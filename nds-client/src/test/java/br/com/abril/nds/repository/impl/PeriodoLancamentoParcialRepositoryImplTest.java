@@ -7,11 +7,9 @@ import java.util.List;
 
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import br.com.abril.nds.dto.ParcialDTO;
 import br.com.abril.nds.dto.PeriodoParcialDTO;
 import br.com.abril.nds.dto.filtro.FiltroParciaisDTO;
 import br.com.abril.nds.fixture.Fixture;
@@ -20,6 +18,7 @@ import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.TipoFornecedor;
 import br.com.abril.nds.model.cadastro.TipoProduto;
+import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.LancamentoParcial;
 import br.com.abril.nds.model.planejamento.PeriodoLancamentoParcial;
@@ -36,8 +35,10 @@ public class PeriodoLancamentoParcialRepositoryImplTest extends AbstractReposito
 	private Fornecedor fornecedorFC;
 	private Produto produtoVeja;
 	private Lancamento lancamento;
+	private Lancamento lancamento2;
 	private LancamentoParcial lancamentoParcial;
 	private PeriodoLancamentoParcial periodo;
+	private PeriodoLancamentoParcial periodo2;
 	
 	@Autowired
 	private PeriodoLancamentoParcialRepository periodoLancamentoParcialRepository;
@@ -66,24 +67,41 @@ public class PeriodoLancamentoParcialRepositoryImplTest extends AbstractReposito
 		
 		
 		Date dtInicial = Fixture.criarData(1, 1, 2010);
-		Date dtFinal = Fixture.criarData(1, 1, 2011);
+		Date dtFinal = Fixture.criarData(1, 1, 2012);
 		
 		lancamentoParcial = Fixture.criarLancamentoParcial(produtoEdicaoVeja1, dtInicial, dtFinal,StatusLancamentoParcial.PROJETADO);
 		save(lancamentoParcial);
 		
 		
-		lancamento = Fixture.lancamento(TipoLancamento.SUPLEMENTAR, produtoEdicaoVeja1,
-				Fixture.criarData(22, Calendar.FEBRUARY, 2012),
-				Fixture.criarData(28, Calendar.FEBRUARY, 2012),
+		lancamento = Fixture.lancamento(TipoLancamento.PARCIAL, produtoEdicaoVeja1,
+				Fixture.criarData(1,1, 2010),
+				Fixture.criarData(1,2,2010),
 				new Date(),
 				new Date(),
 				new BigDecimal(100),
 				StatusLancamento.CONFIRMADO, null, 1);
 		save(lancamento);
 		
+		lancamento2 = Fixture.lancamento(TipoLancamento.PARCIAL, produtoEdicaoVeja1,
+				Fixture.criarData(1,3, 2010),
+				Fixture.criarData(1,4,2010),
+				new Date(),
+				new Date(),
+				new BigDecimal(100),
+				StatusLancamento.CONFIRMADO, null, 2);
+		save(lancamento2);
+		
+		
+		Estudo estudo = Fixture.estudo(new BigDecimal(200),Fixture.criarData(22, Calendar.FEBRUARY, 2012), produtoEdicaoVeja1);
+		save(estudo);
+		
 		periodo = Fixture.criarPeriodoLancamentoParcial(lancamento, lancamentoParcial, 
 				StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.PARCIAL);
-		save(periodo);
+		
+		periodo2 = Fixture.criarPeriodoLancamentoParcial(lancamento2, lancamentoParcial, 
+				StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.PARCIAL);
+		
+		save(periodo, periodo2);
 	}
 		
 	@Test
@@ -91,26 +109,21 @@ public class PeriodoLancamentoParcialRepositoryImplTest extends AbstractReposito
 				
 		FiltroParciaisDTO filtro = new FiltroParciaisDTO();
 		
-		/*filtro.setCodigoProduto(produtoVeja.getCodigo());
+		filtro.setCodigoProduto(produtoVeja.getCodigo());
 		filtro.setDataInicial("10/10/2000");
 		filtro.setDataFinal("10/10/2013");
 		filtro.setEdicaoProduto(produtoEdicaoVeja1.getNumeroEdicao());
 		filtro.setIdFornecedor(fornecedorFC.getId());
 		filtro.setNomeProduto(produtoVeja.getNome());
 		filtro.setStatus(StatusLancamentoParcial.PROJETADO.name());
-		filtro.setPaginacao(new PaginacaoVO(1, 10,"ASC", FiltroParciaisDTO.ColunaOrdenacao.CODIGO_PRODUTO.toString()));
-		*/
-		try{
-		List<PeriodoParcialDTO> periodos = periodoLancamentoParcialRepository.obterPeriodosParciais(filtro);
+		filtro.setPaginacao(new PaginacaoVO(1, 10,"ASC", FiltroParciaisDTO.ColunaOrdenacaoPeriodo.DATA_LANCAMENTO.toString()));
 		
-		Assert.assertEquals(periodos.size(), 1);
-		} catch(Exception e) {
-			e.printStackTrace();
-		}
+		
+		List<PeriodoParcialDTO> periodos = periodoLancamentoParcialRepository.obterPeriodosParciais(filtro);
+		Assert.assertEquals(periodos.size(), 2);	
 	}
 	
 	@Test
-	@Ignore("nao implementado")
 	public void totalBuscaLancamentosParciais() {
 				
 		FiltroParciaisDTO filtro = new FiltroParciaisDTO();
@@ -124,7 +137,41 @@ public class PeriodoLancamentoParcialRepositoryImplTest extends AbstractReposito
 				
 		Integer total = periodoLancamentoParcialRepository.totalObterPeriodosParciais(filtro);
 		
-		Assert.assertTrue(total == 1);
+		Assert.assertTrue(total == 2);
 		
 	}
+	
+	@Test
+	public void obterPeriodoPorIdLancamento() {
+		PeriodoLancamentoParcial periodoL = periodoLancamentoParcialRepository.obterPeriodoPorIdLancamento(lancamento.getId());
+		
+		Assert.assertEquals(periodoL.getId(), periodo.getId());
+	}
+	
+	@Test
+	public void verificarValidadeNovoPeriodoParcialValido() {
+		
+		Date novaDataLancamento = Fixture.criarData(1,3,2011);
+		Date novaDataRecolhimento = Fixture.criarData(1,4,2011);
+		
+		boolean possivel = periodoLancamentoParcialRepository.verificarValidadeNovoPeriodoParcial(lancamento.getId(), novaDataLancamento, novaDataRecolhimento);
+		
+		Assert.assertTrue(possivel);
+		
+
+		novaDataLancamento = Fixture.criarData(1,1,2010);
+		novaDataRecolhimento = Fixture.criarData(1,2,2010);
+		
+		possivel = periodoLancamentoParcialRepository.verificarValidadeNovoPeriodoParcial(lancamento.getId(), novaDataLancamento, novaDataRecolhimento);
+		
+		Assert.assertTrue(possivel);
+		
+		novaDataLancamento = Fixture.criarData(1,1,2010);
+		novaDataRecolhimento = Fixture.criarData(1,1,2011);
+		
+		possivel = periodoLancamentoParcialRepository.verificarValidadeNovoPeriodoParcial(lancamento.getId(), novaDataLancamento, novaDataRecolhimento);
+		
+		Assert.assertFalse(possivel);
+	}
+	
 }

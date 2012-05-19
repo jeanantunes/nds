@@ -1,5 +1,6 @@
 package br.com.abril.nds.repository;
 
+import java.util.Date;
 import java.util.List;
 
 import br.com.abril.nds.dto.PeriodoParcialDTO;
@@ -22,4 +23,23 @@ public interface PeriodoLancamentoParcialRepository  extends Repository<PeriodoL
 	 * @return
 	 */
 	Integer totalObterPeriodosParciais(FiltroParciaisDTO filtro);
+	
+	/**
+	 * Obtém Periodo por id do Lancamento
+	 * 
+	 * @param idLancamento
+	 * @return
+	 */
+	PeriodoLancamentoParcial obterPeriodoPorIdLancamento(Long idLancamento);
+
+	/**
+	 * Retorna se novo periodo é válido para o Lancamento
+	 * 
+	 * @param idLancamento - Id do lançamento a ser alterado
+	 * @param dataLancamento - Nova data de Lancamento
+	 * @param dataRecolhimento - Nova data de Recolhimento
+	 * @return
+	 */
+	Boolean verificarValidadeNovoPeriodoParcial(Long idLancamento,
+			Date dataLancamento, Date dataRecolhimento);
 }

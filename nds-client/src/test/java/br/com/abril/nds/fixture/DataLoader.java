@@ -59,8 +59,6 @@ import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.Rota;
 import br.com.abril.nds.model.cadastro.RotaRoteiroOperacao;
-import br.com.abril.nds.model.cadastro.TipoDesconto;
-import br.com.abril.nds.model.cadastro.TipoGarantia;
 import br.com.abril.nds.model.cadastro.RotaRoteiroOperacao.TipoOperacao;
 import br.com.abril.nds.model.cadastro.Roteiro;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
@@ -68,9 +66,11 @@ import br.com.abril.nds.model.cadastro.Telefone;
 import br.com.abril.nds.model.cadastro.TelefoneDistribuidor;
 import br.com.abril.nds.model.cadastro.TelefoneEntregador;
 import br.com.abril.nds.model.cadastro.TipoBox;
+import br.com.abril.nds.model.cadastro.TipoDesconto;
 import br.com.abril.nds.model.cadastro.TipoEndereco;
 import br.com.abril.nds.model.cadastro.TipoEntrega;
 import br.com.abril.nds.model.cadastro.TipoFornecedor;
+import br.com.abril.nds.model.cadastro.TipoGarantia;
 import br.com.abril.nds.model.cadastro.TipoLicencaMunicipal;
 import br.com.abril.nds.model.cadastro.TipoParametroSistema;
 import br.com.abril.nds.model.cadastro.TipoProduto;
@@ -130,10 +130,12 @@ import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.model.planejamento.EstudoCota;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.LancamentoParcial;
+import br.com.abril.nds.model.planejamento.PeriodoLancamentoParcial;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamentoParcial;
 import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
+import br.com.abril.nds.model.planejamento.TipoLancamentoParcial;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.util.DateUtil;
 
@@ -212,7 +214,9 @@ public class DataLoader {
 	private static Distribuidor distribuidor;
 	private static TipoProduto tipoProdutoRevista;
 	private static TipoProduto tipoRefrigerante;
-
+	private static TipoProduto tipoCromo;
+	private static TipoProduto tipoOutros;
+	
 	private static Produto produtoVeja;
 	private static Produto produtoSuper;
 	private static Produto produtoCapricho;
@@ -647,7 +651,7 @@ public class DataLoader {
 		
 		gerarTipoEntrega(session);
 		
-		gerarLancamentos(session);
+		gerarParciais(session);
 		
 		gerarDescontos(session);
 		
@@ -677,35 +681,62 @@ public class DataLoader {
 		save(session, tipoDesconto);
 	}
 	
-	private static void gerarLancamentos(Session session) {
+	private static void gerarParciais(Session session) {
+		
+		Produto guiaQuatroRodas = Fixture.produto("3111", "Guia Quatro Rodas", "Guia Quatro Rodas", PeriodicidadeProduto.ANUAL, tipoProdutoRevista);
+		guiaQuatroRodas.addFornecedor(fornecedorDinap);
+		
+		Produto cromoBrasileirao = Fixture.produto("3333", "Cromo Brasileirão", "Cromo Brasileirão", PeriodicidadeProduto.ANUAL, tipoCromo);
+		cromoBrasileirao.addFornecedor(fornecedorFc);
+		
+		Produto guiaViagem = Fixture.produto("3113", "Guia Viagem", "Guia Viagem", PeriodicidadeProduto.ANUAL, tipoProdutoRevista);
+		guiaViagem.addFornecedor(fornecedorDinap);
+		
+		save(session,guiaQuatroRodas,cromoBrasileirao,guiaViagem);
+		
+		ProdutoEdicao guiaQuatroRodasEd1 = Fixture.produtoEdicao(1L, 5, 30, 
+				new BigDecimal(50), new BigDecimal(100), new BigDecimal(100), "5546", 0L, guiaQuatroRodas);
+		guiaQuatroRodasEd1.setParcial(true);
+		
+		ProdutoEdicao cromoBrasileiraoEd1 = Fixture.produtoEdicao(1L, 5, 30, 
+				new BigDecimal(50), new BigDecimal(100), new BigDecimal(100), "3333", 0L, cromoBrasileirao);
+		cromoBrasileiraoEd1.setParcial(true);
+		
+		ProdutoEdicao guiaViagemEd1 = Fixture.produtoEdicao(1L, 5, 30, 
+				new BigDecimal(50), new BigDecimal(100), new BigDecimal(100), "2231", 0L, guiaViagem);
+		guiaViagemEd1.setParcial(true);
+		
+		save(session,guiaQuatroRodasEd1,cromoBrasileiraoEd1,guiaViagemEd1);
+		
 		
 		LancamentoParcial lancamentoParcial1 = Fixture.criarLancamentoParcial(
-				produtoEdicaoBoaForma1, Fixture.criarData(1, 1, 2009), Fixture.criarData(1, 1, 2010), StatusLancamentoParcial.RECOLHIDO);
+				guiaQuatroRodasEd1, Fixture.criarData(1, 1, 2009), Fixture.criarData(1, 1, 2010), StatusLancamentoParcial.RECOLHIDO);
 		
 		LancamentoParcial lancamentoParcial2 = Fixture.criarLancamentoParcial(
-				produtoEdicaoBravo1, Fixture.criarData(1, 2, 2011), Fixture.criarData(1, 2, 2012), StatusLancamentoParcial.PROJETADO);
+				cromoBrasileiraoEd1, Fixture.criarData(1, 2, 2011), Fixture.criarData(1, 2, 2012), StatusLancamentoParcial.PROJETADO);
 		
 		LancamentoParcial lancamentoParcial3 = Fixture.criarLancamentoParcial(
-				produtoEdicaoCaras1, Fixture.criarData(1, 3, 2011), Fixture.criarData(1, 3, 2012), StatusLancamentoParcial.PROJETADO);
+				guiaViagemEd1, Fixture.criarData(1, 3, 2011), Fixture.criarData(1, 3, 2012), StatusLancamentoParcial.PROJETADO);
 		
-		LancamentoParcial lancamentoParcial4 = Fixture.criarLancamentoParcial(
-				produtoEdicaoClaudia1, Fixture.criarData(1, 4, 2011), Fixture.criarData(1, 4, 2012), StatusLancamentoParcial.PROJETADO);
+				
+		save(session, lancamentoParcial1,lancamentoParcial2,lancamentoParcial3);
 		
-		LancamentoParcial lancamentoParcial5 = Fixture.criarLancamentoParcial(
-				produtoEdicaoContigo1, Fixture.criarData(1, 5, 2011), Fixture.criarData(1, 5, 2012), StatusLancamentoParcial.PROJETADO);
+		Lancamento lancamentoPeriodo = Fixture.lancamento(TipoLancamento.PARCIAL, cromoBrasileiraoEd1,
+				Fixture.criarData(1, 2, 2011),
+				Fixture.criarData(1, 3, 2011),
+				new Date(),
+				new Date(),
+				new BigDecimal(100),
+				StatusLancamento.PLANEJADO, null, 1);
+		save(session,lancamentoPeriodo);
 		
-		LancamentoParcial lancamentoParcial6 = Fixture.criarLancamentoParcial(
-				produtoEdicaoManequim1, Fixture.criarData(1, 6, 2011), Fixture.criarData(1, 6, 2012), StatusLancamentoParcial.PROJETADO);
+		Estudo estudo = Fixture.estudo(new BigDecimal(200), Fixture.criarData(1, 2, 2011), cromoBrasileiraoEd1);
+		save(session,estudo);
 		
-		LancamentoParcial lancamentoParcial7 = Fixture.criarLancamentoParcial(
-				produtoEdicaoNatGeo1, Fixture.criarData(1, 7, 2011), Fixture.criarData(1, 7, 2012), StatusLancamentoParcial.PROJETADO);
+		PeriodoLancamentoParcial periodo = Fixture.criarPeriodoLancamentoParcial(lancamentoPeriodo, lancamentoParcial2, 
+				StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.PARCIAL);
+		save(session, periodo);
 		
-		LancamentoParcial lancamentoParcial8 = Fixture.criarLancamentoParcial(
-				produtoEdicaoVeja1, Fixture.criarData(1, 8, 2011), Fixture.criarData(1, 8, 2012), StatusLancamentoParcial.PROJETADO);
-		
-		save(session, lancamentoParcial1,lancamentoParcial2,lancamentoParcial3,
-				lancamentoParcial4,lancamentoParcial5,lancamentoParcial6,lancamentoParcial7,
-				lancamentoParcial8);
 	}
 
 	private static void gerarTipoEntrega(Session session) {
@@ -2624,6 +2655,11 @@ public class DataLoader {
 
 		tipoRefrigerante = Fixture.tipoProduto("Refrigerante",GrupoProduto.OUTROS, "5644566");
 		session.save(tipoRefrigerante);
+		
+		tipoCromo = Fixture.tipoProduto("Cromo",GrupoProduto.CROMO, "5644564");
+		session.save(tipoCromo);
+		
+		
 	}
 
 	private static void criarDistribuidor(Session session) {
@@ -2736,6 +2772,8 @@ public class DataLoader {
 		
 		distribuidor.setParametroContratoCota(parametroContrato);
 
+		distribuidor.setFatorRelancamentoParcial(5);
+		
 		save(session, distribuidor);
 		
 		politicaCobranca.setDistribuidor(distribuidor);

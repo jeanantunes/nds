@@ -1,17 +1,21 @@
 package br.com.abril.nds.repository.impl;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import org.hibernate.Criteria;
 import org.hibernate.Query;
+import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.PeriodoParcialDTO;
 import br.com.abril.nds.dto.filtro.FiltroParciaisDTO;
-import br.com.abril.nds.dto.filtro.FiltroParciaisDTO.ColunaOrdenacao;
+import br.com.abril.nds.dto.filtro.FiltroParciaisDTO.ColunaOrdenacaoPeriodo;
 import br.com.abril.nds.model.planejamento.PeriodoLancamentoParcial;
 import br.com.abril.nds.repository.PeriodoLancamentoParcialRepository;
+import br.com.abril.nds.util.DateUtil;
 
 @Repository
 public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepository<PeriodoLancamentoParcial, Long> 
@@ -27,53 +31,79 @@ public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepository<P
 				
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" select rownum as periodo, ");
-		hql.append(" 		lancamento.dataLancamentoDistribuidor as dataLancamento, ");
+		hql.append(" select lancamento.dataLancamentoDistribuidor as dataLancamento, ");
 		hql.append(" 		lancamento.dataRecolhimentoDistribuidor as dataRecolhimento, ");
-		hql.append(" 		estudo.reparte as reparte, ");
+		hql.append(" 		estudo.qtdeReparte as reparte, ");
 		
-		hql.append("		(select sum(movimento.qtde) from ConferenciaEncalhe conferecia");
+		hql.append(" 		1 + (select count(parcial) from PeriodoLancamentoParcial parcial ");
+		hql.append("        		 where parcial.lancamento.dataLancamentoDistribuidor<periodo.lancamento.dataLancamentoDistribuidor");	
+		hql.append("        		 and parcial.lancamento.produtoEdicao.id=periodo.lancamento.produtoEdicao.id)");
+		hql.append("        as periodo,");
+		
+		hql.append("		(select sum(movimento.qtde) from ConferenciaEncalhe conferencia ");
+		hql.append("		 	join conferencia.movimentoEstoqueCota movimento ");
+		hql.append("		 	join conferencia.lancamento lancamentoC ");
+		hql.append("		 	where lancamentoC.id=lancamento.id) ");
+		hql.append(" 		 as encalhe, ");
+		
+		hql.append("		estudo.qtdeReparte - (select sum(movimento.qtde) from ConferenciaEncalhe conferencia ");
 		hql.append("		 	join conferencia.movimentoEstoqueCota movimento ");
 		hql.append("		 	join conferencia.lancamento lancamentoC ");
 		hql.append("		 	where lancamentoC.id=lancamento.id)");
-		hql.append(" 		as encalhe, ");
+		hql.append(" 		as vendas, ");
 		
-		hql.append(" 		10 as vendas, ");
-		hql.append(" 		10 as vendaAcumulada, ");
-		hql.append(" 		10 as percVenda ");
+		hql.append("		(select lancamentoInicial.estudo.qtdeReparte from Lancamento lancamentoInicial ");
+		hql.append("			where lancamentoInicial.dataLancamentoDistribuidor=periodo.lancamentoParcial.lancamentoInicial) ");
+		hql.append("		- (select sum(movimento.qtde) from ConferenciaEncalhe conferencia ");
+		hql.append("		 	join conferencia.movimentoEstoqueCota movimento ");
+		hql.append("		 	join conferencia.lancamento lancamentoC ");
+		hql.append("		 	where lancamentoC.produtoEdicao.id=lancamento.produtoEdicao.id) ");
+		hql.append(" 		 as vendaAcumulada, ");
 		
-		hql.append(getSqlFromEWhereLancamentosParciais(filtro));
+		hql.append(" 		 estudo.qtdeReparte / ");
+		hql.append("		  (estudo.qtdeReparte - (select sum(movimento.qtde) from ConferenciaEncalhe conferencia ");
+		hql.append("		 	join conferencia.movimentoEstoqueCota movimento ");
+		hql.append("		 	join conferencia.lancamento lancamentoC ");
+		hql.append("		 	where lancamentoC.id=lancamento.id))");
+		hql.append("		 as percVenda, ");
+		
+		hql.append("		 lancamento.id as idLancamento ");
+		
+		hql.append(getSqlFromEWherePeriodosParciais(filtro));
 				
-		//hql.append(getOrderByLancamentosParciais(filtro));
-		
+		hql.append(getOrderByPeriodosParciais(filtro));
+				
 		Query query =  getSession().createQuery(hql.toString());
 		
-//		HashMap<String, Object> param = buscarParametrosLancamentosParciais(filtro);
-//		
-//		for(String key : param.keySet()){
-//			query.setParameter(key, param.get(key));
-//		}
-//		
+		HashMap<String, Object> param = buscarParametrosLancamentosParciais(filtro);
+		
+		for(String key : param.keySet()){
+			query.setParameter(key, param.get(key));
+		}
+		
 		query.setResultTransformer(new AliasToBeanResultTransformer(
 				PeriodoParcialDTO.class));
 		
-//		if(filtro.getPaginacao().getQtdResultadosPorPagina() != null) 
-//			query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
-//		
-//		if(filtro.getPaginacao().getQtdResultadosPorPagina() != null) 
-//			query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
+		if(filtro.getPaginacao()!= null && filtro.getPaginacao().getQtdResultadosPorPagina() != null) 
+			query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
+		
+		if(filtro.getPaginacao()!= null && filtro.getPaginacao().getQtdResultadosPorPagina() != null) 
+			query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
 				
 		return query.list();
 	}
 	
-	private String getSqlFromEWhereLancamentosParciais(FiltroParciaisDTO filtro) {
+	private String getSqlFromEWherePeriodosParciais(FiltroParciaisDTO filtro) {
 		
 		StringBuilder hql = new StringBuilder();
-	
-
-		hql.append(" from Lancamento lancamento ");
+			
+		hql.append(" from PeriodoLancamentoParcial periodo ");
+		hql.append(" join periodo.lancamento lancamento ");
 		hql.append(" join lancamento.produtoEdicao produtoEdicao ");
+		hql.append(" join produtoEdicao.produto produto ");
 		hql.append(" left join lancamento.estudo estudo ");
+		hql.append(" join produto.fornecedores fornecedor ");
+		hql.append(" join fornecedor.juridica juridica ");
 		
 		boolean usarAnd = false;
 		
@@ -98,57 +128,61 @@ public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepository<P
 		}
 		
 		if(filtro.getDataInicialDate() != null) { 
-			hql.append( (usarAnd ? " and ":" where ") + " lancamentoParcial.lancamentoInicial>=:dtInicial ");
+			hql.append( (usarAnd ? " and ":" where ") + " periodo.lancamento.dataLancamentoDistribuidor>=:dtInicial ");
 			usarAnd = true;
 		}
 		
 		if(filtro.getDataFinalDate() != null) { 
-			hql.append( (usarAnd ? " and ":" where ") + " lancamentoParcial.recolhimentoFinal<=:dtFinal ");
+			hql.append( (usarAnd ? " and ":" where ") + " periodo.lancamento.dataRecolhimentoDistribuidor<=:dtFinal ");
 			usarAnd = true;
 		}
 		
 		if(filtro.getStatus() != null) { 
-			hql.append( (usarAnd ? " and ":" where ") + " lancamentoParcial.status=:status ");
+			hql.append( (usarAnd ? " and ":" where ") + " periodo.status=:status ");
 			usarAnd = true;
 		}
-
+		
 		return hql.toString();
 	}
 
-	private String getOrderByLancamentosParciais(FiltroParciaisDTO filtro){
+	private String getOrderByPeriodosParciais(FiltroParciaisDTO filtro){
 		
 		if(filtro.getPaginacao() == null || filtro.getPaginacao().getSortColumn() == null){
 			return "";
 		}
 		
-		ColunaOrdenacao coluna = ColunaOrdenacao.getPorDescricao(filtro.getPaginacao().getSortColumn());
+		ColunaOrdenacaoPeriodo coluna = ColunaOrdenacaoPeriodo.getPorDescricao(filtro.getPaginacao().getSortColumn());
 		
 		StringBuilder hql = new StringBuilder();
 		
 		switch (coluna) {
-			case CODIGO_PRODUTO:	
-				hql.append(" order by produto.codigo ");
+			
+			case DATA_LANCAMENTO:	
+				hql.append(" order by dataLancamento ");
 				break;
-			case DATA_LANCAMENTO:
-				hql.append(" order by lancamentoParcial.lancamentoInicial ");
+			case DATA_RECOLHIMENTO:	
+				hql.append(" order by dataRecolhimento ");
 				break;
-			case DATA_RECOLHIMENTO:
-				hql.append(" order by lancamentoParcial.recolhimentoFinal ");
+			case ENCALHE:	
+				hql.append(" order by encalhe ");
+				break;
+			case PERC_VENDA:
+				hql.append(" order by percVenda ");
+				break;
+			case PERIODO:
+				hql.append(" order by dataLancamento ");
 				break;	
-			case NOME_FORNECEDOR:
-				hql.append(" order by juridica.razaoSocial ");
+			case REPARTE:
+				hql.append(" order by reparte ");
 				break;	
-			case NOME_PRODUTO:
-				hql.append(" order by produto.descricao ");
+			case VENDA_ACUMULADA:
+				hql.append(" order by vendaAcumulada ");
 				break;	
-			case NUM_EDICAO:
-				hql.append(" order by produtoEdicao.numeroEdicao ");
-				break;	
-			case STATUS_PARCIAL:
-				hql.append(" order by lancamentoParcial.status ");
+			case VENDAS:
+				hql.append(" order by vendas ");
 				break;	
 			default:
-				hql.append(" order by lancamentoParcial.recolhimentoFinal ");
+				hql.append(" order by dataLancamento ");
 		}
 		
 		if (filtro.getPaginacao().getOrdenacao() != null) {
@@ -197,9 +231,9 @@ public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepository<P
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" select count(lancamentoParcial) ");
+		hql.append(" select count(periodo) ");
 		
-		hql.append(getSqlFromEWhereLancamentosParciais(filtro));
+		hql.append(getSqlFromEWherePeriodosParciais(filtro));
 		
 		Query query =  getSession().createQuery(hql.toString());
 		
@@ -212,5 +246,52 @@ public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepository<P
 		Long totalRegistros = (Long) query.uniqueResult();
 		
 		return (totalRegistros == null) ? 0 : totalRegistros.intValue();
+	}
+	
+	public PeriodoLancamentoParcial obterPeriodoPorIdLancamento(Long idLancamento) {
+		
+		Criteria criteria = super.getSession().createCriteria(PeriodoLancamentoParcial.class,"periodo");
+				
+		criteria.add(Restrictions.eq("periodo.lancamento.id", idLancamento));
+				
+		criteria.setMaxResults(1);
+		
+		return (PeriodoLancamentoParcial) criteria.uniqueResult();
+	}
+
+	@Override
+	public Boolean verificarValidadeNovoPeriodoParcial(Long idLancamento,
+			Date dataLancamento, Date dataRecolhimento) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select count(periodo) ");
+		
+		hql.append(" from PeriodoLancamentoParcial periodo ");
+		
+		hql.append(" join periodo.lancamentoParcial lancamentoParcial ");
+		
+		hql.append(" join lancamentoParcial.periodos periodos ");
+		
+		hql.append(" where periodos.lancamento.id !=:idLancamento ");
+		
+		hql.append(" and ( (periodos.lancamento.dataLancamentoDistribuidor>=:dataLancamento ");
+		
+		hql.append(" 	and periodos.lancamento.dataLancamentoDistribuidor<=:dataRecolhimento) ");
+		
+		hql.append(" 	or (periodos.lancamento.dataRecolhimentoDistribuidor>=:dataLancamento ");
+		
+		hql.append(" 	and periodos.lancamento.dataRecolhimentoDistribuidor<=:dataRecolhimento) )");
+		
+		
+		Query query =  getSession().createQuery(hql.toString());
+		
+		query.setParameter("idLancamento", idLancamento);
+		query.setParameter("dataLancamento", dataLancamento);
+		query.setParameter("dataRecolhimento", dataRecolhimento);
+		
+		Long count = (Long) query.uniqueResult();
+		System.out.print("#####"+idLancamento+"###"+DateUtil.formatarDataPTBR(dataLancamento)+"#######"+DateUtil.formatarDataPTBR(dataRecolhimento)+"##########"+count);
+		return (count == null || count == 0) ? true : false;
 	}
 }
