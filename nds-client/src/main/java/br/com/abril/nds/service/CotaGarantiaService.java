@@ -132,7 +132,7 @@ public interface CotaGarantiaService {
 	 */
 	public abstract CotaGarantiaCaucaoLiquida salvarCaucaoLiquida(
 			List<CaucaoLiquida> listaCaucaoLiquida, Long idCota)
-			throws ValidacaoException;
+			throws ValidacaoException, InstantiationException, IllegalAccessException;
 
 	/**
 	 * @param idCheque

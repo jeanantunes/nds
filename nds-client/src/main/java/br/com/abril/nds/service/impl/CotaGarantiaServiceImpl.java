@@ -1,5 +1,6 @@
 package br.com.abril.nds.service.impl;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
@@ -113,8 +114,6 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 		CotaGarantiaNotaPromissoria cotaGarantiaNota = prepareCotaGarantia(
 				idCota, CotaGarantiaNotaPromissoria.class);
 
-		
-
 		cotaGarantiaNota.setData(Calendar.getInstance());
 
 		cotaGarantiaNota.setNotaPromissoria(notaPromissoria);
@@ -136,8 +135,6 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 
 		CotaGarantiaChequeCaucao cotaGarantiaCheque = prepareCotaGarantia(
 				idCota, CotaGarantiaChequeCaucao.class);
-
-		
 
 		cotaGarantiaCheque.setData(Calendar.getInstance());
 		
@@ -170,7 +167,6 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 
 		CotaGarantiaImovel cotaGarantiaImovel = prepareCotaGarantia(idCota,
 				CotaGarantiaImovel.class);
-
 	
 
 		if (cotaGarantiaImovel.getImoveis() != null
@@ -180,13 +176,14 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 		}
 		
 		cotaGarantiaImovel.setData(Calendar.getInstance());
+		
 
 		cotaGarantiaImovel.setImoveis(listaImoveis);
 		
-		CotaGarantiaImovel cotaGarantia = (CotaGarantiaImovel) cotaGarantiaRepository
+		cotaGarantiaImovel = (CotaGarantiaImovel) cotaGarantiaRepository
 				.merge(cotaGarantiaImovel);
 		
-		return cotaGarantia;
+		return cotaGarantiaImovel;
 	}
 
 	/*
@@ -245,7 +242,6 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 		CotaGarantiaFiador cotaGarantiaFiador = prepareCotaGarantia(idCota,
 				CotaGarantiaFiador.class);
 	
-
 		Fiador fiador = fiadorRepository.buscarPorId(idFiador);
 
 		if (fiador == null) {
@@ -298,22 +294,17 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 	 * @see br.com.abril.nds.service.CotaGarantiaService#salvarCaucaoLiquida(br.com.abril.nds.model.cadastro.CaucaoLiquida, java.lang.Long)
 	 */
 	@Transactional
-	public CotaGarantiaCaucaoLiquida salvarCaucaoLiquida(List<CaucaoLiquida> listaCaucaoLiquida, Long idCota) throws ValidacaoException {
+	public CotaGarantiaCaucaoLiquida salvarCaucaoLiquida(List<CaucaoLiquida> listaCaucaoLiquida, Long idCota) throws ValidacaoException, InstantiationException, IllegalAccessException {
 		
-		CotaGarantiaCaucaoLiquida cotaGarantiaCaucaoLiquida =  (CotaGarantiaCaucaoLiquida) cotaGarantiaRepository.getByCota(idCota);
+		CotaGarantiaCaucaoLiquida cotaGarantiaCaucaoLiquida = prepareCotaGarantia(idCota, CotaGarantiaCaucaoLiquida.class);
 		
-		if (cotaGarantiaCaucaoLiquida == null) {
-		
-			cotaGarantiaCaucaoLiquida = new CotaGarantiaCaucaoLiquida();
-			cotaGarantiaCaucaoLiquida.setCota(getCota(idCota));
-			
-			cotaGarantiaCaucaoLiquida.setCaucaoLiquidas(listaCaucaoLiquida);
-		}else{
-			cotaGarantiaCaucaoLiquida.getCaucaoLiquidas().addAll(listaCaucaoLiquida);
+		if (cotaGarantiaCaucaoLiquida.getCaucaoLiquidas() == null) {
+			cotaGarantiaCaucaoLiquida.setCaucaoLiquidas(new ArrayList<CaucaoLiquida>(listaCaucaoLiquida.size()));
 		}
 		
-		cotaGarantiaCaucaoLiquida.setData(Calendar.getInstance());		
+		cotaGarantiaCaucaoLiquida.getCaucaoLiquidas().addAll(listaCaucaoLiquida);
 		
+		cotaGarantiaCaucaoLiquida.setData(Calendar.getInstance());		
 		
 		return (CotaGarantiaCaucaoLiquida) this.cotaGarantiaRepository.merge(cotaGarantiaCaucaoLiquida);
 	}
@@ -351,7 +342,7 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 		
 		CotaGarantiaNotaPromissoria cotaGarantiaNotaPromissoria = cotaGarantiaRepository.getByCota(idCota, CotaGarantiaNotaPromissoria.class);
 		if(cotaGarantiaNotaPromissoria == null){
-			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, "Nota Promissória não cadastrada para esta cota."));
+			throw new RuntimeException("Nota Promissória não cadastrada para esta cota.");
 		}
 		if(cotaGarantiaNotaPromissoria.getCota().getPessoa() instanceof PessoaJuridica){
 			dto.setDocumentoEmitente(Util.adicionarMascaraCNPJ(cotaGarantiaNotaPromissoria.getCota().getPessoa().getDocumento()));
@@ -365,20 +356,20 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 		EnderecoCota enderecoCota =  enderecoCotaRepository.getPrincipal(idCota);
 		
 		if(enderecoCota==null  || enderecoCota.getEndereco() == null){
-			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, "Endereço não cadastrada para esta cota."));
+			throw new RuntimeException( "Endereço não cadastrado para esta cota.");
 		}
 		dto.setEnderecoEmitente(enderecoCota.getEndereco());
 		Distribuidor distribuidor= distribuidorRepository.obter();
 		
 		if(distribuidor==null){
-			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, "Distribuidor não cadastrado."));
+			throw new RuntimeException( "Distribuidor não cadastrado.");
 		}
 		dto.setNomeBeneficiario(distribuidor.getJuridica().getNome());
 		dto.setDocumentoBeneficiario(Util.adicionarMascaraCNPJ( distribuidor.getJuridica().getDocumento()));
 		
 		EnderecoDistribuidor enderecoDistribuidor =  distribuidorRepository.obterEnderecoPrincipal();
 		if(enderecoDistribuidor==null  || enderecoDistribuidor.getEndereco() == null){
-			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, "Endereço não cadastrada para este distribuidor."));
+			throw new RuntimeException( "Endereço não cadastrada para este distribuidor.");
 		}
 		dto.setPracaPagamento(enderecoDistribuidor.getEndereco().getCidade());
 		
