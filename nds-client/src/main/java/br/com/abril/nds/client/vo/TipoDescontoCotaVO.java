@@ -17,6 +17,12 @@ public class TipoDescontoCotaVO {
 	
 	@Export(label = "")
 	private String seq;
+	
+	@Export(label = "Cota")
+	private String cota;
+	
+	@Export(label = "Nome")
+	private String nome;
 
 	public String getId() {
 		return id;
@@ -57,6 +63,24 @@ public class TipoDescontoCotaVO {
 	public void setSeq(String seq) {
 		this.seq = seq;
 	}
+
+	public String getCota() {
+		return cota;
+	}
+
+	public void setCota(String cota) {
+		this.cota = cota;
+	}
+
+	public String getNome() {
+		return nome;
+	}
+
+	public void setNome(String nome) {
+		this.nome = nome;
+	}
+	
+	
 	
 
 }

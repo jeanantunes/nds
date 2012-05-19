@@ -3,6 +3,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import br.com.abril.nds.client.vo.TipoDescontoCotaVO;
+import br.com.abril.nds.model.cadastro.EspecificacaoDesconto;
 import br.com.abril.nds.model.cadastro.TipoDescontoCota;
 
 
@@ -20,6 +21,8 @@ public interface TipoDescontoCotaService {
 	List<TipoDescontoCotaVO> obterTipoDescontoGeral();
 
 	int obterUltimoSequencial();
+	
+	List<TipoDescontoCotaVO> obterTipoDescontoCota(EspecificacaoDesconto especificacaoDesconto);
 	
 }
 	

@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.client.vo.TipoDescontoCotaVO;
 import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.cadastro.EspecificacaoDesconto;
 import br.com.abril.nds.model.cadastro.TipoDescontoCota;
 import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.TipoDescontoCotaRepository;
@@ -67,6 +68,24 @@ public class TipoDescontoCotaServiceImpl implements TipoDescontoCotaService {
 	@Transactional
 	public int obterUltimoSequencial() {		
 		return this.tipoDescontoCotaRepository.obterSequencial();
+	}
+
+	@Override
+	@Transactional
+	public List<TipoDescontoCotaVO> obterTipoDescontoCota(EspecificacaoDesconto especificacaoDesconto) {
+		List<TipoDescontoCota> lista = this.tipoDescontoCotaRepository.obterTipoDescontosCotas(especificacaoDesconto);
+		List<TipoDescontoCotaVO> listaVO = new ArrayList<TipoDescontoCotaVO>();
+		for(TipoDescontoCota desconto: lista){
+			TipoDescontoCotaVO vo = new TipoDescontoCotaVO();			
+			vo.setDataAlteracao(DateUtil.formatarData(desconto.getDataAlteracao(),
+					  Constantes.DATE_PATTERN_PT_BR));
+			vo.setDesconto(desconto.getDesconto().toString());
+			vo.setUsuario(desconto.getUsuario());
+			vo.setSeq(desconto.getSequencial().toString());
+			vo.setCota(desconto.getIdCota().toString());
+			listaVO.add(vo);
+		}		
+		return listaVO;
 	}
 
 }

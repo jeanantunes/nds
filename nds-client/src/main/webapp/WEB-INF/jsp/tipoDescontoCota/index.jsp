@@ -39,17 +39,20 @@
 	}
 	
 	function pesquisarDescontoEspecifico(){
-		var descontoGeral = $("#descontoGeral").val();
-		var dataAlteracao = $("#dataAlteracaoGeral").val();
-		var usuario = $("#textfield24").val();		
+		 
+		var cotaEspecifica = $("#cotaDaPesquisa").val();
+		var nomeEspecifico = $("#nomeDaCotaDaPesquisa").val();
 		
-		$(".tiposDescGeralGrid").flexOptions({
-			url: "<c:url value='/administracao/tipoDescontoCota/pesquisarDescontoGeral'/>",
-			params: [],
+		$(".tiposDescEspecificoGrid").flexOptions({
+			url: "<c:url value='/administracao/tipoDescontoCota/pesquisarDescontoEspecifico'/>",
+			params: [
+					 {name:'cotaEspecifica', value:cotaEspecifica},
+			         {name:'nomeEspecifico', value:nomeEspecifico}
+			         ],
 		    newp: 1,
 		});
 		
-		$(".tiposDescGeralGrid").flexReload();
+		$(".tiposDescEspecificoGrid").flexReload();
 	}
 	
 	function pesquisarDescontoProduto(){
@@ -562,8 +565,8 @@
 		
 		
 		$(".tiposDescEspecificoGrid").flexigrid({
-			url : '../xml/tipos-desconto-especifico-xml.xml',
-			dataType : 'xml',
+			preProcess: executarPreProcessamento,
+			dataType : 'json',
 			colModel : [ {
 				display : 'Cota',
 				name : 'cota',

@@ -2,7 +2,7 @@ package br.com.abril.nds.model.cadastro;
 
 public enum EspecificacaoDesconto {
 	
-	GERAL("Gerak"),
+	GERAL("Geral"),
 	ESPECIFICO("Específico"),
 	PRODUTO("Produto");
 	

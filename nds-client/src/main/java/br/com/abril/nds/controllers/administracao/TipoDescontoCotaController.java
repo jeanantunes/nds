@@ -3,6 +3,7 @@ package br.com.abril.nds.controllers.administracao;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -12,6 +13,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.vo.TipoDescontoCotaVO;
 import br.com.abril.nds.client.vo.ValidacaoVO;
+import br.com.abril.nds.dto.CotaDTO;
+import br.com.abril.nds.dto.filtro.FiltroCotaDTO;
+import br.com.abril.nds.dto.filtro.FiltroCotaDTO.OrdemColuna;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.EspecificacaoDesconto;
@@ -64,9 +68,10 @@ public class TipoDescontoCotaController {
 	public void novoDescontoGeral(String desconto, String dataAlteracao, String usuario){
 		try {
 			BigDecimal descontoFormatado = new BigDecimal(Double.parseDouble(desconto));
-			TipoDescontoCota tipoDescontoCota = popularDescontoParaCadastrar(desconto,dataAlteracao, usuario, EspecificacaoDesconto.GERAL);			
+			TipoDescontoCota descontoGeral = popularDescontoParaCadastrar(desconto,dataAlteracao, usuario, EspecificacaoDesconto.GERAL);			
 			atualizarDistribuidor(descontoFormatado);
-			salvarDesconto(tipoDescontoCota);
+			descontoGeral.setIdCota((long) 0);
+			salvarDesconto(descontoGeral);
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
@@ -83,6 +88,7 @@ public class TipoDescontoCotaController {
 			Cota cotaParaAtualizar = this.cotaService.obterCotaPDVPorNumeroDaCota(Integer.parseInt(cotaEspecifica));		
 			atualizarCota(new BigDecimal(descontoEspecifico), cotaParaAtualizar);
 			TipoDescontoCota especifico = popularDescontoParaCadastrar(descontoEspecifico, dataAlteracaoEspecifico, usuarioEspecifico, EspecificacaoDesconto.ESPECIFICO);
+			especifico.setIdCota(cotaParaAtualizar.getNumeroCota().longValue());
 			salvarDesconto(especifico);
 		} catch (ParseException e) {
 			e.printStackTrace();
@@ -97,9 +103,9 @@ public class TipoDescontoCotaController {
 			ProdutoEdicao produtoEdicao = this.produtoEdicaoService.obterProdutoEdicaoPorCodProdutoNumEdicao(codigo, edicaoProduto);
 			produtoEdicao.setDesconto(new BigDecimal(descontoProduto));
 			this.produtoEdicaoService.alterarProdutoEdicao(produtoEdicao);
-			TipoDescontoCota produtoParaSalvar;
-			produtoParaSalvar = popularDescontoParaCadastrar(descontoProduto, dataAlteracaoProduto, usuarioProduto, EspecificacaoDesconto.PRODUTO);
-			salvarDesconto(produtoParaSalvar);
+			TipoDescontoCota tipoDescontoProduto = popularDescontoParaCadastrar(descontoProduto, dataAlteracaoProduto, usuarioProduto, EspecificacaoDesconto.PRODUTO);
+			tipoDescontoProduto.setIdCota(0l);
+			salvarDesconto(tipoDescontoProduto);
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
@@ -110,7 +116,7 @@ public class TipoDescontoCotaController {
 	public void pesquisarDescontoGeral(String sortorder, String sortname, int page, int rp) throws Exception {		
 		List<TipoDescontoCotaVO> listaDescontoCotaVO = null;		
 		try {			
-			listaDescontoCotaVO = tipoDescontoCotaService.obterTipoDescontoGeral();
+			listaDescontoCotaVO = tipoDescontoCotaService.obterTipoDescontoCota(EspecificacaoDesconto.GERAL);
 			} catch (Exception e) {
 
 			if (e instanceof ValidacaoException){
@@ -135,6 +141,63 @@ public class TipoDescontoCotaController {
 		}
 	}
 	
+	@Post
+	@Path("/pesquisarDescontoEspecifico")
+	public void pesquisarDescontoEspecifico(String cotaEspecifica, String nomeEspecifico, String sortorder, String sortname, int page, int rp) throws Exception {
+		FiltroCotaDTO filtroCotaDTO = popularFiltroCotaDTO(cotaEspecifica,	nomeEspecifico);
+		List<CotaDTO> listaDeCotas = this.cotaService.obterCotas(filtroCotaDTO);
+		
+		List<TipoDescontoCotaVO> listaDescontoCotaVO = 	null;
+		try {			
+			listaDescontoCotaVO = popularTipoDescontoCotaVOParaCota(listaDeCotas);
+			} catch (Exception e) {
+
+			if (e instanceof ValidacaoException){
+				throw e;
+			} else {
+				throw new ValidacaoException(TipoMensagem.ERROR, "Erro ao pesquisar produto: " + e.getMessage());
+			}
+		}		
+		if (listaDescontoCotaVO == null || listaDescontoCotaVO.isEmpty()) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
+		} else {
+			int qtdeTotalRegistros = listaDescontoCotaVO.size();
+		
+			TableModel<CellModelKeyValue<TipoDescontoCotaVO>> tableModel =
+					new TableModel<CellModelKeyValue<TipoDescontoCotaVO>>();
+	
+			tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaDescontoCotaVO));
+			//tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
+			tableModel.setTotal(qtdeTotalRegistros);
+	
+			result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
+		}
+	}
+
+	private FiltroCotaDTO popularFiltroCotaDTO(String cotaEspecifica,String nomeEspecifico) {
+		FiltroCotaDTO filtroCotaDTO = new FiltroCotaDTO();
+		if(!cotaEspecifica.equals("")){
+			filtroCotaDTO.setNumeroCota(Integer.parseInt(cotaEspecifica));			
+		}		
+		filtroCotaDTO.setOrdemColuna(OrdemColuna.NUMERO_COTA);
+		return filtroCotaDTO;
+	}
+	
+	private List<TipoDescontoCotaVO> popularTipoDescontoCotaVOParaCota(List<CotaDTO> listaDeCotas) {
+		List<TipoDescontoCotaVO> listaVO = this.tipoDescontoCotaService.obterTipoDescontoCota(EspecificacaoDesconto.ESPECIFICO);
+		List<TipoDescontoCotaVO> listaAux = new ArrayList<TipoDescontoCotaVO>();
+		for (TipoDescontoCotaVO tipoDescontoCotaVO : listaVO) {
+			for(CotaDTO cotaDTO: listaDeCotas){
+				if(tipoDescontoCotaVO.getCota().equals(cotaDTO.getNumeroCota().toString())){
+					tipoDescontoCotaVO.setNome(cotaDTO.getNomePessoa());
+					listaAux.add(tipoDescontoCotaVO);
+				}
+			}
+			
+		}
+		return listaAux;
+	}
+
 	private void inserirDataAtual() {		
 		result.include("dataAtual", DateUtil.formatarData(new Date(), "dd/MM/yyyy"));
 	}

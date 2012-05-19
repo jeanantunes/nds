@@ -46,6 +46,9 @@ public class TipoDescontoCota implements Serializable {
 	@Column(name="SEQUENCIAL")
 	private Integer sequencial;
 	
+	@Column(name = "COTA_ID")
+	private Long idCota;
+	
 	public Long getId() {
 		return id;
 	}
@@ -92,6 +95,14 @@ public class TipoDescontoCota implements Serializable {
 
 	public void setSequencial(Integer sequencial) {
 		this.sequencial = sequencial;
+	}
+
+	public Long getIdCota() {
+		return idCota;
+	}
+
+	public void setIdCota(Long idCota) {
+		this.idCota = idCota;
 	}
 
 }
