@@ -7,6 +7,7 @@
         <pattern>/scripts/*</pattern> 
         <pattern>/css/*</pattern>
         <pattern>/upload/*</pattern>
+        <pattern>**impriNotaPromissoria*</pattern>
     </excludes>
               
     <decorator name="main" page="main.jsp">

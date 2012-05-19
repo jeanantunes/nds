@@ -101,7 +101,7 @@ NotaPromissoria.prototype.bindEvents = function() {
 };
 
 NotaPromissoria.prototype.imprimi = function() {
-	window.open(this.path + 'impriNotaPromissoria/' + this.notaPromissoria.id);
+	window.open(this.path + 'impriNotaPromissoria/' + this.idCota);
 };
 
 // **************** CHEQUE CAUCAO PROTOTYPE ********************//

@@ -1,6 +1,5 @@
 package br.com.abril.nds.service.impl;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
@@ -11,14 +10,19 @@ import org.springframework.transaction.annotation.Transactional;
 import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.dto.CotaGarantiaDTO;
 import br.com.abril.nds.dto.ItemDTO;
+import br.com.abril.nds.dto.NotaPromissoriaDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.CaucaoLiquida;
 import br.com.abril.nds.model.cadastro.Cheque;
 import br.com.abril.nds.model.cadastro.ChequeImage;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.cadastro.EnderecoCota;
+import br.com.abril.nds.model.cadastro.EnderecoDistribuidor;
 import br.com.abril.nds.model.cadastro.Fiador;
 import br.com.abril.nds.model.cadastro.Imovel;
 import br.com.abril.nds.model.cadastro.NotaPromissoria;
+import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.TipoGarantia;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantia;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaCaucaoLiquida;
@@ -30,10 +34,12 @@ import br.com.abril.nds.repository.ChequeImageRepository;
 import br.com.abril.nds.repository.CotaGarantiaRepository;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.DistribuidorRepository;
+import br.com.abril.nds.repository.EnderecoCotaRepository;
 import br.com.abril.nds.repository.FiadorRepository;
 import br.com.abril.nds.service.CotaGarantiaService;
 import br.com.abril.nds.util.StringUtil;
 import br.com.abril.nds.util.TipoMensagem;
+import br.com.abril.nds.util.Util;
 
 /**
  * 
@@ -56,6 +62,9 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 	private FiadorRepository fiadorRepository;
 	@Autowired
 	private ChequeImageRepository chequeImageRepository;
+	
+	@Autowired 
+	private EnderecoCotaRepository enderecoCotaRepository;
 
 	/*
 	 * (non-Javadoc)
@@ -332,6 +341,48 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 		
 		chequeImageRepository.merge(chequeImage);
 		
+	}
+	
+	
+	@Override
+	@Transactional(readOnly=true)
+	public NotaPromissoriaDTO getDadosImpressaoNotaPromissoria(long idCota){
+		NotaPromissoriaDTO dto = new NotaPromissoriaDTO();
+		
+		CotaGarantiaNotaPromissoria cotaGarantiaNotaPromissoria = cotaGarantiaRepository.getByCota(idCota, CotaGarantiaNotaPromissoria.class);
+		if(cotaGarantiaNotaPromissoria == null){
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, "Nota Promissória não cadastrada para esta cota."));
+		}
+		if(cotaGarantiaNotaPromissoria.getCota().getPessoa() instanceof PessoaJuridica){
+			dto.setDocumentoEmitente(Util.adicionarMascaraCNPJ(cotaGarantiaNotaPromissoria.getCota().getPessoa().getDocumento()));
+		}else{
+			dto.setDocumentoEmitente(Util.adicionarMascaraCPF(cotaGarantiaNotaPromissoria.getCota().getPessoa().getDocumento()));
+		}
+		
+		dto.setNomeEmitente(cotaGarantiaNotaPromissoria.getCota().getPessoa().getNome());
+		dto.setNotaPromissoria(cotaGarantiaNotaPromissoria.getNotaPromissoria());
+		
+		EnderecoCota enderecoCota =  enderecoCotaRepository.getPrincipal(idCota);
+		
+		if(enderecoCota==null  || enderecoCota.getEndereco() == null){
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, "Endereço não cadastrada para esta cota."));
+		}
+		dto.setEnderecoEmitente(enderecoCota.getEndereco());
+		Distribuidor distribuidor= distribuidorRepository.obter();
+		
+		if(distribuidor==null){
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, "Distribuidor não cadastrado."));
+		}
+		dto.setNomeBeneficiario(distribuidor.getJuridica().getNome());
+		dto.setDocumentoBeneficiario(Util.adicionarMascaraCNPJ( distribuidor.getJuridica().getDocumento()));
+		
+		EnderecoDistribuidor enderecoDistribuidor =  distribuidorRepository.obterEnderecoPrincipal();
+		if(enderecoDistribuidor==null  || enderecoDistribuidor.getEndereco() == null){
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, "Endereço não cadastrada para este distribuidor."));
+		}
+		dto.setPracaPagamento(enderecoDistribuidor.getEndereco().getCidade());
+		
+		return dto;
 	}
 	
 	

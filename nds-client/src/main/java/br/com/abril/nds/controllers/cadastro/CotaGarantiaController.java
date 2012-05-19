@@ -7,10 +7,10 @@ import java.util.List;
 import org.apache.poi.util.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import antlr.collections.impl.LList;
 import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.dto.CotaGarantiaDTO;
 import br.com.abril.nds.dto.ItemDTO;
+import br.com.abril.nds.dto.NotaPromissoriaDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.CaucaoLiquida;
 import br.com.abril.nds.model.cadastro.Cheque;
@@ -119,8 +119,9 @@ public class CotaGarantiaController {
 
 	@Get("/impriNotaPromissoria/{id}")
 	public void impriNotaPromissoria(Long id) {
-		// TODO: chamada do relatorio para nota.
-		result.nothing();
+		NotaPromissoriaDTO nota = cotaGarantiaService.getDadosImpressaoNotaPromissoria(id);
+		
+		result.include("nota",nota);
 	}
 
 	@Get("/getTiposGarantia.json")

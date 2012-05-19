@@ -2,7 +2,9 @@ package br.com.abril.nds.repository.impl;
 
 import java.util.List;
 
+import org.hibernate.Criteria;
 import org.hibernate.Query;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.model.cadastro.Endereco;
@@ -34,5 +36,15 @@ public class EnderecoCotaRepositoryImpl extends AbstractRepository<EnderecoCota,
 		query.setParameterList("enderecos", listaEndereco);
 
 		query.executeUpdate();
+	}
+	
+	@Override
+	public EnderecoCota getPrincipal(Long idCota){
+		Criteria criteria = getSession().createCriteria(EnderecoCota.class);
+		criteria.add(Restrictions.eq("cota.id", idCota));
+		criteria.add(Restrictions.eq("principal", true));
+		criteria.setMaxResults(1);
+		
+		return (EnderecoCota) criteria.uniqueResult();
 	}
 }
