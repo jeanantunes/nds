@@ -161,7 +161,7 @@ public class ConferenciaEncalheController {
 		
 		dados.add(infoConfereciaEncalheCota.getReparte() == null ? BigDecimal.ZERO : infoConfereciaEncalheCota.getReparte());
 		
-		calcularValoresMonetarios(dados);
+		this.calcularValoresMonetarios(dados);
 		
 		Cota cota = infoConfereciaEncalheCota.getCota();
 		
@@ -175,9 +175,43 @@ public class ConferenciaEncalheController {
 			dados.add(cota.getSituacaoCadastro().toString());
 		}
 		
+		dados.add(this.session.getAttribute(NOTA_FISCAL_CONFERENCIA) == null ? "" : this.session.getAttribute(NOTA_FISCAL_CONFERENCIA));
+		
+		this.calcularTotais(dados);
+		
 		result.use(Results.json()).withoutRoot().from(dados).recursive().serialize();
 	}
 	
+	private void calcularTotais(List<Object> dados) {
+		
+		BigDecimal qtdInformada = BigDecimal.ZERO;
+		BigDecimal qtdRecebida = BigDecimal.ZERO;
+		
+		InfoConferenciaEncalheCota info = this.getInfoConferenciaSession();
+		
+		if (info != null){
+			
+			if (info.getListaConferenciaEncalhe() != null){
+			
+				for (ConferenciaEncalheDTO conferenciaEncalheDTO : info.getListaConferenciaEncalhe()){
+					
+					if (conferenciaEncalheDTO.getQtdExemplar() != null){
+					
+						qtdInformada = qtdInformada.add(conferenciaEncalheDTO.getQtdExemplar());
+					}
+					
+					if (conferenciaEncalheDTO.getQtdRecebida() != null){
+					
+						qtdRecebida = qtdRecebida.add(conferenciaEncalheDTO.getQtdRecebida());
+					}
+				}
+			}
+		}
+		
+		dados.add(qtdInformada);
+		dados.add(qtdRecebida);
+	}
+
 	@Post
 	public void pesquisarProdutoEdicao(String codigoBarra, Integer sm, Long idProdutoEdicao, Long codigoAnterior, Long quantidade){
 		
@@ -286,6 +320,39 @@ public class ConferenciaEncalheController {
 		this.atualizarQuantidadeConferida(idProdutoEdicao, quantidade, produtoEdicao);
 		
 		this.result.use(Results.json()).from("").serialize();
+	}
+	
+	@Post
+	public void finalizarConferencia(List<Long> idsConferencia, List<Long> qtdsExemplares, List<Boolean> juramentada, List<BigDecimal> valoresCapa){
+		
+		List<ConferenciaEncalheDTO> listaConferencia = this.getListaConferenciaEncalheFromSession();
+		
+		if (idsConferencia != null){
+		
+			for (int index = 0 ; index < idsConferencia.size() ; index++){
+				
+				for (ConferenciaEncalheDTO dto : listaConferencia){
+					
+					if (dto.getIdConferenciaEncalhe().equals(idsConferencia.get(index))){
+						
+						dto.setQtdExemplar(new BigDecimal(qtdsExemplares.get(index)));
+						
+						if (juramentada != null){
+						
+							dto.setJuramentada(juramentada.get(index));
+						}
+						
+						if (valoresCapa != null){
+							
+							dto.setPrecoCapa(valoresCapa.get(index));
+						}
+						break;
+					}
+				}
+			}
+		}
+		
+		this.carregarListaConferencia(this.getInfoConferenciaSession().getCota().getNumeroCota());
 	}
 	
 	@Post
@@ -399,6 +466,8 @@ public class ConferenciaEncalheController {
 		this.session.removeAttribute(ID_BOX_LOGADO);
 		this.session.removeAttribute(INFO_CONFERENCIA);
 		this.session.removeAttribute(VALOR_ENCALHE_JORNALEIRO);
+		this.session.removeAttribute(NOTA_FISCAL_CONFERENCIA);
+		this.session.removeAttribute(SET_CONFERENCIA_ENCALHE_EXCLUIR);
 	}
 	
 	private InfoConferenciaEncalheCota getInfoConferenciaSession() {

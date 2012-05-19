@@ -114,22 +114,22 @@
 <div id="dialog-dadosNotaFiscal" title="Dados da Nota Fiscal" style="display:none;">
 	<fieldset>
     	<legend>Nota Fiscal</legend>
-        	<table width="670" border="0" cellspacing="1" cellpadding="1" style="color:#666;">
+        	<table width="810" border="0" cellspacing="1" cellpadding="1" style="color:#666;">
           		<tr>
 		            <td width="133">Núm. Nota Fiscal:</td>
-		            <td width="307" id="numeroNotaFiscal"></td>
+		            <td width="307" id="numeroNotaFiscalExibir"></td>
 		            <td width="106">Série:</td>
-		            <td width="111" id="serie"></td>
+		            <td width="111" id="serieExibir"></td>
           		</tr>
           		<tr>
 		            <td>Data:</td>
-		            <td id="data"></td>
+		            <td id="dataExibir"></td>
 		            <td>Valor Total R$:</td>
-		            <td id="valorTotalNotaFiscal"></td>
+		            <td id="valorTotalNotaFiscalExibir"></td>
           		</tr>
           		<tr>
 		            <td>Chave de Acesso:</td>
-		            <td colspan="3" id="chaveAcesso"></td>
+		            <td colspan="3" id="chaveAcessoExibir"></td>
           		</tr>
         	</table>
     </fieldset>
@@ -214,5 +214,12 @@
 		<legend>Nota Fiscal</legend>
 	    <p>Já existe conferencia de encalhe para esta cota.<br/>
 	    Efetuar reabertura?</p>
+	</fieldset>
+</div>
+
+<div id="dialog-excluir-conferencia" title="Conferência" style="display: none;">
+	<fieldset style="width: 350px;">
+		<legend>Excluir Conferência</legend>
+	    <p>Confirma a exclusão dessa conferência?</p>
 	</fieldset>
 </div>
