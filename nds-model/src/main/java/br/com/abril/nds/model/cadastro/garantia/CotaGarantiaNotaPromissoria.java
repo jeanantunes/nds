@@ -15,7 +15,7 @@ public class CotaGarantiaNotaPromissoria extends CotaGarantia {
 	 */
 	private static final long serialVersionUID = 8745281038847495684L;
 	
-	@OneToOne(cascade={CascadeType.ALL})
+	@OneToOne(cascade={CascadeType.ALL},orphanRemoval=true)
 	@JoinColumn(name="NOTA_PROMISSORIA_ID")
 	private NotaPromissoria notaPromissoria;
 

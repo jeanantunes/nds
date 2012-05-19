@@ -797,7 +797,7 @@
 	  
 	<br clear="all" />
 	  
-	<span class="bt_novos" title="Nova Unifica��o">
+	<span class="bt_novos" title="Nova Unificação">
 	    <a href="javascript:;" onclick="popup_nova_unificacao();">
 	        <img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0"/>
 	        Nova Forma de Pagamento
@@ -846,6 +846,7 @@
 					     <td width="21" align="left" valign="top">&nbsp;</td>
 					     <td width="233" align="left" valign="top"style="border:1px solid #ccc;">
 	
+	
 					         <table width="100%" border="0" cellspacing="1" cellpadding="1">
 						         <tr>
 						             <td width="20"><input type="radio" name="mensal" id="mensal" value="radio" onclick="mostraMensal();" /></td>
@@ -854,6 +855,7 @@
 						             <td width="173">Semanal</td>
 						         </tr>
 						     </table>
+						    
 						    
 						     <table width="100%" border="0" cellspacing="1" cellpadding="1" class="mensal">
 						         <tr>
@@ -1065,6 +1067,7 @@
 
 	    </fieldset>
 	</div>	
+			
 			
 	<div id="dialog-excluir-unificacao" title="Unificação de Boletos">
 	<fieldset>

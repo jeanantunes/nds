@@ -10,6 +10,7 @@ import java.util.Set;
 import junit.framework.Assert;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -389,8 +390,8 @@ public class ConferenciaEncalheRepositoryImplTest extends AbstractRepositoryImpl
 	}
 	
 	
-	@SuppressWarnings("unused")
 	@Test
+	@Ignore
 	public void testObterListaConferenciaEncalheCota() {
 		
 		Long idControleConferenciaEncalheCota = controleConferenciaEncalheCota.getId();

@@ -1,13 +1,16 @@
 package br.com.abril.nds.controllers.cadastro;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
+import org.apache.poi.util.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.dto.CotaGarantiaDTO;
 import br.com.abril.nds.dto.ItemDTO;
+import br.com.abril.nds.dto.NotaPromissoriaDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.CaucaoLiquida;
 import br.com.abril.nds.model.cadastro.Cheque;
@@ -16,6 +19,7 @@ import br.com.abril.nds.model.cadastro.Imovel;
 import br.com.abril.nds.model.cadastro.NotaPromissoria;
 import br.com.abril.nds.model.cadastro.TipoGarantia;
 import br.com.abril.nds.serialization.custom.CustomJson;
+import br.com.abril.nds.serialization.custom.PlainJSONSerialization;
 import br.com.abril.nds.service.CotaGarantiaService;
 import br.com.abril.nds.util.StringUtil;
 import br.com.abril.nds.util.TipoMensagem;
@@ -24,6 +28,9 @@ import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
+import br.com.caelum.vraptor.interceptor.download.ByteArrayDownload;
+import br.com.caelum.vraptor.interceptor.download.Download;
+import br.com.caelum.vraptor.interceptor.multipart.UploadedFile;
 import br.com.caelum.vraptor.view.Results;
 
 @Resource
@@ -46,6 +53,7 @@ public class CotaGarantiaController {
 	public void salvaNotaPromissoria(NotaPromissoria notaPromissoria,
 			Long idCota) throws Exception {
 
+		validaNotaPromissoria(notaPromissoria);
 		cotaGarantiaService.salvaNotaPromissoria(notaPromissoria, idCota);
 
 		result.use(Results.json())
@@ -79,7 +87,12 @@ public class CotaGarantiaController {
 	}
 
 	@Post("/salvaCaucaoLiquida.json")
-	public void salvaCaucaoLiquida(List<CaucaoLiquida> listaCaucaoLiquida, Long idCota) {
+	public void salvaCaucaoLiquida(List<CaucaoLiquida> listaCaucaoLiquida, Long idCota) throws Exception {
+		
+		for(CaucaoLiquida caucaoLiquida: listaCaucaoLiquida){			
+			caucaoLiquida.setAtualizacao(Calendar.getInstance());
+			validaCaucaoLiquida(caucaoLiquida);
+		}
 		
 		cotaGarantiaService.salvarCaucaoLiquida(listaCaucaoLiquida, idCota);
 		
@@ -106,8 +119,9 @@ public class CotaGarantiaController {
 
 	@Get("/impriNotaPromissoria/{id}")
 	public void impriNotaPromissoria(Long id) {
-		// TODO: chamada do relatorio para nota.
-		result.nothing();
+		NotaPromissoriaDTO nota = cotaGarantiaService.getDadosImpressaoNotaPromissoria(id);
+		
+		result.include("nota",nota);
 	}
 
 	@Get("/getTiposGarantia.json")
@@ -134,23 +148,50 @@ public class CotaGarantiaController {
 		result.use(Results.json()).from(imovel, "imovel").serialize();
 	}
 	
-	@Post("/incluirCaucaoLiquida.json")
-	public void incluirCaucaoLiquida(CaucaoLiquida caucaoLiquida) {
-		
-		validaCaucaoLiquida(caucaoLiquida);
-		
-		result.use(CustomJson.class).from(caucaoLiquida).serialize();
-	}
+	
 	
 	/**
 	 * @param caucaoLiquida para ser validado
 	 */
 	private void validaCaucaoLiquida(CaucaoLiquida caucaoLiquida) {
+				
+		if (caucaoLiquida.getValor() == null) {
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR,
+					"Parametros inválidos"));
+		}
+		
+		if (caucaoLiquida.getAtualizacao() == null) {
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR,
+					"Parametros inválidos"));
+		}
+		
+		if (caucaoLiquida.getIndiceReajuste() == null) {
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR,
+					"Parametros inválidos"));
+		}	
+	}
+	/**
+	 * @param notaPromissoria para ser validado
+	 */
+	private void validaNotaPromissoria(NotaPromissoria notaPromissoria) {
 		
 		List<String> listaMensagens = new ArrayList<String>();
 		
-		if (caucaoLiquida.getValor() == null || caucaoLiquida.getValor() <= 0) {
+		if (notaPromissoria.getValor() == null || notaPromissoria.getValor() <= 0) {
 			listaMensagens.add("O preenchimento do campo [Valor R$] é obrigatório");
+		}
+		
+		if (StringUtil.isEmpty(notaPromissoria.getValorExtenso())) {
+			listaMensagens
+					.add("O preenchimento do campo [Valor Extenso] é obrigatório");
+		}
+		
+		if (notaPromissoria.getVencimento() == null) {
+			listaMensagens
+					.add("O preenchimento do campo [Vencimento] é obrigatório");
+		}else if(notaPromissoria.getVencimento().compareTo(Calendar.getInstance()) <= 0  ) {
+			listaMensagens
+			.add("O campo [Vencimento] deve ser uma data no futuro.");
 		}
 		
 		if (!listaMensagens.isEmpty()) {
@@ -274,4 +315,37 @@ public class CotaGarantiaController {
 						"Fiador salvo com Sucesso."), "result").recursive()
 				.serialize();
 	}
+
+	
+	public Download getImageCheque(long idCheque) {		
+		
+		byte[] buff = cotaGarantiaService.getImageCheque(idCheque);
+		
+		if (buff == null) {
+			buff = new byte[0];
+		}
+		
+		return new ByteArrayDownload(buff, "image/jpeg", "cheque.jpg");
+	}
+	
+	public void uploadCheque(Long idCheque, UploadedFile image) throws Exception{		
+		
+		if(idCheque != null){
+			byte[] bytes = IOUtils.toByteArray(image.getFile());
+			cotaGarantiaService.salvaChequeImage(idCheque, bytes);
+			
+			result.use(PlainJSONSerialization.class)
+			.from(new ValidacaoVO(TipoMensagem.SUCCESS,
+					"Upload feito com Sucesso."), "result").recursive()
+			.serialize();
+		}else{
+			result.use(PlainJSONSerialization.class)
+			.from(new ValidacaoVO(TipoMensagem.ERROR,
+					"Cheque deve estar salvo."), "result").recursive()
+			.serialize();
+		}
+		
+	}
+	
+	
 }

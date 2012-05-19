@@ -139,17 +139,51 @@ public class FormaCobrancaRepositoryImpl extends AbstractRepository<FormaCobranc
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<FormaCobranca> obterPorCotaETipoCobranca(Long idCota,TipoCobranca tipoCobranca) {
+	public List<FormaCobranca> obterPorCotaETipoCobranca(Long idCota,TipoCobranca tipoCobranca, Long idFormaCobranca) {
 		
 		StringBuilder hql = new StringBuilder();
 		hql.append(" select f from FormaCobranca f");		
 		hql.append(" where f.parametroCobrancaCota.cota.id = :pIdCota ");
 		hql.append(" and f.tipoCobranca = :pTipoCobranca ");
 		hql.append(" and f.ativa = :pAtiva ");
+		if (idFormaCobranca!=null){
+		    hql.append(" and f.id <> :pIdFormaCobranca ");
+		}
         Query query = super.getSession().createQuery(hql.toString());
         query.setParameter("pIdCota", idCota);
         query.setParameter("pTipoCobranca", tipoCobranca);
         query.setParameter("pAtiva", true);
+        if (idFormaCobranca!=null){
+        	query.setParameter("pIdFormaCobranca", idFormaCobranca);
+        }
+        return query.list();
+        
+	}
+	
+	/**
+	 * Obtem lista de Formas de Cobrança por Tipo de Cobrança
+	 * @param tipoCobranca
+	 * @return List<formaCobranca>
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<FormaCobranca> obterPorDistribuidorETipoCobranca(Long idDistribuidor, TipoCobranca tipoCobranca, Long idFormaCobranca) {
+		
+		StringBuilder hql = new StringBuilder();
+		hql.append(" select p.formaCobranca from PoliticaCobranca p");		
+		hql.append(" where p.formaCobranca.tipoCobranca = :pTipoCobranca ");
+		hql.append(" and p.formaCobranca.ativa = :pAtiva ");
+		hql.append(" and p.distribuidor.id = :pIdDistribuidor ");
+		if (idFormaCobranca!=null){
+		    hql.append(" and p.formaCobranca.id <> :pIdFormaCobranca ");
+		}
+        Query query = super.getSession().createQuery(hql.toString());
+        query.setParameter("pTipoCobranca", tipoCobranca);
+        query.setParameter("pAtiva", true);
+        query.setParameter("pIdDistribuidor", idDistribuidor);
+        if (idFormaCobranca!=null){
+        	query.setParameter("pIdFormaCobranca", idFormaCobranca);
+        }
         return query.list();
         
 	}

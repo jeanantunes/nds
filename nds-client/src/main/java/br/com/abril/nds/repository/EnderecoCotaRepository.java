@@ -9,4 +9,11 @@ public interface EnderecoCotaRepository extends Repository<EnderecoCota, Long> {
 
 	void removerEnderecosCota(Long idCota, List<Endereco> listaEndereco);
 	
+	/**
+	 * Recupera o endereço principal da cota
+	 * @param idCota
+	 * @return <code>null</code> caço não encontre resgistros;
+	 */
+	public abstract EnderecoCota getPrincipal(Long idCota);
+	
 }

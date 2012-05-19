@@ -46,6 +46,7 @@ public class EstoqueProdutoCotaRepositoryImpl extends AbstractRepository<Estoque
 		
 		Query query = this.getSession().createQuery(hql.toString());
 		query.setParameter("idProdutoEdicao", idProdutoEdicao);
+		
 		query.setParameter("idCota", idCota);
 		query.setMaxResults(1);
 		
@@ -54,17 +55,22 @@ public class EstoqueProdutoCotaRepositoryImpl extends AbstractRepository<Estoque
 	
 	@Override
 	@SuppressWarnings("unchecked")
-	public List<EstoqueProdutoCota> buscarEstoquesProdutoCotaPorIdProdutEdicao(Set<Long> idsProdutoEdicao) {
+	public List<EstoqueProdutoCota> buscarListaEstoqueProdutoCota(Set<Long> idsLancamento) {
 		
 		StringBuilder hql = new StringBuilder();
 		
 		hql.append("select estoqueProdutoCota ")
-		   .append(" from EstoqueProdutoCota estoqueProdutoCota ")
-		   .append(" where estoqueProdutoCota.produtoEdicao.id in (:idsProdutoEdicao)");
+		   .append(" from EstudoCota estudoCota ")
+		   .append(" join estudoCota.estudo estudo ")
+		   .append(" join estudo.lancamentos lancamento, EstoqueProdutoCota estoqueProdutoCota ")
+		   
+		   .append(" where estoqueProdutoCota.produtoEdicao = estudo.produtoEdicao ")
+		   .append(" and estoqueProdutoCota.cota = estudoCota.cota")
+		   .append(" and lancamento.id in (:idsLancamento)");
 		
 		Query query = this.getSession().createQuery(hql.toString());
 		
-		query.setParameterList("idsProdutoEdicao", idsProdutoEdicao);
+		query.setParameterList("idsLancamento", idsLancamento);
 		
 		return query.list();
 	}

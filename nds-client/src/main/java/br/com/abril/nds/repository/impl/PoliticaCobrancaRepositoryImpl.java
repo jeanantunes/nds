@@ -86,7 +86,7 @@ public class PoliticaCobrancaRepositoryImpl extends AbstractRepository<PoliticaC
 					hql.append(" order by p.acumulaDivida ");
 					break;
 				case COBRANCA_UNIFICADA:
-					hql.append(" order by p.unificaConbranca ");
+					hql.append(" order by p.unificaCobranca ");
 					break;
 				case FORMA_EMISSAO:
 					hql.append(" order by p.formaEmissao ");
@@ -159,6 +159,19 @@ public class PoliticaCobrancaRepositoryImpl extends AbstractRepository<PoliticaC
 
         quantidade = (Long) query.uniqueResult();
 		return (int) quantidade;
+	}
+	
+	
+	@Override
+	public void desativarPoliticaCobranca(long idPolitica) {
+		StringBuilder hql = new StringBuilder();
+		hql.append(" update PoliticaCobranca p ");		
+		hql.append(" set p.ativo = :pAtivo ");
+		hql.append(" where p.id = :idPolitica ");
+        Query query = super.getSession().createQuery(hql.toString());
+        query.setParameter("pAtivo", false);
+        query.setParameter("idPolitica", idPolitica);
+		query.executeUpdate();
 	}
 
 }

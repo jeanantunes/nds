@@ -101,6 +101,7 @@ function verifyCheck(todos){
 
 function removeFromArray(array, item) {
     var newArray = [];
+    var i;
     for (i=0; i<array.length; i++) {
 	if (array[i] != item) {
 	    newArray.push(array[i]);	
@@ -112,24 +113,45 @@ function removeFromArray(array, item) {
 function serializeObjectToPost(objectName, object) {
 	var obj = {};
 	for ( var propriedade in object) {
-		obj[objectName + '.' + propriedade] = object[propriedade];
+		if(object[propriedade]){
+			obj[objectName + '.' + propriedade] = object[propriedade];
+		}
 	}
 	return obj;
 };
 
 function serializeArrayToPost(listaName, lista) {	
-	var obj = {};
 	
-	for(var i = 0; i < lista.length;i++){
+	var obj = {};
+	var i;
+	console.log(lista);
+	for(i = 0; i < lista.length;i++){
 		
 		var object = lista[i];
 		for ( var propriedade in object) {
-			obj[listaName +'['+i+'].'+propriedade] =object[propriedade];
+			if(object[propriedade] || object[propriedade] == 0){
+				obj[listaName +'['+i+'].'+propriedade] = object[propriedade];
+			}
 		}
 	}
 	
 	return obj;
 };
+/**
+ * Transforma um array em um array esperaro pelo flexiggrid
+ *
+ * @param list
+ * @returns {Array} 
+ */
+function toFlexiGridObject(list){
+	
+	var rows = new Array();
+	for (var index in list) {		
+		rows.push({"id" : rows.length,	"cell" : list[index]});		
+	}
+	return rows;
+}
+
 
 
 function concatObjects(obj1, obj2){

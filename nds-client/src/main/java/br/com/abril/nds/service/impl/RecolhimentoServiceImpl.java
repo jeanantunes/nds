@@ -158,14 +158,11 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		Map<Long, ProdutoRecolhimentoDTO> mapaLancamentoRecolhimento =
 			new HashMap<Long, ProdutoRecolhimentoDTO>();
 		
-		Map<Long, Date> mapaEdicaoDataRecolhimento =
-				new HashMap<Long, Date>();
-		
 		Set<Long> idsLancamento = new TreeSet<Long>();
 		
-		Set<Long> idsProdutoEdicao = new TreeSet<Long>();
-		
 		Set<Long> idsProdutoEdicaoParcial = new TreeSet<Long>();
+		
+		Map<Date, Set<Long>> mapaDataRecolhimentoLancamentos = new TreeMap<Date, Set<Long>>();
 		
 		for (Map.Entry<Date, List<ProdutoRecolhimentoDTO>> entry : matrizRecolhimento.entrySet()) {
 			
@@ -179,15 +176,30 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 			
 			for (ProdutoRecolhimentoDTO produtoRecolhimento : listaProdutoRecolhimentoDTO) {
 				
-				mapaLancamentoRecolhimento.put(produtoRecolhimento.getIdLancamento(),
-											   produtoRecolhimento);
+				Date novaDataRecolhimento = produtoRecolhimento.getNovaData();
 				
-				idsLancamento.add(produtoRecolhimento.getIdLancamento());
+				Long idLancamento = produtoRecolhimento.getIdLancamento();
+
+				// Monta Map e Set para controlar a atualização dos lançamentos 
 				
-				mapaEdicaoDataRecolhimento.put(produtoRecolhimento.getIdProdutoEdicao(),
-											   produtoRecolhimento.getNovaData());
+				mapaLancamentoRecolhimento.put(idLancamento, produtoRecolhimento);
 				
-				idsProdutoEdicao.add(produtoRecolhimento.getIdProdutoEdicao());
+				idsLancamento.add(idLancamento);
+				
+				// Monta Map para controlar a geração de chamada de encalhe
+				
+				Set<Long> idsLancamentoPorData = mapaDataRecolhimentoLancamentos.get(novaDataRecolhimento);
+				
+				if (idsLancamentoPorData == null) {
+					
+					idsLancamentoPorData = new TreeSet<Long>();
+				}
+				
+				idsLancamentoPorData.add(idLancamento);
+				
+				mapaDataRecolhimentoLancamentos.put(novaDataRecolhimento, idsLancamentoPorData);
+				
+				// Monta Set para controlar a geração de períodos parciais
 				
 				if (produtoRecolhimento.getParcial() != null) {
 					
@@ -198,9 +210,9 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		
 		atualizarLancamento(idsLancamento, mapaLancamentoRecolhimento);
 		
-		gerarChamadaEncalhe(idsProdutoEdicao, mapaEdicaoDataRecolhimento, numeroSemana);
+		gerarChamadaEncalhe(mapaDataRecolhimentoLancamentos, numeroSemana);
 		
-		gerarPeriodosParciais(idsProdutoEdicaoParcial, idUsuario);
+		//gerarPeriodosParciais(idsProdutoEdicaoParcial, idUsuario);
 	}
 	
 	private void atualizarLancamento(Set<Long> idsLancamento,
@@ -238,11 +250,10 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		}
 	}
 	
-	private void gerarChamadaEncalhe(Set<Long> idsProdutoEdicao,
-			 						 Map<Long, Date> mapaEdicaoDataRecolimento,
+	private void gerarChamadaEncalhe(Map<Date, Set<Long>> mapaDataRecolhimentoLancamentos,
 			 						 Integer numeroSemana) {
 		
-		if (!idsProdutoEdicao.isEmpty()) {
+		if (mapaDataRecolhimentoLancamentos != null && !mapaDataRecolhimentoLancamentos.isEmpty()) {
 			
 			Distribuidor distribuidor = this.distribuidorService.obter();
 			
@@ -251,70 +262,78 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 			removerChamadasEncalhe(periodoRecolhimento.getDataInicial(),
 								   periodoRecolhimento.getDataFinal());
 			
-			List<EstoqueProdutoCota> listaEstoqueProdutoCota =
-				this.estoqueProdutoCotaRepository.buscarEstoquesProdutoCotaPorIdProdutEdicao(
-					idsProdutoEdicao);
+			for (Map.Entry<Date, Set<Long>> entry : mapaDataRecolhimentoLancamentos.entrySet()) {
 			
-			if (listaEstoqueProdutoCota == null || listaEstoqueProdutoCota.isEmpty()) {
+				Set<Long> idsLancamento = entry.getValue();
 				
-//				throw new ValidacaoException(TipoMensagem.WARNING,
-//					"Estoque produto cota não encontrado!");
-			}
-			
-			ProdutoEdicao produtoEdicao = null;
-			Cota cota = null;
-			Date dataRecolhimento = null;
-			ChamadaEncalhe chamadaEncalhe = null;
-			ChamadaEncalhe chamadaEncalheLista = null;
-			ChamadaEncalheCota chamadaEncalheCota = null;			
-			
-			List<ChamadaEncalhe> listaChamadaEncalhe = new ArrayList<ChamadaEncalhe>();
-			
-			for (EstoqueProdutoCota estoqueProdutoCota : listaEstoqueProdutoCota) {
+				Date dataRecolhimento = entry.getKey();
 				
-				produtoEdicao = estoqueProdutoCota.getProdutoEdicao();
-				
-				cota = estoqueProdutoCota.getCota();
-				
-				dataRecolhimento = mapaEdicaoDataRecolimento.get(produtoEdicao.getId());
-				
-				chamadaEncalhe = new ChamadaEncalhe();
-				
-				chamadaEncalhe.setDataRecolhimento(dataRecolhimento);
-				chamadaEncalhe.setProdutoEdicao(produtoEdicao);
-				chamadaEncalhe.setTipoChamadaEncalhe(TipoChamadaEncalhe.MATRIZ_RECOLHIMENTO);
-				
-				chamadaEncalheLista = obterChamadaEncalheLista(listaChamadaEncalhe,
-															   chamadaEncalhe);
-				
-				if (chamadaEncalheLista == null) {
-				
-					chamadaEncalhe = this.chamadaEncalheRepository.merge(chamadaEncalhe);
-				
-					listaChamadaEncalhe.add(chamadaEncalhe);
+				if (idsLancamento == null || idsLancamento.isEmpty()) {
 					
-				} else{
-					
-					chamadaEncalhe = chamadaEncalheLista;
+					continue;
 				}
 				
-				chamadaEncalheCota = new ChamadaEncalheCota();
+				List<EstoqueProdutoCota> listaEstoqueProdutoCota =
+					this.estoqueProdutoCotaRepository.buscarListaEstoqueProdutoCota(idsLancamento);
 				
-				chamadaEncalheCota.setChamadaEncalhe(chamadaEncalhe);
-				chamadaEncalheCota.setConferido(false);
-				chamadaEncalheCota.setCota(cota);
-				
-				BigDecimal qtdPrevista = BigDecimal.ZERO;
-				
-				if (estoqueProdutoCota != null) {
+				if (listaEstoqueProdutoCota == null || listaEstoqueProdutoCota.isEmpty()) {
 					
-					qtdPrevista = estoqueProdutoCota.getQtdeRecebida().subtract(
-						estoqueProdutoCota.getQtdeDevolvida());
+//					throw new ValidacaoException(TipoMensagem.WARNING,
+//						"Estoque produto cota não encontrado!");
 				}
 				
-				chamadaEncalheCota.setQtdePrevista(qtdPrevista);
+				ProdutoEdicao produtoEdicao = null;
+				Cota cota = null;
+				ChamadaEncalhe chamadaEncalhe = null;
+				ChamadaEncalhe chamadaEncalheLista = null;
+				ChamadaEncalheCota chamadaEncalheCota = null;			
 				
-				this.chamadaEncalheCotaRepository.adicionar(chamadaEncalheCota);
+				List<ChamadaEncalhe> listaChamadaEncalhe = new ArrayList<ChamadaEncalhe>();
+				
+				for (EstoqueProdutoCota estoqueProdutoCota : listaEstoqueProdutoCota) {
+					
+					produtoEdicao = estoqueProdutoCota.getProdutoEdicao();
+					
+					cota = estoqueProdutoCota.getCota();
+					
+					chamadaEncalhe = new ChamadaEncalhe();
+					
+					chamadaEncalhe.setDataRecolhimento(dataRecolhimento);
+					chamadaEncalhe.setProdutoEdicao(produtoEdicao);
+					chamadaEncalhe.setTipoChamadaEncalhe(TipoChamadaEncalhe.MATRIZ_RECOLHIMENTO);
+					
+					chamadaEncalheLista = obterChamadaEncalheLista(listaChamadaEncalhe,
+																   chamadaEncalhe);
+					
+					if (chamadaEncalheLista == null) {
+					
+						chamadaEncalhe = this.chamadaEncalheRepository.merge(chamadaEncalhe);
+					
+						listaChamadaEncalhe.add(chamadaEncalhe);
+						
+					} else{
+						
+						chamadaEncalhe = chamadaEncalheLista;
+					}
+					
+					chamadaEncalheCota = new ChamadaEncalheCota();
+					
+					chamadaEncalheCota.setChamadaEncalhe(chamadaEncalhe);
+					chamadaEncalheCota.setConferido(false);
+					chamadaEncalheCota.setCota(cota);
+					
+					BigDecimal qtdPrevista = BigDecimal.ZERO;
+					
+					if (estoqueProdutoCota != null) {
+						
+						qtdPrevista = estoqueProdutoCota.getQtdeRecebida().subtract(
+							estoqueProdutoCota.getQtdeDevolvida());
+					}
+					
+					chamadaEncalheCota.setQtdePrevista(qtdPrevista);
+					
+					this.chamadaEncalheCotaRepository.adicionar(chamadaEncalheCota);
+				}
 			}
 		}
 	}
@@ -326,14 +345,14 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		
 		if (listaProdutoEdicao == null || listaProdutoEdicao.isEmpty()) {
 			
-//			throw new ValidacaoException(TipoMensagem.WARNING,
-//				"Produto edição não encontrado!");
+			throw new ValidacaoException(TipoMensagem.WARNING,
+				"Produto edição não encontrado!");
 		}
 		
 		if (listaProdutoEdicao.size() != idsProdutoEdicaoParcial.size()) {
 			
-//			throw new ValidacaoException(TipoMensagem.WARNING,
-//				"Produto edição não encontrado!");
+			throw new ValidacaoException(TipoMensagem.WARNING,
+				"Produto edição não encontrado!");
 		}
 		
 		for (ProdutoEdicao produtoEdicao : listaProdutoEdicao) {

@@ -1,23 +1,3 @@
-<script type="text/javascript">
-	function gravaObs() {
-		$('#observacao').keypress(function(e) {
-			if (e.keyCode == 13) {
-				$("#observacao").fadeOut();
-				$(".obs").fadeIn("slow");
-				$(".tit").fadeOut("slow");
-				$("#btObs").fadeOut("slow");
-			}
-		});
-	}
-	
-	function incluirObs() {
-		$(".obs").fadeIn("slow");
-		$(".tit").fadeOut("slow");
-		$("#btObs").fadeOut("slow");
-
-	}
-</script>
-
 <div id="dialog-salvar" title="Salvar Conferência" style="display:none;">
 	<fieldset style="width: 415px;">
         <legend>Salvar Conferência</legend>
@@ -38,7 +18,9 @@
 		<legend>Detalhes do Produto</legend>
 		<table width="703" border="0" cellspacing="0" cellpadding="2" >
 	  		<tr>
-			    <td width="117"><img src="" id="imagemProduto" width="117" height="145" alt="" /></td>
+			    <td width="117">
+			    	<img src="" id="imagemProduto" width="117" height="145" alt="" />
+			    </td>
 			    <td width="1">&nbsp;</td>
 			    <td width="573" valign="top">
 			    	<table width="574" border="0" cellspacing="1" cellpadding="2">
@@ -82,7 +64,7 @@
 			    <td>&nbsp;</td>
 			    <td>&nbsp;</td>
 			    <td>
-			    	<textarea class="tit" name="observacao" id="observacao" cols="90" rows="5" onkeypress="gravaObs();"></textarea>
+			    	<textarea class="tit" name="observacao" id="observacao" cols="90" rows="5"></textarea>
 			    </td>
 	  		</tr>
 	  		<tr>
@@ -90,7 +72,7 @@
 			    <td>&nbsp;</td>
 			    <td>
 			    	<span class="bt_novos" id="btObs" title="Incluir Observação">
-			    		<a href="javascript:;" onclick="incluirObs();">
+			    		<a href="javascript:;" onclick="ConferenciaEncalhe.gravaObs();">
 			    			<img src="${pageContext.request.contextPath}/images/ico_add.gif" hspace="5" border="0" />Incluir Observação
 			    		</a>
 			    	</span>
@@ -113,6 +95,11 @@
 </div>
 
 <div id="dialog-pesquisar" title="Pesquisa de Produtos" style="display:none;">
+	
+	<jsp:include page="../messagesDialog.jsp">
+		<jsp:param value="idModalPesquisarProdutos" name="messageDialog"/>
+	</jsp:include>
+	
 	<fieldset style="width: 510px">
 		<legend>Pesquisar Produto</legend>
 		<table width="100%" border="0" cellspacing="1" cellpadding="2">
@@ -130,24 +117,29 @@
 </div>
 
 <div id="dialog-dadosNotaFiscal" title="Dados da Nota Fiscal" style="display:none;">
+	
+	<jsp:include page="../messagesDialog.jsp">
+		<jsp:param value="idModalDadosNotaFiscal" name="messageDialog"/>
+	</jsp:include>
+	
 	<fieldset>
     	<legend>Nota Fiscal</legend>
-        	<table width="670" border="0" cellspacing="1" cellpadding="1" style="color:#666;">
+        	<table width="810" border="0" cellspacing="1" cellpadding="1" style="color:#666;">
           		<tr>
 		            <td width="133">Núm. Nota Fiscal:</td>
-		            <td width="307" id="numeroNotaFiscal"></td>
+		            <td width="307" id="numeroNotaFiscalExibir"></td>
 		            <td width="106">Série:</td>
-		            <td width="111" id="serie"></td>
+		            <td width="111" id="serieExibir"></td>
           		</tr>
           		<tr>
 		            <td>Data:</td>
-		            <td id="data"></td>
+		            <td id="dataExibir"></td>
 		            <td>Valor Total R$:</td>
-		            <td id="valorTotalNotaFiscal"></td>
+		            <td id="valorTotalNotaFiscalExibir"></td>
           		</tr>
           		<tr>
 		            <td>Chave de Acesso:</td>
-		            <td colspan="3" id="chaveAcesso"></td>
+		            <td colspan="3" id="chaveAcessoExibir"></td>
           		</tr>
         	</table>
     </fieldset>
@@ -232,5 +224,12 @@
 		<legend>Nota Fiscal</legend>
 	    <p>Já existe conferencia de encalhe para esta cota.<br/>
 	    Efetuar reabertura?</p>
+	</fieldset>
+</div>
+
+<div id="dialog-excluir-conferencia" title="Conferência" style="display: none;">
+	<fieldset style="width: 350px;">
+		<legend>Excluir Conferência</legend>
+	    <p>Confirma a exclusão dessa conferência?</p>
 	</fieldset>
 </div>

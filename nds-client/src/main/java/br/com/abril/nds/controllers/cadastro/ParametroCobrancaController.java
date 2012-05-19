@@ -8,6 +8,7 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.client.vo.BancoVO;
 import br.com.abril.nds.client.vo.ParametroCobrancaVO;
 import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.dto.ItemDTO;
@@ -15,7 +16,6 @@ import br.com.abril.nds.dto.ParametroCobrancaDTO;
 import br.com.abril.nds.dto.filtro.FiltroParametrosCobrancaDTO;
 import br.com.abril.nds.dto.filtro.FiltroParametrosCobrancaDTO.OrdenacaoColunaParametrosCobranca;
 import br.com.abril.nds.exception.ValidacaoException;
-import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.FormaEmissao;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
@@ -63,7 +63,7 @@ public class ParametroCobrancaController {
 	private FornecedorService fornecedorService;
 	
 	@Autowired
-	private ParametroCobrancaCotaService financeiroService;
+	private ParametroCobrancaCotaService parametroCobrancaCotaService;
 	
 	@Autowired
 	private Validator validator;	
@@ -104,17 +104,14 @@ public class ParametroCobrancaController {
     	
     	listaBancos.clear();
     	listaTiposCobranca.clear();
-    	listaFormasEmissao.clear();
     	listaFornecedores.clear();
     	
     	listaBancos = this.bancoService.getComboBancos();
-    	listaTiposCobranca = this.financeiroService.getComboTiposCobranca();
-    	listaFormasEmissao = this.financeiroService.getComboFormasEmissao();
+    	listaTiposCobranca = this.parametroCobrancaCotaService.getComboTiposCobranca();
     	listaFornecedores = this.fornecedorService.buscarComboFornecedores();
     	
 		result.include("listaBancos",listaBancos);
 		result.include("listaTiposCobranca",listaTiposCobranca);
-		result.include("listaFormasEmissao",listaFormasEmissao);
 		result.include("listaFornecedores",listaFornecedores);
 		
 	}
@@ -180,15 +177,17 @@ public class ParametroCobrancaController {
 	 * @param ParametroCobrancaDTO
 	 */
 	@Post
-	@Path("/novoParametroCobranca")
-	public void novoParametroCobranca(ParametroCobrancaDTO parametros, String tipoFormaCobranca, List<Long> listaIdsFornecedores){
+	@Path("/postarParametroCobranca")
+	public void postarParametroCobranca(ParametroCobrancaDTO parametros, String tipoFormaCobranca, List<Long> listaIdsFornecedores){
 
 		
 		if ((tipoFormaCobranca!=null)&&(!"".equals(tipoFormaCobranca))){
 			parametros.setTipoFormaCobranca(TipoFormaCobranca.valueOf(tipoFormaCobranca));
 		}
         
-		parametros.setFornecedoresId(listaIdsFornecedores);
+		if ((listaIdsFornecedores!=null)&&(listaIdsFornecedores.size()>0)){
+		    parametros.setFornecedoresId(listaIdsFornecedores);
+		}
 		
 		parametros = formatarParametros(parametros);
 		
@@ -196,24 +195,89 @@ public class ParametroCobrancaController {
 		
 		this.politicaCobrancaService.postarPoliticaCobranca(parametros);	
         
-        result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Parâmetro de cobrança cadastrada com sucesso."),"result").recursive().serialize();
+        result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Parâmetro de cobrança cadastrado com sucesso."),"result").recursive().serialize();
 	}
-	
 	
 	
 
 	@Post
-	@Path("/buscaParametroCobranca")
-	public void buscaParametroCobranca(long idParametro){
+	@Path("/obterParametroCobranca")
+	public void obterParametroCobranca(Long idPolitica){
+		
+        validar();
+		
+		if (idPolitica==null) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "O código da política de cobrança informado náo é válido.");
+		} 
 
+		ParametroCobrancaDTO parametroCobranca = this.politicaCobrancaService.obterDadosPoliticaCobranca(idPolitica);
+		
+		if (parametroCobranca==null) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhuma política de cobrança encontrada.");
+		} 
+		
+		result.use(Results.json()).from(parametroCobranca,"result").recursive().serialize();
 	}
 	
+	
+	
+	/**
+	 * Método de Pré-carregamento de fornecedores relacionados com a Cota.
+	 * @param idCota
+	 */
+	@Post
+	@Path("/obterFornecedores")
+	public void obterFornecedores(){
+		listaFornecedores = this.fornecedorService.buscarComboFornecedores();
+		result.use(Results.json()).from(listaFornecedores, "result").recursive().serialize();
+	}
+	
+	
+	
+	/**
+	 * Obtém dados do banco escolhido
+	 * @param idBanco
+	 */
+	@Post
+	@Path("/obterDadosBancarios")
+	public void obterDadosBancarios(Long idBanco){
+		BancoVO bancoVO = this.bancoService.obterDadosBanco(idBanco);
+		result.use(Results.json()).from(bancoVO, "result").recursive().serialize();
+	}
 
 	
+	
+	/**
+	 * Obtém formas de emissão de acordo com o Tipo de Cobrança
+	 * @param idBanco
+	 */
+	@Post
+	@Path("/obterFormasEmissao")
+	public void obterFormasEmissao(TipoCobranca tipoCobranca){
+		listaFormasEmissao.clear();
+		if (tipoCobranca==null){
+			listaFormasEmissao = this.politicaCobrancaService.getComboFormasEmissao();
+		}
+		else{
+			listaFormasEmissao = this.politicaCobrancaService.getComboFormasEmissaoTipoCobranca(tipoCobranca); 
+		}
+		result.use(Results.json()).from(listaFormasEmissao, "result").recursive().serialize();
+	}
 
+	
+	
+    /**
+     * Desativa política de cobrança
+     * @param idPolitica
+     */
 	@Post
 	@Path("/desativaParametroCobranca")
-	public void desativaParametroCobranca(long idParametro){
+	public void desativaParametroCobranca(Long idPolitica){
+		
+		validar();
+		
+		this.politicaCobrancaService.dasativarPoliticaCobranca(idPolitica);
+		
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Parâmetro de cobrança desativado com sucesso."),"result").recursive().serialize();
     }
 	
@@ -224,7 +288,7 @@ public class ParametroCobrancaController {
 	 * @param ParametroCobrancaDTO
 	 */
 	private ParametroCobrancaDTO formatarParametros(ParametroCobrancaDTO parametros){
-		/*
+		
 		if (parametros.getTipoFormaCobranca()==TipoFormaCobranca.SEMANAL){
 			parametros.setDiaDoMes(null);
 		}
@@ -252,7 +316,7 @@ public class ParametroCobrancaController {
 			parametros.setIdBanco(null);
 			parametros.setValorMinimo(null);
 		}    
-        */
+        
 		return parametros;
 		
 	}
@@ -264,8 +328,10 @@ public class ParametroCobrancaController {
 	 * @param ParametroCobrancaDTO
 	 */
 	public void validarParametros(ParametroCobrancaDTO parametros){
-		/*
+		
+		
 		validar();
+		
 		
 		if(parametros.getTipoCobranca()==null){
 			throw new ValidacaoException(TipoMensagem.WARNING, "Escolha um Tipo de Pagamento.");
@@ -274,6 +340,21 @@ public class ParametroCobrancaController {
 		if (parametros.getTipoFormaCobranca()==null){
 			throw new ValidacaoException(TipoMensagem.WARNING, "Selecione um tipo de concentração de Pagamentos.");
 		}
+		
+		if (parametros.getFormaEmissao()==null){
+			throw new ValidacaoException(TipoMensagem.WARNING, "Preencha o campo Impressão.");
+		}
+		
+		
+		if (parametros.getIdBanco()==null){
+		    if ((parametros.getTipoCobranca()==TipoCobranca.BOLETO)||
+		    	(parametros.getTipoCobranca()==TipoCobranca.BOLETO_EM_BRANCO)||
+		    	(parametros.getTipoCobranca()==TipoCobranca.TRANSFERENCIA_BANCARIA)||
+		    	(parametros.getTipoCobranca()==TipoCobranca.DEPOSITO)){
+		    	throw new ValidacaoException(TipoMensagem.WARNING, "Para o Tipo de Cobrança selecionado é necessário a escolha de um Banco.");
+		    }
+		}
+		
 		
 		if(parametros.getTipoFormaCobranca()==TipoFormaCobranca.MENSAL){
 			if (parametros.getDiaDoMes()==null){
@@ -287,6 +368,7 @@ public class ParametroCobrancaController {
 			
 		}
 		
+		
 		if(parametros.getTipoFormaCobranca()==TipoFormaCobranca.SEMANAL){
 			if((!parametros.isDomingo())&&
 			   (!parametros.isSegunda())&&
@@ -299,23 +381,41 @@ public class ParametroCobrancaController {
 			}
 		}
 		
-		if (parametros.getIdBanco()==null){
-		    if ((parametros.getTipoCobranca()==TipoCobranca.BOLETO)||
-		    	(parametros.getTipoCobranca()==TipoCobranca.BOLETO_EM_BRANCO)||
-		    	(parametros.getTipoCobranca()==TipoCobranca.TRANSFERENCIA_BANCARIA)||
-		    	(parametros.getTipoCobranca()==TipoCobranca.DEPOSITO)){
-		    	throw new ValidacaoException(TipoMensagem.WARNING, "Para o Tipo de Cobrança selecionado é necessário a escolha de um Banco.");
-		    }
-		}
 		
 		Distribuidor distribuidor = this.distribuidorService.obter();
 		
-		if (parametros.isEvioEmail()){
+		if (parametros.isEnvioEmail()){
 			if (distribuidor.getJuridica().getEmail()==null){
 				throw new ValidacaoException(TipoMensagem.WARNING, "Cadastre um e-mail para o distribuidor ou desmarque a opção de envio de email.");
 			}
 		}
-		*/
+		
+		if ((parametros.getFornecedoresId()!=null)&&(parametros.getFornecedoresId().size()>0)){
+		
+			//VERIFICA SE A FORMA DE COBRANÇA JA EXISTE PARA O FORNECEDOR, TIPO E DIA DA CONCENTRAÇÃO MENSAL
+			if (parametros.getTipoFormaCobranca()==TipoFormaCobranca.MENSAL){
+				if (!this.politicaCobrancaService.validarFormaCobrancaMensal(parametros.getIdPolitica(),distribuidor,parametros.getTipoCobranca(), parametros.getFornecedoresId(), parametros.getDiaDoMes())){
+					throw new ValidacaoException(TipoMensagem.WARNING, "Este parâmetro de cobrança já está configurado para o Distribuidor.");
+				}
+			}
+			
+			//VERIFICA SE A FORMA DE COBRANÇA JA EXISTE PARA O FORNECEDOR, TIPO E DIA DA CONCENTRAÇÃO SEMANAL
+			if (parametros.getTipoFormaCobranca()==TipoFormaCobranca.SEMANAL){
+				if (!this.politicaCobrancaService.validarFormaCobrancaSemanal(parametros.getIdPolitica(),distribuidor,parametros.getTipoCobranca(), parametros.getFornecedoresId(), 
+																		parametros.isDomingo(),
+																		parametros.isSegunda(),
+																		parametros.isTerca(),
+																		parametros.isQuarta(),
+																		parametros.isQuinta(),
+																		parametros.isSexta(),
+																		parametros.isSabado())){
+					throw new ValidacaoException(TipoMensagem.WARNING, "Este parâmetro de cobrança já está configurado para o Distribuidor.");
+				}
+				
+			}	
+			
+		}	
+
 	}
 	
 	

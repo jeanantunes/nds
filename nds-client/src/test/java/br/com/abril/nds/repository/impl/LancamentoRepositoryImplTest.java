@@ -492,24 +492,6 @@ public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
 	}
 	
 	@Test
-	public void obterLancamentosBalanceamentoMatrizOrderByLancamento() {
-		PaginacaoVO paginacao = new PaginacaoVO(1, 10, "asc");
-		Date data = Fixture.criarData(22, Calendar.FEBRUARY, 2012);
-		FiltroLancamentoDTO filtro = new FiltroLancamentoDTO(data,
-				Collections.singletonList(fornecedorDinap.getId()), paginacao,
-				ColunaOrdenacao.LANCAMENTO.getNomeColuna());
-
-		List<Lancamento> lancamentos = lancamentoRepository
-				.obterBalanceamentoMatrizLancamentos(filtro);
-		Assert.assertNotNull(lancamentos);
-		Assert.assertEquals(3, lancamentos.size());
-
-		Assert.assertEquals(lancamentoInfoExame.getId(), lancamentos.get(0).getId());
-		Assert.assertEquals(lancamentoQuatroRodas.getId(), lancamentos.get(1).getId());
-		Assert.assertEquals(lancamentoVeja.getId(), lancamentos.get(2).getId());
-	}
-	
-	@Test
 	public void obterLancamentosBalanceamentoMatrizOrderByRecolhimento() {
 		PaginacaoVO paginacao = new PaginacaoVO(1, 10, "asc");
 		Date data = Fixture.criarData(22, Calendar.FEBRUARY, 2012);

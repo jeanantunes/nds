@@ -261,11 +261,8 @@ public class BalanceamentoRecolhimentoTest extends AbstractRepositoryImplTest {
 				new BigDecimal(10000),
 				StatusLancamento.BALANCEADO, null, 5);
 		
-		Estudo estudo = Fixture.estudo(new BigDecimal(100),
-				Fixture.criarData(22, Calendar.FEBRUARY, 2012), veja1);
-		
 		save(lancamentoVeja, lancamentoQuatroRodas, lancamentoInfoExame,
-				lancamentoCapricho, lancamentoCromoReiLeao, estudo);
+				lancamentoCapricho, lancamentoCromoReiLeao);
 		
 		ChamadaEncalhe chamadaEncalheVeja = new ChamadaEncalhe();
 		
@@ -319,7 +316,7 @@ public class BalanceamentoRecolhimentoTest extends AbstractRepositoryImplTest {
 				StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.FINAL);
 
 		Estudo estudoCapricho = Fixture.estudo(new BigDecimal(180),
-				Fixture.criarData(12, Calendar.MARCH, 2012), capricho1);
+				lancamentoCapricho.getDataLancamentoDistribuidor(), capricho1);
 		
 		EstudoCota estudoCotaCapricho = Fixture.estudoCota(BigDecimal.TEN, BigDecimal.ONE, estudoCapricho, cotaDinap);
 
@@ -347,7 +344,7 @@ public class BalanceamentoRecolhimentoTest extends AbstractRepositoryImplTest {
 				StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.FINAL);
 		
 		Estudo estudoQuatroRodas = Fixture.estudo(new BigDecimal(180),
-				Fixture.criarData(12, Calendar.MARCH, 2012), quatroRoda2);
+				lancamentoQuatroRodas.getDataLancamentoDistribuidor(), quatroRoda2);
 		
 		EstudoCota estudoCotaQuatroRodas = Fixture.estudoCota(BigDecimal.TEN, BigDecimal.ONE, estudoQuatroRodas, cotaFC);
 		
@@ -372,7 +369,7 @@ public class BalanceamentoRecolhimentoTest extends AbstractRepositoryImplTest {
 				StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.FINAL);
 
 		Estudo estudoVeja = Fixture.estudo(new BigDecimal(180),
-				Fixture.criarData(12, Calendar.MARCH, 2012), veja1);
+				lancamentoVeja.getDataLancamentoDistribuidor(), veja1);
 		
 		EstudoCota estudoCotaVeja = Fixture.estudoCota(BigDecimal.TEN, BigDecimal.ONE, estudoVeja, cotaManoel);
 
@@ -400,7 +397,7 @@ public class BalanceamentoRecolhimentoTest extends AbstractRepositoryImplTest {
 				StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.FINAL);
 		
 		Estudo estudoInfoExame = Fixture.estudo(new BigDecimal(180),
-				Fixture.criarData(12, Calendar.MARCH, 2012), infoExame3);
+				lancamentoInfoExame.getDataLancamentoDistribuidor(), infoExame3);
 		
 		EstudoCota estudoCotaInfoExame = Fixture.estudoCota(BigDecimal.TEN, BigDecimal.ONE, estudoInfoExame, cotaJurandir);
 		
