@@ -2,6 +2,7 @@ package br.com.abril.nds.controllers.devolucao;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -23,6 +24,8 @@ import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaCota;
+import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalheCota;
+import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.service.ConferenciaEncalheService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.exception.ChamadaEncalheCotaInexistenteException;
@@ -51,6 +54,8 @@ public class ConferenciaEncalheController {
 	
 	private static final String NOTA_FISCAL_CONFERENCIA = "notaFiscalConferencia";
 	
+	private static final String HORA_INICIO_CONFERENCIA = "horaInicioConferencia";
+	
 	@Autowired
 	private ConferenciaEncalheService conferenciaEncalheService;
 	
@@ -66,7 +71,6 @@ public class ConferenciaEncalheController {
 	@Autowired
 	private HttpServletResponse httpResponse;
 
-	
 	@Path("/")
 	public void index() {
 		carregarComboBoxEncalhe();
@@ -75,7 +79,7 @@ public class ConferenciaEncalheController {
 	private void carregarComboBoxEncalhe() {
 		
 		List<Box> boxes = 
-				this.conferenciaEncalheService.obterListaBoxEncalhe(this.getIdUsuarioLogado());
+				this.conferenciaEncalheService.obterListaBoxEncalhe(this.getUsuarioLogado().getId());
 		
 		this.result.include("boxes", boxes);
 	}
@@ -89,6 +93,8 @@ public class ConferenciaEncalheController {
 		
 			this.session.setAttribute(ID_BOX_LOGADO, idBox);
 		}
+		
+		this.session.setAttribute(HORA_INICIO_CONFERENCIA, new Date());
 		
 		this.result.use(Results.json()).from("").serialize();
 	}
@@ -323,7 +329,7 @@ public class ConferenciaEncalheController {
 	}
 	
 	@Post
-	public void finalizarConferencia(List<Long> idsConferencia, List<Long> qtdsExemplares, List<Boolean> juramentada, List<BigDecimal> valoresCapa){
+	public void recalcularConferencia(List<Long> idsConferencia, List<Long> qtdsExemplares, List<Boolean> juramentada, List<BigDecimal> valoresCapa){
 		
 		List<ConferenciaEncalheDTO> listaConferencia = this.getListaConferenciaEncalheFromSession();
 		
@@ -359,6 +365,23 @@ public class ConferenciaEncalheController {
 	public void salvarConferencia(){
 		
 		//TODO
+		
+		this.result.use(Results.json()).from(
+				new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."), "result").recursive().serialize();
+	}
+	
+	@Post
+	public void finalizarConferencia(){
+		
+		ControleConferenciaEncalheCota controleConfEncalheCota = new ControleConferenciaEncalheCota();
+		controleConfEncalheCota.setDataInicio((Date) this.session.getAttribute(HORA_INICIO_CONFERENCIA));
+		controleConfEncalheCota.setCota(this.getInfoConferenciaSession().getCota());
+		
+		this.conferenciaEncalheService.salvarDadosConferenciaEncalhe(
+				controleConfEncalheCota, 
+				this.getListaConferenciaEncalheFromSession(), 
+				this.getSetConferenciaEncalheExcluirFromSession(), 
+				this.getUsuarioLogado());
 		
 		this.result.use(Results.json()).from(
 				new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."), "result").recursive().serialize();
@@ -468,6 +491,7 @@ public class ConferenciaEncalheController {
 		this.session.removeAttribute(VALOR_ENCALHE_JORNALEIRO);
 		this.session.removeAttribute(NOTA_FISCAL_CONFERENCIA);
 		this.session.removeAttribute(SET_CONFERENCIA_ENCALHE_EXCLUIR);
+		this.session.removeAttribute(HORA_INICIO_CONFERENCIA);
 	}
 	
 	private InfoConferenciaEncalheCota getInfoConferenciaSession() {
@@ -689,8 +713,11 @@ public class ConferenciaEncalheController {
 	}
 	
 	//TODO
-	private Long getIdUsuarioLogado(){
+	private Usuario getUsuarioLogado(){
 		
-		return 1L;
+		Usuario usuario = new Usuario();
+		usuario.setId(1L);
+		
+		return usuario;
 	}
 }
