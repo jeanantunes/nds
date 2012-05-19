@@ -6787,203 +6787,203 @@ public class DataLoader {
 		//ESTUDOS
 		Estudo estudoJavaMagazineEdicao101 = 
 				Fixture.estudo(new BigDecimal(180),
-						Fixture.criarData(12, Calendar.MARCH, 2012), javaMagazineEdicao101);
+						lancamentoJavaMagazineEdicao101.getDataLancamentoDistribuidor(), javaMagazineEdicao101);
 		
 		Estudo estudoMundoJavaEdicao101 = 
 				Fixture.estudo(new BigDecimal(180),
-						Fixture.criarData(12, Calendar.MARCH, 2012), mundoJavaEdicao101);
+						lancamentoMundoJavaEdicao101.getDataLancamentoDistribuidor(), mundoJavaEdicao101);
 		
 		Estudo estudoSqlMagazineEdicao101 = 
 				Fixture.estudo(new BigDecimal(180),
-						Fixture.criarData(12, Calendar.MARCH, 2012), sqlMagazineEdicao101);
+						lancamentoSqlMagazineEdicao101.getDataLancamentoDistribuidor(), sqlMagazineEdicao101);
 		
 		Estudo estudoGalileuEdicao101 = 
 				Fixture.estudo(new BigDecimal(180),
-						Fixture.criarData(12, Calendar.MARCH, 2012), galileuEdicao101);
+						lancamentoGalileuEdicao101.getDataLancamentoDistribuidor(), galileuEdicao101);
 		
 		Estudo estudoDuasRodasEdicao101 = 
 				Fixture.estudo(new BigDecimal(180),
-						Fixture.criarData(12, Calendar.MARCH, 2012), duasRodasEdicao101);
+						lancamentoDuasRodasEdicao101.getDataLancamentoDistribuidor(), duasRodasEdicao101);
 		
 		Estudo estudoGuitarPlayerEdicao101 = 
 				Fixture.estudo(new BigDecimal(180),
-						Fixture.criarData(12, Calendar.MARCH, 2012), guitarPlayerEdicao101);
+						lancamentoGuitarPlayerEdicao101.getDataLancamentoDistribuidor(), guitarPlayerEdicao101);
 		
 		Estudo estudoRoadieCrewEdicao101 = 
 				Fixture.estudo(new BigDecimal(180),
-						Fixture.criarData(12, Calendar.MARCH, 2012), roadieCrewEdicao101);
+						lancamentoRoadieCrewEdicao101.getDataLancamentoDistribuidor(), roadieCrewEdicao101);
 		
 		Estudo estudoRockBrigadeEdicao101 = 
 				Fixture.estudo(new BigDecimal(180),
-						Fixture.criarData(12, Calendar.MARCH, 2012), rockBrigadeEdicao101);
+						lancamentoRockBrigadeEdicao101.getDataLancamentoDistribuidor(), rockBrigadeEdicao101);
 		
 		Estudo estudoValhallaEdicao101 = 
 				Fixture.estudo(new BigDecimal(180),
-						Fixture.criarData(12, Calendar.MARCH, 2012), valhallaEdicao101);
+						lancamentoValhallaEdicao101.getDataLancamentoDistribuidor(), valhallaEdicao101);
 		
 		Estudo estudoRollingStoneEdicao101 = 
 				Fixture.estudo(new BigDecimal(180),
-						Fixture.criarData(12, Calendar.MARCH, 2012), rollingStoneEdicao101);
+						lancamentoRollingStoneEdicao101.getDataLancamentoDistribuidor(), rollingStoneEdicao101);
 		
 		Estudo estudoBonsFluidosEdicao101 = 
 				Fixture.estudo(new BigDecimal(180),
-						Fixture.criarData(12, Calendar.MARCH, 2012), bonsFluidosEdicao101);
+						lancamentoBonsFluidosEdicao101.getDataLancamentoDistribuidor(), bonsFluidosEdicao101);
 		
 		Estudo estudoBravoEdicao101 = 
 				Fixture.estudo(new BigDecimal(180),
-						Fixture.criarData(12, Calendar.MARCH, 2012), bravoEdicao101);
+						lancamentoBravoEdicao101.getDataLancamentoDistribuidor(), bravoEdicao101);
 		
 		Estudo estudoCasaClaudiaEdicao101 = 
 				Fixture.estudo(new BigDecimal(180),
-						Fixture.criarData(12, Calendar.MARCH, 2012), casaClaudiaEdicao101);
+						lancamentoCasaClaudiaEdicao101.getDataLancamentoDistribuidor(), casaClaudiaEdicao101);
 		
 		Estudo estudoJequitiEdicao101 = 
 				Fixture.estudo(new BigDecimal(180),
-						Fixture.criarData(12, Calendar.MARCH, 2012), jequitiEdicao101);
+						lancamentoJequitiEdicao101.getDataLancamentoDistribuidor(), jequitiEdicao101);
 		
 		Estudo estudoMundoEstranhoEdicao101 = 
 				Fixture.estudo(new BigDecimal(180),
-						Fixture.criarData(12, Calendar.MARCH, 2012), mundoEstranhoEdicao101);
+						lancamentoMundoEstranhoEdicao101.getDataLancamentoDistribuidor(), mundoEstranhoEdicao101);
 		
 		Estudo estudoNovaEscolaEdicao101 = 
 				Fixture.estudo(new BigDecimal(180),
-						Fixture.criarData(12, Calendar.MARCH, 2012), novaEscolaEdicao101);
+						lancamentoNovaEscolaEdicao101.getDataLancamentoDistribuidor(), novaEscolaEdicao101);
 		
 		Estudo estudoMinhaCasaEdicao101 = 
 				Fixture.estudo(new BigDecimal(180),
-						Fixture.criarData(12, Calendar.MARCH, 2012), minhaCasaEdicao101);
+						lancamentoMinhaCasaEdicao101.getDataLancamentoDistribuidor(), minhaCasaEdicao101);
 		
 		Estudo estudoRecreioEdicao101 = 
 				Fixture.estudo(new BigDecimal(180),
-						Fixture.criarData(12, Calendar.MARCH, 2012), recreioEdicao101);
+						lancamentoRecreioEdicao101.getDataLancamentoDistribuidor(), recreioEdicao101);
 		
 		Estudo estudoWomenHealthEdicao101 = 
 				Fixture.estudo(new BigDecimal(180),
-						Fixture.criarData(12, Calendar.MARCH, 2012), womenHealthEdicao101);
+						lancamentoWomenHealthEdicao101.getDataLancamentoDistribuidor(), womenHealthEdicao101);
 		
 		Estudo estudoViagemTurismoEdicao101 = 
 				Fixture.estudo(new BigDecimal(180),
-						Fixture.criarData(12, Calendar.MARCH, 2012), viagemTurismoEdicao101);
+						lancamentoViagemTurismoEdicao101.getDataLancamentoDistribuidor(), viagemTurismoEdicao101);
 		
 		Estudo estudoVipEdicao101 = 
 				Fixture.estudo(new BigDecimal(180),
-						Fixture.criarData(12, Calendar.MARCH, 2012), vipEdicao101);
+						lancamentoVipEdicao101.getDataLancamentoDistribuidor(), vipEdicao101);
 		
 		Estudo estudoGestaoEscolarEdicao101 = 
 				Fixture.estudo(new BigDecimal(180),
-						Fixture.criarData(12, Calendar.MARCH, 2012), gestaoEscolarEdicao101);
+						lancamentoGestaoEscolarEdicao101.getDataLancamentoDistribuidor(), gestaoEscolarEdicao101);
 		
 		Estudo estudoLolaEdicao101 = 
 				Fixture.estudo(new BigDecimal(180),
-						Fixture.criarData(12, Calendar.MARCH, 2012), lolaEdicao101);
+						lancamentoLolaEdicao101.getDataLancamentoDistribuidor(), lolaEdicao101);
 		
 		Estudo estudoHeavyMetalEdicao101 = 
 				Fixture.estudo(new BigDecimal(180),
-						Fixture.criarData(12, Calendar.MARCH, 2012), heavyMetalEdicao101);
+						lancamentoHeavyMetalEdicao101.getDataLancamentoDistribuidor(), heavyMetalEdicao101);
 		
 		Estudo estudoMetalUndergroundEdicao101 = 
 				Fixture.estudo(new BigDecimal(180),
-						Fixture.criarData(12, Calendar.MARCH, 2012), metalUndergroundEdicao101);
+						lancamentoMetalUndergroundEdicao101.getDataLancamentoDistribuidor(), metalUndergroundEdicao101);
 		
 		Estudo estudoJavaMagazineEdicao102 = 
 				Fixture.estudo(new BigDecimal(180),
-						Fixture.criarData(12, Calendar.MARCH, 2012), javaMagazineEdicao102);
+						lancamentoJavaMagazineEdicao102.getDataLancamentoDistribuidor(), javaMagazineEdicao102);
 		
 		Estudo estudoMundoJavaEdicao102 = 
 				Fixture.estudo(new BigDecimal(180),
-						Fixture.criarData(12, Calendar.MARCH, 2012), mundoJavaEdicao102);
+						lancamentoMundoJavaEdicao102.getDataLancamentoDistribuidor(), mundoJavaEdicao102);
 		
 		Estudo estudoSqlMagazineEdicao102 = 
 				Fixture.estudo(new BigDecimal(180),
-						Fixture.criarData(12, Calendar.MARCH, 2012), sqlMagazineEdicao102);
+						lancamentoSqlMagazineEdicao102.getDataLancamentoDistribuidor(), sqlMagazineEdicao102);
 		
 		Estudo estudoGalileuEdicao102 = 
 				Fixture.estudo(new BigDecimal(180),
-						Fixture.criarData(12, Calendar.MARCH, 2012), galileuEdicao102);
+						lancamentoGalileuEdicao102.getDataLancamentoDistribuidor(), galileuEdicao102);
 		
 		Estudo estudoDuasRodasEdicao102 = 
 				Fixture.estudo(new BigDecimal(180),
-						Fixture.criarData(12, Calendar.MARCH, 2012), duasRodasEdicao102);
+						lancamentoDuasRodasEdicao102.getDataLancamentoDistribuidor(), duasRodasEdicao102);
 		
 		Estudo estudoGuitarPlayerEdicao102 = 
 				Fixture.estudo(new BigDecimal(180),
-						Fixture.criarData(12, Calendar.MARCH, 2012), guitarPlayerEdicao102);
+						lancamentoGuitarPlayerEdicao102.getDataLancamentoDistribuidor(), guitarPlayerEdicao102);
 		
 		Estudo estudoRoadieCrewEdicao102 = 
 				Fixture.estudo(new BigDecimal(180),
-						Fixture.criarData(12, Calendar.MARCH, 2012), roadieCrewEdicao102);
+						lancamentoRoadieCrewEdicao102.getDataLancamentoDistribuidor(), roadieCrewEdicao102);
 		
 		Estudo estudoRockBrigadeEdicao102 = 
 				Fixture.estudo(new BigDecimal(180),
-						Fixture.criarData(12, Calendar.MARCH, 2012), rockBrigadeEdicao102);
+						lancamentoRockBrigadeEdicao102.getDataLancamentoDistribuidor(), rockBrigadeEdicao102);
 		
 		Estudo estudoValhallaEdicao102 = 
 				Fixture.estudo(new BigDecimal(180),
-						Fixture.criarData(12, Calendar.MARCH, 2012), valhallaEdicao102);
+						lancamentoValhallaEdicao102.getDataLancamentoDistribuidor(), valhallaEdicao102);
 		
 		Estudo estudoRollingStoneEdicao102 = 
 				Fixture.estudo(new BigDecimal(180),
-						Fixture.criarData(12, Calendar.MARCH, 2012), rollingStoneEdicao102);
+						lancamentoRollingStoneEdicao102.getDataLancamentoDistribuidor(), rollingStoneEdicao102);
 		
 		Estudo estudoBonsFluidosEdicao102 = 
 				Fixture.estudo(new BigDecimal(180),
-						Fixture.criarData(12, Calendar.MARCH, 2012), bonsFluidosEdicao102);
+						lancamentoBonsFluidosEdicao102.getDataLancamentoDistribuidor(), bonsFluidosEdicao102);
 		
 		Estudo estudoBravoEdicao102 = 
 				Fixture.estudo(new BigDecimal(180),
-						Fixture.criarData(12, Calendar.MARCH, 2012), bravoEdicao102);
+						lancamentoBravoEdicao102.getDataLancamentoDistribuidor(), bravoEdicao102);
 		
 		Estudo estudoCasaClaudiaEdicao102 = 
 				Fixture.estudo(new BigDecimal(180),
-						Fixture.criarData(12, Calendar.MARCH, 2012), casaClaudiaEdicao102);
+						lancamentoCasaClaudiaEdicao102.getDataLancamentoDistribuidor(), casaClaudiaEdicao102);
 		
 		Estudo estudoJequitiEdicao102 = 
 				Fixture.estudo(new BigDecimal(180),
-						Fixture.criarData(12, Calendar.MARCH, 2012), jequitiEdicao102);
+						lancamentoJequitiEdicao102.getDataLancamentoDistribuidor(), jequitiEdicao102);
 		
 		Estudo estudoMundoEstranhoEdicao102 = 
 				Fixture.estudo(new BigDecimal(180),
-						Fixture.criarData(12, Calendar.MARCH, 2012), mundoEstranhoEdicao102);
+						lancamentoMundoEstranhoEdicao102.getDataLancamentoDistribuidor(), mundoEstranhoEdicao102);
 		
 		Estudo estudoNovaEscolaEdicao102 = 
 				Fixture.estudo(new BigDecimal(180),
-						Fixture.criarData(12, Calendar.MARCH, 2012), novaEscolaEdicao102);
+						lancamentoNovaEscolaEdicao102.getDataLancamentoDistribuidor(), novaEscolaEdicao102);
 		
 		Estudo estudoMinhaCasaEdicao102 = 
 				Fixture.estudo(new BigDecimal(180),
-						Fixture.criarData(12, Calendar.MARCH, 2012), minhaCasaEdicao102);
+						lancamentoMinhaCasaEdicao102.getDataLancamentoDistribuidor(), minhaCasaEdicao102);
 		
 		Estudo estudoRecreioEdicao102 = 
 				Fixture.estudo(new BigDecimal(180),
-						Fixture.criarData(12, Calendar.MARCH, 2012), recreioEdicao102);
+						lancamentoRecreioEdicao102.getDataLancamentoDistribuidor(), recreioEdicao102);
 		
 		Estudo estudoWomenHealthEdicao102 = 
 				Fixture.estudo(new BigDecimal(180),
-						Fixture.criarData(12, Calendar.MARCH, 2012), womenHealthEdicao102);
+						lancamentoWomenHealthEdicao102.getDataLancamentoDistribuidor(), womenHealthEdicao102);
 		
 		Estudo estudoViagemTurismoEdicao102 = 
 				Fixture.estudo(new BigDecimal(180),
-						Fixture.criarData(12, Calendar.MARCH, 2012), viagemTurismoEdicao102);
+						lancamentoViagemTurismoEdicao102.getDataLancamentoDistribuidor(), viagemTurismoEdicao102);
 		
 		Estudo estudoVipEdicao102 = 
 				Fixture.estudo(new BigDecimal(180),
-						Fixture.criarData(12, Calendar.MARCH, 2012), vipEdicao102);
+						lancamentoVipEdicao102.getDataLancamentoDistribuidor(), vipEdicao102);
 		
 		Estudo estudoGestaoEscolarEdicao102 = 
 				Fixture.estudo(new BigDecimal(180),
-						Fixture.criarData(12, Calendar.MARCH, 2012), gestaoEscolarEdicao102);
+						lancamentoGestaoEscolarEdicao102.getDataLancamentoDistribuidor(), gestaoEscolarEdicao102);
 		
 		Estudo estudoLolaEdicao102 = 
 				Fixture.estudo(new BigDecimal(180),
-						Fixture.criarData(12, Calendar.MARCH, 2012), lolaEdicao102);
+						lancamentoLolaEdicao102.getDataLancamentoDistribuidor(), lolaEdicao102);
 		
 		Estudo estudoHeavyMetalEdicao102 = 
 				Fixture.estudo(new BigDecimal(180),
-						Fixture.criarData(12, Calendar.MARCH, 2012), heavyMetalEdicao102);
+						lancamentoHeavyMetalEdicao102.getDataLancamentoDistribuidor(), heavyMetalEdicao102);
 		
 		Estudo estudoMetalUndergroundEdicao102 = 
 				Fixture.estudo(new BigDecimal(180),
-						Fixture.criarData(12, Calendar.MARCH, 2012), metalUndergroundEdicao102);
+						lancamentoMetalUndergroundEdicao102.getDataLancamentoDistribuidor(), metalUndergroundEdicao102);
 		
 		save(session, estudoJavaMagazineEdicao101, estudoMundoJavaEdicao101, 
 					  estudoSqlMagazineEdicao101, estudoGalileuEdicao101,

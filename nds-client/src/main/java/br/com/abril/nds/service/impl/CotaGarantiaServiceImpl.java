@@ -1,5 +1,6 @@
 package br.com.abril.nds.service.impl;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
@@ -78,6 +79,8 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 			tipo = TipoGarantia.NOTA_PROMISSORIA;
 		} else if (cotaGarantia instanceof CotaGarantiaCaucaoLiquida) {
 			tipo = TipoGarantia.CAUCAO_LIQUIDA;
+			CotaGarantiaCaucaoLiquida cotaGarantiaCaucaoLiquida = (CotaGarantiaCaucaoLiquida) cotaGarantia;
+			cotaGarantiaCaucaoLiquida.getCaucaoLiquidas().size();
 		} else if (cotaGarantia instanceof CotaGarantiaChequeCaucao) {
 			tipo = TipoGarantia.CHEQUE_CAUCAO;
 		}
@@ -170,9 +173,11 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 		cotaGarantiaImovel.setData(Calendar.getInstance());
 
 		cotaGarantiaImovel.setImoveis(listaImoveis);
-
-		return (CotaGarantiaImovel) cotaGarantiaRepository
+		
+		CotaGarantiaImovel cotaGarantia = (CotaGarantiaImovel) cotaGarantiaRepository
 				.merge(cotaGarantiaImovel);
+		
+		return cotaGarantia;
 	}
 
 	/*
@@ -292,11 +297,14 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 		
 			cotaGarantiaCaucaoLiquida = new CotaGarantiaCaucaoLiquida();
 			cotaGarantiaCaucaoLiquida.setCota(getCota(idCota));
+			
+			cotaGarantiaCaucaoLiquida.setCaucaoLiquidas(listaCaucaoLiquida);
+		}else{
+			cotaGarantiaCaucaoLiquida.getCaucaoLiquidas().addAll(listaCaucaoLiquida);
 		}
 		
-		cotaGarantiaCaucaoLiquida.setData(Calendar.getInstance());
+		cotaGarantiaCaucaoLiquida.setData(Calendar.getInstance());		
 		
-		cotaGarantiaCaucaoLiquida.setCaucaoLiquidas(listaCaucaoLiquida);
 		
 		return (CotaGarantiaCaucaoLiquida) this.cotaGarantiaRepository.merge(cotaGarantiaCaucaoLiquida);
 	}
