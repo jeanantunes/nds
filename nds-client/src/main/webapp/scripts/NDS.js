@@ -135,6 +135,21 @@ function serializeArrayToPost(listaName, lista) {
 	
 	return obj;
 };
+/**
+ * Transforma um array em um array esperaro pelo flexiggrid
+ *
+ * @param list
+ * @returns {Array} 
+ */
+function toFlexiGridObject(list){
+	
+	var rows = new Array();
+	for (var index in list) {		
+		rows.push({"id" : rows.length,	"cell" : list[index]});		
+	}
+	return rows;
+}
+
 
 
 function concatObjects(obj1, obj2){

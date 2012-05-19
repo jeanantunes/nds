@@ -302,14 +302,20 @@ ChequeCaucao.prototype.bindEvents = function() {
  * @returns {Imovel}
  */
 function Imovel(idCota, cotaGarantia) {
+	
+	console.log("novo");
+	
 	this.idCota = idCota;
 	this.cotaGarantia = cotaGarantia;
 	this.bindEvents();
 	//this.get();
 	this.toggle();
+	
 	this.initGrid();
-	this.rows = new Array;
+	this.rows = new Array();
 	this.itemEdicao = null;
+	this.popularGrid();
+	
 	//TODO: Processar lista de imoveis data.cotaGarantia.imoveis;
 	
 };
@@ -375,8 +381,12 @@ Imovel.prototype.incluirImovel = function(callBack) {
 		} else {
 
 			var novoImovel = data.imovel;
-			var rows = _this.rows;
-
+			var rows = new Array();
+			
+			for (var index in _this.rows) {
+				rows.push(_this.rows[index]);
+			}
+		
 			if (_this.itemEdicao == null || _this.itemEdicao < 0) {
 				rows.push({
 					"id" : rows.length,
@@ -395,8 +405,14 @@ Imovel.prototype.incluirImovel = function(callBack) {
 				page : 1,
 				total : 1
 			});
-
+			
+			_this.rows.push({
+				"id" : rows.length,
+				"cell" : novoImovel
+			});
+			
 			_this.limparForm();
+				
 		}
 
 		if (callBack) {
@@ -458,6 +474,27 @@ Imovel.prototype.dataBind = function() {
 
 };
 
+Imovel.prototype.popularGrid = function() {
+	
+	var rows = this.rows;
+	$(".cotaGarantiaImovelGrid").flexAddData({rows:[]});
+	if (this.cotaGarantia) {
+		var imoveis = this.cotaGarantia.imoveis;
+
+		for (var index in imoveis) {
+			var novoImovel = imoveis[index];
+			novoImovel.id = null;
+			rows.push({"id" : rows.length,	"cell" : novoImovel});
+		}
+	}
+	
+	$(".cotaGarantiaImovelGrid").flexAddData({
+		rows : rows,
+		page : 1,
+		total : 1
+	});
+};
+
 Imovel.prototype.dataUnBind = function() {
 	this.imovel.proprietario = $("#cotaGarantiaImovelProprietario").val();
 	this.imovel.endereco = $("#cotaGarantiaImovelEndereco").val();
@@ -482,6 +519,11 @@ Imovel.prototype.bindEvents = function() {
 		centsSeparator : ',',
 		thousandsSeparator : '.'
 	});
+};
+
+Imovel.prototype.destroy = function() {
+	$("#cotaGarantiaImovelIncluirNovo").unbind('click');
+	$("#cotaGarantiaImovelSalvaEdicao").unbind('click');
 };
 
 Imovel.prototype.edita = function(id) {
@@ -534,8 +576,10 @@ Imovel.prototype.remove = function(id) {
 
 Imovel.prototype.initGrid = function() {
 
-	$(".cotaGarantiaImovelGrid")
-			.flexigrid(
+	$(".cotaGarantiaImovelGrid").empty();	
+	this.grid = $("<div></div>");
+	$(".cotaGarantiaImovelGrid").append(this.grid);
+	this.grid.flexigrid(
 					{
 
 						preProcess : function(data) {
@@ -549,7 +593,8 @@ Imovel.prototype.initGrid = function() {
 										.each(
 												data.rows,
 												function(index, value) {
-
+													console.log("Data:"); 
+													console.log(data);
 													var idImovel = value.id;
 
 													var acao = '<a href="javascript:;" onclick="tipoCotaGarantia.controller.edita('
@@ -565,7 +610,7 @@ Imovel.prototype.initGrid = function() {
 
 													value.cell.acao = acao;
 												});
-
+								$(".cotaGarantiaImovelGrid").flexReload();
 								return data;
 							}
 						},
@@ -738,7 +783,10 @@ TipoCotaGarantia.prototype.onChange = function(newControllerType) {
 TipoCotaGarantia.prototype.changeController = function(newControllerType) {
 	if (this.controller) {
 		this.controller.toggle();
-		this.controller = null;
+		if(this.controller.destroy){
+			this.controller.destroy();
+		}		
+		delete this.controller;
 	}
 	var obj = this.tipo[newControllerType].controller;
 	this.controller = new obj(this.getIdCota(), this.cotaGarantia);
@@ -968,16 +1016,18 @@ function CaucaoLiquida(idCota, cotaGarantia) {
 	this.bindEvents();
 	this.toggle();
 	this.initGrid();
-	this.rows = new Array;
+	this.cotaGarantia = cotaGarantia;
+	this.listNovosCalcao = new Array;
+	this.rows = new Array();
+	this.popularGrid();
+	this.caucaoLiquida = {
+			id:null,
+			valor:null,
+			atualizacao:null,
+			indiceReajuste:null
+		};
 }
-
 CaucaoLiquida.prototype.path = contextPath + "/cadastro/garantia/";
-CaucaoLiquida.prototype.caucaoLiquida = {
-	id:null,
-	valor:null,
-	atualizacao:null,
-	indiceReajuste:null
-};
 
 CaucaoLiquida.prototype.toggle = function(showOrHide) {
 	$('#cotaGarantiaCaucaoLiquida').toggle(showOrHide);
@@ -991,46 +1041,42 @@ CaucaoLiquida.prototype.formatDate = function(data) {
 	return dia+"/"+mes+"/"+ano;
 };
 
-CaucaoLiquida.prototype.dataUnBind = function() {
+CaucaoLiquida.prototype.dataUnBind = function() {	
+	this.caucaoLiquida = new Object();
 	this.caucaoLiquida.valor = $("#cotaGarantiaCaucaoLiquidaValor").unmask() / 100;
+	$("#cotaGarantiaCaucaoLiquidaValor").val(null);
 	this.caucaoLiquida.indiceReajuste = 0.0;
+	this.caucaoLiquida.atualizacao = this.formatDate(new Date());
 };
 
 CaucaoLiquida.prototype.incluirCaucao = function(callBack) {
 	
 	this.dataUnBind();
+	if(!this.caucaoLiquida.valor || this.caucaoLiquida.valor <= 0){
+		exibirMensagemDialog('ERROR', ['O preenchimento do campo [Valor R$] é obrigatório'], '');		
+	}else{		
+		this.listNovosCalcao.unshift(this.caucaoLiquida);		
+		this.popularGrid();
+		
+	}
 	
-	var postData = serializeObjectToPost('caucaoLiquida', this.caucaoLiquida);
-	
-	var _this = this;
-	
-	$.postJSON(this.path + 'incluirCaucaoLiquida.json', postData,
-			
-			function(data) {
-				var tipoMensagem = data.tipoMensagem;
-				var listaMensagens = data.listaMensagens;
-
-				if (tipoMensagem && listaMensagens) {
-					exibirMensagemDialog(tipoMensagem, listaMensagens,"");
-				} else {
-					
-					var rows = _this.rows;
-					data.atualizacao = _this.formatDate(new Date());
-					rows.unshift({"id": rows.length,"cell":data});
-									
-					$("#cotaGarantiaCaucaoLiquidaGrid").flexAddData({rows:rows,page:1,total:1});
-					
-					_this.limparForm();
-				}
-				
-				if(callBack){
-					callBack();
-				}
-				
-			}, null, true);
 };
 
-CaucaoLiquida.prototype.addItemGrid = function(data) {
+CaucaoLiquida.prototype.popularGrid = function() {
+	
+	var salvas;
+	if (this.cotaGarantia) {		
+		salvas = this.cotaGarantia.caucaoLiquidas;
+	}else{
+		salvas = new Array();
+	}		
+	this.rows  = salvas.concat(this.listNovosCalcao);
+	
+	this.grid.flexAddData({
+		rows : toFlexiGridObject(this.rows),
+		page : 1,
+		total : 1
+	});
 	
 };
 
@@ -1075,29 +1121,18 @@ CaucaoLiquida.prototype.processListPost = function(listaName, lista) {
 	return obj;
 };
 
+
+
 CaucaoLiquida.prototype.resgatarValorCaucao = function() {
-	
-	var rows = this.rows;
-	
-	var data = {
+	var caucaoLiquida = {
 			id:null,
 			atualizacao : this.formatDate(new Date()),
 			indiceReajuste: 0,
 			valor:0
 	};
 
-	this.rows.unshift({"id": rows.length,"cell":data});
-	
-	$("#cotaGarantiaCaucaoLiquidaGrid").flexAddData({rows:this.rows,page:1,total:1});
-};
-
-CaucaoLiquida.prototype.limparForm = function() {
-	
-	this.caucaoLiquida.id = null;
-	this.caucaoLiquida.atualizacao = null;
-	this.caucaoLiquida.indiceReajuste = null;
-	this.caucaoLiquida.valor= null;
-	$("#cotaGarantiaCaucaoLiquidaValor").val(null);
+	this.listNovosCalcao.unshift(caucaoLiquida);		
+	this.popularGrid();
 };
 
 CaucaoLiquida.prototype.bindEvents = function() {
@@ -1110,7 +1145,7 @@ CaucaoLiquida.prototype.bindEvents = function() {
 	});
 	
 	$("#cotaGarantiaCaucaoLiquidaResgatar").click(function(){
-		if (_this.rows[0].cell.valor > 0) {
+		if (_this.rows[0].valor > 0) {
 			_this.resgatarValorCaucao();
 		}
 	});
@@ -1122,9 +1157,16 @@ CaucaoLiquida.prototype.bindEvents = function() {
 	});
 };
 
+CaucaoLiquida.prototype.destroy = function() {
+	$("#cotaGarantiaCaucaoLiquidaIncluir").unbind('click');
+	$("#cotaGarantiaCaucaoLiquidaResgatar").unbind('click');
+};
+
 CaucaoLiquida.prototype.initGrid = function() {
-	
-	$("#cotaGarantiaCaucaoLiquidaGrid").flexigrid({
+	$("#cotaGarantiaCaucaoLiquidaGrid").empty();	
+	this.grid = $("<div></div>");
+	$("#cotaGarantiaCaucaoLiquidaGrid").append(this.grid);
+	this.grid.flexigrid({
 		
 		dataType : 'json',
 		colModel : [ {
