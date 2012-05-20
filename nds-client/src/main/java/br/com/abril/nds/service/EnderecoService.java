@@ -23,4 +23,5 @@ public interface EnderecoService {
 	Endereco buscarEnderecoPorId(Long idEndereco);
 
 	List<EnderecoAssociacaoDTO> buscarEnderecosPorIdPessoa(Long idPessoa, Set<Long> idsIgnorar);
+
 }

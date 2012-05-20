@@ -1,6 +1,10 @@
 package br.com.abril.nds.service;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
+
+import br.com.abril.nds.model.cadastro.Editor;
 
 /**
  * Classe de implementação de serviços referentes a entidade
@@ -9,6 +13,8 @@ import org.springframework.stereotype.Service;
  * @author InfoA2
  */
 @Service
-public class EditorService {
+public interface EditorService {
 
+	public List<Editor> obterEditores();
+	
 }

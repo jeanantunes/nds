@@ -97,7 +97,6 @@ public class ConsultaNotasController {
 	public void exportar(FileType fileType) throws IOException {
 		
 		if (fileType == null) {
-			
 			throw new ValidacaoException(TipoMensagem.WARNING, "Tipo de arquivo não encontrado!");
 		}
 		

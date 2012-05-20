@@ -108,10 +108,32 @@ public class DistribuidorRepositoryImpl extends
 		return criteria.list();
 	}
 
+	@SuppressWarnings("unchecked")
+	public List<RegistroCurvaABCDistribuidorVO> obterCurvaABCDistribuidorTotal(FiltroCurvaABCDistribuidorDTO filtro){
+		StringBuilder hql = new StringBuilder();
+
+		hql.append("SELECT new ").append(RegistroCurvaABCDistribuidorVO.class.getCanonicalName())
+		.append("   case when sum(pdv) is null then 0 else sum(pdv) end, " )
+		.append("   (sum(estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida)), ")
+		.append("   ( sum((estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) * (estoqueProdutoCota.produtoEdicao.precoVenda - estoqueProdutoCota.produtoEdicao.desconto)) ) ) ");
+		
+		hql.append(getWhereQueryObterCurvaABCDistribuidor(filtro));
+
+		Query query = this.getSession().createQuery(hql.toString());
+		
+		HashMap<String, Object> param = getParametrosObterCurvaABCDistribuidor(filtro);
+		
+		for(String key : param.keySet()){
+			query.setParameter(key, param.get(key));
+		}
+		return query.list();
+	}
+	
 	@Override
+	@SuppressWarnings("unchecked")
 	public List<RegistroCurvaABCDistribuidorVO> obterCurvaABCDistribuidor(FiltroCurvaABCDistribuidorDTO filtro) {
 		StringBuilder hql = new StringBuilder();
-		
+
 		hql.append("SELECT new ").append(RegistroCurvaABCDistribuidorVO.class.getCanonicalName())
 		.append(" ( estoqueProdutoCota.cota.numeroCota , ")
 		.append("   case when (pessoa.nome is not null) then ( pessoa.nome ) ")
@@ -123,7 +145,7 @@ public class DistribuidorRepositoryImpl extends
 		.append("   ( sum((estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) * (estoqueProdutoCota.produtoEdicao.precoVenda - estoqueProdutoCota.produtoEdicao.desconto)) ) ) ");
 		
 		hql.append(getWhereQueryObterCurvaABCDistribuidor(filtro));
-
+		hql.append(getGroupQueryObterCurvaABCDistribuidor(filtro));		
 		hql.append(getOrderQueryObterCurvaABCDistribuidor(filtro));
 
 		Query query = this.getSession().createQuery(hql.toString());
@@ -197,15 +219,24 @@ public class DistribuidorRepositoryImpl extends
 			hql.append("AND endereco.cidade = :municipio ");
 		}
 
-		hql.append(" GROUP BY estoqueProdutoCota.cota.numeroCota, ")
-			.append("   CASE WHEN (pessoa.nome is not null) THEN ( pessoa.nome ) ")
-			.append("     WHEN (pessoa.razaoSocial is not null) THEN ( pessoa.razaoSocial ) ")
-			.append("     ELSE null END ");
 		
 		return hql.toString();
 		
 	}
 
+	private String getGroupQueryObterCurvaABCDistribuidor(FiltroCurvaABCDistribuidorDTO filtro) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" GROUP BY estoqueProdutoCota.cota.numeroCota, ")
+		.append("   CASE WHEN (pessoa.nome is not null) THEN ( pessoa.nome ) ")
+		.append("     WHEN (pessoa.razaoSocial is not null) THEN ( pessoa.razaoSocial ) ")
+		.append("     ELSE null END ");
+
+		return hql.toString();
+	}
+	
+	
 	private String getOrderQueryObterCurvaABCDistribuidor(FiltroCurvaABCDistribuidorDTO filtro) {
 
 		StringBuilder hql = new StringBuilder();
@@ -327,6 +358,7 @@ public class DistribuidorRepositoryImpl extends
 		return lista;
 	}
 	
+	@SuppressWarnings("unchecked")
 	private List<RegistroCurvaABCDistribuidorVO> getOrderObterCurvaABCDistribuidor(List<RegistroCurvaABCDistribuidorVO> lista, FiltroCurvaABCDistribuidorDTO filtro) {
 		
 		if (filtro.getOrdenacaoColuna() != null) {

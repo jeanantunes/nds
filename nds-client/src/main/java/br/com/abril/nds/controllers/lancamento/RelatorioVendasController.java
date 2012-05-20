@@ -1,29 +1,41 @@
 package br.com.abril.nds.controllers.lancamento;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.criteria.CriteriaBuilder.Case;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.util.PaginacaoUtil;
+import br.com.abril.nds.client.vo.ConsultaNotaFiscalVO;
 import br.com.abril.nds.client.vo.RegistroCurvaABCDistribuidorVO;
 import br.com.abril.nds.client.vo.ValidacaoVO;
+import br.com.abril.nds.dto.filtro.FiltroConsultaNotaFiscalDTO;
 import br.com.abril.nds.dto.filtro.FiltroCurvaABCDistribuidorDTO;
 import br.com.abril.nds.dto.filtro.FiltroCurvaABCDistribuidorDTO.ColunaOrdenacaoCurvaABCDistribuidor;
 import br.com.abril.nds.exception.ValidacaoException;
-import br.com.abril.nds.service.CotaService;
+import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.cadastro.SituacaoCadastro;
+import br.com.abril.nds.model.fiscal.NotaFiscalEntradaFornecedor;
 import br.com.abril.nds.service.DistribuidorService;
 import br.com.abril.nds.service.EditorService;
+import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.ProdutoService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.Constantes;
+import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
+import br.com.abril.nds.util.export.FileExporter;
+import br.com.abril.nds.util.export.NDSFileHeader;
+import br.com.abril.nds.util.export.FileExporter.FileType;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
@@ -43,6 +55,12 @@ public class RelatorioVendasController {
 	private HttpSession session;
 
 	@Autowired
+	private HttpServletResponse httpServletResponse;
+
+	@Autowired
+	private FornecedorService fornecedorService;
+	
+	@Autowired
 	private DistribuidorService distribuidorService;
 
 	@Autowired
@@ -51,21 +69,54 @@ public class RelatorioVendasController {
 	@Autowired
 	private EditorService editorService;
 
-	@Autowired
-	private CotaService cotaService;
-
 	private static final String QTD_REGISTROS_PESQUISA_CURVA_ABC_DISTRIBUIDOR_SESSION_ATTRIBUTE = "qtdRegistrosPesquisaCurvaAbcDistribuidor";
 	private static final String FILTRO_PESQUISA_CURVA_ABC_DISTRIBUIDOR_SESSION_ATTRIBUTE = "filtroPesquisaCurvaAbcDistribuidor";
 
+	private static final int DISTRIBUIDOR = 1;
+	private static final int EDITOR       = 2;
+	private static final int PRODUTO      = 3;
+	private static final int COTA         = 4;
+
+	private static final String FORMATO_DATA = "dd/MM/yyyy";
+	
+	@Path("/lancamento/relatorioVendas")
+	public void index() {
+		String data = DateUtil.formatarData(new Date(), FORMATO_DATA);
+		result.include("data", data);
+		result.include("fornecedores", fornecedorService.obterFornecedores(true, SituacaoCadastro.ATIVO));
+		result.include("editores", editorService.obterEditores());
+		//result.include("municipios", municipioService.obterMunicipiosCotas());
+	}
+	
 	public RelatorioVendasController(Result result) {
 		this.result = result;
 	}
 
 	@Get
-	@Path("/")
-	public void index() {
-	}
+	public void exportar(FileType fileType, int tipoRelatorio) throws IOException {
+		
+		if (fileType == null) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "Tipo de arquivo não encontrado!");
+		}
+		
+		switch (tipoRelatorio) {
+		case DISTRIBUIDOR:
 
+			FiltroCurvaABCDistribuidorDTO filtro = (FiltroCurvaABCDistribuidorDTO) this.session.getAttribute(FILTRO_PESQUISA_CURVA_ABC_DISTRIBUIDOR_SESSION_ATTRIBUTE);
+			List<RegistroCurvaABCDistribuidorVO> lista = distribuidorService.obterCurvaABCDistribuidor(filtro);
+			FileExporter.to("relatorio-vendas-curva-abc-distribuidor", fileType).inHTTPResponse(null, filtro, null, 
+						lista, RegistroCurvaABCDistribuidorVO.class, this.httpServletResponse);
+
+			break;
+		case EDITOR:
+		case PRODUTO:
+		case COTA:
+		default:
+			break;
+		}
+
+	}
+	
 	private void validarDadosEntradaPesquisa(String dataDe, String dataAte) {
 		List<String> listaMensagemValidacao = new ArrayList<String>();
 

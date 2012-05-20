@@ -30,4 +30,11 @@ public class DistribuidorServiceImpl implements DistribuidorService {
 		return distribuidorRepository.obterCurvaABCDistribuidor(filtroCurvaABCDistribuidorDTO);
 	}
 
+	@Override
+	@Transactional
+	public List<RegistroCurvaABCDistribuidorVO> obterCurvaABCDistribuidorTotal(
+			FiltroCurvaABCDistribuidorDTO filtroCurvaABCDistribuidorDTO) {
+		return distribuidorRepository.obterCurvaABCDistribuidorTotal(filtroCurvaABCDistribuidorDTO);
+	}
+
 }

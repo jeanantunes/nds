@@ -35,9 +35,6 @@
 			var dataDe = $("#datepickerDe").val();
 			var dataAte = $("#datepickerAte").val();
 			
-			alert(dataDe);
-			alert(dataAte);
-			
 			$(".abcDistribuidorGrid").flexOptions({
 				url: "<c:url value='/lancamento/relatorioVendas/pesquisarCurvaABCDistribuidor' />",
 				params: [
@@ -212,7 +209,7 @@
 							onclick="pesquisar();">Pesquisar</a></span></td>
 					<td width="20" rowspan="3" align="center" valign="top"><a
 						href="javascript:;" onclick="mostra_pesq_avancada();"><img
-							src="../images/ico_pesq_avancada.jpg" alt="Pesquisa Avan�ada"
+							src="${pageContext.request.contextPath}/images/ico_pesq_avancada.jpg" alt="Pesquisa Avançada"
 							width="20" height="20" vspace="10" border="0" /></a></td>
 				</tr>
 				<tr class="linhaCota">
@@ -249,26 +246,32 @@
 				class="filtro">
 				<tr>
 					<td width="69">Fornecedor:</td>
-					<td width="255"><select name="select" id="select3"
+					<td width="255"><select name="select" id="selectFornecedor"
 						style="width: 240px;">
 							<option>Todos</option>
+                    		<c:forEach items="${fornecedores}" var="fornecedor">
+								<option value="${fornecedor.id}">${fornecedor.juridica.nomeFantasia}</option>
+                   			</c:forEach> 
 							<option>Dinap</option>
 							<option>FC</option>
 					</select></td>
 					<td width="47" colspan="-1">Código:</td>
-					<td width="108"><input type="text" style="width: 80px;" /></td>
+					<td width="108"><input type="text" style="width: 80px;" name="codigoProduto" id="codigoProduto" /></td>
 					<td width="52">Produto:</td>
-					<td width="213"><input type="text" style="width: 200px;" /></td>
+					<td width="213"><input type="text" style="width: 200px;" name="nomeProduto" id="nomeProduto" /></td>
 					<td width="41">Edição:</td>
-					<td><input type="text" style="width: 100px;" id="edicoesCamp" /></td>
+					<td><input type="text" style="width: 100px;" id="edicoesCamp" name="edicao" id="edicao" /></td>
 					<td><a href="javascript:;" onclick="esconde_pesq_avancada();"><img
-							src="../images/ico_excluir.gif" alt="Fechar" width="15"
+							src="${pageContext.request.contextPath}/images/ico_excluir.gif" alt="Fechar" width="15"
 							height="15" border="0" /></a></td>
 				</tr>
 				<tr>
 					<td>Editor:</td>
-					<td><select name="select2" id="select" style="width: 240px;">
+					<td><select name="select2" id="selectEditor" style="width: 240px;">
 							<option>Todos</option>
+                    		<c:forEach items="${editores}" var="editor">
+								<option value="${editor.id}">${editor.nome}</option>
+                   			</c:forEach> 
 					</select></td>
 					<td colspan="-1">Cota:</td>
 					<td><input type="text" name="datepickerAte2"
@@ -283,7 +286,8 @@
 					<td>Municipio:</td>
 					<td><select name="select3" id="select4" style="width: 240px;">
 							<option selected="selected">Todos</option>
-					</select></td>
+						</select>
+					</td>
 					<td>&nbsp;</td>
 					<td>&nbsp;</td>
 					<td>&nbsp;</td>
@@ -307,10 +311,10 @@
 				<table width="950" border="0" cellspacing="0" cellpadding="0">
 					<tr>
 						<td width="441"><span class="bt_novos" title="Gerar Arquivo"><a
-								href="javascript:;"><img src="../images/ico_excel.png"
+								href="${pageContext.request.contextPath}/lancamento/relatorioVendas/exportar?fileType=XLS&relatorio=1"><img src="${pageContext.request.contextPath}/images/ico_excel.png"
 									hspace="5" border="0" />Arquivo</a></span> <span class="bt_novos"
-							title="Imprimir"><a href="javascript:;"><img
-									src="../images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
+							title="Imprimir"><a href="${pageContext.request.contextPath}/lancamento/relatorioVendas/exportar?fileType=PDF&relatorio=distribuidor"><img
+									src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
 						</td>
 						<td width="121"><strong>Total:</strong></td>
 						<td width="130">1.320</td>
@@ -326,10 +330,10 @@
 				<table width="950" border="0" cellspacing="0" cellpadding="0">
 					<tr>
 						<td width="329"><span class="bt_novos" title="Gerar Arquivo"><a
-								href="javascript:;"><img src="../images/ico_excel.png"
+								href="${pageContext.request.contextPath}/lancamento/relatorioVendas/exportar?fileType=XLS&relatorio=2"><img src="${pageContext.request.contextPath}/images/ico_excel.png"
 									hspace="5" border="0" />Arquivo</a></span> <span class="bt_novos"
-							title="Imprimir"><a href="javascript:;"><img
-									src="../images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
+							title="Imprimir"><a href="${pageContext.request.contextPath}/lancamento/relatorioVendas/exportar?fileType=PDF&relatorio=editor"><img
+									src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
 						</td>
 						<td width="80"><strong>Total:</strong></td>
 						<td width="215">1.320</td>
@@ -346,10 +350,10 @@
 				<table width="950" border="0" cellspacing="0" cellpadding="0">
 					<tr>
 						<td width="441"><span class="bt_novos" title="Gerar Arquivo"><a
-								href="javascript:;"><img src="../images/ico_excel.png"
+								href="${pageContext.request.contextPath}/lancamento/relatorioVendas/exportar?fileType=XLS&relatorio=3"><img src="${pageContext.request.contextPath}/images/ico_excel.png"
 									hspace="5" border="0" />Arquivo</a></span> <span class="bt_novos"
-							title="Imprimir"><a href="javascript:;"><img
-									src="../images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
+							title="Imprimir"><a href="${pageContext.request.contextPath}/lancamento/relatorioVendas/exportar?fileType=PDF&relatorio=produto"><img
+									src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
 						</td>
 						<td width="151"><strong>Total:</strong></td>
 						<td width="114">R$ 52.550,00</td>
@@ -368,10 +372,10 @@
 				<table width="950" border="0" cellspacing="0" cellpadding="0">
 					<tr>
 						<td width="432"><span class="bt_novos" title="Gerar Arquivo"><a
-								href="javascript:;"><img src="../images/ico_excel.png"
+								href="${pageContext.request.contextPath}/lancamento/relatorioVendas/exportar?fileType=XLS&relatorio=4"><img src="${pageContext.request.contextPath}/images/ico_excel.png"
 									hspace="5" border="0" />Arquivo</a></span> <span class="bt_novos"
-							title="Imprimir"><a href="javascript:;"><img
-									src="../images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
+							title="Imprimir"><a href="${pageContext.request.contextPath}/lancamento/relatorioVendas/exportar?fileType=PDF&relatorio=cota"><img
+									src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
 						</td>
 						<td width="73"><strong>Total:</strong></td>
 						<td width="205">1.320</td>
