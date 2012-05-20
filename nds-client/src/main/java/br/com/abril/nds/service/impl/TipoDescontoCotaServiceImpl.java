@@ -83,6 +83,7 @@ public class TipoDescontoCotaServiceImpl implements TipoDescontoCotaService {
 			vo.setUsuario(desconto.getUsuario());
 			vo.setSeq(desconto.getSequencial().toString());
 			vo.setCota(desconto.getIdCota().toString());
+			vo.setCodigo(desconto.getIdProduto().toString());
 			listaVO.add(vo);
 		}		
 		return listaVO;

@@ -56,17 +56,19 @@
 	}
 	
 	function pesquisarDescontoProduto(){
-		var descontoGeral = $("#descontoGeral").val();
-		var dataAlteracao = $("#dataAlteracaoGeral").val();
-		var usuario = $("#textfield24").val();		
+		var codigo = $("#codigoPesquisa").val();
+		var produto = $("#produtoPesquisa").val();
 		
-		$(".tiposDescGeralGrid").flexOptions({
-			url: "<c:url value='/administracao/tipoDescontoCota/pesquisarDescontoGeral'/>",
-			params: [],
+		$(".tiposDescProdutoGrid").flexOptions({
+			url: "<c:url value='/administracao/tipoDescontoCota/pesquisarDescontoProduto'/>",
+			params: [
+					 {name:'codigo', value:codigo},
+			         {name:'produto', value:produto}
+			         ],
 		    newp: 1,
 		});
 		
-		$(".tiposDescGeralGrid").flexReload();
+		$(".tiposDescProdutoGrid").flexReload();
 	}
 	
 	function buscarNomeProduto(){
@@ -614,8 +616,8 @@
 		});
 		
 		$(".tiposDescProdutoGrid").flexigrid({
-			url : '../xml/tipos-desconto-produto-xml.xml',
-			dataType : 'xml',
+			preProcess: executarPreProcessamento,
+			dataType : 'json',
 			colModel : [ {
 				display : 'Código',
 				name : 'codigo',

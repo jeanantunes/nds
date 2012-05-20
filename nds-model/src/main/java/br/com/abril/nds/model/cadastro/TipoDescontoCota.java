@@ -49,6 +49,9 @@ public class TipoDescontoCota implements Serializable {
 	@Column(name = "COTA_ID")
 	private Long idCota;
 	
+	@Column(name = "PRODUTO_ID")
+	private Long idProduto;
+	
 	public Long getId() {
 		return id;
 	}
@@ -105,4 +108,12 @@ public class TipoDescontoCota implements Serializable {
 		this.idCota = idCota;
 	}
 
+	public Long getIdProduto() {
+		return idProduto;
+	}
+
+	public void setIdProduto(Long idProduto) {
+		this.idProduto = idProduto;
+	}
+	
 }

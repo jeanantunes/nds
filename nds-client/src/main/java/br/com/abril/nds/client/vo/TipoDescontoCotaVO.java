@@ -23,6 +23,15 @@ public class TipoDescontoCotaVO {
 	
 	@Export(label = "Nome")
 	private String nome;
+	
+	@Export(label = "Codigo")
+	private String codigo;
+	
+	@Export(label = "Produto")
+	private String produto;
+	
+	@Export(label = "Edição")
+	private String edicao;
 
 	public String getId() {
 		return id;
@@ -79,8 +88,29 @@ public class TipoDescontoCotaVO {
 	public void setNome(String nome) {
 		this.nome = nome;
 	}
-	
-	
-	
 
+	public String getCodigo() {
+		return codigo;
+	}
+
+	public void setCodigo(String codigo) {
+		this.codigo = codigo;
+	}
+
+	public String getProduto() {
+		return produto;
+	}
+
+	public void setProduto(String produto) {
+		this.produto = produto;
+	}
+
+	public String getEdicao() {
+		return edicao;
+	}
+
+	public void setEdicao(String edicao) {
+		this.edicao = edicao;
+	}
+	
 }
