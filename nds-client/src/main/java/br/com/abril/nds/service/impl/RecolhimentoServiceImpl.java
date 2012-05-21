@@ -3,7 +3,6 @@ package br.com.abril.nds.service.impl;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -116,7 +115,7 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		}
 		
 		Map<Long, ProdutoRecolhimentoDTO> mapaRecolhimentos =
-			new HashMap<Long, ProdutoRecolhimentoDTO>();
+			new TreeMap<Long, ProdutoRecolhimentoDTO>();
 		
 		Set<Long> idsLancamento = new TreeSet<Long>();
 		
@@ -156,7 +155,7 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		}
 		
 		Map<Long, ProdutoRecolhimentoDTO> mapaLancamentoRecolhimento =
-			new HashMap<Long, ProdutoRecolhimentoDTO>();
+			new TreeMap<Long, ProdutoRecolhimentoDTO>();
 		
 		Set<Long> idsLancamento = new TreeSet<Long>();
 		
@@ -212,7 +211,7 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		
 		gerarChamadaEncalhe(mapaDataRecolhimentoLancamentos, numeroSemana);
 		
-		//gerarPeriodosParciais(idsProdutoEdicaoParcial, idUsuario);
+		gerarPeriodosParciais(idsProdutoEdicaoParcial, idUsuario);
 	}
 	
 	private void atualizarLancamento(Set<Long> idsLancamento,
@@ -224,14 +223,14 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 			
 			if (listaLancamentos == null || listaLancamentos.isEmpty()) {
 				
-//				throw new ValidacaoException(TipoMensagem.WARNING,
-//					"Lançamento não encontrado!");
+				throw new ValidacaoException(TipoMensagem.WARNING,
+					"Lançamento não encontrado!");
 			}
 			
 			if (idsLancamento.size() != listaLancamentos.size()) {
 				
-//				throw new ValidacaoException(TipoMensagem.WARNING,
-//					"Lançamento não encontrado!");
+				throw new ValidacaoException(TipoMensagem.WARNING,
+					"Lançamento não encontrado!");
 			}
 			
 			ProdutoRecolhimentoDTO produtoRecolhimento = null;
@@ -278,8 +277,8 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 				
 				if (listaEstoqueProdutoCota == null || listaEstoqueProdutoCota.isEmpty()) {
 					
-//					throw new ValidacaoException(TipoMensagem.WARNING,
-//						"Estoque produto cota não encontrado!");
+					throw new ValidacaoException(TipoMensagem.WARNING,
+						"Estoque produto cota não encontrado!");
 				}
 				
 				ProdutoEdicao produtoEdicao = null;
@@ -451,7 +450,7 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		
 		boolean semanaRecolhimento = DateUtil.validarDataEntrePeriodo(dataOperacao,
 										 							  periodoRecolhimento.getDataInicial(),
-										 							  periodoRecolhimento.getDataInicial());
+										 							  periodoRecolhimento.getDataFinal());
 		
 		dadosRecolhimento.setMatrizFechada(matrizFechada || semanaRecolhimento);
 		
@@ -498,6 +497,12 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		List<DistribuicaoFornecedor> listaDistribuicaoFornecedor = 
 			this.distribuidorRepository.buscarDiasDistribuicaoFornecedor(
 				listaIdsFornecedores, OperacaoDistribuidor.RECOLHIMENTO);
+		
+		if (listaDistribuicaoFornecedor == null || listaDistribuicaoFornecedor.isEmpty()) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING ,
+										 "Dias de recolhimento para os fornecedores não encontrados!");
+		}
 		
 		Set<Integer> diasSemanaFornecedor = new TreeSet<Integer>();
 		
