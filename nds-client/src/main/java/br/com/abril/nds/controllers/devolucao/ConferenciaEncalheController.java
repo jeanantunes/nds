@@ -206,15 +206,18 @@ public class ConferenciaEncalheController {
 						qtdInformada = qtdInformada.add(conferenciaEncalheDTO.getQtdExemplar());
 					}
 					
-					if (conferenciaEncalheDTO.getQtdRecebida() != null){
+//FIXME					if (conferenciaEncalheDTO.getQtdRecebida() != null){
+//					
+//						qtdRecebida = qtdRecebida.add(conferenciaEncalheDTO.getQtdRecebida());
+//					}
 					
-						qtdRecebida = qtdRecebida.add(conferenciaEncalheDTO.getQtdRecebida());
-					}
+					
 				}
 			}
 		}
 		
 		dados.add(qtdInformada);
+		
 		dados.add(qtdRecebida);
 	}
 
