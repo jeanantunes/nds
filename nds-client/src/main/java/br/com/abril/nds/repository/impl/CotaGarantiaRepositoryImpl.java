@@ -5,6 +5,7 @@ import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 
+import br.com.abril.nds.model.cadastro.Cheque;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantia;
 import br.com.abril.nds.repository.CotaGarantiaRepository;
 
@@ -52,6 +53,15 @@ public class CotaGarantiaRepositoryImpl extends AbstractRepository<CotaGarantia,
 		Query query = getSession().createQuery("DELETE FROM CotaGarantia this_  WHERE this_.cota.id = :idCota");
 		query.setParameter("idCota", idCota).executeUpdate();
 		
+	}
+	
+	
+	@Override
+	public Cheque getCheque(long idCheque){
+		Criteria criteria = getSession().createCriteria(Cheque.class);
+		
+		criteria.add(Restrictions.idEq(idCheque));
+		return (Cheque) criteria.uniqueResult();
 	}
 
 }

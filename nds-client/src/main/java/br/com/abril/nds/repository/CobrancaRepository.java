@@ -3,6 +3,7 @@ package br.com.abril.nds.repository;
 import java.util.Date;
 import java.util.List;
 
+import br.com.abril.nds.dto.filtro.FiltroConsultaDividasCotaDTO;
 import br.com.abril.nds.model.financeiro.Cobranca;
 
 public interface CobrancaRepository extends Repository<Cobranca, Long>{
@@ -37,5 +38,19 @@ public interface CobrancaRepository extends Repository<Cobranca, Long>{
 	 * @param nossoNumero
 	 */
 	void incrementarVia(String... nossoNumero);
+	
+	/**
+	 * Método responsável por obter a quantidade de cobrancas
+	 * @param filtro
+	 * @return quantidade: quantidade de cobrancas
+	 */
+	long obterQuantidadeCobrancasPorCota(FiltroConsultaDividasCotaDTO filtro);
+	
+	/**
+	 * Método responsável por obter uma lista de cobrancas
+	 * @param filtro
+	 * @return query.list(): lista de cobrancas
+	 */
+	public List<Cobranca> obterCobrancasPorCota(FiltroConsultaDividasCotaDTO filtro);
 	
 }

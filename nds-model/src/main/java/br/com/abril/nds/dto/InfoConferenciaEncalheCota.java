@@ -13,6 +13,11 @@ public class InfoConferenciaEncalheCota implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 
+	/**
+	 * Id de uma conferencia que esta em processo de reabertura.
+	 */
+	private Long idControleConferenciaEncalheCota;
+	
 	private Cota cota;
 	
 	private List<ConferenciaEncalheDTO> listaConferenciaEncalhe;
@@ -94,6 +99,15 @@ public class InfoConferenciaEncalheCota implements Serializable {
 
 	public void setEncalhe(BigDecimal encalhe) {
 		this.encalhe = encalhe;
+	}
+
+	public Long getIdControleConferenciaEncalheCota() {
+		return idControleConferenciaEncalheCota;
+	}
+
+	public void setIdControleConferenciaEncalheCota(
+			Long idControleConferenciaEncalheCota) {
+		this.idControleConferenciaEncalheCota = idControleConferenciaEncalheCota;
 	}
 	
 }
