@@ -1,7 +1,5 @@
 package br.com.abril.nds.model.planejamento;
 
-import java.util.Date;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -10,6 +8,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -32,12 +31,6 @@ public class PeriodoLancamentoParcial {
 	@Column(name = "ID")
 	private Long id;
 	
-	@Column(name = "LANCAMENTO", nullable = false)
-	private Date lancamento;
-	
-	@Column(name = "RECOLHIMENTO", nullable = false)
-	private Date recolhimento;
-
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "LANCAMENTO_PARCIAL_ID")
 	private LancamentoParcial lancamentoParcial;
@@ -50,6 +43,9 @@ public class PeriodoLancamentoParcial {
 	@Column(name = "TIPO", nullable = false)
 	private TipoLancamentoParcial tipo;
 
+	@OneToOne(optional = false)
+	@JoinColumn(name = "LANCAMENTO_ID")
+	private Lancamento lancamento;
 	/**
 	 * @return the id
 	 */
@@ -63,35 +59,6 @@ public class PeriodoLancamentoParcial {
 	public void setId(Long id) {
 		this.id = id;
 	}
-
-	/**
-	 * @return the lancamento
-	 */
-	public Date getLancamento() {
-		return lancamento;
-	}
-
-	/**
-	 * @param lancamento the lancamento to set
-	 */
-	public void setLancamento(Date lancamento) {
-		this.lancamento = lancamento;
-	}
-
-	/**
-	 * @return the recolhimento
-	 */
-	public Date getRecolhimento() {
-		return recolhimento;
-	}
-
-	/**
-	 * @param recolhimento the recolhimento to set
-	 */
-	public void setRecolhimento(Date recolhimento) {
-		this.recolhimento = recolhimento;
-	}
-
 	/**
 	 * @return the lancamentoParcial
 	 */
@@ -132,6 +99,20 @@ public class PeriodoLancamentoParcial {
 	 */
 	public void setTipo(TipoLancamentoParcial tipo) {
 		this.tipo = tipo;
+	}
+
+	/**
+	 * @return the lancamento
+	 */
+	public Lancamento getLancamento() {
+		return lancamento;
+	}
+
+	/**
+	 * @param lancamento the lancamento to set
+	 */
+	public void setLancamento(Lancamento lancamento) {
+		this.lancamento = lancamento;
 	}
 	
 	

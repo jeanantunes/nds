@@ -89,16 +89,11 @@ public class ProdutoController {
 		List<ItemAutoComplete> listaProdutos = new ArrayList<ItemAutoComplete>();
 				
 		if (listaProdutoEdicao != null && !listaProdutoEdicao.isEmpty()) {			
-		
-			ProdutoEdicao proEdicao = null;
-			
+					
 			for (ProdutoEdicao produtoEd : listaProdutoEdicao) {
 				
-				proEdicao = new ProdutoEdicao();
-				proEdicao.setNumeroEdicao(produtoEd.getNumeroEdicao());
-				
 				ItemAutoComplete itemAutoComplete =
-					new ItemAutoComplete(produtoEd.getNumeroEdicao().toString(), null, proEdicao);
+					new ItemAutoComplete(produtoEd.getNumeroEdicao().toString(), produtoEd.getNumeroEdicao().toString(), produtoEd.getId().intValue());
 				
 				listaProdutos.add(itemAutoComplete);
 			}

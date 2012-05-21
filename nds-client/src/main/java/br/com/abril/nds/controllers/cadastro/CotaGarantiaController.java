@@ -7,10 +7,10 @@ import java.util.List;
 import org.apache.poi.util.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import antlr.collections.impl.LList;
 import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.dto.CotaGarantiaDTO;
 import br.com.abril.nds.dto.ItemDTO;
+import br.com.abril.nds.dto.NotaPromissoriaDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.CaucaoLiquida;
 import br.com.abril.nds.model.cadastro.Cheque;
@@ -87,11 +87,11 @@ public class CotaGarantiaController {
 	}
 
 	@Post("/salvaCaucaoLiquida.json")
-	public void salvaCaucaoLiquida(List<CaucaoLiquida> listaCaucaoLiquida, Long idCota) {
+	public void salvaCaucaoLiquida(List<CaucaoLiquida> listaCaucaoLiquida, Long idCota) throws Exception {
 		
 		for(CaucaoLiquida caucaoLiquida: listaCaucaoLiquida){			
 			caucaoLiquida.setAtualizacao(Calendar.getInstance());
-			//TODO: validar;
+			validaCaucaoLiquida(caucaoLiquida);
 		}
 		
 		cotaGarantiaService.salvarCaucaoLiquida(listaCaucaoLiquida, idCota);
@@ -119,8 +119,9 @@ public class CotaGarantiaController {
 
 	@Get("/impriNotaPromissoria/{id}")
 	public void impriNotaPromissoria(Long id) {
-		// TODO: chamada do relatorio para nota.
-		result.nothing();
+		NotaPromissoriaDTO nota = cotaGarantiaService.getDadosImpressaoNotaPromissoria(id);
+		
+		result.include("nota",nota);
 	}
 
 	@Get("/getTiposGarantia.json")
@@ -153,17 +154,21 @@ public class CotaGarantiaController {
 	 * @param caucaoLiquida para ser validado
 	 */
 	private void validaCaucaoLiquida(CaucaoLiquida caucaoLiquida) {
-		
-		List<String> listaMensagens = new ArrayList<String>();
-		
-		if (caucaoLiquida.getValor() == null || caucaoLiquida.getValor() <= 0) {
-			listaMensagens.add("O preenchimento do campo [Valor R$] é obrigatório");
-		}
-		
-		if (!listaMensagens.isEmpty()) {
+				
+		if (caucaoLiquida.getValor() == null) {
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR,
-					listaMensagens));
+					"Parametros inválidos"));
 		}
+		
+		if (caucaoLiquida.getAtualizacao() == null) {
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR,
+					"Parametros inválidos"));
+		}
+		
+		if (caucaoLiquida.getIndiceReajuste() == null) {
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR,
+					"Parametros inválidos"));
+		}	
 	}
 	/**
 	 * @param notaPromissoria para ser validado

@@ -335,7 +335,7 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 				estoqueProdutoCota,
 				new BigDecimal(12), cotaManoel, StatusAprovacao.APROVADO, "Aprovado");
 		save(mec);
-		ConferenciaEncalhe conferenciaEncalhe = Fixture.conferenciaEncalhe(lancamentoVeja, mec, chamadaEncalheCota, controleConferenciaEncalheCota);
+		ConferenciaEncalhe conferenciaEncalhe = Fixture.conferenciaEncalhe(mec, chamadaEncalheCota, controleConferenciaEncalheCota);
 		save(conferenciaEncalhe);
 		
 
@@ -345,7 +345,7 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 				tipoMovimentoEnvioEncalhe, usuarioJoao, estoqueProdutoCota,
 				new BigDecimal(25), cotaManoel, StatusAprovacao.APROVADO, "Aprovado");
 		save(mec);
-		conferenciaEncalhe = Fixture.conferenciaEncalhe(lancamentoVeja, mec, chamadaEncalheCota, controleConferenciaEncalheCota);
+		conferenciaEncalhe = Fixture.conferenciaEncalhe(mec, chamadaEncalheCota, controleConferenciaEncalheCota);
 		save(conferenciaEncalhe);
 		
 		
@@ -355,7 +355,7 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 				tipoMovimentoEnvioEncalhe, usuarioJoao, estoqueProdutoCota,
 				new BigDecimal(14), cotaManoel, StatusAprovacao.APROVADO, "Aprovado");
 		save(mec);
-		conferenciaEncalhe = Fixture.conferenciaEncalhe(lancamentoVeja, mec, chamadaEncalheCota, controleConferenciaEncalheCota);
+		conferenciaEncalhe = Fixture.conferenciaEncalhe(mec, chamadaEncalheCota, controleConferenciaEncalheCota);
 		save(conferenciaEncalhe);
 
 		
@@ -365,7 +365,7 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 				tipoMovimentoEnvioEncalhe, usuarioJoao, estoqueProdutoCota,
 				new BigDecimal(19), cotaManoel, StatusAprovacao.APROVADO, "Aprovado");
 		save(mec);
-		conferenciaEncalhe = Fixture.conferenciaEncalhe(lancamentoVeja, mec, chamadaEncalheCota, controleConferenciaEncalheCota);
+		conferenciaEncalhe = Fixture.conferenciaEncalhe(mec, chamadaEncalheCota, controleConferenciaEncalheCota);
 		save(conferenciaEncalhe);
 
 		mec = Fixture.movimentoEstoqueCotaEnvioEncalhe(
@@ -374,7 +374,7 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 				tipoMovimentoEnvioEncalhe, usuarioJoao, estoqueProdutoCota,
 				new BigDecimal(19), cotaManoel, StatusAprovacao.APROVADO, "Aprovado");
 		save(mec);
-		conferenciaEncalhe = Fixture.conferenciaEncalhe(lancamentoVeja, mec, chamadaEncalheCota, controleConferenciaEncalheCota);
+		conferenciaEncalhe = Fixture.conferenciaEncalhe(mec, chamadaEncalheCota, controleConferenciaEncalheCota);
 		save(conferenciaEncalhe);
 
 		
@@ -384,7 +384,7 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 				tipoMovimentoEnvioEncalhe, usuarioJoao, estoqueProdutoCota,
 				new BigDecimal(19), cotaManoel, StatusAprovacao.APROVADO, "Aprovado");
 		save(mec);
-		conferenciaEncalhe = Fixture.conferenciaEncalhe(lancamentoVeja, mec, chamadaEncalheCota, controleConferenciaEncalheCota);
+		conferenciaEncalhe = Fixture.conferenciaEncalhe(mec, chamadaEncalheCota, controleConferenciaEncalheCota);
 		save(conferenciaEncalhe);
 
 		
@@ -490,7 +490,7 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		
 		save(mec);
 		
-		ConferenciaEncalhe conferenciaEncalhe = Fixture.conferenciaEncalhe(lancamentoVeja, mec, chamadaEncalheCota, controleConferenciaEncalheCota);
+		ConferenciaEncalhe conferenciaEncalhe = Fixture.conferenciaEncalhe(mec, chamadaEncalheCota, controleConferenciaEncalheCota);
 		save(conferenciaEncalhe);
 		
 		mec = Fixture.movimentoEstoqueCotaEnvioEncalhe( 
@@ -503,7 +503,7 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		
 		save(mec);
 		
-		conferenciaEncalhe = Fixture.conferenciaEncalhe(lancamentoVeja, mec, chamadaEncalheCota, controleConferenciaEncalheCota);
+		conferenciaEncalhe = Fixture.conferenciaEncalhe(mec, chamadaEncalheCota, controleConferenciaEncalheCota);
 		save(conferenciaEncalhe);
 		
 		
@@ -517,7 +517,7 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		
 		save(mec);
 	
-		conferenciaEncalhe = Fixture.conferenciaEncalhe(lancamentoVeja, mec, chamadaEncalheCota, controleConferenciaEncalheCota);
+		conferenciaEncalhe = Fixture.conferenciaEncalhe(mec, chamadaEncalheCota, controleConferenciaEncalheCota);
 		save(conferenciaEncalhe);
 			
 	}

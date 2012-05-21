@@ -22,16 +22,6 @@ public interface ConferenciaEncalheService {
 	 * @return List - Box
 	 */
 	public List<Box> obterListaBoxEncalhe(Long idUsuario);
-	
-	/**
-	 * Retorna o código do box de recolhimento relacionado 
-	 * ao usuário em questão (caso exista).
-	 * 
-	 * @param idUsuario
-	 * 
-	 * @return String
-	 */
-	public String obterBoxPadraoUsuario(Long idUsuario);
 
 	/**
 	 * Método faz seguintes verificações:
