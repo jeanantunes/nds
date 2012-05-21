@@ -85,6 +85,17 @@ public interface ConferenciaEncalheService {
 	
 	ProdutoEdicaoDTO pesquisarProdutoEdicaoPorSM(Integer numeroCota, Integer sm) throws ChamadaEncalheCotaInexistenteException;
 	
+	/**
+	 * Obtém detalhes do item de conferencia de encalhe.
+	 * 
+	 * @param numeroCota
+	 * @param idConferenciaEncalhe
+	 * @param idProdutoEdicao
+	 * 
+	 * @return ConferenciaEncalheDTO
+	 */
+	ConferenciaEncalheDTO obterDetalheConferenciaEncalhe(Integer numeroCota, Long idConferenciaEncalhe, Long idProdutoEdicao);
+	
 	/*
 	 * Traz uma lista de codigoProduto - nomeProduto -  numeroEdicao
 	 */
