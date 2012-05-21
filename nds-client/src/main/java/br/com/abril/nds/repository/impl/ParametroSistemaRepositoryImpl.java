@@ -89,7 +89,7 @@ public class ParametroSistemaRepositoryImpl extends AbstractRepository<Parametro
 		lst.add(TipoParametroSistema.DATA_OPERACAO_CORRENTE);
 		
 		Query query = this.getSession().createQuery(hql);
-		query.setParameter("listaTipoParametroSistema", lst);
+		query.setParameterList("listaTipoParametroSistema", lst);
 		
 		return query.list();
 	}
