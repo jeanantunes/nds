@@ -4,12 +4,11 @@
 .metadata
 bin
 target
+META-INF/
 .svn*
 /NDS_replica.eap
 .DS_Store
-
 *.ldb
 /nds-client/src/main/webapp/capas/13.jpg
 /nds-client/src/main/java/applicationContext.xml
 /nds-client/velocity.log
-/nds-util/src/META-INF/MANIFEST.MF
