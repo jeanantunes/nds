@@ -9,6 +9,7 @@ import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 
 import br.com.abril.nds.model.cadastro.CaucaoLiquida;
 
@@ -27,6 +28,7 @@ public class CotaGarantiaCaucaoLiquida extends CotaGarantia {
 	
 
 	@OneToMany(cascade={CascadeType.ALL},orphanRemoval=true)
+	@OrderBy("atualizacao DESC")
 	@JoinColumn(name="COTA_GARANTIA_CAUCAO_LIQUIDA_ID")
 	private List<CaucaoLiquida> caucaoLiquidas;
 
