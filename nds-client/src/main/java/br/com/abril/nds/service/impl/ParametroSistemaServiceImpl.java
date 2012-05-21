@@ -1,5 +1,6 @@
 package br.com.abril.nds.service.impl;
 
+import java.io.InputStream;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,4 +65,16 @@ public class ParametroSistemaServiceImpl implements ParametroSistemaService{
 		return dto;
 	}
 	
+	@Transactional
+	public void salvar(ParametroSistemaGeralDTO dto, InputStream imgLogotipo) {
+		
+		
+		// TODO: validar CNPJ;
+		// TODO: validar email;
+		// TODO: validar Uf;
+		
+		// TODO: salvar imgLogotipo
+		
+		// TODO: salvar dto;
+	}
 }
