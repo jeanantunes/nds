@@ -106,28 +106,28 @@ public class BalanceamentoRecolhimentoEditorTest extends AbstractRepositoryImplT
 		save(cromoReiLeao);
 
 		ProdutoEdicao veja1 = Fixture.produtoEdicao(1L, 10, 7,
-				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(15), veja);
+				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(15), "ABCDEFGHIJKLMNOPQRSTU", 1L, veja);
 
 		veja1.setExpectativaVenda(BigDecimal.TEN);
 		
 		ProdutoEdicao quatroRoda2 = Fixture.produtoEdicao(2L, 15, 30,
-				new BigDecimal(0.1), BigDecimal.TEN, BigDecimal.TEN,
+				new BigDecimal(0.1), BigDecimal.TEN, BigDecimal.TEN, "ABCDEFGHIJKLMNOPQRST", 2L,
 				quatroRodas);
 
 		quatroRoda2.setExpectativaVenda(BigDecimal.TEN);
 		
 		ProdutoEdicao infoExame3 = Fixture.produtoEdicao(3L, 5, 30,
-				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(12), infoExame);
+				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(12), "ABCDEFGHIJKLMNOPQRS", 3L, infoExame);
 
 		infoExame3.setExpectativaVenda(BigDecimal.TEN);
 		
 		ProdutoEdicao capricho1 = Fixture.produtoEdicao(1L, 10, 15,
-				new BigDecimal(0.12), BigDecimal.TEN, BigDecimal.TEN, capricho);
+				new BigDecimal(0.12), BigDecimal.TEN, BigDecimal.TEN, "ABCDEFGHIJKLMNOPQR", 4L, capricho);
 		
 		capricho1.setExpectativaVenda(BigDecimal.TEN);
 		
 		ProdutoEdicao cromoReiLeao1 = Fixture.produtoEdicao(1L, 100, 60,
-				new BigDecimal(0.01), BigDecimal.ONE, new BigDecimal(1.5), cromoReiLeao);
+				new BigDecimal(0.01), BigDecimal.ONE, new BigDecimal(1.5), "ABCDEFGHIJKLMNOPQ", 5L, cromoReiLeao);
 		
 		cromoReiLeao1.setExpectativaVenda(BigDecimal.TEN);
 		
@@ -260,11 +260,8 @@ public class BalanceamentoRecolhimentoEditorTest extends AbstractRepositoryImplT
 				new BigDecimal(10000),
 				StatusLancamento.BALANCEADO, null, 5);
 		
-		Estudo estudo = Fixture.estudo(new BigDecimal(100),
-				Fixture.criarData(22, Calendar.FEBRUARY, 2012), veja1);
-		
 		save(lancamentoVeja, lancamentoQuatroRodas, lancamentoInfoExame,
-				lancamentoCapricho, lancamentoCromoReiLeao, estudo);
+				lancamentoCapricho, lancamentoCromoReiLeao);
 		
 		ChamadaEncalhe chamadaEncalheVeja = new ChamadaEncalhe();
 		
@@ -313,13 +310,12 @@ public class BalanceamentoRecolhimentoEditorTest extends AbstractRepositoryImplT
 		lancamentoParcialCapricho.setStatus(StatusLancamentoParcial.PROJETADO);
 		
 		PeriodoLancamentoParcial parcialCapricho = Fixture.criarPeriodoLancamentoParcial(
-				lancamentoCapricho.getDataLancamentoPrevista(), 
+				lancamentoCapricho, 
 				lancamentoParcialCapricho, 
-				lancamentoCapricho.getDataRecolhimentoPrevista(), 
 				StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.FINAL);
 
 		Estudo estudoCapricho = Fixture.estudo(new BigDecimal(180),
-				Fixture.criarData(12, Calendar.MARCH, 2012), capricho1);
+				lancamentoCapricho.getDataLancamentoDistribuidor(), capricho1);
 		
 		EstudoCota estudoCotaCapricho = Fixture.estudoCota(BigDecimal.TEN, BigDecimal.ONE, estudoCapricho, cotaDinap);
 
@@ -342,13 +338,12 @@ public class BalanceamentoRecolhimentoEditorTest extends AbstractRepositoryImplT
 		lancamentoParcialQuatroRodas.setStatus(StatusLancamentoParcial.PROJETADO);
 		
 		PeriodoLancamentoParcial parcialQuatroRodas = Fixture.criarPeriodoLancamentoParcial(
-				lancamentoQuatroRodas.getDataLancamentoPrevista(), 
+				lancamentoQuatroRodas, 
 				lancamentoParcialQuatroRodas, 
-				lancamentoQuatroRodas.getDataRecolhimentoPrevista(), 
 				StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.FINAL);
 		
 		Estudo estudoQuatroRodas = Fixture.estudo(new BigDecimal(180),
-				Fixture.criarData(12, Calendar.MARCH, 2012), quatroRoda2);
+				lancamentoQuatroRodas.getDataLancamentoDistribuidor(), quatroRoda2);
 		
 		EstudoCota estudoCotaQuatroRodas = Fixture.estudoCota(BigDecimal.TEN, BigDecimal.ONE, estudoQuatroRodas, cotaFC);
 		
@@ -368,13 +363,12 @@ public class BalanceamentoRecolhimentoEditorTest extends AbstractRepositoryImplT
 		lancamentoParcialVeja.setStatus(StatusLancamentoParcial.PROJETADO);
 		
 		PeriodoLancamentoParcial parcialVeja = Fixture.criarPeriodoLancamentoParcial(
-				lancamentoVeja.getDataLancamentoPrevista(), 
+				lancamentoVeja, 
 				lancamentoParcialVeja, 
-				lancamentoVeja.getDataRecolhimentoPrevista(), 
 				StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.FINAL);
 
 		Estudo estudoVeja = Fixture.estudo(new BigDecimal(180),
-				Fixture.criarData(12, Calendar.MARCH, 2012), veja1);
+				lancamentoVeja.getDataLancamentoDistribuidor(), veja1);
 		
 		EstudoCota estudoCotaVeja = Fixture.estudoCota(BigDecimal.TEN, BigDecimal.ONE, estudoVeja, cotaManoel);
 
@@ -397,13 +391,12 @@ public class BalanceamentoRecolhimentoEditorTest extends AbstractRepositoryImplT
 		lancamentoParcialInfoExame.setStatus(StatusLancamentoParcial.PROJETADO);
 		
 		PeriodoLancamentoParcial parcialInfoExame = Fixture.criarPeriodoLancamentoParcial(
-				lancamentoInfoExame.getDataLancamentoPrevista(), 
-				lancamentoParcialInfoExame, 
-				lancamentoInfoExame.getDataRecolhimentoPrevista(), 
+				lancamentoInfoExame, 
+				lancamentoParcialInfoExame,
 				StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.FINAL);
 		
 		Estudo estudoInfoExame = Fixture.estudo(new BigDecimal(180),
-				Fixture.criarData(12, Calendar.MARCH, 2012), infoExame3);
+				lancamentoInfoExame.getDataLancamentoDistribuidor(), infoExame3);
 		
 		EstudoCota estudoCotaInfoExame = Fixture.estudoCota(BigDecimal.TEN, BigDecimal.ONE, estudoInfoExame, cotaJurandir);
 		

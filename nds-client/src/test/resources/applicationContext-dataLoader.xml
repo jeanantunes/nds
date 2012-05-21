@@ -17,7 +17,7 @@
 		<property name="username" value="root" />
 		<property name="password" value="root" />
     </bean>
-
+	
      <!-- Ambiente de Testes
 	<bean id="dataSource"
 		class="org.springframework.jdbc.datasource.DriverManagerDataSource">

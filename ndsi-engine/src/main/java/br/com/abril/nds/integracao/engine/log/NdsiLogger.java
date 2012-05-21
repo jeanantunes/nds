@@ -20,6 +20,7 @@ import br.com.abril.nds.integracao.engine.MessageHeaderProperties;
 import br.com.abril.nds.integracao.engine.data.Message;
 import br.com.abril.nds.integracao.engine.data.RouteTemplate;
 import br.com.abril.nds.integracao.model.EventoExecucao;
+import br.com.abril.nds.integracao.model.EventoExecucaoEnum;
 import br.com.abril.nds.integracao.model.InterfaceExecucao;
 import br.com.abril.nds.integracao.model.LogExecucao;
 import br.com.abril.nds.integracao.model.LogExecucaoMensagem;
@@ -40,6 +41,7 @@ public class NdsiLogger {
 	
 	private Logger LOGGER = Logger.getLogger(NdsiLogger.class);
 	private boolean hasError = false;
+	private boolean hasWarning = false;
 	private LogExecucao logExecucao = null;
 	private LogExecucaoMensagem logExecucaoMensagem = null;
 	
@@ -86,6 +88,8 @@ public class NdsiLogger {
 		
 		if (hasError) {
 			logExecucao.setStatus(StatusExecucaoEnum.FALHA);
+		} else if (hasWarning) {
+			logExecucao.setStatus(StatusExecucaoEnum.AVISO);
 		} else {
 			logExecucao.setStatus(StatusExecucaoEnum.SUCESSO);
 		}
@@ -107,13 +111,39 @@ public class NdsiLogger {
 	}
 	
 	
-	public void logError(Message message, String descricaoErro) {
+	public void logError(Message message, EventoExecucaoEnum eventoExecucaoEnum, String descricaoErro) {
+		
+		hasError = true;
+		this.logMessage(message, eventoExecucaoEnum, descricaoErro);
+	}
+	
+	
+	public void logWarning(Message message, EventoExecucaoEnum eventoExecucaoEnum, String descricaoErro) {
+		
+		hasWarning = true;
+		this.logMessage(message, eventoExecucaoEnum, descricaoErro);
+	}
+	
+	
+	public void logInfo(Message message, EventoExecucaoEnum eventoExecucaoEnum, String descricaoErro) {
+		
+		this.logMessage(message, eventoExecucaoEnum, descricaoErro);
+	}
+	
+	
+	/**
+	 * Faz a inserção da mensagem de log
+	 * @param message
+	 * @param eventoExecucaoEnum
+	 * @param descricaoErro
+	 */
+	private void logMessage(Message message, EventoExecucaoEnum eventoExecucaoEnum, String descricaoErro) {
 		
 		hasError = true;
 		
 		// TODO: criar enum
 		EventoExecucao eventoExecucao = new EventoExecucao();
-		eventoExecucao.setId(0L);
+		eventoExecucao.setId(eventoExecucaoEnum.getCodigo());
 		
 		logExecucaoMensagem = new LogExecucaoMensagem();
 		logExecucaoMensagem.setLogExecucao(this.logExecucao);

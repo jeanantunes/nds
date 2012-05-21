@@ -48,7 +48,7 @@ public class EMS0130MessageProcessor implements MessageProcessor{
 		sql.append("JOIN FETCH e.endereco ender ");
 		sql.append("JOIN FETCH pdv.cota c ");
 		sql.append("JOIN FETCH pdv.segmentacao.tipoPontoPDV tpdv ");
-		sql.append("WHERE c.situacaoCadastro = :ativo");
+		sql.append("WHERE c.situacaoCadastro = :ativo ");
 		sql.append("AND t.principal = true ");
 		sql.append("AND e.principal = true ");
 	
@@ -66,9 +66,7 @@ public class EMS0130MessageProcessor implements MessageProcessor{
 			for (PDV pdv : pdvs){
 				 
 			
-				EMS0130Output output = new EMS0130Output();
-				
-				output.setCodigoDaCota(pdv.getCota().getNumeroCota());
+				EMS0130Output output = new EMS0130Output();			
 				
 				if(!pdv.getEnderecos().isEmpty()){
 					Endereco endereco = pdv.getEnderecos().iterator().next().getEndereco();
@@ -77,15 +75,15 @@ public class EMS0130MessageProcessor implements MessageProcessor{
 					output.setNomeMunicipio(endereco.getCidade());
 					output.setSiglaUf(endereco.getUf());
 					output.setCep(endereco.getCep());				
-					output.setIdEnd(endereco.getId());
 				}
 				
 				if(!pdv.getTelefones().isEmpty()){
 					Telefone tel = pdv.getTelefones().iterator().next().getTelefone();
 					output.setDdd(tel.getDdd());
-					output.setTelefone(tel.getNumero());
-					output.setIdTel(tel.getId());					
+					output.setTelefone(tel.getNumero());			
 				}
+				
+				output.setCodigoDaCota(pdv.getCota().getNumeroCota());
 				output.setPontoDeReferencia(pdv.getPontoReferencia());
 				output.setTipoPontoVenda(pdv.getSegmentacao().getTipoPontoPDV().getCodigo());
 			
@@ -99,7 +97,6 @@ public class EMS0130MessageProcessor implements MessageProcessor{
 			print.close();
 			
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 				

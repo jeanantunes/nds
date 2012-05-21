@@ -34,7 +34,7 @@ public class ConferenciaEncalheRepositoryImpl extends
 		hql.append(" 		MOV_EST_COTA.QTDE AS qtdExemplar,                  ");
 		hql.append(" 		MOV_EST_COTA.PRODUTO_EDICAO_ID AS idProdutoEdicao, ");
 		hql.append(" 		PROD_EDICAO.CODIGO_DE_BARRAS AS codigoDeBarras,    ");
-		hql.append(" 		PROD_EDICAO.CODIGOSM AS codigoSM,                  ");
+		hql.append(" 		LANCTO.SEQUENCIA_MATRIZ AS codigoSM,               ");
 		hql.append("        CH_ENCALHE.DATA_RECOLHIMENTO AS dataRecolhimento,  ");
 		hql.append(" 		PROD.CODIGO AS codigo,                                                                       ");
 		hql.append(" 		PROD.NOME AS nomeProduto,                                                                    ");
@@ -98,6 +98,7 @@ public class ConferenciaEncalheRepositoryImpl extends
 
 		hql.append("     FROM    ");
 		hql.append("         CONFERENCIA_ENCALHE CONF_ENCALHE,     ");
+		hql.append("         LANCAMENTO LANCTO,					   ");
 		hql.append("         MOVIMENTO_ESTOQUE_COTA MOV_EST_COTA,  ");
 		hql.append("         PRODUTO_EDICAO PROD_EDICAO,           ");
 		hql.append("         PRODUTO PROD,                         ");
@@ -105,7 +106,9 @@ public class ConferenciaEncalheRepositoryImpl extends
 		hql.append("         CHAMADA_ENCALHE CH_ENCALHE            ");
 
 		hql.append("     WHERE   ");
-		hql.append("         CONF_ENCALHE.MOVIMENTO_ESTOQUE_COTA_ID=MOV_EST_COTA.ID      ");
+		
+		hql.append("		 CONF_ENCALHE.LANCAMENTO_ID = LANCTO.ID						 ");
+		hql.append("         AND CONF_ENCALHE.MOVIMENTO_ESTOQUE_COTA_ID=MOV_EST_COTA.ID  ");
 		hql.append("         AND MOV_EST_COTA.PRODUTO_EDICAO_ID=PROD_EDICAO.ID           ");
 		hql.append("         AND PROD_EDICAO.PRODUTO_ID=PROD.ID                          ");
 		hql.append("         AND CONF_ENCALHE.CHAMADA_ENCALHE_COTA_ID=CH_ENCALHE_COTA.ID ");

@@ -35,6 +35,8 @@ import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.cadastro.TipoProduto;
 import br.com.abril.nds.model.cadastro.TipoRegistroCobranca;
 import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
+import br.com.abril.nds.model.planejamento.Estudo;
+import br.com.abril.nds.model.planejamento.EstudoCota;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
@@ -58,7 +60,11 @@ public class EstoqueProdutoCotaRepositoryImplTest extends AbstractRepositoryImpl
 	
 	private static Banco bancoHSBC;
 	
-	private Cota cotaManoel;
+	private Cota cotaManoel1;
+	private Cota cotaManoel2;
+	
+	private Lancamento lancamentoVeja1;
+	private Lancamento lancamentoCaras1;
 	
 	@Before
 	public void setup() {
@@ -118,13 +124,13 @@ public class EstoqueProdutoCotaRepositoryImplTest extends AbstractRepositoryImpl
 		
 		produtoEdicaoVeja1 =
 			Fixture.produtoEdicao(1L, 10, 14, new BigDecimal(0.1),
-								  BigDecimal.TEN, new BigDecimal(20), produtoVeja);
+								  BigDecimal.TEN, new BigDecimal(20), "ABCDEFGHIJKLMNOPQRSTU", 1L, produtoVeja);
 		produtoEdicaoVeja1.setDesconto(null);
 		save(produtoEdicaoVeja1);
 		
 		
 		produtoEdicaoCaras1 = Fixture.produtoEdicao(2L, 10, 14, new BigDecimal(0.1),
-				  BigDecimal.TEN, new BigDecimal(20), produtoCaras);
+				  BigDecimal.TEN, new BigDecimal(20), "ABCDEFGHIJKLMNOPQRST", 2L, produtoCaras);
 		
 		produtoEdicaoCaras1.setDesconto(new BigDecimal(8));
 		save(produtoEdicaoCaras1);
@@ -136,32 +142,61 @@ public class EstoqueProdutoCotaRepositoryImplTest extends AbstractRepositoryImpl
 			Fixture.pessoaFisica("123.456.789-00", "sys.discover@gmail.com", "Manoel da Silva");
 		save(manoel);
 		
-		cotaManoel = Fixture.cota(123, manoel, SituacaoCadastro.ATIVO, box1);
-		save(cotaManoel);
+		cotaManoel1 = Fixture.cota(123, manoel, SituacaoCadastro.ATIVO, box1);
+		save(cotaManoel1);
+		
+		cotaManoel2 = Fixture.cota(1234, manoel, SituacaoCadastro.ATIVO, box1);
+		save(cotaManoel2);
 		
 		EstoqueProdutoCota estoqueProdutoCotaVeja1 =
-			Fixture.estoqueProdutoCota(produtoEdicaoVeja1, cotaManoel,
+			Fixture.estoqueProdutoCota(produtoEdicaoVeja1, cotaManoel1,
 									   BigDecimal.TEN, BigDecimal.ONE);
 		save(estoqueProdutoCotaVeja1);
 		
 		EstoqueProdutoCota estoqueProdutoCotaCaras1 =
-				Fixture.estoqueProdutoCota(produtoEdicaoCaras1, cotaManoel,
+				Fixture.estoqueProdutoCota(produtoEdicaoCaras1, cotaManoel1,
 										   BigDecimal.TEN, BigDecimal.ONE);
-			save(estoqueProdutoCotaCaras1);
+		save(estoqueProdutoCotaCaras1);
 		
-		Lancamento lancamentoVeja1 =
+		EstoqueProdutoCota estoqueProdutoCota2Veja1 =
+			Fixture.estoqueProdutoCota(produtoEdicaoVeja1, cotaManoel2,
+									   BigDecimal.TEN, BigDecimal.ONE);
+		save(estoqueProdutoCota2Veja1);
+		
+		lancamentoVeja1 =
 			Fixture.lancamentoExpedidos(TipoLancamento.LANCAMENTO, produtoEdicaoVeja1, new Date(),
 										DateUtil.adicionarDias(new Date(), 1), new Date(), new Date(),
 										BigDecimal.TEN, StatusLancamento.EXPEDIDO, null, null, 1);
 		save(lancamentoVeja1);
 		
 		
-		Lancamento lancamentoCaras1 =
+		lancamentoCaras1 =
 				Fixture.lancamentoExpedidos(TipoLancamento.LANCAMENTO, produtoEdicaoCaras1, new Date(),
 											DateUtil.adicionarDias(new Date(), 1), new Date(), new Date(),
 											BigDecimal.TEN, StatusLancamento.EXPEDIDO, null, null, 1);
+		
 		save(lancamentoCaras1);
 		
+		Estudo estudoVeja =
+			Fixture.estudo(BigDecimal.ZERO, lancamentoVeja1.getDataLancamentoPrevista(),
+						   produtoEdicaoVeja1);
+		
+		Estudo estudoCaras =
+				Fixture.estudo(BigDecimal.ZERO, lancamentoCaras1.getDataLancamentoPrevista(),
+							   produtoEdicaoCaras1);
+		
+		save(estudoVeja, estudoCaras);
+		
+		EstudoCota estudoCotaManoel1Veja =
+			Fixture.estudoCota(BigDecimal.ZERO, BigDecimal.ZERO, estudoVeja, cotaManoel1);
+		
+		EstudoCota estudoCotaManoel2Veja =
+			Fixture.estudoCota(BigDecimal.ZERO, BigDecimal.ZERO, estudoVeja, cotaManoel2);
+		
+		EstudoCota estudoCotaManoel1Caras =
+				Fixture.estudoCota(BigDecimal.ZERO, BigDecimal.ZERO, estudoCaras, cotaManoel1);
+		
+		save(estudoCotaManoel1Veja, estudoCotaManoel2Veja, estudoCotaManoel1Caras);
 	}
 	
 	public void criarDistribuidor() {
@@ -223,17 +258,18 @@ public class EstoqueProdutoCotaRepositoryImplTest extends AbstractRepositoryImpl
 	@Test
 	public void buscarEstoqueProdutoCotaPorIdProdutEdicao() {
 		
-		Set<Long> idsProdutoEdicao = new TreeSet<Long>();
+		Set<Long> idsLancamento = new TreeSet<Long>();
 		
-		idsProdutoEdicao.add(produtoEdicaoVeja1.getId());
+		idsLancamento.add(lancamentoVeja1.getId());
+		idsLancamento.add(lancamentoCaras1.getId());
 		
 		List<EstoqueProdutoCota> listaEstoqueProdutoCota = 
-			this.estoqueProdutoCotaRepository.buscarEstoquesProdutoCotaPorIdProdutEdicao(
-				idsProdutoEdicao);
+			this.estoqueProdutoCotaRepository.buscarListaEstoqueProdutoCota(
+				idsLancamento);
 		
 		Assert.assertNotNull(listaEstoqueProdutoCota);
 		
-		Assert.assertTrue(!listaEstoqueProdutoCota.isEmpty());
+		Assert.assertTrue(listaEstoqueProdutoCota.size() > 0);
 	}
 	
 	@Test
@@ -247,7 +283,7 @@ public class EstoqueProdutoCotaRepositoryImplTest extends AbstractRepositoryImpl
 		
 		Long idDistribuidor = distribuidor.getId();
 		
-		Integer numeroCota = cotaManoel.getNumeroCota();
+		Integer numeroCota = cotaManoel1.getNumeroCota();
 		
 		BigDecimal valorTotalReparteCota = 
 				estoqueProdutoCotaRepository.obterValorTotalReparteCota(numeroCota, listaIdProdutoEdicao, idDistribuidor);

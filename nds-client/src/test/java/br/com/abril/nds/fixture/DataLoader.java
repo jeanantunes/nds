@@ -59,8 +59,6 @@ import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.Rota;
 import br.com.abril.nds.model.cadastro.RotaRoteiroOperacao;
-import br.com.abril.nds.model.cadastro.TipoDesconto;
-import br.com.abril.nds.model.cadastro.TipoGarantia;
 import br.com.abril.nds.model.cadastro.RotaRoteiroOperacao.TipoOperacao;
 import br.com.abril.nds.model.cadastro.Roteiro;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
@@ -68,9 +66,11 @@ import br.com.abril.nds.model.cadastro.Telefone;
 import br.com.abril.nds.model.cadastro.TelefoneDistribuidor;
 import br.com.abril.nds.model.cadastro.TelefoneEntregador;
 import br.com.abril.nds.model.cadastro.TipoBox;
+import br.com.abril.nds.model.cadastro.TipoDesconto;
 import br.com.abril.nds.model.cadastro.TipoEndereco;
 import br.com.abril.nds.model.cadastro.TipoEntrega;
 import br.com.abril.nds.model.cadastro.TipoFornecedor;
+import br.com.abril.nds.model.cadastro.TipoGarantia;
 import br.com.abril.nds.model.cadastro.TipoLicencaMunicipal;
 import br.com.abril.nds.model.cadastro.TipoParametroSistema;
 import br.com.abril.nds.model.cadastro.TipoProduto;
@@ -129,9 +129,13 @@ import br.com.abril.nds.model.planejamento.ChamadaEncalheCota;
 import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.model.planejamento.EstudoCota;
 import br.com.abril.nds.model.planejamento.Lancamento;
+import br.com.abril.nds.model.planejamento.LancamentoParcial;
+import br.com.abril.nds.model.planejamento.PeriodoLancamentoParcial;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
+import br.com.abril.nds.model.planejamento.StatusLancamentoParcial;
 import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
+import br.com.abril.nds.model.planejamento.TipoLancamentoParcial;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.util.DateUtil;
 
@@ -210,7 +214,9 @@ public class DataLoader {
 	private static Distribuidor distribuidor;
 	private static TipoProduto tipoProdutoRevista;
 	private static TipoProduto tipoRefrigerante;
-
+	private static TipoProduto tipoCromo;
+	private static TipoProduto tipoOutros;
+	
 	private static Produto produtoVeja;
 	private static Produto produtoSuper;
 	private static Produto produtoCapricho;
@@ -645,7 +651,11 @@ public class DataLoader {
 		
 		gerarTipoEntrega(session);
 		
+		gerarParciais(session);
+		
 		gerarDescontos(session);
+		
+		criarDadosBalanceamentoRecolhimento(session);
 		
 	}
 
@@ -673,6 +683,64 @@ public class DataLoader {
 		save(session, tipoDesconto);
 	}
 	
+	private static void gerarParciais(Session session) {
+		
+		Produto guiaQuatroRodas = Fixture.produto("3111", "Guia Quatro Rodas", "Guia Quatro Rodas", PeriodicidadeProduto.ANUAL, tipoProdutoRevista);
+		guiaQuatroRodas.addFornecedor(fornecedorDinap);
+		
+		Produto cromoBrasileirao = Fixture.produto("3333", "Cromo Brasileirão", "Cromo Brasileirão", PeriodicidadeProduto.ANUAL, tipoCromo);
+		cromoBrasileirao.addFornecedor(fornecedorFc);
+		
+		Produto guiaViagem = Fixture.produto("3113", "Guia Viagem", "Guia Viagem", PeriodicidadeProduto.ANUAL, tipoProdutoRevista);
+		guiaViagem.addFornecedor(fornecedorDinap);
+		
+		save(session,guiaQuatroRodas,cromoBrasileirao,guiaViagem);
+		
+		ProdutoEdicao guiaQuatroRodasEd1 = Fixture.produtoEdicao(1L, 5, 30, 
+				new BigDecimal(50), new BigDecimal(100), new BigDecimal(100), "5546", 0L, guiaQuatroRodas);
+		guiaQuatroRodasEd1.setParcial(true);
+		
+		ProdutoEdicao cromoBrasileiraoEd1 = Fixture.produtoEdicao(1L, 5, 30, 
+				new BigDecimal(50), new BigDecimal(100), new BigDecimal(100), "3333", 0L, cromoBrasileirao);
+		cromoBrasileiraoEd1.setParcial(true);
+		
+		ProdutoEdicao guiaViagemEd1 = Fixture.produtoEdicao(1L, 5, 30, 
+				new BigDecimal(50), new BigDecimal(100), new BigDecimal(100), "2231", 0L, guiaViagem);
+		guiaViagemEd1.setParcial(true);
+		
+		save(session,guiaQuatroRodasEd1,cromoBrasileiraoEd1,guiaViagemEd1);
+		
+		
+		LancamentoParcial lancamentoParcial1 = Fixture.criarLancamentoParcial(
+				guiaQuatroRodasEd1, Fixture.criarData(1, 1, 2009), Fixture.criarData(1, 1, 2010), StatusLancamentoParcial.RECOLHIDO);
+		
+		LancamentoParcial lancamentoParcial2 = Fixture.criarLancamentoParcial(
+				cromoBrasileiraoEd1, Fixture.criarData(1, 2, 2011), Fixture.criarData(1, 2, 2012), StatusLancamentoParcial.PROJETADO);
+		
+		LancamentoParcial lancamentoParcial3 = Fixture.criarLancamentoParcial(
+				guiaViagemEd1, Fixture.criarData(1, 3, 2011), Fixture.criarData(1, 3, 2012), StatusLancamentoParcial.PROJETADO);
+		
+				
+		save(session, lancamentoParcial1,lancamentoParcial2,lancamentoParcial3);
+		
+		Lancamento lancamentoPeriodo = Fixture.lancamento(TipoLancamento.PARCIAL, cromoBrasileiraoEd1,
+				Fixture.criarData(1, 2, 2011),
+				Fixture.criarData(1, 3, 2011),
+				new Date(),
+				new Date(),
+				new BigDecimal(100),
+				StatusLancamento.PLANEJADO, null, 1);
+		save(session,lancamentoPeriodo);
+		
+		Estudo estudo = Fixture.estudo(new BigDecimal(200), Fixture.criarData(1, 2, 2011), cromoBrasileiraoEd1);
+		save(session,estudo);
+		
+		PeriodoLancamentoParcial periodo = Fixture.criarPeriodoLancamentoParcial(lancamentoPeriodo, lancamentoParcial2, 
+				StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.PARCIAL);
+		save(session, periodo);
+		
+	}
+
 	private static void gerarTipoEntrega(Session session) {
 		
 		tipoCotaRetira = Fixture.criarTipoEntrega(1L,"Cota Retira");
@@ -942,7 +1010,7 @@ public class DataLoader {
 	save(session, produtoBravo);
 
 	ProdutoEdicao produtoEdicao = Fixture.produtoEdicao(234L,12 , 1, new BigDecimal(9), new BigDecimal(8), 
-			new BigDecimal(10), produtoBravo);		
+			new BigDecimal(10), "ABCDEFGHIJKLMNOPQRSTU", 1L, produtoBravo);		
 	save(session, produtoEdicao);
 
 	TipoFornecedor tipoFornecedorPublicacao = Fixture.tipoFornecedorPublicacao();
@@ -2392,112 +2460,112 @@ public class DataLoader {
 	private static void criarProdutosEdicao(Session session) {
 		produtoEdicaoVeja1 = Fixture.produtoEdicao(1L, 10, 14,
 				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(20),
-				produtoVeja);
+				"ABC", 2L, produtoVeja);
 		session.save(produtoEdicaoVeja1);
 
 		produtoEdicaoVeja2 = Fixture.produtoEdicao(2L, 10, 14,
 				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(20),
-				produtoVeja);
+				"DEF", 3L, produtoVeja);
 		session.save(produtoEdicaoVeja2);
 
 		produtoEdicaoVeja3 = Fixture.produtoEdicao(3L, 10, 14,
 				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(20),
-				produtoVeja);
+				"GHI", 4L, produtoVeja);
 		session.save(produtoEdicaoVeja3);
 
 		produtoEdicaoVeja4 = Fixture.produtoEdicao(4L, 10, 14,
 				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(20),
-				produtoVeja);
+				"JKL", 5L, produtoVeja);
 		session.save(produtoEdicaoVeja4);
 
 		produtoEdicaoSuper1 = Fixture.produtoEdicao(1L, 10, 14,
 				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(20),
-				produtoSuper);
+				"MNO", 6L, produtoSuper);
 		session.save(produtoEdicaoSuper1);
 
 		produtoEdicaoCapricho1 = Fixture.produtoEdicao(1L, 9, 14,
 				new BigDecimal(0.15), new BigDecimal(9), new BigDecimal(13.5),
-				produtoCapricho);
+				"PQR", 7L, produtoCapricho);
 		session.save(produtoEdicaoCapricho1);
 
 		produtoEdicaoInfoExame1 = Fixture.produtoEdicao(1L, 12, 30,
 				new BigDecimal(0.25), new BigDecimal(11), new BigDecimal(14.5),
-				produtoInfoExame);
+				"STU", 8L, produtoInfoExame);
 		session.save(produtoEdicaoInfoExame1);
 
 		produtoEdicaoQuatroRodas1 = Fixture.produtoEdicao(1L, 7, 30,
 				new BigDecimal(0.30), new BigDecimal(12.5), new BigDecimal(16.5),
-				produtoQuatroRodas);
+				"VWX", 9L, produtoQuatroRodas);
 		session.save(produtoEdicaoQuatroRodas1);
 
 		produtoEdicaoBoaForma1 = Fixture.produtoEdicao(1L, 10, 30,
 				new BigDecimal(0.10), new BigDecimal(12), new BigDecimal(15),
-				produtoBoaForma);
+				"YZ1", 10L, produtoBoaForma);
 		session.save(produtoEdicaoBoaForma1);
 
 		produtoEdicaoBravo1 = Fixture.produtoEdicao(1L, 10, 30,
 				new BigDecimal(0.12), new BigDecimal(17), new BigDecimal(20),
-				produtoBravo);
+				"YZ2", 11L, produtoBravo);
 		session.save(produtoEdicaoBravo1);
 
 		produtoEdicaoCaras1 = Fixture.produtoEdicao(1L, 15, 30,
 				new BigDecimal(0.20), new BigDecimal(20), new BigDecimal(25),
-				produtoCaras);
+				"YZ3", 12L, produtoCaras);
 		session.save(produtoEdicaoCaras1);
 
 		produtoEdicaoCasaClaudia1 = Fixture.produtoEdicao(1L, 10, 30,
 				new BigDecimal(0.20), new BigDecimal(20), new BigDecimal(25),
-				produtoCasaClaudia);
+				"YZ4", 13L, produtoCasaClaudia);
 		session.save(produtoEdicaoCasaClaudia1);
 
 		produtoEdicaoClaudia1 = Fixture.produtoEdicao(1L, 10, 30,
 				new BigDecimal(0.10), new BigDecimal(10), new BigDecimal(11),
-				produtoClaudia);
+				"YZ5", 14L, produtoClaudia);
 		session.save(produtoEdicaoClaudia1);
 
 		produtoEdicaoContigo1 = Fixture.produtoEdicao(1L, 10, 30,
 				new BigDecimal(0.10), new BigDecimal(12), new BigDecimal(15),
-				produtoContigo);
+				"YZ6", 15L, produtoContigo);
 		session.save(produtoEdicaoContigo1);
 
 		produtoEdicaoManequim1 = Fixture.produtoEdicao(1L, 10, 30,
 				new BigDecimal(0.10), new BigDecimal(15), new BigDecimal(20),
-				produtoManequim);
+				"YZ7", 16L, produtoManequim);
 		session.save(produtoEdicaoManequim1);
 
 		produtoEdicaoNatGeo1 = Fixture.produtoEdicao(1L, 10, 30,
 				new BigDecimal(0.15), new BigDecimal(20), new BigDecimal(23),
-				produtoNatGeo);
+				"YZ8", 17L, produtoNatGeo);
 		session.save(produtoEdicaoNatGeo1);
 
 		produtoEdicaoPlacar1 = Fixture.produtoEdicao(1L, 10, 30,
 				new BigDecimal(0.20), new BigDecimal(9), new BigDecimal(12),
-				produtoPlacar);
+				"YZ9", 18L, produtoPlacar);
 		session.save(produtoEdicaoPlacar1);
 
 		cocaColaLight = Fixture.produtoEdicao(1L, 10, 30,
 				new BigDecimal(0.20), new BigDecimal(9), new BigDecimal(12),
-				cocaCola);
+				"WZ1", 19L, cocaCola);
 		session.save(cocaColaLight);
 
 		produtoEdicaoVeja1EncalheAnt = Fixture.produtoEdicao(5L, 10, 14,
 				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(20),
-				produtoVeja);
+				"WZ2", 20L, produtoVeja);
 		session.save(produtoEdicaoVeja1EncalheAnt);
 
 		produtoEdicaoVeja2EncalheAnt = Fixture.produtoEdicao(6L, 10, 14,
 				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(20),
-				produtoVeja);
+				"WZ3", 21L, produtoVeja);
 		session.save(produtoEdicaoVeja2EncalheAnt);
 
 		produtoEdicaoSuper1EncalheAnt = Fixture.produtoEdicao(2L, 10, 14,
 				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(20),
-				produtoSuper);
+				"WZ4", 22L, produtoSuper);
 		session.save(produtoEdicaoSuper1EncalheAnt);
 
 		produtoEdicaoSuper2EncalheAnt = Fixture.produtoEdicao(3L, 10, 14,
 				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(20),
-				produtoSuper);
+				"WZ5", 23L, produtoSuper);
 		session.save(produtoEdicaoSuper2EncalheAnt);
 
 	}
@@ -2589,6 +2657,11 @@ public class DataLoader {
 
 		tipoRefrigerante = Fixture.tipoProduto("Refrigerante",GrupoProduto.OUTROS, "5644566");
 		session.save(tipoRefrigerante);
+		
+		tipoCromo = Fixture.tipoProduto("Cromo",GrupoProduto.CROMO, "5644564");
+		session.save(tipoCromo);
+		
+		
 	}
 
 	private static void criarDistribuidor(Session session) {
@@ -2701,6 +2774,8 @@ public class DataLoader {
 		
 		distribuidor.setParametroContratoCota(parametroContrato);
 
+		distribuidor.setFatorRelancamentoParcial(5);
+		
 		save(session, distribuidor);
 		
 		politicaCobranca.setDistribuidor(distribuidor);
@@ -3115,7 +3190,7 @@ public class DataLoader {
 			session.save(produto); 
 
 			ProdutoEdicao produtoEdicao = Fixture.produtoEdicao(i.longValue(), 50, 40, 
-					new BigDecimal(30), new BigDecimal(20), new BigDecimal(10), produto);	
+					new BigDecimal(30), new BigDecimal(20), new BigDecimal(10), "ZZZ", 24L, produto);	
 			session.save(produtoEdicao);
 
 
@@ -3575,7 +3650,7 @@ public class DataLoader {
 			save(session,produto); 
 
 			ProdutoEdicao produtoEdicao = Fixture.produtoEdicao(i.longValue(), 50, 40, 
-					new BigDecimal(30), new BigDecimal(20), new BigDecimal(10), produto);	
+					new BigDecimal(30), new BigDecimal(20), new BigDecimal(10), "ZZ2", 25L, produto);	
 			save(session,produtoEdicao);
 
 
@@ -3648,16 +3723,16 @@ public class DataLoader {
 	private static void criarBanco(Session session) {
 
 		bancoHSBC = Fixture.banco(10L, true, carteiraSemRegistro, "1010",
-							  123456L, "1", "1", "Instrucoes.", Moeda.REAL, "HSBC", "399", BigDecimal.ZERO, BigDecimal.ZERO);
+							  123456L, "1", "1", "Instrucoes HSBC.", Moeda.REAL, "HSBC", "399", BigDecimal.ONE, BigDecimal.ZERO);
 
 		bancoITAU = Fixture.banco(10L, true, carteiraSemRegistro, "1010",
-				  12345L, "1", "1", "Instrucoes.", Moeda.REAL, "BANCO_ITAU", "184", BigDecimal.ZERO, BigDecimal.ZERO);
+				  12345L, "1", "1", "Instrucoes ITAU.", Moeda.REAL, "BANCO_ITAU", "184", BigDecimal.TEN, BigDecimal.ONE);
 
 		bancoDOBRASIL = Fixture.banco(10L, true, carteiraSemRegistro, "1010",
-				  123456L, "1", "1", "Instrucoes.", Moeda.REAL, "BANCO_DO_BRASIL", "001", BigDecimal.ZERO, BigDecimal.ZERO);
+				  123456L, "1", "1", "Instrucoes DOBRASIL.", Moeda.REAL, "BANCO_DO_BRASIL", "001", BigDecimal.ZERO, BigDecimal.ONE);
 
 		bancoBRADESCO = Fixture.banco(10L, true, carteiraSemRegistro, "1010",
-				  123456L, "1", "1", "Instrucoes.", Moeda.REAL, "BANCO_BRADESCO", "065", BigDecimal.ZERO, BigDecimal.ZERO);
+				  123456L, "1", "1", "Instrucoes BRADESCO.", Moeda.REAL, "BANCO_BRADESCO", "065", BigDecimal.ZERO, BigDecimal.TEN);
 
 		save(session, bancoHSBC,bancoITAU,bancoDOBRASIL,bancoBRADESCO);
 	}
@@ -3778,18 +3853,18 @@ public class DataLoader {
 		save(session, produto91, produto92, produto93);
 
 		produtoEdicao91 = Fixture.produtoEdicao(91L, 10, 7,
-				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(15), produto91);
+				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(15), "ZZ3", 26L, produto91);
 
 		produtoEdicao91.setDesconto(BigDecimal.ZERO);
 
 
 		produtoEdicao92 = Fixture.produtoEdicao(92L, 10, 7,
-				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(18), produto92);
+				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(18), "ZZ4", 27L, produto92);
 		produtoEdicao92.setDesconto(BigDecimal.ONE);
 
 
 		produtoEdicao93 = Fixture.produtoEdicao(93L, 10, 7,
-				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(90), produto93);
+				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(90), "ZZ5", 28L, produto93);
 		produtoEdicao93.setDesconto(BigDecimal.ONE);
 
 
@@ -4154,17 +4229,17 @@ public class DataLoader {
 		save(session, produtoCE, produtoCE_2, produtoCE_3);
 
 		produtoEdicaoCE = Fixture.produtoEdicao(84L, 10, 7,
-				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(15), produtoCE);
+				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(15), "EZ7", 29L, produtoCE);
 		produtoEdicaoCE.setDesconto(BigDecimal.ZERO);
 
 
 		produtoEdicaoCE_2 = Fixture.produtoEdicao(85L, 10, 7,
-				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(18), produtoCE_2);
+				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(18), "EZ8", 30L, produtoCE_2);
 		produtoEdicaoCE.setDesconto(BigDecimal.ONE);
 
 
 		produtoEdicaoCE_3 = Fixture.produtoEdicao(86L, 10, 7,
-				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(90), produtoCE_3);
+				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(90), "EZ8", 31L, produtoCE_3);
 		produtoEdicaoCE.setDesconto(BigDecimal.ONE);
 
 
@@ -4448,7 +4523,7 @@ public class DataLoader {
 		save(session, mec);
 
 		ConferenciaEncalhe conferenciaEncalhe = Fixture.conferenciaEncalhe(
-				lancamentoRevistaCE, mec, chamadaEncalheCota, controleConferenciaEncalheCota);
+				mec, chamadaEncalheCota, controleConferenciaEncalheCota);
 		save(session, conferenciaEncalhe);
 		
 		
@@ -4464,7 +4539,7 @@ public class DataLoader {
 
 		save(session, mec);
 
-		conferenciaEncalhe = Fixture.conferenciaEncalhe(lancamentoRevistaCE, mec, chamadaEncalheCota, controleConferenciaEncalheCota);
+		conferenciaEncalhe = Fixture.conferenciaEncalhe(mec, chamadaEncalheCota, controleConferenciaEncalheCota);
 		save(session, conferenciaEncalhe);
 		
 		mec = Fixture.movimentoEstoqueCotaEnvioEncalhe( 
@@ -4479,7 +4554,7 @@ public class DataLoader {
 
 		save(session, mec);
 
-		conferenciaEncalhe = Fixture.conferenciaEncalhe(lancamentoRevistaCE, mec, chamadaEncalheCota, controleConferenciaEncalheCota);
+		conferenciaEncalhe = Fixture.conferenciaEncalhe(mec, chamadaEncalheCota, controleConferenciaEncalheCota);
 		save(session, conferenciaEncalhe);
 
 
@@ -4495,7 +4570,7 @@ public class DataLoader {
 
 		save(session, mec);
 
-		conferenciaEncalhe = Fixture.conferenciaEncalhe(lancamentoRevistaCE_2, mec, chamadaEncalheCota_2, controleConferenciaEncalheCota);
+		conferenciaEncalhe = Fixture.conferenciaEncalhe(mec, chamadaEncalheCota_2, controleConferenciaEncalheCota);
 		save(session, conferenciaEncalhe);
 
 		
@@ -4511,7 +4586,7 @@ public class DataLoader {
 
 		save(session, mec);
 		
-		conferenciaEncalhe = Fixture.conferenciaEncalhe(lancamentoRevistaCE_2, mec, chamadaEncalheCota_2, controleConferenciaEncalheCota);
+		conferenciaEncalhe = Fixture.conferenciaEncalhe(mec, chamadaEncalheCota_2, controleConferenciaEncalheCota);
 		save(session, conferenciaEncalhe);
 		
 		
@@ -4527,7 +4602,7 @@ public class DataLoader {
 
 		save(session, mec);
 
-		conferenciaEncalhe = Fixture.conferenciaEncalhe(lancamentoRevistaCE_2, mec, chamadaEncalheCota_2, controleConferenciaEncalheCota);
+		conferenciaEncalhe = Fixture.conferenciaEncalhe(mec, chamadaEncalheCota_2, controleConferenciaEncalheCota);
 		save(session, conferenciaEncalhe);
 
 		mec = Fixture.movimentoEstoqueCotaEnvioEncalhe( 
@@ -4542,7 +4617,7 @@ public class DataLoader {
 
 		save(session, mec);
 
-		conferenciaEncalhe = Fixture.conferenciaEncalhe(lancamentoRevistaCE_3, mec, chamadaEncalheCota_3, controleConferenciaEncalheCota);
+		conferenciaEncalhe = Fixture.conferenciaEncalhe(mec, chamadaEncalheCota_3, controleConferenciaEncalheCota);
 		save(session, conferenciaEncalhe);
 
 		mec = Fixture.movimentoEstoqueCotaEnvioEncalhe( 
@@ -4557,7 +4632,7 @@ public class DataLoader {
 
 		save(session, mec);
 
-		conferenciaEncalhe = Fixture.conferenciaEncalhe(lancamentoRevistaCE_3, mec, chamadaEncalheCota_3, controleConferenciaEncalheCota);
+		conferenciaEncalhe = Fixture.conferenciaEncalhe(mec, chamadaEncalheCota_3, controleConferenciaEncalheCota);
 		save(session, conferenciaEncalhe);
 
 		
@@ -4573,7 +4648,7 @@ public class DataLoader {
 
 		save(session, mec);
 
-		conferenciaEncalhe = Fixture.conferenciaEncalhe(lancamentoRevistaCE_3, mec, chamadaEncalheCota_3, controleConferenciaEncalheCota);
+		conferenciaEncalhe = Fixture.conferenciaEncalhe(mec, chamadaEncalheCota_3, controleConferenciaEncalheCota);
 		save(session, conferenciaEncalhe);
 
 
@@ -4589,7 +4664,7 @@ public class DataLoader {
 
 		save(session, mec);
 
-		conferenciaEncalhe = Fixture.conferenciaEncalhe(lancamentoRevistaCE_3, mec, chamadaEncalheCota_3, controleConferenciaEncalheCota);
+		conferenciaEncalhe = Fixture.conferenciaEncalhe(mec, chamadaEncalheCota_3, controleConferenciaEncalheCota);
 		save(session, conferenciaEncalhe);
 
 		mec = Fixture.movimentoEstoqueCotaEnvioEncalhe( 
@@ -4604,7 +4679,7 @@ public class DataLoader {
 
 		save(session, mec);
 
-		conferenciaEncalhe = Fixture.conferenciaEncalhe(lancamentoRevistaCE_3, mec, chamadaEncalheCota_3, controleConferenciaEncalheCota);
+		conferenciaEncalhe = Fixture.conferenciaEncalhe(mec, chamadaEncalheCota_3, controleConferenciaEncalheCota);
 		save(session, conferenciaEncalhe);
 
 		
@@ -4620,7 +4695,7 @@ public class DataLoader {
 
 		save(session, mec);
 
-		conferenciaEncalhe = Fixture.conferenciaEncalhe(lancamentoRevistaCE_3, mec, chamadaEncalheCota_3, controleConferenciaEncalheCota);
+		conferenciaEncalhe = Fixture.conferenciaEncalhe(mec, chamadaEncalheCota_3, controleConferenciaEncalheCota);
 		save(session, conferenciaEncalhe);
 		
 	}
@@ -4870,5 +4945,2408 @@ public class DataLoader {
 		telefoneEntregador = Fixture.telefoneEntregador(entregador, true, telefone, TipoTelefone.CELULAR);
 
 		save(session, entregador, endereco, enderecoEntregador, telefone, telefoneEntregador);
+	}
+	
+	private static void criarDadosBalanceamentoRecolhimento(Session session) {
+		
+		//EDITORES
+		Editor globo = Fixture.criarEditor("Globo", 680L);
+
+		Editor europa = Fixture.criarEditor("Europa", 681L);
+
+		Editor jazz = Fixture.criarEditor("Jazz", 682L);
+
+		TipoProduto tipoCromo = Fixture.tipoCromo();
+		
+		save(session, globo, europa, jazz, tipoCromo);
+
+		//PRODUTOS
+		Produto javaMagazine = Fixture.produto("541", "Java Magazine", "Java Magazine", PeriodicidadeProduto.MENSAL, tipoProdutoRevista);
+		javaMagazine.setEditor(europa);
+		javaMagazine.addFornecedor(fornecedorDinap);
+		save(session, javaMagazine);
+		
+		Produto mundoJava = Fixture.produto("542", "Mundo Java", "Mundo Java", PeriodicidadeProduto.SEMANAL, tipoProdutoRevista);
+		mundoJava.setEditor(globo);
+		mundoJava.addFornecedor(fornecedorDinap);
+		save(session, mundoJava);
+		
+		Produto sqlMagazine = Fixture.produto("543", "SQL Magazine", "SQL Magazine", PeriodicidadeProduto.SEMANAL, tipoProdutoRevista);
+		sqlMagazine.setEditor(europa);
+		sqlMagazine.addFornecedor(fornecedorDinap);
+		save(session, sqlMagazine);
+		
+		Produto galileu = Fixture.produto("544", "Galileu", "Galileu", PeriodicidadeProduto.SEMANAL, tipoProdutoRevista);
+		galileu.setEditor(globo);
+		galileu.addFornecedor(fornecedorDinap);
+		save(session, galileu);
+		
+		Produto duasRodas = Fixture.produto("545", "Duas Rodas", "Duas Rodas", PeriodicidadeProduto.MENSAL, tipoProdutoRevista);
+		duasRodas.setEditor(globo);
+		duasRodas.addFornecedor(fornecedorFc);
+		save(session, duasRodas);
+		
+		Produto guitarPlayer = Fixture.produto("546", "Guitar Player", "Guitar Player", PeriodicidadeProduto.MENSAL, tipoProdutoRevista);
+		guitarPlayer.setEditor(jazz);
+		guitarPlayer.addFornecedor(fornecedorDinap);
+		save(session, guitarPlayer);
+
+		Produto roadieCrew = Fixture.produto("547", "Roadie Crew", "Roadie Crew", PeriodicidadeProduto.MENSAL, tipoProdutoRevista);
+		roadieCrew.setEditor(editoraAbril);
+		roadieCrew.addFornecedor(fornecedorFc);
+		save(session, roadieCrew);
+		
+		Produto rockBrigade = Fixture.produto("548", "Rock Brigade", "Rock Brigade", PeriodicidadeProduto.MENSAL, tipoProdutoRevista);
+		rockBrigade.setEditor(editoraAbril);
+		rockBrigade.addFornecedor(fornecedorFc);
+		save(session, rockBrigade);
+		
+		Produto valhalla = Fixture.produto("549", "Valhalla", "Valhalla", PeriodicidadeProduto.MENSAL, tipoProdutoRevista);
+		valhalla.setEditor(editoraAbril);
+		valhalla.addFornecedor(fornecedorFc);
+		save(session, valhalla);
+		
+		Produto rollingStone = Fixture.produto("550", "Rolling Stone", "Rolling Stone", PeriodicidadeProduto.MENSAL, tipoProdutoRevista);
+		rollingStone.setEditor(editoraAbril);
+		rollingStone.addFornecedor(fornecedorFc);
+		save(session, rollingStone);
+
+		Produto bonsFluidos = Fixture.produto("551", "Bons Fluídos", "Bons Fluídos", PeriodicidadeProduto.MENSAL, tipoProdutoRevista);
+		bonsFluidos.setEditor(europa);
+		bonsFluidos.addFornecedor(fornecedorDinap);
+		save(session, bonsFluidos);
+		
+		Produto bravo = Fixture.produto("552", "Revista Bravo", "Revista Bravo", PeriodicidadeProduto.SEMANAL, tipoProdutoRevista);
+		bravo.setEditor(globo);
+		bravo.addFornecedor(fornecedorDinap);
+		save(session, bravo);
+		
+		Produto casaClaudia = Fixture.produto("553", "Casa Claudia", "Revista Casa Claudia", PeriodicidadeProduto.SEMANAL, tipoProdutoRevista);
+		casaClaudia.setEditor(europa);
+		casaClaudia.addFornecedor(fornecedorDinap);
+		save(session, casaClaudia);
+		
+		Produto jequiti = Fixture.produto("554", "Jequiti", "Jequiti", PeriodicidadeProduto.SEMANAL, tipoProdutoRevista);
+		jequiti.setEditor(globo);
+		jequiti.addFornecedor(fornecedorDinap);
+		save(session, jequiti);
+		
+		Produto mundoEstranho = Fixture.produto("555", "Mundo Estranho", "Revista Mundo Estranho", PeriodicidadeProduto.MENSAL, tipoProdutoRevista);
+		mundoEstranho.setEditor(globo);
+		mundoEstranho.addFornecedor(fornecedorFc);
+		save(session, mundoEstranho);
+		
+		Produto novaEscola = Fixture.produto("556", "Nova Escola", "Revista Nova Escola", PeriodicidadeProduto.MENSAL, tipoProdutoRevista);
+		novaEscola.setEditor(jazz);
+		novaEscola.addFornecedor(fornecedorDinap);
+		save(session, novaEscola);
+
+		Produto minhaCasa = Fixture.produto("557", "Minha Casa", "Revista Minha Casa", PeriodicidadeProduto.MENSAL, tipoProdutoRevista);
+		minhaCasa.setEditor(editoraAbril);
+		minhaCasa.addFornecedor(fornecedorFc);
+		save(session, minhaCasa);
+		
+		Produto recreio = Fixture.produto("558", "Recreio", "Revista Recreio", PeriodicidadeProduto.MENSAL, tipoProdutoRevista);
+		recreio.setEditor(editoraAbril);
+		recreio.addFornecedor(fornecedorFc);
+		save(session, recreio);
+		
+		Produto womenHealth = Fixture.produto("559", "Women's Health", "Revista Women's Health", PeriodicidadeProduto.MENSAL, tipoCromo);
+		womenHealth.setEditor(editoraAbril);
+		womenHealth.addFornecedor(fornecedorFc);
+		save(session, womenHealth);
+		
+		Produto viagemTurismo = Fixture.produto("560", "Viagem e Turismo", "Revista Viagem e Turismo", PeriodicidadeProduto.MENSAL, tipoProdutoRevista);
+		viagemTurismo.setEditor(editoraAbril);
+		viagemTurismo.addFornecedor(fornecedorFc);
+		save(session, viagemTurismo);
+
+		Produto vip = Fixture.produto("561", "VIP", "Revista VIP", PeriodicidadeProduto.MENSAL, tipoProdutoRevista);
+		vip.setEditor(jazz);
+		vip.addFornecedor(fornecedorDinap);
+		save(session, vip);
+
+		Produto gestaoEscolar = Fixture.produto("562", "Gestão Escolar", "Gestão Escolar", PeriodicidadeProduto.MENSAL, tipoProdutoRevista);
+		gestaoEscolar.setEditor(editoraAbril);
+		gestaoEscolar.addFornecedor(fornecedorFc);
+		save(session, gestaoEscolar);
+		
+		Produto lola = Fixture.produto("563", "Lola", "Lola", PeriodicidadeProduto.MENSAL, tipoCromo);
+		lola.setEditor(editoraAbril);
+		lola.addFornecedor(fornecedorFc);
+		save(session, lola);
+		
+		Produto heavyMetal = Fixture.produto("539", "Heavy Metal", "Heavy Metal", PeriodicidadeProduto.MENSAL, tipoProdutoRevista);
+		heavyMetal.setEditor(editoraAbril);
+		heavyMetal.addFornecedor(fornecedorFc);
+		save(session, heavyMetal);
+		
+		Produto metalUnderground = Fixture.produto("540", "Metal Underground", "Metal Underground", PeriodicidadeProduto.MENSAL, tipoProdutoRevista);
+		metalUnderground.setEditor(editoraAbril);
+		metalUnderground.addFornecedor(fornecedorFc);
+		save(session, metalUnderground);
+
+		
+		//PRODUTOS EDIÇÃO
+		ProdutoEdicao javaMagazineEdicao101 = 
+				Fixture.produtoEdicao(101L, 10, 14,
+									  new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(20),
+									  "ABC", 1L, javaMagazine, BigDecimal.TEN);
+
+		ProdutoEdicao javaMagazineEdicao102 = 
+				Fixture.produtoEdicao(102L, 13, 14,
+									  new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(17),
+									  "ABC1", 2L, javaMagazine, BigDecimal.TEN);
+		
+		ProdutoEdicao mundoJavaEdicao101 = 
+				Fixture.produtoEdicao(101L, 5, 14,
+									  new BigDecimal(0.2), BigDecimal.TEN, new BigDecimal(10.5),
+									  "BCD", 3L, mundoJava, BigDecimal.TEN);
+
+		ProdutoEdicao mundoJavaEdicao102 = 
+				Fixture.produtoEdicao(102L, 15, 14,
+									  new BigDecimal(0.2), BigDecimal.TEN, new BigDecimal(2.9),
+									  "BCD1", 4L, mundoJava, BigDecimal.TEN);
+		
+		ProdutoEdicao sqlMagazineEdicao101 = 
+				Fixture.produtoEdicao(101L, 10, 14,
+									  new BigDecimal(0.2), BigDecimal.TEN, new BigDecimal(23),
+									  "CDE", 5L, sqlMagazine, BigDecimal.TEN);
+		
+		ProdutoEdicao sqlMagazineEdicao102 = 
+				Fixture.produtoEdicao(102L, 8, 14,
+									  new BigDecimal(0.2), BigDecimal.TEN, new BigDecimal(10),
+									  "CDE1", 6L, sqlMagazine, BigDecimal.TEN);
+		
+		ProdutoEdicao galileuEdicao101 = 
+				Fixture.produtoEdicao(101L, 3, 14,
+									  new BigDecimal(0.2), BigDecimal.TEN, new BigDecimal(12),
+									  "DEF", 7L, galileu, BigDecimal.TEN);
+		
+		ProdutoEdicao galileuEdicao102 = 
+				Fixture.produtoEdicao(102L, 9, 14,
+									  new BigDecimal(0.2), BigDecimal.TEN, new BigDecimal(32.1),
+									  "DEF1", 8L, galileu, BigDecimal.TEN);
+		
+		ProdutoEdicao duasRodasEdicao101 = 
+				Fixture.produtoEdicao(101L, 8, 14,
+									  new BigDecimal(0.2), BigDecimal.TEN, new BigDecimal(11),
+									  "EFG", 9L, duasRodas, BigDecimal.TEN);
+		
+		ProdutoEdicao duasRodasEdicao102 = 
+				Fixture.produtoEdicao(102L, 6, 14,
+									  new BigDecimal(0.2), BigDecimal.TEN, new BigDecimal(16),
+									  "EFG1", 10L, duasRodas, BigDecimal.TEN);
+		
+		ProdutoEdicao guitarPlayerEdicao101 = 
+				Fixture.produtoEdicao(101L, 2, 14,
+									  new BigDecimal(0.2), BigDecimal.TEN, new BigDecimal(16),
+									  "FGH", 11L, guitarPlayer, BigDecimal.TEN);
+		
+		ProdutoEdicao guitarPlayerEdicao102 = 
+				Fixture.produtoEdicao(102L, 6, 14,
+									  new BigDecimal(0.2), BigDecimal.TEN, new BigDecimal(15),
+									  "FGH1", 12L, guitarPlayer, BigDecimal.TEN);
+		
+		ProdutoEdicao roadieCrewEdicao101 = 
+				Fixture.produtoEdicao(101L, 3, 14,
+									  new BigDecimal(0.2), BigDecimal.TEN, new BigDecimal(20),
+									  "GHI", 13L, roadieCrew, BigDecimal.TEN);
+		
+		ProdutoEdicao roadieCrewEdicao102 = 
+				Fixture.produtoEdicao(102L, 9, 14,
+									  new BigDecimal(0.2), BigDecimal.TEN, new BigDecimal(28),
+									  "GHI1", 14L, roadieCrew, BigDecimal.TEN);
+		
+		ProdutoEdicao rockBrigadeEdicao101 = 
+				Fixture.produtoEdicao(101L, 5, 14,
+									  new BigDecimal(0.2), BigDecimal.TEN, new BigDecimal(19),
+									  "HIJ", 15L, rockBrigade, BigDecimal.TEN);
+		
+		ProdutoEdicao rockBrigadeEdicao102 = 
+				Fixture.produtoEdicao(102L, 15, 14,
+									  new BigDecimal(0.2), BigDecimal.TEN, new BigDecimal(21.9),
+									  "HIJ1", 16L, rockBrigade, BigDecimal.TEN);
+		
+		ProdutoEdicao valhallaEdicao101 = 
+				Fixture.produtoEdicao(101L, 10, 14,
+									  new BigDecimal(0.2), BigDecimal.TEN, new BigDecimal(29.9),
+									  "IJK", 17L, valhalla, BigDecimal.TEN);
+		
+		ProdutoEdicao valhallaEdicao102 = 
+				Fixture.produtoEdicao(102L, 7, 14,
+									  new BigDecimal(0.2), BigDecimal.TEN, new BigDecimal(19.9),
+									  "IJK1", 18L, valhalla, BigDecimal.TEN);
+
+		ProdutoEdicao rollingStoneEdicao101 = 
+				Fixture.produtoEdicao(101L, 12, 14,
+									  new BigDecimal(0.2), BigDecimal.TEN, new BigDecimal(14),
+									  "JKL", 19L, rollingStone, BigDecimal.TEN);
+		
+		ProdutoEdicao rollingStoneEdicao102 = 
+				Fixture.produtoEdicao(102L, 11, 14,
+									  new BigDecimal(0.2), BigDecimal.TEN, new BigDecimal(13.5),
+									  "JKL1", 20L, rollingStone, BigDecimal.TEN);
+		
+		ProdutoEdicao bonsFluidosEdicao101 = 
+				Fixture.produtoEdicao(101L, 8, 14,
+									  new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(10),
+									  "ABC", 1L, bonsFluidos, BigDecimal.TEN);
+
+		ProdutoEdicao bonsFluidosEdicao102 = 
+				Fixture.produtoEdicao(102L, 7, 14,
+									  new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(20),
+									  "ABC1", 2L, bonsFluidos, BigDecimal.TEN);
+		
+		ProdutoEdicao bravoEdicao101 = 
+				Fixture.produtoEdicao(101L, 6, 14,
+									  new BigDecimal(0.2), BigDecimal.TEN, new BigDecimal(20),
+									  "BCD", 3L, bravo, BigDecimal.TEN);
+
+		ProdutoEdicao bravoEdicao102 = 
+				Fixture.produtoEdicao(102L, 7, 14,
+									  new BigDecimal(0.2), BigDecimal.TEN, new BigDecimal(20),
+									  "BCD1", 4L, bravo, BigDecimal.TEN);
+		
+		ProdutoEdicao casaClaudiaEdicao101 = 
+				Fixture.produtoEdicao(101L, 4, 14,
+									  new BigDecimal(0.2), BigDecimal.TEN, new BigDecimal(15),
+									  "CDE", 5L, casaClaudia, BigDecimal.TEN);
+		
+		ProdutoEdicao casaClaudiaEdicao102 = 
+				Fixture.produtoEdicao(102L, 10, 14,
+									  new BigDecimal(0.2), BigDecimal.TEN, new BigDecimal(18.9),
+									  "CDE1", 6L, casaClaudia, BigDecimal.TEN);
+		
+		ProdutoEdicao jequitiEdicao101 = 
+				Fixture.produtoEdicao(101L, 11, 14,
+									  new BigDecimal(0.2), BigDecimal.TEN, new BigDecimal(19.9),
+									  "DEF", 7L, jequiti, BigDecimal.TEN);
+		
+		ProdutoEdicao jequitiEdicao102 = 
+				Fixture.produtoEdicao(102L, 2, 14,
+									  new BigDecimal(0.2), BigDecimal.TEN, new BigDecimal(12.5),
+									  "DEF1", 8L, jequiti, BigDecimal.TEN);
+		
+		ProdutoEdicao mundoEstranhoEdicao101 = 
+				Fixture.produtoEdicao(101L, 1, 14,
+									  new BigDecimal(0.2), BigDecimal.TEN, new BigDecimal(17.5),
+									  "EFG", 9L, mundoEstranho, BigDecimal.TEN);
+		
+		ProdutoEdicao mundoEstranhoEdicao102 = 
+				Fixture.produtoEdicao(102L, 1, 14,
+									  new BigDecimal(0.2), BigDecimal.TEN, new BigDecimal(13),
+									  "EFG1", 10L, mundoEstranho, BigDecimal.TEN);
+		
+		ProdutoEdicao novaEscolaEdicao101 = 
+				Fixture.produtoEdicao(101L, 1, 14,
+									  new BigDecimal(0.2), BigDecimal.TEN, new BigDecimal(16),
+									  "FGH", 11L, novaEscola, BigDecimal.TEN);
+		
+		ProdutoEdicao novaEscolaEdicao102 = 
+				Fixture.produtoEdicao(102L, 1, 14,
+									  new BigDecimal(0.2), BigDecimal.TEN, new BigDecimal(30),
+									  "FGH1", 12L, novaEscola, BigDecimal.TEN);
+		
+		ProdutoEdicao minhaCasaEdicao101 = 
+				Fixture.produtoEdicao(101L, 5, 14,
+									  new BigDecimal(0.2), BigDecimal.TEN, new BigDecimal(31.5),
+									  "GHI", 13L, minhaCasa, BigDecimal.TEN);
+		
+		ProdutoEdicao minhaCasaEdicao102 = 
+				Fixture.produtoEdicao(102L, 15, 14,
+									  new BigDecimal(0.2), BigDecimal.TEN, new BigDecimal(16),
+									  "GHI1", 14L, minhaCasa, BigDecimal.TEN);
+		
+		ProdutoEdicao recreioEdicao101 = 
+				Fixture.produtoEdicao(101L, 10, 14,
+									  new BigDecimal(0.2), BigDecimal.TEN, new BigDecimal(18.9),
+									  "HIJ", 15L, recreio, BigDecimal.TEN);
+		
+		ProdutoEdicao recreioEdicao102 = 
+				Fixture.produtoEdicao(102L, 10, 14,
+									  new BigDecimal(0.2), BigDecimal.TEN, new BigDecimal(22),
+									  "HIJ1", 16L, recreio, BigDecimal.TEN);
+		
+		ProdutoEdicao womenHealthEdicao101 = 
+				Fixture.produtoEdicao(101L, 7, 14,
+									  new BigDecimal(0.2), BigDecimal.TEN, new BigDecimal(29),
+									  "IJK", 17L, womenHealth, BigDecimal.TEN);
+		
+		ProdutoEdicao womenHealthEdicao102 = 
+				Fixture.produtoEdicao(102L, 9, 14,
+									  new BigDecimal(0.2), BigDecimal.TEN, new BigDecimal(10.5),
+									  "IJK1", 18L, womenHealth, BigDecimal.TEN);
+
+		ProdutoEdicao viagemTurismoEdicao101 = 
+				Fixture.produtoEdicao(101L, 7, 14,
+									  new BigDecimal(0.2), BigDecimal.TEN, new BigDecimal(20.05),
+									  "JKL", 19L, viagemTurismo, BigDecimal.TEN);
+		
+		ProdutoEdicao viagemTurismoEdicao102 = 
+				Fixture.produtoEdicao(102L, 6, 14,
+									  new BigDecimal(0.2), BigDecimal.TEN, new BigDecimal(14.5),
+									  "JKL1", 20L, viagemTurismo, BigDecimal.TEN);
+		
+
+		ProdutoEdicao vipEdicao101 = 
+				Fixture.produtoEdicao(101L, 8, 14,
+									  new BigDecimal(0.2), BigDecimal.TEN, new BigDecimal(12),
+									  "FGH", 11L, vip, BigDecimal.TEN);
+		
+		ProdutoEdicao vipEdicao102 = 
+				Fixture.produtoEdicao(102L, 15, 14,
+									  new BigDecimal(0.2), BigDecimal.TEN, new BigDecimal(17),
+									  "FGH1", 12L, vip, BigDecimal.TEN);
+		
+		ProdutoEdicao gestaoEscolarEdicao101 = 
+				Fixture.produtoEdicao(101L, 14, 14,
+									  new BigDecimal(0.2), BigDecimal.TEN, new BigDecimal(9.9),
+									  "GHI", 13L, gestaoEscolar, BigDecimal.TEN);
+		
+		ProdutoEdicao gestaoEscolarEdicao102 = 
+				Fixture.produtoEdicao(102L, 4, 14,
+									  new BigDecimal(0.2), BigDecimal.TEN, new BigDecimal(9.9),
+									  "GHI1", 14L, gestaoEscolar, BigDecimal.TEN);
+		
+		ProdutoEdicao lolaEdicao101 = 
+				Fixture.produtoEdicao(101L, 5, 14,
+									  new BigDecimal(0.2), BigDecimal.TEN, new BigDecimal(8.5),
+									  "HIJ", 15L, lola, BigDecimal.TEN);
+		
+		ProdutoEdicao lolaEdicao102 = 
+				Fixture.produtoEdicao(102L, 9, 14,
+									  new BigDecimal(0.2), BigDecimal.TEN, new BigDecimal(6.9),
+									  "HIJ1", 16L, lola, BigDecimal.TEN);
+		
+		ProdutoEdicao heavyMetalEdicao101 = 
+				Fixture.produtoEdicao(101L, 1, 14,
+									  new BigDecimal(0.2), BigDecimal.TEN, new BigDecimal(50),
+									  "IJK", 17L, heavyMetal, BigDecimal.TEN);
+		
+		ProdutoEdicao heavyMetalEdicao102 = 
+				Fixture.produtoEdicao(102L, 1, 14,
+									  new BigDecimal(0.2), BigDecimal.TEN, new BigDecimal(50),
+									  "IJK1", 18L, heavyMetal, BigDecimal.TEN);
+
+		ProdutoEdicao metalUndergroundEdicao101 = 
+				Fixture.produtoEdicao(101L, 1, 14,
+									  new BigDecimal(0.2), BigDecimal.TEN, new BigDecimal(16),
+									  "JKL", 19L, metalUnderground, BigDecimal.TEN);
+		
+		ProdutoEdicao metalUndergroundEdicao102 = 
+				Fixture.produtoEdicao(102L, 1, 14,
+									  new BigDecimal(0.2), BigDecimal.TEN, new BigDecimal(16),
+									  "JKL1", 20L, metalUnderground, BigDecimal.TEN);
+
+		save(session, javaMagazineEdicao101, javaMagazineEdicao102, mundoJavaEdicao101, mundoJavaEdicao102, sqlMagazineEdicao101, sqlMagazineEdicao102,
+					  galileuEdicao101, galileuEdicao102, duasRodasEdicao101, duasRodasEdicao102, guitarPlayerEdicao101, guitarPlayerEdicao102,
+					  roadieCrewEdicao101, roadieCrewEdicao102, rockBrigadeEdicao101, rockBrigadeEdicao102, valhallaEdicao101, valhallaEdicao102,
+					  rollingStoneEdicao101, rollingStoneEdicao102, bonsFluidosEdicao101, bonsFluidosEdicao102, bravoEdicao101, bravoEdicao102,
+					  casaClaudiaEdicao101, casaClaudiaEdicao102, jequitiEdicao101, jequitiEdicao102, mundoEstranhoEdicao101, mundoEstranhoEdicao102,
+					  novaEscolaEdicao101, novaEscolaEdicao102, minhaCasaEdicao101, minhaCasaEdicao102, recreioEdicao101, recreioEdicao102,
+					  womenHealthEdicao101, womenHealthEdicao102, viagemTurismoEdicao101, viagemTurismoEdicao102, vipEdicao101, vipEdicao102,
+					  gestaoEscolarEdicao101, gestaoEscolarEdicao102, lolaEdicao101, lolaEdicao102, heavyMetalEdicao101, heavyMetalEdicao102,
+					  metalUndergroundEdicao101, metalUndergroundEdicao102);
+		
+		//LANCAMENTOS
+		Lancamento lancamentoJavaMagazineEdicao101 = Fixture.lancamento(
+				TipoLancamento.SUPLEMENTAR, javaMagazineEdicao101,
+				Fixture.criarData(9, Calendar.MAY, 2012),
+				Fixture.criarData(16, Calendar.MAY, 2012),
+				new Date(),
+				new Date(),
+				new BigDecimal(100),
+				StatusLancamento.EXPEDIDO, null, 1);
+
+		Lancamento lancamentoMundoJavaEdicao101 = Fixture.lancamento(
+				TipoLancamento.SUPLEMENTAR, mundoJavaEdicao101,
+				Fixture.criarData(9, Calendar.MAY, 2012),
+				Fixture.criarData(16, Calendar.MAY, 2012),
+				new Date(),
+				new Date(),
+				new BigDecimal(100),
+				StatusLancamento.EXPEDIDO, null, 1);
+		
+		Lancamento lancamentoSqlMagazineEdicao101 = Fixture.lancamento(
+				TipoLancamento.SUPLEMENTAR, sqlMagazineEdicao101,
+				Fixture.criarData(9, Calendar.MAY, 2012),
+				Fixture.criarData(16, Calendar.MAY, 2012),
+				new Date(),
+				new Date(),
+				new BigDecimal(100),
+				StatusLancamento.EXPEDIDO, null, 1);
+		
+		Lancamento lancamentoGalileuEdicao101 = Fixture.lancamento(
+				TipoLancamento.SUPLEMENTAR, galileuEdicao101,
+				Fixture.criarData(9, Calendar.MAY, 2012),
+				Fixture.criarData(16, Calendar.MAY, 2012),
+				new Date(),
+				new Date(),
+				new BigDecimal(100),
+				StatusLancamento.EXPEDIDO, null, 1);
+		
+		Lancamento lancamentoDuasRodasEdicao101 = Fixture.lancamento(
+				TipoLancamento.SUPLEMENTAR, duasRodasEdicao101,
+				Fixture.criarData(9, Calendar.MAY, 2012),
+				Fixture.criarData(16, Calendar.MAY, 2012),
+				new Date(),
+				new Date(),
+				new BigDecimal(100),
+				StatusLancamento.EXPEDIDO, null, 1);
+		
+		Lancamento lancamentoGuitarPlayerEdicao101 = Fixture.lancamento(
+				TipoLancamento.SUPLEMENTAR, guitarPlayerEdicao101,
+				Fixture.criarData(9, Calendar.MAY, 2012),
+				Fixture.criarData(16, Calendar.MAY, 2012),
+				new Date(),
+				new Date(),
+				new BigDecimal(100),
+				StatusLancamento.EXPEDIDO, null, 1);
+		
+		Lancamento lancamentoRoadieCrewEdicao101 = Fixture.lancamento(
+				TipoLancamento.SUPLEMENTAR, roadieCrewEdicao101,
+				Fixture.criarData(9, Calendar.MAY, 2012),
+				Fixture.criarData(16, Calendar.MAY, 2012),
+				new Date(),
+				new Date(),
+				new BigDecimal(100),
+				StatusLancamento.EXPEDIDO, null, 1);
+		
+		Lancamento lancamentoRockBrigadeEdicao101 = Fixture.lancamento(
+				TipoLancamento.SUPLEMENTAR, rockBrigadeEdicao101,
+				Fixture.criarData(9, Calendar.MAY, 2012),
+				Fixture.criarData(16, Calendar.MAY, 2012),
+				new Date(),
+				new Date(),
+				new BigDecimal(100),
+				StatusLancamento.EXPEDIDO, null, 1);
+		
+		Lancamento lancamentoValhallaEdicao101 = Fixture.lancamento(
+				TipoLancamento.SUPLEMENTAR, valhallaEdicao101,
+				Fixture.criarData(9, Calendar.MAY, 2012),
+				Fixture.criarData(16, Calendar.MAY, 2012),
+				new Date(),
+				new Date(),
+				new BigDecimal(100),
+				StatusLancamento.EXPEDIDO, null, 1);
+		
+		Lancamento lancamentoRollingStoneEdicao101 = Fixture.lancamento(
+				TipoLancamento.SUPLEMENTAR, rollingStoneEdicao101,
+				Fixture.criarData(9, Calendar.MAY, 2012),
+				Fixture.criarData(16, Calendar.MAY, 2012),
+				new Date(),
+				new Date(),
+				new BigDecimal(100),
+				StatusLancamento.EXPEDIDO, null, 1);
+		
+		Lancamento lancamentoBonsFluidosEdicao101 = Fixture.lancamento(
+				TipoLancamento.SUPLEMENTAR, bonsFluidosEdicao101,
+				Fixture.criarData(10, Calendar.MAY, 2012),
+				Fixture.criarData(17, Calendar.MAY, 2012),
+				new Date(),
+				new Date(),
+				new BigDecimal(100),
+				StatusLancamento.EXPEDIDO, null, 1);
+
+		Lancamento lancamentoBravoEdicao101 = Fixture.lancamento(
+				TipoLancamento.SUPLEMENTAR, bravoEdicao101,
+				Fixture.criarData(10, Calendar.MAY, 2012),
+				Fixture.criarData(17, Calendar.MAY, 2012),
+				new Date(),
+				new Date(),
+				new BigDecimal(100),
+				StatusLancamento.EXPEDIDO, null, 1);
+		
+		Lancamento lancamentoCasaClaudiaEdicao101 = Fixture.lancamento(
+				TipoLancamento.SUPLEMENTAR, casaClaudiaEdicao101,
+				Fixture.criarData(10, Calendar.MAY, 2012),
+				Fixture.criarData(17, Calendar.MAY, 2012),
+				new Date(),
+				new Date(),
+				new BigDecimal(100),
+				StatusLancamento.EXPEDIDO, null, 1);
+		
+		Lancamento lancamentoJequitiEdicao101 = Fixture.lancamento(
+				TipoLancamento.SUPLEMENTAR, jequitiEdicao101,
+				Fixture.criarData(10, Calendar.MAY, 2012),
+				Fixture.criarData(17, Calendar.MAY, 2012),
+				new Date(),
+				new Date(),
+				new BigDecimal(100),
+				StatusLancamento.EXPEDIDO, null, 1);
+		
+		Lancamento lancamentoMundoEstranhoEdicao101 = Fixture.lancamento(
+				TipoLancamento.SUPLEMENTAR, mundoEstranhoEdicao101,
+				Fixture.criarData(10, Calendar.MAY, 2012),
+				Fixture.criarData(17, Calendar.MAY, 2012),
+				new Date(),
+				new Date(),
+				new BigDecimal(100),
+				StatusLancamento.EXPEDIDO, null, 1);
+		
+		Lancamento lancamentoNovaEscolaEdicao101 = Fixture.lancamento(
+				TipoLancamento.SUPLEMENTAR, novaEscolaEdicao101,
+				Fixture.criarData(10, Calendar.MAY, 2012),
+				Fixture.criarData(17, Calendar.MAY, 2012),
+				new Date(),
+				new Date(),
+				new BigDecimal(100),
+				StatusLancamento.EXPEDIDO, null, 1);
+		
+		Lancamento lancamentoMinhaCasaEdicao101 = Fixture.lancamento(
+				TipoLancamento.SUPLEMENTAR, minhaCasaEdicao101,
+				Fixture.criarData(10, Calendar.MAY, 2012),
+				Fixture.criarData(17, Calendar.MAY, 2012),
+				new Date(),
+				new Date(),
+				new BigDecimal(100),
+				StatusLancamento.EXPEDIDO, null, 1);
+		
+		Lancamento lancamentoRecreioEdicao101 = Fixture.lancamento(
+				TipoLancamento.SUPLEMENTAR, recreioEdicao101,
+				Fixture.criarData(10, Calendar.MAY, 2012),
+				Fixture.criarData(17, Calendar.MAY, 2012),
+				new Date(),
+				new Date(),
+				new BigDecimal(100),
+				StatusLancamento.EXPEDIDO, null, 1);
+		
+		Lancamento lancamentoWomenHealthEdicao101 = Fixture.lancamento(
+				TipoLancamento.SUPLEMENTAR, womenHealthEdicao101,
+				Fixture.criarData(10, Calendar.MAY, 2012),
+				Fixture.criarData(17, Calendar.MAY, 2012),
+				new Date(),
+				new Date(),
+				new BigDecimal(100),
+				StatusLancamento.EXPEDIDO, null, 1);
+		
+		Lancamento lancamentoViagemTurismoEdicao101 = Fixture.lancamento(
+				TipoLancamento.SUPLEMENTAR, viagemTurismoEdicao101,
+				Fixture.criarData(10, Calendar.MAY, 2012),
+				Fixture.criarData(17, Calendar.MAY, 2012),
+				new Date(),
+				new Date(),
+				new BigDecimal(100),
+				StatusLancamento.EXPEDIDO, null, 1);
+		
+		Lancamento lancamentoVipEdicao101 = Fixture.lancamento(
+				TipoLancamento.SUPLEMENTAR, vipEdicao101,
+				Fixture.criarData(11, Calendar.MAY, 2012),
+				Fixture.criarData(18, Calendar.MAY, 2012),
+				new Date(),
+				new Date(),
+				new BigDecimal(100),
+				StatusLancamento.EXPEDIDO, null, 1);
+		
+		Lancamento lancamentoGestaoEscolarEdicao101 = Fixture.lancamento(
+				TipoLancamento.SUPLEMENTAR, gestaoEscolarEdicao101,
+				Fixture.criarData(11, Calendar.MAY, 2012),
+				Fixture.criarData(18, Calendar.MAY, 2012),
+				new Date(),
+				new Date(),
+				new BigDecimal(100),
+				StatusLancamento.EXPEDIDO, null, 1);
+		
+		Lancamento lancamentoLolaEdicao101 = Fixture.lancamento(
+				TipoLancamento.SUPLEMENTAR, lolaEdicao101,
+				Fixture.criarData(11, Calendar.MAY, 2012),
+				Fixture.criarData(18, Calendar.MAY, 2012),
+				new Date(),
+				new Date(),
+				new BigDecimal(100),
+				StatusLancamento.EXPEDIDO, null, 1);
+		
+		Lancamento lancamentoHeavyMetalEdicao101 = Fixture.lancamento(
+				TipoLancamento.SUPLEMENTAR, heavyMetalEdicao101,
+				Fixture.criarData(11, Calendar.MAY, 2012),
+				Fixture.criarData(18, Calendar.MAY, 2012),
+				new Date(),
+				new Date(),
+				new BigDecimal(100),
+				StatusLancamento.EXPEDIDO, null, 1);
+		
+		Lancamento lancamentoMetalUndergroundEdicao101 = Fixture.lancamento(
+				TipoLancamento.SUPLEMENTAR, metalUndergroundEdicao101,
+				Fixture.criarData(11, Calendar.MAY, 2012),
+				Fixture.criarData(18, Calendar.MAY, 2012),
+				new Date(),
+				new Date(),
+				new BigDecimal(100),
+				StatusLancamento.EXPEDIDO, null, 1);
+		
+		Lancamento lancamentoJavaMagazineEdicao102 = Fixture.lancamento(
+				TipoLancamento.SUPLEMENTAR, javaMagazineEdicao102,
+				Fixture.criarData(11, Calendar.MAY, 2012),
+				Fixture.criarData(18, Calendar.MAY, 2012),
+				new Date(),
+				new Date(),
+				new BigDecimal(100),
+				StatusLancamento.EXPEDIDO, null, 1);
+		
+		Lancamento lancamentoMundoJavaEdicao102 = Fixture.lancamento(
+				TipoLancamento.SUPLEMENTAR, mundoJavaEdicao102,
+				Fixture.criarData(11, Calendar.MAY, 2012),
+				Fixture.criarData(18, Calendar.MAY, 2012),
+				new Date(),
+				new Date(),
+				new BigDecimal(100),
+				StatusLancamento.EXPEDIDO, null, 1);
+		
+		Lancamento lancamentoSqlMagazineEdicao102 = Fixture.lancamento(
+				TipoLancamento.SUPLEMENTAR, sqlMagazineEdicao102,
+				Fixture.criarData(11, Calendar.MAY, 2012),
+				Fixture.criarData(18, Calendar.MAY, 2012),
+				new Date(),
+				new Date(),
+				new BigDecimal(100),
+				StatusLancamento.EXPEDIDO, null, 1);
+		
+		Lancamento lancamentoGalileuEdicao102 = Fixture.lancamento(
+				TipoLancamento.SUPLEMENTAR, galileuEdicao102,
+				Fixture.criarData(11, Calendar.MAY, 2012),
+				Fixture.criarData(18, Calendar.MAY, 2012),
+				new Date(),
+				new Date(),
+				new BigDecimal(100),
+				StatusLancamento.EXPEDIDO, null, 1);
+		
+		Lancamento lancamentoDuasRodasEdicao102 = Fixture.lancamento(
+				TipoLancamento.SUPLEMENTAR, duasRodasEdicao102,
+				Fixture.criarData(11, Calendar.MAY, 2012),
+				Fixture.criarData(18, Calendar.MAY, 2012),
+				new Date(),
+				new Date(),
+				new BigDecimal(100),
+				StatusLancamento.EXPEDIDO, null, 1);
+		
+		Lancamento lancamentoGuitarPlayerEdicao102 = Fixture.lancamento(
+				TipoLancamento.SUPLEMENTAR, guitarPlayerEdicao102,
+				Fixture.criarData(12, Calendar.MAY, 2012),
+				Fixture.criarData(19, Calendar.MAY, 2012),
+				new Date(),
+				new Date(),
+				new BigDecimal(100),
+				StatusLancamento.EXPEDIDO, null, 1);
+		
+		Lancamento lancamentoRoadieCrewEdicao102 = Fixture.lancamento(
+				TipoLancamento.SUPLEMENTAR, roadieCrewEdicao102,
+				Fixture.criarData(12, Calendar.MAY, 2012),
+				Fixture.criarData(19, Calendar.MAY, 2012),
+				new Date(),
+				new Date(),
+				new BigDecimal(100),
+				StatusLancamento.EXPEDIDO, null, 1);
+		
+		Lancamento lancamentoRockBrigadeEdicao102 = Fixture.lancamento(
+				TipoLancamento.SUPLEMENTAR, rockBrigadeEdicao102,
+				Fixture.criarData(12, Calendar.MAY, 2012),
+				Fixture.criarData(19, Calendar.MAY, 2012),
+				new Date(),
+				new Date(),
+				new BigDecimal(100),
+				StatusLancamento.EXPEDIDO, null, 1);
+		
+		Lancamento lancamentoValhallaEdicao102 = Fixture.lancamento(
+				TipoLancamento.SUPLEMENTAR, valhallaEdicao102,
+				Fixture.criarData(12, Calendar.MAY, 2012),
+				Fixture.criarData(19, Calendar.MAY, 2012),
+				new Date(),
+				new Date(),
+				new BigDecimal(100),
+				StatusLancamento.EXPEDIDO, null, 1);
+		
+		Lancamento lancamentoRollingStoneEdicao102 = Fixture.lancamento(
+				TipoLancamento.SUPLEMENTAR, rollingStoneEdicao102,
+				Fixture.criarData(12, Calendar.MAY, 2012),
+				Fixture.criarData(19, Calendar.MAY, 2012),
+				new Date(),
+				new Date(),
+				new BigDecimal(100),
+				StatusLancamento.EXPEDIDO, null, 1);
+		
+		Lancamento lancamentoBonsFluidosEdicao102 = Fixture.lancamento(
+				TipoLancamento.SUPLEMENTAR, bonsFluidosEdicao102,
+				Fixture.criarData(12, Calendar.MAY, 2012),
+				Fixture.criarData(19, Calendar.MAY, 2012),
+				new Date(),
+				new Date(),
+				new BigDecimal(100),
+				StatusLancamento.EXPEDIDO, null, 1);
+		
+		Lancamento lancamentoBravoEdicao102 = Fixture.lancamento(
+				TipoLancamento.SUPLEMENTAR, bravoEdicao102,
+				Fixture.criarData(12, Calendar.MAY, 2012),
+				Fixture.criarData(19, Calendar.MAY, 2012),
+				new Date(),
+				new Date(),
+				new BigDecimal(100),
+				StatusLancamento.EXPEDIDO, null, 1);
+		
+		Lancamento lancamentoCasaClaudiaEdicao102 = Fixture.lancamento(
+				TipoLancamento.SUPLEMENTAR, casaClaudiaEdicao102,
+				Fixture.criarData(12, Calendar.MAY, 2012),
+				Fixture.criarData(19, Calendar.MAY, 2012),
+				new Date(),
+				new Date(),
+				new BigDecimal(100),
+				StatusLancamento.EXPEDIDO, null, 1);
+		
+		Lancamento lancamentoJequitiEdicao102 = Fixture.lancamento(
+				TipoLancamento.SUPLEMENTAR, jequitiEdicao102,
+				Fixture.criarData(12, Calendar.MAY, 2012),
+				Fixture.criarData(19, Calendar.MAY, 2012),
+				new Date(),
+				new Date(),
+				new BigDecimal(100),
+				StatusLancamento.EXPEDIDO, null, 1);
+		
+		Lancamento lancamentoMundoEstranhoEdicao102 = Fixture.lancamento(
+				TipoLancamento.SUPLEMENTAR, mundoEstranhoEdicao102,
+				Fixture.criarData(12, Calendar.MAY, 2012),
+				Fixture.criarData(19, Calendar.MAY, 2012),
+				new Date(),
+				new Date(),
+				new BigDecimal(100),
+				StatusLancamento.EXPEDIDO, null, 1);
+
+		Lancamento lancamentoNovaEscolaEdicao102 = Fixture.lancamento(
+				TipoLancamento.SUPLEMENTAR, novaEscolaEdicao102,
+				Fixture.criarData(13, Calendar.MAY, 2012),
+				Fixture.criarData(20, Calendar.MAY, 2012),
+				new Date(),
+				new Date(),
+				new BigDecimal(100),
+				StatusLancamento.EXPEDIDO, null, 1);
+
+		Lancamento lancamentoMinhaCasaEdicao102 = Fixture.lancamento(
+				TipoLancamento.SUPLEMENTAR, minhaCasaEdicao102,
+				Fixture.criarData(13, Calendar.MAY, 2012),
+				Fixture.criarData(20, Calendar.MAY, 2012),
+				new Date(),
+				new Date(),
+				new BigDecimal(100),
+				StatusLancamento.EXPEDIDO, null, 1);
+
+		Lancamento lancamentoRecreioEdicao102 = Fixture.lancamento(
+				TipoLancamento.SUPLEMENTAR, recreioEdicao102,
+				Fixture.criarData(13, Calendar.MAY, 2012),
+				Fixture.criarData(20, Calendar.MAY, 2012),
+				new Date(),
+				new Date(),
+				new BigDecimal(100),
+				StatusLancamento.EXPEDIDO, null, 1);
+
+		Lancamento lancamentoWomenHealthEdicao102 = Fixture.lancamento(
+				TipoLancamento.SUPLEMENTAR, womenHealthEdicao102,
+				Fixture.criarData(13, Calendar.MAY, 2012),
+				Fixture.criarData(20, Calendar.MAY, 2012),
+				new Date(),
+				new Date(),
+				new BigDecimal(100),
+				StatusLancamento.EXPEDIDO, null, 1);
+
+		Lancamento lancamentoViagemTurismoEdicao102 = Fixture.lancamento(
+				TipoLancamento.SUPLEMENTAR, viagemTurismoEdicao102,
+				Fixture.criarData(13, Calendar.MAY, 2012),
+				Fixture.criarData(20, Calendar.MAY, 2012),
+				new Date(),
+				new Date(),
+				new BigDecimal(100),
+				StatusLancamento.EXPEDIDO, null, 1);
+
+		Lancamento lancamentoVipEdicao102 = Fixture.lancamento(
+				TipoLancamento.SUPLEMENTAR, vipEdicao102,
+				Fixture.criarData(13, Calendar.MAY, 2012),
+				Fixture.criarData(20, Calendar.MAY, 2012),
+				new Date(),
+				new Date(),
+				new BigDecimal(100),
+				StatusLancamento.EXPEDIDO, null, 1);
+
+		Lancamento lancamentoGestaoEscolarEdicao102 = Fixture.lancamento(
+				TipoLancamento.SUPLEMENTAR, gestaoEscolarEdicao102,
+				Fixture.criarData(13, Calendar.MAY, 2012),
+				Fixture.criarData(20, Calendar.MAY, 2012),
+				new Date(),
+				new Date(),
+				new BigDecimal(100),
+				StatusLancamento.EXPEDIDO, null, 1);
+
+		Lancamento lancamentoLolaEdicao102 = Fixture.lancamento(
+				TipoLancamento.SUPLEMENTAR, lolaEdicao102,
+				Fixture.criarData(13, Calendar.MAY, 2012),
+				Fixture.criarData(20, Calendar.MAY, 2012),
+				new Date(),
+				new Date(),
+				new BigDecimal(100),
+				StatusLancamento.EXPEDIDO, null, 1);
+
+		Lancamento lancamentoHeavyMetalEdicao102 = Fixture.lancamento(
+				TipoLancamento.SUPLEMENTAR, heavyMetalEdicao102,
+				Fixture.criarData(13, Calendar.MAY, 2012),
+				Fixture.criarData(20, Calendar.MAY, 2012),
+				new Date(),
+				new Date(),
+				new BigDecimal(100),
+				StatusLancamento.EXPEDIDO, null, 1);
+
+		Lancamento lancamentoMetalUndergroundEdicao102 = Fixture.lancamento(
+				TipoLancamento.SUPLEMENTAR, metalUndergroundEdicao102,
+				Fixture.criarData(13, Calendar.MAY, 2012),
+				Fixture.criarData(20, Calendar.MAY, 2012),
+				new Date(),
+				new Date(),
+				new BigDecimal(100),
+				StatusLancamento.EXPEDIDO, null, 1);
+
+		save(session, lancamentoJavaMagazineEdicao101, lancamentoMundoJavaEdicao101, lancamentoSqlMagazineEdicao101, lancamentoGalileuEdicao101,
+					  lancamentoDuasRodasEdicao101, lancamentoGuitarPlayerEdicao101, lancamentoRoadieCrewEdicao101, lancamentoRockBrigadeEdicao101,
+					  lancamentoValhallaEdicao101, lancamentoRollingStoneEdicao101, lancamentoBonsFluidosEdicao101, lancamentoBravoEdicao101,
+					  lancamentoCasaClaudiaEdicao101, lancamentoJequitiEdicao101, lancamentoMundoEstranhoEdicao101, lancamentoNovaEscolaEdicao101,
+					  lancamentoMinhaCasaEdicao101, lancamentoRecreioEdicao101, lancamentoWomenHealthEdicao101, lancamentoViagemTurismoEdicao101,
+					  lancamentoVipEdicao101, lancamentoGestaoEscolarEdicao101, lancamentoLolaEdicao101, lancamentoHeavyMetalEdicao101, 
+					  lancamentoMetalUndergroundEdicao101, lancamentoJavaMagazineEdicao102, lancamentoMundoJavaEdicao102, lancamentoSqlMagazineEdicao102,
+					  lancamentoGalileuEdicao102, lancamentoDuasRodasEdicao102, lancamentoGuitarPlayerEdicao102, lancamentoRoadieCrewEdicao102,
+					  lancamentoRockBrigadeEdicao102, lancamentoValhallaEdicao102, lancamentoRollingStoneEdicao102, lancamentoBonsFluidosEdicao102,
+					  lancamentoBravoEdicao102, lancamentoCasaClaudiaEdicao102, lancamentoJequitiEdicao102, lancamentoMundoEstranhoEdicao102,
+					  lancamentoNovaEscolaEdicao102, lancamentoMinhaCasaEdicao102, lancamentoRecreioEdicao102, lancamentoWomenHealthEdicao102,
+					  lancamentoViagemTurismoEdicao102, lancamentoVipEdicao102, lancamentoGestaoEscolarEdicao102, lancamentoLolaEdicao102,
+					  lancamentoHeavyMetalEdicao102, lancamentoMetalUndergroundEdicao102);
+		
+		//ESTOQUE PRODUTO COTA
+		EstoqueProdutoCota estoqueProdutoCotaAcmeJavaMagazineEdicao101 = 
+				Fixture.estoqueProdutoCota(javaMagazineEdicao101, cotaAcme, new BigDecimal(110), BigDecimal.ZERO);
+		EstoqueProdutoCota estoqueProdutoCotaManoelJavaMagazineEdicao101 = 
+				Fixture.estoqueProdutoCota(javaMagazineEdicao101, cotaManoel, new BigDecimal(110), BigDecimal.ZERO);
+		
+		EstoqueProdutoCota estoqueProdutoCotaAcmeJavaMagazineEdicao102 = 
+				Fixture.estoqueProdutoCota(javaMagazineEdicao102, cotaAcme, new BigDecimal(210), BigDecimal.ZERO);
+		EstoqueProdutoCota estoqueProdutoCotaManoelJavaMagazineEdicao102 = 
+				Fixture.estoqueProdutoCota(javaMagazineEdicao102, cotaManoel, new BigDecimal(190), BigDecimal.ZERO);
+		
+		EstoqueProdutoCota estoqueProdutoCotaAcmeMundoJavaEdicao101 = 
+				Fixture.estoqueProdutoCota(mundoJavaEdicao101, cotaAcme, new BigDecimal(11), BigDecimal.ZERO);
+		EstoqueProdutoCota estoqueProdutoCotaManoelMundoJavaEdicao101 = 
+				Fixture.estoqueProdutoCota(mundoJavaEdicao101, cotaManoel, new BigDecimal(710), BigDecimal.ZERO);
+		
+		EstoqueProdutoCota estoqueProdutoCotaAcmeMundoJavaEdicao102 = 
+				Fixture.estoqueProdutoCota(mundoJavaEdicao102, cotaAcme, new BigDecimal(540), BigDecimal.ZERO);
+		EstoqueProdutoCota estoqueProdutoCotaManoelMundoJavaEdicao102 = 
+				Fixture.estoqueProdutoCota(mundoJavaEdicao102, cotaManoel, new BigDecimal(345), BigDecimal.ZERO);
+		
+		EstoqueProdutoCota estoqueProdutoCotaAcmeSqlMagazineEdicao101 = 
+				Fixture.estoqueProdutoCota(sqlMagazineEdicao101, cotaAcme, new BigDecimal(810), BigDecimal.ZERO);
+		EstoqueProdutoCota estoqueProdutoCotaManoelSqlMagazineEdicao101 = 
+				Fixture.estoqueProdutoCota(sqlMagazineEdicao101, cotaManoel, new BigDecimal(90), BigDecimal.ZERO);
+		
+		EstoqueProdutoCota estoqueProdutoCotaAcmeSqlMagazineEdicao102 = 
+				Fixture.estoqueProdutoCota(sqlMagazineEdicao102, cotaAcme, new BigDecimal(84), BigDecimal.ZERO);
+		EstoqueProdutoCota estoqueProdutoCotaManoelSqlMagazineEdicao102 = 
+				Fixture.estoqueProdutoCota(sqlMagazineEdicao102, cotaManoel, new BigDecimal(97), BigDecimal.ZERO);
+		
+		EstoqueProdutoCota estoqueProdutoCotaAcmeGalileuEdicao101 = 
+				Fixture.estoqueProdutoCota(galileuEdicao101, cotaAcme, new BigDecimal(2054), BigDecimal.ZERO);
+		EstoqueProdutoCota estoqueProdutoCotaManoelGalileuEdicao101 = 
+				Fixture.estoqueProdutoCota(galileuEdicao101, cotaManoel, new BigDecimal(215), BigDecimal.ZERO);
+		
+		EstoqueProdutoCota estoqueProdutoCotaAcmeGalileuEdicao102 = 
+				Fixture.estoqueProdutoCota(galileuEdicao102, cotaAcme, new BigDecimal(1100), BigDecimal.ZERO);
+		EstoqueProdutoCota estoqueProdutoCotaManoelGalileuEdicao102 = 
+				Fixture.estoqueProdutoCota(galileuEdicao102, cotaManoel, new BigDecimal(811), BigDecimal.ZERO);
+		
+		EstoqueProdutoCota estoqueProdutoCotaAcmeDuasRodasEdicao101 = 
+				Fixture.estoqueProdutoCota(duasRodasEdicao101, cotaAcme, new BigDecimal(618), BigDecimal.ZERO);
+		EstoqueProdutoCota estoqueProdutoCotaManoelDuasRodasEdicao101 = 
+				Fixture.estoqueProdutoCota(duasRodasEdicao101, cotaManoel, new BigDecimal(310), BigDecimal.ZERO);
+		
+		EstoqueProdutoCota estoqueProdutoCotaAcmeDuasRodasEdicao102 = 
+				Fixture.estoqueProdutoCota(duasRodasEdicao102, cotaAcme, new BigDecimal(975), BigDecimal.ZERO);
+		EstoqueProdutoCota estoqueProdutoCotaManoelDuasRodasEdicao102 = 
+				Fixture.estoqueProdutoCota(duasRodasEdicao102, cotaManoel, new BigDecimal(320), BigDecimal.ZERO);
+		
+		EstoqueProdutoCota estoqueProdutoCotaAcmeGuitarPlayerEdicao101 = 
+				Fixture.estoqueProdutoCota(guitarPlayerEdicao101, cotaAcme, new BigDecimal(610), BigDecimal.ZERO);
+		EstoqueProdutoCota estoqueProdutoCotaManoelGuitarPlayerEdicao101 = 
+				Fixture.estoqueProdutoCota(guitarPlayerEdicao101, cotaManoel, new BigDecimal(781), BigDecimal.ZERO);
+		
+		EstoqueProdutoCota estoqueProdutoCotaAcmeGuitarPlayerEdicao102 = 
+				Fixture.estoqueProdutoCota(guitarPlayerEdicao102, cotaAcme, new BigDecimal(110), BigDecimal.ZERO);
+		EstoqueProdutoCota estoqueProdutoCotaManoelGuitarPlayerEdicao102 = 
+				Fixture.estoqueProdutoCota(guitarPlayerEdicao102, cotaManoel, new BigDecimal(110), BigDecimal.ZERO);
+		
+		EstoqueProdutoCota estoqueProdutoCotaAcmeRoadieCrewEdicao101 = 
+				Fixture.estoqueProdutoCota(roadieCrewEdicao101, cotaAcme, new BigDecimal(6452), BigDecimal.ZERO);
+		EstoqueProdutoCota estoqueProdutoCotaManoelRoadieCrewEdicao101 = 
+				Fixture.estoqueProdutoCota(roadieCrewEdicao101, cotaManoel, new BigDecimal(1234), BigDecimal.ZERO);
+		
+		EstoqueProdutoCota estoqueProdutoCotaAcmeRoadieCrewEdicao102 = 
+				Fixture.estoqueProdutoCota(roadieCrewEdicao102, cotaAcme, new BigDecimal(975), BigDecimal.ZERO);
+		EstoqueProdutoCota estoqueProdutoCotaManoelRoadieCrewEdicao102 = 
+				Fixture.estoqueProdutoCota(roadieCrewEdicao102, cotaManoel, new BigDecimal(20000), BigDecimal.ZERO);
+		
+		EstoqueProdutoCota estoqueProdutoCotaAcmeRockBrigadeEdicao101 = 
+				Fixture.estoqueProdutoCota(rockBrigadeEdicao101, cotaAcme, new BigDecimal(116), BigDecimal.ZERO);
+		EstoqueProdutoCota estoqueProdutoCotaManoelRockBrigadeEdicao101 = 
+				Fixture.estoqueProdutoCota(rockBrigadeEdicao101, cotaManoel, new BigDecimal(117), BigDecimal.ZERO);
+		
+		EstoqueProdutoCota estoqueProdutoCotaAcmeRockBrigadeEdicao102 = 
+				Fixture.estoqueProdutoCota(rockBrigadeEdicao102, cotaAcme, new BigDecimal(775), BigDecimal.ZERO);
+		EstoqueProdutoCota estoqueProdutoCotaManoelRockBrigadeEdicao102 = 
+				Fixture.estoqueProdutoCota(rockBrigadeEdicao102, cotaManoel, new BigDecimal(150), BigDecimal.ZERO);
+		
+		EstoqueProdutoCota estoqueProdutoCotaAcmeValhallaEdicao101 = 
+				Fixture.estoqueProdutoCota(valhallaEdicao101, cotaAcme, new BigDecimal(982), BigDecimal.ZERO);
+		EstoqueProdutoCota estoqueProdutoCotaManoelValhallaEdicao101 = 
+				Fixture.estoqueProdutoCota(valhallaEdicao101, cotaManoel, new BigDecimal(1010), BigDecimal.ZERO);
+		
+		EstoqueProdutoCota estoqueProdutoCotaAcmeValhallaEdicao102 = 
+				Fixture.estoqueProdutoCota(valhallaEdicao102, cotaAcme, new BigDecimal(315), BigDecimal.ZERO);
+		EstoqueProdutoCota estoqueProdutoCotaManoelValhallaEdicao102 = 
+				Fixture.estoqueProdutoCota(valhallaEdicao102, cotaManoel, new BigDecimal(450), BigDecimal.ZERO);
+		
+		EstoqueProdutoCota estoqueProdutoCotaAcmeRollingStoneEdicao101 = 
+				Fixture.estoqueProdutoCota(rollingStoneEdicao101, cotaAcme, new BigDecimal(504), BigDecimal.ZERO);
+		EstoqueProdutoCota estoqueProdutoCotaManoelRollingStoneEdicao101 = 
+				Fixture.estoqueProdutoCota(rollingStoneEdicao101, cotaManoel, new BigDecimal(548), BigDecimal.ZERO);
+		
+		EstoqueProdutoCota estoqueProdutoCotaAcmeRollingStoneEdicao102 = 
+				Fixture.estoqueProdutoCota(rollingStoneEdicao102, cotaAcme, new BigDecimal(178), BigDecimal.ZERO);
+		EstoqueProdutoCota estoqueProdutoCotaManoelRollingStoneEdicao102 = 
+				Fixture.estoqueProdutoCota(rollingStoneEdicao102, cotaManoel, new BigDecimal(495), BigDecimal.ZERO);
+		
+		EstoqueProdutoCota estoqueProdutoCotaAcmeBonsFluidosEdicao101 = 
+				Fixture.estoqueProdutoCota(bonsFluidosEdicao101, cotaAcme, new BigDecimal(654), BigDecimal.ZERO);
+		EstoqueProdutoCota estoqueProdutoCotaManoelBonsFluidosEdicao101 = 
+				Fixture.estoqueProdutoCota(bonsFluidosEdicao101, cotaManoel, new BigDecimal(156), BigDecimal.ZERO);
+		
+		EstoqueProdutoCota estoqueProdutoCotaAcmeBonsFluidosEdicao102 = 
+				Fixture.estoqueProdutoCota(bonsFluidosEdicao102, cotaAcme, new BigDecimal(50000), BigDecimal.ZERO);
+		EstoqueProdutoCota estoqueProdutoCotaManoelBonsFluidosEdicao102 = 
+				Fixture.estoqueProdutoCota(bonsFluidosEdicao102, cotaManoel, new BigDecimal(70000), BigDecimal.ZERO);
+		
+		EstoqueProdutoCota estoqueProdutoCotaAcmeBravoEdicao101 = 
+				Fixture.estoqueProdutoCota(bravoEdicao101, cotaAcme, new BigDecimal(168), BigDecimal.ZERO);
+		EstoqueProdutoCota estoqueProdutoCotaManoelBravoEdicao101 = 
+				Fixture.estoqueProdutoCota(bravoEdicao101, cotaManoel, new BigDecimal(157), BigDecimal.ZERO);
+		
+		EstoqueProdutoCota estoqueProdutoCotaAcmeBravoEdicao102 = 
+				Fixture.estoqueProdutoCota(bravoEdicao102, cotaAcme, new BigDecimal(6458), BigDecimal.ZERO);
+		EstoqueProdutoCota estoqueProdutoCotaManoelBravoEdicao102 = 
+				Fixture.estoqueProdutoCota(bravoEdicao102, cotaManoel, new BigDecimal(1085), BigDecimal.ZERO);
+		
+		EstoqueProdutoCota estoqueProdutoCotaAcmeCasaClaudiaEdicao101 = 
+				Fixture.estoqueProdutoCota(casaClaudiaEdicao101, cotaAcme, new BigDecimal(2103), BigDecimal.ZERO);
+		EstoqueProdutoCota estoqueProdutoCotaManoelCasaClaudiaEdicao101 = 
+				Fixture.estoqueProdutoCota(casaClaudiaEdicao101, cotaManoel, new BigDecimal(8075), BigDecimal.ZERO);
+		
+		EstoqueProdutoCota estoqueProdutoCotaAcmeCasaClaudiaEdicao102 = 
+				Fixture.estoqueProdutoCota(casaClaudiaEdicao102, cotaAcme, new BigDecimal(665), BigDecimal.ZERO);
+		EstoqueProdutoCota estoqueProdutoCotaManoelCasaClaudiaEdicao102 = 
+				Fixture.estoqueProdutoCota(casaClaudiaEdicao102, cotaManoel, new BigDecimal(120), BigDecimal.ZERO);
+		
+		EstoqueProdutoCota estoqueProdutoCotaAcmeJequitiEdicao101 = 
+				Fixture.estoqueProdutoCota(jequitiEdicao101, cotaAcme, new BigDecimal(705), BigDecimal.ZERO);
+		EstoqueProdutoCota estoqueProdutoCotaManoelJequitiEdicao101 = 
+				Fixture.estoqueProdutoCota(jequitiEdicao101, cotaManoel, new BigDecimal(804), BigDecimal.ZERO);
+		
+		EstoqueProdutoCota estoqueProdutoCotaAcmeJequitiEdicao102 = 
+				Fixture.estoqueProdutoCota(jequitiEdicao102, cotaAcme, new BigDecimal(401), BigDecimal.ZERO);
+		EstoqueProdutoCota estoqueProdutoCotaManoelJequitiEdicao102 = 
+				Fixture.estoqueProdutoCota(jequitiEdicao102, cotaManoel, new BigDecimal(305), BigDecimal.ZERO);
+		
+		EstoqueProdutoCota estoqueProdutoCotaAcmeMundoEstranhoEdicao101 =
+				Fixture.estoqueProdutoCota(mundoEstranhoEdicao101, cotaAcme, new BigDecimal(111), BigDecimal.ZERO);
+		EstoqueProdutoCota estoqueProdutoCotaManoelMundoEstranhoEdicao101 = 
+				Fixture.estoqueProdutoCota(mundoEstranhoEdicao101, cotaManoel, new BigDecimal(11), BigDecimal.ZERO);
+		
+		EstoqueProdutoCota estoqueProdutoCotaAcmeMundoEstranhoEdicao102 = 
+				Fixture.estoqueProdutoCota(mundoEstranhoEdicao102, cotaAcme, new BigDecimal(110), BigDecimal.ZERO);
+		EstoqueProdutoCota estoqueProdutoCotaManoelMundoEstranhoEdicao102 = 
+				Fixture.estoqueProdutoCota(mundoEstranhoEdicao102, cotaManoel, new BigDecimal(1166), BigDecimal.ZERO);
+		
+		EstoqueProdutoCota estoqueProdutoCotaAcmeNovaEscolaEdicao101 = 
+				Fixture.estoqueProdutoCota(novaEscolaEdicao101, cotaAcme, new BigDecimal(1082), BigDecimal.ZERO);
+		EstoqueProdutoCota estoqueProdutoCotaManoelNovaEscolaEdicao101 = 
+				Fixture.estoqueProdutoCota(novaEscolaEdicao101, cotaManoel, new BigDecimal(1010), BigDecimal.ZERO);
+		
+		EstoqueProdutoCota estoqueProdutoCotaAcmeNovaEscolaEdicao102 = 
+				Fixture.estoqueProdutoCota(novaEscolaEdicao102, cotaAcme, new BigDecimal(11002), BigDecimal.ZERO);
+		EstoqueProdutoCota estoqueProdutoCotaManoelNovaEscolaEdicao102 = 
+				Fixture.estoqueProdutoCota(novaEscolaEdicao102, cotaManoel, new BigDecimal(11048), BigDecimal.ZERO);
+		
+		EstoqueProdutoCota estoqueProdutoCotaAcmeMinhaCasaEdicao101 = 
+				Fixture.estoqueProdutoCota(minhaCasaEdicao101, cotaAcme, new BigDecimal(610), BigDecimal.ZERO);
+		EstoqueProdutoCota estoqueProdutoCotaManoelMinhaCasaEdicao101 = 
+				Fixture.estoqueProdutoCota(minhaCasaEdicao101, cotaManoel, new BigDecimal(1700), BigDecimal.ZERO);
+		
+		EstoqueProdutoCota estoqueProdutoCotaAcmeMinhaCasaEdicao102 = 
+				Fixture.estoqueProdutoCota(minhaCasaEdicao102, cotaAcme, new BigDecimal(2210), BigDecimal.ZERO);
+		EstoqueProdutoCota estoqueProdutoCotaManoelMinhaCasaEdicao102 = 
+				Fixture.estoqueProdutoCota(minhaCasaEdicao102, cotaManoel, new BigDecimal(3165), BigDecimal.ZERO);
+		
+		EstoqueProdutoCota estoqueProdutoCotaAcmeRecreioEdicao101 = 
+				Fixture.estoqueProdutoCota(recreioEdicao101, cotaAcme, new BigDecimal(640), BigDecimal.ZERO);
+		EstoqueProdutoCota estoqueProdutoCotaManoelRecreioEdicao101 = 
+				Fixture.estoqueProdutoCota(recreioEdicao101, cotaManoel, new BigDecimal(758), BigDecimal.ZERO);
+		
+		EstoqueProdutoCota estoqueProdutoCotaAcmeRecreioEdicao102 = 
+				Fixture.estoqueProdutoCota(recreioEdicao102, cotaAcme, new BigDecimal(316), BigDecimal.ZERO);
+		EstoqueProdutoCota estoqueProdutoCotaManoelRecreioEdicao102 = 
+				Fixture.estoqueProdutoCota(recreioEdicao102, cotaManoel, new BigDecimal(450), BigDecimal.ZERO);
+		
+		EstoqueProdutoCota estoqueProdutoCotaAcmeWomenHealthEdicao101 = 
+				Fixture.estoqueProdutoCota(womenHealthEdicao101, cotaAcme, new BigDecimal(665), BigDecimal.ZERO);
+		EstoqueProdutoCota estoqueProdutoCotaManoelWomenHealthEdicao101 = 
+				Fixture.estoqueProdutoCota(womenHealthEdicao101, cotaManoel, new BigDecimal(11585), BigDecimal.ZERO);
+		
+		EstoqueProdutoCota estoqueProdutoCotaAcmeWomenHealthEdicao102 = 
+				Fixture.estoqueProdutoCota(womenHealthEdicao102, cotaAcme, new BigDecimal(447), BigDecimal.ZERO);
+		EstoqueProdutoCota estoqueProdutoCotaManoelWomenHealthEdicao102 = 
+				Fixture.estoqueProdutoCota(womenHealthEdicao102, cotaManoel, new BigDecimal(777), BigDecimal.ZERO);
+		
+		EstoqueProdutoCota estoqueProdutoCotaAcmeViagemTurismoEdicao101 = 
+				Fixture.estoqueProdutoCota(viagemTurismoEdicao101, cotaAcme, new BigDecimal(6065), BigDecimal.ZERO);
+		EstoqueProdutoCota estoqueProdutoCotaManoelViagemTurismoEdicao101 = 
+				Fixture.estoqueProdutoCota(viagemTurismoEdicao101, cotaManoel, new BigDecimal(66666666), BigDecimal.ZERO);
+		
+		EstoqueProdutoCota estoqueProdutoCotaAcmeViagemTurismoEdicao102 = 
+				Fixture.estoqueProdutoCota(viagemTurismoEdicao102, cotaAcme, new BigDecimal(8742), BigDecimal.ZERO);
+		EstoqueProdutoCota estoqueProdutoCotaManoelViagemTurismoEdicao102 = 
+				Fixture.estoqueProdutoCota(viagemTurismoEdicao102, cotaManoel, new BigDecimal(7450), BigDecimal.ZERO);
+		
+		EstoqueProdutoCota estoqueProdutoCotaAcmeVipEdicao101 = 
+				Fixture.estoqueProdutoCota(vipEdicao101, cotaAcme, new BigDecimal(85200), BigDecimal.ZERO);
+		EstoqueProdutoCota estoqueProdutoCotaManoelVipEdicao101 = 
+				Fixture.estoqueProdutoCota(vipEdicao101, cotaManoel, new BigDecimal(4888), BigDecimal.ZERO);
+		
+		EstoqueProdutoCota estoqueProdutoCotaAcmeVipEdicao102 = 
+				Fixture.estoqueProdutoCota(vipEdicao102, cotaAcme, new BigDecimal(6165), BigDecimal.ZERO);
+		EstoqueProdutoCota estoqueProdutoCotaManoelVipEdicao102 = 
+				Fixture.estoqueProdutoCota(vipEdicao102, cotaManoel, new BigDecimal(120), BigDecimal.ZERO);
+		
+		EstoqueProdutoCota estoqueProdutoCotaAcmeGestaoEscolarEdicao101 = 
+				Fixture.estoqueProdutoCota(gestaoEscolarEdicao101, cotaAcme, new BigDecimal(710), BigDecimal.ZERO);
+		EstoqueProdutoCota estoqueProdutoCotaManoelGestaoEscolarEdicao101 = 
+				Fixture.estoqueProdutoCota(gestaoEscolarEdicao101, cotaManoel, new BigDecimal(140), BigDecimal.ZERO);
+		
+		EstoqueProdutoCota estoqueProdutoCotaAcmeGestaoEscolarEdicao102 = 
+				Fixture.estoqueProdutoCota(gestaoEscolarEdicao102, cotaAcme, new BigDecimal(5410), BigDecimal.ZERO);
+		EstoqueProdutoCota estoqueProdutoCotaManoelGestaoEscolarEdicao102 = 
+				Fixture.estoqueProdutoCota(gestaoEscolarEdicao102, cotaManoel, new BigDecimal(110), BigDecimal.ZERO);
+		
+		EstoqueProdutoCota estoqueProdutoCotaAcmeLolaEdicao101 = 
+				Fixture.estoqueProdutoCota(lolaEdicao101, cotaAcme, new BigDecimal(902), BigDecimal.ZERO);
+		EstoqueProdutoCota estoqueProdutoCotaManoelLolaEdicao101 = 
+				Fixture.estoqueProdutoCota(lolaEdicao101, cotaManoel, new BigDecimal(781), BigDecimal.ZERO);
+		
+		EstoqueProdutoCota estoqueProdutoCotaAcmeLolaEdicao102 = 
+				Fixture.estoqueProdutoCota(lolaEdicao102, cotaAcme, new BigDecimal(620), BigDecimal.ZERO);
+		EstoqueProdutoCota estoqueProdutoCotaManoelLolaEdicao102 = 
+				Fixture.estoqueProdutoCota(lolaEdicao102, cotaManoel, new BigDecimal(1208), BigDecimal.ZERO);
+		
+		EstoqueProdutoCota estoqueProdutoCotaAcmeHeavyMetalEdicao101 = 
+				Fixture.estoqueProdutoCota(heavyMetalEdicao101, cotaAcme, new BigDecimal(420), BigDecimal.ZERO);
+		EstoqueProdutoCota estoqueProdutoCotaManoelHeavyMetalEdicao101 = 
+				Fixture.estoqueProdutoCota(heavyMetalEdicao101, cotaManoel, new BigDecimal(487), BigDecimal.ZERO);
+		
+		EstoqueProdutoCota estoqueProdutoCotaAcmeHeavyMetalEdicao102 = 
+				Fixture.estoqueProdutoCota(heavyMetalEdicao102, cotaAcme, new BigDecimal(133), BigDecimal.ZERO);
+		EstoqueProdutoCota estoqueProdutoCotaManoelHeavyMetalEdicao102 = 
+				Fixture.estoqueProdutoCota(heavyMetalEdicao102, cotaManoel, new BigDecimal(321), BigDecimal.ZERO);
+		
+		EstoqueProdutoCota estoqueProdutoCotaAcmeMetalUndergroundEdicao101 = 
+				Fixture.estoqueProdutoCota(metalUndergroundEdicao101, cotaAcme, new BigDecimal(952), BigDecimal.ZERO);
+		EstoqueProdutoCota estoqueProdutoCotaManoelMetalUndergroundEdicao101 = 
+				Fixture.estoqueProdutoCota(metalUndergroundEdicao101, cotaManoel, new BigDecimal(888), BigDecimal.ZERO);
+		
+		EstoqueProdutoCota estoqueProdutoCotaAcmeMetalUndergroundEdicao102 = 
+				Fixture.estoqueProdutoCota(metalUndergroundEdicao102, cotaAcme, new BigDecimal(999), BigDecimal.ZERO);
+		EstoqueProdutoCota estoqueProdutoCotaManoelMetalUndergroundEdicao102 = 
+				Fixture.estoqueProdutoCota(metalUndergroundEdicao102, cotaManoel, new BigDecimal(8720), BigDecimal.ZERO);
+		
+		save(session, estoqueProdutoCotaAcmeJavaMagazineEdicao101, estoqueProdutoCotaManoelJavaMagazineEdicao101, 
+					  estoqueProdutoCotaAcmeJavaMagazineEdicao102, estoqueProdutoCotaManoelJavaMagazineEdicao102,
+					  estoqueProdutoCotaAcmeMundoJavaEdicao101, estoqueProdutoCotaManoelMundoJavaEdicao101,
+					  estoqueProdutoCotaAcmeMundoJavaEdicao102, estoqueProdutoCotaManoelMundoJavaEdicao102,
+					  estoqueProdutoCotaAcmeSqlMagazineEdicao101, estoqueProdutoCotaManoelSqlMagazineEdicao101,
+					  estoqueProdutoCotaAcmeSqlMagazineEdicao102, estoqueProdutoCotaManoelSqlMagazineEdicao102,
+					  estoqueProdutoCotaAcmeGalileuEdicao101, estoqueProdutoCotaManoelGalileuEdicao101,
+					  estoqueProdutoCotaAcmeGalileuEdicao102, estoqueProdutoCotaManoelGalileuEdicao102,
+					  estoqueProdutoCotaAcmeDuasRodasEdicao101, estoqueProdutoCotaManoelDuasRodasEdicao101,
+					  estoqueProdutoCotaAcmeDuasRodasEdicao102, estoqueProdutoCotaManoelDuasRodasEdicao102,
+					  estoqueProdutoCotaAcmeGuitarPlayerEdicao101, estoqueProdutoCotaManoelGuitarPlayerEdicao101,
+					  estoqueProdutoCotaAcmeGuitarPlayerEdicao102, estoqueProdutoCotaManoelGuitarPlayerEdicao102,
+					  estoqueProdutoCotaAcmeRoadieCrewEdicao101, estoqueProdutoCotaManoelRoadieCrewEdicao101,
+					  estoqueProdutoCotaAcmeRoadieCrewEdicao102, estoqueProdutoCotaManoelRoadieCrewEdicao102,
+					  estoqueProdutoCotaAcmeRockBrigadeEdicao101, estoqueProdutoCotaManoelRockBrigadeEdicao101,
+					  estoqueProdutoCotaAcmeRockBrigadeEdicao102, estoqueProdutoCotaManoelRockBrigadeEdicao102,
+					  estoqueProdutoCotaAcmeValhallaEdicao101, estoqueProdutoCotaManoelValhallaEdicao101,
+					  estoqueProdutoCotaAcmeValhallaEdicao102, estoqueProdutoCotaManoelValhallaEdicao102,
+					  estoqueProdutoCotaAcmeRollingStoneEdicao101, estoqueProdutoCotaManoelRollingStoneEdicao101,
+					  estoqueProdutoCotaAcmeRollingStoneEdicao102, estoqueProdutoCotaManoelRollingStoneEdicao102,
+					  estoqueProdutoCotaAcmeBonsFluidosEdicao101, estoqueProdutoCotaManoelBonsFluidosEdicao101,
+					  estoqueProdutoCotaAcmeBonsFluidosEdicao102, estoqueProdutoCotaManoelBonsFluidosEdicao102,
+					  estoqueProdutoCotaAcmeBravoEdicao101, estoqueProdutoCotaManoelBravoEdicao101,
+					  estoqueProdutoCotaAcmeBravoEdicao102, estoqueProdutoCotaManoelBravoEdicao102,
+					  estoqueProdutoCotaAcmeCasaClaudiaEdicao101, estoqueProdutoCotaManoelCasaClaudiaEdicao101,
+					  estoqueProdutoCotaAcmeCasaClaudiaEdicao102, estoqueProdutoCotaManoelCasaClaudiaEdicao102,
+					  estoqueProdutoCotaAcmeJequitiEdicao101, estoqueProdutoCotaManoelJequitiEdicao101,
+					  estoqueProdutoCotaAcmeJequitiEdicao102, estoqueProdutoCotaManoelJequitiEdicao102,
+					  estoqueProdutoCotaAcmeMundoEstranhoEdicao101, estoqueProdutoCotaManoelMundoEstranhoEdicao101,
+					  estoqueProdutoCotaAcmeMundoEstranhoEdicao102, estoqueProdutoCotaManoelMundoEstranhoEdicao102,
+					  estoqueProdutoCotaAcmeNovaEscolaEdicao101, estoqueProdutoCotaManoelNovaEscolaEdicao101,
+					  estoqueProdutoCotaAcmeNovaEscolaEdicao102, estoqueProdutoCotaManoelNovaEscolaEdicao102,
+					  estoqueProdutoCotaAcmeMinhaCasaEdicao101, estoqueProdutoCotaManoelMinhaCasaEdicao101,
+					  estoqueProdutoCotaAcmeMinhaCasaEdicao102, estoqueProdutoCotaManoelMinhaCasaEdicao102,
+					  estoqueProdutoCotaAcmeRecreioEdicao101, estoqueProdutoCotaManoelRecreioEdicao101,
+					  estoqueProdutoCotaAcmeRecreioEdicao102, estoqueProdutoCotaManoelRecreioEdicao102,
+					  estoqueProdutoCotaAcmeWomenHealthEdicao101, estoqueProdutoCotaManoelWomenHealthEdicao101,
+					  estoqueProdutoCotaAcmeWomenHealthEdicao102, estoqueProdutoCotaManoelWomenHealthEdicao102,
+					  estoqueProdutoCotaAcmeViagemTurismoEdicao101, estoqueProdutoCotaManoelViagemTurismoEdicao101,
+					  estoqueProdutoCotaAcmeViagemTurismoEdicao102, estoqueProdutoCotaManoelViagemTurismoEdicao102,
+					  estoqueProdutoCotaAcmeVipEdicao101, estoqueProdutoCotaManoelVipEdicao101,
+					  estoqueProdutoCotaAcmeVipEdicao102, estoqueProdutoCotaManoelVipEdicao102,
+					  estoqueProdutoCotaAcmeGestaoEscolarEdicao101, estoqueProdutoCotaManoelGestaoEscolarEdicao101, 
+					  estoqueProdutoCotaAcmeGestaoEscolarEdicao102, estoqueProdutoCotaManoelGestaoEscolarEdicao102,
+					  estoqueProdutoCotaAcmeLolaEdicao101, estoqueProdutoCotaManoelLolaEdicao101,
+					  estoqueProdutoCotaAcmeLolaEdicao102, estoqueProdutoCotaManoelLolaEdicao102,
+					  estoqueProdutoCotaAcmeHeavyMetalEdicao101, estoqueProdutoCotaManoelHeavyMetalEdicao101,
+					  estoqueProdutoCotaAcmeHeavyMetalEdicao102, estoqueProdutoCotaManoelHeavyMetalEdicao102,
+					  estoqueProdutoCotaAcmeMetalUndergroundEdicao101, estoqueProdutoCotaManoelMetalUndergroundEdicao101,
+					  estoqueProdutoCotaAcmeMetalUndergroundEdicao102, estoqueProdutoCotaManoelMetalUndergroundEdicao102);
+
+		//LANCAMENTO PARCIAL
+		LancamentoParcial lancamentoParcialJavaMagazineEdicao101 = 
+				Fixture.criarLancamentoParcial(javaMagazineEdicao101,
+						lancamentoJavaMagazineEdicao101.getDataLancamentoPrevista(), 
+					    lancamentoJavaMagazineEdicao101.getDataRecolhimentoPrevista(),
+					    StatusLancamentoParcial.PROJETADO);
+		
+		LancamentoParcial lancamentoParcialJavaMagazineEdicao102 = 
+				Fixture.criarLancamentoParcial(javaMagazineEdicao102,
+						lancamentoJavaMagazineEdicao102.getDataLancamentoPrevista(), 
+					    lancamentoJavaMagazineEdicao102.getDataRecolhimentoPrevista(),
+					    StatusLancamentoParcial.PROJETADO);
+		
+		LancamentoParcial lancamentoParcialMundoJavaEdicao101 = 
+				Fixture.criarLancamentoParcial(mundoJavaEdicao101,
+						lancamentoMundoJavaEdicao101.getDataLancamentoPrevista(), 
+					    lancamentoMundoJavaEdicao101.getDataRecolhimentoPrevista(),
+					    StatusLancamentoParcial.PROJETADO);
+		
+		LancamentoParcial lancamentoParcialMundoJavaEdicao102 = 
+				Fixture.criarLancamentoParcial(mundoJavaEdicao102,
+						lancamentoMundoJavaEdicao102.getDataLancamentoPrevista(), 
+					    lancamentoMundoJavaEdicao102.getDataRecolhimentoPrevista(),
+					    StatusLancamentoParcial.PROJETADO);
+		
+		LancamentoParcial lancamentoParcialSqlMagazineEdicao101 = 
+				Fixture.criarLancamentoParcial(sqlMagazineEdicao101,
+						lancamentoSqlMagazineEdicao101.getDataLancamentoPrevista(), 
+					    lancamentoSqlMagazineEdicao101.getDataRecolhimentoPrevista(),
+					    StatusLancamentoParcial.PROJETADO);
+		
+		LancamentoParcial lancamentoParcialSqlMagazineEdicao102 = 
+				Fixture.criarLancamentoParcial(sqlMagazineEdicao102,
+						lancamentoSqlMagazineEdicao102.getDataLancamentoPrevista(), 
+					    lancamentoSqlMagazineEdicao102.getDataRecolhimentoPrevista(),
+					    StatusLancamentoParcial.PROJETADO);
+		
+		LancamentoParcial lancamentoParcialGalileuEdicao101 = 
+				Fixture.criarLancamentoParcial(galileuEdicao101,
+						lancamentoGalileuEdicao101.getDataLancamentoPrevista(), 
+						lancamentoGalileuEdicao101.getDataRecolhimentoPrevista(),
+					    StatusLancamentoParcial.PROJETADO);
+		
+		LancamentoParcial lancamentoParcialGalileuEdicao102 = 
+				Fixture.criarLancamentoParcial(galileuEdicao102,
+						lancamentoGalileuEdicao102.getDataLancamentoPrevista(), 
+						lancamentoGalileuEdicao102.getDataRecolhimentoPrevista(),
+					    StatusLancamentoParcial.PROJETADO);
+		
+		LancamentoParcial lancamentoParcialDuasRodasEdicao101 = 
+				Fixture.criarLancamentoParcial(duasRodasEdicao101,
+						lancamentoDuasRodasEdicao101.getDataLancamentoPrevista(), 
+						lancamentoDuasRodasEdicao101.getDataRecolhimentoPrevista(),
+					    StatusLancamentoParcial.PROJETADO);
+		
+		LancamentoParcial lancamentoParcialDuasRodasEdicao102 = 
+				Fixture.criarLancamentoParcial(duasRodasEdicao102,
+						lancamentoDuasRodasEdicao102.getDataLancamentoPrevista(), 
+						lancamentoDuasRodasEdicao102.getDataRecolhimentoPrevista(),
+					    StatusLancamentoParcial.PROJETADO);
+		
+		LancamentoParcial lancamentoParcialGuitarPlayerEdicao101 = 
+				Fixture.criarLancamentoParcial(guitarPlayerEdicao101,
+						lancamentoGuitarPlayerEdicao101.getDataLancamentoPrevista(), 
+						lancamentoGuitarPlayerEdicao101.getDataRecolhimentoPrevista(),
+					    StatusLancamentoParcial.PROJETADO);
+		
+		LancamentoParcial lancamentoParcialGuitarPlayerEdicao102 = 
+				Fixture.criarLancamentoParcial(guitarPlayerEdicao102,
+						lancamentoGuitarPlayerEdicao102.getDataLancamentoPrevista(), 
+						lancamentoGuitarPlayerEdicao102.getDataRecolhimentoPrevista(),
+					    StatusLancamentoParcial.PROJETADO);
+		
+		LancamentoParcial lancamentoParcialRoadieCrewEdicao101 = 
+				Fixture.criarLancamentoParcial(roadieCrewEdicao101,
+						lancamentoRoadieCrewEdicao101.getDataLancamentoPrevista(), 
+						lancamentoRoadieCrewEdicao101.getDataRecolhimentoPrevista(),
+					    StatusLancamentoParcial.PROJETADO);
+		
+		LancamentoParcial lancamentoParcialRoadieCrewEdicao102 = 
+				Fixture.criarLancamentoParcial(roadieCrewEdicao102,
+						lancamentoRoadieCrewEdicao102.getDataLancamentoPrevista(), 
+						lancamentoRoadieCrewEdicao102.getDataRecolhimentoPrevista(),
+					    StatusLancamentoParcial.PROJETADO);
+		
+		LancamentoParcial lancamentoParcialRockBrigadeEdicao101 = 
+				Fixture.criarLancamentoParcial(rockBrigadeEdicao101,
+						lancamentoRockBrigadeEdicao101.getDataLancamentoPrevista(), 
+						lancamentoRockBrigadeEdicao101.getDataRecolhimentoPrevista(),
+					    StatusLancamentoParcial.PROJETADO);
+		
+		LancamentoParcial lancamentoParcialRockBrigadeEdicao102 = 
+				Fixture.criarLancamentoParcial(rockBrigadeEdicao102,
+						lancamentoRockBrigadeEdicao102.getDataLancamentoPrevista(), 
+						lancamentoRockBrigadeEdicao102.getDataRecolhimentoPrevista(),
+					    StatusLancamentoParcial.PROJETADO);
+		
+		LancamentoParcial lancamentoParcialValhallaEdicao101 = 
+				Fixture.criarLancamentoParcial(valhallaEdicao101,
+						lancamentoValhallaEdicao101.getDataLancamentoPrevista(), 
+						lancamentoValhallaEdicao101.getDataRecolhimentoPrevista(),
+					    StatusLancamentoParcial.PROJETADO);
+
+		LancamentoParcial lancamentoParcialValhallaEdicao102 = 
+				Fixture.criarLancamentoParcial(valhallaEdicao102,
+						lancamentoValhallaEdicao102.getDataLancamentoPrevista(), 
+						lancamentoValhallaEdicao102.getDataRecolhimentoPrevista(),
+					    StatusLancamentoParcial.PROJETADO);
+
+		LancamentoParcial lancamentoParcialRollingStoneEdicao101 = 
+				Fixture.criarLancamentoParcial(rollingStoneEdicao101,
+						lancamentoRollingStoneEdicao101.getDataLancamentoPrevista(), 
+						lancamentoRollingStoneEdicao101.getDataRecolhimentoPrevista(),
+					    StatusLancamentoParcial.PROJETADO);
+		
+		LancamentoParcial lancamentoParcialRollingStoneEdicao102 = 
+				Fixture.criarLancamentoParcial(rollingStoneEdicao102,
+						lancamentoRollingStoneEdicao102.getDataLancamentoPrevista(), 
+						lancamentoRollingStoneEdicao102.getDataRecolhimentoPrevista(),
+					    StatusLancamentoParcial.PROJETADO);
+		
+		LancamentoParcial lancamentoParcialBonsFluidosEdicao101 = 
+				Fixture.criarLancamentoParcial(bonsFluidosEdicao101,
+						lancamentoBonsFluidosEdicao101.getDataLancamentoPrevista(), 
+						lancamentoBonsFluidosEdicao101.getDataRecolhimentoPrevista(),
+					    StatusLancamentoParcial.PROJETADO);
+		
+		LancamentoParcial lancamentoParcialBonsFluidosEdicao102 = 
+				Fixture.criarLancamentoParcial(bonsFluidosEdicao102,
+						lancamentoBonsFluidosEdicao102.getDataLancamentoPrevista(), 
+						lancamentoBonsFluidosEdicao102.getDataRecolhimentoPrevista(),
+					    StatusLancamentoParcial.PROJETADO);
+		
+		LancamentoParcial lancamentoParcialBravoEdicao101 = 
+				Fixture.criarLancamentoParcial(bravoEdicao101,
+						lancamentoBravoEdicao101.getDataLancamentoPrevista(), 
+						lancamentoBravoEdicao101.getDataRecolhimentoPrevista(),
+					    StatusLancamentoParcial.PROJETADO);
+
+		LancamentoParcial lancamentoParcialBravoEdicao102 = 
+				Fixture.criarLancamentoParcial(bravoEdicao102,
+						lancamentoBravoEdicao102.getDataLancamentoPrevista(), 
+						lancamentoBravoEdicao102.getDataRecolhimentoPrevista(),
+					    StatusLancamentoParcial.PROJETADO);
+
+		LancamentoParcial lancamentoParcialCasaClaudiaEdicao101 = 
+				Fixture.criarLancamentoParcial(casaClaudiaEdicao101,
+						lancamentoCasaClaudiaEdicao101.getDataLancamentoPrevista(), 
+						lancamentoCasaClaudiaEdicao101.getDataRecolhimentoPrevista(),
+					    StatusLancamentoParcial.PROJETADO);
+
+		LancamentoParcial lancamentoParcialCasaClaudiaEdicao102 = 
+				Fixture.criarLancamentoParcial(casaClaudiaEdicao102,
+						lancamentoCasaClaudiaEdicao102.getDataLancamentoPrevista(), 
+						lancamentoCasaClaudiaEdicao102.getDataRecolhimentoPrevista(),
+					    StatusLancamentoParcial.PROJETADO);		
+
+		LancamentoParcial lancamentoParcialJequitiEdicao101 = 
+				Fixture.criarLancamentoParcial(jequitiEdicao101,
+						lancamentoJequitiEdicao101.getDataLancamentoPrevista(), 
+						lancamentoJequitiEdicao101.getDataRecolhimentoPrevista(),
+					    StatusLancamentoParcial.PROJETADO);
+
+		LancamentoParcial lancamentoParcialJequitiEdicao102 = 
+				Fixture.criarLancamentoParcial(jequitiEdicao102,
+						lancamentoJequitiEdicao102.getDataLancamentoPrevista(), 
+						lancamentoJequitiEdicao102.getDataRecolhimentoPrevista(),
+					    StatusLancamentoParcial.PROJETADO);
+
+		LancamentoParcial lancamentoParcialMundoEstranhoEdicao101 = 
+				Fixture.criarLancamentoParcial(mundoEstranhoEdicao101,
+						lancamentoMundoEstranhoEdicao101.getDataLancamentoPrevista(), 
+						lancamentoMundoEstranhoEdicao101.getDataRecolhimentoPrevista(),
+					    StatusLancamentoParcial.PROJETADO);
+
+		LancamentoParcial lancamentoParcialMundoEstranhoEdicao102 = 
+				Fixture.criarLancamentoParcial(mundoEstranhoEdicao102,
+						lancamentoMundoEstranhoEdicao102.getDataLancamentoPrevista(), 
+						lancamentoMundoEstranhoEdicao102.getDataRecolhimentoPrevista(),
+					    StatusLancamentoParcial.PROJETADO);
+
+		LancamentoParcial lancamentoParcialNovaEscolaEdicao101 = 
+				Fixture.criarLancamentoParcial(novaEscolaEdicao101,
+						lancamentoNovaEscolaEdicao101.getDataLancamentoPrevista(), 
+						lancamentoNovaEscolaEdicao101.getDataRecolhimentoPrevista(),
+					    StatusLancamentoParcial.PROJETADO);
+
+		LancamentoParcial lancamentoParcialNovaEscolaEdicao102 = 
+				Fixture.criarLancamentoParcial(novaEscolaEdicao102,
+						lancamentoNovaEscolaEdicao102.getDataLancamentoPrevista(), 
+						lancamentoNovaEscolaEdicao102.getDataRecolhimentoPrevista(),
+					    StatusLancamentoParcial.PROJETADO);
+
+		LancamentoParcial lancamentoParcialMinhaCasaEdicao101 = 
+				Fixture.criarLancamentoParcial(minhaCasaEdicao101,
+						lancamentoMinhaCasaEdicao101.getDataLancamentoPrevista(), 
+						lancamentoMinhaCasaEdicao101.getDataRecolhimentoPrevista(),
+					    StatusLancamentoParcial.PROJETADO);
+
+		LancamentoParcial lancamentoParcialMinhaCasaEdicao102 = 
+				Fixture.criarLancamentoParcial(minhaCasaEdicao102,
+						lancamentoMinhaCasaEdicao102.getDataLancamentoPrevista(), 
+						lancamentoMinhaCasaEdicao102.getDataRecolhimentoPrevista(),
+					    StatusLancamentoParcial.PROJETADO);
+
+		LancamentoParcial lancamentoParcialRecreioEdicao101 = 
+				Fixture.criarLancamentoParcial(recreioEdicao101,
+						lancamentoRecreioEdicao101.getDataLancamentoPrevista(), 
+						lancamentoRecreioEdicao101.getDataRecolhimentoPrevista(),
+					    StatusLancamentoParcial.PROJETADO);
+
+		LancamentoParcial lancamentoParcialRecreioEdicao102 = 
+				Fixture.criarLancamentoParcial(recreioEdicao102,
+						lancamentoRecreioEdicao102.getDataLancamentoPrevista(), 
+						lancamentoRecreioEdicao102.getDataRecolhimentoPrevista(),
+					    StatusLancamentoParcial.PROJETADO);
+
+		LancamentoParcial lancamentoParcialWomenHealthEdicao101 = 
+				Fixture.criarLancamentoParcial(womenHealthEdicao101,
+						lancamentoWomenHealthEdicao101.getDataLancamentoPrevista(), 
+						lancamentoWomenHealthEdicao101.getDataRecolhimentoPrevista(),
+					    StatusLancamentoParcial.PROJETADO);
+
+		LancamentoParcial lancamentoParcialWomenHealthEdicao102 = 
+				Fixture.criarLancamentoParcial(womenHealthEdicao102,
+						lancamentoWomenHealthEdicao102.getDataLancamentoPrevista(), 
+						lancamentoWomenHealthEdicao102.getDataRecolhimentoPrevista(),
+					    StatusLancamentoParcial.PROJETADO);
+
+		LancamentoParcial lancamentoParcialViagemTurismoEdicao101 = 
+				Fixture.criarLancamentoParcial(viagemTurismoEdicao101,
+						lancamentoViagemTurismoEdicao101.getDataLancamentoPrevista(), 
+						lancamentoViagemTurismoEdicao101.getDataRecolhimentoPrevista(),
+					    StatusLancamentoParcial.PROJETADO);
+
+		LancamentoParcial lancamentoParcialViagemTurismoEdicao102 = 
+				Fixture.criarLancamentoParcial(viagemTurismoEdicao102,
+						lancamentoViagemTurismoEdicao102.getDataLancamentoPrevista(), 
+						lancamentoViagemTurismoEdicao102.getDataRecolhimentoPrevista(),
+					    StatusLancamentoParcial.PROJETADO);
+
+		LancamentoParcial lancamentoParcialVipEdicao101 = 
+				Fixture.criarLancamentoParcial(vipEdicao101,
+						lancamentoVipEdicao101.getDataLancamentoPrevista(), 
+						lancamentoVipEdicao101.getDataRecolhimentoPrevista(),
+					    StatusLancamentoParcial.PROJETADO);
+
+		LancamentoParcial lancamentoParcialVipEdicao102 = 
+				Fixture.criarLancamentoParcial(vipEdicao102,
+						lancamentoVipEdicao102.getDataLancamentoPrevista(), 
+						lancamentoVipEdicao102.getDataRecolhimentoPrevista(),
+					    StatusLancamentoParcial.PROJETADO);
+
+		LancamentoParcial lancamentoParcialGestaoEscolarEdicao101 = 
+				Fixture.criarLancamentoParcial(gestaoEscolarEdicao101,
+						lancamentoGestaoEscolarEdicao101.getDataLancamentoPrevista(), 
+						lancamentoGestaoEscolarEdicao101.getDataRecolhimentoPrevista(),
+					    StatusLancamentoParcial.PROJETADO);
+
+		LancamentoParcial lancamentoParcialGestaoEscolarEdicao102 = 
+				Fixture.criarLancamentoParcial(gestaoEscolarEdicao102,
+						lancamentoGestaoEscolarEdicao102.getDataLancamentoPrevista(), 
+						lancamentoGestaoEscolarEdicao102.getDataRecolhimentoPrevista(),
+					    StatusLancamentoParcial.PROJETADO);
+
+		LancamentoParcial lancamentoParcialLolaEdicao101 = 
+				Fixture.criarLancamentoParcial(lolaEdicao101,
+						lancamentoLolaEdicao101.getDataLancamentoPrevista(), 
+						lancamentoLolaEdicao101.getDataRecolhimentoPrevista(),
+					    StatusLancamentoParcial.PROJETADO);
+
+		LancamentoParcial lancamentoParcialLolaEdicao102 = 
+				Fixture.criarLancamentoParcial(lolaEdicao102,
+						lancamentoLolaEdicao102.getDataLancamentoPrevista(), 
+						lancamentoLolaEdicao102.getDataRecolhimentoPrevista(),
+					    StatusLancamentoParcial.PROJETADO);
+
+		LancamentoParcial lancamentoParcialHeavyMetalEdicao101 = 
+				Fixture.criarLancamentoParcial(heavyMetalEdicao101,
+						lancamentoHeavyMetalEdicao101.getDataLancamentoPrevista(), 
+						lancamentoHeavyMetalEdicao101.getDataRecolhimentoPrevista(),
+					    StatusLancamentoParcial.PROJETADO);
+
+		LancamentoParcial lancamentoParcialHeavyMetalEdicao102 = 
+				Fixture.criarLancamentoParcial(heavyMetalEdicao102,
+						lancamentoHeavyMetalEdicao102.getDataLancamentoPrevista(), 
+						lancamentoHeavyMetalEdicao102.getDataRecolhimentoPrevista(),
+					    StatusLancamentoParcial.PROJETADO);
+		
+		LancamentoParcial lancamentoParcialMetalUndergroundEdicao101 = 
+				Fixture.criarLancamentoParcial(metalUndergroundEdicao101,
+						lancamentoMetalUndergroundEdicao101.getDataLancamentoPrevista(), 
+						lancamentoMetalUndergroundEdicao101.getDataRecolhimentoPrevista(),
+					    StatusLancamentoParcial.PROJETADO);
+
+		LancamentoParcial lancamentoParcialMetalUndergroundEdicao102 = 
+				Fixture.criarLancamentoParcial(metalUndergroundEdicao102,
+						lancamentoMetalUndergroundEdicao102.getDataLancamentoPrevista(), 
+						lancamentoMetalUndergroundEdicao102.getDataRecolhimentoPrevista(),
+					    StatusLancamentoParcial.PROJETADO);
+		
+		save(session, lancamentoParcialJavaMagazineEdicao101, lancamentoParcialJavaMagazineEdicao102, 
+					  lancamentoParcialMundoJavaEdicao101, lancamentoParcialMundoJavaEdicao102,
+					  lancamentoParcialSqlMagazineEdicao101, lancamentoParcialSqlMagazineEdicao102,
+					  lancamentoParcialGalileuEdicao101, lancamentoParcialGalileuEdicao102,
+					  lancamentoParcialDuasRodasEdicao101, lancamentoParcialDuasRodasEdicao102,
+					  lancamentoParcialGuitarPlayerEdicao101, lancamentoParcialGuitarPlayerEdicao102,
+					  lancamentoParcialRoadieCrewEdicao101, lancamentoParcialRoadieCrewEdicao102,
+					  lancamentoParcialRockBrigadeEdicao101, lancamentoParcialRockBrigadeEdicao102,
+					  lancamentoParcialValhallaEdicao101, lancamentoParcialValhallaEdicao102,
+					  lancamentoParcialRollingStoneEdicao101, lancamentoParcialRollingStoneEdicao102,
+					  lancamentoParcialBonsFluidosEdicao101, lancamentoParcialBonsFluidosEdicao102,
+					  lancamentoParcialBravoEdicao101, lancamentoParcialBravoEdicao102,
+					  lancamentoParcialCasaClaudiaEdicao101, lancamentoParcialCasaClaudiaEdicao102,
+					  lancamentoParcialJequitiEdicao101, lancamentoParcialJequitiEdicao102,
+					  lancamentoParcialMundoEstranhoEdicao101, lancamentoParcialMundoEstranhoEdicao102,
+					  lancamentoParcialNovaEscolaEdicao101, lancamentoParcialNovaEscolaEdicao102,
+					  lancamentoParcialMinhaCasaEdicao101, lancamentoParcialMinhaCasaEdicao102,
+					  lancamentoParcialRecreioEdicao101, lancamentoParcialRecreioEdicao102,
+					  lancamentoParcialWomenHealthEdicao101, lancamentoParcialWomenHealthEdicao102,
+					  lancamentoParcialViagemTurismoEdicao101, lancamentoParcialViagemTurismoEdicao102,
+					  lancamentoParcialVipEdicao101, lancamentoParcialVipEdicao102,
+					  lancamentoParcialGestaoEscolarEdicao101, lancamentoParcialGestaoEscolarEdicao102,
+					  lancamentoParcialLolaEdicao101, lancamentoParcialLolaEdicao102,
+					  lancamentoParcialHeavyMetalEdicao101, lancamentoParcialHeavyMetalEdicao102,
+					  lancamentoParcialMetalUndergroundEdicao101, lancamentoParcialMetalUndergroundEdicao102);
+
+		//PERIODO LANCAMENTO PARCIAL
+		PeriodoLancamentoParcial periodoLancamentoParcialJavaMagazineEdicao101 = 
+				Fixture.criarPeriodoLancamentoParcial(
+						lancamentoJavaMagazineEdicao101, 
+						lancamentoParcialJavaMagazineEdicao101, 
+						StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.PARCIAL);
+		
+		PeriodoLancamentoParcial periodoLancamentoParcialMundoJavaEdicao101 = 
+				Fixture.criarPeriodoLancamentoParcial(
+						lancamentoMundoJavaEdicao101, 
+						lancamentoParcialMundoJavaEdicao101, 
+						StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.FINAL);
+		
+		PeriodoLancamentoParcial periodoLancamentoParcialSqlMagazineEdicao101 = 
+				Fixture.criarPeriodoLancamentoParcial(
+						lancamentoSqlMagazineEdicao101, 
+						lancamentoParcialSqlMagazineEdicao101, 
+						StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.PARCIAL);
+		
+		PeriodoLancamentoParcial periodoLancamentoParcialGalileuEdicao101 = 
+				Fixture.criarPeriodoLancamentoParcial(
+						lancamentoGalileuEdicao101, 
+						lancamentoParcialGalileuEdicao101, 
+						StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.PARCIAL);
+		
+		PeriodoLancamentoParcial periodoLancamentoParcialDuasRodasEdicao101 = 
+				Fixture.criarPeriodoLancamentoParcial(
+						lancamentoDuasRodasEdicao101, 
+						lancamentoParcialDuasRodasEdicao101, 
+						StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.PARCIAL);
+		
+		PeriodoLancamentoParcial periodoLancamentoParcialGuitarPlayerEdicao101 = 
+				Fixture.criarPeriodoLancamentoParcial(
+						lancamentoGuitarPlayerEdicao101, 
+						lancamentoParcialGuitarPlayerEdicao101, 
+						StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.FINAL);
+		
+		PeriodoLancamentoParcial periodoLancamentoParcialRoadieCrewEdicao101 = 
+				Fixture.criarPeriodoLancamentoParcial(
+						lancamentoRoadieCrewEdicao101, 
+						lancamentoParcialRoadieCrewEdicao101, 
+						StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.PARCIAL);
+		
+		PeriodoLancamentoParcial periodoLancamentoParcialRockBrigadeEdicao101 = 
+				Fixture.criarPeriodoLancamentoParcial(
+						lancamentoRockBrigadeEdicao101, 
+						lancamentoParcialRockBrigadeEdicao101, 
+						StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.PARCIAL);
+		
+		PeriodoLancamentoParcial periodoLancamentoParcialValhallaEdicao101 = 
+				Fixture.criarPeriodoLancamentoParcial(
+						lancamentoValhallaEdicao101, 
+						lancamentoParcialValhallaEdicao101, 
+						StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.PARCIAL);
+		
+		PeriodoLancamentoParcial periodoLancamentoParcialRollingStoneEdicao101 = 
+				Fixture.criarPeriodoLancamentoParcial(
+						lancamentoRollingStoneEdicao101, 
+						lancamentoParcialRollingStoneEdicao101, 
+						StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.PARCIAL);
+
+		PeriodoLancamentoParcial periodoLancamentoParcialBonsFluidosEdicao101 = 
+				Fixture.criarPeriodoLancamentoParcial(
+						lancamentoBonsFluidosEdicao101, 
+						lancamentoParcialBonsFluidosEdicao101, 
+						StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.PARCIAL);
+		
+		PeriodoLancamentoParcial periodoLancamentoParcialBravoEdicao101 = 
+				Fixture.criarPeriodoLancamentoParcial(
+						lancamentoBravoEdicao101, 
+						lancamentoParcialBravoEdicao101, 
+						StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.PARCIAL);
+		
+		PeriodoLancamentoParcial periodoLancamentoParcialCasaClaudiaEdicao101 = 
+				Fixture.criarPeriodoLancamentoParcial(
+						lancamentoCasaClaudiaEdicao101, 
+						lancamentoParcialCasaClaudiaEdicao101, 
+						StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.PARCIAL);
+
+		PeriodoLancamentoParcial periodoLancamentoParcialJequitiEdicao101 = 
+				Fixture.criarPeriodoLancamentoParcial(
+						lancamentoJequitiEdicao101, 
+						lancamentoParcialJequitiEdicao101, 
+						StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.PARCIAL);
+		
+		PeriodoLancamentoParcial periodoLancamentoParcialMundoEstranhoEdicao101 = 
+				Fixture.criarPeriodoLancamentoParcial(
+						lancamentoMundoEstranhoEdicao101, 
+						lancamentoParcialMundoEstranhoEdicao101, 
+						StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.PARCIAL);
+		
+		PeriodoLancamentoParcial periodoLancamentoParcialNovaEscolaEdicao101 = 
+				Fixture.criarPeriodoLancamentoParcial(
+						lancamentoNovaEscolaEdicao101, 
+						lancamentoParcialNovaEscolaEdicao101, 
+						StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.FINAL);
+		
+		PeriodoLancamentoParcial periodoLancamentoParcialMinhaCasaEdicao101 = 
+				Fixture.criarPeriodoLancamentoParcial(
+						lancamentoMinhaCasaEdicao101, 
+						lancamentoParcialMinhaCasaEdicao101, 
+						StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.PARCIAL);
+		
+		PeriodoLancamentoParcial periodoLancamentoParcialRecreioEdicao101 = 
+				Fixture.criarPeriodoLancamentoParcial(
+						lancamentoRecreioEdicao101, 
+						lancamentoParcialRecreioEdicao101, 
+						StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.PARCIAL);
+		
+		PeriodoLancamentoParcial periodoLancamentoParcialWomenHealthEdicao101 = 
+				Fixture.criarPeriodoLancamentoParcial(
+						lancamentoWomenHealthEdicao101, 
+						lancamentoParcialWomenHealthEdicao101, 
+						StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.FINAL);
+		
+		PeriodoLancamentoParcial periodoLancamentoParcialViagemTurismoEdicao101 = 
+				Fixture.criarPeriodoLancamentoParcial(
+						lancamentoViagemTurismoEdicao101, 
+						lancamentoParcialViagemTurismoEdicao101, 
+						StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.PARCIAL);
+		
+		PeriodoLancamentoParcial periodoLancamentoParcialVipEdicao101 = 
+				Fixture.criarPeriodoLancamentoParcial(
+						lancamentoVipEdicao101, 
+						lancamentoParcialVipEdicao101, 
+						StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.PARCIAL);
+		
+		PeriodoLancamentoParcial periodoLancamentoParcialGestaoEscolarEdicao101 = 
+				Fixture.criarPeriodoLancamentoParcial(
+						lancamentoGestaoEscolarEdicao101, 
+						lancamentoParcialGestaoEscolarEdicao101, 
+						StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.PARCIAL);
+
+		PeriodoLancamentoParcial periodoLancamentoParcialLolaEdicao101 = 
+				Fixture.criarPeriodoLancamentoParcial(
+						lancamentoLolaEdicao101, 
+						lancamentoParcialLolaEdicao101, 
+						StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.FINAL);
+
+		PeriodoLancamentoParcial periodoLancamentoParcialHeavyMetalEdicao101 = 
+				Fixture.criarPeriodoLancamentoParcial(
+						lancamentoHeavyMetalEdicao101, 
+						lancamentoParcialHeavyMetalEdicao101, 
+						StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.PARCIAL);
+
+		PeriodoLancamentoParcial periodoLancamentoParcialMetalUndergroundEdicao101 = 
+				Fixture.criarPeriodoLancamentoParcial(
+						lancamentoMetalUndergroundEdicao101, 
+						lancamentoParcialMetalUndergroundEdicao101, 
+						StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.PARCIAL);
+
+		PeriodoLancamentoParcial periodoLancamentoParcialJavaMagazineEdicao102 = 
+				Fixture.criarPeriodoLancamentoParcial(
+						lancamentoJavaMagazineEdicao102, 
+						lancamentoParcialJavaMagazineEdicao102, 
+						StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.PARCIAL);
+
+		PeriodoLancamentoParcial periodoLancamentoParcialMundoJavaEdicao102 = 
+				Fixture.criarPeriodoLancamentoParcial(
+						lancamentoMundoJavaEdicao102, 
+						lancamentoParcialMundoJavaEdicao102, 
+						StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.PARCIAL);
+
+		PeriodoLancamentoParcial periodoLancamentoParcialSqlMagazineEdicao102 = 
+				Fixture.criarPeriodoLancamentoParcial(
+						lancamentoSqlMagazineEdicao102, 
+						lancamentoParcialSqlMagazineEdicao102, 
+						StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.FINAL);
+
+		PeriodoLancamentoParcial periodoLancamentoParcialGalileuEdicao102 = 
+				Fixture.criarPeriodoLancamentoParcial(
+						lancamentoGalileuEdicao102, 
+						lancamentoParcialGalileuEdicao102, 
+						StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.PARCIAL);
+
+		PeriodoLancamentoParcial periodoLancamentoParcialDuasRodasEdicao102 = 
+				Fixture.criarPeriodoLancamentoParcial(
+						lancamentoDuasRodasEdicao102,
+						lancamentoParcialDuasRodasEdicao102, 
+						StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.PARCIAL);
+		
+		PeriodoLancamentoParcial periodoLancamentoParcialGuitarPlayerEdicao102 = 
+				Fixture.criarPeriodoLancamentoParcial(
+						lancamentoGuitarPlayerEdicao102, 
+						lancamentoParcialGuitarPlayerEdicao102, 
+						StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.PARCIAL);
+
+		PeriodoLancamentoParcial periodoLancamentoParcialRoadieCrewEdicao102 = 
+				Fixture.criarPeriodoLancamentoParcial(
+						lancamentoRoadieCrewEdicao102, 
+						lancamentoParcialRoadieCrewEdicao102, 
+						StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.PARCIAL);
+
+		PeriodoLancamentoParcial periodoLancamentoParcialRockBrigadeEdicao102 = 
+				Fixture.criarPeriodoLancamentoParcial(
+						lancamentoRockBrigadeEdicao102, 
+						lancamentoParcialRockBrigadeEdicao102,  
+						StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.PARCIAL);
+
+		PeriodoLancamentoParcial periodoLancamentoParcialValhallaEdicao102 = 
+				Fixture.criarPeriodoLancamentoParcial(
+						lancamentoValhallaEdicao102, 
+						lancamentoParcialValhallaEdicao102, 
+						StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.PARCIAL);
+
+		PeriodoLancamentoParcial periodoLancamentoParcialRollingStoneEdicao102 = 
+				Fixture.criarPeriodoLancamentoParcial(
+						lancamentoRollingStoneEdicao102, 
+						lancamentoParcialRollingStoneEdicao102,  
+						StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.PARCIAL);
+
+		PeriodoLancamentoParcial periodoLancamentoParcialBonsFluidosEdicao102 = 
+				Fixture.criarPeriodoLancamentoParcial(
+						lancamentoBonsFluidosEdicao102, 
+						lancamentoParcialBonsFluidosEdicao102, 
+						StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.PARCIAL);
+
+		PeriodoLancamentoParcial periodoLancamentoParcialBravoEdicao102 = 
+				Fixture.criarPeriodoLancamentoParcial(
+						lancamentoBravoEdicao102, 
+						lancamentoParcialBravoEdicao102, 
+						StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.PARCIAL);
+
+		PeriodoLancamentoParcial periodoLancamentoParcialCasaClaudiaEdicao102 = 
+				Fixture.criarPeriodoLancamentoParcial(
+						lancamentoCasaClaudiaEdicao102, 
+						lancamentoParcialCasaClaudiaEdicao102,  
+						StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.PARCIAL);
+
+		PeriodoLancamentoParcial periodoLancamentoParcialJequitiEdicao102 = 
+				Fixture.criarPeriodoLancamentoParcial(
+						lancamentoJequitiEdicao102, 
+						lancamentoParcialJequitiEdicao102, 
+						StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.PARCIAL);
+
+		PeriodoLancamentoParcial periodoLancamentoParcialMundoEstranhoEdicao102 = 
+				Fixture.criarPeriodoLancamentoParcial(
+						lancamentoMundoEstranhoEdicao102, 
+						lancamentoParcialMundoEstranhoEdicao102, 
+						StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.PARCIAL);
+
+		PeriodoLancamentoParcial periodoLancamentoParcialNovaEscolaEdicao102 = 
+				Fixture.criarPeriodoLancamentoParcial(
+						lancamentoNovaEscolaEdicao102, 
+						lancamentoParcialNovaEscolaEdicao102, 
+						StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.PARCIAL);
+
+		PeriodoLancamentoParcial periodoLancamentoParcialMinhaCasaEdicao102 = 
+				Fixture.criarPeriodoLancamentoParcial(
+						lancamentoMinhaCasaEdicao102, 
+						lancamentoParcialMinhaCasaEdicao102, 
+						StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.PARCIAL);
+
+		PeriodoLancamentoParcial periodoLancamentoParcialRecreioEdicao102 = 
+				Fixture.criarPeriodoLancamentoParcial(
+						lancamentoRecreioEdicao102, 
+						lancamentoParcialRecreioEdicao102, 
+						StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.PARCIAL);
+
+		PeriodoLancamentoParcial periodoLancamentoParcialWomenHealthEdicao102 = 
+				Fixture.criarPeriodoLancamentoParcial(
+						lancamentoWomenHealthEdicao102, 
+						lancamentoParcialWomenHealthEdicao102,  
+						StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.FINAL);
+
+		PeriodoLancamentoParcial periodoLancamentoParcialViagemTurismoEdicao102 = 
+				Fixture.criarPeriodoLancamentoParcial(
+						lancamentoViagemTurismoEdicao102, 
+						lancamentoParcialViagemTurismoEdicao102, 
+						StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.PARCIAL);
+
+		PeriodoLancamentoParcial periodoLancamentoParcialVipEdicao102 = 
+				Fixture.criarPeriodoLancamentoParcial(
+						lancamentoVipEdicao102, 
+						lancamentoParcialVipEdicao102, 
+						StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.PARCIAL);
+
+		PeriodoLancamentoParcial periodoLancamentoParcialGestaoEscolarEdicao102 = 
+				Fixture.criarPeriodoLancamentoParcial(
+						lancamentoGestaoEscolarEdicao102, 
+						lancamentoParcialGestaoEscolarEdicao102,  
+						StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.PARCIAL);
+
+		PeriodoLancamentoParcial periodoLancamentoParcialLolaEdicao102 = 
+				Fixture.criarPeriodoLancamentoParcial(
+						lancamentoLolaEdicao102, 
+						lancamentoParcialLolaEdicao102, 
+						StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.FINAL);
+
+		PeriodoLancamentoParcial periodoLancamentoParcialHeavyMetalEdicao102 = 
+				Fixture.criarPeriodoLancamentoParcial(
+						lancamentoHeavyMetalEdicao102, 
+						lancamentoParcialHeavyMetalEdicao102, 
+						StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.PARCIAL);
+
+		PeriodoLancamentoParcial periodoLancamentoParcialMetalUndergroundEdicao102 = 
+				Fixture.criarPeriodoLancamentoParcial(
+						lancamentoMetalUndergroundEdicao102, 
+						lancamentoParcialMetalUndergroundEdicao102, 
+						StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.PARCIAL);
+		
+		save(session, periodoLancamentoParcialJavaMagazineEdicao101, periodoLancamentoParcialMundoJavaEdicao101,
+					  periodoLancamentoParcialSqlMagazineEdicao101, periodoLancamentoParcialGalileuEdicao101,
+					  periodoLancamentoParcialDuasRodasEdicao101, periodoLancamentoParcialGuitarPlayerEdicao101,
+					  periodoLancamentoParcialRoadieCrewEdicao101, periodoLancamentoParcialRockBrigadeEdicao101,
+					  periodoLancamentoParcialValhallaEdicao101, periodoLancamentoParcialRollingStoneEdicao101,
+					  periodoLancamentoParcialBonsFluidosEdicao101, periodoLancamentoParcialBravoEdicao101,
+					  periodoLancamentoParcialCasaClaudiaEdicao101, periodoLancamentoParcialJequitiEdicao101,
+					  periodoLancamentoParcialMundoEstranhoEdicao101, periodoLancamentoParcialNovaEscolaEdicao101,
+					  periodoLancamentoParcialMinhaCasaEdicao101, periodoLancamentoParcialRecreioEdicao101,
+					  periodoLancamentoParcialWomenHealthEdicao101, periodoLancamentoParcialViagemTurismoEdicao101,
+					  periodoLancamentoParcialVipEdicao101, periodoLancamentoParcialGestaoEscolarEdicao101,
+					  periodoLancamentoParcialLolaEdicao101, periodoLancamentoParcialHeavyMetalEdicao101,
+					  periodoLancamentoParcialMetalUndergroundEdicao101, periodoLancamentoParcialJavaMagazineEdicao102,
+					  periodoLancamentoParcialMundoJavaEdicao102, periodoLancamentoParcialSqlMagazineEdicao102,
+					  periodoLancamentoParcialGalileuEdicao102, periodoLancamentoParcialDuasRodasEdicao102,
+					  periodoLancamentoParcialGuitarPlayerEdicao102, periodoLancamentoParcialRoadieCrewEdicao102,
+					  periodoLancamentoParcialRockBrigadeEdicao102, periodoLancamentoParcialValhallaEdicao102,
+					  periodoLancamentoParcialRollingStoneEdicao102, periodoLancamentoParcialBonsFluidosEdicao102,
+					  periodoLancamentoParcialBravoEdicao102, periodoLancamentoParcialCasaClaudiaEdicao102,
+					  periodoLancamentoParcialJequitiEdicao102, periodoLancamentoParcialMundoEstranhoEdicao102,
+					  periodoLancamentoParcialNovaEscolaEdicao102, periodoLancamentoParcialMinhaCasaEdicao102,
+					  periodoLancamentoParcialRecreioEdicao102, periodoLancamentoParcialWomenHealthEdicao102,
+					  periodoLancamentoParcialViagemTurismoEdicao102, periodoLancamentoParcialVipEdicao102,
+					  periodoLancamentoParcialGestaoEscolarEdicao102, periodoLancamentoParcialLolaEdicao102,
+					  periodoLancamentoParcialHeavyMetalEdicao102, periodoLancamentoParcialMetalUndergroundEdicao102);
+		
+		//ESTUDOS
+		Estudo estudoJavaMagazineEdicao101 = 
+				Fixture.estudo(new BigDecimal(180),
+						lancamentoJavaMagazineEdicao101.getDataLancamentoDistribuidor(), javaMagazineEdicao101);
+		
+		Estudo estudoMundoJavaEdicao101 = 
+				Fixture.estudo(new BigDecimal(180),
+						lancamentoMundoJavaEdicao101.getDataLancamentoDistribuidor(), mundoJavaEdicao101);
+		
+		Estudo estudoSqlMagazineEdicao101 = 
+				Fixture.estudo(new BigDecimal(180),
+						lancamentoSqlMagazineEdicao101.getDataLancamentoDistribuidor(), sqlMagazineEdicao101);
+		
+		Estudo estudoGalileuEdicao101 = 
+				Fixture.estudo(new BigDecimal(180),
+						lancamentoGalileuEdicao101.getDataLancamentoDistribuidor(), galileuEdicao101);
+		
+		Estudo estudoDuasRodasEdicao101 = 
+				Fixture.estudo(new BigDecimal(180),
+						lancamentoDuasRodasEdicao101.getDataLancamentoDistribuidor(), duasRodasEdicao101);
+		
+		Estudo estudoGuitarPlayerEdicao101 = 
+				Fixture.estudo(new BigDecimal(180),
+						lancamentoGuitarPlayerEdicao101.getDataLancamentoDistribuidor(), guitarPlayerEdicao101);
+		
+		Estudo estudoRoadieCrewEdicao101 = 
+				Fixture.estudo(new BigDecimal(180),
+						lancamentoRoadieCrewEdicao101.getDataLancamentoDistribuidor(), roadieCrewEdicao101);
+		
+		Estudo estudoRockBrigadeEdicao101 = 
+				Fixture.estudo(new BigDecimal(180),
+						lancamentoRockBrigadeEdicao101.getDataLancamentoDistribuidor(), rockBrigadeEdicao101);
+		
+		Estudo estudoValhallaEdicao101 = 
+				Fixture.estudo(new BigDecimal(180),
+						lancamentoValhallaEdicao101.getDataLancamentoDistribuidor(), valhallaEdicao101);
+		
+		Estudo estudoRollingStoneEdicao101 = 
+				Fixture.estudo(new BigDecimal(180),
+						lancamentoRollingStoneEdicao101.getDataLancamentoDistribuidor(), rollingStoneEdicao101);
+		
+		Estudo estudoBonsFluidosEdicao101 = 
+				Fixture.estudo(new BigDecimal(180),
+						lancamentoBonsFluidosEdicao101.getDataLancamentoDistribuidor(), bonsFluidosEdicao101);
+		
+		Estudo estudoBravoEdicao101 = 
+				Fixture.estudo(new BigDecimal(180),
+						lancamentoBravoEdicao101.getDataLancamentoDistribuidor(), bravoEdicao101);
+		
+		Estudo estudoCasaClaudiaEdicao101 = 
+				Fixture.estudo(new BigDecimal(180),
+						lancamentoCasaClaudiaEdicao101.getDataLancamentoDistribuidor(), casaClaudiaEdicao101);
+		
+		Estudo estudoJequitiEdicao101 = 
+				Fixture.estudo(new BigDecimal(180),
+						lancamentoJequitiEdicao101.getDataLancamentoDistribuidor(), jequitiEdicao101);
+		
+		Estudo estudoMundoEstranhoEdicao101 = 
+				Fixture.estudo(new BigDecimal(180),
+						lancamentoMundoEstranhoEdicao101.getDataLancamentoDistribuidor(), mundoEstranhoEdicao101);
+		
+		Estudo estudoNovaEscolaEdicao101 = 
+				Fixture.estudo(new BigDecimal(180),
+						lancamentoNovaEscolaEdicao101.getDataLancamentoDistribuidor(), novaEscolaEdicao101);
+		
+		Estudo estudoMinhaCasaEdicao101 = 
+				Fixture.estudo(new BigDecimal(180),
+						lancamentoMinhaCasaEdicao101.getDataLancamentoDistribuidor(), minhaCasaEdicao101);
+		
+		Estudo estudoRecreioEdicao101 = 
+				Fixture.estudo(new BigDecimal(180),
+						lancamentoRecreioEdicao101.getDataLancamentoDistribuidor(), recreioEdicao101);
+		
+		Estudo estudoWomenHealthEdicao101 = 
+				Fixture.estudo(new BigDecimal(180),
+						lancamentoWomenHealthEdicao101.getDataLancamentoDistribuidor(), womenHealthEdicao101);
+		
+		Estudo estudoViagemTurismoEdicao101 = 
+				Fixture.estudo(new BigDecimal(180),
+						lancamentoViagemTurismoEdicao101.getDataLancamentoDistribuidor(), viagemTurismoEdicao101);
+		
+		Estudo estudoVipEdicao101 = 
+				Fixture.estudo(new BigDecimal(180),
+						lancamentoVipEdicao101.getDataLancamentoDistribuidor(), vipEdicao101);
+		
+		Estudo estudoGestaoEscolarEdicao101 = 
+				Fixture.estudo(new BigDecimal(180),
+						lancamentoGestaoEscolarEdicao101.getDataLancamentoDistribuidor(), gestaoEscolarEdicao101);
+		
+		Estudo estudoLolaEdicao101 = 
+				Fixture.estudo(new BigDecimal(180),
+						lancamentoLolaEdicao101.getDataLancamentoDistribuidor(), lolaEdicao101);
+		
+		Estudo estudoHeavyMetalEdicao101 = 
+				Fixture.estudo(new BigDecimal(180),
+						lancamentoHeavyMetalEdicao101.getDataLancamentoDistribuidor(), heavyMetalEdicao101);
+		
+		Estudo estudoMetalUndergroundEdicao101 = 
+				Fixture.estudo(new BigDecimal(180),
+						lancamentoMetalUndergroundEdicao101.getDataLancamentoDistribuidor(), metalUndergroundEdicao101);
+		
+		Estudo estudoJavaMagazineEdicao102 = 
+				Fixture.estudo(new BigDecimal(180),
+						lancamentoJavaMagazineEdicao102.getDataLancamentoDistribuidor(), javaMagazineEdicao102);
+		
+		Estudo estudoMundoJavaEdicao102 = 
+				Fixture.estudo(new BigDecimal(180),
+						lancamentoMundoJavaEdicao102.getDataLancamentoDistribuidor(), mundoJavaEdicao102);
+		
+		Estudo estudoSqlMagazineEdicao102 = 
+				Fixture.estudo(new BigDecimal(180),
+						lancamentoSqlMagazineEdicao102.getDataLancamentoDistribuidor(), sqlMagazineEdicao102);
+		
+		Estudo estudoGalileuEdicao102 = 
+				Fixture.estudo(new BigDecimal(180),
+						lancamentoGalileuEdicao102.getDataLancamentoDistribuidor(), galileuEdicao102);
+		
+		Estudo estudoDuasRodasEdicao102 = 
+				Fixture.estudo(new BigDecimal(180),
+						lancamentoDuasRodasEdicao102.getDataLancamentoDistribuidor(), duasRodasEdicao102);
+		
+		Estudo estudoGuitarPlayerEdicao102 = 
+				Fixture.estudo(new BigDecimal(180),
+						lancamentoGuitarPlayerEdicao102.getDataLancamentoDistribuidor(), guitarPlayerEdicao102);
+		
+		Estudo estudoRoadieCrewEdicao102 = 
+				Fixture.estudo(new BigDecimal(180),
+						lancamentoRoadieCrewEdicao102.getDataLancamentoDistribuidor(), roadieCrewEdicao102);
+		
+		Estudo estudoRockBrigadeEdicao102 = 
+				Fixture.estudo(new BigDecimal(180),
+						lancamentoRockBrigadeEdicao102.getDataLancamentoDistribuidor(), rockBrigadeEdicao102);
+		
+		Estudo estudoValhallaEdicao102 = 
+				Fixture.estudo(new BigDecimal(180),
+						lancamentoValhallaEdicao102.getDataLancamentoDistribuidor(), valhallaEdicao102);
+		
+		Estudo estudoRollingStoneEdicao102 = 
+				Fixture.estudo(new BigDecimal(180),
+						lancamentoRollingStoneEdicao102.getDataLancamentoDistribuidor(), rollingStoneEdicao102);
+		
+		Estudo estudoBonsFluidosEdicao102 = 
+				Fixture.estudo(new BigDecimal(180),
+						lancamentoBonsFluidosEdicao102.getDataLancamentoDistribuidor(), bonsFluidosEdicao102);
+		
+		Estudo estudoBravoEdicao102 = 
+				Fixture.estudo(new BigDecimal(180),
+						lancamentoBravoEdicao102.getDataLancamentoDistribuidor(), bravoEdicao102);
+		
+		Estudo estudoCasaClaudiaEdicao102 = 
+				Fixture.estudo(new BigDecimal(180),
+						lancamentoCasaClaudiaEdicao102.getDataLancamentoDistribuidor(), casaClaudiaEdicao102);
+		
+		Estudo estudoJequitiEdicao102 = 
+				Fixture.estudo(new BigDecimal(180),
+						lancamentoJequitiEdicao102.getDataLancamentoDistribuidor(), jequitiEdicao102);
+		
+		Estudo estudoMundoEstranhoEdicao102 = 
+				Fixture.estudo(new BigDecimal(180),
+						lancamentoMundoEstranhoEdicao102.getDataLancamentoDistribuidor(), mundoEstranhoEdicao102);
+		
+		Estudo estudoNovaEscolaEdicao102 = 
+				Fixture.estudo(new BigDecimal(180),
+						lancamentoNovaEscolaEdicao102.getDataLancamentoDistribuidor(), novaEscolaEdicao102);
+		
+		Estudo estudoMinhaCasaEdicao102 = 
+				Fixture.estudo(new BigDecimal(180),
+						lancamentoMinhaCasaEdicao102.getDataLancamentoDistribuidor(), minhaCasaEdicao102);
+		
+		Estudo estudoRecreioEdicao102 = 
+				Fixture.estudo(new BigDecimal(180),
+						lancamentoRecreioEdicao102.getDataLancamentoDistribuidor(), recreioEdicao102);
+		
+		Estudo estudoWomenHealthEdicao102 = 
+				Fixture.estudo(new BigDecimal(180),
+						lancamentoWomenHealthEdicao102.getDataLancamentoDistribuidor(), womenHealthEdicao102);
+		
+		Estudo estudoViagemTurismoEdicao102 = 
+				Fixture.estudo(new BigDecimal(180),
+						lancamentoViagemTurismoEdicao102.getDataLancamentoDistribuidor(), viagemTurismoEdicao102);
+		
+		Estudo estudoVipEdicao102 = 
+				Fixture.estudo(new BigDecimal(180),
+						lancamentoVipEdicao102.getDataLancamentoDistribuidor(), vipEdicao102);
+		
+		Estudo estudoGestaoEscolarEdicao102 = 
+				Fixture.estudo(new BigDecimal(180),
+						lancamentoGestaoEscolarEdicao102.getDataLancamentoDistribuidor(), gestaoEscolarEdicao102);
+		
+		Estudo estudoLolaEdicao102 = 
+				Fixture.estudo(new BigDecimal(180),
+						lancamentoLolaEdicao102.getDataLancamentoDistribuidor(), lolaEdicao102);
+		
+		Estudo estudoHeavyMetalEdicao102 = 
+				Fixture.estudo(new BigDecimal(180),
+						lancamentoHeavyMetalEdicao102.getDataLancamentoDistribuidor(), heavyMetalEdicao102);
+		
+		Estudo estudoMetalUndergroundEdicao102 = 
+				Fixture.estudo(new BigDecimal(180),
+						lancamentoMetalUndergroundEdicao102.getDataLancamentoDistribuidor(), metalUndergroundEdicao102);
+		
+		save(session, estudoJavaMagazineEdicao101, estudoMundoJavaEdicao101, 
+					  estudoSqlMagazineEdicao101, estudoGalileuEdicao101,
+					  estudoDuasRodasEdicao101, estudoGuitarPlayerEdicao101, 
+					  estudoRoadieCrewEdicao101, estudoRockBrigadeEdicao101,
+					  estudoValhallaEdicao101, estudoRollingStoneEdicao101, 
+					  estudoBonsFluidosEdicao101, estudoBravoEdicao101, 
+					  estudoCasaClaudiaEdicao101, estudoJequitiEdicao101, 
+					  estudoMundoEstranhoEdicao101, estudoNovaEscolaEdicao101, 
+					  estudoMinhaCasaEdicao101, estudoRecreioEdicao101, 
+					  estudoWomenHealthEdicao101, estudoViagemTurismoEdicao101, 
+					  estudoVipEdicao101, estudoGestaoEscolarEdicao101, 
+					  estudoLolaEdicao101, estudoHeavyMetalEdicao101, 
+					  estudoMetalUndergroundEdicao101, estudoJavaMagazineEdicao102, 
+					  estudoMundoJavaEdicao102, estudoSqlMagazineEdicao102, 
+					  estudoGalileuEdicao102, estudoDuasRodasEdicao102, 
+					  estudoGuitarPlayerEdicao102, estudoRoadieCrewEdicao102, 
+					  estudoRockBrigadeEdicao102, estudoValhallaEdicao102, 
+					  estudoRollingStoneEdicao102, estudoBonsFluidosEdicao102, 
+					  estudoBravoEdicao102, estudoCasaClaudiaEdicao102, 
+					  estudoJequitiEdicao102, estudoMundoEstranhoEdicao102, 
+					  estudoNovaEscolaEdicao102, estudoMinhaCasaEdicao102, 
+					  estudoRecreioEdicao102, estudoWomenHealthEdicao102,
+					  estudoViagemTurismoEdicao102, estudoVipEdicao102, 
+					  estudoGestaoEscolarEdicao102, estudoLolaEdicao102,
+					  estudoHeavyMetalEdicao102, estudoMetalUndergroundEdicao102);
+		
+		//ESTUDOS COTA
+		EstudoCota estudoCotaAcmeJavaMagazineEdicao101 = 
+				Fixture.estudoCota(BigDecimal.TEN, BigDecimal.ONE, estudoJavaMagazineEdicao101, cotaAcme);
+		
+		EstudoCota estudoCotaAcmeMundoJavaEdicao101 = 
+				Fixture.estudoCota(BigDecimal.TEN, BigDecimal.ONE, estudoMundoJavaEdicao101, cotaAcme);
+		
+		EstudoCota estudoCotaAcmeSqlMagazineEdicao101 = 
+				Fixture.estudoCota(BigDecimal.TEN, BigDecimal.ONE, estudoSqlMagazineEdicao101, cotaAcme);
+		
+		EstudoCota estudoCotaAcmeGalileuEdicao101 = 
+				Fixture.estudoCota(BigDecimal.TEN, BigDecimal.ONE, estudoGalileuEdicao101, cotaAcme);
+		
+		EstudoCota estudoCotaAcmeDuasRodasEdicao101 = 
+				Fixture.estudoCota(BigDecimal.TEN, BigDecimal.ONE, estudoDuasRodasEdicao101, cotaAcme);
+		
+		EstudoCota estudoCotaAcmeGuitarPlayerEdicao101 = 
+				Fixture.estudoCota(BigDecimal.TEN, BigDecimal.ONE, estudoGuitarPlayerEdicao101, cotaAcme);
+		
+		EstudoCota estudoCotaAcmeRoadieCrewEdicao101 = 
+				Fixture.estudoCota(BigDecimal.TEN, BigDecimal.ONE, estudoRoadieCrewEdicao101, cotaAcme);
+		
+		EstudoCota estudoCotaAcmeRockBrigadeEdicao101 = 
+				Fixture.estudoCota(BigDecimal.TEN, BigDecimal.ONE, estudoRockBrigadeEdicao101, cotaAcme);
+		
+		EstudoCota estudoCotaAcmeValhallaEdicao101 = 
+				Fixture.estudoCota(BigDecimal.TEN, BigDecimal.ONE, estudoValhallaEdicao101, cotaAcme);
+		
+		EstudoCota estudoCotaAcmeRollingStoneEdicao101 = 
+				Fixture.estudoCota(BigDecimal.TEN, BigDecimal.ONE, estudoRollingStoneEdicao101, cotaAcme);
+		
+		EstudoCota estudoCotaAcmeBonsFluidosEdicao101 = 
+				Fixture.estudoCota(BigDecimal.TEN, BigDecimal.ONE, estudoBonsFluidosEdicao101, cotaAcme);
+		
+		EstudoCota estudoCotaAcmeBravoEdicao101 = 
+				Fixture.estudoCota(BigDecimal.TEN, BigDecimal.ONE, estudoBravoEdicao101, cotaAcme);
+		
+		EstudoCota estudoCotaAcmeCasaClaudiaEdicao101 = 
+				Fixture.estudoCota(BigDecimal.TEN, BigDecimal.ONE, estudoCasaClaudiaEdicao101, cotaAcme);
+		
+		EstudoCota estudoCotaAcmeJequitiEdicao101 = 
+				Fixture.estudoCota(BigDecimal.TEN, BigDecimal.ONE, estudoJequitiEdicao101, cotaAcme);
+		
+		EstudoCota estudoCotaAcmeMundoEstranhoEdicao101 = 
+				Fixture.estudoCota(BigDecimal.TEN, BigDecimal.ONE, estudoMundoEstranhoEdicao101, cotaAcme);
+		
+		EstudoCota estudoCotaAcmeNovaEscolaEdicao101 = 
+				Fixture.estudoCota(BigDecimal.TEN, BigDecimal.ONE, estudoNovaEscolaEdicao101, cotaAcme);
+		
+		EstudoCota estudoCotaAcmeMinhaCasaEdicao101 = 
+				Fixture.estudoCota(BigDecimal.TEN, BigDecimal.ONE, estudoMinhaCasaEdicao101, cotaAcme);
+		
+		EstudoCota estudoCotaAcmeRecreioEdicao101 = 
+				Fixture.estudoCota(BigDecimal.TEN, BigDecimal.ONE, estudoRecreioEdicao101, cotaAcme);
+		
+		EstudoCota estudoCotaAcmeWomenHealthEdicao101 = 
+				Fixture.estudoCota(BigDecimal.TEN, BigDecimal.ONE, estudoWomenHealthEdicao101, cotaAcme);
+
+		EstudoCota estudoCotaAcmeViagemTurismoEdicao101 = 
+				Fixture.estudoCota(BigDecimal.TEN, BigDecimal.ONE, estudoViagemTurismoEdicao101, cotaAcme);
+		
+		EstudoCota estudoCotaAcmeVipEdicao101 = 
+				Fixture.estudoCota(BigDecimal.TEN, BigDecimal.ONE, estudoVipEdicao101, cotaAcme);
+		
+		EstudoCota estudoCotaAcmeGestaoEscolarEdicao101 = 
+				Fixture.estudoCota(BigDecimal.TEN, BigDecimal.ONE, estudoGestaoEscolarEdicao101, cotaAcme);
+		
+		EstudoCota estudoCotaAcmeLolaEdicao101 = 
+				Fixture.estudoCota(BigDecimal.TEN, BigDecimal.ONE, estudoLolaEdicao101, cotaAcme);
+		
+		EstudoCota estudoCotaAcmeHeavyMetalEdicao101 = 
+				Fixture.estudoCota(BigDecimal.TEN, BigDecimal.ONE, estudoHeavyMetalEdicao101, cotaAcme);
+		
+		EstudoCota estudoCotaAcmeMetalUndergroundEdicao101 = 
+				Fixture.estudoCota(BigDecimal.TEN, BigDecimal.ONE, estudoMetalUndergroundEdicao101, cotaAcme);
+		
+		EstudoCota estudoCotaAcmeJavaMagazineEdicao102 = 
+				Fixture.estudoCota(BigDecimal.TEN, BigDecimal.ONE, estudoJavaMagazineEdicao102, cotaAcme);
+		
+		EstudoCota estudoCotaAcmeMundoJavaEdicao102 = 
+				Fixture.estudoCota(BigDecimal.TEN, BigDecimal.ONE, estudoMundoJavaEdicao102, cotaAcme);
+		
+		EstudoCota estudoCotaAcmeSqlMagazineEdicao102 = 
+				Fixture.estudoCota(BigDecimal.TEN, BigDecimal.ONE, estudoSqlMagazineEdicao102, cotaAcme);
+		
+		EstudoCota estudoCotaAcmeGalileuEdicao102 = 
+				Fixture.estudoCota(BigDecimal.TEN, BigDecimal.ONE, estudoGalileuEdicao102, cotaAcme);
+		
+		EstudoCota estudoCotaAcmeDuasRodasEdicao102 = 
+				Fixture.estudoCota(BigDecimal.TEN, BigDecimal.ONE, estudoDuasRodasEdicao102, cotaAcme);
+		
+		EstudoCota estudoCotaAcmeGuitarPlayerEdicao102 = 
+				Fixture.estudoCota(BigDecimal.TEN, BigDecimal.ONE, estudoGuitarPlayerEdicao102, cotaAcme);
+		
+		EstudoCota estudoCotaAcmeRoadieCrewEdicao102 = 
+				Fixture.estudoCota(BigDecimal.TEN, BigDecimal.ONE, estudoRoadieCrewEdicao102, cotaAcme);
+		
+		EstudoCota estudoCotaAcmeRockBrigadeEdicao102 = 
+				Fixture.estudoCota(BigDecimal.TEN, BigDecimal.ONE, estudoRockBrigadeEdicao102, cotaAcme);
+		
+		EstudoCota estudoCotaAcmeValhallaEdicao102 = 
+				Fixture.estudoCota(BigDecimal.TEN, BigDecimal.ONE, estudoValhallaEdicao102, cotaAcme);
+		
+		EstudoCota estudoCotaAcmeRollingStoneEdicao102 = 
+				Fixture.estudoCota(BigDecimal.TEN, BigDecimal.ONE, estudoRollingStoneEdicao102, cotaAcme);
+		
+		EstudoCota estudoCotaAcmeBonsFluidosEdicao102 = 
+				Fixture.estudoCota(BigDecimal.TEN, BigDecimal.ONE, estudoBonsFluidosEdicao102, cotaAcme);
+		
+		EstudoCota estudoCotaAcmeBravoEdicao102 = 
+				Fixture.estudoCota(BigDecimal.TEN, BigDecimal.ONE, estudoBravoEdicao102, cotaAcme);
+		
+		EstudoCota estudoCotaAcmeCasaClaudiaEdicao102 = 
+				Fixture.estudoCota(BigDecimal.TEN, BigDecimal.ONE, estudoCasaClaudiaEdicao102, cotaAcme);
+		
+		EstudoCota estudoCotaAcmeJequitiEdicao102 = 
+				Fixture.estudoCota(BigDecimal.TEN, BigDecimal.ONE, estudoJequitiEdicao102, cotaAcme);
+		
+		EstudoCota estudoCotaAcmeMundoEstranhoEdicao102 = 
+				Fixture.estudoCota(BigDecimal.TEN, BigDecimal.ONE, estudoMundoEstranhoEdicao102, cotaAcme);
+		
+		EstudoCota estudoCotaAcmeNovaEscolaEdicao102 = 
+				Fixture.estudoCota(BigDecimal.TEN, BigDecimal.ONE, estudoNovaEscolaEdicao102, cotaAcme);
+		
+		EstudoCota estudoCotaAcmeMinhaCasaEdicao102 = 
+				Fixture.estudoCota(BigDecimal.TEN, BigDecimal.ONE, estudoMinhaCasaEdicao102, cotaAcme);
+		
+		EstudoCota estudoCotaAcmeRecreioEdicao102 = 
+				Fixture.estudoCota(BigDecimal.TEN, BigDecimal.ONE, estudoRecreioEdicao102, cotaAcme);
+		
+		EstudoCota estudoCotaAcmeWomenHealthEdicao102 = 
+				Fixture.estudoCota(BigDecimal.TEN, BigDecimal.ONE, estudoWomenHealthEdicao102, cotaAcme);
+		
+		EstudoCota estudoCotaAcmeViagemTurismoEdicao102 = 
+				Fixture.estudoCota(BigDecimal.TEN, BigDecimal.ONE, estudoViagemTurismoEdicao102, cotaAcme);
+		
+		EstudoCota estudoCotaAcmeVipEdicao102 = 
+				Fixture.estudoCota(BigDecimal.TEN, BigDecimal.ONE, estudoVipEdicao102, cotaAcme);
+		
+		EstudoCota estudoCotaAcmeGestaoEscolarEdicao102 = 
+				Fixture.estudoCota(BigDecimal.TEN, BigDecimal.ONE, estudoGestaoEscolarEdicao102, cotaAcme);
+		
+		EstudoCota estudoCotaAcmeLolaEdicao102 = 
+				Fixture.estudoCota(BigDecimal.TEN, BigDecimal.ONE, estudoLolaEdicao102, cotaAcme);
+		
+		EstudoCota estudoCotaAcmeHeavyMetalEdicao102 = 
+				Fixture.estudoCota(BigDecimal.TEN, BigDecimal.ONE, estudoHeavyMetalEdicao102, cotaAcme);
+		
+		EstudoCota estudoCotaAcmeMetalUndergroundEdicao102 = 
+				Fixture.estudoCota(BigDecimal.TEN, BigDecimal.ONE, estudoMetalUndergroundEdicao102, cotaAcme);
+		
+		EstudoCota estudoCotaManoelJavaMagazineEdicao101 = 
+				Fixture.estudoCota(BigDecimal.TEN, BigDecimal.ONE, estudoJavaMagazineEdicao101, cotaManoel);
+		
+		EstudoCota estudoCotaManoelMundoJavaEdicao101 = 
+				Fixture.estudoCota(BigDecimal.TEN, BigDecimal.ONE, estudoMundoJavaEdicao101, cotaManoel);
+		
+		EstudoCota estudoCotaManoelSqlMagazineEdicao101 = 
+				Fixture.estudoCota(BigDecimal.TEN, BigDecimal.ONE, estudoSqlMagazineEdicao101, cotaManoel);
+		
+		EstudoCota estudoCotaManoelGalileuEdicao101 = 
+				Fixture.estudoCota(BigDecimal.TEN, BigDecimal.ONE, estudoGalileuEdicao101, cotaManoel);
+		
+		EstudoCota estudoCotaManoelDuasRodasEdicao101 = 
+				Fixture.estudoCota(BigDecimal.TEN, BigDecimal.ONE, estudoDuasRodasEdicao101, cotaManoel);
+		
+		EstudoCota estudoCotaManoelGuitarPlayerEdicao101 = 
+				Fixture.estudoCota(BigDecimal.TEN, BigDecimal.ONE, estudoGuitarPlayerEdicao101, cotaManoel);
+		
+		EstudoCota estudoCotaManoelRoadieCrewEdicao101 = 
+				Fixture.estudoCota(BigDecimal.TEN, BigDecimal.ONE, estudoRoadieCrewEdicao101, cotaManoel);
+		
+		EstudoCota estudoCotaManoelRockBrigadeEdicao101 = 
+				Fixture.estudoCota(BigDecimal.TEN, BigDecimal.ONE, estudoRockBrigadeEdicao101, cotaManoel);
+		
+		EstudoCota estudoCotaManoelValhallaEdicao101 = 
+				Fixture.estudoCota(BigDecimal.TEN, BigDecimal.ONE, estudoValhallaEdicao101, cotaManoel);
+		
+		EstudoCota estudoCotaManoelRollingStoneEdicao101 = 
+				Fixture.estudoCota(BigDecimal.TEN, BigDecimal.ONE, estudoRollingStoneEdicao101, cotaManoel);
+		
+		EstudoCota estudoCotaManoelBonsFluidosEdicao101 = 
+				Fixture.estudoCota(BigDecimal.TEN, BigDecimal.ONE, estudoBonsFluidosEdicao101, cotaManoel);
+		
+		EstudoCota estudoCotaManoelBravoEdicao101 = 
+				Fixture.estudoCota(BigDecimal.TEN, BigDecimal.ONE, estudoBravoEdicao101, cotaManoel);
+		
+		EstudoCota estudoCotaManoelCasaClaudiaEdicao101 = 
+				Fixture.estudoCota(BigDecimal.TEN, BigDecimal.ONE, estudoCasaClaudiaEdicao101, cotaManoel);
+		
+		EstudoCota estudoCotaManoelJequitiEdicao101 = 
+				Fixture.estudoCota(BigDecimal.TEN, BigDecimal.ONE, estudoJequitiEdicao101, cotaManoel);
+		
+		EstudoCota estudoCotaManoelMundoEstranhoEdicao101 = 
+				Fixture.estudoCota(BigDecimal.TEN, BigDecimal.ONE, estudoMundoEstranhoEdicao101, cotaManoel);
+		
+		EstudoCota estudoCotaManoelNovaEscolaEdicao101 = 
+				Fixture.estudoCota(BigDecimal.TEN, BigDecimal.ONE, estudoNovaEscolaEdicao101, cotaManoel);
+		
+		EstudoCota estudoCotaManoelMinhaCasaEdicao101 = 
+				Fixture.estudoCota(BigDecimal.TEN, BigDecimal.ONE, estudoMinhaCasaEdicao101, cotaManoel);
+		
+		EstudoCota estudoCotaManoelRecreioEdicao101 = 
+				Fixture.estudoCota(BigDecimal.TEN, BigDecimal.ONE, estudoRecreioEdicao101, cotaManoel);
+		
+		EstudoCota estudoCotaManoelWomenHealthEdicao101 = 
+				Fixture.estudoCota(BigDecimal.TEN, BigDecimal.ONE, estudoWomenHealthEdicao101, cotaManoel);
+
+		EstudoCota estudoCotaManoelViagemTurismoEdicao101 = 
+				Fixture.estudoCota(BigDecimal.TEN, BigDecimal.ONE, estudoViagemTurismoEdicao101, cotaManoel);
+		
+		EstudoCota estudoCotaManoelVipEdicao101 = 
+				Fixture.estudoCota(BigDecimal.TEN, BigDecimal.ONE, estudoVipEdicao101, cotaManoel);
+		
+		EstudoCota estudoCotaManoelGestaoEscolarEdicao101 = 
+				Fixture.estudoCota(BigDecimal.TEN, BigDecimal.ONE, estudoGestaoEscolarEdicao101, cotaManoel);
+		
+		EstudoCota estudoCotaManoelLolaEdicao101 = 
+				Fixture.estudoCota(BigDecimal.TEN, BigDecimal.ONE, estudoLolaEdicao101, cotaManoel);
+		
+		EstudoCota estudoCotaManoelHeavyMetalEdicao101 = 
+				Fixture.estudoCota(BigDecimal.TEN, BigDecimal.ONE, estudoHeavyMetalEdicao101, cotaManoel);
+		
+		EstudoCota estudoCotaManoelMetalUndergroundEdicao101 = 
+				Fixture.estudoCota(BigDecimal.TEN, BigDecimal.ONE, estudoMetalUndergroundEdicao101, cotaManoel);
+		
+		EstudoCota estudoCotaManoelJavaMagazineEdicao102 = 
+				Fixture.estudoCota(BigDecimal.TEN, BigDecimal.ONE, estudoJavaMagazineEdicao102, cotaManoel);
+		
+		EstudoCota estudoCotaManoelMundoJavaEdicao102 = 
+				Fixture.estudoCota(BigDecimal.TEN, BigDecimal.ONE, estudoMundoJavaEdicao102, cotaManoel);
+		
+		EstudoCota estudoCotaManoelSqlMagazineEdicao102 = 
+				Fixture.estudoCota(BigDecimal.TEN, BigDecimal.ONE, estudoSqlMagazineEdicao102, cotaManoel);
+		
+		EstudoCota estudoCotaManoelGalileuEdicao102 = 
+				Fixture.estudoCota(BigDecimal.TEN, BigDecimal.ONE, estudoGalileuEdicao102, cotaManoel);
+		
+		EstudoCota estudoCotaManoelDuasRodasEdicao102 = 
+				Fixture.estudoCota(BigDecimal.TEN, BigDecimal.ONE, estudoDuasRodasEdicao102, cotaManoel);
+		
+		EstudoCota estudoCotaManoelGuitarPlayerEdicao102 = 
+				Fixture.estudoCota(BigDecimal.TEN, BigDecimal.ONE, estudoGuitarPlayerEdicao102, cotaManoel);
+		
+		EstudoCota estudoCotaManoelRoadieCrewEdicao102 = 
+				Fixture.estudoCota(BigDecimal.TEN, BigDecimal.ONE, estudoRoadieCrewEdicao102, cotaManoel);
+		
+		EstudoCota estudoCotaManoelRockBrigadeEdicao102 = 
+				Fixture.estudoCota(BigDecimal.TEN, BigDecimal.ONE, estudoRockBrigadeEdicao102, cotaManoel);
+		
+		EstudoCota estudoCotaManoelValhallaEdicao102 = 
+				Fixture.estudoCota(BigDecimal.TEN, BigDecimal.ONE, estudoValhallaEdicao102, cotaManoel);
+		
+		EstudoCota estudoCotaManoelRollingStoneEdicao102 = 
+				Fixture.estudoCota(BigDecimal.TEN, BigDecimal.ONE, estudoRollingStoneEdicao102, cotaManoel);
+		
+		EstudoCota estudoCotaManoelBonsFluidosEdicao102 = 
+				Fixture.estudoCota(BigDecimal.TEN, BigDecimal.ONE, estudoBonsFluidosEdicao102, cotaManoel);
+		
+		EstudoCota estudoCotaManoelBravoEdicao102 = 
+				Fixture.estudoCota(BigDecimal.TEN, BigDecimal.ONE, estudoBravoEdicao102, cotaManoel);
+		
+		EstudoCota estudoCotaManoelCasaClaudiaEdicao102 = 
+				Fixture.estudoCota(BigDecimal.TEN, BigDecimal.ONE, estudoCasaClaudiaEdicao102, cotaManoel);
+		
+		EstudoCota estudoCotaManoelJequitiEdicao102 = 
+				Fixture.estudoCota(BigDecimal.TEN, BigDecimal.ONE, estudoJequitiEdicao102, cotaManoel);
+		
+		EstudoCota estudoCotaManoelMundoEstranhoEdicao102 = 
+				Fixture.estudoCota(BigDecimal.TEN, BigDecimal.ONE, estudoMundoEstranhoEdicao102, cotaManoel);
+		
+		EstudoCota estudoCotaManoelNovaEscolaEdicao102 = 
+				Fixture.estudoCota(BigDecimal.TEN, BigDecimal.ONE, estudoNovaEscolaEdicao102, cotaManoel);
+		
+		EstudoCota estudoCotaManoelMinhaCasaEdicao102 = 
+				Fixture.estudoCota(BigDecimal.TEN, BigDecimal.ONE, estudoMinhaCasaEdicao102, cotaManoel);
+		
+		EstudoCota estudoCotaManoelRecreioEdicao102 = 
+				Fixture.estudoCota(BigDecimal.TEN, BigDecimal.ONE, estudoRecreioEdicao102, cotaManoel);
+		
+		EstudoCota estudoCotaManoelWomenHealthEdicao102 = 
+				Fixture.estudoCota(BigDecimal.TEN, BigDecimal.ONE, estudoWomenHealthEdicao102, cotaManoel);
+		
+		EstudoCota estudoCotaManoelViagemTurismoEdicao102 = 
+				Fixture.estudoCota(BigDecimal.TEN, BigDecimal.ONE, estudoViagemTurismoEdicao102, cotaManoel);
+		
+		EstudoCota estudoCotaManoelVipEdicao102 = 
+				Fixture.estudoCota(BigDecimal.TEN, BigDecimal.ONE, estudoVipEdicao102, cotaManoel);
+		
+		EstudoCota estudoCotaManoelGestaoEscolarEdicao102 = 
+				Fixture.estudoCota(BigDecimal.TEN, BigDecimal.ONE, estudoGestaoEscolarEdicao102, cotaManoel);
+		
+		EstudoCota estudoCotaManoelLolaEdicao102 = 
+				Fixture.estudoCota(BigDecimal.TEN, BigDecimal.ONE, estudoLolaEdicao102, cotaManoel);
+		
+		EstudoCota estudoCotaManoelHeavyMetalEdicao102 = 
+				Fixture.estudoCota(BigDecimal.TEN, BigDecimal.ONE, estudoHeavyMetalEdicao102, cotaManoel);
+		
+		EstudoCota estudoCotaManoelMetalUndergroundEdicao102 = 
+				Fixture.estudoCota(BigDecimal.TEN, BigDecimal.ONE, estudoMetalUndergroundEdicao102, cotaManoel);
+
+		save(session, estudoCotaAcmeJavaMagazineEdicao101, estudoCotaAcmeMundoJavaEdicao101,
+					  estudoCotaAcmeSqlMagazineEdicao101, estudoCotaAcmeGalileuEdicao101,
+					  estudoCotaAcmeDuasRodasEdicao101, estudoCotaAcmeGuitarPlayerEdicao101, 
+					  estudoCotaAcmeRoadieCrewEdicao101, estudoCotaAcmeRockBrigadeEdicao101,
+					  estudoCotaAcmeValhallaEdicao101, estudoCotaAcmeRollingStoneEdicao101, 
+					  estudoCotaAcmeBonsFluidosEdicao101, estudoCotaAcmeBravoEdicao101,
+					  estudoCotaAcmeCasaClaudiaEdicao101,  estudoCotaAcmeJequitiEdicao101, 
+					  estudoCotaAcmeMundoEstranhoEdicao101, estudoCotaAcmeNovaEscolaEdicao101,
+					  estudoCotaAcmeMinhaCasaEdicao101, estudoCotaAcmeRecreioEdicao101, 
+					  estudoCotaAcmeWomenHealthEdicao101, estudoCotaAcmeViagemTurismoEdicao101,
+					  estudoCotaAcmeVipEdicao101, estudoCotaAcmeGestaoEscolarEdicao101, 
+					  estudoCotaAcmeLolaEdicao101, estudoCotaAcmeHeavyMetalEdicao101, 
+					  estudoCotaAcmeMetalUndergroundEdicao101, estudoCotaAcmeJavaMagazineEdicao102, 
+					  estudoCotaAcmeMundoJavaEdicao102, estudoCotaAcmeSqlMagazineEdicao102,
+					  estudoCotaAcmeGalileuEdicao102, estudoCotaAcmeDuasRodasEdicao102, 
+					  estudoCotaAcmeGuitarPlayerEdicao102, estudoCotaAcmeRoadieCrewEdicao102,
+					  estudoCotaAcmeRockBrigadeEdicao102, estudoCotaAcmeValhallaEdicao102, 
+					  estudoCotaAcmeRollingStoneEdicao102, estudoCotaAcmeBonsFluidosEdicao102,
+					  estudoCotaAcmeBravoEdicao102, estudoCotaAcmeCasaClaudiaEdicao102, 
+					  estudoCotaAcmeJequitiEdicao102, estudoCotaAcmeMundoEstranhoEdicao102,
+					  estudoCotaAcmeNovaEscolaEdicao102, estudoCotaAcmeMinhaCasaEdicao102,
+					  estudoCotaAcmeRecreioEdicao102, estudoCotaAcmeWomenHealthEdicao102,
+					  estudoCotaAcmeViagemTurismoEdicao102, estudoCotaAcmeVipEdicao102, 
+					  estudoCotaAcmeGestaoEscolarEdicao102, estudoCotaAcmeLolaEdicao102,
+					  estudoCotaAcmeHeavyMetalEdicao102, estudoCotaAcmeMetalUndergroundEdicao102,
+					  estudoCotaManoelJavaMagazineEdicao101, estudoCotaManoelMundoJavaEdicao101,
+					  estudoCotaManoelSqlMagazineEdicao101, estudoCotaManoelGalileuEdicao101,
+					  estudoCotaManoelDuasRodasEdicao101, estudoCotaManoelGuitarPlayerEdicao101, 
+					  estudoCotaManoelRoadieCrewEdicao101, estudoCotaManoelRockBrigadeEdicao101,
+					  estudoCotaManoelValhallaEdicao101, estudoCotaManoelRollingStoneEdicao101, 
+					  estudoCotaManoelBonsFluidosEdicao101, estudoCotaManoelBravoEdicao101,
+					  estudoCotaManoelCasaClaudiaEdicao101, estudoCotaManoelJequitiEdicao101, 
+					  estudoCotaManoelMundoEstranhoEdicao101, estudoCotaManoelNovaEscolaEdicao101,
+					  estudoCotaManoelMinhaCasaEdicao101, estudoCotaManoelRecreioEdicao101, 
+					  estudoCotaManoelWomenHealthEdicao101, estudoCotaManoelViagemTurismoEdicao101,
+					  estudoCotaManoelVipEdicao101, estudoCotaManoelGestaoEscolarEdicao101, 
+					  estudoCotaManoelLolaEdicao101, estudoCotaManoelHeavyMetalEdicao101, 
+					  estudoCotaManoelMetalUndergroundEdicao101, estudoCotaManoelJavaMagazineEdicao102, 
+					  estudoCotaManoelMundoJavaEdicao102, estudoCotaManoelSqlMagazineEdicao102,
+					  estudoCotaManoelGalileuEdicao102, estudoCotaManoelDuasRodasEdicao102, 
+					  estudoCotaManoelGuitarPlayerEdicao102, estudoCotaManoelRoadieCrewEdicao102,
+					  estudoCotaManoelRockBrigadeEdicao102, estudoCotaManoelValhallaEdicao102, 
+					  estudoCotaManoelRollingStoneEdicao102, estudoCotaManoelBonsFluidosEdicao102,
+					  estudoCotaManoelBravoEdicao102, estudoCotaManoelCasaClaudiaEdicao102, 
+					  estudoCotaManoelJequitiEdicao102, estudoCotaManoelMundoEstranhoEdicao102,
+					  estudoCotaManoelNovaEscolaEdicao102, estudoCotaManoelMinhaCasaEdicao102,
+					  estudoCotaManoelRecreioEdicao102, estudoCotaManoelWomenHealthEdicao102,
+					  estudoCotaManoelViagemTurismoEdicao102, estudoCotaManoelVipEdicao102, 
+					  estudoCotaManoelGestaoEscolarEdicao102, estudoCotaManoelLolaEdicao102,
+					  estudoCotaManoelHeavyMetalEdicao102, estudoCotaManoelMetalUndergroundEdicao102);
 	}
 }

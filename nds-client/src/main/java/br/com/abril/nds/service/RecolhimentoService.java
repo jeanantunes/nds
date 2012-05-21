@@ -22,12 +22,14 @@ public interface RecolhimentoService {
 	 * @param numeroSemana - número da semana para balanceamento
 	 * @param listaIdsFornecedores - lista de id's dos fornecedores
 	 * @param tipoBalanceamentoRecolhimento - tipo de balanceamento de recolhimento
+	 * @param configuracaoInicial - indicao se a matriz de balanceamento deve ser a cofiguração inicial
 	 * 
 	 * @return {@link BalanceamentoRecolhimentoDTO}
 	 */
 	BalanceamentoRecolhimentoDTO obterMatrizBalanceamento(Integer numeroSemana,
 														  List<Long> listaIdsFornecedores,
-														  TipoBalanceamentoRecolhimento tipoBalanceamentoRecolhimento);
+														  TipoBalanceamentoRecolhimento tipoBalanceamentoRecolhimento,
+														  boolean configuracaoInicial);
 	
 	/**
 	 * Salva o balanceamento da matriz de recolhimento.
@@ -41,7 +43,8 @@ public interface RecolhimentoService {
 	 * 
 	 * @param matrizRecolhimento - matriz de recolhimento
 	 * @param numeroSemana - número da semana
+	 * @param idUsuario - identificador do usuário
 	 */
 	void confirmarBalanceamentoRecolhimento(Map<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimento,
-											Integer numeroSemana);
+											Integer numeroSemana, Long idUsuario);
 }

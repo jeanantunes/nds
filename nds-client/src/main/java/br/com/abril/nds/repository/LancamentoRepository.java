@@ -107,6 +107,17 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 	  * 
 	  * @return {@link List<Lancamento>}
 	  */
-	 List<Lancamento> obterLancamentosPorId(Set<Long> idsLancamento);
+	List<Lancamento> obterLancamentosPorId(Set<Long> idsLancamento);
+	
+	/**
+	 * Obtém o lancamento para determinada dataRecolhimentoDistribuidor e idProdutoEdicao.
+	 * 
+	 * @param dataRecolhimentoDistribuidor
+	 * @param idProdutoEdicao
+	 * 
+	 * @return Lancamento
+	 */
+	Lancamento obterLancamentoPorDataRecolhimentoProdutoEdicao(Date dataRecolhimentoDistribuidor, Long idProdutoEdicao);
+
 	 
 }
