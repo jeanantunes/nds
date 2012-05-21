@@ -214,7 +214,9 @@ public class DataLoader {
 	private static Distribuidor distribuidor;
 	private static TipoProduto tipoProdutoRevista;
 	private static TipoProduto tipoRefrigerante;
-
+	private static TipoProduto tipoCromo;
+	private static TipoProduto tipoOutros;
+	
 	private static Produto produtoVeja;
 	private static Produto produtoSuper;
 	private static Produto produtoCapricho;
@@ -649,7 +651,7 @@ public class DataLoader {
 		
 		gerarTipoEntrega(session);
 		
-		gerarLancamentos(session);
+		gerarParciais(session);
 		
 		gerarDescontos(session);
 		
@@ -681,35 +683,62 @@ public class DataLoader {
 		save(session, tipoDesconto);
 	}
 	
-	private static void gerarLancamentos(Session session) {
+	private static void gerarParciais(Session session) {
+		
+		Produto guiaQuatroRodas = Fixture.produto("3111", "Guia Quatro Rodas", "Guia Quatro Rodas", PeriodicidadeProduto.ANUAL, tipoProdutoRevista);
+		guiaQuatroRodas.addFornecedor(fornecedorDinap);
+		
+		Produto cromoBrasileirao = Fixture.produto("3333", "Cromo Brasileirão", "Cromo Brasileirão", PeriodicidadeProduto.ANUAL, tipoCromo);
+		cromoBrasileirao.addFornecedor(fornecedorFc);
+		
+		Produto guiaViagem = Fixture.produto("3113", "Guia Viagem", "Guia Viagem", PeriodicidadeProduto.ANUAL, tipoProdutoRevista);
+		guiaViagem.addFornecedor(fornecedorDinap);
+		
+		save(session,guiaQuatroRodas,cromoBrasileirao,guiaViagem);
+		
+		ProdutoEdicao guiaQuatroRodasEd1 = Fixture.produtoEdicao(1L, 5, 30, 
+				new BigDecimal(50), new BigDecimal(100), new BigDecimal(100), "5546", 0L, guiaQuatroRodas);
+		guiaQuatroRodasEd1.setParcial(true);
+		
+		ProdutoEdicao cromoBrasileiraoEd1 = Fixture.produtoEdicao(1L, 5, 30, 
+				new BigDecimal(50), new BigDecimal(100), new BigDecimal(100), "3333", 0L, cromoBrasileirao);
+		cromoBrasileiraoEd1.setParcial(true);
+		
+		ProdutoEdicao guiaViagemEd1 = Fixture.produtoEdicao(1L, 5, 30, 
+				new BigDecimal(50), new BigDecimal(100), new BigDecimal(100), "2231", 0L, guiaViagem);
+		guiaViagemEd1.setParcial(true);
+		
+		save(session,guiaQuatroRodasEd1,cromoBrasileiraoEd1,guiaViagemEd1);
+		
 		
 		LancamentoParcial lancamentoParcial1 = Fixture.criarLancamentoParcial(
-				produtoEdicaoBoaForma1, Fixture.criarData(1, 1, 2009), Fixture.criarData(1, 1, 2010), StatusLancamentoParcial.RECOLHIDO);
+				guiaQuatroRodasEd1, Fixture.criarData(1, 1, 2009), Fixture.criarData(1, 1, 2010), StatusLancamentoParcial.RECOLHIDO);
 		
 		LancamentoParcial lancamentoParcial2 = Fixture.criarLancamentoParcial(
-				produtoEdicaoBravo1, Fixture.criarData(1, 2, 2011), Fixture.criarData(1, 2, 2012), StatusLancamentoParcial.PROJETADO);
+				cromoBrasileiraoEd1, Fixture.criarData(1, 2, 2011), Fixture.criarData(1, 2, 2012), StatusLancamentoParcial.PROJETADO);
 		
 		LancamentoParcial lancamentoParcial3 = Fixture.criarLancamentoParcial(
-				produtoEdicaoCaras1, Fixture.criarData(1, 3, 2011), Fixture.criarData(1, 3, 2012), StatusLancamentoParcial.PROJETADO);
+				guiaViagemEd1, Fixture.criarData(1, 3, 2011), Fixture.criarData(1, 3, 2012), StatusLancamentoParcial.PROJETADO);
 		
-		LancamentoParcial lancamentoParcial4 = Fixture.criarLancamentoParcial(
-				produtoEdicaoClaudia1, Fixture.criarData(1, 4, 2011), Fixture.criarData(1, 4, 2012), StatusLancamentoParcial.PROJETADO);
+				
+		save(session, lancamentoParcial1,lancamentoParcial2,lancamentoParcial3);
 		
-		LancamentoParcial lancamentoParcial5 = Fixture.criarLancamentoParcial(
-				produtoEdicaoContigo1, Fixture.criarData(1, 5, 2011), Fixture.criarData(1, 5, 2012), StatusLancamentoParcial.PROJETADO);
+		Lancamento lancamentoPeriodo = Fixture.lancamento(TipoLancamento.PARCIAL, cromoBrasileiraoEd1,
+				Fixture.criarData(1, 2, 2011),
+				Fixture.criarData(1, 3, 2011),
+				new Date(),
+				new Date(),
+				new BigDecimal(100),
+				StatusLancamento.PLANEJADO, null, 1);
+		save(session,lancamentoPeriodo);
 		
-		LancamentoParcial lancamentoParcial6 = Fixture.criarLancamentoParcial(
-				produtoEdicaoManequim1, Fixture.criarData(1, 6, 2011), Fixture.criarData(1, 6, 2012), StatusLancamentoParcial.PROJETADO);
+		Estudo estudo = Fixture.estudo(new BigDecimal(200), Fixture.criarData(1, 2, 2011), cromoBrasileiraoEd1);
+		save(session,estudo);
 		
-		LancamentoParcial lancamentoParcial7 = Fixture.criarLancamentoParcial(
-				produtoEdicaoNatGeo1, Fixture.criarData(1, 7, 2011), Fixture.criarData(1, 7, 2012), StatusLancamentoParcial.PROJETADO);
+		PeriodoLancamentoParcial periodo = Fixture.criarPeriodoLancamentoParcial(lancamentoPeriodo, lancamentoParcial2, 
+				StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.PARCIAL);
+		save(session, periodo);
 		
-		LancamentoParcial lancamentoParcial8 = Fixture.criarLancamentoParcial(
-				produtoEdicaoVeja1, Fixture.criarData(1, 8, 2011), Fixture.criarData(1, 8, 2012), StatusLancamentoParcial.PROJETADO);
-		
-		save(session, lancamentoParcial1,lancamentoParcial2,lancamentoParcial3,
-				lancamentoParcial4,lancamentoParcial5,lancamentoParcial6,lancamentoParcial7,
-				lancamentoParcial8);
 	}
 
 	private static void gerarTipoEntrega(Session session) {
@@ -2628,6 +2657,11 @@ public class DataLoader {
 
 		tipoRefrigerante = Fixture.tipoProduto("Refrigerante",GrupoProduto.OUTROS, "5644566");
 		session.save(tipoRefrigerante);
+		
+		tipoCromo = Fixture.tipoProduto("Cromo",GrupoProduto.CROMO, "5644564");
+		session.save(tipoCromo);
+		
+		
 	}
 
 	private static void criarDistribuidor(Session session) {
@@ -2740,6 +2774,8 @@ public class DataLoader {
 		
 		distribuidor.setParametroContratoCota(parametroContrato);
 
+		distribuidor.setFatorRelancamentoParcial(5);
+		
 		save(session, distribuidor);
 		
 		politicaCobranca.setDistribuidor(distribuidor);
@@ -4487,7 +4523,7 @@ public class DataLoader {
 		save(session, mec);
 
 		ConferenciaEncalhe conferenciaEncalhe = Fixture.conferenciaEncalhe(
-				lancamentoRevistaCE, mec, chamadaEncalheCota, controleConferenciaEncalheCota);
+				mec, chamadaEncalheCota, controleConferenciaEncalheCota);
 		save(session, conferenciaEncalhe);
 		
 		
@@ -4503,7 +4539,7 @@ public class DataLoader {
 
 		save(session, mec);
 
-		conferenciaEncalhe = Fixture.conferenciaEncalhe(lancamentoRevistaCE, mec, chamadaEncalheCota, controleConferenciaEncalheCota);
+		conferenciaEncalhe = Fixture.conferenciaEncalhe(mec, chamadaEncalheCota, controleConferenciaEncalheCota);
 		save(session, conferenciaEncalhe);
 		
 		mec = Fixture.movimentoEstoqueCotaEnvioEncalhe( 
@@ -4518,7 +4554,7 @@ public class DataLoader {
 
 		save(session, mec);
 
-		conferenciaEncalhe = Fixture.conferenciaEncalhe(lancamentoRevistaCE, mec, chamadaEncalheCota, controleConferenciaEncalheCota);
+		conferenciaEncalhe = Fixture.conferenciaEncalhe(mec, chamadaEncalheCota, controleConferenciaEncalheCota);
 		save(session, conferenciaEncalhe);
 
 
@@ -4534,7 +4570,7 @@ public class DataLoader {
 
 		save(session, mec);
 
-		conferenciaEncalhe = Fixture.conferenciaEncalhe(lancamentoRevistaCE_2, mec, chamadaEncalheCota_2, controleConferenciaEncalheCota);
+		conferenciaEncalhe = Fixture.conferenciaEncalhe(mec, chamadaEncalheCota_2, controleConferenciaEncalheCota);
 		save(session, conferenciaEncalhe);
 
 		
@@ -4550,7 +4586,7 @@ public class DataLoader {
 
 		save(session, mec);
 		
-		conferenciaEncalhe = Fixture.conferenciaEncalhe(lancamentoRevistaCE_2, mec, chamadaEncalheCota_2, controleConferenciaEncalheCota);
+		conferenciaEncalhe = Fixture.conferenciaEncalhe(mec, chamadaEncalheCota_2, controleConferenciaEncalheCota);
 		save(session, conferenciaEncalhe);
 		
 		
@@ -4566,7 +4602,7 @@ public class DataLoader {
 
 		save(session, mec);
 
-		conferenciaEncalhe = Fixture.conferenciaEncalhe(lancamentoRevistaCE_2, mec, chamadaEncalheCota_2, controleConferenciaEncalheCota);
+		conferenciaEncalhe = Fixture.conferenciaEncalhe(mec, chamadaEncalheCota_2, controleConferenciaEncalheCota);
 		save(session, conferenciaEncalhe);
 
 		mec = Fixture.movimentoEstoqueCotaEnvioEncalhe( 
@@ -4581,7 +4617,7 @@ public class DataLoader {
 
 		save(session, mec);
 
-		conferenciaEncalhe = Fixture.conferenciaEncalhe(lancamentoRevistaCE_3, mec, chamadaEncalheCota_3, controleConferenciaEncalheCota);
+		conferenciaEncalhe = Fixture.conferenciaEncalhe(mec, chamadaEncalheCota_3, controleConferenciaEncalheCota);
 		save(session, conferenciaEncalhe);
 
 		mec = Fixture.movimentoEstoqueCotaEnvioEncalhe( 
@@ -4596,7 +4632,7 @@ public class DataLoader {
 
 		save(session, mec);
 
-		conferenciaEncalhe = Fixture.conferenciaEncalhe(lancamentoRevistaCE_3, mec, chamadaEncalheCota_3, controleConferenciaEncalheCota);
+		conferenciaEncalhe = Fixture.conferenciaEncalhe(mec, chamadaEncalheCota_3, controleConferenciaEncalheCota);
 		save(session, conferenciaEncalhe);
 
 		
@@ -4612,7 +4648,7 @@ public class DataLoader {
 
 		save(session, mec);
 
-		conferenciaEncalhe = Fixture.conferenciaEncalhe(lancamentoRevistaCE_3, mec, chamadaEncalheCota_3, controleConferenciaEncalheCota);
+		conferenciaEncalhe = Fixture.conferenciaEncalhe(mec, chamadaEncalheCota_3, controleConferenciaEncalheCota);
 		save(session, conferenciaEncalhe);
 
 
@@ -4628,7 +4664,7 @@ public class DataLoader {
 
 		save(session, mec);
 
-		conferenciaEncalhe = Fixture.conferenciaEncalhe(lancamentoRevistaCE_3, mec, chamadaEncalheCota_3, controleConferenciaEncalheCota);
+		conferenciaEncalhe = Fixture.conferenciaEncalhe(mec, chamadaEncalheCota_3, controleConferenciaEncalheCota);
 		save(session, conferenciaEncalhe);
 
 		mec = Fixture.movimentoEstoqueCotaEnvioEncalhe( 
@@ -4643,7 +4679,7 @@ public class DataLoader {
 
 		save(session, mec);
 
-		conferenciaEncalhe = Fixture.conferenciaEncalhe(lancamentoRevistaCE_3, mec, chamadaEncalheCota_3, controleConferenciaEncalheCota);
+		conferenciaEncalhe = Fixture.conferenciaEncalhe(mec, chamadaEncalheCota_3, controleConferenciaEncalheCota);
 		save(session, conferenciaEncalhe);
 
 		
@@ -4659,7 +4695,7 @@ public class DataLoader {
 
 		save(session, mec);
 
-		conferenciaEncalhe = Fixture.conferenciaEncalhe(lancamentoRevistaCE_3, mec, chamadaEncalheCota_3, controleConferenciaEncalheCota);
+		conferenciaEncalhe = Fixture.conferenciaEncalhe(mec, chamadaEncalheCota_3, controleConferenciaEncalheCota);
 		save(session, conferenciaEncalhe);
 		
 	}
@@ -4952,7 +4988,7 @@ public class DataLoader {
 		
 		Produto guitarPlayer = Fixture.produto("546", "Guitar Player", "Guitar Player", PeriodicidadeProduto.MENSAL, tipoProdutoRevista);
 		guitarPlayer.setEditor(jazz);
-		guitarPlayer.addFornecedor(fornecedorAcme);
+		guitarPlayer.addFornecedor(fornecedorDinap);
 		save(session, guitarPlayer);
 
 		Produto roadieCrew = Fixture.produto("547", "Roadie Crew", "Roadie Crew", PeriodicidadeProduto.MENSAL, tipoProdutoRevista);
@@ -5002,7 +5038,7 @@ public class DataLoader {
 		
 		Produto novaEscola = Fixture.produto("556", "Nova Escola", "Revista Nova Escola", PeriodicidadeProduto.MENSAL, tipoProdutoRevista);
 		novaEscola.setEditor(jazz);
-		novaEscola.addFornecedor(fornecedorAcme);
+		novaEscola.addFornecedor(fornecedorDinap);
 		save(session, novaEscola);
 
 		Produto minhaCasa = Fixture.produto("557", "Minha Casa", "Revista Minha Casa", PeriodicidadeProduto.MENSAL, tipoProdutoRevista);
@@ -5027,7 +5063,7 @@ public class DataLoader {
 
 		Produto vip = Fixture.produto("561", "VIP", "Revista VIP", PeriodicidadeProduto.MENSAL, tipoProdutoRevista);
 		vip.setEditor(jazz);
-		vip.addFornecedor(fornecedorAcme);
+		vip.addFornecedor(fornecedorDinap);
 		save(session, vip);
 
 		Produto gestaoEscolar = Fixture.produto("562", "Gestão Escolar", "Gestão Escolar", PeriodicidadeProduto.MENSAL, tipoProdutoRevista);
@@ -6410,352 +6446,302 @@ public class DataLoader {
 		//PERIODO LANCAMENTO PARCIAL
 		PeriodoLancamentoParcial periodoLancamentoParcialJavaMagazineEdicao101 = 
 				Fixture.criarPeriodoLancamentoParcial(
-						lancamentoJavaMagazineEdicao101.getDataLancamentoPrevista(), 
+						lancamentoJavaMagazineEdicao101, 
 						lancamentoParcialJavaMagazineEdicao101, 
-						lancamentoJavaMagazineEdicao101.getDataRecolhimentoPrevista(), 
 						StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.PARCIAL);
 		
 		PeriodoLancamentoParcial periodoLancamentoParcialMundoJavaEdicao101 = 
 				Fixture.criarPeriodoLancamentoParcial(
-						lancamentoMundoJavaEdicao101.getDataLancamentoPrevista(), 
+						lancamentoMundoJavaEdicao101, 
 						lancamentoParcialMundoJavaEdicao101, 
-						lancamentoMundoJavaEdicao101.getDataRecolhimentoPrevista(), 
 						StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.FINAL);
 		
 		PeriodoLancamentoParcial periodoLancamentoParcialSqlMagazineEdicao101 = 
 				Fixture.criarPeriodoLancamentoParcial(
-						lancamentoSqlMagazineEdicao101.getDataLancamentoPrevista(), 
+						lancamentoSqlMagazineEdicao101, 
 						lancamentoParcialSqlMagazineEdicao101, 
-						lancamentoSqlMagazineEdicao101.getDataRecolhimentoPrevista(), 
 						StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.PARCIAL);
 		
 		PeriodoLancamentoParcial periodoLancamentoParcialGalileuEdicao101 = 
 				Fixture.criarPeriodoLancamentoParcial(
-						lancamentoGalileuEdicao101.getDataLancamentoPrevista(), 
+						lancamentoGalileuEdicao101, 
 						lancamentoParcialGalileuEdicao101, 
-						lancamentoGalileuEdicao101.getDataRecolhimentoPrevista(), 
 						StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.PARCIAL);
 		
 		PeriodoLancamentoParcial periodoLancamentoParcialDuasRodasEdicao101 = 
 				Fixture.criarPeriodoLancamentoParcial(
-						lancamentoDuasRodasEdicao101.getDataLancamentoPrevista(), 
+						lancamentoDuasRodasEdicao101, 
 						lancamentoParcialDuasRodasEdicao101, 
-						lancamentoDuasRodasEdicao101.getDataRecolhimentoPrevista(), 
 						StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.PARCIAL);
 		
 		PeriodoLancamentoParcial periodoLancamentoParcialGuitarPlayerEdicao101 = 
 				Fixture.criarPeriodoLancamentoParcial(
-						lancamentoGuitarPlayerEdicao101.getDataLancamentoPrevista(), 
+						lancamentoGuitarPlayerEdicao101, 
 						lancamentoParcialGuitarPlayerEdicao101, 
-						lancamentoGuitarPlayerEdicao101.getDataRecolhimentoPrevista(), 
 						StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.FINAL);
 		
 		PeriodoLancamentoParcial periodoLancamentoParcialRoadieCrewEdicao101 = 
 				Fixture.criarPeriodoLancamentoParcial(
-						lancamentoRoadieCrewEdicao101.getDataLancamentoPrevista(), 
+						lancamentoRoadieCrewEdicao101, 
 						lancamentoParcialRoadieCrewEdicao101, 
-						lancamentoRoadieCrewEdicao101.getDataRecolhimentoPrevista(), 
 						StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.PARCIAL);
 		
 		PeriodoLancamentoParcial periodoLancamentoParcialRockBrigadeEdicao101 = 
 				Fixture.criarPeriodoLancamentoParcial(
-						lancamentoRockBrigadeEdicao101.getDataLancamentoPrevista(), 
+						lancamentoRockBrigadeEdicao101, 
 						lancamentoParcialRockBrigadeEdicao101, 
-						lancamentoRockBrigadeEdicao101.getDataRecolhimentoPrevista(), 
 						StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.PARCIAL);
 		
 		PeriodoLancamentoParcial periodoLancamentoParcialValhallaEdicao101 = 
 				Fixture.criarPeriodoLancamentoParcial(
-						lancamentoValhallaEdicao101.getDataLancamentoPrevista(), 
+						lancamentoValhallaEdicao101, 
 						lancamentoParcialValhallaEdicao101, 
-						lancamentoValhallaEdicao101.getDataRecolhimentoPrevista(), 
 						StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.PARCIAL);
 		
 		PeriodoLancamentoParcial periodoLancamentoParcialRollingStoneEdicao101 = 
 				Fixture.criarPeriodoLancamentoParcial(
-						lancamentoRollingStoneEdicao101.getDataLancamentoPrevista(), 
+						lancamentoRollingStoneEdicao101, 
 						lancamentoParcialRollingStoneEdicao101, 
-						lancamentoRollingStoneEdicao101.getDataRecolhimentoPrevista(), 
 						StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.PARCIAL);
 
 		PeriodoLancamentoParcial periodoLancamentoParcialBonsFluidosEdicao101 = 
 				Fixture.criarPeriodoLancamentoParcial(
-						lancamentoBonsFluidosEdicao101.getDataLancamentoPrevista(), 
+						lancamentoBonsFluidosEdicao101, 
 						lancamentoParcialBonsFluidosEdicao101, 
-						lancamentoBonsFluidosEdicao101.getDataRecolhimentoPrevista(), 
 						StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.PARCIAL);
 		
 		PeriodoLancamentoParcial periodoLancamentoParcialBravoEdicao101 = 
 				Fixture.criarPeriodoLancamentoParcial(
-						lancamentoBravoEdicao101.getDataLancamentoPrevista(), 
+						lancamentoBravoEdicao101, 
 						lancamentoParcialBravoEdicao101, 
-						lancamentoBravoEdicao101.getDataRecolhimentoPrevista(), 
 						StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.PARCIAL);
 		
 		PeriodoLancamentoParcial periodoLancamentoParcialCasaClaudiaEdicao101 = 
 				Fixture.criarPeriodoLancamentoParcial(
-						lancamentoCasaClaudiaEdicao101.getDataLancamentoPrevista(), 
+						lancamentoCasaClaudiaEdicao101, 
 						lancamentoParcialCasaClaudiaEdicao101, 
-						lancamentoCasaClaudiaEdicao101.getDataRecolhimentoPrevista(), 
 						StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.PARCIAL);
 
 		PeriodoLancamentoParcial periodoLancamentoParcialJequitiEdicao101 = 
 				Fixture.criarPeriodoLancamentoParcial(
-						lancamentoJequitiEdicao101.getDataLancamentoPrevista(), 
+						lancamentoJequitiEdicao101, 
 						lancamentoParcialJequitiEdicao101, 
-						lancamentoJequitiEdicao101.getDataRecolhimentoPrevista(), 
 						StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.PARCIAL);
 		
 		PeriodoLancamentoParcial periodoLancamentoParcialMundoEstranhoEdicao101 = 
 				Fixture.criarPeriodoLancamentoParcial(
-						lancamentoMundoEstranhoEdicao101.getDataLancamentoPrevista(), 
+						lancamentoMundoEstranhoEdicao101, 
 						lancamentoParcialMundoEstranhoEdicao101, 
-						lancamentoMundoEstranhoEdicao101.getDataRecolhimentoPrevista(), 
 						StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.PARCIAL);
 		
 		PeriodoLancamentoParcial periodoLancamentoParcialNovaEscolaEdicao101 = 
 				Fixture.criarPeriodoLancamentoParcial(
-						lancamentoNovaEscolaEdicao101.getDataLancamentoPrevista(), 
+						lancamentoNovaEscolaEdicao101, 
 						lancamentoParcialNovaEscolaEdicao101, 
-						lancamentoNovaEscolaEdicao101.getDataRecolhimentoPrevista(), 
 						StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.FINAL);
 		
 		PeriodoLancamentoParcial periodoLancamentoParcialMinhaCasaEdicao101 = 
 				Fixture.criarPeriodoLancamentoParcial(
-						lancamentoMinhaCasaEdicao101.getDataLancamentoPrevista(), 
+						lancamentoMinhaCasaEdicao101, 
 						lancamentoParcialMinhaCasaEdicao101, 
-						lancamentoMinhaCasaEdicao101.getDataRecolhimentoPrevista(), 
 						StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.PARCIAL);
 		
 		PeriodoLancamentoParcial periodoLancamentoParcialRecreioEdicao101 = 
 				Fixture.criarPeriodoLancamentoParcial(
-						lancamentoRecreioEdicao101.getDataLancamentoPrevista(), 
+						lancamentoRecreioEdicao101, 
 						lancamentoParcialRecreioEdicao101, 
-						lancamentoRecreioEdicao101.getDataRecolhimentoPrevista(), 
 						StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.PARCIAL);
 		
 		PeriodoLancamentoParcial periodoLancamentoParcialWomenHealthEdicao101 = 
 				Fixture.criarPeriodoLancamentoParcial(
-						lancamentoWomenHealthEdicao101.getDataLancamentoPrevista(), 
+						lancamentoWomenHealthEdicao101, 
 						lancamentoParcialWomenHealthEdicao101, 
-						lancamentoWomenHealthEdicao101.getDataRecolhimentoPrevista(), 
 						StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.FINAL);
 		
 		PeriodoLancamentoParcial periodoLancamentoParcialViagemTurismoEdicao101 = 
 				Fixture.criarPeriodoLancamentoParcial(
-						lancamentoViagemTurismoEdicao101.getDataLancamentoPrevista(), 
+						lancamentoViagemTurismoEdicao101, 
 						lancamentoParcialViagemTurismoEdicao101, 
-						lancamentoViagemTurismoEdicao101.getDataRecolhimentoPrevista(), 
 						StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.PARCIAL);
 		
 		PeriodoLancamentoParcial periodoLancamentoParcialVipEdicao101 = 
 				Fixture.criarPeriodoLancamentoParcial(
-						lancamentoVipEdicao101.getDataLancamentoPrevista(), 
+						lancamentoVipEdicao101, 
 						lancamentoParcialVipEdicao101, 
-						lancamentoVipEdicao101.getDataRecolhimentoPrevista(), 
 						StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.PARCIAL);
 		
 		PeriodoLancamentoParcial periodoLancamentoParcialGestaoEscolarEdicao101 = 
 				Fixture.criarPeriodoLancamentoParcial(
-						lancamentoGestaoEscolarEdicao101.getDataLancamentoPrevista(), 
+						lancamentoGestaoEscolarEdicao101, 
 						lancamentoParcialGestaoEscolarEdicao101, 
-						lancamentoGestaoEscolarEdicao101.getDataRecolhimentoPrevista(), 
 						StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.PARCIAL);
 
 		PeriodoLancamentoParcial periodoLancamentoParcialLolaEdicao101 = 
 				Fixture.criarPeriodoLancamentoParcial(
-						lancamentoLolaEdicao101.getDataLancamentoPrevista(), 
+						lancamentoLolaEdicao101, 
 						lancamentoParcialLolaEdicao101, 
-						lancamentoLolaEdicao101.getDataRecolhimentoPrevista(), 
 						StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.FINAL);
 
 		PeriodoLancamentoParcial periodoLancamentoParcialHeavyMetalEdicao101 = 
 				Fixture.criarPeriodoLancamentoParcial(
-						lancamentoHeavyMetalEdicao101.getDataLancamentoPrevista(), 
+						lancamentoHeavyMetalEdicao101, 
 						lancamentoParcialHeavyMetalEdicao101, 
-						lancamentoHeavyMetalEdicao101.getDataRecolhimentoPrevista(), 
 						StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.PARCIAL);
 
 		PeriodoLancamentoParcial periodoLancamentoParcialMetalUndergroundEdicao101 = 
 				Fixture.criarPeriodoLancamentoParcial(
-						lancamentoMetalUndergroundEdicao101.getDataLancamentoPrevista(), 
+						lancamentoMetalUndergroundEdicao101, 
 						lancamentoParcialMetalUndergroundEdicao101, 
-						lancamentoMetalUndergroundEdicao101.getDataRecolhimentoPrevista(), 
 						StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.PARCIAL);
 
 		PeriodoLancamentoParcial periodoLancamentoParcialJavaMagazineEdicao102 = 
 				Fixture.criarPeriodoLancamentoParcial(
-						lancamentoJavaMagazineEdicao102.getDataLancamentoPrevista(), 
+						lancamentoJavaMagazineEdicao102, 
 						lancamentoParcialJavaMagazineEdicao102, 
-						lancamentoJavaMagazineEdicao102.getDataRecolhimentoPrevista(), 
 						StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.PARCIAL);
 
 		PeriodoLancamentoParcial periodoLancamentoParcialMundoJavaEdicao102 = 
 				Fixture.criarPeriodoLancamentoParcial(
-						lancamentoMundoJavaEdicao102.getDataLancamentoPrevista(), 
+						lancamentoMundoJavaEdicao102, 
 						lancamentoParcialMundoJavaEdicao102, 
-						lancamentoMundoJavaEdicao102.getDataRecolhimentoPrevista(), 
 						StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.PARCIAL);
 
 		PeriodoLancamentoParcial periodoLancamentoParcialSqlMagazineEdicao102 = 
 				Fixture.criarPeriodoLancamentoParcial(
-						lancamentoSqlMagazineEdicao102.getDataLancamentoPrevista(), 
+						lancamentoSqlMagazineEdicao102, 
 						lancamentoParcialSqlMagazineEdicao102, 
-						lancamentoSqlMagazineEdicao102.getDataRecolhimentoPrevista(), 
 						StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.FINAL);
 
 		PeriodoLancamentoParcial periodoLancamentoParcialGalileuEdicao102 = 
 				Fixture.criarPeriodoLancamentoParcial(
-						lancamentoGalileuEdicao102.getDataLancamentoPrevista(), 
+						lancamentoGalileuEdicao102, 
 						lancamentoParcialGalileuEdicao102, 
-						lancamentoGalileuEdicao102.getDataRecolhimentoPrevista(), 
 						StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.PARCIAL);
 
 		PeriodoLancamentoParcial periodoLancamentoParcialDuasRodasEdicao102 = 
 				Fixture.criarPeriodoLancamentoParcial(
-						lancamentoDuasRodasEdicao102.getDataLancamentoPrevista(), 
+						lancamentoDuasRodasEdicao102,
 						lancamentoParcialDuasRodasEdicao102, 
-						lancamentoDuasRodasEdicao102.getDataRecolhimentoPrevista(), 
 						StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.PARCIAL);
 		
 		PeriodoLancamentoParcial periodoLancamentoParcialGuitarPlayerEdicao102 = 
 				Fixture.criarPeriodoLancamentoParcial(
-						lancamentoGuitarPlayerEdicao102.getDataLancamentoPrevista(), 
+						lancamentoGuitarPlayerEdicao102, 
 						lancamentoParcialGuitarPlayerEdicao102, 
-						lancamentoGuitarPlayerEdicao102.getDataRecolhimentoPrevista(), 
 						StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.PARCIAL);
 
 		PeriodoLancamentoParcial periodoLancamentoParcialRoadieCrewEdicao102 = 
 				Fixture.criarPeriodoLancamentoParcial(
-						lancamentoRoadieCrewEdicao102.getDataLancamentoPrevista(), 
+						lancamentoRoadieCrewEdicao102, 
 						lancamentoParcialRoadieCrewEdicao102, 
-						lancamentoRoadieCrewEdicao102.getDataRecolhimentoPrevista(), 
 						StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.PARCIAL);
 
 		PeriodoLancamentoParcial periodoLancamentoParcialRockBrigadeEdicao102 = 
 				Fixture.criarPeriodoLancamentoParcial(
-						lancamentoRockBrigadeEdicao102.getDataLancamentoPrevista(), 
-						lancamentoParcialRockBrigadeEdicao102, 
-						lancamentoRockBrigadeEdicao102.getDataRecolhimentoPrevista(), 
+						lancamentoRockBrigadeEdicao102, 
+						lancamentoParcialRockBrigadeEdicao102,  
 						StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.PARCIAL);
 
 		PeriodoLancamentoParcial periodoLancamentoParcialValhallaEdicao102 = 
 				Fixture.criarPeriodoLancamentoParcial(
-						lancamentoValhallaEdicao102.getDataLancamentoPrevista(), 
+						lancamentoValhallaEdicao102, 
 						lancamentoParcialValhallaEdicao102, 
-						lancamentoValhallaEdicao102.getDataRecolhimentoPrevista(), 
 						StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.PARCIAL);
 
 		PeriodoLancamentoParcial periodoLancamentoParcialRollingStoneEdicao102 = 
 				Fixture.criarPeriodoLancamentoParcial(
-						lancamentoRollingStoneEdicao102.getDataLancamentoPrevista(), 
-						lancamentoParcialRollingStoneEdicao102, 
-						lancamentoRollingStoneEdicao102.getDataRecolhimentoPrevista(), 
+						lancamentoRollingStoneEdicao102, 
+						lancamentoParcialRollingStoneEdicao102,  
 						StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.PARCIAL);
 
 		PeriodoLancamentoParcial periodoLancamentoParcialBonsFluidosEdicao102 = 
 				Fixture.criarPeriodoLancamentoParcial(
-						lancamentoBonsFluidosEdicao102.getDataLancamentoPrevista(), 
+						lancamentoBonsFluidosEdicao102, 
 						lancamentoParcialBonsFluidosEdicao102, 
-						lancamentoBonsFluidosEdicao102.getDataRecolhimentoPrevista(), 
 						StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.PARCIAL);
 
 		PeriodoLancamentoParcial periodoLancamentoParcialBravoEdicao102 = 
 				Fixture.criarPeriodoLancamentoParcial(
-						lancamentoBravoEdicao102.getDataLancamentoPrevista(), 
+						lancamentoBravoEdicao102, 
 						lancamentoParcialBravoEdicao102, 
-						lancamentoBravoEdicao102.getDataRecolhimentoPrevista(), 
 						StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.PARCIAL);
 
 		PeriodoLancamentoParcial periodoLancamentoParcialCasaClaudiaEdicao102 = 
 				Fixture.criarPeriodoLancamentoParcial(
-						lancamentoCasaClaudiaEdicao102.getDataLancamentoPrevista(), 
-						lancamentoParcialCasaClaudiaEdicao102, 
-						lancamentoCasaClaudiaEdicao102.getDataRecolhimentoPrevista(), 
+						lancamentoCasaClaudiaEdicao102, 
+						lancamentoParcialCasaClaudiaEdicao102,  
 						StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.PARCIAL);
 
 		PeriodoLancamentoParcial periodoLancamentoParcialJequitiEdicao102 = 
 				Fixture.criarPeriodoLancamentoParcial(
-						lancamentoJequitiEdicao102.getDataLancamentoPrevista(), 
+						lancamentoJequitiEdicao102, 
 						lancamentoParcialJequitiEdicao102, 
-						lancamentoJequitiEdicao102.getDataRecolhimentoPrevista(), 
 						StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.PARCIAL);
 
 		PeriodoLancamentoParcial periodoLancamentoParcialMundoEstranhoEdicao102 = 
 				Fixture.criarPeriodoLancamentoParcial(
-						lancamentoMundoEstranhoEdicao102.getDataLancamentoPrevista(), 
+						lancamentoMundoEstranhoEdicao102, 
 						lancamentoParcialMundoEstranhoEdicao102, 
-						lancamentoMundoEstranhoEdicao102.getDataRecolhimentoPrevista(), 
 						StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.PARCIAL);
 
 		PeriodoLancamentoParcial periodoLancamentoParcialNovaEscolaEdicao102 = 
 				Fixture.criarPeriodoLancamentoParcial(
-						lancamentoNovaEscolaEdicao102.getDataLancamentoPrevista(), 
+						lancamentoNovaEscolaEdicao102, 
 						lancamentoParcialNovaEscolaEdicao102, 
-						lancamentoNovaEscolaEdicao102.getDataRecolhimentoPrevista(), 
 						StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.PARCIAL);
 
 		PeriodoLancamentoParcial periodoLancamentoParcialMinhaCasaEdicao102 = 
 				Fixture.criarPeriodoLancamentoParcial(
-						lancamentoMinhaCasaEdicao102.getDataLancamentoPrevista(), 
+						lancamentoMinhaCasaEdicao102, 
 						lancamentoParcialMinhaCasaEdicao102, 
-						lancamentoMinhaCasaEdicao102.getDataRecolhimentoPrevista(), 
 						StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.PARCIAL);
 
 		PeriodoLancamentoParcial periodoLancamentoParcialRecreioEdicao102 = 
 				Fixture.criarPeriodoLancamentoParcial(
-						lancamentoRecreioEdicao102.getDataLancamentoPrevista(), 
+						lancamentoRecreioEdicao102, 
 						lancamentoParcialRecreioEdicao102, 
-						lancamentoRecreioEdicao102.getDataRecolhimentoPrevista(), 
 						StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.PARCIAL);
 
 		PeriodoLancamentoParcial periodoLancamentoParcialWomenHealthEdicao102 = 
 				Fixture.criarPeriodoLancamentoParcial(
-						lancamentoWomenHealthEdicao102.getDataLancamentoPrevista(), 
-						lancamentoParcialWomenHealthEdicao102, 
-						lancamentoWomenHealthEdicao102.getDataRecolhimentoPrevista(), 
+						lancamentoWomenHealthEdicao102, 
+						lancamentoParcialWomenHealthEdicao102,  
 						StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.FINAL);
 
 		PeriodoLancamentoParcial periodoLancamentoParcialViagemTurismoEdicao102 = 
 				Fixture.criarPeriodoLancamentoParcial(
-						lancamentoViagemTurismoEdicao102.getDataLancamentoPrevista(), 
+						lancamentoViagemTurismoEdicao102, 
 						lancamentoParcialViagemTurismoEdicao102, 
-						lancamentoViagemTurismoEdicao102.getDataRecolhimentoPrevista(), 
 						StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.PARCIAL);
 
 		PeriodoLancamentoParcial periodoLancamentoParcialVipEdicao102 = 
 				Fixture.criarPeriodoLancamentoParcial(
-						lancamentoVipEdicao102.getDataLancamentoPrevista(), 
+						lancamentoVipEdicao102, 
 						lancamentoParcialVipEdicao102, 
-						lancamentoVipEdicao102.getDataRecolhimentoPrevista(), 
 						StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.PARCIAL);
 
 		PeriodoLancamentoParcial periodoLancamentoParcialGestaoEscolarEdicao102 = 
 				Fixture.criarPeriodoLancamentoParcial(
-						lancamentoGestaoEscolarEdicao102.getDataLancamentoPrevista(), 
-						lancamentoParcialGestaoEscolarEdicao102, 
-						lancamentoGestaoEscolarEdicao102.getDataRecolhimentoPrevista(), 
+						lancamentoGestaoEscolarEdicao102, 
+						lancamentoParcialGestaoEscolarEdicao102,  
 						StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.PARCIAL);
 
 		PeriodoLancamentoParcial periodoLancamentoParcialLolaEdicao102 = 
 				Fixture.criarPeriodoLancamentoParcial(
-						lancamentoLolaEdicao102.getDataLancamentoPrevista(), 
+						lancamentoLolaEdicao102, 
 						lancamentoParcialLolaEdicao102, 
-						lancamentoLolaEdicao102.getDataRecolhimentoPrevista(), 
 						StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.FINAL);
 
 		PeriodoLancamentoParcial periodoLancamentoParcialHeavyMetalEdicao102 = 
 				Fixture.criarPeriodoLancamentoParcial(
-						lancamentoHeavyMetalEdicao102.getDataLancamentoPrevista(), 
+						lancamentoHeavyMetalEdicao102, 
 						lancamentoParcialHeavyMetalEdicao102, 
-						lancamentoHeavyMetalEdicao102.getDataRecolhimentoPrevista(), 
 						StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.PARCIAL);
 
 		PeriodoLancamentoParcial periodoLancamentoParcialMetalUndergroundEdicao102 = 
 				Fixture.criarPeriodoLancamentoParcial(
-						lancamentoMetalUndergroundEdicao102.getDataLancamentoPrevista(), 
+						lancamentoMetalUndergroundEdicao102, 
 						lancamentoParcialMetalUndergroundEdicao102, 
-						lancamentoMetalUndergroundEdicao102.getDataRecolhimentoPrevista(), 
 						StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.PARCIAL);
 		
 		save(session, periodoLancamentoParcialJavaMagazineEdicao101, periodoLancamentoParcialMundoJavaEdicao101,

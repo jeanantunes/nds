@@ -8,6 +8,8 @@ var PARCIAIS = new Parciais('${pageContext.request.contextPath}');
 
 function popup() {
 	
+		PARCIAIS.carregaPeb();
+	
 		$( "#dialog-novo" ).dialog({
 			resizable: false,
 			height:200,
@@ -15,10 +17,10 @@ function popup() {
 			modal: true,
 			buttons: {
 				"Confirmar": function() {
-					$( this ).dialog( "close" );
-					$("#effect").show("highlight", {}, 1000, callback);
-					$(".grids").show();
 					
+					PARCIAIS.inserirPeriodos();
+					
+					$( this ).dialog( "close" );					
 				},
 				"Cancelar": function() {
 					$( this ).dialog( "close" );
@@ -38,7 +40,6 @@ function popup() {
 			buttons: {
 				"Confirmar": function() {
 					$( this ).dialog( "close" );
-					$("#effect").hide("highlight", {}, 1000, callback);
 					
 				},
 				"Cancelar": function() {
@@ -59,8 +60,8 @@ function popup() {
 			modal: true,
 			buttons: {
 				"Confirmar": function() {
-					$( this ).dialog( "close" );
-					$("#effect").show("highlight", {}, 1000, callback);
+					
+					PARCIAIS.excluirPeriodoParcial();
 				},
 				"Cancelar": function() {
 					$( this ).dialog( "close" );
@@ -69,7 +70,6 @@ function popup() {
 		});
 	};
 	function popup_detalhes() {
-		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
 	
 		$( "#dialog-detalhes" ).dialog({
 			resizable: false,
@@ -79,7 +79,7 @@ function popup() {
 			buttons: {
 				"Confirmar": function() {
 					$( this ).dialog( "close" );
-					$("#effect").show("highlight", {}, 1000, callback);
+					
 				},
 				"Cancelar": function() {
 					$( this ).dialog( "close" );
@@ -89,7 +89,6 @@ function popup() {
 	};
 	
 	function popup_edit_produto() {
-		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
 	
 		$( "#dialog-edit-produto" ).dialog({
 			resizable: false,
@@ -98,8 +97,9 @@ function popup() {
 			modal: true,
 			buttons: {
 				"Confirmar": function() {
-					$( this ).dialog( "close" );
-					$("#effect").show("highlight", {}, 1000, callback);
+					
+					PARCIAIS.editarPeriodoParcial();
+					
 				},
 				"Cancelar": function() {
 					$( this ).dialog( "close" );
@@ -109,12 +109,12 @@ function popup() {
 	};
  
 $(function() {
-		$( "#datepicker_1" ).datepicker({
+		$( "#dataLancamentoEd" ).datepicker({
 			showOn: "button",
 			buttonImage: "${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
 			buttonImageOnly: true
 		});
-		$( "#datepicker_2" ).datepicker({
+		$( "#dataRecolhimentoEd" ).datepicker({
 			showOn: "button",
 			buttonImage: "${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
 			buttonImageOnly: true
@@ -132,6 +132,7 @@ $(function() {
 	});
 $(function() {
 	$("#nomeProduto").autocomplete({source: ""});
+	$("#edicaoProduto").autocomplete({source: ""});
 });
 
 		
@@ -146,34 +147,61 @@ $(function() {
 
 
 <div id="dialog-edit-produto" title="Dados do Produto">
+	
+	<jsp:include page="../messagesDialog.jsp">
+		<jsp:param value="dialog-edit-produto" name="messageDialog"/>
+	</jsp:include>
+
         <table width="412" border="0" cellpadding="2" cellspacing="1" class="filtro">
             <tr>
               <td width="129">Código:</td>
-              <td width="272"><input name="textfield2" type="text" id="textfield2" style="width:80px;" value="3456789" disabled="disabled" /></td>
+              <td width="272">
+
+
+<input id="codigoProdutoEd" name="textfield2" type="text" style="width:80px;" value="" disabled="disabled" /></td>
+
             </tr>
             <tr>
               <td>Produto:</td>
-              <td><input name="textfield7" type="text" id="textfield7" style="width:250px;" value="Mônica" disabled="disabled"/></td>
+              <td>
+              
+<input id="nomeProdutoEd" name="textfield7" type="text" style="width:250px;" value="" disabled="disabled"/></td>
+ 
             </tr>
             <tr>
               <td>Edição:</td>
-              <td><input name="textfield" type="text" id="textfield" style="width:80px;" value="4556" disabled="disabled"/></td>
+              <td>
+
+<input id="numEdicaoEd" name="textfield" type="text" style="width:80px;" value="" disabled="disabled"/></td>
+
             </tr>
             <tr>
               <td>Preço Capa R$:</td>
-              <td><input name="textfield3" type="text" id="textfield3" style="width:80px; text-align:right" value="4,85" disabled="disabled"/></td>
+              <td>
+
+<input id="precoCapaEd" name="textfield3" type="text" style="width:80px; text-align:right" value="" disabled="disabled"/></td>
+
             </tr>
             <tr>
               <td>Fornecedor:</td>
-              <td><input name="textfield4" type="text" id="textfield4" style="width:250px;" value="Dinap" disabled="disabled"/></td>
+              <td>
+
+<input id="nomeFornecedorEd" name="textfield4" type="text" style="width:250px;" value="" disabled="disabled"/></td>
+
             </tr>
             <tr>
               <td>Data Lançamento:</td>
-              <td><input type="text" id="datepicker_1" style="width:80px;" /></td>
+              <td>
+
+<input id="dataLancamentoEd" type="text" style="width:80px;" /></td>
+
             </tr>
             <tr>
               <td>Data Recolhimento:</td>
-              <td><input type="text" id="datepicker_2" style="width:80px;" /></td>
+              <td>
+
+<input id="dataRecolhimentoEd" type="text"  style="width:80px;" /></td>
+
             </tr>
           </table>
 </div>
@@ -183,24 +211,29 @@ $(function() {
 </div>
 
 <div id="dialog-detalhes" title="Parcial">
+
+<jsp:include page="../messagesDialog.jsp">
+	<jsp:param value="dialog-detalhes" name="messageDialog"/>
+</jsp:include>
+
 <fieldset>
 	<legend>Dados da Parcial</legend>
     <table width="740" border="0" cellpadding="2" cellspacing="1">
             <tr>
               <td width="81"><strong>Código:</strong></td>
-              <td width="94">44433</td>
+              <td width="94" id="codigoProdutoM" ></td>
               <td width="132"><strong>Produto:</strong></td>
-              <td width="194"> Turma da Mônica</td>
+              <td width="194" id="nomeProdutoM"></td>
               <td width="81"><strong>Edição:</strong></td>
-              <td width="127">4345</td>
+              <td width="127" id="numEdicaoM">4345</td>
             </tr>
             <tr>
               <td><strong>Fornecedor:</strong></td>
-              <td>FC</td>
+              <td id="nomeFornecedorM"></td>
               <td><strong>Data Lançamento:</strong></td>
-              <td>12/02/2012</td>
+              <td id="dataLancamentoM"></td>
               <td><strong>Data Final:</strong></td>
-              <td>10/04/2012</td>
+              <td id="dataRecolhimentoM"></td>
             </tr>
           </table>
           
@@ -211,14 +244,33 @@ $(function() {
 
 <fieldset>
 	<legend>Parciais</legend>
-    <table class="parciaispopGrid"></table>
+    <table class="parciaisPopGrid"></table>
 </fieldset>
 
 
 <br />
-<span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
 
-<span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
+<div id="exportacaoPeriodosModal">
+	            
+	            <span class="bt_novos" title="Gerar Arquivo">
+	            
+	<!-- ARQUIVO EXCEL -->
+	<a href="${pageContext.request.contextPath}/parciais/exportarPeriodos?fileType=XLS">
+			
+			<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />Arquivo</a>
+			</span>
+	
+			<span class="bt_novos" title="Imprimir">
+	
+		
+	<!-- IMPRIMIR PDF -->	
+	<a href="${pageContext.request.contextPath}/parciais/exportarPeriodos?fileType=PDF">
+	
+			<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a>
+			</span>
+	        
+	</div>   
+
  <span class="bt_novos" title="Novo"><a href="javascript:;" onclick="popup();"><img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0" alt="Incluir Períodos" />Incluir Períodos</a></span>
 
 
@@ -232,11 +284,15 @@ $(function() {
         <table width="236" border="0" cellspacing="1" cellpadding="1">
           <tr>
             <td width="103">PEB:</td>
-            <td width="126"><input name="" type="text" style="width:80px;" /> dias</td>
+            <td width="126">
+<!-- PEB -->
+<input id="peb" name="" type="text" style="width:80px;" /> dias</td>
           </tr>
           <tr>
             <td>Qtde. Períodos:</td>
-            <td><input name="" type="text" style="width:80px;" /></td>
+            <td>
+<!-- QTDE -->
+<input id="qtde" name="" type="text" style="width:80px;" /></td>
           </tr>
         </table>
         
@@ -262,7 +318,7 @@ $(function() {
               <td colspan="3">
 <!-- Código -->
 <input id="codigoProduto" name="codigoProduto" style="width: 80px; float: left; margin-right: 5px;" maxlength="255"
-						   onchange="produto.pesquisarPorCodigoProduto('#codigoProduto', '#nomeProduto', null , false);" />
+						   onchange="produto.pesquisarPorCodigoProdutoAutoCompleteEdicao('#codigoProduto', '#nomeProduto', '#edicaoProduto' , false);" />
 				</td>
                 <td width="51">Produto:</td>
                 <td width="163">
@@ -365,7 +421,7 @@ $(function() {
 <fieldset id="painelPeriodos" class="classFieldset" style="display:none">
 	       	  <legend>Períodos Cadastrados</legend>
 	               	
-	        	<table align="center" class="periodosGrid"></table>
+	        	<table class="periodosGrid"></table>
 	            
 	<div id="exportacaoPeriodos">
 	            
@@ -531,7 +587,7 @@ $(".periodosGrid").flexigrid($.extend({},{
 		height : 255
 	})); 
 
-$(".parciaispopGrid").flexigrid($.extend({},{
+$(".parciaisPopGrid").flexigrid($.extend({},{
 	colModel : [ {
 			display : 'Período',
 			name : 'periodo',
@@ -540,13 +596,13 @@ $(".parciaispopGrid").flexigrid($.extend({},{
 			align : 'center'
 		}, {
 			display : 'Data Lançamento',
-			name : 'dtLancamento',
+			name : 'dataLancamento',
 			width : 90,
 			sortable : true,
 			align : 'center'
 		}, {
 			display : 'Data Recolhimento',
-			name : 'dtRecolhimento',
+			name : 'dataRecolhimento',
 			width : 100,
 			sortable : true,
 			align : 'center'
@@ -564,7 +620,7 @@ $(".parciaispopGrid").flexigrid($.extend({},{
 			align : 'center'
 		}, {
 			display : 'Vendas',
-			name : 'venda',
+			name : 'vendas',
 			width : 60,
 			sortable : true,
 			align : 'center'

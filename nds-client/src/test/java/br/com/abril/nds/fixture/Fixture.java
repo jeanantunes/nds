@@ -1549,14 +1549,12 @@ public class Fixture {
 	}
 	
 	public static ConferenciaEncalhe conferenciaEncalhe(
-			Lancamento lancamento, 
 			MovimentoEstoqueCota movimentoEstoqueCota,
 			ChamadaEncalheCota chamadaEncalheCota,
 			ControleConferenciaEncalheCota controleConferenciaEncalheCota) {
 		
 		ConferenciaEncalhe conferenciaEncalhe = new ConferenciaEncalhe();
 		
-		conferenciaEncalhe.setLancamento(lancamento);
 		conferenciaEncalhe.setMovimentoEstoqueCota(movimentoEstoqueCota);
 		conferenciaEncalhe.setChamadaEncalheCota(chamadaEncalheCota);
 		conferenciaEncalhe.setControleConferenciaEncalheCota(controleConferenciaEncalheCota);
@@ -2526,9 +2524,8 @@ public class Fixture {
 		return lancamentoParcial;
 	}
 	
-	public static PeriodoLancamentoParcial criarPeriodoLancamentoParcial(Date lancamento, 
+	public static PeriodoLancamentoParcial criarPeriodoLancamentoParcial(Lancamento lancamento, 
 																		 LancamentoParcial lancamentoParcial,
-																		 Date recolhimento,
 																		 StatusLancamentoParcial status,
 																		 TipoLancamentoParcial tipo) {
 		
@@ -2537,8 +2534,6 @@ public class Fixture {
 		parcial.setLancamento(lancamento);
 		
 		parcial.setLancamentoParcial(lancamentoParcial);
-		
-		parcial.setRecolhimento(recolhimento);
 		
 		parcial.setStatus(status);
 		

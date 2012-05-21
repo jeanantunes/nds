@@ -15,7 +15,6 @@ import javax.persistence.Table;
 
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalheCota;
 import br.com.abril.nds.model.planejamento.ChamadaEncalheCota;
-import br.com.abril.nds.model.planejamento.Lancamento;
 
 /**
  * Entidade de abstrai os movimentos da cota especificos de envio de encalhe 
@@ -42,10 +41,6 @@ public class ConferenciaEncalhe implements Serializable {
 	@OneToOne(optional = false)
 	@JoinColumn(name = "MOVIMENTO_ESTOQUE_COTA_ID")
 	private MovimentoEstoqueCota movimentoEstoqueCota;
-
-	@ManyToOne(optional = false)
-	@JoinColumn(name = "LANCAMENTO_ID")
-	private Lancamento lancamento;
 
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "CHAMADA_ENCALHE_COTA_ID")
@@ -97,23 +92,6 @@ public class ConferenciaEncalhe implements Serializable {
 	 */
 	public void setMovimentoEstoqueCota(MovimentoEstoqueCota movimentoEstoqueCota) {
 		this.movimentoEstoqueCota = movimentoEstoqueCota;
-	}
-
-	/**
-	 * Obtém lancamento
-	 *
-	 * @return Lancamento
-	 */
-	public Lancamento getLancamento() {
-		return lancamento;
-	}
-
-	/**
-	 * Atribuí lancamento
-	 * @param lancamento 
-	 */
-	public void setLancamento(Lancamento lancamento) {
-		this.lancamento = lancamento;
 	}
 
 	/**

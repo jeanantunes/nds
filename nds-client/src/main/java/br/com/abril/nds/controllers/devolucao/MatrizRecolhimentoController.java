@@ -40,6 +40,7 @@ import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TableModel;
+import br.com.abril.nds.util.TipoBalanceamentoRecolhimento;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.caelum.vraptor.Get;
@@ -871,15 +872,14 @@ public class MatrizRecolhimentoController {
 		
 		if (numeroSemana != null && listaIdsFornecedores != null) {
 
-			//TODO: chamar o método para balanceamento automático do service
-			
-//			this.recolhimentoService.obterMatrizBalanceamento(numeroSemana,
-//															  listaIdsFornecedores,
-//															  TipoBalanceamentoRecolhimento.AUTOMATICO,
-//															  configuracaoInicial);
-			
 			balanceamentoRecolhimento = 
-				this.obterBalanceamentoRecolhimentoMock(dataBalanceamento, listaIdsFornecedores);
+				this.recolhimentoService.obterMatrizBalanceamento(numeroSemana,
+																  listaIdsFornecedores,
+																  TipoBalanceamentoRecolhimento.AUTOMATICO,
+																  configuracaoInicial);
+			
+//			balanceamentoRecolhimento = 
+//				this.obterBalanceamentoRecolhimentoMock(dataBalanceamento, listaIdsFornecedores);
 			
 			this.httpSession.setAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_RECOLHIMENTO,
 										  balanceamentoRecolhimento);
@@ -905,16 +905,15 @@ public class MatrizRecolhimentoController {
 			new BalanceamentoRecolhimentoDTO();
 		
 		if (numeroSemana != null && listaIdsFornecedores != null) {
-
-			//TODO: chamar o método para balanceamento por editor do service
-			
-//			this.recolhimentoService.obterMatrizBalanceamento(numeroSemana,
-//															  listaIdsFornecedores,
-//															  TipoBalanceamentoRecolhimento.EDITOR,
-//															  false);
 			
 			balanceamentoRecolhimento = 
-				this.obterBalanceamentoRecolhimentoMock(dataBalanceamento, listaIdsFornecedores);
+				this.recolhimentoService.obterMatrizBalanceamento(numeroSemana,
+																  listaIdsFornecedores,
+																  TipoBalanceamentoRecolhimento.EDITOR,
+																  false);
+			
+//			balanceamentoRecolhimento = 
+//				this.obterBalanceamentoRecolhimentoMock(dataBalanceamento, listaIdsFornecedores);
 			
 			this.httpSession.setAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_RECOLHIMENTO,
 										  balanceamentoRecolhimento);
@@ -941,15 +940,14 @@ public class MatrizRecolhimentoController {
 		
 		if (numeroSemana != null && listaIdsFornecedores != null) {
 
-			//TODO: chamar o método para balanceamento por valor do service
-			
-//			this.recolhimentoService.obterMatrizBalanceamento(numeroSemana,
-//															  listaIdsFornecedores,
-//															  TipoBalanceamentoRecolhimento.VALOR,
-//															  false);
-			
 			balanceamentoRecolhimento = 
-				this.obterBalanceamentoRecolhimentoMock(dataBalanceamento, listaIdsFornecedores);
+				this.recolhimentoService.obterMatrizBalanceamento(numeroSemana,
+																  listaIdsFornecedores,
+																  TipoBalanceamentoRecolhimento.VALOR,
+																  false);
+			
+//			balanceamentoRecolhimento = 
+//				this.obterBalanceamentoRecolhimentoMock(dataBalanceamento, listaIdsFornecedores);
 			
 			this.httpSession.setAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_RECOLHIMENTO,
 										  balanceamentoRecolhimento);

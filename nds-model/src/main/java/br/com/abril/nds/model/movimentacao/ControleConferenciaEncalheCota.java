@@ -59,7 +59,7 @@ public class ControleConferenciaEncalheCota {
 	@JoinColumn(name = "CTRL_CONF_ENCALHE_ID")
 	private ControleConferenciaEncalhe controleConferenciaEncalhe;
 	
-	@OneToOne
+	@OneToOne(optional = true)
 	@JoinColumn(name="NOTA_FISCAL_ENTRADA_COTA_ID")
 	private NotaFiscalEntradaCota notaFiscalEntradaCota;
 
