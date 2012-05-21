@@ -1003,7 +1003,7 @@ public class PdvServiceImpl implements PdvService {
 
 		if (listaEnderecoAssociacaoSalvar != null && !listaEnderecoAssociacaoSalvar.isEmpty()) {
 			
-			this.validarInclusaoEdicaoEnderecoPrincipal(listaEnderecoAssociacaoSalvar);
+			this.validarInclusaoEdicaoEnderecoPrincipal(listaEnderecoAssociacaoSalvar, pdv);
 			
 			this.salvarEnderecosPDV(pdv, listaEnderecoAssociacaoSalvar);
 		}
@@ -1028,23 +1028,16 @@ public class PdvServiceImpl implements PdvService {
 						this.enderecoPDVRepository.buscarEnderecoPorEnderecoPDV(enderecoAssociacao.getId(), pdv.getId());
 	
 				if (enderecoPDV == null) {
-	
 					enderecoPDV = new EnderecoPDV();
-					enderecoPDV.setPdv(pdv);
-					
-					enderecoPDV.setEndereco(enderecoAssociacao.getEndereco());
-					enderecoPDV.setPrincipal(enderecoAssociacao.isEnderecoPrincipal());
-					enderecoPDV.setTipoEndereco(enderecoAssociacao.getTipoEndereco());
-					
-					this.enderecoPDVRepository.adicionar(enderecoPDV);
-				} else {
-					
-					enderecoPDV.setEndereco(enderecoAssociacao.getEndereco());
-					enderecoPDV.setPrincipal(enderecoAssociacao.isEnderecoPrincipal());
-					enderecoPDV.setTipoEndereco(enderecoAssociacao.getTipoEndereco());
-					
-					this.enderecoPDVRepository.alterar(enderecoPDV);
-				}
+				} 
+				
+				enderecoPDV.setPdv(pdv);
+				enderecoPDV.setEndereco(enderecoAssociacao.getEndereco());
+				enderecoPDV.setPrincipal(enderecoAssociacao.isEnderecoPrincipal());
+				enderecoPDV.setTipoEndereco(enderecoAssociacao.getTipoEndereco());
+				
+				this.enderecoPDVRepository.merge(enderecoPDV);
+				
 			}
 		}
 	}
@@ -1139,11 +1132,26 @@ public class PdvServiceImpl implements PdvService {
 		}
 	}
 	
-	private void validarInclusaoEdicaoEnderecoPrincipal(List<EnderecoAssociacaoDTO> listaEnderecoAssociacaoSalvar){
+	private void validarInclusaoEdicaoEnderecoPrincipal(List<EnderecoAssociacaoDTO> listaEnderecoAssociacaoSalvar,PDV pdv){
 		
 		if(!this.existeEnderecoPrincipal(listaEnderecoAssociacaoSalvar)){
 			
-			throw new ValidacaoException(TipoMensagem.WARNING,"Pelomenos um endereço associado ao PDV deve ser principal!");
+			if(pdv.getEnderecos()!= null && !pdv.getEnderecos().isEmpty()){
+			
+					for(EnderecoPDV endereco: pdv.getEnderecos()){
+						
+						for( EnderecoAssociacaoDTO end : listaEnderecoAssociacaoSalvar){
+							
+							if(end.getId().equals(endereco.getEndereco().getId()) && endereco.isPrincipal()){ 
+									
+								throw new ValidacaoException(TipoMensagem.WARNING,"Pelomenos um endereço associado ao PDV deve ser principal!");
+							}
+						}
+					}	
+			}
+			else{
+				throw new ValidacaoException(TipoMensagem.WARNING,"Pelomenos um endereço associado ao PDV deve ser principal!");
+			}
 		}
 	}
 		
