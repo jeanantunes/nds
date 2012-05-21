@@ -29,6 +29,7 @@ import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalheCota;
+import br.com.abril.nds.model.movimentacao.StatusOperacao;
 import br.com.abril.nds.model.planejamento.ChamadaEncalheCota;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
@@ -46,6 +47,7 @@ import br.com.abril.nds.repository.TipoMovimentoEstoqueRepository;
 import br.com.abril.nds.repository.TipoMovimentoFinanceiroRepository;
 import br.com.abril.nds.service.ConferenciaEncalheService;
 import br.com.abril.nds.service.DistribuidorService;
+import br.com.abril.nds.service.MovimentoEstoqueService;
 import br.com.abril.nds.service.exception.ChamadaEncalheCotaInexistenteException;
 import br.com.abril.nds.service.exception.ConferenciaEncalheExistenteException;
 import br.com.abril.nds.util.DateUtil;
@@ -93,6 +95,9 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	
 	@Autowired
 	private MovimentoEstoqueCotaRepository movimentoEstoqueCotaRepository;
+	
+	@Autowired
+	private MovimentoEstoqueService movimentoEstoqueService;
 	
 	/*
 	 * (non-Javadoc)
@@ -532,7 +537,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		Integer numeroCota = controleConfEncalheCota.getCota().getNumeroCota();
 		
 		ControleConferenciaEncalheCota controleConferenciaEncalheCota = 
-				obterControleConferenciaEncalheCotaParaConfEncalhe(controleConfEncalheCota.getId());
+				obterControleConferenciaEncalheCotaParaConfEncalhe(controleConfEncalheCota);
 		
 		Date dataCriacao = new Date();
 		
@@ -621,7 +626,6 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		ConferenciaEncalhe conferenciaEncalhe = new ConferenciaEncalhe();
 		conferenciaEncalhe.setChamadaEncalheCota(chamadaEncalheCota);
 		conferenciaEncalhe.setControleConferenciaEncalheCota(controleConferenciaEncalheCota);
-		conferenciaEncalhe.setLancamento(lancamento);
 		conferenciaEncalhe.setMovimentoEstoqueCota(movimentoEstoqueCota);
 		conferenciaEncalhe.setJuramentada(conferenciaEncalheDTO.isJuramentada());
 		conferenciaEncalhe.setObservacao(conferenciaEncalheDTO.getObservacao());
@@ -710,9 +714,40 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 	}
 	
-	private ControleConferenciaEncalheCota obterControleConferenciaEncalheCotaParaConfEncalhe(Long idControleConfEncalheCota) {
+	/**
+	 * Caso o parâmetro ctrlConfEncalheCota conter um id, sera obtido do banco de dados um registro 
+	 * ControleConferenciaEncalheCota referente ao mesmo, senão, sera criado um novo registro.
+	 * 
+	 * @param ctrlConfEncalheCota
+	 * 
+	 * @return ControleConferenciaEncalheCota
+	 */
+	private ControleConferenciaEncalheCota obterControleConferenciaEncalheCotaParaConfEncalhe( ControleConferenciaEncalheCota ctrlConfEncalheCota ) {
 		
-		return null;
+		Distribuidor distribuidor = distribuidorService.obter();
+		
+		Cota cota = cotaRepository.obterPorNumerDaCota(ctrlConfEncalheCota.getCota().getNumeroCota());
+		
+		if(ctrlConfEncalheCota.getId()!=null) {
+			
+			ControleConferenciaEncalheCota controleConferenciaEncalheCotaFromBD = 
+					controleConferenciaEncalheCotaRepository.buscarPorId(ctrlConfEncalheCota.getId());
+			
+			if(controleConferenciaEncalheCotaFromBD==null) {
+				throw new IllegalStateException("Nenhum registro de ControleConferenciaEncalheCota encontrado.");
+			}
+			
+			return controleConferenciaEncalheCotaFromBD;
+			
+		}
+		
+		ctrlConfEncalheCota.setCota(cota);
+		ctrlConfEncalheCota.setDataOperacao(distribuidor.getDataOperacao());
+		ctrlConfEncalheCota.setStatus(StatusOperacao.EM_ANDAMENTO);
+		
+		controleConferenciaEncalheCotaRepository.adicionar(ctrlConfEncalheCota);
+		
+		return ctrlConfEncalheCota;
 	}
 	
 	/**

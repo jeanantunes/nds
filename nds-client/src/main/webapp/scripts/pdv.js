@@ -18,7 +18,7 @@ var PDV = {
 		},
 		
 		executarPreProcessamento : function (resultado){
-
+			
 			// Monta as colunas com os inputs do grid
 			$.each(resultado.rows, function(index, row) {
 				
@@ -212,7 +212,7 @@ var PDV = {
 				PDV.fecharModalCadastroPDV = false;
 				PDV.carregarDadosEdicao(result);
 				
-			},PDV.errorEditarPDV,true); 
+			},null,true); 
 		},
 		
 		excluirPDV:function(idPdv,idCota){
@@ -224,16 +224,9 @@ var PDV = {
 				
 				PDV.pesquisarPdvs(idCota);
 				
-			},PDV.errorExcluirPDV,true);
+			},null,true);
 		},
 		
-		errorEditarPDV: function (){
-			
-		},
-		
-		errorExcluirPDV: function (){
-			
-		},
 		carregarDadosEdicao:function (result){
 			
 			PDV.popup_novoPdv();
@@ -252,19 +245,33 @@ var PDV = {
 					this.getDadosEspecialidade() +"&" + 
 					this.getDadosGeradorFluxo()  +"&" +
 					this.getDadosMap(), function(result){
-				
+			
+				if(result.listaMensagens){
+					
+					if(result.tipoMensagem && result.tipoMensagem== "ERROR" ){
+						
+						exibirMensagemDialog(result.tipoMensagem, result.listaMensagens, "idModalPDV");
+						
+						ENDERECO_PDV.popularGridEnderecos();
+						
+						return;
+					}
+				}
+			
 				$("#dialog-pdv").dialog( "close" );
 				PDV.fecharModalCadastroPDV = true;
 				PDV.pesquisarPdvs(PDV.idCota);
-				PDV.limparCamposTela();
+				PDV.limparCamposTela();	
 				
-			},this.errorSalvarPDV,true,"idModalPDV");
+				if(result.listaMensagens){
+					
+					exibirMensagemDialog(result.tipoMensagem, result.listaMensagens, "");
+				}
+				
+			},null,true,"idModalPDV");
 			
 		},
-		
-		errorSalvarPDV: function (result){
-		},
-		
+
 		getDadosBasico: function (){
 			
 			var dados = 

@@ -26,11 +26,11 @@ $(function() {
 	    	</fieldset>
 	    </td>
 	    
-	    <td width="69" align="center">
-			<a id="linkEnviarTodos" href="javascript:;"><img height="30" width="39" src="./images/seta_vai_todos.png"></a>
+	    <td width="69" align="center" >
+			<a id="linkEnviarTodos" href="javascript:;"><img height="30" width="39" border="0" src="${pageContext.request.contextPath}/images/seta_vai_todos.png"></a>
 			<br><br>
-			<a id="linkVoltarTodos" href="javascript:;"><img height="30" width="39" src="./images/seta_volta_todos.png"></a>
-			<br>
+			<a id="linkVoltarTodos" href="javascript:;"><img height="30" width="39" border="0" src="${pageContext.request.contextPath}/images/seta_volta_todos.png"></a>
+			<br><br>
 		</td>
 	    
 	    <td width="252" valign="top">

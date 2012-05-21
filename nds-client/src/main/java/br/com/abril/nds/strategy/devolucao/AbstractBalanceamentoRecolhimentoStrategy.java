@@ -316,7 +316,10 @@ public abstract class AbstractBalanceamentoRecolhimentoStrategy implements Balan
 			produtosRecolhimentoAtuais = produtosRecolhimentoNovos;
 		}
 		
-		matrizRecolhimento.put(dataBalanceamento, produtosRecolhimentoAtuais);
+		if (produtosRecolhimentoAtuais != null && !produtosRecolhimentoAtuais.isEmpty()) {
+		
+			matrizRecolhimento.put(dataBalanceamento, produtosRecolhimentoAtuais);
+		}
 	}
 	
 	/*

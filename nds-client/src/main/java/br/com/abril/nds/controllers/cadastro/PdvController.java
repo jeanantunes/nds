@@ -40,6 +40,7 @@ import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.serialization.custom.PlainJSONSerialization;
 import br.com.abril.nds.service.ParametroSistemaService;
 import br.com.abril.nds.service.PdvService;
+import br.com.abril.nds.service.exception.EnderecoUniqueConstraintViolationException;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.CurrencyUtil;
@@ -73,7 +74,7 @@ public class PdvController {
 	
 	public static final String SUCESSO_UPLOAD  = "Upload realizado com sucesso.";
 			
-	private static final String SUCESSO_EXCLUSAO_ARQUIVO = "Imagem excluida com sucesso.";
+	private static final String SUCESSO_EXCLUSAO_ARQUIVO = "Imagem excluída  com sucesso.";
 	
 	private static final String IMAGEM_PDV = "imagemPdv";
 	
@@ -317,7 +318,7 @@ public class PdvController {
 			pdvVO.setIdCota(pdv.getIdCota());
 			pdvVO.setNomePdv(pdv.getNomePDV());
 			pdvVO.setTipoPonto( tratarCampo( pdv.getDescricaoTipoPontoPDV()));
-			pdvVO.setContato(pdv.getContato());
+			pdvVO.setContato(  tratarCampo( pdv.getContato()));
 			pdvVO.setTelefone( tratarCampo(pdv.getTelefone()));
 			pdvVO.setEndereco( tratarCampo(pdv.getEndereco()));
 			pdvVO.setPrincipal(pdv.isPrincipal());
@@ -417,7 +418,7 @@ public class PdvController {
 
 	@Post
 	@Path("/salvar")
-	public void salvarPDV(PdvDTO pdvDTO){		
+	public void salvarPDV(PdvDTO pdvDTO) throws Exception{		
 		
 	
 		if(pdvDTO.isDentroOutroEstabelecimento() && pdvDTO.getTipoEstabelecimentoAssociacaoPDV().getCodigo() == -1){
@@ -436,10 +437,43 @@ public class PdvController {
 		
 		preencherEnderecos(pdvDTO);
 		
-		pdvService.salvar(pdvDTO);
+		try{
 		
-		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
-				Constantes.PARAM_MSGS).recursive().serialize();
+			pdvService.salvar(pdvDTO);
+		
+			result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
+					"result").recursive().serialize();
+			
+		}catch (EnderecoUniqueConstraintViolationException e) {
+			
+			tratarErroExclusaoEndereco();
+			
+			result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.ERROR,e.getMessage()),
+					"result").recursive().serialize();
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	private void tratarErroExclusaoEndereco(){
+		
+		List<EnderecoAssociacaoDTO> listaEnderecosExcluidos = 
+				(List<EnderecoAssociacaoDTO>) httpSession.getAttribute(LISTA_ENDERECOS_REMOVER_SESSAO);
+		
+		List<EnderecoAssociacaoDTO> listaEnderecosExibicao= 
+				(List<EnderecoAssociacaoDTO>) httpSession.getAttribute(LISTA_ENDERECOS_EXIBICAO);
+		
+		if(listaEnderecosExibicao == null || listaEnderecosExibicao.isEmpty()){
+			listaEnderecosExibicao = new ArrayList<EnderecoAssociacaoDTO>();
+		}
+			
+		if(listaEnderecosExcluidos!= null && !listaEnderecosExcluidos.isEmpty()){
+			listaEnderecosExibicao.addAll(listaEnderecosExcluidos);
+		}
+		
+		httpSession.setAttribute(LISTA_ENDERECOS_REMOVER_SESSAO,null);
+		
+		httpSession.setAttribute(LISTA_ENDERECOS_EXIBICAO,listaEnderecosExibicao);
+			
 	}
 	
 	private void preencherTelefones(PdvDTO pdvDTO) {
@@ -492,7 +526,7 @@ public class PdvController {
 	public void adicionarPeriodo(List<PeriodoFuncionamentoDTO> periodos, PeriodoFuncionamentoDTO novoPeriodo){		
 		
 		if(novoPeriodo.getTipoPeriodoFuncionamentoPDV() == null) 
-			throw new ValidacaoException(TipoMensagem.WARNING, "Tipo de período deve selecionado.");
+			throw new ValidacaoException(TipoMensagem.WARNING, "Tipo de período deve ser selecionado.");
 		
 		TipoMensagem status = TipoMensagem.SUCCESS;
 		
@@ -508,12 +542,12 @@ public class PdvController {
  		
 			if(novoPeriodo.getInicio() == null || novoPeriodo.getInicio().trim().isEmpty()) {
 				throw new ValidacaoException(
-						TipoMensagem.WARNING,"Horário de início não não foi preenchido corretamente.");
+						TipoMensagem.WARNING,"Horário de início não foi preenchido corretamente.");
 			}
 	
 			if(novoPeriodo.getFim() == null || novoPeriodo.getFim().trim().isEmpty()) {
 				throw new ValidacaoException(
-						TipoMensagem.WARNING,"Horário de términio não não foi preenchido corretamente.");
+						TipoMensagem.WARNING,"Horário de términio não foi preenchido corretamente.");
 			}
 			
 			validarHorario(novoPeriodo);
