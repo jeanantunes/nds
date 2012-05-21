@@ -294,7 +294,7 @@
 			$.each(resultado.rows, function(index, row) {
 				
 				var linkAprovar = '<a href="javascript:;" onclick="editarServico(' + row.cell.id + ');" style="cursor:pointer">' +
-						     	  	'<img title="Aprovar" src="${pageContext.request.contextPath}/images/ico_editar.gif" hspace="5" border="0px" />' +
+						     	  	'<img title="Editar" src="${pageContext.request.contextPath}/images/ico_editar.gif" hspace="5" border="0px" />' +
 						  		  '</a>';
 				
 				var linkExcluir = '<a href="javascript:;" onclick="removerServico(' + row.cell.id + ');" style="cursor:pointer">' +
