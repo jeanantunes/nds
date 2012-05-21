@@ -40,4 +40,8 @@ public interface ProdutoRepository extends Repository<Produto, Long> {
 	Produto obterProdutoPorCodigo(String codigoProduto);
 	
 	String obterNomeProdutoPorCodigo(String codigoProduto);
+	
+	List<Produto> pesquisarProdutos(Integer codigo, String produto, String fornecedor, String editor,
+			Long codigoTipoProduto, String sortorder, String sortname, int page, int rp);
+
 }

@@ -70,4 +70,23 @@ public class ProdutoRepositoryImpl extends AbstractRepository<Produto, Long> imp
 		
 		return (String) query.uniqueResult();
 	}
+
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<Produto> pesquisarProdutos(Integer codigo, String produto,
+			String fornecedor, String editor, Long codigoTipoProduto,
+			String sortorder, String sortname, int page, int rp) {
+		
+		String hql = "select produto From Produto produto ";
+		
+		
+		hql += "order by " + sortname + " " + sortorder;
+		
+		Query query = super.getSession().createQuery(hql);
+		
+		query.setMaxResults(rp);
+		query.setFirstResult(page);
+		
+		return query.list();
+	}
 }

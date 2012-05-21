@@ -8,10 +8,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.cadastro.TipoProduto;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.service.EstoqueProdutoService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.ProdutoService;
+import br.com.abril.nds.service.TipoProdutoService;
 import br.com.abril.nds.util.ItemAutoComplete;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.caelum.vraptor.Path;
@@ -40,8 +42,21 @@ public class ProdutoController {
 	@Autowired
 	private EstoqueProdutoService estoqueProdutoService;
 	
+	@Autowired
+	private TipoProdutoService tipoProdutoService;
+	
 	public ProdutoController(Result result) {
 		this.result = result;
+	}
+	
+	@Path("/")
+	public void index() {
+		
+		List<TipoProduto> listaTipoProduto = this.tipoProdutoService.obterTodosTiposProduto();
+		
+		if (listaTipoProduto != null && !listaTipoProduto.isEmpty()) {
+			this.result.include("listaTipoProduto", listaTipoProduto);
+		}
 	}
 	
 	@Post
@@ -175,6 +190,13 @@ public class ProdutoController {
 		
 			result.use(Results.json()).from(estoqueProduto, "result").serialize();
 		}
+	}
+	
+	@Path("/pesquisarProdutos")
+	public void pesquisarProdutos(Integer codigo, String produto, String fornecedor, String editor,
+			Long codigoTipoProduto, String sortorder, String sortname, int page, int rp) {
+		
+		
 	}
 	
 }
