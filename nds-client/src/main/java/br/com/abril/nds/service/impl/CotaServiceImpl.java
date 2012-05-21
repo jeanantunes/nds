@@ -66,6 +66,7 @@ import br.com.abril.nds.repository.TipoEntregaRepository;
 import br.com.abril.nds.repository.UsuarioRepository;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.DistribuidorService;
+import br.com.abril.nds.service.EnderecoService;
 import br.com.abril.nds.service.SituacaoCotaService;
 import br.com.abril.nds.service.TelefoneService;
 import br.com.abril.nds.util.DateUtil;
@@ -138,6 +139,9 @@ public class CotaServiceImpl implements CotaService {
 	
 	@Autowired
 	private HistoricoNumeroCotaRepository historicoNumeroCotaRepository;
+	
+	@Autowired
+	private EnderecoService enderecoService;
 	
 	@Transactional(readOnly = true)
 	@Override
@@ -246,7 +250,9 @@ public class CotaServiceImpl implements CotaService {
 	}
 	
 	private void salvarEnderecosCota(Cota cota, List<EnderecoAssociacaoDTO> listaEnderecoAssociacao) {
-
+		
+		enderecoService.cadastrarEnderecos(listaEnderecoAssociacao, cota.getPessoa());
+		
 		for (EnderecoAssociacaoDTO enderecoAssociacao : listaEnderecoAssociacao) {
 
 			EnderecoCota enderecoCota = this.enderecoCotaRepository.buscarPorId(enderecoAssociacao.getId());
@@ -276,17 +282,26 @@ public class CotaServiceImpl implements CotaService {
 		List<Long> idsEndereco = new ArrayList<Long>();
 
 		for (EnderecoAssociacaoDTO enderecoAssociacao : listaEnderecoAssociacao) {
-
-			listaEndereco.add(enderecoAssociacao.getEndereco());
-
-			EnderecoCota enderecoCota = this.enderecoCotaRepository.buscarPorId(enderecoAssociacao.getId());
 			
-			idsEndereco.add(enderecoAssociacao.getEndereco().getId());
+			if(enderecoAssociacao!= null){
+				
+				listaEndereco.add(enderecoAssociacao.getEndereco());
 
-			this.enderecoCotaRepository.remover(enderecoCota);
+				EnderecoCota enderecoCota = this.enderecoCotaRepository.buscarPorId(enderecoAssociacao.getId());
+				
+				if(enderecoCota!= null){
+	
+					idsEndereco.add(enderecoAssociacao.getEndereco().getId());
+	
+					this.enderecoCotaRepository.remover(enderecoCota);
+				}
+			}
 		}
 		
-		this.enderecoRepository.removerEnderecos(idsEndereco);
+		if(!idsEndereco.isEmpty()){
+			
+			this.enderecoRepository.removerEnderecos(idsEndereco);
+		}
 	}
 	
 	@Transactional(readOnly = true)
@@ -781,15 +796,15 @@ public class CotaServiceImpl implements CotaService {
 		}
 		
 		if(cotaDto.getInicioPeriodo() != null && cotaDto.getFimPeriodo() == null ){
-			throw new ValidacaoException(TipoMensagem.WARNING,"Campo [Até] referente à  cota base deve ser informado!");
+			throw new ValidacaoException(TipoMensagem.WARNING,"O preenchimento do campo [Até] referente à  cota base é obrigatório!");
 		}
 		
 		if(cotaDto.getInicioPeriodo() == null && cotaDto.getFimPeriodo() != null ){
-			throw new ValidacaoException(TipoMensagem.WARNING,"Campo [Período] referente à  cota base deve ser informado!");
+			throw new ValidacaoException(TipoMensagem.WARNING,"O preenchimento do campo [Período] referente à  cota base é obrigatório!");
 		}
 		
 		if(DateUtil.isDataInicialMaiorDataFinal(cotaDto.getInicioPeriodo(), cotaDto.getFimPeriodo())){
-			throw new ValidacaoException(TipoMensagem.WARNING,"Período  cota base invalido!");
+			throw new ValidacaoException(TipoMensagem.WARNING,"O período preenchido nos campos [Período] [Até] referente à  cota base está invalido!");
 		}
 	}
 
@@ -802,7 +817,7 @@ public class CotaServiceImpl implements CotaService {
 				cnpjValidator.assertValid(cotaDto.getNumeroCnpj());
 				
 			}catch(InvalidStateException e){
-				throw new ValidacaoException(TipoMensagem.WARNING,"Número CNPJ inválido!");
+				throw new ValidacaoException(TipoMensagem.WARNING,"O preenchimento do campo [Número CNPJ] está inválido!");
 			}
 		}
 		
@@ -813,16 +828,16 @@ public class CotaServiceImpl implements CotaService {
 				cpfValidator.assertValid(cotaDto.getNumeroCPF());
 				
 			}catch(InvalidStateException e){
-				throw new ValidacaoException(TipoMensagem.WARNING,"Número CPF inválido!");
+				throw new ValidacaoException(TipoMensagem.WARNING,"O preenchimento do campo [Número CPF] está inválido!");
 			}
 		}
 		
 		if( cotaDto.getEmail()!= null && !cotaDto.getEmail().isEmpty() && !Util.validarEmail(cotaDto.getEmail())){
-			throw new ValidacaoException(TipoMensagem.WARNING,"E-mail inválido!");
+			throw new ValidacaoException(TipoMensagem.WARNING,"O preenchimento do campo [E-mail] está inválido!");
 		}
 		
 		if( cotaDto.getEmailNF()!= null && !cotaDto.getEmailNF().isEmpty() && !Util.validarEmail(cotaDto.getEmailNF())){
-			throw new ValidacaoException(TipoMensagem.WARNING,"E-mail NF-e inválido!");
+			throw new ValidacaoException(TipoMensagem.WARNING," O preenchimento do campo [E-mail NF-e] está inválido!");
 		}
 		
 	}
@@ -870,21 +885,21 @@ public class CotaServiceImpl implements CotaService {
 		List<String> mensagensValidacao = new ArrayList<String>();
 		
 		if(cotaDto.getNumeroCota() == null){
-			mensagensValidacao.add("O campo Cota é obrigatório.");
+			mensagensValidacao.add("O preenchimento do campo [Cota] é obrigatório!");
 		}
 	
 		if(TipoPessoa.JURIDICA.equals(cotaDto.getTipoPessoa())){
 			
 			if(cotaDto.getRazaoSocial() == null || cotaDto.getRazaoSocial().isEmpty()){
-				mensagensValidacao.add("O campo Razão Social é obrigatório.");
+				mensagensValidacao.add("O preenchimento do campo [Razão Social] é obrigatório!");
 			}
 			
 			if(cotaDto.getNumeroCnpj() == null || cotaDto.getNumeroCnpj().trim().isEmpty()){
-				mensagensValidacao.add("O campo CNPJ é obrigatório.");
+				mensagensValidacao.add("O preenchimento do campo [CNPJ] é obrigatório!");
 	    	}
 			
 			if(cotaDto.getInscricaoEstadual() == null || cotaDto.getInscricaoEstadual().isEmpty() ){
-				mensagensValidacao.add("O campo Inscrição Estadual é obrigatório.");
+				mensagensValidacao.add("O preenchimento do campo [Inscrição Estadual] é obrigatório!");
 			}
 		}
 				
@@ -957,28 +972,46 @@ public class CotaServiceImpl implements CotaService {
 	private void processarDadosReferenciaCota(BaseReferenciaCota baseReferenciaCota, CotaDTO cotaDto){
 		
 		if(baseReferenciaCota == null){
-			return;
+			
+			validarParametrosBaseReferenciaCota(cotaDto);
 		}
+		else{
 		
-		validarPorcentagemCotaBase(cotaDto);
-		
-		Set<ReferenciaCota> referenciasCota = baseReferenciaCota.getReferenciasCota();
-		
-		if(referenciasCota != null && !referenciasCota.isEmpty()){
-	    	
-			referenciaCotaRepository.excluirReferenciaCota(baseReferenciaCota.getId());
-	    }
-		
-		referenciasCota = getReferenciasCota(baseReferenciaCota, cotaDto);
-		
-		if(!referenciasCota.isEmpty()){
-
-			for(ReferenciaCota ref : referenciasCota){
-	    		referenciaCotaRepository.merge(ref);
-	    	}
+			validarPorcentagemCotaBase(cotaDto);
+			
+			Set<ReferenciaCota> referenciasCota = baseReferenciaCota.getReferenciasCota();
+			
+			if(referenciasCota != null && !referenciasCota.isEmpty()){
+		    	
+				referenciaCotaRepository.excluirReferenciaCota(baseReferenciaCota.getId());
+		    }
+			
+			referenciasCota = getReferenciasCota(baseReferenciaCota, cotaDto);
+			
+			if(!referenciasCota.isEmpty()){
+	
+				for(ReferenciaCota ref : referenciasCota){
+		    		referenciaCotaRepository.merge(ref);
+		    	}
+			}
 		}
 	}
 	
+	
+	private void validarParametrosBaseReferenciaCota(CotaDTO cotaDto){
+		
+		if(tratarValorReferenciaCota(cotaDto.getHistoricoPrimeiraCota(),cotaDto.getHistoricoPrimeiraPorcentagem())){
+			throw new ValidacaoException(TipoMensagem.WARNING,"O preenchimento dos campos [Período] [Até] referente à  cota base é obrigatório!");
+		}
+		
+		if(tratarValorReferenciaCota(cotaDto.getHistoricoSegundaCota(),cotaDto.getHistoricoSegundaPorcentagem())){
+			throw new ValidacaoException(TipoMensagem.WARNING,"O preenchimento dos campos [Período] [Até] referente à  cota base é obrigatório!");
+		}
+		
+		if(tratarValorReferenciaCota(cotaDto.getHistoricoTerceiraCota(),cotaDto.getHistoricoTerceiraPorcentagem())){
+			throw new ValidacaoException(TipoMensagem.WARNING,"O preenchimento dos campos [Período] [Até] referente à  cota base é obrigatório!");
+		}
+	}
 	
 	private Set<ReferenciaCota> getReferenciasCota(BaseReferenciaCota baseReferenciaCota, CotaDTO cotaDto){
 		

@@ -162,20 +162,79 @@ public class FornecedorServiceImpl implements FornecedorService {
 	}
 	private void validarIntegridadeFornecedor(List<Long> fornecedores,Long idCota) {
 		
-		//TODO Implementar validação de integridade
+		Cota cota  = cotaRepository.buscarPorId(idCota);
 		
-		/*Cota cota  = cotaRepository.buscarPorId(idCota);
-		
-		if(cota.getParametroCobranca()!= null){
+		if(cota.getParametroCobranca()!= null 
+				&& cota.getFornecedores()!= null && !cota.getFornecedores().isEmpty()){
 			
 			Set<FormaCobranca> formasCobranca = cota.getParametroCobranca().getFormasCobrancaCota();
+			
+			Set<Fornecedor>fornecedoresCobranca = null;
 			
 			if(formasCobranca!= null && !formasCobranca.isEmpty()){
 				
 				for(FormaCobranca forCob : formasCobranca){
+					
+					if(!forCob.isAtiva()){
+						continue;
+					}
+					
+					fornecedoresCobranca = forCob.getFornecedores();
+					
+					if(fornecedoresCobranca!= null && !fornecedoresCobranca.isEmpty()){
+						
+						for(Fornecedor forn : fornecedoresCobranca){
+							
+							if(fornecedores == null){
+								
+								verificarExistenciaFornecedorCota(cota.getFornecedores(),forn);
+							}
+							else{
+								
+								verificarExistenciaFornecedorCotaPorCodigo(fornecedores, forn,cota.getFornecedores());
+							}
+						}
+					}
 				}
 			}
-		}*/
+		}
+	}
+	
+	private void verificarExistenciaFornecedorCota(Set<Fornecedor> fornecedores, Fornecedor fornecedor){
+		
+		for(Fornecedor forn: fornecedores){
+			
+			if(forn.getId().equals(fornecedor.getId())){
+			
+				throw new ValidacaoException(TipoMensagem.WARNING,"Operação não permitida! Registro possui dependências!");
+			}
+		}
+	}
+	
+	private void verificarExistenciaFornecedorCotaPorCodigo(List<Long> fornecedores, Fornecedor fornecedor,Set<Fornecedor> fornecedoresAssCota){
+		
+		for(Fornecedor fr : fornecedoresAssCota){
+			
+			if(!isFornecedorAssociadoCota(fornecedores, fr.getId())){
+				
+				if(fr.getId().equals(fornecedor.getId())){
+					
+					throw new ValidacaoException(TipoMensagem.WARNING,"Operação não permitida! Registro possui dependências!");
+				}
+			}
+		}
+	}
+	
+	private boolean isFornecedorAssociadoCota(List<Long> fornecedores,Long fornecedor){
+		
+		for(Long fr : fornecedores){
+			
+			if(fr.equals(fornecedor)){
+				return true;
+			}
+		}
+		
+		return false;
 	}
 
 	/**
