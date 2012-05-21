@@ -126,10 +126,10 @@ public class ProdutoRecolhimentoDTO implements Serializable {
 	}
 
 	/**
-	 * @param statusLancamento the statusLancamento to set
+	 * @param status do lançamento em formato de String para ser convertida
 	 */
-	public void setStatusLancamento(StatusLancamento statusLancamento) {
-		this.statusLancamento = statusLancamento;
+	public void setStatusLancamento(String statusLancamento) {
+		this.statusLancamento = Util.getEnumByStringValue(StatusLancamento.values(), statusLancamento);
 	}
 
 	/**
