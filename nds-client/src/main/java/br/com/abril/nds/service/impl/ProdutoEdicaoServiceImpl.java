@@ -164,5 +164,5 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 	public void alterarProdutoEdicao(ProdutoEdicao produtoEdicao) {
 		this.produtoEdicaoRepository.alterar(produtoEdicao);		
 	}
-	
+
 }

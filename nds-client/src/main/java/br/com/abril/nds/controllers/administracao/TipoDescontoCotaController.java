@@ -78,6 +78,7 @@ public class TipoDescontoCotaController {
 			atualizarDistribuidor(descontoFormatado);
 			descontoGeral.setIdCota((long) 0);
 			descontoGeral.setIdProduto(0l);
+			descontoGeral.setNumeroEdicao(0l);
 			salvarDesconto(descontoGeral);
 		} catch (ParseException e) {
 			e.printStackTrace();
@@ -97,6 +98,7 @@ public class TipoDescontoCotaController {
 			TipoDescontoCota especifico = popularDescontoParaCadastrar(descontoEspecifico, dataAlteracaoEspecifico, usuarioEspecifico, EspecificacaoDesconto.ESPECIFICO);
 			especifico.setIdCota(cotaParaAtualizar.getNumeroCota().longValue());
 			especifico.setIdProduto(0l);
+			especifico.setNumeroEdicao(0l);
 			salvarDesconto(especifico);
 		} catch (ParseException e) {
 			e.printStackTrace();
@@ -113,7 +115,8 @@ public class TipoDescontoCotaController {
 			this.produtoEdicaoService.alterarProdutoEdicao(produtoEdicao);
 			TipoDescontoCota tipoDescontoProduto = popularDescontoParaCadastrar(descontoProduto, dataAlteracaoProduto, usuarioProduto, EspecificacaoDesconto.PRODUTO);
 			tipoDescontoProduto.setIdCota(0l);
-			tipoDescontoProduto.setIdProduto(produtoEdicao.getId());
+			tipoDescontoProduto.setIdProduto(Long.parseLong(produtoEdicao.getProduto().getCodigo()));
+			tipoDescontoProduto.setNumeroEdicao(Long.parseLong(edicaoProduto));
 			salvarDesconto(tipoDescontoProduto);
 		} catch (ParseException e) {
 			e.printStackTrace();
@@ -245,28 +248,29 @@ public class TipoDescontoCotaController {
 	}
 	
 	private List<TipoDescontoCotaVO> popularTipoDescontoCotaVOParaProduto(Produto produto) {
-		List<TipoDescontoCotaVO> listaVO = this.tipoDescontoCotaService.obterTipoDescontoCota(EspecificacaoDesconto.PRODUTO);		
+		List<TipoDescontoCotaVO> listaVO = this.tipoDescontoCotaService.obterTipoDescontoCota(EspecificacaoDesconto.PRODUTO);
 		List<TipoDescontoCotaVO> listaAux = new ArrayList<TipoDescontoCotaVO>();
 		for (TipoDescontoCotaVO tipoDescontoCotaVO : listaVO) {
+			ProdutoEdicao pr = this.produtoEdicaoService.obterProdutoEdicaoPorCodProdutoNumEdicao(tipoDescontoCotaVO.getCodigo(), tipoDescontoCotaVO.getEdicao());
 			if(tipoDescontoCotaVO.getCodigo().equals(produto.getCodigo())){
-				List<ProdutoEdicao> listaProdutos = this.produtoEdicaoService.obterProdutosEdicaoPorCodigoProduto(tipoDescontoCotaVO.getCodigo());
-				for(ProdutoEdicao p: listaProdutos){
-					tipoDescontoCotaVO.setProduto(p.getProduto().getNome());
-					tipoDescontoCotaVO.setEdicao(p.getNumeroEdicao().toString());
-				}
+				tipoDescontoCotaVO.setCodigo(pr.getProduto().getCodigo());
+				tipoDescontoCotaVO.setProduto(pr.getProduto().getNome());
+				tipoDescontoCotaVO.setEdicao(pr.getNumeroEdicao().toString());
+				listaAux.add(tipoDescontoCotaVO);				
 			}
-			listaAux.add(tipoDescontoCotaVO);
 		}
+		
 		if(listaAux.isEmpty()){
 			for (TipoDescontoCotaVO tipoDescontoCotaVO : listaVO) {
-				List<ProdutoEdicao> listaProdutos = this.produtoEdicaoService.obterProdutosEdicaoPorCodigoProduto(tipoDescontoCotaVO.getCodigo());
-				for(ProdutoEdicao p: listaProdutos){
-					tipoDescontoCotaVO.setProduto(p.getProduto().getNome());
-					tipoDescontoCotaVO.setEdicao(p.getNumeroEdicao().toString());
+					ProdutoEdicao pr = this.produtoEdicaoService.obterProdutoEdicaoPorCodProdutoNumEdicao(tipoDescontoCotaVO.getCodigo(), tipoDescontoCotaVO.getEdicao());
+					tipoDescontoCotaVO.setCodigo(pr.getProduto().getCodigo());
+					tipoDescontoCotaVO.setProduto(pr.getProduto().getNome());
+					tipoDescontoCotaVO.setEdicao(pr.getNumeroEdicao().toString());
+					listaAux.add(tipoDescontoCotaVO);				
 				}
-			}
-			return listaVO;
-		}
+		}		
+		
+		
 		return listaAux;
 	}
 
