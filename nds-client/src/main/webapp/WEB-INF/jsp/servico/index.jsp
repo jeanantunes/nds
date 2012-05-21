@@ -10,6 +10,38 @@
 			
 			inicializar();
 		});
+
+		function mostra_semanal() {
+			$('.semanal').show();
+			$('.diaMes').hide();
+		}
+
+		function mostra_mensal() {
+			$('.diaMes').show();
+			$('.semanal').hide();
+		}
+
+		function mostra_diario( ) {
+			$('.semanal').hide();
+			$('.diaMes').hide();
+		}
+			
+		function mostra_faturamento() {
+			$('.faturamento').show();
+		}
+
+		function mostra_taxa() {
+			$('.taxa').show();
+			/*
+			var selected = $("#idCobranca").checked;
+				
+			if (selected) {
+				$('.taxa').show();
+			} else {
+				$('.taxa').hide();
+			}
+			*/
+		}
 		
 		function iniciarGrid() {
 			$(".serviceGrid").flexigrid({
@@ -18,13 +50,13 @@
 				colModel : [ {
 					display : 'C&oacute;digo',
 					name : 'codigo',
-					width : 70,
+					width : 85,
 					sortable : true,
 					align : 'left'
 				}, {
 					display : 'Descri&ccedil;&atilde;o',
 					name : 'descricao',
-					width : 200,
+					width : 250,
 					sortable : true,
 					align : 'left'
 				}, {
@@ -34,15 +66,9 @@
 					sortable : true,
 					align : 'right'
 				}, {
-					display : 'Isen&ccedil;&atilde;o',
-					name : 'isento',
-					width : 115,
-					sortable : true,
-					align : 'center'
-				}, {
 					display : 'Base de C&aacute;lculo',
 					name : 'baseCalculo',
-					width : 220,
+					width : 270,
 					sortable : true,
 					align : 'left'
 				}, {
@@ -86,13 +112,15 @@
 		function limparModalCadastro() {
 
 			$("#codigoCadastro").removeAttr('disabled');
+			$("#idServico").val("");
 			$("#codigoCadastro").val("");
 			$("#descricaoCadastro").val("");
 			$("#taxaFixaCadastro").val("");
-			$("#isencaoCadastro").val(false);
 			$("#periodicidadeCadastro").val("");
 			$("#baseCalculoCadastro").val("");
-			$("#percentualCalculoBase").val("");
+			$("#percentualCalculoBase").val("");   	
+			$("#periodicidadeDiaria").val("");
+			$("#diaMes").val("");
 
 			aplicarMascaras();			
 		}
@@ -114,11 +142,11 @@
 			$(".serviceGrid").flexReload();
 		}
 
-		function editarServico(codigoServico) {
+		function editarServico(id) {
 
 			$.postJSON(
-				"<c:url value='/servico/cadastroServico/buscarServico' />",
-				"codigo=" + codigo,
+				"<c:url value='/servico/cadastroServico/buscarServicoPeloCodigo' />",
+				"id=" + id,
 				function (result) {
 					
 					$("#codigoCadastro").attr('disabled', '');
@@ -130,58 +158,73 @@
 
 		function carregarEdicao(servico) {
 
+			$("#idServico").val(servico.id);
 			$("#codigoCadastro").val(servico.codigo);
 			$("#descricaoCadastro").val(servico.descricao);
 			$("#taxaFixaCadastro").val(servico.taxa);
-			$("#isencaoCadastro").val(servico.isento);
 			$("#periodicidadeCadastro").val(servico.periodicidade);
 			$("#baseCalculoCadastro").val(servico.baseCalculo);
 			$("#percentualCalculoBase").val(servico.percentualCalculoBase);
+		}
+
+		function incluirENovoServico() {
+
+			salvarServico();
+			limparModalCadastro();
+		}
+
+		function salvarServico() {
+
+			var id = $("#idServico").val(); 
+			var codigo = $("#codigoCadastro").val();
+			var descricao = $("#descricaoCadastro").val();
+			var taxa = $("#taxaFixaCadastro").val();
+			var periodicidade = $("#periodicidadeCadastro").val();
+			var baseCalculo = $("#baseCalculoCadastro").val();
+			var percentual = $("#percentualCalculoBase").val();   	
+			var periodicidadeDiaria = $("#periodicidadeDiaria").val();
+			var diaMes = $("#diaMes").val();
+			
+			$.postJSON("<c:url value='/servico/cadastroServico/salvarServico' />", 
+					   "id=" + id +
+					   "&codigo=" + codigo +
+					   "&descricao=" + descricao +
+					   "&taxaFixa="+ taxa +
+					   "&periodicidade=" + periodicidade +
+					   "&baseCalculo=" + baseCalculo +
+					   "&percentualCalculo=" + percentual +
+					   "&periodicidadeDiaria=" + periodicidadeDiaria +
+					   "&diaMes=" + diaMes,
+					   function(result) {
+					   							   		
+							var tipoMensagem = result.tipoMensagem;
+							var listaMensagens = result.listaMensagens;
+							
+							if (tipoMensagem && listaMensagens) {
+								
+								exibirMensagem(tipoMensagem, listaMensagens);
+							} 
+								
+							$(".serviceGrid").flexReload();
+					   },
+					   null,
+					   true
+			);
 		}
 		
 		function incluirNovo() {
 
 			$("#dialog-novo").dialog({
 				resizable : false,
-				height : 'auto',
-				width : 450,
+				height : 390,
+				width : 600,
 				modal : true,
 				buttons : {
 					"Confirmar" : function() {
 
-						var codigo = $("#codigoCadastro").val();
-						var descricao = $("#descricaoCadastro").val();
-						var taxa = $("#taxaFixaCadastro").val();
-						var isencao = $("#isencaoCadastro").val();
-						var periodicidade = $("#periodicidadeCadastro").val();
-						var baseCalculo = $("#baseCalculoCadastro").val();
-						var percentual = $("#percentualCalculoBase").val();   	
-						
-						$.postJSON("<c:url value='/servico/cadastroServico/salvarServico' />", 
-								   "codigo=" + codigo +
-								   "&descricao=" + descricao +
-								   "&taxaFixa="+ taxa +
-								   "&isento=" + isencao +
-								   "&periodicidade=" + periodicidade +
-								   "&baseCalculo=" + baseCalculo +
-								   "&percentualCalculo=" + percentual,
-								   function(result) {
-								   		
-								   		$("#dialog-novo").dialog("close");
-								   		
-										var tipoMensagem = result.tipoMensagem;
-										var listaMensagens = result.listaMensagens;
-										
-										if (tipoMensagem && listaMensagens) {
-											
-											exibirMensagem(tipoMensagem, listaMensagens);
-										}
-												
-										$(".serviceGrid").flexReload();
-								   },
-								   null,
-								   true
-						);
+						salvarServico();
+
+				   		$("#dialog-novo").dialog("close");
 					},
 					"Cancelar" : function() {
 						$(this).dialog("close");
@@ -194,7 +237,7 @@
 			});
 		}
 		
-		function removerServico(codigo) {
+		function removerServico(id) {
 			
 			$("#dialog-excluir").dialog({
 				resizable : false,
@@ -205,7 +248,7 @@
 					"Confirmar" : function() {
 						
 						$.postJSON("<c:url value='/servico/cadastroServico/removerServico' />", 
-								   "codigo=" + codigo,
+								   "id=" + id,
 								   function(result) {
 								   		
 								   		$("#dialog-excluir").dialog("close");
@@ -235,14 +278,26 @@
 		}
 		
 		function executarPreProcessamento(resultado) {
-						
+			
+			if (resultado.mensagens) {
+
+				exibirMensagem(
+					resultado.mensagens.tipoMensagem, 
+					resultado.mensagens.listaMensagens
+				);
+				
+				$(".grids").hide();
+
+				return resultado;
+			}
+			
 			$.each(resultado.rows, function(index, row) {
 				
-				var linkAprovar = '<a href="javascript:;" onclick="editarServico(' + row.cell.codigo + ');" style="cursor:pointer">' +
+				var linkAprovar = '<a href="javascript:;" onclick="editarServico(' + row.cell.id + ');" style="cursor:pointer">' +
 						     	  	'<img title="Aprovar" src="${pageContext.request.contextPath}/images/ico_editar.gif" hspace="5" border="0px" />' +
 						  		  '</a>';
 				
-				var linkExcluir = '<a href="javascript:;" onclick="removerServico(' + row.cell.codigo + ');" style="cursor:pointer">' +
+				var linkExcluir = '<a href="javascript:;" onclick="removerServico(' + row.cell.id + ');" style="cursor:pointer">' +
 								   	 '<img title="Excluir" src="${pageContext.request.contextPath}/images/ico_excluir.gif" hspace="5" border="0px" />' +
 								   '</a>';
 				
@@ -257,11 +312,13 @@
 	</script>
 	
 	<style>
-		label{ vertical-align:super;}
-		#dialog-novo label{width:370px; margin-bottom:10px; float:left; font-weight:bold; line-height:26px;}
-		#dialog-novo select, #dialog-novo input {
-		    float: right!important;
-		}
+		label { vertical-align:super; }
+		
+		#dialog-novo label { width:370px; margin-bottom:10px; float:left; font-weight:bold; line-height:26px; }
+		
+		.taxa, .faturamento, .diaMes, .semanal { display:none; }
+		
+		#dialog-novo select, #dialog-novo input { }
 	</style>
 
 </head>
@@ -276,67 +333,122 @@
 		
 	</div>
 
+
 	<!--modal -->
 	<div id="dialog-novo" title="Incluir Novo Servi&ccedil;o de Entrega">
-    
-    	<label>C&oacute;digo:<input id="codigoCadastro" type="text" style="width:250px;" /></label>
-    	
-    	<br clear="all" />
-    
-    	<label>Descri&ccedil;&atilde;o:<input id="descricaoCadastro" type="text" style="width:250px;" /></label>
-    	
-    	<br clear="all" />
-    	
-    	<label>Taxa Fixa R$:<input id="taxaFixaCadastro" type="text" style="width:250px;" /></label>
-    
-    	<br clear="all" />
-    	
-    	<label>
-    		<span style="float:left!important;" >Possibilita Isen&ccedil;&atilde;o:</span>
-    		<input id="isencaoCadastro" type="checkbox" style="float:left!important;" />
-    	</label>
-    	
-    	<br clear="all" />
-    	
-    	<label>Periodicidade:
-		    <select id="periodicidadeCadastro" style="width:257px;">
-			    <option value="" selected="selected">Selecione...</option>
-				<option value="D" >Di&aacute;rio</option>
-				<option value="S" >Semanal</option>
-				<option value="M" >Mensal</option>
-		    </select>
-	    
-    	</label>
-    	
-    	<br clear="all" />
-	    
-	    <label>Base de C&aacute;lculo:
-		    <select id="baseCalculoCadastro" style="width:257px;">
-			    <option value="" selected="selected">Selecione...</option>
-			    <option value="B" >Faturamento Bruto</option>
-			    <option value="L" >Faturamento L&iacute;quido</option>
-		    </select>
-	    </label>
-	    
-	    <br clear="all" />
+		
+		<input id="idServico" type="hidden" />
+		<jsp:include page="../messagesDialog.jsp" />
 
-    
-    	<label>
-    		<span style="float:left!important;" >(%) para c&aacute;lculo sobre base:</span>
-    		<input id="percentualCalculoBase" type="text" style="float:left!important; width:70px; margin-left:5px;" />
-    	</label>
- 
-	    <br />
-	    
-	    <br />
-	  	
-	  	<br clear="all" />
-	
+		<table width="580" border="0" cellspacing="2" cellpadding="0">
+			<tr>
+				<td>C&oacute;digo:</td>
+				<td colspan="3"><input id="codigoCadastro" type="text" style="width:270px;" /></td>
+			</tr>
+			<tr>
+				<td>Descri&ccedil;&atilde;o:</td>
+				<td colspan="3"><input id="descricaoCadastro" type="text" style="width:270px;" /></td>
+			</tr>
+			<tr>
+				<td>&nbsp;</td>
+				<td>&nbsp;</td>
+				<td>&nbsp;</td>
+				<td>&nbsp;</td>
+			</tr>
+			<tr>
+				<td width="83">
+					<strong>Cobran&ccedil;a:</strong>
+				</td>
+				<td width="20">
+					<input name="input" id="idCobranca" type="checkbox" value="" onchange="mostra_taxa();" />
+				</td>
+				<td width="177">
+					Taxa Fixa R$
+				</td>
+				<td width="295">
+					<input id="taxaFixaCadastro" type="text" style="width:70px; text-align:right;" class="taxa" />
+				</td>
+			</tr>
+			<tr>
+				<td>&nbsp;</td>
+				<td>
+					<input name="input" type="checkbox" value="" onclick="mostra_faturamento();" />
+				</td>
+				<td>
+					Percentual do Faturamento
+				</td>
+				<td>
+					<div class="faturamento">
+						<input id="percentualCalculoBase" type="text" style="width:70px; text-align:right;" />&nbsp;%
+					</div>
+				</td>
+			</tr>
+			<tr>
+				<td>&nbsp;</td>
+				<td>&nbsp;</td>
+				<td><div class="faturamento">Base de C&aacute;lculo</div></td>
+				<td>
+					<div class="faturamento">
+						<select id="baseCalculoCadastro" style="width:150px;">
+							<option selected="selected">Selecione...</option>
+							<option value="B" >Faturamento Bruto</option>
+							<option value="L" >Faturamento L&iacute;quido</option>
+						</select>
+					</div>
+				</td>
+			</tr>
+		</table>
+		
+		<table width="580" border="0" cellspacing="2" cellpadding="0">
+			<tr>
+				<td>&nbsp;</td>
+				<td>&nbsp;</td>
+				<td>&nbsp;</td>
+				<td>&nbsp;</td>
+				<td>&nbsp;</td>
+				<td>&nbsp;</td>
+				<td>&nbsp;</td>
+			</tr>
+			<tr>
+				<td width="86">Periodicidade:</td>
+				<td width="20"><input id="periodicidadeCadastro" name="periodicidade" type="radio" value="D" onclick="mostra_diario();" /></td>
+				<td width="87">Di&aacute;rio</td>
+				<td width="20"><input id="periodicidadeCadastro" name="periodicidade" type="radio" value="S" onclick="mostra_semanal();" /></td>
+				<td width="148">Semanal</td>
+				<td width="20"><input id="periodicidadeCadastro" name="periodicidade" type="radio" value="M" onclick="mostra_mensal();" /></td>
+				<td width="191">Mensal</td>
+			</tr>
+			<tr>
+				<td>&nbsp;</td>
+				<td>&nbsp;</td>
+				<td>&nbsp;</td>
+				<td>&nbsp;</td>
+				<td>
+					<div class="semanal">
+						<select id="periodicidadeDiaria" style="width:120px;">
+							<option value="1" >Segunda-feira</option>
+							<option value="2" >Ter&ccedil;a-feira</option>
+							<option value="3" >Quarta-feira</option>
+							<option value="4" >Quinta-feira</option>
+							<option value="5" >Sexta-feira</option>
+						</select>
+					</div>
+				</td>
+				<td>&nbsp;</td>
+				<td>
+					<div  class="diaMes">Dia do M&ecirc;s: 
+						<input name="diaMes" id="diaMes" type="text" value="" style="width:70px; text-align:right;" />
+					</div>
+				</td>
+			</tr>
+		</table>
+		
+		<br clear="all" />
+		
 		<span class="bt_add">
-			<a href="javascript:;" onclick="popup();">Incluir Novo</a>
-		</span> 
+			<a href="javascript:;" onclick="incluirENovoServico();">Incluir Novo</a>
+		</span>
 	</div>
-	
 	
 	<!-- pesquisa -->	
     <fieldset class="classFieldset">
@@ -359,7 +471,7 @@
 					</select>
 				</td>
 				<td width="104">
-					<span class="bt_pesquisar" title="Pesquisar Serviço">
+					<span class="bt_pesquisar" title="Pesquisar Servi&ccedil;o">
 						<a href="javascript:;" onclick="pesquisar();">Pesquisar</a>
 					</span>
 				</td>

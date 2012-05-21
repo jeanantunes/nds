@@ -6,17 +6,17 @@ public class ResultadoServicoVO implements Serializable {
 
 	private static final long serialVersionUID = 3646943680195208770L;
 
+	private Long id;
+	
 	private String codigo;
 
 	private String descricao;
 	
-	private String taxa;
-	
-	private String isento;
-	
+	private Double taxa;
+		
 	private String baseCalculo;
 	
-	private String percentualCalculoBase;
+	private Integer percentualCalculoBase;
 	
 	private String periodicidade;
 	
@@ -55,29 +55,15 @@ public class ResultadoServicoVO implements Serializable {
 	/**
 	 * @return the taxa
 	 */
-	public String getTaxa() {
+	public Double getTaxa() {
 		return taxa;
 	}
 
 	/**
 	 * @param taxa the taxa to set
 	 */
-	public void setTaxa(String taxa) {
+	public void setTaxa(Double taxa) {
 		this.taxa = taxa;
-	}
-
-	/**
-	 * @return the isento
-	 */
-	public String isIsento() {
-		return isento;
-	}
-
-	/**
-	 * @param isento the isento to set
-	 */
-	public void setIsento(String isento) {
-		this.isento = isento;
 	}
 
 	/**
@@ -97,14 +83,14 @@ public class ResultadoServicoVO implements Serializable {
 	/**
 	 * @return the percentualCalculoBase
 	 */
-	public String getPercentualCalculoBase() {
+	public Integer getPercentualCalculoBase() {
 		return percentualCalculoBase;
 	}
 
 	/**
 	 * @param percentualCalculoBase the percentualCalculoBase to set
 	 */
-	public void setPercentualCalculoBase(String percentualCalculoBase) {
+	public void setPercentualCalculoBase(Integer percentualCalculoBase) {
 		this.percentualCalculoBase = percentualCalculoBase;
 	}
 
@@ -120,6 +106,20 @@ public class ResultadoServicoVO implements Serializable {
 	 */
 	public void setPeriodicidade(String periodicidade) {
 		this.periodicidade = periodicidade;
+	}
+
+	/**
+	 * @return the id
+	 */
+	public Long getId() {
+		return id;
+	}
+
+	/**
+	 * @param id the id to set
+	 */
+	public void setId(Long id) {
+		this.id = id;
 	}
 	
 }

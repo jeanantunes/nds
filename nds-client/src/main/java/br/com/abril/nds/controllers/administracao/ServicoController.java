@@ -17,6 +17,11 @@ import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
 
+/**
+ * Controller responsável pela tela de serviços.
+ * 
+ * @author Discover Technology
+ */
 @Resource
 @Path("/servico/cadastroServico")
 public class ServicoController {
@@ -25,11 +30,25 @@ public class ServicoController {
 	@Autowired
 	private Result result;
 	
+	/**
+	 * Método chamado assim que iniciada a tela.
+	 */
 	@Path("/")
 	public void index() {
 		
 	}
 	
+	/**
+	 * Método responsável por pesquisar serviços.
+	 * 
+	 * @param codigo
+	 * @param descricao
+	 * @param periodicidade
+	 * @param sortorder
+	 * @param sortname
+	 * @param page
+	 * @param rp
+	 */
 	@Path("/pesquisarServicos")
 	public void pesquisarServicos(String codigo, 
 								  String descricao, 
@@ -43,23 +62,23 @@ public class ServicoController {
 		
 		ResultadoServicoVO resultadoServicoVO = new ResultadoServicoVO();
 
+		resultadoServicoVO.setId(1L);
 		resultadoServicoVO.setCodigo("123");
 		resultadoServicoVO.setDescricao("Descrição de teste");
-		resultadoServicoVO.setTaxa("123,2");
-		resultadoServicoVO.setIsento("Sim");
+		resultadoServicoVO.setTaxa(123.2);
 		resultadoServicoVO.setBaseCalculo("Faturamento Liquido");
-		resultadoServicoVO.setPercentualCalculoBase("12,5");
+		resultadoServicoVO.setPercentualCalculoBase(12);
 		
 		listaServicos.add(resultadoServicoVO);
 		
 		resultadoServicoVO = new ResultadoServicoVO();
 
+		resultadoServicoVO.setId(2L);
 		resultadoServicoVO.setCodigo("321");
 		resultadoServicoVO.setDescricao("Descrição de teste");
-		resultadoServicoVO.setTaxa("123,2");
-		resultadoServicoVO.setIsento("Não");
+		resultadoServicoVO.setTaxa(123.2);
 		resultadoServicoVO.setBaseCalculo("Faturamento Liquido");
-		resultadoServicoVO.setPercentualCalculoBase("12,36");		
+		resultadoServicoVO.setPercentualCalculoBase(50);		
 
 		listaServicos.add(resultadoServicoVO);
 
@@ -72,12 +91,24 @@ public class ServicoController {
 		
 		this.result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
 	}
-
+	
+	/**
+	 * Método responsável por salvar um serviço
+	 * 
+	 * @param codigo
+	 * @param descricao
+	 * @param taxaFixa
+	 * @param isento
+	 * @param periodicidade
+	 * @param baseCalculo
+	 * @param percentualCalculo
+	 */
 	@Post
-	public void salvarServico(String codigo, String descricao, Double taxaFixa,
-			Boolean isento, String periodicidade, String baseCalculo, Integer percentualCalculo) {
+	public void salvarServico(Long id, String codigo, String descricao, Double taxaFixa,
+			String periodicidade, String baseCalculo, Integer percentualCalculo, 
+			String periodicidadeDiaria, String diaMes) {
 		
-		this.validarServico(codigo, descricao, taxaFixa, isento, 
+		this.validarServico(codigo, descricao, taxaFixa, false, 
 				periodicidade, baseCalculo, percentualCalculo);
 
 		this.result.use(Results.json()).from(
@@ -85,41 +116,94 @@ public class ServicoController {
 							"result").recursive().serialize();
 	}
 	
+	/**
+	 * Método responsável por remover um serviço.
+	 * 
+	 * @param id
+	 */
 	@Post
-	public void removerServico(String codigo) {
+	public void removerServico(Long id) {
 		
-		System.out.println(codigo);
+		System.out.println(id);
 		
 		this.result.use(Results.json()).from(
 				new ValidacaoVO(TipoMensagem.SUCCESS, "Serviço excluido com sucesso."), 
 								"result").recursive().serialize();
 	}
 	
+	/**
+	 * Método capaz de buscar um serviço pelo ID.
+	 * 
+	 * @param id
+	 */
 	@Post
-	public void buscarServico(String codigo) {
+	public void buscarServicoPeloCodigo(Long id) {
 		
 		ResultadoServicoVO resultadoServicoVO = new ResultadoServicoVO();
-
+		
+		resultadoServicoVO.setId(1L);
 		resultadoServicoVO.setCodigo("123");
 		resultadoServicoVO.setDescricao("Descrição de teste");
-		resultadoServicoVO.setTaxa("123,2");
-		resultadoServicoVO.setIsento("true");
+		resultadoServicoVO.setTaxa(123.2);
 		resultadoServicoVO.setBaseCalculo("B");
 		resultadoServicoVO.setPeriodicidade("S");
-		resultadoServicoVO.setPercentualCalculoBase("12,5");
+		resultadoServicoVO.setPercentualCalculoBase(20);
 	
 		this.result.use(Results.json()).from(resultadoServicoVO, "result").recursive().serialize();
 	}
 	
+	/**
+	 * Método capaz de validar um serviço.
+	 * 
+	 * @param codigo
+	 * @param descricao
+	 * @param taxaFixa
+	 * @param isento
+	 * @param periodicidade
+	 * @param baseCalculo
+	 * @param percentualCalculoBase
+	 */
 	private void validarServico(String codigo, String descricao, Double taxaFixa,
-			boolean isIsento, String periodicidade, String baseCalculo, Integer percentualCalculoBase) {
+			boolean isento, String periodicidade, String baseCalculo, Integer percentualCalculoBase) {
+		
+		List<String> listaMensagens = new ArrayList<String>();
+		
+		// FIXME: receber diaMes e periodicidadeDiaria e Validar.
 		
 		if (codigo == null || codigo.isEmpty()) {
-			throw new ValidacaoException(
-				TipoMensagem.WARNING, "O preenchimento do campo [Código] é obrigatório!");
+			listaMensagens.add("O preenchimento do campo [Código] é obrigatório!");
+		}
+
+		if (descricao == null || descricao.isEmpty()) {
+			listaMensagens.add("O preenchimento do campo [Descrição] é obrigatório!");
+		}
+
+		if (taxaFixa == null || taxaFixa.isNaN() || taxaFixa <= 0D) {
+			listaMensagens.add("O preenchimento do campo [Taxa Fixa R$] é obrigatório!");
+		}
+
+		if (periodicidade == null || periodicidade.isEmpty()) {
+			listaMensagens.add("O preenchimento do campo [Periodicidade] é obrigatório!");
+		}
+
+		if (baseCalculo == null || baseCalculo.isEmpty()) {
+			listaMensagens.add("O preenchimento do campo [Base de Cálculo] é obrigatório!");
+		}
+
+		if (percentualCalculoBase == null || percentualCalculoBase <= 0) {
+			listaMensagens.add("O preenchimento do campo [(%) para cálculo sobre base] é obrigatório!");
+		}
+
+		if (listaMensagens != null && !listaMensagens.isEmpty()) {
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, listaMensagens));
 		}
 	}
 	
+	/**
+	 * Método capaz de processar o serviço para exibir na tela.
+	 * 
+	 * @param listaServicos
+	 */
 	private void processarServicos(List<ResultadoServicoVO> listaServicos) {
 		
 	}
