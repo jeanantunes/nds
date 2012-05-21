@@ -65,7 +65,7 @@ public class ParametroSistemaRepositoryImpl extends AbstractRepository<Parametro
 		String hql = "from ParametroSistema p where p.tipoParametroSistema in (:listaTipoParametroSistema) ";
 		
 		List<TipoParametroSistema> lst = new ArrayList<TipoParametroSistema>();
-		lst.add(TipoParametroSistema.PATH_LOGO_SISTEMA);
+		lst.add(TipoParametroSistema.LOGO_SISTEMA);
 		lst.add(TipoParametroSistema.CNPJ);
 		lst.add(TipoParametroSistema.RAZAO_SOCIAL);
 		lst.add(TipoParametroSistema.EMAIL_USUARIO);

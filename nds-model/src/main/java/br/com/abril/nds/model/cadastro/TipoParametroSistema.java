@@ -61,7 +61,7 @@ public enum TipoParametroSistema {
 	EMAIL_USUARIO,
 	
 	
-	PATH_LOGO_SISTEMA,
+	LOGO_SISTEMA,
 	
 	CNPJ,
 	RAZAO_SOCIAL,
