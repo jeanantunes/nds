@@ -4952,7 +4952,7 @@ public class DataLoader {
 		
 		Produto guitarPlayer = Fixture.produto("546", "Guitar Player", "Guitar Player", PeriodicidadeProduto.MENSAL, tipoProdutoRevista);
 		guitarPlayer.setEditor(jazz);
-		guitarPlayer.addFornecedor(fornecedorAcme);
+		guitarPlayer.addFornecedor(fornecedorDinap);
 		save(session, guitarPlayer);
 
 		Produto roadieCrew = Fixture.produto("547", "Roadie Crew", "Roadie Crew", PeriodicidadeProduto.MENSAL, tipoProdutoRevista);
@@ -5002,7 +5002,7 @@ public class DataLoader {
 		
 		Produto novaEscola = Fixture.produto("556", "Nova Escola", "Revista Nova Escola", PeriodicidadeProduto.MENSAL, tipoProdutoRevista);
 		novaEscola.setEditor(jazz);
-		novaEscola.addFornecedor(fornecedorAcme);
+		novaEscola.addFornecedor(fornecedorDinap);
 		save(session, novaEscola);
 
 		Produto minhaCasa = Fixture.produto("557", "Minha Casa", "Revista Minha Casa", PeriodicidadeProduto.MENSAL, tipoProdutoRevista);
@@ -5027,7 +5027,7 @@ public class DataLoader {
 
 		Produto vip = Fixture.produto("561", "VIP", "Revista VIP", PeriodicidadeProduto.MENSAL, tipoProdutoRevista);
 		vip.setEditor(jazz);
-		vip.addFornecedor(fornecedorAcme);
+		vip.addFornecedor(fornecedorDinap);
 		save(session, vip);
 
 		Produto gestaoEscolar = Fixture.produto("562", "Gestão Escolar", "Gestão Escolar", PeriodicidadeProduto.MENSAL, tipoProdutoRevista);
