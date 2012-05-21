@@ -640,12 +640,12 @@
 			
 			function confirmar() {
 				
-				fecharGridBalanceamento();
-				
 				$.postJSON(
 					"<c:url value='/devolucao/balanceamentoMatriz/confirmar' />",
 					null,
 					function(result) {
+				
+						fecharGridBalanceamento();
 						
 						$("#resumoPeriodo").hide();
 					}
