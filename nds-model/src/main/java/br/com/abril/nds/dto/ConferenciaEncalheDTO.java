@@ -6,18 +6,31 @@ import java.util.Date;
 
 public class ConferenciaEncalheDTO implements Serializable {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -6012294358522142934L;
 	
 	private Long idConferenciaEncalhe;
 	
 	private Long idProdutoEdicao;
 	
-	private BigDecimal qtdExemplar;
+	private String chamadaCapa;
 	
-	private BigDecimal qtdRecebida;
+	private String nomeFornecedor;
+	
+	private String nomeEditor;
+	
+	private int pacotePadrao;
+	
+	private boolean possuiBrinde;
+	
+	/**
+	 * Quantidade apontada na conferência de encalhe
+	 */	
+	private BigDecimal qtdExemplar;
+
+	/**
+	 *  Quantidade informada. Refere-se a qtd do item da nota fiscal de entrada da cota.
+	 */
+	private BigDecimal qtdInformada;
 	
 	private String codigoDeBarras;
 	
@@ -65,14 +78,6 @@ public class ConferenciaEncalheDTO implements Serializable {
 
 	public void setQtdExemplar(BigDecimal qtdExemplar) {
 		this.qtdExemplar = qtdExemplar;
-	}
-
-	public BigDecimal getQtdRecebida() {
-		return qtdRecebida;
-	}
-
-	public void setQtdRecebida(BigDecimal qtdRecebida) {
-		this.qtdRecebida = qtdRecebida;
 	}
 
 	public String getCodigoDeBarras() {
@@ -170,4 +175,53 @@ public class ConferenciaEncalheDTO implements Serializable {
 	public void setJuramentada(boolean juramentada) {
 		this.juramentada = juramentada;
 	}
+
+	public BigDecimal getQtdInformada() {
+		return qtdInformada;
+	}
+
+	public void setQtdInformada(BigDecimal qtdInformada) {
+		this.qtdInformada = qtdInformada;
+	}
+
+	public String getChamadaCapa() {
+		return chamadaCapa;
+	}
+
+	public void setChamadaCapa(String chamadaCapa) {
+		this.chamadaCapa = chamadaCapa;
+	}
+
+	public String getNomeFornecedor() {
+		return nomeFornecedor;
+	}
+
+	public void setNomeFornecedor(String nomeFornecedor) {
+		this.nomeFornecedor = nomeFornecedor;
+	}
+
+	public String getNomeEditor() {
+		return nomeEditor;
+	}
+
+	public void setNomeEditor(String nomeEditor) {
+		this.nomeEditor = nomeEditor;
+	}
+
+	public int getPacotePadrao() {
+		return pacotePadrao;
+	}
+
+	public void setPacotePadrao(int pacotePadrao) {
+		this.pacotePadrao = pacotePadrao;
+	}
+
+	public boolean isPossuiBrinde() {
+		return possuiBrinde;
+	}
+
+	public void setPossuiBrinde(boolean possuiBrinde) {
+		this.possuiBrinde = possuiBrinde;
+	}
+	
 }
