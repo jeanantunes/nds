@@ -83,7 +83,7 @@ public class ParametroSistemaRepositoryImpl extends AbstractRepository<Parametro
 		lst.add(TipoParametroSistema.PATH_INTERFACE_BANCAS_EXPORTACAO);
 		lst.add(TipoParametroSistema.PATH_INTERFACE_GFS_IMPORTCAO);
 		lst.add(TipoParametroSistema.PATH_INTERFACE_GFS_EXPORTACAO);
-		lst.add(TipoParametroSistema.PATH_INTERFACE_NFE_IMPORTCAO);
+		lst.add(TipoParametroSistema.PATH_INTERFACE_NFE_IMPORTACAO);
 		lst.add(TipoParametroSistema.PATH_INTERFACE_NFE_EXPORTACAO);
 		lst.add(TipoParametroSistema.NFE_DPEC);
 		lst.add(TipoParametroSistema.DATA_OPERACAO_CORRENTE);
