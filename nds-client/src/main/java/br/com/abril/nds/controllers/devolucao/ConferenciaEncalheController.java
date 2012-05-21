@@ -580,7 +580,7 @@ public class ConferenciaEncalheController {
 		conferenciaEncalheDTO.setIdConferenciaEncalhe(new Long((int) System.currentTimeMillis()) *-1);
 		conferenciaEncalheDTO.setCodigo(produtoEdicao.getCodigoProduto());
 		conferenciaEncalheDTO.setCodigoDeBarras(produtoEdicao.getCodigoDeBarras());
-		//conferenciaEncalheDTO.setCodigoSM(produtoEdicao.getCodigoSM());
+		conferenciaEncalheDTO.setCodigoSM(produtoEdicao.getSequenciaMatriz());
 		conferenciaEncalheDTO.setIdProdutoEdicao(produtoEdicao.getId());
 		conferenciaEncalheDTO.setNomeProduto(produtoEdicao.getNomeProduto());
 		conferenciaEncalheDTO.setNumeroEdicao(produtoEdicao.getNumeroEdicao());
