@@ -4487,7 +4487,7 @@ public class DataLoader {
 		save(session, mec);
 
 		ConferenciaEncalhe conferenciaEncalhe = Fixture.conferenciaEncalhe(
-				lancamentoRevistaCE, mec, chamadaEncalheCota, controleConferenciaEncalheCota);
+				mec, chamadaEncalheCota, controleConferenciaEncalheCota);
 		save(session, conferenciaEncalhe);
 		
 		
@@ -4503,7 +4503,7 @@ public class DataLoader {
 
 		save(session, mec);
 
-		conferenciaEncalhe = Fixture.conferenciaEncalhe(lancamentoRevistaCE, mec, chamadaEncalheCota, controleConferenciaEncalheCota);
+		conferenciaEncalhe = Fixture.conferenciaEncalhe(mec, chamadaEncalheCota, controleConferenciaEncalheCota);
 		save(session, conferenciaEncalhe);
 		
 		mec = Fixture.movimentoEstoqueCotaEnvioEncalhe( 
@@ -4518,7 +4518,7 @@ public class DataLoader {
 
 		save(session, mec);
 
-		conferenciaEncalhe = Fixture.conferenciaEncalhe(lancamentoRevistaCE, mec, chamadaEncalheCota, controleConferenciaEncalheCota);
+		conferenciaEncalhe = Fixture.conferenciaEncalhe(mec, chamadaEncalheCota, controleConferenciaEncalheCota);
 		save(session, conferenciaEncalhe);
 
 
@@ -4534,7 +4534,7 @@ public class DataLoader {
 
 		save(session, mec);
 
-		conferenciaEncalhe = Fixture.conferenciaEncalhe(lancamentoRevistaCE_2, mec, chamadaEncalheCota_2, controleConferenciaEncalheCota);
+		conferenciaEncalhe = Fixture.conferenciaEncalhe(mec, chamadaEncalheCota_2, controleConferenciaEncalheCota);
 		save(session, conferenciaEncalhe);
 
 		
@@ -4550,7 +4550,7 @@ public class DataLoader {
 
 		save(session, mec);
 		
-		conferenciaEncalhe = Fixture.conferenciaEncalhe(lancamentoRevistaCE_2, mec, chamadaEncalheCota_2, controleConferenciaEncalheCota);
+		conferenciaEncalhe = Fixture.conferenciaEncalhe(mec, chamadaEncalheCota_2, controleConferenciaEncalheCota);
 		save(session, conferenciaEncalhe);
 		
 		
@@ -4566,7 +4566,7 @@ public class DataLoader {
 
 		save(session, mec);
 
-		conferenciaEncalhe = Fixture.conferenciaEncalhe(lancamentoRevistaCE_2, mec, chamadaEncalheCota_2, controleConferenciaEncalheCota);
+		conferenciaEncalhe = Fixture.conferenciaEncalhe(mec, chamadaEncalheCota_2, controleConferenciaEncalheCota);
 		save(session, conferenciaEncalhe);
 
 		mec = Fixture.movimentoEstoqueCotaEnvioEncalhe( 
@@ -4581,7 +4581,7 @@ public class DataLoader {
 
 		save(session, mec);
 
-		conferenciaEncalhe = Fixture.conferenciaEncalhe(lancamentoRevistaCE_3, mec, chamadaEncalheCota_3, controleConferenciaEncalheCota);
+		conferenciaEncalhe = Fixture.conferenciaEncalhe(mec, chamadaEncalheCota_3, controleConferenciaEncalheCota);
 		save(session, conferenciaEncalhe);
 
 		mec = Fixture.movimentoEstoqueCotaEnvioEncalhe( 
@@ -4596,7 +4596,7 @@ public class DataLoader {
 
 		save(session, mec);
 
-		conferenciaEncalhe = Fixture.conferenciaEncalhe(lancamentoRevistaCE_3, mec, chamadaEncalheCota_3, controleConferenciaEncalheCota);
+		conferenciaEncalhe = Fixture.conferenciaEncalhe(mec, chamadaEncalheCota_3, controleConferenciaEncalheCota);
 		save(session, conferenciaEncalhe);
 
 		
@@ -4612,7 +4612,7 @@ public class DataLoader {
 
 		save(session, mec);
 
-		conferenciaEncalhe = Fixture.conferenciaEncalhe(lancamentoRevistaCE_3, mec, chamadaEncalheCota_3, controleConferenciaEncalheCota);
+		conferenciaEncalhe = Fixture.conferenciaEncalhe(mec, chamadaEncalheCota_3, controleConferenciaEncalheCota);
 		save(session, conferenciaEncalhe);
 
 
@@ -4628,7 +4628,7 @@ public class DataLoader {
 
 		save(session, mec);
 
-		conferenciaEncalhe = Fixture.conferenciaEncalhe(lancamentoRevistaCE_3, mec, chamadaEncalheCota_3, controleConferenciaEncalheCota);
+		conferenciaEncalhe = Fixture.conferenciaEncalhe(mec, chamadaEncalheCota_3, controleConferenciaEncalheCota);
 		save(session, conferenciaEncalhe);
 
 		mec = Fixture.movimentoEstoqueCotaEnvioEncalhe( 
@@ -4643,7 +4643,7 @@ public class DataLoader {
 
 		save(session, mec);
 
-		conferenciaEncalhe = Fixture.conferenciaEncalhe(lancamentoRevistaCE_3, mec, chamadaEncalheCota_3, controleConferenciaEncalheCota);
+		conferenciaEncalhe = Fixture.conferenciaEncalhe(mec, chamadaEncalheCota_3, controleConferenciaEncalheCota);
 		save(session, conferenciaEncalhe);
 
 		
@@ -4659,7 +4659,7 @@ public class DataLoader {
 
 		save(session, mec);
 
-		conferenciaEncalhe = Fixture.conferenciaEncalhe(lancamentoRevistaCE_3, mec, chamadaEncalheCota_3, controleConferenciaEncalheCota);
+		conferenciaEncalhe = Fixture.conferenciaEncalhe(mec, chamadaEncalheCota_3, controleConferenciaEncalheCota);
 		save(session, conferenciaEncalhe);
 		
 	}

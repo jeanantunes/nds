@@ -276,7 +276,7 @@ public class ControleConferenciaEncalheCotaRepositoryImplTest extends AbstractRe
 		
 		save(mec);
 		
-		ConferenciaEncalhe conferenciaEncalhe = Fixture.conferenciaEncalhe(lancamentoVeja, mec, chamadaEncalheCota, controleConferenciaEncalheCota);
+		ConferenciaEncalhe conferenciaEncalhe = Fixture.conferenciaEncalhe(mec, chamadaEncalheCota, controleConferenciaEncalheCota);
 		save(conferenciaEncalhe);
 		
 		mec = Fixture.movimentoEstoqueCotaEnvioEncalhe( 
@@ -289,7 +289,7 @@ public class ControleConferenciaEncalheCotaRepositoryImplTest extends AbstractRe
 		
 		save(mec);
 		
-		conferenciaEncalhe = Fixture.conferenciaEncalhe(lancamentoVeja, mec, chamadaEncalheCota, controleConferenciaEncalheCota);
+		conferenciaEncalhe = Fixture.conferenciaEncalhe(mec, chamadaEncalheCota, controleConferenciaEncalheCota);
 		save(conferenciaEncalhe);
 		
 		
@@ -303,7 +303,7 @@ public class ControleConferenciaEncalheCotaRepositoryImplTest extends AbstractRe
 		
 		save(mec);
 	
-		conferenciaEncalhe = Fixture.conferenciaEncalhe(lancamentoVeja, mec, chamadaEncalheCota, controleConferenciaEncalheCota);
+		conferenciaEncalhe = Fixture.conferenciaEncalhe(mec, chamadaEncalheCota, controleConferenciaEncalheCota);
 		save(conferenciaEncalhe);
 			
 	}
