@@ -420,6 +420,11 @@
 			
 			setarValoresPesquisados : function(result){
 				
+				if (ultimoCodeBar && ultimoCodeBar != result.codigoDeBarras){
+				
+					$(".conferenciaEncalheGrid").flexReload();
+				}
+				
 				ultimoCodeBar = result.codigoDeBarras;
 				ultimoSM = result.codigoSM;
 				ultimoCodigo = result.idProdutoEdicao;
@@ -436,8 +441,6 @@
 				$("#valorTotal").text(((parseFloat(result.precoCapa) - parseFloat(result.desconto)) * parseFloat(result.qtdExemplar)).toFixed(2));
 				
 				$("#qtdeExemplar").val(parseInt(result.qtdExemplar));
-				
-				$(".conferenciaEncalheGrid").flexReload();
 			},
 			
 			adicionarProdutoConferido : function(){
@@ -987,8 +990,6 @@
 						
 						$("#qtdeExemplar").val(qtd + 1);
 					} else {
-						
-						var _codeBar = $("#cod_barras").val();
 						
 						var data = [{name: "codigoBarra", value: $("#cod_barras").val()}, 
 						            {name: "sm", value: ""}, 
