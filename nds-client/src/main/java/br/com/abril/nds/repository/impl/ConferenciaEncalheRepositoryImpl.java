@@ -41,56 +41,16 @@ public class ConferenciaEncalheRepositoryImpl extends
 		hql.append(" 		PROD_EDICAO.NUMERO_EDICAO AS numeroEdicao,                                                   ");
 		hql.append(" 		PROD_EDICAO.PRECO_VENDA AS precoCapa,                                                        ");
 		
-		hql.append("        ( PROD_EDICAO.PRECO_VENDA *  (                                                               ");
-		hql.append("         		                                                                                     ");
-		hql.append("         SELECT                                                                                      ");
-		hql.append("             CASE                                                                                    ");
-		hql.append("                 WHEN PE.DESCONTO IS NOT NULL THEN PE.DESCONTO                                       ");
-		hql.append("                 ELSE CASE                                                                           ");
-		hql.append("                     WHEN CT.FATOR_DESCONTO IS NOT NULL THEN CT.FATOR_DESCONTO                       ");
-		hql.append("                     ELSE CASE                                                                       ");
-		hql.append("                         WHEN DISTRIB.FATOR_DESCONTO IS NOT NULL THEN DISTRIB.FATOR_DESCONTO         ");
-		hql.append("                         ELSE 0                        ");
-		hql.append("                     END                               ");
-		hql.append("                 END                                   ");
-		hql.append("             END                                       ");
-		hql.append("         FROM                                          ");
-		hql.append("             PRODUTO_EDICAO PE CROSS                   ");
-		hql.append("         JOIN                                          ");
-		hql.append("             COTA CT CROSS                             ");
-		hql.append("         JOIN                                          ");
-		hql.append("             DISTRIBUIDOR DISTRIB                      ");
-		hql.append("         WHERE                                         ");
-		hql.append("             CT.ID=MOV_EST_COTA.COTA_ID                ");
-		hql.append("             AND PE.ID=MOV_EST_COTA.PRODUTO_EDICAO_ID  ");
-		hql.append("             AND DISTRIB.ID= :idDistribuidor           ");
-		hql.append("         ) / 100 ) AS desconto,                        ");
+		hql.append("        ( PROD_EDICAO.PRECO_VENDA *  ( ");
+		hql.append(    subSqlQueryValorDesconto()			);		
+		hql.append("         ) / 100 ) AS desconto,        ");
 		
-		hql.append("         MOV_EST_COTA.QTDE * ( PROD_EDICAO.PRECO_VENDA - ( PROD_EDICAO.PRECO_VENDA *                 ");
-		hql.append("         (                                                                                           ");
-		hql.append("            SELECT                                                                                   ");
-		hql.append("             CASE                                                                                    ");
-		hql.append("                 WHEN PE.DESCONTO IS NOT NULL THEN PE.DESCONTO                                       ");
-		hql.append("                 ELSE CASE                                                                           ");
-		hql.append("                     WHEN CT.FATOR_DESCONTO IS NOT NULL THEN CT.FATOR_DESCONTO                       ");
-		hql.append("                     ELSE CASE                                                                       ");
-		hql.append("                         WHEN DISTRIB.FATOR_DESCONTO IS NOT NULL THEN DISTRIB.FATOR_DESCONTO         ");
-		hql.append("                         ELSE 0                        ");
-		hql.append("                     END                               ");
-		hql.append("                 END                                   ");
-		hql.append("             END                                       ");
-		hql.append("         FROM                                          ");
-		hql.append("             PRODUTO_EDICAO PE CROSS                   ");
-		hql.append("         JOIN                                          ");
-		hql.append("             COTA CT CROSS                             ");
-		hql.append("         JOIN                                          ");
-		hql.append("             DISTRIBUIDOR DISTRIB                      ");
-		hql.append("         WHERE                                         ");
-		hql.append("             CT.ID=MOV_EST_COTA.COTA_ID                ");
-		hql.append("             AND PE.ID=MOV_EST_COTA.PRODUTO_EDICAO_ID  ");
-		hql.append("             AND DISTRIB.ID= :idDistribuidor           ");
-		hql.append("         )                                             ");
-		hql.append("             /100)) AS valorTotal,                     ");
+		hql.append("         MOV_EST_COTA.QTDE * ( PROD_EDICAO.PRECO_VENDA - ( PROD_EDICAO.PRECO_VENDA *  ");
+		
+		hql.append(" ( 							");
+		hql.append(subSqlQueryValorDesconto()	 );
+		hql.append(" ) 							");
+		hql.append(" /100)) AS valorTotal,  	");
 		
 		hql.append("         TO_DAYS(MOV_EST_COTA.DATA)-TO_DAYS(CH_ENCALHE.DATA_RECOLHIMENTO) + 1 AS dia,                ");
 		hql.append("         CONF_ENCALHE.OBSERVACAO AS observacao,                                                      ");
@@ -139,7 +99,42 @@ public class ConferenciaEncalheRepositoryImpl extends
 		return query.list();
 		        		
 	}
-
+	
+	/**
+	 * Obtém String de subSQL que retorna valor de desconto
+	 * de acordo com ProdutoEdicao, Cota e Distribuidor.
+	 * @return
+	 */
+	private String subSqlQueryValorDesconto() {
+		
+		StringBuffer sql = new StringBuffer();
+		
+		sql.append("            SELECT                                                                                   ");
+		sql.append("             CASE                                                                                    ");
+		sql.append("                 WHEN PE.DESCONTO IS NOT NULL THEN PE.DESCONTO                                       ");
+		sql.append("                 ELSE CASE                                                                           ");
+		sql.append("                     WHEN CT.FATOR_DESCONTO IS NOT NULL THEN CT.FATOR_DESCONTO                       ");
+		sql.append("                     ELSE CASE                                                                       ");
+		sql.append("                         WHEN DISTRIB.FATOR_DESCONTO IS NOT NULL THEN DISTRIB.FATOR_DESCONTO         ");
+		sql.append("                         ELSE 0                        ");
+		sql.append("                     END                               ");
+		sql.append("                 END                                   ");
+		sql.append("             END                                       ");
+		sql.append("         FROM                                          ");
+		sql.append("             PRODUTO_EDICAO PE CROSS                   ");
+		sql.append("         JOIN                                          ");
+		sql.append("             COTA CT CROSS                             ");
+		sql.append("         JOIN                                          ");
+		sql.append("             DISTRIBUIDOR DISTRIB                      ");
+		sql.append("         WHERE                                         ");
+		sql.append("             CT.ID=MOV_EST_COTA.COTA_ID                ");
+		sql.append("             AND PE.ID=MOV_EST_COTA.PRODUTO_EDICAO_ID  ");
+		sql.append("             AND DISTRIB.ID= :idDistribuidor           ");
+		
+		return sql.toString();
+		
+	}
+	
 	/**
 	 * Retorna String referente a uma subquery que obtém o valor comissionamento 
 	 * (percentual de desconto) para determinado produtoEdicao a partir de idCota e idDistribuidor. 

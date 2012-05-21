@@ -31,14 +31,14 @@ $(function() {
 		      <tr>
 		        <td height="122" valign="top">
 		        	<br />
-		        	<a id="linkFluxoPrincipal" onclick="PDV.enviarFluxoPrincipal();" href="javascript:;"><img src="./images/seta_vai_todos.png" width="39" height="30" /></a>
+		        	<a id="linkFluxoPrincipal" onclick="PDV.enviarFluxoPrincipal();" href="javascript:;"><img border="0" src="${pageContext.request.contextPath}/images/seta_vai_todos.png" width="39" height="30" /></a>
 		        </td>
 		      </tr>
 		      <tr>
 		        <td>
-					<a id="linkFluxoEnviarTodos" href="javascript:;"><img height="30" width="39" src="./images/seta_vai_todos.png"></a>
+					<a id="linkFluxoEnviarTodos" href="javascript:;"><img height="30" width="39" border="0" src="${pageContext.request.contextPath}/images/seta_vai_todos.png"></a>
 					<br><br>
-					<a id="linkFluxoVoltarTodos" href="javascript:;"><img height="30" width="39" src="./images/seta_volta_todos.png"></a>
+					<a id="linkFluxoVoltarTodos" href="javascript:;"><img height="30" width="39" border="0" src="${pageContext.request.contextPath}/images/seta_volta_todos.png"></a>
 					<br>
 				</td>
 		      </tr>

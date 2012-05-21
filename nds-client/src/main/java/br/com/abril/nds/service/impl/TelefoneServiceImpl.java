@@ -123,10 +123,14 @@ public class TelefoneServiceImpl implements TelefoneService {
 				
 				this.telefoneRepository.removerTelefones(listaTelefones);
 			}
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			//caso o telefone esteja associado a outra pessoa na base de dados não pode ser apagado.
 			//nem todas as associações estão definidas, por isso é melhor tratar dessa maneira do que fazer
 			//selects que terão que ser alterados até que todas as associações estejam definidas.
+			
+			if( e instanceof org.springframework.dao.DataIntegrityViolationException){
+				throw new ValidacaoException(TipoMensagem.ERROR,"Exclusão de telefone não permitida, registro possui dependências!");
+			}
 		}
 	}
 
