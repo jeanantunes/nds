@@ -61,7 +61,7 @@ var PDV = {
 			$("#idPDV").val(result.pdvDTO.id);
 			$("#idCotaImagem").val(result.pdvDTO.idCota);
 			$("#selectStatus").val(result.pdvDTO.statusPDV);
-			$("#dataInicio").val($.format.date(result.pdvDTO.dataInicio.$.substr(0,10) + "00:00:00.000","dd/MM/yyyy"));
+			$("#dataInicio").val(result.pdvDTO.dataInicio.$.substr(0,10));
 			$("#nomePDV").val(result.pdvDTO.nomePDV);
 			$("#contatoPDV").val(result.pdvDTO.contato);
 			$("#sitePDV").val(result.pdvDTO.site);
@@ -92,7 +92,9 @@ var PDV = {
 						fim:diaFuncionamento.fim});						
 				});
 
-				PDV.montartabelaDiasFuncionamento();
+				PDV.atualizarComboDiasFuncionamento();
+				
+				PDV.montartabelaDiasFuncionamento();								
 			}
 	
 		},
@@ -384,19 +386,11 @@ var PDV = {
 			var inicioHorario = $("#inicioHorario").val();
 			var fimHorario = $("#fimHorario").val();		
 						
-			var parametros = [];
-			
-			$.each(PDV.diasFuncionamento, function(index, diaFuncionamento) {
-				
-				parametros.push({name:'periodos['+ index +'].tipoPeriodo', value: diaFuncionamento.tipoPeriodo});
-				parametros.push({name:'periodos['+ index +'].inicio', value: diaFuncionamento.inicio});
-				parametros.push({name:'periodos['+ index +'].fim', value: diaFuncionamento.fim});
-		  	});
+			var parametros = PDV.getDiasFuncionamentoPDV();
 						
 			parametros.push({name:'novoPeriodo.tipoPeriodo', value: tipoPeriodo});
 			parametros.push({name:'novoPeriodo.inicio', value: inicioHorario});
-			parametros.push({name:'novoPeriodo.fim', value: fimHorario});
-			
+			parametros.push({name:'novoPeriodo.fim', value: fimHorario});			
 			
 			$.postJSON(contextPath + "/cadastro/pdv/adicionarPeriodo",
 					parametros, 
@@ -407,7 +401,32 @@ var PDV = {
 			);
 		},
 		
-	
+		atualizarComboDiasFuncionamento : function() {
+			
+			var parametros = PDV.getDiasFuncionamentoPDV();
+			
+			$.postJSON(contextPath + "/cadastro/pdv/atualizarComboDiasFuncionamento",
+					parametros, 
+					function(result) {PDV.retornoAdicaoDiaFuncionamento(result);},
+					null,
+					true,
+					"idModalPDV"
+			);
+		},
+		
+		getDiasFuncionamentoPDV:function() {
+			
+			var parametros = [];
+			
+			$.each(PDV.diasFuncionamento, function(index, diaFuncionamento) {
+				
+				parametros.push({name:'periodos['+ index +'].tipoPeriodo', value: diaFuncionamento.tipoPeriodo});
+				parametros.push({name:'periodos['+ index +'].inicio', value: diaFuncionamento.inicio});
+				parametros.push({name:'periodos['+ index +'].fim', value: diaFuncionamento.fim});
+		  	});
+			
+			return parametros;			
+		},
 		
 		retornoAdicaoDiaFuncionamento: 	function(result){
 			
@@ -426,17 +445,11 @@ var PDV = {
 				
 				PDV.diasFuncionamento.push(novoPeriodo);
 				PDV.montartabelaDiasFuncionamento();
+			
+				items.splice(0,0,{"key": {"@class": "string","$": "-1"},"value": {"@class": "string","$": "Selecione"}});
 				
-				var combo = $("#selectDiasFuncionamento");
-				combo.clear();
-				
-				$.each(items, function(index, item) {
-					var option = document.createElement("OPTION");
-					option.innerHTML = item.value.$;
-					option.value = item.key.$;
-							
-					combo.append(option);
-			  	});
+				var combo =  montarComboBox(items, false);
+				$("#selectDiasFuncionamento").html(combo);
 				
 			} else {
 				
@@ -508,6 +521,12 @@ var PDV = {
 			var combo = $("#selectDiasFuncionamento");
 			combo.clear();
 			
+			var option = document.createElement("OPTION");
+			option.innerHTML = "Selecione";
+			option.value = "-1";
+					
+			combo.append(option);
+			
 			$.each(items, function(index, item) {
 				var option = document.createElement("OPTION");
 				option.innerHTML = item.value.$;
@@ -576,6 +595,8 @@ var PDV = {
 			PDV.carregarGeradorFluxo(null);
 			PDV.carregarCaracteristicaEspecialidade(null);
 			PDV.carregarPeriodosFuncionamento();
+			
+			PDV.diasFuncionamento = [];
 			
 			$.postJSON(contextPath + "/cadastro/pdv/novo",
 					"idCota="+PDV.idCota, 
@@ -822,6 +843,7 @@ var PDV = {
 			$("#idImagem").attr("src",  contextPath + "/images/pdv/no_image.jpeg");
 			$("#selectStatus").val(""); 
 			$("#nomePDV").val("");
+			$("#dataInicio").val(dataAtual);
 			$("#contatoPDV").val("");
 			$("#sitePDV").val("");
 			$("#emailPDV").val("");

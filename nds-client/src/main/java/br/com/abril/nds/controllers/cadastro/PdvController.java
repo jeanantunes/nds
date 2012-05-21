@@ -221,10 +221,10 @@ public class PdvController {
 	 * 
 	 * @return Object
 	 */
-	private Object gerarDiasFuncionamento(TipoPeriodoFuncionamentoPDV[] tipos) {
+	private List<ItemDTO<String, String>> gerarDiasFuncionamento(TipoPeriodoFuncionamentoPDV[] tipos) {
 		
 		List<ItemDTO<String, String>> itens = new ArrayList<ItemDTO<String,String>>();
-		
+				
 		for(TipoPeriodoFuncionamentoPDV item: tipos) {
 			itens.add(new ItemDTO<String, String>(item.name(), item.getDescricao()));
 		}
@@ -523,6 +523,34 @@ public class PdvController {
 		periodos.add(novoPeriodo);
 		tiposPeriodosPossiveis = pdvService.getPeriodosPossiveis(periodos);
 					
+
+		Object[] retorno = new Object[3];
+		retorno[0] = getCombosPeriodos(tiposPeriodosPossiveis);
+		retorno[1] = mensagens;
+		retorno[2] = status.name();		
+		
+		result.use(Results.json()).withoutRoot().from(retorno).recursive().serialize();
+	}
+		
+	@Post
+	@Path("/atualizarComboDiasFuncionamento")
+	public void atualizarComboDiasFuncionamento(List<PeriodoFuncionamentoDTO> periodos){		
+		
+		
+		TipoMensagem status = TipoMensagem.SUCCESS;
+		
+		List<String> mensagens = new ArrayList<String>();
+		
+		List<TipoPeriodoFuncionamentoPDV> tiposPeriodosPossiveis = null;
+	
+		if(periodos == null) {
+			periodos = new ArrayList<PeriodoFuncionamentoDTO>();
+		}
+		
+		
+		pdvService.validarPeriodos(periodos);
+		
+		tiposPeriodosPossiveis = pdvService.getPeriodosPossiveis(periodos);					
 
 		Object[] retorno = new Object[3];
 		retorno[0] = getCombosPeriodos(tiposPeriodosPossiveis);
