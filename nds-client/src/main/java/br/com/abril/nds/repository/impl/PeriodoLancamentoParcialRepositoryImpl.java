@@ -41,14 +41,22 @@ public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepository<P
 		
 		hql.append("		(select sum(movimento.qtde) from ConferenciaEncalhe conferencia ");
 		hql.append("		 	join conferencia.movimentoEstoqueCota movimento ");
-		hql.append("		 	join conferencia.lancamento lancamentoC ");
-		hql.append("		 	where lancamentoC.id=lancamento.id) ");
+		hql.append("		 	join conferencia.chamadaEncalheCota chamadaEncalheCota ");
+		hql.append("		 	join chamadaEncalheCota.chamadaEncalhe chamadaEncalhe ");
+		hql.append("			where chamadaEncalhe.dataRecolhimento >= lancamento.dataLancamentoDistribuidor ");
+		hql.append("			and chamadaEncalhe.dataRecolhimento <= lancamento.dataRecolhimentoDistribuidor ");
+		hql.append("			and chamadaEncalhe.produtoEdicao.id = lancamento.produtoEdicao.id ");
+		hql.append("			group by chamadaEncalhe.id) ");
 		hql.append(" 		 as encalhe, ");
 		
 		hql.append("		estudo.qtdeReparte - (select sum(movimento.qtde) from ConferenciaEncalhe conferencia ");
 		hql.append("		 	join conferencia.movimentoEstoqueCota movimento ");
-		hql.append("		 	join conferencia.lancamento lancamentoC ");
-		hql.append("		 	where lancamentoC.id=lancamento.id)");
+		hql.append("		 	join conferencia.chamadaEncalheCota chamadaEncalheCota ");
+		hql.append("		 	join chamadaEncalheCota.chamadaEncalhe chamadaEncalhe ");
+		hql.append("			where chamadaEncalhe.dataRecolhimento >= lancamento.dataLancamentoDistribuidor ");
+		hql.append("			and chamadaEncalhe.dataRecolhimento <= lancamento.dataRecolhimentoDistribuidor ");
+		hql.append("			and chamadaEncalhe.produtoEdicao.id = lancamento.produtoEdicao.id ");
+		hql.append("			group by chamadaEncalhe.id) ");
 		hql.append(" 		as vendas, ");
 		
 		hql.append("		((select lancamentoInicial.estudo.qtdeReparte from Lancamento lancamentoInicial ");
@@ -56,17 +64,25 @@ public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepository<P
 		hql.append("			and lancamentoInicial.produtoEdicao.id=produtoEdicao.id) ");
 		hql.append("		- (select sum(movimento.qtde) from ConferenciaEncalhe conferencia ");
 		hql.append("		 	join conferencia.movimentoEstoqueCota movimento ");
-		hql.append("		 	join conferencia.lancamento lancamentoC ");
-		hql.append("		 	where lancamentoC.produtoEdicao.id=lancamento.produtoEdicao.id)) ");
-
+		hql.append("		 	join conferencia.chamadaEncalheCota chamadaEncalheCota ");
+		hql.append("		 	join chamadaEncalheCota.chamadaEncalhe chamadaEncalhe ");
+		hql.append("			where chamadaEncalhe.dataRecolhimento >= lancamentoParcial.lancamentoInicial ");
+		hql.append("			and chamadaEncalhe.dataRecolhimento <= lancamentoParcial.recolhimentoFinal ");
+		hql.append("			and chamadaEncalhe.produtoEdicao.id = lancamento.produtoEdicao.id ");
+		hql.append("			group by chamadaEncalhe.id)) ");
+		
 		hql.append("		 /case when periodo.status='RECOLHIDO' then 0 else 1 end ");
 		hql.append(" 		 as vendaAcumulada, ");
-		
-		hql.append(" 		 estudo.qtdeReparte / ");
-		hql.append("		  (estudo.qtdeReparte - (select sum(movimento.qtde) from ConferenciaEncalhe conferencia ");
+				
+		hql.append("		  ((estudo.qtdeReparte - (select sum(movimento.qtde) from ConferenciaEncalhe conferencia ");
 		hql.append("		 	join conferencia.movimentoEstoqueCota movimento ");
-		hql.append("		 	join conferencia.lancamento lancamentoC ");
-		hql.append("		 	where lancamentoC.id=lancamento.id))");
+		hql.append("		 	join conferencia.chamadaEncalheCota chamadaEncalheCota ");
+		hql.append("		 	join chamadaEncalheCota.chamadaEncalhe chamadaEncalhe ");
+		hql.append("			where chamadaEncalhe.dataRecolhimento >= lancamento.dataLancamentoDistribuidor ");
+		hql.append("			and chamadaEncalhe.dataRecolhimento <= lancamento.dataRecolhimentoDistribuidor ");
+		hql.append("			and chamadaEncalhe.produtoEdicao.id = lancamento.produtoEdicao.id ");
+		hql.append("			group by chamadaEncalhe.id)) ");
+		hql.append(" 		   /estudo.qtdeReparte) * 100 ");
 		hql.append("		 as percVenda, ");
 		
 		hql.append("		 lancamento.id as idLancamento ");
