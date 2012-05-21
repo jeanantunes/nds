@@ -325,14 +325,11 @@ public class TipoDescontoCotaController {
 
 		FiltroTipoDescontoCotaDTO filtro = new FiltroTipoDescontoCotaDTO();
 		
-		this.configurarPaginacaoPesquisaLancamentos(filtro, sortorder, sortname,
-				page, rp);
+		this.configurarPaginacaoPesquisaLancamentos(filtro, sortorder, sortname, page, rp);
 
-		FiltroTipoDescontoCotaDTO filtroSessao = (FiltroTipoDescontoCotaDTO) this.session
-				.getAttribute(FILTRO_PESQUISA_TIPO_DESCONTO_COTA_SESSION_ATTRIBUTE);
+		FiltroTipoDescontoCotaDTO filtroSessao = (FiltroTipoDescontoCotaDTO) this.session.getAttribute(FILTRO_PESQUISA_TIPO_DESCONTO_COTA_SESSION_ATTRIBUTE);
 
 		if (filtroSessao != null && !filtroSessao.equals(filtro)) {
-
 			filtro.getPaginacao().setPaginaAtual(1);
 		}
 		
