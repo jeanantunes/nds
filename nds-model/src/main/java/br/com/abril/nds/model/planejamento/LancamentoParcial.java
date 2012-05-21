@@ -1,6 +1,8 @@
 package br.com.abril.nds.model.planejamento;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -10,6 +12,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -51,6 +54,9 @@ public class LancamentoParcial {
 	@Column(name = "STATUS", nullable = false)
 	private StatusLancamentoParcial status;
 
+	@OneToMany(mappedBy = "lancamentoParcial")
+	private List<PeriodoLancamentoParcial> periodos = new ArrayList<PeriodoLancamentoParcial>();
+	
 	/**
 	 * @return the id
 	 */
@@ -119,6 +125,20 @@ public class LancamentoParcial {
 	 */
 	public void setStatus(StatusLancamentoParcial status) {
 		this.status = status;
+	}
+
+	/**
+	 * @return the periodos
+	 */
+	public List<PeriodoLancamentoParcial> getPeriodos() {
+		return periodos;
+	}
+
+	/**
+	 * @param periodos the periodos to set
+	 */
+	public void setPeriodos(List<PeriodoLancamentoParcial> periodos) {
+		this.periodos = periodos;
 	}
 
 }

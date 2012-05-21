@@ -33,7 +33,7 @@ public class FiltroParciaisDTO implements Serializable  {
 	
 	
 	private PaginacaoVO paginacao;
-		
+			
 	public enum ColunaOrdenacao {
 
 		DATA_LANCAMENTO("dataLancamento"),
@@ -57,6 +57,37 @@ public class FiltroParciaisDTO implements Serializable  {
 		
 		public static ColunaOrdenacao getPorDescricao(String descricao) {
 			for(ColunaOrdenacao coluna: ColunaOrdenacao.values()) {
+				if(coluna.toString().equals(descricao))
+					return coluna;
+			}
+			return null;
+		}
+	}
+	
+	public enum ColunaOrdenacaoPeriodo {
+
+		DATA_LANCAMENTO("dataLancamento"),
+		DATA_RECOLHIMENTO("dataRecolhimento"),
+		PERIODO("periodo"),
+		REPARTE("reparte"),
+		ENCALHE("encalhe"),
+		VENDAS("vendas"),
+		VENDA_ACUMULADA("vendaAcumulada"),
+		PERC_VENDA("percVenda");
+		
+		private String nomeColuna;
+		
+		private ColunaOrdenacaoPeriodo(String nomeColuna) {
+			this.nomeColuna = nomeColuna;
+		}
+		
+		@Override
+		public String toString() {
+			return this.nomeColuna;
+		}
+		
+		public static ColunaOrdenacaoPeriodo getPorDescricao(String descricao) {
+			for(ColunaOrdenacaoPeriodo coluna: ColunaOrdenacaoPeriodo.values()) {
 				if(coluna.toString().equals(descricao))
 					return coluna;
 			}

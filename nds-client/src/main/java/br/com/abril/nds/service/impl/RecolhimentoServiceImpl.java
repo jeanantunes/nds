@@ -357,7 +357,7 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		
 		for (ProdutoEdicao produtoEdicao : listaProdutoEdicao) {
 		
-			parciaisService.gerarPeriodosParcias(produtoEdicao, QTDE_PERIODOS_, idUsuario);
+			parciaisService.gerarPeriodosParcias(produtoEdicao.getId(), QTDE_PERIODOS_, idUsuario,null);
 		}
 	}
 	

@@ -12,16 +12,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.ParcialDTO;
+import br.com.abril.nds.dto.PeriodoParcialDTO;
 import br.com.abril.nds.dto.filtro.FiltroParciaisDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.Produto;
+import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.planejamento.StatusLancamentoParcial;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.service.DistribuidorService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.LancamentoParcialService;
+import br.com.abril.nds.service.ParciaisService;
+import br.com.abril.nds.service.PeriodoLancamentoParcialService;
+import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.ProdutoService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.DateUtil;
@@ -61,6 +66,15 @@ public class ParciaisController {
 	
 	@Autowired
 	private DistribuidorService distribuidorService;
+	
+	@Autowired
+	private PeriodoLancamentoParcialService periodoLancamentoParcialService;
+	
+	@Autowired
+	private ProdutoEdicaoService produtoEdicaoService;
+	
+	@Autowired
+	private ParciaisService parciaisService;
 	
 	@Autowired
 	private HttpServletResponse httpResponse;
@@ -146,7 +160,7 @@ public class ParciaisController {
 		
 		tratarFiltro(filtro);
 		
-		TableModel<CellModelKeyValue<ParcialDTO>> tableModel = efetuarConsulta(filtro);
+		TableModel<CellModelKeyValue<PeriodoParcialDTO>> tableModel = efetuarConsultaPeriodos(filtro);
 		
 		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
 	}
@@ -190,16 +204,35 @@ public class ParciaisController {
 		
 		
 		List<ParcialDTO> listaParciais = lancamentoParcialService.buscarLancamentosParciais(filtro);
-		
-		if (listaParciais == null || listaParciais.isEmpty()){
-			throw new ValidacaoException(TipoMensagem.WARNING, "A pesquisa realizada não retornou resultados");
-		}
-				
+						
 		Integer totalRegistros = lancamentoParcialService.totalBuscaLancamentosParciais(filtro);
 		
 		TableModel<CellModelKeyValue<ParcialDTO>> tableModel = new TableModel<CellModelKeyValue<ParcialDTO>>();
 
 		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaParciais));
+		
+		tableModel.setPage(1);
+		
+		tableModel.setTotal(totalRegistros);
+		
+		return tableModel;
+	}
+	
+	/**
+	 * Efetua a consulta e monta a estrutura do grid de parciais.
+	 * @param filtro
+	 * @return 
+	 */	
+	private TableModel<CellModelKeyValue<PeriodoParcialDTO>> efetuarConsultaPeriodos(FiltroParciaisDTO filtro) {
+		
+		
+		List<PeriodoParcialDTO> listaPeriodo = periodoLancamentoParcialService.obterPeriodosParciais(filtro);
+				
+		Integer totalRegistros = periodoLancamentoParcialService.totalObterPeriodosParciais(filtro);
+		
+		TableModel<CellModelKeyValue<PeriodoParcialDTO>> tableModel = new TableModel<CellModelKeyValue<PeriodoParcialDTO>>();
+
+		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaPeriodo));
 		
 		tableModel.setPage(1);
 		
@@ -227,6 +260,67 @@ public class ParciaisController {
 			
 			result.use(Results.json()).withoutRoot().from(produto).recursive().serialize();
 		}		
+	}
+	
+	@Post
+	public void obterPebDoProduto(String codigoProduto, String edicaoProduto) {
+		
+		ProdutoEdicao produtoEdicao = produtoEdicaoService.obterProdutoEdicaoPorCodProdutoNumEdicao(codigoProduto, edicaoProduto);
+		
+		if(produtoEdicao == null) 
+			throw new ValidacaoException(TipoMensagem.WARNING, "Edição não encontrada.");
+		
+		Integer pebProduto = produtoEdicao.getPeb();
+		
+		result.use(Results.json()).withoutRoot().from(pebProduto).recursive().serialize();
+	}
+	
+	/**
+	 * Insere períodos ao Lançamento Parcial
+	 */
+	@Post
+	public void inserirPeriodos(Integer peb, Integer qtde, Long idProdutoEdicao) {
+		
+		parciaisService.gerarPeriodosParcias(idProdutoEdicao, qtde, getUsuario().getId(),peb);
+		
+		result.use(Results.json()).withoutRoot().from("").recursive().serialize();		
+	}
+	
+	/**
+	 * Excluir PeriodoLancamentoParcial por id do Lancamento
+	 * 
+	 * @param idLancamento
+	 */
+	@Post
+	public void excluirPeriodoParcial(Long idLancamento) {
+		
+		parciaisService.excluirPeriodo(idLancamento);
+		
+		result.use(Results.json()).withoutRoot().from("").recursive().serialize();	
+	}
+	
+	
+	/**
+	 * Insere períodos ao Lançamento Parcial
+	 */
+	@Post
+	public void editarPeriodoParcial(Long idLancamento, String dataLancamento, String dataRecolhimento) {
+		
+		Date lancamento = DateUtil.parseDataPTBR(dataLancamento);
+		Date recolhimento = DateUtil.parseDataPTBR(dataRecolhimento);
+		
+		if( lancamento == null )
+			throw new ValidacaoException(TipoMensagem.WARNING, "Data de Lancaçmento não válida.");
+		
+		if( recolhimento == null )
+			throw new ValidacaoException(TipoMensagem.WARNING, "Data de Recolhimento não válida.");
+		
+		if(DateUtil.isDataInicialMaiorDataFinal(lancamento, recolhimento))
+			throw new ValidacaoException(TipoMensagem.WARNING, "Data de Lançamento é inferior a de Recolhimento");
+				
+		parciaisService.alterarPeriodo(idLancamento, lancamento, recolhimento);
+		
+		result.use(Results.json()).withoutRoot().from("").recursive().serialize();		
 	}
 	
 	/**
@@ -280,6 +374,34 @@ public class ParciaisController {
 		result.nothing();
 	}
 	
+	/**
+	 * Exporta os dados da pesquisa de períodos.
+	 * 
+	 * @param fileType - tipo de arquivo
+	 * 
+	 * @throws IOException Exceção de E/S
+	 */
+	@Get
+	public void exportarPeriodos(FileType fileType) throws IOException {
+		
+		FiltroParciaisDTO filtro = (FiltroParciaisDTO) session.getAttribute(FILTRO_SESSION_ATTRIBUTE);
+				
+		List<PeriodoParcialDTO> listaPeriodos = periodoLancamentoParcialService.obterPeriodosParciais(filtro);
+		
+		if(listaPeriodos.isEmpty()) {
+			throw new ValidacaoException(TipoMensagem.WARNING,"A última pesquisa realizada não obteve resultado.");
+		}
+		
+		if(filtro.getStatus()!=null && !filtro.getStatus().trim().isEmpty()) {
+			filtro.setStatus(StatusLancamentoParcial.valueOf(filtro.getStatus()).toString());
+		}
+		
+		FileExporter.to("periodos_parciais", fileType).inHTTPResponse(this.getNDSFileHeader(), filtro, null, 
+				listaPeriodos, PeriodoParcialDTO.class, this.httpResponse);
+		
+		result.nothing();
+	}
+		
 
 	/**
 	 * Método que obtém o usuário logado
