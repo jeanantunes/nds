@@ -1,6 +1,9 @@
 package br.com.abril.nds.util;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -210,5 +213,75 @@ public abstract class Util {
 		Matcher matcher = pattern.matcher(email);
 		
 		return matcher.matches();
+	}
+	
+	
+	/** Classe que representa a forma de agrupamento das UFs brasileiras. */
+	public enum TipoAgrupamentoUf {
+		ORDEM_ALFABETICA,
+		DIVISAO_GEOGRAFICA;
+	}
+	
+	/**
+	 * Retorna a lista de UFs brasileiras.<br>
+	 * A lista pode vir ordenada em:<br>
+	 * <ul>
+	 * <li>Ordem Alfabética; (Ordenação padrão);</li>
+	 * <li>Divisão Geográfica (norte, nordestes, centro-oeste, sudeste e sul);</li>
+	 * </ul>
+	 * 
+	 * @param tpUf Determina o tipo de ordenação.<br>
+	 * Se for passado <i>null</i> será utilizado a ordenação padrão (ordem alfabética);
+	 * 
+	 * @return
+	 */
+	public static List<String> getUfs(TipoAgrupamentoUf tpUf) {
+		
+		List<String> lst = new ArrayList<String>();
+		
+		// Região Norte:
+		lst.add("AC");	// Acre
+		lst.add("AM");	// Amazonas	
+		lst.add("AP");	// Amapá
+		lst.add("PA");	// Pará
+		lst.add("RO");	// Rondônia
+		lst.add("RR");	// Roraima
+		lst.add("TO");	// Tocantins
+		
+		// Região Nordeste:
+		lst.add("AL");	// Alagoas
+		lst.add("BA");	// Bahia
+		lst.add("CE");	// Ceará
+		lst.add("MA");	// Maranhão
+		lst.add("PB");	// Paraíba
+		lst.add("PE");	// Pernambuco
+		lst.add("PI");	// Piauí
+		lst.add("RN");	// Rio Grande do Norte
+		lst.add("SE");	// Sergipe
+		
+		// Região Centro-Oeste:
+		lst.add("DF");	// Distrito Federal
+		lst.add("GO");	// Goiás
+		lst.add("MS");	// Mato Grosso do Sul
+		lst.add("MT");	// Mato Grosso
+		
+		// Região Sudeste:
+		lst.add("ES");	// Espírito Santo
+		lst.add("MG");	// Minas Gerais
+		lst.add("RJ");	// Rio de Janeiro
+		lst.add("SP");	// São Paulo
+		
+		// Região Sul:
+		lst.add("PR");	// Paraná
+		lst.add("RS");	// Rio Grande do Sul
+		lst.add("SC");	// Santa Catarina
+		
+		
+		// Ordena a lista se for diferente de divisão geográfica:
+		if (!TipoAgrupamentoUf.DIVISAO_GEOGRAFICA.equals(tpUf)) {
+			Collections.sort(lst);
+		}
+		
+		return lst;
 	}
 }
