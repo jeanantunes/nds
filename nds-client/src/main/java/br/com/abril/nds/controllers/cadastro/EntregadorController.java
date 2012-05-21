@@ -856,12 +856,17 @@ public class EntregadorController {
 			TelefoneAssociacaoDTO telefoneAssociacaoDTO = map.get(key);
 
 			if (telefoneAssociacaoDTO.getTipoTelefone() != null){
-
+				
 				TelefoneEntregador telefoneEntregador = new TelefoneEntregador();
 				telefoneEntregador.setPrincipal(telefoneAssociacaoDTO.isPrincipal());
 				telefoneEntregador.setTelefone(telefoneAssociacaoDTO.getTelefone());
 				telefoneEntregador.setTipoTelefone(telefoneAssociacaoDTO.getTipoTelefone());
 
+				if (key > 0) {
+
+					telefoneEntregador.setId(key.longValue());
+				}
+				
 				lista.add(telefoneEntregador);
 			}
 		}
