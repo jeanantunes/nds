@@ -76,12 +76,12 @@ public class ParametroSistemaRepositoryImpl extends AbstractRepository<Parametro
 		lst.add(TipoParametroSistema.SENHA_DISTRIBUIDOR);
 		lst.add(TipoParametroSistema.VERSAO_SISTEMA);
 		lst.add(TipoParametroSistema.PATH_INTERFACE_CE_EXPORTACAO);
-		lst.add(TipoParametroSistema.PATH_INTERFACE_PRODIN_IMPORTCAO);
+		lst.add(TipoParametroSistema.PATH_INTERFACE_PRODIN_IMPORTACAO);
 		lst.add(TipoParametroSistema.PATH_INTERFACE_PRODIN_EXPORTACAO);
 		lst.add(TipoParametroSistema.PATH_INTERFACE_MDC_IMPORTACAO);
 		lst.add(TipoParametroSistema.PATH_INTERFACE_MDC_EXPORTACAO);
 		lst.add(TipoParametroSistema.PATH_INTERFACE_BANCAS_EXPORTACAO);
-		lst.add(TipoParametroSistema.PATH_INTERFACE_GFS_IMPORTCAO);
+		lst.add(TipoParametroSistema.PATH_INTERFACE_GFS_IMPORTACAO);
 		lst.add(TipoParametroSistema.PATH_INTERFACE_GFS_EXPORTACAO);
 		lst.add(TipoParametroSistema.PATH_INTERFACE_NFE_IMPORTACAO);
 		lst.add(TipoParametroSistema.PATH_INTERFACE_NFE_EXPORTACAO);
