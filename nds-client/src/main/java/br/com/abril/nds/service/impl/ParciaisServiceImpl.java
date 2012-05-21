@@ -235,7 +235,9 @@ public class ParciaisServiceImpl implements ParciaisService{
 		
 		PeriodoLancamentoParcial periodo = periodoLancamentoParcialRepository.obterPeriodoPorIdLancamento(idLancamento);
 		
-		historicoLancamentoRepository.remover(lancamento.getHistoricos().get(0));
+		if(lancamento.getHistoricos().size()>0) {
+			historicoLancamentoRepository.remover(lancamento.getHistoricos().get(0));
+		}
 		
 		periodoLancamentoParcialRepository.remover(periodo);
 		

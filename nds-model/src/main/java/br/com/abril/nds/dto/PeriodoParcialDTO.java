@@ -67,34 +67,34 @@ public class PeriodoParcialDTO implements Serializable {
 		if(reparte==null)
 			this.reparte = "";
 		else
-			this.reparte = reparte.toString();
+			this.reparte = reparte.toBigInteger().toString();
 	}
 	public String getEncalhe() {
 		return encalhe;
 	}
-	public void setEncalhe(BigInteger encalhe) {
+	public void setEncalhe(BigDecimal encalhe) {
 		if(encalhe==null)
 			this.encalhe = "";
 		else
-			this.encalhe = encalhe.toString();
+			this.encalhe = encalhe.toBigInteger().toString();
 	}
 	public String getVendas() {
 		return vendas;
 	}
-	public void setVendas(BigInteger vendas) {
+	public void setVendas(BigDecimal vendas) {
 		if(vendas==null)
 			this.vendas = "";
 		else
-			this.vendas = vendas.toString();
+			this.vendas = vendas.toBigInteger().toString();
 	}
 	public String getVendaAcumulada() {
 		return vendaAcumulada;
 	}
-	public void setVendaAcumulada(BigInteger vendaAcumulada) {
+	public void setVendaAcumulada(BigDecimal vendaAcumulada) {
 		if(vendaAcumulada==null)
 			this.vendaAcumulada = "";
 		else
-			this.vendaAcumulada = vendaAcumulada.toString();
+			this.vendaAcumulada = vendaAcumulada.toBigInteger().toString();
 	}
 	public String getPercVenda() {
 		return percVenda;
@@ -103,7 +103,7 @@ public class PeriodoParcialDTO implements Serializable {
 		if(percVenda==null)
 			this.percVenda = "";
 		else
-			this.percVenda = percVenda.toString() + "%";
+			this.percVenda = percVenda.toBigInteger().toString() + "%";
 	}
 	/**
 	 * @return the idLancamento
