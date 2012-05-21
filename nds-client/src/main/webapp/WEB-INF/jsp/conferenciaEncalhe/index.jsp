@@ -323,20 +323,17 @@
 				$.postJSON("<c:url value='/devolucao/conferenciaEncalhe/buscarDetalhesProduto'/>", data,
 					function (result){
 						
-						
 						$("#nomeProdutoDetalhe").text(result.nomeProduto);
 						$("#precoCapaDetalhe").text(result.precoCapa);
+						$("#chamadaCapa").text(result.chamadaCapa);
+						$("#fornecedor").text(result.nomeFornecedor);
+						$("#brinde").text(result.possuiBrinde == "true" ? "Sim" : "Não");
+						$("#editor").text(result.nomeEditor);
+						$("#pacotePadrao").text(result.pacotePadrao);
 						//TODO ???
-						$("#chamadaCapa").text("");
 						$("#imagemProduto").attr("src", "");
 						
 						$("#precoDesconto").text((parseFloat(result.precoCapa) - parseFloat(result.desconto)).toFixed(2));
-						
-						//TODO ???
-						$("#fornecedor").text("");
-						$("#brinde").text("");
-						$("#editor").text("");
-						$("#pacotePadrao").text("");
 						
 						$("#observacaoReadOnly").text(result.observacao ? result.observacao : "");
 						$("#observacao").val(result.observacao ? result.observacao : "");
