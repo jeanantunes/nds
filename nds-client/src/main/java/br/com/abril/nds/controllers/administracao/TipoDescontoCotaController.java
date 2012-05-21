@@ -11,11 +11,15 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.client.util.PaginacaoUtil;
 import br.com.abril.nds.client.vo.TipoDescontoCotaVO;
 import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.dto.CotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaDTO;
+import br.com.abril.nds.dto.filtro.FiltroParciaisDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaDTO.OrdemColuna;
+import br.com.abril.nds.dto.filtro.FiltroTipoDescontoCotaDTO;
+import br.com.abril.nds.dto.filtro.FiltroTipoDescontoCotaDTO.OrdenacaoColunaConsulta;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.EspecificacaoDesconto;
@@ -31,6 +35,8 @@ import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
+import br.com.abril.nds.util.Util;
+import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
@@ -55,13 +61,16 @@ public class TipoDescontoCotaController {
 	@Autowired
 	private ProdutoService produtoService;
 	
-	@SuppressWarnings("unused")
-	private HttpSession httpSession;
+	@Autowired
+	private HttpSession session;
+	
+	private static final String FILTRO_PESQUISA_TIPO_DESCONTO_COTA_SESSION_ATTRIBUTE = "filtroPesquisaTipoDescontoCota";
+	private static final String QTD_REGISTROS_PESQUISA_TIPO_DESCONTO_COTA_SESSION_ATTRIBUTE = "qtdRegistrosPesquisaTipoDescontoCota";
 
 	
-	public TipoDescontoCotaController(Result result, HttpSession httpSession) {
+	public TipoDescontoCotaController(Result result, HttpSession session) {
 		this.result = result; 
-		this.httpSession = httpSession;
+		this.session = session;
 	}
 	
 	@Path("/")
@@ -125,7 +134,10 @@ public class TipoDescontoCotaController {
 	}
 	
 	@Path("/pesquisarDescontoGeral")
-	public void pesquisarDescontoGeral(String sortorder, String sortname, int page, int rp) throws Exception {		
+	public void pesquisarDescontoGeral(String sortorder, String sortname, int page, int rp) throws Exception {
+		
+		FiltroTipoDescontoCotaDTO filtro = carregarFiltroPesquisaDescontoGeral(sortorder, sortname, page, rp);	
+		
 		List<TipoDescontoCotaVO> listaDescontoCotaVO = null;		
 		try {			
 			listaDescontoCotaVO = tipoDescontoCotaService.obterTipoDescontoCota(EspecificacaoDesconto.GERAL);
@@ -146,7 +158,7 @@ public class TipoDescontoCotaController {
 					new TableModel<CellModelKeyValue<TipoDescontoCotaVO>>();
 	
 			tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaDescontoCotaVO));
-			//tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
+			tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
 			tableModel.setTotal(qtdeTotalRegistros);
 	
 			result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
@@ -308,7 +320,38 @@ public class TipoDescontoCotaController {
 		cotaParaAtualizar.setFatorDesconto(descontoEspecifico);
 		this.cotaService.alterarCota(cotaParaAtualizar);
 	}
-
 	
+	private FiltroTipoDescontoCotaDTO carregarFiltroPesquisaDescontoGeral(String sortorder, String sortname, int page, int rp) {
+
+		FiltroTipoDescontoCotaDTO filtro = new FiltroTipoDescontoCotaDTO();
+		
+		this.configurarPaginacaoPesquisaLancamentos(filtro, sortorder, sortname,
+				page, rp);
+
+		FiltroTipoDescontoCotaDTO filtroSessao = (FiltroTipoDescontoCotaDTO) this.session
+				.getAttribute(FILTRO_PESQUISA_TIPO_DESCONTO_COTA_SESSION_ATTRIBUTE);
+
+		if (filtroSessao != null && !filtroSessao.equals(filtro)) {
+
+			filtro.getPaginacao().setPaginaAtual(1);
+		}
+		
+		session.setAttribute(FILTRO_PESQUISA_TIPO_DESCONTO_COTA_SESSION_ATTRIBUTE, filtro);
+		
+		return filtro;
+	}
+	
+
+	private void configurarPaginacaoPesquisaLancamentos(FiltroTipoDescontoCotaDTO filtro, String sortorder,	String sortname, int page,int rp) {
+
+		if (filtro != null) {
+		
+			PaginacaoVO paginacao = new PaginacaoVO(page, rp, sortorder);
+			
+			filtro.setPaginacao(paginacao);
+		
+			filtro.setOrdenacaoColuna(Util.getEnumByStringValue(FiltroTipoDescontoCotaDTO.OrdenacaoColunaConsulta.values(), sortname));
+		}
+	}
 
 }

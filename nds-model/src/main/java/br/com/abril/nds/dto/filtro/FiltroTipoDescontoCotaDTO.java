@@ -3,9 +3,11 @@ package br.com.abril.nds.dto.filtro;
 import java.io.Serializable;
 import java.util.Date;
 
+import br.com.abril.nds.util.export.Exportable;
 import br.com.abril.nds.vo.PaginacaoVO;
 
-public class FiltroTipoDescontoCotaDTO implements Serializable {
+@Exportable
+public class FiltroTipoDescontoCotaDTO extends FiltroDTO implements Serializable {
 	
 	private static final long serialVersionUID = 2281254940257591061L;
 	
@@ -17,6 +19,28 @@ public class FiltroTipoDescontoCotaDTO implements Serializable {
 	private String usuario;
 	
 	private PaginacaoVO paginacao;
+	
+	
+	private OrdenacaoColunaConsulta ordenacaoColuna;
+	
+	
+	public enum OrdenacaoColunaConsulta {
+		
+		SEQUENCIAL("seq");
+		
+		private String nomeColuna;
+		
+		private OrdenacaoColunaConsulta(String nomeColuna) {
+			
+			this.nomeColuna = nomeColuna;
+		}
+		
+		@Override
+		public String toString() {
+			
+			return this.nomeColuna;
+		}
+	}
 	
 	public FiltroTipoDescontoCotaDTO() {
 		
@@ -60,5 +84,15 @@ public class FiltroTipoDescontoCotaDTO implements Serializable {
 	public void setPaginacao(PaginacaoVO paginacao) {
 		this.paginacao = paginacao;
 	}
+
+	public OrdenacaoColunaConsulta getOrdenacaoColuna() {
+		return ordenacaoColuna;
+	}
+
+	public void setOrdenacaoColuna(OrdenacaoColunaConsulta ordenacaoColuna) {
+		this.ordenacaoColuna = ordenacaoColuna;
+	}
+	
+	
 	
 }

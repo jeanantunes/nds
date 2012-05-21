@@ -1,6 +1,7 @@
 package br.com.abril.nds.client.vo;
 
 import br.com.abril.nds.util.export.Export;
+import br.com.abril.nds.vo.PaginacaoVO;
 
 public class TipoDescontoCotaVO {
 	
@@ -32,7 +33,7 @@ public class TipoDescontoCotaVO {
 	
 	@Export(label = "Edição")
 	private String edicao;
-
+	
 	public String getId() {
 		return id;
 	}
@@ -112,5 +113,6 @@ public class TipoDescontoCotaVO {
 	public void setEdicao(String edicao) {
 		this.edicao = edicao;
 	}
+	
 	
 }
