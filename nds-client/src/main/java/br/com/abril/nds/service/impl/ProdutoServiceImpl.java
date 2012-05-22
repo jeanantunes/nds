@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.dto.ConsultaProdutoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.repository.ProdutoRepository;
@@ -61,6 +62,18 @@ public class ProdutoServiceImpl implements ProdutoService {
 		}
 		
 		return this.produtoRepository.obterNomeProdutoPorCodigo(codigoProduto);
+	}
+
+	@Override
+	@Transactional(readOnly=true)
+	public List<ConsultaProdutoDTO> pesquisarProdutos(Integer codigo,
+			String produto, String fornecedor, String editor,
+			Long codigoTipoProduto, String sortorder, String sortname,
+			int page, int rp) {
+				
+		return this.produtoRepository.pesquisarProdutos(
+			codigo, produto, fornecedor, editor, 
+			codigoTipoProduto, sortorder, sortname, page, rp);
 	}
 	
 }

@@ -1,7 +1,74 @@
 <head>
 	
+	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/produto.js"></script>
 	
 	<script type="text/javascript">
+		var PesquisaProduto = {
+				
+			pesquisarProdutosSuccessCallBack:function() {
+				
+				PesquisaProduto.pesquisarBox(PesquisaProduto.getCodigoProdutoPesquisa());
+				PesquisaProduto.pesquisarFornecedor(PesquisaProduto.getCodigoProdutoPesquisa());
+				
+				$("#dataProgramada").val("");
+				
+			},
+			
+			pesquisarProdutosErrorCallBack: function() {
+					
+				PesquisaProduto.pesquisarBox(PesquisaProduto.getCodigoProdutoPesquisa());
+				PesquisaProduto.pesquisarFornecedor(PesquisaProduto.getCodigoProdutoPesquisa());
+				
+				$("#dataProgramada").val("");
+				
+			},
+
+			getCodigoProdutoPesquisa: function () {
+				return  "codigoProduto=" + $("#codigoProduto").val();
+			},
+			
+			pesquisarBox:function(data) {
+				
+				$.postJSON("<c:url value='/devolucao/chamadaEncalheAntecipada/pesquisarBox' />",
+						   data, PesquisaProduto.montarComboBoxs);
+			},		
+
+			montarComboBoxs:function(result) {
+				var comboBoxes = "<option selected='selected'  value='-1'></option>";  
+				
+				comboBoxes = comboBoxes + montarComboBox(result, true);
+				
+				$("#box").html(comboBoxes);
+			}, 
+
+			pesquisarFornecedor:function(data){
+			
+				$.postJSON("<c:url value='/devolucao/chamadaEncalheAntecipada/pesquisarFornecedor' />",
+						   data, PesquisaProduto.montarComboFornecedores);
+			},
+
+			montarComboFornecedores:function(result) {
+				var comboFornecedores =  montarComboBox(result, true);
+				
+				$("#fornecedor").html(comboFornecedores);
+			},
+			
+			validarEdicaoSuccessCallBack : function(){
+				
+				 var data = [{name:"codigoProduto",value:$("#codigoProduto").val()},
+	             			 {name:"numeroEdicao",value:$("#edicao").val()},
+							];
+				
+				 $.postJSON("<c:url value='/devolucao/chamadaEncalheAntecipada/pesquisarDataProgramada' />",
+						   data, function(result) {
+					 $("#dataProgramada").val(result);
+				 });
+			},
+			
+			validarEdicaoErrorCallBack: function() {
+				 $("#dataProgramada").val("");
+			},
+		};
 
 		$(function() {
 			
@@ -20,25 +87,25 @@
 					align : 'left'
 				}, {
 					display : 'Produto',
-					name : 'produto',
+					name : 'produtoDescricao',
 					width : 180,
 					sortable : true,
 					align : 'left'
 				}, {
 					display : 'Tipo Produto',
-					name : 'tipoProduto',
+					name : 'tipoProdutoDescricao',
 					width : 80,
 					sortable : true,
 					align : 'left'
 				}, {
 					display : 'Editor',
-					name : 'editor',
+					name : 'nomeEditor',
 					width : 190,
 					sortable : true,
 					align : 'left'
 				}, {
 					display : 'Fornecedor',
-					name : 'fornecedor',
+					name : 'tipoContratoFornecedor',
 					width : 150,
 					sortable : true,
 					align : 'left'
@@ -49,7 +116,7 @@
 					sortable : true,
 					align : 'center'
 				}, {
-					display : 'Situa&ccedil;ão',
+					display : 'Situa&ccedil;&atilde;o',
 					name : 'situacao',
 					width : 60,
 					sortable : true,
@@ -80,11 +147,11 @@
 
 		function pesquisar() {
 			
-			var codigo = $("#codigo").val();
+			var codigo = $("#codigoProduto").val();
 			var produto = $("#produto").val();
 			var periodicidade = $("#periodicidade").val();
 			var fornecedor = $("#fornecedor").val();
-			var editor = $("#editor").val();
+			var editor = $("#edicao").val();
 			var codigoTipoProduto = $("#comboTipoProduto").val();
 			
 			$(".produtosGrid").flexOptions({
@@ -157,16 +224,35 @@
 		<table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
 			<tr>
 				<td width="43">C&oacute;digo:</td>
-				<td width="123" ><input type="text" id="codigo" style="width:100px;"/></td>
+				<td width="123" >
+					
+			    	<input type="text" name="codigoProduto" id="codigoProduto"
+						   style="width: 80px; float: left; margin-right: 5px;" maxlength="255"
+						   onchange="produto.pesquisarPorCodigoProduto('#codigoProduto', '#produto', '#edicao', false,
+								   									   PesquisaProduto.pesquisarProdutosSuccessCallBack,
+								   									   PesquisaProduto.pesquisarProdutosErrorCallBack);" />
+				</td>
+				
 				<td width="55">Produto:</td>
-				<td width="237"><input type="text" id="produto" style="width:222px;"/></td>
+				<td width="237">
+					<input type="text" name="produto" id="produto" style="width: 222px;" maxlength="255"
+					       onkeyup="produto.autoCompletarPorNomeProduto('#produto', false);"
+					       onblur="produto.pesquisarPorNomeProduto('#codigoProduto', '#produto', '#edicao', false,
+														    	   PesquisaProduto.pesquisarProdutosSuccessCallBack,
+														    	   PesquisaProduto.pesquisarProdutosErrorCallBack);"/>
+				</td>
 				<td width="99">Fornecedor:</td>
 				<td width="251"><input type="text" id="fornecedor" style="width:200px;"/></td>
 				<td width="106">&nbsp;</td>
 			</tr>
 			<tr>
 				<td>Editor:</td>
-				<td colspan="3" ><input type="text" id="editor" style="width:410px;"/></td>
+				<td colspan="3" >
+					<input type="text" style="width:410px;" name="edicao" id="edicao" maxlength="20" disabled="disabled"
+							   onchange="produto.validarNumEdicao('#codigoProduto', '#edicao', false,
+							   										PesquisaProduto.validarEdicaoSuccessCallBack,
+						    	   									PesquisaProduto.validarEdicaoErrorCallBack);"/>
+				</td>
 				<td>Tipo de Produto:</td>
 				<td>
 					<select id="comboTipoProduto" style="width:207px;">
@@ -195,8 +281,7 @@
 	
 		<span class="bt_novos" title="Novo">
 			<a href="javascript:;" onclick="popup();">
-				<img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0"/>
-				Novo
+				<img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0" />Novo
 			</a>
 		</span>
 	</fieldset>

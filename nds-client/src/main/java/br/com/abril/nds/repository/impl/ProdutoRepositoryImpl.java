@@ -3,8 +3,10 @@ package br.com.abril.nds.repository.impl;
 import java.util.List;
 
 import org.hibernate.Query;
+import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Repository;
 
+import br.com.abril.nds.dto.ConsultaProdutoDTO;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.repository.ProdutoRepository;
 
@@ -73,20 +75,79 @@ public class ProdutoRepositoryImpl extends AbstractRepository<Produto, Long> imp
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public List<Produto> pesquisarProdutos(Integer codigo, String produto,
+	public List<ConsultaProdutoDTO> pesquisarProdutos(Integer codigo, String produto,
 			String fornecedor, String editor, Long codigoTipoProduto,
 			String sortorder, String sortname, int page, int rp) {
 		
-		String hql = "select produto From Produto produto ";
+		String hql = "select produto.codigo as codigo, produto.descricao as produtoDescricao, ";
+		hql += " tipoProduto.descricao as tipoProdutoDescricao, editor.nome as nomeEditor, ";
+		hql += " fornecedor.juridica.razaoSocial as tipoContratoFornecedor, ";
+		hql += " fornecedor.situacaoCadastro as situacao, ";
+		hql += " produtoEdicao.peb as peb ";
+		hql += " from ProdutoEdicao produtoEdicao ";
+		hql += " join produtoEdicao.produto produto ";
+		hql += " join produto.fornecedores fornecedor ";
+		hql += " join produto.editor editor ";
+		hql += " join produto.tipoProduto tipoProduto ";
+		hql += " where 1 = 1 ";
 		
+		if (codigo != null && codigo > 0) {
+			hql += " and produto.codigo = :codigo ";
+		}
 		
-		hql += "order by " + sortname + " " + sortorder;
+		if (produto != null && !produto.isEmpty()) {
+			hql += " and produto.descricao like :produto ";
+		}
 		
-		Query query = super.getSession().createQuery(hql);
+		if (fornecedor != null && !fornecedor.isEmpty()) {
+			hql += " and fornecedor.juridica.razaoSocial like :fornecedor ";
+		}
 		
-		query.setMaxResults(rp);
-		query.setFirstResult(page);
+		if (editor != null && !editor.isEmpty()) {
+			hql += " and editor.nome like :editor ";
+		}
 		
-		return query.list();
+		if (codigoTipoProduto != null && codigoTipoProduto > 0) {
+			hql += " and tipoProduto.id = :codigoTipoProduto ";
+		}
+		
+		hql += " order by " + sortname + " " + sortorder;
+		
+		try {
+			
+			Query query = super.getSession().createQuery(hql);
+
+			if (codigo != null && codigo > 0) {
+				query.setParameter("codigo", codigo);
+			}
+			
+			if (produto != null && !produto.isEmpty()) {
+				query.setParameter("produto", produto);
+			}
+			
+			if (fornecedor != null && !fornecedor.isEmpty()) {
+				query.setParameter("fornecedor", fornecedor);
+			}
+			
+			if (editor != null && !editor.isEmpty()) {
+				query.setParameter("editor", editor);
+			}
+			
+			if (codigoTipoProduto != null && codigoTipoProduto > 0) {
+				query.setParameter("codigoTipoProduto", codigoTipoProduto);
+			}
+			
+			query.setResultTransformer(
+				new AliasToBeanResultTransformer(
+					ConsultaProdutoDTO.class));
+			
+			query.setMaxResults(rp);
+			query.setFirstResult(page);
+			
+			return query.list();
+			
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
 	}
 }

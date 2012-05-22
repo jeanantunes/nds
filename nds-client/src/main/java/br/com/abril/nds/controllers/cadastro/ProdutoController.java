@@ -5,11 +5,13 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.dto.ConsultaProdutoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.TipoProduto;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
+import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.EstoqueProdutoService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.ProdutoService;
@@ -196,7 +198,11 @@ public class ProdutoController {
 	public void pesquisarProdutos(Integer codigo, String produto, String fornecedor, String editor,
 			Long codigoTipoProduto, String sortorder, String sortname, int page, int rp) {
 		
+		List<ConsultaProdutoDTO> listaProdutos =
+			this.produtoService.pesquisarProdutos(codigo, produto, fornecedor, editor, 
+				codigoTipoProduto, sortorder, sortname, page, rp);
 		
+		this.result.use(FlexiGridJson.class).from(listaProdutos).total(listaProdutos.size()).page(page).serialize();
 	}
 	
 }
