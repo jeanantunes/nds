@@ -89,11 +89,11 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 	public BalanceamentoRecolhimentoDTO obterMatrizBalanceamento(Integer numeroSemana,
 																 List<Long> listaIdsFornecedores,
 																 TipoBalanceamentoRecolhimento tipoBalanceamentoRecolhimento,
-																 boolean configuracaoInicial) {
+																 boolean forcarBalanceamento) {
 		
 		RecolhimentoDTO dadosRecolhimento =
 			this.obterDadosRecolhimento(numeroSemana, listaIdsFornecedores,
-										tipoBalanceamentoRecolhimento, configuracaoInicial);
+										tipoBalanceamentoRecolhimento, forcarBalanceamento);
 		
 		BalanceamentoRecolhimentoStrategy balanceamentoRecolhimentoStrategy = 
 			BalanceamentoRecolhimentoFactory.getStrategy(tipoBalanceamentoRecolhimento);
@@ -394,7 +394,7 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 	private RecolhimentoDTO obterDadosRecolhimento(Integer numeroSemana,
 			 									   List<Long> listaIdsFornecedores,
 			 									   TipoBalanceamentoRecolhimento tipoBalanceamento,
-			 									   boolean configuracaoInicial) {
+			 									   boolean forcarBalanceamento) {
 		
 		RecolhimentoDTO dadosRecolhimento = new RecolhimentoDTO();
 		
@@ -416,45 +416,63 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		if (TipoBalanceamentoRecolhimento.EDITOR.equals(tipoBalanceamento)) {
 			
 			produtosRecolhimento =
-					lancamentoRepository.obterBalanceamentoRecolhimentoPorEditorData(periodoRecolhimento, 
-																					 listaIdsFornecedores, 
-																					 GrupoProduto.CROMO);
-
+				this.lancamentoRepository.obterBalanceamentoRecolhimentoPorEditorData(periodoRecolhimento, 
+					 																  listaIdsFornecedores, 
+																					  GrupoProduto.CROMO);
+		
 		} else if (TipoBalanceamentoRecolhimento.AUTOMATICO.equals(tipoBalanceamento)
-					|| TipoBalanceamentoRecolhimento.VALOR.equals(tipoBalanceamento)) {
+						|| TipoBalanceamentoRecolhimento.VALOR.equals(tipoBalanceamento)) {
 			
 			produtosRecolhimento =
-					lancamentoRepository.obterBalanceamentoRecolhimento(periodoRecolhimento, 
-																		listaIdsFornecedores, 
-																		GrupoProduto.CROMO);
+				this.lancamentoRepository.obterBalanceamentoRecolhimento(periodoRecolhimento, 
+																		 listaIdsFornecedores, 
+																		 GrupoProduto.CROMO);
 		}
 
 		TreeMap<Date, BigDecimal> mapaExpectativaEncalheTotalDiaria =
-				lancamentoRepository.obterExpectativasEncalhePorData(periodoRecolhimento, 
-																	 listaIdsFornecedores, 
-																	 GrupoProduto.CROMO);
+			this.lancamentoRepository.obterExpectativasEncalhePorData(periodoRecolhimento, 
+																	  listaIdsFornecedores, 
+																	  GrupoProduto.CROMO);
 
-		
-		
 		dadosRecolhimento.setProdutosRecolhimento(produtosRecolhimento);
 		
 		dadosRecolhimento.setMapaExpectativaEncalheTotalDiaria(mapaExpectativaEncalheTotalDiaria);
 		
 		dadosRecolhimento.setCapacidadeRecolhimentoDistribuidor(distribuidor.getCapacidadeRecolhimento());
 		
-		Date dataOperacao = distribuidor.getDataOperacao();
+		boolean matrizFechada = isMatrizFechada(distribuidor.getDataOperacao(), periodoRecolhimento);
 		
-		boolean matrizFechada = 
-			this.lancamentoRepository
-				.verificarExistenciaChamadaEncalheMatrizRecolhimento(periodoRecolhimento);
+		dadosRecolhimento.setBalancearMatriz(
+			balancearMatriz(produtosRecolhimento, distribuidor.getDataOperacao(),
+							periodoRecolhimento, matrizFechada, forcarBalanceamento));
 		
-		boolean semanaRecolhimento = DateUtil.validarDataEntrePeriodo(dataOperacao,
-										 							  periodoRecolhimento.getDataInicial(),
-										 							  periodoRecolhimento.getDataFinal());
+		dadosRecolhimento.setMatrizFechada(matrizFechada);
 		
-		dadosRecolhimento.setMatrizFechada(matrizFechada || semanaRecolhimento);
+		return dadosRecolhimento;
+	}
+	
+	private boolean balancearMatriz(List<ProdutoRecolhimentoDTO> produtosRecolhimento,
+									Date dataOperacao,
+									PeriodoVO periodoRecolhimento,
+									boolean matrizFechada,
+									boolean forcarBalanceamento) {
 		
-		boolean matrizSalva = true;
+		if (matrizFechada) {
+			
+			return false;
+		}
+		
+		if (!isMatrizSalva(produtosRecolhimento)) {
+			
+			return true;
+		}
+		
+		return forcarBalanceamento;
+	}
+	
+	private boolean isMatrizSalva(List<ProdutoRecolhimentoDTO> produtosRecolhimento) {
+		
+		boolean matrizSalva = false;
 		
 		if (produtosRecolhimento != null && !produtosRecolhimento.isEmpty()) {
 			
@@ -468,9 +486,20 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 			}
 		}
 		
-		dadosRecolhimento.setBalancearMatriz(configuracaoInicial || !matrizSalva);
+		return matrizSalva;
+	}
+	
+	private boolean isMatrizFechada(Date dataOperacao, PeriodoVO periodoRecolhimento) {
 		
-		return dadosRecolhimento;
+		boolean matrizConfirmada = 
+			this.lancamentoRepository
+				.verificarExistenciaChamadaEncalheMatrizRecolhimento(periodoRecolhimento);
+		
+		boolean semanaRecolhimento = DateUtil.validarDataEntrePeriodo(dataOperacao,
+																	  periodoRecolhimento.getDataInicial(),
+																	  periodoRecolhimento.getDataFinal());
+		
+		return matrizConfirmada || semanaRecolhimento;
 	}
 
 	/*
