@@ -2,6 +2,7 @@ package br.com.abril.nds.util;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -235,51 +236,56 @@ public abstract class Util {
 	 * 
 	 * @return
 	 */
-	public static List<String> getUfs(TipoAgrupamentoUf tpUf) {
+	public static List<UfEnum> getUfs(TipoAgrupamentoUf tpUf) {
 		
-		List<String> lst = new ArrayList<String>();
+		List<UfEnum> lst = new ArrayList<UfEnum>();
 		
 		// Região Norte:
-		lst.add("AC");	// Acre
-		lst.add("AM");	// Amazonas	
-		lst.add("AP");	// Amapá
-		lst.add("PA");	// Pará
-		lst.add("RO");	// Rondônia
-		lst.add("RR");	// Roraima
-		lst.add("TO");	// Tocantins
+		lst.add(UfEnum.AC);	// Acre
+		lst.add(UfEnum.AM);	// Amazonas	
+		lst.add(UfEnum.AP);	// Amapá
+		lst.add(UfEnum.PA);	// Pará
+		lst.add(UfEnum.RO);	// Rondônia
+		lst.add(UfEnum.RR);	// Roraima
+		lst.add(UfEnum.TO);	// Tocantins
 		
 		// Região Nordeste:
-		lst.add("AL");	// Alagoas
-		lst.add("BA");	// Bahia
-		lst.add("CE");	// Ceará
-		lst.add("MA");	// Maranhão
-		lst.add("PB");	// Paraíba
-		lst.add("PE");	// Pernambuco
-		lst.add("PI");	// Piauí
-		lst.add("RN");	// Rio Grande do Norte
-		lst.add("SE");	// Sergipe
+		lst.add(UfEnum.AL);	// Alagoas
+		lst.add(UfEnum.BA);	// Bahia
+		lst.add(UfEnum.CE);	// Ceará
+		lst.add(UfEnum.MA);	// Maranhão
+		lst.add(UfEnum.PB);	// Paraíba
+		lst.add(UfEnum.PE);	// Pernambuco
+		lst.add(UfEnum.PI);	// Piauí
+		lst.add(UfEnum.RN);	// Rio Grande do Norte
+		lst.add(UfEnum.SE);	// Sergipe
 		
 		// Região Centro-Oeste:
-		lst.add("DF");	// Distrito Federal
-		lst.add("GO");	// Goiás
-		lst.add("MS");	// Mato Grosso do Sul
-		lst.add("MT");	// Mato Grosso
+		lst.add(UfEnum.DF);	// Distrito Federal
+		lst.add(UfEnum.GO);	// Goiás
+		lst.add(UfEnum.MS);	// Mato Grosso do Sul
+		lst.add(UfEnum.MT);	// Mato Grosso
 		
 		// Região Sudeste:
-		lst.add("ES");	// Espírito Santo
-		lst.add("MG");	// Minas Gerais
-		lst.add("RJ");	// Rio de Janeiro
-		lst.add("SP");	// São Paulo
+		lst.add(UfEnum.ES);	// Espírito Santo
+		lst.add(UfEnum.MG);	// Minas Gerais
+		lst.add(UfEnum.RJ);	// Rio de Janeiro
+		lst.add(UfEnum.SP);	// São Paulo
 		
 		// Região Sul:
-		lst.add("PR");	// Paraná
-		lst.add("RS");	// Rio Grande do Sul
-		lst.add("SC");	// Santa Catarina
+		lst.add(UfEnum.PR);	// Paraná
+		lst.add(UfEnum.RS);	// Rio Grande do Sul
+		lst.add(UfEnum.SC);	// Santa Catarina
 		
 		
-		// Ordena a lista se for diferente de divisão geográfica:
+		// Ordena por ordem alabética as siglas se for diferente de divisão geográfica:
 		if (!TipoAgrupamentoUf.DIVISAO_GEOGRAFICA.equals(tpUf)) {
-			Collections.sort(lst);
+			Collections.sort(lst, new Comparator<UfEnum>() {
+				@Override
+				public int compare(UfEnum o1, UfEnum o2) {
+					return o1.getSigla().compareTo(o2.getSigla());
+				}
+			});
 		}
 		
 		return lst;
