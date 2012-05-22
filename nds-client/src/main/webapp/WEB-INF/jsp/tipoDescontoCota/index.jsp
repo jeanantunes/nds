@@ -546,7 +546,7 @@
 					Imprimir
 				</a>
              </span>
-           <span class="bt_novos" title="Novo"><a href="javascript:;" onclick="popup_geral();"><img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0"/>Novo</a></span>
+           <span class="bt_novos" title="Novo"><a href="javascript:;" onclick="popup_especifico();"><img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0"/>Novo</a></span>
    
       </fieldset>
       
@@ -568,7 +568,7 @@
 					Imprimir
 				</a>
              </span>
-           <span class="bt_novos" title="Novo"><a href="javascript:;" onclick="popup_geral();"><img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0"/>Novo</a></span>
+           <span class="bt_novos" title="Novo"><a href="javascript:;" onclick="popup_produto();"><img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0"/>Novo</a></span>
    
       </fieldset>
     </div>
