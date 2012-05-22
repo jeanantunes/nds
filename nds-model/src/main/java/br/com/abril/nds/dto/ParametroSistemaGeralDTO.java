@@ -383,7 +383,9 @@ public class ParametroSistemaGeralDTO implements Serializable {
 	 * @return the nfeDpec
 	 */
 	public String getNfeDpec() {
-		return this.getParametroSistemaString(TipoParametroSistema.NFE_DPEC);
+		return "TRUE".equals(this.getParametroSistemaString(TipoParametroSistema.NFE_DPEC)) 
+				? "TRUE"
+				: "FALSE";
 	}
 
 	/**
@@ -394,23 +396,34 @@ public class ParametroSistemaGeralDTO implements Serializable {
 		this.params.put(TipoParametroSistema.NFE_DPEC, nfeDpec);
 	}
 	
-	
+	/**
+	 * @return pathImageCapa
+	 */
 	public String getPathImageCapa() {
 		return this.getParametroSistemaString(TipoParametroSistema.PATH_IMAGENS_CAPA);
 	}
 
+	/**
+	 * 
+	 * @param pathImageCapa
+	 */
 	public void setPathImageCapa(String pathImageCapa) {
 		this.params.put(TipoParametroSistema.PATH_IMAGENS_CAPA, pathImageCapa);
 	}
 
+	/**
+	 * @return pathImageBancaPdv
+	 */
 	public String getPathImageBancaPdv() {
 		return this.getParametroSistemaString(TipoParametroSistema.PATH_IMAGENS_PDV);
 	}
 
+	/**
+	 * @param pathImageBancaPdv
+	 */
 	public void setPathImageBancaPdv(String pathImageBancaPdv) {
 		this.params.put(TipoParametroSistema.PATH_IMAGENS_PDV, pathImageBancaPdv);
-	}	
-	
+	}
 
 	/**
 	 * @return the dtOperacaoCorrente
