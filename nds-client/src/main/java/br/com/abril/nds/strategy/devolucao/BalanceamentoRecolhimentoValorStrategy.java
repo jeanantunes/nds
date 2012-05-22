@@ -73,7 +73,7 @@ public class BalanceamentoRecolhimentoValorStrategy extends AbstractBalanceament
 		
 		for (ProdutoRecolhimentoDTO produtoRecolhimento : produtosRecolhimento) {
 			
-			Date dataRecolhimento = produtoRecolhimento.getDataRecolhimentoDistribuidor();
+			Date dataRecolhimento = produtoRecolhimento.getDataRecolhimentoPrevista();
 			
 			Date dataBalanceamento = 
 				super.obterDataRecolhimentoPermitida(datasRecolhimento, dataRecolhimento);

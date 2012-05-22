@@ -69,7 +69,7 @@ public abstract class AbstractBalanceamentoRecolhimentoStrategy implements Balan
 		List<ProdutoRecolhimentoDTO> produtosRecolhimentoNaoBalanceaveis = 
 			this.obterProdutosRecolhimentoNaoBalanceaveisPorData(
 				dadosRecolhimento.getProdutosRecolhimento(), dataRecolhimentoPrevista, 
-					dadosRecolhimento.getBalancearMatriz(), dadosRecolhimento.isMatrizFechada());
+					dadosRecolhimento.getBalancearMatriz());
 		
 		if (!produtosRecolhimentoNaoBalanceaveis.isEmpty()) {
 			
@@ -82,8 +82,7 @@ public abstract class AbstractBalanceamentoRecolhimentoStrategy implements Balan
 	 */
 	protected List<ProdutoRecolhimentoDTO> obterProdutosRecolhimentoNaoBalanceaveisPorData(List<ProdutoRecolhimentoDTO> produtosRecolhimento, 
 																		  				   Date dataRecolhimentoDesejada,
-																		  				   boolean balancearMatriz,
-																		  				   boolean matrizFechada) {
+																		  				   boolean balancearMatriz) {
 		
 		List<ProdutoRecolhimentoDTO> produtosRecolhimentoNaoBalanceaveis = new ArrayList<ProdutoRecolhimentoDTO>();
 		
@@ -98,7 +97,7 @@ public abstract class AbstractBalanceamentoRecolhimentoStrategy implements Balan
 			
 			ProdutoRecolhimentoDTO produtoRecolhimento = produtosRecolhimento.get(indice);
 			
-			if ((!balancearMatriz || matrizFechada || produtoRecolhimento.isPossuiChamada())
+			if ((!balancearMatriz || produtoRecolhimento.isPossuiChamada())
 					&& produtoRecolhimento.getDataRecolhimentoDistribuidor().equals(dataRecolhimentoDesejada)) {
 				
 				produtosRecolhimentoNaoBalanceaveis.add(produtosRecolhimento.remove(indice--));
@@ -238,7 +237,7 @@ public abstract class AbstractBalanceamentoRecolhimentoStrategy implements Balan
 				continue;
 			}
 			
-			if (produtoRecolhimento.getDataRecolhimentoDistribuidor().equals(dataRecolhimentoDesejada)) {
+			if (produtoRecolhimento.getDataRecolhimentoPrevista().equals(dataRecolhimentoDesejada)) {
 				
 				produtosRecolhimentoFiltrados.add(produtoRecolhimento);
 			}
@@ -328,7 +327,7 @@ public abstract class AbstractBalanceamentoRecolhimentoStrategy implements Balan
 	private void configurarMatrizRecolhimento(Map<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimento,
 											  RecolhimentoDTO dadosRecolhimento) {
 		
-		if (dadosRecolhimento.isMatrizFechada() || !dadosRecolhimento.getBalancearMatriz()) {
+		if (!dadosRecolhimento.getBalancearMatriz()) {
 			
 			return;
 		}

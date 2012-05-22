@@ -172,6 +172,11 @@ public class BalanceamentoRecolhimentoAutomaticoStrategy extends AbstractBalance
 															 List<ProdutoRecolhimentoDTO> produtosRecolhimentoNaoBalanceados,
 															 RecolhimentoDTO dadosRecolhimento) {
 
+		if (!dadosRecolhimento.getBalancearMatriz()) {
+			
+			return;
+		}
+		
 		Map<Date, BigDecimal> mapaExpectativaEncalheTotalDiariaAtual = 
 			this.gerarMapaExpectativaEncalheTotalDiariaOrdenadoPelaMaiorData(matrizRecolhimento);
 		
