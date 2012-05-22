@@ -2,6 +2,8 @@ package br.com.abril.nds.repository;
 
 import java.util.List;
 
+import br.com.abril.nds.dto.TipoMovimentoDTO;
+import br.com.abril.nds.dto.filtro.FiltroTipoMovimento;
 import br.com.abril.nds.model.movimentacao.TipoMovimento;
 
 /**
@@ -18,5 +20,13 @@ public interface TipoMovimentoRepository extends Repository<TipoMovimento, Long>
 	 * @return {@link List<TipoMovimento>}
 	 */
 	List<TipoMovimento> obterTiposMovimento();
+	
+	/**
+	 * Obtém lista de tipos de movimento filtrada
+	 * 
+	 * @param filtro
+	 * @return
+	 */
+	List<TipoMovimentoDTO> obterTipoMovimento(FiltroTipoMovimento filtro);
 	
 }
