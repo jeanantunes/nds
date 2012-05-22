@@ -94,17 +94,17 @@ public class ViewNotaFiscalRepositoryImplTest extends AbstractRepositoryImplTest
 		save(produtoCE, produtoCE_2, produtoCE_3);
 
 		produtoEdicaoCE = Fixture.produtoEdicao(84L, 10, 7,
-				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(15), produtoCE);
+				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(15), "ABCDEFGHIJKLMNOPQRSTU", 1L, produtoCE);
 		produtoEdicaoCE.setDesconto(BigDecimal.ZERO);
 
 		
 		produtoEdicaoCE_2 = Fixture.produtoEdicao(85L, 10, 7,
-				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(18), produtoCE_2);
+				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(18), "ABCDEFGHIJKLMNOPQRST", 2L, produtoCE_2);
 		produtoEdicaoCE.setDesconto(BigDecimal.ONE);
 
 		
 		produtoEdicaoCE_3 = Fixture.produtoEdicao(86L, 10, 7,
-				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(90), produtoCE_3);
+				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(90), "ABCDEFGHIJKLMNOPQRS", 3L, produtoCE_3);
 		produtoEdicaoCE.setDesconto(BigDecimal.ONE);
 
 		

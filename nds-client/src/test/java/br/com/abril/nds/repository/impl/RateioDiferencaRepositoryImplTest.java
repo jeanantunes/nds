@@ -66,7 +66,7 @@ public class RateioDiferencaRepositoryImplTest extends AbstractRepositoryImplTes
 		produto.setEditor(abril);
 		save(produto);
 				
-		ProdutoEdicao produtoEdicao = Fixture.produtoEdicao(1L, 1, 1, BigDecimal.TEN, BigDecimal.TEN, BigDecimal.TEN, produto);
+		ProdutoEdicao produtoEdicao = Fixture.produtoEdicao(1L, 1, 1, BigDecimal.TEN, BigDecimal.TEN, BigDecimal.TEN, "ABCDEFGHIJKLMNOPQRSTU", 1L, produto);
 		save(produtoEdicao);
 		
 		PessoaJuridica pessoaJuridica = Fixture.pessoaJuridica("razaoSocial", "cnpj", "ie", "email", "99.999-9");

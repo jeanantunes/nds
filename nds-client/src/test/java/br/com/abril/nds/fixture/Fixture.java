@@ -363,7 +363,6 @@ public class Fixture {
 		TipoProduto tipoProduto = new TipoProduto();
 		tipoProduto.setDescricao(descricao);
 		tipoProduto.setGrupoProduto(grupo);
-		tipoProduto.setNcm(ncm);
 		return tipoProduto;
 	}
 	
@@ -387,7 +386,8 @@ public class Fixture {
 
 	public static ProdutoEdicao produtoEdicao(Long numeroEdicao,
 			int pacotePadrao, int peb, BigDecimal peso, BigDecimal precoCusto,
-			BigDecimal precoVenda, Produto produto) {
+			BigDecimal precoVenda, String codigoDeBarras, Long cdSMNotUsedAnyMore, Produto produto) {
+		
 		ProdutoEdicao produtoEdicao = new ProdutoEdicao();
 		produtoEdicao.setNumeroEdicao(numeroEdicao);
 		produtoEdicao.setPacotePadrao(pacotePadrao);
@@ -396,7 +396,24 @@ public class Fixture {
 		produtoEdicao.setPrecoCusto(precoCusto);
 		produtoEdicao.setPrecoVenda(precoVenda);
 		produtoEdicao.setProduto(produto);
+		produtoEdicao.setCodigoDeBarras(codigoDeBarras);
+		return produtoEdicao;
+	}
+	
+	public static ProdutoEdicao produtoEdicao(Long numeroEdicao,
+			int pacotePadrao, int peb, BigDecimal peso, BigDecimal precoCusto,
+			BigDecimal precoVenda, String codigoDeBarras, Long cdSMNotUsedAnyMore, Produto produto, 
+			BigDecimal expectativaVenda) {
+		ProdutoEdicao produtoEdicao = new ProdutoEdicao();
 		produtoEdicao.setNumeroEdicao(numeroEdicao);
+		produtoEdicao.setPacotePadrao(pacotePadrao);
+		produtoEdicao.setPeb(peb);
+		produtoEdicao.setPeso(peso);
+		produtoEdicao.setPrecoCusto(precoCusto);
+		produtoEdicao.setPrecoVenda(precoVenda);
+		produtoEdicao.setProduto(produto);
+		produtoEdicao.setCodigoDeBarras(codigoDeBarras);
+		produtoEdicao.setExpectativaVenda(expectativaVenda);
 		return produtoEdicao;
 	}
 
@@ -541,7 +558,7 @@ public class Fixture {
 		distribuidor.setJuridica(juridica);
 		distribuidor.setPoliticasCobranca(politicasCobranca);
 		distribuidor.setCapacidadeDistribuicao(new BigDecimal("10000"));
-		distribuidor.setCapacidadeRecolhimento(new BigDecimal("10000"));
+		distribuidor.setCapacidadeRecolhimento(new BigDecimal("1000"));
 		distribuidor.setPreenchimentoAutomaticoPDV(true);
 		
 		return distribuidor;
@@ -1532,14 +1549,12 @@ public class Fixture {
 	}
 	
 	public static ConferenciaEncalhe conferenciaEncalhe(
-			Lancamento lancamento, 
 			MovimentoEstoqueCota movimentoEstoqueCota,
 			ChamadaEncalheCota chamadaEncalheCota,
 			ControleConferenciaEncalheCota controleConferenciaEncalheCota) {
 		
 		ConferenciaEncalhe conferenciaEncalhe = new ConferenciaEncalhe();
 		
-		conferenciaEncalhe.setLancamento(lancamento);
 		conferenciaEncalhe.setMovimentoEstoqueCota(movimentoEstoqueCota);
 		conferenciaEncalhe.setChamadaEncalheCota(chamadaEncalheCota);
 		conferenciaEncalhe.setControleConferenciaEncalheCota(controleConferenciaEncalheCota);
@@ -2509,9 +2524,8 @@ public class Fixture {
 		return lancamentoParcial;
 	}
 	
-	public static PeriodoLancamentoParcial criarPeriodoLancamentoParcial(Date lancamento, 
+	public static PeriodoLancamentoParcial criarPeriodoLancamentoParcial(Lancamento lancamento, 
 																		 LancamentoParcial lancamentoParcial,
-																		 Date recolhimento,
 																		 StatusLancamentoParcial status,
 																		 TipoLancamentoParcial tipo) {
 		
@@ -2520,8 +2534,6 @@ public class Fixture {
 		parcial.setLancamento(lancamento);
 		
 		parcial.setLancamentoParcial(lancamentoParcial);
-		
-		parcial.setRecolhimento(recolhimento);
 		
 		parcial.setStatus(status);
 		

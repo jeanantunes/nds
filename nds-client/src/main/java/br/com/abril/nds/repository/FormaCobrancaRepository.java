@@ -30,6 +30,8 @@ public interface FormaCobrancaRepository extends Repository<FormaCobranca,Long>{
 	
 	void desativarFormaCobranca(long idFormaCobranca);
 
-	List<FormaCobranca> obterPorCotaETipoCobranca(Long idCota,TipoCobranca tipoCobranca);
+	List<FormaCobranca> obterPorCotaETipoCobranca(Long idCota,TipoCobranca tipoCobranca, Long idFormaCobranca);
+	
+	List<FormaCobranca> obterPorDistribuidorETipoCobranca(Long idDistribuidor,TipoCobranca tipoCobranca, Long idFormaCobranca);
 	
 }

@@ -4,20 +4,16 @@
 package br.com.abril.nds.model.cadastro;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.util.Calendar;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-
-import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaCaucaoLiquida;
 
 /**
  * @author Diego Fernandes
@@ -44,16 +40,11 @@ public class CaucaoLiquida implements Serializable {
 	private Double valor;
 	
 	@Column(name="DATA_ATUALIZACAO")
-	@Temporal(TemporalType.DATE)
-	private Date atualizacao;
+	@Temporal(TemporalType.TIMESTAMP)
+	private Calendar atualizacao;
 	
 	@Column(name="INDICE_REAJUSTE")
 	private Double indiceReajuste;
-	
-	@ManyToOne(optional=false)
-	@JoinColumn(name="COTA_GARANTIA_CAUCAO_LIQUIDA_ID")
-	private CotaGarantiaCaucaoLiquida cotaGarantiaCaucaoLiquida;
-	
 
 	/**
 	 * @return the id
@@ -86,14 +77,14 @@ public class CaucaoLiquida implements Serializable {
 	/**
 	 * @return the atualizacao
 	 */
-	public Date getAtualizacao() {
+	public Calendar getAtualizacao() {
 		return atualizacao;
 	}
 
 	/**
 	 * @param atualizacao the atualizacao to set
 	 */
-	public void setAtualizacao(Date atualizacao) {
+	public void setAtualizacao(Calendar atualizacao) {
 		this.atualizacao = atualizacao;
 	}
 
@@ -109,21 +100,6 @@ public class CaucaoLiquida implements Serializable {
 	 */
 	public void setIndiceReajuste(Double indiceReajuste) {
 		this.indiceReajuste = indiceReajuste;
-	}
-
-	/**
-	 * @return the cotaGarantiaCaucaoLiquida
-	 */
-	public CotaGarantiaCaucaoLiquida getCotaGarantiaCaucaoLiquida() {
-		return cotaGarantiaCaucaoLiquida;
-	}
-
-	/**
-	 * @param cotaGarantiaCaucaoLiquida the cotaGarantiaCaucaoLiquida to set
-	 */
-	public void setCotaGarantiaCaucaoLiquida(
-			CotaGarantiaCaucaoLiquida cotaGarantiaCaucaoLiquida) {
-		this.cotaGarantiaCaucaoLiquida = cotaGarantiaCaucaoLiquida;
 	}
 
 }

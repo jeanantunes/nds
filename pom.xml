@@ -236,13 +236,6 @@
 				<artifactId>jasperreports</artifactId>
 				<version>4.5.1</version>
 			</dependency>
-            <dependency>
-                <groupId>net.sf.jasperreports</groupId>
-                <artifactId>jasperreports-fonts-nds</artifactId>
-                <version>4.5.1</version>
-				<type>jar</type>
-                <scope>provided</scope>
-            </dependency>
      	    <dependency>
                 <groupId>com.lowagie</groupId>
                 <artifactId>itext</artifactId>
@@ -306,11 +299,6 @@
 			<groupId>net.sf.jasperreports</groupId>
 			<artifactId>jasperreports</artifactId>
 		</dependency>
-        <dependency>
-            <groupId>net.sf.jasperreports</groupId>
-            <artifactId>jasperreports-fonts-nds</artifactId>
-            <scope>provided</scope>
-        </dependency>
 		<dependency>
 			<groupId>org.quartz-scheduler</groupId>
 			<artifactId>quartz</artifactId>
@@ -391,11 +379,16 @@
 
 	<modules>
 		<module>nds-model</module>
+		<module>nds-util</module>
+		<module>nds-client</module>
+
+		<module>ndsi-canonical</module>
+		<module>ndsi-couchdbinterface</module>
+		<module>ndsi-engine</module>
+		<module>ndsi-webtest</module>
 
 		<!-- DESABILITADO até início de atividades neste módulo <module>nds-server</module> -->
 
-		<module>nds-client</module>
-		<module>nds-util</module>
 	</modules>
 
 </project>

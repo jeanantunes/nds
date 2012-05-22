@@ -38,6 +38,8 @@ public abstract class AbstractBalanceamentoRecolhimentoStrategy implements Balan
 		TreeMap<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimento = 
 			this.gerarMatrizRecolhimentoBalanceada(dadosRecolhimento);
 		
+		this.configurarMatrizRecolhimento(matrizRecolhimento, dadosRecolhimento);
+		
 		balanceamentoRecolhimento.setMatrizRecolhimento(matrizRecolhimento);
 		
 		balanceamentoRecolhimento.setCapacidadeRecolhimentoDistribuidor(
@@ -314,13 +316,45 @@ public abstract class AbstractBalanceamentoRecolhimentoStrategy implements Balan
 			produtosRecolhimentoAtuais = produtosRecolhimentoNovos;
 		}
 		
-		matrizRecolhimento.put(dataBalanceamento, produtosRecolhimentoAtuais);
+		if (produtosRecolhimentoAtuais != null && !produtosRecolhimentoAtuais.isEmpty()) {
+		
+			matrizRecolhimento.put(dataBalanceamento, produtosRecolhimentoAtuais);
+		}
+	}
+	
+	/*
+	 * Configura a sequência, a data de recolhimento e a nova data dos produtos da matriz.
+	 */
+	private void configurarMatrizRecolhimento(Map<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimento,
+											  RecolhimentoDTO dadosRecolhimento) {
+		
+		if (dadosRecolhimento.isMatrizFechada() || !dadosRecolhimento.getBalancearMatriz()) {
+			
+			return;
+		}
+		
+		Integer sequencia = 1;
+		
+		for (Map.Entry<Date, List<ProdutoRecolhimentoDTO>> entryMatrizRecolhimento 
+				: matrizRecolhimento.entrySet()) {
+			
+			Date dataRecolhimento = entryMatrizRecolhimento.getKey();
+			
+			List<ProdutoRecolhimentoDTO> produtosRecolhimento = entryMatrizRecolhimento.getValue();
+			
+			for (ProdutoRecolhimentoDTO produtoRecolhimento : produtosRecolhimento) {
+				
+				produtoRecolhimento.setDataRecolhimentoDistribuidor(dataRecolhimento);
+				produtoRecolhimento.setNovaData(dataRecolhimento);
+				produtoRecolhimento.setSequencia(sequencia++);
+			}
+		}
 	}
 	
 	/*
 	 * Valida os dados de recolhimento.
 	 */
-	protected boolean validarDadosRecolhimento(RecolhimentoDTO dadosRecolhimento) {
+	private boolean validarDadosRecolhimento(RecolhimentoDTO dadosRecolhimento) {
 		
 		return !(dadosRecolhimento == null
 					|| dadosRecolhimento.getCapacidadeRecolhimentoDistribuidor() == null

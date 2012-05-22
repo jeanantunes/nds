@@ -54,5 +54,7 @@ public interface ProdutoEdicaoService {
 	 * @return Lista de edições do produto
 	 */
 	List<ProdutoEdicao> obterProdutosEdicaoPorCodigoProduto(String codigoProduto);
+
+	List<ProdutoEdicao> obterProdutoPorCodigoNome(String codigoNomeProduto);
 	
 }

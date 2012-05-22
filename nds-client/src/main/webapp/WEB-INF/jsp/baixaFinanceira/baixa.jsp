@@ -823,8 +823,8 @@
 		                    </span>
 
 		                </td>
-		              </tr>
-		          </table>
+		            </tr>
+		        </table>
 	        </div>
 			
 	    </fieldset>

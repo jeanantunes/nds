@@ -1,6 +1,7 @@
 package br.com.abril.nds.service.impl;
 
-import java.util.Date;
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,12 +11,19 @@ import org.springframework.transaction.annotation.Transactional;
 import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.dto.CotaGarantiaDTO;
 import br.com.abril.nds.dto.ItemDTO;
+import br.com.abril.nds.dto.NotaPromissoriaDTO;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.cadastro.CaucaoLiquida;
 import br.com.abril.nds.model.cadastro.Cheque;
+import br.com.abril.nds.model.cadastro.ChequeImage;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.cadastro.EnderecoCota;
+import br.com.abril.nds.model.cadastro.EnderecoDistribuidor;
 import br.com.abril.nds.model.cadastro.Fiador;
 import br.com.abril.nds.model.cadastro.Imovel;
 import br.com.abril.nds.model.cadastro.NotaPromissoria;
+import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.TipoGarantia;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantia;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaCaucaoLiquida;
@@ -23,13 +31,16 @@ import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaChequeCaucao;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaFiador;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaImovel;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaNotaPromissoria;
+import br.com.abril.nds.repository.ChequeImageRepository;
 import br.com.abril.nds.repository.CotaGarantiaRepository;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.DistribuidorRepository;
+import br.com.abril.nds.repository.EnderecoCotaRepository;
 import br.com.abril.nds.repository.FiadorRepository;
 import br.com.abril.nds.service.CotaGarantiaService;
 import br.com.abril.nds.util.StringUtil;
 import br.com.abril.nds.util.TipoMensagem;
+import br.com.abril.nds.util.Util;
 
 /**
  * 
@@ -50,19 +61,11 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 
 	@Autowired
 	private FiadorRepository fiadorRepository;
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see br.com.abril.nds.service.CotaGarantiaService#salva(CotaGarantia)
-	 */
-	@Override
-	@Transactional
-	public CotaGarantia salva(CotaGarantia entity) {
-
-		// TODO: validações para substituição da cota.
-		return cotaGarantiaRepository.merge(entity);
-	}
+	@Autowired
+	private ChequeImageRepository chequeImageRepository;
+	
+	@Autowired 
+	private EnderecoCotaRepository enderecoCotaRepository;
 
 	/*
 	 * (non-Javadoc)
@@ -73,23 +76,25 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 	@Override
 	@Transactional(readOnly = true)
 	public CotaGarantiaDTO getByCota(Long idCota) {
-		
 		CotaGarantia cotaGarantia = cotaGarantiaRepository.getByCota(idCota);
 		TipoGarantia tipo = null;
-		if(cotaGarantia instanceof CotaGarantiaFiador){
+		if (cotaGarantia instanceof CotaGarantiaFiador) {
 			tipo = TipoGarantia.FIADOR;
-			initFiador(((CotaGarantiaFiador)cotaGarantia).getFiador());
-		}else if(cotaGarantia instanceof CotaGarantiaImovel){
-			tipo = TipoGarantia.IMOVEL;
-		}else if(cotaGarantia instanceof CotaGarantiaNotaPromissoria){
+			initFiador(((CotaGarantiaFiador) cotaGarantia).getFiador());
+		} else if (cotaGarantia instanceof CotaGarantiaImovel) {
+			tipo = TipoGarantia.IMOVEL;			
+			CotaGarantiaImovel cotaGarantiaImovel = (CotaGarantiaImovel) cotaGarantia;			
+			cotaGarantiaImovel.getImoveis().size();			
+		} else if (cotaGarantia instanceof CotaGarantiaNotaPromissoria) {
 			tipo = TipoGarantia.NOTA_PROMISSORIA;
-		}else if(cotaGarantia instanceof CotaGarantiaCaucaoLiquida){
+		} else if (cotaGarantia instanceof CotaGarantiaCaucaoLiquida) {
 			tipo = TipoGarantia.CAUCAO_LIQUIDA;
-		}else if(cotaGarantia instanceof CotaGarantiaChequeCaucao){
+			CotaGarantiaCaucaoLiquida cotaGarantiaCaucaoLiquida = (CotaGarantiaCaucaoLiquida) cotaGarantia;
+			cotaGarantiaCaucaoLiquida.getCaucaoLiquidas().size();
+		} else if (cotaGarantia instanceof CotaGarantiaChequeCaucao) {
 			tipo = TipoGarantia.CHEQUE_CAUCAO;
-		} 
-		
-		
+		}
+
 		return new CotaGarantiaDTO(tipo, cotaGarantia);
 	}
 
@@ -104,18 +109,12 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 	@Transactional
 	public CotaGarantiaNotaPromissoria salvaNotaPromissoria(
 			NotaPromissoria notaPromissoria, Long idCota)
-			throws ValidacaoException {
+			throws ValidacaoException, InstantiationException, IllegalAccessException {
 
-		CotaGarantiaNotaPromissoria cotaGarantiaNota = (CotaGarantiaNotaPromissoria) cotaGarantiaRepository
-				.getByCota(idCota);
+		CotaGarantiaNotaPromissoria cotaGarantiaNota = prepareCotaGarantia(
+				idCota, CotaGarantiaNotaPromissoria.class);
 
-		if (cotaGarantiaNota == null) {
-
-			cotaGarantiaNota = new CotaGarantiaNotaPromissoria();
-			cotaGarantiaNota.setCota(getCota(idCota));
-		}
-
-		cotaGarantiaNota.setData(new Date());
+		cotaGarantiaNota.setData(Calendar.getInstance());
 
 		cotaGarantiaNota.setNotaPromissoria(notaPromissoria);
 
@@ -132,20 +131,13 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 	@Override
 	@Transactional
 	public CotaGarantiaChequeCaucao salvaChequeCaucao(Cheque cheque, Long idCota)
-			throws ValidacaoException {
+			throws ValidacaoException, InstantiationException, IllegalAccessException {
 
-		CotaGarantiaChequeCaucao cotaGarantiaCheque = (CotaGarantiaChequeCaucao) cotaGarantiaRepository
-				.getByCota(idCota);
+		CotaGarantiaChequeCaucao cotaGarantiaCheque = prepareCotaGarantia(
+				idCota, CotaGarantiaChequeCaucao.class);
 
-		if (cotaGarantiaCheque == null) {
-
-			cotaGarantiaCheque = new CotaGarantiaChequeCaucao();
-
-			cotaGarantiaCheque.setCota(getCota(idCota));
-		}
-
-		cotaGarantiaCheque.setData(new Date());
-
+		cotaGarantiaCheque.setData(Calendar.getInstance());
+		
 		cotaGarantiaCheque.setCheque(cheque);
 
 		return (CotaGarantiaChequeCaucao) cotaGarantiaRepository
@@ -171,27 +163,27 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 	@Override
 	@Transactional
 	public CotaGarantiaImovel salvaImovel(List<Imovel> listaImoveis, Long idCota)
-			throws ValidacaoException {
-		
-		CotaGarantiaImovel cotaGarantiaImovel = (CotaGarantiaImovel) this.cotaGarantiaRepository.getByCota(idCota);
-				
-		if (cotaGarantiaImovel == null) {
+			throws ValidacaoException, InstantiationException, IllegalAccessException {
 
-			cotaGarantiaImovel = new CotaGarantiaImovel();
-			cotaGarantiaImovel.setCota(getCota(idCota));
-		
-		} else {
-		
-			if (cotaGarantiaImovel.getImoveis() != null || !cotaGarantiaImovel.getImoveis().isEmpty()) {
-				this.cotaGarantiaRepository.deleteListaImoveis(cotaGarantiaImovel.getId());
-			}
+		CotaGarantiaImovel cotaGarantiaImovel = prepareCotaGarantia(idCota,
+				CotaGarantiaImovel.class);
+	
+
+		if (cotaGarantiaImovel.getImoveis() != null
+				&& !cotaGarantiaImovel.getImoveis().isEmpty()) {
+			this.cotaGarantiaRepository
+					.deleteListaImoveis(cotaGarantiaImovel.getId());
 		}
-		cotaGarantiaImovel.setData(new Date());
+		
+		cotaGarantiaImovel.setData(Calendar.getInstance());
+		
 
 		cotaGarantiaImovel.setImoveis(listaImoveis);
 		
-		return (CotaGarantiaImovel) cotaGarantiaRepository
+		cotaGarantiaImovel = (CotaGarantiaImovel) cotaGarantiaRepository
 				.merge(cotaGarantiaImovel);
+		
+		return cotaGarantiaImovel;
 	}
 
 	/*
@@ -242,27 +234,25 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 		fiador.getGarantias().size();
 		fiador.getPessoa().getEnderecos().size();
 	}
+
 	@Transactional
 	@Override
-	public CotaGarantiaFiador salvaFiador(Long idFiador, Long idCota) throws ValidacaoException {
-		CotaGarantiaFiador cotaGarantiaFiador = (CotaGarantiaFiador) cotaGarantiaRepository
-				.getByCota(idCota);
-		if (cotaGarantiaFiador == null) {
-			cotaGarantiaFiador = new CotaGarantiaFiador();
-
-			cotaGarantiaFiador.setCota(getCota(idCota));
-		}
-		
+	public CotaGarantiaFiador salvaFiador(Long idFiador, Long idCota)
+			throws ValidacaoException, InstantiationException, IllegalAccessException {
+		CotaGarantiaFiador cotaGarantiaFiador = prepareCotaGarantia(idCota,
+				CotaGarantiaFiador.class);
+	
 		Fiador fiador = fiadorRepository.buscarPorId(idFiador);
-		
-		if(fiador == null){
+
+		if (fiador == null) {
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR,
-					"Fiador "+idFiador+ " não existe."));
+					"Fiador " + idFiador + " não existe."));
 		}
 		cotaGarantiaFiador.setFiador(fiador);
-		cotaGarantiaFiador.setData(new Date());
-		
-		return (CotaGarantiaFiador)cotaGarantiaRepository.merge(cotaGarantiaFiador);
+		cotaGarantiaFiador.setData(Calendar.getInstance());
+
+		return (CotaGarantiaFiador) cotaGarantiaRepository
+				.merge(cotaGarantiaFiador);
 
 	}
 
@@ -275,9 +265,116 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 		Cota cota = this.cotaRepository.buscarPorId(idCota);
 
 		if (cota == null) {
-			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR,"Cota " + idCota
-					+ " não encontrada."));
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR,
+					"Cota " + idCota + " não encontrada."));
 		}
 		return cota;
 	}
+	
+	@SuppressWarnings("unchecked")
+	private <T extends CotaGarantia> T prepareCotaGarantia(Long idCota,
+			Class<T> type) throws InstantiationException,
+			IllegalAccessException {
+
+		CotaGarantia cotaGarantia = cotaGarantiaRepository.getByCota(idCota);
+		
+		if(cotaGarantia != null && cotaGarantia.getClass() != type){
+			cotaGarantiaRepository.remover(cotaGarantia);
+			cotaGarantia = null;
+		}
+		if (cotaGarantia == null) {			
+			cotaGarantia = type.newInstance();
+			cotaGarantia.setCota(getCota(idCota));			
+		}
+
+		return (T) cotaGarantia;
+	}
+	
+	/* (non-Javadoc)
+	 * @see br.com.abril.nds.service.CotaGarantiaService#salvarCaucaoLiquida(br.com.abril.nds.model.cadastro.CaucaoLiquida, java.lang.Long)
+	 */
+	@Transactional
+	public CotaGarantiaCaucaoLiquida salvarCaucaoLiquida(List<CaucaoLiquida> listaCaucaoLiquida, Long idCota) throws ValidacaoException, InstantiationException, IllegalAccessException {
+		
+		CotaGarantiaCaucaoLiquida cotaGarantiaCaucaoLiquida = prepareCotaGarantia(idCota, CotaGarantiaCaucaoLiquida.class);
+		
+		if (cotaGarantiaCaucaoLiquida.getCaucaoLiquidas() == null) {
+			cotaGarantiaCaucaoLiquida.setCaucaoLiquidas(new ArrayList<CaucaoLiquida>(listaCaucaoLiquida.size()));
+		}
+		
+		cotaGarantiaCaucaoLiquida.getCaucaoLiquidas().addAll(listaCaucaoLiquida);
+		
+		cotaGarantiaCaucaoLiquida.setData(Calendar.getInstance());		
+		
+		return (CotaGarantiaCaucaoLiquida) this.cotaGarantiaRepository.merge(cotaGarantiaCaucaoLiquida);
+	}
+
+	/**
+	 * @param idCheque
+	 * @return
+	 * @see br.com.abril.nds.repository.CotaGarantiaRepository#getCheque(long)
+	 */
+	@Override
+	@Transactional(readOnly=true)
+	public byte[] getImageCheque(long idCheque) {
+		return chequeImageRepository.getImageCheque(idCheque);
+	}
+	@Override
+	@Transactional
+	public void salvaChequeImage(long idCheque, byte[] image){
+		ChequeImage chequeImage  = chequeImageRepository.get(idCheque);
+		
+		if(chequeImage == null){
+			chequeImage = new  ChequeImage();
+			chequeImage.setId(idCheque);
+		}
+		chequeImage.setImagem(image);
+		
+		chequeImageRepository.merge(chequeImage);
+		
+	}
+	
+	
+	@Override
+	@Transactional(readOnly=true)
+	public NotaPromissoriaDTO getDadosImpressaoNotaPromissoria(long idCota){
+		NotaPromissoriaDTO dto = new NotaPromissoriaDTO();
+		
+		CotaGarantiaNotaPromissoria cotaGarantiaNotaPromissoria = cotaGarantiaRepository.getByCota(idCota, CotaGarantiaNotaPromissoria.class);
+		if(cotaGarantiaNotaPromissoria == null){
+			throw new RuntimeException("Nota Promissória não cadastrada para esta cota.");
+		}
+		if(cotaGarantiaNotaPromissoria.getCota().getPessoa() instanceof PessoaJuridica){
+			dto.setDocumentoEmitente(Util.adicionarMascaraCNPJ(cotaGarantiaNotaPromissoria.getCota().getPessoa().getDocumento()));
+		}else{
+			dto.setDocumentoEmitente(Util.adicionarMascaraCPF(cotaGarantiaNotaPromissoria.getCota().getPessoa().getDocumento()));
+		}
+		
+		dto.setNomeEmitente(cotaGarantiaNotaPromissoria.getCota().getPessoa().getNome());
+		dto.setNotaPromissoria(cotaGarantiaNotaPromissoria.getNotaPromissoria());
+		
+		EnderecoCota enderecoCota =  enderecoCotaRepository.getPrincipal(idCota);
+		
+		if(enderecoCota==null  || enderecoCota.getEndereco() == null){
+			throw new RuntimeException( "Endereço não cadastrado para esta cota.");
+		}
+		dto.setEnderecoEmitente(enderecoCota.getEndereco());
+		Distribuidor distribuidor= distribuidorRepository.obter();
+		
+		if(distribuidor==null){
+			throw new RuntimeException( "Distribuidor não cadastrado.");
+		}
+		dto.setNomeBeneficiario(distribuidor.getJuridica().getNome());
+		dto.setDocumentoBeneficiario(Util.adicionarMascaraCNPJ( distribuidor.getJuridica().getDocumento()));
+		
+		EnderecoDistribuidor enderecoDistribuidor =  distribuidorRepository.obterEnderecoPrincipal();
+		if(enderecoDistribuidor==null  || enderecoDistribuidor.getEndereco() == null){
+			throw new RuntimeException( "Endereço não cadastrada para este distribuidor.");
+		}
+		dto.setPracaPagamento(enderecoDistribuidor.getEndereco().getCidade());
+		
+		return dto;
+	}
+	
+	
 }

@@ -2,7 +2,13 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>br.com.discover</groupId>
+	<parent>
+		<artifactId>nds</artifactId>
+		<groupId>br.com.abril</groupId>
+		<version>1.0</version>
+	</parent>
+
+	<groupId>br.com.abril</groupId>
 	<artifactId>nsdi-engine</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
@@ -80,12 +86,9 @@
 			<artifactId>slf4j-api</artifactId>
 			<version>1.6.1</version>
 		</dependency>
-<!-- 		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>jcl-over-log4j</artifactId>
-			<version>1.6.1</version>
-		</dependency>
- -->		<dependency>
+		<!-- <dependency> <groupId>org.slf4j</groupId> <artifactId>jcl-over-log4j</artifactId> 
+			<version>1.6.1</version> </dependency> -->
+		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>jcl-over-slf4j</artifactId>
 			<version>1.6.1</version>
@@ -136,24 +139,61 @@
 			<version>1.0</version>
 		</dependency>
 		<dependency>
-			<groupId>com.thoughtworks.xstream</groupId>
-			<artifactId>xstream</artifactId>
-			<version>1.4.2</version>
+			<groupId>br.com.abril</groupId>
+			<artifactId>ndsi-canonical</artifactId>
+			<version>1.0</version>
 		</dependency>
 		<dependency>
-			<groupId>com.fasterxml.jackson.core</groupId>
-			<artifactId>jackson-core</artifactId>
-			<version>2.0.0</version>
+			<groupId>org.lightcouch</groupId>
+			<artifactId>lightcouch</artifactId> 
+			<version>0.0.4</version>
 		</dependency>
 		<dependency>
-			<groupId>com.fasterxml.jackson.datatype</groupId>
-			<artifactId>jackson-datatype-hibernate3</artifactId>
-			<version>2.0.0</version>
-		</dependency>
-		<dependency>
-			<groupId>net.sf.flexjson</groupId>
-			<artifactId>flexjson</artifactId>
-			<version>2.1</version>
+			<groupId>org.reflections</groupId>
+			<artifactId>reflections</artifactId>
+			<version>0.9.7.RC1</version>
 		</dependency>
 	</dependencies>
+
+
+	<build>
+		<plugins>
+			<!-- <plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>appassembler-maven-plugin</artifactId>
+				<version>1.2.2</version>
+				<configuration>
+					<programs>
+						<program>
+							<mainClass>br.com.abril.nds.integracao.spring.NdsiRunner</mainClass>
+							<name>ndsi</name>
+
+							<commandLineArguments>
+								Add two predefined command line arguments to the call of App3
+								<commandLineArgument>br.com.abril.nds.integracao.ems0118.route.EMS0118Route</commandLineArgument>
+							</commandLineArguments>
+
+						</program>
+					</programs>
+				</configuration>
+			</plugin> -->
+			<plugin>
+  <groupId>org.apache.maven.plugins</groupId>
+  <artifactId>maven-jar-plugin</artifactId>
+  <configuration>
+   <archive>
+    <manifest>
+     <addClasspath>true</addClasspath>
+     <mainClass>br.com.abril.nds.integracao.spring.NdsiRunner</mainClass>
+     
+     <classpathPrefix>lib/</classpathPrefix>
+    </manifest>
+   </archive>
+  </configuration>
+ </plugin>
+		</plugins>
+	</build>
+
+
+
 </project>

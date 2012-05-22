@@ -1,6 +1,7 @@
 package br.com.abril.nds.service;
 
-import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import java.util.Date;
+
 
 
 /**
@@ -17,6 +18,25 @@ public interface ParciaisService {
 	 * @param idProdutoEdicao - Id do ProdutoEdicao
 	 * @param qtdePeriodos - Quantidade de períodos
 	 * @param idUsuario - Id do Usuário
+	 * @param peb - periodo em banca (dias) - caso nulo, será obtido do ProdutoEdicao 
 	 */
-	void gerarPeriodosParcias(ProdutoEdicao produtoEdicao, Integer qtdePeriodos,Long idUsuario);
+	void gerarPeriodosParcias(Long idProdutoEdicao, Integer qtdePeriodos,Long idUsuario, Integer peb);
+
+	/**
+	 * Altera data de Período de Lancamento Parcial
+	 * 
+	 * @param idLancamento
+	 * @param dataLancamento
+	 * @param dataRecolhimento
+	 */
+	void alterarPeriodo(Long idLancamento, Date dataLancamento,
+			Date dataRecolhimento);
+
+	/**
+	 * Remove PeriodoLancamentoParcial e Lancamento referente ao mesmo
+	 * 
+	 * @param idLancamento
+	 */
+	void excluirPeriodo(Long idLancamento);
+
 }

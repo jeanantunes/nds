@@ -94,7 +94,7 @@ public class ExpedicaoResumoProdutoRepositoryImplTest extends AbstractRepository
 			save(produto); 
 			
 			ProdutoEdicao produtoEdicao = Fixture.produtoEdicao(i.longValue(), 50, 40, 
-					new BigDecimal(30), new BigDecimal(20), new BigDecimal(10), produto);	
+					new BigDecimal(30), new BigDecimal(20), new BigDecimal(10), "ABCDEFGHIJKLMNOPQRSTU", 1L, produto);	
 			save(produtoEdicao);
 			
 			

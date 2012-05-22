@@ -3,6 +3,7 @@ package br.com.abril.nds.repository;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import br.com.abril.nds.dto.FuroProdutoDTO;
 import br.com.abril.nds.model.cadastro.Produto;
@@ -15,6 +16,24 @@ import br.com.abril.nds.model.cadastro.ProdutoEdicao;
  * @author Discover Technology
  */
 public interface ProdutoEdicaoRepository extends Repository<ProdutoEdicao, Long> {
+	
+	/**
+	 * Obtém o codigoSM a partir do idProdutoEdicao
+	 * 
+	 * @param sequenciaMatriz
+	 * 
+	 * @return Integer
+	 */
+	public Integer obterCodigoMatrizPorProdutoEdicao(Long idProdutoEdicao);
+	
+	/**
+	 * Obtém o produtoEdicao através do código SM do mesmo produtoEdicao que esta amarrado a seu lancamento.
+	 * 
+	 * @param sequenciaMatriz
+	 * 
+	 * @return ProdutoEdicao
+	 */
+	public ProdutoEdicao obterProdutoEdicaoPorSequenciaMatriz(Integer sequenciaMatriz);
 	
 	/**
 	 * Obtem o percentual de comissionamento (fatorDesconto) de acordo com os parâmetros
@@ -81,8 +100,21 @@ public interface ProdutoEdicaoRepository extends Repository<ProdutoEdicao, Long>
 	 */
 	List<ProdutoEdicao> obterProdutosEdicaoPorCodigoProduto(String codigoProduto);
 
+	
+	
 	ProdutoEdicao obterProdutoEdicaoPorCodigoBarra(String codigoBarra);
 
-	ProdutoEdicao obterProdutoEdicaoPorSM(Long sm);
+	
+	
+	List<ProdutoEdicao> obterProdutoPorCodigoNome(String codigoNomeProduto);
+	
+	/**
+	 * Obtém uma lista de produtos edição de acordo com o parâmetro iformado.
+	 * 
+	 * @param idsProdutoEdicao - identificadores de produto edição
+	 * 
+	 * @return {@link List<ProdutoEdicao>}
+	 */
+	List<ProdutoEdicao> obterProdutosEdicaoPorId(Set<Long> idsProdutoEdicao);
 	
 }
