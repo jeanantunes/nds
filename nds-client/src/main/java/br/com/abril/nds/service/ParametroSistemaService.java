@@ -1,5 +1,7 @@
 package br.com.abril.nds.service;
 
+import java.io.InputStream;
+
 import br.com.abril.nds.dto.ParametroSistemaGeralDTO;
 import br.com.abril.nds.model.cadastro.ParametroSistema;
 import br.com.abril.nds.model.cadastro.TipoParametroSistema;
@@ -39,5 +41,13 @@ public interface ParametroSistemaService {
 	 * @return Lista dos parâmetros do sistema que são considerados gerais. 
 	 */
 	public ParametroSistemaGeralDTO buscarParametroSistemaGeral();
+	
+	/**
+	 * Salva os Parâmetros do Sistema.
+	 *  
+	 * @param dto
+	 * @param imgLogotipo
+	 */
+	public void salvar(ParametroSistemaGeralDTO dto, InputStream imgLogotipo);
 	
 }

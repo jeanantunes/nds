@@ -8,13 +8,17 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.ParametroSistemaGeralDTO;
+import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.ParametroSistema;
 import br.com.abril.nds.model.cadastro.TipoParametroSistema;
 import br.com.abril.nds.repository.ParametroSistemaRepository;
 import br.com.abril.nds.service.ParametroSistemaService;
+import br.com.abril.nds.util.TipoMensagem;
+import br.com.abril.nds.util.UfEnum;
+import br.com.abril.nds.util.Util;
 
 @Service
-public class ParametroSistemaServiceImpl implements ParametroSistemaService{
+public class ParametroSistemaServiceImpl implements ParametroSistemaService {
 
 	@Autowired
 	private ParametroSistemaRepository parametroSistemaRepository;
@@ -65,16 +69,39 @@ public class ParametroSistemaServiceImpl implements ParametroSistemaService{
 		return dto;
 	}
 	
+	/**
+	 * Salva os Parâmetros do Sistema.
+	 *  
+	 * @param dto
+	 * @param imgLogotipo
+	 */
 	@Transactional
 	public void salvar(ParametroSistemaGeralDTO dto, InputStream imgLogotipo) {
 		
+		// TODO: validar imagem
+		// TODO: validar CNPJ
 		
-		// TODO: validar CNPJ;
-		// TODO: validar email;
-		// TODO: validar Uf;
+		// Validar email:
+		if (!Util.validarEmail(dto.getEmail())) {
+			throw new ValidacaoException(TipoMensagem.ERROR, "Formato de email é inválido!");
+		}
+		
+		// Validar UF:
+		boolean invalidUf = true;
+		for (UfEnum uf : Util.getUfs(null)) {
+			if (uf.getSigla().equals(dto.getUf())) {
+				invalidUf = false;
+				break;
+			}
+		}
+		if (invalidUf) {
+			throw new ValidacaoException(TipoMensagem.ERROR, "Unidade Federativa é inválida!");
+		}
 		
 		// TODO: salvar imgLogotipo
 		
-		// TODO: salvar dto;
+		// Salvar dto:
+		List<ParametroSistema> lst = dto.getParametrosSistema();
+		parametroSistemaRepository.salvar(lst);
 	}
 }
