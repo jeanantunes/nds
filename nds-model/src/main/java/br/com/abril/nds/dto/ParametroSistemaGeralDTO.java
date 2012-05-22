@@ -1,8 +1,10 @@
 package br.com.abril.nds.dto;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import br.com.abril.nds.model.cadastro.ParametroSistema;
@@ -17,11 +19,14 @@ import br.com.abril.nds.model.cadastro.TipoParametroSistema;
 public class ParametroSistemaGeralDTO implements Serializable {
 	
 	/** */
-	private static final long serialVersionUID = -3743082353422640710L;
+	private static final long serialVersionUID = -8302938075932981968L;
+	
 	
 	private Map<TipoParametroSistema, String> params = 
 			new HashMap<TipoParametroSistema, String>();
 	
+	/** Data da Operação Corrente (usado apenas para exibição). */
+	private String dtOperacaoCorrente;
 	
 	/** Método Construtor padrão. */
 	public ParametroSistemaGeralDTO() {
@@ -46,10 +51,33 @@ public class ParametroSistemaGeralDTO implements Serializable {
 	 */
 	public void setParametrosSistema(Collection<ParametroSistema> parametrosSistema) {
 		for (ParametroSistema ps : parametrosSistema) {
-			params.put(ps.getTipoParametroSistema(), ps.getValor());
+			
+			// Data Operação não é editável, por isso não entra no 'params':
+			if (TipoParametroSistema.DATA_OPERACAO_CORRENTE.equals(ps.getTipoParametroSistema())) {
+				this.dtOperacaoCorrente = ps.getValor();
+			} else {
+				this.params.put(ps.getTipoParametroSistema(), ps.getValor());
+			}
 		}
 	}
 	
+	/**
+	 * Retorna todos os parâmetros do sistema com os dados alterados pelo usuário.
+	 * 
+	 * @return
+	 */
+	public List<ParametroSistema> getParametrosSistema() {
+		
+		List<ParametroSistema> lst = new ArrayList<ParametroSistema>();
+		for (TipoParametroSistema tps : params.keySet()) {
+			ParametroSistema ps = new ParametroSistema();
+			ps.setTipoParametroSistema(tps);
+			ps.setValor(params.get(tps));
+			lst.add(ps);
+		}
+		
+		return lst;
+	}
 	
 	/**
 	 * @return the logoSistema
@@ -365,12 +393,30 @@ public class ParametroSistemaGeralDTO implements Serializable {
 	public void setNfeDpec(String nfeDpec) {
 		this.params.put(TipoParametroSistema.NFE_DPEC, nfeDpec);
 	}
+	
+	
+	public String getPathImageCapa() {
+		return this.getParametroSistemaString(TipoParametroSistema.PATH_IMAGENS_CAPA);
+	}
+
+	public void setPathImageCapa(String pathImageCapa) {
+		this.params.put(TipoParametroSistema.PATH_IMAGENS_CAPA, pathImageCapa);
+	}
+
+	public String getPathImageBancaPdv() {
+		return this.getParametroSistemaString(TipoParametroSistema.PATH_IMAGENS_PDV);
+	}
+
+	public void setPathImageBancaPdv(String pathImageBancaPdv) {
+		this.params.put(TipoParametroSistema.PATH_IMAGENS_PDV, pathImageBancaPdv);
+	}	
+	
 
 	/**
 	 * @return the dtOperacaoCorrente
 	 */
 	public String getDtOperacaoCorrente() {
-		return this.getParametroSistemaString(TipoParametroSistema.DATA_OPERACAO_CORRENTE);
+		return this.dtOperacaoCorrente;
 	}
 
 	/**
@@ -378,7 +424,7 @@ public class ParametroSistemaGeralDTO implements Serializable {
 	 *            the dtOperacaoCorrente to set
 	 */
 	public void setDtOperacaoCorrente(String dtOperacaoCorrente) {
-		this.params.put(TipoParametroSistema.DATA_OPERACAO_CORRENTE, dtOperacaoCorrente);
+		this.dtOperacaoCorrente = dtOperacaoCorrente;
 	}
 
 }
