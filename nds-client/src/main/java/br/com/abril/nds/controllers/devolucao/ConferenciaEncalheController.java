@@ -668,13 +668,18 @@ public class ConferenciaEncalheController {
 		List<CellModelKeyValue<ConferenciaEncalheDTO>> list =
 				new ArrayList<CellModelKeyValue<ConferenciaEncalheDTO>>();
 		
+		boolean aceitaJuramentado = this.getInfoConferenciaSession().isDistribuidorAceitaJuramentado();
+		
 		if (listaConferenciaEncalhe != null){
 			
 			for (ConferenciaEncalheDTO dto : listaConferenciaEncalhe){
 				
 				dto.setValorTotal(dto.getPrecoCapa().subtract(dto.getDesconto()).multiply(dto.getQtdExemplar()));
 				
-				dto.setJuramentada(null);
+				if (!aceitaJuramentado){
+					
+					dto.setJuramentada(null);
+				}
 				
 				if (dto.getIdConferenciaEncalhe() == null){
 					
