@@ -1,10 +1,12 @@
 package br.com.abril.nds.dto;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 
 import br.com.abril.nds.model.planejamento.StatusLancamentoParcial;
 import br.com.abril.nds.util.Constantes;
+import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Exportable;
@@ -31,6 +33,8 @@ public class ParcialDTO implements Serializable{
 	private String nomeFornecedor;
 	@Export(label = "Status", alignment=Alignment.LEFT)
 	private String statusParcial;
+	
+	private String precoCapa;
 	
 	public ParcialDTO() {}
 		
@@ -107,6 +111,17 @@ public class ParcialDTO implements Serializable{
 		this.idProdutoEdicao = idProdutoEdicao;
 	}
 
-	
+	/**
+	 * @return the precoCapa
+	 */
+	public String getPrecoCapa() {
+		return precoCapa;
+	}
+	/**
+	 * @param precoCapa the precoCapa to set
+	 */
+	public void setPrecoCapa(BigDecimal precoCapa) {
+		this.precoCapa = CurrencyUtil.formatarValor(precoCapa);
+	}
 	
 }

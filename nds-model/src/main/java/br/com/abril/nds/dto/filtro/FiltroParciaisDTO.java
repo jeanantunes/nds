@@ -33,7 +33,7 @@ public class FiltroParciaisDTO implements Serializable  {
 	
 	
 	private PaginacaoVO paginacao;
-		
+			
 	public enum ColunaOrdenacao {
 
 		DATA_LANCAMENTO("dataLancamento"),
@@ -57,6 +57,37 @@ public class FiltroParciaisDTO implements Serializable  {
 		
 		public static ColunaOrdenacao getPorDescricao(String descricao) {
 			for(ColunaOrdenacao coluna: ColunaOrdenacao.values()) {
+				if(coluna.toString().equals(descricao))
+					return coluna;
+			}
+			return null;
+		}
+	}
+	
+	public enum ColunaOrdenacaoPeriodo {
+
+		DATA_LANCAMENTO("dataLancamento"),
+		DATA_RECOLHIMENTO("dataRecolhimento"),
+		PERIODO("periodo"),
+		REPARTE("reparte"),
+		ENCALHE("encalhe"),
+		VENDAS("vendas"),
+		VENDA_ACUMULADA("vendaAcumulada"),
+		PERC_VENDA("percVenda");
+		
+		private String nomeColuna;
+		
+		private ColunaOrdenacaoPeriodo(String nomeColuna) {
+			this.nomeColuna = nomeColuna;
+		}
+		
+		@Override
+		public String toString() {
+			return this.nomeColuna;
+		}
+		
+		public static ColunaOrdenacaoPeriodo getPorDescricao(String descricao) {
+			for(ColunaOrdenacaoPeriodo coluna: ColunaOrdenacaoPeriodo.values()) {
 				if(coluna.toString().equals(descricao))
 					return coluna;
 			}
@@ -160,4 +191,85 @@ public class FiltroParciaisDTO implements Serializable  {
 	public void setNomeFornecedor(String nomeFornecedor) {
 		this.nomeFornecedor = nomeFornecedor;
 	}
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result
+				+ ((codigoProduto == null) ? 0 : codigoProduto.hashCode());
+		result = prime * result
+				+ ((dataFinal == null) ? 0 : dataFinal.hashCode());
+		result = prime * result
+				+ ((dataInicial == null) ? 0 : dataInicial.hashCode());
+		result = prime * result
+				+ ((edicaoProduto == null) ? 0 : edicaoProduto.hashCode());
+		result = prime * result
+				+ ((idFornecedor == null) ? 0 : idFornecedor.hashCode());
+		result = prime * result
+				+ ((nomeFornecedor == null) ? 0 : nomeFornecedor.hashCode());
+		result = prime * result
+				+ ((nomeProduto == null) ? 0 : nomeProduto.hashCode());
+		result = prime * result
+				+ ((paginacao == null) ? 0 : paginacao.hashCode());
+		result = prime * result + ((status == null) ? 0 : status.hashCode());
+		return result;
+	}
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		FiltroParciaisDTO other = (FiltroParciaisDTO) obj;
+		if (codigoProduto == null) {
+			if (other.codigoProduto != null)
+				return false;
+		} else if (!codigoProduto.equals(other.codigoProduto))
+			return false;
+		if (dataFinal == null) {
+			if (other.dataFinal != null)
+				return false;
+		} else if (!dataFinal.equals(other.dataFinal))
+			return false;
+		if (dataInicial == null) {
+			if (other.dataInicial != null)
+				return false;
+		} else if (!dataInicial.equals(other.dataInicial))
+			return false;
+		if (edicaoProduto == null) {
+			if (other.edicaoProduto != null)
+				return false;
+		} else if (!edicaoProduto.equals(other.edicaoProduto))
+			return false;
+		if (idFornecedor == null) {
+			if (other.idFornecedor != null)
+				return false;
+		} else if (!idFornecedor.equals(other.idFornecedor))
+			return false;
+		if (nomeFornecedor == null) {
+			if (other.nomeFornecedor != null)
+				return false;
+		} else if (!nomeFornecedor.equals(other.nomeFornecedor))
+			return false;
+		if (nomeProduto == null) {
+			if (other.nomeProduto != null)
+				return false;
+		} else if (!nomeProduto.equals(other.nomeProduto))
+			return false;
+		if (paginacao == null) {
+			if (other.paginacao != null)
+				return false;
+		} else if (!paginacao.equals(other.paginacao))
+			return false;
+		if (status == null) {
+			if (other.status != null)
+				return false;
+		} else if (!status.equals(other.status))
+			return false;
+		return true;
+	}
+	
+	
 }

@@ -42,8 +42,10 @@ var produto = {
 			
 			$.postJSON(contextPath + "/produto/pesquisarPorCodigoProduto",
 					   "codigoProduto=" + codigoProduto,
-					   function(result) { produto.pesquisarPorCodigoSuccessCallBack(result, idProduto, idEdicao, successCallBack, idCodigo, isFromModal); },
-					   function() { produto.pesquisarPorCodigoErrorCallBack(idCodigo, errorCallBack); }, isFromModal);
+					   function(result) { produto.pesquisarPorCodigoSuccessCallBack(result, idProduto, idEdicao, successCallBack, idCodigo, isFromModal); 
+					   		produto.autoCompletarEdicaoPorProduto(idCodigo, idEdicao, isFromModal);
+						},
+					   null, isFromModal);
 		
 		} else {
 		
@@ -55,14 +57,9 @@ var produto = {
 
 	pesquisarPorCodigoSuccessCallBack : function(result, idProduto, idEdicao, successCallBack,idCodigo, isFromModal) {
 		
-		if(idCodigo) {
-			produto.autoCompletarEdicaoPorProduto(idCodigo, idEdicao, isFromModal);
-		} else {
-		
-			$(idEdicao).removeAttr("disabled");
-			$(idProduto).val(result.nome);
-			$(idEdicao).focus();
-		}
+		$(idEdicao).removeAttr("disabled");
+		$(idProduto).val(result.nome);
+		$(idEdicao).focus();
 		
 		produto.pesquisaRealizada = true;
 		
@@ -88,7 +85,7 @@ var produto = {
 		var codigoProduto = $(idCodigoProduto).val();
 		
 		$.postJSON(contextPath + "/produto/autoCompletarEdicaoPorProduto", "codigoProduto=" + codigoProduto,
-					   function(result) { produto.exibirAutoComplete(result, idEdicao); },
+					   function(result) { produto.exibirAutoCompleteEdicao(result, idEdicao); },
 					   null, isFromModal);
 		
 	},
@@ -134,9 +131,7 @@ var produto = {
 	exibirAutoCompleteEdicao : function(result, idEdicao) {
 		
 		$(idEdicao).autocomplete({
-			source : result,
-			minLength: 0,
-			delay : 0,
+			source : result
 		});
 	},
 	

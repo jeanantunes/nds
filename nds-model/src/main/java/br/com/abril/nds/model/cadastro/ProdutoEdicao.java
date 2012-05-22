@@ -269,8 +269,7 @@ public class ProdutoEdicao implements Serializable {
 
 	@Override
 	public String toString() {
-		return new StringBuilder(produto.toString()).append("-")
-				.append(numeroEdicao).toString();
+		return produto.toString() + "-" + numeroEdicao.toString();
 	}
 
 	/**

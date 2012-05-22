@@ -79,10 +79,7 @@ var MANTER_COTA = {
 		ENDERECO_COTA.limparFormEndereco();
 		COTA.limparCamposTelefone();
 		
-		$.postJSON(contextPath + "/cadastro/cota/cancelar",
-				null, 
-				null
-		);
+		$.postJSON(contextPath + "/cadastro/cota/cancelar",null, null);
 	},
 	
 	executarPreProcessamento:function (resultado){
@@ -330,14 +327,16 @@ var MANTER_COTA = {
 					"&numeroCota="+ $(idCampoNumeroCota).val(), 
 					null,
 					function(){
+						$(idCampoNumeroCota).focus();
 						$(idCampoNumeroCota).val("");
 						$(idCampoPorcentagem).val("");
-						$(idCampoNumeroCota).focus();
 					},	
 					true
 			);
 		}
-		
+		else {
+			$(idCampoPorcentagem).val("");
+		}	
 	}
 };
 
@@ -401,7 +400,10 @@ var COTA_FORNECEDOR = {
 					fornecedores + 
 					"idCota="+ MANTER_COTA.idCota, 
 					null,
-					null,
+					function(mensagens){
+						
+						COTA_FORNECEDOR.carregarFornecedores();
+					},
 					true
 			);
 
@@ -464,7 +466,16 @@ var COTA_CNPJ = {
 	
 	editarCNPJ:function(result){
 		
-		COTA_CNPJ.limparCampos();
+		COTA_CNPJ.carregarDadosCadastraisCnpj(result);
+		
+		MANTER_COTA.tipoCotaSelecionada = MANTER_COTA.tipoCota_CNPJ;
+		
+		MANTER_COTA.popupCota();
+	},
+	
+	carregarDadosCadastraisCnpj:function(result){
+		
+		COTA_CNPJ.limparCampos(result);
 		
 		$( "#tabCota" ).tabs({ selected:0 });
 		TAB_COTA.possuiDadosObrigatorios = true;
@@ -495,10 +506,6 @@ var COTA_CNPJ = {
 		if(result.fimPeriodo){
 			$("#periodoCotaAte").val(result.fimPeriodo.$);
 		}
-		
-		MANTER_COTA.tipoCotaSelecionada = MANTER_COTA.tipoCota_CNPJ;
-		
-		MANTER_COTA.popupCota();
 	},
 		
 	salvarDadosBasico:function (){
@@ -515,6 +522,8 @@ var COTA_CNPJ = {
 					MANTER_COTA.numeroCota = result.numeroCota;
 					
 					TAB_COTA.possuiDadosObrigatorios = true;
+					
+					COTA_CNPJ.carregarDadosCadastraisCnpj(result);
 					
 					exibirMensagemDialog("SUCCESS",["Operação realizada com sucesso."],"");
 
