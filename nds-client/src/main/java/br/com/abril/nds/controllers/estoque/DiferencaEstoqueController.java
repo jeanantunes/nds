@@ -10,7 +10,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -70,7 +69,6 @@ import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
-import br.com.caelum.vraptor.core.Localization;
 import br.com.caelum.vraptor.view.Results;
 
 /**
@@ -84,8 +82,6 @@ import br.com.caelum.vraptor.view.Results;
 public class DiferencaEstoqueController {
 
 	private Result result;
-	
-	private Localization localization;
 	
 	private HttpSession httpSession;
 	
@@ -127,12 +123,10 @@ public class DiferencaEstoqueController {
 	private static final String MODO_INCLUSAO_SESSION_ATTRIBUTE = "modoInclusaoDiferenca";
 
 	public DiferencaEstoqueController(Result result, 
-								 	  Localization localization,
 								 	  HttpSession httpSession,
 								 	  HttpServletResponse httpServletResponse) {
 		
 		this.result = result;
-		this.localization = localization;
 		this.httpSession = httpSession;
 		this.httpServletResponse = httpServletResponse;
 	}
@@ -227,7 +221,7 @@ public class DiferencaEstoqueController {
 		}
 		
 		String valorTotalDiferencasFormatado = 
-			CurrencyUtil.formatarValor(valorTotalDiferencas, getLocale());
+			CurrencyUtil.formatarValorComSimbolo(valorTotalDiferencas);
 		
 		ResultadoDiferencaVO resultadoDiferencaVO = 
 			new ResultadoDiferencaVO(null, qtdeTotalDiferencas, valorTotalDiferencasFormatado);
@@ -978,7 +972,7 @@ public class DiferencaEstoqueController {
 		tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
 		
 		String valorTotalDiferencasFormatado = 
-			CurrencyUtil.formatarValor(valorTotalDiferencas, getLocale());
+			CurrencyUtil.formatarValorComSimbolo(valorTotalDiferencas);
 		
 		ResultadoDiferencaVO resultadoLancamentoDiferenca = 
 			new ResultadoDiferencaVO(tableModel, qtdeTotalDiferencas, valorTotalDiferencasFormatado);
@@ -1077,7 +1071,7 @@ public class DiferencaEstoqueController {
 		tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
 		
 		String valorTotalDiferencasFormatado = 
-			CurrencyUtil.formatarValor(valorTotalDiferencas, getLocale());
+			CurrencyUtil.formatarValorComSimbolo(valorTotalDiferencas);
 		
 		ResultadoDiferencaVO resultadoLancamentoDiferenca = 
 			new ResultadoDiferencaVO(tableModel, qtdeTotalDiferencas, valorTotalDiferencasFormatado);
@@ -1171,7 +1165,7 @@ public class DiferencaEstoqueController {
 		tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
 		
 		String valorTotalDiferencasFormatado = 
-			CurrencyUtil.formatarValor(valorTotalDiferencas, getLocale());
+			CurrencyUtil.formatarValorComSimbolo(valorTotalDiferencas);
 		
 		ResultadoDiferencaVO resultadoDiferencaVO = 
 			new ResultadoDiferencaVO(tableModel, qtdeTotalDiferencas, valorTotalDiferencasFormatado);
@@ -1747,19 +1741,6 @@ public class DiferencaEstoqueController {
 		this.httpSession.removeAttribute(MAPA_RATEIOS_CADASTRADOS_SESSION_ATTRIBUTE);
 		
 		this.httpSession.removeAttribute(MODO_INCLUSAO_SESSION_ATTRIBUTE);
-	}
-	
-	/*
-	 * Obtém o locale da requisição HTTP.
-	 */
-	private Locale getLocale() {
-		
-		if (localization != null) {
-			
-			return localization.getLocale();
-		}
-		
-		return null;
 	}
 	
 	/*

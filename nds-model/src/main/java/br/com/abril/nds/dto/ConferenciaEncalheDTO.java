@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
+
 public class ConferenciaEncalheDTO implements Serializable {
 
 	private static final long serialVersionUID = -6012294358522142934L;
@@ -56,6 +58,12 @@ public class ConferenciaEncalheDTO implements Serializable {
 	
 	private Boolean juramentada;
 
+	/**
+	 * Tipo de chamada de encalhe deste produtoEdicao
+	 */
+	private TipoChamadaEncalhe tipoChamadaEncalhe;
+
+	
 	public Long getIdConferenciaEncalhe() {
 		return idConferenciaEncalhe;
 	}
@@ -222,6 +230,14 @@ public class ConferenciaEncalheDTO implements Serializable {
 
 	public void setPossuiBrinde(boolean possuiBrinde) {
 		this.possuiBrinde = possuiBrinde;
+	}
+
+	public TipoChamadaEncalhe getTipoChamadaEncalhe() {
+		return tipoChamadaEncalhe;
+	}
+
+	public void setTipoChamadaEncalhe(TipoChamadaEncalhe tipoChamadaEncalhe) {
+		this.tipoChamadaEncalhe = tipoChamadaEncalhe;
 	}
 	
 }

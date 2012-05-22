@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
+
 public class ProdutoEdicaoDTO implements Serializable {
 
 	/**
@@ -29,6 +31,12 @@ public class ProdutoEdicaoDTO implements Serializable {
 	private boolean parcial;
 	private Integer dia;
 	private Date dataRecolhimentoDistribuidor;
+	
+	/**
+	 * Tipo de chamada de encalhe deste produtoEdicao
+	 */
+	private TipoChamadaEncalhe tipoChamadaEncalhe;
+	
 	
 	public Long getId() {
 		return id;
@@ -137,6 +145,12 @@ public class ProdutoEdicaoDTO implements Serializable {
 	}
 	public void setDataRecolhimentoDistribuidor(Date dataRecolhimentoDistribuidor) {
 		this.dataRecolhimentoDistribuidor = dataRecolhimentoDistribuidor;
+	}
+	public TipoChamadaEncalhe getTipoChamadaEncalhe() {
+		return tipoChamadaEncalhe;
+	}
+	public void setTipoChamadaEncalhe(TipoChamadaEncalhe tipoChamadaEncalhe) {
+		this.tipoChamadaEncalhe = tipoChamadaEncalhe;
 	}
 	
 }

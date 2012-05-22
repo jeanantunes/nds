@@ -17,34 +17,42 @@ import br.com.caelum.stella.inwords.NumericToWordsConverter;
  */
 public abstract class CurrencyUtil {
 
+	public static final String SIMBOLO_BRL = "R$";
+	
 	/**
-	 * Formata um valor de moeda com ou sem símbolo monetário.
+	 * Formata um valor de moeda sem símbolo monetário.
 	 * 
 	 * @param valor - valor
-	 * @param locale - locale recebido do cliente (necessário para símbolo monetário)
 	 * 
 	 * @return Valor formatado
 	 */
-	public static String formatarValor(Number valor, Locale locale) {
+	public static String formatarValor(Number valor) {
 		
 		if (valor == null) {
+			
 			return null;
 		}
+
+		return new DecimalFormat("#,##0.00").format(valor);
+	}
+	
+	/**
+	 * Formata um valor de moeda com símbolo monetário.
+	 * 
+	 * @param valor - valor
+	 * 
+	 * @return Valor formatado
+	 */
+	public static String formatarValorComSimbolo(Number valor) {
 		
-		DecimalFormat decimalFormat = null;
+		String valorFormatado = formatarValor(valor);
 		
-		if (locale != null) {
-		
-			Currency currency = Currency.getInstance(locale);
-		
-			decimalFormat = new DecimalFormat(currency.getSymbol() + " #,##0.00");
+		if (valorFormatado != null) {
 			
-		} else {
-			
-			decimalFormat = new DecimalFormat("#,##0.00");
+			valorFormatado = SIMBOLO_BRL + " " + valorFormatado; 
 		}
 		
-		return decimalFormat.format(valor);
+		return valorFormatado;
 	}
 	
 	/**
@@ -86,18 +94,6 @@ public abstract class CurrencyUtil {
 	}
 	
 	/**
-	 * Formata um valor de moeda sem símbolo monetário.
-	 * 
-	 * @param valor - valor
-	 * 
-	 * @return Valor formatado
-	 */
-	public static String formatarValor(Number valor) {
-
-		return formatarValor(valor, null);
-	}
-	
-	/**
 	 * Converte uma String de moeda sem símbolo monetário.
 	 * 
 	 * @param valor - valor
@@ -109,8 +105,18 @@ public abstract class CurrencyUtil {
 		return converterValor(valor, null);
 	}
 	
+	/**
+	 * Converte um valor em formato extenso.
+	 * 
+	 * @param valor - valor
+	 * 
+	 * @return Valor formatado
+	 */
 	public static String valorExtenso(BigDecimal valor) {
+		
 		NumericToWordsConverter converter = new NumericToWordsConverter(new FormatoDeReal());  
+		
 		return converter.toWords(valor.doubleValue());
 	}
+	
 }

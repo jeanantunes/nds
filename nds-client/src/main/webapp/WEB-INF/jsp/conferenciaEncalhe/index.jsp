@@ -149,6 +149,8 @@
 					}
 				);
 				
+				$('input[name="qtdExemplaresGrid"]').numeric();
+				
 				$(".outrosVlrsGrid").flexAddData({
 					page: result[1].page, total: result[1].total, rows: result[1].rows
 				});
@@ -221,6 +223,10 @@
 						value.cell.acao = '<a href="javascript:;" onclick="ConferenciaEncalhe.excluirConferencia(' + value.cell.idConferenciaEncalhe + ');">' + imgExclusao + '</a>';
 					}
 				);
+				
+				
+				$('input[name="qtdeInformadaFinalizarConf"]').numeric();
+				$('input[name="precoCapaFinalizarConf"]').numeric();
 				
 				$("#somatorioQtdInformada").text(parseInt(result[10]));
 				$("#somatorioQtdRecebida").text(parseInt(result[11]));
