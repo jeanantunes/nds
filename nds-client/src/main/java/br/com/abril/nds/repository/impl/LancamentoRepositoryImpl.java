@@ -490,6 +490,7 @@ public class LancamentoRepositoryImpl extends
 		sql.append(" lancamento.DATA_LCTO_DISTRIBUIDOR as dataLancamento, ");
 		sql.append(" lancamento.DATA_REC_PREVISTA as dataRecolhimentoPrevista, ");
 		sql.append(" lancamento.DATA_REC_DISTRIB as dataRecolhimentoDistribuidor, ");
+		sql.append(" lancamento.DATA_REC_DISTRIB as novaData, ");
 		sql.append(" produto.EDITOR_ID as idEditor, ");
 		sql.append(" editor.NOME as nomeEditor, ");
 
@@ -618,12 +619,12 @@ public class LancamentoRepositoryImpl extends
 	
 	private String getConsultaExpectativaEncalheData() {
 		
-		String sql = " select analitica.dataRecolhimentoDistribuidor, "
+		String sql = " select analitica.dataRecolhimentoPrevista, "
 				   + " sum(analitica.expectativaEncalhe) "
 				   + " from "
 				   + " ( "
 				   + " select "
-				   + " lancamento.DATA_REC_DISTRIB as dataRecolhimentoDistribuidor, "
+				   + " lancamento.DATA_REC_PREVISTA as dataRecolhimentoPrevista, "
 				   + " case  "
 				   + " when tipoProduto.GRUPO_PRODUTO = :grupoCromo "
 				   + " and periodoLancamentoParcial.TIPO<> :tipoParcial then "
@@ -637,7 +638,7 @@ public class LancamentoRepositoryImpl extends
 		
 		sql += clausulaFrom;
 		sql += " ) as analitica ";
-		sql += " group by analitica.dataRecolhimentoDistribuidor ";
+		sql += " group by analitica.dataRecolhimentoPrevista ";
 		
 		return sql;
 	}
@@ -667,7 +668,9 @@ public class LancamentoRepositoryImpl extends
 													  .addScalar("idFornecedor", StandardBasicTypes.LONG)
 													  .addScalar("idProdutoEdicao", StandardBasicTypes.LONG)
 													  .addScalar("possuiBrinde", StandardBasicTypes.BOOLEAN)
-													  .addScalar("possuiChamada", StandardBasicTypes.BOOLEAN);
+													  .addScalar("possuiChamada", StandardBasicTypes.BOOLEAN)
+													  .addScalar("sequencia", StandardBasicTypes.INTEGER)
+													  .addScalar("novaData");
 
 		query.setParameterList("idsFornecedores", fornecedores);
 		query.setParameter("periodoInicial", periodoRecolhimento.getDataInicial());

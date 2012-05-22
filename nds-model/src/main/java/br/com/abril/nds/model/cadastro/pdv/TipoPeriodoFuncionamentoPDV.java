@@ -19,7 +19,7 @@ public enum TipoPeriodoFuncionamentoPDV {
 	TERCA_FEIRA("Terça-Feira"), 
 	QUARTA_FEIRA("Quarta-Feira"),
 	QUINTA_FEIRA("Quinta-Feira"), 
-	SEXTA_FEIRA("Sexta-Deira"), 
+	SEXTA_FEIRA("Sexta-Feira"), 
 	SABADO("Sábado");
 	
 

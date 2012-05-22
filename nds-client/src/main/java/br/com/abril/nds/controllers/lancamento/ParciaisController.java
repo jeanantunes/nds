@@ -211,7 +211,7 @@ public class ParciaisController {
 
 		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaParciais));
 		
-		tableModel.setPage(1);
+		tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
 		
 		tableModel.setTotal(totalRegistros);
 		
