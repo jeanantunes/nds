@@ -67,6 +67,12 @@ public class Distribuidor {
 	private List<TelefoneDistribuidor> telefones = new ArrayList<TelefoneDistribuidor>();
 	
 	/**
+	 * Flag que indica se o distribuidor aceita a conferência de um encalhe juramentado.
+	 */
+	@Column(name = "ACEITA_JURAMENTADO")
+	private boolean aceitaJuramentado;
+	
+	/**
 	 * Capacidade de distribuição diária do distribuidor, em número de exemplares
 	 */
 	@Column(name = "CAPACIDADE_DISTRIBUICAO", nullable = false)
@@ -344,6 +350,22 @@ public class Distribuidor {
 		this.qtdDiasEncalheAtrasadoAceitavel = qtdDiasEncalheAtrasadoAceitavel;
 	}
 
+	/**
+	 * Obtém aceitaJuramentado
+	 *
+	 * @return boolean
+	 */
+	public boolean isAceitaJuramentado() {
+		return aceitaJuramentado;
+	}
 
+	/**
+	 * Atribuí aceitaJuramentado
+	 * @param aceitaJuramentado 
+	 */
+	public void setAceitaJuramentado(boolean aceitaJuramentado) {
+		this.aceitaJuramentado = aceitaJuramentado;
+	}
+	
 	
 }
