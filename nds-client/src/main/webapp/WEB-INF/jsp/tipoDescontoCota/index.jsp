@@ -310,22 +310,50 @@
 		}
 		
 		$.each(resultado.rows, function(index, row) {
+						
 			
-			var linkAprovar = '<a href="javascript:;" onclick="aprovarMovimento(' + row.cell.id + ');" style="cursor:pointer">' +
-					     	  	'<img title="Aprovar" src="${pageContext.request.contextPath}/images/ico_check.gif" hspace="5" border="0px" />' +
-					  		  '</a>';
-			
-			var linkRejeitar = '<a href="javascript:;" onclick="rejeitarMovimento(' + row.cell.id + ');" style="cursor:pointer">' +
-							   	 '<img title="Rejeitar" src="${pageContext.request.contextPath}/images/ico_excluir.gif" hspace="5" border="0px" />' +
+			var linkExcluir = '<a href="javascript:;" onclick="exibirDialogExclusao(' + row.cell.id + ');" style="cursor:pointer">' +
+							   	 '<img title="Excluir Desconto" src="${pageContext.request.contextPath}/images/ico_excluir.gif" hspace="5" border="0px" />' +
 							   '</a>';
 			
-			row.cell.acao = linkAprovar + linkRejeitar;
+			row.cell.acao = linkExcluir;
 		});
 		
 		$(".grids").show();
 		
 		return resultado;
 	}
+	
+	function exibirDialogExclusao(idDesconto){		
+		$("#dialog-excluirCota" ).dialog({
+			resizable: false,
+			height:'auto',
+			width:250,
+			modal: true,
+			buttons: {
+				"Confirmar": function() {
+					excluirDesconto(idDesconto);
+					$( this ).dialog( "close" );
+				},
+				"Cancelar": function() {
+					$( this ).dialog( "close" );
+				}
+			}
+		});
+	}
+	
+	function excluirDesconto(idDesconto){		
+		$.postJSON(contextPath + "/administracao/tipoDescontoCota/excluirDesconto",
+				"idDesconto="+idDesconto, 
+				function(){
+					pesquisar();
+				}
+		);
+	}
+	
+	
+	
+	
 	
 	function limparTelaCadastro() {
 		//Tela Geral
@@ -356,6 +384,9 @@
 </head>
 
 <body>
+	<div id="dialog-excluirCota" title="Atenção" style="display:none">
+		<p>Confirmar exclusão Desconto ?</p>
+	</div>
 
 	<div id="dialog-geral" title="Novo Tipo de Desconto Geral" style="display:none;">    
 	    <table width="350" border="0" cellpadding="2" cellspacing="1" class="filtro">
@@ -380,7 +411,7 @@
 	    <table width="350" border="0" cellpadding="2" cellspacing="1" class="filtro">
 	            <tr>
 	              <td width="100">Cota:</td>
-	              <td width="239"><input type="text" name="cotaEspecifica" id="cotaEspecifica" onchange="cota.pesquisarPorNumeroCota('#cotaEspecifica', '#nomeEspecifico');"  style="width:100px; float:left; margin-right:5px;" /><span class="classPesquisar"><a href="javascript:;">&nbsp;</a></span></td>
+	              <td width="239"><input type="text" name="cotaEspecifica" id="cotaEspecifica" onchange="cota.pesquisarPorNumeroCota('#cotaEspecifica', '#nomeEspecifico');"  style="width:100px; float:left; margin-right:5px;" /></td>
 	            </tr>
 	            <tr>
 	              <td>Nome:</td>
@@ -550,7 +581,7 @@
 				align : 'left'
 			}, {
 				display : 'Ação',
-				name : 'usuario',
+				name : 'acao',
 				width : 30,
 				sortable : true,
 				align : 'center'
@@ -600,7 +631,7 @@
 				align : 'left'
 			}, {
 				display : 'Ação',
-				name : 'usuario',
+				name : 'acao',
 				width : 30,
 				sortable : true,
 				align : 'center'
@@ -656,7 +687,7 @@
 				align : 'left'
 			}, {
 				display : 'Ação',
-				name : 'usuario',
+				name : 'acao',
 				width : 30,
 				sortable : true,
 				align : 'center'

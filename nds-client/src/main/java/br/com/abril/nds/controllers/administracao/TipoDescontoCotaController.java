@@ -16,10 +16,8 @@ import br.com.abril.nds.client.vo.TipoDescontoCotaVO;
 import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.dto.CotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaDTO;
-import br.com.abril.nds.dto.filtro.FiltroParciaisDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaDTO.OrdemColuna;
 import br.com.abril.nds.dto.filtro.FiltroTipoDescontoCotaDTO;
-import br.com.abril.nds.dto.filtro.FiltroTipoDescontoCotaDTO.OrdenacaoColunaConsulta;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.EspecificacaoDesconto;
@@ -65,8 +63,6 @@ public class TipoDescontoCotaController {
 	private HttpSession session;
 	
 	private static final String FILTRO_PESQUISA_TIPO_DESCONTO_COTA_SESSION_ATTRIBUTE = "filtroPesquisaTipoDescontoCota";
-	private static final String QTD_REGISTROS_PESQUISA_TIPO_DESCONTO_COTA_SESSION_ATTRIBUTE = "qtdRegistrosPesquisaTipoDescontoCota";
-
 	
 	public TipoDescontoCotaController(Result result, HttpSession session) {
 		this.result = result; 
@@ -152,15 +148,23 @@ public class TipoDescontoCotaController {
 		if (listaDescontoCotaVO == null || listaDescontoCotaVO.isEmpty()) {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
 		} else {
+			
 			int qtdeTotalRegistros = listaDescontoCotaVO.size();
+			
+			List<TipoDescontoCotaVO> listaTipoDescontoCOtaPaginada =
+					PaginacaoUtil.paginarEOrdenarEmMemoria(
+							listaDescontoCotaVO, filtro.getPaginacao(), filtro.getOrdenacaoColuna().toString());
 		
 			TableModel<CellModelKeyValue<TipoDescontoCotaVO>> tableModel =
 					new TableModel<CellModelKeyValue<TipoDescontoCotaVO>>();
 	
-			tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaDescontoCotaVO));
+			tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaTipoDescontoCOtaPaginada));
 			tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
 			tableModel.setTotal(qtdeTotalRegistros);
-	
+			
+//			this.session.setAttribute(
+//					FILTRO_PESQUISA_TIPO_DESCONTO_COTA_SESSION_ATTRIBUTE, listaTipoDescontoCOtaPaginada);
+			
 			result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
 		}
 	}
@@ -168,6 +172,7 @@ public class TipoDescontoCotaController {
 	@Post
 	@Path("/pesquisarDescontoEspecifico")
 	public void pesquisarDescontoEspecifico(String cotaEspecifica, String nomeEspecifico, String sortorder, String sortname, int page, int rp) throws Exception {
+		
 		FiltroCotaDTO filtroCotaDTO = popularFiltroCotaDTO(cotaEspecifica,	nomeEspecifico);
 		List<CotaDTO> listaDeCotas = this.cotaService.obterCotas(filtroCotaDTO);
 		
@@ -190,7 +195,7 @@ public class TipoDescontoCotaController {
 			TableModel<CellModelKeyValue<TipoDescontoCotaVO>> tableModel =
 					new TableModel<CellModelKeyValue<TipoDescontoCotaVO>>();
 	
-			tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaDescontoCotaVO));
+			tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaDescontoCotaVO));			
 			//tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
 			tableModel.setTotal(qtdeTotalRegistros);
 	
@@ -232,6 +237,27 @@ public class TipoDescontoCotaController {
 			tableModel.setTotal(qtdeTotalRegistros);
 	
 			result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
+		}
+	}
+	@Post
+	@Path("/excluirDesconto")
+	public void excluirDesconto(long idDesconto){
+		TipoDescontoCota desconto = this.tipoDescontoCotaService.obterTipoDescontoCotaPorId(idDesconto);
+		
+		Date dataAtual = new Date();		
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		String hoje = sdf.format(dataAtual);
+		
+		Date dataDesconto = desconto.getDataAlteracao();
+		String dataDescontoFormatada = sdf.format(dataDesconto);
+		
+		if(dataDescontoFormatada.equals(hoje)){
+			this.tipoDescontoCotaService.excluirDesconto(desconto);			
+			result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação realizada com sucesso."),
+					Constantes.PARAM_MSGS).recursive().serialize();			
+		}else{
+			result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.WARNING, "Só pode excluir desconto de data vigente!"),
+					Constantes.PARAM_MSGS).recursive().serialize();
 		}
 	}
 

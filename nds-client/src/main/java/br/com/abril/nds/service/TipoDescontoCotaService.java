@@ -18,11 +18,13 @@ public interface TipoDescontoCotaService {
 	
 	void atualizarDistribuidores(BigDecimal desconto);
 	
-	List<TipoDescontoCotaVO> obterTipoDescontoGeral();
-
 	int obterUltimoSequencial();
 	
 	List<TipoDescontoCotaVO> obterTipoDescontoCota(EspecificacaoDesconto especificacaoDesconto);
+	
+	void excluirDesconto(TipoDescontoCota tipoDescontoCota);
+	
+	TipoDescontoCota obterTipoDescontoCotaPorId(long idDesconto);
 	
 }
 	

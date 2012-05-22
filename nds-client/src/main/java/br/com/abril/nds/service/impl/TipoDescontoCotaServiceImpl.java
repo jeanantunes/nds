@@ -47,22 +47,6 @@ public class TipoDescontoCotaServiceImpl implements TipoDescontoCotaService {
 		}
 	}
 	
-	@Transactional
-	@Override
-	public List<TipoDescontoCotaVO> obterTipoDescontoGeral() {
-		List<TipoDescontoCota> lista =  this.tipoDescontoCotaRepository.buscarTodos();
-		List<TipoDescontoCotaVO> listaVO = new ArrayList<TipoDescontoCotaVO>();
-		for(TipoDescontoCota desconto: lista){
-			TipoDescontoCotaVO vo = new TipoDescontoCotaVO();			
-			vo.setDataAlteracao(DateUtil.formatarData(desconto.getDataAlteracao(),
-					  Constantes.DATE_PATTERN_PT_BR));
-			vo.setDesconto(desconto.getDesconto().toString());
-			vo.setUsuario(desconto.getUsuario());
-			vo.setSeq(desconto.getSequencial().toString());
-			listaVO.add(vo);
-		}		
-		return listaVO;
-	}
 
 	@Override
 	@Transactional
@@ -76,7 +60,8 @@ public class TipoDescontoCotaServiceImpl implements TipoDescontoCotaService {
 		List<TipoDescontoCota> lista = this.tipoDescontoCotaRepository.obterTipoDescontosCotas(especificacaoDesconto);
 		List<TipoDescontoCotaVO> listaVO = new ArrayList<TipoDescontoCotaVO>();
 		for(TipoDescontoCota desconto: lista){
-			TipoDescontoCotaVO vo = new TipoDescontoCotaVO();			
+			TipoDescontoCotaVO vo = new TipoDescontoCotaVO();
+			vo.setId(desconto.getId().toString());
 			vo.setDataAlteracao(DateUtil.formatarData(desconto.getDataAlteracao(),
 					  Constantes.DATE_PATTERN_PT_BR));
 			vo.setDesconto(desconto.getDesconto().toString());
@@ -88,6 +73,19 @@ public class TipoDescontoCotaServiceImpl implements TipoDescontoCotaService {
 			listaVO.add(vo);
 		}		
 		return listaVO;
+	}
+
+	@Override
+	@Transactional
+	public void excluirDesconto(TipoDescontoCota tipoDescontoCota) {		
+		this.tipoDescontoCotaRepository.remover(tipoDescontoCota);
+		
+	}
+
+	@Override
+	@Transactional
+	public TipoDescontoCota obterTipoDescontoCotaPorId(long idDesconto) {		
+		return this.tipoDescontoCotaRepository.buscarPorId(idDesconto);
 	}
 
 }
