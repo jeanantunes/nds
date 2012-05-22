@@ -18,9 +18,10 @@ public class EnderecoEditor extends AssociacaoEndereco {
 	@GeneratedValue(generator = "ENDERECO_EDITOR_SEQ")
 	@Column(name = "ID")
 	private Long id;
+	
 	@ManyToOne(optional = false)
-	@JoinColumn(name = "COTA_ID")
-	private Cota cota;
+	@JoinColumn(name = "EDITOR_ID")
+	private Editor editor;
 	
 	public EnderecoEditor() {
 		
@@ -41,17 +42,17 @@ public class EnderecoEditor extends AssociacaoEndereco {
 	}
 
 	/**
-	 * @return the cota
+	 * @return the editor
 	 */
-	public Cota getCota() {
-		return cota;
+	public Editor getEditor() {
+		return editor;
 	}
 
 	/**
-	 * @param cota the cota to set
+	 * @param editor the editor to set
 	 */
-	public void setCota(Cota cota) {
-		this.cota = cota;
+	public void setEditor(Editor editor) {
+		this.editor = editor;
 	}
 
 }

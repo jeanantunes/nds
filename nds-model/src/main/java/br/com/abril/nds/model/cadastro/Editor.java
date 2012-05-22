@@ -35,7 +35,7 @@ public class Editor {
 	inverseJoinColumns = {@JoinColumn(name = "FORNECEDOR_ID")})
 	private Set<Fornecedor> fornecedores = new HashSet<Fornecedor>();
 	
-	@OneToMany(mappedBy = "cota")
+	@OneToMany(mappedBy = "editor")
 	private Set<EnderecoEditor> enderecos = new HashSet<EnderecoEditor>();
 
 	public Long getId() {
