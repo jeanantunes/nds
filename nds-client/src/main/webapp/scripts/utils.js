@@ -30,6 +30,8 @@ $(document).ready(function(){
 
 function exibirMensagem(tipoMensagem, mensagens) {
 
+	clearMessageTimeout();
+	
 	var divSuccess = $("#effectSuccess");
 	var divWarning = $("#effectWarning");
 	var divError = $("#effectError");
@@ -44,15 +46,17 @@ function exibirMensagem(tipoMensagem, mensagens) {
 						   divError, textError);
 }
 
-function exibirMensagemDialog(tipoMensagem, mensagens,idDialog) {
+function exibirMensagemDialog(tipoMensagem, mensagens, idDialog) {
 	
-	var divSuccess = $("div[name='"+idDialog+"effectSuccessDialog']");
-	var divWarning = $("div[name='"+idDialog+"effectWarningDialog']");
-	var divError = $("div[name='"+idDialog+"effectErrorDialog']");
+	clearMessageDialogTimeout(idDialog);
 	
-	var textSuccess = $("b[name='"+idDialog+"idTextSuccessDialog']");
-	var textWarning = $("b[name='"+idDialog+"idTextWarningDialog']");
-	var textError = $("b[name='"+idDialog+"idTextErrorDialog']");
+	var divSuccess = $("div[name='" + idDialog + "effectSuccessDialog']");
+	var divWarning = $("div[name='" + idDialog + "effectWarningDialog']");
+	var divError = $("div[name='" + idDialog + "effectErrorDialog']");
+	
+	var textSuccess = $("b[name='" + idDialog + "textSuccessDialog']");
+	var textWarning = $("b[name='" + idDialog + "textWarningDialog']");
+	var textError = $("b[name='" + idDialog + "textErrorDialog']");
 	
 	montarExibicaoMensagem(true, tipoMensagem, mensagens,
 						   divSuccess, textSuccess,
@@ -143,9 +147,9 @@ function clearMessageDialogTimeout(idDialog) {
 		dialog = idDialog;
 	}
 	
-	$("div[name='"+dialog+"effectSuccessDialog']").hide();
-	$("div[name='"+dialog+"effectWarningDialog']").hide();
-	$("div[name='"+dialog+"effectErrorDialog']").hide();
+	$("div[name='" + dialog + "effectSuccessDialog']").hide();
+	$("div[name='" + dialog + "effectWarningDialog']").hide();
+	$("div[name='" + dialog + "effectErrorDialog']").hide();
 }
 
 function montarComboBox(result, incluirTodos) {
@@ -184,14 +188,14 @@ function removeMascaraPriceFormat(field) {
 
 function clickLineFlexigrid(inputCheck, select) {
 	
-	var linha = $(inputCheck).parents()[2];
+	var line = $(inputCheck).parents()[2];
 	
 	if (select) {
 		
-		$(linha).attr("class", "erow trSelected");
+		$(line).addClass("trSelected");
 		
 	} else {
 		
-		$(linha).attr("class", "erow");
+		$(line).removeClass("trSelected");
 	}
 }
