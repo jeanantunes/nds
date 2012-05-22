@@ -162,7 +162,7 @@ var MANTER_COTA = {
 						MANTER_COTA.montarCombo(result.listaClassificacao,"#classificacaoSelecionada");
 						
 						if(result.tipoPessoa == MANTER_COTA.tipoCota_CPF){
-							COTA_CPF.editarCPF();
+							COTA_CPF.editarCPF(result);
 						}
 						else {
 							COTA_CNPJ.editarCNPJ(result);
@@ -200,6 +200,7 @@ var MANTER_COTA = {
 		}
 		else {
 			
+			COTA_CPF.salvarDadosBasico();
 		}
 	},
 	
@@ -250,9 +251,20 @@ var MANTER_COTA = {
 		
 		$("#numeroCnpj").mask("99.999.999/9999-99");
 		
+		$("#numeroCPF").mask("999.999.999-99");
+				
 		$('input[id^="periodoCota"]').mask("99/99/9999");
 		
+		$('input[id^="dataNascimento"]').mask("99/99/9999");
+		
 		$('input[id^="periodoCota"]').datepicker({
+			showOn: "button",
+			buttonImage: contextPath+"/images/calendar.gif",
+			buttonImageOnly: true,
+			dateFormat: "dd/mm/yy"
+		});
+		
+		$('input[id^="dataNascimento"]').datepicker({
 			showOn: "button",
 			buttonImage: contextPath+"/images/calendar.gif",
 			buttonImageOnly: true,
@@ -266,7 +278,9 @@ var MANTER_COTA = {
 			modal: true,
 			buttons: {
 				"Confirmar": function() {
-					TAB_COTA.funcaoSalvar();
+					if(TAB_COTA.funcaoSalvar){
+						TAB_COTA.funcaoSalvar();
+					}
 				},
 				"Cancelar": function() {
 					MANTER_COTA.fecharModalCadastroCota = false;
@@ -434,10 +448,20 @@ var COTA_FORNECEDOR = {
 };
 
 var COTA_CNPJ = {	
+	
+	tratarExibicaoDadosCadastrais:function(){
+		
+		$("#dadosCNPJ").show();
+		$("#dadosCPF").hide();
+		$("#idTabSocio").parent().show();
+		$( "#tabCota" ).tabs({ selected: 0 });
+		
+	},	
 		
 	novoCNPJ:function(){
 		
-		$( "#tabCota" ).tabs({ selected: 0 });
+		COTA_CNPJ.tratarExibicaoDadosCadastrais();
+		
 		TAB_COTA.possuiDadosObrigatorios = false;
 		
 		MANTER_COTA.tipoCotaSelecionada = MANTER_COTA.tipoCota_CNPJ;
@@ -465,6 +489,8 @@ var COTA_CNPJ = {
 	},
 	
 	editarCNPJ:function(result){
+		
+		COTA_CNPJ.tratarExibicaoDadosCadastrais();
 		
 		COTA_CNPJ.carregarDadosCadastraisCnpj(result);
 		
@@ -566,15 +592,10 @@ var COTA_CNPJ = {
 				function(result){
 
 					if(result.email){$("#email").val(result.email);}
-					
 					if(result.razaoSocial){$("#razaoSocial").val(result.razaoSocial);}
-					
 					if(result.nomeFantasia){$("#nomeFantasia").val(result.nomeFantasia);}
-					
 					if(result.inscricaoEstadual){$("#inscricaoEstadual").val(result.inscricaoEstadual);}
-					
 					if(result.inscricaoMunicipal){$("#inscricaoMunicipal").val(result.inscricaoMunicipal);}
-
 				},
 				null,
 				true
@@ -584,22 +605,172 @@ var COTA_CNPJ = {
 
 var COTA_CPF = {
 	
+	tratarExibicaoDadosCadastrais:function(){
+		
+		$("#dadosCPF").show();
+		$("#dadosCNPJ").hide();
+		$("#idTabSocio").parent().hide();
+		$( "#tabCota" ).tabs({ selected: 0 });
+	},		
+		
 	novoCPF:function(){
 		
-		alert("Operação em desenvolvimento!!");
-		/*
-		$("#tabCota" ).tabs( "option", "disabled", [9] );
-		
 		MANTER_COTA.tipoCotaSelecionada = MANTER_COTA.tipoCota_CPF;
-		MANTER_COTA.popupCota();*/
+		MANTER_COTA.idCota="";
+		MANTER_COTA.numeroCota="";
+		
+		COTA_CPF.tratarExibicaoDadosCadastrais();
+		COTA_CPF.limparCampos();
+		
+		TAB_COTA.possuiDadosObrigatorios = false;
+		
+		$.postJSON(
+				contextPath + "/cadastro/cota/incluirNovoCPF",
+				null, 
+				function(result){
+					
+					var dados = result;
+					
+					$("#dataInclusaoCPF").html(dados.dataInicioAtividade);
+					$("#numeroCotaCPF").val(dados.numeroSugestaoCota);
+					$("#statusCPF").val(dados.status);
+					
+					MANTER_COTA.montarCombo(dados.listaClassificacao,"#classificacaoSelecionadaCPF");
+					
+					MANTER_COTA.popupCota();
+				}
+		);
 	},
 
-	editarCPF:function(){
-	
-		MANTER_COTA.tipoCotaSelecionada = MANTER_COTA.tipoCota_CPF;
-		MANTER_COTA.popupCota();
-	}
+	editarCPF:function(result){
 		
+		COTA_CPF.tratarExibicaoDadosCadastrais();
+		
+		COTA_CPF.carregarDadosCpf(result);
+		
+		MANTER_COTA.tipoCotaSelecionada = MANTER_COTA.tipoCota_CPF;
+		
+		MANTER_COTA.popupCota();
+	},
+	
+	carregarDadosCpf:function(result){
+		
+		COTA_CPF.limparCampos();
+		
+		$( "#tabCota" ).tabs({ selected:0 });
+		TAB_COTA.possuiDadosObrigatorios = true;
+		
+		$("#numeroCotaCPF").val(result.numeroCota);
+		$("#emailCPF").val(result.email);
+		$("#statusCPF").val(result.status);
+		$("#dataInclusaoCPF").html(result.dataInclusao.$);
+		$("#nomePessoaCPF").val(result.nomePessoa);
+		$("#numeroCPF").val(result.numeroCPF);
+		$("#numeroRG").val(result.numeroRG);
+		$("#dataNascimento").val(result.dataNascimento.$);
+		$("#orgaoEmissor").val(result.orgaoEmissor);
+		$("#estadoSelecionado").val(result.estadoSelecionado);
+		$("#estadoCivilSelecionado").val(result.estadoCivilSelecionado);
+		$("#sexoSelecionado").val(result.sexoSelecionado);
+		$("#nacionalidade").val(result.nacionalidade);
+		$("#natural").val(result.natural);
+		$("#emailNFCPF").val(result.emailNF);
+		$("#emiteNFECPF").attr("checked", (result.emiteNFE == true)?"checked":null);
+		$("#classificacaoSelecionadaCPF").val(result.classificacaoSelecionada);
+		$("#historicoPrimeiraCotaCPF").val(result.historicoPrimeiraCota);
+		$("#historicoPrimeiraPorcentagemCPF").val( eval( result.historicoPrimeiraPorcentagem));
+		$("#historicoSegundaCotaCPF").val(result.historicoSegundaCota);
+		$("#historicoSegundaPorcentagemCPF").val( eval( result.historicoSegundaPorcentagem));
+		$("#historicoTerceiraCotaCPF").val(result.historicoTerceiraCota);
+		$("#historicoTerceiraPorcentagemCPF").val( eval( result.historicoTerceiraPorcentagem));
+		
+		if(result.inicioPeriodo){
+			$("#periodoCotaDeCPF").val(result.inicioPeriodo.$);
+		}
+		
+		if(result.fimPeriodo){
+			$("#periodoCotaAteCPF").val(result.fimPeriodo.$);
+		}
+	},
+	
+	salvarDadosBasico:function (){
+
+		var formData = $("#formDadosBasicoCpf").serializeArray();
+		
+		formData.push({name:"cotaDTO.idCota",value: MANTER_COTA.idCota});
+		
+		$.postJSON(contextPath + "/cadastro/cota/salvarCotaCPF",
+				formData , 
+				function(result){
+			
+					MANTER_COTA.idCota = result.idCota;
+					MANTER_COTA.numeroCota = result.numeroCota;
+					
+					TAB_COTA.possuiDadosObrigatorios = true;
+					
+					COTA_CPF.carregarDadosCpf(result);
+					
+					exibirMensagemDialog("SUCCESS",["Operação realizada com sucesso."],"");
+
+				},
+				null,
+				true
+		);
+		
+	},
+	carregarDadosCPF: function(idCampo){
+		
+		$.postJSON(contextPath + "/cadastro/cota/obterDadosCPF",
+				"numeroCPF="+$(idCampo).val() , 
+				function(result){
+					
+					if(result.email)$("#emailCPF").val(result.email);
+					if(result.nomePessoa)$("#nomePessoaCPF").val(result.nomePessoa);
+					if(result.numeroRG)$("#numeroRG").val(result.numeroRG);
+					if(result.dataNascimento)$("#dataNascimento").val(result.dataNascimento.$);
+					if(result.orgaoEmissor)$("#orgaoEmissor").val(result.orgaoEmissor);
+					if(result.estadoSelecionado)$("#estadoSelecionado").val(result.estadoSelecionado);
+					if(result.estadoCivilSelecionado)$("#estadoCivilSelecionado").val(result.estadoCivilSelecionado);
+					if(result.sexoSelecionado)$("#sexoSelecionado").val(result.sexoSelecionado);
+					if(result.nacionalidade)$("#nacionalidade").val(result.nacionalidade);
+					if(result.natural)$("#natural").val(result.natural);
+				},
+				null,
+				true
+		);
+	},
+	
+	limparCampos:function(){
+		
+		$("#numeroCotaCPF").val("");
+		$("#emailCPF").val("");
+		$("#statusCPF").val("");
+		$("#dataInclusaoCPF").html("");
+		$("#nomePessoaCPF").val("");
+		$("#numeroCPF").val("");
+		$("#numeroRG").val("");
+		$("#dataNascimento").val("");
+		$("#orgaoEmissor").val("");
+		$("#estadoSelecionado").val("");
+		$("#estadoCivilSelecionado").val("");
+		$("#sexoSelecionado").val("");
+		$("#nacionalidade").val("");
+		$("#natural").val("");
+		$("#emailNFCPF").val("");
+		$("#emiteNFECPF").attr("checked", null);
+		$("#classificacaoSelecionadaCPF").val("");
+		$("#historicoPrimeiraCotaCPF").val("");
+		$("#historicoPrimeiraPorcentagemCPF").val("");
+		$("#historicoSegundaCotaCPF").val("");
+		$("#historicoSegundaPorcentagemCPF").val("");
+		$("#historicoTerceiraCotaCPF").val("");
+		$("#historicoTerceiraPorcentagemCPF").val("");
+		$("#periodoCotaDeCPF").val("");
+		$("#periodoCotaAteCPF").val("");
+		
+		clearMessageDialogTimeout(null);
+	},
+	
 };
 
 var SOCIO_COTA = {

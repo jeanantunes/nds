@@ -57,6 +57,7 @@ import br.com.abril.nds.repository.EnderecoRepository;
 import br.com.abril.nds.repository.HistoricoNumeroCotaRepository;
 import br.com.abril.nds.repository.HistoricoSituacaoCotaRepository;
 import br.com.abril.nds.repository.PdvRepository;
+import br.com.abril.nds.repository.PessoaFisicaRepository;
 import br.com.abril.nds.repository.PessoaJuridicaRepository;
 import br.com.abril.nds.repository.ReferenciaCotaRepository;
 import br.com.abril.nds.repository.SocioCotaRepository;
@@ -124,6 +125,9 @@ public class CotaServiceImpl implements CotaService {
 	
 	@Autowired
 	private PessoaJuridicaRepository pessoaJuridicaRepository;
+	
+	@Autowired
+	private PessoaFisicaRepository pessoaFisicaRepository;
 	
 	@Autowired
 	private PdvRepository pdvRepository;
@@ -644,8 +648,8 @@ public class CotaServiceImpl implements CotaService {
 		cotaDTO.setNumeroCota(cota.getNumeroCota());
 		cotaDTO.setClassificacaoSelecionada(cota.getClassificacaoEspectativaFaturamento());
 		cotaDTO.setDataInclusao(cota.getInicioAtividade());
-		cotaDTO.setEmailNF(cota.getParametrosCotaNotaFiscalEletronica().getEmailNotaFiscalEletronica());
-		cotaDTO.setEmiteNFE(cota.getParametrosCotaNotaFiscalEletronica().getEmiteNotaFiscalEletronica());
+		cotaDTO.setEmailNF((cota.getParametrosCotaNotaFiscalEletronica()!= null)?cota.getParametrosCotaNotaFiscalEletronica().getEmailNotaFiscalEletronica():"");
+		cotaDTO.setEmiteNFE((cota.getParametrosCotaNotaFiscalEletronica()!= null)?cota.getParametrosCotaNotaFiscalEletronica().getEmiteNotaFiscalEletronica():false);
 		cotaDTO.setStatus(cota.getSituacaoCadastro());
 		
 		this.atribuirDadosPessoaCota(cotaDTO, cota.getPessoa());
@@ -670,6 +674,23 @@ public class CotaServiceImpl implements CotaService {
 			cotaDTO.setNomeFantasia(pessoaJ.getNomeFantasia());
 			cotaDTO.setRazaoSocial(pessoaJ.getRazaoSocial());
 			cotaDTO.setTipoPessoa(TipoPessoa.JURIDICA);
+		}
+		
+		else if (pessoa instanceof PessoaFisica){
+			
+			PessoaFisica pessoaF = (PessoaFisica) pessoa;
+			cotaDTO.setNomePessoa(pessoaF.getNome());
+			cotaDTO.setEmail(pessoaF.getEmail());
+			cotaDTO.setNumeroRG(pessoaF.getRg());
+			cotaDTO.setDataNascimento(pessoaF.getDataNascimento());
+			cotaDTO.setOrgaoEmissor(pessoaF.getOrgaoEmissor());
+			cotaDTO.setEstadoSelecionado(pessoaF.getUfOrgaoEmissor());
+			cotaDTO.setEstadoCivilSelecionado(pessoaF.getEstadoCivil());
+			cotaDTO.setSexoSelecionado(pessoaF.getSexo());
+			cotaDTO.setNacionalidade(pessoaF.getNacionalidade());
+			cotaDTO.setNatural(pessoaF.getNatural());
+			cotaDTO.setNumeroCPF(pessoaF.getCpf());
+			cotaDTO.setTipoPessoa(TipoPessoa.FISICA);
 		}
 	}
 	
@@ -823,7 +844,7 @@ public class CotaServiceImpl implements CotaService {
 		
 		if(TipoPessoa.FISICA.equals(cotaDto.getTipoPessoa())){
 			
-			CPFValidator cpfValidator = new CPFValidator();
+			CPFValidator cpfValidator = new CPFValidator(true);
 			try{
 				cpfValidator.assertValid(cotaDto.getNumeroCPF());
 				
@@ -902,6 +923,43 @@ public class CotaServiceImpl implements CotaService {
 				mensagensValidacao.add("O preenchimento do campo [Inscrição Estadual] é obrigatório!");
 			}
 		}
+		
+		if(TipoPessoa.FISICA.equals(cotaDto.getTipoPessoa())){
+			
+			if(cotaDto.getNomePessoa() == null || cotaDto.getNomePessoa().isEmpty()){
+				mensagensValidacao.add("O preenchimento do campo [Nome] é obrigatório!");
+			}
+			
+			if(cotaDto.getNumeroCPF() == null || cotaDto.getNumeroCPF().isEmpty()){
+				mensagensValidacao.add("O preenchimento do campo [CPF] é obrigatório!");
+			}
+			
+			if(cotaDto.getNumeroRG() == null || cotaDto.getNumeroRG().isEmpty()){
+				mensagensValidacao.add("O preenchimento do campo [R. G.] é obrigatório!");
+			}
+			
+			if(cotaDto.getDataNascimento() == null){
+				mensagensValidacao.add("O preenchimento do campo [Data Nascimento] é obrigatório!");
+			}
+			
+			if(cotaDto.getOrgaoEmissor() == null ||  cotaDto.getOrgaoEmissor().isEmpty()){
+				mensagensValidacao.add("O preenchimento do campo [Orgão Emissor] é obrigatório!");
+			}
+			
+			if(cotaDto.getEstadoSelecionado() == null || cotaDto.getEstadoSelecionado().isEmpty()){
+				mensagensValidacao.add("O preenchimento do campo [UF] é obrigatório!");
+			}
+			
+			if(cotaDto.getEstadoCivilSelecionado() == null){
+				mensagensValidacao.add("O preenchimento do campo [Estado Civil] é obrigatório!");
+			}
+		}
+		
+		if(cotaDto.isEmiteNFE()){
+			if((cotaDto.getEmailNF() == null || cotaDto.getEmailNF().isEmpty())){
+				mensagensValidacao.add("O preenchimento do campo [E-mail NF-e] é obrigatório!");
+			}
+		}
 				
 		if (!mensagensValidacao.isEmpty()){
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, mensagensValidacao));
@@ -910,19 +968,7 @@ public class CotaServiceImpl implements CotaService {
 	
 	private Pessoa getPessoaCota(Cota cota, CotaDTO cotaDto){
 		
-		Pessoa pessoa = cota.getPessoa();
-	    
-	    if(cota.getPessoa() == null){
-	    	
-	    	if( TipoPessoa.JURIDICA.equals(cotaDto.getTipoPessoa())){
-	    		
-	    		pessoa  = pessoaJuridicaRepository.buscarPorCnpj(cotaDto.getNumeroCnpj().replace(".", "").replace("-", "").replace("/", "").trim());
-	    		
-	    		if(pessoa == null){
-	    			pessoa = new PessoaJuridica();
-	    		}
-	    	}
-	    }
+		Pessoa pessoa = getPessoa(cotaDto, cota.getPessoa()) ;
 	    
 	    pessoa.setEmail(cotaDto.getEmail());
 	    
@@ -936,8 +982,48 @@ public class CotaServiceImpl implements CotaService {
     		
     		pessoa = pessoaJuridicaRepository.merge(((PessoaJuridica) pessoa));
     	}
+    	else if (pessoa instanceof  PessoaFisica){
+    		
+    		((PessoaFisica) pessoa).setNome(cotaDto.getNomePessoa());
+    		((PessoaFisica) pessoa).setEmail(cotaDto.getEmail());
+    		((PessoaFisica) pessoa).setRg(cotaDto.getNumeroRG());
+    		((PessoaFisica) pessoa).setDataNascimento(cotaDto.getDataNascimento());
+    		((PessoaFisica) pessoa).setOrgaoEmissor(cotaDto.getOrgaoEmissor());
+    		((PessoaFisica) pessoa).setUfOrgaoEmissor(cotaDto.getEstadoSelecionado());
+    		((PessoaFisica) pessoa).setEstadoCivil(cotaDto.getEstadoCivilSelecionado());
+    		((PessoaFisica) pessoa).setSexo(cotaDto.getSexoSelecionado());
+    		((PessoaFisica) pessoa).setNacionalidade(cotaDto.getNacionalidade());
+    		((PessoaFisica) pessoa).setNatural(cotaDto.getNatural());
+    		((PessoaFisica) pessoa).setCpf(cotaDto.getNumeroCPF().replace(".", "").replace("-", "").trim());
+    		
+    		pessoa = pessoaFisicaRepository.merge(((PessoaFisica) pessoa));
+    	}
 	    
     	return pessoa;
+	}
+	
+	private Pessoa getPessoa(CotaDTO cotaDTO, Pessoa pessoa){
+		
+		if(pessoa == null){
+	    	
+	    	if( TipoPessoa.JURIDICA.equals(cotaDTO.getTipoPessoa())){
+	    		
+	    		pessoa  = pessoaJuridicaRepository.buscarPorCnpj(cotaDTO.getNumeroCnpj().replace(".", "").replace("-", "").replace("/", "").trim());
+	    		
+	    		if(pessoa == null){
+	    			pessoa = new PessoaJuridica();
+	    		}
+	    	}
+	    	else if (TipoPessoa.FISICA.equals(cotaDTO.getTipoPessoa())) {
+	    		
+	    		pessoa  = pessoaFisicaRepository.buscarPorCpf(cotaDTO.getNumeroCPF().replace(".", "").replace("-", "").trim());
+	    		
+	    		if(pessoa == null){
+	    			pessoa = new PessoaFisica();
+	    		}
+	    	}
+	    }
+		return pessoa;
 	}
 	
 	private BaseReferenciaCota processarDadosBaseReferenciaCota(Cota cota , CotaDTO cotaDto){

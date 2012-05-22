@@ -27,12 +27,14 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.ClassificacaoEspectativaFaturamento;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Fornecedor;
+import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TipoDesconto;
 import br.com.abril.nds.model.cadastro.TipoEntrega;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.FornecedorService;
+import br.com.abril.nds.service.PessoaFisicaService;
 import br.com.abril.nds.service.PessoaJuridicaService;
 import br.com.abril.nds.service.TipoEntregaService;
 import br.com.abril.nds.util.CellModelKeyValue;
@@ -43,13 +45,11 @@ import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.vo.PaginacaoVO;
-import br.com.caelum.stella.validation.CNPJValidator;
-import br.com.caelum.stella.validation.CPFValidator;
-import br.com.caelum.stella.validation.InvalidStateException;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
+import br.com.caelum.vraptor.validator.Message;
 import br.com.caelum.vraptor.view.Results;
 
 @Resource
@@ -70,15 +70,18 @@ public class CotaController {
 	
 	@Autowired
 	private Result result;
+	
+	@Autowired
+	private br.com.caelum.vraptor.Validator validator;
 
+	@Autowired
+	private HttpSession session;
+	
 	@Autowired
 	private CotaService cotaService;
 	
 	@Autowired
 	private FornecedorService fornecedorService;
-
-	@Autowired
-	private HttpSession session;
 	
 	@Autowired
 	private ParametroCobrancaCotaController financeiroController;
@@ -91,13 +94,11 @@ public class CotaController {
 	
 	@Autowired
 	private PessoaJuridicaService pessoaJuridicaService;
+	
+	@Autowired
+	private PessoaFisicaService pessoaFisicaService;
 
 	private static final String FILTRO_SESSION_ATTRIBUTE="filtroCadastroCota";
-
-	public CotaController(Result result) {
-		this.result = result;
-	}
-	
 
 	@Path("/")
 	public void index() {
@@ -306,8 +307,40 @@ public class CotaController {
 	}
 	
 	@Post
-	@Path("/incluirNovoCNPJ")
-	public void prepararDadosInclusaoCota(){
+	@Path("/obterDadosCPF")
+	public void obterDadosCPF(String numeroCPF){
+		
+		if(numeroCPF!= null){
+			
+			numeroCPF = numeroCPF.replace(".", "").replace("-", "");
+			
+			PessoaFisica pessoaF = pessoaFisicaService.buscarPorCpf(numeroCPF.trim());
+			
+			CotaDTO cotaDTO = new CotaDTO();
+			
+			if(pessoaF!= null){
+				
+				cotaDTO.setNomePessoa(pessoaF.getNome());
+				cotaDTO.setEmail(pessoaF.getEmail());
+				cotaDTO.setNumeroRG(pessoaF.getRg());
+				cotaDTO.setDataNascimento(pessoaF.getDataNascimento());
+				cotaDTO.setOrgaoEmissor(pessoaF.getOrgaoEmissor());
+				cotaDTO.setEstadoSelecionado(pessoaF.getUfOrgaoEmissor());
+				cotaDTO.setEstadoCivilSelecionado(pessoaF.getEstadoCivil());
+				cotaDTO.setSexoSelecionado(pessoaF.getSexo());
+				cotaDTO.setNacionalidade(pessoaF.getNacionalidade());
+				cotaDTO.setNatural(pessoaF.getNatural());
+			}
+			
+			result.use(Results.json()).from(cotaDTO, "result").recursive().serialize();
+		}
+		else{
+			result.use(Results.json()).from("", "result").recursive().serialize();
+		}
+
+	}
+	
+	private DadosCotaVO getDadosInclusaoCota(){
 		
 		limparDadosSession();
 		
@@ -318,9 +351,23 @@ public class CotaController {
 		dadosCotaVO.setStatus(SituacaoCadastro.PENDENTE.toString());
 		dadosCotaVO.setListaClassificacao(getListaClassificacao());
 		
-		result.use(Results.json()).from(dadosCotaVO, "result").recursive().serialize();
+		return dadosCotaVO;
 	}
 	
+	@Post
+	@Path("/incluirNovoCNPJ")
+	public void prepararDadosInclusaoCotaCNPJ(){
+		
+		result.use(Results.json()).from(getDadosInclusaoCota(), "result").recursive().serialize();
+	}
+	
+	@Post
+	@Path("/incluirNovoCPF")
+	public void prepararDadosInclusaoCota(){
+		
+		result.use(Results.json()).from(getDadosInclusaoCota(), "result").recursive().serialize();
+	}
+
 	private List<ItemDTO<String, String>> getListaClassificacao(){
 		
 		List<ItemDTO<String, String>> listaClassificacao = new ArrayList<ItemDTO<String,String>>();
@@ -337,7 +384,37 @@ public class CotaController {
 	@Path("/salvarCotaCNPJ")
 	public void salvarCotaPessoaJuridica(CotaDTO cotaDTO){
 		
+		validarFormatoData();
+		
 		cotaDTO.setTipoPessoa(TipoPessoa.JURIDICA);
+		
+		cotaDTO = salvarDadosCota(cotaDTO);
+		
+		cotaDTO.setNumeroCnpj(Util.adicionarMascaraCNPJ(cotaDTO.getNumeroCnpj()));
+		
+		carregarDadosEnderecoETelefone(cotaDTO.getIdCota());
+		
+		result.use(Results.json()).from(cotaDTO, "result").recursive().serialize();
+	}
+	
+	@Post
+	@Path("/salvarCotaCPF")
+	public void salvarCotaPessoaFisica(CotaDTO cotaDTO){
+		
+		validarFormatoData();
+		
+		cotaDTO.setTipoPessoa(TipoPessoa.FISICA);
+		
+		cotaDTO = salvarDadosCota(cotaDTO);
+		
+		cotaDTO.setNumeroCPF(Util.adicionarMascaraCPF(cotaDTO.getNumeroCPF()));
+		
+		carregarDadosEnderecoETelefone(cotaDTO.getIdCota());
+		
+		result.use(Results.json()).from(cotaDTO, "result").recursive().serialize();
+	}
+	
+	private CotaDTO salvarDadosCota(CotaDTO cotaDTO){
 		
 		if(cotaDTO.getDataInclusao() == null){
 			cotaDTO.setDataInclusao(new Date());
@@ -345,15 +422,36 @@ public class CotaController {
 		
 		Long idCota = cotaService.salvarCota(cotaDTO);
 		
-		cotaDTO = cotaService.obterDadosCadastraisCota(idCota);
-		
-		cotaDTO.setNumeroCnpj(Util.adicionarMascaraCNPJ(cotaDTO.getNumeroCnpj()));
-		
-		carregarDadosEnderecoETelefone(idCota);
-		
-		result.use(Results.json()).from(cotaDTO, "result").recursive().serialize();
+		return cotaDTO = cotaService.obterDadosCadastraisCota(idCota);
 	}
-
+	
+	private void validarFormatoData(){
+		
+		List<String> mensagensValidacao = new ArrayList<String>();
+		
+		if (validator.hasErrors()) {
+			
+			for (Message message : validator.getErrors()) {
+				
+				if (message.getCategory().equals("dataNascimento")){
+					mensagensValidacao.add("O campo [Data Nascimento] está inválido");
+				}
+				
+				if(message.getCategory().equals("inicioPeriodo")){
+					mensagensValidacao.add("O campo [Périodo] está inválido");
+				}
+				
+				if(message.getCategory().equals("fimPeriodo")){
+					mensagensValidacao.add("O campo [Até] está inválido");
+				}
+			}
+			
+			if (!mensagensValidacao.isEmpty()){
+				throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, mensagensValidacao));
+			}
+		}
+	}
+	
 	@Post
 	@Path("/editar")
 	public void editar(Long idCota){

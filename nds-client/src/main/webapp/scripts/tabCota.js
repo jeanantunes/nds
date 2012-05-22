@@ -96,7 +96,7 @@ function TabCota(tabName) {
 		    		
 		    		exibirMensagemDialog(
 							"WARNING", 
-							["Os dados cadastrais precisam ser confirmados para proseguir com o cadasto da cota!"],""
+							["Os dados cadastrais precisam ser confirmados para prosseguir com o cadastro da cota!"],""
 						);
 						
 		    		return false;
