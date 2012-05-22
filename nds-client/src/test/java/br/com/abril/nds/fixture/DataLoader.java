@@ -729,15 +729,50 @@ public class DataLoader {
 				new Date(),
 				new Date(),
 				new BigDecimal(100),
-				StatusLancamento.PLANEJADO, null, 1);
+				StatusLancamento.RECOLHIDO, null, 1);
 		save(session,lancamentoPeriodo);
+		
+		Lancamento lancamentoPeriodo2 = Fixture.lancamento(TipoLancamento.PARCIAL, cromoBrasileiraoEd1,
+				Fixture.criarData(5, 3, 2011),
+				Fixture.criarData(5, 4, 2011),
+				new Date(),
+				new Date(),
+				new BigDecimal(80),
+				StatusLancamento.PLANEJADO, null, 1);
+		save(session,lancamentoPeriodo2);
 		
 		Estudo estudo = Fixture.estudo(new BigDecimal(200), Fixture.criarData(1, 2, 2011), cromoBrasileiraoEd1);
 		save(session,estudo);
 		
+		TipoMovimentoEstoque tipoMovimentoEncalhe = Fixture.tipoMovimentoEnvioEncalhe();
+		save(session,tipoMovimentoEncalhe);
+		
+		
+		EstoqueProdutoCota estoque = Fixture.estoqueProdutoCota(cromoBrasileiraoEd1, new BigDecimal(50), cotaGuilherme, null);
+		
+		MovimentoEstoqueCota movimento = Fixture.movimentoEstoqueCota(cromoBrasileiraoEd1, tipoMovimentoEncalhe, 
+				usuarioJoao, estoque, new BigDecimal(50), cotaGuilherme, StatusAprovacao.APROVADO, "motivo");
+		
+		ChamadaEncalhe chamadaEncalhe = Fixture.chamadaEncalhe(Fixture.criarData(1, 3, 2011), cromoBrasileiraoEd1,TipoChamadaEncalhe.ANTECIPADA);
+		
+		ChamadaEncalheCota chamadaEncalheCota = Fixture.chamadaEncalheCota(chamadaEncalhe, true, cotaGuilherme, new BigDecimal(50));
+		
+		ControleConferenciaEncalhe controle = Fixture.controleConferenciaEncalhe(StatusOperacao.CONCLUIDO, new Date());
+		
+		ControleConferenciaEncalheCota controleCota = Fixture.controleConferenciaEncalheCota(controle, cotaGuilherme, 
+				new Date(), new Date(), new Date(), StatusOperacao.CONCLUIDO);
+		
+		ConferenciaEncalhe conferencia = Fixture.conferenciaEncalhe(movimento, chamadaEncalheCota, controleCota);
+		
+		save(session,estoque,movimento,chamadaEncalhe,chamadaEncalheCota,controle,controleCota,conferencia);
+		
 		PeriodoLancamentoParcial periodo = Fixture.criarPeriodoLancamentoParcial(lancamentoPeriodo, lancamentoParcial2, 
 				StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.PARCIAL);
 		save(session, periodo);
+		
+		PeriodoLancamentoParcial periodo2 = Fixture.criarPeriodoLancamentoParcial(lancamentoPeriodo2, lancamentoParcial2, 
+				StatusLancamentoParcial.RECOLHIDO, TipoLancamentoParcial.PARCIAL);
+		save(session, periodo2);
 		
 	}
 

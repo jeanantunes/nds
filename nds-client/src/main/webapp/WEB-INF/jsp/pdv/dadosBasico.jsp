@@ -2,14 +2,15 @@
 
 <script>
 
+var dataAtual = '${dataAtual}';
+
 $(function() {
-		
+	
 	$('#inicioHorario').mask('99:99'); 
 	$('#fimHorario').mask('99:99'); 
 	$("#porcentagemFaturamento").numeric();
 	$("#qntFuncionarios").numeric();
-	$("#numerolicenca").numeric();
-	
+	$("#numerolicenca").numeric();	
 	
 	var options = {
 			success: tratarRetornoUploadImagem,
@@ -158,9 +159,7 @@ function tratarRetornoUploadImagem(data) {
 	    <td width="135">Dias Funcionamento:</td>
 	    <td width="252" class="diasFunc">
 	    	<select name="selectDiasFuncionamento" id="selectDiasFuncionamento" onchange="PDV.selecionarDiaFuncionamento(this)" style="width:230px;">
-		      
-		      <option value="-1" selected="selected">Selecione</option>
-		      
+		      		      
 		       <c:forEach items="${listaDiasFuncionamento}" var="item">
 	          	<option value="${item.key}">${item.value}</option>	          
 	          </c:forEach>

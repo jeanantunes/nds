@@ -30,6 +30,7 @@ import br.com.abril.nds.service.ConferenciaEncalheService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.exception.ChamadaEncalheCotaInexistenteException;
 import br.com.abril.nds.service.exception.ConferenciaEncalheExistenteException;
+import br.com.abril.nds.service.exception.EncalheSemPermissaoSalvarException;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.ItemAutoComplete;
 import br.com.abril.nds.util.TableModel;
@@ -380,11 +381,19 @@ public class ConferenciaEncalheController {
 		controleConfEncalheCota.setDataInicio((Date) this.session.getAttribute(HORA_INICIO_CONFERENCIA));
 		controleConfEncalheCota.setCota(this.getInfoConferenciaSession().getCota());
 		
-		this.conferenciaEncalheService.salvarDadosConferenciaEncalhe(
-				controleConfEncalheCota, 
-				this.getListaConferenciaEncalheFromSession(), 
-				this.getSetConferenciaEncalheExcluirFromSession(), 
-				this.getUsuarioLogado());
+		try {
+			
+			this.conferenciaEncalheService.salvarDadosConferenciaEncalhe(
+					controleConfEncalheCota, 
+					this.getListaConferenciaEncalheFromSession(), 
+					this.getSetConferenciaEncalheExcluirFromSession(), 
+					this.getUsuarioLogado());
+			
+		} catch (EncalheSemPermissaoSalvarException e) {
+			
+			//TODO tratar com mensagem
+			
+		}
 		
 		this.result.use(Results.json()).from(
 				new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."), "result").recursive().serialize();
@@ -580,7 +589,7 @@ public class ConferenciaEncalheController {
 		conferenciaEncalheDTO.setIdConferenciaEncalhe(new Long((int) System.currentTimeMillis()) *-1);
 		conferenciaEncalheDTO.setCodigo(produtoEdicao.getCodigoProduto());
 		conferenciaEncalheDTO.setCodigoDeBarras(produtoEdicao.getCodigoDeBarras());
-		//conferenciaEncalheDTO.setCodigoSM(produtoEdicao.getCodigoSM());
+		conferenciaEncalheDTO.setCodigoSM(produtoEdicao.getSequenciaMatriz());
 		conferenciaEncalheDTO.setIdProdutoEdicao(produtoEdicao.getId());
 		conferenciaEncalheDTO.setNomeProduto(produtoEdicao.getNomeProduto());
 		conferenciaEncalheDTO.setNumeroEdicao(produtoEdicao.getNumeroEdicao());

@@ -1,5 +1,6 @@
 package br.com.abril.nds.service;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -8,11 +9,13 @@ import br.com.abril.nds.dto.ConferenciaEncalheDTO;
 import br.com.abril.nds.dto.InfoConferenciaEncalheCota;
 import br.com.abril.nds.dto.ProdutoEdicaoDTO;
 import br.com.abril.nds.model.cadastro.Box;
-import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalheCota;
+import br.com.abril.nds.model.planejamento.ChamadaEncalhe;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.service.exception.ChamadaEncalheCotaInexistenteException;
 import br.com.abril.nds.service.exception.ConferenciaEncalheExistenteException;
+import br.com.abril.nds.service.exception.EncalheExcedeReparteException;
+import br.com.abril.nds.service.exception.EncalheSemPermissaoSalvarException;
 
 public interface ConferenciaEncalheService {
 	
@@ -48,22 +51,31 @@ public interface ConferenciaEncalheService {
 	 * cota e produtoEdicao cuja dataRecolhimento esteja dentro da 
 	 * faixa aceitavel (de acordo com  parâmetro do Distribuidor e dataOperacao atual).
 	 * 
-	 * Se encontrada, será retornada a dataRecolhimentoDistribuidor para o produtoEdicao em questão.
+	 * Se encontrada, será retornada esta chamadaEncalhe para o produtoEdicao em questão.
 	 *  
 	 * @param numeroCota
-	 * @param idProdutoEdicao]
+	 * @param idProdutoEdicao
 	 * 
-	 * @return Date
+	 * @return ChamadaEncalhe
 	 * 
 	 * @throws ChamadaEncalheCotaInexistenteException
 	 */
-	public Date validarExistenciaChamadaEncalheParaCotaProdutoEdicao(Integer numeroCota, Long idProdutoEdicao) throws ChamadaEncalheCotaInexistenteException;
+	public ChamadaEncalhe validarExistenciaChamadaEncalheParaCotaProdutoEdicao(Integer numeroCota, Long idProdutoEdicao) throws ChamadaEncalheCotaInexistenteException;
 
 	
-   /*
-	* Verifica cota emite NFe.  
-	* Caso positivo retorna true
-	*/
+	/**
+	 * Método que irá validar se o encalhe não ultrapassa o valor de reparte.
+	 * Caso isso ocorra ira lançar EncalheExcedeReparteException 
+	 * 
+	 * @param idProdutoEdicao
+	 * @param numeroCota
+	 * 
+	 * @throws EncalheExcedeReparteException
+	 */
+	public void validarQtdeEncalheExcedeQtdeReparte(Integer numeroCota, Long idProdutoEdicao, BigDecimal qtdeExemplarEncalhe) throws EncalheExcedeReparteException;
+
+	
+	
 	public boolean verificarCotaEmiteNFe();
 
 	public void inserirDadosNotaFiscalCota();
@@ -85,19 +97,27 @@ public interface ConferenciaEncalheService {
 	
 	ProdutoEdicaoDTO pesquisarProdutoEdicaoPorSM(Integer numeroCota, Integer sm) throws ChamadaEncalheCotaInexistenteException;
 	
-	/*
-	 * Traz uma lista de codigoProduto - nomeProduto -  numeroEdicao
+	/**
+	 * Obtém detalhes do item de conferencia de encalhe.
+	 * 
+	 * @param numeroCota
+	 * @param idConferenciaEncalhe
+	 * @param idProdutoEdicao
+	 * 
+	 * @return ConferenciaEncalheDTO
 	 */
-	public Object obterListaDadosProdutoEdicao(String codigoOuNome);
-	
-	
+	ConferenciaEncalheDTO obterDetalheConferenciaEncalhe(Integer numeroCota, Long idConferenciaEncalhe, Long idProdutoEdicao);
 	
 	public void salvarDadosConferenciaEncalhe(
 			ControleConferenciaEncalheCota controleConfEncalheCota, 
 			List<ConferenciaEncalheDTO> listaConferenciaEncalhe, 
 			Set<Long> listaIdConferenciaEncalheParaExclusao,
+			Usuario usuario) throws EncalheSemPermissaoSalvarException;
+	
+	
+	public void finalizarConferenciaEncalhe(
+			ControleConferenciaEncalheCota controleConfEncalheCota, 
+			List<ConferenciaEncalheDTO> listaConferenciaEncalhe, 
+			Set<Long> listaIdConferenciaEncalheParaExclusao,
 			Usuario usuario);
-	
-	
-	public void finalizarConferenciaEncalhe(List<ConferenciaEncalheDTO> listaConferenciaEncalhe);
 }

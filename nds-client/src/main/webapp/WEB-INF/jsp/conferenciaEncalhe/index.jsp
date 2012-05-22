@@ -323,20 +323,17 @@
 				$.postJSON("<c:url value='/devolucao/conferenciaEncalhe/buscarDetalhesProduto'/>", data,
 					function (result){
 						
-						
 						$("#nomeProdutoDetalhe").text(result.nomeProduto);
 						$("#precoCapaDetalhe").text(result.precoCapa);
+						$("#chamadaCapa").text(result.chamadaCapa);
+						$("#fornecedor").text(result.nomeFornecedor);
+						$("#brinde").text(result.possuiBrinde == "true" ? "Sim" : "Não");
+						$("#editor").text(result.nomeEditor);
+						$("#pacotePadrao").text(result.pacotePadrao);
 						//TODO ???
-						$("#chamadaCapa").text("");
 						$("#imagemProduto").attr("src", "");
 						
 						$("#precoDesconto").text((parseFloat(result.precoCapa) - parseFloat(result.desconto)).toFixed(2));
-						
-						//TODO ???
-						$("#fornecedor").text("");
-						$("#brinde").text("");
-						$("#editor").text("");
-						$("#pacotePadrao").text("");
 						
 						$("#observacaoReadOnly").text(result.observacao ? result.observacao : "");
 						$("#observacao").val(result.observacao ? result.observacao : "");
@@ -420,6 +417,11 @@
 			
 			setarValoresPesquisados : function(result){
 				
+				if (ultimoCodeBar && ultimoCodeBar != result.codigoDeBarras){
+				
+					$(".conferenciaEncalheGrid").flexReload();
+				}
+				
 				ultimoCodeBar = result.codigoDeBarras;
 				ultimoSM = result.codigoSM;
 				ultimoCodigo = result.idProdutoEdicao;
@@ -436,8 +438,6 @@
 				$("#valorTotal").text(((parseFloat(result.precoCapa) - parseFloat(result.desconto)) * parseFloat(result.qtdExemplar)).toFixed(2));
 				
 				$("#qtdeExemplar").val(parseInt(result.qtdExemplar));
-				
-				$(".conferenciaEncalheGrid").flexReload();
 			},
 			
 			adicionarProdutoConferido : function(){
@@ -987,8 +987,6 @@
 						
 						$("#qtdeExemplar").val(qtd + 1);
 					} else {
-						
-						var _codeBar = $("#cod_barras").val();
 						
 						var data = [{name: "codigoBarra", value: $("#cod_barras").val()}, 
 						            {name: "sm", value: ""}, 
