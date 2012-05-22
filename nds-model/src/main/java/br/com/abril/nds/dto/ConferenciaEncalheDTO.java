@@ -56,7 +56,7 @@ public class ConferenciaEncalheDTO implements Serializable {
 	
 	private String observacao;
 	
-	private boolean juramentada;
+	private Boolean juramentada;
 
 	/**
 	 * Tipo de chamada de encalhe deste produtoEdicao
@@ -176,11 +176,11 @@ public class ConferenciaEncalheDTO implements Serializable {
 		this.observacao = observacao;
 	}
 
-	public boolean isJuramentada() {
+	public Boolean isJuramentada() {
 		return juramentada;
 	}
 
-	public void setJuramentada(boolean juramentada) {
+	public void setJuramentada(Boolean juramentada) {
 		this.juramentada = juramentada;
 	}
 
