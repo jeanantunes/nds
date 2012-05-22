@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.client.vo.RegistroCurvaABCCotaVO;
+import br.com.abril.nds.client.vo.ResultadoCurvaABC;
 import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.dto.CotaDTO;
 import br.com.abril.nds.dto.CotaDTO.TipoPessoa;
@@ -21,6 +23,7 @@ import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaDTO;
+import br.com.abril.nds.dto.filtro.FiltroCurvaABCCotaDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.TipoEdicao;
 import br.com.abril.nds.model.cadastro.BaseReferenciaCota;
@@ -47,6 +50,8 @@ import br.com.abril.nds.model.cadastro.TipoCota;
 import br.com.abril.nds.model.cadastro.TipoDesconto;
 import br.com.abril.nds.model.cadastro.pdv.CaracteristicasPDV;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
+import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
+import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.financeiro.Cobranca;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.BaseReferenciaCotaRepository;
@@ -63,6 +68,7 @@ import br.com.abril.nds.repository.SocioCotaRepository;
 import br.com.abril.nds.repository.TelefoneCotaRepository;
 import br.com.abril.nds.repository.TipoDescontoRepository;
 import br.com.abril.nds.repository.TipoEntregaRepository;
+import br.com.abril.nds.repository.TipoMovimentoEstoqueRepository;
 import br.com.abril.nds.repository.UsuarioRepository;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.DistribuidorService;
@@ -142,6 +148,9 @@ public class CotaServiceImpl implements CotaService {
 	
 	@Autowired
 	private EnderecoService enderecoService;
+	
+	@Autowired
+	TipoMovimentoEstoqueRepository tipoMovimentoEstoqueRepository;
 	
 	@Transactional(readOnly = true)
 	@Override
@@ -1290,5 +1299,26 @@ public class CotaServiceImpl implements CotaService {
 		}
 		
 		return false;
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public ResultadoCurvaABC obterCurvaABCCotaTotal(
+			FiltroCurvaABCCotaDTO filtroCurvaABCCotaDTO) {
+		return cotaRepository.obterCurvaABCCotaTotal(filtroCurvaABCCotaDTO);
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public List<RegistroCurvaABCCotaVO> obterCurvaABCCota(
+			FiltroCurvaABCCotaDTO filtroCurvaABCCotaDTO) {
+		
+		TipoMovimentoEstoque tipoMovimento = 
+				tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.ENVIO_JORNALEIRO);
+			
+			TipoMovimentoEstoque tipoMovimentoCota =
+				tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.RECEBIMENTO_REPARTE);
+		
+		return cotaRepository.obterCurvaABCCota(filtroCurvaABCCotaDTO, tipoMovimento, tipoMovimentoCota);
 	}
 }

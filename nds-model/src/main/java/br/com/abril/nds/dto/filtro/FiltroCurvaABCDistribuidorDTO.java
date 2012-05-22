@@ -15,8 +15,8 @@ public class FiltroCurvaABCDistribuidorDTO extends FiltroCurvaABCDTO implements 
 	private static final long serialVersionUID = -1308372670097421023L;
 
 	public FiltroCurvaABCDistribuidorDTO(Date dataDe, Date dataAte,
-			Long codigoFornecedor, String codigoProduto, String nomeProduto,
-			String edicaoProduto, Long codigoEditor, String codigoCota,
+			String codigoFornecedor, String codigoProduto, String nomeProduto,
+			String edicaoProduto, String codigoEditor, String codigoCota,
 			String nomeCota, String municipio) {
 		this.setDataDe(dataDe);
 		this.setDataAte(dataAte);

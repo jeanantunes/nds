@@ -17,7 +17,7 @@ public abstract class FiltroCurvaABCDTO extends FiltroDTO {
 	
 	private Date dataAte;
 	
-	private Long codigoFornecedor;
+	private String codigoFornecedor;
 	
 	private String codigoProduto;
 	
@@ -25,7 +25,7 @@ public abstract class FiltroCurvaABCDTO extends FiltroDTO {
 	
 	private String edicaoProduto;
 	
-	private Long codigoEditor;
+	private String codigoEditor;
 	
 	private String codigoCota;
 	
@@ -99,14 +99,6 @@ public abstract class FiltroCurvaABCDTO extends FiltroDTO {
 		this.paginacao = paginacao;
 	}
 
-	public Long getCodigoFornecedor() {
-		return codigoFornecedor;
-	}
-
-	public void setCodigoFornecedor(Long codigoFornecedor) {
-		this.codigoFornecedor = codigoFornecedor;
-	}
-
 	public String getEdicaoProduto() {
 		return edicaoProduto;
 	}
@@ -115,12 +107,20 @@ public abstract class FiltroCurvaABCDTO extends FiltroDTO {
 		this.edicaoProduto = edicaoProduto;
 	}
 
-	public Long getCodigoEditor() {
+	public String getCodigoFornecedor() {
+		return codigoFornecedor;
+	}
+
+	public void setCodigoFornecedor(String codigoFornecedor) {
+		this.codigoFornecedor = codigoFornecedor;
+	}
+
+	public String getCodigoEditor() {
 		return codigoEditor;
 	}
 
-	public void setCodigoEditor(Long codigoEditor) {
+	public void setCodigoEditor(String codigoEditor) {
 		this.codigoEditor = codigoEditor;
 	}
-	
+
 }

@@ -30,11 +30,11 @@
 	});
 
 	function pesquisar() {
+
+		var dataDe = $("#datepickerDe").val();
+		var dataAte = $("#datepickerAte").val();
+
 		if ($('#filtro_distrib').attr("checked") == "checked") {
-			
-			var dataDe = $("#datepickerDe").val();
-			var dataAte = $("#datepickerAte").val();
-			
 			$(".abcDistribuidorGrid").flexOptions({
 				url: "<c:url value='/lancamento/relatorioVendas/pesquisarCurvaABCDistribuidor' />",
 				params: [
@@ -50,19 +50,65 @@
 			//$.postJSON("<c:url value='/lancamento/relatorioVendas/pesquisarCurvaABCDistribuidor'/>", data, exibirResultado);
 			
 		} else if ($('#filtro_editor').attr("checked") == "checked") {
-			alert('Editor');
+			$(".abcEditorGrid").flexOptions({
+				url: "<c:url value='/lancamento/relatorioVendas/pesquisarCurvaABCEditor' />",
+				params: [
+			         {name:'dataDe', value: dataDe},
+			         {name:'dataAte', value: dataAte},
+			    ],
+			    newp: 1,
+			});
+			
+			$(".abcEditorGrid").flexReload();
+			mostra_editor();			
 			
 		} else if ($('#filtro_produto').attr("checked") == "checked") {
-			alert('Produto');
+			
+			var codigoProduto=$('#codigoProdutoListaProduto').val();
+			var nomeProduto=$('#nomeProdutoListaProduto').val();
+			
+			$(".abcProdutoGrid").flexOptions({
+				url: "<c:url value='/lancamento/relatorioVendas/pesquisarCurvaABCProduto' />",
+				params: [
+			         {name:'dataDe', value: dataDe},
+			         {name:'dataAte', value: dataAte},
+			         {name:'codigoProduto', value: codigoProduto},
+			         {name:'nomeProduto', value: nomeProduto}
+			    ],
+			    newp: 1,
+			});
+			
+			$(".abcProdutoGrid").flexReload();
+			mostra_produto();
+			
+			//$.postJSON("<c:url value='/lancamento/relatorioVendas/pesquisarCurvaABCDistribuidor'/>", data, exibirResultado);
 			
 		} else if ($('#filtro_cota').attr("checked") == "checked") {
-			alert('Cota');
 			
+			var codigoCota=$('#numeroCotaListaCota').val();
+			var nomeCota=$('#nomeCotaListaCota').val();
+			
+			$(".abcCotaGrid").flexOptions({
+				url: "<c:url value='/lancamento/relatorioVendas/pesquisarCurvaABCCota' />",
+				params: [
+			         {name:'dataDe', value: dataDe},
+			         {name:'dataAte', value: dataAte},
+			         {name:'codigoCota', value: codigoCota},
+			         {name:'nomeCota', value: nomeCota}
+			    ],
+			    newp: 1,
+			});
+			
+			$(".abcCotaGrid").flexReload();
+			mostra_cota();					
 		}
 	}
 	
 	function pesquisarAvancada() {
-		
+
+		var dataDe = $("#datepickerDe").val();
+		var dataAte = $("#datepickerAte").val();
+
 		var selectFornecedor = $("select#selectFornecedor").val();
 		var codigoProduto    = $("#codigoProduto").val();
 		var nomeProduto      = $("#nomeProduto").val();
@@ -73,9 +119,6 @@
 		var selectMunicipio  = $("select#selectMunicipio").val();
 		
 		if ($('#filtro_distrib').attr("checked") == "checked") {
-			
-			var dataDe = $("#datepickerDe").val();
-			var dataAte = $("#datepickerAte").val();
 			
 			$(".abcDistribuidorGrid").flexOptions({
 				url: "<c:url value='/lancamento/relatorioVendas/pesquisarCurvaABCDistribuidorAvancada' />",
@@ -97,16 +140,85 @@
 			$(".abcDistribuidorGrid").flexReload();
 			mostra_distrib();
 			
-			//$.postJSON("<c:url value='/lancamento/relatorioVendas/pesquisarCurvaABCDistribuidor'/>", data, exibirResultado);
-			
 		} else if ($('#filtro_editor').attr("checked") == "checked") {
-			alert('Editor');
+			
+			$(".abcEditorGrid").flexOptions({
+				url: "<c:url value='/lancamento/relatorioVendas/pesquisarCurvaABCEditorAvancada' />",
+				params: [
+			         {name:'dataDe', value: dataDe},
+			         {name:'dataAte', value: dataAte},
+			         {name:'codigoFornecedor', value: selectFornecedor},
+			         {name:'codigoProduto', value: codigoProduto},
+			         {name:'nomeProduto', value: nomeProduto},
+			         {name:'edicaoProduto', value: edicao},
+			         {name:'codigoEditor', value: selectEditor},
+			         {name:'codigoCota', value: numerocota},
+			         {name:'nomeCota', value: nomeCota},
+			         {name:'municipio', value: selectMunicipio}
+			    ],
+			    newp: 1,
+			});
+			
+			$(".abcEditorGrid").flexReload();
+			mostra_editor();			
 			
 		} else if ($('#filtro_produto').attr("checked") == "checked") {
-			alert('Produto');
+			
+			if ($('#nomeProdutoListaProduto').val() != "") {
+				codigoProduto=$('#codigoProdutoListaProduto').val();
+			}
+			if ($('#codigoProdutoListaProduto').val() != "") {
+				nomeProduto=$('#nomeProdutoListaProduto').val();
+			}
+			
+			$(".abcProdutoGrid").flexOptions({
+				url: "<c:url value='/lancamento/relatorioVendas/pesquisarCurvaABCProdutoAvancada' />",
+				params: [
+			         {name:'dataDe', value: dataDe},
+			         {name:'dataAte', value: dataAte},
+			         {name:'codigoFornecedor', value: selectFornecedor},
+			         {name:'codigoProduto', value: codigoProduto},
+			         {name:'nomeProduto', value: nomeProduto},
+			         {name:'edicaoProduto', value: edicao},
+			         {name:'codigoEditor', value: selectEditor},
+			         {name:'codigoCota', value: numerocota},
+			         {name:'nomeCota', value: nomeCota},
+			         {name:'municipio', value: selectMunicipio}
+			    ],
+			    newp: 1,
+			});
+			
+			$(".abcProdutoGrid").flexReload();
+			mostra_produto();
 			
 		} else if ($('#filtro_cota').attr("checked") == "checked") {
-			alert('Cota');
+			
+			if ($('#numeroCotaListaCota').val() != "") {
+				numerocota=$('#numeroCotaListaCota').val();
+			}
+			if ($('#nomeCotaListaCota').val() != "") {
+				nomeCota=$('#nomeCotaListaCota').val();
+			}
+			
+			$(".abcCotaGrid").flexOptions({
+				url: "<c:url value='/lancamento/relatorioVendas/pesquisarCurvaABCCotaAvancada' />",
+				params: [
+			         {name:'dataDe', value: dataDe},
+			         {name:'dataAte', value: dataAte},
+			         {name:'codigoFornecedor', value: selectFornecedor},
+			         {name:'codigoProduto', value: codigoProduto},
+			         {name:'nomeProduto', value: nomeProduto},
+			         {name:'edicaoProduto', value: edicao},
+			         {name:'codigoEditor', value: selectEditor},
+			         {name:'codigoCota', value: numerocota},
+			         {name:'nomeCota', value: nomeCota},
+			         {name:'municipio', value: selectMunicipio}
+			    ],
+			    newp: 1,
+			});
+			
+			$(".abcCotaGrid").flexReload();
+			mostra_cota();			
 			
 		}
 		
@@ -271,8 +383,8 @@
 					<td>&nbsp;</td>
 					<td>&nbsp;</td>
 					<td colspan="6"><label>Cota:</label> <input type="text"
-						style="width: 80px; float: left; margin: 5px;" /> <label>Nome:</label>
-						<input type="text" style="width: 200px; float: left; margin: 5px;" />
+						style="width: 80px; float: left; margin: 5px;" name="numeroCotaListaCota" id="numeroCotaListaCota" /> <label>Nome:</label>
+						<input type="text" style="width: 200px; float: left; margin: 5px;" name="nomeCotaListaCota" id="nomeCotaListaCota" />
 					</td>
 				</tr>
 				<tr class="linhaProduto">
@@ -281,8 +393,8 @@
 					<td>&nbsp;</td>
 					<td>&nbsp;</td>
 					<td colspan="8"><label>Código:</label> <input type="text"
-						style="width: 80px; float: left; margin: 5px;" /> <label>Produto:</label>
-						<input type="text" style="width: 200px; float: left; margin: 5px;" />
+						style="width: 80px; float: left; margin: 5px;" id="codigoProdutoListaProduto" name="codigoProdutoListaProduto" /> <label>Produto:</label>
+						<input type="text" style="width: 200px; float: left; margin: 5px;" id="nomeProdutoListaProduto" name="nomeProdutoListaProduto" />
 					</td>
 				</tr>
 			</table>
@@ -311,7 +423,7 @@
 					<td width="52">Produto:</td>
 					<td width="213"><input type="text" style="width: 200px;" name="nomeProduto" id="nomeProduto" /></td>
 					<td width="41">Edição:</td>
-					<td><input type="text" style="width: 100px;" id="edicoesCamp" name="edicaoProduto" id="edicaoProduto" /></td>
+					<td><input type="text" style="width: 100px;" name="edicaoProduto" id="edicaoProduto" /></td>
 					<td><a href="javascript:;" onclick="esconde_pesq_avancada();"><img
 							src="${pageContext.request.contextPath}/images/ico_excluir.gif" alt="Fechar" width="15"
 							height="15" border="0" /></a></td>
@@ -325,8 +437,8 @@
                    			</c:forEach> 
 					</select></td>
 					<td colspan="-1">Cota:</td>
-					<td><input type="text" name="numerocota"
-						id="numerocota" style="width: 80px;" /></td>
+					<td><input type="text" name="numeroCota"
+						id="numeroCota" style="width: 80px;" /></td>
 					<td>Nome:</td>
 					<td><input type="text" style="width: 200px;" id="nomeCota" name="nomeCota" /></td>
 					<td>&nbsp;</td>
@@ -337,6 +449,9 @@
 					<td>Municipio:</td>
 					<td><select name="selectMunicipio" id="selectMunicipio" style="width: 240px;">
 							<option selected="selected">Todos</option>
+                    		<c:forEach items="${municipios}" var="municipio">
+								<option value="${municipio}">${municipio}</option>
+                   			</c:forEach> 
 						</select>
 					</td>
 					<td>&nbsp;</td>
@@ -368,8 +483,8 @@
 									src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
 						</td>
 						<td width="121"><strong>Total:</strong></td>
-						<td width="130"><span id="qtdeTotalVendaExemplares"></span></td>
-						<td width="258"><span id="totalFaturamentoCapa"></span></td>
+						<td width="130"><span id="qtdeTotalVendaExemplaresDistribuidor"></span></td>
+						<td width="258"><span id="totalFaturamentoCapaDistribuidor"></span></td>
 					</tr>
 				</table>
 			</fieldset>
@@ -387,8 +502,8 @@
 									src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
 						</td>
 						<td width="80"><strong>Total:</strong></td>
-						<td width="215"><span id="qtdeTotalVendaExemplares"></span></td>
-						<td width="326"><span id="totalFaturamentoCapa"></span></td>
+						<td width="215"><span id="qtdeTotalVendaExemplaresEditor"></span></td>
+						<td width="326"><span id="totalFaturamentoCapaEditor"></span></td>
 					</tr>
 				</table>
 			</fieldset>
@@ -407,8 +522,8 @@
 									src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
 						</td>
 						<td width="151"><strong>Total:</strong></td>
-						<td width="114"><span id="qtdeTotalVendaExemplares"></span></td>
-						<td width="244"><span id="totalFaturamentoCapa"></span></td>
+						<td width="114"><span id="qtdeTotalVendaExemplaresProduto"></span></td>
+						<td width="244"><span id="totalFaturamentoCapaProduto"></span></td>
 					</tr>
 				</table>
 
@@ -429,8 +544,8 @@
 									src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
 						</td>
 						<td width="73"><strong>Total:</strong></td>
-						<td width="205"><span id="qtdeTotalVendaExemplares"></span></td>
-						<td width="240"><span id="totalFaturamentoCapa"></td>
+						<td width="205"><span id="qtdeTotalVendaExemplaresCota"></span></td>
+						<td width="240"><span id="totalFaturamentoCapaCota"></td>
 					</tr>
 				</table>
 			</fieldset>
@@ -488,8 +603,8 @@
 		});
 
 		$(".abcEditorGrid").flexigrid({
-			url : '../xml/abc-editor-xml.xml',
-			dataType : 'xml',
+			preProcess: executarPreProcessamentoEditor,
+			dataType : 'json',
 			colModel : [ {
 				display : 'Código',
 				name : 'codigo',
@@ -556,7 +671,7 @@
 		});
 
 		$(".abcDistribuidorGrid").flexigrid({
-			preProcess: executarPreProcessamento,
+			preProcess: executarPreProcessamentoDistribuidor,
 			dataType : 'json',
 			colModel : [ {
 				display : 'Cota',
@@ -618,58 +733,58 @@
 		});
 
 		$(".abcProdutoGrid").flexigrid({
-			url : '../xml/abc-produtos-xml.xml',
-			dataType : 'xml',
+			preProcess: executarPreProcessamentoProduto,
+			dataType : 'json',
 			colModel : [ {
 				display : 'Cota',
-				name : 'cota',
+				name : 'numeroCota',
 				width : 60,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Nome',
-				name : 'nome',
-				width : 190,
+				name : 'nomeCota',
+				width : 210,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Município',
 				name : 'municipio',
-				width : 210,
+				width : 160,
 				sortable : true,
 				align : 'left'
 			}, {
-				display : 'Qtde PDV´s',
-				name : 'qtdePdv',
+				display : 'Qtde PDVs',
+				name : 'quantidadePdvs',
 				width : 60,
 				sortable : true,
 				align : 'center'
 			}, {
-				display : 'Venda Exempl. R$',
-				name : 'vdaExempl',
+				display : 'Venda Exs.',
+				name : 'vendaExemplares',
 				width : 90,
 				sortable : true,
-				align : 'right'
+				align : 'center'
 			}, {
-				display : 'Faturamento R$',
-				name : 'faturamento',
-				width : 100,
+				display : 'Faturamento Capa R$',
+				name : 'faturamentoCapa',
+				width : 120,
 				sortable : true,
 				align : 'right'
 			}, {
 				display : 'Part. %',
 				name : 'participacao',
-				width : 50,
+				width : 52,
 				sortable : true,
 				align : 'right'
 			}, {
 				display : 'Part. Acum. %',
-				name : 'partAcumulada',
-				width : 70,
+				name : 'participacaoAcumulada',
+				width : 90,
 				sortable : true,
 				align : 'right'
 			} ],
-			sortname : "cota",
+			sortname : "numeroCota",
 			sortorder : "asc",
 			usepager : true,
 			useRp : true,
@@ -680,23 +795,23 @@
 		});
 
 		$(".abcCotaGrid").flexigrid({
-			url : '../xml/abc-cotas-xml.xml',
-			dataType : 'xml',
+			preProcess: executarPreProcessamentoCota,
+			dataType : 'json',
 			colModel : [ {
 				display : 'Código',
-				name : 'codigo',
+				name : 'numeroProduto',
 				width : 60,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Produto',
-				name : 'produto',
+				name : 'nomeProduto',
 				width : 220,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Edição',
-				name : 'edicao',
+				name : 'edicaoProduto',
 				width : 70,
 				sortable : true,
 				align : 'left'
@@ -708,13 +823,13 @@
 				align : 'center'
 			}, {
 				display : 'Venda Exs.',
-				name : 'vdaExempl',
+				name : 'vendaExemplares',
 				width : 90,
 				sortable : true,
 				align : 'center'
 			}, {
 				display : 'Venda %',
-				name : 'percVda',
+				name : 'porcentagemVenda',
 				width : 90,
 				sortable : true,
 				align : 'right'
@@ -732,7 +847,7 @@
 				align : 'right'
 			}, {
 				display : 'Part. Acum. %',
-				name : 'partAcumulada',
+				name : 'participacaoAcumulada',
 				width : 70,
 				sortable : true,
 				align : 'right'
@@ -747,7 +862,7 @@
 			height : 255
 		});
 		
-		function executarPreProcessamento(resultado) {
+		function executarPreProcessamentoDistribuidor(resultado) {
 			if (resultado.mensagens) {
 				exibirMensagem(
 					resultado.mensagens.tipoMensagem, 
@@ -757,13 +872,64 @@
 				return resultado;
 			}
 
-			$("#qtdeTotalVendaExemplares").html(resultado.totalVendaExemplares);
-			$("#totalFaturamentoCapa").html("R$ " + resultado.totalFaturamento);
+			$("#qtdeTotalVendaExemplaresDistribuidor").html(resultado.totalVendaExemplares);
+			$("#totalFaturamentoCapaDistribuidor").html("R$ " + resultado.totalFaturamento);
 			
 			$(".grids").show();
 			return resultado.tableModel;
 		}
-		
+
+		function executarPreProcessamentoEditor(resultado) {
+			if (resultado.mensagens) {
+				exibirMensagem(
+					resultado.mensagens.tipoMensagem, 
+					resultado.mensagens.listaMensagens
+				);
+				$(".grids").hide();
+				return resultado;
+			}
+
+			$("#qtdeTotalVendaExemplaresEditor").html(resultado.totalVendaExemplares);
+			$("#totalFaturamentoCapaEditor").html("R$ " + resultado.totalFaturamento);
+			
+			$(".grids").show();
+			return resultado.tableModel;
+		}
+
+		function executarPreProcessamentoProduto(resultado) {
+			if (resultado.mensagens) {
+				exibirMensagem(
+					resultado.mensagens.tipoMensagem, 
+					resultado.mensagens.listaMensagens
+				);
+				$(".grids").hide();
+				return resultado;
+			}
+
+			$("#qtdeTotalVendaExemplaresProduto").html(resultado.totalVendaExemplares);
+			$("#totalFaturamentoCapaProduto").html("R$ " + resultado.totalFaturamento);
+			
+			$(".grids").show();
+			return resultado.tableModel;
+		}
+
+		function executarPreProcessamentoCota(resultado) {
+			if (resultado.mensagens) {
+				exibirMensagem(
+					resultado.mensagens.tipoMensagem, 
+					resultado.mensagens.listaMensagens
+				);
+				$(".grids").hide();
+				return resultado;
+			}
+
+			$("#qtdeTotalVendaExemplaresCota").html(resultado.totalVendaExemplares);
+			$("#totalFaturamentoCapaCota").html("R$ " + resultado.totalFaturamento);
+			
+			$(".grids").show();
+			return resultado.tableModel;
+		}
+
 	</script>
 </body>
 </html>

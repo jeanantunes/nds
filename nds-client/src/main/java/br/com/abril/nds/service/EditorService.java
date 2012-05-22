@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import br.com.abril.nds.client.vo.RegistroCurvaABCEditorVO;
+import br.com.abril.nds.dto.filtro.FiltroCurvaABCEditorDTO;
 import br.com.abril.nds.model.cadastro.Editor;
 
 /**
@@ -16,5 +18,7 @@ import br.com.abril.nds.model.cadastro.Editor;
 public interface EditorService {
 
 	public List<Editor> obterEditores();
+
+	public List<RegistroCurvaABCEditorVO> obterCurvaABCEditor(FiltroCurvaABCEditorDTO filtroCurvaABCEditorDTO);
 	
 }

@@ -2,11 +2,11 @@ package br.com.abril.nds.repository.impl;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
-import org.apache.xmlbeans.impl.xb.xsdschema.RestrictionDocument.Restriction;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.criterion.MatchMode;
@@ -19,6 +19,10 @@ import org.hibernate.transform.Transformers;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
+import br.com.abril.nds.client.util.comparators.CurvaABCParticipacaoAcumuladaComparator;
+import br.com.abril.nds.client.util.comparators.CurvaABCParticipacaoComparator;
+import br.com.abril.nds.client.vo.RegistroCurvaABCCotaVO;
+import br.com.abril.nds.client.vo.ResultadoCurvaABC;
 import br.com.abril.nds.dto.ChamadaAntecipadaEncalheDTO;
 import br.com.abril.nds.dto.CotaDTO;
 import br.com.abril.nds.dto.CotaSuspensaoDTO;
@@ -26,12 +30,15 @@ import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.dto.ProdutoValorDTO;
 import br.com.abril.nds.dto.filtro.FiltroChamadaAntecipadaEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaDTO;
+import br.com.abril.nds.dto.filtro.FiltroCurvaABCCotaDTO;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.EnderecoCota;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
+import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.OperacaoEstoque;
+import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
 import br.com.abril.nds.repository.CotaRepository;
@@ -725,6 +732,275 @@ public class CotaRepositoryImpl extends AbstractRepository<Cota, Long>
 		
 		return (numeroCota == null ) ? 0 : numeroCota + 1;
 	}
-	
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public ResultadoCurvaABC obterCurvaABCCotaTotal(FiltroCurvaABCCotaDTO filtro){
+		StringBuilder hql = new StringBuilder();
+
+		hql.append("SELECT new ").append(ResultadoCurvaABC.class.getCanonicalName())
+		.append(" ( (sum(estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida)), ")
+		.append("   ( sum((estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) * (estoqueProdutoCota.produtoEdicao.precoVenda - estoqueProdutoCota.produtoEdicao.desconto)) ) ) ");
+
+		hql.append(getWhereQueryObterCurvaABCCota(filtro));
+
+		Query query = this.getSession().createQuery(hql.toString());
+
+		HashMap<String, Object> param = getParametrosObterCurvaABCCota(filtro);
+
+		for(String key : param.keySet()){
+			query.setParameter(key, param.get(key));
+		}
+		return (ResultadoCurvaABC) query.list().get(0);
+	}
+
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<RegistroCurvaABCCotaVO> obterCurvaABCCota(FiltroCurvaABCCotaDTO filtro, TipoMovimentoEstoque tipoMovimento, TipoMovimentoEstoque tipoMovimentoCota) {
+		StringBuilder hql = new StringBuilder();
+
+		hql.append("SELECT new ").append(RegistroCurvaABCCotaVO.class.getCanonicalName())
+		.append(" ( estoqueProdutoCota.produtoEdicao.produto.codigo , ")
+		.append("   estoqueProdutoCota.produtoEdicao.produto.nome , ")
+		.append("   estoqueProdutoCota.produtoEdicao.numeroEdicao , ")
+		.append("   (sum(movimentos.qtde)) , ")
+		.append("   (sum(estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida)), ")
+		.append("   ( sum((estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) * (estoqueProdutoCota.produtoEdicao.precoVenda - estoqueProdutoCota.produtoEdicao.desconto)) ) ) ");
+
+		hql.append(getWhereQueryObterCurvaABCCota(filtro));
+		hql.append(getGroupQueryObterCurvaABCCota(filtro));
+		hql.append(getOrderQueryObterCurvaABCCota(filtro));
+
+		Query query = this.getSession().createQuery(hql.toString());
+
+		HashMap<String, Object> param = getParametrosObterCurvaABCCota(filtro);
+
+		for(String key : param.keySet()){
+			query.setParameter(key, param.get(key));
+		}
+
+		if (filtro.getPaginacao() != null) {
+
+			if (filtro.getPaginacao().getPosicaoInicial() != null) {
+				query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
+			}
+
+			if (filtro.getPaginacao().getQtdResultadosPorPagina() != null) {
+				query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
+			}
+		}
+
+		return getOrderObterCurvaABCCota(complementarCurvaABCCota((List<RegistroCurvaABCCotaVO>) query.list()), filtro);
+
+	}
+
+	private String getWhereQueryObterCurvaABCCota(FiltroCurvaABCCotaDTO filtro) {
+
+		StringBuilder hql = new StringBuilder();
+
+		hql.append(" FROM EstoqueProdutoCota AS estoqueProdutoCota ")
+		.append(" LEFT JOIN estoqueProdutoCota.movimentos AS movimentos ")
+		.append(" LEFT JOIN estoqueProdutoCota.produtoEdicao.produto.fornecedores AS fornecedores ")
+		.append(" LEFT JOIN estoqueProdutoCota.cota.enderecos AS enderecos ")
+		.append(" LEFT JOIN enderecos.endereco AS endereco ")
+		.append(" LEFT JOIN estoqueProdutoCota.cota.pdvs AS pdv ")
+		.append(" LEFT JOIN estoqueProdutoCota.cota.pessoa AS pessoa ")
+		.append(" LEFT JOIN estoqueProdutoCota.cota.pessoa AS pessoa ");
+
+		hql.append("WHERE movimentos.data BETWEEN :dataDe AND :dataAte ");
+		hql.append(" AND movimentos.tipoMovimento.grupoMovimentoEstoque = :grupoMovimentoEstoque ");
+
+		if (filtro.getCodigoProduto() != null && !filtro.getCodigoProduto().isEmpty()) {
+			hql.append(" AND estoqueProdutoCota.produtoEdicao.produto.codigo = :codigoProduto ");
+		}
+
+		if (filtro.getNomeProduto() != null && !filtro.getNomeProduto().isEmpty()) {
+			hql.append(" AND estoqueProdutoCota.produtoEdicao.produto.nome = :nomeProduto ");
+		}
+		
+		if (filtro.getCodigoFornecedor() != null && !filtro.getCodigoFornecedor().isEmpty() && !filtro.getCodigoFornecedor().equals("0")) {
+			hql.append("AND fornecedores.id = :codigoFornecedor ");
+		}
+
+		if (filtro.getEdicaoProduto() != null && !filtro.getEdicaoProduto().isEmpty()) {
+			hql.append("AND estoqueProdutoCota.produtoEdicao.numeroEdicao = :edicaoProduto ");
+		}
+
+		if (filtro.getCodigoEditor() != null && !filtro.getCodigoEditor().isEmpty() && !filtro.getCodigoEditor().equals("0")) {
+			hql.append("AND estoqueProdutoCota.produtoEdicao.produto.editor.codigo = :codigoEditor ");
+		}
+
+		if (filtro.getCodigoCota() != null && !filtro.getCodigoCota().isEmpty()) {
+			hql.append("AND estoqueProdutoCota.cota.numeroCota = :codigoCota ");
+		}
+
+		if (filtro.getNomeCota() != null && !filtro.getNomeCota().isEmpty()) {
+			hql.append("AND pessoa.nome = :nomeCota ");
+		}
+
+		if (filtro.getMunicipio() != null && !filtro.getMunicipio().isEmpty() && !filtro.getMunicipio().equalsIgnoreCase("Todos")) {
+			hql.append("AND endereco.cidade = :municipio ");
+		}
+
+		return hql.toString();
+
+	}
+
+	private String getGroupQueryObterCurvaABCCota(FiltroCurvaABCCotaDTO filtro) {
+
+		StringBuilder hql = new StringBuilder();
+
+		hql.append(" GROUP BY estoqueProdutoCota.produtoEdicao.produto.codigo, ")
+		   .append("   estoqueProdutoCota.produtoEdicao.produto.nome, ")
+		   .append("   estoqueProdutoCota.produtoEdicao.numeroEdicao ");
+
+		return hql.toString();
+	}
+
+	private String getOrderQueryObterCurvaABCCota(FiltroCurvaABCCotaDTO filtro) {
+
+		StringBuilder hql = new StringBuilder();
+
+		if (filtro.getOrdenacaoColuna() != null) {
+			
+			switch (filtro.getOrdenacaoColuna()) {
+				case CODIGO_PRODUTO:
+					hql.append(" order by estoqueProdutoCota.produtoEdicao.produto.codigo ");
+					break;
+				case NOME_PRODUTO:
+					hql.append(" order by estoqueProdutoCota.produtoEdicao.produto.nome ");
+					break;
+				case EDICAO_PRODUTO:
+					hql.append(" order by estoqueProdutoCota.produtoEdicao.numeroEdicao ");
+					break;
+				case REPARTE:
+					hql.append(" order by (sum(movimentos.qtde)) ");
+					break;
+				case VENDA_EXEMPLARES:
+					hql.append(" order by (sum(estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida)) ");
+					break;
+				case FATURAMENTO:
+					hql.append(" order by ( sum((estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) * (estoqueProdutoCota.produtoEdicao.precoVenda - estoqueProdutoCota.produtoEdicao.desconto)) ) ");
+					break;
+				default:
+					hql.append(" order by estoqueProdutoCota.produtoEdicao.produto.codigo ");
+					break;
+			}
+			if (filtro.getPaginacao().getOrdenacao() != null) {
+				hql.append(filtro.getPaginacao().getOrdenacao().toString());
+			}
+		}
+
+		return hql.toString();
+	}
+
+	/**
+	 * Retorna os parametros da consulta de dividas.
+	 * @param filtro
+	 * @return HashMap<String,Object>
+	 */
+	private HashMap<String,Object> getParametrosObterCurvaABCCota(FiltroCurvaABCCotaDTO filtro){
+
+		HashMap<String,Object> param = new HashMap<String, Object>();
+
+		param.put("dataDe",  filtro.getDataDe());
+		param.put("dataAte", filtro.getDataAte());
+
+		param.put("grupoMovimentoEstoque", GrupoMovimentoEstoque.RECEBIMENTO_REPARTE);
+		
+		if (filtro.getCodigoCota() != null && !filtro.getCodigoCota().isEmpty()) {
+			param.put("codigoCota", Integer.parseInt(filtro.getCodigoCota().toString()));
+		}
+
+		if (filtro.getNomeCota() != null && !filtro.getNomeCota().isEmpty()) {
+			param.put("nomeCota", filtro.getNomeCota());
+		}
+		
+		if (filtro.getCodigoFornecedor() != null && !filtro.getCodigoFornecedor().isEmpty() && !filtro.getCodigoFornecedor().equals("0")) {
+			param.put("codigoFornecedor", Long.parseLong(filtro.getCodigoFornecedor()));
+		}
+
+		if (filtro.getCodigoProduto() != null && !filtro.getCodigoProduto().isEmpty()) {
+			param.put("codigoProduto", filtro.getCodigoProduto().toString());
+		}
+
+		if (filtro.getNomeProduto() != null && !filtro.getNomeProduto().isEmpty()) {
+			param.put("nomeProduto", filtro.getNomeProduto());
+		}
+
+		if (filtro.getEdicaoProduto() != null && !filtro.getEdicaoProduto().isEmpty()) {
+			param.put("edicaoProduto", filtro.getEdicaoProduto());
+		}
+
+		if (filtro.getCodigoEditor() != null && !filtro.getCodigoEditor().isEmpty() && !filtro.getCodigoFornecedor().equals("0")) {
+			param.put("codigoEditor", Long.parseLong(filtro.getCodigoEditor()));
+		}
+
+		if (filtro.getMunicipio() != null && !filtro.getMunicipio().isEmpty() && !filtro.getMunicipio().equalsIgnoreCase("Todos")) {
+			param.put("municipio", filtro.getMunicipio());
+		}
+
+		return param;
+	}
+
+	private List<RegistroCurvaABCCotaVO> complementarCurvaABCCota(List<RegistroCurvaABCCotaVO> lista) {
+
+		BigDecimal participacaoTotal = new BigDecimal(0);
+		BigDecimal vendaTotal = new BigDecimal(0);
+
+		// Soma todos os valores de participacao
+		for (RegistroCurvaABCCotaVO registro : lista) {
+			participacaoTotal.add(registro.getFaturamento());
+			vendaTotal.add(registro.getVendaExemplares());
+		}
+
+		BigDecimal participacaoRegistro = new BigDecimal(0);
+		BigDecimal participacaoAcumulada = new BigDecimal(0);
+		BigDecimal porcentagemVendaRegistro = new BigDecimal(0);
+		
+		RegistroCurvaABCCotaVO registro = null;
+
+		// Verifica o percentual dos valores em relação ao total de participacao
+		for (int i=0; i<lista.size(); i++) {
+
+			registro = (RegistroCurvaABCCotaVO) lista.get(i);
+
+			// Partipacao do registro em relacao a participacao total no periodo
+			if ( participacaoTotal.doubleValue() != 0 ) {
+				participacaoRegistro = new BigDecimal((registro.getFaturamento().doubleValue()*100)/participacaoTotal.doubleValue());
+			}
+			registro.setParticipacao(participacaoRegistro);
+
+			if (vendaTotal.doubleValue() != 0) {
+				porcentagemVendaRegistro = new BigDecimal(registro.getVendaExemplares().doubleValue()*100/vendaTotal.doubleValue());
+			}
+			registro.setPorcentagemVenda(porcentagemVendaRegistro);
+			
+			participacaoAcumulada.add(participacaoRegistro);
+			registro.setParticipacaoAcumulada(participacaoAcumulada);
+
+			// Substitui o registro pelo registro atualizado (com participacao total)
+			lista.set(i, registro);
+
+		}
+
+		return lista;
+	}
+
+	@SuppressWarnings("unchecked")
+	private List<RegistroCurvaABCCotaVO> getOrderObterCurvaABCCota(List<RegistroCurvaABCCotaVO> lista, FiltroCurvaABCCotaDTO filtro) {
+
+		if (filtro.getOrdenacaoColuna() != null) {
+			switch (filtro.getOrdenacaoColuna()) {
+				case PARTICIPACAO:
+					Collections.sort(lista, new CurvaABCParticipacaoComparator());
+				case PARTICIPACAO_ACUMULADA:
+					Collections.sort(lista, new CurvaABCParticipacaoAcumuladaComparator());
+				default:
+					break;
+			}
+		}
+		return lista;
+	}
 
 }

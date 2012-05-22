@@ -4,18 +4,9 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 
 import br.com.abril.nds.util.export.Export;
-import br.com.abril.nds.util.export.Exportable;
 
-/**
- * 
- * Classe responsável por armazenar os valores referente aos registros da
- * pesquisa de registra de curva ABC do distribuidor.
- * 
- * @author InfoA2
- * 
- */
-@Exportable
-public class RegistroCurvaABCDistribuidorVO extends RegistroCurvaABC implements Serializable {
+public class RegistroCurvaABCEditorVO extends RegistroCurvaABC implements
+		Serializable {
 
 	/**
 	 * Serial Version UID
@@ -23,13 +14,13 @@ public class RegistroCurvaABCDistribuidorVO extends RegistroCurvaABC implements 
 	private static final long serialVersionUID = 3849170873913801404L;
 
 	@Export(label = "Número", exhibitionOrder = 1)
-	private Integer numeroCota;
+	private Integer codigoEditor;
 
 	@Export(label = "Cota", exhibitionOrder = 2)
-	private String nomeCota;
+	private String nomeEditor;
 
 	@Export(label = "Quantidade de Pdvs", exhibitionOrder = 3)
-	private Integer quantidadePdvs;
+	private Integer reparte;
 
 	@Export(label = "Municipio", exhibitionOrder = 4)
 	private String municipio;
@@ -40,41 +31,42 @@ public class RegistroCurvaABCDistribuidorVO extends RegistroCurvaABC implements 
 	@Export(label = "Faturamento da Capa", exhibitionOrder = 6)
 	private BigDecimal faturamentoCapa;
 
-	public RegistroCurvaABCDistribuidorVO() {
+	public RegistroCurvaABCEditorVO() {
 	}
 
-	public RegistroCurvaABCDistribuidorVO(Integer numeroCota, String nomeCota,
-			Integer quantidadePdvs, String municipio, BigDecimal vendaExemplares, BigDecimal faturamento) {
-		this.numeroCota = numeroCota;
-		this.nomeCota = nomeCota;
-		this.quantidadePdvs = quantidadePdvs;
+	public RegistroCurvaABCEditorVO(Integer codigoEditor, String nomeEditor,
+			Integer reparte, String municipio,
+			BigDecimal vendaExemplares, BigDecimal faturamentoCapa) {
+		this.codigoEditor = codigoEditor;
+		this.nomeEditor = nomeEditor;
+		this.reparte = reparte;
 		this.municipio = municipio;
 		this.vendaExemplares = vendaExemplares;
-		this.faturamentoCapa = faturamento;
+		this.faturamentoCapa = faturamentoCapa;
 	}
 
-	public Integer getNumeroCota() {
-		return numeroCota;
+	public Integer getCodigoEditor() {
+		return codigoEditor;
 	}
 
-	public void setNumeroCota(Integer numeroCota) {
-		this.numeroCota = numeroCota;
+	public void setCodigoEditor(Integer codigoEditor) {
+		this.codigoEditor = codigoEditor;
 	}
 
-	public String getNomeCota() {
-		return nomeCota;
+	public String getNomeEditor() {
+		return nomeEditor;
 	}
 
-	public void setNomeCota(String nomeCota) {
-		this.nomeCota = nomeCota;
+	public void setNomeEditor(String nomeEditor) {
+		this.nomeEditor = nomeEditor;
 	}
 
-	public Integer getQuantidadePdvs() {
-		return quantidadePdvs;
+	public Integer getReparte() {
+		return reparte;
 	}
 
-	public void setQuantidadePdvs(Integer quantidadePdvs) {
-		this.quantidadePdvs = quantidadePdvs;
+	public void setReparte(Integer reparte) {
+		this.reparte = reparte;
 	}
 
 	public String getMunicipio() {
@@ -100,5 +92,5 @@ public class RegistroCurvaABCDistribuidorVO extends RegistroCurvaABC implements 
 	public void setFaturamentoCapa(BigDecimal faturamentoCapa) {
 		this.faturamentoCapa = faturamentoCapa;
 	}
-	
+
 }

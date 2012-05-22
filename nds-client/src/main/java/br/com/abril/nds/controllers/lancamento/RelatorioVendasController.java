@@ -12,17 +12,24 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.util.PaginacaoUtil;
+import br.com.abril.nds.client.vo.RegistroCurvaABCCotaVO;
 import br.com.abril.nds.client.vo.RegistroCurvaABCDistribuidorVO;
+import br.com.abril.nds.client.vo.RegistroCurvaABCEditorVO;
 import br.com.abril.nds.client.vo.ResultadoCurvaABC;
 import br.com.abril.nds.client.vo.ValidacaoVO;
+import br.com.abril.nds.dto.filtro.FiltroCurvaABCCotaDTO;
+import br.com.abril.nds.dto.filtro.FiltroCurvaABCCotaDTO.ColunaOrdenacaoCurvaABCCota;
 import br.com.abril.nds.dto.filtro.FiltroCurvaABCDistribuidorDTO;
 import br.com.abril.nds.dto.filtro.FiltroCurvaABCDistribuidorDTO.ColunaOrdenacaoCurvaABCDistribuidor;
+import br.com.abril.nds.dto.filtro.FiltroCurvaABCEditorDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.seguranca.Usuario;
+import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.DistribuidorService;
 import br.com.abril.nds.service.EditorService;
+import br.com.abril.nds.service.EnderecoService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.ProdutoService;
 import br.com.abril.nds.util.CellModelKeyValue;
@@ -56,20 +63,34 @@ public class RelatorioVendasController {
 	private HttpServletResponse httpServletResponse;
 
 	@Autowired
+	private EnderecoService enderecoService;
+	
+	@Autowired
 	private FornecedorService fornecedorService;
 	
 	@Autowired
 	private DistribuidorService distribuidorService;
 
 	@Autowired
+	private CotaService cotaService;
+	
+	@Autowired
 	private ProdutoService produtoService;
 
 	@Autowired
 	private EditorService editorService;
 
-	private static final String QTD_REGISTROS_PESQUISA_CURVA_ABC_DISTRIBUIDOR_SESSION_ATTRIBUTE = "qtdRegistrosPesquisaCurvaAbcDistribuidor";
+	private static final String QTD_REGISTROS_PESQUISA_CURVA_DISTRIBUIDOR_ABC_SESSION_ATTRIBUTE = "qtdRegistrosPesquisaCurvaAbcDistribuidor";
 	private static final String FILTRO_PESQUISA_CURVA_ABC_DISTRIBUIDOR_SESSION_ATTRIBUTE = "filtroPesquisaCurvaAbcDistribuidor";
 	private static final String RESULTADO_PESQUISA_CURVA_ABC_DISTRIBUIDOR_SESSION_ATTRIBUTE = "resultadoPesquisaCurvaAbcDistribuidor";
+
+	private static final String QTD_REGISTROS_PESQUISA_CURVA_COTA_ABC_SESSION_ATTRIBUTE = "qtdRegistrosPesquisaCurvaAbcCota";
+	private static final String FILTRO_PESQUISA_CURVA_ABC_COTA_SESSION_ATTRIBUTE = "filtroPesquisaCurvaAbcCota";
+	private static final String RESULTADO_PESQUISA_CURVA_ABC_COTA_SESSION_ATTRIBUTE = "resultadoPesquisaCurvaAbcCota";
+
+	private static final String QTD_REGISTROS_PESQUISA_CURVA_EDITOR_ABC_SESSION_ATTRIBUTE = "qtdRegistrosPesquisaCurvaAbcEditor";
+	private static final String FILTRO_PESQUISA_CURVA_ABC_EDITOR_SESSION_ATTRIBUTE = "filtroPesquisaCurvaAbcEditor";
+	private static final String RESULTADO_PESQUISA_CURVA_ABC_EDITOR_SESSION_ATTRIBUTE = "resultadoPesquisaCurvaAbcEditor";
 
 	private static final int DISTRIBUIDOR = 1;
 	private static final int EDITOR       = 2;
@@ -84,7 +105,7 @@ public class RelatorioVendasController {
 		result.include("data", data);
 		result.include("fornecedores", fornecedorService.obterFornecedores(true, SituacaoCadastro.ATIVO));
 		result.include("editores", editorService.obterEditores());
-		//result.include("municipios", municipioService.obterMunicipiosCotas());
+		result.include("municipios", enderecoService.obterMunicipiosCotas());
 	}
 	
 	public RelatorioVendasController(Result result) {
@@ -140,6 +161,56 @@ public class RelatorioVendasController {
 
 	}
 
+	private void validarDadosEntradaPesquisaProduto(String dataDe, String dataAte, String codigoProduto, String nomeProduto) {
+		List<String> listaMensagemValidacao = new ArrayList<String>();
+
+		if (dataDe == null || dataDe.isEmpty()) {
+			listaMensagemValidacao
+					.add("O preenchimento do campo Período De é obrigatório!");
+		}
+
+		if (dataAte == null || dataAte.isEmpty()) {
+			listaMensagemValidacao
+					.add("O preenchimento do campo Período Até é obrigatório!");
+		}
+
+		if ((codigoProduto == null || codigoProduto.isEmpty()) && (nomeProduto == null || nomeProduto.isEmpty())) {
+			listaMensagemValidacao.add("O preenchimento do campo nome do Produto ou Código do Produto é obrigatório!");
+		}
+		
+		if (!listaMensagemValidacao.isEmpty()) {
+			ValidacaoVO validacaoVO = new ValidacaoVO(TipoMensagem.ERROR,
+					listaMensagemValidacao);
+			throw new ValidacaoException(validacaoVO);
+		}
+
+	}
+
+	private void validarDadosEntradaPesquisaCota(String dataDe, String dataAte, String codigoCota, String nomeCota) {
+		List<String> listaMensagemValidacao = new ArrayList<String>();
+
+		if (dataDe == null || dataDe.isEmpty()) {
+			listaMensagemValidacao
+					.add("O preenchimento do campo Período De é obrigatório!");
+		}
+
+		if (dataAte == null || dataAte.isEmpty()) {
+			listaMensagemValidacao
+					.add("O preenchimento do campo Período Até é obrigatório!");
+		}
+
+		if ((codigoCota == null || codigoCota.isEmpty()) && (nomeCota == null || nomeCota.isEmpty())) {
+			listaMensagemValidacao.add("O preenchimento do campo nome da Cota ou Código da Cota é obrigatório!");
+		}
+		
+		if (!listaMensagemValidacao.isEmpty()) {
+			ValidacaoVO validacaoVO = new ValidacaoVO(TipoMensagem.ERROR,
+					listaMensagemValidacao);
+			throw new ValidacaoException(validacaoVO);
+		}
+
+	}
+	
 	@Post
 	@Path("/pesquisarCurvaABCDistribuidor")
 	public void pesquisarCurvaABCDistribuidor(String dataDe, String dataAte,
@@ -162,7 +233,7 @@ public class RelatorioVendasController {
 		SimpleDateFormat sdf = new SimpleDateFormat(
 				Constantes.DATE_PATTERN_PT_BR);
 
-		FiltroCurvaABCDistribuidorDTO filtroCurvaABCDistribuidorDTO = carregarFiltroPesquisa(sdf.parse(dataDe), sdf.parse(dataAte), codigoFornecedor,
+		FiltroCurvaABCDistribuidorDTO filtroCurvaABCDistribuidorDTO = carregarFiltroPesquisaDistribuidor(sdf.parse(dataDe), sdf.parse(dataAte), codigoFornecedor,
 				codigoProduto, nomeProduto, edicaoProduto, codigoEditor,
 				codigoCota, nomeCota, municipio, sortorder, sortname, page, rp);
 
@@ -176,7 +247,7 @@ public class RelatorioVendasController {
 				throw e;
 			} else {
 				throw new ValidacaoException(TipoMensagem.ERROR,
-						"Erro ao pesquisar produto: " + e.getMessage());
+						"Erro ao pesquisar registros: " + e.getMessage());
 			}
 		}
 
@@ -191,7 +262,7 @@ public class RelatorioVendasController {
 			PaginacaoUtil
 					.armazenarQtdRegistrosPesquisa(
 							this.session,
-							QTD_REGISTROS_PESQUISA_CURVA_ABC_DISTRIBUIDOR_SESSION_ATTRIBUTE,
+							QTD_REGISTROS_PESQUISA_CURVA_DISTRIBUIDOR_ABC_SESSION_ATTRIBUTE,
 							qtdeTotalRegistros);
 
 			TableModel<CellModelKeyValue<RegistroCurvaABCDistribuidorVO>> tableModel = new TableModel<CellModelKeyValue<RegistroCurvaABCDistribuidorVO>>();
@@ -213,33 +284,165 @@ public class RelatorioVendasController {
 	}
 
 	@Post
-	public void pesquisarCurvaABCEditor(String codigo, String produto)
+	@Path("/pesquisarCurvaABCEditor")
+	public void pesquisarCurvaABCEditor(String dataDe, String dataAte, String sortorder,
+			String sortname, int page, int rp)
 			throws Exception {
+		pesquisarCurvaABCEditor(dataDe, dataAte, 0L, "", "", "", 0L, "",
+				"", "", sortorder, sortname, page, rp);
 	}
 
 	@Post
-	public void pesquisarCurvaABCEditor(String codigo, String produto,
-			Long edicao, String dataLancamento) throws Exception {
+	@Path("/pesquisarCurvaABCEditorAvancada")
+	public void pesquisarCurvaABCEditor(String dataDe, String dataAte,
+			Long codigoFornecedor, String codigoProduto, String nomeProduto,
+			String edicaoProduto, Long codigoEditor, String codigoCota,
+			String nomeCota, String municipio, String sortorder,
+			String sortname, int page, int rp) throws Exception {
+		this.validarDadosEntradaPesquisa(dataDe, dataAte);
+
+		SimpleDateFormat sdf = new SimpleDateFormat(
+				Constantes.DATE_PATTERN_PT_BR);
+
+		FiltroCurvaABCEditorDTO filtroCurvaABCEditorDTO = carregarFiltroPesquisaEditor(sdf.parse(dataDe), sdf.parse(dataAte), codigoFornecedor,
+				codigoProduto, nomeProduto, edicaoProduto, codigoEditor,
+				codigoCota, nomeCota, municipio, sortorder, sortname, page, rp);
+
+		List<RegistroCurvaABCEditorVO> resultadoCurvaABCEditor = null;
+		try {
+			resultadoCurvaABCEditor = editorService.obterCurvaABCEditor(filtroCurvaABCEditorDTO);
+		} catch (Exception e) {
+
+			if (e instanceof ValidacaoException) {
+				throw e;
+			} else {
+				throw new ValidacaoException(TipoMensagem.ERROR,
+						"Erro ao pesquisar registros: " + e.getMessage());
+			}
+		}
+
+		if (resultadoCurvaABCEditor == null
+				|| resultadoCurvaABCEditor.isEmpty()) {
+			throw new ValidacaoException(TipoMensagem.WARNING,
+					"Nenhum registro encontrado.");
+		} else {
+
+			int qtdeTotalRegistros = resultadoCurvaABCEditor.size();
+
+			PaginacaoUtil
+					.armazenarQtdRegistrosPesquisa(
+							this.session,
+							QTD_REGISTROS_PESQUISA_CURVA_COTA_ABC_SESSION_ATTRIBUTE,
+							qtdeTotalRegistros);
+
+			TableModel<CellModelKeyValue<RegistroCurvaABCCotaVO>> tableModel = new TableModel<CellModelKeyValue<RegistroCurvaABCCotaVO>>();
+
+			//tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(resultadoCurvaABCEditor));
+			tableModel.setPage(filtroCurvaABCEditorDTO.getPaginacao().getPaginaAtual());
+			tableModel.setTotal(qtdeTotalRegistros);
+
+			/*ResultadoCurvaABC resultado = cotaService.obterCurvaABCEditorTotal(filtroCurvaABCEditorDTO);
+			resultado.setTableModel(tableModel);
+			
+			session.setAttribute(RESULTADO_PESQUISA_CURVA_ABC_EDITOR_SESSION_ATTRIBUTE, resultado);
+			
+			result.use(Results.json()).withoutRoot().from(resultado)
+					.recursive().serialize();*/
+		}
+		
 	}
 
 	@Post
-	public void pesquisarCurvaABCProduto(String codigo, String produto)
+	@Path("/pesquisarCurvaABCProduto")
+	public void pesquisarCurvaABCProduto(String dataDe, String dataAte,
+			String codigoProduto, String nomeProduto, String sortorder,
+			String sortname, int page, int rp) throws Exception {
+		pesquisarCurvaABCProduto(dataDe, dataAte, 0L, codigoProduto, nomeProduto, "", 0L, "", "", "", sortorder, sortname, page, rp);
+	}
+	
+	@Post
+	@Path("/pesquisarCurvaABCProdutoAvancada")
+	public void pesquisarCurvaABCProduto(String dataDe, String dataAte,
+			Long codigoFornecedor, String codigoProduto, String nomeProduto,
+			String edicaoProduto, Long codigoEditor, String codigoCota,
+			String nomeCota, String municipio, String sortorder,
+			String sortname, int page, int rp) throws Exception {
+		
+			validarDadosEntradaPesquisaProduto(dataDe, dataAte, codigoProduto, nomeProduto);
+		
+			pesquisarCurvaABCDistribuidor(dataDe, dataAte, codigoFornecedor, codigoProduto, nomeProduto, edicaoProduto, codigoEditor, codigoCota,
+					nomeCota, municipio, sortorder, sortname, page, rp);
+		
+	}
+
+	@Post
+	@Path("/pesquisarCurvaABCCota")
+	public void pesquisarCurvaABCCota(String dataDe, String dataAte, 
+			String codigoCota, String nomeCota, String sortorder,
+			String sortname, int page, int rp)
 			throws Exception {
+		pesquisarCurvaABCCota(dataDe, dataAte, 0L, "", "", "", 0L, codigoCota, nomeCota, "", sortorder, sortname, page, rp);
 	}
 
 	@Post
-	public void pesquisarCurvaABCProduto(String codigo, String produto,
-			Long edicao, String dataLancamento) throws Exception {
-	}
+	@Path("/pesquisarCurvaABCCotaAvancada")
+	public void pesquisarCurvaABCCota(String dataDe, String dataAte,
+			Long codigoFornecedor, String codigoProduto, String nomeProduto,
+			String edicaoProduto, Long codigoEditor, String codigoCota,
+			String nomeCota, String municipio, String sortorder,
+			String sortname, int page, int rp) throws Exception {
+		
+		this.validarDadosEntradaPesquisaCota(dataDe, dataAte, codigoCota, nomeCota);
 
-	@Post
-	public void pesquisarCurvaABCCota(String codigo, String produto)
-			throws Exception {
-	}
+		SimpleDateFormat sdf = new SimpleDateFormat(
+				Constantes.DATE_PATTERN_PT_BR);
 
-	@Post
-	public void pesquisarCurvaABCCota(String codigo, String produto,
-			Long edicao, String dataLancamento) throws Exception {
+		FiltroCurvaABCCotaDTO filtroCurvaABCCotaDTO = carregarFiltroPesquisaCota(sdf.parse(dataDe), sdf.parse(dataAte), codigoFornecedor,
+				codigoProduto, nomeProduto, edicaoProduto, codigoEditor,
+				codigoCota, nomeCota, municipio, sortorder, sortname, page, rp);
+
+		List<RegistroCurvaABCCotaVO> resultadoCurvaABCCota = null;
+		try {
+			resultadoCurvaABCCota = cotaService.obterCurvaABCCota(filtroCurvaABCCotaDTO);
+		} catch (Exception e) {
+
+			if (e instanceof ValidacaoException) {
+				throw e;
+			} else {
+				throw new ValidacaoException(TipoMensagem.ERROR,
+						"Erro ao pesquisar registros: " + e.getMessage());
+			}
+		}
+
+		if (resultadoCurvaABCCota == null
+				|| resultadoCurvaABCCota.isEmpty()) {
+			throw new ValidacaoException(TipoMensagem.WARNING,
+					"Nenhum registro encontrado.");
+		} else {
+
+			int qtdeTotalRegistros = resultadoCurvaABCCota.size();
+
+			PaginacaoUtil
+					.armazenarQtdRegistrosPesquisa(
+							this.session,
+							QTD_REGISTROS_PESQUISA_CURVA_COTA_ABC_SESSION_ATTRIBUTE,
+							qtdeTotalRegistros);
+
+			TableModel<CellModelKeyValue<RegistroCurvaABCCotaVO>> tableModel = new TableModel<CellModelKeyValue<RegistroCurvaABCCotaVO>>();
+
+			tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(resultadoCurvaABCCota));
+			tableModel.setPage(filtroCurvaABCCotaDTO.getPaginacao().getPaginaAtual());
+			tableModel.setTotal(qtdeTotalRegistros);
+
+			ResultadoCurvaABC resultado = cotaService.obterCurvaABCCotaTotal(filtroCurvaABCCotaDTO);
+			resultado.setTableModel(tableModel);
+			
+			session.setAttribute(RESULTADO_PESQUISA_CURVA_ABC_COTA_SESSION_ATTRIBUTE, resultado);
+			
+			result.use(Results.json()).withoutRoot().from(resultado)
+					.recursive().serialize();
+		}
+		
 	}
 
 	@Post
@@ -247,30 +450,105 @@ public class RelatorioVendasController {
 			String dataAte) throws Exception {
 	}
 
-	private FiltroCurvaABCDistribuidorDTO carregarFiltroPesquisa(Date dataDe, Date dataAte, Long codigoFornecedor, 
+	private FiltroCurvaABCEditorDTO carregarFiltroPesquisaEditor(Date dataDe, Date dataAte, Long codigoFornecedor, 
 			String codigoProduto, String nomeProduto, String edicaoProduto, Long codigoEditor,
 			String codigoCota, String nomeCota, String municipio,
 			String sortorder, String sortname, int page, int rp) {
 
-		FiltroCurvaABCDistribuidorDTO filtro = new FiltroCurvaABCDistribuidorDTO(dataDe, dataAte, codigoFornecedor,
-				codigoProduto, nomeProduto, edicaoProduto, codigoEditor,
+		/*FiltroCurvaABCEditorDTO filtro = new FiltroCurvaABCEditorDTO(dataDe, dataAte, (codigoFornecedor == null ? "" : codigoFornecedor.toString()),
+				codigoProduto, nomeProduto, edicaoProduto, (codigoEditor == null ? "" : codigoEditor.toString()),
 				codigoCota, nomeCota, municipio);
 		
-		this.configurarPaginacaoPesquisa(filtro, sortorder, sortname,
+		this.configurarPaginacaoEditorPesquisa(filtro, sortorder, sortname,
+				page, rp);
+
+		FiltroCurvaABCEditorDTO filtroSessao = (FiltroCurvaABCEditorDTO) this.session
+				.getAttribute(FILTRO_PESQUISA_CURVA_ABC_EDITOR_SESSION_ATTRIBUTE);
+
+		PaginacaoUtil.calcularPaginaAtual(this.session,
+				QTD_REGISTROS_PESQUISA_CURVA_EDITOR_ABC_SESSION_ATTRIBUTE,
+				FILTRO_PESQUISA_CURVA_ABC_EDITOR_SESSION_ATTRIBUTE,
+				filtro, filtroSessao);
+
+		return filtro;*/
+		return null;
+	}
+	
+	private FiltroCurvaABCDistribuidorDTO carregarFiltroPesquisaDistribuidor(Date dataDe, Date dataAte, Long codigoFornecedor, 
+			String codigoProduto, String nomeProduto, String edicaoProduto, Long codigoEditor,
+			String codigoCota, String nomeCota, String municipio,
+			String sortorder, String sortname, int page, int rp) {
+
+		FiltroCurvaABCDistribuidorDTO filtro = new FiltroCurvaABCDistribuidorDTO(dataDe, dataAte, (codigoFornecedor == null ? "" : codigoFornecedor.toString()),
+				codigoProduto, nomeProduto, edicaoProduto, (codigoEditor == null ? "" : codigoEditor.toString()),
+				codigoCota, nomeCota, municipio);
+		
+		this.configurarPaginacaoDistribuidorPesquisa(filtro, sortorder, sortname,
 				page, rp);
 
 		FiltroCurvaABCDistribuidorDTO filtroSessao = (FiltroCurvaABCDistribuidorDTO) this.session
 				.getAttribute(FILTRO_PESQUISA_CURVA_ABC_DISTRIBUIDOR_SESSION_ATTRIBUTE);
 
 		PaginacaoUtil.calcularPaginaAtual(this.session,
-				QTD_REGISTROS_PESQUISA_CURVA_ABC_DISTRIBUIDOR_SESSION_ATTRIBUTE,
+				QTD_REGISTROS_PESQUISA_CURVA_DISTRIBUIDOR_ABC_SESSION_ATTRIBUTE,
 				FILTRO_PESQUISA_CURVA_ABC_DISTRIBUIDOR_SESSION_ATTRIBUTE,
 				filtro, filtroSessao);
 
 		return filtro;
 	}
 
-	private void configurarPaginacaoPesquisa(FiltroCurvaABCDistribuidorDTO filtro,
+	private FiltroCurvaABCCotaDTO carregarFiltroPesquisaCota(Date dataDe, Date dataAte, Long codigoFornecedor, 
+			String codigoProduto, String nomeProduto, String edicaoProduto, Long codigoEditor,
+			String codigoCota, String nomeCota, String municipio,
+			String sortorder, String sortname, int page, int rp) {
+
+		FiltroCurvaABCCotaDTO filtro = new FiltroCurvaABCCotaDTO(dataDe, dataAte, (codigoFornecedor == null ? "" : codigoFornecedor.toString()),
+				codigoProduto, nomeProduto, edicaoProduto, (codigoEditor == null ? "" : codigoEditor.toString()),
+				codigoCota, nomeCota, municipio);
+		
+		this.configurarPaginacaoCotaPesquisa(filtro, sortorder, sortname,
+				page, rp);
+
+		FiltroCurvaABCCotaDTO filtroSessao = (FiltroCurvaABCCotaDTO) this.session
+				.getAttribute(FILTRO_PESQUISA_CURVA_ABC_COTA_SESSION_ATTRIBUTE);
+
+		PaginacaoUtil.calcularPaginaAtual(this.session,
+				QTD_REGISTROS_PESQUISA_CURVA_COTA_ABC_SESSION_ATTRIBUTE,
+				FILTRO_PESQUISA_CURVA_ABC_COTA_SESSION_ATTRIBUTE,
+				filtro, filtroSessao);
+
+		return filtro;
+	}	
+
+	private void configurarPaginacaoEditorPesquisa(FiltroCurvaABCEditorDTO filtro,
+			String sortorder, String sortname, int page, int rp) {
+
+		if (filtro != null) {
+
+			PaginacaoVO paginacao = new PaginacaoVO(page, rp, sortorder);
+
+			filtro.setPaginacao(paginacao);
+
+			/*filtro.setOrdenacaoColuna(Util.getEnumByStringValue(
+					ColunaOrdenacaoCurvaABCEditor.values(), sortname));*/
+		}
+	}
+	
+	private void configurarPaginacaoCotaPesquisa(FiltroCurvaABCCotaDTO filtro,
+			String sortorder, String sortname, int page, int rp) {
+
+		if (filtro != null) {
+
+			PaginacaoVO paginacao = new PaginacaoVO(page, rp, sortorder);
+
+			filtro.setPaginacao(paginacao);
+
+			filtro.setOrdenacaoColuna(Util.getEnumByStringValue(
+					ColunaOrdenacaoCurvaABCCota.values(), sortname));
+		}
+	}
+
+	private void configurarPaginacaoDistribuidorPesquisa(FiltroCurvaABCDistribuidorDTO filtro,
 			String sortorder, String sortname, int page, int rp) {
 
 		if (filtro != null) {

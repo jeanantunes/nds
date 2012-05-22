@@ -24,4 +24,6 @@ public interface EnderecoService {
 
 	List<EnderecoAssociacaoDTO> buscarEnderecosPorIdPessoa(Long idPessoa, Set<Long> idsIgnorar);
 
+	List<String> obterMunicipiosCotas();
+	
 }

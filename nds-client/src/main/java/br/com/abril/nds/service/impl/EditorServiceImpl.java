@@ -6,6 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.client.vo.RegistroCurvaABCEditorVO;
+import br.com.abril.nds.client.vo.ResultadoCurvaABC;
+import br.com.abril.nds.dto.filtro.FiltroCurvaABCEditorDTO;
 import br.com.abril.nds.model.cadastro.Editor;
 import br.com.abril.nds.repository.EditorRepository;
 import br.com.abril.nds.service.EditorService;
@@ -22,4 +25,14 @@ public class EditorServiceImpl implements EditorService {
 		return editorRepository.obterEditores();
 	}
 
+	@Override
+	@Transactional
+	public List<RegistroCurvaABCEditorVO> obterCurvaABCEditor(FiltroCurvaABCEditorDTO filtroCurvaABCEditorDTO) {
+		return editorRepository.obterCurvaABCEditor(filtroCurvaABCEditorDTO);
+	}
+
+	/*public ResultadoCurvaABC obterCurvaABCEditorTotal(FiltroCurvaABCEditorDTO filtroCurvaABCEditorDTO);
+		return editorRepository.obterCurvaABCEditor(filtroCurvaABCEditorDTO);
+	}*/
+	
 }

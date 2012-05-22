@@ -168,7 +168,7 @@ public class DistribuidorRepositoryImpl extends
 			}
 		}
 
-		return getOrderObterCurvaABCDistribuidor(complementarCurvaABCDistribuidor(query.list()), filtro);
+		return getOrderObterCurvaABCDistribuidor(complementarCurvaABCDistribuidor((List<RegistroCurvaABCDistribuidorVO>) query.list()), filtro);
 
 	}
 
@@ -187,7 +187,7 @@ public class DistribuidorRepositoryImpl extends
 		hql.append("WHERE movimentos.data BETWEEN :dataDe AND :dataAte ");
 		hql.append(" AND enderecos.principal IS TRUE ");
 
-		if (filtro.getCodigoFornecedor() != null && filtro.getCodigoFornecedor() != 0) {
+		if (filtro.getCodigoFornecedor() != null && !filtro.getCodigoFornecedor().isEmpty() && !filtro.getCodigoFornecedor().equals("0")) {
 			hql.append("AND fornecedores.id = :codigoFornecedor ");
 			//hql.append("and produtoEdicao.produto.fornecedores.id = :codigoFornecedor ");
 		}
@@ -204,7 +204,7 @@ public class DistribuidorRepositoryImpl extends
 			hql.append("AND estoqueProdutoCota.produtoEdicao.numeroEdicao = :edicaoProduto ");
 		}
 
-		if (filtro.getCodigoEditor() != null && filtro.getCodigoEditor() != 0) {
+		if (filtro.getCodigoEditor() != null && !filtro.getCodigoEditor().isEmpty() && !filtro.getCodigoEditor().equals("0")) {
 			hql.append("AND estoqueProdutoCota.produtoEdicao.produto.editor.codigo = :codigoEditor ");
 		}
 
@@ -216,7 +216,7 @@ public class DistribuidorRepositoryImpl extends
 			hql.append("AND pessoa.nome = :nomeCota ");
 		}
 
-		if (filtro.getMunicipio() != null && !filtro.getMunicipio().isEmpty()) {
+		if (filtro.getMunicipio() != null && !filtro.getMunicipio().isEmpty() && !filtro.getMunicipio().equalsIgnoreCase("Todos")) {
 			hql.append("AND endereco.cidade = :municipio ");
 		}
 
@@ -288,12 +288,12 @@ public class DistribuidorRepositoryImpl extends
 		param.put("dataDe",  filtro.getDataDe());
 		param.put("dataAte", filtro.getDataAte());
 
-		if (filtro.getCodigoFornecedor() != null && filtro.getCodigoFornecedor() != 0) {
-			param.put("codigoFornecedor", filtro.getCodigoFornecedor());
+		if (filtro.getCodigoFornecedor() != null && !filtro.getCodigoFornecedor().isEmpty() && !filtro.getCodigoFornecedor().equals("0")) {
+			param.put("codigoFornecedor", Long.parseLong(filtro.getCodigoFornecedor()));
 		}
 
 		if (filtro.getCodigoProduto() != null && !filtro.getCodigoProduto().isEmpty()) {
-			param.put("codigoProduto", filtro.getCodigoProduto());
+			param.put("codigoProduto", filtro.getCodigoProduto().toString());
 		}
 
 		if (filtro.getNomeProduto() != null && !filtro.getNomeProduto().isEmpty()) {
@@ -304,19 +304,19 @@ public class DistribuidorRepositoryImpl extends
 			param.put("edicaoProduto", filtro.getEdicaoProduto());
 		}
 
-		if (filtro.getCodigoEditor() != null && filtro.getCodigoEditor() != 0) {
-			param.put("codigoEditor", filtro.getCodigoEditor());
+		if (filtro.getCodigoEditor() != null && !filtro.getCodigoEditor().isEmpty() && !filtro.getCodigoFornecedor().equals("0")) {
+			param.put("codigoEditor", Long.parseLong(filtro.getCodigoEditor()));
 		}
 
 		if (filtro.getCodigoCota() != null && !filtro.getCodigoCota().isEmpty()) {
-			param.put("codigoCota", filtro.getCodigoCota());
+			param.put("codigoCota", filtro.getCodigoCota().toString());
 		}
 
 		if (filtro.getNomeCota() != null && !filtro.getNomeCota().isEmpty()) {
 			param.put("nomeCota", filtro.getNomeCota());
 		}
 
-		if (filtro.getMunicipio() != null && !filtro.getMunicipio().isEmpty()) {
+		if (filtro.getMunicipio() != null && !filtro.getMunicipio().isEmpty() && !filtro.getMunicipio().equalsIgnoreCase("Todos")) {
 			param.put("municipio", filtro.getMunicipio());
 		}
 
@@ -373,145 +373,6 @@ public class DistribuidorRepositoryImpl extends
 			}
 		}
 		return lista;
-	}
-
-	@Override
-	public List<RegistroCurvaABCDistribuidorVO> obterCurvaABCDistribuidor(FiltroCurvaABCDistribuidorDTO filtro) {
-		StringBuilder hql = new StringBuilder();
-
-		hql.append("SELECT new ").append(RegistroCurvaABCDistribuidorVO.class.getCanonicalName())
-				.append(" ( estoqueProdutoCota.cota.numeroCota , ")
-				.append("   case when (pessoa.nome is not null) then ( pessoa.nome ) ")
-				.append("     when (pessoa.razaoSocial is not null) then ( pessoa.razaoSocial ) ")
-				.append("     else null end , ")
-				.append("   sum(pdv) , " )
-				.append("   endereco.cidade , " )
-				.append("   (sum(estoqueProdutoCota.qtdeRecebida) - sum(estoqueProdutoCota.qtdeDevolvida)) , ")
-				.append("   ( (sum(estoqueProdutoCota.qtdeRecebida) - sum(estoqueProdutoCota.qtdeDevolvida)) * estoqueProdutoCota.produtoEdicao.precoVenda ) ) ");
-
-		hql.append(getWhereQueryObterCurvaABCDistribuidor(filtro));
-
-		Query query = this.getSession().createQuery(hql.toString());
-
-		HashMap<String, Object> param = getParametrosObterCurvaABCDistribuidor(filtro);
-
-		for(String key : param.keySet()){
-			query.setParameter(key, param.get(key));
-		}
-
-		if (filtro.getPaginacao() != null) {
-
-			if (filtro.getPaginacao().getPosicaoInicial() != null) {
-				query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
-			}
-
-			if (filtro.getPaginacao().getQtdResultadosPorPagina() != null) {
-				query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
-			}
-		}
-
-		return query.list();
-
-	}
-
-	private String getWhereQueryObterCurvaABCDistribuidor(FiltroCurvaABCDistribuidorDTO filtro) {
-
-		StringBuilder hql = new StringBuilder();
-
-		hql.append("from EstoqueProdutoCota as estoqueProdutoCota ")
-		.append(" join estoqueProdutoCota.movimentos as movimentos ")
-		.append(" join estoqueProdutoCota.produtoEdicao.produto.fornecedores as fornecedores ")
-		.append(" join estoqueProdutoCota.cota.enderecos as enderecos ")
-		.append(" join enderecos.endereco as endereco ")
-		.append(" join estoqueProdutoCota.cota.pdvs as pdv ")
-		.append(" join estoqueProdutoCota.cota.pessoa as pessoa ");
-
-		hql.append("where movimentos.data between :dataDe and :dataAte ");
-
-		hql.append("and enderecos.principal is true ");
-
-		if (filtro.getCodigoFornecedor() != null && !filtro.getCodigoFornecedor().isEmpty()) {
-			hql.append("and fornecedores.id = :codigoFornecedor ");
-			//hql.append("and produtoEdicao.produto.fornecedores.id = :codigoFornecedor ");
-		}
-
-		if (filtro.getCodigoProduto() != null && !filtro.getCodigoProduto().isEmpty()) {
-			hql.append("and estoqueProdutoCota.produtoEdicao.produto.codigo = :codigoProduto ");
-		}
-
-		if (filtro.getNomeProduto() != null && !filtro.getNomeProduto().isEmpty()) {
-			hql.append("and estoqueProdutoCota.produtoEdicao.produto.nome = :nomeProduto ");
-		}
-
-		if (filtro.getEdicaoProduto() != null && !filtro.getEdicaoProduto().isEmpty()) {
-			hql.append("and estoqueProdutoCota.produtoEdicao.numeroEdicao = :edicaoProduto ");
-		}
-
-		if (filtro.getCodigoEditor() != null && !filtro.getCodigoEditor().isEmpty()) {
-			hql.append("and estoqueProdutoCota.produtoEdicao.produto.editor.codigo = :codigoEditor ");
-		}
-
-		if (filtro.getCodigoCota() != null && !filtro.getCodigoCota().isEmpty()) {
-			hql.append("and estoqueProdutoCota.cota.numeroCota = :codigoCota ");
-		}
-
-		if (filtro.getNomeCota() != null && !filtro.getNomeCota().isEmpty()) {
-			hql.append("and pessoa.nome = :nomeCota ");
-		}
-
-		if (filtro.getMunicipio() != null && !filtro.getMunicipio().isEmpty()) {
-			hql.append("and endereco.cidade = :municipio ");
-		}
-
-		return hql.toString();
-
-	}
-
-	/**
-	 * Retorna os parametros da consulta de dividas.
-	 * @param filtro
-	 * @return HashMap<String,Object>
-	 */
-	private HashMap<String,Object> getParametrosObterCurvaABCDistribuidor(FiltroCurvaABCDistribuidorDTO filtro){
-
-		HashMap<String,Object> param = new HashMap<String, Object>();
-
-		param.put("dataDe",  filtro.getDataDe());
-		param.put("dataAte", filtro.getDataAte());
-
-		if (filtro.getCodigoFornecedor() != null && !filtro.getCodigoFornecedor().isEmpty()) {
-			param.put("codigoFornecedor", filtro.getCodigoFornecedor());
-		}
-
-		if (filtro.getCodigoProduto() != null && !filtro.getCodigoProduto().isEmpty()) {
-			param.put("codigoProduto", filtro.getCodigoProduto());
-		}
-
-		if (filtro.getNomeProduto() != null && !filtro.getNomeProduto().isEmpty()) {
-			param.put("nomeProduto", filtro.getNomeProduto());
-		}
-
-		if (filtro.getEdicaoProduto() != null && !filtro.getEdicaoProduto().isEmpty()) {
-			param.put("edicaoProduto", filtro.getEdicaoProduto());
-		}
-
-		if (filtro.getCodigoEditor() != null && !filtro.getCodigoEditor().isEmpty()) {
-			param.put("codigoEditor", filtro.getCodigoEditor());
-		}
-
-		if (filtro.getCodigoCota() != null && !filtro.getCodigoCota().isEmpty()) {
-			param.put("codigoCota", filtro.getCodigoCota());
-		}
-
-		if (filtro.getNomeCota() != null && !filtro.getNomeCota().isEmpty()) {
-			param.put("nomeCota", filtro.getNomeCota());
-		}
-
-		if (filtro.getMunicipio() != null && !filtro.getMunicipio().isEmpty()) {
-			param.put("municipio", filtro.getMunicipio());
-		}
-
-		return param;
 	}
 
 }
