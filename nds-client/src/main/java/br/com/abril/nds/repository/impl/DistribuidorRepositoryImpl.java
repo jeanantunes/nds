@@ -15,6 +15,7 @@ import org.springframework.stereotype.Repository;
 import br.com.abril.nds.client.util.comparators.CurvaABCParticipacaoAcumuladaComparator;
 import br.com.abril.nds.client.util.comparators.CurvaABCParticipacaoComparator;
 import br.com.abril.nds.client.vo.RegistroCurvaABCDistribuidorVO;
+import br.com.abril.nds.client.vo.ResultadoCurvaABC;
 import br.com.abril.nds.dto.filtro.FiltroCurvaABCDistribuidorDTO;
 import br.com.abril.nds.model.cadastro.DistribuicaoDistribuidor;
 import br.com.abril.nds.model.cadastro.DistribuicaoFornecedor;
@@ -109,12 +110,12 @@ public class DistribuidorRepositoryImpl extends
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<RegistroCurvaABCDistribuidorVO> obterCurvaABCDistribuidorTotal(FiltroCurvaABCDistribuidorDTO filtro){
+	@Override
+	public ResultadoCurvaABC obterCurvaABCDistribuidorTotal(FiltroCurvaABCDistribuidorDTO filtro){
 		StringBuilder hql = new StringBuilder();
 
-		hql.append("SELECT new ").append(RegistroCurvaABCDistribuidorVO.class.getCanonicalName())
-		.append("   case when sum(pdv) is null then 0 else sum(pdv) end, " )
-		.append("   (sum(estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida)), ")
+		hql.append("SELECT new ").append(ResultadoCurvaABC.class.getCanonicalName())
+		.append(" ( (sum(estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida)), ")
 		.append("   ( sum((estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) * (estoqueProdutoCota.produtoEdicao.precoVenda - estoqueProdutoCota.produtoEdicao.desconto)) ) ) ");
 		
 		hql.append(getWhereQueryObterCurvaABCDistribuidor(filtro));
@@ -126,7 +127,7 @@ public class DistribuidorRepositoryImpl extends
 		for(String key : param.keySet()){
 			query.setParameter(key, param.get(key));
 		}
-		return query.list();
+		return (ResultadoCurvaABC) query.list().get(0);
 	}
 	
 	@Override
@@ -186,7 +187,7 @@ public class DistribuidorRepositoryImpl extends
 		hql.append("WHERE movimentos.data BETWEEN :dataDe AND :dataAte ");
 		hql.append(" AND enderecos.principal IS TRUE ");
 
-		if (filtro.getCodigoFornecedor() != null && !filtro.getCodigoFornecedor().isEmpty()) {
+		if (filtro.getCodigoFornecedor() != null && filtro.getCodigoFornecedor() != 0) {
 			hql.append("AND fornecedores.id = :codigoFornecedor ");
 			//hql.append("and produtoEdicao.produto.fornecedores.id = :codigoFornecedor ");
 		}
@@ -203,7 +204,7 @@ public class DistribuidorRepositoryImpl extends
 			hql.append("AND estoqueProdutoCota.produtoEdicao.numeroEdicao = :edicaoProduto ");
 		}
 
-		if (filtro.getCodigoEditor() != null && !filtro.getCodigoEditor().isEmpty()) {
+		if (filtro.getCodigoEditor() != null && filtro.getCodigoEditor() != 0) {
 			hql.append("AND estoqueProdutoCota.produtoEdicao.produto.editor.codigo = :codigoEditor ");
 		}
 
@@ -287,7 +288,7 @@ public class DistribuidorRepositoryImpl extends
 		param.put("dataDe",  filtro.getDataDe());
 		param.put("dataAte", filtro.getDataAte());
 
-		if (filtro.getCodigoFornecedor() != null && !filtro.getCodigoFornecedor().isEmpty()) {
+		if (filtro.getCodigoFornecedor() != null && filtro.getCodigoFornecedor() != 0) {
 			param.put("codigoFornecedor", filtro.getCodigoFornecedor());
 		}
 
@@ -303,7 +304,7 @@ public class DistribuidorRepositoryImpl extends
 			param.put("edicaoProduto", filtro.getEdicaoProduto());
 		}
 
-		if (filtro.getCodigoEditor() != null && !filtro.getCodigoEditor().isEmpty()) {
+		if (filtro.getCodigoEditor() != null && filtro.getCodigoEditor() != 0) {
 			param.put("codigoEditor", filtro.getCodigoEditor());
 		}
 

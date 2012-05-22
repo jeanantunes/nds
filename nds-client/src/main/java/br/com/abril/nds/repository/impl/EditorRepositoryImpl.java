@@ -17,11 +17,12 @@ public class EditorRepositoryImpl extends AbstractRepository<Editor, Long> imple
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
 	public List<Editor> obterEditores() {
 		String hql = "from Editor";
 		Query query = getSession().createQuery(hql);
-		return query.list();
+		@SuppressWarnings("unchecked")
+		List<Editor> editores = query.list();
+		return editores;
 	}
 
 }

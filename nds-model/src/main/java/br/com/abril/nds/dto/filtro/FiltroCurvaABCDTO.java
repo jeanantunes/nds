@@ -2,8 +2,10 @@ package br.com.abril.nds.dto.filtro;
 
 import java.util.Date;
 
+import br.com.abril.nds.util.export.Exportable;
 import br.com.abril.nds.vo.PaginacaoVO;
 
+@Exportable
 public abstract class FiltroCurvaABCDTO extends FiltroDTO {
 	
 	/**
@@ -15,7 +17,7 @@ public abstract class FiltroCurvaABCDTO extends FiltroDTO {
 	
 	private Date dataAte;
 	
-	private String codigoFornecedor;
+	private Long codigoFornecedor;
 	
 	private String codigoProduto;
 	
@@ -23,7 +25,7 @@ public abstract class FiltroCurvaABCDTO extends FiltroDTO {
 	
 	private String edicaoProduto;
 	
-	private String codigoEditor;
+	private Long codigoEditor;
 	
 	private String codigoCota;
 	
@@ -49,14 +51,6 @@ public abstract class FiltroCurvaABCDTO extends FiltroDTO {
 		this.dataAte = dataAte;
 	}
 
-	public String getCodigoFornecedor() {
-		return codigoFornecedor;
-	}
-
-	public void setCodigoFornecedor(String codigoFornecedor) {
-		this.codigoFornecedor = codigoFornecedor;
-	}
-
 	public String getCodigoProduto() {
 		return codigoProduto;
 	}
@@ -71,22 +65,6 @@ public abstract class FiltroCurvaABCDTO extends FiltroDTO {
 
 	public void setNomeProduto(String nomeProduto) {
 		this.nomeProduto = nomeProduto;
-	}
-
-	public String getEdicaoProduto() {
-		return edicaoProduto;
-	}
-
-	public void setEdicaoProduto(String edicaoProduto) {
-		this.edicaoProduto = edicaoProduto;
-	}
-
-	public String getCodigoEditor() {
-		return codigoEditor;
-	}
-
-	public void setCodigoEditor(String codigoEditor) {
-		this.codigoEditor = codigoEditor;
 	}
 
 	public String getCodigoCota() {
@@ -121,4 +99,28 @@ public abstract class FiltroCurvaABCDTO extends FiltroDTO {
 		this.paginacao = paginacao;
 	}
 
+	public Long getCodigoFornecedor() {
+		return codigoFornecedor;
+	}
+
+	public void setCodigoFornecedor(Long codigoFornecedor) {
+		this.codigoFornecedor = codigoFornecedor;
+	}
+
+	public String getEdicaoProduto() {
+		return edicaoProduto;
+	}
+
+	public void setEdicaoProduto(String edicaoProduto) {
+		this.edicaoProduto = edicaoProduto;
+	}
+
+	public Long getCodigoEditor() {
+		return codigoEditor;
+	}
+
+	public void setCodigoEditor(Long codigoEditor) {
+		this.codigoEditor = codigoEditor;
+	}
+	
 }

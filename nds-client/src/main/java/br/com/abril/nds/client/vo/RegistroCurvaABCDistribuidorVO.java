@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 
 import br.com.abril.nds.util.export.Export;
+import br.com.abril.nds.util.export.Exportable;
 
 /**
  * 
@@ -13,6 +14,7 @@ import br.com.abril.nds.util.export.Export;
  * @author InfoA2
  * 
  */
+@Exportable
 public class RegistroCurvaABCDistribuidorVO extends RegistroCurvaABC implements Serializable {
 
 	/**
@@ -20,22 +22,22 @@ public class RegistroCurvaABCDistribuidorVO extends RegistroCurvaABC implements 
 	 */
 	private static final long serialVersionUID = 3849170873913801404L;
 
-	@Export(label = "Número")
+	@Export(label = "Número", exhibitionOrder = 1)
 	private Integer numeroCota;
 
-	@Export(label = "Cota")
+	@Export(label = "Cota", exhibitionOrder = 2)
 	private String nomeCota;
 
-	@Export(label = "Quantidade de Pdvs")
+	@Export(label = "Quantidade de Pdvs", exhibitionOrder = 3)
 	private Integer quantidadePdvs;
 
-	@Export(label = "Municipio")
+	@Export(label = "Municipio", exhibitionOrder = 4)
 	private String municipio;
 
-	@Export(label = "Venda de Exemplares")
+	@Export(label = "Venda de Exemplares", exhibitionOrder = 5)
 	private BigDecimal vendaExemplares;
 
-	@Export(label = "Faturamento da Capa")
+	@Export(label = "Faturamento da Capa", exhibitionOrder = 6)
 	private BigDecimal faturamentoCapa;
 
 	public RegistroCurvaABCDistribuidorVO() {

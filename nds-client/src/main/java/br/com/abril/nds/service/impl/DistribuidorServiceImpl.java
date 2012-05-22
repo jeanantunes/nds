@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.client.vo.RegistroCurvaABCDistribuidorVO;
+import br.com.abril.nds.client.vo.ResultadoCurvaABC;
 import br.com.abril.nds.dto.filtro.FiltroCurvaABCDistribuidorDTO;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.repository.DistribuidorRepository;
@@ -32,7 +33,7 @@ public class DistribuidorServiceImpl implements DistribuidorService {
 
 	@Override
 	@Transactional
-	public List<RegistroCurvaABCDistribuidorVO> obterCurvaABCDistribuidorTotal(
+	public ResultadoCurvaABC obterCurvaABCDistribuidorTotal(
 			FiltroCurvaABCDistribuidorDTO filtroCurvaABCDistribuidorDTO) {
 		return distribuidorRepository.obterCurvaABCDistribuidorTotal(filtroCurvaABCDistribuidorDTO);
 	}

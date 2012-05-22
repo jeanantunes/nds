@@ -61,6 +61,57 @@
 		}
 	}
 	
+	function pesquisarAvancada() {
+		
+		var selectFornecedor = $("select#selectFornecedor").val();
+		var codigoProduto    = $("#codigoProduto").val();
+		var nomeProduto      = $("#nomeProduto").val();
+		var edicao           = $("#edicaoProduto").val();
+		var selectEditor     = $("select#selectEditor").val();
+		var numerocota       = $("#numerocota").val();
+		var nomeCota         = $("#nomeCota").val();
+		var selectMunicipio  = $("select#selectMunicipio").val();
+		
+		if ($('#filtro_distrib').attr("checked") == "checked") {
+			
+			var dataDe = $("#datepickerDe").val();
+			var dataAte = $("#datepickerAte").val();
+			
+			$(".abcDistribuidorGrid").flexOptions({
+				url: "<c:url value='/lancamento/relatorioVendas/pesquisarCurvaABCDistribuidorAvancada' />",
+				params: [
+			         {name:'dataDe', value: dataDe},
+			         {name:'dataAte', value: dataAte},
+			         {name:'codigoFornecedor', value: selectFornecedor},
+			         {name:'codigoProduto', value: codigoProduto},
+			         {name:'nomeProduto', value: nomeProduto},
+			         {name:'edicaoProduto', value: edicao},
+			         {name:'codigoEditor', value: selectEditor},
+			         {name:'codigoCota', value: numerocota},
+			         {name:'nomeCota', value: nomeCota},
+			         {name:'municipio', value: selectMunicipio}
+			    ],
+			    newp: 1,
+			});
+			
+			$(".abcDistribuidorGrid").flexReload();
+			mostra_distrib();
+			
+			//$.postJSON("<c:url value='/lancamento/relatorioVendas/pesquisarCurvaABCDistribuidor'/>", data, exibirResultado);
+			
+		} else if ($('#filtro_editor').attr("checked") == "checked") {
+			alert('Editor');
+			
+		} else if ($('#filtro_produto').attr("checked") == "checked") {
+			alert('Produto');
+			
+		} else if ($('#filtro_cota').attr("checked") == "checked") {
+			alert('Cota');
+			
+		}
+		
+	}
+	
 	function exibirResultado(result) {
 		alert(result);
 	}
@@ -260,7 +311,7 @@
 					<td width="52">Produto:</td>
 					<td width="213"><input type="text" style="width: 200px;" name="nomeProduto" id="nomeProduto" /></td>
 					<td width="41">Edição:</td>
-					<td><input type="text" style="width: 100px;" id="edicoesCamp" name="edicao" id="edicao" /></td>
+					<td><input type="text" style="width: 100px;" id="edicoesCamp" name="edicaoProduto" id="edicaoProduto" /></td>
 					<td><a href="javascript:;" onclick="esconde_pesq_avancada();"><img
 							src="${pageContext.request.contextPath}/images/ico_excluir.gif" alt="Fechar" width="15"
 							height="15" border="0" /></a></td>
@@ -274,17 +325,17 @@
                    			</c:forEach> 
 					</select></td>
 					<td colspan="-1">Cota:</td>
-					<td><input type="text" name="datepickerAte2"
-						id="datepickerAte2" style="width: 80px;" /></td>
+					<td><input type="text" name="numerocota"
+						id="numerocota" style="width: 80px;" /></td>
 					<td>Nome:</td>
-					<td><input type="text" style="width: 200px;" /></td>
+					<td><input type="text" style="width: 200px;" id="nomeCota" name="nomeCota" /></td>
 					<td>&nbsp;</td>
 					<td width="104">&nbsp;</td>
 					<td width="15">&nbsp;</td>
 				</tr>
 				<tr>
 					<td>Municipio:</td>
-					<td><select name="select3" id="select4" style="width: 240px;">
+					<td><select name="selectMunicipio" id="selectMunicipio" style="width: 240px;">
 							<option selected="selected">Todos</option>
 						</select>
 					</td>
@@ -294,7 +345,7 @@
 					<td>&nbsp;</td>
 					<td>&nbsp;</td>
 					<td><span class="bt_pesquisar"><a href="javascript:;"
-							onclick="pesquisar();">Pesquisar</a></span></td>
+							onclick="pesquisarAvancada();">Pesquisar</a></span></td>
 					<td>&nbsp;</td>
 				</tr>
 			</table>
@@ -311,14 +362,14 @@
 				<table width="950" border="0" cellspacing="0" cellpadding="0">
 					<tr>
 						<td width="441"><span class="bt_novos" title="Gerar Arquivo"><a
-								href="${pageContext.request.contextPath}/lancamento/relatorioVendas/exportar?fileType=XLS&relatorio=1"><img src="${pageContext.request.contextPath}/images/ico_excel.png"
+								href="${pageContext.request.contextPath}/lancamento/relatorioVendas/exportar?fileType=XLS&tipoRelatorio=1"><img src="${pageContext.request.contextPath}/images/ico_excel.png"
 									hspace="5" border="0" />Arquivo</a></span> <span class="bt_novos"
-							title="Imprimir"><a href="${pageContext.request.contextPath}/lancamento/relatorioVendas/exportar?fileType=PDF&relatorio=distribuidor"><img
+							title="Imprimir"><a href="${pageContext.request.contextPath}/lancamento/relatorioVendas/exportar?fileType=PDF&tipoRelatorio=1"><img
 									src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
 						</td>
 						<td width="121"><strong>Total:</strong></td>
-						<td width="130">1.320</td>
-						<td width="258">R$ 52.550,00</td>
+						<td width="130"><span id="qtdeTotalVendaExemplares"></span></td>
+						<td width="258"><span id="totalFaturamentoCapa"></span></td>
 					</tr>
 				</table>
 			</fieldset>
@@ -330,14 +381,14 @@
 				<table width="950" border="0" cellspacing="0" cellpadding="0">
 					<tr>
 						<td width="329"><span class="bt_novos" title="Gerar Arquivo"><a
-								href="${pageContext.request.contextPath}/lancamento/relatorioVendas/exportar?fileType=XLS&relatorio=2"><img src="${pageContext.request.contextPath}/images/ico_excel.png"
+								href="${pageContext.request.contextPath}/lancamento/relatorioVendas/exportar?fileType=XLS&tipoRelatorio=2"><img src="${pageContext.request.contextPath}/images/ico_excel.png"
 									hspace="5" border="0" />Arquivo</a></span> <span class="bt_novos"
-							title="Imprimir"><a href="${pageContext.request.contextPath}/lancamento/relatorioVendas/exportar?fileType=PDF&relatorio=editor"><img
+							title="Imprimir"><a href="${pageContext.request.contextPath}/lancamento/relatorioVendas/exportar?fileType=PDF&tipoRelatorio=2"><img
 									src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
 						</td>
 						<td width="80"><strong>Total:</strong></td>
-						<td width="215">1.320</td>
-						<td width="326">R$ 52.550,00</td>
+						<td width="215"><span id="qtdeTotalVendaExemplares"></span></td>
+						<td width="326"><span id="totalFaturamentoCapa"></span></td>
 					</tr>
 				</table>
 			</fieldset>
@@ -350,14 +401,14 @@
 				<table width="950" border="0" cellspacing="0" cellpadding="0">
 					<tr>
 						<td width="441"><span class="bt_novos" title="Gerar Arquivo"><a
-								href="${pageContext.request.contextPath}/lancamento/relatorioVendas/exportar?fileType=XLS&relatorio=3"><img src="${pageContext.request.contextPath}/images/ico_excel.png"
+								href="${pageContext.request.contextPath}/lancamento/relatorioVendas/exportar?fileType=XLS&tipoRelatorio=3"><img src="${pageContext.request.contextPath}/images/ico_excel.png"
 									hspace="5" border="0" />Arquivo</a></span> <span class="bt_novos"
-							title="Imprimir"><a href="${pageContext.request.contextPath}/lancamento/relatorioVendas/exportar?fileType=PDF&relatorio=produto"><img
+							title="Imprimir"><a href="${pageContext.request.contextPath}/lancamento/relatorioVendas/exportar?fileType=PDF&tipoRelatorio=3"><img
 									src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
 						</td>
 						<td width="151"><strong>Total:</strong></td>
-						<td width="114">R$ 52.550,00</td>
-						<td width="244">R$ 52.550,00</td>
+						<td width="114"><span id="qtdeTotalVendaExemplares"></span></td>
+						<td width="244"><span id="totalFaturamentoCapa"></span></td>
 					</tr>
 				</table>
 
@@ -365,21 +416,21 @@
 
 			<fieldset class="classFieldset" id="relatorioCota"
 				style="display: none;">
-				<legend>Curva ABC Cota: 4444 - José da Silva</legend>
+				<legend>Curva ABC Cota</legend>
 
 				<table class="abcCotaGrid"></table>
 
 				<table width="950" border="0" cellspacing="0" cellpadding="0">
 					<tr>
 						<td width="432"><span class="bt_novos" title="Gerar Arquivo"><a
-								href="${pageContext.request.contextPath}/lancamento/relatorioVendas/exportar?fileType=XLS&relatorio=4"><img src="${pageContext.request.contextPath}/images/ico_excel.png"
+								href="${pageContext.request.contextPath}/lancamento/relatorioVendas/exportar?fileType=XLS&tipoRelatorio=4"><img src="${pageContext.request.contextPath}/images/ico_excel.png"
 									hspace="5" border="0" />Arquivo</a></span> <span class="bt_novos"
-							title="Imprimir"><a href="${pageContext.request.contextPath}/lancamento/relatorioVendas/exportar?fileType=PDF&relatorio=cota"><img
+							title="Imprimir"><a href="${pageContext.request.contextPath}/lancamento/relatorioVendas/exportar?fileType=PDF&tipoRelatorio=4"><img
 									src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
 						</td>
 						<td width="73"><strong>Total:</strong></td>
-						<td width="205">1.320</td>
-						<td width="240">R$ 52.550,00</td>
+						<td width="205"><span id="qtdeTotalVendaExemplares"></span></td>
+						<td width="240"><span id="totalFaturamentoCapa"></td>
 					</tr>
 				</table>
 			</fieldset>
@@ -440,7 +491,7 @@
 			url : '../xml/abc-editor-xml.xml',
 			dataType : 'xml',
 			colModel : [ {
-				display : 'C�digo',
+				display : 'Código',
 				name : 'codigo',
 				width : 60,
 				sortable : true,
@@ -582,13 +633,13 @@
 				sortable : true,
 				align : 'left'
 			}, {
-				display : 'Munic�pio',
+				display : 'Município',
 				name : 'municipio',
 				width : 210,
 				sortable : true,
 				align : 'left'
 			}, {
-				display : 'Qtde PDV�s',
+				display : 'Qtde PDV´s',
 				name : 'qtdePdv',
 				width : 60,
 				sortable : true,
@@ -705,8 +756,12 @@
 				$(".grids").hide();
 				return resultado;
 			}
+
+			$("#qtdeTotalVendaExemplares").html(resultado.totalVendaExemplares);
+			$("#totalFaturamentoCapa").html("R$ " + resultado.totalFaturamento);
+			
 			$(".grids").show();
-			return resultado;
+			return resultado.tableModel;
 		}
 		
 	</script>

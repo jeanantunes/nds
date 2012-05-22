@@ -6,23 +6,21 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.criteria.CriteriaBuilder.Case;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.util.PaginacaoUtil;
-import br.com.abril.nds.client.vo.ConsultaNotaFiscalVO;
 import br.com.abril.nds.client.vo.RegistroCurvaABCDistribuidorVO;
+import br.com.abril.nds.client.vo.ResultadoCurvaABC;
 import br.com.abril.nds.client.vo.ValidacaoVO;
-import br.com.abril.nds.dto.filtro.FiltroConsultaNotaFiscalDTO;
 import br.com.abril.nds.dto.filtro.FiltroCurvaABCDistribuidorDTO;
 import br.com.abril.nds.dto.filtro.FiltroCurvaABCDistribuidorDTO.ColunaOrdenacaoCurvaABCDistribuidor;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
-import br.com.abril.nds.model.fiscal.NotaFiscalEntradaFornecedor;
+import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.service.DistribuidorService;
 import br.com.abril.nds.service.EditorService;
 import br.com.abril.nds.service.FornecedorService;
@@ -34,8 +32,8 @@ import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.util.export.FileExporter;
-import br.com.abril.nds.util.export.NDSFileHeader;
 import br.com.abril.nds.util.export.FileExporter.FileType;
+import br.com.abril.nds.util.export.NDSFileHeader;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
@@ -71,6 +69,7 @@ public class RelatorioVendasController {
 
 	private static final String QTD_REGISTROS_PESQUISA_CURVA_ABC_DISTRIBUIDOR_SESSION_ATTRIBUTE = "qtdRegistrosPesquisaCurvaAbcDistribuidor";
 	private static final String FILTRO_PESQUISA_CURVA_ABC_DISTRIBUIDOR_SESSION_ATTRIBUTE = "filtroPesquisaCurvaAbcDistribuidor";
+	private static final String RESULTADO_PESQUISA_CURVA_ABC_DISTRIBUIDOR_SESSION_ATTRIBUTE = "resultadoPesquisaCurvaAbcDistribuidor";
 
 	private static final int DISTRIBUIDOR = 1;
 	private static final int EDITOR       = 2;
@@ -79,7 +78,7 @@ public class RelatorioVendasController {
 
 	private static final String FORMATO_DATA = "dd/MM/yyyy";
 	
-	@Path("/lancamento/relatorioVendas")
+	@Path("/")
 	public void index() {
 		String data = DateUtil.formatarData(new Date(), FORMATO_DATA);
 		result.include("data", data);
@@ -103,8 +102,11 @@ public class RelatorioVendasController {
 		case DISTRIBUIDOR:
 
 			FiltroCurvaABCDistribuidorDTO filtro = (FiltroCurvaABCDistribuidorDTO) this.session.getAttribute(FILTRO_PESQUISA_CURVA_ABC_DISTRIBUIDOR_SESSION_ATTRIBUTE);
-			List<RegistroCurvaABCDistribuidorVO> lista = distribuidorService.obterCurvaABCDistribuidor(filtro);
-			FileExporter.to("relatorio-vendas-curva-abc-distribuidor", fileType).inHTTPResponse(null, filtro, null, 
+			
+			ResultadoCurvaABC resultado = (ResultadoCurvaABC) this.session.getAttribute(RESULTADO_PESQUISA_CURVA_ABC_DISTRIBUIDOR_SESSION_ATTRIBUTE);
+			
+			List<RegistroCurvaABCDistribuidorVO> lista = (List<RegistroCurvaABCDistribuidorVO>) resultado.getTableModel().getRows();
+			FileExporter.to("relatorio-vendas-curva-abc-distribuidor", fileType).inHTTPResponse(getNDSFileHeader(), filtro, resultado, 
 						lista, RegistroCurvaABCDistribuidorVO.class, this.httpServletResponse);
 
 			break;
@@ -143,15 +145,15 @@ public class RelatorioVendasController {
 	public void pesquisarCurvaABCDistribuidor(String dataDe, String dataAte,
 			String sortorder, String sortname, int page, int rp)
 			throws Exception {
-		pesquisarCurvaABCDistribuidor(dataDe, dataAte, "", "", "", "", "", "",
+		pesquisarCurvaABCDistribuidor(dataDe, dataAte, 0L, "", "", "", 0L, "",
 				"", "", sortorder, sortname, page, rp);
 	}
 
 	@Post
 	@Path("/pesquisarCurvaABCDistribuidorAvancada")
 	public void pesquisarCurvaABCDistribuidor(String dataDe, String dataAte,
-			String codigoFornecedor, String codigoProduto, String nomeProduto,
-			String edicaoProduto, String codigoEditor, String codigoCota,
+			Long codigoFornecedor, String codigoProduto, String nomeProduto,
+			String edicaoProduto, Long codigoEditor, String codigoCota,
 			String nomeCota, String municipio, String sortorder,
 			String sortname, int page, int rp) throws Exception {
 
@@ -198,7 +200,12 @@ public class RelatorioVendasController {
 			tableModel.setPage(filtroCurvaABCDistribuidorDTO.getPaginacao().getPaginaAtual());
 			tableModel.setTotal(qtdeTotalRegistros);
 
-			result.use(Results.json()).withoutRoot().from(tableModel)
+			ResultadoCurvaABC resultado = distribuidorService.obterCurvaABCDistribuidorTotal(filtroCurvaABCDistribuidorDTO);
+			resultado.setTableModel(tableModel);
+			
+			session.setAttribute(RESULTADO_PESQUISA_CURVA_ABC_DISTRIBUIDOR_SESSION_ATTRIBUTE, resultado);
+			
+			result.use(Results.json()).withoutRoot().from(resultado)
 					.recursive().serialize();
 
 		}
@@ -240,8 +247,8 @@ public class RelatorioVendasController {
 			String dataAte) throws Exception {
 	}
 
-	private FiltroCurvaABCDistribuidorDTO carregarFiltroPesquisa(Date dataDe, Date dataAte, String codigoFornecedor, 
-			String codigoProduto, String nomeProduto, String edicaoProduto, String codigoEditor,
+	private FiltroCurvaABCDistribuidorDTO carregarFiltroPesquisa(Date dataDe, Date dataAte, Long codigoFornecedor, 
+			String codigoProduto, String nomeProduto, String edicaoProduto, Long codigoEditor,
 			String codigoCota, String nomeCota, String municipio,
 			String sortorder, String sortname, int page, int rp) {
 
@@ -277,4 +284,40 @@ public class RelatorioVendasController {
 		}
 	}
 
+	/*
+	 * Obtém os dados do cabeçalho de exportação.
+	 * 
+	 * @return NDSFileHeader
+	 */
+	private NDSFileHeader getNDSFileHeader() {
+		
+		NDSFileHeader ndsFileHeader = new NDSFileHeader();
+		
+		Distribuidor distribuidor = this.distribuidorService.obter();
+		
+		if (distribuidor != null) {
+			
+			ndsFileHeader.setNomeDistribuidor(distribuidor.getJuridica().getRazaoSocial());
+			ndsFileHeader.setCnpjDistribuidor(distribuidor.getJuridica().getCnpj());
+		}
+		
+		ndsFileHeader.setData(new Date());
+		
+		ndsFileHeader.setNomeUsuario(this.getUsuario().getNome());
+		
+		return ndsFileHeader;
+	}
+	
+	//TODO: não há como reconhecer usuario, ainda
+	private Usuario getUsuario() {
+		
+		Usuario usuario = new Usuario();
+		
+		usuario.setId(1L);
+		
+		usuario.setNome("Jornaleiro da Silva");
+		
+		return usuario;
+	}
+	
 }
