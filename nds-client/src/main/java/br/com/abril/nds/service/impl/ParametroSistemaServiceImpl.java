@@ -78,26 +78,6 @@ public class ParametroSistemaServiceImpl implements ParametroSistemaService {
 	@Transactional
 	public void salvar(ParametroSistemaGeralDTO dto, InputStream imgLogotipo) {
 		
-		// TODO: validar imagem
-		// TODO: validar CNPJ
-		
-		// Validar email:
-		if (!Util.validarEmail(dto.getEmail())) {
-			throw new ValidacaoException(TipoMensagem.ERROR, "Formato de email é inválido!");
-		}
-		
-		// Validar UF:
-		boolean invalidUf = true;
-		for (UfEnum uf : Util.getUfs(null)) {
-			if (uf.getSigla().equals(dto.getUf())) {
-				invalidUf = false;
-				break;
-			}
-		}
-		if (invalidUf) {
-			throw new ValidacaoException(TipoMensagem.ERROR, "Unidade Federativa é inválida!");
-		}
-		
 		// TODO: salvar imgLogotipo
 		
 		// Salvar dto:
