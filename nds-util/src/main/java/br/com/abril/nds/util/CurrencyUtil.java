@@ -17,6 +17,8 @@ import br.com.caelum.stella.inwords.NumericToWordsConverter;
  */
 public abstract class CurrencyUtil {
 
+	public static final String SIMBOLO_BRL = "R$";
+	
 	/**
 	 * Formata um valor de moeda sem símbolo monetário.
 	 * 
@@ -47,7 +49,7 @@ public abstract class CurrencyUtil {
 		
 		if (valorFormatado != null) {
 			
-			valorFormatado = "R$ " + valorFormatado; 
+			valorFormatado = SIMBOLO_BRL + " " + valorFormatado; 
 		}
 		
 		return valorFormatado;
