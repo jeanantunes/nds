@@ -370,9 +370,8 @@ fieldset label {
 									Controle Aprovação
 								</a>
 							</li>
-							<li><a href="Administracao/cadastro_tipos_movimento.htm">Cadastrar
-									Tipos de Movimento</a>
-							</li>
+							<li><a href="<c:url value="/tipoMovimento/index"/>">Tipo de Movimento</a></li>
+							
 							<li><a href="Administracao/iniciar_dia.htm">Iniciar o
 									Dia</a>
 							</li>
