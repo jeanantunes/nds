@@ -111,7 +111,6 @@ public class ParametroSistemaRepositoryImpl extends AbstractRepository<Parametro
 		query.setMaxResults(1);
 		
 		for (ParametroSistema itemPS : parametrosSistema) {
-
 			query.setParameter("tipoParametroSistema", itemPS.getTipoParametroSistema());
 			ParametroSistema ps = (ParametroSistema) query.uniqueResult();
 			if (ps == null) {
