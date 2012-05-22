@@ -1,6 +1,7 @@
 package br.com.abril.nds.repository.impl;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.hibernate.Query;
@@ -88,10 +89,44 @@ public class ParametroSistemaRepositoryImpl extends AbstractRepository<Parametro
 		lst.add(TipoParametroSistema.NFE_DPEC);
 		lst.add(TipoParametroSistema.DATA_OPERACAO_CORRENTE);
 		
+		// Incluidos em 21/mai: 
+		lst.add(TipoParametroSistema.PATH_IMAGENS_CAPA);
+		lst.add(TipoParametroSistema.PATH_IMAGENS_PDV);
+		
 		Query query = this.getSession().createQuery(hql);
 		query.setParameterList("listaTipoParametroSistema", lst);
 		
 		return query.list();
+	}
+	
+	/**
+	 * Salva os Parâmetros do Sistema.
+	 *  
+	 * @param parametrosSistema
+	 */
+	public void salvar(Collection<ParametroSistema> parametrosSistema) {
+
+		String hql = "from ParametroSistema p where p.tipoParametroSistema = :tipoParametroSistema ";
+		Query query = this.getSession().createQuery(hql);
+		query.setMaxResults(1);
+		
+		for (ParametroSistema itemPS : parametrosSistema) {
+
+			query.setParameter("tipoParametroSistema", itemPS.getTipoParametroSistema());
+			ParametroSistema ps = (ParametroSistema) query.uniqueResult();
+			if (ps == null) {
+				
+				// Parâmetro não existe no banco - vai salvar!
+				adicionar(itemPS);
+			} else {
+				
+				// Atualiza o valor de um parâmetro existente:
+				if (!ps.getValor().equals(itemPS.getValor())) {
+					ps.setValor(itemPS.getValor());
+					alterar(ps);
+				}
+			}
+		}
 	}
 	
 }
