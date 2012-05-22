@@ -29,17 +29,18 @@ public class ConferenciaEncalheRepositoryImpl extends
 	
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" 		SELECT                                             ");
-		hql.append(" 		CONF_ENCALHE.ID AS idConferenciaEncalhe,           ");
-		hql.append(" 		MOV_EST_COTA.QTDE AS qtdExemplar,                  ");
-		hql.append(" 		MOV_EST_COTA.PRODUTO_EDICAO_ID AS idProdutoEdicao, ");
-		hql.append(" 		PROD_EDICAO.CODIGO_DE_BARRAS AS codigoDeBarras,    ");
-		hql.append(" 		LANCTO.SEQUENCIA_MATRIZ AS codigoSM,               ");
-		hql.append("        CH_ENCALHE.DATA_RECOLHIMENTO AS dataRecolhimento,  ");
-		hql.append(" 		PROD.CODIGO AS codigo,                                                                       ");
-		hql.append(" 		PROD.NOME AS nomeProduto,                                                                    ");
-		hql.append(" 		PROD_EDICAO.NUMERO_EDICAO AS numeroEdicao,                                                   ");
-		hql.append(" 		PROD_EDICAO.PRECO_VENDA AS precoCapa,                                                        ");
+		hql.append(" 		SELECT                                             		");
+		hql.append(" 		CONF_ENCALHE.ID AS idConferenciaEncalhe,           		");
+		hql.append(" 		MOV_EST_COTA.QTDE AS qtdExemplar,                  		");
+		hql.append(" 		MOV_EST_COTA.PRODUTO_EDICAO_ID AS idProdutoEdicao, 		");
+		hql.append(" 		PROD_EDICAO.CODIGO_DE_BARRAS AS codigoDeBarras,    		");
+		hql.append(" 		LANCTO.SEQUENCIA_MATRIZ AS codigoSM,               		");
+		hql.append("        CH_ENCALHE.DATA_RECOLHIMENTO AS dataRecolhimento,  		");
+		hql.append("		CH_ENCALHE.TIPO_CHAMADA_ENCALHE AS tipoChamadaEncalhe,	");
+		hql.append(" 		PROD.CODIGO AS codigo,                                  ");
+		hql.append(" 		PROD.NOME AS nomeProduto,                               ");
+		hql.append(" 		PROD_EDICAO.NUMERO_EDICAO AS numeroEdicao,              ");
+		hql.append(" 		PROD_EDICAO.PRECO_VENDA AS precoCapa,                   ");
 		
 		hql.append("        ( PROD_EDICAO.PRECO_VENDA *  ( ");
 		hql.append(    subSqlQueryValorDesconto()			);		
@@ -74,6 +75,8 @@ public class ConferenciaEncalheRepositoryImpl extends
 		hql.append("         AND CONF_ENCALHE.CHAMADA_ENCALHE_COTA_ID=CH_ENCALHE_COTA.ID ");
 		hql.append("         AND CH_ENCALHE_COTA.CHAMADA_ENCALHE_ID=CH_ENCALHE.ID        ");
 		hql.append("         AND CONF_ENCALHE.CONTROLE_CONFERENCIA_ENCALHE_COTA_ID = :idControleConferenciaEncalheCota   ");
+		
+		hql.append("  ORDER BY LANCTO.SEQUENCIA_MATRIZ ");
 		
 		Query query =  this.getSession().createSQLQuery(hql.toString()).setResultTransformer(new AliasToBeanResultTransformer(ConferenciaEncalheDTO.class));
 		

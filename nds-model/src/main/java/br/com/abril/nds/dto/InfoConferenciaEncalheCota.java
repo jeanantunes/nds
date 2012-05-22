@@ -34,7 +34,18 @@ public class InfoConferenciaEncalheCota implements Serializable {
 	
 	private BigDecimal valorPagar;
 	
+	private boolean distribuidorAceitaJuramentado;
 	
+	
+	public boolean isDistribuidorAceitaJuramentado() {
+		return distribuidorAceitaJuramentado;
+	}
+
+	public void setDistribuidorAceitaJuramentado(
+			boolean distribuidorAceitaJuramentado) {
+		this.distribuidorAceitaJuramentado = distribuidorAceitaJuramentado;
+	}
+
 	public Cota getCota() {
 		return cota;
 	}
@@ -109,5 +120,7 @@ public class InfoConferenciaEncalheCota implements Serializable {
 			Long idControleConferenciaEncalheCota) {
 		this.idControleConferenciaEncalheCota = idControleConferenciaEncalheCota;
 	}
+	
+	
 	
 }
