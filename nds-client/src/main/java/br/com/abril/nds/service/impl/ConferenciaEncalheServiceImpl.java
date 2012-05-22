@@ -605,14 +605,12 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 	}
 	
-	@Transactional
-	public void salvarDadosConferenciaEncalhe(
+	
+	private void inserirDadosConferenciaEncalhe(
 			ControleConferenciaEncalheCota controleConfEncalheCota, 
 			List<ConferenciaEncalheDTO> listaConferenciaEncalhe, 
 			Set<Long> listaIdConferenciaEncalheParaExclusao,
-			Usuario usuario) throws EncalheSemPermissaoSalvarException {
-		
-		validarPermissaoSalvarConferenciaEncalhe(listaConferenciaEncalhe);
+			Usuario usuario) {
 		
 	    Date dataRecolhimentoReferencia = obterDataRecolhimentoReferencia();
 		
@@ -654,6 +652,19 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			
 		}
 		
+	}
+	
+	
+	@Transactional
+	public void salvarDadosConferenciaEncalhe(
+			ControleConferenciaEncalheCota controleConfEncalheCota, 
+			List<ConferenciaEncalheDTO> listaConferenciaEncalhe, 
+			Set<Long> listaIdConferenciaEncalheParaExclusao,
+			Usuario usuario) throws EncalheSemPermissaoSalvarException {
+		
+		validarPermissaoSalvarConferenciaEncalhe(listaConferenciaEncalhe);
+		
+		inserirDadosConferenciaEncalhe(controleConfEncalheCota, listaConferenciaEncalhe, listaIdConferenciaEncalheParaExclusao, usuario);
 		
 	}
 	
