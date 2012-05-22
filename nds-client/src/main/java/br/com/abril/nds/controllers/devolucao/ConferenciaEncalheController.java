@@ -206,15 +206,18 @@ public class ConferenciaEncalheController {
 						qtdInformada = qtdInformada.add(conferenciaEncalheDTO.getQtdExemplar());
 					}
 					
-					if (conferenciaEncalheDTO.getQtdRecebida() != null){
+//FIXME					if (conferenciaEncalheDTO.getQtdRecebida() != null){
+//					
+//						qtdRecebida = qtdRecebida.add(conferenciaEncalheDTO.getQtdRecebida());
+//					}
 					
-						qtdRecebida = qtdRecebida.add(conferenciaEncalheDTO.getQtdRecebida());
-					}
+					
 				}
 			}
 		}
 		
 		dados.add(qtdInformada);
+		
 		dados.add(qtdRecebida);
 	}
 
@@ -577,7 +580,7 @@ public class ConferenciaEncalheController {
 		conferenciaEncalheDTO.setIdConferenciaEncalhe(new Long((int) System.currentTimeMillis()) *-1);
 		conferenciaEncalheDTO.setCodigo(produtoEdicao.getCodigoProduto());
 		conferenciaEncalheDTO.setCodigoDeBarras(produtoEdicao.getCodigoDeBarras());
-		//conferenciaEncalheDTO.setCodigoSM(produtoEdicao.getCodigoSM());
+		conferenciaEncalheDTO.setCodigoSM(produtoEdicao.getSequenciaMatriz());
 		conferenciaEncalheDTO.setIdProdutoEdicao(produtoEdicao.getId());
 		conferenciaEncalheDTO.setNomeProduto(produtoEdicao.getNomeProduto());
 		conferenciaEncalheDTO.setNumeroEdicao(produtoEdicao.getNumeroEdicao());

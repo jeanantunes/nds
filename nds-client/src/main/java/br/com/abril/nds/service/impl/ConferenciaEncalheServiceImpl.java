@@ -99,6 +99,8 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	@Autowired
 	private MovimentoEstoqueService movimentoEstoqueService;
 	
+	
+	
 	/*
 	 * (non-Javadoc)
 	 * @see br.com.abril.nds.service.ConferenciaEncalheService#obterListaBoxEncalhe()
@@ -284,6 +286,57 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		infoConfereciaEncalheCota.setValorVendaDia(valorVendaDia);
 		
 		return infoConfereciaEncalheCota;
+		
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see br.com.abril.nds.service.ConferenciaEncalheService#obterDetalheConferenciaEncalhe(java.lang.Integer, java.lang.Long, java.lang.Long)
+	 */
+	@Transactional
+	public ConferenciaEncalheDTO obterDetalheConferenciaEncalhe(Integer numeroCota, Long idConferenciaEncalhe, Long idProdutoEdicao) {
+		
+		ConferenciaEncalheDTO conferenciaEncalheDTO = new ConferenciaEncalheDTO();
+		
+		if(idConferenciaEncalhe!=null) {
+		
+			ConferenciaEncalhe conferenciaEncalhe = conferenciaEncalheRepository.buscarPorId(idConferenciaEncalhe);
+			
+			if(conferenciaEncalhe == null) {
+				
+				throw new IllegalStateException("Conferência de encalhe não encontrada");
+				
+			}
+			
+			conferenciaEncalheDTO.setIdConferenciaEncalhe(conferenciaEncalhe.getId());
+			
+			conferenciaEncalheDTO.setObservacao(conferenciaEncalhe.getObservacao());
+			
+		}
+		
+		ProdutoEdicao produtoEdicao = produtoEdicaoRepository.buscarPorId(idProdutoEdicao);
+		
+		carregarValorDesconto(produtoEdicao, numeroCota);
+		
+		conferenciaEncalheDTO.setNumeroEdicao(produtoEdicao.getNumeroEdicao());
+		
+		conferenciaEncalheDTO.setPrecoCapa(produtoEdicao.getPrecoVenda());
+		
+		conferenciaEncalheDTO.setDesconto(produtoEdicao.getDesconto());
+		
+		conferenciaEncalheDTO.setPacotePadrao(produtoEdicao.getPacotePadrao());
+		
+		conferenciaEncalheDTO.setNomeProduto(produtoEdicao.getProduto().getNome());
+		
+		conferenciaEncalheDTO.setPossuiBrinde(produtoEdicao.isPossuiBrinde());
+		
+		conferenciaEncalheDTO.setNomeEditor(produtoEdicao.getProduto().getEditor().getNome());
+		
+		conferenciaEncalheDTO.setNomeEditor(produtoEdicao.getProduto().getFornecedor().getJuridica().getNome());
+		
+		
+		
+		return conferenciaEncalheDTO;
 		
 	}
 	

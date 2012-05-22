@@ -17,6 +17,7 @@ import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.TipoEndereco;
 import br.com.abril.nds.repository.EnderecoRepository;
 import br.com.abril.nds.service.EnderecoService;
+import br.com.abril.nds.service.exception.EnderecoUniqueConstraintViolationException;
 import br.com.abril.nds.util.TipoMensagem;
 
 @Service
@@ -144,7 +145,16 @@ public class EnderecoServiceImpl implements EnderecoService {
 		
 		if (idsEndereco != null && !idsEndereco.isEmpty()){
 			
-			this.enderecoRepository.removerEnderecos(idsEndereco);
+			try{
+				
+				this.enderecoRepository.removerEnderecos(idsEndereco);
+				
+			}catch (RuntimeException e) {
+				
+				if( e instanceof org.springframework.dao.DataIntegrityViolationException){
+					throw new EnderecoUniqueConstraintViolationException("Exclusão de endereço não permitida, registro possui dependências!");
+				}
+			}
 		}
 	}
 
