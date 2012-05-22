@@ -512,9 +512,19 @@
         
         	<table class="tiposDescGeralGrid"></table>
             
-       		<span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;"><img src="../images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
-             <span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="../images/ico_impressora.gif" alt="Imprimir" hspace="5" border="0" />Imprimir</a></span>
-           <span class="bt_novos" title="Novo"><a href="javascript:;" onclick="popup_geral();"><img src="../images/ico_salvar.gif" hspace="5" border="0"/>Novo</a></span>
+       		<span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;">
+       			<a href="${pageContext.request.contextPath}/administracao/tipoDescontoCota/exportar?fileType=XLS&tipoDesconto=geral">
+					<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
+					Arquivo
+				</a>
+       		</span>
+             <span class="bt_novos" title="Imprimir">
+             	<a href="${pageContext.request.contextPath}/administracao/tipoDescontoCota/exportar?fileType=PDF&tipoDesconto=geral">
+					<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" alt="Imprimir" hspace="5" border="0" />
+					Imprimir
+				</a>
+             </span>
+           <span class="bt_novos" title="Novo"><a href="javascript:;" onclick="popup_geral();"><img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0"/>Novo</a></span>
    
       </fieldset>
       
@@ -524,9 +534,19 @@
         
         	<table class="tiposDescEspecificoGrid"></table>
        
-			<span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;"><img src="../images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
-             <span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="../images/ico_impressora.gif" alt="Imprimir" hspace="5" border="0" />Imprimir</a></span>
-           <span class="bt_novos" title="Novo"><a href="javascript:;" onclick="popup_especifico();"><img src="../images/ico_salvar.gif" hspace="5" border="0"/>Novo</a></span>
+			<span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;">
+       			<a href="${pageContext.request.contextPath}/administracao/tipoDescontoCota/exportar?fileType=XLS&tipoDesconto=especifico">
+					<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
+					Arquivo
+				</a>
+       		</span>
+             <span class="bt_novos" title="Imprimir">
+             	<a href="${pageContext.request.contextPath}/administracao/tipoDescontoCota/exportar?fileType=PDF&tipoDesconto=especifico">
+					<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" alt="Imprimir" hspace="5" border="0" />
+					Imprimir
+				</a>
+             </span>
+           <span class="bt_novos" title="Novo"><a href="javascript:;" onclick="popup_geral();"><img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0"/>Novo</a></span>
    
       </fieldset>
       
@@ -536,9 +556,19 @@
         
        	<table class="tiposDescProdutoGrid"></table>
        
-			<span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;"><img src="../images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
-             <span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="../images/ico_impressora.gif" alt="Imprimir" hspace="5" border="0" />Imprimir</a></span>
-           <span class="bt_novos" title="Novo"><a href="javascript:;" onclick="popup_produto();"><img src="../images/ico_salvar.gif" hspace="5" border="0"/>Novo</a></span>
+			<span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;">
+       			<a href="${pageContext.request.contextPath}/administracao/tipoDescontoCota/exportar?fileType=XLS&tipoDesconto=produto">
+					<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
+					Arquivo
+				</a>
+       		</span>
+             <span class="bt_novos" title="Imprimir">
+             	<a href="${pageContext.request.contextPath}/administracao/tipoDescontoCota/exportar?fileType=PDF&tipoDesconto=produto">
+					<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" alt="Imprimir" hspace="5" border="0" />
+					Imprimir
+				</a>
+             </span>
+           <span class="bt_novos" title="Novo"><a href="javascript:;" onclick="popup_geral();"><img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0"/>Novo</a></span>
    
       </fieldset>
     </div>

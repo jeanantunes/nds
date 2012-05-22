@@ -4,7 +4,7 @@ import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Exportable;
 
 @Exportable
-public class TipoDescontoCotaVO {
+public class TipoDescontoCotaProdutoVO {
 	
 	private String id;
 	
@@ -17,20 +17,15 @@ public class TipoDescontoCotaVO {
 	@Export(label = "Usuário")
 	private String usuario;
 	
-	private String seq;
-	
-	private String cota;
-	
-	private String nome;
-	
+	@Export(label = "Código")
 	private String codigo;
 	
+	@Export(label = "Produto")
 	private String produto;
 	
+	@Export(label = "Edição")
 	private String edicao;
-	
-	private String especificacaoDesconto;
-	
+
 	public String getId() {
 		return id;
 	}
@@ -43,7 +38,7 @@ public class TipoDescontoCotaVO {
 		return dtAlteracao;
 	}
 
-	public void setDataAlteracao(String dtAlteracao) {
+	public void setDtAlteracao(String dtAlteracao) {
 		this.dtAlteracao = dtAlteracao;
 	}
 
@@ -61,30 +56,6 @@ public class TipoDescontoCotaVO {
 
 	public void setUsuario(String usuario) {
 		this.usuario = usuario;
-	}
-
-	public String getSeq() {
-		return seq;
-	}
-
-	public void setSeq(String seq) {
-		this.seq = seq;
-	}
-
-	public String getCota() {
-		return cota;
-	}
-
-	public void setCota(String cota) {
-		this.cota = cota;
-	}
-
-	public String getNome() {
-		return nome;
-	}
-
-	public void setNome(String nome) {
-		this.nome = nome;
 	}
 
 	public String getCodigo() {
@@ -110,13 +81,9 @@ public class TipoDescontoCotaVO {
 	public void setEdicao(String edicao) {
 		this.edicao = edicao;
 	}
+	
+	
+	
 
-	public String getEspecificacaoDesconto() {
-		return especificacaoDesconto;
-	}
-
-	public void setEspecificacaoDesconto(String especificacaoDesconto) {
-		this.especificacaoDesconto = especificacaoDesconto;
-	}
 	
 }

@@ -11,12 +11,19 @@ public class FiltroTipoDescontoCotaDTO extends FiltroDTO implements Serializable
 	
 	private static final long serialVersionUID = 2281254940257591061L;
 	
-	
 	private Long desconto;
 	
 	private Date dataAlteracao;
 	
 	private String usuario;
+	
+	private Long idCota;
+	
+	private String nomeEspecifico;
+	
+	private Long idProduto;
+	
+	private Long numeroEdicao;
 	
 	private PaginacaoVO paginacao;
 	
@@ -26,7 +33,7 @@ public class FiltroTipoDescontoCotaDTO extends FiltroDTO implements Serializable
 	
 	public enum OrdenacaoColunaConsulta {
 		
-		SEQUENCIAL("seq");
+		SEQUENCIAL("seq"),COTA("cota"),CODIGO("codigo");
 		
 		private String nomeColuna;
 		
@@ -92,7 +99,37 @@ public class FiltroTipoDescontoCotaDTO extends FiltroDTO implements Serializable
 	public void setOrdenacaoColuna(OrdenacaoColunaConsulta ordenacaoColuna) {
 		this.ordenacaoColuna = ordenacaoColuna;
 	}
-	
-	
+
+	public Long getIdCota() {
+		return idCota;
+	}
+
+	public void setIdCota(Long idCota) {
+		this.idCota = idCota;
+	}
+
+	public Long getIdProduto() {
+		return idProduto;
+	}
+
+	public void setIdProduto(Long idProduto) {
+		this.idProduto = idProduto;
+	}
+
+	public Long getNumeroEdicao() {
+		return numeroEdicao;
+	}
+
+	public void setNumeroEdicao(Long numeroEdicao) {
+		this.numeroEdicao = numeroEdicao;
+	}
+
+	public String getNomeEspecifico() {
+		return nomeEspecifico;
+	}
+
+	public void setNomeEspecifico(String nomeEspecifico) {
+		this.nomeEspecifico = nomeEspecifico;
+	}
 	
 }
