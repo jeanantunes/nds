@@ -370,15 +370,6 @@ public class ConferenciaEncalheController {
 	@Post
 	public void salvarConferencia(){
 		
-		//TODO
-		
-		this.result.use(Results.json()).from(
-				new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."), "result").recursive().serialize();
-	}
-	
-	@Post
-	public void finalizarConferencia(){
-		
 		ControleConferenciaEncalheCota controleConfEncalheCota = new ControleConferenciaEncalheCota();
 		controleConfEncalheCota.setDataInicio((Date) this.session.getAttribute(HORA_INICIO_CONFERENCIA));
 		controleConfEncalheCota.setCota(this.getInfoConferenciaSession().getCota());
@@ -406,6 +397,34 @@ public class ConferenciaEncalheController {
 			
 			throw new ValidacaoException(TipoMensagem.WARNING, e.getMessage());
 		}
+		
+		this.result.use(Results.json()).from(
+				new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."), "result").recursive().serialize();
+	}
+	
+	@Post
+	public void finalizarConferencia(){
+		
+		ControleConferenciaEncalheCota controleConfEncalheCota = new ControleConferenciaEncalheCota();
+		controleConfEncalheCota.setDataInicio((Date) this.session.getAttribute(HORA_INICIO_CONFERENCIA));
+		controleConfEncalheCota.setCota(this.getInfoConferenciaSession().getCota());
+		controleConfEncalheCota.setId(this.getInfoConferenciaSession().getIdControleConferenciaEncalheCota());
+		
+		List<ConferenciaEncalheDTO> lista = this.getListaConferenciaEncalheFromSession();
+		
+		for (ConferenciaEncalheDTO dto : lista){
+			
+			if (dto.getIdConferenciaEncalhe() < 0){
+				
+				dto.setIdConferenciaEncalhe(null);
+			}
+		}
+		
+		this.conferenciaEncalheService.finalizarConferenciaEncalhe(
+				controleConfEncalheCota, 
+				this.getListaConferenciaEncalheFromSession(), 
+				this.getSetConferenciaEncalheExcluirFromSession(), 
+				this.getUsuarioLogado());
 		
 		this.result.use(Results.json()).from(
 				new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."), "result").recursive().serialize();
