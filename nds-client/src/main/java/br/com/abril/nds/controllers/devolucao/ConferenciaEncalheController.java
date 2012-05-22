@@ -1,6 +1,7 @@
 package br.com.abril.nds.controllers.devolucao;
 
 import java.math.BigDecimal;
+import java.math.MathContext;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -24,6 +25,7 @@ import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaCota;
+import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalhe;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalheCota;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.service.ConferenciaEncalheService;
@@ -379,10 +381,22 @@ public class ConferenciaEncalheController {
 		ControleConferenciaEncalheCota controleConfEncalheCota = new ControleConferenciaEncalheCota();
 		controleConfEncalheCota.setDataInicio((Date) this.session.getAttribute(HORA_INICIO_CONFERENCIA));
 		controleConfEncalheCota.setCota(this.getInfoConferenciaSession().getCota());
+		controleConfEncalheCota.setId(this.getInfoConferenciaSession().getIdControleConferenciaEncalheCota());
+		
+		List<ConferenciaEncalheDTO> lista = this.getListaConferenciaEncalheFromSession();
+		
+		for (ConferenciaEncalheDTO dto : lista){
+			
+			if (dto.getIdConferenciaEncalhe() < 0){
+				
+				dto.setIdConferenciaEncalhe(null);
+			}
+		}
+		
 		
 		this.conferenciaEncalheService.salvarDadosConferenciaEncalhe(
 				controleConfEncalheCota, 
-				this.getListaConferenciaEncalheFromSession(), 
+				lista, 
 				this.getSetConferenciaEncalheExcluirFromSession(), 
 				this.getUsuarioLogado());
 		
@@ -487,6 +501,25 @@ public class ConferenciaEncalheController {
 		this.result.use(Results.json()).from(nota == null ? "" : nota, "result").serialize();
 	}
 	
+	@Post
+	public void verificarValorTotalNotaFiscal(){
+		
+		NotaFiscalEntradaCota nota = (NotaFiscalEntradaCota) this.session.getAttribute(NOTA_FISCAL_CONFERENCIA);
+		
+		BigDecimal valorTotal = this.calcularValoresMonetarios(null);
+		
+		valorTotal = valorTotal.round(new MathContext(2));
+		
+		if (nota != null && nota.getValorProdutos() != null && 
+				!nota.getValorProdutos().equals(valorTotal)){
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Valor total dos produtos difere do valor da nota informada.");
+		} else {
+			
+			this.finalizarConferencia();
+		}
+	}
+	
 	private void limparDadosSessao() {
 		
 		this.session.removeAttribute(ID_BOX_LOGADO);
@@ -502,7 +535,7 @@ public class ConferenciaEncalheController {
 		return (InfoConferenciaEncalheCota) this.session.getAttribute(INFO_CONFERENCIA);
 	}
 
-	private void calcularValoresMonetarios(List<Object> dados){
+	private BigDecimal calcularValoresMonetarios(List<Object> dados){
 		
 		BigDecimal valorEncalhe = BigDecimal.ZERO;
 		BigDecimal valorVendaDia = BigDecimal.ZERO;
@@ -534,10 +567,17 @@ public class ConferenciaEncalheController {
 			}
 		}
 		
-		dados.add(valorEncalhe);
-		dados.add(valorVendaDia);
-		dados.add(valorDebitoCredito);
-		dados.add(valorEncalhe.subtract(valorVendaDia).add(valorDebitoCredito));
+		BigDecimal valorPagar = valorEncalhe.subtract(valorVendaDia).add(valorDebitoCredito);
+		
+		if (dados != null){
+			
+			dados.add(valorEncalhe);
+			dados.add(valorVendaDia);
+			dados.add(valorDebitoCredito);
+			dados.add(valorPagar);
+		}
+		
+		return valorPagar;
 	}
 	
 	/*
@@ -626,6 +666,13 @@ public class ConferenciaEncalheController {
 			for (ConferenciaEncalheDTO dto : listaConferenciaEncalhe){
 				
 				dto.setValorTotal(dto.getPrecoCapa().subtract(dto.getDesconto()).multiply(dto.getQtdExemplar()));
+				
+				dto.setJuramentada(null);
+				
+				if (dto.getIdConferenciaEncalhe() == null){
+					
+					dto.setIdConferenciaEncalhe(new Long(((int) System.currentTimeMillis()) *-1));
+				}
 				
 				list.add(new CellModelKeyValue<ConferenciaEncalheDTO>(dto.getIdConferenciaEncalhe().intValue(), dto));
 			}

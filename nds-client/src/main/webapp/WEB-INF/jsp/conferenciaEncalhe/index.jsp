@@ -135,7 +135,9 @@
 						}
 						
 						var inputCheckBoxJuramentada = 
-							'<input type="checkbox" ' + (value.cell.juramentada ? 'checked="checked"' : '')  + ' name="checkGroupJuramentada" style="align: center;"/>';
+							'<input type="checkbox" ' + (value.cell.juramentada == "true" ? 'checked="checked"' : '')
+								+ (!value.cell.juramentada ? 'disabled="disabled"' : '')
+								+ ' name="checkGroupJuramentada" style="align: center;"/>';
 						
 						value.cell.juramentada = inputCheckBoxJuramentada;
 						
@@ -183,7 +185,7 @@
 					$("#numeroNotaFiscalExibir").text(notaFiscal.numero);
 					$("#serieExibir").text(notaFiscal.serie);
 					$("#dataExibir").text(notaFiscal.dataEmissao);
-					$("#valorTotalNotaFiscalExibir").text(notaFiscal.valorProdutos);
+					$("#valorTotalNotaFiscalExibir").text(parseFloat(notaFiscal.valorProdutos).toFixed(2));
 					$("#chaveAcessoExibir").text(notaFiscal.chaveAcesso);
 				}
 				
@@ -1110,7 +1112,16 @@
 			
 			if (!modalAberta){
 				
-				ConferenciaEncalhe.recalcularValoresFinalizar();
+				$.postJSON("<c:url value='/devolucao/conferenciaEncalhe/verificarValorTotalNotaFiscal'/>", null,
+					function(result){
+						
+						exibirMensagem(result.mensagens.tipoMensagem, result.mensagens.listaMensagens);
+					},
+					function(){
+						
+						ConferenciaEncalhe.recalcularValoresFinalizar();
+					}, true, "idModalDadosNotaFiscal"
+				);
 			}
 		});
 		
