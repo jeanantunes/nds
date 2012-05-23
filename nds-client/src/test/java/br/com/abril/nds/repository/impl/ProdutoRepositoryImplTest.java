@@ -30,7 +30,7 @@ public class ProdutoRepositoryImplTest extends AbstractRepositoryImplTest {
 		save(tipoProduto);
 		
 		Produto produto =
-			Fixture.produto("1", "Revista Veja", "Veja", PeriodicidadeProduto.SEMANAL, tipoProduto);
+			Fixture.produto("1", "Revista Veja", "Veja", PeriodicidadeProduto.SEMANAL, tipoProduto, 5, 5);
 		produto.setEditor(abril);
 		save(produto);
 	}

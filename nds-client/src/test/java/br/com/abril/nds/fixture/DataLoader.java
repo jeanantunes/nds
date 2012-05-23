@@ -687,13 +687,13 @@ public class DataLoader {
 	
 	private static void gerarParciais(Session session) {
 		
-		Produto guiaQuatroRodas = Fixture.produto("3111", "Guia Quatro Rodas", "Guia Quatro Rodas", PeriodicidadeProduto.ANUAL, tipoProdutoRevista);
+		Produto guiaQuatroRodas = Fixture.produto("3111", "Guia Quatro Rodas", "Guia Quatro Rodas", PeriodicidadeProduto.ANUAL, tipoProdutoRevista, 5, 5);
 		guiaQuatroRodas.addFornecedor(fornecedorDinap);
 		
-		Produto cromoBrasileirao = Fixture.produto("3333", "Cromo Brasileirão", "Cromo Brasileirão", PeriodicidadeProduto.ANUAL, tipoCromo);
+		Produto cromoBrasileirao = Fixture.produto("3333", "Cromo Brasileirão", "Cromo Brasileirão", PeriodicidadeProduto.ANUAL, tipoCromo, 5, 5);
 		cromoBrasileirao.addFornecedor(fornecedorFc);
 		
-		Produto guiaViagem = Fixture.produto("3113", "Guia Viagem", "Guia Viagem", PeriodicidadeProduto.ANUAL, tipoProdutoRevista);
+		Produto guiaViagem = Fixture.produto("3113", "Guia Viagem", "Guia Viagem", PeriodicidadeProduto.ANUAL, tipoProdutoRevista, 5, 5);
 		guiaViagem.addFornecedor(fornecedorDinap);
 		
 		save(session,guiaQuatroRodas,cromoBrasileirao,guiaViagem);
@@ -2678,7 +2678,7 @@ public class DataLoader {
 		produtoPlacar.setEditor(editoraAbril);
 		session.save(produtoPlacar);
 
-		cocaCola = Fixture.produto("564", "Coca-Cola", "Coca-Cola", PeriodicidadeProduto.MENSAL, tipoRefrigerante);
+		cocaCola = Fixture.produto("564", "Coca-Cola", "Coca-Cola", PeriodicidadeProduto.MENSAL, tipoRefrigerante, 5, 5);
 		cocaCola.addFornecedor(fornecedorAcme);
 		save(session, cocaCola);
 	}
@@ -3227,7 +3227,7 @@ public class DataLoader {
 			Fornecedor fornecedor = Fixture.fornecedor(juridica, SituacaoCadastro.ATIVO, true, tipoFornecedorPublicacao);
 			session.save(fornecedor);
 
-			Produto produto = Fixture.produto("00"+i, "descricao"+i, "nome"+i, PeriodicidadeProduto.ANUAL, tipoRevista);
+			Produto produto = Fixture.produto("00"+i, "descricao"+i, "nome"+i, PeriodicidadeProduto.ANUAL, tipoRevista, 5, 5);
 			produto.addFornecedor(fornecedor);
 			session.save(produto); 
 
@@ -3692,7 +3692,7 @@ public class DataLoader {
 			Fornecedor fornecedor = Fixture.fornecedor(juridica, SituacaoCadastro.ATIVO, true, tipoFornecedorPublicacao);
 			save(session,fornecedor);
 
-			Produto produto = Fixture.produto("00"+i, "descricao"+i, "nome"+i, PeriodicidadeProduto.ANUAL, tipoRevista);
+			Produto produto = Fixture.produto("00"+i, "descricao"+i, "nome"+i, PeriodicidadeProduto.ANUAL, tipoRevista, 5, 5);
 			produto.addFornecedor(fornecedor);
 			save(session,produto); 
 
@@ -3889,9 +3889,9 @@ public class DataLoader {
 
 		PeriodicidadeProduto periodicidade = PeriodicidadeProduto.MENSAL;
 
-		Produto produto91 = Fixture.produto("00091", "Produto 91", "Produto 91", periodicidade, tipoProdutoRevista);
-		Produto produto92 = Fixture.produto("00092", "Produto 92", "Produto 92", periodicidade, tipoProdutoRevista);
-		Produto produto93 = Fixture.produto("00093", "Produto 93", "Produto 93", periodicidade, tipoProdutoRevista);
+		Produto produto91 = Fixture.produto("00091", "Produto 91", "Produto 91", periodicidade, tipoProdutoRevista, 5, 5);
+		Produto produto92 = Fixture.produto("00092", "Produto 92", "Produto 92", periodicidade, tipoProdutoRevista, 5, 5);
+		Produto produto93 = Fixture.produto("00093", "Produto 93", "Produto 93", periodicidade, tipoProdutoRevista, 5, 5);
 
 		produto91.addFornecedor(fornecedorDinap);
 		produto92.addFornecedor(fornecedorDinap);
@@ -4265,9 +4265,9 @@ public class DataLoader {
 
 		PeriodicidadeProduto periodicidade = PeriodicidadeProduto.MENSAL;
 
-		Produto produtoCE = Fixture.produto("00084", "Produto CE", "ProdutoCE", periodicidade, tipoProdutoRevista);
-		Produto produtoCE_2 = Fixture.produto("00085", "Produto CE 2", "ProdutoCE_2", periodicidade, tipoProdutoRevista);
-		Produto produtoCE_3 = Fixture.produto("00086", "Produto CE 3", "ProdutoCE_3", periodicidade, tipoProdutoRevista);
+		Produto produtoCE = Fixture.produto("00084", "Produto CE", "ProdutoCE", periodicidade, tipoProdutoRevista, 5, 5);
+		Produto produtoCE_2 = Fixture.produto("00085", "Produto CE 2", "ProdutoCE_2", periodicidade, tipoProdutoRevista, 5, 5);
+		Produto produtoCE_3 = Fixture.produto("00086", "Produto CE 3", "ProdutoCE_3", periodicidade, tipoProdutoRevista, 5, 5);
 
 		produtoCE.addFornecedor(fornecedorDinap);
 		produtoCE_2.addFornecedor(fornecedorDinap);
@@ -5008,127 +5008,127 @@ public class DataLoader {
 		save(session, globo, europa, jazz, tipoCromo);
 
 		//PRODUTOS
-		Produto javaMagazine = Fixture.produto("541", "Java Magazine", "Java Magazine", PeriodicidadeProduto.MENSAL, tipoProdutoRevista);
+		Produto javaMagazine = Fixture.produto("541", "Java Magazine", "Java Magazine", PeriodicidadeProduto.MENSAL, tipoProdutoRevista, 5, 5);
 		javaMagazine.setEditor(europa);
 		javaMagazine.addFornecedor(fornecedorDinap);
 		save(session, javaMagazine);
 		
-		Produto mundoJava = Fixture.produto("542", "Mundo Java", "Mundo Java", PeriodicidadeProduto.SEMANAL, tipoProdutoRevista);
+		Produto mundoJava = Fixture.produto("542", "Mundo Java", "Mundo Java", PeriodicidadeProduto.SEMANAL, tipoProdutoRevista, 5, 5);
 		mundoJava.setEditor(globo);
 		mundoJava.addFornecedor(fornecedorDinap);
 		save(session, mundoJava);
 		
-		Produto sqlMagazine = Fixture.produto("543", "SQL Magazine", "SQL Magazine", PeriodicidadeProduto.SEMANAL, tipoProdutoRevista);
+		Produto sqlMagazine = Fixture.produto("543", "SQL Magazine", "SQL Magazine", PeriodicidadeProduto.SEMANAL, tipoProdutoRevista, 5, 5);
 		sqlMagazine.setEditor(europa);
 		sqlMagazine.addFornecedor(fornecedorDinap);
 		save(session, sqlMagazine);
 		
-		Produto galileu = Fixture.produto("544", "Galileu", "Galileu", PeriodicidadeProduto.SEMANAL, tipoProdutoRevista);
+		Produto galileu = Fixture.produto("544", "Galileu", "Galileu", PeriodicidadeProduto.SEMANAL, tipoProdutoRevista, 5, 5);
 		galileu.setEditor(globo);
 		galileu.addFornecedor(fornecedorDinap);
 		save(session, galileu);
 		
-		Produto duasRodas = Fixture.produto("545", "Duas Rodas", "Duas Rodas", PeriodicidadeProduto.MENSAL, tipoProdutoRevista);
+		Produto duasRodas = Fixture.produto("545", "Duas Rodas", "Duas Rodas", PeriodicidadeProduto.MENSAL, tipoProdutoRevista, 5, 5);
 		duasRodas.setEditor(globo);
 		duasRodas.addFornecedor(fornecedorFc);
 		save(session, duasRodas);
 		
-		Produto guitarPlayer = Fixture.produto("546", "Guitar Player", "Guitar Player", PeriodicidadeProduto.MENSAL, tipoProdutoRevista);
+		Produto guitarPlayer = Fixture.produto("546", "Guitar Player", "Guitar Player", PeriodicidadeProduto.MENSAL, tipoProdutoRevista, 5, 5);
 		guitarPlayer.setEditor(jazz);
 		guitarPlayer.addFornecedor(fornecedorDinap);
 		save(session, guitarPlayer);
 
-		Produto roadieCrew = Fixture.produto("547", "Roadie Crew", "Roadie Crew", PeriodicidadeProduto.MENSAL, tipoProdutoRevista);
+		Produto roadieCrew = Fixture.produto("547", "Roadie Crew", "Roadie Crew", PeriodicidadeProduto.MENSAL, tipoProdutoRevista, 5, 5);
 		roadieCrew.setEditor(editoraAbril);
 		roadieCrew.addFornecedor(fornecedorFc);
 		save(session, roadieCrew);
 		
-		Produto rockBrigade = Fixture.produto("548", "Rock Brigade", "Rock Brigade", PeriodicidadeProduto.MENSAL, tipoProdutoRevista);
+		Produto rockBrigade = Fixture.produto("548", "Rock Brigade", "Rock Brigade", PeriodicidadeProduto.MENSAL, tipoProdutoRevista, 5, 5);
 		rockBrigade.setEditor(editoraAbril);
 		rockBrigade.addFornecedor(fornecedorFc);
 		save(session, rockBrigade);
 		
-		Produto valhalla = Fixture.produto("549", "Valhalla", "Valhalla", PeriodicidadeProduto.MENSAL, tipoProdutoRevista);
+		Produto valhalla = Fixture.produto("549", "Valhalla", "Valhalla", PeriodicidadeProduto.MENSAL, tipoProdutoRevista, 5, 5);
 		valhalla.setEditor(editoraAbril);
 		valhalla.addFornecedor(fornecedorFc);
 		save(session, valhalla);
 		
-		Produto rollingStone = Fixture.produto("550", "Rolling Stone", "Rolling Stone", PeriodicidadeProduto.MENSAL, tipoProdutoRevista);
+		Produto rollingStone = Fixture.produto("550", "Rolling Stone", "Rolling Stone", PeriodicidadeProduto.MENSAL, tipoProdutoRevista, 5, 5);
 		rollingStone.setEditor(editoraAbril);
 		rollingStone.addFornecedor(fornecedorFc);
 		save(session, rollingStone);
 
-		Produto bonsFluidos = Fixture.produto("551", "Bons Fluídos", "Bons Fluídos", PeriodicidadeProduto.MENSAL, tipoProdutoRevista);
+		Produto bonsFluidos = Fixture.produto("551", "Bons Fluídos", "Bons Fluídos", PeriodicidadeProduto.MENSAL, tipoProdutoRevista, 5, 5);
 		bonsFluidos.setEditor(europa);
 		bonsFluidos.addFornecedor(fornecedorDinap);
 		save(session, bonsFluidos);
 		
-		Produto bravo = Fixture.produto("552", "Revista Bravo", "Revista Bravo", PeriodicidadeProduto.SEMANAL, tipoProdutoRevista);
+		Produto bravo = Fixture.produto("552", "Revista Bravo", "Revista Bravo", PeriodicidadeProduto.SEMANAL, tipoProdutoRevista, 5, 5);
 		bravo.setEditor(globo);
 		bravo.addFornecedor(fornecedorDinap);
 		save(session, bravo);
 		
-		Produto casaClaudia = Fixture.produto("553", "Casa Claudia", "Revista Casa Claudia", PeriodicidadeProduto.SEMANAL, tipoProdutoRevista);
+		Produto casaClaudia = Fixture.produto("553", "Casa Claudia", "Revista Casa Claudia", PeriodicidadeProduto.SEMANAL, tipoProdutoRevista, 5, 5);
 		casaClaudia.setEditor(europa);
 		casaClaudia.addFornecedor(fornecedorDinap);
 		save(session, casaClaudia);
 		
-		Produto jequiti = Fixture.produto("554", "Jequiti", "Jequiti", PeriodicidadeProduto.SEMANAL, tipoProdutoRevista);
+		Produto jequiti = Fixture.produto("554", "Jequiti", "Jequiti", PeriodicidadeProduto.SEMANAL, tipoProdutoRevista, 5, 5);
 		jequiti.setEditor(globo);
 		jequiti.addFornecedor(fornecedorDinap);
 		save(session, jequiti);
 		
-		Produto mundoEstranho = Fixture.produto("555", "Mundo Estranho", "Revista Mundo Estranho", PeriodicidadeProduto.MENSAL, tipoProdutoRevista);
+		Produto mundoEstranho = Fixture.produto("555", "Mundo Estranho", "Revista Mundo Estranho", PeriodicidadeProduto.MENSAL, tipoProdutoRevista, 5, 5);
 		mundoEstranho.setEditor(globo);
 		mundoEstranho.addFornecedor(fornecedorFc);
 		save(session, mundoEstranho);
 		
-		Produto novaEscola = Fixture.produto("556", "Nova Escola", "Revista Nova Escola", PeriodicidadeProduto.MENSAL, tipoProdutoRevista);
+		Produto novaEscola = Fixture.produto("556", "Nova Escola", "Revista Nova Escola", PeriodicidadeProduto.MENSAL, tipoProdutoRevista, 5, 5);
 		novaEscola.setEditor(jazz);
 		novaEscola.addFornecedor(fornecedorDinap);
 		save(session, novaEscola);
 
-		Produto minhaCasa = Fixture.produto("557", "Minha Casa", "Revista Minha Casa", PeriodicidadeProduto.MENSAL, tipoProdutoRevista);
+		Produto minhaCasa = Fixture.produto("557", "Minha Casa", "Revista Minha Casa", PeriodicidadeProduto.MENSAL, tipoProdutoRevista, 5, 5);
 		minhaCasa.setEditor(editoraAbril);
 		minhaCasa.addFornecedor(fornecedorFc);
 		save(session, minhaCasa);
 		
-		Produto recreio = Fixture.produto("558", "Recreio", "Revista Recreio", PeriodicidadeProduto.MENSAL, tipoProdutoRevista);
+		Produto recreio = Fixture.produto("558", "Recreio", "Revista Recreio", PeriodicidadeProduto.MENSAL, tipoProdutoRevista, 5, 5);
 		recreio.setEditor(editoraAbril);
 		recreio.addFornecedor(fornecedorFc);
 		save(session, recreio);
 		
-		Produto womenHealth = Fixture.produto("559", "Women's Health", "Revista Women's Health", PeriodicidadeProduto.MENSAL, tipoCromo);
+		Produto womenHealth = Fixture.produto("559", "Women's Health", "Revista Women's Health", PeriodicidadeProduto.MENSAL, tipoCromo, 5, 5);
 		womenHealth.setEditor(editoraAbril);
 		womenHealth.addFornecedor(fornecedorFc);
 		save(session, womenHealth);
 		
-		Produto viagemTurismo = Fixture.produto("560", "Viagem e Turismo", "Revista Viagem e Turismo", PeriodicidadeProduto.MENSAL, tipoProdutoRevista);
+		Produto viagemTurismo = Fixture.produto("560", "Viagem e Turismo", "Revista Viagem e Turismo", PeriodicidadeProduto.MENSAL, tipoProdutoRevista, 5, 5);
 		viagemTurismo.setEditor(editoraAbril);
 		viagemTurismo.addFornecedor(fornecedorFc);
 		save(session, viagemTurismo);
 
-		Produto vip = Fixture.produto("561", "VIP", "Revista VIP", PeriodicidadeProduto.MENSAL, tipoProdutoRevista);
+		Produto vip = Fixture.produto("561", "VIP", "Revista VIP", PeriodicidadeProduto.MENSAL, tipoProdutoRevista, 5, 5);
 		vip.setEditor(jazz);
 		vip.addFornecedor(fornecedorDinap);
 		save(session, vip);
 
-		Produto gestaoEscolar = Fixture.produto("562", "Gestão Escolar", "Gestão Escolar", PeriodicidadeProduto.MENSAL, tipoProdutoRevista);
+		Produto gestaoEscolar = Fixture.produto("562", "Gestão Escolar", "Gestão Escolar", PeriodicidadeProduto.MENSAL, tipoProdutoRevista, 5, 5);
 		gestaoEscolar.setEditor(editoraAbril);
 		gestaoEscolar.addFornecedor(fornecedorFc);
 		save(session, gestaoEscolar);
 		
-		Produto lola = Fixture.produto("563", "Lola", "Lola", PeriodicidadeProduto.MENSAL, tipoCromo);
+		Produto lola = Fixture.produto("563", "Lola", "Lola", PeriodicidadeProduto.MENSAL, tipoCromo, 5, 5);
 		lola.setEditor(editoraAbril);
 		lola.addFornecedor(fornecedorFc);
 		save(session, lola);
 		
-		Produto heavyMetal = Fixture.produto("539", "Heavy Metal", "Heavy Metal", PeriodicidadeProduto.MENSAL, tipoProdutoRevista);
+		Produto heavyMetal = Fixture.produto("539", "Heavy Metal", "Heavy Metal", PeriodicidadeProduto.MENSAL, tipoProdutoRevista, 5, 5);
 		heavyMetal.setEditor(editoraAbril);
 		heavyMetal.addFornecedor(fornecedorFc);
 		save(session, heavyMetal);
 		
-		Produto metalUnderground = Fixture.produto("540", "Metal Underground", "Metal Underground", PeriodicidadeProduto.MENSAL, tipoProdutoRevista);
+		Produto metalUnderground = Fixture.produto("540", "Metal Underground", "Metal Underground", PeriodicidadeProduto.MENSAL, tipoProdutoRevista, 5, 5);
 		metalUnderground.setEditor(editoraAbril);
 		metalUnderground.addFornecedor(fornecedorFc);
 		save(session, metalUnderground);
