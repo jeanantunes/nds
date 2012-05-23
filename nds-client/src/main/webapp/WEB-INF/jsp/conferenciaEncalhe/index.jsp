@@ -1058,8 +1058,6 @@
 						$('#cod_barras').focus();
 					} else {
 						
-						var _codProduto = $("#codProduto").val();
-						
 						var data = [{name: "codigoBarra", value: ""}, 
 						            {name: "sm", value: ""}, 
 						            {name: "idProdutoEdicao", value: idProdutoEdicao},
@@ -1086,8 +1084,11 @@
 			
 			$('#codProduto').keypress(function(e) {
 				
-				$("#pesq_prod").val("");
-				ConferenciaEncalhe.popup_pesquisar();
+				if (e.keyCode == 0){
+				
+					$("#pesq_prod").val("");
+					ConferenciaEncalhe.popup_pesquisar();
+				}
 			});
 			
 			$('#observacao').keypress(function(e) {
@@ -1236,7 +1237,7 @@
 						<input name="sm" type="text" id="sm" style="width: 40px;" />
 					</td>
 					<td class="class_linha_1" align="center" style="border-bottom: 1px solid #666; border-right: 1px solid #666;">
-						<input name="codProduto" type="text" id="codProduto" style="width: 100px;" />
+						<input name="codProduto" type="text" readonly="readonly" id="codProduto" style="width: 100px;" />
 					</td>
 					<td class="class_linha_2" id="nomeProduto"></td>
 					<td class="class_linha_2" align="center" id="edicaoProduto"></td>
