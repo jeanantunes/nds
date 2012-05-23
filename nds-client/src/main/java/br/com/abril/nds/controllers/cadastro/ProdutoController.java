@@ -213,6 +213,18 @@ public class ProdutoController {
 	}
 	
 	@Post
+	public void carregarDadosProduto(Long id) {
+		
+		List<TipoProduto> listaTipoProduto = this.tipoProdutoService.obterTodosTiposProduto();
+		
+		if (id != null) {
+			// TODO: carregar dados produto.
+		}
+
+		this.result.include("listaTipoProduto", listaTipoProduto);
+	}
+	
+	@Post
 	public void removerProduto(Long id) {
 		
 		try {
