@@ -35,6 +35,6 @@
     </dependency>
   </dependencies>
   <build>
-    <finalName>ndsiwebtest</finalName>
+    <finalName>ndsiweb</finalName>
   </build>
 </project>
