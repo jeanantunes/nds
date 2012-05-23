@@ -391,7 +391,6 @@ public class ConferenciaEncalheRepositoryImplTest extends AbstractRepositoryImpl
 	
 	
 	@Test
-	@Ignore
 	public void testObterListaConferenciaEncalheCota() {
 		
 		Long idControleConferenciaEncalheCota = controleConferenciaEncalheCota.getId();
