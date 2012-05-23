@@ -14,9 +14,9 @@ import org.springframework.stereotype.Component;
 import br.com.abril.nds.integracao.engine.MessageProcessor;
 import br.com.abril.nds.integracao.engine.data.Message;
 import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;
-import br.com.abril.nds.integracao.model.EventoExecucaoEnum;
 import br.com.abril.nds.integracao.model.canonic.EMS0111Input;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 
@@ -140,11 +140,11 @@ public class EMS0113MessageProcessor implements MessageProcessor {
 
 		} catch (NoResultException e) {
 			// NAO ENCONTROU Produto/Edicao, DEVE LOGAR
-			// NÃO É POSSIVEL REALIZAR INSERT/UPDATE 
+			// Nï¿½O ï¿½ POSSIVEL REALIZAR INSERT/UPDATE 
 			ndsiLoggerFactory.getLogger().logError(
 					message,
 					EventoExecucaoEnum.RELACIONAMENTO,
-					"Impossível realizar Insert/update - Nenhum resultado encontrado para Produto: "
+					"Impossï¿½vel realizar Insert/update - Nenhum resultado encontrado para Produto: "
 							+ input.getCodigoProduto() + " e Edicao: "
 							+ input.getEdicaoProduto() + " na tabela produto_edicao");
 
