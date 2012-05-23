@@ -53,10 +53,7 @@ public class ProdutoEdicao implements Serializable {
 
 	@Column(name  = "CODIGO_DE_BARRAS")
 	protected String codigoDeBarras;
-	
-	@Column(name="SLOGAN", length = 50, nullable = true)
-	protected String slogan;
-	
+
 	@Column(name  = "NUMERO_EDICAO", nullable = false)
 	protected Long numeroEdicao;
 	
@@ -357,20 +354,6 @@ public class ProdutoEdicao implements Serializable {
 	 */
 	public void setDataDesativacao(Date dataDesativacao) {
 		this.dataDesativacao = dataDesativacao;
-	}
-
-	/**
-	 * @return the slogan
-	 */
-	public String getSlogan() {
-		return slogan;
-	}
-
-	/**
-	 * @param slogan the slogan to set
-	 */
-	public void setSlogan(String slogan) {
-		this.slogan = slogan;
 	}
 
 }

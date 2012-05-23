@@ -59,7 +59,7 @@ public class EstudoRepositoryImplTest extends AbstractRepositoryImplTest {
 		
 		save(tipoProduto);
 		
-		Produto produto = Fixture.produto("1", "teste", "teste", PeriodicidadeProduto.SEMANAL, tipoProduto);
+		Produto produto = Fixture.produto("1", "teste", "teste", PeriodicidadeProduto.SEMANAL, tipoProduto, 5, 5);
 		produto.addFornecedor(dinap);
 		save(produto);
 		
