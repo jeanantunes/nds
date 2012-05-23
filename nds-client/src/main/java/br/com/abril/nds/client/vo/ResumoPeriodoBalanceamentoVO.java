@@ -20,7 +20,7 @@ public class ResumoPeriodoBalanceamentoVO implements Serializable {
 	private String pesoTotalFormatado;
 	private BigDecimal valorTotal;
 	private String valorTotalFormatado;
-	private BigDecimal qtdeTitulosParciais;
+	private Long qtdeTitulosParciais;
 	private boolean exibeDestaque;
 	private boolean excedeCapacidadeDistribuidor;
 	
@@ -105,14 +105,14 @@ public class ResumoPeriodoBalanceamentoVO implements Serializable {
 	/**
 	 * @return the qtdeTitulosParciais
 	 */
-	public BigDecimal getQtdeTitulosParciais() {
+	public Long getQtdeTitulosParciais() {
 		return qtdeTitulosParciais;
 	}
 
 	/**
 	 * @param qtdeTitulosParciais the qtdeTitulosParciais to set
 	 */
-	public void setQtdeTitulosParciais(BigDecimal qtdeTitulosParciais) {
+	public void setQtdeTitulosParciais(Long qtdeTitulosParciais) {
 		this.qtdeTitulosParciais = qtdeTitulosParciais;
 	}
 

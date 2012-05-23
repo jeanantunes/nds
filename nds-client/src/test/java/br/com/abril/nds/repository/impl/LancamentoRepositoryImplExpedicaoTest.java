@@ -78,7 +78,7 @@ public class LancamentoRepositoryImplExpedicaoTest extends AbstractRepositoryImp
 			Editor abril = Fixture.editoraAbril();
 			save(abril);
 			
-			Produto produto = Fixture.produto("00"+i, "descricao"+i, "nome"+i, PeriodicidadeProduto.ANUAL, tipoRevista);
+			Produto produto = Fixture.produto("00"+i, "descricao"+i, "nome"+i, PeriodicidadeProduto.ANUAL, tipoRevista, 5, 5);
 			produto.addFornecedor(fornecedor);
 			produto.setEditor(abril);
 			save(produto); 

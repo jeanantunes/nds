@@ -90,7 +90,7 @@ public class RecebimentoFisicoRepositoryImplTest extends AbstractRepositoryImplT
 		Editor abril = Fixture.editoraAbril();
 		save(abril);
 		
-		produto = Fixture.produto("1", "Revista Veja", "Veja", PeriodicidadeProduto.SEMANAL, tipoProduto);
+		produto = Fixture.produto("1", "Revista Veja", "Veja", PeriodicidadeProduto.SEMANAL, tipoProduto, 5, 5);
 		produto.addFornecedor(dinap);
 		produto.setEditor(abril);
 		save(produto);
