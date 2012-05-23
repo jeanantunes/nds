@@ -56,7 +56,6 @@ public class Produto implements Serializable {
 	private String descricao;
 	
 	@ManyToMany(mappedBy="produtos")
-	
 	private Set<Fornecedor> fornecedores = new HashSet<Fornecedor>();
 
 	@Enumerated(EnumType.STRING)
@@ -87,7 +86,7 @@ public class Produto implements Serializable {
 	protected int peb;
 	
 	/**
-	 * Dimens�es do produto (largura, etc)
+	 * Dimensções do produto (largura, etc)
 	 */
 	@Embedded
 	private Dimensao dimensao;
