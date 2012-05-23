@@ -30,7 +30,7 @@ public class EditorRepositoryImpl extends AbstractRepository<Editor, Long> imple
 
 	@Override
 	public List<Editor> obterEditores() {
-		String hql = "from Editor";
+		String hql = "from Editor ed ORDER BY ed.nome";
 		Query query = getSession().createQuery(hql);
 		@SuppressWarnings("unchecked")
 		List<Editor> editores = query.list();
