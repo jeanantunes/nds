@@ -4,7 +4,9 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -35,6 +37,7 @@ import br.com.abril.nds.service.EditorService;
 import br.com.abril.nds.service.EnderecoService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.ProdutoService;
+import br.com.abril.nds.util.CellModel;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.DateUtil;
@@ -240,7 +243,12 @@ public class RelatorioVendasController {
 			throw new ValidacaoException(TipoMensagem.WARNING,
 					"Nenhum registro encontrado.");
 		} else {
-			result.use(Results.json()).withoutRoot().from(resultado).recursive().serialize();
+			
+			TableModel<CellModelKeyValue<RegistroHistoricoEditorVO>> tableModel = new TableModel<CellModelKeyValue<RegistroHistoricoEditorVO>>();
+			tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(resultado));
+			tableModel.setPage(1);
+			tableModel.setTotal(resultado.size());
+			result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
 		}
 	
 	}
@@ -309,7 +317,7 @@ public class RelatorioVendasController {
 			resultado.setTableModel(tableModel);
 			
 			session.setAttribute(RESULTADO_PESQUISA_CURVA_ABC_DISTRIBUIDOR_SESSION_ATTRIBUTE, resultado);
-			
+
 			result.use(Results.json()).withoutRoot().from(resultado)
 					.recursive().serialize();
 

@@ -978,7 +978,7 @@
 				return resultado;
 			}
 
-			$("#nomeEditorPopUp").html(resultado[0].nomeEditor);
+			//$("#nomeEditorPopUp").html(resultado[0].nomeEditor);
 			
 			$(".dialog-editor").show();
 			return resultado;
