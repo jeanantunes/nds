@@ -193,7 +193,7 @@ fieldset label {
 							<li><a href="Financeiro/baixa_bancaria_manual.htm">Baixa
 									Bancária Manual</a>
 							</li>
-							<li><a href='<c:url value="/financeiro/divida/manual"/>'>Baixa Manual de Dívidas</a>
+							<li><a href='<c:url value=""/>'>Baixa Manual de Dívidas</a>
 							</li>
 							<li><a href='<c:url value="/financeiro/boletos/consulta"/>'>Consulta
 									Boletos por Cota</a>
