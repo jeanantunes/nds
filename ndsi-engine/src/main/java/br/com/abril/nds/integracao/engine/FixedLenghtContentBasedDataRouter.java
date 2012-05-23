@@ -25,7 +25,7 @@ import br.com.abril.nds.integracao.engine.data.FixedLengthRouteTemplate;
 import br.com.abril.nds.integracao.engine.data.FixedLengthTypeMapping;
 import br.com.abril.nds.integracao.engine.data.Message;
 import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;
-import br.com.abril.nds.integracao.model.EventoExecucaoEnum;
+import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
 
 import com.ancientprogramming.fixedformat4j.format.FixedFormatManager;
 

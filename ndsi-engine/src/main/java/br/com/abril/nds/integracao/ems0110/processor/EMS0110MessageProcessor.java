@@ -1,6 +1,5 @@
 package br.com.abril.nds.integracao.ems0110.processor;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -11,18 +10,17 @@ import javax.persistence.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import br.com.abril.nds.integracao.model.canonic.EMS0110Input;
 import br.com.abril.nds.integracao.engine.MessageProcessor;
 import br.com.abril.nds.integracao.engine.data.Message;
 import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;
-import br.com.abril.nds.integracao.model.EventoExecucaoEnum;
+import br.com.abril.nds.integracao.model.canonic.EMS0110Input;
 import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.cadastro.Brinde;
 import br.com.abril.nds.model.cadastro.Dimensao;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
-import br.com.abril.nds.model.cadastro.pdv.PDV;
+import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
 
 @SuppressWarnings("unused")
 @Component
@@ -96,7 +94,10 @@ public class EMS0110MessageProcessor implements MessageProcessor {
 			edicao = new ProdutoEdicao();
 			
 			produto.setCodigoContexto(input.getContextoProd());
+			
+			// FIXME: Corrigir campo NBM
 //			produto.setNbm(input.getCodNBM());
+			
 			edicao.setProduto(produto);
 			
 			dimensao.setLargura(input.getLargura());
@@ -134,6 +135,8 @@ public class EMS0110MessageProcessor implements MessageProcessor {
 			ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, "Atualizacao do ProdutoEdicao " + edicao.getId());
 			
 			edicao.getProduto().setCodigoContexto(input.getContextoProd());
+			
+			// FIXME: Corrigir campo NBM
 //			edicao.getProduto().setNbm(input.getCodNBM());
 			
 			edicao.getDimensao().setLargura(input.getLargura());

@@ -11,9 +11,9 @@ import org.springframework.stereotype.Component;
 import br.com.abril.nds.integracao.engine.MessageProcessor;
 import br.com.abril.nds.integracao.engine.data.Message;
 import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;
-import br.com.abril.nds.integracao.model.EventoExecucaoEnum;
 import br.com.abril.nds.integracao.model.canonic.EMS0126Input;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
 /**
  * @author Jones.Costa
  * @version 1.0
