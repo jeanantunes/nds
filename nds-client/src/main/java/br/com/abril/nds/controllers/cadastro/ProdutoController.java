@@ -20,7 +20,6 @@ import br.com.abril.nds.service.TipoProdutoService;
 import br.com.abril.nds.service.exception.UniqueConstraintViolationException;
 import br.com.abril.nds.util.ItemAutoComplete;
 import br.com.abril.nds.util.TipoMensagem;
-import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
