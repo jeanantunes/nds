@@ -1,6 +1,7 @@
 package br.com.abril.nds.integracao.ems0114.processor;
 
 import java.math.BigDecimal;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -17,6 +18,8 @@ import br.com.abril.nds.integracao.engine.MessageProcessor;
 import br.com.abril.nds.integracao.engine.data.Message;
 import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;
 import br.com.abril.nds.integracao.model.EventoExecucaoEnum;
+import br.com.abril.nds.integracao.service.DistribuidorService;
+import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
@@ -29,86 +32,141 @@ public class EMS0114MessageProcessor implements MessageProcessor {
 	
 	@Autowired
 	private NdsiLoggerFactory ndsiLoggerFactory;
+	
+	@Autowired
+	private DistribuidorService distribuidorService;
 		
 	@Override
 	public void processMessage(Message message){
 		EMS0114Input input = (EMS0114Input) message.getBody();
 		
-		StringBuilder sql = new StringBuilder();
-		sql.append("SELECT pe  ");
-		sql.append("FROM ProdutoEdicao pe ");
-		sql.append("JOIN FETCH pe.produto p ");
-		sql.append("WHERE ");
-		sql.append("     pe.numeroEdicao = :numeroEdicao ");
-		sql.append("  AND   p.codigo = :codigo ");
+		Distribuidor distribuidor = this.obterDistribuidor();
 		
-		Query query = entityManager.createQuery(sql.toString());
-		query.setParameter("numeroEdicao", input.getEdicao());
-		query.setParameter("codigo", input.getCodProd());
-		ProdutoEdicao produtoEdicao = null;
+		if (distribuidor == null) {
+			this.ndsiLoggerFactory.getLogger().logWarning(message, EventoExecucaoEnum.RELACIONAMENTO, "Distribuidor nao encontrato.");
+			throw new RuntimeException("Distribuidor nao encontrado.");
+		}
+		
+		ProdutoEdicao produtoEdicao = this.obterProdutoEdicao(input.getEdicao(), input.getCodProd()); 
 			
-		try {
-			
-			produtoEdicao = (ProdutoEdicao) query.getSingleResult();
-			
-		} catch(NoResultException e) {
+		if (produtoEdicao == null) {
 			
 			// Não encontrou o Produto. Realizar Log 			
 			ndsiLoggerFactory.getLogger().logWarning(message, EventoExecucaoEnum.HIERARQUIA,"Produto " +  input.getCodProd() + " e Produto Edicao nao encontrado.");
-			e.printStackTrace();
-			return;
+			throw new RuntimeException("Produto Edicao nao encontrado.");
 		}
 		
-		sql = new StringBuilder();
-		sql.append("SELECT l  ");
-		sql.append("FROM Lancamento l ");
-		sql.append("WHERE ");
-		sql.append("     l.dataRecolhimentoPrevista = :dataRecolhimentoPrevista ");
-
-		query = entityManager.createQuery(sql.toString());
-		query.setParameter("dataRecolhimentoPrevista", input.getDataRecolhimento());
-		
-		@SuppressWarnings("unchecked")
-		List<Lancamento> lancamentos = (List<Lancamento>) query.getResultList();
-		Lancamento lancamento = null;
+		Lancamento lancamento = this.obterLancamento(input.getDataRecolhimento());
 			
-			if (lancamentos.isEmpty()) {
-				
-				lancamento = new Lancamento();
-				lancamento.setDataCriacao(new Date());
-				lancamento.setDataStatus(new Date());
-				lancamento.setReparte(new BigDecimal(0));
-				lancamento.setDataLancamentoDistribuidor(new Date());
-				lancamento.setDataLancamentoPrevista(new Date());
-				
-				//FIXME 
-		/*		lancamento.setDataRecolhimentoDistribuidor(new Date());
-				lancamento.setStatus(StatusLancamento.CONFIRMADO);
-				
-				if (produtoEdicao.getProduto().isParcial()){
-					
-					lancamento.setTipoLancamento(TipoLancamento.LANCAMENTO);
-				}*/
-				
-				
+		criarLancamentoConformeInput(lancamento, input, produtoEdicao, message);
+		
+	}
+	
+	private void criarLancamentoConformeInput(Lancamento lancamento, EMS0114Input input, ProdutoEdicao produtoEdicao, Message message) {
+		
+		if (lancamento != null) {
+			
+			if (lancamento.getProdutoEdicao().getNumeroEdicao() != produtoEdicao.getNumeroEdicao()) {
 				lancamento.setProdutoEdicao(produtoEdicao);
+				ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, 
+						"Atualizacao do Produto Edicao para " + produtoEdicao.getNumeroEdicao());
+			}
+			
+			if (lancamento.getDataRecolhimentoDistribuidor() != input.getDataRecolhimento()) {
 				lancamento.setDataRecolhimentoPrevista(input.getDataRecolhimento());
-				entityManager.persist(lancamento);
+				ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, 
+						"Atualizacao da Data de Recolhimento Distribuidor para " + input.getDataRecolhimento());
+			}	
+			
+		} else {
+			
+			Calendar data = Calendar.getInstance();
+			
+			lancamento = new Lancamento();
+			lancamento.setDataCriacao(data.getTime());
+			lancamento.setDataStatus(data.getTime());
+			lancamento.setReparte(new BigDecimal(0));
+			lancamento.setDataLancamentoDistribuidor(data.getTime());
+			lancamento.setDataLancamentoPrevista(data.getTime());
+			lancamento.setStatus(StatusLancamento.EXPEDIDO);
+			lancamento.setProdutoEdicao(produtoEdicao);
+			
+			if (produtoEdicao.isParcial()){
+				
+				lancamento.setTipoLancamento(TipoLancamento.PARCIAL);
 				
 			} else {
 				
-				for (Lancamento lancamento2 : lancamentos) {
+				lancamento.setTipoLancamento(TipoLancamento.LANCAMENTO);
+			}
+				
+			data.add(Calendar.DAY_OF_MONTH, produtoEdicao.getPeb());
+			lancamento.setDataRecolhimentoDistribuidor(data.getTime());
+			
+			lancamento.setProdutoEdicao(produtoEdicao);
+			lancamento.setDataRecolhimentoPrevista(input.getDataRecolhimento());
+			
+			entityManager.persist(lancamento);
+		}
+	}
+			
+	private Distribuidor obterDistribuidor() {
+		
+		return this.distribuidorService.findDistribuidor();
+	}
+	
+	private ProdutoEdicao obterProdutoEdicao(Long numeroEdicao, String codigoProduto) {
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append("SELECT pe FROM ProdutoEdicao pe JOIN FETCH pe.produto p ");
+		sql.append("WHERE pe.numeroEdicao = :numeroEdicao ");
+		sql.append("  AND   p.codigo = :codigo ");
+				
+		try {
+		
+			Query query = this.entityManager.createQuery(sql.toString());
+			
+			query.setParameter("numeroEdicao", numeroEdicao);
+			query.setParameter("codigo", codigoProduto);
+			
+			return (ProdutoEdicao) query.getSingleResult();
+			
+		} catch (NoResultException e) {
+			return null;
+		} catch (Exception e) {
+			throw new RuntimeException(e);			
+		}
+	}
+	
+	private Lancamento obterLancamento(Date dataRecolhimento) {
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append("SELECT l FROM Lancamento l ");
+		sql.append("WHERE l.dataRecolhimentoPrevista = :dataRecolhimentoPrevista ");
+
+		Query query = this.entityManager.createQuery(sql.toString());
+		query.setParameter("dataRecolhimentoPrevista", dataRecolhimento);
+		
+		@SuppressWarnings("unchecked")
+		List<Lancamento> lancamentos = (List<Lancamento>) query.getResultList();
+		
+		Lancamento lancamento = null;
+		
+		if (!lancamentos.isEmpty()) {
+			
+			for (Lancamento lancamento2 : lancamentos) {
+				
+				if (lancamento2.getDataRecolhimentoPrevista().equals(dataRecolhimento)) {
 					
-					if (lancamento2.getDataRecolhimentoPrevista().equals(input.getDataRecolhimento())) {
-						
-						lancamento = lancamento2;
-					}				
-				}
-				
-				ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, "Atualizacao do Lancamento " + lancamento.getId());
-				
-				lancamento.setProdutoEdicao(produtoEdicao);
-				lancamento.setDataRecolhimentoPrevista(input.getDataRecolhimento());	
-			}		
+					lancamento = lancamento2;
+				}				
+			}
+			
+			return lancamento;
+			
+		} else {
+			
+			return null;
+		}
 	}
 }

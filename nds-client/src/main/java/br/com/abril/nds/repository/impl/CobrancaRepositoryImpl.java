@@ -81,11 +81,19 @@ public class CobrancaRepositoryImpl extends AbstractRepository<Cobranca, Long> i
 		    hql.append(" and c.dataVencimento >= :vcto ");
 		}
 		
+		if (filtro.getStatusCobranca()!=null){
+			hql.append(" and c.statusCobranca = :status ");
+		}
+		
 		Query query = super.getSession().createQuery(hql.toString());
 		query.setParameter("ncota", filtro.getNumeroCota());
 		
 		if (filtro.getDataVencimento()!=null){
 		    query.setDate("vcto", filtro.getDataVencimento());
+		}
+		
+		if (filtro.getStatusCobranca()!=null){
+		    query.setParameter("status", filtro.getStatusCobranca());
 		}
 		
 		quantidade = (Long) query.uniqueResult();
@@ -107,6 +115,10 @@ public class CobrancaRepositoryImpl extends AbstractRepository<Cobranca, Long> i
 		
 		if (filtro.getDataVencimento()!=null){
 		    hql.append(" and c.dataVencimento >= :vcto ");
+		}
+		
+		if (filtro.getStatusCobranca()!=null){
+			hql.append(" and c.statusCobranca = :status ");
 		}
 	
 		if (filtro.getOrdenacaoColuna() != null) {
@@ -139,6 +151,10 @@ public class CobrancaRepositoryImpl extends AbstractRepository<Cobranca, Long> i
 		
 		if (filtro.getDataVencimento()!=null){
 		    query.setDate("vcto", filtro.getDataVencimento());
+		}
+		
+		if (filtro.getStatusCobranca()!=null){
+		    query.setParameter("status", filtro.getStatusCobranca());
 		}
 
         if (filtro.getPaginacao() != null) {

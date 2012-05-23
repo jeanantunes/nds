@@ -114,20 +114,27 @@ public class NdsiLogger {
 	public void logError(Message message, EventoExecucaoEnum eventoExecucaoEnum, String descricaoErro) {
 		
 		hasError = true;
-		this.logMessage(message, eventoExecucaoEnum, descricaoErro);
+		message.getHeader().put(MessageHeaderProperties.ERRO_PROCESSAMENTO.getValue(), descricaoErro);
+		this.logMessage(message, eventoExecucaoEnum, descricaoErro, null);
 	}
 	
 	
 	public void logWarning(Message message, EventoExecucaoEnum eventoExecucaoEnum, String descricaoErro) {
 		
 		hasWarning = true;
-		this.logMessage(message, eventoExecucaoEnum, descricaoErro);
+		this.logMessage(message, eventoExecucaoEnum, descricaoErro, null);
 	}
 	
 	
 	public void logInfo(Message message, EventoExecucaoEnum eventoExecucaoEnum, String descricaoErro) {
 		
-		this.logMessage(message, eventoExecucaoEnum, descricaoErro);
+		this.logMessage(message, eventoExecucaoEnum, descricaoErro, null);
+	}
+	
+	
+	public void logInfo(Message message, EventoExecucaoEnum eventoExecucaoEnum, String descricaoErro, String mensagemInfo) {
+		
+		this.logMessage(message, eventoExecucaoEnum, descricaoErro, mensagemInfo);
 	}
 	
 	
@@ -137,9 +144,7 @@ public class NdsiLogger {
 	 * @param eventoExecucaoEnum
 	 * @param descricaoErro
 	 */
-	private void logMessage(Message message, EventoExecucaoEnum eventoExecucaoEnum, String descricaoErro) {
-		
-		hasError = true;
+	private void logMessage(Message message, EventoExecucaoEnum eventoExecucaoEnum, String descricaoErro, String mensagemInfo) {
 		
 		// TODO: criar enum
 		EventoExecucao eventoExecucao = new EventoExecucao();
@@ -149,6 +154,7 @@ public class NdsiLogger {
 		logExecucaoMensagem.setLogExecucao(this.logExecucao);
 		logExecucaoMensagem.setEventoExecucao(eventoExecucao);
 		logExecucaoMensagem.setMensagem(descricaoErro);
+		logExecucaoMensagem.setMensagemInfo(mensagemInfo);
 		logExecucaoMensagem.setNomeArquivo((String) message.getHeader().get(MessageHeaderProperties.FILE_NAME.getValue()));
 		logExecucaoMensagem.setNumeroLinha((Integer) message.getHeader().get(MessageHeaderProperties.LINE_NUMBER.getValue()));
 		

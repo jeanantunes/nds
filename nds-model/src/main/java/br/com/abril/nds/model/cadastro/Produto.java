@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -55,6 +56,7 @@ public class Produto implements Serializable {
 	private String descricao;
 	
 	@ManyToMany
+	
 	private Set<Fornecedor> fornecedores = new HashSet<Fornecedor>();
 
 	@Enumerated(EnumType.STRING)
@@ -74,6 +76,21 @@ public class Produto implements Serializable {
 	
 	@Column(name = "COD_CONTEXTO", nullable = true)
 	private Integer codigoContexto;
+	
+	@Column(name="SLOGAN", length = 50, nullable = true)
+	protected String slogan;
+	
+	@Column(name = "PACOTE_PADRAO", nullable = false)
+	protected int pacotePadrao;
+	
+	@Column(name = "PEB", nullable = false)
+	protected int peb;
+	
+	/**
+	 * Dimensões do produto (largura, etc)
+	 */
+	@Embedded
+	private Dimensao dimensao;
 
 	public Long getId() {
 		return id;
@@ -213,6 +230,62 @@ public class Produto implements Serializable {
 	 */
 	public void setNomeComercial(String nomeComercial) {
 		this.nomeComercial = nomeComercial;
+	}
+
+	/**
+	 * @return the slogan
+	 */
+	public String getSlogan() {
+		return slogan;
+	}
+
+	/**
+	 * @param slogan the slogan to set
+	 */
+	public void setSlogan(String slogan) {
+		this.slogan = slogan;
+	}
+
+	/**
+	 * @return the pacotePadrao
+	 */
+	public int getPacotePadrao() {
+		return pacotePadrao;
+	}
+
+	/**
+	 * @param pacotePadrao the pacotePadrao to set
+	 */
+	public void setPacotePadrao(int pacotePadrao) {
+		this.pacotePadrao = pacotePadrao;
+	}
+
+	/**
+	 * @return the peb
+	 */
+	public int getPeb() {
+		return peb;
+	}
+
+	/**
+	 * @param peb the peb to set
+	 */
+	public void setPeb(int peb) {
+		this.peb = peb;
+	}
+
+	/**
+	 * @return the dimensao
+	 */
+	public Dimensao getDimensao() {
+		return dimensao;
+	}
+
+	/**
+	 * @param dimensao the dimensao to set
+	 */
+	public void setDimensao(Dimensao dimensao) {
+		this.dimensao = dimensao;
 	}
 	
 }
