@@ -97,9 +97,6 @@ public class CotaServiceImpl implements CotaService {
 	private EnderecoCotaRepository enderecoCotaRepository;
 	
 	@Autowired
-	private EnderecoRepository enderecoRepository;
-	
-	@Autowired
 	private UsuarioRepository usuarioRepository;
 	
 	@Autowired
@@ -203,8 +200,38 @@ public class CotaServiceImpl implements CotaService {
 	 */
 	@Transactional(readOnly = true)
 	public List<EnderecoAssociacaoDTO> obterEnderecosPorIdCota(Long idCota) {
+		
+		Cota cota = cotaRepository.buscarPorId(idCota);
+		
+		if(cota == null)
+			throw new ValidacaoException(TipoMensagem.ERROR, "IdCota é obrigatório");
+		
+		Long idPessoa = cota.getPessoa().getId();
+		
+		Set<Long> endRemover = new HashSet<Long>();
+		
+		List<EnderecoAssociacaoDTO> listRetorno = new ArrayList<EnderecoAssociacaoDTO>();
+		
+		List<EnderecoAssociacaoDTO> listaEnderecolAssoc = cotaRepository.obterEnderecosPorIdCota(idCota);
+			
+		if(listaEnderecolAssoc!= null && !listaEnderecolAssoc.isEmpty()){
+			
+			listRetorno.addAll(listaEnderecolAssoc);
 
-		return this.cotaRepository.obterEnderecosPorIdCota(idCota);
+			for (EnderecoAssociacaoDTO dto : listaEnderecolAssoc){
+				
+				endRemover.add(dto.getEndereco().getId());
+			}
+		}
+		
+		List<EnderecoAssociacaoDTO> lista = this.enderecoService.buscarEnderecosPorIdPessoa(idPessoa, endRemover);
+		
+		if (lista!= null && !lista.isEmpty()){
+			
+			listRetorno.addAll(lista);
+		}
+		
+		return listRetorno;
 	}	
 	
 	
@@ -304,10 +331,11 @@ public class CotaServiceImpl implements CotaService {
 		
 		if(!idsEndereco.isEmpty()){
 			
-			this.enderecoRepository.removerEnderecos(idsEndereco);
+			this.enderecoService.removerEnderecos(idsEndereco);
 		}
 	}
 	
+	@SuppressWarnings("unused")
 	@Transactional(readOnly = true)
 	@Override
 	public List<TelefoneAssociacaoDTO> buscarTelefonesCota(Long idCota, Set<Long> idsIgnorar) {
@@ -315,9 +343,30 @@ public class CotaServiceImpl implements CotaService {
 		if (idCota == null){
 			throw new ValidacaoException(TipoMensagem.ERROR, "IdCota é obrigatório");
 		}
+
+		Cota cota = cotaRepository.buscarPorId(idCota);
+		
+		Long idPessoa = cota.getPessoa().getId();
+		
+		Set<Long> telRemover = new HashSet<Long>();
 		
 		List<TelefoneAssociacaoDTO> listaTelAssoc =
 				this.telefoneCotaRepository.buscarTelefonesCota(idCota, idsIgnorar);
+			
+		for (TelefoneAssociacaoDTO dto : listaTelAssoc){
+				
+			telRemover.add(dto.getTelefone().getId());
+		}
+		
+		List<TelefoneAssociacaoDTO> lista = this.telefoneService.buscarTelefonesPorIdPessoa(idPessoa, telRemover);
+		
+		if (lista!= null && !lista.isEmpty()){
+			
+			if(listaTelAssoc==null)
+				listaTelAssoc = new ArrayList<TelefoneAssociacaoDTO>();
+			
+			listaTelAssoc.addAll(lista);
+		}
 		
 		return listaTelAssoc;
 	}
@@ -358,25 +407,25 @@ public class CotaServiceImpl implements CotaService {
 		this.telefoneService.cadastrarTelefone(listaTelefonesCota, cota.getPessoa());
 		
 		if (listaTelefonesCota != null){
-			boolean isTelefonePrincipal = false;
 			
 			for (TelefoneAssociacaoDTO dto : listaTelefonesCota){
+					
+				TelefoneCota telefoneCota = null;
 				
-				if (isTelefonePrincipal && dto.isPrincipal()){
-					throw new ValidacaoException(TipoMensagem.WARNING, "Apenas um telefone principal é permitido.");
+				if(dto.getTelefone()!= null && dto.getTelefone().getId()!= null){
+					telefoneCota = cotaRepository.obterTelefonePorTelefoneCota(dto.getTelefone().getId(), cota.getId());
 				}
 				
-				if (dto.isPrincipal()){
-					isTelefonePrincipal = dto.isPrincipal();
+				if(telefoneCota == null){
+					telefoneCota = new TelefoneCota();
+					telefoneCota.setCota(cota);
 				}
-				
-				TelefoneCota telefoneCota = new TelefoneCota();
-				telefoneCota.setCota(cota);
+			
 				telefoneCota.setPrincipal(dto.isPrincipal());
 				telefoneCota.setTelefone(dto.getTelefone());
 				telefoneCota.setTipoTelefone(dto.getTipoTelefone());
 				
-				this.telefoneCotaRepository.adicionar(telefoneCota);
+				this.telefoneCotaRepository.merge(telefoneCota);
 			}
 		}
 	}
@@ -1062,7 +1111,9 @@ public class CotaServiceImpl implements CotaService {
 			validarParametrosBaseReferenciaCota(cotaDto);
 		}
 		else{
-		
+			
+			validarCotaBaseIgual(cotaDto);
+			
 			validarPorcentagemCotaBase(cotaDto);
 			
 			Set<ReferenciaCota> referenciasCota = baseReferenciaCota.getReferenciasCota();
@@ -1082,7 +1133,6 @@ public class CotaServiceImpl implements CotaService {
 			}
 		}
 	}
-	
 	
 	private void validarParametrosBaseReferenciaCota(CotaDTO cotaDto){
 		
@@ -1144,6 +1194,24 @@ public class CotaServiceImpl implements CotaService {
 		return referenciaCota;
 	}
 	
+	private void validarCotaBaseIgual(CotaDTO cotaDTO){
+		
+		validarCotaIguais(cotaDTO.getHistoricoPrimeiraCota(), cotaDTO.getHistoricoSegundaCota(), cotaDTO.getHistoricoTerceiraCota());
+		
+		validarCotaIguais(cotaDTO.getHistoricoSegundaCota(),cotaDTO.getHistoricoPrimeiraCota(), cotaDTO.getHistoricoTerceiraCota());
+		
+		validarCotaIguais(cotaDTO.getHistoricoTerceiraCota(),cotaDTO.getHistoricoSegundaCota(),cotaDTO.getHistoricoPrimeiraCota());
+	}
+	
+	private void validarCotaIguais(Integer param,Integer param2, Integer param3){
+		
+		if(param!= null){
+			if(param.equals(param2)|| param.equals(param3)){
+				throw new ValidacaoException(TipoMensagem.WARNING,"A cota " + param + "está incorreta! A cota " + param + " está duplicada!");
+			}
+		}
+	}
+	
 	private void validarPorcentagemCotaBase(CotaDTO cotaDto) {
 		
 		boolean existeValor = false;
@@ -1171,7 +1239,7 @@ public class CotaServiceImpl implements CotaService {
 		}
 		
 		if(existeValor && (valor.intValue() != 100)){
-			throw new ValidacaoException(TipoMensagem.WARNING,"Porcentagem histórica cota base invalido! A porcentagem do histórico das cotas base deve ser 100%  ");
+			throw new ValidacaoException(TipoMensagem.WARNING,"Porcentagem histórico cota base invalido! A porcentagem do histórico cota base deve ser 100%  ");
 		}
 		
 	}

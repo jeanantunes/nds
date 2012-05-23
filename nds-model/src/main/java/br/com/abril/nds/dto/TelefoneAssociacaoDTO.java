@@ -11,7 +11,9 @@ public class TelefoneAssociacaoDTO implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = -1156114629027482122L;
-
+	
+	private Long id;
+	
 	private Telefone telefone;
 	
 	private TipoTelefone tipoTelefone;
@@ -68,4 +70,14 @@ public class TelefoneAssociacaoDTO implements Serializable {
 	public void setReferencia(int referencia) {
 		this.referencia = referencia;
 	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+	
+	
 }

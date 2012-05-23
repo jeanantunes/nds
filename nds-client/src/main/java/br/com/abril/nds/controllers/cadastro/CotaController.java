@@ -115,56 +115,38 @@ public class CotaController {
 			throw new ValidacaoException(TipoMensagem.ERROR, "Ocorreu um erro: Cota inexistente.");
 		}
 
-		List<EnderecoAssociacaoDTO> listaEnderecoAssociacao = 
-				this.cotaService.obterEnderecosPorIdCota(idCota);
-		
-		this.session.setAttribute(
-			LISTA_ENDERECOS_SALVAR_SESSAO, listaEnderecoAssociacao
-		);
-		
-		List<TelefoneAssociacaoDTO> listaTelefoneAssociacao = 
-				this.cotaService.buscarTelefonesCota(idCota, null);
-		
-		Map<Integer, TelefoneAssociacaoDTO> map = new LinkedHashMap<Integer, TelefoneAssociacaoDTO>();
-		
-		for (TelefoneAssociacaoDTO telefoneAssociacaoDTO : listaTelefoneAssociacao){
-			map.put(telefoneAssociacaoDTO.getReferencia(), telefoneAssociacaoDTO);
-		}
-		
-		this.session.setAttribute(LISTA_TELEFONES_SALVAR_SESSAO, map);
+		obterEndereco(idCota);
+		obterTelefones(idCota);
 	}
 
 	@SuppressWarnings("unchecked")
 	private void processarEnderecosCota(Long idCota) {
 
 		List<EnderecoAssociacaoDTO> listaEnderecoAssociacaoSalvar = 
-				(List<EnderecoAssociacaoDTO>) this.session.getAttribute(
-						LISTA_ENDERECOS_SALVAR_SESSAO);
+				(List<EnderecoAssociacaoDTO>) this.session.getAttribute(LISTA_ENDERECOS_SALVAR_SESSAO);
 		
 		List<EnderecoAssociacaoDTO> listaEnderecoAssociacaoRemover = 
-				(List<EnderecoAssociacaoDTO>) this.session.getAttribute(
-						LISTA_ENDERECOS_REMOVER_SESSAO);
+				(List<EnderecoAssociacaoDTO>) this.session.getAttribute(LISTA_ENDERECOS_REMOVER_SESSAO);
 		
 		this.cotaService.processarEnderecos(idCota, listaEnderecoAssociacaoSalvar, listaEnderecoAssociacaoRemover);
 		
 		this.session.removeAttribute(LISTA_ENDERECOS_SALVAR_SESSAO);
 		this.session.removeAttribute(LISTA_ENDERECOS_REMOVER_SESSAO);
 		
-		List<EnderecoAssociacaoDTO> listaEnderecoAssociacao = 
-				this.cotaService.obterEnderecosPorIdCota(idCota);
-		
-		this.session.setAttribute(
-			LISTA_ENDERECOS_SALVAR_SESSAO, listaEnderecoAssociacao
-		);
+		obterEndereco(idCota);
 	}
 
 	private void processarTelefonesCota(Long idCota){
+		
 		Map<Integer, TelefoneAssociacaoDTO> map = this.obterTelefonesSalvarSessao();
 		
 		List<TelefoneAssociacaoDTO> lista = new ArrayList<TelefoneAssociacaoDTO>();
 		for (Integer key : map.keySet()){
 			TelefoneAssociacaoDTO telefoneAssociacaoDTO = map.get(key);
-			lista.add(telefoneAssociacaoDTO);
+			
+			if(telefoneAssociacaoDTO.getTipoTelefone()!= null){
+				lista.add(telefoneAssociacaoDTO);
+			}
 		}
 		
 		Set<Long> telefonesRemover = this.obterTelefonesRemoverSessao();
@@ -172,6 +154,8 @@ public class CotaController {
 		
 		this.session.removeAttribute(LISTA_TELEFONES_SALVAR_SESSAO);
 		this.session.removeAttribute(LISTA_TELEFONES_REMOVER_SESSAO);
+		
+		obterTelefones(idCota);
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -609,7 +593,6 @@ public class CotaController {
 			if (cota == null) {
 
 				throw new ValidacaoException(TipoMensagem.WARNING, "Cota \"" + numeroCota + "\" não encontrada!");
-				
 			} 
 		}
 					
@@ -797,6 +780,37 @@ public class CotaController {
 		}
 		
 		return itens;
+	}
+	
+	@Post
+	public void recarregarEndereco(Long idCota){
+		
+		obterEndereco(idCota);
+		
+		this.result.use(Results.json()).from("", "result").serialize();
+	}
+	
+	@Post
+	public void recarregarTelefone(Long idCota){
+		
+		obterTelefones(idCota);
+		
+		this.result.use(Results.json()).from("", "result").serialize();
+	}
+	
+	private void obterEndereco(Long idCota){
+		
+		List<EnderecoAssociacaoDTO> listaEnderecoAssociacao = this.cotaService.obterEnderecosPorIdCota(idCota);
+		
+		this.session.setAttribute(LISTA_ENDERECOS_EXIBICAO, listaEnderecoAssociacao);
+	}
+	
+	
+	private void obterTelefones(Long idCota){
+		
+		List<TelefoneAssociacaoDTO> listaTelefoneAssociacao = this.cotaService.buscarTelefonesCota(idCota, null);
+		
+		this.session.setAttribute(LISTA_TELEFONES_EXIBICAO, listaTelefoneAssociacao);
 	}
 	
 	private void limparDadosSession(){

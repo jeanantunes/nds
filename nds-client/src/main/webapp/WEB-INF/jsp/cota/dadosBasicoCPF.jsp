@@ -3,7 +3,7 @@
 
  <form name="formDadosBasicoCpf" id="formDadosBasicoCpf">
 
- <table width="765" cellpadding="2" cellspacing="2" style="text-align:left;">
+ <table width="785" cellpadding="2" cellspacing="2" style="text-align:left;">
    <tr>
        <td><strong>Cota:</strong></td>
       <td><input name="cotaDTO.numeroCota" maxlength="16" id="numeroCotaCPF" type="text" style="width:100px" /></td>

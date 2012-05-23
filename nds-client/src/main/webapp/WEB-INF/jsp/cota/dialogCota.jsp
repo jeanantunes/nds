@@ -1,5 +1,5 @@
 
-<div id="dialog-cancelar-cadastro-cota" title="Atenção" style="display: none;">
+<div id="dialog-cancelar-cadastro-cota" title="Cota" style="display: none;">
 	<p>Informações das abas não salvas serão perdidos. Confirma o cancelamento?</p>
 </div>
 

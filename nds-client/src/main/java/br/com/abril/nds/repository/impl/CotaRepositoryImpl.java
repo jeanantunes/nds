@@ -6,7 +6,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
-import org.apache.xmlbeans.impl.xb.xsdschema.RestrictionDocument.Restriction;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.criterion.MatchMode;
@@ -29,6 +28,7 @@ import br.com.abril.nds.dto.filtro.FiltroCotaDTO;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.EnderecoCota;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
+import br.com.abril.nds.model.cadastro.TelefoneCota;
 import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.OperacaoEstoque;
@@ -137,7 +137,23 @@ public class CotaRepositoryImpl extends AbstractRepository<Cota, Long>
 
 		return query.list();
 	}
-
+	
+	
+	@Override
+	public TelefoneCota obterTelefonePorTelefoneCota(Long idTelefone, Long idCota){
+		
+		StringBuilder hql = new StringBuilder("select t from TelefoneCota t ");
+		hql.append(" where t.telefone.id = :idTelefone ")
+		   .append(" and   t.cota.id   = :idCota");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setParameter("idTelefone", idTelefone);
+		query.setParameter("idCota", idCota);
+		query.setMaxResults(1);
+		
+		return (TelefoneCota) query.uniqueResult();
+	}
+	
 	@SuppressWarnings("unchecked")
 	public List<CotaSuspensaoDTO> obterCotasSujeitasSuspensao(String sortOrder,
 			String sortColumn, Integer inicio, Integer rp) {
