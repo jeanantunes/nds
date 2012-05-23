@@ -42,7 +42,6 @@ public class EMS0114Input extends IntegracaoDocument implements Serializable {
 		this.codDistrib = codDistrib;
 	}
 	
-	@Field(offset = 8, length = 8)
 	public String getDataGeracaoArq() {
 		return dataGeracaoArq;
 	}
@@ -51,7 +50,6 @@ public class EMS0114Input extends IntegracaoDocument implements Serializable {
 		this.dataGeracaoArq = dataGeracaoArq;
 	}
 	
-	@Field(offset = 16, length = 6)
 	public String getHoraGeracaoArq() {
 		return horaGeracaoArq;
 	}
@@ -60,7 +58,6 @@ public class EMS0114Input extends IntegracaoDocument implements Serializable {
 		this.horaGeracaoArq = horaGeracaoArq;
 	}
 	
-	@Field(offset = 22, length = 4)
 	public String getMnemonicoTab() {
 		return mnemonicoTab;
 	}
@@ -69,7 +66,6 @@ public class EMS0114Input extends IntegracaoDocument implements Serializable {
 		this.mnemonicoTab = mnemonicoTab;
 	}
 	
-	@Field(offset = 26, length = 1)
 	public String getContextoProd() {
 		return contextoProd;
 	}
@@ -78,7 +74,6 @@ public class EMS0114Input extends IntegracaoDocument implements Serializable {
 		this.contextoProd = contextoProd;
 	}
 	
-	@Field(offset = 27, length = 7)
 	public String getCodForncProd() {
 		return codForncProd;
 	}
@@ -114,7 +109,6 @@ public class EMS0114Input extends IntegracaoDocument implements Serializable {
 		this.dataRecolhimento = dataRecolhimento;
 	}
 	
-	@Field(offset = 54, length = 150)
 	public String getDescBrinde() {
 		return descBrinde;
 	}
@@ -123,7 +117,6 @@ public class EMS0114Input extends IntegracaoDocument implements Serializable {
 		this.descBrinde = descBrinde;
 	}
 	
-	@Field(offset = 204, length = 1)
 	public String getRegimeRecolhimento() {
 		return regimeRecolhimento;
 	}
@@ -132,7 +125,6 @@ public class EMS0114Input extends IntegracaoDocument implements Serializable {
 		this.regimeRecolhimento = regimeRecolhimento;
 	}
 	
-	@Field(offset = 205, length = 2)
 	public String getTipoDesconto() {
 		return tipoDesconto;
 	}
@@ -141,7 +133,6 @@ public class EMS0114Input extends IntegracaoDocument implements Serializable {
 		this.tipoDesconto = tipoDesconto;
 	}
 	
-	@Field(offset = 207, length = 3)
 	public String getStatusRecolhimento() {
 		return statusRecolhimento;
 	}

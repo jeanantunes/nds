@@ -7,12 +7,13 @@ import com.ancientprogramming.fixedformat4j.annotation.Field;
 import com.ancientprogramming.fixedformat4j.annotation.FixedFormatBoolean;
 import com.ancientprogramming.fixedformat4j.annotation.FixedFormatDecimal;
 import com.ancientprogramming.fixedformat4j.annotation.Record;
-
+/**
+ * @author Jones.Costa
+ * @version 1.0
+ */
 @Record
 public class EMS0118Input implements Serializable{
-	/**
-	 * 
-	 */
+	
 	private static final long serialVersionUID = 1L;
 	
 	private String codigoPublicacao;
@@ -29,6 +30,8 @@ public class EMS0118Input implements Serializable{
 	public void setCodigoPublicacao(String codigoPublicacao) {
 		this.codigoPublicacao = codigoPublicacao;
 	}
+	
+	
 	@Field(offset = 9, length = 4  )
 	public Long getEdicao() {
 		return edicao;
@@ -36,6 +39,8 @@ public class EMS0118Input implements Serializable{
 	public void setEdicao(Long edicao) {
 		this.edicao = edicao;
 	}
+	
+	
 	@Field(offset = 13, length = 10  )
 	@FixedFormatDecimal(decimals = 2, useDecimalDelimiter = true)
 	public BigDecimal getPreco() {

@@ -22,9 +22,13 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import br.com.abril.nds.integracao.model.canonic.IntegracaoDocument;
 import br.com.abril.nds.integracao.model.canonic.InterfaceEnum;
 import br.com.abril.nds.integracao.persistence.dao.InterfaceExecucaoHibernateDAO;
+import br.com.abril.nds.integracao.persistence.dao.LogExecucaoArquivoHibernateDAO;
 import br.com.abril.nds.integracao.persistence.dao.LogExecucaoHibernateDAO;
 import br.com.abril.nds.integracao.persistence.dao.ParametroSistemaHibernateDAO;
 import br.com.abril.nds.integracao.persistence.model.InterfaceExecucao;
+import br.com.abril.nds.integracao.persistence.model.LogExecucao;
+import br.com.abril.nds.integracao.persistence.model.LogExecucaoArquivo;
+import br.com.abril.nds.integracao.persistence.model.enums.StatusExecucaoEnum;
 
 import com.ancientprogramming.fixedformat4j.format.FixedFormatManager;
 import com.ancientprogramming.fixedformat4j.format.impl.FixedFormatManagerImpl;
@@ -37,11 +41,16 @@ public class InterfaceExecutor {
 	
 	private static ApplicationContext applicationContext;
 	
+	private static String NAO_HA_ARQUIVOS = "Não há arquivos a serem processados para este distribuidor"; 
+	
 	private LogExecucaoHibernateDAO logExecucaoDAO;
+	private LogExecucaoArquivoHibernateDAO logExecucaoArquivoAO;
 	private ParametroSistemaHibernateDAO parametroSistemaDAO;
 	private InterfaceExecucaoHibernateDAO interfaceExecucaoDAO;
 	private FixedFormatManager ffm;
 	private Properties couchDbProperties;
+	
+	private boolean processadoComSucesso = true;
 	
 	static {
 		ClassPathXmlApplicationContext classPathXmlApplicationContext = new ClassPathXmlApplicationContext("applicationContext.xml");
@@ -52,6 +61,7 @@ public class InterfaceExecutor {
 	public InterfaceExecutor() {
 		
 		this.logExecucaoDAO = (LogExecucaoHibernateDAO) applicationContext.getBean("logExecucaoDAO");
+		this.logExecucaoArquivoAO = (LogExecucaoArquivoHibernateDAO) applicationContext.getBean("logExecucaoArquivoDAO");
 		this.parametroSistemaDAO = (ParametroSistemaHibernateDAO) applicationContext.getBean("parametroSistemaDAO");
 		this.interfaceExecucaoDAO = (InterfaceExecucaoHibernateDAO) applicationContext.getBean("interfaceExecucaoDAO");
 		this.ffm = (FixedFormatManagerImpl) applicationContext.getBean("ffm");
@@ -76,12 +86,14 @@ public class InterfaceExecutor {
 	 */
 	public void executarInterface(String nomeUsuario, InterfaceEnum interfaceEnum, String codigoDistribuidor) {
 		
-		Date dataInicio = new Date();
-		
 		// Busca dados de configuracao
 		this.carregaCouchDbProperties();
 		InterfaceExecucao interfaceExecucao = interfaceExecucaoDAO.findById(interfaceEnum.getCodigoInterface());
 		String diretorio = parametroSistemaDAO.getParametro("INBOUND_DIR");
+		
+		// Loga Início
+		Date dataInicio = new Date();
+		LogExecucao logExecucao = this.logarInicio(dataInicio, interfaceExecucao, nomeUsuario);
 		
 		// Recupera distribuidores
 		List<String> distribuidores = this.getDistribuidores(diretorio, interfaceExecucao, codigoDistribuidor);
@@ -92,15 +104,34 @@ public class InterfaceExecutor {
 			CouchDbClient couchDbClient = this.getCouchDbClientInstance(distribuidor);
 			List<File> arquivos = this.recuperaArquivosProcessar(diretorio, interfaceExecucao, distribuidor);
 			
-			// TODO: logar
 			if (arquivos == null || arquivos.isEmpty()) {
+				this.logarArquivo(logExecucao, distribuidor, null, StatusExecucaoEnum.FALHA, NAO_HA_ARQUIVOS);
 				continue;
 			}
 			
 			for (File arquivo: arquivos) {
-				this.trataArquivo(couchDbClient, arquivo, interfaceEnum, dataInicio, nomeUsuario);
+				
+				try {
+					
+					this.trataArquivo(couchDbClient, arquivo, interfaceEnum, dataInicio, nomeUsuario);
+					this.logarArquivo(logExecucao, distribuidor, arquivo.getAbsolutePath(), StatusExecucaoEnum.SUCESSO, null);
+					
+				} catch (Throwable e) {
+					
+					this.logarArquivo(logExecucao, distribuidor, arquivo.getAbsolutePath(), StatusExecucaoEnum.FALHA, e.getMessage());
+					e.printStackTrace();
+					continue;
+					
+				} finally {
+					
+					// TODO: arquivar arquivo
+				}
 			}
+			
+			couchDbClient.shutdown();
 		}
+		
+		this.logarFim(logExecucao);
 	}
 	
 	/**
@@ -123,39 +154,35 @@ public class InterfaceExecutor {
 		return distribuidores;
 	}
 	
+	/**
+	 * Processa o arquivo, lendo suas linhas e gravando no CouchDB.
+	 */
+	private void trataArquivo(CouchDbClient couchDbClient, File arquivo, InterfaceEnum interfaceEnum, Date dataInicio, String nomeUsuario) throws FileNotFoundException {
 	
-	// TODO: arquivos com header e trailer
-	private void trataArquivo(CouchDbClient couchDbClient, File arquivo, InterfaceEnum interfaceEnum, Date dataInicio, String nomeUsuario) {
+		FileReader in = new FileReader(arquivo);
+		Scanner scanner = new Scanner(in);
+		int linhaArquivo = 0;
 		
-		try {
-
-			FileReader in = new FileReader(arquivo);
-			Scanner scanner = new Scanner(in);
-			int linhaArquivo = 0;
+		while (scanner.hasNextLine()) {
 			
-			while (scanner.hasNextLine()) {
-				
-				String linha = scanner.nextLine();
-				linhaArquivo++;
+			String linha = scanner.nextLine();
+			linhaArquivo++;
 
-				if (StringUtils.isEmpty(linha)) {
-					continue;
-				}
-				
-				IntegracaoDocument doc = (IntegracaoDocument) this.ffm.load(interfaceEnum.getClasseLinha(), linha);
-				
-				doc.setTipoDocumento(interfaceEnum.name());
-				doc.setNomeArquivo(arquivo.getName());
-				doc.setLinhaArquivo(linhaArquivo);
-				doc.setDataHoraExtracao(dataInicio);
-				doc.setNomeUsuarioExtracao(nomeUsuario);
-				
-				couchDbClient.save(doc);
+			if (StringUtils.isEmpty(linha)) {
+				continue;
+			} else {
+				// TODO: validar linha
 			}
 			
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			IntegracaoDocument doc = (IntegracaoDocument) this.ffm.load(interfaceEnum.getClasseLinha(), linha);
+			
+			doc.setTipoDocumento(interfaceEnum.name());
+			doc.setNomeArquivo(arquivo.getName());
+			doc.setLinhaArquivo(linhaArquivo);
+			doc.setDataHoraExtracao(dataInicio);
+			doc.setNomeUsuarioExtracao(nomeUsuario);
+			
+			couchDbClient.save(doc);
 		}
 	}
 	
@@ -187,8 +214,7 @@ public class InterfaceExecutor {
 			InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("couchdb.properties");
 			couchDbProperties.load(inputStream);
 		} catch (IOException e) {
-			// TODO: parar execução
-			e.printStackTrace();
+			throw new RuntimeException(e);
 		}
 	}
 	
@@ -209,5 +235,52 @@ public class InterfaceExecutor {
 				this.couchDbProperties.getProperty("couchdb.username"),
 				this.couchDbProperties.getProperty("couchdb.password")
 		);
+	}
+	
+	/**
+	 * Loga o início da execução de uma interface de integração.
+	 */
+	private LogExecucao logarInicio(Date dataInicio, InterfaceExecucao interfaceExecucao, String nomeLoginUsuario) {
+		
+		LogExecucao logExecucao = new LogExecucao();
+		logExecucao.setDataInicio(dataInicio);
+		logExecucao.setInterfaceExecucao(interfaceExecucao);
+		logExecucao.setNomeLoginUsuario(nomeLoginUsuario);
+		
+		return logExecucaoDAO.inserir(logExecucao);
+	}
+	
+	/**
+	 * Loga o processamento de um arquivo
+	 */
+	private void logarArquivo(LogExecucao logExecucao, String distribuidor, String caminhoArquivo, StatusExecucaoEnum status, String mensagem) {
+		
+		if (status.equals(StatusExecucaoEnum.FALHA)) {
+			this.processadoComSucesso = false;
+		}
+		
+		LogExecucaoArquivo logExecucaoArquivo = new LogExecucaoArquivo();
+		logExecucaoArquivo.setLogExecucao(logExecucao);
+		logExecucaoArquivo.setCaminhoArquivo(caminhoArquivo);
+		logExecucaoArquivo.setDistribuidor(Integer.valueOf(distribuidor));
+		logExecucaoArquivo.setStatus(status);
+		logExecucaoArquivo.setMensagem(StringUtils.abbreviate(mensagem, 500));
+		
+		this.logExecucaoArquivoAO.inserir(logExecucaoArquivo);
+	}
+	
+	/**
+	 * Loga o final da execução da interface de integração.
+	 */
+	private void logarFim(LogExecucao logExecucao) {
+		
+		if (this.processadoComSucesso) {
+			logExecucao.setStatus(StatusExecucaoEnum.SUCESSO);
+		} else {
+			logExecucao.setStatus(StatusExecucaoEnum.FALHA);
+		}
+		logExecucao.setDataFim(new Date());
+		
+		logExecucaoDAO.atualizar(logExecucao);
 	}
 }

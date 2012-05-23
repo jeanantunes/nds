@@ -12,4 +12,13 @@
 		<property name="username" value="${database.username}" />
 		<property name="password" value="${database.password}" />
 	</bean>	
+	
+	<bean id="couchDbProperties" class="br.com.abril.nds.integracao.couchdb.CouchDbProperties">
+		<property name="protocol" value="${couchdb.protocol}"/>
+		<property name="host" value="${couchdb.host}"/>
+		<property name="port" value="${couchdb.port}"/>
+		<property name="username" value="${couchdb.username}"/>
+		<property name="password" value="${couchdb.password}"/>
+	</bean>
+	
 </beans>

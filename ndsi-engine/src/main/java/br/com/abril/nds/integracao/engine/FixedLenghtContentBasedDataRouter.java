@@ -8,7 +8,10 @@ import java.util.Scanner;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -25,11 +28,13 @@ import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;
 import br.com.abril.nds.integracao.model.EventoExecucaoEnum;
 
 import com.ancientprogramming.fixedformat4j.format.FixedFormatManager;
-import com.ancientprogramming.fixedformat4j.format.impl.FixedFormatManagerImpl;
 
 @Component
 public class FixedLenghtContentBasedDataRouter extends FileContentBasedRouter {
-	private final FixedFormatManager fixedFormatManager = new FixedFormatManagerImpl();
+	private final Logger logger = LoggerFactory.getLogger(FixedLenghtContentBasedDataRouter.class);
+	
+	@Autowired
+	private FixedFormatManager fixedFormatManager;
 	
 	@Autowired
 	private PlatformTransactionManager transactionManager;
@@ -60,26 +65,44 @@ public class FixedLenghtContentBasedDataRouter extends FileContentBasedRouter {
 						}
 					});
 			}
+			else if (fileRouteTemplate.isBulkLoad()) {
+				TransactionTemplate template = new TransactionTemplate(
+						transactionManager);
+		
+					template.execute(new TransactionCallback<Void>() {
+		
+						@Override
+						public Void doInTransaction(TransactionStatus status) {
+							processFile(fileRouteTemplate, file);
+							
+							entityManager.flush();
+							entityManager.clear();
+							
+							return null;
+						}
+					});
+			}
 			else {
 				processFile(fileRouteTemplate, file);
 			}
 		}
 		catch (Exception e) {
-			// TODO: LOGAR Exception
-			e.printStackTrace();
-		}
-		finally {
-			// TODO: FINALLY
+			logger.error(e.getMessage(), e);
 		}
 	}
 	
 	public void processFile(FileRouteTemplate fileRouteTemplate, File file) {
 		try {
-			FileReader in = new FileReader(file);
-
-			Scanner scanner = new Scanner(in);
 			
-			System.currentTimeMillis();
+			File processingFile = new File(normalizeFileName(file.getParent()), file.getName() + ".processing");
+			
+			// RENOMEIA O ARQUIVO PARA PROCESSANDO
+			
+			file.renameTo(processingFile);
+			
+			FileReader in = new FileReader(processingFile);
+			
+			Scanner scanner = new Scanner(in);
 			
 			int lineNumber = 0;
 			
@@ -135,10 +158,12 @@ public class FixedLenghtContentBasedDataRouter extends FileContentBasedRouter {
 								});
 							}
 							catch (Exception e) {
-								ndsiLoggerFactory.getLogger().logError(message, EventoExecucaoEnum.ERRO_INFRA, e.getMessage());
-								e.printStackTrace();
+								logger.error(e.getMessage(), e);
+								
+								ndsiLoggerFactory.getLogger().logError(message, EventoExecucaoEnum.ERRO_INFRA, e.getMessage());								
 							}
 						}
+						// BULK LOAD DO ARQUIVO (TABELA TEMPORARIA)
 						else {
 							messageProcessor.processMessage(message);
 							
@@ -151,7 +176,20 @@ public class FixedLenghtContentBasedDataRouter extends FileContentBasedRouter {
 					}
 				}
 			}
-		} 
+			
+			// FECHA O STREAM
+			scanner.close();
+			
+			// MARCA COMO PROCESSADO (MOVE PARA A PASTA archive)
+			File archiveFile = new File(normalizeFileName(fileRouteTemplate.getArchiveFolder()), file.getName());
+			
+			// SE EXISTE O ARQUIVO APAGA
+			if (archiveFile.exists()) {
+				archiveFile.delete();
+			}
+			
+			FileUtils.moveFile(processingFile, archiveFile);
+		}
 		catch (Exception e) {
 			throw new RuntimeException(e);
 		}
