@@ -181,4 +181,10 @@ public class EnderecoServiceImpl implements EnderecoService {
 		
 		return ret;
 	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public List<String> obterMunicipiosCotas() {
+		return enderecoRepository.obterMunicipiosCotas();
+	}
 }

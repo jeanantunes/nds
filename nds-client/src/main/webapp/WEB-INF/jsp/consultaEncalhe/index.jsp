@@ -24,7 +24,6 @@ var ConsultaEncalhe = {
 			        {name:'numeroCota', value: numeroCota }
 			];
 			
-			
 			$("#gridConsultaEncalhe").flexOptions({
 				url: "<c:url value='/devolucao/consultaEncalhe/pesquisar'/>",
 				params: formData

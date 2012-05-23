@@ -75,18 +75,6 @@ public class Produto implements Serializable {
 	
 	@Column(name = "COD_CONTEXTO", nullable = true)
 	private Integer codigoContexto;
-	
-	/**
-	 * Nomenclatura Comum do Mercosul
-	 */
-	@Column(name  = "NCM", nullable = true)
-	private String ncm;
-	
-	/**
-	 * Nomenclatura Brasileira de Mercadorias
-	 */
-	@Column(name  = "NBM", nullable = true)
-	private String nbm;
 
 	public Long getId() {
 		return id;
@@ -212,34 +200,6 @@ public class Produto implements Serializable {
 		} else if (!codigo.equals(other.codigo))
 			return false;
 		return true;
-	}
-
-	/**
-	 * @return the ncm
-	 */
-	public String getNcm() {
-		return ncm;
-	}
-
-	/**
-	 * @param ncm the ncm to set
-	 */
-	public void setNcm(String ncm) {
-		this.ncm = ncm;
-	}
-
-	/**
-	 * @return the nbm
-	 */
-	public String getNbm() {
-		return nbm;
-	}
-
-	/**
-	 * @param nbm the nbm to set
-	 */
-	public void setNbm(String nbm) {
-		this.nbm = nbm;
 	}
 
 	/**

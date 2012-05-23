@@ -193,7 +193,7 @@ fieldset label {
 							<li><a href="Financeiro/baixa_bancaria_manual.htm">Baixa
 									Bancária Manual</a>
 							</li>
-							<li><a href='<c:url value="/financeiro/divida/manual"/>'>Baixa Manual de Dívidas</a>
+							<li><a href='<c:url value=""/>'>Baixa Manual de Dívidas</a>
 							</li>
 							<li><a href='<c:url value="/financeiro/boletos/consulta"/>'>Consulta
 									Boletos por Cota</a>
@@ -261,6 +261,8 @@ fieldset label {
 							</li>
 							<li><a href="<c:url value='/lancamento/furoProduto'/>">Furo de
 									Produto</a>
+							</li>
+							<li><a href="<c:url value='/lancamento/relatorioVendas'/>">Relatório de Vendas</a>
 							</li>
 							<li><a href="Lancamento/help_lancamento.htm">Help</a>
 							</li>
@@ -370,6 +372,9 @@ fieldset label {
 									Controle Aprovação
 								</a>
 							</li>
+							
+							<li><a href='<c:url value="/administracao/tipoDescontoCota"/>'>Tipo de Desconto Cota</a></li>
+							
 							<li><a href="<c:url value="/tipoMovimento/index"/>">Tipo de Movimento</a></li>
 							
 							<li><a href="Administracao/iniciar_dia.htm">Iniciar o

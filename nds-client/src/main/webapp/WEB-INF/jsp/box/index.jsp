@@ -46,7 +46,7 @@ $(function(){
 	                    <option value="SUPLEMENTAR">Suplementar</option>
 	                    <option value="RECOLHIMENTO">Recolhimento</option>
 	                    <option value="LANCAMENTO">Lan&ccedil;amento</option>
-	                    <option value="NUMEROS_ATRAZADOS">NA</option>
+	                    <option value="NUMEROS_ATRASADOS">NA</option>
 	             	 </select>
 	             </td>
 	            </tr>
@@ -69,7 +69,7 @@ $(function(){
 	                    <option value="SUPLEMENTAR">Suplementar</option>
 	                    <option value="RECOLHIMENTO">Recolhimento</option>
 	                    <option value="LANCAMENTO">Lan&ccedil;amento</option>
-	                    <option value="NUMEROS_ATRAZADOS">NA</option>
+	                    <option value="NUMEROS_ATRASADOS">NA</option>
               </select></td>               
 <!--               <td width="120"><label for="box.postoAvancado">Posto Avan&ccedil;ado:</label></td> -->
 <!-- 	          <td align="left"><input type="checkbox" name="box.postoAvancado" id="boxPostoAvancado" /></td>	          -->

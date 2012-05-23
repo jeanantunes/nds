@@ -789,6 +789,5 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepository<Movim
 		return query.list();
 		
 	}
-
 	
 }

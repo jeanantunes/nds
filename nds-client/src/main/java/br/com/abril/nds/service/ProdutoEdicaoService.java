@@ -57,4 +57,13 @@ public interface ProdutoEdicaoService {
 
 	List<ProdutoEdicao> obterProdutoPorCodigoNome(String codigoNomeProduto);
 	
+	
+	/**
+	 * Altera um produtoEdicao
+	 * 
+	 * @param ProdutoEdicao produtoEdicao
+	 * @return void
+	 */
+	void alterarProdutoEdicao(ProdutoEdicao produtoEdicao);
+	
 }

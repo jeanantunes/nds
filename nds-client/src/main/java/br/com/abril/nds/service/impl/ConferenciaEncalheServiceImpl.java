@@ -18,6 +18,8 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.cadastro.FormaEmissao;
+import br.com.abril.nds.model.cadastro.PoliticaCobranca;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.estoque.ConferenciaEncalhe;
@@ -49,8 +51,10 @@ import br.com.abril.nds.repository.TipoMovimentoFinanceiroRepository;
 import br.com.abril.nds.service.ConferenciaEncalheService;
 import br.com.abril.nds.service.DistribuidorService;
 import br.com.abril.nds.service.MovimentoEstoqueService;
+import br.com.abril.nds.service.PoliticaCobrancaService;
 import br.com.abril.nds.service.exception.ChamadaEncalheCotaInexistenteException;
 import br.com.abril.nds.service.exception.ConferenciaEncalheExistenteException;
+import br.com.abril.nds.service.exception.ConferenciaEncalheFinalizadaException;
 import br.com.abril.nds.service.exception.EncalheExcedeReparteException;
 import br.com.abril.nds.service.exception.EncalheSemPermissaoSalvarException;
 import br.com.abril.nds.util.DateUtil;
@@ -102,7 +106,8 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	@Autowired
 	private MovimentoEstoqueService movimentoEstoqueService;
 	
-	
+	@Autowired
+	private PoliticaCobrancaService politicaCobrancaService;
 	
 	/*
 	 * (non-Javadoc)
@@ -171,7 +176,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		ControleConferenciaEncalheCota controleConferenciaEncalheCota = 
 				controleConferenciaEncalheCotaRepository.obterControleConferenciaEncalheCota(numeroCota, dataOperacao);
 		
-		if(controleConferenciaEncalheCota != null) {
+		if(controleConferenciaEncalheCota != null && StatusOperacao.CONCLUIDO.equals(controleConferenciaEncalheCota.getStatus())) {
 			throw new ConferenciaEncalheExistenteException();
 		}
 		
@@ -588,20 +593,28 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			Set<Long> listaIdConferenciaEncalheParaExclusao,
 			Usuario usuario) {
 	
-		if(controleConfEncalheCota.getId()!=null) {
+		if(	controleConfEncalheCota.getId() != null) {
 			
-			//TODO: RESETAR DADOS DA CONFERENCIA DE ENCALHE JA EXISTENTE
 			// CANCELAR BOLETOS E 
-			//REGERAR DIVIDAS(COBRANCA)
-			//REIMPRIMIR DOCUMENTOS - ENVIO DE EMAIL. 
+			// REGERAR DIVIDAS(COBRANCA)
+			// REIMPRIMIR DOCUMENTOS - ENVIO DE EMAIL. 
+
+			inserirDadosConferenciaEncalhe(controleConfEncalheCota, listaConferenciaEncalhe, listaIdConferenciaEncalheParaExclusao, usuario, StatusOperacao.CONCLUIDO);
+
 			
 		} else {
 			
-			//TODO: GERAR DADOS DE NOVA CONFERENCIA DE ENCALHE
+			inserirDadosConferenciaEncalhe(controleConfEncalheCota, listaConferenciaEncalhe, listaIdConferenciaEncalheParaExclusao, usuario, StatusOperacao.CONCLUIDO);
+			
+			// TODO: GERAR DADOS DE NOVA CONFERENCIA DE ENCALHE
 			// GERAR A DIVIDA 
-			//IMPRESSAO DE DOCUMENTOS - ENVIO DE EMAIL.
+			// IMPRESSAO DE DOCUMENTOS - ENVIO DE EMAIL.
 			
 		}
+		
+//		gerarDivida(controleConfEncalheCota);
+		
+		gerarDocumentosConferenciaEncalhe(controleConfEncalheCota);
 		
 	}
 	
@@ -610,14 +623,15 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			ControleConferenciaEncalheCota controleConfEncalheCota, 
 			List<ConferenciaEncalheDTO> listaConferenciaEncalhe, 
 			Set<Long> listaIdConferenciaEncalheParaExclusao,
-			Usuario usuario) {
+			Usuario usuario,
+			StatusOperacao statusOperacao) {
 		
 	    Date dataRecolhimentoReferencia = obterDataRecolhimentoReferencia();
 		
 		Integer numeroCota = controleConfEncalheCota.getCota().getNumeroCota();
 		
 		ControleConferenciaEncalheCota controleConferenciaEncalheCota = 
-				obterControleConferenciaEncalheCotaParaConfEncalhe(controleConfEncalheCota);
+				obterControleConferenciaEncalheCotaParaConfEncalhe(controleConfEncalheCota, statusOperacao);
 		
 		Date dataCriacao = new Date();
 		
@@ -643,13 +657,11 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			}
 			
 		}
-		
+
 		if(listaIdConferenciaEncalheParaExclusao!=null && !listaIdConferenciaEncalheParaExclusao.isEmpty()) {
-			
 			for(Long idConferenciaEncalheExclusao : listaIdConferenciaEncalheParaExclusao) {
 				excluirRegistroConferenciaEncalhe(idConferenciaEncalheExclusao);
 			}
-			
 		}
 		
 	}
@@ -660,11 +672,37 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			ControleConferenciaEncalheCota controleConfEncalheCota, 
 			List<ConferenciaEncalheDTO> listaConferenciaEncalhe, 
 			Set<Long> listaIdConferenciaEncalheParaExclusao,
-			Usuario usuario) throws EncalheSemPermissaoSalvarException {
+			Usuario usuario) throws EncalheSemPermissaoSalvarException, ConferenciaEncalheFinalizadaException {
+
+		validarConferenciaEncalheReaberta(controleConfEncalheCota.getId());
 		
 		validarPermissaoSalvarConferenciaEncalhe(listaConferenciaEncalhe);
 		
-		inserirDadosConferenciaEncalhe(controleConfEncalheCota, listaConferenciaEncalhe, listaIdConferenciaEncalheParaExclusao, usuario);
+		inserirDadosConferenciaEncalhe(controleConfEncalheCota, listaConferenciaEncalhe, listaIdConferenciaEncalheParaExclusao, usuario, StatusOperacao.EM_ANDAMENTO);
+		
+	}
+	
+	/**
+	 * Se uma conferência de encalhe ja foi finalizada e depois reaberta, a mesma
+	 * não poderá ser somente salva após alterações. O usuário devera invocar a ação
+	 * finalizarConferencia para que os dados de cobrança sejam regerados.
+	 * 
+	 * @param idControleConferenciaEncalheCota
+	 * @throws ConferenciaEncalheFinalizadaException
+	 */
+	private void validarConferenciaEncalheReaberta(Long idControleConferenciaEncalheCota) throws ConferenciaEncalheFinalizadaException {
+		
+		if(idControleConferenciaEncalheCota == null) {
+			return;
+		}
+		
+		ControleConferenciaEncalheCota controleConferenciaEncalheCota = controleConferenciaEncalheCotaRepository.buscarPorId(idControleConferenciaEncalheCota);
+		
+		if(StatusOperacao.CONCLUIDO.equals(controleConferenciaEncalheCota.getStatus())){
+			
+			throw new ConferenciaEncalheFinalizadaException();
+			
+		}
 		
 	}
 	
@@ -889,16 +927,18 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	 * ControleConferenciaEncalheCota referente ao mesmo, senão, sera criado um novo registro.
 	 * 
 	 * @param ctrlConfEncalheCota
+	 * @param statusOperacao
 	 * 
 	 * @return ControleConferenciaEncalheCota
 	 */
-	private ControleConferenciaEncalheCota obterControleConferenciaEncalheCotaParaConfEncalhe( ControleConferenciaEncalheCota ctrlConfEncalheCota ) {
+	private ControleConferenciaEncalheCota obterControleConferenciaEncalheCotaParaConfEncalhe( 
+			ControleConferenciaEncalheCota ctrlConfEncalheCota, StatusOperacao statusOperacao) {
 		
 		Distribuidor distribuidor = distribuidorService.obter();
 		
 		Cota cota = cotaRepository.obterPorNumerDaCota(ctrlConfEncalheCota.getCota().getNumeroCota());
 		
-		if(ctrlConfEncalheCota.getId()!=null) {
+		if(ctrlConfEncalheCota.getId()!=null) { 
 			
 			ControleConferenciaEncalheCota controleConferenciaEncalheCotaFromBD = 
 					controleConferenciaEncalheCotaRepository.buscarPorId(ctrlConfEncalheCota.getId());
@@ -913,7 +953,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		ctrlConfEncalheCota.setCota(cota);
 		ctrlConfEncalheCota.setDataOperacao(distribuidor.getDataOperacao());
-		ctrlConfEncalheCota.setStatus(StatusOperacao.EM_ANDAMENTO);
+		ctrlConfEncalheCota.setStatus(statusOperacao);
 		
 		controleConferenciaEncalheCotaRepository.adicionar(ctrlConfEncalheCota);
 		
@@ -946,8 +986,6 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	}
 	
 	
-	
-	
 	private void gerarDiferencas() {
 		//TODO
 		//Pagina 4 paragrafo 4
@@ -955,6 +993,8 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	
 	private void gerarDivida() {
 		//TODO
+		
+		gerarDividaChamadaEncalheAntecipada();
 		
 	}
 	
@@ -968,9 +1008,17 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	* quais documentos serao gerados e se os mesmos serao impressos
 	* ou enviados por email.                                       
 	*/
-	private void gerarDocumentosConferenciaEncalhe() {
-		//TODO
+	private void gerarDocumentosConferenciaEncalhe(ControleConferenciaEncalheCota controleConferenciaEncalheCota) {
+		
+		
+		PoliticaCobranca politicaCobranca = politicaCobrancaService.obterPoliticaCobrancaPrincipal();
+
+		FormaEmissao formaEmissao = politicaCobranca.getFormaEmissao();
+		
+		boolean indEnviaEmail = politicaCobranca.getFormaCobranca().isRecebeCobrancaEmail();
+		
 	}
+	
 	
 	private void gerarSlip() {
 		//TODO
