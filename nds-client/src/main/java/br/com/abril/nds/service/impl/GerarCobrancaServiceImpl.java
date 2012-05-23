@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -50,14 +51,14 @@ import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.CobrancaService;
 import br.com.abril.nds.service.DocumentoCobrancaService;
 import br.com.abril.nds.service.EmailService;
-import br.com.abril.nds.service.ParametroCobrancaCotaService;
 import br.com.abril.nds.service.GerarCobrancaService;
+import br.com.abril.nds.service.ParametroCobrancaCotaService;
 import br.com.abril.nds.service.PoliticaCobrancaService;
 import br.com.abril.nds.service.exception.AutenticacaoEmailException;
 import br.com.abril.nds.util.AnexoEmail;
+import br.com.abril.nds.util.AnexoEmail.TipoAnexo;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
-import br.com.abril.nds.util.AnexoEmail.TipoAnexo;
 
 @Service
 public class GerarCobrancaServiceImpl implements GerarCobrancaService {
@@ -571,4 +572,31 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		return (quantidadeRegistro == null || quantidadeRegistro == 0) ? Boolean.FALSE : Boolean.TRUE;
 	}
 
+	@Transactional
+	@Override
+	public void cancelarDividaCobranca(Set<Long> idsMovimentoFinanceiroCota) {
+		
+		if (idsMovimentoFinanceiroCota != null && !idsMovimentoFinanceiroCota.isEmpty()){
+			
+			for (Long idMovFinCota : idsMovimentoFinanceiroCota){
+				
+				ConsolidadoFinanceiroCota consolidado =
+						this.consolidadoFinanceiroRepository.obterConsolidadoPorIdMovimentoFinanceiro(idMovFinCota);
+				
+				if (consolidado != null){
+					
+					Divida divida = this.dividaRepository.obterDividaPorIdConsolidado(consolidado.getId());
+					
+					if (divida != null){
+					
+						this.cobrancaRepository.excluirCobrancaPorIdDivida(divida.getId());
+						
+						this.dividaRepository.remover(divida);
+					}
+					
+					this.consolidadoFinanceiroRepository.remover(consolidado);
+				}
+			}
+		}
+	}
 }

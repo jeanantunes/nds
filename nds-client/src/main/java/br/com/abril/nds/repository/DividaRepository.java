@@ -73,4 +73,6 @@ public interface DividaRepository extends Repository<Divida, Long>{
 	 * @return
 	 */
 	Double obterSomaDividas(FiltroCotaInadimplenteDTO filtro);
+	
+	Divida obterDividaPorIdConsolidado(Long idConsolidado);
 }

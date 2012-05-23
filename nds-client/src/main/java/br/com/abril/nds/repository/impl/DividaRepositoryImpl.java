@@ -540,4 +540,14 @@ public class DividaRepositoryImpl extends AbstractRepository<Divida, Long> imple
 		
 		return ((BigDecimal) query.uniqueResult()).doubleValue();
 	}
+
+	@Override
+	public Divida obterDividaPorIdConsolidado(Long idConsolidado) {
+		
+		Query query = this.getSession().createQuery("select Divida where consolidado.id = :idConsolidado");
+		
+		query.setParameter("idConsolidado", idConsolidado);
+		
+		return (Divida) query.uniqueResult();
+	}
 }

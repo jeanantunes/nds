@@ -154,5 +154,15 @@ public class CobrancaRepositoryImpl extends AbstractRepository<Cobranca, Long> i
 		return query.list();
 	}
 
+	@Override
+	public void excluirCobrancaPorIdDivida(Long idDivida) {
+		
+		Query query = this.getSession().createQuery("delete from Cobranca where divida.id = :idDivida");
+		
+		query.setParameter("idDivida", idDivida);
+		
+		query.executeUpdate();
+	}
+
 	
 }
