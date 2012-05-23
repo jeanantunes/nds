@@ -88,7 +88,7 @@ public class ExpedicaoResumoProdutoRepositoryImplTest extends AbstractRepository
 			Fornecedor fornecedor = Fixture.fornecedor(juridica, SituacaoCadastro.ATIVO, true, tipoFornecedorPublicacao);
 			save(fornecedor);
 			
-			Produto produto = Fixture.produto("00"+i, "descricao"+i, "nome"+i, PeriodicidadeProduto.ANUAL, tipoRevista);
+			Produto produto = Fixture.produto("00"+i, "descricao"+i, "nome"+i, PeriodicidadeProduto.ANUAL, tipoRevista, 5, 5);
 			produto.addFornecedor(fornecedor);
 			produto.setEditor(abril);
 			save(produto); 
