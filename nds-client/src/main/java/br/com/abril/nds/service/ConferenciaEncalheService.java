@@ -14,6 +14,7 @@ import br.com.abril.nds.model.planejamento.ChamadaEncalhe;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.service.exception.ChamadaEncalheCotaInexistenteException;
 import br.com.abril.nds.service.exception.ConferenciaEncalheExistenteException;
+import br.com.abril.nds.service.exception.ConferenciaEncalheFinalizadaException;
 import br.com.abril.nds.service.exception.EncalheExcedeReparteException;
 import br.com.abril.nds.service.exception.EncalheSemPermissaoSalvarException;
 
@@ -112,7 +113,7 @@ public interface ConferenciaEncalheService {
 			ControleConferenciaEncalheCota controleConfEncalheCota, 
 			List<ConferenciaEncalheDTO> listaConferenciaEncalhe, 
 			Set<Long> listaIdConferenciaEncalheParaExclusao,
-			Usuario usuario) throws EncalheSemPermissaoSalvarException;
+			Usuario usuario) throws EncalheSemPermissaoSalvarException, ConferenciaEncalheFinalizadaException;
 	
 	
 	public void finalizarConferenciaEncalhe(
