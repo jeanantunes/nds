@@ -3,6 +3,7 @@ package br.com.abril.nds.dto.filtro;
 import java.io.Serializable;
 import java.util.Date;
 
+import br.com.abril.nds.model.StatusCobranca;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Exportable;
 import br.com.abril.nds.vo.PaginacaoVO;
@@ -26,6 +27,9 @@ public class FiltroConsultaDividasCotaDTO implements Serializable {
 	
 	@Export(label = "Data de Vencimento")
 	private Date dataVencimento;
+	
+	@Export(label = "Status da Cobrança")
+	private StatusCobranca statusCobranca;
 	
 	private PaginacaoVO paginacao;
 	
@@ -52,6 +56,17 @@ public class FiltroConsultaDividasCotaDTO implements Serializable {
 			                            Date dataVencimento){
 		this.numeroCota=numeroCota;
 		this.dataVencimento=dataVencimento;
+	}
+	
+	/**
+	 * Construtor.
+	 */
+	public FiltroConsultaDividasCotaDTO(Integer numeroCota,
+			                            Date dataVencimento,
+			                            StatusCobranca statusCobranca){
+		this.numeroCota=numeroCota;
+		this.dataVencimento=dataVencimento;
+		this.statusCobranca = statusCobranca;
 	}
 	
 	
@@ -97,10 +112,6 @@ public class FiltroConsultaDividasCotaDTO implements Serializable {
 	public void setPaginacao(PaginacaoVO paginacao) {
 		this.paginacao = paginacao;
 	}
-	
-	public static long getSerialversionuid() {
-		return serialVersionUID;
-	}
 
 	public OrdenacaoColunaDividas getOrdenacaoColuna() {
 		return ordenacaoColuna;
@@ -130,6 +141,14 @@ public class FiltroConsultaDividasCotaDTO implements Serializable {
 
 	public void setDataVencimento(Date dataVencimento) {
 		this.dataVencimento = dataVencimento;
+	}
+
+	public StatusCobranca getStatusCobranca() {
+		return statusCobranca;
+	}
+
+	public void setStatusCobranca(StatusCobranca statusCobranca) {
+		this.statusCobranca = statusCobranca;
 	}
 
 	@Override
