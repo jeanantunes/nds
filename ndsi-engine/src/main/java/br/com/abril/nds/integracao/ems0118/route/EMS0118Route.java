@@ -9,7 +9,10 @@ import br.com.abril.nds.integracao.ems0118.processor.EMS0118MessageProcessor;
 import br.com.abril.nds.integracao.engine.MessageProcessor;
 import br.com.abril.nds.integracao.engine.RouteInterface;
 import br.com.abril.nds.integracao.engine.data.FixedLengthRouteTemplate;
-
+/**
+ * @author Jones.Costa
+ * @version 1.0
+ */
 @Component
 @Scope("prototype")
 public class EMS0118Route extends FixedLengthRouteTemplate{

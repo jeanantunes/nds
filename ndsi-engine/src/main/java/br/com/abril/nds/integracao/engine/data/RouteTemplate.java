@@ -48,7 +48,11 @@ public abstract class RouteTemplate {
 	public boolean isCommitAtEnd() {
 		return false;
 	}
-	
+
+	public boolean isBulkLoad() {
+		return false;
+	}
+
 	public Map<String, Object> getParameters() {
 		return parameters;
 	}

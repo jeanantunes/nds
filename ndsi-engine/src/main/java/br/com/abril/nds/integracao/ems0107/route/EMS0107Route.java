@@ -24,14 +24,22 @@ public class EMS0107Route extends FixedLengthRouteTemplate implements AbstractRo
 	
 	@Override
 	public void onStart() {
+		// MUDA PARA MEMORIA
+		executeNativeSqlIgnoreError("ALTER TABLE ndsi_ems0107_tmp ENGINE = MYISAM");
+		
+		// MATA A FK PARA COTA SE EXISTIR
+		executeNativeSqlIgnoreError("ALTER TABLE ndsi_ems0107_tmp DROP FOREIGN KEY fk_ndsi_ems0107_tmp_cota");
+		
+		executeNativeSqlIgnoreError("TRUNCATE TABLE ndsi_ems0107_tmp");
+	}
+	
+	private void executeNativeSqlIgnoreError(String sql) {
 		try {
-			entityManager.createNativeQuery("ALTER TABLE ndsi_ems0107_tmp DROP FOREIGN KEY fk_ndsi_ems0107_tmp_cota").executeUpdate();
+			entityManager.createNativeQuery(sql).executeUpdate();
 			entityManager.flush();
 		} catch (Exception e) {
 			// FK NAO EXISTE, IGNORA O Statement
 		}
-		
-		entityManager.createQuery("DELETE EMS0107Input").executeUpdate();
 	}
 	
 	@Override
@@ -66,6 +74,11 @@ public class EMS0107Route extends FixedLengthRouteTemplate implements AbstractRo
 	
 	@Override
 	public boolean isCommitAtEnd() {
+		return false;
+	}
+	
+	@Override
+	public boolean isBulkLoad() {
 		return true;
 	}
 	
