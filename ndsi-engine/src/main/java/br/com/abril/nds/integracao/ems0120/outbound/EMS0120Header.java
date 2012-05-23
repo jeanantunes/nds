@@ -58,7 +58,7 @@ public class EMS0120Header implements Serializable {
 		this.qtdeRegistrosDetalhe = qtdeRegistrosDetalhe;
 	}
 
-	@Field(offset=24, length=30, paddingChar='0')
+	@Field(offset=24, length=29, paddingChar='0')
 	public String getFiller() {
 		return filler;
 	}
