@@ -583,7 +583,7 @@ public class LancamentoRepositoryImpl extends
 		sql.append(" left join ");
 		sql.append(" LANCAMENTO_PARCIAL lancamentoParcial  ");
 		sql.append(" on lancamentoParcial.PRODUTO_EDICAO_ID=produtoEdicao.ID ");
-		sql.append(" inner join ");
+		sql.append(" left join ");
 		sql.append(" PERIODO_LANCAMENTO_PARCIAL periodoLancamentoParcial  ");
 		sql.append(" on periodoLancamentoParcial.LANCAMENTO_PARCIAL_ID=lancamentoParcial.ID ");
 		sql.append(" inner join ");
@@ -637,6 +637,7 @@ public class LancamentoRepositoryImpl extends
 		clausulaFrom = clausulaFrom.substring(clausulaFrom.indexOf(" from "));
 		
 		sql += clausulaFrom;
+		sql += " group by lancamento.ID ";
 		sql += " ) as analitica ";
 		sql += " group by analitica.dataRecolhimentoPrevista ";
 		
@@ -658,6 +659,8 @@ public class LancamentoRepositoryImpl extends
 													  .addScalar("dataRecolhimentoPrevista")
 													  .addScalar("dataRecolhimentoDistribuidor")
 													  .addScalar("expectativaEncalhe")
+													  .addScalar("expectativaEncalheSede")
+													  .addScalar("expectativaEncalheAtendida")
 													  .addScalar("valorTotal")
 													  .addScalar("desconto")
 													  .addScalar("parcial")
