@@ -48,7 +48,7 @@ public class LogExecucao implements Serializable {
 	
 	@Type(type = "br.com.abril.nds.integracao.hibernate.types.GenericEnumUserType", 
 		parameters = {
-			@Parameter( name="enumClass", value="br.com.abril.nds.integracao.model.StatusExecucaoEnum" )
+			@Parameter( name="enumClass", value="br.com.abril.nds.model.integracao.StatusExecucaoEnum" )
 			})
 	@Enumerated(EnumType.STRING)
 	@Column(name = "STATUS", nullable = true, length = 1)
