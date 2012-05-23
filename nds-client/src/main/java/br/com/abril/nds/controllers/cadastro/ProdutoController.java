@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.dto.ConsultaProdutoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Produto;
@@ -16,8 +17,10 @@ import br.com.abril.nds.service.EstoqueProdutoService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.ProdutoService;
 import br.com.abril.nds.service.TipoProdutoService;
+import br.com.abril.nds.service.exception.UniqueConstraintViolationException;
 import br.com.abril.nds.util.ItemAutoComplete;
 import br.com.abril.nds.util.TipoMensagem;
+import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
@@ -195,14 +198,38 @@ public class ProdutoController {
 	}
 	
 	@Path("/pesquisarProdutos")
-	public void pesquisarProdutos(Integer codigo, String produto, String fornecedor, String editor,
+	public void pesquisarProdutos(String codigo, String produto, String fornecedor, String editor,
 			Long codigoTipoProduto, String sortorder, String sortname, int page, int rp) {
+		
+		int startSearch = page*rp - rp;
 		
 		List<ConsultaProdutoDTO> listaProdutos =
 			this.produtoService.pesquisarProdutos(codigo, produto, fornecedor, editor, 
-				codigoTipoProduto, sortorder, sortname, page, rp);
+				codigoTipoProduto, sortorder, sortname, startSearch, rp);
 		
-		this.result.use(FlexiGridJson.class).from(listaProdutos).total(listaProdutos.size()).page(page).serialize();
+		Integer totalResultados = this.produtoService.pesquisarCountProdutos(codigo, produto, fornecedor, editor, codigoTipoProduto);
+		
+		this.result.use(FlexiGridJson.class).from(listaProdutos).total(totalResultados).page(page).serialize();
+	}
+	
+	@Post
+	public void removerProduto(Long id) {
+		
+		try {
+			
+			this.produtoService.removerProduto(id);
+			
+		} catch (UniqueConstraintViolationException e) {
+			
+			this.result.use(Results.json()).from(
+					new ValidacaoVO(TipoMensagem.WARNING, e.getMessage()), 
+					"result").recursive().serialize();
+			throw new ValidacaoException();
+		}
+			
+		this.result.use(Results.json()).from(
+				new ValidacaoVO(TipoMensagem.SUCCESS, "Produto excluido com sucesso."), 
+				"result").recursive().serialize();
 	}
 	
 }

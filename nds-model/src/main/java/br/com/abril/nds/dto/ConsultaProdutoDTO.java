@@ -2,11 +2,15 @@ package br.com.abril.nds.dto;
 
 import java.io.Serializable;
 
+import br.com.abril.nds.model.cadastro.SituacaoCadastro;
+
 public class ConsultaProdutoDTO implements Serializable {
 
 	private static final long serialVersionUID = -8072285478313345444L;
 
-	private Integer codigo;
+	private Long id;
+	
+	private String codigo;
 
 	private String produtoDescricao;
 
@@ -30,14 +34,14 @@ public class ConsultaProdutoDTO implements Serializable {
 	/**
 	 * @return the codigo
 	 */
-	public Integer getCodigo() {
+	public String getCodigo() {
 		return codigo;
 	}
 
 	/**
 	 * @param codigo the codigo to set
 	 */
-	public void setCodigo(Integer codigo) {
+	public void setCodigo(String codigo) {
 		this.codigo = codigo;
 	}
 
@@ -107,8 +111,8 @@ public class ConsultaProdutoDTO implements Serializable {
 	/**
 	 * @param situacao the situacao to set
 	 */
-	public void setSituacao(String situacao) {
-		this.situacao = situacao;
+	public void setSituacao(SituacaoCadastro situacao) {
+		this.situacao = situacao.toString();
 	}
 
 	/**
@@ -123,6 +127,20 @@ public class ConsultaProdutoDTO implements Serializable {
 	 */
 	public void setPeb(Integer peb) {
 		this.peb = peb;
+	}
+
+	/**
+	 * @return the id
+	 */
+	public Long getId() {
+		return id;
+	}
+
+	/**
+	 * @param id the id to set
+	 */
+	public void setId(Long id) {
+		this.id = id;
 	}
 	
 }

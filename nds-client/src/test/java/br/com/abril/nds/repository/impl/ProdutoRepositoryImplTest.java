@@ -65,7 +65,7 @@ public class ProdutoRepositoryImplTest extends AbstractRepositoryImplTest {
 		
 		List<ConsultaProdutoDTO> listaProdutos = 
 			this.produtoRepository.pesquisarProdutos(
-				1, "", "", "", 1L, "", "", 1, 15);
+				"1", "", "", "", 1L, "asc", "codigo", 1, 15);
 		
 		Assert.assertNotNull(listaProdutos);
 	}

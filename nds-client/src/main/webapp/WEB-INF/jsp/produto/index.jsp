@@ -172,7 +172,43 @@
 		}
 
 		function removerProduto(id) {
-
+			
+			$("#dialog-excluir").dialog( {
+				resizable : false,
+				height : 'auto',
+				width : 450,
+				modal : true,
+				buttons : {
+					"Confirmar" : function() {
+						
+						$.postJSON("<c:url value='/produto/removerProduto' />", 
+								   "id=" + id,
+								   function(result) {
+								   		
+								   		$("#dialog-excluir").dialog("close");
+								   		
+										var tipoMensagem = result.tipoMensagem;
+										var listaMensagens = result.listaMensagens;
+										
+										if (tipoMensagem && listaMensagens) {
+											
+											exibirMensagem(tipoMensagem, listaMensagens);
+										}
+												
+										$(".produtosGrid").flexReload();
+								   },
+								   null,
+								   true
+						);
+					},
+					"Cancelar" : function() {
+						$(this).dialog("close");
+					}
+				},
+				beforeClose: function() {
+					clearMessageDialogTimeout();
+				}
+			});
 		}
 		
 		function executarPreProcessamento(resultado) {
