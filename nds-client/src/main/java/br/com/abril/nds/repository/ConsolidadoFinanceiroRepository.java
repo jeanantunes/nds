@@ -22,6 +22,7 @@ public interface ConsolidadoFinanceiroRepository extends Repository<ConsolidadoF
 	
 	public abstract List<VendaEncalheDTO> obterMovimentoVendaEncalhe(FiltroConsolidadoVendaCotaDTO filtro);
 	
-	 List<ConsignadoCotaDTO> obterMovimentoEstoqueCotaConsignado(FiltroConsolidadoConsignadoCotaDTO filtro);
-
+	List<ConsignadoCotaDTO> obterMovimentoEstoqueCotaConsignado(FiltroConsolidadoConsignadoCotaDTO filtro);
+	
+	ConsolidadoFinanceiroCota obterConsolidadoPorIdMovimentoFinanceiro(Long idMovimentoFinanceiro);
 }
