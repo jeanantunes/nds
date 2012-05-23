@@ -3,7 +3,6 @@ package br.com.abril.nds.service.impl;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -19,6 +18,7 @@ import br.com.abril.nds.dto.ProdutoRecolhimentoDTO;
 import br.com.abril.nds.dto.RecolhimentoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.factory.devolucao.BalanceamentoRecolhimentoFactory;
+import br.com.abril.nds.model.TipoEdicao;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.DistribuicaoDistribuidor;
 import br.com.abril.nds.model.cadastro.DistribuicaoFornecedor;
@@ -29,13 +29,16 @@ import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
 import br.com.abril.nds.model.planejamento.ChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.ChamadaEncalheCota;
+import br.com.abril.nds.model.planejamento.HistoricoLancamento;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
+import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.ChamadaEncalheCotaRepository;
 import br.com.abril.nds.repository.ChamadaEncalheRepository;
 import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.EstoqueProdutoCotaRepository;
+import br.com.abril.nds.repository.HistoricoLancamentoRepository;
 import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.service.DistribuidorService;
@@ -61,6 +64,9 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 	
 	@Autowired
 	private LancamentoRepository lancamentoRepository;
+	
+	@Autowired
+	private HistoricoLancamentoRepository historicoLancamentoRepository;
 	
 	@Autowired
 	private EstoqueProdutoCotaRepository estoqueProdutoCotaRepository;
@@ -90,11 +96,11 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 	public BalanceamentoRecolhimentoDTO obterMatrizBalanceamento(Integer numeroSemana,
 																 List<Long> listaIdsFornecedores,
 																 TipoBalanceamentoRecolhimento tipoBalanceamentoRecolhimento,
-																 boolean configuracaoInicial) {
+																 boolean forcarBalanceamento) {
 		
 		RecolhimentoDTO dadosRecolhimento =
 			this.obterDadosRecolhimento(numeroSemana, listaIdsFornecedores,
-										tipoBalanceamentoRecolhimento, configuracaoInicial);
+										tipoBalanceamentoRecolhimento, forcarBalanceamento);
 		
 		BalanceamentoRecolhimentoStrategy balanceamentoRecolhimentoStrategy = 
 			BalanceamentoRecolhimentoFactory.getStrategy(tipoBalanceamentoRecolhimento);
@@ -107,7 +113,8 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 	 */
 	@Override
 	@Transactional
-	public void salvarBalanceamentoRecolhimento(Map<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimento) {
+	public void salvarBalanceamentoRecolhimento(Map<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimento,
+												Usuario usuario) {
 		
 		if (matrizRecolhimento == null
 				|| matrizRecolhimento.isEmpty()) {
@@ -116,7 +123,7 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		}
 		
 		Map<Long, ProdutoRecolhimentoDTO> mapaRecolhimentos =
-			new HashMap<Long, ProdutoRecolhimentoDTO>();
+			new TreeMap<Long, ProdutoRecolhimentoDTO>();
 		
 		Set<Long> idsLancamento = new TreeSet<Long>();
 		
@@ -138,7 +145,7 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 			}
 		}
 		
-		atualizarLancamento(idsLancamento, mapaRecolhimentos);
+		atualizarLancamento(idsLancamento, usuario, mapaRecolhimentos);
 	}
 	
 	/**
@@ -147,7 +154,7 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 	@Override
 	@Transactional
 	public void confirmarBalanceamentoRecolhimento(Map<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimento,
-												   Integer numeroSemana, Long idUsuario) {
+												   Integer numeroSemana, Usuario usuario) {
 		
 		if (matrizRecolhimento == null
 				|| matrizRecolhimento.isEmpty()) {
@@ -156,16 +163,13 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		}
 		
 		Map<Long, ProdutoRecolhimentoDTO> mapaLancamentoRecolhimento =
-			new HashMap<Long, ProdutoRecolhimentoDTO>();
-		
-		Map<Long, Date> mapaEdicaoDataRecolhimento =
-				new HashMap<Long, Date>();
+			new TreeMap<Long, ProdutoRecolhimentoDTO>();
 		
 		Set<Long> idsLancamento = new TreeSet<Long>();
 		
-		Set<Long> idsProdutoEdicao = new TreeSet<Long>();
-		
 		Set<Long> idsProdutoEdicaoParcial = new TreeSet<Long>();
+		
+		Map<Date, Set<Long>> mapaDataRecolhimentoLancamentos = new TreeMap<Date, Set<Long>>();
 		
 		for (Map.Entry<Date, List<ProdutoRecolhimentoDTO>> entry : matrizRecolhimento.entrySet()) {
 			
@@ -179,15 +183,30 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 			
 			for (ProdutoRecolhimentoDTO produtoRecolhimento : listaProdutoRecolhimentoDTO) {
 				
-				mapaLancamentoRecolhimento.put(produtoRecolhimento.getIdLancamento(),
-											   produtoRecolhimento);
+				Date novaDataRecolhimento = produtoRecolhimento.getNovaData();
 				
-				idsLancamento.add(produtoRecolhimento.getIdLancamento());
+				Long idLancamento = produtoRecolhimento.getIdLancamento();
+
+				// Monta Map e Set para controlar a atualização dos lançamentos 
 				
-				mapaEdicaoDataRecolhimento.put(produtoRecolhimento.getIdProdutoEdicao(),
-											   produtoRecolhimento.getNovaData());
+				mapaLancamentoRecolhimento.put(idLancamento, produtoRecolhimento);
 				
-				idsProdutoEdicao.add(produtoRecolhimento.getIdProdutoEdicao());
+				idsLancamento.add(idLancamento);
+				
+				// Monta Map para controlar a geração de chamada de encalhe
+				
+				Set<Long> idsLancamentoPorData = mapaDataRecolhimentoLancamentos.get(novaDataRecolhimento);
+				
+				if (idsLancamentoPorData == null) {
+					
+					idsLancamentoPorData = new TreeSet<Long>();
+				}
+				
+				idsLancamentoPorData.add(idLancamento);
+				
+				mapaDataRecolhimentoLancamentos.put(novaDataRecolhimento, idsLancamentoPorData);
+				
+				// Monta Set para controlar a geração de períodos parciais
 				
 				if (produtoRecolhimento.getParcial() != null) {
 					
@@ -196,14 +215,14 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 			}
 		}
 		
-		atualizarLancamento(idsLancamento, mapaLancamentoRecolhimento);
+		atualizarLancamento(idsLancamento, usuario, mapaLancamentoRecolhimento);
 		
-		gerarChamadaEncalhe(idsProdutoEdicao, mapaEdicaoDataRecolhimento, numeroSemana);
+		gerarChamadaEncalhe(mapaDataRecolhimentoLancamentos, numeroSemana);
 		
-		gerarPeriodosParciais(idsProdutoEdicaoParcial, idUsuario);
+		gerarPeriodosParciais(idsProdutoEdicaoParcial, usuario);
 	}
 	
-	private void atualizarLancamento(Set<Long> idsLancamento,
+	private void atualizarLancamento(Set<Long> idsLancamento, Usuario usuario,
 									 Map<Long, ProdutoRecolhimentoDTO> mapaRecolhimentos) {
 		
 		if (!idsLancamento.isEmpty()) {
@@ -212,19 +231,26 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 			
 			if (listaLancamentos == null || listaLancamentos.isEmpty()) {
 				
-//				throw new ValidacaoException(TipoMensagem.WARNING,
-//					"Lançamento não encontrado!");
+				throw new ValidacaoException(TipoMensagem.WARNING,
+					"Lançamento não encontrado!");
 			}
 			
 			if (idsLancamento.size() != listaLancamentos.size()) {
 				
-//				throw new ValidacaoException(TipoMensagem.WARNING,
-//					"Lançamento não encontrado!");
+				throw new ValidacaoException(TipoMensagem.WARNING,
+					"Lançamento não encontrado!");
 			}
 			
 			ProdutoRecolhimentoDTO produtoRecolhimento = null;
 			
+			boolean gerarHistoricoLancamento = false;
+			
+			HistoricoLancamento historicoLancamento = null;
+			
 			for (Lancamento lancamento : listaLancamentos) {
+				
+				gerarHistoricoLancamento =
+					!(lancamento.getStatus().equals(StatusLancamento.BALANCEADO_RECOLHIMENTO));
 				
 				produtoRecolhimento = mapaRecolhimentos.get(lancamento.getId());
 				
@@ -234,15 +260,27 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 				lancamento.setDataStatus(new Date());
 				
 				this.lancamentoRepository.merge(lancamento);
+				
+				if (gerarHistoricoLancamento) {
+				
+					historicoLancamento = new HistoricoLancamento();
+					
+					historicoLancamento.setLancamento(lancamento);
+					historicoLancamento.setTipoEdicao(TipoEdicao.ALTERACAO);
+					historicoLancamento.setStatus(lancamento.getStatus());
+					historicoLancamento.setDataEdicao(new Date());
+					historicoLancamento.setResponsavel(usuario);
+					
+					this.historicoLancamentoRepository.merge(historicoLancamento);
+				}
 			}
 		}
 	}
 	
-	private void gerarChamadaEncalhe(Set<Long> idsProdutoEdicao,
-			 						 Map<Long, Date> mapaEdicaoDataRecolimento,
+	private void gerarChamadaEncalhe(Map<Date, Set<Long>> mapaDataRecolhimentoLancamentos,
 			 						 Integer numeroSemana) {
 		
-		if (!idsProdutoEdicao.isEmpty()) {
+		if (mapaDataRecolhimentoLancamentos != null && !mapaDataRecolhimentoLancamentos.isEmpty()) {
 			
 			Distribuidor distribuidor = this.distribuidorService.obter();
 			
@@ -251,94 +289,103 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 			removerChamadasEncalhe(periodoRecolhimento.getDataInicial(),
 								   periodoRecolhimento.getDataFinal());
 			
-			List<EstoqueProdutoCota> listaEstoqueProdutoCota =
-				this.estoqueProdutoCotaRepository.buscarEstoquesProdutoCotaPorIdProdutEdicao(
-					idsProdutoEdicao);
+			for (Map.Entry<Date, Set<Long>> entry : mapaDataRecolhimentoLancamentos.entrySet()) {
 			
-			if (listaEstoqueProdutoCota == null || listaEstoqueProdutoCota.isEmpty()) {
+				Set<Long> idsLancamento = entry.getValue();
 				
-//				throw new ValidacaoException(TipoMensagem.WARNING,
-//					"Estoque produto cota não encontrado!");
-			}
-			
-			ProdutoEdicao produtoEdicao = null;
-			Cota cota = null;
-			Date dataRecolhimento = null;
-			ChamadaEncalhe chamadaEncalhe = null;
-			ChamadaEncalhe chamadaEncalheLista = null;
-			ChamadaEncalheCota chamadaEncalheCota = null;			
-			
-			List<ChamadaEncalhe> listaChamadaEncalhe = new ArrayList<ChamadaEncalhe>();
-			
-			for (EstoqueProdutoCota estoqueProdutoCota : listaEstoqueProdutoCota) {
+				Date dataRecolhimento = entry.getKey();
 				
-				produtoEdicao = estoqueProdutoCota.getProdutoEdicao();
-				
-				cota = estoqueProdutoCota.getCota();
-				
-				dataRecolhimento = mapaEdicaoDataRecolimento.get(produtoEdicao.getId());
-				
-				chamadaEncalhe = new ChamadaEncalhe();
-				
-				chamadaEncalhe.setDataRecolhimento(dataRecolhimento);
-				chamadaEncalhe.setProdutoEdicao(produtoEdicao);
-				chamadaEncalhe.setTipoChamadaEncalhe(TipoChamadaEncalhe.MATRIZ_RECOLHIMENTO);
-				
-				chamadaEncalheLista = obterChamadaEncalheLista(listaChamadaEncalhe,
-															   chamadaEncalhe);
-				
-				if (chamadaEncalheLista == null) {
-				
-					chamadaEncalhe = this.chamadaEncalheRepository.merge(chamadaEncalhe);
-				
-					listaChamadaEncalhe.add(chamadaEncalhe);
+				if (idsLancamento == null || idsLancamento.isEmpty()) {
 					
-				} else{
-					
-					chamadaEncalhe = chamadaEncalheLista;
+					continue;
 				}
 				
-				chamadaEncalheCota = new ChamadaEncalheCota();
+				List<EstoqueProdutoCota> listaEstoqueProdutoCota =
+					this.estoqueProdutoCotaRepository.buscarListaEstoqueProdutoCota(idsLancamento);
 				
-				chamadaEncalheCota.setChamadaEncalhe(chamadaEncalhe);
-				chamadaEncalheCota.setConferido(false);
-				chamadaEncalheCota.setCota(cota);
-				
-				BigDecimal qtdPrevista = BigDecimal.ZERO;
-				
-				if (estoqueProdutoCota != null) {
+				if (listaEstoqueProdutoCota == null || listaEstoqueProdutoCota.isEmpty()) {
 					
-					qtdPrevista = estoqueProdutoCota.getQtdeRecebida().subtract(
-						estoqueProdutoCota.getQtdeDevolvida());
+					throw new ValidacaoException(TipoMensagem.WARNING,
+						"Estoque produto cota não encontrado!");
 				}
 				
-				chamadaEncalheCota.setQtdePrevista(qtdPrevista);
+				ProdutoEdicao produtoEdicao = null;
+				Cota cota = null;
+				ChamadaEncalhe chamadaEncalhe = null;
+				ChamadaEncalhe chamadaEncalheLista = null;
+				ChamadaEncalheCota chamadaEncalheCota = null;			
 				
-				this.chamadaEncalheCotaRepository.adicionar(chamadaEncalheCota);
+				List<ChamadaEncalhe> listaChamadaEncalhe = new ArrayList<ChamadaEncalhe>();
+				
+				for (EstoqueProdutoCota estoqueProdutoCota : listaEstoqueProdutoCota) {
+					
+					produtoEdicao = estoqueProdutoCota.getProdutoEdicao();
+					
+					cota = estoqueProdutoCota.getCota();
+					
+					chamadaEncalhe = new ChamadaEncalhe();
+					
+					chamadaEncalhe.setDataRecolhimento(dataRecolhimento);
+					chamadaEncalhe.setProdutoEdicao(produtoEdicao);
+					chamadaEncalhe.setTipoChamadaEncalhe(TipoChamadaEncalhe.MATRIZ_RECOLHIMENTO);
+					
+					chamadaEncalheLista = obterChamadaEncalheLista(listaChamadaEncalhe,
+																   chamadaEncalhe);
+					
+					if (chamadaEncalheLista == null) {
+					
+						chamadaEncalhe = this.chamadaEncalheRepository.merge(chamadaEncalhe);
+					
+						listaChamadaEncalhe.add(chamadaEncalhe);
+						
+					} else{
+						
+						chamadaEncalhe = chamadaEncalheLista;
+					}
+					
+					chamadaEncalheCota = new ChamadaEncalheCota();
+					
+					chamadaEncalheCota.setChamadaEncalhe(chamadaEncalhe);
+					chamadaEncalheCota.setConferido(false);
+					chamadaEncalheCota.setCota(cota);
+					
+					BigDecimal qtdPrevista = BigDecimal.ZERO;
+					
+					if (estoqueProdutoCota != null) {
+						
+						qtdPrevista = estoqueProdutoCota.getQtdeRecebida().subtract(
+							estoqueProdutoCota.getQtdeDevolvida());
+					}
+					
+					chamadaEncalheCota.setQtdePrevista(qtdPrevista);
+					
+					this.chamadaEncalheCotaRepository.adicionar(chamadaEncalheCota);
+				}
 			}
 		}
 	}
 	
-	private void gerarPeriodosParciais(Set<Long> idsProdutoEdicaoParcial, Long idUsuario) {
+	private void gerarPeriodosParciais(Set<Long> idsProdutoEdicaoParcial, Usuario usuario) {
 		
 		List<ProdutoEdicao> listaProdutoEdicao =
 			produtoEdicaoRepository.obterProdutosEdicaoPorId(idsProdutoEdicaoParcial);
 		
 		if (listaProdutoEdicao == null || listaProdutoEdicao.isEmpty()) {
 			
-//			throw new ValidacaoException(TipoMensagem.WARNING,
-//				"Produto edição não encontrado!");
+			throw new ValidacaoException(TipoMensagem.WARNING,
+				"Produto edição não encontrado!");
 		}
 		
 		if (listaProdutoEdicao.size() != idsProdutoEdicaoParcial.size()) {
 			
-//			throw new ValidacaoException(TipoMensagem.WARNING,
-//				"Produto edição não encontrado!");
+			throw new ValidacaoException(TipoMensagem.WARNING,
+				"Produto edição não encontrado!");
 		}
 		
 		for (ProdutoEdicao produtoEdicao : listaProdutoEdicao) {
 		
-			parciaisService.gerarPeriodosParcias(produtoEdicao, QTDE_PERIODOS_, idUsuario);
+			parciaisService.gerarPeriodosParcias(produtoEdicao.getId(), QTDE_PERIODOS_,
+												 usuario.getId(), null);
 		}
 	}
 	
@@ -376,7 +423,7 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 	private RecolhimentoDTO obterDadosRecolhimento(Integer numeroSemana,
 			 									   List<Long> listaIdsFornecedores,
 			 									   TipoBalanceamentoRecolhimento tipoBalanceamento,
-			 									   boolean configuracaoInicial) {
+			 									   boolean forcarBalanceamento) {
 		
 		RecolhimentoDTO dadosRecolhimento = new RecolhimentoDTO();
 		
@@ -398,45 +445,63 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		if (TipoBalanceamentoRecolhimento.EDITOR.equals(tipoBalanceamento)) {
 			
 			produtosRecolhimento =
-					lancamentoRepository.obterBalanceamentoRecolhimentoPorEditorData(periodoRecolhimento, 
-																					 listaIdsFornecedores, 
-																					 GrupoProduto.CROMO);
-
+				this.lancamentoRepository.obterBalanceamentoRecolhimentoPorEditorData(periodoRecolhimento, 
+					 																  listaIdsFornecedores, 
+																					  GrupoProduto.CROMO);
+		
 		} else if (TipoBalanceamentoRecolhimento.AUTOMATICO.equals(tipoBalanceamento)
-					|| TipoBalanceamentoRecolhimento.VALOR.equals(tipoBalanceamento)) {
+						|| TipoBalanceamentoRecolhimento.VALOR.equals(tipoBalanceamento)) {
 			
 			produtosRecolhimento =
-					lancamentoRepository.obterBalanceamentoRecolhimento(periodoRecolhimento, 
-																		listaIdsFornecedores, 
-																		GrupoProduto.CROMO);
+				this.lancamentoRepository.obterBalanceamentoRecolhimento(periodoRecolhimento, 
+																		 listaIdsFornecedores, 
+																		 GrupoProduto.CROMO);
 		}
 
 		TreeMap<Date, BigDecimal> mapaExpectativaEncalheTotalDiaria =
-				lancamentoRepository.obterExpectativasEncalhePorData(periodoRecolhimento, 
-																	 listaIdsFornecedores, 
-																	 GrupoProduto.CROMO);
+			this.lancamentoRepository.obterExpectativasEncalhePorData(periodoRecolhimento, 
+																	  listaIdsFornecedores, 
+																	  GrupoProduto.CROMO);
 
-		
-		
 		dadosRecolhimento.setProdutosRecolhimento(produtosRecolhimento);
 		
 		dadosRecolhimento.setMapaExpectativaEncalheTotalDiaria(mapaExpectativaEncalheTotalDiaria);
 		
 		dadosRecolhimento.setCapacidadeRecolhimentoDistribuidor(distribuidor.getCapacidadeRecolhimento());
 		
-		Date dataOperacao = distribuidor.getDataOperacao();
+		boolean matrizFechada = isMatrizFechada(distribuidor.getDataOperacao(), periodoRecolhimento);
 		
-		boolean matrizFechada = 
-			this.lancamentoRepository
-				.verificarExistenciaChamadaEncalheMatrizRecolhimento(periodoRecolhimento);
+		dadosRecolhimento.setBalancearMatriz(
+			balancearMatriz(produtosRecolhimento, distribuidor.getDataOperacao(),
+							periodoRecolhimento, matrizFechada, forcarBalanceamento));
 		
-		boolean semanaRecolhimento = DateUtil.validarDataEntrePeriodo(dataOperacao,
-										 							  periodoRecolhimento.getDataInicial(),
-										 							  periodoRecolhimento.getDataInicial());
+		dadosRecolhimento.setMatrizFechada(matrizFechada);
 		
-		dadosRecolhimento.setMatrizFechada(matrizFechada || semanaRecolhimento);
+		return dadosRecolhimento;
+	}
+	
+	private boolean balancearMatriz(List<ProdutoRecolhimentoDTO> produtosRecolhimento,
+									Date dataOperacao,
+									PeriodoVO periodoRecolhimento,
+									boolean matrizFechada,
+									boolean forcarBalanceamento) {
 		
-		boolean matrizSalva = true;
+		if (matrizFechada) {
+			
+			return false;
+		}
+		
+		if (!isMatrizSalva(produtosRecolhimento)) {
+			
+			return true;
+		}
+		
+		return forcarBalanceamento;
+	}
+	
+	private boolean isMatrizSalva(List<ProdutoRecolhimentoDTO> produtosRecolhimento) {
+		
+		boolean matrizSalva = false;
 		
 		if (produtosRecolhimento != null && !produtosRecolhimento.isEmpty()) {
 			
@@ -450,9 +515,20 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 			}
 		}
 		
-		dadosRecolhimento.setBalancearMatriz(configuracaoInicial || !matrizSalva);
+		return matrizSalva;
+	}
+	
+	private boolean isMatrizFechada(Date dataOperacao, PeriodoVO periodoRecolhimento) {
 		
-		return dadosRecolhimento;
+		boolean matrizConfirmada = 
+			this.lancamentoRepository
+				.verificarExistenciaChamadaEncalheMatrizRecolhimento(periodoRecolhimento);
+		
+		boolean semanaRecolhimento = DateUtil.validarDataEntrePeriodo(dataOperacao,
+																	  periodoRecolhimento.getDataInicial(),
+																	  periodoRecolhimento.getDataFinal());
+		
+		return matrizConfirmada || semanaRecolhimento;
 	}
 
 	/*
@@ -479,6 +555,12 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		List<DistribuicaoFornecedor> listaDistribuicaoFornecedor = 
 			this.distribuidorRepository.buscarDiasDistribuicaoFornecedor(
 				listaIdsFornecedores, OperacaoDistribuidor.RECOLHIMENTO);
+		
+		if (listaDistribuicaoFornecedor == null || listaDistribuicaoFornecedor.isEmpty()) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING ,
+										 "Dias de recolhimento para os fornecedores não encontrados!");
+		}
 		
 		Set<Integer> diasSemanaFornecedor = new TreeSet<Integer>();
 		

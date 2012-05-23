@@ -23,4 +23,6 @@ public interface EnderecoRepository extends Repository<Endereco, Long> {
 	void removerEnderecos(Collection<Long> idsEndereco);
 
 	List<Endereco> buscarEnderecosPessoa(Long idPessoa, Set<Long> idsIgnorar);
+
+	List<String> obterMunicipiosCotas();
 }

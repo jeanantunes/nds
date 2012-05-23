@@ -10,6 +10,7 @@ import java.util.Set;
 import junit.framework.Assert;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -298,7 +299,7 @@ public class ConferenciaEncalheRepositoryImplTest extends AbstractRepositoryImpl
 		
 		save(mec);
 		
-		ConferenciaEncalhe conferenciaEncalhe = Fixture.conferenciaEncalhe(lancamentoVeja, mec, chamadaEncalheCota, controleConferenciaEncalheCota);
+		ConferenciaEncalhe conferenciaEncalhe = Fixture.conferenciaEncalhe(mec, chamadaEncalheCota, controleConferenciaEncalheCota);
 		save(conferenciaEncalhe);
 		
 		mec = Fixture.movimentoEstoqueCotaEnvioEncalhe( 
@@ -311,7 +312,7 @@ public class ConferenciaEncalheRepositoryImplTest extends AbstractRepositoryImpl
 		
 		save(mec);
 		
-		conferenciaEncalhe = Fixture.conferenciaEncalhe(lancamentoVeja, mec, chamadaEncalheCota, controleConferenciaEncalheCota);
+		conferenciaEncalhe = Fixture.conferenciaEncalhe(mec, chamadaEncalheCota, controleConferenciaEncalheCota);
 		save(conferenciaEncalhe);
 		
 		
@@ -325,7 +326,7 @@ public class ConferenciaEncalheRepositoryImplTest extends AbstractRepositoryImpl
 		
 		save(mec);
 	
-		conferenciaEncalhe = Fixture.conferenciaEncalhe(lancamentoVeja, mec, chamadaEncalheCota, controleConferenciaEncalheCota);
+		conferenciaEncalhe = Fixture.conferenciaEncalhe(mec, chamadaEncalheCota, controleConferenciaEncalheCota);
 		save(conferenciaEncalhe);
 			
 	}
@@ -389,7 +390,6 @@ public class ConferenciaEncalheRepositoryImplTest extends AbstractRepositoryImpl
 	}
 	
 	
-	@SuppressWarnings("unused")
 	@Test
 	public void testObterListaConferenciaEncalheCota() {
 		

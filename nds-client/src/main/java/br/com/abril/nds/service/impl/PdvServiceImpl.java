@@ -306,12 +306,8 @@ public class PdvServiceImpl implements PdvService {
 		
 		PDV pdv = pdvRepository.buscarPorId(idPdv);
 		
-		if(pdvRepository.obterQntPDV() == 1 ){
-			throw new ValidacaoException(TipoMensagem.WARNING,"PDV não pode ser excluido! Uma cota deve ter pelomenos um PDV cadastrado.");
-		}
-		
 		if( pdv.getCaracteristicas()!= null &&  pdv.getCaracteristicas().isPontoPrincipal()){
-			throw new ValidacaoException(TipoMensagem.WARNING,"PDV não pode ser excluido! Pelomenos um PDV deve ser um Ponto Principal.");
+			throw new ValidacaoException(TipoMensagem.WARNING,"PDV não pode ser excluído! Pelomenos um PDV deve ser um Ponto Principal.");
 		}
 		
 		if(pdv!= null){
@@ -496,9 +492,7 @@ public class PdvServiceImpl implements PdvService {
 			this.validarExcluirTelefonePrincipal(pdv, pdvDTO.getTelefonesRemover(),pdvDTO.getTelefonesAdicionar());
 			
 		}
-		
-		
-		
+
 		List<Telefone> listaTelefones = new ArrayList<Telefone>();
 		if (pdvDTO.getTelefonesAdicionar() != null){
 			for (TelefoneAssociacaoDTO telefoneAssociacaoDTO : pdvDTO.getTelefonesAdicionar()){
@@ -782,10 +776,10 @@ public class PdvServiceImpl implements PdvService {
 		
 		if(pdv.getSegmentacao()!= null){
 
-			caracteristicaDTO.setAreaInfluencia(pdv.getSegmentacao().getAreaInfluenciaPDV().getCodigo());
-			caracteristicaDTO.setCluster(pdv.getSegmentacao().getClusterPDV().getCodigo());
+			caracteristicaDTO.setAreaInfluencia( (pdv.getSegmentacao().getAreaInfluenciaPDV()!= null)? pdv.getSegmentacao().getAreaInfluenciaPDV().getCodigo():null);
+			caracteristicaDTO.setCluster( (pdv.getSegmentacao().getClusterPDV()!=null)? pdv.getSegmentacao().getClusterPDV().getCodigo():null);
 			caracteristicaDTO.setTipoCaracteristicaSegmentacaoPDV(pdv.getSegmentacao().getTipoCaracteristica());
-			caracteristicaDTO.setTipoPonto(pdv.getSegmentacao().getTipoPontoPDV().getCodigo());
+			caracteristicaDTO.setTipoPonto((pdv.getSegmentacao().getTipoPontoPDV()!= null)? pdv.getSegmentacao().getTipoPontoPDV().getCodigo():null);
 		}
 		
 		if(pdv.getCaracteristicas()!= null){
@@ -893,7 +887,7 @@ public class PdvServiceImpl implements PdvService {
 				
 				throw new ValidacaoException(TipoMensagem.WARNING,
 						"Ao selecionar " + TipoPeriodoFuncionamentoPDV.DIARIA.getDescricao() 
-						+ ", nenhum outro item deve ser incluido.");
+						+ ", nenhum outro item deve ser incluído.");
 			} 
 		
 		}
@@ -903,7 +897,7 @@ public class PdvServiceImpl implements PdvService {
 			if(listaTipos.size() > 1) {
 				
 				throw new ValidacaoException(TipoMensagem.WARNING,
-						"Ao selecionar " + TipoPeriodoFuncionamentoPDV.VINTE_QUATRO_HORAS.getDescricao() + ", nenhum outro item deve ser incluido.");
+						"Ao selecionar " + TipoPeriodoFuncionamentoPDV.VINTE_QUATRO_HORAS.getDescricao() + ", nenhum outro item deve ser incluído.");
 			} 
 		
 		} 
@@ -1009,7 +1003,7 @@ public class PdvServiceImpl implements PdvService {
 
 		if (listaEnderecoAssociacaoSalvar != null && !listaEnderecoAssociacaoSalvar.isEmpty()) {
 			
-			this.validarInclusaoEdicaoEnderecoPrincipal(listaEnderecoAssociacaoSalvar);
+			this.validarInclusaoEdicaoEnderecoPrincipal(listaEnderecoAssociacaoSalvar, pdv);
 			
 			this.salvarEnderecosPDV(pdv, listaEnderecoAssociacaoSalvar);
 		}
@@ -1034,23 +1028,16 @@ public class PdvServiceImpl implements PdvService {
 						this.enderecoPDVRepository.buscarEnderecoPorEnderecoPDV(enderecoAssociacao.getId(), pdv.getId());
 	
 				if (enderecoPDV == null) {
-	
 					enderecoPDV = new EnderecoPDV();
-					enderecoPDV.setPdv(pdv);
-					
-					enderecoPDV.setEndereco(enderecoAssociacao.getEndereco());
-					enderecoPDV.setPrincipal(enderecoAssociacao.isEnderecoPrincipal());
-					enderecoPDV.setTipoEndereco(enderecoAssociacao.getTipoEndereco());
-					
-					this.enderecoPDVRepository.adicionar(enderecoPDV);
-				} else {
-					
-					enderecoPDV.setEndereco(enderecoAssociacao.getEndereco());
-					enderecoPDV.setPrincipal(enderecoAssociacao.isEnderecoPrincipal());
-					enderecoPDV.setTipoEndereco(enderecoAssociacao.getTipoEndereco());
-					
-					this.enderecoPDVRepository.alterar(enderecoPDV);
-				}
+				} 
+				
+				enderecoPDV.setPdv(pdv);
+				enderecoPDV.setEndereco(enderecoAssociacao.getEndereco());
+				enderecoPDV.setPrincipal(enderecoAssociacao.isEnderecoPrincipal());
+				enderecoPDV.setTipoEndereco(enderecoAssociacao.getTipoEndereco());
+				
+				this.enderecoPDVRepository.merge(enderecoPDV);
+				
 			}
 		}
 	}
@@ -1063,12 +1050,13 @@ public class PdvServiceImpl implements PdvService {
 
 		for (Long enderecoAssociacao : listaEnderecoAssociacao) {
 			
-			idsEndereco.add(enderecoAssociacao);
-			
 			EnderecoPDV enderecoPDV = this.enderecoPDVRepository.buscarEnderecoPorEnderecoPDV(enderecoAssociacao, pdv.getId());
 			
 			if (enderecoPDV != null && enderecoPDV.getEndereco() != null){
+				
 				idsEnderecoPDV.add(enderecoPDV.getId());
+				
+				idsEndereco.add(enderecoPDV.getEndereco().getId());
 			}
 		}
 		
@@ -1079,7 +1067,7 @@ public class PdvServiceImpl implements PdvService {
 		
 		if (!idsEndereco.isEmpty()){
 			
-			this.enderecoRepository.removerEnderecos(idsEndereco);
+			enderecoService.removerEnderecos(idsEndereco);
 		}
 	}
 
@@ -1145,11 +1133,26 @@ public class PdvServiceImpl implements PdvService {
 		}
 	}
 	
-	private void validarInclusaoEdicaoEnderecoPrincipal(List<EnderecoAssociacaoDTO> listaEnderecoAssociacaoSalvar){
+	private void validarInclusaoEdicaoEnderecoPrincipal(List<EnderecoAssociacaoDTO> listaEnderecoAssociacaoSalvar,PDV pdv){
 		
 		if(!this.existeEnderecoPrincipal(listaEnderecoAssociacaoSalvar)){
 			
-			throw new ValidacaoException(TipoMensagem.WARNING,"Pelomenos um endereço associado ao PDV deve ser principal!");
+			if(pdv.getEnderecos()!= null && !pdv.getEnderecos().isEmpty()){
+			
+					for(EnderecoPDV endereco: pdv.getEnderecos()){
+						
+						for( EnderecoAssociacaoDTO end : listaEnderecoAssociacaoSalvar){
+							
+							if(end.getId().equals(endereco.getEndereco().getId()) && endereco.isPrincipal()){ 
+									
+								throw new ValidacaoException(TipoMensagem.WARNING,"Pelomenos um endereço associado ao PDV deve ser principal!");
+							}
+						}
+					}	
+			}
+			else{
+				throw new ValidacaoException(TipoMensagem.WARNING,"Pelomenos um endereço associado ao PDV deve ser principal!");
+			}
 		}
 	}
 		
@@ -1172,7 +1175,7 @@ public class PdvServiceImpl implements PdvService {
 		
 		if(!this.existeTelefonePrincipal(listaTelefoneAssociacaoSalvar)){
 			
-			throw new ValidacaoException(TipoMensagem.WARNING,"Pelomenos um telegone associado ao PDV deve ser principal!");
+			throw new ValidacaoException(TipoMensagem.WARNING,"Pelomenos um telefone associado ao PDV deve ser principal!");
 		}
 	}
 	

@@ -35,10 +35,18 @@ public abstract class AbstractBalanceamentoRecolhimentoStrategy implements Balan
 			return balanceamentoRecolhimento; 
 		}
 		
-		TreeMap<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimento = 
-			this.gerarMatrizRecolhimentoBalanceada(dadosRecolhimento);
+		TreeMap<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimento = null;
 		
-		this.configurarSequenciaProdutosMatrizRecolhimento(matrizRecolhimento, dadosRecolhimento);
+		if (dadosRecolhimento.getBalancearMatriz()) {
+			
+			matrizRecolhimento = this.gerarMatrizRecolhimentoBalanceada(dadosRecolhimento);
+			
+			this.configurarMatrizRecolhimento(matrizRecolhimento);
+			
+		} else {
+			
+			matrizRecolhimento = this.carregarMatrizRecolhimentoSalva(dadosRecolhimento);
+		}
 		
 		balanceamentoRecolhimento.setMatrizRecolhimento(matrizRecolhimento);
 		
@@ -68,8 +76,7 @@ public abstract class AbstractBalanceamentoRecolhimentoStrategy implements Balan
 		
 		List<ProdutoRecolhimentoDTO> produtosRecolhimentoNaoBalanceaveis = 
 			this.obterProdutosRecolhimentoNaoBalanceaveisPorData(
-				dadosRecolhimento.getProdutosRecolhimento(), dataRecolhimentoPrevista, 
-					dadosRecolhimento.getBalancearMatriz(), dadosRecolhimento.isMatrizFechada());
+				dadosRecolhimento.getProdutosRecolhimento(), dataRecolhimentoPrevista);
 		
 		if (!produtosRecolhimentoNaoBalanceaveis.isEmpty()) {
 			
@@ -81,9 +88,7 @@ public abstract class AbstractBalanceamentoRecolhimentoStrategy implements Balan
 	 * Obtém os produtos de recolhimento não balanceáveis (possuem chamada antecipada ou chamadão) de uma determinada data.
 	 */
 	protected List<ProdutoRecolhimentoDTO> obterProdutosRecolhimentoNaoBalanceaveisPorData(List<ProdutoRecolhimentoDTO> produtosRecolhimento, 
-																		  				   Date dataRecolhimentoDesejada,
-																		  				   boolean balancearMatriz,
-																		  				   boolean matrizFechada) {
+																		  				   Date dataRecolhimentoDesejada) {
 		
 		List<ProdutoRecolhimentoDTO> produtosRecolhimentoNaoBalanceaveis = new ArrayList<ProdutoRecolhimentoDTO>();
 		
@@ -98,7 +103,7 @@ public abstract class AbstractBalanceamentoRecolhimentoStrategy implements Balan
 			
 			ProdutoRecolhimentoDTO produtoRecolhimento = produtosRecolhimento.get(indice);
 			
-			if ((!balancearMatriz || matrizFechada || produtoRecolhimento.isPossuiChamada())
+			if ((produtoRecolhimento.isPossuiChamada())
 					&& produtoRecolhimento.getDataRecolhimentoDistribuidor().equals(dataRecolhimentoDesejada)) {
 				
 				produtosRecolhimentoNaoBalanceaveis.add(produtosRecolhimento.remove(indice--));
@@ -238,7 +243,7 @@ public abstract class AbstractBalanceamentoRecolhimentoStrategy implements Balan
 				continue;
 			}
 			
-			if (produtoRecolhimento.getDataRecolhimentoDistribuidor().equals(dataRecolhimentoDesejada)) {
+			if (produtoRecolhimento.getDataRecolhimentoPrevista().equals(dataRecolhimentoDesejada)) {
 				
 				produtosRecolhimentoFiltrados.add(produtoRecolhimento);
 			}
@@ -316,30 +321,67 @@ public abstract class AbstractBalanceamentoRecolhimentoStrategy implements Balan
 			produtosRecolhimentoAtuais = produtosRecolhimentoNovos;
 		}
 		
-		matrizRecolhimento.put(dataBalanceamento, produtosRecolhimentoAtuais);
+		if (produtosRecolhimentoAtuais != null && !produtosRecolhimentoAtuais.isEmpty()) {
+		
+			matrizRecolhimento.put(dataBalanceamento, produtosRecolhimentoAtuais);
+		}
 	}
 	
 	/*
-	 * Configura a sequência dos produtos da matriz de recolhimento.
+	 * Carrega a matriz de recolhimento salva.
 	 */
-	private void configurarSequenciaProdutosMatrizRecolhimento(
-												Map<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimento,
-												RecolhimentoDTO dadosRecolhimento) {
+	private TreeMap<Date, List<ProdutoRecolhimentoDTO>> carregarMatrizRecolhimentoSalva(
+																		RecolhimentoDTO dadosRecolhimento) {
 		
-		if (dadosRecolhimento.isMatrizFechada() || !dadosRecolhimento.getBalancearMatriz()) {
+		TreeMap<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimento = 
+			new TreeMap<Date, List<ProdutoRecolhimentoDTO>>();
+		
+		List<ProdutoRecolhimentoDTO> produtosRecolhimento = dadosRecolhimento.getProdutosRecolhimento();
+		
+		if (produtosRecolhimento == null
+				|| produtosRecolhimento.isEmpty()) {
 			
-			return;
+			return matrizRecolhimento;
 		}
+		
+		for (ProdutoRecolhimentoDTO produtoRecolhimento : produtosRecolhimento) {
+			
+			Date dataRecolhimento = produtoRecolhimento.getDataRecolhimentoDistribuidor();
+			
+			List<ProdutoRecolhimentoDTO> produtosRecolhimentoBalanceados = 
+					matrizRecolhimento.get(dataRecolhimento);
+			
+			if (produtosRecolhimentoBalanceados == null) {
+				
+				produtosRecolhimentoBalanceados = new ArrayList<ProdutoRecolhimentoDTO>();
+			}
+			
+			produtosRecolhimentoBalanceados.add(produtoRecolhimento);
+			
+			matrizRecolhimento.put(dataRecolhimento, produtosRecolhimentoBalanceados);
+		}
+		
+		return matrizRecolhimento;
+	}
+	
+	/*
+	 * Configura a sequência, a data de recolhimento e a nova data dos produtos da matriz.
+	 */
+	private void configurarMatrizRecolhimento(Map<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimento) {
 		
 		Integer sequencia = 1;
 		
 		for (Map.Entry<Date, List<ProdutoRecolhimentoDTO>> entryMatrizRecolhimento 
 				: matrizRecolhimento.entrySet()) {
 			
+			Date dataRecolhimento = entryMatrizRecolhimento.getKey();
+			
 			List<ProdutoRecolhimentoDTO> produtosRecolhimento = entryMatrizRecolhimento.getValue();
 			
 			for (ProdutoRecolhimentoDTO produtoRecolhimento : produtosRecolhimento) {
 				
+				produtoRecolhimento.setDataRecolhimentoDistribuidor(dataRecolhimento);
+				produtoRecolhimento.setNovaData(dataRecolhimento);
 				produtoRecolhimento.setSequencia(sequencia++);
 			}
 		}

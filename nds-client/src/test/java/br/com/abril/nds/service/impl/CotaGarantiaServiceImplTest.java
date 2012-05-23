@@ -136,8 +136,9 @@ public class CotaGarantiaServiceImplTest extends AbstractRepositoryImplTest {
 						
 	}
 
+
 	@Test
-	public void testSalvaCaucaoLiquida() {
+	public void testSalvaCaucaoLiquida() throws Exception {
 		
 		CotaGarantiaCaucaoLiquida cotaGarantiaCaucaoLiquida = null;
 		

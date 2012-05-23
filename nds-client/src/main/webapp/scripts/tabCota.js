@@ -4,7 +4,9 @@ function TabCota(tabName) {
 
 	this.funcaoSalvar = null;
 
-	this.novaAba=null;
+	this.possuiDadosObrigatorios = null;
+	
+	this.novaAba=0;
 		
 	/**
 	 * Verifica qual aba foi selecionada, define o metodo de salvamento da mesma e chama seu método carregamento.
@@ -36,8 +38,7 @@ function TabCota(tabName) {
 		/**GARANTIA**/
 		case 4: 
 			T.funcaoSalvar = function(callBack){
-				console.log('SALVA GARANTIA');
-				return tipoCotaGarantia.controller.salva(callBack);
+				return tipoCotaGarantia.salva(callBack);
 			};
 			tipoCotaGarantia.onOpen();
 			break;
@@ -71,21 +72,7 @@ function TabCota(tabName) {
 	}
 		
 	},
-	
-	this.fecharDialog = function() {
 		
-		T.funcaoSalvar = null;
-		
-		$( "#dialog-cota" ).dialog( "close" );
-		
-	},
-	
-	this.abrirNovaAba = function() {
-		
-		T.funcaoSalvar = null;
-		
-		$("#" + tabName).tabs('select', T.novaAba);
-	};
 		
 	$(function() {
 		
@@ -99,21 +86,39 @@ function TabCota(tabName) {
 						
 		    select: function(event, ui) {
 		    	
+		    	if(ui.index == 3){
+		    		$("#btn_confirmar_cota").hide();
+		    	}
+		    	else{
+		    		$("#btn_confirmar_cota").show();
+		    	}
+		    	
 		    	if(!T.funcaoSalvar) {
 		    		return;
 		    	}
 		    	
+		    	var abaAnterior = T.novaAba;
+
+		    	if(abaAnterior == 0 && !T.possuiDadosObrigatorios){
+		    		
+		    		exibirMensagemDialog(
+							"WARNING", 
+							["Os dados cadastrais precisam ser confirmados para prosseguir com o cadastro da cota!"],""
+						);
+						
+		    		return false;
+		    	}
+		    	
 		    	T.novaAba = ui.index;
 		    	
-		    	return T.funcaoSalvar(T.abrirNovaAba);
-		    	
-		    	//return false;
+		    	return true;
 		    }
 		});	
 		
 		$("#" + tabName).tabs({
 			
-		    show: function(event, ui) {				
+		    show: function(event, ui) {		
+		    	T.funcaoSalvar = null;
 		    	T.carregaDadosNovaAba(ui.index);
 		    }
 		});		

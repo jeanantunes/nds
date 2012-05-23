@@ -87,6 +87,9 @@ public class Lancamento implements Serializable {
 	@Column(name = "REPARTE", nullable = false)
 	private BigDecimal reparte;
 	
+	@Column(name = "REPARTE_PROMOCIONAL", nullable = true)
+	private BigDecimal repartePromocional;
+	
 	@OneToMany
 	private Set<ItemRecebimentoFisico> recebimentos = new HashSet<ItemRecebimentoFisico>();
 	
@@ -96,7 +99,7 @@ public class Lancamento implements Serializable {
 	@Column(name = "NUMERO_REPROGRAMACOES")
 	private Integer numeroReprogramacoes;
 	
-	@Column(name = "SEQUENCIA_MATRIZ", nullable = false)
+	@Column(name = "SEQUENCIA_MATRIZ", nullable = true)
 	private Integer sequenciaMatriz;
 	
 	@NotFound(action = NotFoundAction.IGNORE)
@@ -272,6 +275,20 @@ public class Lancamento implements Serializable {
 	
 	public boolean isSemRecebimentoFisico() {
 		return recebimentos.isEmpty();
+	}
+
+	/**
+	 * @return the repartePromocional
+	 */
+	public BigDecimal getRepartePromocional() {
+		return repartePromocional;
+	}
+
+	/**
+	 * @param repartePromocional the repartePromocional to set
+	 */
+	public void setRepartePromocional(BigDecimal repartePromocional) {
+		this.repartePromocional = repartePromocional;
 	}
 	
 

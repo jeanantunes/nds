@@ -533,7 +533,7 @@
 					}, {
 						display : 'Produto',
 						name : 'nomeProduto',
-						width : 50,
+						width : 80,
 						sortable : true,
 						align : 'left'
 					}, {
@@ -593,25 +593,25 @@
 					}, {
 						display : 'Sede',
 						name : 'encalheSede',
-						width : 35,
+						width : 60,
 						sortable : true,
 						align : 'center'
 					}, {
 						display : 'Atendida',
 						name : 'encalheAtendida',
-						width : 50,
+						width : 60,
 						sortable : true,
 						align : 'center'
 					}, {
 						display : 'Exemplar',
 						name : 'encalhe',
-						width : 50,
+						width : 60,
 						sortable : true,
 						align : 'center'
 					}, {
 						display : 'Total R$',
 						name : 'valorTotal',
-						width : 42,
+						width : 70,
 						sortable : true,
 						align : 'right'
 					}, {
@@ -640,12 +640,12 @@
 			
 			function confirmar() {
 				
-				fecharGridBalanceamento();
-				
 				$.postJSON(
 					"<c:url value='/devolucao/balanceamentoMatriz/confirmar' />",
 					null,
 					function(result) {
+				
+						fecharGridBalanceamento();
 						
 						$("#resumoPeriodo").hide();
 					}

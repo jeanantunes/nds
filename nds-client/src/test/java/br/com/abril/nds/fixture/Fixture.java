@@ -190,78 +190,78 @@ public class Fixture {
 
 	public static Produto produtoVeja(TipoProduto tipoProduto) {
 		return produto("1", "Veja", "Veja", PeriodicidadeProduto.SEMANAL,
-				tipoProduto);
+				tipoProduto, 5, 5);
 	}
 
 	public static Produto produtoQuatroRodas(TipoProduto tipoProduto) {
 		return produto("2", "Quatro Rodas", "Quatro Rodas",
-				PeriodicidadeProduto.MENSAL, tipoProduto);
+				PeriodicidadeProduto.MENSAL, tipoProduto, 5, 5);
 	}
 
 	public static Produto produtoInfoExame(TipoProduto tipoProduto) {
 		return produto("3", "Info Exame", "Info Exame",
-				PeriodicidadeProduto.MENSAL, tipoProduto);
+				PeriodicidadeProduto.MENSAL, tipoProduto, 5, 5);
 	}
 
 	public static Produto produtoCapricho(TipoProduto tipoProduto) {
 		return produto("4", "Capricho", "Capricho",
-				PeriodicidadeProduto.QUINZENAL, tipoProduto);
+				PeriodicidadeProduto.QUINZENAL, tipoProduto, 5, 5);
 	}
 	
 	public static Produto produtoSuperInteressante(TipoProduto tipoProduto) {
 		return produto("5",
 				"Superinteressante", "Superinteressante",
-				PeriodicidadeProduto.MENSAL, tipoProduto);
+				PeriodicidadeProduto.MENSAL, tipoProduto, 5, 5);
 	}
 	
 	public static Produto produtoBoaForma(TipoProduto tipoProduto) {
 		return produto("6", "Boa Forma", "Boa Forma",
-				PeriodicidadeProduto.MENSAL, tipoProduto);
+				PeriodicidadeProduto.MENSAL, tipoProduto, 5, 5);
 	}
 	
 	public static Produto produtoBravo(TipoProduto tipoProduto) {
 		return produto("7", "Bravo", "Bravo",
-				PeriodicidadeProduto.MENSAL, tipoProduto);
+				PeriodicidadeProduto.MENSAL, tipoProduto, 5, 5);
 	}
 	
 	public static Produto produtoContigo(TipoProduto tipoProduto) {
 		return produto("8", "Contigo", "Contigo",
-				PeriodicidadeProduto.QUINZENAL, tipoProduto);
+				PeriodicidadeProduto.QUINZENAL, tipoProduto, 5, 5);
 	}
 	
 	public static Produto produtoCaras(TipoProduto tipoProduto) {
 		return produto("9", "Caras", "Caras",
-				PeriodicidadeProduto.MENSAL, tipoProduto);
+				PeriodicidadeProduto.MENSAL, tipoProduto, 5, 5);
 	}
 	
 	public static Produto produtoClaudia(TipoProduto tipoProduto) {
 		return produto("10", "Claudia", "Claudia",
-				PeriodicidadeProduto.SEMANAL, tipoProduto);
+				PeriodicidadeProduto.SEMANAL, tipoProduto, 5, 5);
 	}
 	
 	public static Produto produtoCasaClaudia(TipoProduto tipoProduto) {
 		return produto("11", "Casa Claudia", "Casa Claudia",
-				PeriodicidadeProduto.MENSAL, tipoProduto);
+				PeriodicidadeProduto.MENSAL, tipoProduto, 5, 5);
 	}
 	
 	public static Produto produtoManequim(TipoProduto tipoProduto) {
 		return produto("12", "Manequim", "Manequim",
-				PeriodicidadeProduto.SEMANAL, tipoProduto);
+				PeriodicidadeProduto.SEMANAL, tipoProduto, 5, 5);
 	}
 	
 	public static Produto produtoNationalGeographic(TipoProduto tipoProduto) {
 		return produto("13", "National Geographic", "National Geographic",
-				PeriodicidadeProduto.MENSAL, tipoProduto);
+				PeriodicidadeProduto.MENSAL, tipoProduto, 5, 5);
 	}
 	
 	public static Produto produtoPlacar(TipoProduto tipoProduto) {
 		return produto("14", "Placar", "Placar",
-				PeriodicidadeProduto.MENSAL, tipoProduto);
+				PeriodicidadeProduto.MENSAL, tipoProduto, 5, 5);
 	}
 	
 	public static Produto produtoCromoReiLeao(TipoProduto tipoProduto) {
 		return produto("15", "Cromo Rei Leao", "Cromo Rei Leao",
-				PeriodicidadeProduto.SEMANAL, tipoProduto);
+				PeriodicidadeProduto.SEMANAL, tipoProduto, 5, 5);
 	}
 
 	public static TipoProduto tipoRevista() {
@@ -363,7 +363,6 @@ public class Fixture {
 		TipoProduto tipoProduto = new TipoProduto();
 		tipoProduto.setDescricao(descricao);
 		tipoProduto.setGrupoProduto(grupo);
-		tipoProduto.setNcm(ncm);
 		return tipoProduto;
 	}
 	
@@ -375,19 +374,22 @@ public class Fixture {
 	}
 
 	public static Produto produto(String codigo, String descricao, String nome,
-			PeriodicidadeProduto periodicidade, TipoProduto tipo) {
+			PeriodicidadeProduto periodicidade, TipoProduto tipo, int peb, int pacotePadrao) {
 		Produto produto = new Produto();
 		produto.setCodigo(codigo);
 		produto.setDescricao(descricao);
 		produto.setNome(nome);
 		produto.setPeriodicidade(periodicidade);
 		produto.setTipoProduto(tipo);
+		produto.setPeb(peb);
+		produto.setPacotePadrao(pacotePadrao);
 		return produto;
 	}
 
 	public static ProdutoEdicao produtoEdicao(Long numeroEdicao,
 			int pacotePadrao, int peb, BigDecimal peso, BigDecimal precoCusto,
-			BigDecimal precoVenda, String codigoDeBarras, Long codigoSM, Produto produto) {
+			BigDecimal precoVenda, String codigoDeBarras, Long cdSMNotUsedAnyMore, Produto produto) {
+		
 		ProdutoEdicao produtoEdicao = new ProdutoEdicao();
 		produtoEdicao.setNumeroEdicao(numeroEdicao);
 		produtoEdicao.setPacotePadrao(pacotePadrao);
@@ -397,10 +399,48 @@ public class Fixture {
 		produtoEdicao.setPrecoVenda(precoVenda);
 		produtoEdicao.setProduto(produto);
 		produtoEdicao.setCodigoDeBarras(codigoDeBarras);
-		produtoEdicao.setCodigoSM(codigoSM);
+		return produtoEdicao;
+	}
+	
+	public static ProdutoEdicao produtoEdicao(Long numeroEdicao,
+			int pacotePadrao, int peb, BigDecimal peso, BigDecimal precoCusto,
+			BigDecimal precoVenda, String codigoDeBarras, Long cdSMNotUsedAnyMore, Produto produto, 
+			BigDecimal expectativaVenda) {
+		
+		ProdutoEdicao produtoEdicao = new ProdutoEdicao();
+		produtoEdicao.setNumeroEdicao(numeroEdicao);
+		produtoEdicao.setPacotePadrao(pacotePadrao);
+		produtoEdicao.setPeb(peb);
+		produtoEdicao.setPeso(peso);
+		produtoEdicao.setPrecoCusto(precoCusto);
+		produtoEdicao.setPrecoVenda(precoVenda);
+		produtoEdicao.setProduto(produto);
+		produtoEdicao.setCodigoDeBarras(codigoDeBarras);
+		produtoEdicao.setExpectativaVenda(expectativaVenda);
+		
 		return produtoEdicao;
 	}
 
+	public static ProdutoEdicao produtoEdicao(Long numeroEdicao,
+			int pacotePadrao, int peb, BigDecimal peso, BigDecimal precoCusto,
+			BigDecimal precoVenda, String codigoDeBarras, Long cdSMNotUsedAnyMore, Produto produto, 
+			BigDecimal expectativaVenda, boolean parcial) {
+		
+		ProdutoEdicao produtoEdicao = new ProdutoEdicao();
+		produtoEdicao.setNumeroEdicao(numeroEdicao);
+		produtoEdicao.setPacotePadrao(pacotePadrao);
+		produtoEdicao.setPeb(peb);
+		produtoEdicao.setPeso(peso);
+		produtoEdicao.setPrecoCusto(precoCusto);
+		produtoEdicao.setPrecoVenda(precoVenda);
+		produtoEdicao.setProduto(produto);
+		produtoEdicao.setCodigoDeBarras(codigoDeBarras);
+		produtoEdicao.setExpectativaVenda(expectativaVenda);
+		produtoEdicao.setParcial(parcial);
+		
+		return produtoEdicao;
+	}
+	
 	public static Lancamento lancamento(TipoLancamento tipoLancamento,
 			ProdutoEdicao produtoEdicao, Date dlp, Date drp, Date dataCriacao,
 			Date dataStatus, BigDecimal reparte, StatusLancamento statusLancamento,
@@ -542,7 +582,7 @@ public class Fixture {
 		distribuidor.setJuridica(juridica);
 		distribuidor.setPoliticasCobranca(politicasCobranca);
 		distribuidor.setCapacidadeDistribuicao(new BigDecimal("10000"));
-		distribuidor.setCapacidadeRecolhimento(new BigDecimal("10000"));
+		distribuidor.setCapacidadeRecolhimento(new BigDecimal("1000"));
 		distribuidor.setPreenchimentoAutomaticoPDV(true);
 		
 		return distribuidor;
@@ -1533,14 +1573,12 @@ public class Fixture {
 	}
 	
 	public static ConferenciaEncalhe conferenciaEncalhe(
-			Lancamento lancamento, 
 			MovimentoEstoqueCota movimentoEstoqueCota,
 			ChamadaEncalheCota chamadaEncalheCota,
 			ControleConferenciaEncalheCota controleConferenciaEncalheCota) {
 		
 		ConferenciaEncalhe conferenciaEncalhe = new ConferenciaEncalhe();
 		
-		conferenciaEncalhe.setLancamento(lancamento);
 		conferenciaEncalhe.setMovimentoEstoqueCota(movimentoEstoqueCota);
 		conferenciaEncalhe.setChamadaEncalheCota(chamadaEncalheCota);
 		conferenciaEncalhe.setControleConferenciaEncalheCota(controleConferenciaEncalheCota);
@@ -1615,6 +1653,15 @@ public class Fixture {
 		box.setCodigo(codigo);
 		box.setNome(nome);
 		box.setTipoBox(tipoBox);
+		return box;
+	}
+	
+	public static Box criarBox(String codigo, String nome, TipoBox tipoBox, boolean postoAvancado) {
+		Box box = new Box();
+		box.setCodigo(codigo);
+		box.setNome(nome);
+		box.setTipoBox(tipoBox);
+		box.setPostoAvancado(postoAvancado);
 		return box;
 	}
 	
@@ -2510,9 +2557,8 @@ public class Fixture {
 		return lancamentoParcial;
 	}
 	
-	public static PeriodoLancamentoParcial criarPeriodoLancamentoParcial(Date lancamento, 
+	public static PeriodoLancamentoParcial criarPeriodoLancamentoParcial(Lancamento lancamento, 
 																		 LancamentoParcial lancamentoParcial,
-																		 Date recolhimento,
 																		 StatusLancamentoParcial status,
 																		 TipoLancamentoParcial tipo) {
 		
@@ -2521,8 +2567,6 @@ public class Fixture {
 		parcial.setLancamento(lancamento);
 		
 		parcial.setLancamentoParcial(lancamentoParcial);
-		
-		parcial.setRecolhimento(recolhimento);
 		
 		parcial.setStatus(status);
 		

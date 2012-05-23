@@ -40,7 +40,7 @@ public class CaucaoLiquida implements Serializable {
 	private Double valor;
 	
 	@Column(name="DATA_ATUALIZACAO")
-	@Temporal(TemporalType.DATE)
+	@Temporal(TemporalType.TIMESTAMP)
 	private Calendar atualizacao;
 	
 	@Column(name="INDICE_REAJUSTE")

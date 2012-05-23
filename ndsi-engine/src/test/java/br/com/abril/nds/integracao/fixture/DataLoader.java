@@ -14,6 +14,8 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import br.com.abril.nds.integracao.model.EventoExecucao;
+import br.com.abril.nds.integracao.model.InterfaceExecucao;
 import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.StatusCobranca;
 import br.com.abril.nds.model.StatusConfirmacao;
@@ -644,9 +646,31 @@ public class DataLoader {
 		
 		gerarTipoEntrega(session);
 		
+		gerarInterfaceExecucao(session);
+				
+		gerarEventoExecucao(session);
 	}
 
+	private static void gerarEventoExecucao(Session session) {
+
+		EventoExecucao erroInfra = Fixture.eventoExecucao(0L, "Erro Infra", "Erro de infraestrutura");
+		EventoExecucao semDominio = Fixture.eventoExecucao(1L, "Dominio", "Sem Domínio");
+		EventoExecucao hierarquia = Fixture.eventoExecucao(2L, "Hierarquia", "Hierarquia Corrompida");
+		EventoExecucao relacionamento = Fixture.eventoExecucao(3L, "Relacionamento", "Relacionamento Não Encontrado");
+		EventoExecucao geracaoDeArquivo = Fixture.eventoExecucao(4L, "Arquivo", "Geração de Arquivo");
+		EventoExecucao informacaoDadosAlterados = Fixture.eventoExecucao(5L, "Alteração Dado", "Informação de dado Alterado");
+		
+		save(session, erroInfra, semDominio, hierarquia, relacionamento, 
+				geracaoDeArquivo, informacaoDadosAlterados);
+	}
 	
+	private static void gerarInterfaceExecucao(Session session) {
+		
+		InterfaceExecucao interfaceExecucao = Fixture.interfaceExecucao(1L, "Teste");
+		
+		save(session, interfaceExecucao);
+	}
+
 	private static void gerarTipoEntrega(Session session) {
 		
 		tipoCotaRetira = Fixture.criarTipoEntrega(1L,"Cota Retira");
@@ -2629,15 +2653,15 @@ public class DataLoader {
 		politicasCobranca.add(politicaCobranca);;
 		
 		distribuidor = Fixture.distribuidor(1, juridicaDistrib, new Date(), politicasCobranca);
-		distribuidor.getFormasCobranca().add(formaBoleto);
+		//distribuidor.getFormasCobranca().add(formaBoleto);
 
 		distribuidor.setPoliticaSuspensao(politicaSuspensao);
-
+		/*
 		distribuidor.getFormasCobranca().add(formaCheque);
 		distribuidor.getFormasCobranca().add(formaDeposito);
 		distribuidor.getFormasCobranca().add(formaDinheiro);
 		distribuidor.getFormasCobranca().add(formaTransferenciBancaria);
-		
+		*/
 		ParametroContratoCota parametroContrato = Fixture.criarParametroContratoCota("<font color='blue'><b>CONSIDERANDO QUE:</b></font><br>"+
 																					 "<br>"+"<b>(i)</b>	A Contratante contempla, dentro de seu objeto social, a atividade de distribuição de livros, jornais, revistas, impressos e publicações em geral e, portanto, necessita de serviços de transporte de revistas;"+
 																					 "<br>"+"<b>(ii)</b>	A Contratada é empresa especializada e, por isso, capaz de prestar serviços de transportes, bem como declara que possui qualificação técnica e documentação necessária para a prestação dos serviços citados acima;"+

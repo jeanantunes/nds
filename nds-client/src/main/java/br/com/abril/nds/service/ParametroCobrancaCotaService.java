@@ -1,5 +1,6 @@
 package br.com.abril.nds.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import br.com.abril.nds.dto.ContratoTransporteDTO;
@@ -38,12 +39,6 @@ public interface ParametroCobrancaCotaService {
 	 * @return comboTiposPagamento: formas de cobrança cadastrados
 	 */
     List<ItemDTO<TipoCobranca, String>> getComboTiposCobranca();
-    
-    /**
-	 * Método responsável por obter formas de emissao para preencher combo da camada view
-	 * @return comboFormasEmissao: formas de emissão cadastrados
-	 */
-    List<ItemDTO<FormaEmissao, String>> getComboFormasEmissao();
     
     /**
    	 * Método responsável por obter combo de fornecedores relacionados com a Cota
@@ -140,7 +135,7 @@ public interface ParametroCobrancaCotaService {
 	 * @param diaDoMes
 	 * @return Boolean
 	 */
-	 boolean validarFormaCobrancaMensal(Long idCota, TipoCobranca tipoCobranca, List<Long> idFornecedores, Integer diaDoMes);
+	 boolean validarFormaCobrancaMensal(Long idFormaCobranca, Long idCota, TipoCobranca tipoCobranca, List<Long> idFornecedores, Integer diaDoMes);
 		 
 	 
 	 /**
@@ -156,7 +151,7 @@ public interface ParametroCobrancaCotaService {
 	 * @param sabado
 	 * @return Boolean
 	 */
-	 boolean validarFormaCobrancaSemanal(Long idCota, TipoCobranca tipoCobranca, List<Long> idFornecedores, Boolean domingo, Boolean segunda, Boolean terca, Boolean quarta, Boolean quinta, Boolean sexta, Boolean sabado);
+	 boolean validarFormaCobrancaSemanal(Long idFormaCobranca, Long idCota, TipoCobranca tipoCobranca, List<Long> idFornecedores, Boolean domingo, Boolean segunda, Boolean terca, Boolean quarta, Boolean quinta, Boolean sexta, Boolean sabado);
 		 	 
 	 
 }

@@ -13,7 +13,14 @@ public class LogExecucaoHibernateDAO {
 	@PersistenceContext
 	private EntityManager em;
 	
-	public void logInicio(LogExecucao logExecucao) {
+	public LogExecucao inserir(LogExecucao logExecucao) {
 		em.persist(logExecucao);
+		em.flush();
+		return logExecucao;
+	}
+	
+	public void atualizar(LogExecucao logExecucao) {
+		em.merge(logExecucao);
+		em.flush();
 	}
 }

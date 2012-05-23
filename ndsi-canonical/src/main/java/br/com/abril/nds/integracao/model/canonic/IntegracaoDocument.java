@@ -12,6 +12,7 @@ public class IntegracaoDocument {
 	private Integer linhaArquivo;
 	private Date dataHoraExtracao;
 	private String nomeUsuarioExtracao;
+	private String erro;
 	
 	
 	public String get_id() {
@@ -61,5 +62,11 @@ public class IntegracaoDocument {
 	}
 	public void setNomeUsuarioExtracao(String nomeUsuarioExtracao) {
 		this.nomeUsuarioExtracao = nomeUsuarioExtracao;
+	}
+	public String getErro() {
+		return erro;
+	}
+	public void setErro(String erro) {
+		this.erro = erro;
 	}
 }

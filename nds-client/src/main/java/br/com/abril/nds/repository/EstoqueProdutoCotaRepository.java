@@ -47,9 +47,9 @@ public interface EstoqueProdutoCotaRepository extends Repository<EstoqueProdutoC
 	/**
 	 * Obtém uma lista de estoque de produto da cota de acordo o parâmetro informado.
 	 * 
-	 * @param idsProdutoEdicao - identificadores do produto edição
+	 * @param idsLancamento - identificadores de lancamento
 	 * 
 	 * @return {@link List<EstoqueProdutoCota>}
 	 */
-	List<EstoqueProdutoCota> buscarEstoquesProdutoCotaPorIdProdutEdicao(Set<Long> idsProdutoEdicao);
+	List<EstoqueProdutoCota> buscarListaEstoqueProdutoCota(Set<Long> idsLancamento);
 }

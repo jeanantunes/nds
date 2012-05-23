@@ -314,9 +314,8 @@ public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
 																			 StatusLancamentoParcial.PROJETADO);
 
 		PeriodoLancamentoParcial parcial = Fixture.criarPeriodoLancamentoParcial(
-				lancamentoCapricho.getDataLancamentoPrevista(), 
-				lancamentoParcial, 
-				lancamentoCapricho.getDataRecolhimentoPrevista(), 
+				lancamentoCapricho, 
+				lancamentoParcial,  
 				StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.FINAL);
 
 		EstudoCota estudoCota = Fixture.estudoCota(BigDecimal.TEN, BigDecimal.ONE, estudo, cota);
@@ -335,9 +334,8 @@ public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
 																			  StatusLancamentoParcial.PROJETADO);
 
 		PeriodoLancamentoParcial parcial2 = Fixture.criarPeriodoLancamentoParcial(
-				lancamentoInfoExame.getDataLancamentoPrevista(), 
+				lancamentoInfoExame, 
 				lancamentoParcial2, 
-				lancamentoInfoExame.getDataRecolhimentoPrevista(), 
 				StatusLancamentoParcial.RECOLHIDO, TipoLancamentoParcial.PARCIAL);
 		
 		Estudo estudo2 = Fixture.estudo(new BigDecimal(180),
@@ -482,24 +480,6 @@ public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
 		FiltroLancamentoDTO filtro = new FiltroLancamentoDTO(data,
 				Collections.singletonList(fornecedorDinap.getId()), paginacao,
 				ColunaOrdenacao.ESTUDO_GERADO.getNomeColuna());
-
-		List<Lancamento> lancamentos = lancamentoRepository
-				.obterBalanceamentoMatrizLancamentos(filtro);
-		Assert.assertNotNull(lancamentos);
-		Assert.assertEquals(3, lancamentos.size());
-
-		Assert.assertEquals(lancamentoInfoExame.getId(), lancamentos.get(0).getId());
-		Assert.assertEquals(lancamentoQuatroRodas.getId(), lancamentos.get(1).getId());
-		Assert.assertEquals(lancamentoVeja.getId(), lancamentos.get(2).getId());
-	}
-	
-	@Test
-	public void obterLancamentosBalanceamentoMatrizOrderByLancamento() {
-		PaginacaoVO paginacao = new PaginacaoVO(1, 10, "asc");
-		Date data = Fixture.criarData(22, Calendar.FEBRUARY, 2012);
-		FiltroLancamentoDTO filtro = new FiltroLancamentoDTO(data,
-				Collections.singletonList(fornecedorDinap.getId()), paginacao,
-				ColunaOrdenacao.LANCAMENTO.getNomeColuna());
 
 		List<Lancamento> lancamentos = lancamentoRepository
 				.obterBalanceamentoMatrizLancamentos(filtro);

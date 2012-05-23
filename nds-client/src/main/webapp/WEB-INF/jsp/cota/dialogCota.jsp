@@ -1,4 +1,8 @@
 
+<div id="dialog-cancelar-cadastro-cota" title="Cota" style="display: none;">
+	<p>Informações das abas não salvas serão perdidos. Confirma o cancelamento?</p>
+</div>
+
 <div id="dialog-cota" title="Nova Cota" style="display: none">
 	
 	<jsp:include page="../messagesDialog.jsp" />
@@ -15,12 +19,12 @@
                 <li><a href="#tabCota-7">Desconto</a></li>
                 <li><a href="#tabCota-8">Financeiro</a></li>
                 <li><a href="#tabCota-9">Distribuição</a></li>
-                <li><a href="#tabCota-10">Sócios</a></li>
+                <li><a href="#tabCota-10" id="idTabSocio">Sócios</a></li>
           </ul>
         
         <div id="tabCota-1">
       		<jsp:include page="dadosBasicoCNPJ.jsp"/>
-      		
+      		<jsp:include page="dadosBasicoCPF.jsp"/>
 		</div>
 		
 		<div id="tabCota-2">

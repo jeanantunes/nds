@@ -24,8 +24,6 @@
 		$("#descricaoPessoa").autocomplete({source: ""});
 		
 		$("#numCota").numeric();
-		
-		$("#txtCPF_CNPJ").numeric();
 	
 		$(".pessoasGrid").flexigrid({
 			preProcess: MANTER_COTA.executarPreProcessamento,
@@ -99,7 +97,10 @@
 	
 	#dialog-pdv fieldset{width:777px!important; margin-bottom:10px;  margin-left: -11px;}
 	
-	#tabCota-5 fieldset {width:755px!important;}
+	.ui-widget {
+    	font-size: 1em;
+	}
+
 
 </style>
 
@@ -140,7 +141,7 @@
                </td>
                <td width="72">CPF / CNPJ:</td>
                <td width="253">
-               		<input type="text" name="txtCPF_CNPJ" id="txtCPF_CNPJ" style="width:150px;" maxlength="14"/>
+               		<input type="text" name="txtCPF_CNPJ" id="txtCPF_CNPJ" style="width:150px;" maxlength="18"/>
                </td>
                <td width="104">
 	               	<span class="bt_pesquisar">

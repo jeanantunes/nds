@@ -2,16 +2,22 @@ package br.com.abril.nds.service.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.client.vo.DetalhesDividaVO;
 import br.com.abril.nds.dto.StatusDividaDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaInadimplenteDTO;
+import br.com.abril.nds.model.financeiro.BaixaCobranca;
+import br.com.abril.nds.model.financeiro.Cobranca;
 import br.com.abril.nds.model.financeiro.Divida;
+import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 import br.com.abril.nds.repository.DividaRepository;
 import br.com.abril.nds.service.DividaService;
+import br.com.abril.nds.util.TipoBaixaCobranca;
 
 @Service
 public class DividaServiceImpl implements DividaService{
@@ -56,5 +62,57 @@ public class DividaServiceImpl implements DividaService{
 		return dividas; 
 	}
 
+	@Override
+	@Transactional
+	public Divida obterDividaPorId(Long idDivida) {
+		return dividaRepository.buscarPorId(idDivida);
+	}
 	
+	@Override
+	@Transactional
+	public List<DetalhesDividaVO> obterDetalhesDivida(Long idDivida){
+		
+		BaixaCobranca baixaCobranca;
+		Cobranca cobranca;
+		DetalhesDividaVO detalhe;
+		
+		List<DetalhesDividaVO> detalhes = new ArrayList<DetalhesDividaVO>();
+		Divida divida = this.obterDividaPorId(idDivida);
+		
+		//Detalhes Acumuladas
+	    Set<Divida> dividasAcumuladas = divida.getAcumulado();
+        for (Divida itemDivida:dividasAcumuladas){
+    	   
+    	    cobranca = itemDivida.getCobranca();
+	   	    detalhe = new DetalhesDividaVO();
+	   		
+	   	    detalhe.setValor(cobranca.getValor());
+	   	    detalhe.setData(cobranca.getDataEmissao());
+	   	    detalhe.setTipo("Acumulado");
+	   	    detalhe.setObservacao("");
+	   	    
+	        detalhes.add(detalhe);
+        }
+		
+       
+       
+		
+        //Historico !!!!
+		cobranca = divida.getCobranca();
+		baixaCobranca = cobranca.getBaixaCobranca();
+		detalhe = new DetalhesDividaVO();
+		detalhe.setValor(baixaCobranca.getValorPago());
+		detalhe.setData(baixaCobranca.getDataBaixa());
+	    detalhe.setTipo("Pagamento");
+	    detalhe.setObservacao("");
+	    
+		detalhes.add(detalhe);
+		//------------------
+		
+		
+		
+		
+	    return detalhes;
+	}
+
 }

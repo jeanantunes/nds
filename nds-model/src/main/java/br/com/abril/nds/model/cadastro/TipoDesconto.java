@@ -30,7 +30,7 @@ public class TipoDesconto implements Serializable {
 	
 	@Column(name="PORCENTAGEM")
 	private BigDecimal porcentagem;
-
+	
 	/**
 	 * @return the id
 	 */
@@ -86,6 +86,5 @@ public class TipoDesconto implements Serializable {
 	public void setPorcentagem(BigDecimal porcentagem) {
 		this.porcentagem = porcentagem;
 	}
-	
-	
+
 }
