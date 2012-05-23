@@ -404,6 +404,7 @@ public class Fixture {
 			int pacotePadrao, int peb, BigDecimal peso, BigDecimal precoCusto,
 			BigDecimal precoVenda, String codigoDeBarras, Long cdSMNotUsedAnyMore, Produto produto, 
 			BigDecimal expectativaVenda) {
+		
 		ProdutoEdicao produtoEdicao = new ProdutoEdicao();
 		produtoEdicao.setNumeroEdicao(numeroEdicao);
 		produtoEdicao.setPacotePadrao(pacotePadrao);
@@ -414,9 +415,30 @@ public class Fixture {
 		produtoEdicao.setProduto(produto);
 		produtoEdicao.setCodigoDeBarras(codigoDeBarras);
 		produtoEdicao.setExpectativaVenda(expectativaVenda);
+		
 		return produtoEdicao;
 	}
 
+	public static ProdutoEdicao produtoEdicao(Long numeroEdicao,
+			int pacotePadrao, int peb, BigDecimal peso, BigDecimal precoCusto,
+			BigDecimal precoVenda, String codigoDeBarras, Long cdSMNotUsedAnyMore, Produto produto, 
+			BigDecimal expectativaVenda, boolean parcial) {
+		
+		ProdutoEdicao produtoEdicao = new ProdutoEdicao();
+		produtoEdicao.setNumeroEdicao(numeroEdicao);
+		produtoEdicao.setPacotePadrao(pacotePadrao);
+		produtoEdicao.setPeb(peb);
+		produtoEdicao.setPeso(peso);
+		produtoEdicao.setPrecoCusto(precoCusto);
+		produtoEdicao.setPrecoVenda(precoVenda);
+		produtoEdicao.setProduto(produto);
+		produtoEdicao.setCodigoDeBarras(codigoDeBarras);
+		produtoEdicao.setExpectativaVenda(expectativaVenda);
+		produtoEdicao.setParcial(parcial);
+		
+		return produtoEdicao;
+	}
+	
 	public static Lancamento lancamento(TipoLancamento tipoLancamento,
 			ProdutoEdicao produtoEdicao, Date dlp, Date drp, Date dataCriacao,
 			Date dataStatus, BigDecimal reparte, StatusLancamento statusLancamento,
@@ -1629,6 +1651,15 @@ public class Fixture {
 		box.setCodigo(codigo);
 		box.setNome(nome);
 		box.setTipoBox(tipoBox);
+		return box;
+	}
+	
+	public static Box criarBox(String codigo, String nome, TipoBox tipoBox, boolean postoAvancado) {
+		Box box = new Box();
+		box.setCodigo(codigo);
+		box.setNome(nome);
+		box.setTipoBox(tipoBox);
+		box.setPostoAvancado(postoAvancado);
 		return box;
 	}
 	
