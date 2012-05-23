@@ -224,6 +224,26 @@
 		
 	}
 	
+	function abrirPopUpHistoricoEditor(codigoEditora) {
+
+		var dataDe = $("#datepickerDe").val();
+		var dataAte = $("#datepickerAte").val();
+
+		$(".popEditorGrid").flexOptions({
+			url: "<c:url value='/lancamento/relatorioVendas/pesquisarHistoricoEditor' />",
+			params: [
+		         {name:'dataDe', value: dataDe},
+		         {name:'dataAte', value: dataAte},
+		         {name:'codigoEditor', value: codigoEditora}
+		    ],
+		    newp: 1,
+		});
+		
+		$(".popEditorGrid").flexReload();
+		popup_editor();			
+	
+	}
+	
 	function exibirResultado(result) {
 		alert(result);
 	}
@@ -333,6 +353,15 @@
 </script>
 </head>
 <body>
+
+	<div id="dialog-editor" title="Histórico de Produtos" style="display:none;">
+	<fieldset style="width:560px;">
+		<legend>Editor: <span name="nomeEditorPopUp" id="nomeEditorPopUp"></span></legend>
+	    <table class="popEditorGrid"></table>
+	        <span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
+			<span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
+	</fieldset>
+	</div>
 
 	<div class="container">
 
@@ -558,23 +587,23 @@
 
 	<script>
 		$(".popEditorGrid").flexigrid({
-			url : '../xml/pop-editor-xml.xml',
-			dataType : 'xml',
+			preProcess: executarPreProcessamentoPopUp,
+			dataType : 'json',
 			colModel : [ {
 				display : 'Código',
-				name : 'codigo',
+				name : 'codigoProduto',
 				width : 60,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Produto',
-				name : 'produto',
+				name : 'nomeProduto',
 				width : 110,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Edição',
-				name : 'edicao',
+				name : 'edicaoProduto',
 				width : 80,
 				sortable : true,
 				align : 'center'
@@ -586,13 +615,13 @@
 				align : 'center'
 			}, {
 				display : 'Venda Exs.',
-				name : 'vdaExempl',
+				name : 'vendaExemplares',
 				width : 90,
 				sortable : true,
 				align : 'center'
 			}, {
 				display : '% Venda',
-				name : 'percVenda',
+				name : 'porcentagemVenda',
 				width : 50,
 				sortable : true,
 				align : 'right'
@@ -607,13 +636,13 @@
 			dataType : 'json',
 			colModel : [ {
 				display : 'Código',
-				name : 'codigo',
+				name : 'codigoEditor',
 				width : 60,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Editor',
-				name : 'editor',
+				name : 'nomeEditor',
 				width : 210,
 				sortable : true,
 				align : 'left'
@@ -625,13 +654,13 @@
 				align : 'center'
 			}, {
 				display : 'Venda Exs.',
-				name : 'vendaExempl',
+				name : 'vendaExemplares',
 				width : 80,
 				sortable : true,
 				align : 'center'
 			}, {
 				display : '% Venda Exs.',
-				name : 'percExempl',
+				name : 'porcentagemVendaExemplares',
 				width : 90,
 				sortable : true,
 				align : 'center'
@@ -649,7 +678,7 @@
 				align : 'right'
 			}, {
 				display : 'Part. Acum. %',
-				name : 'partAcumulada',
+				name : 'participacaoAcumulada',
 				width : 90,
 				sortable : true,
 				align : 'right'
@@ -892,6 +921,15 @@
 			$("#qtdeTotalVendaExemplaresEditor").html(resultado.totalVendaExemplares);
 			$("#totalFaturamentoCapaEditor").html("R$ " + resultado.totalFaturamento);
 			
+			$.each(resultado.tableModel.rows, function(index, row) {
+				
+				var linkHistorico = '<a href="javascript:;" onclick="abrirPopUpHistoricoEditor(' + row.cell.codigoEditor + ');" style="cursor:pointer">' +
+						     	  	'<img title="Histórico" src="${pageContext.request.contextPath}/images/ico_detalhes.png" hspace="5" border="0px" />' +
+						  		    '</a>';
+						  		    
+				row.cell[8] = linkHistorico;
+			});
+			
 			$(".grids").show();
 			return resultado.tableModel;
 		}
@@ -928,6 +966,22 @@
 			
 			$(".grids").show();
 			return resultado.tableModel;
+		}
+
+		function executarPreProcessamentoPopUp(resultado) {
+			if (resultado.mensagens) {
+				exibirMensagem(
+					resultado.mensagens.tipoMensagem, 
+					resultado.mensagens.listaMensagens
+				);
+				$(".dialog-editor").hide();
+				return resultado;
+			}
+
+			$("#nomeEditorPopUp").html(resultado[0].nomeEditor);
+			
+			$(".dialog-editor").show();
+			return resultado;
 		}
 
 	</script>

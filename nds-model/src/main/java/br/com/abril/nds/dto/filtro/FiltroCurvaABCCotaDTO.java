@@ -42,6 +42,7 @@ public class FiltroCurvaABCCotaDTO extends FiltroCurvaABCDTO implements Serializ
 		REPARTE("reparte"),
 		VENDA_EXEMPLARES("vendaExemplares"),
 		FATURAMENTO("faturamentoCapa"),
+		PORCENTAGEM_VENDA("porcentagemVenda"),
 		PARTICIPACAO("participacao"),
 		PARTICIPACAO_ACUMULADA("participacaoAcumulada");
 

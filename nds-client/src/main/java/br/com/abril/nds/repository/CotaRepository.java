@@ -164,5 +164,5 @@ public interface CotaRepository extends Repository<Cota, Long> {
 	Cota obterPorNumerDaCotaAtiva(Integer numeroCota);
 
 	ResultadoCurvaABC obterCurvaABCCotaTotal(FiltroCurvaABCCotaDTO filtroCurvaABCCotaDTO);
-	List<RegistroCurvaABCCotaVO> obterCurvaABCCota(FiltroCurvaABCCotaDTO filtro, TipoMovimentoEstoque tipoMovimento, TipoMovimentoEstoque tipoMovimentoCota);
+	List<RegistroCurvaABCCotaVO> obterCurvaABCCota(FiltroCurvaABCCotaDTO filtro);
 }

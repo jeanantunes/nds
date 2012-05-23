@@ -70,6 +70,7 @@ public class  FiltroCurvaABCEditorDTO extends FiltroCurvaABCDTO implements Seria
 			ColunaOrdenacaoCurvaABCEditor ordenacaoColuna) {
 		this.ordenacaoColuna = ordenacaoColuna;
 	}
+
 	
 	
 }

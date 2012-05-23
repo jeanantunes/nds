@@ -15,6 +15,7 @@ import br.com.abril.nds.client.util.PaginacaoUtil;
 import br.com.abril.nds.client.vo.RegistroCurvaABCCotaVO;
 import br.com.abril.nds.client.vo.RegistroCurvaABCDistribuidorVO;
 import br.com.abril.nds.client.vo.RegistroCurvaABCEditorVO;
+import br.com.abril.nds.client.vo.RegistroHistoricoEditorVO;
 import br.com.abril.nds.client.vo.ResultadoCurvaABC;
 import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.dto.filtro.FiltroCurvaABCCotaDTO;
@@ -22,6 +23,8 @@ import br.com.abril.nds.dto.filtro.FiltroCurvaABCCotaDTO.ColunaOrdenacaoCurvaABC
 import br.com.abril.nds.dto.filtro.FiltroCurvaABCDistribuidorDTO;
 import br.com.abril.nds.dto.filtro.FiltroCurvaABCDistribuidorDTO.ColunaOrdenacaoCurvaABCDistribuidor;
 import br.com.abril.nds.dto.filtro.FiltroCurvaABCEditorDTO;
+import br.com.abril.nds.dto.filtro.FiltroCurvaABCEditorDTO.ColunaOrdenacaoCurvaABCEditor;
+import br.com.abril.nds.dto.filtro.FiltroPesquisarHistoricoEditorDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
@@ -210,6 +213,37 @@ public class RelatorioVendasController {
 		}
 
 	}
+
+	@Post
+	@Path("/pesquisarHistoricoEditor")
+	public void pesquisarHistoricoEditor(String dataDe, String dataAte, String codigoEditor) throws Exception {
+
+		SimpleDateFormat sdf = new SimpleDateFormat(Constantes.DATE_PATTERN_PT_BR);
+
+		FiltroPesquisarHistoricoEditorDTO filtro = new FiltroPesquisarHistoricoEditorDTO(sdf.parse(dataDe), sdf.parse(dataAte), codigoEditor);
+
+		List<RegistroHistoricoEditorVO> resultado = null;
+		try {
+			resultado = editorService.obterHistoricoEditor(filtro);
+		} catch (Exception e) {
+
+			if (e instanceof ValidacaoException) {
+				throw e;
+			} else {
+				throw new ValidacaoException(TipoMensagem.ERROR,
+						"Erro ao pesquisar registros: " + e.getMessage());
+			}
+		}
+
+		if (resultado == null
+				|| resultado.isEmpty()) {
+			throw new ValidacaoException(TipoMensagem.WARNING,
+					"Nenhum registro encontrado.");
+		} else {
+			result.use(Results.json()).withoutRoot().from(resultado).recursive().serialize();
+		}
+	
+	}
 	
 	@Post
 	@Path("/pesquisarCurvaABCDistribuidor")
@@ -335,19 +369,19 @@ public class RelatorioVendasController {
 							QTD_REGISTROS_PESQUISA_CURVA_COTA_ABC_SESSION_ATTRIBUTE,
 							qtdeTotalRegistros);
 
-			TableModel<CellModelKeyValue<RegistroCurvaABCCotaVO>> tableModel = new TableModel<CellModelKeyValue<RegistroCurvaABCCotaVO>>();
+			TableModel<CellModelKeyValue<RegistroCurvaABCEditorVO>> tableModel = new TableModel<CellModelKeyValue<RegistroCurvaABCEditorVO>>();
 
-			//tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(resultadoCurvaABCEditor));
+			tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(resultadoCurvaABCEditor));
 			tableModel.setPage(filtroCurvaABCEditorDTO.getPaginacao().getPaginaAtual());
 			tableModel.setTotal(qtdeTotalRegistros);
 
-			/*ResultadoCurvaABC resultado = cotaService.obterCurvaABCEditorTotal(filtroCurvaABCEditorDTO);
+			ResultadoCurvaABC resultado = editorService.obterCurvaABCEditorTotal(filtroCurvaABCEditorDTO);
 			resultado.setTableModel(tableModel);
 			
 			session.setAttribute(RESULTADO_PESQUISA_CURVA_ABC_EDITOR_SESSION_ATTRIBUTE, resultado);
 			
 			result.use(Results.json()).withoutRoot().from(resultado)
-					.recursive().serialize();*/
+					.recursive().serialize();
 		}
 		
 	}
@@ -455,7 +489,7 @@ public class RelatorioVendasController {
 			String codigoCota, String nomeCota, String municipio,
 			String sortorder, String sortname, int page, int rp) {
 
-		/*FiltroCurvaABCEditorDTO filtro = new FiltroCurvaABCEditorDTO(dataDe, dataAte, (codigoFornecedor == null ? "" : codigoFornecedor.toString()),
+		FiltroCurvaABCEditorDTO filtro = new FiltroCurvaABCEditorDTO(dataDe, dataAte, (codigoFornecedor == null ? "" : codigoFornecedor.toString()),
 				codigoProduto, nomeProduto, edicaoProduto, (codigoEditor == null ? "" : codigoEditor.toString()),
 				codigoCota, nomeCota, municipio);
 		
@@ -470,8 +504,7 @@ public class RelatorioVendasController {
 				FILTRO_PESQUISA_CURVA_ABC_EDITOR_SESSION_ATTRIBUTE,
 				filtro, filtroSessao);
 
-		return filtro;*/
-		return null;
+		return filtro;
 	}
 	
 	private FiltroCurvaABCDistribuidorDTO carregarFiltroPesquisaDistribuidor(Date dataDe, Date dataAte, Long codigoFornecedor, 
@@ -529,8 +562,8 @@ public class RelatorioVendasController {
 
 			filtro.setPaginacao(paginacao);
 
-			/*filtro.setOrdenacaoColuna(Util.getEnumByStringValue(
-					ColunaOrdenacaoCurvaABCEditor.values(), sortname));*/
+			filtro.setOrdenacaoColuna(Util.getEnumByStringValue(
+					ColunaOrdenacaoCurvaABCEditor.values(), sortname));
 		}
 	}
 	

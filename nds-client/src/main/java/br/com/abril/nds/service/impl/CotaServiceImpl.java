@@ -1312,13 +1312,6 @@ public class CotaServiceImpl implements CotaService {
 	@Transactional(readOnly = true)
 	public List<RegistroCurvaABCCotaVO> obterCurvaABCCota(
 			FiltroCurvaABCCotaDTO filtroCurvaABCCotaDTO) {
-		
-		TipoMovimentoEstoque tipoMovimento = 
-				tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.ENVIO_JORNALEIRO);
-			
-			TipoMovimentoEstoque tipoMovimentoCota =
-				tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.RECEBIMENTO_REPARTE);
-		
-		return cotaRepository.obterCurvaABCCota(filtroCurvaABCCotaDTO, tipoMovimento, tipoMovimentoCota);
+		return cotaRepository.obterCurvaABCCota(filtroCurvaABCCotaDTO);
 	}
 }

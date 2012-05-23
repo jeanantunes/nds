@@ -3,6 +3,7 @@ package br.com.abril.nds.repository.impl;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -22,6 +23,7 @@ import org.springframework.stereotype.Repository;
 import br.com.abril.nds.client.util.comparators.CurvaABCParticipacaoAcumuladaComparator;
 import br.com.abril.nds.client.util.comparators.CurvaABCParticipacaoComparator;
 import br.com.abril.nds.client.vo.RegistroCurvaABCCotaVO;
+import br.com.abril.nds.client.vo.RegistroCurvaABCEditorVO;
 import br.com.abril.nds.client.vo.ResultadoCurvaABC;
 import br.com.abril.nds.dto.ChamadaAntecipadaEncalheDTO;
 import br.com.abril.nds.dto.CotaDTO;
@@ -756,7 +758,7 @@ public class CotaRepositoryImpl extends AbstractRepository<Cota, Long>
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public List<RegistroCurvaABCCotaVO> obterCurvaABCCota(FiltroCurvaABCCotaDTO filtro, TipoMovimentoEstoque tipoMovimento, TipoMovimentoEstoque tipoMovimentoCota) {
+	public List<RegistroCurvaABCCotaVO> obterCurvaABCCota(FiltroCurvaABCCotaDTO filtro) {
 		StringBuilder hql = new StringBuilder();
 
 		hql.append("SELECT new ").append(RegistroCurvaABCCotaVO.class.getCanonicalName())
@@ -804,7 +806,6 @@ public class CotaRepositoryImpl extends AbstractRepository<Cota, Long>
 		.append(" LEFT JOIN estoqueProdutoCota.cota.enderecos AS enderecos ")
 		.append(" LEFT JOIN enderecos.endereco AS endereco ")
 		.append(" LEFT JOIN estoqueProdutoCota.cota.pdvs AS pdv ")
-		.append(" LEFT JOIN estoqueProdutoCota.cota.pessoa AS pessoa ")
 		.append(" LEFT JOIN estoqueProdutoCota.cota.pessoa AS pessoa ");
 
 		hql.append("WHERE movimentos.data BETWEEN :dataDe AND :dataAte ");
@@ -996,6 +997,15 @@ public class CotaRepositoryImpl extends AbstractRepository<Cota, Long>
 					Collections.sort(lista, new CurvaABCParticipacaoComparator());
 				case PARTICIPACAO_ACUMULADA:
 					Collections.sort(lista, new CurvaABCParticipacaoAcumuladaComparator());
+				case VENDA_EXEMPLARES:
+					Collections.sort(lista, new Comparator() {
+						@Override
+						public int compare(Object o1, Object o2) {
+							RegistroCurvaABCCotaVO registro1 = (RegistroCurvaABCCotaVO) o1;
+							RegistroCurvaABCCotaVO registro2 = (RegistroCurvaABCCotaVO) o2;
+							return registro1.getPorcentagemVenda().compareTo(registro2.getPorcentagemVenda());
+						}
+					});
 				default:
 					break;
 			}

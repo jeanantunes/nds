@@ -14,19 +14,19 @@ public class RegistroCurvaABCEditorVO extends RegistroCurvaABC implements
 	private static final long serialVersionUID = 3849170873913801404L;
 
 	@Export(label = "Número", exhibitionOrder = 1)
-	private Integer codigoEditor;
+	private Long codigoEditor;
 
 	@Export(label = "Cota", exhibitionOrder = 2)
 	private String nomeEditor;
 
-	@Export(label = "Quantidade de Pdvs", exhibitionOrder = 3)
-	private Integer reparte;
-
-	@Export(label = "Municipio", exhibitionOrder = 4)
-	private String municipio;
+	@Export(label = "Reparte", exhibitionOrder = 3)
+	private BigDecimal reparte;
 
 	@Export(label = "Venda de Exemplares", exhibitionOrder = 5)
 	private BigDecimal vendaExemplares;
+
+	@Export(label = "% Venda de Exemplares", exhibitionOrder = 5)
+	private BigDecimal porcentagemVendaExemplares;
 
 	@Export(label = "Faturamento da Capa", exhibitionOrder = 6)
 	private BigDecimal faturamentoCapa;
@@ -34,23 +34,13 @@ public class RegistroCurvaABCEditorVO extends RegistroCurvaABC implements
 	public RegistroCurvaABCEditorVO() {
 	}
 
-	public RegistroCurvaABCEditorVO(Integer codigoEditor, String nomeEditor,
-			Integer reparte, String municipio,
-			BigDecimal vendaExemplares, BigDecimal faturamentoCapa) {
+	public RegistroCurvaABCEditorVO(Long codigoEditor, String nomeEditor,
+			BigDecimal reparte, BigDecimal vendaExemplares, BigDecimal faturamentoCapa) {
 		this.codigoEditor = codigoEditor;
 		this.nomeEditor = nomeEditor;
 		this.reparte = reparte;
-		this.municipio = municipio;
 		this.vendaExemplares = vendaExemplares;
 		this.faturamentoCapa = faturamentoCapa;
-	}
-
-	public Integer getCodigoEditor() {
-		return codigoEditor;
-	}
-
-	public void setCodigoEditor(Integer codigoEditor) {
-		this.codigoEditor = codigoEditor;
 	}
 
 	public String getNomeEditor() {
@@ -59,22 +49,6 @@ public class RegistroCurvaABCEditorVO extends RegistroCurvaABC implements
 
 	public void setNomeEditor(String nomeEditor) {
 		this.nomeEditor = nomeEditor;
-	}
-
-	public Integer getReparte() {
-		return reparte;
-	}
-
-	public void setReparte(Integer reparte) {
-		this.reparte = reparte;
-	}
-
-	public String getMunicipio() {
-		return municipio;
-	}
-
-	public void setMunicipio(String municipio) {
-		this.municipio = municipio;
 	}
 
 	public BigDecimal getVendaExemplares() {
@@ -93,4 +67,28 @@ public class RegistroCurvaABCEditorVO extends RegistroCurvaABC implements
 		this.faturamentoCapa = faturamentoCapa;
 	}
 
+	public BigDecimal getPorcentagemVendaExemplares() {
+		return porcentagemVendaExemplares;
+	}
+
+	public void setPorcentagemVendaExemplares(BigDecimal porcentagemVendaExemplares) {
+		this.porcentagemVendaExemplares = porcentagemVendaExemplares;
+	}
+
+	public Long getCodigoEditor() {
+		return codigoEditor;
+	}
+
+	public void setCodigoEditor(Long codigoEditor) {
+		this.codigoEditor = codigoEditor;
+	}
+
+	public BigDecimal getReparte() {
+		return reparte;
+	}
+
+	public void setReparte(BigDecimal reparte) {
+		this.reparte = reparte;
+	}
+	
 }
