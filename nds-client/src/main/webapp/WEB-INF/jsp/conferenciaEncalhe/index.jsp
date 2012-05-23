@@ -39,6 +39,7 @@
 								buttons : {
 									"Sim" : function() {
 										
+										$("#dialog-reabertura").dialog("close");
 										ConferenciaEncalhe.carregarListaConferencia(data);
 										ConferenciaEncalhe.popup_alert();
 									},
