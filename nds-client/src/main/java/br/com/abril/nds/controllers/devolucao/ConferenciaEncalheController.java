@@ -25,7 +25,6 @@ import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaCota;
-import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalhe;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalheCota;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.service.ConferenciaEncalheService;
@@ -205,17 +204,15 @@ public class ConferenciaEncalheController {
 			
 				for (ConferenciaEncalheDTO conferenciaEncalheDTO : info.getListaConferenciaEncalhe()){
 					
-					if (conferenciaEncalheDTO.getQtdExemplar() != null){
+					if (conferenciaEncalheDTO.getQtdInformada() != null){
 					
-						qtdInformada = qtdInformada.add(conferenciaEncalheDTO.getQtdExemplar());
+						qtdInformada = qtdInformada.add(conferenciaEncalheDTO.getQtdInformada());
 					}
 					
-//FIXME					if (conferenciaEncalheDTO.getQtdRecebida() != null){
-//					
-//						qtdRecebida = qtdRecebida.add(conferenciaEncalheDTO.getQtdRecebida());
-//					}
+					if (conferenciaEncalheDTO.getQtdExemplar() != null){
 					
-					
+						qtdRecebida = qtdRecebida.add(conferenciaEncalheDTO.getQtdExemplar());
+					}
 				}
 			}
 		}
@@ -789,14 +786,6 @@ public class ConferenciaEncalheController {
 		}
 		
 		return set;
-	}
-
-	private BigDecimal getValorEncalheJornaleiroFromSession() {
-		return (BigDecimal) session.getAttribute(VALOR_ENCALHE_JORNALEIRO);
-	}
-
-	private void setValorEncalheJornaleiroToSession(BigDecimal valorEncalheJornaleiro) {
-		session.setAttribute(VALOR_ENCALHE_JORNALEIRO, valorEncalheJornaleiro);
 	}
 	
 	//TODO

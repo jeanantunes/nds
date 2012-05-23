@@ -47,5 +47,4 @@ public class EnderecoPDV extends AssociacaoEndereco {
 		this.pdv = pdv;
 	}
 	
-	
 }

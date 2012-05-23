@@ -12,7 +12,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.CaucaoLiquida;
@@ -72,25 +71,6 @@ public class CotaGarantiaServiceImplTest extends AbstractRepositoryImplTest {
 		
 		assertNotNull(cotaGarantiaService.getByCota(cota.getId()));
 	}
-	
-//	@Test
-//	public void testSalvaNotaPromissoria() {
-//		
-//		NotaPromissoria notaPromissoria = new NotaPromissoria();
-//		
-//		notaPromissoria.setValor(10000D);
-//		notaPromissoria.setVencimento(new Date());
-//		
-//		notaPromissoria.setValorExtenso("Mil Conto");
-//		
-//	
-//			cotaGarantiaService.salvaNotaPromissoria(notaPromissoria,cota.getId());
-//		
-//		
-//		CotaGarantia cotaGarantia = cotaGarantiaService.getByCota(cota.getId());
-//		
-//		assertNotNull(cotaGarantia);
-//	}
 	
 	@Test
 	public void testSalvaChequeCalcao() throws Exception {
@@ -155,50 +135,7 @@ public class CotaGarantiaServiceImplTest extends AbstractRepositoryImplTest {
 		
 						
 	}
-//	@Test
-//	public void testSalvaImovel() {
-//		
-//		CotaGarantiaImovel cotaGarantia = null;
-//		
-//		List<Imovel> listaImoveis = new ArrayList<Imovel>();
-//		
-//		for (int i = 0 ; i <= 5; i++) {
-//			
-//			Imovel imovel = new Imovel();
-//			
-//			imovel.setProprietario("Proprietario0"+i);
-//			imovel.setEndereco("Endereço0"+i);
-//			imovel.setNumeroRegistro(i+"001");
-//			imovel.setValor((i+1)*1000D);
-//			imovel.setObservacao("Obs: "+i+"000");
-//			
-//			listaImoveis.add(imovel);
-//		}
-//		
-//		cotaGarantia = cotaGarantiaService.salvaImovel(listaImoveis, cota.getId());
-//				
-//		assertNotNull(cotaGarantia);
-//		
-//		listaImoveis.remove(1);
-//		listaImoveis.remove(2);
-//		
-//		Imovel imovel = cotaGarantia.getImoveis().get(3);
-//		
-//		imovel.setProprietario("proprietario");
-//		
-//		cotaGarantiaService.salvaImovel(listaImoveis, cota.getId());
-//		
-//		cotaGarantia = null;
-//		
-//		cotaGarantia = (CotaGarantiaImovel) cotaGarantiaService.getByCota(cota.getId());
-//		
-//		int expectedSize = 4;
-//		
-//		Assert.assertEquals(expectedSize, cotaGarantia.getImoveis().size());
-//		
-//		Assert.assertEquals("proprietario", cotaGarantia.getImoveis().get(3).getProprietario());
-//		
-//	}
+
 
 	@Test
 	public void testSalvaCaucaoLiquida() throws Exception {
