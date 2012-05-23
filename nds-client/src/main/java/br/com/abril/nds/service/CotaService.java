@@ -199,6 +199,8 @@ public interface CotaService {
 	 * @return comboTiposCota: Tipos de cota padrão.
 	 */
 	public List<ItemDTO<TipoCota, String>> getComboTiposCota();
+	
+	void alterarCota(Cota cota);
 
 	public ResultadoCurvaABC obterCurvaABCCotaTotal(FiltroCurvaABCCotaDTO filtroCurvaABCCotaDTO);
 	public List<RegistroCurvaABCCotaVO> obterCurvaABCCota(FiltroCurvaABCCotaDTO filtroCurvaABCCotaDTO);

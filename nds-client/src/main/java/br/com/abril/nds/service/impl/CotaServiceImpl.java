@@ -1300,6 +1300,12 @@ public class CotaServiceImpl implements CotaService {
 		
 		return false;
 	}
+	
+	@Transactional
+	@Override
+	public void alterarCota(Cota cota) {
+		this.cotaRepository.alterar(cota);
+	}
 
 	@Override
 	@Transactional(readOnly = true)

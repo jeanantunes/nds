@@ -372,6 +372,9 @@ fieldset label {
 									Controle Aprovação
 								</a>
 							</li>
+							
+							<li><a href='<c:url value="/administracao/tipoDescontoCota"/>'>Tipo de Desconto Cota</a></li>
+							
 							<li><a href="<c:url value="/tipoMovimento/index"/>">Tipo de Movimento</a></li>
 							
 							<li><a href="Administracao/iniciar_dia.htm">Iniciar o
