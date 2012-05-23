@@ -135,7 +135,9 @@
 						}
 						
 						var inputCheckBoxJuramentada = 
-							'<input type="checkbox" ' + (value.cell.juramentada ? 'checked="checked"' : '')  + ' name="checkGroupJuramentada" style="align: center;"/>';
+							'<input type="checkbox" ' + (value.cell.juramentada == "true" ? 'checked="checked"' : '')
+								+ (!value.cell.juramentada ? 'disabled="disabled"' : '')
+								+ ' name="checkGroupJuramentada" style="align: center;"/>';
 						
 						value.cell.juramentada = inputCheckBoxJuramentada;
 						
@@ -146,6 +148,8 @@
 						value.cell.acao = '<a href="javascript:;" onclick="ConferenciaEncalhe.excluirConferencia(' + value.cell.idConferenciaEncalhe + ');">' + imgExclusao + '</a>';
 					}
 				);
+				
+				$('input[name="qtdExemplaresGrid"]').numeric();
 				
 				$(".outrosVlrsGrid").flexAddData({
 					page: result[1].page, total: result[1].total, rows: result[1].rows
@@ -183,7 +187,7 @@
 					$("#numeroNotaFiscalExibir").text(notaFiscal.numero);
 					$("#serieExibir").text(notaFiscal.serie);
 					$("#dataExibir").text(notaFiscal.dataEmissao);
-					$("#valorTotalNotaFiscalExibir").text(notaFiscal.valorProdutos);
+					$("#valorTotalNotaFiscalExibir").text(parseFloat(notaFiscal.valorProdutos).toFixed(2));
 					$("#chaveAcessoExibir").text(notaFiscal.chaveAcesso);
 				}
 				
@@ -219,6 +223,10 @@
 						value.cell.acao = '<a href="javascript:;" onclick="ConferenciaEncalhe.excluirConferencia(' + value.cell.idConferenciaEncalhe + ');">' + imgExclusao + '</a>';
 					}
 				);
+				
+				
+				$('input[name="qtdeInformadaFinalizarConf"]').numeric();
+				$('input[name="precoCapaFinalizarConf"]').numeric();
 				
 				$("#somatorioQtdInformada").text(parseInt(result[10]));
 				$("#somatorioQtdRecebida").text(parseInt(result[11]));
@@ -323,20 +331,17 @@
 				$.postJSON("<c:url value='/devolucao/conferenciaEncalhe/buscarDetalhesProduto'/>", data,
 					function (result){
 						
-						
 						$("#nomeProdutoDetalhe").text(result.nomeProduto);
 						$("#precoCapaDetalhe").text(result.precoCapa);
+						$("#chamadaCapa").text(result.chamadaCapa);
+						$("#fornecedor").text(result.nomeFornecedor);
+						$("#brinde").text(result.possuiBrinde == "true" ? "Sim" : "Não");
+						$("#editor").text(result.nomeEditor);
+						$("#pacotePadrao").text(result.pacotePadrao);
 						//TODO ???
-						$("#chamadaCapa").text("");
 						$("#imagemProduto").attr("src", "");
 						
 						$("#precoDesconto").text((parseFloat(result.precoCapa) - parseFloat(result.desconto)).toFixed(2));
-						
-						//TODO ???
-						$("#fornecedor").text("");
-						$("#brinde").text("");
-						$("#editor").text("");
-						$("#pacotePadrao").text("");
 						
 						$("#observacaoReadOnly").text(result.observacao ? result.observacao : "");
 						$("#observacao").val(result.observacao ? result.observacao : "");
@@ -420,6 +425,11 @@
 			
 			setarValoresPesquisados : function(result){
 				
+				if (ultimoCodeBar && ultimoCodeBar != result.codigoDeBarras){
+				
+					$(".conferenciaEncalheGrid").flexReload();
+				}
+				
 				ultimoCodeBar = result.codigoDeBarras;
 				ultimoSM = result.codigoSM;
 				ultimoCodigo = result.idProdutoEdicao;
@@ -436,8 +446,6 @@
 				$("#valorTotal").text(((parseFloat(result.precoCapa) - parseFloat(result.desconto)) * parseFloat(result.qtdExemplar)).toFixed(2));
 				
 				$("#qtdeExemplar").val(parseInt(result.qtdExemplar));
-				
-				$(".conferenciaEncalheGrid").flexReload();
 			},
 			
 			adicionarProdutoConferido : function(){
@@ -988,8 +996,6 @@
 						$("#qtdeExemplar").val(qtd + 1);
 					} else {
 						
-						var _codeBar = $("#cod_barras").val();
-						
 						var data = [{name: "codigoBarra", value: $("#cod_barras").val()}, 
 						            {name: "sm", value: ""}, 
 						            {name: "idProdutoEdicao", value: ""},
@@ -1112,7 +1118,16 @@
 			
 			if (!modalAberta){
 				
-				ConferenciaEncalhe.recalcularValoresFinalizar();
+				$.postJSON("<c:url value='/devolucao/conferenciaEncalhe/verificarValorTotalNotaFiscal'/>", null,
+					function(result){
+						
+						exibirMensagem(result.mensagens.tipoMensagem, result.mensagens.listaMensagens);
+					},
+					function(){
+						
+						ConferenciaEncalhe.recalcularValoresFinalizar();
+					}, true, "idModalDadosNotaFiscal"
+				);
 			}
 		});
 		

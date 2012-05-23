@@ -15,7 +15,6 @@ import br.com.abril.nds.dto.filtro.FiltroParciaisDTO;
 import br.com.abril.nds.dto.filtro.FiltroParciaisDTO.ColunaOrdenacaoPeriodo;
 import br.com.abril.nds.model.planejamento.PeriodoLancamentoParcial;
 import br.com.abril.nds.repository.PeriodoLancamentoParcialRepository;
-import br.com.abril.nds.util.DateUtil;
 
 @Repository
 public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepository<PeriodoLancamentoParcial, Long> 
@@ -42,29 +41,48 @@ public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepository<P
 		
 		hql.append("		(select sum(movimento.qtde) from ConferenciaEncalhe conferencia ");
 		hql.append("		 	join conferencia.movimentoEstoqueCota movimento ");
-		hql.append("		 	join conferencia.lancamento lancamentoC ");
-		hql.append("		 	where lancamentoC.id=lancamento.id) ");
+		hql.append("		 	join conferencia.chamadaEncalheCota chamadaEncalheCota ");
+		hql.append("		 	join chamadaEncalheCota.chamadaEncalhe chamadaEncalhe ");
+		hql.append("			where chamadaEncalhe.dataRecolhimento >= lancamento.dataLancamentoDistribuidor ");
+		hql.append("			and chamadaEncalhe.dataRecolhimento <= lancamento.dataRecolhimentoDistribuidor ");
+		hql.append("			and chamadaEncalhe.produtoEdicao.id = lancamento.produtoEdicao.id ");
+		hql.append("			group by chamadaEncalhe.id) ");
 		hql.append(" 		 as encalhe, ");
 		
 		hql.append("		estudo.qtdeReparte - (select sum(movimento.qtde) from ConferenciaEncalhe conferencia ");
 		hql.append("		 	join conferencia.movimentoEstoqueCota movimento ");
-		hql.append("		 	join conferencia.lancamento lancamentoC ");
-		hql.append("		 	where lancamentoC.id=lancamento.id)");
+		hql.append("		 	join conferencia.chamadaEncalheCota chamadaEncalheCota ");
+		hql.append("		 	join chamadaEncalheCota.chamadaEncalhe chamadaEncalhe ");
+		hql.append("			where chamadaEncalhe.dataRecolhimento >= lancamento.dataLancamentoDistribuidor ");
+		hql.append("			and chamadaEncalhe.dataRecolhimento <= lancamento.dataRecolhimentoDistribuidor ");
+		hql.append("			and chamadaEncalhe.produtoEdicao.id = lancamento.produtoEdicao.id ");
+		hql.append("			group by chamadaEncalhe.id) ");
 		hql.append(" 		as vendas, ");
 		
-		hql.append("		(select lancamentoInicial.estudo.qtdeReparte from Lancamento lancamentoInicial ");
-		hql.append("			where lancamentoInicial.dataLancamentoDistribuidor=periodo.lancamentoParcial.lancamentoInicial) ");
+		hql.append("		((select lancamentoInicial.estudo.qtdeReparte from Lancamento lancamentoInicial ");
+		hql.append("			where lancamentoInicial.dataLancamentoDistribuidor=lancamentoParcial.lancamentoInicial ");
+		hql.append("			and lancamentoInicial.produtoEdicao.id=produtoEdicao.id) ");
 		hql.append("		- (select sum(movimento.qtde) from ConferenciaEncalhe conferencia ");
 		hql.append("		 	join conferencia.movimentoEstoqueCota movimento ");
-		hql.append("		 	join conferencia.lancamento lancamentoC ");
-		hql.append("		 	where lancamentoC.produtoEdicao.id=lancamento.produtoEdicao.id) ");
-		hql.append(" 		 as vendaAcumulada, ");
+		hql.append("		 	join conferencia.chamadaEncalheCota chamadaEncalheCota ");
+		hql.append("		 	join chamadaEncalheCota.chamadaEncalhe chamadaEncalhe ");
+		hql.append("			where chamadaEncalhe.dataRecolhimento >= lancamentoParcial.lancamentoInicial ");
+		hql.append("			and chamadaEncalhe.dataRecolhimento <= lancamentoParcial.recolhimentoFinal ");
+		hql.append("			and chamadaEncalhe.produtoEdicao.id = lancamento.produtoEdicao.id ");
+		hql.append("			group by chamadaEncalhe.id)) ");
 		
-		hql.append(" 		 estudo.qtdeReparte / ");
-		hql.append("		  (estudo.qtdeReparte - (select sum(movimento.qtde) from ConferenciaEncalhe conferencia ");
+		hql.append("		 /case when periodo.status='RECOLHIDO' then 0 else 1 end ");
+		hql.append(" 		 as vendaAcumulada, ");
+				
+		hql.append("		  ((estudo.qtdeReparte - (select sum(movimento.qtde) from ConferenciaEncalhe conferencia ");
 		hql.append("		 	join conferencia.movimentoEstoqueCota movimento ");
-		hql.append("		 	join conferencia.lancamento lancamentoC ");
-		hql.append("		 	where lancamentoC.id=lancamento.id))");
+		hql.append("		 	join conferencia.chamadaEncalheCota chamadaEncalheCota ");
+		hql.append("		 	join chamadaEncalheCota.chamadaEncalhe chamadaEncalhe ");
+		hql.append("			where chamadaEncalhe.dataRecolhimento >= lancamento.dataLancamentoDistribuidor ");
+		hql.append("			and chamadaEncalhe.dataRecolhimento <= lancamento.dataRecolhimentoDistribuidor ");
+		hql.append("			and chamadaEncalhe.produtoEdicao.id = lancamento.produtoEdicao.id ");
+		hql.append("			group by chamadaEncalhe.id)) ");
+		hql.append(" 		   /estudo.qtdeReparte) * 100 ");
 		hql.append("		 as percVenda, ");
 		
 		hql.append("		 lancamento.id as idLancamento ");
@@ -89,7 +107,7 @@ public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepository<P
 		
 		if(filtro.getPaginacao()!= null && filtro.getPaginacao().getQtdResultadosPorPagina() != null) 
 			query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
-				
+		
 		return query.list();
 	}
 	
@@ -98,6 +116,7 @@ public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepository<P
 		StringBuilder hql = new StringBuilder();
 			
 		hql.append(" from PeriodoLancamentoParcial periodo ");
+		hql.append(" join periodo.lancamentoParcial lancamentoParcial");
 		hql.append(" join periodo.lancamento lancamento ");
 		hql.append(" join lancamento.produtoEdicao produtoEdicao ");
 		hql.append(" join produtoEdicao.produto produto ");
@@ -200,7 +219,7 @@ public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepository<P
 	private HashMap<String,Object> buscarParametrosLancamentosParciais(FiltroParciaisDTO filtro){
 		
 		HashMap<String,Object> param = new HashMap<String, Object>();
-		
+				
 		if(filtro.getCodigoProduto() != null) 
 			param.put("codProduto", filtro.getCodigoProduto());
 		
@@ -291,7 +310,7 @@ public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepository<P
 		query.setParameter("dataRecolhimento", dataRecolhimento);
 		
 		Long count = (Long) query.uniqueResult();
-		System.out.print("#####"+idLancamento+"###"+DateUtil.formatarDataPTBR(dataLancamento)+"#######"+DateUtil.formatarDataPTBR(dataRecolhimento)+"##########"+count);
+		
 		return (count == null || count == 0) ? true : false;
 	}
 }

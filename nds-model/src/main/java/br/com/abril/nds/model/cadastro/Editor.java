@@ -10,6 +10,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -33,6 +34,9 @@ public class Editor {
 	@JoinTable(name = "EDITOR_FORNECEDOR", joinColumns = {@JoinColumn(name = "EDITOR_ID")}, 
 	inverseJoinColumns = {@JoinColumn(name = "FORNECEDOR_ID")})
 	private Set<Fornecedor> fornecedores = new HashSet<Fornecedor>();
+	
+	@OneToMany(mappedBy = "editor")
+	private Set<EnderecoEditor> enderecos = new HashSet<EnderecoEditor>();
 
 	public Long getId() {
 		return id;
@@ -89,6 +93,20 @@ public class Editor {
 		} else if (!codigo.equals(other.codigo))
 			return false;
 		return true;
+	}
+
+	/**
+	 * @return the enderecos
+	 */
+	public Set<EnderecoEditor> getEnderecos() {
+		return enderecos;
+	}
+
+	/**
+	 * @param enderecos the enderecos to set
+	 */
+	public void setEnderecos(Set<EnderecoEditor> enderecos) {
+		this.enderecos = enderecos;
 	}
 
 }

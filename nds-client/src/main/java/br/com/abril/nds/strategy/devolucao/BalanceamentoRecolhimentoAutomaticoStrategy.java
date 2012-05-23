@@ -171,7 +171,7 @@ public class BalanceamentoRecolhimentoAutomaticoStrategy extends AbstractBalance
 	private void gerenciarProdutosRecolhimentoNaoBalanceados(Map<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimento,
 															 List<ProdutoRecolhimentoDTO> produtosRecolhimentoNaoBalanceados,
 															 RecolhimentoDTO dadosRecolhimento) {
-
+		
 		Map<Date, BigDecimal> mapaExpectativaEncalheTotalDiariaAtual = 
 			this.gerarMapaExpectativaEncalheTotalDiariaOrdenadoPelaMaiorData(matrizRecolhimento);
 		

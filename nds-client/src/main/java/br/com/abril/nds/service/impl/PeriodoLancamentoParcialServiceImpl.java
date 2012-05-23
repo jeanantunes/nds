@@ -21,6 +21,7 @@ public class PeriodoLancamentoParcialServiceImpl implements PeriodoLancamentoPar
 	public List<PeriodoParcialDTO> obterPeriodosParciais(FiltroParciaisDTO filtro) {
 		
 		return periodoLancamentoParcialRepository.obterPeriodosParciais(filtro);
+		
 	}
 	
 	@Transactional
