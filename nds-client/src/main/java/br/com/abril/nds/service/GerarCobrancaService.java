@@ -9,4 +9,6 @@ public interface GerarCobrancaService {
 	Boolean validarDividaGeradaDataOperacao();
 	
 	void cancelarDividaCobranca(Set<Long> idMovimentoFinanceiroCota);
+
+	void cancelarDividaCobranca(Long idMovimentoFinanceiroCota);
 }

@@ -580,22 +580,32 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			
 			for (Long idMovFinCota : idsMovimentoFinanceiroCota){
 				
-				ConsolidadoFinanceiroCota consolidado =
-						this.consolidadoFinanceiroRepository.obterConsolidadoPorIdMovimentoFinanceiro(idMovFinCota);
+				this.cancelarDividaCobranca(idMovFinCota);
+			}
+		}
+	}
+	
+	@Transactional
+	@Override
+	public void cancelarDividaCobranca(Long idMovimentoFinanceiroCota) {
+		
+		if (idMovimentoFinanceiroCota != null){
+
+			ConsolidadoFinanceiroCota consolidado =
+					this.consolidadoFinanceiroRepository.obterConsolidadoPorIdMovimentoFinanceiro(idMovimentoFinanceiroCota);
+			
+			if (consolidado != null){
 				
-				if (consolidado != null){
+				Divida divida = this.dividaRepository.obterDividaPorIdConsolidado(consolidado.getId());
+				
+				if (divida != null){
+				
+					this.cobrancaRepository.excluirCobrancaPorIdDivida(divida.getId());
 					
-					Divida divida = this.dividaRepository.obterDividaPorIdConsolidado(consolidado.getId());
-					
-					if (divida != null){
-					
-						this.cobrancaRepository.excluirCobrancaPorIdDivida(divida.getId());
-						
-						this.dividaRepository.remover(divida);
-					}
-					
-					this.consolidadoFinanceiroRepository.remover(consolidado);
+					this.dividaRepository.remover(divida);
 				}
+				
+				this.consolidadoFinanceiroRepository.remover(consolidado);
 			}
 		}
 	}
