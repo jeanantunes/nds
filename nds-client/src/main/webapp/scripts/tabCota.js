@@ -86,6 +86,13 @@ function TabCota(tabName) {
 						
 		    select: function(event, ui) {
 		    	
+		    	if(ui.index == 3){
+		    		$("#btn_confirmar_cota").hide();
+		    	}
+		    	else{
+		    		$("#btn_confirmar_cota").show();
+		    	}
+		    	
 		    	if(!T.funcaoSalvar) {
 		    		return;
 		    	}
