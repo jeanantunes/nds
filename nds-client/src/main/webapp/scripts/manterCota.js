@@ -283,17 +283,20 @@ var MANTER_COTA = {
 			height:590,
 			width:950,
 			modal: true,
-			buttons: {
-				"Confirmar": function() {
-					if(TAB_COTA.funcaoSalvar){
-						TAB_COTA.funcaoSalvar();
-					}
-				},
-				"Cancelar": function() {
-					MANTER_COTA.fecharModalCadastroCota = false;
-					$( this ).dialog( "close" );
-				}
-			},
+			buttons: [
+			         {id:"btn_confirmar_cota",text:"Confirmar",
+		        	  click: function() {
+								if(TAB_COTA.funcaoSalvar)
+									TAB_COTA.funcaoSalvar();
+		        	  		}
+			         },
+		        	{id:"btn_cancelar_cota",text:"Cancelar",
+			         click:function(){
+		        				MANTER_COTA.fecharModalCadastroCota = false;
+		        				$( this ).dialog( "close" );
+		        		}	  
+		        	}  
+			],
 			beforeClose: function(event, ui) {
 				
 				clearMessageDialogTimeout();
