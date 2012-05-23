@@ -32,6 +32,7 @@ import br.com.abril.nds.service.ConferenciaEncalheService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.exception.ChamadaEncalheCotaInexistenteException;
 import br.com.abril.nds.service.exception.ConferenciaEncalheExistenteException;
+import br.com.abril.nds.service.exception.ConferenciaEncalheFinalizadaException;
 import br.com.abril.nds.service.exception.EncalheSemPermissaoSalvarException;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.ItemAutoComplete;
@@ -396,6 +397,11 @@ public class ConferenciaEncalheController {
 		} catch (EncalheSemPermissaoSalvarException e) {
 			
 			throw new ValidacaoException(TipoMensagem.WARNING, e.getMessage());
+			
+		} catch (ConferenciaEncalheFinalizadaException e) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, e.getMessage());
+			
 		}
 		
 		this.result.use(Results.json()).from(
