@@ -53,7 +53,7 @@ public class ProdutoEdicao implements Serializable {
 
 	@Column(name  = "CODIGO_DE_BARRAS")
 	protected String codigoDeBarras;
-	
+
 	@Column(name  = "NUMERO_EDICAO", nullable = false)
 	protected Long numeroEdicao;
 	
@@ -82,7 +82,7 @@ public class ProdutoEdicao implements Serializable {
 	@OneToMany(mappedBy = "produtoEdicao")
 	protected Set<Lancamento> lancamentos = new HashSet<Lancamento>();
 	
-	@Column(name = "POSSUI_BRINDE", nullable = false)
+	@Column(name = "POSSUI_BRINDE", nullable = true)
 	protected boolean possuiBrinde;
 	
 	@Embedded

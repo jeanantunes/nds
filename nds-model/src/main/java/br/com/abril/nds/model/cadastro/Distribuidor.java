@@ -40,6 +40,9 @@ public class Distribuidor {
 	@Column(name = "ID")
 	private Long id;
 	
+	@Embedded
+	private ParametroCobrancaDistribuidor parametroCobrancaDistribuidor;
+	
 	@Column(name = "CODIGO", nullable = false)
 	private Integer codigo;
 	
@@ -65,6 +68,12 @@ public class Distribuidor {
 	
 	@OneToMany(mappedBy = "distribuidor")
 	private List<TelefoneDistribuidor> telefones = new ArrayList<TelefoneDistribuidor>();
+	
+	/**
+	 * Flag que indica se o distribuidor aceita a conferência de um encalhe juramentado.
+	 */
+	@Column(name = "ACEITA_JURAMENTADO")
+	private boolean aceitaJuramentado;
 	
 	/**
 	 * Capacidade de distribuição diária do distribuidor, em número de exemplares
@@ -143,6 +152,15 @@ public class Distribuidor {
 		this.id = id;
 	}
 	
+	public ParametroCobrancaDistribuidor getParametroCobrancaDistribuidor() {
+		return parametroCobrancaDistribuidor;
+	}
+
+	public void setParametroCobrancaDistribuidor(
+			ParametroCobrancaDistribuidor parametroCobrancaDistribuidor) {
+		this.parametroCobrancaDistribuidor = parametroCobrancaDistribuidor;
+	}
+
 	public Date getDataOperacao() {
 		return dataOperacao;
 	}
@@ -344,6 +362,22 @@ public class Distribuidor {
 		this.qtdDiasEncalheAtrasadoAceitavel = qtdDiasEncalheAtrasadoAceitavel;
 	}
 
+	/**
+	 * Obtém aceitaJuramentado
+	 *
+	 * @return boolean
+	 */
+	public boolean isAceitaJuramentado() {
+		return aceitaJuramentado;
+	}
 
+	/**
+	 * Atribuí aceitaJuramentado
+	 * @param aceitaJuramentado 
+	 */
+	public void setAceitaJuramentado(boolean aceitaJuramentado) {
+		this.aceitaJuramentado = aceitaJuramentado;
+	}
+	
 	
 }

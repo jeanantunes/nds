@@ -12,7 +12,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.CaucaoLiquida;
@@ -136,6 +135,7 @@ public class CotaGarantiaServiceImplTest extends AbstractRepositoryImplTest {
 		
 						
 	}
+
 
 	@Test
 	public void testSalvaCaucaoLiquida() throws Exception {

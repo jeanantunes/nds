@@ -7,6 +7,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -38,6 +39,7 @@ import br.com.abril.nds.model.cadastro.pdv.TipoPeriodoFuncionamentoPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoPontoPDV;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.serialization.custom.PlainJSONSerialization;
+import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.ParametroSistemaService;
 import br.com.abril.nds.service.PdvService;
 import br.com.abril.nds.service.exception.EnderecoUniqueConstraintViolationException;
@@ -90,6 +92,9 @@ public class PdvController {
 
 	@Autowired
 	private ParametroSistemaService parametroSistemaService;
+	
+	@Autowired
+	private CotaService cotaService;
 	
 	@Autowired
 	private ServletContext servletContext;
@@ -487,7 +492,10 @@ public class PdvController {
 		
 		if (listaTelefone != null){
 			for (TelefoneAssociacaoDTO telefoneAssociacaoDTO : listaTelefone.values()){
-				pdvDTO.getTelefonesAdicionar() .add(telefoneAssociacaoDTO);
+				
+				if(telefoneAssociacaoDTO.getTipoTelefone()!= null){
+					pdvDTO.getTelefonesAdicionar() .add(telefoneAssociacaoDTO);
+				}
 			}
 		}
 		
@@ -840,7 +848,30 @@ public class PdvController {
 		result.use(Results.json()).withoutRoot().from("").recursive().serialize();
 	}
 	
-
+	/**
+	 * Recarrega os endereços e telefones adicionados pelo cadastro de pdv para mesma pessoa.
+	 * 
+	 * @param idCota
+	 */
+	@Post
+	public void recarregarEnderecoTelefoneCota(Long idCota){
+		
+		httpSession.removeAttribute(CotaController.LISTA_ENDERECOS_EXIBICAO);
+		httpSession.removeAttribute(CotaController.LISTA_ENDERECOS_REMOVER_SESSAO);
+		httpSession.removeAttribute(CotaController.LISTA_ENDERECOS_SALVAR_SESSAO);
+		httpSession.removeAttribute(CotaController.LISTA_TELEFONES_EXIBICAO);
+		httpSession.removeAttribute(CotaController.LISTA_TELEFONES_REMOVER_SESSAO);
+		httpSession.removeAttribute(CotaController.LISTA_TELEFONES_SALVAR_SESSAO);
+		
+		List<EnderecoAssociacaoDTO> listaEnderecoAssociacao = cotaService.obterEnderecosPorIdCota(idCota);
+		httpSession.setAttribute(CotaController.LISTA_ENDERECOS_EXIBICAO, listaEnderecoAssociacao);
+		
+		List<TelefoneAssociacaoDTO> listaTelefoneAssociacao = cotaService.buscarTelefonesCota(idCota, null);
+		httpSession.setAttribute(CotaController.LISTA_TELEFONES_EXIBICAO, listaTelefoneAssociacao);
+		
+		result.use(Results.json()).withoutRoot().from("").serialize();
+	}
+	
 	//TODO getRealUsuario
 	public Usuario getUsuario() {
 		Usuario usuario = new Usuario();

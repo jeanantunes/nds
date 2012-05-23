@@ -160,6 +160,11 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 	}
 
 	@Override
+	@Transactional
+	public void alterarProdutoEdicao(ProdutoEdicao produtoEdicao) {
+		this.produtoEdicaoRepository.alterar(produtoEdicao);		
+	}
+	
 	@Transactional(readOnly = true)
 	public List<ProdutoEdicao> obterProdutoPorCodigoNome(String codigoNomeProduto) {
 		
