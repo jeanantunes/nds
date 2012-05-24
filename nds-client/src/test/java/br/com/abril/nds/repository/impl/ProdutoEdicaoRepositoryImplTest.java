@@ -145,7 +145,7 @@ public class ProdutoEdicaoRepositoryImplTest extends AbstractRepositoryImplTest 
 		//////
 		
 		//////
-		Produto produtoComDesconto = Fixture.produto("8001", "Novo", "Novo", PeriodicidadeProduto.ANUAL, tipoProduto, 5, 5);
+		Produto produtoComDesconto = Fixture.produto("8001", "Novo", "Novo", PeriodicidadeProduto.ANUAL, tipoProduto, 5, 5, BigDecimal.TEN);
 		produtoComDesconto.addFornecedor(dinap);
 		produtoComDesconto.setEditor(abril);
 		save(produtoComDesconto);

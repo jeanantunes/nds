@@ -1,6 +1,7 @@
 package br.com.abril.nds.model.cadastro;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -49,9 +50,6 @@ public class Produto implements Serializable {
 	@Column(name = "NOME", nullable = false, unique = true)
 	private String nome;
 	
-	@Column(name = "NOME_COMERCIAL", nullable = true, unique = true, length = 24)
-	private String nomeComercial;
-	
 	@Column(name = "DESCRICAO")
 	private String descricao;
 	
@@ -85,6 +83,9 @@ public class Produto implements Serializable {
 	
 	@Column(name = "PEB", nullable = false)
 	protected int peb;
+	
+	@Column(name = "PESO", nullable = false)
+	protected BigDecimal peso;
 	
 	/**
 	 * Dimensões do produto (largura, etc)
@@ -219,20 +220,6 @@ public class Produto implements Serializable {
 	}
 
 	/**
-	 * @return the nomeComercial
-	 */
-	public String getNomeComercial() {
-		return nomeComercial;
-	}
-
-	/**
-	 * @param nomeComercial the nomeComercial to set
-	 */
-	public void setNomeComercial(String nomeComercial) {
-		this.nomeComercial = nomeComercial;
-	}
-
-	/**
 	 * @return the slogan
 	 */
 	public String getSlogan() {
@@ -286,6 +273,20 @@ public class Produto implements Serializable {
 	 */
 	public void setDimensao(Dimensao dimensao) {
 		this.dimensao = dimensao;
+	}
+
+	/**
+	 * @return the peso
+	 */
+	public BigDecimal getPeso() {
+		return peso;
+	}
+
+	/**
+	 * @param peso the peso to set
+	 */
+	public void setPeso(BigDecimal peso) {
+		this.peso = peso;
 	}
 	
 }
