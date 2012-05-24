@@ -2,6 +2,10 @@ package br.com.abril.nds.service;
 
 import java.util.Date;
 
+import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.seguranca.Usuario;
+
 
 
 /**
@@ -15,12 +19,24 @@ public interface ParciaisService {
 	/**
 	 * Cria novos período parcial para determinada edição de um produto 
 	 * 
-	 * @param idProdutoEdicao - Id do ProdutoEdicao
+	 * @param idProdutoEdicao - identificador do produto edição
 	 * @param qtdePeriodos - Quantidade de períodos
-	 * @param idUsuario - Id do Usuário
-	 * @param peb - periodo em banca (dias) - caso nulo, será obtido do ProdutoEdicao 
+	 * @param usuario - Usuário
+	 * @param peb - Período em banca (dias) - caso nulo, será obtido do ProdutoEdicao 
 	 */
-	void gerarPeriodosParcias(Long idProdutoEdicao, Integer qtdePeriodos,Long idUsuario, Integer peb);
+	void gerarPeriodosParcias(Long idProdutoEdicao, Integer qtdePeriodos, Usuario usuario, Integer peb);
+	
+	/**
+	 * Cria novos período parcial para determinada edição de um produto 
+	 * 
+	 * @param produtoEdicao - Produto edição
+	 * @param qtdePeriodos - Quantidade de períodos
+	 * @param usuario - Usuário
+	 * @param peb - Período em banca (dias) - caso nulo, será obtido do ProdutoEdicao
+	 * @param distribuidor - Distribuídor
+	 */
+	void gerarPeriodosParcias(ProdutoEdicao produtoEdicao, Integer qtdePeriodos,
+							  Usuario usuario, Integer peb, Distribuidor distribuidor);
 
 	/**
 	 * Altera data de Período de Lancamento Parcial
