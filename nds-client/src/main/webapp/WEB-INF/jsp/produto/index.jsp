@@ -238,9 +238,10 @@
 					   	"id=" + id,
 						function (result) {
 
-							popularCombo(result.comboTipoProduto, $("#comboTipoProduto"));
-							popularCombo(result.comboEditor, $("#comboEditor"));
-							popularCombo(result.comboFornecedores, $("#comboFornecedores"));
+							popularCombo(result[0], $("#comboTipoProduto"));
+							popularCombo(result[1], $("#comboFornecedoresCadastro"));
+							popularCombo(result[2], $("#comboEditor"));
+							popularCombo(result[3], $("#comboTipoDesconto"));
 						},
 					  	null,
 					   	true
@@ -332,11 +333,13 @@
 						<td><strong>Editor:</strong></td>
 						<td>
 							<select name="comboEditor" id="comboEditor" style="width:210px;" >
+								<option value="0" selected="selected"></option>
 							</select>
 						</td>
 						<td><strong>Fornecedor:</strong></td>
 						<td>
-							<select name="comboFornecedores" id="comboFornecedores" style="width:200px;" >
+							<select name="comboFornecedoresCadastro" id="comboFornecedoresCadastro" style="width:200px;" >
+								<option value="0" selected="selected"></option>
 							</select>
 						</td>
 					</tr>
@@ -347,12 +350,8 @@
 					<tr>
 						<td><strong>Tipo de Desconto:</strong></td>
 						<td>
-							<select name="select6" id="select8" style="width:210px;" >
-								<option value="0" selected="selected">Selecione...</option>
-								<option>Importadas</option>
-								<option>Promoções</option>
-								<option>Especial Globo</option>
-								<option>Magali Fome Zero</option>
+							<select name="comboTipoDesconto" id="comboTipoDesconto" style="width:210px;" >
+								<option value="0" selected="selected"></option>
 							</select>
 						</td>
 						<td><strong>% Desconto:</strong></td>
@@ -362,6 +361,7 @@
 						<td><strong>Tipo de Produto:</strong></td>
 						<td>
 							<select name="comboTipoProduto" id="comboTipoProduto" style="width:210px;" >
+								<option value="0" selected="selected"></option>
 							</select>
 						</td>
 						<td><strong>Forma Comercialização:</strong></td>

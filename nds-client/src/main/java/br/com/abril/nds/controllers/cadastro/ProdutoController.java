@@ -13,6 +13,7 @@ import br.com.abril.nds.model.cadastro.Editor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.cadastro.TipoDesconto;
 import br.com.abril.nds.model.cadastro.TipoProduto;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
@@ -21,6 +22,7 @@ import br.com.abril.nds.service.EstoqueProdutoService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.ProdutoService;
+import br.com.abril.nds.service.TipoDescontoService;
 import br.com.abril.nds.service.TipoProdutoService;
 import br.com.abril.nds.service.exception.UniqueConstraintViolationException;
 import br.com.abril.nds.util.ItemAutoComplete;
@@ -59,6 +61,9 @@ public class ProdutoController {
 
 	@Autowired
 	private FornecedorService fornecedorService;
+	
+	@Autowired
+	private TipoDescontoService tipoDescontoService;
 	
 	public ProdutoController(Result result) {
 		this.result = result;
@@ -226,19 +231,21 @@ public class ProdutoController {
 		
 		List<Object> listaCombos = new ArrayList<Object>();
 
-		List<BaseComboVO> comboTipoProduto = parseComboTipoProduto(this.tipoProdutoService.obterTodosTiposProduto());
-		listaCombos.add(comboTipoProduto);
+		//List<BaseComboVO> comboTipoProduto = parseComboTipoProduto(this.tipoProdutoService.obterTodosTiposProduto());
+		listaCombos.add(parseComboTipoProduto(this.tipoProdutoService.obterTodosTiposProduto()));
 
-		List<BaseComboVO> comboEditor = parseComboEditor(this.editorService.obterEditores());
-		listaCombos.add(comboEditor);
 		
-		List<BaseComboVO> comboFornecedores = parseComboFornecedor(this.fornecedorService.obterFornecedores());
-		listaCombos.add(comboFornecedores);
+		//List<BaseComboVO> comboFornecedores = parseComboFornecedor(this.fornecedorService.obterFornecedores());
+		listaCombos.add(parseComboFornecedor(this.fornecedorService.obterFornecedores()));
 
+		//List<BaseComboVO> comboEditor = parseComboEditor(this.editorService.obterEditores());
+		listaCombos.add(parseComboEditor(this.editorService.obterEditores()));
+		
+		listaCombos.add(parseComboTipoDesconto(this.tipoDescontoService.obterTodosTiposDescontos()));
+		
 		this.result
 				.use(Results.json())
 				.from(listaCombos, "result")
-				.include("comboTipoProduto", "comboEditor", "comboFornecedores")
 				.serialize();
 	}
 	
@@ -262,7 +269,18 @@ public class ProdutoController {
 				"result").recursive().serialize();
 	}
 
-	public List<BaseComboVO> parseComboTipoProduto(List<TipoProduto> listaTipoProduto) {
+	private List<BaseComboVO> parseComboTipoDesconto(List<TipoDesconto> listaTipoDesconto) {
+		
+		List<BaseComboVO> listaBaseComboVO = new ArrayList<BaseComboVO>();
+		
+		for (TipoDesconto tipoDesconto : listaTipoDesconto) {
+			listaBaseComboVO.add(new BaseComboVO(tipoDesconto.getId(), tipoDesconto.getDescricao()));
+		}
+		
+		return listaBaseComboVO;
+	}
+
+	private List<BaseComboVO> parseComboTipoProduto(List<TipoProduto> listaTipoProduto) {
 		
 		List<BaseComboVO> listaBaseComboVO = new ArrayList<BaseComboVO>();
 		
@@ -273,7 +291,7 @@ public class ProdutoController {
 		return listaBaseComboVO;
 	}
 
-	public List<BaseComboVO> parseComboFornecedor(List<Fornecedor> listaFornecedor) {
+	private List<BaseComboVO> parseComboFornecedor(List<Fornecedor> listaFornecedor) {
 		
 		List<BaseComboVO> listaBaseComboVO = new ArrayList<BaseComboVO>();
 		
