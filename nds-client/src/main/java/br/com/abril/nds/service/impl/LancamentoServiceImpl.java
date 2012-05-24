@@ -2,6 +2,7 @@ package br.com.abril.nds.service.impl;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -10,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.dto.InformeEncalheDTO;
 import br.com.abril.nds.dto.LancamentoNaoExpedidoDTO;
 import br.com.abril.nds.model.TipoEdicao;
 import br.com.abril.nds.model.estoque.Expedicao;
@@ -25,6 +27,7 @@ import br.com.abril.nds.repository.UsuarioRepository;
 import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.MovimentoEstoqueService;
 import br.com.abril.nds.vo.PaginacaoVO;
+import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
 @Service
 public class LancamentoServiceImpl implements LancamentoService {
@@ -155,5 +158,24 @@ public class LancamentoServiceImpl implements LancamentoService {
 	@Transactional
 	public Long obterTotalLancamentosNaoExpedidos(Date data, Long idFornecedor, Boolean estudo) {
 		return lancamentoRepository.obterTotalLancamentosNaoExpedidos(data, idFornecedor, estudo);
-	}		
+	}
+
+	@Override
+	@Transactional(readOnly=true)
+	public Long quantidadeLancamentoInformeRecolhimento(Long idFornecedor,
+			Calendar dataInicioRecolhimento, Calendar dataFimRecolhimento) {
+		return lancamentoRepository.quantidadeLancamentoInformeRecolhimento(
+				idFornecedor, dataInicioRecolhimento, dataFimRecolhimento);
+	}
+
+	@Override
+	@Transactional(readOnly=true)
+	public List<InformeEncalheDTO> obterLancamentoInformeRecolhimento(
+			Long idFornecedor, Calendar dataInicioRecolhimento,
+			Calendar dataFimRecolhimento, String orderBy, Ordenacao ordenacao,
+			int initialResult, int maxResults) {
+		return lancamentoRepository.obterLancamentoInformeRecolhimento(
+				idFornecedor, dataInicioRecolhimento, dataFimRecolhimento,
+				orderBy, ordenacao, initialResult, maxResults);
+	}
 }

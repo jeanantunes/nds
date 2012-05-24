@@ -26,5 +26,9 @@
             <artifactId>nds-util</artifactId>
             <version>1.0</version>
         </dependency>
+		<dependency>
+			<groupId>org.lightcouch</groupId>
+			<artifactId>lightcouch</artifactId>
+		</dependency>
 	</dependencies>
 </project>
