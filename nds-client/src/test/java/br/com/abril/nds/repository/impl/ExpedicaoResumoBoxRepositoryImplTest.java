@@ -166,22 +166,22 @@ public class ExpedicaoResumoBoxRepositoryImplTest extends AbstractRepositoryImpl
 		
 		ProdutoEdicao produtoEdicaoVeja1 = Fixture.produtoEdicao(1L, 10, 14,
 				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(20), "ABCDEFGHIJKLMNOPQRSTU", 1L,
-				produtoVeja);
+				produtoVeja, null, false);
 		save(produtoEdicaoVeja1);
 		
 		ProdutoEdicao produtoEdicaoVeja2 = Fixture.produtoEdicao(2L, 10, 14,
 				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(20), "ABCDEFGHIJKLMNOPQRST", 2L,
-				produtoVeja);
+				produtoVeja, null, false);
 		save(produtoEdicaoVeja2);
 		
 		ProdutoEdicao produtoEdicaoSuper1 = Fixture.produtoEdicao(1L, 10, 14,
 				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(20), "ABCDEFGHIJKLMNOPQRS", 3L,
-				produtoSuper);
+				produtoSuper, null, false);
 		save(produtoEdicaoSuper1);
 		
 		ProdutoEdicao produtoEdicaoCapricho1 = Fixture.produtoEdicao(1L, 9, 14,
 				new BigDecimal(0.15), new BigDecimal(9), new BigDecimal(13.5), "ABCDEFGHIJKLMNOPQR", 4L,
-				produtoCapricho);
+				produtoCapricho, null, false);
 		save(produtoEdicaoCapricho1);
 		
 		CFOP cfop5102 = Fixture.cfop5102();
