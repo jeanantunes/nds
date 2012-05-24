@@ -172,23 +172,23 @@ public class BoletoServiceImplTest  extends AbstractRepositoryImplTest {
 		save(consolidado5);
 			
 		Divida divida1 = Fixture.divida(consolidado1, cota, new Date(),
-										usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200));
+										usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200),false);
 		save(divida1);
 
 		Divida divida2 = Fixture.divida(consolidado2, cota, new Date(),
-		        						usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200));
+		        						usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200),false);
 		save(divida2);
 		
 		Divida divida3 = Fixture.divida(consolidado3, cota, new Date(),
-		        						usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200));
+		        						usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200),false);
 		save(divida3);
 		
 		Divida divida4 = Fixture.divida(consolidado4, cota, new Date(),
-										usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200));
+										usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200),false);
 		save(divida4);
 		
 		Divida divida5 = Fixture.divida(consolidado5, cota, new Date(),
-										usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200));
+										usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200),false);
 		save(divida5);
 		
 		Boleto boleto1 = Fixture.boleto("1234567890123", "456", "1234567890123456", new Date(),
