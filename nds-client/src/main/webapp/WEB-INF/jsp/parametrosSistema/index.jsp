@@ -100,6 +100,14 @@
 						</td>
 					</tr>
 					<tr>
+						<td>&nbsp;</td>
+						<td>&nbsp;</td>
+						<td>Interface MDC Backup:</td>
+						<td>
+							<input type="text" name="dto.pathMdcBackup" id="dto.pathMdcBackup" style="width:220px;" value="${parametroSistemaGeralDTO.pathMdcBackup}" />
+						</td>
+					</tr>
+					<tr>
 						<td>C&oacute;digo Distribuidor Dinap:</td>
 						<td><input type="text" name="dto.codDistribuidorDinap" id="dto.codDistribuidorDinap" style="width:220px;" value="${parametroSistemaGeralDTO.codDistribuidorDinap}" /></td>
 						<td>Interface Bancas Exporta&ccedil;&atilde;o: </td>
