@@ -320,7 +320,7 @@ public class ExpectativaEncalheDataTest extends AbstractRepositoryImplTest {
 
 		save(estudoCapricho, lancamentoParcialCapricho, parcialCapricho, estudoCotaCapricho);
 		
-		Box box301 = Fixture.criarBox("357", "Box 301", TipoBox.RECOLHIMENTO);
+		Box box301 = Fixture.criarBox("357", "Box 301", TipoBox.RECOLHIMENTO, false);
 		box301.setPostoAvancado(false);
 		
 		Cota cotaFC = Fixture.cota(55, fornecedorFC.getJuridica(), SituacaoCadastro.ATIVO, box301);
@@ -373,7 +373,7 @@ public class ExpectativaEncalheDataTest extends AbstractRepositoryImplTest {
 
 		save(estudoVeja, lancamentoParcialVeja, parcialVeja, estudoCotaVeja);
 		
-		Box box303 = Fixture.criarBox("359", "Box 303", TipoBox.RECOLHIMENTO);
+		Box box303 = Fixture.criarBox("359", "Box 303", TipoBox.RECOLHIMENTO, false);
 		box303.setPostoAvancado(false);
 		
 		Cota cotaJurandir = Fixture.cota(59, fornecedorFC.getJuridica(), SituacaoCadastro.ATIVO, box303);

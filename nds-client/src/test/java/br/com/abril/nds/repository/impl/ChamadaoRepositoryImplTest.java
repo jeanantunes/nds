@@ -53,7 +53,7 @@ public class ChamadaoRepositoryImplTest extends AbstractRepositoryImplTest  {
 								  BigDecimal.TEN, new BigDecimal(20), "ABCDEFGHIJKLMNOPQRSTU", 1L, produtoVeja);
 		save(produtoEdicaoVeja1);
 		
-		Box box1 = Fixture.criarBox("Box-1", "BX-001", TipoBox.LANCAMENTO);
+		Box box1 = Fixture.criarBox("Box-1", "BX-001", TipoBox.LANCAMENTO, false);
 		save(box1);
 		
 		PessoaFisica manoel =
