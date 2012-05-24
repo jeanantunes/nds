@@ -232,7 +232,15 @@ public class RoteirizacaoController {
 	@Path("/excluiRotas")
 	public void excluiRotas(List<Long> rotasId) {
 		roteirizacaoService.excluirListaRota(rotasId);
-		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Rota cadastrada com sucesso."),"result").recursive().serialize();
+		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Rotas excluidas com sucesso."),"result").recursive().serialize();
+
+	}
+	
+	@Path("/transferirRotas")
+	public void transferirRotas(List<Long> rotasId, Long roteiroId) {
+		roteiroId = 3l;
+		roteirizacaoService.transferirListaRota(rotasId, roteiroId) ;
+		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Rotas transferidas com sucesso."),"result").recursive().serialize();
 
 	}
 }

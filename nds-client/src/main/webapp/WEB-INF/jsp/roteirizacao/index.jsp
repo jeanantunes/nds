@@ -203,28 +203,7 @@ function popup_cotas_ausentes() {
 		});	
 		      
 	};
-	
-	function popup_tranferir_rota() {
-		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
-	
-		$( "#dialog-transfere-rota" ).dialog({
-			resizable: false,
-			height:300,
-			width:400,
-			modal: true,
-			buttons: {
-				"Confirmar": function() {
-					$( this ).dialog( "close" );
-					$("#effect").hide("highlight", {}, 1000, callback);
-					
-				},
-				"Cancelar": function() {
-					$( this ).dialog( "close" );
-				}
-			}
-		});	
-		      
-	};
+
 	
 	
 	function popup_rota() {
@@ -307,7 +286,8 @@ label{ vertical-align:super;}
 	<fieldset>
     	<legend>Transferir Rotas para:</legend>
         <p>Pesquise ou Digite o nome de um Novo Roteiro para estas Rotas.</p>
-        <input name="lstRoteiros_1" type="text" id="lstRoteiros_1" style="width:300px; float:left; margin-bottom:5px;" />
+        <input name="roteiroTranferenciaNome" type="text" id="roteiroTranferenciaNome" style="width:300px; float:left; margin-bottom:5px;" />
+        <input name="roteiroTranferenciaId" type="hidden" id="roteiroTranferenciaId" style="width:300px; float:left; margin-bottom:5px;" />
         <a href="javascript:;" onclick="roteiroNovo();"><img src="${pageContext.request.contextPath}/images/ico_add.gif" alt="Adicionar Rota" width="16" height="16" border="0" style="float:left; margin-left:5px; margin-top:5px;" /></a>
         <br clear="all" />
         <div class="roteiroNovo" style="display:none;">
@@ -419,7 +399,7 @@ label{ vertical-align:super;}
         <a href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_add.gif" alt="Adicionar Rota" width="16" height="16" border="0" style="float:left; margin-left:5px; margin-top:5px;" /></a> <br />
         <table class="rotasGrid"></table>
 		<span class="bt_novos" title="Nova Rota"><a href="javascript:;" onclick="roteirizacao.abrirTelaRota();"><img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0"/>Nova</a></span>
-        <span class="bt_novos" title="Transferência de Roteiro"><a href="javascript:;" onclick="popup_tranferir_rota();"><img src="${pageContext.request.contextPath}/images/ico_integrar.png" hspace="5" border="0"/>Transferir</a></span>
+        <span class="bt_novos" title="Transferência de Roteiro"><a href="javascript:;" onclick="roteirizacao.popupTransferirRota();"><img src="${pageContext.request.contextPath}/images/ico_integrar.png" hspace="5" border="0"/>Transferir</a></span>
         <span class="bt_novos" title="Excluir Rota"><a href="javascript:;" onclick="roteirizacao.popupExcluirRotas();"><img src="${pageContext.request.contextPath}/images/ico_excluir.gif" hspace="5" border="0"/>Excluir</a></span>
     </fieldset>
     

@@ -95,4 +95,20 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 		
 		
 	}
+
+	@Override
+	@Transactional
+	public void transferirListaRota(List<Long> rotasId, Long roteiroId) {
+		Roteiro roteiro  = new Roteiro();
+		roteiro.setId(roteiroId);
+		for (Long rotaId : rotasId ){
+			Rota rota = rotaRepository.buscarPorId(rotaId);
+			//Rota rota = new Rota();
+			rota.setRoteiro(roteiro);
+			rota.setId(rotaId);
+			rota.setOrdem(0);
+			rotaRepository.merge(rota);
+		}	
+		
+	}
 }

@@ -293,8 +293,51 @@ var roteirizacao = {
 			}
 		});	
 		      
-	}
+	},
 	
+	
+	popupTransferirRota : function() {
+		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
+	
+		$( "#dialog-transfere-rota" ).dialog({
+			resizable: false,
+			height:300,
+			width:400,
+			modal: true,
+			buttons: {
+				"Confirmar": function() {
+					roteirizacao.transferirRotas();
+					$( this ).dialog( "close" );
+					
+				},
+				"Cancelar": function() {
+					$( this ).dialog( "close" );
+				}
+			}
+		});	
+		      
+	},
+	transferirRotas : function() {
+	 	$.postJSON(contextPath + '/cadastro/roteirizacao/transferirRotas',
+				 {
+					'rotasId' : roteirizacao.buscaRotasSelecionadas(),
+					'roteiroId' : $('#roteiroTranferenciaNome').val()
+					
+				 },
+				   function(result) {
+						var tipoMensagem = result.tipoMensagem;
+						var listaMensagens = result.listaMensagens;
+						$('#dialog-rota').dialog( "close" );
+						if (tipoMensagem && listaMensagens) {
+							exibirMensagemDialog(tipoMensagem, listaMensagens,'dialogRoteirizacao');
+						}
+						$(".rotasGrid").flexReload();
+						
+				   },
+				   null,
+				   true
+		);
+},
 	
 		
 		
