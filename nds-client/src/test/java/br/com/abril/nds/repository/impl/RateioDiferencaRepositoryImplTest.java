@@ -62,7 +62,7 @@ public class RateioDiferencaRepositoryImplTest extends AbstractRepositoryImplTes
 		Editor abril = Fixture.editoraAbril();
 		save(abril);
 		
-		Produto produto = Fixture.produto("jkgfhfhjgh", "descricao", "nome", PeriodicidadeProduto.ANUAL, tipoProduto, 5, 5);
+		Produto produto = Fixture.produto("jkgfhfhjgh", "descricao", "nome", PeriodicidadeProduto.ANUAL, tipoProduto, 5, 5, BigDecimal.TEN);
 		produto.setEditor(abril);
 		save(produto);
 				
