@@ -23,11 +23,11 @@ public interface TipoProdutoService {
 	public abstract TipoProduto obterPorId(Long id);
 	
 	/**
-	 * Remove o Tipo Produto do reposit�rio de dados.
+	 * Remove o Tipo Produto do repositório de dados.
 	 * @param id
 	 * @throws ValidacaoException Lança quando o Tipo de Produto em questão não pode ser removido.
 	 */
-	public abstract void remover(Long id) throws ValidacaoException;
+	public abstract void remover(Long id);
 	
 	/**
 	 * Atualiza a entidade tipo produto no repositorio de dados.

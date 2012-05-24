@@ -12,11 +12,10 @@ import org.springframework.stereotype.Component;
 import br.com.abril.nds.integracao.engine.MessageProcessor;
 import br.com.abril.nds.integracao.engine.data.Message;
 import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;
-import br.com.abril.nds.integracao.model.EventoExecucaoEnum;
 import br.com.abril.nds.integracao.model.canonic.EMS0119Input;
 import br.com.abril.nds.integracao.service.PeriodicidadeProdutoService;
-import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
 
 
 @Component

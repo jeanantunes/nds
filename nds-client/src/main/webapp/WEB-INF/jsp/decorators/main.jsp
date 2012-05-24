@@ -375,9 +375,7 @@ fieldset label {
 									Controle Aprovação
 								</a>
 							</li>
-							
 							<li><a href='<c:url value="/administracao/cadastroCalendario"/>'>Calendário</a></li>
-							
 							<li><a href='<c:url value="/administracao/tipoDescontoCota"/>'>Tipo de Desconto Cota</a></li>
 							
 							<li><a href="<c:url value="/tipoMovimento/index"/>">Tipo de Movimento</a></li>
@@ -392,10 +390,16 @@ fieldset label {
 									Serviço de Entrega
 								</a>
 							</li>
+								<li>
+								<a href='<c:url value="/administracao/tipoProduto/"/>'>
+									Tipo de Produto
+								</a>
+							</li>
 							<li><a href="Administracao/help_administracao.htm">Help</a>
 							</li>
 							<li><a href='<c:url value="/distribuidor/parametroCobranca/index"/>'>Parâmetros de Cobrança</a>
 							</li>
+							<li><a href='<c:url value="/administracao/parametrosSistema"/>'>Par&acirc;metros do Sistema</a></li>
 						</ul>
 					</li>
 					<li><span class="classHelp">&nbsp;</span><a href="help.htm">Help</a>

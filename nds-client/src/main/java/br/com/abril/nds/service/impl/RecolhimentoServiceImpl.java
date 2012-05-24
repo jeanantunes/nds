@@ -86,7 +86,7 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 	@Autowired
 	private ParciaisService parciaisService;
 	
-	private static final Integer QTDE_PERIODOS_ = 1;
+	private static final Integer QTDE_PERIODOS_PARCIAIS = 1;
 	
 	/**
 	 * {@inheritDoc}
@@ -382,10 +382,12 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 				"Produto edição não encontrado!");
 		}
 		
+		Distribuidor distribuidor = this.distribuidorRepository.obter();
+		
 		for (ProdutoEdicao produtoEdicao : listaProdutoEdicao) {
 		
-			parciaisService.gerarPeriodosParcias(produtoEdicao.getId(), QTDE_PERIODOS_,
-												 usuario.getId(), null);
+			parciaisService.gerarPeriodosParcias(produtoEdicao, QTDE_PERIODOS_PARCIAIS,
+												 usuario, null, distribuidor);
 		}
 	}
 	

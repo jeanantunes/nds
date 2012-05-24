@@ -278,7 +278,7 @@
 							 + 	     ' value="' + row.cell.novaData + '"'
 							 + 	     ' style="width:65px; margin-right:5px; float:left;" />';
 				
-				retornoHTML += '<div class="bt_atualizarIco">'
+				retornoHTML += '<div class="bt_atualizarIco" title="Reprogramar">'
 					  		 + '  <a href="javascript:;">&nbsp;</a>'
 					  		 + '</div>';
 					  		 

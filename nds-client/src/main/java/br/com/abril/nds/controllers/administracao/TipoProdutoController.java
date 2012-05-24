@@ -62,19 +62,15 @@ public class TipoProdutoController {
 		this.tipoProdutoService.merge(tipoProduto);
 		
 		this.resutl.use(Results.json()).from(new ValidacaoVO
-				(TipoMensagem.SUCCESS, "Tipo de Produto salva com Sucesso."), "result").recursive().serialize();
+				(TipoMensagem.SUCCESS, "Tipo de Produto salvo com Sucesso."), "result").recursive().serialize();
 	}
 	
 	@Post("/remove.json")
 	public void remove(long id) {
 		
-		try {
-			this.tipoProdutoService.remover(id);
-		} catch (Exception e) {
-			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, e.getMessage()));
-		}
-		
-		this.resutl.use(Results.nothing());
+		this.tipoProdutoService.remover(id);
+				
+		this.resutl.use(Results.json()).from("OK").serialize();
 	}
 	
 	

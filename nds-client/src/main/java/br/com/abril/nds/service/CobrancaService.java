@@ -4,8 +4,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
-import org.springframework.transaction.annotation.Transactional;
-
+import br.com.abril.nds.client.vo.CobrancaDividaVO;
 import br.com.abril.nds.client.vo.CobrancaVO;
 import br.com.abril.nds.dto.PagamentoDividasDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaDividasCotaDTO;
@@ -86,5 +85,13 @@ public interface CobrancaService {
 	 * @param List<Long> idCobrancas
 	 * @return Data Transfer object com dados somados das cobrancas encontradas e calculadas.
 	 */
-	PagamentoDividasDTO obterDadosCobrancas(List<Long> idCobrancas);
+	CobrancaDividaVO obterDadosCobrancas(List<Long> idCobrancas);
+	
+	
+	/**
+	 *Método responsável por baixar dividas manualmente 
+	 * @param pagamento
+	 * @param idCobrancas
+	 */
+	void baixaManualDividas(PagamentoDividasDTO pagamento, List<Long> idCobrancas);
 }

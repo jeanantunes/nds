@@ -19,12 +19,12 @@ import org.springframework.transaction.support.TransactionTemplate;
 import br.com.abril.nds.integracao.engine.MessageHeaderProperties;
 import br.com.abril.nds.integracao.engine.data.Message;
 import br.com.abril.nds.integracao.engine.data.RouteTemplate;
-import br.com.abril.nds.integracao.model.EventoExecucao;
-import br.com.abril.nds.integracao.model.EventoExecucaoEnum;
-import br.com.abril.nds.integracao.model.InterfaceExecucao;
-import br.com.abril.nds.integracao.model.LogExecucao;
-import br.com.abril.nds.integracao.model.LogExecucaoMensagem;
-import br.com.abril.nds.integracao.model.StatusExecucaoEnum;
+import br.com.abril.nds.model.integracao.EventoExecucao;
+import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
+import br.com.abril.nds.model.integracao.InterfaceExecucao;
+import br.com.abril.nds.model.integracao.LogExecucao;
+import br.com.abril.nds.model.integracao.LogExecucaoMensagem;
+import br.com.abril.nds.model.integracao.StatusExecucaoEnum;
 
 /**
  * Insere registros de log de execução da interface no banco de dados.

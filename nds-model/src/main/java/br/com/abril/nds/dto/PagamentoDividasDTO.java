@@ -2,15 +2,12 @@ package br.com.abril.nds.dto;
 
 import java.math.BigDecimal;
 import java.util.Date;
-import java.util.List;
 
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 
 public class PagamentoDividasDTO {
 
 	private Date dataPagamento;
-	
-	private List<Long> idDividas;
 	
 	private BigDecimal valorDividas;
 	
@@ -21,8 +18,6 @@ public class PagamentoDividasDTO {
 	private BigDecimal valorDesconto;
 	
 	private BigDecimal valorSaldo;
-	
-	private BigDecimal valorTotalDividas;
 	
 	private BigDecimal valorPagamento;
 	
@@ -36,14 +31,6 @@ public class PagamentoDividasDTO {
 
 	public void setDataPagamento(Date dataPagamento) {
 		this.dataPagamento = dataPagamento;
-	}
-
-	public List<Long> getIdDividas() {
-		return idDividas;
-	}
-
-	public void setIdDividas(List<Long> idDividas) {
-		this.idDividas = idDividas;
 	}
 
 	public BigDecimal getValorDividas() {
@@ -109,14 +96,5 @@ public class PagamentoDividasDTO {
 	public void setObservacoes(String observacoes) {
 		this.observacoes = observacoes;
 	}
-
-	public BigDecimal getValorTotalDividas() {
-		return valorTotalDividas;
-	}
-
-	public void setValorTotalDividas(BigDecimal valorTotalDividas) {
-		this.valorTotalDividas = valorTotalDividas;
-	}
-	
 	
 }

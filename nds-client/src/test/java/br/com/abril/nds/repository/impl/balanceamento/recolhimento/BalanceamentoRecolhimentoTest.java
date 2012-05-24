@@ -20,6 +20,7 @@ import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Editor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
+import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
@@ -45,15 +46,15 @@ import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamentoParcial;
 import br.com.abril.nds.model.seguranca.Usuario;
+import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.repository.impl.AbstractRepositoryImplTest;
-import br.com.abril.nds.repository.impl.LancamentoRepositoryImpl;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.vo.PeriodoVO;
 
 public class BalanceamentoRecolhimentoTest extends AbstractRepositoryImplTest {
 	
 	@Autowired
-	private LancamentoRepositoryImpl lancamentoRepository;
+	private LancamentoRepository lancamentoRepository;
 	
 	private Lancamento lancamentoVeja;
 	private Lancamento lancamentoQuatroRodas;
@@ -72,7 +73,10 @@ public class BalanceamentoRecolhimentoTest extends AbstractRepositoryImplTest {
 		Editor abril = Fixture.editoraAbril();
 		save(abril);
 		
-		Editor globo = Fixture.criarEditor("Globo", 687L);
+		PessoaJuridica juridicaFc = Fixture.juridicaFC();
+		save(juridicaFc);
+		
+		Editor globo = Fixture.criarEditor("Globo", 687L, juridicaFc, true);
 		save(globo);
 
 		tipoFornecedorPublicacao = Fixture.tipoFornecedorPublicacao();
