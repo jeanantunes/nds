@@ -272,6 +272,8 @@ public class ProdutoController {
 	private List<BaseComboVO> parseComboTipoDesconto(List<TipoDesconto> listaTipoDesconto) {
 		
 		List<BaseComboVO> listaBaseComboVO = new ArrayList<BaseComboVO>();
+
+		listaBaseComboVO.add(getDefaultBaseComboVO());
 		
 		for (TipoDesconto tipoDesconto : listaTipoDesconto) {
 			listaBaseComboVO.add(new BaseComboVO(tipoDesconto.getId(), tipoDesconto.getDescricao()));
@@ -283,6 +285,8 @@ public class ProdutoController {
 	private List<BaseComboVO> parseComboTipoProduto(List<TipoProduto> listaTipoProduto) {
 		
 		List<BaseComboVO> listaBaseComboVO = new ArrayList<BaseComboVO>();
+
+		listaBaseComboVO.add(getDefaultBaseComboVO());
 		
 		for (TipoProduto tipoProduto : listaTipoProduto) {
 			listaBaseComboVO.add(new BaseComboVO(tipoProduto.getId(), tipoProduto.getDescricao()));
@@ -294,6 +298,8 @@ public class ProdutoController {
 	private List<BaseComboVO> parseComboFornecedor(List<Fornecedor> listaFornecedor) {
 		
 		List<BaseComboVO> listaBaseComboVO = new ArrayList<BaseComboVO>();
+
+		listaBaseComboVO.add(getDefaultBaseComboVO());
 		
 		for (Fornecedor fornecedor : listaFornecedor) {
 			listaBaseComboVO.add(new BaseComboVO(fornecedor.getId(), fornecedor.getJuridica().getRazaoSocial()));
@@ -306,6 +312,8 @@ public class ProdutoController {
 		
 		List<BaseComboVO> listaBaseComboVO = new ArrayList<BaseComboVO>();
 		
+		listaBaseComboVO.add(getDefaultBaseComboVO());
+		
 		for (Editor editor : listaEditor) {
 			listaBaseComboVO.add(new BaseComboVO(editor.getId(), editor.getNome()));
 		}
@@ -313,4 +321,8 @@ public class ProdutoController {
 		return listaBaseComboVO;
 	}
 
+	private BaseComboVO getDefaultBaseComboVO() {
+		return new BaseComboVO(0L, "");
+	}
+	
 }

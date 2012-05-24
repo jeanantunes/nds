@@ -28,19 +28,20 @@
 			
 		function mostra_faturamento() {
 			$('.faturamento').show();
+
+			$("#percentualFaturamento").val("");
+			
+			$('.taxa').hide();
 		}
 
 		function mostra_taxa() {
+			
 			$('.taxa').show();
-			/*
-			var selected = $("#idCobranca").checked;
-				
-			if (selected) {
-				$('.taxa').show();
-			} else {
-				$('.taxa').hide();
-			}
-			*/
+
+			$('.faturamento').hide();
+
+			$("#percentualFaturamento").val("");
+			$("#baseCalculoCadastro").val(0);
 		}
 		
 		function iniciarGrid() {
@@ -111,7 +112,6 @@
 
 		function limparModalCadastro() {
 
-			$("#codigoCadastro").removeAttr('disabled');
 			$("#idServico").val("");
 			$("#codigoCadastro").val("");
 			$("#descricaoCadastro").val("");
@@ -159,7 +159,7 @@
 		function carregarEdicao(servico) {
 
 			$("#idServico").val(servico.id);
-			$("#codigoCadastro").val(servico.codigo);
+			$("#codigoCadastro").val(servico.id);
 			$("#descricaoCadastro").val(servico.descricao);
 			$("#taxaFixaCadastro").val(servico.taxa);
 			$("#periodicidadeCadastro").val(servico.periodicidade);
@@ -176,25 +176,25 @@
 		function salvarServico() {
 
 			var id = $("#idServico").val(); 
-			var codigo = $("#codigoCadastro").val();
 			var descricao = $("#descricaoCadastro").val();
 			var taxa = $("#taxaFixaCadastro").val();
-			var periodicidade = $("#periodicidadeCadastro").val();
+			var percentualFaturamento = $("#percentualFaturamento").val();
 			var baseCalculo = $("#baseCalculoCadastro").val();
-			var percentual = $("#percentualCalculoBase").val();   	
-			var periodicidadeDiaria = $("#periodicidadeDiaria").val();
+			var periodicidadeCadastro = $("#periodicidadeCadastro").val();
+			var diaSemana = $("#diaSemana").val();
 			var diaMes = $("#diaMes").val();
+			var cobranca = $("#radioCobranca").val();
 			
 			$.postJSON("<c:url value='/servico/cadastroServico/salvarServico' />", 
 					   "id=" + id +
-					   "&codigo=" + codigo +
 					   "&descricao=" + descricao +
 					   "&taxaFixa="+ taxa +
-					   "&periodicidade=" + periodicidade +
+					   "&percentualFaturamento=" + percentualFaturamento +
 					   "&baseCalculo=" + baseCalculo +
-					   "&percentualCalculo=" + percentual +
-					   "&periodicidadeDiaria=" + periodicidadeDiaria +
-					   "&diaMes=" + diaMes,
+					   "&periodicidadeCadastro=" + periodicidadeCadastro +
+					   "&diaSemana=" + diaSemana +
+					   "&diaMes=" + diaMes +
+					   "&cobranca=" + cobranca,
 					   function(result) {
 					   							   		
 							var tipoMensagem = result.tipoMensagem;
@@ -343,7 +343,7 @@
 		<table width="580" border="0" cellspacing="2" cellpadding="0">
 			<tr>
 				<td>C&oacute;digo:</td>
-				<td colspan="3"><input id="codigoCadastro" type="text" style="width:270px;" /></td>
+				<td colspan="3"><input id="codigoCadastro" type="text" style="width:270px;" disabled="disabled" /></td>
 			</tr>
 			<tr>
 				<td>Descri&ccedil;&atilde;o:</td>
@@ -360,7 +360,7 @@
 					<strong>Cobran&ccedil;a:</strong>
 				</td>
 				<td width="20">
-					<input name="input" id="idCobranca" type="checkbox" value="" onchange="mostra_taxa();" />
+					<input name="radioCobranca" id="radioCobranca" type="radio" value="TF" onchange="mostra_taxa();" />
 				</td>
 				<td width="177">
 					Taxa Fixa R$
@@ -372,14 +372,14 @@
 			<tr>
 				<td>&nbsp;</td>
 				<td>
-					<input name="input" type="checkbox" value="" onclick="mostra_faturamento();" />
+					<input name="radioCobranca" id="radioCobranca" type="radio" value="PF" onclick="mostra_faturamento();" />
 				</td>
 				<td>
 					Percentual do Faturamento
 				</td>
 				<td>
 					<div class="faturamento">
-						<input id="percentualCalculoBase" type="text" style="width:70px; text-align:right;" />&nbsp;%
+						<input id="percentualFaturamento" type="text" style="width:70px; text-align:right;" />&nbsp;%
 					</div>
 				</td>
 			</tr>
@@ -390,7 +390,7 @@
 				<td>
 					<div class="faturamento">
 						<select id="baseCalculoCadastro" style="width:150px;">
-							<option selected="selected">Selecione...</option>
+							<option value="" selected="selected"></option>
 							<option value="B" >Faturamento Bruto</option>
 							<option value="L" >Faturamento L&iacute;quido</option>
 						</select>
@@ -411,11 +411,11 @@
 			</tr>
 			<tr>
 				<td width="86">Periodicidade:</td>
-				<td width="20"><input id="periodicidadeCadastro" name="periodicidade" type="radio" value="D" onclick="mostra_diario();" /></td>
+				<td width="20"><input id="periodicidadeCadastro" name="periodicidadeCadastro" type="radio" value="D" onclick="mostra_diario();" /></td>
 				<td width="87">Di&aacute;rio</td>
-				<td width="20"><input id="periodicidadeCadastro" name="periodicidade" type="radio" value="S" onclick="mostra_semanal();" /></td>
+				<td width="20"><input id="periodicidadeCadastro" name="periodicidadeCadastro" type="radio" value="S" onclick="mostra_semanal();" /></td>
 				<td width="148">Semanal</td>
-				<td width="20"><input id="periodicidadeCadastro" name="periodicidade" type="radio" value="M" onclick="mostra_mensal();" /></td>
+				<td width="20"><input id="periodicidadeCadastro" name="periodicidadeCadastro" type="radio" value="M" onclick="mostra_mensal();" /></td>
 				<td width="191">Mensal</td>
 			</tr>
 			<tr>
@@ -425,12 +425,13 @@
 				<td>&nbsp;</td>
 				<td>
 					<div class="semanal">
-						<select id="periodicidadeDiaria" style="width:120px;">
-							<option value="1" >Segunda-feira</option>
-							<option value="2" >Ter&ccedil;a-feira</option>
-							<option value="3" >Quarta-feira</option>
-							<option value="4" >Quinta-feira</option>
-							<option value="5" >Sexta-feira</option>
+						<select id="diaSemana" style="width:120px;">
+							<option value="-1" ></option>
+							<option value="2" >Segunda-feira</option>
+							<option value="3" >Ter&ccedil;a-feira</option>
+							<option value="4" >Quarta-feira</option>
+							<option value="5" >Quinta-feira</option>
+							<option value="6" >Sexta-feira</option>
 						</select>
 					</div>
 				</td>
