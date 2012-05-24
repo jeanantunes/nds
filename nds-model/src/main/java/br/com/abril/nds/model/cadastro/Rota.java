@@ -1,6 +1,8 @@
 package br.com.abril.nds.model.cadastro;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -8,6 +10,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -33,8 +36,17 @@ public class Rota implements Serializable {
 	private String descricaoRota;
 	
 	@ManyToOne
-	@JoinColumn(name = "ROTEIRO_ID")
+	@JoinColumn(name = "ROTEIRO_ID", nullable = false )
 	private Roteiro roteiro;
+	
+
+	@OneToMany(mappedBy = "rota")
+	private List<Roteirizacao> roteirizacao = new ArrayList<Roteirizacao>();
+	
+	@Column(name="ORDEM", nullable = false)
+	private Integer ordem;
+	
+	
 	
 	public Long getId() {
 		return id;
@@ -66,5 +78,21 @@ public class Rota implements Serializable {
 
 	public void setRoteiro(Roteiro roteiro) {
 		this.roteiro = roteiro;
+	}
+
+	public Integer getOrdem() {
+		return ordem;
+	}
+
+	public void setOrdem(Integer ordem) {
+		this.ordem = ordem;
+	}
+
+	public List<Roteirizacao> getRoteirizacao() {
+		return roteirizacao;
+	}
+
+	public void setRoteirizacao(List<Roteirizacao> roteirizacao) {
+		this.roteirizacao = roteirizacao;
 	}
 }
