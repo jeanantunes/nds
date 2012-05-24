@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -114,7 +115,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 	
 	@Override
 	@Transactional
-	public void gerarCobranca(Long idCota, Long idUsuario) {
+	public Set<String> gerarCobranca(Long idCota, Long idUsuario) {
 		
 		// verificar se a operação de conferencia ja foi concluida
 		StatusOperacao statusOperacao = this.controleConferenciaEncalheRepository.obterStatusConferenciaDataOperacao();
@@ -155,6 +156,8 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		
 		List<String> msgs = new ArrayList<String>();
 		
+		Set<String> setNossoNumero = new HashSet<String>();
+		
 		// buscar movimentos financeiros da cota para a data de operação em andamento
 		List<MovimentoFinanceiroCota> listaMovimentoFinanceiroCota = 
 				this.movimentoFinanceiroCotaRepository.obterMovimentoFinanceiroCotaDataOperacao(idCota, new Date());
@@ -168,6 +171,8 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			
 			List<MovimentoFinanceiroCota> movimentos = new ArrayList<MovimentoFinanceiroCota>();
 			
+			String nossoNumero = null;
+			
 			for (MovimentoFinanceiroCota movimentoFinanceiroCota : listaMovimentoFinanceiroCota){
 				if (movimentoFinanceiroCota.getCota().equals(ultimaCota)){
 					
@@ -179,11 +184,16 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 					}
 					
 					//Decide se gera movimento consolidado ou postergado para a cota
-					this.inserirConsolidadoFinanceiro(ultimaCota, movimentos,
+					nossoNumero = this.inserirConsolidadoFinanceiro(ultimaCota, movimentos,
 							politicaPrincipal.getFormaCobranca().getValorMinimoEmissao(), politicaPrincipal.isAcumulaDivida(), idUsuario, 
 							tipoCobranca != null ? tipoCobranca : politicaPrincipal.getFormaCobranca().getTipoCobranca(),
 							politicaPrincipal.getNumeroDiasNovaCobranca(),
 							distribuidor, msgs);
+					
+					if (nossoNumero != null){
+						
+						setNossoNumero.add(nossoNumero);
+					}
 					
 					//Limpa dados para contabilizar próxima cota
 					ultimaCota = movimentoFinanceiroCota.getCota();
@@ -199,16 +209,23 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			}
 			
 			//Decide se gera movimento consolidado ou postergado para a ultima cota
-			this.inserirConsolidadoFinanceiro(ultimaCota, movimentos, politicaPrincipal.getFormaCobranca().getValorMinimoEmissao(),
+			nossoNumero = this.inserirConsolidadoFinanceiro(ultimaCota, movimentos, politicaPrincipal.getFormaCobranca().getValorMinimoEmissao(),
 					politicaPrincipal.isAcumulaDivida(), idUsuario, 
 					tipoCobranca != null ? tipoCobranca : politicaPrincipal.getFormaCobranca().getTipoCobranca(),
 					politicaPrincipal.getNumeroDiasNovaCobranca(), distribuidor, msgs);
+			
+			if (nossoNumero != null){
+				
+				setNossoNumero.add(nossoNumero);
+			}
 		}
 		
 		if (!msgs.isEmpty()){
 			
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, msgs));
 		}
+		
+		return setNossoNumero;
 	}
 	
 	private boolean verificarCotaTemBanco(Cota cota, List<String> msgs){
@@ -236,7 +253,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		return valorMinimo;
 	}
 	
-	private boolean inserirConsolidadoFinanceiro(Cota cota, List<MovimentoFinanceiroCota> movimentos, BigDecimal valorMininoDistribuidor,
+	private String inserirConsolidadoFinanceiro(Cota cota, List<MovimentoFinanceiroCota> movimentos, BigDecimal valorMininoDistribuidor,
 			boolean acumulaDivida, Long idUsuario, TipoCobranca tipoCobranca, int qtdDiasNovaCobranca, Distribuidor distribuidor, List<String> msgs){
 		
 		ConsolidadoFinanceiroCota consolidadoFinanceiroCota = new ConsolidadoFinanceiroCota();
@@ -350,7 +367,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			
 			msgs.add("Forma de cobrança principal para cota de número: " + cota.getNumeroCota() + " não encontrada.");
 			
-			return false;
+			return null;
 		}
 		
 		Date dataVencimento = null;
@@ -381,7 +398,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			
 			msgs.add("Não foi possível calcular data de vencimento da cobrança, verifique os parâmetros de cobrança da cota número: " + cota.getNumeroCota());
 			
-			return false;
+			return null;
 		}
 		
 		Divida novaDivida = null;
@@ -489,6 +506,8 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		
 		this.consolidadoFinanceiroRepository.adicionar(consolidadoFinanceiroCota);
 		
+		Cobranca cobranca = null;
+		
 		if (novaDivida != null){
 			if (novaDivida.getId() == null){
 				this.dividaRepository.adicionar(novaDivida);
@@ -499,8 +518,6 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			if (historicoAcumuloDivida != null){
 				this.historicoAcumuloDividaRepository.adicionar(historicoAcumuloDivida);
 			}
-			
-			Cobranca cobranca = null;
 			
 			switch (tipoCobranca){
 				case BOLETO:
@@ -559,9 +576,13 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			this.movimentoFinanceiroCotaRepository.adicionar(movimentoFinanceiroCota);
 		}
 		
-		return true;
+		if (cobranca != null){
+			
+			return cobranca.getNossoNumero();
+		}
+		
+		return null;
 	}
-	
 	
 	@Transactional(readOnly=true)
 	@Override
