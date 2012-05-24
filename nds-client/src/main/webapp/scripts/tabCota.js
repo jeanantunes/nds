@@ -86,6 +86,13 @@ function TabCota(tabName) {
 						
 		    select: function(event, ui) {
 		    	
+		    	if(ui.index == 3){
+		    		$("#btn_confirmar_cota").hide();
+		    	}
+		    	else{
+		    		$("#btn_confirmar_cota").show();
+		    	}
+		    	
 		    	if(!T.funcaoSalvar) {
 		    		return;
 		    	}
@@ -96,7 +103,7 @@ function TabCota(tabName) {
 		    		
 		    		exibirMensagemDialog(
 							"WARNING", 
-							["Os dados cadastrais precisam ser confirmados para proseguir com o cadasto da cota!"],""
+							["Os dados cadastrais precisam ser confirmados para prosseguir com o cadastro da cota!"],""
 						);
 						
 		    		return false;

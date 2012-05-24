@@ -70,4 +70,16 @@ public class EnderecoRepositoryImpl extends AbstractRepository<Endereco, Long> i
 		
 		return query.list();
 	}
+
+	@Override
+	public List<String> obterMunicipiosCotas() {
+		StringBuilder hql = new StringBuilder("select endereco.cidade ");
+		hql.append(" from EnderecoCota enderecoCota ")
+		   .append(" join enderecoCota.endereco endereco ")
+		   .append(" group by endereco.cidade"); 
+
+		Query query = this.getSession().createQuery(hql.toString());
+
+		return query.list();
+	}
 }

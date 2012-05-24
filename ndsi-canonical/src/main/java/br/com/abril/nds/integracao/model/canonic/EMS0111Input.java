@@ -5,50 +5,54 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 import com.ancientprogramming.fixedformat4j.annotation.Field;
+import com.ancientprogramming.fixedformat4j.annotation.FixedFormatPattern;
 import com.ancientprogramming.fixedformat4j.annotation.Record;
 
 @Record
 public class EMS0111Input extends IntegracaoDocument implements Serializable {
-
+	/**
+	 * @author Jones.Costa
+	 * @version 1.0
+	 */
 	private static final long serialVersionUID = -6653473316882827815L;
 
 	private Long codigoDistribuidor;
 	private String contextoProduto;
 	private Long codigoFornecedorProduto;
-	private Long codigoProduto;
+	private String codigoProduto;
 	private Long edicaoProduto;	
 	private Long numeroLancamento;	
 	private Long numeroFase;	
 	private Date dataLancamento;	
 	private String tipoLancamento;	
 	private String tipoProduto;	
-	private Long repartePrevisto;	
+	private BigDecimal repartePrevisto;	
 	private BigDecimal pctAbrangencia;	
 	private BigDecimal pctEntregaAntecipada;	
 	private String condCotasAtuais;	
-	private String tipoBaseRegiaa;	
+	private String tipoBaseRegiao;	
 	private String tipoHistorico;	
 	private String condBasePacotePadrao;	
 	private BigDecimal precoPrevisto;	
-	private Long repartePromocional;	
+	private BigDecimal repartePromocional;	
 	private String condDistribuicaoFases;
 	
 	@Field(offset = 1, length = 7)
 	public Long getCodigoDistribuidor() {
 		return codigoDistribuidor;
 	}
-	
 	public void setCodigoDistribuidor(Long codigoDistribuidor) {
 		this.codigoDistribuidor = codigoDistribuidor;
 	}
 	
+
 	public String getContextoProduto() {
 		return contextoProduto;
 	}
-	
 	public void setContextoProduto(String contextoProduto) {
 		this.contextoProduto = contextoProduto;
 	}
+	
 	
 	public Long getCodigoFornecedorProduto() {
 		return codigoFornecedorProduto;
@@ -58,14 +62,17 @@ public class EMS0111Input extends IntegracaoDocument implements Serializable {
 		this.codigoFornecedorProduto = codigoFornecedorProduto;
 	}
 	
+	
 	@Field(offset = 34, length = 9)
-	public Long getCodigoProduto() {
+	public String getCodigoProduto() {
 		return codigoProduto;
 	}
 	
-	public void setCodigoProduto(Long codigoProduto) {
+	public void setCodigoProduto(String codigoProduto) {
 		this.codigoProduto = codigoProduto;
 	}
+	
+	
 	
 	@Field(offset = 43, length = 3)
 	public Long getEdicaoProduto() {
@@ -76,6 +83,8 @@ public class EMS0111Input extends IntegracaoDocument implements Serializable {
 		this.edicaoProduto = edicaoProduto;
 	}
 	
+	
+	
 	public Long getNumeroLancamento() {
 		return numeroLancamento;
 	}
@@ -83,6 +92,8 @@ public class EMS0111Input extends IntegracaoDocument implements Serializable {
 	public void setNumeroLancamento(Long numeroLancamento) {
 		this.numeroLancamento = numeroLancamento;
 	}
+	
+	
 	
 	public Long getNumeroFase() {
 		return numeroFase;
@@ -92,7 +103,9 @@ public class EMS0111Input extends IntegracaoDocument implements Serializable {
 		this.numeroFase = numeroFase;
 	}
 	
+	
 	@Field(offset = 50, length = 8)
+	@FixedFormatPattern("yyyyMMdd")
 	public Date getDataLancamento() {
 		return dataLancamento;
 	}
@@ -100,6 +113,7 @@ public class EMS0111Input extends IntegracaoDocument implements Serializable {
 	public void setDataLancamento(Date dataLancamento) {
 		this.dataLancamento = dataLancamento;
 	}
+	
 	
 	@Field(offset = 58, length = 3)
 	public String getTipoLancamento() {
@@ -110,6 +124,7 @@ public class EMS0111Input extends IntegracaoDocument implements Serializable {
 		this.tipoLancamento = tipoLancamento;
 	}
 	
+	
 	public String getTipoProduto() {
 		return tipoProduto;
 	}
@@ -118,14 +133,17 @@ public class EMS0111Input extends IntegracaoDocument implements Serializable {
 		this.tipoProduto = tipoProduto;
 	}
 	
+	
 	@Field(offset = 62, length = 8)
-	public Long getRepartePrevisto() {
+	public BigDecimal getRepartePrevisto() {
 		return repartePrevisto;
 	}
 	
-	public void setRepartePrevisto(Long repartePrevisto) {
+	public void setRepartePrevisto(BigDecimal repartePrevisto) {
 		this.repartePrevisto = repartePrevisto;
 	}
+	
+	
 	
 	public BigDecimal getPctAbrangencia() {
 		return pctAbrangencia;
@@ -135,6 +153,7 @@ public class EMS0111Input extends IntegracaoDocument implements Serializable {
 		this.pctAbrangencia = pctAbrangencia;
 	}
 	
+	
 	public BigDecimal getPctEntregaAntecipada() {
 		return pctEntregaAntecipada;
 	}
@@ -142,6 +161,7 @@ public class EMS0111Input extends IntegracaoDocument implements Serializable {
 	public void setPctEntregaAntecipada(BigDecimal pctEntregaAntecipada) {
 		this.pctEntregaAntecipada = pctEntregaAntecipada;
 	}
+	
 	
 	public String getCondCotasAtuais() {
 		return condCotasAtuais;
@@ -151,13 +171,15 @@ public class EMS0111Input extends IntegracaoDocument implements Serializable {
 		this.condCotasAtuais = condCotasAtuais;
 	}
 	
-	public String getTipoBaseRegiaa() {
-		return tipoBaseRegiaa;
+	
+	public String getTipoBaseRegiao() {
+		return tipoBaseRegiao;
 	}
 	
-	public void setTipoBaseRegiaa(String tipoBaseRegiaa) {
-		this.tipoBaseRegiaa = tipoBaseRegiaa;
+	public void setTipoBaseRegiao(String tipoBaseRegiao) {
+		this.tipoBaseRegiao = tipoBaseRegiao;
 	}
+	
 	
 	public String getTipoHistorico() {
 		return tipoHistorico;
@@ -167,6 +189,7 @@ public class EMS0111Input extends IntegracaoDocument implements Serializable {
 		this.tipoHistorico = tipoHistorico;
 	}
 	
+	
 	public String getCondBasePacotePadrao() {
 		return condBasePacotePadrao;
 	}
@@ -174,6 +197,7 @@ public class EMS0111Input extends IntegracaoDocument implements Serializable {
 	public void setCondBasePacotePadrao(String condBasePacotePadrao) {
 		this.condBasePacotePadrao = condBasePacotePadrao;
 	}
+	
 	
 	public BigDecimal getPrecoPrevisto() {
 		return precoPrevisto;
@@ -183,14 +207,16 @@ public class EMS0111Input extends IntegracaoDocument implements Serializable {
 		this.precoPrevisto = precoPrevisto;
 	}
 	
+	
 	@Field(offset = 92, length = 8)
-	public Long getRepartePromocional() {
+	public BigDecimal getRepartePromocional() {
 		return repartePromocional;
 	}
 	
-	public void setRepartePromocional(Long repartePromocional) {
+	public void setRepartePromocional(BigDecimal repartePromocional) {
 		this.repartePromocional = repartePromocional;
 	}
+	
 	
 	public String getCondDistribuicaoFases() {
 		return condDistribuicaoFases;
@@ -199,4 +225,6 @@ public class EMS0111Input extends IntegracaoDocument implements Serializable {
 	public void setCondDistribuicaoFases(String condDistribuicaoFases) {
 		this.condDistribuicaoFases = condDistribuicaoFases;
 	}
+	
+	
 }

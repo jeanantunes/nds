@@ -165,6 +165,8 @@ fieldset label {
 					<li><span class="classCadastros">&nbsp;</span><a
 						href="javascript:;">Cadastro</a>
 						<ul>
+							<li><a href='<c:url value="/produto"/>'>Produto</a>
+							</li>
 							<li><a href='<c:url value="/banco/bancos"/>'>Bancos</a>
 							</li>
 							<li><a href='<c:url value="/cadastro/box"/>'>Box</a>
@@ -193,7 +195,7 @@ fieldset label {
 							<li><a href="Financeiro/baixa_bancaria_manual.htm">Baixa
 									Bancária Manual</a>
 							</li>
-							<li><a href='<c:url value="/financeiro/divida/manual"/>'>Baixa Manual de Dívidas</a>
+							<li><a href='<c:url value=""/>'>Baixa Manual de Dívidas</a>
 							</li>
 							<li><a href='<c:url value="/financeiro/boletos/consulta"/>'>Consulta
 									Boletos por Cota</a>
@@ -264,6 +266,7 @@ fieldset label {
 							</li>
 							<li><a href="<c:url value='/lancamento/relatorioVendas'/>">Relatório de Vendas</a>
 							</li>
+							<li><a href="<c:url value='/lancamento/vendaProduto'/>">Venda por Produto</a></li>
 							<li><a href="Lancamento/help_lancamento.htm">Help</a>
 							</li>
 						</ul></li>
@@ -372,13 +375,20 @@ fieldset label {
 									Controle Aprovação
 								</a>
 							</li>
-							<li><a href="Administracao/cadastro_tipos_movimento.htm">Cadastrar
-									Tipos de Movimento</a>
-							</li>
+							
+							<li><a href='<c:url value="/administracao/tipoDescontoCota"/>'>Tipo de Desconto Cota</a></li>
+							
+							<li><a href="<c:url value="/tipoMovimento/index"/>">Tipo de Movimento</a></li>
+							
 							<li><a href="Administracao/iniciar_dia.htm">Iniciar o
 									Dia</a>
 							</li>
 							<li><a href="Administracao/fechar_dia.htm">Fechar o Dia</a>
+							</li>
+							<li>
+								<a href='<c:url value="/servico/cadastroServico"/>'>
+									Serviço de Entrega
+								</a>
 							</li>
 							<li><a href="Administracao/help_administracao.htm">Help</a>
 							</li>

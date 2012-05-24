@@ -1,6 +1,10 @@
 package br.com.abril.nds.client.vo;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
+
+import br.com.abril.nds.util.export.Export;
+import br.com.abril.nds.util.export.Exportable;
 
 /**
  * 
@@ -10,46 +14,43 @@ import java.io.Serializable;
  * @author InfoA2
  * 
  */
-public class RegistroCurvaABCDistribuidorVO implements Serializable {
+@Exportable
+public class RegistroCurvaABCDistribuidorVO extends RegistroCurvaABC implements Serializable {
 
 	/**
 	 * Serial Version UID
 	 */
 	private static final long serialVersionUID = 3849170873913801404L;
 
+	@Export(label = "Número", exhibitionOrder = 1)
 	private Integer numeroCota;
 
+	@Export(label = "Cota", exhibitionOrder = 2)
 	private String nomeCota;
 
+	@Export(label = "Quantidade de Pdvs", exhibitionOrder = 3)
 	private Integer quantidadePdvs;
 
-	// Baseado no Pdv principal
+	@Export(label = "Municipio", exhibitionOrder = 4)
 	private String municipio;
 
-	private Long vendaExemplares;
+	@Export(label = "Venda de Exemplares", exhibitionOrder = 5)
+	private BigDecimal vendaExemplares;
 
-	private Double faturamentoCapa;
-
-	private Double participacao;
-
-	private Double participacaoAcumulada;
+	@Export(label = "Faturamento da Capa", exhibitionOrder = 6)
+	private BigDecimal faturamentoCapa;
 
 	public RegistroCurvaABCDistribuidorVO() {
 	}
 
 	public RegistroCurvaABCDistribuidorVO(Integer numeroCota, String nomeCota,
-			Integer quantidadePdvs, String municipio, Long vendaExemplares,
-			Double faturamentoCapa, Double participacao,
-			Double participacaoAcumulada) {
-		super();
+			Integer quantidadePdvs, String municipio, BigDecimal vendaExemplares, BigDecimal faturamento) {
 		this.numeroCota = numeroCota;
 		this.nomeCota = nomeCota;
 		this.quantidadePdvs = quantidadePdvs;
 		this.municipio = municipio;
 		this.vendaExemplares = vendaExemplares;
-		this.faturamentoCapa = faturamentoCapa;
-		this.participacao = participacao;
-		this.participacaoAcumulada = participacaoAcumulada;
+		this.faturamentoCapa = faturamento;
 	}
 
 	public Integer getNumeroCota() {
@@ -84,36 +85,20 @@ public class RegistroCurvaABCDistribuidorVO implements Serializable {
 		this.municipio = municipio;
 	}
 
-	public Long getVendaExemplares() {
+	public BigDecimal getVendaExemplares() {
 		return vendaExemplares;
 	}
 
-	public void setVendaExemplares(Long vendaExemplares) {
+	public void setVendaExemplares(BigDecimal vendaExemplares) {
 		this.vendaExemplares = vendaExemplares;
 	}
 
-	public Double getFaturamentoCapa() {
+	public BigDecimal getFaturamentoCapa() {
 		return faturamentoCapa;
 	}
 
-	public void setFaturamentoCapa(Double faturamentoCapa) {
+	public void setFaturamentoCapa(BigDecimal faturamentoCapa) {
 		this.faturamentoCapa = faturamentoCapa;
 	}
-
-	public Double getParticipacao() {
-		return participacao;
-	}
-
-	public void setParticipacao(Double participacao) {
-		this.participacao = participacao;
-	}
-
-	public Double getParticipacaoAcumulada() {
-		return participacaoAcumulada;
-	}
-
-	public void setParticipacaoAcumulada(Double participacaoAcumulada) {
-		this.participacaoAcumulada = participacaoAcumulada;
-	}
-
+	
 }

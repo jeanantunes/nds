@@ -39,6 +39,10 @@ public class LogExecucaoMensagem implements Serializable {
 	
 	@Column(name = "MENSAGEM", length = 500, nullable = true)
 	private String mensagem;
+	
+	@Column(name = "MENSAGEM_INFO", length = 500, nullable = true)
+	private String mensagemInfo;
+	
 
 	public Long getId() {
 		return id;
@@ -86,5 +90,13 @@ public class LogExecucaoMensagem implements Serializable {
 
 	public void setMensagem(String mensagem) {
 		this.mensagem = mensagem;
+	}
+
+	public String getMensagemInfo() {
+		return mensagemInfo;
+	}
+
+	public void setMensagemInfo(String mensagemInfo) {
+		this.mensagemInfo = mensagemInfo;
 	}
 }

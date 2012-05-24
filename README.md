@@ -1,6 +1,11 @@
 NDS
 ===
 
+build Status
+------------
+
+[![Build Status](http://177.71.177.215:8080/jenkins/job/build/badge/icon)](http://177.71.177.215:8080/jenkins/job/build/)
+
 pre requisites
 --------------
 

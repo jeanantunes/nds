@@ -42,7 +42,7 @@ public interface BoletoService {
 
 	void enviarBoletoEmail(String nossoNumero);
 	
-	CobrancaVO obterDadosCobranca(String nossoNumero);
+	CobrancaVO obterDadosBoletoPorNossoNumero(String nossoNumero);
 	
 	byte[] gerarImpressaoBoletos(List<String> nossoNumeros) throws IOException;
 	
