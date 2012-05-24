@@ -11,8 +11,6 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
@@ -36,38 +34,25 @@ public class Fornecedor implements Serializable {
 	@GeneratedValue(generator = "FORNECEDOR_SEQ")
 	@Column(name = "ID")
 	private Long id;
-	
 	@Column(name = "COD_INTERFACE", nullable = true)
 	private Integer codigoInterface;
-	
 	@Column(name = "TIPO_CONTRATO")
 	private String tipoContrato;
-	
 	@Column(name = "PERMITE_BALANCEAMENTO", nullable = false)
 	private boolean permiteBalanceamento;
-	
 	@ManyToOne(optional = false)
 	@Cascade(value = org.hibernate.annotations.CascadeType.SAVE_UPDATE)
 	@JoinColumn(name = "JURIDICA_ID")
 	private PessoaJuridica juridica;
-	
 	@Enumerated(EnumType.STRING)
 	@Column(name = "SITUACAO_CADASTRO", nullable = false)
 	private SituacaoCadastro situacaoCadastro;
-	
 	@OneToMany(mappedBy = "fornecedor")
 	private Set<EnderecoFornecedor> enderecos = new HashSet<EnderecoFornecedor>();
-	
 	@Cascade(value = org.hibernate.annotations.CascadeType.SAVE_UPDATE)
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "TIPO_FORNECEDOR_ID")
 	private TipoFornecedor tipoFornecedor;
-	
-	@ManyToMany
-	@JoinTable(name = "PRODUTO_FORNECEDOR", 
-			   inverseJoinColumns = {@JoinColumn(name = "PRODUTO_ID")}, 
-			   joinColumns = {@JoinColumn(name = "FORNECEDORES_ID")})
-	private Set<Produto> produtos = new HashSet<Produto>();
 	
 	public Long getId() {
 		return id;
@@ -131,20 +116,6 @@ public class Fornecedor implements Serializable {
 
 	public void setCodigoInterface(Integer codigoInterface) {
 		this.codigoInterface = codigoInterface;
-	}
-	
-	/**
-	 * @return the produtos
-	 */
-	public Set<Produto> getProdutos() {
-		return produtos;
-	}
-
-	/**
-	 * @param produtos the produtos to set
-	 */
-	public void setProdutos(Set<Produto> produtos) {
-		this.produtos = produtos;
 	}
 
 	@Override

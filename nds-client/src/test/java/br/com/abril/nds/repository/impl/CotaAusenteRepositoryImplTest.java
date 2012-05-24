@@ -49,7 +49,7 @@ public class CotaAusenteRepositoryImplTest extends AbstractRepositoryImplTest {
 				"manoel@mail.com", "Manoel da Silva");
 		save(manoel);
 		
-		box1 = Fixture.criarBox("Box-1", "BX-001", TipoBox.LANCAMENTO);
+		box1 = Fixture.criarBox("Box-1", "BX-001", TipoBox.LANCAMENTO, false);
 		save(box1);
 		
 		cotaManoel = Fixture.cota(123, manoel, SituacaoCadastro.ATIVO, box1);
@@ -66,7 +66,7 @@ public class CotaAusenteRepositoryImplTest extends AbstractRepositoryImplTest {
 		Editor abril = Fixture.editoraAbril();
 		save(abril);
 		
-		Produto produto = Fixture.produto("12","Algum", "Nome-p", PeriodicidadeProduto.MENSAL, t, 5, 5);
+		Produto produto = Fixture.produto("12","Algum", "Nome-p", PeriodicidadeProduto.MENSAL, t, 5, 5, BigDecimal.TEN);
 		produto.setEditor(abril);
 		save(produto);
 		

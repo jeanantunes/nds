@@ -1,5 +1,6 @@
 package br.com.abril.nds.repository.impl;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.junit.Assert;
@@ -31,7 +32,7 @@ public class ProdutoRepositoryImplTest extends AbstractRepositoryImplTest {
 		save(tipoProduto);
 		
 		Produto produto =
-			Fixture.produto("1", "Revista Veja", "Veja", PeriodicidadeProduto.SEMANAL, tipoProduto, 5, 5);
+			Fixture.produto("1", "Revista Veja", "Veja", PeriodicidadeProduto.SEMANAL, tipoProduto, 5, 5, BigDecimal.TEN);
 		produto.setEditor(abril);
 		save(produto);
 	}
