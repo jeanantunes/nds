@@ -238,7 +238,7 @@
 					   	"id=" + id,
 						function (result) {
 
-							popularCombo(result[0], $("#comboTipoProduto"));
+							popularCombo(result[0], $("#comboTipoProdutoCadastro"));
 							popularCombo(result[1], $("#comboFornecedoresCadastro"));
 							popularCombo(result[2], $("#comboEditor"));
 							popularCombo(result[3], $("#comboTipoDesconto"));
@@ -360,7 +360,7 @@
 					<tr>
 						<td><strong>Tipo de Produto:</strong></td>
 						<td>
-							<select name="comboTipoProduto" id="comboTipoProduto" style="width:210px;" >
+							<select name="comboTipoProdutoCadastro" id="comboTipoProdutoCadastro" style="width:210px;" >
 								<option value="0" selected="selected"></option>
 							</select>
 						</td>
@@ -677,7 +677,7 @@
 				<td>Tipo de Produto:</td>
 				<td>
 					<select id="comboTipoProduto" style="width:207px;">
-						<option value="-1"></option>
+						<option value="0"></option>
 						<c:forEach items="${listaTipoProduto}" var="tipoProduto" >
 							<option value="${tipoProduto.id}">${tipoProduto.descricao}</option>
 						</c:forEach>
