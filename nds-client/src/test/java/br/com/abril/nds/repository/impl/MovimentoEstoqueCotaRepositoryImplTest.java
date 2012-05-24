@@ -248,7 +248,7 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 				"manoel@mail.com", "Manoel da Silva");
 		save(manoel);
 		
-		Box box1 = Fixture.criarBox("Box-1", "BX-001", TipoBox.LANCAMENTO);
+		Box box1 = Fixture.criarBox("Box-1", "BX-001", TipoBox.LANCAMENTO, false);
 		save(box1);
 		
 		cotaManoel = Fixture.cota(123, manoel, SituacaoCadastro.ATIVO, box1);
@@ -420,7 +420,7 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 				"manoel@mail.com", "Manoel da Silva");
 		save(manoel);
 		
-		Box box1 = Fixture.criarBox("Box-1", "BX-001", TipoBox.LANCAMENTO);
+		Box box1 = Fixture.criarBox("Box-1", "BX-001", TipoBox.LANCAMENTO, false);
 		save(box1);
 		
 		cotaManoel = Fixture.cota(123, manoel, SituacaoCadastro.ATIVO, box1);
@@ -745,7 +745,7 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 				"manoel@mail.com", "Manoel da Silva");
 		save(manoel);
 		
-		Box box1 = Fixture.criarBox("Box-45", "BX-045", TipoBox.LANCAMENTO);
+		Box box1 = Fixture.criarBox("Box-45", "BX-045", TipoBox.LANCAMENTO, false);
 		save(box1);
 		
 		

@@ -64,6 +64,8 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
 	@Autowired
 	private DividaRepository dividaRepository;
 	
+	ConsolidadoFinanceiroCota consolidado;
+	
 	@Before
 	public void setUp() {
 		Editor abril = Fixture.editoraAbril();
@@ -109,7 +111,7 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
 		Usuario usuarioJoao = Fixture.usuarioJoao();
 		save(usuarioJoao);
 		
-		Box box1 = Fixture.criarBox("Box-1", "BX-001", TipoBox.LANCAMENTO);
+		Box box1 = Fixture.criarBox("Box-1", "BX-001", TipoBox.LANCAMENTO, false);
 		save(box1);
 		
 		Cota cotaManoel = Fixture.cota(123, manoel, SituacaoCadastro.ATIVO,box1);
@@ -168,7 +170,7 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
 				new BigDecimal(200), Arrays.asList(mec), StatusAprovacao.APROVADO, new Date(), true);
 		save(movimentoFinanceiroCota);
 		
-		ConsolidadoFinanceiroCota consolidado = Fixture
+		consolidado = Fixture
 				.consolidadoFinanceiroCota(
 						Arrays.asList(movimentoFinanceiroCota), cotaManoel,
 						new Date(), new BigDecimal(200));
@@ -325,5 +327,11 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
 		Double valor = dividaRepository.obterSomaDividas(new FiltroCotaInadimplenteDTO());
 		
 		Assert.assertTrue(valor==210.0);					
+	}
+	
+	@Test
+	public void obterDividaPorIdConsolidado(){
+		
+		Assert.assertNotNull(this.dividaRepository.obterDividaPorIdConsolidado(consolidado.getId()));
 	}
 }

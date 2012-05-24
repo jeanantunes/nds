@@ -62,7 +62,7 @@ public class BoletoRepositoryImplTest extends AbstractRepositoryImplTest  {
 		save(pessoaJuridica);
 		
 		//CRIA UM OBJETO BOX NA SESSAO PARA TESTES
-		Box box = Fixture.criarBox("300", "Box 300", TipoBox.LANCAMENTO);
+		Box box = Fixture.criarBox("300", "Box 300", TipoBox.LANCAMENTO, false);
 		save(box);
 		
 		//CRIA UM OBJETO COTA NA SESSAO PARA TESTES

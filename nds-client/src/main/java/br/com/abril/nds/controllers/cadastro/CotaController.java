@@ -107,6 +107,11 @@ public class CotaController {
 		this.pdvController.preCarregamento();
 	}
 	
+	/**
+	 * Obtem e seta os dados de endereço e telefone na sessão.
+	 * 
+	 * @param idCota - identificador da cota
+	 */
 	private void carregarDadosEnderecoETelefone(Long idCota) { 
 		
 		limparDadosSession();
@@ -120,6 +125,11 @@ public class CotaController {
 	}
 
 	@SuppressWarnings("unchecked")
+	/**
+	 * Processa os dados de endereço, obtem os dados da sessão, grava os dados no banco de dados e atualiza os dados na sessão
+	 * 
+	 * @param idCota - identificador da cota
+	 */
 	private void processarEnderecosCota(Long idCota) {
 
 		List<EnderecoAssociacaoDTO> listaEnderecoAssociacaoSalvar = 
@@ -136,6 +146,11 @@ public class CotaController {
 		obterEndereco(idCota);
 	}
 
+	/**
+	 * Processa os dados de telefone, obtem os dados da sessão, grava os dados no banco de dados e atualiza os dados na sessão
+	 * 
+	 * @param idCota - identificador da cota
+	 */
 	private void processarTelefonesCota(Long idCota){
 		
 		Map<Integer, TelefoneAssociacaoDTO> map = this.obterTelefonesSalvarSessao();
@@ -158,6 +173,11 @@ public class CotaController {
 		obterTelefones(idCota);
 	}
 	
+	/**
+	 * Obtem os dados de telefone da sessão para atuaização e inclusão
+	 * 
+	 * @return Map<Integer, TelefoneAssociacaoDTO> 
+	 */
 	@SuppressWarnings("unchecked")
 	private Map<Integer, TelefoneAssociacaoDTO> obterTelefonesSalvarSessao(){
 		Map<Integer, TelefoneAssociacaoDTO> telefonesSessao = (Map<Integer, TelefoneAssociacaoDTO>) 
@@ -170,7 +190,12 @@ public class CotaController {
 		return telefonesSessao;
 	}
 
-	
+	/**
+	 * 
+	 * Obtem os dados de telefone da sessão para serem removidos
+	 * 
+	 * @return Set<Long> 
+	 */
 	@SuppressWarnings("unchecked")
 	private Set<Long> obterTelefonesRemoverSessao(){
 		Set<Long> telefonesSessao = (Set<Long>) 
@@ -182,7 +207,12 @@ public class CotaController {
 		
 		return telefonesSessao;
 	}
-
+	
+	/**
+	 * Efetua consulta de cota pelo número informado
+	 * 
+	 * @param numeroCota - número da cota
+	 */
 	@Post
 	public void pesquisarPorNumero(Integer numeroCota) {
 		
@@ -211,6 +241,11 @@ public class CotaController {
 		}		
 	}
 
+	/**
+	 * Efetua consulta pelo nome da cota informado, utilizado para auto complete da tela
+	 * 
+	 * @param nomeCota - nome da cota
+	 */
 	@Post
 	public void autoCompletarPorNome(String nomeCota) {
 		
@@ -235,6 +270,11 @@ public class CotaController {
 		this.result.use(Results.json()).from(listaCotasAutoComplete, "result").include("value", "chave").serialize();
 	}
 
+	/**
+	 * Efetua consulta pelo nome da cota informado
+	 * 
+	 * @param nomeCota - nome da cota
+	 */
 	@Post
 	public void pesquisarPorNome(String nomeCota) {
 		
@@ -254,6 +294,9 @@ public class CotaController {
 		this.result.use(Results.json()).from(cotaVO, "result").serialize();
 	}
 	
+	/**
+	 * Limpa os dados da sessão após o usúario fechar ou cancelar a operação de cadastro ou edição de uma cota
+	 */
 	@Post
 	public void cancelar(){
 		
@@ -262,6 +305,11 @@ public class CotaController {
 		this.result.use(Results.json()).from("", "result").serialize();
 	}
 	
+	/**
+	 * Retorna os dados de uma pessoa/cota referente o número do CNPJ informado
+	 * 
+	 * @param numeroCnpj - número CNPJ
+	 */
 	@Post
 	@Path("/obterDadosCNPJ")
 	public void obterDadosCNPJ(String numeroCnpj){
@@ -290,6 +338,11 @@ public class CotaController {
 
 	}
 	
+	/**
+	 * Retorna os dados de uma pessoa/cota referente o número do CPF informado
+	 * 
+	 * @param numeroCPF - número CPF
+	 */
 	@Post
 	@Path("/obterDadosCPF")
 	public void obterDadosCPF(String numeroCPF){
@@ -324,6 +377,11 @@ public class CotaController {
 
 	}
 	
+	/**
+	 * Retorna os dados default para inclusão de uma nova cota.
+	 * 
+	 * @return DadosCotaVO
+	 */
 	private DadosCotaVO getDadosInclusaoCota(){
 		
 		limparDadosSession();
@@ -338,6 +396,9 @@ public class CotaController {
 		return dadosCotaVO;
 	}
 	
+	/**
+	 * Prepara os dados default para inclusão de uma nova cota para CNPJ
+	 */
 	@Post
 	@Path("/incluirNovoCNPJ")
 	public void prepararDadosInclusaoCotaCNPJ(){
@@ -345,6 +406,9 @@ public class CotaController {
 		result.use(Results.json()).from(getDadosInclusaoCota(), "result").recursive().serialize();
 	}
 	
+	/**
+	 * Prepara os dados default para inclusão de uma nova cota para CPF
+	 */
 	@Post
 	@Path("/incluirNovoCPF")
 	public void prepararDadosInclusaoCota(){
@@ -352,6 +416,11 @@ public class CotaController {
 		result.use(Results.json()).from(getDadosInclusaoCota(), "result").recursive().serialize();
 	}
 
+	/**
+	 * Retorna uma lista de classificação de espectativa de faturamento da cota
+	 * 
+	 * @return List<ItemDTO<String, String>>
+	 */
 	private List<ItemDTO<String, String>> getListaClassificacao(){
 		
 		List<ItemDTO<String, String>> listaClassificacao = new ArrayList<ItemDTO<String,String>>();
@@ -364,6 +433,11 @@ public class CotaController {
 		return listaClassificacao;
 	}
 	
+	/**
+	 * Salva os dados de uma cota do tipo CNPJ
+	 * 
+	 * @param cotaDTO
+	 */
 	@Post
 	@Path("/salvarCotaCNPJ")
 	public void salvarCotaPessoaJuridica(CotaDTO cotaDTO){
@@ -381,6 +455,11 @@ public class CotaController {
 		result.use(Results.json()).from(cotaDTO, "result").recursive().serialize();
 	}
 	
+	/**
+	 * Salva os dados de uma cota do tipo CPF
+	 * 
+	 * @param cotaDTO
+	 */
 	@Post
 	@Path("/salvarCotaCPF")
 	public void salvarCotaPessoaFisica(CotaDTO cotaDTO){
@@ -398,6 +477,14 @@ public class CotaController {
 		result.use(Results.json()).from(cotaDTO, "result").recursive().serialize();
 	}
 	
+	/**
+	 * 
+	 * Salva os dados de uma cota e retorna os dados da cota atualizados.
+	 * 
+	 * @param cotaDTO
+	 * 
+	 * @return CotaDTO
+	 */
 	private CotaDTO salvarDadosCota(CotaDTO cotaDTO){
 		
 		if(cotaDTO.getDataInclusao() == null){
@@ -409,6 +496,9 @@ public class CotaController {
 		return cotaDTO = cotaService.obterDadosCadastraisCota(idCota);
 	}
 	
+	/**
+	 * Valida o formato das datas utilizadas na tela de cadastro de cota
+	 */
 	private void validarFormatoData(){
 		
 		List<String> mensagensValidacao = new ArrayList<String>();
@@ -436,6 +526,12 @@ public class CotaController {
 		}
 	}
 	
+	/**
+	 *
+	 *Prepara os dados de uma cota para edição.
+	 * 
+	 * @param idCota
+	 */
 	@Post
 	@Path("/editar")
 	public void editar(Long idCota){
@@ -448,7 +544,11 @@ public class CotaController {
 		result.use(Results.json()).from(cotaDTO, "result").recursive().serialize();
 	}
 	
-	
+	/**
+	 * Exclui uma cota, informada pelo usúario
+	 * 
+	 * @param idCota - identificador da cota
+	 */
 	@Post
 	@Path("/excluir")
 	public void excluir(Long idCota){
@@ -459,6 +559,12 @@ public class CotaController {
 				Constantes.PARAM_MSGS).recursive().serialize();
 	}
 	
+	/**
+	 * Salva os dados dos fornecedores, associa os fornecedores a cota informada.
+	 * 
+	 * @param fornecedores  - fornecedores selecionados
+	 * @param idCota - identificador da cota
+	 */
 	@Post
 	@Path("/salvarFornecedores")
 	public void salvarFornecedores(List<Long> fornecedores, Long idCota){
@@ -480,7 +586,12 @@ public class CotaController {
 				Constantes.PARAM_MSGS).recursive().serialize();
 	}
 	
-	
+	/**
+	 * Salva os dados referente a tipo de desconto, associa os tipos de desconto a cota informada.
+	 * 
+	 * @param descontos  - tipos de desconto selecionados
+	 * @param idCota - identificador da cota
+	 */
 	@Post
 	@Path("/salvarDescontos")
 	public void salvarDescontos(List<Long> descontos, Long idCota){
@@ -502,6 +613,11 @@ public class CotaController {
 				Constantes.PARAM_MSGS).recursive().serialize();
 	}
 	
+	/**
+	 * Salva os endereços da cota informada
+	 * 
+	 * @param idCota - identificador da cota
+	 */
 	@Post
 	@Path("/salvarEnderecos")
 	public void salvarEnderecos(Long idCota){
@@ -512,6 +628,11 @@ public class CotaController {
 				Constantes.PARAM_MSGS).recursive().serialize();
 	}
 	
+	/**
+	 * Salva os telefones da cota informada
+	 * 
+	 * @param idCota - identificador da cota
+	 */
 	@Post
 	@Path("/salvarTelefones")
 	public void salvarTelefones(Long idCota){
@@ -522,6 +643,11 @@ public class CotaController {
 				Constantes.PARAM_MSGS).recursive().serialize();
 	}
 	
+	/**
+	 * Obtem os fornecedores que não possui associação com a cota informada
+	 * 
+	 * @param idCota -identificador da cota
+	 */
 	@Post
 	@Path("/obterFornecedores")
 	public void obterFornecedores(Long idCota){
@@ -531,6 +657,11 @@ public class CotaController {
 		result.use(Results.json()).from(this.getFornecedores(fornecedores),"result").recursive().serialize();
 	}
 	
+	/**
+	 * Obtem os fornecedores associados a cota informada
+	 * 
+	 * @param idCota -identificador da cota
+	 */
 	@Post
 	@Path("/obterFornecedoresSelecionados")
 	public void obterFornecedoresSelecionados(Long idCota){
@@ -541,6 +672,13 @@ public class CotaController {
 	
 	}
 	
+	/**
+	 * Retorna uma lista de fornecedores para exibição na tela
+	 * 
+	 * @param fornecedores - lista de fornecedores
+	 * 
+	 * @return List<ItemDTO<Long, String>>
+	 */
 	private List<ItemDTO<Long, String>> getFornecedores(List<Fornecedor> fornecedores){
 		
 		List<ItemDTO<Long, String>> itensFornecedor = new ArrayList<ItemDTO<Long,String>>();
@@ -553,6 +691,11 @@ public class CotaController {
 		return itensFornecedor;
 	}
 	
+	/**
+	 * Obtem os tipos de desconto que não possui associação com a cota informada
+	 * 
+	 * @param idCota -identificador da cota
+	 */
 	@Post
 	@Path("/obterDescontos")
 	public void obterDescontos(Long idCota){
@@ -562,6 +705,13 @@ public class CotaController {
 		result.use(Results.json()).from(this.getDescontos(descontos),"result").recursive().serialize();
 	}
 	
+	/**
+	 * Retorna uma lista de tipo de desconto para exibição na tela
+	 * 
+	 * @param descontos - lista de descontos
+	 * 
+	 * @return List<ItemDTO<Long, String>>
+	 */
 	private List<ItemDTO<Long, String>> getDescontos(List<TipoDesconto> descontos){
 		
 		List<ItemDTO<Long, String>> itensDesconto = new ArrayList<ItemDTO<Long,String>>();
@@ -572,7 +722,12 @@ public class CotaController {
 		}
 		return itensDesconto;
 	}
-
+	
+	/**
+	 * Obtem os tipos de desconto associados a cota informada
+	 * 
+	 * @param idCota -identificador da cota
+	 */
 	@Post
 	@Path("/obterDescontosSelecionados")
 	public void obterDescontosSelecionados(Long idCota){
@@ -582,6 +737,11 @@ public class CotaController {
 		result.use(Results.json()).from(this.getDescontos(descontos),"result").recursive().serialize();
 	}
 	
+	/**
+	 * Valida se o número da cota informada para histórico base é ativo.
+	 * 
+	 * @param numeroCota - número da cota
+	 */
 	@Post
 	@Path("/validarNumeroCotaHistoricoBase")
 	public void validarNumeroCotaHistoricoBase(Integer numeroCota){
@@ -599,6 +759,17 @@ public class CotaController {
 		this.result.use(Results.json()).from("", "result").recursive().serialize();
 	}
 	
+	/**
+	 * Efetua a pesquisa das cotas cadastradas no sistema, possibiltando a exclusão, visualização e edição.
+	 * 
+	 * @param numCota - número da cota
+	 * @param nomeCota - nome da cota
+	 * @param numeroCpfCnpj - número do CNPJ ou CPF
+	 * @param sortorder  - tipo de oredenação
+	 * @param sortname - campo a ser ordenado
+	 * @param page - página atual
+	 * @param rp - quantidade de páginas visualizadas
+	 */
 	@Post
 	@Path("/pesquisarCotas")
 	public void pesquisarCotas(Integer numCota,String nomeCota,String numeroCpfCnpj, String sortorder, 
@@ -647,6 +818,13 @@ public class CotaController {
 		
 	}
 	
+	/**
+	 * Retorna uma lista de cotaVO para renderização das informaçoes do grid na tela
+	 * 
+	 * @param listaCotas - lista de cotas
+	 * 
+	 * @return List<CotaVO> 
+	 */
 	private List<CotaVO> getListaCotaVO(List<CotaDTO> listaCotas) {
 		
 		List<CotaVO> listaRetorno  =  new ArrayList<CotaVO>();
@@ -670,6 +848,13 @@ public class CotaController {
 		return listaRetorno;
 	}
 	
+	/**
+	 * Retorna o número do CPF ou CNPJ com mascara.
+	 * 
+	 * @param numeroCpfCnpj - número do CPF ou CNPJ
+	 * 
+	 * @return String
+	 */
 	private String formatarNumeroCPFCNPJ(String numeroCpfCnpj){
 		
 		if(numeroCpfCnpj!= null && !numeroCpfCnpj.isEmpty()){
@@ -686,11 +871,26 @@ public class CotaController {
 		return "";
 	} 
 	
+	/**
+	 * Retorna um objeto com valor vazio caso seja nulo 
+	 * 
+	 * @param valor - valor a ser tratado
+	 * 
+	 * @return String
+	 */
 	private String tratarValor(Object valor){
 		
 		return (valor == null)?"":valor.toString();
 	}
-
+	
+	/**
+	 * Valida os parâmetros de pesquisa da consulta de cotas cadastradas
+	 * 
+	 * @param numCota - número da cota
+	 * @param nomeCota - nome da cota
+	 * @param numeroCpfCnpj - número do CNPJ ou CPF
+	 * 
+	 */
 	private void validarParametrosPesquisa(Integer numCota,String nomeCota, String numeroCpfCnpj) {
 		
 		if(numCota == null 
@@ -769,7 +969,7 @@ public class CotaController {
 	/**
 	 * Gera combos de Tipo de Entrega
 	 * 
-	 * @return
+	 * @return List<ItemDTO<Long, String>> 
 	 */
 	private List<ItemDTO<Long, String>> gerarTiposEntrega() {
 		
@@ -782,6 +982,11 @@ public class CotaController {
 		return itens;
 	}
 	
+	/**
+	 * Recarrega os dados de endereço referente a cota.
+	 * 
+	 * @param idCota - identificador da cota
+	 */
 	@Post
 	public void recarregarEndereco(Long idCota){
 		
@@ -790,6 +995,11 @@ public class CotaController {
 		this.result.use(Results.json()).from("", "result").serialize();
 	}
 	
+	/**
+	 * Recarrega os dados de telefone referente a cota.
+	 * 
+	 * @param idCota - identificador da cota
+	 */
 	@Post
 	public void recarregarTelefone(Long idCota){
 		
@@ -798,6 +1008,11 @@ public class CotaController {
 		this.result.use(Results.json()).from("", "result").serialize();
 	}
 	
+	/**
+	 * Obtem os endereços da sessão referente a cota informada
+	 * 
+	 * @param idCota - identificador da cota
+	 */
 	private void obterEndereco(Long idCota){
 		
 		List<EnderecoAssociacaoDTO> listaEnderecoAssociacao = this.cotaService.obterEnderecosPorIdCota(idCota);
@@ -806,6 +1021,11 @@ public class CotaController {
 	}
 	
 	
+	/**
+	 * Obtem os telefones da sessão referente a cota informada
+	 * 
+	 * @param idCota - identificador da cota
+	 */
 	private void obterTelefones(Long idCota){
 		
 		List<TelefoneAssociacaoDTO> listaTelefoneAssociacao = this.cotaService.buscarTelefonesCota(idCota, null);
@@ -813,6 +1033,9 @@ public class CotaController {
 		this.session.setAttribute(LISTA_TELEFONES_EXIBICAO, listaTelefoneAssociacao);
 	}
 	
+	/**
+	 * Limpa os dados da sessão referente a telefone e endereço.
+	 */
 	private void limparDadosSession(){
 		
 		this.session.removeAttribute(LISTA_TELEFONES_SALVAR_SESSAO);

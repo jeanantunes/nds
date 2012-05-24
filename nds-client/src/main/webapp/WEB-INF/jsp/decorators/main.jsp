@@ -165,6 +165,8 @@ fieldset label {
 					<li><span class="classCadastros">&nbsp;</span><a
 						href="javascript:;">Cadastro</a>
 						<ul>
+							<li><a href='<c:url value="/produto"/>'>Produto</a>
+							</li>
 							<li><a href='<c:url value="/banco/bancos"/>'>Bancos</a>
 							</li>
 							<li><a href='<c:url value="/cadastro/box"/>'>Box</a>
@@ -384,6 +386,11 @@ fieldset label {
 									Dia</a>
 							</li>
 							<li><a href="Administracao/fechar_dia.htm">Fechar o Dia</a>
+							</li>
+							<li>
+								<a href='<c:url value="/servico/cadastroServico"/>'>
+									Serviço de Entrega
+								</a>
 							</li>
 							<li><a href="Administracao/help_administracao.htm">Help</a>
 							</li>

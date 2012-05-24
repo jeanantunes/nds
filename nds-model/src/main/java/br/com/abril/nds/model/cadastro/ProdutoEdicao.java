@@ -12,6 +12,7 @@ import javax.persistence.DiscriminatorType;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
@@ -25,6 +26,8 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
 
+import br.com.abril.nds.model.estoque.MovimentoEstoque;
+import br.com.abril.nds.model.planejamento.ChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.Lancamento;
 
 /**
@@ -57,6 +60,9 @@ public class ProdutoEdicao implements Serializable {
 	@Column(name  = "NUMERO_EDICAO", nullable = false)
 	protected Long numeroEdicao;
 	
+	@Column(name = "NOME_COMERCIAL", nullable = true, unique = true, length = 24)
+	private String nomeComercial;
+	
 	@Column(name = "PRECO_VENDA", nullable = true)
 	protected BigDecimal precoVenda;
 	
@@ -82,6 +88,12 @@ public class ProdutoEdicao implements Serializable {
 	@OneToMany(mappedBy = "produtoEdicao")
 	protected Set<Lancamento> lancamentos = new HashSet<Lancamento>();
 	
+	@OneToMany(mappedBy = "produtoEdicao", fetch=FetchType.LAZY)
+	private Set<MovimentoEstoque> movimentoEstoques = new HashSet<MovimentoEstoque>();
+
+	@OneToMany(mappedBy = "produtoEdicao", fetch=FetchType.LAZY)
+	private Set<ChamadaEncalhe> chamadaEncalhes = new HashSet<ChamadaEncalhe>(); 
+
 	@Column(name = "POSSUI_BRINDE", nullable = true)
 	protected boolean possuiBrinde;
 	
@@ -354,6 +366,36 @@ public class ProdutoEdicao implements Serializable {
 	 */
 	public void setDataDesativacao(Date dataDesativacao) {
 		this.dataDesativacao = dataDesativacao;
+	}
+
+	public Set<MovimentoEstoque> getMovimentoEstoques() {
+		return movimentoEstoques;
+	}
+
+	public void setMovimentoEstoques(Set<MovimentoEstoque> movimentoEstoques) {
+		this.movimentoEstoques = movimentoEstoques;
+	}
+
+	public Set<ChamadaEncalhe> getChamadaEncalhes() {
+		return chamadaEncalhes;
+	}
+
+	public void setChamadaEncalhes(Set<ChamadaEncalhe> chamadaEncalhes) {
+		this.chamadaEncalhes = chamadaEncalhes;
+	}
+
+	/**
+	 * @return the nomeComercial
+	 */
+	public String getNomeComercial() {
+		return nomeComercial;
+	}
+
+	/**
+	 * @param nomeComercial the nomeComercial to set
+	 */
+	public void setNomeComercial(String nomeComercial) {
+		this.nomeComercial = nomeComercial;
 	}
 
 }

@@ -50,15 +50,12 @@ import br.com.abril.nds.model.cadastro.TipoCota;
 import br.com.abril.nds.model.cadastro.TipoDesconto;
 import br.com.abril.nds.model.cadastro.pdv.CaracteristicasPDV;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
-import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
-import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.financeiro.Cobranca;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.BaseReferenciaCotaRepository;
 import br.com.abril.nds.repository.CobrancaRepository;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.EnderecoCotaRepository;
-import br.com.abril.nds.repository.EnderecoRepository;
 import br.com.abril.nds.repository.HistoricoNumeroCotaRepository;
 import br.com.abril.nds.repository.HistoricoSituacaoCotaRepository;
 import br.com.abril.nds.repository.PdvRepository;
@@ -706,8 +703,10 @@ public class CotaServiceImpl implements CotaService {
 		cotaDTO.setNumeroCota(cota.getNumeroCota());
 		cotaDTO.setClassificacaoSelecionada(cota.getClassificacaoEspectativaFaturamento());
 		cotaDTO.setDataInclusao(cota.getInicioAtividade());
-		cotaDTO.setEmailNF((cota.getParametrosCotaNotaFiscalEletronica()!= null)?cota.getParametrosCotaNotaFiscalEletronica().getEmailNotaFiscalEletronica():"");
-		cotaDTO.setEmiteNFE((cota.getParametrosCotaNotaFiscalEletronica()!= null)?cota.getParametrosCotaNotaFiscalEletronica().getEmiteNotaFiscalEletronica():false);
+		cotaDTO.setEmailNF((cota.getParametrosCotaNotaFiscalEletronica()!= null)
+				?cota.getParametrosCotaNotaFiscalEletronica().getEmailNotaFiscalEletronica():"");
+		cotaDTO.setEmiteNFE((cota.getParametrosCotaNotaFiscalEletronica()!= null)
+				?cota.getParametrosCotaNotaFiscalEletronica().getEmiteNotaFiscalEletronica():false);
 		cotaDTO.setStatus(cota.getSituacaoCadastro());
 		
 		this.atribuirDadosPessoaCota(cotaDTO, cota.getPessoa());
@@ -716,6 +715,11 @@ public class CotaServiceImpl implements CotaService {
 		return cotaDTO;
 	}
 	
+	/**
+	 *  Atribui os dados da pessoa relacionada a cota ao objeto CotaDTO
+	 * @param cotaDTO
+	 * @param pessoa
+	 */
 	private void atribuirDadosPessoaCota(CotaDTO cotaDTO, Pessoa pessoa){
 		
 		if(pessoa == null){
@@ -752,6 +756,11 @@ public class CotaServiceImpl implements CotaService {
 		}
 	}
 	
+	/**
+	 * Atribui os dados das referencias histórico cota base ao objeto CotaDTO
+	 * @param cotaDTO
+	 * @param baseReferenciaCota
+	 */
 	private void atribuirDadosBaseReferencia(CotaDTO cotaDTO, BaseReferenciaCota baseReferenciaCota){
 		
 		if(baseReferenciaCota == null){
@@ -788,7 +797,7 @@ public class CotaServiceImpl implements CotaService {
 	public void excluirCota(Long idCota){
 		
 		if(idCota == null){
-			throw new ValidacaoException(TipoMensagem.WARNING, "Cota informada para exclusão invalida!");
+			throw new ValidacaoException(TipoMensagem.WARNING, "Cota informada para exclusão inválida!");
 		}
 		
 		Cota cota  = cotaRepository.buscarPorId(idCota);
@@ -845,7 +854,7 @@ public class CotaServiceImpl implements CotaService {
 	    
 	    cota.setClassificacaoEspectativaFaturamento(cotaDto.getClassificacaoSelecionada());
 	    
-	    cota.setPessoa(getPessoaCota(cota, cotaDto));
+	    cota.setPessoa(persistePessoaCota(cota, cotaDto));
 	    
 	    cota  = cotaRepository.merge(cota);
 	    
@@ -854,12 +863,16 @@ public class CotaServiceImpl implements CotaService {
 	    processarDadosReferenciaCota(baseReferenciaCota, cotaDto);
 	    
 	    if(incluirPDV){
-	    	processarDadosPDV(cota, cotaDto);
+	    	persisteDadosPDV(cota, cotaDto);
 	    }
 	
 	    return cota.getId();
 	}
 	
+	/**
+	 * Valida os dados referente histórico cota base
+	 * @param cotaDto
+	 */
 	private void validarHistoricoCotaBase(CotaDTO cotaDto) {
 		
 		if(cotaDto.getInicioPeriodo() != null && cotaDto.getFimPeriodo() != null ){
@@ -883,10 +896,14 @@ public class CotaServiceImpl implements CotaService {
 		}
 		
 		if(DateUtil.isDataInicialMaiorDataFinal(cotaDto.getInicioPeriodo(), cotaDto.getFimPeriodo())){
-			throw new ValidacaoException(TipoMensagem.WARNING,"O período preenchido nos campos [Período] [Até] referente à  cota base está invalido!");
+			throw new ValidacaoException(TipoMensagem.WARNING,"O período preenchido nos campos [Período] [Até] referente à  cota base está inválido!");
 		}
 	}
-
+	
+	/**
+	 * Valida o formato das inforamções referente ao cadastro de uma cota
+	 * @param cotaDto
+	 */
 	private void validarFormatoDados(CotaDTO cotaDto) {
 		
 		if(TipoPessoa.JURIDICA.equals(cotaDto.getTipoPessoa())){
@@ -920,8 +937,13 @@ public class CotaServiceImpl implements CotaService {
 		}
 		
 	}
-
-	private void processarDadosPDV(Cota cota,CotaDTO cotaDTO) {
+	
+	/**
+	 * Persiste dados básicos de um PDV referente a nova cota
+	 * @param cota
+	 * @param cotaDTO
+	 */
+	private void persisteDadosPDV(Cota cota,CotaDTO cotaDTO) {
 		
 		if(cota.getPdvs() == null || cota.getPdvs().isEmpty()){
 			
@@ -942,9 +964,14 @@ public class CotaServiceImpl implements CotaService {
 			
 			pdvRepository.adicionar(pdv);
 		}
-
 	}
-
+	
+	/**
+	 * Retorna os parâmetros de notas fiscais eletrônicas referente a uma cota 
+	 * @param cota
+	 * @param cotaDto
+	 * @return ParametrosCotaNotaFiscalEletronica
+	 */
 	private ParametrosCotaNotaFiscalEletronica getParamNFE(Cota cota, CotaDTO cotaDto){
 		
 		ParametrosCotaNotaFiscalEletronica paramNFE = cota.getParametrosCotaNotaFiscalEletronica(); 
@@ -959,6 +986,10 @@ public class CotaServiceImpl implements CotaService {
 	    return paramNFE;
 	}
 	
+	/**
+	 * Validas as informações referente ao cadasto de uma nova cota.
+	 * @param cotaDto
+	 */
 	private void validarParametrosObrigatoriosCota(CotaDTO cotaDto) {
 		
 		List<String> mensagensValidacao = new ArrayList<String>();
@@ -1024,7 +1055,13 @@ public class CotaServiceImpl implements CotaService {
 		}
 	}
 	
-	private Pessoa getPessoaCota(Cota cota, CotaDTO cotaDto){
+	/**
+	 * Persiste e retorna os dados da pessoa referente a cota Física ou Jurídica
+	 * @param cota
+	 * @param cotaDto
+	 * @return Pessoa
+	 */
+	private Pessoa persistePessoaCota(Cota cota, CotaDTO cotaDto){
 		
 		Pessoa pessoa = getPessoa(cotaDto, cota.getPessoa()) ;
 	    
@@ -1060,6 +1097,12 @@ public class CotaServiceImpl implements CotaService {
     	return pessoa;
 	}
 	
+	/**
+	 * Retona uma instância de Pessoa Jurídica ou Física
+	 * @param cotaDTO
+	 * @param pessoa
+	 * @return Pessoa
+	 */
 	private Pessoa getPessoa(CotaDTO cotaDTO, Pessoa pessoa){
 		
 		if(pessoa == null){
@@ -1084,6 +1127,12 @@ public class CotaServiceImpl implements CotaService {
 		return pessoa;
 	}
 	
+	/**
+	 * Persiste e retorna os dados referente a entidade BaseReferenciaCota.
+	 * @param cota
+	 * @param cotaDto
+	 * @return BaseReferenciaCota
+	 */
 	private BaseReferenciaCota processarDadosBaseReferenciaCota(Cota cota , CotaDTO cotaDto){
 		
 		BaseReferenciaCota baseReferenciaCota  = cota.getBaseReferenciaCota();
@@ -1113,6 +1162,11 @@ public class CotaServiceImpl implements CotaService {
 		
 	}
 	
+	/**
+	 * Persiste um conjunto de dados referente a entidade ReferenciaCota, associados a entidade BaseReferenciaCota
+	 * @param baseReferenciaCota
+	 * @param cotaDto
+	 */
 	private void processarDadosReferenciaCota(BaseReferenciaCota baseReferenciaCota, CotaDTO cotaDto){
 		
 		if(baseReferenciaCota == null){
@@ -1143,6 +1197,10 @@ public class CotaServiceImpl implements CotaService {
 		}
 	}
 	
+	/**
+	 * Valida os parâmetros referente ao objeto BaseReferenciaCota
+	 * @param cotaDto
+	 */
 	private void validarParametrosBaseReferenciaCota(CotaDTO cotaDto){
 		
 		if(tratarValorReferenciaCota(cotaDto.getHistoricoPrimeiraCota(),cotaDto.getHistoricoPrimeiraPorcentagem())){
@@ -1158,6 +1216,12 @@ public class CotaServiceImpl implements CotaService {
 		}
 	}
 	
+	/**
+	 * Retorna as Refencias de uma base referencia cota associada a uma cota
+	 * @param baseReferenciaCota
+	 * @param cotaDto
+	 * @return Set<ReferenciaCota>
+	 */
 	private Set<ReferenciaCota> getReferenciasCota(BaseReferenciaCota baseReferenciaCota, CotaDTO cotaDto){
 		
 		Set<ReferenciaCota> referenciasCota = new HashSet<ReferenciaCota>();
@@ -1187,6 +1251,13 @@ public class CotaServiceImpl implements CotaService {
 		return referenciasCota;
 	}
 	
+	/**
+	 * Retorna um objeto do tipo ReferenciaCota
+	 * @param numeroCota - número da cota
+	 * @param porcentagem - porcentagem
+	 * @param baseReferenciaCota - objeto BaseReferenciaCota
+	 * @return ReferenciaCota
+	 */
 	private ReferenciaCota getReferencaiCota(Integer numeroCota,BigDecimal porcentagem, BaseReferenciaCota baseReferenciaCota){
 		
 		Cota cota = null;
@@ -1203,6 +1274,10 @@ public class CotaServiceImpl implements CotaService {
 		return referenciaCota;
 	}
 	
+	/**
+	 * Valida se os números de cota informado para histórico cota base são iguais
+	 * @param cotaDTO
+	 */
 	private void validarCotaBaseIgual(CotaDTO cotaDTO){
 		
 		validarCotaIguais(cotaDTO.getHistoricoPrimeiraCota(), cotaDTO.getHistoricoSegundaCota(), cotaDTO.getHistoricoTerceiraCota());
@@ -1212,6 +1287,12 @@ public class CotaServiceImpl implements CotaService {
 		validarCotaIguais(cotaDTO.getHistoricoTerceiraCota(),cotaDTO.getHistoricoSegundaCota(),cotaDTO.getHistoricoPrimeiraCota());
 	}
 	
+	/**
+	 * Verifica números de cotas iguais
+	 * @param param
+	 * @param param2
+	 * @param param3
+	 */
 	private void validarCotaIguais(Integer param,Integer param2, Integer param3){
 		
 		if(param!= null){
@@ -1221,6 +1302,10 @@ public class CotaServiceImpl implements CotaService {
 		}
 	}
 	
+	/**
+	 * Valida se a porcentagem informada nas cotas histórico base obedecem 100 porcento.
+	 * @param cotaDto
+	 */
 	private void validarPorcentagemCotaBase(CotaDTO cotaDto) {
 		
 		boolean existeValor = false;
@@ -1248,7 +1333,7 @@ public class CotaServiceImpl implements CotaService {
 		}
 		
 		if(existeValor && (valor.intValue() != 100)){
-			throw new ValidacaoException(TipoMensagem.WARNING,"Porcentagem histórico cota base invalido! A porcentagem do histórico cota base deve ser 100%  ");
+			throw new ValidacaoException(TipoMensagem.WARNING,"Porcentagem histórico cota base inválido! A porcentagem do histórico cota base deve ser 100%  ");
 		}
 		
 	}
@@ -1288,6 +1373,10 @@ public class CotaServiceImpl implements CotaService {
 		}
 	}
 	
+	/**
+	 * Altera o número da cota e gera um histporico com o número antigo
+	 * @param cota - objeto que sofrera a alteração de número de cota
+	 */
 	private void alteraNumeroCota(Cota cota){
 		
 		Integer novoNumeroCota = getNovoNumeroCota(cota.getNumeroCota(), null,1);
@@ -1310,6 +1399,13 @@ public class CotaServiceImpl implements CotaService {
 		
 	}
 	
+	/**
+	 * Retorna um número de sugestão para o cadastro de uma nova cota
+	 * @param numeroCota
+	 * @param novoNumeroCota
+	 * @param numero
+	 * @return Integer
+	 */
 	private Integer getNovoNumeroCota(Integer numeroCota, Integer novoNumeroCota ,Integer numero){
 		
 		Cota cota  = cotaRepository.obterPorNumerDaCota( (novoNumeroCota == null) ?numeroCota :novoNumeroCota);
@@ -1379,7 +1475,7 @@ public class CotaServiceImpl implements CotaService {
 	public void salvarDescontosCota(List<Long> descontos, Long idCota){
 		
 		if(idCota == null ){
-			throw new ValidacaoException(TipoMensagem.ERROR,"Parâmetro Cota invalido!");
+			throw new ValidacaoException(TipoMensagem.ERROR,"Parâmetro Cota inválido!");
 		}
 		
 		Set<TipoDesconto> listaDescontos = new HashSet<TipoDesconto>();
@@ -1418,13 +1514,13 @@ public class CotaServiceImpl implements CotaService {
 	public void salvarSociosCota(List<SocioCota> sociosCota, Long idCota ){
 		
 		if(idCota == null ){
-			throw new ValidacaoException(TipoMensagem.ERROR,"Parâmetro Cota invalido!");
+			throw new ValidacaoException(TipoMensagem.ERROR,"Parâmetro Cota inválido!");
 		}
 		
 		Cota cota  = cotaRepository.buscarPorId(idCota);
 		
 		if(cota == null ){
-			throw new ValidacaoException(TipoMensagem.ERROR,"Parâmetro Cota invalido!");
+			throw new ValidacaoException(TipoMensagem.ERROR,"Parâmetro Cota inválido!");
 		}
 		
 		if( cota.getSociosCota() != null && !cota.getSociosCota().isEmpty()){
@@ -1444,7 +1540,12 @@ public class CotaServiceImpl implements CotaService {
 	    	}
 		}
 	}
-
+	
+	/**
+	 * Verifica se existe sócio principal
+	 * @param sociosCota
+	 * @return boolean
+	 */
 	private boolean isSocioPrincipal(List<SocioCota> sociosCota) {
 		
 		for(SocioCota socio : sociosCota){
@@ -1461,6 +1562,7 @@ public class CotaServiceImpl implements CotaService {
 		this.cotaRepository.alterar(cota);
 	}
 
+	@SuppressWarnings("rawtypes")
 	@Override
 	@Transactional(readOnly = true)
 	public ResultadoCurvaABC obterCurvaABCCotaTotal(

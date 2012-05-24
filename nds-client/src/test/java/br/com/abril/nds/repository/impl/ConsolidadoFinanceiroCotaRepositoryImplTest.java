@@ -51,6 +51,7 @@ import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
+import br.com.abril.nds.repository.ConsolidadoFinanceiroRepository;
 import br.com.abril.nds.service.ConsolidadoFinanceiroService;
 
 public class ConsolidadoFinanceiroCotaRepositoryImplTest extends AbstractRepositoryImplTest {
@@ -58,11 +59,15 @@ public class ConsolidadoFinanceiroCotaRepositoryImplTest extends AbstractReposit
 	@Autowired
 	private ConsolidadoFinanceiroService consolidadoFinanceiroService;
 	
+	@Autowired
+	private ConsolidadoFinanceiroRepository consolidadoFinanceiroRepository;
+	
 	Cota cotaManoel;
 	Date dataAtual = new Date();
 	List<MovimentoEstoqueCota> listaMovimentoEstoqueCota = new ArrayList<MovimentoEstoqueCota>();
 	EstoqueProdutoCota estoqueProdutoCota = new EstoqueProdutoCota();
 	MovimentoEstoqueCota movimento = new MovimentoEstoqueCota();
+	MovimentoFinanceiroCota movimentoFinanceiroCota;
 	
 	//@Before
 	public void setUp() {
@@ -73,7 +78,7 @@ public class ConsolidadoFinanceiroCotaRepositoryImplTest extends AbstractReposit
 				"manoel@mail.com", "Manoel da Silva");
 				save(manoel);
 				
-		Box box1 = Fixture.criarBox("Box-1", "BX-001", TipoBox.LANCAMENTO);
+		Box box1 = Fixture.criarBox("Box-1", "BX-001", TipoBox.LANCAMENTO, false);
 		save(box1);
 		
 		cotaManoel = Fixture.cota(1235, manoel, SituacaoCadastro.ATIVO, box1);
@@ -197,7 +202,7 @@ public class ConsolidadoFinanceiroCotaRepositoryImplTest extends AbstractReposit
 				"manoel@mail.com", "Manoel da Silva");
 				save(manoel);
 				
-		Box box1 = Fixture.criarBox("Box-1", "BX-001", TipoBox.LANCAMENTO);
+		Box box1 = Fixture.criarBox("Box-1", "BX-001", TipoBox.LANCAMENTO, false);
 		save(box1);
 		
 		cotaManoel = Fixture.cota(123, manoel, SituacaoCadastro.ATIVO, box1);
@@ -314,7 +319,7 @@ public class ConsolidadoFinanceiroCotaRepositoryImplTest extends AbstractReposit
 		
 		listaMovimentoEstoqueCota.add(movimentoEstoqueCota);
 		
-		MovimentoFinanceiroCota movimentoFinanceiroCota= Fixture.movimentoFinanceiroCota(cotaManoel, tipoMovimentoFinanceiro, usuario, 
+		movimentoFinanceiroCota= Fixture.movimentoFinanceiroCota(cotaManoel, tipoMovimentoFinanceiro, usuario, 
 				new BigDecimal(230), listaMovimentoEstoqueCota,StatusAprovacao.APROVADO, dataAtual, true);
 		save(movimentoFinanceiroCota);
 		
@@ -330,7 +335,7 @@ public class ConsolidadoFinanceiroCotaRepositoryImplTest extends AbstractReposit
 		List<MovimentoFinanceiroCota> listaMovimentoFinanceiroCota = new ArrayList<MovimentoFinanceiroCota>();
  		listaMovimentoFinanceiroCota.add(movimentoFinanceiroCota);
 				
-		ConsolidadoFinanceiroCota consolidadoFinanceiroCota = Fixture.consolidadoFinanceiroCota(listaMovimentoFinanceiroCota, cotaManoel, dataAtual, new BigDecimal(230));
+ 		ConsolidadoFinanceiroCota consolidadoFinanceiroCota = Fixture.consolidadoFinanceiroCota(listaMovimentoFinanceiroCota, cotaManoel, dataAtual, new BigDecimal(230));
 		save(consolidadoFinanceiroCota);
 		
 	}
@@ -381,4 +386,12 @@ public class ConsolidadoFinanceiroCotaRepositoryImplTest extends AbstractReposit
 		
 	}*/
 	
+	@Test
+	public void obterConsolidadoPorIdMovimentoFinanceiro(){
+		
+		Assert.assertNotNull(
+				this.consolidadoFinanceiroRepository.obterConsolidadoPorIdMovimentoFinanceiro(
+						movimentoFinanceiroCota.getId())
+		);
+	}
 }

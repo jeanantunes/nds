@@ -5,13 +5,19 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.client.vo.ValidacaoVO;
+import br.com.abril.nds.dto.ConsultaProdutoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.cadastro.TipoProduto;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
+import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.EstoqueProdutoService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.ProdutoService;
+import br.com.abril.nds.service.TipoProdutoService;
+import br.com.abril.nds.service.exception.UniqueConstraintViolationException;
 import br.com.abril.nds.util.ItemAutoComplete;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.caelum.vraptor.Path;
@@ -40,8 +46,21 @@ public class ProdutoController {
 	@Autowired
 	private EstoqueProdutoService estoqueProdutoService;
 	
+	@Autowired
+	private TipoProdutoService tipoProdutoService;
+	
 	public ProdutoController(Result result) {
 		this.result = result;
+	}
+	
+	@Path("/")
+	public void index() {
+		
+		List<TipoProduto> listaTipoProduto = this.tipoProdutoService.obterTodosTiposProduto();
+		
+		if (listaTipoProduto != null && !listaTipoProduto.isEmpty()) {
+			this.result.include("listaTipoProduto", listaTipoProduto);
+		}
 	}
 	
 	@Post
@@ -170,6 +189,53 @@ public class ProdutoController {
 		
 			result.use(Results.json()).from(estoqueProduto, "result").serialize();
 		}
+	}
+	
+	@Path("/pesquisarProdutos")
+	public void pesquisarProdutos(String codigo, String produto, String fornecedor, String editor,
+			Long codigoTipoProduto, String sortorder, String sortname, int page, int rp) {
+		
+		int startSearch = page*rp - rp;
+		
+		List<ConsultaProdutoDTO> listaProdutos =
+			this.produtoService.pesquisarProdutos(codigo, produto, fornecedor, editor, 
+				codigoTipoProduto, sortorder, sortname, startSearch, rp);
+		
+		Integer totalResultados = this.produtoService.pesquisarCountProdutos(codigo, produto, fornecedor, editor, codigoTipoProduto);
+		
+		this.result.use(FlexiGridJson.class).from(listaProdutos).total(totalResultados).page(page).serialize();
+	}
+	
+	@Post
+	public void carregarDadosProduto(Long id) {
+		
+		List<TipoProduto> listaTipoProduto = this.tipoProdutoService.obterTodosTiposProduto();
+		
+		if (id != null) {
+			// TODO: carregar dados produto.
+		}
+
+		this.result.include("listaTipoProduto", listaTipoProduto);
+	}
+	
+	@Post
+	public void removerProduto(Long id) {
+		
+		try {
+			
+			this.produtoService.removerProduto(id);
+			
+		} catch (UniqueConstraintViolationException e) {
+			
+			this.result.use(Results.json()).from(
+					new ValidacaoVO(TipoMensagem.WARNING, e.getMessage()), 
+					"result").recursive().serialize();
+			throw new ValidacaoException();
+		}
+			
+		this.result.use(Results.json()).from(
+				new ValidacaoVO(TipoMensagem.SUCCESS, "Produto excluido com sucesso."), 
+				"result").recursive().serialize();
 	}
 	
 }
