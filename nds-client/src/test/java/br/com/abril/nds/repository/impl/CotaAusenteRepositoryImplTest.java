@@ -49,7 +49,7 @@ public class CotaAusenteRepositoryImplTest extends AbstractRepositoryImplTest {
 				"manoel@mail.com", "Manoel da Silva");
 		save(manoel);
 		
-		box1 = Fixture.criarBox("Box-1", "BX-001", TipoBox.LANCAMENTO);
+		box1 = Fixture.criarBox("Box-1", "BX-001", TipoBox.LANCAMENTO, false);
 		save(box1);
 		
 		cotaManoel = Fixture.cota(123, manoel, SituacaoCadastro.ATIVO, box1);

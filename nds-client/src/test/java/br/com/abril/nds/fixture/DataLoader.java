@@ -3429,10 +3429,10 @@ public class DataLoader {
 
 	private static void criarBox(Session session){
 
-		box1 = Fixture.criarBox("Box-1", "BX-001", TipoBox.LANCAMENTO);
+		box1 = Fixture.criarBox("Box-1", "BX-001", TipoBox.LANCAMENTO, false);
 		session.save(box1);
 
-		box2 = Fixture.criarBox("Box-2", "BX-002", TipoBox.LANCAMENTO);
+		box2 = Fixture.criarBox("Box-2", "BX-002", TipoBox.LANCAMENTO, false);
 		session.save(box2);
 		
 		boxPostoAvancado = Fixture.criarBox("Box-Avancado", "BX-AVANCADO", TipoBox.LANCAMENTO, true);
@@ -3444,7 +3444,7 @@ public class DataLoader {
 		
 		
 		for (int i = 3; i < 100; i++) {
-			session.save(Fixture.criarBox("Box-"+i, "BX-"+i, TipoBox.LANCAMENTO));
+			session.save(Fixture.criarBox("Box-"+i, "BX-"+i, TipoBox.LANCAMENTO, false));
 		}
 	}
 
