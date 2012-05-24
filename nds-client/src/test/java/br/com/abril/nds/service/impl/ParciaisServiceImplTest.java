@@ -37,6 +37,8 @@ import br.com.abril.nds.repository.impl.AbstractRepositoryImplTest;
 
 public class ParciaisServiceImplTest extends AbstractRepositoryImplTest  {
 
+	private Distribuidor distribuidor;
+	
 	private Integer fatorRelancamento = 5;
 	private Integer peb = 20;
 	private Date dtInicial;
@@ -94,7 +96,7 @@ public class ParciaisServiceImplTest extends AbstractRepositoryImplTest  {
 		Set<PoliticaCobranca> politicasCobranca = new HashSet<PoliticaCobranca>();
 		politicasCobranca.add(politicaCobranca);
 		
-		Distribuidor distribuidor = Fixture.distribuidor(1, pj, new Date(), politicasCobranca);
+		distribuidor = Fixture.distribuidor(1, pj, new Date(), politicasCobranca);
 		
 		distribuidor.setFatorRelancamentoParcial(fatorRelancamento);
 		save(distribuidor);
@@ -123,7 +125,7 @@ public class ParciaisServiceImplTest extends AbstractRepositoryImplTest  {
 	@Test
 	public void gerarPeriodosParcias() {
 		
-		parciaisServiceImpl.gerarPeriodosParcias(produtoEdicaoVeja1.getId(), 1, usuarioJoao.getId(),peb);
+		parciaisServiceImpl.gerarPeriodosParcias(produtoEdicaoVeja1, 1, usuarioJoao, peb, distribuidor);
 		
 		List<Lancamento> lancamentos = lancamentoRepository.buscarTodos();
 		
@@ -135,7 +137,7 @@ public class ParciaisServiceImplTest extends AbstractRepositoryImplTest  {
 		Assert.assertEquals(historicos.size(),1);
 		Assert.assertEquals(periodos.size(),1);
 		
-		parciaisServiceImpl.gerarPeriodosParcias(produtoEdicaoVeja1.getId(), 5, usuarioJoao.getId(),peb);
+		parciaisServiceImpl.gerarPeriodosParcias(produtoEdicaoVeja1, 5, usuarioJoao, peb, distribuidor);
 		
 		List<Lancamento> lancamentos2 = lancamentoRepository.buscarTodos();
 		List<HistoricoLancamento> historicos2 = historicoLancamentoRepository.buscarTodos();
@@ -145,7 +147,7 @@ public class ParciaisServiceImplTest extends AbstractRepositoryImplTest  {
 		Assert.assertEquals(historicos2.size(),6);
 		Assert.assertEquals(periodos2.size(),6);
 		
-		parciaisServiceImpl.gerarPeriodosParcias(produtoEdicaoVeja1.getId(), 50, usuarioJoao.getId(), peb);
+		parciaisServiceImpl.gerarPeriodosParcias(produtoEdicaoVeja1, 50, usuarioJoao, peb, distribuidor);
 		
 		List<Lancamento> lancamentos3 = lancamentoRepository.buscarTodos();
 		List<HistoricoLancamento> historicos3 = historicoLancamentoRepository.buscarTodos();

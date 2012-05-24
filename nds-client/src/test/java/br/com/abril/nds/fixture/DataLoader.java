@@ -96,6 +96,7 @@ import br.com.abril.nds.model.estoque.RecebimentoFisico;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.financeiro.Boleto;
+import br.com.abril.nds.model.financeiro.Cobranca;
 import br.com.abril.nds.model.financeiro.CobrancaCheque;
 import br.com.abril.nds.model.financeiro.CobrancaDeposito;
 import br.com.abril.nds.model.financeiro.CobrancaDinheiro;
@@ -920,7 +921,7 @@ public class DataLoader {
 		Usuario usuario = Fixture.usuarioJoao();
 		save(session,usuario);
 
-		TipoProduto tipoProduto = Fixture.tipoRevista();
+		TipoProduto tipoProduto = Fixture.tipoProduto("Revista ContaCorrenteConsignado", GrupoProduto.REVISTA, "3721894", "473794321", "4312756189");
 		save(session,tipoProduto);
 
 		TipoFornecedor tipoFornecedor = Fixture.tipoFornecedorPublicacao();
@@ -1037,7 +1038,7 @@ public class DataLoader {
 	Usuario usuario = Fixture.usuarioJoao();
 	save(session, usuario);
 
-	TipoProduto tipoProduto = Fixture.tipoRevista();
+	TipoProduto tipoProduto = Fixture.tipoProduto("Revista ContaCorrenteTipoMovimento", GrupoProduto.REVISTA, "431251324", "513543", "8768568");
 	save(session, tipoProduto);
 
 	TipoFornecedor tipoFornecedor = Fixture.tipoFornecedor("Tipo A",GrupoFornecedor.PUBLICACAO);
@@ -1319,14 +1320,283 @@ public class DataLoader {
 				"TIPO_BAIXA", "ACAO", StatusCobranca.PAGO,
 				cotaMariana, bancoHSBC, dividaAcumuladaMariana1,1);
 
-
 		save(session, cobrancaGuilherme1, cobrancaGuilherme2, cobrancaGuilherme3,
 				cobrancaMurilo1, cobrancaMurilo2, cobrancaMurilo3,
 				cobrancaMariana1, cobrancaMariana2, 
 				cobrancaOrlando,
 				cobrancaAcumuloGuilherme1,cobrancaAcumuloGuilherme2,cobrancaAcumuloMariana1,cobrancaAcumuloMurilo1);
+	
+		
+		criarDividasCobrancas(session);
+		
 	}
 
+	
+	private static void criarDividasCobrancas(Session session){
+		
+		
+		
+		ConsolidadoFinanceiroCota consolidadoManoel1 = Fixture.consolidadoFinanceiroCota(null, cotaManoel ,
+				new Date(), new BigDecimal(500));
+        save(session,consolidadoManoel1);  
+        
+		Divida dividaManoel1 = Fixture.divida(consolidadoManoel1, cotaManoel, new Date(),
+				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(500),false);
+		save(session,dividaManoel1);  
+		
+		Cobranca cobrancaManoel1 = Fixture.criarCobrancaDinheiro("1234567890023", 
+				new Date(),  new Date(),
+                null, BigDecimal.ZERO, new BigDecimal(500),
+				"TIPO_BAIXA", "ACAO", StatusCobranca.NAO_PAGO,
+				cotaManoel, bancoHSBC, dividaManoel1,1);
+
+		
+		
+		ConsolidadoFinanceiroCota consolidadoManoel2 = Fixture.consolidadoFinanceiroCota(null, cotaManoel ,
+				new Date(), new BigDecimal(200));
+        save(session,consolidadoManoel2);  
+        
+		Divida dividaManoel2 = Fixture.divida(consolidadoManoel2, cotaManoel, new Date(),
+				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200),false);
+		save(session,dividaManoel2);
+		
+		Cobranca cobrancaManoel2 = Fixture.criarCobrancaDinheiro("1234567890024", 
+				new Date(),  new Date(),
+                null, BigDecimal.ZERO, new BigDecimal(200),
+				"TIPO_BAIXA", "ACAO", StatusCobranca.NAO_PAGO,
+				cotaManoel, bancoHSBC, dividaManoel2,1);
+		
+		
+		
+		ConsolidadoFinanceiroCota consolidadoManoel3 = Fixture.consolidadoFinanceiroCota(null, cotaManoel ,
+				new Date(), new BigDecimal(300));
+        save(session,consolidadoManoel3);  
+        
+		Divida dividaManoel3 = Fixture.divida(consolidadoManoel3, cotaManoel, new Date(),
+				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(300),false);
+		save(session,dividaManoel3);
+		
+		Cobranca cobrancaManoel3 = Fixture.criarCobrancaDinheiro("1234567890025", 
+				new Date(),  new Date(),
+                null, BigDecimal.ZERO, new BigDecimal(300),
+				"TIPO_BAIXA", "ACAO", StatusCobranca.NAO_PAGO,
+				cotaManoel, bancoHSBC, dividaManoel3,1);
+
+		
+		ConsolidadoFinanceiroCota consolidadoManoel4 = Fixture.consolidadoFinanceiroCota(null, cotaManoel ,
+				new Date(), new BigDecimal(1000));
+        save(session,consolidadoManoel4);  
+		
+		Divida dividaManoel4 = Fixture.divida(consolidadoManoel4, cotaManoel, new Date(),
+				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(1000),false);
+		save(session,dividaManoel4);
+		
+		Cobranca cobrancaManoel4 = Fixture.boleto("1234567890026", "41235", "1234567890126023",
+				new Date(),  new Date(),
+                null, BigDecimal.ZERO, new BigDecimal(1000),
+				"TIPO_BAIXA", "ACAO", StatusCobranca.NAO_PAGO,
+				cotaManoel, bancoHSBC, dividaManoel4,1);
+
+		
+		
+		ConsolidadoFinanceiroCota consolidadoManoel5 = Fixture.consolidadoFinanceiroCota(null, cotaManoel ,
+				Fixture.criarData(9, 1, 2010), new BigDecimal(2000));
+        save(session,consolidadoManoel5);  
+		
+		Divida dividaManoel5 = Fixture.divida(consolidadoManoel5, cotaManoel, Fixture.criarData(9, 1, 2010),
+				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(2000),false);
+		save(session,dividaManoel5);
+		
+		Cobranca cobrancaManoel5 = Fixture.boleto("1234567890027", "4124", "1234567890127133",
+				Fixture.criarData(1, 5, 2012),  new Date(),
+                null, BigDecimal.ZERO, new BigDecimal(2000),
+				"TIPO_BAIXA", "ACAO", StatusCobranca.NAO_PAGO,
+				cotaManoel, bancoHSBC, dividaManoel5,1);
+
+		
+		
+		ConsolidadoFinanceiroCota consolidadoManoel6 = Fixture.consolidadoFinanceiroCota(null, cotaManoel ,
+				Fixture.criarData(9, 1, 2010), new BigDecimal(2200));
+        save(session,consolidadoManoel6);  
+        
+		Divida dividaManoel6 = Fixture.divida(consolidadoManoel6, cotaManoel, Fixture.criarData(9, 1, 2010),
+				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(2200),false);
+		save(session,dividaManoel6);
+		
+		Cobranca cobrancaManoel6 = Fixture.boleto("1234567890028", "4125", "1234567890128143",
+				Fixture.criarData(1, 5, 2012),  new Date(),
+                null, BigDecimal.ZERO, new BigDecimal(2200),
+				"TIPO_BAIXA", "ACAO", StatusCobranca.NAO_PAGO,
+				cotaManoel, bancoHSBC, dividaManoel6,1);
+
+		
+		
+		ConsolidadoFinanceiroCota consolidadoManoel7 = Fixture.consolidadoFinanceiroCota(null, cotaManoel ,
+				Fixture.criarData(9, 1, 2010), new BigDecimal(300));
+        save(session,consolidadoManoel7);  
+        
+		Divida dividaManoel7 = Fixture.divida(consolidadoManoel7, cotaManoel, Fixture.criarData(9, 1, 2010),
+				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(300),false);
+		save(session,dividaManoel7);
+		
+		Cobranca cobrancaManoel7 = Fixture.boleto("1234567890029", "4126", "1234567890129153",
+				Fixture.criarData(1, 5, 2012),  new Date(),
+                null, BigDecimal.ZERO, new BigDecimal(300),
+				"TIPO_BAIXA", "ACAO", StatusCobranca.NAO_PAGO,
+				cotaManoel, bancoHSBC, dividaManoel7,1);
+
+		
+		
+		ConsolidadoFinanceiroCota consolidadoManoel8 = Fixture.consolidadoFinanceiroCota(null, cotaManoel ,
+				Fixture.criarData(9, 1, 2010), new BigDecimal(200));
+        save(session,consolidadoManoel8);  
+		
+		Divida dividaManoel8 = Fixture.divida(consolidadoManoel8, cotaManoel, Fixture.criarData(9, 1, 2010),
+				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200),false);
+		save(session,dividaManoel8);
+		
+		Cobranca cobrancaManoel8 = Fixture.boleto("1234567890030", "4123", "1234567890120154",
+				Fixture.criarData(1, 5, 2012),  new Date(),
+                null, BigDecimal.ZERO, new BigDecimal(200),
+				"TIPO_BAIXA", "ACAO", StatusCobranca.NAO_PAGO,
+				cotaManoel, bancoHSBC, dividaManoel8,1);
+		
+		
+		
+		ConsolidadoFinanceiroCota consolidadoManoel9 = Fixture.consolidadoFinanceiroCota(null, cotaManoel ,
+				Fixture.criarData(9, 1, 2010), new BigDecimal(200));
+        save(session,consolidadoManoel9);  
+        
+		Divida dividaManoel9 = Fixture.divida(consolidadoManoel9, cotaManoel, Fixture.criarData(9, 1, 2010),
+				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200),false);
+		save(session,dividaManoel9);
+		
+		Cobranca cobrancaManoel9 = Fixture.criarCobrancaDeposito("1234567890140", 
+				Fixture.criarData(1, 5, 2012),  new Date(),
+                null, BigDecimal.ZERO, new BigDecimal(200),
+				"TIPO_BAIXA", "ACAO", StatusCobranca.NAO_PAGO,
+				cotaManoel, bancoHSBC, dividaManoel9,1);
+		
+		
+		
+		ConsolidadoFinanceiroCota consolidadoManoel10 = Fixture.consolidadoFinanceiroCota(null, cotaManoel ,
+				Fixture.criarData(9, 1, 2010), new BigDecimal(200));
+        save(session,consolidadoManoel10);  
+		
+		Divida dividaManoel10 = Fixture.divida(consolidadoManoel10, cotaManoel, Fixture.criarData(9, 1, 2010),
+				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200),false);
+		save(session,dividaManoel10);
+		
+		Cobranca cobrancaManoel10 = Fixture.criarCobrancaDeposito("1234567890141", 
+				Fixture.criarData(1, 5, 2012),  new Date(),
+                null, BigDecimal.ZERO, new BigDecimal(200),
+				"TIPO_BAIXA", "ACAO", StatusCobranca.NAO_PAGO,
+				cotaManoel, bancoHSBC, dividaManoel10,1);
+		
+		
+		
+		ConsolidadoFinanceiroCota consolidadoManoel11 = Fixture.consolidadoFinanceiroCota(null, cotaManoel ,
+				Fixture.criarData(9, 1, 2010), new BigDecimal(210));
+        save(session,consolidadoManoel11);  
+		
+		Divida dividaManoel11 = Fixture.divida(consolidadoManoel11, cotaManoel, Fixture.criarData(9, 1, 2010),
+				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(210),false);
+		save(session,dividaManoel11);
+		
+		Cobranca cobrancaManoel11 = Fixture.criarCobrancaDeposito("1234567890142", 
+				Fixture.criarData(1, 3, 2012),  new Date(),
+                null, BigDecimal.ZERO, new BigDecimal(210),
+				"TIPO_BAIXA", "ACAO", StatusCobranca.NAO_PAGO,
+				cotaManoel, bancoHSBC, dividaManoel11,1);
+		
+		
+		
+		ConsolidadoFinanceiroCota consolidadoManoel12 = Fixture.consolidadoFinanceiroCota(null, cotaManoel ,
+				Fixture.criarData(9, 1, 2010), new BigDecimal(200));
+        save(session,consolidadoManoel12);  
+		
+		Divida dividaManoel12 = Fixture.divida(consolidadoManoel12, cotaManoel, Fixture.criarData(9, 1, 2010),
+				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200),false);
+		save(session,dividaManoel12);
+		
+		Cobranca cobrancaManoel12 = Fixture.criarCobrancaDeposito("1234567890143", 
+				Fixture.criarData(1, 5, 2012),  new Date(),
+                null, BigDecimal.ZERO, new BigDecimal(200),
+				"TIPO_BAIXA", "ACAO", StatusCobranca.NAO_PAGO,
+				cotaManoel, bancoHSBC, dividaManoel12,1);
+		
+		
+		
+		ConsolidadoFinanceiroCota consolidadoManoel13 = Fixture.consolidadoFinanceiroCota(null, cotaManoel ,
+				Fixture.criarData(9, 1, 2010), new BigDecimal(210));
+        save(session,consolidadoManoel13);  
+		
+		Divida dividaAcumuladaManoel1 = Fixture.divida(consolidadoManoel13, cotaManoel, Fixture.criarData(1, 2, 2010),
+				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(210),true);
+		save(session,dividaAcumuladaManoel1);
+		
+		Cobranca cobrancaAcumuloManoel1= Fixture.criarCobrancaDinheiro("3234567890135", 
+				Fixture.criarData(1, 5, 2012),  new Date(),
+				null,BigDecimal.ZERO, new BigDecimal(210),
+				"TIPO_BAIXA", "ACAO", StatusCobranca.NAO_PAGO,
+				cotaManoel, bancoHSBC, dividaAcumuladaManoel1,1);
+
+		
+		
+		ConsolidadoFinanceiroCota consolidadoManoel14 = Fixture.consolidadoFinanceiroCota(null, cotaManoel ,
+				Fixture.criarData(9, 1, 2010), new BigDecimal(250));
+        save(session,consolidadoManoel14);  
+		
+		Divida dividaAcumuladaManoel2 = Fixture.divida(consolidadoManoel14, cotaManoel, Fixture.criarData(1, 2, 2010),
+				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(250),true);
+		save(session,dividaAcumuladaManoel2);
+		
+		Cobranca cobrancaAcumuloManoel2 = Fixture.criarCobrancaDinheiro("3234567890136", 
+				new Date(),Fixture.criarData(1, 1, 2010),  
+				Fixture.criarData(2, 2, 2010),BigDecimal.ZERO, new BigDecimal(250),
+				"TIPO_BAIXA", "ACAO", StatusCobranca.NAO_PAGO,
+				cotaManoel, bancoHSBC, dividaAcumuladaManoel2,1);
+
+		
+		
+		ConsolidadoFinanceiroCota consolidadoManoel15 = Fixture.consolidadoFinanceiroCota(null, cotaManoel ,
+				Fixture.criarData(9, 1, 2010), new BigDecimal(290));
+        save(session,consolidadoManoel15);  
+        
+		Divida dividaAcumuladaManoel3 = Fixture.divida(consolidadoManoel15, cotaManoel, Fixture.criarData(1, 2, 2010),
+				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(290),true);
+		save(session,dividaAcumuladaManoel3);
+		
+		Cobranca cobrancaAcumuloManoel3 = Fixture.boleto("3234567890137", "323", "3234567890126137",
+				new Date(),Fixture.criarData(1, 1, 2010),  
+				Fixture.criarData(4, 2, 2010),BigDecimal.ZERO, new BigDecimal(290),
+				"TIPO_BAIXA", "ACAO", StatusCobranca.NAO_PAGO,
+				cotaManoel, bancoHSBC, dividaAcumuladaManoel3,1);
+
+		
+		
+		ConsolidadoFinanceiroCota consolidadoManoel16 = Fixture.consolidadoFinanceiroCota(null, cotaManoel ,
+				Fixture.criarData(9, 1, 2010), new BigDecimal(802));
+        save(session,consolidadoManoel16);  
+        
+		Divida dividaAcumuladaManoel4 = Fixture.divida(consolidadoManoel16, cotaManoel, Fixture.criarData(1, 2, 2010),
+				usuarioJoao, StatusDivida.QUITADA, new BigDecimal(802),true);
+		save(session,dividaAcumuladaManoel4);
+		
+		Cobranca cobrancaAcumuloManoel4 = Fixture.boleto("3234567890138", "323", "3234567890129138",
+				new Date(),Fixture.criarData(5, 1, 2010),  
+				Fixture.criarData(7, 2, 2010),BigDecimal.ZERO, new BigDecimal(802),
+				"TIPO_BAIXA", "ACAO", StatusCobranca.PAGO,
+				cotaManoel, bancoHSBC, dividaAcumuladaManoel4,1);
+		
+		
+		
+		save(session,cobrancaManoel1,cobrancaManoel2,cobrancaManoel3,cobrancaManoel4,cobrancaManoel5,cobrancaManoel6,
+				     cobrancaManoel7,cobrancaManoel8,cobrancaManoel9,cobrancaManoel10,cobrancaManoel11,cobrancaManoel12,
+				     cobrancaAcumuloManoel1,cobrancaAcumuloManoel2,cobrancaAcumuloManoel3,cobrancaAcumuloManoel4);
+
+	}
+	
 	private static void criarParametrosCobrancaCota(Session session) {
 
 		FormaCobranca formaBoleto =
@@ -1568,88 +1838,88 @@ public class DataLoader {
 
 
 		divida1 = Fixture.divida(consolidado1, cotaManoel, new Date(),
-				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200));
+				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200),false);
 
 		divida2 = Fixture.divida(consolidado2, cotaManoel, new Date(),
-				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200));
+				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200),false);
 
 		divida3 = Fixture.divida(consolidado3, cotaManoel, new Date(),
-				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200));
+				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200),false);
 
 		divida4 = Fixture.divida(consolidado4, cotaManoel, new Date(),
-				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200));
+				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200),false);
 
 		divida5 = Fixture.divida(consolidado5, cotaManoel, new Date(),
-				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200));
+				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200),false);
 
 		divida6 = Fixture.divida(consolidado6, cotaManoel, new Date(),
-				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200));
+				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200),false);
 
 		divida7 = Fixture.divida(consolidado7, cotaManoel, new Date(),
-				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200));
+				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200),false);
 
 		divida8 = Fixture.divida(consolidado8, cotaManoel, new Date(),
-				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200));
+				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200),false);
 
 		divida9 = Fixture.divida(consolidado9, cotaMaria, new Date(),
-				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200));
+				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200),false);
 
 		divida10 = Fixture.divida(consolidado10, cotaMaria, new Date(),
-				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200));
+				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200),false);
 
 		divida11 = Fixture.divida(consolidado11, cotaLuis, new Date(),
-				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200));
+				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200),false);
 
 		divida12 = Fixture.divida(consolidado12, cotaJoao, new Date(),
-				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200));
+				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200),false);
 
 		divida13 = Fixture.divida(consolidado13, cotaJose, new Date(),
-				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200));
+				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200),false);
 
 		divida14 = Fixture.divida(consolidado14, cotaJose, new Date(),
-				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200));
+				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200),false);
 
 
 		dividaGuilherme1 = Fixture.divida(consolidadoGuilherme1, cotaGuilherme, Fixture.criarData(1, 1, 2010),
-				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200));
+				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200),false);
 
 		dividaGuilherme2 = Fixture.divida(consolidadoGuilherme2, cotaGuilherme, Fixture.criarData(2, 1, 2010),
-				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200));
+				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200),false);
 
 		dividaGuilherme3 = Fixture.divida(consolidadoGuilherme3, cotaGuilherme, Fixture.criarData(3, 1, 2010),
-				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200));
+				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200),false);
 
 		dividaMurilo1 = Fixture.divida(consolidadoMurilo1, cotaMurilo, Fixture.criarData(4, 1, 2010),
-				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200));
+				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200),false);
 
 		dividaMurilo2 = Fixture.divida(consolidadoMurilo2, cotaMurilo, Fixture.criarData(5, 1, 2010),
-				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200));
+				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200),false);
 
 		dividaMurilo3 = Fixture.divida(consolidadoMurilo3, cotaMurilo, Fixture.criarData(6, 1, 2010),
-				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200));
+				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200),false);
 
 		dividaMariana1 = Fixture.divida(consolidadoMariana1, cotaMariana, Fixture.criarData(7, 1, 2010),
-				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200));
+				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200),false);
 
 		dividaMariana2 = Fixture.divida(consolidadoMariana2, cotaMariana, Fixture.criarData(8, 1, 2010),
-				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200));
+				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200),false);
 
 		dividaOrlando = Fixture.divida(consolidadoOrlando1, cotaOrlando, Fixture.criarData(9, 1, 2010),
-				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200));
+				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200),false);
 
 
 
 		dividaAcumuladaGuilherme1 = Fixture.divida(consolidadoAcumuloGuilherme1, cotaGuilherme, Fixture.criarData(1, 2, 2010),
-				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(210));
+				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(210),true);
 
 		dividaAcumuladaGuilherme2 = Fixture.divida(consolidadoAcumuloGuilherme2, cotaGuilherme, Fixture.criarData(2, 2, 2010),
-				usuarioJoao, StatusDivida.QUITADA, new BigDecimal(210));
+				usuarioJoao, StatusDivida.QUITADA, new BigDecimal(210),true);
 
 		dividaAcumuladaMurilo1 = Fixture.divida(consolidadoAcumuloMurilo1, cotaMurilo, Fixture.criarData(4, 2, 2010),
-				usuarioJoao, StatusDivida.QUITADA, new BigDecimal(210));
+				usuarioJoao, StatusDivida.QUITADA, new BigDecimal(210),true);
 
 		dividaAcumuladaMariana1 = Fixture.divida(consolidadoAcumuloMariana1, cotaMariana, Fixture.criarData(7, 2, 2010),
-				usuarioJoao, StatusDivida.QUITADA, new BigDecimal(210));
+				usuarioJoao, StatusDivida.QUITADA, new BigDecimal(210),true);
 
 		save(session, divida1, divida2, divida3, divida4, divida5, divida6,
 				      divida7, divida8, divida9, divida10, divida11,
@@ -2693,10 +2963,10 @@ public class DataLoader {
 		tipoProdutoRevista = Fixture.tipoRevista();
 		session.save(tipoProdutoRevista);
 
-		tipoRefrigerante = Fixture.tipoProduto("Refrigerante",GrupoProduto.OUTROS, "5644566");
+		tipoRefrigerante = Fixture.tipoProduto("Refrigerante",GrupoProduto.OUTROS, "5644566", null, "002");
 		session.save(tipoRefrigerante);
 		
-		tipoCromo = Fixture.tipoProduto("Cromo",GrupoProduto.CROMO, "5644564");
+		tipoCromo = Fixture.tipoProduto("Cromo",GrupoProduto.CROMO, "5644564", null, "002");
 		session.save(tipoCromo);
 		
 		
@@ -5000,11 +5270,11 @@ public class DataLoader {
 	private static void criarDadosBalanceamentoRecolhimento(Session session) {
 		
 		//EDITORES
-		Editor globo = Fixture.criarEditor("Globo", 680L);
+		Editor globo = Fixture.criarEditor("Globo", 680L, juridicaDinap, true);
 
-		Editor europa = Fixture.criarEditor("Europa", 681L);
+		Editor europa = Fixture.criarEditor("Europa", 681L, juridicaAcme, true);
 
-		Editor jazz = Fixture.criarEditor("Jazz", 682L);
+		Editor jazz = Fixture.criarEditor("Jazz", 682L, juridicaFc, true);
 
 		TipoProduto tipoCromo = Fixture.tipoCromo();
 		

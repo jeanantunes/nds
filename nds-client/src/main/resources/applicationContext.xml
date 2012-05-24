@@ -21,6 +21,9 @@
 
 	<!-- TOMCAT -->
 	<jee:jndi-lookup id="dataSource" jndi-name="java:comp/env/jdbc/nds-client"/>
+	<!-- COUCH DB -->	
+	<jee:jndi-lookup id="couchDbProperties" jndi-name="java:comp/env/couchDbProperties"/>
+	
 
 	<bean id="sessionFactory"
 		class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean">
@@ -46,6 +49,10 @@
 		class="org.springframework.orm.hibernate3.HibernateTransactionManager">
 		<property name="sessionFactory" ref="sessionFactory" />
 	</bean>
+	
+<!-- 	<bean id="couchDbClient " class="org.lightcouch.CouchDbClient" destroy-method="shutdown"> -->
+<!-- 		<constructor-arg value="couchdb.properties" />  -->
+<!-- 	</bean> -->
 
 	<tx:annotation-driven transaction-manager="transactionManager" />
 

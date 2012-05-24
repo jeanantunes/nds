@@ -152,7 +152,12 @@ import br.com.abril.nds.model.planejamento.TipoLancamentoParcial;
 import br.com.abril.nds.model.seguranca.Usuario;
 
 public class Fixture {
-
+	
+	public static PessoaJuridica juridicaAbril() {
+		return pessoaJuridica("Abril", "00.000.000/0002-00", "010.000.000.000",
+				"abril@mail.com", "99.999-1");
+	}
+	
 	public static PessoaJuridica juridicaFC() {
 		return pessoaJuridica("FC", "00.000.000/0001-00", "000.000.000.000",
 				"fc@mail.com", "99.999-9");
@@ -266,11 +271,11 @@ public class Fixture {
 	}
 
 	public static TipoProduto tipoRevista() {
-		return tipoProduto("Revistas", GrupoProduto.REVISTA, "99000642");
+		return tipoProduto("Revistas", GrupoProduto.REVISTA, "99000642", null, "001");
 	}
 	
 	public static TipoProduto tipoCromo() {
-		return tipoProduto("Cromos", GrupoProduto.CROMO, "1230004560");
+		return tipoProduto("Cromos", GrupoProduto.CROMO, "1230004560", null, "001");
 	}
 	
 	public static TipoFornecedor tipoFornecedorPublicacao() {
@@ -291,7 +296,7 @@ public class Fixture {
 	}
 	
 	public static Editor editoraAbril() {
-		return criarEditor("Editora Abril", 10L);
+		return criarEditor("Editora Abril", 10L, juridicaAbril(), true);
 	}
 
 	public static Date criarData(int dia, int mes, int ano) {
@@ -360,10 +365,13 @@ public class Fixture {
 	}
 
 	public static TipoProduto tipoProduto(String descricao, GrupoProduto grupo,
-			String ncm) {
+			String codigoNCM, String codigoNBM, String codigo) {
 		TipoProduto tipoProduto = new TipoProduto();
 		tipoProduto.setDescricao(descricao);
 		tipoProduto.setGrupoProduto(grupo);
+		tipoProduto.setCodigo(codigo);
+		tipoProduto.setCodigoNBM(codigoNBM);
+		tipoProduto.setCodigoNCM(codigoNCM);
 		return tipoProduto;
 	}
 	
@@ -1838,7 +1846,7 @@ public class Fixture {
 	
 	public static Divida divida(ConsolidadoFinanceiroCota consolidado,
 			Cota cota, Date data, Usuario usuario, StatusDivida status,
-			BigDecimal valor) {
+			BigDecimal valor, boolean acumulada) {
 		Divida divida = new Divida();
 		divida.setConsolidado(consolidado);
 		divida.setCota(cota);
@@ -1846,6 +1854,7 @@ public class Fixture {
 		divida.setResponsavel(usuario);
 		divida.setStatus(status);
 		divida.setValor(valor);
+		divida.setAcumulada(acumulada);
 		return divida;
 	}
 	
@@ -2225,10 +2234,17 @@ public class Fixture {
 		return telefone;
 	}
 	
-	public static Editor criarEditor(String nome, Long codigo) {
+	public static Editor criarEditor(String nome, Long codigo, 
+									 PessoaJuridica pessoaJuridica,
+									 boolean ativo) {
+		
 		Editor editor = new Editor();
+		
 		editor.setNome(nome);
 		editor.setCodigo(10L);
+		editor.setPessoaJuridica(pessoaJuridica);
+		editor.setAtivo(ativo);
+		
 		return editor;
 	}	
 	

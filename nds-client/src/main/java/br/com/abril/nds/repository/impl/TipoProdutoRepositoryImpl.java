@@ -3,6 +3,7 @@ package br.com.abril.nds.repository.impl;
 import java.util.List;
 
 import org.hibernate.Criteria;
+import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
@@ -74,7 +75,7 @@ public class TipoProdutoRepositoryImpl extends AbstractRepository<TipoProduto,Lo
 		Criteria criteria = getSession().createCriteria(TipoProduto.class);
 		
 		if (!StringUtil.isEmpty(nomeTipoProduto)){
-			criteria.add(Restrictions.ilike("nomeTipoProduto", nomeTipoProduto));
+			criteria.add(Restrictions.ilike("descricao", nomeTipoProduto, MatchMode.ANYWHERE));
 		}
 		
 		if (!StringUtil.isEmpty(codigo)) {

@@ -123,7 +123,7 @@ public class BoletoRepositoryImplTest extends AbstractRepositoryImplTest  {
 		save(consolidado);
 		
 		Divida divida = Fixture.divida(consolidado, cota, new Date(),
-				        usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200));
+				        usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200),false);
 		save(divida);
 		
 		
@@ -136,7 +136,7 @@ public class BoletoRepositoryImplTest extends AbstractRepositoryImplTest  {
 		ConsolidadoFinanceiroCota consolidado1 = Fixture.consolidadoFinanceiroCota(null, cota, new Date(), new BigDecimal(10));
 		save(consolidado1);
 		
-		Divida divida1 = Fixture.divida(consolidado1, cota, new Date(), usuario, StatusDivida.EM_ABERTO, new BigDecimal(10));
+		Divida divida1 = Fixture.divida(consolidado1, cota, new Date(), usuario, StatusDivida.EM_ABERTO, new BigDecimal(10),false);
 		save(divida1);
 		
 	    Boleto boleto = Fixture.boleto("5", "5", "5",

@@ -6,12 +6,12 @@ import java.util.Map;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 
 import org.springframework.stereotype.Component;
 
 import br.com.abril.nds.integracao.engine.RouteParameterProvider;
-import br.com.abril.nds.integracao.model.NdsiParametroSistema;
+import br.com.abril.nds.model.cadastro.ParametroSistema;
 
 
 @Component
@@ -19,19 +19,18 @@ public class NdsiRouteParameterProvider implements RouteParameterProvider {
 	@PersistenceContext
 	private EntityManager entityManager;
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public Map<String, Object> getParameters() {
-		Query query = entityManager.createNamedQuery("findAllNdsiParameters");
+		TypedQuery<ParametroSistema> query = entityManager.createQuery("SELECT p FROM ParametroSistema p", ParametroSistema.class);
 		
-		query.setParameter("prefix", "NDSI_%");
+//		query.setParameter("prefix", "NDSI_%");
 		
-		List<NdsiParametroSistema> result = query.getResultList();
+		List<ParametroSistema> result = query.getResultList();
 		
 		Map<String, Object> parameters = new HashMap<String, Object>(result.size());
 		
-		for (NdsiParametroSistema parametroSistema : result) {
-			parameters.put(parametroSistema.getTipoParametroSistema(), parametroSistema.getValor());
+		for (ParametroSistema parametroSistema : result) {
+			parameters.put(parametroSistema.getTipoParametroSistema().toString(), parametroSistema.getValor());
 		}
 		
 		return parameters;

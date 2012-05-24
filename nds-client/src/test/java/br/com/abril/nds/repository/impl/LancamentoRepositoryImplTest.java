@@ -16,6 +16,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.dto.InformeEncalheDTO;
 import br.com.abril.nds.dto.ResumoPeriodoBalanceamentoDTO;
 import br.com.abril.nds.dto.SumarioLancamentosDTO;
 import br.com.abril.nds.dto.filtro.FiltroLancamentoDTO;
@@ -51,6 +52,7 @@ import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamentoParcial;
 import br.com.abril.nds.model.seguranca.Usuario;
+import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.PeriodoVO;
@@ -58,7 +60,7 @@ import br.com.abril.nds.vo.PeriodoVO;
 public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
 
 	@Autowired
-	private LancamentoRepositoryImpl lancamentoRepository;
+	private LancamentoRepository lancamentoRepository;
 	
 	private Lancamento lancamentoVeja;
 	private Lancamento lancamentoQuatroRodas;
@@ -730,5 +732,21 @@ public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
 		
 		Assert.assertTrue(listaLancamento.size() == idsLancamento.size());
 	}
+
+	@Test
+	public void quantidadeLancamentoInformeRecolhimento() {
+		Long quantidade = lancamentoRepository.quantidadeLancamentoInformeRecolhimento(
+				null, Calendar.getInstance(), Calendar.getInstance());
+	}
+
+	@Test
+	public void obterLancamentoInformeRecolhimento() {
+		List<InformeEncalheDTO>  result =  lancamentoRepository.obterLancamentoInformeRecolhimento(
+				1L, Calendar.getInstance(), Calendar.getInstance(),
+				null, null, 0, 15);
+	}
+	
+	
+	
 	
 }
