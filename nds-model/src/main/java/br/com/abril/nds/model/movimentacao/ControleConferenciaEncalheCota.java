@@ -19,6 +19,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.estoque.ConferenciaEncalhe;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaCota;
@@ -74,6 +75,12 @@ public class ControleConferenciaEncalheCota {
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "USUARIO_ID")
 	private Usuario usuario;
+
+	@ManyToOne(optional = false)
+	@JoinColumn(name = "BOX_ID")
+	private Box box;
+
+	
 	
 	
 	/**
@@ -237,6 +244,22 @@ public class ControleConferenciaEncalheCota {
 	public void setUsuario(Usuario usuario) {
 		this.usuario = usuario;
 	}
-	
+
+	/**
+	 * Obtém box
+	 *
+	 * @return Box
+	 */
+	public Box getBox() {
+		return box;
+	}
+
+	/**
+	 * Atribuí box
+	 * @param box 
+	 */
+	public void setBox(Box box) {
+		this.box = box;
+	}
 	
 }

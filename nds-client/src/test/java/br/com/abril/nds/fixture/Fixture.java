@@ -488,7 +488,9 @@ public class Fixture {
 			Date dataInicio,
 			Date dataFim,
 			Date dataOperacao,
-			StatusOperacao statusOperacao) {
+			StatusOperacao statusOperacao,
+			Usuario usuario,
+			Box box) {
 		
 		ControleConferenciaEncalheCota controleConferenciaEncalheCota = new ControleConferenciaEncalheCota();
 		
@@ -498,6 +500,8 @@ public class Fixture {
 		controleConferenciaEncalheCota.setDataFim(dataFim);
 		controleConferenciaEncalheCota.setDataOperacao(dataOperacao);
 		controleConferenciaEncalheCota.setStatus(statusOperacao);
+		controleConferenciaEncalheCota.setUsuario(usuario);
+		controleConferenciaEncalheCota.setBox(box);
 		
 		return controleConferenciaEncalheCota;
 	}

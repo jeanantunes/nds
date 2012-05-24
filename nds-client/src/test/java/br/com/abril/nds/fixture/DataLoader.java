@@ -763,7 +763,7 @@ public class DataLoader {
 		ControleConferenciaEncalhe controle = Fixture.controleConferenciaEncalhe(StatusOperacao.CONCLUIDO, new Date());
 		
 		ControleConferenciaEncalheCota controleCota = Fixture.controleConferenciaEncalheCota(controle, cotaGuilherme, 
-				new Date(), new Date(), new Date(), StatusOperacao.CONCLUIDO);
+				new Date(), new Date(), new Date(), StatusOperacao.CONCLUIDO, usuarioJoao, box1);
 		
 		ConferenciaEncalhe conferencia = Fixture.conferenciaEncalhe(movimento, chamadaEncalheCota, controleCota);
 		
@@ -4550,7 +4550,9 @@ public class DataLoader {
 				Fixture.criarData(28, Calendar.FEBRUARY, 2012), 
 				Fixture.criarData(28, Calendar.FEBRUARY, 2012), 
 				Fixture.criarData(28, Calendar.FEBRUARY, 2012), 
-				StatusOperacao.CONCLUIDO);
+				StatusOperacao.CONCLUIDO,
+				usuarioJoao,
+				box1);
 		
 		save(session, controleConferenciaEncalheCota);
 		
