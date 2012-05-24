@@ -4,7 +4,7 @@ import java.util.Set;
 
 public interface GerarCobrancaService {
 
-	void gerarCobranca(Long idCota, Long idUsuario);
+	Set<String> gerarCobranca(Long idCota, Long idUsuario);
 	
 	Boolean validarDividaGeradaDataOperacao();
 	
