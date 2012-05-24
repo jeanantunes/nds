@@ -1325,29 +1325,33 @@ public class DataLoader {
 	
 	private static void criarRotaRoteiroCota(Session session) {
 
-		Rota rota = Fixture.rota("005", "Rota 005");
-		session.save(rota);
-
 		Roteiro roteiro = Fixture.roteiro("Pinheiros");
 		session.save(roteiro);
+
+		Rota rota = Fixture.rota("005", "Rota 005");
+		rota.setRoteiro(roteiro);
+		session.save(rota);
 
 		RotaRoteiroOperacao rotaRoteiroOperacao = Fixture.rotaRoteiroOperacao(rota, roteiro, cotaManoel, TipoOperacao.IMPRESSAO_DIVIDA);
 		session.save(rotaRoteiroOperacao);
 
-		rota = Fixture.rota("004", "Rota 004");
-		session.save(rota);
-
 		roteiro = Fixture.roteiro("Interlagos");
 		session.save(roteiro);
+
+		rota = Fixture.rota("004", "Rota 004");
+		rota.setRoteiro(roteiro);
+		session.save(rota);
 
 		rotaRoteiroOperacao = Fixture.rotaRoteiroOperacao(rota, roteiro, cotaJose, TipoOperacao.IMPRESSAO_DIVIDA);
 		session.save(rotaRoteiroOperacao);
 		
-		rota = Fixture.rota("007", "Rota 007");
-		session.save(rota);
 
 		roteiro = Fixture.roteiro("Mococa");
 		session.save(roteiro);
+		
+		rota = Fixture.rota("007", "Rota 007");
+		rota.setRoteiro(roteiro);
+		session.save(rota);
 
 		rotaRoteiroOperacao = Fixture.rotaRoteiroOperacao(rota, roteiro, cotaAcme, TipoOperacao.IMPRESSAO_DIVIDA);
 		session.save(rotaRoteiroOperacao);

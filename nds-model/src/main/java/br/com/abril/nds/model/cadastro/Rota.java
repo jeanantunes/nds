@@ -36,7 +36,7 @@ public class Rota implements Serializable {
 	private String descricaoRota;
 	
 	@ManyToOne
-	@JoinColumn(name = "ROTEIRO_ID")
+	@JoinColumn(name = "ROTEIRO_ID", nullable = false )
 	private Roteiro roteiro;
 	
 
