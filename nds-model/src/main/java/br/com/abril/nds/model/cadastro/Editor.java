@@ -38,6 +38,12 @@ public class Editor implements Serializable {
 	
 	@Column(name = "CODIGO", nullable = false)
 	private Long codigo;
+
+	/**
+	 * Flag que indica se o Editor foi criado atraves de interface de sistemas ou por cadastro
+	 */
+	@Column(name = "ORIGEM_INTERFACE", nullable = true)
+	private Boolean origemInterface;
 	
 	@Column(name = "NOME_CONTATO", nullable = true)
 	private String nomeContato;
@@ -203,6 +209,14 @@ public class Editor implements Serializable {
 	 */
 	public void setTiposProduto(Set<TipoProdutoEditor> tiposProduto) {
 		this.tiposProduto = tiposProduto;
+	}
+	
+	public Boolean getOrigemInterface() {
+		return origemInterface;
+	}
+
+	public void setOrigemInterface(Boolean origemInterface) {
+		this.origemInterface = origemInterface;
 	}
 
 }

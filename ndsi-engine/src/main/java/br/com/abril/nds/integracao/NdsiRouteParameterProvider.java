@@ -6,7 +6,7 @@ import java.util.Map;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.TypedQuery;
+import javax.persistence.Query;
 
 import org.springframework.stereotype.Component;
 
@@ -19,18 +19,19 @@ public class NdsiRouteParameterProvider implements RouteParameterProvider {
 	@PersistenceContext
 	private EntityManager entityManager;
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public Map<String, Object> getParameters() {
-		TypedQuery<ParametroSistema> query = entityManager.createQuery("SELECT p FROM ParametroSistema p", ParametroSistema.class);
+		Query query = entityManager.createNativeQuery("select * from parametro_sistema where TIPO_PARAMETRO_SISTEMA like :prefix");
 		
-//		query.setParameter("prefix", "NDSI_%");
+		query.setParameter("prefix", "NDSI_%");
 		
-		List<ParametroSistema> result = query.getResultList();
+		List<Object[]> result = query.getResultList();
 		
 		Map<String, Object> parameters = new HashMap<String, Object>(result.size());
 		
-		for (ParametroSistema parametroSistema : result) {
-			parameters.put(parametroSistema.getTipoParametroSistema().toString(), parametroSistema.getValor());
+		for (Object[] values : result) {
+			parameters.put(values[1].toString(), values[2]);
 		}
 		
 		return parameters;

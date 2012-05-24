@@ -1,13 +1,17 @@
 package br.com.abril.nds.model.cadastro;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -32,8 +36,28 @@ public class Roteiro implements Serializable {
 	
 	@OneToMany
 	@JoinColumn( name="ROTEIRO_ID")
-	private List<Rota> rotas;
+	private List<Rota> rotas = new ArrayList<Rota>();
 	
+	@ManyToOne
+	@JoinColumn(name = "BOX_ID", nullable = true)
+	private Box box;
+	
+	@Column(name="ORDEM", nullable = false)
+	private Integer ordem;
+	
+	@Enumerated(EnumType.STRING)
+	@Column(name = "TIPO_ROTEIRO", nullable = false)
+	private TipoRoteiro tipoRoteiro;
+	
+
+	public Integer getOrdem() {
+		return ordem;
+	}
+
+	public void setOrdem(Integer ordem) {
+		this.ordem = ordem;
+	}
+
 	public Long getId() {
 		return id;
 	}
@@ -57,4 +81,21 @@ public class Roteiro implements Serializable {
 	public void setRotas(List<Rota> rotas) {
 		this.rotas = rotas;
 	}
+	
+	public Box getBox() {
+		return box;
+	}
+
+	public void setBox(Box box) {
+		this.box = box;
+	}
+
+	public TipoRoteiro getTipoRoteiro() {
+		return tipoRoteiro;
+	}
+
+	public void setTipoRoteiro(TipoRoteiro tipoRoteiro) {
+		this.tipoRoteiro = tipoRoteiro;
+	}
+
 }
