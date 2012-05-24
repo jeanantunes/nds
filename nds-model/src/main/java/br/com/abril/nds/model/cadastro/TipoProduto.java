@@ -31,10 +31,10 @@ public class TipoProduto implements Serializable {
 	@Column(name = "ID")
 	private Long id;
 	
-	@Column(name = "DESCRICAO", nullable = false)
+	@Column(name = "DESCRICAO", nullable = false, unique = true)
 	private String descricao;
 	
-	@Column(name = "CODIGO")
+	@Column(name = "CODIGO", nullable = false)
 	private String codigo;
 	
 	@Column(name = "CODIGO_NCM")
