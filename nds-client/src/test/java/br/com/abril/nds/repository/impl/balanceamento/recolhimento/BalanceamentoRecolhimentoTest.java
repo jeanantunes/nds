@@ -20,6 +20,7 @@ import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Editor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
+import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
@@ -72,7 +73,10 @@ public class BalanceamentoRecolhimentoTest extends AbstractRepositoryImplTest {
 		Editor abril = Fixture.editoraAbril();
 		save(abril);
 		
-		Editor globo = Fixture.criarEditor("Globo", 687L);
+		PessoaJuridica juridicaFc = Fixture.juridicaFC();
+		save(juridicaFc);
+		
+		Editor globo = Fixture.criarEditor("Globo", 687L, juridicaFc, true);
 		save(globo);
 
 		tipoFornecedorPublicacao = Fixture.tipoFornecedorPublicacao();
