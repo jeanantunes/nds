@@ -2,6 +2,7 @@ package br.com.abril.nds.service;
 
 import java.util.List;
 
+import br.com.abril.nds.client.vo.DetalhesDividaVO;
 import br.com.abril.nds.dto.StatusDividaDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaInadimplenteDTO;
 import br.com.abril.nds.model.financeiro.Divida;
@@ -49,5 +50,23 @@ public interface DividaService {
 	 * @return
 	 */
 	List<Divida> getDividasAcumulo(Long idDivida);
+	
+	
+	/**
+	 * Obtém divida por código
+	 * 
+	 * @param idDivida
+	 * @return
+	 */
+	Divida obterDividaPorId(Long idDivida);
+	
+	
+	/**
+	 * Obtém detalhes da Dívida
+	 * 
+	 * @param idDivida
+	 * @return
+	 */
+	List<DetalhesDividaVO> obterDetalhesDivida(Long idDivida);
 	
 }

@@ -3,8 +3,13 @@ package br.com.abril.nds.integracao.model.canonic;
 public enum InterfaceEnum {
 
 	EMS0111(111L, EMS0111Input.class),
+	EMS0109(109L, EMS0109Input.class),
 	EMS0110(110L, EMS0110Input.class),
-	EMS0114(114L, EMS0114Input.class);
+	EMS0114(114L, EMS0114Input.class),
+	EMS0119(119L, EMS0119Input.class),
+	EMS0125(125L, EMS0125Input.class),
+	EMS0126(126L, EMS0126Input.class),
+	EMS0113(113L, EMS0113Input.class);
 	
 	private Long codigoInterface;
 	private Class<? extends IntegracaoDocument> classeLinha;

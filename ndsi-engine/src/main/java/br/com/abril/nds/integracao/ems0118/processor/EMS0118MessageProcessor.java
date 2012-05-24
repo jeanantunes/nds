@@ -17,7 +17,10 @@ import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;
 import br.com.abril.nds.integracao.model.EventoExecucaoEnum;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
-
+/**
+ * @author Jones.Costa
+ * @version 1.0
+ */
 @Component
 public class EMS0118MessageProcessor implements MessageProcessor{
 	@PersistenceContext
@@ -67,9 +70,10 @@ public class EMS0118MessageProcessor implements MessageProcessor{
 			//Atualiza valor de custo	
 			produtoEdicao.setPrecoCusto(new BigDecimal(precoCusto).setScale(2, RoundingMode.HALF_DOWN) );	
 				
+			System.out.println("breakpoint");
 
 		    } catch (NoResultException e) {
-			//NAO ENCONTROU ProdutoEdicao OU Lancamento, DEVE LOGAR
+			//NAO ENCONTROU Produto/Edicao, DEVE LOGAR
 		    ndsiLoggerFactory.getLogger().logError(message, EventoExecucaoEnum.RELACIONAMENTO,"Nenhum resultado encontrado para Produto: "+input.getCodigoPublicacao()+" e Edição: "+input.getEdicao()+" na tabela produto_edicao");
 					
 		    e.printStackTrace();

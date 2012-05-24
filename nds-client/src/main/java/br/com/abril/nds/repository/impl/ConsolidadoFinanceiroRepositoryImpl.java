@@ -109,7 +109,6 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 
 		hql.append(" FROM ConsolidadoFinanceiroCota consolidado ");
 
-		
 		hql.append(" LEFT JOIN consolidado.cota c ");
 		hql.append(" LEFT JOIN consolidado.movimentos mfc ");
 		hql.append(" LEFT JOIN mfc.movimentos mec ");		
@@ -119,7 +118,6 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 		hql.append(" LEFT JOIN pe.produto p ");
 		hql.append(" LEFT JOIN p.fornecedores f ");
 		hql.append(" LEFT JOIN f.juridica juridica ");
-			
 
 		hql.append(" WHERE c.numeroCota =:numeroCota ");
 
@@ -400,4 +398,15 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 		
  	}
 
+	@Override
+	public ConsolidadoFinanceiroCota obterConsolidadoPorIdMovimentoFinanceiro(Long idMovimentoFinanceiro) {
+		
+		StringBuilder hql = new StringBuilder("select c from ConsolidadoFinanceiroCota c join c.movimentos mov ");
+		hql.append(" where mov.id = :idMovimentoFinanceiro ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setParameter("idMovimentoFinanceiro", idMovimentoFinanceiro);
+		
+		return (ConsolidadoFinanceiroCota) query.uniqueResult();
+	}
 }

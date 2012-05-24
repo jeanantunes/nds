@@ -104,7 +104,7 @@ public class BoletoServiceImplTest  extends AbstractRepositoryImplTest {
 		politicaCobranca.setDistribuidor(distribuidor);
 		save(politicaCobranca);
 		
-		Box box = Fixture.criarBox("300", "Box 300", TipoBox.LANCAMENTO);
+		Box box = Fixture.criarBox("300", "Box 300", TipoBox.LANCAMENTO, false);
 		save(box);
 		
 		Cota cota = Fixture.cota(1000, pessoaJuridica, SituacaoCadastro.ATIVO,box);
@@ -133,7 +133,7 @@ public class BoletoServiceImplTest  extends AbstractRepositoryImplTest {
 				
 		ProdutoEdicao produtoEdicaoVeja1 = Fixture.produtoEdicao(1L, 10, 14,
 				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(20), "ABCDEFGHIJKLMNOPQRSTU", 1L,
-				produtoVeja);
+				produtoVeja, null, false);
 		save(produtoEdicaoVeja1);
 		
 		EstoqueProdutoCota estoqueProdutoCota = Fixture.estoqueProdutoCota(

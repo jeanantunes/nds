@@ -1,10 +1,12 @@
 package br.com.abril.nds.model.cadastro;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -48,9 +50,6 @@ public class Produto implements Serializable {
 	@Column(name = "NOME", nullable = false, unique = true)
 	private String nome;
 	
-	@Column(name = "NOME_COMERCIAL", nullable = true, unique = true, length = 24)
-	private String nomeComercial;
-	
 	@Column(name = "DESCRICAO")
 	private String descricao;
 	
@@ -75,17 +74,23 @@ public class Produto implements Serializable {
 	@Column(name = "COD_CONTEXTO", nullable = true)
 	private Integer codigoContexto;
 	
-	/**
-	 * Nomenclatura Comum do Mercosul
-	 */
-	@Column(name  = "NCM", nullable = true)
-	private String ncm;
+	@Column(name="SLOGAN", length = 50, nullable = true)
+	protected String slogan;
+	
+	@Column(name = "PACOTE_PADRAO", nullable = false)
+	protected int pacotePadrao;
+	
+	@Column(name = "PEB", nullable = false)
+	protected int peb;
+	
+	@Column(name = "PESO", nullable = false)
+	protected BigDecimal peso;
 	
 	/**
-	 * Nomenclatura Brasileira de Mercadorias
+	 * Dimensões do produto (largura, etc)
 	 */
-	@Column(name  = "NBM", nullable = true)
-	private String nbm;
+	@Embedded
+	private Dimensao dimensao;
 
 	public Long getId() {
 		return id;
@@ -214,45 +219,73 @@ public class Produto implements Serializable {
 	}
 
 	/**
-	 * @return the ncm
+	 * @return the slogan
 	 */
-	public String getNcm() {
-		return ncm;
+	public String getSlogan() {
+		return slogan;
 	}
 
 	/**
-	 * @param ncm the ncm to set
+	 * @param slogan the slogan to set
 	 */
-	public void setNcm(String ncm) {
-		this.ncm = ncm;
+	public void setSlogan(String slogan) {
+		this.slogan = slogan;
 	}
 
 	/**
-	 * @return the nbm
+	 * @return the pacotePadrao
 	 */
-	public String getNbm() {
-		return nbm;
+	public int getPacotePadrao() {
+		return pacotePadrao;
 	}
 
 	/**
-	 * @param nbm the nbm to set
+	 * @param pacotePadrao the pacotePadrao to set
 	 */
-	public void setNbm(String nbm) {
-		this.nbm = nbm;
+	public void setPacotePadrao(int pacotePadrao) {
+		this.pacotePadrao = pacotePadrao;
 	}
 
 	/**
-	 * @return the nomeComercial
+	 * @return the peb
 	 */
-	public String getNomeComercial() {
-		return nomeComercial;
+	public int getPeb() {
+		return peb;
 	}
 
 	/**
-	 * @param nomeComercial the nomeComercial to set
+	 * @param peb the peb to set
 	 */
-	public void setNomeComercial(String nomeComercial) {
-		this.nomeComercial = nomeComercial;
+	public void setPeb(int peb) {
+		this.peb = peb;
+	}
+
+	/**
+	 * @return the dimensao
+	 */
+	public Dimensao getDimensao() {
+		return dimensao;
+	}
+
+	/**
+	 * @param dimensao the dimensao to set
+	 */
+	public void setDimensao(Dimensao dimensao) {
+		this.dimensao = dimensao;
+	}
+
+	/**
+	 * @return the peso
+	 */
+	public BigDecimal getPeso() {
+		return peso;
+	}
+
+	/**
+	 * @param peso the peso to set
+	 */
+	public void setPeso(BigDecimal peso) {
+		this.peso = peso;
 	}
 	
 }

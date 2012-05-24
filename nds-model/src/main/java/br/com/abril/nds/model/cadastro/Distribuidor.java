@@ -40,6 +40,9 @@ public class Distribuidor {
 	@Column(name = "ID")
 	private Long id;
 	
+	@Embedded
+	private ParametroCobrancaDistribuidor parametroCobrancaDistribuidor;
+	
 	@Column(name = "CODIGO", nullable = false)
 	private Integer codigo;
 	
@@ -149,6 +152,15 @@ public class Distribuidor {
 		this.id = id;
 	}
 	
+	public ParametroCobrancaDistribuidor getParametroCobrancaDistribuidor() {
+		return parametroCobrancaDistribuidor;
+	}
+
+	public void setParametroCobrancaDistribuidor(
+			ParametroCobrancaDistribuidor parametroCobrancaDistribuidor) {
+		this.parametroCobrancaDistribuidor = parametroCobrancaDistribuidor;
+	}
+
 	public Date getDataOperacao() {
 		return dataOperacao;
 	}

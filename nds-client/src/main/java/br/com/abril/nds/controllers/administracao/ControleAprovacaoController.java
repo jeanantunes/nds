@@ -98,9 +98,7 @@ public class ControleAprovacaoController {
 			controleAprovacaoService.obterMovimentosAprovacao(filtro);
 		
 		if (listaMovimentoAprovacaoDTO == null || listaMovimentoAprovacaoDTO.isEmpty()) {
-			
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
-			
 		} else {
 			
 			Long qtdeTotalRegistros = 

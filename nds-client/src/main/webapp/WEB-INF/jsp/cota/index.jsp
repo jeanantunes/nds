@@ -97,7 +97,10 @@
 	
 	#dialog-pdv fieldset{width:777px!important; margin-bottom:10px;  margin-left: -11px;}
 	
-	#tabCota-5 fieldset {width:755px!important;}
+	.ui-widget {
+    	font-size: 1em;
+	}
+
 
 </style>
 

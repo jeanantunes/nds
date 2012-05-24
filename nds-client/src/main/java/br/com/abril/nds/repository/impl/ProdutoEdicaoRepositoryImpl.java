@@ -268,6 +268,12 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepository<ProdutoEdica
 		return (Integer) query.uniqueResult();
 	}
 
+	@Override
+	public ProdutoEdicao obterProdutoEdicaoPorSM(Long sm) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 	
 	
 	
