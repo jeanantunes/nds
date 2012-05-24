@@ -7,6 +7,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.dto.ConsultaProdutoDTO;
 import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.cadastro.Editor;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
@@ -57,6 +58,16 @@ public class ProdutoRepositoryImplTest extends AbstractRepositoryImplTest {
 			produtoRepository.obterProdutoLikeNomeProduto("Vej");
 		
 		Assert.assertTrue(!listaProduto.isEmpty());
+	}
+	
+	@Test
+	public void pesquisarProdutos() {
+		
+		List<ConsultaProdutoDTO> listaProdutos = 
+			this.produtoRepository.pesquisarProdutos(
+				"1", "", "", "", 1L, "asc", "codigo", 1, 15);
+		
+		Assert.assertNotNull(listaProdutos);
 	}
 	
 }
