@@ -312,6 +312,11 @@ public abstract class AbstractBalanceamentoRecolhimentoStrategy implements Balan
 											   List<ProdutoRecolhimentoDTO> produtosRecolhimentoNovos,
 											   Date dataBalanceamento) {
 		
+		if (produtosRecolhimentoNovos == null || produtosRecolhimentoNovos.isEmpty()) {
+			
+			return;
+		}
+		
 		if (produtosRecolhimentoAtuais != null) {
 			
 			produtosRecolhimentoAtuais.addAll(produtosRecolhimentoNovos);
