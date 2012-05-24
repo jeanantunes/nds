@@ -152,7 +152,12 @@ import br.com.abril.nds.model.planejamento.TipoLancamentoParcial;
 import br.com.abril.nds.model.seguranca.Usuario;
 
 public class Fixture {
-
+	
+	public static PessoaJuridica juridicaAbril() {
+		return pessoaJuridica("Abril", "00.000.000/0002-00", "010.000.000.000",
+				"abril@mail.com", "99.999-1");
+	}
+	
 	public static PessoaJuridica juridicaFC() {
 		return pessoaJuridica("FC", "00.000.000/0001-00", "000.000.000.000",
 				"fc@mail.com", "99.999-9");
@@ -291,7 +296,7 @@ public class Fixture {
 	}
 	
 	public static Editor editoraAbril() {
-		return criarEditor("Editora Abril", 10L);
+		return criarEditor("Editora Abril", 10L, juridicaAbril(), true);
 	}
 
 	public static Date criarData(int dia, int mes, int ano) {
@@ -2222,10 +2227,17 @@ public class Fixture {
 		return telefone;
 	}
 	
-	public static Editor criarEditor(String nome, Long codigo) {
+	public static Editor criarEditor(String nome, Long codigo, 
+									 PessoaJuridica pessoaJuridica,
+									 boolean ativo) {
+		
 		Editor editor = new Editor();
+		
 		editor.setNome(nome);
 		editor.setCodigo(10L);
+		editor.setPessoaJuridica(pessoaJuridica);
+		editor.setAtivo(ativo);
+		
 		return editor;
 	}	
 	

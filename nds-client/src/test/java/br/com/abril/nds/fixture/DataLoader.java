@@ -5268,11 +5268,11 @@ public class DataLoader {
 	private static void criarDadosBalanceamentoRecolhimento(Session session) {
 		
 		//EDITORES
-		Editor globo = Fixture.criarEditor("Globo", 680L);
+		Editor globo = Fixture.criarEditor("Globo", 680L, juridicaDinap, true);
 
-		Editor europa = Fixture.criarEditor("Europa", 681L);
+		Editor europa = Fixture.criarEditor("Europa", 681L, juridicaAcme, true);
 
-		Editor jazz = Fixture.criarEditor("Jazz", 682L);
+		Editor jazz = Fixture.criarEditor("Jazz", 682L, juridicaFc, true);
 
 		TipoProduto tipoCromo = Fixture.tipoCromo();
 		
