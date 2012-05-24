@@ -3,11 +3,13 @@ package br.com.abril.nds.dto;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 import br.com.abril.nds.model.TipoEdicao;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
+import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.financeiro.BaixaCobranca;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 import br.com.abril.nds.model.seguranca.Usuario;
@@ -50,6 +52,8 @@ public class MovimentoFinanceiroCotaDTO implements Serializable {
 	private boolean isAprovacaoAutomatica;
 	
 	private boolean isLancamentoManual;
+	
+	private List<MovimentoEstoqueCota> movimentos;
 	
 	/**
 	 * @return the idMovimentoFinanceiroCota
@@ -287,4 +291,22 @@ public class MovimentoFinanceiroCotaDTO implements Serializable {
 
 		return "";
 	}
+
+	/**
+	 * Obtém movimentos
+	 *
+	 * @return List<MovimentoEstoqueCota>
+	 */
+	public List<MovimentoEstoqueCota> getMovimentos() {
+		return movimentos;
+	}
+
+	/**
+	 * Atribuí movimentos
+	 * @param movimentos 
+	 */
+	public void setMovimentos(List<MovimentoEstoqueCota> movimentos) {
+		this.movimentos = movimentos;
+	}
+	
 }

@@ -1,5 +1,6 @@
 package br.com.abril.nds.repository;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import br.com.abril.nds.dto.ConferenciaEncalheDTO;
@@ -18,5 +19,17 @@ public interface ConferenciaEncalheRepository extends Repository<ConferenciaEnca
 	 */
 	public List<ConferenciaEncalheDTO> obterListaConferenciaEncalheDTO(Long idControleConferenciaEncalheCota, Long idDistribuidor);
 
+	/**
+	 * Obtém o valorTotal de uma operação de conferência de encalhe. Para o calculo do valor
+	 * é levado em conta o preco com desconto de acordo com a regra de comissão que verifica 
+	 * desconto no níveis de produtoedicao, cota e distribuidor.
+	 * 
+	 * @param idControleConferenciaEncalhe
+	 * @param idDistribuidor
+	 * 
+	 * @return BigDecimal
+	 */
+	public BigDecimal obterValorTotalEncalheOperacaoConferenciaEncalhe(Long idControleConferenciaEncalhe, Long idDistribuidor);
+	
 
 }
