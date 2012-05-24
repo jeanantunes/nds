@@ -163,7 +163,7 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 		
 		ConsolidadoFinanceiroCota consolidado1 = Fixture.consolidadoFinanceiroCota(null, cota, new Date(), new BigDecimal(10));
 		save(consolidado1);
-		Divida divida1 = Fixture.divida(consolidado1, cota, Fixture.criarData(1, 10, 2010), usuario, StatusDivida.EM_ABERTO, new BigDecimal(10));
+		Divida divida1 = Fixture.divida(consolidado1, cota, Fixture.criarData(1, 10, 2010), usuario, StatusDivida.EM_ABERTO, new BigDecimal(10),false);
 		save(divida1);
 		
 		boleto1  = Fixture.boleto(
@@ -183,7 +183,7 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 		
 		ConsolidadoFinanceiroCota consolidado2 = Fixture.consolidadoFinanceiroCota(null, cota, new Date(), new BigDecimal(10));
 		save(consolidado2);
-		Divida divida2 = Fixture.divida(consolidado2, cota, Fixture.criarData(2, 10, 2010), usuario, StatusDivida.EM_ABERTO, new BigDecimal(10));
+		Divida divida2 = Fixture.divida(consolidado2, cota, Fixture.criarData(2, 10, 2010), usuario, StatusDivida.EM_ABERTO, new BigDecimal(10),false);
 		save(divida2);
 
 		boleto2  = Fixture.boleto(

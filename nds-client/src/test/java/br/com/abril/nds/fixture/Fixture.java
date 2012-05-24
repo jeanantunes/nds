@@ -1834,7 +1834,7 @@ public class Fixture {
 	
 	public static Divida divida(ConsolidadoFinanceiroCota consolidado,
 			Cota cota, Date data, Usuario usuario, StatusDivida status,
-			BigDecimal valor) {
+			BigDecimal valor, boolean acumulada) {
 		Divida divida = new Divida();
 		divida.setConsolidado(consolidado);
 		divida.setCota(cota);
@@ -1842,6 +1842,7 @@ public class Fixture {
 		divida.setResponsavel(usuario);
 		divida.setStatus(status);
 		divida.setValor(valor);
+		divida.setAcumulada(acumulada);
 		return divida;
 	}
 	
