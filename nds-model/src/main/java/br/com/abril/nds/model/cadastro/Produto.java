@@ -50,9 +50,6 @@ public class Produto implements Serializable {
 	@Column(name = "NOME", nullable = false, unique = true)
 	private String nome;
 	
-	@Column(name = "NOME_COMERCIAL", nullable = true, unique = true, length = 24)
-	private String nomeComercial;
-	
 	@Column(name = "DESCRICAO")
 	private String descricao;
 	
@@ -219,20 +216,6 @@ public class Produto implements Serializable {
 		} else if (!codigo.equals(other.codigo))
 			return false;
 		return true;
-	}
-
-	/**
-	 * @return the nomeComercial
-	 */
-	public String getNomeComercial() {
-		return nomeComercial;
-	}
-
-	/**
-	 * @param nomeComercial the nomeComercial to set
-	 */
-	public void setNomeComercial(String nomeComercial) {
-		this.nomeComercial = nomeComercial;
 	}
 
 	/**
