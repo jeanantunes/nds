@@ -1,6 +1,7 @@
 package br.com.abril.nds.repository.impl;
 
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -38,47 +39,47 @@ public class DistribuidorRepositoryImpl extends
 		List<Distribuidor> distribuidores = query.list();
 		return distribuidores.isEmpty() ? null : distribuidores.get(0);
 	}
-	
-	
+
+
 	@Override
 	@SuppressWarnings("unchecked")
 	public List<DistribuicaoFornecedor> buscarDiasDistribuicaoFornecedor(
-															Collection<Long> idsForncedores, 
+															Collection<Long> idsForncedores,
 															OperacaoDistribuidor operacaoDistribuidor) {
-		
-		StringBuilder hql = 
+
+		StringBuilder hql =
 			new StringBuilder("from DistribuicaoFornecedor where fornecedor.id in (:idsFornecedores) ");
-		
+
 		hql.append("and operacaoDistribuidor = :operacaoDistribuidor ");
-		
+
 		Query query = getSession().createQuery(hql.toString());
-		
+
 		query.setParameterList("idsFornecedores", idsForncedores);
 		query.setParameter("operacaoDistribuidor", operacaoDistribuidor);
-		
+
 		return query.list();
 	}
-	
+
 	@Override
 	@SuppressWarnings("unchecked")
 	public List<DistribuicaoDistribuidor> buscarDiasDistribuicaoDistribuidor(
 															Long idDistruibuidor,
 															OperacaoDistribuidor operacaoDistribuidor) {
-		
+
 		StringBuilder hql = new StringBuilder();
-		
+
 		hql.append("from DistribuicaoDistribuidor ");
 		hql.append("where distribuidor.id = :idDistribuidor ");
 		hql.append("and operacaoDistribuidor = :operacaoDistribuidor ");
-		
+
 		Query query = getSession().createQuery(hql.toString());
-		
+
 		query.setParameter("idDistribuidor", idDistruibuidor);
 		query.setParameter("operacaoDistribuidor", operacaoDistribuidor);
-		
+
 		return query.list();
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * @see br.com.abril.nds.repository.DistribuidorRepository#obterEnderecoPrincipal()
@@ -86,28 +87,112 @@ public class DistribuidorRepositoryImpl extends
 	@Override
 	public EnderecoDistribuidor obterEnderecoPrincipal(){
 		Criteria criteria=  getSession().createCriteria(EnderecoDistribuidor.class);
-		criteria.add(Restrictions.eq("principal", true) );		
+		criteria.add(Restrictions.eq("principal", true) );
 		criteria.setMaxResults(1);
-		
+
 		return (EnderecoDistribuidor) criteria.uniqueResult();
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * @see br.com.abril.nds.repository.DistribuidorRepository#obtemTiposGarantiasAceitas()
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<TipoGarantia> obtemTiposGarantiasAceitas() {		
-		Criteria criteria =  getSession().createCriteria(TipoGarantiaAceita.class);		
+	public List<TipoGarantia> obtemTiposGarantiasAceitas() {
+		Criteria criteria =  getSession().createCriteria(TipoGarantiaAceita.class);
 		criteria.setProjection(Projections.property("tipoGarantia"));
 		return criteria.list();
 	}
 
 	@Override
+	public List<RegistroCurvaABCDistribuidorVO> obterCurvaABCDistribuidor(
+			Date dataDe, Date dataAte, String codigoFornecedor,
+			String codigoProduto, String nomeProduto, String edicaoProduto,
+			String codigoEditor, String codigoCota, String nomeCota,
+			String municipio) {
+		StringBuilder hql = new StringBuilder();
+
+		hql.append("from EstoqueProdutoCota estoque join estoque.movimentos movimentos join estoque.produtoEdicao.produto.fornecedores fornecedores join estoque.cota.enderecos enderecos ");
+		hql.append("where movimentos.data >= :dataDe ");
+		hql.append("and movimentos.data <= :dataAte ");
+
+		if (codigoFornecedor != null && !codigoFornecedor.isEmpty()) {
+			hql.append("and fornecedores.id = :codigoFornecedor ");
+			//hql.append("and produtoEdicao.produto.fornecedores.id = :codigoFornecedor ");
+		}
+
+		if (codigoProduto != null && !codigoProduto.isEmpty()) {
+			hql.append("and estoque.produtoEdicao.produto.codigo <= :codigoProduto ");
+		}
+
+		if (nomeProduto != null && !nomeProduto.isEmpty()) {
+			hql.append("and estoque.produtoEdicao.produto.nome <= :nomeProduto ");
+		}
+
+		if (edicaoProduto != null && !edicaoProduto.isEmpty()) {
+			hql.append("and estoque.produtoEdicao.numeroEdicao <= :edicaoProduto ");
+		}
+
+		if (codigoEditor != null && !codigoEditor.isEmpty()) {
+			hql.append("and estoque.produtoEdicao.produto.editor.codigo <= :codigoEditor ");
+		}
+
+		if (codigoCota != null && !codigoCota.isEmpty()) {
+			hql.append("and estoque.cota.numeroCota = :codigoCota ");
+		}
+
+		if (nomeCota != null && !nomeCota.isEmpty()) {
+			hql.append("and estoque.cota.pessoa.nome = :nomeCota ");
+		}
+
+		if (municipio != null && !municipio.isEmpty()) {
+			hql.append("and enderecos.endereco.cidade <= :municipio ");
+		}
+
+		Query query = getSession().createQuery(hql.toString());
+
+		query.setParameter("dataDe", dataDe);
+		query.setParameter("dataAte", dataAte);
+
+		if (codigoFornecedor != null && !codigoFornecedor.isEmpty()) {
+			query.setParameter("codigoFornecedor", codigoFornecedor);
+		}
+
+		if (codigoProduto != null && !codigoProduto.isEmpty()) {
+			query.setParameter("codigoProduto", codigoProduto);
+		}
+
+		if (nomeProduto != null && !nomeProduto.isEmpty()) {
+			query.setParameter("nomeProduto", nomeProduto);
+		}
+
+		if (edicaoProduto != null && !edicaoProduto.isEmpty()) {
+			query.setParameter("edicaoProduto", edicaoProduto);
+		}
+
+		if (codigoEditor != null && !codigoEditor.isEmpty()) {
+			query.setParameter("codigoEditor", codigoEditor);
+		}
+
+		if (codigoCota != null && !codigoCota.isEmpty()) {
+			query.setParameter("codigoCota", codigoCota);
+		}
+
+		if (nomeCota != null && !nomeCota.isEmpty()) {
+			query.setParameter("nomeCota", nomeCota);
+		}
+
+		if (municipio != null && !municipio.isEmpty()) {
+			query.setParameter("municipio", municipio);
+		}
+		return query.list();
+	}
+
+	@Override
 	public List<RegistroCurvaABCDistribuidorVO> obterCurvaABCDistribuidor(FiltroCurvaABCDistribuidorDTO filtro) {
 		StringBuilder hql = new StringBuilder();
-		
+
 		hql.append("SELECT new ").append(RegistroCurvaABCDistribuidorVO.class.getCanonicalName())
 				.append(" ( estoqueProdutoCota.cota.numeroCota , ")
 				.append("   case when (pessoa.nome is not null) then ( pessoa.nome ) ")
@@ -119,34 +204,34 @@ public class DistribuidorRepositoryImpl extends
 				.append("   ( (sum(estoqueProdutoCota.qtdeRecebida) - sum(estoqueProdutoCota.qtdeDevolvida)) * estoqueProdutoCota.produtoEdicao.precoVenda ) ) ");
 
 		hql.append(getWhereQueryObterCurvaABCDistribuidor(filtro));
-		
+
 		Query query = this.getSession().createQuery(hql.toString());
-		
+
 		HashMap<String, Object> param = getParametrosObterCurvaABCDistribuidor(filtro);
-		
+
 		for(String key : param.keySet()){
 			query.setParameter(key, param.get(key));
 		}
-		
+
 		if (filtro.getPaginacao() != null) {
-			
+
 			if (filtro.getPaginacao().getPosicaoInicial() != null) {
 				query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
 			}
-			
+
 			if (filtro.getPaginacao().getQtdResultadosPorPagina() != null) {
 				query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
 			}
 		}
-		
-		return query.list();		
-		
+
+		return query.list();
+
 	}
 
 	private String getWhereQueryObterCurvaABCDistribuidor(FiltroCurvaABCDistribuidorDTO filtro) {
-		
+
 		StringBuilder hql = new StringBuilder();
-		
+
 		hql.append("from EstoqueProdutoCota as estoqueProdutoCota ")
 		.append(" join estoqueProdutoCota.movimentos as movimentos ")
 		.append(" join estoqueProdutoCota.produtoEdicao.produto.fornecedores as fornecedores ")
@@ -154,11 +239,11 @@ public class DistribuidorRepositoryImpl extends
 		.append(" join enderecos.endereco as endereco ")
 		.append(" join estoqueProdutoCota.cota.pdvs as pdv ")
 		.append(" join estoqueProdutoCota.cota.pessoa as pessoa ");
-		
+
 		hql.append("where movimentos.data between :dataDe and :dataAte ");
 
 		hql.append("and enderecos.principal is true ");
-		
+
 		if (filtro.getCodigoFornecedor() != null && !filtro.getCodigoFornecedor().isEmpty()) {
 			hql.append("and fornecedores.id = :codigoFornecedor ");
 			//hql.append("and produtoEdicao.produto.fornecedores.id = :codigoFornecedor ");
@@ -191,9 +276,9 @@ public class DistribuidorRepositoryImpl extends
 		if (filtro.getMunicipio() != null && !filtro.getMunicipio().isEmpty()) {
 			hql.append("and endereco.cidade = :municipio ");
 		}
-		
+
 		return hql.toString();
-		
+
 	}
 
 	/**
@@ -202,9 +287,9 @@ public class DistribuidorRepositoryImpl extends
 	 * @return HashMap<String,Object>
 	 */
 	private HashMap<String,Object> getParametrosObterCurvaABCDistribuidor(FiltroCurvaABCDistribuidorDTO filtro){
-		
+
 		HashMap<String,Object> param = new HashMap<String, Object>();
-		
+
 		param.put("dataDe",  filtro.getDataDe());
 		param.put("dataAte", filtro.getDataAte());
 
@@ -242,5 +327,5 @@ public class DistribuidorRepositoryImpl extends
 
 		return param;
 	}
-	
+
 }
