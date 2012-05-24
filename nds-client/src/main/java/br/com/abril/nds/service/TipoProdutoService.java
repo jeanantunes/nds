@@ -7,7 +7,7 @@ import br.com.abril.nds.model.cadastro.TipoProduto;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
 /**
- * Interface que define serviços referentes a entidade
+ * Interface que define servi�os referentes a entidade
  * {@link br.com.abril.nds.model.cadastro.TipoProduto}
  * 
  * @author Discover Technology
@@ -23,17 +23,17 @@ public interface TipoProdutoService {
 	public abstract TipoProduto obterPorId(Long id);
 	
 	/**
-	 * Remove o Tipo Produto do reposit�rio de dados.
+	 * Remove o Tipo Produto do reposit?rio de dados.
 	 * @param id
-	 * @throws ValidacaoException Lança quando o Tipo de Produto em questão não pode ser removido.
+	 * @throws ValidacaoException Lan�a quando o Tipo de Produto em quest�o n�o pode ser removido.
 	 */
-	public abstract void remover(Long id) throws ValidacaoException;
+	public abstract void remover(Long id);
 	
 	/**
 	 * Atualiza a entidade tipo produto no repositorio de dados.
 	 * @param entity entidade a ser persistida.
 	 * @return o TipoProduto que foi persistido.
-	 * @throws ValidacaoException quando o Tipo de Produto em questão não pode ser editado.
+	 * @throws ValidacaoException quando o Tipo de Produto em quest�o n�o pode ser editado.
 	 */
 	public abstract TipoProduto merge(TipoProduto entity) throws ValidacaoException;
 	
@@ -43,10 +43,10 @@ public interface TipoProdutoService {
 	 * @param codigo
 	 * @param codigoNCM
 	 * @param codigoNBM
-	 * @param orderBy nome do campo para compor a ordenção
-	 * @param ordenacao tipo da ordenção
+	 * @param orderBy nome do campo para compor a orden��o
+	 * @param ordenacao tipo da orden��o
 	 * @param initialResult resultado inicial
-	 * @param maxResults numero máximo de resultados
+	 * @param maxResults numero m�ximo de resultados
 	 * @return lista de Tipos de Produtos.
 	 */
 	public abstract List<TipoProduto> busca(String nomeTipoProduto, String codigo, String codigoNCM, String codigoNBM, String orderBy, 
@@ -63,7 +63,7 @@ public interface TipoProdutoService {
 	public abstract Long quantidade(String nomeTipoProduto, String codigo, String codigoNCM, String NBM);
 	
 	/**
-	 * Obtém tipo produto por id.
+	 * Obt�m tipo produto por id.
 	 * @param id 
 	 * @return tipoProduto
 	 */

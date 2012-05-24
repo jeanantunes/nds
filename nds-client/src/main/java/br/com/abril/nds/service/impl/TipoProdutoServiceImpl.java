@@ -16,7 +16,7 @@ import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
 /**
- * Classe de implementação referente ao serviço da entidade 
+ * Classe de implementacao referente ao servico da entidade 
  * {@link br.com.abril.nds.model.cadastro.TipoProduto}
  * 
  * @author Discover Technology
@@ -42,12 +42,12 @@ public class TipoProdutoServiceImpl implements TipoProdutoService {
 	 */
 	@Override
 	@Transactional(rollbackFor={ValidacaoException.class})
-	public void remover(Long id) throws ValidacaoException {
+	public void remover(Long id) {
 		
 		TipoProduto tipoProduto = this.tipoProdutoRepository.buscarPorId(id);
 		
 		if(tipoProduto != null) {
-
+			
 			this.validaTipoProduto(tipoProduto);
 			
 			this.tipoProdutoRepository.remover(tipoProduto);
@@ -65,7 +65,7 @@ public class TipoProdutoServiceImpl implements TipoProdutoService {
 		if (entity.getId() != null) {
 			
 			TipoProduto tipoProduto = this.tipoProdutoRepository.buscarPorId(entity.getId());
-
+			
 			this.validaTipoProduto(tipoProduto);
 			
 		} else {
@@ -124,20 +124,20 @@ public class TipoProdutoServiceImpl implements TipoProdutoService {
 	/**
 	 * Valida se um tipo de produto pode ser editado ou removido.
 	 * @param tipoProduto tipo produto para ser validado
-	 * @throws ValidacaoException lança exception caso o tipoProduto não possa ser alterado ou removido.
+	 * @throws ValidacaoException lanca exception caso o tipoProduto nao possa ser alterado ou removido.
 	 */
 	private void validaTipoProduto(TipoProduto tipoProduto) throws ValidacaoException {
 		
+		if (!isTipoProdutoDistribuidor(tipoProduto)) {
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR,
+					"Tipos de produtos cadastrados pela Treelog nao podem ser modificados."));
+		}
 		
 		if (this.tipoProdutoRepository.hasProdutoVinculado(tipoProduto)) {
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR,
-					"O Tipo de Produto já esta em uso."));
+					"Este Tipo Produto ja possui Produtos vinculados e não pode ser modificado."));
 		}
 		
-		if (!isTipoProdutoDistribuidor(tipoProduto)) {
-			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR,
-					"O Tipo de Produto não pode ser modificado."));
-		}
 	}
 	
 	/**
