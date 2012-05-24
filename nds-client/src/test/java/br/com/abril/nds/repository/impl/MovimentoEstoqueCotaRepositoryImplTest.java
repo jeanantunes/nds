@@ -319,7 +319,7 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 				Fixture.criarData(28, Calendar.FEBRUARY, 2012), 
 				Fixture.criarData(28, Calendar.FEBRUARY, 2012), 
 				Fixture.criarData(28, Calendar.FEBRUARY, 2012), 
-				StatusOperacao.CONCLUIDO);
+				StatusOperacao.CONCLUIDO, usuarioJoao, box1);
 		
 		save(controleConferenciaEncalheCota);
 		
@@ -474,7 +474,9 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 				Fixture.criarData(28, Calendar.FEBRUARY, 2012), 
 				Fixture.criarData(28, Calendar.FEBRUARY, 2012), 
 				Fixture.criarData(28, Calendar.FEBRUARY, 2012), 
-				StatusOperacao.CONCLUIDO);
+				StatusOperacao.CONCLUIDO, 
+				usuarioJoao, 
+				box1);
 		
 		save(controleConferenciaEncalheCota);		
 		/**
