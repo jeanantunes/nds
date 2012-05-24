@@ -15,25 +15,25 @@ public class EMS0119Input extends IntegracaoDocument implements Serializable{
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private String codigoDaPublicacao; //ok
-	private Long edicao; //ok
-	private String nomeDaPublicacao;//ok
+	private String codigoDaPublicacao; 
+	private Long edicao;
+	private String nomeDaPublicacao;
 	private String numeroDeEdicoes;
-	private Integer periodicidade; //ok ENUM PARA O CAMPO PERIODICIDADE ESTA EM FORMATO DIFERENTE
-	private Long tipoDePublicacao; //ok
-	private boolean statusDaPublicacao; //NAO EXISTE O CAMPO NA TABELA PRODUTO
-	private Long codigoDoEditor; //ok
+	private Integer periodicidade; 
+	private Long tipoDePublicacao;
+	private boolean statusDaPublicacao; 
+	private Long codigoDoEditor;
 	private String cobrancaAntecipada;
 	private String condTransmiteHistograma;
-	private Integer pacotePadrao; //ok
+	private Integer pacotePadrao; 
 	private String condPublicacaoEspecial;
 	private String condProdutoAVista;
 	private String contextoFornecedorProduto;
 	private String codigoFornecedorPublic;
-	private BigDecimal desconto;//ok
+	private BigDecimal desconto;
 	private String origemDoProduto;
 	private String cromos; 
-	private String nomeComercial; // NAO EXISTE O CAMPO NA TABELA PRODUTO_EDICAO
+	private String nomeComercial;
 	
 	@Field(offset = 1, length = 5)
 	public String getCodigoDaPublicacao() {
