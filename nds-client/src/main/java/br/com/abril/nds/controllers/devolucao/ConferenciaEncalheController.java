@@ -370,7 +370,15 @@ public class ConferenciaEncalheController {
 		
 		ControleConferenciaEncalheCota controleConfEncalheCota = new ControleConferenciaEncalheCota();
 		controleConfEncalheCota.setDataInicio((Date) this.session.getAttribute(HORA_INICIO_CONFERENCIA));
-		controleConfEncalheCota.setCota(this.getInfoConferenciaSession().getCota());
+		
+		InfoConferenciaEncalheCota info = this.getInfoConferenciaSession();
+		
+		if (info == null){
+			
+			throw new ValidacaoException(TipoMensagem.ERROR, "Sessão expirada.");
+		}
+		
+		controleConfEncalheCota.setCota(info.getCota());
 		controleConfEncalheCota.setId(this.getInfoConferenciaSession().getIdControleConferenciaEncalheCota());
 		
 		List<ConferenciaEncalheDTO> lista = this.getListaConferenciaEncalheFromSession();
