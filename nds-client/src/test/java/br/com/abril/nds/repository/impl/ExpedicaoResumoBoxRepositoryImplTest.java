@@ -119,10 +119,10 @@ public class ExpedicaoResumoBoxRepositoryImplTest extends AbstractRepositoryImpl
 		Fornecedor fornecedorDinap = Fixture.fornecedorDinap(tipoFornecedorPublicacao);
 		save(fornecedorDinap);
 		
-		box1 = Fixture.criarBox("Box-1", "BX-001", TipoBox.LANCAMENTO);
+		box1 = Fixture.criarBox("Box-1", "BX-001", TipoBox.LANCAMENTO, false);
 		save(box1);
 		
-		Box box2 = Fixture.criarBox("Box-2", "BX-002", TipoBox.LANCAMENTO);
+		Box box2 = Fixture.criarBox("Box-2", "BX-002", TipoBox.LANCAMENTO, false);
 		save(box2);
 		
 		PessoaFisica manoel = Fixture.pessoaFisica("123.456.789-00",

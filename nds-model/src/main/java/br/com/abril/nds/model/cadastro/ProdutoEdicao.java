@@ -60,6 +60,9 @@ public class ProdutoEdicao implements Serializable {
 	@Column(name  = "NUMERO_EDICAO", nullable = false)
 	protected Long numeroEdicao;
 	
+	@Column(name = "NOME_COMERCIAL", nullable = true, unique = true, length = 24)
+	private String nomeComercial;
+	
 	@Column(name = "PRECO_VENDA", nullable = true)
 	protected BigDecimal precoVenda;
 	
@@ -379,6 +382,20 @@ public class ProdutoEdicao implements Serializable {
 
 	public void setChamadaEncalhes(Set<ChamadaEncalhe> chamadaEncalhes) {
 		this.chamadaEncalhes = chamadaEncalhes;
+	}
+
+	/**
+	 * @return the nomeComercial
+	 */
+	public String getNomeComercial() {
+		return nomeComercial;
+	}
+
+	/**
+	 * @param nomeComercial the nomeComercial to set
+	 */
+	public void setNomeComercial(String nomeComercial) {
+		this.nomeComercial = nomeComercial;
 	}
 
 }

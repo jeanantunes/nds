@@ -2,6 +2,7 @@ package br.com.abril.nds.repository;
 
 import java.util.List;
 
+import br.com.abril.nds.dto.ConsultaProdutoDTO;
 import br.com.abril.nds.model.cadastro.Produto;
 
 /**
@@ -40,4 +41,11 @@ public interface ProdutoRepository extends Repository<Produto, Long> {
 	Produto obterProdutoPorCodigo(String codigoProduto);
 	
 	String obterNomeProdutoPorCodigo(String codigoProduto);
+	
+	List<ConsultaProdutoDTO> pesquisarProdutos(String codigo, String produto, String fornecedor, String editor,
+			Long codigoTipoProduto, String sortorder, String sortname, int page, int rp);
+
+	Integer pesquisarCountProdutos(String codigo, String produto,
+			String fornecedor, String editor, Long codigoTipoProduto);
+
 }

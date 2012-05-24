@@ -1,5 +1,6 @@
 package br.com.abril.nds.repository.impl;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.junit.Assert;
@@ -7,6 +8,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.dto.ConsultaProdutoDTO;
 import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.cadastro.Editor;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
@@ -30,7 +32,7 @@ public class ProdutoRepositoryImplTest extends AbstractRepositoryImplTest {
 		save(tipoProduto);
 		
 		Produto produto =
-			Fixture.produto("1", "Revista Veja", "Veja", PeriodicidadeProduto.SEMANAL, tipoProduto, 5, 5);
+			Fixture.produto("1", "Revista Veja", "Veja", PeriodicidadeProduto.SEMANAL, tipoProduto, 5, 5, BigDecimal.TEN);
 		produto.setEditor(abril);
 		save(produto);
 	}
@@ -57,6 +59,16 @@ public class ProdutoRepositoryImplTest extends AbstractRepositoryImplTest {
 			produtoRepository.obterProdutoLikeNomeProduto("Vej");
 		
 		Assert.assertTrue(!listaProduto.isEmpty());
+	}
+	
+	@Test
+	public void pesquisarProdutos() {
+		
+		List<ConsultaProdutoDTO> listaProdutos = 
+			this.produtoRepository.pesquisarProdutos(
+				"1", "", "", "", 1L, "asc", "codigo", 1, 15);
+		
+		Assert.assertNotNull(listaProdutos);
 	}
 	
 }
