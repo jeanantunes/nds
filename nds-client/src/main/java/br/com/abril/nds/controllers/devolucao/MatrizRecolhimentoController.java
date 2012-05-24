@@ -987,16 +987,6 @@ public class MatrizRecolhimentoController {
 						
 						qtdeExemplares = qtdeExemplares.add(produtoRecolhimento.getExpectativaEncalhe());
 					}
-					
-					if (produtoRecolhimento.getExpectativaEncalheAtendida() != null) {
-											
-						qtdeExemplares = qtdeExemplares.add(produtoRecolhimento.getExpectativaEncalheAtendida());
-					}
-					
-					if (produtoRecolhimento.getExpectativaEncalheSede() != null) {
-						
-						qtdeExemplares = qtdeExemplares.add(produtoRecolhimento.getExpectativaEncalheSede());
-					}
 				}
 				
 				boolean excedeCapacidadeDistribuidor = false;

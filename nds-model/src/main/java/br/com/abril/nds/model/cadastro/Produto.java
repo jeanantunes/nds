@@ -53,7 +53,7 @@ public class Produto implements Serializable {
 	@Column(name = "DESCRICAO")
 	private String descricao;
 	
-	@ManyToMany(mappedBy="produtos")
+	@ManyToMany
 	private Set<Fornecedor> fornecedores = new HashSet<Fornecedor>();
 
 	@Enumerated(EnumType.STRING)

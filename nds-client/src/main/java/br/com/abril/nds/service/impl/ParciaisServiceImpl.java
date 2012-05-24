@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.TipoEdicao;
+import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.planejamento.HistoricoLancamento;
 import br.com.abril.nds.model.planejamento.Lancamento;
@@ -18,6 +19,7 @@ import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamentoParcial;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamentoParcial;
+import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.HistoricoLancamentoRepository;
 import br.com.abril.nds.repository.LancamentoParcialRepository;
 import br.com.abril.nds.repository.LancamentoRepository;
@@ -46,9 +48,6 @@ public class ParciaisServiceImpl implements ParciaisService{
 	private DistribuidorService distribuidorService;
 	
 	@Autowired
-	private UsuarioRepository usuarioRepository;
-	
-	@Autowired
 	private HistoricoLancamentoRepository historicoLancamentoRepository;
 	
 	@Autowired
@@ -57,17 +56,26 @@ public class ParciaisServiceImpl implements ParciaisService{
 	@Autowired
 	private CalendarioService calendarioService;
 	
+	public void gerarPeriodosParcias(Long idProdutoEdicao, Integer qtdePeriodos, Usuario usuario, Integer peb) {
+		
+		ProdutoEdicao produtoEdicao = produtoEdicaoRepository.buscarPorId(idProdutoEdicao);
+		
+		Distribuidor distribuidor = this.distribuidorService.obter();
+		
+		gerarPeriodosParcias(produtoEdicao, qtdePeriodos, usuario, peb, distribuidor);
+	}
+	
 	@Override
 	@Transactional
-	public void gerarPeriodosParcias(Long idProdutoEdicao, Integer qtdePeriodos, Long idUsuario, Integer peb) {
+	public void gerarPeriodosParcias(ProdutoEdicao produtoEdicao, Integer qtdePeriodos, Usuario usuario, Integer peb, Distribuidor distribuidor) {
 		
-		ProdutoEdicao produtoEdicao = obterProdutoEdicaoValidado(idProdutoEdicao);
+		validarProdutoEdicao(produtoEdicao);
 		
 		LancamentoParcial lancamentoParcial = obterLancamentoParcialValidado(produtoEdicao, qtdePeriodos);		
 		
 		Lancamento ultimoLancamento = lancamentoRepository.obterUltimoLancamentoDaEdicao(produtoEdicao.getId());
 		
-		Integer fatorRelancamentoParcial = distribuidorService.obter().getFatorRelancamentoParcial();
+		Integer fatorRelancamentoParcial = distribuidor.getFatorRelancamentoParcial();
 		
 		if(peb==null)
 			peb = produtoEdicao.getPeb(); 
@@ -96,7 +104,7 @@ public class ParciaisServiceImpl implements ParciaisService{
 			
 			Lancamento novoLancamento =  gerarLancamento(produtoEdicao, dtLancamento, dtRecolhimento);
 			
-			HistoricoLancamento novoHistorico = gerarHistoricoLancamento(novoLancamento, idUsuario);
+			HistoricoLancamento novoHistorico = gerarHistoricoLancamento(novoLancamento, usuario);
 			
 			PeriodoLancamentoParcial novoPeriodo = gerarPeriodoParcial(novoLancamento, lancamentoParcial);
 			
@@ -108,18 +116,10 @@ public class ParciaisServiceImpl implements ParciaisService{
 		}
 	}
 
-	private ProdutoEdicao obterProdutoEdicaoValidado(Long idProdutoEdicao) {
+	private void validarProdutoEdicao(ProdutoEdicao produtEdicao) {
 		
-		if(idProdutoEdicao == null)
-			throw new ValidacaoException(TipoMensagem.WARNING, "Id do ProdutoEdicao não deve ser nulo.");
-		
-		ProdutoEdicao produtoEdicao = produtoEdicaoRepository.buscarPorId(idProdutoEdicao);
-
-		if(produtoEdicao == null)
+		if(produtEdicao == null)
 			throw new ValidacaoException(TipoMensagem.WARNING, "ProdutoEdicao não deve ser nulo.");
-		
-
-		return produtoEdicao;
 	}
 
 	private PeriodoLancamentoParcial gerarPeriodoParcial(Lancamento lancamento, LancamentoParcial lancamentoParcial) {
@@ -133,14 +133,14 @@ public class ParciaisServiceImpl implements ParciaisService{
 		return periodo;
 	}
 
-	private HistoricoLancamento gerarHistoricoLancamento(Lancamento lancamento, Long idUsuario) {
+	private HistoricoLancamento gerarHistoricoLancamento(Lancamento lancamento, Usuario usuario) {
 
 		HistoricoLancamento historico = new HistoricoLancamento();
 		historico.setLancamento(lancamento);
 		historico.setTipoEdicao(TipoEdicao.INCLUSAO);
 		historico.setStatus(lancamento.getStatus());
 		historico.setDataEdicao(new Date());
-		historico.setResponsavel(usuarioRepository.buscarPorId(idUsuario));
+		historico.setResponsavel(usuario);
 		
 		return historico;		
 	}
