@@ -111,10 +111,11 @@ public class TipoProdutoServiceImpl implements TipoProdutoService {
 	}
 	
 
-	/* (non-Javadoc)
+	/**
 	 * @see br.com.abril.nds.service.TipoProdutoService#obterTodosTiposProduto()
 	 */
 	@Override
+	@Transactional(readOnly=true)
 	public List<TipoProduto> obterTodosTiposProduto() {
 		
 		return this.tipoProdutoRepository.buscarTodos();

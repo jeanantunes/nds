@@ -5,17 +5,24 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.client.vo.BaseComboVO;
 import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.dto.ConsultaProdutoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.cadastro.Editor;
+import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.cadastro.TipoDesconto;
 import br.com.abril.nds.model.cadastro.TipoProduto;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
+import br.com.abril.nds.service.EditorService;
 import br.com.abril.nds.service.EstoqueProdutoService;
+import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.ProdutoService;
+import br.com.abril.nds.service.TipoDescontoService;
 import br.com.abril.nds.service.TipoProdutoService;
 import br.com.abril.nds.service.exception.UniqueConstraintViolationException;
 import br.com.abril.nds.util.ItemAutoComplete;
@@ -48,6 +55,15 @@ public class ProdutoController {
 	
 	@Autowired
 	private TipoProdutoService tipoProdutoService;
+
+	@Autowired
+	private EditorService editorService;
+
+	@Autowired
+	private FornecedorService fornecedorService;
+	
+	@Autowired
+	private TipoDescontoService tipoDescontoService;
 	
 	public ProdutoController(Result result) {
 		this.result = result;
@@ -209,13 +225,28 @@ public class ProdutoController {
 	@Post
 	public void carregarDadosProduto(Long id) {
 		
-		List<TipoProduto> listaTipoProduto = this.tipoProdutoService.obterTodosTiposProduto();
-		
 		if (id != null) {
 			// TODO: carregar dados produto.
 		}
+		
+		List<Object> listaCombos = new ArrayList<Object>();
 
-		this.result.include("listaTipoProduto", listaTipoProduto);
+		//List<BaseComboVO> comboTipoProduto = parseComboTipoProduto(this.tipoProdutoService.obterTodosTiposProduto());
+		listaCombos.add(parseComboTipoProduto(this.tipoProdutoService.obterTodosTiposProduto()));
+
+		
+		//List<BaseComboVO> comboFornecedores = parseComboFornecedor(this.fornecedorService.obterFornecedores());
+		listaCombos.add(parseComboFornecedor(this.fornecedorService.obterFornecedores()));
+
+		//List<BaseComboVO> comboEditor = parseComboEditor(this.editorService.obterEditores());
+		listaCombos.add(parseComboEditor(this.editorService.obterEditores()));
+		
+		listaCombos.add(parseComboTipoDesconto(this.tipoDescontoService.obterTodosTiposDescontos()));
+		
+		this.result
+				.use(Results.json())
+				.from(listaCombos, "result")
+				.serialize();
 	}
 	
 	@Post
@@ -237,5 +268,49 @@ public class ProdutoController {
 				new ValidacaoVO(TipoMensagem.SUCCESS, "Produto excluido com sucesso."), 
 				"result").recursive().serialize();
 	}
-	
+
+	private List<BaseComboVO> parseComboTipoDesconto(List<TipoDesconto> listaTipoDesconto) {
+		
+		List<BaseComboVO> listaBaseComboVO = new ArrayList<BaseComboVO>();
+		
+		for (TipoDesconto tipoDesconto : listaTipoDesconto) {
+			listaBaseComboVO.add(new BaseComboVO(tipoDesconto.getId(), tipoDesconto.getDescricao()));
+		}
+		
+		return listaBaseComboVO;
+	}
+
+	private List<BaseComboVO> parseComboTipoProduto(List<TipoProduto> listaTipoProduto) {
+		
+		List<BaseComboVO> listaBaseComboVO = new ArrayList<BaseComboVO>();
+		
+		for (TipoProduto tipoProduto : listaTipoProduto) {
+			listaBaseComboVO.add(new BaseComboVO(tipoProduto.getId(), tipoProduto.getDescricao()));
+		}
+		
+		return listaBaseComboVO;
+	}
+
+	private List<BaseComboVO> parseComboFornecedor(List<Fornecedor> listaFornecedor) {
+		
+		List<BaseComboVO> listaBaseComboVO = new ArrayList<BaseComboVO>();
+		
+		for (Fornecedor fornecedor : listaFornecedor) {
+			listaBaseComboVO.add(new BaseComboVO(fornecedor.getId(), fornecedor.getJuridica().getRazaoSocial()));
+		}
+		
+		return listaBaseComboVO;
+	}
+
+	private List<BaseComboVO> parseComboEditor(List<Editor> listaEditor) {
+		
+		List<BaseComboVO> listaBaseComboVO = new ArrayList<BaseComboVO>();
+		
+		for (Editor editor : listaEditor) {
+			listaBaseComboVO.add(new BaseComboVO(editor.getId(), editor.getNome()));
+		}
+		
+		return listaBaseComboVO;
+	}
+
 }

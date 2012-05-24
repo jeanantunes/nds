@@ -54,7 +54,6 @@ public class Produto implements Serializable {
 	private String descricao;
 	
 	@ManyToMany
-	
 	private Set<Fornecedor> fornecedores = new HashSet<Fornecedor>();
 
 	@Enumerated(EnumType.STRING)

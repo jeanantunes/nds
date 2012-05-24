@@ -83,7 +83,7 @@ public class ProdutoRepositoryImpl extends AbstractRepository<Produto, Long> imp
 		hql += " tipoProduto.descricao as tipoProdutoDescricao, editor.nome as nomeEditor, ";
 		hql += " juridica.razaoSocial as tipoContratoFornecedor, ";
 		hql += " fornecedor.situacaoCadastro as situacao, ";
-		hql += " produtoEdicao.peb as peb ";
+		hql += " produto.peb as peb ";
 
 		try {
 			
@@ -129,8 +129,7 @@ public class ProdutoRepositoryImpl extends AbstractRepository<Produto, Long> imp
 	private Query getQueryBuscaProdutos(String hql, String codigo, String produto,
 			String fornecedor, String editor, Long codigoTipoProduto, String sortname, String sortorder) {
 		
-		hql += " from ProdutoEdicao produtoEdicao ";
-		hql += " join produtoEdicao.produto produto ";
+		hql += " from Produto produto ";
 		hql += " join produto.fornecedores fornecedor ";
 		hql += " join fornecedor.juridica juridica ";
 		hql += " join produto.editor editor ";
