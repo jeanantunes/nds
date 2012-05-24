@@ -19,7 +19,7 @@ import br.com.abril.nds.model.cadastro.TipoParametroSistema;
 public class ParametroSistemaGeralDTO implements Serializable {
 	
 	/** */
-	private static final long serialVersionUID = -8302938075932981968L;
+	private static final long serialVersionUID = -7477289076396360578L;
 	
 	
 	private Map<TipoParametroSistema, String> params = 
@@ -303,7 +303,22 @@ public class ParametroSistemaGeralDTO implements Serializable {
 	public void setPathMdcExportacao(String pathMdcExportacao) {
 		this.params.put(TipoParametroSistema.PATH_INTERFACE_MDC_EXPORTACAO, pathMdcExportacao);
 	}
+	
+	/**
+	 * @return the pathMdcBackup
+	 */
+	public String getPathMdcBackup() {
+		return this.getParametroSistemaString(TipoParametroSistema.PATH_INTERFACE_MDC_BACKUP);
+	}
 
+	/**
+	 * @param pathMdcBackup
+	 *            the pathMdcBackup to set
+	 */
+	public void setPathMdcBackup(String pathMdcBackup) {
+		this.params.put(TipoParametroSistema.PATH_INTERFACE_MDC_BACKUP, pathMdcBackup);
+	}
+	
 	/**
 	 * @return the pathBancasExportacao
 	 */
