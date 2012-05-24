@@ -29,6 +29,12 @@ public class Editor {
 	
 	@Column(name = "CODIGO", nullable = false)
 	private Long codigo;
+
+	/**
+	 * Flag que indica se o Editor foi criado atraves de interface de sistemas ou por cadastro
+	 */
+	@Column(name = "ORIGEM_INTERFACE", nullable = true)
+	private Boolean origemInterface;
 	
 	@ManyToMany
 	@JoinTable(name = "EDITOR_FORNECEDOR", joinColumns = {@JoinColumn(name = "EDITOR_ID")}, 
@@ -107,6 +113,14 @@ public class Editor {
 	 */
 	public void setEnderecos(Set<EnderecoEditor> enderecos) {
 		this.enderecos = enderecos;
+	}
+
+	public Boolean getOrigemInterface() {
+		return origemInterface;
+	}
+
+	public void setOrigemInterface(Boolean origemInterface) {
+		this.origemInterface = origemInterface;
 	}
 
 }

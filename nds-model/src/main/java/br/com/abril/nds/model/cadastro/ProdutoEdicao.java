@@ -129,6 +129,12 @@ public class ProdutoEdicao implements Serializable {
 	private Date dataDesativacao;
 	
 	/**
+	 * Flag que indica se o ProdutoEdicao foi criado atraves de interface de sistemas ou por cadastro
+	 */
+	@Column(name = "ORIGEM_INTERFACE", nullable = true)
+	private Boolean origemInterface;
+	
+	/**
 	 * Dimensões do produto (largura, etc)
 	 */
 	@Embedded
@@ -396,6 +402,14 @@ public class ProdutoEdicao implements Serializable {
 	 */
 	public void setNomeComercial(String nomeComercial) {
 		this.nomeComercial = nomeComercial;
+	}
+
+	public Boolean getOrigemInterface() {
+		return origemInterface;
+	}
+
+	public void setOrigemInterface(Boolean origemInterface) {
+		this.origemInterface = origemInterface;
 	}
 
 }
