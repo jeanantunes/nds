@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import br.com.abril.nds.client.vo.RegistroCurvaABCDistribuidorVO;
 import br.com.abril.nds.client.vo.ResultadoEdicoesFechadasVO;
 import br.com.abril.nds.client.vo.ValidacaoVO;
+import br.com.abril.nds.dto.filtro.FiltroEdicoesFechadasDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.service.EdicoesFechadasService;
 import br.com.abril.nds.util.CellModelKeyValue;
@@ -41,15 +42,20 @@ public class EdicoesFechadasController {
 		result.include("data", data);
 	}
 
-	private void validarDadosPesquisa(String dataDe, String dataAte) {
+	/**
+	 * Valida os dados enviados para a pesquisa
+	 * @param dataDe
+	 * @param dataAte
+	 */
+	private void validarDadosPesquisa(Date dataDe, Date dataAte) {
 		List<String> listaMensagemValidacao = new ArrayList<String>();
 
-		if (dataDe == null || dataDe.isEmpty()) {
+		if (dataDe == null) {
 			listaMensagemValidacao
 					.add("O preenchimento do campo Período De é obrigatório!");
 		}
 
-		if (dataAte == null || dataAte.isEmpty()) {
+		if (dataAte == null) {
 			listaMensagemValidacao
 					.add("O preenchimento do campo Período Até é obrigatório!");
 		}
@@ -62,17 +68,22 @@ public class EdicoesFechadasController {
 
 	}
 	
+	/**
+	 * Realiza a pesquisa de edições fechadas
+	 * @param filtroEdicoesFechadasDTO
+	 * @throws Exception
+	 */
 	@Post
 	@Path("/pesquisar")
-	public void pesquisar(String dataDe, String dataAte, String codigoFornecedor) throws Exception {
+	public void pesquisarEdicoesFechadas(FiltroEdicoesFechadasDTO filtroEdicoesFechadasDTO) throws Exception {
 
-		this.validarDadosPesquisa(dataDe, dataAte);
+		this.validarDadosPesquisa(filtroEdicoesFechadasDTO.getDateDe(), filtroEdicoesFechadasDTO.getDateAte());
 
 		SimpleDateFormat sdf = new SimpleDateFormat(Constantes.DATE_PATTERN_PT_BR);
 		
 		ResultadoEdicoesFechadasVO resultado = null;
 		try {
-			resultado = edicoesFechadasService.obterResultadoEdicoesFechadas(sdf.parse(dataDe), sdf.parse(dataAte), codigoFornecedor);
+			resultado = null; //edicoesFechadasService.obterResultadoEdicoesFechadas(sdf.parse(dataDe), sdf.parse(dataAte), codigoFornecedor);
 		} catch (Exception e) {
 
 			if (e instanceof ValidacaoException) {
