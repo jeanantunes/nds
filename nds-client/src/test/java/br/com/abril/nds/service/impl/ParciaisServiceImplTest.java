@@ -107,7 +107,7 @@ public class ParciaisServiceImplTest extends AbstractRepositoryImplTest  {
 		
 		produtoEdicaoVeja1 = Fixture.produtoEdicao(1L, 10, peb,
 				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(20), "ABCDEFGHIJKLMNOPQRSTU", 1L,
-				produtoVeja);
+				produtoVeja, null, false);
 		
 		produtoEdicaoVeja1.setParcial(true);
 		save(produtoEdicaoVeja1);

@@ -393,41 +393,6 @@ public class Fixture {
 
 	public static ProdutoEdicao produtoEdicao(Long numeroEdicao,
 			int pacotePadrao, int peb, BigDecimal peso, BigDecimal precoCusto,
-			BigDecimal precoVenda, String codigoDeBarras, Long cdSMNotUsedAnyMore, Produto produto) {
-		
-		ProdutoEdicao produtoEdicao = new ProdutoEdicao();
-		produtoEdicao.setNumeroEdicao(numeroEdicao);
-		produtoEdicao.setPacotePadrao(pacotePadrao);
-		produtoEdicao.setPeb(peb);
-		produtoEdicao.setPeso(peso);
-		produtoEdicao.setPrecoCusto(precoCusto);
-		produtoEdicao.setPrecoVenda(precoVenda);
-		produtoEdicao.setProduto(produto);
-		produtoEdicao.setCodigoDeBarras(codigoDeBarras);
-		return produtoEdicao;
-	}
-	
-	public static ProdutoEdicao produtoEdicao(Long numeroEdicao,
-			int pacotePadrao, int peb, BigDecimal peso, BigDecimal precoCusto,
-			BigDecimal precoVenda, String codigoDeBarras, Long cdSMNotUsedAnyMore, Produto produto, 
-			BigDecimal expectativaVenda) {
-		
-		ProdutoEdicao produtoEdicao = new ProdutoEdicao();
-		produtoEdicao.setNumeroEdicao(numeroEdicao);
-		produtoEdicao.setPacotePadrao(pacotePadrao);
-		produtoEdicao.setPeb(peb);
-		produtoEdicao.setPeso(peso);
-		produtoEdicao.setPrecoCusto(precoCusto);
-		produtoEdicao.setPrecoVenda(precoVenda);
-		produtoEdicao.setProduto(produto);
-		produtoEdicao.setCodigoDeBarras(codigoDeBarras);
-		produtoEdicao.setExpectativaVenda(expectativaVenda);
-		
-		return produtoEdicao;
-	}
-
-	public static ProdutoEdicao produtoEdicao(Long numeroEdicao,
-			int pacotePadrao, int peb, BigDecimal peso, BigDecimal precoCusto,
 			BigDecimal precoVenda, String codigoDeBarras, Long cdSMNotUsedAnyMore, Produto produto, 
 			BigDecimal expectativaVenda, boolean parcial) {
 		
