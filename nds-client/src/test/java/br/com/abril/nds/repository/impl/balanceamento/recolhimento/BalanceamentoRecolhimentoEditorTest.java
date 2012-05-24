@@ -45,14 +45,14 @@ import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamentoParcial;
 import br.com.abril.nds.model.seguranca.Usuario;
+import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.repository.impl.AbstractRepositoryImplTest;
-import br.com.abril.nds.repository.impl.LancamentoRepositoryImpl;
 import br.com.abril.nds.vo.PeriodoVO;
 
 public class BalanceamentoRecolhimentoEditorTest extends AbstractRepositoryImplTest {
 	
 	@Autowired
-	private LancamentoRepositoryImpl lancamentoRepository;
+	private LancamentoRepository lancamentoRepository;
 	
 	private Lancamento lancamentoVeja;
 	private Lancamento lancamentoQuatroRodas;
