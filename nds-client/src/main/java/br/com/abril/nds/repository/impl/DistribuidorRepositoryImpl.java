@@ -44,7 +44,6 @@ public class DistribuidorRepositoryImpl extends
 		return distribuidores.isEmpty() ? null : distribuidores.get(0);
 	}
 
-
 	@Override
 	@SuppressWarnings("unchecked")
 	public List<DistribuicaoFornecedor> buscarDiasDistribuicaoFornecedor(

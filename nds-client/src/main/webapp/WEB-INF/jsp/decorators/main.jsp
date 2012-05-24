@@ -247,6 +247,8 @@ fieldset label {
 							<li><a href='<c:url value="/estoque/recebimentoFisico/index"/>'>Recebimento
 									Fisico</a>
 							</li>
+							<li><a href='<c:url value="/estoque/edicoesFechadas"/>'>Edições Fechadas com Saldo</a>
+							</li>
 							<li><a href="Estoque/help_estoque.htm">Help</a>
 							</li>
 						</ul></li>
