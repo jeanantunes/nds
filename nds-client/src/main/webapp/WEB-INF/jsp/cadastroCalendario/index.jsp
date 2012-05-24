@@ -61,8 +61,10 @@
 		var dtFeriado = $("#dtFeriado").val();
 		var tipoFeriado = $("#novoTipoFeriado").val();
 		var descricao = $("#novoDescricao").val();
-		var opera = $("#novoOpera:checked").val();
-		alert(opera);
+		var opera = $("#novoOpera").is(":checked");novoOpera
+		var efetuaCobranca = $("#novoEfetuaCobranca").is(":checked");
+		var repeteAnualmente = $("#novoRepeteAnualmente").is(":checked");
+		
 		
 		$.postJSON("<c:url value='/administracao/cadastroCalendario/novoFeriado'/>",
 				   "dtFeriado="+dtFeriado+
