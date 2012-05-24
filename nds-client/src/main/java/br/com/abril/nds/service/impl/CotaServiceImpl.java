@@ -50,15 +50,12 @@ import br.com.abril.nds.model.cadastro.TipoCota;
 import br.com.abril.nds.model.cadastro.TipoDesconto;
 import br.com.abril.nds.model.cadastro.pdv.CaracteristicasPDV;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
-import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
-import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.financeiro.Cobranca;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.BaseReferenciaCotaRepository;
 import br.com.abril.nds.repository.CobrancaRepository;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.EnderecoCotaRepository;
-import br.com.abril.nds.repository.EnderecoRepository;
 import br.com.abril.nds.repository.HistoricoNumeroCotaRepository;
 import br.com.abril.nds.repository.HistoricoSituacaoCotaRepository;
 import br.com.abril.nds.repository.PdvRepository;
@@ -800,7 +797,7 @@ public class CotaServiceImpl implements CotaService {
 	public void excluirCota(Long idCota){
 		
 		if(idCota == null){
-			throw new ValidacaoException(TipoMensagem.WARNING, "Cota informada para exclusão invalida!");
+			throw new ValidacaoException(TipoMensagem.WARNING, "Cota informada para exclusão inválida!");
 		}
 		
 		Cota cota  = cotaRepository.buscarPorId(idCota);
@@ -899,7 +896,7 @@ public class CotaServiceImpl implements CotaService {
 		}
 		
 		if(DateUtil.isDataInicialMaiorDataFinal(cotaDto.getInicioPeriodo(), cotaDto.getFimPeriodo())){
-			throw new ValidacaoException(TipoMensagem.WARNING,"O período preenchido nos campos [Período] [Até] referente à  cota base está invalido!");
+			throw new ValidacaoException(TipoMensagem.WARNING,"O período preenchido nos campos [Período] [Até] referente à  cota base está inválido!");
 		}
 	}
 	
@@ -1336,7 +1333,7 @@ public class CotaServiceImpl implements CotaService {
 		}
 		
 		if(existeValor && (valor.intValue() != 100)){
-			throw new ValidacaoException(TipoMensagem.WARNING,"Porcentagem histórico cota base invalido! A porcentagem do histórico cota base deve ser 100%  ");
+			throw new ValidacaoException(TipoMensagem.WARNING,"Porcentagem histórico cota base inválido! A porcentagem do histórico cota base deve ser 100%  ");
 		}
 		
 	}
@@ -1478,7 +1475,7 @@ public class CotaServiceImpl implements CotaService {
 	public void salvarDescontosCota(List<Long> descontos, Long idCota){
 		
 		if(idCota == null ){
-			throw new ValidacaoException(TipoMensagem.ERROR,"Parâmetro Cota invalido!");
+			throw new ValidacaoException(TipoMensagem.ERROR,"Parâmetro Cota inválido!");
 		}
 		
 		Set<TipoDesconto> listaDescontos = new HashSet<TipoDesconto>();
@@ -1517,13 +1514,13 @@ public class CotaServiceImpl implements CotaService {
 	public void salvarSociosCota(List<SocioCota> sociosCota, Long idCota ){
 		
 		if(idCota == null ){
-			throw new ValidacaoException(TipoMensagem.ERROR,"Parâmetro Cota invalido!");
+			throw new ValidacaoException(TipoMensagem.ERROR,"Parâmetro Cota inválido!");
 		}
 		
 		Cota cota  = cotaRepository.buscarPorId(idCota);
 		
 		if(cota == null ){
-			throw new ValidacaoException(TipoMensagem.ERROR,"Parâmetro Cota invalido!");
+			throw new ValidacaoException(TipoMensagem.ERROR,"Parâmetro Cota inválido!");
 		}
 		
 		if( cota.getSociosCota() != null && !cota.getSociosCota().isEmpty()){
