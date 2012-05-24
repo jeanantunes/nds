@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -13,6 +14,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.client.vo.CobrancaDividaVO;
 import br.com.abril.nds.client.vo.CobrancaVO;
 import br.com.abril.nds.client.vo.DetalhesDividaVO;
 import br.com.abril.nds.client.vo.ValidacaoVO;
@@ -25,7 +27,6 @@ import br.com.abril.nds.dto.filtro.FiltroConsultaDividasCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaDividasCotaDTO.OrdenacaoColunaDividas;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.StatusCobranca;
-import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.PoliticaCobranca;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
@@ -37,6 +38,7 @@ import br.com.abril.nds.service.CobrancaService;
 import br.com.abril.nds.service.DistribuidorService;
 import br.com.abril.nds.service.DividaService;
 import br.com.abril.nds.service.LeitorArquivoBancoService;
+import br.com.abril.nds.service.ParametroCobrancaCotaService;
 import br.com.abril.nds.service.PoliticaCobrancaService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.Constantes;
@@ -88,6 +90,9 @@ public class BaixaFinanceiraController {
 	private CalendarioService calendarioService;
 	
 	@Autowired
+	private ParametroCobrancaCotaService financeiroService;
+	
+	@Autowired
 	private LeitorArquivoBancoService leitorArquivoBancoService;
 	
 	private static List<ItemDTO<TipoCobranca,String>> listaTiposCobranca =  new ArrayList<ItemDTO<TipoCobranca,String>>();
@@ -110,6 +115,7 @@ public class BaixaFinanceiraController {
 	@Get
 	@Path("/baixa")
 	public void baixa() {
+		listaTiposCobranca = this.financeiroService.getComboTiposCobranca();
 		result.include("listaTiposCobranca",listaTiposCobranca);
 	}
 	
@@ -350,7 +356,10 @@ public class BaixaFinanceiraController {
 	
 	
 	
-	
+	/**
+	 * Método responsável por obter detalhes da Dívida(Cobrança)
+	 * @param idDivida
+	 */
 	@Post
 	@Path("obterDetalhesDivida")
 	public void obterDetalhesDivida(Long idDivida){
@@ -371,33 +380,81 @@ public class BaixaFinanceiraController {
 		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
 	}
 	
+	/**
+	 * Método responsável por obter os calculos de juros, multa e totais referentes às dividas escolhidas pelo usuário
+	 * @param idCobrancas: Dividas(Cobranças) marcadas pelo usuário
+	 * @throws Exception: Tratamento na obtenção dos calculos 
+	 */
 	@Post
 	@Path("obterPagamentoDividas")
 	public void obterPagamentoDividas(List<Long> idCobrancas){
 		
-		//Teste
-		idCobrancas= new ArrayList<Long>();
-		idCobrancas.add(1l);
-		idCobrancas.add(2l);
-		idCobrancas.add(3l);
-		idCobrancas.add(4l);
-		idCobrancas.add(5l);
-		//----
+		if ((idCobrancas==null) || (idCobrancas.size() <=0)){
+			throw new ValidacaoException(TipoMensagem.WARNING, "É necessário marcar ao menos uma dívida.");
+		}
 		
-		PagamentoDividasDTO pagamento = this.cobrancaService.obterDadosCobrancas(idCobrancas);
+		CobrancaDividaVO pagamento;
+		
+		try{
+		    pagamento = this.cobrancaService.obterDadosCobrancas(idCobrancas);
+		}
+		catch(Exception e){
+			throw new ValidacaoException(TipoMensagem.WARNING, "Não foi possível obter calculos para o pagamento das dívidas.");
+		}
 		
 		result.use(Results.json()).from(pagamento,"result").recursive().serialize();
 	}
 	
+	/**
+	 * Método responsável por efetuar a baixa das dívidas marcadas pelo usuário
+	 * @param pagamento
+	 * @param idCobrancas
+	 */
 	@Post
-	@Path("baixaManualDivida")
-	public void baixaManualDivida(PagamentoDividasDTO pagamento){
+	@Path("baixaManualDividas")
+	public void baixaManualDividas(String valorDividas, 
+								   String valorMulta, 
+								   String valorJuros,
+								   String valorDesconto,
+								   String valorSaldo,
+								   String valorPagamento,
+	                               TipoCobranca tipoPagamento,
+	                               String observacoes,
+	                               List<Long> idCobrancas){
 		
-		//pagamento menor, somar primeiras ate atingir o valor, o restante vira crédito e épostado em historico!!!!!
+		BigDecimal valorDividasConvertido = CurrencyUtil.converterValor(valorDividas);
+		BigDecimal valorMultaConvertido = CurrencyUtil.converterValor(valorMulta);
+	    BigDecimal valorJurosConvertido = CurrencyUtil.converterValor(valorJuros);
+		BigDecimal valorDescontoConvertido = CurrencyUtil.converterValor(valorDesconto);
+		BigDecimal valorSaldoConvertido = CurrencyUtil.converterValor(valorSaldo);
+		BigDecimal valorPagamentoConvertido = CurrencyUtil.converterValor(valorPagamento);
+		
+		if (valorDescontoConvertido.compareTo(
+				valorDescontoConvertido.add(valorJurosConvertido).add(valorMultaConvertido)) == 1) {
+        	
+        	throw new ValidacaoException(TipoMensagem.WARNING,"O desconto não deve ser maior do que o valor a pagar.");
+        }
+		
+		PagamentoDividasDTO pagamento = new PagamentoDividasDTO();
+		pagamento.setValorDividas(valorDividasConvertido);
+		pagamento.setValorMulta(valorMultaConvertido);
+		pagamento.setValorJuros(valorJurosConvertido);
+		pagamento.setValorDesconto(valorDescontoConvertido);
+		pagamento.setValorSaldo(valorSaldoConvertido);
+		pagamento.setValorPagamento(valorPagamentoConvertido);
+		pagamento.setTipoPagamento(tipoPagamento);
+		pagamento.setObservacoes(observacoes);
+		pagamento.setDataPagamento(Calendar.getInstance().getTime());
+		
+		this.cobrancaService.baixaManualDividas(pagamento, idCobrancas);
 		
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Dividas baixadas com sucesso."),Constantes.PARAM_MSGS).recursive().serialize();
 	}
 	
+	/**
+	 * Método responsável por validar se é possível a negociação de dividas(Cobranças)
+	 * @param dataVencimento
+	 */
 	@Post
 	@Path("obterNegociacao")
 	public void obterNegociacao(Date dataVencimento){
@@ -439,7 +496,7 @@ public class BaixaFinanceiraController {
 		PaginacaoVO paginacao = new PaginacaoVO(page, rp, sortorder);
 		filtroAtual.setPaginacao(paginacao);
 		filtroAtual.setOrdenacaoColuna(Util.getEnumByStringValue(OrdenacaoColunaDividas.values(), sortname));
-	
+	    
 		FiltroConsultaDividasCotaDTO filtroSessao = (FiltroConsultaDividasCotaDTO) this.httpSession.getAttribute(FILTRO_PESQUISA_SESSION_ATTRIBUTE);
 		
 		if (filtroSessao != null && !filtroSessao.equals(filtroAtual)) {

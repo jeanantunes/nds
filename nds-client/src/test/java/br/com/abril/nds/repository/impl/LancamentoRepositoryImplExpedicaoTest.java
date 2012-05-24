@@ -39,13 +39,14 @@ import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
+import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.vo.PaginacaoVO;
 
 public class LancamentoRepositoryImplExpedicaoTest extends AbstractRepositoryImplTest{
 
 
 	@Autowired
-	private LancamentoRepositoryImpl lancamentoRepository;
+	private LancamentoRepository lancamentoRepository;
 	
 	
 	@Before

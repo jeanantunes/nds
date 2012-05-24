@@ -84,7 +84,7 @@ public class RecebimentoFisicoRepositoryImplTest extends AbstractRepositoryImplT
 		notaFiscal.setOrigem(Origem.MANUAL);
 		save(notaFiscal);		
 				
-		tipoProduto = Fixture.tipoProduto("Revista", GrupoProduto.REVISTA, "99000642");
+		tipoProduto = Fixture.tipoProduto("Revista", GrupoProduto.REVISTA, "99000642", null, "codigo");
 		save(tipoProduto);
 		
 		Editor abril = Fixture.editoraAbril();
