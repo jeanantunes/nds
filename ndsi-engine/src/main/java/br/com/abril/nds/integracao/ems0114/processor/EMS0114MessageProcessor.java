@@ -13,14 +13,14 @@ import javax.persistence.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import br.com.abril.nds.integracao.model.canonic.EMS0114Input;
 import br.com.abril.nds.integracao.engine.MessageProcessor;
 import br.com.abril.nds.integracao.engine.data.Message;
 import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;
-import br.com.abril.nds.integracao.model.EventoExecucaoEnum;
+import br.com.abril.nds.integracao.model.canonic.EMS0114Input;
 import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
@@ -37,25 +37,18 @@ public class EMS0114MessageProcessor implements MessageProcessor {
 	private DistribuidorService distribuidorService;
 		
 	@Override
-	public void processMessage(Message message){
+	public void processMessage(Message message) {
 		EMS0114Input input = (EMS0114Input) message.getBody();
 		
-		Distribuidor distribuidor = this.obterDistribuidor();
+		Distribuidor distribuidor = this.obterDistribuidor(message);
 		
 		if (distribuidor == null) {
 			this.ndsiLoggerFactory.getLogger().logWarning(message, EventoExecucaoEnum.RELACIONAMENTO, "Distribuidor nao encontrato.");
 			throw new RuntimeException("Distribuidor nao encontrado.");
 		}
 		
-		ProdutoEdicao produtoEdicao = this.obterProdutoEdicao(input.getEdicao(), input.getCodProd()); 
+		ProdutoEdicao produtoEdicao = this.obterProdutoEdicao(message);
 			
-		if (produtoEdicao == null) {
-			
-			// Não encontrou o Produto. Realizar Log 			
-			ndsiLoggerFactory.getLogger().logWarning(message, EventoExecucaoEnum.HIERARQUIA,"Produto " +  input.getCodProd() + " e Produto Edicao nao encontrado.");
-			throw new RuntimeException("Produto Edicao nao encontrado.");
-		}
-		
 		Lancamento lancamento = this.obterLancamento(input.getDataRecolhimento());
 			
 		criarLancamentoConformeInput(lancamento, input, produtoEdicao, message);
@@ -110,12 +103,13 @@ public class EMS0114MessageProcessor implements MessageProcessor {
 		}
 	}
 			
-	private Distribuidor obterDistribuidor() {
-		
+	private Distribuidor obterDistribuidor(Message message) {
 		return this.distribuidorService.findDistribuidor();
 	}
 	
-	private ProdutoEdicao obterProdutoEdicao(Long numeroEdicao, String codigoProduto) {
+	private ProdutoEdicao obterProdutoEdicao(Message message) {
+		EMS0114Input input = (EMS0114Input) message.getBody();
+		
 		StringBuilder sql = new StringBuilder();
 		
 		sql.append("SELECT pe FROM ProdutoEdicao pe JOIN FETCH pe.produto p ");
@@ -126,15 +120,15 @@ public class EMS0114MessageProcessor implements MessageProcessor {
 		
 			Query query = this.entityManager.createQuery(sql.toString());
 			
-			query.setParameter("numeroEdicao", numeroEdicao);
-			query.setParameter("codigo", codigoProduto);
+			query.setParameter("numeroEdicao", input.getEdicao());
+			query.setParameter("codigo", input.getCodProd());
 			
 			return (ProdutoEdicao) query.getSingleResult();
 			
 		} catch (NoResultException e) {
-			return null;
-		} catch (Exception e) {
-			throw new RuntimeException(e);			
+			// Não encontrou o Produto. Realizar Log 			
+			ndsiLoggerFactory.getLogger().logWarning(message, EventoExecucaoEnum.HIERARQUIA,"Produto " +  input.getCodProd() + " e Produto Edicao nao encontrado.");
+			throw new RuntimeException("Produto Edicao nao encontrado.");
 		}
 	}
 	

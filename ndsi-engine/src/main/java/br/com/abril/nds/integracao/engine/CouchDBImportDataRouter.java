@@ -21,8 +21,8 @@ import br.com.abril.nds.integracao.engine.data.CouchDBImportRouteTemplate;
 import br.com.abril.nds.integracao.engine.data.Message;
 import br.com.abril.nds.integracao.engine.data.RouteTemplate;
 import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;
-import br.com.abril.nds.integracao.model.EventoExecucaoEnum;
 import br.com.abril.nds.integracao.model.canonic.IntegracaoDocument;
+import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
 
 @Component
 public class CouchDBImportDataRouter implements ContentBasedRouter {
