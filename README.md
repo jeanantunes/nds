@@ -4,7 +4,15 @@ NDS
 build Status
 ------------
 
-[![Build Status](http://177.71.177.215:8080/jenkins/job/build/badge/icon)](http://177.71.177.215:8080/jenkins/job/build/)
+Geral: [![Build Status](http://177.71.177.215:8080/jenkins/job/build/badge/icon)](http://177.71.177.215:8080/jenkins/job/build/)
+NDS-Parent: [![Build Status](http://177.71.177.215:8080/jenkins/job/build/br.com.abril$nds/badge/icon)](http://177.71.177.215:8080/jenkins/job/build/br.com.abril$nds/)
+NDS-Model: [![Build Status](http://177.71.177.215:8080/jenkins/job/build/br.com.abril$nds-model/badge/icon)](http://177.71.177.215:8080/jenkins/job/build/br.com.abril$nds-model/)
+NDS-Util: [![Build Status](http://177.71.177.215:8080/jenkins/job/build/br.com.abril$nds-util/badge/icon)](http://177.71.177.215:8080/jenkins/job/build/br.com.abril$nds-util/)
+NDS-Client: [![Build Status](http://177.71.177.215:8080/jenkins/job/build/br.com.abril$nds-client/badge/icon)](http://177.71.177.215:8080/jenkins/job/build/br.com.abril$nds-client/)
+NDSI-Canonical: [![Build Status](http://177.71.177.215:8080/jenkins/job/build/br.com.abril$ndsi-canonical/badge/icon)](http://177.71.177.215:8080/jenkins/job/build/br.com.abril$ndsi-canonical/)
+NDSI-CouchdbInterface: [![Build Status](http://177.71.177.215:8080/jenkins/job/build/br.com.discover$ndsi-couchdbinterface/badge/icon)](http://177.71.177.215:8080/jenkins/job/build/br.com.discover$ndsi-couchdbinterface/)
+NDSI-Engine: [![Build Status](http://177.71.177.215:8080/jenkins/job/build/br.com.abril$nsdi-engine/badge/icon)](http://177.71.177.215:8080/jenkins/job/build/br.com.abril$nsdi-engine/)
+NDSI-WebTest: [![Build Status](http://177.71.177.215:8080/jenkins/job/build/br.com.abril.nds$ndsi-webtest/badge/icon)](http://177.71.177.215:8080/jenkins/job/build/br.com.abril.nds$ndsi-webtest/)
 
 pre requisites
 --------------
