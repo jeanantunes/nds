@@ -27,7 +27,7 @@ public class EMS0109Input extends IntegracaoDocument implements Serializable {
 	
 	private Integer contextoPublicacao;
 	
-	private Long codigoFornecedor;
+	private Integer codigoFornecedor;
 	
 	private Long codigoPublicacao;
 	
@@ -103,7 +103,7 @@ public class EMS0109Input extends IntegracaoDocument implements Serializable {
 
 	private String regimeRecolhimento;
 
-	private String periodicidade;
+	private Integer periodicidade;
 
 	private String categoria;
 
@@ -119,7 +119,7 @@ public class EMS0109Input extends IntegracaoDocument implements Serializable {
 	
 	private Long codigoEditor; 
 
-	private Integer tipoDesconto;
+	private String tipoDesconto;
 	
 	private String percentualLimiteCotasFixadas;
 	
@@ -182,7 +182,7 @@ public class EMS0109Input extends IntegracaoDocument implements Serializable {
 	 * @return the codigoFornecedor
 	 */
 	@Field(offset=28, length=7)
-	public Long getCodigoFornecedor() {
+	public Integer getCodigoFornecedor() {
 		return codigoFornecedor;
 	}
 
@@ -490,7 +490,7 @@ public class EMS0109Input extends IntegracaoDocument implements Serializable {
 	 * @return the periodicidade
 	 */
 	@Field(offset=222, length=3)
-	public String getPeriodicidade() {
+	public Integer getPeriodicidade() {
 		return periodicidade;
 	}
 
@@ -554,7 +554,7 @@ public class EMS0109Input extends IntegracaoDocument implements Serializable {
 	 * @return the tipoDesconto
 	 */
 	@Field(offset=245, length=2)
-	public Integer getTipoDesconto() {
+	public String getTipoDesconto() {
 		return tipoDesconto;
 	}
 
@@ -636,7 +636,7 @@ public class EMS0109Input extends IntegracaoDocument implements Serializable {
 	/**
 	 * @param codigoFornecedor the codigoFornecedor to set
 	 */
-	public void setCodigoFornecedor(Long codigoFornecedor) {
+	public void setCodigoFornecedor(Integer codigoFornecedor) {
 		this.codigoFornecedor = codigoFornecedor;
 	}
 
@@ -903,7 +903,7 @@ public class EMS0109Input extends IntegracaoDocument implements Serializable {
 	/**
 	 * @param periodicidade the periodicidade to set
 	 */
-	public void setPeriodicidade(String periodicidade) {
+	public void setPeriodicidade(Integer periodicidade) {
 		this.periodicidade = periodicidade;
 	}
 
@@ -959,7 +959,7 @@ public class EMS0109Input extends IntegracaoDocument implements Serializable {
 	/**
 	 * @param tipoDesconto the tipoDesconto to set
 	 */
-	public void setTipoDesconto(Integer tipoDesconto) {
+	public void setTipoDesconto(String tipoDesconto) {
 		this.tipoDesconto = tipoDesconto;
 	}
 
