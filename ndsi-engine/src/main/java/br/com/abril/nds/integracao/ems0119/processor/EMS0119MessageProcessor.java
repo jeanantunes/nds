@@ -81,14 +81,14 @@ public class EMS0119MessageProcessor implements MessageProcessor{
 			
 			}
 			
-			if(produtoEdicao.getProduto().getNomeComercial() !=  input.getNomeComercial()){
-				produtoEdicao.getProduto().setNomeComercial(input.getNomeComercial());
+			if(produtoEdicao.getNomeComercial() !=  input.getNomeComercial()){
+				produtoEdicao.setNomeComercial(input.getNomeComercial());
 				 ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, "Atualizacao do Nome Comercial para: "+input.getNomeComercial());
 			}
 			
 			if(produtoEdicao.isAtivo() != input.getStatusDaPublicacao()){ 
 				produtoEdicao.setAtivo(input.getStatusDaPublicacao());
-				 ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, "Atualizacao do Staus para: "+input.getPacotePadrao());
+				 ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, "Atualizacao do Status para: "+input.getPacotePadrao());
 		
 			}
 			

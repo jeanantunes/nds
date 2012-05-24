@@ -87,6 +87,12 @@ public class Produto implements Serializable {
 	protected BigDecimal peso;
 	
 	/**
+	 * Flag que indica se o Produto foi criado atraves de interface de sistemas ou por cadastro
+	 */
+	@Column(name = "ORIGEM_INTERFACE", nullable = true)
+	private Boolean origemInterface;
+
+	/**
 	 * Dimensões do produto (largura, etc)
 	 */
 	@Embedded
@@ -286,6 +292,14 @@ public class Produto implements Serializable {
 	 */
 	public void setPeso(BigDecimal peso) {
 		this.peso = peso;
+	}
+
+	public Boolean getOrigemInterface() {
+		return origemInterface;
+	}
+
+	public void setOrigemInterface(Boolean origemInterface) {
+		this.origemInterface = origemInterface;
 	}
 	
 }
