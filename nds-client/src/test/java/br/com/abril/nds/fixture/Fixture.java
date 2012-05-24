@@ -70,6 +70,7 @@ import br.com.abril.nds.model.cadastro.TipoLicencaMunicipal;
 import br.com.abril.nds.model.cadastro.TipoParametroSistema;
 import br.com.abril.nds.model.cadastro.TipoProduto;
 import br.com.abril.nds.model.cadastro.TipoRegistroCobranca;
+import br.com.abril.nds.model.cadastro.TipoRoteiro;
 import br.com.abril.nds.model.cadastro.TipoTelefone;
 import br.com.abril.nds.model.cadastro.pdv.AreaInfluenciaPDV;
 import br.com.abril.nds.model.cadastro.pdv.CaracteristicasPDV;
@@ -1960,12 +1961,15 @@ public class Fixture {
 		Rota rota = new Rota();
 		rota.setCodigoRota(codigoRota);
 		rota.setDescricaoRota(descricaoRota);
+		rota.setOrdem(0);
 		return rota;
 	}
 	
 	public static Roteiro roteiro(String descricaoRoteiro){
 		Roteiro rota = new Roteiro();
 		rota.setDescricaoRoteiro(descricaoRoteiro);
+		rota.setOrdem(0);
+		rota.setTipoRoteiro(TipoRoteiro.ESPECIAL);
 		return rota;
 	}
 	
