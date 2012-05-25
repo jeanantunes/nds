@@ -111,4 +111,13 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 		}	
 		
 	}
+
+	@Override
+	@Transactional
+	public void transferirListaRotaComNovoRoteiro(List<Long> rotasId,
+			Roteiro roteiro) {
+		 incluirRoteiro(roteiro);
+		 transferirListaRota(rotasId, roteiro.getId());
+		
+	}
 }
