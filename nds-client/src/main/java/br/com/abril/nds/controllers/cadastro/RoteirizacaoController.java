@@ -111,15 +111,7 @@ public class RoteirizacaoController {
 	public void incluirRoteiro(Long idBox, Integer ordem, String nome, TipoRoteiro tipoRoteiro) {
 		
 
-		Roteiro roteiro = new Roteiro();
-		if ( idBox != null ){
-			Box box = new Box();
-			box.setId(idBox);
-			roteiro.setBox(box);
-		}	
-		roteiro.setOrdem(ordem);
-		roteiro.setDescricaoRoteiro(nome);
-		roteiro.setTipoRoteiro(tipoRoteiro);
+		Roteiro roteiro = populaRoteiro(idBox, ordem, nome, tipoRoteiro);
 		validarCampoObrigatoriosRoteiro(roteiro);
 		roteirizacaoService.incluirRoteiro(roteiro);
 		result.use(Results.json()).from(
@@ -237,10 +229,40 @@ public class RoteirizacaoController {
 	}
 	
 	@Path("/transferirRotas")
-	public void transferirRotas(List<Long> rotasId, Long roteiroId) {
-		roteiroId = 3l;
+	public void transferirRotas(List<Long> rotasId, Long roteiroId, String roteiroNome) {
+		if ( roteiroId == null ) {
+			List<Roteiro> listaRoteiros  = roteirizacaoService.buscarRoteiroPorDescricao(roteiroNome, MatchMode.EXACT);
+			if (!listaRoteiros.isEmpty() ){
+				roteiroId = listaRoteiros.get(0).getId();
+			} 
+			
+		}
 		roteirizacaoService.transferirListaRota(rotasId, roteiroId) ;
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Rotas transferidas com sucesso."),"result").recursive().serialize();
 
+	}
+	
+	@Path("/transferirRotasComNovoRoteiro")
+	public void transferirRotasComNovoRoteiro(List<Long> rotasId, Long idBox, Integer ordem, String roteiroNome, TipoRoteiro tipoRoteiro) {
+		Roteiro roteiro = populaRoteiro(idBox, ordem, roteiroNome, tipoRoteiro);
+		validarCampoObrigatoriosRoteiro(roteiro);
+		roteirizacaoService.transferirListaRotaComNovoRoteiro(rotasId, roteiro);
+		
+		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Rotas transferidas com sucesso."),"result").recursive().serialize();
+
+	}
+
+	private Roteiro populaRoteiro(Long idBox, Integer ordem,
+			String roteiroNome, TipoRoteiro tipoRoteiro) {
+		Roteiro roteiro = new Roteiro();
+		if ( idBox != null ){
+			Box box = new Box();
+			box.setId(idBox);
+			roteiro.setBox(box);
+		}	
+		roteiro.setOrdem(ordem);
+		roteiro.setDescricaoRoteiro(roteiroNome);
+		roteiro.setTipoRoteiro(tipoRoteiro);
+		return roteiro;
 	}
 }
