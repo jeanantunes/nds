@@ -142,7 +142,7 @@
 		}
 		
 		function executarAposProcessamento() {
-			$("span[id='statusAprovacao']").tooltip();
+			$("span[name='statusAprovacao']").tooltip();
 		}
 		
 		function executarPreProcessamento(resultado) {
@@ -165,10 +165,13 @@
 			
 			$.each(resultado.tableModel.rows, function(index, row) {
 				
-				var spanAprovacao = "<span id='statusAprovacao' title='" + row.cell.motivoAprovacao + "'>"
-									+ row.cell.statusAprovacao + "</span>";
+				if (row.cell.motivoAprovacao) {
 				
-				row.cell.statusAprovacao = spanAprovacao;
+					var spanAprovacao = "<span name='statusAprovacao' title='" + row.cell.motivoAprovacao + "'>"
+										+ row.cell.statusAprovacao + "</span>";
+					
+					row.cell.statusAprovacao = spanAprovacao;
+				}
 			});
 				
 			$(".grids").show();
