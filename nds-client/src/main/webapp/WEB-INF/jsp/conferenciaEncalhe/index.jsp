@@ -22,7 +22,7 @@
 			
 			pesquisarCota : function() {
 				
-				var data = [{name : 'numeroCota', value : jQuery("#numeroCota").val()}];
+				var data = [{name : 'numeroCota', value : $("#numeroCota").val()}];
 				
 				$.postJSON("<c:url value='/devolucao/conferenciaEncalhe/verificarReabertura'/>", data,
 					function(result){
@@ -407,7 +407,7 @@
 									
 									$("#dialog-logado").dialog("close");
 									$('#numeroCota').focus();
-								}
+								}, null, true, "idModalBoxRecolhimento"
 							);
 						},
 						"Cancelar" : function() {
