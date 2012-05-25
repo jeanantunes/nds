@@ -3,6 +3,8 @@ package br.com.abril.nds.service.impl;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.VendaProdutoDTO;
 import br.com.abril.nds.dto.filtro.FiltroVendaProdutoDTO;
@@ -11,12 +13,14 @@ import br.com.abril.nds.repository.VendaProdutoRepository;
 import br.com.abril.nds.service.VendaProdutoService;
 import br.com.abril.nds.util.TipoMensagem;
 
+@Service
 public class VendaProdutoServiceImpl implements VendaProdutoService {
 	
 	@Autowired
 	private VendaProdutoRepository vendaProdutoRepository;
 
 	@Override
+	@Transactional
 	public List<VendaProdutoDTO> buscaVendaporProduto(FiltroVendaProdutoDTO filtro) {
 		if(filtro == null) 
 			throw new ValidacaoException(TipoMensagem.WARNING, "Filtro não deve ser nulo.");

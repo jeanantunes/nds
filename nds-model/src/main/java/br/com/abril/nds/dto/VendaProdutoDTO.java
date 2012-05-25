@@ -1,6 +1,7 @@
 package br.com.abril.nds.dto;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Exportable;
@@ -21,7 +22,7 @@ public class VendaProdutoDTO implements Serializable {
 	private String dataRecolhimento;
 	
 	@Export(label = "Reparte", alignment=Alignment.CENTER)
-	private Long reparte;
+	private BigDecimal reparte;
 	
 	@Export(label = "Venda", alignment=Alignment.CENTER)
 	private Long venda;
@@ -30,7 +31,7 @@ public class VendaProdutoDTO implements Serializable {
 	private Long percentagemVenda;
 	
 	@Export(label = "Preço Capa", alignment=Alignment.CENTER)
-	private Long precoCapa;
+	private BigDecimal precoCapa;
 	
 	@Export(label = "Total", alignment=Alignment.CENTER)
 	private Long total;
@@ -40,7 +41,7 @@ public class VendaProdutoDTO implements Serializable {
 		
 	}
 	
-	public VendaProdutoDTO(Integer numEdicao, String dataLancamento, String dataRecolhimento, Long reparte, Long venda,  Long percentagemVenda, Long precoCapa, Long total) {
+	public VendaProdutoDTO(Integer numEdicao, String dataLancamento, String dataRecolhimento, BigDecimal reparte, Long venda,  Long percentagemVenda, BigDecimal precoCapa, Long total) {
 		super();
 		this.numEdicao = numEdicao;
 		this.dataLancamento = dataLancamento;
@@ -78,11 +79,11 @@ public class VendaProdutoDTO implements Serializable {
 		this.dataRecolhimento = dataRecolhimento;
 	}
 
-	public Long getReparte() {
+	public BigDecimal getReparte() {
 		return reparte;
 	}
 
-	public void setReparte(Long reparte) {
+	public void setReparte(BigDecimal reparte) {
 		this.reparte = reparte;
 	}
 
@@ -102,11 +103,11 @@ public class VendaProdutoDTO implements Serializable {
 		this.percentagemVenda = percentagemVenda;
 	}
 
-	public Long getPrecoCapa() {
+	public BigDecimal getPrecoCapa() {
 		return precoCapa;
 	}
 
-	public void setPrecoCapa(Long precoCapa) {
+	public void setPrecoCapa(BigDecimal precoCapa) {
 		this.precoCapa = precoCapa;
 	}
 
