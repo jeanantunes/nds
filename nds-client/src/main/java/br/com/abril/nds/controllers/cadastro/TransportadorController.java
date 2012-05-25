@@ -240,6 +240,14 @@ public class TransportadorController {
 			}
 		}
 		
+		for (AssociacaoVeiculoMotoristaRotaDTO assoc : listaAssocAdd){
+			
+			if (assoc.getId() != null && assoc.getId() < 0){
+				
+				assoc.setId(null);
+			}
+		}
+		
 		transportador.setId((Long) this.httpSession.getAttribute(ID_TRANSPORTADORA_EDICAO));
 
 		this.transportadorService.cadastrarTransportador(transportador, 
@@ -443,7 +451,9 @@ public class TransportadorController {
 		
 		if (veiculo.getId() == null){
 			
-			veiculo.setId(new Long((int) System.currentTimeMillis() *-1));
+			Long id = new Long((int) System.currentTimeMillis());
+			
+			veiculo.setId(id < 0 ? id : id *-1);
 		}
 		
 		if (add){
@@ -678,7 +688,9 @@ public class TransportadorController {
 		
 		if (motorista.getId() == null){
 			
-			motorista.setId(new Long((int) System.currentTimeMillis() * -1));
+			Long id = new Long((int) System.currentTimeMillis());
+			
+			motorista.setId(id < 0 ? id : id * -1);
 		}
 		
 		if (add){
@@ -1103,10 +1115,15 @@ public class TransportadorController {
 
 		for (Veiculo veiculo : listaVeiculos) {
 			
-			int id  = veiculo.getId() == null ? (int)System.currentTimeMillis() * -1 : veiculo.getId().intValue();
+			if (veiculo.getId() == null){
+				
+				int id  = (int)System.currentTimeMillis() * -1;
+				
+				veiculo.setId(new Long(id));
+			}
 			
 			CellModelKeyValue<Veiculo> cellModel = new CellModelKeyValue<Veiculo>(
-				id,
+				veiculo.getId().intValue(),
 				veiculo
 			);
 
@@ -1128,10 +1145,15 @@ public class TransportadorController {
 
 		for (Motorista motorista : listaMotoristas) {
 			
-			int id  = motorista.getId() == null ? (int)System.currentTimeMillis() * -1 : motorista.getId().intValue();
+			if (motorista.getId() == null){
+				
+				int id  = (int)System.currentTimeMillis() * -1;
+				
+				motorista.setId(new Long(id));
+			}
 			
 			CellModelKeyValue<Motorista> cellModel = new CellModelKeyValue<Motorista>(
-				id,
+				motorista.getId().intValue(),
 				motorista
 			);
 
