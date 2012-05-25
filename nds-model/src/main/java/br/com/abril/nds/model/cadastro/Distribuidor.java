@@ -23,6 +23,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import br.com.abril.nds.model.DiaSemana;
+import br.com.abril.nds.model.LeiautePicking;
 
 /**
  * Cadastro do Distribuidor
@@ -143,6 +144,10 @@ public class Distribuidor {
 	 */
 	@Column(name = "QTD_DIAS_ENCALHE_ATRASADO_ACEITAVEL", nullable = false)
 	private int qtdDiasEncalheAtrasadoAceitavel = 4;
+	
+	@Enumerated(EnumType.STRING)
+	@Column(name = "LEIAUTE_PICKING", length = 20, nullable = true)
+	private LeiautePicking leiautePicking;
 	
 	public Long getId() {
 		return id;
@@ -377,6 +382,20 @@ public class Distribuidor {
 	 */
 	public void setAceitaJuramentado(boolean aceitaJuramentado) {
 		this.aceitaJuramentado = aceitaJuramentado;
+	}
+
+	/**
+	 * @return the leiautePicking
+	 */
+	public LeiautePicking getLeiautePicking() {
+		return leiautePicking;
+	}
+
+	/**
+	 * @param leiautePicking the leiautePicking to set
+	 */
+	public void setLeiautePicking(LeiautePicking leiautePicking) {
+		this.leiautePicking = leiautePicking;
 	}
 	
 	
