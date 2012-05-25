@@ -47,6 +47,7 @@ import br.com.abril.nds.model.planejamento.TipoLancamentoParcial;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.repository.impl.AbstractRepositoryImplTest;
+import br.com.abril.nds.util.MathUtil;
 import br.com.abril.nds.vo.PeriodoVO;
 
 public class ExpectativaEncalheDataTest extends AbstractRepositoryImplTest {
@@ -65,23 +66,26 @@ public class ExpectativaEncalheDataTest extends AbstractRepositoryImplTest {
 	private TipoProduto tipoCromo;
 	private TipoFornecedor tipoFornecedorPublicacao;
 	
+	BigDecimal qtdRecebida = new BigDecimal("110.00");
+	BigDecimal qtdDevolvida = BigDecimal.TEN;
+	BigDecimal porcentagemExpectativaVenda = BigDecimal.TEN;
+	
 	@Before
 	public void setUp() {
 
 		Editor abril = Fixture.editoraAbril();
 		save(abril);
-		
-		PessoaJuridica juridicaFc = Fixture.juridicaFC();
-		save(juridicaFc);
-		
-		Editor globo = Fixture.criarEditor("Globo", 687L, juridicaFc, true);
-		save(globo);
 
 		tipoFornecedorPublicacao = Fixture.tipoFornecedorPublicacao();
 		fornecedorFC = Fixture.fornecedorFC(tipoFornecedorPublicacao);
 		fornecedorDinap = Fixture.fornecedorDinap(tipoFornecedorPublicacao);
 		save(fornecedorFC, fornecedorDinap);
 
+		PessoaJuridica juridicaFc = fornecedorFC.getJuridica();
+		
+		Editor globo = Fixture.criarEditor("Globo", 687L, juridicaFc, true);
+		save(globo);
+		
 		TipoProduto tipoRevista = Fixture.tipoRevista();
 		tipoCromo = Fixture.tipoCromo();
 		save(tipoRevista, tipoCromo);
@@ -109,30 +113,24 @@ public class ExpectativaEncalheDataTest extends AbstractRepositoryImplTest {
 		save(cromoReiLeao);
 
 		ProdutoEdicao veja1 = Fixture.produtoEdicao(1L, 10, 7,
-				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(15), "ABCDEFGHIJKLMNOPQRSTU", 1L, veja, null, false);
+			new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(15), "ABCDEFGHIJKLMNOPQRSTU", 1L,
+			veja, porcentagemExpectativaVenda, false);
 
-		veja1.setExpectativaVenda(BigDecimal.TEN);
-		
 		ProdutoEdicao quatroRoda2 = Fixture.produtoEdicao(2L, 15, 30,
-				new BigDecimal(0.1), BigDecimal.TEN, BigDecimal.TEN, "ABCDEFGHIJKLMNOPQRST", 2L,
-				quatroRodas, null, false);
-
-		quatroRoda2.setExpectativaVenda(BigDecimal.TEN);
+			new BigDecimal(0.1), BigDecimal.TEN, BigDecimal.TEN, "ABCDEFGHIJKLMNOPQRST", 2L,
+			quatroRodas, porcentagemExpectativaVenda, false);
 		
 		ProdutoEdicao infoExame3 = Fixture.produtoEdicao(3L, 5, 30,
-				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(12), "ABCDEFGHIJKLMNOPQRS", 3L, infoExame, null, false);
-
-		infoExame3.setExpectativaVenda(BigDecimal.TEN);
+			new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(12), "ABCDEFGHIJKLMNOPQRS", 3L,
+			infoExame, porcentagemExpectativaVenda, false);
 		
 		ProdutoEdicao capricho1 = Fixture.produtoEdicao(1L, 10, 15,
-				new BigDecimal(0.12), BigDecimal.TEN, BigDecimal.TEN, "ABCDEFGHIJKLMNOPQR", 4L, capricho, null, false);
-		
-		capricho1.setExpectativaVenda(BigDecimal.TEN);
+			new BigDecimal(0.12), BigDecimal.TEN, BigDecimal.TEN, "ABCDEFGHIJKLMNOPQR", 4L,
+			capricho, porcentagemExpectativaVenda, false);
 		
 		ProdutoEdicao cromoReiLeao1 = Fixture.produtoEdicao(1L, 100, 60,
-				new BigDecimal(0.01), BigDecimal.ONE, new BigDecimal(1.5), "ABCDEFGHIJKLMNOPQ", 5L, cromoReiLeao, null, false);
-		
-		cromoReiLeao1.setExpectativaVenda(BigDecimal.TEN);
+			new BigDecimal(0.01), BigDecimal.ONE, new BigDecimal(1.5), "ABCDEFGHIJKLMNOPQ", 5L,
+			cromoReiLeao, porcentagemExpectativaVenda, false);
 		
 		save(veja1, quatroRoda2, infoExame3, capricho1, cromoReiLeao1);
 		
@@ -301,7 +299,7 @@ public class ExpectativaEncalheDataTest extends AbstractRepositoryImplTest {
 		
 		Cota cotaDinap = Fixture.cota(50, fornecedorDinap.getJuridica(), SituacaoCadastro.ATIVO, box);
 		
-		EstoqueProdutoCota estoqueProdutoCotaCapricho = Fixture.estoqueProdutoCota(capricho1, cotaDinap, new BigDecimal(110), BigDecimal.TEN);
+		EstoqueProdutoCota estoqueProdutoCotaCapricho = Fixture.estoqueProdutoCota(capricho1, cotaDinap, qtdRecebida, qtdDevolvida);
 		
 		save(box, cotaDinap, estoqueProdutoCotaCapricho);
 
@@ -329,7 +327,7 @@ public class ExpectativaEncalheDataTest extends AbstractRepositoryImplTest {
 		
 		Cota cotaFC = Fixture.cota(55, fornecedorFC.getJuridica(), SituacaoCadastro.ATIVO, box301);
 		
-		EstoqueProdutoCota estoqueProdutoCotaQuatroRodas = Fixture.estoqueProdutoCota(quatroRoda2, cotaFC, new BigDecimal(110), BigDecimal.TEN);
+		EstoqueProdutoCota estoqueProdutoCotaQuatroRodas = Fixture.estoqueProdutoCota(quatroRoda2, cotaFC, qtdRecebida, qtdDevolvida);
 		
 		save(box301, cotaFC, estoqueProdutoCotaQuatroRodas);
 		
@@ -354,7 +352,7 @@ public class ExpectativaEncalheDataTest extends AbstractRepositoryImplTest {
 		
 		Cota cotaManoel = Fixture.cota(60, fornecedorFC.getJuridica(), SituacaoCadastro.ATIVO, box);
 
-		EstoqueProdutoCota estoqueProdutoCotaVeja= Fixture.estoqueProdutoCota(veja1, cotaManoel, new BigDecimal(110), BigDecimal.TEN);
+		EstoqueProdutoCota estoqueProdutoCotaVeja= Fixture.estoqueProdutoCota(veja1, cotaManoel, qtdRecebida, qtdDevolvida);
 		
 		save(cotaManoel, estoqueProdutoCotaVeja);
 
@@ -382,7 +380,7 @@ public class ExpectativaEncalheDataTest extends AbstractRepositoryImplTest {
 		
 		Cota cotaJurandir = Fixture.cota(59, fornecedorFC.getJuridica(), SituacaoCadastro.ATIVO, box303);
 		
-		EstoqueProdutoCota estoqueProdutoCotaInfoExame = Fixture.estoqueProdutoCota(infoExame3, cotaJurandir, new BigDecimal(110), BigDecimal.TEN);
+		EstoqueProdutoCota estoqueProdutoCotaInfoExame = Fixture.estoqueProdutoCota(infoExame3, cotaJurandir, qtdRecebida, qtdDevolvida);
 		
 		save(box303, cotaJurandir, estoqueProdutoCotaInfoExame);
 		
@@ -421,11 +419,16 @@ public class ExpectativaEncalheDataTest extends AbstractRepositoryImplTest {
 
 		Assert.assertEquals(4, expectativas.size());
 		
-		for (Map.Entry<Date, BigDecimal> entry : expectativas.entrySet()) {
+		BigDecimal qtdEstoque = qtdRecebida.subtract(qtdDevolvida);
 		
-			BigDecimal expectativaExpected = new BigDecimal(10);
+		BigDecimal expectativaVenda =
+			qtdEstoque.multiply(MathUtil.divide(porcentagemExpectativaVenda, new BigDecimal("100.00")));
+		
+		BigDecimal expectativaEsperada = qtdEstoque.subtract(expectativaVenda);
+		
+		for (Map.Entry<Date, BigDecimal> entry : expectativas.entrySet()) {
 
-			boolean condition = expectativaExpected.compareTo(entry.getValue()) == 0;
+			boolean condition = expectativaEsperada.compareTo(entry.getValue()) == 0;
 			
 			Assert.assertTrue(condition);
 		}
