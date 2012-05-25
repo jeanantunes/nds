@@ -1,29 +1,30 @@
 package br.com.abril.nds.integracao.engine;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Date;
-import java.util.Properties;
-
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
+import org.apache.commons.lang.StringUtils;
 import org.lightcouch.CouchDbClient;
 import org.lightcouch.View;
 import org.lightcouch.ViewResult;
 import org.lightcouch.ViewResult.Rows;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import br.com.abril.nds.integracao.couchdb.CouchDbProperties;
 import br.com.abril.nds.integracao.engine.data.CouchDBImportRouteTemplate;
 import br.com.abril.nds.integracao.engine.data.Message;
 import br.com.abril.nds.integracao.engine.data.RouteTemplate;
+import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;
 import br.com.abril.nds.integracao.model.canonic.IntegracaoDocument;
+import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
 
+@Component
 public class CouchDBImportDataRouter implements ContentBasedRouter {
 	
 	@PersistenceContext
@@ -32,11 +33,16 @@ public class CouchDBImportDataRouter implements ContentBasedRouter {
 	@Autowired
 	private PlatformTransactionManager transactionManager;
 	
-	private Properties couchDbProperties;
-	private Long codDistribuidor = null;
+	@Autowired
+	private NdsiLoggerFactory ndsiLoggerFactory;
+	
+	@Autowired
+	private CouchDbProperties couchDbProperties;
+
+	private Integer codDistribuidor = null;
 	
 	
-	private void setCodDistribuidor(Long codDistribuidor) {
+	private void setCodDistribuidor(Integer codDistribuidor) {
 		this.codDistribuidor = codDistribuidor;
 	}
 	
@@ -44,31 +50,59 @@ public class CouchDBImportDataRouter implements ContentBasedRouter {
 	@Override
 	public <T extends RouteTemplate> void routeData(T inputModel) {
 
-		MessageProcessor messageProcessor = inputModel.getMessageProcessor();
+		final MessageProcessor messageProcessor = inputModel.getMessageProcessor();
 		Class<?> classLinha = ((CouchDBImportRouteTemplate) inputModel).getInterfaceEnum().getClasseLinha();
 		
+		this.consultaCodigoDistribuidor();
 		CouchDbClient couchDbClient = this.getCouchDBClient();
 		
 		View view = couchDbClient.view("importacao/porTipoDocumento");
 		view.key(inputModel.getRouteInterface().getName());
-		view.includeDocs(true);
-		ViewResult<String, Void, ?> result = view.queryView(String.class, Void.class, classLinha);
+		ViewResult<String, ?, Void> result = view.queryView(String.class, classLinha, Void.class);
 		
-		for (Rows row: result.getRows()) {
+		for (@SuppressWarnings("rawtypes") Rows row: result.getRows()) {
 			
-			IntegracaoDocument doc = (IntegracaoDocument) row.getDoc(); 
+			IntegracaoDocument doc = (IntegracaoDocument) row.getValue(); 
 			
-			Message message = new Message();
+			final Message message = new Message();
 			message.getHeader().put(MessageHeaderProperties.URI.getValue(), inputModel.getRouteInterface().getName());
 			message.getHeader().put(MessageHeaderProperties.PAYLOAD.getValue(), doc);
 			message.getHeader().put(MessageHeaderProperties.FILE_NAME.getValue(), doc.getNomeArquivo());
 			message.getHeader().put(MessageHeaderProperties.FILE_CREATION_DATE.getValue(), doc.getDataHoraExtracao());
 			message.getHeader().put(MessageHeaderProperties.LINE_NUMBER.getValue(), doc.getLinhaArquivo());
 			message.getHeader().put(MessageHeaderProperties.USER_NAME.getValue(), inputModel.getUserName());
+			message.getHeader().put(MessageHeaderProperties.CODIGO_DISTRIBUIDOR.getValue(), this.codDistribuidor);
 			
 			message.setBody(doc);
 			
-			messageProcessor.processMessage(message);
+			try {
+				
+				TransactionTemplate template = new TransactionTemplate(transactionManager);
+				template.execute(new TransactionCallback<Void>() {
+					@Override
+					public Void doInTransaction(TransactionStatus status) {
+					
+						messageProcessor.processMessage(message);
+						
+						entityManager.flush();
+						entityManager.clear();
+
+						return null;
+					}
+				});
+			} catch(Throwable e) {
+				ndsiLoggerFactory.getLogger().logError(message, EventoExecucaoEnum.ERRO_INFRA, e.getMessage());
+				e.printStackTrace();
+			}
+			
+			String erro = (String) message.getHeader().get(MessageHeaderProperties.ERRO_PROCESSAMENTO.getValue()); 
+			
+			if (erro == null) {
+				couchDbClient.remove(doc);
+			} else {
+				doc.setErro(erro);
+				couchDbClient.update(doc);
+			}
 		}
 		
 		couchDbClient.shutdown();
@@ -81,47 +115,34 @@ public class CouchDBImportDataRouter implements ContentBasedRouter {
 	 */
 	private CouchDbClient getCouchDBClient() {
 		
-		// Recuperando código deste distribuidor (há apenas um registro na tabela)
+		return new CouchDbClient(
+				"db_" + StringUtils.leftPad(this.codDistribuidor.toString(), 7, "0"),
+				true,
+				couchDbProperties.getProtocol(),
+				couchDbProperties.getHost(),
+				couchDbProperties.getPort(),
+				couchDbProperties.getUsername(),
+				couchDbProperties.getPassword()
+		);
+	}
+	
+	/**
+	 * Busca o código deste distribuidor e seta no atributo da classe.
+	 */
+	private void consultaCodigoDistribuidor() {
+		
 		TransactionTemplate template = new TransactionTemplate(transactionManager);
 		template.execute(new TransactionCallback<Void>() {
 			@Override
 			public Void doInTransaction(TransactionStatus status) {
 				
-				String sql = "SELECT a.id FROM Distribuidor a";
+				String sql = "SELECT a.codigo FROM Distribuidor a";
 				Query query = entityManager.createQuery(sql);
 				
-				setCodDistribuidor((Long) query.getSingleResult());
+				setCodDistribuidor((Integer) query.getSingleResult());
 				
 				return null;
 			}
 		});
-	
-		// Criando client
-		this.carregaCouchDbProperties();
-		
-		return new CouchDbClient(
-				"db_" + this.codDistribuidor,
-				true,
-				this.couchDbProperties.getProperty("couchdb.protocol"),
-				this.couchDbProperties.getProperty("couchdb.host"),
-				Integer.valueOf(this.couchDbProperties.getProperty("couchdb.port")),
-				this.couchDbProperties.getProperty("couchdb.username"),
-				this.couchDbProperties.getProperty("couchdb.password")
-		);
-	}
-	
-	/**
-	 * Carrega os dados do arquivo couchdb.properties
-	 */
-	private void carregaCouchDbProperties() {
-		
-		try {
-			couchDbProperties = new Properties();
-			InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("couchdb.properties");
-			couchDbProperties.load(inputStream);
-		} catch (IOException e) {
-			// TODO: parar execução
-			e.printStackTrace();
-		}
 	}
 }

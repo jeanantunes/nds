@@ -16,14 +16,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import br.com.abril.nds.integracao.ems0133.outbound.EMS0133Output;
-import br.com.abril.nds.integracao.engine.FileContentBasedRouter;
 import br.com.abril.nds.integracao.engine.MessageProcessor;
 import br.com.abril.nds.integracao.engine.data.Message;
 import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;
-import br.com.abril.nds.integracao.model.EventoExecucaoEnum;
 import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
+import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
 import br.com.abril.nds.model.planejamento.Lancamento;
 
 import com.ancientprogramming.fixedformat4j.format.FixedFormatManager;
@@ -58,31 +57,33 @@ public class EMS0133MessageProcessor implements MessageProcessor {
 		
 		StringBuilder sql = new StringBuilder();
 		sql.append("SELECT l ");
-		sql.append("FROM Lancamento l WHERE l.id IN (SELECT lc.id FROM Lancamento lc ");
-		sql.append("JOIN lc.produtoEdicao pe ");
+		sql.append("FROM Lancamento l ");
+		sql.append("WHERE l.id ");
+		sql.append("IN (SELECT lc.id FROM Lancamento lc ");
+		sql.append("JOIN l.produtoEdicao pe ");
 		sql.append("JOIN pe.produto p ");
 		sql.append("JOIN p.fornecedores f ");
-		sql.append("WHERE lc.dataRecolhimentoDistribuidor = :dataOperacao)");
+		sql.append("WHERE l.dataRecolhimentoDistribuidor = :dataOperacao)");
 		
 		Query query = entityManager.createQuery(sql.toString());
 
 		query.setParameter("dataOperacao", distribuidor.getDataOperacao());
 		
-		
+
 		
 		try {
 
 			@SuppressWarnings("unchecked")
 			List<Lancamento> lancamentos = query.getResultList();
 			
-			PrintWriter print = new PrintWriter(new FileWriter(FileContentBasedRouter.normalizeFileName(message.getHeader().get("NDSI_EMS0133_OUTBOUND")+"/"+sdf.format(data)+".drr")));	
+			PrintWriter print = new PrintWriter(new FileWriter(message.getHeader().get("NDSI_EMS0133_OUTBOUND")+"/"+sdf.format(data)+".drr"));	
 			
 			
 			
 			for (Lancamento lancamento : lancamentos){
 				
 				EMS0133Output output = new EMS0133Output();
-
+				
 				for(Fornecedor fornecedor : lancamento.getProdutoEdicao().getProduto().getFornecedores()){			
 						output.setCodigoFornecedorProduto(fornecedor.getCodigoInterface());
 						output.setCodigoProduto(lancamento.getProdutoEdicao().getProduto().getCodigo());
@@ -92,8 +93,9 @@ public class EMS0133MessageProcessor implements MessageProcessor {
 						output.setDataRecolhimento(lancamento.getDataRecolhimentoDistribuidor());
 						output.setCodigoDistribuidor(distribuidor.getCodigo());
 						
-						print.println(fixedFormatManager.export(output));		
+						print.println(fixedFormatManager.export(output));
 				}
+				
 				
 			}
 			
@@ -103,8 +105,6 @@ public class EMS0133MessageProcessor implements MessageProcessor {
 		} catch (IOException e) {
 			
 			ndsiLoggerFactory.getLogger().logError(message, EventoExecucaoEnum.GERACAO_DE_ARQUIVO, "Não foi possível gerar o arquivo");
-			
-			throw new RuntimeException(e);
 			
 		} catch (NoResultException e) {
 			ndsiLoggerFactory.getLogger().logError(message, EventoExecucaoEnum.RELACIONAMENTO, "Nenhum resultado encontrado para Data de Operação: "+ distribuidor.getDataOperacao());

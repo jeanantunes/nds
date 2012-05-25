@@ -3,6 +3,7 @@ package br.com.abril.nds.dto.filtro;
 import java.io.Serializable;
 import java.util.Date;
 
+import br.com.abril.nds.model.StatusCobranca;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Exportable;
 import br.com.abril.nds.vo.PaginacaoVO;
@@ -26,6 +27,17 @@ public class FiltroConsultaDividasCotaDTO implements Serializable {
 	
 	@Export(label = "Data de Vencimento")
 	private Date dataVencimento;
+	
+	
+	
+	@Export(label = "Status da Cobrança")
+	private StatusCobranca statusCobranca;
+	
+	@Export(label = "Acumula Divida")
+	private boolean acumulaDivida;
+
+	
+	
 	
 	private PaginacaoVO paginacao;
 	
@@ -54,6 +66,17 @@ public class FiltroConsultaDividasCotaDTO implements Serializable {
 		this.dataVencimento=dataVencimento;
 	}
 	
+	/**
+	 * Construtor.
+	 */
+	public FiltroConsultaDividasCotaDTO(Integer numeroCota,
+			                            Date dataVencimento,
+			                            StatusCobranca statusCobranca){
+		this.numeroCota=numeroCota;
+		this.dataVencimento=dataVencimento;
+		this.statusCobranca = statusCobranca;
+	}
+	
 	
 	/**
 	 * Enum para ordenação das colunas do filtro.
@@ -65,9 +88,9 @@ public class FiltroConsultaDividasCotaDTO implements Serializable {
 		
 		CODIGO("codigo"),
 		NOME_COTA("nome"),
-		DATA_EMISSAO("dtEmissao"),
-		DATA_VENCIMENTO("dtVencimento"),
-		VALOR("vlDivida");
+		DATA_EMISSAO("dataEmissao"),
+		DATA_VENCIMENTO("dataVencimento"),
+		VALOR("valor");
 		
 		private String nomeColuna;
 		
@@ -96,10 +119,6 @@ public class FiltroConsultaDividasCotaDTO implements Serializable {
 	
 	public void setPaginacao(PaginacaoVO paginacao) {
 		this.paginacao = paginacao;
-	}
-	
-	public static long getSerialversionuid() {
-		return serialVersionUID;
 	}
 
 	public OrdenacaoColunaDividas getOrdenacaoColuna() {
@@ -130,6 +149,22 @@ public class FiltroConsultaDividasCotaDTO implements Serializable {
 
 	public void setDataVencimento(Date dataVencimento) {
 		this.dataVencimento = dataVencimento;
+	}
+
+	public StatusCobranca getStatusCobranca() {
+		return statusCobranca;
+	}
+
+	public void setStatusCobranca(StatusCobranca statusCobranca) {
+		this.statusCobranca = statusCobranca;
+	}
+
+	public boolean isAcumulaDivida() {
+		return acumulaDivida;
+	}
+
+	public void setAcumulaDivida(boolean acumulaDivida) {
+		this.acumulaDivida = acumulaDivida;
 	}
 
 	@Override

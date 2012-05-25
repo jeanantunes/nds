@@ -12,7 +12,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.CaucaoLiquida;
@@ -48,7 +47,7 @@ public class CotaGarantiaServiceImplTest extends AbstractRepositoryImplTest {
 		PessoaFisica pessoaFisica = Fixture.pessoaFisica("100.955.356-39",
 				"joao@gmail.com", "João da Silva");
 		save(pessoaFisica);
-		Box box1 = Fixture.criarBox("Box-1", "BX-001", TipoBox.LANCAMENTO);
+		Box box1 = Fixture.criarBox("Box-1", "BX-001", TipoBox.LANCAMENTO, false);
 		save(box1);
 		cota = Fixture
 				.cota(1, pessoaFisica, SituacaoCadastro.ATIVO, box1);
@@ -136,6 +135,7 @@ public class CotaGarantiaServiceImplTest extends AbstractRepositoryImplTest {
 		
 						
 	}
+
 
 	@Test
 	public void testSalvaCaucaoLiquida() throws Exception {

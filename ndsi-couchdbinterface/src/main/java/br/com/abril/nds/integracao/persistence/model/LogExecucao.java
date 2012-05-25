@@ -56,13 +56,7 @@ public class LogExecucao implements Serializable {
 	@Column(name = "NOME_LOGIN_USUARIO", nullable = false, length = 20)
 	private String nomeLoginUsuario;
 	
-	@Column(name = "CAMINHO_ARQUIVO", length = 350, nullable = false)
-	private String caminhoArquivo;
 	
-	@Column(name = "MENSAGEM", length = 500, nullable = true)
-	private String mensagem;
-	
-
 	public Long getId() {
 		return id;
 	}
@@ -109,21 +103,5 @@ public class LogExecucao implements Serializable {
 
 	public void setNomeLoginUsuario(String nomeLoginUsuario) {
 		this.nomeLoginUsuario = nomeLoginUsuario;
-	}
-
-	public String getCaminhoArquivo() {
-		return caminhoArquivo;
-	}
-
-	public void setCaminhoArquivo(String caminhoArquivo) {
-		this.caminhoArquivo = caminhoArquivo;
-	}
-
-	public String getMensagem() {
-		return mensagem;
-	}
-
-	public void setMensagem(String mensagem) {
-		this.mensagem = mensagem;
 	}
 }

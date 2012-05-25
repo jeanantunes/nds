@@ -1050,12 +1050,13 @@ public class PdvServiceImpl implements PdvService {
 
 		for (Long enderecoAssociacao : listaEnderecoAssociacao) {
 			
-			idsEndereco.add(enderecoAssociacao);
-			
 			EnderecoPDV enderecoPDV = this.enderecoPDVRepository.buscarEnderecoPorEnderecoPDV(enderecoAssociacao, pdv.getId());
 			
 			if (enderecoPDV != null && enderecoPDV.getEndereco() != null){
+				
 				idsEnderecoPDV.add(enderecoPDV.getId());
+				
+				idsEndereco.add(enderecoPDV.getEndereco().getId());
 			}
 		}
 		

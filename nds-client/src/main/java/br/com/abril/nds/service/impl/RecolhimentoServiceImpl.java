@@ -18,6 +18,7 @@ import br.com.abril.nds.dto.ProdutoRecolhimentoDTO;
 import br.com.abril.nds.dto.RecolhimentoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.factory.devolucao.BalanceamentoRecolhimentoFactory;
+import br.com.abril.nds.model.TipoEdicao;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.DistribuicaoDistribuidor;
 import br.com.abril.nds.model.cadastro.DistribuicaoFornecedor;
@@ -28,13 +29,16 @@ import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
 import br.com.abril.nds.model.planejamento.ChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.ChamadaEncalheCota;
+import br.com.abril.nds.model.planejamento.HistoricoLancamento;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
+import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.ChamadaEncalheCotaRepository;
 import br.com.abril.nds.repository.ChamadaEncalheRepository;
 import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.EstoqueProdutoCotaRepository;
+import br.com.abril.nds.repository.HistoricoLancamentoRepository;
 import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.service.DistribuidorService;
@@ -62,6 +66,9 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 	private LancamentoRepository lancamentoRepository;
 	
 	@Autowired
+	private HistoricoLancamentoRepository historicoLancamentoRepository;
+	
+	@Autowired
 	private EstoqueProdutoCotaRepository estoqueProdutoCotaRepository;
 	
 	@Autowired
@@ -79,7 +86,7 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 	@Autowired
 	private ParciaisService parciaisService;
 	
-	private static final Integer QTDE_PERIODOS_ = 1;
+	private static final Integer QTDE_PERIODOS_PARCIAIS = 1;
 	
 	/**
 	 * {@inheritDoc}
@@ -106,7 +113,8 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 	 */
 	@Override
 	@Transactional
-	public void salvarBalanceamentoRecolhimento(Map<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimento) {
+	public void salvarBalanceamentoRecolhimento(Map<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimento,
+												Usuario usuario) {
 		
 		if (matrizRecolhimento == null
 				|| matrizRecolhimento.isEmpty()) {
@@ -137,7 +145,7 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 			}
 		}
 		
-		atualizarLancamento(idsLancamento, mapaRecolhimentos);
+		atualizarLancamento(idsLancamento, usuario, mapaRecolhimentos);
 	}
 	
 	/**
@@ -146,7 +154,7 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 	@Override
 	@Transactional
 	public void confirmarBalanceamentoRecolhimento(Map<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimento,
-												   Integer numeroSemana, Long idUsuario) {
+												   Integer numeroSemana, Usuario usuario) {
 		
 		if (matrizRecolhimento == null
 				|| matrizRecolhimento.isEmpty()) {
@@ -207,14 +215,14 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 			}
 		}
 		
-		atualizarLancamento(idsLancamento, mapaLancamentoRecolhimento);
+		atualizarLancamento(idsLancamento, usuario, mapaLancamentoRecolhimento);
 		
 		gerarChamadaEncalhe(mapaDataRecolhimentoLancamentos, numeroSemana);
 		
-		gerarPeriodosParciais(idsProdutoEdicaoParcial, idUsuario);
+		gerarPeriodosParciais(idsProdutoEdicaoParcial, usuario);
 	}
 	
-	private void atualizarLancamento(Set<Long> idsLancamento,
+	private void atualizarLancamento(Set<Long> idsLancamento, Usuario usuario,
 									 Map<Long, ProdutoRecolhimentoDTO> mapaRecolhimentos) {
 		
 		if (!idsLancamento.isEmpty()) {
@@ -235,7 +243,14 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 			
 			ProdutoRecolhimentoDTO produtoRecolhimento = null;
 			
+			boolean gerarHistoricoLancamento = false;
+			
+			HistoricoLancamento historicoLancamento = null;
+			
 			for (Lancamento lancamento : listaLancamentos) {
+				
+				gerarHistoricoLancamento =
+					!(lancamento.getStatus().equals(StatusLancamento.BALANCEADO_RECOLHIMENTO));
 				
 				produtoRecolhimento = mapaRecolhimentos.get(lancamento.getId());
 				
@@ -245,6 +260,19 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 				lancamento.setDataStatus(new Date());
 				
 				this.lancamentoRepository.merge(lancamento);
+				
+				if (gerarHistoricoLancamento) {
+				
+					historicoLancamento = new HistoricoLancamento();
+					
+					historicoLancamento.setLancamento(lancamento);
+					historicoLancamento.setTipoEdicao(TipoEdicao.ALTERACAO);
+					historicoLancamento.setStatus(lancamento.getStatus());
+					historicoLancamento.setDataEdicao(new Date());
+					historicoLancamento.setResponsavel(usuario);
+					
+					this.historicoLancamentoRepository.merge(historicoLancamento);
+				}
 			}
 		}
 	}
@@ -337,7 +365,7 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		}
 	}
 	
-	private void gerarPeriodosParciais(Set<Long> idsProdutoEdicaoParcial, Long idUsuario) {
+	private void gerarPeriodosParciais(Set<Long> idsProdutoEdicaoParcial, Usuario usuario) {
 		
 		List<ProdutoEdicao> listaProdutoEdicao =
 			produtoEdicaoRepository.obterProdutosEdicaoPorId(idsProdutoEdicaoParcial);
@@ -354,9 +382,12 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 				"Produto edição não encontrado!");
 		}
 		
+		Distribuidor distribuidor = this.distribuidorRepository.obter();
+		
 		for (ProdutoEdicao produtoEdicao : listaProdutoEdicao) {
 		
-			parciaisService.gerarPeriodosParcias(produtoEdicao.getId(), QTDE_PERIODOS_, idUsuario,null);
+			parciaisService.gerarPeriodosParcias(produtoEdicao, QTDE_PERIODOS_PARCIAIS,
+												 usuario, null, distribuidor);
 		}
 	}
 	

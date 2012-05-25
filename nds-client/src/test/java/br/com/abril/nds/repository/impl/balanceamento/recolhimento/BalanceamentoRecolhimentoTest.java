@@ -20,6 +20,7 @@ import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Editor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
+import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
@@ -45,15 +46,15 @@ import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamentoParcial;
 import br.com.abril.nds.model.seguranca.Usuario;
+import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.repository.impl.AbstractRepositoryImplTest;
-import br.com.abril.nds.repository.impl.LancamentoRepositoryImpl;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.vo.PeriodoVO;
 
 public class BalanceamentoRecolhimentoTest extends AbstractRepositoryImplTest {
 	
 	@Autowired
-	private LancamentoRepositoryImpl lancamentoRepository;
+	private LancamentoRepository lancamentoRepository;
 	
 	private Lancamento lancamentoVeja;
 	private Lancamento lancamentoQuatroRodas;
@@ -72,7 +73,10 @@ public class BalanceamentoRecolhimentoTest extends AbstractRepositoryImplTest {
 		Editor abril = Fixture.editoraAbril();
 		save(abril);
 		
-		Editor globo = Fixture.criarEditor("Globo", 687L);
+		PessoaJuridica juridicaFc = Fixture.juridicaFC();
+		save(juridicaFc);
+		
+		Editor globo = Fixture.criarEditor("Globo", 687L, juridicaFc, true);
 		save(globo);
 
 		tipoFornecedorPublicacao = Fixture.tipoFornecedorPublicacao();
@@ -107,28 +111,28 @@ public class BalanceamentoRecolhimentoTest extends AbstractRepositoryImplTest {
 		save(cromoReiLeao);
 
 		ProdutoEdicao veja1 = Fixture.produtoEdicao(1L, 10, 7,
-				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(15), "ABCDEFGHIJKLMNOPQRSTU", 1L, veja);
+				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(15), "ABCDEFGHIJKLMNOPQRSTU", 1L, veja, null, false);
 
 		veja1.setExpectativaVenda(BigDecimal.TEN);
 		
 		ProdutoEdicao quatroRoda2 = Fixture.produtoEdicao(2L, 15, 30,
 				new BigDecimal(0.1), BigDecimal.TEN, BigDecimal.TEN, "ABCDEFGHIJKLMNOPQRST", 2L,
-				quatroRodas);
+				quatroRodas, null, false);
 
 		quatroRoda2.setExpectativaVenda(BigDecimal.TEN);
 		
 		ProdutoEdicao infoExame3 = Fixture.produtoEdicao(3L, 5, 30,
-				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(12), "ABCDEFGHIJKLMNOPQRS", 3L, infoExame);
+				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(12), "ABCDEFGHIJKLMNOPQRS", 3L, infoExame, null, false);
 
 		infoExame3.setExpectativaVenda(BigDecimal.TEN);
 		
 		ProdutoEdicao capricho1 = Fixture.produtoEdicao(1L, 10, 15,
-				new BigDecimal(0.12), BigDecimal.TEN, BigDecimal.TEN, "ABCDEFGHIJKLMNOPQR", 4L, capricho);
+				new BigDecimal(0.12), BigDecimal.TEN, BigDecimal.TEN, "ABCDEFGHIJKLMNOPQR", 4L, capricho, null, false);
 		
 		capricho1.setExpectativaVenda(BigDecimal.TEN);
 		
 		ProdutoEdicao cromoReiLeao1 = Fixture.produtoEdicao(1L, 100, 60,
-				new BigDecimal(0.01), BigDecimal.ONE, new BigDecimal(1.5), "ABCDEFGHIJKLMNOPQ", 5L, cromoReiLeao);
+				new BigDecimal(0.01), BigDecimal.ONE, new BigDecimal(1.5), "ABCDEFGHIJKLMNOPQ", 5L, cromoReiLeao, null, false);
 		
 		cromoReiLeao1.setExpectativaVenda(BigDecimal.TEN);
 		
@@ -322,7 +326,7 @@ public class BalanceamentoRecolhimentoTest extends AbstractRepositoryImplTest {
 
 		save(estudoCapricho, lancamentoParcialCapricho, parcialCapricho, estudoCotaCapricho);
 		
-		Box box301 = Fixture.criarBox("357", "Box 301", TipoBox.RECOLHIMENTO);
+		Box box301 = Fixture.criarBox("357", "Box 301", TipoBox.RECOLHIMENTO, false);
 		box301.setPostoAvancado(false);
 		
 		Cota cotaFC = Fixture.cota(55, fornecedorFC.getJuridica(), SituacaoCadastro.ATIVO, box301);
@@ -375,7 +379,7 @@ public class BalanceamentoRecolhimentoTest extends AbstractRepositoryImplTest {
 
 		save(estudoVeja, lancamentoParcialVeja, parcialVeja, estudoCotaVeja);
 		
-		Box box303 = Fixture.criarBox("359", "Box 303", TipoBox.RECOLHIMENTO);
+		Box box303 = Fixture.criarBox("359", "Box 303", TipoBox.RECOLHIMENTO, false);
 		box303.setPostoAvancado(false);
 		
 		Cota cotaJurandir = Fixture.cota(59, fornecedorFC.getJuridica(), SituacaoCadastro.ATIVO, box303);

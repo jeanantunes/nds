@@ -23,6 +23,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import br.com.abril.nds.model.DiaSemana;
+import br.com.abril.nds.model.LeiautePicking;
 
 /**
  * Cadastro do Distribuidor
@@ -39,6 +40,9 @@ public class Distribuidor {
 	@GeneratedValue(generator = "DISTRIB_SEQ")
 	@Column(name = "ID")
 	private Long id;
+	
+	@Embedded
+	private ParametroCobrancaDistribuidor parametroCobrancaDistribuidor;
 	
 	@Column(name = "CODIGO", nullable = false)
 	private Integer codigo;
@@ -141,6 +145,10 @@ public class Distribuidor {
 	@Column(name = "QTD_DIAS_ENCALHE_ATRASADO_ACEITAVEL", nullable = false)
 	private int qtdDiasEncalheAtrasadoAceitavel = 4;
 	
+	@Enumerated(EnumType.STRING)
+	@Column(name = "LEIAUTE_PICKING", length = 20, nullable = true)
+	private LeiautePicking leiautePicking;
+	
 	public Long getId() {
 		return id;
 	}
@@ -149,6 +157,15 @@ public class Distribuidor {
 		this.id = id;
 	}
 	
+	public ParametroCobrancaDistribuidor getParametroCobrancaDistribuidor() {
+		return parametroCobrancaDistribuidor;
+	}
+
+	public void setParametroCobrancaDistribuidor(
+			ParametroCobrancaDistribuidor parametroCobrancaDistribuidor) {
+		this.parametroCobrancaDistribuidor = parametroCobrancaDistribuidor;
+	}
+
 	public Date getDataOperacao() {
 		return dataOperacao;
 	}
@@ -365,6 +382,20 @@ public class Distribuidor {
 	 */
 	public void setAceitaJuramentado(boolean aceitaJuramentado) {
 		this.aceitaJuramentado = aceitaJuramentado;
+	}
+
+	/**
+	 * @return the leiautePicking
+	 */
+	public LeiautePicking getLeiautePicking() {
+		return leiautePicking;
+	}
+
+	/**
+	 * @param leiautePicking the leiautePicking to set
+	 */
+	public void setLeiautePicking(LeiautePicking leiautePicking) {
+		this.leiautePicking = leiautePicking;
 	}
 	
 	

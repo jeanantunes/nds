@@ -33,6 +33,28 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepository<Movim
 	
 	/*
 	 * (non-Javadoc)
+	 * @see br.com.abril.nds.repository.MovimentoEstoqueCotaRepository#obterListaMovimentoEstoqueCotaParaOperacaoConferenciaEncalhe(java.lang.Long)
+	 */
+	public List<MovimentoEstoqueCota> obterListaMovimentoEstoqueCotaParaOperacaoConferenciaEncalhe(Long idControleConferenciaEncalheCota) {
+		
+		StringBuffer hql = new StringBuffer();
+		
+		hql.append(" select conferenciaEncalhe.movimentoEstoqueCota  ");			
+		
+		hql.append(" from ConferenciaEncalhe conferenciaEncalhe ");
+		
+		hql.append(" where conferenciaEncalhe.controleConferenciaEncalheCota.id = :idControleConferenciaEncalheCota ");
+		
+		Query query = getSession().createQuery(hql.toString());
+		
+		query.setParameter("idControleConferenciaEncalheCota", idControleConferenciaEncalheCota);
+		
+		return query.list();
+		
+	}
+	
+	/*
+	 * (non-Javadoc)
 	 * @see br.com.abril.nds.repository.MovimentoEstoqueCotaRepository#obterQtdProdutoEdicaoEncalhe(br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDTO, boolean)
 	 */
 	public Integer obterQtdProdutoEdicaoEncalhe(FiltroConsultaEncalheDTO filtro, boolean indQtdEncalheAposPrimeiroDia) {
@@ -789,6 +811,5 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepository<Movim
 		return query.list();
 		
 	}
-
 	
 }

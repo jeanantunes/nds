@@ -39,13 +39,14 @@ import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
+import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.vo.PaginacaoVO;
 
 public class LancamentoRepositoryImplExpedicaoTest extends AbstractRepositoryImplTest{
 
 
 	@Autowired
-	private LancamentoRepositoryImpl lancamentoRepository;
+	private LancamentoRepository lancamentoRepository;
 	
 	
 	@Before
@@ -78,13 +79,13 @@ public class LancamentoRepositoryImplExpedicaoTest extends AbstractRepositoryImp
 			Editor abril = Fixture.editoraAbril();
 			save(abril);
 			
-			Produto produto = Fixture.produto("00"+i, "descricao"+i, "nome"+i, PeriodicidadeProduto.ANUAL, tipoRevista);
+			Produto produto = Fixture.produto("00"+i, "descricao"+i, "nome"+i, PeriodicidadeProduto.ANUAL, tipoRevista, 5, 5, BigDecimal.TEN);
 			produto.addFornecedor(fornecedor);
 			produto.setEditor(abril);
 			save(produto); 
 			
 			ProdutoEdicao produtoEdicao = Fixture.produtoEdicao(i.longValue(), 50, 40, 
-					new BigDecimal(30), new BigDecimal(20), new BigDecimal(10), "ABCDEFGHIJKLMNOPQRSTU", 1L, produto);	
+					new BigDecimal(30), new BigDecimal(20), new BigDecimal(10), "ABCDEFGHIJKLMNOPQRSTU", 1L, produto, null, false);	
 			save(produtoEdicao);
 			
 			

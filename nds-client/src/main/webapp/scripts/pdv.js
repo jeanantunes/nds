@@ -96,6 +96,10 @@ var PDV = {
 				
 				PDV.montartabelaDiasFuncionamento();								
 			}
+			else{
+				
+				PDV.carregarPeriodosFuncionamento();
+			}
 	
 		},
 		

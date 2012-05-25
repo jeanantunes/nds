@@ -98,25 +98,25 @@ public class ChamadaEncalheCotaRepositoryImplTest extends AbstractRepositoryImpl
 		save(cromoReiLeao);
 
 		veja1 = Fixture.produtoEdicao(1L, 10, 7,
-				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(15), "ABCDEFGHIJKLMNOPQRSTU", 1L, veja);
+				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(15), "ABCDEFGHIJKLMNOPQRSTU", 1L, veja, null, false);
 		
 		veja1.setDesconto(BigDecimal.ZERO);
 
 		quatroRoda2 = Fixture.produtoEdicao(2L, 15, 30,
 				new BigDecimal(0.1), BigDecimal.TEN, BigDecimal.TEN, "ABCDEFGHIJKNOPQRSTU", 2L,
-				quatroRodas);
+				quatroRodas, null, false);
 		quatroRoda2.setDesconto(BigDecimal.ZERO);
 
 		ProdutoEdicao infoExame3 = Fixture.produtoEdicao(3L, 5, 30,
-				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(12), "ABCDGHIJKLMNOPQRSTU", 3L, infoExame);
+				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(12), "ABCDGHIJKLMNOPQRSTU", 3L, infoExame, null, false);
 		infoExame3.setDesconto(BigDecimal.ZERO);
 
 		ProdutoEdicao capricho1 = Fixture.produtoEdicao(1L, 10, 15,
-				new BigDecimal(0.12), BigDecimal.TEN, BigDecimal.TEN, "ABCDEFGHIJKLMNU", 4L, capricho);
+				new BigDecimal(0.12), BigDecimal.TEN, BigDecimal.TEN, "ABCDEFGHIJKLMNU", 4L, capricho, null, false);
 		capricho1.setDesconto(BigDecimal.ZERO);
 		
 		ProdutoEdicao cromoReiLeao1 = Fixture.produtoEdicao(1L, 100, 60,
-				new BigDecimal(0.01), BigDecimal.ONE, new BigDecimal(1.5), "ABCTU", 5L, cromoReiLeao);
+				new BigDecimal(0.01), BigDecimal.ONE, new BigDecimal(1.5), "ABCTU", 5L, cromoReiLeao, null, false);
 		cromoReiLeao1.setDesconto(BigDecimal.ZERO);
 		
 		save(veja1, quatroRoda2, infoExame3, capricho1, cromoReiLeao1);
@@ -201,7 +201,7 @@ public class ChamadaEncalheCotaRepositoryImplTest extends AbstractRepositoryImpl
 				"manoel@mail.com", "Manoel da Silva");
 		save(manoel);
 		
-		Box box1 = Fixture.criarBox("Box-1", "BX-001", TipoBox.LANCAMENTO);
+		Box box1 = Fixture.criarBox("Box-1", "BX-001", TipoBox.LANCAMENTO, false);
 		save(box1);
 		
 		cotaManoel = Fixture.cota(123, manoel, SituacaoCadastro.ATIVO, box1);
@@ -255,7 +255,7 @@ public class ChamadaEncalheCotaRepositoryImplTest extends AbstractRepositoryImpl
 				Fixture.criarData(28, Calendar.FEBRUARY, 2012), 
 				Fixture.criarData(28, Calendar.FEBRUARY, 2012), 
 				Fixture.criarData(28, Calendar.FEBRUARY, 2012), 
-				StatusOperacao.CONCLUIDO);
+				StatusOperacao.CONCLUIDO, usuarioJoao, box1);
 		
 		save(controleConferenciaEncalheCota);		
 		/**

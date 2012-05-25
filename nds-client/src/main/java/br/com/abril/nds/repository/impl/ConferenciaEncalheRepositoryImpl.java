@@ -1,5 +1,6 @@
 package br.com.abril.nds.repository.impl;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.hibernate.Hibernate;
@@ -29,27 +30,31 @@ public class ConferenciaEncalheRepositoryImpl extends
 	
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" 		SELECT                                             		");
-		hql.append(" 		CONF_ENCALHE.ID AS idConferenciaEncalhe,           		");
-		hql.append(" 		MOV_EST_COTA.QTDE AS qtdExemplar,                  		");
-		hql.append(" 		MOV_EST_COTA.PRODUTO_EDICAO_ID AS idProdutoEdicao, 		");
-		hql.append(" 		PROD_EDICAO.CODIGO_DE_BARRAS AS codigoDeBarras,    		");
-		hql.append(" 		LANCTO.SEQUENCIA_MATRIZ AS codigoSM,               		");
-		hql.append("        CH_ENCALHE.DATA_RECOLHIMENTO AS dataRecolhimento,  		");
-		hql.append("		CH_ENCALHE.TIPO_CHAMADA_ENCALHE AS tipoChamadaEncalhe,	");
-		hql.append(" 		PROD.CODIGO AS codigo,                                  ");
-		hql.append(" 		PROD.NOME AS nomeProduto,                               ");
-		hql.append(" 		PROD_EDICAO.NUMERO_EDICAO AS numeroEdicao,              ");
-		hql.append(" 		PROD_EDICAO.PRECO_VENDA AS precoCapa,                   ");
+		hql.append(" SELECT                                             		");
+		hql.append(" CONF_ENCALHE.ID AS idConferenciaEncalhe,           		");
+		hql.append(" MOV_EST_COTA.QTDE AS qtdExemplar,                  		");
+		hql.append(" MOV_EST_COTA.PRODUTO_EDICAO_ID AS idProdutoEdicao, 		");
+		hql.append(" PROD_EDICAO.CODIGO_DE_BARRAS AS codigoDeBarras,    		");
+
+		hql.append(" ( ");
+		hql.append( subSqlQuerySequenciaMatriz() );
+		hql.append(" ) AS codigoSM, ");
+		
+		hql.append(" CH_ENCALHE.DATA_RECOLHIMENTO AS dataRecolhimento,  	 ");
+		hql.append(" CH_ENCALHE.TIPO_CHAMADA_ENCALHE AS tipoChamadaEncalhe,	 ");
+		hql.append(" PROD.CODIGO AS codigo,                                  ");
+		hql.append(" PROD.NOME AS nomeProduto,                               ");
+		hql.append(" PROD_EDICAO.NUMERO_EDICAO AS numeroEdicao,              ");
+		hql.append(" PROD_EDICAO.PRECO_VENDA AS precoCapa,                   ");
 		
 		hql.append("        ( PROD_EDICAO.PRECO_VENDA *  ( ");
-		hql.append(    subSqlQueryValorDesconto()			);		
+		hql.append(    getSubSqlQueryValorDesconto()			);		
 		hql.append("         ) / 100 ) AS desconto,        ");
 		
 		hql.append("         MOV_EST_COTA.QTDE * ( PROD_EDICAO.PRECO_VENDA - ( PROD_EDICAO.PRECO_VENDA *  ");
 		
 		hql.append(" ( 							");
-		hql.append(subSqlQueryValorDesconto()	 );
+		hql.append(getSubSqlQueryValorDesconto()	 );
 		hql.append(" ) 							");
 		hql.append(" /100)) AS valorTotal,  	");
 		
@@ -68,15 +73,14 @@ public class ConferenciaEncalheRepositoryImpl extends
 
 		hql.append("     WHERE   ");
 		
-		hql.append("		 CONF_ENCALHE.LANCAMENTO_ID = LANCTO.ID						 ");
-		hql.append("         AND CONF_ENCALHE.MOVIMENTO_ESTOQUE_COTA_ID=MOV_EST_COTA.ID  ");
+		hql.append("         CONF_ENCALHE.MOVIMENTO_ESTOQUE_COTA_ID=MOV_EST_COTA.ID  	 ");
 		hql.append("         AND MOV_EST_COTA.PRODUTO_EDICAO_ID=PROD_EDICAO.ID           ");
 		hql.append("         AND PROD_EDICAO.PRODUTO_ID=PROD.ID                          ");
 		hql.append("         AND CONF_ENCALHE.CHAMADA_ENCALHE_COTA_ID=CH_ENCALHE_COTA.ID ");
 		hql.append("         AND CH_ENCALHE_COTA.CHAMADA_ENCALHE_ID=CH_ENCALHE.ID        ");
 		hql.append("         AND CONF_ENCALHE.CONTROLE_CONFERENCIA_ENCALHE_COTA_ID = :idControleConferenciaEncalheCota   ");
 		
-		hql.append("  ORDER BY LANCTO.SEQUENCIA_MATRIZ ");
+		hql.append("  ORDER BY codigoSM ");
 		
 		Query query =  this.getSession().createSQLQuery(hql.toString()).setResultTransformer(new AliasToBeanResultTransformer(ConferenciaEncalheDTO.class));
 		
@@ -84,7 +88,7 @@ public class ConferenciaEncalheRepositoryImpl extends
 		((SQLQuery)query).addScalar("qtdExemplar");
 		((SQLQuery)query).addScalar("idProdutoEdicao", Hibernate.LONG);
 		((SQLQuery)query).addScalar("codigoDeBarras");
-		((SQLQuery)query).addScalar("codigoSM");
+		((SQLQuery)query).addScalar("codigoSM", Hibernate.INTEGER);
 		((SQLQuery)query).addScalar("dataRecolhimento");
 		((SQLQuery)query).addScalar("codigo");
 		((SQLQuery)query).addScalar("nomeProduto");
@@ -104,11 +108,34 @@ public class ConferenciaEncalheRepositoryImpl extends
 	}
 	
 	/**
+	 * Obtém String de subSQL que retorna valor sequenciaMatriz
+	 * para determinado ProdutoEdicao para a dataRecolhimento mais atual.
+	 * 
+	 * @return String
+	 */
+	private String subSqlQuerySequenciaMatriz() {
+		
+		StringBuffer sql = new StringBuffer();
+		
+		sql.append(" SELECT LANCTO.SEQUENCIA_MATRIZ ");
+		sql.append(" FROM LANCAMENTO LANCTO 		");
+		sql.append(" WHERE LANCTO.PRODUTO_EDICAO_ID = PROD_EDICAO.ID AND ");
+		sql.append(" LANCTO.DATA_REC_DISTRIB = ");
+		
+		sql.append(" ( SELECT MAX(LCTO.DATA_REC_DISTRIB) FROM LANCAMENTO LCTO 	");
+		sql.append(" WHERE LCTO.PRODUTO_EDICAO_ID = PROD_EDICAO.ID ) 			");
+		
+		return sql.toString();
+		
+	}
+	
+	/**
 	 * Obtém String de subSQL que retorna valor de desconto
 	 * de acordo com ProdutoEdicao, Cota e Distribuidor.
-	 * @return
+	 * 
+	 * @return String
 	 */
-	private String subSqlQueryValorDesconto() {
+	private String getSubSqlQueryValorDesconto() {
 		
 		StringBuffer sql = new StringBuffer();
 		
@@ -138,17 +165,38 @@ public class ConferenciaEncalheRepositoryImpl extends
 		
 	}
 	
-	/**
-	 * Retorna String referente a uma subquery que obtém o valor comissionamento 
-	 * (percentual de desconto) para determinado produtoEdicao a partir de idCota e idDistribuidor. 
-	 * 
-	 * @return String
-	 */
-	private static String getSubQueryConsultaValorComissionamento() {
+	
+	public BigDecimal obterValorTotalEncalheOperacaoConferenciaEncalhe(Long idControleConferenciaEncalhe, Long idDistribuidor) {
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" ( select case when ( pe.desconto is not null ) then pe.desconto else ");
+		hql.append(" select sum( conferenciaEncalhe.movimentoEstoqueCota.produtoEdicao.precoVenda - ( pe.precoVenda * ("+ getSubHqlQueryValorDesconto() +") / 100 ) ) ");
+		
+		hql.append(" from ConferenciaEncalhe conferenciaEncalhe  ");
+		
+		hql.append(" where conferenciaEncalhe.controleConferenciaEncalheCota.id = :idControleConferenciaEncalhe  ");
+		
+		Query query =  this.getSession().createQuery(hql.toString());
+		
+		query.setParameter("idControleConferenciaEncalhe", idControleConferenciaEncalhe);
+		
+		query.setParameter("idDistribuidor", idDistribuidor);
+		
+		return (BigDecimal) query.uniqueResult();
+		
+	}
+	
+	/**
+	 * Obtém String de subHQL que retorna valor de desconto
+	 * de acordo com ProdutoEdicao, Cota e Distribuidor.
+	 * 
+	 * @return String
+	 */
+	private String getSubHqlQueryValorDesconto() {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select case when ( pe.desconto is not null ) then pe.desconto else ");
 		
 		hql.append(" ( case when ( ct.fatorDesconto is not null ) then ct.fatorDesconto  else  ");
 		
@@ -164,7 +212,7 @@ public class ConferenciaEncalheRepositoryImpl extends
 
 		hql.append(" pe.id = conferenciaEncalhe.movimentoEstoqueCota.produtoEdicao.id and ");
 
-		hql.append(" distribuidor.id = :idDistribuidor ) ");
+		hql.append(" distribuidor.id = :idDistribuidor ");
 		
 		return hql.toString();
 		

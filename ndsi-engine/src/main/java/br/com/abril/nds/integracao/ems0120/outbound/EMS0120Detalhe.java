@@ -17,7 +17,7 @@ public class EMS0120Detalhe {
 	private Integer codigoCota;
 	private BigDecimal quantidadeReparte;
 	private BigDecimal precoCapa;
-	private Date dataLançamento;
+	private Date dataLancamento;
 	private String numeroBoxCota;
 
 	@Field(offset=1, length=2, paddingChar='2')
@@ -94,12 +94,12 @@ public class EMS0120Detalhe {
 	
 	@Field(offset=43, length=8)
 	@FixedFormatPattern("ddMMyyyy")
-	public Date getDataLançamento() {
-		return dataLançamento;
+	public Date getDataLancamento() {
+		return dataLancamento;
 	}
 
-	public void setDataLançamento(Date dataLançamento) {
-		this.dataLançamento = dataLançamento;
+	public void setDataLancamento(Date dataLancamento) {
+		this.dataLancamento = dataLancamento;
 	}
 
 	@Field(offset=51, length=3)

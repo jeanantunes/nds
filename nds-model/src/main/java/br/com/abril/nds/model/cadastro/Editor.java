@@ -1,5 +1,6 @@
 package br.com.abril.nds.model.cadastro;
 
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -10,15 +11,23 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Cascade;
+
 @Entity
 @Table(name = "EDITOR")
 @SequenceGenerator(name="EDITOR_SEQ", initialValue = 1, allocationSize = 1)
-public class Editor {
+public class Editor implements Serializable {
 	
+	/**
+	 * Serial Version UID
+	 */
+	private static final long serialVersionUID = 6934629458438025418L;
+
 	@Id
 	@GeneratedValue(generator = "EDITOR_SEQ")
 	@Column(name = "ID", nullable = false)
@@ -29,6 +38,18 @@ public class Editor {
 	
 	@Column(name = "CODIGO", nullable = false)
 	private Long codigo;
+
+	/**
+	 * Flag que indica se o Editor foi criado atraves de interface de sistemas ou por cadastro
+	 */
+	@Column(name = "ORIGEM_INTERFACE", nullable = true)
+	private Boolean origemInterface;
+	
+	@Column(name = "NOME_CONTATO", nullable = true)
+	private String nomeContato;
+	
+	@Column(name = "ATIVO", nullable = false)
+	private boolean ativo;
 	
 	@ManyToMany
 	@JoinTable(name = "EDITOR_FORNECEDOR", joinColumns = {@JoinColumn(name = "EDITOR_ID")}, 
@@ -37,6 +58,17 @@ public class Editor {
 	
 	@OneToMany(mappedBy = "editor")
 	private Set<EnderecoEditor> enderecos = new HashSet<EnderecoEditor>();
+	
+	@OneToMany(mappedBy = "editor")
+	private Set<TelefoneEditor> telefones = new HashSet<TelefoneEditor>();
+	
+	@OneToMany(mappedBy = "editor")
+	private Set<TipoProdutoEditor> tiposProduto = new HashSet<TipoProdutoEditor>();
+	
+	@ManyToOne(optional = false)
+	@Cascade(value = org.hibernate.annotations.CascadeType.SAVE_UPDATE)
+	@JoinColumn(name = "JURIDICA_ID")
+	private PessoaJuridica pessoaJuridica;
 
 	public Long getId() {
 		return id;
@@ -107,6 +139,84 @@ public class Editor {
 	 */
 	public void setEnderecos(Set<EnderecoEditor> enderecos) {
 		this.enderecos = enderecos;
+	}
+
+	/**
+	 * @return the nomeContato
+	 */
+	public String getNomeContato() {
+		return nomeContato;
+	}
+
+	/**
+	 * @param nomeContato the nomeContato to set
+	 */
+	public void setNomeContato(String nomeContato) {
+		this.nomeContato = nomeContato;
+	}
+
+	/**
+	 * @return the ativo
+	 */
+	public boolean isAtivo() {
+		return ativo;
+	}
+
+	/**
+	 * @param ativo the ativo to set
+	 */
+	public void setAtivo(boolean ativo) {
+		this.ativo = ativo;
+	}
+
+	/**
+	 * @return the pessoaJuridica
+	 */
+	public PessoaJuridica getPessoaJuridica() {
+		return pessoaJuridica;
+	}
+
+	/**
+	 * @param pessoaJuridica the pessoaJuridica to set
+	 */
+	public void setPessoaJuridica(PessoaJuridica pessoaJuridica) {
+		this.pessoaJuridica = pessoaJuridica;
+	}
+
+	/**
+	 * @return the telefones
+	 */
+	public Set<TelefoneEditor> getTelefones() {
+		return telefones;
+	}
+
+	/**
+	 * @param telefones the telefones to set
+	 */
+	public void setTelefones(Set<TelefoneEditor> telefones) {
+		this.telefones = telefones;
+	}
+
+	/**
+	 * @return the tiposProduto
+	 */
+	public Set<TipoProdutoEditor> getTiposProduto() {
+		return tiposProduto;
+	}
+
+	/**
+	 * @param tiposProduto the tiposProduto to set
+	 */
+	public void setTiposProduto(Set<TipoProdutoEditor> tiposProduto) {
+		this.tiposProduto = tiposProduto;
+	}
+	
+	public Boolean getOrigemInterface() {
+		return origemInterface;
+	}
+
+	public void setOrigemInterface(Boolean origemInterface) {
+		this.origemInterface = origemInterface;
 	}
 
 }
