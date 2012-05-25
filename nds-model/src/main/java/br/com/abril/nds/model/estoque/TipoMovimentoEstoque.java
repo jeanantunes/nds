@@ -21,6 +21,20 @@ public class TipoMovimentoEstoque extends TipoMovimento {
 	@Enumerated(EnumType.STRING)
 	private OperacaoEstoque operacaoEstoque;
 
+
+	public TipoMovimentoEstoque() {
+		
+	}
+	
+	public TipoMovimentoEstoque(boolean incideDivida,
+			GrupoMovimentoEstoque grupoMovimentoEstoque,
+			OperacaoEstoque operacaoEstoque) {
+		super();
+		this.incideDivida = incideDivida;
+		this.grupoMovimentoEstoque = grupoMovimentoEstoque;
+		this.setOperacaoEstoque(operacaoEstoque);
+	}
+
 	public boolean isIncideDivida() {
 		return incideDivida;
 	}
@@ -36,11 +50,15 @@ public class TipoMovimentoEstoque extends TipoMovimento {
 	public void setGrupoMovimentoEstoque(
 			GrupoMovimentoEstoque grupoMovimentoEstoque) {
 		this.grupoMovimentoEstoque = grupoMovimentoEstoque;
-		this.operacaoEstoque = grupoMovimentoEstoque.getOperacaoEstoque();
+		this.setOperacaoEstoque(grupoMovimentoEstoque.getOperacaoEstoque());
 	}
 
 	public OperacaoEstoque getOperacaoEstoque() {
 		return operacaoEstoque;
+	}
+
+	public void setOperacaoEstoque(OperacaoEstoque operacaoEstoque) {
+		this.operacaoEstoque = operacaoEstoque;
 	}
 
 }

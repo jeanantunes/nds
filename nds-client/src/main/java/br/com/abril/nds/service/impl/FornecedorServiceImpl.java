@@ -9,8 +9,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.dto.FornecedorDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
+import br.com.abril.nds.dto.filtro.FiltroConsultaFornecedorDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
@@ -250,5 +252,47 @@ public class FornecedorServiceImpl implements FornecedorService {
 			comboFornecedores.add(new ItemDTO<Long,String>(itemFornecedor.getId(), itemFornecedor.getJuridica().getRazaoSocial()));
 		}
 		return comboFornecedores;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@Transactional
+	public List<FornecedorDTO> obterFornecedoresPorFiltro(FiltroConsultaFornecedorDTO filtroConsultaFornecedor) {
+
+		validarFiltroConsultaFornecedorDTO(filtroConsultaFornecedor);
+		
+		return this.fornecedorRepository.obterFornecedoresPorFiltro(filtroConsultaFornecedor);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Long obterContagemFornecedoresPorFiltro(FiltroConsultaFornecedorDTO filtroConsultaFornecedor) {
+
+		validarFiltroConsultaFornecedorDTO(filtroConsultaFornecedor);
+		
+		return this.obterContagemFornecedoresPorFiltro(filtroConsultaFornecedor);
+	}
+	
+	/*
+	 * Método que realiza a validação do filtro para consulta de fornecedores.
+	 */
+	private void validarFiltroConsultaFornecedorDTO(FiltroConsultaFornecedorDTO filtroConsultaFornecedor) {
+
+		if (filtroConsultaFornecedor == null) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Filtro obrigatório para a pesquisa.");
+		}
+
+		if (filtroConsultaFornecedor.getCnpj() == null && filtroConsultaFornecedor.getCnpj().isEmpty() 
+				&& filtroConsultaFornecedor.getRazaoSocial() == null && filtroConsultaFornecedor.getRazaoSocial().isEmpty()
+				&& filtroConsultaFornecedor.getNomeFantasia() == null && filtroConsultaFornecedor.getNomeFantasia().isEmpty()) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Digite ao menos um filtro para realizar a pesquisa.");
+		}
+		
 	}
 }

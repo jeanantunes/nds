@@ -78,8 +78,10 @@
 			return null;
 		}
 		
-		gerarRelatorio(cotas);
-				
+		if(cotas.length != 0) {
+			gerarRelatorio(cotas);
+		}
+		
 		$( "#divRelatorio" ).dialog({
 			resizable: false,
 			height:'auto',

@@ -6,6 +6,20 @@ package br.com.abril.nds.model.estoque;
  * @created 14-fev-2012 11:35:33
  */
 public enum OperacaoEstoque {
-	ENTRADA,
-	SAIDA
+	ENTRADA("Entrada"),
+	SAIDA("Saída");
+	
+	
+	private String descricao;
+	
+	private OperacaoEstoque(String descricao) {
+
+		this.descricao = descricao;
+	}
+
+	@Override
+	public String toString() {
+
+		return this.descricao;
+	}
 }

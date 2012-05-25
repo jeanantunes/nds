@@ -102,7 +102,7 @@ public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepository<P
 		query.setResultTransformer(new AliasToBeanResultTransformer(
 				PeriodoParcialDTO.class));
 		
-		if(filtro.getPaginacao()!= null && filtro.getPaginacao().getQtdResultadosPorPagina() != null) 
+		if(filtro.getPaginacao()!= null && filtro.getPaginacao().getPosicaoInicial() != null) 
 			query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
 		
 		if(filtro.getPaginacao()!= null && filtro.getPaginacao().getQtdResultadosPorPagina() != null) 

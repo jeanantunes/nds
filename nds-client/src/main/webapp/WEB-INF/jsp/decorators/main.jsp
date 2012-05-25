@@ -175,7 +175,7 @@ fieldset label {
 							</li>
 							<li><a href='<c:url value="/cadastro/fiador/"/>'>Fiador</a>
 							</li>
-							<li><a href="Cadastro/cadastro_fornecedor.htm">Fornecedor</a>
+							<li><a href='<c:url value="/cadastro/fornecedor"/>'>Fornecedor</a>
 							</li>
 							<li><a href="<c:url value="/parciais/index"/>">Parciais</a>
 							</li>
@@ -380,6 +380,8 @@ fieldset label {
 									Dia</a>
 							</li>
 							<li><a href="Administracao/fechar_dia.htm">Fechar o Dia</a>
+							</li>
+							<li><a href='<c:url value="/servico/cadastroServico"/>'>Serviço de Entrega</a>
 							</li>
 							<li><a href="Administracao/help_administracao.htm">Help</a>
 							</li>
