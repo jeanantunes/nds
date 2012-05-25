@@ -1,4 +1,5 @@
 var roteiroSelecionadoAutoComplete = false;	
+var transferirRotasComNovoRoteiro = false;	
 var roteirizacao = {
 
 		abrirTelaRoteiro : function () {
@@ -58,7 +59,7 @@ var roteirizacao = {
 		},
 		
 		//Busca dados para o auto complete do nome da cota
-		autoCompletarRoteiroPorNome : function(idRoteiro, isFromModal) {
+		autoCompletarRoteiroPorNome : function(idRoteiro, callBack) {
 			
 			var descricao = $(idRoteiro).val();
 			
@@ -75,15 +76,15 @@ var roteirizacao = {
 						
 					 },
 					function(result) { 
-						 roteirizacao.exibirAutoComplete(result, idRoteiro); 
+						 roteirizacao.exibirAutoComplete(result, idRoteiro ,callBack); 
 					},
 					null, 
-					isFromModal
+					true
 				);
 			}
 		},
 		//Exibe o auto complete no campo
-		exibirAutoComplete : function(result, idCampo) {
+		exibirAutoComplete : function(result, idCampo ,callBack) {
 			$(idCampo).autocomplete({
 				source: result,
 				focus : function(event, ui) {
@@ -91,10 +92,13 @@ var roteirizacao = {
 				close : function(event, ui) {
 				},
 				select : function(event, ui) {
-					roteirizacao.populaDadosRoteiro(ui.item.chave);
-					roteiroSelecionadoAutoComplete = true;
+					if (callBack){ 
+					  callBack(ui.item.chave,true);
+					} 
+				//	roteirizacao.populaDadosRoteiro(ui.item.chave);
+				
 				},
-				minLength: 3,
+				minLength: 2,
 				delay : 0,
 			});
 		},
@@ -110,7 +114,7 @@ var roteirizacao = {
 							
 						 },
 						function(result) { 
-							 roteirizacao.populaDadosRoteiro(result[0]);
+							 roteirizacao.populaDadosRoteiro(result[0], false);
 						},
 						null, 
 						isFromModal
@@ -119,7 +123,8 @@ var roteirizacao = {
 		},
 		
 		//Busca dados para o auto complete do nome da cota
-		populaDadosRoteiro : function(roteiro) {
+		populaDadosRoteiro : function(roteiro, autoComplete) {
+			roteiroSelecionadoAutoComplete = autoComplete;
 			$('#spanDadosRoteiro').html('<strong>Roteiro Selecionado:</strong> '+ roteiro.descricaoRoteiro+' - <strong>Box: </strong>'+roteiro.box.nome+' - <strong>Ordem: </strong>'+roteiro.ordem);
 			$('#idRoteiroSelecionado').val(roteiro.id);
 			roteirizacao.populaListaCotasRoteiro(roteiro.id);
@@ -306,7 +311,12 @@ var roteirizacao = {
 			modal: true,
 			buttons: {
 				"Confirmar": function() {
-					roteirizacao.transferirRotas();
+					if ( transferirRotasComNovoRoteiro ){
+						roteirizacao.transferirRotasComNovoRoteiro();
+					} else {
+						roteirizacao.transferirRotas();
+					}
+					
 					$( this ).dialog( "close" );
 					
 				},
@@ -318,10 +328,19 @@ var roteirizacao = {
 		      
 	},
 	transferirRotas : function() {
+		$('#roteiroTranferenciaSelecionadoId').val(roteiro.id);
+		
+		var roteiroId = null;
+		
+		if ( $('#roteiroTranferenciaSelecionadoId').val() != null &&   $.trim( $('#roteiroTranferenciaNome').val()) == $('#roteiroTranferenciaSelecionadoNome').val()) {
+			roteiroId =  $('#roteiroTranferenciaSelecionadoId').val();
+		}
+		
 	 	$.postJSON(contextPath + '/cadastro/roteirizacao/transferirRotas',
 				 {
 					'rotasId' : roteirizacao.buscaRotasSelecionadas(),
-					'roteiroId' : $('#roteiroTranferenciaNome').val()
+					'roteiroId' : roteiroId,
+					'roteiroNome' : $('#roteiroTranferenciaNome').val()
 					
 				 },
 				   function(result) {
@@ -337,8 +356,52 @@ var roteirizacao = {
 				   null,
 				   true
 		);
-},
-	
+	 },
+	 transferirRotasComNovoRoteiro : function() {
+		   var tipoRoteiro = 'NORMAL';
+		   if ( $('input[name=tipoRoteiroTranferencia]').is(':checked') ){
+			   tipoRoteiro = 'ESPECIAL';
+		   } 
+		 	$.postJSON(contextPath + '/cadastro/roteirizacao/transferirRotasComNovoRoteiro',
+					 {
+		 		
+		 		        'rotasId' : roteirizacao.buscaRotasSelecionadas(),
+		 		        'idBox' :  $("#boxRoteiroTranferencia").val(),
+						'ordem' :  $("#ordemRoteiroTranferencia").val(),
+						'roteiroNome' :  $("#roteiroTranferenciaNome").val(),
+						'tipoRoteiro' : tipoRoteiro 
+
+
+					 },
+					   function(result) {
+							var tipoMensagem = result.tipoMensagem;
+							var listaMensagens = result.listaMensagens;
+							$('#dialog-rota').dialog( "close" );
+							if (tipoMensagem && listaMensagens) {
+								exibirMensagemDialog(tipoMensagem, listaMensagens,'dialogRoteirizacao');
+							}
+							$(".rotasGrid").flexReload();
+							
+					   },
+					   null,
+					   true
+			);
+		 },
+	 
+	 
+	 
+	 selecionaRoteiroTranferencia : function(roteiro) {
+		 $('#roteiroTranferenciaSelecionadoId').val(roteiro.id);
+		 $('#roteiroTranferenciaSelecionadoNome').val(roteiro.descricaoRoteiro);
+	 },
+	 exibiRoteiroNovoTranferencia : function (){
+			$('.roteiroNovo').show();
+			transferirRotasComNovoRoteiro = true;	
+	 },
+	 escondeRoteiroNovoTranferencia : function (){
+			$('.roteiroNovo').hide();
+			transferirRotasComNovoRoteiro = false;	
+	  }
 		
 		
 };

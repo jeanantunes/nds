@@ -14,18 +14,29 @@ import br.com.abril.nds.model.cadastro.TipoEntrega;
 import br.com.abril.nds.repository.TipoEntregaRepository;
 import br.com.abril.nds.service.TipoEntregaService;
 
+/**
+ * Serviço para TipoEntrega.
+ * 
+ * @author Discover Technology.
+ */
 @Service
 public class TipoEntregaServiceImpl implements TipoEntregaService {
 
 	@Autowired
 	private TipoEntregaRepository tipoEntregaRepository;
-		
+	
+	/**
+	 * @see br.com.abril.nds.service.TipoEntregaService#obterTodos()
+	 */
 	@Override
 	@Transactional(readOnly=true)
 	public List<TipoEntrega> obterTodos() {
 		return tipoEntregaRepository.buscarTodos();
 	}
 
+	/**
+	 * @see br.com.abril.nds.service.TipoEntregaService#pesquisarTiposEntrega(java.lang.Long, java.lang.String, java.lang.String, java.lang.String, java.lang.String, int, int)
+	 */
 	@Override
 	@Transactional(readOnly=true)
 	public List<TipoEntrega> pesquisarTiposEntrega(Long codigo,
@@ -36,6 +47,9 @@ public class TipoEntregaServiceImpl implements TipoEntregaService {
 				sortname, sortorder, page, rp);
 	}
 
+	/**
+	 * @see br.com.abril.nds.service.TipoEntregaService#removerTipoEntrega(java.lang.Long)
+	 */
 	@Override
 	@Transactional
 	public void removerTipoEntrega(Long id) {
@@ -54,6 +68,9 @@ public class TipoEntregaServiceImpl implements TipoEntregaService {
 		}
 	}
 
+	/**
+	 * @see br.com.abril.nds.service.TipoEntregaService#pesquisarQuantidadeTiposEntrega(java.lang.Long, java.lang.String, java.lang.String)
+	 */
 	@Override
 	@Transactional(readOnly=true)
 	public Integer pesquisarQuantidadeTiposEntrega(Long codigo,
@@ -62,6 +79,9 @@ public class TipoEntregaServiceImpl implements TipoEntregaService {
 		return this.tipoEntregaRepository.pesquisarQuantidadeTiposEntrega(codigo, descricao, periodicidade);
 	}
 
+	/**
+	 * @see br.com.abril.nds.service.TipoEntregaService#salvarTipoEntrega(java.lang.Long, java.lang.String, java.math.BigDecimal, java.lang.Integer, java.lang.String, java.lang.String, java.lang.Integer, java.lang.Integer)
+	 */
 	@Override
 	@Transactional(readOnly=false)
 	public void salvarTipoEntrega(Long id, String descricao, BigDecimal taxaFixa, Integer percentualFaturamento,
@@ -100,11 +120,27 @@ public class TipoEntregaServiceImpl implements TipoEntregaService {
 		}
 	}
 
-	private BaseCalculo getBaseCalculo(String value) {
+	/**
+	 * @see br.com.abril.nds.service.TipoEntregaService#obterTipoEntrega(java.lang.Long)
+	 */
+	@Override
+	@Transactional(readOnly=false)
+	public TipoEntrega obterTipoEntrega(Long id) {
+
+		return this.tipoEntregaRepository.buscarPorId(id);
+	}
+	
+	/**
+	 * Retorna a Base de cálculo de acordo com o sua key.
+	 * 
+	 * @param key
+	 * @return
+	 */
+	private BaseCalculo getBaseCalculo(String key) {
 
 		for (BaseCalculo baseCalculo : BaseCalculo.values()) {
 
-			if (baseCalculo.getValue().equals(value)) {
+			if (baseCalculo.getKey().equals(key)) {
 				return baseCalculo;
 			}
 		}
@@ -112,6 +148,12 @@ public class TipoEntregaServiceImpl implements TipoEntregaService {
 		return null;
 	}
 	
+	/**
+	 * Retorna a Periodicidade de acordo com seu value.
+	 * 
+	 * @param value
+	 * @return
+	 */
 	private Periodicidade getPeriodicidade(String value) {
 		
 		for (Periodicidade periodicidade : Periodicidade.values()) {

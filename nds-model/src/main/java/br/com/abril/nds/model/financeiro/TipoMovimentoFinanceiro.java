@@ -20,6 +20,18 @@ public class TipoMovimentoFinanceiro extends TipoMovimento {
 	@Enumerated(EnumType.STRING)
 	private OperacaoFinaceira operacaoFinaceira;
 
+	public TipoMovimentoFinanceiro() {
+		
+	}
+		
+	public TipoMovimentoFinanceiro(
+			GrupoMovimentoFinaceiro grupoMovimentoFinaceiro,
+			OperacaoFinaceira operacaoFinaceira) {
+		super();
+		this.grupoMovimentoFinaceiro = grupoMovimentoFinaceiro;
+		this.setOperacaoFinaceira(operacaoFinaceira);
+	}
+
 	public GrupoMovimentoFinaceiro getGrupoMovimentoFinaceiro() {
 		return grupoMovimentoFinaceiro;
 	}
@@ -27,11 +39,15 @@ public class TipoMovimentoFinanceiro extends TipoMovimento {
 	public void setGrupoMovimentoFinaceiro(
 			GrupoMovimentoFinaceiro grupoMovimentoFinaceiro) {
 		this.grupoMovimentoFinaceiro = grupoMovimentoFinaceiro;
-		this.operacaoFinaceira = grupoMovimentoFinaceiro.getOperacaoFinaceira();
+		this.setOperacaoFinaceira(grupoMovimentoFinaceiro.getOperacaoFinaceira());
 	}
-	
+
 	public OperacaoFinaceira getOperacaoFinaceira() {
 		return operacaoFinaceira;
 	}
 
+	public void setOperacaoFinaceira(OperacaoFinaceira operacaoFinaceira) {
+		this.operacaoFinaceira = operacaoFinaceira;
+	}
+	
 }
