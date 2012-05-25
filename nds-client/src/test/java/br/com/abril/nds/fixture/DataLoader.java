@@ -49,6 +49,7 @@ import br.com.abril.nds.model.cadastro.ParametroCobrancaCota;
 import br.com.abril.nds.model.cadastro.ParametroContratoCota;
 import br.com.abril.nds.model.cadastro.ParametroDistribuicaoCota;
 import br.com.abril.nds.model.cadastro.ParametroSistema;
+import br.com.abril.nds.model.cadastro.Periodicidade;
 import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
 import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
@@ -95,6 +96,7 @@ import br.com.abril.nds.model.estoque.RecebimentoFisico;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.financeiro.Boleto;
+import br.com.abril.nds.model.financeiro.Cobranca;
 import br.com.abril.nds.model.financeiro.CobrancaCheque;
 import br.com.abril.nds.model.financeiro.CobrancaDeposito;
 import br.com.abril.nds.model.financeiro.CobrancaDinheiro;
@@ -687,27 +689,27 @@ public class DataLoader {
 	
 	private static void gerarParciais(Session session) {
 		
-		Produto guiaQuatroRodas = Fixture.produto("3111", "Guia Quatro Rodas", "Guia Quatro Rodas", PeriodicidadeProduto.ANUAL, tipoProdutoRevista, 5, 5);
+		Produto guiaQuatroRodas = Fixture.produto("3111", "Guia Quatro Rodas", "Guia Quatro Rodas", PeriodicidadeProduto.ANUAL, tipoProdutoRevista, 5, 5, BigDecimal.TEN);
 		guiaQuatroRodas.addFornecedor(fornecedorDinap);
 		
-		Produto cromoBrasileirao = Fixture.produto("3333", "Cromo Brasileirão", "Cromo Brasileirão", PeriodicidadeProduto.ANUAL, tipoCromo, 5, 5);
+		Produto cromoBrasileirao = Fixture.produto("3333", "Cromo Brasileirão", "Cromo Brasileirão", PeriodicidadeProduto.ANUAL, tipoCromo, 5, 5, BigDecimal.TEN);
 		cromoBrasileirao.addFornecedor(fornecedorFc);
 		
-		Produto guiaViagem = Fixture.produto("3113", "Guia Viagem", "Guia Viagem", PeriodicidadeProduto.ANUAL, tipoProdutoRevista, 5, 5);
+		Produto guiaViagem = Fixture.produto("3113", "Guia Viagem", "Guia Viagem", PeriodicidadeProduto.ANUAL, tipoProdutoRevista, 5, 5, BigDecimal.TEN);
 		guiaViagem.addFornecedor(fornecedorDinap);
 		
 		save(session,guiaQuatroRodas,cromoBrasileirao,guiaViagem);
 		
 		ProdutoEdicao guiaQuatroRodasEd1 = Fixture.produtoEdicao(1L, 5, 30, 
-				new BigDecimal(50), new BigDecimal(100), new BigDecimal(100), "5546", 0L, guiaQuatroRodas);
+				new BigDecimal(50), new BigDecimal(100), new BigDecimal(100), "5546", 0L, guiaQuatroRodas, null, false);
 		guiaQuatroRodasEd1.setParcial(true);
 		
 		ProdutoEdicao cromoBrasileiraoEd1 = Fixture.produtoEdicao(1L, 5, 30, 
-				new BigDecimal(50), new BigDecimal(100), new BigDecimal(100), "3333", 0L, cromoBrasileirao);
+				new BigDecimal(50), new BigDecimal(100), new BigDecimal(100), "3333", 0L, cromoBrasileirao, null, false);
 		cromoBrasileiraoEd1.setParcial(true);
 		
 		ProdutoEdicao guiaViagemEd1 = Fixture.produtoEdicao(1L, 5, 30, 
-				new BigDecimal(50), new BigDecimal(100), new BigDecimal(100), "2231", 0L, guiaViagem);
+				new BigDecimal(50), new BigDecimal(100), new BigDecimal(100), "2231", 0L, guiaViagem, null, false);
 		guiaViagemEd1.setParcial(true);
 		
 		save(session,guiaQuatroRodasEd1,cromoBrasileiraoEd1,guiaViagemEd1);
@@ -762,7 +764,7 @@ public class DataLoader {
 		ControleConferenciaEncalhe controle = Fixture.controleConferenciaEncalhe(StatusOperacao.CONCLUIDO, new Date());
 		
 		ControleConferenciaEncalheCota controleCota = Fixture.controleConferenciaEncalheCota(controle, cotaGuilherme, 
-				new Date(), new Date(), new Date(), StatusOperacao.CONCLUIDO);
+				new Date(), new Date(), new Date(), StatusOperacao.CONCLUIDO, usuarioJoao, box1);
 		
 		ConferenciaEncalhe conferencia = Fixture.conferenciaEncalhe(movimento, chamadaEncalheCota, controleCota);
 		
@@ -780,9 +782,9 @@ public class DataLoader {
 
 	private static void gerarTipoEntrega(Session session) {
 		
-		tipoCotaRetira = Fixture.criarTipoEntrega(1L,"Cota Retira");
-		tipoEntregaEmBanca = Fixture.criarTipoEntrega(1L,"Entrega em Banca");
-		tipoEntregador = Fixture.criarTipoEntrega(1L,"Entregador");
+		tipoCotaRetira = Fixture.criarTipoEntrega(1L,"Cota Retira", Periodicidade.DIARIO);
+		tipoEntregaEmBanca = Fixture.criarTipoEntrega(1L,"Entrega em Banca", Periodicidade.DIARIO);
+		tipoEntregador = Fixture.criarTipoEntrega(1L,"Entregador", Periodicidade.DIARIO);
 		
 		save(session,tipoCotaRetira,tipoEntregaEmBanca,tipoEntregador);
 	}
@@ -919,7 +921,7 @@ public class DataLoader {
 		Usuario usuario = Fixture.usuarioJoao();
 		save(session,usuario);
 
-		TipoProduto tipoProduto = Fixture.tipoRevista();
+		TipoProduto tipoProduto = Fixture.tipoProduto("Revista ContaCorrenteConsignado", GrupoProduto.REVISTA, "3721894", "473794321", "4312756189");
 		save(session,tipoProduto);
 
 		TipoFornecedor tipoFornecedor = Fixture.tipoFornecedorPublicacao();
@@ -951,7 +953,7 @@ public class DataLoader {
 		ItemRecebimentoFisico itemRecebimentoFisico= Fixture.itemRecebimentoFisico(itemNotaFiscal, recebimentoFisico, new BigDecimal(12));
 		save(session,itemRecebimentoFisico);
 
-		Lancamento lancamento = Fixture.lancamento(TipoLancamento.LANCAMENTO, produtoEdicaoBravo1, dataAtual, dataAtual, dataAtual, dataAtual, new BigDecimal(30), StatusLancamento.CONFIRMADO, itemRecebimentoFisico, 1);
+		Lancamento lancamento = Fixture.lancamento(TipoLancamento.LANCAMENTO, produtoEdicaoBravo1, dataAtual, dataAtual, dataAtual, dataAtual, new BigDecimal(30), StatusLancamento.ESTUDO_FECHADO, itemRecebimentoFisico, 1);
 		save(session,lancamento);	
 
 		Estudo estudo = Fixture.estudo(BigDecimal.TEN, dataAtual, produtoEdicaoBravo1);
@@ -1036,7 +1038,7 @@ public class DataLoader {
 	Usuario usuario = Fixture.usuarioJoao();
 	save(session, usuario);
 
-	TipoProduto tipoProduto = Fixture.tipoRevista();
+	TipoProduto tipoProduto = Fixture.tipoProduto("Revista ContaCorrenteTipoMovimento", GrupoProduto.REVISTA, "431251324", "513543", "8768568");
 	save(session, tipoProduto);
 
 	TipoFornecedor tipoFornecedor = Fixture.tipoFornecedor("Tipo A",GrupoFornecedor.PUBLICACAO);
@@ -1047,7 +1049,7 @@ public class DataLoader {
 	save(session, produtoBravo);
 
 	ProdutoEdicao produtoEdicao = Fixture.produtoEdicao(234L,12 , 1, new BigDecimal(9), new BigDecimal(8), 
-			new BigDecimal(10), "ABCDEFGHIJKLMNOPQRSTU", 1L, produtoBravo);		
+			new BigDecimal(10), "ABCDEFGHIJKLMNOPQRSTU", 1L, produtoBravo, null, false);
 	save(session, produtoEdicao);
 
 	TipoFornecedor tipoFornecedorPublicacao = Fixture.tipoFornecedorPublicacao();
@@ -1076,7 +1078,7 @@ public class DataLoader {
 	ItemRecebimentoFisico itemRecebimentoFisico= Fixture.itemRecebimentoFisico(itemNotaFiscal, recebimentoFisico, new BigDecimal(12));
 	save(session, itemRecebimentoFisico);
 
-	Lancamento lancamento = Fixture.lancamento(TipoLancamento.LANCAMENTO, produtoEdicao, dataAtual, dataAtual, dataAtual, dataAtual, new BigDecimal(30), StatusLancamento.CONFIRMADO, itemRecebimentoFisico, 1);
+	Lancamento lancamento = Fixture.lancamento(TipoLancamento.LANCAMENTO, produtoEdicao, dataAtual, dataAtual, dataAtual, dataAtual, new BigDecimal(30), StatusLancamento.ESTUDO_FECHADO, itemRecebimentoFisico, 1);
 	save(session, lancamento);	
 
 	Estudo estudo = Fixture.estudo(BigDecimal.TEN, dataAtual, produtoEdicao);
@@ -1318,14 +1320,283 @@ public class DataLoader {
 				"TIPO_BAIXA", "ACAO", StatusCobranca.PAGO,
 				cotaMariana, bancoHSBC, dividaAcumuladaMariana1,1);
 
-
 		save(session, cobrancaGuilherme1, cobrancaGuilherme2, cobrancaGuilherme3,
 				cobrancaMurilo1, cobrancaMurilo2, cobrancaMurilo3,
 				cobrancaMariana1, cobrancaMariana2, 
 				cobrancaOrlando,
 				cobrancaAcumuloGuilherme1,cobrancaAcumuloGuilherme2,cobrancaAcumuloMariana1,cobrancaAcumuloMurilo1);
+	
+		
+		criarDividasCobrancas(session);
+		
 	}
 
+	
+	private static void criarDividasCobrancas(Session session){
+		
+		
+		
+		ConsolidadoFinanceiroCota consolidadoManoel1 = Fixture.consolidadoFinanceiroCota(null, cotaManoel ,
+				new Date(), new BigDecimal(500));
+        save(session,consolidadoManoel1);  
+        
+		Divida dividaManoel1 = Fixture.divida(consolidadoManoel1, cotaManoel, new Date(),
+				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(500),false);
+		save(session,dividaManoel1);  
+		
+		Cobranca cobrancaManoel1 = Fixture.criarCobrancaDinheiro("1234567890023", 
+				new Date(),  new Date(),
+                null, BigDecimal.ZERO, new BigDecimal(500),
+				"TIPO_BAIXA", "ACAO", StatusCobranca.NAO_PAGO,
+				cotaManoel, bancoHSBC, dividaManoel1,1);
+
+		
+		
+		ConsolidadoFinanceiroCota consolidadoManoel2 = Fixture.consolidadoFinanceiroCota(null, cotaManoel ,
+				new Date(), new BigDecimal(200));
+        save(session,consolidadoManoel2);  
+        
+		Divida dividaManoel2 = Fixture.divida(consolidadoManoel2, cotaManoel, new Date(),
+				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200),false);
+		save(session,dividaManoel2);
+		
+		Cobranca cobrancaManoel2 = Fixture.criarCobrancaDinheiro("1234567890024", 
+				new Date(),  new Date(),
+                null, BigDecimal.ZERO, new BigDecimal(200),
+				"TIPO_BAIXA", "ACAO", StatusCobranca.NAO_PAGO,
+				cotaManoel, bancoHSBC, dividaManoel2,1);
+		
+		
+		
+		ConsolidadoFinanceiroCota consolidadoManoel3 = Fixture.consolidadoFinanceiroCota(null, cotaManoel ,
+				new Date(), new BigDecimal(300));
+        save(session,consolidadoManoel3);  
+        
+		Divida dividaManoel3 = Fixture.divida(consolidadoManoel3, cotaManoel, new Date(),
+				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(300),false);
+		save(session,dividaManoel3);
+		
+		Cobranca cobrancaManoel3 = Fixture.criarCobrancaDinheiro("1234567890025", 
+				new Date(),  new Date(),
+                null, BigDecimal.ZERO, new BigDecimal(300),
+				"TIPO_BAIXA", "ACAO", StatusCobranca.NAO_PAGO,
+				cotaManoel, bancoHSBC, dividaManoel3,1);
+
+		
+		ConsolidadoFinanceiroCota consolidadoManoel4 = Fixture.consolidadoFinanceiroCota(null, cotaManoel ,
+				new Date(), new BigDecimal(1000));
+        save(session,consolidadoManoel4);  
+		
+		Divida dividaManoel4 = Fixture.divida(consolidadoManoel4, cotaManoel, new Date(),
+				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(1000),false);
+		save(session,dividaManoel4);
+		
+		Cobranca cobrancaManoel4 = Fixture.boleto("1234567890026", "41235", "1234567890126023",
+				new Date(),  new Date(),
+                null, BigDecimal.ZERO, new BigDecimal(1000),
+				"TIPO_BAIXA", "ACAO", StatusCobranca.NAO_PAGO,
+				cotaManoel, bancoHSBC, dividaManoel4,1);
+
+		
+		
+		ConsolidadoFinanceiroCota consolidadoManoel5 = Fixture.consolidadoFinanceiroCota(null, cotaManoel ,
+				Fixture.criarData(9, 1, 2010), new BigDecimal(2000));
+        save(session,consolidadoManoel5);  
+		
+		Divida dividaManoel5 = Fixture.divida(consolidadoManoel5, cotaManoel, Fixture.criarData(9, 1, 2010),
+				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(2000),false);
+		save(session,dividaManoel5);
+		
+		Cobranca cobrancaManoel5 = Fixture.boleto("1234567890027", "4124", "1234567890127133",
+				Fixture.criarData(1, 5, 2012),  new Date(),
+                null, BigDecimal.ZERO, new BigDecimal(2000),
+				"TIPO_BAIXA", "ACAO", StatusCobranca.NAO_PAGO,
+				cotaManoel, bancoHSBC, dividaManoel5,1);
+
+		
+		
+		ConsolidadoFinanceiroCota consolidadoManoel6 = Fixture.consolidadoFinanceiroCota(null, cotaManoel ,
+				Fixture.criarData(9, 1, 2010), new BigDecimal(2200));
+        save(session,consolidadoManoel6);  
+        
+		Divida dividaManoel6 = Fixture.divida(consolidadoManoel6, cotaManoel, Fixture.criarData(9, 1, 2010),
+				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(2200),false);
+		save(session,dividaManoel6);
+		
+		Cobranca cobrancaManoel6 = Fixture.boleto("1234567890028", "4125", "1234567890128143",
+				Fixture.criarData(1, 5, 2012),  new Date(),
+                null, BigDecimal.ZERO, new BigDecimal(2200),
+				"TIPO_BAIXA", "ACAO", StatusCobranca.NAO_PAGO,
+				cotaManoel, bancoHSBC, dividaManoel6,1);
+
+		
+		
+		ConsolidadoFinanceiroCota consolidadoManoel7 = Fixture.consolidadoFinanceiroCota(null, cotaManoel ,
+				Fixture.criarData(9, 1, 2010), new BigDecimal(300));
+        save(session,consolidadoManoel7);  
+        
+		Divida dividaManoel7 = Fixture.divida(consolidadoManoel7, cotaManoel, Fixture.criarData(9, 1, 2010),
+				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(300),false);
+		save(session,dividaManoel7);
+		
+		Cobranca cobrancaManoel7 = Fixture.boleto("1234567890029", "4126", "1234567890129153",
+				Fixture.criarData(1, 5, 2012),  new Date(),
+                null, BigDecimal.ZERO, new BigDecimal(300),
+				"TIPO_BAIXA", "ACAO", StatusCobranca.NAO_PAGO,
+				cotaManoel, bancoHSBC, dividaManoel7,1);
+
+		
+		
+		ConsolidadoFinanceiroCota consolidadoManoel8 = Fixture.consolidadoFinanceiroCota(null, cotaManoel ,
+				Fixture.criarData(9, 1, 2010), new BigDecimal(200));
+        save(session,consolidadoManoel8);  
+		
+		Divida dividaManoel8 = Fixture.divida(consolidadoManoel8, cotaManoel, Fixture.criarData(9, 1, 2010),
+				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200),false);
+		save(session,dividaManoel8);
+		
+		Cobranca cobrancaManoel8 = Fixture.boleto("1234567890030", "4123", "1234567890120154",
+				Fixture.criarData(1, 5, 2012),  new Date(),
+                null, BigDecimal.ZERO, new BigDecimal(200),
+				"TIPO_BAIXA", "ACAO", StatusCobranca.NAO_PAGO,
+				cotaManoel, bancoHSBC, dividaManoel8,1);
+		
+		
+		
+		ConsolidadoFinanceiroCota consolidadoManoel9 = Fixture.consolidadoFinanceiroCota(null, cotaManoel ,
+				Fixture.criarData(9, 1, 2010), new BigDecimal(200));
+        save(session,consolidadoManoel9);  
+        
+		Divida dividaManoel9 = Fixture.divida(consolidadoManoel9, cotaManoel, Fixture.criarData(9, 1, 2010),
+				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200),false);
+		save(session,dividaManoel9);
+		
+		Cobranca cobrancaManoel9 = Fixture.criarCobrancaDeposito("1234567890140", 
+				Fixture.criarData(1, 5, 2012),  new Date(),
+                null, BigDecimal.ZERO, new BigDecimal(200),
+				"TIPO_BAIXA", "ACAO", StatusCobranca.NAO_PAGO,
+				cotaManoel, bancoHSBC, dividaManoel9,1);
+		
+		
+		
+		ConsolidadoFinanceiroCota consolidadoManoel10 = Fixture.consolidadoFinanceiroCota(null, cotaManoel ,
+				Fixture.criarData(9, 1, 2010), new BigDecimal(200));
+        save(session,consolidadoManoel10);  
+		
+		Divida dividaManoel10 = Fixture.divida(consolidadoManoel10, cotaManoel, Fixture.criarData(9, 1, 2010),
+				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200),false);
+		save(session,dividaManoel10);
+		
+		Cobranca cobrancaManoel10 = Fixture.criarCobrancaDeposito("1234567890141", 
+				Fixture.criarData(1, 5, 2012),  new Date(),
+                null, BigDecimal.ZERO, new BigDecimal(200),
+				"TIPO_BAIXA", "ACAO", StatusCobranca.NAO_PAGO,
+				cotaManoel, bancoHSBC, dividaManoel10,1);
+		
+		
+		
+		ConsolidadoFinanceiroCota consolidadoManoel11 = Fixture.consolidadoFinanceiroCota(null, cotaManoel ,
+				Fixture.criarData(9, 1, 2010), new BigDecimal(210));
+        save(session,consolidadoManoel11);  
+		
+		Divida dividaManoel11 = Fixture.divida(consolidadoManoel11, cotaManoel, Fixture.criarData(9, 1, 2010),
+				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(210),false);
+		save(session,dividaManoel11);
+		
+		Cobranca cobrancaManoel11 = Fixture.criarCobrancaDeposito("1234567890142", 
+				Fixture.criarData(1, 3, 2012),  new Date(),
+                null, BigDecimal.ZERO, new BigDecimal(210),
+				"TIPO_BAIXA", "ACAO", StatusCobranca.NAO_PAGO,
+				cotaManoel, bancoHSBC, dividaManoel11,1);
+		
+		
+		
+		ConsolidadoFinanceiroCota consolidadoManoel12 = Fixture.consolidadoFinanceiroCota(null, cotaManoel ,
+				Fixture.criarData(9, 1, 2010), new BigDecimal(200));
+        save(session,consolidadoManoel12);  
+		
+		Divida dividaManoel12 = Fixture.divida(consolidadoManoel12, cotaManoel, Fixture.criarData(9, 1, 2010),
+				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200),false);
+		save(session,dividaManoel12);
+		
+		Cobranca cobrancaManoel12 = Fixture.criarCobrancaDeposito("1234567890143", 
+				Fixture.criarData(1, 5, 2012),  new Date(),
+                null, BigDecimal.ZERO, new BigDecimal(200),
+				"TIPO_BAIXA", "ACAO", StatusCobranca.NAO_PAGO,
+				cotaManoel, bancoHSBC, dividaManoel12,1);
+		
+		
+		
+		ConsolidadoFinanceiroCota consolidadoManoel13 = Fixture.consolidadoFinanceiroCota(null, cotaManoel ,
+				Fixture.criarData(9, 1, 2010), new BigDecimal(210));
+        save(session,consolidadoManoel13);  
+		
+		Divida dividaAcumuladaManoel1 = Fixture.divida(consolidadoManoel13, cotaManoel, Fixture.criarData(1, 2, 2010),
+				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(210),true);
+		save(session,dividaAcumuladaManoel1);
+		
+		Cobranca cobrancaAcumuloManoel1= Fixture.criarCobrancaDinheiro("3234567890135", 
+				Fixture.criarData(1, 5, 2012),  new Date(),
+				null,BigDecimal.ZERO, new BigDecimal(210),
+				"TIPO_BAIXA", "ACAO", StatusCobranca.NAO_PAGO,
+				cotaManoel, bancoHSBC, dividaAcumuladaManoel1,1);
+
+		
+		
+		ConsolidadoFinanceiroCota consolidadoManoel14 = Fixture.consolidadoFinanceiroCota(null, cotaManoel ,
+				Fixture.criarData(9, 1, 2010), new BigDecimal(250));
+        save(session,consolidadoManoel14);  
+		
+		Divida dividaAcumuladaManoel2 = Fixture.divida(consolidadoManoel14, cotaManoel, Fixture.criarData(1, 2, 2010),
+				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(250),true);
+		save(session,dividaAcumuladaManoel2);
+		
+		Cobranca cobrancaAcumuloManoel2 = Fixture.criarCobrancaDinheiro("3234567890136", 
+				new Date(),Fixture.criarData(1, 1, 2010),  
+				Fixture.criarData(2, 2, 2010),BigDecimal.ZERO, new BigDecimal(250),
+				"TIPO_BAIXA", "ACAO", StatusCobranca.NAO_PAGO,
+				cotaManoel, bancoHSBC, dividaAcumuladaManoel2,1);
+
+		
+		
+		ConsolidadoFinanceiroCota consolidadoManoel15 = Fixture.consolidadoFinanceiroCota(null, cotaManoel ,
+				Fixture.criarData(9, 1, 2010), new BigDecimal(290));
+        save(session,consolidadoManoel15);  
+        
+		Divida dividaAcumuladaManoel3 = Fixture.divida(consolidadoManoel15, cotaManoel, Fixture.criarData(1, 2, 2010),
+				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(290),true);
+		save(session,dividaAcumuladaManoel3);
+		
+		Cobranca cobrancaAcumuloManoel3 = Fixture.boleto("3234567890137", "323", "3234567890126137",
+				new Date(),Fixture.criarData(1, 1, 2010),  
+				Fixture.criarData(4, 2, 2010),BigDecimal.ZERO, new BigDecimal(290),
+				"TIPO_BAIXA", "ACAO", StatusCobranca.NAO_PAGO,
+				cotaManoel, bancoHSBC, dividaAcumuladaManoel3,1);
+
+		
+		
+		ConsolidadoFinanceiroCota consolidadoManoel16 = Fixture.consolidadoFinanceiroCota(null, cotaManoel ,
+				Fixture.criarData(9, 1, 2010), new BigDecimal(802));
+        save(session,consolidadoManoel16);  
+        
+		Divida dividaAcumuladaManoel4 = Fixture.divida(consolidadoManoel16, cotaManoel, Fixture.criarData(1, 2, 2010),
+				usuarioJoao, StatusDivida.QUITADA, new BigDecimal(802),true);
+		save(session,dividaAcumuladaManoel4);
+		
+		Cobranca cobrancaAcumuloManoel4 = Fixture.boleto("3234567890138", "323", "3234567890129138",
+				new Date(),Fixture.criarData(5, 1, 2010),  
+				Fixture.criarData(7, 2, 2010),BigDecimal.ZERO, new BigDecimal(802),
+				"TIPO_BAIXA", "ACAO", StatusCobranca.PAGO,
+				cotaManoel, bancoHSBC, dividaAcumuladaManoel4,1);
+		
+		
+		
+		save(session,cobrancaManoel1,cobrancaManoel2,cobrancaManoel3,cobrancaManoel4,cobrancaManoel5,cobrancaManoel6,
+				     cobrancaManoel7,cobrancaManoel8,cobrancaManoel9,cobrancaManoel10,cobrancaManoel11,cobrancaManoel12,
+				     cobrancaAcumuloManoel1,cobrancaAcumuloManoel2,cobrancaAcumuloManoel3,cobrancaAcumuloManoel4);
+
+	}
+	
 	private static void criarParametrosCobrancaCota(Session session) {
 
 		FormaCobranca formaBoleto =
@@ -1395,29 +1666,33 @@ public class DataLoader {
 	
 	private static void criarRotaRoteiroCota(Session session) {
 
-		Rota rota = Fixture.rota("005", "Rota 005");
-		session.save(rota);
-
 		Roteiro roteiro = Fixture.roteiro("Pinheiros");
 		session.save(roteiro);
+
+		Rota rota = Fixture.rota("005", "Rota 005");
+		rota.setRoteiro(roteiro);
+		session.save(rota);
 
 		RotaRoteiroOperacao rotaRoteiroOperacao = Fixture.rotaRoteiroOperacao(rota, roteiro, cotaManoel, TipoOperacao.IMPRESSAO_DIVIDA);
 		session.save(rotaRoteiroOperacao);
 
-		rota = Fixture.rota("004", "Rota 004");
-		session.save(rota);
-
 		roteiro = Fixture.roteiro("Interlagos");
 		session.save(roteiro);
+
+		rota = Fixture.rota("004", "Rota 004");
+		rota.setRoteiro(roteiro);
+		session.save(rota);
 
 		rotaRoteiroOperacao = Fixture.rotaRoteiroOperacao(rota, roteiro, cotaJose, TipoOperacao.IMPRESSAO_DIVIDA);
 		session.save(rotaRoteiroOperacao);
 		
-		rota = Fixture.rota("007", "Rota 007");
-		session.save(rota);
 
 		roteiro = Fixture.roteiro("Mococa");
 		session.save(roteiro);
+		
+		rota = Fixture.rota("007", "Rota 007");
+		rota.setRoteiro(roteiro);
+		session.save(rota);
 
 		rotaRoteiroOperacao = Fixture.rotaRoteiroOperacao(rota, roteiro, cotaAcme, TipoOperacao.IMPRESSAO_DIVIDA);
 		session.save(rotaRoteiroOperacao);
@@ -1567,88 +1842,88 @@ public class DataLoader {
 
 
 		divida1 = Fixture.divida(consolidado1, cotaManoel, new Date(),
-				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200));
+				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200),false);
 
 		divida2 = Fixture.divida(consolidado2, cotaManoel, new Date(),
-				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200));
+				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200),false);
 
 		divida3 = Fixture.divida(consolidado3, cotaManoel, new Date(),
-				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200));
+				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200),false);
 
 		divida4 = Fixture.divida(consolidado4, cotaManoel, new Date(),
-				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200));
+				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200),false);
 
 		divida5 = Fixture.divida(consolidado5, cotaManoel, new Date(),
-				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200));
+				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200),false);
 
 		divida6 = Fixture.divida(consolidado6, cotaManoel, new Date(),
-				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200));
+				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200),false);
 
 		divida7 = Fixture.divida(consolidado7, cotaManoel, new Date(),
-				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200));
+				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200),false);
 
 		divida8 = Fixture.divida(consolidado8, cotaManoel, new Date(),
-				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200));
+				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200),false);
 
 		divida9 = Fixture.divida(consolidado9, cotaMaria, new Date(),
-				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200));
+				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200),false);
 
 		divida10 = Fixture.divida(consolidado10, cotaMaria, new Date(),
-				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200));
+				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200),false);
 
 		divida11 = Fixture.divida(consolidado11, cotaLuis, new Date(),
-				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200));
+				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200),false);
 
 		divida12 = Fixture.divida(consolidado12, cotaJoao, new Date(),
-				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200));
+				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200),false);
 
 		divida13 = Fixture.divida(consolidado13, cotaJose, new Date(),
-				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200));
+				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200),false);
 
 		divida14 = Fixture.divida(consolidado14, cotaJose, new Date(),
-				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200));
+				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200),false);
 
 
 		dividaGuilherme1 = Fixture.divida(consolidadoGuilherme1, cotaGuilherme, Fixture.criarData(1, 1, 2010),
-				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200));
+				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200),false);
 
 		dividaGuilherme2 = Fixture.divida(consolidadoGuilherme2, cotaGuilherme, Fixture.criarData(2, 1, 2010),
-				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200));
+				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200),false);
 
 		dividaGuilherme3 = Fixture.divida(consolidadoGuilherme3, cotaGuilherme, Fixture.criarData(3, 1, 2010),
-				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200));
+				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200),false);
 
 		dividaMurilo1 = Fixture.divida(consolidadoMurilo1, cotaMurilo, Fixture.criarData(4, 1, 2010),
-				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200));
+				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200),false);
 
 		dividaMurilo2 = Fixture.divida(consolidadoMurilo2, cotaMurilo, Fixture.criarData(5, 1, 2010),
-				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200));
+				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200),false);
 
 		dividaMurilo3 = Fixture.divida(consolidadoMurilo3, cotaMurilo, Fixture.criarData(6, 1, 2010),
-				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200));
+				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200),false);
 
 		dividaMariana1 = Fixture.divida(consolidadoMariana1, cotaMariana, Fixture.criarData(7, 1, 2010),
-				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200));
+				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200),false);
 
 		dividaMariana2 = Fixture.divida(consolidadoMariana2, cotaMariana, Fixture.criarData(8, 1, 2010),
-				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200));
+				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200),false);
 
 		dividaOrlando = Fixture.divida(consolidadoOrlando1, cotaOrlando, Fixture.criarData(9, 1, 2010),
-				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200));
+				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200),false);
 
 
 
 		dividaAcumuladaGuilherme1 = Fixture.divida(consolidadoAcumuloGuilherme1, cotaGuilherme, Fixture.criarData(1, 2, 2010),
-				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(210));
+				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(210),true);
 
 		dividaAcumuladaGuilherme2 = Fixture.divida(consolidadoAcumuloGuilherme2, cotaGuilherme, Fixture.criarData(2, 2, 2010),
-				usuarioJoao, StatusDivida.QUITADA, new BigDecimal(210));
+				usuarioJoao, StatusDivida.QUITADA, new BigDecimal(210),true);
 
 		dividaAcumuladaMurilo1 = Fixture.divida(consolidadoAcumuloMurilo1, cotaMurilo, Fixture.criarData(4, 2, 2010),
-				usuarioJoao, StatusDivida.QUITADA, new BigDecimal(210));
+				usuarioJoao, StatusDivida.QUITADA, new BigDecimal(210),true);
 
 		dividaAcumuladaMariana1 = Fixture.divida(consolidadoAcumuloMariana1, cotaMariana, Fixture.criarData(7, 2, 2010),
-				usuarioJoao, StatusDivida.QUITADA, new BigDecimal(210));
+				usuarioJoao, StatusDivida.QUITADA, new BigDecimal(210),true);
 
 		save(session, divida1, divida2, divida3, divida4, divida5, divida6,
 				      divida7, divida8, divida9, divida10, divida11,
@@ -2353,7 +2628,7 @@ public class DataLoader {
 						DateUtil.adicionarDias(new Date(), 1),
 						DateUtil.adicionarDias(new Date(),
 								produtoEdicaoInfoExame1.getPeb()), new Date(),
-								new Date(), new BigDecimal(500), StatusLancamento.CONFIRMADO,
+								new Date(), new BigDecimal(500), StatusLancamento.ESTUDO_FECHADO,
 								itemInfoExame1, 1);
 		session.save(lancamentoInfoExame1);
 
@@ -2364,7 +2639,7 @@ public class DataLoader {
 						DateUtil.adicionarDias(new Date(), 1),
 						DateUtil.adicionarDias(new Date(),
 								produtoEdicaoQuatroRodas1.getPeb()), new Date(),
-								new Date(), new BigDecimal(1500), StatusLancamento.CONFIRMADO,
+								new Date(), new BigDecimal(1500), StatusLancamento.ESTUDO_FECHADO,
 								itemQuatroRodas1, 1);
 		session.save(lancamentoQuatroRodas1);
 
@@ -2375,7 +2650,7 @@ public class DataLoader {
 						DateUtil.adicionarDias(new Date(), 1),
 						DateUtil.adicionarDias(new Date(),
 								produtoEdicaoBoaForma1.getPeb()), new Date(),
-								new Date(), new BigDecimal(190), StatusLancamento.CONFIRMADO,
+								new Date(), new BigDecimal(190), StatusLancamento.ESTUDO_FECHADO,
 								itemBoaForma1, 1);
 		session.save(lancamentoBoaForma1);
 
@@ -2386,7 +2661,7 @@ public class DataLoader {
 						DateUtil.adicionarDias(new Date(), 1),
 						DateUtil.adicionarDias(new Date(),
 								produtoEdicaoBravo1.getPeb()), new Date(),
-								new Date(), new BigDecimal(250), StatusLancamento.CONFIRMADO,
+								new Date(), new BigDecimal(250), StatusLancamento.ESTUDO_FECHADO,
 								itemBravo1, 1);
 		session.save(lancamentoBravo1);
 
@@ -2397,7 +2672,7 @@ public class DataLoader {
 						DateUtil.adicionarDias(new Date(), 1),
 						DateUtil.adicionarDias(new Date(),
 								produtoEdicaoInfoExame1.getPeb()), new Date(),
-								new Date(), new BigDecimal(250), StatusLancamento.CONFIRMADO,
+								new Date(), new BigDecimal(250), StatusLancamento.ESTUDO_FECHADO,
 								itemCaras1, 1);
 		session.save(lancamentoCaras1);
 
@@ -2410,7 +2685,7 @@ public class DataLoader {
 						DateUtil.adicionarDias(new Date(), 1),
 						DateUtil.adicionarDias(new Date(),
 								produtoEdicaoCasaClaudia1.getPeb()), new Date(),
-								new Date(), new BigDecimal(350), StatusLancamento.CONFIRMADO,
+								new Date(), new BigDecimal(350), StatusLancamento.ESTUDO_FECHADO,
 								itemCasaClaudia1, 1);
 		session.save(lancamentoCasaClaudia1);
 
@@ -2421,7 +2696,7 @@ public class DataLoader {
 						DateUtil.adicionarDias(new Date(), 1),
 						DateUtil.adicionarDias(new Date(),
 								produtoEdicaoClaudia1.getPeb()), new Date(),
-								new Date(), new BigDecimal(400), StatusLancamento.CONFIRMADO,
+								new Date(), new BigDecimal(400), StatusLancamento.ESTUDO_FECHADO,
 								itemClaudia1, 1);
 		session.save(lancamentoClaudia1);
 
@@ -2433,7 +2708,7 @@ public class DataLoader {
 						DateUtil.adicionarDias(new Date(), 1),
 						DateUtil.adicionarDias(new Date(),
 								produtoEdicaoContigo1.getPeb()), new Date(),
-								new Date(), new BigDecimal(185), StatusLancamento.CONFIRMADO,
+								new Date(), new BigDecimal(185), StatusLancamento.ESTUDO_FECHADO,
 								itemContigo1, 1);
 		session.save(lancamentoContigo1);
 
@@ -2444,7 +2719,7 @@ public class DataLoader {
 						DateUtil.adicionarDias(new Date(), 1),
 						DateUtil.adicionarDias(new Date(),
 								produtoEdicaoManequim1.getPeb()), new Date(),
-								new Date(), new BigDecimal(225), StatusLancamento.CONFIRMADO,
+								new Date(), new BigDecimal(225), StatusLancamento.ESTUDO_FECHADO,
 								itemManequim1, 1);
 		session.save(lancamentoManequim1);
 
@@ -2455,7 +2730,7 @@ public class DataLoader {
 						DateUtil.adicionarDias(new Date(), 1),
 						DateUtil.adicionarDias(new Date(),
 								produtoEdicaoNatGeo1.getPeb()), new Date(),
-								new Date(), new BigDecimal(75), StatusLancamento.CONFIRMADO,
+								new Date(), new BigDecimal(75), StatusLancamento.ESTUDO_FECHADO,
 								itemNatGeo1, 1);
 		session.save(lancamentoNatGeo1);
 
@@ -2466,7 +2741,7 @@ public class DataLoader {
 						DateUtil.adicionarDias(new Date(), 1),
 						DateUtil.adicionarDias(new Date(),
 								produtoEdicaoPlacar1.getPeb()), new Date(),
-								new Date(), new BigDecimal(195), StatusLancamento.CONFIRMADO,
+								new Date(), new BigDecimal(195), StatusLancamento.ESTUDO_FECHADO,
 								itemPlacar1, 1);
 		session.save(lancamentoPlacar1);
 
@@ -2497,112 +2772,112 @@ public class DataLoader {
 	private static void criarProdutosEdicao(Session session) {
 		produtoEdicaoVeja1 = Fixture.produtoEdicao(1L, 10, 14,
 				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(20),
-				"ABC", 2L, produtoVeja);
+				"ABC", 2L, produtoVeja, null, false);
 		session.save(produtoEdicaoVeja1);
 
 		produtoEdicaoVeja2 = Fixture.produtoEdicao(2L, 10, 14,
 				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(20),
-				"DEF", 3L, produtoVeja);
+				"DEF", 3L, produtoVeja, null, false);
 		session.save(produtoEdicaoVeja2);
 
 		produtoEdicaoVeja3 = Fixture.produtoEdicao(3L, 10, 14,
 				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(20),
-				"GHI", 4L, produtoVeja);
+				"GHI", 4L, produtoVeja, null, false);
 		session.save(produtoEdicaoVeja3);
 
 		produtoEdicaoVeja4 = Fixture.produtoEdicao(4L, 10, 14,
 				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(20),
-				"JKL", 5L, produtoVeja);
+				"JKL", 5L, produtoVeja, null, false);
 		session.save(produtoEdicaoVeja4);
 
 		produtoEdicaoSuper1 = Fixture.produtoEdicao(1L, 10, 14,
 				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(20),
-				"MNO", 6L, produtoSuper);
+				"MNO", 6L, produtoSuper, null, false);
 		session.save(produtoEdicaoSuper1);
 
 		produtoEdicaoCapricho1 = Fixture.produtoEdicao(1L, 9, 14,
 				new BigDecimal(0.15), new BigDecimal(9), new BigDecimal(13.5),
-				"PQR", 7L, produtoCapricho);
+				"PQR", 7L, produtoCapricho, null, false);
 		session.save(produtoEdicaoCapricho1);
 
 		produtoEdicaoInfoExame1 = Fixture.produtoEdicao(1L, 12, 30,
 				new BigDecimal(0.25), new BigDecimal(11), new BigDecimal(14.5),
-				"STU", 8L, produtoInfoExame);
+				"STU", 8L, produtoInfoExame, null, false);
 		session.save(produtoEdicaoInfoExame1);
 
 		produtoEdicaoQuatroRodas1 = Fixture.produtoEdicao(1L, 7, 30,
 				new BigDecimal(0.30), new BigDecimal(12.5), new BigDecimal(16.5),
-				"VWX", 9L, produtoQuatroRodas);
+				"VWX", 9L, produtoQuatroRodas, null, false);
 		session.save(produtoEdicaoQuatroRodas1);
 
 		produtoEdicaoBoaForma1 = Fixture.produtoEdicao(1L, 10, 30,
 				new BigDecimal(0.10), new BigDecimal(12), new BigDecimal(15),
-				"YZ1", 10L, produtoBoaForma);
+				"YZ1", 10L, produtoBoaForma, null, false);
 		session.save(produtoEdicaoBoaForma1);
 
 		produtoEdicaoBravo1 = Fixture.produtoEdicao(1L, 10, 30,
 				new BigDecimal(0.12), new BigDecimal(17), new BigDecimal(20),
-				"YZ2", 11L, produtoBravo);
+				"YZ2", 11L, produtoBravo, null, false);
 		session.save(produtoEdicaoBravo1);
 
 		produtoEdicaoCaras1 = Fixture.produtoEdicao(1L, 15, 30,
 				new BigDecimal(0.20), new BigDecimal(20), new BigDecimal(25),
-				"YZ3", 12L, produtoCaras);
+				"YZ3", 12L, produtoCaras, null, false);
 		session.save(produtoEdicaoCaras1);
 
 		produtoEdicaoCasaClaudia1 = Fixture.produtoEdicao(1L, 10, 30,
 				new BigDecimal(0.20), new BigDecimal(20), new BigDecimal(25),
-				"YZ4", 13L, produtoCasaClaudia);
+				"YZ4", 13L, produtoCasaClaudia, null, false);
 		session.save(produtoEdicaoCasaClaudia1);
 
 		produtoEdicaoClaudia1 = Fixture.produtoEdicao(1L, 10, 30,
 				new BigDecimal(0.10), new BigDecimal(10), new BigDecimal(11),
-				"YZ5", 14L, produtoClaudia);
+				"YZ5", 14L, produtoClaudia, null, false);
 		session.save(produtoEdicaoClaudia1);
 
 		produtoEdicaoContigo1 = Fixture.produtoEdicao(1L, 10, 30,
 				new BigDecimal(0.10), new BigDecimal(12), new BigDecimal(15),
-				"YZ6", 15L, produtoContigo);
+				"YZ6", 15L, produtoContigo, null, false);
 		session.save(produtoEdicaoContigo1);
 
 		produtoEdicaoManequim1 = Fixture.produtoEdicao(1L, 10, 30,
 				new BigDecimal(0.10), new BigDecimal(15), new BigDecimal(20),
-				"YZ7", 16L, produtoManequim);
+				"YZ7", 16L, produtoManequim, null, false);
 		session.save(produtoEdicaoManequim1);
 
 		produtoEdicaoNatGeo1 = Fixture.produtoEdicao(1L, 10, 30,
 				new BigDecimal(0.15), new BigDecimal(20), new BigDecimal(23),
-				"YZ8", 17L, produtoNatGeo);
+				"YZ8", 17L, produtoNatGeo, null, false);
 		session.save(produtoEdicaoNatGeo1);
 
 		produtoEdicaoPlacar1 = Fixture.produtoEdicao(1L, 10, 30,
 				new BigDecimal(0.20), new BigDecimal(9), new BigDecimal(12),
-				"YZ9", 18L, produtoPlacar);
+				"YZ9", 18L, produtoPlacar, null, false);
 		session.save(produtoEdicaoPlacar1);
 
 		cocaColaLight = Fixture.produtoEdicao(1L, 10, 30,
 				new BigDecimal(0.20), new BigDecimal(9), new BigDecimal(12),
-				"WZ1", 19L, cocaCola);
+				"WZ1", 19L, cocaCola, null, false);
 		session.save(cocaColaLight);
 
 		produtoEdicaoVeja1EncalheAnt = Fixture.produtoEdicao(5L, 10, 14,
 				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(20),
-				"WZ2", 20L, produtoVeja);
+				"WZ2", 20L, produtoVeja, null, false);
 		session.save(produtoEdicaoVeja1EncalheAnt);
 
 		produtoEdicaoVeja2EncalheAnt = Fixture.produtoEdicao(6L, 10, 14,
 				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(20),
-				"WZ3", 21L, produtoVeja);
+				"WZ3", 21L, produtoVeja, null, false);
 		session.save(produtoEdicaoVeja2EncalheAnt);
 
 		produtoEdicaoSuper1EncalheAnt = Fixture.produtoEdicao(2L, 10, 14,
 				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(20),
-				"WZ4", 22L, produtoSuper);
+				"WZ4", 22L, produtoSuper, null, false);
 		session.save(produtoEdicaoSuper1EncalheAnt);
 
 		produtoEdicaoSuper2EncalheAnt = Fixture.produtoEdicao(3L, 10, 14,
 				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(20),
-				"WZ5", 23L, produtoSuper);
+				"WZ5", 23L, produtoSuper, null, false);
 		session.save(produtoEdicaoSuper2EncalheAnt);
 
 	}
@@ -2678,7 +2953,7 @@ public class DataLoader {
 		produtoPlacar.setEditor(editoraAbril);
 		session.save(produtoPlacar);
 
-		cocaCola = Fixture.produto("564", "Coca-Cola", "Coca-Cola", PeriodicidadeProduto.MENSAL, tipoRefrigerante, 5, 5);
+		cocaCola = Fixture.produto("564", "Coca-Cola", "Coca-Cola", PeriodicidadeProduto.MENSAL, tipoRefrigerante, 5, 5, BigDecimal.TEN);
 		cocaCola.addFornecedor(fornecedorAcme);
 		save(session, cocaCola);
 	}
@@ -2692,10 +2967,10 @@ public class DataLoader {
 		tipoProdutoRevista = Fixture.tipoRevista();
 		session.save(tipoProdutoRevista);
 
-		tipoRefrigerante = Fixture.tipoProduto("Refrigerante",GrupoProduto.OUTROS, "5644566");
+		tipoRefrigerante = Fixture.tipoProduto("Refrigerante",GrupoProduto.OUTROS, "5644566", null, "002");
 		session.save(tipoRefrigerante);
 		
-		tipoCromo = Fixture.tipoProduto("Cromo",GrupoProduto.CROMO, "5644564");
+		tipoCromo = Fixture.tipoProduto("Cromo",GrupoProduto.CROMO, "5644564", null, "002");
 		session.save(tipoCromo);
 		
 		
@@ -3227,12 +3502,12 @@ public class DataLoader {
 			Fornecedor fornecedor = Fixture.fornecedor(juridica, SituacaoCadastro.ATIVO, true, tipoFornecedorPublicacao);
 			session.save(fornecedor);
 
-			Produto produto = Fixture.produto("00"+i, "descricao"+i, "nome"+i, PeriodicidadeProduto.ANUAL, tipoRevista, 5, 5);
+			Produto produto = Fixture.produto("00"+i, "descricao"+i, "nome"+i, PeriodicidadeProduto.ANUAL, tipoRevista, 5, 5, BigDecimal.TEN);
 			produto.addFornecedor(fornecedor);
 			session.save(produto); 
 
 			ProdutoEdicao produtoEdicao = Fixture.produtoEdicao(i.longValue(), 50, 40, 
-					new BigDecimal(30), new BigDecimal(20), new BigDecimal(10), "ZZZ", 24L, produto);	
+					new BigDecimal(30), new BigDecimal(20), new BigDecimal(10), "ZZZ", 24L, produto, null, false);	
 			session.save(produtoEdicao);
 
 
@@ -3429,10 +3704,10 @@ public class DataLoader {
 
 	private static void criarBox(Session session){
 
-		box1 = Fixture.criarBox("Box-1", "BX-001", TipoBox.LANCAMENTO);
+		box1 = Fixture.criarBox("Box-1", "BX-001", TipoBox.LANCAMENTO, false);
 		session.save(box1);
 
-		box2 = Fixture.criarBox("Box-2", "BX-002", TipoBox.LANCAMENTO);
+		box2 = Fixture.criarBox("Box-2", "BX-002", TipoBox.LANCAMENTO, false);
 		session.save(box2);
 		
 		boxPostoAvancado = Fixture.criarBox("Box-Avancado", "BX-AVANCADO", TipoBox.LANCAMENTO, true);
@@ -3444,7 +3719,7 @@ public class DataLoader {
 		
 		
 		for (int i = 3; i < 100; i++) {
-			session.save(Fixture.criarBox("Box-"+i, "BX-"+i, TipoBox.LANCAMENTO));
+			session.save(Fixture.criarBox("Box-"+i, "BX-"+i, TipoBox.LANCAMENTO, false));
 		}
 	}
 
@@ -3692,12 +3967,12 @@ public class DataLoader {
 			Fornecedor fornecedor = Fixture.fornecedor(juridica, SituacaoCadastro.ATIVO, true, tipoFornecedorPublicacao);
 			save(session,fornecedor);
 
-			Produto produto = Fixture.produto("00"+i, "descricao"+i, "nome"+i, PeriodicidadeProduto.ANUAL, tipoRevista, 5, 5);
+			Produto produto = Fixture.produto("00"+i, "descricao"+i, "nome"+i, PeriodicidadeProduto.ANUAL, tipoRevista, 5, 5, BigDecimal.TEN);
 			produto.addFornecedor(fornecedor);
 			save(session,produto); 
 
 			ProdutoEdicao produtoEdicao = Fixture.produtoEdicao(i.longValue(), 50, 40, 
-					new BigDecimal(30), new BigDecimal(20), new BigDecimal(10), "ZZ2", 25L, produto);	
+					new BigDecimal(30), new BigDecimal(20), new BigDecimal(10), "ZZ2", 25L, produto, null, false);
 			save(session,produtoEdicao);
 
 
@@ -3889,9 +4164,9 @@ public class DataLoader {
 
 		PeriodicidadeProduto periodicidade = PeriodicidadeProduto.MENSAL;
 
-		Produto produto91 = Fixture.produto("00091", "Produto 91", "Produto 91", periodicidade, tipoProdutoRevista, 5, 5);
-		Produto produto92 = Fixture.produto("00092", "Produto 92", "Produto 92", periodicidade, tipoProdutoRevista, 5, 5);
-		Produto produto93 = Fixture.produto("00093", "Produto 93", "Produto 93", periodicidade, tipoProdutoRevista, 5, 5);
+		Produto produto91 = Fixture.produto("00091", "Produto 91", "Produto 91", periodicidade, tipoProdutoRevista, 5, 5, BigDecimal.TEN);
+		Produto produto92 = Fixture.produto("00092", "Produto 92", "Produto 92", periodicidade, tipoProdutoRevista, 5, 5, BigDecimal.TEN);
+		Produto produto93 = Fixture.produto("00093", "Produto 93", "Produto 93", periodicidade, tipoProdutoRevista, 5, 5, BigDecimal.TEN);
 
 		produto91.addFornecedor(fornecedorDinap);
 		produto92.addFornecedor(fornecedorDinap);
@@ -3900,18 +4175,18 @@ public class DataLoader {
 		save(session, produto91, produto92, produto93);
 
 		produtoEdicao91 = Fixture.produtoEdicao(91L, 10, 7,
-				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(15), "ZZ3", 26L, produto91);
+				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(15), "ZZ3", 26L, produto91, null, false);
 
 		produtoEdicao91.setDesconto(BigDecimal.ZERO);
 
 
 		produtoEdicao92 = Fixture.produtoEdicao(92L, 10, 7,
-				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(18), "ZZ4", 27L, produto92);
+				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(18), "ZZ4", 27L, produto92, null, false);
 		produtoEdicao92.setDesconto(BigDecimal.ONE);
 
 
 		produtoEdicao93 = Fixture.produtoEdicao(93L, 10, 7,
-				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(90), "ZZ5", 28L, produto93);
+				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(90), "ZZ5", 28L, produto93, null, false);
 		produtoEdicao93.setDesconto(BigDecimal.ONE);
 
 
@@ -4265,9 +4540,9 @@ public class DataLoader {
 
 		PeriodicidadeProduto periodicidade = PeriodicidadeProduto.MENSAL;
 
-		Produto produtoCE = Fixture.produto("00084", "Produto CE", "ProdutoCE", periodicidade, tipoProdutoRevista, 5, 5);
-		Produto produtoCE_2 = Fixture.produto("00085", "Produto CE 2", "ProdutoCE_2", periodicidade, tipoProdutoRevista, 5, 5);
-		Produto produtoCE_3 = Fixture.produto("00086", "Produto CE 3", "ProdutoCE_3", periodicidade, tipoProdutoRevista, 5, 5);
+		Produto produtoCE = Fixture.produto("00084", "Produto CE", "ProdutoCE", periodicidade, tipoProdutoRevista, 5, 5, BigDecimal.TEN);
+		Produto produtoCE_2 = Fixture.produto("00085", "Produto CE 2", "ProdutoCE_2", periodicidade, tipoProdutoRevista, 5, 5, BigDecimal.TEN);
+		Produto produtoCE_3 = Fixture.produto("00086", "Produto CE 3", "ProdutoCE_3", periodicidade, tipoProdutoRevista, 5, 5, BigDecimal.TEN);
 
 		produtoCE.addFornecedor(fornecedorDinap);
 		produtoCE_2.addFornecedor(fornecedorDinap);
@@ -4276,17 +4551,17 @@ public class DataLoader {
 		save(session, produtoCE, produtoCE_2, produtoCE_3);
 
 		produtoEdicaoCE = Fixture.produtoEdicao(84L, 10, 7,
-				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(15), "EZ7", 29L, produtoCE);
+				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(15), "EZ7", 29L, produtoCE, null, false);
 		produtoEdicaoCE.setDesconto(BigDecimal.ZERO);
 
 
 		produtoEdicaoCE_2 = Fixture.produtoEdicao(85L, 10, 7,
-				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(18), "EZ8", 30L, produtoCE_2);
+				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(18), "EZ8", 30L, produtoCE_2, null, false);
 		produtoEdicaoCE.setDesconto(BigDecimal.ONE);
 
 
 		produtoEdicaoCE_3 = Fixture.produtoEdicao(86L, 10, 7,
-				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(90), "EZ8", 31L, produtoCE_3);
+				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(90), "EZ8", 31L, produtoCE_3, null, false);
 		produtoEdicaoCE.setDesconto(BigDecimal.ONE);
 
 
@@ -4549,7 +4824,9 @@ public class DataLoader {
 				Fixture.criarData(28, Calendar.FEBRUARY, 2012), 
 				Fixture.criarData(28, Calendar.FEBRUARY, 2012), 
 				Fixture.criarData(28, Calendar.FEBRUARY, 2012), 
-				StatusOperacao.CONCLUIDO);
+				StatusOperacao.CONCLUIDO,
+				usuarioJoao,
+				box1);
 		
 		save(session, controleConferenciaEncalheCota);
 		
@@ -4997,138 +5274,138 @@ public class DataLoader {
 	private static void criarDadosBalanceamentoRecolhimento(Session session) {
 		
 		//EDITORES
-		Editor globo = Fixture.criarEditor("Globo", 680L);
+		Editor globo = Fixture.criarEditor("Globo", 680L, juridicaDinap, true);
 
-		Editor europa = Fixture.criarEditor("Europa", 681L);
+		Editor europa = Fixture.criarEditor("Europa", 681L, juridicaAcme, true);
 
-		Editor jazz = Fixture.criarEditor("Jazz", 682L);
+		Editor jazz = Fixture.criarEditor("Jazz", 682L, juridicaFc, true);
 
 		TipoProduto tipoCromo = Fixture.tipoCromo();
 		
 		save(session, globo, europa, jazz, tipoCromo);
 
 		//PRODUTOS
-		Produto javaMagazine = Fixture.produto("541", "Java Magazine", "Java Magazine", PeriodicidadeProduto.MENSAL, tipoProdutoRevista, 5, 5);
+		Produto javaMagazine = Fixture.produto("541", "Java Magazine", "Java Magazine", PeriodicidadeProduto.MENSAL, tipoProdutoRevista, 5, 5, BigDecimal.TEN);
 		javaMagazine.setEditor(europa);
 		javaMagazine.addFornecedor(fornecedorDinap);
 		save(session, javaMagazine);
 		
-		Produto mundoJava = Fixture.produto("542", "Mundo Java", "Mundo Java", PeriodicidadeProduto.SEMANAL, tipoProdutoRevista, 5, 5);
+		Produto mundoJava = Fixture.produto("542", "Mundo Java", "Mundo Java", PeriodicidadeProduto.SEMANAL, tipoProdutoRevista, 5, 5, BigDecimal.TEN);
 		mundoJava.setEditor(globo);
 		mundoJava.addFornecedor(fornecedorDinap);
 		save(session, mundoJava);
 		
-		Produto sqlMagazine = Fixture.produto("543", "SQL Magazine", "SQL Magazine", PeriodicidadeProduto.SEMANAL, tipoProdutoRevista, 5, 5);
+		Produto sqlMagazine = Fixture.produto("543", "SQL Magazine", "SQL Magazine", PeriodicidadeProduto.SEMANAL, tipoProdutoRevista, 5, 5, BigDecimal.TEN);
 		sqlMagazine.setEditor(europa);
 		sqlMagazine.addFornecedor(fornecedorDinap);
 		save(session, sqlMagazine);
 		
-		Produto galileu = Fixture.produto("544", "Galileu", "Galileu", PeriodicidadeProduto.SEMANAL, tipoProdutoRevista, 5, 5);
+		Produto galileu = Fixture.produto("544", "Galileu", "Galileu", PeriodicidadeProduto.SEMANAL, tipoProdutoRevista, 5, 5, BigDecimal.TEN);
 		galileu.setEditor(globo);
 		galileu.addFornecedor(fornecedorDinap);
 		save(session, galileu);
 		
-		Produto duasRodas = Fixture.produto("545", "Duas Rodas", "Duas Rodas", PeriodicidadeProduto.MENSAL, tipoProdutoRevista, 5, 5);
+		Produto duasRodas = Fixture.produto("545", "Duas Rodas", "Duas Rodas", PeriodicidadeProduto.MENSAL, tipoProdutoRevista, 5, 5, BigDecimal.TEN);
 		duasRodas.setEditor(globo);
 		duasRodas.addFornecedor(fornecedorFc);
 		save(session, duasRodas);
 		
-		Produto guitarPlayer = Fixture.produto("546", "Guitar Player", "Guitar Player", PeriodicidadeProduto.MENSAL, tipoProdutoRevista, 5, 5);
+		Produto guitarPlayer = Fixture.produto("546", "Guitar Player", "Guitar Player", PeriodicidadeProduto.MENSAL, tipoProdutoRevista, 5, 5, BigDecimal.TEN);
 		guitarPlayer.setEditor(jazz);
 		guitarPlayer.addFornecedor(fornecedorDinap);
 		save(session, guitarPlayer);
 
-		Produto roadieCrew = Fixture.produto("547", "Roadie Crew", "Roadie Crew", PeriodicidadeProduto.MENSAL, tipoProdutoRevista, 5, 5);
+		Produto roadieCrew = Fixture.produto("547", "Roadie Crew", "Roadie Crew", PeriodicidadeProduto.MENSAL, tipoProdutoRevista, 5, 5, BigDecimal.TEN);
 		roadieCrew.setEditor(editoraAbril);
 		roadieCrew.addFornecedor(fornecedorFc);
 		save(session, roadieCrew);
 		
-		Produto rockBrigade = Fixture.produto("548", "Rock Brigade", "Rock Brigade", PeriodicidadeProduto.MENSAL, tipoProdutoRevista, 5, 5);
+		Produto rockBrigade = Fixture.produto("548", "Rock Brigade", "Rock Brigade", PeriodicidadeProduto.MENSAL, tipoProdutoRevista, 5, 5, BigDecimal.TEN);
 		rockBrigade.setEditor(editoraAbril);
 		rockBrigade.addFornecedor(fornecedorFc);
 		save(session, rockBrigade);
 		
-		Produto valhalla = Fixture.produto("549", "Valhalla", "Valhalla", PeriodicidadeProduto.MENSAL, tipoProdutoRevista, 5, 5);
+		Produto valhalla = Fixture.produto("549", "Valhalla", "Valhalla", PeriodicidadeProduto.MENSAL, tipoProdutoRevista, 5, 5, BigDecimal.TEN);
 		valhalla.setEditor(editoraAbril);
 		valhalla.addFornecedor(fornecedorFc);
 		save(session, valhalla);
 		
-		Produto rollingStone = Fixture.produto("550", "Rolling Stone", "Rolling Stone", PeriodicidadeProduto.MENSAL, tipoProdutoRevista, 5, 5);
+		Produto rollingStone = Fixture.produto("550", "Rolling Stone", "Rolling Stone", PeriodicidadeProduto.MENSAL, tipoProdutoRevista, 5, 5, BigDecimal.TEN);
 		rollingStone.setEditor(editoraAbril);
 		rollingStone.addFornecedor(fornecedorFc);
 		save(session, rollingStone);
 
-		Produto bonsFluidos = Fixture.produto("551", "Bons Fluídos", "Bons Fluídos", PeriodicidadeProduto.MENSAL, tipoProdutoRevista, 5, 5);
+		Produto bonsFluidos = Fixture.produto("551", "Bons Fluídos", "Bons Fluídos", PeriodicidadeProduto.MENSAL, tipoProdutoRevista, 5, 5, BigDecimal.TEN);
 		bonsFluidos.setEditor(europa);
 		bonsFluidos.addFornecedor(fornecedorDinap);
 		save(session, bonsFluidos);
 		
-		Produto bravo = Fixture.produto("552", "Revista Bravo", "Revista Bravo", PeriodicidadeProduto.SEMANAL, tipoProdutoRevista, 5, 5);
+		Produto bravo = Fixture.produto("552", "Revista Bravo", "Revista Bravo", PeriodicidadeProduto.SEMANAL, tipoProdutoRevista, 5, 5, BigDecimal.TEN);
 		bravo.setEditor(globo);
 		bravo.addFornecedor(fornecedorDinap);
 		save(session, bravo);
 		
-		Produto casaClaudia = Fixture.produto("553", "Casa Claudia", "Revista Casa Claudia", PeriodicidadeProduto.SEMANAL, tipoProdutoRevista, 5, 5);
+		Produto casaClaudia = Fixture.produto("553", "Casa Claudia", "Revista Casa Claudia", PeriodicidadeProduto.SEMANAL, tipoProdutoRevista, 5, 5, BigDecimal.TEN);
 		casaClaudia.setEditor(europa);
 		casaClaudia.addFornecedor(fornecedorDinap);
 		save(session, casaClaudia);
 		
-		Produto jequiti = Fixture.produto("554", "Jequiti", "Jequiti", PeriodicidadeProduto.SEMANAL, tipoProdutoRevista, 5, 5);
+		Produto jequiti = Fixture.produto("554", "Jequiti", "Jequiti", PeriodicidadeProduto.SEMANAL, tipoProdutoRevista, 5, 5, BigDecimal.TEN);
 		jequiti.setEditor(globo);
 		jequiti.addFornecedor(fornecedorDinap);
 		save(session, jequiti);
 		
-		Produto mundoEstranho = Fixture.produto("555", "Mundo Estranho", "Revista Mundo Estranho", PeriodicidadeProduto.MENSAL, tipoProdutoRevista, 5, 5);
+		Produto mundoEstranho = Fixture.produto("555", "Mundo Estranho", "Revista Mundo Estranho", PeriodicidadeProduto.MENSAL, tipoProdutoRevista, 5, 5, BigDecimal.TEN);
 		mundoEstranho.setEditor(globo);
 		mundoEstranho.addFornecedor(fornecedorFc);
 		save(session, mundoEstranho);
 		
-		Produto novaEscola = Fixture.produto("556", "Nova Escola", "Revista Nova Escola", PeriodicidadeProduto.MENSAL, tipoProdutoRevista, 5, 5);
+		Produto novaEscola = Fixture.produto("556", "Nova Escola", "Revista Nova Escola", PeriodicidadeProduto.MENSAL, tipoProdutoRevista, 5, 5, BigDecimal.TEN);
 		novaEscola.setEditor(jazz);
 		novaEscola.addFornecedor(fornecedorDinap);
 		save(session, novaEscola);
 
-		Produto minhaCasa = Fixture.produto("557", "Minha Casa", "Revista Minha Casa", PeriodicidadeProduto.MENSAL, tipoProdutoRevista, 5, 5);
+		Produto minhaCasa = Fixture.produto("557", "Minha Casa", "Revista Minha Casa", PeriodicidadeProduto.MENSAL, tipoProdutoRevista, 5, 5, BigDecimal.TEN);
 		minhaCasa.setEditor(editoraAbril);
 		minhaCasa.addFornecedor(fornecedorFc);
 		save(session, minhaCasa);
 		
-		Produto recreio = Fixture.produto("558", "Recreio", "Revista Recreio", PeriodicidadeProduto.MENSAL, tipoProdutoRevista, 5, 5);
+		Produto recreio = Fixture.produto("558", "Recreio", "Revista Recreio", PeriodicidadeProduto.MENSAL, tipoProdutoRevista, 5, 5, BigDecimal.TEN);
 		recreio.setEditor(editoraAbril);
 		recreio.addFornecedor(fornecedorFc);
 		save(session, recreio);
 		
-		Produto womenHealth = Fixture.produto("559", "Women's Health", "Revista Women's Health", PeriodicidadeProduto.MENSAL, tipoCromo, 5, 5);
+		Produto womenHealth = Fixture.produto("559", "Women's Health", "Revista Women's Health", PeriodicidadeProduto.MENSAL, tipoCromo, 5, 5, BigDecimal.TEN);
 		womenHealth.setEditor(editoraAbril);
 		womenHealth.addFornecedor(fornecedorFc);
 		save(session, womenHealth);
 		
-		Produto viagemTurismo = Fixture.produto("560", "Viagem e Turismo", "Revista Viagem e Turismo", PeriodicidadeProduto.MENSAL, tipoProdutoRevista, 5, 5);
+		Produto viagemTurismo = Fixture.produto("560", "Viagem e Turismo", "Revista Viagem e Turismo", PeriodicidadeProduto.MENSAL, tipoProdutoRevista, 5, 5, BigDecimal.TEN);
 		viagemTurismo.setEditor(editoraAbril);
 		viagemTurismo.addFornecedor(fornecedorFc);
 		save(session, viagemTurismo);
 
-		Produto vip = Fixture.produto("561", "VIP", "Revista VIP", PeriodicidadeProduto.MENSAL, tipoProdutoRevista, 5, 5);
+		Produto vip = Fixture.produto("561", "VIP", "Revista VIP", PeriodicidadeProduto.MENSAL, tipoProdutoRevista, 5, 5, BigDecimal.TEN);
 		vip.setEditor(jazz);
 		vip.addFornecedor(fornecedorDinap);
 		save(session, vip);
 
-		Produto gestaoEscolar = Fixture.produto("562", "Gestão Escolar", "Gestão Escolar", PeriodicidadeProduto.MENSAL, tipoProdutoRevista, 5, 5);
+		Produto gestaoEscolar = Fixture.produto("562", "Gestão Escolar", "Gestão Escolar", PeriodicidadeProduto.MENSAL, tipoProdutoRevista, 5, 5, BigDecimal.TEN);
 		gestaoEscolar.setEditor(editoraAbril);
 		gestaoEscolar.addFornecedor(fornecedorFc);
 		save(session, gestaoEscolar);
 		
-		Produto lola = Fixture.produto("563", "Lola", "Lola", PeriodicidadeProduto.MENSAL, tipoCromo, 5, 5);
+		Produto lola = Fixture.produto("563", "Lola", "Lola", PeriodicidadeProduto.MENSAL, tipoCromo, 5, 5, BigDecimal.TEN);
 		lola.setEditor(editoraAbril);
 		lola.addFornecedor(fornecedorFc);
 		save(session, lola);
 		
-		Produto heavyMetal = Fixture.produto("539", "Heavy Metal", "Heavy Metal", PeriodicidadeProduto.MENSAL, tipoProdutoRevista, 5, 5);
+		Produto heavyMetal = Fixture.produto("539", "Heavy Metal", "Heavy Metal", PeriodicidadeProduto.MENSAL, tipoProdutoRevista, 5, 5, BigDecimal.TEN);
 		heavyMetal.setEditor(editoraAbril);
 		heavyMetal.addFornecedor(fornecedorFc);
 		save(session, heavyMetal);
 		
-		Produto metalUnderground = Fixture.produto("540", "Metal Underground", "Metal Underground", PeriodicidadeProduto.MENSAL, tipoProdutoRevista, 5, 5);
+		Produto metalUnderground = Fixture.produto("540", "Metal Underground", "Metal Underground", PeriodicidadeProduto.MENSAL, tipoProdutoRevista, 5, 5, BigDecimal.TEN);
 		metalUnderground.setEditor(editoraAbril);
 		metalUnderground.addFornecedor(fornecedorFc);
 		save(session, metalUnderground);

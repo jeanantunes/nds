@@ -1,16 +1,12 @@
 package br.com.abril.nds.integracao.ems0108.test;
 
-import java.util.List;
-
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import br.com.abril.nds.integracao.ems0108.processor.EMS0108MessageProcessor;
 import br.com.abril.nds.integracao.ems0108.route.EMS0108Route;
 import br.com.abril.nds.integracao.engine.data.RouteTemplate;
-import br.com.abril.nds.integracao.model.NdsiParametroSistema;
 import br.com.abril.nds.integracao.test.RouteTestTemplate;
 
 public class EMS0108Test extends RouteTestTemplate {

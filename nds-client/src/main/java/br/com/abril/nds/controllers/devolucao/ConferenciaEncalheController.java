@@ -95,9 +95,10 @@ public class ConferenciaEncalheController {
 		if (idBox != null){
 		
 			this.session.setAttribute(ID_BOX_LOGADO, idBox);
+		} else {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Box de recolhimento é obrigatório.");
 		}
-		
-		this.session.setAttribute(HORA_INICIO_CONFERENCIA, new Date());
 		
 		this.result.use(Results.json()).from("").serialize();
 	}
@@ -105,9 +106,15 @@ public class ConferenciaEncalheController {
 	@Post
 	public void verificarReabertura(Integer numeroCota){
 		
+		if (this.session.getAttribute(ID_BOX_LOGADO) == null){
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Box de recolhimento não informado.");
+		}
+		
 		try {
 			
 			this.conferenciaEncalheService.verificarChamadaEncalheCota(numeroCota);
+			this.session.setAttribute(HORA_INICIO_CONFERENCIA, new Date());
 		} catch (ConferenciaEncalheExistenteException e) {
 			
 			this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.WARNING, "REABERTURA"), "result").recursive().serialize();
@@ -149,6 +156,13 @@ public class ConferenciaEncalheController {
 	*/
 	@Post
 	public void carregarListaConferencia(Integer numeroCota){
+		
+		Date horaInicio = (Date) this.session.getAttribute(HORA_INICIO_CONFERENCIA);
+		
+		if (horaInicio == null){
+			
+			this.session.setAttribute(HORA_INICIO_CONFERENCIA, new Date());
+		}
 		
 		InfoConferenciaEncalheCota infoConfereciaEncalheCota = this.getInfoConferenciaSession();
 		
@@ -224,6 +238,8 @@ public class ConferenciaEncalheController {
 
 	@Post
 	public void pesquisarProdutoEdicao(String codigoBarra, Integer sm, Long idProdutoEdicao, Long codigoAnterior, Long quantidade){
+		
+		this.verificarInicioConferencia();
 		
 		ProdutoEdicaoDTO produtoEdicao = null;
 		
@@ -368,6 +384,8 @@ public class ConferenciaEncalheController {
 	@Post
 	public void salvarConferencia(){
 		
+		this.verificarInicioConferencia();
+		
 		ControleConferenciaEncalheCota controleConfEncalheCota = new ControleConferenciaEncalheCota();
 		controleConfEncalheCota.setDataInicio((Date) this.session.getAttribute(HORA_INICIO_CONFERENCIA));
 		
@@ -413,32 +431,52 @@ public class ConferenciaEncalheController {
 				new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."), "result").recursive().serialize();
 	}
 	
+	private void verificarInicioConferencia() {
+		
+		Date horaInicio = (Date) this.session.getAttribute(HORA_INICIO_CONFERENCIA);
+		
+		if (horaInicio == null){
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Conferência não iniciada.");
+		}
+	}
+
 	@Post
 	public void finalizarConferencia(){
 		
-		ControleConferenciaEncalheCota controleConfEncalheCota = new ControleConferenciaEncalheCota();
-		controleConfEncalheCota.setDataInicio((Date) this.session.getAttribute(HORA_INICIO_CONFERENCIA));
-		controleConfEncalheCota.setCota(this.getInfoConferenciaSession().getCota());
-		controleConfEncalheCota.setId(this.getInfoConferenciaSession().getIdControleConferenciaEncalheCota());
+		Date horaInicio = (Date) this.session.getAttribute(HORA_INICIO_CONFERENCIA);
 		
-		List<ConferenciaEncalheDTO> lista = this.getListaConferenciaEncalheFromSession();
+		if (horaInicio != null){
 		
-		for (ConferenciaEncalheDTO dto : lista){
+			ControleConferenciaEncalheCota controleConfEncalheCota = new ControleConferenciaEncalheCota();
+			controleConfEncalheCota.setDataInicio(horaInicio);
+			controleConfEncalheCota.setCota(this.getInfoConferenciaSession().getCota());
+			controleConfEncalheCota.setId(this.getInfoConferenciaSession().getIdControleConferenciaEncalheCota());
+			controleConfEncalheCota.setNotaFiscalEntradaCota((NotaFiscalEntradaCota) this.session.getAttribute(NOTA_FISCAL_CONFERENCIA));
 			
-			if (dto.getIdConferenciaEncalhe() < 0){
+			List<ConferenciaEncalheDTO> lista = this.getListaConferenciaEncalheFromSession();
+			
+			for (ConferenciaEncalheDTO dto : lista){
 				
-				dto.setIdConferenciaEncalhe(null);
+				if (dto.getIdConferenciaEncalhe() < 0){
+					
+					dto.setIdConferenciaEncalhe(null);
+				}
 			}
+			
+			this.conferenciaEncalheService.finalizarConferenciaEncalhe(
+					controleConfEncalheCota, 
+					this.getListaConferenciaEncalheFromSession(), 
+					this.getSetConferenciaEncalheExcluirFromSession(), 
+					this.getUsuarioLogado());
+			
+			this.result.use(Results.json()).from(
+					new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."), "result").recursive().serialize();
+		} else {
+			
+			this.result.use(Results.json()).from(
+					new ValidacaoVO(TipoMensagem.WARNING, "Conferência não iniciada."), "result").recursive().serialize();
 		}
-		
-		this.conferenciaEncalheService.finalizarConferenciaEncalhe(
-				controleConfEncalheCota, 
-				this.getListaConferenciaEncalheFromSession(), 
-				this.getSetConferenciaEncalheExcluirFromSession(), 
-				this.getUsuarioLogado());
-		
-		this.result.use(Results.json()).from(
-				new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."), "result").recursive().serialize();
 	}
 	
 	@Post

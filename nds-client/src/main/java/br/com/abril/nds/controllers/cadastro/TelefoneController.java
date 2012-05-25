@@ -169,7 +169,11 @@ public class TelefoneController {
 			telefoneAssociacaoDTO = new TelefoneAssociacaoDTO();
 			telefone = new Telefone();
 			
-			telefoneAssociacaoDTO.setReferencia((int) (new Date()).getTime() * -1);
+			int referenciaTelefone = (int) (new Date()).getTime();
+			
+			referenciaTelefone = referenciaTelefone < 0 ? referenciaTelefone : referenciaTelefone * -1;
+			
+			telefoneAssociacaoDTO.setReferencia(referenciaTelefone);
 			telefoneAssociacaoDTO.setTelefone(telefone);
 		} else {
 			telefoneAssociacaoDTO = telefonesSessao.get(referencia);

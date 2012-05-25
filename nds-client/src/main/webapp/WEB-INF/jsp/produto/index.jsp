@@ -143,6 +143,21 @@
 				height : 255,
 				singleSelect : true
 			});
+		}			
+
+		function popularCombo(data, combo) {
+			opcoes = "";
+			selecionado = "-1";
+			$.each(data, function(i,n){
+				if (n["checked"]) {
+					opcoes+="<option value="+n["value"]+" selected='selected'>"+n["label"]+"</option>";
+					selecionado = n["value"];
+				} else {
+					opcoes+="<option value="+n["value"]+">"+n["label"]+"</option>";
+				}
+			});
+			$(combo).clear().append(opcoes);
+			$(combo).val(selecionado);
 		}
 
 		function inicializar() {
@@ -217,7 +232,21 @@
 		}
 
 		function novoProduto() {
-			
+
+			var id = null;
+			$.postJSON("<c:url value='/produto/carregarDadosProduto' />", 
+					   	"id=" + id,
+						function (result) {
+
+							popularCombo(result[0], $("#comboTipoProdutoCadastro"));
+							popularCombo(result[1], $("#comboFornecedoresCadastro"));
+							popularCombo(result[2], $("#comboEditor"));
+							popularCombo(result[3], $("#comboTipoDesconto"));
+						},
+					  	null,
+					   	true
+				);
+
 			$("#dialog-novo").dialog({
 				resizable: false,
 				height:600,
@@ -226,20 +255,8 @@
 				buttons: {
 					"Confirmar": function() {
 
-						var id = null;
-						
-						$.postJSON("<c:url value='/produto/carregarDadosProduto' />", 
-								   	"id=" + id,
-									function (result) {
-
-								   		$("#dialog-novo").dialog( "close" );
-										
-
-								   		$(".produtosGrid").flexReload();
-									},
-								  	null,
-								   	true
-							);
+						$("#dialog-novo").dialog( "close" );
+				   		$(".produtosGrid").flexReload();
 					},
 					"Cancelar": function() {
 						$( this ).dialog( "close" );
@@ -315,22 +332,14 @@
 					<tr>
 						<td><strong>Editor:</strong></td>
 						<td>
-							<select name="select7" id="select6" style="width:210px;" >
-								<option selected="selected">Selecione...</option>
-								<option>3R Studio Comunicação Ltda</option>
-								<option>A Recreativa Ltda</option>
-								<option>A.R. &amp; T Editores Ltda</option>
-								<option>A.W. Editora Ltda</option>
+							<select name="comboEditor" id="comboEditor" style="width:210px;" >
+								<option value="0" selected="selected"></option>
 							</select>
 						</td>
 						<td><strong>Fornecedor:</strong></td>
 						<td>
-							<select name="select" id="select7" style="width:200px;" >
-								<option selected="selected">Selecione...</option>
-								<option>Block</option>
-								<option>Chinaglia</option>
-								<option>Distrib. Nacional de Publicações</option>
-								<option>Outros-Conversão</option>
+							<select name="comboFornecedoresCadastro" id="comboFornecedoresCadastro" style="width:200px;" >
+								<option value="0" selected="selected"></option>
 							</select>
 						</td>
 					</tr>
@@ -341,12 +350,8 @@
 					<tr>
 						<td><strong>Tipo de Desconto:</strong></td>
 						<td>
-							<select name="select6" id="select8" style="width:210px;" >
-								<option value="0" selected="selected">Selecione...</option>
-								<option>Importadas</option>
-								<option>Promoções</option>
-								<option>Especial Globo</option>
-								<option>Magali Fome Zero</option>
+							<select name="comboTipoDesconto" id="comboTipoDesconto" style="width:210px;" >
+								<option value="0" selected="selected"></option>
 							</select>
 						</td>
 						<td><strong>% Desconto:</strong></td>
@@ -355,11 +360,8 @@
 					<tr>
 						<td><strong>Tipo de Produto:</strong></td>
 						<td>
-							<select name="select8" id="select9" style="width:210px;" >
+							<select name="comboTipoProdutoCadastro" id="comboTipoProdutoCadastro" style="width:210px;" >
 								<option value="0" selected="selected"></option>
-								<c:forEach items="${listaTipoProduto}" var="tipoProduto" >
-									<option value="${tipoProduto.id}" >${tipoProduto.descricao}</option>
-								</c:forEach>
 							</select>
 						</td>
 						<td><strong>Forma Comercialização:</strong></td>
@@ -675,7 +677,7 @@
 				<td>Tipo de Produto:</td>
 				<td>
 					<select id="comboTipoProduto" style="width:207px;">
-						<option value="-1">Selecione...</option>
+						<option value="0"></option>
 						<c:forEach items="${listaTipoProduto}" var="tipoProduto" >
 							<option value="${tipoProduto.id}">${tipoProduto.descricao}</option>
 						</c:forEach>

@@ -1,6 +1,7 @@
 package br.com.abril.nds.repository.impl;
 
 import java.math.BigDecimal;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -9,17 +10,25 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 
+import org.hibernate.Criteria;
 import org.hibernate.Query;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.ProjectionList;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.hibernate.type.StandardBasicTypes;
+import org.hibernate.type.Type;
 import org.springframework.stereotype.Repository;
 
+import br.com.abril.nds.dto.InformeEncalheDTO;
 import br.com.abril.nds.dto.LancamentoNaoExpedidoDTO;
 import br.com.abril.nds.dto.ProdutoRecolhimentoDTO;
 import br.com.abril.nds.dto.ResumoPeriodoBalanceamentoDTO;
 import br.com.abril.nds.dto.SumarioLancamentosDTO;
 import br.com.abril.nds.dto.filtro.FiltroLancamentoDTO;
 import br.com.abril.nds.dto.filtro.FiltroLancamentoDTO.ColunaOrdenacao;
+import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
@@ -507,13 +516,13 @@ public class LancamentoRepositoryImpl extends
 		sql.append(" case when produtoEdicao.EXPECTATIVA_VENDA is null or produtoEdicao.EXPECTATIVA_VENDA = 0 then ");
 		sql.append(" sum((estoqueProdutoCota.QTDE_RECEBIDA-estoqueProdutoCota.QTDE_DEVOLVIDA)/produtoEdicao.PACOTE_PADRAO) ");  
 		sql.append(" else ");
-		sql.append(" sum((estoqueProdutoCota.QTDE_RECEBIDA-estoqueProdutoCota.QTDE_DEVOLVIDA)/produtoEdicao.PACOTE_PADRAO * (produtoEdicao.EXPECTATIVA_VENDA/100)) ");  
+		sql.append(" sum(((estoqueProdutoCota.QTDE_RECEBIDA-estoqueProdutoCota.QTDE_DEVOLVIDA) - ((estoqueProdutoCota.QTDE_RECEBIDA-estoqueProdutoCota.QTDE_DEVOLVIDA) * (produtoEdicao.EXPECTATIVA_VENDA/100))) / produtoEdicao.PACOTE_PADRAO) ");  
 		sql.append(" end ");
 		sql.append(" else ");
 		sql.append(" case when produtoEdicao.EXPECTATIVA_VENDA is null or produtoEdicao.EXPECTATIVA_VENDA = 0 then ");
 		sql.append(" sum(estoqueProdutoCota.QTDE_RECEBIDA-estoqueProdutoCota.QTDE_DEVOLVIDA) ");
 		sql.append(" else ");
-		sql.append(" sum(estoqueProdutoCota.QTDE_RECEBIDA-estoqueProdutoCota.QTDE_DEVOLVIDA * (produtoEdicao.EXPECTATIVA_VENDA/100)) ");  
+		sql.append(" sum((estoqueProdutoCota.QTDE_RECEBIDA-estoqueProdutoCota.QTDE_DEVOLVIDA) - ((estoqueProdutoCota.QTDE_RECEBIDA-estoqueProdutoCota.QTDE_DEVOLVIDA) * (produtoEdicao.EXPECTATIVA_VENDA/100))) ");  
 		sql.append(" end ");
 		sql.append(" end ");
 		sql.append(" end as expectativaEncalheAtendida, ");		
@@ -531,13 +540,13 @@ public class LancamentoRepositoryImpl extends
 		sql.append(" case when produtoEdicao.EXPECTATIVA_VENDA is null or produtoEdicao.EXPECTATIVA_VENDA = 0 then ");
 		sql.append(" sum((estoqueProdutoCota.QTDE_RECEBIDA-estoqueProdutoCota.QTDE_DEVOLVIDA)/produtoEdicao.PACOTE_PADRAO) ");  
 		sql.append(" else ");
-		sql.append(" sum((estoqueProdutoCota.QTDE_RECEBIDA-estoqueProdutoCota.QTDE_DEVOLVIDA)/produtoEdicao.PACOTE_PADRAO * (produtoEdicao.EXPECTATIVA_VENDA/100)) ");
+		sql.append(" sum(((estoqueProdutoCota.QTDE_RECEBIDA-estoqueProdutoCota.QTDE_DEVOLVIDA) - ((estoqueProdutoCota.QTDE_RECEBIDA-estoqueProdutoCota.QTDE_DEVOLVIDA) * (produtoEdicao.EXPECTATIVA_VENDA/100))) / produtoEdicao.PACOTE_PADRAO) ");
 		sql.append(" end ");
 		sql.append(" else ");
 		sql.append(" case when produtoEdicao.EXPECTATIVA_VENDA is null or produtoEdicao.EXPECTATIVA_VENDA = 0 then ");
 		sql.append(" sum(estoqueProdutoCota.QTDE_RECEBIDA-estoqueProdutoCota.QTDE_DEVOLVIDA) ");
 		sql.append(" else ");
-		sql.append(" sum(estoqueProdutoCota.QTDE_RECEBIDA-estoqueProdutoCota.QTDE_DEVOLVIDA * (produtoEdicao.EXPECTATIVA_VENDA/100)) ");
+		sql.append(" sum((estoqueProdutoCota.QTDE_RECEBIDA-estoqueProdutoCota.QTDE_DEVOLVIDA) - ((estoqueProdutoCota.QTDE_RECEBIDA-estoqueProdutoCota.QTDE_DEVOLVIDA) * (produtoEdicao.EXPECTATIVA_VENDA/100))) ");
 		sql.append(" end ");
 		sql.append(" end ");
 		sql.append(" end as expectativaEncalheSede, ");
@@ -548,13 +557,13 @@ public class LancamentoRepositoryImpl extends
 		sql.append(" case when produtoEdicao.EXPECTATIVA_VENDA is null or produtoEdicao.EXPECTATIVA_VENDA = 0 then ");
 		sql.append(" sum((estoqueProdutoCota.QTDE_RECEBIDA-estoqueProdutoCota.QTDE_DEVOLVIDA)/produtoEdicao.PACOTE_PADRAO) ");
 		sql.append(" else ");
-		sql.append(" sum((estoqueProdutoCota.QTDE_RECEBIDA-estoqueProdutoCota.QTDE_DEVOLVIDA)/produtoEdicao.PACOTE_PADRAO * (produtoEdicao.EXPECTATIVA_VENDA/100)) ");
+		sql.append(" sum(((estoqueProdutoCota.QTDE_RECEBIDA-estoqueProdutoCota.QTDE_DEVOLVIDA) - ((estoqueProdutoCota.QTDE_RECEBIDA-estoqueProdutoCota.QTDE_DEVOLVIDA) * (produtoEdicao.EXPECTATIVA_VENDA/100))) / produtoEdicao.PACOTE_PADRAO) ");
 		sql.append(" end ");
 		sql.append(" else ");
 		sql.append(" case when produtoEdicao.EXPECTATIVA_VENDA is null or produtoEdicao.EXPECTATIVA_VENDA = 0 then ");
 		sql.append(" sum(estoqueProdutoCota.QTDE_RECEBIDA-estoqueProdutoCota.QTDE_DEVOLVIDA) ");
 		sql.append(" else ");
-		sql.append(" sum(estoqueProdutoCota.QTDE_RECEBIDA-estoqueProdutoCota.QTDE_DEVOLVIDA * (produtoEdicao.EXPECTATIVA_VENDA/100)) ");
+		sql.append(" sum((estoqueProdutoCota.QTDE_RECEBIDA-estoqueProdutoCota.QTDE_DEVOLVIDA) - ((estoqueProdutoCota.QTDE_RECEBIDA-estoqueProdutoCota.QTDE_DEVOLVIDA) * (produtoEdicao.EXPECTATIVA_VENDA/100))) ");
 		sql.append(" end ");
 		sql.append(" end as expectativaEncalhe, ");
 		
@@ -562,15 +571,15 @@ public class LancamentoRepositoryImpl extends
 		sql.append(" when tipoProduto.GRUPO_PRODUTO = :grupoCromo ");
 		sql.append(" and periodoLancamentoParcial.TIPO <> :tipoParcial then ");
 		sql.append(" case when produtoEdicao.EXPECTATIVA_VENDA is null or produtoEdicao.EXPECTATIVA_VENDA = 0 then ");
-		sql.append(" sum((estoqueProdutoCota.QTDE_RECEBIDA-estoqueProdutoCota.QTDE_DEVOLVIDA)/produtoEdicao.PACOTE_PADRAO * (produtoEdicao.PRECO_VENDA - produtoEdicao.DESCONTO)) ");
+		sql.append(" sum(((estoqueProdutoCota.QTDE_RECEBIDA-estoqueProdutoCota.QTDE_DEVOLVIDA)/produtoEdicao.PACOTE_PADRAO) * (produtoEdicao.PRECO_VENDA - produtoEdicao.DESCONTO)) ");
 		sql.append(" else ");
-		sql.append(" sum((estoqueProdutoCota.QTDE_RECEBIDA-estoqueProdutoCota.QTDE_DEVOLVIDA)/produtoEdicao.PACOTE_PADRAO * (produtoEdicao.EXPECTATIVA_VENDA/100)  * (produtoEdicao.PRECO_VENDA - produtoEdicao.DESCONTO)) ");
+		sql.append(" sum((((estoqueProdutoCota.QTDE_RECEBIDA-estoqueProdutoCota.QTDE_DEVOLVIDA) - ((estoqueProdutoCota.QTDE_RECEBIDA-estoqueProdutoCota.QTDE_DEVOLVIDA) * (produtoEdicao.EXPECTATIVA_VENDA/100))) / produtoEdicao.PACOTE_PADRAO) * (produtoEdicao.PRECO_VENDA - produtoEdicao.DESCONTO)) ");
 		sql.append(" end ");
 		sql.append(" else ");
 		sql.append(" case when produtoEdicao.EXPECTATIVA_VENDA is null or produtoEdicao.EXPECTATIVA_VENDA = 0 then ");
-		sql.append(" sum(estoqueProdutoCota.QTDE_RECEBIDA-estoqueProdutoCota.QTDE_DEVOLVIDA * (produtoEdicao.PRECO_VENDA - produtoEdicao.DESCONTO)) ");
+		sql.append(" sum((estoqueProdutoCota.QTDE_RECEBIDA-estoqueProdutoCota.QTDE_DEVOLVIDA) * (produtoEdicao.PRECO_VENDA - produtoEdicao.DESCONTO)) ");
 		sql.append(" else ");
-		sql.append(" sum(estoqueProdutoCota.QTDE_RECEBIDA-estoqueProdutoCota.QTDE_DEVOLVIDA * (produtoEdicao.EXPECTATIVA_VENDA/100)  * (produtoEdicao.PRECO_VENDA - produtoEdicao.DESCONTO)) ");
+		sql.append(" sum(((estoqueProdutoCota.QTDE_RECEBIDA-estoqueProdutoCota.QTDE_DEVOLVIDA) - ((estoqueProdutoCota.QTDE_RECEBIDA-estoqueProdutoCota.QTDE_DEVOLVIDA) * (produtoEdicao.EXPECTATIVA_VENDA/100))) * (produtoEdicao.PRECO_VENDA - produtoEdicao.DESCONTO)) ");
 		sql.append(" end ");
 		sql.append(" end as valorTotal, ");
 		
@@ -671,13 +680,13 @@ public class LancamentoRepositoryImpl extends
 				   + " case when produtoEdicao.EXPECTATIVA_VENDA is null or produtoEdicao.EXPECTATIVA_VENDA = 0 then "
 				   + " sum((estoqueProdutoCota.QTDE_RECEBIDA-estoqueProdutoCota.QTDE_DEVOLVIDA)/produtoEdicao.PACOTE_PADRAO) "
 				   + " else "
-				   + " sum((estoqueProdutoCota.QTDE_RECEBIDA-estoqueProdutoCota.QTDE_DEVOLVIDA)/produtoEdicao.PACOTE_PADRAO * (produtoEdicao.EXPECTATIVA_VENDA/100)) "
+				   + " sum(((estoqueProdutoCota.QTDE_RECEBIDA-estoqueProdutoCota.QTDE_DEVOLVIDA) - ((estoqueProdutoCota.QTDE_RECEBIDA-estoqueProdutoCota.QTDE_DEVOLVIDA) * (produtoEdicao.EXPECTATIVA_VENDA/100))) / produtoEdicao.PACOTE_PADRAO) "
 				   + " end "
 				   + " else "
 				   + " case when produtoEdicao.EXPECTATIVA_VENDA is null or produtoEdicao.EXPECTATIVA_VENDA = 0 then "
 				   + " sum(estoqueProdutoCota.QTDE_RECEBIDA-estoqueProdutoCota.QTDE_DEVOLVIDA) "
 				   + " else "
-				   + " sum(estoqueProdutoCota.QTDE_RECEBIDA-estoqueProdutoCota.QTDE_DEVOLVIDA * (produtoEdicao.EXPECTATIVA_VENDA/100)) "
+				   + " sum((estoqueProdutoCota.QTDE_RECEBIDA-estoqueProdutoCota.QTDE_DEVOLVIDA) - ((estoqueProdutoCota.QTDE_RECEBIDA-estoqueProdutoCota.QTDE_DEVOLVIDA) * (produtoEdicao.EXPECTATIVA_VENDA/100))) "
 				   + " end "
 				   + " end as expectativaEncalhe ";
 		
@@ -798,6 +807,90 @@ public class LancamentoRepositoryImpl extends
 		query.setLong("idProdutoEdicao", idProdutoEdicao);
 		
 		return (Lancamento) query.uniqueResult();
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see br.com.abril.nds.repository.LancamentoRepository#obterLancamentoInformeRecolhimento(java.lang.Long, java.util.Calendar, java.util.Calendar, java.lang.String, br.com.abril.nds.vo.PaginacaoVO.Ordenacao, int, int)
+	 */
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<InformeEncalheDTO> obterLancamentoInformeRecolhimento(Long idFornecedor, Calendar dataInicioRecolhimento, Calendar dataFimRecolhimento, String  orderBy, Ordenacao ordenacao, int initialResult, int maxResults){
+		Criteria criteria  = addRestrictions(idFornecedor,
+				dataInicioRecolhimento, dataFimRecolhimento);
+		
+		ProjectionList projectionList = Projections.projectionList();	
+		
+		projectionList.add(Projections.id(), "idLancamento");		
+		projectionList.add(Projections.property("produtoEdicao.id"), "idProdutoEdicao");		
+		projectionList.add(Projections.property("sequenciaMatriz"),"sequenciaMatriz");	
+		
+		projectionList.add(Projections.property("produto.codigo"),"codigoProduto");
+		projectionList.add(Projections.property("produto.nome"),"nomeProduto");		
+		projectionList.add(Projections.property("produtoEdicao.numeroEdicao"),"numeroEdicao");
+		projectionList.add(Projections.property("produtoEdicao.slogan"),"slogan");
+		projectionList.add(Projections.property("produtoEdicao.codigoDeBarras"),"codigoDeBarras");
+		projectionList.add(Projections.property("produtoEdicao.precoVenda"),"precoVenda");
+		projectionList.add(Projections.property("produtoEdicao.desconto"),"desconto");		
+		projectionList.add(Projections.sqlProjection("(produtoedi1_.PRECO_VENDA - produtoedi1_.DESCONTO) as precoDesconto", new String[]{"precoDesconto"}, new Type[] {StandardBasicTypes.DOUBLE}));
+		projectionList.add(Projections.property("dataLancamentoDistribuidor"),"dataLancamento");
+		projectionList.add(Projections.property("dataRecolhimentoDistribuidor"),"dataRecolhimento");
+		criteria.setProjection(projectionList);		
+		
+		if(Ordenacao.ASC ==  ordenacao){
+			criteria.addOrder(Order.asc(orderBy));
+		}else if(Ordenacao.DESC ==  ordenacao){
+			criteria.addOrder(Order.desc(orderBy));
+		}
+		
+		criteria.setMaxResults(maxResults);
+		criteria.setFirstResult(initialResult);
+		criteria.setResultTransformer(new AliasToBeanResultTransformer(InformeEncalheDTO.class));
+		
+		return criteria.list();
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see br.com.abril.nds.repository.LancamentoRepository#quantidadeLancamentoInformeRecolhimento(java.lang.Long, java.util.Calendar, java.util.Calendar)
+	 */
+	@Override
+	public Long quantidadeLancamentoInformeRecolhimento(Long idFornecedor, Calendar dataInicioRecolhimento, Calendar dataFimRecolhimento){
+		
+		
+		Criteria criteria = addRestrictions(idFornecedor,
+				dataInicioRecolhimento, dataFimRecolhimento);
+		criteria.setProjection(Projections.rowCount());
+		
+		
+		return (Long) criteria.list().get(0);
+		
+	}
+	
+	
+
+	/**
+	 * Adiciona restrições.
+	 * 
+	 * @param idFornecedor (Opcional) Identificador do {@link Fornecedor}
+	 * @param dataInicioRecolhimento Inicio do intervalo para recolhimento.
+	 * @param dataFimRecolhimento Fim do intervalo para recolhimento.
+	 * return criteria
+	 */
+	private Criteria addRestrictions(Long idFornecedor,
+			Calendar dataInicioRecolhimento, Calendar dataFimRecolhimento) {
+		
+		Criteria criteria  = getSession().createCriteria(Lancamento.class);
+		criteria.createAlias("produtoEdicao","produtoEdicao");
+		criteria.createAlias("produtoEdicao.produto","produto");
+		criteria.createAlias("produtoEdicao.produto.fornecedores", "fornecedores");
+		
+		criteria.add(Restrictions.between("dataRecolhimentoDistribuidor", dataInicioRecolhimento.getTime(), dataFimRecolhimento.getTime()));
+		if (idFornecedor != null) {
+			criteria.add(Restrictions.eq(
+					"fornecedores.id", idFornecedor));
+		}
+		return criteria;
 	}
 	
 }

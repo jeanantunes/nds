@@ -65,11 +65,11 @@ public class TipoDescontoCotaServiceImpl implements TipoDescontoCotaService {
 			vo.setDataAlteracao(DateUtil.formatarData(desconto.getDataAlteracao(),
 					  Constantes.DATE_PATTERN_PT_BR));
 			vo.setDesconto(desconto.getDesconto().toString());
-			vo.setUsuario(desconto.getUsuario());
-			vo.setSeq(desconto.getSequencial().toString());
-			vo.setCota(desconto.getIdCota().toString());
-			vo.setCodigo(desconto.getIdProduto().toString());
-			vo.setEdicao(desconto.getNumeroEdicao().toString());			
+//			vo.setUsuario(desconto.getUsuario());
+//			vo.setSeq(desconto.getSequencial().toString());
+//			vo.setCota(desconto.getIdCota().toString());
+//			vo.setCodigo(desconto.getIdProduto().toString());
+//			vo.setEdicao(desconto.getNumeroEdicao().toString());			
 			listaVO.add(vo);
 		}		
 		return listaVO;

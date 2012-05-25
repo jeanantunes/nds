@@ -1,19 +1,23 @@
 package br.com.abril.nds.repository;
 
 import java.math.BigDecimal;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeMap;
 
+import br.com.abril.nds.dto.InformeEncalheDTO;
 import br.com.abril.nds.dto.ProdutoRecolhimentoDTO;
 import br.com.abril.nds.dto.ResumoPeriodoBalanceamentoDTO;
 import br.com.abril.nds.dto.SumarioLancamentosDTO;
 import br.com.abril.nds.dto.filtro.FiltroLancamentoDTO;
+import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.vo.PaginacaoVO;
+import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 import br.com.abril.nds.vo.PeriodoVO;
 
 public interface LancamentoRepository extends Repository<Lancamento, Long> {
@@ -118,6 +122,32 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 	 * @return Lancamento
 	 */
 	Lancamento obterLancamentoPorDataRecolhimentoProdutoEdicao(Date dataRecolhimentoDistribuidor, Long idProdutoEdicao);
+	
+	
+	/**
+	 * Obtem a quantidade de registros de lançamentos respeitantdo os paramentros.
+	 * @param idFornecedor (Opcional) Identificador do {@link Fornecedor}
+	 * @param dataInicioRecolhimento Inicio do intervalo para recolhimento.
+	 * @param dataFimRecolhimento Fim do intervalo para recolhimento.
+	 * @return
+	 */
+	public abstract Long quantidadeLancamentoInformeRecolhimento(
+			Long idFornecedor, Calendar dataInicioRecolhimento, Calendar dataFimRecolhimento);
+	
+	/**
+	 * Obtem Dados de informe encalhe dos lançamentos respeitando os parametros.
+	 * @param idFornecedor (Opcional) Identificador do {@link Fornecedor}
+	 * @param dataInicioRecolhimento Inicio do intervalo para recolhimento.
+	 * @param dataFimRecolhimento Fim do intervalo para recolhimento.
+	 * @param orderBy (Opcional) nome do campo para compor a ordenação
+	 * @param ordenacao (Opcional) tipo da ordenação
+	 * @param initialResult resultado inicial
+	 * @param maxResults numero maximo de resultados
+	 * @return
+	 */
+	public abstract List<InformeEncalheDTO> obterLancamentoInformeRecolhimento(Long idFornecedor,
+			Calendar dataInicioRecolhimento, Calendar dataFimRecolhimento, String  orderBy, Ordenacao ordenacao, int initialResult,
+			int maxResults);
 
 	 
 }

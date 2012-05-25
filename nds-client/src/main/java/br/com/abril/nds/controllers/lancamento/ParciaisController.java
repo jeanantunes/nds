@@ -281,7 +281,7 @@ public class ParciaisController {
 	@Post
 	public void inserirPeriodos(Integer peb, Integer qtde, Long idProdutoEdicao) {
 		
-		parciaisService.gerarPeriodosParcias(idProdutoEdicao, qtde, getUsuario().getId(),peb);
+		parciaisService.gerarPeriodosParcias(idProdutoEdicao, qtde, getUsuario(), peb);
 		
 		result.use(Results.json()).withoutRoot().from("").recursive().serialize();		
 	}

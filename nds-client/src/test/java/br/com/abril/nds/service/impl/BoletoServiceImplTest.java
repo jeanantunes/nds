@@ -104,7 +104,7 @@ public class BoletoServiceImplTest  extends AbstractRepositoryImplTest {
 		politicaCobranca.setDistribuidor(distribuidor);
 		save(politicaCobranca);
 		
-		Box box = Fixture.criarBox("300", "Box 300", TipoBox.LANCAMENTO);
+		Box box = Fixture.criarBox("300", "Box 300", TipoBox.LANCAMENTO, false);
 		save(box);
 		
 		Cota cota = Fixture.cota(1000, pessoaJuridica, SituacaoCadastro.ATIVO,box);
@@ -133,7 +133,7 @@ public class BoletoServiceImplTest  extends AbstractRepositoryImplTest {
 				
 		ProdutoEdicao produtoEdicaoVeja1 = Fixture.produtoEdicao(1L, 10, 14,
 				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(20), "ABCDEFGHIJKLMNOPQRSTU", 1L,
-				produtoVeja);
+				produtoVeja, null, false);
 		save(produtoEdicaoVeja1);
 		
 		EstoqueProdutoCota estoqueProdutoCota = Fixture.estoqueProdutoCota(
@@ -172,23 +172,23 @@ public class BoletoServiceImplTest  extends AbstractRepositoryImplTest {
 		save(consolidado5);
 			
 		Divida divida1 = Fixture.divida(consolidado1, cota, new Date(),
-										usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200));
+										usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200),false);
 		save(divida1);
 
 		Divida divida2 = Fixture.divida(consolidado2, cota, new Date(),
-		        						usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200));
+		        						usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200),false);
 		save(divida2);
 		
 		Divida divida3 = Fixture.divida(consolidado3, cota, new Date(),
-		        						usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200));
+		        						usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200),false);
 		save(divida3);
 		
 		Divida divida4 = Fixture.divida(consolidado4, cota, new Date(),
-										usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200));
+										usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200),false);
 		save(divida4);
 		
 		Divida divida5 = Fixture.divida(consolidado5, cota, new Date(),
-										usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200));
+										usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200),false);
 		save(divida5);
 		
 		Boleto boleto1 = Fixture.boleto("1234567890123", "456", "1234567890123456", new Date(),

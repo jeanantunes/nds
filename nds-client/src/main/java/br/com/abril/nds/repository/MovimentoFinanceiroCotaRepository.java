@@ -13,6 +13,16 @@ import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 public interface MovimentoFinanceiroCotaRepository extends Repository<MovimentoFinanceiroCota, Long> {
 
 
+	/**
+	 * Obtem MovimentoFinaceiroCota relativo a um registro de MovimentoEstoqueCota. 
+	 * 
+	 * @param idMovimentoEstoqueCota
+	 * 
+	 * @return MovimentoFinanceiroCota;
+	 */
+	MovimentoFinanceiroCota obterMovimentoFinanceiroCotaParaMovimentoEstoqueCota(Long idMovimentoEstoqueCota);
+	
+	
 	List<MovimentoFinanceiroCota> obterMovimentoFinanceiroCotaDataOperacao(Long idCota, Date dataAtual);	
 
 	List<MovimentoFinanceiroCota> obterMovimentosFinanceiroCota(

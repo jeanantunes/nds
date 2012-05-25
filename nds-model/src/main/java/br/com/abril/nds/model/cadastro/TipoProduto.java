@@ -1,13 +1,16 @@
 package br.com.abril.nds.model.cadastro;
 
 import java.io.Serializable;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -31,12 +34,25 @@ public class TipoProduto implements Serializable {
 	@Column(name = "ID")
 	private Long id;
 	
-	@Column(name = "DESCRICAO", nullable = false)
+	@Column(name = "DESCRICAO", nullable = false, unique = true)
 	private String descricao;
+	
+	@Column(name = "CODIGO", nullable = false)
+	private String codigo;
+	
+	@Column(name = "CODIGO_NCM")
+	private String codigoNCM;
+	
+	@Column(name = "CODIGO_NBM")
+	private String codigoNBM;
+	
 	
 	@Enumerated(EnumType.STRING)
 	@Column(name = "GRUPO_PRODUTO", nullable = false)
 	private GrupoProduto grupoProduto;
+	
+	@OneToMany(fetch=FetchType.LAZY, mappedBy="tipoProduto")
+	private List<Produto> listaProdutos;
 	
 	public Long getId() {
 		return id;
@@ -62,4 +78,53 @@ public class TipoProduto implements Serializable {
 		this.grupoProduto = grupoProduto;
 	}
 
+	/**
+	 * @return the codigo
+	 */
+	public String getCodigo() {
+		return codigo;
+	}
+
+	/**
+	 * @param codigo the codigo to set
+	 */
+	public void setCodigo(String codigo) {
+		this.codigo = codigo;
+	}
+
+	/**
+	 * @return the codigoNCM
+	 */
+	public String getCodigoNCM() {
+		return codigoNCM;
+	}
+
+	/**
+	 * @param codigoNCM the codigoNCM to set
+	 */
+	public void setCodigoNCM(String codigoNCM) {
+		this.codigoNCM = codigoNCM;
+	}
+
+	/**
+	 * @return the codigoNBM
+	 */
+	public String getCodigoNBM() {
+		return codigoNBM;
+	}
+
+	/**
+	 * @param codigoNBM the codigoNBM to set
+	 */
+	public void setCodigoNBM(String codigoNBM) {
+		this.codigoNBM = codigoNBM;
+	}
+
+	/**
+	 * @return the listaProdutos
+	 */
+	public List<Produto> getListaProdutos() {
+		return listaProdutos;
+	}
+	
 }

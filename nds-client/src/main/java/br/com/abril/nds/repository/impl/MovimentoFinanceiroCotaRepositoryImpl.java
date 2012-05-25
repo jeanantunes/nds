@@ -23,6 +23,22 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepository<Mo
 		super(MovimentoFinanceiroCota.class);
 	}
 	
+	public MovimentoFinanceiroCota obterMovimentoFinanceiroCotaParaMovimentoEstoqueCota(Long idMovimentoEstoqueCota) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" from MovimentoFinanceiroCota mfc   		")
+		   .append(" inner join mfc.movimentos mec 				")
+		   .append(" where mec.id = : idMovimentoEstoqueCota 	");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		
+		query.setParameter("idMovimentoEstoqueCota", idMovimentoEstoqueCota);
+		
+		return (MovimentoFinanceiroCota) query.uniqueResult();
+		
+	}
+	
 	@SuppressWarnings("unchecked")
 	public List<MovimentoFinanceiroCota> obterMovimentoFinanceiroCotaDataOperacao(Long idCota, Date dataAtual){
 		
