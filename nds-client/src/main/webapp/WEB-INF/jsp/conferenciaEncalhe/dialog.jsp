@@ -1,4 +1,9 @@
 <div id="dialog-salvar" title="Salvar Conferência" style="display:none;">
+	
+	<jsp:include page="../messagesDialog.jsp">
+		<jsp:param value="idModalConfirmarSalvarConf" name="messageDialog"/>
+	</jsp:include>
+	
 	<fieldset style="width: 415px;">
         <legend>Salvar Conferência</legend>
         <p>Confima a Conferência de Encalhe?</p>
@@ -83,6 +88,11 @@
 </div>
 
 <div id="dialog-logado" title="Box de Encalhe" style="display:none;">
+	
+	<jsp:include page="../messagesDialog.jsp">
+		<jsp:param value="idModalBoxRecolhimento" name="messageDialog"/>
+	</jsp:include>
+	
 	<fieldset style="width: 410px">
 		<legend>Box de Encalhe</legend>
 	    <label>Confirma Box de Encalhe: </label>

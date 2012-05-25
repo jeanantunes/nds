@@ -37,12 +37,12 @@ public class BoxRepositoryImplTest extends AbstractRepositoryImplTest {
 	public void setUp() throws Exception {
 
 		for (int i = 0; i < 100; i++) {
-			box = Fixture.criarBox("Box-" + i, "BX-" + i, TipoBox.LANCAMENTO);
+			box = Fixture.criarBox("Box-" + i, "BX-" + i, TipoBox.LANCAMENTO, false);
 			save(box);
 		}
 		
 		for (int i = 0; i < 3; i++) {
-			box = Fixture.criarBox("RecBox-" + i, "RECBX-" + i, TipoBox.RECOLHIMENTO);
+			box = Fixture.criarBox("RecBox-" + i, "RECBX-" + i, TipoBox.RECOLHIMENTO, false);
 			save(box);
 		}
 		

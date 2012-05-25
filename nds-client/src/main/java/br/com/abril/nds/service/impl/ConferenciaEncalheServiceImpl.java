@@ -13,8 +13,10 @@ import org.springframework.transaction.annotation.Transactional;
 import br.com.abril.nds.dto.ConferenciaEncalheDTO;
 import br.com.abril.nds.dto.DebitoCreditoCotaDTO;
 import br.com.abril.nds.dto.InfoConferenciaEncalheCota;
+import br.com.abril.nds.dto.MovimentoFinanceiroCotaDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.TipoEdicao;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
@@ -28,7 +30,10 @@ import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
+import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
+import br.com.abril.nds.model.fiscal.ItemNotaFiscalEntrada;
+import br.com.abril.nds.model.fiscal.NotaFiscalEntradaCota;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalheCota;
 import br.com.abril.nds.model.movimentacao.StatusOperacao;
 import br.com.abril.nds.model.planejamento.ChamadaEncalhe;
@@ -42,15 +47,19 @@ import br.com.abril.nds.repository.ConferenciaEncalheRepository;
 import br.com.abril.nds.repository.ControleConferenciaEncalheCotaRepository;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.EstoqueProdutoCotaRepository;
+import br.com.abril.nds.repository.ItemNotaFiscalEntradaRepository;
 import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
 import br.com.abril.nds.repository.MovimentoFinanceiroCotaRepository;
+import br.com.abril.nds.repository.NotaFiscalEntradaRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.repository.TipoMovimentoEstoqueRepository;
 import br.com.abril.nds.repository.TipoMovimentoFinanceiroRepository;
 import br.com.abril.nds.service.ConferenciaEncalheService;
 import br.com.abril.nds.service.DistribuidorService;
+import br.com.abril.nds.service.GerarCobrancaService;
 import br.com.abril.nds.service.MovimentoEstoqueService;
+import br.com.abril.nds.service.MovimentoFinanceiroCotaService;
 import br.com.abril.nds.service.PoliticaCobrancaService;
 import br.com.abril.nds.service.exception.ChamadaEncalheCotaInexistenteException;
 import br.com.abril.nds.service.exception.ConferenciaEncalheExistenteException;
@@ -108,6 +117,18 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	
 	@Autowired
 	private PoliticaCobrancaService politicaCobrancaService;
+	
+	@Autowired
+	private GerarCobrancaService gerarCobrancaService;
+	
+	@Autowired
+	private MovimentoFinanceiroCotaService movimentoFinanceiroCotaService;
+	
+	@Autowired
+	private NotaFiscalEntradaRepository notaFiscalEntradaRepository;
+	
+	@Autowired
+	private ItemNotaFiscalEntradaRepository itemNotaFiscalEntradaRepository;
 	
 	/*
 	 * (non-Javadoc)
@@ -219,15 +240,11 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		
 	}
-
-
 	
 	public boolean verificarCotaEmiteNFe() {
 		return false;
 	}
-
-	public void inserirDadosNotaFiscalCota() {
-	}
+	
 	
 	/*
 	 * (non-Javadoc)
@@ -595,29 +612,47 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	
 		if(	controleConfEncalheCota.getId() != null) {
 			
-			// CANCELAR BOLETOS E 
-			// REGERAR DIVIDAS(COBRANCA)
-			// REIMPRIMIR DOCUMENTOS - ENVIO DE EMAIL. 
-
-			inserirDadosConferenciaEncalhe(controleConfEncalheCota, listaConferenciaEncalhe, listaIdConferenciaEncalheParaExclusao, usuario, StatusOperacao.CONCLUIDO);
-
+			ControleConferenciaEncalheCota controleConferenciaEncalheCotaFromBD = 
+					controleConferenciaEncalheCotaRepository.buscarPorId(controleConfEncalheCota.getId());
 			
-		} else {
+			if(StatusOperacao.CONCLUIDO.equals(controleConferenciaEncalheCotaFromBD.getStatus())) {
+				resetarDadosFinanceirosConferenciaEncalheCota(controleConferenciaEncalheCotaFromBD);
+			}
 			
-			inserirDadosConferenciaEncalhe(controleConfEncalheCota, listaConferenciaEncalhe, listaIdConferenciaEncalheParaExclusao, usuario, StatusOperacao.CONCLUIDO);
-			
-			// TODO: GERAR DADOS DE NOVA CONFERENCIA DE ENCALHE
-			// GERAR A DIVIDA 
-			// IMPRESSAO DE DOCUMENTOS - ENVIO DE EMAIL.
-			
-		}
+		} 			
 		
-//		gerarDivida(controleConfEncalheCota);
+		inserirDadosConferenciaEncalhe(controleConfEncalheCota, listaConferenciaEncalhe, listaIdConferenciaEncalheParaExclusao, usuario, StatusOperacao.CONCLUIDO);
+		
+		gerarCobranca(controleConfEncalheCota);
 		
 		gerarDocumentosConferenciaEncalhe(controleConfEncalheCota);
 		
 	}
 	
+	/**
+	 * Faz o cancelamento de dados financeiros relativos conferenciaEncalheCota em questão.
+	 * 
+	 * @param controleConferenciaEncalheCota
+	 */
+	private void resetarDadosFinanceirosConferenciaEncalheCota(ControleConferenciaEncalheCota controleConferenciaEncalheCota) {
+		
+		List<ConferenciaEncalhe> listaConferenciaEncalhe = controleConferenciaEncalheCota.getConferenciasEncalhe();
+		
+		if( listaConferenciaEncalhe==null || listaConferenciaEncalhe.isEmpty() ) {
+			throw new IllegalStateException("Nenhum registro de conferencia de encalhe, não foi possível fazer reabertura.");
+		}
+		
+		MovimentoEstoqueCota movimentoEstoqueCota = listaConferenciaEncalhe.get(0).getMovimentoEstoqueCota();
+
+		MovimentoFinanceiroCota movimentoFinanceiroCota = 
+				movimentoFinanceiroCotaRepository.obterMovimentoFinanceiroCotaParaMovimentoEstoqueCota(movimentoEstoqueCota.getId());
+		
+		gerarCobrancaService.cancelarDividaCobranca(movimentoFinanceiroCota.getId());
+		
+		movimentoFinanceiroCotaRepository.remover(movimentoFinanceiroCota);
+		
+		
+	}
 	
 	private void inserirDadosConferenciaEncalhe(
 			ControleConferenciaEncalheCota controleConfEncalheCota, 
@@ -630,12 +665,23 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		Integer numeroCota = controleConfEncalheCota.getCota().getNumeroCota();
 		
+		atualizarCabecalhoNotaFiscalEntradaCota(controleConfEncalheCota);
+		
+		atualizarItensNotaFiscalEntradaCota(
+				controleConfEncalheCota.getNotaFiscalEntradaCota(), 
+				listaConferenciaEncalhe);
+		
+		if(StatusOperacao.CONCLUIDO.equals(statusOperacao)){
+			gerarDiferencas();
+		}
+		
 		ControleConferenciaEncalheCota controleConferenciaEncalheCota = 
-				obterControleConferenciaEncalheCotaParaConfEncalhe(controleConfEncalheCota, statusOperacao);
+				obterControleConferenciaEncalheCotaParaConfEncalhe(controleConfEncalheCota, statusOperacao, usuario);
 		
 		Date dataCriacao = new Date();
 		
 		TipoMovimentoEstoque tipoMovimentoEstoqueEnvioEncalhe = tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.ENVIO_ENCALHE);
+		
 		
 		for(ConferenciaEncalheDTO conferenciaEncalheDTO : listaConferenciaEncalhe) {
 			
@@ -657,11 +703,79 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			}
 			
 		}
-
+		
 		if(listaIdConferenciaEncalheParaExclusao!=null && !listaIdConferenciaEncalheParaExclusao.isEmpty()) {
+		
 			for(Long idConferenciaEncalheExclusao : listaIdConferenciaEncalheParaExclusao) {
 				excluirRegistroConferenciaEncalhe(idConferenciaEncalheExclusao);
 			}
+		}
+			
+			
+		
+	}
+	
+	/**
+	 * Atualiza os dados da notaFiscalEntradaCota relacionada com 
+	 * uma operação de conferência de encalhe.
+	 * 
+	 * @param controleConferenciaEncalheCota
+	 */
+	private void atualizarCabecalhoNotaFiscalEntradaCota(ControleConferenciaEncalheCota controleConferenciaEncalheCota) {
+		
+		if(controleConferenciaEncalheCota.getNotaFiscalEntradaCota() == null) {
+			return;
+		}
+		
+		if(controleConferenciaEncalheCota.getNotaFiscalEntradaCota().getId()!=null) {
+			
+			notaFiscalEntradaRepository.alterar(controleConferenciaEncalheCota.getNotaFiscalEntradaCota());
+			
+		} else {
+			
+			notaFiscalEntradaRepository.adicionar(controleConferenciaEncalheCota.getNotaFiscalEntradaCota());
+			
+		}
+		
+		
+	}
+	
+	/**
+	 * Atualiza os itens relativos a uma notaFiscalEntradaCota.
+	 */
+	private void atualizarItensNotaFiscalEntradaCota(
+			NotaFiscalEntradaCota notaFiscalEntradaCota,
+			List<ConferenciaEncalheDTO> listaConferenciaEncalhe) {
+		
+		if(notaFiscalEntradaCota == null || notaFiscalEntradaCota.getId() == null) {
+			return;
+		}
+		
+		Long idNotaFiscalEntrada = notaFiscalEntradaCota.getId();
+		
+		List<ItemNotaFiscalEntrada> itensNotaFiscalEntradaCota = 
+				itemNotaFiscalEntradaRepository.buscarItensPorIdNota(idNotaFiscalEntrada);
+		
+		if(itensNotaFiscalEntradaCota!= null && !itensNotaFiscalEntradaCota.isEmpty()) {
+			for(ItemNotaFiscalEntrada itemNFEntrada : itensNotaFiscalEntradaCota) {
+				itemNotaFiscalEntradaRepository.remover(itemNFEntrada);
+			}
+		}
+		
+		if(listaConferenciaEncalhe != null && !listaConferenciaEncalhe.isEmpty()) {
+			
+			for(ConferenciaEncalheDTO conferenciaEncalhe : listaConferenciaEncalhe) {
+
+				ProdutoEdicao produtoEdicao = new ProdutoEdicao();
+				produtoEdicao.setId(conferenciaEncalhe.getIdProdutoEdicao());
+				
+				ItemNotaFiscalEntrada item = new ItemNotaFiscalEntrada();
+				item.setNotaFiscal(notaFiscalEntradaCota);
+				item.setQtde(conferenciaEncalhe.getQtdInformada());
+				item.setProdutoEdicao(produtoEdicao);
+				
+			}
+			
 		}
 		
 	}
@@ -928,11 +1042,12 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	 * 
 	 * @param ctrlConfEncalheCota
 	 * @param statusOperacao
+	 * @param usuario
 	 * 
 	 * @return ControleConferenciaEncalheCota
 	 */
-	private ControleConferenciaEncalheCota obterControleConferenciaEncalheCotaParaConfEncalhe( 
-			ControleConferenciaEncalheCota ctrlConfEncalheCota, StatusOperacao statusOperacao) {
+	private ControleConferenciaEncalheCota obterControleConferenciaEncalheCotaParaConfEncalhe(  
+			ControleConferenciaEncalheCota ctrlConfEncalheCota, StatusOperacao statusOperacao, Usuario usuario) {
 		
 		Distribuidor distribuidor = distribuidorService.obter();
 		
@@ -940,17 +1055,17 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		if(ctrlConfEncalheCota.getId()!=null) { 
 			
-			ControleConferenciaEncalheCota controleConferenciaEncalheCotaFromBD = 
+			ControleConferenciaEncalheCota controleConferenciaEncalheCotaFromBD = 			
 					controleConferenciaEncalheCotaRepository.buscarPorId(ctrlConfEncalheCota.getId());
 			
-			if(controleConferenciaEncalheCotaFromBD==null) {
-				throw new IllegalStateException("Nenhum registro de ControleConferenciaEncalheCota encontrado.");
-			}
+			controleConferenciaEncalheCotaFromBD.setStatus(statusOperacao);
+			controleConferenciaEncalheCotaFromBD.setUsuario(usuario);
 			
-			return controleConferenciaEncalheCotaFromBD;
+			return controleConferenciaEncalheCotaRepository.merge(controleConferenciaEncalheCotaFromBD);
 			
 		}
 		
+		ctrlConfEncalheCota.setUsuario(usuario);
 		ctrlConfEncalheCota.setCota(cota);
 		ctrlConfEncalheCota.setDataOperacao(distribuidor.getDataOperacao());
 		ctrlConfEncalheCota.setStatus(statusOperacao);
@@ -959,6 +1074,8 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		return ctrlConfEncalheCota;
 	}
+	
+	
 	
 	/**
 	 * Atualiza o registro de MovimentoEstoqueCota assim como o 
@@ -987,20 +1104,51 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	
 	
 	private void gerarDiferencas() {
-		//TODO
+		
+		//TODO: invocar workflow das diferenças.
+		
 		//Pagina 4 paragrafo 4
-	}
-	
-	private void gerarDivida() {
-		//TODO
-		
-		gerarDividaChamadaEncalheAntecipada();
 		
 	}
 	
-	private void gerarDividaChamadaEncalheAntecipada() {
-		//TODO
-		//Pagina 3 paragrafo 6
+	
+	private void gerarCobranca(ControleConferenciaEncalheCota controleConferenciaEncalheCota) {
+		
+		Distribuidor distribuidor = distribuidorService.obter();
+		
+		Long idControleConferenciaEncalheCota = controleConferenciaEncalheCota.getId();
+		
+		List<MovimentoEstoqueCota> movimentosEstoqueCotaOperacaoConferenciaEncalhe = 
+				movimentoEstoqueCotaRepository.obterListaMovimentoEstoqueCotaParaOperacaoConferenciaEncalhe(idControleConferenciaEncalheCota);
+		
+		BigDecimal valorTotalEncalheOperacaoConferenciaEncalhe = 
+				conferenciaEncalheRepository.obterValorTotalEncalheOperacaoConferenciaEncalhe(idControleConferenciaEncalheCota, distribuidor.getId());
+		
+		TipoMovimentoFinanceiro tipoMovimentoFinanceiro = tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(GrupoMovimentoFinaceiro.ENVIO_ENCALHE);
+		
+		MovimentoFinanceiroCotaDTO movimentoFinanceiroCotaDTO = new MovimentoFinanceiroCotaDTO();
+		
+		movimentoFinanceiroCotaDTO.setCota(controleConferenciaEncalheCota.getCota());
+		movimentoFinanceiroCotaDTO.setTipoMovimentoFinanceiro(tipoMovimentoFinanceiro);
+		movimentoFinanceiroCotaDTO.setUsuario(controleConferenciaEncalheCota.getUsuario());
+		movimentoFinanceiroCotaDTO.setValor(valorTotalEncalheOperacaoConferenciaEncalhe);
+		movimentoFinanceiroCotaDTO.setDataOperacao(controleConferenciaEncalheCota.getDataOperacao());
+		movimentoFinanceiroCotaDTO.setBaixaCobranca(null);
+		movimentoFinanceiroCotaDTO.setDataVencimento(controleConferenciaEncalheCota.getDataOperacao());
+		movimentoFinanceiroCotaDTO.setDataAprovacao(controleConferenciaEncalheCota.getDataOperacao());
+		movimentoFinanceiroCotaDTO.setDataCriacao(controleConferenciaEncalheCota.getDataOperacao());
+		movimentoFinanceiroCotaDTO.setObservacao(null);
+		movimentoFinanceiroCotaDTO.setTipoEdicao(TipoEdicao.INCLUSAO);
+		movimentoFinanceiroCotaDTO.setAprovacaoAutomatica(true);
+		movimentoFinanceiroCotaDTO.setLancamentoManual(false);
+		movimentoFinanceiroCotaDTO.setMovimentos(movimentosEstoqueCotaOperacaoConferenciaEncalhe);
+		
+		movimentoFinanceiroCotaService.gerarMovimentoFinanceiroDebitoCredito(movimentoFinanceiroCotaDTO);
+
+		gerarCobrancaService.gerarCobranca(
+				controleConferenciaEncalheCota.getCota().getId(), 
+				controleConferenciaEncalheCota.getUsuario().getId());
+		
 	}
 	
    /*
@@ -1010,12 +1158,18 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	*/
 	private void gerarDocumentosConferenciaEncalhe(ControleConferenciaEncalheCota controleConferenciaEncalheCota) {
 		
-		
 		PoliticaCobranca politicaCobranca = politicaCobrancaService.obterPoliticaCobrancaPrincipal();
 
 		FormaEmissao formaEmissao = politicaCobranca.getFormaEmissao();
 		
 		boolean indEnviaEmail = politicaCobranca.getFormaCobranca().isRecebeCobrancaEmail();
+		
+		
+		gerarSlip();
+		
+		gerarBoleto();
+		
+		gerarRecibo();
 		
 	}
 	

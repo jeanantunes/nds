@@ -60,6 +60,9 @@ public class ProdutoEdicao implements Serializable {
 	@Column(name  = "NUMERO_EDICAO", nullable = false)
 	protected Long numeroEdicao;
 	
+	@Column(name = "NOME_COMERCIAL", nullable = true, unique = true, length = 24)
+	private String nomeComercial;
+	
 	@Column(name = "PRECO_VENDA", nullable = true)
 	protected BigDecimal precoVenda;
 	
@@ -124,6 +127,12 @@ public class ProdutoEdicao implements Serializable {
 	@Column(name = "DATA_DESATIVACAO", nullable = true)
 	@Temporal(TemporalType.DATE)
 	private Date dataDesativacao;
+	
+	/**
+	 * Flag que indica se o ProdutoEdicao foi criado atraves de interface de sistemas ou por cadastro
+	 */
+	@Column(name = "ORIGEM_INTERFACE", nullable = true)
+	private Boolean origemInterface;
 	
 	/**
 	 * Dimensões do produto (largura, etc)
@@ -379,6 +388,28 @@ public class ProdutoEdicao implements Serializable {
 
 	public void setChamadaEncalhes(Set<ChamadaEncalhe> chamadaEncalhes) {
 		this.chamadaEncalhes = chamadaEncalhes;
+	}
+
+	/**
+	 * @return the nomeComercial
+	 */
+	public String getNomeComercial() {
+		return nomeComercial;
+	}
+
+	/**
+	 * @param nomeComercial the nomeComercial to set
+	 */
+	public void setNomeComercial(String nomeComercial) {
+		this.nomeComercial = nomeComercial;
+	}
+
+	public Boolean getOrigemInterface() {
+		return origemInterface;
+	}
+
+	public void setOrigemInterface(Boolean origemInterface) {
+		this.origemInterface = origemInterface;
 	}
 
 }

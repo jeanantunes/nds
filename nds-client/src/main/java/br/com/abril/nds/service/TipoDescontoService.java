@@ -21,5 +21,7 @@ public interface TipoDescontoService {
 	List<TipoDescontoVO> obterTipoDescontoGeral();
 
 	Cota obterCota(int numeroCota);
+	
+	List<TipoDesconto> obterTodosTiposDescontos();
 }
 	

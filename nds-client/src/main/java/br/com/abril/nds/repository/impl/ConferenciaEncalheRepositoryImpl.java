@@ -1,5 +1,6 @@
 package br.com.abril.nds.repository.impl;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.hibernate.Hibernate;
@@ -47,13 +48,13 @@ public class ConferenciaEncalheRepositoryImpl extends
 		hql.append(" PROD_EDICAO.PRECO_VENDA AS precoCapa,                   ");
 		
 		hql.append("        ( PROD_EDICAO.PRECO_VENDA *  ( ");
-		hql.append(    subSqlQueryValorDesconto()			);		
+		hql.append(    getSubSqlQueryValorDesconto()			);		
 		hql.append("         ) / 100 ) AS desconto,        ");
 		
 		hql.append("         MOV_EST_COTA.QTDE * ( PROD_EDICAO.PRECO_VENDA - ( PROD_EDICAO.PRECO_VENDA *  ");
 		
 		hql.append(" ( 							");
-		hql.append(subSqlQueryValorDesconto()	 );
+		hql.append(getSubSqlQueryValorDesconto()	 );
 		hql.append(" ) 							");
 		hql.append(" /100)) AS valorTotal,  	");
 		
@@ -134,7 +135,7 @@ public class ConferenciaEncalheRepositoryImpl extends
 	 * 
 	 * @return String
 	 */
-	private String subSqlQueryValorDesconto() {
+	private String getSubSqlQueryValorDesconto() {
 		
 		StringBuffer sql = new StringBuffer();
 		
@@ -164,17 +165,38 @@ public class ConferenciaEncalheRepositoryImpl extends
 		
 	}
 	
-	/**
-	 * Retorna String referente a uma subquery que obtém o valor comissionamento 
-	 * (percentual de desconto) para determinado produtoEdicao a partir de idCota e idDistribuidor. 
-	 * 
-	 * @return String
-	 */
-	private static String getSubQueryConsultaValorComissionamento() {
+	
+	public BigDecimal obterValorTotalEncalheOperacaoConferenciaEncalhe(Long idControleConferenciaEncalhe, Long idDistribuidor) {
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" ( select case when ( pe.desconto is not null ) then pe.desconto else ");
+		hql.append(" select sum( conferenciaEncalhe.movimentoEstoqueCota.produtoEdicao.precoVenda - ( pe.precoVenda * ("+ getSubHqlQueryValorDesconto() +") / 100 ) ) ");
+		
+		hql.append(" from ConferenciaEncalhe conferenciaEncalhe  ");
+		
+		hql.append(" where conferenciaEncalhe.controleConferenciaEncalheCota.id = :idControleConferenciaEncalhe  ");
+		
+		Query query =  this.getSession().createQuery(hql.toString());
+		
+		query.setParameter("idControleConferenciaEncalhe", idControleConferenciaEncalhe);
+		
+		query.setParameter("idDistribuidor", idDistribuidor);
+		
+		return (BigDecimal) query.uniqueResult();
+		
+	}
+	
+	/**
+	 * Obtém String de subHQL que retorna valor de desconto
+	 * de acordo com ProdutoEdicao, Cota e Distribuidor.
+	 * 
+	 * @return String
+	 */
+	private String getSubHqlQueryValorDesconto() {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select case when ( pe.desconto is not null ) then pe.desconto else ");
 		
 		hql.append(" ( case when ( ct.fatorDesconto is not null ) then ct.fatorDesconto  else  ");
 		
@@ -190,7 +212,7 @@ public class ConferenciaEncalheRepositoryImpl extends
 
 		hql.append(" pe.id = conferenciaEncalhe.movimentoEstoqueCota.produtoEdicao.id and ");
 
-		hql.append(" distribuidor.id = :idDistribuidor ) ");
+		hql.append(" distribuidor.id = :idDistribuidor ");
 		
 		return hql.toString();
 		

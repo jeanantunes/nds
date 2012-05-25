@@ -544,10 +544,9 @@ public class DividaRepositoryImpl extends AbstractRepository<Divida, Long> imple
 	@Override
 	public Divida obterDividaPorIdConsolidado(Long idConsolidado) {
 		
-		Query query = this.getSession().createQuery("select Divida where consolidado.id = :idConsolidado");
+		Criteria criteria = this.getSession().createCriteria(Divida.class);
+		criteria.add(Restrictions.eq("consolidado.id", idConsolidado));
 		
-		query.setParameter("idConsolidado", idConsolidado);
-		
-		return (Divida) query.uniqueResult();
+		return (Divida) criteria.uniqueResult();
 	}
 }

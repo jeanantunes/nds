@@ -2,6 +2,8 @@ package br.com.abril.nds.repository;
 
 import java.util.List;
 
+import br.com.abril.nds.dto.FornecedorDTO;
+import br.com.abril.nds.dto.filtro.FiltroConsultaFornecedorDTO;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.GrupoFornecedor;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
@@ -47,5 +49,23 @@ public interface FornecedorRepository extends Repository<Fornecedor, Long> {
 	List<Fornecedor> obterFornecedoresCota(Long idCota);
 	
 	List<Fornecedor> obterFornecedoresNaoReferenciadosComCota(Long idCota);
+
+	/**
+	 * Método que retorna uma lista de fornecedores com base no filtro recebido. 
+	 * 
+	 * @param filtroConsultaFornecedor - Filtro de Fornecedores.
+	 * 
+	 * @return List<FornecedorDTO>
+	 */
+	List<FornecedorDTO> obterFornecedoresPorFiltro(FiltroConsultaFornecedorDTO filtroConsultaFornecedor);
 	
+
+	/**
+	 * Método que retorna a contagem de fornecedores com base no filtro recebido. 
+	 * 
+	 * @param filtroConsultaFornecedor - Filtro de Fornecedores.
+	 * 
+	 * @return Long
+	 */
+	Long obterContagemFornecedoresPorFiltro(FiltroConsultaFornecedorDTO filtroConsultaFornecedor);
 }

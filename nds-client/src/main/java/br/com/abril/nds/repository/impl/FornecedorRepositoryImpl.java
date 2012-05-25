@@ -2,17 +2,17 @@ package br.com.abril.nds.repository.impl;
 
 import java.util.List;
 
-import org.apache.xmlbeans.impl.xb.xsdschema.RestrictionDocument.Restriction;
-import org.hibernate.Criteria;
 import org.hibernate.Query;
-import org.hibernate.criterion.Restrictions;
+import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Repository;
 
+import br.com.abril.nds.dto.FornecedorDTO;
+import br.com.abril.nds.dto.filtro.FiltroConsultaFornecedorDTO;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.GrupoFornecedor;
-import br.com.abril.nds.model.cadastro.MaterialPromocional;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.repository.FornecedorRepository;
+import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
 /**
  * Classe de implementação referente ao acesso a dados da entidade
@@ -163,6 +163,129 @@ public class FornecedorRepositoryImpl extends
 		return query.list();
 		
 	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<FornecedorDTO> obterFornecedoresPorFiltro(FiltroConsultaFornecedorDTO filtroConsultaFornecedor) {
+
+		String hql = obterHQLConsultaFornecedoresPorFiltro(filtroConsultaFornecedor);
+		
+		if (filtroConsultaFornecedor.getColunaOrdenacao() != null) {
+		
+			hql += " order by ";
+			hql += filtroConsultaFornecedor.getColunaOrdenacao().getOrdenacao();
+			hql += filtroConsultaFornecedor.getPaginacao() != null
+			   		&& Ordenacao.DESC == filtroConsultaFornecedor.getPaginacao().getOrdenacao() ? 
+			   				" desc " : " asc ";
+		}
+
+		Query query = obterQueryParametrizada(filtroConsultaFornecedor, hql);
+
+	    if (filtroConsultaFornecedor.getPaginacao() != null 
+				&& filtroConsultaFornecedor.getPaginacao().getPosicaoInicial() != null) {
+		
+			query.setFirstResult(filtroConsultaFornecedor.getPaginacao().getPosicaoInicial());
+			
+			query.setMaxResults(filtroConsultaFornecedor.getPaginacao().getQtdResultadosPorPagina());
+	    }
+		
+		query.setResultTransformer(new AliasToBeanResultTransformer(FornecedorDTO.class));
+
+		return query.list();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Long obterContagemFornecedoresPorFiltro(FiltroConsultaFornecedorDTO filtroConsultaFornecedor) {
+
+		String hql = obterHQLConsultaFornecedoresPorFiltro(filtroConsultaFornecedor);
+		
+		hql = " select count(fornecedor) " 
+			+ hql.substring(hql.indexOf(" from "));
+		
+		Query query = obterQueryParametrizada(filtroConsultaFornecedor, hql);
+		
+		return (Long) query.uniqueResult();
+	}
 	
+	private String obterHQLConsultaFornecedoresPorFiltro(FiltroConsultaFornecedorDTO filtroConsultaFornecedor) {
+
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select ")
+		   .append(" fornecedor.id as idFornecedor, ")
+		   .append(" fornecedor.codigoInterface as codigoInterface, ")
+		   .append(" fornecedor.juridica.razaoSocial as razaoSocial, ")
+		   .append(" fornecedor.juridica.cnpj as cnpj, ")
+//		   .append(" fornecedor.responsavel as responsavel, ")
+//		   .append(" telefone.numero as telefone, ")
+		   .append(" fornecedor.juridica.email as email ")
+		   
+		   .append(" from Fornecedor fornecedor ");
+		
+		String condicoes = "";
+		
+		if (filtroConsultaFornecedor.getCnpj() != null 
+				&& !filtroConsultaFornecedor.getCnpj().isEmpty()) {
+			
+			condicoes = "".equals(condicoes) ? " where " : " and ";  
+			
+			hql.append(condicoes);
+			hql.append(" fornecedor.juridica.cnpj like :cnpj ");
+		}
+		
+		if (filtroConsultaFornecedor.getNomeFantasia() != null 
+				&& !filtroConsultaFornecedor.getNomeFantasia().isEmpty()) {
+			
+			condicoes = "".equals(condicoes) ? " where " : " and ";  
+			
+			hql.append(condicoes);
+			hql.append(" fornecedor.juridica.nomeFantasia like :nomeFantasia ");
+		}
+
+		if (filtroConsultaFornecedor.getRazaoSocial() != null 
+				&& !filtroConsultaFornecedor.getRazaoSocial().isEmpty()) {
+			
+			condicoes = "".equals(condicoes) ? " where " : " and ";  
+			
+			hql.append(condicoes);
+			hql.append(" fornecedor.juridica.razaoSocial like :razaoSocial ");
+		}
+		
+		return hql.toString();
+	}
 	
+	/*
+	 * Método que retorna o objeto Query com suas devidas parametrizações.
+	 */
+	private Query obterQueryParametrizada(FiltroConsultaFornecedorDTO filtroConsultaFornecedor, String hql) {
+		
+		Query query = getSession().createQuery(hql);
+		
+		if (filtroConsultaFornecedor.getCnpj() != null 
+				&& !filtroConsultaFornecedor.getCnpj().isEmpty()) {
+			
+			query.setParameter("cnpj", filtroConsultaFornecedor.getCnpj());
+		}
+		
+		if (filtroConsultaFornecedor.getNomeFantasia() != null 
+				&& !filtroConsultaFornecedor.getNomeFantasia().isEmpty()) {
+			
+			query.setParameter("nomeFantasia", filtroConsultaFornecedor.getNomeFantasia());
+		}
+
+		if (filtroConsultaFornecedor.getRazaoSocial() != null 
+				&& !filtroConsultaFornecedor.getRazaoSocial().isEmpty()) {
+			
+			query.setParameter("razaoSocial", filtroConsultaFornecedor.getRazaoSocial());
+		}
+
+		return query;
+	}
+
 }

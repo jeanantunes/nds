@@ -57,7 +57,7 @@ public class ItemNotaFiscalEntradaRepositoryImplTest extends AbstractRepositoryI
 		TipoNotaFiscal tipoNotaFiscal = Fixture.tipoNotaFiscalRecebimento();
 		save(tipoNotaFiscal);
 		
-		box1 = Fixture.criarBox("Box-1", "BX-001", TipoBox.LANCAMENTO);
+		box1 = Fixture.criarBox("Box-1", "BX-001", TipoBox.LANCAMENTO, false);
 		save(box1);
 		
 		TipoProduto tipoProdutoRevista = Fixture.tipoRevista();
@@ -85,9 +85,9 @@ public class ItemNotaFiscalEntradaRepositoryImplTest extends AbstractRepositoryI
 		
 		PeriodicidadeProduto periodicidade = PeriodicidadeProduto.MENSAL;
 		
-		Produto produtoCE = Fixture.produto("00084", "Produto CE", "ProdutoCE", periodicidade, tipoProdutoRevista, 5, 5);
-		Produto produtoCE_2 = Fixture.produto("00085", "Produto CE 2", "ProdutoCE_2", periodicidade, tipoProdutoRevista, 5, 5);
-		Produto produtoCE_3 = Fixture.produto("00086", "Produto CE 3", "ProdutoCE_3", periodicidade, tipoProdutoRevista, 5, 5);
+		Produto produtoCE = Fixture.produto("00084", "Produto CE", "ProdutoCE", periodicidade, tipoProdutoRevista, 5, 5, BigDecimal.TEN);
+		Produto produtoCE_2 = Fixture.produto("00085", "Produto CE 2", "ProdutoCE_2", periodicidade, tipoProdutoRevista, 5, 5, BigDecimal.TEN);
+		Produto produtoCE_3 = Fixture.produto("00086", "Produto CE 3", "ProdutoCE_3", periodicidade, tipoProdutoRevista, 5, 5, BigDecimal.TEN);
 		
 		produtoCE.addFornecedor(fornecedorDinap);
 		produtoCE_2.addFornecedor(fornecedorDinap);
@@ -96,17 +96,17 @@ public class ItemNotaFiscalEntradaRepositoryImplTest extends AbstractRepositoryI
 		save(produtoCE, produtoCE_2, produtoCE_3);
 
 		produtoEdicaoCE = Fixture.produtoEdicao(84L, 10, 7,
-				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(15), "ABCDEFGHIJKLMNOPQRSTU", 1L, produtoCE);
+				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(15), "ABCDEFGHIJKLMNOPQRSTU", 1L, produtoCE, null, false);
 		produtoEdicaoCE.setDesconto(BigDecimal.ZERO);
 
 		
 		produtoEdicaoCE_2 = Fixture.produtoEdicao(85L, 10, 7,
-				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(18), "ABCDEFGHIJKLMNOPQRST", 2L, produtoCE_2);
+				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(18), "ABCDEFGHIJKLMNOPQRST", 2L, produtoCE_2, null, false);
 		produtoEdicaoCE.setDesconto(BigDecimal.ONE);
 
 		
 		produtoEdicaoCE_3 = Fixture.produtoEdicao(86L, 10, 7,
-				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(90), "ABCDEFGHIJKLMNOPQRS", 3L, produtoCE_3);
+				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(90), "ABCDEFGHIJKLMNOPQRS", 3L, produtoCE_3, null, false);
 		produtoEdicaoCE.setDesconto(BigDecimal.ONE);
 
 		

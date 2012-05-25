@@ -28,8 +28,16 @@ public class FiltroConsultaDividasCotaDTO implements Serializable {
 	@Export(label = "Data de Vencimento")
 	private Date dataVencimento;
 	
+	
+	
 	@Export(label = "Status da Cobrança")
 	private StatusCobranca statusCobranca;
+	
+	@Export(label = "Acumula Divida")
+	private boolean acumulaDivida;
+
+	
+	
 	
 	private PaginacaoVO paginacao;
 	
@@ -80,9 +88,9 @@ public class FiltroConsultaDividasCotaDTO implements Serializable {
 		
 		CODIGO("codigo"),
 		NOME_COTA("nome"),
-		DATA_EMISSAO("dtEmissao"),
-		DATA_VENCIMENTO("dtVencimento"),
-		VALOR("vlDivida");
+		DATA_EMISSAO("dataEmissao"),
+		DATA_VENCIMENTO("dataVencimento"),
+		VALOR("valor");
 		
 		private String nomeColuna;
 		
@@ -149,6 +157,14 @@ public class FiltroConsultaDividasCotaDTO implements Serializable {
 
 	public void setStatusCobranca(StatusCobranca statusCobranca) {
 		this.statusCobranca = statusCobranca;
+	}
+
+	public boolean isAcumulaDivida() {
+		return acumulaDivida;
+	}
+
+	public void setAcumulaDivida(boolean acumulaDivida) {
+		this.acumulaDivida = acumulaDivida;
 	}
 
 	@Override

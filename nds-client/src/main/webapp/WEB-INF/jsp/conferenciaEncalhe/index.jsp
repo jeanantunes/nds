@@ -22,7 +22,7 @@
 			
 			pesquisarCota : function() {
 				
-				var data = [{name : 'numeroCota', value : jQuery("#numeroCota").val()}];
+				var data = [{name : 'numeroCota', value : $("#numeroCota").val()}];
 				
 				$.postJSON("<c:url value='/devolucao/conferenciaEncalhe/verificarReabertura'/>", data,
 					function(result){
@@ -407,7 +407,7 @@
 									
 									$("#dialog-logado").dialog("close");
 									$('#numeroCota').focus();
-								}
+								}, null, true, "idModalBoxRecolhimento"
 							);
 						},
 						"Cancelar" : function() {
@@ -689,7 +689,8 @@
 									exibirMensagem(result.tipoMensagem, result.listaMensagens);
 									
 									$("#dialog-salvar").dialog("close");
-								}
+								},
+								null, true, "idModalConfirmarSalvarConf"
 							);
 						},
 						"Cancelar" : function() {
@@ -1025,8 +1026,6 @@
 						$("#qtdeExemplar").val(qtd + 1);
 					} else {
 						
-						var _sm = $("#sm").val();
-						
 						var data = [{name: "codigoBarra", value: ""}, 
 						            {name: "sm", value: $("#sm").val()}, 
 						            {name: "idProdutoEdicao", value: ""},
@@ -1070,7 +1069,11 @@
 								ConferenciaEncalhe.setarValoresPesquisados(result);
 								$("#dialog-pesquisar").dialog("destroy");
 								$('#cod_barras').focus();
-							}, null, true, "idModalPesquisarProdutos"
+							},
+							function(){
+								
+								$("#codProduto").val("");
+							}, true, "idModalPesquisarProdutos"
 						);
 					}
 				} else {
@@ -1123,7 +1126,7 @@
 				$.postJSON("<c:url value='/devolucao/conferenciaEncalhe/verificarValorTotalNotaFiscal'/>", null,
 					function(result){
 						
-						exibirMensagem(result.mensagens.tipoMensagem, result.mensagens.listaMensagens);
+						exibirMensagem(result.tipoMensagem, result.listaMensagens);
 					},
 					function(){
 						

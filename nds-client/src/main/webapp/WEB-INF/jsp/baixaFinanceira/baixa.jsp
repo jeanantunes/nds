@@ -9,12 +9,90 @@
 	
 	
 		$(function() {
+			
 			$("#filtroNumCota").numeric();
 			$("#descricaoCota").autocomplete({source: ""});
+			
 		}); 
 	
 	
 	    //BAIXA MANUAL--------------------------------------
+	    
+	    function popup_baixa_dividas() {
+			$( "#dialog-baixa-dividas" ).dialog({
+				resizable: false,
+				height:430,
+				width:480,
+				modal: true,
+				buttons: {
+					"Confirmar": function() {
+						
+						popup_confirma_baixa_dividas();
+						
+						$( this ).dialog( "close" );
+					},
+					"Cancelar": function() {
+						$( this ).dialog( "close" );
+					}
+				}
+			});
+		};
+
+		function popup_detalhes(codigo) {
+			
+			obterDetalhesDivida(codigo);
+			
+			$( "#dialog-detalhes-divida" ).dialog({
+				resizable: false,
+				height:350,
+				width:650,
+				modal: true,
+				buttons: {
+					"Fechar": function() {
+						$( this ).dialog( "close" );
+					}
+				}
+			});
+		};
+
+		function popup_confirma_baixa_dividas() {
+			$( "#dialog-confirma-baixa" ).dialog({
+				resizable: false,
+				height:130,
+				width:470,
+				modal: true,
+				buttons: {
+					"Confirmar": function() {
+						
+						baixaManualDividas();
+						
+						$( this ).dialog( "close" );
+					},
+					"Cancelar": function() {
+						$( this ).dialog( "close" );
+					}
+				}
+			});
+		};
+		
+		function mostrarPopupPagamento() {
+			$( "#dialog-confirma-baixa-numero" ).dialog({
+				resizable: false,
+				height:170,
+				width:380,
+				modal: true,
+				buttons: {
+					"Confirmar": function() {
+						$( this ).dialog( "close" );
+						
+						baixaPorNossoNumero();
+					},
+					"Cancelar": function() {
+						$( this ).dialog( "close" );
+					}
+				}
+			});
+		};
 	
 		$(function() {
 			$(".liberaDividaGrid").flexigrid({
@@ -74,37 +152,36 @@
 			});
 		});
 		
-		cont = 0;
 		function selecionarTodos(checked){
+			
 			for (var i=0;i<document.formularioListaDividas.elements.length;i++) {
 			     var x = document.formularioListaDividas.elements[i];
-			     if (x.name == 'checkbox') {
+			     if (x.name == 'checkboxGrid') {
 			    	 x.checked = checked;
 			     }    
 			}
 			
-			if (cont == 0){   
+			if (checked){
+				
 				var elem = document.getElementById("textoSelTodos");
 				elem.innerHTML = "Desmarcar todos";
 				cont = 1;
-			} 
-			
-			else {
-				var elem = document.getElementById("textoSelTodos");
-				elem.innerHTML = "Marcar todos";
-				cont = 0;
-			}
-			
-			if (checked){
+				
     	        $("#totalDividasSelecionadas").html($("#totalDividas").html());
 			    $("#totalDividasSelecionadasHidden").val($("#totalDividasHidden").val());
             }
+			
 			else{
+				
+				var elem = document.getElementById("textoSelTodos");
+				elem.innerHTML = "Marcar todos";
+				cont = 0;
+				
 				$("#totalDividasSelecionadas").html("0,00");
 				$("#totalDividasSelecionadasHidden").val("0,00");
 			}
 		}
-		
+
 		function calculaSelecionados(checked, valor) {
 			
 			var totalSelecionado = removeMascaraPriceFormat($("#totalDividasSelecionadasHidden").val());
@@ -149,7 +226,7 @@
 						 	   '<img title="Aprovar" src="${pageContext.request.contextPath}/images/ico_detalhes.png" hspace="5" border="0px" />' +
 							   '</a>';	
 							   
-				var checkBox = '<input type="checkbox" name="checkbox" onchange="calculaSelecionados(this.checked,'+ valorItem +');" />';	
+				var checkBox = '<input type="checkbox" name="checkboxGrid" id="checkbox_'+ row.cell.codigo +'" onchange="calculaSelecionados(this.checked,'+ valorItem +');" />';	
 				
 				row.cell.acao = detalhes;
 			    row.cell.check = checkBox;
@@ -386,117 +463,28 @@
 			$('#filtroNossoNumero').val("");
 		}
 		
-        function popup_baixa() {
-			
-			obterPagamentoDivida();
-			
-			$( "#dialog-baixa-dividas" ).dialog({
-				resizable: false,
-				height:430,
-				width:480,
-				modal: true,
-				buttons: {
-					"Confirmar": function() {
-						
-						popup_confirma();
-						
-						$( this ).dialog( "close" );
-					},
-					"Cancelar": function() {
-						$( this ).dialog( "close" );
-					}
-				}
-			});
-		};
-
-		function popup_detalhes(codigo) {
-			
-			obterDetalhesDivida(codigo);
-			
-			$( "#dialog-detalhes-divida" ).dialog({
-				resizable: false,
-				height:350,
-				width:650,
-				modal: true,
-				buttons: {
-					"Fechar": function() {
-						$( this ).dialog( "close" );
-					}
-				}
-			});
-		};
-
-		function popup_confirma() {
-			$( "#dialog-confirma-baixa" ).dialog({
-				resizable: false,
-				height:130,
-				width:470,
-				modal: true,
-				buttons: {
-					"Confirmar": function() {
-						
-						baixaManualDividas();
-						
-						$( this ).dialog( "close" );
-					},
-					"Cancelar": function() {
-						$( this ).dialog( "close" );
-					}
-				}
-			});
-		};
-		
-		function mostrarPopupPagamento() {
-			$( "#dialog-confirma-baixa-numero" ).dialog({
-				resizable: false,
-				height:170,
-				width:380,
-				modal: true,
-				buttons: {
-					"Confirmar": function() {
-						$( this ).dialog( "close" );
-						
-						baixaPorNossoNumero();
-					},
-					"Cancelar": function() {
-						$( this ).dialog( "close" );
-					}
-				}
-			});
-		};
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
 		function obterCobrancasDividasMarcadas(){
-			var dividasMarcadas;
-			/*
-			$(".liberaDividaGrid").each(resultado.rows, function(index, row) {
-				dividasMarcadas = dividasMarcadas + row.cell.codigo;
-			});
-			*/
-			dividasMarcadas = 'idDividas=1&idDividas=2';
-			return dividasMarcadas; //array de id dividas
+
+			var dividasMarcadas='';
+			var table = document.getElementById("tabelaDividas");
+			
+			for(i = 0; i < table.rows.length; i++){   
+				
+				if (document.getElementById("checkbox_"+table.rows[i].cells[0].textContent).checked){
+				    table.rows[i].cells[0].textContent; 
+				    dividasMarcadas+='idCobrancas='+ table.rows[i].cells[0].textContent + '&';
+			    }
+
+			} 
+			
+			return dividasMarcadas;
 		}
 		
-        function obterPagamentoDivida() {
-			var idCobrancasDividas = obterCobrancasDividasMarcadas();
-			var data = [{name: 'idCobrancas', value: idCobrancasDividas}];
-			$.postJSON("<c:url value='/financeiro/obterPagamentoDivida' />",
-					   data,
-					   sucessCallbackPagamentoDivida);
+        function obterPagamentoDividas() {
+			$.postJSON("<c:url value='/financeiro/obterPagamentoDividas' />",
+					   obterCobrancasDividasMarcadas(),
+					   sucessCallbackPagamentoDivida,
+					   null);
 		}
 		
 		function calculaTotalManualDividas() {
@@ -515,7 +503,6 @@
 				centsSeparator: ',',
 			    thousandsSeparator: '.'
 			});
-			
 		}
         
 		function sucessCallbackPagamentoDivida(resultado) {
@@ -580,6 +567,8 @@
 			
 			$("#saldoCotaDividas").html($("#saldoCotaDividasHidden").val());
 			$("#valorDividas").html($("#valorDividasHidden").val());
+			
+			popup_baixa_dividas();
 		}
 		
         function baixaManualDividas() {
@@ -593,30 +582,21 @@
         	var formaRecebimentoDividas = $("#formaRecebimentoDividas").val();
         	var observacoesDividas = $("#observacoesDividas").val();
 
-			$.postJSON("<c:url value='/financeiro/baixaManualDivida'/>",
-					   "pagamento.valorDividas="+valorDividas+
-					   "&pagamento.valorMulta="+ multaDividas +
-					   "&pagamento.valorJuros="+ jurosDividas+
-					   "&pagamento.valorDesconto="+ descontoDividas +
-					   "&pagamento.valorPagamento="+ valorPagoDividas+
-					   "&pagamento.valorSaldo="+ saldoCotaDividas+
-					   "&pagamento.tipoPagamento="+ formaRecebimentoDividas+
-					   "&pagamento.observacoes="+ observacoesDividas);
+			$.postJSON("<c:url value='/financeiro/baixaManualDividas'/>",
+					   "valorDividas="+valorDividas+
+					   "&valorMulta="+ multaDividas +
+					   "&valorJuros="+ jurosDividas+
+					   "&valorDesconto="+ descontoDividas +
+					   "&valorPagamento="+ valorPagoDividas+
+					   "&valorSaldo="+ saldoCotaDividas+
+					   "&tipoPagamento="+ formaRecebimentoDividas+
+					   "&observacoes="+ observacoesDividas +
+					   "&"+obterCobrancasDividasMarcadas(),
+					   null,
+					   null,
+					   true);
 			
 		}
-
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
 		
         function obterNegociacao(dataVencimento) {
 			var data = [{name: 'dataVencimento', value: dataVencimento}];
@@ -695,7 +675,6 @@
 			}
 			
 			if (responseJson.result) {
-				
 				$("#nomeArquivo").html(responseJson.result.nomeArquivo);
 				$("#dataCompetencia").html(responseJson.result.dataCompetencia);
 				$("#somaPagamentos").html(responseJson.result.somaPagamentos);
@@ -825,7 +804,7 @@
 		        </td>
 			  
 				<td width="97">Nosso Número:</td>
-				<td width="333"><input type="text" name="filtroNossoNumero" id="filtroNossoNumero" style="width: 300px;" /></td>
+				<td width="333"><input maxlength="100" type="text" name="filtroNossoNumero" id="filtroNossoNumero" style="width: 300px;" /></td>
 				<td width="104"><span class="bt_pesquisar"><a href="javascript:;" onclick="buscaManual();">Pesquisar</a></span></td>
 			</tr>
         </table>
@@ -932,11 +911,12 @@
 		<input type="hidden" id="valorTotalHidden" />
 		<input type="hidden" id="valorBoletoHidden" />
 		
-		 <input type="hidden" id="saldoCotaDividasHidden" />
+		<input type="hidden" id="saldoCotaDividasHidden" />
 		<input type="hidden" id="valorDividasHidden" />
 		
 		<input type="hidden" id="totalDividasHidden" />
 	    <input type="hidden" id="totalDividasSelecionadasHidden" />
+	 
 	
 		<fieldset class="classFieldset" id="extratoBaixaManual" >
 	      	<legend>Baixa Manual</legend>
@@ -1012,7 +992,7 @@
 			
 	      	<div  id="porCota">
 	      	
-		       <table class="liberaDividaGrid"></table>
+		       <table class="liberaDividaGrid" id="tabelaDividas"></table>
 		    
 		       <table width="100%" border="0" cellspacing="2" cellpadding="2">
 		            <tr>
@@ -1021,7 +1001,7 @@
 		                <span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
 		                </td>
 		                <td width="20%">   
-		                    <span class="bt_confirmar_novo" title="Pagar Boleto"><a onclick="popup_baixa();" href="javascript:;"><img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_check.gif">Pagar</a></span>
+		                    <span class="bt_confirmar_novo" title="Pagar Boleto"><a onclick="obterPagamentoDividas();" href="javascript:;"><img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_check.gif">Pagar</a></span>
 		                    <span class="bt_confirmar_novo" title="Negociar Dívida"><a onclick="obterNegociacao('01/01/2012');" href="javascript:;"><img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_check.gif">Negociar</a></span>
 		                </td>
 		                
@@ -1065,19 +1045,19 @@
 				  </tr>
 				  <tr>
 				    <td><strong>Multa R$:</strong></td>
-				    <td><input id="multaDividas" name="multaDividas" onblur="calculaTotalManualDividas();" type="text" style="width:80px; text-align:right;" /></td>
+				    <td><input  maxlength="16" id="multaDividas" name="multaDividas" onblur="calculaTotalManualDividas();" type="text" style="width:80px; text-align:right;" /></td>
 				  </tr>
 				  <tr>
 				    <td><strong>Juros R$:</strong></td>
-				    <td><input id="jurosDividas" name="jurosDividas" onblur="calculaTotalManualDividas();" type="text" style="width:80px; text-align:right;" /></td>
+				    <td><input maxlength="16" id="jurosDividas" name="jurosDividas" onblur="calculaTotalManualDividas();" type="text" style="width:80px; text-align:right;" /></td>
 				  </tr>
 				  <tr>
 				    <td><strong>Desconto R$:</strong></td>
-				    <td><input id="descontoDividas" name="descontoDividas" onblur="calculaTotalManualDividas();" type="text" style="width:80px; text-align:right;" /></td>
+				    <td><input maxlength="16" id="descontoDividas" name="descontoDividas" onblur="calculaTotalManualDividas();" type="text" style="width:80px; text-align:right;" /></td>
 				  </tr>
 				  <tr>
 				    <td><strong>Valor pago R$:</strong></td>
-				    <td><input id="valorPagoDividas" name="valorPagoDividas" type="text" style="width:80px; text-align:right;" /></td>
+				    <td><input maxlength="16" id="valorPagoDividas" name="valorPagoDividas" type="text" style="width:80px; text-align:right;" /></td>
 				  </tr>
 				  <tr>
 				    <td>&nbsp;</td>
@@ -1108,7 +1088,7 @@
 				  </tr>
 				  <tr>
 				    <td><strong>Observação:</strong></td>
-				    <td><textarea name="observacoesDividas" id="observacoesDividas" cols="45" rows="3" style="width:260px;"></textarea></td>
+				    <td><textarea maxlength="150" name="observacoesDividas" id="observacoesDividas" cols="45" rows="3" style="width:260px;"></textarea></td>
 				  </tr>
 				</table>
 			</div>

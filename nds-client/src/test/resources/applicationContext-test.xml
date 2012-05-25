@@ -12,13 +12,14 @@
 	<context:component-scan base-package="br.com.abril.nds" />
 
 	<util:properties id="queries" location="classpath:/query.properties" />
+
 	<bean id="dataSource"
 		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
 		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
 		<property name="url" value="${testDataSourceURL}" />
 		<property name="username" value="${testDataSourceUsername}" />
 		<property name="password" value="${testDataSourcePassword}" />
-	</bean>
+    </bean>
 
 	<bean id="sessionFactory"
 		class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean">
@@ -37,6 +38,14 @@
 	<bean id="transactionManager"
 		class="org.springframework.orm.hibernate3.HibernateTransactionManager">
 		<property name="sessionFactory" ref="sessionFactory" />
+	</bean>
+	
+	<bean id="couchDbProperties" class="br.com.abril.nds.integracao.couchdb.CouchDbProperties">
+		<property name="protocol" value="http" />
+		<property name="host" value="127.0.0.1" />
+		<property name="port" value="5984" />
+		<property name="username" value="" />
+		<property name="password" value="" />
 	</bean>
 
 	<!-- 
