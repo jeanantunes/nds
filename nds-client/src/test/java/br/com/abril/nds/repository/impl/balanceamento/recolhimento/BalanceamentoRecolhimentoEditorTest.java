@@ -72,17 +72,16 @@ public class BalanceamentoRecolhimentoEditorTest extends AbstractRepositoryImplT
 		Editor abril = Fixture.editoraAbril();
 		save(abril);
 		
-		PessoaJuridica juridicaFc = Fixture.juridicaFC();
-		save(juridicaFc);
-		
-		Editor globo = Fixture.criarEditor("Globo", 687L, juridicaFc, true);
-		save(globo);
-
 		tipoFornecedorPublicacao = Fixture.tipoFornecedorPublicacao();
 		fornecedorFC = Fixture.fornecedorFC(tipoFornecedorPublicacao);
 		fornecedorDinap = Fixture.fornecedorDinap(tipoFornecedorPublicacao);
 		save(fornecedorFC, fornecedorDinap);
 
+		PessoaJuridica juridicaFc = fornecedorFC.getJuridica();
+		
+		Editor globo = Fixture.criarEditor("Globo", 687L, juridicaFc, true);
+		save(globo);
+		
 		TipoProduto tipoRevista = Fixture.tipoRevista();
 		tipoCromo = Fixture.tipoCromo();
 		save(tipoRevista, tipoCromo);
