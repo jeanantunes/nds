@@ -34,10 +34,10 @@ public class TipoMovimentoRepositoryImplTest extends AbstractRepositoryImplTest 
 		
 		FiltroTipoMovimento filtro = new FiltroTipoMovimento();
 		filtro.setPaginacao(new PaginacaoVO(1, 10, "asc", "codigo"));
-		filtro.setDescricao("Envio Encalhe");
+		filtro.setDescricao("Encalhe");
 		
-		List<TipoMovimentoDTO> tipos =  tipoMovimentoRepository.obterTipoMovimento(filtro);
-		Assert.assertTrue(tipos.size() == 1);
+		List<TipoMovimentoDTO> tipos =  tipoMovimentoRepository.obterTiposMovimento(filtro);
+		Assert.assertTrue(tipos.size() == 2);
 		
 	}
 		

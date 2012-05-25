@@ -27,6 +27,14 @@ public interface TipoMovimentoRepository extends Repository<TipoMovimento, Long>
 	 * @param filtro
 	 * @return
 	 */
-	List<TipoMovimentoDTO> obterTipoMovimento(FiltroTipoMovimento filtro);
+	List<TipoMovimentoDTO> obterTiposMovimento(FiltroTipoMovimento filtro);
+
+	/**
+	 * Count da busca "obterTiposMovimento"
+	 * 
+	 * @param filtro
+	 * @return
+	 */
+	Integer countObterTiposMovimento(FiltroTipoMovimento filtro);
 	
 }

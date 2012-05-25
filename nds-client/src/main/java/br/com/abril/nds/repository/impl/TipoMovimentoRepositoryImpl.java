@@ -43,17 +43,24 @@ public class TipoMovimentoRepositoryImpl extends AbstractRepository<TipoMoviment
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<TipoMovimentoDTO> obterTipoMovimento(FiltroTipoMovimento filtro) {
+	public List<TipoMovimentoDTO> obterTiposMovimento(FiltroTipoMovimento filtro) {
 		
 		HashMap<String, Object> param = new HashMap<String, Object>();
 		
 		StringBuilder hql = new StringBuilder();
 		
 		hql.append(" select tipo.id as codigo, ");
-		hql.append(" 		tipo.descricao as descricao ");
-		hql.append(" from TipoMovimento tipo ");
 		
+		hql.append(" 		tipo.descricao as descricao, ");
+		hql.append("		tipo.class as grupoOperacao, ");	
+		hql.append("		tipo.operacaoEstoque as operacaoEstoque, ");
+		hql.append("		tipo.operacaoFinaceira as operacaoFinanceira, ");
+		hql.append("		tipo.aprovacaoAutomatica as aprovacao, ");
+		hql.append("		tipo.incideDivida as incideDivida, ");
+		hql.append("		tipo.grupoMovimentoFinaceiro as grupoMovimentoFinaceiro, ");
+		hql.append("		tipo.grupoMovimentoEstoque as grupoMovimentoEstoque ");
 		
+				
 		gerarFromWhere(filtro, hql, param);
 		
 		gerarOrdenacao(filtro, hql);		
@@ -76,8 +83,32 @@ public class TipoMovimentoRepositoryImpl extends AbstractRepository<TipoMoviment
 		return query.list();
 		
 	}
+	
+	public Integer countObterTiposMovimento(FiltroTipoMovimento filtro) {
+		
+		HashMap<String, Object> param = new HashMap<String, Object>();
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select count(tipo) ");
+	
+		gerarFromWhere(filtro, hql, param);
+				
+		Query query =  getSession().createQuery(hql.toString());
+				
+		for(String key : param.keySet()){
+			query.setParameter(key, param.get(key));
+		}
+		
+		Long qtde = (Long) query.uniqueResult();
+		
+		return (qtde==null) ? 0 : qtde.intValue();
+		
+	}
 
 	private void gerarFromWhere(FiltroTipoMovimento filtro, StringBuilder hql, HashMap<String, Object> param) {
+		
+		hql.append(" from TipoMovimento tipo ");
 		
 		if(filtro.getCodigo() != null) {
 			
@@ -113,7 +144,7 @@ public class TipoMovimentoRepositoryImpl extends AbstractRepository<TipoMoviment
 				nome = " grupoOperacao ";
 				break;
 			case OPERACAO:
-				nome = " operacao ";
+				nome = " operacaoEstoque, operacaoFinanceira ";
 				break;
 			case APROVACAO:
 				nome = " aprovacao ";

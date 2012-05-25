@@ -7,17 +7,24 @@ function TipoMovimento(pathTela,obj) {
 	
 	this.cliquePesquisar = function() {
 		
+		var data = [];
+		
+		data.push({name:'filtro.codigo',		value: T.get("codigo")});
+		data.push({name:'filtro.descricao',		value: T.get("descricao")});
+		
 		$(".movimentosGrid").flexOptions({			
 			url : pathTela + "/tipoMovimento/pesquisarTipoMovimento",
 			dataType : 'json',
 			preProcess: T.processaRetornoPesquisa,
-			params:T.getDadosFiltro()
+			params:data
 		});
 		
 		$(".movimentosGrid").flexReload();
 	},
 	
 	this.processaRetornoPesquisa = function(result) {
+		
+		T.tiposMovimento = [];
 		
 		$.each(result.rows, function(index,row){T.processarLinha(index,row.cell);} );
 		
@@ -28,12 +35,16 @@ function TipoMovimento(pathTela,obj) {
 		
 		T.tiposMovimento.push(cell);
 		
+		var onClickAlteracao = cell.permiteAlteracao == false ? '' : (obj +'.carregarAlteracao(\''+ index + '\')');
+		var onClickExclusao =  cell.permiteAlteracao == false ? '' : (obj +'.carregarExclusao(\''+ index + '\')');
+		var styleOpacity = cell.permiteAlteracao == false 	  ? ('style="opacity: 0.5"') : '';
+		
 		cell.acao = 			
-			'<a href="javascript:;" onclick="'+ obj +'.carregarAlteracao(\''+ index + '\')">' +
-			'<img src="'+pathTela+'/images/ico_editar.gif" border="0" hspace="5" />' +
+			'<a href="javascript:;" onclick="'+ onClickAlteracao +'">' +
+			'<img src="'+pathTela+'/images/ico_editar.gif" border="0" hspace="5" ' + styleOpacity + ' />' +
 			'</a>'+
-			'<a href="javascript:;" onclick="'+ obj +'.carregarExclusao(\''+ index + '\')">' +
-			'<img src="'+pathTela+'/images/ico_excluir.gif" hspace="5" border="0" />' +
+			'<a href="javascript:;" onclick="' + onClickExclusao + '">' +
+			'<img src="'+pathTela+'/images/ico_excluir.gif" hspace="5" border="0" ' + styleOpacity + ' />' +
 			'</a>';
 	},
 	
@@ -41,38 +52,128 @@ function TipoMovimento(pathTela,obj) {
 		
 		T.tipoMovimento = T.tiposMovimento[index];
 		
-		T.set('codigoModal', T.tipoMovimento.codigo);
-		T.set('descricaoModal', T.tipoMovimento.descricao);
-		T.set('grupoOperacaoModal', T.tipoMovimento.grupoOperacao);
-		T.set('operacaoModal', T.tipoMovimento.operacao);
-		T.set('aprovacaoModal', T.tipoMovimento.aprovacao);
-		T.set('incideDividaModal', T.tipoMovimento.incideDivida);
-				
+		T.preencherModal(T.tipoMovimento.codigo, 
+						 T.tipoMovimento.descricao, 
+						 T.tipoMovimento.grupoOperacaoValue, 
+						 T.tipoMovimento.operacaoValue, 
+						 T.tipoMovimento.aprovacaoValue, 
+						 T.tipoMovimento.incideDividaValue);
+		
 		popup_alterar();
 		
 	},
-	
+		
 	this.carregarNovo = function() {
+		
+		T.preencherModal(null,'','FINANCEIRO','CREDITO','SIM','SIM');
+		
 		popup();
 	},
 	
-	this.carregarExclusao = function(index) {
-		popup_excluir();
+	this.excluirTipoMovimento = function() {
+		
+		var data = [];		
+		data.push({name:'codigo',		value: T.tipoMovimento.codigo});
+
+		$.postJSON(contextPath + "/tipoMovimento/excluirTipoMovimento",
+				data,
+				function(result){										
+					$(".movimentosGrid").flexReload();
+					exibirMensagem('SUCCESS', ['Tipo de Movimento excluido com sucesso.']);										
+				});		
+		
+		$( "#dialog-excluir" ).dialog( "close" );
 	},
 	
-	
-	/**
-	 * Retorna todos os dados do filtro no padrão utilizado pelo VRaptor
-	 * @return Espelho de FiltroTipoMovimentoDTO (br.com.abril.nds.dto) 
-	 */
-	this.getDadosFiltro = function() {
-	
-		var data = [];
+	this.salvarTipoMovimento = function() {
 		
-		data.push({name:'filtro.codigo',		value: T.get("codigo")});
-		data.push({name:'filtro.descricao',		value: T.get("descricao")});
+		var data = [];		
+		data.push({name:'tipoMovimentoDTO.codigo',		value: T.get('codigoModal')});
+		data.push({name:'tipoMovimentoDTO.descricao',		value: T.get('descricaoModal')});
+		data.push({name:'tipoMovimentoDTO.grupoOperacaoValue',		value: T.get('grupoOperacaoModal')});
+		data.push({name:'tipoMovimentoDTO.operacaoValue',		value: T.get('operacaoModal')});
+		data.push({name:'tipoMovimentoDTO.aprovacaoValue',		value: T.get('aprovacaoModal')});
+		data.push({name:'tipoMovimentoDTO.incideDividaValue',		value: T.get('incideDividaModal')});
 		
-		return data;
+		$.postJSON(contextPath + "/tipoMovimento/salvarTipoMovimento",
+				data,
+				function(result){
+					$( "#dialog-novo" ).dialog( "close" );					
+					$(".movimentosGrid").flexReload();
+					exibirMensagem('SUCCESS', ['Tipo de Movimento salvo com sucesso.']);										
+				},	
+				null, 
+				true,
+				"dialog-novo");		
+		
+	},
+	
+	this.alterarTipoMovimento = function() {
+		
+		var data = [];		
+		data.push({name:'tipoMovimentoDTO.codigo',		value: T.get('codigoModal')});
+		data.push({name:'tipoMovimentoDTO.descricao',		value: T.get('descricaoModal')});
+		data.push({name:'tipoMovimentoDTO.grupoOperacaoValue',		value: T.get('grupoOperacaoModal')});
+		data.push({name:'tipoMovimentoDTO.operacaoValue',		value: T.get('operacaoModal')});
+		data.push({name:'tipoMovimentoDTO.aprovacaoValue',		value: T.get('aprovacaoModal')});
+		data.push({name:'tipoMovimentoDTO.incideDividaValue',		value: T.get('incideDividaModal')});
+		
+		$.postJSON(contextPath + "/tipoMovimento/alterarTipoMovimento",
+				data,
+				function(result){		
+					$( "#dialog-novo" ).dialog( "close" );
+					$(".movimentosGrid").flexReload();
+					exibirMensagem('SUCCESS', ['Tipo de Movimento alterado com sucesso.']);										
+				},
+				null, 
+				true,
+				"dialog-novo");		
+	},
+	
+	this.preencherModal = function(codigo, descricao, grupoOperacao, operacao, aprovacao, incideDivida) {
+		
+		if(codigo!=null) {
+			$('#grupoOperacaoModal').disable();
+		} else {
+			$('#grupoOperacaoModal').enable();
+		}
+		
+		T.atualizarCombosPorGrupoOperacao(grupoOperacao);
+		
+		T.set('codigoModal', codigo);
+		T.set('descricaoModal', descricao);
+		T.set('grupoOperacaoModal', grupoOperacao);
+		T.set('operacaoModal', operacao);
+		T.set('aprovacaoModal', aprovacao);
+		T.set('incideDividaModal', incideDivida == ('NAO_SE_APLICA') ? 'SIM' : incideDivida);
+		
+	},
+	
+	this.atualizarCombosPorGrupoOperacao = function(grupoOperacao) {
+		
+		var opcoes = [];
+				
+		if(grupoOperacao == 'FINANCEIRO') {
+			opcoes.push({value:{$:'Crédito'},key:{$:'CREDITO'}});
+			opcoes.push({value:{$:'Débito'},key:{$:'DEBITO'}});
+			
+			T.set('incideDividaModal','SIM');
+			$('#incideDividaModal').disable();
+			
+		} else {
+			opcoes.push({value:{$:'Entrada'},key:{$:'ENTRADA'}});
+			opcoes.push({value:{$:'Saída'},key:{$:'SAIDA'}});
+			
+			$('#incideDividaModal').enable();
+		}
+		
+		var combo =  montarComboBox(opcoes, false);
+		$("#operacaoModal").html(combo);
+	},
+		
+	this.carregarExclusao = function(index) {
+		T.tipoMovimento = T.tiposMovimento[index];
+		popup_excluir();
 	},
 	
 	
@@ -117,13 +218,8 @@ function TipoMovimento(pathTela,obj) {
 	};
 	
 	$(function() {
-		$("#dataInicial").mask("99/99/9999");
-		$("#dataFinal").mask("99/99/9999");
 		
-		$("#dataLancamentoEd").mask("99/99/9999");
-		$("#dataRecolhimentoEd").mask("99/99/9999");
-		
-		$("#edicaoProduto").numeric();
+		$("#codigo").numeric();
 
 	});
 }

@@ -1,16 +1,16 @@
 package br.com.abril.nds.controllers.administracao;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.TipoMovimentoDTO;
+import br.com.abril.nds.dto.TipoMovimentoDTO.IncideDivida;
 import br.com.abril.nds.dto.filtro.FiltroTipoMovimento;
-import br.com.abril.nds.model.cadastro.Fornecedor;
+import br.com.abril.nds.model.seguranca.Usuario;
+import br.com.abril.nds.service.TipoMovimentoService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.vo.PaginacaoVO;
@@ -28,6 +28,9 @@ public class TipoMovimentoController {
 	
 	@Autowired
 	private HttpSession session;
+	
+	@Autowired
+	private TipoMovimentoService tipoMovimentoService;
 		
 	@Autowired
 	private Result result;
@@ -56,16 +59,14 @@ public class TipoMovimentoController {
 	 */	
 	private TableModel<CellModelKeyValue<TipoMovimentoDTO>> efetuarConsulta(FiltroTipoMovimento filtro) {
 		
-		//TODO getRealTipos
-		List<TipoMovimentoDTO> listaTipoMovimento = new ArrayList<TipoMovimentoDTO>();//lancamentoParcialService.buscarLancamentosParciais(filtro);
-		listaTipoMovimento.add(new TipoMovimentoDTO(1L,"Tipo1","ESTOQUE", "DEBITO","SIM","-"));
-		listaTipoMovimento.add(new TipoMovimentoDTO(1L,"Tipo2","FINANCEIRO", "CREDITO","NAO","-"));
-		listaTipoMovimento.add(new TipoMovimentoDTO(1L,"Tipo3","ESTOQUE", "DEBITO","SIM","-"));
-		listaTipoMovimento.add(new TipoMovimentoDTO(1L,"Tipo4","FINANCEIRO", "CREDITO","NAO","-"));
-		listaTipoMovimento.add(new TipoMovimentoDTO(1L,"Tipo5","ESTOQUE", "DEBITO","SIM","-"));
+		List<TipoMovimentoDTO> listaTipoMovimento = tipoMovimentoService.obterTiposMovimento(filtro);
 		
-		//TODO getRealQtde
-		Integer totalRegistros = 5;//lancamentoParcialService.totalBuscaLancamentosParciais(filtro);
+		for(TipoMovimentoDTO tipo:listaTipoMovimento) {
+			if(IncideDivida.SIM.equals(tipo.getIncideDividaValue()) && tipo.getPermiteAlteracao())
+				tipo.setPermiteAlteracao(this.isUsuarioNivelGerencial());
+		}
+		
+		Integer totalRegistros = tipoMovimentoService.countObterTiposMovimento(filtro);
 		
 		TableModel<CellModelKeyValue<TipoMovimentoDTO>> tableModel = new TableModel<CellModelKeyValue<TipoMovimentoDTO>>();
 
@@ -76,6 +77,37 @@ public class TipoMovimentoController {
 		tableModel.setTotal(totalRegistros);
 		
 		return tableModel;
+	}
+	
+	/**
+	 * Grava o Tipo de Movimento no banco de dados
+	 * 
+	 * @param tipoMovimentoDTO
+	 */
+	@Post
+	public void salvarTipoMovimento(TipoMovimentoDTO tipoMovimentoDTO) {
+		
+		tipoMovimentoService.salvarTipoMovimento(tipoMovimentoDTO);
+		result.use(Results.json()).withoutRoot().from("").recursive().serialize();
+	}	
+	
+	/**
+	 * Altera o Tipo de Movimento no banco de dados
+	 * 
+	 * @param tipoMovimentoDTO
+	 */
+	@Post
+	public void alterarTipoMovimento(TipoMovimentoDTO tipoMovimentoDTO) {
+						
+		tipoMovimentoService.editarTipoMovimento(tipoMovimentoDTO, this.getUsuario());
+		result.use(Results.json()).withoutRoot().from("").recursive().serialize();
+	}
+	
+	@Post
+	public void excluirTipoMovimento(Long codigo) {		
+		
+		tipoMovimentoService.excluirTipoMovimento(codigo, this.getUsuario());
+		result.use(Results.json()).withoutRoot().from("").recursive().serialize();
 	}
 	
 	/**
@@ -106,5 +138,17 @@ public class TipoMovimentoController {
 		}
 		
 		session.setAttribute(FILTRO_SESSION_ATTRIBUTE, filtroAtual);
+	}
+
+	//TODO Verificar se usuário possui nível gerencial
+	private boolean isUsuarioNivelGerencial() {
+		return false;
+	}
+	
+	//TODO Obter Usuário logado
+	private Usuario getUsuario() {
+		Usuario usuario = new Usuario();
+		usuario.setId(1L);
+		return usuario;
 	}
 }

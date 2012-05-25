@@ -15,10 +15,7 @@ function popup() {
 			modal: true,
 			buttons: {
 				"Confirmar": function() {
-					$( this ).dialog( "close" );
-					$("#effect").show("highlight", {}, 1000, callback);
-					$(".grids").show();
-					
+					TM.salvarTipoMovimento();					
 				},
 				"Cancelar": function() {
 					$( this ).dialog( "close" );
@@ -37,7 +34,7 @@ function popup() {
 			modal: true,
 			buttons: {
 				"Confirmar": function() {
-					
+					TM.alterarTipoMovimento();
 				},
 				"Cancelar": function() {
 					$( this ).dialog( "close" );
@@ -57,8 +54,7 @@ function popup() {
 			modal: true,
 			buttons: {
 				"Confirmar": function() {
-					$( this ).dialog( "close" );
-					$("#effect").show("highlight", {}, 1000, callback);
+					TM.excluirTipoMovimento();
 				},
 				"Cancelar": function() {
 					$( this ).dialog( "close" );
@@ -81,6 +77,11 @@ function popup() {
 
 
 <div id="dialog-novo" title="Incluir Tipo de Movimento">
+	
+		
+	<jsp:include page="../messagesDialog.jsp">
+		<jsp:param value="dialog-novo" name="messageDialog"/>
+	</jsp:include>
      
 	<label><strong>Tipo de Movimento</strong></label>
     
@@ -90,7 +91,7 @@ function popup() {
               <td width="250">
               
 <!-- CODIGO -->
-<input id="codigoModal"  type="text" name="textfield2" style="width:87px;"/></td>
+<input id="codigoModal"  type="text" name="textfield2" style="width:87px;" disabled="disabled"/></td>
 
 
             </tr>
@@ -107,7 +108,7 @@ function popup() {
               <td>
 
 <!-- GRUPO OPERACAO -->
- <select id="grupoOperacaoModal" style="width:100px;"> 
+ <select id="grupoOperacaoModal" onchange="TM.atualizarCombosPorGrupoOperacao($(this).val());" style="width:100px;"> 
     <option value="ESTOQUE">Estoque</option>	
    	<option value="FINANCEIRO">Financeiro</option>	
 </select>
