@@ -103,6 +103,11 @@ public class TipoMovimentoController {
 		result.use(Results.json()).withoutRoot().from("").recursive().serialize();
 	}
 	
+	/**
+	 * Exclui Tipo de Movimento do banco de dados
+	 * 
+	 * @param codigo
+	 */
 	@Post
 	public void excluirTipoMovimento(Long codigo) {		
 		
