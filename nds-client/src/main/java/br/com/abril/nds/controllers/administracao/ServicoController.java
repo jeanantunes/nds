@@ -65,6 +65,8 @@ public class ServicoController {
 								  int page, 
 								  int rp) {
 		
+		descricao = this.validarDescricao(descricao);
+		
 		sortname = this.getSortName(sortname);
 		
 		int startSearch = page * rp - rp;
@@ -165,9 +167,14 @@ public class ServicoController {
 		BigDecimal taxaFixa = tipoEntrega.getTaxaFixa();
 		
 		if (taxaFixa == null) {
-			resultadoServicoVO.setTipoCobranca("PF");
-			resultadoServicoVO.setBaseCalculo(tipoEntrega.getBaseCalculo().getKey());
-			resultadoServicoVO.setPercentualCalculoBase(tipoEntrega.getPercentualFaturamento().toString());
+			
+			if (tipoEntrega.getPercentualFaturamento() != null && 
+					tipoEntrega.getBaseCalculo() != null) {
+				
+				resultadoServicoVO.setTipoCobranca("PF");
+				resultadoServicoVO.setBaseCalculo(tipoEntrega.getBaseCalculo().getKey());
+				resultadoServicoVO.setPercentualCalculoBase(tipoEntrega.getPercentualFaturamento().toString());
+			}
 		} else {
 			resultadoServicoVO.setTipoCobranca("TF");
 			resultadoServicoVO.setTaxa(taxaFixa.toString());
@@ -207,6 +214,8 @@ public class ServicoController {
 		
 		if (descricao == null || descricao.isEmpty()) {
 			listaMensagens.add("O preenchimento do campo [Descrição] é obrigatório!");
+		} else {
+			descricao = this.validarDescricao(descricao);
 		}
 
 		if ("TF".equals(cobranca)) {
@@ -308,5 +317,23 @@ public class ServicoController {
 		
 		return sortname;
 	}
-	
+
+	private String validarDescricao(String descricao) {
+		
+		if (descricao == null || descricao.isEmpty()) {
+			
+			if (descricao.contains("%")) {
+				descricao.replace("%", "");
+			}
+			
+			if (descricao.length() > 256) {
+				throw new ValidacaoException(TipoMensagem.ERROR, "O campo [Descrição] excedeu o limite permitido!");
+			}
+		
+			descricao.trim();
+		}
+		
+		return descricao;
+	}
+		
 }
