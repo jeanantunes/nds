@@ -108,5 +108,18 @@ public class TipoProdutoRepositoryImpl extends AbstractRepository<TipoProduto,Lo
 		
 		return quantidade > 0;
 	}
+
+	/* (non-Javadoc)
+	 * @see br.com.abril.nds.repository.TipoProdutoRepository#getMaxCodigo()
+	 */
+	@Override
+	public Long getMaxCodigo() {
+		
+		Criteria criteria = getSession().createCriteria(TipoProduto.class);
+		
+		criteria.setProjection(Projections.max("id"));
+		
+		return (Long) criteria.list().get(0);
+	}
 	
 }
