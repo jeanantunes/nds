@@ -74,6 +74,13 @@ public interface BoxService {
 	 * @see BoxRepository#obtemCotaRotaRoteiro(long)
 	 */
 	public abstract List<CotaRotaRoteiroDTO> obtemCotaRotaRoteiro(long id);
+	
+	/**
+	 * Busca lista de Box por tipo;
+	 * @param tipo
+	 * @return List<Box> 
+	 */
+	public List<Box> buscarPorTipo(TipoBox tipo);
 
 	
 }

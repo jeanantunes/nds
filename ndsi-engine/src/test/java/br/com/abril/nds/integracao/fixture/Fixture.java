@@ -6,8 +6,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
-import br.com.abril.nds.integracao.model.EventoExecucao;
-import br.com.abril.nds.integracao.model.InterfaceExecucao;
 import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.StatusCobranca;
@@ -132,6 +130,8 @@ import br.com.abril.nds.model.fiscal.StatusEmissaoNfe;
 import br.com.abril.nds.model.fiscal.StatusNotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.TipoEmissaoNfe;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
+import br.com.abril.nds.model.integracao.EventoExecucao;
+import br.com.abril.nds.model.integracao.InterfaceExecucao;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalhe;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalheCota;
 import br.com.abril.nds.model.movimentacao.ControleContagemDevolucao;

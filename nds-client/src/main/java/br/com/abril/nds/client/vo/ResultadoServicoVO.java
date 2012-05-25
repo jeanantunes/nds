@@ -1,6 +1,7 @@
 package br.com.abril.nds.client.vo;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 public class ResultadoServicoVO implements Serializable {
 
@@ -12,11 +13,11 @@ public class ResultadoServicoVO implements Serializable {
 
 	private String descricao;
 	
-	private Double taxa;
+	private BigDecimal taxa;
 		
 	private String baseCalculo;
 	
-	private Integer percentualCalculoBase;
+	private Float percentualCalculoBase;
 	
 	private String periodicidade;
 	
@@ -55,14 +56,14 @@ public class ResultadoServicoVO implements Serializable {
 	/**
 	 * @return the taxa
 	 */
-	public Double getTaxa() {
+	public BigDecimal getTaxa() {
 		return taxa;
 	}
 
 	/**
 	 * @param taxa the taxa to set
 	 */
-	public void setTaxa(Double taxa) {
+	public void setTaxa(BigDecimal taxa) {
 		this.taxa = taxa;
 	}
 
@@ -83,14 +84,14 @@ public class ResultadoServicoVO implements Serializable {
 	/**
 	 * @return the percentualCalculoBase
 	 */
-	public Integer getPercentualCalculoBase() {
+	public Float getPercentualCalculoBase() {
 		return percentualCalculoBase;
 	}
 
 	/**
 	 * @param percentualCalculoBase the percentualCalculoBase to set
 	 */
-	public void setPercentualCalculoBase(Integer percentualCalculoBase) {
+	public void setPercentualCalculoBase(Float percentualCalculoBase) {
 		this.percentualCalculoBase = percentualCalculoBase;
 	}
 

@@ -1,6 +1,10 @@
 package br.com.abril.nds.util;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -210,5 +214,80 @@ public abstract class Util {
 		Matcher matcher = pattern.matcher(email);
 		
 		return matcher.matches();
+	}
+	
+	
+	/** Classe que representa a forma de agrupamento das UFs brasileiras. */
+	public enum TipoAgrupamentoUf {
+		ORDEM_ALFABETICA,
+		DIVISAO_GEOGRAFICA;
+	}
+	
+	/**
+	 * Retorna a lista de UFs brasileiras.<br>
+	 * A lista pode vir ordenada em:<br>
+	 * <ul>
+	 * <li>Ordem Alfabética; (Ordenação padrão);</li>
+	 * <li>Divisão Geográfica (norte, nordestes, centro-oeste, sudeste e sul);</li>
+	 * </ul>
+	 * 
+	 * @param tpUf Determina o tipo de ordenação.<br>
+	 * Se for passado <i>null</i> será utilizado a ordenação padrão (ordem alfabética);
+	 * 
+	 * @return
+	 */
+	public static List<UfEnum> getUfs(TipoAgrupamentoUf tpUf) {
+		
+		List<UfEnum> lst = new ArrayList<UfEnum>();
+		
+		// Região Norte:
+		lst.add(UfEnum.AC);	// Acre
+		lst.add(UfEnum.AM);	// Amazonas	
+		lst.add(UfEnum.AP);	// Amapá
+		lst.add(UfEnum.PA);	// Pará
+		lst.add(UfEnum.RO);	// Rondônia
+		lst.add(UfEnum.RR);	// Roraima
+		lst.add(UfEnum.TO);	// Tocantins
+		
+		// Região Nordeste:
+		lst.add(UfEnum.AL);	// Alagoas
+		lst.add(UfEnum.BA);	// Bahia
+		lst.add(UfEnum.CE);	// Ceará
+		lst.add(UfEnum.MA);	// Maranhão
+		lst.add(UfEnum.PB);	// Paraíba
+		lst.add(UfEnum.PE);	// Pernambuco
+		lst.add(UfEnum.PI);	// Piauí
+		lst.add(UfEnum.RN);	// Rio Grande do Norte
+		lst.add(UfEnum.SE);	// Sergipe
+		
+		// Região Centro-Oeste:
+		lst.add(UfEnum.DF);	// Distrito Federal
+		lst.add(UfEnum.GO);	// Goiás
+		lst.add(UfEnum.MS);	// Mato Grosso do Sul
+		lst.add(UfEnum.MT);	// Mato Grosso
+		
+		// Região Sudeste:
+		lst.add(UfEnum.ES);	// Espírito Santo
+		lst.add(UfEnum.MG);	// Minas Gerais
+		lst.add(UfEnum.RJ);	// Rio de Janeiro
+		lst.add(UfEnum.SP);	// São Paulo
+		
+		// Região Sul:
+		lst.add(UfEnum.PR);	// Paraná
+		lst.add(UfEnum.RS);	// Rio Grande do Sul
+		lst.add(UfEnum.SC);	// Santa Catarina
+		
+		
+		// Ordena por ordem alabética as siglas se for diferente de divisão geográfica:
+		if (!TipoAgrupamentoUf.DIVISAO_GEOGRAFICA.equals(tpUf)) {
+			Collections.sort(lst, new Comparator<UfEnum>() {
+				@Override
+				public int compare(UfEnum o1, UfEnum o2) {
+					return o1.getSigla().compareTo(o2.getSigla());
+				}
+			});
+		}
+		
+		return lst;
 	}
 }

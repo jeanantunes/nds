@@ -1,4 +1,4 @@
-package br.com.abril.nds.integracao.model;
+package br.com.abril.nds.model.integracao;
 
 import java.io.Serializable;
 

@@ -71,6 +71,7 @@ import br.com.abril.nds.model.cadastro.TipoLicencaMunicipal;
 import br.com.abril.nds.model.cadastro.TipoParametroSistema;
 import br.com.abril.nds.model.cadastro.TipoProduto;
 import br.com.abril.nds.model.cadastro.TipoRegistroCobranca;
+import br.com.abril.nds.model.cadastro.TipoRoteiro;
 import br.com.abril.nds.model.cadastro.TipoTelefone;
 import br.com.abril.nds.model.cadastro.pdv.AreaInfluenciaPDV;
 import br.com.abril.nds.model.cadastro.pdv.CaracteristicasPDV;
@@ -152,7 +153,12 @@ import br.com.abril.nds.model.planejamento.TipoLancamentoParcial;
 import br.com.abril.nds.model.seguranca.Usuario;
 
 public class Fixture {
-
+	
+	public static PessoaJuridica juridicaAbril() {
+		return pessoaJuridica("Abril", "00.000.000/0002-00", "010.000.000.000",
+				"abril@mail.com", "99.999-1");
+	}
+	
 	public static PessoaJuridica juridicaFC() {
 		return pessoaJuridica("FC", "00.000.000/0001-00", "000.000.000.000",
 				"fc@mail.com", "99.999-9");
@@ -266,11 +272,11 @@ public class Fixture {
 	}
 
 	public static TipoProduto tipoRevista() {
-		return tipoProduto("Revistas", GrupoProduto.REVISTA, "99000642");
+		return tipoProduto("Revistas", GrupoProduto.REVISTA, "99000642", null, "001");
 	}
 	
 	public static TipoProduto tipoCromo() {
-		return tipoProduto("Cromos", GrupoProduto.CROMO, "1230004560");
+		return tipoProduto("Cromos", GrupoProduto.CROMO, "1230004560", null, "001");
 	}
 	
 	public static TipoFornecedor tipoFornecedorPublicacao() {
@@ -291,7 +297,7 @@ public class Fixture {
 	}
 	
 	public static Editor editoraAbril() {
-		return criarEditor("Editora Abril", 10L);
+		return criarEditor("Editora Abril", 10L, juridicaAbril(), true);
 	}
 
 	public static Date criarData(int dia, int mes, int ano) {
@@ -360,10 +366,13 @@ public class Fixture {
 	}
 
 	public static TipoProduto tipoProduto(String descricao, GrupoProduto grupo,
-			String ncm) {
+			String codigoNCM, String codigoNBM, String codigo) {
 		TipoProduto tipoProduto = new TipoProduto();
 		tipoProduto.setDescricao(descricao);
 		tipoProduto.setGrupoProduto(grupo);
+		tipoProduto.setCodigo(codigo);
+		tipoProduto.setCodigoNBM(codigoNBM);
+		tipoProduto.setCodigoNCM(codigoNCM);
 		return tipoProduto;
 	}
 	
@@ -488,7 +497,9 @@ public class Fixture {
 			Date dataInicio,
 			Date dataFim,
 			Date dataOperacao,
-			StatusOperacao statusOperacao) {
+			StatusOperacao statusOperacao,
+			Usuario usuario,
+			Box box) {
 		
 		ControleConferenciaEncalheCota controleConferenciaEncalheCota = new ControleConferenciaEncalheCota();
 		
@@ -498,6 +509,8 @@ public class Fixture {
 		controleConferenciaEncalheCota.setDataFim(dataFim);
 		controleConferenciaEncalheCota.setDataOperacao(dataOperacao);
 		controleConferenciaEncalheCota.setStatus(statusOperacao);
+		controleConferenciaEncalheCota.setUsuario(usuario);
+		controleConferenciaEncalheCota.setBox(box);
 		
 		return controleConferenciaEncalheCota;
 	}
@@ -1970,12 +1983,15 @@ public class Fixture {
 		Rota rota = new Rota();
 		rota.setCodigoRota(codigoRota);
 		rota.setDescricaoRota(descricaoRota);
+		rota.setOrdem(0);
 		return rota;
 	}
 	
 	public static Roteiro roteiro(String descricaoRoteiro){
 		Roteiro rota = new Roteiro();
 		rota.setDescricaoRoteiro(descricaoRoteiro);
+		rota.setOrdem(0);
+		rota.setTipoRoteiro(TipoRoteiro.ESPECIAL);
 		return rota;
 	}
 	
@@ -2222,10 +2238,17 @@ public class Fixture {
 		return telefone;
 	}
 	
-	public static Editor criarEditor(String nome, Long codigo) {
+	public static Editor criarEditor(String nome, Long codigo, 
+									 PessoaJuridica pessoaJuridica,
+									 boolean ativo) {
+		
 		Editor editor = new Editor();
+		
 		editor.setNome(nome);
 		editor.setCodigo(10L);
+		editor.setPessoaJuridica(pessoaJuridica);
+		editor.setAtivo(ativo);
+		
 		return editor;
 	}	
 	

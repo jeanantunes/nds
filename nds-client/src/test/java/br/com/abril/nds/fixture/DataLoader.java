@@ -764,7 +764,7 @@ public class DataLoader {
 		ControleConferenciaEncalhe controle = Fixture.controleConferenciaEncalhe(StatusOperacao.CONCLUIDO, new Date());
 		
 		ControleConferenciaEncalheCota controleCota = Fixture.controleConferenciaEncalheCota(controle, cotaGuilherme, 
-				new Date(), new Date(), new Date(), StatusOperacao.CONCLUIDO);
+				new Date(), new Date(), new Date(), StatusOperacao.CONCLUIDO, usuarioJoao, box1);
 		
 		ConferenciaEncalhe conferencia = Fixture.conferenciaEncalhe(movimento, chamadaEncalheCota, controleCota);
 		
@@ -921,7 +921,7 @@ public class DataLoader {
 		Usuario usuario = Fixture.usuarioJoao();
 		save(session,usuario);
 
-		TipoProduto tipoProduto = Fixture.tipoRevista();
+		TipoProduto tipoProduto = Fixture.tipoProduto("Revista ContaCorrenteConsignado", GrupoProduto.REVISTA, "3721894", "473794321", "4312756189");
 		save(session,tipoProduto);
 
 		TipoFornecedor tipoFornecedor = Fixture.tipoFornecedorPublicacao();
@@ -1038,7 +1038,7 @@ public class DataLoader {
 	Usuario usuario = Fixture.usuarioJoao();
 	save(session, usuario);
 
-	TipoProduto tipoProduto = Fixture.tipoRevista();
+	TipoProduto tipoProduto = Fixture.tipoProduto("Revista ContaCorrenteTipoMovimento", GrupoProduto.REVISTA, "431251324", "513543", "8768568");
 	save(session, tipoProduto);
 
 	TipoFornecedor tipoFornecedor = Fixture.tipoFornecedor("Tipo A",GrupoFornecedor.PUBLICACAO);
@@ -1666,29 +1666,33 @@ public class DataLoader {
 	
 	private static void criarRotaRoteiroCota(Session session) {
 
-		Rota rota = Fixture.rota("005", "Rota 005");
-		session.save(rota);
-
 		Roteiro roteiro = Fixture.roteiro("Pinheiros");
 		session.save(roteiro);
+
+		Rota rota = Fixture.rota("005", "Rota 005");
+		rota.setRoteiro(roteiro);
+		session.save(rota);
 
 		RotaRoteiroOperacao rotaRoteiroOperacao = Fixture.rotaRoteiroOperacao(rota, roteiro, cotaManoel, TipoOperacao.IMPRESSAO_DIVIDA);
 		session.save(rotaRoteiroOperacao);
 
-		rota = Fixture.rota("004", "Rota 004");
-		session.save(rota);
-
 		roteiro = Fixture.roteiro("Interlagos");
 		session.save(roteiro);
+
+		rota = Fixture.rota("004", "Rota 004");
+		rota.setRoteiro(roteiro);
+		session.save(rota);
 
 		rotaRoteiroOperacao = Fixture.rotaRoteiroOperacao(rota, roteiro, cotaJose, TipoOperacao.IMPRESSAO_DIVIDA);
 		session.save(rotaRoteiroOperacao);
 		
-		rota = Fixture.rota("007", "Rota 007");
-		session.save(rota);
 
 		roteiro = Fixture.roteiro("Mococa");
 		session.save(roteiro);
+		
+		rota = Fixture.rota("007", "Rota 007");
+		rota.setRoteiro(roteiro);
+		session.save(rota);
 
 		rotaRoteiroOperacao = Fixture.rotaRoteiroOperacao(rota, roteiro, cotaAcme, TipoOperacao.IMPRESSAO_DIVIDA);
 		session.save(rotaRoteiroOperacao);
@@ -2963,10 +2967,10 @@ public class DataLoader {
 		tipoProdutoRevista = Fixture.tipoRevista();
 		session.save(tipoProdutoRevista);
 
-		tipoRefrigerante = Fixture.tipoProduto("Refrigerante",GrupoProduto.OUTROS, "5644566");
+		tipoRefrigerante = Fixture.tipoProduto("Refrigerante",GrupoProduto.OUTROS, "5644566", null, "002");
 		session.save(tipoRefrigerante);
 		
-		tipoCromo = Fixture.tipoProduto("Cromo",GrupoProduto.CROMO, "5644564");
+		tipoCromo = Fixture.tipoProduto("Cromo",GrupoProduto.CROMO, "5644564", null, "002");
 		session.save(tipoCromo);
 		
 		
@@ -4820,7 +4824,9 @@ public class DataLoader {
 				Fixture.criarData(28, Calendar.FEBRUARY, 2012), 
 				Fixture.criarData(28, Calendar.FEBRUARY, 2012), 
 				Fixture.criarData(28, Calendar.FEBRUARY, 2012), 
-				StatusOperacao.CONCLUIDO);
+				StatusOperacao.CONCLUIDO,
+				usuarioJoao,
+				box1);
 		
 		save(session, controleConferenciaEncalheCota);
 		
@@ -5268,11 +5274,11 @@ public class DataLoader {
 	private static void criarDadosBalanceamentoRecolhimento(Session session) {
 		
 		//EDITORES
-		Editor globo = Fixture.criarEditor("Globo", 680L);
+		Editor globo = Fixture.criarEditor("Globo", 680L, juridicaDinap, true);
 
-		Editor europa = Fixture.criarEditor("Europa", 681L);
+		Editor europa = Fixture.criarEditor("Europa", 681L, juridicaAcme, true);
 
-		Editor jazz = Fixture.criarEditor("Jazz", 682L);
+		Editor jazz = Fixture.criarEditor("Jazz", 682L, juridicaFc, true);
 
 		TipoProduto tipoCromo = Fixture.tipoCromo();
 		

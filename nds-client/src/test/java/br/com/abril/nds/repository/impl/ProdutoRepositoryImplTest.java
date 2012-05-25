@@ -28,7 +28,7 @@ public class ProdutoRepositoryImplTest extends AbstractRepositoryImplTest {
 		save(abril);
 		
 		TipoProduto tipoProduto =
-			Fixture.tipoProduto("Revista", GrupoProduto.REVISTA, "99000642");
+			Fixture.tipoProduto("Revista", GrupoProduto.REVISTA, "99000642", null, "codigo");
 		save(tipoProduto);
 		
 		Produto produto =

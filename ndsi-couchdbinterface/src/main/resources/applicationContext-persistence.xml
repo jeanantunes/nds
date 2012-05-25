@@ -23,7 +23,7 @@
 		<property name="persistenceUnitPostProcessors">
 			<list>
 				<bean class="br.com.abril.nds.integracao.persistence.EntityScanner">
-					<property name="locationPatterns" value="classpath*:br/com/abril/nds/integracao/persistence/model/**"></property>
+					<property name="packagesToScan" value="br.com.abril.nds.integracao.persistence.model"></property>
 				</bean>
 			</list>
 		</property>

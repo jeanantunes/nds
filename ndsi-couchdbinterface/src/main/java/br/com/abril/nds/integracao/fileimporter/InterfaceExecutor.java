@@ -1,7 +1,6 @@
 package br.com.abril.nds.integracao.fileimporter;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FilenameFilter;
 import java.io.IOException;
@@ -41,7 +40,8 @@ public class InterfaceExecutor {
 	
 	private static ApplicationContext applicationContext;
 	
-	private static String NAO_HA_ARQUIVOS = "Não há arquivos a serem processados para este distribuidor"; 
+	private static String NAO_HA_ARQUIVOS = "Não há arquivos a serem processados para este distribuidor";
+//	private static String TAMANHO_LINHA = "Tamanho da linha é diferente do tamanho definido";
 	
 	private LogExecucaoHibernateDAO logExecucaoDAO;
 	private LogExecucaoArquivoHibernateDAO logExecucaoArquivoAO;
@@ -89,19 +89,35 @@ public class InterfaceExecutor {
 		// Busca dados de configuracao
 		this.carregaCouchDbProperties();
 		InterfaceExecucao interfaceExecucao = interfaceExecucaoDAO.findById(interfaceEnum.getCodigoInterface());
-		String diretorio = parametroSistemaDAO.getParametro("INBOUND_DIR");
 		
-		// Loga Início
+		// Loga início
 		Date dataInicio = new Date();
 		LogExecucao logExecucao = this.logarInicio(dataInicio, interfaceExecucao, nomeUsuario);
 		
+		// Executa interface
+		if (interfaceEnum.equals(InterfaceEnum.EMS0134)) {
+			this.executarInterfaceImagem();
+		} else {
+			this.executarInterfaceArquivo(interfaceEnum, interfaceExecucao, logExecucao, codigoDistribuidor, nomeUsuario);
+		}
+		
+		// Loga fim
+		this.logarFim(logExecucao);
+	}
+	
+	/**
+	 * Executa uma interface de carga de arquivo.
+	 */
+	private void executarInterfaceArquivo(InterfaceEnum interfaceEnum, InterfaceExecucao interfaceExecucao, LogExecucao logExecucao, String codigoDistribuidor, String nomeUsuario) {
+		
 		// Recupera distribuidores
+		String diretorio = parametroSistemaDAO.getParametro("INBOUND_DIR");
 		List<String> distribuidores = this.getDistribuidores(diretorio, interfaceExecucao, codigoDistribuidor);
 		
 		// Processa arquivos do distribuidor
 		for (String distribuidor: distribuidores) {
 		
-			CouchDbClient couchDbClient = this.getCouchDbClientInstance(distribuidor);
+			CouchDbClient couchDbClient = this.getCouchDbClientInstance("db_" + StringUtils.leftPad(distribuidor, 7, "0"));
 			List<File> arquivos = this.recuperaArquivosProcessar(diretorio, interfaceExecucao, distribuidor);
 			
 			if (arquivos == null || arquivos.isEmpty()) {
@@ -113,7 +129,7 @@ public class InterfaceExecutor {
 				
 				try {
 					
-					this.trataArquivo(couchDbClient, arquivo, interfaceEnum, dataInicio, nomeUsuario);
+					this.trataArquivo(couchDbClient, arquivo, interfaceEnum, logExecucao.getDataInicio(), nomeUsuario);
 					this.logarArquivo(logExecucao, distribuidor, arquivo.getAbsolutePath(), StatusExecucaoEnum.SUCESSO, null);
 					
 				} catch (Throwable e) {
@@ -130,8 +146,23 @@ public class InterfaceExecutor {
 			
 			couchDbClient.shutdown();
 		}
+	}
+	
+	/**
+	 * Executa a interface de carga de imagens EMS0134.
+	 */
+	private void executarInterfaceImagem() {
+		/*
+		String diretorio = parametroSistemaDAO.getParametro("IMAGE_DIR");
+		CouchDbClient couchDbClient = this.getCouchDbClientInstance("");
 		
-		this.logarFim(logExecucao);
+		File[] imagens = new File(diretorio).listFiles();
+		
+		for (File imagem: imagens) {
+			
+		}
+		
+		couchDbClient.shutdown();*/
 	}
 	
 	/**
@@ -157,22 +188,25 @@ public class InterfaceExecutor {
 	/**
 	 * Processa o arquivo, lendo suas linhas e gravando no CouchDB.
 	 */
-	private void trataArquivo(CouchDbClient couchDbClient, File arquivo, InterfaceEnum interfaceEnum, Date dataInicio, String nomeUsuario) throws FileNotFoundException {
-	
+	private void trataArquivo(CouchDbClient couchDbClient, File arquivo, InterfaceEnum interfaceEnum, Date dataInicio, String nomeUsuario) throws Exception {
+
 		FileReader in = new FileReader(arquivo);
 		Scanner scanner = new Scanner(in);
 		int linhaArquivo = 0;
-		
+
 		while (scanner.hasNextLine()) {
-			
+
 			String linha = scanner.nextLine();
 			linhaArquivo++;
 
 			if (StringUtils.isEmpty(linha)) {
 				continue;
-			} else {
-				// TODO: validar linha
-			}
+			} 
+
+			// TODO: verificar tamanho correto das linhas nos arquivos: difere da definição
+//			if (linha.length() != interfaceEnum.getTamanhoLinha().intValue()) {
+//				throw new ValidacaoException(TAMANHO_LINHA);
+//			}
 			
 			IntegracaoDocument doc = (IntegracaoDocument) this.ffm.load(interfaceEnum.getClasseLinha(), linha);
 			
@@ -181,11 +215,11 @@ public class InterfaceExecutor {
 			doc.setLinhaArquivo(linhaArquivo);
 			doc.setDataHoraExtracao(dataInicio);
 			doc.setNomeUsuarioExtracao(nomeUsuario);
-			
+
 			couchDbClient.save(doc);
 		}
 	}
-	
+
 	/**
 	 * Recupera a lista de arquivos a serem processados.
 	 * 
@@ -224,10 +258,10 @@ public class InterfaceExecutor {
 	 * @param codigoDistribuidor codigo do distribuidor
 	 * @return client
 	 */
-	private CouchDbClient getCouchDbClientInstance(String codigoDistribuidor) {
+	private CouchDbClient getCouchDbClientInstance(String databaseName) {
 		
 		return new CouchDbClient(
-				"db_" + codigoDistribuidor,
+				databaseName,
 				true,
 				this.couchDbProperties.getProperty("couchdb.protocol"),
 				this.couchDbProperties.getProperty("couchdb.host"),
