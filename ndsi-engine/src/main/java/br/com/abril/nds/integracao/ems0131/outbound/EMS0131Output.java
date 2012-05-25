@@ -3,6 +3,7 @@ package br.com.abril.nds.integracao.ems0131.outbound;
 import java.io.Serializable;
 
 import com.ancientprogramming.fixedformat4j.annotation.Field;
+import com.ancientprogramming.fixedformat4j.annotation.FixedFormatBoolean;
 import com.ancientprogramming.fixedformat4j.annotation.Record;
 
 @Record
@@ -153,11 +154,9 @@ public class EMS0131Output implements Serializable {
 	}
 	
 	@Field(offset = 131, length = 1)
-	public int isRepartePorPdv() {
-		if(repartePorPdv == true)
-			return 1;
-		else 
-			return 0;
+	@FixedFormatBoolean(trueValue = "1", falseValue = "2")
+	public boolean isRepartePorPdv() {
+		return repartePorPdv;
 	}
 	public void setRepartePorPdv(boolean repartePorPdv) {
 		this.repartePorPdv = repartePorPdv;

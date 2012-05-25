@@ -4,8 +4,33 @@ import java.util.List;
 
 import br.com.abril.nds.dto.RotaRoteiroDTO;
 import br.com.abril.nds.model.cadastro.Rota;
+import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
+
 
 public interface RotaRepository extends Repository<Rota, Long> {
 
 	List<RotaRoteiroDTO> buscarRotasRoteiroAssociacao(String sortname, String sortorder);
+	
+	/**
+	 * Retorna uma lista de rotas.
+	 * @param sortname - nome do campo para ordenação
+	 * @param ordenacao - tipo da ordenção 
+	 * @return List<Rota>
+	 */
+	List<Rota> buscarRota(String sortname, Ordenacao ordenacao);
+	
+	/**
+	 * Retorna uma lista de rotas referente um roteiro.
+	 * @param roteiroId - Id do roteiro
+	 * @param sortname - nome do campo para ordenação
+	 * @param ordenacao - tipo da ordenção 
+	 * @return List<Rota>
+	 */
+	List<Rota> buscarRotaPorRoteiro(Long roteiroId, String sortname, Ordenacao ordenacao );
+	 
+	/**
+	 * atualiza a ordenação das rotas.
+	 * 
+	 */
+	void atualizaOrdenacao(Rota rota );
 }

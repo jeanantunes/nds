@@ -49,7 +49,7 @@ public class CotaAusenteRepositoryImplTest extends AbstractRepositoryImplTest {
 				"manoel@mail.com", "Manoel da Silva");
 		save(manoel);
 		
-		box1 = Fixture.criarBox("Box-1", "BX-001", TipoBox.LANCAMENTO);
+		box1 = Fixture.criarBox("Box-1", "BX-001", TipoBox.LANCAMENTO, false);
 		save(box1);
 		
 		cotaManoel = Fixture.cota(123, manoel, SituacaoCadastro.ATIVO, box1);
@@ -60,17 +60,17 @@ public class CotaAusenteRepositoryImplTest extends AbstractRepositoryImplTest {
 		CotaAusente c =  Fixture.cotaAusente(data, true, cotaManoel);
 		save(c);
 		
-		TipoProduto t = Fixture.tipoProduto("teste", GrupoProduto.JORNAL, "sdsd");
+		TipoProduto t = Fixture.tipoProduto("teste", GrupoProduto.JORNAL, "sdsd", null, "001");
 		save(t);
 		
 		Editor abril = Fixture.editoraAbril();
 		save(abril);
 		
-		Produto produto = Fixture.produto("12","Algum", "Nome-p", PeriodicidadeProduto.MENSAL, t, 5, 5);
+		Produto produto = Fixture.produto("12","Algum", "Nome-p", PeriodicidadeProduto.MENSAL, t, 5, 5, BigDecimal.TEN);
 		produto.setEditor(abril);
 		save(produto);
 		
-		ProdutoEdicao pe = Fixture.produtoEdicao(12L, 3, 2, new BigDecimal(12), new BigDecimal(120),new BigDecimal(35), "ABCDEFGHIJKLMNOPQRSTU", 1L, produto);
+		ProdutoEdicao pe = Fixture.produtoEdicao(12L, 3, 2, new BigDecimal(12), new BigDecimal(120),new BigDecimal(35), "ABCDEFGHIJKLMNOPQRSTU", 1L, produto, null, false);
 		save(pe);
 		
 	

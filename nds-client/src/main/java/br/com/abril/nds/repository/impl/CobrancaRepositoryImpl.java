@@ -78,11 +78,15 @@ public class CobrancaRepositoryImpl extends AbstractRepository<Cobranca, Long> i
 		hql.append(" c.cota.numeroCota = :ncota ");
 		
 		if (filtro.getDataVencimento()!=null){
-		    hql.append(" and c.dataVencimento >= :vcto ");
+		    hql.append(" and c.dataVencimento <= :vcto ");
 		}
 		
 		if (filtro.getStatusCobranca()!=null){
 			hql.append(" and c.statusCobranca = :status ");
+		}
+		
+		if (filtro.isAcumulaDivida()){
+		    hql.append(" and ( (c.divida.acumulada = :acumulada) or (c.divida.data = :data) )");
 		}
 		
 		Query query = super.getSession().createQuery(hql.toString());
@@ -94,6 +98,11 @@ public class CobrancaRepositoryImpl extends AbstractRepository<Cobranca, Long> i
 		
 		if (filtro.getStatusCobranca()!=null){
 		    query.setParameter("status", filtro.getStatusCobranca());
+		}
+		
+		if (filtro.isAcumulaDivida()){
+			query.setParameter("acumulada", filtro.isAcumulaDivida());
+			query.setParameter("data", filtro.getDataVencimento());
 		}
 		
 		quantidade = (Long) query.uniqueResult();
@@ -114,13 +123,17 @@ public class CobrancaRepositoryImpl extends AbstractRepository<Cobranca, Long> i
 		hql.append(" c.cota.numeroCota = :ncota ");
 		
 		if (filtro.getDataVencimento()!=null){
-		    hql.append(" and c.dataVencimento >= :vcto ");
+		    hql.append(" and c.dataVencimento <= :vcto ");
 		}
 		
 		if (filtro.getStatusCobranca()!=null){
 			hql.append(" and c.statusCobranca = :status ");
 		}
-	
+		
+		if (filtro.isAcumulaDivida()){
+		    hql.append(" and ( (c.divida.acumulada = :acumulada) or (c.divida.data = :data) )");
+		}
+
 		if (filtro.getOrdenacaoColuna() != null) {
 			switch (filtro.getOrdenacaoColuna()) {
 				case CODIGO:
@@ -156,6 +169,11 @@ public class CobrancaRepositoryImpl extends AbstractRepository<Cobranca, Long> i
 		if (filtro.getStatusCobranca()!=null){
 		    query.setParameter("status", filtro.getStatusCobranca());
 		}
+		
+		if (filtro.isAcumulaDivida()){
+			query.setParameter("acumulada", filtro.isAcumulaDivida());
+			query.setParameter("data", filtro.getDataVencimento());
+		}
 
         if (filtro.getPaginacao() != null) {
 			if (filtro.getPaginacao().getPosicaoInicial() != null) {
@@ -170,5 +188,40 @@ public class CobrancaRepositoryImpl extends AbstractRepository<Cobranca, Long> i
 		return query.list();
 	}
 
+	@Override
+	public void excluirCobrancaPorIdDivida(Long idDivida) {
+		
+		Query query = this.getSession().createQuery("delete from Cobranca where divida.id = :idDivida");
+		
+		query.setParameter("idDivida", idDivida);
+		
+		query.executeUpdate();
+	}
+
+	
+	/**
+	 * Método responsável por obter uma lista de cobrancas ordenadas por data de vencimento
+	 * @param List<Long>: Id's de cobranças
+	 * @return query.list(): lista de cobrancas
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Cobranca> obterCobrancasOrdenadasPorVencimento(List<Long> idCobrancas) {
+		StringBuilder hql = new StringBuilder();
+		hql.append(" from Cobranca c ");		
+		for(int i=0; i< idCobrancas.size(); i++){
+			if(i==0){
+				hql.append(" where c.id = "+idCobrancas.get(i));
+			}
+			else{
+		        hql.append(" or c.id = "+idCobrancas.get(i));
+			}
+		}
+		hql.append(" order by c.dataVencimento ");
+		
+		Query query = super.getSession().createQuery(hql.toString());
+
+		return query.list();
+	}
 	
 }

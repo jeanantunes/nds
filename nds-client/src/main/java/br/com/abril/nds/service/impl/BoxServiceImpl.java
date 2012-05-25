@@ -83,4 +83,10 @@ public class BoxServiceImpl implements BoxService{
 	public List<CotaRotaRoteiroDTO> obtemCotaRotaRoteiro(long id) {
 		return boxRepository.obtemCotaRotaRoteiro(id);
 	}
+	
+	@Override
+	@Transactional(readOnly=true)
+	public List<Box>  buscarPorTipo(TipoBox tipo) {
+		return boxRepository.obterListaBox(tipo);
+	}
 }

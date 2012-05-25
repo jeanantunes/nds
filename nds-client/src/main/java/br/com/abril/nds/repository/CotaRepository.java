@@ -159,9 +159,19 @@ public interface CotaRepository extends Repository<Cota, Long> {
 	
 	Integer gerarSugestaoNumeroCota();
 	
-	
+	/**
+	 * Retorna uma cota ativa referente o número da cota informado
+	 * @param numeroCota - número da cota
+	 * @return Cota
+	 */
 	Cota obterPorNumerDaCotaAtiva(Integer numeroCota);
 	
+	/**
+	 * Retorna um telefone associado a uma cota
+	 * @param idTelefone - identificador da associação
+	 * @param idCota - identificador da cota
+	 * @return TelefoneCota
+	 */
 	TelefoneCota obterTelefonePorTelefoneCota(Long idTelefone, Long idCota);
 
 	ResultadoCurvaABC obterCurvaABCCotaTotal(FiltroCurvaABCCotaDTO filtroCurvaABCCotaDTO);

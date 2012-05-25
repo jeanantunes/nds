@@ -1,6 +1,8 @@
 package br.com.abril.nds.model.movimentacao;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -10,14 +12,18 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.estoque.ConferenciaEncalhe;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaCota;
+import br.com.abril.nds.model.seguranca.Usuario;
 
 /**
  * Entidade que abstrai a sinalização do status da 
@@ -63,6 +69,20 @@ public class ControleConferenciaEncalheCota {
 	@JoinColumn(name="NOTA_FISCAL_ENTRADA_COTA_ID")
 	private NotaFiscalEntradaCota notaFiscalEntradaCota;
 
+	@OneToMany(mappedBy = "controleConferenciaEncalheCota")
+	private List<ConferenciaEncalhe> conferenciasEncalhe = new ArrayList<ConferenciaEncalhe>();
+
+	@ManyToOne(optional = false)
+	@JoinColumn(name = "USUARIO_ID")
+	private Usuario usuario;
+
+	@ManyToOne(optional = false)
+	@JoinColumn(name = "BOX_ID")
+	private Box box;
+
+	
+	
+	
 	/**
 	 * Obtém id
 	 *
@@ -189,6 +209,57 @@ public class ControleConferenciaEncalheCota {
 
 	public void setNotaFiscalEntradaCota(NotaFiscalEntradaCota notaFiscalEntradaCota) {
 		this.notaFiscalEntradaCota = notaFiscalEntradaCota;
+	}
+
+	/**
+	 * Obtém conferenciasEncalhe
+	 *
+	 * @return List<ConferenciaEncalhe>
+	 */
+	public List<ConferenciaEncalhe> getConferenciasEncalhe() {
+		return conferenciasEncalhe;
+	}
+
+	/**
+	 * Atribuí conferenciasEncalhe
+	 * @param conferenciasEncalhe 
+	 */
+	public void setConferenciasEncalhe(List<ConferenciaEncalhe> conferenciasEncalhe) {
+		this.conferenciasEncalhe = conferenciasEncalhe;
+	}
+
+	/**
+	 * Obtém usuario
+	 *
+	 * @return Usuario
+	 */
+	public Usuario getUsuario() {
+		return usuario;
+	}
+
+	/**
+	 * Atribuí usuario
+	 * @param usuario 
+	 */
+	public void setUsuario(Usuario usuario) {
+		this.usuario = usuario;
+	}
+
+	/**
+	 * Obtém box
+	 *
+	 * @return Box
+	 */
+	public Box getBox() {
+		return box;
+	}
+
+	/**
+	 * Atribuí box
+	 * @param box 
+	 */
+	public void setBox(Box box) {
+		this.box = box;
 	}
 	
 }

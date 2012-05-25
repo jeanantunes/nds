@@ -91,8 +91,8 @@ public class ChamadaAntecipadaEncalheRepositoryImplTest extends AbstractReposito
 		fornecedorFc = Fixture.fornecedorFC(tipoFornecedorPublicacao);
 		save(fornecedorDinap, fornecedorFc);
 		
-		box1 = Fixture.criarBox("Box-1", "BX-001", TipoBox.LANCAMENTO);
-		box2 = Fixture.criarBox("Box-2", "BX-002", TipoBox.LANCAMENTO);
+		box1 = Fixture.criarBox("Box-1", "BX-001", TipoBox.LANCAMENTO, false);
+		box2 = Fixture.criarBox("Box-2", "BX-002", TipoBox.LANCAMENTO, false);
 		save(box1,box2);
 		
 		Cota cotaManoel = Fixture.cota(123, manoel, SituacaoCadastro.ATIVO,box1);
@@ -117,12 +117,12 @@ public class ChamadaAntecipadaEncalheRepositoryImplTest extends AbstractReposito
 
 		ProdutoEdicao produtoEdicaoVeja1 = Fixture.produtoEdicao(1L, 10, 14,
 				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(20), "ABCDEFGHIJKLMNOPQRSTU", 1L,
-				produtoVeja);
+				produtoVeja, null, false);
 		save(produtoEdicaoVeja1);
 		
 		ProdutoEdicao produtoEdicaoVeja2 = Fixture.produtoEdicao(2L, 10, 14,
 				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(20), "ABCDEFGHIJOPQRSTU", 2L,
-				produtoVeja);
+				produtoVeja, null, false);
 		save(produtoEdicaoVeja2);
 		
 		CFOP cfop5102 = Fixture.cfop5102();

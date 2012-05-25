@@ -17,11 +17,11 @@ import br.com.abril.nds.integracao.ems0131.outbound.EMS0131Output;
 import br.com.abril.nds.integracao.engine.MessageProcessor;
 import br.com.abril.nds.integracao.engine.data.Message;
 import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;
-import br.com.abril.nds.integracao.model.EventoExecucaoEnum;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.EnderecoCota;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.TelefoneCota;
+import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
 
 import com.ancientprogramming.fixedformat4j.format.FixedFormatManager;
 

@@ -12,11 +12,10 @@ import org.springframework.stereotype.Component;
 import br.com.abril.nds.integracao.engine.MessageProcessor;
 import br.com.abril.nds.integracao.engine.data.Message;
 import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;
-import br.com.abril.nds.integracao.model.EventoExecucaoEnum;
 import br.com.abril.nds.integracao.model.canonic.EMS0119Input;
 import br.com.abril.nds.integracao.service.PeriodicidadeProdutoService;
-import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
 
 
 @Component
@@ -82,14 +81,14 @@ public class EMS0119MessageProcessor implements MessageProcessor{
 			
 			}
 			
-			if(produtoEdicao.getProduto().getNomeComercial() !=  input.getNomeComercial()){
-				produtoEdicao.getProduto().setNomeComercial(input.getNomeComercial());
+			if(produtoEdicao.getNomeComercial() !=  input.getNomeComercial()){
+				produtoEdicao.setNomeComercial(input.getNomeComercial());
 				 ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, "Atualizacao do Nome Comercial para: "+input.getNomeComercial());
 			}
 			
 			if(produtoEdicao.isAtivo() != input.getStatusDaPublicacao()){ 
 				produtoEdicao.setAtivo(input.getStatusDaPublicacao());
-				 ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, "Atualizacao do Staus para: "+input.getPacotePadrao());
+				 ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, "Atualizacao do Status para: "+input.getPacotePadrao());
 		
 			}
 			

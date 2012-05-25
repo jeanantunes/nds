@@ -2,12 +2,15 @@ package br.com.abril.nds.repository.impl;
 
 import java.util.List;
 
+import org.hibernate.Criteria;
 import org.hibernate.Query;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
-
 import br.com.abril.nds.dto.RotaRoteiroDTO;
 import br.com.abril.nds.model.cadastro.Rota;
 import br.com.abril.nds.repository.RotaRepository;
+import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
 @Repository
 public class RotaRepositoryImpl extends AbstractRepository<Rota, Long>
@@ -39,5 +42,50 @@ public class RotaRepositoryImpl extends AbstractRepository<Rota, Long>
 		Query query = this.getSession().createQuery(hql.toString());
 		
 		return query.list();
+	}
+	
+
+	@SuppressWarnings("unchecked")
+	public List<Rota> buscarRota(String sortname, Ordenacao ordenacao){
+		
+		Criteria criteria =  getSession().createCriteria(Rota.class);
+		if(Ordenacao.ASC ==  ordenacao){
+			criteria.addOrder(Order.asc(sortname));
+		}else if(Ordenacao.DESC ==  ordenacao){
+			criteria.addOrder(Order.desc(sortname));
+		}
+		return criteria.list();
+	}
+	
+
+	@SuppressWarnings("unchecked")
+	public List<Rota> buscarRotaPorRoteiro(Long roteiroId, String sortname, Ordenacao ordenacao ){
+		
+		Criteria criteria =  getSession().createCriteria(Rota.class);
+		criteria.add(Restrictions.eq("roteiro.id", roteiroId));
+		if(Ordenacao.ASC ==  ordenacao){
+			criteria.addOrder(Order.asc(sortname));
+		}else if(Ordenacao.DESC ==  ordenacao){
+			criteria.addOrder(Order.desc(sortname));
+		}
+		return criteria.list();
+	}
+	
+	@SuppressWarnings("unchecked")
+	public void atualizaOrdenacao(Rota rota ){
+		Criteria criteria =  getSession().createCriteria(Rota.class);
+		criteria.add(Restrictions.eq("roteiro", rota.getRoteiro()));
+		criteria.add(Restrictions.ge("ordem", rota.getOrdem()));
+		criteria.add(Restrictions.ne("id", rota.getId()));
+		criteria.addOrder(Order.asc("ordem"));
+		List<Rota> rotas = criteria.list();
+		Integer ordem = rota.getOrdem();
+		for(Rota entity : rotas  ){
+			ordem++;
+			entity.setOrdem(ordem);
+			merge(entity);
+			
+		}
+			
 	}
 }

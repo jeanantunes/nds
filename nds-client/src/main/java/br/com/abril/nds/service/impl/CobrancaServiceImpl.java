@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.client.vo.CobrancaDividaVO;
 import br.com.abril.nds.client.vo.CobrancaVO;
 import br.com.abril.nds.dto.PagamentoDividasDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaDividasCotaDTO;
@@ -23,6 +24,7 @@ import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.PoliticaCobranca;
 import br.com.abril.nds.model.financeiro.Cobranca;
 import br.com.abril.nds.repository.CobrancaRepository;
+import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.CobrancaService;
 import br.com.abril.nds.service.DistribuidorService;
@@ -50,6 +52,9 @@ public class CobrancaServiceImpl implements CobrancaService {
 	
 	@Autowired
 	protected CalendarioService calendarioService;
+	
+	@Autowired
+	protected CotaRepository cotaRepository;
 
 
 	@Override
@@ -162,6 +167,11 @@ public class CobrancaServiceImpl implements CobrancaService {
 	@Override
 	@Transactional(readOnly=true)
 	public List<CobrancaVO> obterDadosCobrancasPorCota(FiltroConsultaDividasCotaDTO filtro) {
+		
+	    Cota cota = this.cotaRepository.obterPorNumerDaCota(filtro.getNumeroCota());
+		boolean acumulaDivida = (cota.getParametroCobranca().getPoliticaSuspensao().getNumeroAcumuloDivida() > 0);
+		filtro.setAcumulaDivida(acumulaDivida);
+		
 	    List<Cobranca> cobrancas = this.cobrancaRepository.obterCobrancasPorCota(filtro);
 		List<CobrancaVO> listaCobrancaVO = new ArrayList<CobrancaVO>();
 		CobrancaVO cobrancaVO;
@@ -257,9 +267,9 @@ public class CobrancaServiceImpl implements CobrancaService {
 	 */
 	@Override
 	@Transactional(readOnly=true)
-	public PagamentoDividasDTO obterDadosCobrancas(List<Long> idCobrancas) {
+	public CobrancaDividaVO obterDadosCobrancas(List<Long> idCobrancas) {
 	
-		PagamentoDividasDTO pagamento = new PagamentoDividasDTO();
+		CobrancaDividaVO pagamento = new CobrancaDividaVO();
 	
 		BigDecimal totalJuros = new BigDecimal(0);
 		BigDecimal totalMulta = new BigDecimal(0);
@@ -269,6 +279,7 @@ public class CobrancaServiceImpl implements CobrancaService {
 		for (int i = 0; i<idCobrancas.size(); i++){
         
 			CobrancaVO cobranca = this.obterDadosCobranca(idCobrancas.get(i));
+
 	        totalJuros = totalJuros.add(CurrencyUtil.converterValor(cobranca.getJuros()));
 	        totalMulta = totalMulta.add(CurrencyUtil.converterValor(cobranca.getMulta()));
 	        totalDividas = totalDividas.add(CurrencyUtil.converterValor(cobranca.getValor()));
@@ -276,20 +287,55 @@ public class CobrancaServiceImpl implements CobrancaService {
 	        
 		}
 		
-		pagamento.setDataPagamento(new Date());
-		pagamento.setValorJuros(totalJuros);
-		pagamento.setValorMulta(totalMulta);
-		pagamento.setValorDividas(totalDividas);
-		pagamento.setValorPagamento(totalPagamento);
-		pagamento.setValorTotalDividas(totalPagamento);
+		pagamento.setValorJuros(CurrencyUtil.formatarValor(totalJuros));
+		pagamento.setValorMulta(CurrencyUtil.formatarValor(totalMulta));
+		pagamento.setValorDividas(CurrencyUtil.formatarValor(totalDividas));
+		pagamento.setValorPagamento(CurrencyUtil.formatarValor(totalPagamento));
+		pagamento.setValorDesconto(CurrencyUtil.formatarValor(BigDecimal.ZERO));
 		
-		pagamento.setValorDesconto(BigDecimal.ZERO);
+		
 		
 		//saldo da cota
-		pagamento.setValorSaldo(BigDecimal.TEN);//!!
+		pagamento.setValorSaldo(CurrencyUtil.formatarValor(BigDecimal.TEN));//!!
+		
 		
 
 		return pagamento;
+	}
+
+	
+	/**
+	 *Método responsável por baixar dividas manualmente 
+	 * @param pagamento
+	 * @param idCobrancas
+	 */
+	@Override
+	@Transactional
+	public void baixaManualDividas(PagamentoDividasDTO pagamento,List<Long> idCobrancas) {
+		
+		BigDecimal somatorioValorCobranca = pagamento.getValorPagamento();
+		List<Cobranca> cobrancasOrdenadas = this.cobrancaRepository.obterCobrancasOrdenadasPorVencimento(idCobrancas);
+        
+		@SuppressWarnings("unused")
+		Cobranca cobrancaParcial = null;
+		
+		for (Cobranca itemCobranca:cobrancasOrdenadas){
+		    if (itemCobranca.getValor().floatValue() <= somatorioValorCobranca.floatValue()){
+		    	somatorioValorCobranca.subtract(itemCobranca.getValor());
+		    	
+		    	
+		    	//TODO BAIXAR A COBRANÇA DA ITERAÇÃO AQUI
+		    	
+		    }
+		    else{
+		    	cobrancaParcial = itemCobranca;
+		    	break;
+		    }
+		}
+		
+		
+		//TODO LANÇAR AQUI SOMATORIO TOTAL (somatorioValorCobranca) COMO CREDITO E LANÇAR NO HISTORICO DA ULTIMA COBRANCA (cobrancaParcial)
+		
 	}
 	
 }

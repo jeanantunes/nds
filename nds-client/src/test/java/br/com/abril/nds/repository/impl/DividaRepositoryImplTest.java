@@ -64,6 +64,8 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
 	@Autowired
 	private DividaRepository dividaRepository;
 	
+	ConsolidadoFinanceiroCota consolidado;
+	
 	@Before
 	public void setUp() {
 		Editor abril = Fixture.editoraAbril();
@@ -109,7 +111,7 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
 		Usuario usuarioJoao = Fixture.usuarioJoao();
 		save(usuarioJoao);
 		
-		Box box1 = Fixture.criarBox("Box-1", "BX-001", TipoBox.LANCAMENTO);
+		Box box1 = Fixture.criarBox("Box-1", "BX-001", TipoBox.LANCAMENTO, false);
 		save(box1);
 		
 		Cota cotaManoel = Fixture.cota(123, manoel, SituacaoCadastro.ATIVO,box1);
@@ -151,7 +153,7 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
 				
 		ProdutoEdicao produtoEdicaoVeja1 = Fixture.produtoEdicao(1L, 10, 14,
 				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(20), "ABCDEFGHIJKLMNOPQRSTU", 1L,
-				produtoVeja);
+				produtoVeja, null, false);
 		save(produtoEdicaoVeja1);
 		
 		EstoqueProdutoCota estoqueProdutoCota = Fixture.estoqueProdutoCota(
@@ -168,14 +170,14 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
 				new BigDecimal(200), Arrays.asList(mec), StatusAprovacao.APROVADO, new Date(), true);
 		save(movimentoFinanceiroCota);
 		
-		ConsolidadoFinanceiroCota consolidado = Fixture
+		consolidado = Fixture
 				.consolidadoFinanceiroCota(
 						Arrays.asList(movimentoFinanceiroCota), cotaManoel,
 						new Date(), new BigDecimal(200));
 		save(consolidado);
 		
 		Divida divida = Fixture.divida(consolidado, cotaManoel, new Date(),
-				        usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200));
+				        usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200),false);
 		divida.setAcumulada(false);
 		save(divida);
 		
@@ -189,7 +191,7 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
 		ConsolidadoFinanceiroCota consolidado1 = Fixture.consolidadoFinanceiroCota(null, cotaManoel, new Date(), new BigDecimal(10));
 		save(consolidado1);
 		
-		Divida divida1 = Fixture.divida(consolidado1, cotaManoel, new Date(), usuario, StatusDivida.EM_ABERTO, new BigDecimal(10));
+		Divida divida1 = Fixture.divida(consolidado1, cotaManoel, new Date(), usuario, StatusDivida.EM_ABERTO, new BigDecimal(10),false);
 		divida1.setAcumulada(false);
 		save(divida1);
 		
@@ -215,7 +217,7 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
 						Fixture.criarData(2, 2, 2010), new BigDecimal(210));
 		
 		Divida dividaAcumuladaGuilherme2 = Fixture.divida(consolidadoAcumuloGuilherme2, cotaManoel, Fixture.criarData(2, 2, 2010),
-				usuarioJoao, StatusDivida.QUITADA, new BigDecimal(210));
+				usuarioJoao, StatusDivida.QUITADA, new BigDecimal(210),false);
 		
 		
 		acumDividaGuilherme2 = Fixture.criarHistoricoAcumuloDivida(
@@ -325,5 +327,11 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
 		Double valor = dividaRepository.obterSomaDividas(new FiltroCotaInadimplenteDTO());
 		
 		Assert.assertTrue(valor==210.0);					
+	}
+	
+	@Test
+	public void obterDividaPorIdConsolidado(){
+		
+		Assert.assertNotNull(this.dividaRepository.obterDividaPorIdConsolidado(consolidado.getId()));
 	}
 }
