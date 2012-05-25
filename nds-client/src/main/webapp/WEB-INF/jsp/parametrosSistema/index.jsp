@@ -1,4 +1,11 @@
 <head>
+
+<script type="text/javascript">
+	$(function(){
+		$("#cnpj").mask("99.999.999/9999-99");
+	});
+</script>
+
 </head>
 
 <body>
@@ -53,7 +60,7 @@
 					</tr>
 					<tr>
 						<td width="166">CNPJ:</td>
-						<td width="305"><input type="text" name="dto.cnpj" id="dto.cnpj" style="width:220px;" value="${parametroSistemaGeralDTO.cnpj}"/></td>
+						<td width="305"><input type="text" name="dto.cnpj" id="cnpj" style="width:220px;" value="${parametroSistemaGeralDTO.cnpj}"/></td>
 						<td width="164">Interface PRODIN Importa&ccedil;&atilde;o: </td>
 						<td width="294">
 							<input type="text" name="dto.pathProdinImportacao" id="dto.pathProdinImportacao" style="width:220px;" value="${parametroSistemaGeralDTO.pathProdinImportacao}"/>
