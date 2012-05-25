@@ -31,4 +31,6 @@ public interface RoteirizacaoService {
 	void excluirListaRota(List<Long> rotasId);
 	
 	void transferirListaRota(List<Long> rotasId, Long roteiroId);
+	
+	void transferirListaRotaComNovoRoteiro(List<Long> rotasId, Roteiro roteiro);
 }
