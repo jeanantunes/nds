@@ -17,17 +17,17 @@ import javax.persistence.TemporalType;
 import br.com.abril.nds.model.seguranca.Usuario;
 
 @Entity
-@Table(name = "TIPO_DESCONTO_COTA")
-@SequenceGenerator(name="TIPO_DESCONTO_COTA_SEQ", initialValue = 1, allocationSize = 1)
-public class TipoDescontoCota implements Serializable {
+@Table(name = "TIPO_DESCONTO_PRODUTO")
+@SequenceGenerator(name="TIPO_DESCONTO_PRODUTO_SEQ", initialValue = 1, allocationSize = 1)
+public class TipoDescontoProduto implements Serializable {
 
 	/**
 	 * Serial Version UID
 	 */
-	private static final long serialVersionUID = -7293231301319891635L;
+	private static final long serialVersionUID = 2729825625956908037L;
 	
 	@Id
-	@GeneratedValue(generator = "TIPO_DESCONTO_COTA_SEQ")
+	@GeneratedValue(generator = "TIPO_DESCONTO_PRODUTO_SEQ")
 	@Column(name = "ID")
 	private Long id;
 	
@@ -41,15 +41,16 @@ public class TipoDescontoCota implements Serializable {
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "USUARIO_ID")
 	private Usuario usuario;
-
+	
 	@ManyToOne(optional = false)
-	@JoinColumn(name = "COTA_ID")
-	private Cota cota;
+	@JoinColumn(name = "PRODUTO_EDICAO_ID")
+	private ProdutoEdicao produtoEdicao;
 	
 	/**
 	 * Construtor padrão.
 	 */
-	public TipoDescontoCota() {
+	public TipoDescontoProduto() {
+		
 		
 	}
 
@@ -110,17 +111,17 @@ public class TipoDescontoCota implements Serializable {
 	}
 
 	/**
-	 * @return the cota
+	 * @return the produtoEdicao
 	 */
-	public Cota getCota() {
-		return cota;
+	public ProdutoEdicao getProdutoEdicao() {
+		return produtoEdicao;
 	}
 
 	/**
-	 * @param cota the cota to set
+	 * @param produtoEdicao the produtoEdicao to set
 	 */
-	public void setCota(Cota cota) {
-		this.cota = cota;
+	public void setProdutoEdicao(ProdutoEdicao produtoEdicao) {
+		this.produtoEdicao = produtoEdicao;
 	}
 
 	/* (non-Javadoc)
@@ -145,7 +146,7 @@ public class TipoDescontoCota implements Serializable {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		TipoDescontoCota other = (TipoDescontoCota) obj;
+		TipoDescontoProduto other = (TipoDescontoProduto) obj;
 		if (id == null) {
 			if (other.id != null)
 				return false;
@@ -155,3 +156,4 @@ public class TipoDescontoCota implements Serializable {
 	}
 	
 }
+	

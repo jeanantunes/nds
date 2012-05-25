@@ -13,6 +13,7 @@ import br.com.abril.nds.model.cadastro.Periodicidade;
 import br.com.abril.nds.model.cadastro.TipoEntrega;
 import br.com.abril.nds.service.TipoEntregaService;
 import br.com.abril.nds.util.CellModelKeyValue;
+import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.caelum.vraptor.Path;
@@ -64,6 +65,8 @@ public class ServicoController {
 								  int page, 
 								  int rp) {
 		
+		descricao = this.validarDescricao(descricao);
+		
 		sortname = this.getSortName(sortname);
 		
 		int startSearch = page * rp - rp;
@@ -77,7 +80,7 @@ public class ServicoController {
 			this.tipoEntregaService.pesquisarQuantidadeTiposEntrega(
 				codigo, descricao, periodicidade);
 		
-		processarServicos(listaTipoEntrega, total, page);
+		this.processarServicos(listaTipoEntrega, total, page);
 	}
 	
 	/**
@@ -129,7 +132,10 @@ public class ServicoController {
 			this.tipoEntregaService.removerTipoEntrega(id);
 			
 		} catch (Exception e) {
-			
+			this.result.use(Results.json()).from(
+					new ValidacaoVO(TipoMensagem.ERROR, "Ocorreu um erro ao tentar excluir o serviço."), 
+									"result").recursive().serialize();
+			throw new RuntimeException(e);
 		}
 		
 		this.result.use(Results.json()).from(
@@ -145,7 +151,46 @@ public class ServicoController {
 	@Post
 	public void buscarServicoPeloCodigo(Long id) {
 		
+		if (id == null) {
+			throw new ValidacaoException(TipoMensagem.ERROR, "Tipo de Entrega não encontrado.");
+		}
+		
+		TipoEntrega tipoEntrega = 
+			this.tipoEntregaService.obterTipoEntrega(id);
+		
 		ResultadoServicoVO resultadoServicoVO = new ResultadoServicoVO();
+		
+		resultadoServicoVO.setId(tipoEntrega.getId());
+		resultadoServicoVO.setCodigo(tipoEntrega.getId().toString());
+		resultadoServicoVO.setDescricao(tipoEntrega.getDescricao());
+		
+		BigDecimal taxaFixa = tipoEntrega.getTaxaFixa();
+		
+		if (taxaFixa == null) {
+			
+			if (tipoEntrega.getPercentualFaturamento() != null && 
+					tipoEntrega.getBaseCalculo() != null) {
+				
+				resultadoServicoVO.setTipoCobranca("PF");
+				resultadoServicoVO.setBaseCalculo(tipoEntrega.getBaseCalculo().getKey());
+				resultadoServicoVO.setPercentualCalculoBase(tipoEntrega.getPercentualFaturamento().toString());
+			}
+		} else {
+			resultadoServicoVO.setTipoCobranca("TF");
+			resultadoServicoVO.setTaxa(taxaFixa.toString());
+		}
+
+		Periodicidade periodicidadeContrato = tipoEntrega.getPeriodicidade();
+		
+		if (periodicidadeContrato.getValue().equals("S")) {
+			resultadoServicoVO.setPeriodicidade("S");
+			resultadoServicoVO.setDiaSemana(tipoEntrega.getDiaSemana().getCodigoDiaSemana());
+		} else if (periodicidadeContrato.getValue().equals("M")) {
+			resultadoServicoVO.setPeriodicidade("M");
+			resultadoServicoVO.setDiaMes(tipoEntrega.getDiaMes());
+		} else {
+			resultadoServicoVO.setPeriodicidade("D");
+		}
 		
 		this.result.use(Results.json()).from(resultadoServicoVO, "result").recursive().serialize();
 	}
@@ -169,6 +214,8 @@ public class ServicoController {
 		
 		if (descricao == null || descricao.isEmpty()) {
 			listaMensagens.add("O preenchimento do campo [Descrição] é obrigatório!");
+		} else {
+			descricao = this.validarDescricao(descricao);
 		}
 
 		if ("TF".equals(cobranca)) {
@@ -225,9 +272,25 @@ public class ServicoController {
 			resultadoServicoVO.setId(tipoEntrega.getId());
 			resultadoServicoVO.setCodigo(tipoEntrega.getId().toString());
 			resultadoServicoVO.setDescricao(tipoEntrega.getDescricao());
-			resultadoServicoVO.setTaxa(tipoEntrega.getTaxaFixa());
-			resultadoServicoVO.setBaseCalculo(tipoEntrega.getBaseCalculo() != null ?tipoEntrega.getBaseCalculo().name() : "");
-			resultadoServicoVO.setPercentualCalculoBase(tipoEntrega.getPercentualFaturamento());
+			
+			BigDecimal taxaFixa = tipoEntrega.getTaxaFixa();
+			
+			if (taxaFixa != null) {
+				resultadoServicoVO.setTaxa(CurrencyUtil.formatarValor(taxaFixa));
+			} else {
+				resultadoServicoVO.setTaxa("-");
+			}
+			
+			resultadoServicoVO.setBaseCalculo(tipoEntrega.getBaseCalculo() != null ? tipoEntrega.getBaseCalculo().getValue() : " - ");
+			
+			Float percentualFaturamento = tipoEntrega.getPercentualFaturamento();
+			
+			if(percentualFaturamento != null) {
+				String value = ""+percentualFaturamento.intValue();
+				resultadoServicoVO.setPercentualCalculoBase(value);
+			} else {
+				resultadoServicoVO.setPercentualCalculoBase("-");
+			}
 			
 			listaServicos.add(resultadoServicoVO);
 		}
@@ -254,5 +317,23 @@ public class ServicoController {
 		
 		return sortname;
 	}
-	
+
+	private String validarDescricao(String descricao) {
+		
+		if (descricao == null || descricao.isEmpty()) {
+			
+			if (descricao.contains("%")) {
+				descricao.replace("%", "");
+			}
+			
+			if (descricao.length() > 256) {
+				throw new ValidacaoException(TipoMensagem.ERROR, "O campo [Descrição] excedeu o limite permitido!");
+			}
+		
+			descricao.trim();
+		}
+		
+		return descricao;
+	}
+		
 }

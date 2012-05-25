@@ -95,6 +95,9 @@ public class ConferenciaEncalheController {
 		if (idBox != null){
 		
 			this.session.setAttribute(ID_BOX_LOGADO, idBox);
+		} else {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Box de recolhimento é obrigatório.");
 		}
 		
 		this.result.use(Results.json()).from("").serialize();
@@ -102,6 +105,11 @@ public class ConferenciaEncalheController {
 	
 	@Post
 	public void verificarReabertura(Integer numeroCota){
+		
+		if (this.session.getAttribute(ID_BOX_LOGADO) == null){
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Box de recolhimento não informado.");
+		}
 		
 		try {
 			

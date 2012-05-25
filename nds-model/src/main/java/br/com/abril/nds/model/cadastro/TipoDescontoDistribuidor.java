@@ -17,17 +17,17 @@ import javax.persistence.TemporalType;
 import br.com.abril.nds.model.seguranca.Usuario;
 
 @Entity
-@Table(name = "TIPO_DESCONTO_COTA")
-@SequenceGenerator(name="TIPO_DESCONTO_COTA_SEQ", initialValue = 1, allocationSize = 1)
-public class TipoDescontoCota implements Serializable {
+@Table(name = "TIPO_DESCONTO_DISTRIBUIDOR")
+@SequenceGenerator(name="TIPO_DESCONTO_DISTRIBUIDOR_SEQ", initialValue = 1, allocationSize = 1)
+public class TipoDescontoDistribuidor implements Serializable {
 
 	/**
 	 * Serial Version UID
 	 */
-	private static final long serialVersionUID = -7293231301319891635L;
-	
+	private static final long serialVersionUID = 4686258999970099752L;
+
 	@Id
-	@GeneratedValue(generator = "TIPO_DESCONTO_COTA_SEQ")
+	@GeneratedValue(generator = "TIPO_DESCONTO_DISTRIBUIDOR_SEQ")
 	@Column(name = "ID")
 	private Long id;
 	
@@ -41,15 +41,16 @@ public class TipoDescontoCota implements Serializable {
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "USUARIO_ID")
 	private Usuario usuario;
-
+	
 	@ManyToOne(optional = false)
-	@JoinColumn(name = "COTA_ID")
-	private Cota cota;
+	@JoinColumn(name = "DISTRIBUIDOR_ID")
+	private Distribuidor distribuidor;
 	
 	/**
 	 * Construtor padrão.
 	 */
-	public TipoDescontoCota() {
+	public TipoDescontoDistribuidor() {
+		
 		
 	}
 
@@ -110,17 +111,17 @@ public class TipoDescontoCota implements Serializable {
 	}
 
 	/**
-	 * @return the cota
+	 * @return the distribuidor
 	 */
-	public Cota getCota() {
-		return cota;
+	public Distribuidor getDistribuidor() {
+		return distribuidor;
 	}
 
 	/**
-	 * @param cota the cota to set
+	 * @param distribuidor the distribuidor to set
 	 */
-	public void setCota(Cota cota) {
-		this.cota = cota;
+	public void setDistribuidor(Distribuidor distribuidor) {
+		this.distribuidor = distribuidor;
 	}
 
 	/* (non-Javadoc)
@@ -145,7 +146,7 @@ public class TipoDescontoCota implements Serializable {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		TipoDescontoCota other = (TipoDescontoCota) obj;
+		TipoDescontoDistribuidor other = (TipoDescontoDistribuidor) obj;
 		if (id == null) {
 			if (other.id != null)
 				return false;

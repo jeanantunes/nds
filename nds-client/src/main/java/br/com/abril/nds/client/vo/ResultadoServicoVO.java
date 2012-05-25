@@ -1,7 +1,6 @@
 package br.com.abril.nds.client.vo;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 
 public class ResultadoServicoVO implements Serializable {
 
@@ -13,13 +12,19 @@ public class ResultadoServicoVO implements Serializable {
 
 	private String descricao;
 	
-	private BigDecimal taxa;
+	private String taxa;
 		
 	private String baseCalculo;
 	
-	private Float percentualCalculoBase;
+	private String percentualCalculoBase;
 	
 	private String periodicidade;
+	
+	private String tipoCobranca;
+	
+	private Integer diaSemana;
+	
+	private Integer diaMes;
 	
 	public ResultadoServicoVO() {
 		
@@ -56,14 +61,14 @@ public class ResultadoServicoVO implements Serializable {
 	/**
 	 * @return the taxa
 	 */
-	public BigDecimal getTaxa() {
+	public String getTaxa() {
 		return taxa;
 	}
 
 	/**
 	 * @param taxa the taxa to set
 	 */
-	public void setTaxa(BigDecimal taxa) {
+	public void setTaxa(String taxa) {
 		this.taxa = taxa;
 	}
 
@@ -84,14 +89,14 @@ public class ResultadoServicoVO implements Serializable {
 	/**
 	 * @return the percentualCalculoBase
 	 */
-	public Float getPercentualCalculoBase() {
+	public String getPercentualCalculoBase() {
 		return percentualCalculoBase;
 	}
 
 	/**
 	 * @param percentualCalculoBase the percentualCalculoBase to set
 	 */
-	public void setPercentualCalculoBase(Float percentualCalculoBase) {
+	public void setPercentualCalculoBase(String percentualCalculoBase) {
 		this.percentualCalculoBase = percentualCalculoBase;
 	}
 
@@ -121,6 +126,48 @@ public class ResultadoServicoVO implements Serializable {
 	 */
 	public void setId(Long id) {
 		this.id = id;
+	}
+
+	/**
+	 * @return the tipoCobranca
+	 */
+	public String getTipoCobranca() {
+		return tipoCobranca;
+	}
+
+	/**
+	 * @param tipoCobranca the tipoCobranca to set
+	 */
+	public void setTipoCobranca(String tipoCobranca) {
+		this.tipoCobranca = tipoCobranca;
+	}
+
+	/**
+	 * @return the diaSemana
+	 */
+	public Integer getDiaSemana() {
+		return diaSemana;
+	}
+
+	/**
+	 * @param diaSemana the diaSemana to set
+	 */
+	public void setDiaSemana(Integer diaSemana) {
+		this.diaSemana = diaSemana;
+	}
+
+	/**
+	 * @return the diaMes
+	 */
+	public Integer getDiaMes() {
+		return diaMes;
+	}
+
+	/**
+	 * @param diaMes the diaMes to set
+	 */
+	public void setDiaMes(Integer diaMes) {
+		this.diaMes = diaMes;
 	}
 	
 }

@@ -4,6 +4,7 @@ import java.util.List;
 
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.TipoProduto;
+import br.com.abril.nds.service.exception.UniqueConstraintViolationException;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
 /**
@@ -25,9 +26,10 @@ public interface TipoProdutoService {
 	/**
 	 * Remove o Tipo Produto do repositório de dados.
 	 * @param id
+	 * @throws UniqueConstraintViolationException 
 	 * @throws ValidacaoException Lança quando o Tipo de Produto em questão não pode ser removido.
 	 */
-	public abstract void remover(Long id);
+	public abstract void remover(Long id) throws UniqueConstraintViolationException, ValidacaoException;
 	
 	/**
 	 * Atualiza a entidade tipo produto no repositorio de dados.
@@ -74,4 +76,10 @@ public interface TipoProdutoService {
 	 * @return lista tipoProduto
 	 */
 	public abstract List<TipoProduto> obterTodosTiposProduto();
+	
+	/**
+	 * Obtem um codigo sugerido pelo sistema para ser cadastrado no tipo produto
+	 * @return codigo
+	 */
+	public abstract String getCodigoSugerido();
 }
