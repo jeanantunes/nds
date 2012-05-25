@@ -10,7 +10,11 @@ import org.springframework.transaction.annotation.Transactional;
 import br.com.abril.nds.dto.ConsultaProdutoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Produto;
+import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.repository.ProdutoRepository;
+import br.com.abril.nds.service.EstoqueProdutoService;
+import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.ProdutoService;
 import br.com.abril.nds.service.exception.UniqueConstraintViolationException;
 import br.com.abril.nds.util.TipoMensagem;
@@ -26,6 +30,12 @@ public class ProdutoServiceImpl implements ProdutoService {
 
 	@Autowired
 	private ProdutoRepository produtoRepository;
+	
+	@Autowired
+	private ProdutoEdicaoService produtoEdicaoService;
+	
+	@Autowired
+	private EstoqueProdutoService estoqueProdutoService;
 	
 	@Override
 	@Transactional(readOnly = true)
@@ -104,6 +114,27 @@ public class ProdutoServiceImpl implements ProdutoService {
 		} catch (Exception e) {
 			throw new ValidacaoException(TipoMensagem.ERROR, "Ocorreu um erro ao tentar excluir o produto.");
 		}
+	}
+
+	/* (non-Javadoc)
+	 * @see br.com.abril.nds.service.ProdutoService#isProdutoEmEstoque(java.lang.String)
+	 */
+	@Override
+	@Transactional(readOnly=true)
+	public boolean isProdutoEmEstoque(String codigoProduto) {
+		
+		List<ProdutoEdicao> listaProdutoEdicao = this.produtoEdicaoService.obterProdutosEdicaoPorCodigoProduto(codigoProduto);
+		
+		for (ProdutoEdicao produtoEdicao : listaProdutoEdicao) {
+			
+			EstoqueProduto estoqueProduto = estoqueProdutoService.buscarEstoquePorProduto(produtoEdicao.getId());
+			
+			if (estoqueProduto != null) {
+				return true;
+			}
+		}
+		
+		return false;
 	}
 	
 }
