@@ -133,16 +133,28 @@
 		}
 
 		function limparModalCadastro() {
-
+						
 			$("#idServico").val("");
 			$("#codigoCadastro").val("");
 			$("#descricaoCadastro").val("");
 			$("#taxaFixaCadastro").val("");
 			$("#baseCalculoCadastro").val("");
-			$("#percentualCalculoBase").val("");   	
-			$("#periodicidadeDiaria").val("");
+			$("#percentualFaturamento").val("");   	
+			$("#diaSemana").val("");
 			$("#diaMes").val("");
 
+			$("#radioCobrancaTF").attr('checked', false);
+			$("#radioCobrancaPF").attr('checked', false);
+
+			$("#periodicidadeCadastroDiario").attr('checked', false);
+			$("#periodicidadeCadastroSemanal").attr('checked', false);
+			$("#periodicidadeCadastroMensal").attr('checked', false);
+
+			$('.diaMes').hide();
+			$('.semanal').hide();
+			$('.taxa').hide();
+			$('.faturamento').hide();
+			
 			aplicarMascaras();			
 		}
 		
@@ -215,11 +227,11 @@
 
 		function incluirENovoServico() {
 
-			salvarServico();
+			salvarServico(false);
 			limparModalCadastro();
 		}
 
-		function salvarServico() {
+		function salvarServico(isConfirm) {
 
 			var id = $("#idServico").val(); 
 			var descricao = $("#descricaoCadastro").val();
@@ -247,13 +259,19 @@
 							var listaMensagens = result.listaMensagens;
 							
 							if (tipoMensagem && listaMensagens) {
-								
-								exibirMensagem(tipoMensagem, listaMensagens);
+
+								if (isConfirm) {
+									exibirMensagem(tipoMensagem, listaMensagens);
+								} else {
+									exibirMensagemDialog(tipoMensagem, listaMensagens, 'dialogMensagemNovo');
+								}
 							}
 					   },
 					   null,
-					   true
+					   isConfirm
 			);
+
+			$(".serviceGrid").flexReload();
 		}
 		
 		function incluirNovo() {
@@ -266,12 +284,14 @@
 				buttons : {
 					"Confirmar" : function() {
 
-						salvarServico();
+						salvarServico(true);
 
 				   		$("#dialog-novo").dialog("close");
 						$(".serviceGrid").flexReload();
+						limparModalCadastro();
 					},
 					"Cancelar" : function() {
+						$(".serviceGrid").flexReload();
 						$(this).dialog("close");
 					}
 				},
@@ -383,7 +403,9 @@
 	<div id="dialog-novo" title="Incluir Novo Servi&ccedil;o de Entrega">
 		
 		<input id="idServico" type="hidden" />
-		<jsp:include page="../messagesDialog.jsp" />
+		<jsp:include page="../messagesDialog.jsp">
+			<jsp:param value="dialogMensagemNovo" name="messageDialog"/>
+		</jsp:include> 
 
 		<table width="580" border="0" cellspacing="2" cellpadding="0">
 			<tr>
@@ -502,10 +524,10 @@
    		<table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
 			<tr>
 				<td width="46">C&oacute;digo:</td>
-				<td width="118" ><input type="text" name="codigo" id="codigo" style="width:100px;"/></td>
+				<td width="118" ><input type="text" maxlength="20" name="codigo" id="codigo" style="width:100px;"/></td>
 				
 				<td width="63">Descri&ccedil;&atilde;o:</td>
-				<td width="250"><input type="text" name="descricao" id="descricao" style="width:222px;"/></td>
+				<td width="250"><input type="text" name="descricao" id="descricao" style="width:222px;" maxlength="256" /></td>
 				
 				<td width="82">Periodicidade:</td>
 				<td width="251">
