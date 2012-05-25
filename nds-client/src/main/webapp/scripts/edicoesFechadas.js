@@ -1,6 +1,6 @@
+var contextPath;
 
-var boxController = {
-		var contextPath;
+var edicoesFechadasController = {
 		init : function(path) {
 			this.contextPath=path;
 			this.initGridEdicoesFechadasGrid();
@@ -8,21 +8,11 @@ var boxController = {
 			this.bindButtons();
 		},
 		bindButtons : function() {
-			$(".boxGrid").flexOptions({
-				"url" : this.path + 'busca.json',
-				params : [{
-					name : "codigoBox",
-					value : codigoBox
-				}, {
-					name : "tipoBox",
-					value : tipoBox
-				}, {
-					name : "postoAvancado",
-					value : false
-				}],
-				newp:1
+			$("#btnPesquisar").click(function() {
+				edicoesFechadasController.pesquisar();
+				$(".grids").show();
 			});
-			$(".boxGrid").flexReload();		},
+		},
 		initGridEdicoesFechadasGrid: function(){
 			$(".consultaEdicoesFechadasGrid").flexigrid({
 				dataType : 'json',
@@ -90,7 +80,7 @@ var boxController = {
 				width : 960,
 				height : 180
 			});
-		}
+		},
 		initGridDetalheEdicoesFechadas: function(){
 			$(".detalheEdicoesFechadasGrid").flexigrid({
 				dataType : 'xml',
@@ -134,26 +124,34 @@ var boxController = {
 				width : 700,
 				height : 180
 			});
+		},
+		pesquisar : function() {
+			alert("pesquisar");
+			$(".consultaEdicoesFechadasGrid").flexOptions({
+				url: contextPath + '/estoque/edicoesFechadas/pesquisar',
+				params: [],		
+			    newp: 1,
+			});
+			$(".consultaEdicoesFechadasGrid").flexReload();
+		},
+		popup_detalhes : function() {
+			$( "#dialog-detalhes" ).dialog({
+				resizable: false,
+				height:440,
+				width:750,
+				modal: true,
+				buttons: {
+					"Fechar": function() {
+						$( this ).dialog( "close" );
+						
+					},
+				}
+			});
 		}
-
-}
-
-function setContextPath(path) {
-	contextPath=path;
-}
-
-function pesquisar() {
-	alert("pesquisar");
-	$(".consultaEdicoesFechadasGrid").flexOptions({
-		url: contextPath + '/estoque/edicoesFechadas/pesquisar',
-		params: [],		
-	    newp: 1,
-	});
-	$(".consultaEdicoesFechadasGrid").flexReload();
 }
 
 $(function() {
-	$( "#datepickerDe" ).datepicker({
+	$( "#filtroEdicoesFechadasDTO.dataDe" ).datepicker({
 		showOn: "button",
 		buttonImage: contextPath + "/images/calendar.gif",
 		buttonImageOnly: true,
@@ -161,9 +159,9 @@ $(function() {
 		defaultDate: new Date()
 	});
 
-	$("#datepickerDe").mask("99/99/9999");
+	$("#filtroEdicoesFechadasDTO.dataDe").mask("99/99/9999");
 
-	$( "#datepickerAte" ).datepicker({
+	$( "#filtroEdicoesFechadasDTO.dataAte" ).datepicker({
 		showOn: "button",
 		buttonImage: contextPath + "/images/calendar.gif",
 		buttonImageOnly: true,
@@ -171,23 +169,6 @@ $(function() {
 		defaultDate: new Date()
 	});
 
-	$("#datepickerAte").mask("99/99/9999");
+	$("#filtroEdicoesFechadasDTO.dataAte").mask("99/99/9999");
 	
 });
-
-function popup_detalhes() {
-
-	$( "#dialog-detalhes" ).dialog({
-		resizable: false,
-		height:440,
-		width:750,
-		modal: true,
-		buttons: {
-			"Fechar": function() {
-				$( this ).dialog( "close" );
-				
-			},
-		}
-	});
-	
-};

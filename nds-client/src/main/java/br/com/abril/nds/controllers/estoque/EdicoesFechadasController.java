@@ -7,16 +7,13 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import br.com.abril.nds.client.vo.RegistroCurvaABCDistribuidorVO;
 import br.com.abril.nds.client.vo.ResultadoEdicoesFechadasVO;
 import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.dto.filtro.FiltroEdicoesFechadasDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.service.EdicoesFechadasService;
-import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.DateUtil;
-import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
@@ -70,14 +67,14 @@ public class EdicoesFechadasController {
 	
 	/**
 	 * Realiza a pesquisa de edições fechadas
-	 * @param filtroEdicoesFechadasDTO
+	 * @param filtro
 	 * @throws Exception
 	 */
 	@Post
 	@Path("/pesquisar")
-	public void pesquisarEdicoesFechadas(FiltroEdicoesFechadasDTO filtroEdicoesFechadasDTO) throws Exception {
+	public void pesquisarEdicoesFechadas(FiltroEdicoesFechadasDTO filtro) throws Exception {
 
-		this.validarDadosPesquisa(filtroEdicoesFechadasDTO.getDateDe(), filtroEdicoesFechadasDTO.getDateAte());
+		this.validarDadosPesquisa(filtro.getDateDe(), filtro.getDateAte());
 
 		SimpleDateFormat sdf = new SimpleDateFormat(Constantes.DATE_PATTERN_PT_BR);
 		
