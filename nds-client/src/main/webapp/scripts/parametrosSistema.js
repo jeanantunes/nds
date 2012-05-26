@@ -19,8 +19,16 @@ ParametroSistema.prototype.initUploadForm = function() {
 			beforeSubmit: function(arr, formData, options) {
 				
 				// Validar seleção de imagem:
+				/*
 				if (!$('#imgLogoSistema').val()) { 
-					exibirMensagem('WARNING', ['Escolha um arquivo para ser enviado.'], "");
+					exibirMensagem('WARNING', ['Escolha um arquivo para ser enviado!'], "");
+					return false; 
+				}
+				*/
+				
+				// Valida o formato do email:
+				if (!/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{1,3})+$/.test($('#email').val())) {
+					exibirMensagem('WARNING', ['Por favor, preencha com um email válido!'], "");
 					return false; 
 				}
 			},
