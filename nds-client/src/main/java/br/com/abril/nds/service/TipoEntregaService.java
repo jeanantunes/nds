@@ -71,7 +71,7 @@ public interface TipoEntregaService {
 	 * @param diaSemana
 	 * @param diaMes
 	 */
-	void salvarTipoEntrega(Long id, String descricao, BigDecimal taxaFixa, Integer percentualFaturamento,
+	void salvarTipoEntrega(Long id, String descricao, BigDecimal taxaFixa, Float percentualFaturamento,
 			String baseCalculo, String periodicidadeCadastro, Integer diaSemana, Integer diaMes);
 		
 }
