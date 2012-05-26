@@ -268,7 +268,8 @@
 							}
 					   },
 					   null,
-					   isConfirm
+					   !isConfirm,
+					   'dialogMensagemNovo'
 			);
 
 			$(".serviceGrid").flexReload();
@@ -414,7 +415,7 @@
 			</tr>
 			<tr>
 				<td>Descri&ccedil;&atilde;o:</td>
-				<td colspan="3"><input id="descricaoCadastro" type="text" style="width:270px;" /></td>
+				<td colspan="3"><input id="descricaoCadastro" maxlength="255" type="text" style="width:270px;" /></td>
 			</tr>
 			<tr>
 				<td>&nbsp;</td>
