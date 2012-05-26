@@ -67,4 +67,5 @@ ParametroSistema.prototype.loadImage = function(){
 
 ParametroSistema.prototype.bindEvents = function() {
 	$("#cnpj").mask("99.999.999/9999-99");
+	$("#dtOperacaoCorrente").mask("99/99/9999");
 };

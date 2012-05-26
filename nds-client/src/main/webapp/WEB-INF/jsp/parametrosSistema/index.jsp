@@ -197,7 +197,7 @@
 						</td>
 						<td>&nbsp;</td>
 						<td>Data Opera&ccedil;&atilde;o Corrente:</td>
-						<td><input type="text" name="dto.dtOperacaoCorrente" id="dto.dtOperacaoCorrente" style="width:100px; text-align:center;" disabled="disabled" /></td>
+						<td><input type="text" name="dto.dtOperacaoCorrente" id="dtOperacaoCorrente" style="width:100px; text-align:center;" disabled="disabled" value="${parametroSistemaGeralDTO.dtOperacaoCorrente}" /></td>
 					</tr>
 				</tbody>
 			</table>
