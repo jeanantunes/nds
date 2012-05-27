@@ -64,23 +64,28 @@ public class ServicoController {
 								  String sortname, 
 								  int page, 
 								  int rp) {
-		
-		descricao = this.validarDescricao(descricao);
-		
-		sortname = this.getSortName(sortname);
-		
-		int startSearch = page * rp - rp;
-		
-		List<TipoEntrega> listaTipoEntrega =
-			this.tipoEntregaService.pesquisarTiposEntrega(
-					codigo, descricao, periodicidade, 
-					sortname, sortorder, startSearch, rp);
-		
-		int total = 
-			this.tipoEntregaService.pesquisarQuantidadeTiposEntrega(
-				codigo, descricao, periodicidade);
-		
-		this.processarServicos(listaTipoEntrega, total, page);
+		try {	
+			
+			descricao = this.validarDescricao(descricao);
+			
+			sortname = this.getSortName(sortname);
+			
+			int startSearch = page * rp - rp;
+			
+			List<TipoEntrega> listaTipoEntrega =
+				this.tipoEntregaService.pesquisarTiposEntrega(
+						codigo, descricao, periodicidade, 
+						sortname, sortorder, startSearch, rp);
+			
+			int total = 
+				this.tipoEntregaService.pesquisarQuantidadeTiposEntrega(
+					codigo, descricao, periodicidade);
+			
+			this.processarServicos(listaTipoEntrega, total, page);
+			
+		} catch (Exception e) {
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, "Erro ao tentar pesquisar."));
+		}
 	}
 	
 	/**
@@ -95,7 +100,7 @@ public class ServicoController {
 	 * @param percentualCalculo
 	 */
 	@Post
-	public void salvarServico(Long id, String descricao, BigDecimal taxaFixa, Integer percentualFaturamento,
+	public void salvarServico(Long id, String descricao, BigDecimal taxaFixa, Float percentualFaturamento,
 			String baseCalculo, String periodicidadeCadastro, Integer diaSemana, Integer diaMes, String cobranca) {
 		
 		this.validarServico(descricao, taxaFixa, baseCalculo, percentualFaturamento, cobranca, periodicidadeCadastro, diaSemana, diaMes);
@@ -107,7 +112,7 @@ public class ServicoController {
 				baseCalculo, periodicidadeCadastro, diaSemana, diaMes);
 		
 		} catch (Exception e) {
-			throw new RuntimeException(e);
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, "Erro ao tentar salvar o tipo de entrega."));
 		}
 		
 		this.result.use(Results.json()).from(
@@ -126,16 +131,13 @@ public class ServicoController {
 		try {
 			
 			if (id == null) {
-				throw new ValidacaoException(TipoMensagem.ERROR, "Serviço não encontrado.");
+				throw new ValidacaoException(TipoMensagem.WARNING, "Serviço não encontrado.");
 			}
 			
 			this.tipoEntregaService.removerTipoEntrega(id);
 			
 		} catch (Exception e) {
-			this.result.use(Results.json()).from(
-					new ValidacaoVO(TipoMensagem.ERROR, "Ocorreu um erro ao tentar excluir o serviço."), 
-									"result").recursive().serialize();
-			throw new RuntimeException(e);
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, "Ocorreu um erro ao tentar excluir o serviço."));
 		}
 		
 		this.result.use(Results.json()).from(
@@ -152,7 +154,7 @@ public class ServicoController {
 	public void buscarServicoPeloCodigo(Long id) {
 		
 		if (id == null) {
-			throw new ValidacaoException(TipoMensagem.ERROR, "Tipo de Entrega não encontrado.");
+			throw new ValidacaoException(TipoMensagem.WARNING, "Tipo de Entrega não encontrado.");
 		}
 		
 		TipoEntrega tipoEntrega = 
@@ -182,10 +184,10 @@ public class ServicoController {
 
 		Periodicidade periodicidadeContrato = tipoEntrega.getPeriodicidade();
 		
-		if (periodicidadeContrato.getValue().equals("S")) {
+		if (("S").equals(periodicidadeContrato.getValue())) {
 			resultadoServicoVO.setPeriodicidade("S");
 			resultadoServicoVO.setDiaSemana(tipoEntrega.getDiaSemana().getCodigoDiaSemana());
-		} else if (periodicidadeContrato.getValue().equals("M")) {
+		} else if (("M").equals(periodicidadeContrato.getValue())) {
 			resultadoServicoVO.setPeriodicidade("M");
 			resultadoServicoVO.setDiaMes(tipoEntrega.getDiaMes());
 		} else {
@@ -207,7 +209,7 @@ public class ServicoController {
 	 * @param percentualFaturamento
 	 */
 	private void validarServico(String descricao, BigDecimal taxaFixa, String baseCalculo, 
-			Integer percentualFaturamento, String cobranca, String periodicidadeCadastro, 
+			Float percentualFaturamento, String cobranca, String periodicidadeCadastro, 
 			Integer diaSemana, Integer diaMes) {
 		
 		List<String> listaMensagens = new ArrayList<String>();

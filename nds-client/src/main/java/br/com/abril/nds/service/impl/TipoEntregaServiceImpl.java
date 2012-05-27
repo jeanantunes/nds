@@ -51,7 +51,7 @@ public class TipoEntregaServiceImpl implements TipoEntregaService {
 	 * @see br.com.abril.nds.service.TipoEntregaService#removerTipoEntrega(java.lang.Long)
 	 */
 	@Override
-	@Transactional
+	@Transactional(readOnly=false)
 	public void removerTipoEntrega(Long id) {
 		
 		try {
@@ -84,39 +84,45 @@ public class TipoEntregaServiceImpl implements TipoEntregaService {
 	 */
 	@Override
 	@Transactional(readOnly=false)
-	public void salvarTipoEntrega(Long id, String descricao, BigDecimal taxaFixa, Integer percentualFaturamento,
+	public void salvarTipoEntrega(Long id, String descricao, BigDecimal taxaFixa, Float percentualFaturamento,
 			String baseCalculo, String periodicidadeCadastro, Integer diaSemana, Integer diaMes) {
-
-		TipoEntrega tipoEntrega = new TipoEntrega();
 		
-		tipoEntrega.setId(id);
-		tipoEntrega.setDescricao(descricao);
-		tipoEntrega.setPeriodicidade(getPeriodicidade(periodicidadeCadastro));
-
-		if (taxaFixa != null) {
-			tipoEntrega.setTaxaFixa(taxaFixa);
-		}
-		
-		if (baseCalculo != null && !baseCalculo.isEmpty()) {
-			tipoEntrega.setBaseCalculo(getBaseCalculo(baseCalculo));
-		}
-		
-		if (percentualFaturamento != null) {
-			tipoEntrega.setPercentualFaturamento(percentualFaturamento.floatValue());
-		}
-		
-		if (diaMes != null) {
-			tipoEntrega.setDiaMes(diaMes);
-		}
-		
-		if (diaSemana != null) {
-			tipoEntrega.setDiaSemana(DiaSemana.getByCodigoDiaSemana(diaSemana));
-		}
-		
-		if (id != null) {
-			this.tipoEntregaRepository.alterar(tipoEntrega);
-		} else {
-			this.tipoEntregaRepository.adicionar(tipoEntrega);
+		try {
+			
+			TipoEntrega tipoEntrega = new TipoEntrega();
+			
+			tipoEntrega.setId(id);
+			tipoEntrega.setDescricao(descricao);
+			tipoEntrega.setPeriodicidade(getPeriodicidade(periodicidadeCadastro));
+	
+			if (taxaFixa != null) {
+				tipoEntrega.setTaxaFixa(taxaFixa);
+			}
+			
+			if (baseCalculo != null && !baseCalculo.isEmpty()) {
+				tipoEntrega.setBaseCalculo(getBaseCalculo(baseCalculo));
+			}
+			
+			if (percentualFaturamento != null) {
+				tipoEntrega.setPercentualFaturamento(percentualFaturamento);
+			}
+			
+			if (diaMes != null) {
+				tipoEntrega.setDiaMes(diaMes);
+			}
+			
+			if (diaSemana != null) {
+				tipoEntrega.setDiaSemana(DiaSemana.getByCodigoDiaSemana(diaSemana));
+			}
+			
+			if (id != null) {
+				this.tipoEntregaRepository.alterar(tipoEntrega);
+			} else {
+				this.tipoEntregaRepository.adicionar(tipoEntrega);
+			}
+			
+		} catch (Exception e) {
+			throw new RuntimeException(e);
 		}
 	}
 
