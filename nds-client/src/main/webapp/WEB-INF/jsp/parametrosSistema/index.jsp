@@ -19,13 +19,7 @@
 
 <body>
 
-<div id="dialog-confirm" title="Salvar Par&acirc;metro de Cobrança">
-	<p>Confirma os Par&acirc;metro de Cobrança?</p>
-</div>
-
-
 <form id="formUpload" method="post" enctype="multipart/form-data" >
-
 
 <div class="corpo">
 	<br />
@@ -38,12 +32,8 @@
 					<tr>
 						<td>
 							<div id="div_imagem_logotipo">
-								<!-- TODO: exibir logo já cadastrado, caso houver -->
-								<img src="${pageContext.request.contextPath}/images/${parametroSistemaGeralDTO.logoSistema}" width="110" height="70" alt="Logo Sistema" />
+								<img src="${pageContext.request.contextPath}/administracao/parametrosSistema/getImageLogotipo" width="110" height="70" alt="Logotipo Distribuidor" />
 							</div>
-							
-							<!-- TODO: evento para excluir a image (grava 'elemento neutro' no path da imagem) -->
-							<a href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_excluir.gif" alt="Excluir Logo" width="15" height="15" border="0" /></a>
 						</td>
 						<td>&nbsp;</td>
 						<td>&nbsp;</td>

@@ -40,8 +40,8 @@ ParametroSistema.prototype.initUploadForm = function() {
 					exibirMensagem(tipoMensagem, listaMensagens, "");
 				}    	    	    
 				
-				// TODO: Implementar posteriormente:
-				// _this.loadImage();
+				// carregar imagem:
+				_this.loadImage();
 				
 			} ,
 			url: _this.path + 'salvar',

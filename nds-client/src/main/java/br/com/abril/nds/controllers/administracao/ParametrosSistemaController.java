@@ -7,20 +7,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.dto.ParametroSistemaGeralDTO;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.service.ParametroSistemaService;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.UfEnum;
 import br.com.abril.nds.util.Util;
 
-import br.com.caelum.stella.ValidationMessage;
 import br.com.caelum.stella.validation.CNPJValidator;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
-import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
-import br.com.caelum.vraptor.interceptor.download.ByteArrayDownload;
 import br.com.caelum.vraptor.interceptor.download.Download;
+import br.com.caelum.vraptor.interceptor.download.InputStreamDownload;
 import br.com.caelum.vraptor.interceptor.multipart.UploadedFile;
 import br.com.caelum.vraptor.view.Results;
 
@@ -64,22 +63,20 @@ public class ParametrosSistemaController {
 		// WORKAROUND: para tratar o checkbox (no cenário que ele foi desmarcado):
 		dto.setNfeDpec(dto.getNfeDpec());
 		
+		//
+		this.validarParametrosSistema(dto, imgLogoSistema);
+		
 		// Obtém os dados do arquivo:
 		InputStream imgLogotipo = null;
-		String nomeImgLogotipo = "";
+		String contentType = "";
 		if (imgLogoSistema != null) {
 			imgLogotipo = imgLogoSistema.getFile();
-			nomeImgLogotipo = imgLogoSistema.getFileName();
+			contentType = imgLogoSistema.getContentType();
 		}
 		
-		//dto.setLogoSistema(nomeImgLogotipo);
-		
-		//
-		this.validar(dto, imgLogoSistema);
-		
-		
 		// Salvar:
-		//psService.salvar(dto, imgLogotipo);
+		psService.salvar(dto, imgLogotipo, contentType);
+		
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Parâmetros salvos com sucesso."), "result").recursive().serialize();
 	}
 	
@@ -92,30 +89,29 @@ public class ParametrosSistemaController {
 	 * 
 	 * @exception
 	 */
-	private void validar(ParametroSistemaGeralDTO dto, UploadedFile imgLogoSistema) 
+	private void validarParametrosSistema(ParametroSistemaGeralDTO dto, UploadedFile imgLogoSistema) 
 				throws ValidacaoException {
 		
-		// TODO: validar imagem
-		if (imgLogoSistema == null) {
-			throw new ValidacaoException(TipoMensagem.ERROR, "Escolha um arquivo para ser enviado!");
-		}
-		String fileName = imgLogoSistema.getFileName().toLowerCase();
-		if (!fileName.matches("([A-Za-z0-9]|_|.|-)+\\.(png|gif)")) {
-			throw new ValidacaoException(TipoMensagem.ERROR, "Por favor, selecione um formato de arquivo 'gif' ou 'png'!");
+		// Validar imagem:
+		if (imgLogoSistema != null) {
+			String fileName = imgLogoSistema.getFileName().toLowerCase();
+			if (!fileName.matches("([A-Za-z0-9]|_|.|-)+\\.(png|gif)")) {
+				throw new ValidacaoException(TipoMensagem.ERROR, "Por favor, selecione um formato de arquivo 'gif' ou 'png'!");
+			}
 		}
 		
-		// TODO: validar CNPJ
+		// Validar CNPJ
 		CNPJValidator vld = new CNPJValidator(true);
-		for (ValidationMessage error : vld.invalidMessagesFor(dto.getCnpj())) {
+		if (!vld.invalidMessagesFor(dto.getCnpj()).isEmpty()) {
 			throw new ValidacaoException(TipoMensagem.ERROR, "Por favor, preencha com um CNPJ válido!");
 		}
 		
-		// TODO: Validar email:
+		// Validar email:
 		if (!Util.validarEmail(dto.getEmail())) {
 			throw new ValidacaoException(TipoMensagem.ERROR, "Por favor, preencha com um email válido!");
 		}
 		
-		// TODO: Validar UF:
+		// Validar UF:
 		try {
 			UfEnum.valueOf(dto.getUf().toUpperCase());
 		} catch (Exception e) {
@@ -123,16 +119,20 @@ public class ParametrosSistemaController {
 		}
 	}
 	
-	public Download getImageLogotipo() {		
-		/*
-		byte[] buff = cotaGarantiaService.getImageCheque(idCheque);
+	/**
+	 * Obtém o logotipo do distribuidor, caso exista.
+	 * 
+	 * @return
+	 */
+	public Download getImageLogotipo() {
 		
-		if (buff == null) {
-			buff = new byte[0];
+		try {
+			InputStream inputStream = psService.getLogotipoDistribuidor();
+			return new InputStreamDownload(inputStream, null, null);
+		} catch (Exception e) {
+			result.use(CustomJson.class).from(new ValidacaoVO(TipoMensagem.ERROR, e.getMessage())).serialize();
 		}
-		
-		return new ByteArrayDownload(buff, "image/jpeg", "cheque.jpg");
-		*/
+
 		return null;
 	}
 	

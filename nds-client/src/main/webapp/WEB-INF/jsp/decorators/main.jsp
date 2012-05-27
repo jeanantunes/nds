@@ -387,6 +387,7 @@ fieldset label {
 							</li>
 							<li><a href='<c:url value="/distribuidor/parametroCobranca/index"/>'>Parâmetros de Cobrança</a>
 							</li>
+							<li><a href='<c:url value="administracao/parametrosSistema"/>'>Par&acirc;metros do Sistema</a></li>
 						</ul>
 					</li>
 					<li><span class="classHelp">&nbsp;</span><a href="help.htm">Help</a>
