@@ -5,7 +5,6 @@ import java.util.Date;
 import java.util.List;
 
 import br.com.abril.nds.client.vo.RegistroCurvaABCCotaVO;
-import br.com.abril.nds.client.vo.RegistroCurvaABCDistribuidorVO;
 import br.com.abril.nds.client.vo.ResultadoCurvaABC;
 import br.com.abril.nds.dto.ChamadaAntecipadaEncalheDTO;
 import br.com.abril.nds.dto.CotaDTO;
@@ -17,7 +16,7 @@ import br.com.abril.nds.dto.filtro.FiltroCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroCurvaABCCotaDTO;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.EnderecoCota;
-import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
+import br.com.abril.nds.model.cadastro.TelefoneCota;
 
 /**
  * Interface que define as regras de acesso a dados referentes a entidade
@@ -160,9 +159,23 @@ public interface CotaRepository extends Repository<Cota, Long> {
 	
 	Integer gerarSugestaoNumeroCota();
 	
-	
+	/**
+	 * Retorna uma cota ativa referente o número da cota informado
+	 * @param numeroCota - número da cota
+	 * @return Cota
+	 */
 	Cota obterPorNumerDaCotaAtiva(Integer numeroCota);
+	
+	/**
+	 * Retorna um telefone associado a uma cota
+	 * @param idTelefone - identificador da associação
+	 * @param idCota - identificador da cota
+	 * @return TelefoneCota
+	 */
+	TelefoneCota obterTelefonePorTelefoneCota(Long idTelefone, Long idCota);
 
 	ResultadoCurvaABC obterCurvaABCCotaTotal(FiltroCurvaABCCotaDTO filtroCurvaABCCotaDTO);
+	
 	List<RegistroCurvaABCCotaVO> obterCurvaABCCota(FiltroCurvaABCCotaDTO filtro);
+
 }

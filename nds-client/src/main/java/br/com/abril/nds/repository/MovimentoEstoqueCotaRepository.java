@@ -16,6 +16,16 @@ import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 public interface MovimentoEstoqueCotaRepository extends Repository<MovimentoEstoqueCota, Long> {
 	
 	/**
+	 * Obtém lista de MovimentoEstoqueCota relativa a uma operação de
+	 * conferência de encalhe.
+	 * 
+	 * @param idControleConferenciaEncalheCota
+	 * 
+	 * @return List - MovimentoEstoqueCota
+	 */
+	public List<MovimentoEstoqueCota> obterListaMovimentoEstoqueCotaParaOperacaoConferenciaEncalhe(Long idControleConferenciaEncalheCota);
+	
+	/**
 	 * Obtém a quantidade de tipos de produtoEdicao da consulta de encalhe.
 	 * Caso o parâmetro "indQtdEncalheAposPrimeiroDia" = false a pesquisa ira retornar 
 	 * a quantidade de tipos de produtoEdicao do encalhe sumarizada do primeiro dia.

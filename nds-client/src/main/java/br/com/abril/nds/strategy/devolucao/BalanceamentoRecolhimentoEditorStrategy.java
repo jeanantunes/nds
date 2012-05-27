@@ -124,7 +124,7 @@ public class BalanceamentoRecolhimentoEditorStrategy extends AbstractBalanceamen
 			
 			for (ProdutoRecolhimentoDTO produtoRecolhimento : produtosRecolhimentoEditor) {
 				
-				Date dataRecolhimento = produtoRecolhimento.getDataRecolhimentoDistribuidor();
+				Date dataRecolhimento = produtoRecolhimento.getDataRecolhimentoPrevista();
 				
 				BigDecimal expectativaEncalheDiaria = mapaExpectativaEncalheDiaria.get(dataRecolhimento);
 				
@@ -172,7 +172,7 @@ public class BalanceamentoRecolhimentoEditorStrategy extends AbstractBalanceamen
 			List<ProdutoRecolhimentoDTO> produtosRecolhimentoEditor = mapaProdutosRecolhimentoEditor.get(idEditor);
 			
 			List<ProdutoRecolhimentoDTO> produtosRecolhimentoAtuaisNaData = 
-				matrizRecolhimento.get(dataRecolhimentoEditor);
+				matrizRecolhimento.get(dataBalanceamento);
 			
 			super.atualizarMatrizRecolhimento(
 				matrizRecolhimento, produtosRecolhimentoAtuaisNaData, 

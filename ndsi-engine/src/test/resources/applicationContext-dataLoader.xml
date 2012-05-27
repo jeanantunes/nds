@@ -12,21 +12,21 @@
 	<bean id="dataSource"
 		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
 		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
-		<property name="url" value="jdbc:mysql://10.100.1.98:3306/nds-client" />
-		<property name="username" value="mysqluser" />
-		<property name="password" value="Discover1" />
+		<property name="url" value="jdbc:mysql://abrildgbdb01.cdgtwjqgurfb.sa-east-1.rds.amazonaws.com:3306/nds-client" />
+		<property name="username" value="admin" />
+		<property name="password" value="abrildgb01" />
     </bean>
 
 	<bean id="sessionFactory"
 		class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean">
 		<property name="dataSource" ref="dataSource" />
-		<property name="packagesToScan" value="br.com.abril.nds.model" />
+		<property name="packagesToScan" value="br.com.abril.nds" />
 		<property name="hibernateProperties">
 			<props>
             <prop key="hibernate.dialect">org.hibernate.dialect.MySQL5InnoDBDialect</prop>
 		    <prop key="hibernate.show_sql">true</prop>
 		    <prop key="hibernate.format_sql">true</prop>	
-            <prop key="hibernate.hbm2ddl.auto">create</prop>
+            <prop key="hibernate.hbm2ddl.auto">update</prop>
 		</props>
 		</property>
 	</bean>

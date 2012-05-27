@@ -62,7 +62,7 @@ public class BoletoRepositoryImplTest extends AbstractRepositoryImplTest  {
 		save(pessoaJuridica);
 		
 		//CRIA UM OBJETO BOX NA SESSAO PARA TESTES
-		Box box = Fixture.criarBox("300", "Box 300", TipoBox.LANCAMENTO);
+		Box box = Fixture.criarBox("300", "Box 300", TipoBox.LANCAMENTO, false);
 		save(box);
 		
 		//CRIA UM OBJETO COTA NA SESSAO PARA TESTES
@@ -99,7 +99,7 @@ public class BoletoRepositoryImplTest extends AbstractRepositoryImplTest  {
 				
 		ProdutoEdicao produtoEdicaoVeja1 = Fixture.produtoEdicao(1L, 10, 14,
 				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(20), "ABCDEFGHIJKLMNOPQRSTU", 1L,
-				produtoVeja);
+				produtoVeja, null, false);
 		save(produtoEdicaoVeja1);
 		
 		EstoqueProdutoCota estoqueProdutoCota = Fixture.estoqueProdutoCota(
@@ -123,7 +123,7 @@ public class BoletoRepositoryImplTest extends AbstractRepositoryImplTest  {
 		save(consolidado);
 		
 		Divida divida = Fixture.divida(consolidado, cota, new Date(),
-				        usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200));
+				        usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200),false);
 		save(divida);
 		
 		
@@ -136,7 +136,7 @@ public class BoletoRepositoryImplTest extends AbstractRepositoryImplTest  {
 		ConsolidadoFinanceiroCota consolidado1 = Fixture.consolidadoFinanceiroCota(null, cota, new Date(), new BigDecimal(10));
 		save(consolidado1);
 		
-		Divida divida1 = Fixture.divida(consolidado1, cota, new Date(), usuario, StatusDivida.EM_ABERTO, new BigDecimal(10));
+		Divida divida1 = Fixture.divida(consolidado1, cota, new Date(), usuario, StatusDivida.EM_ABERTO, new BigDecimal(10),false);
 		save(divida1);
 		
 	    Boleto boleto = Fixture.boleto("5", "5", "5",

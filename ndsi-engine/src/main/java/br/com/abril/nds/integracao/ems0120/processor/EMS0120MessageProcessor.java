@@ -19,6 +19,7 @@ import br.com.abril.nds.integracao.ems0120.outbound.EMS0120Trailer;
 import br.com.abril.nds.integracao.engine.MessageProcessor;
 import br.com.abril.nds.integracao.engine.data.Message;
 import br.com.abril.nds.integracao.service.DistribuidorService;
+import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 
 import com.ancientprogramming.fixedformat4j.format.FixedFormatManager;
@@ -50,14 +51,15 @@ public class EMS0120MessageProcessor implements MessageProcessor{
 		sql.append("JOIN FETCH mec.produtoEdicao pe ");
 		sql.append("JOIN FETCH pe.produto p ");
 		sql.append("JOIN FETCH p.fornecedores fs ");
-		sql.append("WHERE mec.data = :dataOperacao");
-		sql.append("AND mec.tipoMovimento.id = ");
+		sql.append("WHERE mec.data = :dataOperacao ");
+		sql.append("AND mec.tipoMovimento.grupoMovimentoEstoque = :recebimentoReparte ");
 
 		
 		
 	
 		Query query = entityManager.createQuery(sql.toString());
-		query.setParameter("dataOperacao", distribuidorService.findDistribuidor());
+		query.setParameter("dataOperacao", distribuidorService.findDistribuidor().getDataOperacao());
+		query.setParameter("recebimentoReparte", GrupoMovimentoEstoque.RECEBIMENTO_REPARTE);
 		
 		@SuppressWarnings("unchecked")
 		List<MovimentoEstoqueCota> mecs = (List<MovimentoEstoqueCota>) query.getResultList();
@@ -86,10 +88,10 @@ public class EMS0120MessageProcessor implements MessageProcessor{
 			    outdetalhe.setContextoProduto(mec.getProdutoEdicao().getProduto().getCodigoContexto());//cod_publ
 				outdetalhe.setCodPublicacao(mec.getProdutoEdicao().getProduto().getCodigo());
 				outdetalhe.setEdicao(mec.getProdutoEdicao().getNumeroEdicao());
-				outdetalhe.setDataLançamento(mec.getData());			
 				outdetalhe.setNumeroBoxCota(mec.getCota().getBox().getCodigo());
 				outdetalhe.setPrecoCapa(mec.getProdutoEdicao().getPrecoVenda());
 				outdetalhe.setQuantidadeReparte(mec.getQtde());
+				outdetalhe.setDataLancamento(mec.getData());
 				
 				 
 				print.println(fixedFormatManager.export(outdetalhe));

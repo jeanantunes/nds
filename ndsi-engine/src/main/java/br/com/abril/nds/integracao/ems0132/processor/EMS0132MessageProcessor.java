@@ -19,11 +19,11 @@ import br.com.abril.nds.integracao.ems0132.outbound.EMS0132Output;
 import br.com.abril.nds.integracao.engine.MessageProcessor;
 import br.com.abril.nds.integracao.engine.data.Message;
 import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;
-import br.com.abril.nds.integracao.model.EventoExecucaoEnum;
 import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.Produto;
+import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
 import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.util.DateUtil;
 

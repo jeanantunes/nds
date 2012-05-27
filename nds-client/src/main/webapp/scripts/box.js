@@ -3,7 +3,7 @@ var boxController = {
 		SUPLEMENTAR : 'Suplementar',
 		RECOLHIMENTO : 'Recolhimento',
 		LANCAMENTO : 'Lan&ccedil;amento',
-		NUMEROS_ATRAZADOS : 'NA'
+		NUMEROS_ATRASADOS : 'NA'
 	},
 	box : {},
 	path : contextPath + '/cadastro/box/',

@@ -80,7 +80,16 @@ public interface CotaService {
 	void processarEnderecos(Long idCota,
 							List<EnderecoAssociacaoDTO> listaEnderecoAssociacaoSalvar,
 							List<EnderecoAssociacaoDTO> listaEnderecoAssociacaoRemover);
-
+	
+	/**
+	 * Persiste um conjunto de telefones para uma determinada cota.
+	 *
+	 * @param idCota
+	 *
+	 * @param listaTelefonesAdicionar
+	 *
+	 * @param listaTelefonesRemover
+	 */
 	void processarTelefones(Long idCota,
 			List<TelefoneAssociacaoDTO> listaTelefonesAdicionar,
 			Collection<Long> listaTelefonesRemover);
@@ -146,8 +155,6 @@ public interface CotaService {
 
 	Cota obterCotaPDVPorNumeroDaCota(Integer numeroCota);
 
-	//void cadastrarTelefonesCota(List<TelefoneCota> listaTelefonesAdicionar, Collection<Long> listaTelefonesRemover);
-
 	List<Cota> obterCotaAssociadaFiador(Long idFiador);
 
 	/**
@@ -158,7 +165,11 @@ public interface CotaService {
 	 */
 	DistribuicaoDTO obterDadosDistribuicaoCota(Long idCota);
 
-
+	/**
+	 * Retorna uma lista de fornecedores associados a uma determinda cota
+	 * @param idCota
+	 * @return List<Fornecedor> 
+	 */
 	List<Fornecedor> obterFornecedoresCota(Long idCota);
 
 	/**
@@ -176,22 +187,67 @@ public interface CotaService {
 	 */
 	Long salvarCota(CotaDTO cotaDto);
 
+	/**
+	 * Exclui uma cota referente o parâmetro informado
+	 * @param idCota
+	 */
 	void excluirCota(Long idCota);
 
+	/**
+	 * Retorna os dados cadastrais de uma determinada cota
+	 * @param idCota
+	 * @return CotaDTO
+	 */
 	CotaDTO obterDadosCadastraisCota(Long idCota);
 
+	/**
+	 * Retorna o número de sugestão para inclusão de uma nova cota
+	 * @return Integer
+	 */
 	Integer gerarNumeroSugestaoCota();
-
+	
+	/**
+	 *  Retorna uma lista de tipos de desconto não associadas a uma cota
+	 * @param idCota
+	 * @return List<TipoDesconto>
+	 */
 	List<TipoDesconto> obterDescontos(Long idCota);
-
+	
+	/**
+	 * Retorna uma lista de tipos de desconto associadas a uma cota
+	 * @param idCota
+	 * @return List<TipoDesconto>
+	 */
 	List<TipoDesconto> obterDescontosCota(Long idCota);
 
+	/**
+	 * Persiste os dados de tipo de desconto referente a cota informada
+	 * @param descontos
+	 * @param idCota
+	 */
 	void salvarDescontosCota(List<Long> descontos, Long idCota);
-
+	
+	/**
+	 * Persiste os dados de sócio referente o identificador da cota informado
+	 * @param sociosCota
+	 * @param idCota
+	 */
 	void salvarSociosCota(List<SocioCota> sociosCota, Long idCota );
-
+	
+	/**
+	 * Retorna uma lista de sócios referente o código da cota informada
+	 * @param idCota - identificador da cota
+	 * @return  List<SocioCota>
+	 */
 	List<SocioCota> obterSociosCota(Long idCota);
-
+	
+	/**
+	 * Retorna uma cota ativa referente ao número de cota informado
+	 * 
+	 * @param numeroCota - número da cota
+	 * 
+	 * @return Cota
+	 */
 	Cota obterPorNumeroDaCotaAtiva(Integer numeroCota);
 
 	/**
@@ -199,8 +255,11 @@ public interface CotaService {
 	 * @return comboTiposCota: Tipos de cota padrão.
 	 */
 	public List<ItemDTO<TipoCota, String>> getComboTiposCota();
+	
+	void alterarCota(Cota cota);
 
 	public ResultadoCurvaABC obterCurvaABCCotaTotal(FiltroCurvaABCCotaDTO filtroCurvaABCCotaDTO);
+	
 	public List<RegistroCurvaABCCotaVO> obterCurvaABCCota(FiltroCurvaABCCotaDTO filtroCurvaABCCotaDTO);
 
 }

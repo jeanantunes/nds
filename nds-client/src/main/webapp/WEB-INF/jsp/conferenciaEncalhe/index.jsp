@@ -22,7 +22,7 @@
 			
 			pesquisarCota : function() {
 				
-				var data = [{name : 'numeroCota', value : jQuery("#numeroCota").val()}];
+				var data = [{name : 'numeroCota', value : $("#numeroCota").val()}];
 				
 				$.postJSON("<c:url value='/devolucao/conferenciaEncalhe/verificarReabertura'/>", data,
 					function(result){
@@ -39,6 +39,7 @@
 								buttons : {
 									"Sim" : function() {
 										
+										$("#dialog-reabertura").dialog("close");
 										ConferenciaEncalhe.carregarListaConferencia(data);
 										ConferenciaEncalhe.popup_alert();
 									},
@@ -135,7 +136,9 @@
 						}
 						
 						var inputCheckBoxJuramentada = 
-							'<input type="checkbox" ' + (value.cell.juramentada ? 'checked="checked"' : '')  + ' name="checkGroupJuramentada" style="align: center;"/>';
+							'<input type="checkbox" ' + (value.cell.juramentada == "true" ? 'checked="checked"' : '')
+								+ (!value.cell.juramentada ? 'disabled="disabled"' : '')
+								+ ' name="checkGroupJuramentada" style="align: center;"/>';
 						
 						value.cell.juramentada = inputCheckBoxJuramentada;
 						
@@ -146,6 +149,8 @@
 						value.cell.acao = '<a href="javascript:;" onclick="ConferenciaEncalhe.excluirConferencia(' + value.cell.idConferenciaEncalhe + ');">' + imgExclusao + '</a>';
 					}
 				);
+				
+				$('input[name="qtdExemplaresGrid"]').numeric();
 				
 				$(".outrosVlrsGrid").flexAddData({
 					page: result[1].page, total: result[1].total, rows: result[1].rows
@@ -183,7 +188,7 @@
 					$("#numeroNotaFiscalExibir").text(notaFiscal.numero);
 					$("#serieExibir").text(notaFiscal.serie);
 					$("#dataExibir").text(notaFiscal.dataEmissao);
-					$("#valorTotalNotaFiscalExibir").text(notaFiscal.valorProdutos);
+					$("#valorTotalNotaFiscalExibir").text(parseFloat(notaFiscal.valorProdutos).toFixed(2));
 					$("#chaveAcessoExibir").text(notaFiscal.chaveAcesso);
 				}
 				
@@ -219,6 +224,10 @@
 						value.cell.acao = '<a href="javascript:;" onclick="ConferenciaEncalhe.excluirConferencia(' + value.cell.idConferenciaEncalhe + ');">' + imgExclusao + '</a>';
 					}
 				);
+				
+				
+				$('input[name="qtdeInformadaFinalizarConf"]').numeric();
+				$('input[name="precoCapaFinalizarConf"]').numeric();
 				
 				$("#somatorioQtdInformada").text(parseInt(result[10]));
 				$("#somatorioQtdRecebida").text(parseInt(result[11]));
@@ -398,7 +407,7 @@
 									
 									$("#dialog-logado").dialog("close");
 									$('#numeroCota').focus();
-								}
+								}, null, true, "idModalBoxRecolhimento"
 							);
 						},
 						"Cancelar" : function() {
@@ -680,7 +689,8 @@
 									exibirMensagem(result.tipoMensagem, result.listaMensagens);
 									
 									$("#dialog-salvar").dialog("close");
-								}
+								},
+								null, true, "idModalConfirmarSalvarConf"
 							);
 						},
 						"Cancelar" : function() {
@@ -1016,8 +1026,6 @@
 						$("#qtdeExemplar").val(qtd + 1);
 					} else {
 						
-						var _sm = $("#sm").val();
-						
 						var data = [{name: "codigoBarra", value: ""}, 
 						            {name: "sm", value: $("#sm").val()}, 
 						            {name: "idProdutoEdicao", value: ""},
@@ -1049,8 +1057,6 @@
 						$('#cod_barras').focus();
 					} else {
 						
-						var _codProduto = $("#codProduto").val();
-						
 						var data = [{name: "codigoBarra", value: ""}, 
 						            {name: "sm", value: ""}, 
 						            {name: "idProdutoEdicao", value: idProdutoEdicao},
@@ -1063,7 +1069,11 @@
 								ConferenciaEncalhe.setarValoresPesquisados(result);
 								$("#dialog-pesquisar").dialog("destroy");
 								$('#cod_barras').focus();
-							}, null, true, "idModalPesquisarProdutos"
+							},
+							function(){
+								
+								$("#codProduto").val("");
+							}, true, "idModalPesquisarProdutos"
 						);
 					}
 				} else {
@@ -1077,8 +1087,11 @@
 			
 			$('#codProduto').keypress(function(e) {
 				
-				$("#pesq_prod").val("");
-				ConferenciaEncalhe.popup_pesquisar();
+				if (e.keyCode == 0){
+				
+					$("#pesq_prod").val("");
+					ConferenciaEncalhe.popup_pesquisar();
+				}
 			});
 			
 			$('#observacao').keypress(function(e) {
@@ -1110,7 +1123,16 @@
 			
 			if (!modalAberta){
 				
-				ConferenciaEncalhe.recalcularValoresFinalizar();
+				$.postJSON("<c:url value='/devolucao/conferenciaEncalhe/verificarValorTotalNotaFiscal'/>", null,
+					function(result){
+						
+						exibirMensagem(result.tipoMensagem, result.listaMensagens);
+					},
+					function(){
+						
+						ConferenciaEncalhe.recalcularValoresFinalizar();
+					}, true, "idModalDadosNotaFiscal"
+				);
 			}
 		});
 		
@@ -1218,7 +1240,7 @@
 						<input name="sm" type="text" id="sm" style="width: 40px;" />
 					</td>
 					<td class="class_linha_1" align="center" style="border-bottom: 1px solid #666; border-right: 1px solid #666;">
-						<input name="codProduto" type="text" id="codProduto" style="width: 100px;" />
+						<input name="codProduto" type="text" readonly="readonly" id="codProduto" style="width: 100px;" />
 					</td>
 					<td class="class_linha_2" id="nomeProduto"></td>
 					<td class="class_linha_2" align="center" id="edicaoProduto"></td>

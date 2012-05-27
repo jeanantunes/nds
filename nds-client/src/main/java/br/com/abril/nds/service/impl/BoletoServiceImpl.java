@@ -36,6 +36,7 @@ import br.com.abril.nds.model.financeiro.BaixaAutomatica;
 import br.com.abril.nds.model.financeiro.BaixaCobranca;
 import br.com.abril.nds.model.financeiro.BaixaManual;
 import br.com.abril.nds.model.financeiro.Boleto;
+import br.com.abril.nds.model.financeiro.Cobranca;
 import br.com.abril.nds.model.financeiro.ControleBaixaBancaria;
 import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
 import br.com.abril.nds.model.financeiro.StatusBaixa;
@@ -1068,69 +1069,10 @@ public class BoletoServiceImpl implements BoletoService {
 	 */
 	@Override
 	@Transactional(readOnly=true)
-	public CobrancaVO obterDadosCobranca(String nossoNumero) {
-		
-		//PARAMETROS PARA CALCULO DE JUROS E MULTA
-		Distribuidor distribuidor = distribuidorService.obter();
-        Date dataOperacao = distribuidor.getDataOperacao();
-		
-		CobrancaVO cobranca=null;
-		
+	public CobrancaVO obterDadosBoletoPorNossoNumero(String nossoNumero) {
 		Boleto boleto = boletoRepository.obterPorNossoNumero(nossoNumero,false);
-		
-		if ((boleto!=null)&&(boleto.getStatusCobranca()==StatusCobranca.NAO_PAGO)){
-			
-			cobranca = new CobrancaVO();
-			
-			cobranca.setNossoNumero(boleto.getNossoNumero());	
-			
-			String cota = "";
-			
-			if ((boleto.getCota().getPessoa()) instanceof PessoaFisica){
-				cota = boleto.getCota().getNumeroCota()+"-"+((PessoaFisica) boleto.getCota().getPessoa()).getNome();
-			}
-			
-			if ((boleto.getCota().getPessoa()) instanceof PessoaJuridica){
-				cota = boleto.getCota().getNumeroCota()+"-"+((PessoaJuridica) boleto.getCota().getPessoa()).getRazaoSocial();
-			}
-			
-			cobranca.setCota(cota);
-			cobranca.setBanco(boleto.getBanco().getNome());
-			cobranca.setDataVencimento((boleto.getDataVencimento()!=null?DateUtil.formatarDataPTBR(boleto.getDataVencimento()):""));
-			cobranca.setDataEmissao((boleto.getDataEmissao()!=null?DateUtil.formatarDataPTBR(boleto.getDataEmissao()):""));
-			cobranca.setValor(CurrencyUtil.formatarValor(boleto.getValor()));
-			cobranca.setDividaTotal(CurrencyUtil.formatarValor(boleto.getDivida().getValor()));
-			
-			//CALCULO DE JUROS E MULTA
-			BigDecimal valorJurosCalculado = BigDecimal.ZERO;
-			BigDecimal valorMultaCalculado = BigDecimal.ZERO;
-			Date dataVencimentoUtil = calendarioService.adicionarDiasUteis(boleto.getDataVencimento(), 0);
-			
-			if (dataVencimentoUtil.compareTo(dataOperacao) < 0) {
-				
-				//CALCULA JUROS
-				valorJurosCalculado =
-					cobrancaService.calcularJuros(boleto.getBanco(), boleto.getCota(), distribuidor,
-												  boleto.getValor(), boleto.getDataVencimento(),
-												  dataOperacao);
-				//CALCULA MULTA
-				valorMultaCalculado =
-					cobrancaService.calcularMulta(boleto.getBanco(), boleto.getCota(), distribuidor,
-												  boleto.getValor());
-			}
-			
-			cobranca.setDataPagamento( DateUtil.formatarDataPTBR(dataOperacao) );
-			cobranca.setDesconto( CurrencyUtil.formatarValor(BigDecimal.ZERO) );
-			cobranca.setJuros( CurrencyUtil.formatarValor(valorJurosCalculado) );
-            cobranca.setMulta( CurrencyUtil.formatarValor(valorMultaCalculado) );
-            
-            //CALCULA VALOR TOTAL
-            BigDecimal valorTotal =
-            	boleto.getValor().add(valorJurosCalculado).add(valorMultaCalculado);
-            
-			cobranca.setValorTotal( CurrencyUtil.formatarValor(valorTotal) );
-		}
-		return cobranca;
+		Cobranca cob = (Cobranca) boleto;
+		return this.cobrancaService.obterDadosCobranca(cob.getId());
 	}
 
 	/**

@@ -124,18 +124,18 @@ public class EstoqueProdutoCotaRepositoryImplTest extends AbstractRepositoryImpl
 		
 		produtoEdicaoVeja1 =
 			Fixture.produtoEdicao(1L, 10, 14, new BigDecimal(0.1),
-								  BigDecimal.TEN, new BigDecimal(20), "ABCDEFGHIJKLMNOPQRSTU", 1L, produtoVeja);
+								  BigDecimal.TEN, new BigDecimal(20), "ABCDEFGHIJKLMNOPQRSTU", 1L, produtoVeja, null, false);
 		produtoEdicaoVeja1.setDesconto(null);
 		save(produtoEdicaoVeja1);
 		
 		
 		produtoEdicaoCaras1 = Fixture.produtoEdicao(2L, 10, 14, new BigDecimal(0.1),
-				  BigDecimal.TEN, new BigDecimal(20), "ABCDEFGHIJKLMNOPQRST", 2L, produtoCaras);
+				  BigDecimal.TEN, new BigDecimal(20), "ABCDEFGHIJKLMNOPQRST", 2L, produtoCaras, null, false);
 		
 		produtoEdicaoCaras1.setDesconto(new BigDecimal(8));
 		save(produtoEdicaoCaras1);
 		
-		Box box1 = Fixture.criarBox("Box-1", "BX-001", TipoBox.LANCAMENTO);
+		Box box1 = Fixture.criarBox("Box-1", "BX-001", TipoBox.LANCAMENTO, false);
 		save(box1);
 		
 		PessoaFisica manoel =

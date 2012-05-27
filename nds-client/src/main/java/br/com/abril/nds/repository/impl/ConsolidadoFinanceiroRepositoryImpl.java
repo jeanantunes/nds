@@ -398,4 +398,15 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 		
  	}
 
+	@Override
+	public ConsolidadoFinanceiroCota obterConsolidadoPorIdMovimentoFinanceiro(Long idMovimentoFinanceiro) {
+		
+		StringBuilder hql = new StringBuilder("select c from ConsolidadoFinanceiroCota c join c.movimentos mov ");
+		hql.append(" where mov.id = :idMovimentoFinanceiro ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setParameter("idMovimentoFinanceiro", idMovimentoFinanceiro);
+		
+		return (ConsolidadoFinanceiroCota) query.uniqueResult();
+	}
 }

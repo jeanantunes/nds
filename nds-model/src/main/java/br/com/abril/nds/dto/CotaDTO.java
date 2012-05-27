@@ -6,6 +6,8 @@ import java.util.Date;
 import java.util.List;
 
 import br.com.abril.nds.model.cadastro.ClassificacaoEspectativaFaturamento;
+import br.com.abril.nds.model.cadastro.EstadoCivil;
+import br.com.abril.nds.model.cadastro.Sexo;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 
 public class CotaDTO implements Serializable {
@@ -83,9 +85,87 @@ public class CotaDTO implements Serializable {
 	private List<ItemDTO<String, String>> listaClassificacao;
 	
 	private String numeroCPF;
+	
+	private String numeroRG;
+	
+	private Date dataNascimento;
+	
+	private String orgaoEmissor;
+	
+	private String estadoSelecionado;
+	
+	private EstadoCivil estadoCivilSelecionado;
+	
+	private Sexo sexoSelecionado;
+	
+	private String nacionalidade;
+	
+	private String natural;
+	
+	public String getNumeroRG() {
+		return numeroRG;
+	}
 
-	
-	
+	public void setNumeroRG(String numeroRG) {
+		this.numeroRG = numeroRG;
+	}
+
+	public Date getDataNascimento() {
+		return dataNascimento;
+	}
+
+	public void setDataNascimento(Date dataNascimento) {
+		this.dataNascimento = dataNascimento;
+	}
+
+	public String getOrgaoEmissor() {
+		return orgaoEmissor;
+	}
+
+	public void setOrgaoEmissor(String orgaoEmissor) {
+		this.orgaoEmissor = orgaoEmissor;
+	}
+
+	public String getEstadoSelecionado() {
+		return estadoSelecionado;
+	}
+
+	public void setEstadoSelecionado(String estadoSelecionado) {
+		this.estadoSelecionado = estadoSelecionado;
+	}
+
+	public EstadoCivil getEstadoCivilSelecionado() {
+		return estadoCivilSelecionado;
+	}
+
+	public void setEstadoCivilSelecionado(EstadoCivil estadoCivilSelecionado) {
+		this.estadoCivilSelecionado = estadoCivilSelecionado;
+	}
+
+	public Sexo getSexoSelecionado() {
+		return sexoSelecionado;
+	}
+
+	public void setSexoSelecionado(Sexo sexoSelecionado) {
+		this.sexoSelecionado = sexoSelecionado;
+	}
+
+	public String getNacionalidade() {
+		return nacionalidade;
+	}
+
+	public void setNacionalidade(String nacionalidade) {
+		this.nacionalidade = nacionalidade;
+	}
+
+	public String getNatural() {
+		return natural;
+	}
+
+	public void setNatural(String natural) {
+		this.natural = natural;
+	}
+
 	/**
 	 * @return the numeroCPF
 	 */

@@ -11,7 +11,7 @@ import javax.persistence.Query;
 import org.springframework.stereotype.Component;
 
 import br.com.abril.nds.integracao.engine.RouteParameterProvider;
-import br.com.abril.nds.integracao.model.NdsiParametroSistema;
+import br.com.abril.nds.model.cadastro.ParametroSistema;
 
 
 @Component
@@ -22,16 +22,16 @@ public class NdsiRouteParameterProvider implements RouteParameterProvider {
 	@SuppressWarnings("unchecked")
 	@Override
 	public Map<String, Object> getParameters() {
-		Query query = entityManager.createNamedQuery("findAllNdsiParameters");
+		Query query = entityManager.createNativeQuery("select * from parametro_sistema where TIPO_PARAMETRO_SISTEMA like :prefix");
 		
 		query.setParameter("prefix", "NDSI_%");
 		
-		List<NdsiParametroSistema> result = query.getResultList();
+		List<Object[]> result = query.getResultList();
 		
 		Map<String, Object> parameters = new HashMap<String, Object>(result.size());
 		
-		for (NdsiParametroSistema parametroSistema : result) {
-			parameters.put(parametroSistema.getTipoParametroSistema(), parametroSistema.getValor());
+		for (Object[] values : result) {
+			parameters.put(values[1].toString(), values[2]);
 		}
 		
 		return parameters;

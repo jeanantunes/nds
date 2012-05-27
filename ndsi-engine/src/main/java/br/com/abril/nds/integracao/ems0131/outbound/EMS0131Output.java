@@ -3,6 +3,7 @@ package br.com.abril.nds.integracao.ems0131.outbound;
 import java.io.Serializable;
 
 import com.ancientprogramming.fixedformat4j.annotation.Field;
+import com.ancientprogramming.fixedformat4j.annotation.FixedFormatBoolean;
 import com.ancientprogramming.fixedformat4j.annotation.Record;
 
 @Record
@@ -16,7 +17,7 @@ public class EMS0131Output implements Serializable {
 	
 	private Integer codigoDaCota; //NUMERO_COTA -- COTA
 	private String nomeDoJornaleiro; //NOME -- PESSOA
-	//private Integer quantidadeDeCotas; 
+	private Integer quantidadeDeCotas; 
 	private String endereco; //LOGRADOURO -- ENDERECO
 	private Integer codigoDoBairro; // CODIGO_BAIRRO -- ENDERECO
 	private String municipio; //CIDADE -- ENDERECO
@@ -25,10 +26,10 @@ public class EMS0131Output implements Serializable {
 	private String ddd; //DDD -- TELEFONE
 	private String telefone; //NUMERO -- TELEFONE
 	private String situacaoCota; //SITUACAO_CADASTRO -- COTA
-	//private condPrazoPagamento;
-	private Long codigoDoBox; //CODIGO -- BOX
-	private Long codigoTipoBox; //TIPO_BOX -- BOX
-	//private repartePorPdv;
+	private String condPrazoPagamento;
+	private String codigoDoBox; //CODIGO -- BOX
+	private String codigoTipoBox; //TIPO_BOX -- BOX
+	private boolean repartePorPdv;
 	private Long codigoDoCapataz; //CODIGO -- ENTREGADOR
 	private String cpfCnpj; //CPF -- PESSOA / CNPJ -- PESSOA
 	private String tipoDePessoa; //TIPO -- PESSOA
@@ -36,6 +37,9 @@ public class EMS0131Output implements Serializable {
 	private Integer codigoDaCidade; //CODIGO_CIDADE_IBGE -- ENDERECO
 	private String inscricaoEstadual; //INSC_ESTADUAL -- PESSOA
 	private String inscricaoMunicipal;//INSC_MUNICIPAL -- PESSOA
+	
+	
+	
 	
 	@Field(offset = 1, length = 4)
 	public Integer getCodigoDaCota() {
@@ -53,12 +57,28 @@ public class EMS0131Output implements Serializable {
 		this.nomeDoJornaleiro = nomeDoJornaleiro;
 	}
 	
+	@Field(offset = 35, length = 4)
+	public Integer getQuantidadeDeCotas() {
+		return quantidadeDeCotas;
+	}
+	public void setQuantidadeDeCotas(Integer quantidadeDeCotas) {
+		this.quantidadeDeCotas = quantidadeDeCotas;
+	}
+	
 	@Field(offset = 39, length = 40)
 	public String getEndereco() {
 		return endereco;
 	}
 	public void setEndereco(String endereco) {
 		this.endereco = endereco;
+	}
+	
+	@Field(offset = 81, length = 3)
+	public Integer getCodigoDoBairro() {
+		return codigoDoBairro;
+	}
+	public void setCodigoDoBairro(Integer codigoDoBairro) {
+		this.codigoDoBairro = codigoDoBairro;
 	}
 	
 	@Field(offset = 84, length = 20)
@@ -109,20 +129,37 @@ public class EMS0131Output implements Serializable {
 		this.situacaoCota = situacaoCota;
 	}
 	
+	@Field(offset = 126, length = 1)
+	public String getCondPrazoPagamento() {
+		return condPrazoPagamento;
+	}
+	public void setCondPrazoPagamento(String condPrazoPagamento) {
+		this.condPrazoPagamento = condPrazoPagamento;
+	}
+	
 	@Field(offset = 127, length = 2)
-	public Long getCodigoDoBox() {
+	public String getCodigoDoBox() {
 		return codigoDoBox;
 	}
-	public void setCodigoDoBox(Long codigoDoBox) {
+	public void setCodigoDoBox(String codigoDoBox) {
 		this.codigoDoBox = codigoDoBox;
 	}
 	
 	@Field(offset = 129, length = 2)
-	public Long getCodigoTipoBox() {
+	public String getCodigoTipoBox() {
 		return codigoTipoBox;
 	}
-	public void setCodigoTipoBox(Long codigoTipoBox) {
+	public void setCodigoTipoBox(String codigoTipoBox) {
 		this.codigoTipoBox = codigoTipoBox;
+	}
+	
+	@Field(offset = 131, length = 1)
+	@FixedFormatBoolean(trueValue = "1", falseValue = "2")
+	public boolean isRepartePorPdv() {
+		return repartePorPdv;
+	}
+	public void setRepartePorPdv(boolean repartePorPdv) {
+		this.repartePorPdv = repartePorPdv;
 	}
 	
 	@Field(offset = 132, length = 6)
@@ -157,12 +194,28 @@ public class EMS0131Output implements Serializable {
 		this.numeroDoLogradouro = numeroDoLogradouro;
 	}
 	
+	@Field(offset = 159, length = 7)
+	public Integer getCodigoDaCidade() {
+		return codigoDaCidade;
+	}
+	public void setCodigoDaCidade(Integer codigoDaCidade) {
+		this.codigoDaCidade = codigoDaCidade;
+	}
+	
 	@Field(offset = 166, length = 20)
 	public String getInscricaoEstadual() {
 		return inscricaoEstadual;
 	}
 	public void setInscricaoEstadual(String inscricaoEstadual) {
 		this.inscricaoEstadual = inscricaoEstadual;
+	}
+	
+	@Field(offset = 186, length = 15)
+	public String getInscricaoMunicipal() {
+		return inscricaoMunicipal;
+	}
+	public void setInscricaoMunicipal(String inscricaoMunicipal) {
+		this.inscricaoMunicipal = inscricaoMunicipal;
 	}
 	
 	

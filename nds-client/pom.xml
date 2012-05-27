@@ -135,6 +135,15 @@
 			<artifactId>jackson-module-hibernate</artifactId>
 			<version>1.9.1</version>
 		</dependency>
+		<dependency>
+			<groupId>org.lightcouch</groupId>
+			<artifactId>lightcouch</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>br.com.abril</groupId>
+			<artifactId>ndsi-canonical</artifactId>
+			<version>1.0</version>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -163,6 +172,8 @@
 				<configuration>
 					<outputDirectory>${project.build.directory}/classes/reports</outputDirectory>
 					<sourceDirectory>src/main/resources/reports</sourceDirectory>
+					<server>tomcat-server</server>
+					<url>http://localhost:8080/manager/text</url>
 				</configuration>
 				<executions>
 					<execution>
@@ -178,6 +189,22 @@
 						<version>4.5.1</version>
 					</dependency>
 				</dependencies>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<version>1.2.1</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>java</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<mainClass>br.com.abril.nds.fixture.DataLoader</mainClass>
+					<classpathScope>test</classpathScope>
+				</configuration>
 			</plugin>
 		</plugins>
 		<pluginManagement>

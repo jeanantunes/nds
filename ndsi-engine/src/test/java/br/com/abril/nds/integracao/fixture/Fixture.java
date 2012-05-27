@@ -3,7 +3,6 @@ package br.com.abril.nds.integracao.fixture;
 import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -131,6 +130,8 @@ import br.com.abril.nds.model.fiscal.StatusEmissaoNfe;
 import br.com.abril.nds.model.fiscal.StatusNotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.TipoEmissaoNfe;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
+import br.com.abril.nds.model.integracao.EventoExecucao;
+import br.com.abril.nds.model.integracao.InterfaceExecucao;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalhe;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalheCota;
 import br.com.abril.nds.model.movimentacao.ControleContagemDevolucao;
@@ -363,7 +364,7 @@ public class Fixture {
 		TipoProduto tipoProduto = new TipoProduto();
 		tipoProduto.setDescricao(descricao);
 		tipoProduto.setGrupoProduto(grupo);
-		tipoProduto.setNcm(ncm);
+		//tipoProduto.setNcm(ncm);
 		return tipoProduto;
 	}
 	
@@ -1539,7 +1540,7 @@ public class Fixture {
 		
 		ConferenciaEncalhe conferenciaEncalhe = new ConferenciaEncalhe();
 		
-		conferenciaEncalhe.setLancamento(lancamento);
+//		conferenciaEncalhe.setLancamento(lancamento);
 		conferenciaEncalhe.setMovimentoEstoqueCota(movimentoEstoqueCota);
 		conferenciaEncalhe.setChamadaEncalheCota(chamadaEncalheCota);
 		conferenciaEncalhe.setControleConferenciaEncalheCota(controleConferenciaEncalheCota);
@@ -2515,11 +2516,11 @@ public class Fixture {
 		
 		PeriodoLancamentoParcial parcial = new PeriodoLancamentoParcial();
 		
-		parcial.setLancamento(lancamento);
+//		parcial.setLancamento(lancamento);
 		
 		parcial.setLancamentoParcial(lancamentoParcial);
 		
-		parcial.setRecolhimento(recolhimento);
+//		parcial.setRecolhimento(recolhimento);
 		
 		parcial.setStatus(status);
 		
@@ -2527,4 +2528,26 @@ public class Fixture {
 		
 		return parcial;
 	}
+
+	public static InterfaceExecucao interfaceExecucao(Long id, String nome) {
+		
+		InterfaceExecucao interfaceExecucao = new InterfaceExecucao();
+		
+		interfaceExecucao.setId(id);
+		interfaceExecucao.setNome(nome);
+		
+		return interfaceExecucao;
+	}
+	
+	public static EventoExecucao eventoExecucao(Long id, String nome, String descricao) {
+		
+		EventoExecucao eventoExecucao = new EventoExecucao();
+		
+		eventoExecucao.setId(id);
+		eventoExecucao.setNome(nome);
+		eventoExecucao.setDescricao(descricao);
+		
+		return eventoExecucao;
+	}
+	
 }

@@ -86,13 +86,16 @@ public class MovimentoFinanceiroCotaServiceImpl implements
 			movimentoFinanceiroCota.setObservacao(
 					movimentoFinanceiroCotaDTO.getObservacao());
 			
+			movimentoFinanceiroCota.setMovimentos(movimentoFinanceiroCotaDTO.getMovimentos());
+			
 			MovimentoFinanceiroCota movimentoFinanceiroCotaMerged = 
 					this.movimentoFinanceiroCotaRepository.merge(movimentoFinanceiroCota);
 
 			gerarHistoricoMovimentoFinanceiroCota(movimentoFinanceiroCotaMerged, movimentoFinanceiroCotaDTO.getTipoEdicao());
 		}
 	}
-
+	
+	
 	/**
 	 * @see br.com.abril.nds.service.MovimentoFinanceiroCotaService#obterMovimentosFinanceiroCota()
 	 */

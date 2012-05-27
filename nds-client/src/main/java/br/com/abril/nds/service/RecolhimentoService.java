@@ -6,6 +6,7 @@ import java.util.Map;
 
 import br.com.abril.nds.dto.BalanceamentoRecolhimentoDTO;
 import br.com.abril.nds.dto.ProdutoRecolhimentoDTO;
+import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.util.TipoBalanceamentoRecolhimento;
 
 /**
@@ -22,29 +23,31 @@ public interface RecolhimentoService {
 	 * @param numeroSemana - número da semana para balanceamento
 	 * @param listaIdsFornecedores - lista de id's dos fornecedores
 	 * @param tipoBalanceamentoRecolhimento - tipo de balanceamento de recolhimento
-	 * @param configuracaoInicial - indicao se a matriz de balanceamento deve ser a cofiguração inicial
+	 * @param forcarBalanceamento - indica se é necessário forçar o balanceamento da matriz
 	 * 
 	 * @return {@link BalanceamentoRecolhimentoDTO}
 	 */
 	BalanceamentoRecolhimentoDTO obterMatrizBalanceamento(Integer numeroSemana,
 														  List<Long> listaIdsFornecedores,
 														  TipoBalanceamentoRecolhimento tipoBalanceamentoRecolhimento,
-														  boolean configuracaoInicial);
+														  boolean forcarBalanceamento);
 	
 	/**
 	 * Salva o balanceamento da matriz de recolhimento.
 	 * 
 	 * @param matrizRecolhimento - matriz de recolhimento
+	 * @param usuario - usuário
 	 */
-	void salvarBalanceamentoRecolhimento(Map<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimento);
+	void salvarBalanceamentoRecolhimento(Map<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimento,
+										 Usuario idUsuario);
 
 	/**
 	 * Confirma o balanceamento da matriz de recolhimento.
 	 * 
 	 * @param matrizRecolhimento - matriz de recolhimento
 	 * @param numeroSemana - número da semana
-	 * @param idUsuario - identificador do usuário
+	 * @param usuario - usuário
 	 */
 	void confirmarBalanceamentoRecolhimento(Map<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimento,
-											Integer numeroSemana, Long idUsuario);
+											Integer numeroSemana, Usuario usuario);
 }
