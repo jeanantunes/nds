@@ -168,6 +168,7 @@ fieldset label {
 							<li>
 								<a href='<c:url value="/produto"/>'>Produtos</a>
 							</li>
+							<li><a href='<c:url value="/cadastro/edicao"/>'>Edi&ccedil;&atilde;o</a></li>
 							<li><a href='<c:url value="/banco/bancos"/>'>Bancos</a>
 							</li>
 							<li><a href='<c:url value="/cadastro/box"/>'>Box</a>
