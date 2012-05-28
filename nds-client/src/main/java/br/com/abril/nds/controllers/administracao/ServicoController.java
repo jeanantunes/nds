@@ -12,6 +12,7 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Periodicidade;
 import br.com.abril.nds.model.cadastro.TipoEntrega;
 import br.com.abril.nds.service.TipoEntregaService;
+import br.com.abril.nds.service.exception.UniqueConstraintViolationException;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.TableModel;
@@ -112,11 +113,11 @@ public class ServicoController {
 				baseCalculo, periodicidadeCadastro, diaSemana, diaMes);
 		
 		} catch (Exception e) {
-			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, "Erro ao tentar salvar o tipo de entrega."));
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, "Erro ao tentar salvar o Serviço de Entrega."));
 		}
 		
 		this.result.use(Results.json()).from(
-			new ValidacaoVO(TipoMensagem.SUCCESS, "Serviço incluido com sucesso."), 
+			new ValidacaoVO(TipoMensagem.SUCCESS, "Serviço de Entrega salvo com sucesso."), 
 							"result").recursive().serialize();
 	}
 	
@@ -135,13 +136,15 @@ public class ServicoController {
 			}
 			
 			this.tipoEntregaService.removerTipoEntrega(id);
-			
+		
+		} catch (UniqueConstraintViolationException e) {
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, "Serviço de Entrega não pode ser excluído."));	
 		} catch (Exception e) {
-			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, "Ocorreu um erro ao tentar excluir o serviço."));
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, "Ocorreu um erro ao tentar excluir o Serviço de Entrega."));
 		}
 		
 		this.result.use(Results.json()).from(
-				new ValidacaoVO(TipoMensagem.SUCCESS, "Serviço excluido com sucesso."), 
+				new ValidacaoVO(TipoMensagem.SUCCESS, "Serviço de Entrega excluído com sucesso."), 
 								"result").recursive().serialize();
 	}
 	
@@ -154,7 +157,7 @@ public class ServicoController {
 	public void buscarServicoPeloCodigo(Long id) {
 		
 		if (id == null) {
-			throw new ValidacaoException(TipoMensagem.WARNING, "Tipo de Entrega não encontrado.");
+			throw new ValidacaoException(TipoMensagem.WARNING, "Serviço de Entrega não encontrado.");
 		}
 		
 		TipoEntrega tipoEntrega = 
