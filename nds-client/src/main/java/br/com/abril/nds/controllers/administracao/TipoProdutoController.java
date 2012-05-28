@@ -1,5 +1,6 @@
 package br.com.abril.nds.controllers.administracao;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +10,7 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.TipoProduto;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.TipoProdutoService;
+import br.com.abril.nds.service.exception.UniqueConstraintViolationException;
 import br.com.abril.nds.util.StringUtil;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
@@ -34,7 +36,7 @@ public class TipoProdutoController {
 	}
 	
 	@Post("/busca.json")
-	public void busca(String descricao, String codigo, 
+	public void busca(String descricao, Long codigo, 
 			String codigoNCM, String codigoNBM, String sortname, String sortorder, int rp, int page ) {
 		
 		List<TipoProduto> listaTipoProdutos = this.tipoProdutoService.busca(descricao, codigo, codigoNCM, codigoNBM,
@@ -68,18 +70,38 @@ public class TipoProdutoController {
 	@Post("/remove.json")
 	public void remove(long id) {
 		
-		this.tipoProdutoService.remover(id);
+		try {
+			this.tipoProdutoService.remover(id);
+		} catch (UniqueConstraintViolationException e) {
+			throw new ValidacaoException(TipoMensagem.ERROR, e.getMessage());
+		}
 				
 		this.resutl.use(Results.json()).from("OK").serialize();
 	}
 	
+	@Post("/getCodigoSugerido.json")
+	public void getCodigoSugerido() {
+		String codigo = this.tipoProdutoService.getCodigoSugerido();
+		
+		this.resutl.use(Results.json()).from(codigo, "codigo").serialize();
+	}
+	
 	
 	private void valida(TipoProduto tipoProduto) {
-				
+		
+		List<String> listaMensagens = new ArrayList<String>();
+		
 		if (tipoProduto == null || StringUtil.isEmpty(tipoProduto.getDescricao())) {
-			throw new ValidacaoException(
-					new ValidacaoVO(TipoMensagem.ERROR, "O preenchimento do campo [Tipo de Produto] é obrigatório."));
+			listaMensagens.add("O preenchimento do campo [Tipo de Produto] é obrigatório.");
 		}
-	
+		
+		if (tipoProduto == null || tipoProduto.getCodigo() == null ) {
+			listaMensagens.add("O preenchimento do campo [Código] é obrigatório.");
+		}
+		
+		if (!listaMensagens.isEmpty()) {
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR,
+					listaMensagens));
+		}
 	}
 }

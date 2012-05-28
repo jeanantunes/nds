@@ -34,7 +34,7 @@ public class TipoProdutoRepositoryImpl extends AbstractRepository<TipoProduto,Lo
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<TipoProduto> busca(String nomeTipoProduto, String codigo, String codigoNCM, String codigoNBM, String orderBy,
+	public List<TipoProduto> busca(String nomeTipoProduto, Long codigo, String codigoNCM, String codigoNBM, String orderBy,
 			Ordenacao ordenacao, int initialResult, int maxResults) {
 		
 		Criteria criteria = addRestrictions(nomeTipoProduto, codigo, codigoNCM, codigoNBM);
@@ -55,7 +55,7 @@ public class TipoProdutoRepositoryImpl extends AbstractRepository<TipoProduto,Lo
 	 * @see br.com.abril.nds.repository.TipoProdutoRepository#quantidade(java.lang.String)
 	 */
 	@Override
-	public Long quantidade(String nomeTipoProduto, String codigo, String codigoNCM, String codigoNBM) {
+	public Long quantidade(String nomeTipoProduto, Long codigo, String codigoNCM, String codigoNBM) {
 		
 		Criteria criteria = addRestrictions(nomeTipoProduto, codigo, codigoNCM, codigoNBM);
 		criteria.setProjection(Projections.rowCount());
@@ -70,7 +70,7 @@ public class TipoProdutoRepositoryImpl extends AbstractRepository<TipoProduto,Lo
 	 * @param codigoNCM
 	 * @return
 	 */
-	private Criteria addRestrictions(String nomeTipoProduto, String codigo, String codigoNCM, String codigoNBM) {
+	private Criteria addRestrictions(String nomeTipoProduto, Long codigo, String codigoNCM, String codigoNBM) {
 		
 		Criteria criteria = getSession().createCriteria(TipoProduto.class);
 		
@@ -78,7 +78,7 @@ public class TipoProdutoRepositoryImpl extends AbstractRepository<TipoProduto,Lo
 			criteria.add(Restrictions.ilike("descricao", nomeTipoProduto, MatchMode.ANYWHERE));
 		}
 		
-		if (!StringUtil.isEmpty(codigo)) {
+		if (codigo != null) {
 			criteria.add(Restrictions.eq("codigo", codigo));
 		}
 		
@@ -107,6 +107,19 @@ public class TipoProdutoRepositoryImpl extends AbstractRepository<TipoProduto,Lo
 		Long quantidade = (Long) criteria.list().get(0);
 		
 		return quantidade > 0;
+	}
+
+	/* (non-Javadoc)
+	 * @see br.com.abril.nds.repository.TipoProdutoRepository#getMaxCodigo()
+	 */
+	@Override
+	public Long getMaxCodigo() {
+		
+		Criteria criteria = getSession().createCriteria(TipoProduto.class);
+		
+		criteria.setProjection(Projections.max("codigo"));
+		
+		return (Long) criteria.list().get(0);
 	}
 	
 }

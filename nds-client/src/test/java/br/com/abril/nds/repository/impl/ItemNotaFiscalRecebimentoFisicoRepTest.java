@@ -57,7 +57,7 @@ public class ItemNotaFiscalRecebimentoFisicoRepTest extends AbstractRepositoryIm
 		Usuario usuario = Fixture.usuarioJoao();
 		save(usuario);
 		
-		TipoProduto tipoProduto = Fixture.tipoProduto("Revista", GrupoProduto.REVISTA, "99000642", null, "001");
+		TipoProduto tipoProduto = Fixture.tipoProduto("Revista", GrupoProduto.REVISTA, "99000642", null, 11L);
 		save(tipoProduto);
 		
 		TipoFornecedor tipoFornecedorPublicacao = Fixture.tipoFornecedorPublicacao();

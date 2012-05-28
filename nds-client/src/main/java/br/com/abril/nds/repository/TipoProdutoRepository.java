@@ -27,7 +27,7 @@ public interface TipoProdutoRepository extends Repository<TipoProduto, Long> {
 	 * @param maxResults numero maximo de resultados
 	 * @return lista de Tipos de Produtos.
 	 */
-	public abstract List<TipoProduto> busca(String nomeTipoProduto, String codigo, String codigoNCM, String codigoNBM, String orderBy, 
+	public abstract List<TipoProduto> busca(String nomeTipoProduto, Long codigo, String codigoNCM, String codigoNBM, String orderBy, 
 			Ordenacao ordenacao, int initialResult, int maxResults);
 	
 	/**
@@ -38,7 +38,7 @@ public interface TipoProdutoRepository extends Repository<TipoProduto, Long> {
 	 * @param codigoNBM
 	 * @return quantidade de registros
 	 */
-	public abstract Long quantidade(String nomeTipoProduto, String codigo, String codigoNCM, String codigoNBM);
+	public abstract Long quantidade(String nomeTipoProduto, Long codigo, String codigoNCM, String codigoNBM);
 	
 	/**
 	 * Verifica se um tipo de produto ja possui um produto vinculado.
@@ -46,5 +46,11 @@ public interface TipoProdutoRepository extends Repository<TipoProduto, Long> {
 	 * @return true para tipo produto que ja possui produto vinculado
 	 */
 	public abstract boolean hasProdutoVinculado(TipoProduto tipoProduto);
+	
+	/**
+	 * Obtem o ultimo id da tabela.
+	 * @return
+	 */
+	public abstract Long getMaxCodigo();
 	
 }

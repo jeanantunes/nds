@@ -168,7 +168,10 @@ public class BalanceamentoRecolhimentoAutomaticoStrategyTest {
 		
 			ProdutoRecolhimentoDTO produtoRecolhimento = new ProdutoRecolhimentoDTO();
 			
-			produtoRecolhimento.setDataRecolhimentoDistribuidor(DateUtil.parseDataPTBR("07/05/2012"));
+			Date dataRecolhimento = DateUtil.parseDataPTBR("07/05/2012");
+			
+			produtoRecolhimento.setDataRecolhimentoDistribuidor(dataRecolhimento);
+			produtoRecolhimento.setDataRecolhimentoPrevista(dataRecolhimento);
 			produtoRecolhimento.setExpectativaEncalhe(new BigDecimal(1));
 			
 			produtosRecolhimento.add(produtoRecolhimento);
@@ -178,7 +181,10 @@ public class BalanceamentoRecolhimentoAutomaticoStrategyTest {
 			
 			ProdutoRecolhimentoDTO produtoRecolhimento = new ProdutoRecolhimentoDTO();
 			
-			produtoRecolhimento.setDataRecolhimentoDistribuidor(DateUtil.parseDataPTBR("08/05/2012"));
+			Date dataRecolhimento = DateUtil.parseDataPTBR("08/05/2012");
+			
+			produtoRecolhimento.setDataRecolhimentoDistribuidor(dataRecolhimento);
+			produtoRecolhimento.setDataRecolhimentoPrevista(dataRecolhimento);
 			produtoRecolhimento.setExpectativaEncalhe(new BigDecimal(1));
 			
 			produtosRecolhimento.add(produtoRecolhimento);
@@ -188,7 +194,10 @@ public class BalanceamentoRecolhimentoAutomaticoStrategyTest {
 			
 			ProdutoRecolhimentoDTO produtoRecolhimento = new ProdutoRecolhimentoDTO();
 			
-			produtoRecolhimento.setDataRecolhimentoDistribuidor(DateUtil.parseDataPTBR("09/05/2012"));
+			Date dataRecolhimento = DateUtil.parseDataPTBR("09/05/2012");
+			
+			produtoRecolhimento.setDataRecolhimentoDistribuidor(dataRecolhimento);
+			produtoRecolhimento.setDataRecolhimentoPrevista(dataRecolhimento);
 			produtoRecolhimento.setExpectativaEncalhe(new BigDecimal(1));
 			
 			produtosRecolhimento.add(produtoRecolhimento);
@@ -198,7 +207,10 @@ public class BalanceamentoRecolhimentoAutomaticoStrategyTest {
 			
 			ProdutoRecolhimentoDTO produtoRecolhimento = new ProdutoRecolhimentoDTO();
 			
-			produtoRecolhimento.setDataRecolhimentoDistribuidor(DateUtil.parseDataPTBR("10/05/2012"));
+			Date dataRecolhimento = DateUtil.parseDataPTBR("10/05/2012");
+			
+			produtoRecolhimento.setDataRecolhimentoDistribuidor(dataRecolhimento);
+			produtoRecolhimento.setDataRecolhimentoPrevista(dataRecolhimento);
 			produtoRecolhimento.setExpectativaEncalhe(new BigDecimal(1));
 			
 			produtosRecolhimento.add(produtoRecolhimento);
@@ -208,7 +220,10 @@ public class BalanceamentoRecolhimentoAutomaticoStrategyTest {
 			
 			ProdutoRecolhimentoDTO produtoRecolhimento = new ProdutoRecolhimentoDTO();
 			
-			produtoRecolhimento.setDataRecolhimentoDistribuidor(DateUtil.parseDataPTBR("11/05/2012"));
+			Date dataRecolhimento = DateUtil.parseDataPTBR("11/05/2012");
+			
+			produtoRecolhimento.setDataRecolhimentoDistribuidor(dataRecolhimento);
+			produtoRecolhimento.setDataRecolhimentoPrevista(dataRecolhimento);
 			produtoRecolhimento.setExpectativaEncalhe(new BigDecimal(1));
 			
 			produtosRecolhimento.add(produtoRecolhimento);
@@ -263,7 +278,10 @@ public class BalanceamentoRecolhimentoAutomaticoStrategyTest {
 			
 			ProdutoRecolhimentoDTO produtoRecolhimento = new ProdutoRecolhimentoDTO();
 			
-			produtoRecolhimento.setDataRecolhimentoDistribuidor(DateUtil.parseDataPTBR("07/05/2012"));
+			Date dataRecolhimento = DateUtil.parseDataPTBR("07/05/2012");
+			
+			produtoRecolhimento.setDataRecolhimentoDistribuidor(dataRecolhimento);
+			produtoRecolhimento.setDataRecolhimentoPrevista(dataRecolhimento);
 			produtoRecolhimento.setExpectativaEncalhe(new BigDecimal(2));
 			
 			produtosRecolhimento.add(produtoRecolhimento);
@@ -273,7 +291,10 @@ public class BalanceamentoRecolhimentoAutomaticoStrategyTest {
 			
 			ProdutoRecolhimentoDTO produtoRecolhimento = new ProdutoRecolhimentoDTO();
 			
-			produtoRecolhimento.setDataRecolhimentoDistribuidor(DateUtil.parseDataPTBR("07/05/2012"));
+			Date dataRecolhimento = DateUtil.parseDataPTBR("07/05/2012");
+			
+			produtoRecolhimento.setDataRecolhimentoDistribuidor(dataRecolhimento);
+			produtoRecolhimento.setDataRecolhimentoPrevista(dataRecolhimento);
 			produtoRecolhimento.setExpectativaEncalhe(new BigDecimal(1));
 			
 			produtosRecolhimento.add(produtoRecolhimento);
@@ -283,7 +304,10 @@ public class BalanceamentoRecolhimentoAutomaticoStrategyTest {
 			
 			ProdutoRecolhimentoDTO produtoRecolhimento = new ProdutoRecolhimentoDTO();
 			
-			produtoRecolhimento.setDataRecolhimentoDistribuidor(DateUtil.parseDataPTBR("08/05/2012"));
+			Date dataRecolhimento = DateUtil.parseDataPTBR("08/05/2012");
+			
+			produtoRecolhimento.setDataRecolhimentoDistribuidor(dataRecolhimento);
+			produtoRecolhimento.setDataRecolhimentoPrevista(dataRecolhimento);
 			produtoRecolhimento.setExpectativaEncalhe(new BigDecimal(1));
 			
 			produtosRecolhimento.add(produtoRecolhimento);
@@ -293,7 +317,10 @@ public class BalanceamentoRecolhimentoAutomaticoStrategyTest {
 			
 			ProdutoRecolhimentoDTO produtoRecolhimento = new ProdutoRecolhimentoDTO();
 			
-			produtoRecolhimento.setDataRecolhimentoDistribuidor(DateUtil.parseDataPTBR("09/05/2012"));
+			Date dataRecolhimento = DateUtil.parseDataPTBR("09/05/2012");
+			
+			produtoRecolhimento.setDataRecolhimentoDistribuidor(dataRecolhimento);
+			produtoRecolhimento.setDataRecolhimentoPrevista(dataRecolhimento);
 			produtoRecolhimento.setExpectativaEncalhe(new BigDecimal(1));
 			
 			produtosRecolhimento.add(produtoRecolhimento);
@@ -303,7 +330,10 @@ public class BalanceamentoRecolhimentoAutomaticoStrategyTest {
 			
 			ProdutoRecolhimentoDTO produtoRecolhimento = new ProdutoRecolhimentoDTO();
 			
-			produtoRecolhimento.setDataRecolhimentoDistribuidor(DateUtil.parseDataPTBR("10/05/2012"));
+			Date dataRecolhimento = DateUtil.parseDataPTBR("10/05/2012");
+			
+			produtoRecolhimento.setDataRecolhimentoDistribuidor(dataRecolhimento);
+			produtoRecolhimento.setDataRecolhimentoPrevista(dataRecolhimento);
 			produtoRecolhimento.setExpectativaEncalhe(new BigDecimal(1));
 			
 			produtosRecolhimento.add(produtoRecolhimento);
@@ -313,7 +343,10 @@ public class BalanceamentoRecolhimentoAutomaticoStrategyTest {
 			
 			ProdutoRecolhimentoDTO produtoRecolhimento = new ProdutoRecolhimentoDTO();
 			
-			produtoRecolhimento.setDataRecolhimentoDistribuidor(DateUtil.parseDataPTBR("11/05/2012"));
+			Date dataRecolhimento = DateUtil.parseDataPTBR("11/05/2012");
+			
+			produtoRecolhimento.setDataRecolhimentoDistribuidor(dataRecolhimento);
+			produtoRecolhimento.setDataRecolhimentoPrevista(dataRecolhimento);
 			produtoRecolhimento.setExpectativaEncalhe(new BigDecimal(2));
 			
 			produtosRecolhimento.add(produtoRecolhimento);
@@ -323,7 +356,10 @@ public class BalanceamentoRecolhimentoAutomaticoStrategyTest {
 			
 			ProdutoRecolhimentoDTO produtoRecolhimento = new ProdutoRecolhimentoDTO();
 			
-			produtoRecolhimento.setDataRecolhimentoDistribuidor(DateUtil.parseDataPTBR("11/05/2012"));
+			Date dataRecolhimento = DateUtil.parseDataPTBR("11/05/2012");
+			
+			produtoRecolhimento.setDataRecolhimentoDistribuidor(dataRecolhimento);
+			produtoRecolhimento.setDataRecolhimentoPrevista(dataRecolhimento);
 			produtoRecolhimento.setExpectativaEncalhe(new BigDecimal(1));
 			
 			produtosRecolhimento.add(produtoRecolhimento);

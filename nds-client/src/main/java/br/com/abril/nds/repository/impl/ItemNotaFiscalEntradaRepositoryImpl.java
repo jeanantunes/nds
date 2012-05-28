@@ -1,6 +1,5 @@
 package br.com.abril.nds.repository.impl;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 import org.hibernate.Query;
@@ -40,6 +39,7 @@ public class ItemNotaFiscalEntradaRepositoryImpl extends
 
 		return query.list();
 	}
+	
 
 	public List<ItemDanfe> obterListaItemNotaFiscalEntradaDadosDanfe(Long idNotaFiscal) {
 		

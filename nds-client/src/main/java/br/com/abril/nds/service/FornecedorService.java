@@ -3,8 +3,10 @@ package br.com.abril.nds.service;
 import java.util.List;
 import java.util.Set;
 
+import br.com.abril.nds.dto.FornecedorDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
+import br.com.abril.nds.dto.filtro.FiltroConsultaFornecedorDTO;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.GrupoFornecedor;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
@@ -51,4 +53,22 @@ public interface FornecedorService {
 	void salvarFornecedorCota(List<Long> fornecedores, Long idCota);
 	
 	List<ItemDTO<Long,String>> buscarComboFornecedores();
+	
+	/**
+	 * Método que retorna uma lista de fornecedores com base no filtro recebido. 
+	 * 
+	 * @param filtroConsultaFornecedor - Filtro de Fornecedores.
+	 * 
+	 * @return List<FornecedorDTO>
+	 */
+	List<FornecedorDTO> obterFornecedoresPorFiltro(FiltroConsultaFornecedorDTO filtroConsultaFornecedor);
+	
+	/**
+	 * Método que retorna a contagem de fornecedores com base no filtro recebido. 
+	 * 
+	 * @param filtroConsultaFornecedor - Filtro de Fornecedores.
+	 * 
+	 * @return Long
+	 */
+	Long obterContagemFornecedoresPorFiltro(FiltroConsultaFornecedorDTO filtroConsultaFornecedor);
 }

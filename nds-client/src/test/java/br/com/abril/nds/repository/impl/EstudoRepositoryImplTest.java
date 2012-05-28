@@ -55,7 +55,7 @@ public class EstudoRepositoryImplTest extends AbstractRepositoryImplTest {
 		Fornecedor dinap = Fixture.fornecedorDinap(tipoFornecedorPublicacao);
 		save(dinap);
 		
-		TipoProduto tipoProduto = Fixture.tipoProduto("grupo teste", GrupoProduto.REVISTA, "ncm", null, "001");
+		TipoProduto tipoProduto = Fixture.tipoProduto("grupo teste", GrupoProduto.REVISTA, "ncm", null, 10L);
 		
 		save(tipoProduto);
 		
