@@ -32,6 +32,9 @@ public class ProdutoEdicaoDTO implements Serializable {
 	private Integer dia;
 	private Date dataRecolhimentoDistribuidor;
 	
+	private Date dataLancamento;
+	private String situacaoLancamento;
+	
 	/**
 	 * Tipo de chamada de encalhe deste produtoEdicao
 	 */
@@ -151,6 +154,34 @@ public class ProdutoEdicaoDTO implements Serializable {
 	}
 	public void setTipoChamadaEncalhe(TipoChamadaEncalhe tipoChamadaEncalhe) {
 		this.tipoChamadaEncalhe = tipoChamadaEncalhe;
+	}
+	
+	/**
+	 * @return the dataLancamento
+	 */
+	public Date getDataLancamento() {
+		return dataLancamento;
+	}
+	
+	/**
+	 * @param dataLancamento the dataLancamento to set
+	 */
+	public void setDataLancamento(Date dataLancamento) {
+		this.dataLancamento = dataLancamento;
+	}
+	
+	/**
+	 * @return the situacaoLancamento
+	 */
+	public String getSituacaoLancamento() {
+		return situacaoLancamento;
+	}
+	
+	/**
+	 * @param situacaoLancamento the situacaoLancamento to set
+	 */
+	public void setSituacaoLancamento(String situacaoLancamento) {
+		this.situacaoLancamento = situacaoLancamento;
 	}
 	
 }

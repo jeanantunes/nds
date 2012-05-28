@@ -16,7 +16,7 @@ function pesquisarEdicoes() {
 	var brinde = $("#pBrinde").val();
 	
 	$(".edicoesGrid").flexOptions({
-		url: "<c:url value='/cadastro/edicao/pesquisarEdicoes' />",
+		url: "<c:url value='/cadastro/edicao/pesquisarEdicoes.json' />",
 		params: [{name:'codigoProduto', value: codigoProduto },
 			     {name:'nomeProduto', value: nomeProduto },
 			     {name:'dataLancamento', value: dataLancamento },

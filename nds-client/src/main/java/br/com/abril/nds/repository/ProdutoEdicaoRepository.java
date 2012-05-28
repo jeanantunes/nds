@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 
 import br.com.abril.nds.dto.FuroProdutoDTO;
+import br.com.abril.nds.dto.ProdutoEdicaoDTO;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 
@@ -116,5 +117,28 @@ public interface ProdutoEdicaoRepository extends Repository<ProdutoEdicao, Long>
 	 * @return {@link List<ProdutoEdicao>}
 	 */
 	List<ProdutoEdicao> obterProdutosEdicaoPorId(Set<Long> idsProdutoEdicao);
+	
+	/**
+	 * Pesquisa as Edições já cadastradas.<br>
+	 * Possui como opções de filtro:<br>
+	 * <ul>
+	 * <li>Código do Produto;</li>
+	 * <li>Nome do Produto;</li>
+	 * <li>Data de Lançamento;</li>
+	 * <li>Situação do Lançamento;</li>
+	 * <li>Código de Barra da Edição;</li>
+	 * <li>Contém brinde;</li>
+	 * </ul>
+	 * 
+	 * @param dto
+	 * @param sortorder
+	 * @param sortname
+	 * @param initialResult
+	 * @param maxResults
+	 * 
+	 * @return
+	 */
+	public List<ProdutoEdicao> pesquisarEdicoes(ProdutoEdicaoDTO dto,
+			String sortorder, String sortname, int initialResult, int maxResults);
 	
 }

@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 
 import br.com.abril.nds.dto.FuroProdutoDTO;
+import br.com.abril.nds.dto.ProdutoEdicaoDTO;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 
 /**
@@ -65,5 +66,28 @@ public interface ProdutoEdicaoService {
 	 * @return void
 	 */
 	void alterarProdutoEdicao(ProdutoEdicao produtoEdicao);
+	
+	/**
+	 * Pesquisa as Edições já cadastradas.<br>
+	 * Possui como opções de filtro:<br>
+	 * <ul>
+	 * <li>Código do Produto;</li>
+	 * <li>Nome do Produto;</li>
+	 * <li>Data de Lançamento;</li>
+	 * <li>Situação do Lançamento;</li>
+	 * <li>Código de Barra da Edição;</li>
+	 * <li>Contém brinde;</li>
+	 * </ul>
+	 * 
+	 * @param dto
+	 * @param sortorder
+	 * @param sortname
+	 * @param page
+	 * @param maxResults
+	 * 
+	 * @return
+	 */
+	public List<ProdutoEdicao> pesquisarEdicoes(ProdutoEdicaoDTO dto,
+			String sortorder, String sortname, int page, int maxResults);
 	
 }
