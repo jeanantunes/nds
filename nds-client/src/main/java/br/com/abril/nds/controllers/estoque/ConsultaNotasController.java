@@ -115,7 +115,8 @@ public class ConsultaNotasController {
 	public void pesquisarNotas(FiltroConsultaNotaFiscalDTO filtroConsultaNotaFiscal, int isNotaRecebida,
 							   String dataInicial, String dataFinal, String sortorder, String sortname, int page, int rp) {
 
-		prepararFiltro(filtroConsultaNotaFiscal, isNotaRecebida, dataInicial, dataFinal, sortorder, sortname, page, rp);
+		filtroConsultaNotaFiscal =
+				prepararFiltro(filtroConsultaNotaFiscal, isNotaRecebida, dataInicial, dataFinal, sortorder, sortname, page, rp);
 
 		try {
 
@@ -321,7 +322,7 @@ public class ConsultaNotasController {
 		return String.valueOf(itemExibicao == null ? "-" : itemExibicao);
 	}
 	
-	private void prepararFiltro(
+	private FiltroConsultaNotaFiscalDTO prepararFiltro(
 			FiltroConsultaNotaFiscalDTO filtroConsultaNotaFiscal, int isNotaRecebida,
 			String dataInicial, String dataFinal, String sortorder, String sortname, int page, int rp) {
 
@@ -359,18 +360,7 @@ public class ConsultaNotasController {
 			filtroConsultaNotaFiscal.setIsNotaRecebida(NOTA_RECEBIDA == isNotaRecebida);
 		}
 
-		FiltroConsultaNotaFiscalDTO filtroConsultaNotaFiscalSession =
-			(FiltroConsultaNotaFiscalDTO) session.getAttribute(FILTRO_SESSION_ATTRIBUTE);
-		
-		if (filtroConsultaNotaFiscalSession != null 
-				&& !filtroConsultaNotaFiscalSession.equals(filtroConsultaNotaFiscal)) {
-			
-			page = 1;
-		}
-		
-		paginacao.setPaginaAtual(page);
-		
-		session.setAttribute(FILTRO_SESSION_ATTRIBUTE, filtroConsultaNotaFiscal);
+		return filtroConsultaNotaFiscal;
 	}
 	
 	private PeriodoVO obterPeriodoValidado(String dataInicial, String dataFinal) {

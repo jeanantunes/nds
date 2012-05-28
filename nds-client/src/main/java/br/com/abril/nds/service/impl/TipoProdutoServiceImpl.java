@@ -102,7 +102,7 @@ public class TipoProdutoServiceImpl implements TipoProdutoService {
 	 */
 	@Override
 	@Transactional(readOnly=true)
-	public List<TipoProduto> busca(String nomeTipoProduto, String codigo, String codigoNCM, String codigoNBM, String orderBy,
+	public List<TipoProduto> busca(String nomeTipoProduto, Long codigo, String codigoNCM, String codigoNBM, String orderBy,
 			Ordenacao ordenacao, int initialResult, int maxResults) {
 		
 		return this.tipoProdutoRepository.busca(nomeTipoProduto, codigo, codigoNCM, codigoNBM, orderBy, ordenacao, initialResult, maxResults);
@@ -113,7 +113,7 @@ public class TipoProdutoServiceImpl implements TipoProdutoService {
 	 */
 	@Override
 	@Transactional(readOnly=true)
-	public Long quantidade(String nomeTipoProduto,String codigo, String codigoNCM, String codigoNBM) {
+	public Long quantidade(String nomeTipoProduto,Long codigo, String codigoNCM, String codigoNBM) {
 		return this.tipoProdutoRepository.quantidade(nomeTipoProduto, codigo, codigoNCM, codigoNBM);
 	}
 

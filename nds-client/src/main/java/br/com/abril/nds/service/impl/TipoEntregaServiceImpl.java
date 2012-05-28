@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,6 +14,7 @@ import br.com.abril.nds.model.cadastro.Periodicidade;
 import br.com.abril.nds.model.cadastro.TipoEntrega;
 import br.com.abril.nds.repository.TipoEntregaRepository;
 import br.com.abril.nds.service.TipoEntregaService;
+import br.com.abril.nds.service.exception.UniqueConstraintViolationException;
 
 /**
  * Serviço para TipoEntrega.
@@ -48,11 +50,12 @@ public class TipoEntregaServiceImpl implements TipoEntregaService {
 	}
 
 	/**
+	 * @throws UniqueConstraintViolationException 
 	 * @see br.com.abril.nds.service.TipoEntregaService#removerTipoEntrega(java.lang.Long)
 	 */
 	@Override
-	@Transactional
-	public void removerTipoEntrega(Long id) {
+	@Transactional(readOnly=false)
+	public void removerTipoEntrega(Long id) throws UniqueConstraintViolationException {
 		
 		try {
 			
@@ -62,7 +65,9 @@ public class TipoEntregaServiceImpl implements TipoEntregaService {
 			if (tipoEntrega != null) {
 				this.tipoEntregaRepository.remover(tipoEntrega);
 			}
-			
+		
+		} catch (DataIntegrityViolationException e) {
+			throw new UniqueConstraintViolationException(e);
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
@@ -84,39 +89,45 @@ public class TipoEntregaServiceImpl implements TipoEntregaService {
 	 */
 	@Override
 	@Transactional(readOnly=false)
-	public void salvarTipoEntrega(Long id, String descricao, BigDecimal taxaFixa, Integer percentualFaturamento,
+	public void salvarTipoEntrega(Long id, String descricao, BigDecimal taxaFixa, Float percentualFaturamento,
 			String baseCalculo, String periodicidadeCadastro, Integer diaSemana, Integer diaMes) {
-
-		TipoEntrega tipoEntrega = new TipoEntrega();
 		
-		tipoEntrega.setId(id);
-		tipoEntrega.setDescricao(descricao);
-		tipoEntrega.setPeriodicidade(getPeriodicidade(periodicidadeCadastro));
-
-		if (taxaFixa != null) {
-			tipoEntrega.setTaxaFixa(taxaFixa);
-		}
-		
-		if (baseCalculo != null && !baseCalculo.isEmpty()) {
-			tipoEntrega.setBaseCalculo(getBaseCalculo(baseCalculo));
-		}
-		
-		if (percentualFaturamento != null) {
-			tipoEntrega.setPercentualFaturamento(percentualFaturamento.floatValue());
-		}
-		
-		if (diaMes != null) {
-			tipoEntrega.setDiaMes(diaMes);
-		}
-		
-		if (diaSemana != null) {
-			tipoEntrega.setDiaSemana(DiaSemana.getByCodigoDiaSemana(diaSemana));
-		}
-		
-		if (id != null) {
-			this.tipoEntregaRepository.alterar(tipoEntrega);
-		} else {
-			this.tipoEntregaRepository.adicionar(tipoEntrega);
+		try {
+			
+			TipoEntrega tipoEntrega = new TipoEntrega();
+			
+			tipoEntrega.setId(id);
+			tipoEntrega.setDescricao(descricao);
+			tipoEntrega.setPeriodicidade(getPeriodicidade(periodicidadeCadastro));
+	
+			if (taxaFixa != null) {
+				tipoEntrega.setTaxaFixa(taxaFixa);
+			}
+			
+			if (baseCalculo != null && !baseCalculo.isEmpty()) {
+				tipoEntrega.setBaseCalculo(getBaseCalculo(baseCalculo));
+			}
+			
+			if (percentualFaturamento != null) {
+				tipoEntrega.setPercentualFaturamento(percentualFaturamento);
+			}
+			
+			if (diaMes != null) {
+				tipoEntrega.setDiaMes(diaMes);
+			}
+			
+			if (diaSemana != null) {
+				tipoEntrega.setDiaSemana(DiaSemana.getByCodigoDiaSemana(diaSemana));
+			}
+			
+			if (id != null) {
+				this.tipoEntregaRepository.alterar(tipoEntrega);
+			} else {
+				this.tipoEntregaRepository.adicionar(tipoEntrega);
+			}
+			
+		} catch (Exception e) {
+			throw new RuntimeException(e);
 		}
 	}
 

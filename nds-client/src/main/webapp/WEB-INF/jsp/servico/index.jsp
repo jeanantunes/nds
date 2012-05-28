@@ -268,7 +268,8 @@
 							}
 					   },
 					   null,
-					   isConfirm
+					   !isConfirm,
+					   'dialogMensagemNovo'
 			);
 
 			$(".serviceGrid").flexReload();
@@ -414,7 +415,7 @@
 			</tr>
 			<tr>
 				<td>Descri&ccedil;&atilde;o:</td>
-				<td colspan="3"><input id="descricaoCadastro" type="text" style="width:270px;" /></td>
+				<td colspan="3"><input id="descricaoCadastro" maxlength="255" type="text" style="width:270px;" /></td>
 			</tr>
 			<tr>
 				<td>&nbsp;</td>
@@ -505,7 +506,7 @@
 				<td>&nbsp;</td>
 				<td>
 					<div  class="diaMes">Dia do M&ecirc;s: 
-						<input name="diaMes" id="diaMes" type="text" value="" style="width:70px; text-align:right;" />
+						<input name="diaMes" id="diaMes" type="text" maxlength="2" value="" style="width:70px; text-align:right;" />
 					</div>
 				</td>
 			</tr>
@@ -514,7 +515,7 @@
 		<br clear="all" />
 		
 		<span class="bt_add">
-			<a href="javascript:;" onclick="incluirENovoServico();">Incluir Novo</a>
+			<a href="javascript:;" onclick="incluirENovoServico();" title="Incluir Novo" >Incluir Novo</a>
 		</span>
 	</div>
 	
