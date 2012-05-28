@@ -14,7 +14,7 @@ public class ProdutoEdicaoController {
 	@Path("/")
 	public void index() { }
 	
-	@Get
+	@Post
 	@Path("/pesquisarEdicoes")
 	public void pesquisarEdicoes(String codigoProduto, String nomeProduto,
 			String dataLancamento, String situacaoLancamento,
