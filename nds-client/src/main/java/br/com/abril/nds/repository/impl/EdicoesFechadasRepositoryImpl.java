@@ -1,0 +1,78 @@
+package br.com.abril.nds.repository.impl;
+
+import java.util.Date;
+import java.util.List;
+
+import org.hibernate.Query;
+import org.springframework.stereotype.Repository;
+
+import br.com.abril.nds.client.vo.RegistroEdicoesFechadasVO;
+import br.com.abril.nds.model.estoque.MovimentoEstoque;
+import br.com.abril.nds.repository.EdicoesFechadasRepository;
+
+@Repository
+public class EdicoesFechadasRepositoryImpl extends AbstractRepository<MovimentoEstoque, Long>  implements EdicoesFechadasRepository {
+
+	/**
+	 * Construtor padrão.
+	 */
+	public EdicoesFechadasRepositoryImpl() {
+		super(MovimentoEstoque.class);
+	}
+	
+	@Override
+	public List<RegistroEdicoesFechadasVO> obterResultadoEdicoesFechadas(
+			Date dataDe, Date dataAte) {
+		return obterResultadoEdicoesFechadas(dataDe, dataAte, "");
+	}
+
+	@Override
+	public List<RegistroEdicoesFechadasVO> obterResultadoEdicoesFechadas(
+			Date dataDe, Date dataAte, String codigoFornecedor) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append("SELECT new ").append(RegistroEdicoesFechadasVO.class.getCanonicalName())
+			.append(" ( produto.codigo , ")
+			.append("   produto.nome , ")
+			.append("   produtoEdicao.numeroEdicao, " )
+			.append("   juridica.nomeFantasia, " )
+			.append("   min(lancamentos.dataRecolhimentoDistribuidor), ")
+			.append("   produtoEdicao.parcial, ")
+			.append("   max(lancamentos.dataRecolhimentoDistribuidor), ")
+			.append("   ( sum(movimentoEstoque.qtde) ) ) ");
+		
+		hql.append(" FROM MovimentoEstoque AS movimentoEstoque ")
+			.append(" LEFT JOIN movimentoEstoque.estoqueProduto.produtoEdicao AS produtoEdicao ")
+			.append(" LEFT JOIN produtoEdicao.produto AS produto ")
+			.append(" LEFT JOIN produtoEdicao.lancamentos AS lancamentos ")
+			.append(" LEFT JOIN produto.fornecedores AS fornecedores ")
+			.append(" LEFT JOIN fornecedores.juridica AS juridica ");
+
+		hql.append(" WHERE ( produtoEdicao.dataDesativacao BETWEEN :dataDe AND :dataAte ) ");
+		
+		if (!codigoFornecedor.isEmpty()) {
+			hql.append(" AND fornecedores.id = :codigoFornecedor ");
+		}
+
+		hql.append(" GROUP BY produto.codigo , ")
+			.append("   produto.nome , ")
+			.append("   produtoEdicao.numeroEdicao, " )
+			.append("   juridica.nomeFantasia, " )
+			.append("   produtoEdicao.parcial ");
+
+		hql.append(" HAVING ( sum(movimentoEstoque.qtde) ) > 0 ");
+
+		Query query = this.getSession().createQuery(hql.toString());
+
+    	query.setParameter("dataDe", dataDe);
+    	query.setParameter("dataAte", dataAte);
+
+    	if(!codigoFornecedor.isEmpty()){
+	    	query.setParameter("codigoFornecedor", codigoFornecedor);
+	    }
+		
+		return query.list();
+	}
+
+}
