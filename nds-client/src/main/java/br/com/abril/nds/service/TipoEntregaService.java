@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import br.com.abril.nds.model.cadastro.TipoEntrega;
+import br.com.abril.nds.service.exception.UniqueConstraintViolationException;
 
 /**
  * Interface de serviços para TipoEntrega
@@ -56,8 +57,9 @@ public interface TipoEntregaService {
 	 * Deleta um Tipo de Entrega.
 	 * 
 	 * @param id
+	 * @throws UniqueConstraintViolationException 
 	 */
-	void removerTipoEntrega(Long id);
+	void removerTipoEntrega(Long id) throws UniqueConstraintViolationException;
 	
 	/**
 	 * Salva um tipo de entrega.
