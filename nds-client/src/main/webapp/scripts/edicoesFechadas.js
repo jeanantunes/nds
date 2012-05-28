@@ -132,9 +132,9 @@ var edicoesFechadasController = {
 			
 			$(".consultaEdicoesFechadasGrid").flexOptions({
 				url: contextPath + '/estoque/edicoesFechadas/pesquisar',
-				params: [{name:'filtro.dateDe', value: dataDe},
-				         {name:'filtro.dateAte', value: dataAte},
-				         {name:'filtro.fornecedor', value:selectFornecedor}],		
+				params: [{name:'dataDe', value: dataDe},
+				         {name:'dataAte', value: dataAte},
+				         {name:'codigoFornecedor', value:selectFornecedor}],		
 				dataType : 'json'
 			});
 			$(".consultaEdicoesFechadasGrid").flexReload();

@@ -1,6 +1,8 @@
 package br.com.abril.nds.fixture;
 
 import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -90,6 +92,7 @@ import br.com.abril.nds.model.estoque.Diferenca;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
 import br.com.abril.nds.model.estoque.Expedicao;
+import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
 import br.com.abril.nds.model.estoque.MovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
@@ -558,7 +561,7 @@ public class DataLoader {
 	}
 
 	private static void carregarDados(Session session) {
-		criarCarteira(session);
+		/*criarCarteira(session);
 		criarBanco(session);
 		criarPessoas(session);
 		criarDistribuidor(session);
@@ -661,7 +664,65 @@ public class DataLoader {
 		
 		gerarDescontos(session);
 		
-		criarDadosBalanceamentoRecolhimento(session);
+		criarDadosBalanceamentoRecolhimento(session);*/
+		
+		criarDadosEdicoesFechadas(session);
+		
+	}
+
+	private static void criarDadosEdicoesFechadas(Session session) {
+		
+		for (int i=0; i<22; i++) {
+		
+			SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+			
+			Produto produto = new Produto();
+			produto.setCodigo("" + i);
+			produto.setNome("teste" + i);
+			
+			ItemRecebimentoFisico itemRecebimentoFisico = new ItemRecebimentoFisico();
+			ProdutoEdicao produtoEdicao = new ProdutoEdicao();
+			produtoEdicao.setNumeroEdicao(16l + i);
+			produtoEdicao.setParcial(false);
+			
+			PessoaJuridica juridica = new PessoaJuridica();
+			juridica.setRazaoSocial("Juridica " + i);
+			
+			try {
+				Lancamento lancamento1 = new Lancamento();
+				lancamento1.setDataRecolhimentoDistribuidor(sdf.parse("26/05/2012"));
+				
+				Lancamento lancamento2 = new Lancamento();
+				lancamento2.setDataRecolhimentoDistribuidor(sdf.parse("23/05/2012"));
+				
+				Set<Lancamento> lancamentos = new HashSet<Lancamento>();
+				lancamentos.add(lancamento1);
+				lancamentos.add(lancamento2);
+				
+				produtoEdicao.setLancamentos(lancamentos);
+				produtoEdicao.setDataDesativacao(sdf.parse("27/05/2012"));
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+			
+			TipoMovimentoEstoque tipoMovimento = new TipoMovimentoEstoque();
+			Usuario usuario = new Usuario();
+			EstoqueProduto estoqueProduto = new EstoqueProduto();
+			Date dataInclusao = new Date();
+			BigDecimal qtde = new BigDecimal(13);
+			StatusAprovacao status = StatusAprovacao.APROVADO;
+			String motivo = "Teste";
+			
+			MovimentoEstoque movimento = Fixture.movimentoEstoque(itemRecebimentoFisico, produtoEdicao, tipoMovimento, usuario, estoqueProduto, dataInclusao, qtde, status, motivo);
+
+			TipoMovimentoEstoque tipoMovimentoEstoque = new TipoMovimentoEstoque();
+			tipoMovimentoEstoque.setGrupoMovimentoEstoque(GrupoMovimentoEstoque.RECEBIMENTO_ENCALHE);
+			
+			movimento.setTipoMovimento(tipoMovimentoEstoque);
+			
+			save(session, movimento);
+		
+		}
 		
 	}
 

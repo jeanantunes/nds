@@ -7,11 +7,9 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import br.com.abril.nds.client.vo.ResultadoEdicoesFechadasVO;
+import br.com.abril.nds.client.vo.RegistroEdicoesFechadasVO;
 import br.com.abril.nds.client.vo.ValidacaoVO;
-import br.com.abril.nds.dto.filtro.FiltroEdicoesFechadasDTO;
 import br.com.abril.nds.exception.ValidacaoException;
-import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.service.EdicoesFechadasService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.util.Constantes;
@@ -51,15 +49,15 @@ public class EdicoesFechadasController {
 	 * @param dataDe
 	 * @param dataAte
 	 */
-	private void validarDadosPesquisa(Date dataDe, Date dataAte) {
+	private void validarDadosPesquisa(String dataDe, String dataAte) {
 		List<String> listaMensagemValidacao = new ArrayList<String>();
 
-		if (dataDe == null) {
+		if (dataDe == null || dataDe.isEmpty()) {
 			listaMensagemValidacao
 					.add("O preenchimento do campo Período De é obrigatório!");
 		}
 
-		if (dataAte == null) {
+		if (dataAte == null || dataAte.isEmpty()) {
 			listaMensagemValidacao
 					.add("O preenchimento do campo Período Até é obrigatório!");
 		}
@@ -80,22 +78,22 @@ public class EdicoesFechadasController {
 	@Post
 	@Path("/pesquisar")
 	//public void pesquisarEdicoesFechadas(String dataDe, String dataAte, String fornecedor) throws Exception {
-	public void pesquisarEdicoesFechadas(FiltroEdicoesFechadasDTO filtro) throws Exception {
+	public void pesquisarEdicoesFechadas(String dataDe, String dataAte, String codigoFornecedor) throws Exception {
 
-		this.validarDadosPesquisa(filtro.getDateAte(), filtro.getDateAte());
+		this.validarDadosPesquisa(dataDe, dataAte);
 
-		/*if (fornecedor == null || fornecedor.isEmpty() || !fornecedor.equalsIgnoreCase("Todos")) {
+		/*if (codigoFornecedor == null || codigoFornecedor.isEmpty() || !codigoFornecedor.equalsIgnoreCase("Todos")) {
 			FiltroEdicoesFechadasDTO filtro = new FiltroEdicoesFechadasDTO(sdf.parse(dataDe), sdf.parse(dataAte));
 		} else {
-			Fornecedor fornecedorUnico = fornecedorService.obterFornecedorUnico(fornecedor);
+			Fornecedor fornecedorUnico = fornecedorService.obterFornecedorUnico(codigoFornecedor);
 			FiltroEdicoesFechadasDTO filtro = new FiltroEdicoesFechadasDTO(sdf.parse(dataDe), sdf.parse(dataAte),fornecedorUnico);
 		}*/
 		
 		SimpleDateFormat sdf = new SimpleDateFormat(Constantes.DATE_PATTERN_PT_BR);
 		
-		ResultadoEdicoesFechadasVO resultado = null;
+		List<RegistroEdicoesFechadasVO> resultado = null;
 		try {
-			resultado = null; //edicoesFechadasService.obterResultadoEdicoesFechadas(sdf.parse(dataDe), sdf.parse(dataAte), codigoFornecedor);
+			resultado = edicoesFechadasService.obterResultadoEdicoesFechadas(sdf.parse(dataDe), sdf.parse(dataAte), codigoFornecedor);
 		} catch (Exception e) {
 
 			if (e instanceof ValidacaoException) {

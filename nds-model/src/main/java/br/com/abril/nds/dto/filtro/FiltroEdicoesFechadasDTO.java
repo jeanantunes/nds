@@ -16,20 +16,12 @@ public class FiltroEdicoesFechadasDTO {
 	private Date dateAte;
 	
 	@Export(label="Fornecedor")
-	private Fornecedor fornecedor;
+	private String codigoFornecedor;
 
-	public FiltroEdicoesFechadasDTO() {
-		System.out.println("teste");
-	}
-	
-	public FiltroEdicoesFechadasDTO(Object o1, Object o2, Object o3) {
-		System.out.println(o1);
-	}
-	
-	public FiltroEdicoesFechadasDTO(Date dateDe, Date dateAte, Fornecedor fornecedor) {
+	public FiltroEdicoesFechadasDTO(Date dateDe, Date dateAte, String codigoFornecedor) {
 		this.dateDe = dateDe;
 		this.dateAte = dateAte;
-		this.fornecedor = fornecedor;
+		this.codigoFornecedor = codigoFornecedor;
 	}
 
 	public FiltroEdicoesFechadasDTO(Date dateDe, Date dateAte) {
@@ -53,12 +45,12 @@ public class FiltroEdicoesFechadasDTO {
 		this.dateAte = dateAte;
 	}
 
-	public Fornecedor getFornecedor() {
-		return fornecedor;
+	public String getCodigoFornecedor() {
+		return codigoFornecedor;
 	}
 
-	public void setFornecedor(Fornecedor fornecedor) {
-		this.fornecedor = fornecedor;
+	public void setCodigoFornecedor(String codigoFornecedor) {
+		this.codigoFornecedor = codigoFornecedor;
 	}
 	
 }
