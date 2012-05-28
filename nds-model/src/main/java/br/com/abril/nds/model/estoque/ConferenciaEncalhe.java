@@ -38,10 +38,14 @@ public class ConferenciaEncalhe implements Serializable {
 	@GeneratedValue(generator = "CONFERENCIA_ENCALHE_SEQ")
 	private Long id;
 	
-	@OneToOne(optional = false)
+	@OneToOne(optional = true)
 	@JoinColumn(name = "MOVIMENTO_ESTOQUE_COTA_ID")
 	private MovimentoEstoqueCota movimentoEstoqueCota;
 
+	@OneToOne(optional = true)
+	@JoinColumn(name = "MOVIMENTO_ESTOQUE_ID")
+	private MovimentoEstoque movimentoEstoque;
+	
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "CHAMADA_ENCALHE_COTA_ID")
 	private ChamadaEncalheCota chamadaEncalheCota;
@@ -178,6 +182,23 @@ public class ConferenciaEncalhe implements Serializable {
 	 */
 	public void setQtdeInformada(BigDecimal qtdeInformada) {
 		this.qtdeInformada = qtdeInformada;
+	}
+
+	/**
+	 * Obtém movimentoEstoque
+	 *
+	 * @return MovimentoEstoque
+	 */
+	public MovimentoEstoque getMovimentoEstoque() {
+		return movimentoEstoque;
+	}
+
+	/**
+	 * Atribuí movimentoEstoque
+	 * @param movimentoEstoque 
+	 */
+	public void setMovimentoEstoque(MovimentoEstoque movimentoEstoque) {
+		this.movimentoEstoque = movimentoEstoque;
 	}
 	
 		
