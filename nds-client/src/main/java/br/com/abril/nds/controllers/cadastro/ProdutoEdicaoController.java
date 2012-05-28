@@ -1,5 +1,7 @@
 package br.com.abril.nds.controllers.cadastro;
 
+import java.util.Date;
+
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
@@ -10,6 +12,7 @@ import br.com.caelum.vraptor.Resource;
 public class ProdutoEdicaoController {
 
 	
+	/** Traz a página inicial. */
 	@Get
 	@Path("/")
 	public void index() { }
@@ -17,8 +20,8 @@ public class ProdutoEdicaoController {
 	@Post
 	@Path("/pesquisarEdicoes")
 	public void pesquisarEdicoes(String codigoProduto, String nomeProduto,
-			String dataLancamento, String situacaoLancamento,
-			String codigoDeBarras, String brinde) {
+			Date dataLancamento, String situacaoLancamento,
+			String codigoDeBarras, boolean brinde) {
 		
 		
 		System.out.println("codigoProduto: " + codigoProduto);
