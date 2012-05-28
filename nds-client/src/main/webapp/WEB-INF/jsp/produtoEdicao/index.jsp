@@ -563,7 +563,7 @@ fieldset {
 						<td width="50">Situa&ccedil;&atilde;o:</td>
 						<td width="168">
 							<select name="select" id="pSituacaoLancamento" name="pSituacaoLancamento" style="width:150px;">
-								<option selected="selected">Selecione...</option>
+								<option value="" selected="selected">Selecione...</option>
 								<option value="Transmitido">Transmitido</option>
 								<option value="Previsto">Previsto</option>
 								<option value="Cálculo Solicitado">C&aacute;lculo Solicitado</option>
