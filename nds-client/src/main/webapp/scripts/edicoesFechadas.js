@@ -126,11 +126,16 @@ var edicoesFechadasController = {
 			});
 		},
 		pesquisar : function() {
-			alert("pesquisar");
+			var dataDe = $("#dataDe").val();
+			var dataAte = $("#dataAte").val();
+			var selectFornecedor = $("select#fornecedor").val();
+			
 			$(".consultaEdicoesFechadasGrid").flexOptions({
 				url: contextPath + '/estoque/edicoesFechadas/pesquisar',
-				params: [],		
-			    newp: 1,
+				params: [{name:'filtro.dateDe', value: dataDe},
+				         {name:'filtro.dateAte', value: dataAte},
+				         {name:'filtro.fornecedor', value:selectFornecedor}],		
+				dataType : 'json'
 			});
 			$(".consultaEdicoesFechadasGrid").flexReload();
 		},
@@ -151,7 +156,7 @@ var edicoesFechadasController = {
 }
 
 $(function() {
-	$( "#filtroEdicoesFechadasDTO.dataDe" ).datepicker({
+	$( "#dataDe" ).datepicker({
 		showOn: "button",
 		buttonImage: contextPath + "/images/calendar.gif",
 		buttonImageOnly: true,
@@ -159,9 +164,9 @@ $(function() {
 		defaultDate: new Date()
 	});
 
-	$("#filtroEdicoesFechadasDTO.dataDe").mask("99/99/9999");
+	$("#dataDe").mask("99/99/9999");
 
-	$( "#filtroEdicoesFechadasDTO.dataAte" ).datepicker({
+	$( "#dataAte" ).datepicker({
 		showOn: "button",
 		buttonImage: contextPath + "/images/calendar.gif",
 		buttonImageOnly: true,
@@ -169,6 +174,6 @@ $(function() {
 		defaultDate: new Date()
 	});
 
-	$("#filtroEdicoesFechadasDTO.dataAte").mask("99/99/9999");
+	$("#dataAte").mask("99/99/9999");
 	
 });

@@ -40,18 +40,18 @@
 	<table width="950" border="0" cellspacing="2" cellpadding="2" class="filtro">
         <tr>
    	        <td width="58">Período:</td>
-   	        <td width="123"><input type="text" name="filtroEdicoesFechadasDTO.dataDe" id="filtroEdicoesFechadasDTO.dataDe" style="width:80px;" /></td>
+   	        <td width="123"><input type="text" name="filtro.dataDe" value="filtro.dataDe" id="dataDe" style="width:80px;" /></td>
    	        <td width="28" align="center">Até</td>
-   	        <td width="123"><input type="text" name="filtroEdicoesFechadasDTO.dataAte" id="filtroEdicoesFechadasDTO.dataAte" style="width:80px;" /></td>
+   	        <td width="123"><input type="text" name="filtro.dataAte" value="filtro.dataAte" id="dataAte" style="width:80px;" /></td>
    	        <td width="81">Fornecedor:</td>
-   	        <td width="389"><select name="filtroEdicoesFechadasDTO.fornecedor" id="filtroEdicoesFechadasDTO.fornecedor" style="width:280px;">
+   	        <td width="389"><select name="filtro.fornecedor" id="fornecedor" style="width:280px;">
    	          <option selected="selected"></option>
    	          <option value="Todos">Todos</option>
 			  <c:forEach items="${fornecedores}" var="fornecedor">
 					<option value="${fornecedor.id}">${fornecedor.juridica.nomeFantasia}</option>
 			  </c:forEach> 
             </select></td>
-   	        <td width="104"><span class="bt_pesquisar"><a href="javascript:;" id="btnPesquisar" onclick="pesquisar();">Pesquisar</a></span></td>
+   	        <td width="104"><span class="bt_pesquisar"><a href="javascript:;" id="btnPesquisar">Pesquisar</a></span></td>
          </tr>
     </table>
    </fieldset>

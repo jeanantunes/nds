@@ -11,7 +11,9 @@ import br.com.abril.nds.client.vo.ResultadoEdicoesFechadasVO;
 import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.dto.filtro.FiltroEdicoesFechadasDTO;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.service.EdicoesFechadasService;
+import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TipoMensagem;
@@ -30,9 +32,14 @@ public class EdicoesFechadasController {
 
 	@Autowired
 	private EdicoesFechadasService edicoesFechadasService;
-	
+
+	@Autowired
+	private FornecedorService fornecedorService;
+
 	private static final String FORMATO_DATA = "dd/MM/yyyy";
 
+	private SimpleDateFormat sdf = new SimpleDateFormat(FORMATO_DATA);
+	
 	@Path("/")
 	public void index() {
 		String data = DateUtil.formatarData(new Date(), FORMATO_DATA);
@@ -72,10 +79,18 @@ public class EdicoesFechadasController {
 	 */
 	@Post
 	@Path("/pesquisar")
+	//public void pesquisarEdicoesFechadas(String dataDe, String dataAte, String fornecedor) throws Exception {
 	public void pesquisarEdicoesFechadas(FiltroEdicoesFechadasDTO filtro) throws Exception {
 
-		this.validarDadosPesquisa(filtro.getDateDe(), filtro.getDateAte());
+		this.validarDadosPesquisa(filtro.getDateAte(), filtro.getDateAte());
 
+		/*if (fornecedor == null || fornecedor.isEmpty() || !fornecedor.equalsIgnoreCase("Todos")) {
+			FiltroEdicoesFechadasDTO filtro = new FiltroEdicoesFechadasDTO(sdf.parse(dataDe), sdf.parse(dataAte));
+		} else {
+			Fornecedor fornecedorUnico = fornecedorService.obterFornecedorUnico(fornecedor);
+			FiltroEdicoesFechadasDTO filtro = new FiltroEdicoesFechadasDTO(sdf.parse(dataDe), sdf.parse(dataAte),fornecedorUnico);
+		}*/
+		
 		SimpleDateFormat sdf = new SimpleDateFormat(Constantes.DATE_PATTERN_PT_BR);
 		
 		ResultadoEdicoesFechadasVO resultado = null;

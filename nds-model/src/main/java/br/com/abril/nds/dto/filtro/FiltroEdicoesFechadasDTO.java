@@ -18,6 +18,25 @@ public class FiltroEdicoesFechadasDTO {
 	@Export(label="Fornecedor")
 	private Fornecedor fornecedor;
 
+	public FiltroEdicoesFechadasDTO() {
+		System.out.println("teste");
+	}
+	
+	public FiltroEdicoesFechadasDTO(Object o1, Object o2, Object o3) {
+		System.out.println(o1);
+	}
+	
+	public FiltroEdicoesFechadasDTO(Date dateDe, Date dateAte, Fornecedor fornecedor) {
+		this.dateDe = dateDe;
+		this.dateAte = dateAte;
+		this.fornecedor = fornecedor;
+	}
+
+	public FiltroEdicoesFechadasDTO(Date dateDe, Date dateAte) {
+		this.dateDe = dateDe;
+		this.dateAte = dateAte;
+	}
+
 	public Date getDateDe() {
 		return dateDe;
 	}
