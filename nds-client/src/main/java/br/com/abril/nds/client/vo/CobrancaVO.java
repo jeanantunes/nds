@@ -19,8 +19,13 @@ public class CobrancaVO {
 	private String juros;
 	private String valorTotal;
 	
+	
+	private boolean check;
+	
 	//MOVIMENTO FINANCEIRO
 	private String multa;
+	private String valorSaldo;
+	
 
 	public String getCota() {
 		return cota;
@@ -134,11 +139,29 @@ public class CobrancaVO {
 		this.nome = nome;
 	}
 
+	public boolean isCheck() {
+		return check;
+	}
+
+	public void setCheck(boolean check) {
+		this.check = check;
+	}
+
+	public String getValorSaldo() {
+		return valorSaldo;
+	}
+
+	public void setValorSaldo(String valorSaldo) {
+		this.valorSaldo = valorSaldo;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((banco == null) ? 0 : banco.hashCode());
+		result = prime * result + (check ? 1231 : 1237);
+		result = prime * result + ((codigo == null) ? 0 : codigo.hashCode());
 		result = prime * result + ((cota == null) ? 0 : cota.hashCode());
 		result = prime * result
 				+ ((dataEmissao == null) ? 0 : dataEmissao.hashCode());
@@ -152,9 +175,12 @@ public class CobrancaVO {
 				+ ((dividaTotal == null) ? 0 : dividaTotal.hashCode());
 		result = prime * result + ((juros == null) ? 0 : juros.hashCode());
 		result = prime * result + ((multa == null) ? 0 : multa.hashCode());
+		result = prime * result + ((nome == null) ? 0 : nome.hashCode());
 		result = prime * result
 				+ ((nossoNumero == null) ? 0 : nossoNumero.hashCode());
 		result = prime * result + ((valor == null) ? 0 : valor.hashCode());
+		result = prime * result
+				+ ((valorSaldo == null) ? 0 : valorSaldo.hashCode());
 		result = prime * result
 				+ ((valorTotal == null) ? 0 : valorTotal.hashCode());
 		return result;
@@ -173,6 +199,13 @@ public class CobrancaVO {
 			if (other.banco != null)
 				return false;
 		} else if (!banco.equals(other.banco))
+			return false;
+		if (check != other.check)
+			return false;
+		if (codigo == null) {
+			if (other.codigo != null)
+				return false;
+		} else if (!codigo.equals(other.codigo))
 			return false;
 		if (cota == null) {
 			if (other.cota != null)
@@ -214,6 +247,11 @@ public class CobrancaVO {
 				return false;
 		} else if (!multa.equals(other.multa))
 			return false;
+		if (nome == null) {
+			if (other.nome != null)
+				return false;
+		} else if (!nome.equals(other.nome))
+			return false;
 		if (nossoNumero == null) {
 			if (other.nossoNumero != null)
 				return false;
@@ -224,6 +262,11 @@ public class CobrancaVO {
 				return false;
 		} else if (!valor.equals(other.valor))
 			return false;
+		if (valorSaldo == null) {
+			if (other.valorSaldo != null)
+				return false;
+		} else if (!valorSaldo.equals(other.valorSaldo))
+			return false;
 		if (valorTotal == null) {
 			if (other.valorTotal != null)
 				return false;
@@ -232,5 +275,5 @@ public class CobrancaVO {
 		return true;
 	}
 
-	
+
 }
