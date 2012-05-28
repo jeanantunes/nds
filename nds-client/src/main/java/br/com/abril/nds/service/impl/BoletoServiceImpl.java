@@ -60,7 +60,6 @@ import br.com.abril.nds.service.PoliticaCobrancaService;
 import br.com.abril.nds.util.AnexoEmail;
 import br.com.abril.nds.util.AnexoEmail.TipoAnexo;
 import br.com.abril.nds.util.CorpoBoleto;
-import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.GeradorBoleto;
 import br.com.abril.nds.util.TipoBaixaCobranca;
@@ -1070,9 +1069,16 @@ public class BoletoServiceImpl implements BoletoService {
 	@Override
 	@Transactional(readOnly=true)
 	public CobrancaVO obterDadosBoletoPorNossoNumero(String nossoNumero) {
+		
+		CobrancaVO cobrancaVO = null;
+		
 		Boleto boleto = boletoRepository.obterPorNossoNumero(nossoNumero,false);
-		Cobranca cob = (Cobranca) boleto;
-		return this.cobrancaService.obterDadosCobranca(cob.getId());
+		if (boleto!=null){
+		    Cobranca cob = (Cobranca) boleto;
+		    cobrancaVO = this.cobrancaService.obterDadosCobranca(cob.getId());
+		}
+		
+		return cobrancaVO;
 	}
 
 	/**
