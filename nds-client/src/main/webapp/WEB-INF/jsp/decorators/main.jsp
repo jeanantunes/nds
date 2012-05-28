@@ -236,6 +236,7 @@ fieldset label {
 							<li><a href="Financeiro/help_financeiro.htm">Help</a>
 							</li>
 						</ul></li>
+						
 					<li><span class="classEstoque">&nbsp;</span><a
 						href="javascript:;">Estoque</a>
 						<ul>
