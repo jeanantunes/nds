@@ -1,5 +1,6 @@
 package br.com.abril.nds.service.impl;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -15,16 +16,19 @@ import br.com.abril.nds.dto.filtro.FiltroCotaInadimplenteDTO;
 import br.com.abril.nds.model.financeiro.BaixaCobranca;
 import br.com.abril.nds.model.financeiro.Cobranca;
 import br.com.abril.nds.model.financeiro.Divida;
-import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
+import br.com.abril.nds.model.financeiro.StatusDivida;
+import br.com.abril.nds.repository.CobrancaRepository;
 import br.com.abril.nds.repository.DividaRepository;
 import br.com.abril.nds.service.DividaService;
-import br.com.abril.nds.util.TipoBaixaCobranca;
 
 @Service
-public class DividaServiceImpl implements DividaService{
+public class DividaServiceImpl implements DividaService {
 
 	@Autowired
 	private DividaRepository dividaRepository;
+	
+	@Autowired
+	private CobrancaRepository cobrancaRepository;
 	
 	@Override
 	@Transactional
@@ -117,10 +121,19 @@ public class DividaServiceImpl implements DividaService{
 	}
 
 	@Override
-	public void postergarCobrancaCota(List<Long> listaCodigosCotas,
-			Date dataPostergacao) {
-		// TODO Auto-generated method stub
+	@Transactional
+	public void postergarCobrancaCota(List<Cobranca> listaCobranca, Date dataPostergacao, BigDecimal encargos) {
+	
+		// FIXME: Validar cobrancas de entrada.
 		
+		for (Cobranca cobranca : listaCobranca) {
+			
+			cobranca.setDataPagamento(dataPostergacao);
+			cobranca.getDivida().setStatus(StatusDivida.POSTERGADA);
+			cobranca.setEncargos(encargos);
+			
+			this.cobrancaRepository.alterar(cobranca);
+		}
 	}
 
 }
