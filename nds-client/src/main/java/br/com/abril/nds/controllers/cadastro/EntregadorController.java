@@ -649,6 +649,7 @@ public class EntregadorController {
 	/*
 	 * 
 	 */
+	@SuppressWarnings("unchecked")
 	private void validarParametrosEntradaCadastroEntregador(Long codigoEntregador,
 															boolean isComissionado,
 															String percentualComissao,
@@ -714,6 +715,22 @@ public class EntregadorController {
 			}
 		}
 			
+		List<EnderecoAssociacaoDTO> listaEnderecoAssociacaoSalvar = 
+				(List<EnderecoAssociacaoDTO>) this.session.getAttribute(
+						LISTA_ENDERECOS_SALVAR_SESSAO);
+		
+		Map<Integer, TelefoneAssociacaoDTO> map = this.obterTelefonesSalvarSessao();
+		
+		if (map.keySet().isEmpty()) {
+			
+			listaMensagens.add("Pelo menos um telefone deve ser cadastrado para o entregador.");
+		}
+		
+		if (listaEnderecoAssociacaoSalvar == null || listaEnderecoAssociacaoSalvar.isEmpty()) {
+			
+			listaMensagens.add("Pelo menos um endereço deve ser cadastrado para o entregador.");
+		}
+		
 		if (!listaMensagens.isEmpty()) {
 			
 			validacao.setListaMensagens(listaMensagens);
@@ -726,8 +743,8 @@ public class EntregadorController {
 	 * 
 	 */
 	private ProcuracaoEntregador obterProcuracaoEntregadorValidada(Integer numeroCotaProcuracao, 
-																  Long idEntregador,
-																  ProcuracaoEntregador procuracaoEntregador) {
+																   Long idEntregador,
+																   ProcuracaoEntregador procuracaoEntregador) {
 
 		ProcuracaoEntregador procuracaoEntregadorExistente = null;
 		
@@ -779,11 +796,6 @@ public class EntregadorController {
 												  listaEnderecoAssociacaoSalvar, 
 												  listaEnderecoAssociacaoRemover);
 
-		if (listaEnderecoAssociacaoSalvar == null || listaEnderecoAssociacaoSalvar.isEmpty()) {
-			
-			throw new ValidacaoException(TipoMensagem.WARNING, "Pelo menos um endereço deve ser cadastrado para o entregador.");
-		}
-		
 		this.session.removeAttribute(LISTA_ENDERECOS_SALVAR_SESSAO);
 		this.session.removeAttribute(LISTA_ENDERECOS_REMOVER_SESSAO);
 	}
@@ -843,11 +855,6 @@ public class EntregadorController {
 	private void processarTelefonesEntregador(Long idEntregador){
 
 		Map<Integer, TelefoneAssociacaoDTO> map = this.obterTelefonesSalvarSessao();
-		
-		if (map.keySet().isEmpty()) {
-			
-			throw new ValidacaoException(TipoMensagem.WARNING, "Pelo menos um telefone deve ser cadastrado para o entregador.");
-		}
 
 		List<TelefoneEntregador> lista = new ArrayList<TelefoneEntregador>();
 
@@ -877,7 +884,7 @@ public class EntregadorController {
 		this.session.removeAttribute(LISTA_TELEFONES_SALVAR_SESSAO);
 		this.session.removeAttribute(LISTA_TELEFONES_REMOVER_SESSAO);
 	}
-
+	
 	/*
 	 * Método que obtém os telefones a serem salvos, que estão na sessão.
 	 */
