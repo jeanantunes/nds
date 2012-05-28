@@ -165,8 +165,6 @@ fieldset label {
 					<li><span class="classCadastros">&nbsp;</span><a
 						href="javascript:;">Cadastro</a>
 						<ul>
-							<li><a href='<c:url value="/produto"/>'>Produtos</a>
-							</li>
 							<li><a href='<c:url value="/banco/bancos"/>'>Bancos</a>
 							</li>
 							<li><a href='<c:url value="/cadastro/box"/>'>Box</a>
@@ -252,6 +250,8 @@ fieldset label {
 							<li><a href='<c:url value="/estoque/recebimentoFisico/index"/>'>Recebimento
 									Fisico</a>
 							</li>
+							<li><a href='<c:url value="/estoque/edicoesFechadas"/>'>Edições Fechadas com Saldo</a>
+							</li>
 							<li><a href="Estoque/help_estoque.htm">Help</a>
 							</li>
 						</ul></li>
@@ -267,6 +267,9 @@ fieldset label {
 							<li><a href="<c:url value='/lancamento/furoProduto'/>">Furo de
 									Produto</a>
 							</li>
+							<li><a href="<c:url value='/lancamento/relatorioVendas'/>">Relatório de Vendas</a>
+							</li>
+							<li><a href="<c:url value='/lancamento/vendaProduto'/>">Venda por Produto</a></li>
 							<li><a href="Lancamento/help_lancamento.htm">Help</a>
 							</li>
 						</ul></li>
@@ -375,6 +378,8 @@ fieldset label {
 									Controle Aprovação
 								</a>
 							</li>
+							<li><a href='<c:url value="/administracao/cadastroCalendario"/>'>Calendário</a></li>
+							<li><a href='<c:url value="/administracao/tipoDescontoCota"/>'>Tipo de Desconto Cota</a></li>							
 							<li><a href="Administracao/cadastro_tipos_movimento.htm">Cadastrar
 									Tipos de Movimento</a>
 							</li>
