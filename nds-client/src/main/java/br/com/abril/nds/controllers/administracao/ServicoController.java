@@ -231,7 +231,11 @@ public class ServicoController {
 		} else {
 			descricao = this.validarDescricao(descricao);
 		}
-
+		
+		if (cobranca == null  || cobranca.isEmpty()) {
+			listaMensagens.add("O preenchimento do campo [Cobrança] é obrigatório!");
+		}
+		
 		if ("TF".equals(cobranca)) {
 
 			if (taxaFixa == null || BigDecimal.ZERO.compareTo(taxaFixa) > 0) {
