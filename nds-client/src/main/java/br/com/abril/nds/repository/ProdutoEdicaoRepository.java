@@ -138,7 +138,7 @@ public interface ProdutoEdicaoRepository extends Repository<ProdutoEdicao, Long>
 	 * 
 	 * @return
 	 */
-	public List<ProdutoEdicao> pesquisarEdicoes(ProdutoEdicaoDTO dto,
+	public List<ProdutoEdicaoDTO> pesquisarEdicoes(ProdutoEdicaoDTO dto,
 			String sortorder, String sortname, int initialResult, int maxResults);
 	
 }

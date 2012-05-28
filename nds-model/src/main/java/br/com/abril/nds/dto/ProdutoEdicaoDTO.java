@@ -4,7 +4,9 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
+import br.com.abril.nds.model.planejamento.TipoLancamento;
 
 public class ProdutoEdicaoDTO implements Serializable {
 
@@ -32,8 +34,13 @@ public class ProdutoEdicaoDTO implements Serializable {
 	private Integer dia;
 	private Date dataRecolhimentoDistribuidor;
 	
+	// Usados na listagem de Edições:
 	private Date dataLancamento;
 	private String situacaoLancamento;
+	private String nomeFornecedor;
+	private TipoLancamento tipoLancamento;
+	private StatusLancamento status;
+	
 	
 	/**
 	 * Tipo de chamada de encalhe deste produtoEdicao
@@ -178,10 +185,56 @@ public class ProdutoEdicaoDTO implements Serializable {
 	}
 	
 	/**
-	 * @param situacaoLancamento the situacaoLancamento to set
+	 * @param situacaoLancamento
+	 *            the situacaoLancamento to set
 	 */
 	public void setSituacaoLancamento(String situacaoLancamento) {
 		this.situacaoLancamento = situacaoLancamento;
 	}
-	
+
+	/**
+	 * @return the nomeFornecedor
+	 */
+	public String getNomeFornecedor() {
+		return nomeFornecedor;
+	}
+
+	/**
+	 * @param nomeFornecedor
+	 *            the nomeFornecedor to set
+	 */
+	public void setNomeFornecedor(String nomeFornecedor) {
+		this.nomeFornecedor = nomeFornecedor;
+	}
+
+	/**
+	 * @return the tipoLancamento
+	 */
+	public TipoLancamento getTipoLancamento() {
+		return tipoLancamento;
+	}
+
+	/**
+	 * @param tipoLancamento
+	 *            the tipoLancamento to set
+	 */
+	public void setTipoLancamento(TipoLancamento tipoLancamento) {
+		this.tipoLancamento = tipoLancamento;
+	}
+
+	/**
+	 * @return the status
+	 */
+	public StatusLancamento getStatus() {
+		return status;
+	}
+
+	/**
+	 * @param status
+	 *            the status to set
+	 */
+	public void setStatus(StatusLancamento status) {
+		this.status = status;
+	}
+
 }

@@ -87,7 +87,7 @@ public interface ProdutoEdicaoService {
 	 * 
 	 * @return
 	 */
-	public List<ProdutoEdicao> pesquisarEdicoes(ProdutoEdicaoDTO dto,
+	public List<ProdutoEdicaoDTO> pesquisarEdicoes(ProdutoEdicaoDTO dto,
 			String sortorder, String sortname, int page, int maxResults);
 	
 }

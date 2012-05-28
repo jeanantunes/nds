@@ -33,7 +33,6 @@ public class ProdutoEdicaoController {
             String sortorder, String sortname, int page, int rp) {
 
 		
-		
 		ProdutoEdicaoDTO dto = new ProdutoEdicaoDTO();
 		dto.setCodigoProduto(codigoProduto);
 		dto.setNomeProduto(nomeProduto);
@@ -43,7 +42,7 @@ public class ProdutoEdicaoController {
 		dto.setPossuiBrinde(brinde);
 		
 		
-		List<ProdutoEdicao> lst = peService.pesquisarEdicoes(dto, sortorder, sortname, page, rp);
+		List<ProdutoEdicaoDTO> lst = peService.pesquisarEdicoes(dto, sortorder, sortname, page, rp);
 		
 	}
 	
