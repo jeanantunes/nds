@@ -1,5 +1,10 @@
 <head>
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/tipoMovimento.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
 <script language="javascript" type="text/javascript">
+
+var TM = new TipoMovimento('${pageContext.request.contextPath}', 'TM');
+
 function popup() {
 		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
 	
@@ -10,10 +15,7 @@ function popup() {
 			modal: true,
 			buttons: {
 				"Confirmar": function() {
-					$( this ).dialog( "close" );
-					$("#effect").show("highlight", {}, 1000, callback);
-					$(".grids").show();
-					
+					TM.salvarTipoMovimento();					
 				},
 				"Cancelar": function() {
 					$( this ).dialog( "close" );
@@ -32,10 +34,7 @@ function popup() {
 			modal: true,
 			buttons: {
 				"Confirmar": function() {
-					$( this ).dialog( "close" );
-					$("#effect").hide("highlight", {}, 1000, callback);
-					$( "#abaPdv" ).show( );
-					
+					TM.alterarTipoMovimento();
 				},
 				"Cancelar": function() {
 					$( this ).dialog( "close" );
@@ -55,8 +54,7 @@ function popup() {
 			modal: true,
 			buttons: {
 				"Confirmar": function() {
-					$( this ).dialog( "close" );
-					$("#effect").show("highlight", {}, 1000, callback);
+					TM.excluirTipoMovimento();
 				},
 				"Cancelar": function() {
 					$( this ).dialog( "close" );
@@ -79,45 +77,80 @@ function popup() {
 
 
 <div id="dialog-novo" title="Incluir Tipo de Movimento">
+	
+		
+	<jsp:include page="../messagesDialog.jsp">
+		<jsp:param value="dialog-novo" name="messageDialog"/>
+	</jsp:include>
      
 	<label><strong>Tipo de Movimento</strong></label>
     
     <table width="370" border="0" cellpadding="2" cellspacing="1" class="filtro">
             <tr>
               <td width="109">Código:</td>
-              <td width="250"><input type="text" name="textfield2" id="textfield2" style="width:87px;"/></td>
+              <td width="250">
+              
+<!-- CODIGO -->
+<input id="codigoModal"  type="text" name="textfield2" style="width:87px;" disabled="disabled"/></td>
+
+
             </tr>
             <tr>
               <td>Descrição:</td>
-              <td><input type="text" name="textfield7" id="textfield7" style="width:250px;"/></td>
+              <td>
+
+<!-- DESCRICAO -->
+<input id="descricaoModal" type="text" name="textfield7"  style="width:250px;"/></td>
+            
             </tr>
             <tr>
               <td>Grupo Operação:</td>
-              <td><select name="select4" id="select4" style="width:100px;">
-                <option>Financeiro</option>
-                <option>Estoque</option>
-              </select></td>
+              <td>
+
+<!-- GRUPO OPERACAO -->
+ <select id="grupoOperacaoModal" onchange="TM.atualizarCombosPorGrupoOperacao($(this).val());" style="width:100px;"> 
+    <option value="ESTOQUE">Estoque</option>	
+   	<option value="FINANCEIRO">Financeiro</option>	
+</select>
+              
+             </td>
             </tr>
             <tr>
               <td>Operação:</td>
-              <td><select name="select" id="select" style="width:100px;">
-                <option>Débito</option>
-                <option>Crédito</option>
-              </select></td>
+              <td>
+
+<!-- OPERACAO -->
+<select id="operacaoModal" style="width:100px;"> 
+	<option value="DEBITO">Débito</option>
+	<option value="CREDITO">Crédito</option>
+</select>
+            
+              
+              </td>
             </tr>
             <tr>
               <td>Aprovação:</td>
-              <td><select name="select2" id="select2" style="width:100px;">
-                <option>Sim</option>
-                <option>Não</option>
-              </select></td>
+              <td>
+
+<!-- APROVACAO -->
+<select id="aprovacaoModal" style="width:100px;"> 
+    <option value="SIM">Sim</option>
+    <option value="NAO">Não</option>
+</select>
+
+              
+              </td>
             </tr>
             <tr>
               <td>Incide Dívida:</td>
-              <td><select name="select3" id="select3" style="width:100px;">
-                <option>Sim</option>
-                <option>Não</option>
-              </select></td>
+              <td>
+<!-- INCIDE DIVIDA -->              
+<select id="incideDividaModal" style="width:100px;"> 
+      <option value="SIM">Sim</option>
+      <option value="NAO">Não</option>
+</select>
+              
+              </td>
             </tr>
           </table>
 </div>
@@ -134,10 +167,23 @@ function popup() {
         <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
             <tr>
               <td width="52">Código:</td>
-              <td width="95"><input type="text" name="textfield3" id="textfield3" style="width:80px;"/></td>
+              <td width="95">
+              
+<!-- CÓDIGO -->
+<input id="codigo" type="text" name="textfield3"  style="width:80px;"/></td>
+
               <td width="122">Tipo de Movimento:</td>
-              <td width="551"><input type="text" name="textfield" id="textfield" style="width:200px;"/></td>
-              <td width="104"><span class="bt_pesquisar"><a href="javascript:;" onclick="mostrar();">Pesquisar</a></span></td>
+              <td width="551">
+              
+<!-- DESCRICAO -->
+<input id="descricao" type="text" name="textfield" style="width:200px;"/></td>
+
+              <td width="104"><span class="bt_pesquisar">
+
+<!-- PESQUISAR -->
+<a href="javascript:;" onclick="TM.cliquePesquisar();">Pesquisar</a></span></td>
+
+
             </tr>
           </table>
 
@@ -149,7 +195,11 @@ function popup() {
        	  <table class="movimentosGrid"></table>
         </div>
 
-            <span class="bt_novos" title="Novo"><a href="javascript:;" onclick="popup();"><img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0"/>Novo</a></span>
+            <span class="bt_novos" title="Novo">
+
+<!-- NOVO -->            
+<a href="javascript:;" onclick="TM.carregarNovo();"><img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0"/>Novo</a></span>
+
            
       </fieldset>
       <div class="linha_separa_fields">&nbsp;</div>
@@ -161,10 +211,12 @@ function popup() {
     </div>
 </div> 
 <script>
-	$(".movimentosGrid").flexigrid({
-			url : '../xml/movimentos-xml.xml',
-			dataType : 'xml',
-			colModel : [ {
+
+
+$(function() {	
+	
+	$(".movimentosGrid").flexigrid($.extend({},{
+		colModel : [ {
 				display : 'Código',
 				name : 'codigo',
 				width : 95,
@@ -196,7 +248,7 @@ function popup() {
 				align : 'left'
 			}, {
 				display : 'Incide na Dídiva',
-				name : 'incide',
+				name : 'incideDivida',
 				width : 100,
 				sortable : true,
 				align : 'center'
@@ -204,10 +256,10 @@ function popup() {
 				display : 'Ação',
 				name : 'acao',
 				width : 60,
-				sortable : true,
+				sortable : false,
 				align : 'center'
 			}],
-			sortname : "cd",
+			sortname : "codigo",
 			sortorder : "asc",
 			usepager : true,
 			useRp : true,
@@ -215,7 +267,10 @@ function popup() {
 			showTableToggleBtn : true,
 			width : 960,
 			height : 255
-		});
+	})); 	
+	
+	$(".grids").show();	
+});
 </script>
 </body>
 </html>

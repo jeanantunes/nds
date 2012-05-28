@@ -22,6 +22,11 @@ public enum GrupoMovimentoEstoque  {
 	 * Recebimento do encalhe da cota pelo distribuidor
 	 */
 	RECEBIMENTO_ENCALHE(OperacaoEstoque.ENTRADA, Dominio.DISTRIBUIDOR), 
+
+	/**
+	 * Recebimento do encalhe JURAMENTADO da cota pelo distribuidor
+	 */
+	RECEBIMENTO_ENCALHE_JURAMENTADO(OperacaoEstoque.ENTRADA, Dominio.DISTRIBUIDOR), 
 	
 	/**
 	 * Sobra de pacote distribuidor
@@ -37,7 +42,6 @@ public enum GrupoMovimentoEstoque  {
 	 * Falta de pacote distribuidor
 	 */
 	FALTA_DE(OperacaoEstoque.SAIDA, Dominio.DISTRIBUIDOR), 
-	
 	
 	/**
 	 * Falta em pacote distribuidor
@@ -68,6 +72,11 @@ public enum GrupoMovimentoEstoque  {
 	 * Entrada de estoque suplementar de cota ausente distribuidor
 	 */
 	SUPLEMENTAR_COTA_AUSENTE(OperacaoEstoque.ENTRADA, Dominio.DISTRIBUIDOR), 
+
+	/**
+	 * Entrada de estoque suplementar para envio de encalhe antes da data programada
+	 */
+	SUPLEMENTAR_ENVIO_ENCALHE_ANTERIOR_PROGRAMACAO(OperacaoEstoque.ENTRADA, Dominio.DISTRIBUIDOR), 
 	
 	/**
 	 * Restauração de reparte de cota ausente distribuidor

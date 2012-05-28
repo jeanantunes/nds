@@ -98,9 +98,9 @@ public class TipoDescontoCotaController {
 			BigDecimal descontoFormatado = new BigDecimal(Double.parseDouble(desconto));
 			TipoDescontoCota descontoGeral = popularDescontoParaCadastrar(desconto,dataAlteracao, usuario, EspecificacaoDesconto.GERAL);			
 			atualizarDistribuidor(descontoFormatado);
-			descontoGeral.setIdCota((long) 0);
-			descontoGeral.setIdProduto(0l);
-			descontoGeral.setNumeroEdicao(0l);
+//			descontoGeral.setIdCota((long) 0);
+//			descontoGeral.setIdProduto(0l);
+//			descontoGeral.setNumeroEdicao(0l);
 			salvarDesconto(descontoGeral);
 		} catch (ParseException e) {
 			e.printStackTrace();
@@ -118,9 +118,9 @@ public class TipoDescontoCotaController {
 			Cota cotaParaAtualizar = this.cotaService.obterCotaPDVPorNumeroDaCota(Integer.parseInt(cotaEspecifica));		
 			atualizarCota(new BigDecimal(descontoEspecifico), cotaParaAtualizar);
 			TipoDescontoCota especifico = popularDescontoParaCadastrar(descontoEspecifico, dataAlteracaoEspecifico, usuarioEspecifico, EspecificacaoDesconto.ESPECIFICO);
-			especifico.setIdCota(cotaParaAtualizar.getNumeroCota().longValue());
-			especifico.setIdProduto(0l);
-			especifico.setNumeroEdicao(0l);
+//			especifico.setIdCota(cotaParaAtualizar.getNumeroCota().longValue());
+//			especifico.setIdProduto(0l);
+//			especifico.setNumeroEdicao(0l);
 			salvarDesconto(especifico);
 		} catch (ParseException e) {
 			e.printStackTrace();
@@ -136,9 +136,9 @@ public class TipoDescontoCotaController {
 			produtoEdicao.setDesconto(new BigDecimal(descontoProduto));
 			this.produtoEdicaoService.alterarProdutoEdicao(produtoEdicao);
 			TipoDescontoCota tipoDescontoProduto = popularDescontoParaCadastrar(descontoProduto, dataAlteracaoProduto, usuarioProduto, EspecificacaoDesconto.PRODUTO);
-			tipoDescontoProduto.setIdCota(0l);
-			tipoDescontoProduto.setIdProduto(Long.parseLong(produtoEdicao.getProduto().getCodigo()));
-			tipoDescontoProduto.setNumeroEdicao(Long.parseLong(edicaoProduto));
+//			tipoDescontoProduto.setIdCota(0l);
+//			tipoDescontoProduto.setIdProduto(Long.parseLong(produtoEdicao.getProduto().getCodigo()));
+//			tipoDescontoProduto.setNumeroEdicao(Long.parseLong(edicaoProduto));
 			salvarDesconto(tipoDescontoProduto);
 		} catch (ParseException e) {
 			e.printStackTrace();
@@ -442,23 +442,23 @@ public class TipoDescontoCotaController {
 	
 	private TipoDescontoCota popularDescontoParaCadastrar(String desconto,	String dataAlteracao, String usuario, EspecificacaoDesconto especificacaoDesconto) throws ParseException {
 		TipoDescontoCota tipoDescontoCota = new TipoDescontoCota();
-		tipoDescontoCota.setDesconto(new BigDecimal(Double.parseDouble(desconto)));
-		SimpleDateFormat sdf = new SimpleDateFormat(Constantes.DATE_PATTERN_PT_BR);
-		Date dataFormatada;
-		dataFormatada = sdf.parse(dataAlteracao);
-		tipoDescontoCota.setDataAlteracao(dataFormatada);
-		tipoDescontoCota.setUsuario(usuario);
-		tipoDescontoCota.setEspecificacaoDesconto(especificacaoDesconto);
+//		tipoDescontoCota.setDesconto(new BigDecimal(Double.parseDouble(desconto)));
+//		SimpleDateFormat sdf = new SimpleDateFormat(Constantes.DATE_PATTERN_PT_BR);
+//		Date dataFormatada;
+//		dataFormatada = sdf.parse(dataAlteracao);
+//		tipoDescontoCota.setDataAlteracao(dataFormatada);
+//		tipoDescontoCota.setUsuario(usuario);
+//		tipoDescontoCota.setEspecificacaoDesconto(especificacaoDesconto);
 		return tipoDescontoCota;
 	}
 	
 	private void salvarDesconto(TipoDescontoCota tipoDescontoCota) {
-		if(tipoDescontoCota.getEspecificacaoDesconto().equals(EspecificacaoDesconto.GERAL)){
-			int sequencial = this.tipoDescontoCotaService.obterUltimoSequencial();
-			tipoDescontoCota.setSequencial(sequencial + 1);
-		}else{
-			tipoDescontoCota.setSequencial(0);
-		}
+//		if(tipoDescontoCota.getEspecificacaoDesconto().equals(EspecificacaoDesconto.GERAL)){
+//			int sequencial = this.tipoDescontoCotaService.obterUltimoSequencial();
+//			tipoDescontoCota.setSequencial(sequencial + 1);
+//		}else{
+//			tipoDescontoCota.setSequencial(0);
+//		}
 		this.tipoDescontoCotaService.incluirDesconto(tipoDescontoCota);
 	}
 

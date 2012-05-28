@@ -80,21 +80,6 @@ public class ParametroSistemaGeralDTO implements Serializable {
 	}
 	
 	/**
-	 * @return the logoSistema
-	 */
-	public String getLogoSistema() {
-		return this.params.get(TipoParametroSistema.LOGO_SISTEMA);
-	}
-
-	/**
-	 * @param logoSistema
-	 *            the logoSistema to set
-	 */
-	public void setLogoSistema(String logoSistema) {
-		this.params.put(TipoParametroSistema.LOGO_SISTEMA, logoSistema);
-	}
-
-	/**
 	 * @return the cnpj
 	 */
 	public String getCnpj() {
