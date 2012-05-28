@@ -13,6 +13,7 @@ import br.com.abril.nds.dto.filtro.FiltroVendaProdutoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.service.FornecedorService;
+import br.com.abril.nds.service.VendaProdutoService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
@@ -37,6 +38,9 @@ public class VendaProdutoController {
 	@Autowired
 	private FornecedorService fornecedorService;
 	
+	@Autowired
+	private VendaProdutoService vendaProdutoService;
+	
 	public VendaProdutoController(Result result) {
 		this.result = result;
 	}
@@ -44,7 +48,7 @@ public class VendaProdutoController {
 	
 	@Path("/")
 	public void index(){
-		this.carregarComboFornecedores();
+		//this.carregarComboFornecedores();
 	}
 	
 	
@@ -66,15 +70,27 @@ public class VendaProdutoController {
 	
 	private TableModel<CellModelKeyValue<VendaProdutoDTO>> efetuarConsulta(FiltroVendaProdutoDTO filtro) {
 		 
-		return null;
+		List<VendaProdutoDTO> listaVendaProdutoDTO =  this.vendaProdutoService.buscaVendaporProduto(filtro);				
+		
+		//Integer totalRegistros = lancamentoParcialService.totalBuscaLancamentosParciais(filtro);
+		
+		TableModel<CellModelKeyValue<VendaProdutoDTO>> tableModel = new TableModel<CellModelKeyValue<VendaProdutoDTO>>();
+
+		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaVendaProdutoDTO));
+		
+		tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
+		
+		tableModel.setTotal(listaVendaProdutoDTO.size());
+		
+		return tableModel;
 	}
 
 
 	private void validarEntrada(FiltroVendaProdutoDTO filtro) {
 		
-		if(filtro.getCodigo()!=null && !filtro.getCodigo().trim().isEmpty())
+		if(filtro.getCodigo()==null && !filtro.getCodigo().trim().isEmpty())
 			throw new ValidacaoException(TipoMensagem.WARNING, "Código é obrigatório.");		
-		if(filtro.getNomeProduto()!=null && !filtro.getNomeProduto().trim().isEmpty())
+		if(filtro.getNomeProduto()==null && !filtro.getNomeProduto().trim().isEmpty())
 			throw new ValidacaoException(TipoMensagem.WARNING, "Produto é obrigatório.");
 		
 	}

@@ -185,15 +185,20 @@
 		        <td width="164"><input type="text" name="publica" id="produto" onkeyup="pesquisarPorNomeProduto();" style="width:150px;"/></td>
 		        <td width="45">Edição:</td>
 		        <td width="95"><input type="text" name="edicoes" id="edicoes" style="width:80px;"/></td>
+		        
+		        
 		        <td width="76">Fornecedor:</td>
-		        <td width="239">
-		        	<select id="idFornecedor" name="idFornecedor" style="width:200px;">
-					    <option value="-1"  selected="selected">Todos</option>
-					    <c:forEach items="${listaFornecedores}" var="fornecedor">
-					      		<option value="${fornecedor.key}">${fornecedor.value}</option>	
-					    </c:forEach>
-					</select>
-		        </td>
+
+              <td width="239"><select name="select" id="select" style="width:200px;">
+
+                <option>Todos</option>
+
+                <option>Dinap</option>
+
+                <option>FC</option>
+
+              </select></td>
+		        
 		        <td width="104"><span class="bt_pesquisar"><a href="javascript:;" onclick="cliquePesquisar();">Pesquisar</a></span></td>
 		      </tr>
 			</table>		

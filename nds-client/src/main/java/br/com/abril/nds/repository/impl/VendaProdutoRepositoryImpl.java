@@ -9,10 +9,8 @@ import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.ParcialDTO;
 import br.com.abril.nds.dto.VendaProdutoDTO;
-import br.com.abril.nds.dto.filtro.FiltroParciaisDTO;
 import br.com.abril.nds.dto.filtro.FiltroVendaProdutoDTO;
 import br.com.abril.nds.dto.filtro.FiltroVendaProdutoDTO.ColunaOrdenacao;
-
 import br.com.abril.nds.model.estoque.MovimentoEstoque;
 import br.com.abril.nds.repository.VendaProdutoRepository;
 
@@ -23,19 +21,20 @@ public class VendaProdutoRepositoryImpl extends AbstractRepository<MovimentoEsto
 		super(MovimentoEstoque.class);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<VendaProdutoDTO> buscarLancamentosParciais(FiltroVendaProdutoDTO filtro) {
 		
 		StringBuilder hql = new StringBuilder();
 		
 		hql.append("SELECT movimento_estoque.estoqueProduto.produtoEdicao.numeroEdicao as numEdicao, ");
-		hql.append(" 		lancamento.dataLancamentoDistribuidor as dataLancamento, ");
-		hql.append(" 		lancamento.dataLancamentoDistribuidor as dataRecolhimento, ");
-		hql.append(" 		lancamento.reparte as reparte, ");
-		hql.append(" 		(lancamento.reparte - chamadaEncalheCota.qtdePrevista)  as venda, ");
-		hql.append(" 		((lancamento.reparte - chamadaEncalheCota.qtdePrevista) / lancamento.reparte)  as percentagemVenda, ");
-		hql.append(" 		produtoEdicao.precoVenda  as precoCapa, ");
-		hql.append(" 		((lancamento.reparte - chamadaEncalheCota) * produtoEdicao.precoVenda)  as total, ");
+		hql.append(" lancamento.dataLancamentoDistribuidor as dataLancamento, ");
+		hql.append(" lancamento.dataLancamentoDistribuidor as dataRecolhimento, ");
+		hql.append(" lancamento.reparte as reparte, ");
+		hql.append(" (lancamento.reparte - chamadaEncalheCota.qtdePrevista)  as venda, ");
+		hql.append(" ((lancamento.reparte - chamadaEncalheCota.qtdePrevista) / lancamento.reparte)  as percentagemVenda, ");
+		hql.append(" produtoEdicao.precoVenda  as precoCapa, ");
+		hql.append(" ((lancamento.reparte - chamadaEncalheCota) * produtoEdicao.precoVenda)  as total ");
 		
 		
 		hql.append(getSqlFromEWhereLancamentosParciais(filtro));
@@ -68,26 +67,25 @@ public class VendaProdutoRepositoryImpl extends AbstractRepository<MovimentoEsto
 		StringBuilder hql = new StringBuilder();
 	
 
-		hql.append(" from LancamentoParcial lancamentoParcial ");
-		hql.append(" join lancamentoParcial.produtoEdicao produtoEdicao ");
-		hql.append(" join produtoEdicao.produto produto ");
-		hql.append(" join produtoEdicao.produto produto ");
-		hql.append(" join produto.fornecedores fornecedor ");
-		hql.append(" join fornecedor.juridica juridica ");
-		
 		hql.append(" from MovimentoEstoque movimentoEstoque ");
 		hql.append(" LEFT JOIN movimentoEstoque.estoqueProduto.produtoEdicao as produtoEdicao ");
 		hql.append(" LEFT JOIN movimentoEstoque.estoqueProduto.produtoEdicao.lancamentos as lancamento ");
-		hql.append(" LEFT JOIN movimentoEstoque.estoqueProduto.produtoEdicao.chamadaEncalhes.chamadaEncalheCotas as chamadaEncalheCota ");
+		hql.append(" LEFT JOIN movimentoEstoque.estoqueProduto.produtoEdicao.chamadaEncalhes as chamadaEncalhe ");
+		hql.append(" LEFT JOIN chamadaEncalhe.chamadaEncalheCotas as chamadaEncalheCota ");
+		hql.append(" LEFT JOIN movimentoEstoque.estoqueProduto.produtoEdicao.produto.fornecedores as fornecedor ");
 		
 		boolean usarAnd = false;
 		
 		if(filtro.getCodigo() != null) { 
-			hql.append( (usarAnd ? " and ":" where ") + " produto.codigo =:codigo ");
+			hql.append( (usarAnd ? " and ":" where ") + " produtoEdicao.produto.codigo =:codigo ");
 			usarAnd = true;
 		}
 		if(filtro.getEdicao() !=null){
-			hql.append( (usarAnd ? " and ":" where ") + " movimentoEstoque.estoqueProduto.produtoEdicao.numeroEdicao =:edicao ");
+			hql.append( (usarAnd ? " and ":" where ") + " produtoEdicao.numeroEdicao =:edicao ");
+			usarAnd = true;
+		}
+		if(filtro.getIdFornecedor() !=null){
+			hql.append( (usarAnd ? " and ":" where ") + " fornecedor.id =:idFornecedor ");
 			usarAnd = true;
 		}
 
@@ -132,6 +130,9 @@ public class VendaProdutoRepositoryImpl extends AbstractRepository<MovimentoEsto
 		}
 		if(filtro.getEdicao() != null){ 
 			param.put("edicao", filtro.getEdicao());
+		}
+		if(filtro.getEdicao() != null){ 
+			param.put("idFornecedor", filtro.getIdFornecedor());
 		}
 	
 		return param;
