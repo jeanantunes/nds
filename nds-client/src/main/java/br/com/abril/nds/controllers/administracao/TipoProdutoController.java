@@ -36,7 +36,7 @@ public class TipoProdutoController {
 	}
 	
 	@Post("/busca.json")
-	public void busca(String descricao, String codigo, 
+	public void busca(String descricao, Long codigo, 
 			String codigoNCM, String codigoNBM, String sortname, String sortorder, int rp, int page ) {
 		
 		List<TipoProduto> listaTipoProdutos = this.tipoProdutoService.busca(descricao, codigo, codigoNCM, codigoNBM,
@@ -95,7 +95,7 @@ public class TipoProdutoController {
 			listaMensagens.add("O preenchimento do campo [Tipo de Produto] é obrigatório.");
 		}
 		
-		if (tipoProduto == null || StringUtil.isEmpty(tipoProduto.getCodigo())) {
+		if (tipoProduto == null || tipoProduto.getCodigo() == null ) {
 			listaMensagens.add("O preenchimento do campo [Código] é obrigatório.");
 		}
 		
