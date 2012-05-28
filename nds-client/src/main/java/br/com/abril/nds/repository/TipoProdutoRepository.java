@@ -47,4 +47,10 @@ public interface TipoProdutoRepository extends Repository<TipoProduto, Long> {
 	 */
 	public abstract boolean hasProdutoVinculado(TipoProduto tipoProduto);
 	
+	/**
+	 * Obtem o ultimo id da tabela.
+	 * @return
+	 */
+	public abstract Long getMaxCodigo();
+	
 }

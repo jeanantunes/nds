@@ -51,4 +51,13 @@ public interface ProdutoService {
 
 	Integer pesquisarCountProdutos(String codigo, String produto,
 			String fornecedor, String editor, Long codigoTipoProduto);
+	
+	/**
+	 * Verifica se o Produto está em estoque
+	 * desconsiderando a quantidade
+	 * 
+	 * @param codigoProduto codigo do produto
+	 * @return true caso ja exista o produto no estoque
+	 */
+	boolean isProdutoEmEstoque(String codigoProduto);
 }
