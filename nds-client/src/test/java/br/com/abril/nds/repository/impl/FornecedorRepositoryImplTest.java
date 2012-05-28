@@ -17,12 +17,13 @@ import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TipoFornecedor;
 import br.com.abril.nds.model.cadastro.TipoProduto;
+import br.com.abril.nds.repository.FornecedorRepository;
 import br.com.abril.nds.vo.PaginacaoVO;
 
 public class FornecedorRepositoryImplTest extends AbstractRepositoryImplTest {
 
 	@Autowired
-	private FornecedorRepositoryImpl fornecedorRepository;
+	private FornecedorRepository fornecedorRepository;
 
 	private Fornecedor fornecedor1;
 	private Fornecedor fornecedor2;
@@ -232,5 +233,14 @@ public class FornecedorRepositoryImplTest extends AbstractRepositoryImplTest {
 		
 		Assert.assertNotNull(contagemFornecedores);
 		Assert.assertEquals(expected, contagemFornecedores);
+	}
+	
+	
+	@Test
+	public void obterFornecedoresIdNome(){
+		fornecedorRepository.obterFornecedoresIdNome(null, null);
+		fornecedorRepository.obterFornecedoresIdNome(SituacaoCadastro.ATIVO, null);
+		fornecedorRepository.obterFornecedoresIdNome(SituacaoCadastro.ATIVO, true);
+		fornecedorRepository.obterFornecedoresIdNome(null, false);
 	}
 }
