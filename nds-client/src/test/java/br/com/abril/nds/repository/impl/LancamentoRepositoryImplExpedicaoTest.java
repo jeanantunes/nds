@@ -73,7 +73,7 @@ public class LancamentoRepositoryImplExpedicaoTest extends AbstractRepositoryImp
 					"0"+ i, "000.000.000.000", "acme@mail.com", "99.999-9");
 			save(juridica);
 			
-			Fornecedor fornecedor = Fixture.fornecedor(juridica, SituacaoCadastro.ATIVO, true, tipoFornecedorPublicacao);
+			Fornecedor fornecedor = Fixture.fornecedor(juridica, SituacaoCadastro.ATIVO, true, tipoFornecedorPublicacao, null);
 			save(fornecedor);
 			
 			Editor abril = Fixture.editoraAbril();

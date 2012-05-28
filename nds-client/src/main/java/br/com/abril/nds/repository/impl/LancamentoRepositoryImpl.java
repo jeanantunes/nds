@@ -828,14 +828,17 @@ public class LancamentoRepositoryImpl extends
 		projectionList.add(Projections.property("produto.codigo"),"codigoProduto");
 		projectionList.add(Projections.property("produto.nome"),"nomeProduto");		
 		projectionList.add(Projections.property("produtoEdicao.numeroEdicao"),"numeroEdicao");
-		projectionList.add(Projections.property("produtoEdicao.slogan"),"slogan");
+		projectionList.add(Projections.property("produtoEdicao.chamadaCapa"),"chamadaCapa");
 		projectionList.add(Projections.property("produtoEdicao.codigoDeBarras"),"codigoDeBarras");
 		projectionList.add(Projections.property("produtoEdicao.precoVenda"),"precoVenda");
 		projectionList.add(Projections.property("produtoEdicao.desconto"),"desconto");		
-		projectionList.add(Projections.sqlProjection("(produtoedi1_.PRECO_VENDA - produtoedi1_.DESCONTO) as precoDesconto", new String[]{"precoDesconto"}, new Type[] {StandardBasicTypes.DOUBLE}));
+		projectionList.add(Projections.sqlProjection("(produtoedi1_.PRECO_VENDA - produtoedi1_.DESCONTO) as precoDesconto", new String[]{"precoDesconto"}, new Type[] {StandardBasicTypes.BIG_DECIMAL}));
 		projectionList.add(Projections.property("dataLancamentoDistribuidor"),"dataLancamento");
 		projectionList.add(Projections.property("dataRecolhimentoDistribuidor"),"dataRecolhimento");
+		projectionList.add(Projections.groupProperty("id"));
 		criteria.setProjection(projectionList);		
+		
+		
 		
 		if(Ordenacao.ASC ==  ordenacao){
 			criteria.addOrder(Order.asc(orderBy));
@@ -860,7 +863,7 @@ public class LancamentoRepositoryImpl extends
 		
 		Criteria criteria = addRestrictions(idFornecedor,
 				dataInicioRecolhimento, dataFimRecolhimento);
-		criteria.setProjection(Projections.rowCount());
+		criteria.setProjection(Projections.countDistinct("id"));
 		
 		
 		return (Long) criteria.list().get(0);

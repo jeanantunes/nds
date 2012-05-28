@@ -4,10 +4,8 @@ import java.io.InputStream;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.service.CapaService;
-import br.com.abril.nds.util.TipoMensagem;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
@@ -36,10 +34,10 @@ public class CapaController {
 			InputStream inputStream = capaService.getCapaInputStream(idProdutoEdicao);
 			return new InputStreamDownload(inputStream, null,null);
 		} catch (Exception e) {			
-			result.use(CustomJson.class).from( new ValidacaoVO(TipoMensagem.ERROR, e.getMessage())).serialize();
+			
+			result.notFound();
+			return null;
 		}
-		
-		return null;
 		
 	}	
 	

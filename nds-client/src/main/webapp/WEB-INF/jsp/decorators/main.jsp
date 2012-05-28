@@ -327,8 +327,9 @@ fieldset label {
 									Encalhe Cota</a>
 							</li>
 
-							<li><a href="Recolhimento/consulta_informe_encalhe.htm">Consulta
+							<li><a href='<c:url value="/devolucao/informeEncalhe/"/>'>Consulta
 									de Informe de Encalhe</a>
+									
 							</li>
 							<li><a href="Recolhimento/edicoes_chamada.htm">Consulta
 									CE</a>
