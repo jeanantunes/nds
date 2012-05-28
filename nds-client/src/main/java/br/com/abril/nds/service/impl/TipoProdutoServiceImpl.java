@@ -57,7 +57,7 @@ public class TipoProdutoServiceImpl implements TipoProdutoService {
 			if(tipoProduto != null) {
 				
 				if (!this.isTipoProdutoDistribuidor(tipoProduto)) {
-					throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR,
+					throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING,
 							"Tipos de produtos cadastrados pela Treelog não podem ser removidos."));
 				}
 				
@@ -69,7 +69,7 @@ public class TipoProdutoServiceImpl implements TipoProdutoService {
 					throw new UniqueConstraintViolationException("Não foi possível excluir o registro. Existem Produtos vinculados a ele");
 				}
 				catch (Exception e) {
-					throw new ValidacaoException(TipoMensagem.ERROR, "Ocorreu um erro ao tentar excluir o registro");
+					throw new ValidacaoException(TipoMensagem.WARNING, "Ocorreu um erro ao tentar excluir o registro");
 				}	
 			}
 	}
@@ -93,8 +93,15 @@ public class TipoProdutoServiceImpl implements TipoProdutoService {
 				entity.setGrupoProduto(GrupoProduto.OUTROS);
 			}
 		}
+		TipoProduto tipoProduto = null;
 		
-		return this.tipoProdutoRepository.merge(entity);
+		try {
+			tipoProduto = this.tipoProdutoRepository.merge(entity);
+		} catch (DataIntegrityViolationException e) {
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Já existem Tipos de Produtos que utilizam este código ou esta descrição"));
+		}		
+		
+		return tipoProduto;
 	}
 	
 	/* (non-Javadoc)
@@ -147,12 +154,12 @@ public class TipoProdutoServiceImpl implements TipoProdutoService {
 	private void validaEdicaoTipoProduto(TipoProduto tipoProduto) throws ValidacaoException {
 		
 		if (!this.isTipoProdutoDistribuidor(tipoProduto)) {
-			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR,
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING,
 					"Tipos de produtos cadastrados pela Treelog não podem ser modificados."));
 		}
 		
 		if (this.hasProdutoEmEstoqueVinculado(tipoProduto)) {
-			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR,
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING,
 					"Este Tipo Produto já possui produtos em estoque vinculados e não pode ser modificado."));
 		}
 	}
