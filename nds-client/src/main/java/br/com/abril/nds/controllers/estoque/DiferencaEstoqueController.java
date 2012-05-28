@@ -64,6 +64,7 @@ import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
 import br.com.abril.nds.util.export.NDSFileHeader;
 import br.com.abril.nds.vo.PaginacaoVO;
+import br.com.abril.nds.vo.PeriodoVO;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
@@ -468,13 +469,18 @@ public class DiferencaEstoqueController {
 	@Post
 	@Path("/pesquisarDiferencas")
 	public void pesquisarDiferencas(String codigoProduto, Long numeroEdicao,
-									Long idFornecedor, TipoDiferenca tipoDiferenca,
+									Long idFornecedor, String dataInicial,
+									String dataFinal, TipoDiferenca tipoDiferenca,
 									String sortorder, String sortname,
 									int page, int rp) {
 		
+		this.validarEntradaDadosPesquisa(codigoProduto, numeroEdicao, idFornecedor,
+										 dataInicial, dataFinal, tipoDiferenca);
+		
 		FiltroConsultaDiferencaEstoqueDTO filtro =
 			this.carregarFiltroPesquisa(codigoProduto, numeroEdicao, idFornecedor,
-										tipoDiferenca, sortorder, sortname, page, rp);
+										dataInicial, dataFinal, tipoDiferenca,
+										sortorder, sortname, page, rp);
 		
 		List<Diferenca> listaDiferencas =
 			diferencaEstoqueService.obterDiferencas(filtro);
@@ -1218,6 +1224,8 @@ public class DiferencaEstoqueController {
 	 * @param codigoProduto - código do produto
 	 * @param numeroEdicao - número da edição
 	 * @param idFornecedor - identificador do fornecedor
+	 * @param dataInicial - data de movimento inicial
+	 * @param dataFinal - data de movimento final
 	 * @param tipoDiferenca - tipo de diferença
 	 * @param sortorder - ordenação
 	 * @param sortname - coluna para ordenação
@@ -1227,7 +1235,8 @@ public class DiferencaEstoqueController {
 	 * @return Filtro
 	 */
 	private FiltroConsultaDiferencaEstoqueDTO carregarFiltroPesquisa(String codigoProduto, Long numeroEdicao,
-																	 Long idFornecedor, TipoDiferenca tipoDiferenca,
+																	 Long idFornecedor, String dataInicial,
+																	 String dataFinal, TipoDiferenca tipoDiferenca,
 																	 String sortorder, String sortname,
 																	 int page, int rp) {
 		
@@ -1236,6 +1245,16 @@ public class DiferencaEstoqueController {
 		filtroAtual.setCodigoProduto(codigoProduto);
 		filtroAtual.setNumeroEdicao(numeroEdicao);
 		filtroAtual.setIdFornecedor(idFornecedor);
+		
+		if (!dataInicial.trim().isEmpty() && dataFinal.isEmpty()) {
+			
+			dataFinal = DateUtil.formatarDataPTBR(new Date());
+		}
+		
+		filtroAtual.setPeriodoVO(
+				new PeriodoVO(DateUtil.parseData(dataInicial, Constantes.DATE_PATTERN_PT_BR),
+							  DateUtil.parseData(dataFinal, Constantes.DATE_PATTERN_PT_BR)));
+		
 		
 		filtroAtual.setTipoDiferenca(tipoDiferenca);
 		
@@ -1322,6 +1341,67 @@ public class DiferencaEstoqueController {
 		if (!DateUtil.isValidDatePTBR(dataMovimentoFormatada)) {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Data de Movimento inválida");
 		}
+	}
+	
+	/*
+	 * Valida a entrada de dados para pesquisa de diferença de estoque.
+	 * 
+	 * @param codigoProduto
+	 * @param numeroEdicao
+	 * @param idFornecedor
+	 * @param dataInicial
+	 * @param dataFinal
+	 * @param tipoDiferenca
+	 * 
+	 */
+	private void validarEntradaDadosPesquisa(String codigoProduto, Long numeroEdicao,
+											 Long idFornecedor, String dataInicial,
+											 String dataFinal, TipoDiferenca tipoDiferenca) {
+			
+		if (dataInicial != null && !dataInicial.trim().isEmpty()
+				&& !DateUtil.isValidDatePTBR(dataInicial)) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Data Inicial inválida");
+		}
+		
+		if (dataFinal != null && !dataFinal.trim().isEmpty()
+				&& !DateUtil.isValidDatePTBR(dataFinal)) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Data Final inválida");
+		}
+		
+		if (!dataFinal.trim().isEmpty() && dataInicial.isEmpty()) {
+			
+			throw new ValidacaoException(
+				TipoMensagem.WARNING, "O preenchimento do campo [Data Inicial] é obrigatório!");
+		}
+		
+		if (!dataInicial.trim().isEmpty() && dataFinal.isEmpty()) {
+			
+			if (DateUtil.parseDataPTBR(dataInicial).compareTo(new Date()) == 1) {
+				
+				throw new ValidacaoException(
+					TipoMensagem.WARNING, "O campo [Data Inicial] não deve ser maior que a data do dia!");
+			}
+		}
+		
+		if (DateUtil.isDataInicialMaiorDataFinal(DateUtil.parseDataPTBR(dataInicial),
+												 DateUtil.parseDataPTBR(dataFinal))) {
+			
+			throw new ValidacaoException(
+				TipoMensagem.WARNING, "O campo [Data Incial] não deve ser maior que o campo [Data Final]!");
+		}
+		
+		if ((codigoProduto == null || codigoProduto.trim().isEmpty()) && numeroEdicao == null 
+				&& (dataInicial == null || dataInicial.trim().isEmpty())
+				&& (dataFinal == null || dataFinal.trim().isEmpty())
+				&& idFornecedor == null && tipoDiferenca == null) {
+			
+			throw new ValidacaoException(
+				TipoMensagem.WARNING,
+					"Para realizar a pesquisa é necessário informar um ou mais filtro(s) da pesquisa!");
+		}
+		
 	}
 	
 	/*
