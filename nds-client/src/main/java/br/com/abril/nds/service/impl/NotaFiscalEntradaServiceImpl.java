@@ -2,6 +2,7 @@ package br.com.abril.nds.service.impl;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,6 +74,14 @@ public class NotaFiscalEntradaServiceImpl implements NotaFiscalEntradaService {
 
 			throw new ValidacaoException(TipoMensagem.WARNING, "A data inicial deve anteceder a data final.");
 		}
+		
+		Calendar dataFinal = Calendar.getInstance();
+		
+		dataFinal.setTime(periodo.getDataFinal());
+		
+		dataFinal.add(Calendar.DAY_OF_MONTH, 1);
+		
+		periodo.setDataFinal(DateUtil.removerTimestamp(dataFinal.getTime()));
 		
 		return notaFiscalDAO.obterNotasFiscaisCadastradas(filtroConsultaNotaFiscal);
 	}

@@ -40,68 +40,11 @@
 		function pesquisarNotas() { 
 			
 			var formData = $('#formPesquisaNotas').serializeArray();
-
-			$("#notasSemFisicoGrid").flexigrid({
-				preProcess: processarResultadoConsultaNF,
-				url : '<c:url value="/estoque/consultaNotas/pesquisarNotas" />',
-				dataType : 'json',
-				colModel : [ {
-					display : 'Número da Nota',
-					name : 'numero',
-					width : 100,
-					sortable : true,
-					align : 'left'
-				}, {
-					display : 'Data de Emissão',
-					name : 'dataEmissao',
-					width : 120,
-					sortable : true,
-					align : 'center'
-				}, {
-					display : 'Data de Expedição',
-					name : 'dataExpedicao',
-					width : 120,
-					sortable : true,
-					align : 'center'
-				}, {
-					display : 'Tipo',
-					name : 'descricao',
-					width : 200,
-					sortable : true,
-					align : 'left'
-				}, {
-					display : 'Fornecedor',
-					name : 'razaoSocial',
-					width : 130,
-					sortable : true,
-					align : 'left'
-				}, {
-					display : 'Nota Recebida',
-					name : 'statusNotaFiscal',
-					width : 120,
-					sortable : true,
-					align : 'center'
-				}, {
-					display : "Ação",
-					name : 'acao',
-					width : 60,
-					sortable : true,
-					align : 'center'
-				}],
-				sortname : "numero, dataEmissao",
-				sortorder : "asc",
-				usepager : true,
-				useRp : true,
-				rp : 15,
-				params: formData,
-				showTableToggleBtn : true,
-				width : 960,
-				height : 180,
-				singleSelect: true
-			});
 			
 			$("#notasSemFisicoGrid").flexOptions({
-				url : '<c:url value="/estoque/consultaNotas/pesquisarNotas" />', params: formData
+				url : '<c:url value="/estoque/consultaNotas/pesquisarNotas" />',
+				params: formData,
+				newp: 1
 			});
 
 			$("#notasSemFisicoGrid").flexReload();
@@ -225,6 +168,64 @@
 		});
 		
 		$(function() {
+			
+			$("#notasSemFisicoGrid").flexigrid({
+				preProcess: processarResultadoConsultaNF,
+				dataType : 'json',
+				colModel : [ {
+					display : 'Número da Nota',
+					name : 'numero',
+					width : 100,
+					sortable : true,
+					align : 'left'
+				}, {
+					display : 'Data de Emissão',
+					name : 'dataEmissao',
+					width : 120,
+					sortable : true,
+					align : 'center'
+				}, {
+					display : 'Data de Expedição',
+					name : 'dataExpedicao',
+					width : 120,
+					sortable : true,
+					align : 'center'
+				}, {
+					display : 'Tipo',
+					name : 'descricao',
+					width : 200,
+					sortable : true,
+					align : 'left'
+				}, {
+					display : 'Fornecedor',
+					name : 'razaoSocial',
+					width : 130,
+					sortable : true,
+					align : 'left'
+				}, {
+					display : 'Nota Recebida',
+					name : 'statusNotaFiscal',
+					width : 120,
+					sortable : true,
+					align : 'center'
+				}, {
+					display : "Ação",
+					name : 'acao',
+					width : 60,
+					sortable : true,
+					align : 'center'
+				}],
+				sortname : "numero, dataEmissao",
+				sortorder : "asc",
+				usepager : true,
+				useRp : true,
+				rp : 15,
+				showTableToggleBtn : true,
+				width : 960,
+				height : 180,
+				singleSelect: true
+			});
+			
 			$("#datepickerDe").datepicker({
 				showOn : "button",
 				buttonImage: "${pageContext.request.contextPath}/images/calendar.gif",
