@@ -38,7 +38,7 @@ public class TipoDescontoProduto implements Serializable {
 	@Column(name="DATA_ALTERACAO")
 	private Date dataAlteracao;
 	
-	@ManyToOne(optional = false)
+	@ManyToOne(optional = true)
 	@JoinColumn(name = "USUARIO_ID")
 	private Usuario usuario;
 	
