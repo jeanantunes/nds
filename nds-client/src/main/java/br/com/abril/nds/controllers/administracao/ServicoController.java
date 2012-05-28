@@ -106,18 +106,27 @@ public class ServicoController {
 		
 		this.validarServico(descricao, taxaFixa, baseCalculo, percentualFaturamento, cobranca, periodicidadeCadastro, diaSemana, diaMes);
 		
+		String mensagem = null;
+		
 		try {
+			
+			if (id == null) {
+				mensagem = "Serviço de Entrega incluído com sucesso!";
+			} else {
+				mensagem = "Serviço de Entrega atualizado com sucesso!";
+			}			
 			
 			this.tipoEntregaService.salvarTipoEntrega(
 				id, descricao, taxaFixa, percentualFaturamento, 
 				baseCalculo, periodicidadeCadastro, diaSemana, diaMes);
 		
 		} catch (Exception e) {
-			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, "Erro ao tentar salvar o Serviço de Entrega."));
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, "Erro ao salvar o Serviço de Entrega!"));
 		}
 		
+		
 		this.result.use(Results.json()).from(
-			new ValidacaoVO(TipoMensagem.SUCCESS, "Serviço de Entrega salvo com sucesso."), 
+			new ValidacaoVO(TipoMensagem.SUCCESS, mensagem), 
 							"result").recursive().serialize();
 	}
 	
@@ -140,7 +149,7 @@ public class ServicoController {
 		} catch (UniqueConstraintViolationException e) {
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, "Serviço de Entrega não pode ser excluído."));	
 		} catch (Exception e) {
-			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, "Ocorreu um erro ao tentar excluir o Serviço de Entrega."));
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, "Erro excluir o Serviço de Entrega!"));
 		}
 		
 		this.result.use(Results.json()).from(
@@ -222,7 +231,11 @@ public class ServicoController {
 		} else {
 			descricao = this.validarDescricao(descricao);
 		}
-
+		
+		if (cobranca == null  || cobranca.isEmpty()) {
+			listaMensagens.add("O preenchimento do campo [Cobrança] é obrigatório!");
+		}
+		
 		if ("TF".equals(cobranca)) {
 
 			if (taxaFixa == null || BigDecimal.ZERO.compareTo(taxaFixa) > 0) {
@@ -283,10 +296,10 @@ public class ServicoController {
 			if (taxaFixa != null) {
 				resultadoServicoVO.setTaxa(CurrencyUtil.formatarValor(taxaFixa));
 			} else {
-				resultadoServicoVO.setTaxa("-");
+				resultadoServicoVO.setTaxa("");
 			}
 			
-			resultadoServicoVO.setBaseCalculo(tipoEntrega.getBaseCalculo() != null ? tipoEntrega.getBaseCalculo().getValue() : " - ");
+			resultadoServicoVO.setBaseCalculo(tipoEntrega.getBaseCalculo() != null ? tipoEntrega.getBaseCalculo().getValue() : "");
 			
 			Float percentualFaturamento = tipoEntrega.getPercentualFaturamento();
 			
@@ -294,7 +307,7 @@ public class ServicoController {
 				String value = ""+percentualFaturamento.intValue();
 				resultadoServicoVO.setPercentualCalculoBase(value);
 			} else {
-				resultadoServicoVO.setPercentualCalculoBase("-");
+				resultadoServicoVO.setPercentualCalculoBase("");
 			}
 			
 			listaServicos.add(resultadoServicoVO);

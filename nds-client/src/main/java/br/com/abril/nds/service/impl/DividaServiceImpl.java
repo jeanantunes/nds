@@ -1,6 +1,7 @@
 package br.com.abril.nds.service.impl;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -113,6 +114,13 @@ public class DividaServiceImpl implements DividaService{
 		
 		
 	    return detalhes;
+	}
+
+	@Override
+	public void postergarCobrancaCota(List<Long> listaCodigosCotas,
+			Date dataPostergacao) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

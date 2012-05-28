@@ -1,5 +1,6 @@
 package br.com.abril.nds.service;
 
+import java.util.Date;
 import java.util.List;
 
 import br.com.abril.nds.client.vo.DetalhesDividaVO;
@@ -69,4 +70,11 @@ public interface DividaService {
 	 */
 	List<DetalhesDividaVO> obterDetalhesDivida(Long idDivida);
 	
+	/**
+	 * Posterga a dívida de uma cota.
+	 * 
+	 * @param listaCodigosCotas
+	 * @param dataPostergacao
+	 */
+	void postergarCobrancaCota(List<Long> listaCodigosCotas, Date dataPostergacao);
 }
