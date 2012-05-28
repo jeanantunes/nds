@@ -197,6 +197,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 	 * 
 	 * @return
 	 */
+	@Transactional(readOnly = true)
 	public List<ProdutoEdicao> pesquisarEdicoes(ProdutoEdicaoDTO dto,
 			String sortorder, String sortname, int page, int maxResults) {
 		
