@@ -66,7 +66,6 @@ public class ParametroSistemaRepositoryImpl extends AbstractRepository<Parametro
 		String hql = "from ParametroSistema p where p.tipoParametroSistema in (:listaTipoParametroSistema) ";
 		
 		List<TipoParametroSistema> lst = new ArrayList<TipoParametroSistema>();
-		lst.add(TipoParametroSistema.LOGO_SISTEMA);
 		lst.add(TipoParametroSistema.CNPJ);
 		lst.add(TipoParametroSistema.RAZAO_SOCIAL);
 		lst.add(TipoParametroSistema.EMAIL_USUARIO);
@@ -114,7 +113,7 @@ public class ParametroSistemaRepositoryImpl extends AbstractRepository<Parametro
 			ParametroSistema ps = (ParametroSistema) query.uniqueResult();
 			if (ps == null) {
 				
-				// Parâmetro não existe no banco - vai salvar!
+				// Parâmetro não existe no banco - create:
 				adicionar(itemPS);
 			} else {
 				
