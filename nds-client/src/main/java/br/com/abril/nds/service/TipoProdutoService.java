@@ -51,7 +51,7 @@ public interface TipoProdutoService {
 	 * @param maxResults numero máximo de resultados
 	 * @return lista de Tipos de Produtos.
 	 */
-	public abstract List<TipoProduto> busca(String nomeTipoProduto, String codigo, String codigoNCM, String codigoNBM, String orderBy, 
+	public abstract List<TipoProduto> busca(String nomeTipoProduto, Long codigo, String codigoNCM, String codigoNBM, String orderBy, 
 			Ordenacao ordenacao, int initialResult, int maxResults);
 	
 	/**
@@ -62,7 +62,7 @@ public interface TipoProdutoService {
 	 * @param codigoNBM
 	 * @return
 	 */
-	public abstract Long quantidade(String nomeTipoProduto, String codigo, String codigoNCM, String NBM);
+	public abstract Long quantidade(String nomeTipoProduto, Long codigo, String codigoNCM, String NBM);
 	
 	/**
 	 * Obtém tipo produto por id.

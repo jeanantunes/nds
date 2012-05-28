@@ -38,7 +38,7 @@ public class TipoProdutoRepositoryImplTest extends AbstractRepositoryImplTest {
 			} 
 			
 			this.tipoProduto =
-					Fixture.tipoProduto("TipoProduto0"+i, grupoProduto, i+"99000642", "nbm","codigo");
+					Fixture.tipoProduto("TipoProduto0"+i, grupoProduto, i+"99000642", "nbm", 14L);
 			
 			save(tipoProduto);
 			
