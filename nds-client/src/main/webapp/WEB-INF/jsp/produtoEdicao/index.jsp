@@ -3,16 +3,23 @@
 
 function pesquisarEdicoes() {
 
-	var codigoProduto = $("#codigoProduto").val();
-	var nomeProduto = $("#nomeProduto").val();
-	var situacaoLancamento = $("#situacaoLancamento").val();
-	var codigoDeBarras = $("#codigoDeBarras").val();
-	var brinde = $("#brinde").val();
+	var codigoProduto = $("#pCodigoProduto").val();
+	var nomeProduto = $("#pNomeProduto").val();
+	var dataLancamento = $("#pDataLancamento").val();
+	var situacaoLancamento = $("#pSituacaoLancamento").val();
+	var codigoDeBarras = $("#pCodigoDeBarras").val();
+	
+	$("#pBrinde").val(0);
+	if (document.getElementById('pBrinde').checked){
+		$("#pBrinde").val(1);
+	}
+	var brinde = $("#pBrinde").val();
 	
 	$(".edicoesGrid").flexOptions({
 		url: "<c:url value='/cadastro/edicao/pesquisarEdicoes' />",
 		params: [{name:'codigoProduto', value: codigoProduto },
 			     {name:'nomeProduto', value: nomeProduto },
+			     {name:'dataLancamento', value: dataLancamento },
 			     {name:'situacaoLancamento', value: situacaoLancamento },
 			     {name:'codigoDeBarras', value: codigoDeBarras },
 			     {name:'brinde', value : brinde }],
@@ -134,7 +141,7 @@ function popup() {
 	});
 	
 	$(function() {
-		$( "#dataLancamento" ).datepicker({
+		$( "#pDataLancamento" ).datepicker({
 			showOn: "button",
 			buttonImage: "${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
 			buttonImageOnly: true
@@ -548,14 +555,14 @@ fieldset {
 				<tbody>
 					<tr>
 						<td width="72">C&oacute;digo:</td>
-						<td width="80" ><input type="text" name="codigoProduto" id="codigoProduto" style="width:80px;"/></td>
+						<td width="80" ><input type="text" name="pCodigoProduto" id="pCodigoProduto" style="width:80px;"/></td>
 						<td width="47">Produto:</td>
-						<td width="172"><input type="text" name="nomeProduto" id="nomeProduto" style="width:170px;"/></td>
+						<td width="172"><input type="text" name="pNomeProduto" id="pNomeProduto" style="width:170px;"/></td>
 						<td width="100">Data Lan&ccedil;amento:</td>
-						<td width="105"><input type="text" name="dataLancamento" id="dataLancamento" style="width:80px;"/></td>
+						<td width="105"><input type="text" name="pDataLancamento" id="pDataLancamento" style="width:80px;"/></td>
 						<td width="50">Situa&ccedil;&atilde;o:</td>
 						<td width="168">
-							<select name="select" id="situacaoLancamento" name="situacaoLancamento" style="width:150px;">
+							<select name="select" id="pSituacaoLancamento" name="pSituacaoLancamento" style="width:150px;">
 								<option selected="selected">Selecione...</option>
 								<option value="Transmitido">Transmitido</option>
 								<option value="Previsto">Previsto</option>
@@ -575,8 +582,8 @@ fieldset {
 					</tr>
 					<tr>
 						<td>C&oacute;d. Barras:</td>
-						<td colspan="3" ><input type="text" name="codigoDeBarras" id="codigoDeBarras" style="width:311px;"/></td>
-						<td align="right"><input type="checkbox" name="brinde" id="brinde" /></td>
+						<td colspan="3" ><input type="text" name="pCodigoDeBarras" id="pCodigoDeBarras" style="width:311px;"/></td>
+						<td align="right"><input type="checkbox" name="pBrinde" id="pBrinde" value=""/></td>
 						<td>Brinde</td>
 						<td>&nbsp;</td>
 						<td>&nbsp;</td>
