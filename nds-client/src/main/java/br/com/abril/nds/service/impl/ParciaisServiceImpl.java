@@ -56,6 +56,7 @@ public class ParciaisServiceImpl implements ParciaisService{
 	@Autowired
 	private CalendarioService calendarioService;
 	
+	@Transactional
 	public void gerarPeriodosParcias(Long idProdutoEdicao, Integer qtdePeriodos, Usuario usuario, Integer peb) {
 		
 		ProdutoEdicao produtoEdicao = produtoEdicaoRepository.buscarPorId(idProdutoEdicao);
