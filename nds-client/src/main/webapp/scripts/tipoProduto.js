@@ -333,6 +333,9 @@ TipoProduto.prototype.bindEvents = function() {
 	$("#tipoProdutoNovoButton").click(function() {
 		_this.novo();
 	});
+	
+	$("#tipoProdutoNovoCodigo").numeric();
+	$("#tipoProdutoPesquisaCodigo").numeric();
 };
 
 /**
