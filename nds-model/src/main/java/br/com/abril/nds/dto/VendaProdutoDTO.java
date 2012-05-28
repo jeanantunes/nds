@@ -13,7 +13,7 @@ public class VendaProdutoDTO implements Serializable {
 	private static final long serialVersionUID = 2903790306949832310L;
 	
 	@Export(label = "Edição", alignment=Alignment.LEFT)
-	private Integer numEdicao;
+	private Long numEdicao;
 	
 	@Export(label = "Data Lançamento", alignment=Alignment.CENTER)
 	private String dataLancamento;
@@ -41,7 +41,7 @@ public class VendaProdutoDTO implements Serializable {
 		
 	}
 	
-	public VendaProdutoDTO(Integer numEdicao, String dataLancamento, String dataRecolhimento, BigDecimal reparte, Long venda,  Long percentagemVenda, BigDecimal precoCapa, Long total) {
+	public VendaProdutoDTO(Long numEdicao, String dataLancamento, String dataRecolhimento, BigDecimal reparte, Long venda,  Long percentagemVenda, BigDecimal precoCapa, Long total) {
 		super();
 		this.numEdicao = numEdicao;
 		this.dataLancamento = dataLancamento;
@@ -55,11 +55,11 @@ public class VendaProdutoDTO implements Serializable {
 	
 	
 
-	public Integer getNumEdicao() {
+	public Long getNumEdicao() {
 		return numEdicao;
 	}
 
-	public void setNumEdicao(Integer numEdicao) {
+	public void setNumEdicao(Long numEdicao) {
 		this.numEdicao = numEdicao;
 	}
 

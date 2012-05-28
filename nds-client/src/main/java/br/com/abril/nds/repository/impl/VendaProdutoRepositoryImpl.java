@@ -27,7 +27,7 @@ public class VendaProdutoRepositoryImpl extends AbstractRepository<MovimentoEsto
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append("SELECT movimento_estoque.estoqueProduto.produtoEdicao.numeroEdicao as numEdicao, ");
+		hql.append("SELECT produtoEdicao.numeroEdicao as numEdicao, ");
 		hql.append(" lancamento.dataLancamentoDistribuidor as dataLancamento, ");
 		hql.append(" lancamento.dataLancamentoDistribuidor as dataRecolhimento, ");
 		hql.append(" lancamento.reparte as reparte, ");
@@ -39,18 +39,18 @@ public class VendaProdutoRepositoryImpl extends AbstractRepository<MovimentoEsto
 		
 		hql.append(getSqlFromEWhereLancamentosParciais(filtro));
 		
-		hql.append(getOrderByLancamentosParciais(filtro));
+		hql.append(getOrderByPorEdicoes(filtro));
 		
 		Query query =  getSession().createQuery(hql.toString());
 		
-		HashMap<String, Object> param = buscarParametrosLancamentosParciais(filtro);
+		HashMap<String, Object> param = buscarParametrosVendaProduto(filtro);
 		
 		for(String key : param.keySet()){
 			query.setParameter(key, param.get(key));
 		}
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(
-				ParcialDTO.class));
+				VendaProdutoDTO.class));
 		
 		if(filtro.getPaginacao().getQtdResultadosPorPagina() != null) 
 			query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
@@ -77,15 +77,15 @@ public class VendaProdutoRepositoryImpl extends AbstractRepository<MovimentoEsto
 		boolean usarAnd = false;
 		
 		if(filtro.getCodigo() != null) { 
-			hql.append( (usarAnd ? " and ":" where ") + " produtoEdicao.produto.codigo =:codigo ");
+			hql.append( (usarAnd ? " and ":" where ") + "produtoEdicao.produto.codigo = :codigo ");
 			usarAnd = true;
 		}
 		if(filtro.getEdicao() !=null){
-			hql.append( (usarAnd ? " and ":" where ") + " produtoEdicao.numeroEdicao =:edicao ");
+			hql.append( (usarAnd ? " and ":" where ") + " produtoEdicao.numeroEdicao = :edicao ");
 			usarAnd = true;
 		}
 		if(filtro.getIdFornecedor() !=null){
-			hql.append( (usarAnd ? " and ":" where ") + " fornecedor.id =:idFornecedor ");
+			hql.append( (usarAnd ? " and ":" where ") + " fornecedor.id = :idFornecedor ");
 			usarAnd = true;
 		}
 
@@ -93,7 +93,7 @@ public class VendaProdutoRepositoryImpl extends AbstractRepository<MovimentoEsto
 		return hql.toString();
 	}
 	
-	private String getOrderByLancamentosParciais(FiltroVendaProdutoDTO filtro){
+	private String getOrderByPorEdicoes(FiltroVendaProdutoDTO filtro){
 		
 		if(filtro.getPaginacao() == null || filtro.getPaginacao().getSortColumn() == null){
 			return "";
@@ -121,7 +121,7 @@ public class VendaProdutoRepositoryImpl extends AbstractRepository<MovimentoEsto
 	 * @param filtro
 	 * @return HashMap<String,Object>
 	 */
-	private HashMap<String,Object> buscarParametrosLancamentosParciais(FiltroVendaProdutoDTO filtro){
+	private HashMap<String,Object> buscarParametrosVendaProduto(FiltroVendaProdutoDTO filtro){
 		
 		HashMap<String,Object> param = new HashMap<String, Object>();
 		
@@ -131,7 +131,7 @@ public class VendaProdutoRepositoryImpl extends AbstractRepository<MovimentoEsto
 		if(filtro.getEdicao() != null){ 
 			param.put("edicao", filtro.getEdicao());
 		}
-		if(filtro.getEdicao() != null){ 
+		if(filtro.getIdFornecedor() != null){ 
 			param.put("idFornecedor", filtro.getIdFornecedor());
 		}
 	
