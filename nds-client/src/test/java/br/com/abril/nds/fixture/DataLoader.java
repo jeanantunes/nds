@@ -561,7 +561,7 @@ public class DataLoader {
 	}
 
 	private static void carregarDados(Session session) {
-		/*criarCarteira(session);
+		criarCarteira(session);
 		criarBanco(session);
 		criarPessoas(session);
 		criarDistribuidor(session);
@@ -664,7 +664,7 @@ public class DataLoader {
 		
 		gerarDescontos(session);
 		
-		criarDadosBalanceamentoRecolhimento(session);*/
+		criarDadosBalanceamentoRecolhimento(session);
 		
 		criarDadosEdicoesFechadas(session);
 		
@@ -672,56 +672,87 @@ public class DataLoader {
 
 	private static void criarDadosEdicoesFechadas(Session session) {
 		
-		for (int i=0; i<22; i++) {
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+		Date dataAtual = new Date();
 		
-			SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+		try {
+		
+			for (int i=0; i<22; i++) {
 			
-			Produto produto = new Produto();
-			produto.setCodigo("" + i);
-			produto.setNome("teste" + i);
-			
-			ItemRecebimentoFisico itemRecebimentoFisico = new ItemRecebimentoFisico();
-			ProdutoEdicao produtoEdicao = new ProdutoEdicao();
-			produtoEdicao.setNumeroEdicao(16l + i);
-			produtoEdicao.setParcial(false);
-			
-			PessoaJuridica juridica = new PessoaJuridica();
-			juridica.setRazaoSocial("Juridica " + i);
-			
-			try {
-				Lancamento lancamento1 = new Lancamento();
-				lancamento1.setDataRecolhimentoDistribuidor(sdf.parse("26/05/2012"));
+				Usuario usuario = Fixture.usuarioJoao();
+				save(session,usuario);
+	
+				TipoMovimentoEstoque tipoMovimentoEncalhe = Fixture.tipoMovimentoEnvioEncalhe();
+				save(session,tipoMovimentoEncalhe);
+	
+				TipoMovimentoEstoque tipoMovimentoVenda = Fixture.tipoMovimentoVendaEncalhe();
+				save(session,tipoMovimentoVenda);
+	
+				TipoMovimentoEstoque tipoMovimentoConsignado = Fixture.tipoMovimentoEnvioJornaleiro();
+				save(session,tipoMovimentoConsignado);
+	
+				TipoProduto tipoProduto = Fixture.tipoProduto("Revista TesteEdicoesFechadas", GrupoProduto.REVISTA, "44358941", "4723744581", 147L);
+				save(session,tipoProduto);
+	
+				TipoFornecedor tipoFornecedor = Fixture.tipoFornecedorPublicacao();
+				save(session,tipoFornecedor);
+	
+				TipoFornecedor tipoFornecedorPublicacao = Fixture.tipoFornecedorPublicacao();
+				save(session,tipoFornecedorPublicacao);
+	
+				TipoNotaFiscal tipoNotaFiscal = Fixture.tipoNotaFiscalRecebimento();
+				save(session,tipoNotaFiscal);
+	
+				NotaFiscalEntradaFornecedor notaFiscal = Fixture.notaFiscalEntradaFornecedor(cfop5102, juridicaFc, fornecedorFc, tipoNotaFiscal, usuario, new BigDecimal(145),  new BigDecimal(10),  new BigDecimal(10));
+				save(session,notaFiscal);
+	
+				RecebimentoFisico recebimentoFisico = Fixture.recebimentoFisico(notaFiscal, usuario, new Date(), new Date(), StatusConfirmacao.PENDENTE);
+				save(session,recebimentoFisico);
+	
+				ItemNotaFiscalEntrada itemNotaFiscal= 
+						Fixture.itemNotaFiscal(
+								produtoEdicaoBravo1, 
+								usuario, 
+								notaFiscal, 
+								new Date(), 
+								new Date(),
+								TipoLancamento.LANCAMENTO,
+								new BigDecimal(12));
+				save(session,itemNotaFiscal);			
 				
+				ItemRecebimentoFisico itemRecebimentoFisico= Fixture.itemRecebimentoFisico(itemNotaFiscal, recebimentoFisico, new BigDecimal(12));
+				save(session,itemRecebimentoFisico);
+	
+				TipoMovimentoEstoque tipoMovimentoEstoque = Fixture.tipoMovimentoSobraDe();
+				save(session,tipoMovimentoEstoque);
+	
+				Lancamento lancamento1 = new Lancamento();
 				Lancamento lancamento2 = new Lancamento();
+				
+				lancamento1.setDataRecolhimentoDistribuidor(sdf.parse("26/05/2012"));
 				lancamento2.setDataRecolhimentoDistribuidor(sdf.parse("23/05/2012"));
 				
 				Set<Lancamento> lancamentos = new HashSet<Lancamento>();
 				lancamentos.add(lancamento1);
 				lancamentos.add(lancamento2);
 				
-				produtoEdicao.setLancamentos(lancamentos);
-				produtoEdicao.setDataDesativacao(sdf.parse("27/05/2012"));
-			} catch (ParseException e) {
-				e.printStackTrace();
+				produtoEdicaoBravo1.setLancamentos(lancamentos);
+				produtoEdicaoBravo1.setDataDesativacao(sdf.parse("27/05/2012"));
+				produtoEdicaoBravo1.setId(1005l + i);
+				
+				EstoqueProduto estoqueProduto = Fixture.estoqueProduto(produtoEdicaoBravo1, new BigDecimal(45));
+				estoqueProduto.getProdutoEdicao().setId(1005l + i);
+				estoqueProduto.getProdutoEdicao().setNumeroEdicao(1005l + i);
+				estoqueProduto.getProdutoEdicao().setNomeComercial("abc" + i);
+				save(session,estoqueProduto);
+	
+				MovimentoEstoque movimentoEstoque = Fixture.movimentoEstoque(itemRecebimentoFisico, produtoEdicaoBravo1, tipoMovimentoEstoque, usuario, estoqueProduto, dataAtual, new BigDecimal(12), StatusAprovacao.APROVADO , "MOTIVO B");
+				save(session,movimentoEstoque);
+			
 			}
 			
-			TipoMovimentoEstoque tipoMovimento = new TipoMovimentoEstoque();
-			Usuario usuario = new Usuario();
-			EstoqueProduto estoqueProduto = new EstoqueProduto();
-			Date dataInclusao = new Date();
-			BigDecimal qtde = new BigDecimal(13);
-			StatusAprovacao status = StatusAprovacao.APROVADO;
-			String motivo = "Teste";
-			
-			MovimentoEstoque movimento = Fixture.movimentoEstoque(itemRecebimentoFisico, produtoEdicao, tipoMovimento, usuario, estoqueProduto, dataInclusao, qtde, status, motivo);
-
-			TipoMovimentoEstoque tipoMovimentoEstoque = new TipoMovimentoEstoque();
-			tipoMovimentoEstoque.setGrupoMovimentoEstoque(GrupoMovimentoEstoque.RECEBIMENTO_ENCALHE);
-			
-			movimento.setTipoMovimento(tipoMovimentoEstoque);
-			
-			save(session, movimento);
-		
+		} catch(ParseException e) {
+			e.printStackTrace();
 		}
 		
 	}
