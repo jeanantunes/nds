@@ -33,6 +33,7 @@ import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.EnderecoCota;
 import br.com.abril.nds.model.cadastro.EnderecoDistribuidor;
 import br.com.abril.nds.model.cadastro.EnderecoEntregador;
+import br.com.abril.nds.model.cadastro.EnderecoFornecedor;
 import br.com.abril.nds.model.cadastro.Entregador;
 import br.com.abril.nds.model.cadastro.Feriado;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
@@ -66,6 +67,7 @@ import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.Telefone;
 import br.com.abril.nds.model.cadastro.TelefoneDistribuidor;
 import br.com.abril.nds.model.cadastro.TelefoneEntregador;
+import br.com.abril.nds.model.cadastro.TelefoneFornecedor;
 import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.cadastro.TipoDesconto;
 import br.com.abril.nds.model.cadastro.TipoEndereco;
@@ -3284,10 +3286,116 @@ public class DataLoader {
 	}
 	
 	private static void criarFornecedores(Session session) {
+	
 		fornecedorAcme = Fixture.fornecedorAcme(tipoFornecedorOutros);
+		fornecedorAcme.setCodigoInterface(123);
+		fornecedorAcme.setResponsavel("João");
 		fornecedorDinap = Fixture.fornecedorDinap(tipoFornecedorPublicacao);
+		fornecedorDinap.setCodigoInterface(234);
+		fornecedorDinap.setResponsavel("Maria");
 		fornecedorFc = Fixture.fornecedorFC(tipoFornecedorPublicacao);
+		fornecedorFc.setCodigoInterface(345);
+		fornecedorFc.setResponsavel("Sebastião");
+		
 		save(session, fornecedorAcme, fornecedorDinap, fornecedorFc);
+		
+		Endereco enderecoPrincipal = Fixture.criarEndereco(
+				TipoEndereco.COMERCIAL, "13730-500", "Rua Marechal", 50, "Centro", "Mococa", "SP");
+		
+		Endereco endereco = Fixture.criarEndereco(
+				TipoEndereco.RESIDENCIAL, "92130-330", "Avenida Brasil", 50, "Centro", "Mococa", "SP");
+		
+		EnderecoFornecedor enderecoFornecedorAcme = new EnderecoFornecedor();
+		enderecoFornecedorAcme.setFornecedor(fornecedorAcme);
+		enderecoFornecedorAcme.setPrincipal(true);
+		enderecoFornecedorAcme.setEndereco(enderecoPrincipal);
+		enderecoFornecedorAcme.setTipoEndereco(TipoEndereco.COMERCIAL);
+		
+		EnderecoFornecedor enderecoFornecedorDinap = new EnderecoFornecedor();
+		enderecoFornecedorDinap.setFornecedor(fornecedorDinap);
+		enderecoFornecedorDinap.setPrincipal(true);
+		enderecoFornecedorDinap.setEndereco(enderecoPrincipal);
+		enderecoFornecedorDinap.setTipoEndereco(TipoEndereco.COMERCIAL);
+		
+		EnderecoFornecedor enderecoFornecedorFc = new EnderecoFornecedor();
+		enderecoFornecedorFc.setFornecedor(fornecedorFc);
+		enderecoFornecedorFc.setPrincipal(true);
+		enderecoFornecedorFc.setEndereco(enderecoPrincipal);
+		enderecoFornecedorFc.setTipoEndereco(TipoEndereco.COMERCIAL);
+
+		save(session, enderecoPrincipal, endereco, enderecoFornecedorAcme, enderecoFornecedorDinap, enderecoFornecedorFc);
+		
+		enderecoFornecedorAcme = new EnderecoFornecedor();
+		enderecoFornecedorAcme.setFornecedor(fornecedorAcme);
+		enderecoFornecedorAcme.setPrincipal(false);
+		enderecoFornecedorAcme.setEndereco(endereco);
+		enderecoFornecedorAcme.setTipoEndereco(TipoEndereco.RESIDENCIAL);
+		
+		enderecoFornecedorDinap = new EnderecoFornecedor();
+		enderecoFornecedorDinap.setFornecedor(fornecedorDinap);
+		enderecoFornecedorDinap.setPrincipal(false);
+		enderecoFornecedorDinap.setEndereco(endereco);
+		enderecoFornecedorDinap.setTipoEndereco(TipoEndereco.RESIDENCIAL);
+		
+		enderecoFornecedorFc = new EnderecoFornecedor();
+		enderecoFornecedorFc.setFornecedor(fornecedorFc);
+		enderecoFornecedorFc.setPrincipal(false);
+		enderecoFornecedorFc.setEndereco(endereco);
+		enderecoFornecedorFc.setTipoEndereco(TipoEndereco.RESIDENCIAL);
+		
+		save(session, enderecoPrincipal, endereco, enderecoFornecedorAcme, enderecoFornecedorDinap, enderecoFornecedorFc);
+		
+		Telefone telefonePrincipalAcme = Fixture.telefone("19", "3216549", null);
+		TelefoneFornecedor telefoneFornecedorAcme = new TelefoneFornecedor();
+		telefoneFornecedorAcme.setPrincipal(true);
+		telefoneFornecedorAcme.setFornecedor(fornecedorAcme);
+		telefoneFornecedorAcme.setTelefone(telefonePrincipalAcme);
+		telefoneFornecedorAcme.setTipoTelefone(TipoTelefone.CELULAR);
+		
+		Telefone telefonePrincipalDinap = Fixture.telefone("11", "18250104", null);
+		TelefoneFornecedor telefoneFornecedorDinap = new TelefoneFornecedor();
+		telefoneFornecedorDinap.setPrincipal(true);
+		telefoneFornecedorDinap.setFornecedor(fornecedorDinap);
+		telefoneFornecedorDinap.setTelefone(telefonePrincipalDinap);
+		telefoneFornecedorDinap.setTipoTelefone(TipoTelefone.CELULAR);
+		
+		Telefone telefonePrincipalFc = Fixture.telefone("19", "9871234", null);
+		TelefoneFornecedor telefoneFornecedorFc = new TelefoneFornecedor();
+		telefoneFornecedorFc.setPrincipal(true);
+		telefoneFornecedorFc.setFornecedor(fornecedorFc);
+		telefoneFornecedorFc.setTelefone(telefonePrincipalFc);
+		telefoneFornecedorFc.setTipoTelefone(TipoTelefone.CELULAR);
+		
+		save(session, telefonePrincipalAcme, telefonePrincipalDinap, telefonePrincipalFc, 
+					  telefoneFornecedorAcme, telefoneFornecedorDinap, telefoneFornecedorFc);
+		
+		telefonePrincipalAcme = Fixture.telefone("19", "75110240", null);
+		telefoneFornecedorAcme = new TelefoneFornecedor();
+		telefoneFornecedorAcme.setPrincipal(false);
+		telefoneFornecedorAcme.setFornecedor(fornecedorAcme);
+		telefoneFornecedorAcme.setTelefone(telefonePrincipalAcme);
+		telefoneFornecedorAcme.setTipoTelefone(TipoTelefone.RESIDENCIAL);
+		
+		telefonePrincipalDinap = Fixture.telefone("11", "5407842", null);
+		telefoneFornecedorDinap = new TelefoneFornecedor();
+		telefoneFornecedorDinap.setPrincipal(false);
+		telefoneFornecedorDinap.setFornecedor(fornecedorDinap);
+		telefoneFornecedorDinap.setTelefone(telefonePrincipalDinap);
+		telefoneFornecedorDinap.setTipoTelefone(TipoTelefone.RESIDENCIAL);
+		
+		telefonePrincipalFc = Fixture.telefone("19", "3210054", null);
+		telefoneFornecedorFc = new TelefoneFornecedor();
+		telefoneFornecedorFc.setPrincipal(false);
+		telefoneFornecedorFc.setFornecedor(fornecedorFc);
+		telefoneFornecedorFc.setTelefone(telefonePrincipalFc);
+		telefoneFornecedorFc.setTipoTelefone(TipoTelefone.RESIDENCIAL);
+		
+		save(session, telefonePrincipalAcme, telefonePrincipalDinap, telefonePrincipalFc, 
+					  telefoneFornecedorAcme, telefoneFornecedorDinap, telefoneFornecedorFc);
+		
+		Fornecedor fornecedor = Fixture.fornecedor(juridicaValida, SituacaoCadastro.ATIVO, false, tipoFornecedorOutros);
+		
+		save(session, fornecedor);
 	}
 	
 	private static void criarUsuarios(Session session) {
@@ -5161,6 +5269,126 @@ public class DataLoader {
 					cotaMaria, tipoMovimentoFinanceiroEnvioEncalhe, usuarioJoao,
 					new BigDecimal(650), null, StatusAprovacao.PENDENTE,
 					new Date(), true);
+
+		save(session, movimentoFinanceiroCota10, movimentoFinanceiroCota11,
+				  	  movimentoFinanceiroCota12, movimentoFinanceiroCota13,
+				  	  movimentoFinanceiroDebito1, movimentoFinanceiroDebito2,
+				  	  movimentoFinanceiroCredito1, movimentoFinanceiroCredito2,
+				  	  movimentoFinanceiroJuros1, movimentoFinanceiroJuros2,
+				  	  movimentoFinanceiroMulta1, movimentoFinanceiroMulta2,
+				  	  movimentoFinanceiroEnvioEncalhe1, movimentoFinanceiroEnvioEncalhe2);
+		
+		movimentoFinanceiroCota10 =
+				Fixture.movimentoFinanceiroCota(
+					cotaManoel, tipoMovimentoFinanceiroCredito, usuarioJoao,
+					new BigDecimal(225), null, StatusAprovacao.PENDENTE,
+					DateUtil.adicionarDias(new Date(), 10), true);
+		
+		movimentoFinanceiroCota10.setDataCriacao(DateUtil.adicionarDias(new Date(), -2));
+
+		movimentoFinanceiroCota11 =
+				Fixture.movimentoFinanceiroCota(
+					cotaManoel, tipoMovimentoFinanceiroDebito, usuarioJoao,
+					new BigDecimal(225), null, StatusAprovacao.APROVADO,
+					DateUtil.adicionarDias(new Date(), 20), true);
+		
+		movimentoFinanceiroCota11.setDataCriacao(DateUtil.adicionarDias(new Date(), -6));
+
+		movimentoFinanceiroCota12 = 
+				Fixture.movimentoFinanceiroCota(
+					cotaManoel, tipoMovimentoFinanceiroRecebimentoReparte, usuarioJoao,
+					new BigDecimal(225), null, StatusAprovacao.PENDENTE,
+					DateUtil.adicionarDias(new Date(), 30), true);
+		
+		movimentoFinanceiroCota12.setDataCriacao(DateUtil.adicionarDias(new Date(), -6));
+
+		movimentoFinanceiroCota13 =
+				Fixture.movimentoFinanceiroCota(
+					cotaManoel, tipoMovimentoFinanceiroRecebimentoReparte, usuarioJoao,
+					new BigDecimal(650), null, StatusAprovacao.APROVADO,
+					DateUtil.adicionarDias(new Date(), 60), true);
+		
+		movimentoFinanceiroCota13.setDataCriacao(DateUtil.adicionarDias(new Date(), -2));
+
+		movimentoFinanceiroDebito1 =
+					Fixture.movimentoFinanceiroCota(
+						cotaManoel, tipoMovimentoFinanceiroDebito, usuarioJoao,
+						new BigDecimal(650), null, StatusAprovacao.PENDENTE,
+						DateUtil.adicionarDias(new Date(), 50), true);
+		
+		movimentoFinanceiroDebito1.setDataCriacao(DateUtil.adicionarDias(new Date(), -12));
+
+		movimentoFinanceiroDebito2 =
+				Fixture.movimentoFinanceiroCota(
+					cotaManoel, tipoMovimentoFinanceiroDebito, usuarioJoao,
+					new BigDecimal(650), null, StatusAprovacao.PENDENTE,
+					new Date(), true);
+		
+		movimentoFinanceiroDebito2.setDataCriacao(DateUtil.adicionarDias(new Date(), -8));
+
+		movimentoFinanceiroCredito1 =
+				Fixture.movimentoFinanceiroCota(
+					cotaManoel, tipoMovimentoFinanceiroCredito, usuarioJoao,
+					new BigDecimal(650), null, StatusAprovacao.APROVADO,
+					DateUtil.adicionarDias(new Date(), 40), true);
+		
+		movimentoFinanceiroCredito1.setDataCriacao(DateUtil.adicionarDias(new Date(), -2));
+
+		movimentoFinanceiroCredito2 =
+				Fixture.movimentoFinanceiroCota(
+					cotaJoao, tipoMovimentoFinanceiroCredito, usuarioJoao,
+					new BigDecimal(650), null, StatusAprovacao.PENDENTE,
+					new Date(), true);
+
+		movimentoFinanceiroCredito2.setDataCriacao(DateUtil.adicionarDias(new Date(), -2));
+		
+		movimentoFinanceiroJuros1 =
+				Fixture.movimentoFinanceiroCota(
+					cotaJose, tipoMovimentoFinanceiroJuros, usuarioJoao,
+					new BigDecimal(650), null, StatusAprovacao.PENDENTE,
+					new Date(), true);
+		
+		movimentoFinanceiroJuros1.setDataCriacao(DateUtil.adicionarDias(new Date(), -2));
+
+		movimentoFinanceiroJuros2 =
+				Fixture.movimentoFinanceiroCota(
+					cotaMaria, tipoMovimentoFinanceiroJuros, usuarioJoao,
+					new BigDecimal(650), null, StatusAprovacao.PENDENTE,
+					new Date(), true);
+		
+		movimentoFinanceiroJuros2.setDataCriacao(DateUtil.adicionarDias(new Date(), -6));
+
+		movimentoFinanceiroMulta1 =
+				Fixture.movimentoFinanceiroCota(
+					cotaJose, tipoMovimentoFinanceiroMulta, usuarioJoao,
+					new BigDecimal(650), null, StatusAprovacao.PENDENTE,
+					new Date(), true);
+		
+		movimentoFinanceiroMulta1.setDataCriacao(DateUtil.adicionarDias(new Date(), -6));
+
+		movimentoFinanceiroMulta2 =
+				Fixture.movimentoFinanceiroCota(
+					cotaMaria, tipoMovimentoFinanceiroMulta, usuarioJoao,
+					new BigDecimal(650), null, StatusAprovacao.PENDENTE,
+					new Date(), true);
+		
+		movimentoFinanceiroMulta2.setDataCriacao(DateUtil.adicionarDias(new Date(), -6));
+		
+		movimentoFinanceiroEnvioEncalhe1 =
+					Fixture.movimentoFinanceiroCota(
+						cotaJose, tipoMovimentoFinanceiroEnvioEncalhe, usuarioJoao,
+						new BigDecimal(650), null, StatusAprovacao.PENDENTE,
+						new Date(), true);
+		
+		movimentoFinanceiroEnvioEncalhe1.setDataCriacao(DateUtil.adicionarDias(new Date(), -8));
+
+		movimentoFinanceiroEnvioEncalhe2 =
+					Fixture.movimentoFinanceiroCota(
+						cotaMaria, tipoMovimentoFinanceiroEnvioEncalhe, usuarioJoao,
+						new BigDecimal(650), null, StatusAprovacao.PENDENTE,
+						new Date(), true);
+		
+		movimentoFinanceiroEnvioEncalhe2.setDataCriacao(DateUtil.adicionarDias(new Date(), -8));
 
 		save(session, movimentoFinanceiroCota10, movimentoFinanceiroCota11,
 				  	  movimentoFinanceiroCota12, movimentoFinanceiroCota13,

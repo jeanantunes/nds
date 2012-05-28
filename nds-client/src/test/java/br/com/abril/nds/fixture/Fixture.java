@@ -362,6 +362,7 @@ public class Fixture {
 		fornecedor.setSituacaoCadastro(situacaoCadastro);
 		fornecedor.setPermiteBalanceamento(permiteBalanceamento);
 		fornecedor.setTipoFornecedor(tipo);
+		fornecedor.setInicioAtividade(new Date());
 		return fornecedor;
 	}
 
