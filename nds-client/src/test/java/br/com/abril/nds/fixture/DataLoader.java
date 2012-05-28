@@ -3454,7 +3454,7 @@ public class DataLoader {
 		save(session, telefonePrincipalAcme, telefonePrincipalDinap, telefonePrincipalFc, 
 					  telefoneFornecedorAcme, telefoneFornecedorDinap, telefoneFornecedorFc);
 		
-		Fornecedor fornecedor = Fixture.fornecedor(juridicaValida, SituacaoCadastro.ATIVO, false, tipoFornecedorOutros);
+		Fornecedor fornecedor = Fixture.fornecedor(juridicaValida, SituacaoCadastro.ATIVO, false, tipoFornecedorOutros,null);
 		
 		save(session, fornecedor);
 	}
