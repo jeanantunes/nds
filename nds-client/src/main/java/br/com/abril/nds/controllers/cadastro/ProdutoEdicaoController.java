@@ -6,7 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.dto.ProdutoEdicaoDTO;
-import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
@@ -37,9 +37,15 @@ public class ProdutoEdicaoController {
 		dto.setCodigoProduto(codigoProduto);
 		dto.setNomeProduto(nomeProduto);
 		dto.setDataLancamento(dataLancamento);
-		dto.setSituacaoLancamento(situacaoLancamento);
 		dto.setCodigoDeBarras(codigoDeBarras);
 		dto.setPossuiBrinde(brinde);
+		
+		dto.setSituacaoLancamento(null);
+		for (StatusLancamento status : StatusLancamento.values()) {
+			if (status.getDescricao().equals(situacaoLancamento)) {
+				dto.setSituacaoLancamento(status);
+			}
+		}
 		
 		
 		List<ProdutoEdicaoDTO> lst = peService.pesquisarEdicoes(dto, sortorder, sortname, page, rp);

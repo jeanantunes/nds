@@ -566,13 +566,13 @@ fieldset {
 								<option value="" selected="selected">Selecione...</option>
 								<option value="Transmitido">Transmitido</option>
 								<option value="Previsto">Previsto</option>
-								<option value="Cálculo Solicitado">C&aacute;lculo Solicitado</option>
+								<option value="C&aacute;lculo Solicitado">C&aacute;lculo Solicitado</option>
 								<option value="Calculado">Calculado</option>
 								<option value="Furo">Furo</option>
 								<option value="Emitido">Emitido</option>
-								<option value="Liberar Cálculo">Liberar C&aacute;lculo</option>
+								<option value="Liberar C&aacute;lculo">Liberar C&aacute;lculo</option>
 								<option value="Confirmado">Confirmado</option>
-								<option value="Lançado">Lan&ccedil;ado</option>
+								<option value="Lan&ccedil;ado">Lan&ccedil;ado</option>
 								<option value="Em Recolhimento">Em Recolhimento</option>
 								<option value="Recolhido">Recolhido</option>
 								<option value="Fechado">Fechado</option>

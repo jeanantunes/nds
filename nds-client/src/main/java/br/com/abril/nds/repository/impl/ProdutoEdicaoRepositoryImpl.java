@@ -309,19 +309,119 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepository<ProdutoEdica
 		StringBuilder hql = new StringBuilder();
 		hql.append(" SELECT pr.codigo as codigoProduto, pe.nomeComercial as nomeProduto, ");
 		hql.append("        pe.numeroEdicao as numeroEdicao, jr.razaoSocial as nomeFornecedor, ");
-		hql.append("        ln.tipoLancamento as tipoLancamento, ln.status as status, ");
-		hql.append("        pe.possuiBrinde as possuiBrinde");
+		hql.append("        ln.tipoLancamento as tipoLancamento, ln.status as situacaoLancamento, ");
+		hql.append("        pe.possuiBrinde as possuiBrinde ");
 		hql.append("   FROM ProdutoEdicao pe ");
 		hql.append("        JOIN pe.produto pr ");
 		hql.append("        JOIN pr.fornecedores fr JOIN fr.juridica jr ");
 		hql.append("        JOIN pe.lancamentos ln ");
+		hql.append("  WHERE 1=1 ");
+		
+		/*
+		select pr.codigo as codigoProduto, pe.nomeComercial as nomeProduto, pe.numeroEdicao as numeroEdicao, jr.razaoSocial as nomeFornecedor, ln.tipoLancamento as tipoLancamento, ln.status as status, pe.possuiBrinde as possuiBrinde FROM ProdutoEdicao pe JOIN pe.produto pr JOIN pr.fornecedores fr JOIN fr.juridica jr JOIN pe.lancamentos ln WHERE 1=1 AND UPPER(pr.codigo) LIKE UPPER(:codigoProduto)
+		
+		SELECT pr.codigo as codigoProduto, pe.nomeComercial as nomeProduto, pe.numeroEdicao as numeroEdicao, jr.razaoSocial as nomeFornecedor, ln.tipoLancamento as tipoLancamento, ln.status as status, pe.possuiBrinde as possuiBrinde FROM ProdutoEdicao pe JOIN pe.produto pr JOIN pr.fornecedores fr JOIN fr.juridica jr JOIN pe.lancamentos ln WHERE 1=1
+		
+		SELECT pr.codigo as codigoProduto, pe.nomeComercial as nomeProduto,         pe.numeroEdicao as numeroEdicao, jr.razaoSocial as nomeFornecedor,         ln.tipoLancamento as tipoLancamento, ln.status as status,         pe.possuiBrinde as possuiBrinde   FROM ProdutoEdicao pe         JOIN pe.produto pr         JOIN pr.fornecedores fr JOIN fr.juridica jr         JOIN pe.lancamentos ln   WHERE 1=1
+		*/
+		
+		// Filtros opcionais da pesquisa:
+		if (dto.getDataLancamento() != null) {
+			hql.append("  AND (ln.dataLancamentoDistribuidor = :dataLancamento OR ln.dataLancamentoPrevista = :dataLancamento) ");
+		}
+		if (dto.getSituacaoLancamento() != null) {
+			hql.append("  AND ln.status = :situacaoLancamento ");
+		}		
+		if (dto.getCodigoProduto() != null && dto.getCodigoProduto().trim().length() > 0) {
+			hql.append("  AND UPPER(pr.codigo) LIKE UPPER(:codigoProduto) ");
+		}
+		if (dto.getNomeProduto() != null && dto.getNomeProduto().trim().length() > 0) {
+			hql.append("  AND UPPER(pe.nomeComercial) LIKE UPPER(:nomeProduto) ");
+		}
+		if (dto.getCodigoDeBarras() != null && dto.getCodigoDeBarras().trim().length() > 0) {
+			hql.append("  AND pe.codigoDeBarras LIKE :codigoDeBarras ");
+		}
+		if (dto.isPossuiBrinde()) {
+			hql.append("  AND pe.possuiBrinde = :possuiBrinde ");
+		}
+		
+		/*
+		// Ordenação:
+		if (Ordenacao.ASC.toString().equals(sortorder)) {
+			hql.append(" ORDERY BY :orderColumn ASC");
+		} else if (Ordenacao.DESC.toString().equals(sortorder)) {
+			hql.append(" ORDERY BY :orderColumn DESC");
+		}		
+		*/
 		
 		Query query = getSession().createQuery(hql.toString());
-		
 		query.setResultTransformer(new AliasToBeanResultTransformer(ProdutoEdicaoDTO.class));
 		
-		//query.setMaxResults(initialResult);
-		//query.setFirstResult(maxResults);
+		// Parâmetros opcionais da pesquisa:
+		if (dto.getDataLancamento() != null) {
+			query.setDate("dataLancamento", dto.getDataLancamento());
+		}
+		if (dto.getSituacaoLancamento() != null) {
+			query.setParameter("situacaoLancamento", dto.getSituacaoLancamento());
+		}		
+		if (dto.getCodigoProduto() != null && dto.getCodigoProduto().trim().length() > 0) {
+			query.setString("codigoProduto", dto.getCodigoProduto());
+		}
+		if (dto.getNomeProduto() != null && dto.getNomeProduto().trim().length() > 0) {
+			query.setString("nomeProduto", dto.getNomeProduto());
+		}
+		if (dto.getCodigoDeBarras() != null && dto.getCodigoDeBarras().trim().length() > 0) {
+			query.setString("codigoDeBarras", dto.getCodigoDeBarras());
+		}
+		if (dto.isPossuiBrinde()) {
+			query.setBoolean("possuiBrinde", Boolean.valueOf(dto.isPossuiBrinde()));
+		}
+		
+		
+//		//hql.append(" ORDER BY pe.numeroEdicao :sortorder ");
+//		if(Ordenacao.ASC.toString().equals(sortorder)){
+//			criteria.addOrder(Order.asc(sortname));
+//		}else if(Ordenacao.DESC.toString().equals(sortorder)){
+//			criteria.addOrder(Order.desc(sortname));
+//		}		
+		
+//		if (dto.getCodigoProduto() != null && dto.getCodigoProduto().trim().length() > 0) {
+//		//hql.append("  AND UPPER(pe.produto.codigo) LIKE UPPER(:codigoProduto) ");
+//		criteria.add(Restrictions.ilike("produto.codigoProduto",
+//				dto.getCodigoProduto(), MatchMode.ANYWHERE));
+//	}
+//	if (dto.getNomeProduto() != null && dto.getNomeProduto().trim().length() > 0) {
+//		//hql.append("  AND UPPER(pe.produto.nome) LIKE UPPER(:nomeProduto) ");
+//		criteria.add(Restrictions.ilike("produto.nome",
+//				dto.getNomeProduto(), MatchMode.ANYWHERE));
+//	}
+//	
+//	if (dto.getSituacaoLancamento() != null || dto.getDataLancamento() != null) {
+//		Criteria cLancamento = criteria.createCriteria("lancamentos");
+//		if (dto.getSituacaoLancamento() != null && dto.getSituacaoLancamento().trim().length() > 0) {
+//			//hql.append("  AND la.status = :statusLancamento ");
+//			cLancamento.add(Restrictions.eq("status", dto.getSituacaoLancamento()));
+//		}
+//		if (dto.getDataLancamento() != null) {
+//			//hql.append("  AND (la.dataLancamentoDistribuidor = :dataLancamento OR la.dataLancamentoPrevista = :dataLancamento) ");
+//			cLancamento.add(Restrictions.or(
+//					Restrictions.eq("dataLancamentoDistribuidor", dto.getSituacaoLancamento()),
+//					Restrictions.eq("dataLancamentoPrevista", dto.getSituacaoLancamento())));
+//		}
+//	}
+//	
+//	
+//	// 
+//	if (dto.getCodigoDeBarras() != null && dto.getCodigoDeBarras().trim().length() > 0) {
+//		//hql.append("  AND pe.codigoDeBarras LIKE :codigoDeBarras ");
+//		criteria.add(Restrictions.ilike("codigoDeBarras",
+//				dto.getCodigoDeBarras(), MatchMode.ANYWHERE));
+//	}
+//	if (dto.isPossuiBrinde()) {
+//		//hql.append("  AND pe.possuiBrindie = :possuiBrinde ");
+//		criteria.add(Restrictions.eq("possuiBrinde", Boolean.valueOf(dto.isPossuiBrinde())));
+//	}		
+		
 		
 //		//hql.append(" FROM ProdutoEdicao pe JOIN FETCH pe.produto LEFT OUTER JOIN FETCH pe.lancamentos as la WHERE 1=1 ");
 //		Criteria criteria =  getSession().createCriteria(ProdutoEdicao.class);
@@ -416,8 +516,10 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepository<ProdutoEdica
 //		
 //		return criteria.list();
 		
-		return 	query.list();
-		//return Collections.<ProdutoEdicao>emptyList();
+		query.setFirstResult(initialResult);
+		query.setMaxResults(maxResults);
+		
+		return query.list();
 	}
 	
 }

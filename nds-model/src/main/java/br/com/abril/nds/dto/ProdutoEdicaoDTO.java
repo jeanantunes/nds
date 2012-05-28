@@ -36,10 +36,9 @@ public class ProdutoEdicaoDTO implements Serializable {
 	
 	// Usados na listagem de Edições:
 	private Date dataLancamento;
-	private String situacaoLancamento;
+	private StatusLancamento situacaoLancamento;
 	private String nomeFornecedor;
 	private TipoLancamento tipoLancamento;
-	private StatusLancamento status;
 	
 	
 	/**
@@ -180,7 +179,7 @@ public class ProdutoEdicaoDTO implements Serializable {
 	/**
 	 * @return the situacaoLancamento
 	 */
-	public String getSituacaoLancamento() {
+	public StatusLancamento getSituacaoLancamento() {
 		return situacaoLancamento;
 	}
 	
@@ -188,7 +187,7 @@ public class ProdutoEdicaoDTO implements Serializable {
 	 * @param situacaoLancamento
 	 *            the situacaoLancamento to set
 	 */
-	public void setSituacaoLancamento(String situacaoLancamento) {
+	public void setSituacaoLancamento(StatusLancamento situacaoLancamento) {
 		this.situacaoLancamento = situacaoLancamento;
 	}
 
@@ -221,20 +220,5 @@ public class ProdutoEdicaoDTO implements Serializable {
 	public void setTipoLancamento(TipoLancamento tipoLancamento) {
 		this.tipoLancamento = tipoLancamento;
 	}
-
-	/**
-	 * @return the status
-	 */
-	public StatusLancamento getStatus() {
-		return status;
-	}
-
-	/**
-	 * @param status
-	 *            the status to set
-	 */
-	public void setStatus(StatusLancamento status) {
-		this.status = status;
-	}
-
+	
 }
