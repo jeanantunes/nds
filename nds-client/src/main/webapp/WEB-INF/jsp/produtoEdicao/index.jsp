@@ -727,7 +727,7 @@ fieldset {
 				sortable : true,
 				align : 'center'
 			}],
-			sortname : "codigo",
+			sortname : "codigoProduto",
 			sortorder : "asc",
 			usepager : true,
 			useRp : true,

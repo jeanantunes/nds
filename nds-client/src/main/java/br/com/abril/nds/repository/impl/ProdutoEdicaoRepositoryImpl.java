@@ -380,16 +380,8 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepository<ProdutoEdica
 		}
 		
 		// Ordenacao:
-		if (sortname != null) {
-			
-			/*
-			// Ordenação:
-			if (Ordenacao.ASC.toString().equals(sortorder)) {
-				hql.append(" ORDERY BY :orderColumn ASC");
-			} else if (Ordenacao.DESC.toString().equals(sortorder)) {
-				hql.append(" ORDERY BY :orderColumn DESC");
-			}		
-			*/
+		if (sortname != null && sortorder != null) {
+			hql.append(" ORDER BY " + sortname + " " + sortorder);
 		}
 		
 		Query query = getSession().createQuery(hql.toString());
@@ -412,20 +404,6 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepository<ProdutoEdica
 		}
 		if (dto.isPossuiBrinde()) {
 			query.setBoolean("possuiBrinde", Boolean.valueOf(dto.isPossuiBrinde()));
-		}
-		// Ordenacao:
-		if (sortname != null) {
-			/*
-			// Ordenação
-			if (sortname != null && sortname.trim().length() > 0) {
-				
-				query.setString("sortorder", sortorder.toUpperCase());
-				if (sortorder != null && sortorder.trim().length() > 0) {
-					query.setString("sortorder", sortorder.toUpperCase());
-					
-				}
-			}
-			*/
 		}
 		
 		return query;
