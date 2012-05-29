@@ -36,7 +36,6 @@ import br.com.abril.nds.model.financeiro.BaixaAutomatica;
 import br.com.abril.nds.model.financeiro.BaixaCobranca;
 import br.com.abril.nds.model.financeiro.BaixaManual;
 import br.com.abril.nds.model.financeiro.Boleto;
-import br.com.abril.nds.model.financeiro.Cobranca;
 import br.com.abril.nds.model.financeiro.ControleBaixaBancaria;
 import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
 import br.com.abril.nds.model.financeiro.StatusBaixa;
@@ -1072,10 +1071,9 @@ public class BoletoServiceImpl implements BoletoService {
 		
 		CobrancaVO cobrancaVO = null;
 		
-		Boleto boleto = boletoRepository.obterPorNossoNumero(nossoNumero,false);
+		Boleto boleto = boletoRepository.obterPorNossoNumero(nossoNumero,null);
 		if (boleto!=null){
-		    Cobranca cob = (Cobranca) boleto;
-		    cobrancaVO = this.cobrancaService.obterDadosCobranca(cob.getId());
+		    cobrancaVO = this.cobrancaService.obterDadosCobranca(boleto.getId());
 		}
 		
 		return cobrancaVO;

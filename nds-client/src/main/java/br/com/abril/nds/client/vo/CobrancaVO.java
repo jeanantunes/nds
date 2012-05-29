@@ -1,16 +1,37 @@
 package br.com.abril.nds.client.vo;
 
-public class CobrancaVO {
+import java.io.Serializable;
+
+import br.com.abril.nds.util.export.Export;
+import br.com.abril.nds.util.export.Exportable;
+
+@Exportable
+public class CobrancaVO implements Serializable  {
     
+	/**
+	 * Serial Version UID
+	 */
+	private static final long serialVersionUID = -5988272381369010529L;
+
 	//BOLETO
+	@Export(label = "Código")
 	private String codigo;
+	
+	@Export(label = "Nome")
 	private String nome;
+	
+	@Export(label = "Data Emissão")
+	private String dataEmissao;
+	
+	@Export(label = "Data Vencimento")
+	private String dataVencimento;
+	
+	@Export(label = "Valor Dívida R$")
+	private String valor;
+	
 	private String cota;
 	private String banco;
 	private String nossoNumero;
-	private String dataEmissao;
-	private String dataVencimento;
-	private String valor;
 	
 	//DIVIDA
 	private String dividaTotal;

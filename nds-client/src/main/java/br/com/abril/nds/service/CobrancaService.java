@@ -90,11 +90,26 @@ public interface CobrancaService {
 	
 	
 	/**
+	 *Método responsável por validar baixa de dividas, verificando se existem boletos envolvidos 
+	 * @param idCobrancas
+	 */
+	boolean validaBaixaManualDividas(List<Long> idCobrancas);
+	
+	
+	/**
+	 *Método responsável por validar negociação, verificando se as datas de vencimento das dividas estão de acordo com a configuração do Distribuidor
+	 * @param idCobrancas
+	 */
+	boolean validaNegociacaoDividas(List<Long> idCobrancas);
+	
+	
+	/**
 	 *Método responsável por baixar dividas manualmente 
 	 * @param pagamento
 	 * @param idCobrancas
+	 * @param manterPendente
 	 */
-	void baixaManualDividas(PagamentoDividasDTO pagamento, List<Long> idCobrancas);
+	void baixaManualDividas(PagamentoDividasDTO pagamento, List<Long> idCobrancas, Boolean manterPendente);
 	
 	
 	/**
