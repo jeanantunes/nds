@@ -84,13 +84,26 @@ public class VendaProdutoController {
 		
 		return tableModel;
 	}
+	
+	@Post
+	@Path("/pesquisarLancamentoEdicao")
+	public void pesquisarLancamentoEdicao(FiltroVendaProdutoDTO filtro,String sortorder, String sortname, int page, int rp){
+		
+		filtro.setPaginacao(new PaginacaoVO(page, rp, sortorder,sortname));
+		
+		this.tratarFiltro(filtro);
+		
+		TableModel<CellModelKeyValue<VendaProdutoDTO>> tableModel = efetuarConsulta(filtro);
+		
+		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
+	}
 
 
 	private void validarEntrada(FiltroVendaProdutoDTO filtro) {
 		
-		if(filtro.getCodigo()==null && !filtro.getCodigo().trim().isEmpty())
+		if(filtro.getCodigo()==null || filtro.getCodigo().trim().isEmpty())
 			throw new ValidacaoException(TipoMensagem.WARNING, "Código é obrigatório.");		
-		if(filtro.getNomeProduto()==null && !filtro.getNomeProduto().trim().isEmpty())
+		if(filtro.getNomeProduto()==null || filtro.getNomeProduto().trim().isEmpty())
 			throw new ValidacaoException(TipoMensagem.WARNING, "Produto é obrigatório.");
 		
 	}
