@@ -570,6 +570,8 @@ public class RecebimentoFisicoController {
 			}
 		}		
 		
+		result.use(Results.json()).from("").serialize();
+		
 	}
 
 	/**

@@ -14,6 +14,10 @@ ParametroSistema.prototype.initUploadForm = function() {
 	
 	$('#formUpload').bind('submit', function(e) {
 		
+		// Tratar o valor do checkbox (melhorar depois):
+		document.getElementById("dto.nfeDpec").value = 
+			document.getElementById('nfeDpec').checked ? "TRUE" : "FALSE";
+		
 		e.preventDefault(); // <-- important
 		$(this).ajaxSubmit({
 			beforeSubmit: function(arr, formData, options) {

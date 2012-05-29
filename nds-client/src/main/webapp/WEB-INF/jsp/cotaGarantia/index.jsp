@@ -13,6 +13,8 @@
 		tipoCotaGarantia = new TipoCotaGarantia();
 	});
 </script>
+
+
 <table width="755" cellpadding="2" cellspacing="2"
 	style="text-align: left;">
 	<tr>
@@ -24,6 +26,7 @@
 		</select></td>
 	</tr>
 </table>
+
 <div id="cotaGarantiaNotaPromissoriaPanel" style="display: none;">
 	<fieldset>
 		<legend>Nota Promiss&oacute;ria</legend>
@@ -276,7 +279,7 @@
 <div id="cotaGarantiaCaucaoLiquida" style="display: none;">
 
 	<fieldset>
-	   	<legend>Cau&ccedil;&atilde; L&iacute;quida</legend>
+	   	<legend>Cau&ccedil;&atilde;o L&iacute;quida</legend>
         <table width="755" cellpadding="2" cellspacing="2" style="text-align:left;">
         <tbody>
         	<tr>
@@ -307,7 +310,7 @@
     <br>
     
     <fieldset>
-    	<legend>Cau&ccedil;&atilde; L&iacute;quida</legend>
+    	<legend>Cau&ccedil;&atilde;o L&iacute;quida</legend>
     	
     	<div class="flexigrid" style="width: 740px; ">
     		<table id="cotaGarantiaCaucaoLiquidaGrid"></table>

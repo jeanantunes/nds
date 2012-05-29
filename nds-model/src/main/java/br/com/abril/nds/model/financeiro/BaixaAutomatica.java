@@ -3,8 +3,6 @@ package br.com.abril.nds.model.financeiro;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 
 /**
  * @author Discover Technology
@@ -14,10 +12,6 @@ import javax.persistence.Enumerated;
 @Entity
 @DiscriminatorValue(value = "AUTOMATICA")
 public class BaixaAutomatica extends BaixaCobranca {
-
-	@Enumerated(EnumType.STRING)
-	@Column(name = "STATUS", nullable = true)
-	private StatusBaixa status;
 	
 	@Column(name = "NOME_ARQUIVO", nullable = true)
 	private String nomeArquivo;
@@ -27,20 +21,6 @@ public class BaixaAutomatica extends BaixaCobranca {
 	
 	@Column(name = "NOSSO_NUMERO", nullable = true)
 	private String nossoNumero;
-
-	/**
-	 * @return the status
-	 */
-	public StatusBaixa getStatus() {
-		return status;
-	}
-
-	/**
-	 * @param status the status to set
-	 */
-	public void setStatus(StatusBaixa status) {
-		this.status = status;
-	}
 
 	/**
 	 * @return the nomeArquivo

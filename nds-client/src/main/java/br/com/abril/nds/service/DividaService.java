@@ -1,10 +1,12 @@
 package br.com.abril.nds.service;
 
+import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
-import br.com.abril.nds.client.vo.DetalhesDividaVO;
 import br.com.abril.nds.dto.StatusDividaDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaInadimplenteDTO;
+import br.com.abril.nds.model.financeiro.Cobranca;
 import br.com.abril.nds.model.financeiro.Divida;
 
 public interface DividaService {
@@ -62,11 +64,11 @@ public interface DividaService {
 	
 	
 	/**
-	 * Obtém detalhes da Dívida
+	 * Posterga a dívida de uma cota.
 	 * 
-	 * @param idDivida
-	 * @return
+	 * @param listaCodigosCotas
+	 * @param dataPostergacao
 	 */
-	List<DetalhesDividaVO> obterDetalhesDivida(Long idDivida);
-	
+	void postergarCobrancaCota(List<Cobranca> listaCobranca, Date dataPostergacao, BigDecimal encargos);
+
 }

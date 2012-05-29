@@ -4,7 +4,9 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
+import br.com.abril.nds.model.planejamento.TipoLancamento;
 
 public class ProdutoEdicaoDTO implements Serializable {
 
@@ -31,6 +33,16 @@ public class ProdutoEdicaoDTO implements Serializable {
 	private boolean parcial;
 	private Integer dia;
 	private Date dataRecolhimentoDistribuidor;
+	
+	// Usados na listagem de Edições:
+	private Date dataLancamento;
+	private StatusLancamento situacaoLancamento;
+	private String nomeFornecedor;
+	private TipoLancamento tipoLancamento;
+	private String statusLancamento;
+	private String statusSituacao;
+	private String temBrinde;
+	
 	
 	/**
 	 * Tipo de chamada de encalhe deste produtoEdicao
@@ -151,6 +163,96 @@ public class ProdutoEdicaoDTO implements Serializable {
 	}
 	public void setTipoChamadaEncalhe(TipoChamadaEncalhe tipoChamadaEncalhe) {
 		this.tipoChamadaEncalhe = tipoChamadaEncalhe;
+	}
+	
+	/**
+	 * @return the dataLancamento
+	 */
+	public Date getDataLancamento() {
+		return dataLancamento;
+	}
+	
+	/**
+	 * @param dataLancamento the dataLancamento to set
+	 */
+	public void setDataLancamento(Date dataLancamento) {
+		this.dataLancamento = dataLancamento;
+	}
+	
+	/**
+	 * @return the situacaoLancamento
+	 */
+	public StatusLancamento getSituacaoLancamento() {
+		return situacaoLancamento;
+	}
+	
+	/**
+	 * @param situacaoLancamento
+	 *            the situacaoLancamento to set
+	 */
+	public void setSituacaoLancamento(StatusLancamento situacaoLancamento) {
+		this.situacaoLancamento = situacaoLancamento;
+	}
+
+	/**
+	 * @return the nomeFornecedor
+	 */
+	public String getNomeFornecedor() {
+		return nomeFornecedor;
+	}
+
+	/**
+	 * @param nomeFornecedor
+	 *            the nomeFornecedor to set
+	 */
+	public void setNomeFornecedor(String nomeFornecedor) {
+		this.nomeFornecedor = nomeFornecedor;
+	}
+
+	/**
+	 * @return the tipoLancamento
+	 */
+	public TipoLancamento getTipoLancamento() {
+		return tipoLancamento;
+	}
+
+	/**
+	 * @param tipoLancamento
+	 *            the tipoLancamento to set
+	 */
+	public void setTipoLancamento(TipoLancamento tipoLancamento) {
+		this.tipoLancamento = tipoLancamento;
+	}
+	
+	/**
+	 * @return the tipoLancamento
+	 */
+	public String getStatusLancamento() {
+		return this.statusLancamento;
+	}
+	public void setStatusLancamento(TipoLancamento statusLancamento) {
+		this.statusLancamento = statusLancamento.getDescricao(); 
+	}
+	
+	/**
+	 * @return the situacaoLancamento
+	 */
+	public String getStatusSituacao() {
+		return this.statusSituacao;
+	}
+	public void setStatusSituacao(StatusLancamento statusSituacao) {
+		this.statusSituacao = statusSituacao.getDescricao();
+	}
+	
+	/**
+	 * 
+	 * @return the possuiBrindeDescricao;
+	 */
+	public String getTemBrinde() {
+		return this.temBrinde;
+	}
+	public void setTemBrinde(Boolean temBrinde) {
+		this.temBrinde = temBrinde.booleanValue() ? "Sim" : "Não";
 	}
 	
 }

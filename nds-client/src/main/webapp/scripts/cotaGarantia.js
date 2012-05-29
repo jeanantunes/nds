@@ -793,6 +793,7 @@ Fiador.prototype.bindEvents = function() {
 		},
 		minLength : 3,
 		select : function(event, ui) {
+			 $("#cotaGarantiaFiadorSearchDoc").val("");
 			_this.getFiador(ui.item.key, null);
 		},
 		open : function() {
@@ -803,11 +804,21 @@ Fiador.prototype.bindEvents = function() {
 		}
 	});
 
+	
 	$("#cotaGarantiaFiadorSearchDoc").keypress(function(e) {
 		if ((e.which && e.which == 13) || (e.keyCode && e.keyCode == 13)) {
 			$("#cotaGarantiaFiadorSearchName").val("");
-			_this.getFiador(null, $("#cotaGarantiaFiadorSearchDoc").val());
+			_this.getFiador(null, removeSpecialCharacteres($("#cotaGarantiaFiadorSearchDoc").val()));
 		}
+	});
+	
+	$("#cotaGarantiaFiadorSearchDoc").blur(function() {
+		
+		if ( $("#cotaGarantiaFiadorSearchDoc").val() != "" ) { 
+			$("#cotaGarantiaFiadorSearchName").val("");
+			_this.getFiador(null, removeSpecialCharacteres($("#cotaGarantiaFiadorSearchDoc").val()));
+		}
+	
 	});
 
 };
@@ -817,7 +828,7 @@ Fiador.prototype.getFiador = function(idFiador, documento) {
 	if (idFiador) {
 		param.idFiador = idFiador;
 	} else if (documento) {
-		param.documento = documento;
+		param.documento =  documento;
 	}
 	;
 
@@ -849,14 +860,15 @@ Fiador.prototype.bindData = function() {
 
 	var nome;
 	var doc;
-	if (this.fiador.pessoa.nome) {
-		nome = this.fiador.pessoa.nome;
-		doc = this.fiador.pessoa.cpf;
-	} else {
+	if (this.fiador.pessoa.razaoSocial) {
+		
 		nome = this.fiador.pessoa.razaoSocial;
 		doc = this.fiador.pessoa.cnpj;
+	} else {
+		nome = this.fiador.pessoa.nome;
+		doc = this.fiador.pessoa.cpf;
 	}
-	console.log();
+	console.log(this.fiador);
 	$("#cotaGarantiaFiadorNome").html(nome);
 	$("#cotaGarantiaFiadorDoc").html(doc);
 

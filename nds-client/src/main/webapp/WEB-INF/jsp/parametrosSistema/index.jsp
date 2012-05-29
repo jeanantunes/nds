@@ -159,12 +159,13 @@
 						<td>
 							<c:choose>
 								<c:when test='${parametroSistemaGeralDTO.nfeDpec == "TRUE"}'>
-									<input type="checkbox" id="dto.nfeDpec" name="nfeDpec" checked="checked" value="TRUE" /> 
+									<input type="checkbox" id="nfeDpec" name="nfeDpec" checked="checked" value="TRUE" class="checkboxNfeDpec"/> 
 								</c:when>
 								<c:otherwise>
-									<input type="checkbox" id="dto.nfeDpec" name="nfeDpec" value="TRUE" />
+									<input type="checkbox" id="nfeDpec" name="nfeDpec" value="TRUE" class="checkboxNfeDpec"/>
 								</c:otherwise>
 							</c:choose>
+							<input type="hidden" name="dto.nfeDpec" id="dto.nfeDpec" />
 						</td>
 					</tr>
 					<tr>

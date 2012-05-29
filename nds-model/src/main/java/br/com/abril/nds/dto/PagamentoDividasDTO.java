@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 import br.com.abril.nds.model.cadastro.TipoCobranca;
+import br.com.abril.nds.model.seguranca.Usuario;
 
 public class PagamentoDividasDTO {
 
@@ -22,6 +23,8 @@ public class PagamentoDividasDTO {
 	private BigDecimal valorPagamento;
 	
 	private TipoCobranca tipoPagamento;
+	
+	private Usuario usuario;
 	
 	private String observacoes;
 
@@ -95,6 +98,14 @@ public class PagamentoDividasDTO {
 
 	public void setObservacoes(String observacoes) {
 		this.observacoes = observacoes;
+	}
+
+	public Usuario getUsuario() {
+		return usuario;
+	}
+
+	public void setUsuario(Usuario usuario) {
+		this.usuario = usuario;
 	}
 	
 }
