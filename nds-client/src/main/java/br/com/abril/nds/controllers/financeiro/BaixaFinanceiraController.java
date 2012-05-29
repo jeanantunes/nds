@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -14,6 +13,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.client.util.DataHolder;
 import br.com.abril.nds.client.vo.CobrancaDividaVO;
 import br.com.abril.nds.client.vo.CobrancaVO;
 import br.com.abril.nds.client.vo.DetalhesDividaVO;
@@ -36,7 +36,6 @@ import br.com.abril.nds.service.BoletoService;
 import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.CobrancaService;
 import br.com.abril.nds.service.DistribuidorService;
-import br.com.abril.nds.service.DividaService;
 import br.com.abril.nds.service.LeitorArquivoBancoService;
 import br.com.abril.nds.service.ParametroCobrancaCotaService;
 import br.com.abril.nds.service.PoliticaCobrancaService;
@@ -78,9 +77,6 @@ public class BaixaFinanceiraController {
 	private CobrancaService cobrancaService;
 	
 	@Autowired
-	private DividaService dividaService;
-	
-	@Autowired
 	private PoliticaCobrancaService politicaCobrancaService;
 	
 	@Autowired
@@ -115,7 +111,9 @@ public class BaixaFinanceiraController {
 	@Get
 	@Path("/baixa")
 	public void baixa() {
-		listaTiposCobranca = this.financeiroService.getComboTiposCobranca();
+		listaTiposCobranca.add(new ItemDTO<TipoCobranca,String>(TipoCobranca.DINHEIRO, TipoCobranca.DINHEIRO.getDescTipoCobranca()));
+		listaTiposCobranca.add(new ItemDTO<TipoCobranca,String>(TipoCobranca.DEPOSITO, TipoCobranca.DEPOSITO.getDescTipoCobranca()));
+		listaTiposCobranca.add(new ItemDTO<TipoCobranca,String>(TipoCobranca.TRANSFERENCIA_BANCARIA, TipoCobranca.TRANSFERENCIA_BANCARIA.getDescTipoCobranca()));
 		result.include("listaTiposCobranca",listaTiposCobranca);
 	}
 	
@@ -356,16 +354,104 @@ public class BaixaFinanceiraController {
 	
 	
 	
+	
+	
+	
+	/**
+	 * Método responsável pela busca de dívidas(Cobranças Geradas)
+	 * @param numCota
+	 * @param sortorder
+	 * @param sortname
+	 * @param page
+	 * @param rp
+	 */
+	@Post
+	@Path("/buscaDividas")
+	public void buscaDividas(Integer numCota,
+			                 String sortorder, 
+			                 String sortname,
+			                 int page, 
+			                 int rp){
+
+		if (numCota==null){
+		    throw new ValidacaoException(TipoMensagem.WARNING, "Digite o número da cota ou o número do boleto.");
+		}
+
+		//OBTER DISTRIBUIDOR PARA BUSCAR DATA DE OPERAÇÃO
+		Distribuidor distribuidor = distribuidorService.obter();
+		
+        //CONFIGURAR PAGINA DE PESQUISA
+		FiltroConsultaDividasCotaDTO filtroAtual = new FiltroConsultaDividasCotaDTO(numCota, distribuidor.getDataOperacao(),StatusCobranca.NAO_PAGO);
+		PaginacaoVO paginacao = new PaginacaoVO(page, rp, sortorder);
+		filtroAtual.setPaginacao(paginacao);
+		filtroAtual.setOrdenacaoColuna(Util.getEnumByStringValue(OrdenacaoColunaDividas.values(), sortname));
+	    
+		FiltroConsultaDividasCotaDTO filtroSessao = (FiltroConsultaDividasCotaDTO) this.httpSession.getAttribute(FILTRO_PESQUISA_SESSION_ATTRIBUTE);
+		
+		if (filtroSessao != null && !filtroSessao.equals(filtroAtual)) {
+			filtroAtual.getPaginacao().setPaginaAtual(1);
+		}
+		
+		this.httpSession.setAttribute(FILTRO_PESQUISA_SESSION_ATTRIBUTE, filtroAtual);
+		
+		
+		//BUSCA COBRANCAS //!!
+		List<CobrancaVO> cobrancasVO = this.cobrancaService.obterDadosCobrancasPorCota(filtroAtual);
+		
+		if ((cobrancasVO.size()<=0)||(cobrancasVO==null)) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "Não há dividas em aberto nesta data para esta Cota.");
+		} 
+		
+
+    	//TRATAMENTO DE DIVIDAS SELECIONADAS
+		DataHolder dataHolder = (DataHolder) this.httpSession.getAttribute(DataHolder.SESSION_ATTRIBUTE_NAME);
+		if (dataHolder != null) {
+		    for (CobrancaVO itemCobrancaVO:cobrancasVO){
+		    	String dividaMarcada = dataHolder.getData("baixaManual", itemCobrancaVO.getCodigo(), "checado");
+		    	if (dividaMarcada!=null){
+		    	    itemCobrancaVO.setCheck(dividaMarcada.equals("true")?true:false); 
+		    	}
+		    }
+		}
+		
+
+		int qtdRegistros = this.cobrancaService.obterQuantidadeCobrancasPorCota(filtroAtual);
+			
+		TableModel<CellModelKeyValue<CobrancaVO>> tableModel = new TableModel<CellModelKeyValue<CobrancaVO>>();
+			
+		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(cobrancasVO));
+		tableModel.setPage(page);
+		tableModel.setTotal(qtdRegistros);
+
+		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
+
+	}
+	
+	
+	/**
+	 * Método responsável por obter o saldo da cobranca(Dívida)
+	 * @param idCobranca
+	 */
+	@Post
+	@Path("obterSaldoDivida")
+	public void obterSaldoDivida(Long idCobranca){
+		
+	    BigDecimal saldoDivida = this.cobrancaService.obterSaldoDivida(idCobranca);
+	    
+	    result.use(Results.json()).from(saldoDivida,"result").recursive().serialize();
+	}
+	
+	
 	/**
 	 * Método responsável por obter detalhes da Dívida(Cobrança)
 	 * @param idDivida
 	 */
 	@Post
 	@Path("obterDetalhesDivida")
-	public void obterDetalhesDivida(Long idDivida){
+	public void obterDetalhesDivida(Long idCobranca){
 
 		//BUSCA DETALHES DA DIVIDA
-		List<DetalhesDividaVO> detalhes = this.dividaService.obterDetalhesDivida(idDivida);
+		List<DetalhesDividaVO> detalhes = this.cobrancaService.obterDetalhesDivida(idCobranca);
 		
 		if ((detalhes.size()==0)||(detalhes==null)) {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Não há dividas em aberto nesta data para esta Cota.");
@@ -379,6 +465,7 @@ public class BaixaFinanceiraController {
 
 		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
 	}
+	
 	
 	/**
 	 * Método responsável por obter os calculos de juros, multa e totais referentes às dividas escolhidas pelo usuário
@@ -394,14 +481,8 @@ public class BaixaFinanceiraController {
 		}
 		
 		CobrancaDividaVO pagamento;
-		
-		try{
-		    pagamento = this.cobrancaService.obterDadosCobrancas(idCobrancas);
-		}
-		catch(Exception e){
-			throw new ValidacaoException(TipoMensagem.WARNING, "Não foi possível obter calculos para o pagamento das dívidas.");
-		}
-		
+	    pagamento = this.cobrancaService.obterDadosCobrancas(idCobrancas);
+
 		result.use(Results.json()).from(pagamento,"result").recursive().serialize();
 	}
 	
@@ -444,12 +525,26 @@ public class BaixaFinanceiraController {
 		pagamento.setValorPagamento(valorPagamentoConvertido);
 		pagamento.setTipoPagamento(tipoPagamento);
 		pagamento.setObservacoes(observacoes);
-		pagamento.setDataPagamento(Calendar.getInstance().getTime());
+		pagamento.setDataPagamento(DateUtil.adicionarDias(this.distribuidorService.obter().getDataOperacao(),1));
+		
+		
+		/**
+		 * TO-DO: OBTER USUARIO LOGADO
+		 */
+		Usuario us = new Usuario();
+		us.setId(1l);
+		us.setNome("João");
+		us.setLogin("joao");
+		us.setSenha("ABC123");
+		
+		
+		pagamento.setUsuario(us);
 		
 		this.cobrancaService.baixaManualDividas(pagamento, idCobrancas);
 		
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Dividas baixadas com sucesso."),Constantes.PARAM_MSGS).recursive().serialize();
 	}
+
 	
 	/**
 	 * Método responsável por validar se é possível a negociação de dividas(Cobranças)
@@ -467,63 +562,5 @@ public class BaixaFinanceiraController {
 		}
 		result.nothing();
 	}
-	
-	/**
-	 * Método responsável pela busca de dívidas(Cobranças Geradas)
-	 * @param numCota
-	 * @param sortorder
-	 * @param sortname
-	 * @param page
-	 * @param rp
-	 */
-	@Post
-	@Path("/buscaDividas")
-	public void buscaDividas(Integer numCota,
-			                 String sortorder, 
-			                 String sortname, 
-			                 int page, 
-			                 int rp){
-
-		if ((numCota==null)||(numCota<=0)){
-		    throw new ValidacaoException(TipoMensagem.WARNING, "Digite o número da cota.");
-		}
-
-		//OBTER DISTRIBUIDOR PARA BUSCAR DATA DE OPERAÇÃO
-		Distribuidor distribuidor = distribuidorService.obter();
-		
-        //CONFIGURAR PAGINA DE PESQUISA
-		FiltroConsultaDividasCotaDTO filtroAtual = new FiltroConsultaDividasCotaDTO(numCota, distribuidor.getDataOperacao(),StatusCobranca.NAO_PAGO);
-		PaginacaoVO paginacao = new PaginacaoVO(page, rp, sortorder);
-		filtroAtual.setPaginacao(paginacao);
-		filtroAtual.setOrdenacaoColuna(Util.getEnumByStringValue(OrdenacaoColunaDividas.values(), sortname));
-	    
-		FiltroConsultaDividasCotaDTO filtroSessao = (FiltroConsultaDividasCotaDTO) this.httpSession.getAttribute(FILTRO_PESQUISA_SESSION_ATTRIBUTE);
-		
-		if (filtroSessao != null && !filtroSessao.equals(filtroAtual)) {
-			filtroAtual.getPaginacao().setPaginaAtual(1);
-		}
-		
-		this.httpSession.setAttribute(FILTRO_PESQUISA_SESSION_ATTRIBUTE, filtroAtual);
-		
-		//BUSCA COBRANCAS //!!
-		List<CobrancaVO> cobrancas = this.cobrancaService.obterDadosCobrancasPorCota(filtroAtual);
-		
-		if ((cobrancas.size()==0)||(cobrancas==null)) {
-			throw new ValidacaoException(TipoMensagem.WARNING, "Não há dividas em aberto nesta data para esta Cota.");
-		} 
-		
-		int qtdRegistros = this.cobrancaService.obterQuantidadeCobrancasPorCota(filtroAtual);
-			
-		TableModel<CellModelKeyValue<CobrancaVO>> tableModel = new TableModel<CellModelKeyValue<CobrancaVO>>();
-			
-		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(cobrancas));
-		tableModel.setPage(page);
-		tableModel.setTotal(qtdRegistros);
-
-		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
-
-	}
-	
-	
 	
 }

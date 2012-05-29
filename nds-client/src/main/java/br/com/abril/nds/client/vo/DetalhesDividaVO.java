@@ -1,19 +1,17 @@
 package br.com.abril.nds.client.vo;
 
-import java.math.BigDecimal;
-import java.util.Date;
 
 public class DetalhesDividaVO {
 	
-	Date data;
+	String data;
 	String tipo;
-	BigDecimal valor;
+	String valor;
 	String observacao;
 	
-	public Date getData() {
+	public String getData() {
 		return data;
 	}
-	public void setData(Date data) {
+	public void setData(String data) {
 		this.data = data;
 	}
 	public String getTipo() {
@@ -22,10 +20,10 @@ public class DetalhesDividaVO {
 	public void setTipo(String tipo) {
 		this.tipo = tipo;
 	}
-	public BigDecimal getValor() {
+	public String getValor() {
 		return valor;
 	}
-	public void setValor(BigDecimal valor) {
+	public void setValor(String valor) {
 		this.valor = valor;
 	}
 	public String getObservacao() {
@@ -34,5 +32,7 @@ public class DetalhesDividaVO {
 	public void setObservacao(String observacao) {
 		this.observacao = observacao;
 	}
+	
+	
 	
 }

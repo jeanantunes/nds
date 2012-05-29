@@ -41,8 +41,8 @@ public class CotaServiceImplTest extends AbstractRepositoryImplTest {
 		
 		TipoFornecedor tipoFornecedor = Fixture.tipoFornecedor("TIPO_FORNECEDOR", GrupoFornecedor.PUBLICACAO);
 		
-		Fornecedor fornecedor1 = Fixture.fornecedor(pessoaJuridica, SituacaoCadastro.ATIVO, true, tipoFornecedor);
-		Fornecedor fornecedor2 = Fixture.fornecedor(pessoaJuridica2, SituacaoCadastro.ATIVO, true, tipoFornecedor);
+		Fornecedor fornecedor1 = Fixture.fornecedor(pessoaJuridica, SituacaoCadastro.ATIVO, true, tipoFornecedor, null);
+		Fornecedor fornecedor2 = Fixture.fornecedor(pessoaJuridica2, SituacaoCadastro.ATIVO, true, tipoFornecedor, null);
 		Set<Fornecedor> fornecedores = new HashSet<Fornecedor>();
 		fornecedores.add(fornecedor1);
 		fornecedores.add(fornecedor2);

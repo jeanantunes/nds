@@ -8,6 +8,7 @@ import java.io.InputStream;
 import javax.annotation.PostConstruct;
 import javax.persistence.NoResultException;
 
+import org.apache.commons.lang.StringUtils;
 import org.lightcouch.Attachment;
 import org.lightcouch.CouchDbClient;
 import org.lightcouch.NoDocumentException;
@@ -27,9 +28,9 @@ import br.com.abril.nds.service.CapaService;
  * 
  */
 @Service
-public class CapaServiceImpl implements CapaService {
-	
-	private static final String ATTACHMENT_CAPA  =  "capa";
+public class CapaServiceImpl implements CapaService {	
+	private static final String DEFAULT_EXTENSION = ".jpg";
+
 	private static final String DB_NAME  =  "db_capas";
 
 	@Autowired
@@ -102,28 +103,28 @@ public class CapaServiceImpl implements CapaService {
 		String id = toId(codigoProduto, numeroEdicao);
 		Capa capa = couchDbClient.find(Capa.class,id);
 		
-		if(!capa.getAttachments().containsKey(ATTACHMENT_CAPA)){
+		if(!capa.getAttachments().containsKey(id + DEFAULT_EXTENSION)){
 			throw new NoDocumentException("Capa: "+ id +  " - imagem inexistente.");
 		}
-		return capa.getAttachments().get(ATTACHMENT_CAPA);
+		return capa.getAttachments().get(id + DEFAULT_EXTENSION);
 	}
 
 	@Override
 	public InputStream getCapaInputStream(String codigoProduto,
 			long numeroEdicao) {
 		String id = toId(codigoProduto, numeroEdicao);
-		return couchDbClient.find(id + "/" + ATTACHMENT_CAPA);
+		return couchDbClient.find(id + "/" + id+ DEFAULT_EXTENSION);
 	}
 
 	@Override
 	public void saveCapa(String codigoProduto, long numeroEdicao,
 			Attachment attachment) {
-		
+		String id = toId(codigoProduto, numeroEdicao);
 		
 		Capa capa = new Capa();
 		
-		capa.setId(toId(codigoProduto, numeroEdicao));
-		capa.getAttachments().put(ATTACHMENT_CAPA, attachment);
+		capa.setId(id);
+		capa.getAttachments().put(id + DEFAULT_EXTENSION, attachment);
 		couchDbClient.save(capa);
 
 	}
@@ -131,7 +132,8 @@ public class CapaServiceImpl implements CapaService {
 	@Override
 	public void saveCapa(String codigoProduto, long numeroEdicao,
 			String contentType, InputStream inputStream) {		
-		couchDbClient.saveAttachment(inputStream, ATTACHMENT_CAPA, contentType, toId(codigoProduto, numeroEdicao),null);
+		String id = toId(codigoProduto, numeroEdicao);
+		couchDbClient.saveAttachment(inputStream, id + DEFAULT_EXTENSION, contentType, toId(codigoProduto, numeroEdicao),null);
 	}
 	
 	
@@ -140,8 +142,8 @@ public class CapaServiceImpl implements CapaService {
 	 * @param numeroEdicao
 	 * @return
 	 */
-	private String toId(String codigoProduto, long numeroEdicao) {
-		return codigoProduto + "-" + numeroEdicao;
+	private String toId(String codigoProduto, long numeroEdicao) {		
+		return StringUtils.leftPad(codigoProduto, 8,'0') +  StringUtils.leftPad(""+numeroEdicao, 4,'0') ;
 	}
 
 	/**

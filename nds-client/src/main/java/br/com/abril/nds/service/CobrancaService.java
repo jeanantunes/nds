@@ -6,6 +6,7 @@ import java.util.List;
 
 import br.com.abril.nds.client.vo.CobrancaDividaVO;
 import br.com.abril.nds.client.vo.CobrancaVO;
+import br.com.abril.nds.client.vo.DetalhesDividaVO;
 import br.com.abril.nds.dto.PagamentoDividasDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaDividasCotaDTO;
 import br.com.abril.nds.model.cadastro.Banco;
@@ -94,4 +95,30 @@ public interface CobrancaService {
 	 * @param idCobrancas
 	 */
 	void baixaManualDividas(PagamentoDividasDTO pagamento, List<Long> idCobrancas);
+	
+	
+	/**
+	 * Obtém saldo financeiro da cota
+	 * @param idCota
+	 * @return
+	 */
+	BigDecimal obterSaldoCota(Integer numeroCota);
+	
+	
+	/**
+	 * Obtém detalhes da Cobranca(Dívida)
+	 * 
+	 * @param idCobranca
+	 * @return
+	 */
+	List<DetalhesDividaVO> obterDetalhesDivida(Long idCobranca);
+	
+	
+	/**
+	 * Obtém saldo da Cobranca(Dívida)
+	 * 
+	 * @param idCobranca
+	 * @return
+	 */
+	BigDecimal obterSaldoDivida(Long idCobranca);
 }
