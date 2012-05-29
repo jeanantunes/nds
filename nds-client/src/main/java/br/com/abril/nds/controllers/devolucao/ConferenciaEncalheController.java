@@ -111,10 +111,12 @@ public class ConferenciaEncalheController {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Box de recolhimento não informado.");
 		}
 		
+		this.session.setAttribute(HORA_INICIO_CONFERENCIA, new Date());
+		
 		try {
 			
 			this.conferenciaEncalheService.verificarChamadaEncalheCota(numeroCota);
-			this.session.setAttribute(HORA_INICIO_CONFERENCIA, new Date());
+			
 		} catch (ConferenciaEncalheExistenteException e) {
 			
 			this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.WARNING, "REABERTURA"), "result").recursive().serialize();
@@ -157,6 +159,16 @@ public class ConferenciaEncalheController {
 	@Post
 	public void carregarListaConferencia(Integer numeroCota){
 		
+		if (numeroCota == null){
+			
+			InfoConferenciaEncalheCota info = this.getInfoConferenciaSession();
+			
+			if (info != null){
+				
+				numeroCota = info.getCota().getNumeroCota();
+			}
+		}
+		
 		Date horaInicio = (Date) this.session.getAttribute(HORA_INICIO_CONFERENCIA);
 		
 		if (horaInicio == null){
@@ -178,7 +190,7 @@ public class ConferenciaEncalheController {
 		
 		List<Object> dados = new ArrayList<Object>();
 		
-		dados.add(this.obterTableModelConferenciaEncalhe(infoConfereciaEncalheCota.getListaConferenciaEncalhe()));
+		dados.add(infoConfereciaEncalheCota.getListaConferenciaEncalhe());
 		
 		dados.add(this.obterTableModelDebitoCreditoCota(infoConfereciaEncalheCota.getListaDebitoCreditoCota()));
 		
@@ -345,40 +357,52 @@ public class ConferenciaEncalheController {
 		
 		this.atualizarQuantidadeConferida(idProdutoEdicao, quantidade, produtoEdicao);
 		
-		this.result.use(Results.json()).from("").serialize();
+		this.carregarListaConferencia(null);
 	}
 	
 	@Post
-	public void recalcularConferencia(List<Long> idsConferencia, List<Long> qtdsExemplares, List<Boolean> juramentada, List<BigDecimal> valoresCapa){
+	public void recalcularConferencia(Long idConferencia, Long qtdExemplares, Boolean juramentada, BigDecimal valorCapa){
 		
 		List<ConferenciaEncalheDTO> listaConferencia = this.getListaConferenciaEncalheFromSession();
 		
-		if (idsConferencia != null){
+		ConferenciaEncalheDTO conf = null;
 		
-			for (int index = 0 ; index < idsConferencia.size() ; index++){
+		if (idConferencia != null){
 				
-				for (ConferenciaEncalheDTO dto : listaConferencia){
+			for (ConferenciaEncalheDTO dto : listaConferencia){
+				
+				if (dto.getIdConferenciaEncalhe().equals(idConferencia)){
 					
-					if (dto.getIdConferenciaEncalhe().equals(idsConferencia.get(index))){
-						
-						dto.setQtdExemplar(new BigDecimal(qtdsExemplares.get(index)));
-						
-						if (juramentada != null){
-						
-							dto.setJuramentada(juramentada.get(index));
-						}
-						
-						if (valoresCapa != null){
-							
-							dto.setPrecoCapa(valoresCapa.get(index));
-						}
-						break;
+					dto.setQtdExemplar(new BigDecimal(qtdExemplares));
+					
+					if (juramentada != null){
+					
+						dto.setJuramentada(juramentada);
 					}
+					
+					if (valorCapa != null){
+						
+						dto.setPrecoCapa(valorCapa);
+					}
+					
+					dto.setValorTotal(dto.getPrecoCapa().subtract(dto.getDesconto()).multiply(dto.getQtdExemplar()));
+					
+					conf = dto;
+					
+					break;
 				}
 			}
 		}
 		
-		this.carregarListaConferencia(this.getInfoConferenciaSession().getCota().getNumeroCota());
+		List<Object> dados = new ArrayList<Object>();
+		
+		dados.add(conf);
+		
+		dados.add(this.getInfoConferenciaSession().getReparte() == null ? BigDecimal.ZERO : this.getInfoConferenciaSession().getReparte());
+		
+		this.calcularValoresMonetarios(dados);
+		
+		this.result.use(Results.json()).from(dados == null ? "" : dados, "result").recursive().serialize();
 	}
 	
 	@Post
@@ -540,7 +564,7 @@ public class ConferenciaEncalheController {
 			}
 		}
 		
-		result.use(Results.json()).from("", "result").serialize();
+		this.carregarListaConferencia(null);
 	}
 	
 	@Post
@@ -711,6 +735,8 @@ public class ConferenciaEncalheController {
 		
 		conferenciaEncalheDTO.setDesconto(produtoEdicao.getDesconto());
 		
+		conferenciaEncalheDTO.setValorTotal(produtoEdicao.getPrecoVenda().subtract(produtoEdicao.getDesconto()).multiply(conferenciaEncalheDTO.getQtdExemplar()));
+		
 		if (adicionarGrid){
 			
 			List<ConferenciaEncalheDTO> lista = this.getListaConferenciaEncalheFromSession();
@@ -728,43 +754,43 @@ public class ConferenciaEncalheController {
 	 * 
 	 * @return TableModel<CellModelKeyValue<ConferenciaEncalheVO>>
 	 */
-	private TableModel<CellModelKeyValue<ConferenciaEncalheDTO>> obterTableModelConferenciaEncalhe(List<ConferenciaEncalheDTO> listaConferenciaEncalhe) {
-
-		TableModel<CellModelKeyValue<ConferenciaEncalheDTO>> tableModelConferenciaEncalhe = 
-				new TableModel<CellModelKeyValue<ConferenciaEncalheDTO>>();
-		
-		List<CellModelKeyValue<ConferenciaEncalheDTO>> list =
-				new ArrayList<CellModelKeyValue<ConferenciaEncalheDTO>>();
-		
-		boolean aceitaJuramentado = this.getInfoConferenciaSession().isDistribuidorAceitaJuramentado();
-		
-		if (listaConferenciaEncalhe != null){
-			
-			for (ConferenciaEncalheDTO dto : listaConferenciaEncalhe){
-				
-				dto.setValorTotal(dto.getPrecoCapa().subtract(dto.getDesconto()).multiply(dto.getQtdExemplar()));
-				
-				if (!aceitaJuramentado){
-					
-					dto.setJuramentada(null);
-				}
-				
-				if (dto.getIdConferenciaEncalhe() == null){
-					
-					dto.setIdConferenciaEncalhe(new Long(((int) System.currentTimeMillis()) *-1));
-				}
-				
-				list.add(new CellModelKeyValue<ConferenciaEncalheDTO>(dto.getIdConferenciaEncalhe().intValue(), dto));
-			}
-		}
-		
-		tableModelConferenciaEncalhe.setRows(list);
-		tableModelConferenciaEncalhe.setTotal((listaConferenciaEncalhe!= null) ? listaConferenciaEncalhe.size() : 0);
-		tableModelConferenciaEncalhe.setPage(1);
-		
-		return tableModelConferenciaEncalhe;
-		
-	}
+//	private TableModel<CellModelKeyValue<ConferenciaEncalheDTO>> obterTableModelConferenciaEncalhe(List<ConferenciaEncalheDTO> listaConferenciaEncalhe) {
+//
+//		TableModel<CellModelKeyValue<ConferenciaEncalheDTO>> tableModelConferenciaEncalhe = 
+//				new TableModel<CellModelKeyValue<ConferenciaEncalheDTO>>();
+//		
+//		List<CellModelKeyValue<ConferenciaEncalheDTO>> list =
+//				new ArrayList<CellModelKeyValue<ConferenciaEncalheDTO>>();
+//		
+//		boolean aceitaJuramentado = this.getInfoConferenciaSession().isDistribuidorAceitaJuramentado();
+//		
+//		if (listaConferenciaEncalhe != null){
+//			
+//			for (ConferenciaEncalheDTO dto : listaConferenciaEncalhe){
+//				
+//				dto.setValorTotal(dto.getPrecoCapa().subtract(dto.getDesconto()).multiply(dto.getQtdExemplar()));
+//				
+//				if (!aceitaJuramentado){
+//					
+//					dto.setJuramentada(null);
+//				}
+//				
+//				if (dto.getIdConferenciaEncalhe() == null){
+//					
+//					dto.setIdConferenciaEncalhe(new Long(((int) System.currentTimeMillis()) *-1));
+//				}
+//				
+//				list.add(new CellModelKeyValue<ConferenciaEncalheDTO>(dto.getIdConferenciaEncalhe().intValue(), dto));
+//			}
+//		}
+//		
+//		tableModelConferenciaEncalhe.setRows(list);
+//		tableModelConferenciaEncalhe.setTotal((listaConferenciaEncalhe!= null) ? listaConferenciaEncalhe.size() : 0);
+//		tableModelConferenciaEncalhe.setPage(1);
+//		
+//		return tableModelConferenciaEncalhe;
+//		
+//	}
 	
 	/**
 	 * Obtém tableModel para grid OutrosValores (Debitos e Creditos da cota).

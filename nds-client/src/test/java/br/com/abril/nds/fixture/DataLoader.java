@@ -1114,11 +1114,6 @@ public class DataLoader {
 			tipoMovimentoFinanceiroCompraEncalhe, dataAtual, listaMovimentoEstoqueCota,
 			usuario, produtoEdicao, estoqueProdutoCota);
 
-
-	massaDadosContaCorrenteMovimento(session, tipoMovimentoEnvioEncalhe,
-			tipoMovimentoFinanceiroEnvioEncalhe, dataAtual, listaMovimentoEstoqueCota,
-			usuario, produtoEdicao, estoqueProdutoCota);
-
 }
 
 	private static void massaDadosContaCorrenteMovimento(Session session,

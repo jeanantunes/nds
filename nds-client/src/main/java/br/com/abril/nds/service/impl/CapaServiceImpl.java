@@ -31,7 +31,7 @@ import br.com.abril.nds.service.CapaService;
 public class CapaServiceImpl implements CapaService {	
 	private static final String DEFAULT_EXTENSION = ".jpg";
 
-	private static final String DB_NAME  =  "db_capas";
+	private static final String DB_NAME  =  "db_integracao";
 
 	@Autowired
 	private CouchDbProperties couchDbProperties;
