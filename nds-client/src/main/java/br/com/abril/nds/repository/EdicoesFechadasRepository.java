@@ -1,5 +1,6 @@
 package br.com.abril.nds.repository;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -29,5 +30,22 @@ public interface EdicoesFechadasRepository extends Repository<MovimentoEstoque, 
 	 * @return
 	 */
 	public List<RegistroEdicoesFechadasVO> obterResultadoEdicoesFechadas(Date dataDe, Date dateAte, String codigoFornecedor);
+
+	/**
+	 * Retorna o resultado total do saldo de edições fechadas em um período de datas
+	 * @param dataDe
+	 * @param dateAte
+	 * @return
+	 */
+	public BigDecimal obterResultadoTotalEdicoesFechadas(Date dataDe, Date dateAte);
+
+	/**
+	 * Retorna o resultado total do saldo de edições fechadas filtrada pelo código do fornecedor em um período de datas
+	 * @param dataDe
+	 * @param dateAte
+	 * @param codigoFornecedor
+	 * @return
+	 */
+	public BigDecimal obterResultadoTotalEdicoesFechadas(Date dataDe, Date dateAte, String codigoFornecedor);
 
 }

@@ -1,5 +1,6 @@
 package br.com.abril.nds.repository.impl;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -19,16 +20,62 @@ public class EdicoesFechadasRepositoryImpl extends AbstractRepository<MovimentoE
 	public EdicoesFechadasRepositoryImpl() {
 		super(MovimentoEstoque.class);
 	}
-	
+
+	/* (non-Javadoc)
+	 * @see br.com.abril.nds.repository.EdicoesFechadasRepository#obterResultadoTotalEdicoesFechadas(java.util.Date, java.util.Date)
+	 */
 	@Override
-	public List<RegistroEdicoesFechadasVO> obterResultadoEdicoesFechadas(
-			Date dataDe, Date dataAte) {
+	public BigDecimal obterResultadoTotalEdicoesFechadas(Date dataDe, Date dataAte) {
+		return obterResultadoTotalEdicoesFechadas(dataDe, dataAte, "");
+	}
+
+	/* (non-Javadoc)
+	 * @see br.com.abril.nds.repository.EdicoesFechadasRepository#obterResultadoTotalEdicoesFechadas(java.util.Date, java.util.Date, java.lang.String)
+	 */
+	@Override
+	public BigDecimal obterResultadoTotalEdicoesFechadas(Date dataDe, Date dataAte, String codigoFornecedor) {
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append("SELECT ( sum(movimentoEstoque.qtde) ) ");
+		
+		hql.append(" FROM MovimentoEstoque AS movimentoEstoque ")
+			.append(" LEFT JOIN movimentoEstoque.estoqueProduto.produtoEdicao AS produtoEdicao ")
+			.append(" LEFT JOIN produtoEdicao.produto AS produto ")
+			.append(" LEFT JOIN produtoEdicao.lancamentos AS lancamentos ")
+			.append(" LEFT JOIN produto.fornecedores AS fornecedores ")
+			.append(" LEFT JOIN fornecedores.juridica AS juridica ");
+
+		hql.append(" WHERE ( produtoEdicao.dataDesativacao BETWEEN :dataDe AND :dataAte ) ");
+		
+		if (!codigoFornecedor.isEmpty()) {
+			hql.append(" AND fornecedores.id = :codigoFornecedor ");
+		}
+
+		Query query = this.getSession().createQuery(hql.toString());
+
+    	query.setParameter("dataDe", dataDe);
+    	query.setParameter("dataAte", dataAte);
+
+    	if(!codigoFornecedor.isEmpty()){
+	    	query.setParameter("codigoFornecedor", Long.parseLong(codigoFornecedor));
+	    }
+		
+		return (BigDecimal) query.uniqueResult();
+	}
+
+	/* (non-Javadoc)
+	 * @see br.com.abril.nds.repository.EdicoesFechadasRepository#obterResultadoEdicoesFechadas(java.util.Date, java.util.Date)
+	 */
+	@Override
+	public List<RegistroEdicoesFechadasVO> obterResultadoEdicoesFechadas(Date dataDe, Date dataAte) {
 		return obterResultadoEdicoesFechadas(dataDe, dataAte, "");
 	}
 
+	/* (non-Javadoc)
+	 * @see br.com.abril.nds.repository.EdicoesFechadasRepository#obterResultadoEdicoesFechadas(java.util.Date, java.util.Date, java.lang.String)
+	 */
 	@Override
-	public List<RegistroEdicoesFechadasVO> obterResultadoEdicoesFechadas(
-			Date dataDe, Date dataAte, String codigoFornecedor) {
+	public List<RegistroEdicoesFechadasVO> obterResultadoEdicoesFechadas(Date dataDe, Date dataAte, String codigoFornecedor) {
 		
 		StringBuilder hql = new StringBuilder();
 		
@@ -69,7 +116,7 @@ public class EdicoesFechadasRepositoryImpl extends AbstractRepository<MovimentoE
     	query.setParameter("dataAte", dataAte);
 
     	if(!codigoFornecedor.isEmpty()){
-	    	query.setParameter("codigoFornecedor", codigoFornecedor);
+	    	query.setParameter("codigoFornecedor", Long.parseLong(codigoFornecedor));
 	    }
 		
 		return query.list();

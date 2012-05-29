@@ -1,48 +1,82 @@
 package br.com.abril.nds.dto.filtro;
 
+import java.io.Serializable;
 import java.util.Date;
 
-import br.com.abril.nds.model.cadastro.Fornecedor;
-import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Exportable;
+import br.com.abril.nds.vo.PaginacaoVO;
 
 @Exportable
-public class FiltroEdicoesFechadasDTO {
+public class FiltroEdicoesFechadasDTO extends FiltroDTO implements Serializable {
 
-	@Export(label="Data De")
-	private Date dateDe;
+	private static final long serialVersionUID = -990334749020240008L;
 
-	@Export(label="Data Até")
-	private Date dateAte;
+	private Date dataDe;
 	
-	@Export(label="Fornecedor")
+	private Date dataAte;
+	
 	private String codigoFornecedor;
-
-	public FiltroEdicoesFechadasDTO(Date dateDe, Date dateAte, String codigoFornecedor) {
-		this.dateDe = dateDe;
-		this.dateAte = dateAte;
-		this.codigoFornecedor = codigoFornecedor;
+	
+	private PaginacaoVO paginacao;
+	
+	private OrdenacaoColunaConsulta ordenacaoColuna;
+	
+	public enum OrdenacaoColunaConsulta {
+		
+		CODIGO_PRODUTO("codigoProduto"),
+		NOME_PRODUTO("nomeProduto"),
+		EDICAO_PRODUTO("edicaoProduto"),
+		NOME_FORNECEDOR("nomeFornecedor"),
+		DATA_LANCAMENTO("dataLancamento"),
+		DATA_RECOLHIMENTO("dataRecolhimento"),
+		PARCIAL("parcial"),
+		SALDO("saldo");
+		
+		private String nomeColuna;
+		
+		private OrdenacaoColunaConsulta(String nomeColuna) {
+			this.nomeColuna = nomeColuna;
+		}
+		
+		@Override
+		public String toString() {
+			return this.nomeColuna;
+		}
+	}
+	
+	public FiltroEdicoesFechadasDTO() {
 	}
 
-	public FiltroEdicoesFechadasDTO(Date dateDe, Date dateAte) {
-		this.dateDe = dateDe;
-		this.dateAte = dateAte;
+	public PaginacaoVO getPaginacao() {
+		return paginacao;
 	}
 
-	public Date getDateDe() {
-		return dateDe;
+	public void setPaginacao(PaginacaoVO paginacao) {
+		this.paginacao = paginacao;
 	}
 
-	public void setDateDe(Date dateDe) {
-		this.dateDe = dateDe;
+	public OrdenacaoColunaConsulta getOrdenacaoColuna() {
+		return ordenacaoColuna;
 	}
 
-	public Date getDateAte() {
-		return dateAte;
+	public void setOrdenacaoColuna(OrdenacaoColunaConsulta ordenacaoColuna) {
+		this.ordenacaoColuna = ordenacaoColuna;
 	}
 
-	public void setDateAte(Date dateAte) {
-		this.dateAte = dateAte;
+	public Date getDataDe() {
+		return dataDe;
+	}
+
+	public void setDataDe(Date dataDe) {
+		this.dataDe = dataDe;
+	}
+
+	public Date getDataAte() {
+		return dataAte;
+	}
+
+	public void setDataAte(Date dataAte) {
+		this.dataAte = dataAte;
 	}
 
 	public String getCodigoFornecedor() {
@@ -52,5 +86,5 @@ public class FiltroEdicoesFechadasDTO {
 	public void setCodigoFornecedor(String codigoFornecedor) {
 		this.codigoFornecedor = codigoFornecedor;
 	}
-	
+
 }

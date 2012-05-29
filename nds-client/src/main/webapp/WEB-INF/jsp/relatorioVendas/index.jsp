@@ -686,7 +686,7 @@
 				display : 'Hist.',
 				name : 'hist',
 				width : 30,
-				sortable : true,
+				sortable : false,
 				align : 'center'
 			} ],
 			sortname : "codigo",

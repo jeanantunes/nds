@@ -63,8 +63,8 @@
             <table width="100%" border="0" cellspacing="2" cellpadding="2">
 			  <tr>
 			    <td width="70%">
-			    <span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
-			    <span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_impressora.gif" alt="Imprimir" hspace="5" border="0" />Imprimir</a></span>
+			    <span class="bt_novos" title="Gerar Arquivo"><a href="${pageContext.request.contextPath}/estoque/edicoesFechadas/exportar?fileType=XLS"><img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
+			    <span class="bt_novos" title="Imprimir"><a href="${pageContext.request.contextPath}/estoque/edicoesFechadas/exportar?fileType=PDF"><img src="${pageContext.request.contextPath}/images/ico_impressora.gif" alt="Imprimir" hspace="5" border="0" />Imprimir</a></span>
 			    </td>
 			    <td width="5%">&nbsp;</td>
 			    <td width="9%" align="right"><strong>Total:</strong></td>

@@ -1,5 +1,6 @@
 package br.com.abril.nds.service.impl;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -34,6 +35,21 @@ public class EdicoesFechadasServiceImpl implements EdicoesFechadasService {
 		}
 		// Filtra por fornecedor específico
 		return edicoesFechadasRepository.obterResultadoEdicoesFechadas(dataDe, dateAte, codigoFornecedor);
+	}
+
+	/* (non-Javadoc)
+	 * @see br.com.abril.nds.service.EdicoesFechadasService#obterTotalResultadoEdicoesFechadas(java.util.Date, java.util.Date, java.lang.String)
+	 */
+	@Override
+	@Transactional(readOnly = true)
+	public BigDecimal obterTotalResultadoEdicoesFechadas(
+			Date dataDe, Date dateAte, String codigoFornecedor) {
+		if (codigoFornecedor == null || codigoFornecedor.isEmpty() || codigoFornecedor.equalsIgnoreCase("Todos")) {
+			// Retorna todos os fornecedores
+			return edicoesFechadasRepository.obterResultadoTotalEdicoesFechadas(dataDe, dateAte);
+		}
+		// Filtra por fornecedor específico
+		return edicoesFechadasRepository.obterResultadoTotalEdicoesFechadas(dataDe, dateAte, codigoFornecedor);
 	}
 	
 }
