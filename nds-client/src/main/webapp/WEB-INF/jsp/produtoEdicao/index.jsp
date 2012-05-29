@@ -632,7 +632,7 @@ fieldset {
 		<div class="linha_separa_fields">&nbsp;</div>
 		
 		<fieldset class="classFieldset">
-			<legend>Edi&ccedil;&otilde;es do Produto</legend>
+			<legend>Edi&ccedil;&otilde;es do Produto<span id="labelNomeProduto" /></legend>
 			<div class="grids" style="display:none;">
 				<table class="edicoesGrid"></table>
 			</div>
