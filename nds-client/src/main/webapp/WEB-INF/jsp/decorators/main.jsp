@@ -165,6 +165,10 @@ fieldset label {
 					<li><span class="classCadastros">&nbsp;</span><a
 						href="javascript:;">Cadastro</a>
 						<ul>
+							<li>
+								<a href='<c:url value="/produto"/>'>Produtos</a>
+							</li>
+							<li><a href='<c:url value="/cadastro/edicao"/>'>Edi&ccedil;&atilde;o</a></li>
 							<li><a href='<c:url value="/banco/bancos"/>'>Bancos</a>
 							</li>
 							<li><a href='<c:url value="/cadastro/box"/>'>Box</a>
@@ -232,6 +236,7 @@ fieldset label {
 							<li><a href="Financeiro/help_financeiro.htm">Help</a>
 							</li>
 						</ul></li>
+						
 					<li><span class="classEstoque">&nbsp;</span><a
 						href="javascript:;">Estoque</a>
 						<ul>
@@ -330,8 +335,9 @@ fieldset label {
 									Encalhe Cota</a>
 							</li>
 
-							<li><a href="Recolhimento/consulta_informe_encalhe.htm">Consulta
+							<li><a href='<c:url value="/devolucao/informeEncalhe/"/>'>Consulta
 									de Informe de Encalhe</a>
+									
 							</li>
 							<li><a href="Recolhimento/edicoes_chamada.htm">Consulta
 									CE</a>

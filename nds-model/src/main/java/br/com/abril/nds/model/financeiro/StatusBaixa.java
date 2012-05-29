@@ -3,6 +3,7 @@ package br.com.abril.nds.model.financeiro;
 public enum StatusBaixa {
 	
 	PAGO,
+	PAGAMENTO_PARCIAL,
 	PAGO_DIVERGENCIA_VALOR,
 	PAGO_DIVERGENCIA_DATA,
 	PAGO_BOLETO_NAO_ENCONTRADO,

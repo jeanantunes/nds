@@ -85,7 +85,7 @@ public class ServicoController {
 			this.processarServicos(listaTipoEntrega, total, page);
 			
 		} catch (Exception e) {
-			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, "Erro ao tentar pesquisar."));
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, "Erro ao Pesquisar os Serviços de Entrega."));
 		}
 	}
 	
@@ -149,7 +149,7 @@ public class ServicoController {
 		} catch (UniqueConstraintViolationException e) {
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, "Serviço de Entrega não pode ser excluído."));	
 		} catch (Exception e) {
-			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, "Erro excluir o Serviço de Entrega!"));
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, "Erro ao excluir o Serviço de Entrega!"));
 		}
 		
 		this.result.use(Results.json()).from(

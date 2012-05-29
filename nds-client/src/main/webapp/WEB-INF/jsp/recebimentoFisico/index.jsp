@@ -677,11 +677,7 @@ validarEdicaoCallBack : function() {
     *FAZ A VERIFICACAO SE EXISTE QUANTIDADE NÃO PREENCHIDA PARA NOTA INTERFACE
     */
     function verificarQuantidade(){
-    	$.postJSON("<c:url value='/estoque/recebimentoFisico/validarItensRecebimento'/>", "", 
-
-    			function(result) {
-    		        exibirMensagem(result.tipoMensagem, result.listaMensagens);
-    			});
+    	$.postJSON("<c:url value='/estoque/recebimentoFisico/validarItensRecebimento'/>", "");
     }
 
     /**
