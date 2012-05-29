@@ -141,4 +141,13 @@ public interface ProdutoEdicaoRepository extends Repository<ProdutoEdicao, Long>
 	public List<ProdutoEdicaoDTO> pesquisarEdicoes(ProdutoEdicaoDTO dto,
 			String sortorder, String sortname, int initialResult, int maxResults);
 	
+	/**
+	 * Obtém a quantidade de edições cadastradas filtradas pelos critérios 
+	 * escolhidos pelo usuário.
+	 * 
+	 * @param dto
+	 * @return
+	 */
+	public Long countPesquisarEdicoes(ProdutoEdicaoDTO dto);
+	
 }

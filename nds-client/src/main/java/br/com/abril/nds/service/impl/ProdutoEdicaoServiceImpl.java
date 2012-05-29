@@ -205,4 +205,18 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 		return this.produtoEdicaoRepository.pesquisarEdicoes(dto, sortorder,
 				sortname, initialResult, maxResults);
 	}
+	
+	/**
+	 * Obtém a quantidade de edições cadastradas filtradas pelos critérios 
+	 * escolhidos pelo usuário.
+	 * 
+	 * @param dto
+	 * @return
+	 */
+	@Transactional(readOnly = true)
+	public Long countPesquisarEdicoes(ProdutoEdicaoDTO dto) {
+		
+		return this.produtoEdicaoRepository.countPesquisarEdicoes(dto);
+	}
+	
 }

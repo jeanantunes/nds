@@ -39,6 +39,9 @@ public class ProdutoEdicaoDTO implements Serializable {
 	private StatusLancamento situacaoLancamento;
 	private String nomeFornecedor;
 	private TipoLancamento tipoLancamento;
+	private String statusLancamento;
+	private String statusSituacao;
+	private String temBrinde;
 	
 	
 	/**
@@ -219,6 +222,37 @@ public class ProdutoEdicaoDTO implements Serializable {
 	 */
 	public void setTipoLancamento(TipoLancamento tipoLancamento) {
 		this.tipoLancamento = tipoLancamento;
+	}
+	
+	/**
+	 * @return the tipoLancamento
+	 */
+	public String getStatusLancamento() {
+		return this.statusLancamento;
+	}
+	public void setStatusLancamento(TipoLancamento statusLancamento) {
+		this.statusLancamento = statusLancamento.getDescricao(); 
+	}
+	
+	/**
+	 * @return the situacaoLancamento
+	 */
+	public String getStatusSituacao() {
+		return this.statusSituacao;
+	}
+	public void setStatusSituacao(StatusLancamento statusSituacao) {
+		this.statusSituacao = statusSituacao.getDescricao();
+	}
+	
+	/**
+	 * 
+	 * @return the possuiBrindeDescricao;
+	 */
+	public String getTemBrinde() {
+		return this.temBrinde;
+	}
+	public void setTemBrinde(Boolean temBrinde) {
+		this.temBrinde = temBrinde.booleanValue() ? "Sim" : "Não";
 	}
 	
 }

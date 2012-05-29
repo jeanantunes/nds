@@ -29,6 +29,26 @@ function pesquisarEdicoes() {
 	$(".edicoesGrid").flexReload();
 }
 
+function executarPreProcessamento(resultado) {
+
+	$.each(resultado.rows, function(index, row) {
+		
+		var linkAprovar = '<a href="javascript:;" onclick="editarEdicao(' + row.cell.id + ');" style="cursor:pointer">' +
+				     	  	'<img title="Editar" src="${pageContext.request.contextPath}/images/ico_editar.gif" hspace="5" border="0px" />' +
+				  		  '</a>';
+		
+		var linkExcluir = '<a href="javascript:;" onclick="removerEdicao(' + row.cell.id + ');" style="cursor:pointer">' +
+						   	 '<img title="Excluir" src="${pageContext.request.contextPath}/images/ico_excluir.gif" hspace="5" border="0px" />' +
+						   '</a>';
+		
+		row.cell.acao = linkAprovar + linkExcluir;
+	});
+		
+	$(".grids").show();
+	
+	return resultado;
+}
+
 
 function popup() {
 		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
@@ -596,7 +616,7 @@ fieldset {
 		<div class="linha_separa_fields">&nbsp;</div>
 		
 		<fieldset class="classFieldset">
-			<legend>Edi&ccedil;ões do Produto: 4455 - Veja</legend>
+			<legend>Edi&ccedil;ões do Produto: 4455 - Veja 1</legend>
 			<div class="grids" style="display:none;">
 				<table class="edicoesGrid"></table>
 			</div>
@@ -656,47 +676,47 @@ fieldset {
 		
 		
 	$(".edicoesGrid").flexigrid({
-			//url : '../xml/edicoes-xml.xml',
-			dataType : 'xml',
+		preProcess: executarPreProcessamento,
+		dataType : 'json',
 			colModel : [ {
 				display : 'C&oacute;digo',
-				name : 'codigo',
+				name : 'codigoProduto',
 				width : 60,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Nome Comercial',
-				name : 'nomeComercialProduto',
+				name : 'nomeProduto',
 				width : 180,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Edi&ccedil;&atilde;o',
-				name : 'edicao',
+				name : 'numeroEdicao',
 				width : 50,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Fornecedor',
-				name : 'fornecedor',
+				name : 'nomeFornecedor',
 				width : 200,
 				sortable : true,
 				align : 'left',
 			}, {
 				display : 'Tipo de Lan&ccedil;amento',
-				name : 'tipoLancto',
+				name : 'statusLancamento',
 				width : 120,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Situa&ccedil;&atilde;o',
-				name : 'situacao',
+				name : 'statusSituacao',
 				width : 115,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Brinde',
-				name : 'brinde',
+				name : 'temBrinde',
 				width : 60,
 				sortable : true,
 				align : 'left'
@@ -719,8 +739,8 @@ fieldset {
 		
 		
 		$(".produtoEdicaoBaseGrid").flexigrid({
-			//url : '../xml/produtos-edicao-base-xml.xml',
-			dataType : 'xml',
+			preProcess: executarPreProcessamento,
+			dataType : 'json',
 			colModel : [ {
 				display : 'C&oacute;digo',
 				name : 'codigo',
