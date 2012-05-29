@@ -44,7 +44,7 @@ public class FaixaCepUf implements Serializable {
 	
     @ManyToOne
 	@JoinColumn(name="SIGLA_UF", nullable=false, insertable=false, updatable=false)
-	private UnidadeFederacao unidadesFederacao;
+	private UnidadeFederacao unidadeFederacao;
 
     public FaixaCepUf() {
     }
@@ -120,17 +120,19 @@ public class FaixaCepUf implements Serializable {
 	}
 
 	/**
-	 * @return the unidadesFederacao
+	 * @return the unidadeFederacao
 	 */
-	public UnidadeFederacao getUnidadesFederacao() {
-		return unidadesFederacao;
+	public UnidadeFederacao getUnidadeFederacao() {
+		return unidadeFederacao;
 	}
 
 	/**
-	 * @param unidadesFederacao the unidadesFederacao to set
+	 * @param unidadeFederacao the unidadeFederacao to set
 	 */
-	public void setUnidadesFederacao(UnidadeFederacao unidadesFederacao) {
-		this.unidadesFederacao = unidadesFederacao;
+	public void setUnidadeFederacao(UnidadeFederacao unidadeFederacao) {
+		this.unidadeFederacao = unidadeFederacao;
 	}
+
+	
 
 }

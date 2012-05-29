@@ -18,8 +18,6 @@ public class TituloPatente implements Serializable {
 	private static final long serialVersionUID = 6071629238653956307L;
 
 	@Id
-	@SequenceGenerator(name="DNE_GU_TITULOS_PATENTES_ID_GENERATOR", sequenceName="DNE_GU_TITULOS_PATENTES_SEQ")
-	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="DNE_GU_TITULOS_PATENTES_ID_GENERATOR")
 	@Column(name="CHAVE_TIT_PAT_LOG_DNE", unique=true, nullable=false)
 	private String id;
 

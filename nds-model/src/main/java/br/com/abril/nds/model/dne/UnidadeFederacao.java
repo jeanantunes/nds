@@ -5,13 +5,10 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 
@@ -29,8 +26,6 @@ public class UnidadeFederacao implements Serializable {
 	private static final long serialVersionUID = 1528902275097474122L;
 
 	@Id
-	@SequenceGenerator(name="DNE_GU_UNIDADES_FEDERACAO_SIGLA_GENERATOR", sequenceName="DNE_GU_UNIDADES_FEDERACAO_SEQ")
-	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="DNE_GU_UNIDADES_FEDERACAO_SIGLA_GENERATOR")
 	@Column(name="SIGLA_UF", unique=true, nullable=false, length=2)
 	private String sigla;
 
@@ -43,10 +38,10 @@ public class UnidadeFederacao implements Serializable {
 	@Column(name="NOME_OFICIAL_UF", length=72)
 	private String nome;
 
-	@OneToMany(mappedBy="dneGuUnidadesFederacao")
+	@OneToMany(mappedBy="unidadeFederacao")
 	private List<FaixaCepUf> faixasCepUfs;
 
-	@OneToMany(mappedBy="dneGuUnidadesFederacao")
+	@OneToMany(mappedBy="unidadeFederacao")
 	private List<Localidade> localidades;
 
     @ManyToOne

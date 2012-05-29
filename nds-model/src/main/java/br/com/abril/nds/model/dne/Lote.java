@@ -5,13 +5,10 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 
@@ -29,8 +26,6 @@ public class Lote implements Serializable {
 	private static final long serialVersionUID = 1686057435538527825L;
 
 	@Id
-	@SequenceGenerator(name="DNE_GU_LOGRADOUROS_NUM_LOTE_ID_GENERATOR", sequenceName="DNE_GU_LOGRADOUROS_NUM_LOTE_SEQ")
-	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="DNE_GU_LOGRADOUROS_NUM_LOTE_ID_GENERATOR")
 	@Column(name="CHAVE_LOT_DNE", unique=true, nullable=false)
 	private String id;
 
@@ -40,7 +35,7 @@ public class Lote implements Serializable {
 	@Column(name="NUM_LOT_DNE", length=11)
 	private String numero;
 
-	@OneToMany(mappedBy="dneGuLogradourosNumLote")
+	@OneToMany(mappedBy="lote")
 	private List<Complemento> complementos;
 
     @ManyToOne

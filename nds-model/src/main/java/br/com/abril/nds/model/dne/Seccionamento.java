@@ -4,12 +4,9 @@ import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 
@@ -28,8 +25,6 @@ public class Seccionamento implements Serializable {
 	private static final long serialVersionUID = -6471398752412706359L;
 
 	@Id
-	@SequenceGenerator(name="DNE_GU_LOGRADOUROS_SEC_ID_GENERATOR", sequenceName="DNE_GU_LOGRADOUROS_SEC_SEQ")
-	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="DNE_GU_LOGRADOUROS_SEC_ID_GENERATOR")
 	@Column(name="CHAVE_SECC_DNE", unique=true, nullable=false)
 	private String id;
 

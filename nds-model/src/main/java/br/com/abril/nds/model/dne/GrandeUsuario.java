@@ -4,12 +4,9 @@ import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 
@@ -27,8 +24,6 @@ public class GrandeUsuario implements Serializable {
 	private static final long serialVersionUID = 1369950716913195740L;
 
 	@Id
-	@SequenceGenerator(name="DNE_GU_GRANDES_USUARIOS_ID_GENERATOR", sequenceName="DNE_GU_GRANDES_USUARIOS_SEQ")
-	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="DNE_GU_GRANDES_USUARIOS_ID_GENERATOR")
 	@Column(name="CHAVE_GU_DNE", unique=true, nullable=false)
 	private String id;
 

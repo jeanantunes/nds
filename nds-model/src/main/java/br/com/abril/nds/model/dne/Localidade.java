@@ -5,14 +5,11 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 
@@ -31,8 +28,6 @@ public class Localidade implements Serializable {
 	private static final long serialVersionUID = 4438288966441513488L;
 
 	@Id
-	@SequenceGenerator(name="DNE_GU_LOCALIDADES_CHAVELOCDNE_GENERATOR", sequenceName="DNE_GU_LOCALIDADES_SEQ")
-	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="DNE_GU_LOCALIDADES_CHAVELOCDNE_GENERATOR")
 	@Column(name="CHAVE_LOC_DNE", unique=true, nullable=false)
 	private String id;
 
@@ -60,33 +55,33 @@ public class Localidade implements Serializable {
 	@Column(name="TIPO_LOCALIDADE", length=1)
 	private String tipoLocalidade;
 
-	@OneToMany(mappedBy="dneGuLocalidade")
+	@OneToMany(mappedBy="localidade")
 	private List<Bairro> bairros;
 
-	@OneToMany(mappedBy="dneGuLocalidade")
+	@OneToMany(mappedBy="localidade")
 	private List<CaixaPostalComunitaria> caixasPostaisComunitarias;
 
-	@OneToMany(mappedBy="dneGuLocalidade")
+	@OneToMany(mappedBy="localidade")
 	private List<FaixaCepLocalidade> faixasCepLocalidades;
 
-	@OneToMany(mappedBy="dneGuLocalidade")
+	@OneToMany(mappedBy="localidade")
 	private List<GrandeUsuario> grandesUsuarios;
 
 	@OneToOne
 	@JoinColumn(name="CHAVE_LOC_DNE", nullable=false, insertable=false, updatable=false)
 	private Localidade localidade1;
 
-	@OneToOne(mappedBy="dneGuLocalidade1")
+	@OneToOne(mappedBy="localidade1")
 	private Localidade localidade2;
 
     @ManyToOne
 	@JoinColumn(name="SIGLA_UF")
 	private UnidadeFederacao unidadeFederacao;
 
-	@OneToMany(mappedBy="dneGuLocalidade")
+	@OneToMany(mappedBy="localidade")
 	private List<Logradouro> logradouros;
 
-	@OneToMany(mappedBy="dneGuLocalidade")
+	@OneToMany(mappedBy="localidade")
 	private List<UnidadeOperacional> unidadesOperacionais;
 
     public Localidade() {

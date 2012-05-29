@@ -4,12 +4,9 @@ import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 
@@ -29,8 +26,6 @@ public class CaixaPostalComunitaria implements Serializable {
 	private static final long serialVersionUID = 517200942458327946L;
 
 	@Id
-	@SequenceGenerator(name="DNE_GU_CAIXAS_POSTAIS_COMUNIT_ID_GENERATOR", sequenceName="DNE_GU_CAIXAS_POSTAIS_COMUNIT_SEQ")
-	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="DNE_GU_CAIXAS_POSTAIS_COMUNIT_ID_GENERATOR")
 	@Column(name="CHAVE_CX_POSTAL_COMU", unique=true, nullable=false)
 	private String id;
 

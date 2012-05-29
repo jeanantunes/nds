@@ -1,7 +1,13 @@
 package br.com.abril.nds.model.dne;
 
 import java.io.Serializable;
-import javax.persistence.*;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
 
 
@@ -20,8 +26,6 @@ public class Complemento implements Serializable {
 	private static final long serialVersionUID = 7468101631962909249L;
 
 	@Id
-	@SequenceGenerator(name="DNE_GU_LOGRADOUROS_COMPL1_ID_GENERATOR", sequenceName="DNE_GU_LOGRADOUROS_COMPL1_SEQ")
-	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="DNE_GU_LOGRADOUROS_COMPL1_ID_GENERATOR")
 	@Column(name="CHAVE_COMPLE_1_DNE", unique=true, nullable=false)
 	private String id;
 

@@ -18,8 +18,6 @@ public class TipoLogradouro implements Serializable {
 	private static final long serialVersionUID = -3479736653601925380L;
 
 	@Id
-	@SequenceGenerator(name="DNE_GU_TIPOS_LOGRADOURO_ID_GENERATOR", sequenceName="DNE_GU_TIPOS_LOGRADOURO_SEQ")
-	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="DNE_GU_TIPOS_LOGRADOURO_ID_GENERATOR")
 	@Column(name="CHAVE_TP_LOG_DNE", unique=true, nullable=false)
 	private String id;
 

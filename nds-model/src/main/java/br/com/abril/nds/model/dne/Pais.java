@@ -20,8 +20,6 @@ public class Pais implements Serializable {
 	private static final long serialVersionUID = -6731085702979436569L;
 
 	@Id
-	@SequenceGenerator(name="DNE_GU_PAISES_SIGLA_GENERATOR", sequenceName="DNE_GU_PAISES_SEQ")
-	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="DNE_GU_PAISES_SIGLA_GENERATOR")
 	@Column(name="SIGLA_PAIS_1", unique=true, nullable=false, length=2)
 	private String sigla;
 
@@ -40,7 +38,7 @@ public class Pais implements Serializable {
 	@Column(name="SIGLA_PAIS_2", length=3)
 	private String sigla2;
 
-	@OneToMany(mappedBy="dneGuPais")
+	@OneToMany(mappedBy="pais")
 	private List<UnidadeFederacao> unidadesFederacoes;
 
     public Pais() {

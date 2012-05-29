@@ -1,8 +1,15 @@
 package br.com.abril.nds.model.dne;
 
 import java.io.Serializable;
-import javax.persistence.*;
 import java.util.List;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 
 /**
  * @author Discover Technology
@@ -18,8 +25,6 @@ public class Bairro implements Serializable {
 	private static final long serialVersionUID = 2098584768905693662L;
 
 	@Id
-	@SequenceGenerator(name="DNE_GU_BAIRROS_ID_GENERATOR", sequenceName="DNE_GU_BAIRROS_SEQ")
-	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="DNE_GU_BAIRROS_ID_GENERATOR")
 	@Column(name="CHAVE_BAI_DNE", unique=true, nullable=false)
 	private String id;
 
@@ -38,7 +43,7 @@ public class Bairro implements Serializable {
 	private Localidade localidade;
 
 	
-	@OneToMany(mappedBy="dneGuBairro")
+	@OneToMany(mappedBy="bairro")
 	private List<FaixaCepBairro> faixasCepBairros;
 
     public Bairro() {
