@@ -73,7 +73,7 @@ public class TipoProdutoController {
 		try {
 			this.tipoProdutoService.remover(id);
 		} catch (UniqueConstraintViolationException e) {
-			throw new ValidacaoException(TipoMensagem.ERROR, e.getMessage());
+			throw new ValidacaoException(TipoMensagem.WARNING, e.getMessage());
 		}
 				
 		this.resutl.use(Results.json()).from("OK").serialize();
@@ -100,7 +100,7 @@ public class TipoProdutoController {
 		}
 		
 		if (!listaMensagens.isEmpty()) {
-			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR,
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING,
 					listaMensagens));
 		}
 	}
