@@ -211,14 +211,6 @@
 	    		<input type="text" id="chaveAcessoNFE" style="width:510px;" />
 	    	</td>
     	</tr>
-		<tr>
-			<td>&nbsp;</td>
-			<td colspan="3">
-				<span class="bt_add">
-					<a href="javascript:;">Incluir Novo</a>
-				</span>
-			</td>
-		</tr>
 	</table>
 </div>
 
