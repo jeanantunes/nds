@@ -616,7 +616,7 @@ fieldset {
 		<div class="linha_separa_fields">&nbsp;</div>
 		
 		<fieldset class="classFieldset">
-			<legend>Edi&ccedil;ões do Produto: 4455 - Veja 1</legend>
+			<legend>Edi&ccedil;ões do Produto</legend>
 			<div class="grids" style="display:none;">
 				<table class="edicoesGrid"></table>
 			</div>
