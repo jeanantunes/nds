@@ -26,27 +26,7 @@
 	    
 	    
 	    //POPUPS
-	    function popup_baixa_dividas() {
-			$( "#dialog-baixa-dividas" ).dialog({
-				resizable: false,
-				height:430,
-				width:480,
-				modal: true,
-				buttons: {
-					"Confirmar": function() {
-						
-						popup_confirma_baixa_dividas();
-						
-						$( this ).dialog( "close" );
-					},
-					"Cancelar": function() {
-						$( this ).dialog( "close" );
-					}
-				}
-			});
-		};
-
-		function popup_detalhes(codigo) {
+	    function popup_detalhes(codigo) {
 			
 			obterDetalhesDivida(codigo);
 			
@@ -62,6 +42,28 @@
 				}
 			});
 		};
+		
+	    function popup_baixa_dividas() {
+			$( "#dialog-baixa-dividas" ).dialog({
+				resizable: false,
+				height:430,
+				width:480,
+				modal: true,
+				buttons: {
+					"Confirmar": function() {
+						
+						popup_confirma_baixa_dividas();
+						
+					},
+					"Cancelar": function() {
+						$( this ).dialog( "close" );
+					}
+				},
+				beforeClose: function() {
+					clearMessageDialogTimeout("idModalBaixaDividas");
+			    }
+			});
+		};
 
 		function popup_confirma_baixa_dividas() {
 			$( "#dialog-confirma-baixa" ).dialog({
@@ -72,14 +74,43 @@
 				buttons: {
 					"Confirmar": function() {
 						
-						baixaManualDividas();
+						popup_confirma_pendente();
 						
 						$( this ).dialog( "close" );
 					},
 					"Cancelar": function() {
 						$( this ).dialog( "close" );
 					}
-				}
+				},
+				beforeClose: function() {
+					clearMessageDialogTimeout("idModalBaixaDividas");
+			    }
+			});
+		};
+		
+		function popup_confirma_pendente() {
+			$( "#dialog-confirma-pendente" ).dialog({
+				resizable: false,
+				height:170,
+				width:380,
+				modal: true,
+				buttons: {
+					"Sim": function() {
+						
+						baixaManualDividas(true);
+						
+						$( this ).dialog( "close" );
+					},
+					"Não": function() {
+						
+						baixaManualDividas(false);
+						
+						$( this ).dialog( "close" );
+					}
+				},
+				beforeClose: function() {
+					clearMessageDialogTimeout("idModalBaixaDividas");
+			    }
 			});
 		};
 		
@@ -351,8 +382,6 @@
         //POPULA GRADE DE DETALHES DA DIVIDA E CALCULA SALDO DE DIVIDAS
         function obterDetalhesDivida(idDividaCobranca){
         	
-        	obterSaldoDivida(idDividaCobranca);
-        	
 			$(".dadosDividaGrid").flexOptions({
 				url: "<c:url value='/financeiro/obterDetalhesDivida' />",
 				params: [
@@ -365,31 +394,25 @@
 		}
 		
 		function getDataFromResultDivida(resultado) {
+			
+			var saldoDivida=0;
+			$.each(resultado.rows, function(index, row) {
+				saldoDivida = saldoDivida + intValue(removeMascaraPriceFormat(row.cell.valor));
+			});
+			
+			$("#saldoDividaHidden").val(saldoDivida);
+			$('#saldoDividaHidden').priceFormat({
+			    allowNegative: true,
+				centsSeparator: ',',
+				thousandsSeparator: '.'
+			});
+			$("#saldoDivida").html($("#saldoDividaHidden").val());
+			
 			$(".grids").show();
+			
 			return resultado;
 		}
-		
-		
-		
-		
-		//OBTENÇÃO DE SALDO DA DIVIDA
-		function obterSaldoDivida(idDividaCobranca) {
-			var data = [{name: 'idCobranca', value: idDividaCobranca}];
-			$.postJSON("<c:url value='/financeiro/obterSaldoDivida' />",
-					   data,
-					   sucessCallbackSaldoDivida,
-					   null);
-		}
-		
-		function sucessCallbackSaldoDivida(resultado){
-			 $("#saldoDividaHidden").val(resultado);
-			 $('#saldoDividaHidden').priceFormat({
-					allowNegative: true,
-					centsSeparator: ',',
-				    thousandsSeparator: '.'
-			 });
-		}
-		
+
 		
 		
 		
@@ -665,9 +688,12 @@
         	
 			var valorDividas = removeMascaraPriceFormat($("#valorDividasHidden").val());		
 			var valorPago = removeMascaraPriceFormat($("#valorPagoDividas").val());
+			
 			var desconto = removeMascaraPriceFormat($("#descontoDividas").val());
+			var juros = removeMascaraPriceFormat($("#jurosDividas").val());
+			var multa = removeMascaraPriceFormat($("#multaDividas").val());
 
-			var valorSaldo = intValue(valorDividas) - ( intValue(valorPago) + intValue(desconto) );
+			var valorSaldo = intValue(valorDividas) + intValue(juros) + intValue(multa) - ( intValue(valorPago) + intValue(desconto) );
 			
 			if (valorSaldo < 0){
 				valorSaldo = 0;
@@ -687,7 +713,7 @@
         
         
         //EFETUA BAIXA MANUAL DE DIVIDAS SELECIONADAS E CALCULADAS
-        function baixaManualDividas() {
+        function baixaManualDividas(manterPendente) {
 
         	var valorDividas = $("#valorDividas").html();
         	var multaDividas = $("#multaDividas").val();
@@ -698,8 +724,10 @@
         	var formaRecebimentoDividas = $("#formaRecebimentoDividas").val();
         	var observacoesDividas = $("#observacoesDividas").val();
 
+        	var telaMensagem="idModalBaixaDividas";
 			$.postJSON("<c:url value='/financeiro/baixaManualDividas'/>",
-					   "valorDividas="+valorDividas+
+					   "manterPendente="+manterPendente+
+					   "&valorDividas="+valorDividas+
 					   "&valorMulta="+ multaDividas +
 					   "&valorJuros="+ jurosDividas+
 					   "&valorDesconto="+ descontoDividas +
@@ -708,9 +736,21 @@
 					   "&tipoPagamento="+ formaRecebimentoDividas+
 					   "&observacoes="+ observacoesDividas +
 					   "&"+obterCobrancasDividasMarcadas(),
+					   function(mensagens) {
+				           $("#dialog-baixa-dividas").dialog("close");
+			        	   if (mensagens){
+			        		   telaMensagem=null;
+							   var tipoMensagem = mensagens.tipoMensagem;
+							   var listaMensagens = mensagens.listaMensagens;
+							   if (tipoMensagem && listaMensagens) {
+							       exibirMensagem(tipoMensagem, listaMensagens);
+						       }
+			        	   }	   
+				           buscaManual();
+		               },
 					   null,
-					   null,
-					   true);
+					   true,
+					   telaMensagem);
 			
 		}
 		
@@ -718,26 +758,19 @@
         
         
         //OBTEM VALIDAÇÃO DE PERMISSÃO DE NEGOCIAÇÃO
-        function obterNegociacao(dataVencimento) {
-			var data = [{name: 'dataVencimento', value: dataVencimento}];
+        function obterNegociacao() {
 			$.postJSON("<c:url value='/financeiro/obterNegociacao' />",
-					   data,
-					   popup_negociacao());
+					   obterCobrancasDividasMarcadas());
 		}
-		
-        function popup_negociacao() {
-			$( "#dialog-negociar-dividas" ).dialog({
-				resizable: false,
-				height:350,
-				width:650,
-				modal: true,
-				buttons: {
-					"Fechar": function() {
-						$( this ).dialog( "close" );
-					}
-				}
-			});
-		};
+        
+        
+        
+        
+        //OBTEM VALIDAÇÃO DE PERMISSÃO DE POSTERGAÇÃO
+        function obterPostergacao() {
+			$.postJSON("<c:url value='/financeiro/obterPostergacao' />",
+					   obterCobrancasDividasMarcadas());
+		}
 		
 		
 		
@@ -831,7 +864,7 @@
 		#resultadoIntegracao{display:none;}
         #tableBaixaManual, #tableBaixaAuto, #extratoBaixaManual, #porNossoNumero, #porCota, #dialog-divida{display:none;}
         #dialog-baixa-dividas,#dialog-detalhes-divida,#dialog-baixa-dividas{display:none;}
-        #dialog-confirma-baixa-numero,#dialog-confirma-baixa,#dialog-negociar-dividas{display:none;}
+        #dialog-confirma-baixa-numero,#dialog-confirma-baixa,#dialog-confirma-pendente{display:none;}
         
 	</style>
 	
@@ -1122,15 +1155,29 @@
 		       <table width="100%" border="0" cellspacing="2" cellpadding="2">
 		            <tr>
 		            
-		                <td width="20%"><span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
-		                <span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
+		                <td width="20%">
+		                    <span class="bt_novos" title="Gerar Arquivo">
+								<a href="${pageContext.request.contextPath}/financeiro/exportar?fileType=XLS">
+									<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
+									Arquivo
+								</a>
+							</span>
+							
+							<span class="bt_novos" title="Imprimir">
+								<a href="${pageContext.request.contextPath}/financeiro/exportar?fileType=PDF">
+									<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
+									Imprimir
+								</a>
+							</span>
 		                </td>
-		                <td width="20%">   
-		                    <span class="bt_confirmar_novo" title="Pagar Boleto"><a onclick="obterPagamentoDividas();" href="javascript:;"><img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_check.gif">Pagar</a></span>
-		                    <span class="bt_confirmar_novo" title="Negociar Dívida"><a onclick="obterNegociacao('01/01/2012');" href="javascript:;"><img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_check.gif">Negociar</a></span>
+
+		                <td width="30%">   
+		                    <span class="bt_confirmar_novo" title="Pagar Dívida"><a onclick="obterPagamentoDividas();" href="javascript:;"><img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_check.gif">À Vista</a></span>
+		                    <span class="bt_confirmar_novo" title="Negociar Dívida"><a onclick="obterNegociacao();" href="javascript:;"><img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_check.gif">Negociar</a></span>
+		                    <span class="bt_confirmar_novo" title="Postergar Dívida"><a onclick="obterPostergacao();" href="javascript:;"><img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_check.gif">Postergar</a></span>
 		                </td>
 		                
-		                <td width="15%">
+		                <td width="14%">
 		                    <strong>Total Selecionado R$:</strong>
 		                </td>
 		                <td width="7%" id="totalDividasSelecionadas"></td>
@@ -1140,12 +1187,12 @@
 		                </td>
 		                <td width="7%" id="totalDividas"></td>
 		                
-		                <td width="25%">
+		                <td width="20%">
 		                
 		                    <span class="checar">
 		                        
 		                        <label for="textoSelTodos" id="textoSelTodos">
-		                            Selecionar Todos
+		                            Marcar Todos
 		                        </label>
 		                        
 		                        <input type="checkbox" id="selTodos" name="selTodos" onclick="selecionarTodos(this.checked);" style="float:left;"/>
@@ -1161,6 +1208,11 @@
 		    </div>
 		
 			<div id="dialog-baixa-dividas" title="Baixa Bancária">
+			
+			    <jsp:include page="../messagesDialog.jsp">
+			        <jsp:param value="idModalBaixaDividas" name="messageDialog"/>
+		        </jsp:include>
+			
 				<table width="433" border="0" cellpadding="2" cellspacing="2">
 				  <tr>
 				    <td width="153"><strong>Valor Dívida R$:</strong>
@@ -1224,15 +1276,17 @@
 				<table class="dadosDividaGrid"></table>
                 <table>
 	                <tr>
-	                    <td id="saldoDividas"></td>
+	                    <td><strong>Saldo R$: </strong></td>
+	                    <td id="saldoDivida"></td>
 	                </tr>        
                 </table>
 			</div> 
 
 
-            <div id="dialog-negociar-dividas" title="Negociar Dívida">
-			    <p>EMS 0038 - negociar dividas</p>
-		    </div>
+            <div id="dialog-confirma-pendente" title="Baixa Manual de Dívidas">
+			    <p>Deseja manter as dívidas com o status [Pendente] até a confirmação do pagamento ?</p>
+		    </div> 
+
 			
 	    </fieldset>
     

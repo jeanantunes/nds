@@ -358,15 +358,6 @@ public class BancoController {
 								  	  BigDecimal multa,
 								  	  BigDecimal vrMulta){
 		
-		if (validator.hasErrors()) {
-			List<String> mensagens = new ArrayList<String>();
-			for (Message message : validator.getErrors()) {
-				mensagens.add(message.getMessage());
-			}
-			ValidacaoVO validacao = new ValidacaoVO(TipoMensagem.WARNING, mensagens);
-			throw new ValidacaoException(validacao);
-		}
-		
 		if (idBanco==0){
 			Banco banco = this.bancoService.obterbancoPorNumero(numero);
 			if(banco!=null){
@@ -421,6 +412,14 @@ public class BancoController {
         	throw new ValidacaoException(TipoMensagem.WARNING, "Especifique a taxa ou o valor da multa.");
 		}
 		
+        if (validator.hasErrors()) {
+			List<String> mensagens = new ArrayList<String>();
+			for (Message message : validator.getErrors()) {
+				mensagens.add(message.getMessage());
+			}
+			ValidacaoVO validacao = new ValidacaoVO(TipoMensagem.WARNING, mensagens);
+			throw new ValidacaoException(validacao);
+		}
 	}
 	
 	
