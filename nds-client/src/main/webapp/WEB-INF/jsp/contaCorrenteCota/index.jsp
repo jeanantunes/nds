@@ -130,7 +130,6 @@ function pesquisarConsignadoCota(lineId){
 			 	 	
 			      conteudoSpan = $("#listaInfoConsignado").html();
 			 	 	
-			
 			      $("#listaInfoConsignado").html(conteudoSpan + value.nomeFornecedor+":      "+value.valorTotal+"<br><br>");
 			    });
 				
