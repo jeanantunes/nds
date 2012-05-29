@@ -1,4 +1,7 @@
 <head>
+
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/produtoEdicao.js"></script>
+
 <script language="javascript" type="text/javascript">
 
 function pesquisarEdicoes() {
@@ -575,9 +578,22 @@ fieldset {
 				<tbody>
 					<tr>
 						<td width="72">C&oacute;digo:</td>
-						<td width="80" ><input type="text" name="pCodigoProduto" id="pCodigoProduto" style="width:80px;"/></td>
+						<td width="80">
+							<input type="text" name="pCodigoProduto" id="pCodigoProduto" maxlength="255" 
+									style="width:80px;" 
+									onchange="produtoEdicao.pesquisarPorCodigoProduto('#pCodigoProduto', '#pNomeProduto', false,
+											undefined,
+											undefined);" />
+						</td>
 						<td width="47">Produto:</td>
-						<td width="172"><input type="text" name="pNomeProduto" id="pNomeProduto" style="width:170px;"/></td>
+						<td width="172">
+							<input type="text" name="pNomeProduto" id="pNomeProduto" maxlength="255" 
+									style="width:170px;"
+									onkeyup="produtoEdicao.autoCompletarPorNomeProduto('#pNomeProduto', false);"
+									onblur="produtoEdicao.pesquisarPorNomeProduto('#pCodigoProduto', '#pNomeProduto', false,
+										undefined,
+										undefined);" />
+						</td>
 						<td width="100">Data Lan&ccedil;amento:</td>
 						<td width="105"><input type="text" name="pDataLancamento" id="pDataLancamento" style="width:80px;"/></td>
 						<td width="50">Situa&ccedil;&atilde;o:</td>
