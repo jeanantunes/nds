@@ -2,6 +2,7 @@ package br.com.abril.nds.client.vo;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Date;
 
 import br.com.abril.nds.util.export.Export;
@@ -38,7 +39,7 @@ public class RegistroEdicoesFechadasVO implements Serializable {
 	private boolean parcial;
 
 	@Export(label = "Saldo", exhibitionOrder = 8)
-	private BigDecimal saldo;
+	private BigInteger saldo;
 
 	public RegistroEdicoesFechadasVO(String codigoProduto, String nomeProduto,
 			Long edicaoProduto, String nomeFornecedor, Date dataLancamento,
@@ -50,7 +51,7 @@ public class RegistroEdicoesFechadasVO implements Serializable {
 		this.dataLancamento=dataLancamento;
 		this.parcial=parcial;
 		this.dataRecolhimento=dataRecolhimento;
-		this.saldo=saldo;
+		this.saldo=saldo.toBigInteger();
 	}
 
 	public String getCodigoProduto() {
@@ -108,15 +109,15 @@ public class RegistroEdicoesFechadasVO implements Serializable {
 	public void setParcial(boolean parcial) {
 		this.parcial = parcial;
 	}
-
-	public BigDecimal getSaldo() {
+	
+	public BigInteger getSaldo() {
 		return saldo;
 	}
 
-	public void setSaldo(BigDecimal saldo) {
+	public void setSaldo(BigInteger saldo) {
 		this.saldo = saldo;
 	}
-	
+
 	@Export(label = "Parcial", exhibitionOrder = 7)
 	public String getParcialString() {
 		return (this.parcial ? "S" : "N"); 

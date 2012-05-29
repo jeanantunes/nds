@@ -84,10 +84,11 @@ var edicoesFechadasController = {
 	},
 	initGridDetalheEdicoesFechadas : function() {
 		$(".detalheEdicoesFechadasGrid").flexigrid({
-			dataType : 'xml',
+			preProcess: edicoesFechadasController.executarPreProcessamentoPopUp,
+			dataType : 'json',
 			colModel : [ {
 				display : 'Data',
-				name : 'data',
+				name : 'dataInclusao',
 				width : 100,
 				sortable : true,
 				align : 'left'
@@ -111,7 +112,7 @@ var edicoesFechadasController = {
 				align : 'center'
 			}, {
 				display : 'Saldo Parcial',
-				name : 'saldoParcial',
+				name : 'parcial',
 				width : 110,
 				sortable : true,
 				align : 'right'
@@ -126,6 +127,46 @@ var edicoesFechadasController = {
 			height : 180
 		});
 	},
+	executarPreProcessamentoPopUp : function(resultado) {
+		var dadosPesquisa = {page: 0, total: 0};
+		var saldoTotalExtratoEdicao = 0.0;
+		var destacarValorSaldoTotal = "";
+		
+		if(typeof resultado.mensagens == "object") {
+			exibirMensagem(resultado.mensagens.tipoMensagem, resultado.mensagens.listaMensagens);
+		} else {
+			$.each(resultado, function(index, value) {
+				  if(value[0] == "gridResult") {
+					  dadosPesquisa = edicoesFechadasController.destacarValorParcial(value[1]);
+				  } else if(value[0] == "saldoTotalExtratoEdicao") {
+					  saldoTotalExtratoEdicao = value[1];
+				  } else if(value[0] == "destacarSaldoTotalExtratoEdicao") {
+					  destacarValorSaldoTotal = value[1];
+				  } 
+			});
+		}
+		
+		if(destacarValorSaldoTotal == "S") {
+			$("#saldoEstoque").css("color", "red");
+			$("#saldoEstoque").html(saldoTotalExtratoEdicao); 
+		} else {
+			$("#saldoEstoque").css("color", "black");
+			$("#saldoEstoque").html(saldoTotalExtratoEdicao); 
+		}
+		return dadosPesquisa;
+	},
+	destacarValorParcial : function(data) {
+		$.each(data.rows, function(index, value) {
+			var destacarValorNegativo = value.cell[5];
+			var valorParcial =  value.cell[4];
+			if(destacarValorNegativo == "S") {
+				value.cell[4] = '<span style="color: red">'+valorParcial+'</span>';
+			} else {
+				value.cell[4] = '<span style="color: black">'+valorParcial+'</span>';
+			}
+		});
+		return data;
+	},	
 	executarPreProcessamento : function(resultado) {
 		if (typeof resultado.mensagens == "object") {
 			exibirMensagem(resultado.mensagens.tipoMensagem,
@@ -139,7 +180,7 @@ var edicoesFechadasController = {
 		var tableModel = resultado.tableModel;
 
 		$.each(tableModel.rows, function(index, row) {
-			var linkAcao = '<a href="javascript:;" style="cursor:pointer">'
+			var linkAcao = '<a href="javascript:;" onclick="edicoesFechadasController.abrirPopUpSaldoEdicoesFechadas(' + row.cell.codigoProduto + ', ' + row.cell.edicaoProduto + ');"  style="cursor:pointer">'
 					+ '<img title="Ação" src="' + contextPath
 					+ '/images/ico_detalhes.png" hspace="5" border="0px" />'
 					+ '</a>';
@@ -147,12 +188,29 @@ var edicoesFechadasController = {
 			row.cell.dataRecolhimento = row.cell.dataRecolhimento.$;
 			row.cell.dataLancamento = row.cell.dataLancamento.$;
 			row.cell.parcial = ((row.cell.parcial == true) ? "S" : "N");
+			row.cell.saldo = row.cell.saldo;
 			row.cell.acao = linkAcao;
 		});
 
 		$(".grids").show();
 		return tableModel;
 
+	},
+	abrirPopUpSaldoEdicoesFechadas : function(codigoProduto, edicaoProduto) {
+		$(".detalheEdicoesFechadasGrid").flexOptions({
+			url: contextPath + '/estoque/extratoEdicao/pesquisaExtratoEdicao',
+			params: [
+		         {name:'codigoProduto', value: codigoProduto},
+		         {name:'numeroEdicao', value: edicaoProduto},
+		         {name:'nomeProduto', value: ""},
+		         {name:'precoCapa', value: ""},
+		         {name:'nomeFornecedor', value: ""}
+		    ],
+		    newp: 1,
+		});
+		
+		$(".detalheEdicoesFechadasGrid").flexReload();
+		edicoesFechadasController.popup_detalhes();			
 	},
 	pesquisar : function() {
 		var dataDe = $("#dataDe").val();
@@ -184,7 +242,6 @@ var edicoesFechadasController = {
 			buttons : {
 				"Fechar" : function() {
 					$(this).dialog("close");
-
 				},
 			}
 		});

@@ -146,7 +146,7 @@ public class EdicoesFechadasController {
 			
 			ResultadoEdicoesFechadasVO resultadoEdicoesFechadas = new ResultadoEdicoesFechadasVO();
 			resultadoEdicoesFechadas.setTableModel(tableModel);
-			resultadoEdicoesFechadas.setSaldoTotal(saldoTotal);
+			resultadoEdicoesFechadas.setSaldoTotal(saldoTotal.toBigInteger());
 			
 			result.use(Results.json()).withoutRoot().from(resultadoEdicoesFechadas).recursive().serialize();
 		}
@@ -217,9 +217,13 @@ public class EdicoesFechadasController {
 		}
 
 		FiltroEdicoesFechadasDTO filtroSessao = this.obterFiltroParaExportacao();
-		List<RegistroEdicoesFechadasVO> lista = null;
-		lista = edicoesFechadasService.obterResultadoEdicoesFechadas(filtroSessao.getDataDe(), filtroSessao.getDataAte(), filtroSessao.getCodigoFornecedor());
-		FileExporter.to("consulta-edicoes-fechadas-com-saldo", fileType).inHTTPResponse(this.getNDSFileHeader(), filtroSessao, null, lista, RegistroEdicoesFechadasVO.class, this.httpServletResponse);
+		List<RegistroEdicoesFechadasVO> lista = edicoesFechadasService.obterResultadoEdicoesFechadas(filtroSessao.getDataDe(), filtroSessao.getDataAte(), filtroSessao.getCodigoFornecedor());
+		
+		BigDecimal	saldoTotal = edicoesFechadasService.obterTotalResultadoEdicoesFechadas(filtroSessao.getDataDe(), filtroSessao.getDataAte(), filtroSessao.getCodigoFornecedor());
+		ResultadoEdicoesFechadasVO resultadoTotalEdicoesFechadas = new ResultadoEdicoesFechadasVO();
+		resultadoTotalEdicoesFechadas.setSaldoTotal(saldoTotal.toBigInteger());
+		
+		FileExporter.to("consulta-edicoes-fechadas-com-saldo", fileType).inHTTPResponse(this.getNDSFileHeader(), filtroSessao, resultadoTotalEdicoesFechadas, lista, RegistroEdicoesFechadasVO.class, this.httpServletResponse);
 	}
 
 	/**
@@ -265,12 +269,6 @@ public class EdicoesFechadasController {
 		return filtroSessao;
 	}
 	
-	@Post
-	@Path("/verificarSaldo")
-	public void verificarSaldo(String dataDe, String dataAte, String codigoEditor) throws Exception {
-			
-	}
-
 	/**
 	 * Retorna o usuário logado
 	 * @return
