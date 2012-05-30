@@ -4,6 +4,7 @@ import java.util.List;
 
 import br.com.abril.nds.dto.CotaRotaRoteiroDTO;
 import br.com.abril.nds.model.cadastro.Box;
+import br.com.abril.nds.model.cadastro.Roteiro;
 import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.repository.BoxRepository;
 import br.com.abril.nds.service.exception.RelationshipRestrictionException;
@@ -54,7 +55,7 @@ public interface BoxService {
 	 * @return o Box
 	 * @throws UniqueConstraintViolationException Lançada caso o codigo do box ja esteja em uso.
 	 */
-	public abstract Box merge(Box entity) throws UniqueConstraintViolationException;
+	public abstract Box merge(Box entity) throws UniqueConstraintViolationException,RelationshipRestrictionException;
 	
 	/**
 	 * Busca o Box por id;
@@ -65,7 +66,7 @@ public interface BoxService {
 	/**
 	 * Remove o box do repositorio de dados
 	 * @param id
-	 * @throws RelationshipRestrictionException Lança quando o box em questão está relacionado há Cota.
+	 * @throws RelationshipRestrictionException Lança quando o box em questão está relacionado há Cota ou Roteiro.
 	 */
 	public abstract void remover(Long id)throws RelationshipRestrictionException;
 	
@@ -87,7 +88,14 @@ public interface BoxService {
 	 * @param tipoBox
 	 * @return
 	 */
-	List<Box> buscarTodos(TipoBox tipoBox); 
+	List<Box> buscarTodos(TipoBox tipoBox);
+	
+	/**
+	 * Verifica se o {@link Box} está associado a {@link Cota} ou {@link Roteiro} 
+	 * @param id id do {@link Box}
+	 * @return
+	 */
+	public abstract boolean hasAssociacao(long id); 
 
 	
 }
