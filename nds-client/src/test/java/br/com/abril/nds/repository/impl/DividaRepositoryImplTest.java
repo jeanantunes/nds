@@ -36,13 +36,14 @@ import br.com.abril.nds.model.cadastro.PoliticaCobranca;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.Rota;
-import br.com.abril.nds.model.cadastro.RotaRoteiroOperacao;
-import br.com.abril.nds.model.cadastro.RotaRoteiroOperacao.TipoOperacao;
+import br.com.abril.nds.model.cadastro.Roteirizacao;
 import br.com.abril.nds.model.cadastro.Roteiro;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.cadastro.TipoProduto;
 import br.com.abril.nds.model.cadastro.TipoRegistroCobranca;
+import br.com.abril.nds.model.cadastro.TipoRoteiro;
+import br.com.abril.nds.model.cadastro.pdv.PDV;
 import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
@@ -117,6 +118,9 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
 		Cota cotaManoel = Fixture.cota(123, manoel, SituacaoCadastro.ATIVO,box1);
 		save(cotaManoel);
 		
+		PDV pdv = Fixture.criarPDVPrincipal("Manoel", cotaManoel);
+		save(pdv);
+		
 		Set<FormaCobranca> formasCobranca = new HashSet<FormaCobranca>();
 		formasCobranca.add(formaBoleto);
 		ParametroCobrancaCota parametroCobrancaConta = 
@@ -127,14 +131,15 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
 		
 		save(parametroCobrancaConta);
 		
-		Rota rota = Fixture.rota("Rota1232", "Rota 1232");
+		Roteiro roteiro = Fixture.criarRoteiro("Pinheiros",box1,TipoRoteiro.NORMAL);
+		save(roteiro);
+
+		Rota rota = Fixture.rota("005", "Rota 005");
+		rota.setRoteiro(roteiro);
 		save(rota);
 		
-		Roteiro roteiro = Fixture.roteiro("Pinheiros");
-		save(roteiro);
-		
-		RotaRoteiroOperacao rotaRoteiroOperacao = Fixture.rotaRoteiroOperacao(rota, roteiro, cotaManoel, TipoOperacao.IMPRESSAO_DIVIDA);
-		save(rotaRoteiroOperacao);
+		Roteirizacao roteirizacao = Fixture.criarRoteirizacao(pdv, rota,1);
+		save(roteirizacao);
 		
 		TipoMovimentoFinanceiro tipoMovimentoFinenceiroRecebimentoReparte =
 			Fixture.tipoMovimentoFinanceiroRecebimentoReparte();

@@ -1,6 +1,8 @@
 package br.com.abril.nds.fixture;
 
 import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -60,8 +62,7 @@ import br.com.abril.nds.model.cadastro.PoliticaSuspensao;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.Rota;
-import br.com.abril.nds.model.cadastro.RotaRoteiroOperacao;
-import br.com.abril.nds.model.cadastro.RotaRoteiroOperacao.TipoOperacao;
+import br.com.abril.nds.model.cadastro.Roteirizacao;
 import br.com.abril.nds.model.cadastro.Roteiro;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.Telefone;
@@ -78,10 +79,12 @@ import br.com.abril.nds.model.cadastro.TipoLicencaMunicipal;
 import br.com.abril.nds.model.cadastro.TipoParametroSistema;
 import br.com.abril.nds.model.cadastro.TipoProduto;
 import br.com.abril.nds.model.cadastro.TipoRegistroCobranca;
+import br.com.abril.nds.model.cadastro.TipoRoteiro;
 import br.com.abril.nds.model.cadastro.TipoTelefone;
 import br.com.abril.nds.model.cadastro.pdv.AreaInfluenciaPDV;
 import br.com.abril.nds.model.cadastro.pdv.ClusterPDV;
 import br.com.abril.nds.model.cadastro.pdv.EspecialidadePDV;
+import br.com.abril.nds.model.cadastro.pdv.PDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoEstabelecimentoAssociacaoPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoGeradorFluxoPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoPontoPDV;
@@ -90,6 +93,7 @@ import br.com.abril.nds.model.estoque.Diferenca;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
 import br.com.abril.nds.model.estoque.Expedicao;
+import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
 import br.com.abril.nds.model.estoque.MovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
@@ -527,6 +531,16 @@ public class DataLoader {
 	private static TipoEntrega tipoCotaRetira;
 	private static TipoEntrega tipoEntregaEmBanca;
 	private static TipoEntrega tipoEntregador;
+	private static PDV pdvOrlando;
+	private static PDV pdvMariana;
+	private static PDV pdvMurilo;
+	private static PDV pdvGuilherme;
+	private static PDV pdvJoao;
+	private static PDV pdvLuis;
+	private static PDV pdvMaria;
+	private static PDV pdvManoelCunha;
+	private static PDV pdvManoel;
+	private static PDV pdvJose;
 	
 
 	public static void main(String[] args) {
@@ -583,6 +597,7 @@ public class DataLoader {
 		criarDiasDistribuicaoFornecedores(session);
 		criarDiasDistribuicaoDistribuidor(session);
 		criarCotas(session);
+		criarPDVsCota(session);
 		criarDistribuicaoCota(session);
 		criarEditores(session);
 		criarTiposProduto(session);
@@ -673,6 +688,111 @@ public class DataLoader {
 		gerarDescontos(session);
 		
 		criarDadosBalanceamentoRecolhimento(session);
+		
+		criarDadosEdicoesFechadas(session);
+		
+	}
+
+	private static void criarDadosEdicoesFechadas(Session session) {
+		
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+		Date dataAtual = new Date();
+		
+		try {
+		
+			for (int i=0; i<22; i++) {
+			
+				Usuario usuario = Fixture.usuarioJoao();
+				save(session,usuario);
+	
+				TipoMovimentoEstoque tipoMovimentoEncalhe = Fixture.tipoMovimentoEnvioEncalhe();
+				save(session,tipoMovimentoEncalhe);
+	
+				TipoMovimentoEstoque tipoMovimentoVenda = Fixture.tipoMovimentoVendaEncalhe();
+				save(session,tipoMovimentoVenda);
+	
+				TipoMovimentoEstoque tipoMovimentoConsignado = Fixture.tipoMovimentoEnvioJornaleiro();
+				save(session,tipoMovimentoConsignado);
+	
+				TipoProduto tipoProduto = Fixture.tipoProduto("Revista TesteEdicoesFechadas" + i, GrupoProduto.REVISTA, "44358941", "4723744581", 147L + i);
+				save(session,tipoProduto);
+	
+				TipoFornecedor tipoFornecedor = Fixture.tipoFornecedorPublicacao();
+				save(session,tipoFornecedor);
+	
+				TipoFornecedor tipoFornecedorPublicacao = Fixture.tipoFornecedorPublicacao();
+				save(session,tipoFornecedorPublicacao);
+	
+				TipoNotaFiscal tipoNotaFiscal = Fixture.tipoNotaFiscalRecebimento();
+				save(session,tipoNotaFiscal);
+	
+				NotaFiscalEntradaFornecedor notaFiscal = Fixture.notaFiscalEntradaFornecedor(cfop5102, juridicaFc, fornecedorFc, tipoNotaFiscal, usuario, new BigDecimal(145),  new BigDecimal(10),  new BigDecimal(10));
+				save(session,notaFiscal);
+	
+				RecebimentoFisico recebimentoFisico = Fixture.recebimentoFisico(notaFiscal, usuario, new Date(), new Date(), StatusConfirmacao.PENDENTE);
+				save(session,recebimentoFisico);
+
+				ProdutoEdicao produtoEdicao = Fixture.produtoEdicao(273L + i, 10 + i, 30 + i,
+						new BigDecimal(0.12), new BigDecimal(17), new BigDecimal(20),
+						"YZ2", 11L, produtoBravo, null, false);
+				session.save(produtoEdicao);
+
+				ItemNotaFiscalEntrada itemNotaFiscal= 
+						Fixture.itemNotaFiscal(
+								produtoEdicao, 
+								usuario, 
+								notaFiscal, 
+								new Date(), 
+								new Date(),
+								TipoLancamento.LANCAMENTO,
+								new BigDecimal(12));
+				save(session,itemNotaFiscal);			
+				
+				ItemRecebimentoFisico itemRecebimentoFisico= Fixture.itemRecebimentoFisico(itemNotaFiscal, recebimentoFisico, new BigDecimal(12));
+				save(session,itemRecebimentoFisico);
+	
+				TipoMovimentoEstoque tipoMovimentoEstoque = Fixture.tipoMovimentoSobraDe();
+				save(session,tipoMovimentoEstoque);
+
+				Lancamento lancamento1 = Fixture.lancamento(TipoLancamento.PARCIAL, produtoEdicao,
+						Fixture.criarData(1, 4, 2012),
+						Fixture.criarData(1, 4, 2012),
+						Fixture.criarData(27, 4, 2012),
+						Fixture.criarData(27, 4, 2012),
+						new BigDecimal(100),
+						StatusLancamento.RECOLHIDO, null, 1);
+				save(session,lancamento1);
+				
+				Lancamento lancamento2 = Fixture.lancamento(TipoLancamento.PARCIAL, produtoEdicao,
+						Fixture.criarData(1, 5, 2012),
+						Fixture.criarData(1, 5, 2012),
+						Fixture.criarData(14, 5, 2012),
+						Fixture.criarData(14, 5, 2012),
+						new BigDecimal(80),
+						StatusLancamento.PLANEJADO, null, 1);
+				save(session,lancamento2);
+
+				lancamento1.setDataRecolhimentoDistribuidor(sdf.parse("26/05/2012"));
+				lancamento2.setDataRecolhimentoDistribuidor(sdf.parse("23/05/2012"));
+				
+				Set<Lancamento> lancamentos = new HashSet<Lancamento>();
+				lancamentos.add(lancamento1);
+				lancamentos.add(lancamento2);
+
+				produtoEdicao.setLancamentos(lancamentos);
+				produtoEdicao.setDataDesativacao(sdf.parse("27/05/2012"));
+				
+				EstoqueProduto estoqueProduto = Fixture.estoqueProduto(produtoEdicao, new BigDecimal(45));
+				save(session,estoqueProduto);
+	
+				MovimentoEstoque movimentoEstoque = Fixture.movimentoEstoque(itemRecebimentoFisico, produtoEdicao, tipoMovimentoEstoque, usuario, estoqueProduto, dataAtual, new BigDecimal(12), StatusAprovacao.APROVADO , "MOTIVO B");
+				save(session,movimentoEstoque);
+			
+			}
+			
+		} catch(ParseException e) {
+			e.printStackTrace();
+		}
 		
 	}
 
@@ -1672,38 +1792,65 @@ public class DataLoader {
 		
 	}
 	
+	private static void criarPDVsCota(Session session){
+		
+		pdvJose = Fixture.criarPDVPrincipal("PDV JOSE", cotaJose);
+		session.save(pdvJose);
+		
+		pdvManoel = Fixture.criarPDVPrincipal("PDV MANOEL", cotaManoel);
+		session.save(pdvManoel);
+		
+		pdvManoelCunha = Fixture.criarPDVPrincipal("PDV CUNHA", cotaManoelCunha);
+		session.save(pdvManoelCunha);
+		
+		pdvMaria = Fixture.criarPDVPrincipal("PDV MARIA", cotaMaria);
+		session.save(pdvMaria);
+		
+		pdvLuis = Fixture.criarPDVPrincipal("PDV LUIS", cotaLuis);
+		session.save(pdvLuis);
+		
+		pdvJoao = Fixture.criarPDVPrincipal("PDV JOAO", cotaJoao);
+		session.save(pdvJoao);
+		
+		pdvGuilherme = Fixture.criarPDVPrincipal("PDV Guilherme", cotaGuilherme);
+		session.save(pdvGuilherme);
+		
+		pdvMurilo = Fixture.criarPDVPrincipal("PDV MURILO", cotaMurilo);
+		session.save(pdvMurilo);
+		
+		pdvMariana = Fixture.criarPDVPrincipal("PDV MARINA", cotaMariana);
+		session.save(pdvMariana);
+		
+		pdvOrlando = Fixture.criarPDVPrincipal("PDV ORLANDO", cotaOrlando);
+		session.save(pdvOrlando);
+	
+	}
+	
 	private static void criarRotaRoteiroCota(Session session) {
 
-		Roteiro roteiro = Fixture.roteiro("Pinheiros");
+		Roteiro roteiro = Fixture.criarRoteiro("Pinheiros",box1,TipoRoteiro.NORMAL);
 		session.save(roteiro);
 
 		Rota rota = Fixture.rota("005", "Rota 005");
 		rota.setRoteiro(roteiro);
 		session.save(rota);
-
-		RotaRoteiroOperacao rotaRoteiroOperacao = Fixture.rotaRoteiroOperacao(rota, roteiro, cotaManoel, TipoOperacao.IMPRESSAO_DIVIDA);
-		session.save(rotaRoteiroOperacao);
-
-		roteiro = Fixture.roteiro("Interlagos");
+		
+		Roteirizacao roteirizacao = Fixture.criarRoteirizacao(pdvManoel, rota,1);
+		session.save(roteirizacao);
+		
+		roteiro = Fixture.criarRoteiro("Interlagos", box1,TipoRoteiro.NORMAL);
 		session.save(roteiro);
 
 		rota = Fixture.rota("004", "Rota 004");
 		rota.setRoteiro(roteiro);
 		session.save(rota);
-
-		rotaRoteiroOperacao = Fixture.rotaRoteiroOperacao(rota, roteiro, cotaJose, TipoOperacao.IMPRESSAO_DIVIDA);
-		session.save(rotaRoteiroOperacao);
 		
-
-		roteiro = Fixture.roteiro("Mococa");
-		session.save(roteiro);
+		roteirizacao = Fixture.criarRoteirizacao(pdvJose, rota,1);
+		session.save(roteirizacao);
 		
-		rota = Fixture.rota("007", "Rota 007");
+		rota = Fixture.rota("006", "Rota 006");
 		rota.setRoteiro(roteiro);
 		session.save(rota);
-
-		rotaRoteiroOperacao = Fixture.rotaRoteiroOperacao(rota, roteiro, cotaAcme, TipoOperacao.IMPRESSAO_DIVIDA);
-		session.save(rotaRoteiroOperacao);
 	}
 
 	private static void criarDivida(Session session) {

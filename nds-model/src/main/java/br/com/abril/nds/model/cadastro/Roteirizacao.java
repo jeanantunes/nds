@@ -9,6 +9,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import br.com.abril.nds.model.cadastro.pdv.PDV;
+
 @Entity
 @Table(name = "ROTEIRIZACAO")
 @SequenceGenerator(name="ROTEIRIZACAO_SEQ", initialValue = 1, allocationSize = 1)
@@ -21,8 +23,8 @@ public class Roteirizacao {
 	private Long id;
 	
 	@ManyToOne
-	@JoinColumn(name = "COTA_ID")
-	private Cota cota;
+	@JoinColumn(name = "PDV_ID")
+	private PDV pdv;
 
 	@ManyToOne
 	@JoinColumn(name = "ROTA_ID")
@@ -40,12 +42,18 @@ public class Roteirizacao {
 		this.id = id;
 	}
 	
-	public Cota getCota() {
-		return cota;
+	/**
+	 * @return the pdv
+	 */
+	public PDV getPdv() {
+		return pdv;
 	}
 
-	public void setCota(Cota cota) {
-		this.cota = cota;
+	/**
+	 * @param pdv the pdv to set
+	 */
+	public void setPdv(PDV pdv) {
+		this.pdv = pdv;
 	}
 
 	public Rota getRota() {

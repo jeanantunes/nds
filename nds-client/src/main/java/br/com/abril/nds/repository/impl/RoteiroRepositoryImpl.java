@@ -2,7 +2,9 @@ package br.com.abril.nds.repository.impl;
 
 import java.util.List;
 
+import org.exolab.castor.xml.validators.IdValidator;
 import org.hibernate.Criteria;
+import org.hibernate.Query;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
@@ -10,7 +12,9 @@ import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Rota;
+import br.com.abril.nds.model.cadastro.Roteirizacao;
 import br.com.abril.nds.model.cadastro.Roteiro;
+import br.com.abril.nds.model.cadastro.TipoRoteiro;
 import br.com.abril.nds.repository.RoteiroRepository;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
@@ -58,5 +62,14 @@ public class RoteiroRepositoryImpl extends AbstractRepository<Roteiro, Long>
 		}
 			
 	}
-
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Roteiro> buscarRoteiroDeBox(Long idBox) {
+		
+		Criteria criteria  = getSession().createCriteria(Roteiro.class);
+		criteria.add(Restrictions.eq("box.id", idBox));
+		
+		return criteria.list();
+	}
 }

@@ -11,7 +11,6 @@ import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Rota;
-import br.com.abril.nds.model.cadastro.RotaRoteiroOperacao;
 import br.com.abril.nds.model.cadastro.Roteiro;
 import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.cadastro.TipoRoteiro;
@@ -101,10 +100,8 @@ public class RoteirizacaoController {
 	@Path("/pesquisar")
 	public void pesquisar(Long idBox, Long idRoteiro, Long idRota,
 			String sortname, String sortorder, int rp, int page) {
-		List<RotaRoteiroOperacao> lista = roteirizacaoService.busca(null, null,null, null, null, 0, 0);
-		int quantidade = lista.size();
-		result.use(FlexiGridJson.class).from(lista).total(quantidade).page(page).serialize();
-
+		
+		//TODO alteração de roteirização - foi deletado do sistema a entidade RotaRoteiroOperacao
 	}
 	
 	@Path("/incluirRoteiro")

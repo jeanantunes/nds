@@ -134,7 +134,7 @@
 	
 	<fieldset>
     	<legend>Nota Fiscal</legend>
-        	<table width="810" border="0" cellspacing="1" cellpadding="1" style="color:#666;">
+        	<table width="830" border="0" cellspacing="1" cellpadding="1" style="color:#666;">
           		<tr>
 		            <td width="133">Núm. Nota Fiscal:</td>
 		            <td width="307" id="numeroNotaFiscalExibir"></td>
@@ -158,15 +158,35 @@
     
 	<fieldset>
         <legend>Produtos Nota Fiscal</legend>
-        <table class="pesqProdutosNotaGrid"></table>
+        <div style="overflow: auto; height: 250px; width: 828px; border: 1px #EEEEEE solid;">
+			<table class="pesqProdutosNotaGrid gridTeste" style="width: 811px;" id="dadosGridConferenciaEncalheFinalizar">
+				<tr class="header_table">
+					<td style="width: 50px; text-align: left;">Código</td>
+					<td style="width: 100px; text-align: left;">Produto</td>
+					<td style="width: 50px; text-align: center;">Edição</td>
+					<td style="width: 70px; text-align: left;">Dia</td>
+					<td style="width: 70px; text-align: left;">Qtde. info</td>
+					<td style="width: 101px; text-align: left;">Qtde. Recebida</td>
+					<td style="width: 80px; text-align: right;" nowrap="nowrap">Preço Capa R$</td>
+					<td style="width: 80px; text-align: right;" nowrap="nowrap">Preço Desconto R$</td>
+					<td style="width: 60px; text-align: right;">Total R$</td>
+					<td style="width: 30px; text-align: center;">Ação</td>
+				</tr>
+			</table>
+		</div>
         
 		<table width="800" border="0" cellspacing="1" cellpadding="1">
 			<tr>
-			    <td width="352" align="right"><strong>Total:</strong>&nbsp;&nbsp;</td>
-			    <td width="83" id="somatorioQtdInformada"></td>
-			    <td width="82" id="somatorioQtdRecebida"></td>
-			    <td width="182">&nbsp;</td>
-			    <td width="85" id="somatorioTotal"></td>
+				<td style="width: 50px;"></td>
+				<td style="width: 100px;"></td>
+				<td style="width: 50px;"></td>
+				<td style="width: 70px;"><strong>Total:</strong></td>
+				<td style="width: 70px; text-align: center;" id="somatorioQtdInformada"></td>
+				<td style="width: 101px; text-align: center;" id="somatorioQtdRecebida"></td>
+				<td style="width: 80px;"></td>
+				<td style="width: 80px;"></td>
+				<td style="width: 60px; text-align: right;" id="somatorioTotal"></td>
+				<td style="width: 30px;"></td>
 		  	</tr>
 		</table>
 	</fieldset>
@@ -211,14 +231,6 @@
 	    		<input type="text" id="chaveAcessoNFE" style="width:510px;" />
 	    	</td>
     	</tr>
-		<tr>
-			<td>&nbsp;</td>
-			<td colspan="3">
-				<span class="bt_add">
-					<a href="javascript:;">Incluir Novo</a>
-				</span>
-			</td>
-		</tr>
 	</table>
 </div>
 
