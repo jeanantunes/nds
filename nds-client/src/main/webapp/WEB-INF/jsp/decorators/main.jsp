@@ -385,7 +385,7 @@ fieldset label {
 								</a>
 							</li>
 							<li><a href='<c:url value="/administracao/cadastroCalendario"/>'>Calendário</a></li>
-							<li><a href='<c:url value="/administracao/tipoDescontoCota"/>'>Tipo de Desconto Cota</a></li>							
+							<li><a href='<c:url value="/administracao/tipoDescontoCota"/>'>Tipo de Desconto Cota</a></li>
 							<li><a href="Administracao/cadastro_tipos_movimento.htm">Cadastrar
 									Tipos de Movimento</a>
 							</li>
