@@ -22,7 +22,7 @@ public class VendaProdutoRepositoryImpl extends AbstractRepository<MovimentoEsto
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<VendaProdutoDTO> buscarLancamentosParciais(FiltroVendaProdutoDTO filtro) {
+	public List<VendaProdutoDTO> buscarVendaPorProduto(FiltroVendaProdutoDTO filtro) {
 		
 		StringBuilder hql = new StringBuilder();
 		
@@ -36,7 +36,7 @@ public class VendaProdutoRepositoryImpl extends AbstractRepository<MovimentoEsto
 		hql.append(" (((estoqueProduto.qtde + estoqueProduto.qtdeSuplementar) - estoqueProduto.qtdeDevolucaoEncalhe) * produtoEdicao.precoVenda)  as total ");
 		
 		
-		hql.append(getSqlFromEWhereLancamentosParciais(filtro));
+		hql.append(getSqlFromEWhereVendaPorProduto(filtro));
 		
 		hql.append(getOrderByPorEdicoes(filtro));
 		
@@ -61,7 +61,7 @@ public class VendaProdutoRepositoryImpl extends AbstractRepository<MovimentoEsto
 		 
 	}
 	
-	private String getSqlFromEWhereLancamentosParciais(FiltroVendaProdutoDTO filtro) {
+	private String getSqlFromEWhereVendaPorProduto(FiltroVendaProdutoDTO filtro) {
 		
 		StringBuilder hql = new StringBuilder();
 	
@@ -113,11 +113,7 @@ public class VendaProdutoRepositoryImpl extends AbstractRepository<MovimentoEsto
 		return hql.toString();
 	}
 	
-	/**
-	 * Retorna os parametros da consulta de dividas.
-	 * @param filtro
-	 * @return HashMap<String,Object>
-	 */
+	
 	private HashMap<String,Object> buscarParametrosVendaProduto(FiltroVendaProdutoDTO filtro){
 		
 		HashMap<String,Object> param = new HashMap<String, Object>();
@@ -131,6 +127,86 @@ public class VendaProdutoRepositoryImpl extends AbstractRepository<MovimentoEsto
 		if(filtro.getIdFornecedor() != null){ 
 			param.put("idFornecedor", filtro.getIdFornecedor());
 		}
+	
+		return param;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<VendaProdutoDTO> buscarLancamentoPorEdicao(
+			FiltroVendaProdutoDTO filtro) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" SELECT lancamento.dataLancamentoDistribuidor as dataLancamento, ");
+		hql.append(" lancamento.dataLancamentoDistribuidor as dataRecolhimento, ");
+		hql.append(" (estoqueProduto.qtde + estoqueProduto.qtdeSuplementar) as reparte, ");
+		hql.append(" estoqueProduto.qtdeDevolucaoEncalhe  as encalhe, ");
+		hql.append(" ((estoqueProduto.qtde + estoqueProduto.qtdeSuplementar) - estoqueProduto.qtdeDevolucaoEncalhe)  as venda, ");
+		hql.append(" (((estoqueProduto.qtde + estoqueProduto.qtdeSuplementar) - estoqueProduto.qtdeDevolucaoEncalhe) * produtoEdicao.precoVenda)  as total ");
+		
+		
+		hql.append(getSqlFromEWhereLancamentoPorEdicao(filtro));
+		
+		//hql.append(getOrderByPorEdicoes(filtro));
+		
+		Query query =  getSession().createQuery(hql.toString());
+		
+		HashMap<String, Object> param = buscarParametrosLancamentoPorEdicao(filtro);
+		
+		for(String key : param.keySet()){
+			query.setParameter(key, param.get(key));
+		}
+		
+		query.setResultTransformer(new AliasToBeanResultTransformer(
+				VendaProdutoDTO.class));
+		
+		if(filtro.getPaginacao().getQtdResultadosPorPagina() != null) 
+			query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
+		
+		if(filtro.getPaginacao().getQtdResultadosPorPagina() != null) 
+			query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
+				
+		return query.list();
+		
+	}
+	
+	private String getSqlFromEWhereLancamentoPorEdicao(FiltroVendaProdutoDTO filtro) {
+		
+		StringBuilder hql = new StringBuilder();
+	
+
+		hql.append(" from Lancamento lancamento ");
+		hql.append(" LEFT JOIN lancamento.produtoEdicao as produtoEdicao ");
+		hql.append(" LEFT JOIN lancamento.produtoEdicao.produto as produto ");
+		hql.append(" LEFT JOIN lancamento.produtoEdicao.movimentoEstoques as movimentoEstoque ");
+		hql.append(" LEFT JOIN movimentoEstoque.estoqueProduto as estoqueProduto ");
+		
+		
+		boolean usarAnd = false;
+		
+		if(filtro.getCodigo() != null && !filtro.getCodigo().isEmpty()) { 
+			hql.append( (usarAnd ? " and ":" where ") + "produto.codigo = :codigo ");
+			usarAnd = true;
+		}
+		if(filtro.getEdicao() !=null){
+			hql.append( (usarAnd ? " and ":" where ") + " produtoEdicao.numeroEdicao = :edicao ");
+			usarAnd = true;
+		}
+
+		return hql.toString();
+	}
+	
+	private HashMap<String,Object> buscarParametrosLancamentoPorEdicao(FiltroVendaProdutoDTO filtro){
+		
+		HashMap<String,Object> param = new HashMap<String, Object>();
+		
+		if(filtro.getCodigo() != null && !filtro.getCodigo().isEmpty()){ 
+			param.put("codigo", filtro.getCodigo());
+		}
+		if(filtro.getEdicao() != null){ 
+			param.put("edicao", filtro.getEdicao());
+		}		
 	
 		return param;
 	}

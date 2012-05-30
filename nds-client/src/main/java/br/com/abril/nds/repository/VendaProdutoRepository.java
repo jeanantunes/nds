@@ -8,7 +8,8 @@ import br.com.abril.nds.model.estoque.MovimentoEstoque;
 
 public interface VendaProdutoRepository extends Repository<MovimentoEstoque, Long>{
 
-	List<VendaProdutoDTO> buscarLancamentosParciais(FiltroVendaProdutoDTO filtro);
-
+	List<VendaProdutoDTO> buscarVendaPorProduto(FiltroVendaProdutoDTO filtro);
+	
+	List<VendaProdutoDTO> buscarLancamentoPorEdicao(FiltroVendaProdutoDTO filtro);
 
 }

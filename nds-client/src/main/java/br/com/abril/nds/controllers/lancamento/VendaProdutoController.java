@@ -62,15 +62,15 @@ public class VendaProdutoController {
 		
 		this.tratarFiltro(filtro);
 		
-		TableModel<CellModelKeyValue<VendaProdutoDTO>> tableModel = efetuarConsulta(filtro);
+		TableModel<CellModelKeyValue<VendaProdutoDTO>> tableModel = efetuarConsultaVendaProduto(filtro);
 		
 		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
 		
 	}
 	
-	private TableModel<CellModelKeyValue<VendaProdutoDTO>> efetuarConsulta(FiltroVendaProdutoDTO filtro) {
+	private TableModel<CellModelKeyValue<VendaProdutoDTO>> efetuarConsultaVendaProduto(FiltroVendaProdutoDTO filtro) {
 		 
-		List<VendaProdutoDTO> listaVendaProdutoDTO =  this.vendaProdutoService.buscaVendaporProduto(filtro);				
+		List<VendaProdutoDTO> listaVendaProdutoDTO =  this.vendaProdutoService.buscaVendaPorProduto(filtro);				
 		
 		//Integer totalRegistros = lancamentoParcialService.totalBuscaLancamentosParciais(filtro);
 		
@@ -93,9 +93,26 @@ public class VendaProdutoController {
 		
 		this.tratarFiltro(filtro);
 		
-		TableModel<CellModelKeyValue<VendaProdutoDTO>> tableModel = efetuarConsulta(filtro);
+		TableModel<CellModelKeyValue<VendaProdutoDTO>> tableModel = efetuarConsultaLancamentoEdicao(filtro);
 		
 		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
+	}
+	
+	private TableModel<CellModelKeyValue<VendaProdutoDTO>> efetuarConsultaLancamentoEdicao(FiltroVendaProdutoDTO filtro) {
+		 
+		List<VendaProdutoDTO> listaVendaProdutoDTO =  this.vendaProdutoService.buscaLancamentoPorEdicao(filtro);				
+		
+		//Integer totalRegistros = lancamentoParcialService.totalBuscaLancamentosParciais(filtro);
+		
+		TableModel<CellModelKeyValue<VendaProdutoDTO>> tableModel = new TableModel<CellModelKeyValue<VendaProdutoDTO>>();
+
+		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaVendaProdutoDTO));
+		
+		tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
+		
+		tableModel.setTotal(listaVendaProdutoDTO.size());
+		
+		return tableModel;
 	}
 
 

@@ -7,6 +7,8 @@ import br.com.abril.nds.dto.filtro.FiltroVendaProdutoDTO;
 
 public interface VendaProdutoService {
 	
-	List<VendaProdutoDTO> buscaVendaporProduto(FiltroVendaProdutoDTO filtro);
+	List<VendaProdutoDTO> buscaVendaPorProduto(FiltroVendaProdutoDTO filtro);
+	
+	List<VendaProdutoDTO> buscaLancamentoPorEdicao(FiltroVendaProdutoDTO filtro);
 
 }

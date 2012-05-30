@@ -40,12 +40,16 @@ public class VendaProdutoDTO implements Serializable {
 	@Export(label = "Total", alignment=Alignment.CENTER)
 	private BigDecimal total;
 	
+	@Export(label = "Encalhe", alignment=Alignment.CENTER)
+	private BigDecimal encalhe;
+	
 	
 	public VendaProdutoDTO() {
 		
 	}
 	
-	public VendaProdutoDTO(Long numEdicao, String dataLancamento, String dataRecolhimento, BigDecimal reparte, BigDecimal venda,  BigDecimal percentagemVenda, BigDecimal precoCapa, BigDecimal total) {
+	public VendaProdutoDTO(Long numEdicao, String dataLancamento, String dataRecolhimento, BigDecimal reparte, BigDecimal venda,  
+			BigDecimal percentagemVenda, BigDecimal precoCapa, BigDecimal total, BigDecimal encalhe) {
 		super();
 		this.numEdicao = numEdicao;
 		this.dataLancamento = dataLancamento;
@@ -54,7 +58,8 @@ public class VendaProdutoDTO implements Serializable {
 		this.venda = venda;
 		this.percentagemVenda = percentagemVenda;
 		this.precoCapa = precoCapa;
-		this.total = total;		
+		this.total = total;
+		this.encalhe = encalhe;
 	}
 	
 	
@@ -122,6 +127,13 @@ public class VendaProdutoDTO implements Serializable {
 	public void setTotal(BigDecimal total) {
 		this.total = total;
 	}
-	
+
+	public BigDecimal getEncalhe() {
+		return encalhe;
+	}
+
+	public void setEncalhe(BigDecimal encalhe) {
+		this.encalhe = encalhe;
+	}
 	
 }
