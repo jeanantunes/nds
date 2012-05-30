@@ -2,7 +2,11 @@ package br.com.abril.nds.dto;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.Date;
 
+import br.com.abril.nds.util.Constantes;
+import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Exportable;
 import br.com.abril.nds.util.export.Export.Alignment;
@@ -25,23 +29,23 @@ public class VendaProdutoDTO implements Serializable {
 	private BigDecimal reparte;
 	
 	@Export(label = "Venda", alignment=Alignment.CENTER)
-	private Long venda;
+	private BigDecimal venda;
 	
 	@Export(label = "% Venda", alignment=Alignment.CENTER)
-	private Long percentagemVenda;
+	private BigDecimal percentagemVenda;
 	
 	@Export(label = "Preço Capa", alignment=Alignment.CENTER)
 	private BigDecimal precoCapa;
 	
 	@Export(label = "Total", alignment=Alignment.CENTER)
-	private Long total;
+	private BigDecimal total;
 	
 	
 	public VendaProdutoDTO() {
 		
 	}
 	
-	public VendaProdutoDTO(Long numEdicao, String dataLancamento, String dataRecolhimento, BigDecimal reparte, Long venda,  Long percentagemVenda, BigDecimal precoCapa, Long total) {
+	public VendaProdutoDTO(Long numEdicao, String dataLancamento, String dataRecolhimento, BigDecimal reparte, BigDecimal venda,  BigDecimal percentagemVenda, BigDecimal precoCapa, BigDecimal total) {
 		super();
 		this.numEdicao = numEdicao;
 		this.dataLancamento = dataLancamento;
@@ -67,16 +71,16 @@ public class VendaProdutoDTO implements Serializable {
 		return dataLancamento;
 	}
 
-	public void setDataLancamento(String dataLancamento) {
-		this.dataLancamento = dataLancamento;
+	public void setDataLancamento(Date dataLancamento) {
+		this.dataLancamento =  DateUtil.formatarData(dataLancamento, Constantes.DATE_PATTERN_PT_BR);
 	}
 
 	public String getDataRecolhimento() {
 		return dataRecolhimento;
 	}
 
-	public void setDataRecolhimento(String dataRecolhimento) {
-		this.dataRecolhimento = dataRecolhimento;
+	public void setDataRecolhimento(Date dataRecolhimento) {
+		this.dataRecolhimento = DateUtil.formatarData(dataRecolhimento, Constantes.DATE_PATTERN_PT_BR);
 	}
 
 	public BigDecimal getReparte() {
@@ -87,19 +91,19 @@ public class VendaProdutoDTO implements Serializable {
 		this.reparte = reparte;
 	}
 
-	public Long getVenda() {
+	public BigDecimal getVenda() {
 		return venda;
 	}
 
-	public void setVenda(Long venda) {
+	public void setVenda(BigDecimal venda) {
 		this.venda = venda;
 	}
 
-	public Long getPercentagemVenda() {
+	public BigDecimal getPercentagemVenda() {
 		return percentagemVenda;
 	}
 
-	public void setPercentagemVenda(Long percentagemVenda) {
+	public void setPercentagemVenda(BigDecimal percentagemVenda) {
 		this.percentagemVenda = percentagemVenda;
 	}
 
@@ -111,11 +115,11 @@ public class VendaProdutoDTO implements Serializable {
 		this.precoCapa = precoCapa;
 	}
 
-	public Long getTotal() {
-		return total;
+	public BigDecimal getTotal() {
+		return total.setScale(2,RoundingMode.HALF_DOWN);
 	}
 
-	public void setTotal(Long total) {
+	public void setTotal(BigDecimal total) {
 		this.total = total;
 	}
 	

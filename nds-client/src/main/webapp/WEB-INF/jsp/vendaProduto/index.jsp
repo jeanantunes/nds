@@ -15,6 +15,7 @@
 <script language="javascript" type="text/javascript" src="../scripts/jquery-ui-1.8.16.custom/development-bundle/ui/jquery.ui.accordion.js"></script>
 <script language="javascript" type="text/javascript" src="../scripts/NDS.js"></script>
 <script language="javascript" type="text/javascript" src="../scripts/jquery-ui-1.8.16.custom/development-bundle/ui/jquery.ui.dialog.js"></script>
+<script language="javascript" type="text/javascript" src="../scripts/jquery.maskmoney.js"></script>
 
 <script language="javascript" type="text/javascript" src="../scripts/flexigrid-1.1/js/flexigrid.pack.js"></script>
 <link rel="stylesheet" type="text/css" href="../scripts/flexigrid-1.1/css/flexigrid.pack.css" />
@@ -24,8 +25,20 @@
 		$("#produto").autocomplete({source: ""});				
 	});
 
-	function popup_detalhes() {
-		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
+	function popup_detalhes(numEdicao) {
+		var edicao = numEdicao;
+		var codigo = $('#codigo').val();
+		$(".detalhesVendaGrid").flexOptions({
+			url: "<c:url value='/lancamento/vendaProduto/pesquisarLancamentoEdicao'/>",
+			dataType : 'json',
+			params: [
+			          {name:'filtro.edicao', value:edicao},
+				      {name:'filtro.codigo', value:codigo}
+			         ]
+		    
+		});
+		
+		$(".detalhesVendaGrid").flexReload();
 	
 		$( "#dialog-detalhes" ).dialog({
 			resizable: false,
@@ -84,8 +97,8 @@
 		
 		$(".parciaisGrid").flexOptions({
 			url: "<c:url value='/lancamento/vendaProduto/pesquisarVendaProduto'/>",
-			params: getDados(),
-		    newp: 1,
+			dataType : 'json',
+			params: getDados()
 		});
 		
 		$(".parciaisGrid").flexReload();
@@ -130,19 +143,38 @@
 
 			return resultado;
 		}
-		/*
+		
 		$.each(resultado.rows, function(index, row) {
 						
 			
-			var linkExcluir = '<a href="javascript:;" onclick="exibirDialogExclusao(' + row.cell.id + ');" style="cursor:pointer">' +
-							   	 '<img title="Excluir Desconto" src="${pageContext.request.contextPath}/images/ico_excluir.gif" hspace="5" border="0px" />' +
+			var linkDetalhe = '<a href="javascript:;" onclick="popup_detalhes('+row.cell.numEdicao+');" style="cursor:pointer">' +
+							   	 '<img title="Lançamentos da Edição" src="${pageContext.request.contextPath}/images/ico_detalhes.png" hspace="5" border="0px" />' +
 							   '</a>';
 			
-			row.cell.acao = linkExcluir;
+			row.cell.acao = linkDetalhe;
 		});
-		*/
+		
+		$(".total").maskMoney({
+				 thousands:'.', 
+				 decimal:',', 
+				 precision:2
+			});
+		
 		$(".grids").show();
 		
+		return resultado;
+	}
+	
+	function executarPreProcessamentoFilha(resultado) {
+		if (resultado.mensagens) {
+			exibirMensagem(
+				resultado.mensagens.tipoMensagem, 
+				resultado.mensagens.listaMensagens
+			);
+			$(".grids").hide();
+			return resultado;
+		}
+		$(".grids").show();
 		return resultado;
 	}
 	
@@ -221,19 +253,19 @@
 			dataType : 'json',
 			colModel : [ {
 				display : 'Edição',
-				name : 'edicao',
+				name : 'numEdicao',
 				width : 100,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Data Lançamento',
-				name : 'dtLancto',
+				name : 'dataLancamento',
 				width : 100,
 				sortable : true,
 				align : 'center'
 			}, {
 				display : 'Data Recolhimento',
-				name : 'dtRecolhimento',
+				name : 'dataRecolhimento',
 				width : 100,
 				sortable : true,
 				align : 'center'
@@ -251,7 +283,7 @@
 				align : 'center'
 			}, {
 				display : '% Venda',
-				name : 'percVenda',
+				name : 'percentagemVenda',
 				width : 90,
 				sortable : true,
 				align : 'right'
@@ -263,7 +295,7 @@
 				align : 'right'
 			}, {
 				display : 'Total R$',
-				name : 'vendaDinheiro',
+				name : 'total',
 				width : 90,
 				sortable : true,
 				align : 'right'
@@ -287,8 +319,8 @@
 		
 		
 		$(".detalhesVendaGrid").flexigrid({
-			url : '../xml/parciais-pop-xml.xml',
-			dataType : 'xml',
+			preProcess: executarPreProcessamentoFilha,
+			dataType : 'json',
 			colModel : [ {
 				display : 'Período',
 				name : 'periodo',

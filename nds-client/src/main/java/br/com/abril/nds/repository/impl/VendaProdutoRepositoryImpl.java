@@ -7,7 +7,6 @@ import org.hibernate.Query;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Repository;
 
-import br.com.abril.nds.dto.ParcialDTO;
 import br.com.abril.nds.dto.VendaProdutoDTO;
 import br.com.abril.nds.dto.filtro.FiltroVendaProdutoDTO;
 import br.com.abril.nds.dto.filtro.FiltroVendaProdutoDTO.ColunaOrdenacao;
@@ -27,14 +26,14 @@ public class VendaProdutoRepositoryImpl extends AbstractRepository<MovimentoEsto
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append("SELECT produtoEdicao.numeroEdicao as numEdicao, ");
+		hql.append("SELECT estoqueProduto.produtoEdicao.numeroEdicao as numEdicao, ");
 		hql.append(" lancamento.dataLancamentoDistribuidor as dataLancamento, ");
 		hql.append(" lancamento.dataLancamentoDistribuidor as dataRecolhimento, ");
-		hql.append(" lancamento.reparte as reparte, ");
-		hql.append(" (lancamento.reparte - chamadaEncalheCota.qtdePrevista)  as venda, ");
-		hql.append(" ((lancamento.reparte - chamadaEncalheCota.qtdePrevista) / lancamento.reparte)  as percentagemVenda, ");
+		hql.append(" (estoqueProduto.qtde + estoqueProduto.qtdeSuplementar) as reparte, ");
+		hql.append(" ((estoqueProduto.qtde + estoqueProduto.qtdeSuplementar) - estoqueProduto.qtdeDevolucaoEncalhe)  as venda, ");
+		hql.append(" (((estoqueProduto.qtde + estoqueProduto.qtdeSuplementar) - estoqueProduto.qtdeDevolucaoEncalhe) / lancamento.reparte)  as percentagemVenda, ");
 		hql.append(" produtoEdicao.precoVenda  as precoCapa, ");
-		hql.append(" ((lancamento.reparte - chamadaEncalheCota) * produtoEdicao.precoVenda)  as total ");
+		hql.append(" (((estoqueProduto.qtde + estoqueProduto.qtdeSuplementar) - estoqueProduto.qtdeDevolucaoEncalhe) * produtoEdicao.precoVenda)  as total ");
 		
 		
 		hql.append(getSqlFromEWhereLancamentosParciais(filtro));
@@ -67,16 +66,14 @@ public class VendaProdutoRepositoryImpl extends AbstractRepository<MovimentoEsto
 		StringBuilder hql = new StringBuilder();
 	
 
-		hql.append(" from MovimentoEstoque movimentoEstoque ");
-		hql.append(" LEFT JOIN movimentoEstoque.estoqueProduto.produtoEdicao as produtoEdicao ");
-		hql.append(" LEFT JOIN movimentoEstoque.estoqueProduto.produtoEdicao.lancamentos as lancamento ");
-		hql.append(" LEFT JOIN movimentoEstoque.estoqueProduto.produtoEdicao.chamadaEncalhes as chamadaEncalhe ");
-		hql.append(" LEFT JOIN chamadaEncalhe.chamadaEncalheCotas as chamadaEncalheCota ");
-		hql.append(" LEFT JOIN movimentoEstoque.estoqueProduto.produtoEdicao.produto.fornecedores as fornecedor ");
+		hql.append(" from EstoqueProduto estoqueProduto ");
+		hql.append(" LEFT JOIN estoqueProduto.produtoEdicao as produtoEdicao ");
+		hql.append(" LEFT JOIN estoqueProduto.produtoEdicao.lancamentos as lancamento ");		
+		hql.append(" LEFT JOIN estoqueProduto.produtoEdicao.produto.fornecedores as fornecedor ");
 		
 		boolean usarAnd = false;
 		
-		if(filtro.getCodigo() != null) { 
+		if(filtro.getCodigo() != null && !filtro.getCodigo().isEmpty()) { 
 			hql.append( (usarAnd ? " and ":" where ") + "produtoEdicao.produto.codigo = :codigo ");
 			usarAnd = true;
 		}
@@ -105,7 +102,7 @@ public class VendaProdutoRepositoryImpl extends AbstractRepository<MovimentoEsto
 		
 		switch (coluna) {
 			case EDICAO:	
-				hql.append(" order by movimentoEstoque.estoqueProduto.produtoEdicao.numeroEdicao ");
+				hql.append(" order by estoqueProduto.produtoEdicao.numeroEdicao desc ");
 				break;
 		}
 		
@@ -125,7 +122,7 @@ public class VendaProdutoRepositoryImpl extends AbstractRepository<MovimentoEsto
 		
 		HashMap<String,Object> param = new HashMap<String, Object>();
 		
-		if(filtro.getCodigo() != null){ 
+		if(filtro.getCodigo() != null && !filtro.getCodigo().isEmpty()){ 
 			param.put("codigo", filtro.getCodigo());
 		}
 		if(filtro.getEdicao() != null){ 
