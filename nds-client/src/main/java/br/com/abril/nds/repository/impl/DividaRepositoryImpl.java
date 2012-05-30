@@ -20,6 +20,7 @@ import br.com.abril.nds.dto.filtro.FiltroDividaGeradaDTO;
 import br.com.abril.nds.dto.filtro.FiltroDividaGeradaDTO.ColunaOrdenacao;
 import br.com.abril.nds.model.StatusCobranca;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
+import br.com.abril.nds.model.cadastro.TipoRoteiro;
 import br.com.abril.nds.model.financeiro.Divida;
 import br.com.abril.nds.model.financeiro.StatusDivida;
 import br.com.abril.nds.repository.DividaRepository;
@@ -147,6 +148,7 @@ public class DividaRepositoryImpl extends AbstractRepository<Divida, Long> imple
 		param.put("data",filtro.getDataMovimento());
 		param.put("acumulaDivida", Boolean.FALSE);
 		param.put("statusCobranca",StatusCobranca.NAO_PAGO);
+		param.put("tipoRoteiro", TipoRoteiro.NORMAL);
 		
 		if(!isBoleto){
 			param.put("tipoCobrancaBoleto",TipoCobranca.BOLETO);
@@ -212,19 +214,21 @@ public class DividaRepositoryImpl extends AbstractRepository<Divida, Long> imple
 		.append(" Divida divida ")
 		.append(" JOIN divida.cobranca cobranca ")
 		.append(" JOIN cobranca.cota cota ")
+		.append(" JOIN cota.pdvs pdv ")
 		.append(" JOIN cota.pessoa pessoa ")
 		.append(" JOIN cota.parametroCobranca parametroCobranca ")
-		.append(" JOIN cota.box box")
-		.append(" LEFT JOIN cota.rotaRoteiroOperacao rotaRoteiroOperacao ")
-		.append(" LEFT JOIN rotaRoteiroOperacao.rota rota ")
-		.append(" LEFT JOIN rotaRoteiroOperacao.roteiro roteiro ")
+		.append(" LEFT JOIN cota.box box")
+		.append(" LEFT JOIN pdv.roteirizacao roteirizacao ")
+		.append(" LEFT JOIN roteirizacao.rota rota  ")
+		.append(" LEFT JOIN rota.roteiro roteiro ")
 		
 		.append(" WHERE ")
 		
 		.append(" divida.data =:data ")
 		.append(" AND divida.acumulada =:acumulaDivida ")
-		.append(" AND cobranca.statusCobranca=:statusCobranca");
-		
+		.append(" AND cobranca.statusCobranca=:statusCobranca ")
+		.append(" AND pdv.caracteristicas.pontoPrincipal = true ")
+		.append(" AND roteiro.tipoRoteiro is null OR roteiro.tipoRoteiro=:tipoRoteiro ");
 		
 		if(filtro.getNumeroCota()!= null  ){
 			hql.append(" AND cota.numeroCota =:numeroCota ");

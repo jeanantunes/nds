@@ -89,4 +89,15 @@ public class BoxServiceImpl implements BoxService{
 	public List<Box>  buscarPorTipo(TipoBox tipo) {
 		return boxRepository.obterListaBox(tipo);
 	}
+	
+	@Override
+	@Transactional(readOnly=true)
+	public List<Box> buscarTodos(TipoBox tipoBox) {
+		
+		if(tipoBox == null){
+			return boxRepository.buscarTodos();
+		}
+		
+		return boxRepository.obterListaBox(tipoBox);
+	}
 }
