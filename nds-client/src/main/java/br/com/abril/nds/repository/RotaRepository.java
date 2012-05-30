@@ -33,4 +33,13 @@ public interface RotaRepository extends Repository<Rota, Long> {
 	 * 
 	 */
 	void atualizaOrdenacao(Rota rota );
+	
+	/**
+	 * Retorna uma lista de rotas associadas a um determinado box
+	 * @param idBox - identificador do box
+	 * @return List<Rota>
+	 */
+	List<Rota> buscarRotaDeBox(Long idBox);
+	
+	 List<Rota> buscarRotaDeRoteiro(String descRoteiro);
 }

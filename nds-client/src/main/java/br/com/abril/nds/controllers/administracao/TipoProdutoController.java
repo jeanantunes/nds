@@ -10,9 +10,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.vo.ValidacaoVO;
-import br.com.abril.nds.dto.ExtratoEdicaoDTO;
-import br.com.abril.nds.dto.InfoGeralExtratoEdicaoDTO;
-import br.com.abril.nds.dto.filtro.FiltroExtratoEdicaoDTO;
+import br.com.abril.nds.dto.TipoProdutoDTO;
+import br.com.abril.nds.dto.filtro.FiltroTipoProdutoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.TipoProduto;
@@ -24,8 +23,8 @@ import br.com.abril.nds.service.exception.UniqueConstraintViolationException;
 import br.com.abril.nds.util.StringUtil;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.export.FileExporter;
-import br.com.abril.nds.util.export.NDSFileHeader;
 import br.com.abril.nds.util.export.FileExporter.FileType;
+import br.com.abril.nds.util.export.NDSFileHeader;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
@@ -114,25 +113,13 @@ public class TipoProdutoController {
 	 */
 	public void exportar(FileType fileType) throws IOException {
 		
-//	FiltroExtratoEdicaoDTO filtro = 
-//			(FiltroExtratoEdicaoDTO) this.session.getAttribute(FILTRO_PESQUISA_SESSION_ATTRIBUTE);
-//		
-//	List<ExtratoEdicaoDTO> listaExtratoEdicao = null;
-//		
-//		InfoGeralExtratoEdicaoDTO infoGeralExtratoEdicao = null;
-//		
-//		if (filtro != null) {
-//		
-//			infoGeralExtratoEdicao = 
-//				extratoEdicaoService.obterInfoGeralExtratoEdicao(
-//					filtro.getCodigoProduto(), filtro.getNumeroEdicao());
-//			
-//			listaExtratoEdicao = infoGeralExtratoEdicao.getListaExtratoEdicao();
-//		}
+		FiltroTipoProdutoDTO filtro = new FiltroTipoProdutoDTO();
 		
-//		FileExporter.to("extrato-edicao", fileType)
-//			.inHTTPResponse(this.getNDSFileHeader(), null, null, 
-//				this.tipoProdutoService.obterTodosTiposProduto(), TipoProduto.class, this.response);
+		List<TipoProdutoDTO> listaTipoProduto = this.toDTO(this.tipoProdutoService.obterTodosTiposProduto());
+		
+		FileExporter.to("tipo-produto", fileType)
+			.inHTTPResponse(this.getNDSFileHeader(), filtro, null, 
+				listaTipoProduto, TipoProdutoDTO.class, this.response);
 	}
 	
 	private void valida(TipoProduto tipoProduto) {
@@ -187,5 +174,25 @@ public class TipoProdutoController {
 			usuario.setNome("Jornaleiro da Silva");
 			
 			return usuario;
+	}
+	
+	private List<TipoProdutoDTO> toDTO(List<TipoProduto> listaTipoProduto) {
+		
+		List<TipoProdutoDTO> lista = new ArrayList<TipoProdutoDTO>();
+		
+		if (listaTipoProduto != null) {
+			for (TipoProduto tipoProduto : listaTipoProduto) {
+			
+				TipoProdutoDTO tipoProdutoDTO = new TipoProdutoDTO();
+			
+				tipoProdutoDTO.setCodigo(tipoProduto.getCodigo());
+				tipoProdutoDTO.setCodigoNBM(tipoProduto.getCodigoNBM());
+				tipoProdutoDTO.setCodigoNCM(tipoProduto.getCodigoNCM());
+				tipoProdutoDTO.setDescricao(tipoProduto.getDescricao());
+			
+				lista.add(tipoProdutoDTO);
+			}
+		}
+		return lista;
 	}
 }

@@ -81,6 +81,13 @@ public interface BoxService {
 	 * @return List<Box> 
 	 */
 	public List<Box> buscarPorTipo(TipoBox tipo);
+	
+	/**
+	 * Retorna todos os boxes, se tipo for informado retorna todos do tipo.
+	 * @param tipoBox
+	 * @return
+	 */
+	List<Box> buscarTodos(TipoBox tipoBox); 
 
 	
 }

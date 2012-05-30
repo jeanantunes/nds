@@ -27,8 +27,7 @@ import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.PoliticaCobranca;
-import br.com.abril.nds.model.cadastro.RotaRoteiroOperacao;
-import br.com.abril.nds.model.cadastro.RotaRoteiroOperacao.TipoOperacao;
+import br.com.abril.nds.model.cadastro.Roteirizacao;
 import br.com.abril.nds.model.cadastro.TelefoneDistribuidor;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.financeiro.Cobranca;
@@ -38,6 +37,7 @@ import br.com.abril.nds.service.DistribuidorService;
 import br.com.abril.nds.service.DocumentoCobrancaService;
 import br.com.abril.nds.service.EmailService;
 import br.com.abril.nds.service.PoliticaCobrancaService;
+import br.com.abril.nds.service.RoteirizacaoService;
 import br.com.abril.nds.service.exception.AutenticacaoEmailException;
 import br.com.abril.nds.util.AnexoEmail;
 import br.com.abril.nds.util.TipoMensagem;
@@ -59,6 +59,9 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
 	
 	@Autowired
 	private PoliticaCobrancaService politicaCobrancaService;
+	
+	@Autowired
+	private RoteirizacaoService roteirizacaoService;
 	
 	
 	@Override
@@ -135,14 +138,14 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
 				arquivo = gerarDocumentoCobrancas(listNossoNumero);
 			}
 			
-			this.cobrancaRepository.incrementarVia( listNossoNumero.toArray(new String[] {}) );
-		
+			if(arquivo!= null){
+				this.cobrancaRepository.incrementarVia( listNossoNumero.toArray(new String[] {}) );
+			}
 		} catch (Exception e) {
 			throw new ValidacaoException(TipoMensagem.ERROR, e.getMessage());
 		}
 		
 		return arquivo;
-		
 	}
 	
 	/**
@@ -326,22 +329,19 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
 			
 			impressaoDTO.setBox((cota.getBox()!= null)?cota.getBox().getCodigo():"");
 			
-			if(cota.getRotaRoteiroOperacao()!= null && !cota.getRotaRoteiroOperacao().isEmpty() ){
+			Roteirizacao roteirizacao = roteirizacaoService.buscarRoteirizacaoDeCota(cota.getNumeroCota());
+			
+			if(roteirizacao!= null){
 				
-				for(RotaRoteiroOperacao rotaRoteiro : cota.getRotaRoteiroOperacao()){
-					
-					if(TipoOperacao.IMPRESSAO_DIVIDA.equals(rotaRoteiro.getTipoOperacao())){
-						
-						impressaoDTO.setRota( (rotaRoteiro.getRota()!= null)? rotaRoteiro.getRota().getCodigoRota():"");
-						impressaoDTO.setRoteiro( (rotaRoteiro.getRoteiro()!= null)? rotaRoteiro.getRoteiro().getDescricaoRoteiro():"");
-						break;
-					}
-				}
+				impressaoDTO.setRota( (roteirizacao.getRota()!= null)? roteirizacao.getRota().getCodigoRota():"");
+				impressaoDTO.setRoteiro( (roteirizacao.getRota().getRoteiro()!= null)? roteirizacao.getRota().getRoteiro().getDescricaoRoteiro():"");
+		
 			}
 			else{
+		
 				impressaoDTO.setRota("");
 				impressaoDTO.setRoteiro("");
-			}	
+			}
 		}
 		
 		impressaoDTO.setTipoCobranca(cobranca.getTipoCobranca());
