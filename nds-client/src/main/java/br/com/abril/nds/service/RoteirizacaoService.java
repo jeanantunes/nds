@@ -3,6 +3,7 @@ package br.com.abril.nds.service;
 import java.util.List;
 
 import org.hibernate.criterion.MatchMode;
+import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.model.cadastro.Rota;
 import br.com.abril.nds.model.cadastro.Roteirizacao;
@@ -40,4 +41,8 @@ public interface RoteirizacaoService {
 	Roteirizacao buscarRoteirizacaoDeCota(Integer numeroCota);
 	
 	List<Rota> buscarRotaPorRoteiro(String descRoteiro);
+	
+	Rota buscarRotaPorId(Long idRota);
+	 
+	Roteiro buscarRoteiroPorId(Long idRoteiro);
 }
