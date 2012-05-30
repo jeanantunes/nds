@@ -329,13 +329,13 @@
 				align : 'center'
 			}, {
 				display : 'Data Lançamento',
-				name : 'dtLancamento',
+				name : 'dataLancamento',
 				width : 100,
 				sortable : true,
 				align : 'center'
 			}, {
 				display : 'Data Recolhimento',
-				name : 'dtRecolhimento',
+				name : 'dataRecolhimento',
 				width : 110,
 				sortable : true,
 				align : 'center'
@@ -365,7 +365,7 @@
 				align : 'center'
 			}, {
 				display : '% Venda',
-				name : 'percVenda',
+				name : 'total',
 				width : 60,
 				sortable : true,
 				align : 'center'

@@ -21,12 +21,21 @@ public class VendaProdutoServiceImpl implements VendaProdutoService {
 
 	@Override
 	@Transactional
-	public List<VendaProdutoDTO> buscaVendaporProduto(FiltroVendaProdutoDTO filtro) {
+	public List<VendaProdutoDTO> buscaVendaPorProduto(FiltroVendaProdutoDTO filtro) {
 		if(filtro == null) 
 			throw new ValidacaoException(TipoMensagem.WARNING, "Filtro não deve ser nulo.");
 				
-		return vendaProdutoRepository.buscarLancamentosParciais(filtro);
+		return vendaProdutoRepository.buscarVendaPorProduto(filtro);
 		 
+	}
+
+	@Override
+	@Transactional
+	public List<VendaProdutoDTO> buscaLancamentoPorEdicao(FiltroVendaProdutoDTO filtro) {
+		if(filtro == null) 
+			throw new ValidacaoException(TipoMensagem.WARNING, "Filtro não deve ser nulo.");
+		 
+		return vendaProdutoRepository.buscarLancamentoPorEdicao(filtro);
 	}
 
 }
