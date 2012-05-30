@@ -11,6 +11,8 @@ import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.CotaRotaRoteiroDTO;
 import br.com.abril.nds.model.cadastro.Box;
+import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.Roteiro;
 import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.repository.BoxRepository;
 import br.com.abril.nds.util.StringUtil;
@@ -230,5 +232,40 @@ public class BoxRepositoryImpl extends AbstractRepository<Box,Long> implements B
 		
 		return (String) query.uniqueResult();
 	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see br.com.abril.nds.repository.BoxRepository#hasRoteiros(long)
+	 */
+	@Override
+	public boolean hasRoteirosVinculados(long idBox){
+		Criteria criteria = getSession().createCriteria(Roteiro.class);
+		
+		criteria.createCriteria("box").add(Restrictions.idEq(idBox));
+		
+		criteria.setProjection(Projections.rowCount());
+		
+		Long qtd = (Long)criteria.list().get(0);
+		return qtd > 0;
+		
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see br.com.abril.nds.repository.BoxRepository#hasCotas(long)
+	 */
+	@Override
+	public boolean hasCotasVinculadas(long idBox){
+		Criteria criteria = getSession().createCriteria(Cota.class);
+		
+		criteria.createCriteria("box").add(Restrictions.idEq(idBox));
+		
+		criteria.setProjection(Projections.rowCount());
+		
+		Long qtd = (Long)criteria.list().get(0);
+		return qtd > 0;
+		
+	}
+
 
 }
