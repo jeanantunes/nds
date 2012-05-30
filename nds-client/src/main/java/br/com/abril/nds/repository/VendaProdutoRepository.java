@@ -2,6 +2,7 @@ package br.com.abril.nds.repository;
 
 import java.util.List;
 
+import br.com.abril.nds.dto.LancamentoPorEdicaoDTO;
 import br.com.abril.nds.dto.VendaProdutoDTO;
 import br.com.abril.nds.dto.filtro.FiltroVendaProdutoDTO;
 import br.com.abril.nds.model.estoque.MovimentoEstoque;
@@ -10,6 +11,6 @@ public interface VendaProdutoRepository extends Repository<MovimentoEstoque, Lon
 
 	List<VendaProdutoDTO> buscarVendaPorProduto(FiltroVendaProdutoDTO filtro);
 	
-	List<VendaProdutoDTO> buscarLancamentoPorEdicao(FiltroVendaProdutoDTO filtro);
+	List<LancamentoPorEdicaoDTO> buscarLancamentoPorEdicao(FiltroVendaProdutoDTO filtro);
 
 }

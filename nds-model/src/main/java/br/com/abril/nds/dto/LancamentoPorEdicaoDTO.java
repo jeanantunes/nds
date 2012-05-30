@@ -8,16 +8,14 @@ import java.util.Date;
 import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.export.Export;
-import br.com.abril.nds.util.export.Exportable;
 import br.com.abril.nds.util.export.Export.Alignment;
+import br.com.abril.nds.util.export.Exportable;
 
 @Exportable
-public class VendaProdutoDTO implements Serializable {
-
-	private static final long serialVersionUID = 2903790306949832310L;
+public class LancamentoPorEdicaoDTO implements Serializable  {
 	
-	@Export(label = "Edição", alignment=Alignment.LEFT)
-	private Long numEdicao;
+	
+	private static final long serialVersionUID = -4125231140420830266L;
 	
 	@Export(label = "Data Lançamento", alignment=Alignment.CENTER)
 	private String dataLancamento;
@@ -28,48 +26,33 @@ public class VendaProdutoDTO implements Serializable {
 	@Export(label = "Reparte", alignment=Alignment.CENTER)
 	private BigDecimal reparte;
 	
+	@Export(label = "Encalhe", alignment=Alignment.CENTER)
+	private BigDecimal encalhe;
+	
 	@Export(label = "Venda", alignment=Alignment.CENTER)
 	private BigDecimal venda;
-	
-	@Export(label = "% Venda", alignment=Alignment.CENTER)
-	private BigDecimal percentagemVenda;
-	
-	@Export(label = "Preço Capa", alignment=Alignment.CENTER)
-	private BigDecimal precoCapa;
 	
 	@Export(label = "Total", alignment=Alignment.CENTER)
 	private BigDecimal total;
 	
-	private BigDecimal encalhe;
 	
 	
-	public VendaProdutoDTO() {
+	
+	public LancamentoPorEdicaoDTO() {
 		
 	}
 	
-	public VendaProdutoDTO(Long numEdicao, String dataLancamento, String dataRecolhimento, BigDecimal reparte, BigDecimal venda,  
-			BigDecimal percentagemVenda, BigDecimal precoCapa, BigDecimal total, BigDecimal encalhe) {
+	public LancamentoPorEdicaoDTO(String dataLancamento, String dataRecolhimento, BigDecimal reparte, BigDecimal venda,  
+			BigDecimal total, BigDecimal encalhe) {
 		super();
-		this.numEdicao = numEdicao;
 		this.dataLancamento = dataLancamento;
 		this.dataRecolhimento = dataRecolhimento;
 		this.reparte = reparte;
 		this.venda = venda;
-		this.percentagemVenda = percentagemVenda;
-		this.precoCapa = precoCapa;
 		this.total = total;
-		this.encalhe = encalhe;
 	}
 	
 	
-
-	public Long getNumEdicao() {
-		return numEdicao;
-	}
-
-	public void setNumEdicao(Long numEdicao) {
-		this.numEdicao = numEdicao;
-	}
 
 	public String getDataLancamento() {
 		return dataLancamento;
@@ -103,22 +86,6 @@ public class VendaProdutoDTO implements Serializable {
 		this.venda = venda;
 	}
 
-	public BigDecimal getPercentagemVenda() {
-		return percentagemVenda;
-	}
-
-	public void setPercentagemVenda(BigDecimal percentagemVenda) {
-		this.percentagemVenda = percentagemVenda;
-	}
-
-	public BigDecimal getPrecoCapa() {
-		return precoCapa;
-	}
-
-	public void setPrecoCapa(BigDecimal precoCapa) {
-		this.precoCapa = precoCapa;
-	}
-
 	public BigDecimal getTotal() {
 		return total.setScale(2,RoundingMode.HALF_DOWN);
 	}
@@ -126,7 +93,7 @@ public class VendaProdutoDTO implements Serializable {
 	public void setTotal(BigDecimal total) {
 		this.total = total;
 	}
-
+	
 	public BigDecimal getEncalhe() {
 		return encalhe;
 	}
@@ -135,6 +102,4 @@ public class VendaProdutoDTO implements Serializable {
 		this.encalhe = encalhe;
 	}
 	
-	
-
 }

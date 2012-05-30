@@ -7,6 +7,7 @@ import org.hibernate.Query;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Repository;
 
+import br.com.abril.nds.dto.LancamentoPorEdicaoDTO;
 import br.com.abril.nds.dto.VendaProdutoDTO;
 import br.com.abril.nds.dto.filtro.FiltroVendaProdutoDTO;
 import br.com.abril.nds.dto.filtro.FiltroVendaProdutoDTO.ColunaOrdenacao;
@@ -28,7 +29,7 @@ public class VendaProdutoRepositoryImpl extends AbstractRepository<MovimentoEsto
 		
 		hql.append("SELECT estoqueProduto.produtoEdicao.numeroEdicao as numEdicao, ");
 		hql.append(" lancamento.dataLancamentoDistribuidor as dataLancamento, ");
-		hql.append(" lancamento.dataLancamentoDistribuidor as dataRecolhimento, ");
+		hql.append(" lancamento.dataRecolhimentoDistribuidor as dataRecolhimento, ");
 		hql.append(" (estoqueProduto.qtde + estoqueProduto.qtdeSuplementar) as reparte, ");
 		hql.append(" ((estoqueProduto.qtde + estoqueProduto.qtdeSuplementar) - estoqueProduto.qtdeDevolucaoEncalhe)  as venda, ");
 		hql.append(" (((estoqueProduto.qtde + estoqueProduto.qtdeSuplementar) - estoqueProduto.qtdeDevolucaoEncalhe) / lancamento.reparte)  as percentagemVenda, ");
@@ -133,7 +134,7 @@ public class VendaProdutoRepositoryImpl extends AbstractRepository<MovimentoEsto
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<VendaProdutoDTO> buscarLancamentoPorEdicao(
+	public List<LancamentoPorEdicaoDTO> buscarLancamentoPorEdicao(
 			FiltroVendaProdutoDTO filtro) {
 		
 		StringBuilder hql = new StringBuilder();
@@ -159,14 +160,8 @@ public class VendaProdutoRepositoryImpl extends AbstractRepository<MovimentoEsto
 		}
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(
-				VendaProdutoDTO.class));
+				LancamentoPorEdicaoDTO.class));
 		
-		if(filtro.getPaginacao().getQtdResultadosPorPagina() != null) 
-			query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
-		
-		if(filtro.getPaginacao().getQtdResultadosPorPagina() != null) 
-			query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
-				
 		return query.list();
 		
 	}

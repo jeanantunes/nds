@@ -39,7 +39,7 @@
 		});
 		
 		$(".detalhesVendaGrid").flexReload();
-	
+		
 		$( "#dialog-detalhes" ).dialog({
 			resizable: false,
 			height:400,
@@ -145,8 +145,13 @@
 		}
 		
 		$.each(resultado.rows, function(index, row) {
-						
-			
+			/*
+			$('#row.cell.total').val().maskMoney({
+				 thousands:'.', 
+				 decimal:',', 
+				 precision:2
+			});
+			*/
 			var linkDetalhe = '<a href="javascript:;" onclick="popup_detalhes('+row.cell.numEdicao+');" style="cursor:pointer">' +
 							   	 '<img title="Lançamentos da Edição" src="${pageContext.request.contextPath}/images/ico_detalhes.png" hspace="5" border="0px" />' +
 							   '</a>';
@@ -154,11 +159,8 @@
 			row.cell.acao = linkDetalhe;
 		});
 		
-		$(".total").maskMoney({
-				 thousands:'.', 
-				 decimal:',', 
-				 precision:2
-			});
+		
+		
 		
 		$(".grids").show();
 		
@@ -188,12 +190,22 @@
 <body>
 	<div id="dialog-detalhes" title="Detalhes do Produto">
      <fieldset>
-     	<legend>Produto: 4455 - Veja - Edição 001 - Tipo de Lançamento: Parcial</legend>
+     	<legend>Produto: ${produtoEdicao}  - Veja - Edição 001 - Tipo de Lançamento: Parcial</legend>
         
         <table class="detalhesVendaGrid"></table>
-         <span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
+         <span class="bt_novos" title="Gerar Arquivo">
+         	<a href="${pageContext.request.contextPath}/lancamento/vendaProduto/exportar?fileType=XLS&tipoExportacao=popup">
+         		<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
+         		Arquivo
+         	</a>
+         </span>
 
-		<span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
+		<span class="bt_novos" title="Imprimir">
+			<a href="${pageContext.request.contextPath}/lancamento/vendaProduto/exportar?fileType=PDF&tipoExportacao=popup">
+				<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
+				Imprimir
+			</a>
+		</span>
      </fieldset>
    
     </div>
@@ -240,8 +252,18 @@
 		       	  <legend>Produto: 4455 - Veja - Tipo de Lançamento: Normal</legend>
 		        	<table class="parciaisGrid"></table>
 		            <!--<span class="bt_novos" title="Novo"><a href="javascript:;" onclick="popup();"><img src="../images/ico_salvar.gif" hspace="5" border="0"/>Novo</a></span>-->
-		            <span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
-					<span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>	        
+		            <span class="bt_novos" title="Gerar Arquivo">
+		            	<a href="${pageContext.request.contextPath}/lancamento/vendaProduto/exportar?fileType=XLS&tipoExportacao=principal">
+		            		<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
+		            		Arquivo
+		            	</a>
+		            </span>
+					<span class="bt_novos" title="Imprimir">
+						<a href="${pageContext.request.contextPath}/lancamento/vendaProduto/exportar?fileType=PDF&tipoExportacao=principal">
+							<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
+							Imprimir
+						</a>
+					</span>	        
 		      </fieldset>
 	      </div>
 	      <div class="linha_separa_fields">&nbsp;</div>
