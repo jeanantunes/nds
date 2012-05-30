@@ -1,4 +1,3 @@
-
 <head>
 
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/produtoEdicao.js"></script>
