@@ -405,7 +405,7 @@ var PDV = {
 			
 			$.postJSON(contextPath + "/cadastro/pdv/adicionarPeriodo",
 					parametros, 
-					function(result) {PDV.retornoAdicaoDiaFuncionamento(result);},
+					function(result) {PDV.retornoAdicaoDiaFuncionamento(result,true);},
 					null,
 					true,
 					"idModalPDV"
@@ -418,7 +418,7 @@ var PDV = {
 			
 			$.postJSON(contextPath + "/cadastro/pdv/atualizarComboDiasFuncionamento",
 					parametros, 
-					function(result) {PDV.retornoAdicaoDiaFuncionamento(result);},
+					function(result) {PDV.retornoAdicaoDiaFuncionamento(result,false);},
 					null,
 					true,
 					"idModalPDV"
@@ -439,7 +439,7 @@ var PDV = {
 			return parametros;			
 		},
 		
-		retornoAdicaoDiaFuncionamento: 	function(result){
+		retornoAdicaoDiaFuncionamento: 	function(result,hasAdicao){
 			
 			var items = result[0];
 			var mensagens = result[1];
@@ -447,14 +447,18 @@ var PDV = {
 	
 			if(status == "SUCCESS") {
 				
-				var tipoPeriodo = $("#selectDiasFuncionamento").val();
-				var descTipoPeriodo = $("#selectDiasFuncionamento option:selected").text();
-				var inicioHorario = $("#inicioHorario").val();
-				var fimHorario = $("#fimHorario").val();
+				if(hasAdicao) {
+					
+					var tipoPeriodo = $("#selectDiasFuncionamento").val();
+					var descTipoPeriodo = $("#selectDiasFuncionamento option:selected").text();
+					var inicioHorario = $("#inicioHorario").val();
+					var fimHorario = $("#fimHorario").val();
+					
+					var novoPeriodo = {tipoPeriodo:tipoPeriodo,descTipoPeriodo:descTipoPeriodo,inicio:inicioHorario,fim:fimHorario};
+					
+					PDV.diasFuncionamento.push(novoPeriodo);
+				}	
 				
-				var novoPeriodo = {tipoPeriodo:tipoPeriodo,descTipoPeriodo:descTipoPeriodo,inicio:inicioHorario,fim:fimHorario};
-				
-				PDV.diasFuncionamento.push(novoPeriodo);
 				PDV.montartabelaDiasFuncionamento();
 			
 				items.splice(0,0,{"key": {"@class": "string","$": "-1"},"value": {"@class": "string","$": "Selecione"}});
