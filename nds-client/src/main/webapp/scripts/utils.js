@@ -165,6 +165,19 @@ function montarComboBox(result, incluirTodos) {
 	
 	return options;
 }
+function montarComboBoxCustomJson(result, incluirTodos) {
+	var options = "";
+	
+	if (incluirTodos) {
+		options += "<option selected='selected'  value=''>Todos</option>";
+	}
+	
+	$.each(result, function(index, row) {
+		options += "<option value='" + row.key + "'>" + row.value + "</option>";
+	});
+	
+	return options;
+}
 
 function replaceAll(string, token, newtoken) {
 	while (string.indexOf(token) != -1) {

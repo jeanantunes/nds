@@ -10,10 +10,10 @@ import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.CotaRotaRoteiroDTO;
-import br.com.abril.nds.dto.EncalheCotaDTO;
 import br.com.abril.nds.model.cadastro.Box;
+import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.Roteiro;
 import br.com.abril.nds.model.cadastro.TipoBox;
-import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.BoxRepository;
 import br.com.abril.nds.util.StringUtil;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
@@ -199,14 +199,14 @@ public class BoxRepositoryImpl extends AbstractRepository<Box,Long> implements B
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append("select rotaRoteiro.cota.numeroCota as numeroCota,");
-		hql.append("case rotaRoteiro.cota.pessoa.class when 'F' then rotaRoteiro.cota.pessoa.nome when 'J' then rotaRoteiro.cota.pessoa.razaoSocial end  as nomeCota,");
-		hql.append("rotaRoteiro.rota.codigoRota as rota,");
-		hql.append("rotaRoteiro.roteiro.descricaoRoteiro as roteiro");
+		hql.append("select roteirizacao.pdv.cota.numeroCota as numeroCota,");
+		hql.append("case roteirizacao.pdv.cota.pessoa.class when 'F' then roteirizacao.pdv.cota.pessoa.nome when 'J' then roteirizacao.pdv.cota.pessoa.razaoSocial end  as nomeCota,");
+		hql.append("rota.codigoRota as rota,");
+		hql.append("roteiro.descricaoRoteiro as roteiro");
 		
-		hql.append(" from RotaRoteiroOperacao rotaRoteiro");
+		hql.append(" from Roteiro roteiro  join roteiro.rotas rota join rota.roteirizacao roteirizacao ");
 		
-		hql.append(" where rotaRoteiro.cota.box.id = :id");
+		hql.append(" where roteiro.box.id = :id");
 		
 		hql.append(" order by roteiro asc, rota asc, numeroCota asc");
 		
@@ -232,5 +232,40 @@ public class BoxRepositoryImpl extends AbstractRepository<Box,Long> implements B
 		
 		return (String) query.uniqueResult();
 	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see br.com.abril.nds.repository.BoxRepository#hasRoteiros(long)
+	 */
+	@Override
+	public boolean hasRoteirosVinculados(long idBox){
+		Criteria criteria = getSession().createCriteria(Roteiro.class);
+		
+		criteria.createCriteria("box").add(Restrictions.idEq(idBox));
+		
+		criteria.setProjection(Projections.rowCount());
+		
+		Long qtd = (Long)criteria.list().get(0);
+		return qtd > 0;
+		
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see br.com.abril.nds.repository.BoxRepository#hasCotas(long)
+	 */
+	@Override
+	public boolean hasCotasVinculadas(long idBox){
+		Criteria criteria = getSession().createCriteria(Cota.class);
+		
+		criteria.createCriteria("box").add(Restrictions.idEq(idBox));
+		
+		criteria.setProjection(Projections.rowCount());
+		
+		Long qtd = (Long)criteria.list().get(0);
+		return qtd > 0;
+		
+	}
+
 
 }

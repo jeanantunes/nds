@@ -10,6 +10,7 @@ import br.com.abril.nds.dto.CotaRotaRoteiroDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.TipoBox;
+import br.com.abril.nds.serialization.custom.CustomMapJson;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.BoxService;
 import br.com.abril.nds.service.exception.RelationshipRestrictionException;
@@ -55,8 +56,8 @@ public class BoxController {
 	@Post
 	@Path("/buscaPorId.json")
 	public void buscaPorId(long id) {
-		Box box = boxService.buscarPorId(id);
-		result.use(Results.json()).from(box).serialize();
+		Box box = boxService.buscarPorId(id);		
+		result.use(CustomMapJson.class).put("box", box).put("associado", boxService.hasAssociacao(id)).serialize();
 	}
 
 	@Post
@@ -66,6 +67,8 @@ public class BoxController {
 		try {
 			boxService.merge(box);
 		} catch (UniqueConstraintViolationException e) {
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, e.getMessage()));
+		} catch (RelationshipRestrictionException e) {
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, e.getMessage()));
 		}
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS,"Box salvo com Sucesso."),"result").recursive().serialize();
@@ -99,7 +102,7 @@ public class BoxController {
 		} catch (RelationshipRestrictionException e) {
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, e.getMessage()));
 		}
-		result.use(Results.nothing());
+		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Box removido com sucesso.")).serialize();
 	}
 	
 	@Post
@@ -107,5 +110,6 @@ public class BoxController {
 	public void detalhe(long id){		
 		List<CotaRotaRoteiroDTO> rotaRoteiroDTOs = boxService.obtemCotaRotaRoteiro(id);		
 		result.use(FlexiGridJson.class).from(rotaRoteiroDTOs).total(rotaRoteiroDTOs.size()).page(1).serialize();
-	}
+	}	
+
 }

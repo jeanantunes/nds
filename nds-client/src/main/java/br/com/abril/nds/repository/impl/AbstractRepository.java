@@ -3,6 +3,7 @@ package br.com.abril.nds.repository.impl;
 import java.io.Serializable;
 import java.util.List;
 
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +40,17 @@ public abstract class AbstractRepository<T, K extends Serializable> implements R
 	
 	public void remover(T entity) {
 		getSession().delete(entity);
+		getSession().flush();
+	}
+	
+	
+	@Override
+	public void removerPorId(K... id) {		
+		String hql  = "DELETE FROM "+ clazz.getCanonicalName() + " WHERE id in (:ids)" ;
+		
+		Query query = getSession().createQuery(hql);
+		query.setParameterList("ids", id);		
+		query.executeUpdate();
 		getSession().flush();
 	}
 	

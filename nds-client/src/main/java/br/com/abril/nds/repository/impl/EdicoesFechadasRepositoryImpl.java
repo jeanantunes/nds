@@ -1,5 +1,5 @@
 package br.com.abril.nds.repository.impl;
-
+ 
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
@@ -41,9 +41,10 @@ public class EdicoesFechadasRepositoryImpl extends AbstractRepository<MovimentoE
 		hql.append(" FROM MovimentoEstoque AS movimentoEstoque ")
 			.append(" LEFT JOIN movimentoEstoque.estoqueProduto.produtoEdicao AS produtoEdicao ")
 			.append(" LEFT JOIN produtoEdicao.produto AS produto ")
-			.append(" LEFT JOIN produtoEdicao.lancamentos AS lancamentos ")
 			.append(" LEFT JOIN produto.fornecedores AS fornecedores ")
 			.append(" LEFT JOIN fornecedores.juridica AS juridica ");
+
+		//.append(" LEFT JOIN produtoEdicao.lancamentos AS lancamentos ")
 
 		hql.append(" WHERE ( produtoEdicao.dataDesativacao BETWEEN :dataDe AND :dataAte ) ");
 		
@@ -84,17 +85,21 @@ public class EdicoesFechadasRepositoryImpl extends AbstractRepository<MovimentoE
 			.append("   produto.nome , ")
 			.append("   produtoEdicao.numeroEdicao, " )
 			.append("   juridica.nomeFantasia, " )
-			.append("   min(lancamentos.dataRecolhimentoDistribuidor), ")
+			.append("   (SELECT min(lancamentos.dataRecolhimentoDistribuidor) from Lancamento AS lancamentos WHERE lancamentos.produtoEdicao = movimentoEstoque.estoqueProduto.produtoEdicao) , ")
 			.append("   produtoEdicao.parcial, ")
-			.append("   max(lancamentos.dataRecolhimentoDistribuidor), ")
+			.append("   (SELECT max(lancamentos.dataRecolhimentoDistribuidor) from Lancamento AS lancamentos WHERE lancamentos.produtoEdicao = movimentoEstoque.estoqueProduto.produtoEdicao) , ")
 			.append("   ( sum(movimentoEstoque.qtde) ) ) ");
-		
+
+		/*.append("   min(lancamentos.dataRecolhimentoDistribuidor), ")
+		.append("   max(lancamentos.dataRecolhimentoDistribuidor), ")*/
+
 		hql.append(" FROM MovimentoEstoque AS movimentoEstoque ")
 			.append(" LEFT JOIN movimentoEstoque.estoqueProduto.produtoEdicao AS produtoEdicao ")
 			.append(" LEFT JOIN produtoEdicao.produto AS produto ")
-			.append(" LEFT JOIN produtoEdicao.lancamentos AS lancamentos ")
 			.append(" LEFT JOIN produto.fornecedores AS fornecedores ")
 			.append(" LEFT JOIN fornecedores.juridica AS juridica ");
+
+		//.append(" LEFT JOIN produtoEdicao.lancamentos AS lancamentos ")
 
 		hql.append(" WHERE ( produtoEdicao.dataDesativacao BETWEEN :dataDe AND :dataAte ) ");
 		

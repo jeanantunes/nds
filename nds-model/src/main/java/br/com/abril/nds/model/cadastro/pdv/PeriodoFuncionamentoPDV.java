@@ -34,7 +34,7 @@ public class PeriodoFuncionamentoPDV implements Serializable {
 	private PDV pdv;
 	
 	@Enumerated(EnumType.STRING)
-	@Column(name = "FUNCIONAMENTO_PDV", nullable = false)
+	@Column(name = "FUNCIONAMENTO_PDV")
 	private TipoPeriodoFuncionamentoPDV tipoPeriodoFuncionamentoPDV;
 	
 	@Temporal(TemporalType.TIME)

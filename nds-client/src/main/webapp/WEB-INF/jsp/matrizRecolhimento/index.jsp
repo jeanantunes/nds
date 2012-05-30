@@ -7,7 +7,7 @@
 			function verificarBalanceamentosAlterados(funcao) {
 				
 				$.postJSON(
-					"<c:url value='/devolucao/balanceamentoMatriz/verificarBalanceamentosAlterados' />",
+					"${pageContext.request.contextPath}/devolucao/balanceamentoMatriz/verificarBalanceamentosAlterados",
 					null,
 					function(result) {
 						
@@ -45,7 +45,7 @@
 				fecharGridBalanceamento();
 				
 				$.postJSON(
-					"<c:url value='/devolucao/balanceamentoMatriz/pesquisar' />", 
+					"${pageContext.request.contextPath}/devolucao/balanceamentoMatriz/pesquisar", 
 					obterParametrosPesquisa(),
 					function(result) {
 						
@@ -193,7 +193,7 @@
 				$("#dataBalanceamentoHidden").val(data);
 				
 				$(".balanceamentoGrid").flexOptions({
-					url: "<c:url value='/devolucao/balanceamentoMatriz/exibirMatrizFornecedor' />",
+					url: "${pageContext.request.contextPath}/devolucao/balanceamentoMatriz/exibirMatrizFornecedor",
 					onSuccess: executarAposProcessamento,
 					params: [
 				         {name:'dataFormatada', value: data}
@@ -431,7 +431,7 @@
 	   			];
 				
 				$.getJSON(
-					"<c:url value='/cadastro/distribuidor/obterDataDaSemana' />", 
+					"${pageContext.request.contextPath}/cadastro/distribuidor/obterDataDaSemana", 
 					data,
 					function(result) {
 	
@@ -459,7 +459,7 @@
 	   			];
 				
 				$.getJSON(
-					"<c:url value='/cadastro/distribuidor/obterNumeroSemana' />", 
+					"${pageContext.request.contextPath}/cadastro/distribuidor/obterNumeroSemana", 
 					data,
 					function(result) {
 	
@@ -641,7 +641,7 @@
 			function confirmar() {
 				
 				$.postJSON(
-					"<c:url value='/devolucao/balanceamentoMatriz/confirmar' />",
+					"${pageContext.request.contextPath}/devolucao/balanceamentoMatriz/confirmar",
 					null,
 					function(result) {
 				
@@ -657,7 +657,7 @@
 				fecharGridBalanceamento();
 				
 				$.postJSON(
-					"<c:url value='/devolucao/balanceamentoMatriz/balancearPorEditor' />",
+					"${pageContext.request.contextPath}/devolucao/balanceamentoMatriz/balancearPorEditor",
 					null,
 					function(result) {
 						
@@ -675,7 +675,7 @@
 				fecharGridBalanceamento();
 				
 				$.postJSON(
-					"<c:url value='/devolucao/balanceamentoMatriz/balancearPorValor' />",
+					"${pageContext.request.contextPath}/devolucao/balanceamentoMatriz/balancearPorValor",
 					null,
 					function(result) {
 						
@@ -693,7 +693,7 @@
 				fecharGridBalanceamento();
 				
 				$.postJSON(
-					"<c:url value='/devolucao/balanceamentoMatriz/salvar' />"
+					"${pageContext.request.contextPath}/devolucao/balanceamentoMatriz/salvar"
 				);
 			}
 			
@@ -702,7 +702,7 @@
 				$("#dataBalanceamentoHidden").val("");
 				
 				$(".balanceamentoGrid").flexOptions({
-					url: "<c:url value='/devolucao/balanceamentoMatriz/exibirMatrizFornecedor' />",
+					url: "${pageContext.request.contextPath}/devolucao/balanceamentoMatriz/exibirMatrizFornecedor",
 					onSuccess: executarAposProcessamento,
 					params: null,
 				    newp: 1,
@@ -716,7 +716,7 @@
 				fecharGridBalanceamento();
 				
 				$.postJSON(
-					"<c:url value='/devolucao/balanceamentoMatriz/voltarConfiguracaoOriginal' />",
+					"${pageContext.request.contextPath}/devolucao/balanceamentoMatriz/voltarConfiguracaoOriginal",
 					null,
 					function(result) {
 						
@@ -794,7 +794,7 @@
 				
 				var dataAntiga = $("#dataBalanceamentoHidden").val();
 				
-				$.postJSON("<c:url value='/devolucao/balanceamentoMatriz/reprogramarSelecionados' />",
+				$.postJSON("${pageContext.request.contextPath}/devolucao/balanceamentoMatriz/reprogramarSelecionados",
 						   listaProdutoRecolhimento
 						   		+ "&selecionarTodos=" + checkAllSelected
 						   		+ "&novaDataFormatada=" + novaData
@@ -839,7 +839,7 @@
 				
 				var dataAntiga = $("#dataBalanceamentoHidden").val();
 				
-				$.postJSON("<c:url value='/devolucao/balanceamentoMatriz/reprogramarRecolhimentoUnico' />",
+				$.postJSON("${pageContext.request.contextPath}/devolucao/balanceamentoMatriz/reprogramarRecolhimentoUnico",
 						   linhaSelecionada
 						   		+ "&dataAntigaFormatada=" + dataAntiga,
 						   function(result) {
@@ -858,7 +858,7 @@
 			
 			function atualizarResumoBalanceamento() {
 				
-				$.postJSON("<c:url value='/devolucao/balanceamentoMatriz/atualizarResumoBalanceamento' />",
+				$.postJSON("${pageContext.request.contextPath}/devolucao/balanceamentoMatriz/atualizarResumoBalanceamento",
 						   null,
 						   function(result) {
 						   	
@@ -991,7 +991,7 @@
 					<td width="115">
 						<span class="bt_confirmar_novo" title="Confirmar balanceamento">
 							<a id="linkConfirmar" href="javascript:;">
-								<img border="0" hspace="5" src="<c:url value='/images/ico_check.gif'/>">Confirmar
+								<img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_check.gif">Confirmar
 							</a>
 						</span>
 					</td>
@@ -1001,17 +1001,17 @@
 					<td width="296">
 						<span class="bt_confirmar_novo" title="Balancear Editor">
 							<a id="linkEditor" href="javascript:;">
-								<img border="0" hspace="5" src="<c:url value='/images/ico_check.gif'/>">Editor
+								<img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_check.gif">Editor
 							</a>
 						</span>
 						<span class="bt_confirmar_novo" title="Balancear Volume / Valor">
 							<a id="linkValor" href="javascript:;">
-								<img border="0" hspace="5" src="<c:url value='/images/ico_check.gif'/>">Valor
+								<img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_check.gif">Valor
 							</a>
 						</span>
 						<span class="bt_novos" title="Salvar">
 							<a id="linkSalvar" href="javascript:;">
-								<img border="0" hspace="5" src="<c:url value='/images/ico_salvar.gif'/>">Salvar
+								<img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_salvar.gif">Salvar
 							</a>
 						</span>
 					</td>
@@ -1019,7 +1019,7 @@
 					<td width="207">
 						<span class="bt_novos" title="Matriz Fornecedor" style="float: right;">
 							<a id="linkMatrizFornecedor" href="javascript:;" onclick="exibirMatrizFornecedor();">
-								<img border="0" hspace="5" src="<c:url value='/images/ico_detalhes.png'/>">Matriz Fornecedor
+								<img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_detalhes.png">Matriz Fornecedor
 							</a>
 						</span>
 					</td>
@@ -1027,7 +1027,7 @@
 					<td width="215">
 						<span class="bt_configura_inicial" title="Voltar Configuração Inicial">
 							<a id="linkConfiguracaoInicial" href="javascript:;">
-								<img src="<c:url value='/images/bt_devolucao.png'/>" border="0" hspace="5" />
+								<img src="${pageContext.request.contextPath}/images/bt_devolucao.png" border="0" hspace="5" />
 								Voltar Configuração Inicial
 							</a>
 						</span>
@@ -1063,7 +1063,7 @@
 						<td width="152">
 							<span class="bt_novos" title="Reprogramar">
 								<a id="linkReprogramar" href="javascript:;">
-									<img src="<c:url value='/images/ico_reprogramar.gif'/>" hspace="5" border="0" />Reprogramar
+									<img src="${pageContext.request.contextPath}/images/ico_reprogramar.gif" hspace="5" border="0" />Reprogramar
 								</a>
 							</span>
 						</td>

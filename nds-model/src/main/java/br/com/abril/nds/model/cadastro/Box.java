@@ -47,6 +47,9 @@ public class Box implements Serializable {
 	@OneToMany(mappedBy = "box")
 	private Set<Cota> cotas = new HashSet<Cota>();
 	
+	@OneToMany(mappedBy ="box")
+	private Set<Roteiro> roteiros;
+	
 	/**
 	 * Flag indicando se o box é um posto avançado
 	 */
@@ -106,6 +109,24 @@ public class Box implements Serializable {
 	public void setTipoBox(TipoBox tipoBox) {
 		this.tipoBox = tipoBox;
 	}
+
+	/**
+	 * @return the roteiros
+	 */
+	public Set<Roteiro> getRoteiros() {
+		return roteiros;
+	}
+
+	/**
+	 * @param roteiros the roteiros to set
+	 */
+	public void setRoteiros(Set<Roteiro> roteiros) {
+		this.roteiros = roteiros;
+	}
+
+
+
+
 
 
 }

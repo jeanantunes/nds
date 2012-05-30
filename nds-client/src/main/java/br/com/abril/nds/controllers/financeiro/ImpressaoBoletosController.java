@@ -18,21 +18,27 @@ import br.com.abril.nds.dto.GeraDividaDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.filtro.FiltroDividaGeradaDTO;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
 import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
-import br.com.abril.nds.model.cadastro.RotaRoteiroOperacao;
+import br.com.abril.nds.model.cadastro.Rota;
+import br.com.abril.nds.model.cadastro.Roteirizacao;
+import br.com.abril.nds.model.cadastro.Roteiro;
+import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.seguranca.Usuario;
+import br.com.abril.nds.serialization.custom.CustomMapJson;
+import br.com.abril.nds.service.BoxService;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.DistribuidorService;
-import br.com.abril.nds.service.ParametroCobrancaCotaService;
 import br.com.abril.nds.service.GerarCobrancaService;
 import br.com.abril.nds.service.ImpressaoDividaService;
-import br.com.abril.nds.service.RotaRoteiroOperacaoService;
+import br.com.abril.nds.service.ParametroCobrancaCotaService;
+import br.com.abril.nds.service.RoteirizacaoService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
@@ -69,7 +75,7 @@ public class ImpressaoBoletosController {
 	private GerarCobrancaService gerarCobrancaService;
 	
 	@Autowired
-	private RotaRoteiroOperacaoService rotaRoteiroOperacaoService;
+	private RoteirizacaoService roteirizacaoService;
 	
 	@Autowired
 	private ImpressaoDividaService dividaService;
@@ -82,6 +88,10 @@ public class ImpressaoBoletosController {
 
 	@Autowired
 	private ParametroCobrancaCotaService financeiroService;
+	
+	@Autowired
+	private BoxService boxService;
+	
 
 	@Autowired
 	private HttpSession session;
@@ -101,6 +111,9 @@ public class ImpressaoBoletosController {
 	public void index(){
 		
 		carregarTiposCobranca();
+		carregarBoxes();
+		carregarRota();
+		carregarRoteiro();
 	}
 	
 	/**
@@ -118,6 +131,114 @@ public class ImpressaoBoletosController {
 		result.include("listaTipoCobranca",listaTipoCobranca);
 	}
 	
+	/**
+	 * Carrega a lista de Boxes
+	 */
+	private void carregarBoxes(){
+		
+		List<ItemDTO<Long, String>> boxes = new ArrayList<ItemDTO<Long,String>>();
+		
+		List<Box> listaBoxes = boxService.buscarTodos(TipoBox.LANCAMENTO);
+		
+		for(Box box : listaBoxes){
+			
+			boxes.add(new ItemDTO<Long, String>(box.getId(),box.getCodigo()));
+		}
+			
+		result.include("listaBoxes",boxes);
+	}
+	
+	/**
+	 * Carrega a lista de Rotas
+	 */
+	private void carregarRota(){
+		
+		List<Rota> rotas = roteirizacaoService.buscarRotas();
+			
+		result.include("listaRotas",getRotas(rotas));
+	} 
+	
+	/**
+	 * Retorna uma lista de Rota no formato ItemDTO
+	 * @param rotas
+	 * @return List<ItemDTO<Long, String>>
+	 */
+	private List<ItemDTO<Long, String>> getRotas(List<Rota> rotas){
+		
+		List<ItemDTO<Long, String>> listaRotas = new ArrayList<ItemDTO<Long,String>>();
+		
+		for(Rota rota : rotas){
+			
+			listaRotas.add(new ItemDTO<Long, String>(rota.getId(),rota.getCodigoRota()));
+		}
+		
+		return listaRotas;
+	}
+	
+	/**
+	 * Carrega as listas de Roteiros
+	 */
+	private void carregarRoteiro(){
+		
+		List<Roteiro> roteiros = roteirizacaoService.buscarRoteiros();
+			
+		result.include("listaRoteiros",getRoteiros(roteiros));
+	}
+	
+	/**
+	 * Retorna uma lista de roteiros no formato ItemDTO
+	 * @param roteiros - lista de roteiros
+	 * @return List<ItemDTO<Long, String>> 
+	 */
+	private List<ItemDTO<Long, String>> getRoteiros(List<Roteiro> roteiros){
+		
+		List<ItemDTO<Long, String>> listaRoteiros = new ArrayList<ItemDTO<Long,String>>();
+		
+		for(Roteiro roteiro : roteiros){
+			
+			listaRoteiros.add(new ItemDTO<Long, String>(roteiro.getId(),roteiro.getDescricaoRoteiro()));
+		}
+		return listaRoteiros;
+	}
+	
+	@Post
+	public void recarregarListaRotas(Long roteiro){
+		
+		List<Rota> rotas = null;
+		
+		if(roteiro!= null){
+
+			rotas = roteirizacaoService.buscarRotaPorRoteiro(roteiro);
+		}
+		else{
+			
+			rotas = roteirizacaoService.buscarRotas();
+		}
+	
+		result.use(Results.json()).from(getRotas(rotas), "result").recursive().serialize();
+	}
+	
+	@Post
+	public void recarregarRoteiroRota(Long idBox){
+		
+		List<Roteiro> roteirosBox = null;
+		
+		List<Rota> rotas = null;
+		
+		if(idBox!= null){
+			
+			roteirosBox = roteirizacaoService.buscarRoteiroDeBox(idBox);
+			rotas = roteirizacaoService.buscarRotaDeBox(idBox);
+		}
+		else{
+			
+			roteirosBox = roteirizacaoService.buscarRoteiros();
+			rotas = roteirizacaoService.buscarRotas();
+		}
+		
+		result.use(CustomMapJson.class).put("rotas", getRotas(rotas)).put("roteiros", getRoteiros(roteirosBox)).serialize();
+	}
+	
 	@Post
 	public void gerarDivida(){
 
@@ -133,8 +254,8 @@ public class ImpressaoBoletosController {
 	
 	@Post
 	@Path("/consultar")
-	public void consultarDividas(String dataMovimento,String box, String rota,
-								 String roteiro,Integer numCota,TipoCobranca tipoCobranca, String sortorder, 
+	public void consultarDividas(String dataMovimento,Long box, Long rota,
+								 Long roteiro,Integer numCota,TipoCobranca tipoCobranca, String sortorder, 
 								 String sortname, int page, int rp){
 		
 		isDataMovimento(dataMovimento);
@@ -154,28 +275,31 @@ public class ImpressaoBoletosController {
 	@Path("/pesquisarInfoCota")
 	public void pesquisarInfoCota(int numeroCota){
 		
-		RotaRoteiroOperacao operacao = rotaRoteiroOperacaoService.obterRotaRoteiroImpressaoDividaCota(numeroCota);
+		Roteirizacao roteirizacao = roteirizacaoService.buscarRoteirizacaoDeCota(numeroCota);
 		
 		RotaRoteiroVO rotaRoteiroVO = new RotaRoteiroVO();
 		
-		if(operacao!= null){
+		if(roteirizacao!= null){
 			
-			rotaRoteiroVO.setBox( (operacao.getCota()!= null && operacao.getCota().getBox()!= null) 
-									? operacao.getCota().getBox().getCodigo():"");
+			rotaRoteiroVO.setBox( (roteirizacao.getPdv()!= null 
+									&& roteirizacao.getPdv().getCota()!= null 
+									&& roteirizacao.getPdv().getCota().getBox()!= null)
+									
+									? roteirizacao.getPdv().getCota().getBox().getId():null);
 			
-			rotaRoteiroVO.setRota((operacao.getRota()!= null)
-									? operacao.getRota().getCodigoRota():"");
 			
-			rotaRoteiroVO.setRoteiro((operacao.getRoteiro()!= null)
-									?operacao.getRoteiro().getDescricaoRoteiro():"");
+			rotaRoteiroVO.setRota((roteirizacao.getRota()!= null)
+					
+									? roteirizacao.getRota().getId():null);
 			
-			FormaCobranca formaCobrancaPrincipal = this.financeiroService.obterFormaCobrancaPrincipalCota(operacao.getCota().getId());
-
-			rotaRoteiroVO.setTipoCobranca( ( operacao.getCota()!= null 
-					&& operacao.getCota().getParametroCobranca()!= null 
-					&& formaCobrancaPrincipal!= null)
-					? formaCobrancaPrincipal.getTipoCobranca():null);
-
+			rotaRoteiroVO.setRoteiro((roteirizacao.getRota()!= null 
+										&& roteirizacao.getRota().getRoteiro()!= null)
+					
+										?roteirizacao.getRota().getRoteiro().getId():null);
+			
+			FormaCobranca formaCobrancaPrincipal = this.financeiroService.obterFormaCobrancaPrincipalCota(roteirizacao.getPdv().getCota().getId());
+			
+			rotaRoteiroVO.setTipoCobranca( (formaCobrancaPrincipal!= null)? formaCobrancaPrincipal.getTipoCobranca():null);
 		}
 		
 		result.use(Results.json()).from(rotaRoteiroVO,"result").serialize();
@@ -235,6 +359,29 @@ public class ImpressaoBoletosController {
 					}
 				}
 			}
+			
+			if(filtro.getIdBox()!= null){
+				Box box = boxService.buscarPorId(filtro.getIdBox());
+				
+				if(box!= null){
+					filtro.setCodigoBox(box.getCodigo());
+				}
+			}
+			
+			if(filtro.getIdRota()!= null){
+				Rota rota = roteirizacaoService.buscarRotaPorId(filtro.getIdRota());
+				if(rota!= null){
+					filtro.setRota(rota.getCodigoRota());
+				}
+			}
+			
+			if(filtro.getIdRoteiro()!= null){
+				Roteiro roteiro = roteirizacaoService.buscarRoteiroPorId(filtro.getIdRoteiro());
+				if(roteiro!= null){
+					filtro.setRoteiro(roteiro.getDescricaoRoteiro());
+				}
+			}
+			
 		}
 		
 		return filtro;

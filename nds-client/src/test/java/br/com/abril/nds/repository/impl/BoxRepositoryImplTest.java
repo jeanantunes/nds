@@ -15,11 +15,12 @@ import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.Rota;
-import br.com.abril.nds.model.cadastro.RotaRoteiroOperacao;
+import br.com.abril.nds.model.cadastro.Roteirizacao;
 import br.com.abril.nds.model.cadastro.Roteiro;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TipoBox;
-import br.com.abril.nds.model.cadastro.RotaRoteiroOperacao.TipoOperacao;
+import br.com.abril.nds.model.cadastro.TipoRoteiro;
+import br.com.abril.nds.model.cadastro.pdv.PDV;
 import br.com.abril.nds.repository.BoxRepository;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
@@ -61,28 +62,37 @@ public class BoxRepositoryImplTest extends AbstractRepositoryImplTest {
 		cota.setSugereSuspensao(true);
 		save(cota);
 		
-		Rota rota = Fixture.rota("005", "Rota 005");
-		save(rota);
-
-		Roteiro roteiro = Fixture.roteiro("Pinheiros");
+		Roteiro roteiro = Fixture.criarRoteiro("Pinheiros", box,TipoRoteiro.NORMAL);
 		save(roteiro);
-
-		RotaRoteiroOperacao rotaRoteiroOperacao = Fixture.rotaRoteiroOperacao(rota, roteiro, cota, TipoOperacao.IMPRESSAO_DIVIDA);
-		save(rotaRoteiroOperacao);
+		
+		Rota rota = Fixture.rota("005", "Rota 005");
+		rota.setRoteiro(roteiro);
+		save(rota);
+		
+		PDV pdv = Fixture.criarPDVPrincipal("Pdv 1", cota);
+		save(pdv);
+		
+		Roteirizacao roteirizacao = Fixture.criarRoteirizacao(pdv, rota, 1);
+		save(roteirizacao);
 		
 		cota = Fixture
 				.cota(2, pessoaJuridica, SituacaoCadastro.ATIVO, box);
 		cota.setSugereSuspensao(true);
 		
 		save(cota);
-		rota = Fixture.rota("004", "Rota 004");
-		save(rota);
-
-		roteiro = Fixture.roteiro("Interlagos");
+		
+		roteiro = Fixture.criarRoteiro("Interlagos",box,TipoRoteiro.NORMAL);
 		save(roteiro);
-
-		rotaRoteiroOperacao = Fixture.rotaRoteiroOperacao(rota, roteiro, cota, TipoOperacao.IMPRESSAO_DIVIDA);
-		save(rotaRoteiroOperacao);
+		
+		rota = Fixture.rota("004", "Rota 004");
+		rota.setRoteiro(roteiro);
+		save(rota);
+		
+		pdv = Fixture.criarPDVPrincipal("Pdv 1", cota);
+		save(pdv);
+		
+		roteirizacao = Fixture.criarRoteirizacao(pdv, rota, 1);
+		save(roteirizacao);
 		
 
 	}
