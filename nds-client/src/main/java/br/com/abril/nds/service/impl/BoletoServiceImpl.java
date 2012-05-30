@@ -1052,12 +1052,17 @@ public class BoletoServiceImpl implements BoletoService {
 			
 			boleto = boletoRepository.obterPorNossoNumero(nossoNumero,null);
 			
-			corpos.add(this.geraCorpoBoleto(boleto));
+			if(boleto!= null){
+				corpos.add(this.geraCorpoBoleto(boleto));
+			}
 		}
 		
-		GeradorBoleto geradorBoleto = new GeradorBoleto(corpos) ;
-		byte[] b = geradorBoleto.getByteGroupPdf();
-        return b;
+		if(!corpos.isEmpty()){
+			GeradorBoleto geradorBoleto = new GeradorBoleto(corpos) ;
+			byte[] b = geradorBoleto.getByteGroupPdf();
+	        return b;
+		}
+		return null;
 	}
 
 	/**

@@ -1,6 +1,5 @@
 package br.com.abril.nds.service.impl;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.hibernate.criterion.MatchMode;
@@ -9,9 +8,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.model.cadastro.Rota;
-import br.com.abril.nds.model.cadastro.RotaRoteiroOperacao;
+import br.com.abril.nds.model.cadastro.Roteirizacao;
 import br.com.abril.nds.model.cadastro.Roteiro;
 import br.com.abril.nds.repository.RotaRepository;
+import br.com.abril.nds.repository.RoteirizacaoRepository;
 import br.com.abril.nds.repository.RoteiroRepository;
 import br.com.abril.nds.service.RoteirizacaoService;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
@@ -25,6 +25,9 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 	
 	@Autowired
 	private RotaRepository rotaRepository;
+	
+	@Autowired
+	private RoteirizacaoRepository roteirizacaoRepository;
 
 	@Override
 	@Transactional(readOnly=true)
@@ -36,24 +39,6 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 	@Transactional(readOnly=true)
 	public List<Rota> buscarRota(String sortname, Ordenacao ordenacao) {
 		return rotaRepository.buscarRota(sortname, ordenacao);
-	}
-
-	@Override
-	public List<RotaRoteiroOperacao> busca(Long idBox, Long idRoteiro,
-			Long idRota, String orderBy, Ordenacao ordenacao,
-			int initialResult, int maxResults) {
-		List<RotaRoteiroOperacao>  lista = new ArrayList<RotaRoteiroOperacao>();
-		RotaRoteiroOperacao objeto = new RotaRoteiroOperacao();
-		objeto.setId(1l);
-		Rota rota = new Rota();
-		rota.setDescricaoRota("rota1");
-		Roteiro roteiro = new Roteiro();
-		roteiro.setDescricaoRoteiro("roteiro1");
-		objeto.setRota(rota);
-		objeto.setRoteiro(roteiro);
-		lista.add(objeto);
-		
-		return lista;
 	}
 
 	@Override
@@ -119,5 +104,54 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 		 incluirRoteiro(roteiro);
 		 transferirListaRota(rotasId, roteiro.getId());
 		
+	}
+
+	@Override
+	@Transactional(readOnly=true)
+	public List<Rota> buscarRotas() {
+		
+		return rotaRepository.buscarTodos();
+	}
+
+	@Override
+	@Transactional(readOnly=true)
+	public List<Roteiro> buscarRoteiros() {
+		
+		return roteiroRepository.buscarTodos();
+	}
+	
+	@Override
+	@Transactional(readOnly=true)
+	public List<Roteiro> buscarRoteiroDeBox(Long idBox){
+		
+		return roteiroRepository.buscarRoteiroDeBox(idBox);
+	}
+	
+	@Override
+	@Transactional(readOnly=true)
+	public List<Rota> buscarRotaDeBox(Long idBox){
+		
+		return rotaRepository.buscarRotaDeBox(idBox);
+	}
+	
+	@Override
+	@Transactional(readOnly=true)
+	public Roteirizacao buscarRoteirizacaoDeCota(Integer numeroCota){
+		
+		return roteirizacaoRepository.buscarRoteirizacaoDeCota(numeroCota);
+	}
+	
+	@Transactional(readOnly=true)
+	public List<Rota> buscarRotaPorRoteiro(String descRoteiro){
+		return  rotaRepository.buscarRotaDeRoteiro(descRoteiro);
+	}
+	
+	@Transactional(readOnly=true)
+	public Rota buscarRotaPorId(Long idRota){
+		return rotaRepository.buscarPorId(idRota);
+	}
+	@Transactional(readOnly=true)
+	public Roteiro buscarRoteiroPorId(Long idRoteiro){
+		return roteiroRepository.buscarPorId(idRoteiro);
 	}
 }

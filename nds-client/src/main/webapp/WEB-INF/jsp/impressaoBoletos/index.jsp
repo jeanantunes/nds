@@ -131,6 +131,8 @@
 			$("#rota").val("");
 			$("#roteiro").val("");
 			$("#tipoCobranca").val("");
+			
+			GeraDivida.recarregarComboRoteiroRotas(null);
 		},
 		validarPesquisa:function(){
 			
@@ -210,6 +212,30 @@
 
 			window.open("<c:url value='/financeiro/impressaoBoletos/imprimirDivida?nossoNumero="+ nossoNumero +"'/>",'page','toolbar=no,location=no,status=no,menubar=no,scrollbars=no,resizable=no,width=1,height=1');
 
+		},
+		
+		recarregarComboRotas:function(idRoteiro){
+			
+			$.postJSON("<c:url value='/financeiro/impressaoBoletos/recarregarListaRotas' />",
+					[{name:"roteiro",value:idRoteiro}], function(result){
+				
+				var comboRotas =  montarComboBox(result, true);
+				
+				$("#rota").html(comboRotas);	
+			});
+		},
+		
+	recarregarComboRoteiroRotas:function(idBox){
+			
+			$.postJSON("<c:url value='/financeiro/impressaoBoletos/recarregarRoteiroRota' />",
+					[{name:"idBox",value:idBox}], function(result){
+				
+				var comboRotas =  montarComboBoxCustomJson(result.rotas, true);
+				var comboRoteiros = montarComboBoxCustomJson(result.roteiros, true);
+				
+				$("#rota").html(comboRotas);
+				$("#roteiro").html(comboRoteiros);
+			});
 		}
 		
 	};
@@ -331,12 +357,33 @@
 	  					<tr>
 						    <td width="29">Data:</td>
 						    <td width="125"><input type="text" name="dataMovimento" id="dataMovimento" style="width:70px; float:left; margin-right:5px;" /></td>
-						    <td width="49">Box:</td>
-						    <td width="169"><input type="text" id="box" name="box" style="width:70px; float:left; margin-right:5px;" /></td>
-						    <td width="43">Rota:</td>
-						    <td width="198"><input type="text" id="rota" name="rota" style="width:160px; float:left; margin-right:5px;" /></td>
-						    <td width="54">Roteiro:</td>
-						    <td width="242"><input type="text" id="roteiro" name="roteiro" style="width:160px; float:left; margin-right:5px;" /></td>
+						    <td width="49">Box</td>
+						    <td width="169">
+						    	<select name="box" id="box" style="width:70px; float:left; margin-right:5px;" onchange="GeraDivida.recarregarComboRoteiroRotas(this.value)">
+							      <option selected="selected" value="">Todos</option>
+							      <c:forEach var="box" items="${listaBoxes}">
+											<option value="${box.key}">${box.value}</option>
+								  </c:forEach>
+							    </select>
+						    </td>
+						    <td width="43">Roteiro</td>
+						    <td width="198">
+						    	<select name="roteiro" id="roteiro" style="width:160px; float:left; margin-right:5px;" onchange="GeraDivida.recarregarComboRotas(this.value)" >
+							      <option selected="selected" value="">Todos</option>
+							      <c:forEach var="roteiro" items="${listaRoteiros}">
+											<option value="${roteiro.key}">${roteiro.value}</option>
+								  </c:forEach>
+							    </select>
+						    </td>
+						    <td width="54">Rota</td>
+						    <td width="242">
+						    	<select name="rota" id="rota" style="width:160px; float:left; margin-right:5px;"  >
+							      <option selected="selected" value="">Todos</option>
+							      <c:forEach var="rota" items="${listaRotas}">
+											<option value="${rota.key}">${rota.value}</option>
+								  </c:forEach>
+							    </select>
+						    </td>
 					    </tr>
 	 		 			<tr>
 	    					<td>Cota:</td>

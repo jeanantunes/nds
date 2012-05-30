@@ -51,9 +51,7 @@ import br.com.abril.nds.model.cadastro.ProcuracaoEntregador;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.Rota;
-import br.com.abril.nds.model.cadastro.RotaRoteiroOperacao;
-import br.com.abril.nds.model.cadastro.TipoDesconto;
-import br.com.abril.nds.model.cadastro.RotaRoteiroOperacao.TipoOperacao;
+import br.com.abril.nds.model.cadastro.Roteirizacao;
 import br.com.abril.nds.model.cadastro.Roteiro;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.Telefone;
@@ -61,6 +59,7 @@ import br.com.abril.nds.model.cadastro.TelefoneDistribuidor;
 import br.com.abril.nds.model.cadastro.TelefoneEntregador;
 import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
+import br.com.abril.nds.model.cadastro.TipoDesconto;
 import br.com.abril.nds.model.cadastro.TipoEndereco;
 import br.com.abril.nds.model.cadastro.TipoEntrega;
 import br.com.abril.nds.model.cadastro.TipoFormaCobranca;
@@ -1996,19 +1995,6 @@ public class Fixture {
 		rota.setTipoRoteiro(TipoRoteiro.ESPECIAL);
 		return rota;
 	}
-	
-	public static RotaRoteiroOperacao rotaRoteiroOperacao (Rota rota,Roteiro roteiro,Cota cota, TipoOperacao tipoOperacao){
-		
-		RotaRoteiroOperacao rotaRoteiroOperacao = new RotaRoteiroOperacao();
-		rotaRoteiroOperacao.setRota(rota);
-		rotaRoteiroOperacao.setRoteiro(roteiro);
-		rotaRoteiroOperacao.setCota(cota);
-		rotaRoteiroOperacao.setTipoOperacao(tipoOperacao);
-		
-		return rotaRoteiroOperacao;
-
-
-	}
 
 	public static CobrancaDinheiro criarCobrancaDinheiro(String nossoNumero,
             Date dataEmissao,
@@ -2574,4 +2560,35 @@ public class Fixture {
 		
 		return tipoDesconto;
 	}
+	
+	public static Roteirizacao criarRoteirizacao(PDV pdv, Rota rota,Integer ordem ){
+		
+		Roteirizacao roteirizacao = new Roteirizacao();
+		roteirizacao.setPdv(pdv);
+		roteirizacao.setRota(rota);
+		roteirizacao.setOrdem(ordem);
+		
+		return roteirizacao;
+	}
+	
+	public static Roteiro criarRoteiro(String descricaoRoteiro,Box box, TipoRoteiro tipoRoteiro ){
+		Roteiro rota = new Roteiro();
+		rota.setDescricaoRoteiro(descricaoRoteiro);
+		rota.setOrdem(0);
+		rota.setTipoRoteiro(tipoRoteiro);
+		rota.setBox(box);
+		return rota;
+	}
+	
+	public static  PDV criarPDVPrincipal(String nome, Cota cota){
+		
+		PDV pdv = new PDV();
+		pdv.setNome(nome);
+		pdv.setCota(cota);
+		pdv.setCaracteristicas(new CaracteristicasPDV());
+		pdv.getCaracteristicas().setPontoPrincipal(true);
+		
+		return pdv;
+	}
+
 }

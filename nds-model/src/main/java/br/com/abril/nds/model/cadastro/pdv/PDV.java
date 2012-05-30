@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -28,6 +29,7 @@ import javax.persistence.TemporalType;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.LicencaMunicipal;
 import br.com.abril.nds.model.cadastro.MaterialPromocional;
+import br.com.abril.nds.model.cadastro.Roteirizacao;
 
 /**
  * Entidade que representa o PDV associado
@@ -189,6 +191,10 @@ public class PDV implements Serializable {
 	  	
 	@OneToOne(mappedBy = "pdv",cascade=CascadeType.REMOVE)	  	
 	private GeradorFluxoPDV geradorFluxoPDV;
+	
+	@OneToMany
+	@JoinColumn( name="PDV_ID")
+	private Set<Roteirizacao> roteirizacao;
 	
 	public Long getId() {
 		return id;
@@ -421,6 +427,27 @@ public class PDV implements Serializable {
 	 */
 	public void setDataInclusao(Date dataInclusao) {
 		this.dataInclusao = dataInclusao;
+	}
+
+	/**
+	 * @return the roteirizacao
+	 */
+	public Set<Roteirizacao> getRoteirizacao() {
+		return roteirizacao;
+	}
+
+	/**
+	 * @param roteirizacao the roteirizacao to set
+	 */
+	public void setRoteirizacao(Set<Roteirizacao> roteirizacao) {
+		this.roteirizacao = roteirizacao;
+	}
+
+	/**
+	 * @return the expositor
+	 */
+	public Boolean getExpositor() {
+		return expositor;
 	}
 	
 	

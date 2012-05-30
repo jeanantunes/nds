@@ -10,9 +10,9 @@ public class RotaRoteiroVO implements Serializable {
 	 * Serial Version UID
 	 */
 	private static final long serialVersionUID = 1L;
-	private String box;
-	private String rota;
-	private String roteiro;
+	private Long box;
+	private Long rota;
+	private Long roteiro;
 	private TipoCobranca tipoCobranca;
 	
 	
@@ -32,37 +32,40 @@ public class RotaRoteiroVO implements Serializable {
 	/**
 	 * @return the box
 	 */
-	public String getBox() {
+	/**
+	 * @return the box
+	 */
+	public Long getBox() {
 		return box;
 	}
 	/**
 	 * @param box the box to set
 	 */
-	public void setBox(String box) {
+	public void setBox(Long box) {
 		this.box = box;
 	}
 	/**
 	 * @return the rota
 	 */
-	public String getRota() {
+	public Long getRota() {
 		return rota;
 	}
 	/**
 	 * @param rota the rota to set
 	 */
-	public void setRota(String rota) {
+	public void setRota(Long rota) {
 		this.rota = rota;
 	}
 	/**
 	 * @return the roteiro
 	 */
-	public String getRoteiro() {
+	public Long getRoteiro() {
 		return roteiro;
 	}
 	/**
 	 * @param roteiro the roteiro to set
 	 */
-	public void setRoteiro(String roteiro) {
+	public void setRoteiro(Long roteiro) {
 		this.roteiro = roteiro;
 	}
 	

@@ -4,8 +4,10 @@ import java.math.BigDecimal;
 import java.math.MathContext;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletResponse;
@@ -27,11 +29,15 @@ import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaCota;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalheCota;
 import br.com.abril.nds.model.seguranca.Usuario;
+import br.com.abril.nds.serialization.custom.CustomJson;
+import br.com.abril.nds.serialization.custom.CustomMapJson;
 import br.com.abril.nds.service.ConferenciaEncalheService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.exception.ChamadaEncalheCotaInexistenteException;
 import br.com.abril.nds.service.exception.ConferenciaEncalheExistenteException;
 import br.com.abril.nds.service.exception.ConferenciaEncalheFinalizadaException;
+import br.com.abril.nds.service.exception.EncalheExcedeReparteException;
+import br.com.abril.nds.service.exception.EncalheRecolhimentoParcialException;
 import br.com.abril.nds.service.exception.EncalheSemPermissaoSalvarException;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.ItemAutoComplete;
@@ -188,13 +194,13 @@ public class ConferenciaEncalheController {
 			this.setListaConferenciaEncalheToSession(infoConfereciaEncalheCota.getListaConferenciaEncalhe());
 		}
 		
-		List<Object> dados = new ArrayList<Object>();
+		Map<String, Object> dados = new HashMap<String, Object>();
 		
-		dados.add(infoConfereciaEncalheCota.getListaConferenciaEncalhe());
+		dados.put("listaConferenciaEncalhe", infoConfereciaEncalheCota.getListaConferenciaEncalhe());
 		
-		dados.add(this.obterTableModelDebitoCreditoCota(infoConfereciaEncalheCota.getListaDebitoCreditoCota()));
+		dados.put("listaDebitoCredito", this.obterTableModelDebitoCreditoCota(infoConfereciaEncalheCota.getListaDebitoCreditoCota()));
 		
-		dados.add(infoConfereciaEncalheCota.getReparte() == null ? BigDecimal.ZERO : infoConfereciaEncalheCota.getReparte());
+		dados.put("reparte", infoConfereciaEncalheCota.getReparte() == null ? BigDecimal.ZERO : infoConfereciaEncalheCota.getReparte());
 		
 		this.calcularValoresMonetarios(dados);
 		
@@ -202,22 +208,22 @@ public class ConferenciaEncalheController {
 		
 		if (cota != null){
 			
-			dados.add(
+			dados.put("razaoSocial", 
 				cota.getPessoa() instanceof PessoaFisica ? 
 						((PessoaFisica)cota.getPessoa()).getNome() : 
 							((PessoaJuridica)cota.getPessoa()).getRazaoSocial());
 			
-			dados.add(cota.getSituacaoCadastro().toString());
+			dados.put("situacao", cota.getSituacaoCadastro().toString());
 		}
 		
-		dados.add(this.session.getAttribute(NOTA_FISCAL_CONFERENCIA) == null ? "" : this.session.getAttribute(NOTA_FISCAL_CONFERENCIA));
+		dados.put("notaFiscal", this.session.getAttribute(NOTA_FISCAL_CONFERENCIA) == null ? "" : this.session.getAttribute(NOTA_FISCAL_CONFERENCIA));
 		
 		this.calcularTotais(dados);
 		
-		result.use(Results.json()).withoutRoot().from(dados).recursive().serialize();
+		result.use(CustomMapJson.class).put("result", dados).serialize();
 	}
 	
-	private void calcularTotais(List<Object> dados) {
+	private void calcularTotais(Map<String, Object> dados) {
 		
 		BigDecimal qtdInformada = BigDecimal.ZERO;
 		BigDecimal qtdRecebida = BigDecimal.ZERO;
@@ -243,9 +249,9 @@ public class ConferenciaEncalheController {
 			}
 		}
 		
-		dados.add(qtdInformada);
+		dados.put("qtdInformada", qtdInformada);
 		
-		dados.add(qtdRecebida);
+		dados.put("qtdRecebida", qtdRecebida);
 	}
 
 	@Post
@@ -322,6 +328,11 @@ public class ConferenciaEncalheController {
 		} catch(ChamadaEncalheCotaInexistenteException e){
 			
 			throw new ValidacaoException(TipoMensagem.WARNING, "Não existe chamada de encalhe deste produto para essa cota.");
+		
+		} catch(EncalheRecolhimentoParcialException e) {
+
+			throw new ValidacaoException(TipoMensagem.WARNING, "Não existe chamada de encalhe para produto parcial na data operação.");
+			
 		}
 		
 		if (conferenciaEncalheDTO == null && produtoEdicao == null){
@@ -350,10 +361,17 @@ public class ConferenciaEncalheController {
 			throw new ValidacaoException(TipoMensagem.ERROR, "Sessão expirada.");
 		}
 		
-		ProdutoEdicaoDTO produtoEdicao = 
-				this.conferenciaEncalheService.pesquisarProdutoEdicaoPorId(
-						info.getCota().getNumeroCota(), 
-						idProdutoEdicao);
+		ProdutoEdicaoDTO produtoEdicao;
+		
+		try {
+			produtoEdicao = this.conferenciaEncalheService.pesquisarProdutoEdicaoPorId(
+					info.getCota().getNumeroCota(), 
+					idProdutoEdicao);
+		} catch (EncalheRecolhimentoParcialException e) {
+
+			throw new ValidacaoException(TipoMensagem.WARNING, "Não existe chamada de encalhe para produto parcial na data operação.");
+			
+		}
 		
 		this.atualizarQuantidadeConferida(idProdutoEdicao, quantidade, produtoEdicao);
 		
@@ -394,15 +412,17 @@ public class ConferenciaEncalheController {
 			}
 		}
 		
-		List<Object> dados = new ArrayList<Object>();
+		Map<String, Object> dados = new HashMap<String, Object>();
 		
-		dados.add(conf);
+		dados.put("conf", conf);
 		
-		dados.add(this.getInfoConferenciaSession().getReparte() == null ? BigDecimal.ZERO : this.getInfoConferenciaSession().getReparte());
+		dados.put("reparte", this.getInfoConferenciaSession().getReparte() == null ? BigDecimal.ZERO : this.getInfoConferenciaSession().getReparte());
 		
 		this.calcularValoresMonetarios(dados);
 		
-		this.result.use(Results.json()).from(dados == null ? "" : dados, "result").recursive().serialize();
+		this.calcularTotais(dados);
+		
+		this.result.use(CustomMapJson.class).put("result", dados == null ? "" : dados).serialize();
 	}
 	
 	@Post
@@ -449,6 +469,8 @@ public class ConferenciaEncalheController {
 			
 			throw new ValidacaoException(TipoMensagem.WARNING, e.getMessage());
 			
+		} catch (EncalheExcedeReparteException e) {
+			throw new ValidacaoException(TipoMensagem.WARNING, e.getMessage());
 		}
 		
 		this.result.use(Results.json()).from(
@@ -488,11 +510,17 @@ public class ConferenciaEncalheController {
 				}
 			}
 			
-			this.conferenciaEncalheService.finalizarConferenciaEncalhe(
-					controleConfEncalheCota, 
-					this.getListaConferenciaEncalheFromSession(), 
-					this.getSetConferenciaEncalheExcluirFromSession(), 
-					this.getUsuarioLogado());
+			try {
+				this.conferenciaEncalheService.finalizarConferenciaEncalhe(
+						controleConfEncalheCota, 
+						this.getListaConferenciaEncalheFromSession(), 
+						this.getSetConferenciaEncalheExcluirFromSession(), 
+						this.getUsuarioLogado());
+			} catch (EncalheExcedeReparteException e) {
+
+				this.result.use(Results.json()).from(
+						new ValidacaoVO(TipoMensagem.WARNING, "Conferência de encalhe está excedendo quantidade de reparte."), "result").recursive().serialize();
+			}
 			
 			this.result.use(Results.json()).from(
 					new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."), "result").recursive().serialize();
@@ -634,7 +662,7 @@ public class ConferenciaEncalheController {
 		return (InfoConferenciaEncalheCota) this.session.getAttribute(INFO_CONFERENCIA);
 	}
 
-	private BigDecimal calcularValoresMonetarios(List<Object> dados){
+	private BigDecimal calcularValoresMonetarios(Map<String, Object> dados){
 		
 		BigDecimal valorEncalhe = BigDecimal.ZERO;
 		BigDecimal valorVendaDia = BigDecimal.ZERO;
@@ -670,10 +698,10 @@ public class ConferenciaEncalheController {
 		
 		if (dados != null){
 			
-			dados.add(valorEncalhe);
-			dados.add(valorVendaDia);
-			dados.add(valorDebitoCredito);
-			dados.add(valorPagar);
+			dados.put("valorEncalhe", valorEncalhe);
+			dados.put("valorVendaDia", valorVendaDia);
+			dados.put("valorDebitoCredito", valorDebitoCredito);
+			dados.put("valorPagar", valorPagar);
 		}
 		
 		return valorPagar;
@@ -746,51 +774,6 @@ public class ConferenciaEncalheController {
 		
 		return conferenciaEncalheDTO;
 	}
-
-	/**
-	 * Obtém tableModel para grid de conferencia encalhe.
-	 * 
-	 * @param listaConferenciaEncalhe
-	 * 
-	 * @return TableModel<CellModelKeyValue<ConferenciaEncalheVO>>
-	 */
-//	private TableModel<CellModelKeyValue<ConferenciaEncalheDTO>> obterTableModelConferenciaEncalhe(List<ConferenciaEncalheDTO> listaConferenciaEncalhe) {
-//
-//		TableModel<CellModelKeyValue<ConferenciaEncalheDTO>> tableModelConferenciaEncalhe = 
-//				new TableModel<CellModelKeyValue<ConferenciaEncalheDTO>>();
-//		
-//		List<CellModelKeyValue<ConferenciaEncalheDTO>> list =
-//				new ArrayList<CellModelKeyValue<ConferenciaEncalheDTO>>();
-//		
-//		boolean aceitaJuramentado = this.getInfoConferenciaSession().isDistribuidorAceitaJuramentado();
-//		
-//		if (listaConferenciaEncalhe != null){
-//			
-//			for (ConferenciaEncalheDTO dto : listaConferenciaEncalhe){
-//				
-//				dto.setValorTotal(dto.getPrecoCapa().subtract(dto.getDesconto()).multiply(dto.getQtdExemplar()));
-//				
-//				if (!aceitaJuramentado){
-//					
-//					dto.setJuramentada(null);
-//				}
-//				
-//				if (dto.getIdConferenciaEncalhe() == null){
-//					
-//					dto.setIdConferenciaEncalhe(new Long(((int) System.currentTimeMillis()) *-1));
-//				}
-//				
-//				list.add(new CellModelKeyValue<ConferenciaEncalheDTO>(dto.getIdConferenciaEncalhe().intValue(), dto));
-//			}
-//		}
-//		
-//		tableModelConferenciaEncalhe.setRows(list);
-//		tableModelConferenciaEncalhe.setTotal((listaConferenciaEncalhe!= null) ? listaConferenciaEncalhe.size() : 0);
-//		tableModelConferenciaEncalhe.setPage(1);
-//		
-//		return tableModelConferenciaEncalhe;
-//		
-//	}
 	
 	/**
 	 * Obtém tableModel para grid OutrosValores (Debitos e Creditos da cota).
