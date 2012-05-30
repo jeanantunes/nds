@@ -208,28 +208,36 @@ TipoProduto.prototype.salva = function() {
 
 	var postData = serializeObjectToPost("tipoProduto", this.tipoProduto);
 	
-	$.postJSON(this.path + 'salva.json', postData,function(data) {
+	$.postJSON(this.path + 'salva.json', postData, function(data) {
 		
 		var mensagens = (data.mensagens) ? data.mensagens : data;
 		var tipoMensagem = mensagens.tipoMensagem;
 		var listaMensagens = mensagens.listaMensagens;
-		console.log(data);
+		
 		if (tipoMensagem && listaMensagens) {
-			
-
-			exibirMensagem(tipoMensagem, listaMensagens, "");
-			
+					
 			if (tipoMensagem === "SUCCESS") {
 			
 				tipoProduto.limparForm();
 				tipoProduto.pesquisa();
+				$("#dialog-novo").dialog("close");
+				exibirMensagem(tipoMensagem, listaMensagens);
 			} 
 		}
 
-	});
-	
-	return false;
+	}, function(data) {
+		
+		console.log(data);
+		var mensagens = (data.mensagens) ? data.mensagens : data;
+		var tipoMensagem = mensagens.tipoMensagem;
+		var listaMensagens = mensagens.listaMensagens;
+		
+		if (tipoMensagem && listaMensagens) {
 
+			exibirMensagemDialog(tipoMensagem, listaMensagens, "");
+		}
+		
+	}, true);
 };
 
 TipoProduto.prototype.getCodigoSugerido = function(callBack) {
@@ -363,7 +371,7 @@ TipoProduto.prototype.novo = function(title, edita) {
 		title : title,
 		buttons : {
 			"Confirmar" : function() {
-				$(this).dialog("close");
+				
 				_this.salva();
 
 			},
