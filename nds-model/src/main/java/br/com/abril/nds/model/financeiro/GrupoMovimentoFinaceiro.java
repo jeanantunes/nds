@@ -46,11 +46,16 @@ public enum GrupoMovimentoFinaceiro {
 	 * Recuperação do reparte de cota ausente
 	 */
 	RECUPERACAO_REPARTE_COTA_AUSENTE(OperacaoFinaceira.DEBITO),	
-	
+
 	/**
 	 * Conta comprando encalhe.
 	 */
-	COMPRA_ENCALHE(OperacaoFinaceira.DEBITO);
+	COMPRA_ENCALHE(OperacaoFinaceira.DEBITO),
+
+	/**
+	 * Postergação de dívida a pedido do jornaleiro.
+	 */
+	POSTERGADO_NEGOCIACAO(OperacaoFinaceira.DEBITO);
 	
 	
 	private OperacaoFinaceira operacaoFinaceira;
