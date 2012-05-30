@@ -103,10 +103,6 @@ public class Cota implements Serializable {
 	@Embedded
 	private ParametroDistribuicaoCota parametroDistribuicao;
 	
-	@OneToMany
-	@JoinColumn( name="ID_COTA")
-	private List<RotaRoteiroOperacao> rotaRoteiroOperacao;
-	
 	@ManyToOne(optional = true)
 	@JoinColumn(name="ID_FIADOR")
 	private Fiador fiador;
@@ -276,15 +272,7 @@ public class Cota implements Serializable {
 	public void setParametroCobranca(ParametroCobrancaCota parametroCobranca) {
 		this.parametroCobranca = parametroCobranca;
 	}
-	
-	public List<RotaRoteiroOperacao> getRotaRoteiroOperacao() {
-		return rotaRoteiroOperacao;
-	}
 
-	public void setRotaRoteiroOperacao(List<RotaRoteiroOperacao> rotaRoteiroOperacao) {
-		this.rotaRoteiroOperacao = rotaRoteiroOperacao;
-	}
-	
 	public Fiador getFiador() {
 		return fiador;
 	}

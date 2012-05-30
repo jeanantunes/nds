@@ -4,9 +4,8 @@ import java.util.List;
 
 import org.hibernate.criterion.MatchMode;
 
-
 import br.com.abril.nds.model.cadastro.Rota;
-import br.com.abril.nds.model.cadastro.RotaRoteiroOperacao;
+import br.com.abril.nds.model.cadastro.Roteirizacao;
 import br.com.abril.nds.model.cadastro.Roteiro;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
@@ -16,10 +15,6 @@ public interface RoteirizacaoService {
 	
 	List<Rota> buscarRota(String sortname, Ordenacao ordenacao);
 
-	List<RotaRoteiroOperacao> busca(Long idBox, Long idRoteiro, Long idRota , String orderBy,
-			Ordenacao ordenacao, int initialResult, int maxResults);
-	
-	
 	void incluirRoteiro(Roteiro roteiro);
 	
 	List<Roteiro> buscarRoteiroPorDescricao(String descricao, MatchMode matchMode);
@@ -33,4 +28,16 @@ public interface RoteirizacaoService {
 	void transferirListaRota(List<Long> rotasId, Long roteiroId);
 	
 	void transferirListaRotaComNovoRoteiro(List<Long> rotasId, Roteiro roteiro);
+	
+	List<Rota> buscarRotas();
+	
+	List<Roteiro> buscarRoteiros();
+	
+	List<Roteiro> buscarRoteiroDeBox(Long idBox);
+	
+	List<Rota> buscarRotaDeBox(Long idBox);
+	
+	Roteirizacao buscarRoteirizacaoDeCota(Integer numeroCota);
+	
+	List<Rota> buscarRotaPorRoteiro(String descRoteiro);
 }

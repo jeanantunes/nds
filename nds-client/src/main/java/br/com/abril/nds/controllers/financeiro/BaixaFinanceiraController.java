@@ -2,12 +2,14 @@ package br.com.abril.nds.controllers.financeiro;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.io.IOUtils;
@@ -27,7 +29,11 @@ import br.com.abril.nds.dto.filtro.FiltroConsultaDividasCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaDividasCotaDTO.OrdenacaoColunaDividas;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.StatusCobranca;
+import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.cadastro.Pessoa;
+import br.com.abril.nds.model.cadastro.PessoaFisica;
+import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.PoliticaCobranca;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.seguranca.Usuario;
@@ -35,9 +41,9 @@ import br.com.abril.nds.serialization.custom.PlainJSONSerialization;
 import br.com.abril.nds.service.BoletoService;
 import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.CobrancaService;
+import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.DistribuidorService;
 import br.com.abril.nds.service.LeitorArquivoBancoService;
-import br.com.abril.nds.service.ParametroCobrancaCotaService;
 import br.com.abril.nds.service.PoliticaCobrancaService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.Constantes;
@@ -47,6 +53,9 @@ import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoBaixaCobranca;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
+import br.com.abril.nds.util.export.FileExporter;
+import br.com.abril.nds.util.export.FileExporter.FileType;
+import br.com.abril.nds.util.export.NDSFileHeader;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
@@ -68,6 +77,8 @@ public class BaixaFinanceiraController {
 	
 	private HttpSession httpSession;
 	
+	private HttpServletResponse httpResponse;
+	
 	private ServletContext servletContext;
 	
 	@Autowired
@@ -86,7 +97,7 @@ public class BaixaFinanceiraController {
 	private CalendarioService calendarioService;
 	
 	@Autowired
-	private ParametroCobrancaCotaService financeiroService;
+	private CotaService cotaService;
 	
 	@Autowired
 	private LeitorArquivoBancoService leitorArquivoBancoService;
@@ -100,12 +111,13 @@ public class BaixaFinanceiraController {
 	private static final String FILTRO_PESQUISA_SESSION_ATTRIBUTE = "filtroPesquisaConsultaDividas";
 	   
 	public BaixaFinanceiraController(Result result, Localization localization,
-									 HttpSession httpSession, ServletContext servletContext) {
+									 HttpSession httpSession, ServletContext servletContext,  HttpServletResponse httpResponse) {
 		
 		this.result = result;
 		this.localization = localization;
 		this.httpSession = httpSession;
 		this.servletContext = servletContext;
+		this.httpResponse = httpResponse;
 	}
 		
 	@Get
@@ -258,16 +270,28 @@ public class BaixaFinanceiraController {
 		}
 	}
 	
+	
+	/**
+	 * TO-DO: OBTER USUARIO LOGADO
+	 */
 	private Usuario obterUsuario() {
-		
 		//TODO: obter usuário
-		
 		Usuario usuario = new Usuario();
-		
+		usuario.setNome("João");
 		usuario.setId(1L);
-		
 		return usuario;
 	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	/**
 	 * Método responsavel pela busca de boleto individual
@@ -287,6 +311,7 @@ public class BaixaFinanceiraController {
 		} 
 		result.use(Results.json()).from(cobranca,"result").recursive().serialize();
 	}
+	
 	
 	/**
 	 * Método responsável pela baixa de boleto individual manualmente.	
@@ -341,20 +366,6 @@ public class BaixaFinanceiraController {
 			
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Boleto "+nossoNumero+" baixado com sucesso."),Constantes.PARAM_MSGS).recursive().serialize();
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	
 	
 	/**
@@ -429,22 +440,8 @@ public class BaixaFinanceiraController {
 	
 	
 	/**
-	 * Método responsável por obter o saldo da cobranca(Dívida)
-	 * @param idCobranca
-	 */
-	@Post
-	@Path("obterSaldoDivida")
-	public void obterSaldoDivida(Long idCobranca){
-		
-	    BigDecimal saldoDivida = this.cobrancaService.obterSaldoDivida(idCobranca);
-	    
-	    result.use(Results.json()).from(saldoDivida,"result").recursive().serialize();
-	}
-	
-	
-	/**
 	 * Método responsável por obter detalhes da Dívida(Cobrança)
-	 * @param idDivida
+	 * @param idCobranca
 	 */
 	@Post
 	@Path("obterDetalhesDivida")
@@ -493,7 +490,8 @@ public class BaixaFinanceiraController {
 	 */
 	@Post
 	@Path("baixaManualDividas")
-	public void baixaManualDividas(String valorDividas, 
+	public void baixaManualDividas(Boolean manterPendente,
+			                       String valorDividas, 
 								   String valorMulta, 
 								   String valorJuros,
 								   String valorDesconto,
@@ -511,10 +509,17 @@ public class BaixaFinanceiraController {
 		BigDecimal valorPagamentoConvertido = CurrencyUtil.converterValor(valorPagamento);
 		
 		if (valorDescontoConvertido.compareTo(
-				valorDescontoConvertido.add(valorJurosConvertido).add(valorMultaConvertido)) == 1) {
-        	
+				valorDescontoConvertido.add(valorJurosConvertido).add(valorMultaConvertido)) == 1) {	
         	throw new ValidacaoException(TipoMensagem.WARNING,"O desconto não deve ser maior do que o valor a pagar.");
         }
+		
+		if (!this.cobrancaService.validaBaixaManualDividas(idCobrancas) && (valorSaldoConvertido.floatValue() > 0)){
+			throw new ValidacaoException(TipoMensagem.WARNING,"Não é permitida a baixa parcial de dívidas do tipo [Boleto].");
+		}
+		
+		if (tipoPagamento==null){
+			throw new ValidacaoException(TipoMensagem.WARNING,"É obrigatório a escolha de uma [Forma de Recebimento].");
+		}
 		
 		PagamentoDividasDTO pagamento = new PagamentoDividasDTO();
 		pagamento.setValorDividas(valorDividasConvertido);
@@ -526,21 +531,9 @@ public class BaixaFinanceiraController {
 		pagamento.setTipoPagamento(tipoPagamento);
 		pagamento.setObservacoes(observacoes);
 		pagamento.setDataPagamento(DateUtil.adicionarDias(this.distribuidorService.obter().getDataOperacao(),1));
+		pagamento.setUsuario(this.obterUsuario());
 		
-		
-		/**
-		 * TO-DO: OBTER USUARIO LOGADO
-		 */
-		Usuario us = new Usuario();
-		us.setId(1l);
-		us.setNome("João");
-		us.setLogin("joao");
-		us.setSenha("ABC123");
-		
-		
-		pagamento.setUsuario(us);
-		
-		this.cobrancaService.baixaManualDividas(pagamento, idCobrancas);
+		this.cobrancaService.baixaManualDividas(pagamento, idCobrancas, manterPendente);
 		
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Dividas baixadas com sucesso."),Constantes.PARAM_MSGS).recursive().serialize();
 	}
@@ -548,19 +541,110 @@ public class BaixaFinanceiraController {
 	
 	/**
 	 * Método responsável por validar se é possível a negociação de dividas(Cobranças)
-	 * @param dataVencimento
+	 * @param idCobrancas
 	 */
 	@Post
 	@Path("obterNegociacao")
-	public void obterNegociacao(Date dataVencimento){
-		Distribuidor distribuidor = distribuidorService.obter();
-		Integer diasNegociacao=distribuidor.getParametroCobrancaDistribuidor().getDiasNegociacao();
-		if (diasNegociacao!=null){
-			if (  distribuidor.getDataOperacao().getTime() >  DateUtil.adicionarDias(dataVencimento, diasNegociacao).getTime()){
-				throw new ValidacaoException(TipoMensagem.WARNING, "Distribuidor parametrizado para não permitir a negociação neste caso.");
+	public void obterNegociacao(List<Long> idCobrancas){
+		
+		if ((idCobrancas==null) || (idCobrancas.size() <=0)){
+			throw new ValidacaoException(TipoMensagem.WARNING, "É necessário marcar ao menos uma dívida.");
+		}
+		
+		if (!this.cobrancaService.validaNegociacaoDividas(idCobrancas)){
+		    throw new ValidacaoException(TipoMensagem.WARNING, "Negociação não permitida.");
+		}
+		
+		//TO-DO: Obter dados para negociação de dívidas aqui.
+		
+		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "TO-DO: Negociação permitida."),Constantes.PARAM_MSGS).recursive().serialize();
+	}
+	
+	
+	/**
+	 * Método responsável por validar se é possível a negociação de dividas(Cobranças)
+	 * @param idCobrancas
+	 */
+	@Post
+	@Path("obterPostergacao")
+	public void obterPostergacao(List<Long> idCobrancas){
+		
+		if ((idCobrancas==null) || (idCobrancas.size() <=0)){
+			throw new ValidacaoException(TipoMensagem.WARNING, "É necessário marcar ao menos uma dívida.");
+		}
+		
+		boolean validacaoPostergacao = true;
+		if (!validacaoPostergacao){
+		    throw new ValidacaoException(TipoMensagem.WARNING, "Postergação não permitida.");
+		}
+		
+		//TO-DO: Obter dados para postergação de dívidas aqui.
+		
+		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "TO-DO: Postergação permitida."),Constantes.PARAM_MSGS).recursive().serialize();
+	}
+	
+	
+	/**
+	 * Obtém o filtro de pesquisa para exportação.
+	 */
+	private FiltroConsultaDividasCotaDTO obterFiltroExportacao() {
+		
+		FiltroConsultaDividasCotaDTO filtro= (FiltroConsultaDividasCotaDTO) this.httpSession.getAttribute(FILTRO_PESQUISA_SESSION_ATTRIBUTE);
+		
+		if (filtro != null) {
+			
+			if (filtro.getPaginacao() != null) {
+				filtro.getPaginacao().setPaginaAtual(null);
+				filtro.getPaginacao().setQtdResultadosPorPagina(null);
+			}
+			
+			if (filtro.getNumeroCota() != null) {
+				Cota cota = this.cotaService.obterPorNumeroDaCota(filtro.getNumeroCota());
+				if (cota != null) {
+					Pessoa pessoa = cota.getPessoa();
+					if (pessoa instanceof PessoaFisica) {
+						filtro.setNomeCota(((PessoaFisica) pessoa).getNome());					
+					} else if (pessoa instanceof PessoaJuridica) {
+						filtro.setNomeCota(((PessoaJuridica) pessoa).getRazaoSocial());
+					}
+				}
 			}
 		}
-		result.nothing();
+		
+		return filtro;
+	}
+	
+	/**
+	 * Obtém os dados do cabeçalho de exportação.
+	 * @return NDSFileHeader
+	 */
+	private NDSFileHeader getNDSFileHeader() {
+		
+		NDSFileHeader ndsFileHeader = new NDSFileHeader();
+		Distribuidor distribuidor = this.distribuidorService.obter();
+		
+		if (distribuidor != null) {
+			
+			ndsFileHeader.setNomeDistribuidor(distribuidor.getJuridica().getRazaoSocial());
+			ndsFileHeader.setCnpjDistribuidor(distribuidor.getJuridica().getCnpj());
+		}
+		
+		ndsFileHeader.setData(new Date());
+		ndsFileHeader.setNomeUsuario(this.obterUsuario().getNome());
+		return ndsFileHeader;
+	}
+	
+	/**
+	 * Exporta os dados da pesquisa.
+	 * @param fileType - tipo de arquivo
+	 * @throws IOException Exceção de E/S
+	 */
+	public void exportar(FileType fileType) throws IOException {
+		FiltroConsultaDividasCotaDTO filtro = this.obterFiltroExportacao();
+		List<CobrancaVO> cobrancasVO = this.cobrancaService.obterDadosCobrancasPorCota(filtro);
+		FileExporter.to("dividas-cota", fileType)
+			.inHTTPResponse(this.getNDSFileHeader(), filtro, null, 
+					cobrancasVO, CobrancaVO.class, this.httpResponse);
 	}
 	
 }

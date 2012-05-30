@@ -606,8 +606,8 @@ public class PdvController {
 		
 		try {
 			
-			Date inicio = DateUtil.parseData(novoPeriodo.getInicio(), "hh:mm");
-			Date fim = DateUtil.parseData(novoPeriodo.getFim(), "hh:mm");
+			Date inicio = DateUtil.parseData(novoPeriodo.getInicio(), "HH:mm");
+			Date fim = DateUtil.parseData(novoPeriodo.getFim(), "HH:mm");
 						
 			if(DateUtil.isDataInicialMaiorDataFinal(inicio, fim)) {
 				throw new ValidacaoException(TipoMensagem.WARNING, "Hora de início deve ser menor que de fim.");

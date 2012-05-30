@@ -2,7 +2,7 @@ package br.com.abril.nds.dto;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
 
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.TableModel;
@@ -12,12 +12,12 @@ public class ResultadosContaCorrenteConsignadoDTO implements Serializable {
 	
 	private TableModel<CellModelKeyValue<ConsignadoCotaDTO>> tableModelConsignado;
 	private String dataEscolhida;
-	private List<InfoTotalFornecedorDTO> listaInfoFornecedores = new ArrayList<InfoTotalFornecedorDTO>();
+	private Collection<InfoTotalFornecedorDTO> listaInfoFornecedores = new ArrayList<InfoTotalFornecedorDTO>();
 	
 	public ResultadosContaCorrenteConsignadoDTO(
 			TableModel<CellModelKeyValue<ConsignadoCotaDTO>> tableModelConsignado,			
 			String dataEscolhida,
-			List<InfoTotalFornecedorDTO> listaInfoFornecedores){
+			Collection<InfoTotalFornecedorDTO> listaInfoFornecedores){
 		super();
 		this.tableModelConsignado = tableModelConsignado;
 		this.dataEscolhida = dataEscolhida;
@@ -44,12 +44,12 @@ public class ResultadosContaCorrenteConsignadoDTO implements Serializable {
 		this.dataEscolhida = dataEscolhida;
 	}
 
-	public List<InfoTotalFornecedorDTO> getListaInfoFornecedores() {
+	public Collection<InfoTotalFornecedorDTO> getListaInfoFornecedores() {
 		return listaInfoFornecedores;
 	}
 
 	public void setListaInfoFornecedores(
-			List<InfoTotalFornecedorDTO> listaInfoFornecedores) {
+			Collection<InfoTotalFornecedorDTO> listaInfoFornecedores) {
 		this.listaInfoFornecedores = listaInfoFornecedores;
 	}		
 

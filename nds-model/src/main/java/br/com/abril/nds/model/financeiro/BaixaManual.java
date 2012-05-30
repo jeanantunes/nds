@@ -5,9 +5,12 @@ import java.math.BigDecimal;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
+import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.seguranca.Usuario;
 
 @Entity
@@ -26,6 +29,10 @@ public class BaixaManual extends BaixaCobranca {
 	
 	@Column(name = "VALOR_DESCONTO", nullable = true)
 	private BigDecimal valorDesconto;
+	
+	@Enumerated(EnumType.STRING)
+	@Column(name = "STATUS_APROVACAO")
+	private StatusAprovacao statusAprovacao;
 	
 	public Usuario getResponsavel() {
 		return responsavel;
@@ -57,6 +64,14 @@ public class BaixaManual extends BaixaCobranca {
 
 	public void setValorDesconto(BigDecimal valorDesconto) {
 		this.valorDesconto = valorDesconto;
+	}
+
+	public StatusAprovacao getStatusAprovacao() {
+		return statusAprovacao;
+	}
+
+	public void setStatusAprovacao(StatusAprovacao statusAprovacao) {
+		this.statusAprovacao = statusAprovacao;
 	}
 
 }

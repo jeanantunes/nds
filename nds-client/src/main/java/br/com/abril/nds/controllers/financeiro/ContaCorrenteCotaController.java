@@ -1,13 +1,14 @@
 package br.com.abril.nds.controllers.financeiro;
 
 import java.io.IOException;
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -53,7 +54,6 @@ import br.com.abril.nds.util.export.FileExporter.FileType;
 import br.com.abril.nds.util.export.NDSFileHeader;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.caelum.vraptor.Path;
-import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
@@ -162,7 +162,7 @@ public class ContaCorrenteCotaController {
 		List<EncalheCotaDTO> listaEncalheCota = consolidadoFinanceiroService
 				.obterMovimentoEstoqueCotaEncalhe(filtroConsolidadoEncalheDTO);
 
-		List<InfoTotalFornecedorDTO> listaInfoTotalFornecedor = mostrarInfoTotalForncedores(listaEncalheCota);
+		Collection<InfoTotalFornecedorDTO> listaInfoTotalFornecedor = mostrarInfoTotalForncedores(listaEncalheCota);
 
 		if (listaEncalheCota != null) {
 
@@ -177,7 +177,7 @@ public class ContaCorrenteCotaController {
 					contaCorrente.getDataConsolidado().toString(),
 					listaInfoTotalFornecedor );
 			
-			boolean temMaisQueUm = verificarQuantidadeFornecedor(listaEncalheCota);
+			boolean temMaisQueUm = listaInfoTotalFornecedor.size() > 1;
 					
 			Object[] dados = new Object[2];
 			dados[0] = temMaisQueUm;
@@ -212,7 +212,7 @@ public class ContaCorrenteCotaController {
 		List<ConsignadoCotaDTO> listaConsignadoCota = consolidadoFinanceiroService
 				.obterMovimentoEstoqueCotaConsignado(filtroConsolidadoConsignadoCotaDTO);
 		
-		List<InfoTotalFornecedorDTO> listaInfoTotalFornecedor = mostrarInfoTotalForncedoresConsignado(listaConsignadoCota);
+		Collection<InfoTotalFornecedorDTO> listaInfoTotalFornecedor = mostrarInfoTotalForncedoresConsignado(listaConsignadoCota);
 		
 		TableModel<CellModelKeyValue<ConsignadoCotaDTO>> tableModel = new TableModel<CellModelKeyValue<ConsignadoCotaDTO>>();
 		
@@ -228,7 +228,7 @@ public class ContaCorrenteCotaController {
 					contaCorrente.getDataConsolidado().toString(),
 					listaInfoTotalFornecedor );
 			
-			boolean temMaisQueUm = verificarQuantidadeFornecedorConsignado(listaConsignadoCota);
+			boolean temMaisQueUm = listaInfoTotalFornecedor.size() > 1;
 									
 			Object[] dados = new Object[2];
 			dados[0] = temMaisQueUm;
@@ -244,93 +244,37 @@ public class ContaCorrenteCotaController {
 	
 	
 	
-	/**
-	 * Método para verificação de quantidade de fornecedor para ocultar coluna na grid
-	 */
-	private boolean verificarQuantidadeFornecedor(List<EncalheCotaDTO> listaEncalheCota){
-			
-		String nomeFornecedor = null;
-		boolean temMaisQueUm = false;
-		
-		for(EncalheCotaDTO encalheDTO : listaEncalheCota){
-			
-			if(nomeFornecedor == null && encalheDTO.getNomeFornecedor() != null){
-				nomeFornecedor = encalheDTO.getNomeFornecedor();
-			}
-			
-			if(!nomeFornecedor.equals(encalheDTO.getNomeFornecedor()) ){
-				temMaisQueUm = true;
-			}
-		}
-		
-		return temMaisQueUm;
-	}
 	
-	private boolean  verificarQuantidadeFornecedorConsignado(List<ConsignadoCotaDTO> listaConsignadoCota){
-		
-		String nomeFornecedor = null;
-		boolean temMaisQueUm = false;
-		
-		for(ConsignadoCotaDTO consignadoCotaDTO : listaConsignadoCota){
-			
-			if(nomeFornecedor == null && consignadoCotaDTO.getNomeFornecedor() != null){
-				nomeFornecedor = consignadoCotaDTO.getNomeFornecedor();
-			}
-			
-			if(!nomeFornecedor.equals(consignadoCotaDTO.getNomeFornecedor()) ){
-				temMaisQueUm = true;
-			}
-		}
-		
-		return temMaisQueUm;
-		
-	}
 	
 		
 	/**
 	 * Método que armazena informações para exibição do nome fornecedor e o total por fornecedor
 	 * @param listaEncalheCota
 	 */
-	private List<InfoTotalFornecedorDTO> mostrarInfoTotalForncedores(
+	private Collection<InfoTotalFornecedorDTO> mostrarInfoTotalForncedores(
 			List<EncalheCotaDTO> listaEncalheCota) {
 
-		List<InfoTotalFornecedorDTO> listaInfoFornecedores = new ArrayList<InfoTotalFornecedorDTO>();
+		Map<String, InfoTotalFornecedorDTO> mapFornecedores = new HashMap<String, InfoTotalFornecedorDTO>();
 
-		String nomeFornecedor = "";
-		BigDecimal total = new BigDecimal(0);
-		InfoTotalFornecedorDTO info = new InfoTotalFornecedorDTO();
-		int count = 1;
+		String key;
+		BigDecimal valor;
 
 		for (EncalheCotaDTO encalhe : listaEncalheCota) {
-
-			if (nomeFornecedor.equals("")) {
-				nomeFornecedor = encalhe.getNomeFornecedor();
+			 key = encalhe.getNomeFornecedor();
+			 valor = encalhe.getTotal();
+			if(mapFornecedores.containsKey(key)){				
+				valor = mapFornecedores.get(key).getValorTotal().add(valor);				
 			}
-
-			if (encalhe.getNomeFornecedor().equals(nomeFornecedor)) {
-				total = total.add(encalhe.getTotal());
-
-			} else {
-				info = new InfoTotalFornecedorDTO();
-				info.setNomeFornecedor(nomeFornecedor);
-				info.setValorTotal(total.toString());
-				listaInfoFornecedores.add(info);
-				nomeFornecedor = encalhe.getNomeFornecedor();
-				total = new BigDecimal(0);
-
-			}
-
-			if (count == listaEncalheCota.size()) {
-				info = new InfoTotalFornecedorDTO();
-				info.setNomeFornecedor(encalhe.getNomeFornecedor());
-				info.setValorTotal(total.add(encalhe.getTotal()).toString());
-				listaInfoFornecedores.add(info);
-			}
-
-			count++;
+			
+			mapFornecedores.put(key,new InfoTotalFornecedorDTO(key, valor));
+			
 		}
+		
 
-		return listaInfoFornecedores;
+		List<InfoTotalFornecedorDTO> infoTotalFornecedorDTOs = new ArrayList<InfoTotalFornecedorDTO>();
+		infoTotalFornecedorDTOs.addAll( mapFornecedores.values() );
+		
+		return infoTotalFornecedorDTOs;
 
 	}
 	
@@ -338,46 +282,29 @@ public class ContaCorrenteCotaController {
 	 * Método que armazena informações para exibição do nome fornecedor e o total por fornecedor
 	 * @param listaConsignadoCota
 	 */
-	private List<InfoTotalFornecedorDTO> mostrarInfoTotalForncedoresConsignado(
+	private Collection<InfoTotalFornecedorDTO> mostrarInfoTotalForncedoresConsignado(
 			List<ConsignadoCotaDTO> listaConsignadoCota) {
 
-		List<InfoTotalFornecedorDTO> listaInfoFornecedores = new ArrayList<InfoTotalFornecedorDTO>();
+		
+		Map<String, InfoTotalFornecedorDTO> mapFornecedores = new HashMap<String, InfoTotalFornecedorDTO>();
 
-		String nomeFornecedor = "";
-		BigDecimal total = new BigDecimal(0);
-		InfoTotalFornecedorDTO info = new InfoTotalFornecedorDTO();
-		int count = 1;
+		String key;
+		BigDecimal valor;
 
 		for (ConsignadoCotaDTO consignado : listaConsignadoCota) {
-
-			if (nomeFornecedor.equals("")) {
-				nomeFornecedor = consignado.getNomeFornecedor();
+			 key = consignado.getNomeFornecedor();
+			 valor = consignado.getTotal();
+			if(mapFornecedores.containsKey(key)){				
+				valor = mapFornecedores.get(key).getValorTotal().add(valor);				
 			}
-
-			if (consignado.getNomeFornecedor().equals(nomeFornecedor)) {
-				total = total.add(consignado.getTotal());
-
-			} else {
-				info = new InfoTotalFornecedorDTO();
-				info.setNomeFornecedor(nomeFornecedor);
-				info.setValorTotal(total.toString());
-				listaInfoFornecedores.add(info);
-				nomeFornecedor = consignado.getNomeFornecedor();
-				total = new BigDecimal(0);
-
-			}
-
-			if (count == listaConsignadoCota.size()) {
-				info = new InfoTotalFornecedorDTO();
-				info.setNomeFornecedor(consignado.getNomeFornecedor());
-				info.setValorTotal(total.add(consignado.getTotal()).toString());
-				listaInfoFornecedores.add(info);
-			}
-
-			count++;
+			
+			mapFornecedores.put(key,new InfoTotalFornecedorDTO(key, valor));
+			
 		}
-
-		return listaInfoFornecedores;
+		List<InfoTotalFornecedorDTO> infoTotalFornecedorDTOs = new ArrayList<InfoTotalFornecedorDTO>();
+		infoTotalFornecedorDTOs.addAll( mapFornecedores.values() );
+		
+		return infoTotalFornecedorDTOs;
 
 	}
 

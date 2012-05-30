@@ -5,6 +5,7 @@ import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -80,6 +81,10 @@ public class EntregadorController {
 
 	@Autowired
 	private PessoaJuridicaService pessoaJuridicaService;
+
+	private static final String CPF = "CPF";
+	
+	private static final String CNPJ = "CNPF";
 	
 	private static final String NOME_ARQUIVO_PROCURACAO = "procuracao";
 	
@@ -94,6 +99,7 @@ public class EntregadorController {
 	public static final String LISTA_ENDERECOS_REMOVER_SESSAO = "listaEnderecosRemoverSessaoEntregador";
 
 	public static final String LISTA_ENDERECOS_EXIBICAO = "listaEnderecosExibicaoEntregador";
+	
 	
 	@Path("/")
 	public void index() { }
@@ -155,11 +161,14 @@ public class EntregadorController {
 												Integer numeroCotaProcuracao,
 												PessoaFisica pessoaFisica,
 												ProcuracaoEntregador procuracaoEntregador) {
-
+		
+		HashMap<String, String> cpf = new HashMap<String, String>();
+		cpf.put(CPF, cpfEntregador);
+		
 		validarParametrosEntradaCadastroEntregador(codigoEntregador, 
 												   isComissionado, 
 												   percentualComissao, 
-												   cpfEntregador,
+												   cpf,
 												   procuracao,
 												   numeroCotaProcuracao,
 												   procuracaoEntregador);
@@ -272,11 +281,14 @@ public class EntregadorController {
 												  Integer numeroCotaProcuracao,
 												  PessoaJuridica pessoaJuridica,
 												  ProcuracaoEntregador procuracaoEntregador) {
-
+		
+		HashMap<String, String> cnpj = new HashMap<String, String>();
+		cnpj.put(CNPJ, cnpjEntregador);
+		
 		validarParametrosEntradaCadastroEntregador(codigoEntregador, 
 												   isComissionado, 
 												   percentualComissao, 
-												   cnpjEntregador,
+												   cnpj,
 												   procuracao,
 												   numeroCotaProcuracao,
 												   procuracaoEntregador);
@@ -653,7 +665,7 @@ public class EntregadorController {
 	private void validarParametrosEntradaCadastroEntregador(Long codigoEntregador,
 															boolean isComissionado,
 															String percentualComissao,
-															String cnpjCpfEntregador,
+															HashMap<String, String> cpfCnpj,
    															boolean procuracao,
 															Integer numeroCotaProcuracao,
 															ProcuracaoEntregador procuracaoEntregador) {
@@ -663,17 +675,31 @@ public class EntregadorController {
 		ValidacaoVO validacao = new ValidacaoVO();
 		
 		validacao.setTipoMensagem(TipoMensagem.WARNING);
-		
+						
 		if (codigoEntregador == null) {
 			
 			listaMensagens.add("O preenchimento do campo [Código do entregador] é obrigatório.");
 		}
 		
-		if (cnpjCpfEntregador == null || cnpjCpfEntregador.isEmpty()) {
+		if (cpfCnpj.containsKey(CPF)) {
 			
-			listaMensagens.add("O preenchimento do campo [Pessoa] é obrigatório.");
+			String cpfEntregador = cpfCnpj.get(CPF);
+			
+			if (cpfEntregador == null || cpfEntregador.isEmpty()) {
+			
+				listaMensagens.add("O preenchimento do campo [CPF] é obrigatório.");
+			}
+			
+		} else if (cpfCnpj.containsKey(CNPJ)) {
+			
+			String cnpjEntregador = cpfCnpj.get(CNPJ);
+			
+			if (cnpjEntregador == null || cnpjEntregador.isEmpty()) {
+			
+				listaMensagens.add("O preenchimento do campo [CNPJ] é obrigatório.");
+			}
 		}
-				
+		
 		if (isComissionado && percentualComissao == null) {
 			
 			listaMensagens.add("O preenchimento do campo [Percentual da comissão] é obrigatório.");

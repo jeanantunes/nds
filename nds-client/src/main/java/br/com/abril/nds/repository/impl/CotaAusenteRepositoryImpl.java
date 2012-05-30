@@ -136,8 +136,8 @@ public class CotaAusenteRepositoryImpl extends AbstractRepository<CotaAusente, L
 		queryNative.append("LEFT JOIN COTA_AUSENTE ca ON (ca.COTA_ID=cota.ID)									");
 		queryNative.append("LEFT JOIN BOX box ON (cota.BOX_ID=box.ID)											");
 		queryNative.append("LEFT JOIN PESSOA pessoa ON (cota.PESSOA_ID=pessoa.ID)								");
-		
 		queryNative.append("WHERE ca.DATA = :data																");
+		queryNative.append("AND ca.ativo =:ativo "																	 );
 		
 		if(filtro.getNumCota() != null){			
 			queryNative.append("and cota.NUMERO_COTA = :numCota 												");
@@ -150,6 +150,8 @@ public class CotaAusenteRepositoryImpl extends AbstractRepository<CotaAusente, L
 		Query query  = getSession().createSQLQuery(queryNative.toString());
 			
 		query.setParameter("data", filtro.getData());
+		
+		query.setParameter("ativo", true);
 		
 		if(filtro.getNumCota() != null){
 			query.setParameter("numCota", filtro.getNumCota());

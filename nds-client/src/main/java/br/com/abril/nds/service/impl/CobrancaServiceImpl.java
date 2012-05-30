@@ -19,6 +19,7 @@ import br.com.abril.nds.dto.PagamentoDividasDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaDividasCotaDTO;
 import br.com.abril.nds.model.StatusCobranca;
 import br.com.abril.nds.model.TipoEdicao;
+import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
@@ -26,6 +27,7 @@ import br.com.abril.nds.model.cadastro.FormaCobranca;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.PoliticaCobranca;
+import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.financeiro.BaixaManual;
 import br.com.abril.nds.model.financeiro.Cobranca;
 import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
@@ -414,51 +416,56 @@ public class CobrancaServiceImpl implements CobrancaService {
 	 *Método responsável por baixar dividas manualmente 
 	 * @param pagamento
 	 * @param idCobrancas
+	 * @param manterPendente
 	 */
 	@Override
 	@Transactional
-	public void baixaManualDividas(PagamentoDividasDTO pagamento,List<Long> idCobrancas) {
+	public void baixaManualDividas(PagamentoDividasDTO pagamento,List<Long> idCobrancas,Boolean manterPendente) {
+		
+		StatusAprovacao statusAprovacao = StatusAprovacao.APROVADO;
+		if (manterPendente){
+			statusAprovacao = StatusAprovacao.PENDENTE;
+		}
+		
+		BigDecimal valorJuros = pagamento.getValorJuros();
+		BigDecimal valorMulta = pagamento.getValorMulta();
+		BigDecimal valorDesconto = pagamento.getValorDesconto();
 		
 		BigDecimal valorPagamentoCobranca = pagamento.getValorPagamento();
+
 		BigDecimal saldoDivida = BigDecimal.ZERO;
+		BigDecimal valorPagar = BigDecimal.ZERO;
+		
 		List<Cobranca> cobrancasOrdenadas = this.cobrancaRepository.obterCobrancasOrdenadasPorVencimento(idCobrancas);
 		
 		Cobranca cobrancaParcial = null;
 		for (Cobranca itemCobranca:cobrancasOrdenadas){
 			
 			saldoDivida = this.obterSaldoDivida(itemCobranca.getId());
+			valorPagar = itemCobranca.getValor().subtract(saldoDivida);
 			
-			valorPagamentoCobranca = valorPagamentoCobranca.subtract(itemCobranca.getValor().subtract(saldoDivida));
-		    
+			valorPagamentoCobranca = valorPagamentoCobranca.subtract(valorPagar).subtract(valorJuros).subtract(valorMulta).add(valorDesconto);
+			
 			if (valorPagamentoCobranca.floatValue() >=0 ){
-
-		    	itemCobranca.setDataPagamento(Calendar.getInstance().getTime());
+		    	itemCobranca.setDataPagamento(pagamento.getDataPagamento());
 		    	itemCobranca.setStatusCobranca(StatusCobranca.PAGO);
 		    	itemCobranca.getDivida().setStatus(StatusDivida.QUITADA);
 		    	this.cobrancaRepository.merge(itemCobranca);
-		   
-		    	this.lancamentoBaixaParcial(itemCobranca,pagamento,itemCobranca.getValor().subtract(saldoDivida),StatusBaixa.PAGO);
+		    	this.lancamentoBaixaParcial(itemCobranca,pagamento,valorPagar,StatusBaixa.PAGO,  statusAprovacao);
 		    }
 		    else{
-		    	
-		    	valorPagamentoCobranca = valorPagamentoCobranca.add(itemCobranca.getValor().subtract(saldoDivida));
-		    	
+		    	valorPagamentoCobranca = valorPagamentoCobranca.add(valorPagar).add(valorJuros).add(valorMulta).subtract(valorDesconto);
 		    	cobrancaParcial = itemCobranca;
 		    	break;
 		    }
 		}
-		if ((valorPagamentoCobranca!=null)&&(valorPagamentoCobranca.floatValue() > 0)){
-			if (cobrancaParcial!=null){
-			    this.lancamentoBaixaParcial(cobrancaParcial,pagamento,valorPagamentoCobranca,StatusBaixa.PAGAMENTO_PARCIAL);
-			}
-			else{
-				this.lancamentoBaixaParcial(null,pagamento,valorPagamentoCobranca,StatusBaixa.PAGO_DIVERGENCIA_VALOR);
-			}
+		if ((valorPagamentoCobranca!=null)&&(valorPagamentoCobranca.floatValue()>0)&&(cobrancaParcial!=null)){
+	        this.lancamentoBaixaParcial(cobrancaParcial,pagamento,valorPagamentoCobranca,StatusBaixa.PAGAMENTO_PARCIAL,  statusAprovacao);
 		}
 	}
 	
 	
-	private void lancamentoBaixaParcial(Cobranca cobrancaParcial,PagamentoDividasDTO pagamento,BigDecimal valor, StatusBaixa status){
+	private void lancamentoBaixaParcial(Cobranca cobrancaParcial,PagamentoDividasDTO pagamento,BigDecimal valor, StatusBaixa status, StatusAprovacao statusAprovacao){
 
 		//BAIXA COBRANCA
 		BaixaManual baixaManual = new BaixaManual();
@@ -473,6 +480,7 @@ public class CobrancaServiceImpl implements CobrancaService {
 		baixaManual.setValorMulta(pagamento.getValorMulta());
 		baixaManual.setValorDesconto(pagamento.getValorDesconto());
 		baixaManual.setStatus(status);
+		baixaManual.setStatusAprovacao(statusAprovacao);
 		
 		baixaCobrancaRepository.adicionar(baixaManual);
 
@@ -496,6 +504,53 @@ public class CobrancaServiceImpl implements CobrancaService {
 			
 			this.movimentoFinanceiroCotaService.gerarMovimentoFinanceiroDebitoCredito(movimento);
 		}
+	}
+
+	
+	/**
+	 *Método responsável por validar baixa de dividas, verificando se existem boletos envolvidos 
+	 * @param idCobrancas
+	 */
+	@Override
+	@Transactional
+	public boolean validaBaixaManualDividas(List<Long> idCobrancas) {
+		boolean res=true;
+		for (Long id:idCobrancas){
+			Cobranca cobranca = this.cobrancaRepository.buscarPorId(id);
+			if (cobranca.getTipoCobranca()==TipoCobranca.BOLETO){
+				res=false;
+				break;
+			}
+		}
+		return res;
+	}
+	
+	
+	/**
+	 *Método responsável por validar negociação, verificando se as datas de vencimento das dividas estão de acordo com a configuração do Distribuidor
+	 * @param idCobrancas
+	 */
+	@Override
+	@Transactional
+	public boolean validaNegociacaoDividas(List<Long> idCobrancas) {
+		
+		boolean res=true;
+		Distribuidor distribuidor = distribuidorService.obter();
+		Integer diasNegociacao = (distribuidor.getParametroCobrancaDistribuidor()!=null?distribuidor.getParametroCobrancaDistribuidor().getDiasNegociacao():null);
+		
+		if (diasNegociacao!=null){
+			
+			for (Long id:idCobrancas){
+				Cobranca cobranca = this.cobrancaRepository.buscarPorId(id);
+				
+				if (  distribuidor.getDataOperacao().getTime() >  DateUtil.adicionarDias(cobranca.getDataVencimento(), diasNegociacao).getTime()){
+					res=false;
+					break;
+				}
+
+			}
+	    }
+		return res;
 	}
 	
 }
