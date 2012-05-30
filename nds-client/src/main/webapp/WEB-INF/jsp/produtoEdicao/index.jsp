@@ -54,6 +54,13 @@ function executarPreProcessamento(resultado) {
 
 
 function popup() {
+
+	if ($("#edicoesGrid > tbody").empty()) {
+		exibirMensagem('WARNING', ['Por favor, escolha um produto para adicionar a Edi&ccedil;&atilde;o!'], "");
+		return;
+	}
+	
+	
 		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
 	
 		$( "#dialog-novo" ).dialog({
@@ -637,7 +644,9 @@ fieldset {
 				<table class="edicoesGrid"></table>
 			</div>
 			
-			<span class="bt_novos" title="Novo"><a href="javascript:;" onclick="popup();"><img src="../images/ico_salvar.gif" hspace="5" border="0"/>Novo</a></span>
+			<span class="bt_novos" title="Novo">
+				<a href="javascript:;" onclick="popup();"><img src="../images/ico_salvar.gif" hspace="5" border="0"/>Novo</a>
+			</span>
 		</fieldset>
 		
 		<div class="linha_separa_fields">&nbsp;</div>
