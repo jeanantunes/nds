@@ -1,5 +1,6 @@
 package br.com.abril.nds.repository.impl;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -36,6 +37,20 @@ public class LancamentoParcialRepositoryImpl extends AbstractRepository<Lancamen
 		return (lancamento!=null) ? (LancamentoParcial) lancamento : null ;	
 	}
 
+	@Override
+	public LancamentoParcial obterLancamentoParcial(Long idProdutoEdicao, Date dataRecolhimento) {
+		
+		Criteria criteria = getSession().createCriteria(LancamentoParcial.class);
+		
+		criteria.add(Restrictions.eq("produtoEdicao.id", idProdutoEdicao));
+		criteria.add(Restrictions.eq("recolhimentoFinal", dataRecolhimento));
+		
+		Object lancamento = criteria.uniqueResult();
+		
+		return (lancamento!=null) ? (LancamentoParcial) lancamento : null ;	
+	}
+	
+	
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<ParcialDTO> buscarLancamentosParciais(FiltroParciaisDTO filtro) {

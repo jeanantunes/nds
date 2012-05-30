@@ -32,6 +32,8 @@ import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.exception.ChamadaEncalheCotaInexistenteException;
 import br.com.abril.nds.service.exception.ConferenciaEncalheExistenteException;
 import br.com.abril.nds.service.exception.ConferenciaEncalheFinalizadaException;
+import br.com.abril.nds.service.exception.EncalheExcedeReparteException;
+import br.com.abril.nds.service.exception.EncalheRecolhimentoParcialException;
 import br.com.abril.nds.service.exception.EncalheSemPermissaoSalvarException;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.ItemAutoComplete;
@@ -310,6 +312,11 @@ public class ConferenciaEncalheController {
 		} catch(ChamadaEncalheCotaInexistenteException e){
 			
 			throw new ValidacaoException(TipoMensagem.WARNING, "Não existe chamada de encalhe deste produto para essa cota.");
+		
+		} catch(EncalheRecolhimentoParcialException e) {
+
+			throw new ValidacaoException(TipoMensagem.WARNING, "Não existe chamada de encalhe para produto parcial na data operação.");
+			
 		}
 		
 		if (conferenciaEncalheDTO == null && produtoEdicao == null){
@@ -338,10 +345,17 @@ public class ConferenciaEncalheController {
 			throw new ValidacaoException(TipoMensagem.ERROR, "Sessão expirada.");
 		}
 		
-		ProdutoEdicaoDTO produtoEdicao = 
-				this.conferenciaEncalheService.pesquisarProdutoEdicaoPorId(
-						info.getCota().getNumeroCota(), 
-						idProdutoEdicao);
+		ProdutoEdicaoDTO produtoEdicao;
+		
+		try {
+			produtoEdicao = this.conferenciaEncalheService.pesquisarProdutoEdicaoPorId(
+					info.getCota().getNumeroCota(), 
+					idProdutoEdicao);
+		} catch (EncalheRecolhimentoParcialException e) {
+
+			throw new ValidacaoException(TipoMensagem.WARNING, "Não existe chamada de encalhe para produto parcial na data operação.");
+			
+		}
 		
 		this.atualizarQuantidadeConferida(idProdutoEdicao, quantidade, produtoEdicao);
 		
@@ -425,6 +439,8 @@ public class ConferenciaEncalheController {
 			
 			throw new ValidacaoException(TipoMensagem.WARNING, e.getMessage());
 			
+		} catch (EncalheExcedeReparteException e) {
+			throw new ValidacaoException(TipoMensagem.WARNING, e.getMessage());
 		}
 		
 		this.result.use(Results.json()).from(
@@ -464,11 +480,17 @@ public class ConferenciaEncalheController {
 				}
 			}
 			
-			this.conferenciaEncalheService.finalizarConferenciaEncalhe(
-					controleConfEncalheCota, 
-					this.getListaConferenciaEncalheFromSession(), 
-					this.getSetConferenciaEncalheExcluirFromSession(), 
-					this.getUsuarioLogado());
+			try {
+				this.conferenciaEncalheService.finalizarConferenciaEncalhe(
+						controleConfEncalheCota, 
+						this.getListaConferenciaEncalheFromSession(), 
+						this.getSetConferenciaEncalheExcluirFromSession(), 
+						this.getUsuarioLogado());
+			} catch (EncalheExcedeReparteException e) {
+
+				this.result.use(Results.json()).from(
+						new ValidacaoVO(TipoMensagem.WARNING, "Conferência de encalhe está excedendo quantidade de reparte."), "result").recursive().serialize();
+			}
 			
 			this.result.use(Results.json()).from(
 					new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."), "result").recursive().serialize();
