@@ -8,6 +8,8 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -32,12 +34,12 @@ public class VendaEncalhe implements Serializable {
 	@Temporal(TemporalType.DATE)
 	private Date dataVenda;
 	
-	@Column(name="ID_COTA")
-	@OneToMany
+	@ManyToOne
+	@JoinColumn(name = "ID_COTA")
 	private Cota cota;
 	
-	@OneToMany
-	@Column(name="ID_PRODUTO_EDICAO")
+	@ManyToOne
+	@JoinColumn(name = "ID_PRODUTO_EDICAO")
 	private ProdutoEdicao produtoEdicao;
 	
 	@Column(name="QNT_PRODUTO")
