@@ -14,6 +14,7 @@ import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -31,6 +32,7 @@ import org.hibernate.annotations.Cascade;
 
 import br.com.abril.nds.model.cadastro.pdv.PDV;
 import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
+import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.planejamento.EstudoCota;
 
 @Entity
@@ -111,7 +113,10 @@ public class Cota implements Serializable {
 	
 	@OneToMany(mappedBy = "cota")
 	private Set<EstoqueProdutoCota> estoqueProdutoCotas = new HashSet<EstoqueProdutoCota>();
-	
+
+	@OneToMany(mappedBy = "cota", fetch=FetchType.LAZY)
+	private Set<MovimentoEstoqueCota> movimentoEstoqueCotas = new HashSet<MovimentoEstoqueCota>();
+
 	/**
 	 * Data de início de atividade da cota
 	 */
@@ -433,6 +438,14 @@ public class Cota implements Serializable {
 	 */
 	public void setSociosCota(Set<SocioCota> sociosCota) {
 		this.sociosCota = sociosCota;
+	}
+
+	public Set<MovimentoEstoqueCota> getMovimentoEstoqueCotas() {
+		return movimentoEstoqueCotas;
+	}
+
+	public void setMovimentoEstoqueCotas(Set<MovimentoEstoqueCota> movimentoEstoqueCotas) {
+		this.movimentoEstoqueCotas = movimentoEstoqueCotas;
 	}
 
 

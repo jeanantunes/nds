@@ -43,11 +43,19 @@ public interface ParametroSistemaService {
 	public ParametroSistemaGeralDTO buscarParametroSistemaGeral();
 	
 	/**
+	 * Retorna o logotipo do distribuidor, caso exista.
+	 * 
+	 * @return
+	 */
+	public InputStream getLogotipoDistribuidor();
+	
+	/**
 	 * Salva os Parâmetros do Sistema.
 	 *  
 	 * @param dto
 	 * @param imgLogotipo
+	 * @param imgContentType
 	 */
-	public void salvar(ParametroSistemaGeralDTO dto, InputStream imgLogotipo);
+	public void salvar(ParametroSistemaGeralDTO dto, InputStream imgLogotipo, String imgContentType);
 	
 }

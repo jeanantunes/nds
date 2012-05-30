@@ -7,6 +7,8 @@ import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
@@ -40,6 +42,10 @@ public abstract class BaixaCobranca {
 	@ManyToOne(optional = true)
 	@JoinColumn(name = "COBRANCA_ID")
 	private Cobranca cobranca;
+	
+	@Enumerated(EnumType.STRING)
+	@Column(name = "STATUS", nullable = true)
+	private StatusBaixa status;
 
 	public Long getId() {
 		return id;
@@ -71,6 +77,20 @@ public abstract class BaixaCobranca {
 
 	public void setCobranca(Cobranca cobranca) {
 		this.cobranca = cobranca;
+	}
+	
+	/**
+	 * @return the status
+	 */
+	public StatusBaixa getStatus() {
+		return status;
+	}
+
+	/**
+	 * @param status the status to set
+	 */
+	public void setStatus(StatusBaixa status) {
+		this.status = status;
 	}
 	
 }

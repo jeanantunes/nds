@@ -37,6 +37,12 @@ public class EstoqueProduto {
 	@Column(name = "QTDE_SUPLEMENTAR")
 	private BigDecimal qtdeSuplementar;
 	
+	@Column(name = "QTDE_DEVOLUCAO_ENCALHE")
+	private BigDecimal qtdeDevolucaoEncalhe;
+	
+	@Column(name = "QTDE_DEVOLUCAO_FORNECEDOR")
+	private BigDecimal qtdeDevolucaoFornecedor;
+	
 	@OneToMany(mappedBy = "estoqueProduto")
 	private List<MovimentoEstoque> movimentos = new ArrayList<MovimentoEstoque>();
 	
@@ -90,6 +96,34 @@ public class EstoqueProduto {
 	
 	public void setVersao(Long versao) {
 		this.versao = versao;
+	}
+
+	/**
+	 * @return the qtdeDevolucaoEncalhe
+	 */
+	public BigDecimal getQtdeDevolucaoEncalhe() {
+		return qtdeDevolucaoEncalhe;
+	}
+
+	/**
+	 * @param qtdeDevolucaoEncalhe the qtdeDevolucaoEncalhe to set
+	 */
+	public void setQtdeDevolucaoEncalhe(BigDecimal qtdeDevolucaoEncalhe) {
+		this.qtdeDevolucaoEncalhe = qtdeDevolucaoEncalhe;
+	}
+
+	/**
+	 * @return the qtdeDevolucaoFornecedor
+	 */
+	public BigDecimal getQtdeDevolucaoFornecedor() {
+		return qtdeDevolucaoFornecedor;
+	}
+
+	/**
+	 * @param qtdeDevolucaoFornecedor the qtdeDevolucaoFornecedor to set
+	 */
+	public void setQtdeDevolucaoFornecedor(BigDecimal qtdeDevolucaoFornecedor) {
+		this.qtdeDevolucaoFornecedor = qtdeDevolucaoFornecedor;
 	}
 
 }

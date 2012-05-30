@@ -201,8 +201,8 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 			
 			if (OperacaoEstoque.ENTRADA.equals(tipoMovimentoEstoque.getOperacaoEstoque())) {
 				
-				 if(GrupoMovimentoEstoque.SUPLEMENTAR_COTA_AUSENTE
-						 .equals(tipoMovimentoEstoque.getGrupoMovimentoEstoque())) {
+				 if( GrupoMovimentoEstoque.SUPLEMENTAR_COTA_AUSENTE.equals(tipoMovimentoEstoque.getGrupoMovimentoEstoque()) ||
+					 GrupoMovimentoEstoque.SUPLEMENTAR_ENVIO_ENCALHE_ANTERIOR_PROGRAMACAO.equals(tipoMovimentoEstoque.getGrupoMovimentoEstoque())) {
 					 
 					 novaQuantidade = estoqueProduto.getQtdeSuplementar().add(movimentoEstoque.getQtde());
 					 

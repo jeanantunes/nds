@@ -184,15 +184,15 @@ public class Fixture {
 	}
 
 	public static Fornecedor fornecedorFC(TipoFornecedor tipoFornecedor) {
-		return fornecedor(juridicaFC(), SituacaoCadastro.ATIVO, true, tipoFornecedor);
+		return fornecedor(juridicaFC(), SituacaoCadastro.ATIVO, true, tipoFornecedor, 1);
 	}
 
 	public static Fornecedor fornecedorDinap(TipoFornecedor tipoFornecedor) {
-		return fornecedor(juridicaDinap(), SituacaoCadastro.ATIVO, true, tipoFornecedor);
+		return fornecedor(juridicaDinap(), SituacaoCadastro.ATIVO, true, tipoFornecedor, 2);
 	}
 	
 	public static Fornecedor fornecedorAcme(TipoFornecedor tipoFornecedor) {
-		return fornecedor(juridicaAcme(), SituacaoCadastro.ATIVO, false, tipoFornecedor);
+		return fornecedor(juridicaAcme(), SituacaoCadastro.ATIVO, false, tipoFornecedor, 3);
 	}
 
 	public static Produto produtoVeja(TipoProduto tipoProduto) {
@@ -272,11 +272,11 @@ public class Fixture {
 	}
 
 	public static TipoProduto tipoRevista() {
-		return tipoProduto("Revistas", GrupoProduto.REVISTA, "99000642", null, "001");
+		return tipoProduto("Revistas", GrupoProduto.REVISTA, "99000642", null, 001L);
 	}
 	
 	public static TipoProduto tipoCromo() {
-		return tipoProduto("Cromos", GrupoProduto.CROMO, "1230004560", null, "001");
+		return tipoProduto("Cromos", GrupoProduto.CROMO, "1230004560", null, 002L);
 	}
 	
 	public static TipoFornecedor tipoFornecedorPublicacao() {
@@ -356,17 +356,19 @@ public class Fixture {
 
 	public static Fornecedor fornecedor(PessoaJuridica juridica,
 			SituacaoCadastro situacaoCadastro, boolean permiteBalanceamento,
-			TipoFornecedor tipo) {
+			TipoFornecedor tipo, Integer codigoInterface) {
 		Fornecedor fornecedor = new Fornecedor();
 		fornecedor.setJuridica(juridica);
 		fornecedor.setSituacaoCadastro(situacaoCadastro);
 		fornecedor.setPermiteBalanceamento(permiteBalanceamento);
 		fornecedor.setTipoFornecedor(tipo);
+		fornecedor.setInicioAtividade(new Date());
+		fornecedor.setCodigoInterface(codigoInterface);
 		return fornecedor;
 	}
 
 	public static TipoProduto tipoProduto(String descricao, GrupoProduto grupo,
-			String codigoNCM, String codigoNBM, String codigo) {
+			String codigoNCM, String codigoNBM, Long codigo) {
 		TipoProduto tipoProduto = new TipoProduto();
 		tipoProduto.setDescricao(descricao);
 		tipoProduto.setGrupoProduto(grupo);
