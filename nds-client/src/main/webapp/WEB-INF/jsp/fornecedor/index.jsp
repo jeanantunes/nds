@@ -1,7 +1,12 @@
 <head>
 <script language="javascript" type="text/javascript">
 
-	function novoFornecedor() {
+	function novoFornecedor(isEdicao) {
+		
+		if (!isEdicao) {
+			
+			limparCamposModal();
+		}
 	
 		$( "#dialogNovoFornecedor" ).dialog({
 			resizable: false,
@@ -10,9 +15,7 @@
 			modal: true,
 			buttons: {
 				"Confirmar": function() {
-					$( this ).dialog( "close" );
-					$("#effect").show("highlight", {}, 1000, callback);
-					$(".grids").show();
+					cadastrarFornecedor();
 				},
 				"Cancelar": function() {
 					$( this ).dialog( "close" );
@@ -20,6 +23,47 @@
 			}
 		});
 	};
+	
+	function limparCamposModal() {
+		$("#idFornecedor").val("");
+		$("#codigoInterface").val("");
+		$("#razaoSocial").val("");
+		$("#nomeFantasia").val("");
+		$("#cnpj").val("");
+		$("#inscricaoEstadual").val("");
+		$("#responsavel").val("");
+		$("#email").val("");
+		$("#tipoFornecedor").val("");
+		$("#possuiContrato").val("");
+		$("#validadeContrato").val("");
+	}
+	
+	function cadastrarFornecedor() {
+		
+		var formData = $("#formNovoFornecedor").serializeArray();
+		
+		$.postJSON(
+			'<c:url value="/cadastro/fornecedor/cadastrarFornecedor" />',
+			formData,
+			function(result) {
+				exibirMensagem(
+					result.tipoMensagem, 
+					result.listaMensagens
+				);
+				
+				pesquisarFornecedores();
+				
+				$( this ).dialog( "close" );
+			},
+			function(result) {
+				exibirMensagemDialog(
+					result.mensagens.tipoMensagem, 
+					result.mensagens.listaMensagens
+				);
+			},
+			true
+		);
+	}
 	
 	function pesquisarFornecedores() {
 		
@@ -37,7 +81,7 @@
 	}
 
 	function processarResultadoFornecedores(data) {
-
+		
 		if (data.mensagens) {
 
 			exibirMensagem(
@@ -50,13 +94,13 @@
 			return;
 		}
 
+		data = data.tableModel;
+
 		var i;
 
 		for (i = 0; i < data.rows.length; i++) {
 
-			var lastIndex = data.rows[i].cell.length;
-
-			data.rows[i].cell[lastIndex] = getActionFornecedor(data.rows[i].id);
+			data.rows[i].cell.acao = getActionFornecedor(data.rows[i].id);
 		}
 
 		if (data.rows.length < 0) {
@@ -71,12 +115,42 @@
 		return data;
 	}
 
+	function editarFornecedor(idFornecedor) {
+
+		$.postJSON(
+			'<c:url value="/cadastro/fornecedor/editarFornecedor" />',
+			{'idFornecedor': idFornecedor},
+			function(result) {
+				
+				$("#idFornecedor").val(result.idFornecedor);
+				$("#codigoInterface").val(result.codigoInterface);
+				$("#razaoSocial").val(result.razaoSocial);
+				$("#nomeFantasia").val(result.nomeFantasia);
+				$("#cnpj").val(result.cnpj);
+				$("#inscricaoEstadual").val(result.inscricaoEstadual);
+				$("#responsavel").val(result.responsavel);
+				$("#email").val(result.email);
+				$("#tipoFornecedor").val(result.tipoFornecedor);
+				$("#possuiContrato").val(result.possuiContrato);
+				$("#validadeContrato").val(result.validadeContrato);
+				
+				novoFornecedor(true);
+			},
+			function(result) {
+				exibirMensagem(
+					result.mensagens.tipoMensagem, 
+					result.mensagens.listaMensagens
+				);
+			}
+		);
+	}
+	
 	function getActionFornecedor(idFornecedor) {
 
 		return '<a href="javascript:;" onclick="editarFornecedor('
 				+ idFornecedor
 				+ ')" '
-				+ ' style="cursor:pointer;border:0px;margin:5px" title="Editar entregador">'
+				+ ' style="cursor:pointer;border:0px;margin:5px" title="Editar fornecedor">'
 				+ '<img src="${pageContext.request.contextPath}/images/ico_editar.gif" border="0px"/>'
 				+ '</a>'
 				+ '<a href="javascript:;" onclick="confirmarExclusaoFornecedor('
@@ -96,8 +170,8 @@
 			modal: true,
 			buttons: {
 				"Confirmar": function() {
+					excluirFornecedor(idFornecedor);
 					$( this ).dialog( "close" );
-					$("#effect").show("highlight", {}, 1000, callback);
 				},
 				"Cancelar": function() {
 					$( this ).dialog( "close" );
@@ -106,12 +180,34 @@
 		});
 	};
 	
+	function excluirFornecedor(idFornecedor) {
+	
+		$.postJSON(
+			'<c:url value="/cadastro/fornecedor/excluirFornecedor" />',
+			{'idFornecedor': idFornecedor},
+			function(result) {
+				exibirMensagem(
+					result.tipoMensagem, 
+					result.listaMensagens
+				);
+				
+				pesquisarFornecedores();
+			},
+			function(result) {
+				exibirMensagem(
+					result.mensagens.tipoMensagem, 
+					result.mensagens.listaMensagens
+				);
+			}
+		);
+	}
+	
 	$(function() {
 		
 		$(".fornecedoresGrid").flexigrid({
 			dataType : 'json',
 			colModel : [  {
-				display : 'CÃ³digo',
+				display : 'Código',
 				name : 'codigoInterface',
 				width : 60,
 				sortable : true,
@@ -157,11 +253,21 @@
 			sortorder : "asc",
 			usepager : true,
 			useRp : true,
+			singleSelect: true,
 			rp : 15,
 			showTableToggleBtn : true,
 			width : 960,
 			height : 255
 		});
+		
+		$("#dataValidade").datepicker({
+			showOn : "button",
+			buttonImage: "${pageContext.request.contextPath}/images/calendar.gif",
+			buttonImageOnly : true,
+			dateFormat: 'dd/mm/yy'
+		});
+		
+		$( "#dataValidade" ).mask("99/99/9999");
 		
 		$( "#tabFornecedores" ).tabs();
 	});

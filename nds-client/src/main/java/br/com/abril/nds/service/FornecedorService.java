@@ -71,4 +71,27 @@ public interface FornecedorService {
 	 * @return Long
 	 */
 	Long obterContagemFornecedoresPorFiltro(FiltroConsultaFornecedorDTO filtroConsultaFornecedor);
+	
+	/**
+	 * Método que remove um fornecedor de acordo com seu ID.
+	 * 
+	 * @param idFornecedor
+	 */
+	void removerFornecedor(Long idFornecedor);
+	
+	/**
+	 * Método responsável por criar um novo fornecedor.
+	 * 
+	 * @param fornecedor - Fornecedor
+	 */
+	void salvarFornecedor(Fornecedor fornecedor);
+	
+	/**
+	 * Método responsável pela atualização de fornecedor.
+	 * 
+	 * @param fornecedor - Fornecedor
+	 * 
+	 * @return - Fornecedor atualizado.
+	 */
+	Fornecedor merge(Fornecedor fornecedor);
 }

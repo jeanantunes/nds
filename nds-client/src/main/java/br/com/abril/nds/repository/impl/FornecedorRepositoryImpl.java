@@ -222,38 +222,30 @@ public class FornecedorRepositoryImpl extends
 		   .append(" fornecedor.codigoInterface as codigoInterface, ")
 		   .append(" fornecedor.juridica.razaoSocial as razaoSocial, ")
 		   .append(" fornecedor.juridica.cnpj as cnpj, ")
-//		   .append(" fornecedor.responsavel as responsavel, ")
-//		   .append(" telefone.numero as telefone, ")
+		   .append(" fornecedor.responsavel as responsavel, ")
+		   .append(" telefone.numero as telefone, ")
 		   .append(" fornecedor.juridica.email as email ")
 		   
-		   .append(" from Fornecedor fornecedor ");
-		
-		String condicoes = "";
+		   .append(" from Fornecedor fornecedor ")
+		   .append(" left join fornecedor.telefones telefoneFornecedor ")
+		   .append(" left join telefoneFornecedor.telefone telefone ")
+		   .append(" where telefoneFornecedor is null or telefoneFornecedor.principal = true ");
 		
 		if (filtroConsultaFornecedor.getCnpj() != null 
 				&& !filtroConsultaFornecedor.getCnpj().isEmpty()) {
 			
-			condicoes = "".equals(condicoes) ? " where " : " and ";  
-			
-			hql.append(condicoes);
 			hql.append(" fornecedor.juridica.cnpj like :cnpj ");
 		}
 		
 		if (filtroConsultaFornecedor.getNomeFantasia() != null 
 				&& !filtroConsultaFornecedor.getNomeFantasia().isEmpty()) {
 			
-			condicoes = "".equals(condicoes) ? " where " : " and ";  
-			
-			hql.append(condicoes);
 			hql.append(" fornecedor.juridica.nomeFantasia like :nomeFantasia ");
 		}
 
 		if (filtroConsultaFornecedor.getRazaoSocial() != null 
 				&& !filtroConsultaFornecedor.getRazaoSocial().isEmpty()) {
 			
-			condicoes = "".equals(condicoes) ? " where " : " and ";  
-			
-			hql.append(condicoes);
 			hql.append(" fornecedor.juridica.razaoSocial like :razaoSocial ");
 		}
 		

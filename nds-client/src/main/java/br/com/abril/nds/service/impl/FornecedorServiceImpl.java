@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -270,11 +271,12 @@ public class FornecedorServiceImpl implements FornecedorService {
 	 * {@inheritDoc}
 	 */
 	@Override
+	@Transactional
 	public Long obterContagemFornecedoresPorFiltro(FiltroConsultaFornecedorDTO filtroConsultaFornecedor) {
 
 		validarFiltroConsultaFornecedorDTO(filtroConsultaFornecedor);
 		
-		return this.obterContagemFornecedoresPorFiltro(filtroConsultaFornecedor);
+		return this.fornecedorRepository.obterContagemFornecedoresPorFiltro(filtroConsultaFornecedor);
 	}
 	
 	/*
@@ -295,4 +297,61 @@ public class FornecedorServiceImpl implements FornecedorService {
 		}
 		
 	}
+
+	@Override
+	@Transactional
+	public void removerFornecedor(Long idFornecedor) {
+
+		if (idFornecedor == null) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Fornecedor inexistente."); 
+		}
+		
+		Fornecedor fornecedor = this.fornecedorRepository.buscarPorId(idFornecedor);
+		
+		if (fornecedor == null) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Fornecedor inexistente."); 
+		}
+		
+		try {
+		
+			this.fornecedorRepository.remover(fornecedor);
+		
+		} catch (DataIntegrityViolationException e) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Este fornecedor não pode ser removido.");
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@Transactional
+	public void salvarFornecedor(Fornecedor fornecedor) {
+
+		if (fornecedor == null) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Fornecedor não pode estar nulo.");
+		}
+		
+		this.fornecedorRepository.adicionar(fornecedor);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@Transactional
+	public Fornecedor merge(Fornecedor fornecedor) {
+
+		if (fornecedor == null) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Fornecedor não pode estar nulo.");
+		}
+		
+		return this.fornecedorRepository.merge(fornecedor);
+	}
 }
+
