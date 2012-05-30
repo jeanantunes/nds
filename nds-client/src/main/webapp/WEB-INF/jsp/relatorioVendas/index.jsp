@@ -686,7 +686,7 @@
 				display : 'Hist.',
 				name : 'hist',
 				width : 30,
-				sortable : true,
+				sortable : false,
 				align : 'center'
 			} ],
 			sortname : "codigo",
@@ -978,7 +978,7 @@
 				return resultado;
 			}
 
-			$("#nomeEditorPopUp").html(resultado[0].nomeEditor);
+			$("#nomeEditorPopUp").html(resultado.rows[0].cell.nomeEditor);
 			
 			$(".dialog-editor").show();
 			return resultado;

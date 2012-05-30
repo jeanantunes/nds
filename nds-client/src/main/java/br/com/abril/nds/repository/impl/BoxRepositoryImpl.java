@@ -123,7 +123,6 @@ public class BoxRepositoryImpl extends AbstractRepository<Box,Long> implements B
 		
 		Criteria criteria = addRestrictions(codigoBox, tipoBox, postoAvancado);
 		
-		
 		if(Ordenacao.ASC ==  ordenacao){
 			criteria.addOrder(Order.asc(orderBy));
 		}else if(Ordenacao.DESC ==  ordenacao){

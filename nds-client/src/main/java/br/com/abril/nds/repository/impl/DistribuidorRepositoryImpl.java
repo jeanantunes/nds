@@ -2,6 +2,7 @@ package br.com.abril.nds.repository.impl;
 
 import java.math.BigDecimal;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -43,7 +44,6 @@ public class DistribuidorRepositoryImpl extends
 		List<Distribuidor> distribuidores = query.list();
 		return distribuidores.isEmpty() ? null : distribuidores.get(0);
 	}
-
 
 	@Override
 	@SuppressWarnings("unchecked")
