@@ -39,6 +39,6 @@ public interface DistribuidorRepository extends Repository<Distribuidor, Long> {
 
 	public List<RegistroCurvaABCDistribuidorVO> obterCurvaABCDistribuidor(FiltroCurvaABCDistribuidorDTO filtroCurvaABCDistribuidorDTO);
 
-	public ResultadoCurvaABC obterCurvaABCDistribuidorTotal(FiltroCurvaABCDistribuidorDTO filtroCurvaABCDistribuidorDTO);
+	public ResultadoCurvaABC<RegistroCurvaABCDistribuidorVO> obterCurvaABCDistribuidorTotal(FiltroCurvaABCDistribuidorDTO filtroCurvaABCDistribuidorDTO);
 
 }

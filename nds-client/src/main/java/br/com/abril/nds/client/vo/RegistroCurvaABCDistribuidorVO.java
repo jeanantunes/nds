@@ -114,7 +114,7 @@ public class RegistroCurvaABCDistribuidorVO extends RegistroCurvaABC implements 
 		return getParticipacao();
 	}
 
-	@Export(label = "Participação", exhibitionOrder = 8)
+	@Export(label = "Participação Acumulada", exhibitionOrder = 8)
 	public BigDecimal getParticipacaoAcumuladaString() {
 		return getParticipacaoAcumulada();
 	}

@@ -21,7 +21,6 @@ import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.dto.filtro.FiltroCurvaABCCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroCurvaABCCotaDTO.ColunaOrdenacaoCurvaABCCota;
 import br.com.abril.nds.dto.filtro.FiltroCurvaABCDistribuidorDTO;
-import br.com.abril.nds.dto.filtro.FiltroCurvaABCDistribuidorDTO.ColunaOrdenacaoCurvaABCDistribuidor;
 import br.com.abril.nds.dto.filtro.FiltroCurvaABCEditorDTO;
 import br.com.abril.nds.dto.filtro.FiltroCurvaABCEditorDTO.ColunaOrdenacaoCurvaABCEditor;
 import br.com.abril.nds.dto.filtro.FiltroPesquisarHistoricoEditorDTO;
@@ -83,18 +82,10 @@ public class RelatorioVendasController {
 	@Autowired
 	private EditorService editorService;
 
-	private static final String QTD_REGISTROS_PESQUISA_CURVA_DISTRIBUIDOR_ABC_SESSION_ATTRIBUTE = "qtdRegistrosPesquisaCurvaAbcDistribuidor";
-	private static final String FILTRO_PESQUISA_CURVA_ABC_DISTRIBUIDOR_SESSION_ATTRIBUTE = "filtroPesquisaCurvaAbcDistribuidor";
-	private static final String RESULTADO_PESQUISA_CURVA_ABC_DISTRIBUIDOR_SESSION_ATTRIBUTE = "resultadoPesquisaCurvaAbcDistribuidor";
-
-	private static final String QTD_REGISTROS_PESQUISA_CURVA_COTA_ABC_SESSION_ATTRIBUTE = "qtdRegistrosPesquisaCurvaAbcCota";
-	private static final String FILTRO_PESQUISA_CURVA_ABC_COTA_SESSION_ATTRIBUTE = "filtroPesquisaCurvaAbcCota";
-	private static final String RESULTADO_PESQUISA_CURVA_ABC_COTA_SESSION_ATTRIBUTE = "resultadoPesquisaCurvaAbcCota";
-
-	private static final String QTD_REGISTROS_PESQUISA_CURVA_EDITOR_ABC_SESSION_ATTRIBUTE = "qtdRegistrosPesquisaCurvaAbcEditor";
-	private static final String FILTRO_PESQUISA_CURVA_ABC_EDITOR_SESSION_ATTRIBUTE = "filtroPesquisaCurvaAbcEditor";
-	private static final String RESULTADO_PESQUISA_CURVA_ABC_EDITOR_SESSION_ATTRIBUTE = "resultadoPesquisaCurvaAbcEditor";
-
+	private static final String FILTRO_PESQUISA_CURVA_ABC_DISTRIBUIDOR_SESSION_ATTRIBUTE = "filtroPesquisaCurbaABCDistribuidor";
+	private static final String FILTRO_PESQUISA_CURVA_ABC_EDITOR_SESSION_ATTRIBUTE = "filtroPesquisaCurbaABCEditor";
+	private static final String FILTRO_PESQUISA_CURVA_ABC_PRODUTO_SESSION_ATTRIBUTE = "filtroPesquisaCurbaABCProduto";
+	
 	private static final int DISTRIBUIDOR = 1;
 	private static final int EDITOR       = 2;
 	private static final int PRODUTO      = 3;
@@ -126,30 +117,41 @@ public class RelatorioVendasController {
 	 */
 	@Get
 	public void exportar(FileType fileType, int tipoRelatorio) throws IOException {
-		
 		if (fileType == null) {
-			throw new ValidacaoException(TipoMensagem.WARNING, "Tipo de arquivo não encontrado!");
+			throw new ValidacaoException(TipoMensagem.ERROR, "Tipo de arquivo não encontrado!");
 		}
-		
+
 		switch (tipoRelatorio) {
 		case DISTRIBUIDOR:
 
-			FiltroCurvaABCDistribuidorDTO filtro = (FiltroCurvaABCDistribuidorDTO) this.session.getAttribute(FILTRO_PESQUISA_CURVA_ABC_DISTRIBUIDOR_SESSION_ATTRIBUTE);
+			FiltroCurvaABCDistribuidorDTO filtroSessao = (FiltroCurvaABCDistribuidorDTO) this.session.getAttribute(FILTRO_PESQUISA_CURVA_ABC_DISTRIBUIDOR_SESSION_ATTRIBUTE);
+			if (filtroSessao != null) {
+				if (filtroSessao.getPaginacao() != null) {				
+					filtroSessao.getPaginacao().setPaginaAtual(null);
+					filtroSessao.getPaginacao().setQtdResultadosPorPagina(null);
+				}
+			}
 			
-			ResultadoCurvaABC resultado = (ResultadoCurvaABC) this.session.getAttribute(RESULTADO_PESQUISA_CURVA_ABC_DISTRIBUIDOR_SESSION_ATTRIBUTE);
+			List<RegistroCurvaABCDistribuidorVO> lista = distribuidorService.obterCurvaABCDistribuidor(filtroSessao);
+			ResultadoCurvaABC resultadoTotal = distribuidorService.obterCurvaABCDistribuidorTotal(filtroSessao);
 			
-			List<RegistroCurvaABCDistribuidorVO> lista = (List<RegistroCurvaABCDistribuidorVO>) resultado.getTableModel().getRows();
-			FileExporter.to("relatorio-vendas-curva-abc-distribuidor", fileType).inHTTPResponse(getNDSFileHeader(), filtro, resultado, 
-						lista, RegistroCurvaABCDistribuidorVO.class, this.httpServletResponse);
-
+			FileExporter.to("consulta-edicoes-fechadas-com-saldo", fileType).inHTTPResponse(this.getNDSFileHeader(), filtroSessao, resultadoTotal, lista, RegistroCurvaABCDistribuidorVO.class, this.httpServletResponse);
+			
 			break;
+
 		case EDITOR:
-		case PRODUTO:
-		case COTA:
-		default:
 			break;
-		}
 
+		case PRODUTO:
+			break;
+
+		case COTA:
+			break;
+
+		default:
+			throw new ValidacaoException(TipoMensagem.ERROR, "Tipo de relatório " + tipoRelatorio + " não encontrado!");
+		}
+		
 	}
 	
 	/**
@@ -332,17 +334,15 @@ public class RelatorioVendasController {
 
 		this.validarDadosEntradaPesquisa(dataDe, dataAte);
 
-		SimpleDateFormat sdf = new SimpleDateFormat(
-				Constantes.DATE_PATTERN_PT_BR);
+		SimpleDateFormat sdf = new SimpleDateFormat(Constantes.DATE_PATTERN_PT_BR);
 
-		FiltroCurvaABCDistribuidorDTO filtroCurvaABCDistribuidorDTO = carregarFiltroPesquisaDistribuidor(sdf.parse(dataDe), sdf.parse(dataAte), codigoFornecedor,
+		FiltroCurvaABCDistribuidorDTO filtro = carregarFiltroPesquisaDistribuidor(sdf.parse(dataDe), sdf.parse(dataAte), codigoFornecedor,
 				codigoProduto, nomeProduto, edicaoProduto, codigoEditor,
 				codigoCota, nomeCota, municipio, sortorder, sortname, page, rp);
 
 		List<RegistroCurvaABCDistribuidorVO> resultadoCurvaABCDistribuidor = null;
 		try {
-			resultadoCurvaABCDistribuidor = distribuidorService
-					.obterCurvaABCDistribuidor(filtroCurvaABCDistribuidorDTO);
+			resultadoCurvaABCDistribuidor = distribuidorService.obterCurvaABCDistribuidor(filtro);
 		} catch (Exception e) {
 
 			if (e instanceof ValidacaoException) {
@@ -361,23 +361,17 @@ public class RelatorioVendasController {
 
 			int qtdeTotalRegistros = resultadoCurvaABCDistribuidor.size();
 
-			PaginacaoUtil
-					.armazenarQtdRegistrosPesquisa(
-							this.session,
-							QTD_REGISTROS_PESQUISA_CURVA_DISTRIBUIDOR_ABC_SESSION_ATTRIBUTE,
-							qtdeTotalRegistros);
+			List<RegistroCurvaABCDistribuidorVO> resultadoPaginado = PaginacaoUtil.paginarEOrdenarEmMemoria(resultadoCurvaABCDistribuidor, filtro.getPaginacao(), filtro.getOrdenacaoColuna().toString());
 
 			TableModel<CellModelKeyValue<RegistroCurvaABCDistribuidorVO>> tableModel = new TableModel<CellModelKeyValue<RegistroCurvaABCDistribuidorVO>>();
 
-			tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(resultadoCurvaABCDistribuidor));
-			tableModel.setPage(filtroCurvaABCDistribuidorDTO.getPaginacao().getPaginaAtual());
+			tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(resultadoPaginado));
+			tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
 			tableModel.setTotal(qtdeTotalRegistros);
 
-			ResultadoCurvaABC resultado = distribuidorService.obterCurvaABCDistribuidorTotal(filtroCurvaABCDistribuidorDTO);
+			ResultadoCurvaABC<RegistroCurvaABCDistribuidorVO> resultado = distribuidorService.obterCurvaABCDistribuidorTotal(filtro);
 			resultado.setTableModel(tableModel);
 			
-			session.setAttribute(RESULTADO_PESQUISA_CURVA_ABC_DISTRIBUIDOR_SESSION_ATTRIBUTE, resultado);
-
 			result.use(Results.json()).withoutRoot().from(resultado).recursive().serialize();
 
 		}
@@ -458,11 +452,11 @@ public class RelatorioVendasController {
 
 			int qtdeTotalRegistros = resultadoCurvaABCEditor.size();
 
-			PaginacaoUtil
+			/*PaginacaoUtil
 					.armazenarQtdRegistrosPesquisa(
 							this.session,
 							QTD_REGISTROS_PESQUISA_CURVA_COTA_ABC_SESSION_ATTRIBUTE,
-							qtdeTotalRegistros);
+							qtdeTotalRegistros);*/
 
 			TableModel<CellModelKeyValue<RegistroCurvaABCEditorVO>> tableModel = new TableModel<CellModelKeyValue<RegistroCurvaABCEditorVO>>();
 
@@ -473,7 +467,7 @@ public class RelatorioVendasController {
 			ResultadoCurvaABC resultado = editorService.obterCurvaABCEditorTotal(filtroCurvaABCEditorDTO);
 			resultado.setTableModel(tableModel);
 			
-			session.setAttribute(RESULTADO_PESQUISA_CURVA_ABC_EDITOR_SESSION_ATTRIBUTE, resultado);
+			//session.setAttribute(RESULTADO_PESQUISA_CURVA_ABC_EDITOR_SESSION_ATTRIBUTE, resultado);
 			
 			result.use(Results.json()).withoutRoot().from(resultado)
 					.recursive().serialize();
@@ -611,11 +605,11 @@ public class RelatorioVendasController {
 
 			int qtdeTotalRegistros = resultadoCurvaABCCota.size();
 
-			PaginacaoUtil
+			/*PaginacaoUtil
 					.armazenarQtdRegistrosPesquisa(
 							this.session,
 							QTD_REGISTROS_PESQUISA_CURVA_COTA_ABC_SESSION_ATTRIBUTE,
-							qtdeTotalRegistros);
+							qtdeTotalRegistros);*/
 
 			TableModel<CellModelKeyValue<RegistroCurvaABCCotaVO>> tableModel = new TableModel<CellModelKeyValue<RegistroCurvaABCCotaVO>>();
 
@@ -626,7 +620,7 @@ public class RelatorioVendasController {
 			ResultadoCurvaABC resultado = cotaService.obterCurvaABCCotaTotal(filtroCurvaABCCotaDTO);
 			resultado.setTableModel(tableModel);
 			
-			session.setAttribute(RESULTADO_PESQUISA_CURVA_ABC_COTA_SESSION_ATTRIBUTE, resultado);
+			//session.setAttribute(RESULTADO_PESQUISA_CURVA_ABC_COTA_SESSION_ATTRIBUTE, resultado);
 			
 			result.use(Results.json()).withoutRoot().from(resultado)
 					.recursive().serialize();
@@ -667,10 +661,10 @@ public class RelatorioVendasController {
 		FiltroCurvaABCEditorDTO filtroSessao = (FiltroCurvaABCEditorDTO) this.session
 				.getAttribute(FILTRO_PESQUISA_CURVA_ABC_EDITOR_SESSION_ATTRIBUTE);
 
-		PaginacaoUtil.calcularPaginaAtual(this.session,
+		/*PaginacaoUtil.calcularPaginaAtual(this.session,
 				QTD_REGISTROS_PESQUISA_CURVA_EDITOR_ABC_SESSION_ATTRIBUTE,
 				FILTRO_PESQUISA_CURVA_ABC_EDITOR_SESSION_ATTRIBUTE,
-				filtro, filtroSessao);
+				filtro, filtroSessao);*/
 
 		return filtro;
 	}
@@ -702,17 +696,16 @@ public class RelatorioVendasController {
 				codigoProduto, nomeProduto, edicaoProduto, (codigoEditor == null ? "" : codigoEditor.toString()),
 				codigoCota, nomeCota, municipio);
 		
-		this.configurarPaginacaoDistribuidorPesquisa(filtro, sortorder, sortname,
-				page, rp);
+		this.configurarPaginacaoDistribuidorPesquisa(filtro, sortorder, sortname, page, rp);
 
-		FiltroCurvaABCDistribuidorDTO filtroSessao = (FiltroCurvaABCDistribuidorDTO) this.session
-				.getAttribute(FILTRO_PESQUISA_CURVA_ABC_DISTRIBUIDOR_SESSION_ATTRIBUTE);
+		FiltroCurvaABCDistribuidorDTO filtroSessao = (FiltroCurvaABCDistribuidorDTO) this.session.getAttribute(FILTRO_PESQUISA_CURVA_ABC_DISTRIBUIDOR_SESSION_ATTRIBUTE);
 
-		PaginacaoUtil.calcularPaginaAtual(this.session,
-				QTD_REGISTROS_PESQUISA_CURVA_DISTRIBUIDOR_ABC_SESSION_ATTRIBUTE,
-				FILTRO_PESQUISA_CURVA_ABC_DISTRIBUIDOR_SESSION_ATTRIBUTE,
-				filtro, filtroSessao);
-
+		if (filtroSessao != null && !filtroSessao.equals(filtro)) {
+			filtro.getPaginacao().setPaginaAtual(1);
+		}
+		
+		session.setAttribute(FILTRO_PESQUISA_CURVA_ABC_DISTRIBUIDOR_SESSION_ATTRIBUTE, filtro);
+		
 		return filtro;
 	}
 
@@ -746,13 +739,13 @@ public class RelatorioVendasController {
 		this.configurarPaginacaoCotaPesquisa(filtro, sortorder, sortname,
 				page, rp);
 
-		FiltroCurvaABCCotaDTO filtroSessao = (FiltroCurvaABCCotaDTO) this.session
+		/*FiltroCurvaABCCotaDTO filtroSessao = (FiltroCurvaABCCotaDTO) this.session
 				.getAttribute(FILTRO_PESQUISA_CURVA_ABC_COTA_SESSION_ATTRIBUTE);
 
 		PaginacaoUtil.calcularPaginaAtual(this.session,
 				QTD_REGISTROS_PESQUISA_CURVA_COTA_ABC_SESSION_ATTRIBUTE,
 				FILTRO_PESQUISA_CURVA_ABC_COTA_SESSION_ATTRIBUTE,
-				filtro, filtroSessao);
+				filtro, filtroSessao);*/
 
 		return filtro;
 	}	
@@ -809,8 +802,7 @@ public class RelatorioVendasController {
 	 * @param page
 	 * @param rp
 	 */
-	private void configurarPaginacaoDistribuidorPesquisa(FiltroCurvaABCDistribuidorDTO filtro,
-			String sortorder, String sortname, int page, int rp) {
+	private void configurarPaginacaoDistribuidorPesquisa(FiltroCurvaABCDistribuidorDTO filtro, String sortorder, String sortname, int page, int rp) {
 
 		if (filtro != null) {
 
@@ -818,8 +810,7 @@ public class RelatorioVendasController {
 
 			filtro.setPaginacao(paginacao);
 
-			filtro.setOrdenacaoColuna(Util.getEnumByStringValue(
-					ColunaOrdenacaoCurvaABCDistribuidor.values(), sortname));
+			filtro.setOrdenacaoColuna(Util.getEnumByStringValue(FiltroCurvaABCDistribuidorDTO.ColunaOrdenacaoCurvaABCDistribuidor.values(), sortname));
 		}
 	}
 

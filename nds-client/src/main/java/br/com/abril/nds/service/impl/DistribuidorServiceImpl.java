@@ -33,7 +33,7 @@ public class DistribuidorServiceImpl implements DistribuidorService {
 
 	@Override
 	@Transactional
-	public ResultadoCurvaABC obterCurvaABCDistribuidorTotal(FiltroCurvaABCDistribuidorDTO filtroCurvaABCDistribuidorDTO) {
+	public ResultadoCurvaABC<RegistroCurvaABCDistribuidorVO> obterCurvaABCDistribuidorTotal(FiltroCurvaABCDistribuidorDTO filtroCurvaABCDistribuidorDTO) {
 		return distribuidorRepository.obterCurvaABCDistribuidorTotal(filtroCurvaABCDistribuidorDTO);
 	}
 

@@ -2,8 +2,6 @@ package br.com.abril.nds.repository.impl;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -20,8 +18,6 @@ import org.hibernate.transform.Transformers;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
-import br.com.abril.nds.client.util.comparators.CurvaABCParticipacaoAcumuladaComparator;
-import br.com.abril.nds.client.util.comparators.CurvaABCParticipacaoComparator;
 import br.com.abril.nds.client.vo.RegistroCurvaABCCotaVO;
 import br.com.abril.nds.client.vo.ResultadoCurvaABC;
 import br.com.abril.nds.dto.ChamadaAntecipadaEncalheDTO;
@@ -792,7 +788,6 @@ public class CotaRepositoryImpl extends AbstractRepository<Cota, Long>
 
 		hql.append(getWhereQueryObterCurvaABCCota(filtro));
 		hql.append(getGroupQueryObterCurvaABCCota(filtro));
-		hql.append(getOrderQueryObterCurvaABCCota(filtro));
 
 		Query query = this.getSession().createQuery(hql.toString());
 
@@ -813,7 +808,7 @@ public class CotaRepositoryImpl extends AbstractRepository<Cota, Long>
 			}
 		}
 
-		return getOrderObterCurvaABCCota(complementarCurvaABCCota((List<RegistroCurvaABCCotaVO>) query.list()), filtro);
+		return complementarCurvaABCCota((List<RegistroCurvaABCCotaVO>) query.list());
 
 	}
 
@@ -885,48 +880,6 @@ public class CotaRepositoryImpl extends AbstractRepository<Cota, Long>
 		hql.append(" GROUP BY estoqueProdutoCota.produtoEdicao.produto.codigo, ")
 		   .append("   estoqueProdutoCota.produtoEdicao.produto.nome, ")
 		   .append("   estoqueProdutoCota.produtoEdicao.numeroEdicao ");
-
-		return hql.toString();
-	}
-
-	/**
-	 * Retorna a ordenação via HQL do relatório de vendas
-	 * @param filtro
-	 * @return
-	 */
-	private String getOrderQueryObterCurvaABCCota(FiltroCurvaABCCotaDTO filtro) {
-
-		StringBuilder hql = new StringBuilder();
-
-		if (filtro.getOrdenacaoColuna() != null) {
-			
-			switch (filtro.getOrdenacaoColuna()) {
-				case CODIGO_PRODUTO:
-					hql.append(" order by estoqueProdutoCota.produtoEdicao.produto.codigo ");
-					break;
-				case NOME_PRODUTO:
-					hql.append(" order by estoqueProdutoCota.produtoEdicao.produto.nome ");
-					break;
-				case EDICAO_PRODUTO:
-					hql.append(" order by estoqueProdutoCota.produtoEdicao.numeroEdicao ");
-					break;
-				case REPARTE:
-					hql.append(" order by (sum(movimentos.qtde)) ");
-					break;
-				case VENDA_EXEMPLARES:
-					hql.append(" order by (sum(estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida)) ");
-					break;
-				case FATURAMENTO:
-					hql.append(" order by ( sum((estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) * (estoqueProdutoCota.produtoEdicao.precoVenda - estoqueProdutoCota.produtoEdicao.desconto)) ) ");
-					break;
-				default:
-					hql.append(" order by estoqueProdutoCota.produtoEdicao.produto.codigo ");
-					break;
-			}
-			if (filtro.getPaginacao().getOrdenacao() != null) {
-				hql.append(filtro.getPaginacao().getOrdenacao().toString());
-			}
-		}
 
 		return hql.toString();
 	}
@@ -1026,37 +979,6 @@ public class CotaRepositoryImpl extends AbstractRepository<Cota, Long>
 
 		}
 
-		return lista;
-	}
-
-	/**
-	 * Realiza a ordenação dos registros adicionados após a consulta HQL
-	 * @param lista
-	 * @param filtro
-	 * @return
-	 */
-	@SuppressWarnings("unchecked")
-	private List<RegistroCurvaABCCotaVO> getOrderObterCurvaABCCota(List<RegistroCurvaABCCotaVO> lista, FiltroCurvaABCCotaDTO filtro) {
-
-		if (filtro.getOrdenacaoColuna() != null) {
-			switch (filtro.getOrdenacaoColuna()) {
-				case PARTICIPACAO:
-					Collections.sort(lista, new CurvaABCParticipacaoComparator());
-				case PARTICIPACAO_ACUMULADA:
-					Collections.sort(lista, new CurvaABCParticipacaoAcumuladaComparator());
-				case VENDA_EXEMPLARES:
-					Collections.sort(lista, new Comparator() {
-						@Override
-						public int compare(Object o1, Object o2) {
-							RegistroCurvaABCCotaVO registro1 = (RegistroCurvaABCCotaVO) o1;
-							RegistroCurvaABCCotaVO registro2 = (RegistroCurvaABCCotaVO) o2;
-							return registro1.getPorcentagemVenda().compareTo(registro2.getPorcentagemVenda());
-						}
-					});
-				default:
-					break;
-			}
-		}
 		return lista;
 	}
 
