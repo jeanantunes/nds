@@ -120,7 +120,7 @@
 		function pesquisarFornecedores() {
 			var data = "codigoProduto=" + $("#codigo").val();
 			
-			$.postJSON("<c:url value='/estoque/diferenca/pesquisarFonecedores' />",
+			$.postJSON("${pageContext.request.contextPath}/estoque/diferenca/pesquisarFonecedores",
 					   data, montarComboFornecedores);
 		}
 		
@@ -139,7 +139,7 @@
 			var tipoDiferenca = $("#tipoDiferenca").val();
 			
 			$(".consultaFaltasSobrasGrid").flexOptions({
-				url: "<c:url value='/estoque/diferenca/pesquisarDiferencas' />",
+				url: "${pageContext.request.contextPath}/estoque/diferenca/pesquisarDiferencas",
 				onSuccess: executarAposProcessamento,
 				params: [
 				         {name:'codigoProduto', value:codigoProduto},

@@ -25,4 +25,6 @@ public interface Repository<T, K extends Serializable> {
 	
 	T merge(T entity);
 
+	public abstract void removerPorId(K... id);
+
 }

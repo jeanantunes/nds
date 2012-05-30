@@ -88,7 +88,7 @@ public class ProdutoController {
 		
 		if (produto == null) {
 			
-			throw new ValidacaoException(TipoMensagem.WARNING, "Produto \"" + codigoProduto + "\" não encontrado!");
+			throw new ValidacaoException(TipoMensagem.WARNING, "Produto com o código \"" + codigoProduto + "\" não encontrado!");
 			
 		} else {
 			

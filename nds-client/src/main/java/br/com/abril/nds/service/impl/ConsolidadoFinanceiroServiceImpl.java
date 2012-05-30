@@ -8,7 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.ConsignadoCotaDTO;
 import br.com.abril.nds.dto.EncalheCotaDTO;
-import br.com.abril.nds.dto.VendaEncalheDTO;
+import br.com.abril.nds.dto.ConsultaVendaEncalheDTO;
 import br.com.abril.nds.dto.FiltroConsolidadoConsignadoCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsolidadoEncalheCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsolidadoVendaCotaDTO;
@@ -31,7 +31,7 @@ public class ConsolidadoFinanceiroServiceImpl implements ConsolidadoFinanceiroSe
 		return consolidadoFinanceiroRepository.obterMovimentoEstoqueCotaEncalhe(filtro);		
 	}
 	@Transactional(readOnly=true)
-	public List<VendaEncalheDTO> obterMovimentoVendaEncalhe(
+	public List<ConsultaVendaEncalheDTO> obterMovimentoVendaEncalhe(
 			FiltroConsolidadoVendaCotaDTO filtro) {
 		return consolidadoFinanceiroRepository
 				.obterMovimentoVendaEncalhe(filtro);

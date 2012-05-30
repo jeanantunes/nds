@@ -145,4 +145,13 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 	public List<Rota> buscarRotaPorRoteiro(String descRoteiro){
 		return  rotaRepository.buscarRotaDeRoteiro(descRoteiro);
 	}
+	
+	@Transactional(readOnly=true)
+	public Rota buscarRotaPorId(Long idRota){
+		return rotaRepository.buscarPorId(idRota);
+	}
+	@Transactional(readOnly=true)
+	public Roteiro buscarRoteiroPorId(Long idRoteiro){
+		return roteiroRepository.buscarPorId(idRoteiro);
+	}
 }

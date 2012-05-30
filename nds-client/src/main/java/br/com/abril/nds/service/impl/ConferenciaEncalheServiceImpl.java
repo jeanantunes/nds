@@ -32,6 +32,7 @@ import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
+import br.com.abril.nds.model.estoque.OperacaoEstoque;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
 import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
@@ -43,6 +44,7 @@ import br.com.abril.nds.model.movimentacao.StatusOperacao;
 import br.com.abril.nds.model.planejamento.ChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.ChamadaEncalheCota;
 import br.com.abril.nds.model.planejamento.Lancamento;
+import br.com.abril.nds.model.planejamento.LancamentoParcial;
 import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.BoxRepository;
@@ -53,6 +55,7 @@ import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.EstoqueProdutoCotaRepository;
 import br.com.abril.nds.repository.EstoqueProdutoRespository;
 import br.com.abril.nds.repository.ItemNotaFiscalEntradaRepository;
+import br.com.abril.nds.repository.LancamentoParcialRepository;
 import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
 import br.com.abril.nds.repository.MovimentoEstoqueRepository;
@@ -71,6 +74,7 @@ import br.com.abril.nds.service.exception.ChamadaEncalheCotaInexistenteException
 import br.com.abril.nds.service.exception.ConferenciaEncalheExistenteException;
 import br.com.abril.nds.service.exception.ConferenciaEncalheFinalizadaException;
 import br.com.abril.nds.service.exception.EncalheExcedeReparteException;
+import br.com.abril.nds.service.exception.EncalheRecolhimentoParcialException;
 import br.com.abril.nds.service.exception.EncalheSemPermissaoSalvarException;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TipoMensagem;
@@ -141,6 +145,9 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	
 	@Autowired
 	private EstoqueProdutoRespository estoqueProdutoRepository;
+	
+	@Autowired
+	private LancamentoParcialRepository lancamentoParcialRepository;
 	
 //	@Autowired
 //	private EstoqueProdutoRespository estoqueProdutoRepository;
@@ -237,6 +244,10 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	 * cota e produtoEdicao cuja dataRecolhimento esteja dentro da 
 	 * faixa aceitavel (de acordo com  parâmetro do Distribuidor e dataOperacao atual).
 	 * 
+	 * Obs.: A conferência de encalhe de ProdutoEdicao parcial só será possível se
+	 * houver chamadaEncalhe para o mesmo na dataOperacao atual, senão sera lançada 
+	 * EncalheRecolhimentoParcialException.
+	 * 
 	 * Se encontrada, será retornada esta chamadaEncalhe para o produtoEdicao em questão.
 	 * 
 	 * @param numeroCota
@@ -245,8 +256,9 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	 * @return ChamadaEncalhe
 	 * 
 	 * @throws ChamadaEncalheCotaInexistenteException
+	 * @throws EncalheRecolhimentoParcialException 
 	 */
-	private ChamadaEncalhe validarExistenciaChamadaEncalheParaCotaProdutoEdicao(Integer numeroCota, ProdutoEdicao produtoEdicao) throws ChamadaEncalheCotaInexistenteException {
+	private ChamadaEncalhe validarExistenciaChamadaEncalheParaCotaProdutoEdicao(Integer numeroCota, ProdutoEdicao produtoEdicao) throws ChamadaEncalheCotaInexistenteException, EncalheRecolhimentoParcialException {
 		
 		if(produtoEdicao.isParcial()) {
 
@@ -262,7 +274,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 					obterListaChamaEncalheCota(numeroCota, dataOperacao, produtoEdicao.getId(), indPesquisaCEFutura, encalheConferido);
 
 			if(listaChamadaEncalheCota == null || listaChamadaEncalheCota.isEmpty()) {
-				throw new ChamadaEncalheCotaInexistenteException();
+				throw new EncalheRecolhimentoParcialException();
 			}
 			
 			return listaChamadaEncalheCota.get(0).getChamadaEncalhe();
@@ -467,7 +479,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	}
 	
 	@Transactional(readOnly = true)
-	public ProdutoEdicaoDTO pesquisarProdutoEdicaoPorId(Integer numeroCota, Long idProdutoEdicao) throws ChamadaEncalheCotaInexistenteException {
+	public ProdutoEdicaoDTO pesquisarProdutoEdicaoPorId(Integer numeroCota, Long idProdutoEdicao) throws ChamadaEncalheCotaInexistenteException, EncalheRecolhimentoParcialException {
 		
 		if (numeroCota == null) {
 			
@@ -522,7 +534,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	}
 	
 	@Transactional(readOnly = true)
-	public ProdutoEdicaoDTO pesquisarProdutoEdicaoPorSM(Integer numeroCota, Integer sm) throws ChamadaEncalheCotaInexistenteException {
+	public ProdutoEdicaoDTO pesquisarProdutoEdicaoPorSM(Integer numeroCota, Integer sm) throws ChamadaEncalheCotaInexistenteException, EncalheRecolhimentoParcialException {
 		
 		if (numeroCota == null){
 			
@@ -577,7 +589,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	}	
 	
 	@Transactional(readOnly = true)
-	public ProdutoEdicaoDTO pesquisarProdutoEdicaoPorCodigoDeBarras(Integer numeroCota, String codigoDeBarras) throws ChamadaEncalheCotaInexistenteException {
+	public ProdutoEdicaoDTO pesquisarProdutoEdicaoPorCodigoDeBarras(Integer numeroCota, String codigoDeBarras) throws ChamadaEncalheCotaInexistenteException, EncalheRecolhimentoParcialException {
 		
 		if (numeroCota == null){
 			
@@ -655,7 +667,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			ControleConferenciaEncalheCota controleConfEncalheCota, 
 			List<ConferenciaEncalheDTO> listaConferenciaEncalhe, 
 			Set<Long> listaIdConferenciaEncalheParaExclusao,
-			Usuario usuario) {
+			Usuario usuario) throws EncalheExcedeReparteException {
 	
 		if(	controleConfEncalheCota.getId() != null) {
 			
@@ -670,7 +682,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		inserirDadosConferenciaEncalhe(controleConfEncalheCota, listaConferenciaEncalhe, listaIdConferenciaEncalheParaExclusao, usuario, StatusOperacao.CONCLUIDO);
 		
-		gerarDiferencas();
+		executarProcedimentoDivergenciaNFEntradaDeEncalhe(controleConfEncalheCota);
 		
 		Set<String> nossoNumeroCollection = gerarCobranca(controleConfEncalheCota);
 		
@@ -759,10 +771,14 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			List<ConferenciaEncalheDTO> listaConferenciaEncalhe, 
 			Set<Long> listaIdConferenciaEncalheParaExclusao,
 			Usuario usuario,
-			StatusOperacao statusOperacao) {
+			StatusOperacao statusOperacao) throws EncalheExcedeReparteException {
 		
 	    Date dataRecolhimentoReferencia = obterDataRecolhimentoReferencia();
 		
+	    Distribuidor distribuidor = distribuidorService.obter();
+		
+		Date dataOperacao = distribuidor.getDataOperacao();
+	    
 		Integer numeroCota = controleConfEncalheCota.getCota().getNumeroCota();
 		
 		atualizarCabecalhoNotaFiscalEntradaCota(controleConfEncalheCota);
@@ -782,6 +798,14 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 
 
 		for(ConferenciaEncalheDTO conferenciaEncalheDTO : listaConferenciaEncalhe) {
+			
+			validarQtdeEncalheExcedeQtdeReparte(
+					controleConferenciaEncalheCota.getCota().getId(), 
+					conferenciaEncalheDTO.getIdProdutoEdicao(),
+					dataOperacao,
+					conferenciaEncalheDTO.getDataRecolhimento(),
+					conferenciaEncalheDTO.getQtdExemplar());
+
 			
 			if(conferenciaEncalheDTO.getIdConferenciaEncalhe()!=null) {
 
@@ -840,6 +864,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 				
 				
 			} else {
+				
 				
 				MovimentoEstoqueCota movimentoEstoqueCota = null;
 				
@@ -1037,13 +1062,16 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 	}
 	
-	
+	/*
+	 * (non-Javadoc)
+	 * @see br.com.abril.nds.service.ConferenciaEncalheService#salvarDadosConferenciaEncalhe(br.com.abril.nds.model.movimentacao.ControleConferenciaEncalheCota, java.util.List, java.util.Set, br.com.abril.nds.model.seguranca.Usuario)
+	 */
 	@Transactional
 	public void salvarDadosConferenciaEncalhe(
 			ControleConferenciaEncalheCota controleConfEncalheCota, 
 			List<ConferenciaEncalheDTO> listaConferenciaEncalhe, 
 			Set<Long> listaIdConferenciaEncalheParaExclusao,
-			Usuario usuario) throws EncalheSemPermissaoSalvarException, ConferenciaEncalheFinalizadaException {
+			Usuario usuario) throws EncalheSemPermissaoSalvarException, ConferenciaEncalheFinalizadaException, EncalheExcedeReparteException {
 
 		validarConferenciaEncalheReaberta(controleConfEncalheCota.getId());
 		
@@ -1077,14 +1105,75 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 	}
 	
-	public void validarQtdeEncalheExcedeQtdeReparte(Integer numeroCota, Long idProdutoEdicao, BigDecimal qtdeExemplarEncalhe) throws EncalheExcedeReparteException {
+	/**
+	 * Valida se a quantidade da conferência de encalhe não excede o reparte 
+	 * de um produtoEdicao para determinada cota.
+	 * 
+	 * @param idCota
+	 * @param idProdutoEdicao
+	 * @param dataOperacao
+	 * @param dataRecolhimentoDistribuidor
+	 * @param qtdeExemplarEncalhe
+	 * 
+	 * @throws EncalheExcedeReparteException
+	 */
+	private void validarQtdeEncalheExcedeQtdeReparte(
+			Long idCota, 
+			Long idProdutoEdicao, 
+			Date dataOperacao,
+			Date dataRecolhimentoDistribuidor,
+			BigDecimal qtdeExemplarEncalhe) throws EncalheExcedeReparteException {
 		
-		//TODO implementar este método
+		ProdutoEdicao produtoEdicao 	= produtoEdicaoRepository.buscarPorId(idProdutoEdicao);
+		LancamentoParcial lancParcial 	= null;
+		BigDecimal qtdeReparte 			= null;
 		
-		//sera necessario identificar qual o valor do reparte para a cota e produtoEdicao em questao.
-		
-		//porem temos o problema de um relancamento de produto edicao.
+		if(produtoEdicao.isParcial()) {
+			
+			lancParcial = lancamentoParcialRepository.obterLancamentoParcial(produtoEdicao.getId(), dataOperacao);
+			
+			if(lancParcial==null) {
 				
+				Date dataLancamento = lancamentoRepository.obterDataUltimoLancamentoParcial(idProdutoEdicao, dataOperacao);
+				
+				if(dataLancamento == null) {
+					throw new IllegalStateException("Não foi possível validar a quantidade de " + 
+													"reparte para o produtoEdicao de id: " + idProdutoEdicao);
+				}
+				
+				qtdeReparte = movimentoEstoqueCotaRepository.obterQtdeMovimentoEstoqueCotaParaProdutoEdicaoNoPeriodo(
+						idCota, 
+						idProdutoEdicao, 
+						dataLancamento, 
+						dataRecolhimentoDistribuidor, 
+						OperacaoEstoque.ENTRADA);
+
+				if(qtdeReparte == null) {
+					throw new IllegalStateException("Não foi possível validar a quantidade de " + 
+													"reparte para o produtoEdicao de id: " + idProdutoEdicao);
+				}
+				
+				if(qtdeExemplarEncalhe.compareTo(qtdeReparte)>0) {
+					
+					throw new EncalheExcedeReparteException();
+					
+				} else {
+					
+					return;
+					
+				}
+			}
+		} 
+
+		EstoqueProdutoCota estoqueProdutoCota = estoqueProdutoCotaRepository.buscarEstoquePorProdutEdicaoECota(idProdutoEdicao, idCota);
+		BigDecimal qtdeDevolvida 	= (estoqueProdutoCota.getQtdeDevolvida() == null) ? BigDecimal.ZERO : estoqueProdutoCota.getQtdeDevolvida();
+		BigDecimal qtdeRecebida 	=  (estoqueProdutoCota.getQtdeRecebida() == null) ? BigDecimal.ZERO : estoqueProdutoCota.getQtdeRecebida();
+		qtdeReparte 				=  qtdeRecebida.subtract(qtdeDevolvida);
+		
+		if(qtdeExemplarEncalhe.compareTo(qtdeReparte)>0) {
+			throw new EncalheExcedeReparteException();
+		}
+		
 	}
 	
 	/**
@@ -1586,7 +1675,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	}
 	
 	
-	private void gerarDiferencas() {
+	private void executarProcedimentoDivergenciaNFEntradaDeEncalhe(ControleConferenciaEncalheCota controleConferenciaEncalheCota) {
 		
 		//TODO: invocar workflow das diferenças.
 		

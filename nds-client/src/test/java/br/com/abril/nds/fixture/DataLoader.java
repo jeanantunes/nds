@@ -1851,16 +1851,6 @@ public class DataLoader {
 		rota = Fixture.rota("006", "Rota 006");
 		rota.setRoteiro(roteiro);
 		session.save(rota);
-		
-		roteiro = Fixture.criarRoteiro("Mococa",box1,TipoRoteiro.NORMAL);
-		session.save(roteiro);
-		
-		rota = Fixture.rota("007", "Rota 007");
-		rota.setRoteiro(roteiro);
-		session.save(rota);
-	
-		roteirizacao = Fixture.criarRoteirizacao(pdvMaria, rota,1);
-		session.save(roteirizacao);
 	}
 
 	private static void criarDivida(Session session) {
@@ -3763,7 +3753,7 @@ public class DataLoader {
 
 			MovimentoEstoque movimentoEstoqueDiferenca = 
 				Fixture.movimentoEstoque(
-					null, produtoEdicao, tipoMovimento, usuario, estoqueProduto, new Date(), new BigDecimal(i), StatusAprovacao.PENDENTE, null);
+					null, produtoEdicao, tipoMovimento, usuario, estoqueProduto, new Date(), new BigDecimal(i), StatusAprovacao.PENDENTE, "Motivo");
 
 			session.save(movimentoEstoqueDiferenca);
 
@@ -6162,7 +6152,7 @@ public class DataLoader {
 					  gestaoEscolarEdicao101, gestaoEscolarEdicao102, lolaEdicao101, lolaEdicao102, heavyMetalEdicao101, heavyMetalEdicao102,
 					  metalUndergroundEdicao101, metalUndergroundEdicao102);
 		
-		int numeroSemana = DateUtil.obterNumeroSemanaNoAno(new Date());
+		int numeroSemana = DateUtil.obterNumeroSemanaNoAno(new Date(), distribuidor.getInicioSemana().getCodigoDiaSemana());
 		
 		Date dataLancamentoSemanaAtual = DateUtil.obterDataDaSemanaNoAno(numeroSemana, Calendar.WEDNESDAY);
 		
@@ -6170,7 +6160,7 @@ public class DataLoader {
 		
 		//LANCAMENTOS
 		Lancamento lancamentoJavaMagazineEdicao101 = Fixture.lancamento(
-				TipoLancamento.SUPLEMENTAR, javaMagazineEdicao101,
+				TipoLancamento.PARCIAL, javaMagazineEdicao101,
 				dataLancamentoSemanaAtual,
 				dataRecolhimentoProximaSemana,
 				new Date(),
@@ -6179,7 +6169,7 @@ public class DataLoader {
 				StatusLancamento.EXPEDIDO, null, 1);
 
 		Lancamento lancamentoMundoJavaEdicao101 = Fixture.lancamento(
-				TipoLancamento.SUPLEMENTAR, mundoJavaEdicao101,
+				TipoLancamento.LANCAMENTO, mundoJavaEdicao101,
 				dataLancamentoSemanaAtual,
 				dataRecolhimentoProximaSemana,
 				new Date(),
@@ -6188,7 +6178,7 @@ public class DataLoader {
 				StatusLancamento.EXPEDIDO, null, 1);
 		
 		Lancamento lancamentoSqlMagazineEdicao101 = Fixture.lancamento(
-				TipoLancamento.SUPLEMENTAR, sqlMagazineEdicao101,
+				TipoLancamento.LANCAMENTO, sqlMagazineEdicao101,
 				dataLancamentoSemanaAtual,
 				dataRecolhimentoProximaSemana,
 				new Date(),
@@ -6197,7 +6187,7 @@ public class DataLoader {
 				StatusLancamento.EXPEDIDO, null, 1);
 		
 		Lancamento lancamentoGalileuEdicao101 = Fixture.lancamento(
-				TipoLancamento.SUPLEMENTAR, galileuEdicao101,
+				TipoLancamento.PARCIAL, galileuEdicao101,
 				dataLancamentoSemanaAtual,
 				dataRecolhimentoProximaSemana,
 				new Date(),
@@ -6206,7 +6196,7 @@ public class DataLoader {
 				StatusLancamento.EXPEDIDO, null, 1);
 		
 		Lancamento lancamentoDuasRodasEdicao101 = Fixture.lancamento(
-				TipoLancamento.SUPLEMENTAR, duasRodasEdicao101,
+				TipoLancamento.LANCAMENTO, duasRodasEdicao101,
 				dataLancamentoSemanaAtual,
 				dataRecolhimentoProximaSemana,
 				new Date(),
@@ -6215,7 +6205,7 @@ public class DataLoader {
 				StatusLancamento.EXPEDIDO, null, 1);
 		
 		Lancamento lancamentoGuitarPlayerEdicao101 = Fixture.lancamento(
-				TipoLancamento.SUPLEMENTAR, guitarPlayerEdicao101,
+				TipoLancamento.LANCAMENTO, guitarPlayerEdicao101,
 				dataLancamentoSemanaAtual,
 				dataRecolhimentoProximaSemana,
 				new Date(),
@@ -6224,7 +6214,7 @@ public class DataLoader {
 				StatusLancamento.EXPEDIDO, null, 1);
 		
 		Lancamento lancamentoRoadieCrewEdicao101 = Fixture.lancamento(
-				TipoLancamento.SUPLEMENTAR, roadieCrewEdicao101,
+				TipoLancamento.PARCIAL, roadieCrewEdicao101,
 				dataLancamentoSemanaAtual,
 				dataRecolhimentoProximaSemana,
 				new Date(),
@@ -6233,7 +6223,7 @@ public class DataLoader {
 				StatusLancamento.EXPEDIDO, null, 1);
 		
 		Lancamento lancamentoRockBrigadeEdicao101 = Fixture.lancamento(
-				TipoLancamento.SUPLEMENTAR, rockBrigadeEdicao101,
+				TipoLancamento.LANCAMENTO, rockBrigadeEdicao101,
 				dataLancamentoSemanaAtual,
 				dataRecolhimentoProximaSemana,
 				new Date(),
@@ -6242,7 +6232,7 @@ public class DataLoader {
 				StatusLancamento.EXPEDIDO, null, 1);
 		
 		Lancamento lancamentoValhallaEdicao101 = Fixture.lancamento(
-				TipoLancamento.SUPLEMENTAR, valhallaEdicao101,
+				TipoLancamento.PARCIAL, valhallaEdicao101,
 				dataLancamentoSemanaAtual,
 				dataRecolhimentoProximaSemana,
 				new Date(),
@@ -6251,7 +6241,7 @@ public class DataLoader {
 				StatusLancamento.EXPEDIDO, null, 1);
 		
 		Lancamento lancamentoRollingStoneEdicao101 = Fixture.lancamento(
-				TipoLancamento.SUPLEMENTAR, rollingStoneEdicao101,
+				TipoLancamento.LANCAMENTO, rollingStoneEdicao101,
 				dataLancamentoSemanaAtual,
 				dataRecolhimentoProximaSemana,
 				new Date(),
@@ -6263,7 +6253,7 @@ public class DataLoader {
 		dataRecolhimentoProximaSemana = DateUtil.adicionarDias(dataRecolhimentoProximaSemana, 1);
 		
 		Lancamento lancamentoBonsFluidosEdicao101 = Fixture.lancamento(
-				TipoLancamento.SUPLEMENTAR, bonsFluidosEdicao101,
+				TipoLancamento.LANCAMENTO, bonsFluidosEdicao101,
 				dataLancamentoSemanaAtual,
 				dataRecolhimentoProximaSemana,
 				new Date(),
@@ -6272,7 +6262,7 @@ public class DataLoader {
 				StatusLancamento.EXPEDIDO, null, 1);
 
 		Lancamento lancamentoBravoEdicao101 = Fixture.lancamento(
-				TipoLancamento.SUPLEMENTAR, bravoEdicao101,
+				TipoLancamento.LANCAMENTO, bravoEdicao101,
 				dataLancamentoSemanaAtual,
 				dataRecolhimentoProximaSemana,
 				new Date(),
@@ -6281,7 +6271,7 @@ public class DataLoader {
 				StatusLancamento.EXPEDIDO, null, 1);
 		
 		Lancamento lancamentoCasaClaudiaEdicao101 = Fixture.lancamento(
-				TipoLancamento.SUPLEMENTAR, casaClaudiaEdicao101,
+				TipoLancamento.LANCAMENTO, casaClaudiaEdicao101,
 				dataLancamentoSemanaAtual,
 				dataRecolhimentoProximaSemana,
 				new Date(),
@@ -6290,7 +6280,7 @@ public class DataLoader {
 				StatusLancamento.EXPEDIDO, null, 1);
 		
 		Lancamento lancamentoJequitiEdicao101 = Fixture.lancamento(
-				TipoLancamento.SUPLEMENTAR, jequitiEdicao101,
+				TipoLancamento.LANCAMENTO, jequitiEdicao101,
 				dataLancamentoSemanaAtual,
 				dataRecolhimentoProximaSemana,
 				new Date(),
@@ -6299,7 +6289,7 @@ public class DataLoader {
 				StatusLancamento.EXPEDIDO, null, 1);
 		
 		Lancamento lancamentoMundoEstranhoEdicao101 = Fixture.lancamento(
-				TipoLancamento.SUPLEMENTAR, mundoEstranhoEdicao101,
+				TipoLancamento.LANCAMENTO, mundoEstranhoEdicao101,
 				dataLancamentoSemanaAtual,
 				dataRecolhimentoProximaSemana,
 				new Date(),
@@ -6308,7 +6298,7 @@ public class DataLoader {
 				StatusLancamento.EXPEDIDO, null, 1);
 		
 		Lancamento lancamentoNovaEscolaEdicao101 = Fixture.lancamento(
-				TipoLancamento.SUPLEMENTAR, novaEscolaEdicao101,
+				TipoLancamento.LANCAMENTO, novaEscolaEdicao101,
 				dataLancamentoSemanaAtual,
 				dataRecolhimentoProximaSemana,
 				new Date(),
@@ -6317,7 +6307,7 @@ public class DataLoader {
 				StatusLancamento.EXPEDIDO, null, 1);
 		
 		Lancamento lancamentoMinhaCasaEdicao101 = Fixture.lancamento(
-				TipoLancamento.SUPLEMENTAR, minhaCasaEdicao101,
+				TipoLancamento.LANCAMENTO, minhaCasaEdicao101,
 				dataLancamentoSemanaAtual,
 				dataRecolhimentoProximaSemana,
 				new Date(),
@@ -6326,7 +6316,7 @@ public class DataLoader {
 				StatusLancamento.EXPEDIDO, null, 1);
 		
 		Lancamento lancamentoRecreioEdicao101 = Fixture.lancamento(
-				TipoLancamento.SUPLEMENTAR, recreioEdicao101,
+				TipoLancamento.LANCAMENTO, recreioEdicao101,
 				dataLancamentoSemanaAtual,
 				dataRecolhimentoProximaSemana,
 				new Date(),
@@ -6335,7 +6325,7 @@ public class DataLoader {
 				StatusLancamento.EXPEDIDO, null, 1);
 		
 		Lancamento lancamentoWomenHealthEdicao101 = Fixture.lancamento(
-				TipoLancamento.SUPLEMENTAR, womenHealthEdicao101,
+				TipoLancamento.LANCAMENTO, womenHealthEdicao101,
 				dataLancamentoSemanaAtual,
 				dataRecolhimentoProximaSemana,
 				new Date(),
@@ -6344,7 +6334,7 @@ public class DataLoader {
 				StatusLancamento.EXPEDIDO, null, 1);
 		
 		Lancamento lancamentoViagemTurismoEdicao101 = Fixture.lancamento(
-				TipoLancamento.SUPLEMENTAR, viagemTurismoEdicao101,
+				TipoLancamento.LANCAMENTO, viagemTurismoEdicao101,
 				dataLancamentoSemanaAtual,
 				dataRecolhimentoProximaSemana,
 				new Date(),
@@ -6356,7 +6346,7 @@ public class DataLoader {
 		dataRecolhimentoProximaSemana = DateUtil.adicionarDias(dataRecolhimentoProximaSemana, 1);
 		
 		Lancamento lancamentoVipEdicao101 = Fixture.lancamento(
-				TipoLancamento.SUPLEMENTAR, vipEdicao101,
+				TipoLancamento.LANCAMENTO, vipEdicao101,
 				dataLancamentoSemanaAtual,
 				dataRecolhimentoProximaSemana,
 				new Date(),
@@ -6365,7 +6355,7 @@ public class DataLoader {
 				StatusLancamento.EXPEDIDO, null, 1);
 		
 		Lancamento lancamentoGestaoEscolarEdicao101 = Fixture.lancamento(
-				TipoLancamento.SUPLEMENTAR, gestaoEscolarEdicao101,
+				TipoLancamento.LANCAMENTO, gestaoEscolarEdicao101,
 				dataLancamentoSemanaAtual,
 				dataRecolhimentoProximaSemana,
 				new Date(),
@@ -6374,7 +6364,7 @@ public class DataLoader {
 				StatusLancamento.EXPEDIDO, null, 1);
 		
 		Lancamento lancamentoLolaEdicao101 = Fixture.lancamento(
-				TipoLancamento.SUPLEMENTAR, lolaEdicao101,
+				TipoLancamento.LANCAMENTO, lolaEdicao101,
 				dataLancamentoSemanaAtual,
 				dataRecolhimentoProximaSemana,
 				new Date(),
@@ -6383,7 +6373,7 @@ public class DataLoader {
 				StatusLancamento.EXPEDIDO, null, 1);
 		
 		Lancamento lancamentoHeavyMetalEdicao101 = Fixture.lancamento(
-				TipoLancamento.SUPLEMENTAR, heavyMetalEdicao101,
+				TipoLancamento.LANCAMENTO, heavyMetalEdicao101,
 				dataLancamentoSemanaAtual,
 				dataRecolhimentoProximaSemana,
 				new Date(),
@@ -6392,7 +6382,7 @@ public class DataLoader {
 				StatusLancamento.EXPEDIDO, null, 1);
 		
 		Lancamento lancamentoMetalUndergroundEdicao101 = Fixture.lancamento(
-				TipoLancamento.SUPLEMENTAR, metalUndergroundEdicao101,
+				TipoLancamento.LANCAMENTO, metalUndergroundEdicao101,
 				dataLancamentoSemanaAtual,
 				dataRecolhimentoProximaSemana,
 				new Date(),
@@ -6401,7 +6391,7 @@ public class DataLoader {
 				StatusLancamento.EXPEDIDO, null, 1);
 		
 		Lancamento lancamentoJavaMagazineEdicao102 = Fixture.lancamento(
-				TipoLancamento.SUPLEMENTAR, javaMagazineEdicao102,
+				TipoLancamento.PARCIAL, javaMagazineEdicao102,
 				dataLancamentoSemanaAtual,
 				dataRecolhimentoProximaSemana,
 				new Date(),
@@ -6410,7 +6400,7 @@ public class DataLoader {
 				StatusLancamento.EXPEDIDO, null, 1);
 		
 		Lancamento lancamentoMundoJavaEdicao102 = Fixture.lancamento(
-				TipoLancamento.SUPLEMENTAR, mundoJavaEdicao102,
+				TipoLancamento.LANCAMENTO, mundoJavaEdicao102,
 				dataLancamentoSemanaAtual,
 				dataRecolhimentoProximaSemana,
 				new Date(),
@@ -6419,7 +6409,7 @@ public class DataLoader {
 				StatusLancamento.EXPEDIDO, null, 1);
 		
 		Lancamento lancamentoSqlMagazineEdicao102 = Fixture.lancamento(
-				TipoLancamento.SUPLEMENTAR, sqlMagazineEdicao102,
+				TipoLancamento.LANCAMENTO, sqlMagazineEdicao102,
 				dataLancamentoSemanaAtual,
 				dataRecolhimentoProximaSemana,
 				new Date(),
@@ -6428,7 +6418,7 @@ public class DataLoader {
 				StatusLancamento.EXPEDIDO, null, 1);
 		
 		Lancamento lancamentoGalileuEdicao102 = Fixture.lancamento(
-				TipoLancamento.SUPLEMENTAR, galileuEdicao102,
+				TipoLancamento.PARCIAL, galileuEdicao102,
 				dataLancamentoSemanaAtual,
 				dataRecolhimentoProximaSemana,
 				new Date(),
@@ -6437,7 +6427,7 @@ public class DataLoader {
 				StatusLancamento.EXPEDIDO, null, 1);
 		
 		Lancamento lancamentoDuasRodasEdicao102 = Fixture.lancamento(
-				TipoLancamento.SUPLEMENTAR, duasRodasEdicao102,
+				TipoLancamento.LANCAMENTO, duasRodasEdicao102,
 				dataLancamentoSemanaAtual,
 				dataRecolhimentoProximaSemana,
 				new Date(),
@@ -6449,7 +6439,7 @@ public class DataLoader {
 		dataRecolhimentoProximaSemana = DateUtil.adicionarDias(dataRecolhimentoProximaSemana, 1);
 		
 		Lancamento lancamentoGuitarPlayerEdicao102 = Fixture.lancamento(
-				TipoLancamento.SUPLEMENTAR, guitarPlayerEdicao102,
+				TipoLancamento.PARCIAL, guitarPlayerEdicao102,
 				dataLancamentoSemanaAtual,
 				dataRecolhimentoProximaSemana,
 				new Date(),
@@ -6458,7 +6448,7 @@ public class DataLoader {
 				StatusLancamento.EXPEDIDO, null, 1);
 		
 		Lancamento lancamentoRoadieCrewEdicao102 = Fixture.lancamento(
-				TipoLancamento.SUPLEMENTAR, roadieCrewEdicao102,
+				TipoLancamento.LANCAMENTO, roadieCrewEdicao102,
 				dataLancamentoSemanaAtual,
 				dataRecolhimentoProximaSemana,
 				new Date(),
@@ -6467,7 +6457,7 @@ public class DataLoader {
 				StatusLancamento.EXPEDIDO, null, 1);
 		
 		Lancamento lancamentoRockBrigadeEdicao102 = Fixture.lancamento(
-				TipoLancamento.SUPLEMENTAR, rockBrigadeEdicao102,
+				TipoLancamento.PARCIAL, rockBrigadeEdicao102,
 				dataLancamentoSemanaAtual,
 				dataRecolhimentoProximaSemana,
 				new Date(),
@@ -6476,7 +6466,7 @@ public class DataLoader {
 				StatusLancamento.EXPEDIDO, null, 1);
 		
 		Lancamento lancamentoValhallaEdicao102 = Fixture.lancamento(
-				TipoLancamento.SUPLEMENTAR, valhallaEdicao102,
+				TipoLancamento.PARCIAL, valhallaEdicao102,
 				dataLancamentoSemanaAtual,
 				dataRecolhimentoProximaSemana,
 				new Date(),
@@ -6485,7 +6475,7 @@ public class DataLoader {
 				StatusLancamento.EXPEDIDO, null, 1);
 		
 		Lancamento lancamentoRollingStoneEdicao102 = Fixture.lancamento(
-				TipoLancamento.SUPLEMENTAR, rollingStoneEdicao102,
+				TipoLancamento.LANCAMENTO, rollingStoneEdicao102,
 				dataLancamentoSemanaAtual,
 				dataRecolhimentoProximaSemana,
 				new Date(),
@@ -6494,7 +6484,7 @@ public class DataLoader {
 				StatusLancamento.EXPEDIDO, null, 1);
 		
 		Lancamento lancamentoBonsFluidosEdicao102 = Fixture.lancamento(
-				TipoLancamento.SUPLEMENTAR, bonsFluidosEdicao102,
+				TipoLancamento.LANCAMENTO, bonsFluidosEdicao102,
 				dataLancamentoSemanaAtual,
 				dataRecolhimentoProximaSemana,
 				new Date(),
@@ -6503,7 +6493,7 @@ public class DataLoader {
 				StatusLancamento.EXPEDIDO, null, 1);
 		
 		Lancamento lancamentoBravoEdicao102 = Fixture.lancamento(
-				TipoLancamento.SUPLEMENTAR, bravoEdicao102,
+				TipoLancamento.LANCAMENTO, bravoEdicao102,
 				dataLancamentoSemanaAtual,
 				dataRecolhimentoProximaSemana,
 				new Date(),
@@ -6512,7 +6502,7 @@ public class DataLoader {
 				StatusLancamento.EXPEDIDO, null, 1);
 		
 		Lancamento lancamentoCasaClaudiaEdicao102 = Fixture.lancamento(
-				TipoLancamento.SUPLEMENTAR, casaClaudiaEdicao102,
+				TipoLancamento.LANCAMENTO, casaClaudiaEdicao102,
 				dataLancamentoSemanaAtual,
 				dataRecolhimentoProximaSemana,
 				new Date(),
@@ -6521,7 +6511,7 @@ public class DataLoader {
 				StatusLancamento.EXPEDIDO, null, 1);
 		
 		Lancamento lancamentoJequitiEdicao102 = Fixture.lancamento(
-				TipoLancamento.SUPLEMENTAR, jequitiEdicao102,
+				TipoLancamento.LANCAMENTO, jequitiEdicao102,
 				dataLancamentoSemanaAtual,
 				dataRecolhimentoProximaSemana,
 				new Date(),
@@ -6530,7 +6520,7 @@ public class DataLoader {
 				StatusLancamento.EXPEDIDO, null, 1);
 		
 		Lancamento lancamentoMundoEstranhoEdicao102 = Fixture.lancamento(
-				TipoLancamento.SUPLEMENTAR, mundoEstranhoEdicao102,
+				TipoLancamento.LANCAMENTO, mundoEstranhoEdicao102,
 				dataLancamentoSemanaAtual,
 				dataRecolhimentoProximaSemana,
 				new Date(),
@@ -6542,7 +6532,7 @@ public class DataLoader {
 		dataRecolhimentoProximaSemana = DateUtil.adicionarDias(dataRecolhimentoProximaSemana, 1);
 		
 		Lancamento lancamentoNovaEscolaEdicao102 = Fixture.lancamento(
-				TipoLancamento.SUPLEMENTAR, novaEscolaEdicao102,
+				TipoLancamento.LANCAMENTO, novaEscolaEdicao102,
 				dataLancamentoSemanaAtual,
 				dataRecolhimentoProximaSemana,
 				new Date(),
@@ -6551,7 +6541,7 @@ public class DataLoader {
 				StatusLancamento.EXPEDIDO, null, 1);
 
 		Lancamento lancamentoMinhaCasaEdicao102 = Fixture.lancamento(
-				TipoLancamento.SUPLEMENTAR, minhaCasaEdicao102,
+				TipoLancamento.LANCAMENTO, minhaCasaEdicao102,
 				dataLancamentoSemanaAtual,
 				dataRecolhimentoProximaSemana,
 				new Date(),
@@ -6560,7 +6550,7 @@ public class DataLoader {
 				StatusLancamento.EXPEDIDO, null, 1);
 
 		Lancamento lancamentoRecreioEdicao102 = Fixture.lancamento(
-				TipoLancamento.SUPLEMENTAR, recreioEdicao102,
+				TipoLancamento.LANCAMENTO, recreioEdicao102,
 				dataLancamentoSemanaAtual,
 				dataRecolhimentoProximaSemana,
 				new Date(),
@@ -6569,7 +6559,7 @@ public class DataLoader {
 				StatusLancamento.EXPEDIDO, null, 1);
 
 		Lancamento lancamentoWomenHealthEdicao102 = Fixture.lancamento(
-				TipoLancamento.SUPLEMENTAR, womenHealthEdicao102,
+				TipoLancamento.LANCAMENTO, womenHealthEdicao102,
 				dataLancamentoSemanaAtual,
 				dataRecolhimentoProximaSemana,
 				new Date(),
@@ -6578,7 +6568,7 @@ public class DataLoader {
 				StatusLancamento.EXPEDIDO, null, 1);
 
 		Lancamento lancamentoViagemTurismoEdicao102 = Fixture.lancamento(
-				TipoLancamento.SUPLEMENTAR, viagemTurismoEdicao102,
+				TipoLancamento.LANCAMENTO, viagemTurismoEdicao102,
 				dataLancamentoSemanaAtual,
 				dataRecolhimentoProximaSemana,
 				new Date(),
@@ -6587,7 +6577,7 @@ public class DataLoader {
 				StatusLancamento.EXPEDIDO, null, 1);
 
 		Lancamento lancamentoVipEdicao102 = Fixture.lancamento(
-				TipoLancamento.SUPLEMENTAR, vipEdicao102,
+				TipoLancamento.LANCAMENTO, vipEdicao102,
 				dataLancamentoSemanaAtual,
 				dataRecolhimentoProximaSemana,
 				new Date(),
@@ -6596,7 +6586,7 @@ public class DataLoader {
 				StatusLancamento.EXPEDIDO, null, 1);
 
 		Lancamento lancamentoGestaoEscolarEdicao102 = Fixture.lancamento(
-				TipoLancamento.SUPLEMENTAR, gestaoEscolarEdicao102,
+				TipoLancamento.PARCIAL, gestaoEscolarEdicao102,
 				dataLancamentoSemanaAtual,
 				dataRecolhimentoProximaSemana,
 				new Date(),
@@ -6605,7 +6595,7 @@ public class DataLoader {
 				StatusLancamento.EXPEDIDO, null, 1);
 
 		Lancamento lancamentoLolaEdicao102 = Fixture.lancamento(
-				TipoLancamento.SUPLEMENTAR, lolaEdicao102,
+				TipoLancamento.LANCAMENTO, lolaEdicao102,
 				dataLancamentoSemanaAtual,
 				dataRecolhimentoProximaSemana,
 				new Date(),
@@ -6614,7 +6604,7 @@ public class DataLoader {
 				StatusLancamento.EXPEDIDO, null, 1);
 
 		Lancamento lancamentoHeavyMetalEdicao102 = Fixture.lancamento(
-				TipoLancamento.SUPLEMENTAR, heavyMetalEdicao102,
+				TipoLancamento.LANCAMENTO, heavyMetalEdicao102,
 				dataLancamentoSemanaAtual,
 				dataRecolhimentoProximaSemana,
 				new Date(),
@@ -6623,7 +6613,7 @@ public class DataLoader {
 				StatusLancamento.EXPEDIDO, null, 1);
 
 		Lancamento lancamentoMetalUndergroundEdicao102 = Fixture.lancamento(
-				TipoLancamento.SUPLEMENTAR, metalUndergroundEdicao102,
+				TipoLancamento.LANCAMENTO, metalUndergroundEdicao102,
 				dataLancamentoSemanaAtual,
 				dataRecolhimentoProximaSemana,
 				new Date(),
