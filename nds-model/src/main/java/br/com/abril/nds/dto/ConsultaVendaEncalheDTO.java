@@ -13,7 +13,7 @@ import br.com.abril.nds.util.export.Export.Alignment;
  * 
  */
 @Exportable
-public class VendaEncalheDTO implements Serializable {
+public class ConsultaVendaEncalheDTO implements Serializable {
 
 	/**
 	 * 
