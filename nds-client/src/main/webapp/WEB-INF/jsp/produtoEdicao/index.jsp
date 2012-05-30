@@ -55,7 +55,7 @@ function executarPreProcessamento(resultado) {
 
 function popup() {
 
-	if ($("#edicoesGrid > tbody").empty()) {
+	if ($(".edicoesGrid > tbody").data() == null || $(".edicoesGrid > tbody").data() == undefined) {
 		exibirMensagem('WARNING', ['Por favor, escolha um produto para adicionar a Edi&ccedil;&atilde;o!'], "");
 		return;
 	}
