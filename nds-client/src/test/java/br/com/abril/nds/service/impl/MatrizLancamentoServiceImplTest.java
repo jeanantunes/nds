@@ -82,9 +82,9 @@ public class MatrizLancamentoServiceImplTest {
 				"22.222.222/0001-22", "222.222.222.222", "fc@mail.com", "99.999-9");
 		
 		Fornecedor fornecedorDinap = Fixture.fornecedor(juridicaDinap,
-				SituacaoCadastro.ATIVO, true, Fixture.tipoFornecedorPublicacao());
+				SituacaoCadastro.ATIVO, true, Fixture.tipoFornecedorPublicacao(), null);
 		Fornecedor fornecedorFc = Fixture.fornecedor(juridicaFc,
-				SituacaoCadastro.ATIVO, true, Fixture.tipoFornecedorPublicacao());
+				SituacaoCadastro.ATIVO, true, Fixture.tipoFornecedorPublicacao(), null);
 		
 		dinapSegunda = Fixture.distribuicaoFornecedor(
 				fornecedorDinap, DiaSemana.SEGUNDA_FEIRA,

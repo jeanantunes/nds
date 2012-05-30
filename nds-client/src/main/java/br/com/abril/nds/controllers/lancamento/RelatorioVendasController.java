@@ -240,7 +240,12 @@ public class RelatorioVendasController {
 			throw new ValidacaoException(TipoMensagem.WARNING,
 					"Nenhum registro encontrado.");
 		} else {
-			result.use(Results.json()).withoutRoot().from(resultado).recursive().serialize();
+			
+			TableModel<CellModelKeyValue<RegistroHistoricoEditorVO>> tableModel = new TableModel<CellModelKeyValue<RegistroHistoricoEditorVO>>();
+			tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(resultado));
+			tableModel.setPage(1);
+			tableModel.setTotal(resultado.size());
+			result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
 		}
 	
 	}
@@ -309,9 +314,8 @@ public class RelatorioVendasController {
 			resultado.setTableModel(tableModel);
 			
 			session.setAttribute(RESULTADO_PESQUISA_CURVA_ABC_DISTRIBUIDOR_SESSION_ATTRIBUTE, resultado);
-			
-			result.use(Results.json()).withoutRoot().from(resultado)
-					.recursive().serialize();
+
+			result.use(Results.json()).withoutRoot().from(resultado).recursive().serialize();
 
 		}
 
