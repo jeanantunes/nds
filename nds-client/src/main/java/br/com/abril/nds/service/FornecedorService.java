@@ -52,6 +52,11 @@ public interface FornecedorService {
 	
 	void salvarFornecedorCota(List<Long> fornecedores, Long idCota);
 	
+	/**
+	 * @deprecated use {@link FornecedorService#obterFornecedoresIdNome(SituacaoCadastro, Boolean)}
+	 * @return
+	 */
+	@Deprecated
 	List<ItemDTO<Long,String>> buscarComboFornecedores();
 	
 	/**
@@ -71,6 +76,10 @@ public interface FornecedorService {
 	 * @return Long
 	 */
 	Long obterContagemFornecedoresPorFiltro(FiltroConsultaFornecedorDTO filtroConsultaFornecedor);
+	/**
+	 * @see br.com.abril.nds.repository.FornecedorRepository#obterFornecedoresIdNome(br.com.abril.nds.model.cadastro.SituacaoCadastro, java.lang.Boolean)
+	 */
+	public abstract List<ItemDTO<Long, String>> obterFornecedoresIdNome(SituacaoCadastro situacao, Boolean inferface);
 	
 	/**
 	 * Método que remove um fornecedor de acordo com seu ID.

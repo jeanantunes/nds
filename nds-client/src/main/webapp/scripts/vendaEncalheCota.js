@@ -26,6 +26,9 @@ var vendaEncalhe = {
 						});
 					 var table=document.getElementById("totaisFornecedores-venda-encalhe");
 					 
+					 
+					 
+					 
 					 for(var i= 1; i<table.rows.length;i++){
 						 table.deleteRow(i);
 					 }
@@ -36,7 +39,9 @@ var vendaEncalhe = {
 				      }
 					 
 					 var primeira = true;
-					 for(var fornecedor in totalFonecedor){						     
+					 var count = 0;
+					 for(var fornecedor in totalFonecedor){		
+					 	  count++;				     
 					      if(primeira){
 					    	  primeira = false;
 					    	  
@@ -50,7 +55,7 @@ var vendaEncalhe = {
 					      cell2.align="right";
 					      cell2.innerHTML=totalFonecedor[fornecedor];
 					 }
-					 
+					 $(gridId).flexToggleCol(7,count>1);
 					
 					 return data;
 					}	

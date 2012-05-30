@@ -2,11 +2,15 @@ package br.com.abril.nds.repository.impl;
 
 import java.util.List;
 
+import org.hibernate.Criteria;
 import org.hibernate.Query;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.FornecedorDTO;
+import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaFornecedorDTO;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.GrupoFornecedor;
@@ -278,6 +282,30 @@ public class FornecedorRepositoryImpl extends
 		}
 
 		return query;
+	}
+	
+	
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<ItemDTO<Long, String>> obterFornecedoresIdNome(SituacaoCadastro situacao, Boolean inferface){
+		Criteria criteria = getSession().createCriteria(Fornecedor.class);
+		
+		criteria.createAlias("juridica","juridica");
+		if(situacao!=null){
+			criteria.add(Restrictions.eq("situacaoCadastro", situacao));		
+		}
+		
+		if(inferface!=null){
+			if (inferface) {
+				criteria.add(Restrictions.isNotNull("codigoInterface"));
+			}else{
+				criteria.add(Restrictions.isNull("codigoInterface"));
+			}
+		}
+		
+		criteria.setProjection(Projections.projectionList().add(Projections.id(), "key").add(Projections.property("juridica.razaoSocial"), "value"));
+		criteria.setResultTransformer(new AliasToBeanResultTransformer(ItemDTO.class));
+		return  criteria.list();
 	}
 
 }

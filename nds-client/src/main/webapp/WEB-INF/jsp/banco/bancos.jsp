@@ -106,7 +106,6 @@
     }); 
 
     function popup() {
-		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
 	
 		limparTelaCadastroBanco();
 		
@@ -124,14 +123,12 @@
 				}
 			},
 			beforeClose: function() {
-			
 				clearMessageDialogTimeout();
 			}
 		});
 	};
 	
 	function popup_alterar() {
-		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
 	
 		$( "#dialog-alterar" ).dialog({
 			resizable: false,
@@ -147,7 +144,6 @@
 				}
 			},
 			beforeClose: function() {
-				
 				clearMessageDialogTimeout();
 		    }
 		});	
@@ -155,7 +151,6 @@
 	};
 	
 	function popup_excluir(idBanco) {
-		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
 	
 		$( "#dialog-excluir" ).dialog({
 			resizable: false,

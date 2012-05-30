@@ -36,7 +36,6 @@ import br.com.abril.nds.model.financeiro.BaixaAutomatica;
 import br.com.abril.nds.model.financeiro.BaixaCobranca;
 import br.com.abril.nds.model.financeiro.BaixaManual;
 import br.com.abril.nds.model.financeiro.Boleto;
-import br.com.abril.nds.model.financeiro.Cobranca;
 import br.com.abril.nds.model.financeiro.ControleBaixaBancaria;
 import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
 import br.com.abril.nds.model.financeiro.StatusBaixa;
@@ -60,7 +59,6 @@ import br.com.abril.nds.service.PoliticaCobrancaService;
 import br.com.abril.nds.util.AnexoEmail;
 import br.com.abril.nds.util.AnexoEmail.TipoAnexo;
 import br.com.abril.nds.util.CorpoBoleto;
-import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.GeradorBoleto;
 import br.com.abril.nds.util.TipoBaixaCobranca;
@@ -1070,9 +1068,15 @@ public class BoletoServiceImpl implements BoletoService {
 	@Override
 	@Transactional(readOnly=true)
 	public CobrancaVO obterDadosBoletoPorNossoNumero(String nossoNumero) {
-		Boleto boleto = boletoRepository.obterPorNossoNumero(nossoNumero,false);
-		Cobranca cob = (Cobranca) boleto;
-		return this.cobrancaService.obterDadosCobranca(cob.getId());
+		
+		CobrancaVO cobrancaVO = null;
+		
+		Boleto boleto = boletoRepository.obterPorNossoNumero(nossoNumero,null);
+		if (boleto!=null){
+		    cobrancaVO = this.cobrancaService.obterDadosCobranca(boleto.getId());
+		}
+		
+		return cobrancaVO;
 	}
 
 	/**

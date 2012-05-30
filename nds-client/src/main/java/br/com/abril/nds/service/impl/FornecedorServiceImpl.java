@@ -298,6 +298,14 @@ public class FornecedorServiceImpl implements FornecedorService {
 		
 	}
 
+	@Transactional(readOnly=true)
+	@Override
+	public List<ItemDTO<Long, String>> obterFornecedoresIdNome(
+			SituacaoCadastro situacao, Boolean inferface) {
+		return fornecedorRepository
+				.obterFornecedoresIdNome(situacao, inferface);
+	}
+
 	@Override
 	@Transactional
 	public void removerFornecedor(Long idFornecedor) {

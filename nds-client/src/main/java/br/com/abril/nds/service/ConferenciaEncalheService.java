@@ -46,21 +46,6 @@ public interface ConferenciaEncalheService {
 	 */
 	public void verificarChamadaEncalheCota(Integer numeroCota) throws ConferenciaEncalheExistenteException, ChamadaEncalheCotaInexistenteException;
 	
-	/**
-	 * Valida a existência de chamada de encalhe de acordo com a
-	 * cota e produtoEdicao cuja dataRecolhimento esteja dentro da 
-	 * faixa aceitavel (de acordo com  parâmetro do Distribuidor e dataOperacao atual).
-	 * 
-	 * Se encontrada, será retornada esta chamadaEncalhe para o produtoEdicao em questão.
-	 *  
-	 * @param numeroCota
-	 * @param idProdutoEdicao
-	 * 
-	 * @return ChamadaEncalhe
-	 * 
-	 * @throws ChamadaEncalheCotaInexistenteException
-	 */
-	public ChamadaEncalhe validarExistenciaChamadaEncalheParaCotaProdutoEdicao(Integer numeroCota, Long idProdutoEdicao) throws ChamadaEncalheCotaInexistenteException;
 
 	
 	/**

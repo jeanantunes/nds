@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.dto.FuroProdutoDTO;
+import br.com.abril.nds.dto.ProdutoEdicaoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.ParametroSistema;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
@@ -175,4 +176,47 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 		
 		return this.produtoEdicaoRepository.obterProdutoPorCodigoNome(codigoNomeProduto);
 	}
+
+	/**
+	 * Pesquisa as Edições já cadastradas.<br>
+	 * Possui como opções de filtro:<br>
+	 * <ul>
+	 * <li>Código do Produto;</li>
+	 * <li>Nome do Produto;</li>
+	 * <li>Data de Lançamento;</li>
+	 * <li>Situação do Lançamento;</li>
+	 * <li>Código de Barra da Edição;</li>
+	 * <li>Contém brinde;</li>
+	 * </ul>
+	 * 
+	 * @param dto
+	 * @param sortorder
+	 * @param sortname
+	 * @param page
+	 * @param maxResults
+	 * 
+	 * @return
+	 */
+	@Transactional(readOnly = true)
+	public List<ProdutoEdicaoDTO> pesquisarEdicoes(ProdutoEdicaoDTO dto,
+			String sortorder, String sortname, int page, int maxResults) {
+		
+		final int initialResult = ((page * maxResults) - maxResults);
+		return this.produtoEdicaoRepository.pesquisarEdicoes(dto, sortorder,
+				sortname, initialResult, maxResults);
+	}
+	
+	/**
+	 * Obtém a quantidade de edições cadastradas filtradas pelos critérios 
+	 * escolhidos pelo usuário.
+	 * 
+	 * @param dto
+	 * @return
+	 */
+	@Transactional(readOnly = true)
+	public Long countPesquisarEdicoes(ProdutoEdicaoDTO dto) {
+		
+		return this.produtoEdicaoRepository.countPesquisarEdicoes(dto);
+	}
+	
 }
