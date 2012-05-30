@@ -1851,16 +1851,6 @@ public class DataLoader {
 		rota = Fixture.rota("006", "Rota 006");
 		rota.setRoteiro(roteiro);
 		session.save(rota);
-		
-		roteiro = Fixture.criarRoteiro("Mococa",box1,TipoRoteiro.NORMAL);
-		session.save(roteiro);
-		
-		rota = Fixture.rota("007", "Rota 007");
-		rota.setRoteiro(roteiro);
-		session.save(rota);
-	
-		roteirizacao = Fixture.criarRoteirizacao(pdvMaria, rota,1);
-		session.save(roteirizacao);
 	}
 
 	private static void criarDivida(Session session) {
