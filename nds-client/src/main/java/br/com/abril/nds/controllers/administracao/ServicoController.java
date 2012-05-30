@@ -251,6 +251,10 @@ public class ServicoController {
 			if (percentualFaturamento == null || percentualFaturamento <= 0) {
 				listaMensagens.add("O preenchimento do campo [(%) para cálculo sobre base] é obrigatório!");
 			}
+
+			if (percentualFaturamento != null && percentualFaturamento > 100) {
+				listaMensagens.add("O campo [Percentual Faturamento] é inválido!");
+			}
 		}
 		
 		if (periodicidadeCadastro == null || periodicidadeCadastro.isEmpty()) {
