@@ -1,7 +1,6 @@
 package br.com.abril.nds.service.impl;
 
 import java.math.BigDecimal;
-import java.security.InvalidParameterException;
 import java.util.Date;
 import java.util.List;
 
@@ -73,7 +72,7 @@ public class CotaAusenteServiceImpl implements CotaAusenteService{
 	private CotaAusente gerarCotaAusente(Integer numCota, Date data, Long idUsuario, Cota cota) throws TipoMovimentoEstoqueInexistenteException{
 				
 		if(isCotaAusenteNaData(numCota,data)) {
-			throw new InvalidParameterException();
+			throw new ValidacaoException(TipoMensagem.WARNING, "Cota já está declada como ausente.");
 		}
 				
 		CotaAusente cotaAusente = new CotaAusente();
