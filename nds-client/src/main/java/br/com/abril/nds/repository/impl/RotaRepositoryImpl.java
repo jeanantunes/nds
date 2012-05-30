@@ -85,7 +85,33 @@ public class RotaRepositoryImpl extends AbstractRepository<Rota, Long>
 			entity.setOrdem(ordem);
 			merge(entity);
 			
-		}
-			
+		}	
 	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Rota> buscarRotaDeBox(Long idBox) {
+		
+		String hql  = "select rota from Rota rota join rota.roteiro roteiro join roteiro.box box where box.id=:idBox group by rota ";
+		
+		Query query = getSession().createQuery(hql);
+		query.setParameter("idBox", idBox);
+		
+		return query.list();
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Rota> buscarRotaDeRoteiro(String descRoteiro) {
+		
+		String hql = " select rota from Rota rota where rota.roteiro.descricaoRoteiro=:descRoteiro ";
+		
+		Query query = getSession().createQuery(hql);
+		query.setParameter("descRoteiro", descRoteiro);
+		
+		return query.list();
+	}
+	
+	
+	
 }

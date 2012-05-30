@@ -62,8 +62,7 @@ import br.com.abril.nds.model.cadastro.PoliticaSuspensao;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.Rota;
-import br.com.abril.nds.model.cadastro.RotaRoteiroOperacao;
-import br.com.abril.nds.model.cadastro.RotaRoteiroOperacao.TipoOperacao;
+import br.com.abril.nds.model.cadastro.Roteirizacao;
 import br.com.abril.nds.model.cadastro.Roteiro;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.Telefone;
@@ -80,10 +79,12 @@ import br.com.abril.nds.model.cadastro.TipoLicencaMunicipal;
 import br.com.abril.nds.model.cadastro.TipoParametroSistema;
 import br.com.abril.nds.model.cadastro.TipoProduto;
 import br.com.abril.nds.model.cadastro.TipoRegistroCobranca;
+import br.com.abril.nds.model.cadastro.TipoRoteiro;
 import br.com.abril.nds.model.cadastro.TipoTelefone;
 import br.com.abril.nds.model.cadastro.pdv.AreaInfluenciaPDV;
 import br.com.abril.nds.model.cadastro.pdv.ClusterPDV;
 import br.com.abril.nds.model.cadastro.pdv.EspecialidadePDV;
+import br.com.abril.nds.model.cadastro.pdv.PDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoEstabelecimentoAssociacaoPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoGeradorFluxoPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoPontoPDV;
@@ -530,6 +531,16 @@ public class DataLoader {
 	private static TipoEntrega tipoCotaRetira;
 	private static TipoEntrega tipoEntregaEmBanca;
 	private static TipoEntrega tipoEntregador;
+	private static PDV pdvOrlando;
+	private static PDV pdvMariana;
+	private static PDV pdvMurilo;
+	private static PDV pdvGuilherme;
+	private static PDV pdvJoao;
+	private static PDV pdvLuis;
+	private static PDV pdvMaria;
+	private static PDV pdvManoelCunha;
+	private static PDV pdvManoel;
+	private static PDV pdvJose;
 	
 
 	public static void main(String[] args) {
@@ -586,6 +597,7 @@ public class DataLoader {
 		criarDiasDistribuicaoFornecedores(session);
 		criarDiasDistribuicaoDistribuidor(session);
 		criarCotas(session);
+		criarPDVsCota(session);
 		criarDistribuicaoCota(session);
 		criarEditores(session);
 		criarTiposProduto(session);
@@ -1780,38 +1792,75 @@ public class DataLoader {
 		
 	}
 	
+	private static void criarPDVsCota(Session session){
+		
+		pdvJose = Fixture.criarPDVPrincipal("PDV JOSE", cotaJose);
+		session.save(pdvJose);
+		
+		pdvManoel = Fixture.criarPDVPrincipal("PDV MANOEL", cotaManoel);
+		session.save(pdvManoel);
+		
+		pdvManoelCunha = Fixture.criarPDVPrincipal("PDV CUNHA", cotaManoelCunha);
+		session.save(pdvManoelCunha);
+		
+		pdvMaria = Fixture.criarPDVPrincipal("PDV MARIA", cotaMaria);
+		session.save(pdvMaria);
+		
+		pdvLuis = Fixture.criarPDVPrincipal("PDV LUIS", cotaLuis);
+		session.save(pdvLuis);
+		
+		pdvJoao = Fixture.criarPDVPrincipal("PDV JOAO", cotaJoao);
+		session.save(pdvJoao);
+		
+		pdvGuilherme = Fixture.criarPDVPrincipal("PDV Guilherme", cotaGuilherme);
+		session.save(pdvGuilherme);
+		
+		pdvMurilo = Fixture.criarPDVPrincipal("PDV MURILO", cotaMurilo);
+		session.save(pdvMurilo);
+		
+		pdvMariana = Fixture.criarPDVPrincipal("PDV MARINA", cotaMariana);
+		session.save(pdvMariana);
+		
+		pdvOrlando = Fixture.criarPDVPrincipal("PDV ORLANDO", cotaOrlando);
+		session.save(pdvOrlando);
+	
+	}
+	
 	private static void criarRotaRoteiroCota(Session session) {
 
-		Roteiro roteiro = Fixture.roteiro("Pinheiros");
+		Roteiro roteiro = Fixture.criarRoteiro("Pinheiros",box1,TipoRoteiro.NORMAL);
 		session.save(roteiro);
 
 		Rota rota = Fixture.rota("005", "Rota 005");
 		rota.setRoteiro(roteiro);
 		session.save(rota);
-
-		RotaRoteiroOperacao rotaRoteiroOperacao = Fixture.rotaRoteiroOperacao(rota, roteiro, cotaManoel, TipoOperacao.IMPRESSAO_DIVIDA);
-		session.save(rotaRoteiroOperacao);
-
-		roteiro = Fixture.roteiro("Interlagos");
+		
+		Roteirizacao roteirizacao = Fixture.criarRoteirizacao(pdvManoel, rota,1);
+		session.save(roteirizacao);
+		
+		roteiro = Fixture.criarRoteiro("Interlagos", box1,TipoRoteiro.NORMAL);
 		session.save(roteiro);
 
 		rota = Fixture.rota("004", "Rota 004");
 		rota.setRoteiro(roteiro);
 		session.save(rota);
-
-		rotaRoteiroOperacao = Fixture.rotaRoteiroOperacao(rota, roteiro, cotaJose, TipoOperacao.IMPRESSAO_DIVIDA);
-		session.save(rotaRoteiroOperacao);
 		
-
-		roteiro = Fixture.roteiro("Mococa");
+		roteirizacao = Fixture.criarRoteirizacao(pdvJose, rota,1);
+		session.save(roteirizacao);
+		
+		rota = Fixture.rota("006", "Rota 006");
+		rota.setRoteiro(roteiro);
+		session.save(rota);
+		
+		roteiro = Fixture.criarRoteiro("Mococa",box1,TipoRoteiro.NORMAL);
 		session.save(roteiro);
 		
 		rota = Fixture.rota("007", "Rota 007");
 		rota.setRoteiro(roteiro);
 		session.save(rota);
-
-		rotaRoteiroOperacao = Fixture.rotaRoteiroOperacao(rota, roteiro, cotaAcme, TipoOperacao.IMPRESSAO_DIVIDA);
-		session.save(rotaRoteiroOperacao);
+	
+		roteirizacao = Fixture.criarRoteirizacao(pdvMaria, rota,1);
+		session.save(roteirizacao);
 	}
 
 	private static void criarDivida(Session session) {
