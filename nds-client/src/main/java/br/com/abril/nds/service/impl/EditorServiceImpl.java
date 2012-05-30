@@ -35,15 +35,13 @@ public class EditorServiceImpl implements EditorService {
 
 	@Override
 	@Transactional
-	public ResultadoCurvaABC obterCurvaABCEditorTotal(
-			FiltroCurvaABCEditorDTO filtroCurvaABCEditorDTO) {
+	public ResultadoCurvaABC obterCurvaABCEditorTotal(FiltroCurvaABCEditorDTO filtroCurvaABCEditorDTO) {
 		return editorRepository.obterCurvaABCEditorTotal(filtroCurvaABCEditorDTO);
 	}
 
 	@Override
 	@Transactional
-	public List<RegistroHistoricoEditorVO> obterHistoricoEditor(
-			FiltroPesquisarHistoricoEditorDTO filtro) {
+	public List<RegistroHistoricoEditorVO> obterHistoricoEditor(FiltroPesquisarHistoricoEditorDTO filtro) {
 		return editorRepository.obterHistoricoEditor(filtro);
 	}
 

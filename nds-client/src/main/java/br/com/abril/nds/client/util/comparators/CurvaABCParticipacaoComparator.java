@@ -4,8 +4,15 @@ import java.util.Comparator;
 
 import br.com.abril.nds.client.vo.RegistroCurvaABC;
 
+/**
+ * @author infoA2
+ * Classe utilizada para comparar a participação nos relatórios de Curva ABC
+ */
 public class CurvaABCParticipacaoComparator implements Comparator {
 
+	/* (non-Javadoc)
+	 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
+	 */
 	@Override
 	public int compare(Object o1, Object o2) {
 

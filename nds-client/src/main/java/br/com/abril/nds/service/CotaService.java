@@ -258,8 +258,18 @@ public interface CotaService {
 	
 	void alterarCota(Cota cota);
 
+	/**
+	 * Método responsável por obter o total do relatório de vendas ABC por cota
+	 * @param filtroCurvaABCCotaDTO
+	 * @return
+	 */
 	public ResultadoCurvaABC obterCurvaABCCotaTotal(FiltroCurvaABCCotaDTO filtroCurvaABCCotaDTO);
 	
+	/**
+	 * Método responsável por obter o relatório de vendas ABC por cota
+	 * @param filtroCurvaABCCotaDTO
+	 * @return
+	 */
 	public List<RegistroCurvaABCCotaVO> obterCurvaABCCota(FiltroCurvaABCCotaDTO filtroCurvaABCCotaDTO);
 
 }

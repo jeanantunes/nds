@@ -1565,15 +1565,14 @@ public class CotaServiceImpl implements CotaService {
 	@SuppressWarnings("rawtypes")
 	@Override
 	@Transactional(readOnly = true)
-	public ResultadoCurvaABC obterCurvaABCCotaTotal(
-			FiltroCurvaABCCotaDTO filtroCurvaABCCotaDTO) {
+	public ResultadoCurvaABC obterCurvaABCCotaTotal(FiltroCurvaABCCotaDTO filtroCurvaABCCotaDTO) {
 		return cotaRepository.obterCurvaABCCotaTotal(filtroCurvaABCCotaDTO);
 	}
 
 	@Override
 	@Transactional(readOnly = true)
-	public List<RegistroCurvaABCCotaVO> obterCurvaABCCota(
-			FiltroCurvaABCCotaDTO filtroCurvaABCCotaDTO) {
+	public List<RegistroCurvaABCCotaVO> obterCurvaABCCota(FiltroCurvaABCCotaDTO filtroCurvaABCCotaDTO) {
 		return cotaRepository.obterCurvaABCCota(filtroCurvaABCCotaDTO);
 	}
+	
 }

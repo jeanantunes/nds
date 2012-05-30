@@ -109,9 +109,12 @@ public class DistribuidorRepositoryImpl extends
 		return criteria.list();
 	}
 
+	/* (non-Javadoc)
+	 * @see br.com.abril.nds.repository.DistribuidorRepository#obterCurvaABCDistribuidorTotal(br.com.abril.nds.dto.filtro.FiltroCurvaABCDistribuidorDTO)
+	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public ResultadoCurvaABC obterCurvaABCDistribuidorTotal(FiltroCurvaABCDistribuidorDTO filtro){
+	public ResultadoCurvaABC obterCurvaABCDistribuidorTotal(FiltroCurvaABCDistribuidorDTO filtro) {
 		StringBuilder hql = new StringBuilder();
 
 		hql.append("SELECT new ").append(ResultadoCurvaABC.class.getCanonicalName())
@@ -130,6 +133,9 @@ public class DistribuidorRepositoryImpl extends
 		return (ResultadoCurvaABC) query.list().get(0);
 	}
 
+	/* (non-Javadoc)
+	 * @see br.com.abril.nds.repository.DistribuidorRepository#obterCurvaABCDistribuidor(br.com.abril.nds.dto.filtro.FiltroCurvaABCDistribuidorDTO)
+	 */
 	@Override
 	@SuppressWarnings("unchecked")
 	public List<RegistroCurvaABCDistribuidorVO> obterCurvaABCDistribuidor(FiltroCurvaABCDistribuidorDTO filtro) {
@@ -172,6 +178,11 @@ public class DistribuidorRepositoryImpl extends
 
 	}
 
+	/**
+	 * Retorna as tabelas, joins e filtros da Query de seleção do relatório de vendas
+	 * @param filtro
+	 * @return
+	 */
 	private String getWhereQueryObterCurvaABCDistribuidor(FiltroCurvaABCDistribuidorDTO filtro) {
 
 		StringBuilder hql = new StringBuilder();
@@ -225,19 +236,29 @@ public class DistribuidorRepositoryImpl extends
 
 	}
 
+	/**
+	 * Retorna o agrupamento das pesquisas do relatório de vendas
+	 * @param filtro
+	 * @return
+	 */
 	private String getGroupQueryObterCurvaABCDistribuidor(FiltroCurvaABCDistribuidorDTO filtro) {
 
 		StringBuilder hql = new StringBuilder();
 
 		hql.append(" GROUP BY estoqueProdutoCota.cota.numeroCota, ")
-		.append("   CASE WHEN (pessoa.nome is not null) THEN ( pessoa.nome ) ")
-		.append("     WHEN (pessoa.razaoSocial is not null) THEN ( pessoa.razaoSocial ) ")
-		.append("     ELSE null END ");
+			.append("   CASE WHEN (pessoa.nome is not null) THEN ( pessoa.nome ) ")
+			.append("     WHEN (pessoa.razaoSocial is not null) THEN ( pessoa.razaoSocial ) ")
+			.append("     ELSE null END ");
 
 		return hql.toString();
 	}
 
 
+	/**
+	 * Retorna a ordenação via HQL do relatório de vendas
+	 * @param filtro
+	 * @return
+	 */
 	private String getOrderQueryObterCurvaABCDistribuidor(FiltroCurvaABCDistribuidorDTO filtro) {
 
 		StringBuilder hql = new StringBuilder();
@@ -277,7 +298,7 @@ public class DistribuidorRepositoryImpl extends
 	}
 
 	/**
-	 * Retorna os parametros da consulta de dividas.
+	 * Popula os parametros do relatório.
 	 * @param filtro
 	 * @return HashMap<String,Object>
 	 */
@@ -323,6 +344,11 @@ public class DistribuidorRepositoryImpl extends
 		return param;
 	}
 
+	/**
+	 * Insere os registros de participação e participação acumulada no resultado da consulta HQL
+	 * @param lista
+	 * @return
+	 */
 	private List<RegistroCurvaABCDistribuidorVO> complementarCurvaABCDistribuidor(List<RegistroCurvaABCDistribuidorVO> lista) {
 
 		BigDecimal participacaoTotal = new BigDecimal(0);
@@ -359,6 +385,12 @@ public class DistribuidorRepositoryImpl extends
 		return lista;
 	}
 
+	/**
+	 * Realiza a ordenação dos registros adicionados após a consulta HQL
+	 * @param lista
+	 * @param filtro
+	 * @return
+	 */
 	@SuppressWarnings("unchecked")
 	private List<RegistroCurvaABCDistribuidorVO> getOrderObterCurvaABCDistribuidor(List<RegistroCurvaABCDistribuidorVO> lista, FiltroCurvaABCDistribuidorDTO filtro) {
 

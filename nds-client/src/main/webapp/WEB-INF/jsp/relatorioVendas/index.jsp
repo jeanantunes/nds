@@ -47,8 +47,6 @@
 			$(".abcDistribuidorGrid").flexReload();
 			mostra_distrib();
 			
-			//$.postJSON("<c:url value='/lancamento/relatorioVendas/pesquisarCurvaABCDistribuidor'/>", data, exibirResultado);
-			
 		} else if ($('#filtro_editor').attr("checked") == "checked") {
 			$(".abcEditorGrid").flexOptions({
 				url: "<c:url value='/lancamento/relatorioVendas/pesquisarCurvaABCEditor' />",
@@ -80,8 +78,6 @@
 			
 			$(".abcProdutoGrid").flexReload();
 			mostra_produto();
-			
-			//$.postJSON("<c:url value='/lancamento/relatorioVendas/pesquisarCurvaABCDistribuidor'/>", data, exibirResultado);
 			
 		} else if ($('#filtro_cota').attr("checked") == "checked") {
 			
@@ -244,13 +240,10 @@
 	
 	}
 	
-	function exibirResultado(result) {
-		alert(result);
-	}
-	
 	function mostra_pesq_avancada() {
 		$('#pesquisaAvancada').fadeIn("slow");
 	}
+	
 	function esconde_pesq_avancada() {
 		$('#pesquisaAvancada').fadeOut("slow");
 	}
@@ -263,6 +256,7 @@
 		$('.linhaCota').hide();
 		$('.linhaProduto').hide();
 	}
+	
 	function mostra_editor() {
 		$('#relatorioDistribuidor').hide();
 		$('#relatorioEditor').show();
@@ -271,6 +265,7 @@
 		$('.linhaCota').hide();
 		$('.linhaProduto').hide();
 	}
+	
 	function mostra_produto() {
 		$('#relatorioDistribuidor').hide();
 		$('#relatorioEditor').hide();
@@ -278,8 +273,8 @@
 		$('#relatorioCota').hide();
 		$('.linhaCota').hide();
 		$('.linhaProduto').show();
-
 	}
+	
 	function mostra_cota() {
 		$('#relatorioDistribuidor').hide();
 		$('#relatorioEditor').hide();
@@ -290,8 +285,6 @@
 	}
 
 	function popup_editor() {
-		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
-
 		$("#dialog-editor").dialog({
 			resizable : false,
 			height : 450,
@@ -365,8 +358,7 @@
 
 	<div class="container">
 
-		<div id="effect" style="padding: 0 .7em;"
-			class="ui-state-highlight ui-corner-all">
+		<div id="effect" style="padding: 0 .7em;" class="ui-state-highlight ui-corner-all">
 			<p>
 				<span style="float: left; margin-right: .3em;"
 					class="ui-icon ui-icon-info"></span> <b>Parcial < evento > com
@@ -378,31 +370,21 @@
 			<legend> Relatório de Vendas</legend>
 			<table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
 				<tr>
-					<td width="20"><input type="radio" name="filtro"
-						id="filtro_distrib" onclick="mostra_distrib();" value="radio" /></td>
+					<td width="20"><input type="radio" name="filtro" id="filtro_distrib" onclick="mostra_distrib();" value="radio" /></td>
 					<td colspan="3"><label for="filtro_distrib">Curva ABC Distribuidor</label></td>
-					<td width="20"><input type="radio" name="filtro"
-						id="filtro_editor" value="radio" onclick="mostra_editor();" /></td>
+					<td width="20"><input type="radio" name="filtro" id="filtro_editor" value="radio" onclick="mostra_editor();" /></td>
 					<td width="94"><label for="filtro_editor">Curva ABC Editor</label></td>
-					<td width="20"><input type="radio" name="filtro"
-						id="filtro_produto" onclick="mostra_produto();" value="radio" /></td>
+					<td width="20"><input type="radio" name="filtro" id="filtro_produto" onclick="mostra_produto();" value="radio" /></td>
 					<td width="114"><label for="filtro_produto">Curva ABC Produto</label></td>
-					<td width="21" align="right"><input type="radio" name="filtro"
-						id="filtro_cota" value="radio" onclick="mostra_cota();" /></td>
+					<td width="21" align="right"><input type="radio" name="filtro" id="filtro_cota" value="radio" onclick="mostra_cota();" /></td>
 					<td width="90"><label for="filtro_cota">Curva ABC Cota</label></td>
 					<td width="47">Período:</td>
-					<td width="86"><input type="text" name="datepickerDe"
-						id="datepickerDe" style="width: 60px;" /></td>
+					<td width="86"><input type="text" name="datepickerDe" id="datepickerDe" style="width: 60px;" /></td>
 					<td width="24">Até:</td>
-					<td width="87"><input type="text" name="datepickerAte"
-						id="datepickerAte" style="width: 60px;" /></td>
-					<td width="104" rowspan="3" valign="top"><span
-						class="bt_pesquisar"><a href="javascript:;"
-							onclick="pesquisar();">Pesquisar</a></span></td>
+					<td width="87"><input type="text" name="datepickerAte" id="datepickerAte" style="width: 60px;" /></td>
+					<td width="104" rowspan="3" valign="top"><span class="bt_pesquisar"><a href="javascript:;" onclick="pesquisar();">Pesquisar</a></span></td>
 					<td width="20" rowspan="3" align="center" valign="top"><a
-						href="javascript:;" onclick="mostra_pesq_avancada();"><img
-							src="${pageContext.request.contextPath}/images/ico_pesq_avancada.jpg" alt="Pesquisa Avançada"
-							width="20" height="20" vspace="10" border="0" /></a></td>
+						href="javascript:;" onclick="mostra_pesq_avancada();"><img src="${pageContext.request.contextPath}/images/ico_pesq_avancada.jpg" alt="Pesquisa Avançada" width="20" height="20" vspace="10" border="0" /></a></td>
 				</tr>
 				<tr class="linhaCota">
 					<td>&nbsp;</td>
@@ -411,9 +393,9 @@
 					<td>&nbsp;</td>
 					<td>&nbsp;</td>
 					<td>&nbsp;</td>
-					<td colspan="6"><label>Cota:</label> <input type="text"
-						style="width: 80px; float: left; margin: 5px;" name="numeroCotaListaCota" id="numeroCotaListaCota" /> <label>Nome:</label>
-						<input type="text" style="width: 200px; float: left; margin: 5px;" name="nomeCotaListaCota" id="nomeCotaListaCota" />
+					<td colspan="6">
+						<label>Cota:</label> <input type="text" style="width: 80px; float: left; margin: 5px;" name="numeroCotaListaCota" id="numeroCotaListaCota" /> 
+						<label>Nome:</label> <input type="text" style="width: 200px; float: left; margin: 5px;" name="nomeCotaListaCota" id="nomeCotaListaCota" />
 					</td>
 				</tr>
 				<tr class="linhaProduto">
@@ -421,25 +403,22 @@
 					<td colspan="3">&nbsp;</td>
 					<td>&nbsp;</td>
 					<td>&nbsp;</td>
-					<td colspan="8"><label>Código:</label> <input type="text"
-						style="width: 80px; float: left; margin: 5px;" id="codigoProdutoListaProduto" name="codigoProdutoListaProduto" /> <label>Produto:</label>
-						<input type="text" style="width: 200px; float: left; margin: 5px;" id="nomeProdutoListaProduto" name="nomeProdutoListaProduto" />
+					<td colspan="8">
+						<label>Código:</label> <input type="text" style="width: 80px; float: left; margin: 5px;" id="codigoProdutoListaProduto" name="codigoProdutoListaProduto" /> 
+						<label>Produto:</label> <input type="text" style="width: 200px; float: left; margin: 5px;" id="nomeProdutoListaProduto" name="nomeProdutoListaProduto" />
 					</td>
 				</tr>
 			</table>
-
 		</fieldset>
+
 		<div class="linha_separa_fields">&nbsp;</div>
 
-		<fieldset class="classFieldset" id="pesquisaAvancada"
-			style="display: none;">
+		<fieldset class="classFieldset" id="pesquisaAvancada" style="display: none;">
 			<legend>Busca Avançada</legend>
-			<table width="950" border="0" cellpadding="2" cellspacing="1"
-				class="filtro">
+			<table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
 				<tr>
 					<td width="69">Fornecedor:</td>
-					<td width="255"><select name="select" id="selectFornecedor"
-						style="width: 240px;">
+					<td width="255"><select name="select" id="selectFornecedor" style="width: 240px;">
 							<option>Todos</option>
                     		<c:forEach items="${fornecedores}" var="fornecedor">
 								<option value="${fornecedor.id}">${fornecedor.juridica.nomeFantasia}</option>
@@ -453,9 +432,7 @@
 					<td width="213"><input type="text" style="width: 200px;" name="nomeProduto" id="nomeProduto" /></td>
 					<td width="41">Edição:</td>
 					<td><input type="text" style="width: 100px;" name="edicaoProduto" id="edicaoProduto" /></td>
-					<td><a href="javascript:;" onclick="esconde_pesq_avancada();"><img
-							src="${pageContext.request.contextPath}/images/ico_excluir.gif" alt="Fechar" width="15"
-							height="15" border="0" /></a></td>
+					<td><a href="javascript:;" onclick="esconde_pesq_avancada();"><img src="${pageContext.request.contextPath}/images/ico_excluir.gif" alt="Fechar" width="15" height="15" border="0" /></a></td>
 				</tr>
 				<tr>
 					<td>Editor:</td>
@@ -466,8 +443,7 @@
                    			</c:forEach> 
 					</select></td>
 					<td colspan="-1">Cota:</td>
-					<td><input type="text" name="numeroCota"
-						id="numeroCota" style="width: 80px;" /></td>
+					<td><input type="text" name="numeroCota" id="numeroCota" style="width: 80px;" /></td>
 					<td>Nome:</td>
 					<td><input type="text" style="width: 200px;" id="nomeCota" name="nomeCota" /></td>
 					<td>&nbsp;</td>
@@ -488,8 +464,7 @@
 					<td>&nbsp;</td>
 					<td>&nbsp;</td>
 					<td>&nbsp;</td>
-					<td><span class="bt_pesquisar"><a href="javascript:;"
-							onclick="pesquisarAvancada();">Pesquisar</a></span></td>
+					<td><span class="bt_pesquisar"><a href="javascript:;" onclick="pesquisarAvancada();">Pesquisar</a></span></td>
 					<td>&nbsp;</td>
 				</tr>
 			</table>
@@ -498,18 +473,19 @@
 		<div class="linha_separa_fields">&nbsp;</div>
 
 		<div class="grids" style="display: none;">
-			<fieldset class="classFieldset" id="relatorioDistribuidor"
-				style="display: none;">
+			<fieldset class="classFieldset" id="relatorioDistribuidor" style="display: none;">
 				<legend>Curva ABC Distribuidor</legend>
 				<table class="abcDistribuidorGrid"></table>
 
 				<table width="950" border="0" cellspacing="0" cellpadding="0">
 					<tr>
-						<td width="441"><span class="bt_novos" title="Gerar Arquivo"><a
-								href="${pageContext.request.contextPath}/lancamento/relatorioVendas/exportar?fileType=XLS&tipoRelatorio=1"><img src="${pageContext.request.contextPath}/images/ico_excel.png"
-									hspace="5" border="0" />Arquivo</a></span> <span class="bt_novos"
-							title="Imprimir"><a href="${pageContext.request.contextPath}/lancamento/relatorioVendas/exportar?fileType=PDF&tipoRelatorio=1"><img
-									src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
+						<td width="441">
+							<span class="bt_novos" title="Gerar Arquivo">
+								<a href="${pageContext.request.contextPath}/lancamento/relatorioVendas/exportar?fileType=XLS&tipoRelatorio=1"><img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />Arquivo</a>
+							</span> 
+							<span class="bt_novos" title="Imprimir">
+								<a href="${pageContext.request.contextPath}/lancamento/relatorioVendas/exportar?fileType=PDF&tipoRelatorio=1"><img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a>
+							</span>
 						</td>
 						<td width="121"><strong>Total:</strong></td>
 						<td width="130"><span id="qtdeTotalVendaExemplaresDistribuidor"></span></td>
@@ -518,17 +494,18 @@
 				</table>
 			</fieldset>
 
-			<fieldset class="classFieldset" id="relatorioEditor"
-				style="display: none;">
+			<fieldset class="classFieldset" id="relatorioEditor" style="display: none;">
 				<legend>Curva ABC Editor</legend>
 				<table class="abcEditorGrid"></table>
 				<table width="950" border="0" cellspacing="0" cellpadding="0">
 					<tr>
-						<td width="329"><span class="bt_novos" title="Gerar Arquivo"><a
-								href="${pageContext.request.contextPath}/lancamento/relatorioVendas/exportar?fileType=XLS&tipoRelatorio=2"><img src="${pageContext.request.contextPath}/images/ico_excel.png"
-									hspace="5" border="0" />Arquivo</a></span> <span class="bt_novos"
-							title="Imprimir"><a href="${pageContext.request.contextPath}/lancamento/relatorioVendas/exportar?fileType=PDF&tipoRelatorio=2"><img
-									src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
+						<td width="329">
+							<span class="bt_novos" title="Gerar Arquivo">
+								<a href="${pageContext.request.contextPath}/lancamento/relatorioVendas/exportar?fileType=XLS&tipoRelatorio=2"><img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />Arquivo</a>
+							</span>
+							<span class="bt_novos" title="Imprimir">
+								<a href="${pageContext.request.contextPath}/lancamento/relatorioVendas/exportar?fileType=PDF&tipoRelatorio=2"><img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a>
+							</span>
 						</td>
 						<td width="80"><strong>Total:</strong></td>
 						<td width="215"><span id="qtdeTotalVendaExemplaresEditor"></span></td>
@@ -537,40 +514,39 @@
 				</table>
 			</fieldset>
 
-			<fieldset class="classFieldset" id="relatorioProduto"
-				style="display: none;">
+			<fieldset class="classFieldset" id="relatorioProduto" style="display: none;">
 				<legend>Curva ABC Produto</legend>
-
 				<table class="abcProdutoGrid"></table>
 				<table width="950" border="0" cellspacing="0" cellpadding="0">
 					<tr>
-						<td width="441"><span class="bt_novos" title="Gerar Arquivo"><a
-								href="${pageContext.request.contextPath}/lancamento/relatorioVendas/exportar?fileType=XLS&tipoRelatorio=3"><img src="${pageContext.request.contextPath}/images/ico_excel.png"
-									hspace="5" border="0" />Arquivo</a></span> <span class="bt_novos"
-							title="Imprimir"><a href="${pageContext.request.contextPath}/lancamento/relatorioVendas/exportar?fileType=PDF&tipoRelatorio=3"><img
-									src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
+						<td width="441">
+							<span class="bt_novos" title="Gerar Arquivo">
+								<a href="${pageContext.request.contextPath}/lancamento/relatorioVendas/exportar?fileType=XLS&tipoRelatorio=3"><img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />Arquivo</a>
+							</span>
+							<span class="bt_novos" title="Imprimir">
+								<a href="${pageContext.request.contextPath}/lancamento/relatorioVendas/exportar?fileType=PDF&tipoRelatorio=3"><img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a>
+							</span>
 						</td>
 						<td width="151"><strong>Total:</strong></td>
 						<td width="114"><span id="qtdeTotalVendaExemplaresProduto"></span></td>
 						<td width="244"><span id="totalFaturamentoCapaProduto"></span></td>
 					</tr>
 				</table>
-
 			</fieldset>
 
 			<fieldset class="classFieldset" id="relatorioCota"
 				style="display: none;">
 				<legend>Curva ABC Cota</legend>
-
 				<table class="abcCotaGrid"></table>
-
 				<table width="950" border="0" cellspacing="0" cellpadding="0">
 					<tr>
-						<td width="432"><span class="bt_novos" title="Gerar Arquivo"><a
-								href="${pageContext.request.contextPath}/lancamento/relatorioVendas/exportar?fileType=XLS&tipoRelatorio=4"><img src="${pageContext.request.contextPath}/images/ico_excel.png"
-									hspace="5" border="0" />Arquivo</a></span> <span class="bt_novos"
-							title="Imprimir"><a href="${pageContext.request.contextPath}/lancamento/relatorioVendas/exportar?fileType=PDF&tipoRelatorio=4"><img
-									src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
+						<td width="432">
+							<span class="bt_novos" title="Gerar Arquivo">
+								<a href="${pageContext.request.contextPath}/lancamento/relatorioVendas/exportar?fileType=XLS&tipoRelatorio=4"><img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />Arquivo</a>
+							</span> 
+							<span class="bt_novos" title="Imprimir">
+								<a href="${pageContext.request.contextPath}/lancamento/relatorioVendas/exportar?fileType=PDF&tipoRelatorio=4"><img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a>
+							</span>
 						</td>
 						<td width="73"><strong>Total:</strong></td>
 						<td width="205"><span id="qtdeTotalVendaExemplaresCota"></span></td>

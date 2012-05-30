@@ -750,6 +750,9 @@ public class CotaRepositoryImpl extends AbstractRepository<Cota, Long>
 		return (numeroCota == null ) ? 0 : numeroCota + 1;
 	}
 
+	/* (non-Javadoc)
+	 * @see br.com.abril.nds.repository.CotaRepository#obterCurvaABCCotaTotal(br.com.abril.nds.dto.filtro.FiltroCurvaABCCotaDTO)
+	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public ResultadoCurvaABC obterCurvaABCCotaTotal(FiltroCurvaABCCotaDTO filtro){
@@ -771,6 +774,9 @@ public class CotaRepositoryImpl extends AbstractRepository<Cota, Long>
 		return (ResultadoCurvaABC) query.list().get(0);
 	}
 
+	/* (non-Javadoc)
+	 * @see br.com.abril.nds.repository.CotaRepository#obterCurvaABCCota(br.com.abril.nds.dto.filtro.FiltroCurvaABCCotaDTO)
+	 */
 	@Override
 	@SuppressWarnings("unchecked")
 	public List<RegistroCurvaABCCotaVO> obterCurvaABCCota(FiltroCurvaABCCotaDTO filtro) {
@@ -811,6 +817,11 @@ public class CotaRepositoryImpl extends AbstractRepository<Cota, Long>
 
 	}
 
+	/**
+	 * Retorna as tabelas, joins e filtros da Query de seleção do relatório de vendas
+	 * @param filtro
+	 * @return
+	 */
 	private String getWhereQueryObterCurvaABCCota(FiltroCurvaABCCotaDTO filtro) {
 
 		StringBuilder hql = new StringBuilder();
@@ -862,6 +873,11 @@ public class CotaRepositoryImpl extends AbstractRepository<Cota, Long>
 
 	}
 
+	/**
+	 * Retorna o agrupamento das pesquisas do relatório de vendas
+	 * @param filtro
+	 * @return
+	 */
 	private String getGroupQueryObterCurvaABCCota(FiltroCurvaABCCotaDTO filtro) {
 
 		StringBuilder hql = new StringBuilder();
@@ -873,6 +889,11 @@ public class CotaRepositoryImpl extends AbstractRepository<Cota, Long>
 		return hql.toString();
 	}
 
+	/**
+	 * Retorna a ordenação via HQL do relatório de vendas
+	 * @param filtro
+	 * @return
+	 */
 	private String getOrderQueryObterCurvaABCCota(FiltroCurvaABCCotaDTO filtro) {
 
 		StringBuilder hql = new StringBuilder();
@@ -911,7 +932,7 @@ public class CotaRepositoryImpl extends AbstractRepository<Cota, Long>
 	}
 
 	/**
-	 * Retorna os parametros da consulta de dividas.
+	 * Popula os parametros da consulta do relatório de vendas.
 	 * @param filtro
 	 * @return HashMap<String,Object>
 	 */
@@ -959,6 +980,11 @@ public class CotaRepositoryImpl extends AbstractRepository<Cota, Long>
 		return param;
 	}
 
+	/**
+	 * Insere os registros de participação e participação acumulada no resultado da consulta HQL
+	 * @param lista
+	 * @return
+	 */
 	private List<RegistroCurvaABCCotaVO> complementarCurvaABCCota(List<RegistroCurvaABCCotaVO> lista) {
 
 		BigDecimal participacaoTotal = new BigDecimal(0);
@@ -1003,6 +1029,12 @@ public class CotaRepositoryImpl extends AbstractRepository<Cota, Long>
 		return lista;
 	}
 
+	/**
+	 * Realiza a ordenação dos registros adicionados após a consulta HQL
+	 * @param lista
+	 * @param filtro
+	 * @return
+	 */
 	@SuppressWarnings("unchecked")
 	private List<RegistroCurvaABCCotaVO> getOrderObterCurvaABCCota(List<RegistroCurvaABCCotaVO> lista, FiltroCurvaABCCotaDTO filtro) {
 

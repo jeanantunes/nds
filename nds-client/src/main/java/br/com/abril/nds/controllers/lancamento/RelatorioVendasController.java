@@ -34,7 +34,6 @@ import br.com.abril.nds.service.DistribuidorService;
 import br.com.abril.nds.service.EditorService;
 import br.com.abril.nds.service.EnderecoService;
 import br.com.abril.nds.service.FornecedorService;
-import br.com.abril.nds.service.ProdutoService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.DateUtil;
@@ -52,6 +51,10 @@ import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
 
+/**
+ * @author infoA2
+ * Controller do relatório de vendas
+ */
 @Resource
 @Path("/lancamento/relatorioVendas")
 public class RelatorioVendasController {
@@ -78,9 +81,6 @@ public class RelatorioVendasController {
 	private CotaService cotaService;
 	
 	@Autowired
-	private ProdutoService produtoService;
-
-	@Autowired
 	private EditorService editorService;
 
 	private static final String QTD_REGISTROS_PESQUISA_CURVA_DISTRIBUIDOR_ABC_SESSION_ATTRIBUTE = "qtdRegistrosPesquisaCurvaAbcDistribuidor";
@@ -102,6 +102,9 @@ public class RelatorioVendasController {
 
 	private static final String FORMATO_DATA = "dd/MM/yyyy";
 	
+	/**
+	 * Inicializa a página, populando os combos
+	 */
 	@Path("/")
 	public void index() {
 		String data = DateUtil.formatarData(new Date(), FORMATO_DATA);
@@ -115,6 +118,12 @@ public class RelatorioVendasController {
 		this.result = result;
 	}
 
+	/**
+	 * Exporta para o tipo de arquivo passado em fileType 
+	 * @param fileType
+	 * @param tipoRelatorio
+	 * @throws IOException
+	 */
 	@Get
 	public void exportar(FileType fileType, int tipoRelatorio) throws IOException {
 		
@@ -143,6 +152,11 @@ public class RelatorioVendasController {
 
 	}
 	
+	/**
+	 * Valida os dados de entrada
+	 * @param dataDe
+	 * @param dataAte
+	 */
 	private void validarDadosEntradaPesquisa(String dataDe, String dataAte) {
 		List<String> listaMensagemValidacao = new ArrayList<String>();
 
@@ -164,6 +178,13 @@ public class RelatorioVendasController {
 
 	}
 
+	/**
+	 * Valida os dados de entrada de relatórios de Curva ABC por produto
+	 * @param dataDe
+	 * @param dataAte
+	 * @param codigoProduto
+	 * @param nomeProduto
+	 */
 	private void validarDadosEntradaPesquisaProduto(String dataDe, String dataAte, String codigoProduto, String nomeProduto) {
 		List<String> listaMensagemValidacao = new ArrayList<String>();
 
@@ -189,6 +210,13 @@ public class RelatorioVendasController {
 
 	}
 
+	/**
+	 * Valida os dados de entrada de relatório
+	 * @param dataDe
+	 * @param dataAte
+	 * @param codigoCota
+	 * @param nomeCota
+	 */
 	private void validarDadosEntradaPesquisaCota(String dataDe, String dataAte, String codigoCota, String nomeCota) {
 		List<String> listaMensagemValidacao = new ArrayList<String>();
 
@@ -214,6 +242,13 @@ public class RelatorioVendasController {
 
 	}
 
+	/**
+	 * Realiza a pesquisa do histórico do editor
+	 * @param dataDe
+	 * @param dataAte
+	 * @param codigoEditor
+	 * @throws Exception
+	 */
 	@Post
 	@Path("/pesquisarHistoricoEditor")
 	public void pesquisarHistoricoEditor(String dataDe, String dataAte, String codigoEditor) throws Exception {
@@ -250,6 +285,16 @@ public class RelatorioVendasController {
 	
 	}
 	
+	/**
+	 * Realiza a pesquisa da curva ABC do distribuidor
+	 * @param dataDe
+	 * @param dataAte
+	 * @param sortorder
+	 * @param sortname
+	 * @param page
+	 * @param rp
+	 * @throws Exception
+	 */
 	@Post
 	@Path("/pesquisarCurvaABCDistribuidor")
 	public void pesquisarCurvaABCDistribuidor(String dataDe, String dataAte,
@@ -259,6 +304,24 @@ public class RelatorioVendasController {
 				"", "", sortorder, sortname, page, rp);
 	}
 
+	/**
+	 * Realiza a pesquisa da curva ABC do distribuidor com os parametros da busca avançada
+	 * @param dataDe
+	 * @param dataAte
+	 * @param codigoFornecedor
+	 * @param codigoProduto
+	 * @param nomeProduto
+	 * @param edicaoProduto
+	 * @param codigoEditor
+	 * @param codigoCota
+	 * @param nomeCota
+	 * @param municipio
+	 * @param sortorder
+	 * @param sortname
+	 * @param page
+	 * @param rp
+	 * @throws Exception
+	 */
 	@Post
 	@Path("/pesquisarCurvaABCDistribuidorAvancada")
 	public void pesquisarCurvaABCDistribuidor(String dataDe, String dataAte,
@@ -321,6 +384,16 @@ public class RelatorioVendasController {
 
 	}
 
+	/**
+	 * Realiza a pesquisa da curva ABC do editor
+	 * @param dataDe
+	 * @param dataAte
+	 * @param sortorder
+	 * @param sortname
+	 * @param page
+	 * @param rp
+	 * @throws Exception
+	 */
 	@Post
 	@Path("/pesquisarCurvaABCEditor")
 	public void pesquisarCurvaABCEditor(String dataDe, String dataAte, String sortorder,
@@ -330,6 +403,24 @@ public class RelatorioVendasController {
 				"", "", sortorder, sortname, page, rp);
 	}
 
+	/**
+	 * Realiza a pesquisa da curva ABC do editor com os parametros da busca avançada
+	 * @param dataDe
+	 * @param dataAte
+	 * @param codigoFornecedor
+	 * @param codigoProduto
+	 * @param nomeProduto
+	 * @param edicaoProduto
+	 * @param codigoEditor
+	 * @param codigoCota
+	 * @param nomeCota
+	 * @param municipio
+	 * @param sortorder
+	 * @param sortname
+	 * @param page
+	 * @param rp
+	 * @throws Exception
+	 */
 	@Post
 	@Path("/pesquisarCurvaABCEditorAvancada")
 	public void pesquisarCurvaABCEditor(String dataDe, String dataAte,
@@ -390,6 +481,18 @@ public class RelatorioVendasController {
 		
 	}
 
+	/**
+	 * Realiza a pesquisa da curva ABC por produto
+	 * @param dataDe
+	 * @param dataAte
+	 * @param codigoProduto
+	 * @param nomeProduto
+	 * @param sortorder
+	 * @param sortname
+	 * @param page
+	 * @param rp
+	 * @throws Exception
+	 */
 	@Post
 	@Path("/pesquisarCurvaABCProduto")
 	public void pesquisarCurvaABCProduto(String dataDe, String dataAte,
@@ -398,6 +501,24 @@ public class RelatorioVendasController {
 		pesquisarCurvaABCProduto(dataDe, dataAte, 0L, codigoProduto, nomeProduto, "", 0L, "", "", "", sortorder, sortname, page, rp);
 	}
 	
+	/**
+	 * Realiza a pesquisa da curva ABC por produto avançada
+	 * @param dataDe
+	 * @param dataAte
+	 * @param codigoFornecedor
+	 * @param codigoProduto
+	 * @param nomeProduto
+	 * @param edicaoProduto
+	 * @param codigoEditor
+	 * @param codigoCota
+	 * @param nomeCota
+	 * @param municipio
+	 * @param sortorder
+	 * @param sortname
+	 * @param page
+	 * @param rp
+	 * @throws Exception
+	 */
 	@Post
 	@Path("/pesquisarCurvaABCProdutoAvancada")
 	public void pesquisarCurvaABCProduto(String dataDe, String dataAte,
@@ -413,6 +534,18 @@ public class RelatorioVendasController {
 		
 	}
 
+	/**
+	 * Realiza a pesquisa da curva ABC por cota
+	 * @param dataDe
+	 * @param dataAte
+	 * @param codigoCota
+	 * @param nomeCota
+	 * @param sortorder
+	 * @param sortname
+	 * @param page
+	 * @param rp
+	 * @throws Exception
+	 */
 	@Post
 	@Path("/pesquisarCurvaABCCota")
 	public void pesquisarCurvaABCCota(String dataDe, String dataAte, 
@@ -422,6 +555,24 @@ public class RelatorioVendasController {
 		pesquisarCurvaABCCota(dataDe, dataAte, 0L, "", "", "", 0L, codigoCota, nomeCota, "", sortorder, sortname, page, rp);
 	}
 
+	/**
+	 * Realiza a pesquisa da curva ABC por cota com os parametros da pesquisa avançada
+	 * @param dataDe
+	 * @param dataAte
+	 * @param codigoFornecedor
+	 * @param codigoProduto
+	 * @param nomeProduto
+	 * @param edicaoProduto
+	 * @param codigoEditor
+	 * @param codigoCota
+	 * @param nomeCota
+	 * @param municipio
+	 * @param sortorder
+	 * @param sortname
+	 * @param page
+	 * @param rp
+	 * @throws Exception
+	 */
 	@Post
 	@Path("/pesquisarCurvaABCCotaAvancada")
 	public void pesquisarCurvaABCCota(String dataDe, String dataAte,
@@ -483,11 +634,24 @@ public class RelatorioVendasController {
 		
 	}
 
-	@Post
-	public void pesquisarProdutosPorEditor(String codigo, String dataDe,
-			String dataAte) throws Exception {
-	}
-
+	/**
+	 * Carrega filtro da pesquisa por editor 
+	 * @param dataDe
+	 * @param dataAte
+	 * @param codigoFornecedor
+	 * @param codigoProduto
+	 * @param nomeProduto
+	 * @param edicaoProduto
+	 * @param codigoEditor
+	 * @param codigoCota
+	 * @param nomeCota
+	 * @param municipio
+	 * @param sortorder
+	 * @param sortname
+	 * @param page
+	 * @param rp
+	 * @return
+	 */
 	private FiltroCurvaABCEditorDTO carregarFiltroPesquisaEditor(Date dataDe, Date dataAte, Long codigoFornecedor, 
 			String codigoProduto, String nomeProduto, String edicaoProduto, Long codigoEditor,
 			String codigoCota, String nomeCota, String municipio,
@@ -511,6 +675,24 @@ public class RelatorioVendasController {
 		return filtro;
 	}
 	
+	/**
+	 * Carrega o filtro da pesquisa por distribuidor
+	 * @param dataDe
+	 * @param dataAte
+	 * @param codigoFornecedor
+	 * @param codigoProduto
+	 * @param nomeProduto
+	 * @param edicaoProduto
+	 * @param codigoEditor
+	 * @param codigoCota
+	 * @param nomeCota
+	 * @param municipio
+	 * @param sortorder
+	 * @param sortname
+	 * @param page
+	 * @param rp
+	 * @return
+	 */
 	private FiltroCurvaABCDistribuidorDTO carregarFiltroPesquisaDistribuidor(Date dataDe, Date dataAte, Long codigoFornecedor, 
 			String codigoProduto, String nomeProduto, String edicaoProduto, Long codigoEditor,
 			String codigoCota, String nomeCota, String municipio,
@@ -534,6 +716,24 @@ public class RelatorioVendasController {
 		return filtro;
 	}
 
+	/**
+	 * Carrega filtro da pesquisa por cota
+	 * @param dataDe
+	 * @param dataAte
+	 * @param codigoFornecedor
+	 * @param codigoProduto
+	 * @param nomeProduto
+	 * @param edicaoProduto
+	 * @param codigoEditor
+	 * @param codigoCota
+	 * @param nomeCota
+	 * @param municipio
+	 * @param sortorder
+	 * @param sortname
+	 * @param page
+	 * @param rp
+	 * @return
+	 */
 	private FiltroCurvaABCCotaDTO carregarFiltroPesquisaCota(Date dataDe, Date dataAte, Long codigoFornecedor, 
 			String codigoProduto, String nomeProduto, String edicaoProduto, Long codigoEditor,
 			String codigoCota, String nomeCota, String municipio,
@@ -557,6 +757,14 @@ public class RelatorioVendasController {
 		return filtro;
 	}	
 
+	/**
+	 * Configura paginação da pesquisa do editor
+	 * @param filtro
+	 * @param sortorder
+	 * @param sortname
+	 * @param page
+	 * @param rp
+	 */
 	private void configurarPaginacaoEditorPesquisa(FiltroCurvaABCEditorDTO filtro,
 			String sortorder, String sortname, int page, int rp) {
 
@@ -571,6 +779,14 @@ public class RelatorioVendasController {
 		}
 	}
 	
+	/**
+	 * Configura a paginação da pesquisa por cota
+	 * @param filtro
+	 * @param sortorder
+	 * @param sortname
+	 * @param page
+	 * @param rp
+	 */
 	private void configurarPaginacaoCotaPesquisa(FiltroCurvaABCCotaDTO filtro,
 			String sortorder, String sortname, int page, int rp) {
 
@@ -585,6 +801,14 @@ public class RelatorioVendasController {
 		}
 	}
 
+	/**
+	 * Configura a paginação da pesquisa do distribuidor
+	 * @param filtro
+	 * @param sortorder
+	 * @param sortname
+	 * @param page
+	 * @param rp
+	 */
 	private void configurarPaginacaoDistribuidorPesquisa(FiltroCurvaABCDistribuidorDTO filtro,
 			String sortorder, String sortname, int page, int rp) {
 
@@ -599,10 +823,9 @@ public class RelatorioVendasController {
 		}
 	}
 
-	/*
+	/**
 	 * Obtém os dados do cabeçalho de exportação.
-	 * 
-	 * @return NDSFileHeader
+	 * @return
 	 */
 	private NDSFileHeader getNDSFileHeader() {
 		
@@ -623,7 +846,11 @@ public class RelatorioVendasController {
 		return ndsFileHeader;
 	}
 	
-	//TODO: não há como reconhecer usuario, ainda
+	/**
+	 * Retorna o usuário logado
+	 * @return
+	 */
+	//TODO: Implementar quando a segurança for implementada
 	private Usuario getUsuario() {
 		
 		Usuario usuario = new Usuario();

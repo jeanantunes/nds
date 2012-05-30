@@ -10,7 +10,6 @@ import br.com.abril.nds.model.cadastro.Distribuidor;
 public interface DistribuidorService {
 	
 	Distribuidor obter();
-
 	public List<RegistroCurvaABCDistribuidorVO> obterCurvaABCDistribuidor(FiltroCurvaABCDistribuidorDTO filtroCurvaABCDistribuidorDTO);
 	public ResultadoCurvaABC obterCurvaABCDistribuidorTotal(FiltroCurvaABCDistribuidorDTO filtroCurvaABCDistribuidorDTO);
 	

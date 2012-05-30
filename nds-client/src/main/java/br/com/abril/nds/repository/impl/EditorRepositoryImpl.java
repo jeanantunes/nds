@@ -20,6 +20,10 @@ import br.com.abril.nds.model.cadastro.Editor;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.repository.EditorRepository;
 
+/**
+ * Classe de implementação referente ao acesso a dados da entidade
+ * @author infoA2
+ */
 @Repository
 public class EditorRepositoryImpl extends AbstractRepository<Editor, Long> implements EditorRepository {
 
@@ -28,6 +32,9 @@ public class EditorRepositoryImpl extends AbstractRepository<Editor, Long> imple
 		// TODO Auto-generated constructor stub
 	}
 
+	/* (non-Javadoc)
+	 * @see br.com.abril.nds.repository.EditorRepository#obterEditores()
+	 */
 	@Override
 	public List<Editor> obterEditores() {
 		String hql = "from Editor ed ORDER BY ed.nome";
@@ -37,6 +44,9 @@ public class EditorRepositoryImpl extends AbstractRepository<Editor, Long> imple
 		return editores;
 	}
 
+	/* (non-Javadoc)
+	 * @see br.com.abril.nds.repository.EditorRepository#obterCurvaABCEditorTotal(br.com.abril.nds.dto.filtro.FiltroCurvaABCEditorDTO)
+	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public ResultadoCurvaABC obterCurvaABCEditorTotal(FiltroCurvaABCEditorDTO filtro){
@@ -58,6 +68,9 @@ public class EditorRepositoryImpl extends AbstractRepository<Editor, Long> imple
 		return (ResultadoCurvaABC) query.list().get(0);
 	}
 
+	/* (non-Javadoc)
+	 * @see br.com.abril.nds.repository.EditorRepository#obterCurvaABCEditor(br.com.abril.nds.dto.filtro.FiltroCurvaABCEditorDTO)
+	 */
 	@Override
 	@SuppressWarnings("unchecked")
 	public List<RegistroCurvaABCEditorVO> obterCurvaABCEditor(FiltroCurvaABCEditorDTO filtro) {
@@ -97,6 +110,11 @@ public class EditorRepositoryImpl extends AbstractRepository<Editor, Long> imple
 
 	}
 
+	/**
+	 * Retorna as tabelas, joins e filtros da Query de seleção do relatório de vendas
+	 * @param filtro
+	 * @return
+	 */
 	private String getWhereQueryObterCurvaABCEditor(FiltroCurvaABCEditorDTO filtro) {
 
 		StringBuilder hql = new StringBuilder();
@@ -149,6 +167,11 @@ public class EditorRepositoryImpl extends AbstractRepository<Editor, Long> imple
 
 	}
 
+	/**
+	 * Retorna o agrupamento das pesquisas do relatório de vendas
+	 * @param filtro
+	 * @return
+	 */
 	private String getGroupQueryObterCurvaABCEditor(FiltroCurvaABCEditorDTO filtro) {
 
 		StringBuilder hql = new StringBuilder();
@@ -159,6 +182,11 @@ public class EditorRepositoryImpl extends AbstractRepository<Editor, Long> imple
 		return hql.toString();
 	}
 
+	/**
+	 * Retorna a ordenação via HQL do relatório de vendas
+	 * @param filtro
+	 * @return
+	 */
 	private String getOrderQueryObterCurvaABCEditor(FiltroCurvaABCEditorDTO filtro) {
 
 		StringBuilder hql = new StringBuilder();
@@ -194,7 +222,7 @@ public class EditorRepositoryImpl extends AbstractRepository<Editor, Long> imple
 	}
 
 	/**
-	 * Retorna os parametros da consulta de dividas.
+	 * Popula os parametros do relatório.
 	 * @param filtro
 	 * @return HashMap<String,Object>
 	 */
@@ -242,6 +270,11 @@ public class EditorRepositoryImpl extends AbstractRepository<Editor, Long> imple
 		return param;
 	}
 
+	/**
+	 * Insere os registros de participação e participação acumulada no resultado da consulta HQL
+	 * @param lista
+	 * @return
+	 */
 	private List<RegistroCurvaABCEditorVO> complementarCurvaABCEditor(List<RegistroCurvaABCEditorVO> lista) {
 
 		BigDecimal participacaoTotal = new BigDecimal(0);
@@ -286,6 +319,12 @@ public class EditorRepositoryImpl extends AbstractRepository<Editor, Long> imple
 		return lista;
 	}
 
+	/**
+	 * Retorna ordenação da consulta do relatório
+	 * @param lista
+	 * @param filtro
+	 * @return
+	 */
 	@SuppressWarnings("unchecked")
 	private List<RegistroCurvaABCEditorVO> getOrderObterCurvaABCEditor(List<RegistroCurvaABCEditorVO> lista, FiltroCurvaABCEditorDTO filtro) {
 
@@ -313,9 +352,11 @@ public class EditorRepositoryImpl extends AbstractRepository<Editor, Long> imple
 		return lista;
 	}
 
+	/* (non-Javadoc)
+	 * @see br.com.abril.nds.repository.EditorRepository#obterHistoricoEditor(br.com.abril.nds.dto.filtro.FiltroPesquisarHistoricoEditorDTO)
+	 */
 	@Override
-	public List<RegistroHistoricoEditorVO> obterHistoricoEditor(
-			FiltroPesquisarHistoricoEditorDTO filtro) {
+	public List<RegistroHistoricoEditorVO> obterHistoricoEditor(FiltroPesquisarHistoricoEditorDTO filtro) {
 
 		StringBuilder hql = new StringBuilder();
 
@@ -370,6 +411,12 @@ public class EditorRepositoryImpl extends AbstractRepository<Editor, Long> imple
 		
 	}
 
+	/**
+	 * Complementa os dados do histórico do editor
+	 * @param lista
+	 * @param filtro
+	 * @return
+	 */
 	private List<RegistroHistoricoEditorVO> complementarHistoricoEditor(List<RegistroHistoricoEditorVO> lista, FiltroPesquisarHistoricoEditorDTO filtro) {
 
 		BigDecimal vendaTotal = new BigDecimal(0);
