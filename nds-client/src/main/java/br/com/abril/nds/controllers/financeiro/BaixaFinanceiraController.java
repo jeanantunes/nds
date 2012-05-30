@@ -123,6 +123,7 @@ public class BaixaFinanceiraController {
 	@Get
 	@Path("/baixa")
 	public void baixa() {
+		listaTiposCobranca.clear();
 		listaTiposCobranca.add(new ItemDTO<TipoCobranca,String>(TipoCobranca.DINHEIRO, TipoCobranca.DINHEIRO.getDescTipoCobranca()));
 		listaTiposCobranca.add(new ItemDTO<TipoCobranca,String>(TipoCobranca.DEPOSITO, TipoCobranca.DEPOSITO.getDescTipoCobranca()));
 		listaTiposCobranca.add(new ItemDTO<TipoCobranca,String>(TipoCobranca.TRANSFERENCIA_BANCARIA, TipoCobranca.TRANSFERENCIA_BANCARIA.getDescTipoCobranca()));
@@ -406,10 +407,10 @@ public class BaixaFinanceiraController {
 		this.httpSession.setAttribute(FILTRO_PESQUISA_SESSION_ATTRIBUTE, filtroAtual);
 		
 		
-		//BUSCA COBRANCAS //!!
+		//BUSCA COBRANCAS
 		List<CobrancaVO> cobrancasVO = this.cobrancaService.obterDadosCobrancasPorCota(filtroAtual);
 		
-		if ((cobrancasVO.size()<=0)||(cobrancasVO==null)) {
+		if ((cobrancasVO==null)||(cobrancasVO.size()<=0)) {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Não há dividas em aberto nesta data para esta Cota.");
 		} 
 		
@@ -474,7 +475,7 @@ public class BaixaFinanceiraController {
 	public void obterPagamentoDividas(List<Long> idCobrancas){
 		
 		if ((idCobrancas==null) || (idCobrancas.size() <=0)){
-			throw new ValidacaoException(TipoMensagem.WARNING, "É necessário marcar ao menos uma dívida.");
+			throw new ValidacaoException(TipoMensagem.WARNING, "É necessário selecionar ao menos uma dívida.");
 		}
 		
 		CobrancaDividaVO pagamento;
@@ -530,12 +531,17 @@ public class BaixaFinanceiraController {
 		pagamento.setValorPagamento(valorPagamentoConvertido);
 		pagamento.setTipoPagamento(tipoPagamento);
 		pagamento.setObservacoes(observacoes);
-		pagamento.setDataPagamento(DateUtil.adicionarDias(this.distribuidorService.obter().getDataOperacao(),1));
+		pagamento.setDataPagamento(this.distribuidorService.obter().getDataOperacao());
 		pagamento.setUsuario(this.obterUsuario());
 		
-		this.cobrancaService.baixaManualDividas(pagamento, idCobrancas, manterPendente);
+		try{
+		    this.cobrancaService.baixaManualDividas(pagamento, idCobrancas, manterPendente);
+		}
+		catch(Exception e){
+			throw new ValidacaoException(TipoMensagem.ERROR,"Erro ao efetuar a baixa manual de [Dívida]!("+e.getMessage()+")");
+		}
 		
-		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Dividas baixadas com sucesso."),Constantes.PARAM_MSGS).recursive().serialize();
+		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Dividas baixadas com sucesso."), "result").recursive().serialize();
 	}
 
 	
