@@ -26,7 +26,7 @@ import br.com.abril.nds.dto.FiltroConsolidadoConsignadoCotaDTO;
 import br.com.abril.nds.dto.InfoTotalFornecedorDTO;
 import br.com.abril.nds.dto.ResultadosContaCorrenteConsignadoDTO;
 import br.com.abril.nds.dto.ResultadosContaCorrenteEncalheDTO;
-import br.com.abril.nds.dto.VendaEncalheDTO;
+import br.com.abril.nds.dto.ConsultaVendaEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsolidadoEncalheCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsolidadoVendaCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroViewContaCorrenteCotaDTO;
@@ -630,10 +630,10 @@ public class ContaCorrenteCotaController {
 		filtro.setOrdenacaoColuna(FiltroConsolidadoVendaCotaDTO.OrdenacaoColuna.valueOf(sortname));
 		filtro.setPaginacao(new PaginacaoVO(page, rp, sortorder));
 		
-		List<VendaEncalheDTO> encalheDTOs = consolidadoFinanceiroService
+		List<ConsultaVendaEncalheDTO> encalheDTOs = consolidadoFinanceiroService
 				.obterMovimentoVendaEncalhe(filtro);
 
-		TableModel<CellModelKeyValue<VendaEncalheDTO>> tableModel = new TableModel<CellModelKeyValue<VendaEncalheDTO>>();
+		TableModel<CellModelKeyValue<ConsultaVendaEncalheDTO>> tableModel = new TableModel<CellModelKeyValue<ConsultaVendaEncalheDTO>>();
 
 		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(encalheDTOs));
 		tableModel.setPage(1);
@@ -654,13 +654,13 @@ public class ContaCorrenteCotaController {
 		String cota = consolidado.getCota().getNumeroCota() + " - " + PessoaUtil.obterNomeExibicaoPeloTipo(consolidado.getCota().getPessoa());
 		filtro.setCota(cota);
 		
-		List<VendaEncalheDTO> encalheDTOs = consolidadoFinanceiroService
+		List<ConsultaVendaEncalheDTO> encalheDTOs = consolidadoFinanceiroService
 				.obterMovimentoVendaEncalhe(filtro);
 		
 		
 		HashMap<String, BigDecimal> totais = new HashMap<String, BigDecimal>();
 		
-		for(VendaEncalheDTO encalheDTO: encalheDTOs){
+		for(ConsultaVendaEncalheDTO encalheDTO: encalheDTOs){
 			String key = encalheDTO.getNomeFornecedor();
 			if(totais.containsKey(key)){				
 				totais.put(key, totais.get(key).add(encalheDTO.getTotal()));				
@@ -670,7 +670,7 @@ public class ContaCorrenteCotaController {
 		}
 		FileExporter.to("venda-encalhe", fileType).inHTTPResponse(
 				this.getNDSFileHeader(), filtro, new FooterTotalFornecedorVO(totais),
-				encalheDTOs, VendaEncalheDTO.class,
+				encalheDTOs, ConsultaVendaEncalheDTO.class,
 				this.httpServletResponse);
 		
 		result.use(Results.nothing());

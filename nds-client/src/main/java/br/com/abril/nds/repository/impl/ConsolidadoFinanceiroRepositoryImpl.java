@@ -12,7 +12,7 @@ import org.springframework.stereotype.Repository;
 import br.com.abril.nds.dto.ConsignadoCotaDTO;
 import br.com.abril.nds.dto.EncalheCotaDTO;
 import br.com.abril.nds.dto.FiltroConsolidadoConsignadoCotaDTO;
-import br.com.abril.nds.dto.VendaEncalheDTO;
+import br.com.abril.nds.dto.ConsultaVendaEncalheDTO;
 import br.com.abril.nds.dto.ViewContaCorrenteCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsolidadoEncalheCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsolidadoVendaCotaDTO;
@@ -198,7 +198,7 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 	}
 
 	@SuppressWarnings(value = "unchecked")
-	public List<VendaEncalheDTO> obterMovimentoVendaEncalhe(
+	public List<ConsultaVendaEncalheDTO> obterMovimentoVendaEncalhe(
 			FiltroConsolidadoVendaCotaDTO filtro) {
 		StringBuffer hql = new StringBuffer();
 
@@ -266,7 +266,7 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 		}
 
 		query.setResultTransformer(new AliasToBeanResultTransformer(
-				VendaEncalheDTO.class));
+				ConsultaVendaEncalheDTO.class));
 
 		return query.list();
 	}
