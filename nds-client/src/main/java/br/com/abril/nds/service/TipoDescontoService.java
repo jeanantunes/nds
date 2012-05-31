@@ -23,5 +23,7 @@ public interface TipoDescontoService {
 	Cota obterCota(int numeroCota);
 	
 	List<TipoDesconto> obterTodosTiposDescontos();
+	
+	TipoDesconto obterTipoDescontoPorID(Long id);
 }
 	

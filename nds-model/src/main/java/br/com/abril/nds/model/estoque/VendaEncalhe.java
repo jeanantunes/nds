@@ -6,6 +6,8 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -46,6 +48,10 @@ public class VendaEncalhe implements Serializable {
 	
 	@Column(name="VALOR_TOTAL_VENDA")
 	private BigDecimal valorTotalVenda;
+	
+	@Enumerated(EnumType.STRING)
+	@Column(name = "TIPO_VENDA_ENCALHE", nullable = false)
+	private TipoVendaEncalhe tipoVenda;
 
 	/**
 	 * @return the id
@@ -129,6 +135,20 @@ public class VendaEncalhe implements Serializable {
 	 */
 	public void setValorTotalVenda(BigDecimal valorTotalVenda) {
 		this.valorTotalVenda = valorTotalVenda;
+	}
+
+	/**
+	 * @return the tipoVenda
+	 */
+	public TipoVendaEncalhe getTipoVenda() {
+		return tipoVenda;
+	}
+
+	/**
+	 * @param tipoVenda the tipoVenda to set
+	 */
+	public void setTipoVenda(TipoVendaEncalhe tipoVenda) {
+		this.tipoVenda = tipoVenda;
 	}
 	
 	

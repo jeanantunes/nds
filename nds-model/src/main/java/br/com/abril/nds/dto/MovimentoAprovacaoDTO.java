@@ -3,6 +3,8 @@ package br.com.abril.nds.dto;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import br.com.abril.nds.model.aprovacao.StatusAprovacao;
+
 /**
  * Data Transfer Object para consulta de movimento para aprovação.
  * 
@@ -28,27 +30,15 @@ public class MovimentoAprovacaoDTO {
 	
 	private String nomeUsuarioRequerente;
 	
+	private StatusAprovacao statusMovimento;
+	
+	private String motivo;
+	
 	/**
 	 * Contrutor padrão
 	 */
 	public MovimentoAprovacaoDTO() {
 		
-	}
-	
-	public MovimentoAprovacaoDTO(Long idMovimento, String descricaoTipoMovimento,
-								 Date dataCriacao, Integer numeroCota, String nomeCota,
-								 BigDecimal valor, Integer parcelas, Integer prazo,
-								 String nomeUsuarioRequerente) {
-	
-		this.idMovimento = idMovimento;
-		this.descricaoTipoMovimento = descricaoTipoMovimento;
-		this.dataCriacao = dataCriacao;
-		this.numeroCota = numeroCota;
-		this.nomeCota = nomeCota;
-		this.valor = valor;
-		this.parcelas = parcelas;
-		this.prazo = prazo;
-		this.nomeUsuarioRequerente = nomeUsuarioRequerente;
 	}
 
 	/**
@@ -175,6 +165,34 @@ public class MovimentoAprovacaoDTO {
 	 */
 	public void setNomeUsuarioRequerente(String nomeUsuarioRequerente) {
 		this.nomeUsuarioRequerente = nomeUsuarioRequerente;
+	}
+
+	/**
+	 * @return the statusMovimento
+	 */
+	public StatusAprovacao getStatusMovimento() {
+		return statusMovimento;
+	}
+
+	/**
+	 * @param statusMovimento the statusMovimento to set
+	 */
+	public void setStatusMovimento(StatusAprovacao statusMovimento) {
+		this.statusMovimento = statusMovimento;
+	}
+
+	/**
+	 * @return the motivo
+	 */
+	public String getMotivo() {
+		return motivo;
+	}
+
+	/**
+	 * @param motivo the motivo to set
+	 */
+	public void setMotivo(String motivo) {
+		this.motivo = motivo;
 	}
 	
 }

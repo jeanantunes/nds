@@ -109,7 +109,7 @@
 			buttons : {
 				"Confirmar" : function() {
 					
-					$.postJSON("<c:url value='/administracao/controleAprovacao/aprovarMovimento' />", 
+					$.postJSON("${pageContext.request.contextPath}/administracao/controleAprovacao/aprovarMovimento", 
 							   "idMovimento=" + idMovimento,
 							   function(result) {
 							   		
@@ -153,7 +153,7 @@
 					
 					$("#motivoRejeicao").val(motivoRejeicao.trim());
 					
-					$.postJSON("<c:url value='/administracao/controleAprovacao/rejeitarMovimento' />", 
+					$.postJSON("${pageContext.request.contextPath}/administracao/controleAprovacao/rejeitarMovimento", 
 							   "idMovimento=" + idMovimento +
 							   "&motivo=" + motivoRejeicao,
 							   function(result) {
@@ -194,7 +194,7 @@
 		var dataMovimento = $("#dataMovimento").val();
 		
 		$(".solicitacoesAprovacao").flexOptions({
-			url: "<c:url value='/administracao/controleAprovacao/pesquisarAprovacoes' />",
+			url: "${pageContext.request.contextPath}/administracao/controleAprovacao/pesquisarAprovacoes",
 			params: [
 		         {name:'idTipoMovimento', value: idTipoMovimento},
 		         {name:'dataMovimentoFormatada', value: dataMovimento}
