@@ -301,6 +301,15 @@ public class ProdutoController {
 		this.result.use(Results.json()).from(porcentagem, "result").recursive().serialize();
 	}
 
+	/**
+	 * Salva o produto.
+	 * 
+	 * @param produto
+	 * @param codigoEditor
+	 * @param codigoFornecedor
+	 * @param codigoTipoDesconto
+	 * @param codigoTipoProduto
+	 */
 	@Post
 	public void salvarProduto(Produto produto, Long codigoEditor, Long codigoFornecedor, Long codigoTipoDesconto, 
 			Long codigoTipoProduto) {
@@ -316,13 +325,19 @@ public class ProdutoController {
 				codigoTipoDesconto, codigoTipoProduto);
 			
 		} catch (Exception e) {
-			e.printStackTrace();
+			this.result.use(Results.json()).from(
+				new ValidacaoVO(TipoMensagem.ERROR, "Erro ao tentar salvar o Produto!"), "result").recursive().serialize();
 		}
 		
 		this.result.use(Results.json()).from(
 			new ValidacaoVO(TipoMensagem.SUCCESS, "Produto salvo com sucesso!"), "result").recursive().serialize();
 	}
 	
+	/**
+	 * Carrega o produto para edição.
+	 * 
+	 * @param id
+	 */
 	@Post
 	public void carregarProdutoParaEdicao(Long id) {
 		
@@ -342,6 +357,15 @@ public class ProdutoController {
 		this.result.use(Results.json()).from(produtoCadastroVO, "result").recursive().serialize();
 	}
 	
+	/**
+	 * Valida o produto.
+	 * 
+	 * @param produto
+	 * @param codigoEditor
+	 * @param codigoFornecedor
+	 * @param codigoTipoDesconto
+	 * @param codigoTipoProduto
+	 */
 	private void validarProduto(Produto produto, Long codigoEditor, Long codigoFornecedor, 
 			Long codigoTipoDesconto, Long codigoTipoProduto) {
 
@@ -399,6 +423,12 @@ public class ProdutoController {
 		}
 	}
 		
+	/**
+	 * Parse para combo.
+	 * 
+	 * @param listaTipoDesconto
+	 * @return
+	 */
 	private List<BaseComboVO> parseComboTipoDesconto(List<TipoDesconto> listaTipoDesconto) {
 		
 		List<BaseComboVO> listaBaseComboVO = new ArrayList<BaseComboVO>();
@@ -411,7 +441,13 @@ public class ProdutoController {
 		
 		return listaBaseComboVO;
 	}
-
+	
+	/**
+	 * Parse para combo.
+	 * 
+	 * @param listaTipoProduto
+	 * @return
+	 */
 	private List<BaseComboVO> parseComboTipoProduto(List<TipoProduto> listaTipoProduto) {
 		
 		List<BaseComboVO> listaBaseComboVO = new ArrayList<BaseComboVO>();
@@ -424,7 +460,13 @@ public class ProdutoController {
 		
 		return listaBaseComboVO;
 	}
-
+	
+	/**
+	 * Parse para combo.
+	 * 
+	 * @param listaFornecedor
+	 * @return
+	 */
 	private List<BaseComboVO> parseComboFornecedor(List<Fornecedor> listaFornecedor) {
 		
 		List<BaseComboVO> listaBaseComboVO = new ArrayList<BaseComboVO>();
@@ -438,6 +480,12 @@ public class ProdutoController {
 		return listaBaseComboVO;
 	}
 
+	/**
+	 * Parse para combo.
+	 * 
+	 * @param listaEditor
+	 * @return
+	 */
 	private List<BaseComboVO> parseComboEditor(List<Editor> listaEditor) {
 		
 		List<BaseComboVO> listaBaseComboVO = new ArrayList<BaseComboVO>();
@@ -450,7 +498,12 @@ public class ProdutoController {
 		
 		return listaBaseComboVO;
 	}
-
+	
+	/**
+	 * Retorna o valor default para combo.
+	 * 
+	 * @return
+	 */
 	private BaseComboVO getDefaultBaseComboVO() {
 		return new BaseComboVO(0L, "");
 	}
