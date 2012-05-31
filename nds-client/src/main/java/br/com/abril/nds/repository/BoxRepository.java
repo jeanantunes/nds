@@ -6,6 +6,7 @@ import br.com.abril.nds.dto.CotaRotaRoteiroDTO;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Rota;
+import br.com.abril.nds.model.cadastro.Roteiro;
 import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
@@ -83,4 +84,18 @@ public interface BoxRepository extends Repository<Box,Long> {
 	public abstract List<CotaRotaRoteiroDTO> obtemCotaRotaRoteiro(long id);
 	
 	String obterCodigoBoxPadraoUsuario(Long idUsuario);
+
+	/**
+	 * Verifica se há {@link Cota} vincula ao {@link Box}
+	 * @param idBox
+	 * @return <code>true</code>Possui vinculo
+	 */
+	public abstract boolean hasCotasVinculadas(long idBox);
+
+	/**
+	 * Verifica se há {@link Roteiro} vincula ao {@link Box}
+	 * @param idBox
+	 * @return <code>true</code>Possui vinculo
+	 */
+	public abstract boolean hasRoteirosVinculados(long idBox);
 }

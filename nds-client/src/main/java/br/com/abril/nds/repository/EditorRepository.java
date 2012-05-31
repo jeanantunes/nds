@@ -9,7 +9,7 @@ import br.com.abril.nds.dto.filtro.FiltroCurvaABCEditorDTO;
 import br.com.abril.nds.dto.filtro.FiltroPesquisarHistoricoEditorDTO;
 import br.com.abril.nds.model.cadastro.Editor;
 
-public interface EditorRepository {
+public interface EditorRepository extends Repository<Editor, Long> {
 
 	public List<Editor> obterEditores();
 

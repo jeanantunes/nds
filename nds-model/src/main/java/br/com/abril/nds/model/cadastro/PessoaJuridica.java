@@ -23,7 +23,7 @@ public class PessoaJuridica extends Pessoa implements Serializable {
 	@Column(name = "RAZAO_SOCIAL")
 	private String razaoSocial;
 	
-	@Column(name = "NOME_FANTASIA")
+	@Column(name = "NOME_FANTASIA", length = 60)
 	private String nomeFantasia;
 	
 	@Column(name = "CNPJ", unique = true)

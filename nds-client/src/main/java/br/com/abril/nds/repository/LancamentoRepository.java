@@ -149,5 +149,18 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 			Calendar dataInicioRecolhimento, Calendar dataFimRecolhimento, String  orderBy, Ordenacao ordenacao, int initialResult,
 			int maxResults);
 
-	 
+	
+	/**
+	 * 
+	 * Obtém a ultima (mais atual) dataLancamentoDistribuidor de determinado 
+	 * produtoEdicao, sendo esta dataLancamentoDistribuidor anterior a dataOperacao passada
+	 * como parâmetro.
+	 * 
+	 * @param idProdutoEdicao
+	 * @param dataOperacao
+	 * 
+	 * @return Date
+	 */
+	public Date obterDataUltimoLancamentoParcial(Long idProdutoEdicao, Date dataOperacao);
+	
 }

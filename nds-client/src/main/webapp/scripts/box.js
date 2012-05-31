@@ -144,7 +144,7 @@ var boxController = {
 		});
 	},
 	editar : function(id) {
-		$.post(this.path + 'buscaPorId.json', {
+		$.postJSON(this.path + 'buscaPorId.json', {
 			'id' : id
 		}, function(data) {
 			if( typeof data.mensagens == "object") {
@@ -157,7 +157,9 @@ var boxController = {
 		});
 	},
 	bindData : function(data) {
-		this.box = data.box;		
+		this.box = data.box;
+		$("#boxCodigo,#boxTipoBox,#boxPostoAvancado").attr('disabled',data.associado);
+		
 		$("#boxCodigo").val(this.box.codigo);
 		$("#boxNome").val(this.box.nome);
 		$("#boxTipoBox").val(this.box.tipoBox);
@@ -211,19 +213,20 @@ var boxController = {
 		});
 	},
 	remove : function(id) {
-		$.post(this.path + 'remove.json', {
+		$.postJSON(this.path + 'remove.json', {
 			'id' : id
 		}, function(data) {
 			if( typeof data.mensagens == "object") {
 				exibirMensagem(data.mensagens.tipoMensagem, data.mensagens.listaMensagens);
-			} else {
-				$(".boxGrid").flexReload();
 			}
+			$(".boxGrid").flexReload();
+			
 		});
 	},
 	novo : function() {
 		var data = {
-			box : {}
+			box : {},
+			associado:false
 		};
 
 		this.bindData(data);

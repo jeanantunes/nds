@@ -9,15 +9,17 @@ import java.util.Map;
 import javax.servlet.http.HttpServletResponse;
 
 import org.codehaus.jackson.JsonParser;
+import org.codehaus.jackson.Version;
 import org.codehaus.jackson.map.DeserializationConfig;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.SerializationConfig;
-
-import com.fasterxml.jackson.module.hibernate.HibernateModule;
+import org.codehaus.jackson.map.module.SimpleModule;
 
 import br.com.caelum.vraptor.View;
 import br.com.caelum.vraptor.core.Localization;
 import br.com.caelum.vraptor.ioc.Component;
+
+import com.fasterxml.jackson.module.hibernate.HibernateModule;
 @Component
 public class CustomMapJson implements View {
 
@@ -33,10 +35,6 @@ public class CustomMapJson implements View {
 		this.response = response;
 		mapper = new ObjectMapper();
 		mapper.registerModule(new HibernateModule());
-		
-		
-		
-		
 		Locale locale = localization.getLocale();
 		if (locale == null) {
 			locale = Locale.getDefault();
@@ -46,7 +44,12 @@ public class CustomMapJson implements View {
 				.getDateInstance(DateFormat.MEDIUM, locale);
 		df.setLenient(false);
 		mapper.setDateFormat(df);
-
+		
+		
+		 SimpleModule testModule = new SimpleModule("DateSQL", new Version(1, 0, 0, null));
+		 
+		 testModule.addSerializer( new SqlDateSerializerBase(df));
+		 mapper.registerModule(testModule);
 		
 		mapper.configure(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 		mapper.configure(SerializationConfig.Feature.WRITE_DATES_AS_TIMESTAMPS, false);
@@ -58,6 +61,8 @@ public class CustomMapJson implements View {
 		mapper.configure(SerializationConfig.Feature.INDENT_OUTPUT, false);
 		mapper.configure(SerializationConfig.Feature.WRITE_NULL_MAP_VALUES,
 				false);
+		
+		
 
 	}
 	

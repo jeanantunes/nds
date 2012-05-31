@@ -19,6 +19,7 @@ import br.com.abril.nds.dto.filtro.FiltroDigitacaoContagemDevolucaoDTO;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
+import br.com.abril.nds.model.estoque.OperacaoEstoque;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.movimentacao.StatusOperacao;
 import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
@@ -52,6 +53,45 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepository<Movim
 		return query.list();
 		
 	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see br.com.abril.nds.repository.MovimentoEstoqueCotaRepository#obterQtdeMovimentoEstoqueCotaParaProdutoEdicaoNoPeriodo(java.lang.Long, java.lang.Long, java.util.Date, java.util.Date, br.com.abril.nds.model.estoque.OperacaoEstoque)
+	 */
+	public BigDecimal obterQtdeMovimentoEstoqueCotaParaProdutoEdicaoNoPeriodo(
+			Long idCota,
+			Long idProdutoEdicao,
+			Date dataInicial, 
+			Date dataFinal,
+			OperacaoEstoque operacaoEstoque) {
+		
+		StringBuffer hql = new StringBuffer();
+		
+		hql.append(" select sum(movimentoEstoqueCota.qtde) ");			
+		
+		hql.append(" from MovimentoEstoqueCota movimentoEstoqueCota ");
+		
+		hql.append(" where movimentoEstoqueCota.data between :dataInicial and :dataFinal and ");
+
+		hql.append(" movimentoEstoqueCota.cota.id = :idCota and ");
+		
+		hql.append(" movimentoEstoqueCota.produtoEdicao.id = :idProdutoEdicao and ");
+		
+		hql.append(" movimentoEstoqueCota.tipoMovimento.operacaoEstoque = :operacaoEstoque ");
+		
+		Query query = getSession().createQuery(hql.toString());
+		
+		query.setParameter("dataInicial", dataInicial);
+		query.setParameter("dataFinal", dataFinal);
+		query.setParameter("idCota", idCota);
+		query.setParameter("idProdutoEdicao", idProdutoEdicao);
+		query.setParameter("operacaoEstoque", operacaoEstoque);
+		
+		return (BigDecimal) query.uniqueResult();
+		
+	}
+
+	
 	
 	/*
 	 * (non-Javadoc)

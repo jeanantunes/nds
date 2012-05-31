@@ -10,6 +10,7 @@ import br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroDigitacaoContagemDevolucaoDTO;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
+import br.com.abril.nds.model.estoque.OperacaoEstoque;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 
 
@@ -120,5 +121,26 @@ public interface MovimentoEstoqueCotaRepository extends Repository<MovimentoEsto
 	 * @return List - ConsultaEncalhe
 	 */
 	public  List<ConsultaEncalheDTO> obterListaConsultaEncalhe(FiltroConsultaEncalheDTO filtro);
+	
+	
+	/**
+	 * 
+	 * Obtém a quantidade de movimento para determinados produtoEdicao e cota de
+	 * acordo com o range de data informado.
+	 * 
+	 * @param idCota
+	 * @param idProdutoEdicao
+	 * @param dataInicial
+	 * @param dataFinal
+	 * @param operacaoEstoque
+	 * 
+	 * @return BigDecimal
+	 */
+	public BigDecimal obterQtdeMovimentoEstoqueCotaParaProdutoEdicaoNoPeriodo(
+			Long idCota,
+			Long idProdutoEdicao,
+			Date dataInicial, 
+			Date dataFinal,
+			OperacaoEstoque operacaoEstoque);
 	
 }

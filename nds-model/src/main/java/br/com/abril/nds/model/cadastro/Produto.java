@@ -40,14 +40,14 @@ public class Produto implements Serializable {
 	@Column(name = "ID")
 	private Long id;
 	
-	@Column(name = "CODIGO", unique = true)
+	@Column(name = "CODIGO", unique = true, length = 30)
 	private String codigo;
 	
 	@Enumerated(EnumType.STRING)
 	@Column(name = "PERIODICIDADE", nullable = false)
 	private PeriodicidadeProduto periodicidade;
 	
-	@Column(name = "NOME", nullable = false, unique = true)
+	@Column(name = "NOME", nullable = false, unique = true, length = 60)
 	private String nome;
 	
 	@Column(name = "DESCRICAO")
@@ -98,6 +98,34 @@ public class Produto implements Serializable {
 	@Embedded
 	private Dimensao dimensao;
 
+	@Column(name="LANCAMENTO_IMEDIATO", nullable = true)
+	private Boolean lancamentoImediato;
+
+	@Column(name="PERCENTUAl_ABRANGENCIA", nullable = true)
+	private Double percentualAbrangencia;
+
+	@Enumerated(EnumType.STRING)
+	@Column(name = "TRIBUTACAO_FISCAL", nullable = true)
+	private TributacaoFiscal tributacaoFiscal; 
+
+	@Enumerated(EnumType.STRING)
+	@Column(name = "SITUACAO_TRIBUTARIA", nullable = true)
+	private SituacaoTributaria situacaoTributaria; 
+
+	@Enumerated(EnumType.STRING)
+	@Column(name = "FORMA_COMERCIALIZACAO", nullable = true)
+	private FormaComercializacao formaComercializacao; 
+
+	@Column(name = "PERC_LIMITE_COTA_FIXACAO", nullable = true)
+	private Double percentualLimiteCotaFixacao;
+
+	@Column(name = "PERC_LIMITE_REPARTE_FIXACAO", nullable = true)
+	private Double percentualLimiteReparteFixacao;
+
+	@ManyToOne(optional = true)
+	@JoinColumn(name = "ALGORITMO_ID")
+	private Algoritmo algoritmo;
+	
 	public Long getId() {
 		return id;
 	}
@@ -300,6 +328,119 @@ public class Produto implements Serializable {
 
 	public void setOrigemInterface(Boolean origemInterface) {
 		this.origemInterface = origemInterface;
+	}
+
+	/**
+	 * @return the lancamentoImediato
+	 */
+	public Boolean getLancamentoImediato() {
+		return lancamentoImediato;
+	}
+
+	/**
+	 * @param lancamentoImediato the lancamentoImediato to set
+	 */
+	public void setLancamentoImediato(Boolean lancamentoImediato) {
+		this.lancamentoImediato = lancamentoImediato;
+	}
+
+	/**
+	 * @return the percentualAbrangencia
+	 */
+	public Double getPercentualAbrangencia() {
+		return percentualAbrangencia;
+	}
+
+	/**
+	 * @param percentualAbrangencia the percentualAbrangencia to set
+	 */
+	public void setPercentualAbrangencia(Double percentualAbrangencia) {
+		this.percentualAbrangencia = percentualAbrangencia;
+	}
+
+	/**
+	 * @return the tributacaoFiscal
+	 */
+	public TributacaoFiscal getTributacaoFiscal() {
+		return tributacaoFiscal;
+	}
+
+	/**
+	 * @param tributacaoFiscal the tributacaoFiscal to set
+	 */
+	public void setTributacaoFiscal(TributacaoFiscal tributacaoFiscal) {
+		this.tributacaoFiscal = tributacaoFiscal;
+	}
+
+	/**
+	 * @return the situacaoTributaria
+	 */
+	public SituacaoTributaria getSituacaoTributaria() {
+		return situacaoTributaria;
+	}
+
+	/**
+	 * @param situacaoTributaria the situacaoTributaria to set
+	 */
+	public void setSituacaoTributaria(SituacaoTributaria situacaoTributaria) {
+		this.situacaoTributaria = situacaoTributaria;
+	}
+
+	/**
+	 * @return the formaComercializacao
+	 */
+	public FormaComercializacao getFormaComercializacao() {
+		return formaComercializacao;
+	}
+
+	/**
+	 * @param formaComercializacao the formaComercializacao to set
+	 */
+	public void setFormaComercializacao(FormaComercializacao formaComercializacao) {
+		this.formaComercializacao = formaComercializacao;
+	}
+
+	/**
+	 * @return the percentualLimiteCotaFixacao
+	 */
+	public Double getPercentualLimiteCotaFixacao() {
+		return percentualLimiteCotaFixacao;
+	}
+
+	/**
+	 * @param percentualLimiteCotaFixacao the percentualLimiteCotaFixacao to set
+	 */
+	public void setPercentualLimiteCotaFixacao(Double percentualLimiteCotaFixacao) {
+		this.percentualLimiteCotaFixacao = percentualLimiteCotaFixacao;
+	}
+
+	/**
+	 * @return the percentualLimiteReparteFixacao
+	 */
+	public Double getPercentualLimiteReparteFixacao() {
+		return percentualLimiteReparteFixacao;
+	}
+
+	/**
+	 * @param percentualLimiteReparteFixacao the percentualLimiteReparteFixacao to set
+	 */
+	public void setPercentualLimiteReparteFixacao(
+			Double percentualLimiteReparteFixacao) {
+		this.percentualLimiteReparteFixacao = percentualLimiteReparteFixacao;
+	}
+
+	/**
+	 * @return the algoritmo
+	 */
+	public Algoritmo getAlgoritmo() {
+		return algoritmo;
+	}
+
+	/**
+	 * @param algoritmo the algoritmo to set
+	 */
+	public void setAlgoritmo(Algoritmo algoritmo) {
+		this.algoritmo = algoritmo;
 	}
 	
 }

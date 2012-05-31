@@ -6,7 +6,6 @@ import java.util.List;
 
 import br.com.abril.nds.dto.StatusDividaDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaInadimplenteDTO;
-import br.com.abril.nds.model.financeiro.Cobranca;
 import br.com.abril.nds.model.financeiro.Divida;
 
 public interface DividaService {
@@ -69,6 +68,6 @@ public interface DividaService {
 	 * @param listaCodigosCotas
 	 * @param dataPostergacao
 	 */
-	void postergarCobrancaCota(List<Cobranca> listaCobranca, Date dataPostergacao, BigDecimal encargos);
+	void postergarCobrancaCota(List<Long> listaIdsCobranca, Date dataPostergacao, BigDecimal juros, BigDecimal multa);
 
 }

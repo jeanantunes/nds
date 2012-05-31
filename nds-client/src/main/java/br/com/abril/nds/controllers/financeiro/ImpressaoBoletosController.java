@@ -163,13 +163,13 @@ public class ImpressaoBoletosController {
 	 * @param rotas
 	 * @return List<ItemDTO<Long, String>>
 	 */
-	private List<ItemDTO<String, String>> getRotas(List<Rota> rotas){
+	private List<ItemDTO<Long, String>> getRotas(List<Rota> rotas){
 		
-		List<ItemDTO<String, String>> listaRotas = new ArrayList<ItemDTO<String,String>>();
+		List<ItemDTO<Long, String>> listaRotas = new ArrayList<ItemDTO<Long,String>>();
 		
 		for(Rota rota : rotas){
 			
-			listaRotas.add(new ItemDTO<String, String>(rota.getCodigoRota(),rota.getCodigoRota()));
+			listaRotas.add(new ItemDTO<Long, String>(rota.getId(),rota.getCodigoRota()));
 		}
 		
 		return listaRotas;
@@ -190,23 +190,23 @@ public class ImpressaoBoletosController {
 	 * @param roteiros - lista de roteiros
 	 * @return List<ItemDTO<Long, String>> 
 	 */
-	private List<ItemDTO<String, String>> getRoteiros(List<Roteiro> roteiros){
+	private List<ItemDTO<Long, String>> getRoteiros(List<Roteiro> roteiros){
 		
-		List<ItemDTO<String, String>> listaRoteiros = new ArrayList<ItemDTO<String,String>>();
+		List<ItemDTO<Long, String>> listaRoteiros = new ArrayList<ItemDTO<Long,String>>();
 		
 		for(Roteiro roteiro : roteiros){
 			
-			listaRoteiros.add(new ItemDTO<String, String>(roteiro.getDescricaoRoteiro(),roteiro.getDescricaoRoteiro()));
+			listaRoteiros.add(new ItemDTO<Long, String>(roteiro.getId(),roteiro.getDescricaoRoteiro()));
 		}
 		return listaRoteiros;
 	}
 	
 	@Post
-	public void recarregarListaRotas(String roteiro){
+	public void recarregarListaRotas(Long roteiro){
 		
 		List<Rota> rotas = null;
 		
-		if(roteiro!= null && !roteiro.isEmpty()){
+		if(roteiro!= null){
 
 			rotas = roteirizacaoService.buscarRotaPorRoteiro(roteiro);
 		}
@@ -254,8 +254,8 @@ public class ImpressaoBoletosController {
 	
 	@Post
 	@Path("/consultar")
-	public void consultarDividas(String dataMovimento,String box, String rota,
-								 String roteiro,Integer numCota,TipoCobranca tipoCobranca, String sortorder, 
+	public void consultarDividas(String dataMovimento,Long box, Long rota,
+								 Long roteiro,Integer numCota,TipoCobranca tipoCobranca, String sortorder, 
 								 String sortname, int page, int rp){
 		
 		isDataMovimento(dataMovimento);
@@ -285,17 +285,17 @@ public class ImpressaoBoletosController {
 									&& roteirizacao.getPdv().getCota()!= null 
 									&& roteirizacao.getPdv().getCota().getBox()!= null)
 									
-									? roteirizacao.getPdv().getCota().getBox().getId().toString():"");
+									? roteirizacao.getPdv().getCota().getBox().getId():null);
 			
 			
 			rotaRoteiroVO.setRota((roteirizacao.getRota()!= null)
 					
-									? roteirizacao.getRota().getCodigoRota():"");
+									? roteirizacao.getRota().getId():null);
 			
 			rotaRoteiroVO.setRoteiro((roteirizacao.getRota()!= null 
 										&& roteirizacao.getRota().getRoteiro()!= null)
 					
-										?roteirizacao.getRota().getRoteiro().getDescricaoRoteiro():"");
+										?roteirizacao.getRota().getRoteiro().getId():null);
 			
 			FormaCobranca formaCobrancaPrincipal = this.financeiroService.obterFormaCobrancaPrincipalCota(roteirizacao.getPdv().getCota().getId());
 			
@@ -359,6 +359,29 @@ public class ImpressaoBoletosController {
 					}
 				}
 			}
+			
+			if(filtro.getIdBox()!= null){
+				Box box = boxService.buscarPorId(filtro.getIdBox());
+				
+				if(box!= null){
+					filtro.setCodigoBox(box.getCodigo());
+				}
+			}
+			
+			if(filtro.getIdRota()!= null){
+				Rota rota = roteirizacaoService.buscarRotaPorId(filtro.getIdRota());
+				if(rota!= null){
+					filtro.setRota(rota.getCodigoRota());
+				}
+			}
+			
+			if(filtro.getIdRoteiro()!= null){
+				Roteiro roteiro = roteirizacaoService.buscarRoteiroPorId(filtro.getIdRoteiro());
+				if(roteiro!= null){
+					filtro.setRoteiro(roteiro.getDescricaoRoteiro());
+				}
+			}
+			
 		}
 		
 		return filtro;

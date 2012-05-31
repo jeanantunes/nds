@@ -162,16 +162,16 @@ public class DividaRepositoryImpl extends AbstractRepository<Divida, Long> imple
 			param.put("tipoCobranca",filtro.getTipoCobranca());
 		}
 		
-		if(filtro.getCodigoBox()!= null && !filtro.getCodigoBox().isEmpty()){
-			param.put("box",filtro.getCodigoBox() + "%");
+		if(filtro.getIdBox()!= null ){
+			param.put("box",filtro.getIdBox());
 		}
 		
-		if(filtro.getRota()!= null && !filtro.getRota().isEmpty()){
-			param.put("rota",filtro.getRota() +"%");
+		if(filtro.getIdRota()!= null){
+			param.put("rota",filtro.getIdRota());
 		}
 		
-		if(filtro.getRoteiro()!= null && !filtro.getRoteiro().isEmpty()){
-			param.put("roteiro",filtro.getRoteiro() + "%" );
+		if(filtro.getIdRoteiro()!= null){
+			param.put("roteiro",filtro.getIdRoteiro());
 		}
 		
 		return param;
@@ -217,10 +217,10 @@ public class DividaRepositoryImpl extends AbstractRepository<Divida, Long> imple
 		.append(" JOIN cota.pdvs pdv ")
 		.append(" JOIN cota.pessoa pessoa ")
 		.append(" JOIN cota.parametroCobranca parametroCobranca ")
-		.append(" LEFT JOIN cota.box box")
 		.append(" LEFT JOIN pdv.roteirizacao roteirizacao ")
 		.append(" LEFT JOIN roteirizacao.rota rota  ")
 		.append(" LEFT JOIN rota.roteiro roteiro ")
+		.append(" LEFT JOIN cota.box box")
 		
 		.append(" WHERE ")
 		
@@ -228,7 +228,7 @@ public class DividaRepositoryImpl extends AbstractRepository<Divida, Long> imple
 		.append(" AND divida.acumulada =:acumulaDivida ")
 		.append(" AND cobranca.statusCobranca=:statusCobranca ")
 		.append(" AND pdv.caracteristicas.pontoPrincipal = true ")
-		.append(" AND roteiro.tipoRoteiro is null OR roteiro.tipoRoteiro=:tipoRoteiro ");
+		.append(" AND (roteiro.tipoRoteiro is null OR roteiro.tipoRoteiro=:tipoRoteiro) ");
 		
 		if(filtro.getNumeroCota()!= null  ){
 			hql.append(" AND cota.numeroCota =:numeroCota ");
@@ -243,16 +243,16 @@ public class DividaRepositoryImpl extends AbstractRepository<Divida, Long> imple
 			hql.append(" AND cobranca.tipoCobranca not in (:tipoCobrancaBoleto ) ");
 		}
 		
-		if(filtro.getCodigoBox()!= null && !filtro.getCodigoBox().isEmpty()){
-			hql.append(" AND upper(box.codigo) like upper(:box) ");
+		if(filtro.getIdBox()!= null ){
+			hql.append(" AND box.id =:box ");
 		}
 		
-		if(filtro.getRota()!= null && !filtro.getRota().isEmpty()){
-			hql.append(" AND upper(rota.codigoRota) like upper(:rota)");
+		if(filtro.getIdRota()!= null){
+			hql.append(" AND rota.id =:rota ");
 		}
 		
-		if(filtro.getRoteiro()!= null && !filtro.getRoteiro().isEmpty()){
-			hql.append(" AND upper(roteiro.descricaoRoteiro) like (:roteiro)");
+		if(filtro.getIdRoteiro()!= null ){
+			hql.append(" AND roteiro.id =:roteiro ");
 		}
 		
 		return hql.toString();

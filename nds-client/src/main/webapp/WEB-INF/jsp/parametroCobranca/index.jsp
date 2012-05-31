@@ -139,7 +139,7 @@
 
 		$( "#dialog-novo" ).dialog({
 			resizable: false,
-			height:720,
+			height:680,
 			width:890,
 			modal: true,
 			buttons: {
@@ -166,7 +166,7 @@
 		
 		$( "#dialog-novo" ).dialog({
 			resizable: false,
-			height:720,
+			height:680,
 			width:890,
 			modal: true,
 			buttons: {
@@ -899,7 +899,7 @@
     
 	<form name="formularioFormaCobranca" id="formularioFormaCobranca">		
                          
-	    <table width="434" height="25" border="0" cellpadding="1" cellspacing="1">
+	    <table width="800" height="25" border="0" cellpadding="1" cellspacing="1">
 		    
 		     <tr class="header_table">
 		         <td align="left">Fornecedores</td>
@@ -910,7 +910,7 @@
 	         <tr>
 	         
                
-                <td width="170" align="left" valign="top" style="border:1px solid #ccc;">
+                 <td width="400" align="left" valign="top" style="border:1px solid #ccc;">
 
 	                 <table width="168" border="0" cellspacing="1" cellpadding="1">
 	                     <div id="fornecedores"/>
@@ -922,12 +922,11 @@
 		                 <br clear="all" />
 	                 </p>
                  
-                </td>
-               
+                 </td>
                  
                  
-			     <td width="21" align="left" valign="top">&nbsp;</td>
-			     <td width="233" align="left" valign="top"style="border:1px solid #ccc;">
+			     <td width="6" align="left" valign="top">&nbsp;</td>
+			     <td width="148" align="left" valign="top"style="border:1px solid #ccc;">
 
 			         <table width="100%" border="0" cellspacing="1" cellpadding="1">
 				         <tr>

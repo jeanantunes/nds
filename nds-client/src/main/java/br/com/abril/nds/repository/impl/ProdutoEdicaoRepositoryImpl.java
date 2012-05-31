@@ -301,7 +301,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepository<ProdutoEdica
 			String sortorder, String sortname, int initialResult, int maxResults) {
 		
 		StringBuilder hql = new StringBuilder();
-		hql.append(" SELECT pr.codigo as codigoProduto, pe.nomeComercial as nomeProduto, ");
+		hql.append(" SELECT pr.codigo as codigoProduto, pr.descricao as nomeProduto, ");
 		hql.append("        pe.numeroEdicao as numeroEdicao, jr.razaoSocial as nomeFornecedor, ");
 		hql.append("        ln.tipoLancamento as statusLancamento, ln.status as statusSituacao, ");
 		hql.append("        pe.possuiBrinde as temBrinde ");
@@ -370,7 +370,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepository<ProdutoEdica
 			hql.append("  AND UPPER(pr.codigo) LIKE UPPER(:codigoProduto) ");
 		}
 		if (dto.getNomeProduto() != null && dto.getNomeProduto().trim().length() > 0) {
-			hql.append("  AND UPPER(pe.nomeComercial) LIKE UPPER(:nomeProduto) ");
+			hql.append("  AND UPPER(pr.descricao) LIKE UPPER(:nomeProduto) ");
 		}
 		if (dto.getCodigoDeBarras() != null && dto.getCodigoDeBarras().trim().length() > 0) {
 			hql.append("  AND pe.codigoDeBarras LIKE :codigoDeBarras ");

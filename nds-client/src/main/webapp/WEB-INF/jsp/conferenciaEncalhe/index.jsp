@@ -133,7 +133,7 @@
 				
 				<div style="overflow: auto; height: 250px; border: 1px #EEEEEE solid;">
 					<table class="conferenciaEncalheGrid gridTeste" style="width: 941px;" id="dadosGridConferenciaEncalhe">
-						<tr id="dadosTabelaConferencia" class="header_table">
+						<tr class="header_table">
 							<td style="width: 65px; text-align: left;">Exemplares</td>
 							<td style="width: 165px; text-align: left;">Código de Barras</td>
 							<td style="width: 50px; text-align: center;">SM</td>
