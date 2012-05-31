@@ -170,5 +170,4 @@ public interface ProdutoEdicaoRepository extends Repository<ProdutoEdicao, Long>
 	 */
 	public boolean hasProdutoEdicao(Produto produto);
 	
-	
 }
