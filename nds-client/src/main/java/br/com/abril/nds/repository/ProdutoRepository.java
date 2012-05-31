@@ -48,4 +48,6 @@ public interface ProdutoRepository extends Repository<Produto, Long> {
 	Integer pesquisarCountProdutos(String codigo, String produto,
 			String fornecedor, String editor, Long codigoTipoProduto);
 
+	Produto obterProdutoPorID(Long id);
+	
 }

@@ -10,7 +10,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.ConsultaProdutoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
-import br.com.abril.nds.model.cadastro.Dimensao;
 import br.com.abril.nds.model.cadastro.Editor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
@@ -154,24 +153,17 @@ public class ProdutoServiceImpl implements ProdutoService {
 		
 		return false;
 	}
-
+	
+	/**
+	 * @see br.com.abril.nds.service.ProdutoService#salvarProduto(br.com.abril.nds.model.cadastro.Produto, java.lang.Long, java.lang.Long, java.lang.Long, java.lang.Long)
+	 */
 	@Override
 	@Transactional
-	public void salvarProduto(Long id, String codigo, String nomeProduto, Long codigoEditor, Long codigoFornecedor,
-			String sloganProduto, Long codigoTipoDesconto, Long codigoTipoProduto, String formaComercializacao, Integer peb, 
-			Integer pacotePadrao, String periodicidade, Double percentualAbrangencia, String algoritmo, boolean parametrosAbertos, 
-			boolean lancamentoImediato, Double comprimento, Double espessura, Double largura, Double peso, 
-			String tributacaoFiscal, String situacaoTributaria, String classeHistogramaAnalitico, Double percentualCotaFixacao,
-			Double percentualReparteFixacao, String grupoEditorial, String subGrupoEditorial) {
+	public void salvarProduto(Produto produto, Long codigoEditor,
+			Long codigoFornecedor, Long codigoTipoDesconto,
+			Long codigoTipoProduto) {
 		
 		try {
-			
-			Produto produto = new Produto();
-			
-			produto.setId(id);
-			produto.setCodigo(codigo);
-			produto.setNome(nomeProduto);
-			produto.setSlogan(sloganProduto);
 			
 			Editor editor =	this.editorRepository.buscarPorId(codigoEditor);
 			produto.setEditor(editor);
@@ -182,24 +174,23 @@ public class ProdutoServiceImpl implements ProdutoService {
 			TipoProduto tipoProduto = this.tipoProdutoRepository.buscarPorId(codigoTipoProduto);
 			produto.setTipoProduto(tipoProduto);
 			
-			produto.setPeb(peb);
-			produto.setPacotePadrao(pacotePadrao);
-			
 			produto.setPeriodicidade(PeriodicidadeProduto.QUINZENAL);
 			produto.setPeso(BigDecimal.TEN);
 			
-			Dimensao dimensao = new Dimensao();
-			dimensao.setComprimento(comprimento.floatValue());
-			dimensao.setEspessura(espessura.floatValue());
-			dimensao.setLargura(largura.floatValue());
-			
-			produto.setDimensao(dimensao);
-			
-			this.produtoRepository.adicionar(produto);
+			this.produtoRepository.merge(produto);
 			
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
+	}
+
+	@Override
+	@Transactional(readOnly=true)
+	public Produto obterProdutoPorID(Long id) {
+
+		Produto produto = this.produtoRepository.obterProdutoPorID(id);
+				
+		return produto;
 	}
 	
 }

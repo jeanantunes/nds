@@ -2,7 +2,10 @@ package br.com.abril.nds.repository.impl;
 
 import java.util.List;
 
+import org.hibernate.Criteria;
+import org.hibernate.FetchMode;
 import org.hibernate.Query;
+import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Repository;
 
@@ -79,7 +82,7 @@ public class ProdutoRepositoryImpl extends AbstractRepository<Produto, Long> imp
 			String fornecedor, String editor, Long codigoTipoProduto,
 			String sortorder, String sortname, int page, int rp) {
 		
-		String hql = "select produto.id as id, produto.codigo as codigo, produto.descricao as produtoDescricao, ";
+		String hql = "select produto.id as id, produto.codigo as codigo, produto.nome as produtoDescricao, ";
 		hql += " tipoProduto.descricao as tipoProdutoDescricao, editor.nome as nomeEditor, ";
 		hql += " juridica.razaoSocial as tipoContratoFornecedor, ";
 		hql += " fornecedor.situacaoCadastro as situacao, ";
@@ -141,7 +144,7 @@ public class ProdutoRepositoryImpl extends AbstractRepository<Produto, Long> imp
 		}
 		
 		if (produto != null && !produto.isEmpty()) {
-			hql += " and produto.descricao like :produto ";
+			hql += " and produto.nome like :produto ";
 		}
 		
 		if (fornecedor != null && !fornecedor.isEmpty()) {
@@ -184,6 +187,15 @@ public class ProdutoRepositoryImpl extends AbstractRepository<Produto, Long> imp
 		
 		return query;
 	}
-	
+
+	@Override
+	public Produto obterProdutoPorID(Long id) {
+		
+		Criteria criteria = super.getSession().createCriteria(Produto.class);
+		
+		criteria.add(Restrictions.eq("id", id)).setFetchMode("fornecedores", FetchMode.JOIN);
+		
+		return (Produto) criteria.uniqueResult();
+	}
 	
 }
