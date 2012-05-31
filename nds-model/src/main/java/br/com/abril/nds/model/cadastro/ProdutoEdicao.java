@@ -69,6 +69,9 @@ public class ProdutoEdicao implements Serializable {
 	@Column(name = "PRECO_PREVISTO", nullable = true)
 	protected BigDecimal precoPrevisto;
 	
+	@Column(name = "REPARTE_DISTRIBUIDO", nullable = true)
+	protected BigDecimal reparteDistribuido;
+	
 	@Column(name = "DESCONTO")
 	protected BigDecimal desconto = BigDecimal.ZERO;
 	
@@ -440,4 +443,19 @@ public class ProdutoEdicao implements Serializable {
 	public void setDescontoLogistica(DescontoLogistica descontoLogistica) {
 		this.descontoLogistica = descontoLogistica;
 	}
+
+	/**
+	 * @return the reparteDistribuido
+	 */
+	public BigDecimal getReparteDistribuido() {
+		return reparteDistribuido;
+	}
+
+	/**
+	 * @param reparteDistribuido the reparteDistribuido to set
+	 */
+	public void setReparteDistribuido(BigDecimal reparteDistribuido) {
+		this.reparteDistribuido = reparteDistribuido;
+	}
+	
 }
