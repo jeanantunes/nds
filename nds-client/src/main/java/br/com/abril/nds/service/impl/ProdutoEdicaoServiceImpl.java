@@ -277,7 +277,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 		}
 		
 		// TODO: Popular ProdutoEdicao:
-		// TODO: implementar atributo: 
+		// TODO: implementar atributos: 
 		dto.getCodigoProduto();	// codigodaedicao
 		produtoEdicao.setNomeComercial(dto.getNomeComercialProduto());
 		produtoEdicao.setNumeroEdicao(dto.getNumeroEdicao());
@@ -289,16 +289,16 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 		BigDecimal repartePromocional = dto.getRepartePromocional();
 		produtoEdicao.setReparteDistribuido(repartePrevisto.add(repartePromocional));
 		
-		dto.getCodigoDeBarras();
-		dto.getCodigoDeBarrasCorporativo();
+		produtoEdicao.setCodigoDeBarras(dto.getCodigoDeBarras());
+		dto.getCodigoDeBarrasCorporativo(); // FIXME: INCLUIR
 		produtoEdicao.setDesconto(dto.getDesconto());
-		dto.getChamadaCapa();
-		dto.isParcial();
-		dto.isPossuiBrinde();
+		produtoEdicao.setChamadaCapa(dto.getChamadaCapa());
+		produtoEdicao.setParcial(dto.isParcial());
+		produtoEdicao.setPossuiBrinde(dto.isPossuiBrinde());
 		
 		produtoEdicao.setPeso(dto.getPeso());
-		dto.getAltura();
-		dto.getLargura();
+		dto.getAltura();	 // FIXME: INCLUIR
+		dto.getLargura();	 // FIXME: INCLUIR
 		
 		if (produtoEdicao.getId() == null) {
 			
@@ -317,10 +317,14 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 			// update
 			
 			// TODO: Regra: Edição - permitir alteração do código de edição se o status não for LANÇADO;
+				dto.getCodigoProduto();
+				
+			
+			
+			
 			// TODO: No final, salvar na tabela de lançamento tb 
 			
 		}		
-		
 		
 		
 		// Salvar imagem:
@@ -328,6 +332,15 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 			capaService.saveCapa(produtoEdicao.getId(), contentType, imgInputStream);
 		}
 	}
+	
+	/**
+	 * 
+	 * @param idProdutoEdicao
+	 */
+	public void excluirProdutoEdicao(Long idProdutoEdicao) {
+		
+	}
+	
 	
 	/**
 	 * Transforma o valor em formato String para BigDecimal.<br>
