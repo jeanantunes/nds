@@ -22,7 +22,7 @@ public class EditorServiceImpl implements EditorService {
 	private EditorRepository editorRepository;
 	
 	@Override
-	@Transactional
+	@Transactional(readOnly=true)
 	public List<Editor> obterEditores() {
 		return editorRepository.obterEditores();
 	}
