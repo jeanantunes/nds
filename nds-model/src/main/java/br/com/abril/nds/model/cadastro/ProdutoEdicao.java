@@ -462,5 +462,4 @@ public class ProdutoEdicao implements Serializable {
 		this.reparteDistribuido = reparteDistribuido;
 	}
 	
-	
 }
