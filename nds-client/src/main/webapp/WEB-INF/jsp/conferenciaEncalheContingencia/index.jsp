@@ -11,6 +11,12 @@
 	<script type="text/javascript" src='<c:url value="/"/>/scripts/shortcut.js'></script>
 	
 	<script type="text/javascript" src='<c:url value="/"/>/scripts/scriptConferenciaEncalheCont.js'></script>
+	
+	<style type="text/css">
+		.gridTeste tr:hover{
+			background: none repeat scroll 0 0 #D9EBF5;
+		}
+	</style>
 </head>
 
 <body>
@@ -52,6 +58,24 @@
 			<legend>Encalhes Cadastrados</legend>
 			<div class="grids" style="display: noneA;">
 				<table class="conferenciaEncalheContGrid"></table>
+				
+				<div style="overflow: auto; height: 250px; border: 1px #EEEEEE solid;">
+					<table class="conferenciaEncalheGrid gridTeste" style="width: 941px;" id="dadosGridConferenciaEncalhe">
+						<tr class="header_table">
+							<td style="width: 70px; text-align: left;">Código</td>
+							<td style="width: 150px; text-align: left;">Produto</td>
+							<td style="width: 80px; text-align: center;">Edição</td>
+							<td style="width: 80px; text-align: center;">Recolhimento</td>
+							<td style="width: 80px; text-align: right;">Preço Capa R$</td>
+							<td style="width: 70px; text-align: right;">Desconto R$</td>
+							<td style="width: 100px; text-align: center;">Exemplares</td>
+							<td style="width: 100px; text-align: right;">Total R$</td>
+							<td style="width: 70px; text-align: center;">Juramentada</td>
+						</tr>
+					</table>
+				</div>
+				
+				
 				<br />
 				
 				<table width="100%" border="0" cellspacing="2" cellpadding="2" class="totais">
