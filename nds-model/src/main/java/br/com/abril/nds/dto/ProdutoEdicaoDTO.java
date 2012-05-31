@@ -44,25 +44,38 @@ public class ProdutoEdicaoDTO implements Serializable {
 	private String statusSituacao;
 	private String temBrinde;
 	
+	// Listas e comboBox para Incluir/Alterar:
+	private List<ProdutoEdicaoDTO> ultimasEdicoes;
+	private List<TipoLancamento> tiposLancamentos;
 	
 	// Campos para cadastrar uma nova Edição:
-	private List<ProdutoEdicaoDTO> ultimasEdicoes;
-	// codigoProduto; nomeProduto;
+	// codigoProduto;
 	private String nomeComercialProduto;
-	// nomeFornecedor; statusSituacao; numeroEdicao;
-	
-	//
-	// fase; n. lancamento; pct. padrao; 
-	
-	private List<TipoLancamento> tiposLancamentos;
+	// numeroEdicao; pacotePadrao;
 	private BigDecimal precoPrevisto;
 	// precoVenda; (Real)
+	private BigDecimal repartePrevisto;
+	private BigDecimal reparteDistribuido;
+	private BigDecimal repartePromocional;
+	// codigoDeBarras
+	private String codigoDeBarrasCorporativo;
+	// desconto;
+	private String chamadaCapa;
+	// parcial;	-- Regime de Recolhimento;
+	// brinde;
+	// peso;
+	private BigDecimal altura;
+	private BigDecimal largura;
+	private String boletimInformativo;
+	
+	
+	// Lancamento:
+	// tipoLancamento;
 	private Date dataLancamentoPrevisto;
 	// dataLancamento; (Real)
+	// categoria;
 	
-	private String repartePrevisto;
-	private String reparteDistribuido;
-	private String repartePromocional;
+	
 	
 	/**
 	 * Tipo de chamada de encalhe deste produtoEdicao
@@ -337,38 +350,98 @@ public class ProdutoEdicaoDTO implements Serializable {
 	/**
 	 * @return the repartePrevisto
 	 */
-	public String getRepartePrevisto() {
+	public BigDecimal getRepartePrevisto() {
 		return repartePrevisto;
 	}
 	/**
 	 * @param repartePrevisto the repartePrevisto to set
 	 */
-	public void setRepartePrevisto(String repartePrevisto) {
+	public void setRepartePrevisto(BigDecimal repartePrevisto) {
 		this.repartePrevisto = repartePrevisto;
 	}
 	/**
 	 * @return the reparteDistribuido
 	 */
-	public String getReparteDistribuido() {
+	public BigDecimal getReparteDistribuido() {
 		return reparteDistribuido;
 	}
 	/**
 	 * @param reparteDistribuido the reparteDistribuido to set
 	 */
-	public void setReparteDistribuido(String reparteDistribuido) {
+	public void setReparteDistribuido(BigDecimal reparteDistribuido) {
 		this.reparteDistribuido = reparteDistribuido;
 	}
 	/**
 	 * @return the repartePromocional
 	 */
-	public String getRepartePromocional() {
+	public BigDecimal getRepartePromocional() {
 		return repartePromocional;
 	}
 	/**
 	 * @param repartePromocional the repartePromocional to set
 	 */
-	public void setRepartePromocional(String repartePromocional) {
+	public void setRepartePromocional(BigDecimal repartePromocional) {
 		this.repartePromocional = repartePromocional;
+	}
+	/**
+	 * @return the codigoDeBarrasCorporativo
+	 */
+	public String getCodigoDeBarrasCorporativo() {
+		return codigoDeBarrasCorporativo;
+	}
+	/**
+	 * @param codigoDeBarrasCorporativo the codigoDeBarrasCorporativo to set
+	 */
+	public void setCodigoDeBarrasCorporativo(String codigoDeBarrasCorporativo) {
+		this.codigoDeBarrasCorporativo = codigoDeBarrasCorporativo;
+	}
+	/**
+	 * @return the chamadaCapa
+	 */
+	public String getChamadaCapa() {
+		return chamadaCapa;
+	}
+	/**
+	 * @param chamadaCapa the chamadaCapa to set
+	 */
+	public void setChamadaCapa(String chamadaCapa) {
+		this.chamadaCapa = chamadaCapa;
+	}
+	/**
+	 * @return the altura
+	 */
+	public BigDecimal getAltura() {
+		return altura;
+	}
+	/**
+	 * @param altura the altura to set
+	 */
+	public void setAltura(BigDecimal altura) {
+		this.altura = altura;
+	}
+	/**
+	 * @return the largura
+	 */
+	public BigDecimal getLargura() {
+		return largura;
+	}
+	/**
+	 * @param largura the largura to set
+	 */
+	public void setLargura(BigDecimal largura) {
+		this.largura = largura;
+	}
+	/**
+	 * @return the boletimInformativo
+	 */
+	public String getBoletimInformativo() {
+		return boletimInformativo;
+	}
+	/**
+	 * @param boletimInformativo the boletimInformativo to set
+	 */
+	public void setBoletimInformativo(String boletimInformativo) {
+		this.boletimInformativo = boletimInformativo;
 	}
 	
 }

@@ -277,18 +277,28 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 		}
 		
 		// TODO: Popular ProdutoEdicao:
-		// TODO: implementar atributo: codigodaedicao
+		// TODO: implementar atributo: 
+		dto.getCodigoProduto();	// codigodaedicao
 		produtoEdicao.setNomeComercial(dto.getNomeComercialProduto());
 		produtoEdicao.setNumeroEdicao(dto.getNumeroEdicao());
 		produtoEdicao.setPacotePadrao(dto.getPacotePadrao());
 		produtoEdicao.setPrecoPrevisto(dto.getPrecoPrevisto());
 		produtoEdicao.setPrecoVenda(dto.getPrecoVenda());	// View: Preço real;
 		
-		BigDecimal repartePrevisto = this.converterValor(dto.getRepartePrevisto());
-		BigDecimal repartePromocional = this.converterValor(dto.getRepartePromocional());
+		BigDecimal repartePrevisto = dto.getRepartePrevisto();
+		BigDecimal repartePromocional = dto.getRepartePromocional();
 		produtoEdicao.setReparteDistribuido(repartePrevisto.add(repartePromocional));
 		
+		dto.getCodigoDeBarras();
+		dto.getCodigoDeBarrasCorporativo();
+		produtoEdicao.setDesconto(dto.getDesconto());
+		dto.getChamadaCapa();
+		dto.isParcial();
+		dto.isPossuiBrinde();
+		
 		produtoEdicao.setPeso(dto.getPeso());
+		dto.getAltura();
+		dto.getLargura();
 		
 		if (produtoEdicao.getId() == null) {
 			
