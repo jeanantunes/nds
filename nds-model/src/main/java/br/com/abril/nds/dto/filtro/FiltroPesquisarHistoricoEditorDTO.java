@@ -4,6 +4,15 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
+import br.com.abril.nds.util.export.Exportable;
+import br.com.abril.nds.vo.PaginacaoVO;
+
+/**
+ * Classe responsável por armazenar os valores referente aos filtros de registros da
+ * pesquisa de registros de histórico de editor.
+ * @author InfoA2
+ */
+@Exportable
 public class FiltroPesquisarHistoricoEditorDTO implements Serializable {
 
 	/**
@@ -18,7 +27,9 @@ public class FiltroPesquisarHistoricoEditorDTO implements Serializable {
 	private List<ColunaOrdenacaoPesquisarHistoricoEditorDTO> listaColunaOrdenacao;
 
 	private ColunaOrdenacaoPesquisarHistoricoEditorDTO ordenacaoColuna;
-	
+
+	private PaginacaoVO paginacao;
+
 	public FiltroPesquisarHistoricoEditorDTO(Date dataDe, Date dataAte, String numeroEditor) {
 		this.dataDe = dataDe;
 		this.dataAte = dataAte;
@@ -32,7 +43,7 @@ public class FiltroPesquisarHistoricoEditorDTO implements Serializable {
 		EDICAO_PRODUTO("edicaoProduto"),
 		REPARTE("reparte"),
 		VENDA_EXEMPLARES("vendaExemplares"),
-		PORCENTAGEM_VENDA_EXEMPLARES("porcentagemVendaExemplares");
+		PORCENTAGEM_VENDA_EXEMPLARES("porcentagemVenda");
 
 		private String nomeColuna;
 		
@@ -85,6 +96,14 @@ public class FiltroPesquisarHistoricoEditorDTO implements Serializable {
 
 	public void setNumeroEditor(String numeroEditor) {
 		this.numeroEditor = numeroEditor;
+	}
+
+	public PaginacaoVO getPaginacao() {
+		return paginacao;
+	}
+
+	public void setPaginacao(PaginacaoVO paginacao) {
+		this.paginacao = paginacao;
 	}
 	
 }
