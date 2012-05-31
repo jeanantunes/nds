@@ -19,7 +19,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.client.vo.RegistroCurvaABCCotaVO;
-import br.com.abril.nds.client.vo.ResultadoCurvaABC;
+import br.com.abril.nds.client.vo.ResultadoCurvaABCCota;
 import br.com.abril.nds.dto.ChamadaAntecipadaEncalheDTO;
 import br.com.abril.nds.dto.CotaDTO;
 import br.com.abril.nds.dto.CotaSuspensaoDTO;
@@ -749,12 +749,11 @@ public class CotaRepositoryImpl extends AbstractRepository<Cota, Long>
 	/* (non-Javadoc)
 	 * @see br.com.abril.nds.repository.CotaRepository#obterCurvaABCCotaTotal(br.com.abril.nds.dto.filtro.FiltroCurvaABCCotaDTO)
 	 */
-	@SuppressWarnings("unchecked")
 	@Override
-	public ResultadoCurvaABC obterCurvaABCCotaTotal(FiltroCurvaABCCotaDTO filtro){
+	public ResultadoCurvaABCCota obterCurvaABCCotaTotal(FiltroCurvaABCCotaDTO filtro){
 		StringBuilder hql = new StringBuilder();
 
-		hql.append("SELECT new ").append(ResultadoCurvaABC.class.getCanonicalName())
+		hql.append("SELECT new ").append(ResultadoCurvaABCCota.class.getCanonicalName())
 		.append(" ( (sum(estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida)), ")
 		.append("   ( sum((estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) * (estoqueProdutoCota.produtoEdicao.precoVenda - estoqueProdutoCota.produtoEdicao.desconto)) ) ) ");
 
@@ -767,7 +766,7 @@ public class CotaRepositoryImpl extends AbstractRepository<Cota, Long>
 		for(String key : param.keySet()){
 			query.setParameter(key, param.get(key));
 		}
-		return (ResultadoCurvaABC) query.list().get(0);
+		return (ResultadoCurvaABCCota) query.list().get(0);
 	}
 
 	/* (non-Javadoc)
@@ -795,17 +794,6 @@ public class CotaRepositoryImpl extends AbstractRepository<Cota, Long>
 
 		for(String key : param.keySet()){
 			query.setParameter(key, param.get(key));
-		}
-
-		if (filtro.getPaginacao() != null) {
-
-			if (filtro.getPaginacao().getPosicaoInicial() != null) {
-				query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
-			}
-
-			if (filtro.getPaginacao().getQtdResultadosPorPagina() != null) {
-				query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
-			}
 		}
 
 		return complementarCurvaABCCota((List<RegistroCurvaABCCotaVO>) query.list());

@@ -220,11 +220,7 @@
 		
 	}
 	
-	function abrirPopUpHistoricoEditor(codigoEditora) {
-
-		var dataDe = $("#datepickerDe").val();
-		var dataAte = $("#datepickerAte").val();
-
+	function abrirPopUpHistoricoEditor(dataDe, dataAte, codigoEditora) {
 		$(".popEditorGrid").flexOptions({
 			url: "<c:url value='/lancamento/relatorioVendas/pesquisarHistoricoEditor' />",
 			params: [
@@ -351,8 +347,8 @@
 	<fieldset style="width:560px;">
 		<legend>Editor: <span name="nomeEditorPopUp" id="nomeEditorPopUp"></span></legend>
 	    <table class="popEditorGrid"></table>
-	        <span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
-			<span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
+	        <span class="bt_novos" title="Gerar Arquivo"><a href="${pageContext.request.contextPath}/lancamento/relatorioVendas/exportar?fileType=XLS&tipoRelatorio=5"><img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
+			<span class="bt_novos" title="Imprimir"><a href="${pageContext.request.contextPath}/lancamento/relatorioVendas/exportar?fileType=PDF&tipoRelatorio=5"><img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
 	</fieldset>
 	</div>
 
@@ -602,7 +598,10 @@
 				sortable : true,
 				align : 'right'
 			} ],
-
+			sortname : "codigoProduto",
+			sortorder : "asc",
+			usepager : false,
+			useRp : false,
 			width : 560,
 			height : 255
 		});
@@ -665,7 +664,7 @@
 				sortable : false,
 				align : 'center'
 			} ],
-			sortname : "codigo",
+			sortname : "codigoEditor",
 			sortorder : "asc",
 			usepager : true,
 			useRp : true,
@@ -804,7 +803,7 @@
 			dataType : 'json',
 			colModel : [ {
 				display : 'Código',
-				name : 'numeroProduto',
+				name : 'codigoProduto',
 				width : 60,
 				sortable : true,
 				align : 'left'
@@ -857,7 +856,7 @@
 				sortable : true,
 				align : 'right'
 			} ],
-			sortname : "produto",
+			sortname : "codigoProduto",
 			sortorder : "asc",
 			usepager : true,
 			useRp : true,
@@ -899,7 +898,7 @@
 			
 			$.each(resultado.tableModel.rows, function(index, row) {
 				
-				var linkHistorico = '<a href="javascript:;" onclick="abrirPopUpHistoricoEditor(' + row.cell.codigoEditor + ');" style="cursor:pointer">' +
+				var linkHistorico = '<a href="javascript:;" onclick="abrirPopUpHistoricoEditor( \'' + row.cell.dataDe + '\', \'' + row.cell.dataAte + '\', ' + row.cell.codigoEditor + ');" style="cursor:pointer">' +
 						     	  	'<img title="Histórico" src="${pageContext.request.contextPath}/images/ico_detalhes.png" hspace="5" border="0px" />' +
 						  		    '</a>';
 						  		    

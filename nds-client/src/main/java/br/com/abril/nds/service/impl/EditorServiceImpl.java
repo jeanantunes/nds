@@ -8,7 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.client.vo.RegistroCurvaABCEditorVO;
 import br.com.abril.nds.client.vo.RegistroHistoricoEditorVO;
-import br.com.abril.nds.client.vo.ResultadoCurvaABC;
+import br.com.abril.nds.client.vo.ResultadoCurvaABCEditor;
 import br.com.abril.nds.dto.filtro.FiltroCurvaABCEditorDTO;
 import br.com.abril.nds.dto.filtro.FiltroPesquisarHistoricoEditorDTO;
 import br.com.abril.nds.model.cadastro.Editor;
@@ -35,7 +35,7 @@ public class EditorServiceImpl implements EditorService {
 
 	@Override
 	@Transactional
-	public ResultadoCurvaABC obterCurvaABCEditorTotal(FiltroCurvaABCEditorDTO filtroCurvaABCEditorDTO) {
+	public ResultadoCurvaABCEditor obterCurvaABCEditorTotal(FiltroCurvaABCEditorDTO filtroCurvaABCEditorDTO) {
 		return editorRepository.obterCurvaABCEditorTotal(filtroCurvaABCEditorDTO);
 	}
 

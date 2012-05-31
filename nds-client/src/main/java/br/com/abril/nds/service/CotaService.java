@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Set;
 
 import br.com.abril.nds.client.vo.RegistroCurvaABCCotaVO;
-import br.com.abril.nds.client.vo.ResultadoCurvaABC;
+import br.com.abril.nds.client.vo.ResultadoCurvaABCCota;
 import br.com.abril.nds.dto.CotaDTO;
 import br.com.abril.nds.dto.CotaSuspensaoDTO;
 import br.com.abril.nds.dto.DistribuicaoDTO;
@@ -263,7 +263,7 @@ public interface CotaService {
 	 * @param filtroCurvaABCCotaDTO
 	 * @return
 	 */
-	public ResultadoCurvaABC obterCurvaABCCotaTotal(FiltroCurvaABCCotaDTO filtroCurvaABCCotaDTO);
+	public ResultadoCurvaABCCota obterCurvaABCCotaTotal(FiltroCurvaABCCotaDTO filtroCurvaABCCotaDTO);
 	
 	/**
 	 * Método responsável por obter o relatório de vendas ABC por cota

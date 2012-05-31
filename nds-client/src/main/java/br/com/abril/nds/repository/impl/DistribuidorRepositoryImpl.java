@@ -5,7 +5,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
-import org.apache.poi.ss.formula.functions.T;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.criterion.Projections;
@@ -13,7 +12,7 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.client.vo.RegistroCurvaABCDistribuidorVO;
-import br.com.abril.nds.client.vo.ResultadoCurvaABC;
+import br.com.abril.nds.client.vo.ResultadoCurvaABCDistribuidor;
 import br.com.abril.nds.dto.filtro.FiltroCurvaABCDistribuidorDTO;
 import br.com.abril.nds.model.cadastro.DistribuicaoDistribuidor;
 import br.com.abril.nds.model.cadastro.DistribuicaoFornecedor;
@@ -109,12 +108,11 @@ public class DistribuidorRepositoryImpl extends
 	/* (non-Javadoc)
 	 * @see br.com.abril.nds.repository.DistribuidorRepository#obterCurvaABCDistribuidorTotal(br.com.abril.nds.dto.filtro.FiltroCurvaABCDistribuidorDTO)
 	 */
-	@SuppressWarnings("unchecked")
 	@Override
-	public ResultadoCurvaABC<RegistroCurvaABCDistribuidorVO> obterCurvaABCDistribuidorTotal(FiltroCurvaABCDistribuidorDTO filtro) {
+	public ResultadoCurvaABCDistribuidor obterCurvaABCDistribuidorTotal(FiltroCurvaABCDistribuidorDTO filtro) {
 		StringBuilder hql = new StringBuilder();
 
-		hql.append("SELECT new ").append(ResultadoCurvaABC.class.getCanonicalName())
+		hql.append("SELECT new ").append(ResultadoCurvaABCDistribuidor.class.getCanonicalName())
 		.append(" ( (sum(estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida)), ")
 		.append("   ( sum((estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) * (estoqueProdutoCota.produtoEdicao.precoVenda - estoqueProdutoCota.produtoEdicao.desconto)) ) ) ");
 
@@ -127,7 +125,7 @@ public class DistribuidorRepositoryImpl extends
 		for(String key : param.keySet()){
 			query.setParameter(key, param.get(key));
 		}
-		return (ResultadoCurvaABC<RegistroCurvaABCDistribuidorVO>) query.uniqueResult();
+		return (ResultadoCurvaABCDistribuidor) query.uniqueResult();
 	}
 
 	/* (non-Javadoc)
@@ -159,17 +157,6 @@ public class DistribuidorRepositoryImpl extends
 			query.setParameter(key, param.get(key));
 		}
 
-		if (filtro.getPaginacao() != null) {
-
-			if (filtro.getPaginacao().getPosicaoInicial() != null) {
-				query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
-			}
-
-			if (filtro.getPaginacao().getQtdResultadosPorPagina() != null) {
-				query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
-			}
-		}
-
 		return complementarCurvaABCDistribuidor((List<RegistroCurvaABCDistribuidorVO>) query.list());
 
 	}
@@ -191,12 +178,11 @@ public class DistribuidorRepositoryImpl extends
 		.append(" LEFT JOIN estoqueProdutoCota.cota.pdvs AS pdv ")
 		.append(" LEFT JOIN estoqueProdutoCota.cota.pessoa AS pessoa ");
 
-		/*hql.append("WHERE movimentos.data BETWEEN :dataDe AND :dataAte ");
-		hql.append(" AND enderecos.principal IS TRUE ");*/
+		hql.append("WHERE movimentos.data BETWEEN :dataDe AND :dataAte ");
+		hql.append(" AND enderecos.principal IS TRUE ");
 
 		if (filtro.getCodigoFornecedor() != null && !filtro.getCodigoFornecedor().isEmpty() && !filtro.getCodigoFornecedor().equals("0")) {
 			hql.append("AND fornecedores.id = :codigoFornecedor ");
-			//hql.append("and produtoEdicao.produto.fornecedores.id = :codigoFornecedor ");
 		}
 
 		if (filtro.getCodigoProduto() != null && !filtro.getCodigoProduto().isEmpty()) {
@@ -258,8 +244,8 @@ public class DistribuidorRepositoryImpl extends
 
 		HashMap<String,Object> param = new HashMap<String, Object>();
 
-		/*param.put("dataDe",  filtro.getDataDe());
-		param.put("dataAte", filtro.getDataAte());*/
+		param.put("dataDe",  filtro.getDataDe());
+		param.put("dataAte", filtro.getDataAte());
 
 		if (filtro.getCodigoFornecedor() != null && !filtro.getCodigoFornecedor().isEmpty() && !filtro.getCodigoFornecedor().equals("0")) {
 			param.put("codigoFornecedor", Long.parseLong(filtro.getCodigoFornecedor()));

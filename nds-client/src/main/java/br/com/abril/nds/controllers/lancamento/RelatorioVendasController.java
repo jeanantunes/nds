@@ -16,13 +16,13 @@ import br.com.abril.nds.client.vo.RegistroCurvaABCCotaVO;
 import br.com.abril.nds.client.vo.RegistroCurvaABCDistribuidorVO;
 import br.com.abril.nds.client.vo.RegistroCurvaABCEditorVO;
 import br.com.abril.nds.client.vo.RegistroHistoricoEditorVO;
-import br.com.abril.nds.client.vo.ResultadoCurvaABC;
+import br.com.abril.nds.client.vo.ResultadoCurvaABCCota;
+import br.com.abril.nds.client.vo.ResultadoCurvaABCDistribuidor;
+import br.com.abril.nds.client.vo.ResultadoCurvaABCEditor;
 import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.dto.filtro.FiltroCurvaABCCotaDTO;
-import br.com.abril.nds.dto.filtro.FiltroCurvaABCCotaDTO.ColunaOrdenacaoCurvaABCCota;
 import br.com.abril.nds.dto.filtro.FiltroCurvaABCDistribuidorDTO;
 import br.com.abril.nds.dto.filtro.FiltroCurvaABCEditorDTO;
-import br.com.abril.nds.dto.filtro.FiltroCurvaABCEditorDTO.ColunaOrdenacaoCurvaABCEditor;
 import br.com.abril.nds.dto.filtro.FiltroPesquisarHistoricoEditorDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Distribuidor;
@@ -82,14 +82,16 @@ public class RelatorioVendasController {
 	@Autowired
 	private EditorService editorService;
 
-	private static final String FILTRO_PESQUISA_CURVA_ABC_DISTRIBUIDOR_SESSION_ATTRIBUTE = "filtroPesquisaCurbaABCDistribuidor";
-	private static final String FILTRO_PESQUISA_CURVA_ABC_EDITOR_SESSION_ATTRIBUTE = "filtroPesquisaCurbaABCEditor";
-	private static final String FILTRO_PESQUISA_CURVA_ABC_PRODUTO_SESSION_ATTRIBUTE = "filtroPesquisaCurbaABCProduto";
+	private static final String FILTRO_PESQUISA_CURVA_ABC_DISTRIBUIDOR_SESSION_ATTRIBUTE = "filtroPesquisaCurvaABCDistribuidor";
+	private static final String FILTRO_PESQUISA_CURVA_ABC_EDITOR_SESSION_ATTRIBUTE = "filtroPesquisaCurvaABCEditor";
+	private static final String FILTRO_PESQUISA_CURVA_ABC_COTA_SESSION_ATTRIBUTE = "filtroPesquisaCurvaABCCota";
+	private static final String FILTRO_PESQUISA_CURVA_ABC_HISTORICO_EDITOR_SESSION_ATTRIBUTE = "filtroPesquisaCurvaABCHistoricoEditor";
 	
-	private static final int DISTRIBUIDOR = 1;
-	private static final int EDITOR       = 2;
-	private static final int PRODUTO      = 3;
-	private static final int COTA         = 4;
+	private static final int DISTRIBUIDOR 	  = 1;
+	private static final int EDITOR       	  = 2;
+	private static final int PRODUTO      	  = 3;
+	private static final int COTA         	  = 4;
+	private static final int HISTORICO_EDITOR = 5;
 
 	private static final String FORMATO_DATA = "dd/MM/yyyy";
 	
@@ -123,35 +125,113 @@ public class RelatorioVendasController {
 
 		switch (tipoRelatorio) {
 		case DISTRIBUIDOR:
-
-			FiltroCurvaABCDistribuidorDTO filtroSessao = (FiltroCurvaABCDistribuidorDTO) this.session.getAttribute(FILTRO_PESQUISA_CURVA_ABC_DISTRIBUIDOR_SESSION_ATTRIBUTE);
-			if (filtroSessao != null) {
-				if (filtroSessao.getPaginacao() != null) {				
-					filtroSessao.getPaginacao().setPaginaAtual(null);
-					filtroSessao.getPaginacao().setQtdResultadosPorPagina(null);
-				}
-			}
-			
-			List<RegistroCurvaABCDistribuidorVO> lista = distribuidorService.obterCurvaABCDistribuidor(filtroSessao);
-			ResultadoCurvaABC resultadoTotal = distribuidorService.obterCurvaABCDistribuidorTotal(filtroSessao);
-			
-			FileExporter.to("consulta-edicoes-fechadas-com-saldo", fileType).inHTTPResponse(this.getNDSFileHeader(), filtroSessao, resultadoTotal, lista, RegistroCurvaABCDistribuidorVO.class, this.httpServletResponse);
-			
+			exportarDistribuidor(fileType, DISTRIBUIDOR);
 			break;
-
 		case EDITOR:
+			exportarEditor(fileType);
 			break;
-
 		case PRODUTO:
+			exportarDistribuidor(fileType, PRODUTO);
 			break;
-
 		case COTA:
+			exportarCota(fileType);
 			break;
-
+		case HISTORICO_EDITOR:
+			exportarHistoricoEditor(fileType);
+			break;
 		default:
 			throw new ValidacaoException(TipoMensagem.ERROR, "Tipo de relatório " + tipoRelatorio + " não encontrado!");
 		}
 		
+	}
+	
+	/**
+	 * Exporta arquivos para filtros do tipo distribuidor e produto (que é a pesquisa do distribuidor, mas com o produto como campo obrigatório)
+	 * @param fileType
+	 * @throws IOException
+	 */
+	private void exportarDistribuidor(FileType fileType, int tipoRelatorio) throws IOException {
+		FiltroCurvaABCDistribuidorDTO filtroSessao = (FiltroCurvaABCDistribuidorDTO) this.session.getAttribute(FILTRO_PESQUISA_CURVA_ABC_DISTRIBUIDOR_SESSION_ATTRIBUTE);
+		if (filtroSessao != null) {
+			if (filtroSessao.getPaginacao() != null) {				
+				filtroSessao.getPaginacao().setPaginaAtual(null);
+				filtroSessao.getPaginacao().setQtdResultadosPorPagina(null);
+			}
+		}
+		
+		List<RegistroCurvaABCDistribuidorVO> lista = distribuidorService.obterCurvaABCDistribuidor(filtroSessao);
+		ResultadoCurvaABCDistribuidor resultadoTotal = distribuidorService.obterCurvaABCDistribuidorTotal(filtroSessao);
+		
+		String nomeArquivo = "";
+		
+		if (tipoRelatorio == DISTRIBUIDOR) {
+			nomeArquivo = "relatorio-vendas-curva-abc-distribuidor";
+		} else {
+			nomeArquivo = "relatorio-vendas-curva-abc-produto";
+		}
+
+		FileExporter.to(nomeArquivo, fileType).inHTTPResponse(this.getNDSFileHeader(), filtroSessao, resultadoTotal, lista, RegistroCurvaABCDistribuidorVO.class, this.httpServletResponse);
+
+	}
+	
+	
+	/**
+	 * Exporta arquivos para filtros do tipo editor
+	 * @param fileType
+	 * @throws IOException
+	 */
+	private void exportarEditor(FileType fileType) throws IOException {
+		FiltroCurvaABCEditorDTO filtroSessao = (FiltroCurvaABCEditorDTO) this.session.getAttribute(FILTRO_PESQUISA_CURVA_ABC_EDITOR_SESSION_ATTRIBUTE);
+		if (filtroSessao != null) {
+			if (filtroSessao.getPaginacao() != null) {				
+				filtroSessao.getPaginacao().setPaginaAtual(null);
+				filtroSessao.getPaginacao().setQtdResultadosPorPagina(null);
+			}
+		}
+		
+		List<RegistroCurvaABCEditorVO> lista = editorService.obterCurvaABCEditor(filtroSessao);
+		ResultadoCurvaABCEditor resultadoTotal = editorService.obterCurvaABCEditorTotal(filtroSessao);
+		
+		FileExporter.to("relatorio-vendas-curva-abc-editor", fileType).inHTTPResponse(this.getNDSFileHeader(), filtroSessao, resultadoTotal, lista, RegistroCurvaABCEditorVO.class, this.httpServletResponse);
+	}
+
+	/**
+	 * Exporta arquivos para filtros do tipo cota
+	 * @param fileType
+	 * @throws IOException
+	 */
+	private void exportarCota(FileType fileType) throws IOException {
+		FiltroCurvaABCCotaDTO filtroSessao = (FiltroCurvaABCCotaDTO) this.session.getAttribute(FILTRO_PESQUISA_CURVA_ABC_COTA_SESSION_ATTRIBUTE);
+		if (filtroSessao != null) {
+			if (filtroSessao.getPaginacao() != null) {				
+				filtroSessao.getPaginacao().setPaginaAtual(null);
+				filtroSessao.getPaginacao().setQtdResultadosPorPagina(null);
+			}
+		}
+		
+		List<RegistroCurvaABCCotaVO> lista = cotaService.obterCurvaABCCota(filtroSessao);
+		ResultadoCurvaABCCota resultadoTotal = cotaService.obterCurvaABCCotaTotal(filtroSessao);
+		
+		FileExporter.to("relatorio-vendas-curva-abc-cota", fileType).inHTTPResponse(this.getNDSFileHeader(), filtroSessao, resultadoTotal, lista, RegistroCurvaABCCotaVO.class, this.httpServletResponse);
+	}
+
+	/**
+	 * Exporta arquivos para filtros do tipo histórico do editor
+	 * @param fileType
+	 * @throws IOException
+	 */
+	private void exportarHistoricoEditor(FileType fileType) throws IOException {
+		FiltroPesquisarHistoricoEditorDTO filtroSessao = (FiltroPesquisarHistoricoEditorDTO) this.session.getAttribute(FILTRO_PESQUISA_CURVA_ABC_HISTORICO_EDITOR_SESSION_ATTRIBUTE);
+		if (filtroSessao != null) {
+			if (filtroSessao.getPaginacao() != null) {				
+				filtroSessao.getPaginacao().setPaginaAtual(null);
+				filtroSessao.getPaginacao().setQtdResultadosPorPagina(null);
+			}
+		}
+		
+		List<RegistroHistoricoEditorVO> lista = editorService.obterHistoricoEditor(filtroSessao);
+		
+		FileExporter.to("consulta-historico-editor", fileType).inHTTPResponse(this.getNDSFileHeader(), filtroSessao, null, lista, RegistroHistoricoEditorVO.class, this.httpServletResponse);
 	}
 	
 	/**
@@ -253,11 +333,11 @@ public class RelatorioVendasController {
 	 */
 	@Post
 	@Path("/pesquisarHistoricoEditor")
-	public void pesquisarHistoricoEditor(String dataDe, String dataAte, String codigoEditor) throws Exception {
+	public void pesquisarHistoricoEditor(String dataDe, String dataAte, String codigoEditor, String sortorder, String sortname, int page, int rp) throws Exception {
 
 		SimpleDateFormat sdf = new SimpleDateFormat(Constantes.DATE_PATTERN_PT_BR);
 
-		FiltroPesquisarHistoricoEditorDTO filtro = new FiltroPesquisarHistoricoEditorDTO(sdf.parse(dataDe), sdf.parse(dataAte), codigoEditor);
+		FiltroPesquisarHistoricoEditorDTO filtro = carregarFiltroHistoricoEditor(sortorder, sortname, page, rp, sdf.parse(dataDe), sdf.parse(dataAte), codigoEditor);	
 
 		List<RegistroHistoricoEditorVO> resultado = null;
 		try {
@@ -278,10 +358,16 @@ public class RelatorioVendasController {
 					"Nenhum registro encontrado.");
 		} else {
 			
+			int qtdeTotalRegistros = resultado.size();
+
+			List<RegistroHistoricoEditorVO> resultadoPaginado = PaginacaoUtil.paginarEOrdenarEmMemoria(resultado, filtro.getPaginacao(), filtro.getOrdenacaoColuna().toString());
+
 			TableModel<CellModelKeyValue<RegistroHistoricoEditorVO>> tableModel = new TableModel<CellModelKeyValue<RegistroHistoricoEditorVO>>();
-			tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(resultado));
+
+			tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(resultadoPaginado));
 			tableModel.setPage(1);
-			tableModel.setTotal(resultado.size());
+			tableModel.setTotal(qtdeTotalRegistros);
+			
 			result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
 		}
 	
@@ -369,7 +455,7 @@ public class RelatorioVendasController {
 			tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
 			tableModel.setTotal(qtdeTotalRegistros);
 
-			ResultadoCurvaABC<RegistroCurvaABCDistribuidorVO> resultado = distribuidorService.obterCurvaABCDistribuidorTotal(filtro);
+			ResultadoCurvaABCDistribuidor resultado = distribuidorService.obterCurvaABCDistribuidorTotal(filtro);
 			resultado.setTableModel(tableModel);
 			
 			result.use(Results.json()).withoutRoot().from(resultado).recursive().serialize();
@@ -422,10 +508,10 @@ public class RelatorioVendasController {
 			String edicaoProduto, Long codigoEditor, String codigoCota,
 			String nomeCota, String municipio, String sortorder,
 			String sortname, int page, int rp) throws Exception {
+
 		this.validarDadosEntradaPesquisa(dataDe, dataAte);
 
-		SimpleDateFormat sdf = new SimpleDateFormat(
-				Constantes.DATE_PATTERN_PT_BR);
+		SimpleDateFormat sdf = new SimpleDateFormat(Constantes.DATE_PATTERN_PT_BR);
 
 		FiltroCurvaABCEditorDTO filtroCurvaABCEditorDTO = carregarFiltroPesquisaEditor(sdf.parse(dataDe), sdf.parse(dataAte), codigoFornecedor,
 				codigoProduto, nomeProduto, edicaoProduto, codigoEditor,
@@ -451,26 +537,19 @@ public class RelatorioVendasController {
 		} else {
 
 			int qtdeTotalRegistros = resultadoCurvaABCEditor.size();
-
-			/*PaginacaoUtil
-					.armazenarQtdRegistrosPesquisa(
-							this.session,
-							QTD_REGISTROS_PESQUISA_CURVA_COTA_ABC_SESSION_ATTRIBUTE,
-							qtdeTotalRegistros);*/
-
+			
+			List<RegistroCurvaABCEditorVO> resultadoPaginado = PaginacaoUtil.paginarEOrdenarEmMemoria(resultadoCurvaABCEditor, filtroCurvaABCEditorDTO.getPaginacao(), filtroCurvaABCEditorDTO.getOrdenacaoColuna().toString());
+			
 			TableModel<CellModelKeyValue<RegistroCurvaABCEditorVO>> tableModel = new TableModel<CellModelKeyValue<RegistroCurvaABCEditorVO>>();
-
-			tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(resultadoCurvaABCEditor));
+	
+			tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(resultadoPaginado));
 			tableModel.setPage(filtroCurvaABCEditorDTO.getPaginacao().getPaginaAtual());
 			tableModel.setTotal(qtdeTotalRegistros);
-
-			ResultadoCurvaABC resultado = editorService.obterCurvaABCEditorTotal(filtroCurvaABCEditorDTO);
+			
+			ResultadoCurvaABCEditor resultado = editorService.obterCurvaABCEditorTotal(filtroCurvaABCEditorDTO);
 			resultado.setTableModel(tableModel);
 			
-			//session.setAttribute(RESULTADO_PESQUISA_CURVA_ABC_EDITOR_SESSION_ATTRIBUTE, resultado);
-			
-			result.use(Results.json()).withoutRoot().from(resultado)
-					.recursive().serialize();
+			result.use(Results.json()).withoutRoot().from(resultado).recursive().serialize();
 		}
 		
 	}
@@ -520,12 +599,9 @@ public class RelatorioVendasController {
 			String edicaoProduto, Long codigoEditor, String codigoCota,
 			String nomeCota, String municipio, String sortorder,
 			String sortname, int page, int rp) throws Exception {
-		
 			validarDadosEntradaPesquisaProduto(dataDe, dataAte, codigoProduto, nomeProduto);
-		
 			pesquisarCurvaABCDistribuidor(dataDe, dataAte, codigoFornecedor, codigoProduto, nomeProduto, edicaoProduto, codigoEditor, codigoCota,
 					nomeCota, municipio, sortorder, sortname, page, rp);
-		
 	}
 
 	/**
@@ -577,8 +653,7 @@ public class RelatorioVendasController {
 		
 		this.validarDadosEntradaPesquisaCota(dataDe, dataAte, codigoCota, nomeCota);
 
-		SimpleDateFormat sdf = new SimpleDateFormat(
-				Constantes.DATE_PATTERN_PT_BR);
+		SimpleDateFormat sdf = new SimpleDateFormat(Constantes.DATE_PATTERN_PT_BR);
 
 		FiltroCurvaABCCotaDTO filtroCurvaABCCotaDTO = carregarFiltroPesquisaCota(sdf.parse(dataDe), sdf.parse(dataAte), codigoFornecedor,
 				codigoProduto, nomeProduto, edicaoProduto, codigoEditor,
@@ -599,31 +674,24 @@ public class RelatorioVendasController {
 
 		if (resultadoCurvaABCCota == null
 				|| resultadoCurvaABCCota.isEmpty()) {
-			throw new ValidacaoException(TipoMensagem.WARNING,
-					"Nenhum registro encontrado.");
+			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
 		} else {
 
 			int qtdeTotalRegistros = resultadoCurvaABCCota.size();
 
-			/*PaginacaoUtil
-					.armazenarQtdRegistrosPesquisa(
-							this.session,
-							QTD_REGISTROS_PESQUISA_CURVA_COTA_ABC_SESSION_ATTRIBUTE,
-							qtdeTotalRegistros);*/
-
+			List<RegistroCurvaABCCotaVO> resultadoPaginado = PaginacaoUtil.paginarEOrdenarEmMemoria(resultadoCurvaABCCota, filtroCurvaABCCotaDTO.getPaginacao(), filtroCurvaABCCotaDTO.getOrdenacaoColuna().toString());
+			
 			TableModel<CellModelKeyValue<RegistroCurvaABCCotaVO>> tableModel = new TableModel<CellModelKeyValue<RegistroCurvaABCCotaVO>>();
-
-			tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(resultadoCurvaABCCota));
+	
+			tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(resultadoPaginado));
 			tableModel.setPage(filtroCurvaABCCotaDTO.getPaginacao().getPaginaAtual());
 			tableModel.setTotal(qtdeTotalRegistros);
-
-			ResultadoCurvaABC resultado = cotaService.obterCurvaABCCotaTotal(filtroCurvaABCCotaDTO);
+			
+			ResultadoCurvaABCCota resultado = cotaService.obterCurvaABCCotaTotal(filtroCurvaABCCotaDTO);
 			resultado.setTableModel(tableModel);
 			
-			//session.setAttribute(RESULTADO_PESQUISA_CURVA_ABC_COTA_SESSION_ATTRIBUTE, resultado);
+			result.use(Results.json()).withoutRoot().from(resultado).recursive().serialize();
 			
-			result.use(Results.json()).withoutRoot().from(resultado)
-					.recursive().serialize();
 		}
 		
 	}
@@ -655,18 +723,18 @@ public class RelatorioVendasController {
 				codigoProduto, nomeProduto, edicaoProduto, (codigoEditor == null ? "" : codigoEditor.toString()),
 				codigoCota, nomeCota, municipio);
 		
-		this.configurarPaginacaoEditorPesquisa(filtro, sortorder, sortname,
-				page, rp);
+		this.configurarPaginacaoEditorPesquisa(filtro, sortorder, sortname, page, rp);
 
-		FiltroCurvaABCEditorDTO filtroSessao = (FiltroCurvaABCEditorDTO) this.session
-				.getAttribute(FILTRO_PESQUISA_CURVA_ABC_EDITOR_SESSION_ATTRIBUTE);
+		FiltroCurvaABCEditorDTO filtroSessao = (FiltroCurvaABCEditorDTO) this.session.getAttribute(FILTRO_PESQUISA_CURVA_ABC_EDITOR_SESSION_ATTRIBUTE);
 
-		/*PaginacaoUtil.calcularPaginaAtual(this.session,
-				QTD_REGISTROS_PESQUISA_CURVA_EDITOR_ABC_SESSION_ATTRIBUTE,
-				FILTRO_PESQUISA_CURVA_ABC_EDITOR_SESSION_ATTRIBUTE,
-				filtro, filtroSessao);*/
-
+		if (filtroSessao != null && !filtroSessao.equals(filtro)) {
+			filtro.getPaginacao().setPaginaAtual(1);
+		}
+		
+		session.setAttribute(FILTRO_PESQUISA_CURVA_ABC_EDITOR_SESSION_ATTRIBUTE, filtro);
+		
 		return filtro;
+		
 	}
 	
 	/**
@@ -736,20 +804,47 @@ public class RelatorioVendasController {
 				codigoProduto, nomeProduto, edicaoProduto, (codigoEditor == null ? "" : codigoEditor.toString()),
 				codigoCota, nomeCota, municipio);
 		
-		this.configurarPaginacaoCotaPesquisa(filtro, sortorder, sortname,
-				page, rp);
+		this.configurarPaginacaoCotaPesquisa(filtro, sortorder, sortname, page, rp);
 
-		/*FiltroCurvaABCCotaDTO filtroSessao = (FiltroCurvaABCCotaDTO) this.session
-				.getAttribute(FILTRO_PESQUISA_CURVA_ABC_COTA_SESSION_ATTRIBUTE);
+		FiltroCurvaABCCotaDTO filtroSessao = (FiltroCurvaABCCotaDTO) this.session.getAttribute(FILTRO_PESQUISA_CURVA_ABC_COTA_SESSION_ATTRIBUTE);
 
-		PaginacaoUtil.calcularPaginaAtual(this.session,
-				QTD_REGISTROS_PESQUISA_CURVA_COTA_ABC_SESSION_ATTRIBUTE,
-				FILTRO_PESQUISA_CURVA_ABC_COTA_SESSION_ATTRIBUTE,
-				filtro, filtroSessao);*/
+		if (filtroSessao != null && !filtroSessao.equals(filtro)) {
+			filtro.getPaginacao().setPaginaAtual(1);
+		}
+		
+		session.setAttribute(FILTRO_PESQUISA_CURVA_ABC_COTA_SESSION_ATTRIBUTE, filtro);
 
 		return filtro;
 	}	
 
+	/**
+	 * Carrega filtro da pesquisa de histórico de editor
+	 * @param sortorder
+	 * @param sortname
+	 * @param page
+	 * @param rp
+	 * @param dataDe
+	 * @param dataAte
+	 * @param codigoEditor
+	 * @return
+	 */
+	private FiltroPesquisarHistoricoEditorDTO carregarFiltroHistoricoEditor(String sortorder, String sortname, int page, int rp, Date dataDe, Date dataAte, String codigoEditor) {
+
+		FiltroPesquisarHistoricoEditorDTO filtro = new FiltroPesquisarHistoricoEditorDTO(dataDe, dataAte, codigoEditor);
+		
+		this.configurarPaginacaoPesquisarHistoricoEditor(filtro, sortorder, sortname, page, rp);
+
+		FiltroPesquisarHistoricoEditorDTO filtroSessao = (FiltroPesquisarHistoricoEditorDTO) this.session.getAttribute(FILTRO_PESQUISA_CURVA_ABC_HISTORICO_EDITOR_SESSION_ATTRIBUTE);
+
+		if (filtroSessao != null && !filtroSessao.equals(filtro)) {
+			filtro.getPaginacao().setPaginaAtual(1);
+		}
+
+		session.setAttribute(FILTRO_PESQUISA_CURVA_ABC_HISTORICO_EDITOR_SESSION_ATTRIBUTE, filtro);
+		
+		return filtro;
+	}
+	
 	/**
 	 * Configura paginação da pesquisa do editor
 	 * @param filtro
@@ -758,17 +853,11 @@ public class RelatorioVendasController {
 	 * @param page
 	 * @param rp
 	 */
-	private void configurarPaginacaoEditorPesquisa(FiltroCurvaABCEditorDTO filtro,
-			String sortorder, String sortname, int page, int rp) {
-
+	private void configurarPaginacaoEditorPesquisa(FiltroCurvaABCEditorDTO filtro, String sortorder, String sortname, int page, int rp) {
 		if (filtro != null) {
-
 			PaginacaoVO paginacao = new PaginacaoVO(page, rp, sortorder);
-
 			filtro.setPaginacao(paginacao);
-
-			filtro.setOrdenacaoColuna(Util.getEnumByStringValue(
-					ColunaOrdenacaoCurvaABCEditor.values(), sortname));
+			filtro.setOrdenacaoColuna(Util.getEnumByStringValue(FiltroCurvaABCEditorDTO.ColunaOrdenacaoCurvaABCEditor.values(), sortname));
 		}
 	}
 	
@@ -780,17 +869,11 @@ public class RelatorioVendasController {
 	 * @param page
 	 * @param rp
 	 */
-	private void configurarPaginacaoCotaPesquisa(FiltroCurvaABCCotaDTO filtro,
-			String sortorder, String sortname, int page, int rp) {
-
+	private void configurarPaginacaoCotaPesquisa(FiltroCurvaABCCotaDTO filtro, String sortorder, String sortname, int page, int rp) {
 		if (filtro != null) {
-
 			PaginacaoVO paginacao = new PaginacaoVO(page, rp, sortorder);
-
 			filtro.setPaginacao(paginacao);
-
-			filtro.setOrdenacaoColuna(Util.getEnumByStringValue(
-					ColunaOrdenacaoCurvaABCCota.values(), sortname));
+			filtro.setOrdenacaoColuna(Util.getEnumByStringValue(FiltroCurvaABCCotaDTO.ColunaOrdenacaoCurvaABCCota.values(), sortname));
 		}
 	}
 
@@ -803,14 +886,26 @@ public class RelatorioVendasController {
 	 * @param rp
 	 */
 	private void configurarPaginacaoDistribuidorPesquisa(FiltroCurvaABCDistribuidorDTO filtro, String sortorder, String sortname, int page, int rp) {
-
 		if (filtro != null) {
-
 			PaginacaoVO paginacao = new PaginacaoVO(page, rp, sortorder);
-
 			filtro.setPaginacao(paginacao);
-
 			filtro.setOrdenacaoColuna(Util.getEnumByStringValue(FiltroCurvaABCDistribuidorDTO.ColunaOrdenacaoCurvaABCDistribuidor.values(), sortname));
+		}
+	}
+
+	/**
+	 * Configuração a paginação da pesquisa de histórico por editor
+	 * @param filtro
+	 * @param sortorder
+	 * @param sortname
+	 * @param page
+	 * @param rp
+	 */
+	private void configurarPaginacaoPesquisarHistoricoEditor(FiltroPesquisarHistoricoEditorDTO filtro, String sortorder, String sortname, int page, int rp) {
+		if (filtro != null) {
+			PaginacaoVO paginacao = new PaginacaoVO(page, rp, sortorder);
+			filtro.setPaginacao(paginacao);
+			filtro.setOrdenacaoColuna(Util.getEnumByStringValue(FiltroPesquisarHistoricoEditorDTO.ColunaOrdenacaoPesquisarHistoricoEditorDTO.values(), sortname));
 		}
 	}
 

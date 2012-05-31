@@ -7,12 +7,9 @@ import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Exportable;
 
 /**
- * 
  * Classe responsável por armazenar os valores referente aos registros da
  * pesquisa de registra de curva ABC do distribuidor.
- * 
  * @author InfoA2
- * 
  */
 @Exportable
 public class RegistroCurvaABCDistribuidorVO extends RegistroCurvaABC implements Serializable {

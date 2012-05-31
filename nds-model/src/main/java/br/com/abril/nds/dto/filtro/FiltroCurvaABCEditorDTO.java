@@ -4,6 +4,14 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
+import br.com.abril.nds.util.export.Exportable;
+
+/**
+ * Classe responsável por armazenar os valores referente aos registros da
+ * pesquisa de registra de curva ABC do editor.
+ * @author InfoA2
+ */
+@Exportable
 public class  FiltroCurvaABCEditorDTO extends FiltroCurvaABCDTO implements Serializable {
 
 	/**
@@ -33,7 +41,7 @@ public class  FiltroCurvaABCEditorDTO extends FiltroCurvaABCDTO implements Seria
 	
 	public enum ColunaOrdenacaoCurvaABCEditor {
 
-		CODIGO_EDITOR("numeroEditor"),
+		CODIGO_EDITOR("codigoEditor"),
 		NOME_EDITOR("nomeEditor"),
 		REPARTE("reparte"),
 		VENDA_EXEMPLARES("vendaExemplares"),
@@ -70,7 +78,5 @@ public class  FiltroCurvaABCEditorDTO extends FiltroCurvaABCDTO implements Seria
 			ColunaOrdenacaoCurvaABCEditor ordenacaoColuna) {
 		this.ordenacaoColuna = ordenacaoColuna;
 	}
-
-	
 	
 }
