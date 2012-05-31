@@ -1,5 +1,5 @@
 <div id="dialog-salvar" title="Salvar Conferência" style="display: none;">
-	<fieldset>
+	<fieldset style="width: 410px;">
 		<legend>Salvar Conferência</legend>
 		<p>Confima a Conferência de Encalhe?</p>
 	</fieldset>
