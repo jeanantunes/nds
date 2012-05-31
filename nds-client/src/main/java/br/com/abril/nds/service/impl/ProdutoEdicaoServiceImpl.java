@@ -24,6 +24,7 @@ import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.TipoParametroSistema;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.repository.DistribuicaoFornecedorRepository;
+import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.repository.ParametroSistemaRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.repository.ProdutoRepository;
@@ -56,7 +57,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 	private ProdutoRepository produtoRepository;
 	
 	@Autowired
-	private LancamentoService lancamentoService;
+	private LancamentoRepository lancamentoRepository;
 	
 	@Autowired
 	private CapaService capaService;
@@ -265,9 +266,8 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 			lancamento = new Lancamento();
 		} else {
 			produtoEdicao = produtoEdicaoRepository.buscarPorId(dto.getId());
-			
-			// FIXME: Qual lançamento deve-se ser atualizado? 
-			lancamento = new Lancamento();
+			lancamento = lancamentoRepository.obterUltimoLancamentoDaEdicao(
+					produtoEdicao.getId());
 		}		
 		
 		
