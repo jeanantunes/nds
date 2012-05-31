@@ -32,7 +32,7 @@ public class VendaProdutoRepositoryImpl extends AbstractRepository<MovimentoEsto
 		hql.append(" lancamento.dataRecolhimentoDistribuidor as dataRecolhimento, ");
 		hql.append(" (estoqueProduto.qtde + estoqueProduto.qtdeSuplementar) as reparte, ");
 		hql.append(" ((estoqueProduto.qtde + estoqueProduto.qtdeSuplementar) - estoqueProduto.qtdeDevolucaoEncalhe)  as venda, ");
-		hql.append(" (((estoqueProduto.qtde + estoqueProduto.qtdeSuplementar) - estoqueProduto.qtdeDevolucaoEncalhe) / lancamento.reparte)  as percentagemVenda, ");
+		hql.append(" (((estoqueProduto.qtde + estoqueProduto.qtdeSuplementar) - estoqueProduto.qtdeDevolucaoEncalhe) / (estoqueProduto.qtde + estoqueProduto.qtdeSuplementar))  as percentagemVenda, ");
 		hql.append(" produtoEdicao.precoVenda  as precoCapa, ");
 		hql.append(" (((estoqueProduto.qtde + estoqueProduto.qtdeSuplementar) - estoqueProduto.qtdeDevolucaoEncalhe) * produtoEdicao.precoVenda)  as total ");
 		
@@ -139,17 +139,16 @@ public class VendaProdutoRepositoryImpl extends AbstractRepository<MovimentoEsto
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" SELECT lancamento.dataLancamentoDistribuidor as dataLancamento, ");
-		hql.append(" lancamento.dataLancamentoDistribuidor as dataRecolhimento, ");
+		hql.append(" SELECT DISTINCT lancamento.lancamentoInicial as dataLancamento, ");
+		hql.append(" lancamento.recolhimentoFinal as dataRecolhimento, ");
 		hql.append(" (estoqueProduto.qtde + estoqueProduto.qtdeSuplementar) as reparte, ");
 		hql.append(" estoqueProduto.qtdeDevolucaoEncalhe  as encalhe, ");
 		hql.append(" ((estoqueProduto.qtde + estoqueProduto.qtdeSuplementar) - estoqueProduto.qtdeDevolucaoEncalhe)  as venda, ");
-		hql.append(" (((estoqueProduto.qtde + estoqueProduto.qtdeSuplementar) - estoqueProduto.qtdeDevolucaoEncalhe) * produtoEdicao.precoVenda)  as total ");
+		hql.append(" ((estoqueProduto.qtde + estoqueProduto.qtdeSuplementar) - estoqueProduto.qtdeDevolucaoEncalhe)  as vendaAcumulada, ");
+		hql.append(" (((estoqueProduto.qtde + estoqueProduto.qtdeSuplementar) - estoqueProduto.qtdeDevolucaoEncalhe) / (estoqueProduto.qtde + estoqueProduto.qtdeSuplementar))  as percentualVenda ");
 		
 		
 		hql.append(getSqlFromEWhereLancamentoPorEdicao(filtro));
-		
-		//hql.append(getOrderByPorEdicoes(filtro));
 		
 		Query query =  getSession().createQuery(hql.toString());
 		
@@ -171,12 +170,11 @@ public class VendaProdutoRepositoryImpl extends AbstractRepository<MovimentoEsto
 		StringBuilder hql = new StringBuilder();
 	
 
-		hql.append(" from Lancamento lancamento ");
+		hql.append(" from LancamentoParcial lancamento ");
 		hql.append(" LEFT JOIN lancamento.produtoEdicao as produtoEdicao ");
 		hql.append(" LEFT JOIN lancamento.produtoEdicao.produto as produto ");
 		hql.append(" LEFT JOIN lancamento.produtoEdicao.movimentoEstoques as movimentoEstoque ");
 		hql.append(" LEFT JOIN movimentoEstoque.estoqueProduto as estoqueProduto ");
-		
 		
 		boolean usarAnd = false;
 		

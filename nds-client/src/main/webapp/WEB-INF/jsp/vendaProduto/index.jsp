@@ -299,7 +299,7 @@
 				align : 'center'
 			}, {
 				display : 'Venda',
-				name : 'venda',
+				name : 'valorVenda',
 				width : 90,
 				sortable : true,
 				align : 'center'
@@ -387,7 +387,7 @@
 				align : 'center'
 			}, {
 				display : '% Venda',
-				name : 'total',
+				name : 'percentualVenda',
 				width : 60,
 				sortable : true,
 				align : 'center'

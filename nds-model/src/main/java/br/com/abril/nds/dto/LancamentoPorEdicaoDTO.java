@@ -2,7 +2,6 @@ package br.com.abril.nds.dto;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.Date;
 
 import br.com.abril.nds.util.Constantes;
@@ -16,6 +15,9 @@ public class LancamentoPorEdicaoDTO implements Serializable  {
 	
 	
 	private static final long serialVersionUID = -4125231140420830266L;
+	
+	@Export(label = "Período", alignment=Alignment.CENTER)
+	private String periodo;
 	
 	@Export(label = "Data Lançamento", alignment=Alignment.CENTER)
 	private String dataLancamento;
@@ -32,24 +34,25 @@ public class LancamentoPorEdicaoDTO implements Serializable  {
 	@Export(label = "Venda", alignment=Alignment.CENTER)
 	private BigDecimal venda;
 	
-	@Export(label = "Total", alignment=Alignment.CENTER)
-	private BigDecimal total;
+	@Export(label = "Venda Acumulada", alignment=Alignment.CENTER)
+	private BigDecimal vendaAcumulada;
 	
-	
-	
+	@Export(label = "% Venda", alignment=Alignment.CENTER)
+	private BigDecimal percentualVenda;
 	
 	public LancamentoPorEdicaoDTO() {
 		
 	}
 	
-	public LancamentoPorEdicaoDTO(String dataLancamento, String dataRecolhimento, BigDecimal reparte, BigDecimal venda,  
-			BigDecimal total, BigDecimal encalhe) {
+	public LancamentoPorEdicaoDTO(String dataLancamento, String dataRecolhimento, BigDecimal reparte, BigDecimal encalhe, BigDecimal venda,  
+			BigDecimal vendaAcumulada, BigDecimal percentualVenda) {
 		super();
 		this.dataLancamento = dataLancamento;
 		this.dataRecolhimento = dataRecolhimento;
 		this.reparte = reparte;
-		this.venda = venda;
-		this.total = total;
+		this.venda = venda;		
+		this.vendaAcumulada = vendaAcumulada;
+		this.percentualVenda = percentualVenda;
 	}
 	
 	
@@ -86,12 +89,12 @@ public class LancamentoPorEdicaoDTO implements Serializable  {
 		this.venda = venda;
 	}
 
-	public BigDecimal getTotal() {
-		return total.setScale(2,RoundingMode.HALF_DOWN);
+	public BigDecimal getPercentualVenda() {
+		return percentualVenda;
 	}
 
-	public void setTotal(BigDecimal total) {
-		this.total = total;
+	public void setPercentualVenda(BigDecimal percentualVenda) {
+		this.percentualVenda = percentualVenda;
 	}
 	
 	public BigDecimal getEncalhe() {
@@ -101,5 +104,20 @@ public class LancamentoPorEdicaoDTO implements Serializable  {
 	public void setEncalhe(BigDecimal encalhe) {
 		this.encalhe = encalhe;
 	}
-	
+
+	public String getPeriodo() {
+		return periodo;
+	}
+
+	public void setPeriodo(String periodo) {
+		this.periodo = periodo;
+	}
+
+	public BigDecimal getVendaAcumulada() {
+		return vendaAcumulada;
+	}
+
+	public void setVendaAcumulada(BigDecimal vendaAcumulada) {
+		this.vendaAcumulada = vendaAcumulada;
+	}
 }

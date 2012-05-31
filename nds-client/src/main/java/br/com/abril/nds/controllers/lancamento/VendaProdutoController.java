@@ -127,7 +127,16 @@ public class VendaProdutoController {
 	
 	private TableModel<CellModelKeyValue<LancamentoPorEdicaoDTO>> efetuarConsultaLancamentoEdicao(FiltroVendaProdutoDTO filtro) {
 		 
-		List<LancamentoPorEdicaoDTO> listaLancamentoPorEdicao =  this.vendaProdutoService.buscaLancamentoPorEdicao(filtro);				
+		List<LancamentoPorEdicaoDTO> listaAux =  this.vendaProdutoService.buscaLancamentoPorEdicao(filtro);		
+		List<LancamentoPorEdicaoDTO> listaLancamentoPorEdicao = new ArrayList<LancamentoPorEdicaoDTO>();
+		int cont = 1;
+		if(!listaAux.isEmpty()){
+			for(LancamentoPorEdicaoDTO dto: listaAux){
+				dto.setPeriodo(cont+"º");
+				listaLancamentoPorEdicao.add(dto);
+				cont++;
+			}			
+		}
 		
 		//Integer totalRegistros = lancamentoParcialService.totalBuscaLancamentosParciais(filtro);
 		
