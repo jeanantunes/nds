@@ -105,7 +105,11 @@ public class ProdutoEdicao implements Serializable {
 	
 	@Embedded
 	protected Brinde brinde;
+<<<<<<< HEAD
 		
+=======
+	
+>>>>>>> EMS-217: Inclusao de novo atributo 'reparte_previsto'.
 	@ManyToOne(fetch=FetchType.LAZY, optional=true)
 	@JoinColumn(name="DESCONTO_LOGISTICA_ID", nullable=true)
 	private DescontoLogistica descontoLogistica;
@@ -457,6 +461,5 @@ public class ProdutoEdicao implements Serializable {
 	public void setReparteDistribuido(BigDecimal reparteDistribuido) {
 		this.reparteDistribuido = reparteDistribuido;
 	}
-	
 	
 }
