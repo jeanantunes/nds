@@ -9,7 +9,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,7 +18,6 @@ import br.com.abril.nds.dto.FuroProdutoDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.ParametroSistema;
-import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.TipoParametroSistema;
 import br.com.abril.nds.model.planejamento.Lancamento;
@@ -29,11 +27,9 @@ import br.com.abril.nds.repository.ParametroSistemaRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.repository.ProdutoRepository;
 import br.com.abril.nds.service.CapaService;
-import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
-import br.com.caelum.vraptor.converter.BigDecimalConverter;
 
 /**
  * Classe de implementação de serviços referentes a entidade
@@ -261,17 +257,34 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 		ProdutoEdicao produtoEdicao = null;
 		Lancamento lancamento = null;
 		if (dto.getId() == null) {
+			
+			// Salvar novo ProdutoEdicao:
 			produtoEdicao = new ProdutoEdicao();
 			produtoEdicao.setProduto(produtoRepository.obterProdutoPorCodigo(codigoProduto));
 			lancamento = new Lancamento();
 		} else {
+			
+			// Atualizar ProdutoEdicao existente:
 			produtoEdicao = produtoEdicaoRepository.buscarPorId(dto.getId());
 			lancamento = lancamentoRepository.obterUltimoLancamentoDaEdicao(
 					produtoEdicao.getId());
+			
+			// FIXME REVISAR ESTA REGRA!!!
+			/* Regra: Não é permitido alterar o número da Edição se houver Lançamentos */
+			// Para editar um registro, só permitir a alteração do campo Edição se não existir Lançamento (tabela lancamento) para ele.
+			if (!produtoEdicao.getNumeroEdicao().equals(dto.getNumeroEdicao())
+					&& (produtoEdicao.getLancamentos() != null 
+						&& !produtoEdicao.getLancamentos().isEmpty())) {
+				
+				throw new ValidacaoException(TipoMensagem.ERROR, "Não é permitido alterar o número de uma Edição já lançada!");
+			}
+			
+			
+			
 		}		
 		
 		
-		// Regra: Se não existir nenhuma edição associada ao produto, salvar n. 1
+		/* Regra: Se não existir nenhuma edição associada ao produto, salvar n. 1 */
 		if (!this.produtoEdicaoRepository.hasProdutoEdicao(produtoEdicao.getProduto())) {
 			produtoEdicao.setNumeroEdicao(Long.valueOf(1));
 		}
@@ -337,8 +350,25 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 	 * 
 	 * @param idProdutoEdicao
 	 */
+	@Transactional(readOnly = true)
 	public void excluirProdutoEdicao(Long idProdutoEdicao) {
 		
+		ProdutoEdicao produtoEdicao = produtoEdicaoRepository.buscarPorId(idProdutoEdicao);
+		if (produtoEdicao == null) {
+			throw new ValidacaoException(TipoMensagem.ERROR, "Por favor, selecione uma Edição existente!");
+		}
+		
+		/* Regra: Se a Edição for originária da Interface, não pode ser excluida! */
+		if (produtoEdicao.getOrigemInterface()) {
+			throw new ValidacaoException(TipoMensagem.ERROR, "Esta Edição não pode ser excluida por ser originária da INTERFACE!");
+		}
+		
+		
+		// TODO: Para a exclusão, verificar se existe integridade referencial. Se sim, não excluir
+		// O que seria isso?!
+		
+		
+		produtoEdicaoRepository.remover(produtoEdicao);
 	}
 	
 	
