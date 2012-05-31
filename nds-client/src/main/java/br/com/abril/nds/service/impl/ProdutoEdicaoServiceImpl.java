@@ -1,5 +1,7 @@
 package br.com.abril.nds.service.impl;
 
+import java.io.InputStream;
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -7,6 +9,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,14 +19,20 @@ import br.com.abril.nds.dto.FuroProdutoDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.ParametroSistema;
+import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.TipoParametroSistema;
+import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.repository.DistribuicaoFornecedorRepository;
 import br.com.abril.nds.repository.ParametroSistemaRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
+import br.com.abril.nds.repository.ProdutoRepository;
+import br.com.abril.nds.service.CapaService;
+import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
+import br.com.caelum.vraptor.converter.BigDecimalConverter;
 
 /**
  * Classe de implementação de serviços referentes a entidade
@@ -43,9 +52,19 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 	@Autowired
 	private ParametroSistemaRepository parametroSistemaRepository;
 	
+	@Autowired
+	private ProdutoRepository produtoRepository;
+	
+	@Autowired
+	private LancamentoService lancamentoService;
+	
+	@Autowired
+	private CapaService capaService;
+	
+	
 	@Override
 	@Transactional(readOnly = true)
-	public List<ProdutoEdicao> obterProdutoEdicaoPorNomeProduto(String nomeProduto) {
+ 	public List<ProdutoEdicao> obterProdutoEdicaoPorNomeProduto(String nomeProduto) {
 		return produtoEdicaoRepository.obterProdutoEdicaoPorNomeProduto(nomeProduto);
 	}
 
@@ -217,6 +236,85 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 	public Long countPesquisarEdicoes(ProdutoEdicaoDTO dto) {
 		
 		return this.produtoEdicaoRepository.countPesquisarEdicoes(dto);
+	}
+	
+	/**
+	 * Pesquisa as últimas edições cadastradas.<br>
+	 * 
+	 * @param dto
+	 * @param maxResults Quantidade das últimas edições cadastradas a ser exibidas.
+	 * 
+	 * @return
+	 */
+	@Transactional(readOnly = true)
+	public List<ProdutoEdicaoDTO> pesquisarUltimasEdicoes(ProdutoEdicaoDTO dto,
+			int maxResults) {
+		
+		return this.produtoEdicaoRepository.pesquisarEdicoes(dto, "DESC",
+				"codigoProduto", 0, 5);
+	}
+	
+	@Transactional
+	public void salvarProdutoEdicao(ProdutoEdicaoDTO dto, String codigoProduto, String contentType, InputStream imgInputStream) {
+		
+		ProdutoEdicao produtoEdicao = null;
+		Lancamento lancamento = null;
+		if (dto.getId() == null) {
+			produtoEdicao = new ProdutoEdicao();
+			produtoEdicao.setProduto(produtoRepository.obterProdutoPorCodigo(codigoProduto));
+			lancamento = new Lancamento();
+		} else {
+			produtoEdicao = produtoEdicaoRepository.buscarPorId(dto.getId());
+			
+			// FIXME: Qual lançamento deve-se ser atualizado? 
+			lancamento = new Lancamento();
+		}		
+		
+		
+		// Regra: Se não existir nenhuma edição associada ao produto, salvar n. 1
+		if (!this.produtoEdicaoRepository.hasProdutoEdicao(produtoEdicao.getProduto())) {
+			produtoEdicao.setNumeroEdicao(Long.valueOf(1));
+		}
+		
+		// TODO: Popular ProdutoEdicao:
+		// TODO: implementar atributo: codigodaedicao
+		produtoEdicao.setNomeComercial(dto.getNomeComercialProduto());
+		produtoEdicao.setNumeroEdicao(dto.getNumeroEdicao());
+		produtoEdicao.setPacotePadrao(dto.getPacotePadrao());
+		produtoEdicao.setPrecoPrevisto(dto.getPrecoPrevisto());
+		produtoEdicao.setPrecoVenda(dto.getPrecoVenda());	// View: Preço real;
+		
+		
+		produtoEdicao.setPeso(dto.getPeso());
+		
+		if (produtoEdicao.getId() == null) {
+			
+			// save
+			produtoEdicaoRepository.adicionar(produtoEdicao);
+			
+			// Salvar na tabela de lançamento: 
+			lancamento.setProdutoEdicao(produtoEdicao);
+			lancamento.setTipoLancamento(dto.getTipoLancamento());
+			lancamento.setDataLancamentoPrevista(dto.getDataLancamentoPrevisto());
+			lancamento.setReparte((new BigDecimal(
+					dto.getRepartePrevisto())).setScale(2));	// View: Reparte Previsto;
+			lancamento.setRepartePromocional(new BigDecimal(
+					dto.getRepartePromocional()).setScale(2));	// View: Reparte Promocional;
+			
+		} else {
+			// update
+			
+			// TODO: Regra: Edição - permitir alteração do código de edição se o status não for LANÇADO;
+			// TODO: No final, salvar na tabela de lançamento tb 
+			
+		}		
+		
+		
+		
+		// Salvar imagem:
+		if (imgInputStream != null) {
+			capaService.saveCapa(produtoEdicao.getId(), contentType, imgInputStream);
+		}
 	}
 	
 }
