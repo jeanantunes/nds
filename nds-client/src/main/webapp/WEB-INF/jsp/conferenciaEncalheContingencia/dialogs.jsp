@@ -67,7 +67,7 @@
 </div>
 
 <div id="dialog-alert" title="Nota Fiscal">
-	<fieldset>
+	<fieldset style="width: 410px;">
 		<legend>Nota Fiscal</legend>
 		<p>Existe Nota Fiscal para esta Cota?</p>
 	</fieldset>
@@ -90,44 +90,60 @@
 </div>
 
 <div id="dialog-encalhe" title="Novo Encalhe">
+	
+	<jsp:include page="../messagesDialog.jsp">
+		<jsp:param value="idModalNovoEncalhe" name="messageDialog"/>
+	</jsp:include>
+	
 	<table width="425" border="0" cellspacing="2" cellpadding="2">
 		<tr>
 			<td width="125">Produto:</td>
-			<td width="286"><input name="lstProdutos" type="text"
-				id="lstProdutos" style="width: 280px;" /></td>
+			<td width="286">
+				<input name="lstProdutos" type="text" id="lstProdutos" style="width: 280px;" />
+			</td>
 		</tr>
 		<tr>
 			<td>Edição:</td>
-			<td><input type="text" style="width: 80px;" /></td>
+			<td>
+				<input type="text" style="width: 80px;" disabled="disabled" id="numEdicaoNovoEncalhe" />
+			</td>
 		</tr>
 		<tr>
 			<td>Preço Capa R$:</td>
-			<td><input type="text" style="width: 80px; text-align: right;"
-				disabled="disabled" /></td>
+			<td>
+				<input type="text" style="width: 80px; text-align: right;" disabled="disabled" id="precoCapaNovoEncalhe" />
+			</td>
 		</tr>
 		<tr>
 			<td>Preço Desconto R$:</td>
-			<td><input type="text" style="width: 80px;" disabled="disabled" />
+			<td>
+				<input type="text" style="width: 80px;" disabled="disabled" id="descontoNovoEncalhe" />
 			</td>
 		</tr>
 		<tr>
 			<td>Exemplares:</td>
-			<td><input type="text" style="width: 80px;" /></td>
+			<td><input type="text" style="width: 80px;" id="exemplaresNovoEncalhe" onchange="ConferenciaEncalheCont.calcularValorTotalNovoEncalhe();" /></td>
 		</tr>
 		<tr>
 			<td>Valor Total R$</td>
-			<td><input type="text" style="width: 80px; text-align: right;" />
+			<td>
+				<input type="text" style="width: 80px; text-align: right;" disabled="disabled" id="valorTotalNovoEncalhe"/>
 			</td>
 		</tr>
 		<tr>
 			<td>Juramentada:</td>
-			<td><input type="checkbox" name="checkbox" id="checkbox" /></td>
+			<td>
+				<input type="checkbox" name="checkbox" id="checkboxJueramentadaNovoEncalhe" />
+			</td>
 		</tr>
 	</table>
-	<br /> <span class="bt_add"> <a href="javascript:;"
-		onclick="showLinhas();">Incluir Novo</a>
-	</span> <br />
-
+	<br />
+	
+	<span class="bt_add">
+		<a href="javascript:;" onclick="ConferenciaEncalheCont.adicionarEncalhe();">Incluir Novo</a>
+	</span>
+	
+	<br />
 </div>
 
 <div id="dialog-conferencia" title="Liberação de Encalhe">
@@ -136,4 +152,12 @@
 
 <div id="dialog-novo" title="Conferência de Encalhe">
 	<p>Confirma o Encalhe?</p>
+</div>
+
+<div id="dialog-reabertura" title="Reabertura" style="display: none;">
+	<fieldset style="width: 310px;">
+		<legend>Nota Fiscal</legend>
+	    <p>Já existe conferencia de encalhe para esta cota.<br/>
+	    Efetuar reabertura?</p>
+	</fieldset>
 </div>
