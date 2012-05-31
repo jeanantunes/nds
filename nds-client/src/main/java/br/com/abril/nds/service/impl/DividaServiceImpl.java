@@ -2,6 +2,7 @@ package br.com.abril.nds.service.impl;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -11,12 +12,18 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.StatusDividaDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaInadimplenteDTO;
+import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.financeiro.Cobranca;
 import br.com.abril.nds.model.financeiro.Divida;
+import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
+import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
+import br.com.abril.nds.model.financeiro.StatusBaixa;
 import br.com.abril.nds.model.financeiro.StatusDivida;
+import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 import br.com.abril.nds.repository.CobrancaRepository;
 import br.com.abril.nds.repository.DividaRepository;
 import br.com.abril.nds.repository.MovimentoFinanceiroCotaRepository;
+import br.com.abril.nds.repository.TipoMovimentoFinanceiroRepository;
 import br.com.abril.nds.service.DividaService;
 
 @Service
@@ -29,6 +36,9 @@ public class DividaServiceImpl implements DividaService {
 	private CobrancaRepository cobrancaRepository;
 
 	protected MovimentoFinanceiroCotaRepository movimentoFinanceiroCotaRepository;
+	
+	@Autowired
+	private TipoMovimentoFinanceiroRepository tipoMovimentoFinanceiroRepository;
 	
 	@Override
 	@Transactional
@@ -75,18 +85,72 @@ public class DividaServiceImpl implements DividaService {
 
 	@Override
 	@Transactional
-	public void postergarCobrancaCota(List<Cobranca> listaCobranca, Date dataPostergacao, BigDecimal encargos) {
-	
-		// FIXME: Validar cobrancas de entrada.
+	public void postergarCobrancaCota(List<Long> listaIdsCobranca, Date dataPostergacao, BigDecimal juros, BigDecimal multa) {
+		
+		List<Cobranca> listaCobranca = 
+			this.cobrancaRepository.obterCobrancasPorIDS(listaIdsCobranca);
+
+		Date dataAtual = Calendar.getInstance().getTime();
+		
+		MovimentoFinanceiroCota movimentoFinanceiroCota = null;
 		
 		for (Cobranca cobranca : listaCobranca) {
 			
-			cobranca.setDataPagamento(dataPostergacao);
+			cobranca.setDataPagamento(dataAtual);
 			cobranca.getDivida().setStatus(StatusDivida.POSTERGADA);
-			cobranca.setEncargos(encargos);
+
+			cobranca.getBaixaCobranca().setStatus(StatusBaixa.NAO_PAGO_POSTERGADO);
+			cobranca.getBaixaCobranca().setDataBaixa(dataAtual);
+			cobranca.getBaixaCobranca().setValorPago(cobranca.getValor());
 			
-			this.cobrancaRepository.alterar(cobranca);
-		}
+			Cobranca cobrancaAtualizada = this.cobrancaRepository.merge(cobranca);
+			
+			movimentoFinanceiroCota = new MovimentoFinanceiroCota();
+
+			movimentoFinanceiroCota.setAprovadoAutomaticamente(false);
+			movimentoFinanceiroCota.setBaixaCobranca(cobrancaAtualizada.getBaixaCobranca());
+			movimentoFinanceiroCota.setCota(cobrancaAtualizada.getCota());
+			movimentoFinanceiroCota.setDataCriacao(dataAtual);
+			movimentoFinanceiroCota.setData(dataPostergacao);
+			movimentoFinanceiroCota.setLancamentoManual(true);
+			movimentoFinanceiroCota.setMotivo("NAO_PAGO_POSTERGADO");
+			movimentoFinanceiroCota.setStatus(StatusAprovacao.PENDENTE);
+			movimentoFinanceiroCota.setValor(cobrancaAtualizada.getValor());
+			
+			TipoMovimentoFinanceiro movimentoFinanceiro =
+				this.tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(
+					GrupoMovimentoFinaceiro.POSTERGADO_NEGOCIACAO);
+			
+			movimentoFinanceiroCota.setTipoMovimento(movimentoFinanceiro);
+			
+			movimentoFinanceiroCota = 
+				this.movimentoFinanceiroCotaRepository.merge(movimentoFinanceiroCota);
+			
+			if (juros != null && BigDecimal.ZERO.compareTo(juros) > 0) {
+
+				movimentoFinanceiro =
+						this.tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(
+							GrupoMovimentoFinaceiro.JUROS);
+
+				movimentoFinanceiroCota.setTipoMovimento(movimentoFinanceiro);
+			
+				movimentoFinanceiroCota = 
+					this.movimentoFinanceiroCotaRepository.merge(movimentoFinanceiroCota);
+			}
+
+			if (multa != null && BigDecimal.ZERO.compareTo(multa) > 0) {
+				
+				movimentoFinanceiro =
+						this.tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(
+							GrupoMovimentoFinaceiro.MULTA);
+
+				movimentoFinanceiroCota.setTipoMovimento(movimentoFinanceiro);
+				
+				movimentoFinanceiroCota = 
+					this.movimentoFinanceiroCotaRepository.merge(movimentoFinanceiroCota);
+				
+			}
+		}		
 	}
 
 }

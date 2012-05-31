@@ -33,7 +33,7 @@ public class Editor implements Serializable {
 	@Column(name = "ID", nullable = false)
 	private Long id;
 	
-	@Column(name = "NOME", nullable = false)
+	@Column(name = "NOME", nullable = false, length = 60)
 	private String nome;
 	
 	@Column(name = "CODIGO", nullable = false)
