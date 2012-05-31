@@ -1,6 +1,11 @@
 package br.com.abril.nds.repository.impl;
 
+import java.util.List;
+
+import org.hibernate.Criteria;
 import org.hibernate.Query;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.model.cadastro.Roteirizacao;
@@ -35,4 +40,13 @@ public class RoteirizacaoRepositoryImpl extends AbstractRepository<Roteirizacao,
 		
 		return (Roteirizacao)query.uniqueResult();
 	}
+	
+	@SuppressWarnings("unchecked")
+	public List<Roteirizacao> buscarRoterizacaoPorRota(Long rotaId) {
+		Criteria criteria = getSession().createCriteria(Roteirizacao.class);
+		criteria.add(Restrictions.eq("rota.id", rotaId));
+		criteria.addOrder(Order.asc("ordem"));
+		return criteria.list();
+	}
 }
+
