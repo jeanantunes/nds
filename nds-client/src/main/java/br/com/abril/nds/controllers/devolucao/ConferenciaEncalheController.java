@@ -677,6 +677,9 @@ public class ConferenciaEncalheController {
 			
 		} catch (ChamadaEncalheCotaInexistenteException e) {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Não existe chamada de encalhe deste produto para essa cota.");
+		} catch (EncalheRecolhimentoParcialException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 	
