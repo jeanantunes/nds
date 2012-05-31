@@ -293,14 +293,54 @@ public class FornecedorController {
 		
 		Map<Integer, TelefoneAssociacaoDTO> map = this.obterTelefonesSalvarSessao();
 		
-		if (map == null || map.keySet().isEmpty()) {
+		if (map.keySet().isEmpty()) {
 			
-			mensagens.add("Pelo menos um telefone deve ser cadastrado para o fornecedor.");
+			mensagens.add("Pelo menos um telefone deve ser cadastrado para o entregador.");
+		
+		} else {
+			
+			boolean temPrincipal = false;
+			
+			for (Integer key : map.keySet()){
+
+				TelefoneAssociacaoDTO telefoneAssociacaoDTO = map.get(key);
+				
+				if (telefoneAssociacaoDTO.isPrincipal()) {
+					
+					temPrincipal = true;
+					
+					break;
+				}
+			}
+			
+			if (!temPrincipal) {
+				
+				mensagens.add("Deve haver ao menos um telefone principal para o entregador.");
+			}
 		}
 		
 		if (listaEnderecoAssociacaoSalvar == null || listaEnderecoAssociacaoSalvar.isEmpty()) {
 			
-			mensagens.add("Pelo menos um endereço deve ser cadastrado para o fornecedor.");
+			mensagens.add("Pelo menos um endereço deve ser cadastrado para o entregador.");
+		
+		} else {
+			
+			boolean temPrincipal = false;
+			
+			for (EnderecoAssociacaoDTO enderecoAssociacao : listaEnderecoAssociacaoSalvar) {
+				
+				if (enderecoAssociacao.isEnderecoPrincipal()) {
+					
+					temPrincipal = true;
+					
+					break;
+				}
+			}
+
+			if (!temPrincipal) {
+				
+				mensagens.add("Deve haver ao menos um endereço principal para o entregador.");
+			}
 		}
 
 		if (!mensagens.isEmpty()) {

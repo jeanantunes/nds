@@ -51,12 +51,6 @@
 					$("#natural").val(result.natural);
 					$("#emailPF").val(result.email);
 
-				} else {
-
-					if ($("#nomeEntregador").val() != '') {
-						
-						$("#nomeEntregador").focus();	
-					}
 				}
 			},
 			function(result) {
