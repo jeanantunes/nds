@@ -347,6 +347,12 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 	}
 	
 	/**
+	 * Exclui uma Edição da base de dados.<br>
+	 * Os critérios para exclusão são:
+	 * <ul>
+	 * <li>A Edição não pode ser cadastrado via INTERFACE;</li>
+	 * <li>A Edição não pode estar sendo utilizada em outras partes dos sitema;</li>
+	 * </ul>
 	 * 
 	 * @param idProdutoEdicao
 	 */
@@ -363,9 +369,9 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 			throw new ValidacaoException(TipoMensagem.ERROR, "Esta Edição não pode ser excluida por ser originária da INTERFACE!");
 		}
 		
-		
-		// TODO: Para a exclusão, verificar se existe integridade referencial. Se sim, não excluir
-		// O que seria isso?!
+		// TODO: 
+		/* Regra: Não excluir se existir referencias desta edição em outras tabelas. */
+		//throw new ValidacaoException(TipoMensagem.ERROR, "Esta Edição não pode ser excluida por estar associada em outras partes do sistema!");
 		
 		
 		produtoEdicaoRepository.remover(produtoEdicao);
