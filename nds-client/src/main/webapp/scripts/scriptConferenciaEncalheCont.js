@@ -1,6 +1,8 @@
 var ConferenciaEncalheCont = {
 	
 	modalAberta: false,
+	
+	idProdutoEdicaoNovoEncalhe: "",
 		
 	pesquisarCota : function(){
 		
@@ -36,6 +38,7 @@ var ConferenciaEncalheCont = {
 				} else {
 					
 					ConferenciaEncalheCont.carregarListaConferencia();
+					$("#dialog-reabertura").dialog("close");
 					ConferenciaEncalheCont.popup_alert();
 				}
 			}
@@ -49,7 +52,6 @@ var ConferenciaEncalheCont = {
 				function(result){
 					
 					ConferenciaEncalheCont.preProcessarConsultaConferenciaEncalhe(result);
-					//$("#cod_barras").focus();
 				}
 		);
 	},
@@ -134,8 +136,6 @@ var ConferenciaEncalheCont = {
 		$(".dadosFiltro").show();
 		$("#nomeCota").text(result.razaoSocial);
 		$("#statusCota").text(result.situacao);
-		
-		$("#dialog-reabertura").dialog("close");
 	},
 	
 	pesquisarProdutoPorCodigoNome: function(){
@@ -158,7 +158,8 @@ var ConferenciaEncalheCont = {
 									function(result2){
 										
 										if (result2){
-									
+											
+											ConferenciaEncalheCont.idProdutoEdicaoNovoEncalhe = ui.item.chave.long;
 											$("#lstProdutos").val(ui.item.chave.string);
 											$("#numEdicaoNovoEncalhe").val(result2.numeroEdicao);
 											$("#precoCapaNovoEncalhe").val(parseFloat(result2.precoVenda).toFixed(2));
@@ -176,6 +177,28 @@ var ConferenciaEncalheCont = {
 	
 	adicionarEncalhe: function(){
 		
+		var data = [{name: "quantidade", value: $("#exemplaresNovoEncalhe").val()}, 
+		            {name: "idProdutoEdicao", value: ConferenciaEncalheCont.idProdutoEdicaoNovoEncalhe}];
+		
+		$.postJSON(contextPath + '/devolucao/conferenciaEncalhe/adicionarProdutoConferido', data,
+			function(result){
+				
+				ConferenciaEncalheCont.preProcessarConsultaConferenciaEncalhe(result);
+				
+				ConferenciaEncalheCont.limparCamposNovoEncalhe();
+			}
+		);
+	},
+	
+	limparCamposNovoEncalhe: function(){
+		
+		$("#lstProdutos").val("");
+		$("#numEdicaoNovoEncalhe").val("");
+		$("#precoCapaNovoEncalhe").val("");
+		$("#descontoNovoEncalhe").val("");
+		$("#exemplaresNovoEncalhe").val("");
+		$("#valorTotalNovoEncalhe").val("");
+		$("#checkboxJueramentadaNovoEncalhe").removeAttr("checked");
 	},
 	
 	calcularValorTotalNovoEncalhe: function(){
@@ -184,7 +207,8 @@ var ConferenciaEncalheCont = {
 	},
 	
 	popup_conferencia: function () {
-		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
+		
+		ConferenciaEncalheCont.modalAberta = true;
 	
 		$("#dialog-conferencia").dialog({
 			resizable : false,
@@ -206,7 +230,6 @@ var ConferenciaEncalheCont = {
 	},
 	
 	popup_novo_encalhe: function () {
-		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
 		
 		ConferenciaEncalheCont.modalAberta = true;
 		
@@ -233,7 +256,8 @@ var ConferenciaEncalheCont = {
 	},
 	
 	popup_alert: function () {
-		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
+		
+		ConferenciaEncalheCont.modalAberta = true;
 
 		$("#dialog-alert").dialog({
 			resizable : false,
@@ -250,13 +274,17 @@ var ConferenciaEncalheCont = {
 				"Não" : function() {
 					$(this).dialog("close");
 				}
+			}, close : function(){
+				
+				ConferenciaEncalheCont.modalAberta = false;
 			}
 		});
 
 	},
 	
 	popup_notaFiscal: function () {
-		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
+		
+		ConferenciaEncalheCont.modalAberta = true;
 
 		$("#dialog-notaFiscal").dialog({
 			resizable : false,
@@ -271,13 +299,18 @@ var ConferenciaEncalheCont = {
 				"Cancelar" : function() {
 					$(this).dialog("close");
 				}
+			}, close : function(){
+				
+				ConferenciaEncalheCont.modalAberta = false;
 			}
 		});
 
 	},
 
 	popup_outros_valores: function () {
-		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
+		
+		ConferenciaEncalheCont.modalAberta = true;
+		
 		$('#observacao').focus();
 		$("#dialog-outros-valores").dialog({
 			resizable : false,
@@ -289,13 +322,17 @@ var ConferenciaEncalheCont = {
 					$(this).dialog("close");
 
 				}
+			}, close : function(){
+				
+				ConferenciaEncalheCont.modalAberta = false;
 			}
 		});
 
 	},
 
 	popup_finalizar_conferencia: function () {
-		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
+		
+		ConferenciaEncalheCont.modalAberta = true;
 
 		$("#dialog-finaliza-conferencia").dialog({
 			resizable : false,
@@ -311,13 +348,18 @@ var ConferenciaEncalheCont = {
 					$(this).dialog("close");
 
 				}
+			}, close : function(){
+				
+				ConferenciaEncalheCont.modalAberta = false;
 			}
 		});
 
 	},
 
 	popup_salvarInfos: function () {
-		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
+		
+		ConferenciaEncalheCont.modalAberta = true;
+		
 		$("#dialog-salvar").dialog({
 			resizable : false,
 			height : 190,
@@ -331,7 +373,9 @@ var ConferenciaEncalheCont = {
 				"Cancelar" : function() {
 					$(this).dialog("close");
 				}
-
+			}, close : function(){
+				
+				ConferenciaEncalheCont.modalAberta = false;
 			}
 		});
 
@@ -386,6 +430,7 @@ shortcut.add("F2", function() {
 	
 	if (!ConferenciaEncalheCont.modalAberta){
 		
+		ConferenciaEncalheCont.limparCamposNovoEncalhe();
 		ConferenciaEncalheCont.popup_novo_encalhe();
 	}
 });
@@ -395,9 +440,17 @@ shortcut.add("F6", function() {
 });
 
 shortcut.add("F8", function() {
-	popup_outros_valores();
+	
+	if (!ConferenciaEncalheCont.modalAberta){
+		
+		ConferenciaEncalheCont.popup_outros_valores();
+	}
 });
 
 shortcut.add("F9", function() {
-	popup_salvarInfos();
+	
+	if (!ConferenciaEncalheCont.modalAberta){
+		
+		ConferenciaEncalheCont.popup_salvarInfos();
+	}
 });

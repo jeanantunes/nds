@@ -38,6 +38,7 @@ var ConferenciaEncalhe = {
 				} else {
 					
 					ConferenciaEncalhe.carregarListaConferencia(data);
+					$("#dialog-reabertura").dialog("close");
 					ConferenciaEncalhe.popup_alert();
 				}
 			}
@@ -156,8 +157,6 @@ var ConferenciaEncalhe = {
 		$(".dadosFiltro").show();
 		$("#nomeCota").text(result.razaoSocial);
 		$("#statusCota").text(result.situacao);
-		
-		$("#dialog-reabertura").dialog("close");
 	},
 	
 	finaliazarConferenciaPreProcess : function(result){
