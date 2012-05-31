@@ -1,50 +1,83 @@
 package br.com.abril.nds.integracao.model.canonic;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 
 import com.ancientprogramming.fixedformat4j.annotation.Field;
 import com.ancientprogramming.fixedformat4j.annotation.FixedFormatBoolean;
-import com.ancientprogramming.fixedformat4j.annotation.FixedFormatDecimal;
 import com.ancientprogramming.fixedformat4j.annotation.Record;
 
 @Record
 public class EMS0112Input extends IntegracaoDocument implements Serializable{
 	
+	
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	
+	private Integer codigoDistribuidor;
+	private String tipoOperacao;
 	private Long codigoEditor;
 	private String nomeEditor;
+	
+	private String tipoLogradouroEditor;
 	private String logradouroEditor;
 	private Integer numeroEditor;
 	private String complementoEditor;
 	private String cidadeEditor;
 	private String ufEditor;
 	private String cepEditor;
+	
+	private String tipoLogradouroEntrega;
 	private String logradouroEntrega;
 	private Integer numeroEntrega;
 	private String complementoEntrega;
 	private String cidadeEntrega;
-	private String ufEntregar;
+	private String ufEntrega;
 	private String cepEntrega;
+	
+	
 	private String dddContato;
 	private String telefoneContato;
+	
+	
 	private String dddEditor;
 	private String telefoneEditor;
+	
+
 	private String dddFax;
 	private String telefoneFax;
+	
+	
 	private String inscricaoMunicipal;
+	private String tipoPessoa;
 	private String nomeContato;
-	private String status;
+	private boolean status;
+	private String cpf;//IGNORAR
+	private String rg; //IGNORAR
+	private String orgaoEmissor;//IGNORAR
+	private String ufOrgaoEmissor;//IGNORAR
 	private String cnpj;
 	private String inscricaoEstadual;
-	private String bairroEditor;
-	private String bairroEntrega;
+	private Integer bairroEditor;
+	private Integer bairroEntrega;
 	
+	@Field(offset=1, length=7)
+	public Integer getCodigoDistribuidor() {
+		return codigoDistribuidor;
+	}
+	public void setCodigoDistribuidor(Integer codigoDistribuidor) {
+		this.codigoDistribuidor = codigoDistribuidor;
+	}
 	
+	@Field(offset=26, length=1)
+	public String getTipoOperacao() {
+		return tipoOperacao;
+	}
+	public void setTipoOperacao(String tipoOperacao) {
+		this.tipoOperacao = tipoOperacao;
+	}
+	
+	@Field(offset=28, length=7)	
 	public Long getCodigoEditor() {
 		return codigoEditor;
 	}
@@ -52,7 +85,7 @@ public class EMS0112Input extends IntegracaoDocument implements Serializable{
 		this.codigoEditor = codigoEditor;
 	}
 	
-	
+	@Field(offset=35, length=35)	
 	public String getNomeEditor() {
 		return nomeEditor;
 	}
@@ -60,7 +93,15 @@ public class EMS0112Input extends IntegracaoDocument implements Serializable{
 		this.nomeEditor = nomeEditor;
 	}
 	
+	@Field(offset=73, length=5)	
+	public String getTipoLogradouroEditor() {
+		return tipoLogradouroEditor;
+	}
+	public void setTipoLogradouroEditor(String tipoLogradouroEditor) {
+		this.tipoLogradouroEditor = tipoLogradouroEditor;
+	}
 	
+	@Field(offset=78, length=30)	
 	public String getLogradouroEditor() {
 		return logradouroEditor;
 	}
@@ -68,7 +109,7 @@ public class EMS0112Input extends IntegracaoDocument implements Serializable{
 		this.logradouroEditor = logradouroEditor;
 	}
 	
-	
+	@Field(offset=108, length=5)	
 	public Integer getNumeroEditor() {
 		return numeroEditor;
 	}
@@ -76,7 +117,7 @@ public class EMS0112Input extends IntegracaoDocument implements Serializable{
 		this.numeroEditor = numeroEditor;
 	}
 	
-	
+	@Field(offset=113, length=10)	
 	public String getComplementoEditor() {
 		return complementoEditor;
 	}
@@ -84,7 +125,7 @@ public class EMS0112Input extends IntegracaoDocument implements Serializable{
 		this.complementoEditor = complementoEditor;
 	}
 	
-	
+	@Field(offset=133, length=30)	
 	public String getCidadeEditor() {
 		return cidadeEditor;
 	}
@@ -92,7 +133,7 @@ public class EMS0112Input extends IntegracaoDocument implements Serializable{
 		this.cidadeEditor = cidadeEditor;
 	}
 	
-	
+	@Field(offset=163, length=2)	
 	public String getUfEditor() {
 		return ufEditor;
 	}
@@ -100,7 +141,7 @@ public class EMS0112Input extends IntegracaoDocument implements Serializable{
 		this.ufEditor = ufEditor;
 	}
 	
-	
+	@Field(offset=165, length=8)	
 	public String getCepEditor() {
 		return cepEditor;
 	}
@@ -108,7 +149,15 @@ public class EMS0112Input extends IntegracaoDocument implements Serializable{
 		this.cepEditor = cepEditor;
 	}
 	
+	@Field(offset=173, length=5)	
+	public String getTipoLogradouroEntrega() {
+		return tipoLogradouroEntrega;
+	}
+	public void setTipoLogradouroEntrega(String tipoLogradouroEntrega) {
+		this.tipoLogradouroEntrega = tipoLogradouroEntrega;
+	}
 	
+	@Field(offset=178, length=20)	
 	public String getLogradouroEntrega() {
 		return logradouroEntrega;
 	}
@@ -116,7 +165,7 @@ public class EMS0112Input extends IntegracaoDocument implements Serializable{
 		this.logradouroEntrega = logradouroEntrega;
 	}
 	
-	
+	@Field(offset=208, length=5)	
 	public Integer getNumeroEntrega() {
 		return numeroEntrega;
 	}
@@ -124,7 +173,7 @@ public class EMS0112Input extends IntegracaoDocument implements Serializable{
 		this.numeroEntrega = numeroEntrega;
 	}
 	
-	
+	@Field(offset=213, length=20)	
 	public String getComplementoEntrega() {
 		return complementoEntrega;
 	}
@@ -132,7 +181,7 @@ public class EMS0112Input extends IntegracaoDocument implements Serializable{
 		this.complementoEntrega = complementoEntrega;
 	}
 	
-	
+	@Field(offset=233, length=30)	
 	public String getCidadeEntrega() {
 		return cidadeEntrega;
 	}
@@ -140,15 +189,15 @@ public class EMS0112Input extends IntegracaoDocument implements Serializable{
 		this.cidadeEntrega = cidadeEntrega;
 	}
 	
-	
-	public String getUfEntregar() {
-		return ufEntregar;
+	@Field(offset=263, length=2)	
+	public String getUfEntrega() {
+		return ufEntrega;
 	}
-	public void setUfEntregar(String ufEntregar) {
-		this.ufEntregar = ufEntregar;
+	public void setUfEntrega(String ufEntrega) {
+		this.ufEntrega = ufEntrega;
 	}
 	
-	
+	@Field(offset=265, length=8)	
 	public String getCepEntrega() {
 		return cepEntrega;
 	}
@@ -156,7 +205,7 @@ public class EMS0112Input extends IntegracaoDocument implements Serializable{
 		this.cepEntrega = cepEntrega;
 	}
 	
-	
+	@Field(offset=273, length=4)	
 	public String getDddContato() {
 		return dddContato;
 	}
@@ -164,7 +213,7 @@ public class EMS0112Input extends IntegracaoDocument implements Serializable{
 		this.dddContato = dddContato;
 	}
 	
-	
+	@Field(offset=277, length=8)	
 	public String getTelefoneContato() {
 		return telefoneContato;
 	}
@@ -172,7 +221,7 @@ public class EMS0112Input extends IntegracaoDocument implements Serializable{
 		this.telefoneContato = telefoneContato;
 	}
 	
-	
+	@Field(offset=285, length=4)	
 	public String getDddEditor() {
 		return dddEditor;
 	}
@@ -180,7 +229,7 @@ public class EMS0112Input extends IntegracaoDocument implements Serializable{
 		this.dddEditor = dddEditor;
 	}
 	
-	
+	@Field(offset=289, length=8)	
 	public String getTelefoneEditor() {
 		return telefoneEditor;
 	}
@@ -188,7 +237,7 @@ public class EMS0112Input extends IntegracaoDocument implements Serializable{
 		this.telefoneEditor = telefoneEditor;
 	}
 	
-	
+	@Field(offset=297, length=4)	
 	public String getDddFax() {
 		return dddFax;
 	}
@@ -196,7 +245,7 @@ public class EMS0112Input extends IntegracaoDocument implements Serializable{
 		this.dddFax = dddFax;
 	}
 	
-	
+	@Field(offset=301, length=8)	
 	public String getTelefoneFax() {
 		return telefoneFax;
 	}
@@ -204,7 +253,7 @@ public class EMS0112Input extends IntegracaoDocument implements Serializable{
 		this.telefoneFax = telefoneFax;
 	}
 	
-	
+	@Field(offset=315, length=12)	
 	public String getInscricaoMunicipal() {
 		return inscricaoMunicipal;
 	}
@@ -212,7 +261,15 @@ public class EMS0112Input extends IntegracaoDocument implements Serializable{
 		this.inscricaoMunicipal = inscricaoMunicipal;
 	}
 	
+	@Field(offset=327, length=1)	
+	public String getTipoPessoa() {
+		return tipoPessoa;
+	}
+	public void setTipoPessoa(String tipoPessoa) {
+		this.tipoPessoa = tipoPessoa;
+	}
 	
+	@Field(offset=328, length=30)	
 	public String getNomeContato() {
 		return nomeContato;
 	}
@@ -220,15 +277,48 @@ public class EMS0112Input extends IntegracaoDocument implements Serializable{
 		this.nomeContato = nomeContato;
 	}
 	
-	
-	public String getStatus() {
+	@Field(offset=361, length=1)
+	@FixedFormatBoolean(falseValue="N", trueValue="S")
+	public boolean getStatus() {
 		return status;
 	}	
-	public void setStatus(String status) {
+	public void setStatus(boolean status) {
 		this.status = status;
 	}
 	
+	@Field(offset=367, length=12)	
+	public String getCpf() {
+		return cpf;
+	}
+	public void setCpf(String cpf) {
+		this.cpf = cpf;
+	}
 	
+	@Field(offset=379, length=15)	
+	public String getRg() {
+		return rg;
+	}
+	public void setRg(String rg) {
+		this.rg = rg;
+	}
+	
+	@Field(offset=394, length=10)	
+	public String getOrgaoEmissor() {
+		return orgaoEmissor;
+	}
+	public void setOrgaoEmissor(String orgaoEmissor) {
+		this.orgaoEmissor = orgaoEmissor;
+	}
+	
+	@Field(offset=404, length=2)	
+	public String getUfOrgaoEmissor() {
+		return ufOrgaoEmissor;
+	}
+	public void setUfOrgaoEmissor(String ufOrgaoEmissor) {
+		this.ufOrgaoEmissor = ufOrgaoEmissor;
+	}
+	
+	@Field(offset=406, length=14)	
 	public String getCnpj() {
 		return cnpj;
 	}
@@ -236,7 +326,7 @@ public class EMS0112Input extends IntegracaoDocument implements Serializable{
 		this.cnpj = cnpj;
 	}
 	
-	
+	@Field(offset=420, length=20)	
 	public String getInscricaoEstadual() {
 		return inscricaoEstadual;
 	}
@@ -244,19 +334,19 @@ public class EMS0112Input extends IntegracaoDocument implements Serializable{
 		this.inscricaoEstadual = inscricaoEstadual;
 	}
 	
-	
-	public String getBairroEditor() {
+	@Field(offset=440, length=5)	
+	public Integer getBairroEditor() {
 		return bairroEditor;
 	}
-	public void setBairroEditor(String bairroEditor) {
+	public void setBairroEditor(Integer bairroEditor) {
 		this.bairroEditor = bairroEditor;
 	}
 	
-	
-	public String getBairroEntrega() {
+	@Field(offset=445, length=5)	
+	public Integer getBairroEntrega() {
 		return bairroEntrega;
 	}
-	public void setBairroEntrega(String bairroEntrega) {
+	public void setBairroEntrega(Integer bairroEntrega) {
 		this.bairroEntrega = bairroEntrega;
 	}
 	

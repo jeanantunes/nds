@@ -1,15 +1,10 @@
 package br.com.abril.nds.integracao.ems0127.processor;
 
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.Date;
 import java.util.List;
 
 import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,12 +12,9 @@ import org.springframework.stereotype.Component;
 
 import br.com.abril.nds.integracao.ems0120.outbound.EMS0120Header;
 import br.com.abril.nds.integracao.ems0127.outbound.EMS0127Detalhe;
-import br.com.abril.nds.integracao.ems0127.outbound.EMS0127Header;
-import br.com.abril.nds.integracao.ems0127.outbound.EMS0127Trailer;
 import br.com.abril.nds.integracao.engine.MessageProcessor;
 import br.com.abril.nds.integracao.engine.data.Message;
 import br.com.abril.nds.integracao.service.DistribuidorService;
-import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 
 import com.ancientprogramming.fixedformat4j.format.FixedFormatManager;
 

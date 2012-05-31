@@ -6,7 +6,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -16,13 +15,13 @@ import br.com.abril.nds.integracao.engine.data.Message;
 import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;
 import br.com.abril.nds.integracao.model.canonic.EMS0109Input;
 import br.com.abril.nds.integracao.service.PeriodicidadeProdutoService;
+import br.com.abril.nds.model.cadastro.DescontoLogistica;
 import br.com.abril.nds.model.cadastro.Editor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
-import br.com.abril.nds.model.cadastro.TipoDesconto;
 import br.com.abril.nds.model.cadastro.TipoProduto;
 import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
 
@@ -63,6 +62,7 @@ public class EMS0109MessageProcessor implements MessageProcessor {
 
 			this.ndsiLoggerFactory.getLogger().logWarning(message, EventoExecucaoEnum.RELACIONAMENTO, 
 					"Distribuidor nao encontrato.");
+			
 			throw new RuntimeException("Distribuidor incorreto.");
 		}
 	}
@@ -70,10 +70,10 @@ public class EMS0109MessageProcessor implements MessageProcessor {
 	private boolean verificarDistribuidor(Message message) {
 		EMS0109Input input = (EMS0109Input) message.getBody();
 		
-		Integer codigoDistribuidorSistema = (Integer) message.getHeader().get(MessageHeaderProperties.CODIGO_DISTRIBUIDOR);
+		Integer codigoDistribuidorSistema = (Integer) message.getHeader().get(MessageHeaderProperties.CODIGO_DISTRIBUIDOR.getValue());
 		Integer codigoDistribuidorArquivo = Integer.parseInt(input.getCodigoDistribuidor()); 
 			
-		if (codigoDistribuidorSistema.equals(codigoDistribuidorArquivo)) {
+		if (codigoDistribuidorSistema != null && codigoDistribuidorSistema.equals(codigoDistribuidorArquivo)) {
 			
 			return true;
 		}
@@ -121,7 +121,7 @@ public class EMS0109MessageProcessor implements MessageProcessor {
 			
 			Query query = this.entityManager.createQuery(sql.toString());
 			
-			query.setParameter("codigoEdito", input.getCodigoEditor());
+			query.setParameter("codigoEditor", input.getCodigoEditor());
 			
 			return (Editor) query.getSingleResult();
 			
@@ -129,15 +129,16 @@ public class EMS0109MessageProcessor implements MessageProcessor {
 			
 			this.ndsiLoggerFactory.getLogger().logWarning(message, EventoExecucaoEnum.SEM_DOMINIO, 
 					"Editor " + input.getCodigoEditor() +  " nao encontrado.");
+			
 			throw new RuntimeException("Editor nao encontrado.");
 		} 
 	}
 	
-	private TipoDesconto findTipoDescontoByCodigo(String codigoTipoDesconto) {
+	private DescontoLogistica findDescontoLogisticaByCodigoTipoDesconto(String codigoTipoDesconto) {
 		StringBuilder sql = new StringBuilder();
 		
-		sql.append("select td from TipoDesconto td ");
-		sql.append( " where td.codigo = :codigoTipoDesconto ");
+		sql.append("select d from DescontoLogistica d ");
+		sql.append( " where d.tipoDesconto = :codigoTipoDesconto ");
 		
 		try {
 			
@@ -145,7 +146,7 @@ public class EMS0109MessageProcessor implements MessageProcessor {
 			
 			query.setParameter("codigoTipoDesconto", codigoTipoDesconto);
 			
-			return (TipoDesconto) query.getSingleResult();
+			return (DescontoLogistica) query.getSingleResult();
 			
 		} catch (NoResultException e) {	
 			
@@ -157,13 +158,13 @@ public class EMS0109MessageProcessor implements MessageProcessor {
 		StringBuilder sql = new StringBuilder();
 		
 		sql.append("SELECT tp FROM TipoProduto tp ");
-		sql.append("WHERE  tp.GrupoProduto = :grupoProduto ");
+		sql.append("WHERE  tp.grupoProduto = :grupoProduto ");
 			
 		Query query = this.entityManager.createQuery(sql.toString());;
 		query.setParameter("grupoProduto", grupoProduto);
 		
 		@SuppressWarnings("unchecked")
-		List<TipoProduto> tiposProduto = (List<TipoProduto>) query.getSingleResult();
+		List<TipoProduto> tiposProduto = (List<TipoProduto>) query.getResultList();
 		
 		TipoProduto tipoProduto = null;
 		
@@ -177,6 +178,7 @@ public class EMS0109MessageProcessor implements MessageProcessor {
 			
 			this.ndsiLoggerFactory.getLogger().logWarning(message, EventoExecucaoEnum.SEM_DOMINIO, 
 					"Tipo Produto REVISTA nao encontrado.");
+			
 			throw new RuntimeException("Tipo Produto nao encontrado.");
 		}
 	}	
@@ -202,44 +204,51 @@ public class EMS0109MessageProcessor implements MessageProcessor {
 	}
 	
 	private void criarProdutoEdicaoConformeInput(Message message, Editor editor, TipoProduto tipoProduto) {
-		
 		EMS0109Input input = (EMS0109Input) message.getBody();
 		
 		ProdutoEdicao produtoEdicao = new ProdutoEdicao();	
 		Produto produto = new Produto();
-		produtoEdicao.setProduto(produto);
-		
+				
 		PeriodicidadeProduto periodicidadeProduto = this.findPeriodicidadeProduto(input.getPeriodicidade());
 		Fornecedor fornecedor = this.findFornecedor(input.getCodigoFornecedor());
-		TipoDesconto tipoDesconto = this.findTipoDescontoByCodigo(input.getTipoDesconto());
+		DescontoLogistica descontoLogistica = this.findDescontoLogisticaByCodigoTipoDesconto(input.getTipoDesconto());
 
-		produtoEdicao.getProduto().setTipoProduto(tipoProduto);
-		produtoEdicao.getProduto().setNome(input.getNomePublicacao());
-		produtoEdicao.getProduto().setCodigoContexto(input.getContextoPublicacao());
-		produtoEdicao.getProduto().setDescricao(input.getNomePublicacao());	
-		produtoEdicao.getProduto().setEditor(editor);
-		produtoEdicao.getProduto().setPeriodicidade(periodicidadeProduto);
-		produtoEdicao.getProduto().setSlogan(input.getSlogan());
+		produto.setTipoProduto(tipoProduto);
+		produto.setNome(input.getNomePublicacao());
+		produto.setCodigoContexto(input.getContextoPublicacao());
+		produto.setDescricao(input.getNomePublicacao());	
+		produto.setEditor(editor);
+		produto.setPeriodicidade(periodicidadeProduto);
+		produto.setSlogan(input.getSlogan());
+		produto.setPeb(input.getPeb());
+		produto.setPeso(input.getPeso());
+		produto.setPacotePadrao(input.getPacotePadrao());
 		
 		if ( fornecedor != null ) {
 			
-			produtoEdicao.getProduto().addFornecedor(fornecedor);
+			produto.addFornecedor(fornecedor);
 		}
 		
+		this.entityManager.persist(produto); 
+		
+		produtoEdicao.setProduto(produto);
 		produtoEdicao.setNumeroEdicao(input.getCodigoPublicacao());
 		produtoEdicao.setAtivo(input.isStatus());
 		produtoEdicao.setDataDesativacao(input.getDataDesativacao());
-		produtoEdicao.setPeb(input.getPeb());
-		produtoEdicao.setPacotePadrao(input.getPacotePadrao());
-		produtoEdicao.setPeso(input.getPeso());
-				
-		if ( tipoDesconto != null ) {
-			
-			// FIXME Campo que falta criar
-			// produtoEdicao.setTipoDesconto(tipoDesconto);
-		}
+//		produtoEdicao.setPeb(input.getPeb());
+//		produtoEdicao.setPacotePadrao(input.getPacotePadrao());
+//		produtoEdicao.setPeso(input.getPeso());
 
-		this.entityManager.persist(produtoEdicao); 
+		if ( descontoLogistica != null ) {
+			
+			produtoEdicao.setDescontoLogistica(descontoLogistica);
+			
+		}
+		
+		this.entityManager.persist(produtoEdicao);
+		
+
+		
 	}
 	
 	private void atualizaProdutoEdicaoConformeInput(ProdutoEdicao produtoEdicao, Editor editor, TipoProduto tipoProduto, Message message) {
@@ -248,7 +257,7 @@ public class EMS0109MessageProcessor implements MessageProcessor {
 		
 		PeriodicidadeProduto periodicidadeProduto = this.findPeriodicidadeProduto(input.getPeriodicidade());
 		Fornecedor fornecedor = this.findFornecedor(input.getCodigoFornecedor());
-		TipoDesconto tipoDesconto = this.findTipoDescontoByCodigo(input.getTipoDesconto());
+		DescontoLogistica descontoLogistica = this.findDescontoLogisticaByCodigoTipoDesconto(input.getTipoDesconto());
 		
 		if (produtoEdicao.getProduto().getTipoProduto() != tipoProduto ) {
 			
@@ -274,7 +283,7 @@ public class EMS0109MessageProcessor implements MessageProcessor {
 			this.ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, 
 					"Atualizacao da Descricao para: " + input.getNomePublicacao());
 		}
-		if (produtoEdicao.getProduto().getEditor().getCodigo() != input.getCodigoEditor()) {
+		if (!produtoEdicao.getProduto().getEditor().getCodigo().equals(input.getCodigoEditor())) {
 			
 			produtoEdicao.getProduto().setEditor(editor);
 			this.ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, 
@@ -286,11 +295,23 @@ public class EMS0109MessageProcessor implements MessageProcessor {
 			this.ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, 
 					"Atualizacao da Periodicidade para: " + periodicidadeProduto);
 		}
-		if (produtoEdicao.getProduto().getSlogan().equals(input.getSlogan())) {
+		if (!produtoEdicao.getProduto().getSlogan().equals(input.getSlogan())) {
 			
 			produtoEdicao.getProduto().setSlogan(input.getSlogan());
 			this.ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, 
 					"Atualizacao do Slogan para: " + input.getSlogan());
+		}
+		if (produtoEdicao.getProduto().getPeb() != input.getPeb()){
+			
+			produtoEdicao.setPeb(input.getPeb());
+			this.ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, 
+					"Atualizacao do PEB para: " + input.getPeb());
+		}
+		if (produtoEdicao.getProduto().getPeso().equals(input.getPeso())) {
+			
+			produtoEdicao.setPeso(input.getPeso());
+			this.ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, 
+					"Atualizacao do Peso para: " + input.getPeso());
 		}
 		
 		
@@ -299,13 +320,14 @@ public class EMS0109MessageProcessor implements MessageProcessor {
 			if (produtoEdicao.getProduto().getFornecedor().getCodigoInterface() != fornecedor.getCodigoInterface()) {
 				
 				produtoEdicao.getProduto().addFornecedor(fornecedor);
+				
 				this.ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, 
 						"Atualizacao de Fornecedor para: " + fornecedor);
 			}
 		}
 		
 		
-		if (produtoEdicao.getNumeroEdicao() != input.getCodigoPublicacao()) {
+		if (!produtoEdicao.getNumeroEdicao().equals(input.getCodigoPublicacao())) {
 			
 			produtoEdicao.setNumeroEdicao(input.getCodigoPublicacao());
 			this.ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, 
@@ -317,7 +339,7 @@ public class EMS0109MessageProcessor implements MessageProcessor {
 			this.ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, 
 					"Atualizacao do Status para: " + input.isStatus());
 		}
-		if (produtoEdicao.getDataDesativacao() != input.getDataDesativacao()) {
+		if (!produtoEdicao.getDataDesativacao().equals(input.getDataDesativacao())) {
 			
 			produtoEdicao.setDataDesativacao(input.getDataDesativacao());
 			this.ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, 
@@ -335,23 +357,23 @@ public class EMS0109MessageProcessor implements MessageProcessor {
 			this.ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, 
 					"Atualizacao do Pacote Padrao para: " + input.getPacotePadrao());
 		}	
-		if (produtoEdicao.getPeso() != input.getPeso()) {
+		if (!produtoEdicao.getPeso().equals(input.getPeso())) {
 			
 			produtoEdicao.setPeso(input.getPeso());
 			this.ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, 
 					"Atualizacao do Peso para: " + input.getPeso());
 		}
 
-		
-		if ( tipoDesconto != null ) {
-						
-			/*if (produtoEdicao.getTipoDesconto().codigo != tipoDesconto.codigo) {
+		if ( descontoLogistica != null ) {
+			
+			if (!produtoEdicao.getDescontoLogistica().equals(descontoLogistica)) {
+
+				produtoEdicao.setDescontoLogistica(descontoLogistica);
 				
-				// FIXME Campo que falta criar
-				produtoEdicao.setTipoDesconto(tipoDesconto);
 				this.ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, 
-						"Atualizacao do Tipo Desconto para: " + tipoDesconto.descricao);
-			}*/
+						"Atualizacao do Tipo Desconto para: " + descontoLogistica.getTipoDesconto());
+						
+			}
 		}
 	}
 }

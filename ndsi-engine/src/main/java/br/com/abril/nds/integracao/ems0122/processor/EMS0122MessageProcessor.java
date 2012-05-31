@@ -19,6 +19,7 @@ import br.com.abril.nds.integracao.ems0122.outbound.EMS0122Trailer;
 import br.com.abril.nds.integracao.engine.MessageProcessor;
 import br.com.abril.nds.integracao.engine.data.Message;
 import br.com.abril.nds.integracao.service.DistribuidorService;
+import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 
 import com.ancientprogramming.fixedformat4j.format.FixedFormatManager;
@@ -58,7 +59,7 @@ public class EMS0122MessageProcessor implements MessageProcessor{
 	
 		Query query = entityManager.createQuery(sql.toString());
 		query.setParameter("dataOperacao", distribuidorService.findDistribuidor().getDataOperacao());
-		//query.setParameter("compraSuplementar", GrupoMovimentoEstoque.COMPRA_SUPLEMENTAR);
+		query.setParameter("compraSuplementar", GrupoMovimentoEstoque.COMPRA_SUPLEMENTAR);
 		
 		@SuppressWarnings("unchecked")
 		List<MovimentoEstoqueCota> mecs = (List<MovimentoEstoqueCota>) query.getResultList();

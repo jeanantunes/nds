@@ -33,18 +33,8 @@ public class EMS0119Route extends FixedLengthRouteTemplate{
 	}
 
 	@Override
-	public String getInboundFolder() {
-		return (String) getParameters().get("NDSI_EMS0119_INBOUND");
-	}
-
-	@Override
 	public String getFileFilterExpression() {
 		return (String) getParameters().get("NDSI_EMS0119_IN_FILEMASK");
-	}
-
-	@Override
-	public String getArchiveFolder() {
-		return (String) getParameters().get("NDSI_EMS0119_ARCHIVE");
 	}
 
 	@Override
@@ -52,6 +42,4 @@ public class EMS0119Route extends FixedLengthRouteTemplate{
 		setTypeMapping(EMS0119Input.class);
 		
 	}
-	
-	
 }
