@@ -51,7 +51,7 @@ public class FornecedorServiceImpl implements FornecedorService {
 		
 	}
 	
-	@Transactional
+	@Transactional(readOnly=true)
 	public List<Fornecedor> obterFornecedores() {
 		return fornecedorRepository.obterFornecedores();
 	}

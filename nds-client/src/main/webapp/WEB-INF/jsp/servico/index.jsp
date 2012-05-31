@@ -225,12 +225,6 @@
 			$("#diaMes").val(servico.diaMes);
 		}
 
-		function incluirENovoServico() {
-
-			salvarServico(false);
-			limparModalCadastro();
-		}
-
 		function salvarServico(isConfirm) {
 
 			var id = $("#idServico").val(); 
@@ -266,6 +260,11 @@
 									exibirMensagemDialog(tipoMensagem, listaMensagens, 'dialogMensagemNovo');
 								}
 							}
+
+							if (tipoMensagem == 'SUCCESS') {
+								limparModalCadastro();
+							}
+							
 					   },
 					   null,
 					   !isConfirm,
@@ -515,7 +514,7 @@
 		<br clear="all" />
 		
 		<span class="bt_add">
-			<a href="javascript:;" onclick="incluirENovoServico();" title="Incluir Novo" >Incluir Novo</a>
+			<a href="javascript:;" onclick="salvarServico(false);" title="Incluir Novo" >Incluir Novo</a>
 		</span>
 	</div>
 	
