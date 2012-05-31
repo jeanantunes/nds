@@ -17,6 +17,8 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.google.common.collect.Multiset.Entry;
+
 import br.com.abril.nds.client.vo.EntregadorPessoaFisicaVO;
 import br.com.abril.nds.client.vo.EntregadorPessoaJuridicaVO;
 import br.com.abril.nds.client.vo.ValidacaoVO;
@@ -750,11 +752,51 @@ public class EntregadorController {
 		if (map.keySet().isEmpty()) {
 			
 			listaMensagens.add("Pelo menos um telefone deve ser cadastrado para o entregador.");
+		
+		} else {
+			
+			boolean temPrincipal = false;
+			
+			for (Integer key : map.keySet()){
+
+				TelefoneAssociacaoDTO telefoneAssociacaoDTO = map.get(key);
+				
+				if (telefoneAssociacaoDTO.isPrincipal()) {
+					
+					temPrincipal = true;
+					
+					break;
+				}
+			}
+			
+			if (!temPrincipal) {
+				
+				listaMensagens.add("Deve haver ao menos um telefone principal para o entregador.");
+			}
 		}
 		
 		if (listaEnderecoAssociacaoSalvar == null || listaEnderecoAssociacaoSalvar.isEmpty()) {
 			
 			listaMensagens.add("Pelo menos um endereço deve ser cadastrado para o entregador.");
+		
+		} else {
+			
+			boolean temPrincipal = false;
+			
+			for (EnderecoAssociacaoDTO enderecoAssociacao : listaEnderecoAssociacaoSalvar) {
+				
+				if (enderecoAssociacao.isEnderecoPrincipal()) {
+					
+					temPrincipal = true;
+					
+					break;
+				}
+			}
+
+			if (!temPrincipal) {
+				
+				listaMensagens.add("Deve haver ao menos um endereço principal para o entregador.");
+			}
 		}
 		
 		if (!listaMensagens.isEmpty()) {

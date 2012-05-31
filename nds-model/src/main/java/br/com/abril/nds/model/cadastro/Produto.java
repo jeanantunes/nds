@@ -2,6 +2,7 @@ package br.com.abril.nds.model.cadastro;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -10,6 +11,7 @@ import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -17,6 +19,8 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import br.com.abril.nds.model.Origem;
 
@@ -64,6 +68,17 @@ public class Produto implements Serializable {
 	@JoinColumn(name = "TIPO_PRODUTO_ID")
 	private TipoProduto tipoProduto;
 	
+	@Column(name = "ATIVO", nullable = true)
+	private boolean ativo = true;
+	
+	@Column(name = "DATA_DESATIVACAO", nullable = true)
+	@Temporal(TemporalType.DATE)
+	private Date dataDesativacao;
+	
+	@ManyToOne(fetch=FetchType.LAZY, optional=true)
+	@JoinColumn(name="DESCONTO_LOGISTICA_ID", nullable=true)
+	private DescontoLogistica descontoLogistica;
+
 	/**
 	 * Editor do produto
 	 */
@@ -469,12 +484,33 @@ public class Produto implements Serializable {
 	public String getSubGrupoEditorial() {
 		return subGrupoEditorial;
 	}
-
-	/**
-	 * @param subGrupoEditorial the subGrupoEditorial to set
-	 */
+	
 	public void setSubGrupoEditorial(String subGrupoEditorial) {
 		this.subGrupoEditorial = subGrupoEditorial;
+	}
+
+	public boolean isAtivo() {
+		return ativo;
+	}
+
+	public void setAtivo(boolean ativo) {
+		this.ativo = ativo;
+	}
+
+	public Date getDataDesativacao() {
+		return dataDesativacao;
+	}
+
+	public void setDataDesativacao(Date dataDesativacao) {
+		this.dataDesativacao = dataDesativacao;
+	}
+
+	public DescontoLogistica getDescontoLogistica() {
+		return descontoLogistica;
+	}
+
+	public void setDescontoLogistica(DescontoLogistica descontoLogistica) {
+		this.descontoLogistica = descontoLogistica;
 	}
 	
 }

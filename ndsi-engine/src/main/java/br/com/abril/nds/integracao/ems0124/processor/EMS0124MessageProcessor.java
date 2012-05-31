@@ -19,7 +19,9 @@ import br.com.abril.nds.integracao.ems0124.outbound.EMS0124Trailer;
 import br.com.abril.nds.integracao.engine.MessageProcessor;
 import br.com.abril.nds.integracao.engine.data.Message;
 import br.com.abril.nds.integracao.service.DistribuidorService;
+import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
+import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 
 import com.ancientprogramming.fixedformat4j.format.FixedFormatManager;
 
@@ -49,7 +51,6 @@ public class EMS0124MessageProcessor implements MessageProcessor{
 		sql.append("JOIN FETCH mec.cota c ");
 		sql.append("JOIN FETCH mec.produtoEdicao pe ");
 		sql.append("JOIN FETCH pe.produto p ");
-		sql.append("JOIN FETCH p.fornecedores fs ");
 		sql.append("WHERE mec.data = :dataOperacao ");
 		sql.append("AND mec.tipoMovimento.grupoMovimentoEstoque = :nivelamentoEntrada ");
 		sql.append("OR mec.tipoMovimento.grupoMovimentoEstoque = :nivelamentoSaida");
@@ -59,8 +60,8 @@ public class EMS0124MessageProcessor implements MessageProcessor{
 	
 		Query query = entityManager.createQuery(sql.toString());
 		query.setParameter("dataOperacao", distribuidorService.findDistribuidor().getDataOperacao());
-		//query.setParameter("nivelamentoEntrada", GrupoMovimentoEstoque.NIVELAMENTO_ENTRADA);
-		//query.setParameter("nivelamentoSaida", GrupoMovimentoEstoque.NIVELAMENTO_SAIDA);
+		query.setParameter("nivelamentoEntrada", GrupoMovimentoEstoque.NIVELAMENTO_ENTRADA);
+		query.setParameter("nivelamentoSaida", GrupoMovimentoEstoque.NIVELAMENTO_SAIDA);
 		
 		@SuppressWarnings("unchecked")
 		List<MovimentoEstoqueCota> mecs = (List<MovimentoEstoqueCota>) query.getResultList();
@@ -84,16 +85,19 @@ public class EMS0124MessageProcessor implements MessageProcessor{
 				
 				EMS0124Detalhe outdetalhe = new EMS0124Detalhe();
 				
+				TipoMovimentoEstoque tipoMovimento = (TipoMovimentoEstoque) mec.getTipoMovimento();
+				
 				outdetalhe.setCodigoCota(mec.getCota().getNumeroCota());
-				outdetalhe.setCodigoFornecedorProduto(mec.getProdutoEdicao().getProduto().getFornecedores().iterator().next().getCodigoInterface());
 			    outdetalhe.setContextoProduto(mec.getProdutoEdicao().getProduto().getCodigoContexto());
 				outdetalhe.setCodPublicacao(mec.getProdutoEdicao().getProduto().getCodigo());
 				outdetalhe.setEdicao(mec.getProdutoEdicao().getNumeroEdicao());
 				outdetalhe.setPrecoCapa(mec.getProdutoEdicao().getPrecoVenda());
 				outdetalhe.setQuantidadeNivelamento(mec.getQtde());
-				//outdetalhe.setTipoNivelamento();
 				outdetalhe.setDataLancamento(mec.getData());
-				
+				if (tipoMovimento.equals(GrupoMovimentoEstoque.NIVELAMENTO_ENTRADA))
+					outdetalhe.setTipoNivelamento("E");
+				else 
+					outdetalhe.setTipoNivelamento("S");
 				 
 				print.println(fixedFormatManager.export(outdetalhe));
 
