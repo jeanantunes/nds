@@ -69,6 +69,9 @@ public class ProdutoEdicao implements Serializable {
 	@Column(name = "PRECO_PREVISTO", nullable = true)
 	protected BigDecimal precoPrevisto;
 	
+	@Column(name = "REPARTE_DISTRIBUIDO", nullable = true)
+	protected BigDecimal reparteDistribuido;
+	
 	@Column(name = "DESCONTO")
 	protected BigDecimal desconto = BigDecimal.ZERO;
 	
@@ -102,7 +105,11 @@ public class ProdutoEdicao implements Serializable {
 	
 	@Embedded
 	protected Brinde brinde;
-		
+	
+	@ManyToOne(fetch=FetchType.LAZY, optional=true)
+	@JoinColumn(name="DESCONTO_LOGISTICA_ID", nullable=true)
+	private DescontoLogistica descontoLogistica;
+	
 	/**
 	 * Percentual de expectativa de venda do produto
 	 */
@@ -428,4 +435,27 @@ public class ProdutoEdicao implements Serializable {
 	public void setOrigemInterface(Boolean origemInterface) {
 		this.origemInterface = origemInterface;
 	}
+
+	public DescontoLogistica getDescontoLogistica() {
+		return descontoLogistica;
+	}
+
+	public void setDescontoLogistica(DescontoLogistica descontoLogistica) {
+		this.descontoLogistica = descontoLogistica;
+	}
+
+	/**
+	 * @return the reparteDistribuido
+	 */
+	public BigDecimal getReparteDistribuido() {
+		return reparteDistribuido;
+	}
+
+	/**
+	 * @param reparteDistribuido the reparteDistribuido to set
+	 */
+	public void setReparteDistribuido(BigDecimal reparteDistribuido) {
+		this.reparteDistribuido = reparteDistribuido;
+	}
+	
 }
