@@ -389,6 +389,7 @@ public class FornecedorServiceImpl implements FornecedorService {
 	 * {@inheritDoc}
 	 */
 	@Override
+	@Transactional
 	public void processarEnderecos(Long idFornecedor,
 								   List<EnderecoAssociacaoDTO> listaEnderecoAssociacaoSalvar,
 								   List<EnderecoAssociacaoDTO> listaEnderecoAssociacaoRemover) {
@@ -479,6 +480,7 @@ public class FornecedorServiceImpl implements FornecedorService {
 	 * {@inheritDoc}
 	 */
 	@Override
+	@Transactional
 	public void processarTelefones(Long idFornecedor,
 								   List<TelefoneFornecedor> listaTelefonesAdicionar,
 								   Collection<Long> listaTelefonesRemover) {
@@ -600,6 +602,48 @@ public class FornecedorServiceImpl implements FornecedorService {
 		if (!mensagensValidacao.isEmpty()){
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, mensagensValidacao));
 		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@Transactional
+	public List<EnderecoAssociacaoDTO> obterEnderecosFornecedor(Long idFornecedor) {
+		
+		if (idFornecedor == null) {
+
+			throw new ValidacaoException(TipoMensagem.ERROR, "Id do Fornecedor é obrigatório");
+		}
+		
+		return this.enderecoFornecedorRepository.obterEnderecosFornecedor(idFornecedor);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@Transactional
+	public List<TelefoneAssociacaoDTO> obterTelefonesFornecedor(Long idFornecedor) {
+
+		if (idFornecedor == null) {
+			
+			throw new ValidacaoException(TipoMensagem.ERROR, "Id do Fornecedor é obrigatório");
+		}
+		
+		return this.telefoneFornecedorRepository.buscarTelefonesFornecedor(idFornecedor, null);
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@Transactional
+	public boolean isPessoaJaCadastrada(Long idPessoa, Long idFornecedor) {
+	
+		Integer contagem = this.fornecedorRepository.obterQuantidadeFornecedoresPorIdPessoa(idPessoa, idFornecedor);
+		
+		return contagem > 0;
 	}
 }
 

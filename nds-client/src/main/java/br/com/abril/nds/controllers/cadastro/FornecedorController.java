@@ -4,19 +4,28 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.dto.ComboTipoFornecedorDTO;
+import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.dto.FornecedorDTO;
+import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaFornecedorDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaFornecedorDTO.ColunaOrdenacao;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
+import br.com.abril.nds.model.cadastro.TelefoneFornecedor;
 import br.com.abril.nds.model.cadastro.TipoFornecedor;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.PessoaJuridicaService;
@@ -48,6 +57,9 @@ public class FornecedorController {
 	private Result result;
 
 	@Autowired
+	private HttpSession session;
+	
+	@Autowired
 	private FornecedorService fornecedorService;
 	
 	@Autowired
@@ -55,10 +67,22 @@ public class FornecedorController {
 	
 	@Autowired
 	private TipoFornecedorService tipoFornecedorService;
+	
+	public static final String LISTA_TELEFONES_SALVAR_SESSAO = "listaTelefonesSalvarSessaoFornecedor";
+	
+	public static final String LISTA_TELEFONES_REMOVER_SESSAO = "listaTelefonesRemoverSessaoFornecedor";
+	
+	public static final String LISTA_TELEFONES_EXIBICAO = "listaTelefonesExibicaoFornecedor";
+
+	public static final String LISTA_ENDERECOS_SALVAR_SESSAO = "listaEnderecosSalvarSessaoFornecedor";
+
+	public static final String LISTA_ENDERECOS_REMOVER_SESSAO = "listaEnderecosRemoverSessaoFornecedor";
+
+	public static final String LISTA_ENDERECOS_EXIBICAO = "listaEnderecosExibicaoFornecedor";
 
 	@Path("/")
 	public void index() {
-		
+
 		obterTiposFornecedor();
 	}
 
@@ -112,12 +136,7 @@ public class FornecedorController {
 
 		validarFornecedorDTO(fornecedorDTO);
 		
-		TipoFornecedor tipoFornecedor = 
-				this.tipoFornecedorService.obterTipoFornecedorPorId(fornecedorDTO.getTipoFornecedor());
-		
 		Fornecedor fornecedor = criarFornecedor(fornecedorDTO);
-
-		fornecedor.setTipoFornecedor(tipoFornecedor);
 		
 		String mensagemSucesso = "Cadastro realizado com sucesso.";
 		
@@ -133,12 +152,18 @@ public class FornecedorController {
 			
 			this.fornecedorService.salvarFornecedor(fornecedor);
 		}
+		
+		processarEnderecosFornecedor(fornecedor.getId());
+		
+		processarTelefonesFornecedor(fornecedor.getId());
 
-		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, mensagemSucesso), "result").serialize();
+		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, mensagemSucesso), "result").recursive().serialize();
 	}
 	
 	@Post
 	public void obterPessoaJuridica(String cnpj) {
+		
+		cnpj = cnpj.replaceAll("\\.", "").replaceAll("-", "").replaceAll("/", "");
 		
 		PessoaJuridica pessoaJuridica = this.pessoaJuridicaService.buscarPorCnpj(cnpj);
 		
@@ -165,9 +190,37 @@ public class FornecedorController {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Fornecedor inválido.");
 		}
 		
+		List<EnderecoAssociacaoDTO> listaEnderecoAssociacao = 
+				this.fornecedorService.obterEnderecosFornecedor(idFornecedor);
+
+		this.session.setAttribute(LISTA_ENDERECOS_SALVAR_SESSAO, listaEnderecoAssociacao);
+
+		List<TelefoneAssociacaoDTO> listaTelefoneAssociacao = 
+				this.fornecedorService.obterTelefonesFornecedor(idFornecedor);
+
+		Map<Integer, TelefoneAssociacaoDTO> map = new LinkedHashMap<Integer, TelefoneAssociacaoDTO>();
+
+		for (TelefoneAssociacaoDTO telefoneAssociacaoDTO : listaTelefoneAssociacao) {
+
+			map.put(telefoneAssociacaoDTO.getReferencia(), telefoneAssociacaoDTO);
+		}
+
+		this.session.setAttribute(LISTA_TELEFONES_SALVAR_SESSAO, map);
+		
 		FornecedorDTO fornecedorDTO = criarFornecedorDTO(fornecedor);
 
 		this.result.use(Results.json()).from(fornecedorDTO, "result").recursive().serialize();
+	}
+	
+	@Post
+	public void novoCadastro() {
+
+		this.session.removeAttribute(LISTA_ENDERECOS_SALVAR_SESSAO);
+		this.session.removeAttribute(LISTA_ENDERECOS_REMOVER_SESSAO);
+		this.session.removeAttribute(LISTA_TELEFONES_SALVAR_SESSAO);
+		this.session.removeAttribute(LISTA_TELEFONES_REMOVER_SESSAO);
+		
+		this.result.use(Results.json()).from(DateUtil.formatarDataPTBR(new Date()), "result").serialize();
 	}
 	
 	private void obterTiposFornecedor() {
@@ -222,10 +275,128 @@ public class FornecedorController {
 			}
 		}
 
+		PessoaJuridica juridica = 
+				this.pessoaJuridicaService.buscarPorCnpj(fornecedorDTO.getCnpj());
+		
+		boolean juridicaCadastrada = 
+				this.fornecedorService.isPessoaJaCadastrada(juridica.getId(), fornecedorDTO.getIdFornecedor());
+		
+		if (juridicaCadastrada) {
+			
+			mensagens.add("Pessoa Jurídica já cadastrada para outro fornecedor.");
+		}
+		
+		@SuppressWarnings("unchecked")
+		List<EnderecoAssociacaoDTO> listaEnderecoAssociacaoSalvar = 
+				(List<EnderecoAssociacaoDTO>) this.session.getAttribute(
+						LISTA_ENDERECOS_SALVAR_SESSAO);
+		
+		Map<Integer, TelefoneAssociacaoDTO> map = this.obterTelefonesSalvarSessao();
+		
+		if (map == null || map.keySet().isEmpty()) {
+			
+			mensagens.add("Pelo menos um telefone deve ser cadastrado para o fornecedor.");
+		}
+		
+		if (listaEnderecoAssociacaoSalvar == null || listaEnderecoAssociacaoSalvar.isEmpty()) {
+			
+			mensagens.add("Pelo menos um endereço deve ser cadastrado para o fornecedor.");
+		}
+
 		if (!mensagens.isEmpty()) {
 			
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, mensagens));
 		}
+	}
+	
+	/*
+	 * Método responsável por processar os endereços do entregador.
+	 */
+	@SuppressWarnings("unchecked")
+	private void processarEnderecosFornecedor(Long idFornecedor) {
+
+		List<EnderecoAssociacaoDTO> listaEnderecoAssociacaoSalvar = 
+				(List<EnderecoAssociacaoDTO>) this.session.getAttribute(
+						LISTA_ENDERECOS_SALVAR_SESSAO);
+
+		List<EnderecoAssociacaoDTO> listaEnderecoAssociacaoRemover = 
+				(List<EnderecoAssociacaoDTO>) this.session.getAttribute(
+						LISTA_ENDERECOS_REMOVER_SESSAO);
+
+		this.fornecedorService.processarEnderecos(idFornecedor, 
+												  listaEnderecoAssociacaoSalvar, 
+												  listaEnderecoAssociacaoRemover);
+
+		this.session.removeAttribute(LISTA_ENDERECOS_SALVAR_SESSAO);
+		this.session.removeAttribute(LISTA_ENDERECOS_REMOVER_SESSAO);
+	}
+
+	/*
+	 * Método responsável por processar os telefones do entregador.
+	 */
+	private void processarTelefonesFornecedor(Long idFornecedor){
+
+		Map<Integer, TelefoneAssociacaoDTO> map = this.obterTelefonesSalvarSessao();
+
+		List<TelefoneFornecedor> lista = new ArrayList<TelefoneFornecedor>();
+
+		for (Integer key : map.keySet()){
+
+			TelefoneAssociacaoDTO telefoneAssociacaoDTO = map.get(key);
+
+			if (telefoneAssociacaoDTO.getTipoTelefone() != null){
+				
+				TelefoneFornecedor telefoneFornecedor = new TelefoneFornecedor();
+				telefoneFornecedor.setPrincipal(telefoneAssociacaoDTO.isPrincipal());
+				telefoneFornecedor.setTelefone(telefoneAssociacaoDTO.getTelefone());
+				telefoneFornecedor.setTipoTelefone(telefoneAssociacaoDTO.getTipoTelefone());
+
+				if (key > 0) {
+
+					telefoneFornecedor.setId(key.longValue());
+				}
+				
+				lista.add(telefoneFornecedor);
+			}
+		}
+
+		Set<Long> telefonesRemover = this.obterTelefonesRemoverSessao();
+		this.fornecedorService.processarTelefones(idFornecedor, lista, telefonesRemover);
+
+		this.session.removeAttribute(LISTA_TELEFONES_SALVAR_SESSAO);
+		this.session.removeAttribute(LISTA_TELEFONES_REMOVER_SESSAO);
+	}
+	
+	/*
+	 * Método que obtém os telefones a serem salvos, que estão na sessão.
+	 */
+	@SuppressWarnings("unchecked")
+	private Map<Integer, TelefoneAssociacaoDTO> obterTelefonesSalvarSessao(){
+		
+		Map<Integer, TelefoneAssociacaoDTO> telefonesSessao = (Map<Integer, TelefoneAssociacaoDTO>) 
+				this.session.getAttribute(LISTA_TELEFONES_SALVAR_SESSAO);
+		
+		if (telefonesSessao == null){
+
+			telefonesSessao = new LinkedHashMap<Integer, TelefoneAssociacaoDTO>();
+		}
+		
+		return telefonesSessao;
+	}
+	
+	/*
+	 * Método que obtém os telefones a serem removidos, que estão na sessão.
+	 */
+	@SuppressWarnings("unchecked")
+	private Set<Long> obterTelefonesRemoverSessao(){
+		Set<Long> telefonesSessao = (Set<Long>) 
+				this.session.getAttribute(LISTA_TELEFONES_REMOVER_SESSAO);
+
+		if (telefonesSessao == null){
+			telefonesSessao = new HashSet<Long>();
+		}
+
+		return telefonesSessao;
 	}
 	
 	private Fornecedor criarFornecedor(FornecedorDTO fornecedorDTO) {
@@ -247,6 +418,8 @@ public class FornecedorController {
 		
 		pessoaJuridica.setRazaoSocial(fornecedorDTO.getRazaoSocial());
 		
+		pessoaJuridica = this.pessoaJuridicaService.salvarPessoaJuridica(pessoaJuridica);
+		
 		Fornecedor fornecedor = null;
 		
 		if (fornecedorDTO.getIdFornecedor() != null) {
@@ -259,7 +432,12 @@ public class FornecedorController {
 			
 			fornecedor.setInicioAtividade(new Date());
 		}
+		
+		TipoFornecedor tipoFornecedor = 
+				this.tipoFornecedorService.obterTipoFornecedorPorId(fornecedorDTO.getTipoFornecedor());
 
+		fornecedor.setTipoFornecedor(tipoFornecedor);
+		
 		fornecedor.setCodigoInterface(fornecedorDTO.getCodigoInterface());
 		
 		fornecedor.setValidadeContrato(DateUtil.parseDataPTBR(fornecedorDTO.getValidadeContrato()));

@@ -6,8 +6,28 @@
 		if (!isEdicao) {
 			
 			limparCamposModal();
+			
+			$.postJSON(
+				'<c:url value="/cadastro/fornecedor/novoCadastro" />',
+				null,
+				function(result) {
+
+					$("#inicioAtividade").html(result);
+					
+					showPopupFornecedor();
+				},
+				null,
+				true
+			);
+		
+		} else {
+			
+			showPopupFornecedor();
 		}
-	
+	};
+
+	function showPopupFornecedor() {
+
 		$( "#dialogNovoFornecedor" ).dialog({
 			resizable: false,
 			height:610,
@@ -22,7 +42,7 @@
 				}
 			}
 		});
-	};
+	}
 	
 	function limparCamposModal() {
 		$("#idFornecedor").val("");
@@ -34,8 +54,9 @@
 		$("#responsavel").val("");
 		$("#email").val("");
 		$("#tipoFornecedor").val("");
-		$("#possuiContrato").val("");
 		$("#validadeContrato").val("");
+		$("#possuiContrato").uncheck();
+		$( '.validade' ).hide();
 	}
 	
 	function cadastrarFornecedor() {
@@ -46,19 +67,20 @@
 			'<c:url value="/cadastro/fornecedor/cadastrarFornecedor" />',
 			formData,
 			function(result) {
+				
+				$( "#dialogNovoFornecedor" ).dialog( "close" );
+				
 				exibirMensagem(
 					result.tipoMensagem, 
 					result.listaMensagens
 				);
 				
 				pesquisarFornecedores();
-				
-				$( this ).dialog( "close" );
 			},
 			function(result) {
 				exibirMensagemDialog(
 					result.mensagens.tipoMensagem, 
-					result.mensagens.listaMensagens
+					result.mensagens.listaMensagens, ""
 				);
 			},
 			true
@@ -100,6 +122,36 @@
 
 		for (i = 0; i < data.rows.length; i++) {
 
+			if (!data.rows[i].cell.codigoInterface) {
+				
+				data.rows[i].cell.codigoInterface = "";
+			}
+			
+			if (!data.rows[i].cell.razaoSocial) {
+				
+				data.rows[i].cell.razaoSocial = "";
+			}
+						
+			if (!data.rows[i].cell.cnpj) {
+				
+				data.rows[i].cell.cnpj = "";
+			}
+			
+			if (!data.rows[i].cell.responsavel) {
+				
+				data.rows[i].cell.responsavel = "";
+			}
+			
+			if (!data.rows[i].cell.telefone) {
+				
+				data.rows[i].cell.telefone = "";
+			}
+						
+			if (!data.rows[i].cell.email) {
+				
+				data.rows[i].cell.email = "";
+			}
+			
 			data.rows[i].cell.acao = getActionFornecedor(data.rows[i].id);
 		}
 
@@ -122,6 +174,7 @@
 			{'idFornecedor': idFornecedor},
 			function(result) {
 				
+				$("#inicioAtividade").html(result.inicioAtividade);
 				$("#idFornecedor").val(result.idFornecedor);
 				$("#codigoInterface").val(result.codigoInterface);
 				$("#razaoSocial").val(result.razaoSocial);
@@ -131,9 +184,24 @@
 				$("#responsavel").val(result.responsavel);
 				$("#email").val(result.email);
 				$("#tipoFornecedor").val(result.tipoFornecedor);
-				$("#possuiContrato").val(result.possuiContrato);
-				$("#validadeContrato").val(result.validadeContrato);
 				
+				if (result.possuiContrato) {
+
+					$("#possuiContrato").check();
+
+					$("#validadeContrato").val(result.validadeContrato);	
+				
+					$( '.validade' ).show();
+					
+				} else {
+					
+					$("#possuiContrato").uncheck();
+					
+					$("#validadeContrato").val("");
+					
+					$( '.validade' ).hide();
+				}
+
 				novoFornecedor(true);
 			},
 			function(result) {
@@ -202,12 +270,33 @@
 		);
 	}
 	
+	function obterPessoaJuridica() {
+		
+		$.postJSON(
+				'<c:url value="/cadastro/fornecedor/obterPessoaJuridica" />',
+				{'cnpj': $("#cnpj").val()},
+				function(result) {
+					
+					if (result.razaoSocial) 
+						$("#razaoSocial").val(result.razaoSocial);
+					if (result.nomeFantasia)
+						$("#nomeFantasia").val(result.nomeFantasia);
+					if (result.inscricaoEstadual)
+						$("#inscricaoEstadual").val(result.inscricaoEstadual);
+					if (result.email)
+						$("#email").val(result.email);
+				},
+				null,
+				true
+			);
+	}
+	
 	$(function() {
 		
 		$(".fornecedoresGrid").flexigrid({
 			dataType : 'json',
 			colModel : [  {
-				display : 'Código',
+				display : 'CÃ³digo',
 				name : 'codigoInterface',
 				width : 60,
 				sortable : true,
@@ -260,19 +349,23 @@
 			height : 255
 		});
 		
-		$("#dataValidade").datepicker({
+		$("#validadeContrato").datepicker({
 			showOn : "button",
 			buttonImage: "${pageContext.request.contextPath}/images/calendar.gif",
 			buttonImageOnly : true,
 			dateFormat: 'dd/mm/yy'
 		});
 		
-		$( "#dataValidade" ).mask("99/99/9999");
+		$( "#validadeContrato" ).mask("99/99/9999");
+		
+		$( "#cnpj" ).mask("99.999.999/9999-99");
+				
+		$( "#validadeContrato" ).mask("99/99/9999");
 		
 		$( "#tabFornecedores" ).tabs();
 	});
 
-	function mostraValidade(){
+	function mostraValidade() {
 		
 		if ($(".validade").css("display") == "none") {
 
