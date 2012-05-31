@@ -91,7 +91,28 @@ public enum GrupoMovimentoEstoque  {
 	/**
 	 * Venda de encalhe do distruibuidor para a cota.
 	 */
-	VENDA_ENCALHE(OperacaoEstoque.SAIDA,Dominio.DISTRIBUIDOR);
+	VENDA_ENCALHE(OperacaoEstoque.SAIDA, Dominio.DISTRIBUIDOR),
+	
+	/**
+	 * 
+	 */
+	ENCALHE_ANTECIPADO(OperacaoEstoque.ENTRADA,Dominio.COTA),
+	
+	/**
+	 * 
+	 */
+	COMPRA_SUPLEMENTAR(OperacaoEstoque.ENTRADA,Dominio.COTA),
+	
+	/**
+	 *
+	 */
+	NIVELAMENTO_SAIDA(OperacaoEstoque.SAIDA,Dominio.COTA),
+	
+	/**
+	 * 
+	 */
+	NIVELAMENTO_ENTRADA(OperacaoEstoque.ENTRADA,Dominio.COTA);
+
 	
 	private OperacaoEstoque operacaoEstoque;
 	private Dominio dominio;

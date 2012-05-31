@@ -7,12 +7,9 @@ import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Exportable;
 
 /**
- * 
  * Classe responsável por armazenar os valores referente aos registros da
  * pesquisa de registra de curva ABC do distribuidor.
- * 
  * @author InfoA2
- * 
  */
 @Exportable
 public class RegistroCurvaABCDistribuidorVO extends RegistroCurvaABC implements Serializable {
@@ -22,13 +19,11 @@ public class RegistroCurvaABCDistribuidorVO extends RegistroCurvaABC implements 
 	 */
 	private static final long serialVersionUID = 3849170873913801404L;
 
-	@Export(label = "Número", exhibitionOrder = 1)
 	private Integer numeroCota;
 
 	@Export(label = "Cota", exhibitionOrder = 2)
 	private String nomeCota;
 
-	@Export(label = "Quantidade de Pdvs", exhibitionOrder = 3)
 	private Integer quantidadePdvs;
 
 	@Export(label = "Municipio", exhibitionOrder = 4)
@@ -100,5 +95,25 @@ public class RegistroCurvaABCDistribuidorVO extends RegistroCurvaABC implements 
 	public void setFaturamentoCapa(BigDecimal faturamentoCapa) {
 		this.faturamentoCapa = faturamentoCapa;
 	}
-	
+
+	@Export(label = "Número", exhibitionOrder = 1)
+	public String getNumeroCotaString() {
+		return this.getNumeroCota().toString();
+	}
+
+	@Export(label = "Quantidade de Pdvs", exhibitionOrder = 3)
+	public String getQuantidadePdvsString() {
+		return this.getQuantidadePdvs().toString();
+	}
+
+	@Export(label = "Participação", exhibitionOrder = 7)
+	public BigDecimal getParticipacaoString() {
+		return getParticipacao();
+	}
+
+	@Export(label = "Participação Acumulada", exhibitionOrder = 8)
+	public BigDecimal getParticipacaoAcumuladaString() {
+		return getParticipacaoAcumulada();
+	}
+
 }

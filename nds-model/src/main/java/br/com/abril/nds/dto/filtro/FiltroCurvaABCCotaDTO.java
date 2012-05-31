@@ -6,6 +6,11 @@ import java.util.List;
 
 import br.com.abril.nds.util.export.Exportable;
 
+/**
+ * Classe responsável por armazenar os valores de filtro referente aos registros da
+ * pesquisa de registra de curva ABC da cota.
+ * @author InfoA2
+ */
 @Exportable
 public class FiltroCurvaABCCotaDTO extends FiltroCurvaABCDTO implements Serializable {
 
@@ -74,6 +79,5 @@ public class FiltroCurvaABCCotaDTO extends FiltroCurvaABCDTO implements Serializ
 			ColunaOrdenacaoCurvaABCCota ordenacaoColuna) {
 		this.ordenacaoColuna = ordenacaoColuna;
 	}
-	
 	
 }

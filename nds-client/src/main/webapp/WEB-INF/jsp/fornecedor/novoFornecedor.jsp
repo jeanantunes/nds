@@ -6,8 +6,10 @@
 	
 		<ul>
 			<li><a href="#dadosCadastrais">Dados Cadastrais</a></li>
-			<li><a href="#manutencaoEnderecos">Endereços</a></li>
-			<li><a href="#manutencaoTelefones">Telefones</a></li>
+			
+			<li><a href="#manutencaoEnderecos" onclick="ENDERECO_FORNECEDOR.popularGridEnderecos()">Endereços</a></li>
+			
+			<li><a href="#manutencaoTelefones" onclick="FORNECEDOR.carregarTelefones()">Telefones</a></li>
 		</ul>
 	
 		<div id="dadosCadastrais">

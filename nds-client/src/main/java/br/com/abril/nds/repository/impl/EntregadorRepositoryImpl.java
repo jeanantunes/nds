@@ -262,7 +262,7 @@ public class EntregadorRepositoryImpl extends AbstractRepository<Entregador, Lon
 	}
 
 	/**
-	 * @see br.com.abril.nds.repository.EntregadorRepository#obterQuantidadeEntregadoresPorIdPessoa(java.lang.Long)
+	 * {@inheritDoc}
 	 */
 	@Override
 	public Integer obterQuantidadeEntregadoresPorIdPessoa(Long idPessoa, Long idEntregador) {

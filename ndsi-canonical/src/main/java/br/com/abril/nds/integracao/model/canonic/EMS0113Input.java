@@ -1,7 +1,6 @@
 package br.com.abril.nds.integracao.model.canonic;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.util.Date;
 
 import com.ancientprogramming.fixedformat4j.annotation.Field;
@@ -19,23 +18,23 @@ public class EMS0113Input extends IntegracaoDocument implements Serializable{
 	
 
 	
-	private Long codigoDistribuidor;
+	private Integer codigoDistribuidor;
 	private	Date dataGeracaoArquivo;
 	private Date horaGeracaoArquivo;
 	private String mnemonicoTabela;
 	private String tipoOperacao;
-	private int contextoDistribuidor;
-	private Long codigoFornecedor;
-	private int tipoDesconto;
-	private BigDecimal percentDesconto;
-	private BigDecimal percentPrestServico;
+	private Integer contextoDistribuidor;
+	private Integer codigoFornecedor;
+	private Integer tipoDesconto;
+	private float percentDesconto;
+	private float percentPrestServico;
 	private Date dataInicioDesconto;
 	
 	@Field(offset = 1, length=7)
-	public Long getCodigoDistribuidor() {
+	public Integer getCodigoDistribuidor() {
 		return codigoDistribuidor;
 	}
-	public void setCodigoDistribuidor(Long codigoDistribuidor) {
+	public void setCodigoDistribuidor(Integer codigoDistribuidor) {
 		this.codigoDistribuidor = codigoDistribuidor;
 	}
 	
@@ -72,42 +71,42 @@ public class EMS0113Input extends IntegracaoDocument implements Serializable{
 	}
 	
 	
-	public int getContextoDistribuidor() {
+	public Integer getContextoDistribuidor() {
 		return contextoDistribuidor;
 	}
-	public void setContextoDistribuidor(int contextoDistribuidor) {
+	public void setContextoDistribuidor(Integer contextoDistribuidor) {
 		this.contextoDistribuidor = contextoDistribuidor;
 	}
 	
 	
-	public Long getCodigoFornecedor() {
+	public Integer getCodigoFornecedor() {
 		return codigoFornecedor;
 	}
-	public void setCodigoFornecedor(Long codigoFornecedor) {
+	public void setCodigoFornecedor(Integer codigoFornecedor) {
 		this.codigoFornecedor = codigoFornecedor;
 	}
 	
 	@Field(offset = 35, length=2)
-	public int getTipoDesconto() {
+	public Integer getTipoDesconto() {
 		return tipoDesconto;
 	}
-	public void setTipoDesconto(int tipoDesconto) {
+	public void setTipoDesconto(Integer tipoDesconto) {
 		this.tipoDesconto = tipoDesconto;
 	}
 	
 	@Field(offset = 37, length=7)
-	public BigDecimal getPercentDesconto() {
+	public float getPercentDesconto() {
 		return percentDesconto;
 	}
-	public void setPercentDesconto(BigDecimal percentDesconto) {
+	public void setPercentDesconto(float percentDesconto) {
 		this.percentDesconto = percentDesconto;
 	}
 	
 	@Field(offset = 44, length=7)
-	public BigDecimal getPercentPrestServico() {
+	public float getPercentPrestServico() {
 		return percentPrestServico;
 	}
-	public void setPercentPrestServico(BigDecimal percentPrestServico) {
+	public void setPercentPrestServico(float percentPrestServico) {
 		this.percentPrestServico = percentPrestServico;
 	}
 	

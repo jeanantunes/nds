@@ -99,7 +99,7 @@ public class ProdutoEdicao implements Serializable {
 	
 	@Embedded
 	protected Brinde brinde;
-	
+		
 	/**
 	 * Percentual de expectativa de venda do produto
 	 */
@@ -411,5 +411,4 @@ public class ProdutoEdicao implements Serializable {
 	public void setOrigemInterface(Boolean origemInterface) {
 		this.origemInterface = origemInterface;
 	}
-
 }

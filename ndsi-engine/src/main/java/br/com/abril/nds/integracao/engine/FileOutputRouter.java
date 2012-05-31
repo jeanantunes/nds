@@ -11,12 +11,17 @@ public class FileOutputRouter implements ContentBasedRouter {
 	public <T extends RouteTemplate> void routeData(T route) {
 		final Message message = new Message();
 		
+		FileOutputRoute fileOutputRoute = (FileOutputRoute) route;
+		
 		// FAZ MERGE COM OS PARAMETROS
-		message.getHeader().putAll(route.getParameters());
+		message.getHeader().putAll(fileOutputRoute.getParameters());
 		
 		// ADICIONA OUTRAS INFORMACOES NO HEADER (METADATA)
-		message.getHeader().put(MessageHeaderProperties.URI.getValue(), route.getUri());
-		message.getHeader().put(MessageHeaderProperties.USER_NAME.getValue(), route.getUserName());
+		message.getHeader().put(MessageHeaderProperties.URI.getValue(), fileOutputRoute.getUri());
+		message.getHeader().put(MessageHeaderProperties.USER_NAME.getValue(), fileOutputRoute.getUserName());
+		
+		// PASTA DE SAIDA
+		message.getHeader().put(MessageHeaderProperties.OUTBOUND_FOLDER.getValue(), fileOutputRoute.getOutboundFolder());
 		
 		route.getMessageProcessor().processMessage(message);
 	}

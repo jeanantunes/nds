@@ -1,11 +1,14 @@
 package br.com.abril.nds.model.cadastro;
 
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -33,6 +36,9 @@ public class DescontoLogistica {
 	@Temporal(TemporalType.DATE)
 	@Column(name = "DATA_INICIO_VIGENCIA", nullable = false)
 	private Date dataInicioVigencia;
+	
+	@OneToMany(mappedBy="descontoLogistica")
+	private Set<Produto> produtos = new HashSet<Produto>();
 	
 	/**
 	 * Construtor padrão.
@@ -112,6 +118,14 @@ public class DescontoLogistica {
 		this.dataInicioVigencia = dataInicioVigencia;
 	}
 
+	public Set<Produto> getProdutos() {
+		return produtos;
+	}
+
+	public void setProdutos(Set<Produto> produtos) {
+		this.produtos = produtos;
+	}
+
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
@@ -142,5 +156,4 @@ public class DescontoLogistica {
 			return false;
 		return true;
 	}
-
 }

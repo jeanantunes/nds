@@ -25,6 +25,18 @@ public class FornecedorDTO implements Serializable {
 	private String telefone;
 	
 	private String email;
+	
+	private String nomeFantasia;
+	
+	private String inscricaoEstadual;
+	
+	private Long tipoFornecedor;
+		
+	private String inicioAtividade;
+	
+	private boolean possuiContrato;
+	
+	private String validadeContrato;
 
 	/**
 	 * @return the idFornecedor
@@ -122,6 +134,90 @@ public class FornecedorDTO implements Serializable {
 	 */
 	public void setEmail(String email) {
 		this.email = email;
+	}
+
+	/**
+	 * @return the nomeFantasia
+	 */
+	public String getNomeFantasia() {
+		return nomeFantasia;
+	}
+
+	/**
+	 * @param nomeFantasia the nomeFantasia to set
+	 */
+	public void setNomeFantasia(String nomeFantasia) {
+		this.nomeFantasia = nomeFantasia;
+	}
+
+	/**
+	 * @return the inscricaoEstadual
+	 */
+	public String getInscricaoEstadual() {
+		return inscricaoEstadual;
+	}
+
+	/**
+	 * @param inscricaoEstadual the inscricaoEstadual to set
+	 */
+	public void setInscricaoEstadual(String inscricaoEstadual) {
+		this.inscricaoEstadual = inscricaoEstadual;
+	}
+
+	/**
+	 * @return the tipoFornecedor
+	 */
+	public Long getTipoFornecedor() {
+		return tipoFornecedor;
+	}
+
+	/**
+	 * @param tipoFornecedor the tipoFornecedor to set
+	 */
+	public void setTipoFornecedor(Long tipoFornecedor) {
+		this.tipoFornecedor = tipoFornecedor;
+	}
+
+	/**
+	 * @return the inicioAtividade
+	 */
+	public String getInicioAtividade() {
+		return inicioAtividade;
+	}
+
+	/**
+	 * @param inicioAtividade the inicioAtividade to set
+	 */
+	public void setInicioAtividade(String inicioAtividade) {
+		this.inicioAtividade = inicioAtividade;
+	}
+
+	/**
+	 * @return the possuiContrato
+	 */
+	public boolean isPossuiContrato() {
+		return possuiContrato;
+	}
+
+	/**
+	 * @param possuiContrato the possuiContrato to set
+	 */
+	public void setPossuiContrato(boolean possuiContrato) {
+		this.possuiContrato = possuiContrato;
+	}
+
+	/**
+	 * @return the validadeContrato
+	 */
+	public String getValidadeContrato() {
+		return validadeContrato;
+	}
+
+	/**
+	 * @param validadeContrato the validadeContrato to set
+	 */
+	public void setValidadeContrato(String validadeContrato) {
+		this.validadeContrato = validadeContrato;
 	}
 
 }

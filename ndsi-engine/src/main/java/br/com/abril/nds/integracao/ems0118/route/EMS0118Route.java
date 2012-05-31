@@ -20,20 +20,12 @@ public class EMS0118Route extends FixedLengthRouteTemplate{
 	@Autowired
 	private EMS0118MessageProcessor messageProcessor;
 	
-	@Override
-	public String getInboundFolder() {
-		return (String) getParameters().get("NDSI_EMS0118_INBOUND");
-	}
 
 	@Override
 	public String getFileFilterExpression() {
 		return (String) getParameters().get("NDSI_EMS0118_IN_FILEMASK");
 	}
 
-	@Override
-	public String getArchiveFolder() {
-		return (String) getParameters().get("NDSI_EMS0118_ARCHIVE");
-	}
 
 	@Override
 	public void setupTypeMapping() {

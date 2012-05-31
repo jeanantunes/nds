@@ -165,7 +165,7 @@
 						<td width="80" align="center" bgcolor="#EFEFEF"	style="border: 1px solid #000;" id="valorVendaDia"></td>
 						<td width="130">&nbsp;&nbsp;
 							<strong>
-								<a href="javascript:;" onclick="popup_outros_valores();"> ( + )Outros valores </a>:
+								<a href="javascript:;" onclick="ConferenciaEncalhe.popup_outros_valores();"> ( + )Outros valores </a>:
 							</strong>
 						</td>
 						<td width="68" id="totalOutrosValores"></td>

@@ -41,6 +41,10 @@ import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
 
+/**
+ * @author infoA2
+ * Controller de edições fechadas
+ */
 @Resource
 @Path("/estoque/edicoesFechadas")
 public class EdicoesFechadasController {
