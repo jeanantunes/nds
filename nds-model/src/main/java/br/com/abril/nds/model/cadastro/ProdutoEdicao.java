@@ -69,12 +69,9 @@ public class ProdutoEdicao implements Serializable {
 	@Column(name = "PRECO_PREVISTO", nullable = true)
 	protected BigDecimal precoPrevisto;
 	
-<<<<<<< HEAD
 	@Column(name = "REPARTE_DISTRIBUIDO", nullable = true)
 	protected BigDecimal reparteDistribuido;
 	
-=======
->>>>>>> EMS-217: Inclusao de novo atributo 'preco_previsto'.
 	@Column(name = "DESCONTO")
 	protected BigDecimal desconto = BigDecimal.ZERO;
 	
