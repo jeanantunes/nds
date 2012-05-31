@@ -12,6 +12,7 @@ import br.com.abril.nds.model.StatusCobranca;
 import br.com.abril.nds.model.StatusConfirmacao;
 import br.com.abril.nds.model.StatusControle;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
+import br.com.abril.nds.model.cadastro.Algoritmo;
 import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Carteira;
@@ -2591,4 +2592,12 @@ public class Fixture {
 		return pdv;
 	}
 
+	public static Algoritmo criarAlgoritmo(String descricao) {
+		Algoritmo algoritmo = new Algoritmo();
+		
+		algoritmo.setDescricao(descricao);
+		
+		return algoritmo;
+	}
+	
 }
