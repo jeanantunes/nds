@@ -1,6 +1,7 @@
 package br.com.abril.nds.service.impl;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -10,21 +11,31 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.client.vo.ValidacaoVO;
+import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.dto.FornecedorDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaFornecedorDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.Endereco;
+import br.com.abril.nds.model.cadastro.EnderecoFornecedor;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.GrupoFornecedor;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.Telefone;
+import br.com.abril.nds.model.cadastro.TelefoneFornecedor;
+import br.com.abril.nds.model.cadastro.TipoTelefone;
 import br.com.abril.nds.repository.CotaRepository;
+import br.com.abril.nds.repository.EnderecoFornecedorRepository;
+import br.com.abril.nds.repository.EnderecoRepository;
 import br.com.abril.nds.repository.FornecedorRepository;
 import br.com.abril.nds.repository.TelefoneFornecedorRepository;
+import br.com.abril.nds.repository.TelefoneRepository;
 import br.com.abril.nds.service.FornecedorService;
+import br.com.abril.nds.service.TelefoneService;
 import br.com.abril.nds.util.TipoMensagem;
 
 @Service
@@ -38,6 +49,18 @@ public class FornecedorServiceImpl implements FornecedorService {
 	
 	@Autowired
 	private CotaRepository cotaRepository;
+
+	@Autowired
+	private EnderecoRepository enderecoRepository;
+	
+	@Autowired
+	private EnderecoFornecedorRepository enderecoFornecedorRepository;
+	
+	@Autowired
+	private TelefoneRepository telefoneRepository;
+	
+	@Autowired
+	private TelefoneService telefoneService;
 	
 	@Transactional
 	public Fornecedor obterFornecedorUnico(String codigoProduto) {
@@ -360,6 +383,223 @@ public class FornecedorServiceImpl implements FornecedorService {
 		}
 		
 		return this.fornecedorRepository.merge(fornecedor);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void processarEnderecos(Long idFornecedor,
+								   List<EnderecoAssociacaoDTO> listaEnderecoAssociacaoSalvar,
+								   List<EnderecoAssociacaoDTO> listaEnderecoAssociacaoRemover) {
+
+		if (idFornecedor == null){
+
+			throw new ValidacaoException(TipoMensagem.ERROR, "Id do fornecedor é obrigatório.");
+		}
+		
+		Fornecedor fornecedor = this.fornecedorRepository.buscarPorId(idFornecedor);
+		
+		if (fornecedor == null){
+
+			throw new ValidacaoException(TipoMensagem.ERROR, "Fornecedor não encontrado.");
+		}
+		
+		if (listaEnderecoAssociacaoSalvar != null && !listaEnderecoAssociacaoSalvar.isEmpty()) {
+
+			this.salvarEnderecosFornecedor(fornecedor, listaEnderecoAssociacaoSalvar);
+		}
+
+		if (listaEnderecoAssociacaoRemover != null && !listaEnderecoAssociacaoRemover.isEmpty()) {
+			
+			this.removerEnderecosFornecedor(fornecedor, listaEnderecoAssociacaoRemover);
+		}
+	}
+
+	/*
+	 * Método responsável por salvar os endereços referentes ao fornecedor em questão.
+	 */
+	private void salvarEnderecosFornecedor(Fornecedor fornecedor, 
+										   List<EnderecoAssociacaoDTO> listaEnderecoAssociacao) {
+		
+		for (EnderecoAssociacaoDTO enderecoAssociacao : listaEnderecoAssociacao) {
+
+			EnderecoFornecedor enderecoFornecedor = this.enderecoFornecedorRepository.buscarPorId(enderecoAssociacao.getId());
+
+			if (enderecoFornecedor == null) {
+
+				enderecoFornecedor = new EnderecoFornecedor();
+
+				enderecoFornecedor.setFornecedor(fornecedor);
+			}
+
+			enderecoFornecedor.setEndereco(enderecoAssociacao.getEndereco());
+
+			enderecoFornecedor.setPrincipal(enderecoAssociacao.isEnderecoPrincipal());
+
+			enderecoFornecedor.setTipoEndereco(enderecoAssociacao.getTipoEndereco());
+
+			this.enderecoFornecedorRepository.merge(enderecoFornecedor);
+		}
+	}
+
+	/*
+	 * Método responsável por remover os endereços referentes ao fornecedor em questão.
+	 */
+	private void removerEnderecosFornecedor(Fornecedor fornecedor, 
+			   								List<EnderecoAssociacaoDTO> listaEnderecoAssociacao) {
+
+		List<Endereco> listaEndereco = new ArrayList<Endereco>();
+		
+		List<Long> idsEndereco = new ArrayList<Long>();
+
+		for (EnderecoAssociacaoDTO enderecoAssociacao : listaEnderecoAssociacao) {
+
+			if (enderecoAssociacao.getEndereco() == null) {
+				
+				continue;
+			}
+			
+			listaEndereco.add(enderecoAssociacao.getEndereco());
+
+			EnderecoFornecedor enderecoFornecedor = this.enderecoFornecedorRepository.buscarPorId(enderecoAssociacao.getId());
+			
+			idsEndereco.add(enderecoAssociacao.getEndereco().getId());
+
+			this.enderecoFornecedorRepository.remover(enderecoFornecedor);
+		}
+
+		if (!idsEndereco.isEmpty()) {
+			
+			this.enderecoRepository.removerEnderecos(idsEndereco);
+		}
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void processarTelefones(Long idFornecedor,
+								   List<TelefoneFornecedor> listaTelefonesAdicionar,
+								   Collection<Long> listaTelefonesRemover) {
+
+		if (idFornecedor == null){
+		
+			throw new ValidacaoException(TipoMensagem.ERROR, "Cota é obrigatório.");
+		}
+		
+		Fornecedor fornecedor = this.fornecedorRepository.buscarPorId(idFornecedor);
+		
+		if (fornecedor == null){
+		
+			throw new ValidacaoException(TipoMensagem.ERROR, "Cota não encontrada.");
+		}
+		
+		for (TelefoneFornecedor telefoneFornecedor : listaTelefonesAdicionar){
+			
+			telefoneFornecedor.setFornecedor(fornecedor);
+		}
+		
+		this.salvarTelefonesFornecedor(listaTelefonesAdicionar);
+	
+		this.removerTelefonesFornecedor(listaTelefonesRemover);
+	}
+	
+	private void salvarTelefonesFornecedor(List<TelefoneFornecedor> listaTelefoneFornecedor) {
+		
+		if (listaTelefoneFornecedor != null) {
+			
+			boolean isTelefonePrincipal = false;
+			
+			for (TelefoneFornecedor telefoneFornecedor : listaTelefoneFornecedor){
+				
+				if (telefoneFornecedor == null) {
+					
+					throw new ValidacaoException(TipoMensagem.ERROR, "Telefone fornecedor é obrigatório.");
+				}
+				
+				this.validarTelefone(telefoneFornecedor.getTelefone(), telefoneFornecedor.getTipoTelefone());
+				
+				if (isTelefonePrincipal && telefoneFornecedor.isPrincipal()) {
+					
+					throw new ValidacaoException(TipoMensagem.WARNING, "Apenas um telefone principal é permitido.");
+				}
+				
+				if (telefoneFornecedor.isPrincipal()) {
+					
+					isTelefonePrincipal = telefoneFornecedor.isPrincipal();
+				}
+				
+				if (telefoneFornecedor.getFornecedor() == null || telefoneFornecedor.getFornecedor().getId() == null) {
+					
+					throw new ValidacaoException(TipoMensagem.ERROR, "Fornecedor é obrigatório.");
+				}
+				
+				if (telefoneFornecedor.getTelefone().getId() == null) {
+					
+					this.telefoneRepository.adicionar(telefoneFornecedor.getTelefone());
+					
+				} else {
+					
+					this.telefoneRepository.alterar(telefoneFornecedor.getTelefone());
+				}
+				
+				if (telefoneFornecedor.getId() == null) {
+					
+					this.telefoneFornecedorRepository.adicionar(telefoneFornecedor);
+					
+				} else {
+					
+					this.telefoneFornecedorRepository.alterar(telefoneFornecedor);
+				}
+			}
+		}
+	}
+
+	private void removerTelefonesFornecedor(Collection<Long> listaTelefonesFornecedor) {
+		
+		if (listaTelefonesFornecedor != null && !listaTelefonesFornecedor.isEmpty()){
+			
+			this.telefoneFornecedorRepository.removerTelefonesFornecedor(listaTelefonesFornecedor);
+			
+			this.telefoneService.removerTelefones(listaTelefonesFornecedor);
+		}
+	}
+
+	private void validarTelefone(Telefone telefone, TipoTelefone tipoTelefone){
+		
+		List<String> mensagensValidacao = new ArrayList<String>();
+		
+		if (telefone == null){
+			throw new ValidacaoException(TipoMensagem.WARNING, "Telefone é obrigatório.");
+		}
+		
+		if (telefone.getDdd() == null || telefone.getDdd().trim().isEmpty()){
+			mensagensValidacao.add("DDD é obrigatório.");
+		} else if (telefone.getDdd().trim().length() > 255){
+			mensagensValidacao.add("Valor maior que o permitido para o campo DDD.");
+		}
+		telefone.setDdd(telefone.getDdd() != null ? telefone.getDdd().trim() : null);
+		
+		if (telefone.getNumero() == null || telefone.getNumero().trim().isEmpty()){
+			mensagensValidacao.add("Número é obrigatório.");
+		} else if (telefone.getNumero().trim().length() > 255){
+			mensagensValidacao.add("Valor maior que o permitido para o campo Número.");
+		}
+		telefone.setNumero(telefone.getNumero() != null ? telefone.getNumero().trim() : null);
+		
+		if (tipoTelefone == null){
+			mensagensValidacao.add("Tipo Telefone é obrigatório.");
+		}
+		
+		if (telefone.getRamal() != null && telefone.getRamal().trim().length() > 255){
+			mensagensValidacao.add("Valor maior que o permitido para o campo Ramal.");
+		}
+		telefone.setRamal(telefone.getRamal() != null ? telefone.getRamal().trim() : null);
+		
+		if (!mensagensValidacao.isEmpty()){
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, mensagensValidacao));
+		}
 	}
 }
 
