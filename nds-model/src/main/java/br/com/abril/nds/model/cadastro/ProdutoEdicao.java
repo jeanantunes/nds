@@ -99,11 +99,7 @@ public class ProdutoEdicao implements Serializable {
 	
 	@Embedded
 	protected Brinde brinde;
-	
-	@ManyToOne(fetch=FetchType.LAZY, optional=true)
-	@JoinColumn(name="DESCONTO_LOGISTICA_ID", nullable=true)
-	private DescontoLogistica descontoLogistica;
-	
+		
 	/**
 	 * Percentual de expectativa de venda do produto
 	 */
@@ -414,13 +410,5 @@ public class ProdutoEdicao implements Serializable {
 
 	public void setOrigemInterface(Boolean origemInterface) {
 		this.origemInterface = origemInterface;
-	}
-
-	public DescontoLogistica getDescontoLogistica() {
-		return descontoLogistica;
-	}
-
-	public void setDescontoLogistica(DescontoLogistica descontoLogistica) {
-		this.descontoLogistica = descontoLogistica;
 	}
 }
