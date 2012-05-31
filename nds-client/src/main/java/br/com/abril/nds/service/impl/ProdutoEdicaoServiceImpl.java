@@ -284,6 +284,9 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 		produtoEdicao.setPrecoPrevisto(dto.getPrecoPrevisto());
 		produtoEdicao.setPrecoVenda(dto.getPrecoVenda());	// View: Preço real;
 		
+		BigDecimal repartePrevisto = this.converterValor(dto.getRepartePrevisto());
+		BigDecimal repartePromocional = this.converterValor(dto.getRepartePromocional());
+		produtoEdicao.setReparteDistribuido(repartePrevisto.add(repartePromocional));
 		
 		produtoEdicao.setPeso(dto.getPeso());
 		
@@ -296,10 +299,9 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 			lancamento.setProdutoEdicao(produtoEdicao);
 			lancamento.setTipoLancamento(dto.getTipoLancamento());
 			lancamento.setDataLancamentoPrevista(dto.getDataLancamentoPrevisto());
-			lancamento.setReparte((new BigDecimal(
-					dto.getRepartePrevisto())).setScale(2));	// View: Reparte Previsto;
-			lancamento.setRepartePromocional(new BigDecimal(
-					dto.getRepartePromocional()).setScale(2));	// View: Reparte Promocional;
+			lancamento.setDataLancamentoDistribuidor(dto.getDataLancamento());	// Data Lançamento Real;
+			lancamento.setReparte(repartePrevisto);
+			lancamento.setRepartePromocional(repartePromocional);
 			
 		} else {
 			// update
@@ -315,6 +317,25 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 		if (imgInputStream != null) {
 			capaService.saveCapa(produtoEdicao.getId(), contentType, imgInputStream);
 		}
+	}
+	
+	/**
+	 * Transforma o valor em formato String para BigDecimal.<br>
+	 * Caso o valor não for válido, irá retornar 0 (zero).
+	 * 
+	 * @param valor
+	 * @return
+	 */
+	private BigDecimal converterValor(String valor) {
+		
+		BigDecimal nValor = null;
+		try {
+			nValor = (new BigDecimal(valor)).setScale(2);
+		} catch (Exception e) {
+			nValor = BigDecimal.ZERO.setScale(2);
+		}
+		
+		return nValor;
 	}
 	
 }
