@@ -20,6 +20,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
 
 /**
  * @author francisco.garcia
@@ -70,9 +71,11 @@ public class Fornecedor implements Serializable {
 	private SituacaoCadastro situacaoCadastro;
 	
 	@OneToMany(mappedBy = "fornecedor")
+	@Cascade(value={CascadeType.DELETE})
 	private Set<EnderecoFornecedor> enderecos = new HashSet<EnderecoFornecedor>();
 	
 	@OneToMany(mappedBy = "fornecedor")
+	@Cascade(value={CascadeType.DELETE})
 	private Set<TelefoneFornecedor> telefones = new HashSet<TelefoneFornecedor>();
 	
 	@Cascade(value = org.hibernate.annotations.CascadeType.SAVE_UPDATE)
