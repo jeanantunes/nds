@@ -226,7 +226,7 @@ public class ServicoController {
 		
 		List<String> listaMensagens = new ArrayList<String>();
 		
-		if (descricao == null || descricao.isEmpty()) {
+		if (descricao == null || descricao.trim().isEmpty()) {
 			listaMensagens.add("O preenchimento do campo [Descrição] é obrigatório!");
 		} else {
 			descricao = this.validarDescricao(descricao);
