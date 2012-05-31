@@ -22,7 +22,7 @@ public class TipoDesconto implements Serializable {
 	@Column(name = "ID")
 	private Long id;
 	
-	@Column(name="DESCRICAO")
+	@Column(name="DESCRICAO", length = 25)
 	private String descricao;
 	
 	@Column(name="CODIGO")

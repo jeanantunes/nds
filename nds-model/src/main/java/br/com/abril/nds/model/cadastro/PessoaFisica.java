@@ -60,7 +60,7 @@ public class PessoaFisica extends Pessoa implements Serializable {
 	@Column(name = "NATURALIDADE")
 	private String natural;
 	
-	@Column(name = "APELIDO")
+	@Column(name = "APELIDO", length = 25)
 	private String apelido;
 	
 	@OneToOne(optional = true)
