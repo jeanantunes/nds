@@ -58,8 +58,6 @@ import br.com.abril.nds.model.cadastro.PoliticaSuspensao;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.Rota;
-//import br.com.abril.nds.model.cadastro.RotaRoteiroOperacao;
-//import br.com.abril.nds.model.cadastro.RotaRoteiroOperacao.TipoOperacao;
 import br.com.abril.nds.model.cadastro.Roteiro;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.Telefone;
@@ -118,6 +116,7 @@ import br.com.abril.nds.model.fiscal.ParametroEmissaoNotaFiscal;
 import br.com.abril.nds.model.fiscal.StatusEmissaoNfe;
 import br.com.abril.nds.model.fiscal.TipoEmissaoNfe;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
+import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.model.integracao.EventoExecucao;
 import br.com.abril.nds.model.integracao.InterfaceExecucao;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalhe;
@@ -1294,8 +1293,8 @@ public class DataLoader {
 		Roteiro roteiro = Fixture.roteiro("Pinheiros");
 		session.save(roteiro);
 
-//		RotaRoteiroOperacao rotaRoteiroOperacao = Fixture.rotaRoteiroOperacao(rota, roteiro, cotaManoel, TipoOperacao.IMPRESSAO_DIVIDA);
-//		session.save(rotaRoteiroOperacao);
+		/*RotaRoteiroOperacao rotaRoteiroOperacao = Fixture.rotaRoteiroOperacao(rota, roteiro, cotaManoel, TipoOperacao.IMPRESSAO_DIVIDA);
+		session.save(rotaRoteiroOperacao);
 
 		rota = Fixture.rota("004", "Rota 004");
 		session.save(rota);
@@ -1303,8 +1302,8 @@ public class DataLoader {
 		roteiro = Fixture.roteiro("Interlagos");
 		session.save(roteiro);
 
-//		rotaRoteiroOperacao = Fixture.rotaRoteiroOperacao(rota, roteiro, cotaJose, TipoOperacao.IMPRESSAO_DIVIDA);
-//		session.save(rotaRoteiroOperacao);
+		rotaRoteiroOperacao = Fixture.rotaRoteiroOperacao(rota, roteiro, cotaJose, TipoOperacao.IMPRESSAO_DIVIDA);
+		session.save(rotaRoteiroOperacao);
 		
 		rota = Fixture.rota("007", "Rota 007");
 		session.save(rota);
@@ -1312,8 +1311,8 @@ public class DataLoader {
 		roteiro = Fixture.roteiro("Mococa");
 		session.save(roteiro);
 
-//		rotaRoteiroOperacao = Fixture.rotaRoteiroOperacao(rota, roteiro, cotaAcme, TipoOperacao.IMPRESSAO_DIVIDA);
-//		session.save(rotaRoteiroOperacao);
+		rotaRoteiroOperacao = Fixture.rotaRoteiroOperacao(rota, roteiro, cotaAcme, TipoOperacao.IMPRESSAO_DIVIDA);
+		session.save(rotaRoteiroOperacao);*/
 	}
 
 	private static void criarDivida(Session session) {

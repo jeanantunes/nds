@@ -147,47 +147,23 @@
 			<artifactId>reflections</artifactId>
 			<version>0.9.7.RC1</version>
 		</dependency>
+		<dependency>
+			<groupId>org.codehaus.plexus</groupId>
+			<artifactId>plexus-archiver</artifactId>
+			<version>2.0.1</version>
+		</dependency>
 	</dependencies>
-
-
 	<build>
 		<plugins>
-			<!-- <plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>appassembler-maven-plugin</artifactId>
-				<version>1.2.2</version>
-				<configuration>
-					<programs>
-						<program>
-							<mainClass>br.com.abril.nds.integracao.spring.NdsiRunner</mainClass>
-							<name>ndsi</name>
-
-							<commandLineArguments>
-								Add two predefined command line arguments to the call of App3
-								<commandLineArgument>br.com.abril.nds.integracao.ems0118.route.EMS0118Route</commandLineArgument>
-							</commandLineArguments>
-
-						</program>
-					</programs>
-				</configuration>
-			</plugin> -->
 			<plugin>
-  <groupId>org.apache.maven.plugins</groupId>
-  <artifactId>maven-jar-plugin</artifactId>
-  <configuration>
-   <archive>
-    <manifest>
-     <addClasspath>true</addClasspath>
-     <mainClass>br.com.abril.nds.integracao.spring.NdsiRunner</mainClass>
-     
-     <classpathPrefix>lib/</classpathPrefix>
-    </manifest>
-   </archive>
-  </configuration>
- </plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>2.5</version>
+				<configuration>
+					<source>1.6</source>
+					<target>1.6</target>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
-
-
-
 </project>

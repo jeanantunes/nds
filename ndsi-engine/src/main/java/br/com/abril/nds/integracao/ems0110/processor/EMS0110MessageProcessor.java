@@ -22,7 +22,6 @@ import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
 
-@SuppressWarnings("unused")
 @Component
 public class EMS0110MessageProcessor implements MessageProcessor {
 	@PersistenceContext
@@ -212,7 +211,7 @@ public class EMS0110MessageProcessor implements MessageProcessor {
 		}	
 			
 		
-		if (!edicao.getBrinde().getPermiteVendaSeparada() != input.getCondVendeSeparado()) {
+		if (edicao.getBrinde().getPermiteVendaSeparada() != input.getCondVendeSeparado()) {
 			
 			edicao.getBrinde().setPermiteVendaSeparada(input.getCondVendeSeparado());
 			this.ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, 
@@ -244,19 +243,19 @@ public class EMS0110MessageProcessor implements MessageProcessor {
 			this.ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, 
 					"Atualizacao do Tipo Desconto para: " + input.getTipoDesconto());
 		}
-		if (edicao.getCodigoDeBarras().equals(input.getCodBarra())) {
+		if (!edicao.getCodigoDeBarras().equals(input.getCodBarra())) {
 			
 			edicao.setCodigoDeBarras(input.getCodBarra());
 			this.ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, 
 					"Atualizacao do Codigo de Barra para: " + input.getCodBarra());
 		}
-		if (edicao.getNumeroEdicao() != input.getEdicaoProd()) {
+		if (!edicao.getNumeroEdicao().equals(input.getEdicaoProd())) {
 			
 			edicao.setNumeroEdicao(input.getEdicaoProd());
 			this.ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, 
 					"Atualizacao do Numero da Publicacao para: " + input.getEdicaoProd());
 		}
-		if (edicao.getDataDesativacao() != input.getDataDesativacao()) {
+		if (!edicao.getDataDesativacao().equals(input.getDataDesativacao())) {
 			
 			edicao.setDataDesativacao(input.getDataDesativacao());
 			this.ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, 
@@ -274,7 +273,7 @@ public class EMS0110MessageProcessor implements MessageProcessor {
 			this.ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, 
 					"Atualizacao do Pacote Padrao para: " + input.getPactPadrao());
 		}	
-		if (edicao.getPeso() != input.getPesoUni()) {
+		if (!edicao.getPeso().equals(input.getPesoUni())) {
 			
 			edicao.setPeso(input.getPesoUni());
 			this.ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, 

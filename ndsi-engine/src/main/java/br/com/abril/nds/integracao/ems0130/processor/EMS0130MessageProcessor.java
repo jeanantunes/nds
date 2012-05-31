@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import br.com.abril.nds.integracao.ems0130.outbound.EMS0130Output;
+import br.com.abril.nds.integracao.engine.MessageHeaderProperties;
 import br.com.abril.nds.integracao.engine.MessageProcessor;
 import br.com.abril.nds.integracao.engine.data.Message;
 import br.com.abril.nds.model.cadastro.Endereco;
@@ -61,7 +62,7 @@ public class EMS0130MessageProcessor implements MessageProcessor{
 		
 		try {
 			
-			PrintWriter print = new PrintWriter(new FileWriter(message.getHeader().get("NDSI_EMS0130_OUTBOUND")+"/BANCA.txt"));	
+			PrintWriter print = new PrintWriter(new FileWriter(message.getHeader().get(MessageHeaderProperties.OUTBOUND_FOLDER)+"/BANCA.txt"));	
 			
 			for (PDV pdv : pdvs){
 				 
