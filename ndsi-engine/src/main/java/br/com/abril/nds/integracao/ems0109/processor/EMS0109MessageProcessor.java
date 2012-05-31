@@ -241,7 +241,7 @@ public class EMS0109MessageProcessor implements MessageProcessor {
 
 		if ( descontoLogistica != null ) {
 			
-			produtoEdicao.setDescontoLogistica(descontoLogistica);
+//			produtoEdicao.setDescontoLogistica(descontoLogistica);
 			
 		}
 		
@@ -366,14 +366,14 @@ public class EMS0109MessageProcessor implements MessageProcessor {
 
 		if ( descontoLogistica != null ) {
 			
-			if (!produtoEdicao.getDescontoLogistica().equals(descontoLogistica)) {
+			/*if (!produtoEdicao.getDescontoLogistica().equals(descontoLogistica)) {
 
 				produtoEdicao.setDescontoLogistica(descontoLogistica);
 				
 				this.ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, 
 						"Atualizacao do Tipo Desconto para: " + descontoLogistica.getTipoDesconto());
 						
-			}
+			}*/
 		}
 	}
 }
