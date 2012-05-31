@@ -53,9 +53,15 @@ public class ProdutoEdicao implements Serializable {
 	@GeneratedValue(generator = "PROD_ED_SEQ")
 	@Column(name = "ID")
 	protected Long id;
+	
+	@Column(name = "CODIGO", nullable = false, unique = true)
+	protected String codigo;
 
-	@Column(name  = "CODIGO_DE_BARRAS")
+	@Column(name  = "CODIGO_DE_BARRAS", nullable = true)
 	protected String codigoDeBarras;
+	
+	@Column(name  = "CODIGO_DE_BARRAS_CORPORATIVO", nullable = true, length = 25)
+	protected String codigoDeBarraCorporativo;
 
 	@Column(name  = "NUMERO_EDICAO", nullable = false)
 	protected Long numeroEdicao;
@@ -86,6 +92,18 @@ public class ProdutoEdicao implements Serializable {
 	
 	@Column(name = "PESO", nullable = false)
 	protected BigDecimal peso;
+	
+	@Column(name = "ESPESSURA", nullable = true)
+	protected BigDecimal espessura; 
+	
+	@Column(name = "LARGURA", nullable = true)
+	protected BigDecimal largura; 
+	
+	@Column(name = "COMPRIMENTO", nullable = true)
+	protected BigDecimal comprimento;
+	
+	@Column(name = "BOLETIM_INFORMATIVO", nullable = true)
+	protected String boletimInformativo;
 	
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "PRODUTO_ID")
@@ -456,6 +474,90 @@ public class ProdutoEdicao implements Serializable {
 	 */
 	public void setReparteDistribuido(BigDecimal reparteDistribuido) {
 		this.reparteDistribuido = reparteDistribuido;
+	}
+
+	/**
+	 * @return the codigo
+	 */
+	public String getCodigo() {
+		return codigo;
+	}
+
+	/**
+	 * @param codigo the codigo to set
+	 */
+	public void setCodigo(String codigo) {
+		this.codigo = codigo;
+	}
+
+	/**
+	 * @return the codigoDeBarraCorporativo
+	 */
+	public String getCodigoDeBarraCorporativo() {
+		return codigoDeBarraCorporativo;
+	}
+
+	/**
+	 * @param codigoDeBarraCorporativo the codigoDeBarraCorporativo to set
+	 */
+	public void setCodigoDeBarraCorporativo(String codigoDeBarraCorporativo) {
+		this.codigoDeBarraCorporativo = codigoDeBarraCorporativo;
+	}
+
+	/**
+	 * @return the espessura
+	 */
+	public BigDecimal getEspessura() {
+		return espessura;
+	}
+
+	/**
+	 * @param espessura the espessura to set
+	 */
+	public void setEspessura(BigDecimal espessura) {
+		this.espessura = espessura;
+	}
+
+	/**
+	 * @return the largura
+	 */
+	public BigDecimal getLargura() {
+		return largura;
+	}
+
+	/**
+	 * @param largura the largura to set
+	 */
+	public void setLargura(BigDecimal largura) {
+		this.largura = largura;
+	}
+
+	/**
+	 * @return the comprimento
+	 */
+	public BigDecimal getComprimento() {
+		return comprimento;
+	}
+
+	/**
+	 * @param comprimento the comprimento to set
+	 */
+	public void setComprimento(BigDecimal comprimento) {
+		this.comprimento = comprimento;
+	}
+
+	/**
+	 * @return the boletimInformativo
+	 */
+	public String getBoletimInformativo() {
+		return boletimInformativo;
+	}
+
+	/**
+	 * @param boletimInformativo the boletimInformativo to set
+	 */
+	public void setBoletimInformativo(String boletimInformativo) {
+		this.boletimInformativo = boletimInformativo;
 	}
 	
 }
