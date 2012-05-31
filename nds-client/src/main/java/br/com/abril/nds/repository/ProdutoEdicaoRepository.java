@@ -151,7 +151,7 @@ public interface ProdutoEdicaoRepository extends Repository<ProdutoEdicao, Long>
 	public Long countPesquisarEdicoes(ProdutoEdicaoDTO dto);
 	
 	/**
-	 * Pesquisa as últimas edições cadastradas, .<br>
+	 * Pesquisa as últimas edições cadastradas.<br>
 	 * 
 	 * @param dto
 	 * @param maxResults
