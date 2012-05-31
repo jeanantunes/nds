@@ -6,6 +6,11 @@ import java.math.BigDecimal;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Exportable;
 
+/**
+ * Classe responsável por armazenar os valores referente aos registros da
+ * pesquisa de registra de curva ABC da cota.
+ * @author InfoA2
+ */
 @Exportable
 public class RegistroCurvaABCCotaVO extends RegistroCurvaABC implements Serializable {
 
@@ -15,7 +20,7 @@ public class RegistroCurvaABCCotaVO extends RegistroCurvaABC implements Serializ
 	private static final long serialVersionUID = -5830163841520335115L;
 
 	@Export(label = "Código", exhibitionOrder = 1)
-	private String numeroProduto;
+	private String codigoProduto;
 
 	@Export(label = "Produto", exhibitionOrder = 2)
 	private String nomeProduto;
@@ -38,11 +43,11 @@ public class RegistroCurvaABCCotaVO extends RegistroCurvaABC implements Serializ
 	public RegistroCurvaABCCotaVO	() {
 	}
 
-	public RegistroCurvaABCCotaVO(String numeroProduto, String nomeProduto,
+	public RegistroCurvaABCCotaVO(String numeroProduto, String codigoProduto,
 			Long numeroEdicao, BigDecimal reparte,
 			BigDecimal vendaExemplares, BigDecimal faturamento) {
-		this.numeroProduto = numeroProduto;
-		this.nomeProduto = nomeProduto;
+		this.codigoProduto = numeroProduto;
+		this.nomeProduto = codigoProduto;
 		this.edicaoProduto = numeroEdicao;
 		this.reparte = reparte;
 		this.vendaExemplares = vendaExemplares;
@@ -89,20 +94,30 @@ public class RegistroCurvaABCCotaVO extends RegistroCurvaABC implements Serializ
 		this.faturamento = faturamento;
 	}
 
-	public String getNumeroProduto() {
-		return numeroProduto;
-	}
-
-	public void setNumeroProduto(String numeroProduto) {
-		this.numeroProduto = numeroProduto;
-	}
-
 	public Long getEdicaoProduto() {
 		return edicaoProduto;
 	}
 
 	public void setEdicaoProduto(Long edicaoProduto) {
 		this.edicaoProduto = edicaoProduto;
+	}
+
+	public String getCodigoProduto() {
+		return codigoProduto;
+	}
+
+	public void setCodigoProduto(String codigoProduto) {
+		this.codigoProduto = codigoProduto;
+	}
+	
+	@Export(label = "Participação", exhibitionOrder = 7)
+	public BigDecimal getParticipacaoString() {
+		return getParticipacao();
+	}
+
+	@Export(label = "Participação Acumulada", exhibitionOrder = 8)
+	public BigDecimal getParticipacaoAcumuladaString() {
+		return getParticipacaoAcumulada();
 	}
 
 }

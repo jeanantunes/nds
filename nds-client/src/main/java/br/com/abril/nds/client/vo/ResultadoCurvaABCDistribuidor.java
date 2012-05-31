@@ -9,32 +9,29 @@ import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Exportable;
 
 @Exportable
-public class ResultadoCurvaABC<T> implements Serializable {
+public class ResultadoCurvaABCDistribuidor implements Serializable {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -5667524744114236970L;
 
-	public ResultadoCurvaABC(BigDecimal totalVendaExemplares, BigDecimal totalFaturamento) {
-		this.totalVendaExemplares = totalVendaExemplares;
-		this.totalFaturamento = totalFaturamento;
-	}
-
-	private TableModel<CellModelKeyValue<T>> tableModel;
+	private TableModel<CellModelKeyValue<RegistroCurvaABCDistribuidorVO>> tableModel;
 	
 	@Export(label = "Total de Venda de Exemplares", exhibitionOrder = 1)
 	private BigDecimal totalVendaExemplares;
 	
-
 	@Export(label = "Faturamento Total", exhibitionOrder = 2)
 	private BigDecimal totalFaturamento;
 
-	public TableModel<CellModelKeyValue<T>> getTableModel() {
+	public ResultadoCurvaABCDistribuidor(BigDecimal totalVendaExemplares, BigDecimal totalFaturamento) {
+		this.totalVendaExemplares = totalVendaExemplares;
+		this.totalFaturamento = totalFaturamento;
+	}
+
+	public TableModel<CellModelKeyValue<RegistroCurvaABCDistribuidorVO>> getTableModel() {
 		return tableModel;
 	}
 
-	public void setTableModel(TableModel<CellModelKeyValue<T>> tableModel) {
+	public void setTableModel(
+			TableModel<CellModelKeyValue<RegistroCurvaABCDistribuidorVO>> tableModel) {
 		this.tableModel = tableModel;
 	}
 
@@ -53,5 +50,5 @@ public class ResultadoCurvaABC<T> implements Serializable {
 	public void setTotalFaturamento(BigDecimal totalFaturamento) {
 		this.totalFaturamento = totalFaturamento;
 	}
-	
+
 }
