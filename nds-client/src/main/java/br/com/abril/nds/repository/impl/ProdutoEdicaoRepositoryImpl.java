@@ -409,5 +409,55 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepository<ProdutoEdica
 		return query;
 	}
 	
+	/**
+	 * Pesquisa as últimas edições cadastradas, .<br>
+	 * 
+	 * @param dto
+	 * @param maxResults
+	 * 
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public List<ProdutoEdicaoDTO> pesquisarUltimasEdicoes(ProdutoEdicaoDTO dto,
+			int maxResults) {
+		
+		StringBuilder hql = new StringBuilder();
+		hql.append(" SELECT pe ");
+		
+		// Corpo da consulta com os filtros:
+		Query query = this.queryBodyPesquisarEdicoes(hql, dto, "codigoProduto", "DESC");
+		
+		query.setMaxResults(maxResults);
+		
+		try {
+			return query.list();
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+	
+	/**
+	 * Verifica se existe alguma Edição já cadastrada para o produto.
+	 * 
+	 * @param produto
+	 * @return
+	 */
+	public boolean hasProdutoEdicao(Produto produto) {
+		
+		String hql = 
+				"SELECT count(pe.id) FROM ProdutoEdicao pe WHERE pe.produto = produto ";
+		
+		// Corpo da consulta com os filtros:
+		Query query = this.getSession().createQuery(hql);
+		query.setParameter("produto", produto);
+		
+		try {
+			Long qtd = (Long) query.uniqueResult(); 
+			return qtd == null || Long.valueOf(0).equals(qtd) ? false : true;
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+	
 }
  
