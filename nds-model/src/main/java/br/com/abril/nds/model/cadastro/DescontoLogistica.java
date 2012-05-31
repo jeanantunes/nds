@@ -38,7 +38,7 @@ public class DescontoLogistica {
 	private Date dataInicioVigencia;
 	
 	@OneToMany(mappedBy="descontoLogistica")
-	private Set<ProdutoEdicao> produtoEdicoes = new HashSet<ProdutoEdicao>();
+	private Set<Produto> produtos = new HashSet<Produto>();
 	
 	/**
 	 * Construtor padrão.
@@ -118,6 +118,14 @@ public class DescontoLogistica {
 		this.dataInicioVigencia = dataInicioVigencia;
 	}
 
+	public Set<Produto> getProdutos() {
+		return produtos;
+	}
+
+	public void setProdutos(Set<Produto> produtos) {
+		this.produtos = produtos;
+	}
+
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
@@ -148,13 +156,4 @@ public class DescontoLogistica {
 			return false;
 		return true;
 	}
-
-	public Set<ProdutoEdicao> getProdutoEdicoes() {
-		return produtoEdicoes;
-	}
-
-	public void setProdutoEdicoes(Set<ProdutoEdicao> produtoEdicoes) {
-		this.produtoEdicoes = produtoEdicoes;
-	}
-
 }
