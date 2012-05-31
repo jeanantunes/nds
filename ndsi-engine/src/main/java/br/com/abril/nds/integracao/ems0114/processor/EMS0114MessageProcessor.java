@@ -55,14 +55,14 @@ public class EMS0114MessageProcessor implements MessageProcessor {
 		
 		if (lancamento != null) {
 			
-			if (lancamento.getProdutoEdicao().getNumeroEdicao() != produtoEdicao.getNumeroEdicao()) {
+			if (!lancamento.getProdutoEdicao().getNumeroEdicao().equals(produtoEdicao.getNumeroEdicao())) {
 				
 				lancamento.setProdutoEdicao(produtoEdicao);
 				ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, 
 						"Atualizacao do Produto Edicao para " + produtoEdicao.getNumeroEdicao());
 			}
 			
-			if (lancamento.getDataRecolhimentoDistribuidor() != input.getDataRecolhimento()) {
+			if (!lancamento.getDataRecolhimentoDistribuidor().equals(input.getDataRecolhimento())) {
 				
 				lancamento.setDataRecolhimentoPrevista(input.getDataRecolhimento());
 				ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, 

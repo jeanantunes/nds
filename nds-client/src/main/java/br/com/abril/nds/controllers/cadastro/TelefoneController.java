@@ -54,7 +54,8 @@ public class TelefoneController {
 		COTA,
 		ENTREGADOR,
 		TRANSPORTADOR,
-		TELEFONE_PDV;
+		TELEFONE_PDV,
+		FORNECEDOR;
 		
 		public void setarParametros(){
 			
@@ -88,6 +89,12 @@ public class TelefoneController {
 							PdvController.LISTA_TELEFONES_SALVAR_SESSAO, 
 							PdvController.LISTA_TELEFONES_REMOVER_SESSAO, 
 							PdvController.LISTA_TELEFONES_EXIBICAO);
+				break;
+				case FORNECEDOR:
+					TelefoneController.setarParametros(
+							FornecedorController.LISTA_TELEFONES_SALVAR_SESSAO, 
+							FornecedorController.LISTA_TELEFONES_REMOVER_SESSAO, 
+							FornecedorController.LISTA_TELEFONES_EXIBICAO);
 				break;
 			}
 		}

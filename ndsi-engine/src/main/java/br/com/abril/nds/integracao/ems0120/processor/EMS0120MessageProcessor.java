@@ -16,6 +16,7 @@ import org.springframework.stereotype.Component;
 import br.com.abril.nds.integracao.ems0120.outbound.EMS0120Detalhe;
 import br.com.abril.nds.integracao.ems0120.outbound.EMS0120Header;
 import br.com.abril.nds.integracao.ems0120.outbound.EMS0120Trailer;
+import br.com.abril.nds.integracao.engine.MessageHeaderProperties;
 import br.com.abril.nds.integracao.engine.MessageProcessor;
 import br.com.abril.nds.integracao.engine.data.Message;
 import br.com.abril.nds.integracao.service.DistribuidorService;
@@ -68,7 +69,7 @@ public class EMS0120MessageProcessor implements MessageProcessor{
 		
 		try {
 			
-			PrintWriter print = new PrintWriter(new FileWriter(message.getHeader().get("NDSI_EMS0120_OUTBOUND")+"/REPARTE.NEW"));	
+			PrintWriter print = new PrintWriter(new FileWriter(message.getHeader().get(MessageHeaderProperties.OUTBOUND_FOLDER)+"/REPARTE.NEW"));	
 			
 			EMS0120Header outheader = new EMS0120Header();
 			

@@ -10,7 +10,8 @@ public enum TipoTelefone {
 	CELULAR,
 	FAX,
 	RESIDENCIAL,
-	RADIO;
+	RADIO,
+	CONTATO;
 	
 	public static String getDescricao(TipoTelefone tipoTelefone){
 		if (tipoTelefone == null){
@@ -28,6 +29,8 @@ public enum TipoTelefone {
 				return "Residencial";
 			case RADIO:
 				return "Rádio";
+			case CONTATO:
+				return "Contato";
 			default:
 				return "";
 		}

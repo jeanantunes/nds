@@ -22,6 +22,7 @@ import br.com.abril.nds.model.StatusConfirmacao;
 import br.com.abril.nds.model.StatusControle;
 import br.com.abril.nds.model.TipoEdicao;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
+import br.com.abril.nds.model.cadastro.Algoritmo;
 import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Carteira;
@@ -93,7 +94,6 @@ import br.com.abril.nds.model.estoque.Diferenca;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
 import br.com.abril.nds.model.estoque.Expedicao;
-import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
 import br.com.abril.nds.model.estoque.MovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
@@ -583,6 +583,7 @@ public class DataLoader {
 	}
 
 	private static void carregarDados(Session session) {
+		criarAlgoritmos(session);
 		criarCarteira(session);
 		criarBanco(session);
 		criarPessoas(session);
@@ -688,9 +689,112 @@ public class DataLoader {
 		gerarDescontos(session);
 		
 		criarDadosBalanceamentoRecolhimento(session);
+
+		criarEnderecoCotaRelatorioVendas(session);
+		
+		criarDadosRelatorioVendas(session);
 		
 		criarDadosEdicoesFechadas(session);
+	}
+
+	private static void criarAlgoritmos(Session session) {
+
+		Algoritmo algoritmoSP = Fixture.criarAlgoritmo("Rota SP");
+		Algoritmo algoritmoRJ = Fixture.criarAlgoritmo("Rota RJ");
 		
+		save(session, algoritmoRJ, algoritmoSP);
+	}
+
+	private static void criarDadosRelatorioVendas(Session session) {
+		for (int i=2; i<28; i++) {
+
+			Produto guiaQuatroRodas = Fixture.produto("3111" + i, "Guia Quatro Rodas" + i, "Guia Quatro Rodas" + i, PeriodicidadeProduto.ANUAL, tipoProdutoRevista, 5, 5, BigDecimal.TEN);
+			guiaQuatroRodas.addFornecedor(fornecedorDinap);
+			
+			Produto cromoBrasileirao = Fixture.produto("3333" + i, "Cromo Brasileirão" + i, "Cromo Brasileirão" + i, PeriodicidadeProduto.ANUAL, tipoCromo, 5, 5, BigDecimal.TEN);
+			cromoBrasileirao.addFornecedor(fornecedorFc);
+			
+			Produto guiaViagem = Fixture.produto("3113" + i, "Guia Viagem" + i, "Guia Viagem" + i, PeriodicidadeProduto.ANUAL, tipoProdutoRevista, 5, 5, BigDecimal.TEN);
+			guiaViagem.addFornecedor(fornecedorDinap);
+			
+			save(session,guiaQuatroRodas,cromoBrasileirao,guiaViagem);
+			
+			ProdutoEdicao produtoEdicao = Fixture.produtoEdicao(1L + i, 5 + i, 30 + i, 
+					new BigDecimal(50 + i), new BigDecimal(100 + i), new BigDecimal(100 + i), "5546" + i, 0L + i, guiaQuatroRodas, null, false);
+			produtoEdicao.setParcial(true);
+			
+			ProdutoEdicao cromoBrasileiraoEd1 = Fixture.produtoEdicao(1L + i, 5 + i, 30 + i, 
+					new BigDecimal(50 + i), new BigDecimal(100 + i), new BigDecimal(100 + i), "3333" + i, 0L + i, cromoBrasileirao, null, false);
+			cromoBrasileiraoEd1.setParcial(true);
+			
+			ProdutoEdicao guiaViagemEd1 = Fixture.produtoEdicao(1L + i, 5 + i, 30 + i, 
+					new BigDecimal(50 + i), new BigDecimal(100 + i), new BigDecimal(100 + i), "2231" + i, 0L + i, guiaViagem, null, false);
+			guiaViagemEd1.setParcial(true);
+			
+			save(session,produtoEdicao,cromoBrasileiraoEd1,guiaViagemEd1);
+			
+			
+			LancamentoParcial lancamentoParcial1 = Fixture.criarLancamentoParcial(
+					produtoEdicao, Fixture.criarData(1 + i, 1 + i, 2009 + i), Fixture.criarData(1 + i, 1 + i, 2010 + i), StatusLancamentoParcial.RECOLHIDO);
+			
+			LancamentoParcial lancamentoParcial2 = Fixture.criarLancamentoParcial(
+					cromoBrasileiraoEd1, Fixture.criarData(1 + i, 2 + i, 2011 + i), Fixture.criarData(1 + i, 2 + i, 2012 + i), StatusLancamentoParcial.PROJETADO);
+			
+			LancamentoParcial lancamentoParcial3 = Fixture.criarLancamentoParcial(
+					guiaViagemEd1, Fixture.criarData(1 + i, 3 + i, 2011 + i), Fixture.criarData(1 + i, 3 + i, 2012 + i), StatusLancamentoParcial.PROJETADO);
+			
+					
+			save(session, lancamentoParcial1,lancamentoParcial2,lancamentoParcial3);
+			
+			Lancamento lancamentoPeriodo = Fixture.lancamento(TipoLancamento.PARCIAL, cromoBrasileiraoEd1,
+					Fixture.criarData(1, 2, 2011),
+					Fixture.criarData(1, 3, 2011),
+					new Date(),
+					new Date(),
+					new BigDecimal(100 + i),
+					StatusLancamento.RECOLHIDO, null, 1);
+			save(session,lancamentoPeriodo);
+			
+			Lancamento lancamentoPeriodo2 = Fixture.lancamento(TipoLancamento.PARCIAL, cromoBrasileiraoEd1,
+					Fixture.criarData(5, 3, 2011),
+					Fixture.criarData(5, 4, 2011),
+					new Date(),
+					new Date(),
+					new BigDecimal(80 + i),
+					StatusLancamento.PLANEJADO, null, 1);
+			save(session,lancamentoPeriodo2);
+			
+			Estudo estudo = Fixture.estudo(new BigDecimal(200 + i), Fixture.criarData(1, 2, 2011), cromoBrasileiraoEd1);
+			save(session,estudo);
+			
+			TipoMovimentoEstoque tipoMovimentoEncalhe = Fixture.tipoMovimentoEnvioEncalhe();
+			save(session,tipoMovimentoEncalhe);
+			
+			//kame
+			EstoqueProdutoCota estoque = null;
+			if (i == 2)
+				estoque = Fixture.estoqueProdutoCota(produtoEdicao, new BigDecimal(50 + i), cotaJose, null);
+			else if (i == 3)
+				estoque = Fixture.estoqueProdutoCota(produtoEdicao, new BigDecimal(50 + i), cotaManoel, null);
+			else if (i == 4)
+				estoque = Fixture.estoqueProdutoCota(produtoEdicao, new BigDecimal(50 + i), cotaManoelCunha, null);
+			else if (i == 5)
+				estoque = Fixture.estoqueProdutoCota(produtoEdicao, new BigDecimal(50 + i), cotaMaria, null);
+			else if (i == 6)
+				estoque = Fixture.estoqueProdutoCota(produtoEdicao, new BigDecimal(50 + i), cotaLuis, null);
+			else if (i == 7)
+				estoque = Fixture.estoqueProdutoCota(produtoEdicao, new BigDecimal(50 + i), cotaJoao, null);
+			else if (i == 8)
+				estoque = Fixture.estoqueProdutoCota(produtoEdicao, new BigDecimal(50 + i), cotaGuilherme, null);
+			else if (i == 9)
+				estoque = Fixture.estoqueProdutoCota(produtoEdicao, new BigDecimal(50 + i), cotaMurilo, null);
+			else if (i == 10)
+				estoque = Fixture.estoqueProdutoCota(produtoEdicao, new BigDecimal(50 + i), cotaMariana, null);
+			else
+				estoque = Fixture.estoqueProdutoCota(produtoEdicao, new BigDecimal(50 + i), cotaOrlando, null);
+
+			save(session, estoque);
+		}
 	}
 
 	private static void criarDadosEdicoesFechadas(Session session) {
@@ -714,7 +818,7 @@ public class DataLoader {
 				TipoMovimentoEstoque tipoMovimentoConsignado = Fixture.tipoMovimentoEnvioJornaleiro();
 				save(session,tipoMovimentoConsignado);
 	
-				TipoProduto tipoProduto = Fixture.tipoProduto("Revista TesteEdicoesFechadas" + i, GrupoProduto.REVISTA, "44358941", "4723744581", 147L + i);
+				TipoProduto tipoProduto = Fixture.tipoProduto("Revista EdicoesFechadas" + i, GrupoProduto.REVISTA, "44358941", "4723744581", 147L + i);
 				save(session,tipoProduto);
 	
 				TipoFornecedor tipoFornecedor = Fixture.tipoFornecedorPublicacao();
@@ -1054,7 +1158,7 @@ public class DataLoader {
 		Usuario usuario = Fixture.usuarioJoao();
 		save(session,usuario);
 
-		TipoProduto tipoProduto = Fixture.tipoProduto("Revista ContaCorrenteConsignado", GrupoProduto.REVISTA, "3721894", "473794321", 003L);
+		TipoProduto tipoProduto = Fixture.tipoProduto("Revista C.C.Consignado", GrupoProduto.REVISTA, "3721894", "473794321", 003L);
 		save(session,tipoProduto);
 
 		TipoFornecedor tipoFornecedor = Fixture.tipoFornecedorPublicacao();
@@ -1171,7 +1275,7 @@ public class DataLoader {
 	Usuario usuario = Fixture.usuarioJoao();
 	save(session, usuario);
 
-	TipoProduto tipoProduto = Fixture.tipoProduto("Revista ContaCorrenteTipoMovimento", GrupoProduto.REVISTA, "431251324", "513543", 004L);
+	TipoProduto tipoProduto = Fixture.tipoProduto("Revista C.C.Movimento", GrupoProduto.REVISTA, "431251324", "513543", 004L);
 	save(session, tipoProduto);
 
 	TipoFornecedor tipoFornecedor = Fixture.tipoFornecedor("Tipo A",GrupoFornecedor.PUBLICACAO);
@@ -4241,6 +4345,47 @@ public class DataLoader {
 		save(session, feriadoProclamacao);
 	}
 
+	private static void criarEnderecoCotaRelatorioVendas(Session session) {
+
+		for (int i=0; i<=9; i++) {
+			
+			Endereco endereco = Fixture.criarEndereco(
+					TipoEndereco.COMERCIAL, "13730-000", "Rua Marechal Deodoro", 50, "Centro", "Mococa", "SP");
+
+			EnderecoCota enderecoCota = new EnderecoCota();
+
+			if ( i == 0)
+				enderecoCota.setCota(cotaJose);
+			else if (i == 1)
+				enderecoCota.setCota(cotaManoel);
+			else if (i == 2)
+				enderecoCota.setCota(cotaManoelCunha);
+			else if (i == 3)
+				enderecoCota.setCota(cotaMaria);
+			else if (i == 4)
+				enderecoCota.setCota(cotaLuis);
+			else if (i == 5)
+				enderecoCota.setCota(cotaJoao);
+			else if (i == 6)
+				enderecoCota.setCota(cotaGuilherme);
+			else if (i == 7)
+				enderecoCota.setCota(cotaMurilo);
+			else if (i == 8)
+				enderecoCota.setCota(cotaMariana);
+			else if (i == 9)
+				enderecoCota.setCota(cotaOrlando);
+			else
+				enderecoCota.setCota(cotaManoel);
+				
+			enderecoCota.setEndereco(endereco);
+			enderecoCota.setPrincipal(true);
+			enderecoCota.setTipoEndereco(TipoEndereco.COBRANCA);
+
+			save(session, endereco, enderecoCota);
+
+		}
+	}
+	
 	private static void criarEnderecoCotaPF(Session session) {
 		Endereco endereco = Fixture.criarEndereco(
 				TipoEndereco.COMERCIAL, "13730-000", "Rua Marechal Deodoro", 50, "Centro", "Mococa", "SP");
@@ -4257,7 +4402,7 @@ public class DataLoader {
 		EnderecoCota enderecoCota2 = new EnderecoCota();
 		enderecoCota2.setCota(cotaMaria);
 		enderecoCota2.setEndereco(endereco2);
-		enderecoCota2.setPrincipal(false);
+		enderecoCota2.setPrincipal(true);
 		enderecoCota2.setTipoEndereco(TipoEndereco.COBRANCA);
 
 		Endereco enderecoLuis = Fixture.criarEndereco(
@@ -4280,7 +4425,13 @@ public class DataLoader {
 		enderecoCotaJoao.setPrincipal(false);
 		enderecoCotaJoao.setTipoEndereco(TipoEndereco.COBRANCA);
 
-		save(session, endereco, enderecoCota, endereco2,enderecoCota2,enderecoLuis,enderecoCotaLuis,enderecoJoao,enderecoCotaJoao);
+		EnderecoCota enderecoCotaGuilherme = new EnderecoCota();
+		enderecoCotaGuilherme.setCota(cotaGuilherme);
+		enderecoCotaGuilherme.setEndereco(endereco);
+		enderecoCotaGuilherme.setPrincipal(false);
+		enderecoCotaGuilherme.setTipoEndereco(TipoEndereco.COBRANCA);
+		
+		save(session, endereco, enderecoCota, endereco2,enderecoCota2,enderecoLuis,enderecoCotaLuis,enderecoJoao,enderecoCotaJoao, enderecoCotaGuilherme);
 	}
 
 	private static void dadosExpedicao(Session session) {

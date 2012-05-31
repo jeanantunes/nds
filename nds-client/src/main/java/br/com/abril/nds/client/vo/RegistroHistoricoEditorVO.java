@@ -4,7 +4,14 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 
 import br.com.abril.nds.util.export.Export;
+import br.com.abril.nds.util.export.Exportable;
 
+/**
+ * Classe responsável por armazenar os valores referente aos registros da
+ * pesquisa de registra de históricos de editor.
+ * @author InfoA2
+ */
+@Exportable
 public class RegistroHistoricoEditorVO implements Serializable {
 
 	/**
@@ -97,5 +104,5 @@ public class RegistroHistoricoEditorVO implements Serializable {
 	public void setReparte(BigDecimal reparte) {
 		this.reparte = reparte;
 	}
-
+	
 }

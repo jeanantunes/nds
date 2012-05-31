@@ -647,6 +647,42 @@ public class ConferenciaEncalheController {
 		}
 	}
 	
+	@Post
+	public void pesquisarProdutoEdicaoPorId(Long idProdutoEdicao){
+		
+		
+		Integer numeroCota = null;
+		
+		InfoConferenciaEncalheCota info = this.getInfoConferenciaSession();
+			
+		if (info != null){
+			
+			numeroCota = info.getCota().getNumeroCota();
+		}
+		
+		try {
+			ProdutoEdicaoDTO p = 
+					this.conferenciaEncalheService.pesquisarProdutoEdicaoPorId(numeroCota, idProdutoEdicao);
+			
+			Map<String, Object> dados = new HashMap<String, Object>();
+			
+			if (p != null){
+				
+				dados.put("numeroEdicao", p.getNumeroEdicao());
+				dados.put("precoVenda", p.getPrecoVenda());
+				dados.put("desconto", p.getDesconto());
+			}
+			
+			this.result.use(CustomMapJson.class).put("result", dados).serialize();
+			
+		} catch (ChamadaEncalheCotaInexistenteException e) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "Não existe chamada de encalhe deste produto para essa cota.");
+		} catch (EncalheRecolhimentoParcialException e) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, e.getMessage());
+		}
+	}
+	
 	private void limparDadosSessao() {
 		
 		this.session.removeAttribute(ID_BOX_LOGADO);

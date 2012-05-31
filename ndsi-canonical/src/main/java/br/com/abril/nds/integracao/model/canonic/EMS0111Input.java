@@ -37,7 +37,8 @@ public class EMS0111Input extends IntegracaoDocument implements Serializable {
 	private BigDecimal repartePromocional;	
 	private String condDistribuicaoFases;
 	
-	@Field(offset = 1, length = 7)
+		
+	/*@Field(offset = 1, length = 7)*/
 	public Long getCodigoDistribuidor() {
 		return codigoDistribuidor;
 	}
@@ -45,7 +46,7 @@ public class EMS0111Input extends IntegracaoDocument implements Serializable {
 		this.codigoDistribuidor = codigoDistribuidor;
 	}
 	
-
+	
 	public String getContextoProduto() {
 		return contextoProduto;
 	}

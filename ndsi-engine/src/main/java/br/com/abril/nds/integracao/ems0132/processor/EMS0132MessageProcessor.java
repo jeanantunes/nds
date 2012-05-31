@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import br.com.abril.nds.integracao.ems0132.outbound.EMS0132Output;
+import br.com.abril.nds.integracao.engine.MessageHeaderProperties;
 import br.com.abril.nds.integracao.engine.MessageProcessor;
 import br.com.abril.nds.integracao.engine.data.Message;
 import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;
@@ -54,11 +55,6 @@ public class EMS0132MessageProcessor implements MessageProcessor {
 	 * Value - LANP
 	 */
 	private static final String CODIGO_LANP = "LANP";
-	
-	/**
-	 * Value - NDSI_EMS0132_OUTBOUND
-	 */
-	private static final String NDSI_EMS0132_OUTBOUND = "NDSI_EMS0132_OUTBOUND";
 	
 	@Override
 	public void processMessage(Message message) {
@@ -191,7 +187,7 @@ public class EMS0132MessageProcessor implements MessageProcessor {
 		String data = DateUtil.formatarData(dataAtual.getTime(), "MMddyyyy");
 		String hora = DateUtil.formatarData(dataAtual.getTime(), "HHmmss");
 		
-		String ems0132PathName = (String) message.getHeader().get(NDSI_EMS0132_OUTBOUND);
+		String ems0132PathName = (String) message.getHeader().get(MessageHeaderProperties.OUTBOUND_FOLDER);
 		
 		if (ems0132PathName == null) {
 			return null;

@@ -3,7 +3,14 @@ package br.com.abril.nds.integracao.fileimporter;
 import br.com.abril.nds.integracao.model.canonic.InterfaceEnum;
 
 /**
- * Classe principal para executar as interfaces por linha de comando.
+ * Classe principal para executar as interfaces por linha de comando.<br>
+ * Para executar uma interface, devem ser passados os seguintes parâmetros na linha de comando:<br>
+ * <br>
+ * 1) Nome do usuário     (obrigatório)<br>
+ * 2) Código da interface (obrigatório)<br>
+ * 3) Código do distribuidor (opcional) - se passado, carregará apenas os arquivos deste distribuidor<br>
+ * <br>
+ * Ex: java -jar ndsi-couchdbinterface.jar usuario 111 <br> 
  */
 public class StartBatch {
 
@@ -43,6 +50,6 @@ public class StartBatch {
 		}
 		
 		InterfaceExecutor executor = new InterfaceExecutor();
-		executor.executarInterface(usuario, interfaceEnum, codigoDistribuidor.toString());
+		executor.executarInterface(usuario, interfaceEnum, codigoDistribuidor);
 	}
 }
