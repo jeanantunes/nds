@@ -387,16 +387,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 		}
 	}
 	
-	/**
-	 * Exclui uma Edição da base de dados.<br>
-	 * Os critérios para exclusão são:
-	 * <ul>
-	 * <li>A Edição não pode ser cadastrado via INTERFACE;</li>
-	 * <li>A Edição não pode estar sendo utilizada em outras partes dos sitema;</li>
-	 * </ul>
-	 * 
-	 * @param idProdutoEdicao
-	 */
+	@Override
 	@Transactional(readOnly = true)
 	public void excluirProdutoEdicao(Long idProdutoEdicao) {
 		
