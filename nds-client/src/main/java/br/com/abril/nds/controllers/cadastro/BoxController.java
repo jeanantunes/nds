@@ -56,8 +56,13 @@ public class BoxController {
 	@Post
 	@Path("/buscaPorId.json")
 	public void buscaPorId(long id) {
-		Box box = boxService.buscarPorId(id);		
-		result.use(CustomMapJson.class).put("box", box).put("associado", boxService.hasAssociacao(id)).serialize();
+		if (boxService.hasAssociacao(id)) {
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR,"Box está em uso e não pode ser editado."));
+		} else {
+			Box box = boxService.buscarPorId(id);
+			result.use(CustomMapJson.class).put("box", box).serialize();
+		}
+	
 	}
 
 	@Post
