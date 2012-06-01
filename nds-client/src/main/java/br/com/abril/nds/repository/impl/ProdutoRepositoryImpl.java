@@ -193,7 +193,9 @@ public class ProdutoRepositoryImpl extends AbstractRepository<Produto, Long> imp
 		
 		Criteria criteria = super.getSession().createCriteria(Produto.class);
 		
-		criteria.add(Restrictions.eq("id", id)).setFetchMode("fornecedores", FetchMode.JOIN);
+		criteria.add(Restrictions.eq("id", id))
+			.setFetchMode("fornecedores", FetchMode.JOIN)
+			.setFetchMode("descontoLogistica", FetchMode.JOIN);
 		
 		return (Produto) criteria.uniqueResult();
 	}

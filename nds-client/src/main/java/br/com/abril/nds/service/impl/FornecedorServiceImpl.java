@@ -645,5 +645,12 @@ public class FornecedorServiceImpl implements FornecedorService {
 		
 		return contagem > 0;
 	}
+
+	@Override
+	@Transactional(readOnly=true)
+	public List<Fornecedor> obterFornecedorLikeNomeFornecedor(String nomeFornecedor) {
+		
+		return this.fornecedorRepository.obterFornecedorLikeNomeFantasia(nomeFornecedor);
+	}
 }
 
