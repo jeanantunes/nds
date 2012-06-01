@@ -150,4 +150,24 @@ public interface ProdutoEdicaoRepository extends Repository<ProdutoEdicao, Long>
 	 */
 	public Long countPesquisarEdicoes(ProdutoEdicaoDTO dto);
 	
+	/**
+	 * Pesquisa as últimas edições cadastradas.<br>
+	 * 
+	 * @param dto
+	 * @param maxResults
+	 * 
+	 * @return
+	 */
+	public List<ProdutoEdicaoDTO> pesquisarUltimasEdicoes(ProdutoEdicaoDTO dto,
+			int maxResults);
+	
+	/**
+	 * Verifica se existe alguma Edição já cadastrada para o produto.
+	 * 
+	 * @param produto
+	 * 
+	 * @return 
+	 */
+	public boolean hasProdutoEdicao(Produto produto);
+	
 }

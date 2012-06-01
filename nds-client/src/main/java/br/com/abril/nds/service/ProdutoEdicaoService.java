@@ -91,6 +91,17 @@ public interface ProdutoEdicaoService {
 			String sortorder, String sortname, int page, int maxResults);
 	
 	/**
+	 * Pesquisa as últimas edições cadastradas, .<br>
+	 * 
+	 * @param dto
+	 * @param maxResults
+	 * 
+	 * @return
+	 */
+	public List<ProdutoEdicaoDTO> pesquisarUltimasEdicoes(ProdutoEdicaoDTO dto,
+			int maxResults);
+	
+	/**
 	 * Obtém a quantidade de edições cadastradas filtradas pelos critérios 
 	 * escolhidos pelo usuário.
 	 * 
