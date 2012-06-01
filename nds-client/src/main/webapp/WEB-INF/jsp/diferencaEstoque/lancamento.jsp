@@ -100,7 +100,7 @@
 		} 
 
 		function pesquisar(confirmado) { 
-
+			
 			$.postJSON(
 				"<c:url value='/estoque/diferenca/lancamento/limparSessao' />", 
 				'confirmado=' + confirmado,
@@ -367,19 +367,19 @@
 <body>
 	<div class="corpo">
 		<div id="dialog-excluir" title="Lançamento Faltas e Sobras">
-			<p>Confirma esta Exclusão?</p>
+			<p>Confirma esta Exclus&atilde;o?</p>
 		</div>
 		<div id="dialog-confirmar-lancamentos" title="Lançamento Faltas e Sobras">
-			<p>Confirma estes Lançamentos?</p>
+			<p>Confirma estes Lan&ccedil;amentos?</p>
 		</div>
 		<div id="dialogConfirmacaoPerdaDados" title="Lançamento Faltas e Sobras">
-			<p>Ao prosseguir com essa ação você perderá seus dados não salvos. Deseja prosseguir?</p>
+			<p>Ao prosseguir com essa a&ccedil;&atilde;o voc&ecirc; perder&aacute; seus dados n&atilde;o salvos. Deseja prosseguir?</p>
 		</div>
 		<div class="container">
 
 			<fieldset class="classFieldset">
 			
-				<legend>Lançamento Faltas e Sobras</legend>
+				<legend>Lan&ccedil;amento Faltas e Sobras</legend>
 					  
 				<table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
 					<tr>
@@ -392,7 +392,7 @@
 								   maxlength="10"
 								   value="${dataAtual}" />
 						</td>
-						<td width="115">Tipo de Diferença:</td>
+						<td width="115">Tipo de Diferen&ccedil;a:</td>
 						<td width="294">
 							<select id="selectTiposDiferenca" 
 									name="tipoDiferenca"
