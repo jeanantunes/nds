@@ -119,7 +119,7 @@ public interface ProdutoEdicaoRepository extends Repository<ProdutoEdicao, Long>
 	List<ProdutoEdicao> obterProdutosEdicaoPorId(Set<Long> idsProdutoEdicao);
 	
 	/**
-	 * Pesquisa as Edições já cadastradas.<br>
+	 * Pesquisa as Edições já cadastradas e traz o resultado ordenado.<br>
 	 * Possui como opções de filtro:<br>
 	 * <ul>
 	 * <li>Código do Produto;</li>
@@ -142,8 +142,8 @@ public interface ProdutoEdicaoRepository extends Repository<ProdutoEdicao, Long>
 			String sortorder, String sortname, int initialResult, int maxResults);
 	
 	/**
-	 * Obtém a quantidade de edições cadastradas filtradas pelos critérios 
-	 * escolhidos pelo usuário.
+	 * Obtém a quantidade de edições cadastradas filtradas pelas opções 
+	 * escolhidos pelo usuário na tela de pesquisa.
 	 * 
 	 * @param dto
 	 * @return
@@ -154,12 +154,12 @@ public interface ProdutoEdicaoRepository extends Repository<ProdutoEdicao, Long>
 	 * Pesquisa as últimas edições cadastradas.<br>
 	 * 
 	 * @param dto
-	 * @param maxResults
+	 * @param qtdEdicoes Quantidade de Edições a trazer.
 	 * 
 	 * @return
 	 */
 	public List<ProdutoEdicaoDTO> pesquisarUltimasEdicoes(ProdutoEdicaoDTO dto,
-			int maxResults);
+			int qtdEdicoes);
 	
 	/**
 	 * Verifica se existe alguma Edição já cadastrada para o produto.
@@ -169,5 +169,21 @@ public interface ProdutoEdicaoRepository extends Repository<ProdutoEdicao, Long>
 	 * @return 
 	 */
 	public boolean hasProdutoEdicao(Produto produto);
+	
+	/**
+	 * Verifica se o ProdutoEdicao já foi publicado.<br>
+	 * Irá verificar se a Data de Publicação da Distribuida é mais que a "Data do
+	 * Dia Corrente (hoje)" do Lançamento {@link br.com.abril.nds.model.planejamento.Lancamento}
+	 * mais antigo associado ao ProdutoEdição.
+	 *  
+	 * @param idProdutoEdicao
+	 * 
+	 * @return
+	 * <ul>
+	 * <li>true: A Edição já foi publicada (DataPublicacaoEditora =< DataCorrente);</li>
+	 * <li>false: A Edição ainda não foi publicada (DataPublicacaoEditora > DataCorrente);</li>
+	 * </ul>
+	 */
+	public boolean isProdutoEdicaoJaPublicada(Long idProdutoEdicao);
 	
 }
