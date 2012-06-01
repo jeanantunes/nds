@@ -1,5 +1,6 @@
 package br.com.abril.nds.service;
 
+import java.io.InputStream;
 import java.util.Date;
 import java.util.List;
 
@@ -106,8 +107,19 @@ public interface ProdutoEdicaoService {
 	 * escolhidos pelo usuário.
 	 * 
 	 * @param dto
+	 * 
 	 * @return
 	 */
 	public Long countPesquisarEdicoes(ProdutoEdicaoDTO dto);
+	
+	/**
+	 * Salva ou Atualiza um novo ProdutoEdição.
+	 * 
+	 * @param dto
+	 * @param codigoProduto
+	 * @param contentType
+	 * @param imgInputStream
+	 */
+	public void salvarProdutoEdicao(ProdutoEdicaoDTO dto, String codigoProduto, String contentType, InputStream imgInputStream);
 	
 }
