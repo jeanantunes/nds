@@ -64,8 +64,10 @@ public class ProdutoEdicaoDTO implements Serializable {
 	// parcial;	-- Regime de Recolhimento;
 	// brinde;
 	// peso;
-	private BigDecimal altura;
-	private BigDecimal largura;
+	private float largura;
+	private float comprimento;
+	private float espessura;
+	
 	private String boletimInformativo;
 	
 	
@@ -408,30 +410,6 @@ public class ProdutoEdicaoDTO implements Serializable {
 		this.chamadaCapa = chamadaCapa;
 	}
 	/**
-	 * @return the altura
-	 */
-	public BigDecimal getAltura() {
-		return altura;
-	}
-	/**
-	 * @param altura the altura to set
-	 */
-	public void setAltura(BigDecimal altura) {
-		this.altura = altura;
-	}
-	/**
-	 * @return the largura
-	 */
-	public BigDecimal getLargura() {
-		return largura;
-	}
-	/**
-	 * @param largura the largura to set
-	 */
-	public void setLargura(BigDecimal largura) {
-		this.largura = largura;
-	}
-	/**
 	 * @return the boletimInformativo
 	 */
 	public String getBoletimInformativo() {
@@ -442,6 +420,42 @@ public class ProdutoEdicaoDTO implements Serializable {
 	 */
 	public void setBoletimInformativo(String boletimInformativo) {
 		this.boletimInformativo = boletimInformativo;
+	}
+	/**
+	 * @return the largura
+	 */
+	public float getLargura() {
+		return largura;
+	}
+	/**
+	 * @param largura the largura to set
+	 */
+	public void setLargura(float largura) {
+		this.largura = largura;
+	}
+	/**
+	 * @return the comprimento
+	 */
+	public float getComprimento() {
+		return comprimento;
+	}
+	/**
+	 * @param comprimento the comprimento to set
+	 */
+	public void setComprimento(float comprimento) {
+		this.comprimento = comprimento;
+	}
+	/**
+	 * @return the espessura
+	 */
+	public float getEspessura() {
+		return espessura;
+	}
+	/**
+	 * @param espessura the espessura to set
+	 */
+	public void setEspessura(float espessura) {
+		this.espessura = espessura;
 	}
 	
 }
