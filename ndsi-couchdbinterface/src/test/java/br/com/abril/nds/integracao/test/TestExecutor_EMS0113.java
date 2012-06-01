@@ -5,16 +5,17 @@ import org.junit.Test;
 import br.com.abril.nds.integracao.fileimporter.InterfaceExecutor;
 import br.com.abril.nds.integracao.model.canonic.InterfaceEnum;
 
-public class TestExecutor {
+public class TestExecutor_EMS0113 {
 
 	@Test
 	public void testarExecucaoInterface() {
 		
 		try {
 			InterfaceExecutor executor = new InterfaceExecutor();
-			executor.executarInterface("jonatas", InterfaceEnum.EMS0134);
+			executor.executarInterface("Jones", InterfaceEnum.EMS0113);
 		} catch (Throwable e) {
 			e.printStackTrace();
 		}
 	}
 }
+

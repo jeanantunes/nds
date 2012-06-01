@@ -938,7 +938,7 @@ public class DataLoader {
 	produtoBravo.addFornecedor(fornecedorAcme);
 	save(session, produtoBravo);
 
-	ProdutoEdicao produtoEdicao = Fixture.produtoEdicao("COD_00", 234L,12 , 1, new BigDecimal(9), new BigDecimal(8), 
+	ProdutoEdicao produtoEdicao = Fixture.produtoEdicao(234L,12 , 1, new BigDecimal(9), new BigDecimal(8), 
 			new BigDecimal(10), produtoBravo);		
 	save(session, produtoEdicao);
 
@@ -2387,112 +2387,112 @@ public class DataLoader {
 	}
 
 	private static void criarProdutosEdicao(Session session) {
-		produtoEdicaoVeja1 = Fixture.produtoEdicao("COD_01", 1L, 10, 14,
+		produtoEdicaoVeja1 = Fixture.produtoEdicao(1L, 10, 14,
 				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(20),
 				produtoVeja);
 		session.save(produtoEdicaoVeja1);
 
-		produtoEdicaoVeja2 = Fixture.produtoEdicao("COD_02", 2L, 10, 14,
+		produtoEdicaoVeja2 = Fixture.produtoEdicao(2L, 10, 14,
 				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(20),
 				produtoVeja);
 		session.save(produtoEdicaoVeja2);
 
-		produtoEdicaoVeja3 = Fixture.produtoEdicao("COD_03", 3L, 10, 14,
+		produtoEdicaoVeja3 = Fixture.produtoEdicao(3L, 10, 14,
 				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(20),
 				produtoVeja);
 		session.save(produtoEdicaoVeja3);
 
-		produtoEdicaoVeja4 = Fixture.produtoEdicao("COD_04", 4L, 10, 14,
+		produtoEdicaoVeja4 = Fixture.produtoEdicao(4L, 10, 14,
 				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(20),
 				produtoVeja);
 		session.save(produtoEdicaoVeja4);
 
-		produtoEdicaoSuper1 = Fixture.produtoEdicao("COD_05", 1L, 10, 14,
+		produtoEdicaoSuper1 = Fixture.produtoEdicao(1L, 10, 14,
 				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(20),
 				produtoSuper);
 		session.save(produtoEdicaoSuper1);
 
-		produtoEdicaoCapricho1 = Fixture.produtoEdicao("COD_06", 1L, 9, 14,
+		produtoEdicaoCapricho1 = Fixture.produtoEdicao(1L, 9, 14,
 				new BigDecimal(0.15), new BigDecimal(9), new BigDecimal(13.5),
 				produtoCapricho);
 		session.save(produtoEdicaoCapricho1);
 
-		produtoEdicaoInfoExame1 = Fixture.produtoEdicao("COD_07", 1L, 12, 30,
+		produtoEdicaoInfoExame1 = Fixture.produtoEdicao(1L, 12, 30,
 				new BigDecimal(0.25), new BigDecimal(11), new BigDecimal(14.5),
 				produtoInfoExame);
 		session.save(produtoEdicaoInfoExame1);
 
-		produtoEdicaoQuatroRodas1 = Fixture.produtoEdicao("COD_08", 1L, 7, 30,
+		produtoEdicaoQuatroRodas1 = Fixture.produtoEdicao(1L, 7, 30,
 				new BigDecimal(0.30), new BigDecimal(12.5), new BigDecimal(16.5),
 				produtoQuatroRodas);
 		session.save(produtoEdicaoQuatroRodas1);
 
-		produtoEdicaoBoaForma1 = Fixture.produtoEdicao("COD_09", 1L, 10, 30,
+		produtoEdicaoBoaForma1 = Fixture.produtoEdicao(1L, 10, 30,
 				new BigDecimal(0.10), new BigDecimal(12), new BigDecimal(15),
 				produtoBoaForma);
 		session.save(produtoEdicaoBoaForma1);
 
-		produtoEdicaoBravo1 = Fixture.produtoEdicao("COD_10", 1L, 10, 30,
+		produtoEdicaoBravo1 = Fixture.produtoEdicao(1L, 10, 30,
 				new BigDecimal(0.12), new BigDecimal(17), new BigDecimal(20),
 				produtoBravo);
 		session.save(produtoEdicaoBravo1);
 
-		produtoEdicaoCaras1 = Fixture.produtoEdicao("COD_11", 1L, 15, 30,
+		produtoEdicaoCaras1 = Fixture.produtoEdicao(1L, 15, 30,
 				new BigDecimal(0.20), new BigDecimal(20), new BigDecimal(25),
 				produtoCaras);
 		session.save(produtoEdicaoCaras1);
 
-		produtoEdicaoCasaClaudia1 = Fixture.produtoEdicao("COD_12", 1L, 10, 30,
+		produtoEdicaoCasaClaudia1 = Fixture.produtoEdicao(1L, 10, 30,
 				new BigDecimal(0.20), new BigDecimal(20), new BigDecimal(25),
 				produtoCasaClaudia);
 		session.save(produtoEdicaoCasaClaudia1);
 
-		produtoEdicaoClaudia1 = Fixture.produtoEdicao("COD_13", 1L, 10, 30,
+		produtoEdicaoClaudia1 = Fixture.produtoEdicao(1L, 10, 30,
 				new BigDecimal(0.10), new BigDecimal(10), new BigDecimal(11),
 				produtoClaudia);
 		session.save(produtoEdicaoClaudia1);
 
-		produtoEdicaoContigo1 = Fixture.produtoEdicao("COD_14", 1L, 10, 30,
+		produtoEdicaoContigo1 = Fixture.produtoEdicao(1L, 10, 30,
 				new BigDecimal(0.10), new BigDecimal(12), new BigDecimal(15),
 				produtoContigo);
 		session.save(produtoEdicaoContigo1);
 
-		produtoEdicaoManequim1 = Fixture.produtoEdicao("COD_15", 1L, 10, 30,
+		produtoEdicaoManequim1 = Fixture.produtoEdicao(1L, 10, 30,
 				new BigDecimal(0.10), new BigDecimal(15), new BigDecimal(20),
 				produtoManequim);
 		session.save(produtoEdicaoManequim1);
 
-		produtoEdicaoNatGeo1 = Fixture.produtoEdicao("COD_16", 1L, 10, 30,
+		produtoEdicaoNatGeo1 = Fixture.produtoEdicao(1L, 10, 30,
 				new BigDecimal(0.15), new BigDecimal(20), new BigDecimal(23),
 				produtoNatGeo);
 		session.save(produtoEdicaoNatGeo1);
 
-		produtoEdicaoPlacar1 = Fixture.produtoEdicao("COD_17", 1L, 10, 30,
+		produtoEdicaoPlacar1 = Fixture.produtoEdicao(1L, 10, 30,
 				new BigDecimal(0.20), new BigDecimal(9), new BigDecimal(12),
 				produtoPlacar);
 		session.save(produtoEdicaoPlacar1);
 
-		cocaColaLight = Fixture.produtoEdicao("COD_18", 1L, 10, 30,
+		cocaColaLight = Fixture.produtoEdicao(1L, 10, 30,
 				new BigDecimal(0.20), new BigDecimal(9), new BigDecimal(12),
 				cocaCola);
 		session.save(cocaColaLight);
 
-		produtoEdicaoVeja1EncalheAnt = Fixture.produtoEdicao("COD_19", 5L, 10, 14,
+		produtoEdicaoVeja1EncalheAnt = Fixture.produtoEdicao(5L, 10, 14,
 				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(20),
 				produtoVeja);
 		session.save(produtoEdicaoVeja1EncalheAnt);
 
-		produtoEdicaoVeja2EncalheAnt = Fixture.produtoEdicao("COD_20", 6L, 10, 14,
+		produtoEdicaoVeja2EncalheAnt = Fixture.produtoEdicao(6L, 10, 14,
 				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(20),
 				produtoVeja);
 		session.save(produtoEdicaoVeja2EncalheAnt);
 
-		produtoEdicaoSuper1EncalheAnt = Fixture.produtoEdicao("COD_21", 2L, 10, 14,
+		produtoEdicaoSuper1EncalheAnt = Fixture.produtoEdicao(2L, 10, 14,
 				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(20),
 				produtoSuper);
 		session.save(produtoEdicaoSuper1EncalheAnt);
 
-		produtoEdicaoSuper2EncalheAnt = Fixture.produtoEdicao("COD_22", 3L, 10, 14,
+		produtoEdicaoSuper2EncalheAnt = Fixture.produtoEdicao(3L, 10, 14,
 				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(20),
 				produtoSuper);
 		session.save(produtoEdicaoSuper2EncalheAnt);
@@ -3086,7 +3086,7 @@ public class DataLoader {
 			produto.addFornecedor(fornecedor);
 			session.save(produto); 
 
-			ProdutoEdicao produtoEdicao = Fixture.produtoEdicao("COD_AA_" + i, i.longValue(), 50, 40, 
+			ProdutoEdicao produtoEdicao = Fixture.produtoEdicao(i.longValue(), 50, 40, 
 					new BigDecimal(30), new BigDecimal(20), new BigDecimal(10), produto);	
 			session.save(produtoEdicao);
 
@@ -3546,7 +3546,7 @@ public class DataLoader {
 			produto.addFornecedor(fornecedor);
 			save(session,produto); 
 
-			ProdutoEdicao produtoEdicao = Fixture.produtoEdicao("COD_BB_" + i, i.longValue(), 50, 40, 
+			ProdutoEdicao produtoEdicao = Fixture.produtoEdicao(i.longValue(), 50, 40, 
 					new BigDecimal(30), new BigDecimal(20), new BigDecimal(10), produto);	
 			save(session,produtoEdicao);
 
@@ -3749,18 +3749,18 @@ public class DataLoader {
 
 		save(session, produto91, produto92, produto93);
 
-		produtoEdicao91 = Fixture.produtoEdicao("COD_CC", 91L, 10, 7,
+		produtoEdicao91 = Fixture.produtoEdicao(91L, 10, 7,
 				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(15), produto91);
 
 		produtoEdicao91.setDesconto(BigDecimal.ZERO);
 
 
-		produtoEdicao92 = Fixture.produtoEdicao("COD_DD", 92L, 10, 7,
+		produtoEdicao92 = Fixture.produtoEdicao(92L, 10, 7,
 				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(18), produto92);
 		produtoEdicao92.setDesconto(BigDecimal.ONE);
 
 
-		produtoEdicao93 = Fixture.produtoEdicao("COD_EE", 93L, 10, 7,
+		produtoEdicao93 = Fixture.produtoEdicao(93L, 10, 7,
 				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(90), produto93);
 		produtoEdicao93.setDesconto(BigDecimal.ONE);
 
@@ -4125,17 +4125,17 @@ public class DataLoader {
 
 		save(session, produtoCE, produtoCE_2, produtoCE_3);
 
-		produtoEdicaoCE = Fixture.produtoEdicao("COD_FF", 84L, 10, 7,
+		produtoEdicaoCE = Fixture.produtoEdicao(84L, 10, 7,
 				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(15), produtoCE);
 		produtoEdicaoCE.setDesconto(BigDecimal.ZERO);
 
 
-		produtoEdicaoCE_2 = Fixture.produtoEdicao("COD_GG", 85L, 10, 7,
+		produtoEdicaoCE_2 = Fixture.produtoEdicao(85L, 10, 7,
 				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(18), produtoCE_2);
 		produtoEdicaoCE.setDesconto(BigDecimal.ONE);
 
 
-		produtoEdicaoCE_3 = Fixture.produtoEdicao("COD_HH", 86L, 10, 7,
+		produtoEdicaoCE_3 = Fixture.produtoEdicao(86L, 10, 7,
 				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(90), produtoCE_3);
 		produtoEdicaoCE.setDesconto(BigDecimal.ONE);
 

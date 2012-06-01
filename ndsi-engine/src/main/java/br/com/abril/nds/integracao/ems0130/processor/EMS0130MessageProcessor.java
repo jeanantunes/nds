@@ -62,7 +62,7 @@ public class EMS0130MessageProcessor implements MessageProcessor{
 		
 		try {
 			
-			PrintWriter print = new PrintWriter(new FileWriter(message.getHeader().get(MessageHeaderProperties.OUTBOUND_FOLDER)+"/BANCA.txt"));	
+			PrintWriter print = new PrintWriter(new FileWriter(message.getHeader().get(MessageHeaderProperties.OUTBOUND_FOLDER.getValue())+"/BANCA.txt"));	
 			
 			for (PDV pdv : pdvs){
 				 
