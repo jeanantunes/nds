@@ -45,7 +45,7 @@ public class MovimentoRepositoryImplTest extends AbstractRepositoryImplTest  {
 		Produto produtoVeja = Fixture.produtoVeja(tipoProdutoRevista);
 		save(produtoVeja);
 		
-		ProdutoEdicao produtoEdicaoVeja = Fixture.produtoEdicao(1L, 10, 14,
+		ProdutoEdicao produtoEdicaoVeja = Fixture.produtoEdicao("1", 1L, 10, 14,
 			new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(20), "ABCDEFGHIJKLMNOPQRSTU", 1L, produtoVeja, null, false);
 		save(produtoEdicaoVeja);
 		
