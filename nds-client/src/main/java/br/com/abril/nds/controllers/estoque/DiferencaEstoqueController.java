@@ -363,7 +363,7 @@ public class DiferencaEstoqueController {
 	public void cadastrarNovasDiferencas(List<DiferencaVO> listaNovasDiferencas, 
 										 Date dataMovimento,
 										 TipoDiferenca tipoDiferenca) {
-		
+						
 		if (listaNovasDiferencas == null 
 				|| listaNovasDiferencas.isEmpty()) {
 			
@@ -384,13 +384,15 @@ public class DiferencaEstoqueController {
 		
 		BigDecimal valorDesconto = null;
 		
+		Long id = 0L+ listaDiferencas.size() + listaNovasDiferencas.size();
+		
 		for (DiferencaVO diferencaVO : listaNovasDiferencas) {
 			
 			this.validarNovaDiferenca(diferencaVO, dataMovimento, tipoDiferenca);
 			
 			Diferenca diferenca = new Diferenca();
 			
-			diferenca.setId(diferencaVO.getId());
+			diferenca.setId(id);
 			
 			ProdutoEdicao produtoEdicao =
 				this.produtoEdicaoService.obterProdutoEdicaoPorCodProdutoNumEdicao(
@@ -426,6 +428,8 @@ public class DiferencaEstoqueController {
 						valorDesconto).multiply(diferenca.getQtde());
 			}
 			
+			
+			
 			diferenca.setValorTotalDiferenca(valorTotalDiferenca);
 			
 			MovimentoEstoque movimentoEstoque = new MovimentoEstoque();
@@ -438,16 +442,18 @@ public class DiferencaEstoqueController {
 			diferenca.setMovimentoEstoque(movimentoEstoque);
 
 			listaDiferencas.add(diferenca);
+			
+			id += 1L;
 		}
 		
 		Set<DiferencaVO> listaNovasDiferencasVO = 
-			(Set<DiferencaVO>) this.httpSession.getAttribute(LISTA_NOVAS_DIFERENCAS_VO_SESSION_ATTRIBUTE);
+			(HashSet<DiferencaVO>) this.httpSession.getAttribute(LISTA_NOVAS_DIFERENCAS_VO_SESSION_ATTRIBUTE);
 		
 		if (listaNovasDiferencasVO == null) {
 			
 			listaNovasDiferencasVO = new HashSet<DiferencaVO>();
 		}
-		
+			
 		listaNovasDiferencasVO.addAll(listaNovasDiferencas);
 		
 		this.httpSession.setAttribute(LISTA_NOVAS_DIFERENCAS_VO_SESSION_ATTRIBUTE, listaNovasDiferencasVO);
@@ -1722,6 +1728,8 @@ public class DiferencaEstoqueController {
 	@SuppressWarnings("unchecked")
 	private void validarProdutosDuplicadosLancamento(List<DiferencaVO> listaNovasDiferencas) {
 		
+		List<DiferencaVO> listaDiferencas = new ArrayList<DiferencaVO>();
+		
 		if (listaNovasDiferencas == null) {
 			
 			return;
@@ -1731,8 +1739,8 @@ public class DiferencaEstoqueController {
 			(Set<DiferencaVO>) this.httpSession.getAttribute(LISTA_NOVAS_DIFERENCAS_VO_SESSION_ATTRIBUTE);
 		
 		if (listaDiferencasCadastradas != null) {
-			
-			listaNovasDiferencas.addAll(listaDiferencasCadastradas);
+			listaDiferencas.addAll(listaNovasDiferencas);
+			listaDiferencas.addAll(listaDiferencasCadastradas);
 		}
 		
 		ComparatorChain comparatorChain = new ComparatorChain();
@@ -1740,13 +1748,13 @@ public class DiferencaEstoqueController {
 		comparatorChain.addComparator(new BeanComparator("codigoProduto"));
 		comparatorChain.addComparator(new BeanComparator("numeroEdicao"));
 		
-		Collections.sort(listaNovasDiferencas, comparatorChain);
+		Collections.sort(listaDiferencas, comparatorChain);
 		
 		List<Long> linhasComErro = new ArrayList<Long>();
 		
 		DiferencaVO ultimaDiferencaVO = null;
 		
-		for (DiferencaVO diferencaVO : listaNovasDiferencas) {
+		for (DiferencaVO diferencaVO : listaDiferencas) {
 			
 			if (ultimaDiferencaVO != null) {
 				

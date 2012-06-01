@@ -169,7 +169,7 @@
 			var dataMovimento = "dataMovimento=" + $("#datePickerDataMovimento").val();
 
 			var tipoDiferenca = "&tipoDiferenca=" + $("#selectTiposDiferenca").val();
-
+						
 			$.postJSON(
 				"<c:url value='/estoque/diferenca/lancamento/cadastrarNovasDiferencas' />", 
 				listaDiferencas + dataMovimento + tipoDiferenca,
@@ -221,7 +221,7 @@
 			var linhasDaGrid = $(".gridNovasDiferencas tr");
 
 			var listaDiferencas = "";
-
+			
 			$.each(linhasDaGrid, function(index, value) {
 
 				var linha = $(value);
@@ -255,7 +255,8 @@
 					return true;
 				}
 
-
+				
+				console.log(id);
 				var diferenca = 'listaNovasDiferencas[' + index + '].id=' + id + '&';
 				
 				diferenca += 'listaNovasDiferencas[' + index + '].codigoProduto=' + codigoProduto + '&';
@@ -269,8 +270,9 @@
 				diferenca += 'listaNovasDiferencas[' + index + '].qtdeEstoqueAtual=' + qtdeEstoqueAtual  + '&';
 
 				listaDiferencas = (listaDiferencas + diferenca);
-			});
 
+			});
+			
 			return listaDiferencas;
 		}
 
