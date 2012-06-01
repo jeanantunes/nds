@@ -290,8 +290,8 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 		}
 		
 		// TODO: Popular ProdutoEdicao:
-		// TODO: implementar atributos: 
-		dto.getCodigoProduto();	// codigodaedicao
+		// TODO: implementar atributos:
+		produtoEdicao.setCodigo(dto.getCodigoProduto());	// codigodaedicao
 		produtoEdicao.setNomeComercial(dto.getNomeComercialProduto());
 		produtoEdicao.setNumeroEdicao(dto.getNumeroEdicao());
 		produtoEdicao.setPacotePadrao(dto.getPacotePadrao());
@@ -303,7 +303,8 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 		produtoEdicao.setReparteDistribuido(repartePrevisto.add(repartePromocional));
 		
 		produtoEdicao.setCodigoDeBarras(dto.getCodigoDeBarras());
-		dto.getCodigoDeBarrasCorporativo(); // FIXME: INCLUIR
+		
+		produtoEdicao.setCodigoDeBarraCorporativo(dto.getCodigoDeBarrasCorporativo());
 		produtoEdicao.setDesconto(dto.getDesconto());
 		produtoEdicao.setChamadaCapa(dto.getChamadaCapa());
 		produtoEdicao.setParcial(dto.isParcial());
