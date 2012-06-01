@@ -227,33 +227,71 @@
 
 			$("#dialog-novo").dialog({
 				resizable: false,
-				height:600,
-				width:950,
+				height:550,
+				width:850,
 				modal: true,
 				buttons: {
 					"Confirmar": function() {
 
 						salvarProduto();
-						
-						$("#dialog-novo").dialog( "close" );
-				   		$(".produtosGrid").flexReload();
 					},
 					"Cancelar": function() {
 						$( this ).dialog( "close" );
 					}
 				},
 				beforeClose: function() {
+					limparModalCadastro();
 					clearMessageDialogTimeout();
 				}
 			});
 			
-			carregarNovoProduto();
-
-			carregarProdutoEditado(id);
+			carregarNovoProduto(
+				function() {
+					limparModalCadastro();
+					carregarProdutoEditado(id);		
+				}
+			);
+			
+			
 		}
-
+		
 		function carregarProdutoEditado(id) {
 
+			$.postJSON("<c:url value='/produto/carregarProdutoParaEdicao' />", 
+					   	"id=" + id,
+					   	function(result) {
+				   
+							$("#idProduto").val(result.id);
+							$("#codigoProdutoCadastro").val(result.codigo);
+							$("#nomeProduto").val(result.nome);
+							$("#sloganProduto").val(result.slogan);
+							$("#peb").val(result.peb);
+							$("#pacotePadrao").val(result.pacotePadrao);
+							$("#comboPeriodicidade").val(result.periodicidade);
+							$("#grupoEditorial").val(result.grupoEditorial);
+							$("#subGrupoEditorial").val(result.subGrupoEditorial);
+							$("#comboEditor").val(result.codigoEditor);
+							$("#comboFornecedoresCadastro").val(result.codigoFornecedor);
+							$("#comboTipoDesconto").val(result.codigoTipoDesconto);
+							$("#comboTipoProdutoCadastro").val(result.codigoTipoProduto)
+
+							if (result.formaComercializacao == 'CONTA_FIRME') {
+								$("#formaComercializacaoContaFirme").attr('checked', true);
+							} else if (result.formaComercializacao == 'CONSIGNADO') {
+								$("#formaComercializacaoConsignado").attr('checked', true);
+							}
+							
+							if (result.tributacaoFiscal == 'TRIBUTADO') {
+								$("#radioTributado").attr('checked', true);
+							} else if (result.tributacaoFiscal == 'ISENTO') {
+								$("#radioIsento").attr('checked', true);
+							} else if (result.tributacaoFiscal == 'OUTROS') {
+								$("#radioTributacaoOutros").attr('checked', true);
+							}							
+						},
+						null,
+						true
+					);
 		}
 		
 		function removerProduto(id) {
@@ -300,8 +338,8 @@
 
 			$("#dialog-novo").dialog({
 				resizable: false,
-				height:600,
-				width:950,
+				height:550,
+				width:850,
 				modal: true,
 				buttons: {
 					"Confirmar": function() {
@@ -315,15 +353,15 @@
 					}
 				},
 				beforeClose: function() {
+					limparModalCadastro();
 					clearMessageDialogTimeout();
 				}
 			});
 
-			carregarNovoProduto();
-			limparModalCadastro();
+			carregarNovoProduto(limparModalCadastro);
 		}
 
-		function carregarNovoProduto() {
+		function carregarNovoProduto(callback) {
 
 			$.postJSON("<c:url value='/produto/carregarDadosProduto' />",
 						null,
@@ -333,6 +371,10 @@
 							popularCombo(result[1], $("#comboFornecedoresCadastro"));
 							popularCombo(result[2], $("#comboEditor"));
 							popularCombo(result[3], $("#comboTipoDesconto"));
+
+							if (callback) {
+								callback();
+							}
 						},
 					  	null,
 					   	true
@@ -347,39 +389,38 @@
 			$("#sloganProduto").val("");
 			$("#peb").val("");
 			$("#pacotePadrao").val("");
-			$("#pesoProduto").val("");
-			$("#comprimentoProduto").val("");
-			$("#larguraProduto").val("");
-			$("#espessuraProduto").val("");
 			$("#comboPeriodicidade").val("");
+
+			$("#formaComercializacaoContaFirme").attr('checked', false);
+			$("#formaComercializacaoConsignado").attr('checked', false);
+						
+			$("#radioTributado").attr('checked', false);
+			$("#radioIsento").attr('checked', false);
+			$("#radioTributacaoOutros").attr('checked', false);
+			
 			$("#percentualDesconto").val("");
+			$("#grupoEditorial").val("");
+			$("#subGrupoEditorial").val("");
 		}
 		
 		function salvarProduto() {
 
 			 var params = [{name:"produto.id",value:$("#idProduto").val()},
-            			 {name:"produto.codigo",value:$("#codigoProdutoCadastro").val()},
-            			 {name:"produto.nome",value:$("#nomeProduto").val()},
-            			 {name:"produto.peb",value:$("#peb").val()},
-            			 {name:"produto.pacotePadrao",value:$("#pacotePadrao").val()},
-            			 {name:"produto.peso",value:$("#pesoProduto").val()},
-            			 {name:"produto.slogan",value:$("#sloganProduto").val()},
-            			 {name:"dimensao.largura",value:$("#larguraProduto").val()},
-            			 {name:"dimensao.comprimento",value:$("#comprimentoProduto").val()},
-            			 {name:"dimensao.espessura",value:$("#espessuraProduto").val()},
-            			 {name:"periodicidadeProduto",value:$("#comboPeriodicidade").val()},
-            			 {name:"formaComercializacao",value:PesquisaProduto.buscarValueRadio('formaComercializacao')},
-            			 {name:"codigoEditor",value:$("#comboEditor").val()},
-            			 {name:"codigoFornecedor",value:$("#comboFornecedoresCadastro").val()},
-            			 {name:"codigoTipoDesconto",value:$("#comboTipoDesconto").val()},
-            			 {name:"codigoTipoProduto",value:$("#comboTipoProdutoCadastro").val()},
-            			 {name:"percentualAbrangencia",value:$("#percentualAbrangencia").val()},
-            			 {name:"algoritmo",value:$("#comboAlgoritmo").val()},
-            			 {name:"parametrosAbertos",value:PesquisaProduto.buscarValueCheckBox("checkParametrosAbertos")},
-            			 {name:"lancamentoImediato",value:PesquisaProduto.buscarValueCheckBox("checkLcntoImediato")},
-            			 {name:"tributacaoFiscal",value:PesquisaProduto.buscarValueRadio('radioTributacaoFiscal')},
-            			 {name:"situacaoTributaria",value:PesquisaProduto.buscarValueRadio('radioSituacaoTributaria')} ];
-			  
+            			   {name:"produto.codigo",value:$("#codigoProdutoCadastro").val()},
+            			   {name:"produto.nome",value:$("#nomeProduto").val()},
+            			   {name:"produto.peb",value:$("#peb").val()},
+            			   {name:"produto.pacotePadrao",value:$("#pacotePadrao").val()},
+            			   {name:"produto.slogan",value:$("#sloganProduto").val()},
+            			   {name:"produto.periodicidade",value:$("#comboPeriodicidade").val()},
+            			   {name:"produto.formaComercializacao",value:PesquisaProduto.buscarValueRadio('formaComercializacao')},
+            			   {name:"produto.tributacaoFiscal",value:PesquisaProduto.buscarValueRadio('radioTributacaoFiscal')},
+            			   {name:"produto.grupoEditorial",value:$("#grupoEditorial").val()},
+            			   {name:"produto.subGrupoEditorial",value:$("#subGrupoEditorial").val()},
+            			   {name:"codigoEditor",value:$("#comboEditor").val()},
+            			   {name:"codigoFornecedor",value:$("#comboFornecedoresCadastro").val()},
+            			   {name:"codigoTipoDesconto",value:$("#comboTipoDesconto").val()},
+            			   {name:"codigoTipoProduto",value:$("#comboTipoProdutoCadastro").val()} ];
+			 
 			$.postJSON("<c:url value='/produto/salvarProduto' />", 
 				   	params,
 				   	function (result) {
@@ -453,82 +494,80 @@
 		<jsp:include page="../messagesDialog.jsp">
 			<jsp:param value="dialogMensagemNovo" name="messageDialog"/>
 		</jsp:include> 
-     
-		<div id="tabProduto">
-			<ul>
-				<li><a href="#tabProduto-1">Dados B&aacute;sicos</a></li>
-				<li><a href="#tabProduto-2">Informa&ccedil;&otilde;es Adicionais</a></li>
-				<li><a href="#tabProduto-3">Segmenta&ccedil;&atilde;o</a></li>
-			</ul>
-
-			<div id="tabProduto-1">
-				<table width="800" border="0" cellspacing="1" cellpadding="1">
-					<tr>
-						<td width="135"><strong>C&oacute;digo:</strong></td>
-						<td width="260"><input type="text" name="codigoProdutoCadastro" id="codigoProdutoCadastro" style="width:130px;" maxlength="30" /></td>
-						<td width="142"><strong>Produto:</strong></td>
-						<td width="250"><input type="text" name="nomeProduto" id="nomeProduto" style="width:250px;" maxlength="60" /></td>
-					</tr>
-					<tr>
-						<td><strong>Editor:</strong></td>
-						<td>
-							<select name="comboEditor" id="comboEditor" style="width:210px;" >
-							</select>
-						</td>
-						<td><strong>Fornecedor:</strong></td>
-						<td>
-							<select name="comboFornecedoresCadastro" id="comboFornecedoresCadastro" style="width:200px;" >
-							</select>
-						</td>
-					</tr>
-					<tr>
-						<td><strong> Slogan do Produto:</strong></td>
-						<td colspan="3"><input type="text" name="sloganProduto" id="sloganProduto" style="width:657px;" /></td>
-					</tr>
-					<tr>
-						<td><strong>Tipo de Desconto:</strong></td>
-						<td>
-							<select name="comboTipoDesconto" id="comboTipoDesconto" style="width:210px;" onchange="carregarPercentualDesconto();" >
-							</select>
-						</td>
-						<td><strong>% Desconto:</strong></td>
-						<td><input type="text" name="percentualDesconto" id="percentualDesconto" style="width:80px;" readonly="readonly" disabled="disabled" /></td>
-					</tr>
-					<tr>
-						<td><strong>Tipo de Produto:</strong></td>
-						<td>
-							<select name="comboTipoProdutoCadastro" id="comboTipoProdutoCadastro" style="width:210px;" >
-							</select>
-						</td>
-						<td><strong>Forma Comercializa&ccedil;&atilde;o:</strong></td>
-						<td>
-							<table width="229" border="0" cellspacing="1" cellpadding="1">
-								<tr>
-									<td width="21"><input type="radio" name="formaComercializacao" id="formaComercializacaoConsignado" value="C" /></td>
-									<td width="86">Consignado</td>
-									<td width="21"><input type="radio" name="formaComercializacao" id="formaComercializacaoContaFirme" value="CF" /></td>
-									<td width="88">Conta Firme</td>
-								</tr>
-							</table>
-						</td>
-					</tr>
-					<tr>
-						<td><strong>PEB:</strong></td>
-						<td><input type="text" name="peb" id="peb" style="width:80px;" /></td>
-						<td><strong>Pacote Padr&atilde;o:</strong></td>
-						<td><input type="text" name="pacotePadrao" id="pacotePadrao" style="width:80px;" /></td>
-					</tr>
-				</table>
-			</div> 
-          
-			<div id="tabProduto-2">
-				<table width="890" border="0" cellspacing="0" cellpadding="0">
-					<tr>
-						<td width="508" valign="top">
-							<fieldset style="width:505px!important; margin-bottom:5px;">
-								<legend>Outros</legend>
-									<table width="500" border="0" cellspacing="1" cellpadding="1">
-										<tr>
+     	
+     	<fieldset style="margin-bottom: 10px;">
+     		<legend>Dados Basicos</legend>
+			<table width="800" border="0" cellspacing="1" cellpadding="1">
+				<tr>
+					<td width="135"><strong>C&oacute;digo:</strong></td>
+					<td width="260"><input type="text" name="codigoProdutoCadastro" id="codigoProdutoCadastro" style="width:130px;" maxlength="30" /></td>
+					<td width="142"><strong>Produto:</strong></td>
+					<td width="250"><input type="text" name="nomeProduto" id="nomeProduto" style="width:250px;" maxlength="60" /></td>
+				</tr>
+				<tr>
+					<td><strong>Fornecedor:</strong></td>
+					<td>
+						<select name="comboFornecedoresCadastro" id="comboFornecedoresCadastro" style="width:200px;" >
+						</select>
+					</td>	
+					<td><strong>Editor:</strong></td>
+					<td>
+						<select name="comboEditor" id="comboEditor" style="width:210px;" >
+						</select>
+					</td>
+				</tr>
+				<tr>
+					<td><strong> Slogan do Produto:</strong></td>
+					<td colspan="3"><input type="text" name="sloganProduto" id="sloganProduto" maxlength="50" style="width:657px;" /></td>
+				</tr>
+				<tr>
+					<td><strong>Tipo de Produto:</strong></td>
+					<td>
+						<select name="comboTipoProdutoCadastro" id="comboTipoProdutoCadastro" style="width:210px;" >
+						</select>
+					</td>
+					<td><strong>Forma Comercializa&ccedil;&atilde;o:</strong></td>
+					<td>
+						<table width="229" border="0" cellspacing="1" cellpadding="1">
+							<tr>
+								<td width="21"><input type="radio" name="formaComercializacao" id="formaComercializacaoConsignado" value="CONSIGNADO" /></td>
+								<td width="86">Consignado</td>
+								<td width="21"><input type="radio" name="formaComercializacao" id="formaComercializacaoContaFirme" value="CONTA_FIRME" /></td>
+								<td width="88">Conta Firme</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+				<tr>
+					<td><strong>PEB:</strong></td>
+					<td><input type="text" name="peb" id="peb" style="width:80px;" maxlength="20" /></td>
+					<td><strong>Pacote Padr&atilde;o:</strong></td>
+					<td><input type="text" name="pacotePadrao" id="pacotePadrao" style="width:80px;" maxlength="20" /></td>
+				</tr>
+				<tr>
+					<td><strong>Tipo de Desconto:</strong></td>
+					<td>
+						<select name="comboTipoDesconto" id="comboTipoDesconto" style="width:210px;" onchange="carregarPercentualDesconto();" >
+						</select>
+					</td>
+					<td><strong>% Desconto:</strong></td>
+					<td><input type="text" name="percentualDesconto" id="percentualDesconto" style="width:80px;" readonly="readonly" disabled="disabled" /></td>
+				</tr>
+			</table>
+		</fieldset>
+		
+		
+		<table width="800" border="0" cellspacing="0" cellpadding="0">
+			<tr>
+				<td>
+					<table width="400" border="0" cellspacing="0" cellpadding="0">
+						<tr>
+							<td>	
+								<fieldset style="width:380px!important; margin-bottom:10px; height: 42px;">
+									<legend>Outros</legend>
+										
+									<table>
+										<tr>									
 											<td width="105">Periodicidade: </td>
 											<td width="209">
 												<select name="comboPeriodicidade" id="comboPeriodicidade" style="width:150px;" >
@@ -541,262 +580,124 @@
 													<option value="ANUAL" >Anual</option>
 												</select>
 											</td>
-											<td width="131">Par&acirc;metros Abertos:</td>
-											<td width="42"><input type="checkbox" name="checkParametrosAbertos" id="checkParametrosAbertos" /></td>
-										</tr>
-										<tr>
-											<td>% Abrang&ecirc;ncia:</td>
-											<td><input type="text" name="percentualAbrangencia" id="percentualAbrangencia" style="width:80px;" /></td>
-											<td>Lancto Imediato:</td>
-											<td><input type="checkbox" name="checkLcntoImediato" id="checkLcntoImediato" /></td>
-										</tr>
-										<tr>
-											<td>Algoritmo:</td>
-											<td>
-												<select name="comboAlgoritmo" id="comboAlgoritmo" style="width:150px;" >
-													<option value="0" selected="selected"></option>
-												</select>
-											</td>
-											<td>&nbsp;</td>
-											<td>&nbsp;</td>
 										</tr>
 									</table>
-							</fieldset>
-	   	
-							<fieldset style="width:505px!important; float:left; margin-bottom:5px;">
-								<legend>Sele&ccedil;&atilde;o</legend>
-								<table width="500" border="0" cellspacing="1" cellpadding="1">
-									<tr>
-										<td width="116">Combina&ccedil;&atilde;o 1:</td>
-										<td width="20"><input type="checkbox" name="checkbox5" id="checkbox5" disabled="disabled" /></td>
-										<td width="349">
-											<select name="select6" id="select6" style="width:330px;" disabled="disabled" >
-												<option selected="selected"></option>
-											</select>
-										</td>
-									</tr>
-									<tr>
-										<td>
-										  	<table width="115" border="0" cellspacing="1" cellpadding="1">
-												<tr>
-													<td width="20"><input type="radio" name="radio" id="radio3" value="radio" disabled="disabled" /></td>
-													<td width="32">E</td>
-													<td width="20"><input type="radio" name="radio" id="radio4" value="radio" disabled="disabled" /></td>
-													<td width="30">Ou</td>
-												</tr>
-											</table>
-										</td>
-										<td><input type="checkbox" name="checkbox" id="checkbox" disabled="disabled" /></td>
-										<td>
-											<select name="select7" id="select7" style="width:330px;" disabled="disabled" >
-												<option>Combina&ccedil;&atilde;o 2</option>
-											</select>
-										</td>
-									</tr>
-									<tr>
-										<td>
-											<table width="115" border="0" cellspacing="1" cellpadding="1">
-												<tr>
-													<td width="20"><input type="radio" name="radio" id="radio15" value="radio" disabled="disabled" /></td>
-													<td width="32">E</td>
-													<td width="20"><input type="radio" name="radio" id="radio16" value="radio" disabled="disabled" /></td>
-													<td width="30">Ou</td>
-												</tr>
-											</table>
-										</td>
-										<td><input type="checkbox" name="checkbox2" id="checkbox2" disabled="disabled" /></td>
-										<td>
-											<select name="select8" id="select8" style="width:330px;" disabled="disabled" >
-												<option>Combina&ccedil;&atilde;o 3</option>
-											</select>
-										</td>
-									</tr>
-								</table>
-							</fieldset>
-	    
-							<fieldset style="width:505px!important; float:left; margin-bottom:5px;">
-								<legend>Caracter&iacute;sticas</legend>
-								<table width="500" border="0" cellspacing="1" cellpadding="1">
-									<tr>
-										<td width="94" height="24">Comprimento:</td>
-										<td width="165"><input type="text" name="comprimentoProduto" id="comprimentoProduto" style="width:80px;" /></td>
-										<td width="54">Largura:</td>
-										<td width="174"><input type="text" name="larguraProduto" id="larguraProduto" style="width:80px;" /></td>
-									</tr>
-									<tr>
-										<td height="24">Espessura:</td>
-										<td><input type="text" name="espessuraProduto" id="espessuraProduto" style="width:80px;" /></td>
-										<td>Peso:</td>
-										<td><input type="text" name="pesoProduto" id="pesoProduto" style="width:80px;" /></td>
-									</tr>
-								</table>
-							</fieldset>
-						        
-							<br clear="all" />
-							<br clear="all" />
-	    
-						</td>
-					    
-					    <td width="20" style="width:20px;">
-					    
-					    <td width="362" valign="top">
-	    
-							<fieldset style="width:323px!important; float:left; margin-bottom:5px; margin-right:0px;">
-								<legend>Tributa&ccedil;&atilde;o Fiscal</legend>
-								<table width="229" border="0" cellpadding="1" cellspacing="1">
-									<tr>
-										<td width="20"><input type="radio" name="radioTributacaoFiscal" id="radioTributado" value="TRIBUTADO" /></td>
-										<td width="59">Tributado</td>
-										<td width="20"><input type="radio" name="radioTributacaoFiscal" id="radioIsento" value="ISENTO" /></td>
-										<td width="37">Isento</td>
-										<td width="20"><input type="radio" name="radioTributacaoFiscal" id="radioTributacaoOutros" value="OUTROS" /></td>
-										<td width="81"> Outros</td>
-									</tr>
-								</table>
-							</fieldset>
-							
-							<br clear="all" />
-	    
-							<fieldset style="width:323px!important; float:left; margin-bottom:5px;">
-								<legend>Situa&ccedil;&atilde;o Tribut&aacute;ria</legend>
-								<table width="294" border="0" cellspacing="1" cellpadding="1">
-									<tr>
-										<td width="20"><input type="radio" name="radioSituacaoTributaria" id="radioSituacaoIsento" value="ISENTO" /></td>
-										<td width="267">Produto Nacional Isento ICMS/IPI</td>
-									</tr>
-									<tr>
-										<td><input type="radio" name="radioSituacaoTributaria" id="radioSituacaoImune" value="IMUNE" /></td>
-										<td>Produto Nacional Imune ICMS/IPI </td>
-									</tr>
-									<tr>
-										<td><input type="radio" name="radioSituacaoTributaria" id="radioSituacaoOutros" value="OUTROS" /></td>
-										<td>Outros</td>
-									</tr>
-								</table>
-							</fieldset>
-	
-							<br clear="all" />
-							
-							<fieldset style="width:323px!important; float:left; margin-bottom:5px; margin-right:0px!important;">
-								<legend>Regime de Recolhimento: Normal</legend>
-								<table width="319" border="0" cellspacing="1" cellpadding="1">
-									<tr>
-										<td width="160" height="24">Classe Histograma Anal&iacute;tico</td>
-										<td width="152">
-											<select name="comboHistogramaAnalitico" id="comboHistogramaAnalitico" style="width:150px;" >
-												<option value="" selected="selected"></option>
-											</select>
-										</td>
-									</tr>
-									<tr>
-										<td height="24">% Limite  Cota Fixa&ccedil;&atilde;o:</td>
-										<td><input type="text" name="percentualLimiteCotaFixacao" id="percentualLimiteCotaFixacao" style="width:80px;" /></td>
-									</tr>
-									<tr>
-										<td height="24">% Limite Reparte Fixa&ccedil;&atilde;o:</td>
-										<td><input type="text" name="percentualLimiteReparteFixacao" id="percentualLimiteReparteFixacao" style="width:80px;" /></td>
-									</tr>
-								</table>
-							</fieldset>
-	    
-							<br clear="all" />
-	    
-							<fieldset style="width:323px!important; float:left; margin-bottom:5px; margin-right:0px!important;">
-								<table width="338" border="0" cellspacing="1" cellpadding="1">
-									<tr>
-										<td width="109">Grupo Editorial:</td>
-										<td width="207"><input type="text" name="grupoEditorial" id="grupoEditorial" value="" style="width:200px;" ></td>
-									</tr>
-									<tr>
-										<td>SubGrupo Editorial:</td>
-										<td><input type="text" name="subGrupoEditorial" id="subGrupoEditorial" value="" style="width:200px;" ></td>
-									</tr>
-								</table>
-							</fieldset>
-						</td>
-					</tr>
-				</table>
-			</div>
-		
-			<div id="tabProduto-3">
-	
-				<fieldset style="width:880px!important; margin:auto auto!important;">
-					<legend>P&uacute;blico Alvo</legend>
-					<table width="786" border="0" cellspacing="1" cellpadding="1">
-						<tr>
-							<td width="402" valign="top">
-								<table width="400" border="0" cellspacing="1" cellpadding="1">
-									<tr>
-										<td width="112"><strong>Classe Social:</strong></td>
-										<td width="281">
-											<select name="select12" id="select13" style="width:250px;" disabled="disabled" >
-												<option selected="selected"></option>
-											</select>
-										</td>
-									</tr>
-									<tr>
-										<td><strong>Sexo:</strong></td>
-										<td>
-											<select name="select13" id="select14" style="width:250px;" disabled="disabled" >
-												<option selected="selected"></option>
-											</select>
-										</td>
-									</tr>
-									<tr>
-										<td><strong>Faixa-Et&aacute;ria:</strong></td>
-										<td>
-											<select name="select14" id="select15" style="width:250px;" disabled="disabled" >
-												<option selected="selected"></option>
-											</select>
-										</td>
-									</tr>
-								</table>
+								</fieldset>
 							</td>
-							<td width="34" style="width:34px;">&nbsp;</td>
-							<td width="344" valign="top">
-								<table width="344" border="0" cellspacing="1" cellpadding="1">
-									<tr>
-										<td width="137"><strong>Forma F&iacute;sica:</strong></td>
-										<td width="200">
-											<select name="select12" id="select13" style="width:200px;" disabled="disabled" >
-												<option selected="selected"></option>
-											</select>
-										</td>
-									</tr>
-									<tr>
-										<td><strong>Lan&ccedil;amento:</strong></td>
-										<td>
-											<select name="select13" id="select14" style="width:200px;" disabled="disabled"  >
-												<option selected="selected"></option>
-											</select>
-										</td>
-									</tr>
-									<tr>
-										<td><strong>Tema Principal:</strong></td>
-										<td>
-											<select name="select14" id="select15" style="width:200px;" disabled="disabled" >
-												<option selected="selected"></option>
-											</select>
-										</td>
-									</tr>
-									<tr>
-										<td><strong>Tema Secund&aacute;rio:</strong></td>
-										<td>
-											<select name="select15" id="select16" style="width:200px;" disabled="disabled" >
-												<option selected="selected"></option>
-											</select>
-										</td>
-									</tr>
-								</table>
+						</tr>
+						
+						<tr>
+							<td valign="top">
+			   
+								<fieldset style="width:380px!important; float:left; margin-bottom:10px; margin-right:0px!important;">
+									<legend>Editorial</legend>
+									<table width="380" border="0" cellspacing="1" cellpadding="1">
+										<tr>
+											<td width="100">Grupo Editorial:</td>
+											<td ><input type="text" name="grupoEditorial" id="grupoEditorial" maxlength="25" value="" style="width:200px;" ></td>
+										</tr>
+										<tr>
+											<td width="120" >SubGrupo Editorial:</td>
+											<td><input type="text" name="subGrupoEditorial" id="subGrupoEditorial" maxlength="25" value="" style="width:200px;" ></td>
+										</tr>
+									</table>
+								</fieldset>
+							</td>
+						</tr>
+						
+						<tr>
+							<td>
+								<fieldset style="width:381px!important; float:left; margin-bottom:10px; margin-right:0px;">
+									<legend>Tributa&ccedil;&atilde;o Fiscal</legend>
+									<table width="229" border="0" cellpadding="1" cellspacing="1">
+										<tr>
+											<td width="20"><input type="radio" name="radioTributacaoFiscal" id="radioTributado" value="TRIBUTADO" /></td>
+											<td width="59">Tributado</td>
+											<td width="20"><input type="radio" name="radioTributacaoFiscal" id="radioIsento" value="ISENTO" /></td>
+											<td width="37">Isento</td>
+											<td width="20"><input type="radio" name="radioTributacaoFiscal" id="radioTributacaoOutros" value="OUTROS" /></td>
+											<td width="81"> Outros</td>
+										</tr>
+									</table>
+								</fieldset>
 							</td>
 						</tr>
 					</table>
-				</fieldset>
+				</td>
 				
-				<br clear="all" />
-			</div>
-		</div>
-	</div>
+				<td style="vertical-align: top;" >
+					<fieldset style="width:385px!important; margin:0 auto!important 10px auto!important; height: 205px;">
+						<legend>Segmenta&ccedil;&atilde;o</legend>
+						<table width="380" border="0" cellspacing="1" cellpadding="1">
+							<tr>
+								<td width="380" valign="top">
+									<table width="380" border="0" cellspacing="1" cellpadding="1">
+										<tr>
+											<td width="160"><strong>Classe Social:</strong></td>
+											<td width="281">
+												<select name="select12" id="select13" style="width:200px;" disabled="disabled" >
+													<option selected="selected"></option>
+												</select>
+											</td>
+										</tr>
+										<tr>
+											<td><strong>Sexo:</strong></td>
+											<td>
+												<select name="select13" id="select14" style="width:200px;" disabled="disabled" >
+													<option selected="selected"></option>
+												</select>
+											</td>
+										</tr>
+										<tr>
+											<td><strong>Faixa-Et&aacute;ria:</strong></td>
+											<td>
+												<select name="select14" id="select15" style="width:200px;" disabled="disabled" >
+													<option selected="selected"></option>
+												</select>
+											</td>
+										</tr>
+										<tr>
+											<td width="137"><strong>Formato:</strong></td>
+											<td width="200">
+												<select name="select12" id="select13" style="width:200px;" disabled="disabled" >
+													<option selected="selected"></option>
+												</select>
+											</td>
+										</tr>
+										<tr>
+											<td><strong>Tipo de Lan&ccedil;amento:</strong></td>
+											<td>
+												<select name="select13" id="select14" style="width:200px;" disabled="disabled"  >
+													<option selected="selected"></option>
+												</select>
+											</td>
+										</tr>
+										<tr>
+											<td><strong>Tema Principal:</strong></td>
+											<td>
+												<select name="select14" id="select15" style="width:200px;" disabled="disabled" >
+													<option selected="selected"></option>
+												</select>
+											</td>
+										</tr>
+										<tr>
+											<td><strong>Tema Secund&aacute;rio:</strong></td>
+											<td>
+												<select name="select15" id="select16" style="width:200px;" disabled="disabled" >
+													<option selected="selected"></option>
+												</select>
+											</td>
+										</tr>
+									</table>
+								</td>
+							</tr>
+						</table>
+					</fieldset>
+				</td>
+			</tr>
+		</table>
+		
+	</div> 
 
 	<fieldset class="classFieldset">
 		<legend> Pesquisar Produtos</legend>
