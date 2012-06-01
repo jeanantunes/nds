@@ -15,6 +15,7 @@
 <script language="javascript" type="text/javascript" src="../scripts/jquery-ui-1.8.16.custom/development-bundle/ui/jquery.ui.accordion.js"></script>
 <script language="javascript" type="text/javascript" src="../scripts/NDS.js"></script>
 <script language="javascript" type="text/javascript" src="../scripts/jquery-ui-1.8.16.custom/development-bundle/ui/jquery.ui.dialog.js"></script>
+<script language="javascript" type="text/javascript" src="../scripts/jquery.maskmoney.js"></script>
 
 <script language="javascript" type="text/javascript" src="../scripts/flexigrid-1.1/js/flexigrid.pack.js"></script>
 <link rel="stylesheet" type="text/css" href="../scripts/flexigrid-1.1/css/flexigrid.pack.css" />
@@ -24,9 +25,21 @@
 		$("#produto").autocomplete({source: ""});				
 	});
 
-	function popup_detalhes() {
-		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
-	
+	function popup_detalhes(numEdicao) {
+		var edicao = numEdicao;
+		var codigo = $('#codigo').val();
+		$(".detalhesVendaGrid").flexOptions({
+			url: "<c:url value='/lancamento/vendaProduto/pesquisarLancamentoEdicao'/>",
+			dataType : 'json',
+			params: [
+			          {name:'filtro.edicao', value:edicao},
+				      {name:'filtro.codigo', value:codigo}
+			         ]
+		    
+		});
+		
+		$(".detalhesVendaGrid").flexReload();
+		
 		$( "#dialog-detalhes" ).dialog({
 			resizable: false,
 			height:400,
@@ -84,8 +97,8 @@
 		
 		$(".parciaisGrid").flexOptions({
 			url: "<c:url value='/lancamento/vendaProduto/pesquisarVendaProduto'/>",
-			params: getDados(),
-		    newp: 1,
+			dataType : 'json',
+			params: getDados()
 		});
 		
 		$(".parciaisGrid").flexReload();
@@ -130,19 +143,34 @@
 
 			return resultado;
 		}
-		/*
+		
 		$.each(resultado.rows, function(index, row) {
-						
 			
-			var linkExcluir = '<a href="javascript:;" onclick="exibirDialogExclusao(' + row.cell.id + ');" style="cursor:pointer">' +
-							   	 '<img title="Excluir Desconto" src="${pageContext.request.contextPath}/images/ico_excluir.gif" hspace="5" border="0px" />' +
+			var linkDetalhe = '<a href="javascript:;" onclick="popup_detalhes('+row.cell.numEdicao+');" style="cursor:pointer">' +
+							   	 '<img title="Lançamentos da Edição" src="${pageContext.request.contextPath}/images/ico_detalhes.png" hspace="5" border="0px" />' +
 							   '</a>';
 			
-			row.cell.acao = linkExcluir;
+			row.cell.acao = linkDetalhe;
 		});
-		*/
+		
+		
+		
+		
 		$(".grids").show();
 		
+		return resultado;
+	}
+	
+	function executarPreProcessamentoFilha(resultado) {
+		if (resultado.mensagens) {
+			exibirMensagem(
+				resultado.mensagens.tipoMensagem, 
+				resultado.mensagens.listaMensagens
+			);
+			$(".grids").hide();
+			return resultado;
+		}
+		$(".grids").show();
 		return resultado;
 	}
 	
@@ -156,12 +184,22 @@
 <body>
 	<div id="dialog-detalhes" title="Detalhes do Produto">
      <fieldset>
-     	<legend>Produto: 4455 - Veja - Edição 001 - Tipo de Lançamento: Parcial</legend>
+     	<legend>Produto: 4455  - Veja - Edição 001 - Tipo de Lançamento: Parcial</legend>
         
         <table class="detalhesVendaGrid"></table>
-         <span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
+         <span class="bt_novos" title="Gerar Arquivo">
+         	<a href="${pageContext.request.contextPath}/lancamento/vendaProduto/exportar?fileType=XLS&tipoExportacao=popup">
+         		<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
+         		Arquivo
+         	</a>
+         </span>
 
-		<span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
+		<span class="bt_novos" title="Imprimir">
+			<a href="${pageContext.request.contextPath}/lancamento/vendaProduto/exportar?fileType=PDF&tipoExportacao=popup">
+				<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
+				Imprimir
+			</a>
+		</span>
      </fieldset>
    
     </div>
@@ -185,20 +223,15 @@
 		        <td width="164"><input type="text" name="publica" id="produto" onkeyup="pesquisarPorNomeProduto();" style="width:150px;"/></td>
 		        <td width="45">Edição:</td>
 		        <td width="95"><input type="text" name="edicoes" id="edicoes" style="width:80px;"/></td>
-		        
-		        
-		        <td width="76">Fornecedor:</td>
-
-              <td width="239"><select name="select" id="select" style="width:200px;">
-
-                <option>Todos</option>
-
-                <option>Dinap</option>
-
-                <option>FC</option>
-
-              </select></td>
-		        
+		        <td width="67">Fornecedor:</td>
+              	<td colspan="2">
+					<select id="idFornecedor" name="idFornecedor" style="width:200px;">
+					    <option value="-1"  selected="selected">Todos</option>
+					    <c:forEach items="${listaFornecedores}" var="fornecedor">
+					      		<option value="${fornecedor.key}">${fornecedor.value}</option>	
+					    </c:forEach>
+					</select>
+       			</td>		        
 		        <td width="104"><span class="bt_pesquisar"><a href="javascript:;" onclick="cliquePesquisar();">Pesquisar</a></span></td>
 		      </tr>
 			</table>		
@@ -208,8 +241,18 @@
 		       	  <legend>Produto: 4455 - Veja - Tipo de Lançamento: Normal</legend>
 		        	<table class="parciaisGrid"></table>
 		            <!--<span class="bt_novos" title="Novo"><a href="javascript:;" onclick="popup();"><img src="../images/ico_salvar.gif" hspace="5" border="0"/>Novo</a></span>-->
-		            <span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
-					<span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>	        
+		            <span class="bt_novos" title="Gerar Arquivo">
+		            	<a href="${pageContext.request.contextPath}/lancamento/vendaProduto/exportar?fileType=XLS&tipoExportacao=principal">
+		            		<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
+		            		Arquivo
+		            	</a>
+		            </span>
+					<span class="bt_novos" title="Imprimir">
+						<a href="${pageContext.request.contextPath}/lancamento/vendaProduto/exportar?fileType=PDF&tipoExportacao=principal">
+							<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
+							Imprimir
+						</a>
+					</span>	        
 		      </fieldset>
 	      </div>
 	      <div class="linha_separa_fields">&nbsp;</div>
@@ -221,19 +264,19 @@
 			dataType : 'json',
 			colModel : [ {
 				display : 'Edição',
-				name : 'edicao',
+				name : 'numEdicao',
 				width : 100,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Data Lançamento',
-				name : 'dtLancto',
+				name : 'dataLancamento',
 				width : 100,
 				sortable : true,
 				align : 'center'
 			}, {
 				display : 'Data Recolhimento',
-				name : 'dtRecolhimento',
+				name : 'dataRecolhimento',
 				width : 100,
 				sortable : true,
 				align : 'center'
@@ -245,25 +288,25 @@
 				align : 'center'
 			}, {
 				display : 'Venda',
-				name : 'venda',
+				name : 'valorVendaFormatado',
 				width : 90,
 				sortable : true,
 				align : 'center'
 			}, {
 				display : '% Venda',
-				name : 'percVenda',
+				name : 'percentagemVendaFormatado',
 				width : 90,
 				sortable : true,
 				align : 'right'
 			}, {
 				display : 'Preço Capa R$',
-				name : 'precoCapa',
+				name : 'valorPrecoCapaFormatado',
 				width : 100,
 				sortable : true,
 				align : 'right'
 			}, {
 				display : 'Total R$',
-				name : 'vendaDinheiro',
+				name : 'valorTotalFormatado',
 				width : 90,
 				sortable : true,
 				align : 'right'
@@ -287,8 +330,8 @@
 		
 		
 		$(".detalhesVendaGrid").flexigrid({
-			url : '../xml/parciais-pop-xml.xml',
-			dataType : 'xml',
+			preProcess: executarPreProcessamentoFilha,
+			dataType : 'json',
 			colModel : [ {
 				display : 'Período',
 				name : 'periodo',
@@ -297,13 +340,13 @@
 				align : 'center'
 			}, {
 				display : 'Data Lançamento',
-				name : 'dtLancamento',
+				name : 'dataLancamento',
 				width : 100,
 				sortable : true,
 				align : 'center'
 			}, {
 				display : 'Data Recolhimento',
-				name : 'dtRecolhimento',
+				name : 'dataRecolhimento',
 				width : 110,
 				sortable : true,
 				align : 'center'
@@ -321,19 +364,19 @@
 				align : 'center'
 			}, {
 				display : 'Vendas',
-				name : 'venda',
+				name : 'vendaFormatado',
 				width : 70,
 				sortable : true,
 				align : 'center'
 			}, {
 				display : 'Venda Acumulada',
-				name : 'vendaAcumulada',
+				name : 'vendaAcumuladaFormatado',
 				width : 130,
 				sortable : true,
 				align : 'center'
 			}, {
 				display : '% Venda',
-				name : 'percVenda',
+				name : 'percentualVendaFormatado',
 				width : 60,
 				sortable : true,
 				align : 'center'
