@@ -2,15 +2,14 @@ package br.com.abril.nds.dto;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.Date;
 
 import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.export.Export;
-import br.com.abril.nds.util.export.Exportable;
 import br.com.abril.nds.util.export.Export.Alignment;
+import br.com.abril.nds.util.export.Exportable;
 
 @Exportable
 public class VendaProdutoDTO implements Serializable {
@@ -117,6 +116,22 @@ public class VendaProdutoDTO implements Serializable {
 	public String getValorVendaFormatado() {
 		return valorVendaFormatado;
 	}
+	
+	public BigDecimal getPrecoCapa() {
+		return precoCapa;
+	}
+	
+	public void setPrecoCapa(BigDecimal precoCapa) {
+		this.precoCapa = precoCapa;
+		if (precoCapa != null) {
+			valorPrecoCapaFormatado = CurrencyUtil.formatarValor(precoCapa);
+		}
+	}
+	
+	@Export(label = "Preço Capa", alignment=Alignment.CENTER, exhibitionOrder = 7)
+	public String getValorPrecoCapaFormatado() {
+		return valorPrecoCapaFormatado;
+	}	
 
 	public BigDecimal getPercentagemVenda() {
 		return percentagemVenda;
@@ -130,25 +145,12 @@ public class VendaProdutoDTO implements Serializable {
 	}
 	
 	@Export(label = "% Venda", alignment=Alignment.CENTER, exhibitionOrder = 6)
-	public String getValorPrecoCapaFormatado() {
-		return valorPrecoCapaFormatado;
-	}
-
-	public BigDecimal getPrecoCapa() {
-		return precoCapa;
-	}
-	
-	public void setPrecoCapa(BigDecimal precoCapa) {
-		this.precoCapa = precoCapa;
-	}
-	
-	@Export(label = "Preço Capa", alignment=Alignment.CENTER, exhibitionOrder = 7)
 	public String getPercentagemVendaFormatado() {
 		return percentagemVendaFormatado;
 	}
-
+	
 	public BigDecimal getTotal() {
-		return total.setScale(2,RoundingMode.HALF_DOWN);
+		return total;
 	}
 
 	public void setTotal(BigDecimal total) {

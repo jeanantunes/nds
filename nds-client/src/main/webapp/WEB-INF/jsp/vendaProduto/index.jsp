@@ -299,25 +299,25 @@
 				align : 'center'
 			}, {
 				display : 'Venda',
-				name : 'valorVenda',
+				name : 'valorVendaFormatado',
 				width : 90,
 				sortable : true,
 				align : 'center'
 			}, {
 				display : '% Venda',
-				name : 'percentagemVenda',
+				name : 'percentagemVendaFormatado',
 				width : 90,
 				sortable : true,
 				align : 'right'
 			}, {
 				display : 'Preço Capa R$',
-				name : 'precoCapa',
+				name : 'valorPrecoCapaFormatado',
 				width : 100,
 				sortable : true,
 				align : 'right'
 			}, {
 				display : 'Total R$',
-				name : 'total',
+				name : 'valorTotalFormatado',
 				width : 90,
 				sortable : true,
 				align : 'right'
