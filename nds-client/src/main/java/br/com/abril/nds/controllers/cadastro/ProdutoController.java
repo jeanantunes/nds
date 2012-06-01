@@ -1,11 +1,13 @@
 package br.com.abril.nds.controllers.cadastro;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.vo.BaseComboVO;
+import br.com.abril.nds.client.vo.ProdutoCadastroVO;
 import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.dto.ConsultaProdutoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
@@ -93,7 +95,7 @@ public class ProdutoController {
 			
 		}		
 	}
-	
+
 	@Post
 	public void autoCompletarPorPorNomeProduto(String nomeProduto) {
 		List<Produto> listaProduto = this.produtoService.obterProdutoLikeNomeProduto(nomeProduto);
@@ -115,6 +117,30 @@ public class ProdutoController {
 		}
 		
 		result.use(Results.json()).from(listaProdutos, "result").include("value", "chave").serialize();
+	}
+
+	@Post
+	public void autoCompletarPorNomeFornecedor(String nomeFornecedor) {
+		
+		List<Fornecedor> listaFornecedor = this.fornecedorService.obterFornecedorLikeNomeFornecedor(nomeFornecedor);
+		
+		List<ItemAutoComplete> listaFornecedores = new ArrayList<ItemAutoComplete>();
+		
+		if (listaFornecedor != null && !listaFornecedor.isEmpty()) {
+			Fornecedor fornecedorAutoComplete = null;
+			
+			for (Fornecedor fornecedor : listaFornecedor) {
+				fornecedorAutoComplete = new Fornecedor();
+				fornecedorAutoComplete.setId(fornecedor.getId());
+				
+				ItemAutoComplete itemAutoComplete =
+					new ItemAutoComplete(fornecedor.getJuridica().getNomeFantasia(), null, fornecedorAutoComplete);
+				
+				listaFornecedores.add(itemAutoComplete);
+			}
+		}
+		
+		result.use(Results.json()).from(listaFornecedores, "result").include("value", "chave").serialize();
 	}
 	
 	@Post
@@ -207,6 +233,19 @@ public class ProdutoController {
 		}
 	}
 	
+	/**
+	 * Pesquisa os produtos com paginação.
+	 * 
+	 * @param codigo
+	 * @param produto
+	 * @param fornecedor
+	 * @param editor
+	 * @param codigoTipoProduto
+	 * @param sortorder
+	 * @param sortname
+	 * @param page
+	 * @param rp
+	 */
 	@Path("/pesquisarProdutos")
 	public void pesquisarProdutos(String codigo, String produto, String fornecedor, String editor,
 			Long codigoTipoProduto, String sortorder, String sortname, int page, int rp) {
@@ -222,33 +261,30 @@ public class ProdutoController {
 		this.result.use(FlexiGridJson.class).from(listaProdutos).total(totalResultados).page(page).serialize();
 	}
 	
+	/**
+	 * Carrega os combos do modal de inclusão/edição do Produto.
+	 */
 	@Post
-	public void carregarDadosProduto(Long id) {
-		
-		if (id != null) {
-			// TODO: carregar dados produto.
-		}
+	public void carregarDadosProduto() {
 		
 		List<Object> listaCombos = new ArrayList<Object>();
 
-		//List<BaseComboVO> comboTipoProduto = parseComboTipoProduto(this.tipoProdutoService.obterTodosTiposProduto());
 		listaCombos.add(parseComboTipoProduto(this.tipoProdutoService.obterTodosTiposProduto()));
 
-		
-		//List<BaseComboVO> comboFornecedores = parseComboFornecedor(this.fornecedorService.obterFornecedores());
 		listaCombos.add(parseComboFornecedor(this.fornecedorService.obterFornecedores()));
 
-		//List<BaseComboVO> comboEditor = parseComboEditor(this.editorService.obterEditores());
 		listaCombos.add(parseComboEditor(this.editorService.obterEditores()));
 		
 		listaCombos.add(parseComboTipoDesconto(this.tipoDescontoService.obterTodosTiposDescontos()));
 		
-		this.result
-				.use(Results.json())
-				.from(listaCombos, "result")
-				.serialize();
+		this.result.use(Results.json()).from(listaCombos, "result").recursive().serialize();
 	}
 	
+	/**
+	 * Remove um Produto.
+	 * 
+	 * @param id
+	 */
 	@Post
 	public void removerProduto(Long id) {
 		
@@ -265,10 +301,157 @@ public class ProdutoController {
 		}
 			
 		this.result.use(Results.json()).from(
-				new ValidacaoVO(TipoMensagem.SUCCESS, "Produto excluido com sucesso."), 
+				new ValidacaoVO(TipoMensagem.SUCCESS, "Produto excluído com sucesso!"), 
 				"result").recursive().serialize();
 	}
+	
+	/**
+	 * Carrega o percentual de Desconto do Produto.
+	 * 
+	 * @param codigoTipoDesconto
+	 */
+	@Post
+	public void carregarPercentualDesconto(Long codigoTipoDesconto) {
+	
+		TipoDesconto tipoDesconto = 
+			this.tipoDescontoService.obterTipoDescontoPorID(codigoTipoDesconto);
+		
+		BigDecimal porcentagem = BigDecimal.ZERO;
+		
+		if (tipoDesconto != null) {
+			porcentagem = tipoDesconto.getPorcentagem();
+		}
+		
+		this.result.use(Results.json()).from(porcentagem, "result").recursive().serialize();
+	}
 
+	/**
+	 * Salva o produto.
+	 * 
+	 * @param produto
+	 * @param codigoEditor
+	 * @param codigoFornecedor
+	 * @param codigoTipoDesconto
+	 * @param codigoTipoProduto
+	 */
+	@Post
+	public void salvarProduto(Produto produto, Long codigoEditor, Long codigoFornecedor, Long codigoTipoDesconto, 
+			Long codigoTipoProduto) {
+
+		this.validarProduto(
+			produto, codigoEditor, codigoFornecedor, 
+			codigoTipoDesconto, codigoTipoProduto);
+		
+		try {
+			
+			this.produtoService.salvarProduto(
+				produto, codigoEditor, codigoFornecedor, 
+				codigoTipoDesconto, codigoTipoProduto);
+			
+		} catch (Exception e) {
+			throw new ValidacaoException(TipoMensagem.ERROR, "Erro ao tentar salvar o Produto!");
+		}
+		
+		this.result.use(Results.json()).from(
+			new ValidacaoVO(TipoMensagem.SUCCESS, "Produto salvo com sucesso!"), "result").recursive().serialize();
+	}
+	
+	/**
+	 * Carrega o produto para edição.
+	 * 
+	 * @param id
+	 */
+	@Post
+	public void carregarProdutoParaEdicao(Long id) {
+		
+		if (id == null) {
+			throw new ValidacaoException(TipoMensagem.ERROR, "Produto não encontrado!");
+		}
+		
+		Produto produto =
+			this.produtoService.obterProdutoPorID(id);
+		
+		if (produto == null) {
+			throw new ValidacaoException(TipoMensagem.ERROR, "Produto não encontrado!");
+		}
+		
+		ProdutoCadastroVO produtoCadastroVO = ProdutoCadastroVO.parseProdutoToProdutoCadastroVO(produto);
+		
+		this.result.use(Results.json()).from(produtoCadastroVO, "result").recursive().serialize();
+	}
+	
+	/**
+	 * Valida o produto.
+	 * 
+	 * @param produto
+	 * @param codigoEditor
+	 * @param codigoFornecedor
+	 * @param codigoTipoDesconto
+	 * @param codigoTipoProduto
+	 */
+	private void validarProduto(Produto produto, Long codigoEditor, Long codigoFornecedor, 
+			Long codigoTipoDesconto, Long codigoTipoProduto) {
+
+		List<String> listaMensagens = new ArrayList<String>();
+		
+		if (produto != null) {
+
+			if (produto.getCodigo() == null || produto.getCodigo().trim().isEmpty()) {
+				listaMensagens.add("O preenchimento do campo [Código] é obrigatório!");
+			} else {
+				produto.setCodigo(produto.getCodigo().trim());
+			}
+
+			if (produto.getNome() == null || produto.getNome().trim().isEmpty()) {
+				listaMensagens.add("O preenchimento do campo [Produto] é obrigatório!");
+			} else {
+				produto.setNome(produto.getNome().trim());
+			}
+			
+			if (codigoFornecedor == null || codigoFornecedor.intValue() == 0) {
+				listaMensagens.add("O preenchimento do campo [Fornecedor] é obrigatório!");
+			}
+			
+			if (codigoEditor == null || codigoEditor.intValue() == 0) {
+				listaMensagens.add("O preenchimento do campo [Editor] é obrigatório!");
+			}
+			
+			if (codigoTipoProduto == null || codigoTipoProduto.intValue() == 0) {
+				listaMensagens.add("O preenchimento do campo [Tipo de Produto] é obrigatório!");
+			}
+
+			if (produto.getFormaComercializacao() == null) {
+				listaMensagens.add("O preenchimento do campo [Forma Comercialização] é obrigatório!");
+			}
+			
+			if (produto.getPeriodicidade() == null) {
+				listaMensagens.add("O preenchimento do campo [Periodicidade] é obrigatório!");
+			}
+			
+			if (produto.getTributacaoFiscal() == null) {
+				listaMensagens.add("O preenchimento do campo [Tributação Fiscal] é obrigatório!");
+			}
+
+			if (produto.getGrupoEditorial() != null && !produto.getGrupoEditorial().trim().isEmpty()) {
+				produto.setGrupoEditorial(produto.getGrupoEditorial().trim());
+			}
+			
+			if (produto.getSubGrupoEditorial() != null && !produto.getSubGrupoEditorial().trim().isEmpty()) {
+				produto.setSubGrupoEditorial(produto.getSubGrupoEditorial().trim());
+			}
+		}
+		
+		if (listaMensagens != null && !listaMensagens.isEmpty()) {
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, listaMensagens));
+		}
+	}
+		
+	/**
+	 * Parse para combo.
+	 * 
+	 * @param listaTipoDesconto
+	 * @return
+	 */
 	private List<BaseComboVO> parseComboTipoDesconto(List<TipoDesconto> listaTipoDesconto) {
 		
 		List<BaseComboVO> listaBaseComboVO = new ArrayList<BaseComboVO>();
@@ -281,7 +464,13 @@ public class ProdutoController {
 		
 		return listaBaseComboVO;
 	}
-
+	
+	/**
+	 * Parse para combo.
+	 * 
+	 * @param listaTipoProduto
+	 * @return
+	 */
 	private List<BaseComboVO> parseComboTipoProduto(List<TipoProduto> listaTipoProduto) {
 		
 		List<BaseComboVO> listaBaseComboVO = new ArrayList<BaseComboVO>();
@@ -294,7 +483,13 @@ public class ProdutoController {
 		
 		return listaBaseComboVO;
 	}
-
+	
+	/**
+	 * Parse para combo.
+	 * 
+	 * @param listaFornecedor
+	 * @return
+	 */
 	private List<BaseComboVO> parseComboFornecedor(List<Fornecedor> listaFornecedor) {
 		
 		List<BaseComboVO> listaBaseComboVO = new ArrayList<BaseComboVO>();
@@ -302,12 +497,18 @@ public class ProdutoController {
 		listaBaseComboVO.add(getDefaultBaseComboVO());
 		
 		for (Fornecedor fornecedor : listaFornecedor) {
-			listaBaseComboVO.add(new BaseComboVO(fornecedor.getId(), fornecedor.getJuridica().getRazaoSocial()));
+			listaBaseComboVO.add(new BaseComboVO(fornecedor.getId(), fornecedor.getJuridica().getNomeFantasia()));
 		}
 		
 		return listaBaseComboVO;
 	}
 
+	/**
+	 * Parse para combo.
+	 * 
+	 * @param listaEditor
+	 * @return
+	 */
 	private List<BaseComboVO> parseComboEditor(List<Editor> listaEditor) {
 		
 		List<BaseComboVO> listaBaseComboVO = new ArrayList<BaseComboVO>();
@@ -320,7 +521,12 @@ public class ProdutoController {
 		
 		return listaBaseComboVO;
 	}
-
+	
+	/**
+	 * Retorna o valor default para combo.
+	 * 
+	 * @return
+	 */
 	private BaseComboVO getDefaultBaseComboVO() {
 		return new BaseComboVO(0L, "");
 	}

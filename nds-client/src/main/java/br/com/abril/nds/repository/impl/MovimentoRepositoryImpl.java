@@ -3,6 +3,7 @@ package br.com.abril.nds.repository.impl;
 import java.util.List;
 
 import org.hibernate.Query;
+import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.MovimentoAprovacaoDTO;
@@ -93,6 +94,8 @@ public class MovimentoRepositoryImpl extends AbstractRepository<Movimento, Long>
 			}
 		}
 		
+		query.setResultTransformer(new AliasToBeanResultTransformer(MovimentoAprovacaoDTO.class));
+		
 		return query.list();
 	}
 	
@@ -122,8 +125,6 @@ public class MovimentoRepositoryImpl extends AbstractRepository<Movimento, Long>
 			return;
 		}
 		
-		query.setParameter("statusAprovacao", StatusAprovacao.PENDENTE);
-		
 		if (filtro.getIdTipoMovimento() != null) {
 			query.setParameter("idTipoMovimento", filtro.getIdTipoMovimento());
 		}
@@ -152,31 +153,36 @@ public class MovimentoRepositoryImpl extends AbstractRepository<Movimento, Long>
 			
 		} else {
 			
-			hql = " select new " + MovimentoAprovacaoDTO.class.getCanonicalName()
-				+ " (movimento.id, movimento.tipoMovimento.descricao,"
-				+ " movimento.dataCriacao, cota.numeroCota,"
+			hql = " select "
+				+ " movimento.id as idMovimento, movimento.tipoMovimento.descricao as descricaoTipoMovimento,"
+				+ " movimento.dataCriacao as dataCriacao, cota.numeroCota as numeroCota,"
 				+ " (case when (pessoa.nome is not null) then ( pessoa.nome )"
 				+ " when (pessoa.razaoSocial is not null) then ( pessoa.razaoSocial )"
-				+ " else null end) as nomeCota, movimento.valor,"
-				+ " movimento.parcelas, movimento.prazo, movimento.usuario.nome) ";
+				+ " else null end) as nomeCota, movimento.valor as valor,"
+				+ " movimento.parcelas as parcelas, movimento.prazo as prazo,"
+				+ " movimento.usuario.nome as nomeUsuarioRequerente, movimento.status as statusMovimento,"
+				+ " movimento.motivo as motivo";
 		}
 		
 		hql += " from Movimento movimento "
 			+ " left join movimento.cota cota "
-			+ " left join cota.pessoa pessoa "
-			+ " where movimento.status = :statusAprovacao ";
+			+ " left join cota.pessoa pessoa ";
 		
 		
 		if (filtro != null) {
 		
 			if (filtro.getIdTipoMovimento() != null) {
-				 
-				 hql += " and movimento.tipoMovimento.id = :idTipoMovimento ";
+				
+				hql += (!hql.contains("where")) ? "where" : "and";
+				
+				hql += " movimento.tipoMovimento.id = :idTipoMovimento ";
 			}
 			
 			if (filtro.getDataMovimento() != null) {
 				
-				hql += " and movimento.dataCriacao = :dataMovimento ";
+				hql += (!hql.contains("where")) ? "where" : "and";
+				
+				hql += " movimento.dataCriacao = :dataMovimento ";
 			}
 		}
 		

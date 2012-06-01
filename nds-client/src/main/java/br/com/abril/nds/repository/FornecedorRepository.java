@@ -78,4 +78,15 @@ public interface FornecedorRepository extends Repository<Fornecedor, Long> {
 	 * @return Lista de {@link ItemDTO}} onde <code>key</code> id do {@link Fornecedor}} e <code>value</code> nome do {@link Fornecedor}.
 	 */
 	public abstract List<ItemDTO<Long, String>> obterFornecedoresIdNome(SituacaoCadastro situacao, Boolean inferface);
+
+	/**
+	 * Método que verifica a quantidade de pessoas cadastradas para outros fornecedores.
+	 * 
+	 * @param idPessoa
+	 * @param idFornecedor
+	 * @return qtde
+	 */
+	Integer obterQuantidadeFornecedoresPorIdPessoa(Long idPessoa, Long idFornecedor);
+	
+	List<Fornecedor> obterFornecedorLikeNomeFantasia(String nomeFantasia);
 }

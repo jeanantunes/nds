@@ -46,4 +46,5 @@ public class TipoDescontoRepositoryImpl extends AbstractRepository<TipoDesconto,
 		
 		return query.list();
 	}
+
 }

@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import br.com.abril.nds.integracao.ems0133.outbound.EMS0133Output;
+import br.com.abril.nds.integracao.engine.MessageHeaderProperties;
 import br.com.abril.nds.integracao.engine.MessageProcessor;
 import br.com.abril.nds.integracao.engine.data.Message;
 import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;
@@ -76,7 +77,7 @@ public class EMS0133MessageProcessor implements MessageProcessor {
 			@SuppressWarnings("unchecked")
 			List<Lancamento> lancamentos = query.getResultList();
 			
-			PrintWriter print = new PrintWriter(new FileWriter(message.getHeader().get("NDSI_EMS0133_OUTBOUND")+"/"+sdf.format(data)+".drr"));	
+			PrintWriter print = new PrintWriter(new FileWriter(message.getHeader().get(MessageHeaderProperties.OUTBOUND_FOLDER.getValue())+"/"+sdf.format(data)+".drr"));	
 			
 			
 			

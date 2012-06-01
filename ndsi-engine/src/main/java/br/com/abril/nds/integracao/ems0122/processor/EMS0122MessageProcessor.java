@@ -16,10 +16,14 @@ import org.springframework.stereotype.Component;
 import br.com.abril.nds.integracao.ems0122.outbound.EMS0122Detalhe;
 import br.com.abril.nds.integracao.ems0122.outbound.EMS0122Header;
 import br.com.abril.nds.integracao.ems0122.outbound.EMS0122Trailer;
+import br.com.abril.nds.integracao.engine.MessageHeaderProperties;
 import br.com.abril.nds.integracao.engine.MessageProcessor;
 import br.com.abril.nds.integracao.engine.data.Message;
+import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;
 import br.com.abril.nds.integracao.service.DistribuidorService;
+import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
+import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
 
 import com.ancientprogramming.fixedformat4j.format.FixedFormatManager;
 
@@ -31,7 +35,10 @@ public class EMS0122MessageProcessor implements MessageProcessor{
 	private EntityManager entityManager;
 	
 	@Autowired
-	private FixedFormatManager fixedFormatManager; 
+	private FixedFormatManager fixedFormatManager;
+	
+	@Autowired
+	private NdsiLoggerFactory ndsiLoggerFactory;
 	
 	@Autowired
 	private DistribuidorService distribuidorService;
@@ -58,7 +65,7 @@ public class EMS0122MessageProcessor implements MessageProcessor{
 	
 		Query query = entityManager.createQuery(sql.toString());
 		query.setParameter("dataOperacao", distribuidorService.findDistribuidor().getDataOperacao());
-		//query.setParameter("compraSuplementar", GrupoMovimentoEstoque.COMPRA_SUPLEMENTAR);
+		query.setParameter("compraSuplementar", GrupoMovimentoEstoque.COMPRA_SUPLEMENTAR);
 		
 		@SuppressWarnings("unchecked")
 		List<MovimentoEstoqueCota> mecs = (List<MovimentoEstoqueCota>) query.getResultList();
@@ -67,7 +74,7 @@ public class EMS0122MessageProcessor implements MessageProcessor{
 		
 		try {
 			
-			PrintWriter print = new PrintWriter(new FileWriter(message.getHeader().get("NDSI_EMS0122_OUTBOUND")+"/SUPLEMEN.NEW"));	
+			PrintWriter print = new PrintWriter(new FileWriter(message.getHeader().get("PATH_INTERFACE_MDC_EXPORTACAO")+"/SUPLEMEN.NEW"));	
 			
 			EMS0122Header outheader = new EMS0122Header();
 			
@@ -100,7 +107,7 @@ public class EMS0122MessageProcessor implements MessageProcessor{
 			print.close();
 			
 		} catch (IOException e) {
-			e.printStackTrace();
+			ndsiLoggerFactory.getLogger().logError(message, EventoExecucaoEnum.GERACAO_DE_ARQUIVO, "Não foi possível gerar o arquivo");
 		}
 				
 		

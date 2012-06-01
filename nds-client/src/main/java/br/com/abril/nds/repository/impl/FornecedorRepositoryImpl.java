@@ -3,7 +3,9 @@ package br.com.abril.nds.repository.impl;
 import java.util.List;
 
 import org.hibernate.Criteria;
+import org.hibernate.FetchMode;
 import org.hibernate.Query;
+import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.AliasToBeanResultTransformer;
@@ -226,39 +228,31 @@ public class FornecedorRepositoryImpl extends
 		   .append(" fornecedor.codigoInterface as codigoInterface, ")
 		   .append(" fornecedor.juridica.razaoSocial as razaoSocial, ")
 		   .append(" fornecedor.juridica.cnpj as cnpj, ")
-//		   .append(" fornecedor.responsavel as responsavel, ")
-//		   .append(" telefone.numero as telefone, ")
+		   .append(" fornecedor.responsavel as responsavel, ")
+		   .append(" telefone.numero as telefone, ")
 		   .append(" fornecedor.juridica.email as email ")
 		   
-		   .append(" from Fornecedor fornecedor ");
-		
-		String condicoes = "";
+		   .append(" from Fornecedor fornecedor ")
+		   .append(" left join fornecedor.telefones telefoneFornecedor ")
+		   .append(" left join telefoneFornecedor.telefone telefone ")
+		   .append(" where telefoneFornecedor is null or telefoneFornecedor.principal = true ");
 		
 		if (filtroConsultaFornecedor.getCnpj() != null 
 				&& !filtroConsultaFornecedor.getCnpj().isEmpty()) {
 			
-			condicoes = "".equals(condicoes) ? " where " : " and ";  
-			
-			hql.append(condicoes);
-			hql.append(" fornecedor.juridica.cnpj like :cnpj ");
+			hql.append(" and fornecedor.juridica.cnpj like :cnpj ");
 		}
 		
 		if (filtroConsultaFornecedor.getNomeFantasia() != null 
 				&& !filtroConsultaFornecedor.getNomeFantasia().isEmpty()) {
 			
-			condicoes = "".equals(condicoes) ? " where " : " and ";  
-			
-			hql.append(condicoes);
-			hql.append(" fornecedor.juridica.nomeFantasia like :nomeFantasia ");
+			hql.append(" and fornecedor.juridica.nomeFantasia like :nomeFantasia ");
 		}
 
 		if (filtroConsultaFornecedor.getRazaoSocial() != null 
 				&& !filtroConsultaFornecedor.getRazaoSocial().isEmpty()) {
 			
-			condicoes = "".equals(condicoes) ? " where " : " and ";  
-			
-			hql.append(condicoes);
-			hql.append(" fornecedor.juridica.razaoSocial like :razaoSocial ");
+			hql.append(" and fornecedor.juridica.razaoSocial like :razaoSocial ");
 		}
 		
 		return hql.toString();
@@ -274,19 +268,19 @@ public class FornecedorRepositoryImpl extends
 		if (filtroConsultaFornecedor.getCnpj() != null 
 				&& !filtroConsultaFornecedor.getCnpj().isEmpty()) {
 			
-			query.setParameter("cnpj", filtroConsultaFornecedor.getCnpj());
+			query.setParameter("cnpj", "%" + filtroConsultaFornecedor.getCnpj() + "%");
 		}
 		
 		if (filtroConsultaFornecedor.getNomeFantasia() != null 
 				&& !filtroConsultaFornecedor.getNomeFantasia().isEmpty()) {
 			
-			query.setParameter("nomeFantasia", filtroConsultaFornecedor.getNomeFantasia());
+			query.setParameter("nomeFantasia", "%" + filtroConsultaFornecedor.getNomeFantasia() + "%");
 		}
 
 		if (filtroConsultaFornecedor.getRazaoSocial() != null 
 				&& !filtroConsultaFornecedor.getRazaoSocial().isEmpty()) {
 			
-			query.setParameter("razaoSocial", filtroConsultaFornecedor.getRazaoSocial());
+			query.setParameter("razaoSocial", "%" + filtroConsultaFornecedor.getRazaoSocial() + "%");
 		}
 
 		return query;
@@ -315,5 +309,44 @@ public class FornecedorRepositoryImpl extends
 		criteria.setResultTransformer(new AliasToBeanResultTransformer(ItemDTO.class));
 		return  criteria.list();
 	}
+	
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Integer obterQuantidadeFornecedoresPorIdPessoa(Long idPessoa, Long idFornecedor) {
+
+		Criteria criteria = getSession().createCriteria(Fornecedor.class);
+		
+		criteria.add(Restrictions.eq("juridica.id", idPessoa));
+		
+		if (idFornecedor != null) {
+		
+			criteria.add(Restrictions.ne("id", idFornecedor));
+		}
+		
+		criteria.setProjection(Projections.rowCount());
+
+		return ((Long) criteria.list().get(0)).intValue();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Fornecedor> obterFornecedorLikeNomeFantasia(String nomeFantasia) {
+		
+		try {
+			
+			Criteria criteria = super.getSession().createCriteria(Fornecedor.class);
+
+			criteria.createAlias("juridica","juridica");
+			criteria.setFetchMode("juridica", FetchMode.JOIN);
+			criteria.add(Restrictions.ilike("juridica.nomeFantasia", nomeFantasia, MatchMode.ANYWHERE));
+			
+			return criteria.list();
+			
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}	
 }

@@ -50,4 +50,11 @@ public class TipoDescontoServiceImpl implements TipoDescontoService {
 		return this.tipoDescontoRepository.buscarTodos();
 	}
 
+	@Override
+	@Transactional(readOnly=true)
+	public TipoDesconto obterTipoDescontoPorID(Long id) {
+
+		return this.tipoDescontoRepository.buscarPorId(id);
+	}
+
 }

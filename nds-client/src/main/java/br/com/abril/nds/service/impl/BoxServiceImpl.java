@@ -60,52 +60,19 @@ public class BoxServiceImpl implements BoxService {
 	public Box merge(Box entity) throws UniqueConstraintViolationException, RelationshipRestrictionException {
 		if (boxRepository.hasCodigo(entity.getCodigo(), entity.getId())) {
 			throw new UniqueConstraintViolationException("Código "
-					+ entity.getCodigo() + " do box em uso.");
-		}
+					+ entity.getCodigo() + " do box em uso.");		}
 		
 		if (entity.getId() != null &&  hasAssociacao(entity.getId())) {
-			Box boxSalvo = boxRepository.buscarPorId(entity.getId());			
-			if(!compareBox(entity, boxSalvo)){
-				throw new RelationshipRestrictionException(
-						"Box está em uso. Apenas o Nome pode ser editado.");
-			}
+			throw new RelationshipRestrictionException(
+						"Box está em uso e não pode ser editado.");
+			
 		}
 		
 		
 		return boxRepository.merge(entity);
 	}
 	
-	/**
-	 * Compara igualdade dos boxs desconsiderando o nome
-	 * @param box
-	 * @param other
-	 * @return
-	 */
-	private boolean compareBox(Box box, Box other){
-		
-		if (box.getCodigo() == null) {
-			if (other.getCodigo() != null) {
-				return false;
-			}
-		} else if (!box.getCodigo().equals(other.getCodigo())) {
-			return false;
-		}
-		if (box.getId() == null) {
-			if (other.getId() != null) {
-				return false;
-			}
-		} else if (!box.getId().equals(other.getId())) {
-			return false;
-		}
-		if (box.isPostoAvancado() != other.isPostoAvancado()) {
-			return false;
-		}
-		if (box.getTipoBox() != other.getTipoBox()) {
-			return false;
-		}
-		return true;
-	}
-	
+
 	
 	
 	@Override

@@ -281,6 +281,7 @@ fieldset label {
 					<li><span class="classExpedicao">&nbsp;</span><a
 						href="javascript:;">Expedição</a>
 						<ul>
+							<li><a href="<c:url value="/mapaAbastecimento/index"/>">Mapa Abastecimento</a></li>
 							<li><a href='<c:url value="/confirmacaoExpedicao/index"/>'>Confirma
 									Expedição</a>
 							</li>
@@ -354,10 +355,10 @@ fieldset label {
 					<li><span class="classDevolucao">&nbsp;</span><a
 						href="javascript:;">Devolução</a>
 						<ul>
-							<li>
-							
-							<a href='<c:url value="/devolucao/digitacao/contagem/"/>'>Digitação
+							<li><a href='<c:url value="/devolucao/digitacao/contagem/"/>'>Digitação
 									de Contagem para Devolução</a>
+							</li>
+							<li><a href='<c:url value="devolucao/fechamentoEncalhe/"/>'>Fechamento Encalhe</a>
 							</li>
 							<li><a href="Devolucao/help_devolucao.htm">Help</a>
 							</li>
@@ -386,9 +387,10 @@ fieldset label {
 							</li>
 							<li><a href='<c:url value="/administracao/cadastroCalendario"/>'>Calendário</a></li>
 							<li><a href='<c:url value="/administracao/tipoDescontoCota"/>'>Tipo de Desconto Cota</a></li>
-							<li><a href="Administracao/cadastro_tipos_movimento.htm">Cadastrar
-									Tipos de Movimento</a>
-							</li>
+							
+							<li><a href="<c:url value="/tipoMovimento/index"/>">Tipo de Movimento</a></li>
+							
+							
 							<li><a href="Administracao/iniciar_dia.htm">Iniciar o
 									Dia</a>
 							</li>

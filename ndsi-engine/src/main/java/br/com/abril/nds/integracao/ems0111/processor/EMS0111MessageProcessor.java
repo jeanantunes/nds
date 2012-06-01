@@ -70,55 +70,59 @@ public class EMS0111MessageProcessor implements MessageProcessor {
 		try {
 			ProdutoEdicao produtoEdicao = (ProdutoEdicao) consulta
 					.getSingleResult();
-			
-			
+						
 			//SE EXISTIR PRODUTO/EDICAO NA TABELA
 			//VERIFICAR SE EXISTE LANCAMENTO CADASTRADO PARA O PRODUTO/EDICAO
 			StringBuilder sql = new StringBuilder();
 
 			sql.append("SELECT lcto FROM Lancamento lcto ");
 			sql.append(" WHERE ");
-			sql.append("		lcto.produtoEdicao = :produtoeEicaoId");
+			sql.append("		lcto.produtoEdicao = :produtoEdicao");
+			sql.append(" AND   ");
+			sql.append(" 		lcto.dataLancamentoPrevista = :dataLancamento   ");
 			
 			Query query = entityManager.createQuery(sql.toString());
 			query.setParameter("produtoEdicaoId", produtoEdicao.getId());
+			query.setParameter("dataLancamento", input.getDataLancamento());
 			
 
 			try {
-				Lancamento lancamento = (Lancamento) query.getSingleResult();
 				
+				
+				Lancamento lancamento = (Lancamento) query.getSingleResult();
+		
 				//VERIFICAR SE OS CAMPOS ESTAO DESATUALIZADOS
 				//CASO NECESSARIO, ATUALIZAR OS CAMPOS
 				
-				if(!lancamento.getDataLancamentoPrevista().equals(input.getDataLancamento())){
-					lancamento.setDataLancamentoPrevista(input.getDataLancamento());
-					ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, "Atualizacao da data de lancamento: "+input.getDataLancamento());
-				}
-				
-				
-				if(!lancamento.getTipoLancamento().equals(input.getTipoLancamento()));{
-					//CORRIGIR ENUM
+					if(!lancamento.getDataLancamentoPrevista().equals(input.getDataLancamento())){
+						lancamento.setDataLancamentoPrevista(input.getDataLancamento());
+						ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, "Atualizacao da data de lancamento: "+input.getDataLancamento());
+					}
 					
 					
-					lancamento.setTipoLancamento(TipoLancamento.valueOf(input.getTipoLancamento()));
-					ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, "Atualizacao do tipo de lancamento: "+input.getTipoLancamento());
+					if(!lancamento.getTipoLancamento().equals(parseTipo(input.getTipoLancamento())));{
+												
+						
+						lancamento.setTipoLancamento(parseTipo(input.getTipoLancamento()));
+						ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, "Atualizacao do tipo de lancamento: "+input.getTipoLancamento());
 
-				}
+					}
+						
 					
-				
-				if(lancamento.getReparte()!=input.getRepartePrevisto());{
-					lancamento.setReparte(input.getRepartePrevisto());
-					ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, "Atualizacao do Reparte Previsto: "+input.getRepartePrevisto());
+					if(lancamento.getReparte()!=input.getRepartePrevisto());{
+						lancamento.setReparte(input.getRepartePrevisto());
+						ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, "Atualizacao do Reparte Previsto: "+input.getRepartePrevisto());
 
-				}
-				
-				if(lancamento.getRepartePromocional()!=input.getRepartePromocional());{
-					lancamento.setRepartePromocional(input.getRepartePromocional());
+					}
 					
-					ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, "Atualizacao do Reparte Promocional: "+input.getRepartePromocional());
+					if(lancamento.getRepartePromocional()!=input.getRepartePromocional());{
+						lancamento.setRepartePromocional(input.getRepartePromocional());
+						
+						ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, "Atualizacao do Reparte Promocional: "+input.getRepartePromocional());
 
-				}
+					}
 				
+
 
 
 			} catch (NoResultException e) {
@@ -156,11 +160,11 @@ public class EMS0111MessageProcessor implements MessageProcessor {
 
 		} catch (NoResultException e) {
 			// NAO ENCONTROU Produto/Edicao, DEVE LOGAR
-			// N�O � POSSIVEL REALIZAR INSERT/UPDATE 
+			// NAO E POSSIVEL REALIZAR INSERT/UPDATE 
 			ndsiLoggerFactory.getLogger().logError(
 					message,
 					EventoExecucaoEnum.RELACIONAMENTO,
-					"Imposs�vel realizar Insert/update - Nenhum resultado encontrado para Produto: "
+					"Impossivel realizar Insert/update - Nenhum resultado encontrado para Produto: "
 							+ input.getCodigoProduto() + " e Edicao: "
 							+ input.getEdicaoProduto() + " na tabela produto_edicao");
 

@@ -118,7 +118,7 @@
 		var idFornecedor = $("#idFornecedor").val();
 		
 		$(".chamadaoGrid").flexOptions({
-			url: "<c:url value='/devolucao/chamadao/pesquisarConsignados' />",
+			url: "${pageContext.request.contextPath}/devolucao/chamadao/pesquisarConsignados",
 			onSuccess: function() {
 				
 				var checkAllSelected = verifyCheckAll();
@@ -347,7 +347,7 @@
 			});
 		}
 		
-		$.postJSON("<c:url value='/devolucao/chamadao/confirmarChamadao' />",
+		$.postJSON("${pageContext.request.contextPath}/devolucao/chamadao/confirmarChamadao",
 				   listaChamadao + "&chamarTodos=" + checkAllSelected,
 				   function(result) {
 						

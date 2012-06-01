@@ -29,7 +29,6 @@ import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaCota;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalheCota;
 import br.com.abril.nds.model.seguranca.Usuario;
-import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.serialization.custom.CustomMapJson;
 import br.com.abril.nds.service.ConferenciaEncalheService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
@@ -64,6 +63,8 @@ public class ConferenciaEncalheController {
 	private static final String NOTA_FISCAL_CONFERENCIA = "notaFiscalConferencia";
 	
 	private static final String HORA_INICIO_CONFERENCIA = "horaInicioConferencia";
+	
+	private static final String NUMERO_COTA = "numeroCotaConferenciaEncalhe";
 	
 	@Autowired
 	private ConferenciaEncalheService conferenciaEncalheService;
@@ -132,6 +133,8 @@ public class ConferenciaEncalheController {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Não existe chamada de encalhe para essa cota.");
 		}
 		
+		this.session.setAttribute(NUMERO_COTA, numeroCota);
+		
 		this.result.use(Results.json()).from("").serialize();
 	}
 /*
@@ -167,12 +170,10 @@ public class ConferenciaEncalheController {
 		
 		if (numeroCota == null){
 			
-			InfoConferenciaEncalheCota info = this.getInfoConferenciaSession();
+			numeroCota = this.getNumeroCotaFromSession();
+		} else {
 			
-			if (info != null){
-				
-				numeroCota = info.getCota().getNumeroCota();
-			}
+			this.session.setAttribute(NUMERO_COTA, numeroCota);
 		}
 		
 		Date horaInicio = (Date) this.session.getAttribute(HORA_INICIO_CONFERENCIA);
@@ -263,14 +264,7 @@ public class ConferenciaEncalheController {
 		
 		ConferenciaEncalheDTO conferenciaEncalheDTO = null;
 		
-		InfoConferenciaEncalheCota info = this.getInfoConferenciaSession();
-		
-		if (info == null){
-			
-			throw new ValidacaoException(TipoMensagem.ERROR, "Sessão expirada.");
-		}
-		
-		Integer numeroCota = info.getCota().getNumeroCota();
+		Integer numeroCota = this.getNumeroCotaFromSession();
 		
 		List<ConferenciaEncalheDTO> listaConfSessao = this.getListaConferenciaEncalheFromSession();
 		
@@ -352,20 +346,23 @@ public class ConferenciaEncalheController {
 	}
 	
 	@Post
-	public void adicionarProdutoConferido(Long quantidade, Long idProdutoEdicao) throws ChamadaEncalheCotaInexistenteException{
+	public void adicionarProdutoConferido(Long idProdutoEdicao, Long quantidade) throws ChamadaEncalheCotaInexistenteException{
 		
-		InfoConferenciaEncalheCota info = this.getInfoConferenciaSession();
-		
-		if (info == null){
+		if (idProdutoEdicao == null){
 			
-			throw new ValidacaoException(TipoMensagem.ERROR, "Sessão expirada.");
+			throw new ValidacaoException(TipoMensagem.WARNING, "Produto é obrigatório.");
 		}
 		
-		ProdutoEdicaoDTO produtoEdicao;
+		if (quantidade == null){
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Quantidade é obrigatório.");
+		}
+		
+		ProdutoEdicaoDTO produtoEdicao = null;
 		
 		try {
 			produtoEdicao = this.conferenciaEncalheService.pesquisarProdutoEdicaoPorId(
-					info.getCota().getNumeroCota(), 
+					this.getNumeroCotaFromSession(), 
 					idProdutoEdicao);
 		} catch (EncalheRecolhimentoParcialException e) {
 
@@ -647,6 +644,35 @@ public class ConferenciaEncalheController {
 		}
 	}
 	
+	@Post
+	public void pesquisarProdutoEdicaoPorId(Long idProdutoEdicao){
+		
+		
+		Integer numeroCota = this.getNumeroCotaFromSession();
+		
+		try {
+			ProdutoEdicaoDTO p = 
+					this.conferenciaEncalheService.pesquisarProdutoEdicaoPorId(numeroCota, idProdutoEdicao);
+			
+			Map<String, Object> dados = new HashMap<String, Object>();
+			
+			if (p != null){
+				
+				dados.put("numeroEdicao", p.getNumeroEdicao());
+				dados.put("precoVenda", p.getPrecoVenda());
+				dados.put("desconto", p.getDesconto());
+			}
+			
+			this.result.use(CustomMapJson.class).put("result", dados).serialize();
+			
+		} catch (ChamadaEncalheCotaInexistenteException e) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "Não existe chamada de encalhe deste produto para essa cota.");
+		} catch (EncalheRecolhimentoParcialException e) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, e.getMessage());
+		}
+	}
+	
 	private void limparDadosSessao() {
 		
 		this.session.removeAttribute(ID_BOX_LOGADO);
@@ -841,6 +867,18 @@ public class ConferenciaEncalheController {
 		}
 		
 		return set;
+	}
+	
+	private Integer getNumeroCotaFromSession(){
+		
+		Integer numeroCota = (Integer) this.session.getAttribute(NUMERO_COTA);
+		
+		if (numeroCota == null){
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Informe uma cota.");
+		}
+		
+		return numeroCota;
 	}
 	
 	//TODO

@@ -41,7 +41,7 @@ public class EMS0124Detalhe {
 		this.contextoProduto = contextoProduto;
 	}
 	
-	@Field(offset=3, length=7)
+	@Field(offset=3, length=7, paddingChar='9')
 	public Integer getCodigoFornecedorProduto() {
 		return codigoFornecedorProduto;
 	}
@@ -86,7 +86,8 @@ public class EMS0124Detalhe {
 		this.tipoNivelamento = tipoNivelamento;
 	}
 
-	@Field(offset=27, length =8)
+	@Field(offset=27, length =8) 
+	@FixedFormatDecimal(decimals = 2, useDecimalDelimiter = true)
 	public BigDecimal getQuantidadeNivelamento() {
 		return quantidadeNivelamento;
 	}

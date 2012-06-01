@@ -223,5 +223,16 @@ public class CobrancaRepositoryImpl extends AbstractRepository<Cobranca, Long> i
 
 		return query.list();
 	}
+
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<Cobranca> obterCobrancasPorIDS(List<Long> listaCobrancas) {
+		
+		Criteria criteria = super.getSession().createCriteria(Cobranca.class);
+		
+		criteria.add(Restrictions.in("id", listaCobrancas));
+		
+		return criteria.list();
+	}
 	
 }

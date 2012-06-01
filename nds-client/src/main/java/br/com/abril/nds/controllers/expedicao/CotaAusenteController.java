@@ -48,8 +48,7 @@ public class CotaAusenteController {
 	private static final String FILTRO_SESSION_ATTRIBUTE = "filtroCotaAusente";
 	
 	private static final String WARNING_PESQUISA_SEM_RESULTADO = "Não há resultados para a pesquisa realizada.";
-	private static final String WARNING_COTA_AUSENTE_DUPLICADA =  "Esta cota já foi declarada como ausente na data.";
-	private static final String WARNING_CAMPO_DATA_OBRIGATORIO = "O campo \"Data\" é obrigatório.";
+	private static final String WARNING_COTA_AUSENTE_DUPLICADA =  "Esta cota já foi declarada como ausente nesta data.";
 	private static final String WARNING_DATA_MAIOR_OPERACAO_ATUAL = "A data informada é inferior a data de operação atual.";
 	private static final String WARNING_DATA_INFORMADA_INVALIDA = "A data informada é inválida.";
 	private static final String WARNING_NUMERO_COTA_NAO_INFORMADO =  "O campo \"cota\" é obrigatório.";
@@ -126,9 +125,7 @@ public class CotaAusenteController {
 		
 		try {
 			Date data = validaData(dataAusencia);
-			
-			boolean isDataOperacao = DateUtil.isHoje(data);
-					
+								
 			FiltroCotaAusenteDTO filtro = new FiltroCotaAusenteDTO(
 					data, 
 					(box==null || box.isEmpty()) ? null:box, 
@@ -138,7 +135,7 @@ public class CotaAusenteController {
 					
 			tratarFiltro(filtro);
 			
-			grid = efetuarConsulta(filtro, isDataOperacao);
+			grid = efetuarConsulta(filtro);
 		} catch(ValidacaoException e) {
 		
 			mensagens.clear();
@@ -169,7 +166,7 @@ public class CotaAusenteController {
 	 * Efetua a consulta e monta a estrutura do grid de CotasAusentes.
 	 * @param filtro
 	 */
-	private TableModel<CellModelKeyValue<CotaAusenteDTO>> efetuarConsulta(FiltroCotaAusenteDTO filtro, boolean isDataOperacao) {
+	private TableModel<CellModelKeyValue<CotaAusenteDTO>> efetuarConsulta(FiltroCotaAusenteDTO filtro) {
 		
 		List<CotaAusenteDTO> listaCotasAusentes = null;
 		
@@ -180,9 +177,10 @@ public class CotaAusenteController {
 			throw new ValidacaoException(TipoMensagem.WARNING, WARNING_PESQUISA_SEM_RESULTADO);
 		}
 		
-		if(!isDataOperacao) {
+		if(filtro.getData() != null) {
 			for(CotaAusenteDTO cotaAusenteDTO : listaCotasAusentes) {
-				cotaAusenteDTO.setIdCotaAusente(null);
+				if(DateUtil.isHoje(DateUtil.parseDataPTBR(cotaAusenteDTO.getData())))
+						cotaAusenteDTO.setIdCotaAusente(null);
 			}
 		}
 		
@@ -203,7 +201,7 @@ public class CotaAusenteController {
 	private Date validaData(String dataAusencia) {
 
 		if ( dataAusencia == null || dataAusencia.isEmpty())
-			throw new ValidacaoException(TipoMensagem.WARNING, WARNING_CAMPO_DATA_OBRIGATORIO );
+			return null;
 		
 		Date data = null;
 		

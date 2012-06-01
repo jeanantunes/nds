@@ -1,12 +1,24 @@
 var roteiroSelecionadoAutoComplete = false;	
-var transferirRotasComNovoRoteiro = false;	
+var transferirRotasComNovoRoteiro = false;
+
+
+function CotaDisponivelRoteirizacaoDTO  (idPontoVenda, pontoVenda, origemEndereco, endereco, numeroCota, nome, ordem  ){
+	this.idPontoVenda = idPontoVenda;
+	this.pontoVenda = pontoVenda;
+	this.origemEndereco = origemEndereco;
+	this.endereco = endereco;
+	this.numeroCota = numeroCota;
+	this.nome = nome;
+	this.ordem = ordem; 
+	
+} 
 var roteirizacao = {
 
 		abrirTelaRoteiro : function () {
 			
 			$.postJSON(contextPath + '/cadastro/roteirizacao/iniciaTelaRoteiro',null,
 					function(result) {
-				 			$("#ordemInclusaoRoteiro").numeric();	
+				 			$("#ordemInclusaoRoteiro").int();	
 		   					$("#ordemInclusaoRoteiro").val(result.int);
 		   					$( "#dialog-roteiro" ).dialog({
 		   						resizable: false,
@@ -49,7 +61,7 @@ var roteirizacao = {
 							var listaMensagens = result.listaMensagens;
 							$('#dialog-roteiro').dialog( "close" );
 							if (tipoMensagem && listaMensagens) {
-								exibirMensagemDialog(tipoMensagem, listaMensagens,'dialogRoteirizacao');
+								exibirMensagem(tipoMensagem, listaMensagens);
 							}
 							
 					   },
@@ -98,7 +110,7 @@ var roteirizacao = {
 				//	roteirizacao.populaDadosRoteiro(ui.item.chave);
 				
 				},
-				minLength: 2,
+				minLength: 3,
 				delay : 0,
 			});
 		},
@@ -135,10 +147,13 @@ var roteirizacao = {
 		populaListaCotasRoteiro : function(roteiroId) {
 			roteirizacao.iniciaRotasGrid();
 			$(".rotasGrid").flexOptions({
-				"url" : contextPath + '/cadastro/roteirizacao/buscaRotasPorRoteiro',
+				"url" : contextPath + '/cadastro/roteirizacao/pesquisarRotaPorNome',
 				params : [{
 					name : "roteiroId",
 					value : roteiroId
+				}, {
+					name : "nomeRota",
+					value :$('#nomeRota').val()
 				}],
 				newp:1
 			});
@@ -188,9 +203,9 @@ var roteirizacao = {
 		callBackRotaGrid :  function (data){
 		
 			$.each(data.rows, function(index, value) {
-				var idRota = value.cell.id;
+				var idRota = $.trim(value.cell.id);
 				var selecione = '<input type="checkbox" value="'+idRota +'" name="rotaCheckbox" id="rotaCheckbox" />';
-				var detalhe ='<a href="javascript:;"><img src="'+contextPath+'/images/ico_detalhes.png" border="0" alt="Detalhes" /></a>';
+				var detalhe ='<a href="javascript:roteirizacao.populaCotasRotaGrid('+idRota+');"><img src="'+contextPath+'/images/ico_detalhes.png" border="0" alt="Detalhes" /></a>';
 				value.cell.selecione = selecione;
 				value.cell.detalhe = detalhe;
 	        	
@@ -401,7 +416,325 @@ var roteirizacao = {
 	 escondeRoteiroNovoTranferencia : function (){
 			$('.roteiroNovo').hide();
 			transferirRotasComNovoRoteiro = false;	
-	  }
+	  },
+		//Busca dados para o auto complete do nome da cota
+	  filtroGridRotasPorNome : function() {
+		  
+		  if ( $.trim($('#nomeRota').val()) != ''){
+		    $(".rotasGrid").flexOptions({
+					'url' : contextPath + '/cadastro/roteirizacao/pesquisarRotaPorNome',
+					params : [{
+						name : 'roteiroId',
+						value : $('#idRoteiroSelecionado').val()
+					}, {
+						name : 'nomeRota',
+						value :$('#nomeRota').val()
+					}],
+					newp:1
+				});
+			  
+			  $(".rotasGrid").flexReload();
+		  }
+		},
+		
+		iniciaCotasRotaGrid : function(){
+			$(".cotasRotaGrid").flexigrid({
+				preProcess:roteirizacao.callBackCotasRotaGrid,
+				dataType : 'json',
+				colModel : [ {
+					display : '',
+					name : 'index',
+					width : 15,
+					sortable : true,
+					align : 'center'
+				},{
+					display : 'Ordem',
+					name : 'ordem',
+					width : 35,
+					sortable : true,
+					align : 'left'
+				}, {
+					display : 'Pto. Venda',
+					name : 'pontoVenda',
+					width : 80,
+					sortable : true,
+					align : 'left'
+				}, {
+					display : 'Orig.',
+					name : 'origemEndereco',
+					width : 30,
+					sortable : true,
+					align : 'left'
+				}, {
+					display : 'Endereço',
+					name : 'endereco',
+					width : 135,
+					sortable : true,
+					align : 'left'
+				}, {
+					display : 'Cota',
+					name : 'numeroCota',
+					width : 30,
+					sortable : true,
+					align : 'left'
+				}, {
+					display : 'Nome',
+					name : 'nome',
+					width : 95,
+					sortable : true,
+					align : 'left'
+				}, {
+					display : 'Ordenar',
+					name : 'ordenar',
+					width : 50,
+					sortable : true,
+					align : 'right'
+				}],
+				sortname : "ordem",
+				width : 590,
+				height : 284
+			});
+		},
+	
+		callBackCotasRotaGrid :  function (data){
+			
+			$.each(data.rows, function(index, value) {
+				value.cell.index = index;
+				value.cell.ordenar = '<a href="javascript:;"><img src="'+contextPath+'/images/seta_sobe.gif" border="0" alt="Sobe" hspace="3" /></a><a href="javascript:;"><img src="'+contextPath+'/images/seta_desce_desab.gif" border="0" alt="Desce" hspace="5" /></a>';
+			});
+			
+			$(".grids").show();
+			
+			return data;
+		},
 		
 		
+		populaCotasRotaGrid : function(rotaId) {
+			   $('#rotaSelecionada').val(rotaId);
+			    $(".cotasRotaGrid").flexOptions({
+						'url' : contextPath + '/cadastro/roteirizacao/buscarRoterizacaoPorRota',
+						params : [{
+							name : 'rotaId',
+							value : rotaId
+						}],
+						newp:1
+					});
+				  
+				  $(".cotasRotaGrid").flexReload();
+		},
+	
+		abrirTelaCotas : function () {
+			$.postJSON(contextPath + '/cadastro/roteirizacao/iniciaTelaCotas',null,
+					function(result) {
+			            roteirizacao.populaComboUf(result);
+			            roteirizacao.iniciaCotasDisponiveisGrid();
+						$( "#dialog-cotas-disponiveis" ).dialog({
+							resizable: false,
+							height:490,
+							width:870,
+							modal: true,
+							buttons: {
+								"Confirmar": function() {
+									roteirizacao.confirmaRoteirizacao();
+									$( this ).dialog( "close" );
+									
+								},
+								"Cancelar": function() {
+									$( this ).dialog( "close" );
+								}
+							}
+						});
+				   },
+					   null,
+					   true
+				);
+
+		},
+		
+		buscalistaMunicipio : function () {
+			$.postJSON(contextPath + '/cadastro/roteirizacao/buscalistaMunicipio',
+					{ 
+						'uf' :$('#comboUf').val()
+					}
+			        ,
+					function(result) {
+			            roteirizacao.populaMunicipio(result);
+					},
+					null,
+					true
+				);
+
+		},
+		
+		buscalistaBairro : function () {
+			$.postJSON(contextPath + '/cadastro/roteirizacao/buscalistaBairro',
+					{ 
+						'uf' :$('#comboUf').val(),
+						'municipio' :$('#comboMunicipio').val()
+					}
+			        ,
+					function(result) {
+			            roteirizacao.populaBairro(result);
+					},
+					null,
+					true
+				);
+
+		},
+		populaComboUf : function(result) {
+			$('#comboUf > option').remove();
+			$('#comboUf').append('<option>Selecione...</option>');
+			roteirizacao.resetComboBairro();
+			roteirizacao.resetComboMunicipio();
+			
+			$.each(result, function(index, row){
+				$('#comboUf').append('<option>'+row+'</option>');
+				}
+			);
+			
+		},
+		populaMunicipio : function(result) {
+			roteirizacao.resetComboBairro();
+			roteirizacao.resetComboMunicipio();
+			$.each(result, function(index, row){
+				$('#comboMunicipio').append('<option>'+row+'</option>');
+				}
+			);
+			
+		},
+		populaBairro : function(result) {
+			roteirizacao.resetComboBairro();
+			$.each(result, function(index, row){
+				$('#comboBairro').append('<option>'+row+'</option>');
+				}
+			);
+			
+		},
+		
+		resetComboMunicipio : function(){
+			$('#comboMunicipio > option').remove();
+			$('#comboMunicipio').append('<option>Todos</option>');
+		},
+		resetComboBairro : function(){
+			$('#comboBairro > option').remove();
+			$('#comboBairro').append('<option>Todos</option>');
+		},
+		
+		iniciaCotasDisponiveisGrid : function(){
+			$(".cotasDisponiveisGrid").flexigrid({
+				preProcess:roteirizacao.callCotasDisponiveisGrid,
+				dataType : 'json',
+				colModel : [ {
+					display : 'Pto. Venda',
+					name : 'pontoVenda',
+					width : 95,
+					sortable : true,
+					align : 'left'
+				}, {
+					display : 'Orig. End',
+					name : 'origemEndereco',
+					width : 60,
+					sortable : true,
+					align : 'left'
+				}, {
+					display : 'Endereço',
+					name : 'endereco',
+					width : 270,
+					sortable : true,
+					align : 'left'
+				}, {
+					display : 'Cota',
+					name : 'numeroCota',
+					width : 40,
+					sortable : true,
+					align : 'left'
+				}, {
+					display : 'Nome',
+					name : 'nome',
+					width : 150,
+					sortable : true,
+					align : 'left'
+				}, {
+					display : 'Ordem',
+					name : 'ordem',
+					width : 55,
+					sortable : true,
+					align : 'center'
+				}, {
+					display : '',
+					name : 'selecione',
+					width : 20,
+					sortable : true,
+					align : 'center'
+				}],
+				sortname : "cota",
+				width : 800,
+				height : 200
+			});
+		},
+		
+		callCotasDisponiveisGrid :  function (data){
+			
+			$.each(data.rows, function(index, value) {
+				var idPontoVenda = value.cell.idPontoVenda;
+				var selecione = '<input type="checkbox" value="'+idPontoVenda +'" name="pdvCheckbox" id="pdvCheckbox" />';
+				var ordem ='<input type="input" value="'+index +'" name="pdvOrdem'+idPontoVenda+'" id="pdvOrdem'+idPontoVenda+'" size="6" length="6" />';
+				value.cell.selecione = selecione;
+				value.cell.ordem = ordem;
+	        	
+			});
+			
+			$(".grids").show();
+			
+			return data;
+		},
+		
+		buscarPvsPorCota : function() {
+		    $(".cotasDisponiveisGrid").flexOptions({
+					'url' : contextPath + '/cadastro/roteirizacao/buscarPvsPorCota',
+					params : [{
+						name : 'numeroCota',
+						value : $('#numeroCotaPesquisa').val()
+					}],
+					newp:1
+				});
+			  
+			  $(".cotasDisponiveisGrid").flexReload();
+	},
+	
+
+	confirmaRoteirizacao : function () {
+        var params = roteirizacao.populaParamentrosContaSelecionadas();
+     	$.postJSON(contextPath + '/cadastro/roteirizacao/confirmaRoteirizacao', params,
+				function(result) {
+		            roteirizacao.populaBairro(result);
+				},
+				null,
+				true
+			);
+
+	},
+	
+	populaParamentrosContaSelecionadas : function(){
+		 
+		var dados ="";
+		var index = 0;
+		$("input[type=checkbox][name='pdvCheckbox']:checked").each(function(){
+			if (dados != ""){
+				dados+=",";
+			}
+				
+			var idPontoVenda =  $(this).val();
+			var ordem = $('#pdvOrdem'+idPontoVenda).val();
+			dados+='{name:"lista['+index+'].idPontoVenda",value:'+idPontoVenda+'}, {name:"lista['+index+'].ordem",value:'+ordem+'}';
+			index++;
+		});
+		dados+=',{name:"idRota",value:'+$('#rotaSelecionada').val()+'}';
+		var params = '['+dados+ ']';
+        
+		return eval(params);
+	},
+
+
+
 };

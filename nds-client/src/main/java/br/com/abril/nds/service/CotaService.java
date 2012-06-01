@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Set;
 
 import br.com.abril.nds.client.vo.RegistroCurvaABCCotaVO;
-import br.com.abril.nds.client.vo.ResultadoCurvaABC;
+import br.com.abril.nds.client.vo.ResultadoCurvaABCCota;
 import br.com.abril.nds.dto.CotaDTO;
 import br.com.abril.nds.dto.CotaSuspensaoDTO;
 import br.com.abril.nds.dto.DistribuicaoDTO;
@@ -258,8 +258,18 @@ public interface CotaService {
 	
 	void alterarCota(Cota cota);
 
-	public ResultadoCurvaABC obterCurvaABCCotaTotal(FiltroCurvaABCCotaDTO filtroCurvaABCCotaDTO);
+	/**
+	 * Método responsável por obter o total do relatório de vendas ABC por cota
+	 * @param filtroCurvaABCCotaDTO
+	 * @return
+	 */
+	public ResultadoCurvaABCCota obterCurvaABCCotaTotal(FiltroCurvaABCCotaDTO filtroCurvaABCCotaDTO);
 	
+	/**
+	 * Método responsável por obter o relatório de vendas ABC por cota
+	 * @param filtroCurvaABCCotaDTO
+	 * @return
+	 */
 	public List<RegistroCurvaABCCotaVO> obterCurvaABCCota(FiltroCurvaABCCotaDTO filtroCurvaABCCotaDTO);
 
 }

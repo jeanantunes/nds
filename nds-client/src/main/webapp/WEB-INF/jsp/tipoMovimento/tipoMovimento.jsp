@@ -142,7 +142,7 @@ function popup() {
               </td>
             </tr>
             <tr>
-              <td>Incide Dívida:</td>
+              <td>Incide na Dívida:</td>
               <td>
 <!-- INCIDE DIVIDA -->              
 <select id="incideDividaModal" style="width:100px;"> 
@@ -247,7 +247,7 @@ $(function() {
 				sortable : true,
 				align : 'left'
 			}, {
-				display : 'Incide na Dídiva',
+				display : 'Incide na Dívida',
 				name : 'incideDivida',
 				width : 100,
 				sortable : true,

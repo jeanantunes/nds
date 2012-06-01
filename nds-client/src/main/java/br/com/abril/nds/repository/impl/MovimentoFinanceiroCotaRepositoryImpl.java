@@ -375,7 +375,12 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepository<Mo
 		
 		StringBuilder hql = new StringBuilder(" select ");
 
-		hql.append(" sum(mfc.valor) ");
+		if (operacao == OperacaoFinaceira.CREDITO){
+		    hql.append(" sum(mfc.valor - mfc.baixaCobranca.valorJuros - mfc.baixaCobranca.valorMulta + mfc.baixaCobranca.valorDesconto) ");
+	    }
+		if (operacao == OperacaoFinaceira.DEBITO){
+			hql.append(" sum(mfc.valor + mfc.baixaCobranca.valorJuros + mfc.baixaCobranca.valorMulta - mfc.baixaCobranca.valorDesconto) ");
+		}
 		
 		hql.append(" from MovimentoFinanceiroCota mfc ");
 
@@ -434,8 +439,13 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepository<Mo
 		
 		StringBuilder hql = new StringBuilder(" select ");
 
-		hql.append(" sum(mfc.valor) ");
-		
+		if (operacao == OperacaoFinaceira.CREDITO){
+		    hql.append(" sum(mfc.valor - mfc.baixaCobranca.valorJuros - mfc.baixaCobranca.valorMulta + mfc.baixaCobranca.valorDesconto) ");
+	    }
+		if (operacao == OperacaoFinaceira.DEBITO){
+			hql.append(" sum(mfc.valor + mfc.baixaCobranca.valorJuros + mfc.baixaCobranca.valorMulta - mfc.baixaCobranca.valorDesconto) ");
+		}
+	
 		hql.append(" from MovimentoFinanceiroCota mfc ");
 
 		hql.append(" where mfc.baixaCobranca.status = :status ");

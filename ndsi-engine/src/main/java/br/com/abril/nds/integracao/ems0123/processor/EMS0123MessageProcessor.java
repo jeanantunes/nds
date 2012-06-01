@@ -16,10 +16,14 @@ import org.springframework.stereotype.Component;
 import br.com.abril.nds.integracao.ems0123.outbound.EMS0123Detalhe;
 import br.com.abril.nds.integracao.ems0123.outbound.EMS0123Header;
 import br.com.abril.nds.integracao.ems0123.outbound.EMS0123Trailer;
+import br.com.abril.nds.integracao.engine.MessageHeaderProperties;
 import br.com.abril.nds.integracao.engine.MessageProcessor;
 import br.com.abril.nds.integracao.engine.data.Message;
+import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;
 import br.com.abril.nds.integracao.service.DistribuidorService;
+import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
+import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
 
 import com.ancientprogramming.fixedformat4j.format.FixedFormatManager;
 
@@ -32,6 +36,9 @@ public class EMS0123MessageProcessor implements MessageProcessor{
 	
 	@Autowired
 	private FixedFormatManager fixedFormatManager; 
+	
+	@Autowired
+	private NdsiLoggerFactory ndsiLoggerFactory;
 	
 	@Autowired
 	private DistribuidorService distribuidorService;
@@ -58,7 +65,7 @@ public class EMS0123MessageProcessor implements MessageProcessor{
 	
 		Query query = entityManager.createQuery(sql.toString());
 		query.setParameter("dataOperacao", distribuidorService.findDistribuidor().getDataOperacao());
-		//query.setParameter("encalheAntecipado", GrupoMovimentoEstoque.ENCALHE_ANTECIPADO);
+		query.setParameter("encalheAntecipado", GrupoMovimentoEstoque.ENCALHE_ANTECIPADO);
 		
 		@SuppressWarnings("unchecked")
 		List<MovimentoEstoqueCota> mecs = (List<MovimentoEstoqueCota>) query.getResultList();
@@ -67,7 +74,7 @@ public class EMS0123MessageProcessor implements MessageProcessor{
 		
 		try {
 			
-			PrintWriter print = new PrintWriter(new FileWriter(message.getHeader().get("NDSI_EMS0123_OUTBOUND")+"/ENCANTE.NEW"));	
+			PrintWriter print = new PrintWriter(new FileWriter(message.getHeader().get(MessageHeaderProperties.OUTBOUND_FOLDER.getValue())+"/ENCANTE.NEW"));	
 			
 			EMS0123Header outheader = new EMS0123Header();
 			
@@ -100,7 +107,7 @@ public class EMS0123MessageProcessor implements MessageProcessor{
 			print.close();
 			
 		} catch (IOException e) {
-			e.printStackTrace();
+			ndsiLoggerFactory.getLogger().logError(message, EventoExecucaoEnum.GERACAO_DE_ARQUIVO, "Não foi possível gerar o arquivo");
 		}
 				
 		

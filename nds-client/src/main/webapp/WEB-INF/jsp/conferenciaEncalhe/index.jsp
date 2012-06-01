@@ -38,7 +38,7 @@
 				<tr>
 					<td width="40">Cota:</td>
 					<td width="121">
-						<input type="text" id="numeroCota" style="width: 80px; float: left; margin-right: 5px;" />
+						<input type="text" id="numeroCota" style="width: 80px; float: left; margin-right: 5px;" maxlength="255"/>
 						<span class="classPesquisar">
 							<a href="javascript:;" onclick="ConferenciaEncalhe.pesquisarCota();">&nbsp;</a>
 						</span>
@@ -53,7 +53,7 @@
 					<td width="144"><span class="dadosFiltro">Valor CE Jornaleiro R$:</span></td>
 					<td width="100">
 						<span class="dadosFiltro">
-							<input type="text" name="vlrCE" id="vlrCE" style="width: 100px; text-align: right;" />
+							<input type="text" name="vlrCE" id="vlrCE" style="width: 100px; text-align: right;" maxlength="255" />
 						</span>
 					</td>
 				</tr>
@@ -105,13 +105,13 @@
 				</tr>
 				<tr>
 					<td class="class_linha_1" align="center" style="border-left: 1px solid #666; border-bottom: 1px solid #666;">
-						<input name="qtdeExemplar" type="text" id="qtdeExemplar" style="width: 60px; text-align: center;"/>
+						<input name="qtdeExemplar" type="text" id="qtdeExemplar" style="width: 60px; text-align: center;" maxlength="255"/>
 					</td>
 					<td class="class_linha_1" align="center" style="border-bottom: 1px solid #666;">
-						<input name="cod_barras" type="text" id="cod_barras" style="width: 160px;"/>
+						<input name="cod_barras" type="text" id="cod_barras" style="width: 160px;" maxlength="255"/>
 					</td>
 					<td class="class_linha_1" align="center" style="border-bottom: 1px solid #666;">
-						<input name="sm" type="text" id="sm" style="width: 40px;" />
+						<input name="sm" type="text" id="sm" style="width: 40px;" maxlength="255"/>
 					</td>
 					<td class="class_linha_1" align="center" style="border-bottom: 1px solid #666; border-right: 1px solid #666;">
 						<input name="codProduto" type="text" readonly="readonly" id="codProduto" style="width: 100px;" />
@@ -165,11 +165,11 @@
 						<td width="80" align="center" bgcolor="#EFEFEF"	style="border: 1px solid #000;" id="valorVendaDia"></td>
 						<td width="130">&nbsp;&nbsp;
 							<strong>
-								<a href="javascript:;" onclick="popup_outros_valores();"> ( + )Outros valores </a>:
+								<a href="javascript:;" onclick="ConferenciaEncalhe.popup_outros_valores();"> ( + )Outros valores </a>:
 							</strong>
 						</td>
 						<td width="68" id="totalOutrosValores"></td>
-						<td width="122"><strong>( = )Valor a pagar R$:</strong></td>
+						<td width="125"><strong>( = )Valor a pagar R$:</strong></td>
 						<td width="77" id="valorAPagar"></td>
 						<td width="17">&nbsp;</td>
 					</tr>

@@ -1,6 +1,7 @@
 package br.com.abril.nds.integracao.fileimporter;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.FilenameFilter;
 import java.io.IOException;
@@ -15,6 +16,7 @@ import java.util.Scanner;
 import org.apache.commons.io.filefilter.RegexFileFilter;
 import org.apache.commons.lang.StringUtils;
 import org.lightcouch.CouchDbClient;
+import org.lightcouch.NoDocumentException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -42,6 +44,8 @@ public class InterfaceExecutor {
 	
 	private static String NAO_HA_ARQUIVOS = "Não há arquivos a serem processados para este distribuidor";
 //	private static String TAMANHO_LINHA = "Tamanho da linha é diferente do tamanho definido";
+	
+	//private static Logger LOGGER = LoggerFactory.getLogger(InterfaceExecutor.class);
 	
 	private LogExecucaoHibernateDAO logExecucaoDAO;
 	private LogExecucaoArquivoHibernateDAO logExecucaoArquivoAO;
@@ -84,31 +88,42 @@ public class InterfaceExecutor {
 	 * @param interfaceEnum interface a ser executada
 	 * @param codigoDistribuidor código do distribuidor
 	 */
-	public void executarInterface(String nomeUsuario, InterfaceEnum interfaceEnum, String codigoDistribuidor) {
+	public void executarInterface(String nomeUsuario, InterfaceEnum interfaceEnum, Long codigoDistribuidor) {
 		
 		// Busca dados de configuracao
 		this.carregaCouchDbProperties();
 		InterfaceExecucao interfaceExecucao = interfaceExecucaoDAO.findById(interfaceEnum.getCodigoInterface());
 		
+		if (interfaceExecucao == null) {
+			throw new RuntimeException("Interface " + interfaceEnum.getCodigoInterface() + " nao cadastrada");
+		}
+		
 		// Loga início
 		Date dataInicio = new Date();
 		LogExecucao logExecucao = this.logarInicio(dataInicio, interfaceExecucao, nomeUsuario);
 		
-		// Executa interface
-		if (interfaceEnum.equals(InterfaceEnum.EMS0134)) {
-			this.executarInterfaceImagem();
-		} else {
-			this.executarInterfaceArquivo(interfaceEnum, interfaceExecucao, logExecucao, codigoDistribuidor, nomeUsuario);
+		try {
+			// Executa interface
+			if (interfaceEnum.equals(InterfaceEnum.EMS0134)) {
+				this.executarInterfaceImagem();
+			} else if (interfaceEnum.equals(InterfaceEnum.EMS0185)) {
+				this.executarInterfaceCorreios();
+			} else {
+				this.executarInterfaceArquivo(interfaceEnum, interfaceExecucao, logExecucao, codigoDistribuidor, nomeUsuario);
+			}
+		} catch (Throwable t) {
+			this.processadoComSucesso = false;
+			t.printStackTrace();
+		} finally {
+			// Loga fim
+			this.logarFim(logExecucao);
 		}
-		
-		// Loga fim
-		this.logarFim(logExecucao);
 	}
 	
 	/**
 	 * Executa uma interface de carga de arquivo.
 	 */
-	private void executarInterfaceArquivo(InterfaceEnum interfaceEnum, InterfaceExecucao interfaceExecucao, LogExecucao logExecucao, String codigoDistribuidor, String nomeUsuario) {
+	private void executarInterfaceArquivo(InterfaceEnum interfaceEnum, InterfaceExecucao interfaceExecucao, LogExecucao logExecucao, Long codigoDistribuidor, String nomeUsuario) {
 		
 		// Recupera distribuidores
 		String diretorio = parametroSistemaDAO.getParametro("INBOUND_DIR");
@@ -131,6 +146,7 @@ public class InterfaceExecutor {
 					
 					this.trataArquivo(couchDbClient, arquivo, interfaceEnum, logExecucao.getDataInicio(), nomeUsuario);
 					this.logarArquivo(logExecucao, distribuidor, arquivo.getAbsolutePath(), StatusExecucaoEnum.SUCESSO, null);
+					arquivo.delete();
 					
 				} catch (Throwable e) {
 					
@@ -138,9 +154,6 @@ public class InterfaceExecutor {
 					e.printStackTrace();
 					continue;
 					
-				} finally {
-					
-					// TODO: arquivar arquivo
 				}
 			}
 			
@@ -152,23 +165,87 @@ public class InterfaceExecutor {
 	 * Executa a interface de carga de imagens EMS0134.
 	 */
 	private void executarInterfaceImagem() {
-		/*
+		
 		String diretorio = parametroSistemaDAO.getParametro("IMAGE_DIR");
-		CouchDbClient couchDbClient = this.getCouchDbClientInstance("");
+		CouchDbClient couchDbClient = this.getCouchDbClientInstance("db_integracao");
 		
 		File[] imagens = new File(diretorio).listFiles();
 		
 		for (File imagem: imagens) {
 			
+			IntegracaoDocument doc = null;
+			String id = imagem.getName().substring(0, imagem.getName().indexOf(".")); 
+			
+			try {
+				
+				doc = couchDbClient.find(IntegracaoDocument.class, id);
+			
+			} catch (NoDocumentException e) {
+				
+				doc = new IntegracaoDocument();
+				doc.set_id(id);
+				doc.setTipoDocumento("ImagemCapa");
+				couchDbClient.save(doc);
+			}
+				
+			doc = couchDbClient.find(IntegracaoDocument.class, doc.get_id());
+			
+			try {
+				FileInputStream in = new FileInputStream(imagem);
+				couchDbClient.saveAttachment(in, imagem.getName(), "image/jpeg", doc.get_id(), doc.get_rev());
+				in.close();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			
+			imagem.delete();
 		}
 		
-		couchDbClient.shutdown();*/
+		couchDbClient.shutdown();
 	}
+	
+	/**
+	 * Chama o shell script "cep-export", que converte o arquivo .mdb em um arquivo texto <br>
+	 * contendo comandos sql, e compacta esse arquivo em .tar.gz. Em seguida, sobe esse arquivo <br>
+	 * para o CouchDB como anexo a um documento.
+	 */
+	private void executarInterfaceCorreios() {
+		
+		String diretorio = parametroSistemaDAO.getParametro("CORREIOS_DIR");
+		CouchDbClient couchDbClient = this.getCouchDbClientInstance("db_integracao");
+		
+		try {
+
+			Process process = Runtime.getRuntime().exec(diretorio + "bin/cep-export");
+			int retorno = process.waitFor();
+			
+			if (retorno != 0) {
+				throw new RuntimeException("ERRO");
+			}
+
+			IntegracaoDocument doc = new IntegracaoDocument();
+			doc.set_id("AtualizacaoCep");
+			
+			try {
+				doc = couchDbClient.find(IntegracaoDocument.class, doc.get_id());
+			} catch (NoDocumentException e) {
+				doc.setTipoDocumento("AtualizacaoCep");
+				couchDbClient.save(doc);
+			}
+
+			FileInputStream in = new FileInputStream(new File(diretorio + "data/dnecom.tar.gz"));
+			couchDbClient.saveAttachment(in, "dnecom", "application/x-gzip-compressed", doc.get_id(), doc.get_rev());
+			
+		} catch (Throwable e) {
+			throw new RuntimeException(e);
+		}
+	}
+	
 	
 	/**
 	 * Recupera distribuidores a serem processados.
 	 */
-	private List<String> getDistribuidores(String diretorio, InterfaceExecucao interfaceExecucao, String codigoDistribuidor) {
+	private List<String> getDistribuidores(String diretorio, InterfaceExecucao interfaceExecucao, Long codigoDistribuidor) {
 		
 		List<String> distribuidores = new ArrayList<String>();
 		
@@ -179,7 +256,7 @@ public class InterfaceExecutor {
 			
 		} else {
 			
-			distribuidores.add(codigoDistribuidor);
+			distribuidores.add(codigoDistribuidor.toString());
 		}
 		
 		return distribuidores;
@@ -218,6 +295,8 @@ public class InterfaceExecutor {
 
 			couchDbClient.save(doc);
 		}
+		
+		in.close();
 	}
 
 	/**
@@ -231,7 +310,7 @@ public class InterfaceExecutor {
 		
 		List<File> listaArquivos = new ArrayList<File>();
 		
-		File dir = new File(diretorio + "\\" + codigoDistribuidor + "\\");
+		File dir = new File(diretorio + codigoDistribuidor + File.separator);
 		File[] files = dir.listFiles((FilenameFilter) new RegexFileFilter(interfaceExecucao.getMascaraArquivo()));
 		listaArquivos.addAll(Arrays.asList(files));
 		
