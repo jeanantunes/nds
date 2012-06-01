@@ -53,9 +53,15 @@ public class ProdutoEdicao implements Serializable {
 	@GeneratedValue(generator = "PROD_ED_SEQ")
 	@Column(name = "ID")
 	protected Long id;
+	
+	@Column(name = "CODIGO", nullable = false, unique = true)
+	protected String codigo;
 
-	@Column(name  = "CODIGO_DE_BARRAS")
+	@Column(name  = "CODIGO_DE_BARRAS", nullable = true)
 	protected String codigoDeBarras;
+	
+	@Column(name  = "CODIGO_DE_BARRAS_CORPORATIVO", nullable = true, length = 25)
+	protected String codigoDeBarraCorporativo;
 
 	@Column(name  = "NUMERO_EDICAO", nullable = false)
 	protected Long numeroEdicao;
@@ -65,6 +71,12 @@ public class ProdutoEdicao implements Serializable {
 	
 	@Column(name = "PRECO_VENDA", nullable = true)
 	protected BigDecimal precoVenda;
+	
+	@Column(name = "PRECO_PREVISTO", nullable = true)
+	protected BigDecimal precoPrevisto;
+	
+	@Column(name = "REPARTE_DISTRIBUIDO", nullable = true)
+	protected BigDecimal reparteDistribuido;
 	
 	@Column(name = "DESCONTO")
 	protected BigDecimal desconto = BigDecimal.ZERO;
@@ -99,7 +111,11 @@ public class ProdutoEdicao implements Serializable {
 	
 	@Embedded
 	protected Brinde brinde;
-		
+	
+	@ManyToOne(fetch=FetchType.LAZY, optional=true)
+	@JoinColumn(name="DESCONTO_LOGISTICA_ID", nullable=true)
+	private DescontoLogistica descontoLogistica;
+	
 	/**
 	 * Percentual de expectativa de venda do produto
 	 */
@@ -160,6 +176,20 @@ public class ProdutoEdicao implements Serializable {
 		return precoVenda;
 	}
 	
+	/**
+	 * @return the precoPrevisto
+	 */
+	public BigDecimal getPrecoPrevisto() {
+		return precoPrevisto;
+	}
+
+	/**
+	 * @param precoPrevisto the precoPrevisto to set
+	 */
+	public void setPrecoPrevisto(BigDecimal precoPrevisto) {
+		this.precoPrevisto = precoPrevisto;
+	}
+
 	public void setPrecoVenda(BigDecimal precoVenda) {
 		this.precoVenda = precoVenda;
 	}
@@ -411,4 +441,55 @@ public class ProdutoEdicao implements Serializable {
 	public void setOrigemInterface(Boolean origemInterface) {
 		this.origemInterface = origemInterface;
 	}
+
+	public DescontoLogistica getDescontoLogistica() {
+		return descontoLogistica;
+	}
+
+	public void setDescontoLogistica(DescontoLogistica descontoLogistica) {
+		this.descontoLogistica = descontoLogistica;
+	}
+
+	/**
+	 * @return the reparteDistribuido
+	 */
+	public BigDecimal getReparteDistribuido() {
+		return reparteDistribuido;
+	}
+
+	/**
+	 * @param reparteDistribuido the reparteDistribuido to set
+	 */
+	public void setReparteDistribuido(BigDecimal reparteDistribuido) {
+		this.reparteDistribuido = reparteDistribuido;
+	}
+
+	/**
+	 * @return the codigo
+	 */
+	public String getCodigo() {
+		return codigo;
+	}
+
+	/**
+	 * @param codigo the codigo to set
+	 */
+	public void setCodigo(String codigo) {
+		this.codigo = codigo;
+	}
+
+	/**
+	 * @return the codigoDeBarraCorporativo
+	 */
+	public String getCodigoDeBarraCorporativo() {
+		return codigoDeBarraCorporativo;
+	}
+
+	/**
+	 * @param codigoDeBarraCorporativo the codigoDeBarraCorporativo to set
+	 */
+	public void setCodigoDeBarraCorporativo(String codigoDeBarraCorporativo) {
+		this.codigoDeBarraCorporativo = codigoDeBarraCorporativo;
+	}
+
 }

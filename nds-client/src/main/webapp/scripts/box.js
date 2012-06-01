@@ -158,7 +158,6 @@ var boxController = {
 	},
 	bindData : function(data) {
 		this.box = data.box;
-		$("#boxCodigo,#boxTipoBox,#boxPostoAvancado").attr('disabled',data.associado);
 		
 		$("#boxCodigo").val(this.box.codigo);
 		$("#boxNome").val(this.box.nome);
@@ -225,8 +224,7 @@ var boxController = {
 	},
 	novo : function() {
 		var data = {
-			box : {},
-			associado:false
+			box : {}
 		};
 
 		this.bindData(data);

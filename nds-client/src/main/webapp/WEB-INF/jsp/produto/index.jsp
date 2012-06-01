@@ -1,12 +1,20 @@
 <head>
 	
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/produto.js"></script>
+	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
 	
 	<script type="text/javascript">
 
 		$(function() {
 				$( "#tabProduto" ).tabs();
 		});
+
+
+		function aplicarMascaras() {
+
+			$("#peb").numeric();
+			$("#pacotePadrao").numeric();
+		}
 		
 		var PesquisaProduto = {
 
@@ -27,44 +35,36 @@
 				
 			pesquisarProdutosSuccessCallBack:function() {
 				
-				PesquisaProduto.pesquisarBox(PesquisaProduto.getCodigoProdutoPesquisa());
 				PesquisaProduto.pesquisarFornecedor(PesquisaProduto.getCodigoProdutoPesquisa());
-				
-				$("#dataProgramada").val("");
-				
 			},
 			
 			pesquisarProdutosErrorCallBack: function() {
 					
-				PesquisaProduto.pesquisarBox(PesquisaProduto.getCodigoProdutoPesquisa());
 				PesquisaProduto.pesquisarFornecedor(PesquisaProduto.getCodigoProdutoPesquisa());
-				
-				$("#dataProgramada").val("");
-				
 			},
 
 			getCodigoProdutoPesquisa: function () {
 				return  "codigoProduto=" + $("#codigoProduto").val();
 			},
 			
-			pesquisarBox:function(data) {
-				
-				$.postJSON("<c:url value='/devolucao/chamadaEncalheAntecipada/pesquisarBox' />",
-						   data, PesquisaProduto.montarComboBoxs);
-			},		
-
-			montarComboBoxs:function(result) {
-				var comboBoxes = "<option selected='selected'  value='-1'></option>";  
-				
-				comboBoxes = comboBoxes + montarComboBox(result, true);
-				
-				$("#box").html(comboBoxes);
-			}, 
-
 			pesquisarFornecedor:function(data){
 			
 				$.postJSON("<c:url value='/devolucao/chamadaEncalheAntecipada/pesquisarFornecedor' />",
 						   data, PesquisaProduto.montarComboFornecedores);
+			},
+
+			//Mostrar auto complete por nome do produto
+			autoCompletarPorNomeFornecedor : function(idFornecedor, isFromModal) {
+				
+				produto.pesquisaRealizada = false;
+				
+				var nomeFornecedor = $(idFornecedor).val();
+				
+				if (nomeFornecedor && nomeFornecedor.length > 2) {
+					$.postJSON(contextPath + "/produto/autoCompletarPorNomeFornecedor", "nomeFornecedor=" + nomeFornecedor,
+							   function(result) { produto.exibirAutoComplete(result, idFornecedor); },
+							   null, isFromModal);
+				}
 			},
 
 			montarComboFornecedores:function(result) {
@@ -91,7 +91,7 @@
 		};
 
 		function carregarPercentualDesconto() {
-
+			
 			var codigoTipoDesconto = $("#comboTipoDesconto").val();
 
 			if (codigoTipoDesconto == '0') {
@@ -114,6 +114,7 @@
 		$(function() {
 			
 			inicializar();
+			aplicarMascaras();
 		});
 		
 		function iniciarGrid() {
@@ -251,8 +252,12 @@
 					carregarProdutoEditado(id);		
 				}
 			);
-			
-			
+		}
+
+		function carregarTipoDescontoProduto(callback) {
+			if (callback) {
+				callback();
+			}
 		}
 		
 		function carregarProdutoEditado(id) {
@@ -272,7 +277,7 @@
 							$("#subGrupoEditorial").val(result.subGrupoEditorial);
 							$("#comboEditor").val(result.codigoEditor);
 							$("#comboFornecedoresCadastro").val(result.codigoFornecedor);
-							$("#comboTipoDesconto").val(result.codigoTipoDesconto);
+							$("#comboTipoDesconto").val(result.tipoDesconto);
 							$("#comboTipoProdutoCadastro").val(result.codigoTipoProduto)
 
 							if (result.formaComercializacao == 'CONTA_FIRME') {
@@ -287,7 +292,9 @@
 								$("#radioIsento").attr('checked', true);
 							} else if (result.tributacaoFiscal == 'OUTROS') {
 								$("#radioTributacaoOutros").attr('checked', true);
-							}							
+							}
+
+							carregarTipoDescontoProduto(carregarPercentualDesconto);							
 						},
 						null,
 						true
@@ -722,7 +729,11 @@
 														    	   PesquisaProduto.pesquisarProdutosErrorCallBack);"/>
 				</td>
 				<td width="99">Fornecedor:</td>
-				<td width="251"><input type="text" id="fornecedor" style="width:200px;"/></td>
+				<td width="251">
+					<input type="text" id="fornecedor" name="fornecedor" style="width:200px;"
+					       onkeyup="PesquisaProduto.autoCompletarPorNomeFornecedor('#fornecedor', false);" />
+				
+				</td>
 				<td width="106">&nbsp;</td>
 			</tr>
 			<tr>

@@ -47,7 +47,7 @@ public interface RoteirizacaoService {
 
 	List<Rota> buscarRotaPorNome(Long roteiroId, String rotaNome, MatchMode matchMode);
 	
-	List<Roteirizacao> buscarRoterizacaoPorRota(Long rotaId);
+	List<CotaDisponivelRoteirizacaoDTO> buscarRoterizacaoPorRota(Long rotaId);
 	
 	List<CotaDisponivelRoteirizacaoDTO> buscarPvsPorCota(Integer numeroCota);
 	

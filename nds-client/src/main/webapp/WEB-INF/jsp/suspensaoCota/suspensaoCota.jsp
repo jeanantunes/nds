@@ -95,6 +95,9 @@
 					}
 				}
 			});
+		} else {
+			$(".suspensaoGrid").flexReload();
+			exibirMensagem(status,["Suspensão realizada com sucesso."]);
 		}
 	};
 	
