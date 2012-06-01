@@ -104,13 +104,25 @@
    	    <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
 			<tr>
 				<td width="75">Data Encalhe:</td>
-				<td width="114"><input name="datepickerDe" type="text" id="datepickerDe" style="width:80px;" /></td>
+				<td width="114"><input name="datepickerDe" type="text" id="datepickerDe" style="width:80px;" value="${dataOperacao}" /></td>
 				<td width="67">Fornecedor:</td>
-				<td width="216"><select name="select" id="select" style="width:200px;">
-				</select></td>
+				<td width="216">
+					<select name="selectFornecedor" id="selectFornecedor" style="width:200px;">
+					<option>Selecione...</option>
+					<c:forEach var="fornecedor" items="${listaFornecedores}">
+						<option value="${fornecedor.id}">${fornecedor.juridica.razaoSocial}</option>
+					</c:forEach>
+					</select>
+				</td>
 				<td width="97">Box de Encalhe:</td>
-				<td width="239"><select name="select2" id="select2" style="width:100px;">
-				</select></td>
+				<td width="239">
+					<select name="selectBoxEncalhe" id="selectBoxEncalhe" style="width:100px;">
+					<option>Selecione...</option>
+					<c:forEach var="box" items="${listaBoxes}">
+						<option value="${box.id}">${box.nome}</option>
+					</c:forEach>
+					</select>
+				</td>
 				<td width="106"><span class="bt_pesquisar"><a href="javascript:;" onclick="mostrar();">Pesquisar</a></span></td>
 			</tr>
 		</table>

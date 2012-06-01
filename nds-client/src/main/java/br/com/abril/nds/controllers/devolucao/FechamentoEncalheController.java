@@ -6,8 +6,14 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.dto.ItemDTO;
+import br.com.abril.nds.model.cadastro.Box;
+import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
+import br.com.abril.nds.model.cadastro.TipoBox;
+import br.com.abril.nds.service.BoxService;
+import br.com.abril.nds.service.DistribuidorService;
 import br.com.abril.nds.service.FornecedorService;
+import br.com.abril.nds.util.DateUtil;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
@@ -26,38 +32,24 @@ public class FechamentoEncalheController {
 	private Result result;
 	
 	@Autowired
+	private DistribuidorService distribuidorService;
+	
+	@Autowired
 	private FornecedorService fornecedorService;
+	
+	@Autowired
+	private BoxService boxService;
+	
 	
 	@Path("/")
 	public void index() {
 		
-		/*
-		List<ItemDTO<Long, String>> listaFornecedoresCombo =
-			this.carregarComboFornecedores(null);
-			
-		result.include("listaFornecedores", listaFornecedoresCombo);
-		*/
-	}
-	
-	
-	
-	/**
-	 * Método responsável por carregar o combo de fornecedores.
-	 */
-	private List<ItemDTO<Long, String>> carregarComboFornecedores(String codigoProduto) {
+		Distribuidor dist = distribuidorService.obter();
+		List<Fornecedor> listaFornecedores = fornecedorService.obterFornecedores();
+		List<Box> listaBoxes = boxService.buscarPorTipo(TipoBox.RECOLHIMENTO);
 		
-		List<Fornecedor> listaFornecedor =
-			fornecedorService.obterFornecedoresPorProduto(codigoProduto, null);
-		
-		List<ItemDTO<Long, String>> listaFornecedoresCombo =
-			new ArrayList<ItemDTO<Long,String>>();
-		
-		for (Fornecedor fornecedor : listaFornecedor) {
-			listaFornecedoresCombo.add(
-				new ItemDTO<Long, String>(fornecedor.getId(), fornecedor.getJuridica().getRazaoSocial())
-			);
-		}
-			
-		return listaFornecedoresCombo;
+		result.include("dataOperacao", DateUtil.formatarData(dist.getDataOperacao(), "dd/MM/yyyy"));
+		result.include("listaFornecedores", listaFornecedores);
+		result.include("listaBoxes", listaBoxes);
 	}
 }
