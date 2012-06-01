@@ -288,32 +288,54 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 			produtoEdicao.setNumeroEdicao(Long.valueOf(1));
 		}
 		
-		// TODO: Popular ProdutoEdicao:
-		// TODO: implementar atributos:
+		// Campos a serem persistidos:
+		
+		// Identificação:
 		produtoEdicao.setCodigo(dto.getCodigoProduto());	// View: Codigo da Edição;
 		produtoEdicao.setNomeComercial(dto.getNomeComercialProduto());
 		produtoEdicao.setNumeroEdicao(dto.getNumeroEdicao());
 		produtoEdicao.setPacotePadrao(dto.getPacotePadrao());
+		lancamento.setTipoLancamento(dto.getTipoLancamento());
+		
+		// Preço de capa:
 		produtoEdicao.setPrecoPrevisto(dto.getPrecoPrevisto());
 		produtoEdicao.setPrecoVenda(dto.getPrecoVenda());	// View: Preço real;
 		
+		// Data lançamento:
+		lancamento.setDataLancamentoPrevista(dto.getDataLancamentoPrevisto());
+		lancamento.setDataLancamentoDistribuidor(dto.getDataLancamento());	// Data Lançamento Real;
+
+		// Reparte:
 		BigDecimal repartePrevisto = dto.getRepartePrevisto();
 		BigDecimal repartePromocional = dto.getRepartePromocional();
+		lancamento.setReparte(repartePrevisto);
 		produtoEdicao.setReparteDistribuido(repartePrevisto.add(repartePromocional));
+		lancamento.setRepartePromocional(repartePromocional);
 		
+		// Características do lançamento:
+		// TODO: !!!colocar a categoria aqui!!!
 		produtoEdicao.setCodigoDeBarras(dto.getCodigoDeBarras());
 		produtoEdicao.setCodigoDeBarraCorporativo(dto.getCodigoDeBarrasCorporativo());
+		
+		// Tipos de desconto:
 		produtoEdicao.setDesconto(dto.getDesconto());
+		
+		// Outros:
 		produtoEdicao.setChamadaCapa(dto.getChamadaCapa());
-		produtoEdicao.setParcial(dto.isParcial());
+		produtoEdicao.setParcial(dto.isParcial());	// Regime de Recolhimento;
 		produtoEdicao.setPossuiBrinde(dto.isPossuiBrinde());
 		
+		// Característica Física:
+		produtoEdicao.setPeso(dto.getPeso());
 		Dimensao dimEdicao = new Dimensao();
 		dimEdicao.setLargura(dto.getLargura());
 		dimEdicao.setComprimento(dto.getComprimento());
 		dimEdicao.setEspessura(dto.getEspessura());
 		produtoEdicao.setDimensao(dimEdicao);
-		produtoEdicao.setPeso(dto.getPeso());
+		
+		// Texto boletim informativo:
+		produtoEdicao.setBoletimInformativo(dto.getBoletimInformativo());
+		
 		
 		Dimensao d = new Dimensao();
 		d.setLargura(dto.getLargura());
@@ -327,11 +349,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 			
 			// Salvar na tabela de lançamento: 
 			lancamento.setProdutoEdicao(produtoEdicao);
-			lancamento.setTipoLancamento(dto.getTipoLancamento());
-			lancamento.setDataLancamentoPrevista(dto.getDataLancamentoPrevisto());
-			lancamento.setDataLancamentoDistribuidor(dto.getDataLancamento());	// Data Lançamento Real;
-			lancamento.setReparte(repartePrevisto);
-			lancamento.setRepartePromocional(repartePromocional);
+			
 			
 		} else {
 			// update
