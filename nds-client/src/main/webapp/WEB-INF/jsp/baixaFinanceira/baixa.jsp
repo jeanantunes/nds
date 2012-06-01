@@ -767,6 +767,9 @@
         
         //OBTEM VALIDAÇÃO DE PERMISSÃO DE POSTERGAÇÃO
         function obterPostergacao() {
+
+        	postergarDivida();
+
 			$.postJSON("<c:url value='/financeiro/obterPostergacao' />",
 					   obterCobrancasDividasMarcadas());
 		}
@@ -855,6 +858,32 @@
 		
 		//-----------------------------------------------------
 		
+		$(function() {
+			$( "#dtPostergada" ).datepicker({
+				showOn: "button",
+				buttonImage: "${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
+				buttonImageOnly: true
+			});
+		});
+		
+		function postergarDivida() {
+		
+			$( "#dialog-postergar" ).dialog({
+				resizable: false,
+				height:220,
+				width:300,
+				modal: true,
+				buttons: {
+					"Confirmar": function() {
+
+						$( this ).dialog( "close" );
+					},
+					"Cancelar": function() {
+						$( this ).dialog( "close" );
+					}
+				}
+			});
+		};
 
 	</script>
 	
@@ -863,7 +892,7 @@
 		#resultadoIntegracao{display:none;}
         #tableBaixaManual, #tableBaixaAuto, #extratoBaixaManual, #porNossoNumero, #porCota, #dialog-divida{display:none;}
         #dialog-baixa-dividas,#dialog-detalhes-divida{display:none;}
-        #dialog-confirma-baixa-numero,#dialog-confirma-baixa,#dialog-confirma-pendente{display:none;}
+        #dialog-confirma-baixa-numero,#dialog-confirma-baixa,#dialog-confirma-pendente,#dialog-postergar{display:none;}
         
 	</style>
 	
@@ -1285,6 +1314,26 @@
             <div id="dialog-confirma-pendente" title="Baixa Manual de Dívidas">
 			    <p>Deseja manter as dívidas com o status [Pendente] até a confirmação do pagamento ?</p>
 		    </div> 
+
+			<div id="dialog-postergar" title="Postergar D&iacute;vida">
+				<fieldset style="width:255px!important;">
+			    	<legend>Postergar D&iacute;vida</legend>
+					<table width="230" border="0" cellspacing="2" cellpadding="0">
+			          <tr>
+			            <td width="121">Nova Data:</td>
+			            <td width="103"><input name="dtPostergada" type="text" id="dtPostergada" style="width:80px;" /></td>
+			          </tr>
+			          <tr>
+			            <td>Encargos R$:</td>
+			            <td><input type="text" style="width:80px; text-align:right;" /></td>
+			          </tr>
+			          <tr>
+			            <td>Isentos Encargos</td>
+			            <td><input type="checkbox" name="checkbox" id="checkbox" /></td>
+			          </tr>
+			        </table>
+			    </fieldset>
+			</div>
 
 			
 	    </fieldset>

@@ -60,41 +60,22 @@ public interface ProdutoService {
 	 * @return true caso ja exista o produto no estoque
 	 */
 	boolean isProdutoEmEstoque(String codigoProduto);
-
+	
 	/**
 	 * 
-	 * @param id
-	 * @param codigo
-	 * @param nomeProduto
+	 * @param produto
 	 * @param codigoEditor
 	 * @param codigoFornecedor
-	 * @param sloganProduto
 	 * @param codigoTipoDesconto
 	 * @param codigoTipoProduto
-	 * @param formaComercializacao
-	 * @param peb
-	 * @param pacotePadrao
-	 * @param periodicidade
-	 * @param percentualAbrangencia
-	 * @param algoritmo
-	 * @param parametrosAbertos
-	 * @param lancamentoImediato
-	 * @param comprimento
-	 * @param espessura
-	 * @param largura
-	 * @param peso
-	 * @param tributacaoFiscal
-	 * @param situacaoTributaria
-	 * @param classeHistogramaAnalitico
-	 * @param percentualCotaFixacao
-	 * @param percentualReparteFixacao
-	 * @param grupoEditorial
-	 * @param subGrupoEditorial
 	 */
-	void salvarProduto(Long id, String codigo, String nomeProduto, Long codigoEditor, Long codigoFornecedor,
-			String sloganProduto, Long codigoTipoDesconto, Long codigoTipoProduto, String formaComercializacao, Integer peb, 
-			Integer pacotePadrao, String periodicidade, Double percentualAbrangencia, String algoritmo, boolean parametrosAbertos, 
-			boolean lancamentoImediato, Double comprimento, Double espessura, Double largura, Double peso, 
-			String tributacaoFiscal, String situacaoTributaria, String classeHistogramaAnalitico, Double percentualCotaFixacao,
-			Double percentualReparteFixacao, String grupoEditorial, String subGrupoEditorial);
+	void salvarProduto(Produto produto, Long codigoEditor, Long codigoFornecedor, Long codigoTipoDesconto, Long codigoTipoProduto);
+	
+	/**
+	 * Retorna o Produto pelo se ID.
+	 * 
+	 * @param id
+	 * @return
+	 */
+	Produto obterProdutoPorID(Long id);
 }
