@@ -173,7 +173,7 @@ public interface ProdutoEdicaoRepository extends Repository<ProdutoEdicao, Long>
 	/**
 	 * Verifica se o ProdutoEdicao já foi publicado.<br>
 	 * Irá verificar se a Data de Publicação da Distribuida é mais que a "Data do
-	 * Dia Corrente (hoje)" do Lançamento {@link br.com.abril.nds.model.planejamento.Lancamento}
+	 * Dia Corrente (hoje)" do Lançamento ({@link br.com.abril.nds.model.planejamento.Lancamento})
 	 * mais antigo associado ao ProdutoEdição.
 	 *  
 	 * @param idProdutoEdicao
