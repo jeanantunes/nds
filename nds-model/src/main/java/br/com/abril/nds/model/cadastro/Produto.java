@@ -140,6 +140,12 @@ public class Produto implements Serializable {
 	@ManyToOne(optional = true)
 	@JoinColumn(name = "ALGORITMO_ID")
 	private Algoritmo algoritmo;
+
+	@Column(name="GRUPO_EDITORIAL", length=25, nullable = true)
+	private String grupoEditorial;
+	
+	@Column(name="SUB_GRUPO_EDITORIAL", length=25, nullable = true)
+	private String subGrupoEditorial;
 	
 	public Long getId() {
 		return id;
@@ -456,6 +462,31 @@ public class Produto implements Serializable {
 	 */
 	public void setAlgoritmo(Algoritmo algoritmo) {
 		this.algoritmo = algoritmo;
+	}
+
+	/**
+	 * @return the grupoEditorial
+	 */
+	public String getGrupoEditorial() {
+		return grupoEditorial;
+	}
+
+	/**
+	 * @param grupoEditorial the grupoEditorial to set
+	 */
+	public void setGrupoEditorial(String grupoEditorial) {
+		this.grupoEditorial = grupoEditorial;
+	}
+
+	/**
+	 * @return the subGrupoEditorial
+	 */
+	public String getSubGrupoEditorial() {
+		return subGrupoEditorial;
+	}
+	
+	public void setSubGrupoEditorial(String subGrupoEditorial) {
+		this.subGrupoEditorial = subGrupoEditorial;
 	}
 
 	public boolean isAtivo() {
