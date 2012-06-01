@@ -1,6 +1,7 @@
 package br.com.abril.nds.service.impl;
 
 import java.math.BigDecimal;
+import java.util.Calendar;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,16 +11,19 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.ConsultaProdutoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.cadastro.DescontoLogistica;
 import br.com.abril.nds.model.cadastro.Editor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.cadastro.TipoDesconto;
 import br.com.abril.nds.model.cadastro.TipoProduto;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.repository.EditorRepository;
 import br.com.abril.nds.repository.FornecedorRepository;
 import br.com.abril.nds.repository.ProdutoRepository;
+import br.com.abril.nds.repository.TipoDescontoRepository;
 import br.com.abril.nds.repository.TipoProdutoRepository;
 import br.com.abril.nds.service.EstoqueProdutoService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
@@ -54,6 +58,9 @@ public class ProdutoServiceImpl implements ProdutoService {
 	@Autowired
 	private TipoProdutoRepository tipoProdutoRepository;
 	
+	@Autowired
+	private TipoDescontoRepository tipoDescontoRepository;
+		
 	@Override
 	@Transactional(readOnly = true)
 	public Produto obterProdutoPorNomeProduto(String nome) {
@@ -176,6 +183,19 @@ public class ProdutoServiceImpl implements ProdutoService {
 			
 			produto.setPeriodicidade(PeriodicidadeProduto.QUINZENAL);
 			produto.setPeso(BigDecimal.TEN);
+
+			TipoDesconto tipoDesconto =
+				this.tipoDescontoRepository.buscarPorId(codigoTipoDesconto);
+
+			DescontoLogistica descontoLogistica = new DescontoLogistica();
+			
+			descontoLogistica.setPercentualDesconto(tipoDesconto.getPorcentagem().floatValue());
+			descontoLogistica.setTipoDesconto(tipoDesconto.getId().intValue());
+			descontoLogistica.getProdutos().add(produto);
+			descontoLogistica.setDataInicioVigencia(Calendar.getInstance().getTime());
+			descontoLogistica.setPercentualPrestacaoServico(tipoDesconto.getPorcentagem().floatValue());
+			
+			produto.setDescontoLogistica(descontoLogistica);
 			
 			this.produtoRepository.merge(produto);
 			
