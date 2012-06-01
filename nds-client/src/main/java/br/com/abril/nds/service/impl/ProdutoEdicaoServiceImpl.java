@@ -17,6 +17,7 @@ import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.dto.FuroProdutoDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.cadastro.Dimensao;
 import br.com.abril.nds.model.cadastro.ParametroSistema;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.TipoParametroSistema;
@@ -311,8 +312,10 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 		produtoEdicao.setPossuiBrinde(dto.isPossuiBrinde());
 		
 		produtoEdicao.setPeso(dto.getPeso());
-		dto.getAltura();	 // FIXME: INCLUIR
-		dto.getLargura();	 // FIXME: INCLUIR
+		Dimensao d = new Dimensao();
+		d.setLargura(dto.getLargura());
+		d.setComprimento(dto.getComprimento());
+		d.setEspessura(dto.getEspessura());
 		
 		if (produtoEdicao.getId() == null) {
 			
