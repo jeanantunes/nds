@@ -447,7 +447,6 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepository<ProdutoEdica
 		String hql = 
 				"SELECT count(pe.id) FROM ProdutoEdicao pe WHERE pe.produto = produto ";
 		
-		// Corpo da consulta com os filtros:
 		Query query = this.getSession().createQuery(hql);
 		query.setParameter("produto", produto);
 		
@@ -457,6 +456,25 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepository<ProdutoEdica
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
+	}
+
+	public boolean isProdutoEdicaoJaPublicada(Long idProdutoEdicao) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" SELECT CASE WHEN (ln.dataLancamentoDistribuidor > sysdate()) THEN false ELSE true END ");
+		hql.append("   FROM Lancamento ln ");
+		hql.append("  WHERE ln.dataCriacao = ");
+		hql.append("        (SELECT MIN(lnMinDate.dataCriacao) ");
+		hql.append("           FROM Lancamento lnMinDate ");
+		hql.append("          WHERE lnMinDate.produtoEdicao.id = :idProdutoEdicao ) ");
+		hql.append("    AND ln.produtoEdicao.id = :idProdutoEdicao ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setLong("idProdutoEdicao", idProdutoEdicao);
+		
+		Boolean isPublicado = (Boolean) query.uniqueResult(); 
+		return isPublicado.booleanValue();
 	}
 	
 }

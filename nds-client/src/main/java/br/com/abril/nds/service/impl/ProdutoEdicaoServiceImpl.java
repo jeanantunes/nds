@@ -270,6 +270,18 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 			lancamento = lancamentoRepository.obterUltimoLancamentoDaEdicao(
 					produtoEdicao.getId());
 			
+			/* 
+			 * Regrao: Só é permitido alterar o número da edição se a "Data de 
+			 * Lançamento do Distribuidor" for depois que a "Data 'de Hoje'".
+			 */
+			if (!produtoEdicao.getNumeroEdicao().equals(dto.getNumeroEdicao())) {
+				
+			}
+			
+			//dataLancamentoDistribuidor
+			
+			
+			
 			// FIXME REVISAR ESTA REGRA!!!
 			/* Regra: Não é permitido alterar o número da Edição se houver Lançamentos */
 			// Para editar um registro, só permitir a alteração do campo Edição se não existir Lançamento (tabela lancamento) para ele.
