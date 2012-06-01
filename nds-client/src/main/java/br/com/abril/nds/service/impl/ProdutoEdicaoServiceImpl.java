@@ -330,6 +330,12 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 		produtoEdicao.setDimensao(dimEdicao);
 		produtoEdicao.setPeso(dto.getPeso());
 		
+		Dimensao d = new Dimensao();
+		d.setLargura(dto.getLargura());
+		d.setComprimento(dto.getComprimento());
+		d.setEspessura(dto.getEspessura());
+		
+		
 		if (produtoEdicao.getId() == null) {
 			
 			// save
