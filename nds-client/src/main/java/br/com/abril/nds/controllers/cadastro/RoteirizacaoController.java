@@ -285,7 +285,7 @@ public class RoteirizacaoController {
 	@Path("/buscarRoterizacaoPorRota")
 	public void buscarRoterizacaoPorRota(Long rotaId,
 			String sortname, String sortorder, int rp, int page) {
-		List<Roteirizacao> lista = roteirizacaoService.buscarRoterizacaoPorRota(rotaId) ;
+		List<CotaDisponivelRoteirizacaoDTO>lista = roteirizacaoService.buscarRoterizacaoPorRota(rotaId) ;
 		int quantidade = lista.size();
 		result.use(FlexiGridJson.class).from(lista).total(quantidade).page(page).serialize();
 
