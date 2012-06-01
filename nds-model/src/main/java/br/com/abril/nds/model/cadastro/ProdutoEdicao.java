@@ -138,7 +138,7 @@ public class ProdutoEdicao implements Serializable {
 	@Column(name = "PARCIAL")
 	private boolean parcial;
 
-	@Column(name = "CHAMADA_CAPA", nullable = true)
+	@Column(name = "CHAMADA_CAPA", nullable = true, length = 255)
 	private String chamadaCapa;
 	
 	@Column(name = "ATIVO", nullable = false)
