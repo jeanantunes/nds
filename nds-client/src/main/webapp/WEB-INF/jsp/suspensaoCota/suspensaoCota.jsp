@@ -80,21 +80,22 @@
 		
 		if(cotas.length != 0) {
 			gerarRelatorio(cotas);
-		}
 		
-		$( "#divRelatorio" ).dialog({
-			resizable: false,
-			height:'auto',
-			width:380,
-			modal: true,
-			buttons: {
-				"Fechar": function() {
-					$(".suspensaoGrid").flexReload();
-					exibirMensagem(status,["Suspensão realizada com sucesso."]);
-					$( this ).dialog( "close" );
+		
+			$( "#divRelatorio" ).dialog({
+				resizable: false,
+				height:'auto',
+				width:380,
+				modal: true,
+				buttons: {
+					"Fechar": function() {
+						$(".suspensaoGrid").flexReload();
+						exibirMensagem(status,["Suspensão realizada com sucesso."]);
+						$( this ).dialog( "close" );
+					}
 				}
-			}
-		});
+			});
+		}
 	};
 	
 	

@@ -225,19 +225,19 @@ $(function() {
 	$(".mapaAbastecimentoDetalheGrid").flexigrid($.extend({},{
 		colModel : [ {	
 				display : 'Código',
-				name : 'codigo',
+				name : 'codigoProduto',
 				width : 80,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Produto',
-				name : 'produto',
+				name : 'nomeProduto',
 				width : 150,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Edição',
-				name : 'edicao',
+				name : 'numeroProduto',
 				width : 60,
 				sortable : true,
 				align : 'center'
@@ -255,7 +255,7 @@ $(function() {
 				align : 'right'
 			}, {
 				display : 'Total R$',
-				name : 'vlrTotal',
+				name : 'total',
 				width : 100,
 				sortable : true,
 				align : 'right'
