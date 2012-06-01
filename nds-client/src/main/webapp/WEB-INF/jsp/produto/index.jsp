@@ -1,12 +1,20 @@
 <head>
 	
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/produto.js"></script>
+	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
 	
 	<script type="text/javascript">
 
 		$(function() {
 				$( "#tabProduto" ).tabs();
 		});
+
+
+		function aplicarMascaras() {
+
+			$("#peb").numeric();
+			$("#pacotePadrao").numeric();
+		}
 		
 		var PesquisaProduto = {
 
@@ -106,6 +114,7 @@
 		$(function() {
 			
 			inicializar();
+			aplicarMascaras();
 		});
 		
 		function iniciarGrid() {
