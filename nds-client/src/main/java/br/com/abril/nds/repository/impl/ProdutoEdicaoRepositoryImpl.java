@@ -276,26 +276,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepository<ProdutoEdica
 		return null;
 	}
 
-	/**
-	 * Pesquisa as Edições já cadastradas.<br>
-	 * Possui como opções de filtro:<br>
-	 * <ul>
-	 * <li>Código do Produto;</li>
-	 * <li>Nome do Produto;</li>
-	 * <li>Data de Lançamento;</li>
-	 * <li>Situação do Lançamento;</li>
-	 * <li>Código de Barra da Edição;</li>
-	 * <li>Contém brinde;</li>
-	 * </ul>
-	 * 
-	 * @param dto
-	 * @param sortorder
-	 * @param sortname
-	 * @param initialResult
-	 * @param maxResults
-	 * 
-	 * @return
-	 */
+	@Override
 	@SuppressWarnings("unchecked")
 	public List<ProdutoEdicaoDTO> pesquisarEdicoes(ProdutoEdicaoDTO dto,
 			String sortorder, String sortname, int initialResult, int maxResults) {
@@ -320,13 +301,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepository<ProdutoEdica
 		}
 	}
 	
-	/**
-	 * Obtém a quantidade de edições cadastradas filtradas pelos critérios 
-	 * escolhidos pelo usuário.
-	 * 
-	 * @param dto
-	 * @return
-	 */
+	@Override
 	public Long countPesquisarEdicoes(ProdutoEdicaoDTO dto) {
 		
 		StringBuilder hql = new StringBuilder();
@@ -343,12 +318,23 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepository<ProdutoEdica
 	}
 	
 	/**
-	 * Corpo com a consulta HQL para pesquisar as edições já cadatradas.
+	 * Corpo com a consulta HQL para pesquisar e ordenar as edições já 
+	 * cadatradas.<br>
+	 * Possui como opções de filtro:<br>
+	 * <ul>
+	 * <li>Código do Produto;</li>
+	 * <li>Nome do Produto;</li>
+	 * <li>Data de Lançamento;</li>
+	 * <li>Situação do Lançamento;</li>
+	 * <li>Código de Barra da Edição;</li>
+	 * <li>Contém brinde;</li>
+	 * </ul>
 	 * 
 	 * @param hql
 	 * @param dto
 	 * @param sortname
 	 * @param sortorder
+	 * 
 	 * @return
 	 */
 	private Query queryBodyPesquisarEdicoes(StringBuilder hql, ProdutoEdicaoDTO dto, String sortname, String sortorder) {
@@ -409,17 +395,10 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepository<ProdutoEdica
 		return query;
 	}
 	
-	/**
-	 * Pesquisa as últimas edições cadastradas, .<br>
-	 * 
-	 * @param dto
-	 * @param maxResults
-	 * 
-	 * @return
-	 */
+	@Override
 	@SuppressWarnings("unchecked")
 	public List<ProdutoEdicaoDTO> pesquisarUltimasEdicoes(ProdutoEdicaoDTO dto,
-			int maxResults) {
+			int qtdEdicoes) {
 		
 		StringBuilder hql = new StringBuilder();
 		hql.append(" SELECT pe ");
@@ -427,7 +406,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepository<ProdutoEdica
 		// Corpo da consulta com os filtros:
 		Query query = this.queryBodyPesquisarEdicoes(hql, dto, "codigoProduto", "DESC");
 		
-		query.setMaxResults(maxResults);
+		query.setMaxResults(qtdEdicoes);
 		
 		try {
 			return query.list();
@@ -436,12 +415,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepository<ProdutoEdica
 		}
 	}
 	
-	/**
-	 * Verifica se existe alguma Edição já cadastrada para o produto.
-	 * 
-	 * @param produto
-	 * @return
-	 */
+	@Override
 	public boolean hasProdutoEdicao(Produto produto) {
 		
 		String hql = 
@@ -458,6 +432,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepository<ProdutoEdica
 		}
 	}
 
+	@Override
 	public boolean isProdutoEdicaoJaPublicada(Long idProdutoEdicao) {
 		
 		StringBuilder hql = new StringBuilder();
