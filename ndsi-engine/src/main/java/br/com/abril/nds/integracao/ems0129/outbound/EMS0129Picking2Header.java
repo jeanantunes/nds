@@ -3,6 +3,7 @@ package br.com.abril.nds.integracao.ems0129.outbound;
 import java.io.Serializable;
 import java.util.Date;
 
+import com.ancientprogramming.fixedformat4j.annotation.Align;
 import com.ancientprogramming.fixedformat4j.annotation.Field;
 import com.ancientprogramming.fixedformat4j.annotation.FixedFormatPattern;
 import com.ancientprogramming.fixedformat4j.annotation.Record;
@@ -66,7 +67,7 @@ public class EMS0129Picking2Header implements Serializable {
 		return separador1;
 	}
 	
-	@Field(offset = 3, length = 4)
+	@Field(offset = 3, length = 4, align = Align.RIGHT)
 	public Integer getCodigoCota() {
 		return codigoCota;
 	}
@@ -86,7 +87,7 @@ public class EMS0129Picking2Header implements Serializable {
 		return separador3;
 	}
 	
-	@Field(offset = 49, length = 7)
+	@Field(offset = 49, length = 7, align = Align.RIGHT)
 	@FixedFormatPattern("ddMMyyyy")
 	public Date getData() {
 		return data;

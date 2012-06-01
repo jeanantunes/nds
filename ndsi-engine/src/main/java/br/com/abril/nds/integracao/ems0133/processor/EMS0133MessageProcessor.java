@@ -77,7 +77,7 @@ public class EMS0133MessageProcessor implements MessageProcessor {
 			@SuppressWarnings("unchecked")
 			List<Lancamento> lancamentos = query.getResultList();
 			
-			PrintWriter print = new PrintWriter(new FileWriter(message.getHeader().get(MessageHeaderProperties.OUTBOUND_FOLDER)+"/"+sdf.format(data)+".drr"));	
+			PrintWriter print = new PrintWriter(new FileWriter(message.getHeader().get(MessageHeaderProperties.OUTBOUND_FOLDER.getValue())+"/"+sdf.format(data)+".drr"));	
 			
 			
 			

@@ -2,6 +2,7 @@ package br.com.abril.nds.integracao.ems0129.outbound;
 
 import java.math.BigDecimal;
 
+import com.ancientprogramming.fixedformat4j.annotation.Align;
 import com.ancientprogramming.fixedformat4j.annotation.Field;
 import com.ancientprogramming.fixedformat4j.annotation.Record;
 
@@ -51,7 +52,7 @@ public class EMS0129Picking2Trailer {
 		return separador1;
 	}
 	
-	@Field(offset = 3, length = 4)
+	@Field(offset = 3, length = 4, align = Align.RIGHT)
 	public Integer getCodigoCota() {
 		return codigoCota;
 	}
@@ -61,7 +62,7 @@ public class EMS0129Picking2Trailer {
 		return separador2;
 	}
 	
-	@Field(offset = 8, length = 10)
+	@Field(offset = 8, length = 10, align = Align.RIGHT)
 	public BigDecimal getValorTotalBruto() {
 		return valorTotalBruto;
 	}
@@ -71,7 +72,7 @@ public class EMS0129Picking2Trailer {
 		return separador3;
 	}
 	
-	@Field(offset = 19, length = 10)
+	@Field(offset = 19, length = 10, align = Align.RIGHT)
 	public BigDecimal getValorTotalDesconto() {
 		return valorTotalDesconto;
 	}
