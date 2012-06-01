@@ -22,6 +22,8 @@ import br.com.abril.nds.model.cadastro.ParametroSistema;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.TipoParametroSistema;
 import br.com.abril.nds.model.planejamento.Lancamento;
+import br.com.abril.nds.model.planejamento.StatusLancamento;
+import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.repository.DistribuicaoFornecedorRepository;
 import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.repository.ParametroSistemaRepository;
@@ -194,26 +196,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 		return this.produtoEdicaoRepository.obterProdutoPorCodigoNome(codigoNomeProduto);
 	}
 
-	/**
-	 * Pesquisa as Edições já cadastradas.<br>
-	 * Possui como opções de filtro:<br>
-	 * <ul>
-	 * <li>Código do Produto;</li>
-	 * <li>Nome do Produto;</li>
-	 * <li>Data de Lançamento;</li>
-	 * <li>Situação do Lançamento;</li>
-	 * <li>Código de Barra da Edição;</li>
-	 * <li>Contém brinde;</li>
-	 * </ul>
-	 * 
-	 * @param dto
-	 * @param sortorder
-	 * @param sortname
-	 * @param page
-	 * @param maxResults
-	 * 
-	 * @return
-	 */
+	@Override
 	@Transactional(readOnly = true)
 	public List<ProdutoEdicaoDTO> pesquisarEdicoes(ProdutoEdicaoDTO dto,
 			String sortorder, String sortname, int page, int maxResults) {
@@ -223,27 +206,14 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 				sortname, initialResult, maxResults);
 	}
 	
-	/**
-	 * Obtém a quantidade de edições cadastradas filtradas pelos critérios 
-	 * escolhidos pelo usuário.
-	 * 
-	 * @param dto
-	 * @return
-	 */
+	@Override
 	@Transactional(readOnly = true)
 	public Long countPesquisarEdicoes(ProdutoEdicaoDTO dto) {
 		
 		return this.produtoEdicaoRepository.countPesquisarEdicoes(dto);
 	}
 	
-	/**
-	 * Pesquisa as últimas edições cadastradas.<br>
-	 * 
-	 * @param dto
-	 * @param maxResults Quantidade das últimas edições cadastradas a ser exibidas.
-	 * 
-	 * @return
-	 */
+	@Override
 	@Transactional(readOnly = true)
 	public List<ProdutoEdicaoDTO> pesquisarUltimasEdicoes(ProdutoEdicaoDTO dto,
 			int maxResults) {
@@ -252,31 +222,55 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 				"codigoProduto", 0, 5);
 	}
 	
+	@Override
 	@Transactional
 	public void salvarProdutoEdicao(ProdutoEdicaoDTO dto, String codigoProduto, String contentType, InputStream imgInputStream) {
 		
+		// TODO: REFACTORING: após testar e validar, separa em métodos privados
+		// o save para ProdutoEdicao e Lancamento (melhorar a legibilidade do código).
+		
 		ProdutoEdicao produtoEdicao = null;
-		Lancamento lancamento = null;
+		Lancamento lancamento = 
+				//null;
+				new Lancamento();
 		if (dto.getId() == null) {
 			
-			// Salvar novo ProdutoEdicao:
+			// Novo ProdutoEdicao - create:
 			produtoEdicao = new ProdutoEdicao();
 			produtoEdicao.setProduto(produtoRepository.obterProdutoPorCodigo(codigoProduto));
+			
+			/*
+			 * TODO: REMOVER POSTERIORMENTE
 			lancamento = new Lancamento();
+			produtoEdicao.getLancamentos().add(lancamento);
+			 */
 		} else {
 			
-			// Atualizar ProdutoEdicao existente:
+			// ProdutoEdicao existente - update:
 			produtoEdicao = produtoEdicaoRepository.buscarPorId(dto.getId());
-			lancamento = lancamentoRepository.obterUltimoLancamentoDaEdicao(
-					produtoEdicao.getId());
 			
-			/* 
-			 * Regrao: Só é permitido alterar o número da edição se a 
-			 * "Data de Lançamento do Distribuidor" for depois que a 
-			 * "Data 'de Hoje'".
+			/*
+			 * TODO: REMOVER POSTERIORMENTE
+			lancamento = lancamentoRepository.obterUltimoLancamentoDaEdicao(produtoEdicao.getId());
 			 */
-			if (!produtoEdicao.getNumeroEdicao().equals(dto.getNumeroEdicao())) {
-				if (!produtoEdicaoRepository.isProdutoEdicaoJaPublicada(produtoEdicao.getId())) {
+			
+			/*
+			 * Regra: Os campos abaixos só podem ser alterados caso a Edição
+			 * ainda não tenha sido publicado pelo distribuidor:
+			 * - Código da Edição;
+			 * - Número da Edição;
+			 * 
+			 * Alteração: "Data de Lançamento do Distribuidor" > "Data 'de hoje'"
+			 */
+			if (!produtoEdicaoRepository.isProdutoEdicaoJaPublicada(produtoEdicao.getId())) {
+				
+				// Campo: Código do ProdutoEdicao:
+				if (!produtoEdicao.getCodigo().equals(dto.getCodigoProduto())) {
+					throw new ValidacaoException(TipoMensagem.ERROR, "Não é permitido alterar o código de uma Edição já publicada!");
+				}
+
+				// Campo: Número do ProdutoEdicao:
+				if (!produtoEdicao.getNumeroEdicao().equals(dto.getNumeroEdicao())) {
 					throw new ValidacaoException(TipoMensagem.ERROR, "Não é permitido alterar o número de uma Edição já publicada!");
 				}
 			}
@@ -288,7 +282,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 			produtoEdicao.setNumeroEdicao(Long.valueOf(1));
 		}
 		
-		// Campos a serem persistidos:
+		// Campos a serem persistidos e/ou alterados:
 		
 		// Identificação:
 		produtoEdicao.setCodigo(dto.getCodigoProduto());	// View: Codigo da Edição;
@@ -299,12 +293,11 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 		
 		// Preço de capa:
 		produtoEdicao.setPrecoPrevisto(dto.getPrecoPrevisto());
-		produtoEdicao.setPrecoVenda(dto.getPrecoVenda());	// View: Preço real;
 		
 		// Data lançamento:
 		lancamento.setDataLancamentoPrevista(dto.getDataLancamentoPrevisto());
 		lancamento.setDataLancamentoDistribuidor(dto.getDataLancamento());	// Data Lançamento Real;
-
+		
 		// Reparte:
 		BigDecimal repartePrevisto = dto.getRepartePrevisto();
 		BigDecimal repartePromocional = dto.getRepartePromocional();
@@ -313,7 +306,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 		lancamento.setRepartePromocional(repartePromocional);
 		
 		// Características do lançamento:
-		// TODO: !!!colocar a categoria aqui!!!
+		// TODO: !!!colocar o select da categoria aqui!!!
 		produtoEdicao.setCodigoDeBarras(dto.getCodigoDeBarras());
 		produtoEdicao.setCodigoDeBarraCorporativo(dto.getCodigoDeBarrasCorporativo());
 		
@@ -344,25 +337,48 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 		
 		if (produtoEdicao.getId() == null) {
 			
-			// save
+			// Campos a serem persistidos:
+			// Preço de capa:
+			produtoEdicao.setPrecoVenda(dto.getPrecoVenda());	// View: Preço real;
+			
+			// Salvar:
 			produtoEdicaoRepository.adicionar(produtoEdicao);
-			
-			// Salvar na tabela de lançamento: 
-			lancamento.setProdutoEdicao(produtoEdicao);
-			
-			
 		} else {
-			// update
 			
-			// TODO: Regra: Edição - permitir alteração do código de edição se o status não for LANÇADO;
-				dto.getCodigoProduto();
-				
-			
-			
-			
-			// TODO: No final, salvar na tabela de lançamento tb 
-			
-		}		
+			// Atualizar:
+			produtoEdicaoRepository.alterar(produtoEdicao);
+		}
+		
+		/*
+		 * TODO: Se na alteração de uma Edição, alguns dos dados do lançamento
+		 * for alterado, qual o procedimento a ser tomado?
+		 * - Editar o lançamento mais recente (o que foi exibido na tela para o usuário)?
+		 * - Criar um novo lançamento?
+		 * 
+		 * Caso seja criar um lancamento novo, alterar todas as regras de 
+		 * criação e persistencia
+		 * (irá tornar este código menor).
+		 */
+		// Cálcular as datas de Recolhimento:
+		int peb = produtoEdicao.getProduto().getPeb();
+		Calendar calPeb = Calendar.getInstance();
+		calPeb.setTime(lancamento.getDataLancamentoPrevista());
+		calPeb.add(Calendar.DAY_OF_MONTH, peb);
+		Date dtPeb = calPeb.getTime(); 
+		lancamento.setDataRecolhimentoDistribuidor(dtPeb);
+		lancamento.setDataRecolhimentoPrevista(dtPeb);
+		lancamento.setProdutoEdicao(produtoEdicao);
+		lancamento.setStatus(StatusLancamento.PLANEJADO);
+		lancamento.setTipoLancamento(TipoLancamento.LANCAMENTO);
+		
+		Date dtSysdate = new Date();
+		lancamento.setDataCriacao(dtSysdate);
+		lancamento.setDataStatus(dtSysdate);
+		lancamentoRepository.adicionar(lancamento);
+		
+		// Atualizar:
+		produtoEdicao.getLancamentos().add(lancamento);
+		produtoEdicaoRepository.alterar(produtoEdicao);
 		
 		
 		// Salvar imagem:
