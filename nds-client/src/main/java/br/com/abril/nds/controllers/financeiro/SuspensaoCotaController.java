@@ -56,7 +56,7 @@ public class SuspensaoCotaController {
 	
 	private static final Logger LOG = LoggerFactory
 			.getLogger(SuspensaoCotaController.class);
-	
+		
 	@Autowired
 	private HttpServletResponse httpResponse;
 	private final Result result;
@@ -115,8 +115,8 @@ public class SuspensaoCotaController {
 	}
 
 	private void verificarBaixaBancariaNaData() {
-				
-		boolean existeBaixa = baixaBancariaSerivice.verificarBaixaBancariaNaData(new Date());
+		
+		boolean existeBaixa = baixaBancariaSerivice.verificarBaixaBancariaNaData(distribuidorService.obter().getDataOperacao());
 		
 		if ( !existeBaixa ) {
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, SEM_BAIXA_NA_DATA));
