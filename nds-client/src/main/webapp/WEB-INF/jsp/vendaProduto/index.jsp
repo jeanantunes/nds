@@ -145,13 +145,7 @@
 		}
 		
 		$.each(resultado.rows, function(index, row) {
-			/*
-			$('#row.cell.total').val().maskMoney({
-				 thousands:'.', 
-				 decimal:',', 
-				 precision:2
-			});
-			*/
+			
 			var linkDetalhe = '<a href="javascript:;" onclick="popup_detalhes('+row.cell.numEdicao+');" style="cursor:pointer">' +
 							   	 '<img title="Lançamentos da Edição" src="${pageContext.request.contextPath}/images/ico_detalhes.png" hspace="5" border="0px" />' +
 							   '</a>';
@@ -190,7 +184,7 @@
 <body>
 	<div id="dialog-detalhes" title="Detalhes do Produto">
      <fieldset>
-     	<legend>Produto: ${produtoEdicao}  - Veja - Edição 001 - Tipo de Lançamento: Parcial</legend>
+     	<legend>Produto: 4455  - Veja - Edição 001 - Tipo de Lançamento: Parcial</legend>
         
         <table class="detalhesVendaGrid"></table>
          <span class="bt_novos" title="Gerar Arquivo">
@@ -229,20 +223,15 @@
 		        <td width="164"><input type="text" name="publica" id="produto" onkeyup="pesquisarPorNomeProduto();" style="width:150px;"/></td>
 		        <td width="45">Edição:</td>
 		        <td width="95"><input type="text" name="edicoes" id="edicoes" style="width:80px;"/></td>
-		        
-		        
-		        <td width="76">Fornecedor:</td>
-
-              <td width="239"><select name="select" id="select" style="width:200px;">
-
-                <option>Todos</option>
-
-                <option>Dinap</option>
-
-                <option>FC</option>
-
-              </select></td>
-		        
+		        <td width="67">Fornecedor:</td>
+              	<td colspan="2">
+					<select id="idFornecedor" name="idFornecedor" style="width:200px;">
+					    <option value="-1"  selected="selected">Todos</option>
+					    <c:forEach items="${listaFornecedores}" var="fornecedor">
+					      		<option value="${fornecedor.key}">${fornecedor.value}</option>	
+					    </c:forEach>
+					</select>
+       			</td>		        
 		        <td width="104"><span class="bt_pesquisar"><a href="javascript:;" onclick="cliquePesquisar();">Pesquisar</a></span></td>
 		      </tr>
 			</table>		
@@ -375,19 +364,19 @@
 				align : 'center'
 			}, {
 				display : 'Vendas',
-				name : 'venda',
+				name : 'vendaFormatado',
 				width : 70,
 				sortable : true,
 				align : 'center'
 			}, {
 				display : 'Venda Acumulada',
-				name : 'vendaAcumulada',
+				name : 'vendaAcumuladaFormatado',
 				width : 130,
 				sortable : true,
 				align : 'center'
 			}, {
 				display : '% Venda',
-				name : 'percentualVenda',
+				name : 'percentualVendaFormatado',
 				width : 60,
 				sortable : true,
 				align : 'center'

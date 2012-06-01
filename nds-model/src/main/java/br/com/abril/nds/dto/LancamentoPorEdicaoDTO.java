@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 import br.com.abril.nds.util.Constantes;
+import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Export.Alignment;
@@ -16,29 +17,32 @@ public class LancamentoPorEdicaoDTO implements Serializable  {
 	
 	private static final long serialVersionUID = -4125231140420830266L;
 	
-	@Export(label = "Período", alignment=Alignment.CENTER)
+	@Export(label = "Período", alignment=Alignment.CENTER, exhibitionOrder = 1)
 	private String periodo;
 	
-	@Export(label = "Data Lançamento", alignment=Alignment.CENTER)
+	@Export(label = "Data Lançamento", alignment=Alignment.CENTER, exhibitionOrder = 2)
 	private String dataLancamento;
 	
-	@Export(label = "Data Recolhimento", alignment=Alignment.CENTER)
+	@Export(label = "Data Recolhimento", alignment=Alignment.CENTER, exhibitionOrder = 3)
 	private String dataRecolhimento;
 	
-	@Export(label = "Reparte", alignment=Alignment.CENTER)
+	@Export(label = "Reparte", alignment=Alignment.CENTER, exhibitionOrder = 4)
 	private BigDecimal reparte;
 	
-	@Export(label = "Encalhe", alignment=Alignment.CENTER)
+	@Export(label = "Encalhe", alignment=Alignment.CENTER, exhibitionOrder = 5)
 	private BigDecimal encalhe;
 	
-	@Export(label = "Venda", alignment=Alignment.CENTER)
 	private BigDecimal venda;
 	
-	@Export(label = "Venda Acumulada", alignment=Alignment.CENTER)
 	private BigDecimal vendaAcumulada;
 	
-	@Export(label = "% Venda", alignment=Alignment.CENTER)
 	private BigDecimal percentualVenda;
+	
+	private String vendaFormatado;
+	
+	private String vendaAcumuladaFormatado;
+	
+	private String percentualVendaFormatado;
 	
 	public LancamentoPorEdicaoDTO() {
 		
@@ -56,6 +60,13 @@ public class LancamentoPorEdicaoDTO implements Serializable  {
 	}
 	
 	
+	public String getPeriodo() {
+		return periodo;
+	}
+
+	public void setPeriodo(String periodo) {
+		this.periodo = periodo;
+	}
 
 	public String getDataLancamento() {
 		return dataLancamento;
@@ -80,22 +91,6 @@ public class LancamentoPorEdicaoDTO implements Serializable  {
 	public void setReparte(BigDecimal reparte) {
 		this.reparte = reparte;
 	}
-
-	public BigDecimal getVenda() {
-		return venda;
-	}
-
-	public void setVenda(BigDecimal venda) {
-		this.venda = venda;
-	}
-
-	public BigDecimal getPercentualVenda() {
-		return percentualVenda;
-	}
-
-	public void setPercentualVenda(BigDecimal percentualVenda) {
-		this.percentualVenda = percentualVenda;
-	}
 	
 	public BigDecimal getEncalhe() {
 		return encalhe;
@@ -105,19 +100,52 @@ public class LancamentoPorEdicaoDTO implements Serializable  {
 		this.encalhe = encalhe;
 	}
 
-	public String getPeriodo() {
-		return periodo;
+	public BigDecimal getVenda() {
+		return venda;
 	}
 
-	public void setPeriodo(String periodo) {
-		this.periodo = periodo;
+	public void setVenda(BigDecimal venda) {
+		this.venda = venda;
+		if (venda != null) {
+			vendaFormatado = CurrencyUtil.formatarValor(venda);
+		}
 	}
-
+	
+	@Export(label = "Venda", alignment=Alignment.CENTER, exhibitionOrder = 6)
+	public String getVendaFormatado() {
+		return vendaFormatado;
+	}
+	
 	public BigDecimal getVendaAcumulada() {
 		return vendaAcumulada;
 	}
 
 	public void setVendaAcumulada(BigDecimal vendaAcumulada) {
 		this.vendaAcumulada = vendaAcumulada;
+		if (vendaAcumulada != null) {
+			vendaAcumuladaFormatado = CurrencyUtil.formatarValor(vendaAcumulada);
+		}
 	}
+	
+	@Export(label = "Venda Acumulada", alignment=Alignment.CENTER, exhibitionOrder = 7)
+	public String getVendaAcumuladaFormatado() {
+		return vendaAcumuladaFormatado;
+	}
+
+	public BigDecimal getPercentualVenda() {
+		return percentualVenda;
+	}
+
+	public void setPercentualVenda(BigDecimal percentualVenda) {
+		this.percentualVenda = percentualVenda;
+		if (percentualVenda != null) {
+			percentualVendaFormatado = CurrencyUtil.formatarValor(percentualVenda);
+		}
+	}
+	
+	@Export(label = "% Venda", alignment=Alignment.CENTER, exhibitionOrder = 8)
+	public String getPercentualVendaFormatado() {
+		return percentualVendaFormatado;
+	}
+
 }

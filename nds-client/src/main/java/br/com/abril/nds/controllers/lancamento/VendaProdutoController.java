@@ -17,11 +17,9 @@ import br.com.abril.nds.dto.filtro.FiltroVendaProdutoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
-import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.service.DistribuidorService;
 import br.com.abril.nds.service.FornecedorService;
-import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.VendaProdutoService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.TableModel;
@@ -60,9 +58,6 @@ public class VendaProdutoController {
 	@Autowired
 	private HttpServletResponse httpResponse;
 	
-	@Autowired
-	private ProdutoEdicaoService produtoEdicaoService;
-	
 	public VendaProdutoController(Result result) {
 		this.result = result;
 	}
@@ -70,7 +65,7 @@ public class VendaProdutoController {
 	
 	@Path("/")
 	public void index(){
-		//this.carregarComboFornecedores();
+		this.carregarComboFornecedores();
 	}
 	
 	
@@ -86,16 +81,12 @@ public class VendaProdutoController {
 		
 		TableModel<CellModelKeyValue<VendaProdutoDTO>> tableModel = efetuarConsultaVendaProduto(filtro);
 		
-		//result.include("listaFornecedores",filtro );
-		
 		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
 	}
 	
 	private TableModel<CellModelKeyValue<VendaProdutoDTO>> efetuarConsultaVendaProduto(FiltroVendaProdutoDTO filtro) {
 		 
 		List<VendaProdutoDTO> listaVendaProdutoDTO =  this.vendaProdutoService.buscaVendaPorProduto(filtro);				
-		
-		//Integer totalRegistros = lancamentoParcialService.totalBuscaLancamentosParciais(filtro);
 		
 		TableModel<CellModelKeyValue<VendaProdutoDTO>> tableModel = new TableModel<CellModelKeyValue<VendaProdutoDTO>>();
 
@@ -118,10 +109,6 @@ public class VendaProdutoController {
 		
 		TableModel<CellModelKeyValue<LancamentoPorEdicaoDTO>> tableModel = efetuarConsultaLancamentoEdicao(filtro);
 		
-		ProdutoEdicao produtoEdicao = this.produtoEdicaoService.obterProdutoEdicaoPorCodProdutoNumEdicao(filtro.getCodigo(), filtro.getEdicao().toString());
-		
-		result.include("produtoEdicao",produtoEdicao );
-		
 		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
 	}
 	
@@ -137,8 +124,6 @@ public class VendaProdutoController {
 				cont++;
 			}			
 		}
-		
-		//Integer totalRegistros = lancamentoParcialService.totalBuscaLancamentosParciais(filtro);
 		
 		TableModel<CellModelKeyValue<LancamentoPorEdicaoDTO>> tableModel = new TableModel<CellModelKeyValue<LancamentoPorEdicaoDTO>>();
 
@@ -187,8 +172,6 @@ public class VendaProdutoController {
 					lista, LancamentoPorEdicaoDTO.class, this.httpResponse);
 		}
 		
-		
-		
 		result.nothing();
 	}
 	
@@ -225,7 +208,6 @@ public class VendaProdutoController {
 	}
 	
 	public Usuario getUsuario() {
-		//TODO getUsuario
 		Usuario usuario = new Usuario();
 		usuario.setId(1L);
 		usuario.setNome("Lazaro Jornaleiro");
