@@ -190,7 +190,7 @@ public class ProdutoServiceImpl implements ProdutoService {
 
 			produto = this.produtoRepository.merge(produto);
 			
-			if (codigoTipoDesconto != null) {
+			if (codigoTipoDesconto != null && codigoTipoDesconto.intValue() > 0) {
 				
 				TipoDesconto tipoDesconto =
 					this.tipoDescontoRepository.buscarPorId(codigoTipoDesconto);
