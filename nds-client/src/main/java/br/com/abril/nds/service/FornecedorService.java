@@ -161,4 +161,6 @@ public interface FornecedorService {
 	 * @return true/false
 	 */
 	boolean isPessoaJaCadastrada(Long idPessoa, Long idFornecedor);
+
+	List<Fornecedor> obterFornecedorLikeNomeFornecedor(String nomeFornecedor);
 }

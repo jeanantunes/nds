@@ -95,7 +95,7 @@ public class ProdutoController {
 			
 		}		
 	}
-	
+
 	@Post
 	public void autoCompletarPorPorNomeProduto(String nomeProduto) {
 		List<Produto> listaProduto = this.produtoService.obterProdutoLikeNomeProduto(nomeProduto);
@@ -117,6 +117,30 @@ public class ProdutoController {
 		}
 		
 		result.use(Results.json()).from(listaProdutos, "result").include("value", "chave").serialize();
+	}
+
+	@Post
+	public void autoCompletarPorNomeFornecedor(String nomeFornecedor) {
+		
+		List<Fornecedor> listaFornecedor = this.fornecedorService.obterFornecedorLikeNomeFornecedor(nomeFornecedor);
+		
+		List<ItemAutoComplete> listaFornecedores = new ArrayList<ItemAutoComplete>();
+		
+		if (listaFornecedor != null && !listaFornecedor.isEmpty()) {
+			Fornecedor fornecedorAutoComplete = null;
+			
+			for (Fornecedor fornecedor : listaFornecedor) {
+				fornecedorAutoComplete = new Fornecedor();
+				fornecedorAutoComplete.setId(fornecedor.getId());
+				
+				ItemAutoComplete itemAutoComplete =
+					new ItemAutoComplete(fornecedor.getJuridica().getNomeFantasia(), null, fornecedorAutoComplete);
+				
+				listaFornecedores.add(itemAutoComplete);
+			}
+		}
+		
+		result.use(Results.json()).from(listaFornecedores, "result").include("value", "chave").serialize();
 	}
 	
 	@Post
@@ -325,8 +349,7 @@ public class ProdutoController {
 				codigoTipoDesconto, codigoTipoProduto);
 			
 		} catch (Exception e) {
-			this.result.use(Results.json()).from(
-				new ValidacaoVO(TipoMensagem.ERROR, "Erro ao tentar salvar o Produto!"), "result").recursive().serialize();
+			throw new ValidacaoException(TipoMensagem.ERROR, "Erro ao tentar salvar o Produto!");
 		}
 		
 		this.result.use(Results.json()).from(

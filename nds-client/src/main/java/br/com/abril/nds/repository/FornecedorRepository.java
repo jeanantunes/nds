@@ -87,4 +87,6 @@ public interface FornecedorRepository extends Repository<Fornecedor, Long> {
 	 * @return qtde
 	 */
 	Integer obterQuantidadeFornecedoresPorIdPessoa(Long idPessoa, Long idFornecedor);
+	
+	List<Fornecedor> obterFornecedorLikeNomeFantasia(String nomeFantasia);
 }
