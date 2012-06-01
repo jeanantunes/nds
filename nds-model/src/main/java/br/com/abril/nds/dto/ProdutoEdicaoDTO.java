@@ -3,6 +3,7 @@ package br.com.abril.nds.dto;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
@@ -42,6 +43,38 @@ public class ProdutoEdicaoDTO implements Serializable {
 	private String statusLancamento;
 	private String statusSituacao;
 	private String temBrinde;
+	
+	// Listas e comboBox para Incluir/Alterar:
+	private List<ProdutoEdicaoDTO> ultimasEdicoes;
+	private List<TipoLancamento> tiposLancamentos;
+	
+	// Campos para cadastrar uma nova Edição:
+	// codigoProduto;
+	private String nomeComercialProduto;
+	// numeroEdicao; pacotePadrao;
+	private BigDecimal precoPrevisto;
+	// precoVenda; (Real)
+	private BigDecimal repartePrevisto;
+	private BigDecimal reparteDistribuido;
+	private BigDecimal repartePromocional;
+	// codigoDeBarras
+	private String codigoDeBarrasCorporativo;
+	// desconto;
+	private String chamadaCapa;
+	// parcial;	-- Regime de Recolhimento;
+	// brinde;
+	// peso;
+	private BigDecimal altura;
+	private BigDecimal largura;
+	private String boletimInformativo;
+	
+	
+	// Lancamento:
+	// tipoLancamento;
+	private Date dataLancamentoPrevisto;
+	// dataLancamento; (Real)
+	// categoria;
+	
 	
 	
 	/**
@@ -253,6 +286,162 @@ public class ProdutoEdicaoDTO implements Serializable {
 	}
 	public void setTemBrinde(Boolean temBrinde) {
 		this.temBrinde = temBrinde.booleanValue() ? "Sim" : "Não";
+	}
+	/**
+	 * @return the ultimasEdicoes
+	 */
+	public List<ProdutoEdicaoDTO> getUltimasEdicoes() {
+		return ultimasEdicoes;
+	}
+	/**
+	 * @param ultimasEdicoes the ultimasEdicoes to set
+	 */
+	public void setUltimasEdicoes(List<ProdutoEdicaoDTO> ultimasEdicoes) {
+		this.ultimasEdicoes = ultimasEdicoes;
+	}
+	/**
+	 * @return the nomeComercialProduto
+	 */
+	public String getNomeComercialProduto() {
+		return nomeComercialProduto;
+	}
+	/**
+	 * @param nomeComercialProduto the nomeComercialProduto to set
+	 */
+	public void setNomeComercialProduto(String nomeComercialProduto) {
+		this.nomeComercialProduto = nomeComercialProduto;
+	}
+	/**
+	 * @return the tiposLancamentos
+	 */
+	public List<TipoLancamento> getTiposLancamentos() {
+		return tiposLancamentos;
+	}
+	/**
+	 * @param tiposLancamentos the tiposLancamentos to set
+	 */
+	public void setTiposLancamentos(List<TipoLancamento> tiposLancamentos) {
+		this.tiposLancamentos = tiposLancamentos;
+	}
+	/**
+	 * @return the precoPrevisto
+	 */
+	public BigDecimal getPrecoPrevisto() {
+		return precoPrevisto;
+	}
+	/**
+	 * @param precoPrevisto the precoPrevisto to set
+	 */
+	public void setPrecoPrevisto(BigDecimal precoPrevisto) {
+		this.precoPrevisto = precoPrevisto;
+	}
+	/**
+	 * @return the dataLancamentoPrevisto
+	 */
+	public Date getDataLancamentoPrevisto() {
+		return dataLancamentoPrevisto;
+	}
+	/**
+	 * @param dataLancamentoPrevisto the dataLancamentoPrevisto to set
+	 */
+	public void setDataLancamentoPrevisto(Date dataLancamentoPrevisto) {
+		this.dataLancamentoPrevisto = dataLancamentoPrevisto;
+	}
+	/**
+	 * @return the repartePrevisto
+	 */
+	public BigDecimal getRepartePrevisto() {
+		return repartePrevisto;
+	}
+	/**
+	 * @param repartePrevisto the repartePrevisto to set
+	 */
+	public void setRepartePrevisto(BigDecimal repartePrevisto) {
+		this.repartePrevisto = repartePrevisto;
+	}
+	/**
+	 * @return the reparteDistribuido
+	 */
+	public BigDecimal getReparteDistribuido() {
+		return reparteDistribuido;
+	}
+	/**
+	 * @param reparteDistribuido the reparteDistribuido to set
+	 */
+	public void setReparteDistribuido(BigDecimal reparteDistribuido) {
+		this.reparteDistribuido = reparteDistribuido;
+	}
+	/**
+	 * @return the repartePromocional
+	 */
+	public BigDecimal getRepartePromocional() {
+		return repartePromocional;
+	}
+	/**
+	 * @param repartePromocional the repartePromocional to set
+	 */
+	public void setRepartePromocional(BigDecimal repartePromocional) {
+		this.repartePromocional = repartePromocional;
+	}
+	/**
+	 * @return the codigoDeBarrasCorporativo
+	 */
+	public String getCodigoDeBarrasCorporativo() {
+		return codigoDeBarrasCorporativo;
+	}
+	/**
+	 * @param codigoDeBarrasCorporativo the codigoDeBarrasCorporativo to set
+	 */
+	public void setCodigoDeBarrasCorporativo(String codigoDeBarrasCorporativo) {
+		this.codigoDeBarrasCorporativo = codigoDeBarrasCorporativo;
+	}
+	/**
+	 * @return the chamadaCapa
+	 */
+	public String getChamadaCapa() {
+		return chamadaCapa;
+	}
+	/**
+	 * @param chamadaCapa the chamadaCapa to set
+	 */
+	public void setChamadaCapa(String chamadaCapa) {
+		this.chamadaCapa = chamadaCapa;
+	}
+	/**
+	 * @return the altura
+	 */
+	public BigDecimal getAltura() {
+		return altura;
+	}
+	/**
+	 * @param altura the altura to set
+	 */
+	public void setAltura(BigDecimal altura) {
+		this.altura = altura;
+	}
+	/**
+	 * @return the largura
+	 */
+	public BigDecimal getLargura() {
+		return largura;
+	}
+	/**
+	 * @param largura the largura to set
+	 */
+	public void setLargura(BigDecimal largura) {
+		this.largura = largura;
+	}
+	/**
+	 * @return the boletimInformativo
+	 */
+	public String getBoletimInformativo() {
+		return boletimInformativo;
+	}
+	/**
+	 * @param boletimInformativo the boletimInformativo to set
+	 */
+	public void setBoletimInformativo(String boletimInformativo) {
+		this.boletimInformativo = boletimInformativo;
 	}
 	
 }

@@ -110,7 +110,7 @@ var roteirizacao = {
 				//	roteirizacao.populaDadosRoteiro(ui.item.chave);
 				
 				},
-				minLength: 2,
+				minLength: 3,
 				delay : 0,
 			});
 		},
@@ -436,13 +436,14 @@ var roteirizacao = {
 			  $(".rotasGrid").flexReload();
 		  }
 		},
+		
 		iniciaCotasRotaGrid : function(){
 			$(".cotasRotaGrid").flexigrid({
 				preProcess:roteirizacao.callBackCotasRotaGrid,
 				dataType : 'json',
 				colModel : [ {
 					display : '',
-					name : 'ordem',
+					name : 'index',
 					width : 15,
 					sortable : true,
 					align : 'center'
@@ -454,7 +455,7 @@ var roteirizacao = {
 					align : 'left'
 				}, {
 					display : 'Pto. Venda',
-					name : 'ptoVenda',
+					name : 'pontoVenda',
 					width : 80,
 					sortable : true,
 					align : 'left'
@@ -472,7 +473,7 @@ var roteirizacao = {
 					align : 'left'
 				}, {
 					display : 'Cota',
-					name : 'cota',
+					name : 'numeroCota',
 					width : 30,
 					sortable : true,
 					align : 'left'
@@ -483,7 +484,7 @@ var roteirizacao = {
 					sortable : true,
 					align : 'left'
 				}, {
-					display : 'Ordernar',
+					display : 'Ordenar',
 					name : 'ordenar',
 					width : 50,
 					sortable : true,
@@ -498,12 +499,8 @@ var roteirizacao = {
 		callBackCotasRotaGrid :  function (data){
 			
 			$.each(data.rows, function(index, value) {
-//				var idRota = value.cell.id;
-//				var selecione = '<input type="checkbox" value="'+idRota +'" name="rotaCheckbox" id="rotaCheckbox" />';
-//				var detalhe ='<a href="javascript:;"><img src="'+contextPath+'/images/ico_detalhes.png" border="0" alt="Detalhes" /></a>';
-//				value.cell.selecione = selecione;
-//				value.cell.detalhe = detalhe;
-	        	
+				value.cell.index = index;
+				value.cell.ordenar = '<a href="javascript:;"><img src="'+contextPath+'/images/seta_sobe.gif" border="0" alt="Sobe" hspace="3" /></a><a href="javascript:;"><img src="'+contextPath+'/images/seta_desce_desab.gif" border="0" alt="Desce" hspace="5" /></a>';
 			});
 			
 			$(".grids").show();
@@ -706,27 +703,8 @@ var roteirizacao = {
 	},
 	
 
-//	private Integer idPontoVenda;
-//	
-//	private String pontoVenda;
-//	
-//	private String origemEndereco;
-//	
-//	private String endereco;
-//	
-//	private Integer numeroCota;
-//	
-//	private String nome ;
-//	
-//	private Integer ordem;
-//	
 	confirmaRoteirizacao : function () {
-		
-
         var params = roteirizacao.populaParamentrosContaSelecionadas();
-		
-//		lista = new Array();
-//		lista[0] = new CotaDisponivelRoteirizacaoDTO(1,"Buy plane tickets" ,"teste",  "teste2" ,2 , "teste3" , 1 );
      	$.postJSON(contextPath + '/cadastro/roteirizacao/confirmaRoteirizacao', params,
 				function(result) {
 		            roteirizacao.populaBairro(result);

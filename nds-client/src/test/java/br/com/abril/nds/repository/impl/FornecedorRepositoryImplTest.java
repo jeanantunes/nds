@@ -243,4 +243,15 @@ public class FornecedorRepositoryImplTest extends AbstractRepositoryImplTest {
 		fornecedorRepository.obterFornecedoresIdNome(SituacaoCadastro.ATIVO, true);
 		fornecedorRepository.obterFornecedoresIdNome(null, false);
 	}
+	
+	@Test
+	public void testBuscaFornecedoresLike() {
+		
+		List<Fornecedor> fornecedores =
+			this.fornecedorRepository.obterFornecedorLikeNomeFantasia("din");
+		
+		Assert.assertNotNull(fornecedores);
+		
+	}
+	
 }
