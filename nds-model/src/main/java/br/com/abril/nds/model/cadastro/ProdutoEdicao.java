@@ -93,18 +93,6 @@ public class ProdutoEdicao implements Serializable {
 	@Column(name = "PESO", nullable = false)
 	protected BigDecimal peso;
 	
-	@Column(name = "ESPESSURA", nullable = true)
-	protected BigDecimal espessura; 
-	
-	@Column(name = "LARGURA", nullable = true)
-	protected BigDecimal largura; 
-	
-	@Column(name = "COMPRIMENTO", nullable = true)
-	protected BigDecimal comprimento;
-	
-	@Column(name = "BOLETIM_INFORMATIVO", nullable = true)
-	protected String boletimInformativo;
-	
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "PRODUTO_ID")
 	protected Produto produto;
@@ -504,60 +492,4 @@ public class ProdutoEdicao implements Serializable {
 		this.codigoDeBarraCorporativo = codigoDeBarraCorporativo;
 	}
 
-	/**
-	 * @return the espessura
-	 */
-	public BigDecimal getEspessura() {
-		return espessura;
-	}
-
-	/**
-	 * @param espessura the espessura to set
-	 */
-	public void setEspessura(BigDecimal espessura) {
-		this.espessura = espessura;
-	}
-
-	/**
-	 * @return the largura
-	 */
-	public BigDecimal getLargura() {
-		return largura;
-	}
-
-	/**
-	 * @param largura the largura to set
-	 */
-	public void setLargura(BigDecimal largura) {
-		this.largura = largura;
-	}
-
-	/**
-	 * @return the comprimento
-	 */
-	public BigDecimal getComprimento() {
-		return comprimento;
-	}
-
-	/**
-	 * @param comprimento the comprimento to set
-	 */
-	public void setComprimento(BigDecimal comprimento) {
-		this.comprimento = comprimento;
-	}
-
-	/**
-	 * @return the boletimInformativo
-	 */
-	public String getBoletimInformativo() {
-		return boletimInformativo;
-	}
-
-	/**
-	 * @param boletimInformativo the boletimInformativo to set
-	 */
-	public void setBoletimInformativo(String boletimInformativo) {
-		this.boletimInformativo = boletimInformativo;
-	}
-	
 }
