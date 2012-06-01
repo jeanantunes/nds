@@ -739,10 +739,7 @@
 			<tr>
 				<td>Editor:</td>
 				<td colspan="3" >
-					<input type="text" style="width:410px;" name="edicao" id="edicao" maxlength="20" disabled="disabled"
-							   onchange="produto.validarNumEdicao('#codigoProduto', '#edicao', false,
-							   										PesquisaProduto.validarEdicaoSuccessCallBack,
-						    	   									PesquisaProduto.validarEdicaoErrorCallBack);"/>
+					<input type="text" style="width:410px;" name="edicao" id="edicao" maxlength="20" disabled="disabled"/>
 				</td>
 				<td>Tipo de Produto:</td>
 				<td>
