@@ -17,7 +17,7 @@
 	<bean
 		class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean"
 		id="ndsi-entityManagerFactory">
-		<property name="dataSource" ref="nds-client" />
+		<property name="dataSource" ref="ndsi-datasource" />
 		<property name="persistenceUnitName" value="ndsi-pu1"></property>
 		<property name="persistenceUnitPostProcessors">
 			<list>
