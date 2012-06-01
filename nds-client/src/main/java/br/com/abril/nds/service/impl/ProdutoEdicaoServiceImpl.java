@@ -271,29 +271,15 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 					produtoEdicao.getId());
 			
 			/* 
-			 * Regrao: Só é permitido alterar o número da edição se a "Data de 
-			 * Lançamento do Distribuidor" for depois que a "Data 'de Hoje'".
+			 * Regrao: Só é permitido alterar o número da edição se a 
+			 * "Data de Lançamento do Distribuidor" for depois que a 
+			 * "Data 'de Hoje'".
 			 */
 			if (!produtoEdicao.getNumeroEdicao().equals(dto.getNumeroEdicao())) {
-				
+				if (!produtoEdicaoRepository.isProdutoEdicaoJaPublicada(produtoEdicao.getId())) {
+					throw new ValidacaoException(TipoMensagem.ERROR, "Não é permitido alterar o número de uma Edição já publicada!");
+				}
 			}
-			
-			//dataLancamentoDistribuidor
-			
-			
-			
-			// FIXME REVISAR ESTA REGRA!!!
-			/* Regra: Não é permitido alterar o número da Edição se houver Lançamentos */
-			// Para editar um registro, só permitir a alteração do campo Edição se não existir Lançamento (tabela lancamento) para ele.
-			if (!produtoEdicao.getNumeroEdicao().equals(dto.getNumeroEdicao())
-					&& (produtoEdicao.getLancamentos() != null 
-						&& !produtoEdicao.getLancamentos().isEmpty())) {
-				
-				throw new ValidacaoException(TipoMensagem.ERROR, "Não é permitido alterar o número de uma Edição já lançada!");
-			}
-			
-			
-			
 		}		
 		
 		
