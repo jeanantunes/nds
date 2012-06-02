@@ -495,7 +495,7 @@ fieldset {
 							<tr>
 								<td width="112"><strong>Classe Social:</strong></td>
 								<td width="281">
-									<select name="select4" id="select7" style="width:250px;" >
+									<select name="select4" id="select7" style="width:250px;" disabled="disabled">
 										<option selected="selected">Selecione...</option>
 									</select>
 								</td>
@@ -503,7 +503,7 @@ fieldset {
 							<tr>
 								<td><strong>Sexo:</strong></td>
 								<td>
-									<select name="select4" id="select8" style="width:250px;" >
+									<select name="select4" id="select8" style="width:250px;" disabled="disabled">
 										<option selected="selected">Selecione...</option>
 									</select>
 								</td>
@@ -511,7 +511,7 @@ fieldset {
 							<tr>
 								<td><strong>Faixa-Et&aacute;ria:</strong></td>
 								<td>
-									<select name="select4" id="select10" style="width:250px;" >
+									<select name="select4" id="select10" style="width:250px;" disabled="disabled">
 										<option selected="selected">Selecione...</option>
 									</select>
 								</td>
@@ -527,7 +527,7 @@ fieldset {
 							<tr>
 								<td width="112"><strong>Tema Principal:</strong></td>
 								<td width="281">
-									<select name="select" id="select5" style="width:250px;" >
+									<select name="select" id="select5" style="width:250px;" disabled="disabled">
 										<option selected="selected">Selecione...</option>
 									</select>
 								</td>
@@ -535,7 +535,7 @@ fieldset {
 							<tr>
 								<td><strong>Tema Secund&aacute;rio:</strong></td>
 								<td>
-									<select name="select" id="select6" style="width:250px;" >
+									<select name="select" id="select6" style="width:250px;" disabled="disabled">
 										<option selected="selected">Selecione...</option>
 									</select>
 								</td>
