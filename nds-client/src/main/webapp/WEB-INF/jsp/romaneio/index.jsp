@@ -30,8 +30,65 @@ $(function() {
 		$(".dados").show();
 	}
 	function pesqEncalhe(){
-		$(".dadosFiltro").show();
+		$(".dadosFiltro").show();		
+	}
+
+	function pesquisar(){	
 		
+		$(".romaneiosGrid").flexOptions({
+			url: "<c:url value='/romaneio/pesquisarRomaneio'/>",
+			dataType : 'json',
+			params: [
+						{name:'filtro.idBox', value:$('#idBox').val()},
+						{name:'filtro.idRoteiro', value:$('#idRoteiro').val()},
+						{name:'filtro.idRota', value:$('#idRota').val()}
+						]
+		});
+		
+		$(".romaneiosGrid").flexReload();
+				
+	}
+
+	function getDados() {
+		
+		var data = [];
+		
+		data.push({name:'filtro.idBox',	value: $('#idBox')});
+		data.push({name:'filtro.idRoteiro',	value: $('#idRoteiro')});
+		data.push({name:'filtro.idRota',	value: $('#idRota')});
+		alert(data);
+		return data;
+	}
+	
+	function get(campo) {
+		
+		var elemento = $("#" + campo);
+		
+		if(elemento.attr('type') == 'checkbox') {
+			return (elemento.attr('checked') == 'checked') ;
+		} else {
+			return elemento.val();
+		}
+		
+	}
+
+	function executarPreProcessamento(resultado) {
+		
+		if (resultado.mensagens) {
+
+			exibirMensagem(
+				resultado.mensagens.tipoMensagem, 
+				resultado.mensagens.listaMensagens
+			);
+			
+			$(".grids").hide();
+
+			return resultado;
+		}
+		
+		$(".grids").show();
+		
+		return resultado;
 	}
 
 </script>
@@ -60,7 +117,7 @@ $(function() {
          <tr>
               <td width="34">Box:</td>
               <td width="121">
-	               <select name="box" id="box" style="width: 100px;">
+	               <select name="idBox" id="idBox" style="width: 100px;">
 						<option value="" selected="selected">Selecione...</option>
 						<c:forEach var="box" items="${listaBox}">
 							<option value="${box.key}">${box.value}</option>
@@ -69,7 +126,7 @@ $(function() {
               </td>
                 <td width="55">Roteiro:</td>
                 <td width="277">
-                	<select name="roteiro" id="roteiro" style="width: 200px;">
+                	<select name="idRoteiro" id="idRoteiro" style="width: 200px;">
 						<option value="" selected="selected">Selecione...</option>
 						<c:forEach var="roteiro" items="${listaRoteiro}">
 							<option value="${roteiro.key}">${roteiro.value}</option>
@@ -79,7 +136,7 @@ $(function() {
                 </td>
                 <td width="27">Rota:</td>
                 <td width="296">
-					<select name="rota" id="rota" style="width: 190px;">
+					<select name="idRota" id="idRota" style="width: 190px;">
 						<option value="" selected="selected">Selecione...</option>
 						<c:forEach var="rota" items="${listaRota}">
 							<option value="${rota.key}">${rota.value}</option>
@@ -109,11 +166,11 @@ $(function() {
 	
 		
 		$(".romaneiosGrid").flexigrid({
-			url : '../xml/romaneios-xml.xml',
-			dataType : 'xml',
+			preProcess: executarPreProcessamento,
+			dataType : 'json',
 			colModel : [ {
 				display : 'Cota',
-				name : 'cota',
+				name : 'numeroCota',
 				width : 60,
 				sortable : true,
 				align : 'left'
@@ -149,7 +206,7 @@ $(function() {
 				align : 'center'
 			}, {
 				display : 'Telefone',
-				name : 'telefone',
+				name : 'numeroTelefone',
 				width : 100,
 				sortable : true,
 				align : 'left'

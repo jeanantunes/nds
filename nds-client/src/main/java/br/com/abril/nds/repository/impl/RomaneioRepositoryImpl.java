@@ -1,13 +1,137 @@
 package br.com.abril.nds.repository.impl;
 
+import java.util.HashMap;
+import java.util.List;
+
+import org.hibernate.Query;
+import org.hibernate.transform.AliasToBeanResultTransformer;
+import org.springframework.stereotype.Repository;
+
+import br.com.abril.nds.dto.RomaneioDTO;
+import br.com.abril.nds.dto.filtro.FiltroRomaneioDTO;
+import br.com.abril.nds.dto.filtro.FiltroRomaneioDTO.ColunaOrdenacaoRomaneio;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.repository.RomaneioRepository;
 
+@Repository
 public class RomaneioRepositoryImpl extends AbstractRepository<Box, Long> implements RomaneioRepository {
 
 	public RomaneioRepositoryImpl() {
 		super(Box.class);
 	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<RomaneioDTO> buscarRomaneios(FiltroRomaneioDTO filtro) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append("SELECT DISTINCT cota.numeroCota as numeroCota, ");
+		hql.append("pessoa.nome as nome, ");
+		hql.append("endereco.logradouro as logradouro, ");
+		hql.append("endereco.bairro as bairro, ");
+		hql.append("endereco.cidade as cidade,");
+		hql.append("endereco.uf as uf, ");
+		hql.append("telefone.numero as numeroTelefone");
+		
+		
+		hql.append(getSqlFromEWhereRomaneio(filtro));
+		
+		hql.append(getOrderBy(filtro));
+		
+		Query query =  getSession().createQuery(hql.toString());
+		
+		HashMap<String, Object> param = buscarParametrosRomaneio(filtro);
+		
+		for(String key : param.keySet()){
+			query.setParameter(key, param.get(key));
+		}
+		
+		query.setResultTransformer(new AliasToBeanResultTransformer(
+				RomaneioDTO.class));
+		
+		if(filtro.getPaginacao().getQtdResultadosPorPagina() != null) 
+			query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
+		
+		if(filtro.getPaginacao().getQtdResultadosPorPagina() != null) 
+			query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
+				
+		return  query.list();
+		
+	}
+	
+	private String getSqlFromEWhereRomaneio(FiltroRomaneioDTO filtro) {
+		
+		StringBuilder hql = new StringBuilder();
+	
+
+		hql.append(" from Cota cota ");
+		hql.append(" LEFT JOIN cota.pessoa as pessoa ");
+		hql.append(" LEFT JOIN pessoa.telefones as telefone ");
+		hql.append(" LEFT JOIN cota.enderecos as enderecoCota ");
+		hql.append(" LEFT JOIN enderecoCota.endereco as endereco ");
+		hql.append(" LEFT JOIN enderecoCota.endereco as endereco ");
+		hql.append(" LEFT JOIN cota.box as box ");
+		hql.append(" LEFT JOIN box.roteiros as roteiro ");
+		hql.append(" LEFT JOIN roteiro.rotas as rota ");
+		
+		
+		//hql.append(" where pessoa.TIPO = 'F' or pessoa.TIPO = 'J' ");
+		
+		if(filtro.getIdBox() != 0 ) { 
+			hql.append( " where box.id = :idBox ");
+		}
+		if(filtro.getIdRoteiro() != 0){
+			hql.append( " and roteiro.id = :idRoteiro ");
+		}
+		if(filtro.getIdRota() != 0){
+			hql.append( " and rota.id = :idRota ");
+		}
+
+
+		return hql.toString();
+	}
+	
+	private String getOrderBy(FiltroRomaneioDTO filtro){
+		
+		if(filtro.getPaginacao() == null || filtro.getPaginacao().getSortColumn() == null){
+			return "";
+		}
+		
+		ColunaOrdenacaoRomaneio coluna = ColunaOrdenacaoRomaneio.getPorDescricao(filtro.getPaginacao().getSortColumn());
+		
+		StringBuilder hql = new StringBuilder();
+		
+		switch (coluna) {
+			case COTA:	
+				hql.append(" order by cota.numeroCota desc ");
+				break;
+		}
+		
+		if (filtro.getPaginacao().getOrdenacao() != null) {
+			hql.append( filtro.getPaginacao().getOrdenacao().toString());
+		}
+		
+		return hql.toString();
+	}
+	
+	private HashMap<String,Object> buscarParametrosRomaneio(FiltroRomaneioDTO filtro){
+		
+		HashMap<String,Object> param = new HashMap<String, Object>();
+		
+		if(filtro.getIdBox() != 0 ) { 
+			param.put("idBox", filtro.getIdBox());
+		}
+		if(filtro.getIdRoteiro() != 0){
+			param.put("idRoteiro", filtro.getIdRoteiro());
+		}
+		if(filtro.getIdRota() != 0){
+			param.put("idRota", filtro.getIdRota());
+		}
+		
+		return param;
+	}
+	
 	
 
 	

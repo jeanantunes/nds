@@ -2,7 +2,6 @@ package br.com.abril.nds.dto.filtro;
 
 import java.io.Serializable;
 
-import br.com.abril.nds.dto.filtro.FiltroVendaProdutoDTO.ColunaOrdenacao;
 import br.com.abril.nds.vo.PaginacaoVO;
 
 public class FiltroRomaneioDTO implements Serializable {
@@ -32,8 +31,8 @@ public class FiltroRomaneioDTO implements Serializable {
 			return this.nomeColuna;
 		}
 		
-		public static ColunaOrdenacao getPorDescricao(String descricao) {
-			for(ColunaOrdenacao coluna: ColunaOrdenacao.values()) {
+		public static ColunaOrdenacaoRomaneio getPorDescricao(String descricao) {
+			for(ColunaOrdenacaoRomaneio coluna: ColunaOrdenacaoRomaneio.values()) {
 				if(coluna.toString().equals(descricao))
 					return coluna;
 			}

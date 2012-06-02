@@ -9,9 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.RomaneioDTO;
-import br.com.abril.nds.dto.VendaProdutoDTO;
 import br.com.abril.nds.dto.filtro.FiltroRomaneioDTO;
-import br.com.abril.nds.dto.filtro.FiltroVendaProdutoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Rota;
@@ -104,7 +102,7 @@ public class RomaneioController {
 	
 	private void tratarFiltro(FiltroRomaneioDTO filtroAtual) {
 
-		FiltroVendaProdutoDTO filtroSession = (FiltroVendaProdutoDTO) session
+		FiltroRomaneioDTO filtroSession = (FiltroRomaneioDTO) session
 				.getAttribute(FILTRO_SESSION_ATTRIBUTE);
 		
 		if (filtroSession != null && !filtroSession.equals(filtroAtual)) {
