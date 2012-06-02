@@ -404,17 +404,6 @@ fieldset {
 						<thead />
 						<tbody>
 							<tr>
-								<td width="117">Tipo de Desconto:</td>
-								<td width="126">
-									<select name="select12" id="select9" style="width:120px;" >
-										<option selected="selected">Selecione...</option>
-										<option>Geral</option>
-										<option>Espec&iacute;fico</option>
-										<option>Produto</option>
-									</select>
-								</td>
-							</tr>
-							<tr>
 								<td colspan="2"><input type="text" name="textfield9" id="textfield9" style="width:235px;" /></td>
 							</tr>
 							<tr>
@@ -431,6 +420,18 @@ fieldset {
 						<tbody>
 							<tr>
 								<td width="59">Peso:</td>
+								<td width="86"><input type="text" name="textfield14" id="textfield14" style="width:80px;" /></td>
+							</tr>
+							<tr>
+								<td width="59">Largura:</td>
+								<td width="86"><input type="text" name="textfield14" id="textfield14" style="width:80px;" /></td>
+							</tr>
+							<tr>
+								<td width="59">Comprimento:</td>
+								<td width="86"><input type="text" name="textfield14" id="textfield14" style="width:80px;" /></td>
+							</tr>
+							<tr>
+								<td width="59">Espessura:</td>
 								<td width="86"><input type="text" name="textfield14" id="textfield14" style="width:80px;" /></td>
 							</tr>
 						</tbody>
