@@ -12,7 +12,7 @@ public class TestExecutor {
 		
 		try {
 			InterfaceExecutor executor = new InterfaceExecutor();
-			executor.executarInterface("jonatas", InterfaceEnum.EMS0111);
+			executor.executarInterface("jonatas", InterfaceEnum.EMS0134);
 		} catch (Throwable e) {
 			e.printStackTrace();
 		}

@@ -1,5 +1,7 @@
 package br.com.abril.nds.service.impl;
 
+import java.io.InputStream;
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -18,9 +20,13 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.ParametroSistema;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.TipoParametroSistema;
+import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.repository.DistribuicaoFornecedorRepository;
+import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.repository.ParametroSistemaRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
+import br.com.abril.nds.repository.ProdutoRepository;
+import br.com.abril.nds.service.CapaService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
@@ -43,9 +49,19 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 	@Autowired
 	private ParametroSistemaRepository parametroSistemaRepository;
 	
+	@Autowired
+	private ProdutoRepository produtoRepository;
+	
+	@Autowired
+	private LancamentoRepository lancamentoRepository;
+	
+	@Autowired
+	private CapaService capaService;
+	
+	
 	@Override
 	@Transactional(readOnly = true)
-	public List<ProdutoEdicao> obterProdutoEdicaoPorNomeProduto(String nomeProduto) {
+ 	public List<ProdutoEdicao> obterProdutoEdicaoPorNomeProduto(String nomeProduto) {
 		return produtoEdicaoRepository.obterProdutoEdicaoPorNomeProduto(nomeProduto);
 	}
 
@@ -217,6 +233,168 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 	public Long countPesquisarEdicoes(ProdutoEdicaoDTO dto) {
 		
 		return this.produtoEdicaoRepository.countPesquisarEdicoes(dto);
+	}
+	
+	/**
+	 * Pesquisa as últimas edições cadastradas.<br>
+	 * 
+	 * @param dto
+	 * @param maxResults Quantidade das últimas edições cadastradas a ser exibidas.
+	 * 
+	 * @return
+	 */
+	@Transactional(readOnly = true)
+	public List<ProdutoEdicaoDTO> pesquisarUltimasEdicoes(ProdutoEdicaoDTO dto,
+			int maxResults) {
+		
+		return this.produtoEdicaoRepository.pesquisarEdicoes(dto, "DESC",
+				"codigoProduto", 0, 5);
+	}
+	
+	@Transactional
+	public void salvarProdutoEdicao(ProdutoEdicaoDTO dto, String codigoProduto, String contentType, InputStream imgInputStream) {
+		
+		ProdutoEdicao produtoEdicao = null;
+		Lancamento lancamento = null;
+		if (dto.getId() == null) {
+			
+			// Salvar novo ProdutoEdicao:
+			produtoEdicao = new ProdutoEdicao();
+			produtoEdicao.setProduto(produtoRepository.obterProdutoPorCodigo(codigoProduto));
+			lancamento = new Lancamento();
+		} else {
+			
+			// Atualizar ProdutoEdicao existente:
+			produtoEdicao = produtoEdicaoRepository.buscarPorId(dto.getId());
+			lancamento = lancamentoRepository.obterUltimoLancamentoDaEdicao(
+					produtoEdicao.getId());
+			
+			// FIXME REVISAR ESTA REGRA!!!
+			/* Regra: Não é permitido alterar o número da Edição se houver Lançamentos */
+			// Para editar um registro, só permitir a alteração do campo Edição se não existir Lançamento (tabela lancamento) para ele.
+			if (!produtoEdicao.getNumeroEdicao().equals(dto.getNumeroEdicao())
+					&& (produtoEdicao.getLancamentos() != null 
+						&& !produtoEdicao.getLancamentos().isEmpty())) {
+				
+				throw new ValidacaoException(TipoMensagem.ERROR, "Não é permitido alterar o número de uma Edição já lançada!");
+			}
+			
+			
+			
+		}		
+		
+		
+		/* Regra: Se não existir nenhuma edição associada ao produto, salvar n. 1 */
+		if (!this.produtoEdicaoRepository.hasProdutoEdicao(produtoEdicao.getProduto())) {
+			produtoEdicao.setNumeroEdicao(Long.valueOf(1));
+		}
+		
+		// TODO: Popular ProdutoEdicao:
+		// TODO: implementar atributos: 
+		dto.getCodigoProduto();	// codigodaedicao
+		produtoEdicao.setNomeComercial(dto.getNomeComercialProduto());
+		produtoEdicao.setNumeroEdicao(dto.getNumeroEdicao());
+		produtoEdicao.setPacotePadrao(dto.getPacotePadrao());
+		produtoEdicao.setPrecoPrevisto(dto.getPrecoPrevisto());
+		produtoEdicao.setPrecoVenda(dto.getPrecoVenda());	// View: Preço real;
+		
+		BigDecimal repartePrevisto = dto.getRepartePrevisto();
+		BigDecimal repartePromocional = dto.getRepartePromocional();
+		produtoEdicao.setReparteDistribuido(repartePrevisto.add(repartePromocional));
+		
+		produtoEdicao.setCodigoDeBarras(dto.getCodigoDeBarras());
+		dto.getCodigoDeBarrasCorporativo(); // FIXME: INCLUIR
+		produtoEdicao.setDesconto(dto.getDesconto());
+		produtoEdicao.setChamadaCapa(dto.getChamadaCapa());
+		produtoEdicao.setParcial(dto.isParcial());
+		produtoEdicao.setPossuiBrinde(dto.isPossuiBrinde());
+		
+		produtoEdicao.setPeso(dto.getPeso());
+		dto.getAltura();	 // FIXME: INCLUIR
+		dto.getLargura();	 // FIXME: INCLUIR
+		
+		if (produtoEdicao.getId() == null) {
+			
+			// save
+			produtoEdicaoRepository.adicionar(produtoEdicao);
+			
+			// Salvar na tabela de lançamento: 
+			lancamento.setProdutoEdicao(produtoEdicao);
+			lancamento.setTipoLancamento(dto.getTipoLancamento());
+			lancamento.setDataLancamentoPrevista(dto.getDataLancamentoPrevisto());
+			lancamento.setDataLancamentoDistribuidor(dto.getDataLancamento());	// Data Lançamento Real;
+			lancamento.setReparte(repartePrevisto);
+			lancamento.setRepartePromocional(repartePromocional);
+			
+		} else {
+			// update
+			
+			// TODO: Regra: Edição - permitir alteração do código de edição se o status não for LANÇADO;
+				dto.getCodigoProduto();
+				
+			
+			
+			
+			// TODO: No final, salvar na tabela de lançamento tb 
+			
+		}		
+		
+		
+		// Salvar imagem:
+		if (imgInputStream != null) {
+			capaService.saveCapa(produtoEdicao.getId(), contentType, imgInputStream);
+		}
+	}
+	
+	/**
+	 * Exclui uma Edição da base de dados.<br>
+	 * Os critérios para exclusão são:
+	 * <ul>
+	 * <li>A Edição não pode ser cadastrado via INTERFACE;</li>
+	 * <li>A Edição não pode estar sendo utilizada em outras partes dos sitema;</li>
+	 * </ul>
+	 * 
+	 * @param idProdutoEdicao
+	 */
+	@Transactional(readOnly = true)
+	public void excluirProdutoEdicao(Long idProdutoEdicao) {
+		
+		ProdutoEdicao produtoEdicao = produtoEdicaoRepository.buscarPorId(idProdutoEdicao);
+		if (produtoEdicao == null) {
+			throw new ValidacaoException(TipoMensagem.ERROR, "Por favor, selecione uma Edição existente!");
+		}
+		
+		/* Regra: Se a Edição for originária da Interface, não pode ser excluida! */
+		if (produtoEdicao.getOrigemInterface()) {
+			throw new ValidacaoException(TipoMensagem.ERROR, "Esta Edição não pode ser excluida por ser originária da INTERFACE!");
+		}
+		
+		// TODO: 
+		/* Regra: Não excluir se existir referencias desta edição em outras tabelas. */
+		//throw new ValidacaoException(TipoMensagem.ERROR, "Esta Edição não pode ser excluida por estar associada em outras partes do sistema!");
+		
+		
+		produtoEdicaoRepository.remover(produtoEdicao);
+	}
+	
+	
+	/**
+	 * Transforma o valor em formato String para BigDecimal.<br>
+	 * Caso o valor não for válido, irá retornar 0 (zero).
+	 * 
+	 * @param valor
+	 * @return
+	 */
+	private BigDecimal converterValor(String valor) {
+		
+		BigDecimal nValor = null;
+		try {
+			nValor = (new BigDecimal(valor)).setScale(2);
+		} catch (Exception e) {
+			nValor = BigDecimal.ZERO.setScale(2);
+		}
+		
+		return nValor;
 	}
 	
 }

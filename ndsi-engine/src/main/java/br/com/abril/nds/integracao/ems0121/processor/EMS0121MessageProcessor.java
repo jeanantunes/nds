@@ -19,9 +19,11 @@ import br.com.abril.nds.integracao.ems0121.outbound.EMS0121Trailer;
 import br.com.abril.nds.integracao.engine.MessageHeaderProperties;
 import br.com.abril.nds.integracao.engine.MessageProcessor;
 import br.com.abril.nds.integracao.engine.data.Message;
+import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;
 import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
+import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
 
 import com.ancientprogramming.fixedformat4j.format.FixedFormatManager;
 
@@ -34,6 +36,9 @@ public class EMS0121MessageProcessor implements MessageProcessor{
 	
 	@Autowired
 	private FixedFormatManager fixedFormatManager; 
+	
+	@Autowired
+	private NdsiLoggerFactory ndsiLoggerFactory;
 	
 	@Autowired
 	private DistribuidorService distribuidorService;
@@ -69,7 +74,7 @@ public class EMS0121MessageProcessor implements MessageProcessor{
 		
 		try {
 			
-			PrintWriter print = new PrintWriter(new FileWriter(message.getHeader().get(MessageHeaderProperties.OUTBOUND_FOLDER)+"/ENCALHE.NEW"));	
+			PrintWriter print = new PrintWriter(new FileWriter(message.getHeader().get(MessageHeaderProperties.OUTBOUND_FOLDER.getValue())+"/ENCALHE.NEW"));	
 			
 			EMS0121Header outheader = new EMS0121Header();
 			
@@ -102,7 +107,7 @@ public class EMS0121MessageProcessor implements MessageProcessor{
 			print.close();
 			
 		} catch (IOException e) {
-			e.printStackTrace();
+			ndsiLoggerFactory.getLogger().logError(message, EventoExecucaoEnum.GERACAO_DE_ARQUIVO, "Não foi possível gerar o arquivo");
 		}
 				
 		

@@ -59,7 +59,7 @@ public class EMS0131MessageProcessor implements MessageProcessor {
 			@SuppressWarnings("unchecked")
 			List<Cota> cotas =  query.getResultList();
 			
-			PrintWriter print = new PrintWriter(new FileWriter(message.getHeader().get(MessageHeaderProperties.OUTBOUND_FOLDER)+"/COTA.txt"));
+			PrintWriter print = new PrintWriter(new FileWriter(message.getHeader().get(MessageHeaderProperties.OUTBOUND_FOLDER.getValue())+"/COTA.txt"));
 			
 			for(Cota cota : cotas){
 				

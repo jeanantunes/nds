@@ -3,7 +3,9 @@ package br.com.abril.nds.repository.impl;
 import java.util.List;
 
 import org.hibernate.Criteria;
+import org.hibernate.FetchMode;
 import org.hibernate.Query;
+import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.AliasToBeanResultTransformer;
@@ -12,7 +14,6 @@ import org.springframework.stereotype.Repository;
 import br.com.abril.nds.dto.FornecedorDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaFornecedorDTO;
-import br.com.abril.nds.model.cadastro.Entregador;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.GrupoFornecedor;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
@@ -328,5 +329,24 @@ public class FornecedorRepositoryImpl extends
 		criteria.setProjection(Projections.rowCount());
 
 		return ((Long) criteria.list().get(0)).intValue();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Fornecedor> obterFornecedorLikeNomeFantasia(String nomeFantasia) {
+		
+		try {
+			
+			Criteria criteria = super.getSession().createCriteria(Fornecedor.class);
+
+			criteria.createAlias("juridica","juridica");
+			criteria.setFetchMode("juridica", FetchMode.JOIN);
+			criteria.add(Restrictions.ilike("juridica.nomeFantasia", nomeFantasia, MatchMode.ANYWHERE));
+			
+			return criteria.list();
+			
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
 	}	
 }

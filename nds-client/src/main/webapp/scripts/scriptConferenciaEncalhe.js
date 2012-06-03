@@ -86,7 +86,7 @@ var ConferenciaEncalhe = {
 				
 				var valorExemplares = parseInt(value.qtdExemplar);
 				
-				var inputExemplares = '<input id="qtdExemplaresGrid_' + index + '" onchange="ConferenciaEncalhe.recalcularValores('+ index +');" style="width:50px; text-align: center;" value="' + valorExemplares + '"/>' +
+				var inputExemplares = '<input id="qtdExemplaresGrid_' + index + '" onchange="ConferenciaEncalhe.recalcularValores('+ index +');" style="width:50px; text-align: center;" maxlength="255" value="' + valorExemplares + '"/>' +
 					'<input id="idConferenciaEncalheHidden_' + index + '" type="hidden" value="' + value.idConferenciaEncalhe + '"/>';
 				
 				innerTable += inputExemplares + "</td>";
@@ -247,12 +247,12 @@ var ConferenciaEncalhe = {
 				}
 				
 				innerTable +=
-					'<td style="text-align: center"><input id="qtdeInformadaFinalizarConf_'+ index +'" onchange="ConferenciaEncalhe.recalcularValoresFinalizar('+ index +');" type="text" style="width:50px; text-align: center;" value="' + parseInt(value.qtdExemplar) + '"/></td>';
+					'<td style="text-align: center"><input id="qtdeInformadaFinalizarConf_'+ index +'" onchange="ConferenciaEncalhe.recalcularValoresFinalizar('+ index +');" type="text" maxlength="255" style="width:50px; text-align: center;" value="' + parseInt(value.qtdExemplar) + '"/></td>';
 				
 				innerTable += "<td style='text-align: center;'>" + (value.qtdRecebida ? parseInt(value.qtdRecebida) : "0") + "</td>";
 			
 				innerTable +=
-					'<td style="text-align: center;"><input id="precoCapaFinalizarConf_'+ index +'" onchange="ConferenciaEncalhe.recalcularValoresFinalizar('+ index +');" style="width:50px; text-align: right;" value="' + parseFloat(value.precoCapa).toFixed(2) + '"/></td>';
+					'<td style="text-align: center;"><input id="precoCapaFinalizarConf_'+ index +'" onchange="ConferenciaEncalhe.recalcularValoresFinalizar('+ index +');" maxlength="255" style="width:50px; text-align: right;" value="' + parseFloat(value.precoCapa).toFixed(2) + '"/></td>';
 				
 				innerTable += "<td style='text-align: right;'>" + parseFloat(value.desconto).toFixed(2) + "</td>";
 				
@@ -455,8 +455,8 @@ var ConferenciaEncalhe = {
 	
 	adicionarProdutoConferido : function(){
 		
-		var data = [{name: "quantidade", value: $("#qtdeExemplar").val()}, 
-		            {name: "idProdutoEdicao", value: $("#codProduto").val()}];
+		var data = [{name: "idProdutoEdicao", value: $("#codProduto").val()}, 
+		            {name: "quantidade", value: $("#qtdeExemplar").val()}];
 		
 		$.postJSON(contextPath + '/devolucao/conferenciaEncalhe/adicionarProdutoConferido', data,
 			function(result){

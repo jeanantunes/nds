@@ -129,8 +129,33 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 
 	@Override
 	@Transactional(readOnly=true)
-	public List<Roteirizacao> buscarRoterizacaoPorRota(Long rotaId) {
-		return roteirizacaoRepository.buscarRoterizacaoPorRota(rotaId);
+	public List<CotaDisponivelRoteirizacaoDTO> buscarRoterizacaoPorRota(Long rotaId) {
+	
+		List<Roteirizacao> roteirizacaoLista = roteirizacaoRepository.buscarRoterizacaoPorRota(rotaId);
+		List<CotaDisponivelRoteirizacaoDTO> lista =
+				new ArrayList<CotaDisponivelRoteirizacaoDTO>();
+		for (Roteirizacao roteirizacao : roteirizacaoLista ){
+			    CotaDisponivelRoteirizacaoDTO  cotaDisponivelRoteirizacaoDTO = new CotaDisponivelRoteirizacaoDTO();
+			    PDV  pdv = roteirizacao.getPdv();
+			    Cota  cota = pdv.getCota();
+				cotaDisponivelRoteirizacaoDTO.setNome(cota.getPessoa().getNome());
+				cotaDisponivelRoteirizacaoDTO.setNumeroCota(cota.getNumeroCota());
+				cotaDisponivelRoteirizacaoDTO.setPontoVenda(pdv.getNome());
+				cotaDisponivelRoteirizacaoDTO.setOrigemEndereco("Cota");
+				cotaDisponivelRoteirizacaoDTO.setIdPontoVenda(pdv.getId());
+				cotaDisponivelRoteirizacaoDTO.setOrdem(roteirizacao.getOrdem());
+				for (EnderecoPDV endereco : pdv.getEnderecos()){ 
+					if (endereco.isPrincipal()){
+						
+						String enderecoFormatado = endereco.getEndereco().getTipoLogradouro()+" "+endereco.getEndereco().getLogradouro()+", "+
+						endereco.getEndereco().getBairro()+" "+endereco.getEndereco().getCidade()+" "+endereco.getEndereco().getUf()+" CEP: "+endereco.getEndereco().getCep();
+						cotaDisponivelRoteirizacaoDTO.setEndereco(enderecoFormatado);
+					}
+				}
+				
+				lista.add(cotaDisponivelRoteirizacaoDTO);
+			}
+		return lista;
 	}
 	
 

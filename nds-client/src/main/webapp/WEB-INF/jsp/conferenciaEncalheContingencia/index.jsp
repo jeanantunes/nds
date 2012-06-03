@@ -34,7 +34,7 @@
 				<tr>
 					<td width="40" height="25">Cota:</td>
 					<td width="121">
-						<input type="text" id="numeroCota" style="width: 80px; float: left; margin-right: 5px;" /> 
+						<input type="text" id="numeroCota" style="width: 80px; float: left; margin-right: 5px;" maxlength="255" /> 
 						<span class="classPesquisar">
 							<a href="javascript:;" onclick="ConferenciaEncalheCont.pesquisarCota();">&nbsp;</a>
 						</span>
@@ -45,7 +45,7 @@
 					<td width="144"><span class="dadosFiltro">Valor CE Jornaleiro R$:</span></td>
 					<td width="100">
 						<span class="dadosFiltro">
-							<input type="text" onkeypress="vaiVlr();" id="vlrCE" style="width: 100px; text-align: right;" />
+							<input type="text" id="vlrCE" style="width: 100px; text-align: right;" maxlength="255" />
 						</span>
 					</td>
 				</tr>
@@ -107,10 +107,10 @@
 							<strong>( = )Valor Venda Dia:</strong>
 						</td>
 						<td width="80" align="center" bgcolor="#EFEFEF" style="border: 1px solid #000;" id="valorVendaDia"></td>
-						<td width="120">&nbsp;&nbsp;<strong>
+						<td width="130">&nbsp;&nbsp;<strong>
 							<a href="javascript:;" onclick="ConferenciaEncalheCont.popup_outros_valores();">( + )Outros valores</a>:</strong></td>
 						<td width="68" id="totalOutrosValores"></td>
-						<td width="122"><strong>( = )Valor a pagar R$:</strong></td>
+						<td width="125"><strong>( = )Valor a pagar R$:</strong></td>
 						<td width="77" id="valorAPagar"></td>
 						<td width="17">&nbsp;</td>
 					</tr>

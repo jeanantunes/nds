@@ -17,7 +17,23 @@ function MapaAbastecimento(pathTela, objName) {
 		$(".mapaAbastecimentoGrid").flexReload();
 	},
 	
+	this.pesquisarDetalhes = function() {
+		
+
+		$(".mapaAbastecimentoDetalheGrid").flexOptions({			
+			url : pathTela + "/mapaAbastecimento/pesquisarDetalhes",
+			dataType : 'json',			
+			params:T.getDadosFiltro()
+		});
+		
+		$(".mapaAbastecimentoGrid").flexReload();
+	},
+	
+	
 	this.processaRetornoPesquisa = function(result) {
+		debugger;
+		if(result.messages)
+			exibirMensagem(result.messages.tipoMensagem,result.messages.listaMensagens);
 		
 		T.mapas = [];
 		

@@ -293,12 +293,15 @@ public class ProdutoCadastroVO implements Serializable {
 		
 		TributacaoFiscal tributacaoFiscal = produto.getTributacaoFiscal();
 		
+		long codigoTipoDesconto = produto.getDescontoLogistica() != null ? 
+				produto.getDescontoLogistica().getTipoDesconto().longValue() : 0L;
+		
 		ProdutoCadastroVO produtoCadastroVO = new ProdutoCadastroVO(
 			produto.getId(), produto.getCodigo(), produto.getNome(), 
 			produto.getFornecedor().getId(), produto.getEditor().getId(), 
 			produto.getSlogan(), produto.getTipoProduto().getId(), 
 			formaComercializacao != null ? formaComercializacao.toString() : "", produto.getPeb(), 
-			produto.getPacotePadrao(), null, periodicidade != null ? periodicidade.toString() : "", 
+			produto.getPacotePadrao(), codigoTipoDesconto, periodicidade != null ? periodicidade.toString() : "", 
 			produto.getGrupoEditorial(), produto.getSubGrupoEditorial(), tributacaoFiscal != null ? tributacaoFiscal.toString() : "");
 		
 		return produtoCadastroVO;
