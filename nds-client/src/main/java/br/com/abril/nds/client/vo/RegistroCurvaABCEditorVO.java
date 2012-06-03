@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Exportable;
 
@@ -23,18 +24,26 @@ public class RegistroCurvaABCEditorVO extends RegistroCurvaABC implements
 	@Export(label = "Cota", exhibitionOrder = 2)
 	private String nomeEditor;
 
-	@Export(label = "Reparte", exhibitionOrder = 3)
 	private BigDecimal reparte;
 
-	@Export(label = "Venda de Exemplares", exhibitionOrder = 5)
 	private BigDecimal vendaExemplares;
 
-	@Export(label = "% Venda de Exemplares", exhibitionOrder = 5)
 	private BigDecimal porcentagemVendaExemplares;
 
-	@Export(label = "Faturamento da Capa", exhibitionOrder = 6)
 	private BigDecimal faturamentoCapa;
 
+	@Export(label = "Reparte", exhibitionOrder = 3)
+	private String reparteFormatado;
+	
+	@Export(label = "Venda de Exemplares", exhibitionOrder = 5)
+	private String vendaExemplaresFormatado;
+	
+	@Export(label = "% Venda de Exemplares", exhibitionOrder = 5)
+	private String porcentagemVendaExemplaresFormatado;
+	
+	@Export(label = "Faturamento da Capa", exhibitionOrder = 6)
+	private String faturamentoCapaFormatado;
+	
 	private Date dataDe;
 	
 	private Date dataAte;
@@ -52,6 +61,7 @@ public class RegistroCurvaABCEditorVO extends RegistroCurvaABC implements
 		this.reparte = reparte;
 		this.vendaExemplares = vendaExemplares;
 		this.faturamentoCapa = faturamentoCapa;
+		this.formatarCampos();
 	}
 
 	public String getNomeEditor() {
@@ -83,6 +93,7 @@ public class RegistroCurvaABCEditorVO extends RegistroCurvaABC implements
 	}
 
 	public void setPorcentagemVendaExemplares(BigDecimal porcentagemVendaExemplares) {
+		this.porcentagemVendaExemplaresFormatado = CurrencyUtil.formatarValor(porcentagemVendaExemplares);
 		this.porcentagemVendaExemplares = porcentagemVendaExemplares;
 	}
 
@@ -103,13 +114,13 @@ public class RegistroCurvaABCEditorVO extends RegistroCurvaABC implements
 	}
 
 	@Export(label = "Participação", exhibitionOrder = 7)
-	public BigDecimal getParticipacaoString() {
-		return getParticipacao();
+	public String getParticipacaoString() {
+		return getParticipacaoFormatado();
 	}
 
 	@Export(label = "Participação Acumulada", exhibitionOrder = 8)
-	public BigDecimal getParticipacaoAcumuladaString() {
-		return getParticipacaoAcumulada();
+	public String getParticipacaoAcumuladaString() {
+		return getParticipacaoAcumuladaFormatado();
 	}
 
 	public Date getDataDe() {
@@ -136,4 +147,45 @@ public class RegistroCurvaABCEditorVO extends RegistroCurvaABC implements
 		return sdf.format(dataAte);
 	}
 
+	public String getReparteFormatado() {
+		return reparteFormatado;
+	}
+
+	public void setReparteFormatado(String reparteFormatado) {
+		this.reparteFormatado = reparteFormatado;
+	}
+
+	public String getVendaExemplaresFormatado() {
+		return vendaExemplaresFormatado;
+	}
+
+	public void setVendaExemplaresFormatado(String vendaExemplaresFormatado) {
+		this.vendaExemplaresFormatado = vendaExemplaresFormatado;
+	}
+
+	public String getPorcentagemVendaExemplaresFormatado() {
+		return porcentagemVendaExemplaresFormatado;
+	}
+
+	public void setPorcentagemVendaExemplaresFormatado(
+			String porcentagemVendaExemplaresFormatado) {
+		this.porcentagemVendaExemplaresFormatado = porcentagemVendaExemplaresFormatado;
+	}
+
+	public String getFaturamentoCapaFormatado() {
+		return faturamentoCapaFormatado;
+	}
+
+	public void setFaturamentoCapaFormatado(String faturamentoCapaFormatado) {
+		this.faturamentoCapaFormatado = faturamentoCapaFormatado;
+	}
+
+	private void formatarCampos() {
+		reparteFormatado = CurrencyUtil.formatarValorTruncado(reparte);
+		vendaExemplaresFormatado = CurrencyUtil.formatarValorTruncado(vendaExemplares);
+		porcentagemVendaExemplaresFormatado = CurrencyUtil.formatarValor(porcentagemVendaExemplares);
+		faturamentoCapaFormatado = CurrencyUtil.formatarValor(faturamentoCapa);
+	}
+
+	
 }

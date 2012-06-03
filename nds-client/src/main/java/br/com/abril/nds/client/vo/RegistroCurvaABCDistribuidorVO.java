@@ -3,6 +3,7 @@ package br.com.abril.nds.client.vo;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
+import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Exportable;
 
@@ -29,12 +30,16 @@ public class RegistroCurvaABCDistribuidorVO extends RegistroCurvaABC implements 
 	@Export(label = "Municipio", exhibitionOrder = 4)
 	private String municipio;
 
-	@Export(label = "Venda de Exemplares", exhibitionOrder = 5)
 	private BigDecimal vendaExemplares;
 
-	@Export(label = "Faturamento da Capa", exhibitionOrder = 6)
 	private BigDecimal faturamentoCapa;
 
+	@Export(label = "Venda de Exemplares", exhibitionOrder = 5)
+	private String vendaExemplaresFormatado;
+	
+	@Export(label = "Faturamento da Capa", exhibitionOrder = 6)
+	private String faturamentoCapaFormatado;
+	
 	public RegistroCurvaABCDistribuidorVO() {
 	}
 
@@ -46,6 +51,7 @@ public class RegistroCurvaABCDistribuidorVO extends RegistroCurvaABC implements 
 		this.municipio = municipio;
 		this.vendaExemplares = vendaExemplares;
 		this.faturamentoCapa = faturamento;
+		this.formatarCampos();
 	}
 
 	public Integer getNumeroCota() {
@@ -107,13 +113,34 @@ public class RegistroCurvaABCDistribuidorVO extends RegistroCurvaABC implements 
 	}
 
 	@Export(label = "Participação", exhibitionOrder = 7)
-	public BigDecimal getParticipacaoString() {
-		return getParticipacao();
+	public String getParticipacaoString() {
+		return getParticipacaoFormatado();
 	}
 
 	@Export(label = "Participação Acumulada", exhibitionOrder = 8)
-	public BigDecimal getParticipacaoAcumuladaString() {
-		return getParticipacaoAcumulada();
+	public String getParticipacaoAcumuladaString() {
+		return getParticipacaoAcumuladaFormatado();
+	}
+
+	public String getVendaExemplaresFormatado() {
+		return vendaExemplaresFormatado;
+	}
+
+	public void setVendaExemplaresFormatado(String vendaExemplaresFormatado) {
+		this.vendaExemplaresFormatado = vendaExemplaresFormatado;
+	}
+
+	public String getFaturamentoCapaFormatado() {
+		return faturamentoCapaFormatado;
+	}
+
+	public void setFaturamentoCapaFormatado(String faturamentoCapaFormatado) {
+		this.faturamentoCapaFormatado = faturamentoCapaFormatado;
+	}
+
+	private void formatarCampos() {
+		this.vendaExemplaresFormatado = CurrencyUtil.formatarValor(vendaExemplares);
+		this.faturamentoCapaFormatado = CurrencyUtil.formatarValor(faturamentoCapa);
 	}
 
 }
