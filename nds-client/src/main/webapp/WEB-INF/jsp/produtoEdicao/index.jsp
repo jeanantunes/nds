@@ -59,9 +59,20 @@ function popup() {
 		exibirMensagem('WARNING', ['Por favor, escolha um produto para adicionar a Edi&ccedil;&atilde;o!'], "");
 		return;
 	}
+
+	// Popular a lista de Edições:
+	// TODO: Pegar o código do Produto!
+	$(".prodsPesqGrid").flexOptions({
+		url: "<c:url value='/cadastro/edicao/ultimasEdicoes.json' />",
+		params: [{name:'codigoProduto', value: 1 }],
+		newp: 1,
+	});
 	
+	$(".prodsPesqGrid").flexReload();
+
 	
-		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
+
+	//$( "#dialog:ui-dialog" ).dialog( "destroy" );
 	
 		$( "#dialog-novo" ).dialog({
 			resizable: false,
@@ -671,17 +682,16 @@ fieldset {
 		});
 
 	$(".prodsPesqGrid").flexigrid({
-			//url : '../xml/produtos_pesquisa-xml.xml',
-			dataType : 'xml',
+			dataType : 'json',
 			colModel : [ {
 				display : 'Produto',
-				name : 'produto',
+				name : 'nomeProduto',
 				width : 115,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Edi&ccedil;&atilde;o',
-				name : 'edicao',
+				name : 'numeroEdicao',
 				width : 40,
 				sortable : true,
 				align : 'left'

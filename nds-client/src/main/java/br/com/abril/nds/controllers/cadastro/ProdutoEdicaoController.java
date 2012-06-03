@@ -84,15 +84,12 @@ public class ProdutoEdicaoController {
 	public void carregarDadosProdutoEdicao(String codigoProduto) {
 		
 		if (codigoProduto == null || codigoProduto.trim().isEmpty()) {
-			throw new ValidacaoException(TipoMensagem.WARNING, "Por favor, Por favor, escolha um produto para adicionar a Edição!");
+			throw new ValidacaoException(TipoMensagem.WARNING, "Por favor, escolha um produto para adicionar a Edição!");
 		}
 		
 		ProdutoEdicaoDTO dto = new ProdutoEdicaoDTO();
 		dto.setCodigoProduto(codigoProduto);
 		
-		// Lista - últimas edições:
-		List<ProdutoEdicaoDTO> lstUltimasEdicoes = peService.pesquisarUltimasEdicoes(dto, 5);
-		dto.setUltimasEdicoes(lstUltimasEdicoes);
 		/*
 		
 		// Lista - Tipos de lançamento:
@@ -127,7 +124,18 @@ public class ProdutoEdicaoController {
 		lst.add(lstTpLancamento);	// Index 1: Tipos de Lançamento;
 		*/
 		this.result.use(Results.json()).from(dto, "result").serialize();
-//		this.result.use(FlexiGridJson.class).from(lstUltimasEdicoes).total(lstUltimasEdicoes.size()).page(1).serialize();
+	}
+	
+	@Post
+	@Path("/ultimasEdicoes.json")
+	public void ultimasEdicoes(String codigoProduto) {
+		
+		ProdutoEdicaoDTO dto = new ProdutoEdicaoDTO();
+		dto.setCodigoProduto(codigoProduto);
+		
+		List<ProdutoEdicaoDTO> lst = peService.pesquisarUltimasEdicoes(dto, 5);
+
+		this.result.use(FlexiGridJson.class).from(lst).total(lst.size()).page(1).serialize();
 	}
 	
 	

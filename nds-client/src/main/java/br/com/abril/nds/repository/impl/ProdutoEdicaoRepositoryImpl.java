@@ -404,7 +404,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepository<ProdutoEdica
 		hql.append(" SELECT pe ");
 		
 		// Corpo da consulta com os filtros:
-		Query query = this.queryBodyPesquisarEdicoes(hql, dto, "codigoProduto", "DESC");
+		Query query = this.queryBodyPesquisarEdicoes(hql, dto, "numeroEdicao", "DESC");
 		
 		query.setMaxResults(qtdEdicoes);
 		
