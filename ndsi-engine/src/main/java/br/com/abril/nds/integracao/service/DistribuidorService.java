@@ -6,5 +6,7 @@ public interface DistribuidorService {
 	
 	public Distribuidor findDistribuidor ();
 	
+	public boolean isDistribuidor(Integer codigo);
+	
 
 }

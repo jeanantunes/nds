@@ -217,11 +217,22 @@ public class CobrancaRepositoryImpl extends AbstractRepository<Cobranca, Long> i
 		        hql.append(" or c.id = "+idCobrancas.get(i));
 			}
 		}
-		hql.append(" order by c.dataVencimento ");
+		hql.append(" order by c.dataVencimento, c.valor ");
 		
 		Query query = super.getSession().createQuery(hql.toString());
 
 		return query.list();
+	}
+
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<Cobranca> obterCobrancasPorIDS(List<Long> listaCobrancas) {
+		
+		Criteria criteria = super.getSession().createCriteria(Cobranca.class);
+		
+		criteria.add(Restrictions.in("id", listaCobrancas));
+		
+		return criteria.list();
 	}
 	
 }

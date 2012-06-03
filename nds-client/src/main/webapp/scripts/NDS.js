@@ -110,6 +110,37 @@ function removeFromArray(array, item) {
     return newArray;			
 }
 
+/**
+ * Remove os caracteres especiais de um valor<br><br>
+ * <b>Exemplo 01:</b>  <br>
+ * <br>
+ * removeSpecialCharacteres(<b>32.836.093/0001-8a</b>);<br>
+ * return <b>3283609300018a</b>;<br>
+ * <br><br>
+ * <b>Exemplo 02:</b>  <br>
+ * removeSpecialCharacteres(<b>32.836.093/0001-8a</b>, <b>["a", "8"]</b>)<br>
+ * return <b>32360930001</b>;<br>
+ * <br>
+ * @param value valor para remover os caracteres
+ * @param extraCharacteres  caracteres adicionais para serem removidos do valor;
+ * @returns valor sem caracteres especiais;
+ */
+function removeSpecialCharacteres(value, extraCharacteres) {
+	
+	//add default special characteres to remove;
+	var specialCharacteres = ["-", ".", "/"];
+	
+	if (extraCharacteres) {
+		specialCharacteres = specialCharacteres.concat(extraCharacteres);
+	}
+	
+	for (var index in specialCharacteres) {
+		value = value.split(specialCharacteres[index]).join("");
+	}
+	
+	return value; 
+}
+
 function serializeObjectToPost(objectName, object) {
 	var obj = {};
 	for ( var propriedade in object) {

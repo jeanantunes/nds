@@ -1,8 +1,10 @@
 package br.com.abril.nds.service;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
+import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.dto.FornecedorDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
@@ -10,6 +12,7 @@ import br.com.abril.nds.dto.filtro.FiltroConsultaFornecedorDTO;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.GrupoFornecedor;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
+import br.com.abril.nds.model.cadastro.TelefoneFornecedor;
 
 public interface FornecedorService {
 
@@ -52,6 +55,11 @@ public interface FornecedorService {
 	
 	void salvarFornecedorCota(List<Long> fornecedores, Long idCota);
 	
+	/**
+	 * @deprecated use {@link FornecedorService#obterFornecedoresIdNome(SituacaoCadastro, Boolean)}
+	 * @return
+	 */
+	@Deprecated
 	List<ItemDTO<Long,String>> buscarComboFornecedores();
 	
 	/**
@@ -71,4 +79,86 @@ public interface FornecedorService {
 	 * @return Long
 	 */
 	Long obterContagemFornecedoresPorFiltro(FiltroConsultaFornecedorDTO filtroConsultaFornecedor);
+	/**
+	 * @see br.com.abril.nds.repository.FornecedorRepository#obterFornecedoresIdNome(br.com.abril.nds.model.cadastro.SituacaoCadastro, java.lang.Boolean)
+	 */
+	public abstract List<ItemDTO<Long, String>> obterFornecedoresIdNome(SituacaoCadastro situacao, Boolean inferface);
+	
+	/**
+	 * Método que remove um fornecedor de acordo com seu ID.
+	 * 
+	 * @param idFornecedor
+	 */
+	void removerFornecedor(Long idFornecedor);
+	
+	/**
+	 * Método responsável por criar um novo fornecedor.
+	 * 
+	 * @param fornecedor - Fornecedor
+	 */
+	void salvarFornecedor(Fornecedor fornecedor);
+	
+	/**
+	 * Método responsável pela atualização de fornecedor.
+	 * 
+	 * @param fornecedor - Fornecedor
+	 * 
+	 * @return - Fornecedor atualizado.
+	 */
+	Fornecedor merge(Fornecedor fornecedor);
+	
+	/**
+	 * Método responsável por processar os endereços relacionados a um determinado Fornecedor.
+	 * 
+	 * @param idFornecedor - Id do fornecedor em questão.
+	 * 
+	 * @param listaEnderecoAssociacaoSalvar - Lista dos endereços a serem salvos.
+	 * 
+	 * @param listaEnderecoAssociacaoRemover - Lista dos endereços a serem removidos.
+	 */
+	void processarEnderecos(Long idFornecedor,
+						    List<EnderecoAssociacaoDTO> listaEnderecoAssociacaoSalvar,
+						    List<EnderecoAssociacaoDTO> listaEnderecoAssociacaoRemover);
+	
+	/**
+	 * Método responsável por processar os telefones relacionados ao fornecedor.
+	 * 
+	 * @param idFornecedor - Id do fornecedor
+	 * 
+	 * @param listaTelefonesAdicionar - Telefones a serem adicionados.
+	 *  
+	 * @param listaTelefonesRemover - Telefones a serem removidos.
+	 */
+	void processarTelefones(Long idEntregador, 
+						    List<TelefoneFornecedor> listaTelefonesAdicionar, 
+						    Collection<Long> listaTelefonesRemover);
+	
+	/**
+	 * Método que retorna todos os endereços referentes ao fornecedor em questão
+	 * 
+	 * @param idFornecedor
+	 * 
+	 * @return List<EnderecoAssociacaoDTO>
+	 */
+	List<EnderecoAssociacaoDTO> obterEnderecosFornecedor(Long idFornecedor);
+
+	/**
+	 * Método que retorna todos os telefones referentes ao fornecedor em questão
+	 * 
+	 * @param idFornecedor
+	 * 
+	 * @return List<TelefoneAssociacaoDTO> 
+	 */
+	List<TelefoneAssociacaoDTO> obterTelefonesFornecedor(Long idFornecedor);
+
+	/**
+	 * Método que verifica se já existe pessoa cadastrada em outros fornecedores.
+	 * 
+	 * @param idPessoa
+	 * 
+	 * @param idFornecedor
+	 * 
+	 * @return true/false
+	 */
+	boolean isPessoaJaCadastrada(Long idPessoa, Long idFornecedor);
 }

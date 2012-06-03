@@ -16,6 +16,7 @@ import org.springframework.stereotype.Component;
 import br.com.abril.nds.integracao.ems0121.outbound.EMS0121Detalhe;
 import br.com.abril.nds.integracao.ems0121.outbound.EMS0121Header;
 import br.com.abril.nds.integracao.ems0121.outbound.EMS0121Trailer;
+import br.com.abril.nds.integracao.engine.MessageHeaderProperties;
 import br.com.abril.nds.integracao.engine.MessageProcessor;
 import br.com.abril.nds.integracao.engine.data.Message;
 import br.com.abril.nds.integracao.service.DistribuidorService;
@@ -68,7 +69,7 @@ public class EMS0121MessageProcessor implements MessageProcessor{
 		
 		try {
 			
-			PrintWriter print = new PrintWriter(new FileWriter(message.getHeader().get("NDSI_EMS0121_OUTBOUND")+"/ENCALHE.NEW"));	
+			PrintWriter print = new PrintWriter(new FileWriter(message.getHeader().get(MessageHeaderProperties.OUTBOUND_FOLDER)+"/ENCALHE.NEW"));	
 			
 			EMS0121Header outheader = new EMS0121Header();
 			

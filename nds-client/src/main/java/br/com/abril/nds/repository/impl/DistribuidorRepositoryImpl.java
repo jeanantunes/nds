@@ -2,7 +2,6 @@ package br.com.abril.nds.repository.impl;
 
 import java.math.BigDecimal;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -12,10 +11,8 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 
-import br.com.abril.nds.client.util.comparators.CurvaABCParticipacaoAcumuladaComparator;
-import br.com.abril.nds.client.util.comparators.CurvaABCParticipacaoComparator;
 import br.com.abril.nds.client.vo.RegistroCurvaABCDistribuidorVO;
-import br.com.abril.nds.client.vo.ResultadoCurvaABC;
+import br.com.abril.nds.client.vo.ResultadoCurvaABCDistribuidor;
 import br.com.abril.nds.dto.filtro.FiltroCurvaABCDistribuidorDTO;
 import br.com.abril.nds.model.cadastro.DistribuicaoDistribuidor;
 import br.com.abril.nds.model.cadastro.DistribuicaoFornecedor;
@@ -43,7 +40,6 @@ public class DistribuidorRepositoryImpl extends
 		List<Distribuidor> distribuidores = query.list();
 		return distribuidores.isEmpty() ? null : distribuidores.get(0);
 	}
-
 
 	@Override
 	@SuppressWarnings("unchecked")
@@ -109,12 +105,14 @@ public class DistribuidorRepositoryImpl extends
 		return criteria.list();
 	}
 
-	@SuppressWarnings("unchecked")
+	/* (non-Javadoc)
+	 * @see br.com.abril.nds.repository.DistribuidorRepository#obterCurvaABCDistribuidorTotal(br.com.abril.nds.dto.filtro.FiltroCurvaABCDistribuidorDTO)
+	 */
 	@Override
-	public ResultadoCurvaABC obterCurvaABCDistribuidorTotal(FiltroCurvaABCDistribuidorDTO filtro){
+	public ResultadoCurvaABCDistribuidor obterCurvaABCDistribuidorTotal(FiltroCurvaABCDistribuidorDTO filtro) {
 		StringBuilder hql = new StringBuilder();
 
-		hql.append("SELECT new ").append(ResultadoCurvaABC.class.getCanonicalName())
+		hql.append("SELECT new ").append(ResultadoCurvaABCDistribuidor.class.getCanonicalName())
 		.append(" ( (sum(estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida)), ")
 		.append("   ( sum((estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) * (estoqueProdutoCota.produtoEdicao.precoVenda - estoqueProdutoCota.produtoEdicao.desconto)) ) ) ");
 
@@ -127,9 +125,12 @@ public class DistribuidorRepositoryImpl extends
 		for(String key : param.keySet()){
 			query.setParameter(key, param.get(key));
 		}
-		return (ResultadoCurvaABC) query.list().get(0);
+		return (ResultadoCurvaABCDistribuidor) query.uniqueResult();
 	}
 
+	/* (non-Javadoc)
+	 * @see br.com.abril.nds.repository.DistribuidorRepository#obterCurvaABCDistribuidor(br.com.abril.nds.dto.filtro.FiltroCurvaABCDistribuidorDTO)
+	 */
 	@Override
 	@SuppressWarnings("unchecked")
 	public List<RegistroCurvaABCDistribuidorVO> obterCurvaABCDistribuidor(FiltroCurvaABCDistribuidorDTO filtro) {
@@ -147,7 +148,6 @@ public class DistribuidorRepositoryImpl extends
 
 		hql.append(getWhereQueryObterCurvaABCDistribuidor(filtro));
 		hql.append(getGroupQueryObterCurvaABCDistribuidor(filtro));
-		hql.append(getOrderQueryObterCurvaABCDistribuidor(filtro));
 
 		Query query = this.getSession().createQuery(hql.toString());
 
@@ -157,21 +157,15 @@ public class DistribuidorRepositoryImpl extends
 			query.setParameter(key, param.get(key));
 		}
 
-		if (filtro.getPaginacao() != null) {
-
-			if (filtro.getPaginacao().getPosicaoInicial() != null) {
-				query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
-			}
-
-			if (filtro.getPaginacao().getQtdResultadosPorPagina() != null) {
-				query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
-			}
-		}
-
-		return getOrderObterCurvaABCDistribuidor(complementarCurvaABCDistribuidor((List<RegistroCurvaABCDistribuidorVO>) query.list()), filtro);
+		return complementarCurvaABCDistribuidor((List<RegistroCurvaABCDistribuidorVO>) query.list());
 
 	}
 
+	/**
+	 * Retorna as tabelas, joins e filtros da Query de seleção do relatório de vendas
+	 * @param filtro
+	 * @return
+	 */
 	private String getWhereQueryObterCurvaABCDistribuidor(FiltroCurvaABCDistribuidorDTO filtro) {
 
 		StringBuilder hql = new StringBuilder();
@@ -189,7 +183,6 @@ public class DistribuidorRepositoryImpl extends
 
 		if (filtro.getCodigoFornecedor() != null && !filtro.getCodigoFornecedor().isEmpty() && !filtro.getCodigoFornecedor().equals("0")) {
 			hql.append("AND fornecedores.id = :codigoFornecedor ");
-			//hql.append("and produtoEdicao.produto.fornecedores.id = :codigoFornecedor ");
 		}
 
 		if (filtro.getCodigoProduto() != null && !filtro.getCodigoProduto().isEmpty()) {
@@ -225,59 +218,25 @@ public class DistribuidorRepositoryImpl extends
 
 	}
 
+	/**
+	 * Retorna o agrupamento das pesquisas do relatório de vendas
+	 * @param filtro
+	 * @return
+	 */
 	private String getGroupQueryObterCurvaABCDistribuidor(FiltroCurvaABCDistribuidorDTO filtro) {
 
 		StringBuilder hql = new StringBuilder();
 
 		hql.append(" GROUP BY estoqueProdutoCota.cota.numeroCota, ")
-		.append("   CASE WHEN (pessoa.nome is not null) THEN ( pessoa.nome ) ")
-		.append("     WHEN (pessoa.razaoSocial is not null) THEN ( pessoa.razaoSocial ) ")
-		.append("     ELSE null END ");
-
-		return hql.toString();
-	}
-
-
-	private String getOrderQueryObterCurvaABCDistribuidor(FiltroCurvaABCDistribuidorDTO filtro) {
-
-		StringBuilder hql = new StringBuilder();
-
-		if (filtro.getOrdenacaoColuna() != null) {
-			switch (filtro.getOrdenacaoColuna()) {
-				case COTA:
-					hql.append(" order by estoqueProdutoCota.cota.numeroCota ");
-					break;
-				case NOME:
-					hql.append(" order by case when (pessoa.nome is not null) then ( pessoa.nome ) ")
-					.append("     when (pessoa.razaoSocial is not null) then ( pessoa.razaoSocial ) ")
-					.append("     else null end ");
-					break;
-				case MUNICIPIO:
-					hql.append(" order by endereco.cidade ");
-					break;
-				case QTDEPDV:
-					hql.append(" order by case when sum(pdv) is null then 0 else sum(pdv) end ");
-					break;
-				case VENDA_EXEMPLARES:
-					hql.append(" order by (sum(estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida)) ");
-					break;
-				case FATURAMENTO:
-					hql.append(" order by ( sum((estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) * (estoqueProdutoCota.produtoEdicao.precoVenda - estoqueProdutoCota.produtoEdicao.desconto)) ) ");
-					break;
-				default:
-					hql.append(" order by estoqueProdutoCota.cota.numeroCota ");
-					break;
-			}
-			if (filtro.getPaginacao().getOrdenacao() != null) {
-				hql.append(filtro.getPaginacao().getOrdenacao().toString());
-			}
-		}
-
+			.append("   CASE WHEN (pessoa.nome is not null) THEN ( pessoa.nome ) ")
+			.append("     WHEN (pessoa.razaoSocial is not null) THEN ( pessoa.razaoSocial ) ")
+			.append("     ELSE null END ");
+ 
 		return hql.toString();
 	}
 
 	/**
-	 * Retorna os parametros da consulta de dividas.
+	 * Popula os parametros do relatório.
 	 * @param filtro
 	 * @return HashMap<String,Object>
 	 */
@@ -323,6 +282,11 @@ public class DistribuidorRepositoryImpl extends
 		return param;
 	}
 
+	/**
+	 * Insere os registros de participação e participação acumulada no resultado da consulta HQL
+	 * @param lista
+	 * @return
+	 */
 	private List<RegistroCurvaABCDistribuidorVO> complementarCurvaABCDistribuidor(List<RegistroCurvaABCDistribuidorVO> lista) {
 
 		BigDecimal participacaoTotal = new BigDecimal(0);
@@ -356,22 +320,6 @@ public class DistribuidorRepositoryImpl extends
 
 		}
 
-		return lista;
-	}
-
-	@SuppressWarnings("unchecked")
-	private List<RegistroCurvaABCDistribuidorVO> getOrderObterCurvaABCDistribuidor(List<RegistroCurvaABCDistribuidorVO> lista, FiltroCurvaABCDistribuidorDTO filtro) {
-
-		if (filtro.getOrdenacaoColuna() != null) {
-			switch (filtro.getOrdenacaoColuna()) {
-				case PARTICIPACAO:
-					Collections.sort(lista, new CurvaABCParticipacaoComparator());
-				case PARTICIPACAO_ACUMULADA:
-					Collections.sort(lista, new CurvaABCParticipacaoAcumuladaComparator());
-				default:
-					break;
-			}
-		}
 		return lista;
 	}
 

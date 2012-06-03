@@ -5,6 +5,7 @@ import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -15,6 +16,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
+
+import com.google.common.collect.Multiset.Entry;
 
 import br.com.abril.nds.client.vo.EntregadorPessoaFisicaVO;
 import br.com.abril.nds.client.vo.EntregadorPessoaJuridicaVO;
@@ -80,6 +83,10 @@ public class EntregadorController {
 
 	@Autowired
 	private PessoaJuridicaService pessoaJuridicaService;
+
+	private static final String CPF = "CPF";
+	
+	private static final String CNPJ = "CNPF";
 	
 	private static final String NOME_ARQUIVO_PROCURACAO = "procuracao";
 	
@@ -94,6 +101,7 @@ public class EntregadorController {
 	public static final String LISTA_ENDERECOS_REMOVER_SESSAO = "listaEnderecosRemoverSessaoEntregador";
 
 	public static final String LISTA_ENDERECOS_EXIBICAO = "listaEnderecosExibicaoEntregador";
+	
 	
 	@Path("/")
 	public void index() { }
@@ -155,11 +163,14 @@ public class EntregadorController {
 												Integer numeroCotaProcuracao,
 												PessoaFisica pessoaFisica,
 												ProcuracaoEntregador procuracaoEntregador) {
-
+		
+		HashMap<String, String> cpf = new HashMap<String, String>();
+		cpf.put(CPF, cpfEntregador);
+		
 		validarParametrosEntradaCadastroEntregador(codigoEntregador, 
 												   isComissionado, 
 												   percentualComissao, 
-												   cpfEntregador,
+												   cpf,
 												   procuracao,
 												   numeroCotaProcuracao,
 												   procuracaoEntregador);
@@ -272,11 +283,14 @@ public class EntregadorController {
 												  Integer numeroCotaProcuracao,
 												  PessoaJuridica pessoaJuridica,
 												  ProcuracaoEntregador procuracaoEntregador) {
-
+		
+		HashMap<String, String> cnpj = new HashMap<String, String>();
+		cnpj.put(CNPJ, cnpjEntregador);
+		
 		validarParametrosEntradaCadastroEntregador(codigoEntregador, 
 												   isComissionado, 
 												   percentualComissao, 
-												   cnpjEntregador,
+												   cnpj,
 												   procuracao,
 												   numeroCotaProcuracao,
 												   procuracaoEntregador);
@@ -649,10 +663,11 @@ public class EntregadorController {
 	/*
 	 * 
 	 */
+	@SuppressWarnings("unchecked")
 	private void validarParametrosEntradaCadastroEntregador(Long codigoEntregador,
 															boolean isComissionado,
 															String percentualComissao,
-															String cnpjCpfEntregador,
+															HashMap<String, String> cpfCnpj,
    															boolean procuracao,
 															Integer numeroCotaProcuracao,
 															ProcuracaoEntregador procuracaoEntregador) {
@@ -662,17 +677,31 @@ public class EntregadorController {
 		ValidacaoVO validacao = new ValidacaoVO();
 		
 		validacao.setTipoMensagem(TipoMensagem.WARNING);
-		
+						
 		if (codigoEntregador == null) {
 			
 			listaMensagens.add("O preenchimento do campo [Código do entregador] é obrigatório.");
 		}
 		
-		if (cnpjCpfEntregador == null || cnpjCpfEntregador.isEmpty()) {
+		if (cpfCnpj.containsKey(CPF)) {
 			
-			listaMensagens.add("O preenchimento do campo [Pessoa] é obrigatório.");
+			String cpfEntregador = cpfCnpj.get(CPF);
+			
+			if (cpfEntregador == null || cpfEntregador.isEmpty()) {
+			
+				listaMensagens.add("O preenchimento do campo [CPF] é obrigatório.");
+			}
+			
+		} else if (cpfCnpj.containsKey(CNPJ)) {
+			
+			String cnpjEntregador = cpfCnpj.get(CNPJ);
+			
+			if (cnpjEntregador == null || cnpjEntregador.isEmpty()) {
+			
+				listaMensagens.add("O preenchimento do campo [CNPJ] é obrigatório.");
+			}
 		}
-				
+		
 		if (isComissionado && percentualComissao == null) {
 			
 			listaMensagens.add("O preenchimento do campo [Percentual da comissão] é obrigatório.");
@@ -714,6 +743,62 @@ public class EntregadorController {
 			}
 		}
 			
+		List<EnderecoAssociacaoDTO> listaEnderecoAssociacaoSalvar = 
+				(List<EnderecoAssociacaoDTO>) this.session.getAttribute(
+						LISTA_ENDERECOS_SALVAR_SESSAO);
+		
+		Map<Integer, TelefoneAssociacaoDTO> map = this.obterTelefonesSalvarSessao();
+		
+		if (map.keySet().isEmpty()) {
+			
+			listaMensagens.add("Pelo menos um telefone deve ser cadastrado para o entregador.");
+		
+		} else {
+			
+			boolean temPrincipal = false;
+			
+			for (Integer key : map.keySet()){
+
+				TelefoneAssociacaoDTO telefoneAssociacaoDTO = map.get(key);
+				
+				if (telefoneAssociacaoDTO.isPrincipal()) {
+					
+					temPrincipal = true;
+					
+					break;
+				}
+			}
+			
+			if (!temPrincipal) {
+				
+				listaMensagens.add("Deve haver ao menos um telefone principal para o entregador.");
+			}
+		}
+		
+		if (listaEnderecoAssociacaoSalvar == null || listaEnderecoAssociacaoSalvar.isEmpty()) {
+			
+			listaMensagens.add("Pelo menos um endereço deve ser cadastrado para o entregador.");
+		
+		} else {
+			
+			boolean temPrincipal = false;
+			
+			for (EnderecoAssociacaoDTO enderecoAssociacao : listaEnderecoAssociacaoSalvar) {
+				
+				if (enderecoAssociacao.isEnderecoPrincipal()) {
+					
+					temPrincipal = true;
+					
+					break;
+				}
+			}
+
+			if (!temPrincipal) {
+				
+				listaMensagens.add("Deve haver ao menos um endereço principal para o entregador.");
+			}
+		}
+		
 		if (!listaMensagens.isEmpty()) {
 			
 			validacao.setListaMensagens(listaMensagens);
@@ -726,8 +811,8 @@ public class EntregadorController {
 	 * 
 	 */
 	private ProcuracaoEntregador obterProcuracaoEntregadorValidada(Integer numeroCotaProcuracao, 
-																  Long idEntregador,
-																  ProcuracaoEntregador procuracaoEntregador) {
+																   Long idEntregador,
+																   ProcuracaoEntregador procuracaoEntregador) {
 
 		ProcuracaoEntregador procuracaoEntregadorExistente = null;
 		
@@ -779,11 +864,6 @@ public class EntregadorController {
 												  listaEnderecoAssociacaoSalvar, 
 												  listaEnderecoAssociacaoRemover);
 
-		if (listaEnderecoAssociacaoSalvar == null || listaEnderecoAssociacaoSalvar.isEmpty()) {
-			
-			throw new ValidacaoException(TipoMensagem.WARNING, "Pelo menos um endereço deve ser cadastrado para o entregador.");
-		}
-		
 		this.session.removeAttribute(LISTA_ENDERECOS_SALVAR_SESSAO);
 		this.session.removeAttribute(LISTA_ENDERECOS_REMOVER_SESSAO);
 	}
@@ -843,11 +923,6 @@ public class EntregadorController {
 	private void processarTelefonesEntregador(Long idEntregador){
 
 		Map<Integer, TelefoneAssociacaoDTO> map = this.obterTelefonesSalvarSessao();
-		
-		if (map.keySet().isEmpty()) {
-			
-			throw new ValidacaoException(TipoMensagem.WARNING, "Pelo menos um telefone deve ser cadastrado para o entregador.");
-		}
 
 		List<TelefoneEntregador> lista = new ArrayList<TelefoneEntregador>();
 
@@ -877,7 +952,7 @@ public class EntregadorController {
 		this.session.removeAttribute(LISTA_TELEFONES_SALVAR_SESSAO);
 		this.session.removeAttribute(LISTA_TELEFONES_REMOVER_SESSAO);
 	}
-
+	
 	/*
 	 * Método que obtém os telefones a serem salvos, que estão na sessão.
 	 */

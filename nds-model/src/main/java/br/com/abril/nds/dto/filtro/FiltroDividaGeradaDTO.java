@@ -38,6 +38,10 @@ public class FiltroDividaGeradaDTO implements Serializable {
 	@Export(label = "Tipo")
 	private TipoCobranca tipoCobranca;
 	
+	private Long idBox;
+	private Long idRota;
+	private Long idRoteiro;
+	
 	private PaginacaoVO paginacao;
 	
 	private	ColunaOrdenacao colunaOrdenacao;
@@ -46,14 +50,14 @@ public class FiltroDividaGeradaDTO implements Serializable {
 	
 	public FiltroDividaGeradaDTO() {}
 	
-	public FiltroDividaGeradaDTO(Date dataMovimento, String codigoBox , String rota, String roteiro,Integer numeroCota,TipoCobranca tipoCobranca ) {
+	public FiltroDividaGeradaDTO(Date dataMovimento, Long idBox , Long idRota, Long idRoteiro,Integer numeroCota,TipoCobranca tipoCobranca ) {
 		
 		this.dataMovimento = dataMovimento;
-		this.codigoBox = codigoBox;
-		this.rota = rota;
-		this.roteiro = roteiro;
 		this.numeroCota = numeroCota;
 		this.tipoCobranca = tipoCobranca;
+		this.idRota = idRota;
+		this.idRoteiro = idRoteiro;
+		this.idBox = idBox;
 	}
 	
 	public enum ColunaOrdenacao {
@@ -220,7 +224,53 @@ public class FiltroDividaGeradaDTO implements Serializable {
 	public void setNomeCota(String nomeCota) {
 		this.nomeCota = nomeCota;
 	}
+	
 
+	/**
+	 * @return the idBox
+	 */
+	public Long getIdBox() {
+		return idBox;
+	}
+
+	/**
+	 * @param idBox the idBox to set
+	 */
+	public void setIdBox(Long idBox) {
+		this.idBox = idBox;
+	}
+
+	/**
+	 * @return the idRota
+	 */
+	public Long getIdRota() {
+		return idRota;
+	}
+
+	/**
+	 * @param idRota the idRota to set
+	 */
+	public void setIdRota(Long idRota) {
+		this.idRota = idRota;
+	}
+
+	/**
+	 * @return the idRoteiro
+	 */
+	public Long getIdRoteiro() {
+		return idRoteiro;
+	}
+
+	/**
+	 * @param idRoteiro the idRoteiro to set
+	 */
+	public void setIdRoteiro(Long idRoteiro) {
+		this.idRoteiro = idRoteiro;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -231,10 +281,16 @@ public class FiltroDividaGeradaDTO implements Serializable {
 				+ ((colunaOrdenacao == null) ? 0 : colunaOrdenacao.hashCode());
 		result = prime * result
 				+ ((dataMovimento == null) ? 0 : dataMovimento.hashCode());
+		result = prime * result + ((idBox == null) ? 0 : idBox.hashCode());
+		result = prime * result + ((idRota == null) ? 0 : idRota.hashCode());
+		result = prime * result
+				+ ((idRoteiro == null) ? 0 : idRoteiro.hashCode());
 		result = prime
 				* result
 				+ ((listaColunaOrdenacao == null) ? 0 : listaColunaOrdenacao
 						.hashCode());
+		result = prime * result
+				+ ((nomeCota == null) ? 0 : nomeCota.hashCode());
 		result = prime * result
 				+ ((numeroCota == null) ? 0 : numeroCota.hashCode());
 		result = prime * result
@@ -246,6 +302,9 @@ public class FiltroDividaGeradaDTO implements Serializable {
 		return result;
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -267,10 +326,30 @@ public class FiltroDividaGeradaDTO implements Serializable {
 				return false;
 		} else if (!dataMovimento.equals(other.dataMovimento))
 			return false;
+		if (idBox == null) {
+			if (other.idBox != null)
+				return false;
+		} else if (!idBox.equals(other.idBox))
+			return false;
+		if (idRota == null) {
+			if (other.idRota != null)
+				return false;
+		} else if (!idRota.equals(other.idRota))
+			return false;
+		if (idRoteiro == null) {
+			if (other.idRoteiro != null)
+				return false;
+		} else if (!idRoteiro.equals(other.idRoteiro))
+			return false;
 		if (listaColunaOrdenacao == null) {
 			if (other.listaColunaOrdenacao != null)
 				return false;
 		} else if (!listaColunaOrdenacao.equals(other.listaColunaOrdenacao))
+			return false;
+		if (nomeCota == null) {
+			if (other.nomeCota != null)
+				return false;
+		} else if (!nomeCota.equals(other.nomeCota))
 			return false;
 		if (numeroCota == null) {
 			if (other.numeroCota != null)
@@ -295,6 +374,8 @@ public class FiltroDividaGeradaDTO implements Serializable {
 		if (tipoCobranca != other.tipoCobranca)
 			return false;
 		return true;
-	}	
+	}
+
+	
 	
 }

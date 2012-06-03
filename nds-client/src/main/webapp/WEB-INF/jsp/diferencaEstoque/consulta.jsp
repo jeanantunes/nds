@@ -8,6 +8,16 @@
 	<script type="text/javascript">
 	
 		$(function() {			
+			
+			$('input[id^="data"]').datepicker({
+				showOn: "button",
+				buttonImage: "${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
+				buttonImageOnly: true,
+				dateFormat: "dd/mm/yy"
+			});
+			
+			$('input[id^="data"]').mask("99/99/9999");
+			
 			$("#edicao").numeric();
 			
 			$("#produto").autocomplete({source: ""});
@@ -110,7 +120,7 @@
 		function pesquisarFornecedores() {
 			var data = "codigoProduto=" + $("#codigo").val();
 			
-			$.postJSON("<c:url value='/estoque/diferenca/pesquisarFonecedores' />",
+			$.postJSON("${pageContext.request.contextPath}/estoque/diferenca/pesquisarFonecedores",
 					   data, montarComboFornecedores);
 		}
 		
@@ -124,15 +134,19 @@
 			var codigoProduto = $("#codigo").val();
 			var numeroEdicao = $("#edicao").val();
 			var idFornecedor = $("#fornecedor").val();
+			var dataInicial = $("#dataInicial").val();
+			var dataFinal = $("#dataFinal").val();
 			var tipoDiferenca = $("#tipoDiferenca").val();
 			
 			$(".consultaFaltasSobrasGrid").flexOptions({
-				url: "<c:url value='/estoque/diferenca/pesquisarDiferencas' />",
+				url: "${pageContext.request.contextPath}/estoque/diferenca/pesquisarDiferencas",
 				onSuccess: executarAposProcessamento,
 				params: [
 				         {name:'codigoProduto', value:codigoProduto},
 				         {name:'numeroEdicao', value:numeroEdicao},
 				         {name:'idFornecedor', value:idFornecedor},
+				         {name:'dataInicial', value:dataInicial},
+				         {name:'dataFinal', value:dataFinal},
 				         {name:'tipoDiferenca', value:tipoDiferenca}
 				        ] ,
 		        newp: 1
@@ -226,8 +240,16 @@
 		<table width="950" border="0" cellspacing="2" cellpadding="2"
 			class="filtro">
 			<tr>
-				<td width="120" align="left">Tipo de Diferença:</td>
-				<td width="652">
+				<td width="100">Período de Data:</td>
+				<td width="108">
+					<input type="text" name="dataInicial" id="dataInicial" style="width: 80px;" value="${dataAtual}" />
+				</td>
+				<td width="33" align="center">Até</td>
+				<td width="147">
+					<input type="text" name="dataFinal" id="dataFinal" style="width: 80px;" value="${dataAtual}" />
+				</td>
+				<td width="134" align="right">Tipo de Diferença:</td>
+				<td width="169">
 					<select name="tipoDiferenca" id="tipoDiferenca" style="width: 120px;">
 						<option selected="selected" value="">Todos</option>
 						<c:forEach var="tipoDiferenca" items="${listaTiposDiferenca}">
@@ -235,7 +257,7 @@
 						</c:forEach>
 					</select>
 				</td>
-				<td>
+				<td width="137">
 					<span class="bt_pesquisar" title="Pesquisar">
 						<a href="javascript:;" onclick="pesquisar();">Pesquisar</a>
 					</span>

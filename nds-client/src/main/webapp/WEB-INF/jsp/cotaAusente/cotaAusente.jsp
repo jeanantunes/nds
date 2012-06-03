@@ -394,39 +394,40 @@ function popupRateio(movimentos) {
 		
 	gerarMovimentos(movimentos);
 	
-	gerarGridRateios(0);
+	if(movimentos[0])
+		gerarGridRateios(0);
 	
-		$( "#dialog-suplementar" ).dialog({
-			resizable: false,
-			height:450,
-			width:800,
-			modal: true,
-			buttons: {
-				"Suplementar": function() {
-					
-					$.postJSON("<c:url value='/cotaAusente/enviarParaSuplementar'/>", 
-							"numCota=" + numCotaAusente, 
-							retornoEnvioSuplementar);
-					
-					$( this ).dialog( "close" );
-					
-				},
-				"Redistribuir": function() {
-					
-					var parametros = getParametrosFromMovimentos();
-					
-					if(!parametros) {
-						return;
-					}
-					
-					$.postJSON("<c:url value='/cotaAusente/realizarRateio'/>", 
-							parametros,
-							retornoRateio);
-					
-					$( this ).dialog( "close" );
+	$( "#dialog-suplementar" ).dialog({
+		resizable: false,
+		height:450,
+		width:800,
+		modal: true,
+		buttons: {
+			"Suplementar": function() {
+				
+				$.postJSON("<c:url value='/cotaAusente/enviarParaSuplementar'/>", 
+						"numCota=" + numCotaAusente, 
+						retornoEnvioSuplementar);
+				
+				$( this ).dialog( "close" );
+				
+			},
+			"Redistribuir": function() {
+				
+				var parametros = getParametrosFromMovimentos();
+				
+				if(!parametros) {
+					return;
 				}
+				
+				$.postJSON("<c:url value='/cotaAusente/realizarRateio'/>", 
+						parametros,
+						retornoRateio);
+				
+				$( this ).dialog( "close" );
 			}
-		});
+		}
+	});
 }
 
 function getParametrosFromMovimentos() {

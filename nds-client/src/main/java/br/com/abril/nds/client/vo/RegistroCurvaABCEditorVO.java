@@ -2,9 +2,13 @@ package br.com.abril.nds.client.vo;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import br.com.abril.nds.util.export.Export;
+import br.com.abril.nds.util.export.Exportable;
 
+@Exportable
 public class RegistroCurvaABCEditorVO extends RegistroCurvaABC implements
 		Serializable {
 
@@ -31,6 +35,13 @@ public class RegistroCurvaABCEditorVO extends RegistroCurvaABC implements
 	@Export(label = "Faturamento da Capa", exhibitionOrder = 6)
 	private BigDecimal faturamentoCapa;
 
+	private Date dataDe;
+	
+	private Date dataAte;
+	
+	private static final String FORMATO_DATA = "dd/MM/yyyy";  
+	SimpleDateFormat sdf = new SimpleDateFormat(FORMATO_DATA);
+	
 	public RegistroCurvaABCEditorVO() {
 	}
 
@@ -90,5 +101,39 @@ public class RegistroCurvaABCEditorVO extends RegistroCurvaABC implements
 	public void setReparte(BigDecimal reparte) {
 		this.reparte = reparte;
 	}
-	
+
+	@Export(label = "Participação", exhibitionOrder = 7)
+	public BigDecimal getParticipacaoString() {
+		return getParticipacao();
+	}
+
+	@Export(label = "Participação Acumulada", exhibitionOrder = 8)
+	public BigDecimal getParticipacaoAcumuladaString() {
+		return getParticipacaoAcumulada();
+	}
+
+	public Date getDataDe() {
+		return dataDe;
+	}
+
+	public void setDataDe(Date dataDe) {
+		this.dataDe = dataDe;
+	}
+
+	public Date getDataAte() {
+		return dataAte;
+	}
+
+	public void setDataAte(Date dataAte) {
+		this.dataAte = dataAte;
+	}
+
+	public String getDataDeString() {
+		return sdf.format(dataDe);
+	}
+
+	public String getDataAteString() {
+		return sdf.format(dataAte);
+	}
+
 }

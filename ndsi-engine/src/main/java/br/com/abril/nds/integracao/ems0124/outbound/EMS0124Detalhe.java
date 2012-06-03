@@ -41,7 +41,7 @@ public class EMS0124Detalhe {
 		this.contextoProduto = contextoProduto;
 	}
 	
-	@Field(offset=3, length=7)
+	@Field(offset=3, length=7, paddingChar='9')
 	public Integer getCodigoFornecedorProduto() {
 		return codigoFornecedorProduto;
 	}

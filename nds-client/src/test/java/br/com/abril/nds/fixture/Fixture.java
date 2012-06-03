@@ -12,6 +12,7 @@ import br.com.abril.nds.model.StatusCobranca;
 import br.com.abril.nds.model.StatusConfirmacao;
 import br.com.abril.nds.model.StatusControle;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
+import br.com.abril.nds.model.cadastro.Algoritmo;
 import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Carteira;
@@ -51,9 +52,7 @@ import br.com.abril.nds.model.cadastro.ProcuracaoEntregador;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.Rota;
-import br.com.abril.nds.model.cadastro.RotaRoteiroOperacao;
-import br.com.abril.nds.model.cadastro.TipoDesconto;
-import br.com.abril.nds.model.cadastro.RotaRoteiroOperacao.TipoOperacao;
+import br.com.abril.nds.model.cadastro.Roteirizacao;
 import br.com.abril.nds.model.cadastro.Roteiro;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.Telefone;
@@ -61,6 +60,7 @@ import br.com.abril.nds.model.cadastro.TelefoneDistribuidor;
 import br.com.abril.nds.model.cadastro.TelefoneEntregador;
 import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
+import br.com.abril.nds.model.cadastro.TipoDesconto;
 import br.com.abril.nds.model.cadastro.TipoEndereco;
 import br.com.abril.nds.model.cadastro.TipoEntrega;
 import br.com.abril.nds.model.cadastro.TipoFormaCobranca;
@@ -184,15 +184,15 @@ public class Fixture {
 	}
 
 	public static Fornecedor fornecedorFC(TipoFornecedor tipoFornecedor) {
-		return fornecedor(juridicaFC(), SituacaoCadastro.ATIVO, true, tipoFornecedor);
+		return fornecedor(juridicaFC(), SituacaoCadastro.ATIVO, true, tipoFornecedor, 1);
 	}
 
 	public static Fornecedor fornecedorDinap(TipoFornecedor tipoFornecedor) {
-		return fornecedor(juridicaDinap(), SituacaoCadastro.ATIVO, true, tipoFornecedor);
+		return fornecedor(juridicaDinap(), SituacaoCadastro.ATIVO, true, tipoFornecedor, 2);
 	}
 	
 	public static Fornecedor fornecedorAcme(TipoFornecedor tipoFornecedor) {
-		return fornecedor(juridicaAcme(), SituacaoCadastro.ATIVO, false, tipoFornecedor);
+		return fornecedor(juridicaAcme(), SituacaoCadastro.ATIVO, false, tipoFornecedor, 3);
 	}
 
 	public static Produto produtoVeja(TipoProduto tipoProduto) {
@@ -272,11 +272,11 @@ public class Fixture {
 	}
 
 	public static TipoProduto tipoRevista() {
-		return tipoProduto("Revistas", GrupoProduto.REVISTA, "99000642", null, "001");
+		return tipoProduto("Revistas", GrupoProduto.REVISTA, "99000642", null, 001L);
 	}
 	
 	public static TipoProduto tipoCromo() {
-		return tipoProduto("Cromos", GrupoProduto.CROMO, "1230004560", null, "001");
+		return tipoProduto("Cromos", GrupoProduto.CROMO, "1230004560", null, 002L);
 	}
 	
 	public static TipoFornecedor tipoFornecedorPublicacao() {
@@ -356,17 +356,19 @@ public class Fixture {
 
 	public static Fornecedor fornecedor(PessoaJuridica juridica,
 			SituacaoCadastro situacaoCadastro, boolean permiteBalanceamento,
-			TipoFornecedor tipo) {
+			TipoFornecedor tipo, Integer codigoInterface) {
 		Fornecedor fornecedor = new Fornecedor();
 		fornecedor.setJuridica(juridica);
 		fornecedor.setSituacaoCadastro(situacaoCadastro);
 		fornecedor.setPermiteBalanceamento(permiteBalanceamento);
 		fornecedor.setTipoFornecedor(tipo);
+		fornecedor.setInicioAtividade(new Date());
+		fornecedor.setCodigoInterface(codigoInterface);
 		return fornecedor;
 	}
 
 	public static TipoProduto tipoProduto(String descricao, GrupoProduto grupo,
-			String codigoNCM, String codigoNBM, String codigo) {
+			String codigoNCM, String codigoNBM, Long codigo) {
 		TipoProduto tipoProduto = new TipoProduto();
 		tipoProduto.setDescricao(descricao);
 		tipoProduto.setGrupoProduto(grupo);
@@ -1994,19 +1996,6 @@ public class Fixture {
 		rota.setTipoRoteiro(TipoRoteiro.ESPECIAL);
 		return rota;
 	}
-	
-	public static RotaRoteiroOperacao rotaRoteiroOperacao (Rota rota,Roteiro roteiro,Cota cota, TipoOperacao tipoOperacao){
-		
-		RotaRoteiroOperacao rotaRoteiroOperacao = new RotaRoteiroOperacao();
-		rotaRoteiroOperacao.setRota(rota);
-		rotaRoteiroOperacao.setRoteiro(roteiro);
-		rotaRoteiroOperacao.setCota(cota);
-		rotaRoteiroOperacao.setTipoOperacao(tipoOperacao);
-		
-		return rotaRoteiroOperacao;
-
-
-	}
 
 	public static CobrancaDinheiro criarCobrancaDinheiro(String nossoNumero,
             Date dataEmissao,
@@ -2572,4 +2561,43 @@ public class Fixture {
 		
 		return tipoDesconto;
 	}
+	
+	public static Roteirizacao criarRoteirizacao(PDV pdv, Rota rota,Integer ordem ){
+		
+		Roteirizacao roteirizacao = new Roteirizacao();
+		roteirizacao.setPdv(pdv);
+		roteirizacao.setRota(rota);
+		roteirizacao.setOrdem(ordem);
+		
+		return roteirizacao;
+	}
+	
+	public static Roteiro criarRoteiro(String descricaoRoteiro,Box box, TipoRoteiro tipoRoteiro ){
+		Roteiro rota = new Roteiro();
+		rota.setDescricaoRoteiro(descricaoRoteiro);
+		rota.setOrdem(0);
+		rota.setTipoRoteiro(tipoRoteiro);
+		rota.setBox(box);
+		return rota;
+	}
+	
+	public static  PDV criarPDVPrincipal(String nome, Cota cota){
+		
+		PDV pdv = new PDV();
+		pdv.setNome(nome);
+		pdv.setCota(cota);
+		pdv.setCaracteristicas(new CaracteristicasPDV());
+		pdv.getCaracteristicas().setPontoPrincipal(true);
+		
+		return pdv;
+	}
+
+	public static Algoritmo criarAlgoritmo(String descricao) {
+		Algoritmo algoritmo = new Algoritmo();
+		
+		algoritmo.setDescricao(descricao);
+		
+		return algoritmo;
+	}
+	
 }

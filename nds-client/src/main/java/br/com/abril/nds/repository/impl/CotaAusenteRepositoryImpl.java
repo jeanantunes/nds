@@ -48,9 +48,11 @@ public class CotaAusenteRepositoryImpl extends AbstractRepository<CotaAusente, L
 		queryNative.append("LEFT JOIN BOX box ON (cota.BOX_ID=box.ID)											");
 		queryNative.append("LEFT JOIN PESSOA pessoa ON (cota.PESSOA_ID=pessoa.ID)								");
 		
-		queryNative.append("WHERE 																				");
-		
-		queryNative.append("ca.ativo =:ativo AND ca.DATA = :data 												");
+		queryNative.append("WHERE ca.ativo =:ativo 											 					");
+				
+		if(filtro.getData() != null){	
+			queryNative.append("AND ca.DATA = :data  											");
+		}
 		
 		
 		if(filtro.getNumCota() != null){			
@@ -103,9 +105,12 @@ public class CotaAusenteRepositoryImpl extends AbstractRepository<CotaAusente, L
 				.addScalar("cota")
 				.addScalar("nome")
 				.addScalar("valorNe").setResultTransformer(Transformers.aliasToBean(CotaAusenteDTO.class));
-			
-		query.setParameter("data", filtro.getData());
+		
 		query.setParameter("ativo", true);
+				
+		if(filtro.getData() != null){			
+			query.setParameter("data", filtro.getData());
+		}
 		
 		if(filtro.getNumCota() != null){
 			query.setParameter("numCota", filtro.getNumCota());
@@ -136,8 +141,11 @@ public class CotaAusenteRepositoryImpl extends AbstractRepository<CotaAusente, L
 		queryNative.append("LEFT JOIN COTA_AUSENTE ca ON (ca.COTA_ID=cota.ID)									");
 		queryNative.append("LEFT JOIN BOX box ON (cota.BOX_ID=box.ID)											");
 		queryNative.append("LEFT JOIN PESSOA pessoa ON (cota.PESSOA_ID=pessoa.ID)								");
+		queryNative.append("WHERE ca.ativo =:ativo "																	 );
 		
-		queryNative.append("WHERE ca.DATA = :data																");
+		if(filtro.getData() != null){	
+			queryNative.append("AND ca.DATA = :data  											");
+		}
 		
 		if(filtro.getNumCota() != null){			
 			queryNative.append("and cota.NUMERO_COTA = :numCota 												");
@@ -148,8 +156,13 @@ public class CotaAusenteRepositoryImpl extends AbstractRepository<CotaAusente, L
 		}
 				
 		Query query  = getSession().createSQLQuery(queryNative.toString());
-			
-		query.setParameter("data", filtro.getData());
+		
+		
+		if(filtro.getData() != null){			
+			query.setParameter("data", filtro.getData());
+		}
+		
+		query.setParameter("ativo", true);
 		
 		if(filtro.getNumCota() != null){
 			query.setParameter("numCota", filtro.getNumCota());

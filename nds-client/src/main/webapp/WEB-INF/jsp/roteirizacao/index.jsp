@@ -11,7 +11,7 @@ $(function() {
 function inicializar() {
 	iniciarGrid();
 	roteirizacao.iniciaRotasGrid();
-	
+	roteirizacao.iniciaCotasRotaGrid();
 }
 
 function iniciarGrid() {
@@ -130,25 +130,6 @@ function popup_roteirizacao() {
 		});
 	};
 	
-function popup_cotas_ausentes() {
-		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
-	
-		$( "#dialog-cotas-disponiveis" ).dialog({
-			resizable: false,
-			height:490,
-			width:870,
-			modal: true,
-			buttons: {
-				"Confirmar": function() {
-					$( this ).dialog( "close" );
-					
-				},
-				"Cancelar": function() {
-					$( this ).dialog( "close" );
-				}
-			}
-		});
-	};
 
 
 
@@ -175,13 +156,7 @@ function popup_cotas_ausentes() {
 		      
 	};
 	
-	
-	
-	
-	
-	
-
-	
+		
 	function popup_tranferir_cota() {
 		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
 	
@@ -392,7 +367,9 @@ label{ vertical-align:super;}
 		<legend>Rotas</legend>
         
 
-        <input name="lstRota" type="text" id="lstRota" style="width:240px; float:left; margin-bottom:5px;" />
+        <input name="nomeRota" type="text" id="nomeRota" style="width:240px; float:left; margin-bottom:5px;" onkeyup="roteirizacao.filtroGridRotasPorNome()"  />
+        
+        
         <a href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_add.gif" alt="Adicionar Rota" width="16" height="16" border="0" style="float:left; margin-left:5px; margin-top:5px;" /></a> <br />
         <table class="rotasGrid"></table>
 		<span class="bt_novos" title="Nova Rota"><a href="javascript:;" onclick="roteirizacao.abrirTelaRota();"><img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0"/>Nova</a></span>
@@ -405,10 +382,10 @@ label{ vertical-align:super;}
     <fieldset style="width:596px; float:left; margin-left:3px; overflow:hidden;">
 		<legend>Cotas da Rota</legend>
         <span style="float:left; margin-bottom:10px; margin-left:3px; margin-top:5px;"><strong>Roteiro Selecionado:</strong> Comprador - <strong>Box: </strong>230 - <strong>Ordem: </strong>2</span>
-        
+        <input name="rotaSelecionada" type="hidden"  id="rotaSelecionada" style="width:240px; float:left; margin-bottom:5px;"  />
         
 		<table class="cotasRotaGrid"></table>
-        <span class="bt_novos" title="Cotas Ausentes"><a href="javascript:;" onclick="popup_cotas_ausentes();"><img src="${pageContext.request.contextPath}/images/ico_add.gif" hspace="5" border="0"/>Adicionar</a></span>
+        <span class="bt_novos" title="Cotas Ausentes"><a href="javascript:;" onclick="roteirizacao.abrirTelaCotas();"><img src="${pageContext.request.contextPath}/images/ico_add.gif" hspace="5" border="0"/>Adicionar</a></span>
         
          <span class="bt_novos" title="Transferência de Roteiro"><a href="javascript:;" onclick="popup_tranferir_cota();"><img src="${pageContext.request.contextPath}/images/ico_integrar.png" hspace="5" border="0"/>Transferir</a></span>
          <span class="bt_novos" title="Cotas Ausentes"><a href="javascript:;" onclick="popup_excluir();"><img src="${pageContext.request.contextPath}/images/ico_excluir.gif" hspace="5" border="0"/>Excluir</a></span>
@@ -460,26 +437,22 @@ label{ vertical-align:super;}
                 <option>Cota</option>
               </select></td>
               <td width="42">Cota:</td>
-              <td width="170"><input name="pesq_cota" type="text" id="pesq_cota" style="width:80px; float:left; margin-right:5px;" onkeypress="mostraCota();"/>
-              <span class="classPesquisar"><a href="javascript:;" onclick="mostraCota();">&nbsp;</a></span></td>
+              <td width="170"><input name="numeroCotaPesquisa" type="text" id="numeroCotaPesquisa" style="width:80px; float:left; margin-right:5px;" onkeypress="mostraCota();"/>
+              <span class="classPesquisar"><a href="javascript:;" onclick="roteirizacao.buscarPvsPorCota();">&nbsp;</a></span></td>
               <td width="41">Nome:</td>
               <td colspan="4"><span class="dadosFiltro">CGB Distribuidora de Jorn e Rev</span></td>
             </tr>
             <tr>
               <td>UF:</td>
-              <td><select name="select2" id="select2" style="width:100px;">
-                <option selected="selected">Selecione...</option>
-                <option>AL</option>
-                <option>BA</option>
-                <option>RJ</option>
-                <option>SP</option>
+              <td><select name="comboUf" id="comboUf" onchange="roteirizacao.buscalistaMunicipio()" style="width:100px;">
+                
               </select></td>
               <td>Munic.</td>
-              <td><select name="select3" id="select3" style="width:150px;">
+              <td><select name="comboMunicipio" id="comboMunicipio" onchange="roteirizacao.buscalistaBairro()" style="width:150px;">
                 <option>Todos</option>
               </select></td>
               <td>Bairro:</td>
-              <td width="168"><select name="select4" id="select4" style="width:150px;">
+              <td width="168"><select name="comboBairro" id="comboBairro" style="width:150px;">
                 <option>Todos</option>
               </select></td>
               <td width="36">CEP:</td>
@@ -577,119 +550,8 @@ label{ vertical-align:super;}
     </div>
 </div> 
 <script>
-	$(".cotasDisponiveisGrid").flexigrid({
-			url : '../xml/cotasDisponiveis-xml.xml',
-			dataType : 'xml',
-			colModel : [ {
-				display : 'Pto. Venda',
-				name : 'ptoVenda',
-				width : 95,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Orig. End',
-				name : 'origemEndereco',
-				width : 60,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Endereço',
-				name : 'endereco',
-				width : 270,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Cota',
-				name : 'cota',
-				width : 40,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Nome',
-				name : 'nome',
-				width : 150,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Ordem',
-				name : 'ordem',
-				width : 55,
-				sortable : true,
-				align : 'center'
-			}, {
-				display : '',
-				name : 'sel',
-				width : 20,
-				sortable : true,
-				align : 'center'
-			}],
-			sortname : "cota",
-			width : 800,
-			height : 200
-		});
-	
-
-	$(".cotasRotaGrid").flexigrid({
-			url : '../xml/cotasRotas-xml.xml',
-			dataType : 'xml',
-			colModel : [ {
-				display : '',
-				name : 'ordem',
-				width : 15,
-				sortable : true,
-				align : 'center'
-			},{
-				display : 'Ordem',
-				name : 'ordem',
-				width : 35,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Pto. Venda',
-				name : 'ptoVenda',
-				width : 80,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Orig.',
-				name : 'origemEndereco',
-				width : 30,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Endereço',
-				name : 'endereco',
-				width : 135,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Cota',
-				name : 'cota',
-				width : 30,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Nome',
-				name : 'nome',
-				width : 95,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Ordernar',
-				name : 'ordenar',
-				width : 50,
-				sortable : true,
-				align : 'right'
-			}],
-			sortname : "ordem",
-			width : 590,
-			height : 284
-		});
 	
 	
-	
-	
-
 
 	$(".roteirosGrid").flexigrid({
 			url : '../xml/roteiros-xml.xml',

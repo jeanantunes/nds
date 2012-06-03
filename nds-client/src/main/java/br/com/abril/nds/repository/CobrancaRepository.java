@@ -64,5 +64,6 @@ public interface CobrancaRepository extends Repository<Cobranca, Long>{
 	 */
 	List<Cobranca> obterCobrancasOrdenadasPorVencimento(List<Long> idCobrancas);
 	
+	List<Cobranca> obterCobrancasPorIDS(List<Long> listaCobrancas);
 }
 

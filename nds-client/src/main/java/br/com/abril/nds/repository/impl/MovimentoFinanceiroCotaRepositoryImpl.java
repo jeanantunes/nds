@@ -12,6 +12,8 @@ import br.com.abril.nds.dto.filtro.FiltroDebitoCreditoDTO;
 import br.com.abril.nds.dto.filtro.FiltroDebitoCreditoDTO.ColunaOrdenacao;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
+import br.com.abril.nds.model.financeiro.OperacaoFinaceira;
+import br.com.abril.nds.model.financeiro.StatusBaixa;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 import br.com.abril.nds.repository.MovimentoFinanceiroCotaRepository;
 
@@ -305,4 +307,107 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepository<Mo
 
 		return orderBy;
 	}
+	
+
+	/**
+	 * Obtém movimentos financeiros de uma cota por operação financeira
+	 * @param numeroCota
+	 * @param operacao
+	 * @return BigDecimal valor
+	 */
+	@Override
+	public BigDecimal obterSaldoCotaPorOperacao(Integer numeroCota, OperacaoFinaceira operacao) {
+		
+		StringBuilder hql = new StringBuilder(" select ");
+
+		if (operacao == OperacaoFinaceira.CREDITO){
+		    hql.append(" sum(mfc.valor - mfc.baixaCobranca.valorJuros - mfc.baixaCobranca.valorMulta + mfc.baixaCobranca.valorDesconto) ");
+	    }
+		if (operacao == OperacaoFinaceira.DEBITO){
+			hql.append(" sum(mfc.valor + mfc.baixaCobranca.valorJuros + mfc.baixaCobranca.valorMulta - mfc.baixaCobranca.valorDesconto) ");
+		}
+		
+		hql.append(" from MovimentoFinanceiroCota mfc ");
+
+		hql.append(" where mfc.status = :statusAprovado ");
+		
+		hql.append(" and mfc.cota.numeroCota = :numeroCota ");
+		
+		hql.append(" and mfc.tipoMovimento.operacaoFinaceira = :operacao");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		
+		query.setParameter("statusAprovado", StatusAprovacao.APROVADO);
+		
+		query.setParameter("numeroCota", numeroCota);
+		
+		query.setParameter("operacao", operacao);
+
+		return (BigDecimal) query.uniqueResult();
+	}
+
+	
+	/**
+	 * Obtém o movimentos de uma cobrança
+	 * @param idCobranca
+	 * @return List<MovimentoFinanceiroCota>
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<MovimentoFinanceiroCota> obterMovimentosFinanceirosPorCobranca(Long idCobranca) {
+		StringBuilder hql = new StringBuilder();
+
+		hql.append(" from MovimentoFinanceiroCota mfc ");
+
+		hql.append(" where mfc.baixaCobranca.status = :status ");
+		
+		hql.append(" and mfc.baixaCobranca.cobranca.id = :idCobranca ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		
+		query.setParameter("status", StatusBaixa.PAGAMENTO_PARCIAL);
+		
+		query.setParameter("idCobranca", idCobranca);
+
+		return query.list();
+	}
+	
+	
+	/**
+	 * Obtém movimentos financeiros de uma cobrança por operação
+	 * @param idCobranca
+	 * @param operacao
+	 * @return BigDecimal valor
+	 */
+	@Override
+	public BigDecimal obterSaldoCobrancaPorOperacao(Long idCobranca, OperacaoFinaceira operacao) {
+		
+		StringBuilder hql = new StringBuilder(" select ");
+
+		if (operacao == OperacaoFinaceira.CREDITO){
+		    hql.append(" sum(mfc.valor - mfc.baixaCobranca.valorJuros - mfc.baixaCobranca.valorMulta + mfc.baixaCobranca.valorDesconto) ");
+	    }
+		if (operacao == OperacaoFinaceira.DEBITO){
+			hql.append(" sum(mfc.valor + mfc.baixaCobranca.valorJuros + mfc.baixaCobranca.valorMulta - mfc.baixaCobranca.valorDesconto) ");
+		}
+	
+		hql.append(" from MovimentoFinanceiroCota mfc ");
+
+		hql.append(" where mfc.baixaCobranca.status = :status ");
+		
+		hql.append(" and mfc.baixaCobranca.cobranca.id = :idCobranca ");
+		
+		hql.append(" and mfc.tipoMovimento.operacaoFinaceira = :operacao");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		
+        query.setParameter("status", StatusBaixa.PAGAMENTO_PARCIAL);
+		
+		query.setParameter("idCobranca", idCobranca);
+		
+		query.setParameter("operacao", operacao);
+
+		return (BigDecimal) query.uniqueResult();
+	}
+
 }

@@ -31,19 +31,7 @@ public class TestPoc {
 			}
 
 			@Override
-			public String getInboundFolder() {
-				// TODO Auto-generated method stub
-				return null;
-			}
-
-			@Override
 			public String getFileFilterExpression() {
-				// TODO Auto-generated method stub
-				return null;
-			}
-
-			@Override
-			public String getArchiveFolder() {
 				// TODO Auto-generated method stub
 				return null;
 			}
@@ -78,23 +66,11 @@ public class TestPoc {
 			}
 
 			@Override
-			public String getInboundFolder() {
-				// TODO Auto-generated method stub
-				return null;
-			}
-
-			@Override
 			public String getFileFilterExpression() {
 				// TODO Auto-generated method stub
 				return null;
 			}
-
-			@Override
-			public String getArchiveFolder() {
-				// TODO Auto-generated method stub
-				return null;
-			}
-
+			
 			@Override
 			public RouteInterface getRouteInterface() {
 				// TODO Auto-generated method stub

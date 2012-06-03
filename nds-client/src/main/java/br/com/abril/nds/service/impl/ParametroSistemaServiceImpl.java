@@ -1,27 +1,49 @@
 package br.com.abril.nds.service.impl;
 
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.List;
 
+import javax.annotation.PostConstruct;
+
+import org.lightcouch.CouchDbClient;
+import org.lightcouch.NoDocumentException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.ParametroSistemaGeralDTO;
-import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.integracao.couchdb.CouchDbProperties;
 import br.com.abril.nds.model.cadastro.ParametroSistema;
 import br.com.abril.nds.model.cadastro.TipoParametroSistema;
 import br.com.abril.nds.repository.ParametroSistemaRepository;
 import br.com.abril.nds.service.ParametroSistemaService;
-import br.com.abril.nds.util.TipoMensagem;
-import br.com.abril.nds.util.UfEnum;
-import br.com.abril.nds.util.Util;
 
 @Service
 public class ParametroSistemaServiceImpl implements ParametroSistemaService {
 
+	private static final String ATTACHMENT_LOGOTIPO = "imagem_logotipo";
+	private static final String DB_NAME = "db_parametro_sistema";
+	
+	
 	@Autowired
 	private ParametroSistemaRepository parametroSistemaRepository;
+	
+	@Autowired
+	private CouchDbProperties couchDbProperties;
+
+	private CouchDbClient couchDbClient;	
+	
+	@PostConstruct
+	public void initCouchDbClient() {
+		this.couchDbClient = new CouchDbClient(DB_NAME, true,
+				couchDbProperties.getProtocol(), 
+				couchDbProperties.getHost(),
+				couchDbProperties.getPort(), 
+				couchDbProperties.getUsername(),
+				couchDbProperties.getPassword());
+	}
+	
 	
 	@Transactional
 	public ParametroSistema buscarParametroPorTipoParametro(TipoParametroSistema tipoParametroSistema) {
@@ -70,15 +92,36 @@ public class ParametroSistemaServiceImpl implements ParametroSistemaService {
 	}
 	
 	/**
+	 * Retorna o logotipo do distribuidor, caso exista.
+	 * 
+	 * @return
+	 */
+	public InputStream getLogotipoDistribuidor() {
+		InputStream inputStream;
+		try {
+			inputStream = couchDbClient.find(
+					TipoParametroSistema.LOGOTIPO_DISTRIBUIDOR.name()
+					+ "/" + ATTACHMENT_LOGOTIPO);
+		} catch (NoDocumentException e) {
+			inputStream = new ByteArrayInputStream(new byte[0]);
+		}
+		return inputStream;
+	}
+	
+	/**
 	 * Salva os Parâmetros do Sistema.
 	 *  
 	 * @param dto
 	 * @param imgLogotipo
+	 * @param imgContentType
 	 */
 	@Transactional
-	public void salvar(ParametroSistemaGeralDTO dto, InputStream imgLogotipo) {
+	public void salvar(ParametroSistemaGeralDTO dto, InputStream imgLogotipo, String imgContentType) {
 		
-		// TODO: salvar imgLogotipo
+		// Salvar logotipo:
+		if (imgLogotipo != null) {
+			couchDbClient.saveAttachment(imgLogotipo, ATTACHMENT_LOGOTIPO, imgContentType, TipoParametroSistema.LOGOTIPO_DISTRIBUIDOR.name(), null);
+		}
 		
 		// Salvar dto:
 		List<ParametroSistema> lst = dto.getParametrosSistema();

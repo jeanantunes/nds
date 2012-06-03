@@ -58,19 +58,19 @@ public class EMS0107Route extends FixedLengthRouteTemplate implements AbstractRo
 	} 
 
 	@Override
-	public String getInboundFolder() {
-		return (String) getParameters().get("NDSI_EMS0107_INBOUND");
-	}
-
-	@Override
 	public String getFileFilterExpression() {
 		return (String) getParameters().get("NDSI_EMS0107_IN_FILEMASK");
 	}
-
+	
+	/*@Override
+	public String getInboundFolder() {
+		return (String) getParameters().get("NDSI_EMS0107_INBOUND");
+	}
+	
 	@Override
 	public String getArchiveFolder() {
 		return (String) getParameters().get("NDSI_EMS0107_ARCHIVE");
-	}
+	}*/
 	
 	@Override
 	public boolean isCommitAtEnd() {

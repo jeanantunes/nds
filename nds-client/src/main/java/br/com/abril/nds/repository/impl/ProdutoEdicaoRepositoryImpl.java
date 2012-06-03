@@ -8,9 +8,11 @@ import java.util.Set;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.FuroProdutoDTO;
+import br.com.abril.nds.dto.ProdutoEdicaoDTO;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
@@ -274,7 +276,138 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepository<ProdutoEdica
 		return null;
 	}
 
+	/**
+	 * Pesquisa as Edições já cadastradas.<br>
+	 * Possui como opções de filtro:<br>
+	 * <ul>
+	 * <li>Código do Produto;</li>
+	 * <li>Nome do Produto;</li>
+	 * <li>Data de Lançamento;</li>
+	 * <li>Situação do Lançamento;</li>
+	 * <li>Código de Barra da Edição;</li>
+	 * <li>Contém brinde;</li>
+	 * </ul>
+	 * 
+	 * @param dto
+	 * @param sortorder
+	 * @param sortname
+	 * @param initialResult
+	 * @param maxResults
+	 * 
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public List<ProdutoEdicaoDTO> pesquisarEdicoes(ProdutoEdicaoDTO dto,
+			String sortorder, String sortname, int initialResult, int maxResults) {
+		
+		StringBuilder hql = new StringBuilder();
+		hql.append(" SELECT pr.codigo as codigoProduto, pr.descricao as nomeProduto, ");
+		hql.append("        pe.numeroEdicao as numeroEdicao, jr.razaoSocial as nomeFornecedor, ");
+		hql.append("        ln.tipoLancamento as statusLancamento, ln.status as statusSituacao, ");
+		hql.append("        pe.possuiBrinde as temBrinde ");
+		
+		// Corpo da consulta com os filtros:
+		Query query = this.queryBodyPesquisarEdicoes(hql, dto, sortname, sortorder);
+		
+		query.setResultTransformer(new AliasToBeanResultTransformer(ProdutoEdicaoDTO.class));
+		query.setFirstResult(initialResult);
+		query.setMaxResults(maxResults);
+		
+		try {
+			return query.list();
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
 	
+	/**
+	 * Obtém a quantidade de edições cadastradas filtradas pelos critérios 
+	 * escolhidos pelo usuário.
+	 * 
+	 * @param dto
+	 * @return
+	 */
+	public Long countPesquisarEdicoes(ProdutoEdicaoDTO dto) {
+		
+		StringBuilder hql = new StringBuilder();
+		hql.append(" SELECT count(pr.codigo) ");
+		
+		// Corpo da consulta com os filtros:
+		Query query = this.queryBodyPesquisarEdicoes(hql, dto, null, null);
+		
+		try {
+			return (Long) query.uniqueResult();
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
 	
+	/**
+	 * Corpo com a consulta HQL para pesquisar as edições já cadatradas.
+	 * 
+	 * @param hql
+	 * @param dto
+	 * @param sortname
+	 * @param sortorder
+	 * @return
+	 */
+	private Query queryBodyPesquisarEdicoes(StringBuilder hql, ProdutoEdicaoDTO dto, String sortname, String sortorder) {
+		
+		hql.append("   FROM ProdutoEdicao pe ");
+		hql.append("        JOIN pe.produto pr ");
+		hql.append("        JOIN pr.fornecedores fr JOIN fr.juridica jr ");
+		hql.append("        JOIN pe.lancamentos ln ");
+		hql.append("  WHERE 1=1 ");
+		
+		// Filtros opcionais da pesquisa:
+		if (dto.getDataLancamento() != null) {
+			hql.append("  AND (ln.dataLancamentoDistribuidor = :dataLancamento OR ln.dataLancamentoPrevista = :dataLancamento) ");
+		}
+		if (dto.getSituacaoLancamento() != null) {
+			hql.append("  AND ln.status = :situacaoLancamento ");
+		}		
+		if (dto.getCodigoProduto() != null && dto.getCodigoProduto().trim().length() > 0) {
+			hql.append("  AND UPPER(pr.codigo) LIKE UPPER(:codigoProduto) ");
+		}
+		if (dto.getNomeProduto() != null && dto.getNomeProduto().trim().length() > 0) {
+			hql.append("  AND UPPER(pr.descricao) LIKE UPPER(:nomeProduto) ");
+		}
+		if (dto.getCodigoDeBarras() != null && dto.getCodigoDeBarras().trim().length() > 0) {
+			hql.append("  AND pe.codigoDeBarras LIKE :codigoDeBarras ");
+		}
+		if (dto.isPossuiBrinde()) {
+			hql.append("  AND pe.possuiBrinde = :possuiBrinde ");
+		}
+		
+		// Ordenacao:
+		if (sortname != null && sortorder != null) {
+			hql.append(" ORDER BY " + sortname + " " + sortorder);
+		}
+		
+		Query query = getSession().createQuery(hql.toString());
+		
+		// Parâmetros opcionais da pesquisa:
+		if (dto.getDataLancamento() != null) {
+			query.setDate("dataLancamento", dto.getDataLancamento());
+		}
+		if (dto.getSituacaoLancamento() != null) {
+			query.setParameter("situacaoLancamento", dto.getSituacaoLancamento());
+		}		
+		if (dto.getCodigoProduto() != null && dto.getCodigoProduto().trim().length() > 0) {
+			query.setString("codigoProduto", dto.getCodigoProduto());
+		}
+		if (dto.getNomeProduto() != null && dto.getNomeProduto().trim().length() > 0) {
+			query.setString("nomeProduto", dto.getNomeProduto());
+		}
+		if (dto.getCodigoDeBarras() != null && dto.getCodigoDeBarras().trim().length() > 0) {
+			query.setString("codigoDeBarras", dto.getCodigoDeBarras());
+		}
+		if (dto.isPossuiBrinde()) {
+			query.setBoolean("possuiBrinde", Boolean.valueOf(dto.isPossuiBrinde()));
+		}
+		
+		return query;
+	}
 	
 }
+ 

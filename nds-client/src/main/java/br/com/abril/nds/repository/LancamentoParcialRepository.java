@@ -1,5 +1,6 @@
 package br.com.abril.nds.repository;
 
+import java.util.Date;
 import java.util.List;
 
 import br.com.abril.nds.dto.ParcialDTO;
@@ -26,4 +27,15 @@ public interface LancamentoParcialRepository extends Repository<LancamentoParcia
 	 */
 	Integer totalbuscaLancamentosParciais(FiltroParciaisDTO filtro);
 
+	/**
+	 * Obter lancamentoParcial a partir de idProdutoEdicao e dataRecolhimentoFinal.
+	 * 
+	 * @param idProdutoEdicao
+	 * @param dataRecolhimento
+	 * 
+	 * @return LancamentoParcial
+	 */
+	LancamentoParcial obterLancamentoParcial(Long idProdutoEdicao, Date dataRecolhimento);
+
+	
 }

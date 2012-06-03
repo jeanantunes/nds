@@ -1,9 +1,9 @@
 <head>
-
+	
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.price_format.1.7.js"></script>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/box.js"></script>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/tipoProduto.js"></script>
-
+	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
 	<script type="text/javascript">
 	var tipoProduto;
 		$(function(){
@@ -104,7 +104,20 @@
          		Novo
          	</a>
          </span>
-           
+         
+         <span class="bt_novos" title="Gerar Arquivo">
+		 	<a href="${pageContext.request.contextPath}/administracao/tipoProduto/exportar?fileType=XLS">
+				<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
+				Arquivo
+			</a>
+		</span>
+		
+		<span class="bt_novos" title="Imprimir">
+			<a href="${pageContext.request.contextPath}/administracao/tipoProduto/exportar?fileType=PDF">
+				<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" alt="Imprimir" hspace="5" border="0" />
+				Imprimir
+			</a>
+		</span>  
       </fieldset>
       
       <div class="linha_separa_fields">&nbsp;</div>

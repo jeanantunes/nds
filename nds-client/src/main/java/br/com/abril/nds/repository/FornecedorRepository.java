@@ -3,6 +3,7 @@ package br.com.abril.nds.repository;
 import java.util.List;
 
 import br.com.abril.nds.dto.FornecedorDTO;
+import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaFornecedorDTO;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.GrupoFornecedor;
@@ -68,4 +69,22 @@ public interface FornecedorRepository extends Repository<Fornecedor, Long> {
 	 * @return Long
 	 */
 	Long obterContagemFornecedoresPorFiltro(FiltroConsultaFornecedorDTO filtroConsultaFornecedor);
+	
+	
+	/**
+	 * Obtem o ID e Nome dos Fornecedores.
+	 * @param situacao (Opcional) Situação cadastral dos fornecedores.
+	 * @param inferface (Opcional)<code>true</code> apenas fornecedores quem possiem <code>codigoInterface</code>
+	 * @return Lista de {@link ItemDTO}} onde <code>key</code> id do {@link Fornecedor}} e <code>value</code> nome do {@link Fornecedor}.
+	 */
+	public abstract List<ItemDTO<Long, String>> obterFornecedoresIdNome(SituacaoCadastro situacao, Boolean inferface);
+
+	/**
+	 * Método que verifica a quantidade de pessoas cadastradas para outros fornecedores.
+	 * 
+	 * @param idPessoa
+	 * @param idFornecedor
+	 * @return qtde
+	 */
+	Integer obterQuantidadeFornecedoresPorIdPessoa(Long idPessoa, Long idFornecedor);
 }

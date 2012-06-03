@@ -50,8 +50,6 @@ import br.com.abril.nds.model.cadastro.ProcuracaoEntregador;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.Rota;
-import br.com.abril.nds.model.cadastro.RotaRoteiroOperacao;
-import br.com.abril.nds.model.cadastro.RotaRoteiroOperacao.TipoOperacao;
 import br.com.abril.nds.model.cadastro.Roteiro;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.Telefone;
@@ -1969,7 +1967,7 @@ public class Fixture {
 		return rota;
 	}
 	
-	public static RotaRoteiroOperacao rotaRoteiroOperacao (Rota rota,Roteiro roteiro,Cota cota, TipoOperacao tipoOperacao){
+	/*public static RotaRoteiroOperacao rotaRoteiroOperacao (Rota rota,Roteiro roteiro,Cota cota, TipoOperacao tipoOperacao){
 		
 		RotaRoteiroOperacao rotaRoteiroOperacao = new RotaRoteiroOperacao();
 		rotaRoteiroOperacao.setRota(rota);
@@ -1980,7 +1978,7 @@ public class Fixture {
 		return rotaRoteiroOperacao;
 
 
-	}
+	}*/
 
 	public static CobrancaDinheiro criarCobrancaDinheiro(String nossoNumero,
             Date dataEmissao,

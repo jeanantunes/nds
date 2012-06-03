@@ -225,12 +225,6 @@
 			$("#diaMes").val(servico.diaMes);
 		}
 
-		function incluirENovoServico() {
-
-			salvarServico(false);
-			limparModalCadastro();
-		}
-
 		function salvarServico(isConfirm) {
 
 			var id = $("#idServico").val(); 
@@ -266,6 +260,11 @@
 									exibirMensagemDialog(tipoMensagem, listaMensagens, 'dialogMensagemNovo');
 								}
 							}
+
+							if (tipoMensagem == 'SUCCESS') {
+								limparModalCadastro();
+							}
+							
 					   },
 					   null,
 					   !isConfirm,
@@ -506,7 +505,7 @@
 				<td>&nbsp;</td>
 				<td>
 					<div  class="diaMes">Dia do M&ecirc;s: 
-						<input name="diaMes" id="diaMes" type="text" value="" style="width:70px; text-align:right;" />
+						<input name="diaMes" id="diaMes" type="text" maxlength="2" value="" style="width:70px; text-align:right;" />
 					</div>
 				</td>
 			</tr>
@@ -515,7 +514,7 @@
 		<br clear="all" />
 		
 		<span class="bt_add">
-			<a href="javascript:;" onclick="incluirENovoServico();">Incluir Novo</a>
+			<a href="javascript:;" onclick="salvarServico(false);" title="Incluir Novo" >Incluir Novo</a>
 		</span>
 	</div>
 	

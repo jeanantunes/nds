@@ -1,25 +1,25 @@
 package br.com.abril.nds.repository.impl;
 
 import java.math.BigDecimal;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
 import org.hibernate.Query;
 import org.springframework.stereotype.Repository;
 
-import br.com.abril.nds.client.util.comparators.CurvaABCParticipacaoAcumuladaComparator;
-import br.com.abril.nds.client.util.comparators.CurvaABCParticipacaoComparator;
 import br.com.abril.nds.client.vo.RegistroCurvaABCEditorVO;
 import br.com.abril.nds.client.vo.RegistroHistoricoEditorVO;
-import br.com.abril.nds.client.vo.ResultadoCurvaABC;
+import br.com.abril.nds.client.vo.ResultadoCurvaABCEditor;
 import br.com.abril.nds.dto.filtro.FiltroCurvaABCEditorDTO;
 import br.com.abril.nds.dto.filtro.FiltroPesquisarHistoricoEditorDTO;
 import br.com.abril.nds.model.cadastro.Editor;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.repository.EditorRepository;
 
+/**
+ * Classe de implementação referente ao acesso a dados da entidade
+ * @author infoA2
+ */
 @Repository
 public class EditorRepositoryImpl extends AbstractRepository<Editor, Long> implements EditorRepository {
 
@@ -28,21 +28,26 @@ public class EditorRepositoryImpl extends AbstractRepository<Editor, Long> imple
 		// TODO Auto-generated constructor stub
 	}
 
+	/* (non-Javadoc)
+	 * @see br.com.abril.nds.repository.EditorRepository#obterEditores()
+	 */
 	@Override
 	public List<Editor> obterEditores() {
-		String hql = "from Editor";
+		String hql = "from Editor ed ORDER BY ed.nome";
 		Query query = getSession().createQuery(hql);
 		@SuppressWarnings("unchecked")
 		List<Editor> editores = query.list();
 		return editores;
 	}
 
-	@SuppressWarnings("unchecked")
+	/* (non-Javadoc)
+	 * @see br.com.abril.nds.repository.EditorRepository#obterCurvaABCEditorTotal(br.com.abril.nds.dto.filtro.FiltroCurvaABCEditorDTO)
+	 */
 	@Override
-	public ResultadoCurvaABC obterCurvaABCEditorTotal(FiltroCurvaABCEditorDTO filtro){
+	public ResultadoCurvaABCEditor obterCurvaABCEditorTotal(FiltroCurvaABCEditorDTO filtro){
 		StringBuilder hql = new StringBuilder();
 
-		hql.append("SELECT new ").append(ResultadoCurvaABC.class.getCanonicalName())
+		hql.append("SELECT new ").append(ResultadoCurvaABCEditor.class.getCanonicalName())
 		.append(" ( (sum(estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida)), ")
 		.append("   ( sum((estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) * (estoqueProdutoCota.produtoEdicao.precoVenda - estoqueProdutoCota.produtoEdicao.desconto)) ) ) ");
 
@@ -55,9 +60,12 @@ public class EditorRepositoryImpl extends AbstractRepository<Editor, Long> imple
 		for(String key : param.keySet()){
 			query.setParameter(key, param.get(key));
 		}
-		return (ResultadoCurvaABC) query.list().get(0);
+		return (ResultadoCurvaABCEditor) query.list().get(0);
 	}
 
+	/* (non-Javadoc)
+	 * @see br.com.abril.nds.repository.EditorRepository#obterCurvaABCEditor(br.com.abril.nds.dto.filtro.FiltroCurvaABCEditorDTO)
+	 */
 	@Override
 	@SuppressWarnings("unchecked")
 	public List<RegistroCurvaABCEditorVO> obterCurvaABCEditor(FiltroCurvaABCEditorDTO filtro) {
@@ -72,7 +80,6 @@ public class EditorRepositoryImpl extends AbstractRepository<Editor, Long> imple
 
 		hql.append(getWhereQueryObterCurvaABCEditor(filtro));
 		hql.append(getGroupQueryObterCurvaABCEditor(filtro));
-		hql.append(getOrderQueryObterCurvaABCEditor(filtro));
 
 		Query query = this.getSession().createQuery(hql.toString());
 
@@ -82,21 +89,15 @@ public class EditorRepositoryImpl extends AbstractRepository<Editor, Long> imple
 			query.setParameter(key, param.get(key));
 		}
 
-		if (filtro.getPaginacao() != null) {
-
-			if (filtro.getPaginacao().getPosicaoInicial() != null) {
-				query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
-			}
-
-			if (filtro.getPaginacao().getQtdResultadosPorPagina() != null) {
-				query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
-			}
-		}
-
-		return getOrderObterCurvaABCEditor(complementarCurvaABCEditor((List<RegistroCurvaABCEditorVO>) query.list()), filtro);
+		return complementarCurvaABCEditor((List<RegistroCurvaABCEditorVO>) query.list(), filtro);
 
 	}
 
+	/**
+	 * Retorna as tabelas, joins e filtros da Query de seleção do relatório de vendas
+	 * @param filtro
+	 * @return
+	 */
 	private String getWhereQueryObterCurvaABCEditor(FiltroCurvaABCEditorDTO filtro) {
 
 		StringBuilder hql = new StringBuilder();
@@ -149,6 +150,11 @@ public class EditorRepositoryImpl extends AbstractRepository<Editor, Long> imple
 
 	}
 
+	/**
+	 * Retorna o agrupamento das pesquisas do relatório de vendas
+	 * @param filtro
+	 * @return
+	 */
 	private String getGroupQueryObterCurvaABCEditor(FiltroCurvaABCEditorDTO filtro) {
 
 		StringBuilder hql = new StringBuilder();
@@ -159,42 +165,8 @@ public class EditorRepositoryImpl extends AbstractRepository<Editor, Long> imple
 		return hql.toString();
 	}
 
-	private String getOrderQueryObterCurvaABCEditor(FiltroCurvaABCEditorDTO filtro) {
-
-		StringBuilder hql = new StringBuilder();
-
-		if (filtro.getOrdenacaoColuna() != null) {
-			
-			switch (filtro.getOrdenacaoColuna()) {
-				case CODIGO_EDITOR:
-					hql.append(" order by editor.codigo ");
-					break;
-				case NOME_EDITOR:
-					hql.append(" order by editor.nome ");
-					break;
-				case REPARTE:
-					hql.append(" order by (sum(movimentos.qtde)) ");
-					break;
-				case VENDA_EXEMPLARES:
-					hql.append(" order by (sum(estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida)) ");
-					break;
-				case FATURAMENTO_CAPA:
-					hql.append(" order by ( sum((estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) * (estoqueProdutoCota.produtoEdicao.precoVenda - estoqueProdutoCota.produtoEdicao.desconto)) ) ");
-					break;
-				default:
-					hql.append(" order by editor.codigo ");
-					break;
-			}
-			if (filtro.getPaginacao().getOrdenacao() != null) {
-				hql.append(filtro.getPaginacao().getOrdenacao().toString());
-			}
-		}
-
-		return hql.toString();
-	}
-
 	/**
-	 * Retorna os parametros da consulta de dividas.
+	 * Popula os parametros do relatório.
 	 * @param filtro
 	 * @return HashMap<String,Object>
 	 */
@@ -242,7 +214,12 @@ public class EditorRepositoryImpl extends AbstractRepository<Editor, Long> imple
 		return param;
 	}
 
-	private List<RegistroCurvaABCEditorVO> complementarCurvaABCEditor(List<RegistroCurvaABCEditorVO> lista) {
+	/**
+	 * Insere os registros de participação e participação acumulada no resultado da consulta HQL
+	 * @param lista
+	 * @return
+	 */
+	private List<RegistroCurvaABCEditorVO> complementarCurvaABCEditor(List<RegistroCurvaABCEditorVO> lista, FiltroCurvaABCEditorDTO filtro) {
 
 		BigDecimal participacaoTotal = new BigDecimal(0);
 		BigDecimal vendaTotal = new BigDecimal(0);
@@ -277,6 +254,9 @@ public class EditorRepositoryImpl extends AbstractRepository<Editor, Long> imple
 			
 			participacaoAcumulada.add(participacaoRegistro);
 			registro.setParticipacaoAcumulada(participacaoAcumulada);
+			
+			registro.setDataDe(filtro.getDataDe());
+			registro.setDataAte(filtro.getDataAte());
 
 			// Substitui o registro pelo registro atualizado (com participacao total)
 			lista.set(i, registro);
@@ -286,36 +266,11 @@ public class EditorRepositoryImpl extends AbstractRepository<Editor, Long> imple
 		return lista;
 	}
 
-	@SuppressWarnings("unchecked")
-	private List<RegistroCurvaABCEditorVO> getOrderObterCurvaABCEditor(List<RegistroCurvaABCEditorVO> lista, FiltroCurvaABCEditorDTO filtro) {
-
-		if (filtro.getOrdenacaoColuna() != null) {
-			switch (filtro.getOrdenacaoColuna()) {
-				case PARTICIPACAO:
-					Collections.sort(lista, new CurvaABCParticipacaoComparator());
-				case PARTICIPACAO_ACUMULADA:
-					Collections.sort(lista, new CurvaABCParticipacaoAcumuladaComparator());
-				case PORCENTAGEM_VENDA_EXEMPLARES:
-					Collections.sort(lista, new Comparator() {
-
-						@Override
-						public int compare(Object o1, Object o2) {
-							RegistroCurvaABCEditorVO registro1 = (RegistroCurvaABCEditorVO) o1;
-							RegistroCurvaABCEditorVO registro2 = (RegistroCurvaABCEditorVO) o2;
-							return registro1.getPorcentagemVendaExemplares().compareTo(registro2.getPorcentagemVendaExemplares());
-						}
-						
-					});
-				default:
-					break;
-			}
-		}
-		return lista;
-	}
-
+	/* (non-Javadoc)
+	 * @see br.com.abril.nds.repository.EditorRepository#obterHistoricoEditor(br.com.abril.nds.dto.filtro.FiltroPesquisarHistoricoEditorDTO)
+	 */
 	@Override
-	public List<RegistroHistoricoEditorVO> obterHistoricoEditor(
-			FiltroPesquisarHistoricoEditorDTO filtro) {
+	public List<RegistroHistoricoEditorVO> obterHistoricoEditor(FiltroPesquisarHistoricoEditorDTO filtro) {
 
 		StringBuilder hql = new StringBuilder();
 
@@ -335,34 +290,11 @@ public class EditorRepositoryImpl extends AbstractRepository<Editor, Long> imple
 		hql.append(" AND editor.codigo = :codigoEditor ");
 		hql.append(" AND movimentos.tipoMovimento.grupoMovimentoEstoque = :grupoMovimentoEstoque ");
 
-		if (filtro.getOrdenacaoColuna() != null) {
-			
-			switch (filtro.getOrdenacaoColuna()) {
-				case CODIGO_PRODUTO:
-					hql.append(" order by estoqueProdutoCota.produtoEdicao.produto.codigo ");
-					break;
-				case NOME_PRODUTO:
-					hql.append(" order by estoqueProdutoCota.produtoEdicao.produto.nome ");
-					break;
-				case EDICAO_PRODUTO:
-					hql.append(" order by estoqueProdutoCota.produtoEdicao.numeroEdicao ");
-					break;
-				case REPARTE:
-					hql.append(" order by (sum(movimentos.qtde)) ");
-					break;
-				case VENDA_EXEMPLARES:
-					hql.append(" order by (sum(estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida)) ");
-					break;
-				default:
-					hql.append(" order by estoqueProdutoCota.produtoEdicao.produto.codigo ");
-					break;
-			}
-		}
-
 		Query query = this.getSession().createQuery(hql.toString());
 		
 		query.setParameter("dataDe", filtro.getDataDe());
 		query.setParameter("dataAte", filtro.getDataAte());
+
 		query.setParameter("codigoEditor", Long.parseLong(filtro.getNumeroEditor()));
 		query.setParameter("grupoMovimentoEstoque", GrupoMovimentoEstoque.RECEBIMENTO_REPARTE);
 
@@ -370,6 +302,12 @@ public class EditorRepositoryImpl extends AbstractRepository<Editor, Long> imple
 		
 	}
 
+	/**
+	 * Complementa os dados do histórico do editor
+	 * @param lista
+	 * @param filtro
+	 * @return
+	 */
 	private List<RegistroHistoricoEditorVO> complementarHistoricoEditor(List<RegistroHistoricoEditorVO> lista, FiltroPesquisarHistoricoEditorDTO filtro) {
 
 		BigDecimal vendaTotal = new BigDecimal(0);
@@ -398,23 +336,6 @@ public class EditorRepositoryImpl extends AbstractRepository<Editor, Long> imple
 
 		}		
 		
-		if (filtro.getOrdenacaoColuna() != null) {
-			switch (filtro.getOrdenacaoColuna()) {
-				case PORCENTAGEM_VENDA_EXEMPLARES:
-					Collections.sort(lista, new Comparator() {
-
-						@Override
-						public int compare(Object o1, Object o2) {
-							RegistroHistoricoEditorVO registro1 = (RegistroHistoricoEditorVO) o1;
-							RegistroHistoricoEditorVO registro2 = (RegistroHistoricoEditorVO) o2;
-							return registro1.getPorcentagemVenda().compareTo(registro2.getPorcentagemVenda());
-						}
-						
-					});
-				default:
-					break;
-			}
-		}
 		return lista;	
 	}
 	

@@ -373,6 +373,13 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepository<Diferenca
 				hql += " and fornecedores.id = :idFornecedor ";
 			}
 			
+			if (filtro.getPeriodoVO() != null
+					&& filtro.getPeriodoVO().getDataInicial() != null
+					&& filtro.getPeriodoVO().getDataFinal() != null) {
+				
+				hql += " and diferenca.movimentoEstoque.data between :dataInicial and :dataFinal ";
+			}
+			
 			if (filtro.getTipoDiferenca() != null) {
 				hql += " and diferenca.tipoDiferenca = :tipoDiferenca ";
 			}
@@ -413,6 +420,14 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepository<Diferenca
 		
 		if (filtro.getIdFornecedor() != null) {
 			query.setParameter("idFornecedor", filtro.getIdFornecedor());
+		}
+		
+		if (filtro.getPeriodoVO() != null
+				&& filtro.getPeriodoVO().getDataInicial() != null
+				&& filtro.getPeriodoVO().getDataFinal() != null) {
+			
+			query.setParameter("dataInicial", filtro.getPeriodoVO().getDataInicial());
+			query.setParameter("dataFinal", filtro.getPeriodoVO().getDataFinal());
 		}
 		
 		if (filtro.getTipoDiferenca() != null) {

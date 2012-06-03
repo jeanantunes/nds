@@ -828,14 +828,17 @@ public class LancamentoRepositoryImpl extends
 		projectionList.add(Projections.property("produto.codigo"),"codigoProduto");
 		projectionList.add(Projections.property("produto.nome"),"nomeProduto");		
 		projectionList.add(Projections.property("produtoEdicao.numeroEdicao"),"numeroEdicao");
-		projectionList.add(Projections.property("produtoEdicao.slogan"),"slogan");
+		projectionList.add(Projections.property("produtoEdicao.chamadaCapa"),"chamadaCapa");
 		projectionList.add(Projections.property("produtoEdicao.codigoDeBarras"),"codigoDeBarras");
 		projectionList.add(Projections.property("produtoEdicao.precoVenda"),"precoVenda");
 		projectionList.add(Projections.property("produtoEdicao.desconto"),"desconto");		
-		projectionList.add(Projections.sqlProjection("(produtoedi1_.PRECO_VENDA - produtoedi1_.DESCONTO) as precoDesconto", new String[]{"precoDesconto"}, new Type[] {StandardBasicTypes.DOUBLE}));
+		projectionList.add(Projections.sqlProjection("(produtoedi1_.PRECO_VENDA - produtoedi1_.DESCONTO) as precoDesconto", new String[]{"precoDesconto"}, new Type[] {StandardBasicTypes.BIG_DECIMAL}));
 		projectionList.add(Projections.property("dataLancamentoDistribuidor"),"dataLancamento");
 		projectionList.add(Projections.property("dataRecolhimentoDistribuidor"),"dataRecolhimento");
+		projectionList.add(Projections.groupProperty("id"));
 		criteria.setProjection(projectionList);		
+		
+		
 		
 		if(Ordenacao.ASC ==  ordenacao){
 			criteria.addOrder(Order.asc(orderBy));
@@ -860,7 +863,7 @@ public class LancamentoRepositoryImpl extends
 		
 		Criteria criteria = addRestrictions(idFornecedor,
 				dataInicioRecolhimento, dataFimRecolhimento);
-		criteria.setProjection(Projections.rowCount());
+		criteria.setProjection(Projections.countDistinct("id"));
 		
 		
 		return (Long) criteria.list().get(0);
@@ -891,6 +894,36 @@ public class LancamentoRepositoryImpl extends
 					"fornecedores.id", idFornecedor));
 		}
 		return criteria;
+	}
+	
+	
+	public Date obterDataUltimoLancamentoParcial(Long idProdutoEdicao, Date dataOperacao) {
+		
+		StringBuffer hql = new StringBuffer();
+		
+		hql.append(" select max(lancamento.dataLancamentoDistribuidor)  ");			
+		
+		hql.append(" from LancamentoParcial lancamentoParcial 			");
+		
+		hql.append(" inner join lancamentoParcial.periodos as periodo 	");
+		
+		hql.append(" inner join periodos.lancamento as lancamento 		");
+		
+		hql.append(" where ");
+
+		hql.append(" lancamentoParcial.produtoEdicao.id = :idProdutoEdicao and  ");
+		hql.append(" lancamentoParcial.lancamentoInicial <= :dataOperacao and 	");
+		hql.append(" lancamentoParcial.recolhimentoFinal >= :dataOperacao and 	");
+		hql.append(" lancamento.dataLancamentoDistribuidor < :dataOperacao 	    ");
+		
+		Query query = getSession().createQuery(hql.toString());
+		
+		query.setParameter("idProdutoEdicao", idProdutoEdicao);
+		
+		query.setParameter("dataOperacao", dataOperacao);
+		
+		return (Date) query.uniqueResult();
+		
 	}
 	
 }

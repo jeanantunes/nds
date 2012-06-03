@@ -7,16 +7,23 @@ import org.hibernate.criterion.MatchMode;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.vo.ValidacaoVO;
+import br.com.abril.nds.dto.CotaDisponivelRoteirizacaoDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Box;
+import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.Rota;
-import br.com.abril.nds.model.cadastro.RotaRoteiroOperacao;
+import br.com.abril.nds.model.cadastro.Roteirizacao;
 import br.com.abril.nds.model.cadastro.Roteiro;
 import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.cadastro.TipoRoteiro;
+import br.com.abril.nds.model.cadastro.pdv.EnderecoPDV;
+import br.com.abril.nds.model.cadastro.pdv.PDV;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.BoxService;
+import br.com.abril.nds.service.CotaService;
+import br.com.abril.nds.service.EnderecoService;
 import br.com.abril.nds.service.RoteirizacaoService;
 import br.com.abril.nds.util.ItemAutoComplete;
 import br.com.abril.nds.util.TipoMensagem;
@@ -36,6 +43,7 @@ public class RoteirizacaoController {
 	
 	@Autowired
 	private RoteirizacaoService roteirizacaoService;
+
 	
 	@Autowired
 	private Result result;
@@ -101,10 +109,8 @@ public class RoteirizacaoController {
 	@Path("/pesquisar")
 	public void pesquisar(Long idBox, Long idRoteiro, Long idRota,
 			String sortname, String sortorder, int rp, int page) {
-		List<RotaRoteiroOperacao> lista = roteirizacaoService.busca(null, null,null, null, null, 0, 0);
-		int quantidade = lista.size();
-		result.use(FlexiGridJson.class).from(lista).total(quantidade).page(page).serialize();
-
+		
+		//TODO alteração de roteirização - foi deletado do sistema a entidade RotaRoteiroOperacao
 	}
 	
 	@Path("/incluirRoteiro")
@@ -154,6 +160,7 @@ public class RoteirizacaoController {
 				roteiro.setRotas(null);
 				if ( roteiro.getBox() != null ){ 
 					roteiro.getBox().setCotas(null);
+					roteiro.getBox().setRoteiros(null);
 				}	
 				listaRoteiroAutoComplete.add(new ItemAutoComplete(roteiro.getDescricaoRoteiro(), null,roteiro ));
 			}
@@ -265,4 +272,57 @@ public class RoteirizacaoController {
 		roteiro.setTipoRoteiro(tipoRoteiro);
 		return roteiro;
 	}
+	
+	@Path("/pesquisarRotaPorNome")
+	public void pesquisarRotaPorNome(Long roteiroId, String nomeRota,
+			String sortname, String sortorder, int rp, int page) {
+		List<Rota> lista = roteirizacaoService.buscarRotaPorNome(roteiroId, nomeRota, MatchMode.ANYWHERE) ;
+		int quantidade = lista.size();
+		result.use(FlexiGridJson.class).from(lista).total(quantidade).page(page).serialize();
+
+	}
+	
+	@Path("/buscarRoterizacaoPorRota")
+	public void buscarRoterizacaoPorRota(Long rotaId,
+			String sortname, String sortorder, int rp, int page) {
+		List<Roteirizacao> lista = roteirizacaoService.buscarRoterizacaoPorRota(rotaId) ;
+		int quantidade = lista.size();
+		result.use(FlexiGridJson.class).from(lista).total(quantidade).page(page).serialize();
+
+	}
+	
+	@Path("/iniciaTelaCotas")
+	public void buscarRoterizacaoPorRota() {
+		//List<String> uf = enderecoService.obterUF();
+		result.use(Results.json()).from("", "result").serialize();
+	}
+	
+	@Path("/buscalistaMunicipio")
+	public void buscalistaMunicipio(String uf) {
+		//List<String> municipios = enderecoService.obterMunicipioPorUf(uf);
+		result.use(Results.json()).from("", "result").serialize();
+	}
+	
+	@Path("/buscalistaBairro")
+	public void buscalistaBairro(String uf, String municipio) {
+		//List<String> bairro = enderecoService.obterBairroPorMunicipio(municipio) ;
+		result.use(Results.json()).from("", "result").serialize();
+	}
+	
+	@Path("/buscarPvsPorCota")
+	public void buscarPvsPorCota(Integer numeroCota, String sortname, String sortorder, int rp, int page) {
+		List<CotaDisponivelRoteirizacaoDTO> lista = roteirizacaoService.buscarPvsPorCota(numeroCota);
+		int quantidade = lista.size();
+		result.use(FlexiGridJson.class).from(lista).total(quantidade).page(page).serialize();
+		
+	}
+	
+	@Path("/confirmaRoteirizacao")
+	public void confirmaRoteirizacao(List<CotaDisponivelRoteirizacaoDTO> lista, Long idRota) {
+		roteirizacaoService.gravaRoteirizacao(lista, idRota);
+		
+	}
+	
+	
+	
 }

@@ -43,7 +43,7 @@ public class EMS0126MessageProcessor implements MessageProcessor{
 		sql.append(" AND	prodEdicao.numeroEdicao = :numeroEdicao ");
 		
 		Query query = entityManager.createQuery(sql.toString());		
-		query.setParameter("codigoProduto", input.getCodFornecedorProduto());
+		query.setParameter("codigoProduto", input.getCodigoProduto());
 		query.setParameter("numeroEdicao", input.getEdicao());
 		
 		try{

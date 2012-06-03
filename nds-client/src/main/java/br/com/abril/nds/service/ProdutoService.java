@@ -60,4 +60,22 @@ public interface ProdutoService {
 	 * @return true caso ja exista o produto no estoque
 	 */
 	boolean isProdutoEmEstoque(String codigoProduto);
+	
+	/**
+	 * 
+	 * @param produto
+	 * @param codigoEditor
+	 * @param codigoFornecedor
+	 * @param codigoTipoDesconto
+	 * @param codigoTipoProduto
+	 */
+	void salvarProduto(Produto produto, Long codigoEditor, Long codigoFornecedor, Long codigoTipoDesconto, Long codigoTipoProduto);
+	
+	/**
+	 * Retorna o Produto pelo se ID.
+	 * 
+	 * @param id
+	 * @return
+	 */
+	Produto obterProdutoPorID(Long id);
 }

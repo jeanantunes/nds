@@ -217,7 +217,7 @@
 					$("#dialog-novoEntregador").dialog( "close" );
 
 					pesquisarEntregadores();
-
+					
 					exibirMensagem(
 						result.tipoMensagem, 
 						result.listaMensagens
@@ -225,10 +225,10 @@
 				}
 			},
 			function(result) {
-
+		
 				exibirMensagemDialog(
 					result.mensagens.tipoMensagem, 
-					result.mensagens.listaMensagens
+					result.mensagens.listaMensagens, ""
 				);
 			},
 			true

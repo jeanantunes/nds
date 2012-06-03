@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.client.vo.RegistroCurvaABCCotaVO;
-import br.com.abril.nds.client.vo.ResultadoCurvaABC;
+import br.com.abril.nds.client.vo.ResultadoCurvaABCCota;
 import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.dto.CotaDTO;
 import br.com.abril.nds.dto.CotaDTO.TipoPessoa;
@@ -1562,18 +1562,16 @@ public class CotaServiceImpl implements CotaService {
 		this.cotaRepository.alterar(cota);
 	}
 
-	@SuppressWarnings("rawtypes")
 	@Override
 	@Transactional(readOnly = true)
-	public ResultadoCurvaABC obterCurvaABCCotaTotal(
-			FiltroCurvaABCCotaDTO filtroCurvaABCCotaDTO) {
+	public ResultadoCurvaABCCota obterCurvaABCCotaTotal(FiltroCurvaABCCotaDTO filtroCurvaABCCotaDTO) {
 		return cotaRepository.obterCurvaABCCotaTotal(filtroCurvaABCCotaDTO);
 	}
 
 	@Override
 	@Transactional(readOnly = true)
-	public List<RegistroCurvaABCCotaVO> obterCurvaABCCota(
-			FiltroCurvaABCCotaDTO filtroCurvaABCCotaDTO) {
+	public List<RegistroCurvaABCCotaVO> obterCurvaABCCota(FiltroCurvaABCCotaDTO filtroCurvaABCCotaDTO) {
 		return cotaRepository.obterCurvaABCCota(filtroCurvaABCCotaDTO);
 	}
+	
 }

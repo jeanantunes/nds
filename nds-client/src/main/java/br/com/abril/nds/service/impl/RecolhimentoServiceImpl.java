@@ -145,7 +145,7 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 			}
 		}
 		
-		atualizarLancamento(idsLancamento, usuario, mapaRecolhimentos);
+		atualizarLancamentos(idsLancamento, usuario, mapaRecolhimentos);
 	}
 	
 	/**
@@ -215,15 +215,22 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 			}
 		}
 		
-		atualizarLancamento(idsLancamento, usuario, mapaLancamentoRecolhimento);
+		atualizarLancamentos(idsLancamento, usuario, mapaLancamentoRecolhimento);
 		
-		gerarChamadaEncalhe(mapaDataRecolhimentoLancamentos, numeroSemana);
+		gerarChamadasEncalhe(mapaDataRecolhimentoLancamentos, numeroSemana);
 		
 		gerarPeriodosParciais(idsProdutoEdicaoParcial, usuario);
 	}
 	
-	private void atualizarLancamento(Set<Long> idsLancamento, Usuario usuario,
-									 Map<Long, ProdutoRecolhimentoDTO> mapaRecolhimentos) {
+	/**
+	 * Método que atualiza as informações dos lançamentos.
+	 * 
+	 * @param idsLancamento - identificadores de lançamentos
+	 * @param usuario - usuário
+	 * @param mapaLancamentoRecolhimento - mapa de lancamentos e produtos de recolhimento
+	 */
+	private void atualizarLancamentos(Set<Long> idsLancamento, Usuario usuario,
+									  Map<Long, ProdutoRecolhimentoDTO> mapaLancamentoRecolhimento) {
 		
 		if (!idsLancamento.isEmpty()) {
 		
@@ -252,7 +259,7 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 				gerarHistoricoLancamento =
 					!(lancamento.getStatus().equals(StatusLancamento.BALANCEADO_RECOLHIMENTO));
 				
-				produtoRecolhimento = mapaRecolhimentos.get(lancamento.getId());
+				produtoRecolhimento = mapaLancamentoRecolhimento.get(lancamento.getId());
 				
 				lancamento.setDataRecolhimentoDistribuidor(produtoRecolhimento.getNovaData());
 				lancamento.setSequenciaMatriz(produtoRecolhimento.getSequencia().intValue());
@@ -277,7 +284,13 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		}
 	}
 	
-	private void gerarChamadaEncalhe(Map<Date, Set<Long>> mapaDataRecolhimentoLancamentos,
+	/**
+	 * Gera as chamadas de encalhe para os produtos da matriz de balanceamento.
+	 * 
+	 * @param mapaDataRecolhimentoLancamentos - mapa de datas de recolhimento e identificadores de lancamentos.
+	 * @param numeroSemana - número da semana
+	 */
+	private void gerarChamadasEncalhe(Map<Date, Set<Long>> mapaDataRecolhimentoLancamentos,
 			 						 Integer numeroSemana) {
 		
 		if (mapaDataRecolhimentoLancamentos != null && !mapaDataRecolhimentoLancamentos.isEmpty()) {
@@ -365,6 +378,12 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		}
 	}
 	
+	/**
+	 * Gera os períodos de parciais
+	 * 
+	 * @param idsProdutoEdicaoParcial - identificadores dos produtos de edição
+	 * @param usuario - usuário
+	 */
 	private void gerarPeriodosParciais(Set<Long> idsProdutoEdicaoParcial, Usuario usuario) {
 		
 		List<ProdutoEdicao> listaProdutoEdicao =
@@ -391,6 +410,15 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		}
 	}
 	
+	/**
+	 * Método que obtém uma chamada de encalhe da lista informada.
+	 * É utilizado para informar se já existe uma chamada de encalhe adicionada anteriormente na lista.
+	 * 
+	 * @param listaChamadaEncalhe - lista de chamadas de encalhe
+	 * @param chamadaEncalhe - chamada de encalhe
+	 * 
+	 * @return chamada de encalhe, caso já exista uma chamada na lista
+	 */
 	private ChamadaEncalhe obterChamadaEncalheLista(List<ChamadaEncalhe> listaChamadaEncalhe,
 													ChamadaEncalhe chamadaEncalhe) {
 		
@@ -406,6 +434,12 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		return null;
 	}
 	
+	/**
+	 * Remove as chamadas de encalhe do período informado.
+	 * 
+	 * @param dataInicialRecolhimento - data inicial de recolhimento
+	 * @param dataFinalRecolhimento - data final de recolhimento
+	 */
 	private void removerChamadasEncalhe(Date dataInicialRecolhimento,
 									    Date dataFinalRecolhimento) {
 		
@@ -419,7 +453,7 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		}
 	}
 		
-	/*
+	/**
 	 * Monta o DTO com as informações para realização do balanceamento.
 	 */
 	private RecolhimentoDTO obterDadosRecolhimento(Integer numeroSemana,
@@ -482,6 +516,17 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		return dadosRecolhimento;
 	}
 	
+	/**
+	 * Retorna uma flag que indica se a matriz deve ou não ser balanceada.
+	 * 
+	 * @param produtosRecolhimento - lista de produtos de recolhimento
+	 * @param dataOperacao - data de operação
+	 * @param periodoRecolhimento - período de recolhimento
+	 * @param matrizFechada - flag que indica se a matriz está fechada
+	 * @param forcarBalanceamento - flag que indica se deve ser forçado o balanceamento da matriz
+	 * 
+	 * @return boolean
+	 */
 	private boolean balancearMatriz(List<ProdutoRecolhimentoDTO> produtosRecolhimento,
 									Date dataOperacao,
 									PeriodoVO periodoRecolhimento,
@@ -501,6 +546,13 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		return forcarBalanceamento;
 	}
 	
+	/**
+	 * Retorna uma flag que indica se a matriz está salva.
+	 * 
+	 * @param produtosRecolhimento - lista de produtos de recolhimento
+	 * 
+	 * @return boolean
+	 */
 	private boolean isMatrizSalva(List<ProdutoRecolhimentoDTO> produtosRecolhimento) {
 		
 		boolean matrizSalva = false;
@@ -520,6 +572,14 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		return matrizSalva;
 	}
 	
+	/**
+	 * Retorna uma flag que indica se a matriz está fechada.
+	 * 
+	 * @param dataOperacao - data de operação
+	 * @param periodoRecolhimento - período de recolhimento
+	 * 
+	 * @return boolean
+	 */
 	private boolean isMatrizFechada(Date dataOperacao, PeriodoVO periodoRecolhimento) {
 		
 		boolean matrizConfirmada = 
@@ -533,7 +593,7 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		return matrizConfirmada || semanaRecolhimento;
 	}
 
-	/*
+	/**
 	 * Monta o perídodo de recolhimento de acordo com a semana informada.
 	 */
 	private PeriodoVO getPeriodoRecolhimento(Distribuidor distribuidor, Integer numeroSemana) {
@@ -548,7 +608,7 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		return periodoRecolhimento;
 	}
 	
-	/*
+	/**
 	 * Obtém as datas de recolhimento dos fornecedores informados.
 	 */
 	private TreeSet<Date> obterDatasRecolhimentoFornecedor(PeriodoVO periodoRecolhimento,
@@ -577,7 +637,7 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		return datasRecolhimentoFornecedor;
 	}
 	
-	/*
+	/**
 	 * Obtém as datas de recolhimento do distribuídor.
 	 */
 	private TreeSet<Date> obterDatasRecolhimentoDistribuidor(Distribuidor distribuidor,
@@ -600,7 +660,7 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		return datasRecolhimentoDistribuidor;
 	}
 	
-	/*
+	/**
 	 * Obtém as datas para recolhimento no período informado,
 	 * de acordo com os dias da semana informados.
 	 */

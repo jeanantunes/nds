@@ -2,13 +2,48 @@ package br.com.abril.nds.model.planejamento;
 
 public enum StatusLancamento {
 	
-	PLANEJADO, 
-	CONFIRMADO, 
-	BALANCEADO,
-	ESTUDO_FECHADO,
-	FURO, 
-	EXPEDIDO,
-	BALANCEADO_RECOLHIMENTO,
-	RECOLHIDO,
-	CANCELADO_GD;
+	PLANEJADO("Planejado"),
+	CONFIRMADO("Confirmado"),
+	BALANCEADO("Balanceado"),
+	ESTUDO_FECHADO("Estudo Fechado"),
+	FURO("Furo"),
+	EXPEDIDO("Expedido"),
+	BALANCEADO_RECOLHIMENTO("Balanceado Recolhimento"),
+	RECOLHIDO("Recolhido"),
+	CANCELADO_GD("Cancelado GD"),
+
+	// EMS 217:
+	TRANSMITIDO("Transmitido"),
+	PREVISTO("Previsto"),
+	CALCULO_SOLICITADO("Cálculo Solicitado"),
+	CALCULADO("Calculado"),
+	EMITIDO("Emitido"),
+	LIBERAR_CALCULO("Liberar Cálculo"),
+	LANCADO("Lançado"),
+	EM_RECOLHIMENTO("Em Recolhimento"),
+	FECHADO("Fechado");
+	
+	/** Descrição do status. */
+	private String descricao;
+	
+	/** Método construtor padrão. */
+	private StatusLancamento(String descricao) {
+		this.descricao = descricao;
+	}
+	
+
+	/**
+	 * @return the descricao
+	 */
+	public String getDescricao() {
+		return descricao;
+	}
+
+	/**
+	 * @param descricao the descricao to set
+	 */
+	public void setDescricao(String descricao) {
+		this.descricao = descricao;
+	}
+	
 }
