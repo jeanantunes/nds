@@ -35,6 +35,23 @@ public abstract class CurrencyUtil {
 
 		return new DecimalFormat("#,##0.00").format(valor);
 	}
+
+	/**
+	 * Formata um valor de moeda sem símbolo monetário e sem a parte fracionária (truncado).
+	 * 
+	 * @param valor - valor
+	 * 
+	 * @return Valor formatado
+	 */
+	public static String formatarValorTruncado(Number valor) {
+		
+		if (valor == null) {
+			
+			return null;
+		}
+
+		return new DecimalFormat("#,##0").format(valor);
+	}
 	
 	/**
 	 * Formata um valor de moeda com símbolo monetário.
