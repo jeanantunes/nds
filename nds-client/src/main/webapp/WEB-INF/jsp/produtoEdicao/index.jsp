@@ -74,21 +74,40 @@ function popup() {
 	// Exibir os dados do Produto:
 	// TODO: Pegar o código do Produto!
 	$.postJSON(
-			"<c:url value='/produto/pesquisarPorCodigoProduto' />",
-			"codigoProduto=" + 1,
+			"<c:url value='/cadastro/edicao/carregarDadosProdutoEdicao.json' />",
+			{ codigoProduto : 1, 
+			  idProdutoEdicao : 1},
 			function(result) {
 				if (result) {
-					$("#nomePublicacao").val(result.nome);
-					//$("#nomeFornecedor").val();
-					$("#situacao").val(
-							result.ativo ? "Ativo" : "Inativo"
-							);
-					//$("#fase").val();
-					//$("#numeroLancamento").val();
-
+					$("#codigoProdutoEdicao").val(result.codigoProduto);
+					$("#nomePublicacao").val(result.nomeProduto);
+					$("#nomeComercialProduto").val(result.nomeComercialProduto);
+					$("#nomeFornecedor").val(result.nomeFornecedor);
+					//$("#situacao").val(result.situacao);
+					$("#numeroEdicao").val(result.numeroEdicao)
+					$("#fase").val(result.fase);
+					$("#numeroLancamento").val(result.numeroLancamento);
 					$("#pacotePadrao").val(result.pacotePadrao);
+					$("#tipoLancamento").val(result.tipoLancamento);
+					$("#precoPrevisto").val(result.precoPrevisto);
+					$("#precoVenda").val(result.precoVenda);
+					$("#dataLancamentoPrevisto").val(result.dataLancamentoPrevisto.$);
+					$("#dataLancamento").val(result.dataLancamentoPrevisto.$);
+					$("#repartePrevisto").val(result.repartePrevisto)
+					$("#reparteDistribuido").val(result.reparteDistribuido);
+					$("#repartePromocional").val(result.repartePromocional);
+					//$("#categoria").val();
+					$("#codigoDeBarras").val(result.codigoDeBarras);
+					$("#codigoDeBarrasCorporativo").val(result.codigoDeBarrasCorporativo);
+					$("#desconto").val(result.desconto);
 					$("#peso").val(result.peso);
-					
+					$("#largura").val(result.largura);
+					$("#comprimento").val(result.comprimento);
+					$("#espessura").val(result.espessura);
+					$("#chamadaCapa").val(result.chamadaCapa);
+					$('#parcial').val(result.parcial + "");
+					$('#possuiBrinde').attr('checked', result.possuiBrinde);
+					$('#boletimInformativo').val(result.boletimInformativo);
 				}
 			},
 
@@ -97,13 +116,6 @@ function popup() {
 				},
 			true
 		);
-
-	/*
-	$.postJSON(contextPath + "/produto/pesquisarPorCodigoProduto",
-			   "codigoProduto=" + codigoProduto,
-			   function(result) { produto.pesquisarPorCodigoSuccessCallBack(result, idProduto, idEdicao, successCallBack); },
-			   function() { produto.pesquisarPorCodigoErrorCallBack(idCodigo, errorCallBack); }, isFromModal);
-	*/
 
 	
 	//$( "#dialog:ui-dialog" ).dialog( "destroy" );
@@ -303,7 +315,7 @@ fieldset {
 						<tbody>
 							<tr>
 								<td width="181"><strong>C&oacute;digo:</strong></td>
-								<td width="100"><input type="text" name="textfield" id="textfield" style="width:100px;" /></td>
+								<td width="100"><input type="text" name="codigoProdutoEdicao" id="codigoProdutoEdicao" style="width:100px;" /></td>
 								<td width="90">&nbsp;</td>
 								<td width="108">&nbsp;</td>
 								<td width="153" rowspan="8" align="center">
@@ -318,7 +330,7 @@ fieldset {
 							</tr>
 							<tr>
 								<td><strong>Nome Comercial Produto:</strong></td>
-								<td colspan="3"><input type="text" name="textfield13" id="textfield22" style="width:250px;" /></td>
+								<td colspan="3"><input type="text" name="nomeComercialProduto" id="nomeComercialProduto" style="width:250px;" /></td>
 							</tr>
 							<tr>
 								<td><strong>Fornecedor:</strong></td>
@@ -330,7 +342,7 @@ fieldset {
 							</tr>
 							<tr>
 								<td><strong>Edi&ccedil;&atilde;o:</strong></td>
-								<td><input type="text" name="textfield17" id="textfield16" style="width:50px;" /></td>
+								<td><input type="text" name="numeroEdicao" id="numeroEdicao" style="width:50px;" /></td>
 								<td><strong>Fase:</strong></td>
 								<td><input type="text" name="fase" id="fase" style="width:50px;" disabled="disabled" /></td>
 							</tr>
@@ -343,13 +355,13 @@ fieldset {
 							<tr>
 								<td><strong>Tipo de Lan&ccedil;amento:</strong></td>
 								<td colspan="3">
-									<select name="select2" id="select2" style="width:260px;" >
-										<option selected="selected">Selecione...</option>
-										<option>Lan&ccedil;amento</option>
-										<option>Ed. Parcial</option>
-										<option>Relan&ccedil;amento</option>
-										<option>Redistribui&ccedil;&atilde;o</option>
-										<option>Supl. Compuls</option>
+									<select name="tipoLancamento" id="tipoLancamento" style="width:260px;" >
+										<option value="">Selecione...</option>
+										<option value="LANCAMENTO">Lan&ccedil;amento</option>
+										<option value="PARCIAL">Ed. Parcial</option>
+										<option value="RELANCAMENTO">Relan&ccedil;amento</option>
+										<option value="REDISTRIBUICAO">Redistribui&ccedil;&atilde;o</option>
+										<option value="SUPLEMENTAR">Supl. Compuls</option>
 									</select>
 								</td>
 							</tr>
@@ -363,15 +375,15 @@ fieldset {
 						<tbody>
 							<tr>
 								<td width="103"><strong>Previsto:</strong></td>
-								<td width="80"><input type="text" name="textfield4" id="textfield6" style="width:80px; float:left;" /></td>
+								<td width="80"><input type="text" name="repartePrevisto" id="repartePrevisto" style="width:80px; float:left;" /></td>
 							</tr>
 							<tr>
 								<td><strong>Distribuido:</strong></td>
-								<td><input type="text" name="textfield20" id="textfield20" style="width:80px;" disabled="disabled" /></td>
+								<td><input type="text" name="reparteDistribuido" id="reparteDistribuido" style="width:80px;" disabled="disabled" /></td>
 							</tr>
 							<tr>
 								<td><strong>Promocional:</strong></td>
-								<td><input type="text" name="textfield21" id="textfield21" style="width:80px; float:left;" /></td>
+								<td><input type="text" name="repartePromocional" id="repartePromocional" style="width:80px; float:left;" /></td>
 							</tr>
 						</tbody>
 					</table>
@@ -385,7 +397,7 @@ fieldset {
 								<td width="76"><strong>Previsto:</strong></td>
 								<td width="99"><input type="text" name="precoPrevisto" id="precoPrevisto" style="width:70px; float:left;" /></td>
 								<td width="51"><strong>Real:</strong></td>
-								<td width="70"><input type="text" name="textfield9" id="textfield10" style="width:70px; text-align:right;" disabled="disabled" /></td>
+								<td width="70"><input type="text" name="precoVenda" id="precoVenda" style="width:70px; text-align:right;" disabled="disabled" /></td>
 							</tr>
 						</tbody>
 					</table>
@@ -397,9 +409,9 @@ fieldset {
 						<tbody>
 							<tr>
 								<td width="76"><strong>Previsto:</strong></td>
-								<td width="99"><input type="text" name="textfield4" id="textfield6" style="width:70px; float:left;" /></td>
+								<td width="99"><input type="text" name="dataLancamentoPrevisto" id="dataLancamentoPrevisto" style="width:70px; float:left;" /></td>
 								<td width="51"><strong>Real:</strong></td>
-								<td width="70"><input type="text" name="textfield9" id="textfield10" style="width:70px; text-align:right;" disabled="disabled" /></td>
+								<td width="70"><input type="text" name="dataLancamento" id="dataLancamento" style="width:70px; text-align:right;" disabled="disabled" /></td>
 							</tr>
 						</tbody>
 					</table>
@@ -434,11 +446,11 @@ fieldset {
 							</tr>
 							<tr>
 								<td>Cod. de Barras:</td>
-								<td><input type="text" name="textfield5" id="textfield3" style="width:180px;" /></td>
+								<td><input type="text" name="codigoDeBarras" id="codigoDeBarras" style="width:180px;" /></td>
 							</tr>
 							<tr>
 								<td>Cod. Barras Corporativo:</td>
-								<td><input type="text" name="textfield3" id="textfield4" style="width:180px;" /></td>
+								<td><input type="text" name="codigoDeBarrasCorporativo" id="codigoDeBarrasCorporativo" style="width:180px;" /></td>
 							</tr>
 						</tbody>
 					</table>
@@ -453,7 +465,7 @@ fieldset {
 							</tr>
 							<tr>
 								<td>Desconto:</td>
-								<td><input type="text" name="textfield10" id="textfield10" style="width:113px;" /></td>
+								<td><input type="text" name="desconto" id="desconto" style="width:113px;" /></td>
 							</tr>
 						</tbody>
 					</table>
@@ -469,15 +481,15 @@ fieldset {
 							</tr>
 							<tr>
 								<td width="59">Largura:</td>
-								<td width="86"><input type="text" name="textfield14" id="textfield14" style="width:80px;" /></td>
+								<td width="86"><input type="text" name="largura" id="largura" style="width:80px;" /></td>
 							</tr>
 							<tr>
 								<td width="59">Comprimento:</td>
-								<td width="86"><input type="text" name="textfield14" id="textfield14" style="width:80px;" /></td>
+								<td width="86"><input type="text" name="comprimento" id="comprimento" style="width:80px;" /></td>
 							</tr>
 							<tr>
 								<td width="59">Espessura:</td>
-								<td width="86"><input type="text" name="textfield14" id="textfield14" style="width:80px;" /></td>
+								<td width="86"><input type="text" name="espessura" id="espessura" style="width:80px;" /></td>
 							</tr>
 						</tbody>
 					</table>
@@ -489,19 +501,21 @@ fieldset {
 						<tbody>
 							<tr>
 								<td width="130" height="24">Chamada de Capa:</td>
-								<td width="193"><input type="text" name="textfield2" id="textfield2" style="width:190px;" /></td>
+								<td width="193"><input type="text" name="chamadaCapa" id="chamadaCapa" style="width:190px;" /></td>
 							</tr>
 							<tr>
 								<td height="24">Regime Recolhimento:</td>
 								<td>
-									<select name="select3" id="select3" style="width:190px;" >
-										<option selected="selected">Selecione...</option>
+									<select name="parcial" id="parcial" style="width:190px;" >
+										<option value="">Selecione...</option>
+										<option value="true">Parcial</option>
+										<option value="false">Normal</option>
 									</select>
 								</td>
 							</tr>
 							<tr>
 								<td height="24">Brinde:</td>
-								<td><input type="checkbox" name="checkbox" id="checkbox" /></td>
+								<td><input type="checkbox" name="possuiBrinde" id="possuiBrinde" /></td>
 							</tr>
 						</tbody>
 					</table>
@@ -512,7 +526,7 @@ fieldset {
 						<thead />
 						<tbody>
 							<tr>
-								<td width="600"><textarea name="textfield2" rows="5" id="textfield2" style="width:610px;"></textarea></td>
+								<td width="600"><textarea name="boletimInformativo" id="boletimInformativo" rows="5" style="width:610px;"></textarea></td>
 						</tbody>
 					</table>
 				</fieldset>

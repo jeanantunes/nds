@@ -392,7 +392,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 		// Atualizar:
 		produtoEdicao.getLancamentos().add(lancamento);
 		produtoEdicaoRepository.alterar(produtoEdicao);
-		
+		//produtoEdicaoRepository.atualizarLancamento
 		
 		// Salvar imagem:
 		if (imgInputStream != null) {

@@ -51,6 +51,8 @@ public class ProdutoEdicaoDTO implements Serializable {
 	// Campos para cadastrar uma nova Edição:
 	// codigoProduto;
 	private String nomeComercialProduto;
+	private String fase;
+	private String numeroLancamento;	
 	// numeroEdicao; pacotePadrao;
 	private BigDecimal precoPrevisto;
 	// precoVenda; (Real)
@@ -69,7 +71,6 @@ public class ProdutoEdicaoDTO implements Serializable {
 	private float espessura;
 	
 	private String boletimInformativo;
-	
 	
 	// Lancamento:
 	// tipoLancamento;
@@ -260,7 +261,7 @@ public class ProdutoEdicaoDTO implements Serializable {
 	}
 	
 	/**
-	 * @return the tipoLancamento
+	 * @return the statusLancamento
 	 */
 	public String getStatusLancamento() {
 		return this.statusLancamento;
@@ -420,6 +421,30 @@ public class ProdutoEdicaoDTO implements Serializable {
 	 */
 	public void setBoletimInformativo(String boletimInformativo) {
 		this.boletimInformativo = boletimInformativo;
+	}
+	/**
+	 * @return the fase
+	 */
+	public String getFase() {
+		return fase;
+	}
+	/**
+	 * @param fase the fase to set
+	 */
+	public void setFase(String fase) {
+		this.fase = fase;
+	}
+	/**
+	 * @return the numeroLancamento
+	 */
+	public String getNumeroLancamento() {
+		return numeroLancamento;
+	}
+	/**
+	 * @param numeroLancamento the numeroLancamento to set
+	 */
+	public void setNumeroLancamento(String numeroLancamento) {
+		this.numeroLancamento = numeroLancamento;
 	}
 	/**
 	 * @return the largura

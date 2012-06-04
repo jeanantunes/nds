@@ -57,7 +57,7 @@ public class Produto implements Serializable {
 	@Column(name = "DESCRICAO")
 	private String descricao;
 	
-	@ManyToMany
+	@ManyToMany(fetch=FetchType.EAGER)
 	private Set<Fornecedor> fornecedores = new HashSet<Fornecedor>();
 
 	@Enumerated(EnumType.STRING)

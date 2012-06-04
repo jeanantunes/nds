@@ -1,26 +1,22 @@
 package br.com.abril.nds.controllers.cadastro;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.metamodel.PluralAttribute.CollectionType;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 
-import br.com.abril.nds.client.vo.BaseComboVO;
 import br.com.abril.nds.dto.ProdutoEdicaoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.cadastro.Dimensao;
+import br.com.abril.nds.model.cadastro.Produto;
+import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
-import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
+import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
+import br.com.abril.nds.service.ProdutoService;
 import br.com.abril.nds.util.TipoMensagem;
-import br.com.abril.nds.util.Util;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
@@ -37,6 +33,12 @@ public class ProdutoEdicaoController {
 	
 	@Autowired
 	private ProdutoEdicaoService peService;
+	
+	@Autowired
+	private ProdutoService pService;
+	
+	@Autowired
+	private LancamentoService lService;
 	
 	/** Traz a página inicial. */
 	@Get
@@ -81,48 +83,81 @@ public class ProdutoEdicaoController {
 	}
 	
 	@Post
-	public void carregarDadosProdutoEdicao(String codigoProduto) {
+	@Path("/carregarDadosProdutoEdicao.json")
+	public void carregarDadosProdutoEdicao(String codigoProduto, String idProdutoEdicao) {
 		
 		if (codigoProduto == null || codigoProduto.trim().isEmpty()) {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Por favor, escolha um produto para adicionar a Edição!");
 		}
 		
+		//Map<String, Object> dados = new HashMap<String, Object>();
+		
+		
+		Produto produto = pService.obterProdutoPorCodigo(codigoProduto);
 		ProdutoEdicaoDTO dto = new ProdutoEdicaoDTO();
-		dto.setCodigoProduto(codigoProduto);
+		dto.setNomeProduto(produto.getNome());
 		
-		/*
+		String nomeFornecedor = "";
+		if (produto.getFornecedor() != null 
+				&& produto.getFornecedor().getJuridica() != null) {
+			nomeFornecedor = produto.getFornecedor().getJuridica().getNomeFantasia();
+		}
+		dto.setNomeFornecedor(nomeFornecedor);
 		
-		// Lista - Tipos de lançamento:
-		List<TipoLancamento> lstTpLancamento = Arrays.asList(TipoLancamento.values());
-		Collections.sort(lstTpLancamento, new Comparator<TipoLancamento>() {
-			@Override
-			public int compare(TipoLancamento o1, TipoLancamento o2) {
-				return o1.getDescricao().compareTo(o2.getDescricao());
+		// TODO: Solicitar esses campos:
+		//dto.setFase(produto.fase);
+		//dto.setNumeroLancamento(produto.numerolancamento);
+		dto.setPacotePadrao(produto.getPacotePadrao());
+		
+		
+		//
+		dto.setPeso(produto.getPeso());
+		
+		
+		if (idProdutoEdicao != null && !idProdutoEdicao.trim().isEmpty()) {
+			
+			Long id = Long.valueOf(idProdutoEdicao);
+			ProdutoEdicao pe = peService.obterProdutoEdicao(id);
+			dto.setCodigoProduto(pe.getCodigo());
+			dto.setNomeComercialProduto(pe.getNomeComercial());
+			dto.setNumeroEdicao(pe.getNumeroEdicao());
+			dto.setPacotePadrao(pe.getPacotePadrao());
+			dto.setPrecoPrevisto(pe.getPrecoPrevisto());
+			dto.setPrecoVenda(pe.getPrecoVenda());
+			dto.setReparteDistribuido(pe.getReparteDistribuido());
+			dto.setCodigoDeBarras(pe.getCodigoDeBarras());
+			dto.setCodigoDeBarrasCorporativo(pe.getCodigoDeBarraCorporativo());
+			dto.setChamadaCapa(pe.getChamadaCapa());
+			dto.setParcial(pe.isParcial());
+			dto.setPossuiBrinde(pe.isPossuiBrinde());
+			// descrição tipo de desconto
+			dto.setDesconto(pe.getDesconto());
+			dto.setPeso(pe.getPeso());
+			dto.setBoletimInformativo(pe.getBoletimInformativo());
+			
+			Dimensao dimEdicao = pe.getDimensao();
+			if (dimEdicao == null) {
+				dto.setComprimento(0);
+				dto.setEspessura(0);
+				dto.setLargura(0);
+			} else {
+				dto.setComprimento(dimEdicao.getComprimento());
+				dto.setEspessura(dimEdicao.getEspessura());
+				dto.setLargura(dimEdicao.getLargura());
 			}
-		});
-		dto.setTiposLancamento(lstTpLancamento);
+			
+			Lancamento uLancamento = lService.obterUltimoLancamentoDaEdicao(pe.getId());
+			if (uLancamento != null) {
+				dto.setSituacaoLancamento(uLancamento.getStatus());
+				dto.setTipoLancamento(uLancamento.getTipoLancamento());
+				dto.setDataLancamentoPrevisto(uLancamento.getDataLancamentoPrevista());
+				dto.setDataLancamento(uLancamento.getDataLancamentoDistribuidor());
+				dto.setRepartePrevisto(uLancamento.getReparte());
+				dto.setRepartePromocional(uLancamento.getRepartePromocional());
+			}
+		}
 		
 		
-		
-		// TODO: Lista - Categorias:
-		
-		// TODO: Lista - Tipos de Desconto
-		
-		// TODO: Lista - Regime de Recolhimento
-		
-		
-		// TODO: As listas abaixos são da aba 'segmentação' (não precisa implementar agora). 
-		// TODO: Lista - Classe Social
-		// TODO: Lista - Sexo
-		// TODO: Lista - Faixa-Etária
-		// TODO: Lista - Tema Principal
-		// TODO: Lista - Tema Secundário
-		
-		
-		List<Object> lst = new ArrayList<Object>();
-		lst.add(lstUltimasEdicoes);	// Index 0: Últimas 5 Edições;
-		lst.add(lstTpLancamento);	// Index 1: Tipos de Lançamento;
-		*/
 		this.result.use(Results.json()).from(dto, "result").serialize();
 	}
 	
@@ -137,15 +172,5 @@ public class ProdutoEdicaoController {
 
 		this.result.use(FlexiGridJson.class).from(lst).total(lst.size()).page(1).serialize();
 	}
-	
-	
-//	private List<BaseComboVO> parseComboTipoLancamento() {
-//		
-//		List<BaseComboVO> lst = new ArrayList<BaseComboVO>();
-//		for (TipoLancamento tl : TipoLancamento.values()) {
-//			
-//			lst.add(new BaseComboVO(tl.getDescricao(), tl.getDescricao()))
-//		}
-//	}
 	
 }
