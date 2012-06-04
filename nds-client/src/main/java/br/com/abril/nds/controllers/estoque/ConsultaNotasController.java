@@ -118,6 +118,8 @@ public class ConsultaNotasController {
 		filtroConsultaNotaFiscal =
 				prepararFiltro(filtroConsultaNotaFiscal, isNotaRecebida, dataInicial, dataFinal, sortorder, sortname, page, rp);
 
+		this.session.setAttribute(FILTRO_SESSION_ATTRIBUTE, filtroConsultaNotaFiscal);
+		
 		try {
 
 			List<NotaFiscalEntradaFornecedor> listaNotasFiscais =
