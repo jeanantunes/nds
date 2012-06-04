@@ -155,8 +155,18 @@ $(function() {
        	  	<legend> Roteiros / Rotas</legend>
 	        <div class="grids" style="display:none;">
 			  	<table class="romaneiosGrid"></table>
-	          	<span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;"><img src="../images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
-	    		<span class="bt_novos" title="Imprimir"><a href="imprimir_romaneio.htm" target="_blank"><img src="../images/ico_impressora.gif" alt="Imprimir" hspace="5" border="0" />Imprimir Romaneio</a></span>
+	          	<span class="bt_novos" title="Gerar Arquivo">
+	          		<a href="${pageContext.request.contextPath}/romaneio/exportar?fileType=XLS">
+	          			<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
+	          			Arquivo
+	          		</a>
+	          	</span>
+	    		<span class="bt_novos" title="Imprimir">
+	    			<a href="${pageContext.request.contextPath}/romaneio/exportar?fileType=PDF">
+	    				<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" alt="Imprimir" hspace="5" border="0" />
+	    				Imprimir Romaneio
+	    			</a>
+	    		</span>
 			</div>		
       </fieldset>
       <div class="linha_separa_fields">&nbsp;</div>
@@ -182,7 +192,7 @@ $(function() {
 				align : 'left'
 			}, {
 				display : 'Endereço',
-				name : 'endereco',
+				name : 'logradouro',
 				width : 260,
 				sortable : true,
 				align : 'left'

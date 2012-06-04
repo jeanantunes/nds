@@ -9,7 +9,6 @@ import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.RomaneioDTO;
 import br.com.abril.nds.dto.filtro.FiltroRomaneioDTO;
-import br.com.abril.nds.dto.filtro.FiltroRomaneioDTO.ColunaOrdenacaoRomaneio;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.repository.RomaneioRepository;
 
@@ -97,16 +96,9 @@ public class RomaneioRepositoryImpl extends AbstractRepository<Box, Long> implem
 		if(filtro.getPaginacao() == null || filtro.getPaginacao().getSortColumn() == null){
 			return "";
 		}
-		
-		ColunaOrdenacaoRomaneio coluna = ColunaOrdenacaoRomaneio.getPorDescricao(filtro.getPaginacao().getSortColumn());
-		
 		StringBuilder hql = new StringBuilder();
 		
-		switch (coluna) {
-			case COTA:	
-				hql.append(" order by cota.numeroCota desc ");
-				break;
-		}
+		hql.append(" order by roteiro.ordem asc, rota.ordem asc ");
 		
 		if (filtro.getPaginacao().getOrdenacao() != null) {
 			hql.append( filtro.getPaginacao().getOrdenacao().toString());
@@ -130,6 +122,27 @@ public class RomaneioRepositoryImpl extends AbstractRepository<Box, Long> implem
 		}
 		
 		return param;
+	}
+
+	@Override
+	public Integer buscarTotal(FiltroRomaneioDTO filtro) {
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select count(cota) ");
+		
+		hql.append(getSqlFromEWhereRomaneio(filtro));
+		
+		Query query =  getSession().createQuery(hql.toString());
+		
+		HashMap<String, Object> param = buscarParametrosRomaneio(filtro);
+		
+		for(String key : param.keySet()){
+			query.setParameter(key, param.get(key));
+		}	
+		
+		Long totalRegistros = (Long) query.uniqueResult();
+		
+		return (totalRegistros == null) ? 0 : totalRegistros.intValue();
 	}
 	
 	

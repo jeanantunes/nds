@@ -2,19 +2,23 @@ package br.com.abril.nds.dto.filtro;
 
 import java.io.Serializable;
 
+import br.com.abril.nds.util.export.Exportable;
 import br.com.abril.nds.vo.PaginacaoVO;
 
+@Exportable
 public class FiltroRomaneioDTO implements Serializable {
 
 	private static final long serialVersionUID = -3783996689743491442L;
-	
-	
 	
 	private Long idBox;
 	private Long idRoteiro;
 	private Long idRota;
 	
+	private String cota;
+	
 	private PaginacaoVO paginacao;
+	
+	private ColunaOrdenacaoRomaneio ordenacaoColuna;
 	
 	public enum ColunaOrdenacaoRomaneio {
 
@@ -70,6 +74,22 @@ public class FiltroRomaneioDTO implements Serializable {
 
 	public void setPaginacao(PaginacaoVO paginacao) {
 		this.paginacao = paginacao;
+	}
+
+	public ColunaOrdenacaoRomaneio getOrdenacaoColuna() {
+		return ordenacaoColuna;
+	}
+
+	public void setOrdenacaoColuna(ColunaOrdenacaoRomaneio ordenacaoColuna) {
+		this.ordenacaoColuna = ordenacaoColuna;
+	}
+
+	public String getCota() {
+		return cota;
+	}
+
+	public void setCota(String cota) {
+		this.cota = cota;
 	}
 	
 }

@@ -28,4 +28,10 @@ public class RomaneioServiceImpl implements RomaneioService {
 		return this.romaneioRepository.buscarRomaneios(filtro);
 	}
 
+	@Override
+	@Transactional
+	public Integer buscarTotalDeRomaneios(FiltroRomaneioDTO filtro) {		
+		return this.romaneioRepository.buscarTotal(filtro);
+	}
+
 }

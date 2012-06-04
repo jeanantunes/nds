@@ -32,6 +32,8 @@ public class RomaneioDTO implements Serializable {
 	@Export(label = "Telefone", alignment=Alignment.LEFT, exhibitionOrder = 7)
 	private String numeroTelefone;
 	
+	private String cota;
+	
 	public RomaneioDTO() {}
 	
 	public RomaneioDTO(Integer numeroCota, String nome, String logradouro,
@@ -89,4 +91,13 @@ public class RomaneioDTO implements Serializable {
 	public void setNumeroTelefone(String numeroTelefone) {
 		this.numeroTelefone = numeroTelefone;
 	}
+
+	public String getCota() {
+		return cota;
+	}
+
+	public void setCota(String cota) {
+		this.cota = cota;
+	}
+	
 }
