@@ -23,6 +23,7 @@ public class DynamicRouter {
 	private NdsiLoggerFactory ndsiLoggerFactory;
 
 	public void route(RouteTemplate route) {
+		ndsiLoggerFactory.resetLogger();
 		
 		// LOG DE INICIALIZAÇÃO
 		if (!(route instanceof AbstractRoute)) {

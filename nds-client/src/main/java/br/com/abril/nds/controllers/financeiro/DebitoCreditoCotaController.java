@@ -731,7 +731,7 @@ public class DebitoCreditoCotaController {
 
 				linhasComErro.add(debitoCredito.getId());
 			
-			} else if (DateUtil.isDataInicialMaiorDataFinal(new Date(), dataVencimento)) {
+			} else if (DateUtil.isDataInicialMaiorDataFinal(DateUtil.removerTimestamp(new Date()), dataVencimento)) {
 
 				linhasComErro.add(debitoCredito.getId());
 			}

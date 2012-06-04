@@ -21,7 +21,6 @@ import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
 import br.com.abril.nds.model.cadastro.Produto;
-import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.TipoProduto;
 import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
 
@@ -47,15 +46,15 @@ public class EMS0109MessageProcessor implements MessageProcessor {
 			
 			TipoProduto tipoProduto = this.findTipoProduto(GrupoProduto.REVISTA, message);
 			
-			ProdutoEdicao produtoEdicao = this.findProdutoEdicao(message);
+			Produto produto = this.findProduto(message);
 							
-			if (produtoEdicao == null) {
+			if (produto == null) {
 
-				this.criarProdutoEdicaoConformeInput(message, editor, tipoProduto);
+				this.criarProdutoConformeInput(message, editor, tipoProduto);
 								
 			} else {
 				
-				this.atualizaProdutoEdicaoConformeInput(produtoEdicao, editor, tipoProduto, message);				
+				this.atualizaProdutoConformeInput(produto, editor, tipoProduto, message);				
 			}
 			
 		} else {
@@ -81,14 +80,13 @@ public class EMS0109MessageProcessor implements MessageProcessor {
 		return false;
 	}
 	
-	private ProdutoEdicao findProdutoEdicao(Message message) {
+	private Produto findProduto(Message message) {
 		EMS0109Input input = (EMS0109Input) message.getBody();
 		
 		StringBuilder sql = new StringBuilder();
 		
-		sql.append("select pe from ProdutoEdicao pe ");
-		sql.append(" join fetch pe.produto p ");
-		sql.append(" where pe.numeroEdicao = :codigoPublicacao ");
+		sql.append("select p from Produto p ");
+		sql.append(" where p.codigo = :codigoPublicacao ");
 		
 		try {
 		
@@ -96,7 +94,7 @@ public class EMS0109MessageProcessor implements MessageProcessor {
 			
 			query.setParameter("codigoPublicacao", input.getCodigoPublicacao());
 			
-			return (ProdutoEdicao) query.getSingleResult();
+			return (Produto) query.getSingleResult();
 			
 		} catch (NoResultException e) {
 			
@@ -134,7 +132,7 @@ public class EMS0109MessageProcessor implements MessageProcessor {
 		} 
 	}
 	
-	private DescontoLogistica findDescontoLogisticaByCodigoTipoDesconto(String codigoTipoDesconto) {
+	private DescontoLogistica findDescontoLogisticaByTipoDesconto(String codigoTipoDesconto) {
 		StringBuilder sql = new StringBuilder();
 		
 		sql.append("select d from DescontoLogistica d ");
@@ -203,15 +201,14 @@ public class EMS0109MessageProcessor implements MessageProcessor {
 		} 
 	}
 	
-	private void criarProdutoEdicaoConformeInput(Message message, Editor editor, TipoProduto tipoProduto) {
+	private void criarProdutoConformeInput(Message message, Editor editor, TipoProduto tipoProduto) {
 		EMS0109Input input = (EMS0109Input) message.getBody();
 		
-		ProdutoEdicao produtoEdicao = new ProdutoEdicao();	
 		Produto produto = new Produto();
 				
 		PeriodicidadeProduto periodicidadeProduto = this.findPeriodicidadeProduto(input.getPeriodicidade());
 		Fornecedor fornecedor = this.findFornecedor(input.getCodigoFornecedor());
-		DescontoLogistica descontoLogistica = this.findDescontoLogisticaByCodigoTipoDesconto(input.getTipoDesconto());
+		DescontoLogistica descontoLogistica = this.findDescontoLogisticaByTipoDesconto(input.getTipoDesconto());
 
 		produto.setTipoProduto(tipoProduto);
 		produto.setNome(input.getNomePublicacao());
@@ -223,157 +220,149 @@ public class EMS0109MessageProcessor implements MessageProcessor {
 		produto.setPeb(input.getPeb());
 		produto.setPeso(input.getPeso());
 		produto.setPacotePadrao(input.getPacotePadrao());
+		produto.setCodigo(input.getCodigoPublicacao());
+		produto.setAtivo(input.isStatus());
+		produto.setDataDesativacao(input.getDataDesativacao());
 		
 		if ( fornecedor != null ) {
 			
 			produto.addFornecedor(fornecedor);
 		}
-		
-		this.entityManager.persist(produto); 
-		
-		produtoEdicao.setProduto(produto);
-		produtoEdicao.setNumeroEdicao(input.getCodigoPublicacao());
-		produtoEdicao.setAtivo(input.isStatus());
-		produtoEdicao.setDataDesativacao(input.getDataDesativacao());
-//		produtoEdicao.setPeb(input.getPeb());
-//		produtoEdicao.setPacotePadrao(input.getPacotePadrao());
-//		produtoEdicao.setPeso(input.getPeso());
 
 		if ( descontoLogistica != null ) {
 			
-//			produtoEdicao.setDescontoLogistica(descontoLogistica);
+			produto.setDescontoLogistica(descontoLogistica);
 			
 		}
 		
-		this.entityManager.persist(produtoEdicao);
-		
-
+		this.entityManager.persist(produto); 
 		
 	}
 	
-	private void atualizaProdutoEdicaoConformeInput(ProdutoEdicao produtoEdicao, Editor editor, TipoProduto tipoProduto, Message message) {
+	private void atualizaProdutoConformeInput(Produto produto, Editor editor, TipoProduto tipoProduto, Message message) {
 		
 		EMS0109Input input = (EMS0109Input) message.getBody();
 		
 		PeriodicidadeProduto periodicidadeProduto = this.findPeriodicidadeProduto(input.getPeriodicidade());
 		Fornecedor fornecedor = this.findFornecedor(input.getCodigoFornecedor());
-		DescontoLogistica descontoLogistica = this.findDescontoLogisticaByCodigoTipoDesconto(input.getTipoDesconto());
+		DescontoLogistica descontoLogistica = this.findDescontoLogisticaByTipoDesconto(input.getTipoDesconto());
 		
-		if (produtoEdicao.getProduto().getTipoProduto() != tipoProduto ) {
+		
+		if (produto.getTipoProduto() != tipoProduto ) {
 			
-			produtoEdicao.getProduto().setTipoProduto(tipoProduto);
+			produto.setTipoProduto(tipoProduto);
 			this.ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, 
 					"Atualizacao do Tipo de Publicacao para: " + tipoProduto.getDescricao());
 		}
-		if (!produtoEdicao.getProduto().getNome().equals(input.getNomePublicacao())) { 
+		if (!produto.getNome().equals(input.getNomePublicacao())) { 
 			
-			produtoEdicao.getProduto().setNome(input.getNomePublicacao());
+			produto.setNome(input.getNomePublicacao());
 			this.ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, 
 					"Atualizacao do Nome da Publicacao para: " + input.getNomePublicacao());
 		}
-		if (produtoEdicao.getProduto().getCodigoContexto() != input.getContextoPublicacao()) {
+		if (produto.getCodigoContexto() != input.getContextoPublicacao()) {
 			
-			produtoEdicao.getProduto().setCodigoContexto(input.getContextoPublicacao());
+			produto.setCodigoContexto(input.getContextoPublicacao());
 			this.ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, 
 					"Atualizacao do Contexto Publicacao para: " + input.getContextoPublicacao());
 		}
-		if (!produtoEdicao.getProduto().getDescricao().equals(input.getNomePublicacao())) {
+		if (!produto.getDescricao().equals(input.getNomePublicacao())) {
 		
-			produtoEdicao.getProduto().setDescricao(input.getNomePublicacao());	
+			produto.setDescricao(input.getNomePublicacao());	
 			this.ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, 
 					"Atualizacao da Descricao para: " + input.getNomePublicacao());
 		}
-		if (!produtoEdicao.getProduto().getEditor().getCodigo().equals(input.getCodigoEditor())) {
+		if (!produto.getEditor().getCodigo().equals(input.getCodigoEditor())) {
 			
-			produtoEdicao.getProduto().setEditor(editor);
+			produto.setEditor(editor);
 			this.ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, 
 					"Atualizacao do Editor para: " + editor.getNome());
 		}
-		if (produtoEdicao.getProduto().getPeriodicidade() != periodicidadeProduto) {
+		if (produto.getPeriodicidade() != periodicidadeProduto) {
 			
-			produtoEdicao.getProduto().setPeriodicidade(periodicidadeProduto);
+			produto.setPeriodicidade(periodicidadeProduto);
 			this.ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, 
 					"Atualizacao da Periodicidade para: " + periodicidadeProduto);
 		}
-		if (!produtoEdicao.getProduto().getSlogan().equals(input.getSlogan())) {
+		if (!produto.getSlogan().equals(input.getSlogan())) {
 			
-			produtoEdicao.getProduto().setSlogan(input.getSlogan());
+			produto.setSlogan(input.getSlogan());
 			this.ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, 
 					"Atualizacao do Slogan para: " + input.getSlogan());
 		}
-		if (produtoEdicao.getProduto().getPeb() != input.getPeb()){
+		if (produto.getPeb() != input.getPeb()){
 			
-			produtoEdicao.setPeb(input.getPeb());
+			produto.setPeb(input.getPeb());
 			this.ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, 
 					"Atualizacao do PEB para: " + input.getPeb());
 		}
-		if (produtoEdicao.getProduto().getPeso().equals(input.getPeso())) {
+		if (produto.getPeso().equals(input.getPeso())) {
 			
-			produtoEdicao.setPeso(input.getPeso());
+			produto.setPeso(input.getPeso());
 			this.ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, 
 					"Atualizacao do Peso para: " + input.getPeso());
 		}
-		
+		if (!produto.getCodigo().equals(input.getCodigoPublicacao())) {
+			
+			produto.setCodigo(input.getCodigoPublicacao());
+			this.ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, 
+					"Atualizacao do Codigo da Publicacao para: " + input.getCodigoPublicacao());
+		}
+		if (produto.isAtivo() != input.isStatus()) {
+			
+			produto.setAtivo(input.isStatus());
+			this.ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, 
+					"Atualizacao do Status para: " + input.isStatus());
+		}
+		if (!produto.getDataDesativacao().equals(input.getDataDesativacao())) {
+			
+			produto.setDataDesativacao(input.getDataDesativacao());
+			this.ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, 
+					"Atualizacao da Data de Desativacao para: " + input.getDataDesativacao());
+		}
+		if (produto.getPeb() != input.getPeb()){
+			
+			produto.setPeb(input.getPeb());
+			this.ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, 
+					"Atualizacao do PEB para: " + input.getPeb());
+		}
+		if(produto.getPacotePadrao() != input.getPacotePadrao()){ 
+			
+			produto.setPacotePadrao(input.getPacotePadrao());
+			this.ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, 
+					"Atualizacao do Pacote Padrao para: " + input.getPacotePadrao());
+		}	
+		if (!produto.getPeso().equals(input.getPeso())) {
+			
+			produto.setPeso(input.getPeso());
+			this.ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, 
+					"Atualizacao do Peso para: " + input.getPeso());
+		}
+
 		
 		if ( fornecedor != null )  {
 			
-			if (produtoEdicao.getProduto().getFornecedor().getCodigoInterface() != fornecedor.getCodigoInterface()) {
+			if (produto.getFornecedor().getCodigoInterface() != fornecedor.getCodigoInterface()) {
 				
-				produtoEdicao.getProduto().addFornecedor(fornecedor);
+				produto.addFornecedor(fornecedor);
 				
 				this.ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, 
-						"Atualizacao de Fornecedor para: " + fornecedor);
+						"Atualizacao de Fornecedor para Fornecedor: " + fornecedor.getResponsavel());
 			}
 		}
 		
 		
-		if (!produtoEdicao.getNumeroEdicao().equals(input.getCodigoPublicacao())) {
-			
-			produtoEdicao.setNumeroEdicao(input.getCodigoPublicacao());
-			this.ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, 
-					"Atualizacao do Codigo da Publicacao para: " + input.getCodigoPublicacao());
-		}
-		if (produtoEdicao.isAtivo() != input.isStatus()) {
-			
-			produtoEdicao.setAtivo(input.isStatus());
-			this.ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, 
-					"Atualizacao do Status para: " + input.isStatus());
-		}
-		if (!produtoEdicao.getDataDesativacao().equals(input.getDataDesativacao())) {
-			
-			produtoEdicao.setDataDesativacao(input.getDataDesativacao());
-			this.ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, 
-					"Atualizacao da Data de Desativacao para: " + input.getDataDesativacao());
-		}
-		if (produtoEdicao.getPeb() != input.getPeb()){
-			
-			produtoEdicao.setPeb(input.getPeb());
-			this.ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, 
-					"Atualizacao do PEB para: " + input.getPeb());
-		}
-		if(produtoEdicao.getPacotePadrao() != input.getPacotePadrao()){ 
-			
-			produtoEdicao.setPacotePadrao(input.getPacotePadrao());
-			this.ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, 
-					"Atualizacao do Pacote Padrao para: " + input.getPacotePadrao());
-		}	
-		if (!produtoEdicao.getPeso().equals(input.getPeso())) {
-			
-			produtoEdicao.setPeso(input.getPeso());
-			this.ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, 
-					"Atualizacao do Peso para: " + input.getPeso());
-		}
-
 		if ( descontoLogistica != null ) {
 			
-			/*if (!produtoEdicao.getDescontoLogistica().equals(descontoLogistica)) {
+			if (!produto.getDescontoLogistica().equals(descontoLogistica)) {
 
-				produtoEdicao.setDescontoLogistica(descontoLogistica);
+				produto.setDescontoLogistica(descontoLogistica);
 				
 				this.ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, 
 						"Atualizacao do Tipo Desconto para: " + descontoLogistica.getTipoDesconto());
 						
-			}*/
+			}
 		}
+		
 	}
 }

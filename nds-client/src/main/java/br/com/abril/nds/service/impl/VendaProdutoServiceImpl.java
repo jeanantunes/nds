@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.dto.LancamentoPorEdicaoDTO;
 import br.com.abril.nds.dto.VendaProdutoDTO;
 import br.com.abril.nds.dto.filtro.FiltroVendaProdutoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
@@ -21,12 +22,21 @@ public class VendaProdutoServiceImpl implements VendaProdutoService {
 
 	@Override
 	@Transactional
-	public List<VendaProdutoDTO> buscaVendaporProduto(FiltroVendaProdutoDTO filtro) {
+	public List<VendaProdutoDTO> buscaVendaPorProduto(FiltroVendaProdutoDTO filtro) {
 		if(filtro == null) 
 			throw new ValidacaoException(TipoMensagem.WARNING, "Filtro não deve ser nulo.");
 				
-		return vendaProdutoRepository.buscarLancamentosParciais(filtro);
+		return vendaProdutoRepository.buscarVendaPorProduto(filtro);
 		 
+	}
+
+	@Override
+	@Transactional
+	public List<LancamentoPorEdicaoDTO> buscaLancamentoPorEdicao(FiltroVendaProdutoDTO filtro) {
+		if(filtro == null) 
+			throw new ValidacaoException(TipoMensagem.WARNING, "Filtro não deve ser nulo.");
+		 
+		return vendaProdutoRepository.buscarLancamentoPorEdicao(filtro);
 	}
 
 }
