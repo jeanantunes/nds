@@ -71,7 +71,41 @@ function popup() {
 	$(".prodsPesqGrid").flexReload();
 
 	
+	// Exibir os dados do Produto:
+	// TODO: Pegar o código do Produto!
+	$.postJSON(
+			"<c:url value='/produto/pesquisarPorCodigoProduto' />",
+			"codigoProduto=" + 1,
+			function(result) {
+				if (result) {
+					$("#nomePublicacao").val(result.nome);
+					//$("#nomeFornecedor").val();
+					$("#situacao").val(
+							result.ativo ? "Ativo" : "Inativo"
+							);
+					//$("#fase").val();
+					//$("#numeroLancamento").val();
 
+					$("#pacotePadrao").val(result.pacotePadrao);
+					$("#peso").val(result.peso);
+					
+				}
+			},
+
+			function(result) { 
+				exibirMensagemDialog(result.tipoMensagem, result.listaMensagens, "");
+				},
+			true
+		);
+
+	/*
+	$.postJSON(contextPath + "/produto/pesquisarPorCodigoProduto",
+			   "codigoProduto=" + codigoProduto,
+			   function(result) { produto.pesquisarPorCodigoSuccessCallBack(result, idProduto, idEdicao, successCallBack); },
+			   function() { produto.pesquisarPorCodigoErrorCallBack(idCodigo, errorCallBack); }, isFromModal);
+	*/
+
+	
 	//$( "#dialog:ui-dialog" ).dialog( "destroy" );
 	
 		$( "#dialog-novo" ).dialog({
@@ -280,7 +314,7 @@ fieldset {
 							</tr>
 							<tr>
 								<td><strong>Nome Publica&ccedil;&atilde;o:</strong></td>
-								<td colspan="3"><input type="text" name="textfield8" id="textfield8" style="width:250px;" disabled="disabled" /></td>
+								<td colspan="3"><input type="text" name="nomePublicacao" id="nomePublicacao" style="width:250px;" disabled="disabled" /></td>
 							</tr>
 							<tr>
 								<td><strong>Nome Comercial Produto:</strong></td>
@@ -288,23 +322,23 @@ fieldset {
 							</tr>
 							<tr>
 								<td><strong>Fornecedor:</strong></td>
-								<td colspan="3"><input type="text" name="textfield6" id="textfield6" style="width:250px;" disabled="disabled" /></td>
+								<td colspan="3"><input type="text" name="nomeFornecedor" id="nomeFornecedor" style="width:250px;" disabled="disabled" /></td>
 							</tr>
 							<tr>
 								<td><strong>Situa&ccedil;&atilde;o:</strong></td>
-								<td colspan="3"><input type="text" name="textfield5" id="textfield7" style="width:250px;" disabled="disabled" /></td>
+								<td colspan="3"><input type="text" name="situacao" id="situacao" style="width:250px;" disabled="disabled" /></td>
 							</tr>
 							<tr>
 								<td><strong>Edi&ccedil;&atilde;o:</strong></td>
 								<td><input type="text" name="textfield17" id="textfield16" style="width:50px;" /></td>
 								<td><strong>Fase:</strong></td>
-								<td><input type="text" name="textfield18" id="textfield17" style="width:50px;" disabled="disabled" /></td>
+								<td><input type="text" name="fase" id="fase" style="width:50px;" disabled="disabled" /></td>
 							</tr>
 							<tr>
 								<td><strong>N&ordm; Lancto:</strong></td>
-								<td><input type="text" name="textfield19" id="textfield18" style="width:50px;" disabled="disabled"  /></td>
+								<td><input type="text" name="numeroLancamento" id="numeroLancamento" style="width:50px;" disabled="disabled"  /></td>
 								<td><strong>Pct. Padr&atilde;o:</strong></td>
-								<td><input type="text" name="textfield16" id="textfield19" style="width:50px;" /></td>
+								<td><input type="text" name="pacotePadrao" id="pacotePadrao" style="width:50px;" /></td>
 							</tr>
 							<tr>
 								<td><strong>Tipo de Lan&ccedil;amento:</strong></td>
@@ -349,7 +383,7 @@ fieldset {
 						<tbody>
 							<tr>
 								<td width="76"><strong>Previsto:</strong></td>
-								<td width="99"><input type="text" name="textfield4" id="textfield6" style="width:70px; float:left;" /></td>
+								<td width="99"><input type="text" name="precoPrevisto" id="precoPrevisto" style="width:70px; float:left;" /></td>
 								<td width="51"><strong>Real:</strong></td>
 								<td width="70"><input type="text" name="textfield9" id="textfield10" style="width:70px; text-align:right;" disabled="disabled" /></td>
 							</tr>
@@ -431,7 +465,7 @@ fieldset {
 						<tbody>
 							<tr>
 								<td width="59">Peso:</td>
-								<td width="86"><input type="text" name="textfield14" id="textfield14" style="width:80px;" /></td>
+								<td width="86"><input type="text" name="peso" id="peso" style="width:80px;" /></td>
 							</tr>
 							<tr>
 								<td width="59">Largura:</td>
