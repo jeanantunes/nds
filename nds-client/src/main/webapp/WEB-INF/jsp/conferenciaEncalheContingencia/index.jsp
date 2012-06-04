@@ -127,9 +127,8 @@
 					<td width="348">&nbsp;</td>
 					<td width="63" align="center" bgcolor="#F4F4F4"><strong>Atalhos:</strong></td>
 					<td width="93" bgcolor="#F8F8F8"><strong>F2</strong>-Novo Produto</td>
-					<td width="134" bgcolor="#F8F8F8"><strong>F6</strong>-Finalizar Conferência</td>
-					<td width="102" bgcolor="#F8F8F8"><strong>F8</strong>-Outros Valores</td>
-					<td width="62" bgcolor="#F8F8F8"><strong>F9-</strong>Salvar</td>
+					<td width="134" bgcolor="#F8F8F8"><strong>F8</strong>-Finalizar Conferência</td>
+					<td width="95" bgcolor="#F8F8F8"><strong>F9</strong>-Outros Valores</td>
 				</tr>
 			</table>
 		</fieldset>
