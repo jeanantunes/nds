@@ -51,8 +51,8 @@ public interface LancamentoService {
 	 * @return
 	 */
 	public abstract List<InformeEncalheDTO> obterLancamentoInformeRecolhimento(Long idFornecedor,
-			Calendar dataInicioRecolhimento, Calendar dataFimRecolhimento, String orderBy, Ordenacao ordenacao, int initialResult,
-			int maxResults);
+			Calendar dataInicioRecolhimento, Calendar dataFimRecolhimento, String orderBy, Ordenacao ordenacao, Integer initialResult,
+			Integer maxResults);
 	/**
 	 * Obtem a quantidade de registros de lançamentos respeitantdo os paramentros.
 	 * @param idFornecedor (Opcional) Identificador do {@link Fornecedor}
@@ -62,5 +62,16 @@ public interface LancamentoService {
 	 */
 	public abstract Long quantidadeLancamentoInformeRecolhimento(
 			Long idFornecedor, Calendar dataInicioRecolhimento, Calendar dataFimRecolhimento);
+	
+	/**
+	 * Obtem Dados de informe encalhe dos lançamentos respeitando os parametros.
+	 * @param idFornecedor (Opcional) Identificador do {@link Fornecedor}
+	 * @param dataInicioRecolhimento Inicio do intervalo para recolhimento.
+	 * @param dataFimRecolhimento Fim do intervalo para recolhimento.
+	 * @return
+	 */
+	public abstract List<InformeEncalheDTO> obterLancamentoInformeRecolhimento(
+			Long idFornecedor, Calendar dataInicioRecolhimento,
+			Calendar dataFimRecolhimento);
 }
  
