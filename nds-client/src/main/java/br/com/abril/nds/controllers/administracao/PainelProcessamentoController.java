@@ -8,13 +8,17 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.dto.filtro.FiltroEdicoesFechadasDTO;
+import br.com.abril.nds.dto.filtro.FiltroPesquisarHistoricoEditorDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.integracao.LogExecucao;
 import br.com.abril.nds.model.seguranca.Usuario;
+import br.com.abril.nds.serialization.custom.FlexiGridJson;
+import br.com.abril.nds.service.LogExecucaoService;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.export.FileExporter.FileType;
 import br.com.abril.nds.util.export.NDSFileHeader;
+import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Resource;
@@ -37,8 +41,8 @@ public class PainelProcessamentoController {
 
 	private static final String FILTRO_PESQUISA_INTERFACES_SESSION_ATTRIBUTE = "filtroPesquisaInterfaces";
 
-	/*@Autowired
-	private painelProcessamentoService;*/
+	@Autowired
+	private LogExecucaoService logExecucaoService;
 	
 	@Path("/")
 	public void index() {
@@ -49,7 +53,7 @@ public class PainelProcessamentoController {
 
 		List<LogExecucao> resultado = null;
 		try {
-			resultado = null;//edicoesFechadasService.obterResultadoEdicoesFechadas();
+			resultado = logExecucaoService.buscaPaginada(sortname, Ordenacao.valueOf(sortorder.toUpperCase()), page*rp - rp , rp);
 		} catch (Exception e) {
 			if (e instanceof ValidacaoException) {
 				throw e;
@@ -62,20 +66,7 @@ public class PainelProcessamentoController {
 		if (resultado == null || resultado.isEmpty()) {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
 		} else {
-
-			int qtdeTotalRegistros = resultado.size();
-
-			TableModel tableModel = null;
-			
-			/*List<LogExecucao> resultadoPaginado = PaginacaoUtil.paginarEOrdenarEmMemoria(resultado, filtro.getPaginacao(), filtro.getOrdenacaoColuna().toString());
-		
-			TableModel<CellModelKeyValue<LogExecucao>> tableModel = new TableModel<CellModelKeyValue<LogExecucao>>();
-	
-			tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(resultadoPaginado));
-			tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
-			tableModel.setTotal(qtdeTotalRegistros);*/
-			
-			result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
+			result.use(FlexiGridJson.class).from(resultado).total(resultado.size()).page(page).serialize();
 		}
 	
 	}
