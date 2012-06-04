@@ -626,7 +626,7 @@ public class ConferenciaEncalheController {
 	}
 	
 	@Post
-	public void verificarValorTotalNotaFiscal(){
+	public void verificarValorTotalNotaFiscal(BigDecimal valorCEInformado){
 		
 		NotaFiscalEntradaCota nota = (NotaFiscalEntradaCota) this.session.getAttribute(NOTA_FISCAL_CONFERENCIA);
 		
@@ -637,7 +637,10 @@ public class ConferenciaEncalheController {
 		if (nota != null && nota.getValorProdutos() != null && 
 				!nota.getValorProdutos().equals(valorTotal)){
 			
-			throw new ValidacaoException(TipoMensagem.WARNING, "Valor total dos produtos difere do valor da nota informada.");
+			throw new ValidacaoException(TipoMensagem.WARNING, "Valor total a pagar difere do valor da nota informada.");
+		} else if (!valorTotal.equals(valorCEInformado)){
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Valor total a pagar difere do valor CE jornaleiro informado.");
 		} else {
 			
 			this.finalizarConferencia();
@@ -709,7 +712,7 @@ public class ConferenciaEncalheController {
 				}
 			}
 			
-			valorVendaDia = valorVendaDia.add(info.getReparte()).subtract(valorEncalhe);
+			valorVendaDia = valorVendaDia.add(info.getReparte().subtract(valorEncalhe));
 			
 			if (info.getListaDebitoCreditoCota() != null){
 			
@@ -720,7 +723,7 @@ public class ConferenciaEncalheController {
 			}
 		}
 		
-		BigDecimal valorPagar = valorEncalhe.subtract(valorVendaDia).add(valorDebitoCredito);
+		BigDecimal valorPagar = valorVendaDia.subtract(valorEncalhe).add(valorDebitoCredito);
 		
 		if (dados != null){
 			

@@ -173,9 +173,18 @@ public class LancamentoServiceImpl implements LancamentoService {
 	public List<InformeEncalheDTO> obterLancamentoInformeRecolhimento(
 			Long idFornecedor, Calendar dataInicioRecolhimento,
 			Calendar dataFimRecolhimento, String orderBy, Ordenacao ordenacao,
-			int initialResult, int maxResults) {
+			Integer initialResult, Integer maxResults) {
 		return lancamentoRepository.obterLancamentoInformeRecolhimento(
 				idFornecedor, dataInicioRecolhimento, dataFimRecolhimento,
 				orderBy, ordenacao, initialResult, maxResults);
+	}
+
+	@Override
+	@Transactional(readOnly=true)
+	public List<InformeEncalheDTO> obterLancamentoInformeRecolhimento(
+			Long idFornecedor, Calendar dataInicioRecolhimento,
+			Calendar dataFimRecolhimento) {
+		return lancamentoRepository.obterLancamentoInformeRecolhimento(
+				idFornecedor, dataInicioRecolhimento, dataFimRecolhimento);
 	}
 }
