@@ -342,6 +342,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 			produtoEdicao.setPrecoVenda(dto.getPrecoVenda());	// View: Preço real;
 			
 			// Salvar:
+			produtoEdicao.setOrigemInterface(Boolean.FALSE);
 			produtoEdicaoRepository.adicionar(produtoEdicao);
 		} else {
 			
