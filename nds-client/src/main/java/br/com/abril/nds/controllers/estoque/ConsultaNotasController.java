@@ -118,6 +118,8 @@ public class ConsultaNotasController {
 		filtroConsultaNotaFiscal =
 				prepararFiltro(filtroConsultaNotaFiscal, isNotaRecebida, dataInicial, dataFinal, sortorder, sortname, page, rp);
 
+		this.session.setAttribute(FILTRO_SESSION_ATTRIBUTE, filtroConsultaNotaFiscal);
+		
 		try {
 
 			List<NotaFiscalEntradaFornecedor> listaNotasFiscais =
@@ -178,34 +180,36 @@ public class ConsultaNotasController {
 		FiltroConsultaNotaFiscalDTO filtroSessao =
 			(FiltroConsultaNotaFiscalDTO) session.getAttribute(FILTRO_SESSION_ATTRIBUTE);
 		
-		if (filtroSessao != null) {
+		if (filtroSessao == null) {
 			
-			if (filtroSessao.getPaginacao() != null) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "Sessão expirada. Por favor, logue novamente.");
+		}
+		
+		if (filtroSessao.getPaginacao() != null) {
+			
+			filtroSessao.getPaginacao().setPaginaAtual(null);
+			filtroSessao.getPaginacao().setQtdResultadosPorPagina(null);
+		}
+		
+		if (filtroSessao.getIdFornecedor() != null) {
+			
+			Fornecedor fornecedor = 
+				this.fornecedorService.obterFornecedorPorId(filtroSessao.getIdFornecedor());
+		
+			if (fornecedor != null) {
 				
-				filtroSessao.getPaginacao().setPaginaAtual(null);
-				filtroSessao.getPaginacao().setQtdResultadosPorPagina(null);
+				filtroSessao.setNomeFornecedor(fornecedor.getJuridica().getRazaoSocial());
 			}
+		}
+		
+		if (filtroSessao.getIdTipoNotaFiscal() != null) {
 			
-			if (filtroSessao.getIdFornecedor() != null) {
+			TipoNotaFiscal tipoNotaFiscal = 
+				this.tipoNotaFiscalService.obterPorId(filtroSessao.getIdTipoNotaFiscal());
+		
+			if (tipoNotaFiscal != null) {
 				
-				Fornecedor fornecedor = 
-					this.fornecedorService.obterFornecedorPorId(filtroSessao.getIdFornecedor());
-			
-				if (fornecedor != null) {
-					
-					filtroSessao.setNomeFornecedor(fornecedor.getJuridica().getRazaoSocial());
-				}
-			}
-			
-			if (filtroSessao.getIdTipoNotaFiscal() != null) {
-				
-				TipoNotaFiscal tipoNotaFiscal = 
-					this.tipoNotaFiscalService.obterPorId(filtroSessao.getIdTipoNotaFiscal());
-			
-				if (tipoNotaFiscal != null) {
-					
-					filtroSessao.setTipoNotaFiscal(tipoNotaFiscal.getDescricao());
-				}
+				filtroSessao.setTipoNotaFiscal(tipoNotaFiscal.getDescricao());
 			}
 		}
 		

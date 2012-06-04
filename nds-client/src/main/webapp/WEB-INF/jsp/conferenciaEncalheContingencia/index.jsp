@@ -124,12 +124,12 @@
 			<table width="950" height="32" border="0" cellpadding="1" cellspacing="1">
 				<tr>
 					<td width="126">&nbsp;</td>
-					<td width="348">&nbsp;</td>
+					<td width="330">&nbsp;</td>
 					<td width="63" align="center" bgcolor="#F4F4F4"><strong>Atalhos:</strong></td>
 					<td width="93" bgcolor="#F8F8F8"><strong>F2</strong>-Novo Produto</td>
-					<td width="134" bgcolor="#F8F8F8"><strong>F6</strong>-Finalizar Conferência</td>
-					<td width="102" bgcolor="#F8F8F8"><strong>F8</strong>-Outros Valores</td>
-					<td width="62" bgcolor="#F8F8F8"><strong>F9-</strong>Salvar</td>
+					<td width="120" bgcolor="#F8F8F8"><strong>F6</strong>-Nova Nota Fiscal</td>
+					<td width="137" bgcolor="#F8F8F8"><strong>F8</strong>-Finalizar Conferência</td>
+					<td width="62" bgcolor="#F8F8F8"><strong>F9</strong>-Salvar</td>
 				</tr>
 			</table>
 		</fieldset>

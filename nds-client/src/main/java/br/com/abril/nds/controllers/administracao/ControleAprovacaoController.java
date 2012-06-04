@@ -2,6 +2,7 @@ package br.com.abril.nds.controllers.administracao;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -17,6 +18,7 @@ import br.com.abril.nds.dto.MovimentoAprovacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroControleAprovacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroControleAprovacaoDTO.OrdenacaoColunaControleAprovacao;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.movimentacao.TipoMovimento;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.service.ControleAprovacaoService;
@@ -64,6 +66,7 @@ public class ControleAprovacaoController {
 	public void index() {
 		
 		carregarComboTipoMovimento();
+		carregarStatusAprovacao();
 	}
 	
 	private void carregarComboTipoMovimento() {
@@ -82,16 +85,30 @@ public class ControleAprovacaoController {
 		result.include("listaTipoMovimentoCombo", listaTipoMovimentoCombo);
 	}
 	
+	private void carregarStatusAprovacao() {
+		
+		HashMap<String, String> listaStatusAprovacao = new HashMap<String, String>();
+		
+		listaStatusAprovacao.put(StatusAprovacao.APROVADO.getDescricaoAbreviada(), StatusAprovacao.APROVADO.getDescricao());
+		listaStatusAprovacao.put(StatusAprovacao.PENDENTE.getDescricaoAbreviada(), StatusAprovacao.PENDENTE.getDescricao());
+		listaStatusAprovacao.put(StatusAprovacao.REJEITADO.getDescricaoAbreviada(), StatusAprovacao.REJEITADO.getDescricao());
+				
+		result.include("listaStatusAprovacao", listaStatusAprovacao);
+		
+	}
+	
 	@Path("/pesquisarAprovacoes")
-	public void pesquisarAprovacoes(Long idTipoMovimento, String dataMovimentoFormatada,
+	public void pesquisarAprovacoes(Long idTipoMovimento, String dataMovimentoFormatada, String statusAprovacao,
 			 						String sortorder, String sortname, int page, int rp) {
 		
 		this.validarEntradaDadosPesquisa(dataMovimentoFormatada);
 		
 		Date dataMovimento = DateUtil.parseDataPTBR(dataMovimentoFormatada);
 		
+		StatusAprovacao status = StatusAprovacao.getStatusAprovacao(statusAprovacao);
+		
 		FiltroControleAprovacaoDTO filtro  = 
-			this.carregarFiltroPesquisa(idTipoMovimento, dataMovimento, sortorder,
+			this.carregarFiltroPesquisa(idTipoMovimento, dataMovimento, status,sortorder,
 										sortname, page, rp);
 		
 		List<MovimentoAprovacaoDTO> listaMovimentoAprovacaoDTO =
@@ -212,6 +229,10 @@ public class ControleAprovacaoController {
 			
 			controleAprovacao.setRequerente(movimentoAprovacao.getNomeUsuarioRequerente());
 			
+			controleAprovacao.setStatus(movimentoAprovacao.getStatusMovimento().getDescricaoAbreviada());
+			
+			controleAprovacao.setMotivo(movimentoAprovacao.getMotivo());
+			
 			listaControleAprovacao.add(controleAprovacao);
 		}
 		
@@ -250,6 +271,7 @@ public class ControleAprovacaoController {
 	 * 
 	 * @param idTipoMovimento - id tipo de movimento
 	 * @param dataMovimento - data do movimento
+	 * @param status - status de aprovacao
 	 * @param sortorder - ordenação
 	 * @param sortname - coluna para ordenação
 	 * @param page - página atual
@@ -259,13 +281,14 @@ public class ControleAprovacaoController {
 	 */
 	private FiltroControleAprovacaoDTO carregarFiltroPesquisa(Long idTipoMovimento,
 															  Date dataMovimento, 
+															  StatusAprovacao status,
 															  String sortorder, 
 															  String sortname, 
 															  int page, 
 															  int rp) {
 		
 		FiltroControleAprovacaoDTO filtroAtual =
-			new FiltroControleAprovacaoDTO(dataMovimento, idTipoMovimento);
+			new FiltroControleAprovacaoDTO(dataMovimento, idTipoMovimento, status);
 		
 		this.configurarPaginacaoPesquisa(filtroAtual, sortorder, sortname, page, rp);
 		
