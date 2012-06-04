@@ -96,7 +96,7 @@ var painelProcessamentoController = {
 				sortable : true,
 				align : 'center'
 			}],
-			sortname : "nome",
+			sortname : "nomeLoginUsuario",
 			sortorder : "asc",
 			usepager : true,
 			useRp : true,
@@ -146,7 +146,7 @@ var painelProcessamentoController = {
 				sortable : true,
 				align : 'center'
 			}],
-			sortname : "nome",
+			sortname : "nomeLoginUsuario",
 			sortorder : "asc",
 			usepager : true,
 			useRp : true,
