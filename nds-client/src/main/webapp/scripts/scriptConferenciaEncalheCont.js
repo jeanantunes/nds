@@ -539,8 +539,42 @@ var ConferenciaEncalheCont = {
 				ConferenciaEncalheCont.modalAberta = false;
 			}
 		});
-
 	},
+	
+	popup_salvarInfos : function() {
+		
+		ConferenciaEncalheCont.modalAberta = true;
+		
+		$("#dialog-salvar").dialog({
+			resizable : false,
+			height : 190,
+			width : 460,
+			modal : true,
+			buttons : {
+				"Confirmar" : function() {
+					
+					$.postJSON(contextPath + '/devolucao/conferenciaEncalhe/salvarConferencia', null,
+						function(result){
+							
+							exibirMensagem(result.tipoMensagem, result.listaMensagens);
+							
+							$("#dialog-salvar").dialog("close");
+						},
+						null, true, "idModalConfirmarSalvarConf"
+					);
+				},
+				"Cancelar" : function() {
+					
+					$(this).dialog("close");
+				}
+
+			}, close : function(){
+				
+				ConferenciaEncalheCont.modalAberta = false;
+			}
+		});
+
+	}
 };
 
 $(function() {
@@ -599,6 +633,14 @@ shortcut.add("F2", function() {
 	}
 });
 
+shortcut.add("F6", function() {
+	
+	if (!ConferenciaEncalheCont.modalAberta){
+		
+		ConferenciaEncalheCont.popup_notaFiscal();
+	}
+});
+
 shortcut.add("F8", function() {
 	
 	if (!ConferenciaEncalheCont.modalAberta){
@@ -611,6 +653,6 @@ shortcut.add("F9", function() {
 	
 	if (!ConferenciaEncalheCont.modalAberta){
 		
-		ConferenciaEncalheCont.popup_outros_valores();
+		ConferenciaEncalheCont.popup_salvarInfos();
 	}
 });
