@@ -23,7 +23,7 @@ public interface RoteirizacaoService {
 	
 	void incluirRota(Rota rota);
 	
-	void excluirListaRota(List<Long> rotasId);
+	void excluirListaRota(List<Long> rotasId, Long roteiroId);
 	
 	void transferirListaRota(List<Long> rotasId, Long roteiroId);
 	
@@ -52,4 +52,8 @@ public interface RoteirizacaoService {
 	List<CotaDisponivelRoteirizacaoDTO> buscarPvsPorCota(Integer numeroCota);
 	
 	void gravaRoteirizacao(List<CotaDisponivelRoteirizacaoDTO> lista,  Long idRota);
+	
+	Integer buscarMaiorOrdemRoteiro();
+	
+	Integer buscarMaiorOrdemRota(Long idRoteiro);
 }

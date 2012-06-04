@@ -79,9 +79,19 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 	
 	@Override
 	@Transactional
-	public void  excluirListaRota(List<Long> rotasId) {
+	public void  excluirListaRota(List<Long> rotasId, Long roteiroId) {
+		
+		
+		
+		
 		for (Long rotaId : rotasId ){
 			Rota rota = new Rota();
+			Roteirizacao roteirizacao = new Roteirizacao();
+			roteirizacao.setRota(rota);
+			roteirizacaoRepository.remover(roteirizacao);
+			Roteiro roteiro = new Roteiro();
+			roteiro.setId(roteiroId);
+			rota.setRoteiro(roteiro);
 			rota.setId(rotaId);
 			rota.setOrdem(0);
 			rotaRepository.remover(rota);
@@ -243,8 +253,18 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 			roteirizacao.setOrdem(dto.getOrdem());
 			roteirizacaoRepository.adicionar(roteirizacao);
 		}
-		
-		
 	}
+	
+	@Transactional(readOnly=true)
+	public Integer buscarMaiorOrdemRoteiro() {
+		return roteiroRepository.buscarMaiorOrdemRoteiro();
+	}
+	
+	
+	@Transactional(readOnly=true)
+	public Integer buscarMaiorOrdemRota(Long idRoteiro) {
+		return rotaRepository.buscarMaiorOrdemRota(idRoteiro);
+	}
+	
 
 }
