@@ -7,6 +7,7 @@ import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 
@@ -71,5 +72,13 @@ public class RoteiroRepositoryImpl extends AbstractRepository<Roteiro, Long>
 		criteria.add(Restrictions.eq("box.id", idBox));
 		
 		return criteria.list();
+	}
+	
+
+	@Override
+	public Integer buscarMaiorOrdemRoteiro(){
+		Criteria criteria  = getSession().createCriteria(Roteiro.class);
+		criteria.setProjection(Projections.max("ordem"));  
+		return (Integer) criteria.uniqueResult();  
 	}
 }

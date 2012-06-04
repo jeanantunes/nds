@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.hibernate.criterion.MatchMode;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.w3c.dom.ls.LSInput;
 
 import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.dto.CotaDisponivelRoteirizacaoDTO;
@@ -127,8 +128,9 @@ public class RoteirizacaoController {
 	}
 	@Path("/iniciaTelaRoteiro")
 	public void iniciaTelaRoteiro() {
-			
-		result.use(Results.json()).from(10).recursive().serialize();
+		Integer ordem = roteirizacaoService.buscarMaiorOrdemRoteiro();
+		ordem++;
+		result.use(Results.json()).from(ordem).recursive().serialize();
 	}
 	private void validarCampoObrigatoriosRoteiro(Roteiro roteiro) {
 		
@@ -174,8 +176,14 @@ public class RoteirizacaoController {
 		
 		
 		List<Roteiro> listaRoteiro = roteirizacaoService.buscarRoteiroPorDescricao(descricao, MatchMode.EXACT);
-		
-		this.result.use(Results.json()).from(listaRoteiro, "result").include("box").serialize();
+		if (listaRoteiro.isEmpty()){
+			//throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Não existe roteiro"));
+			result.use(Results.json()).from(
+					new ValidacaoVO(TipoMensagem.ERROR, "Roteiro inexistente."),
+									"result").recursive().serialize();
+		} else {
+			this.result.use(Results.json()).from(listaRoteiro, "result").include("box").serialize();
+		}	
 	}
 	
 	@Post
@@ -205,11 +213,17 @@ public class RoteirizacaoController {
 						"result").recursive().serialize();
 
 	}
+	
 	@Path("/iniciaTelaRota")
-	public void iniciaTelaRota() {
-			
-		result.use(Results.json()).from(10).recursive().serialize();
+	public void iniciaTelaRota(Long idRoteiro) {
+		Integer ordem = roteirizacaoService.buscarMaiorOrdemRota(idRoteiro);
+		if (ordem == null){
+			ordem = 0;
+		}
+		ordem++;
+		result.use(Results.json()).from(ordem).recursive().serialize();
 	}
+	
 	private void validarCampoObrigatoriosRota(Rota rota) {
 		
 		List<String> mensagens = new ArrayList<String>();
@@ -229,8 +243,8 @@ public class RoteirizacaoController {
 	
 	
 	@Path("/excluiRotas")
-	public void excluiRotas(List<Long> rotasId) {
-		roteirizacaoService.excluirListaRota(rotasId);
+	public void excluiRotas(List<Long> rotasId, Long roteiroId) {
+		roteirizacaoService.excluirListaRota(rotasId, roteiroId);
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Rotas excluidas com sucesso."),"result").recursive().serialize();
 
 	}
@@ -320,6 +334,13 @@ public class RoteirizacaoController {
 	@Path("/confirmaRoteirizacao")
 	public void confirmaRoteirizacao(List<CotaDisponivelRoteirizacaoDTO> lista, Long idRota) {
 		roteirizacaoService.gravaRoteirizacao(lista, idRota);
+		
+	}
+	@Path("/buscarRotaPorId")
+	public void buscarRotaPorId(Long rotaId) {
+		 Rota rota =  roteirizacaoService.buscarRotaPorId(rotaId);
+		result.use(Results.json()).from(rota, "result").serialize();
+		
 		
 	}
 	
