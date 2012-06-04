@@ -173,21 +173,35 @@ public class ExtratoEdicaoController {
 	 */
 	public void exportar(FileType fileType) throws IOException {
 		
+		if (fileType == null) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "Tipo de arquivo não encontrado!");
+		}
+		
 		FiltroExtratoEdicaoDTO filtro = 
 			(FiltroExtratoEdicaoDTO) this.session.getAttribute(FILTRO_PESQUISA_SESSION_ATTRIBUTE);
 		
+
+		if (filtro == null) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado!");
+		}
+
 		List<ExtratoEdicaoDTO> listaExtratoEdicao = null;
 		
 		InfoGeralExtratoEdicaoDTO infoGeralExtratoEdicao = null;
 		
-		if (filtro != null) {
-		
-			infoGeralExtratoEdicao = 
-				extratoEdicaoService.obterInfoGeralExtratoEdicao(
-					filtro.getCodigoProduto(), filtro.getNumeroEdicao());
+		infoGeralExtratoEdicao = 
+			extratoEdicaoService.obterInfoGeralExtratoEdicao(
+				filtro.getCodigoProduto(), filtro.getNumeroEdicao());
+
+		if (	infoGeralExtratoEdicao == null || 
+				infoGeralExtratoEdicao.getListaExtratoEdicao() == null ||
+				infoGeralExtratoEdicao.getListaExtratoEdicao().isEmpty() ) {
 			
-			listaExtratoEdicao = infoGeralExtratoEdicao.getListaExtratoEdicao();
+			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado!");
+			
 		}
+		
+		listaExtratoEdicao = infoGeralExtratoEdicao.getListaExtratoEdicao();
 		
 		FileExporter.to("extrato-edicao", fileType)
 			.inHTTPResponse(this.getNDSFileHeader(), filtro, infoGeralExtratoEdicao, 
