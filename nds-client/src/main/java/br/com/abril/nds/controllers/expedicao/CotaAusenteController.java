@@ -48,7 +48,7 @@ public class CotaAusenteController {
 	private static final String FILTRO_SESSION_ATTRIBUTE = "filtroCotaAusente";
 	
 	private static final String WARNING_PESQUISA_SEM_RESULTADO = "Não há resultados para a pesquisa realizada.";
-	private static final String WARNING_COTA_AUSENTE_DUPLICADA =  "Esta cota já foi declarada como ausente na data.";
+	private static final String WARNING_COTA_AUSENTE_DUPLICADA =  "Esta cota já foi declarada como ausente nesta data.";
 	private static final String WARNING_DATA_MAIOR_OPERACAO_ATUAL = "A data informada é inferior a data de operação atual.";
 	private static final String WARNING_DATA_INFORMADA_INVALIDA = "A data informada é inválida.";
 	private static final String WARNING_NUMERO_COTA_NAO_INFORMADO =  "O campo \"cota\" é obrigatório.";

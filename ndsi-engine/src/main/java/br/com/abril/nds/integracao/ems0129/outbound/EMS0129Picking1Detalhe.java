@@ -2,6 +2,7 @@ package br.com.abril.nds.integracao.ems0129.outbound;
 
 import java.math.BigDecimal;
 
+import com.ancientprogramming.fixedformat4j.annotation.Align;
 import com.ancientprogramming.fixedformat4j.annotation.Field;
 import com.ancientprogramming.fixedformat4j.annotation.FixedFormatDecimal;
 import com.ancientprogramming.fixedformat4j.annotation.Record;
@@ -35,12 +36,12 @@ public class EMS0129Picking1Detalhe {
 		return tipoRegistro;
 	}
 	
-	@Field(offset = 2, length = 5)
+	@Field(offset = 2, length = 5, align = Align.RIGHT)
 	public Integer getCodigoCota() {
 		return codigoCota;
 	}
 	
-	@Field(offset = 7, length = 3)
+	@Field(offset = 7, length = 3, align = Align.RIGHT)
 	public Integer getSequenciaNotaEnvio() {
 		return sequenciaNotaEnvio;
 	}
@@ -50,7 +51,7 @@ public class EMS0129Picking1Detalhe {
 		return codigoProduto;
 	}
 	
-	@Field(offset = 15, length = 4)
+	@Field(offset = 15, length = 4, align = Align.RIGHT)
 	public Long getEdicao() {
 		return edicao;
 	}
@@ -60,24 +61,24 @@ public class EMS0129Picking1Detalhe {
 		return nomePublicacao;
 	}
 	
-	@Field(offset = 40, length = 10)
+	@Field(offset = 40, length = 10, align = Align.RIGHT)
 	@FixedFormatDecimal(decimals = 2, useDecimalDelimiter = true)
 	public BigDecimal getPrecoCusto() {
 		return precoCusto;
 	}
 	
-	@Field(offset = 50, length = 10)
+	@Field(offset = 50, length = 10, align = Align.RIGHT)
 	@FixedFormatDecimal(decimals = 2, useDecimalDelimiter = true)
 	public BigDecimal getPrecoVenda() {
 		return precoVenda;
 	}
 	
-	@Field(offset = 60, length = 3)
+	@Field(offset = 60, length = 3, align = Align.RIGHT)
 	public BigDecimal getDesconto() {
 		return desconto;
 	}
 	
-	@Field(offset = 63, length = 6)
+	@Field(offset = 63, length = 6, align = Align.RIGHT)
 	public BigDecimal getQuantidade() {
 		return quantidade;
 	}

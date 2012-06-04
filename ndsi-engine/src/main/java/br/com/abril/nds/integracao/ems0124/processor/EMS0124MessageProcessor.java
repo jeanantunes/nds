@@ -16,12 +16,15 @@ import org.springframework.stereotype.Component;
 import br.com.abril.nds.integracao.ems0124.outbound.EMS0124Detalhe;
 import br.com.abril.nds.integracao.ems0124.outbound.EMS0124Header;
 import br.com.abril.nds.integracao.ems0124.outbound.EMS0124Trailer;
+import br.com.abril.nds.integracao.engine.MessageHeaderProperties;
 import br.com.abril.nds.integracao.engine.MessageProcessor;
 import br.com.abril.nds.integracao.engine.data.Message;
+import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;
 import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
+import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
 
 import com.ancientprogramming.fixedformat4j.format.FixedFormatManager;
 
@@ -34,6 +37,9 @@ public class EMS0124MessageProcessor implements MessageProcessor{
 	
 	@Autowired
 	private FixedFormatManager fixedFormatManager; 
+	
+	@Autowired
+	private NdsiLoggerFactory ndsiLoggerFactory;
 	
 	@Autowired
 	private DistribuidorService distribuidorService;
@@ -70,7 +76,7 @@ public class EMS0124MessageProcessor implements MessageProcessor{
 		
 		try {
 			
-			PrintWriter print = new PrintWriter(new FileWriter(message.getHeader().get("NDSI_EMS0124_OUTBOUND")+"/NIVELTO.NEW"));	
+			PrintWriter print = new PrintWriter(new FileWriter(message.getHeader().get(MessageHeaderProperties.OUTBOUND_FOLDER.getValue())+"/NIVELTO.NEW"));	
 			
 			EMS0124Header outheader = new EMS0124Header();
 			
@@ -94,7 +100,7 @@ public class EMS0124MessageProcessor implements MessageProcessor{
 				outdetalhe.setPrecoCapa(mec.getProdutoEdicao().getPrecoVenda());
 				outdetalhe.setQuantidadeNivelamento(mec.getQtde());
 				outdetalhe.setDataLancamento(mec.getData());
-				if (tipoMovimento.equals(GrupoMovimentoEstoque.NIVELAMENTO_ENTRADA))
+				if (tipoMovimento.getGrupoMovimentoEstoque().equals(GrupoMovimentoEstoque.NIVELAMENTO_ENTRADA))
 					outdetalhe.setTipoNivelamento("E");
 				else 
 					outdetalhe.setTipoNivelamento("S");
@@ -108,7 +114,7 @@ public class EMS0124MessageProcessor implements MessageProcessor{
 			print.close();
 			
 		} catch (IOException e) {
-			e.printStackTrace();
+			ndsiLoggerFactory.getLogger().logError(message, EventoExecucaoEnum.GERACAO_DE_ARQUIVO, "Não foi possível gerar o arquivo");
 		}
 				
 		

@@ -54,7 +54,8 @@ public class ProdutoEdicao implements Serializable {
 	@Column(name = "ID")
 	protected Long id;
 	
-	@Column(name = "CODIGO", nullable = false, unique = true)
+	//@Column(name = "CODIGO", nullable = false, unique = true)
+	@Column(name = "CODIGO", nullable = true)
 	protected String codigo;
 
 	@Column(name  = "CODIGO_DE_BARRAS", nullable = true)
@@ -92,6 +93,9 @@ public class ProdutoEdicao implements Serializable {
 	
 	@Column(name = "PESO", nullable = false)
 	protected BigDecimal peso;
+	
+	@Column(name = "BOLETIM_INFORMATIVO", nullable = true)
+	protected String boletimInformativo;
 	
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "PRODUTO_ID")
@@ -491,5 +495,19 @@ public class ProdutoEdicao implements Serializable {
 	public void setCodigoDeBarraCorporativo(String codigoDeBarraCorporativo) {
 		this.codigoDeBarraCorporativo = codigoDeBarraCorporativo;
 	}
+	
+	/**
+	 * @return the boletimInformativo
+	 */
+	public String getBoletimInformativo() {
+		return boletimInformativo;
+	}
 
+	/**
+	 * @param boletimInformativo the boletimInformativo to set
+	 */
+	public void setBoletimInformativo(String boletimInformativo) {
+		this.boletimInformativo = boletimInformativo;
+	}
+	
 }

@@ -17,6 +17,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinColumns;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -112,6 +113,10 @@ public class Lancamento implements Serializable {
 	@ManyToOne(optional = true)
 	@JoinColumn(name = "EXPEDICAO_ID")
 	private Expedicao expedicao;
+	
+	
+	@OneToOne(mappedBy="lancamento")
+	private PeriodoLancamentoParcial periodoLancamentoParcial;
 
 	public Long getId() {
 		return id;
@@ -289,6 +294,21 @@ public class Lancamento implements Serializable {
 	 */
 	public void setRepartePromocional(BigDecimal repartePromocional) {
 		this.repartePromocional = repartePromocional;
+	}
+
+	/**
+	 * @return the periodoLancamentoParcial
+	 */
+	public PeriodoLancamentoParcial getPeriodoLancamentoParcial() {
+		return periodoLancamentoParcial;
+	}
+
+	/**
+	 * @param periodoLancamentoParcial the periodoLancamentoParcial to set
+	 */
+	public void setPeriodoLancamentoParcial(
+			PeriodoLancamentoParcial periodoLancamentoParcial) {
+		this.periodoLancamentoParcial = periodoLancamentoParcial;
 	}
 	
 

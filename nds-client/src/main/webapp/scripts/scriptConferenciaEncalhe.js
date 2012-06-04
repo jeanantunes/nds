@@ -52,7 +52,6 @@ var ConferenciaEncalhe = {
 				function(result){
 					
 					ConferenciaEncalhe.preProcessarConsultaConferenciaEncalhe(result);
-					//$("#cod_barras").focus();
 				}
 		);
 	},
@@ -71,78 +70,82 @@ var ConferenciaEncalhe = {
 		
 		$("._dadosConfEncalhe").remove();
 		
-		$.each(modeloConferenciaEncalhe, 
-			function(index, value) {
-				
-				var _class;
-				
-				if (index % 2 == 0){
-					_class = "class_linha_1 _dadosConfEncalhe";
-				} else {
-					_class = "class_linha_2 _dadosConfEncalhe";
-				}
-			
-				innerTable += "<tr class='" + _class + "'><td nowrap='nowrap' style='text-align: center;'>";
-				
-				var valorExemplares = parseInt(value.qtdExemplar);
-				
-				var inputExemplares = '<input id="qtdExemplaresGrid_' + index + '" onchange="ConferenciaEncalhe.recalcularValores('+ index +');" style="width:50px; text-align: center;" value="' + valorExemplares + '"/>' +
-					'<input id="idConferenciaEncalheHidden_' + index + '" type="hidden" value="' + value.idConferenciaEncalhe + '"/>';
-				
-				innerTable += inputExemplares + "</td>";
-				
-				innerTable += "<td nowrap='nowrap'>" + value.codigoDeBarras + "</td>";
-				
-				innerTable += "<td nowrap='nowrap'>" + value.codigoSM + "</td>";
-				
-				innerTable += "<td nowrap='nowrap'>" + value.codigo + "</td>";
-				
-				innerTable += "<td nowrap='nowrap'>" + value.nomeProduto + "</td>";
-				
-				innerTable += "<td nowrap='nowrap'>" + value.numeroEdicao + "</td>";
-				
-				innerTable += "<td style='text-align: right;' nowrap='nowrap'>" + parseFloat(value.precoCapa).toFixed(2) + "</td>";
-				
-				innerTable += "<td style='text-align: right;' nowrap='nowrap'>" + parseFloat(value.desconto).toFixed(2) + "</td>";
-				
-				innerTable += "<td align='right' nowrap='nowrap' id='valorTotalConferencia_" + index + "'>" + parseFloat(value.valorTotal).toFixed(2) + "</td>";
-				
-				if (value.dia || value.dataRecolhimento){
-				
-					if (value.dia && value.dia > 0){
+		if (modeloConferenciaEncalhe){
+		
+			$.each(modeloConferenciaEncalhe, 
+				function(index, value) {
 					
-						innerTable += "<td style='text-align: center;' nowrap='nowrap'>" + value.dia + "º" + "</td>";
+					var _class;
+					
+					if (index % 2 == 0){
+						_class = "class_linha_1 _dadosConfEncalhe";
+					} else {
+						_class = "class_linha_2 _dadosConfEncalhe";
+					}
+				
+					innerTable += "<tr class='" + _class + "'><td nowrap='nowrap' style='text-align: center;'>";
+					
+					var valorExemplares = parseInt(value.qtdExemplar);
+					
+					var inputExemplares = '<input id="qtdExemplaresGrid_' + index + '" onchange="ConferenciaEncalhe.recalcularValores('+ index +');" style="width:50px; text-align: center;" maxlength="255" value="' + valorExemplares + '"/>' +
+						'<input id="idConferenciaEncalheHidden_' + index + '" type="hidden" value="' + value.idConferenciaEncalhe + '"/>';
+					
+					innerTable += inputExemplares + "</td>";
+					
+					innerTable += "<td nowrap='nowrap'>" + value.codigoDeBarras + "</td>";
+					
+					innerTable += "<td nowrap='nowrap'>" + value.codigoSM + "</td>";
+					
+					innerTable += "<td nowrap='nowrap'>" + value.codigo + "</td>";
+					
+					innerTable += "<td nowrap='nowrap'>" + value.nomeProduto + "</td>";
+					
+					innerTable += "<td nowrap='nowrap'>" + value.numeroEdicao + "</td>";
+					
+					innerTable += "<td style='text-align: right;' nowrap='nowrap'>" + parseFloat(value.precoCapa).toFixed(2) + "</td>";
+					
+					innerTable += "<td style='text-align: right;' nowrap='nowrap'>" + parseFloat(value.desconto).toFixed(2) + "</td>";
+					
+					innerTable += "<td align='right' nowrap='nowrap' id='valorTotalConferencia_" + index + "'>" + parseFloat(value.valorTotal).toFixed(2) + "</td>";
+					
+					if (value.dia || value.dataRecolhimento){
+					
+						if (value.dia && value.dia > 0){
+						
+							innerTable += "<td style='text-align: center;' nowrap='nowrap'>" + value.dia + "º" + "</td>";
+						} else {
+							
+							innerTable += "<td style='text-align: center;' nowrap='nowrap' style='width: 20px;'>" + value.dataRecolhimento + "</td>";
+						}
 					} else {
 						
-						innerTable += "<td style='text-align: center;' nowrap='nowrap' style='width: 20px;'>" + value.dataRecolhimento + "</td>";
+						innerTable += "<td></td>";
 					}
-				} else {
 					
-					innerTable += "<td></td>";
+					var inputCheckBoxJuramentada = 
+						'<input type="checkbox" ' + (value.juramentada == "true" ? 'checked="checked"' : '')
+							+ (!value.juramentada ? 'disabled="disabled"' : '')
+							+ ' id="checkGroupJuramentada_' + index + '"/>';
+					
+					innerTable += "<td style='text-align: center;' nowrap='nowrap'>" + inputCheckBoxJuramentada + "</td>";
+					
+					var imgDetalhar = '<img src="' + contextPath + '/images/ico_detalhes.png" border="0" hspace="3"/>';
+					innerTable += '<td style="text-align: center;" nowrap="nowrap"><a href="javascript:;" onclick="ConferenciaEncalhe.exibirDetalhesConferencia(' + value.idConferenciaEncalhe + ');">' + imgDetalhar + '</a></td>';
+					
+					var imgExclusao = '<img src="' + contextPath + '/images/ico_excluir.gif" width="15" height="15" alt="Salvar" hspace="5" border="0" />';
+					innerTable += '<td style="text-align: center;" nowrap="nowrap"><a href="javascript:;" onclick="ConferenciaEncalhe.excluirConferencia(' + value.idConferenciaEncalhe + ');">' + imgExclusao + '</a></td>';
+					
+					innerTable += "</tr>";
+					
+					$(innerTable).appendTo("#dadosGridConferenciaEncalhe");
+					
+					innerTable = '';
 				}
-				
-				var inputCheckBoxJuramentada = 
-					'<input type="checkbox" ' + (value.juramentada == "true" ? 'checked="checked"' : '')
-						+ (!value.juramentada ? 'disabled="disabled"' : '')
-						+ ' id="checkGroupJuramentada_' + index + '"/>';
-				
-				innerTable += "<td style='text-align: center;' nowrap='nowrap'>" + inputCheckBoxJuramentada + "</td>";
-				
-				var imgDetalhar = '<img src="' + contextPath + '/images/ico_detalhes.png" border="0" hspace="3"/>';
-				innerTable += '<td style="text-align: center;" nowrap="nowrap"><a href="javascript:;" onclick="ConferenciaEncalhe.exibirDetalhesConferencia(' + value.idConferenciaEncalhe + ');">' + imgDetalhar + '</a></td>';
-				
-				var imgExclusao = '<img src="' + contextPath + '/images/ico_excluir.gif" width="15" height="15" alt="Salvar" hspace="5" border="0" />';
-				innerTable += '<td style="text-align: center;" nowrap="nowrap"><a href="javascript:;" onclick="ConferenciaEncalhe.excluirConferencia(' + value.idConferenciaEncalhe + ');">' + imgExclusao + '</a></td>';
-				
-				innerTable += "</tr>";
-				
-				$(innerTable).appendTo("#dadosGridConferenciaEncalhe");
-				
-				innerTable = '';
-			}
-		);
-		
-		$('input[id*="qtdExemplaresGrid"]').numeric();
+			);
+			
+			$('input[id*="qtdExemplaresGrid"]').numeric();
+			
+		}
 		
 		$(".outrosVlrsGrid").flexAddData({
 			page: result.listaDebitoCredito.page, total: result.listaDebitoCredito.total, rows: result.listaDebitoCredito.rows
@@ -213,64 +216,67 @@ var ConferenciaEncalhe = {
 		
 		$("._dadosConfEncalheFinalizar").remove();
 		
-		$.each(modeloConferenciaEncalhe, 
-			function(index, value) {
-				
-				var _class;
-				
-				if (index % 2 == 0){
-					_class = "class_linha_1 _dadosConfEncalheFinalizar";
-				} else {
-					_class = "class_linha_2 _dadosConfEncalheFinalizar";
-				}
-				
-				innerTable += "<tr class='" + _class + "'>";
-				
-				innerTable += "<td>" + value.codigo + "<input id='idConferenciaEncalheHiddenFinalizarConf_"+ index +"' type='hidden' value='" + value.idConferenciaEncalhe + "'/></td>";
-				
-				innerTable += "<td>" + value.nomeProduto + "</td>";
-				
-				innerTable += "<td style='text-align: center;'>" + value.numeroEdicao + "</td>";
-				
-				if (value.dia || value.dataRecolhimento){
+		if (modeloConferenciaEncalhe){
+		
+			$.each(modeloConferenciaEncalhe, 
+				function(index, value) {
 					
-					if (value.dia && value.dia > 0){
+					var _class;
 					
-						innerTable += "<td style='text-align: center;' nowrap='nowrap'>" + value.dia + "º" + "</td>";
+					if (index % 2 == 0){
+						_class = "class_linha_1 _dadosConfEncalheFinalizar";
+					} else {
+						_class = "class_linha_2 _dadosConfEncalheFinalizar";
+					}
+					
+					innerTable += "<tr class='" + _class + "'>";
+					
+					innerTable += "<td>" + value.codigo + "<input id='idConferenciaEncalheHiddenFinalizarConf_"+ index +"' type='hidden' value='" + value.idConferenciaEncalhe + "'/></td>";
+					
+					innerTable += "<td>" + value.nomeProduto + "</td>";
+					
+					innerTable += "<td style='text-align: center;'>" + value.numeroEdicao + "</td>";
+					
+					if (value.dia || value.dataRecolhimento){
+						
+						if (value.dia && value.dia > 0){
+						
+							innerTable += "<td style='text-align: center;' nowrap='nowrap'>" + value.dia + "º" + "</td>";
+						} else {
+							
+							innerTable += "<td style='text-align: center;' nowrap='nowrap' style='width: 20px;'>" + value.dataRecolhimento + "</td>";
+						}
 					} else {
 						
-						innerTable += "<td style='text-align: center;' nowrap='nowrap' style='width: 20px;'>" + value.dataRecolhimento + "</td>";
+						innerTable += "<td></td>";
 					}
-				} else {
 					
-					innerTable += "<td></td>";
+					innerTable +=
+						'<td style="text-align: center"><input id="qtdeInformadaFinalizarConf_'+ index +'" onchange="ConferenciaEncalhe.recalcularValoresFinalizar('+ index +');" type="text" maxlength="255" style="width:50px; text-align: center;" value="' + parseInt(value.qtdExemplar) + '"/></td>';
+					
+					innerTable += "<td style='text-align: center;'>" + (value.qtdRecebida ? parseInt(value.qtdRecebida) : "0") + "</td>";
+				
+					innerTable +=
+						'<td style="text-align: center;"><input id="precoCapaFinalizarConf_'+ index +'" onchange="ConferenciaEncalhe.recalcularValoresFinalizar('+ index +');" maxlength="255" style="width:50px; text-align: right;" value="' + parseFloat(value.precoCapa).toFixed(2) + '"/></td>';
+					
+					innerTable += "<td style='text-align: right;'>" + parseFloat(value.desconto).toFixed(2) + "</td>";
+					
+					innerTable += "<td style='text-align: right;' id='valorTotalConferenciaFinalizar_" + index + "'>" + parseFloat(value.valorTotal).toFixed(2) + "</td>";
+					
+					var imgExclusao = '<img src="' + contextPath + '/images/ico_excluir.gif" width="15" height="15" alt="Salvar" hspace="5" border="0" />';
+					innerTable += '<td style="text-align: center;"><a href="javascript:;" onclick="ConferenciaEncalhe.excluirConferencia(' + value.idConferenciaEncalhe + ');">' + imgExclusao + '</a></td>';
+					
+					innerTable += "</tr>";
+					
+					$(innerTable).appendTo("#dadosGridConferenciaEncalheFinalizar");
+					
+					innerTable = '';
 				}
-				
-				innerTable +=
-					'<td style="text-align: center"><input id="qtdeInformadaFinalizarConf_'+ index +'" onchange="ConferenciaEncalhe.recalcularValoresFinalizar('+ index +');" type="text" style="width:50px; text-align: center;" value="' + parseInt(value.qtdExemplar) + '"/></td>';
-				
-				innerTable += "<td style='text-align: center;'>" + (value.qtdRecebida ? parseInt(value.qtdRecebida) : "0") + "</td>";
+			);
 			
-				innerTable +=
-					'<td style="text-align: center;"><input id="precoCapaFinalizarConf_'+ index +'" onchange="ConferenciaEncalhe.recalcularValoresFinalizar('+ index +');" style="width:50px; text-align: right;" value="' + parseFloat(value.precoCapa).toFixed(2) + '"/></td>';
-				
-				innerTable += "<td style='text-align: right;'>" + parseFloat(value.desconto).toFixed(2) + "</td>";
-				
-				innerTable += "<td style='text-align: right;' id='valorTotalConferenciaFinalizar_" + index + "'>" + parseFloat(value.valorTotal).toFixed(2) + "</td>";
-				
-				var imgExclusao = '<img src="' + contextPath + '/images/ico_excluir.gif" width="15" height="15" alt="Salvar" hspace="5" border="0" />';
-				innerTable += '<td style="text-align: center;"><a href="javascript:;" onclick="ConferenciaEncalhe.excluirConferencia(' + value.idConferenciaEncalhe + ');">' + imgExclusao + '</a></td>';
-				
-				innerTable += "</tr>";
-				
-				$(innerTable).appendTo("#dadosGridConferenciaEncalheFinalizar");
-				
-				innerTable = '';
-			}
-		);
-		
-		$('input[id*="qtdeInformadaFinalizarConf"]').numeric();
-		$('input[id*="precoCapaFinalizarConf"]').numeric();
+			$('input[id*="qtdeInformadaFinalizarConf"]').numeric();
+			$('input[id*="precoCapaFinalizarConf"]').numeric();
+		}
 		
 		$("#somatorioQtdInformada").text(parseInt(result.qtdInformada));
 		$("#somatorioQtdRecebida").text(parseInt(result.qtdRecebida));
@@ -455,8 +461,8 @@ var ConferenciaEncalhe = {
 	
 	adicionarProdutoConferido : function(){
 		
-		var data = [{name: "quantidade", value: $("#qtdeExemplar").val()}, 
-		            {name: "idProdutoEdicao", value: $("#codProduto").val()}];
+		var data = [{name: "idProdutoEdicao", value: $("#codProduto").val()}, 
+		            {name: "quantidade", value: $("#qtdeExemplar").val()}];
 		
 		$.postJSON(contextPath + '/devolucao/conferenciaEncalhe/adicionarProdutoConferido', data,
 			function(result){
@@ -564,7 +570,7 @@ var ConferenciaEncalhe = {
 							$("#vlrCE").val(parseFloat($("#valorNotaFiscal").val()).toFixed(2));
 							
 							$("#cod_barras").focus();
-						}
+						}, null, true, "idModalConfirmarSalvarConf"
 					);
 				},
 				"Cancelar" : function() {
@@ -969,7 +975,8 @@ shortcut.add("F8", function() {
 	
 	if (!ConferenciaEncalhe.modalAberta){
 		
-		$.postJSON(contextPath + '/devolucao/conferenciaEncalhe/verificarValorTotalNotaFiscal', null,
+		$.postJSON(contextPath + '/devolucao/conferenciaEncalhe/verificarValorTotalNotaFiscal',
+			[{name: "valorCEInformado", value: $("#vlrCE").val()}],
 			function(result){
 				
 				exibirMensagem(result.tipoMensagem, result.listaMensagens);

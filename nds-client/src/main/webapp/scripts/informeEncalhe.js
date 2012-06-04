@@ -3,14 +3,20 @@
  */
 
 function InformeEncalhe() {
+	this.initDialogImprimir();
 	this.initGrid();
 	this.bindEvents();
+	this.imprimirParans = {"idFornecedor": null,
+		"semanaRecolhimento": null,
+		"dataRecolhimento": null,
+		'sortname':'nomeProduto',
+		'sortorder':'asc'
+		};
 
 };
 InformeEncalhe.prototype.path = contextPath + "/devolucao/informeEncalhe/";
 
 InformeEncalhe.prototype.initGrid = function() {
-
 	var _this = this;
 	$("#consultaInformeEncalheGrid").flexigrid(
 			{
@@ -115,7 +121,11 @@ InformeEncalhe.prototype.initGrid = function() {
 				rp : 15,
 				showTableToggleBtn : true,
 				width : 960,
-				height : 180
+				height : 180,
+				onChangeSort :function(sortname, sortorder){
+					_this.imprimirParans.sortname = sortname;
+					_this.imprimirParans.sortorder = sortorder;
+				}
 			});
 
 	$("#consultaInformeEncalheGrid").flexOptions({
@@ -156,6 +166,12 @@ InformeEncalhe.prototype.busca = function() {
 		newp : 1
 	});
 	$("#consultaInformeEncalheGrid").flexReload();
+	
+	this.imprimirParans.idFornecedor = $("#idFornecdorSelect").val();
+	this.imprimirParans.semanaRecolhimento = $("#semanaRecolhimentoBox").val();
+	this.imprimirParans.dataRecolhimento = $("#dataRecolhimentoBox").val();
+	
+	
 };
 
 InformeEncalhe.prototype.bindEvents = function() {
@@ -176,7 +192,7 @@ InformeEncalhe.prototype.bindEvents = function() {
 		$(".grids").show();
 	});
 	$("#btnImprimir").click(function() {
-		alert("TODO: função não implementada");
+		_this.$dialogImprimir.dialog('open');
 	});
 	$('#dataRecolhimentoBox,#semanaRecolhimentoBox').bind('keypress', function(e) {
 		if(e.keyCode == 13) {
@@ -185,6 +201,53 @@ InformeEncalhe.prototype.bindEvents = function() {
 		}
 	});
 
+};
+
+
+InformeEncalhe.prototype.initDialogImprimir = function() {
+	var _this = this;
+	this.$dialogImprimir = $( "#dialog-imprimir" ).dialog({
+		autoOpen : false,
+		resizable: false,
+		height:'auto',
+		width:'auto',
+		modal: true,
+		buttons: {
+			"Imprimir": function() {
+				$( this ).dialog( "close" );
+				_this.imprimir();
+
+			},
+			"Fechar": function() {
+				$( this ).dialog( "close" );
+			}
+		}
+	});
+};
+
+InformeEncalhe.prototype.imprimir =  function(){
+	var _this = this;	
+	
+	
+	 $('#form-imprimir').ajaxSubmit({        	
+	        success:function(responseText, statusText, xhr, $form)  { 
+	        	var mensagens = (responseText.mensagens)?responseText.mensagens:responseText.result;   
+	        	var tipoMensagem = mensagens.tipoMensagem;
+	    		var listaMensagens = mensagens.listaMensagens;
+
+	    		if (tipoMensagem && listaMensagens) {
+	    			exibirMensagemDialog(tipoMensagem, listaMensagens,"");
+	    		} 
+	    	} ,
+	        url:  _this.path + 'imprimir', 
+	        dataType:  'json',
+	        data: _this.imprimirParans,
+	        type:'POST'
+	        
+	    });
+	
+	
+	
 };
 
 function CapaPopup(idProdutoEdicao) {

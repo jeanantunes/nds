@@ -1,5 +1,6 @@
 package br.com.abril.nds.integracao.ems0129.outbound;
 
+import com.ancientprogramming.fixedformat4j.annotation.Align;
 import com.ancientprogramming.fixedformat4j.annotation.Field;
 import com.ancientprogramming.fixedformat4j.annotation.Record;
 
@@ -18,12 +19,12 @@ public class EMS0129Picking1Trailer {
 		return tipoRegistro;
 	}
 	
-	@Field(offset = 2, length = 5)
+	@Field(offset = 2, length = 5, align = Align.RIGHT)
 	public Integer getCodigoCota() {
 		return codigoCota;
 	}
 	
-	@Field(offset = 2, length = 4)
+	@Field(offset = 2, length = 4, align = Align.RIGHT)
 	public Integer getQuantidadeRegistros() {
 		return quantidadeRegistros;
 	}

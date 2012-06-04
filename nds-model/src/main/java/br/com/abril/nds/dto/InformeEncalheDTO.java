@@ -42,6 +42,10 @@ public class InformeEncalheDTO implements Serializable {
 	private Date dataLancamento;
 	
 	private Date dataRecolhimento;
+	
+	private Date dataRecolhimentoFinal;
+	
+	private Integer seqCapa;
 
 	/**
 	 * @return the idLancamento
@@ -223,6 +227,34 @@ public class InformeEncalheDTO implements Serializable {
 	 */
 	public void setChamadaCapa(String chamadaCapa) {
 		this.chamadaCapa = chamadaCapa;
+	}
+
+	/**
+	 * @return the dataRecolhimentoFinal
+	 */
+	public Date getDataRecolhimentoFinal() {
+		return dataRecolhimentoFinal;
+	}
+
+	/**
+	 * @param dataRecolhimentoFinal the dataRecolhimentoFinal to set
+	 */
+	public void setDataRecolhimentoFinal(Date dataRecolhimentoFinal) {
+		this.dataRecolhimentoFinal = dataRecolhimentoFinal;
+	}
+
+	/**
+	 * @return the seqCapa
+	 */
+	public Integer getSeqCapa() {
+		return seqCapa;
+	}
+
+	/**
+	 * @param seqCapa the seqCapa to set
+	 */
+	public void setSeqCapa(Integer seqCapa) {
+		this.seqCapa = seqCapa;
 	}
 
 }

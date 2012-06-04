@@ -29,7 +29,6 @@ import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaCota;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalheCota;
 import br.com.abril.nds.model.seguranca.Usuario;
-import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.serialization.custom.CustomMapJson;
 import br.com.abril.nds.service.ConferenciaEncalheService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
@@ -64,6 +63,8 @@ public class ConferenciaEncalheController {
 	private static final String NOTA_FISCAL_CONFERENCIA = "notaFiscalConferencia";
 	
 	private static final String HORA_INICIO_CONFERENCIA = "horaInicioConferencia";
+	
+	private static final String NUMERO_COTA = "numeroCotaConferenciaEncalhe";
 	
 	@Autowired
 	private ConferenciaEncalheService conferenciaEncalheService;
@@ -132,6 +133,8 @@ public class ConferenciaEncalheController {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Não existe chamada de encalhe para essa cota.");
 		}
 		
+		this.session.setAttribute(NUMERO_COTA, numeroCota);
+		
 		this.result.use(Results.json()).from("").serialize();
 	}
 /*
@@ -167,12 +170,10 @@ public class ConferenciaEncalheController {
 		
 		if (numeroCota == null){
 			
-			InfoConferenciaEncalheCota info = this.getInfoConferenciaSession();
+			numeroCota = this.getNumeroCotaFromSession();
+		} else {
 			
-			if (info != null){
-				
-				numeroCota = info.getCota().getNumeroCota();
-			}
+			this.session.setAttribute(NUMERO_COTA, numeroCota);
 		}
 		
 		Date horaInicio = (Date) this.session.getAttribute(HORA_INICIO_CONFERENCIA);
@@ -263,14 +264,7 @@ public class ConferenciaEncalheController {
 		
 		ConferenciaEncalheDTO conferenciaEncalheDTO = null;
 		
-		InfoConferenciaEncalheCota info = this.getInfoConferenciaSession();
-		
-		if (info == null){
-			
-			throw new ValidacaoException(TipoMensagem.ERROR, "Sessão expirada.");
-		}
-		
-		Integer numeroCota = info.getCota().getNumeroCota();
+		Integer numeroCota = this.getNumeroCotaFromSession();
 		
 		List<ConferenciaEncalheDTO> listaConfSessao = this.getListaConferenciaEncalheFromSession();
 		
@@ -352,20 +346,23 @@ public class ConferenciaEncalheController {
 	}
 	
 	@Post
-	public void adicionarProdutoConferido(Long quantidade, Long idProdutoEdicao) throws ChamadaEncalheCotaInexistenteException{
+	public void adicionarProdutoConferido(Long idProdutoEdicao, Long quantidade) throws ChamadaEncalheCotaInexistenteException{
 		
-		InfoConferenciaEncalheCota info = this.getInfoConferenciaSession();
-		
-		if (info == null){
+		if (idProdutoEdicao == null){
 			
-			throw new ValidacaoException(TipoMensagem.ERROR, "Sessão expirada.");
+			throw new ValidacaoException(TipoMensagem.WARNING, "Produto é obrigatório.");
 		}
 		
-		ProdutoEdicaoDTO produtoEdicao;
+		if (quantidade == null){
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Quantidade é obrigatório.");
+		}
+		
+		ProdutoEdicaoDTO produtoEdicao = null;
 		
 		try {
 			produtoEdicao = this.conferenciaEncalheService.pesquisarProdutoEdicaoPorId(
-					info.getCota().getNumeroCota(), 
+					this.getNumeroCotaFromSession(), 
 					idProdutoEdicao);
 		} catch (EncalheRecolhimentoParcialException e) {
 
@@ -629,7 +626,7 @@ public class ConferenciaEncalheController {
 	}
 	
 	@Post
-	public void verificarValorTotalNotaFiscal(){
+	public void verificarValorTotalNotaFiscal(BigDecimal valorCEInformado){
 		
 		NotaFiscalEntradaCota nota = (NotaFiscalEntradaCota) this.session.getAttribute(NOTA_FISCAL_CONFERENCIA);
 		
@@ -640,7 +637,10 @@ public class ConferenciaEncalheController {
 		if (nota != null && nota.getValorProdutos() != null && 
 				!nota.getValorProdutos().equals(valorTotal)){
 			
-			throw new ValidacaoException(TipoMensagem.WARNING, "Valor total dos produtos difere do valor da nota informada.");
+			throw new ValidacaoException(TipoMensagem.WARNING, "Valor total a pagar difere do valor da nota informada.");
+		} else if (!valorTotal.equals(valorCEInformado)){
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Valor total a pagar difere do valor CE jornaleiro informado.");
 		} else {
 			
 			this.finalizarConferencia();
@@ -651,14 +651,7 @@ public class ConferenciaEncalheController {
 	public void pesquisarProdutoEdicaoPorId(Long idProdutoEdicao){
 		
 		
-		Integer numeroCota = null;
-		
-		InfoConferenciaEncalheCota info = this.getInfoConferenciaSession();
-			
-		if (info != null){
-			
-			numeroCota = info.getCota().getNumeroCota();
-		}
+		Integer numeroCota = this.getNumeroCotaFromSession();
 		
 		try {
 			ProdutoEdicaoDTO p = 
@@ -719,7 +712,7 @@ public class ConferenciaEncalheController {
 				}
 			}
 			
-			valorVendaDia = valorVendaDia.add(info.getReparte()).subtract(valorEncalhe);
+			valorVendaDia = valorVendaDia.add(info.getReparte().subtract(valorEncalhe));
 			
 			if (info.getListaDebitoCreditoCota() != null){
 			
@@ -730,7 +723,7 @@ public class ConferenciaEncalheController {
 			}
 		}
 		
-		BigDecimal valorPagar = valorEncalhe.subtract(valorVendaDia).add(valorDebitoCredito);
+		BigDecimal valorPagar = valorVendaDia.subtract(valorEncalhe).add(valorDebitoCredito);
 		
 		if (dados != null){
 			
@@ -877,6 +870,18 @@ public class ConferenciaEncalheController {
 		}
 		
 		return set;
+	}
+	
+	private Integer getNumeroCotaFromSession(){
+		
+		Integer numeroCota = (Integer) this.session.getAttribute(NUMERO_COTA);
+		
+		if (numeroCota == null){
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Informe uma cota.");
+		}
+		
+		return numeroCota;
 	}
 	
 	//TODO

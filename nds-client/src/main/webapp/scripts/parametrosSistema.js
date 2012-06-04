@@ -63,7 +63,8 @@ ParametroSistema.prototype.loadImage = function(){
 	img = $("<img />").attr('src', imgPath).attr('width', '110').attr('height', '70').attr('alt', 'Logo Sistema')
    .load(function() {
       if (!(!this.complete || typeof this.naturalWidth == "undefined" || this.naturalWidth == 0)) {
-          $("#div_imagem_logotipo").append(img);
+    	  $("#div_imagem_logotipo").empty();
+    	  $("#div_imagem_logotipo").append(img);
       }
    });
 };
