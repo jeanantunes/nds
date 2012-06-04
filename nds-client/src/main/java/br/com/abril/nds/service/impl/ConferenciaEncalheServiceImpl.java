@@ -1,9 +1,5 @@
 package br.com.abril.nds.service.impl;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.math.BigDecimal;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -50,6 +46,7 @@ import br.com.abril.nds.model.estoque.OperacaoEstoque;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
 import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
+import br.com.abril.nds.model.financeiro.OperacaoFinaceira;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 import br.com.abril.nds.model.fiscal.ItemNotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaCota;
@@ -1746,6 +1743,9 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		FormaEmissao formaEmissao = politicaCobranca.getFormaEmissao();
 		
+		DocumentoConferenciaEncalheDTO documentoConferenciaEncalheDTO = new DocumentoConferenciaEncalheDTO();
+
+		
 		switch(formaEmissao) {
 		
 			case INDIVIDUAL_AGREGADA:
@@ -1753,7 +1753,11 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			break;
 			
 			case INDIVIDUAL_BOX:
-				//TODO gerar arquivo ...
+
+				documentoConferenciaEncalheDTO.setDocumentoCobranca(documentoCobrancaService.gerarDocumentoCobranca(nossoNumero));
+				
+				documentoConferenciaEncalheDTO.setDocumentoSlip(gerarSlip(controleConferenciaEncalheCota));
+				
 			break;
 			
 			case EM_MASSA:
@@ -1766,34 +1770,10 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		}
 		
-		boolean indEnviaEmail = politicaCobranca.getFormaCobranca().isRecebeCobrancaEmail();
+//		boolean indEnviaEmail = politicaCobranca.getFormaCobranca().isRecebeCobrancaEmail();
 		
-		DocumentoConferenciaEncalheDTO documentoConferenciaEncalheDTO = new DocumentoConferenciaEncalheDTO();
-		
-		documentoConferenciaEncalheDTO.setDocumentoCobranca(documentoCobrancaService.gerarDocumentoCobranca(nossoNumero));
-		
-		try {
-			
-			documentoConferenciaEncalheDTO.setDocumentoSlip(gerarSlip(controleConferenciaEncalheCota));
-			
-		} catch (FileNotFoundException e) {
-			
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			
-		} catch (JRException e) {
-			
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			
-		} catch (URISyntaxException e) {
-			
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			
-		}
-		
-		return null;
+	
+		return documentoConferenciaEncalheDTO;
 		
 	}
 	
@@ -1803,7 +1783,6 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	 * O valor é constituído pela valor total da chamada de encalhe e
 	 * outros possíveis débitos desta cota.
 	 * 
-	 * 
 	 * @param numeroCota
 	 * @param dataOperacao
 	 * 
@@ -1811,17 +1790,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	 */
 	private BigDecimal obterValorDevidoCota(Integer numeroCota, Date dataOperacao) {
 		
-		//TODO: terminar codificacao.
-		
-		TipoMovimentoFinanceiro tipoMovimentoFinanceiroEnvioEncalhe = tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(GrupoMovimentoFinaceiro.ENVIO_ENCALHE);
-		
-		TipoMovimentoFinanceiro tipoMovimentoFinanceiroRecebimentoReparte = tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(GrupoMovimentoFinaceiro.RECEBIMENTO_REPARTE);
-		
-		List<TipoMovimentoFinanceiro> tiposMovimentoFinanceiroIgnorados = new ArrayList<TipoMovimentoFinanceiro>();
-		
-		tiposMovimentoFinanceiroIgnorados.add(tipoMovimentoFinanceiroEnvioEncalhe);
-		
-		tiposMovimentoFinanceiroIgnorados.add(tipoMovimentoFinanceiroRecebimentoReparte);
+		List<TipoMovimentoFinanceiro> tiposMovimentoFinanceiroIgnorados = null;
 		
 		List<DebitoCreditoCotaDTO> listaDebitoCreditoCota = 
 				movimentoFinanceiroCotaRepository.
@@ -1829,17 +1798,41 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 						numeroCota, 
 						dataOperacao, 
 						tiposMovimentoFinanceiroIgnorados);
-
+		
+		BigDecimal totalCredito = BigDecimal.ZERO;
+		
+		BigDecimal totalDebito = BigDecimal.ZERO;
+		
 		for(DebitoCreditoCotaDTO debitoCreditoCota : listaDebitoCreditoCota) {
+			
+			if(OperacaoFinaceira.CREDITO.name().equals(debitoCreditoCota.getTipoLancamento())) {
+				
+				totalCredito = adicionarValorBigDecimal(totalCredito, debitoCreditoCota.getValor());
+				
+			} else if(OperacaoFinaceira.DEBITO.name().equals(debitoCreditoCota.getTipoLancamento())) {
+				
+				totalDebito = adicionarValorBigDecimal(totalDebito, debitoCreditoCota.getValor());
+				
+			}
+			
+		}
+
+		BigDecimal valorDevido = totalDebito.subtract(totalCredito);
+		
+		
+		if(valorDevido.compareTo(BigDecimal.ZERO)>0) {
+			
+			return valorDevido;
+			
+		} else {
+			
+			return BigDecimal.ZERO;
 			
 		}
 		
-		
-		return null;
-		
 	}
 	
-	private byte[] gerarSlip(ControleConferenciaEncalheCota controleConferenciaEncalheCota) throws FileNotFoundException, JRException, URISyntaxException {
+	private byte[] gerarSlip(ControleConferenciaEncalheCota controleConferenciaEncalheCota) {
 
 		Distribuidor distribuidor = distribuidorService.obter();
 		Date dataOperacao = distribuidor.getDataOperacao();
@@ -1878,7 +1871,9 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		SlipDTO slip = new SlipDTO();
 
-		slip.setCeJornaleiro(1L);
+		//TODO: pode haver produtos na operação de encalhe pertencentes
+		// 		a mais de uma chamada de encalhe.
+		slip.setCeJornaleiro(null);
 		
 		BigDecimal valorDevido	= obterValorDevidoCota(numeroCota, dataOperacao);
 		
@@ -1914,9 +1909,30 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		
 		JRDataSource jrDataSource = new JRBeanCollectionDataSource(slip.getListaProdutoEdicaoSlipDTO());
+		
 		URL url = Thread.currentThread().getContextClassLoader().getResource("/reports/slip.jasper");
-		String path = url.toURI().getPath();
-		return  JasperRunManager.runReportToPdf(path, parameters, jrDataSource);
+		
+		String path = null;
+		
+		try {
+		
+			path = url.toURI().getPath();
+		
+		} catch (URISyntaxException e) {
+			
+			throw new ValidacaoException(TipoMensagem.ERROR, "Não foi possível gerar relatório Slip");
+			
+		}
+		
+		try {
+		
+			return  JasperRunManager.runReportToPdf(path, parameters, jrDataSource);
+		
+		} catch (JRException e) {
+		
+			throw new ValidacaoException(TipoMensagem.ERROR, "Não foi possível gerar relatório Slip");
+		
+		}
 		
 	}
 	
