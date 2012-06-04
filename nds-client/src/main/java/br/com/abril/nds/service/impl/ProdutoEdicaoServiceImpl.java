@@ -219,7 +219,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 			int maxResults) {
 		
 		return this.produtoEdicaoRepository.pesquisarEdicoes(dto, "DESC",
-				"codigoProduto", 0, 5);
+				"numeroEdicao", 0, 5);
 	}
 	
 	@Override
