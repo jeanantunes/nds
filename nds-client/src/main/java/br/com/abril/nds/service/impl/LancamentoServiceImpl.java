@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.InformeEncalheDTO;
 import br.com.abril.nds.dto.LancamentoNaoExpedidoDTO;
+import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.TipoEdicao;
 import br.com.abril.nds.model.estoque.Expedicao;
 import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
@@ -26,6 +27,7 @@ import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.repository.UsuarioRepository;
 import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.MovimentoEstoqueService;
+import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
@@ -178,4 +180,16 @@ public class LancamentoServiceImpl implements LancamentoService {
 				idFornecedor, dataInicioRecolhimento, dataFimRecolhimento,
 				orderBy, ordenacao, initialResult, maxResults);
 	}
+	
+	@Override
+	@Transactional(readOnly=true)
+	public Lancamento obterUltimoLancamentoDaEdicao(Long idProdutoEdicao) {
+		
+		if (idProdutoEdicao == null || Long.valueOf(0).equals(idProdutoEdicao)) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "O código da Edição é inválido!");
+		}
+		
+		return lancamentoRepository.obterUltimoLancamentoDaEdicao(idProdutoEdicao);
+	}
+	
 }

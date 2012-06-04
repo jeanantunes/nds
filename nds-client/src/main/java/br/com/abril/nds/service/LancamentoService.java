@@ -62,5 +62,13 @@ public interface LancamentoService {
 	 */
 	public abstract Long quantidadeLancamentoInformeRecolhimento(
 			Long idFornecedor, Calendar dataInicioRecolhimento, Calendar dataFimRecolhimento);
+	
+	 /**
+	  * Obtém o último Lancamento de determinado ProdutoEdicao
+	  * 
+	  * @param idProdutoEdicao - Id do ProdutoEdicao
+	  * @return Lancamento
+	  */
+	public Lancamento obterUltimoLancamentoDaEdicao(Long idProdutoEdicao);
 }
  
