@@ -179,7 +179,7 @@
 			
 			$.each(resultado.tableModel.rows, function(index, row) {
 				
-				if (row.cell.motivo) {
+				if (row.cell.motivoAprovacao) {
 				
 					var spanAprovacao = "<span name='statusAprovacao' title='" + row.cell.motivoAprovacao + "'>"
 										+ row.cell.statusAprovacao + "</span>";
