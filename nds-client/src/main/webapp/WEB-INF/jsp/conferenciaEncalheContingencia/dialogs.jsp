@@ -1,4 +1,9 @@
 <div id="dialog-salvar" title="Salvar Conferência" style="display: none;">
+	
+	<jsp:include page="../messagesDialog.jsp">
+		<jsp:param value="idModalConfirmarSalvarConf" name="messageDialog"/>
+	</jsp:include>
+	
 	<fieldset style="width: 410px;">
 		<legend>Salvar Conferência</legend>
 		<p>Confima a Conferência de Encalhe?</p>

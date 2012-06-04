@@ -570,7 +570,7 @@ var ConferenciaEncalhe = {
 							$("#vlrCE").val(parseFloat($("#valorNotaFiscal").val()).toFixed(2));
 							
 							$("#cod_barras").focus();
-						}
+						}, null, true, "idModalConfirmarSalvarConf"
 					);
 				},
 				"Cancelar" : function() {
