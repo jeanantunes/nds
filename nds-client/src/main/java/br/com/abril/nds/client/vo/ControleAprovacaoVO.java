@@ -26,6 +26,10 @@ public class ControleAprovacaoVO {
 	
 	private String requerente;
 
+	private String status;
+	
+	private String motivo;
+	
 	/**
 	 * @return the id
 	 */
@@ -152,4 +156,34 @@ public class ControleAprovacaoVO {
 		this.requerente = requerente;
 	}
 
+	/**
+	 * @return the status
+	 */
+	public String getStatus() {
+		return status;
+	}
+
+	/**
+	 * @param status the status to set
+	 */
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
+	/**
+	 * @return the motivo
+	 */
+	public String getMotivo() {
+		return motivo;
+	}
+
+	/**
+	 * @param motivo the motivo to set
+	 */
+	public void setMotivo(String motivo) {
+		this.motivo = motivo;
+	}
+	
+	
+	
 }
