@@ -187,7 +187,7 @@ public class EMS0132MessageProcessor implements MessageProcessor {
 		String data = DateUtil.formatarData(dataAtual.getTime(), "MMddyyyy");
 		String hora = DateUtil.formatarData(dataAtual.getTime(), "HHmmss");
 		
-		String ems0132PathName = (String) message.getHeader().get(MessageHeaderProperties.OUTBOUND_FOLDER);
+		String ems0132PathName = (String) message.getHeader().get(MessageHeaderProperties.OUTBOUND_FOLDER.getValue());
 		
 		if (ems0132PathName == null) {
 			return null;

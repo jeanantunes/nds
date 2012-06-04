@@ -54,7 +54,8 @@ public class ProdutoEdicao implements Serializable {
 	@Column(name = "ID")
 	protected Long id;
 	
-	@Column(name = "CODIGO", nullable = false, unique = true)
+	//@Column(name = "CODIGO", nullable = false, unique = true)
+	@Column(name = "CODIGO", nullable = true)
 	protected String codigo;
 
 	@Column(name  = "CODIGO_DE_BARRAS", nullable = true)

@@ -2,6 +2,7 @@ package br.com.abril.nds.integracao.ems0129.outbound;
 
 import java.math.BigDecimal;
 
+import com.ancientprogramming.fixedformat4j.annotation.Align;
 import com.ancientprogramming.fixedformat4j.annotation.Field;
 import com.ancientprogramming.fixedformat4j.annotation.FixedFormatDecimal;
 import com.ancientprogramming.fixedformat4j.annotation.Record;
@@ -60,7 +61,7 @@ public class EMS0129Picking2Detalhe {
 		return separador1;
 	}
 	
-	@Field(offset = 3, length = 4)
+	@Field(offset = 3, length = 4, align = Align.RIGHT)
 	public Integer getCodigoCota() {
 		return codigoCota;
 	}
@@ -70,7 +71,7 @@ public class EMS0129Picking2Detalhe {
 		return separador2;
 	}
 	
-	@Field(offset = 8, length = 3)
+	@Field(offset = 8, length = 3, align = Align.RIGHT)
 	public Integer getSequenciaNotaEnvio() {
 		return sequenciaNotaEnvio;
 	}
@@ -90,7 +91,7 @@ public class EMS0129Picking2Detalhe {
 		return separador4;
 	}
 	
-	@Field(offset = 21, length = 4)
+	@Field(offset = 21, length = 4, align = Align.RIGHT)
 	public Long getEdicao() {
 		return edicao;
 	}
@@ -110,7 +111,7 @@ public class EMS0129Picking2Detalhe {
 		return separador6;
 	}
 	
-	@Field(offset = 47, length = 10)
+	@Field(offset = 47, length = 10, align = Align.RIGHT)
 	@FixedFormatDecimal(decimals = 2, useDecimalDelimiter = true)
 	public BigDecimal getPrecoCusto() {
 		return precoCusto;
@@ -121,7 +122,7 @@ public class EMS0129Picking2Detalhe {
 		return separador7;
 	}
 	
-	@Field(offset = 58, length = 10)
+	@Field(offset = 58, length = 10, align = Align.RIGHT)
 	@FixedFormatDecimal(decimals = 2, useDecimalDelimiter = true)
 	public BigDecimal getPrecoVenda() {
 		return precoVenda;
@@ -132,7 +133,7 @@ public class EMS0129Picking2Detalhe {
 		return separador8;
 	}
 	
-	@Field(offset = 69, length = 3)
+	@Field(offset = 69, length = 3, align = Align.RIGHT)
 	public BigDecimal getDesconto() {
 		return desconto;
 	}
@@ -142,7 +143,7 @@ public class EMS0129Picking2Detalhe {
 		return separador9;
 	}
 	
-	@Field(offset = 73, length = 6)
+	@Field(offset = 73, length = 6, align = Align.RIGHT)
 	public BigDecimal getQuantidade() {
 		return quantidade;
 	}

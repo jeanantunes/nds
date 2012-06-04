@@ -50,10 +50,6 @@
 		<property name="sessionFactory" ref="sessionFactory" />
 	</bean>
 	
-<!-- 	<bean id="couchDbClient " class="org.lightcouch.CouchDbClient" destroy-method="shutdown"> -->
-<!-- 		<constructor-arg value="couchdb.properties" />  -->
-<!-- 	</bean> -->
-
 	<tx:annotation-driven transaction-manager="transactionManager" />
 
 </beans>

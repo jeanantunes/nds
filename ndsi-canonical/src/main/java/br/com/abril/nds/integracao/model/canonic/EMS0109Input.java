@@ -29,7 +29,7 @@ public class EMS0109Input extends IntegracaoDocument implements Serializable {
 	
 	private Integer codigoFornecedor;
 	
-	private Long codigoPublicacao;
+	private String codigoPublicacao;
 	
 	private String nomePublicacao;
 	
@@ -190,7 +190,7 @@ public class EMS0109Input extends IntegracaoDocument implements Serializable {
 	 * @return the codigoPublicacao
 	 */
 	@Field(offset=35, length=8)
-	public Long getCodigoPublicacao() {
+	public String getCodigoPublicacao() {
 		return codigoPublicacao;
 	}
 
@@ -643,7 +643,7 @@ public class EMS0109Input extends IntegracaoDocument implements Serializable {
 	/**
 	 * @param codigoPublicacao the codigoPublicacao to set
 	 */
-	public void setCodigoPublicacao(Long codigoPublicacao) {
+	public void setCodigoPublicacao(String codigoPublicacao) {
 		this.codigoPublicacao = codigoPublicacao;
 	}
 

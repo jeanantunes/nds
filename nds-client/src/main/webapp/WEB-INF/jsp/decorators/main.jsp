@@ -357,10 +357,10 @@ fieldset label {
 					<li><span class="classDevolucao">&nbsp;</span><a
 						href="javascript:;">Devolução</a>
 						<ul>
-							<li>
-							
-							<a href='<c:url value="/devolucao/digitacao/contagem/"/>'>Digitação
+							<li><a href='<c:url value="/devolucao/digitacao/contagem/"/>'>Digitação
 									de Contagem para Devolução</a>
+							</li>
+							<li><a href='<c:url value="devolucao/fechamentoEncalhe/"/>'>Fechamento Encalhe</a>
 							</li>
 							<li><a href="Devolucao/help_devolucao.htm">Help</a>
 							</li>
