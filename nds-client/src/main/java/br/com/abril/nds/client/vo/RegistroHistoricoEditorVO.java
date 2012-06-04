@@ -3,6 +3,7 @@ package br.com.abril.nds.client.vo;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
+import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Exportable;
 
@@ -30,15 +31,21 @@ public class RegistroHistoricoEditorVO implements Serializable {
 	@Export(label = "EdicaoProduto", exhibitionOrder = 3)
 	private Long edicaoProduto;
 
-	@Export(label = "Reparte", exhibitionOrder = 4)
 	private BigDecimal reparte;
 
-	@Export(label = "Venda Exs.", exhibitionOrder = 5)
 	private BigDecimal vendaExemplares;
 
-	@Export(label = "% Venda", exhibitionOrder = 6)
 	private BigDecimal porcentagemVenda;
 
+	@Export(label = "Reparte", exhibitionOrder = 4)
+	private String reparteFormatado;
+	
+	@Export(label = "Venda Exs.", exhibitionOrder = 5)
+	private String vendaExemplaresFormatado;
+	
+	@Export(label = "% Venda", exhibitionOrder = 6)
+	private String porcentagemVendaFormatado;
+		
 	public RegistroHistoricoEditorVO(String nomeEditor, String codigoProduto, String nomeProduto,
 			Long edicaoProduto, BigDecimal reparte, BigDecimal vendaExemplares) {
 		this.nomeEditor=nomeEditor;
@@ -47,6 +54,7 @@ public class RegistroHistoricoEditorVO implements Serializable {
 		this.edicaoProduto=edicaoProduto;
 		this.reparte=reparte;
 		this.vendaExemplares=vendaExemplares;
+		this.formatarCampos();
 	}
 	
 	public String getNomeProduto() {
@@ -74,6 +82,7 @@ public class RegistroHistoricoEditorVO implements Serializable {
 	}
 
 	public void setPorcentagemVenda(BigDecimal porcentagemVenda) {
+		this.porcentagemVendaFormatado = CurrencyUtil.formatarValor(porcentagemVenda);
 		this.porcentagemVenda = porcentagemVenda;
 	}
 
@@ -104,5 +113,35 @@ public class RegistroHistoricoEditorVO implements Serializable {
 	public void setReparte(BigDecimal reparte) {
 		this.reparte = reparte;
 	}
-	
+
+	public String getReparteFormatado() {
+		return reparteFormatado;
+	}
+
+	public void setReparteFormatado(String reparteFormatado) {
+		this.reparteFormatado = reparteFormatado;
+	}
+
+	public String getVendaExemplaresFormatado() {
+		return vendaExemplaresFormatado;
+	}
+
+	public void setVendaExemplaresFormatado(String vendaExemplaresFormatado) {
+		this.vendaExemplaresFormatado = vendaExemplaresFormatado;
+	}
+
+	public String getPorcentagemVendaFormatado() {
+		return porcentagemVendaFormatado;
+	}
+
+	public void setPorcentagemVendaFormatado(String porcentagemVendaFormatado) {
+		this.porcentagemVendaFormatado = porcentagemVendaFormatado;
+	}
+
+	private void formatarCampos() {
+		this.reparteFormatado = CurrencyUtil.formatarValorTruncado(reparte);
+		this.vendaExemplaresFormatado = CurrencyUtil.formatarValorTruncado(vendaExemplares);
+		this.porcentagemVendaFormatado = CurrencyUtil.formatarValor(porcentagemVenda);
+	}
+
 }
