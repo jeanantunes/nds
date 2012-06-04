@@ -4,6 +4,9 @@
 
 <script language="javascript" type="text/javascript">
 
+var codProduto;
+var idProdutoEdicao;
+
 function pesquisarEdicoes() {
 
 	var codigoProduto = $("#pCodigoProduto").val();
@@ -32,8 +35,11 @@ function pesquisarEdicoes() {
 	$(".edicoesGrid").flexReload();
 }
 
+
 function executarPreProcessamento(resultado) {
 
+	var nProduto = '';
+	var cProduto = '';
 	$.each(resultado.rows, function(index, row) {
 		
 		var linkAprovar = '<a href="javascript:;" onclick="editarEdicao(' + row.cell.id + ');" style="cursor:pointer">' +
@@ -45,9 +51,21 @@ function executarPreProcessamento(resultado) {
 						   '</a>';
 		
 		row.cell.acao = linkAprovar + linkExcluir;
+
+		//
+		nProduto = row.cell.nomeProduto;
+		cProduto = row.cell.codigoProduto;
 	});
 		
 	$(".grids").show();
+
+	//
+	codProduto = cProduto; 
+	var txt = '';
+	if (nProduto != null || cProduto != null) {
+		txt = ": " + cProduto + " - " + nProduto;
+	}
+	$("#labelNomeProduto").html(txt);
 	
 	return resultado;
 }
@@ -75,8 +93,8 @@ function popup() {
 	// TODO: Pegar o código do Produto!
 	$.postJSON(
 			"<c:url value='/cadastro/edicao/carregarDadosProdutoEdicao.json' />",
-			{ codigoProduto : 1, 
-			  idProdutoEdicao : 1},
+			{ codigoProduto : codProduto, 
+			  idProdutoEdicao : idProdutoEdicao},
 			function(result) {
 				if (result) {
 					$("#codigoProdutoEdicao").val(result.codigoProduto);
