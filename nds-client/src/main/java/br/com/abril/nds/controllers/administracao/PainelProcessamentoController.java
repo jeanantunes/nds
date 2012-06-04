@@ -1,6 +1,7 @@
 package br.com.abril.nds.controllers.administracao;
 
 import java.io.IOException;
+import java.util.List;
 
 import javax.servlet.http.HttpSession;
 
@@ -8,13 +9,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.dto.filtro.FiltroEdicoesFechadasDTO;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.integracao.LogExecucao;
 import br.com.abril.nds.model.seguranca.Usuario;
+import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.export.FileExporter.FileType;
 import br.com.abril.nds.util.export.NDSFileHeader;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Resource;
+import br.com.caelum.vraptor.Result;
+import br.com.caelum.vraptor.view.Results;
 
 /**
  * @author infoA2
@@ -23,6 +28,9 @@ import br.com.caelum.vraptor.Resource;
 @Resource
 @Path("/administracao/painelProcessamento")
 public class PainelProcessamentoController {
+
+	@Autowired
+	private Result result;
 
 	@Autowired
 	private HttpSession session;
@@ -37,22 +45,39 @@ public class PainelProcessamentoController {
 	}
 
 	@Path("/pesquisarInterfaces")
-	public void pesquisarInterfaces(String sortname, String sortorder, int rp, int page) {
+	public void pesquisarInterfaces(String sortname, String sortorder, int rp, int page) throws Exception {
 
-		/*List<RegistroInterfacePainelProcessamentoVO> resultado = null;
-		BigDecimal saldoTotal = new BigDecimal("0");
+		List<LogExecucao> resultado = null;
 		try {
-			resultado = edicoesFechadasService.obterResultadoEdicoesFechadas();
-			saldoTotal = edicoesFechadasService.obterTotalResultadoEdicoesFechadas();
+			resultado = null;//edicoesFechadasService.obterResultadoEdicoesFechadas();
 		} catch (Exception e) {
-
 			if (e instanceof ValidacaoException) {
 				throw e;
 			} else {
 				throw new ValidacaoException(TipoMensagem.ERROR,
 						"Erro ao pesquisar registros: " + e.getMessage());
 			}
-		}*/
+		}
+
+		if (resultado == null || resultado.isEmpty()) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
+		} else {
+
+			int qtdeTotalRegistros = resultado.size();
+
+			TableModel tableModel = null;
+			
+			/*List<LogExecucao> resultadoPaginado = PaginacaoUtil.paginarEOrdenarEmMemoria(resultado, filtro.getPaginacao(), filtro.getOrdenacaoColuna().toString());
+		
+			TableModel<CellModelKeyValue<LogExecucao>> tableModel = new TableModel<CellModelKeyValue<LogExecucao>>();
+	
+			tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(resultadoPaginado));
+			tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
+			tableModel.setTotal(qtdeTotalRegistros);*/
+			
+			result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
+		}
+	
 	}
 
 	@Path("/pesquisarProcessos")
