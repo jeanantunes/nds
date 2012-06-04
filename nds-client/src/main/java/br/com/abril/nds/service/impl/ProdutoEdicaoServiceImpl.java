@@ -64,6 +64,18 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 	
 	@Override
 	@Transactional(readOnly = true)
+	public ProdutoEdicao obterProdutoEdicao(Long idProdutoEdicao) {
+		
+		if (idProdutoEdicao == null || Long.valueOf(0).equals(idProdutoEdicao)) {
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, 
+					"Código de identificação da Edição é inválida!"));
+		}
+		
+		return produtoEdicaoRepository.buscarPorId(idProdutoEdicao);
+	}	
+	
+	@Override
+	@Transactional(readOnly = true)
  	public List<ProdutoEdicao> obterProdutoEdicaoPorNomeProduto(String nomeProduto) {
 		return produtoEdicaoRepository.obterProdutoEdicaoPorNomeProduto(nomeProduto);
 	}

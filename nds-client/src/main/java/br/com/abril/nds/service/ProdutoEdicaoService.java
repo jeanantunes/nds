@@ -17,6 +17,15 @@ import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 public interface ProdutoEdicaoService {
 
 	/**
+	 * Obtém o ProdutoEdição.
+	 * 
+	 * @param idProdutoEdicao
+	 * 
+	 * @return
+	 */
+	public ProdutoEdicao obterProdutoEdicao(Long idProdutoEdicao);
+	
+	/**
 	 * Obtém os produtos edição de acordo com o nome do produto.
 	 * 
 	 * @param nomeProduto - nome do produto
