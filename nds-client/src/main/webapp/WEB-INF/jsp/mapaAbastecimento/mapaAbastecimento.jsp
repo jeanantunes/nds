@@ -14,8 +14,8 @@
 			
 				$( "#dialog-detalhesAbastecimento" ).dialog({
 					resizable: false,
-					height:400,
-					width:700,
+					height:410,
+					width:710,
 					modal: true,
 					buttons: {
 						"Fechar": function() {
@@ -58,7 +58,7 @@
               <td>
               
 <!-- Data Lançamento -->              
-<input id="dataLancamento" type="text"  style="width:100px;"/></td>
+<input value="${data}" id="dataLancamento" type="text"  style="width:100px;"/></td>
 
               <td>&nbsp;</td>
               <td>&nbsp;</td>
@@ -237,7 +237,7 @@ $(function() {
 				align : 'left'
 			}, {
 				display : 'Edição',
-				name : 'numeroProduto',
+				name : 'numeroEdicao',
 				width : 60,
 				sortable : true,
 				align : 'center'

@@ -17,23 +17,9 @@ function MapaAbastecimento(pathTela, objName) {
 		$(".mapaAbastecimentoGrid").flexReload();
 	},
 	
-	this.pesquisarDetalhes = function() {
-		
-
-		$(".mapaAbastecimentoDetalheGrid").flexOptions({			
-			url : pathTela + "/mapaAbastecimento/pesquisarDetalhes",
-			dataType : 'json',			
-			params:T.getDadosFiltro()
-		});
-		
-		$(".mapaAbastecimentoGrid").flexReload();
-	},
-	
-	
 	this.processaRetornoPesquisa = function(result) {
-		debugger;
-		if(result.messages)
-			exibirMensagem(result.messages.tipoMensagem,result.messages.listaMensagens);
+		if(result.mensagens)
+			exibirMensagem(result.mensagens.tipoMensagem,result.mensagens.listaMensagens);
 		
 		T.mapas = [];
 		
@@ -42,7 +28,38 @@ function MapaAbastecimento(pathTela, objName) {
 		return result;
 	},
 	
-
+	this.pesquisarDetalhes = function(indice) {
+	
+		var mapa = T.mapas[indice];
+		
+		var data = [];
+		
+		data.push({name: 'idBox' ,value: mapa.idBox});
+		data.push({name: 'data'  ,value: mapa.data});
+		
+		$(".mapaAbastecimentoDetalheGrid").flexOptions({			
+			url : pathTela + "/mapaAbastecimento/pesquisarDetalhes",
+			dataType : 'json',			
+			preProcess: T.processaRetornoPesquisaDetalhes,
+			params: data
+		
+		});		
+		
+		$(".mapaAbastecimentoDetalheGrid").flexReload();
+	},
+	
+	this.processaRetornoPesquisaDetalhes = function(result) {
+		
+		if(result.mensagens)
+			exibirMensagem(result.mensagens.tipoMensagem,result.mensagens.listaMensagens);
+		
+		T.mapas = [];
+		
+		$.each(result.rows, function(index,row){T.processarLinha(index,row.cell);} );
+		
+		return result;
+	},
+	
 	this.processarLinha = function(index,cell) {
 		
 		T.mapas.push(cell);
@@ -51,7 +68,8 @@ function MapaAbastecimento(pathTela, objName) {
 					'<img src="' + pathTela + '/images/ico_detalhes.png" alt="Detalhes do box" border="0" /></a>';
 	},
 	
-	this.carregarDetalhes = function() {
+	this.carregarDetalhes = function(indice) {
+		T.pesquisarDetalhes(indice);
 		popup_detalhe_box();
 	},
 	
@@ -110,7 +128,7 @@ function MapaAbastecimento(pathTela, objName) {
 		
 		return data;
 	},
-	
+		
 	/**
 	 * Atribui valor a um campo da tela
 	 * Obs: Checkboxs devem ser atribuidos com o valor de true ou false

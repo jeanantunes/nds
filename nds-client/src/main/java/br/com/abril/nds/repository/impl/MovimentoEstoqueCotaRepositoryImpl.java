@@ -3,6 +3,7 @@ package br.com.abril.nds.repository.impl;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 import org.hibernate.Query;
@@ -12,10 +13,13 @@ import org.hibernate.transform.Transformers;
 import org.hibernate.type.StandardBasicTypes;
 import org.springframework.stereotype.Repository;
 
+import br.com.abril.nds.dto.AbastecimentoDTO;
 import br.com.abril.nds.dto.ConsultaEncalheDTO;
 import br.com.abril.nds.dto.ContagemDevolucaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroDigitacaoContagemDevolucaoDTO;
+import br.com.abril.nds.dto.filtro.FiltroMapaAbastecimentoDTO;
+import br.com.abril.nds.dto.filtro.FiltroMapaAbastecimentoDTO.ColunaOrdenacao;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
@@ -851,5 +855,78 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepository<Movim
 		return query.list();
 		
 	}
+	
+
+	@SuppressWarnings("unchecked")
+	public List<AbastecimentoDTO> obterDadosAbastecimento(FiltroMapaAbastecimentoDTO filtro) {
+		
+		HashMap<String, Object> param = new HashMap<String, Object>();
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" from EstudoCota estudoCota ");
+		
+		gerarFromWhereDadosAbastecimento(filtro, hql, param);
+		
+		gerarOrdenacaoDadosAbastecimento(filtro, hql);		
+				
+		Query query =  getSession().createQuery(hql.toString());
+				
+		for(String key : param.keySet()){
+			query.setParameter(key, param.get(key));
+		}
+		
+		query.setResultTransformer(new AliasToBeanResultTransformer(AbastecimentoDTO.class));
+		
+		if(filtro.getPaginacao()!= null && filtro.getPaginacao().getPosicaoInicial() != null) 
+			query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
+		
+		if(filtro.getPaginacao()!= null && filtro.getPaginacao().getQtdResultadosPorPagina() != null) 
+			query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
+		
+		return query.list();
+	
+	}
+	
+	private void gerarFromWhereDadosAbastecimento(FiltroMapaAbastecimentoDTO filtro, StringBuilder hql, HashMap<String, Object> param) {
+		
+		hql.append(" from EstudoCota estudoCota ");
+		
+		hql.append(" where dataLancamento");
+		
+		param.put("dataLancamento", filtro.getDataLancamento());
+		
+		
+		if(filtro.getBox() != null) {
+			
+			hql.append(" and id =:box ");
+			param.put("box", filtro.getBox());
+		}
+				
+	}
+	
+	private void gerarOrdenacaoDadosAbastecimento(FiltroMapaAbastecimentoDTO filtro, StringBuilder hql) {
+		
+		String sortOrder = filtro.getPaginacao().getOrdenacao().name();
+		ColunaOrdenacao coluna = ColunaOrdenacao.getPorDescricao(filtro.getPaginacao().getSortColumn());
+		
+		String nome = null;
+		
+		switch(coluna) {
+			case BOX:
+				nome = " ";
+				break;
+			case TOTAL_PRODUTO: 
+				nome = " ";
+				break;
+			case TOTAL_REPARTE:
+				nome = " ";
+				break;
+			case TOTAL_BOX:
+				nome = " ";
+				break;
+		}
+		hql.append( " order by " + nome + sortOrder + " ");
+	}                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
 	
 }

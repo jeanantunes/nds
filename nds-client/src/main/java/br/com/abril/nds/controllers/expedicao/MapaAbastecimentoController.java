@@ -1,6 +1,8 @@
 package br.com.abril.nds.controllers.expedicao;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpSession;
@@ -43,26 +45,49 @@ public class MapaAbastecimentoController {
 		
 	}
 	
+	
+	/**
+	 * Inicializa dados da tela
+	 */
+	public void index() {
+		
+		session.setAttribute(FILTRO_SESSION_ATTRIBUTE, null);
+		
+		String data = new SimpleDateFormat("dd/MM/yyyy").format(new Date());
+		
+		result.include("data",data);	
+		
+		result.forwardTo(MapaAbastecimentoController.class).mapaAbastecimento();
+	}
+	
 	@Post
 	public void pesquisar(FiltroMapaAbastecimentoDTO filtro, Integer page, Integer rp, String sortname, String sortorder) {
 		
 		if(filtro.getDataLancamento() == null || filtro.getDataLancamento().isEmpty())
 			throw new ValidacaoException(TipoMensagem.WARNING, "'Data de Lançamento' é obrigatória.");
 				
-		if(DateUtil.isValidDatePTBR(filtro.getDataLancamento()))
+		if(!DateUtil.isValidDatePTBR(filtro.getDataLancamento()))
 			throw new ValidacaoException(TipoMensagem.WARNING, "'Data de Lançamento' não é válida.");
 		
 		filtro.setPaginacao(new PaginacaoVO(page, rp, sortorder));
 		filtro.setColunaOrdenacao(ColunaOrdenacao.getPorDescricao(sortname));
 		tratarFiltro(filtro);
 		
-		TableModel<CellModelKeyValue<AbastecimentoDTO>> tableModel = efetuarConsulta(filtro);
+		//TODO getRealList
+		List<AbastecimentoDTO> lista = new ArrayList<AbastecimentoDTO>();
+		lista.add(new AbastecimentoDTO("1", 1L, "1", 1, 1, "1"));
+		lista.add(new AbastecimentoDTO("1", 1L, "1", 1, 1, "1"));
+		lista.add(new AbastecimentoDTO("1", 1L, "1", 1, 1, "1"));
+		lista.add(new AbastecimentoDTO("1", 1L, "1", 1, 1, "1"));
 		
-		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
+		//TODO getRealCount
+		Integer totalRegistros = 10;
+
+		result.use(FlexiGridJson.class).from(lista).page(1).total(totalRegistros).serialize();
 	}
 		
 	@Post
-	public void pesquisarDetalhes(String sortname, String sortorder) {
+	public void pesquisarDetalhes(Long idBox, String data, String sortname, String sortorder) {
 		
 		//FiltroMapaAbastecimentoDTO filtro = (FiltroMapaAbastecimentoDTO) session.getAttribute(FILTRO_SESSION_ATTRIBUTE);
 		
@@ -82,33 +107,6 @@ public class MapaAbastecimentoController {
 		result.use(FlexiGridJson.class).from(lista).page(1).total(totalRegistros).serialize();
 	}
 	
-	/**
-	 * Efetua a consulta e monta a estrutura do grid de tipos de movimento.
-	 * @param filtro
-	 * @return 
-	 */	
-	private TableModel<CellModelKeyValue<AbastecimentoDTO>> efetuarConsulta(FiltroMapaAbastecimentoDTO filtro) {
-		
-		//TODO getRealList
-		List<AbastecimentoDTO> lista = new ArrayList<AbastecimentoDTO>();
-		lista.add(new AbastecimentoDTO("", 1L, "1", 1, 1, "1"));
-		lista.add(new AbastecimentoDTO("", 1L, "1", 1, 1, "1"));
-		lista.add(new AbastecimentoDTO("", 1L, "1", 1, 1, "1"));
-		lista.add(new AbastecimentoDTO("", 1L, "1", 1, 1, "1"));
-		
-		//TODO getRealCount
-		Integer totalRegistros = 10;
-		
-		TableModel<CellModelKeyValue<AbastecimentoDTO>> tableModel = new TableModel<CellModelKeyValue<AbastecimentoDTO>>();
-
-		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(lista));
-		
-		tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
-		
-		tableModel.setTotal(totalRegistros);
-		
-		return tableModel;
-	}
 	
 	/**
 	 * Efetua a consulta e monta a estrutura do grid de tipos de movimento.
@@ -155,14 +153,5 @@ public class MapaAbastecimentoController {
 		
 		session.setAttribute(FILTRO_SESSION_ATTRIBUTE, filtroAtual);
 	}
-	
-	/**
-	 * Inicializa dados da tela
-	 */
-	public void index() {
-		
-		session.setAttribute(FILTRO_SESSION_ATTRIBUTE, null);
-		
-		result.forwardTo(MapaAbastecimentoController.class).mapaAbastecimento();
-	}
+
 }
