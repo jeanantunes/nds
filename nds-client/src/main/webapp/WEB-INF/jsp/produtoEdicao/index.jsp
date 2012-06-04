@@ -77,9 +77,8 @@ function popup() {
 		exibirMensagem('WARNING', ['Por favor, escolha um produto para adicionar a Edi&ccedil;&atilde;o!'], "");
 		return;
 	}
-
+	
 	// Popular a lista de Edições:
-	// TODO: Pegar o código do Produto!
 	$(".prodsPesqGrid").flexOptions({
 		url: "<c:url value='/cadastro/edicao/ultimasEdicoes.json' />",
 		params: [{name:'codigoProduto', value: 1 }],
@@ -87,10 +86,9 @@ function popup() {
 	});
 	
 	$(".prodsPesqGrid").flexReload();
-
+	
 	
 	// Exibir os dados do Produto:
-	// TODO: Pegar o código do Produto!
 	$.postJSON(
 			"<c:url value='/cadastro/edicao/carregarDadosProdutoEdicao.json' />",
 			{ codigoProduto : codProduto, 
