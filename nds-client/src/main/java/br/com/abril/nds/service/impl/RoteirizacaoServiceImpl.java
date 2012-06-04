@@ -121,7 +121,8 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 		return  rotaRepository.buscarRotaPorNome(roteiroId, rotaNome, matchMode);
 	}
 	
-	
+	@Override
+	@Transactional(readOnly=true)
 	public List<Rota> buscarRotas() {
 		
 		return rotaRepository.buscarTodos();
@@ -158,7 +159,8 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 		return lista;
 	}
 	
-
+	@Override
+	@Transactional(readOnly=true)
 	public List<Roteiro> buscarRoteiros() {
 		
 		return roteiroRepository.buscarTodos();
