@@ -175,19 +175,30 @@ public class ExtratoEdicaoController {
 		
 		FiltroExtratoEdicaoDTO filtro = 
 			(FiltroExtratoEdicaoDTO) this.session.getAttribute(FILTRO_PESQUISA_SESSION_ATTRIBUTE);
-		
+
+		if (filtro == null) {
+			result.redirectTo("index");
+			return;
+		}
+
 		List<ExtratoEdicaoDTO> listaExtratoEdicao = null;
 		
 		InfoGeralExtratoEdicaoDTO infoGeralExtratoEdicao = null;
 		
-		if (filtro != null) {
-		
-			infoGeralExtratoEdicao = 
-				extratoEdicaoService.obterInfoGeralExtratoEdicao(
-					filtro.getCodigoProduto(), filtro.getNumeroEdicao());
+		infoGeralExtratoEdicao = 
+			extratoEdicaoService.obterInfoGeralExtratoEdicao(
+				filtro.getCodigoProduto(), filtro.getNumeroEdicao());
+
+		if (	infoGeralExtratoEdicao == null || 
+				infoGeralExtratoEdicao.getListaExtratoEdicao() == null ||
+				infoGeralExtratoEdicao.getListaExtratoEdicao().isEmpty() ) {
 			
-			listaExtratoEdicao = infoGeralExtratoEdicao.getListaExtratoEdicao();
+			result.redirectTo("index");
+			return;
+			
 		}
+		
+		listaExtratoEdicao = infoGeralExtratoEdicao.getListaExtratoEdicao();
 		
 		FileExporter.to("extrato-edicao", fileType)
 			.inHTTPResponse(this.getNDSFileHeader(), filtro, infoGeralExtratoEdicao, 
