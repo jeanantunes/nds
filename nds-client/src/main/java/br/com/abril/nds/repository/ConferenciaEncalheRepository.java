@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import br.com.abril.nds.dto.ConferenciaEncalheDTO;
+import br.com.abril.nds.dto.ProdutoEdicaoSlipDTO;
 import br.com.abril.nds.model.estoque.ConferenciaEncalhe;
 
 public interface ConferenciaEncalheRepository extends Repository<ConferenciaEncalhe, Long> { 
@@ -31,5 +32,16 @@ public interface ConferenciaEncalheRepository extends Repository<ConferenciaEnca
 	 */
 	public BigDecimal obterValorTotalEncalheOperacaoConferenciaEncalhe(Long idControleConferenciaEncalhe, Long idDistribuidor);
 	
+	/**
+	 * Obtem dados relativos a uma slip de acordo com ControleConferenciaEncalheCota 
+	 * a que estes pertencem.
+	 * 
+	 * @param idControleConferenciaEncalheCota
+	 * @param idDistribuidor
+	 * 
+	 * @return List - ProdutoEdicaoSlipDTO
+	 */
+	public List<ProdutoEdicaoSlipDTO> obterDadosSlipConferenciaEncalhe(Long idControleConferenciaEncalheCota, Long idDistribuidor);
+
 
 }

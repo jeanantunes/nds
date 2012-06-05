@@ -110,7 +110,7 @@ function pesquisar() {
 
 function popup_roteirizacao() {
 		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
-	
+	    roteirizacao.limparTelaRoteirizacao();
 		$( "#dialog-roteirizacao" ).dialog({
 			resizable: false,
 			height:590,
@@ -335,7 +335,6 @@ label{ vertical-align:super;}
  		</select>
         
         <br clear="all" />
-
         <label>Ordem:</label>
         <input name="ordemInclusaoRoteiro" id="ordemInclusaoRoteiro" type="text" style="width:200px; float:left; margin-bottom:5px;" />       
         <br clear="all" />
@@ -357,7 +356,7 @@ label{ vertical-align:super;}
 	</jsp:include> 
      <fieldset style="width:895px; float:left; margin-bottom:10px;">
 		<legend>Roteiros</legend>
-        <input name="lstRoteiros" type="text" id="lstRoteiros" style="width:240px; float:left;"  onkeyup="roteirizacao.autoCompletarRoteiroPorNome('#lstRoteiros',roteirizacao.populaDadosRoteiro)"/>
+        <input name="lstRoteiros" type="text" id="lstRoteiros" style="width:240px; float:left;"  onkeyup="roteirizacao.autoCompletarRoteiroPorNome('#lstRoteiros',roteirizacao.populaDadosRoteiro)" onblur="roteirizacao.buscaRoteiroPorNome('#lstRoteiros')" />
 	<span class="bt_novos" title="Nova Roteiro"><a href="javascript:;" onclick="roteirizacao.abrirTelaRoteiro();"><img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0"/>Novo Roteiro</a></span>
     <span style="float:right; margin-top:12px; margin-left:20px;" id="spanDadosRoteiro"><strong>Roteiro Selecionado:</strong>&nbsp;&nbsp; <strong>Box: </strong>&nbsp;&nbsp; <strong>Ordem: </strong>&nbsp;</span>
    <input type="hidden" id="idRoteiroSelecionado" name="idRoteiroSelecionado"  >   
@@ -381,7 +380,8 @@ label{ vertical-align:super;}
     
     <fieldset style="width:596px; float:left; margin-left:3px; overflow:hidden;">
 		<legend>Cotas da Rota</legend>
-        <span style="float:left; margin-bottom:10px; margin-left:3px; margin-top:5px;"><strong>Roteiro Selecionado:</strong> Comprador - <strong>Box: </strong>230 - <strong>Ordem: </strong>2</span>
+		
+        <span style="float:left; margin-bottom:10px; margin-left:3px; margin-top:5px;" id="spanDadosRota"><strong>Rota Selecionada:</strong>&nbsp;&nbsp;&nbsp;&nbsp; <strong>Ordem: </strong>&nbsp;</span>
         <input name="rotaSelecionada" type="hidden"  id="rotaSelecionada" style="width:240px; float:left; margin-bottom:5px;"  />
         
 		<table class="cotasRotaGrid"></table>

@@ -206,7 +206,7 @@ public class DiferencaEstoqueController {
 			consultaDiferencaVO.setQuantidade(diferenca.getQtde());
 			
 			consultaDiferencaVO.setStatusAprovacao(
-				diferenca.getMovimentoEstoque().getStatus().getDescricao());
+				diferenca.getMovimentoEstoque().getStatus().getDescricaoAbreviada());
 			
 			consultaDiferencaVO.setMotivoAprovacao(diferenca.getMovimentoEstoque().getMotivo());
 			
@@ -1152,7 +1152,7 @@ public class DiferencaEstoqueController {
 			consultaDiferencaVO.setQuantidade(diferenca.getQtde());
 			
 			consultaDiferencaVO.setStatusAprovacao(
-				diferenca.getMovimentoEstoque().getStatus().getDescricao());
+				diferenca.getMovimentoEstoque().getStatus().getDescricaoAbreviada());
 			
 			consultaDiferencaVO.setMotivoAprovacao(diferenca.getMovimentoEstoque().getMotivo());
 			
