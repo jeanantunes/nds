@@ -83,7 +83,7 @@ var ConferenciaEncalhe = {
 						_class = "class_linha_2 _dadosConfEncalhe";
 					}
 				
-					innerTable += "<tr class='" + _class + "'><td nowrap='nowrap' style='text-align: center;'>";
+					innerTable += "<tr class='" + _class + " _dados'><td nowrap='nowrap' style='text-align: center;'>";
 					
 					var valorExemplares = parseInt(value.qtdExemplar);
 					
@@ -735,7 +735,7 @@ var ConferenciaEncalhe = {
 								select: function(event, ui){
 									
 									$("#codProduto").val(ui.item.chave.string);
-									ConfernciaEncalhe.idProdutoEdicao = ui.item.chave.long;
+									ConferenciaEncalhe.idProdutoEdicao = ui.item.chave.long;
 								}
 							});
 						}

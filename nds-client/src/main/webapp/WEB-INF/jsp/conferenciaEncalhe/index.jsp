@@ -13,7 +13,7 @@
 	<script type="text/javascript" src='<c:url value="/"/>/scripts/scriptConferenciaEncalhe.js'></script>
 	
 	<style type="text/css">
-		.gridTeste tr:hover{
+		._dados:hover{
 			background: none repeat scroll 0 0 #D9EBF5;
 		}
 	</style>
@@ -132,7 +132,7 @@
 			<div class="grids" style="display: block; clear: left; margin-top: 10px;">
 				
 				<div style="overflow: auto; height: 250px; border: 1px #EEEEEE solid;">
-					<table class="conferenciaEncalheGrid gridTeste" style="width: 941px;" id="dadosGridConferenciaEncalhe">
+					<table class="conferenciaEncalheGrid" style="width: 941px;" id="dadosGridConferenciaEncalhe">
 						<tr class="header_table">
 							<td style="width: 65px; text-align: left;">Exemplares</td>
 							<td style="width: 165px; text-align: left;">Código de Barras</td>
