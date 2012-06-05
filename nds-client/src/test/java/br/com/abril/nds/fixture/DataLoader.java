@@ -5109,13 +5109,13 @@ public class DataLoader {
 			nomeProduto = "Produto 8611";
 			codigoProdutoEdicao = "8611";
 			numeroEdicao = 8611L; 
-
+			codigoSM = 8611;
 			
 			nomeProduto 		= nomeProduto + contador;
 			codigoProduto 		= codigoProduto + contador;
 			numeroEdicao 		= numeroEdicao + contador;
 			codigoProdutoEdicao = codigoProdutoEdicao + contador;
-			
+			codigoSM 			= codigoSM + contador; 
 			
 			geraMassaParaConferenciaEncalheCota(
 					session, cotaConferenciaEncalhe, codigoProduto, 

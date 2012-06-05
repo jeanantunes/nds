@@ -358,7 +358,12 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		List<Long> listaIdProdutoEdicao = 
 				chamadaEncalheCotaRepository.obterListaIdProdutoEdicaoChamaEncalheCota(numeroCota, dataOperacao, false, false);
-		BigDecimal reparte = estoqueProdutoCotaRepository.obterValorTotalReparteCota(numeroCota, listaIdProdutoEdicao, distribuidor.getId());
+		
+		BigDecimal reparte = BigDecimal.ZERO;
+		
+		if(listaIdProdutoEdicao != null && !listaIdProdutoEdicao.isEmpty()) {
+			reparte = estoqueProdutoCotaRepository.obterValorTotalReparteCota(numeroCota, listaIdProdutoEdicao, distribuidor.getId());
+		} 
 		
 		BigDecimal totalDebitoCreditoCota = null;
 		BigDecimal valorPagar = null;
