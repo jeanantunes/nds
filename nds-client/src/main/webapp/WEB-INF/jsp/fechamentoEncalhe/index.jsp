@@ -3,7 +3,26 @@
 	
 	<script language="javascript" type="text/javascript">
 
-	function mostrar(){
+	var contextPath = '${pageContext.request.contextPath}';
+	
+	function pesquisar() {
+		
+		$(".fechamentoGrid").flexOptions({
+			"url" : contextPath + '/devolucao/fechamentoEncalhe/pesquisar',
+			params : [{
+				name : "dataEncalhe",
+				value : $('#datepickerDe').val()
+			}, {
+				name : "idFornecedor",
+				value : $('#selectFornecedor').val()
+			}, {
+				name : "idBox",
+				value : $('#selectBoxEncalhe').val()
+			}],
+			newp:1
+		});
+		
+		$(".fechamentoGrid").flexReload();
 		$(".grids").show();
 	}
 	
@@ -123,7 +142,7 @@
 					</c:forEach>
 					</select>
 				</td>
-				<td width="106"><span class="bt_pesquisar"><a href="javascript:;" onclick="mostrar();">Pesquisar</a></span></td>
+				<td width="106"><span class="bt_pesquisar"><a href="javascript:;" onclick="pesquisar();">Pesquisar</a></span></td>
 			</tr>
 		</table>
     </fieldset>
@@ -136,7 +155,7 @@
 			<table class="fechamentoGrid"></table>
             <span class="bt_novos" title="Salvar"><a href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0" />Salvar </a></span>
 			<span class="bt_novos" title="Cotas Ausentes"><a href="javascript:;" onclick="popup_encerrarEncalhe();"><img src="${pageContext.request.contextPath}/images/ico_check.gif" hspace="5" border="0" />Cotas Ausentes</a></span>
-			<span class="bt_novos" title="Encerrar Operação Encalhe"><a href="javascript:;" onclick="popup_encerrar();"><img src="${pageContext.request.contextPath}/images/ico_check.gif" hspace="5" border="0" />Encerrar Operação Encalhe</a></span>
+			<span class="bt_novos" title="Encerrar Opera&ccedil;&atilde;o Encalhe"><a href="javascript:;" onclick="popup_encerrar();"><img src="${pageContext.request.contextPath}/images/ico_check.gif" hspace="5" border="0" />Encerrar Opera&ccedil;&atilde;o Encalhe</a></span>
 			<span class="bt_sellAll" style="float:right;"><input type="checkbox" id="sel" name="Todos" onclick="checkAll();" style="float:right;margin-right:55px;"/><label for="sel">Selecionar Todos</label></span>
         	<br clear="all" />
 			<span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
@@ -148,8 +167,7 @@
 
 	<script>
 		$(".cotasGrid").flexigrid({
-			url : '../xml/cotas_fechamento-xml.xml',
-			dataType : 'xml',
+			dataType : 'json',
 			colModel : [ {
 				display : 'Cota',
 				name : 'cota',
@@ -203,10 +221,9 @@
 			height : 240
 		});
 		$(".fechamentoGrid").flexigrid({
-			url : '../xml/fechamento-xml.xml',
-			dataType : 'xml',
+			dataType : 'json',
 			colModel : [ {
-				display : 'Código',
+				display : 'C&oacute;digo',
 				name : 'codigo',
 				width : 60,
 				sortable : true,
