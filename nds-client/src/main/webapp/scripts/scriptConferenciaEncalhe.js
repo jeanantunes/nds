@@ -939,11 +939,8 @@ $(function() {
 	
 	$('#codProduto').keypress(function(e) {
 		
-		if (e.keyCode == 0){
-		
-			$("#pesq_prod").val("");
-			ConferenciaEncalhe.popup_pesquisar();
-		}
+		$("#pesq_prod").val("");
+		ConferenciaEncalhe.popup_pesquisar();
 	});
 	
 	$('#observacao').keypress(function(e) {
