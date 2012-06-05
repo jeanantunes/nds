@@ -13,16 +13,19 @@ import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
+import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.ProdutoService;
 import br.com.abril.nds.util.TipoMensagem;
+import br.com.abril.nds.util.Util;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
+import br.com.caelum.vraptor.interceptor.multipart.UploadedFile;
 import br.com.caelum.vraptor.view.Results;
 
 @Resource
@@ -112,10 +115,11 @@ public class ProdutoEdicaoController {
 		dto.setPeso(produto.getPeso());
 		
 		
-		if (idProdutoEdicao != null && !idProdutoEdicao.trim().isEmpty()) {
+		if (idProdutoEdicao != null && Util.isLong(idProdutoEdicao)) {
 			
 			Long id = Long.valueOf(idProdutoEdicao);
 			ProdutoEdicao pe = peService.obterProdutoEdicao(id);
+			dto.setId(id);
 			dto.setCodigoProduto(pe.getCodigo());
 			dto.setNomeComercialProduto(pe.getNomeComercial());
 			dto.setNumeroEdicao(pe.getNumeroEdicao());
@@ -180,6 +184,37 @@ public class ProdutoEdicaoController {
 		List<ProdutoEdicaoDTO> lst = peService.pesquisarUltimasEdicoes(dto, 5);
 
 		this.result.use(FlexiGridJson.class).from(lst).total(lst.size()).page(1).serialize();
+	}
+	
+	@Post
+	@Path("/salvarEdicao.json")
+	public void salvarEdicao(UploadedFile imagemCapa,
+			String codigoProduto, Long idProdutoEdicao,
+			String codigoProdutoEdicao, String nomeComercialProduto,
+			TipoLancamento tipoLancamento) {
+		
+		
+		// TODO: Inclusao de nova Edicao:
+		// UploadedFile imagemCapa
+		// String codigoProdutoEdicao
+		// String nomeComercialProduto
+		// Long numeroEdicao
+		// int pacotePadrao
+		// TipoLancamento tipoLancamento
+		
+		
+		
+		
+		
+		// TODO: Alteracao no cenário ORIGEM_INTERFACE = true
+		// BigDecimal precoVenda
+		// String codigoDeBarras
+		// UploadedFile imagemCapa
+		// String chamadaCapa
+		// boolean possuiBrinde
+		// BigDecimal peso
+
+		System.out.println(tipoLancamento);
 	}
 	
 	/**
