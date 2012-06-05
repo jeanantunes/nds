@@ -10,6 +10,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,6 +32,7 @@ import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.repository.ProdutoRepository;
 import br.com.abril.nds.service.CapaService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
+import br.com.abril.nds.service.exception.UniqueConstraintViolationException;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
 
@@ -402,7 +404,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 	
 	@Override
 	@Transactional(readOnly = true)
-	public void excluirProdutoEdicao(Long idProdutoEdicao) {
+	public void excluirProdutoEdicao(Long idProdutoEdicao) throws UniqueConstraintViolationException {
 		
 		ProdutoEdicao produtoEdicao = produtoEdicaoRepository.buscarPorId(idProdutoEdicao);
 		if (produtoEdicao == null) {
@@ -418,8 +420,15 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 		/* Regra: Não excluir se existir referencias desta edição em outras tabelas. */
 		//throw new ValidacaoException(TipoMensagem.ERROR, "Esta Edição não pode ser excluida por estar associada em outras partes do sistema!");
 		
-		
-		produtoEdicaoRepository.remover(produtoEdicao);
+		try {
+			
+			produtoEdicaoRepository.remover(produtoEdicao);
+		} catch (DataIntegrityViolationException e) {
+			throw new UniqueConstraintViolationException(
+					"Impossível excluir o registro. Já foram gerados movimentos.");
+		} catch (Exception e) {
+			throw new ValidacaoException(TipoMensagem.ERROR, "Ocorreu um erro ao tentar excluir a edição!");
+		}
 	}
 	
 	

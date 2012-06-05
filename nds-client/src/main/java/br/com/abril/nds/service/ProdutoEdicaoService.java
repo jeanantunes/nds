@@ -7,6 +7,7 @@ import java.util.List;
 import br.com.abril.nds.dto.FuroProdutoDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoDTO;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.service.exception.UniqueConstraintViolationException;
 
 /**
  * Interface que define serviços referentes a entidade
@@ -140,7 +141,9 @@ public interface ProdutoEdicaoService {
 	 * </ul>
 	 * 
 	 * @param idProdutoEdicao
+	 * 
+	 * @exception 
 	 */
-	public void excluirProdutoEdicao(Long idProdutoEdicao);
+	public void excluirProdutoEdicao(Long idProdutoEdicao) throws UniqueConstraintViolationException;
 	
 }
