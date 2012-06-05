@@ -17,8 +17,8 @@ import br.com.abril.nds.repository.FechamentoEncalheRepository;
 @Repository
 public class FechamentoEncalheRepositoryImpl extends AbstractRepository<FechamentoEncalhe, FechamentoEncalhePK> implements FechamentoEncalheRepository {
 
-	public FechamentoEncalheRepositoryImpl(Class<FechamentoEncalhe> clazz) {
-		super(clazz);
+	public FechamentoEncalheRepositoryImpl() {
+		super(FechamentoEncalhe.class);
 	}
 	
 	@Override
@@ -54,22 +54,29 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepository<Fechamen
 	@Override
 	public List<CotaAusenteEncalheDTO> buscarCotasAusentes(Date dataEncalhe) {
 		
-		String hql = " select distinct cec.cota.id                       \n"
-				   + "   from ChamadaEncalhe ce,                         \n"
-				   + "        ChamadaEncalheCota cec,                    \n"
-				   + "        Cota c                                     \n"
-				   + "  where ce.id = cec.chamadaEncalhe.id              \n"
-				   + "    and ce.dataRecolhimento = :dataEncalhe         \n"
-				   + "    and cec.cota.id not in (                       \n"
-				   + "        select ccec.cota.id                        \n"
-				   + "          from ControleConferenciaEncalheCota ccec \n"
-				   + "         where ccec.dataOperacao = :dataEncalhe    \n"
-				   + "        )";
+		String hql = " select distinct cec.cota.id as idCota ";
+		hql += "   from ChamadaEncalhe ce, ";
+		hql += "        ChamadaEncalheCota cec, ";
+		hql += "        Cota c ";
+		hql += "  where ce.id = cec.chamadaEncalhe.id ";
+		hql += "    and ce.dataRecolhimento = :dataEncalhe ";
+		hql += "    and cec.cota.id not in ( ";
+		hql += "        select ccec.cota.id ";
+		hql += "          from ControleConferenciaEncalheCota ccec ";
+		hql += "         where ccec.dataOperacao = :dataEncalhe ) ";
 		
-		Query query = this.getSession().createQuery(hql);
-		query.setParameter("dataEncalhe", dataEncalhe);
-		query.setResultTransformer(Transformers.aliasToBean(CotaAusenteEncalheDTO.class));
-		
-		return query.list();
+		try {
+			
+			Query query = this.getSession().createQuery(hql);
+			
+			query.setParameter("dataEncalhe", dataEncalhe);
+			
+			query.setResultTransformer(Transformers.aliasToBean(CotaAusenteEncalheDTO.class));
+			
+			return query.list();
+			
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
 	}
 }
