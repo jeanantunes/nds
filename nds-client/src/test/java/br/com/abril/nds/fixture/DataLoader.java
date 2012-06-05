@@ -5148,17 +5148,19 @@ public class DataLoader {
 		
 		while(contador++ < 30) {
 			
-			codigoProduto = "8611"; 
-			nomeProduto = "Produto 8611";
+			codigoProduto 		= "8611"; 
+			nomeProduto 		= "Produto 8611";
 			codigoProdutoEdicao = "8611";
-			numeroEdicao = 8611L; 
-
+			numeroEdicao 		= 8611L; 
+			codigoSM 			= 8611;
+			codigoDeBarras 		= "BYX8611"; 
 			
-			nomeProduto 		= nomeProduto + contador;
-			codigoProduto 		= codigoProduto + contador;
-			numeroEdicao 		= numeroEdicao + contador;
-			codigoProdutoEdicao = codigoProdutoEdicao + contador;
-			
+			nomeProduto 		= nomeProduto 			+ contador;
+			codigoProduto 		= codigoProduto 		+ contador;
+			numeroEdicao 		= numeroEdicao 			+ contador;
+			codigoProdutoEdicao = codigoProdutoEdicao 	+ contador;
+			codigoSM 			= codigoSM 				+ contador; 
+			codigoDeBarras 		= codigoDeBarras 		+ contador;
 			
 			geraMassaParaConferenciaEncalheCota(
 					session, cotaConferenciaEncalhe, codigoProduto, 
