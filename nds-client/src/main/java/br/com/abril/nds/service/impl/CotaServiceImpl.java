@@ -1573,5 +1573,14 @@ public class CotaServiceImpl implements CotaService {
 	public List<RegistroCurvaABCCotaVO> obterCurvaABCCota(FiltroCurvaABCCotaDTO filtroCurvaABCCotaDTO) {
 		return cotaRepository.obterCurvaABCCota(filtroCurvaABCCotaDTO);
 	}
-	
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@Transactional
+	public EnderecoCota obterEnderecoPrincipal(long idCota) {
+
+		return this.cotaRepository.obterEnderecoPrincipal(idCota);
+	}
 }

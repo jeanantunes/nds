@@ -17,8 +17,6 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.google.common.collect.Multiset.Entry;
-
 import br.com.abril.nds.client.vo.EntregadorPessoaFisicaVO;
 import br.com.abril.nds.client.vo.EntregadorPessoaJuridicaVO;
 import br.com.abril.nds.client.vo.ValidacaoVO;
@@ -31,13 +29,12 @@ import br.com.abril.nds.dto.filtro.FiltroEntregadorDTO.OrdenacaoColunaEntregador
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Endereco;
+import br.com.abril.nds.model.cadastro.EnderecoCota;
 import br.com.abril.nds.model.cadastro.Entregador;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.ProcuracaoEntregador;
 import br.com.abril.nds.model.cadastro.TelefoneEntregador;
-import br.com.abril.nds.model.cadastro.pdv.EnderecoPDV;
-import br.com.abril.nds.model.cadastro.pdv.PDV;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.EntregadorService;
 import br.com.abril.nds.service.PessoaFisicaService;
@@ -531,14 +528,16 @@ public class EntregadorController {
 	 */
 	public void obterCotaPorNumero(Integer numeroCota) {
 
-		Cota cota = this.cotaService.obterCotaPDVPorNumeroDaCota(numeroCota);
-
-		ProcuracaoCotaDTO procuracaoCota = parseCotaProcuracao(cota);
-
-		if (procuracaoCota == null) {
+		Cota cota = this.cotaService.obterPorNumeroDaCota(numeroCota);
+		
+		if (cota == null) {
 
 			throw new ValidacaoException(TipoMensagem.WARNING, "Cota inválida!");
 		}
+		
+		EnderecoCota endereco = this.cotaService.obterEnderecoPrincipal(cota.getId());
+
+		ProcuracaoCotaDTO procuracaoCota = parseCotaProcuracao(cota, endereco);
 
 		this.result.use(Results.json()).from(procuracaoCota, "result").recursive().serialize();	
 	}
@@ -871,7 +870,7 @@ public class EntregadorController {
 	/*
 	 * 
 	 */
-	private ProcuracaoCotaDTO parseCotaProcuracao(Cota cota) {
+	private ProcuracaoCotaDTO parseCotaProcuracao(Cota cota, EnderecoCota enderecoCota) {
 		
 		ProcuracaoCotaDTO cotaProcuracao = new ProcuracaoCotaDTO();
 		
@@ -889,24 +888,10 @@ public class EntregadorController {
 		cotaProcuracao.setRg(pessoaFisica.getRg());
 		cotaProcuracao.setCpf(pessoaFisica.getCpf());
 		cotaProcuracao.setEstadoCivil(pessoaFisica.getEstadoCivil());
-		
-		Endereco endereco = null;
-		
-		for (PDV pdv : cota.getPdvs()) {
+
+		if (enderecoCota != null) {
 			
-			if (pdv.getCaracteristicas().isPontoPrincipal()) {
-				
-				for (EnderecoPDV enderecoPDV : pdv.getEnderecos()) {
-					
-					if (enderecoPDV.isPrincipal()) {
-						
-						endereco = enderecoPDV.getEndereco();
-					}
-				}
-			}
-		}
-		
-		if (endereco != null) {
+			Endereco endereco = enderecoCota.getEndereco();
 
 			cotaProcuracao.setBairro(endereco.getBairro());
 			cotaProcuracao.setCep(endereco.getCep());

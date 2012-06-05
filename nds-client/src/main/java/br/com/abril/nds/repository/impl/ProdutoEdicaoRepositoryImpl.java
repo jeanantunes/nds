@@ -257,7 +257,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepository<ProdutoEdica
 
 		hql.append(" ( ");
 		
-		hql.append(" select max(lancamento.dataRecolhimentoDistribuidor) from Lancamento lancamento  ");
+		hql.append(" select max(lancamento.dataLancamentoDistribuidor) from Lancamento lancamento  ");
 		
 		hql.append(" where lancamento.produtoEdicao.id = :idProdutoEdicao   ");
 		
