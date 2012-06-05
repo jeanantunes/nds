@@ -44,10 +44,6 @@ public class ProdutoEdicaoDTO implements Serializable {
 	private String statusSituacao;
 	private String temBrinde;
 	
-	// Listas e comboBox para Incluir/Alterar:
-	private List<ProdutoEdicaoDTO> ultimasEdicoes;
-	private List<TipoLancamento> tiposLancamentos;
-	
 	// Campos para cadastrar uma nova Edição:
 	// codigoProduto;
 	private String nomeComercialProduto;
@@ -290,18 +286,7 @@ public class ProdutoEdicaoDTO implements Serializable {
 	public void setTemBrinde(Boolean temBrinde) {
 		this.temBrinde = temBrinde.booleanValue() ? "Sim" : "Não";
 	}
-	/**
-	 * @return the ultimasEdicoes
-	 */
-	public List<ProdutoEdicaoDTO> getUltimasEdicoes() {
-		return ultimasEdicoes;
-	}
-	/**
-	 * @param ultimasEdicoes the ultimasEdicoes to set
-	 */
-	public void setUltimasEdicoes(List<ProdutoEdicaoDTO> ultimasEdicoes) {
-		this.ultimasEdicoes = ultimasEdicoes;
-	}
+
 	/**
 	 * @return the nomeComercialProduto
 	 */
@@ -314,18 +299,7 @@ public class ProdutoEdicaoDTO implements Serializable {
 	public void setNomeComercialProduto(String nomeComercialProduto) {
 		this.nomeComercialProduto = nomeComercialProduto;
 	}
-	/**
-	 * @return the tiposLancamentos
-	 */
-	public List<TipoLancamento> getTiposLancamentos() {
-		return tiposLancamentos;
-	}
-	/**
-	 * @param tiposLancamentos the tiposLancamentos to set
-	 */
-	public void setTiposLancamentos(List<TipoLancamento> tiposLancamentos) {
-		this.tiposLancamentos = tiposLancamentos;
-	}
+
 	/**
 	 * @return the precoPrevisto
 	 */

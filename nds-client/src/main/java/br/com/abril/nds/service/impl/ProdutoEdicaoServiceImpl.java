@@ -240,7 +240,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 	@Transactional
 	public void salvarProdutoEdicao(ProdutoEdicaoDTO dto, String codigoProduto, String contentType, InputStream imgInputStream) {
 		
-		// TODO: REFACTORING: após testar e validar, separa em métodos privados
+		// TODO: REFACTORING: após testar e validar, separar em métodos privados
 		// o save para ProdutoEdicao e Lancamento (melhorar a legibilidade do código).
 		
 		ProdutoEdicao produtoEdicao = null;
@@ -400,6 +400,28 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 		if (imgInputStream != null) {
 			capaService.saveCapa(produtoEdicao.getId(), contentType, imgInputStream);
 		}
+		
+		// TODO: Inclusao de nova Edicao:
+		// UploadedFile imagemCapa
+		// String codigoProdutoEdicao
+		// String nomeComercialProduto
+		// Long numeroEdicao
+		// int pacotePadrao
+		// TipoLancamento tipoLancamento
+		
+			
+		// TODO: Alteracao no cenário ORIGEM_INTERFACE = true
+		// BigDecimal precoVenda
+		// String codigoDeBarras
+		// UploadedFile imagemCapa
+		// String chamadaCapa
+		// boolean possuiBrinde
+		// BigDecimal peso
+
+		// TODO: REGRAS
+		
+		
+		
 	}
 	
 	@Override

@@ -1,5 +1,7 @@
 package br.com.abril.nds.controllers.cadastro;
 
+import java.io.InputStream;
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -187,34 +189,62 @@ public class ProdutoEdicaoController {
 	}
 	
 	@Post
-	@Path("/salvarEdicao.json")
-	public void salvarEdicao(UploadedFile imagemCapa,
+	public void salvar(UploadedFile imagemCapa,
 			String codigoProduto, Long idProdutoEdicao,
 			String codigoProdutoEdicao, String nomeComercialProduto,
-			TipoLancamento tipoLancamento) {
+			Long numeroEdicao, int pacotePadrao,
+			TipoLancamento tipoLancamento,
+			BigDecimal precoPrevisto, BigDecimal precoVenda,
+			Date dataLancamentoPrevisto, 
+			BigDecimal repartePrevisto, BigDecimal repartePromocional,
+			String codigoDeBarras, String codigoDeBarrasCorporativo,
+			BigDecimal desconto, BigDecimal peso, 
+			BigDecimal largura, BigDecimal comprimento, BigDecimal espessura,
+			String chamadaCapa, boolean parcial, boolean possuiBrinde,
+			String boletimInformativo) {
 		
+		// DTO para transportar os dados:
+		ProdutoEdicaoDTO dto = new ProdutoEdicaoDTO();
+		dto.setId(idProdutoEdicao);
+		dto.setCodigoProduto(codigoProdutoEdicao);
+		dto.setNomeComercialProduto(nomeComercialProduto);
+		dto.setNumeroEdicao(numeroEdicao);
+		dto.setPacotePadrao(pacotePadrao);
+		dto.setTipoLancamento(tipoLancamento);
+		dto.setPrecoPrevisto(precoPrevisto);
+		dto.setPrecoVenda(precoVenda);
+		dto.setDataLancamentoPrevisto(dataLancamentoPrevisto);
+		dto.setRepartePrevisto(repartePrevisto);
+		dto.setRepartePromocional(repartePromocional);
+		dto.setCodigoDeBarras(codigoDeBarras);
+		dto.setCodigoDeBarrasCorporativo(codigoDeBarrasCorporativo);
+		dto.setDesconto(desconto);
+		dto.setPeso(peso);
+		dto.setLargura(largura == null ? 0 : largura.floatValue());
+		dto.setComprimento(comprimento == null ? 0 : comprimento.floatValue());
+		dto.setEspessura(espessura == null ? 0 : espessura.floatValue());
+		dto.setChamadaCapa(chamadaCapa);
+		dto.setParcial(parcial);
+		dto.setPossuiBrinde(possuiBrinde);
 		
-		// TODO: Inclusao de nova Edicao:
-		// UploadedFile imagemCapa
-		// String codigoProdutoEdicao
-		// String nomeComercialProduto
-		// Long numeroEdicao
-		// int pacotePadrao
-		// TipoLancamento tipoLancamento
+		// Dados da Imagem:
+		String contentType = null;
+		InputStream imgInputStream = null;
+		if (imagemCapa != null) {
+			contentType = imagemCapa.getContentType();
+			imgInputStream = imagemCapa.getFile();
+		}
 		
+		try {
+			
+			peService.salvarProdutoEdicao(dto, codigoProduto, contentType, imgInputStream);
+		} catch (Exception e) {
+			
+			throw new ValidacaoException(TipoMensagem.ERROR, "Erro ao tentar salvar a Edição!");
+		}
 		
-		
-		
-		
-		// TODO: Alteracao no cenário ORIGEM_INTERFACE = true
-		// BigDecimal precoVenda
-		// String codigoDeBarras
-		// UploadedFile imagemCapa
-		// String chamadaCapa
-		// boolean possuiBrinde
-		// BigDecimal peso
-
-		System.out.println(tipoLancamento);
+		this.result.use(Results.json()).from(
+				new ValidacaoVO(TipoMensagem.SUCCESS, "Edição salva com sucesso!"), "result").recursive().serialize();
 	}
 	
 	/**
