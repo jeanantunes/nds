@@ -378,7 +378,7 @@ fieldset {
 								<td width="153" rowspan="8" align="center">
 									
 									<div id="div_imagem_capa">
-										<img width="144" height="185" alt="Capa" />
+										<img src="${pageContext.request.contextPath}/capa/0"  width="144" height="185" alt="Capa" />
 									</div>
 									
 									<br clear="all" />
