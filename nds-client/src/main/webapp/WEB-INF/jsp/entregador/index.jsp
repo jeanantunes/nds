@@ -26,7 +26,7 @@
 		var numeroPermissaoProcuracao = "#numeroPermissaoProcuracao" + sufixo;
 		var rgProcuracao = "#rgProcuracao" + sufixo;
 		var cpfProcuracao = "#cpfProcuracao" + sufixo;
-
+		
 		$.postJSON(
 			'<c:url value="/cadastro/entregador/obterCotaPorNumero" />',
 			{'numeroCota': numeroCota},
@@ -61,7 +61,7 @@
 
 				exibirMensagemDialog(
 					result.mensagens.tipoMensagem, 
-					result.mensagens.listaMensagens
+					result.mensagens.listaMensagens, ""
 				);
 			},
 			true
@@ -341,7 +341,7 @@
 				
 				exibirMensagemDialog(
 					result.mensagens.tipoMensagem, 
-					result.mensagens.listaMensagens
+					result.mensagens.listaMensagens, ""
 				);
 			},
 			true
@@ -375,7 +375,7 @@
 
 							exibirMensagemDialog(
 								result.mensagens.tipoMensagem, 
-								result.mensagens.listaMensagens
+								result.mensagens.listaMensagens, ""
 							);
 						}
 					);
