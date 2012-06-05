@@ -180,6 +180,7 @@ public class DataLoader {
 
 	private static TipoMovimentoEstoque tipoMovimentoVendaEncalhe;
 	private static TipoMovimentoFinanceiro tipoMovimentoFinanceiroCompraEncalhe;
+	private static TipoMovimentoFinanceiro tipoMovimentoFinanceiroPostergacao;
 
 	private static TipoMovimentoEstoque tipoMovimentoEnvioJornaleiro;
 
@@ -1337,7 +1338,6 @@ public class DataLoader {
 	massaDadosContaCorrenteMovimento(session, tipoMovimentoVendaEncalhe,
 			tipoMovimentoFinanceiroCompraEncalhe, dataAtual, listaMovimentoEstoqueCota,
 			usuario, produtoEdicao, estoqueProdutoCota);
-
 }
 
 	private static void massaDadosContaCorrenteMovimento(Session session,
