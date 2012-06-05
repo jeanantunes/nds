@@ -861,11 +861,18 @@
 						function (result) {
 
 							$("#dialog-postergar").dialog("close");
-							$(".dadosDividaGrid").flexReload();
+							$(".liberaDividaGrid").flexReload();
+							
+							var tipoMensagem = result.tipoMensagem;
+							var listaMensagens = result.listaMensagens;
+							
+							if (tipoMensagem && listaMensagens) {
+								
+								exibirMensagem(tipoMensagem, listaMensagens);
+							} 
 						},
 						null,
-						true,
-						'dialog-postergar'
+						true
 					);	
 		}
 		
@@ -876,7 +883,18 @@
 						obterCobrancasDividasMarcadas(),
 						function (result) {
 							if (result) {
-								postergarDivida();	
+
+								var tipoMensagem = result.tipoMensagem;
+								var listaMensagens = result.listaMensagens;
+							
+								if (tipoMensagem && listaMensagens) {
+									
+									exibirMensagem(tipoMensagem, listaMensagens);
+								} 
+
+								if (!tipoMensagem) {
+									postergarDivida();
+								}	
 							}							
 						},
 						null,
@@ -896,7 +914,7 @@
 		
 		function postergarDivida() {
 		
-			$( "#dialog-postergar" ).dialog({
+			$("#dialog-postergar").dialog({
 				resizable: false,
 				height:220,
 				width:300,

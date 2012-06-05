@@ -10,9 +10,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.dto.MovimentoFinanceiroCotaDTO;
 import br.com.abril.nds.dto.StatusDividaDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaInadimplenteDTO;
-import br.com.abril.nds.model.aprovacao.StatusAprovacao;
+import br.com.abril.nds.model.TipoEdicao;
 import br.com.abril.nds.model.financeiro.BaixaCobranca;
 import br.com.abril.nds.model.financeiro.BaixaManual;
 import br.com.abril.nds.model.financeiro.Cobranca;
@@ -23,7 +24,7 @@ import br.com.abril.nds.model.financeiro.OperacaoFinaceira;
 import br.com.abril.nds.model.financeiro.StatusBaixa;
 import br.com.abril.nds.model.financeiro.StatusDivida;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
-import br.com.abril.nds.model.movimentacao.TipoMovimento;
+import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.BaixaCobrancaRepository;
 import br.com.abril.nds.repository.CobrancaRepository;
 import br.com.abril.nds.repository.DividaRepository;
@@ -31,6 +32,7 @@ import br.com.abril.nds.repository.MovimentoFinanceiroCotaRepository;
 import br.com.abril.nds.repository.TipoMovimentoFinanceiroRepository;
 import br.com.abril.nds.repository.UsuarioRepository;
 import br.com.abril.nds.service.DividaService;
+import br.com.abril.nds.service.MovimentoFinanceiroCotaService;
 
 @Service
 public class DividaServiceImpl implements DividaService {
@@ -51,6 +53,9 @@ public class DividaServiceImpl implements DividaService {
 	
 	@Autowired
 	private UsuarioRepository usuarioRepository;
+		
+	@Autowired
+	private MovimentoFinanceiroCotaService movimentoFinanceiroCotaService;
 	
 	@Override
 	@Transactional
@@ -97,7 +102,7 @@ public class DividaServiceImpl implements DividaService {
 
 	@Override
 	@Transactional
-	public void postergarCobrancaCota(List<Long> listaIdsCobranca, Date dataPostergacao, BigDecimal juros, BigDecimal multa) {
+	public void postergarCobrancaCota(List<Long> listaIdsCobranca, Date dataPostergacao, BigDecimal juros, BigDecimal multa, Long idUsuario) {
 		
 		try {
 			
@@ -107,11 +112,14 @@ public class DividaServiceImpl implements DividaService {
 			Date dataAtual = Calendar.getInstance().getTime();
 			
 			MovimentoFinanceiroCota movimentoFinanceiroCota = null;
+
+			Usuario currentUser = this.usuarioRepository.buscarPorId(idUsuario);
 			
 			for (Cobranca cobranca : listaCobranca) {
 				
-				cobranca.setDataPagamento(dataAtual);
 				cobranca.getDivida().setStatus(StatusDivida.POSTERGADA);
+				cobranca.setDataPagamento(dataAtual);
+				cobranca.setDataVencimento(dataPostergacao);
 	
 				if (cobranca.getBaixaCobranca() == null) {
 					
@@ -134,18 +142,19 @@ public class DividaServiceImpl implements DividaService {
 				
 				Cobranca cobrancaAtualizada = this.cobrancaRepository.merge(cobranca);
 				
-				movimentoFinanceiroCota = new MovimentoFinanceiroCota();
-	
-				movimentoFinanceiroCota.setAprovadoAutomaticamente(false);
-				movimentoFinanceiroCota.setBaixaCobranca(cobrancaAtualizada.getBaixaCobranca());
-				movimentoFinanceiroCota.setCota(cobrancaAtualizada.getCota());
-				movimentoFinanceiroCota.setDataCriacao(dataAtual);
-				movimentoFinanceiroCota.setData(dataPostergacao);
-				movimentoFinanceiroCota.setLancamentoManual(true);
-				movimentoFinanceiroCota.setMotivo("NAO_PAGO_POSTERGADO");
-				movimentoFinanceiroCota.setStatus(StatusAprovacao.PENDENTE);
-				movimentoFinanceiroCota.setValor(cobrancaAtualizada.getValor());
+				MovimentoFinanceiroCotaDTO movimentoFinanceiroCotaDTO = new MovimentoFinanceiroCotaDTO();
 				
+				movimentoFinanceiroCotaDTO.setAprovacaoAutomatica(false);
+				movimentoFinanceiroCotaDTO.setCota(cobrancaAtualizada.getCota());
+				movimentoFinanceiroCotaDTO.setBaixaCobranca(cobrancaAtualizada.getBaixaCobranca());
+				movimentoFinanceiroCotaDTO.setDataCriacao(dataAtual);
+				movimentoFinanceiroCotaDTO.setDataVencimento(dataPostergacao);
+				movimentoFinanceiroCotaDTO.setValor(cobrancaAtualizada.getValor());
+				movimentoFinanceiroCotaDTO.setUsuario(currentUser);
+				
+				// FIXME: Confirmar
+				movimentoFinanceiroCotaDTO.setTipoEdicao(TipoEdicao.INCLUSAO);
+
 				TipoMovimentoFinanceiro movimentoFinanceiro =
 					this.tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(
 						GrupoMovimentoFinaceiro.POSTERGADO_NEGOCIACAO);
@@ -163,16 +172,11 @@ public class DividaServiceImpl implements DividaService {
 						this.tipoMovimentoFinanceiroRepository.merge(movimentoFinanceiro);
 				}
 				
-				movimentoFinanceiroCota.setTipoMovimento(movimentoFinanceiro);
+				movimentoFinanceiroCotaDTO.setTipoMovimentoFinanceiro(movimentoFinanceiro);
+				movimentoFinanceiroCotaDTO.setLancamentoManual(true);
 				
-				// MOCK USUARIO
-				movimentoFinanceiroCota.setUsuario(this.usuarioRepository.buscarTodos().get(0));
-				
-				movimentoFinanceiroCota.setDataAprovacao(dataAtual);
-				
-				movimentoFinanceiroCota = 
-					this.movimentoFinanceiroCotaRepository.merge(movimentoFinanceiroCota);
-				
+				this.movimentoFinanceiroCotaService.gerarMovimentoFinanceiroDebitoCredito(movimentoFinanceiroCotaDTO);
+								
 				if (juros != null && BigDecimal.ZERO.compareTo(juros) > 0) {
 	
 					movimentoFinanceiro =
@@ -195,7 +199,6 @@ public class DividaServiceImpl implements DividaService {
 					
 					movimentoFinanceiroCota = 
 						this.movimentoFinanceiroCotaRepository.merge(movimentoFinanceiroCota);
-					
 				}
 			}
 			

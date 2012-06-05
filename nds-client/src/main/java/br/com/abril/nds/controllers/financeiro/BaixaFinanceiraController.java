@@ -580,12 +580,10 @@ public class BaixaFinanceiraController {
 	public void obterPostergacao(List<Long> idCobrancas) {
 		
 		if ((idCobrancas==null) || (idCobrancas.size() <=0)){
-			throw new ValidacaoException(TipoMensagem.WARNING, "É necessário marcar ao menos uma dívida.");
-		}
-		
-		boolean validacaoPostergacao = true;
-		if (!validacaoPostergacao){
-		    throw new ValidacaoException(TipoMensagem.WARNING, "Postergação não permitida.");
+			this.result.use(
+				Results.json()).from(
+					new ValidacaoVO(TipoMensagem.WARNING, "É necessário marcar ao menos uma dívida."), "result").recursive().serialize();
+			throw new ValidacaoException();
 		}
 		
 		CobrancaDividaVO cobrancaDivida =
@@ -594,8 +592,6 @@ public class BaixaFinanceiraController {
 		if (cobrancaDivida != null) {
 			this.result.use(Results.json()).from(cobrancaDivida, "result").recursive().serialize();
 		}
-		
-		// result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "TO-DO: Postergação permitida."),Constantes.PARAM_MSGS).recursive().serialize();
 	}
 	
 	@Post
@@ -603,26 +599,56 @@ public class BaixaFinanceiraController {
 	public void finalizarPostergacao(Date dataPostergacao, BigDecimal encargos, boolean isIsento, List<Long> idCobrancas) {
 		
 		List<String> listaMensagens = new ArrayList<String>();
+
+		if (idCobrancas == null || idCobrancas.isEmpty()) {
+			listaMensagens.add("É necessário marcar ao menos uma dívida.");
+		}
 		
 		if (dataPostergacao == null || dataPostergacao.before(Calendar.getInstance().getTime())) {
 			listaMensagens.add("A Data para postergação tem que ser maior que a data atual!");
 		}
 		
-		if (idCobrancas == null || idCobrancas.isEmpty()) {
-			listaMensagens.add("É necessário marcar ao menos uma dívida.");
-		}
+		// TODO: Pegar o id do usuário e passar.
+		Long idUsuario = 1L;
 		
+		if (idUsuario == null || idUsuario <= 0L) {
+			listaMensagens.add("Usuário inválido!");
+		}
+				
 		if (listaMensagens != null && !listaMensagens.isEmpty()) {
-			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, listaMensagens));
+			this.result.use(
+				Results.json()).from(
+					new ValidacaoVO(TipoMensagem.WARNING, listaMensagens), "result").recursive().serialize();
+			throw new ValidacaoException();
 		}
 		
-		CobrancaDividaVO cobrancaDividaVO = 
-			this.cobrancaService.obterDadosCobrancas(idCobrancas);
+		try {
 		
-		BigDecimal valorJuros = CurrencyUtil.converterValor(cobrancaDividaVO.getValorJuros());
-		BigDecimal valorMulta = CurrencyUtil.converterValor(cobrancaDividaVO.getValorMulta());
+			CobrancaDividaVO cobrancaDividaVO = 
+				this.cobrancaService.obterDadosCobrancas(idCobrancas);
+			
+			// TODO: Componente para calculo de Juros e Multa.
+			BigDecimal valorJuros = BigDecimal.ZERO;
+			BigDecimal valorMulta = BigDecimal.ZERO;
+					
+			if (isIsento) {
+				valorJuros = CurrencyUtil.converterValor(cobrancaDividaVO.getValorJuros());
+				valorMulta = CurrencyUtil.converterValor(cobrancaDividaVO.getValorMulta());
+			}
+			
+			this.dividaService.postergarCobrancaCota(idCobrancas, dataPostergacao, valorJuros, valorMulta, idUsuario);
+			
+		} catch (Exception e) {
+			this.result.use(
+				Results.json()).from(
+						new ValidacaoVO(
+							TipoMensagem.ERROR, "Ocorreu um erro ao tentar postergar as cobranças!"), "result").recursive().serialize();
+			throw new ValidacaoException();
+		}
 		
-		this.dividaService.postergarCobrancaCota(idCobrancas, dataPostergacao, valorJuros, valorMulta);
+		this.result.use(
+			Results.json()).from(
+				new ValidacaoVO(TipoMensagem.SUCCESS, "Cobrança postergada com sucesso!"), "result").recursive().serialize();
 	}
 	
 	
