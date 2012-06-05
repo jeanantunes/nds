@@ -1854,27 +1854,44 @@ public class Fixture {
 	
 	public static ConsolidadoFinanceiroCota consolidadoFinanceiroCota(
 			List<MovimentoFinanceiroCota> movimentos, Cota cota, Date data,
-			BigDecimal valorConsolidado) {
+			BigDecimal valorConsignado,BigDecimal valorVendaEncalhe,
+			BigDecimal encalhe, BigDecimal debitoCredito, BigDecimal encargos, 
+			BigDecimal valorPostergado, BigDecimal atrasados, BigDecimal pendente) {
+		
 		ConsolidadoFinanceiroCota consolidado = new ConsolidadoFinanceiroCota();
-		consolidado.setConsignado(valorConsolidado);
 		consolidado.setMovimentos(movimentos);
 		consolidado.setCota(cota);
 		consolidado.setDataConsolidado(data);
-		consolidado.setTotal(valorConsolidado);
-		consolidado.setVendaEncalhe(valorConsolidado);
+		
+		consolidado.setConsignado(valorConsignado);
+		consolidado.setVendaEncalhe(valorVendaEncalhe);
+		consolidado.setEncalhe(encalhe);
+		consolidado.setDebitoCredito(debitoCredito);
+		consolidado.setEncargos(encargos);
+		consolidado.setValorPostergado(valorPostergado);
+		consolidado.setNumeroAtrasados(atrasados);
+		consolidado.setPendente(pendente);
+		
+		consolidado.setTotal(valorConsignado.subtract(encalhe).add(valorVendaEncalhe).add(debitoCredito).add(encargos).add(valorPostergado).add(atrasados).add(pendente));
+		
+		consolidado.setVendaEncalhe(valorVendaEncalhe);
+		
 		return consolidado;
 	}
 	
 	public static ConsolidadoFinanceiroCota consolidadoFinanceiroCotaEncalhe(
 			List<MovimentoFinanceiroCota> movimentos, Cota cota, Date data,
 			BigDecimal valorConsolidado, BigDecimal valorEncalhe) {
+		
 		ConsolidadoFinanceiroCota consolidado = new ConsolidadoFinanceiroCota();
+		
 		consolidado.setConsignado(valorConsolidado);
 		consolidado.setEncalhe(valorEncalhe);
 		consolidado.setMovimentos(movimentos);
 		consolidado.setCota(cota);
 		consolidado.setDataConsolidado(data);
 		consolidado.setTotal(valorConsolidado);
+		
 		return consolidado;
 	}
 	
