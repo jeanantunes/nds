@@ -4,13 +4,19 @@ import java.util.List;
 
 import javax.persistence.NoResultException;
 
+import org.hibernate.Criteria;
 import org.hibernate.Query;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.model.DiaSemana;
+import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.DistribuicaoFornecedor;
+import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.OperacaoDistribuidor;
 import br.com.abril.nds.repository.DistribuicaoFornecedorRepository;
+import br.com.caelum.stella.boleto.exception.CriacaoBoletoException;
 
 @Repository
 public class DistribuicaoFornecedorRepositoryImpl extends AbstractRepository<DistribuicaoFornecedor, Long> implements
@@ -79,4 +85,29 @@ public class DistribuicaoFornecedorRepositoryImpl extends AbstractRepository<Dis
 			return false;
 		}
 	}
+
+	/* (non-Javadoc)
+	 * @see br.com.abril.nds.repository.DistribuicaoFornecedorRepository#obterTodosOrdenadoId()
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<DistribuicaoFornecedor> obterTodosOrdenadoId() {
+		Criteria criteria =  getSession().createCriteria(DistribuicaoFornecedor.class);
+		criteria.addOrder(Order.asc("fornecedor"));
+		return criteria.list();
+	}
+
+	/* (non-Javadoc)
+	 * @see br.com.abril.nds.repository.DistribuicaoFornecedorRepository#excluirDadosFornecedor(br.com.abril.nds.model.cadastro.Fornecedor)
+	 */
+	@Override
+	public void excluirDadosFornecedor(Fornecedor fornecedor) {
+		Criteria criteria =  getSession().createCriteria(DistribuicaoFornecedor.class);
+		criteria.add(Restrictions.eq("fornecedor", fornecedor));
+		List<DistribuicaoFornecedor> lista = criteria.list();
+		for (DistribuicaoFornecedor registro : lista) {
+			this.getSession().delete(registro);
+		}
+	}
+
 }

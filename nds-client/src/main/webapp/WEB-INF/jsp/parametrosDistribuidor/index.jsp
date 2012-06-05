@@ -12,6 +12,11 @@
 	    padding: 0px!important;
 	}
 </style>
+<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/scripts/editor/jquery.wysiwyg.css" />
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/editor/jquery.wysiwyg.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/editor/wysiwyg.image.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/editor/wysiwyg.link.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/editor/wysiwyg.table.js"></script>
 <script language="javascript" type="text/javascript">
 
 function popup_confirm() {
@@ -83,13 +88,16 @@ $(document).ready(function() {
 </head>
 
 <body>
+
+<form name="form" id="form" method="post">
+
 <div id="dialog-pesq-fornecedor" title="Selecione os Fornecedores">
 	<fieldset>
 		<legend>Selecione um ou mais Fornecedores</legend>
 	    <select name="" size="1" multiple="multiple" style="width:440px; height:150px;" >
-	      <option>Dinap</option>
-	      <option>FC</option>
-	      <option>Treelog</option>
+          <c:forEach items="${fornecedores}" var="fornecedor">
+          	<option value="${fornecedor.id}">${fornecedor.juridica.nomeFantasia}</option>
+     	  </c:forEach>
 	    </select>
 	</fieldset>
 </div>
@@ -123,32 +131,40 @@ $(document).ready(function() {
 		                    <td align="center">Recolhimento</td>
 		                  </tr>
 		                  <tr class="class_linha_1">
-		                    <td width="141"><select name="select" size="5" multiple="multiple" id="select" style="width:130px; height:100px">
-		                      <option>Dinap</option>
-		                      <option>FC</option>
-		                      <option>Treelog</option>
-		                    </select></td>
-		                    <td width="157" align="center"><select name="select2" size="5" multiple="multiple" id="select2" style="width:130px; height:100px">
-		                      <option>Domingo</option>
-		                      <option>Segunda-feira</option>
-		                      <option>Terça-feira</option>
-		                      <option>Quarta-feira</option>
-		                      <option>Quinta-feira</option>
-		                      <option>Sábado</option>
-		                    </select></td>
-		                    <td width="139" align="center"><select name="select3" size="5" multiple="multiple" id="select3" style="width:130px; height:100px">
-		                      <option>Domingo</option>
-		                      <option>Segunda-feira</option>
-		                      <option>Terça-feira</option>
-		                      <option>Quarta-feira</option>
-		                      <option>Quinta-feira</option>
-		                      <option>Sábado</option>
-		                    </select></td>
+		                    <td width="141">
+		                    	<select name="selectFornecedoresLancamento[]" size="5" multiple="multiple" id="selectFornecedoresLancamento" style="width:130px; height:100px">
+                    		  		<c:forEach items="${fornecedores}" var="fornecedor">
+		                      			<option value="${fornecedor.id}">${fornecedor.juridica.nomeFantasia}</option>
+		                      		</c:forEach>
+		                    	</select>
+		                    </td>
+		                    <td width="157" align="center">
+		                    	<select name="selectDiasLancamento[]" size="5" multiple="multiple" id="selectDiasLancamento" style="width:130px; height:100px">
+			                      <option value="1">Domingo</option>
+			                      <option value="2">Segunda-feira</option>
+			                      <option value="3">Terça-feira</option>
+			                      <option value="4">Quarta-feira</option>
+			                      <option value="5">Quinta-feira</option>
+			                      <option value="6">Sexta-feira</option>
+			                      <option value="7">Sábado</option>
+		                    	</select>
+		                    </td>
+		                    <td width="139" align="center">
+		                    	<select name="selectDiasRecolhimento[]" size="5" multiple="multiple" id="selectDiasRecolhimento" style="width:130px; height:100px">
+			                      <option value="1">Domingo</option>
+			                      <option value="2">Segunda-feira</option>
+			                      <option value="3">Terça-feira</option>
+			                      <option value="4">Quarta-feira</option>
+			                      <option value="5">Quinta-feira</option>
+			                      <option value="6">Sexta-feira</option>
+			                      <option value="7">Sábado</option>
+		                    	</select>
+		                    </td>
 		                  </tr>
 		                  <tr>
 		                    <td>&nbsp;</td>
 		                    <td align="center">&nbsp;</td>
-		                    <td width="139" align="center"><span class="bt_add"><a href="javascript:;" onclick="popup();">Incluir Novo</a></span></td>
+		                    <td width="139" align="center"><span class="bt_add"><a href="javascript:;" onclick="form.action='${pageContext.request.contextPath}/administracao/parametrosDistribuidor/gravarDiasDistribuidorFornecedor'; form.submit()" >Incluir Novo</a></span></td>
 		                  </tr>
 		                </table>
 		                <br />
@@ -159,18 +175,14 @@ $(document).ready(function() {
 		                    <td align="center">Recolhimento</td>
 		                    <td align="center">&nbsp;</td>
 		                  </tr>
-		                  <tr class="class_linha_1">
-		                    <td width="139">Dinap</td>
-		                    <td width="144" align="center">Ter - Qui - Sab</td>
-		                    <td width="125" align="center">Seg - Qua - </td>
-		                    <td width="28" align="center"><img src="${pageContext.request.contextPath}/images/ico_excluir.gif" width="15" height="15" alt="Excluir" /></td>
-		                  </tr>
-		                  <tr class="class_linha_2">
-		                    <td>FC</td>
-		                    <td align="center">Ter - Qui - Sab</td>
-		                    <td width="125" align="center">Seg - Qua - </td>
-		                    <td width="28" align="center"><img src="${pageContext.request.contextPath}/images/ico_excluir.gif" width="15" height="15" alt="Excluir" /></td>
-		                  </tr>
+                		  <c:forEach items="${listaDiaOperacaoFornecedor}" var="registroDiaOperacaoFornecedor">
+			                  <tr class="class_linha_1">
+			                    <td width="139">${registroDiaOperacaoFornecedor.fornecedor.juridica.nomeFantasia}</td>
+			                    <td width="144" align="center">${registroDiaOperacaoFornecedor.diasLancamento}</td>
+			                    <td width="125" align="center">${registroDiaOperacaoFornecedor.diasRecolhimento}</td>
+			                    <td width="28" align="center"><a href="${pageContext.request.contextPath}/administracao/parametrosDistribuidor/excluirDiasDistribuicaoFornecedor?codigoFornecedor=${registroDiaOperacaoFornecedor.fornecedor.id}" ><img src="${pageContext.request.contextPath}/images/ico_excluir.gif" width="15" height="15" alt="Excluir" /></a></td>
+			                  </tr>
+                   		  </c:forEach>
 		                </table>
 		              </fieldset>
 			          <fieldset style="width:410px!important; margin-bottom:5px;">
@@ -769,5 +781,8 @@ $(document).ready(function() {
       <div class="linha_separa_fields">&nbsp;</div>
     </div>
 </div> 
+
+</form>
+
 </body>
 </html>

@@ -398,5 +398,4 @@ public class Distribuidor {
 		this.leiautePicking = leiautePicking;
 	}
 	
-	
 }
