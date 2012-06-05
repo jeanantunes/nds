@@ -16,6 +16,8 @@ public class ProdutoEdicaoSlipDTO implements Serializable {
 	
 	private BigDecimal encalhe;
 	
+	private BigDecimal quantidadeEfetiva;
+	
 	private BigDecimal precoVenda;
 	
 	private BigDecimal valorTotal;
@@ -88,6 +90,23 @@ public class ProdutoEdicaoSlipDTO implements Serializable {
 	 */
 	public void setEncalhe(BigDecimal encalhe) {
 		this.encalhe = encalhe;
+	}
+	
+	/**
+	 * Obtém quantidadeEfetiva
+	 *
+	 * @return BigDecimal
+	 */
+	public BigDecimal getQuantidadeEfetiva() {
+		return quantidadeEfetiva;
+	}
+	
+	/**
+	 * Atribuí quantidadeEfetiva
+	 * @param quantidadeEfetiva 
+	 */
+	public void setQuantidadeEfetiva(BigDecimal quantidadeEfetiva) {
+		this.quantidadeEfetiva = quantidadeEfetiva;
 	}
 
 	/**
