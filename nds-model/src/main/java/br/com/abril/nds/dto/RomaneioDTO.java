@@ -34,10 +34,12 @@ public class RomaneioDTO implements Serializable {
 	
 	private String cota;
 	
+	private Long idCota;
+	
 	public RomaneioDTO() {}
 	
 	public RomaneioDTO(Integer numeroCota, String nome, String logradouro,
-			String bairro, String cidade, String uf, String numeroTelefone) {
+			String bairro, String cidade, String uf, String numeroTelefone, Long idCota) {
 		super();
 		this.numeroCota = numeroCota;
 		this.nome = nome;
@@ -46,7 +48,18 @@ public class RomaneioDTO implements Serializable {
 		this.cidade = cidade;
 		this.uf = uf;
 		this.numeroTelefone = numeroTelefone;
+		this.idCota = idCota;
 	}
+	
+	public RomaneioDTO(String logradouro, String bairro, String cidade, String uf) {
+		super();
+		this.logradouro = logradouro;
+		this.bairro = bairro;
+		this.cidade = cidade;
+		this.uf = uf;
+	}
+	
+	
 	public Integer getNumeroCota() {
 		return numeroCota;
 	}
@@ -99,5 +112,14 @@ public class RomaneioDTO implements Serializable {
 	public void setCota(String cota) {
 		this.cota = cota;
 	}
+
+	public Long getIdCota() {
+		return idCota;
+	}
+
+	public void setIdCota(Long idCota) {
+		this.idCota = idCota;
+	}
+	
 	
 }
