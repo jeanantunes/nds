@@ -211,7 +211,7 @@ function removerEdicao(id) {
 						
 						if (tipoMensagem && listaMensagens) {
 							
-							exibirMensagemDialog(tipoMensagem, listaMensagens);
+							exibirMensagem(tipoMensagem, listaMensagens);
 						}
 								
 						$(".edicoesGrid").flexReload();
@@ -224,7 +224,7 @@ function removerEdicao(id) {
 						
 						if (tipoMensagem && listaMensagens) {
 							
-							exibirMensagemDialog(tipoMensagem, listaMensagens);
+							exibirMensagem(tipoMensagem, listaMensagens);
 						}
 					},
 					true

@@ -202,18 +202,26 @@ public class ProdutoEdicaoController {
 			this.peService.excluirProdutoEdicao(idProdutoEdicao);
 
 		} catch (Exception e) {
-			/*
-			this.result.use(Results.json()).from(
-					new ValidacaoVO(TipoMensagem.ERROR, e.getMessage()), 
-						"result").recursive().serialize();
+			
+			if (e instanceof ValidacaoException) {
+				
+				this.result.use(Results.json()).from(
+						((ValidacaoException) e).getValidacao(), "result")
+						.recursive().serialize();
+				
+			} else {
+				
+				this.result.use(Results.json()).from(
+						new ValidacaoVO(TipoMensagem.ERROR, e.getMessage() + ""), 
+							"result").recursive().serialize();
+			}
+			
 			throw new ValidacaoException();
-			*/
-			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, e.getMessage()));
 		}
 
 		this.result.use(Results.json()).from(
 				new ValidacaoVO(TipoMensagem.SUCCESS,
-						"Produto excluído com sucesso!"), "result").recursive().serialize();
+						"Edição excluída com sucesso!"), "result").recursive().serialize();
 	}
 
 }
