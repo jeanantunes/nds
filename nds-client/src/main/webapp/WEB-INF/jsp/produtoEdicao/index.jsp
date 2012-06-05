@@ -2,10 +2,9 @@
 
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/produtoEdicao.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.form.js"></script>
 
 <script language="javascript" type="text/javascript">
-
-var codProduto;
 
 function pesquisarEdicoes() {
 
@@ -60,12 +59,12 @@ function executarPreProcessamento(resultado) {
 	$(".grids").show();
 
 	//
-	codProduto = cProduto; 
 	var txt = '';
 	if (nProduto != null || cProduto != null) {
 		txt = ": " + cProduto + " - " + nProduto;
 	}
 	$("#labelNomeProduto").html(txt);
+	$("#codigoProduto").val(cProduto);
 	
 	return resultado;
 }
@@ -98,10 +97,11 @@ function editarEdicao(id) {
 	// Exibir os dados do Produto:
 	$.postJSON(
 		"<c:url value='/cadastro/edicao/carregarDadosProdutoEdicao.json' />",
-		{ codigoProduto : codProduto, 
+		{ codigoProduto : $("#codigoProduto").val(), 
 		  idProdutoEdicao : id},
 		function(result) {
 			if (result) {
+				$("#idProdutoEdicao").val(result.id);
 				$("#codigoProdutoEdicao").val(result.codigoProduto);
 				$("#nomePublicacao").val(result.nomeProduto);
 				$("#nomeComercialProduto").val(result.nomeComercialProduto);
@@ -115,8 +115,8 @@ function editarEdicao(id) {
 				$("#tipoLancamento").val(result.tipoLancamento);
 				$("#precoPrevisto").val(result.precoPrevisto);
 				$("#precoVenda").val(result.precoVenda);
-				$("#dataLancamentoPrevisto").val(result.dataLancamentoPrevisto.$);
-				$("#dataLancamento").val(result.dataLancamentoPrevisto.$);
+				$("#dataLancamentoPrevisto").val(result.dataLancamentoPrevisto == undefined ? '' : result.dataLancamentoPrevisto.$);
+				$("#dataLancamento").val(result.dataLancamentoPrevisto == undefined ? '' : result.dataLancamentoPrevisto.$);
 				$("#repartePrevisto").val(result.repartePrevisto)
 				$("#reparteDistribuido").val(result.reparteDistribuido);
 				$("#repartePromocional").val(result.repartePromocional);
@@ -147,8 +147,49 @@ function editarEdicao(id) {
 		modal: true,
 		buttons: {
 			"Confirmar": function() {
+
+				$("#formUpload").ajaxSubmit({
+					beforeSubmit: function(arr, formData, options) {
+						// Incluir aqui as validacoes;
+					},
+					success: function(responseText, statusText, xhr, $form)  { 
+						var mensagens = (responseText.mensagens) ? responseText.mensagens : responseText.result;   
+						var tipoMensagem = mensagens.tipoMensagem;
+						var listaMensagens = mensagens.listaMensagens;
+						if (tipoMensagem && listaMensagens) {
+							exibirMensagem(tipoMensagem, listaMensagens, "");
+						}
+					}, 
+					url: "<c:url value='/cadastro/edicao/salvar' />",
+					type: 'POST',
+					dataType: 'json',
+					data: {codigoProduto:$("#codigoProduto").val()}
+				});
+
+				/*
 				$( this ).dialog( "close" );
-				$("#effect").show("highlight", {}, 1000, callback);
+				$.postJSON(
+					"<c:url value='/cadastro/edicao/salvarEdicao.json' />",
+					{ imagemCapa : $("#imagemCapa").toString(),
+					  codigoProduto : codProduto,
+					  idProdutoEdicao : $("#idProdutoEdicao").val(),
+					  codigoProdutoEdicao : $("#codigoProdutoEdicao").val(),
+					  nomeComercialProduto: $("#nomeComercialProduto").val(),
+					  tipoLancamento: $("#tipoLancamento").val()
+					},
+					function(result) {
+						var tipoMensagem = result.tipoMensagem;
+						var listaMensagens = result.listaMensagens;
+						if (tipoMensagem && listaMensagens) {
+							exibirMensagem(tipoMensagem, listaMensagens);
+						}
+
+						$(".produtosGrid").flexReload();
+					},
+					null,
+					true
+				);
+				*/
 				$(".grids").show();
 				
 			},
@@ -157,8 +198,7 @@ function editarEdicao(id) {
 			}
 		}
 	});
-
-
+	
 	carregarImagem( (id == 0 ? 0 : id) );
 };
 
@@ -332,6 +372,7 @@ function mostraLinhaProd(){
 </script>
 
 <script type="text/javascript">
+
 $(function() {
 	$("#numeroEdicao").numeric();
 	$("#pacotePadrao").numeric();
@@ -345,7 +386,7 @@ $(function() {
 	$("#largura").numeric();
 	$("#comprimento").numeric();
 	$("#espessura").numeric();
-})
+});
 </script>
 
 <style>
@@ -390,6 +431,7 @@ fieldset {
 			</ul>
 			
 			<div id="tabEdicoes-1">
+				<input type="hidden" id="idProdutoEdicao" name="idProdutoEdicao" />
 				<div class="ldPesq">
 					<fieldset id="pesqProdutos" style="width:200px!important;">
 						<legend>Produtos Pesquisados</legend>
@@ -728,6 +770,7 @@ fieldset {
 		</div>
 		
 		<fieldset class="classFieldset">
+			<input type="hidden" id="codigoProduto" name="codigoProduto" value="" />
 			<legend>Pesquisar Produto</legend>
 			<table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
 				<thead/>
