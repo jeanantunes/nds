@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -53,6 +54,7 @@ import br.com.abril.nds.model.cadastro.ParametroCobrancaCota;
 import br.com.abril.nds.model.cadastro.ParametroContratoCota;
 import br.com.abril.nds.model.cadastro.ParametroDistribuicaoCota;
 import br.com.abril.nds.model.cadastro.ParametroSistema;
+import br.com.abril.nds.model.cadastro.ParametroUsuarioBox;
 import br.com.abril.nds.model.cadastro.Periodicidade;
 import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
 import br.com.abril.nds.model.cadastro.Pessoa;
@@ -695,6 +697,8 @@ public class DataLoader {
 		criarDadosRelatorioVendas(session);
 		
 		criarDadosEdicoesFechadas(session);
+		
+		gerarCargaDadosConferenciaEncalhe(session);
 	}
 
 	private static void criarAlgoritmos(Session session) {
@@ -2443,10 +2447,11 @@ public class DataLoader {
 					 				 estoqueProdutoVeja2, new Date(), new BigDecimal(1),
 					 				 StatusAprovacao.PENDENTE, null);
 		session.save(movimentoRecFisicoVeja2);
-
+		
+		
 		MovimentoEstoque movimentoRecFisicoVeja3 =
 			Fixture.movimentoEstoque(null, produtoEdicaoVeja3, tipoMovimentoRecFisico, usuarioJoao,
-					 				 estoqueProdutoVeja3, new Date(), new BigDecimal(1),
+					 				 estoqueProdutoVeja3, DateUtil.subtrairDias(new Date(), 6), new BigDecimal(1),
 					 				 StatusAprovacao.PENDENTE, null);
 		session.save(movimentoRecFisicoVeja3);
 
@@ -5010,10 +5015,316 @@ public class DataLoader {
 
 		}
 
-
-
 	}
 
+	private static void gerarCargaDadosConferenciaEncalhe(Session session) {
+		
+		Box boxRecolhimento = Fixture.criarBox("ENC_BOX1", "Box Encalhe", TipoBox.RECOLHIMENTO, false);
+		save(session, boxRecolhimento);
+		
+		ParametroUsuarioBox parametroUsuarioBox = Fixture.parametroUsuarioBox(boxRecolhimento, usuarioJoao, true);
+		save(session, parametroUsuarioBox);
+		
+		boxRecolhimento = Fixture.criarBox("ENC_BOX2", "Box Encalhe_2", TipoBox.RECOLHIMENTO, false);
+		save(session, boxRecolhimento);
+		
+		boxRecolhimento = Fixture.criarBox("ENC_BOX3", "Box Encalhe_3", TipoBox.RECOLHIMENTO, false);
+		save(session, boxRecolhimento);
+		
+		boxRecolhimento = Fixture.criarBox("ENC_BOX4", "Box Encalhe_4", TipoBox.RECOLHIMENTO, false);
+		save(session, boxRecolhimento);
+		
+		/**
+		 * COTA
+		 */
+		PessoaFisica valdomiroDevolvedorEncalhe = Fixture.pessoaFisica(
+				"3673745477623",
+				"valdomiro@devolvedor-encalhe.com.br", "Valdomiro Devolvedor Encalhe");
+		save(session, valdomiroDevolvedorEncalhe);
+
+		Cota cotaConferenciaEncalhe = Fixture.cota(5637, valdomiroDevolvedorEncalhe, SituacaoCadastro.ATIVO, box1);
+		save(session, cotaConferenciaEncalhe);
+
+		
+		
+		String codigoProduto = "8611"; 
+		String nomeProduto = "Produto 8611***";
+		String descProduto = "Produto 8611";
+		PeriodicidadeProduto periodicidade = PeriodicidadeProduto.MENSAL;
+		int produtoPeb = 1;
+		int produtoPacotePadrao = 10;
+		BigDecimal produtoPeso = BigDecimal.TEN;
+		
+		String codigoProdutoEdicao = "8611";
+		Long numeroEdicao = 8611L; 
+		int pacotePadrao = 10; 
+		int peb = 1; 
+		BigDecimal peso = BigDecimal.TEN; 
+		
+		BigDecimal precoCusto = new BigDecimal(16);
+		BigDecimal precoVenda = new BigDecimal(16); 
+		String codigoDeBarras = "BYX8611"; 
+		
+		BigDecimal expectativaVenda = BigDecimal.TEN; 
+		
+		boolean parcial = false;
+		
+		Long numeroNF = 8611L;
+		String serie = "8611";
+		String chaveAcesso = "8611";
+		
+		BigDecimal valorBruto = new BigDecimal(17);
+		BigDecimal valorDesconto = BigDecimal.ONE;
+		BigDecimal valorLiquido = new BigDecimal(16);
+		
+		Date dataLancamento = Fixture.criarData(1, Calendar.JUNE, 2012);
+		Date dataRecolhimento = Fixture.criarData(20, Calendar.JUNE, 2012);
+		TipoLancamento tipoLancamento = TipoLancamento.LANCAMENTO;
+		
+		BigDecimal qtdeItemNota = new BigDecimal(80);
+		
+		Date dataRecebimentoFisico = Fixture.criarData(1, Calendar.JUNE, 2012);
+		BigDecimal qtdeItemRecebimentoFisico  = new BigDecimal(80);
+		
+		BigDecimal qtdeReparteLancamento = new BigDecimal(80);
+		Integer codigoSM = 8611;
+		
+		BigDecimal qtdeReparteEstudo = new BigDecimal(80);
+		Date dataEstudo = Fixture.criarData(1, Calendar.JUNE, 2012);
+
+		BigDecimal estoqueProdCotaQtdeRecebida = new BigDecimal(80);
+		BigDecimal estoqueProdCotaQtdeDevolvida = BigDecimal.ZERO;
+		
+		Date dataRecolhimentoChamadaEncalhe = Fixture.criarData(20, Calendar.JUNE, 2012);
+		
+		TipoChamadaEncalhe tipoChamadaEncalhe = TipoChamadaEncalhe.MATRIZ_RECOLHIMENTO;
+				
+		boolean indChamadaEncalheCotaConferida = false; 
+		
+		BigDecimal qtdePrevistaChamadaEncCota = new BigDecimal(80);
+		
+		int contador = 0;
+		
+		while(contador++ < 30) {
+			
+			codigoProduto = "8611"; 
+			nomeProduto = "Produto 8611";
+			codigoProdutoEdicao = "8611";
+			numeroEdicao = 8611L; 
+
+			
+			nomeProduto 		= nomeProduto + contador;
+			codigoProduto 		= codigoProduto + contador;
+			numeroEdicao 		= numeroEdicao + contador;
+			codigoProdutoEdicao = codigoProdutoEdicao + contador;
+			
+			
+			geraMassaParaConferenciaEncalheCota(
+					session, cotaConferenciaEncalhe, codigoProduto, 
+					nomeProduto, descProduto, periodicidade, 
+					produtoPeb, produtoPacotePadrao, produtoPeso, 
+					codigoProdutoEdicao, numeroEdicao, pacotePadrao, 
+					peb, peso, precoCusto, 
+					precoVenda, codigoDeBarras, expectativaVenda, 
+					parcial, numeroNF, serie, 
+					chaveAcesso, valorBruto, valorDesconto, 
+					valorLiquido, dataLancamento, dataRecolhimento, 
+					tipoLancamento, qtdeItemNota, dataRecebimentoFisico, 
+					qtdeItemRecebimentoFisico, qtdeReparteLancamento, codigoSM, 
+					qtdeReparteEstudo, dataEstudo, estoqueProdCotaQtdeRecebida, 
+					estoqueProdCotaQtdeDevolvida, dataRecolhimentoChamadaEncalhe, tipoChamadaEncalhe, 
+					indChamadaEncalheCotaConferida, qtdePrevistaChamadaEncCota);
+			
+		}
+		
+		
+	}
+	
+	private static void geraMassaParaConferenciaEncalheCota(
+			
+			Session session, 
+			
+			Cota cotaConferenciaEncalhe,
+			String codigoProduto, 
+			String nomeProduto,
+			String descProduto,
+			PeriodicidadeProduto periodicidade,
+			int produtoPeb,
+			int produtoPacotePadrao,
+			BigDecimal produtoPeso,
+			
+			String codigoProdutoEdicao,
+			Long numeroEdicao, 
+			int pacotePadrao, 
+			int peb, 
+			BigDecimal peso, 
+			BigDecimal precoCusto,
+			BigDecimal precoVenda, 
+			String codigoDeBarras, 
+			BigDecimal expectativaVenda, 
+			boolean parcial,
+			
+			Long numeroNF,
+			String serie,
+			String chaveAcesso,
+			
+			BigDecimal valorBruto,
+			BigDecimal valorDesconto,
+			BigDecimal valorLiquido,
+			
+			Date dataLancamento,
+			Date dataRecolhimento,
+			TipoLancamento tipoLancamento,
+			BigDecimal qtdeItemNota,
+			Date dataRecebimentoFisico,
+			BigDecimal qtdeItemRecebimentoFisico,
+			
+			BigDecimal qtdeReparteLancamento,
+			Integer codigoSM,
+			
+			BigDecimal qtdeReparteEstudo,
+			Date dataEstudo,
+
+			BigDecimal estoqueProdCotaQtdeRecebida, 
+			BigDecimal estoqueProdCotaQtdeDevolvida,
+			
+			Date dataRecolhimentoChamadaEncalhe,
+			TipoChamadaEncalhe tipoChamadaEncalhe,
+			boolean indChamadaEncalheCotaConferida, 
+			BigDecimal qtdePrevistaChamadaEncCota
+			
+			
+			) {
+	
+		ItemRecebimentoFisico itemRecebimentoFisicoProdutoCE = null;
+
+		/**
+		 * PRODUTO EDICAO
+		 */
+		
+		Lancamento lancamentoRevistaCE = null;
+
+		ProdutoEdicao produtoEdicaoCE = null;
+
+		Produto produtoCE = Fixture.produto(codigoProduto, descProduto, nomeProduto, periodicidade, tipoProdutoRevista, produtoPeb, produtoPacotePadrao, produtoPeso);
+
+		produtoCE.addFornecedor(fornecedorDinap);
+		
+		save(session, produtoCE);
+
+		produtoEdicaoCE = Fixture.produtoEdicao(codigoProdutoEdicao, numeroEdicao, pacotePadrao, peb,
+				peso, precoCusto, precoVenda, codigoDeBarras, null, produtoCE, expectativaVenda, parcial);
+		produtoEdicaoCE.setDesconto(BigDecimal.ZERO);
+
+		save(session, produtoEdicaoCE);
+
+		/**
+		 * RECEBIMENTO FISICO
+		 */
+		NotaFiscalEntradaFornecedor notaFiscalProdutoCE = 
+				Fixture.notaFiscalEntradaFornecedor(
+						numeroNF, 
+						serie, 
+						chaveAcesso,
+						cfop5102, 
+						fornecedorFc.getJuridica(), 
+						fornecedorFc, 
+						tipoNotaFiscalRecebimento,
+						usuarioJoao, 
+						valorBruto, 
+						valorDesconto, 
+						valorLiquido);
+
+		save(session, notaFiscalProdutoCE);
+
+		ItemNotaFiscalEntrada itemNotaFiscalProdutoCE = 
+				Fixture.itemNotaFiscal(
+						produtoEdicaoCE, 
+						usuarioJoao,
+						notaFiscalProdutoCE, 
+						dataLancamento,
+						dataRecolhimento,
+						tipoLancamento,
+						qtdeItemNota);
+
+		save(session, itemNotaFiscalProdutoCE);
+
+		RecebimentoFisico recebimentoFisicoProdutoCE = 
+				Fixture.recebimentoFisico(
+						notaFiscalProdutoCE, 
+						usuarioJoao, 
+						dataRecebimentoFisico,
+						dataRecebimentoFisico, 
+						StatusConfirmacao.CONFIRMADO);
+
+		save(session, recebimentoFisicoProdutoCE);
+
+		itemRecebimentoFisicoProdutoCE = 
+				Fixture.itemRecebimentoFisico(
+						itemNotaFiscalProdutoCE, 
+						recebimentoFisicoProdutoCE, 
+						qtdeItemRecebimentoFisico);
+
+		save(session, itemRecebimentoFisicoProdutoCE);
+
+		/**
+		 * LANCAMENTOS
+		 */
+		
+		lancamentoRevistaCE = Fixture.lancamento(
+				tipoLancamento, 
+				produtoEdicaoCE,
+				dataLancamento,
+				dataRecolhimento,
+				new Date(),
+				new Date(),
+				qtdeReparteLancamento,
+				StatusLancamento.BALANCEADO_RECOLHIMENTO, 
+				itemRecebimentoFisicoProdutoCE,
+				codigoSM);
+
+		Estudo estudo = Fixture.estudo(
+				qtdeReparteEstudo,
+				dataEstudo, 
+				produtoEdicaoCE);
+
+		save(session, lancamentoRevistaCE, estudo);
+		
+		/**
+		 * ESTOQUE DA COTA
+		 */
+		EstoqueProdutoCota estoqueProdutoCotaConferenciaEncalhe = 
+				Fixture.estoqueProdutoCota(
+						produtoEdicaoCE, 
+						cotaConferenciaEncalhe, 
+						estoqueProdCotaQtdeRecebida, 
+						estoqueProdCotaQtdeDevolvida);
+		save(session, estoqueProdutoCotaConferenciaEncalhe);
+
+		/**
+		 * CHAMADA ENCALHE 
+		 */
+		ChamadaEncalhe chamadaEncalhe = Fixture.chamadaEncalhe(
+				dataRecolhimentoChamadaEncalhe,
+				produtoEdicaoCE, 
+				tipoChamadaEncalhe);
+		
+		save(session, chamadaEncalhe);
+		
+
+		/**
+		 * CHAMADA ENCALHE COTA
+		 */
+		ChamadaEncalheCota chamadaEncalheCota = Fixture.chamadaEncalheCota(
+				chamadaEncalhe, 
+				indChamadaEncalheCotaConferida, 
+				cotaConferenciaEncalhe, 
+				qtdePrevistaChamadaEncCota);
+		save(session, chamadaEncalheCota);
+		
+	}
+	
+	
 	private static void gerarCargaDadosConsultaEncalhe(Session session) {
 
 		ItemRecebimentoFisico itemRecebimentoFisicoProdutoCE = null;

@@ -13,7 +13,7 @@
 	<script type="text/javascript" src='<c:url value="/"/>/scripts/scriptConferenciaEncalheCont.js'></script>
 	
 	<style type="text/css">
-		.gridTeste tr:hover{
+		._dados:hover{
 			background: none repeat scroll 0 0 #D9EBF5;
 		}
 	</style>
@@ -60,7 +60,7 @@
 				<table class="conferenciaEncalheContGrid"></table>
 				
 				<div style="overflow: auto; height: 250px; border: 1px #EEEEEE solid;">
-					<table class="conferenciaEncalheGrid gridTeste" style="width: 941px;" id="dadosGridConferenciaEncalhe">
+					<table class="conferenciaEncalheGrid" style="width: 941px;" id="dadosGridConferenciaEncalhe">
 						<tr class="header_table">
 							<td style="width: 70px; text-align: left;">Código</td>
 							<td style="width: 150px; text-align: left;">Produto</td>
@@ -75,27 +75,7 @@
 					</table>
 				</div>
 				
-				
 				<br />
-				
-				<table width="100%" border="0" cellspacing="2" cellpadding="2" class="totais">
-					<tr>
-						<td width="13%"><strong>Valor Calculado R$:</strong></td>
-						<td width="19%">12.879,00</td>
-						<td width="8%"><strong>Exemplares:</strong></td>
-						<td width="8%">2.000</td>
-						<td width="31%"><span class="bt_confirmar_novo"
-							title="Confirmar"><a onclick="popup_conferencia();"
-								href="javascript:;"><img border="0" hspace="5"
-									src="${pageContext.request.contextPath}/images/ico_check.gif" />Confirma Liberação do Encalhe?</a></span>
-						</td>
-						<td width="21%"><span class="bt_novos" title="Arquivo"><a
-								href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_excel.png"
-									hspace="5" border="0" />Arquivo</a></span> <span class="bt_novos"
-							title="Imprimir"><a href="javascript:;"><img
-									src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span></td>
-					</tr>
-				</table>
 				
 				<table width="950" border="0" cellspacing="1" cellpadding="1">
 					<tr>
