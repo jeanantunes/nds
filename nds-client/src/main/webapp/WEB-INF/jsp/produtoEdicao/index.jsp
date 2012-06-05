@@ -98,7 +98,8 @@ function editarEdicao(id) {
 				$("#nomeComercialProduto").val(result.nomeComercialProduto);
 				$("#nomeFornecedor").val(result.nomeFornecedor);
 				//$("#situacao").val(result.situacao);
-				$("#numeroEdicao").val(result.numeroEdicao)
+				$("#numeroEdicao").val(result.numeroEdicao);
+				$("#numeroEdicao").attr("readonly", (result.numeroEdicao == 1));
 				$("#fase").val(result.fase);
 				$("#numeroLancamento").val(result.numeroLancamento);
 				$("#pacotePadrao").val(result.pacotePadrao);

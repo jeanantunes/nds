@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.dto.ProdutoEdicaoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Dimensao;
@@ -16,6 +17,7 @@ import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.ProdutoService;
+import br.com.abril.nds.service.exception.UniqueConstraintViolationException;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
@@ -90,9 +92,6 @@ public class ProdutoEdicaoController {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Por favor, escolha um produto para adicionar a Edição!");
 		}
 		
-		//Map<String, Object> dados = new HashMap<String, Object>();
-		
-		
 		Produto produto = pService.obterProdutoPorCodigo(codigoProduto);
 		ProdutoEdicaoDTO dto = new ProdutoEdicaoDTO();
 		dto.setNomeProduto(produto.getNome());
@@ -157,6 +156,17 @@ public class ProdutoEdicaoController {
 			}
 		}
 		
+		/* 
+		 * Regra: Se não houver edições já cadatradas para este produto, deve-se
+		 * obrigar a cadastrar o número 1. 
+		 */
+		ProdutoEdicaoDTO countEdicao = new ProdutoEdicaoDTO();
+		countEdicao.setCodigoProduto(codigoProduto);
+		Long qtdEdicoes = peService.countPesquisarEdicoes(countEdicao);
+		if (qtdEdicoes == 0 || Long.valueOf(0).equals(qtdEdicoes)) {
+			dto.setNumeroEdicao(1L);
+		}
+		
 		
 		this.result.use(Results.json()).from(dto, "result").serialize();
 	}
@@ -173,4 +183,37 @@ public class ProdutoEdicaoController {
 		this.result.use(FlexiGridJson.class).from(lst).total(lst.size()).page(1).serialize();
 	}
 	
+	/**
+	 * Remove uma Edição.
+	 * 
+	 * @param idProdutoEdicao
+	 */
+	@Post
+	@Path("/removerEdicao.json")
+	public void removerEdicao(Long idProdutoEdicao) {
+
+		if (idProdutoEdicao == null || Long.valueOf(0).equals(idProdutoEdicao)) {
+			throw new ValidacaoException(TipoMensagem.ERROR,
+					"Por favor, selecione uma Edição válida!");
+		}
+
+		try {
+
+			this.peService.excluirProdutoEdicao(idProdutoEdicao);
+
+		} catch (Exception e) {
+			/*
+			this.result.use(Results.json()).from(
+					new ValidacaoVO(TipoMensagem.ERROR, e.getMessage()), 
+						"result").recursive().serialize();
+			throw new ValidacaoException();
+			*/
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, e.getMessage()));
+		}
+
+		this.result.use(Results.json()).from(
+				new ValidacaoVO(TipoMensagem.SUCCESS,
+						"Produto excluído com sucesso!"), "result").recursive().serialize();
+	}
+
 }
