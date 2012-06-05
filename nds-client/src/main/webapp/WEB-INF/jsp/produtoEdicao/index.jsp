@@ -1,5 +1,6 @@
 <head>
 
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/produtoEdicao.js"></script>
 
 <script language="javascript" type="text/javascript">
@@ -315,6 +316,24 @@ function mostraLinhaProd(){
 	$( ".prodLinhas" ).show('slow');
 	}
 </script>
+
+<script type="text/javascript">
+$(function() {
+	$("#numeroEdicao").numeric();
+	$("#pacotePadrao").numeric();
+	$("#repartePrevisto").numeric();
+	$("#reparteDistribuido").numeric();
+	$("#repartePromocional").numeric();
+	$("#precoPrevisto").numeric();
+	$("#precoVenda").numeric();
+	$("#desconto").numeric();
+	$("#peso").numeric();
+	$("#largura").numeric();
+	$("#comprimento").numeric();
+	$("#espessura").numeric();
+})
+</script>
+
 <style>
 label{ vertical-align:super;}
 #dialog-novo label{width:370px; margin-bottom:10px; float:left; font-weight:bold; line-height:26px;}
