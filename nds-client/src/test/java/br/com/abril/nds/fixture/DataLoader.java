@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -2446,10 +2447,11 @@ public class DataLoader {
 					 				 estoqueProdutoVeja2, new Date(), new BigDecimal(1),
 					 				 StatusAprovacao.PENDENTE, null);
 		session.save(movimentoRecFisicoVeja2);
-
+		
+		
 		MovimentoEstoque movimentoRecFisicoVeja3 =
 			Fixture.movimentoEstoque(null, produtoEdicaoVeja3, tipoMovimentoRecFisico, usuarioJoao,
-					 				 estoqueProdutoVeja3, new Date(), new BigDecimal(1),
+					 				 estoqueProdutoVeja3, DateUtil.subtrairDias(new Date(), 6), new BigDecimal(1),
 					 				 StatusAprovacao.PENDENTE, null);
 		session.save(movimentoRecFisicoVeja3);
 

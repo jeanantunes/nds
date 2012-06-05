@@ -14,6 +14,7 @@ import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.dto.InformeEncalheDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.TipoImpressaoInformeEncalheDTO;
+import br.com.abril.nds.dto.TipoImpressaoInformeEncalheDTO.Capas;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
@@ -140,8 +141,9 @@ public class ConsultaInformeEncalheController {
 						dataInicioRecolhimento, dataFimRecolhimento, sortname,
 						Ordenacao.valueOf(sortorder.toUpperCase()), null, null);
 
-		List<List<ItemDTO<Integer, byte[]>>> capas = preparaDadosImpressao(informeEncalheDTOs);
-		
+		if (tipoImpressao.getCapas() != Capas.NAO) {
+			List<List<ItemDTO<Integer, byte[]>>> capas = preparaDadosImpressao(informeEncalheDTOs);
+		}
 		//TODO: Chamar relatorio;
 		return new ByteArrayDownload(new byte[0], "application/pdf", "relatorio.pdf", true);
 

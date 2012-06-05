@@ -142,10 +142,6 @@
 	<br />
 </div>
 
-<div id="dialog-conferencia" title="Liberação de Encalhe">
-	<p>Confirma a Liberação de Encalhe?</p>
-</div>
-
 <div id="dialog-novo" title="Conferência de Encalhe">
 	<p>Confirma o Encalhe?</p>
 </div>

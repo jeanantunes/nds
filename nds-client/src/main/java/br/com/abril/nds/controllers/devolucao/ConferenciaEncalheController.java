@@ -346,7 +346,7 @@ public class ConferenciaEncalheController {
 	}
 	
 	@Post
-	public void adicionarProdutoConferido(Long idProdutoEdicao, Long quantidade) throws ChamadaEncalheCotaInexistenteException{
+	public void adicionarProdutoConferido(Long idProdutoEdicao, Long quantidade) {
 		
 		if (idProdutoEdicao == null){
 			
@@ -368,6 +368,9 @@ public class ConferenciaEncalheController {
 
 			throw new ValidacaoException(TipoMensagem.WARNING, "Não existe chamada de encalhe para produto parcial na data operação.");
 			
+		} catch (ChamadaEncalheCotaInexistenteException e) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, e.getMessage());
 		}
 		
 		this.atualizarQuantidadeConferida(idProdutoEdicao, quantidade, produtoEdicao);
