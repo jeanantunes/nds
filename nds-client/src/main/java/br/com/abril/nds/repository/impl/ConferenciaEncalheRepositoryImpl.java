@@ -10,6 +10,7 @@ import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.ConferenciaEncalheDTO;
+import br.com.abril.nds.dto.ProdutoEdicaoSlipDTO;
 import br.com.abril.nds.model.estoque.ConferenciaEncalhe;
 import br.com.abril.nds.repository.ConferenciaEncalheRepository;
 
@@ -20,6 +21,44 @@ public class ConferenciaEncalheRepositoryImpl extends
 
 	public ConferenciaEncalheRepositoryImpl() {
 		super(ConferenciaEncalhe.class);
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see br.com.abril.nds.repository.ConferenciaEncalheRepository#obterDadosSlipConferenciaEncalhe(java.lang.Long, java.lang.Long)
+	 */
+	public List<ProdutoEdicaoSlipDTO> obterDadosSlipConferenciaEncalhe(Long idControleConferenciaEncalheCota, Long idDistribuidor) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select ");
+		
+		hql.append(" conferencia.movimentoEstoqueCota.produtoEdicao.produto.nome as nomeProduto,	");
+		hql.append(" conferencia.movimentoEstoqueCota.produtoEdicao.numeroEdicao as numeroEdicao,	");
+		hql.append(" conferencia.movimentoEstoqueCota.produtoEdicao.id as idProdutoEdicao,			");
+		
+		hql.append(" (conferenciaEncalhe.movimentoEstoqueCota.produtoEdicao.precoVenda -	");
+		hql.append(" ( pe.precoVenda * ("+ getSubHqlQueryValorDesconto() +") / 100 )) as precoVenda,	");
+		
+		hql.append(" conferencia.movimentoEstoqueCota.qtde as encalhe, ");
+		
+		hql.append(" (conferenciaEncalhe.movimentoEstoqueCota.produtoEdicao.precoVenda -  			");
+		hql.append(" ( pe.precoVenda * ("+ getSubHqlQueryValorDesconto() +") / 100 ))  ");
+		hql.append(" * conferencia.movimentoEstoqueCota.qtde as valorTotal, ");
+		
+		hql.append(" from ConferenciaEncalhe conferencia	");
+		
+		hql.append(" where	");
+		
+		hql.append(" conferencia.controleConferenciaEncalheCota.id = :idControleConferenciaEncalheCota ");
+		
+		Query query =  this.getSession().createSQLQuery(hql.toString()).setResultTransformer(new AliasToBeanResultTransformer(ConferenciaEncalheDTO.class));
+		
+		query.setParameter("idControleConferenciaEncalheCota", idControleConferenciaEncalheCota);
+		query.setParameter("idDistribuidor", idDistribuidor);
+		
+		return query.list();
+	
 	}
 	
 	/*
