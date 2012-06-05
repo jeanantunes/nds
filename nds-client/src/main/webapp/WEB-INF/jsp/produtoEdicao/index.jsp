@@ -150,7 +150,7 @@ function editarEdicao(id) {
 
 	if (id != null) {
 
-		var imgPath = ${pageContext.request.contextPath} + '/capa/' + id;
+		var imgPath = "<c:url value='/capa/' />" + id;
 		var img = $("<img />").attr('src', imgPath).attr('width', '144').attr('height', '185').attr('alt', 'Capa')
 		.load(function() {
 			if (!(!this.complete || typeof this.naturalWidth == "undefined" || this.naturalWidth == 0)) {
@@ -159,13 +159,12 @@ function editarEdicao(id) {
 			}
 		});
 	}
-	
-}
+};
 
 
 function novaEdicao() {
 	editarEdicao(null);	
-}
+};
 
 	
 	function popup_alterar() {
@@ -187,29 +186,58 @@ function novaEdicao() {
 					$( this ).dialog( "close" );
 				}
 			}
-		});	
-		      
+		});	      
 	};
 	
-	function popup_excluir() {
-		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
-	
-		$( "#dialog-excluir" ).dialog({
-			resizable: false,
-			height:170,
-			width:380,
-			modal: true,
-			buttons: {
-				"Confirmar": function() {
-					$( this ).dialog( "close" );
-					$("#effect").show("highlight", {}, 1000, callback);
-				},
-				"Cancelar": function() {
-					$( this ).dialog( "close" );
-				}
+function removerEdicao(id) {
+
+	$( "#dialog-excluir" ).dialog({
+		resizable: false,
+		height:170,
+		width:380,
+		modal: true,
+		buttons: {
+			"Confirmar": function() {
+
+				$.postJSON(
+					"<c:url value='/cadastro/edicao/removerEdicao.json' />",
+					{idProdutoEdicao : id},
+					function(result) {
+				   		$("#dialog-excluir").dialog("close");
+				   		
+						var tipoMensagem = result.tipoMensagem;
+						var listaMensagens = result.listaMensagens;
+						
+						if (tipoMensagem && listaMensagens) {
+							
+							exibirMensagemDialog(tipoMensagem, listaMensagens);
+						}
+								
+						$(".edicoesGrid").flexReload();
+					},
+					function(result) {
+				   		$("#dialog-excluir").dialog("close");
+						
+						var tipoMensagem = result.tipoMensagem;
+						var listaMensagens = result.listaMensagens;
+						
+						if (tipoMensagem && listaMensagens) {
+							
+							exibirMensagemDialog(tipoMensagem, listaMensagens);
+						}
+					},
+					true
+				);
+			},
+			"Cancelar": function() {
+				$( this ).dialog( "close" );
 			}
-		});
-	};
+		},
+		beforeClose: function() {
+			clearMessageDialogTimeout();
+		}
+	});
+};
 	
 	function popup_excluir_capa() {
 		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
@@ -354,7 +382,12 @@ fieldset {
 									</div>
 									
 									<br clear="all" />
-									<a href="javascript:;" onclick="popup_capa();"><img src="../images/bt_cadastros.png" alt="Editar Capa" width="15" height="15" hspace="5" vspace="3" border="0" /></a><a href="javascript:;" onclick="popup_excluir_capa();"><img src="../images/ico_excluir.gif" alt="Excluir Capa" width="15" height="15" hspace="5" vspace="3" border="0" /></a>
+									<a href="javascript:;" onclick="popup_capa();">
+										<img src="${pageContext.request.contextPath}/images/bt_cadastros.png" alt="Editar Capa" width="15" height="15" hspace="5" vspace="3" border="0" />
+									</a>
+									<a href="javascript:;" onclick="popup_excluir_capa();">
+										<img src="${pageContext.request.contextPath}/images/ico_excluir.gif" alt="Excluir Capa" width="15" height="15" hspace="5" vspace="3" border="0" />
+									</a>
 								</td>
 							</tr>
 							<tr>
@@ -728,7 +761,7 @@ fieldset {
 			</div>
 			
 			<span class="bt_novos" title="Novo">
-				<a href="javascript:;" onclick="novaEdicao();"><img src="../images/ico_salvar.gif" hspace="5" border="0"/>Novo</a>
+				<a href="javascript:;" onclick="novaEdicao();"><img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0"/>Novo</a>
 			</span>
 		</fieldset>
 		
