@@ -173,16 +173,12 @@ public class ExtratoEdicaoController {
 	 */
 	public void exportar(FileType fileType) throws IOException {
 		
-		if (fileType == null) {
-			throw new ValidacaoException(TipoMensagem.WARNING, "Tipo de arquivo não encontrado!");
-		}
-		
 		FiltroExtratoEdicaoDTO filtro = 
 			(FiltroExtratoEdicaoDTO) this.session.getAttribute(FILTRO_PESQUISA_SESSION_ATTRIBUTE);
-		
 
 		if (filtro == null) {
-			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado!");
+			result.redirectTo("index");
+			return;
 		}
 
 		List<ExtratoEdicaoDTO> listaExtratoEdicao = null;
@@ -197,7 +193,8 @@ public class ExtratoEdicaoController {
 				infoGeralExtratoEdicao.getListaExtratoEdicao() == null ||
 				infoGeralExtratoEdicao.getListaExtratoEdicao().isEmpty() ) {
 			
-			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado!");
+			result.redirectTo("index");
+			return;
 			
 		}
 		

@@ -41,6 +41,7 @@ import br.com.abril.nds.model.cadastro.ParametroCobrancaCota;
 import br.com.abril.nds.model.cadastro.ParametroContratoCota;
 import br.com.abril.nds.model.cadastro.ParametroDistribuicaoCota;
 import br.com.abril.nds.model.cadastro.ParametroSistema;
+import br.com.abril.nds.model.cadastro.ParametroUsuarioBox;
 import br.com.abril.nds.model.cadastro.Periodicidade;
 import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
 import br.com.abril.nds.model.cadastro.Pessoa;
@@ -173,6 +174,22 @@ public class Fixture {
 		
 	}
 
+	
+	public static ParametroUsuarioBox parametroUsuarioBox(
+			Box box, 
+			Usuario usuario, 
+			boolean principal) {
+	
+		ParametroUsuarioBox parametroUsuarioBox = new ParametroUsuarioBox();
+		
+		parametroUsuarioBox.setBox(box);
+		parametroUsuarioBox.setUsuario(usuario);
+		parametroUsuarioBox.setPrincipal(principal);
+		
+		return parametroUsuarioBox;
+	}
+	
+	
 	public static PessoaJuridica juridicaDinap() {		
 		return pessoaJuridica("Dinap", "11.111.111/0001-00", "111.111.111.111",
 				"dinap@mail.com", "99.999-8");
@@ -1021,6 +1038,19 @@ public class Fixture {
 		notaFiscalFornecedor.setValorDesconto(valorDesconto);
 		notaFiscalFornecedor.setValorLiquido(valorLiquido);
 
+		return notaFiscalFornecedor;
+	}
+	
+	public static NotaFiscalEntradaFornecedor notaFiscalEntradaFornecedor(Long numeroNF, String serie, String chaveAcesso, CFOP cfop,
+			PessoaJuridica emitente, Fornecedor fornecedor, TipoNotaFiscal tipoNotaFiscal,
+			Usuario usuario, BigDecimal valorBruto, BigDecimal valorDesconto, BigDecimal valorLiquido) {
+		
+		NotaFiscalEntradaFornecedor notaFiscalFornecedor = notaFiscalEntradaFornecedor(cfop, emitente, fornecedor, tipoNotaFiscal, usuario, valorBruto, valorDesconto, valorLiquido);
+		
+		notaFiscalFornecedor.setNumero(numeroNF);
+		notaFiscalFornecedor.setSerie(serie);
+		notaFiscalFornecedor.setChaveAcesso(chaveAcesso);
+		
 		return notaFiscalFornecedor;
 	}
 	
