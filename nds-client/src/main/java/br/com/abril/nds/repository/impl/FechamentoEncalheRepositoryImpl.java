@@ -1,22 +1,27 @@
 package br.com.abril.nds.repository.impl;
 
+import java.util.Date;
 import java.util.List;
 
+import org.hibernate.Query;
+import org.hibernate.transform.Transformers;
 import org.springframework.stereotype.Repository;
 
+import br.com.abril.nds.dto.CotaAusenteEncalheDTO;
 import br.com.abril.nds.dto.FechamentoFisicoLogicoDTO;
 import br.com.abril.nds.dto.filtro.FiltroFechamentoEncalheDTO;
 import br.com.abril.nds.model.estoque.FechamentoEncalhe;
 import br.com.abril.nds.model.estoque.pk.FechamentoEncalhePK;
+import br.com.abril.nds.repository.FechamentoEncalheRepository;
 
 @Repository
-public class FechamentoEncalheRepositoryImpl extends AbstractRepository<FechamentoEncalhe, FechamentoEncalhePK> {
+public class FechamentoEncalheRepositoryImpl extends AbstractRepository<FechamentoEncalhe, FechamentoEncalhePK> implements FechamentoEncalheRepository {
 
 	public FechamentoEncalheRepositoryImpl(Class<FechamentoEncalhe> clazz) {
 		super(clazz);
 	}
 	
-	
+	@Override
 	public List<FechamentoFisicoLogicoDTO> buscarFechamentoEncalhe(FiltroFechamentoEncalheDTO filtro) {
 		
 		StringBuffer hql = new StringBuffer();
@@ -44,8 +49,9 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepository<Fechamen
 		return null;
 	}
 	
-/*
+
 	@SuppressWarnings("unchecked")
+	@Override
 	public List<CotaAusenteEncalheDTO> buscarCotasAusentes(Date dataEncalhe) {
 		
 		String hql = " select distinct cec.cota.id                       \n"
@@ -65,5 +71,5 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepository<Fechamen
 		query.setResultTransformer(Transformers.aliasToBean(CotaAusenteEncalheDTO.class));
 		
 		return query.list();
-	}*/
+	}
 }
