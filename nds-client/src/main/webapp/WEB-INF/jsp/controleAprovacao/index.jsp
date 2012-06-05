@@ -45,7 +45,7 @@
 			}, {
 				display : 'Parcelas',
 				name : 'parcelas',
-				width : 110,
+				width : 60,
 				sortable : true,
 				align : 'center'
 			}, {
@@ -57,9 +57,15 @@
 			}, {
 				display : 'Requerente',
 				name : 'requerente',
-				width : 120,
+				width : 100,
 				sortable : true,
 				align : 'left'
+			}, {
+				display : 'Status',
+				name : 'status',
+				width : 45,
+				sortable : true,
+				align : 'center'
 			}, {
 				display : 'Ação',
 				name : 'acao',
@@ -192,17 +198,24 @@
 		
 		var idTipoMovimento = $("#tipoMovimento").val();
 		var dataMovimento = $("#dataMovimento").val();
+		var statusAprovacao = $("#statusAprovacao").val();
 		
 		$(".solicitacoesAprovacao").flexOptions({
 			url: "${pageContext.request.contextPath}/administracao/controleAprovacao/pesquisarAprovacoes",
+			onSuccess: executarAposProcessamento,
 			params: [
 		         {name:'idTipoMovimento', value: idTipoMovimento},
-		         {name:'dataMovimentoFormatada', value: dataMovimento}
+		         {name:'dataMovimentoFormatada', value: dataMovimento},
+		         {name: 'statusAprovacao', value:statusAprovacao}
 		    ],
 		    newp: 1,
 		});
 		
 		$(".solicitacoesAprovacao").flexReload();
+	}
+
+	function executarAposProcessamento() {
+		$("span[name='status']").tooltip();
 	}
 	
 	function executarPreProcessamento(resultado) {
@@ -220,16 +233,42 @@
 		}
 		
 		$.each(resultado.rows, function(index, row) {
+
+			var cursor = "cursor:pointer";
+
+			var classLink = "";
+
+			var aprovarMovimento = 'aprovarMovimento(' + row.cell.id + ');';
+
+			var rejeitarMovimento = 'rejeitarMovimento(' + row.cell.id + ');';
 			
-			var linkAprovar = '<a href="javascript:;" onclick="aprovarMovimento(' + row.cell.id + ');" style="cursor:pointer">' +
-					     	  	'<img title="Aprovar" src="${pageContext.request.contextPath}/images/ico_check.gif" hspace="5" border="0px" />' +
-					  		  '</a>';
+			if (row.cell.status != 'P') {
+
+				cursor = "cursor:default";
+				aprovarMovimento = "";
+				rejeitarMovimento = "";
+				classLink = "linkDisabled";
+															
+			}		
+				
+			linkAprovar = '<a href="javascript:;" class="'+classLink+'" onclick="'+aprovarMovimento+'" style="'+cursor+'">' +
+				     	  	'<img title="Aprovar" src="${pageContext.request.contextPath}/images/ico_check.gif" hspace="5" border="0px" />' +
+				  		  '</a>';
 			
-			var linkRejeitar = '<a href="javascript:;" onclick="rejeitarMovimento(' + row.cell.id + ');" style="cursor:pointer">' +
-							   	 '<img title="Rejeitar" src="${pageContext.request.contextPath}/images/ico_excluir.gif" hspace="5" border="0px" />' +
-							   '</a>';
+			linkRejeitar = '<a href="javascript:;" class="'+classLink+'" onclick="'+rejeitarMovimento+'" style="'+cursor+'">' +
+						   	 '<img title="Rejeitar" src="${pageContext.request.contextPath}/images/ico_excluir.gif" hspace="5" border="0px" />' +
+						   '</a>';
 			
 			row.cell.acao = linkAprovar + linkRejeitar;
+
+			if (row.cell.motivo) {
+							
+				var spanAprovacao = "<span name='status' title='" + row.cell.motivo + "'>"
+									+ row.cell.status + "</span>";
+				
+				row.cell.status = spanAprovacao;
+			}
+			
 		});
 			
 		$(".grids").show();
@@ -280,12 +319,22 @@
 				</td>
 				
 				<td colspan="3">Data:</td>
-				<td width="118">
+				<td width="160">
 					<input name="dataMovimento" type="text" id="dataMovimento"
 						   style="width: 80px; float: left; margin-right: 5px;" />
 				</td>
 				
-				<td width="422">
+				<td width="72">Status:</td>
+				<td width="271">
+					<select name="statusAprovacao" id="statusAprovacao" style="width: 100px;">
+						<option value="" selected="selected">Todos</option>
+						<c:forEach var="statusAprovacao" items="${listaStatusAprovacao}">
+							<option value="${statusAprovacao.key}">${statusAprovacao.value}</option>
+						</c:forEach>
+					</select>
+				</td>
+				
+				<td width="400">
 					<span class="bt_pesquisar" title="Pesquisar Recebimento">
 						<a href="javascript:;" onclick="pesquisar();">Pesquisar</a>
 					</span>

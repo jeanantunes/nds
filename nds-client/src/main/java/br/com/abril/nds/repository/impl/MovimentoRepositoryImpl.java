@@ -8,7 +8,6 @@ import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.MovimentoAprovacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroControleAprovacaoDTO;
-import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.movimentacao.Movimento;
 import br.com.abril.nds.repository.MovimentoRepository;
 
@@ -70,6 +69,10 @@ public class MovimentoRepositoryImpl extends AbstractRepository<Movimento, Long>
 					hql += "order by movimento.usuario.nome ";
 					break;
 				
+				case STATUS:
+					hql += "order by movimento.status ";
+					break;
+					
 				default:
 					break;
 			}
@@ -132,6 +135,10 @@ public class MovimentoRepositoryImpl extends AbstractRepository<Movimento, Long>
 		if (filtro.getDataMovimento() != null) {
 			query.setParameter("dataMovimento", filtro.getDataMovimento());
 		}
+		
+		if (filtro.getStatusAprovacao() != null) {
+			query.setParameter("statusAprovacao", filtro.getStatusAprovacao());
+		}
 	}
 	
 	/**
@@ -183,6 +190,14 @@ public class MovimentoRepositoryImpl extends AbstractRepository<Movimento, Long>
 				hql += (!hql.contains("where")) ? "where" : "and";
 				
 				hql += " movimento.dataCriacao = :dataMovimento ";
+			}
+			
+			if (filtro.getStatusAprovacao() != null) {
+				
+				hql += (!hql.contains("where")) ? "where" : "and";
+				
+				hql += " movimento.status = :statusAprovacao ";
+				
 			}
 		}
 		

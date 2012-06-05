@@ -581,19 +581,19 @@
 				align : 'center'
 			}, {
 				display : 'Reparte',
-				name : 'reparte',
+				name : 'reparteFormatado',
 				width : 80,
 				sortable : true,
 				align : 'center'
 			}, {
 				display : 'Venda Exs.',
-				name : 'vendaExemplares',
+				name : 'vendaExemplaresFormatado',
 				width : 90,
 				sortable : true,
 				align : 'center'
 			}, {
 				display : '% Venda',
-				name : 'porcentagemVenda',
+				name : 'porcentagemVendaFormatado',
 				width : 50,
 				sortable : true,
 				align : 'right'
@@ -623,37 +623,37 @@
 				align : 'left'
 			}, {
 				display : 'Reparte',
-				name : 'reparte',
+				name : 'reparteFormatado',
 				width : 80,
 				sortable : true,
 				align : 'center'
 			}, {
 				display : 'Venda Exs.',
-				name : 'vendaExemplares',
+				name : 'vendaExemplaresFormatado',
 				width : 80,
 				sortable : true,
 				align : 'center'
 			}, {
 				display : '% Venda Exs.',
-				name : 'porcentagemVendaExemplares',
+				name : 'porcentagemVendaExemplaresFormatado',
 				width : 90,
 				sortable : true,
 				align : 'center'
 			}, {
 				display : 'Faturamento Capa R$',
-				name : 'faturamentoCapa',
+				name : 'faturamentoCapaFormatado',
 				width : 120,
 				sortable : true,
 				align : 'right'
 			}, {
 				display : 'Part. %',
-				name : 'participacao',
+				name : 'participacaoFormatado',
 				width : 72,
 				sortable : true,
 				align : 'right'
 			}, {
 				display : 'Part. Acum. %',
-				name : 'participacaoAcumulada',
+				name : 'participacaoAcumuladaFormatado',
 				width : 90,
 				sortable : true,
 				align : 'right'
@@ -703,25 +703,25 @@
 				align : 'center'
 			}, {
 				display : 'Venda Exs.',
-				name : 'vendaExemplares',
+				name : 'vendaExemplaresFormatado',
 				width : 90,
 				sortable : true,
 				align : 'center'
 			}, {
 				display : 'Faturamento Capa R$',
-				name : 'faturamentoCapa',
+				name : 'faturamentoCapaFormatado',
 				width : 120,
 				sortable : true,
 				align : 'right'
 			}, {
 				display : 'Part. %',
-				name : 'participacao',
+				name : 'participacaoFormatado',
 				width : 52,
 				sortable : true,
 				align : 'right'
 			}, {
 				display : 'Part. Acum. %',
-				name : 'participacaoAcumulada',
+				name : 'participacaoAcumuladaFormatado',
 				width : 90,
 				sortable : true,
 				align : 'right'
@@ -765,25 +765,25 @@
 				align : 'center'
 			}, {
 				display : 'Venda Exs.',
-				name : 'vendaExemplares',
+				name : 'vendaExemplaresFormatado',
 				width : 90,
 				sortable : true,
 				align : 'center'
 			}, {
 				display : 'Faturamento Capa R$',
-				name : 'faturamentoCapa',
+				name : 'faturamentoCapaFormatado',
 				width : 120,
 				sortable : true,
 				align : 'right'
 			}, {
 				display : 'Part. %',
-				name : 'participacao',
+				name : 'participacaoFormatado',
 				width : 52,
 				sortable : true,
 				align : 'right'
 			}, {
 				display : 'Part. Acum. %',
-				name : 'participacaoAcumulada',
+				name : 'participacaoAcumuladaFormatado',
 				width : 90,
 				sortable : true,
 				align : 'right'
@@ -821,37 +821,37 @@
 				align : 'left'
 			}, {
 				display : 'Reparte',
-				name : 'reparte',
+				name : 'reparteFormatado',
 				width : 80,
 				sortable : true,
 				align : 'center'
 			}, {
 				display : 'Venda Exs.',
-				name : 'vendaExemplares',
+				name : 'vendaExemplaresFormatado',
 				width : 90,
 				sortable : true,
 				align : 'center'
 			}, {
 				display : 'Venda %',
-				name : 'porcentagemVenda',
+				name : 'porcentagemVendaFormatado',
 				width : 90,
 				sortable : true,
 				align : 'right'
 			}, {
 				display : 'Faturamento R$',
-				name : 'faturamento',
+				name : 'faturamentoFormatado',
 				width : 100,
 				sortable : true,
 				align : 'right'
 			}, {
 				display : 'Part. %',
-				name : 'participacao',
+				name : 'participacaoFormatado',
 				width : 50,
 				sortable : true,
 				align : 'right'
 			}, {
 				display : 'Part. Acum. %',
-				name : 'participacaoAcumulada',
+				name : 'participacaoAcumuladaFormatado',
 				width : 70,
 				sortable : true,
 				align : 'right'
@@ -876,8 +876,8 @@
 				return resultado;
 			}
 
-			$("#qtdeTotalVendaExemplaresDistribuidor").html(resultado.totalVendaExemplares);
-			$("#totalFaturamentoCapaDistribuidor").html("R$ " + resultado.totalFaturamento);
+			$("#qtdeTotalVendaExemplaresDistribuidor").html(resultado.totalVendaExemplaresFormatado);
+			$("#totalFaturamentoCapaDistribuidor").html("R$ " + resultado.totalFaturamentoFormatado);
 			
 			$(".grids").show();
 			return resultado.tableModel;
@@ -893,8 +893,8 @@
 				return resultado;
 			}
 
-			$("#qtdeTotalVendaExemplaresEditor").html(resultado.totalVendaExemplares);
-			$("#totalFaturamentoCapaEditor").html("R$ " + resultado.totalFaturamento);
+			$("#qtdeTotalVendaExemplaresEditor").html(resultado.totalVendaExemplaresFormatado);
+			$("#totalFaturamentoCapaEditor").html("R$ " + resultado.totalFaturamentoFormatado);
 			
 			$.each(resultado.tableModel.rows, function(index, row) {
 				
@@ -919,8 +919,8 @@
 				return resultado;
 			}
 
-			$("#qtdeTotalVendaExemplaresProduto").html(resultado.totalVendaExemplares);
-			$("#totalFaturamentoCapaProduto").html("R$ " + resultado.totalFaturamento);
+			$("#qtdeTotalVendaExemplaresProduto").html(resultado.totalVendaExemplaresFormatado);
+			$("#totalFaturamentoCapaProduto").html("R$ " + resultado.totalFaturamentoFormatado);
 			
 			$(".grids").show();
 			return resultado.tableModel;
@@ -936,8 +936,8 @@
 				return resultado;
 			}
 
-			$("#qtdeTotalVendaExemplaresCota").html(resultado.totalVendaExemplares);
-			$("#totalFaturamentoCapaCota").html("R$ " + resultado.totalFaturamento);
+			$("#qtdeTotalVendaExemplaresCota").html(resultado.totalVendaExemplaresFormatado);
+			$("#totalFaturamentoCapaCota").html("R$ " + resultado.totalFaturamentoFormatado);
 			
 			$(".grids").show();
 			return resultado.tableModel;

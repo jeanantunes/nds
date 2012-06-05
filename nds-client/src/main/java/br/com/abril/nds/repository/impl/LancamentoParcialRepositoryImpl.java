@@ -38,12 +38,13 @@ public class LancamentoParcialRepositoryImpl extends AbstractRepository<Lancamen
 	}
 
 	@Override
-	public LancamentoParcial obterLancamentoParcial(Long idProdutoEdicao, Date dataRecolhimento) {
+	public LancamentoParcial obterLancamentoParcial(Long idProdutoEdicao, Date dataRecolhimentoFinal) {
 		
 		Criteria criteria = getSession().createCriteria(LancamentoParcial.class);
 		
 		criteria.add(Restrictions.eq("produtoEdicao.id", idProdutoEdicao));
-		criteria.add(Restrictions.eq("recolhimentoFinal", dataRecolhimento));
+		
+		criteria.add(Restrictions.eq("recolhimentoFinal", dataRecolhimentoFinal));
 		
 		Object lancamento = criteria.uniqueResult();
 		

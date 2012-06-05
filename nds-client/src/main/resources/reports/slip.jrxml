@@ -1,8 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="slip" pageWidth="500" pageHeight="500" whenNoDataType="AllSectionsNoDetail" columnWidth="496" leftMargin="2" rightMargin="2" topMargin="2" bottomMargin="2" whenResourceMissingType="Empty">
-	<property name="ireport.zoom" value="1.2100000000000066"/>
-	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="slip" pageWidth="500" pageHeight="500" whenNoDataType="AllSectionsNoDetail" columnWidth="496" leftMargin="2" rightMargin="2" topMargin="2" bottomMargin="2" whenResourceMissingType="Empty" isIgnorePagination="true">
+	<property name="ireport.zoom" value="2.0"/>
+	<property name="ireport.x" value="220"/>
+	<property name="ireport.y" value="347"/>
+	<style name="zebrado" mode="Opaque" backcolor="#F0F0F0">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[new Boolean(($V{COLUMN_COUNT}.intValue() % 2) == 0)]]></conditionExpression>
+			<style mode="Opaque" backcolor="#E3E3E3"/>
+		</conditionalStyle>
+	</style>
 	<parameter name="NUM_SLIP" class="java.lang.String"/>
 	<parameter name="NUM_BOX" class="java.lang.String"/>
 	<parameter name="DATA_CONFERENCIA" class="java.util.Date"/>
@@ -14,6 +20,29 @@
 	<parameter name="TOTAL_PRODUTOS" class="java.math.BigDecimal"/>
 	<parameter name="VALOR_TOTAL_ENCA" class="java.math.BigDecimal"/>
 	<parameter name="VALOR_TOTAL_PAGAR" class="java.math.BigDecimal"/>
+	<parameter name="NUMERO_COTA" class="java.lang.Integer"/>
+	<parameter name="NOME_COTA" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<field name="encalhe" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[encalhe]]></fieldDescription>
+	</field>
+	<field name="nomeProduto" class="java.lang.String">
+		<fieldDescription><![CDATA[nomeProduto]]></fieldDescription>
+	</field>
+	<field name="numeroEdicao" class="java.lang.Long">
+		<fieldDescription><![CDATA[numeroEdicao]]></fieldDescription>
+	</field>
+	<field name="precoVenda" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[precoVenda]]></fieldDescription>
+	</field>
+	<field name="reparte" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[reparte]]></fieldDescription>
+	</field>
+	<field name="valorTotal" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[valorTotal]]></fieldDescription>
+	</field>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
@@ -21,11 +50,21 @@
 		<band height="90" splitType="Stretch">
 			<image>
 				<reportElement stretchType="RelativeToTallestObject" x="0" y="0" width="145" height="90"/>
-				<imageExpression><![CDATA["C:\\Projetos\\Abril\\NDS\\nds-client\\src\\main\\resources\\reports\\logo_2.jpg"]]></imageExpression>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<imageExpression><![CDATA[Thread.currentThread().getContextClassLoader().getResource("/reports/logo_2.jpg").toURI().getPath()]]></imageExpression>
 			</image>
 			<staticText>
-				<reportElement x="153" y="22" width="110" height="54"/>
-				<textElement textAlignment="Center">
+				<reportElement x="145" y="0" width="126" height="90"/>
+				<box topPadding="0">
+					<topPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="14" isBold="true"/>
 				</textElement>
 				<text><![CDATA[TREELOG S/A
@@ -45,8 +84,8 @@ DISTRIBUIÇÃO]]></text>
 				<text><![CDATA[]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="274" y="33" width="131" height="57"/>
-				<box>
+				<reportElement x="271" y="33" width="134" height="57"/>
+				<box leftPadding="3">
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
 					<leftPen lineWidth="1.0"/>
@@ -68,21 +107,21 @@ DISTRIBUIÇÃO]]></text>
 					<bottomPen lineWidth="1.0"/>
 					<rightPen lineWidth="1.0"/>
 				</box>
-				<textElement verticalAlignment="Middle" markup="none">
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
 					<font size="13" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA["Box: " + $P{NUM_BOX}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="274" y="0" width="131" height="33"/>
-				<box>
+				<reportElement x="271" y="0" width="134" height="33"/>
+				<box leftPadding="3">
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
 					<leftPen lineWidth="1.0"/>
 					<bottomPen lineWidth="1.0"/>
 					<rightPen lineWidth="1.0"/>
 				</box>
-				<textElement verticalAlignment="Middle" markup="none">
+				<textElement textAlignment="Left" verticalAlignment="Middle" markup="none">
 					<font size="13" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA["Número: " + $P{NUM_SLIP}]]></textFieldExpression>
@@ -106,11 +145,10 @@ DISTRIBUIÇÃO]]></text>
 				<text><![CDATA[SLIP DE RECOLHIMENTO DE ENCALHE]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="0" y="35" width="496" height="25"/>
-				<box>
-					<pen lineWidth="1.0"/>
+				<reportElement x="281" y="35" width="215" height="25"/>
+				<box leftPadding="3">
 					<topPen lineWidth="1.0"/>
-					<leftPen lineWidth="1.0"/>
+					<leftPen lineWidth="0.0"/>
 					<bottomPen lineWidth="1.0"/>
 					<rightPen lineWidth="1.0"/>
 				</box>
@@ -119,14 +157,25 @@ DISTRIBUIÇÃO]]></text>
 				</textElement>
 				<textFieldExpression><![CDATA["Refer. CE Número " + $P{CE_JORNALEIRO}]]></textFieldExpression>
 			</textField>
+			<textField>
+				<reportElement x="0" y="35" width="281" height="25"/>
+				<box leftPadding="3" rightPadding="0">
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement>
+					<font size="11" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{NUMERO_COTA} + " - " + $P{NOME_COTA}]]></textFieldExpression>
+			</textField>
 		</band>
 	</pageHeader>
 	<columnHeader>
 		<band height="23" splitType="Stretch">
 			<staticText>
 				<reportElement mode="Opaque" x="0" y="0" width="120" height="23" backcolor="#CBCACA"/>
-				<box>
-					<pen lineWidth="1.0"/>
+				<box leftPadding="3">
 					<topPen lineWidth="1.0"/>
 					<leftPen lineWidth="1.0"/>
 					<bottomPen lineWidth="1.0"/>
@@ -152,7 +201,7 @@ DISTRIBUIÇÃO]]></text>
 				<text><![CDATA[Edição]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="196" y="0" width="75" height="23" backcolor="#CBCACA"/>
+				<reportElement mode="Opaque" x="195" y="0" width="76" height="23" backcolor="#CBCACA"/>
 				<box>
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
@@ -205,29 +254,82 @@ DISTRIBUIÇÃO]]></text>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
-				<text><![CDATA[Static text]]></text>
+				<text><![CDATA[Total R$]]></text>
 			</staticText>
 		</band>
 	</columnHeader>
 	<detail>
-		<band height="49" splitType="Stretch"/>
+		<band height="20">
+			<textField>
+				<reportElement style="zebrado" x="0" y="0" width="120" height="20"/>
+				<box leftPadding="3">
+					<leftPen lineWidth="1.0"/>
+				</box>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{nomeProduto}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="zebrado" x="120" y="0" width="75" height="20"/>
+				<box>
+					<leftPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{numeroEdicao}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="zebrado" x="195" y="0" width="76" height="20"/>
+				<box>
+					<leftPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{reparte}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="zebrado" x="271" y="0" width="75" height="20"/>
+				<box>
+					<leftPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{encalhe}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="zebrado" x="346" y="0" width="75" height="20"/>
+				<box rightPadding="3">
+					<leftPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$F{precoVenda}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="zebrado" x="421" y="0" width="75" height="20"/>
+				<box rightPadding="3">
+					<leftPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$F{valorTotal}]]></textFieldExpression>
+			</textField>
+		</band>
 	</detail>
 	<pageFooter>
-		<band height="146" splitType="Stretch">
+		<band height="154" splitType="Stretch">
 			<staticText>
-				<reportElement mode="Opaque" x="0" y="126" width="90" height="20" backcolor="#E3E3E3"/>
-				<box>
+				<reportElement mode="Opaque" x="0" y="132" width="90" height="20" backcolor="#E3E3E3"/>
+				<box leftPadding="3">
 					<topPen lineWidth="1.0"/>
 					<leftPen lineWidth="1.0"/>
 					<bottomPen lineWidth="1.0"/>
-					<rightPen lineWidth="0.0"/>
 				</box>
 				<textElement verticalAlignment="Middle"/>
 				<text><![CDATA[Valor total a pagar:]]></text>
 			</staticText>
-			<textField isBlankWhenNull="true">
-				<reportElement mode="Opaque" x="90" y="126" width="406" height="20" backcolor="#E3E3E3"/>
-				<box>
+			<textField pattern="###0.00" isBlankWhenNull="true">
+				<reportElement mode="Opaque" x="90" y="132" width="406" height="20" backcolor="#E3E3E3"/>
+				<box rightPadding="3">
 					<topPen lineWidth="1.0"/>
 					<leftPen lineWidth="0.0"/>
 					<bottomPen lineWidth="1.0"/>
@@ -237,8 +339,8 @@ DISTRIBUIÇÃO]]></text>
 				<textFieldExpression><![CDATA[$P{VALOR_TOTAL_PAGAR}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement mode="Opaque" x="0" y="2" width="120" height="20" backcolor="#E3E3E3"/>
-				<box>
+				<reportElement mode="Opaque" x="0" y="4" width="120" height="20" backcolor="#E3E3E3"/>
+				<box leftPadding="3">
 					<topPen lineWidth="1.0"/>
 					<leftPen lineWidth="1.0"/>
 				</box>
@@ -246,8 +348,8 @@ DISTRIBUIÇÃO]]></text>
 				<text><![CDATA[Total de produtos do dia:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="0" y="22" width="120" height="20" backcolor="#F0F0F0"/>
-				<box>
+				<reportElement mode="Opaque" x="0" y="24" width="120" height="20" backcolor="#F0F0F0"/>
+				<box leftPadding="3">
 					<leftPen lineWidth="1.0"/>
 					<bottomPen lineWidth="1.0"/>
 				</box>
@@ -255,17 +357,17 @@ DISTRIBUIÇÃO]]></text>
 				<text><![CDATA[Valor do encalhe do dia:]]></text>
 			</staticText>
 			<textField isBlankWhenNull="true">
-				<reportElement mode="Opaque" x="120" y="2" width="376" height="20" backcolor="#E3E3E3"/>
-				<box>
+				<reportElement mode="Opaque" x="120" y="4" width="376" height="20" backcolor="#E3E3E3"/>
+				<box rightPadding="3">
 					<topPen lineWidth="1.0"/>
 					<rightPen lineWidth="1.0"/>
 				</box>
 				<textElement textAlignment="Right"/>
 				<textFieldExpression><![CDATA[$P{TOTAL_PROD_DIA}]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="true">
-				<reportElement mode="Opaque" x="120" y="22" width="376" height="20" backcolor="#F0F0F0"/>
-				<box>
+			<textField pattern="###0.00" isBlankWhenNull="true">
+				<reportElement mode="Opaque" x="120" y="24" width="376" height="20" backcolor="#F0F0F0"/>
+				<box rightPadding="3">
 					<bottomPen lineWidth="1.0"/>
 					<rightPen lineWidth="1.0"/>
 				</box>
@@ -273,75 +375,79 @@ DISTRIBUIÇÃO]]></text>
 				<textFieldExpression><![CDATA[$P{VALOR_ENCA_DIA}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement mode="Opaque" x="90" y="44" width="406" height="20" backcolor="#E3E3E3"/>
-				<box>
+				<reportElement mode="Opaque" x="243" y="48" width="253" height="20" backcolor="#E3E3E3"/>
+				<box rightPadding="3">
 					<topPen lineWidth="1.0"/>
-					<leftPen lineWidth="0.0"/>
 					<rightPen lineWidth="1.0"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$P{TOTAL_PRODUTOS}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement mode="Opaque" x="0" y="44" width="90" height="20" backcolor="#E3E3E3"/>
-				<box>
+				<reportElement mode="Opaque" x="0" y="48" width="243" height="20" backcolor="#E3E3E3"/>
+				<box leftPadding="3">
+					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
 					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="0.0"/>
 					<rightPen lineWidth="0.0"/>
 				</box>
 				<textElement verticalAlignment="Middle"/>
 				<text><![CDATA[Total de produtos:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="0" y="64" width="196" height="20" backcolor="#F0F0F0"/>
-				<box>
+				<reportElement mode="Opaque" x="0" y="68" width="243" height="20" backcolor="#F0F0F0"/>
+				<box leftPadding="3">
 					<leftPen lineWidth="1.0"/>
 				</box>
 				<textElement verticalAlignment="Middle"/>
 				<text><![CDATA[Valor total de encalhe:                           ( A )]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="0" y="84" width="196" height="20" backcolor="#E3E3E3"/>
-				<box>
+				<reportElement mode="Opaque" x="0" y="88" width="243" height="20" backcolor="#E3E3E3"/>
+				<box leftPadding="3">
 					<leftPen lineWidth="1.0"/>
 				</box>
 				<textElement verticalAlignment="Middle"/>
-				<text><![CDATA[Valor devido:                                          ( B )]]></text>
+				<text><![CDATA[Valor devido:                                         ( B )]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="0" y="104" width="211" height="20" backcolor="#F0F0F0"/>
-				<box>
+				<reportElement mode="Opaque" x="0" y="108" width="243" height="20" backcolor="#F0F0F0"/>
+				<box leftPadding="3">
 					<leftPen lineWidth="1.0"/>
 					<bottomPen lineWidth="1.0"/>
 				</box>
 				<textElement verticalAlignment="Middle"/>
-				<text><![CDATA[Valor SLIP do dia:                                  ( B - A )]]></text>
+				<text><![CDATA[Valor SLIP do dia:                                 ( B - A )]]></text>
 			</staticText>
-			<textField isBlankWhenNull="true">
-				<reportElement mode="Opaque" x="195" y="64" width="301" height="20" backcolor="#F0F0F0"/>
-				<box>
+			<textField pattern="###0.00" isBlankWhenNull="true">
+				<reportElement mode="Opaque" x="243" y="68" width="253" height="20" backcolor="#F0F0F0"/>
+				<box rightPadding="3">
 					<rightPen lineWidth="1.0"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$P{VALOR_TOTAL_ENCA}]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="true">
-				<reportElement mode="Opaque" x="195" y="84" width="301" height="20" backcolor="#E3E3E3"/>
-				<box>
+			<textField pattern="###0.00" isBlankWhenNull="true">
+				<reportElement mode="Opaque" x="243" y="88" width="253" height="20" backcolor="#E3E3E3"/>
+				<box rightPadding="3">
 					<rightPen lineWidth="1.0"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$P{VALOR_DEVIDO}]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="true">
-				<reportElement mode="Opaque" x="211" y="104" width="285" height="20" backcolor="#F0F0F0"/>
-				<box>
+			<textField pattern="###0.00" isBlankWhenNull="true">
+				<reportElement mode="Opaque" x="243" y="108" width="253" height="20" backcolor="#F0F0F0"/>
+				<box rightPadding="3">
 					<bottomPen lineWidth="1.0"/>
 					<rightPen lineWidth="1.0"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$P{VALOR_SLIP}]]></textFieldExpression>
 			</textField>
+			<line>
+				<reportElement x="0" y="0" width="496" height="1"/>
+			</line>
 		</band>
 	</pageFooter>
 </jasperReport>

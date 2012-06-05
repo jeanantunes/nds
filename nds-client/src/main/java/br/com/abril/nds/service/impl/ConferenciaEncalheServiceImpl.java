@@ -1,6 +1,8 @@
 package br.com.abril.nds.service.impl;
 
 import java.math.BigDecimal;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -8,15 +10,23 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import net.sf.jasperreports.engine.JRDataSource;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperRunManager;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.ConferenciaEncalheDTO;
 import br.com.abril.nds.dto.DebitoCreditoCotaDTO;
+import br.com.abril.nds.dto.DocumentoConferenciaEncalheDTO;
 import br.com.abril.nds.dto.InfoConferenciaEncalheCota;
 import br.com.abril.nds.dto.MovimentoFinanceiroCotaDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoDTO;
+import br.com.abril.nds.dto.ProdutoEdicaoSlipDTO;
+import br.com.abril.nds.dto.SlipDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.TipoEdicao;
 import br.com.abril.nds.model.cadastro.Box;
@@ -36,6 +46,7 @@ import br.com.abril.nds.model.estoque.OperacaoEstoque;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
 import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
+import br.com.abril.nds.model.financeiro.OperacaoFinaceira;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 import br.com.abril.nds.model.fiscal.ItemNotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaCota;
@@ -66,6 +77,7 @@ import br.com.abril.nds.repository.TipoMovimentoEstoqueRepository;
 import br.com.abril.nds.repository.TipoMovimentoFinanceiroRepository;
 import br.com.abril.nds.service.ConferenciaEncalheService;
 import br.com.abril.nds.service.DistribuidorService;
+import br.com.abril.nds.service.DocumentoCobrancaService;
 import br.com.abril.nds.service.GerarCobrancaService;
 import br.com.abril.nds.service.MovimentoEstoqueService;
 import br.com.abril.nds.service.MovimentoFinanceiroCotaService;
@@ -148,6 +160,9 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	
 	@Autowired
 	private LancamentoParcialRepository lancamentoParcialRepository;
+	
+	@Autowired
+	private DocumentoCobrancaService documentoCobrancaService;
 	
 //	@Autowired
 //	private EstoqueProdutoRespository estoqueProdutoRepository;
@@ -686,7 +701,15 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		Set<String> nossoNumeroCollection = gerarCobranca(controleConfEncalheCota);
 		
-		gerarDocumentosConferenciaEncalhe(controleConfEncalheCota, nossoNumeroCollection);
+		String nossoNumero = "";
+		
+		if(nossoNumeroCollection!=null && !nossoNumeroCollection.isEmpty()) {
+			
+			nossoNumero = nossoNumeroCollection.iterator().next();
+			
+		}
+		
+		gerarDocumentosConferenciaEncalhe(controleConfEncalheCota, nossoNumero);
 		
 	}
 	
@@ -1124,54 +1147,78 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			Date dataRecolhimentoDistribuidor,
 			BigDecimal qtdeExemplarEncalhe) throws EncalheExcedeReparteException {
 		
-		ProdutoEdicao produtoEdicao 	= produtoEdicaoRepository.buscarPorId(idProdutoEdicao);
-		LancamentoParcial lancParcial 	= null;
-		BigDecimal qtdeReparte 			= null;
-		
-		if(produtoEdicao.isParcial()) {
-			
-			lancParcial = lancamentoParcialRepository.obterLancamentoParcial(produtoEdicao.getId(), dataOperacao);
-			
-			if(lancParcial==null) {
-				
-				Date dataLancamento = lancamentoRepository.obterDataUltimoLancamentoParcial(idProdutoEdicao, dataOperacao);
-				
-				if(dataLancamento == null) {
-					throw new IllegalStateException("Não foi possível validar a quantidade de " + 
-													"reparte para o produtoEdicao de id: " + idProdutoEdicao);
-				}
-				
-				qtdeReparte = movimentoEstoqueCotaRepository.obterQtdeMovimentoEstoqueCotaParaProdutoEdicaoNoPeriodo(
-						idCota, 
-						idProdutoEdicao, 
-						dataLancamento, 
-						dataRecolhimentoDistribuidor, 
-						OperacaoEstoque.ENTRADA);
-
-				if(qtdeReparte == null) {
-					throw new IllegalStateException("Não foi possível validar a quantidade de " + 
-													"reparte para o produtoEdicao de id: " + idProdutoEdicao);
-				}
-				
-				if(qtdeExemplarEncalhe.compareTo(qtdeReparte)>0) {
-					
-					throw new EncalheExcedeReparteException();
-					
-				} else {
-					
-					return;
-					
-				}
-			}
-		} 
-
-		EstoqueProdutoCota estoqueProdutoCota = estoqueProdutoCotaRepository.buscarEstoquePorProdutEdicaoECota(idProdutoEdicao, idCota);
-		BigDecimal qtdeDevolvida 	= (estoqueProdutoCota.getQtdeDevolvida() == null) ? BigDecimal.ZERO : estoqueProdutoCota.getQtdeDevolvida();
-		BigDecimal qtdeRecebida 	=  (estoqueProdutoCota.getQtdeRecebida() == null) ? BigDecimal.ZERO : estoqueProdutoCota.getQtdeRecebida();
-		qtdeReparte 				=  qtdeRecebida.subtract(qtdeDevolvida);
+		BigDecimal qtdeReparte = obterQtdeReparteParaProdutoEdicao(
+				idCota, 
+				idProdutoEdicao, 
+				dataOperacao, 
+				dataRecolhimentoDistribuidor);
 		
 		if(qtdeExemplarEncalhe.compareTo(qtdeReparte)>0) {
 			throw new EncalheExcedeReparteException();
+		}
+		
+	}
+	
+	/**
+	 * Obtém o reparte de um produtoEdicao para determinada cota.
+	 * 
+	 * @param idCota
+	 * @param idProdutoEdicao
+	 * @param dataOperacao
+	 * @param dataRecolhimentoDistribuidor
+	 * 
+	 * @return BigDecimal
+	 */
+	private BigDecimal obterQtdeReparteParaProdutoEdicao(
+			Long idCota, 
+			Long idProdutoEdicao, 
+			Date dataOperacao,
+			Date dataRecolhimentoDistribuidor) {
+		
+		ProdutoEdicao produtoEdicao 	= produtoEdicaoRepository.buscarPorId(idProdutoEdicao);
+		
+		boolean indParcialNaoFinal = false;
+		
+		if(produtoEdicao.isParcial()) {
+			
+			LancamentoParcial lancamentoParcialFinal =  lancamentoParcialRepository.obterLancamentoParcial(produtoEdicao.getId(), dataOperacao);
+			
+			indParcialNaoFinal = (lancamentoParcialFinal == null);
+		} 
+
+		if(indParcialNaoFinal) {
+			
+			Date dataLancamento = lancamentoRepository.obterDataUltimoLancamentoParcial(idProdutoEdicao, dataOperacao);
+			
+			if(dataLancamento == null) {
+				throw new IllegalStateException("Não foi possível validar a quantidade de " + 
+												"reparte para o produtoEdicao de id: " + idProdutoEdicao);
+			}
+			
+			BigDecimal qtdeReparte = movimentoEstoqueCotaRepository.obterQtdeMovimentoEstoqueCotaParaProdutoEdicaoNoPeriodo(
+					idCota, 
+					idProdutoEdicao, 
+					dataLancamento, 
+					dataRecolhimentoDistribuidor, 
+					OperacaoEstoque.ENTRADA);
+
+			if(qtdeReparte == null) {
+				throw new IllegalStateException("Não foi possível validar a quantidade de " + 
+												"reparte para o produtoEdicao de id: " + idProdutoEdicao);
+			}
+			
+			return qtdeReparte;
+			
+		} else {
+
+			EstoqueProdutoCota estoqueProdutoCota = estoqueProdutoCotaRepository.buscarEstoquePorProdutEdicaoECota(idProdutoEdicao, idCota);
+			
+			BigDecimal qtdeDevolvida 	= (estoqueProdutoCota.getQtdeDevolvida() == null) ? BigDecimal.ZERO : estoqueProdutoCota.getQtdeDevolvida();
+			
+			BigDecimal qtdeRecebida 	=  (estoqueProdutoCota.getQtdeRecebida() == null) ? BigDecimal.ZERO : estoqueProdutoCota.getQtdeRecebida();
+			
+			return  qtdeRecebida.subtract(qtdeDevolvida);
+			
 		}
 		
 	}
@@ -1688,13 +1735,16 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	* quais documentos serao gerados e se os mesmos serao impressos
 	* ou enviados por email.                                       
 	*/
-	private void gerarDocumentosConferenciaEncalhe(
+	private DocumentoConferenciaEncalheDTO gerarDocumentosConferenciaEncalhe(
 			ControleConferenciaEncalheCota controleConferenciaEncalheCota, 
-			Set<String> nossoNumeroCollection) {
+			String nossoNumero) {
 		
 		PoliticaCobranca politicaCobranca = politicaCobrancaService.obterPoliticaCobrancaPrincipal();
 		
 		FormaEmissao formaEmissao = politicaCobranca.getFormaEmissao();
+		
+		DocumentoConferenciaEncalheDTO documentoConferenciaEncalheDTO = new DocumentoConferenciaEncalheDTO();
+
 		
 		switch(formaEmissao) {
 		
@@ -1703,7 +1753,11 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			break;
 			
 			case INDIVIDUAL_BOX:
-				//TODO gerar arquivo ...
+
+				documentoConferenciaEncalheDTO.setDocumentoCobranca(documentoCobrancaService.gerarDocumentoCobranca(nossoNumero));
+				
+				documentoConferenciaEncalheDTO.setDocumentoSlip(gerarSlip(controleConferenciaEncalheCota));
+				
 			break;
 			
 			case EM_MASSA:
@@ -1716,27 +1770,194 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		}
 		
-		boolean indEnviaEmail = politicaCobranca.getFormaCobranca().isRecebeCobrancaEmail();
+//		boolean indEnviaEmail = politicaCobranca.getFormaCobranca().isRecebeCobrancaEmail();
 		
-		gerarSlip();
-		
-		gerarBoleto();
-		
-		gerarRecibo();
+	
+		return documentoConferenciaEncalheDTO;
 		
 	}
 	
-	
-	private void gerarSlip() {
-		//TODO
+	/**
+	 * Obtém o valor devido pela cota na dataOperacao.
+	 * 
+	 * O valor é constituído pela valor total da chamada de encalhe e
+	 * outros possíveis débitos desta cota.
+	 * 
+	 * @param numeroCota
+	 * @param dataOperacao
+	 * 
+	 * @return BigDecimal
+	 */
+	private BigDecimal obterValorDevidoCota(Integer numeroCota, Date dataOperacao) {
+		
+		List<TipoMovimentoFinanceiro> tiposMovimentoFinanceiroIgnorados = null;
+		
+		List<DebitoCreditoCotaDTO> listaDebitoCreditoCota = 
+				movimentoFinanceiroCotaRepository.
+				obterDebitoCreditoSumarizadosParaCotaDataOperacao(
+						numeroCota, 
+						dataOperacao, 
+						tiposMovimentoFinanceiroIgnorados);
+		
+		BigDecimal totalCredito = BigDecimal.ZERO;
+		
+		BigDecimal totalDebito = BigDecimal.ZERO;
+		
+		for(DebitoCreditoCotaDTO debitoCreditoCota : listaDebitoCreditoCota) {
+			
+			if(OperacaoFinaceira.CREDITO.name().equals(debitoCreditoCota.getTipoLancamento())) {
+				
+				totalCredito = adicionarValorBigDecimal(totalCredito, debitoCreditoCota.getValor());
+				
+			} else if(OperacaoFinaceira.DEBITO.name().equals(debitoCreditoCota.getTipoLancamento())) {
+				
+				totalDebito = adicionarValorBigDecimal(totalDebito, debitoCreditoCota.getValor());
+				
+			}
+			
+		}
+
+		BigDecimal valorDevido = totalDebito.subtract(totalCredito);
+		
+		
+		if(valorDevido.compareTo(BigDecimal.ZERO)>0) {
+			
+			return valorDevido;
+			
+		} else {
+			
+			return BigDecimal.ZERO;
+			
+		}
+		
 	}
 	
-	private void gerarBoleto() {
-		//TODO
+	private byte[] gerarSlip(ControleConferenciaEncalheCota controleConferenciaEncalheCota) {
+
+		Distribuidor distribuidor = distribuidorService.obter();
+		Date dataOperacao = distribuidor.getDataOperacao();
+		
+		List<ProdutoEdicaoSlipDTO> listaProdutoEdicaoSlip = 
+				conferenciaEncalheRepository.obterDadosSlipConferenciaEncalhe(
+						controleConferenciaEncalheCota.getId(), 
+						distribuidor.getId());
+		
+		Integer numeroCota 		= controleConferenciaEncalheCota.getCota().getNumeroCota();
+		Long idCota				= controleConferenciaEncalheCota.getCota().getId();
+		String nomeCota 		= controleConferenciaEncalheCota.getCota().getPessoa().getNome();
+		Date dataConferencia 	= controleConferenciaEncalheCota.getDataOperacao();
+		String codigoBox 		= controleConferenciaEncalheCota.getBox().getCodigo();
+		
+		
+		BigDecimal qtdeTotalProdutos 	= null;
+		BigDecimal valorTotalEncalhe 	= null;
+		BigDecimal valorTotalPagar 		= null;
+		
+		for(ProdutoEdicaoSlipDTO produtoEdicaoSlip : listaProdutoEdicaoSlip) {
+			
+			BigDecimal reparte = obterQtdeReparteParaProdutoEdicao(
+					idCota, 
+					produtoEdicaoSlip.getIdProdutoEdicao(), 
+					dataOperacao, 
+					produtoEdicaoSlip.getDataRecolhimentoDistribuidor());
+			
+			produtoEdicaoSlip.setReparte(reparte);
+			
+			qtdeTotalProdutos = adicionarValorBigDecimal(qtdeTotalProdutos, produtoEdicaoSlip.getEncalhe());
+			
+			valorTotalEncalhe = adicionarValorBigDecimal(valorTotalEncalhe, produtoEdicaoSlip.getValorTotal());
+			
+		}
+		
+		SlipDTO slip = new SlipDTO();
+
+		//TODO: pode haver produtos na operação de encalhe pertencentes
+		// 		a mais de uma chamada de encalhe.
+		slip.setCeJornaleiro(null);
+		
+		BigDecimal valorDevido	= obterValorDevidoCota(numeroCota, dataOperacao);
+		
+		slip.setNumeroCota(numeroCota);
+		slip.setNomeCota(nomeCota);
+		slip.setDataConferencia(dataConferencia);           
+		slip.setCodigoBox(codigoBox);                   
+		slip.setTotalProdutoDia(qtdeTotalProdutos);  
+		slip.setTotalProdutos(qtdeTotalProdutos);    
+		slip.setValorEncalheDia(valorTotalEncalhe);    
+		slip.setValorTotalEncalhe(valorTotalEncalhe); 
+		slip.setValorDevido(valorDevido);        
+		slip.setValorSlip(valorDevido.subtract(valorTotalEncalhe));           
+		slip.setValorTotalPagar(valorTotalPagar); 
+		slip.setNumSlip(null);                 
+		slip.setListaProdutoEdicaoSlipDTO(listaProdutoEdicaoSlip);
+
+		Map<String, Object> parameters = new HashMap<String, Object>();
+		
+		parameters.put("NUMERO_COTA", slip.getNumeroCota());
+		parameters.put("NOME_COTA", slip.getNomeCota());
+		parameters.put("NUM_SLIP", slip.getNumSlip().toString());
+		parameters.put("CODIGO_BOX", slip.getCodigoBox());
+		parameters.put("DATA_CONFERENCIA", slip.getDataConferencia());
+		parameters.put("CE_JORNALEIRO", slip.getCeJornaleiro());
+		parameters.put("TOTAL_PROD_DIA", slip.getTotalProdutoDia());
+		parameters.put("VALOR_ENCA_DIA", slip.getValorEncalheDia());
+		parameters.put("VALOR_DEVIDO", slip.getValorDevido());
+		parameters.put("VALOR_SLIP", slip.getValorSlip());
+		parameters.put("TOTAL_PRODUTOS", slip.getTotalProdutos());
+		parameters.put("VALOR_TOTAL_ENCA", slip.getValorTotalEncalhe() );
+		parameters.put("VALOR_TOTAL_PAGAR", slip.getValorTotalPagar());
+		
+		
+		JRDataSource jrDataSource = new JRBeanCollectionDataSource(slip.getListaProdutoEdicaoSlipDTO());
+		
+		URL url = Thread.currentThread().getContextClassLoader().getResource("/reports/slip.jasper");
+		
+		String path = null;
+		
+		try {
+		
+			path = url.toURI().getPath();
+		
+		} catch (URISyntaxException e) {
+			
+			throw new ValidacaoException(TipoMensagem.ERROR, "Não foi possível gerar relatório Slip");
+			
+		}
+		
+		try {
+		
+			return  JasperRunManager.runReportToPdf(path, parameters, jrDataSource);
+		
+		} catch (JRException e) {
+		
+			throw new ValidacaoException(TipoMensagem.ERROR, "Não foi possível gerar relatório Slip");
+		
+		}
+		
 	}
 	
-	private void gerarRecibo() {
-		//TODO
+	/**
+	 * Adiciona ao primeiro parâmetro (valorTotal) o segundo parâmetro (valorAdiciona)
+	 * e retorna o resultado da soma; 
+	 * 
+	 * @param valorTotal
+	 * @param valorAdicional
+	 * 
+	 * @return BigDecimal
+	 */
+	private BigDecimal adicionarValorBigDecimal(BigDecimal valorTotal, BigDecimal valorAdicional) {
+		
+		if(valorAdicional == null ) {
+			return valorTotal;
+		}
+		
+		if(valorTotal == null) {
+			valorTotal = BigDecimal.ZERO;
+		}
+		
+		return valorTotal.add(valorAdicional);
+		
 	}
+	
 	
 }

@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import br.com.abril.nds.model.financeiro.OperacaoFinaceira;
+
 public class DebitoCreditoCotaDTO implements Serializable {
 
 	/**
@@ -56,7 +58,6 @@ public class DebitoCreditoCotaDTO implements Serializable {
 	public void setValor(BigDecimal valor) {
 		this.valor = valor;
 	}
-	
 	
 	
 }

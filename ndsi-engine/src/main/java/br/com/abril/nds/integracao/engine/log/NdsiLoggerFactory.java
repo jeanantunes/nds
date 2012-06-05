@@ -35,4 +35,8 @@ public class NdsiLoggerFactory {
 	public NdsiLogger getLogger() {
 		return threadLocalNdsLogger.get();
 	}
+	
+	public void resetLogger() {
+		threadLocalNdsLogger = new ThreadLocalNdsLogger();
+	}
 }
