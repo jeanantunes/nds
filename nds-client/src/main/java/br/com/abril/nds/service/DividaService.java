@@ -61,13 +61,14 @@ public interface DividaService {
 	 */
 	Divida obterDividaPorId(Long idDivida);
 	
-	
 	/**
 	 * Posterga a dívida de uma cota.
 	 * 
-	 * @param listaCodigosCotas
+	 * @param listaIdsCobranca
 	 * @param dataPostergacao
+	 * @param juros
+	 * @param multa
 	 */
-	void postergarCobrancaCota(List<Long> listaIdsCobranca, Date dataPostergacao, BigDecimal juros, BigDecimal multa);
+	void postergarCobrancaCota(List<Long> listaIdsCobranca, Date dataPostergacao, BigDecimal juros, BigDecimal multa, Long idUsuario);
 
 }
