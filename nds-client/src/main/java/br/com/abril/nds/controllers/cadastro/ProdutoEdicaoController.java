@@ -17,7 +17,6 @@ import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.ProdutoService;
-import br.com.abril.nds.service.exception.UniqueConstraintViolationException;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
@@ -203,19 +202,16 @@ public class ProdutoEdicaoController {
 
 		} catch (Exception e) {
 			
+			ValidacaoVO vo = null;
 			if (e instanceof ValidacaoException) {
 				
-				this.result.use(Results.json()).from(
-						((ValidacaoException) e).getValidacao(), "result")
-						.recursive().serialize();
-				
+				vo = ((ValidacaoException) e).getValidacao();
 			} else {
 				
-				this.result.use(Results.json()).from(
-						new ValidacaoVO(TipoMensagem.ERROR, e.getMessage() + ""), 
-							"result").recursive().serialize();
+				vo = new ValidacaoVO(TipoMensagem.ERROR, e.getMessage() + "");
 			}
 			
+			this.result.use(Results.json()).from(vo, "result").recursive().serialize();
 			throw new ValidacaoException();
 		}
 
