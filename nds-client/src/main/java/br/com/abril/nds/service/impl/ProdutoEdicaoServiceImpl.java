@@ -238,142 +238,246 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 	
 	@Override
 	@Transactional
-	public void salvarProdutoEdicao(ProdutoEdicaoDTO dto, String codigoProduto, String contentType, InputStream imgInputStream) {
-		
-		// TODO: REFACTORING: após testar e validar, separar em métodos privados
-		// o save para ProdutoEdicao e Lancamento (melhorar a legibilidade do código).
+	public void salvarProdutoEdicao(ProdutoEdicaoDTO dto, String codigoProduto, 
+			String contentType, InputStream imgInputStream) {
 		
 		ProdutoEdicao produtoEdicao = null;
-		Lancamento lancamento = 
-				//null;
-				new Lancamento();
 		if (dto.getId() == null) {
 			
 			// Novo ProdutoEdicao - create:
 			produtoEdicao = new ProdutoEdicao();
 			produtoEdicao.setProduto(produtoRepository.obterProdutoPorCodigo(codigoProduto));
-			
-			/*
-			 * TODO: REMOVER POSTERIORMENTE
-			lancamento = new Lancamento();
-			produtoEdicao.getLancamentos().add(lancamento);
-			 */
+			produtoEdicao.setOrigemInterface(Boolean.FALSE);
 		} else {
 			
 			// ProdutoEdicao existente - update:
 			produtoEdicao = produtoEdicaoRepository.buscarPorId(dto.getId());
-			
-			/*
-			 * TODO: REMOVER POSTERIORMENTE
-			lancamento = lancamentoRepository.obterUltimoLancamentoDaEdicao(produtoEdicao.getId());
-			 */
-			
-			/*
-			 * Regra: Os campos abaixos só podem ser alterados caso a Edição
-			 * ainda não tenha sido publicado pelo distribuidor:
-			 * - Código da Edição;
-			 * - Número da Edição;
-			 * 
-			 * Alteração: "Data de Lançamento do Distribuidor" > "Data 'de hoje'"
-			 */
-			if (!produtoEdicaoRepository.isProdutoEdicaoJaPublicada(produtoEdicao.getId())) {
-				
-				// Campo: Código do ProdutoEdicao:
-				if (!produtoEdicao.getCodigo().equals(dto.getCodigoProduto())) {
-					throw new ValidacaoException(TipoMensagem.ERROR, "Não é permitido alterar o código de uma Edição já publicada!");
-				}
-
-				// Campo: Número do ProdutoEdicao:
-				if (!produtoEdicao.getNumeroEdicao().equals(dto.getNumeroEdicao())) {
-					throw new ValidacaoException(TipoMensagem.ERROR, "Não é permitido alterar o número de uma Edição já publicada!");
-				}
-			}
 		}		
 		
+		
+		// 01 ) Salvar/Atualizar o ProdutoEdicao:
+		this.salvarProdutoEdicao(dto, produtoEdicao);
+		
+		
+		// 02) Salvar imagem:
+		if (imgInputStream != null) {
+			capaService.saveCapa(produtoEdicao.getId(), contentType, imgInputStream);
+		}
+		
+		
+		// 03) Salvar/Atualizar o lancamento:
+		this.salvarLancamento(dto, produtoEdicao);
+	}
+	
+	/**
+	 * Aplica todas as regras de validação para o cadastro de uma Edição.
+	 * 
+	 * @param dto
+	 * @param produtoEdicao
+	 */
+	private void validarProdutoEdicao(ProdutoEdicaoDTO dto, ProdutoEdicao produtoEdicao) {
+		
+		/*
+		 * Regra: Os campos abaixos só podem ser alterados caso a Edição
+		 * ainda não tenha sido publicado pelo distribuidor:
+		 * - Código da Edição;
+		 * - Número da Edição;
+		 * 
+		 * Alteração: "Data de Lançamento do Distribuidor" > "Data 'de hoje'"
+		 */
+		if (produtoEdicaoRepository.isProdutoEdicaoJaPublicada(produtoEdicao.getId())) {
+			
+			// Campo: Código do ProdutoEdicao:
+			if (!produtoEdicao.getCodigo().equals(dto.getCodigoProduto())) {
+				throw new ValidacaoException(TipoMensagem.ERROR, 
+						"Não é permitido alterar o código de uma Edição já publicada!");
+			}
+
+			// Campo: Número do ProdutoEdicao:
+			if (!produtoEdicao.getNumeroEdicao().equals(dto.getNumeroEdicao())) {
+				throw new ValidacaoException(TipoMensagem.ERROR, 
+						"Não é permitido alterar o número de uma Edição já publicada!");
+			}
+		}
 		
 		/* Regra: Se não existir nenhuma edição associada ao produto, salvar n. 1 */
 		if (!this.produtoEdicaoRepository.hasProdutoEdicao(produtoEdicao.getProduto())) {
 			produtoEdicao.setNumeroEdicao(Long.valueOf(1));
 		}
 		
-		// Campos a serem persistidos e/ou alterados:
+		/* Regra: Não deve existir dois número de edição para o mesmo grupo de Edições: */
+		if (this.produtoEdicaoRepository.isNumeroEdicaoCadastrada(
+				dto.getCodigoProduto(), dto.getNumeroEdicao(), produtoEdicao.getId())) {
+			throw new ValidacaoException(TipoMensagem.ERROR, "Este número de edição já esta cadastrada para outra Edição!");
+		}
 		
-		// Identificação:
-		produtoEdicao.setCodigo(dto.getCodigoProduto());	// View: Codigo da Edição;
-		produtoEdicao.setNomeComercial(dto.getNomeComercialProduto());
-		produtoEdicao.setNumeroEdicao(dto.getNumeroEdicao());
-		produtoEdicao.setPacotePadrao(dto.getPacotePadrao());
-		lancamento.setTipoLancamento(dto.getTipoLancamento());
+		/* Regra: Não deve existir duas Edições com o mesmo código de barra. */
+		List<ProdutoEdicao> lstPeCodBarra = 
+				this.produtoEdicaoRepository.obterProdutoEdicaoPorCodigoDeBarra(
+						dto.getCodigoDeBarras());
+		if (lstPeCodBarra != null && !lstPeCodBarra.isEmpty()) {
+			
+			ProdutoEdicao peCodBarra = lstPeCodBarra.get(0);
+			StringBuilder msg = new StringBuilder();
+			msg.append("O Produto '");
+			msg.append(peCodBarra.getProduto().getNome());
+			msg.append("' - Edição º");
+			msg.append(peCodBarra.getNumeroEdicao());
+			msg.append(" já esta cadastrado com este código de barra!");
+			
+			throw new ValidacaoException(TipoMensagem.ERROR, msg.toString());
+		}		
+	}
+	
+	/**
+	 * Salva ou atualiza um ProdutoEdicao.<br>.
+	 * Os campos permitidos no cenário de gravação ou alteração de um 
+	 * ProdutoEdição criado por um Distribuidor:
+	 * <ul>
+	 * <li>Imagem da Capa;</li>
+	 * <li>Código do ProdutoEdição;</li>
+	 * <li>Nome Comercial do ProdutoEdição;</li>
+	 * <li>Número da Edição;</li>
+	 * <li>Pacote Padrão;</li>
+	 * <li>Tipo de Lançamento;</li>
+	 * <li>Preço da Capa (Previsto);</li>
+	 * <li>Data de Lançamento (Previsto);</li>
+	 * <li>Reparte Previsto;</li>
+	 * <li>Reparte Promocional;</li>
+	 * <li>Categoria;</li>
+	 * <li>Código de Barras;</li>
+	 * <li>Código de Barras Corporativo;</li>
+	 * <li>Desconto;</li>
+	 * <li>Chamada da Capa;</li>
+	 * <li>Regime de Recolhimento (Parcial);</li>
+	 * <li>Brinde;</li>
+	 * <li>Boletim Informativo;</li>
+	 * </ul>
+	 * <br> 
+	 * Os campos permitidos no cenário de alteração de um ProdutoEdição 
+	 * vindo da Interface:
+	 * <ul>
+	 * <li>Imagem da Capa;</li>
+	 * <li>Preço da Capa (Real);</li>
+	 * <li>Código de Barras;</li>
+	 * <li>Chamada da Capa;</li>
+	 * <li>Brinde;</li>
+	 * <li>Peso;</li>
+	 * </ul>
+	 * 
+	 * @param dto
+	 * @param produtoEdicao
+	 */
+	private void salvarProdutoEdicao(ProdutoEdicaoDTO dto, ProdutoEdicao produtoEdicao) {
 		
-		// Preço de capa:
-		produtoEdicao.setPrecoPrevisto(dto.getPrecoPrevisto());
+		// 01) Validações:
+		this.validarProdutoEdicao(dto, produtoEdicao);
 		
-		// Data lançamento:
-		lancamento.setDataLancamentoPrevista(dto.getDataLancamentoPrevisto());
-		lancamento.setDataLancamentoDistribuidor(dto.getDataLancamento());	// Data Lançamento Real;
 		
-		// Reparte:
-		BigDecimal repartePrevisto = dto.getRepartePrevisto();
-		BigDecimal repartePromocional = dto.getRepartePromocional();
-		lancamento.setReparte(repartePrevisto);
-		produtoEdicao.setReparteDistribuido(repartePrevisto.add(repartePromocional));
-		lancamento.setRepartePromocional(repartePromocional);
+		// 02) Campos a serem persistidos e/ou alterados:
+		
+		BigDecimal repartePrevisto = dto.getRepartePrevisto() == null 
+				? BigDecimal.ZERO : dto.getRepartePrevisto();
+		BigDecimal repartePromocional = dto.getRepartePromocional() == null 
+				? BigDecimal.ZERO : dto.getRepartePromocional();
+		if (!produtoEdicao.getOrigemInterface().booleanValue()) {
+			// Campos exclusivos para o Distribuidor::
+			
+			// Identificação:
+			produtoEdicao.setCodigo(dto.getCodigoProduto());	// View: Codigo da Edição;
+			produtoEdicao.setNomeComercial(dto.getNomeComercialProduto());
+			produtoEdicao.setNumeroEdicao(dto.getNumeroEdicao());
+			produtoEdicao.setPacotePadrao(dto.getPacotePadrao());
+			
+			// Preço de capa:
+			produtoEdicao.setPrecoPrevisto(dto.getPrecoPrevisto());
+			
+			// Reparte:
+			produtoEdicao.setReparteDistribuido(repartePrevisto.add(repartePromocional));
+			
+			// Características do lançamento:
+			// TODO: !!!colocar o select da categoria aqui!!!
+			produtoEdicao.setCodigoDeBarraCorporativo(dto.getCodigoDeBarrasCorporativo());
+			
+			// Tipos de desconto:
+			produtoEdicao.setDesconto(dto.getDesconto());
+			
+			// Outros:
+			produtoEdicao.setChamadaCapa(dto.getChamadaCapa());
+			produtoEdicao.setParcial(dto.isParcial());	// Regime de Recolhimento;
+			
+			// Característica Física:
+			produtoEdicao.setPeso(dto.getPeso());
+			Dimensao dimEdicao = new Dimensao();
+			dimEdicao.setLargura(dto.getLargura());
+			dimEdicao.setComprimento(dto.getComprimento());
+			dimEdicao.setEspessura(dto.getEspessura());
+			produtoEdicao.setDimensao(dimEdicao);
+			
+			// Texto boletim informativo:
+			produtoEdicao.setBoletimInformativo(dto.getBoletimInformativo());
+		} else {
+			// Campos exclusivos para a Interface:
+			
+			// Preço de capa:
+			produtoEdicao.setPrecoVenda(dto.getPrecoVenda());	// View: Preço real;
+		}
+		
+		// Campos comuns para o Distribuidor e Interface:
 		
 		// Características do lançamento:
-		// TODO: !!!colocar o select da categoria aqui!!!
 		produtoEdicao.setCodigoDeBarras(dto.getCodigoDeBarras());
-		produtoEdicao.setCodigoDeBarraCorporativo(dto.getCodigoDeBarrasCorporativo());
-		
-		// Tipos de desconto:
-		produtoEdicao.setDesconto(dto.getDesconto());
 		
 		// Outros:
 		produtoEdicao.setChamadaCapa(dto.getChamadaCapa());
-		produtoEdicao.setParcial(dto.isParcial());	// Regime de Recolhimento;
 		produtoEdicao.setPossuiBrinde(dto.isPossuiBrinde());
 		
 		// Característica Física:
 		produtoEdicao.setPeso(dto.getPeso());
-		Dimensao dimEdicao = new Dimensao();
-		dimEdicao.setLargura(dto.getLargura());
-		dimEdicao.setComprimento(dto.getComprimento());
-		dimEdicao.setEspessura(dto.getEspessura());
-		produtoEdicao.setDimensao(dimEdicao);
 		
-		// Texto boletim informativo:
-		produtoEdicao.setBoletimInformativo(dto.getBoletimInformativo());
-		
-		
-		Dimensao d = new Dimensao();
-		d.setLargura(dto.getLargura());
-		d.setComprimento(dto.getComprimento());
-		d.setEspessura(dto.getEspessura());
 		
 		if (produtoEdicao.getId() == null) {
 			
-			// Campos a serem persistidos:
-			// Preço de capa:
-			produtoEdicao.setPrecoVenda(dto.getPrecoVenda());	// View: Preço real;
-			
 			// Salvar:
-			produtoEdicao.setOrigemInterface(Boolean.FALSE);
 			produtoEdicaoRepository.adicionar(produtoEdicao);
 		} else {
 			
 			// Atualizar:
 			produtoEdicaoRepository.alterar(produtoEdicao);
 		}
+	}
+	
+	/**
+	 * Salva um novo lançamento.
+	 * 
+	 * @param dto
+	 * @param produtoEdicao
+	 */
+	private void salvarLancamento(ProdutoEdicaoDTO dto, ProdutoEdicao produtoEdicao) {
 		
-		/*
-		 * TODO: Se na alteração de uma Edição, alguns dos dados do lançamento
-		 * for alterado, qual o procedimento a ser tomado?
-		 * - Editar o lançamento mais recente (o que foi exibido na tela para o usuário)?
-		 * - Criar um novo lançamento?
-		 * 
-		 * Caso seja criar um lancamento novo, alterar todas as regras de 
-		 * criação e persistencia
-		 * (irá tornar este código menor).
-		 */
+		// Só pode alterar quando o ProdutoEdicao for criado pelo Distribuidor:
+		if (produtoEdicao.getOrigemInterface().booleanValue()) {
+			return;
+		}
+		
+		
+		Lancamento lancamento = new Lancamento();
+		
+		// Identificação:
+		lancamento.setTipoLancamento(dto.getTipoLancamento());
+		
+		// Data lançamento:
+		lancamento.setDataLancamentoPrevista(dto.getDataLancamentoPrevisto());
+		lancamento.setDataLancamentoDistribuidor(dto.getDataLancamento());	// Data Lançamento Real;
+		
+		// Reparte:
+		BigDecimal repartePrevisto = dto.getRepartePrevisto() == null 
+				? BigDecimal.ZERO : dto.getRepartePrevisto();
+		BigDecimal repartePromocional = dto.getRepartePromocional() == null 
+				? BigDecimal.ZERO : dto.getRepartePromocional();
+		lancamento.setReparte(repartePrevisto);
+		lancamento.setRepartePromocional(repartePromocional);
+		
 		// Cálcular as datas de Recolhimento:
 		int peb = produtoEdicao.getProduto().getPeb();
 		Calendar calPeb = Calendar.getInstance();
@@ -388,40 +492,14 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 		
 		Date dtSysdate = new Date();
 		lancamento.setDataCriacao(dtSysdate);
-		lancamento.setDataStatus(dtSysdate);
+		lancamento.setDataStatus(dtSysdate);			
+		
+		// Salvar:
 		lancamentoRepository.adicionar(lancamento);
 		
 		// Atualizar:
 		produtoEdicao.getLancamentos().add(lancamento);
-		produtoEdicaoRepository.alterar(produtoEdicao);
-		//produtoEdicaoRepository.atualizarLancamento
-		
-		// Salvar imagem:
-		if (imgInputStream != null) {
-			capaService.saveCapa(produtoEdicao.getId(), contentType, imgInputStream);
-		}
-		
-		// TODO: Inclusao de nova Edicao:
-		// UploadedFile imagemCapa
-		// String codigoProdutoEdicao
-		// String nomeComercialProduto
-		// Long numeroEdicao
-		// int pacotePadrao
-		// TipoLancamento tipoLancamento
-		
-			
-		// TODO: Alteracao no cenário ORIGEM_INTERFACE = true
-		// BigDecimal precoVenda
-		// String codigoDeBarras
-		// UploadedFile imagemCapa
-		// String chamadaCapa
-		// boolean possuiBrinde
-		// BigDecimal peso
-
-		// TODO: REGRAS
-		
-		
-		
+		produtoEdicaoRepository.alterar(produtoEdicao);			
 	}
 	
 	@Override
