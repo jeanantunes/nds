@@ -454,7 +454,8 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepository<ProdutoEdica
 	}
 	
 	@Override
-	public boolean isNumeroEdicaoJaCadastrada(String codigoProduto, Long numeroEdicao, Long idProdutoEdicao) {
+	public boolean isNumeroEdicaoCadastrada(String codigoProduto, 
+			Long numeroEdicao, Long idProdutoEdicao) {
 	
 		StringBuilder hql = new StringBuilder();
 		
@@ -474,5 +475,14 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepository<ProdutoEdica
 		return qtd.intValue() > 0 ? true : false;
 	}
 	
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<ProdutoEdicao> obterProdutoEdicaoPorCodigoDeBarra(String codigoDeBarra) {
+		
+		Criteria criteria = getSession().createCriteria(ProdutoEdicao.class);
+		criteria.add(Restrictions.eq("codigoDeBarras", codigoDeBarra));
+		
+		return criteria.list();
+	}
 }
  

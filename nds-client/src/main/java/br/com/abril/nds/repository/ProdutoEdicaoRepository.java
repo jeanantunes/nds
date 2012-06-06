@@ -198,6 +198,17 @@ public interface ProdutoEdicaoRepository extends Repository<ProdutoEdicao, Long>
 	 * 
 	 * @return
 	 */
-	public boolean isNumeroEdicaoJaCadastrada(String codigoProduto, 
+	public boolean isNumeroEdicaoCadastrada(String codigoProduto, 
 			Long numeroEdicao, Long idProdutoEdicao);
+	
+	/**
+	 * Obtém todos os Produtos Edições que possuem exatamente o mesmo
+	 * código de barra.
+	 *  
+	 * @param codigoDeBarra
+	 * 
+	 * @return
+	 */
+	public List<ProdutoEdicao> obterProdutoEdicaoPorCodigoDeBarra(String codigoDeBarra);
+	
 }
