@@ -454,7 +454,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepository<ProdutoEdica
 	}
 	
 	@Override
-	public boolean existeNumeroEdicaoJaCadastrada(String codigoProduto, Long numeroEdicao, Long idProdutoEdicao) {
+	public boolean isNumeroEdicaoJaCadastrada(String codigoProduto, Long numeroEdicao, Long idProdutoEdicao) {
 	
 		StringBuilder hql = new StringBuilder();
 		

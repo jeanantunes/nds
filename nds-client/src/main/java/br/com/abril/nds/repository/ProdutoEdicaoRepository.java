@@ -198,6 +198,6 @@ public interface ProdutoEdicaoRepository extends Repository<ProdutoEdicao, Long>
 	 * 
 	 * @return
 	 */
-	public boolean existeNumeroEdicaoJaCadastrada(String codigoProduto, 
+	public boolean isNumeroEdicaoJaCadastrada(String codigoProduto, 
 			Long numeroEdicao, Long idProdutoEdicao);
 }
