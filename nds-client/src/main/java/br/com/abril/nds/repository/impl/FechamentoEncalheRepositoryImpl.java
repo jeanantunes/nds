@@ -16,6 +16,7 @@ import org.springframework.stereotype.Repository;
 import br.com.abril.nds.dto.CotaAusenteEncalheDTO;
 import br.com.abril.nds.dto.FechamentoFisicoLogicoDTO;
 import br.com.abril.nds.dto.filtro.FiltroFechamentoEncalheDTO;
+import br.com.abril.nds.model.estoque.ConferenciaEncalhe;
 import br.com.abril.nds.model.estoque.FechamentoEncalhe;
 import br.com.abril.nds.model.estoque.pk.FechamentoEncalhePK;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalheCota;
@@ -29,32 +30,58 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepository<Fechamen
 		super(FechamentoEncalhe.class);
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
-	public List<FechamentoFisicoLogicoDTO> buscarFechamentoEncalhe(FiltroFechamentoEncalheDTO filtro) {
+	public List<FechamentoFisicoLogicoDTO> buscarFechamentoEncalhe(FiltroFechamentoEncalheDTO filtro,
+			String sortorder, String sortname, int page, int rp) {
+
+		Criteria criteria = this.getSession().createCriteria(ConferenciaEncalhe.class, "ce");
 		
-		StringBuffer hql = new StringBuffer();
-		hql.append("   select p.codigo,                                          \n");
-		hql.append("          p.nome,                                            \n");
-		hql.append("          pe.numeroEdicao,                                   \n");
-		hql.append("          pe.precoVenda,                                     \n");
-		hql.append("          sum(mec.qtde) as qtde,                             \n");
-		hql.append("          (pe.precoVenda * mec.qtde) as total                \n");
-		hql.append("     from ConferenciaEncalhe ce,                             \n");
-		hql.append("          MovimentoEstoqueCota mec,                          \n");
-		hql.append("          ControleConferenciaEncalheCota ccec,               \n");
-		hql.append("          ProdutoEdicao pe,                                  \n");
-		hql.append("          Produto p,                                         \n");
-		hql.append("          ProdutoFornecedor pf                               \n");
-		hql.append("    where ce.movimentoEstoqueCota.id = mec.id                \n");
-		hql.append("      and ce.controleConferenciaEncalheCota.id = ccec.id     \n");
-		hql.append("      and mec.produto_edicao_id = pe.id                      \n");
-		hql.append("      and pe.produto_id = p.id                               \n");
-		hql.append("      and ccec.box_id = 1                                    \n");
-		hql.append("      and pf.produto_id = p.id                               \n");
-		hql.append("      and pf.fornecedores_id = 2                             \n");
-		hql.append(" group by p.id, p.nome, pe.numero_edicao, pe.preco_venda     \n");
+		criteria.setProjection(Projections.projectionList()
+			.add(Projections.property("p.codigo"), "codigo")
+			.add(Projections.property("p.nome"), "produto")
+			.add(Projections.property("pe.numeroEdicao"), "edicao")
+			.add(Projections.property("pe.precoVenda"), "precoCapa")
+			.add(Projections.sum("mec.qtde"), "exemplaresDevolucao")
+			.add(Projections.groupProperty("p.codigo"))
+			.add(Projections.groupProperty("p.nome"))
+			.add(Projections.groupProperty("pe.numeroEdicao"))
+			.add(Projections.groupProperty("pe.precoVenda"))
+		);
 		
-		return null;
+		criteria.createAlias("ce.movimentoEstoqueCota", "mec");
+		criteria.setFetchMode("mec", FetchMode.JOIN);
+		
+		criteria.createAlias("ce.controleConferenciaEncalheCota", "ccec");
+		criteria.setFetchMode("ccec", FetchMode.JOIN);
+		
+		criteria.createAlias("mec.produtoEdicao", "pe");
+		criteria.setFetchMode("pe", FetchMode.JOIN);
+		
+		criteria.createAlias("pe.produto", "p");
+		criteria.setFetchMode("p", FetchMode.JOIN);
+		
+		if (filtro.getFornecedorId() != null) {
+			criteria.createAlias("pe.fornecedores", "pf");
+			criteria.setFetchMode("pf", FetchMode.JOIN);
+		}
+		
+		criteria.add(Restrictions.eq("ccec.dataOperacao", filtro.getDataEncalhe()));
+		
+		if (filtro.getBoxId() != null) {
+			criteria.add(Restrictions.eq("ccec.box.id", filtro.getBoxId()));
+		}
+		
+		if (filtro.getFornecedorId() != null) {
+			criteria.add(Restrictions.eq("pf.id", filtro.getFornecedorId()));
+		}
+		
+		criteria.setFirstResult(page);
+		criteria.setMaxResults(rp);
+		this.addOrderCriteria(criteria, sortorder, sortname);
+		criteria.setResultTransformer(Transformers.aliasToBean(FechamentoFisicoLogicoDTO.class));
+			
+		return criteria.list();
 	}
 
 	@Override
