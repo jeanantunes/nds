@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Exportable;
+import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
 @Exportable
 public class FiltroTipoProdutoDTO implements Serializable {
@@ -25,17 +26,23 @@ public class FiltroTipoProdutoDTO implements Serializable {
 	@Export(label="Tipo de Produto")
 	private String descricao;	
 
+	private Ordenacao sortorder;
+	
+	private String sortname;
+	
 	public FiltroTipoProdutoDTO() {
 		
 	}
 
 	public FiltroTipoProdutoDTO(Long codigo, String codigoNCM, String codigoNBM,
-			String descricao) {
+			String descricao, Ordenacao sortorder, String sortname) {
 		super();
 		this.codigo = codigo;
 		this.codigoNCM = codigoNCM;
 		this.codigoNBM = codigoNBM;
 		this.descricao = descricao;
+		this.sortorder = sortorder;
+		this.sortname = sortname;
 	}
 
 	/**
@@ -93,5 +100,35 @@ public class FiltroTipoProdutoDTO implements Serializable {
 	public void setDescricao(String descricao) {
 		this.descricao = descricao;
 	}
+
+	/**
+	 * @return the sortorder
+	 */
+	public Ordenacao getSortorder() {
+		return sortorder;
+	}
+
+	/**
+	 * @param sortorder the sortorder to set
+	 */
+	public void setSortorder(Ordenacao sortorder) {
+		this.sortorder = sortorder;
+	}
+
+	/**
+	 * @return the sortname
+	 */
+	public String getSortname() {
+		return sortname;
+	}
+
+	/**
+	 * @param sortname the sortname to set
+	 */
+	public void setSortname(String sortname) {
+		this.sortname = sortname;
+	}
+	
+	
 	
 }

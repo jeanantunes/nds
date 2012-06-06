@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -48,6 +49,11 @@ public class TipoProdutoController {
 	@Autowired
 	private TipoProdutoService tipoProdutoService;
 	
+	@Autowired
+	private HttpSession session;
+	
+	private final static String FILTRO = "filtro";
+	
 	@Path("/")
 	public void index() {
 		
@@ -61,6 +67,10 @@ public class TipoProdutoController {
 				sortname, Ordenacao.valueOf(sortorder.toUpperCase()), page*rp - rp, rp);
 		
 		Long quantidade = this.tipoProdutoService.quantidade(descricao, codigo, codigoNCM, codigoNBM);
+		
+		//Gera filtro usado na exportação de arquivo
+		this.gerarFiltro(codigo, codigoNBM, codigoNCM, descricao, 
+				Ordenacao.valueOf(sortorder.toUpperCase()), sortname);
 		
 		this.resutl.use(FlexiGridJson.class).from(listaTipoProdutos)
 			.total(quantidade.intValue()).page(page).serialize();
@@ -113,13 +123,21 @@ public class TipoProdutoController {
 	 */
 	public void exportar(FileType fileType) throws IOException {
 		
-		FiltroTipoProdutoDTO filtro = new FiltroTipoProdutoDTO();
+		FiltroTipoProdutoDTO filtro = (FiltroTipoProdutoDTO) this.session.getAttribute(FILTRO);
 		
-		List<TipoProdutoDTO> listaTipoProduto = this.toDTO(this.tipoProdutoService.obterTodosTiposProduto());
+		List<TipoProduto> listaTipoProduto = this.tipoProdutoService.busca(
+														filtro.getDescricao(), 
+														filtro.getCodigo(), 
+														filtro.getCodigoNCM(), 
+														filtro.getCodigoNBM(), 
+														filtro.getSortname(), 
+														filtro.getSortorder(), -1, -1);
 		
+		List<TipoProdutoDTO> listaTipoProdutoDTO = this.toDTO(listaTipoProduto);
+				
 		FileExporter.to("tipo-produto", fileType)
 			.inHTTPResponse(this.getNDSFileHeader(), filtro, null, 
-				listaTipoProduto, TipoProdutoDTO.class, this.response);
+					listaTipoProdutoDTO, TipoProdutoDTO.class, this.response);
 	}
 	
 	private void valida(TipoProduto tipoProduto) {
@@ -194,5 +212,28 @@ public class TipoProdutoController {
 			}
 		}
 		return lista;
+	}
+	
+
+	/**
+	 *  Gera um filtro de pesquisa para ser usado na exportação de arquivos.
+	 * 
+	 * @param codigo
+	 * @param codigoNBM
+	 * @param codigoNCM
+	 * @param descricao
+	 * @param sortorder
+	 * @param sortname
+	 * @return
+	 */
+	private FiltroTipoProdutoDTO gerarFiltro(Long codigo, String codigoNBM, String codigoNCM, 
+			String descricao, Ordenacao sortorder, String sortname) {
+		
+		FiltroTipoProdutoDTO filtro = 
+				new FiltroTipoProdutoDTO(codigo, codigoNCM, codigoNBM, descricao, sortorder, sortname);
+		
+		this.session.setAttribute(FILTRO, filtro);
+		
+		return filtro;
 	}
 }
