@@ -470,13 +470,36 @@ public class ConferenciaEncalheController {
 			throw new ValidacaoException(TipoMensagem.WARNING, e.getMessage());
 			
 		} catch (EncalheExcedeReparteException e) {
+			
 			throw new ValidacaoException(TipoMensagem.WARNING, e.getMessage());
+		} finally {
+			
+			this.atribuirIds(lista);
 		}
 		
 		this.result.use(Results.json()).from(
 				new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."), "result").recursive().serialize();
 	}
 	
+	private void atribuirIds(List<ConferenciaEncalheDTO> lista) {
+		
+		if (lista != null){
+			for (ConferenciaEncalheDTO dto : lista){
+				
+				if (dto.getIdConferenciaEncalhe() == null){
+				
+					int id = (int) System.currentTimeMillis();
+					
+					if (id > 0){
+						id *= -1;
+					}
+						
+					dto.setIdConferenciaEncalhe(new Long(id));
+				}
+			}
+		}
+	}
+
 	private void verificarInicioConferencia() {
 		
 		Date horaInicio = (Date) this.session.getAttribute(HORA_INICIO_CONFERENCIA);
@@ -520,6 +543,9 @@ public class ConferenciaEncalheController {
 
 				this.result.use(Results.json()).from(
 						new ValidacaoVO(TipoMensagem.WARNING, "Conferência de encalhe está excedendo quantidade de reparte."), "result").recursive().serialize();
+			} finally{
+				
+				this.atribuirIds(lista);
 			}
 			
 			this.result.use(Results.json()).from(
@@ -776,7 +802,13 @@ public class ConferenciaEncalheController {
 		
 		ConferenciaEncalheDTO conferenciaEncalheDTO = new ConferenciaEncalheDTO();
 		
-		conferenciaEncalheDTO.setIdConferenciaEncalhe(new Long((int) System.currentTimeMillis()) *-1);
+		int id = (int) System.currentTimeMillis();
+		
+		if (id > 0){
+			id *= -1;
+		}
+		
+		conferenciaEncalheDTO.setIdConferenciaEncalhe(new Long(id));
 		conferenciaEncalheDTO.setCodigo(produtoEdicao.getCodigoProduto());
 		conferenciaEncalheDTO.setCodigoDeBarras(produtoEdicao.getCodigoDeBarras());
 		conferenciaEncalheDTO.setCodigoSM(produtoEdicao.getSequenciaMatriz());

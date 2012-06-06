@@ -31,6 +31,8 @@ public class SlipDTO {
 	private String codigoBox;
 	
 	private Long numSlip;
+	
+	private String nomeUsuario;
 
 	private List<ProdutoEdicaoSlipDTO> listaProdutoEdicaoSlipDTO;
 	
@@ -256,7 +258,26 @@ public class SlipDTO {
 	public void setNumSlip(Long numSlip) {
 		this.numSlip = numSlip;
 	}
+	
+	
+	/**
+	 * Obtém nomeUsuario
+	 *
+	 * @return String
+	 */
+	public String getNomeUsuario() {
+		return nomeUsuario;
+	}
+	
+	/**
+	 * Atribuí nomeUsuario
+	 * @param nomeUsuario
+	 */
+	public void setNomeUsuario(String nomeUsuario) {
+		this.nomeUsuario = nomeUsuario;
+	}
 
+	
 	/**
 	 * Obtém listaProdutoEdicaoSlipDTO
 	 *
