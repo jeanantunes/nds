@@ -436,12 +436,16 @@ public class ConferenciaEncalheController {
 		InfoConferenciaEncalheCota info = this.getInfoConferenciaSession();
 		
 		if (info == null){
-			
 			throw new ValidacaoException(TipoMensagem.ERROR, "Sessão expirada.");
 		}
 		
 		controleConfEncalheCota.setCota(info.getCota());
 		controleConfEncalheCota.setId(this.getInfoConferenciaSession().getIdControleConferenciaEncalheCota());
+		
+		Box boxEncalhe = new Box();
+		boxEncalhe.setId((Long) this.session.getAttribute(ID_BOX_LOGADO));
+		
+		controleConfEncalheCota.setBox(boxEncalhe);
 		
 		List<ConferenciaEncalheDTO> lista = this.getListaConferenciaEncalheFromSession();
 		
@@ -776,7 +780,7 @@ public class ConferenciaEncalheController {
 		
 		ConferenciaEncalheDTO conferenciaEncalheDTO = new ConferenciaEncalheDTO();
 		
-		conferenciaEncalheDTO.setIdConferenciaEncalhe(new Long((int) System.currentTimeMillis()) *-1);
+		conferenciaEncalheDTO.setIdConferenciaEncalhe(new Long(System.currentTimeMillis()) *-1);
 		conferenciaEncalheDTO.setCodigo(produtoEdicao.getCodigoProduto());
 		conferenciaEncalheDTO.setCodigoDeBarras(produtoEdicao.getCodigoDeBarras());
 		conferenciaEncalheDTO.setCodigoSM(produtoEdicao.getSequenciaMatriz());
@@ -784,6 +788,9 @@ public class ConferenciaEncalheController {
 		conferenciaEncalheDTO.setNomeProduto(produtoEdicao.getNomeProduto());
 		conferenciaEncalheDTO.setNumeroEdicao(produtoEdicao.getNumeroEdicao());
 		conferenciaEncalheDTO.setPrecoCapa(produtoEdicao.getPrecoVenda());
+		conferenciaEncalheDTO.setTipoChamadaEncalhe(produtoEdicao.getTipoChamadaEncalhe());
+		conferenciaEncalheDTO.setDataRecolhimento(produtoEdicao.getDataRecolhimentoDistribuidor());
+		
 		
 		if (quantidade != null){
 		

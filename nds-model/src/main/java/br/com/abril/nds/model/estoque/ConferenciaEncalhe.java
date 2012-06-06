@@ -2,6 +2,7 @@ package br.com.abril.nds.model.estoque;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -12,7 +13,10 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
+import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalheCota;
 import br.com.abril.nds.model.planejamento.ChamadaEncalheCota;
 
@@ -60,8 +64,28 @@ public class ConferenciaEncalhe implements Serializable {
 	@Column(name = "JURAMENTADA")
 	private boolean juramentada;
 	
+	@Temporal(TemporalType.DATE)
+	@Column(name = "DATA", nullable = false)
+	private Date data;
+
+	
+	/**
+	 * Quantidade relativa ao item de nota fiscal de entrada
+	 * fornecida pela cota na operação de conferência de encalhe.
+	 */
 	@Column(name = "QTDE_INFORMADA")
 	private BigDecimal qtdeInformada;
+	
+	/**
+	 * Quantidade replicada na coluna qtde em movimento_estoque_cota 
+	 * relativa a conferência de encalhe
+	 */
+	@Column(name = "QTDE")
+	private BigDecimal qtde;
+	
+	@ManyToOne(optional = false)
+	@JoinColumn(name = "PRODUTO_EDICAO_ID")
+	private ProdutoEdicao produtoEdicao;
 	
 	
 	/**
@@ -199,6 +223,30 @@ public class ConferenciaEncalhe implements Serializable {
 	 */
 	public void setMovimentoEstoque(MovimentoEstoque movimentoEstoque) {
 		this.movimentoEstoque = movimentoEstoque;
+	}
+
+	public BigDecimal getQtde() {
+		return qtde;
+	}
+
+	public void setQtde(BigDecimal qtde) {
+		this.qtde = qtde;
+	}
+
+	public ProdutoEdicao getProdutoEdicao() {
+		return produtoEdicao;
+	}
+
+	public void setProdutoEdicao(ProdutoEdicao produtoEdicao) {
+		this.produtoEdicao = produtoEdicao;
+	}
+
+	public Date getData() {
+		return data;
+	}
+
+	public void setData(Date data) {
+		this.data = data;
 	}
 	
 		
