@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.hibernate.Criteria;
 import org.hibernate.FetchMode;
-import org.hibernate.criterion.Criterion;
+import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Property;
@@ -16,6 +16,7 @@ import org.springframework.stereotype.Repository;
 import br.com.abril.nds.dto.CotaAusenteEncalheDTO;
 import br.com.abril.nds.dto.FechamentoFisicoLogicoDTO;
 import br.com.abril.nds.dto.filtro.FiltroFechamentoEncalheDTO;
+import br.com.abril.nds.model.cadastro.TipoRoteiro;
 import br.com.abril.nds.model.estoque.FechamentoEncalhe;
 import br.com.abril.nds.model.estoque.pk.FechamentoEncalhePK;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalheCota;
@@ -109,40 +110,39 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepository<Fechamen
 		}
 	}
 	
-	@SuppressWarnings("unchecked")
 	private void criarCriteriaCotasAusentesEncalhe(Criteria criteria, Date dataEncalhe) {
 		
 		criteria.createAlias("ce.chamadaEncalheCotas", "cec");
 		criteria.createAlias("cec.cota", "cota");
 		criteria.createAlias("cota.box", "box");
+		criteria.createAlias("cota.pessoa", "pessoa");
 		criteria.createAlias("box.roteiros", "roteiros");
 		criteria.createAlias("roteiros.rotas", "rotas");
 		
 		criteria.setFetchMode("cec", FetchMode.JOIN);
 		criteria.setFetchMode("cota", FetchMode.JOIN);
 		criteria.setFetchMode("box", FetchMode.JOIN);
+		criteria.setFetchMode("pessoa", FetchMode.JOIN);
 		criteria.setFetchMode("roteiros", FetchMode.JOIN);
 		criteria.setFetchMode("rotas", FetchMode.JOIN);
 
 		criteria.setProjection(Projections.distinct(Projections.projectionList()
+				.add(Projections.property("cota.id"), "idCota")
 				.add(Projections.property("cota.numeroCota"), "numeroCota")
+				.add(Projections.property("pessoa.nome"), "colaboradorName")
 				.add(Projections.property("box.nome"), "boxName")
 				.add(Projections.property("roteiros.descricaoRoteiro"), "roteiroName")
 				.add(Projections.property("rotas.descricaoRota"), "rotaName")));
-		
-		criteria.add(Restrictions.eq("ce.dataRecolhimento", dataEncalhe));
 
-		Criteria subQuery = super.getSession().createCriteria(ControleConferenciaEncalheCota.class, "ccec");
+		criteria.add(Restrictions.eq("ce.dataRecolhimento", dataEncalhe));
+		criteria.add(Restrictions.eq("roteiros.tipoRoteiro", TipoRoteiro.NORMAL));
+
+		DetachedCriteria subQuery = DetachedCriteria.forClass(ControleConferenciaEncalheCota.class, "ccec");
 		subQuery.add(Restrictions.eq("ccec.dataOperacao", dataEncalhe));
 		subQuery.setFetchMode("ccec.cota", FetchMode.JOIN);
 		subQuery.setProjection(Property.forName("ccec.cota.id"));
 
-		List<Long> listaIdsCota = subQuery.list();
-		
-		if (listaIdsCota != null && !listaIdsCota.isEmpty()) {
-			Criterion in = Restrictions.in("cec.cota.id", listaIdsCota);
-			criteria.add(Restrictions.not(in));
-		}
+		criteria.add(Property.forName("cec.cota.id").notIn(subQuery));
 	}
 	
 	private void addOrderCriteria(Criteria criteria, String sortorder, String sortname) {

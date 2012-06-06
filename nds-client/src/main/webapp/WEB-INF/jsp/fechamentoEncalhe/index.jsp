@@ -34,11 +34,10 @@
 			modal: true,
 			buttons: {
 				"Postergar": function() {
-
-					
+					postergarCotas();
 				},
 				"Cobrar": function() {
-					
+					cobrarCotas();
 				},
 				"Cancelar": function() {
 					$(this).dialog( "close" );
@@ -106,20 +105,22 @@
 	}
 
 	function checarTodasCotasGrid(checked) {
-		
-		for (var i=0;i<document.formGridCotas.elements.length;i++) {
-		     var x = document.formGridCotas.elements[i];
-		     if (x.name == 'checkboxGridCotas') {
-		    	 x.checked = checked;
-		     }    
-		}
-		
+				
 		if (checked) {
 			var elem = document.getElementById("textoCheckAllCotas");
 			elem.innerHTML = "Desmarcar todos";
+
+			$("input[type=checkbox][name='checkboxGridCotas']").each(function(){
+				$(this).attr('checked', true);
+			});
+				
         } else {
 			var elem = document.getElementById("textoCheckAllCotas");
 			elem.innerHTML = "Marcar todos";
+
+			$("input[type=checkbox][name='checkboxGridCotas']").each(function(){
+				$(this).attr('checked', false);
+			});
 		}
 	}
 
@@ -136,7 +137,7 @@
 		
 		$.each(resultado.rows, function(index, row) {
 
-			var checkBox = '<input type="checkbox" name="checkboxGridCotas" id="checkbox_'+ row.cell.numeroCota +'" />';	
+			var checkBox = '<input type="checkbox" name="checkboxGridCotas" id="checkboxGridCotas" value="' + row.cell.idCota + '" />';	
 			
 		    row.cell.check = checkBox;
 		});
@@ -148,29 +149,22 @@
 	}
 
 	function obterCotasMarcadas() {
+ 
+		var cotasAusentesSelecionadas = new Array();
 
-		var cotasMarcadas='';
-		var table = document.getElementById("tabelaGridCotas");
-		
-		for(i = 0; i < table.rows.length; i++) {   
-			
-			if (document.getElementById("checkbox_" + table.rows[i].cells[0].textContent).checked) {
-			    table.rows[i].cells[0].textContent; 
-			    cotasMarcadas+='idsCotas='+ table.rows[i].cells[0].textContent + '&';
-		    }
+		$("input[type=checkbox][name='checkboxGridCotas']:checked").each(function(){
+			cotasAusentesSelecionadas.push(parseInt($(this).val()));
+		});
 
-		} 
-		
-		return cotasMarcadas;
+		return cotasAusentesSelecionadas;
 	}
-		
+	
 	function postergarCotas() {
 		
 		var dataEncalhe = $("#datepickerDe").val();
 
 		$.postJSON("<c:url value='/devolucao/fechamentoEncalhe/postergarCotas' />",
-					"dataEncalhe=" + dataEncalhe +
-					"&" + obterCotasMarcadas(),
+					{ 'dataEncalhe' : dataEncalhe, 'idsCotas' : obterCotasMarcadas() },
 					function (result) {
 			
 					},
@@ -184,8 +178,7 @@
 		var dataEncalhe = $("#datepickerDe").val();
 		
 		$.postJSON("<c:url value='/devolucao/fechamentoEncalhe/cobrarCotas' />",
-					"dataEncalhe=" + dataEncalhe +
-					"&" + obterCotasMarcadas(),
+					{ 'dataEncalhe' : dataEncalhe, 'idsCotas' : obterCotasMarcadas() },
 					function (result) {
 			
 					},
