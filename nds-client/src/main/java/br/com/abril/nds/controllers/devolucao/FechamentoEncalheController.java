@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.dto.CotaAusenteEncalheDTO;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
@@ -12,6 +13,7 @@ import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.BoxService;
 import br.com.abril.nds.service.DistribuidorService;
+import br.com.abril.nds.service.FechamentoEncalheService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.util.DateUtil;
 import br.com.caelum.vraptor.Path;
@@ -40,6 +42,8 @@ public class FechamentoEncalheController {
 	@Autowired
 	private BoxService boxService;
 	
+	@Autowired
+	private FechamentoEncalheService fechamentoEncalheService;
 	
 	@Path("/")
 	public void index() {
@@ -66,13 +70,28 @@ public class FechamentoEncalheController {
 	
 	
 	@Path("/cotasAusentes")
-	public void cotasAusentes(String dataEncalhe,
+	public void cotasAusentes(Date dataEncalhe,
 			String sortname, String sortorder, int rp, int page) {
 		
-		Date data = DateUtil.parseDataPTBR(dataEncalhe);
+		List<CotaAusenteEncalheDTO> listaCotasAusenteEncalhe =
+			this.fechamentoEncalheService.buscarCotasAusentes(dataEncalhe, sortorder, sortname, page, rp);
 		
+		int total = this.fechamentoEncalheService.buscarTotalCotasAusentes(dataEncalhe);
 		
-		List listaCotas = null;
-		result.use(FlexiGridJson.class).from(listaCotas).total(listaCotas.size()).page(page).serialize();
+		this.result.use(FlexiGridJson.class).from(listaCotasAusenteEncalhe).total(total).page(page).serialize();
 	}
+	
+	@Path("/postergarCotas")
+	public void postergarCotas(Date dataEncalhe, List<Long> idsCotas) {
+		
+		System.out.println(idsCotas);
+		
+	}
+
+	@Path("/cobrarCotas")
+	public void cobrarCotas(Date dataEncalhe, List<Long> idsCotas) {
+
+		System.out.println(idsCotas);
+	}
+	
 }
