@@ -4,8 +4,13 @@
 
 	//IMPRESSÃO DO SLIP DE VENDA DE ENCALHE
 	function imprimeSlipVendaEncalhe(){
-		var idVendaEncalhe = 1;
-	    document.location.assign("${pageContext.request.contextPath}/devolucao/vendaEncalhe/imprimeSlipVendaEncalhe?idVendaEncalhe="+idVendaEncalhe);
+		
+		//Valores dos Filtros
+		var idCota = "1";
+		var dataInicio = "10/10/2012";
+		var dataFim = "10/10/2012";
+	    
+		document.location.assign("${pageContext.request.contextPath}/devolucao/vendaEncalhe/imprimeSlipVendaEncalhe?idCota="+idCota+"&dataInicio="+dataInicio+"&dataFim="+dataFim);
 	}
 
 </script>

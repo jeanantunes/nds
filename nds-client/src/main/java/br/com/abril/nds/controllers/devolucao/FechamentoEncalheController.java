@@ -89,14 +89,13 @@ public class FechamentoEncalheController {
 	@Path("/postergarCotas")
 	public void postergarCotas(Date dataEncalhe, List<Long> idsCotas) {
 		
-		System.out.println(idsCotas);
-		
+		// TODO: postergar as cotas.
 	}
 
 	@Path("/cobrarCotas")
 	public void cobrarCotas(Date dataEncalhe, List<Long> idsCotas) {
 
-		System.out.println(idsCotas);
+		// TODO: cobrar as cotas.
 	}
 	
 }
