@@ -1,6 +1,9 @@
 package br.com.abril.nds.service;
 
-import br.com.abril.nds.dto.SlipDTO;
+import java.util.Date;
+import java.util.List;
+
+import br.com.abril.nds.dto.SlipVendaEncalheDTO;
 
 /**
  * 
@@ -12,18 +15,24 @@ import br.com.abril.nds.dto.SlipDTO;
  */
 public interface VendaEncalheService {
 	
+
 	/**
 	 * Obtém dados da venda encalhe por id
-	 * @param idVendaEncalhe
-	 * @return SlipDTO
+	 * @param idCota
+	 * @param dataInicio
+	 * @param dataFim
+	 * @return List<SlipVendaEncalheDTO>
 	 */
-	 SlipDTO obtemDadosSlip(long idVendaEncalhe);
+	 List<SlipVendaEncalheDTO> obtemDadosSlip(long idCota, Date dataInicio, Date dataFim);
+		
 	 
 	 /**
-	  * Gera Array de Bytes do Slip de Venda de Encalhe
-	  * @param idVendaEncalhe
+	 * Gera Array de Bytes do Slip de Venda de Encalhe
+	 * @param idCota
+	 * @param dataInicio
+	 * @param dataFim
 	  * @return byte[]
-	  */
-	 byte[] geraImpressaoVendaEncalhe(Long idVendaEncalhe);
+	 */
+	 byte[] geraImpressaoVendaEncalhe(long idCota, Date dataInicio, Date dataFim);
 	
 }

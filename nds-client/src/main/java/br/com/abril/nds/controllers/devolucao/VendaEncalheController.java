@@ -1,6 +1,7 @@
 package br.com.abril.nds.controllers.devolucao;
 
 import java.io.OutputStream;
+import java.util.Date;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -52,17 +53,19 @@ public class VendaEncalheController {
 	
 	/**
 	 * Exibe o contrato em formato PDF.
-	 * @param idVendaEncalhe
+	 * @param idCota
+	 * @param dataInicio
+	 * @param dataFim
 	 * @throws Exception
 	 */
 	@Get
 	@Path("/imprimeSlipVendaEncalhe")
-	public void imprimeSlipVendaEncalhe(Long idVendaEncalhe) throws Exception{
+	public void imprimeSlipVendaEncalhe(Long idCota, Date dataInicio, Date dataFim) throws Exception{
 
-		byte[] b = this.vendaEncalheService.geraImpressaoVendaEncalhe(idVendaEncalhe);
+		byte[] b = this.vendaEncalheService.geraImpressaoVendaEncalhe(idCota,dataInicio,dataFim);
 
 		this.httpResponse.setContentType("application/pdf");
-		this.httpResponse.setHeader("Content-Disposition", "attachment; filename=contrato.pdf");
+		this.httpResponse.setHeader("Content-Disposition", "attachment; filename=SlipVE.pdf");
 
 		OutputStream output = this.httpResponse.getOutputStream();
 		output.write(b);
