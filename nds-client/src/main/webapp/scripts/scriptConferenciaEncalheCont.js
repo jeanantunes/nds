@@ -83,7 +83,7 @@ var ConferenciaEncalheCont = {
 						_class = "class_linha_2 _dadosConfEncalhe";
 					}
 					
-					innerTable += "<tr class='" + _class + "'>";
+					innerTable += "<tr class='" + _class + " _dados'>";
 					
 					innerTable += "<td nowrap='nowrap'>" + value.codigo + "</td>";
 					
@@ -356,29 +356,6 @@ var ConferenciaEncalheCont = {
 		$("#somatorioTotal").text(parseFloat(result.valorPagar).toFixed(2));
 	},
 	
-	popup_conferencia: function () {
-		
-		ConferenciaEncalheCont.modalAberta = true;
-	
-		$("#dialog-conferencia").dialog({
-			resizable : false,
-			height : 'auto',
-			width : 450,
-			modal : true,
-			buttons : {
-				"Confirmar" : function() {
-					$(this).dialog("close");
-					$("#effect").hide("highlight", {}, 1000, callback);
-	
-				},
-				"Cancelar" : function() {
-					$(this).dialog("close");
-				}
-			}
-		});
-	
-	},
-	
 	popup_novo_encalhe: function () {
 		
 		ConferenciaEncalheCont.modalAberta = true;
@@ -390,11 +367,11 @@ var ConferenciaEncalheCont = {
 			modal : true,
 			buttons : {
 				"Confirmar" : function() {
+					
 					$(this).dialog("close");
-					$("#effect").hide("highlight", {}, 1000, callback);
-
 				},
 				"Cancelar" : function() {
+					
 					$(this).dialog("close");
 				}
 			}, close : function(){
@@ -416,11 +393,12 @@ var ConferenciaEncalheCont = {
 			modal : true,
 			buttons : {
 				"Sim" : function() {
+					
 					$(this).dialog("close");
 					ConferenciaEncalheCont.popup_notaFiscal();
-
 				},
 				"Não" : function() {
+					
 					$("#vlrCE").focus();
 					$(this).dialog("close");
 				}
@@ -479,7 +457,6 @@ var ConferenciaEncalheCont = {
 		
 		ConferenciaEncalheCont.modalAberta = true;
 		
-		$('#observacao').focus();
 		$("#dialog-outros-valores").dialog({
 			resizable : false,
 			height : 430,
@@ -487,8 +464,8 @@ var ConferenciaEncalheCont = {
 			modal : true,
 			buttons : {
 				"Fechar" : function() {
+					
 					$(this).dialog("close");
-
 				}
 			}, close : function(){
 				

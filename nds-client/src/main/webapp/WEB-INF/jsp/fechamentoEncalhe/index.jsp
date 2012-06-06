@@ -3,7 +3,26 @@
 	
 	<script language="javascript" type="text/javascript">
 
-	function mostrar(){
+	var contextPath = '${pageContext.request.contextPath}';
+	
+	function pesquisar() {
+		
+		$(".fechamentoGrid").flexOptions({
+			"url" : contextPath + '/devolucao/fechamentoEncalhe/pesquisar',
+			params : [{
+				name : "dataEncalhe",
+				value : $('#datepickerDe').val()
+			}, {
+				name : "idFornecedor",
+				value : $('#selectFornecedor').val()
+			}, {
+				name : "idBox",
+				value : $('#selectBoxEncalhe').val()
+			}],
+			newp:1
+		});
+		
+		$(".fechamentoGrid").flexReload();
 		$(".grids").show();
 	}
 	
@@ -15,17 +34,30 @@
 			modal: true,
 			buttons: {
 				"Postergar": function() {
-					$( this ).dialog( "close" );
-					$("#effect").show("highlight", {}, 1000, callback);
+
+					
 				},
 				"Cobrar": function() {
-					$( this ).dialog( "close" );
+					
 				},
 				"Cancelar": function() {
-					$( this ).dialog( "close" );
+					$(this).dialog( "close" );
 				}
+			},
+			beforeClose: function() {
+				clearMessageDialogTimeout();
 			}
 		});
+
+		var dataEncalhe = $("#datepickerDe").val();
+		
+		$(".cotasGrid").flexOptions({
+			url: "<c:url value='/devolucao/fechamentoEncalhe/cotasAusentes' />",
+			params: [{name:'dataEncalhe', value: dataEncalhe }],
+			newp: 1,
+		});
+		
+		$(".cotasGrid").flexReload();
 	};
 
 	function popup_encerrar() {
@@ -73,6 +105,96 @@
 		$(".dadosFiltro").show();
 	}
 
+	function checarTodasCotasGrid(checked) {
+		
+		for (var i=0;i<document.formGridCotas.elements.length;i++) {
+		     var x = document.formGridCotas.elements[i];
+		     if (x.name == 'checkboxGridCotas') {
+		    	 x.checked = checked;
+		     }    
+		}
+		
+		if (checked) {
+			var elem = document.getElementById("textoCheckAllCotas");
+			elem.innerHTML = "Desmarcar todos";
+        } else {
+			var elem = document.getElementById("textoCheckAllCotas");
+			elem.innerHTML = "Marcar todos";
+		}
+	}
+
+	function preprocessamentoGrid(resultado) {	
+		
+		if (resultado.mensagens) {
+			exibirMensagem(resultado.mensagens.tipoMensagem, resultado.mensagens.listaMensagens);
+			$(".cotasGrid").hide();
+			return resultado;
+		}
+		
+		document.getElementById("checkTodasCotas").checked = false;
+		checarTodasCotasGrid(false);
+		
+		$.each(resultado.rows, function(index, row) {
+
+			var checkBox = '<input type="checkbox" name="checkboxGridCotas" id="checkbox_'+ row.cell.numeroCota +'" />';	
+			
+		    row.cell.check = checkBox;
+		});
+
+		
+		$(".cotasGrid").show();
+		
+		return resultado;
+	}
+
+	function obterCotasMarcadas() {
+
+		var cotasMarcadas='';
+		var table = document.getElementById("tabelaGridCotas");
+		
+		for(i = 0; i < table.rows.length; i++) {   
+			
+			if (document.getElementById("checkbox_" + table.rows[i].cells[0].textContent).checked) {
+			    table.rows[i].cells[0].textContent; 
+			    cotasMarcadas+='idsCotas='+ table.rows[i].cells[0].textContent + '&';
+		    }
+
+		} 
+		
+		return cotasMarcadas;
+	}
+		
+	function postergarCotas() {
+		
+		var dataEncalhe = $("#datepickerDe").val();
+
+		$.postJSON("<c:url value='/devolucao/fechamentoEncalhe/postergarCotas' />",
+					"dataEncalhe=" + dataEncalhe +
+					"&" + obterCotasMarcadas(),
+					function (result) {
+			
+					},
+				  	null,
+				   	true
+			);
+	}
+
+	function cobrarCotas() {
+
+		var dataEncalhe = $("#datepickerDe").val();
+		
+		$.postJSON("<c:url value='/devolucao/fechamentoEncalhe/cobrarCotas' />",
+					"dataEncalhe=" + dataEncalhe +
+					"&" + obterCotasMarcadas(),
+					function (result) {
+			
+					},
+				  	null,
+				   	true
+			);
+		
+	}
+	
 	</script>
 
 	<style type="text/css">
@@ -91,10 +213,15 @@
 	<div id="dialog-encerrarEncalhe" title="Opera&ccedil;&atilde;o de Encalhe" style="display:none;">
 		<fieldset>
 			<legend>Cotas Ausentes</legend>
-			<table class="cotasGrid"></table>
+				<form id="formGridCotas" name="formGridCotas" >
+					<table class="cotasGrid" id="tabelaGridCotas" ></table>
+				</form>
 			<span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
 			<span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir </a></span>
-			<span class="bt_sellAll" style="float:right;"><input type="checkbox" id="sel" name="Todos4" onclick="checkAll_cotas();" style="float:right;margin-right:25px;"/><label for="sel">Selecionar Todos</label></span>
+			<span class="bt_sellAll" style="float:right;">
+				<input type="checkbox" id="checkTodasCotas" name="checkTodasCotas" onchange="checarTodasCotasGrid(this.checked);" style="float:right;margin-right:25px;"/>
+				<label for="checkTodasCotas" id="textoCheckAllCotas" ></label>
+			</span>
 		</fieldset>
 	</div>
 
@@ -123,7 +250,7 @@
 					</c:forEach>
 					</select>
 				</td>
-				<td width="106"><span class="bt_pesquisar"><a href="javascript:;" onclick="mostrar();">Pesquisar</a></span></td>
+				<td width="106"><span class="bt_pesquisar"><a href="javascript:;" onclick="pesquisar();">Pesquisar</a></span></td>
 			</tr>
 		</table>
     </fieldset>
@@ -136,7 +263,7 @@
 			<table class="fechamentoGrid"></table>
             <span class="bt_novos" title="Salvar"><a href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0" />Salvar </a></span>
 			<span class="bt_novos" title="Cotas Ausentes"><a href="javascript:;" onclick="popup_encerrarEncalhe();"><img src="${pageContext.request.contextPath}/images/ico_check.gif" hspace="5" border="0" />Cotas Ausentes</a></span>
-			<span class="bt_novos" title="Encerrar Operação Encalhe"><a href="javascript:;" onclick="popup_encerrar();"><img src="${pageContext.request.contextPath}/images/ico_check.gif" hspace="5" border="0" />Encerrar Operação Encalhe</a></span>
+			<span class="bt_novos" title="Encerrar Opera&ccedil;&atilde;o Encalhe"><a href="javascript:;" onclick="popup_encerrar();"><img src="${pageContext.request.contextPath}/images/ico_check.gif" hspace="5" border="0" />Encerrar Opera&ccedil;&atilde;o Encalhe</a></span>
 			<span class="bt_sellAll" style="float:right;"><input type="checkbox" id="sel" name="Todos" onclick="checkAll();" style="float:right;margin-right:55px;"/><label for="sel">Selecionar Todos</label></span>
         	<br clear="all" />
 			<span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
@@ -148,35 +275,35 @@
 
 	<script>
 		$(".cotasGrid").flexigrid({
-			url : '../xml/cotas_fechamento-xml.xml',
-			dataType : 'xml',
+			preProcess: preprocessamentoGrid,
+			dataType : 'json',
 			colModel : [ {
 				display : 'Cota',
-				name : 'cota',
+				name : 'numeroCota',
 				width : 50,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Nome',
-				name : 'nome',
+				name : 'colaboradorName',
 				width : 110,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Box',
-				name : 'box',
+				name : 'boxName',
 				width : 37,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Roteiro',
-				name : 'roteiro',
+				name : 'roteiroName',
 				width : 85,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Rota',
-				name : 'rota',
+				name : 'rotaName',
 				width : 80,
 				sortable : true,
 				align : 'left'
@@ -188,12 +315,12 @@
 				align : 'left'
 			}, {
 				display : ' ',
-				name : 'sel',
+				name : 'check',
 				width : 20,
 				sortable : true,
 				align : 'center'
 			}],
-			sortname : "cota",
+			sortname : "numeroCota",
 			sortorder : "asc",
 			usepager : true,
 			useRp : true,
@@ -203,10 +330,9 @@
 			height : 240
 		});
 		$(".fechamentoGrid").flexigrid({
-			url : '../xml/fechamento-xml.xml',
-			dataType : 'xml',
+			dataType : 'json',
 			colModel : [ {
-				display : 'Código',
+				display : 'C&oacute;digo',
 				name : 'codigo',
 				width : 60,
 				sortable : true,
