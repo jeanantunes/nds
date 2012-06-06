@@ -343,6 +343,8 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		if(controleConferenciaEncalheCota!=null) {
 			
+			
+			
 			List<ConferenciaEncalheDTO> listaConferenciaEncalheDTO = 
 					conferenciaEncalheRepository.obterListaConferenciaEncalheDTO(
 							controleConferenciaEncalheCota.getId(), 
@@ -352,6 +354,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			
 			infoConfereciaEncalheCota.setEncalhe(null);
 			
+			infoConfereciaEncalheCota.setIdControleConferenciaEncalheCota(controleConferenciaEncalheCota.getId());
 			
 		} else {
 			

@@ -7,11 +7,13 @@ import org.hibernate.Hibernate;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.transform.AliasToBeanResultTransformer;
+import org.hibernate.type.StandardBasicTypes;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.ConferenciaEncalheDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoSlipDTO;
 import br.com.abril.nds.model.estoque.ConferenciaEncalhe;
+import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
 import br.com.abril.nds.repository.ConferenciaEncalheRepository;
 
 @Repository
@@ -120,20 +122,21 @@ public class ConferenciaEncalheRepositoryImpl extends
 		
 		Query query =  this.getSession().createSQLQuery(hql.toString()).setResultTransformer(new AliasToBeanResultTransformer(ConferenciaEncalheDTO.class));
 		
-		((SQLQuery)query).addScalar("idConferenciaEncalhe", Hibernate.LONG);
+		((SQLQuery)query).addScalar("idConferenciaEncalhe", StandardBasicTypes.LONG);
 		((SQLQuery)query).addScalar("qtdExemplar");
-		((SQLQuery)query).addScalar("idProdutoEdicao", Hibernate.LONG);
+		((SQLQuery)query).addScalar("tipoChamadaEncalhe");
+		((SQLQuery)query).addScalar("idProdutoEdicao", StandardBasicTypes.LONG);
 		((SQLQuery)query).addScalar("codigoDeBarras");
-		((SQLQuery)query).addScalar("codigoSM", Hibernate.INTEGER);
+		((SQLQuery)query).addScalar("codigoSM", StandardBasicTypes.INTEGER);
 		((SQLQuery)query).addScalar("dataRecolhimento");
 		((SQLQuery)query).addScalar("codigo");
 		((SQLQuery)query).addScalar("nomeProduto");
 		((SQLQuery)query).addScalar("observacao");
-		((SQLQuery)query).addScalar("numeroEdicao", Hibernate.LONG);
+		((SQLQuery)query).addScalar("numeroEdicao", StandardBasicTypes.LONG);
 		((SQLQuery)query).addScalar("precoCapa");
 		((SQLQuery)query).addScalar("desconto");
 		((SQLQuery)query).addScalar("valorTotal");
-		((SQLQuery)query).addScalar("dia", Hibernate.INTEGER);
+		((SQLQuery)query).addScalar("dia", StandardBasicTypes.INTEGER);
 
 		
 		query.setParameter("idControleConferenciaEncalheCota", idControleConferenciaEncalheCota);
