@@ -178,7 +178,7 @@ public interface ProdutoEdicaoRepository extends Repository<ProdutoEdicao, Long>
 	 * com a data de Distribuição mais antiga.
 	 *  
 	 * @param idProdutoEdicao ID da Edição. (Se for passado <i>null</i> será
-	 * considerado o (zero).
+	 * considerado 0 (zero).
 	 * 
 	 * @return
 	 * <ul>
