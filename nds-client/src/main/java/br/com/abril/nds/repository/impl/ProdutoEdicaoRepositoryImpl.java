@@ -439,8 +439,8 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepository<ProdutoEdica
 		
 		hql.append(" SELECT CASE WHEN (ln.dataLancamentoDistribuidor > sysdate()) THEN false ELSE true END ");
 		hql.append("   FROM Lancamento ln ");
-		hql.append("  WHERE ln.dataCriacao = ");
-		hql.append("        (SELECT MIN(lnMinDate.dataCriacao) ");
+		hql.append("  WHERE ln.dataLancamentoDistribuidor = ");
+		hql.append("        (SELECT MIN(lnMinDate.dataLancamentoDistribuidor) ");
 		hql.append("           FROM Lancamento lnMinDate ");
 		hql.append("          WHERE lnMinDate.produtoEdicao.id = :idProdutoEdicao ) ");
 		hql.append("    AND ln.produtoEdicao.id = :idProdutoEdicao ");
@@ -449,7 +449,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepository<ProdutoEdica
 		query.setLong("idProdutoEdicao", idProdutoEdicao);
 		
 		Boolean isPublicado = (Boolean) query.uniqueResult(); 
-		return isPublicado.booleanValue();
+		return (isPublicado == null ? false : isPublicado.booleanValue());
 	}
 	
 }
