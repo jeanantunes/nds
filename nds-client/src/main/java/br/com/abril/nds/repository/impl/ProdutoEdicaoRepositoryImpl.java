@@ -446,7 +446,8 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepository<ProdutoEdica
 		hql.append("    AND ln.produtoEdicao.id = :idProdutoEdicao ");
 		
 		Query query = this.getSession().createQuery(hql.toString());
-		query.setLong("idProdutoEdicao", idProdutoEdicao);
+		query.setLong("idProdutoEdicao", 
+				idProdutoEdicao == null ? Long.valueOf(0) : idProdutoEdicao);
 		
 		Boolean isPublicado = (Boolean) query.uniqueResult(); 
 		return (isPublicado == null ? false : isPublicado.booleanValue());
