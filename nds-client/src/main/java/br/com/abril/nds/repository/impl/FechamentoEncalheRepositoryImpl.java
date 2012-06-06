@@ -3,7 +3,13 @@ package br.com.abril.nds.repository.impl;
 import java.util.Date;
 import java.util.List;
 
-import org.hibernate.Query;
+import org.hibernate.Criteria;
+import org.hibernate.FetchMode;
+import org.hibernate.criterion.Criterion;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Property;
+import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.Transformers;
 import org.springframework.stereotype.Repository;
 
@@ -12,6 +18,8 @@ import br.com.abril.nds.dto.FechamentoFisicoLogicoDTO;
 import br.com.abril.nds.dto.filtro.FiltroFechamentoEncalheDTO;
 import br.com.abril.nds.model.estoque.FechamentoEncalhe;
 import br.com.abril.nds.model.estoque.pk.FechamentoEncalhePK;
+import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalheCota;
+import br.com.abril.nds.model.planejamento.ChamadaEncalhe;
 import br.com.abril.nds.repository.FechamentoEncalheRepository;
 
 @Repository
@@ -48,35 +56,102 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepository<Fechamen
 		
 		return null;
 	}
-	
 
-	@SuppressWarnings("unchecked")
 	@Override
-	public List<CotaAusenteEncalheDTO> buscarCotasAusentes(Date dataEncalhe) {
-		
-		String hql = " select distinct cec.cota.id as idCota ";
-		hql += "   from ChamadaEncalhe ce, ";
-		hql += "        ChamadaEncalheCota cec, ";
-		hql += "        Cota c ";
-		hql += "  where ce.id = cec.chamadaEncalhe.id ";
-		hql += "    and ce.dataRecolhimento = :dataEncalhe ";
-		hql += "    and cec.cota.id not in ( ";
-		hql += "        select ccec.cota.id ";
-		hql += "          from ControleConferenciaEncalheCota ccec ";
-		hql += "         where ccec.dataOperacao = :dataEncalhe ) ";
+	@SuppressWarnings("unchecked")
+	public List<CotaAusenteEncalheDTO> buscarCotasAusentes(
+		Date dataEncalhe, String sortorder, String sortname, int page, int rp) {
 		
 		try {
+
+			Criteria criteria = super.getSession().createCriteria(ChamadaEncalhe.class, "ce");
 			
-			Query query = this.getSession().createQuery(hql);
+			this.criarCriteriaCotasAusentesEncalhe(criteria, dataEncalhe);
 			
-			query.setParameter("dataEncalhe", dataEncalhe);
+			criteria.setFirstResult(page);
+			criteria.setMaxResults(rp);
 			
-			query.setResultTransformer(Transformers.aliasToBean(CotaAusenteEncalheDTO.class));
+			this.addOrderCriteria(criteria, sortorder, sortname);
 			
-			return query.list();
-			
+			criteria.setResultTransformer(Transformers.aliasToBean(CotaAusenteEncalheDTO.class));
+				
+			return criteria.list();
+		
 		} catch (Exception e) {
+			e.printStackTrace();
 			throw new RuntimeException(e);
 		}
 	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public Integer buscarTotalCotasAusentes(Date dataEncalhe) {
+		
+		try {
+			
+			Criteria criteria = super.getSession().createCriteria(ChamadaEncalhe.class, "ce");
+			
+			this.criarCriteriaCotasAusentesEncalhe(criteria, dataEncalhe);
+
+			criteria.setResultTransformer(Transformers.aliasToBean(CotaAusenteEncalheDTO.class));
+			
+			List<CotaAusenteEncalheDTO> listaCotasAusentes = criteria.list();
+			
+			if (listaCotasAusentes == null || listaCotasAusentes.isEmpty()) {
+				return 0;
+			}
+			
+			return listaCotasAusentes.size();
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new RuntimeException(e);
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	private void criarCriteriaCotasAusentesEncalhe(Criteria criteria, Date dataEncalhe) {
+		
+		criteria.createAlias("ce.chamadaEncalheCotas", "cec");
+		criteria.createAlias("cec.cota", "cota");
+		criteria.createAlias("cota.box", "box");
+		criteria.createAlias("box.roteiros", "roteiros");
+		criteria.createAlias("roteiros.rotas", "rotas");
+		
+		criteria.setFetchMode("cec", FetchMode.JOIN);
+		criteria.setFetchMode("cota", FetchMode.JOIN);
+		criteria.setFetchMode("box", FetchMode.JOIN);
+		criteria.setFetchMode("roteiros", FetchMode.JOIN);
+		criteria.setFetchMode("rotas", FetchMode.JOIN);
+
+		criteria.setProjection(Projections.distinct(Projections.projectionList()
+				.add(Projections.property("cota.numeroCota"), "numeroCota")
+				.add(Projections.property("box.nome"), "boxName")
+				.add(Projections.property("roteiros.descricaoRoteiro"), "roteiroName")
+				.add(Projections.property("rotas.descricaoRota"), "rotaName")));
+		
+		criteria.add(Restrictions.eq("ce.dataRecolhimento", dataEncalhe));
+
+		Criteria subQuery = super.getSession().createCriteria(ControleConferenciaEncalheCota.class, "ccec");
+		subQuery.add(Restrictions.eq("ccec.dataOperacao", dataEncalhe));
+		subQuery.setFetchMode("ccec.cota", FetchMode.JOIN);
+		subQuery.setProjection(Property.forName("ccec.cota.id"));
+
+		List<Long> listaIdsCota = subQuery.list();
+		
+		if (listaIdsCota != null && !listaIdsCota.isEmpty()) {
+			Criterion in = Restrictions.in("cec.cota.id", listaIdsCota);
+			criteria.add(Restrictions.not(in));
+		}
+	}
+	
+	private void addOrderCriteria(Criteria criteria, String sortorder, String sortname) {
+		
+		if (("asc").equalsIgnoreCase(sortorder)) {
+			criteria.addOrder(Order.asc(sortname));
+		} else if (("desc").equalsIgnoreCase(sortorder)) {
+			criteria.addOrder(Order.desc(sortname));
+		}
+	}
+	
 }
