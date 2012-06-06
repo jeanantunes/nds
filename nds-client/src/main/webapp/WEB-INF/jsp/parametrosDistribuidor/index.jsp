@@ -281,7 +281,7 @@ $(document).ready(function() {
 		              <fieldset style="width:440px!important; margin-bottom:5px;">
 		                <legend>Parciais / Matriz de Lançamento</legend>
 		                <label>Relançamento de Parciais em D+: </label>
-		                <select name="select18" size="1" multiple="multiple" id="select19" style="width:50px; height:19px;">
+		                <select name="select18" size="1" multiple="multiple" id="select18" style="width:50px; height:19px;">
 		                  <option selected="selected">2</option>
 		                  <option>3</option>
 		                  <option>4</option>

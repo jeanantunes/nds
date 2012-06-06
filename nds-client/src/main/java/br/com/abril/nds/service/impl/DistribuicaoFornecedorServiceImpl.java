@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import br.com.abril.nds.client.vo.RegistroDiaOperacaoFornecedorVO;
 import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.cadastro.DistribuicaoFornecedor;
+import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.OperacaoDistribuidor;
 import br.com.abril.nds.repository.DistribuicaoFornecedorRepository;
@@ -54,7 +55,7 @@ public class DistribuicaoFornecedorServiceImpl implements DistribuicaoFornecedor
 	private DistribuicaoFornecedorRepository distribuicaoFornecedorRepository;
 
 	@Autowired
-	private FornecedorRepository fornecedorRepository;
+	private FornecedorRepository fornecedorService;
 
 	/* (non-Javadoc)
 	 * @see br.com.abril.nds.service.DistribuicaoFornecedorService#buscarTodos()
@@ -143,10 +144,64 @@ public class DistribuicaoFornecedorServiceImpl implements DistribuicaoFornecedor
 	/* (non-Javadoc)
 	 * @see br.com.abril.nds.service.DistribuicaoFornecedorService#excluirDadosFornecedor(long)
 	 */
-	@Transactional(readOnly = true)
+	@Transactional(readOnly = false)
 	@Override
 	public void excluirDadosFornecedor(long codigoFornecedor) {
-		distribuicaoFornecedorRepository.excluirDadosFornecedor(fornecedorRepository.buscarPorId(codigoFornecedor));
+		distribuicaoFornecedorRepository.excluirDadosFornecedor(fornecedorService.buscarPorId(codigoFornecedor));
+	}
+
+	/**
+	 * Atualiza os dados de dias de lanãmento e dias de recolhimento do fornecedor
+	 * @param selectFornecedoresLancamento
+	 * @param selectDiasLancamento
+	 * @param selectDiasRecolhimento
+	 */
+	@Transactional(readOnly = false)
+	@Override
+	public void gravarAtualizarDadosFornecedor(List<String> listaCodigoFornecedoresLancamento,
+											   List<String> listaDiasLancamento,
+											   List<String> listaDiasRecolhimento,
+											   Distribuidor distribuidor) {
+		
+		List<DistribuicaoFornecedor> lista = new ArrayList<DistribuicaoFornecedor>();
+
+		Fornecedor fornecedor = null;
+		
+		for (String codigoFornecedor : listaCodigoFornecedoresLancamento) {
+			
+			fornecedor = fornecedorService.buscarPorId(Long.parseLong(codigoFornecedor));
+			
+			// Adiciona os dias de lançamento na lista
+			for (String diaLancamento : listaDiasLancamento) {
+				lista.add(obterDistribuicaoFornecedorAtualizado(fornecedor, distribuidor, Integer.parseInt(diaLancamento), OperacaoDistribuidor.DISTRIBUICAO));
+			}
+			
+			// Adiciona os dias de recolhimento do fornecedor na lista
+			for (String diaRecolhimento : listaDiasRecolhimento) {
+				lista.add(obterDistribuicaoFornecedorAtualizado(fornecedor, distribuidor, Integer.parseInt(diaRecolhimento), OperacaoDistribuidor.RECOLHIMENTO));
+			}
+			
+		}
+		
+		distribuicaoFornecedorRepository.gravarAtualizarDadosFornecedor(lista);
+		
+	}
+
+	/**
+	 * Retorna um DistribuicaoFornecedor atualizado com os dados de dias atualizados
+	 * @param fornecedor
+	 * @param distribuidor
+	 * @param dia
+	 * @param operacao (Enum OperacaoDistribuidor)
+	 * @return
+	 */
+	private DistribuicaoFornecedor obterDistribuicaoFornecedorAtualizado(Fornecedor fornecedor, Distribuidor distribuidor, int dia, OperacaoDistribuidor operacao) {
+		DistribuicaoFornecedor distribuicaoFornecedor = new DistribuicaoFornecedor();
+		distribuicaoFornecedor.setFornecedor(fornecedor);
+		distribuicaoFornecedor.setDiaSemana(DiaSemana.getByCodigoDiaSemana(dia));
+		distribuicaoFornecedor.setDistribuidor(distribuidor);
+		distribuicaoFornecedor.setOperacaoDistribuidor(operacao);
+		return distribuicaoFornecedor;
 	}
 	
 }

@@ -6,6 +6,12 @@ import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.cadastro.DistribuicaoFornecedor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 
+/**
+ * Interface que define as regras de acesso a dados referentes a entidade
+ * {@link br.com.abril.nds.model.cadastro.DistribuicaoFornecedor }  
+ * 
+ * @author InfoA2
+ */
 public interface DistribuicaoFornecedorRepository extends Repository<DistribuicaoFornecedor, Long>{
 
 	List<Integer> obterDiasSemanaDistribuicao(String codigoProduto, Long idProdutoEdicao);
@@ -14,7 +20,21 @@ public interface DistribuicaoFornecedorRepository extends Repository<Distribuica
 	
 	boolean verificarRecolhimentoDiaSemana(String codigoProduto,Long idProdutoEdicao, DiaSemana diaSemana);
 	
-	List<DistribuicaoFornecedor> obterTodosOrdenadoId();
+	/**
+	 * Obtem uma lista de todos os dados de DistribuicaoFornecedor ordenados por Fornecedor
+	 * @return
+	 */
+	public List<DistribuicaoFornecedor> obterTodosOrdenadoId();
 
-	void excluirDadosFornecedor(Fornecedor fornecedor);
+	/**
+	 * Exxlui todas as informações relacionadas ao fornecedor (dias de lançamento e recolhimento)
+	 * @param fornecedor
+	 */
+	public void excluirDadosFornecedor(Fornecedor fornecedor);
+
+	/**
+	 * Atualiza os dados do fornecedor, setando os novos dias de lançamento e recolhimento (sobrescreve os dados anteriores)
+	 * @param listaDistribuicaoFornecedor
+	 */
+	public void gravarAtualizarDadosFornecedor(List<DistribuicaoFornecedor> listaDistribuicaoFornecedor);
 }

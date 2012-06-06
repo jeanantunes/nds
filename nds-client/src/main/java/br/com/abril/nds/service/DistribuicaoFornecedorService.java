@@ -3,6 +3,7 @@ package br.com.abril.nds.service;
 import java.util.List;
 
 import br.com.abril.nds.client.vo.RegistroDiaOperacaoFornecedorVO;
+import br.com.abril.nds.model.cadastro.Distribuidor;
 
 /**
  * Interface que define as regras de acesso a serviços referentes a entidade
@@ -22,5 +23,13 @@ public interface DistribuicaoFornecedorService {
 	 * @param codigoFornecedor
 	 */
 	public void excluirDadosFornecedor(long codigoFornecedor);
+
+	/**
+	 * Atualiza os dados de dias de lanãmento e dias de recolhimento do fornecedor
+	 * @param selectFornecedoresLancamento
+	 * @param selectDiasLancamento
+	 * @param selectDiasRecolhimento
+	 */
+	public void gravarAtualizarDadosFornecedor(List<String> listaCodigoFornecedoresLancamento, List<String> listaDiasLancamento, List<String> listaDiasRecolhimento, Distribuidor distribuidor);
 	
 }

@@ -1,10 +1,13 @@
 package br.com.abril.nds.controllers.administracao;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.vo.RegistroDiaOperacaoFornecedorVO;
+import br.com.abril.nds.client.vo.ValidacaoVO;
+import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.TipoParametroSistema;
@@ -12,6 +15,7 @@ import br.com.abril.nds.service.DistribuicaoFornecedorService;
 import br.com.abril.nds.service.DistribuidorService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.ParametroSistemaService;
+import br.com.abril.nds.util.TipoMensagem;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
@@ -69,10 +73,8 @@ public class ParametrosDistribuidorController {
 	 * Realiza a exclusão dos dias de distribuição e recolhimento do fornecedor
 	 */
 	public void excluirDiasDistribuicaoFornecedor(long codigoFornecedor) {
-		System.out.println("excluir fornecedor");
-		
 		distribuicaoFornecedorService.excluirDadosFornecedor(codigoFornecedor);
-		
+		result.redirectTo(ParametrosDistribuidorController.class).index();
 	}
 
 	/**
@@ -81,9 +83,37 @@ public class ParametrosDistribuidorController {
 	 */
 	@Post
 	@Path("/gravarDiasDistribuidorFornecedor")
-	public void gravarDiasDistribuidorFornecedor(List<String> selectFornecedoresLancamento, List<String> selectDiasLancamento, List<String> selectDiasRecolhimento) {
-		System.out.println("teste");
-		//distribuidorService.alterar(distribuidor);
+	public void gravarDiasDistribuidorFornecedor(List<String> selectFornecedoresLancamento, List<String> selectDiasLancamento, List<String> selectDiasRecolhimento) throws Exception {
+
+		validarDadosDiasDistribuidorFornecedor(selectFornecedoresLancamento, selectDiasLancamento, selectDiasRecolhimento);
+		Distribuidor distribuidor = distribuidorService.obter();
+		distribuicaoFornecedorService.gravarAtualizarDadosFornecedor(selectFornecedoresLancamento, selectDiasLancamento, selectDiasRecolhimento, distribuidor);
+		
+		result.redirectTo(ParametrosDistribuidorController.class).index();
+		
 	}
 
+	private void validarDadosDiasDistribuidorFornecedor(List<String> selectFornecedoresLancamento, List<String> selectDiasLancamento, List<String> selectDiasRecolhimento) {
+		List<String> listaMensagemValidacao = new ArrayList<String>();
+
+		if (selectFornecedoresLancamento == null || selectFornecedoresLancamento.isEmpty()) {
+			listaMensagemValidacao.add("É necessário selecionar no mínimo um Fornecedor!");
+		}
+
+		if (selectDiasLancamento == null || selectDiasLancamento.isEmpty()) {
+			listaMensagemValidacao.add("É necessário selecionar no mínimo um dia de Lançamento!");
+		}
+
+		if (selectFornecedoresLancamento == null || selectFornecedoresLancamento.isEmpty()) {
+			listaMensagemValidacao.add("É necessário selecionar no mínimo um dia de Recolhimento!");
+		}
+
+		if (!listaMensagemValidacao.isEmpty()) {
+			ValidacaoVO validacaoVO = new ValidacaoVO(TipoMensagem.ERROR,
+					listaMensagemValidacao);
+			throw new ValidacaoException(validacaoVO);
+		}
+	
+	}
+	
 }
