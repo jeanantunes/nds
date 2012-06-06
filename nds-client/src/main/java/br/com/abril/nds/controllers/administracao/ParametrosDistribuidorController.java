@@ -1,6 +1,7 @@
 package br.com.abril.nds.controllers.administracao;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,16 +11,15 @@ import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
-import br.com.abril.nds.model.cadastro.TipoParametroSistema;
 import br.com.abril.nds.service.DistribuicaoFornecedorService;
 import br.com.abril.nds.service.DistribuidorService;
 import br.com.abril.nds.service.FornecedorService;
-import br.com.abril.nds.service.ParametroSistemaService;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
+import br.com.caelum.vraptor.view.Results;
 
 /**
  * @author infoA2
@@ -34,9 +34,6 @@ public class ParametrosDistribuidorController {
 	
 	@Autowired
 	private DistribuidorService distribuidorService;
-	
-	@Autowired
-	private ParametroSistemaService parametroSistemaService;
 	
 	@Autowired
 	private DistribuicaoFornecedorService distribuicaoFornecedorService;
@@ -57,7 +54,6 @@ public class ParametrosDistribuidorController {
 
 		result.include("listaDiaOperacaoFornecedor", listaDiaOperacaoFornecedor);
 		result.include("fornecedores", fornecedores);
-		result.include("CNPJ", parametroSistemaService.buscarParametroPorTipoParametro(TipoParametroSistema.CNPJ));
 		result.include("distribuidor", distribuidorService.obter());
 	}
 
@@ -67,6 +63,7 @@ public class ParametrosDistribuidorController {
 	 */
 	public void gravar(Distribuidor distribuidor) {
 		distribuidorService.alterar(distribuidor);
+		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Parâmetros do Distribuidor alterado com sucesso"),"result").recursive().serialize();
 	}
 	
 	/**
@@ -74,25 +71,41 @@ public class ParametrosDistribuidorController {
 	 */
 	public void excluirDiasDistribuicaoFornecedor(long codigoFornecedor) {
 		distribuicaoFornecedorService.excluirDadosFornecedor(codigoFornecedor);
-		result.redirectTo(ParametrosDistribuidorController.class).index();
+		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Dias de Distribuição do Fornecedor excluido com sucesso"),"result").recursive().serialize();
 	}
 
+	/**
+	 * Retorna via json a lista de dias de distribuição e recolhimento do fornecedor
+	 */
+	public void recarregarDiasDistribuidorFornecedorGrid() {
+		result.use(Results.json()).from(distribuicaoFornecedorService.buscarDiasOperacaoFornecedor(),"result").recursive().serialize();
+	}
+	
 	/**
 	 * Grava os dias de distribuição de recolhimento do fornecedor
 	 * @param distribuidor
 	 */
 	@Post
 	@Path("/gravarDiasDistribuidorFornecedor")
-	public void gravarDiasDistribuidorFornecedor(List<String> selectFornecedoresLancamento, List<String> selectDiasLancamento, List<String> selectDiasRecolhimento) throws Exception {
-
-		validarDadosDiasDistribuidorFornecedor(selectFornecedoresLancamento, selectDiasLancamento, selectDiasRecolhimento);
+	
+	public void gravarDiasDistribuidorFornecedor(String selectFornecedoresLancamento, String selectDiasLancamento, String selectDiasRecolhimento) throws Exception {
+		
+		List<String> listaFornecedoresLancamento = Arrays.asList(selectFornecedoresLancamento.split(","));
+		List<String> listaDiasLancamento		 = Arrays.asList(selectDiasLancamento.split(","));
+		List<String> listaDiasRecolhimento		 = Arrays.asList(selectDiasRecolhimento.split(","));
+		
+		validarDadosDiasDistribuidorFornecedor(listaFornecedoresLancamento, listaDiasLancamento, listaDiasRecolhimento);
 		Distribuidor distribuidor = distribuidorService.obter();
-		distribuicaoFornecedorService.gravarAtualizarDadosFornecedor(selectFornecedoresLancamento, selectDiasLancamento, selectDiasRecolhimento, distribuidor);
-		
-		result.redirectTo(ParametrosDistribuidorController.class).index();
-		
+		distribuicaoFornecedorService.gravarAtualizarDadosFornecedor(listaFornecedoresLancamento, listaDiasLancamento, listaDiasRecolhimento, distribuidor);
+		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Dias de Distribuição do Fornecedor cadastrado com sucesso"),"result").recursive().serialize();
 	}
 
+	/**
+	 * Valida os dados selecionados ao inserir dados de dias de distribuição por fornecedor
+	 * @param selectFornecedoresLancamento
+	 * @param selectDiasLancamento
+	 * @param selectDiasRecolhimento
+	 */
 	private void validarDadosDiasDistribuidorFornecedor(List<String> selectFornecedoresLancamento, List<String> selectDiasLancamento, List<String> selectDiasRecolhimento) {
 		List<String> listaMensagemValidacao = new ArrayList<String>();
 
@@ -109,8 +122,7 @@ public class ParametrosDistribuidorController {
 		}
 
 		if (!listaMensagemValidacao.isEmpty()) {
-			ValidacaoVO validacaoVO = new ValidacaoVO(TipoMensagem.ERROR,
-					listaMensagemValidacao);
+			ValidacaoVO validacaoVO = new ValidacaoVO(TipoMensagem.ERROR, listaMensagemValidacao);
 			throw new ValidacaoException(validacaoVO);
 		}
 	

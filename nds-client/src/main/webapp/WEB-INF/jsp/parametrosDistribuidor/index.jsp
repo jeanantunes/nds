@@ -19,6 +19,64 @@
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/editor/wysiwyg.table.js"></script>
 <script language="javascript" type="text/javascript">
 
+function gravarDiasDistribuidorFornecedor() {	
+	
+	var listaFornecedoresLancamento = [];
+	var listaDiasLancamento         = [];
+	var listaDiasRecolhimento       = [];
+
+	$('#selectFornecedoresLancamento :selected').each(function(i, selected) {
+		listaFornecedoresLancamento[i] = $(selected).val();
+	    //textvalues[i] = $(selected).text();
+	});
+
+	$('#selectDiasLancamento :selected').each(function(i, selected) {
+		listaDiasLancamento[i] = $(selected).val();
+	});
+
+	$('#selectDiasRecolhimento :selected').each(function(i, selected) {
+		listaDiasRecolhimento[i] = $(selected).val();
+	});
+	
+	var data = [{name: 'selectFornecedoresLancamento', value: listaFornecedoresLancamento},
+	            {name: 'selectDiasLancamento', 		   value: listaDiasLancamento},
+	            {name: 'selectDiasRecolhimento', 	   value: listaDiasRecolhimento}];
+
+	$.postJSON("<c:url value='/administracao/parametrosDistribuidor/gravarDiasDistribuidorFornecedor'/>", 
+			   data,
+			   function (resultado) {
+					exibirMensagem(resultado.mensagens.tipoMensagem, 
+								   resultado.mensagens.listaMensagens);
+			   });
+	recarregarDiasDistribuidorFornecedorGrid();
+}
+
+function excluirDiasDistribuidorFornecedor(id) {
+	var data = [{name: 'codigoFornecedor', value: id}];
+	$.postJSON("<c:url value='/administracao/parametrosDistribuidor/excluirDiasDistribuicaoFornecedor'/>",
+			   data,
+			   function (resultado) {
+				   exibirMensagem(resultado.mensagens.tipoMensagem, 
+				   				  resultado.mensagens.listaMensagens);
+			   });
+	recarregarDiasDistribuidorFornecedorGrid();
+}
+
+function recarregarDiasDistribuidorFornecedorGrid() {
+	$.postJSON("<c:url value='/administracao/parametrosDistribuidor/recarregarDiasDistribuidorFornecedorGrid'/>", 
+			   function (resultado) {
+					if (resultado.mensagens) {
+						exibirMensagem(
+							resultado.mensagens.tipoMensagem, 
+							resultado.mensagens.listaMensagens
+						);
+					}
+					$.each(resultado.rows, function(index, row) {
+						alert(row.cell)
+					});
+			   });
+}
+
 function popup_confirm() {
 		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
 	
@@ -164,7 +222,7 @@ $(document).ready(function() {
 		                  <tr>
 		                    <td>&nbsp;</td>
 		                    <td align="center">&nbsp;</td>
-		                    <td width="139" align="center"><span class="bt_add"><a href="javascript:;" onclick="form.action='${pageContext.request.contextPath}/administracao/parametrosDistribuidor/gravarDiasDistribuidorFornecedor'; form.submit()" >Incluir Novo</a></span></td>
+		                    <td width="139" align="center"><span class="bt_add"><a href="javascript:;" onclick="gravarDiasDistribuidorFornecedor()" >Incluir Novo</a></span></td>
 		                  </tr>
 		                </table>
 		                <br />
@@ -180,7 +238,7 @@ $(document).ready(function() {
 			                    <td width="139">${registroDiaOperacaoFornecedor.fornecedor.juridica.nomeFantasia}</td>
 			                    <td width="144" align="center">${registroDiaOperacaoFornecedor.diasLancamento}</td>
 			                    <td width="125" align="center">${registroDiaOperacaoFornecedor.diasRecolhimento}</td>
-			                    <td width="28" align="center"><a href="${pageContext.request.contextPath}/administracao/parametrosDistribuidor/excluirDiasDistribuicaoFornecedor?codigoFornecedor=${registroDiaOperacaoFornecedor.fornecedor.id}" ><img src="${pageContext.request.contextPath}/images/ico_excluir.gif" width="15" height="15" alt="Excluir" /></a></td>
+			                    <td width="28" align="center"><a href="javascript:;" onclick="excluirDiasDistribuidorFornecedor(${registroDiaOperacaoFornecedor.fornecedor.id})" ><img src="${pageContext.request.contextPath}/images/ico_excluir.gif" width="15" height="15" alt="Excluir" /></a></td>
 			                  </tr>
                    		  </c:forEach>
 		                </table>
@@ -286,21 +344,6 @@ $(document).ready(function() {
 		                  <option>3</option>
 		                  <option>4</option>
 		                  <option>5</option>
-		                  <option>6</option>
-		                  <option>7</option>
-		                  <option>8</option>
-		                  <option>9</option>
-		                  <option>10</option>
-		                  <option>11</option>
-		                  <option>12</option>
-		                  <option>13</option>
-		                  <option>14</option>
-		                  <option>15</option>
-		                  <option>16</option>
-		                  <option>17</option>
-		                  <option>18</option>
-		                  <option>19</option>
-		                  <option>20</option>
 		                </select>
 		              </fieldset>
 			</div>
