@@ -696,7 +696,7 @@
 		     <td width="254">
 		         <input id="contrato" name="contrato" type="checkbox" style="float:left;" onclick="exibe_botao_contrato(this.checked);" />
 		         <span name="botaoContrato" id="botaoContrato" class="bt_imprimir">
-		             <!-- BOTAO PARA IMPRESSÃO DE CONTRATO - FUNÇÃO PROVISÓRIA ADICIONADA PARA POSTAR DADOS NA SESSAO -->
+		             <!-- BOTAO PARA IMPRESSÃO DE CONTRATO -->
 		             <a href="javascript:;" onclick="imprimeContrato()">Contrato</a>
 		         </span>
 		     </td>

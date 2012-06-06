@@ -47,6 +47,7 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 		
 		SlipDTO slipVendaEncalhe = null;
 		ProdutoEdicaoSlipDTO produtoEdicaoVendaEncalhe = null;
+		List<ProdutoEdicaoSlipDTO> listaProdutoEdicaoVendaEncalhe = new ArrayList<ProdutoEdicaoSlipDTO>();
 		
 		VendaEncalhe ve = new VendaEncalhe();//TO-DO: OBTER VENDA ENCALHE POR ID(idVendaEncalhe)
 		
@@ -56,7 +57,7 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 			
 			slipVendaEncalhe.setNomeCota("0001 - Nome da Cota");
 			slipVendaEncalhe.setCodigoBox("10 - Suplementar");
-			slipVendaEncalhe.setDataConferencia(DateUtil.parseData(DateUtil.formatarDataPTBR(Calendar.getInstance().getTime()),"dd/MM/yyyy - Hora hh:mm"));
+			slipVendaEncalhe.setDataConferencia(DateUtil.parseData(DateUtil.formatarDataPTBR(Calendar.getInstance().getTime()),"dd/MM/yyyy"));
 			slipVendaEncalhe.setNomeUsuario("Nome do Usuário");
 			
 			
@@ -71,12 +72,13 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 			produtoEdicaoVendaEncalhe.setPrecoVenda(BigDecimal.TEN);
 			produtoEdicaoVendaEncalhe.setValorTotal(new BigDecimal(100));
 			
-			slipVendaEncalhe.getListaProdutoEdicaoSlipDTO().add(produtoEdicaoVendaEncalhe);
-			slipVendaEncalhe.getListaProdutoEdicaoSlipDTO().add(produtoEdicaoVendaEncalhe);
-			slipVendaEncalhe.getListaProdutoEdicaoSlipDTO().add(produtoEdicaoVendaEncalhe);
-			slipVendaEncalhe.getListaProdutoEdicaoSlipDTO().add(produtoEdicaoVendaEncalhe);
+			listaProdutoEdicaoVendaEncalhe.add(produtoEdicaoVendaEncalhe);
+			listaProdutoEdicaoVendaEncalhe.add(produtoEdicaoVendaEncalhe);
+			listaProdutoEdicaoVendaEncalhe.add(produtoEdicaoVendaEncalhe);
+			listaProdutoEdicaoVendaEncalhe.add(produtoEdicaoVendaEncalhe);
+			listaProdutoEdicaoVendaEncalhe.add(produtoEdicaoVendaEncalhe);
 			
-			
+			slipVendaEncalhe.setListaProdutoEdicaoSlipDTO(listaProdutoEdicaoVendaEncalhe);
 			
 		}
 		return slipVendaEncalhe;
