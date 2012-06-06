@@ -453,5 +453,26 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepository<ProdutoEdica
 		return (isPublicado == null ? false : isPublicado.booleanValue());
 	}
 	
+	@Override
+	public boolean existeNumeroEdicaoJaCadastrada(String codigoProduto, Long numeroEdicao, Long idProdutoEdicao) {
+	
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append("SELECT COUNT(pe.id) ");
+		hql.append("  FROM ProdutoEdicao pe JOIN pe.produto as pr ");
+		hql.append(" WHERE pe.numeroEdicao = :numeroEdicao ");
+		hql.append("   AND pe.id != :idProdutoEdicao ");
+		hql.append("   AND pr.codigo = :codigoProduto ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setString("codigoProduto", codigoProduto);
+		query.setLong("numeroEdicao", numeroEdicao);
+		query.setLong("idProdutoEdicao", 
+				idProdutoEdicao == null ? Long.valueOf(0) : idProdutoEdicao);
+		
+		Long qtd = (Long) query.uniqueResult();
+		return qtd.intValue() > 0 ? true : false;
+	}
+	
 }
  
