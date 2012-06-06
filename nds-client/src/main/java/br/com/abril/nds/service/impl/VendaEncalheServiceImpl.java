@@ -4,7 +4,8 @@ import java.math.BigDecimal;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Calendar;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 import net.sf.jasperreports.engine.JRDataSource;
@@ -15,12 +16,10 @@ import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import br.com.abril.nds.dto.ProdutoEdicaoSlipDTO;
-import br.com.abril.nds.dto.SlipDTO;
+import br.com.abril.nds.dto.SlipVendaEncalheDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.estoque.VendaEncalhe;
 import br.com.abril.nds.service.VendaEncalheService;
-import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TipoMensagem;
 
 /**
@@ -38,50 +37,76 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 	
 	/**
 	 * Obtém dados da venda encalhe por id
-	 * @param idVendaEncalhe
-	 * @return SlipDTO
+	 * @param idCota
+	 * @param dataInicio
+	 * @param dataFim
+	 * @return List<SlipVendaEncalheDTO>
 	 */
 	@Override
 	@Transactional(readOnly = true)
-	public SlipDTO obtemDadosSlip(long idVendaEncalhe){
+	public List<SlipVendaEncalheDTO> obtemDadosSlip(long idCota, Date dataInicio, Date dataFim){
 		
-		SlipDTO slipVendaEncalhe = null;
-		ProdutoEdicaoSlipDTO produtoEdicaoVendaEncalhe = null;
-		List<ProdutoEdicaoSlipDTO> listaProdutoEdicaoVendaEncalhe = new ArrayList<ProdutoEdicaoSlipDTO>();
 		
-		VendaEncalhe ve = new VendaEncalhe();//TO-DO: OBTER VENDA ENCALHE POR ID(idVendaEncalhe)
 		
-		if (ve!=null) {
+		SlipVendaEncalheDTO slipVendaEncalhe = null;
+		List<SlipVendaEncalheDTO> listaSlipVendaEncalhe = new ArrayList<SlipVendaEncalheDTO>();
+		
+		List<VendaEncalhe> listaVe = new ArrayList<VendaEncalhe>();//TO-DO: OBTER VENDAS DE ENCALHE POR ID_COTA E RANGE DE DATAS
+		
+		
+		
+		//SIMULAÇÃO DE VENDAS DE ENCALHE ENCONTRADAS
+		VendaEncalhe veTeste01 = new VendaEncalhe();
+		VendaEncalhe veTeste02 = new VendaEncalhe();
+		VendaEncalhe veTeste03 = new VendaEncalhe();
+		VendaEncalhe veTeste04 = new VendaEncalhe();
+		VendaEncalhe veTeste05 = new VendaEncalhe();
+		VendaEncalhe veTeste06 = new VendaEncalhe();
+		VendaEncalhe veTeste07 = new VendaEncalhe();
+		VendaEncalhe veTeste08 = new VendaEncalhe();
+		VendaEncalhe veTeste09 = new VendaEncalhe();
+		VendaEncalhe veTeste10 = new VendaEncalhe();
+		listaVe = Arrays.asList(veTeste01,veTeste02,veTeste03,veTeste04,veTeste05,veTeste06,veTeste07,veTeste08,veTeste09,veTeste10);
+		
+
+		
+		if (listaVe!=null && listaVe.size()>0) {
 			
-			slipVendaEncalhe = new SlipDTO();
+			Double quantidadeTotal = 0d;
+			Double valorTotal = 0d;
 			
-			slipVendaEncalhe.setNomeCota("0001 - Nome da Cota");
-			slipVendaEncalhe.setCodigoBox("10 - Suplementar");
-			slipVendaEncalhe.setDataConferencia(DateUtil.parseData(DateUtil.formatarDataPTBR(Calendar.getInstance().getTime()),"dd/MM/yyyy"));
-			slipVendaEncalhe.setNomeUsuario("Nome do Usuário");
+			for (VendaEncalhe itemVE:listaVe){
 			
-			
-			
-			//ÍTENS - VENDA ENCALHE - TO-DO: OBTER DADOS DE PRODUTO EDIÇÃO DA VENDA ENCALHE EM QUESTÃO
-			produtoEdicaoVendaEncalhe = new ProdutoEdicaoSlipDTO();
-			
-			produtoEdicaoVendaEncalhe.setIdProdutoEdicao(1l);
-			produtoEdicaoVendaEncalhe.setNomeProduto("Produto Edição 01");
-			produtoEdicaoVendaEncalhe.setNumeroEdicao(2l);
-			produtoEdicaoVendaEncalhe.setQuantidadeEfetiva(BigDecimal.TEN);
-			produtoEdicaoVendaEncalhe.setPrecoVenda(BigDecimal.TEN);
-			produtoEdicaoVendaEncalhe.setValorTotal(new BigDecimal(100));
-			
-			listaProdutoEdicaoVendaEncalhe.add(produtoEdicaoVendaEncalhe);
-			listaProdutoEdicaoVendaEncalhe.add(produtoEdicaoVendaEncalhe);
-			listaProdutoEdicaoVendaEncalhe.add(produtoEdicaoVendaEncalhe);
-			listaProdutoEdicaoVendaEncalhe.add(produtoEdicaoVendaEncalhe);
-			listaProdutoEdicaoVendaEncalhe.add(produtoEdicaoVendaEncalhe);
-			
-			slipVendaEncalhe.setListaProdutoEdicaoSlipDTO(listaProdutoEdicaoVendaEncalhe);
-			
+				slipVendaEncalhe = new SlipVendaEncalheDTO();
+				
+				
+				//DADOS PARA SIMULAÇÃO - TO-DO - OBTER DO ITEM ATUAL DA ITERAÇÃO
+				slipVendaEncalhe.setNomeCota("Nome da Cota");
+				slipVendaEncalhe.setNumeroCota("0001");
+				slipVendaEncalhe.setNumeroBox("10");
+				slipVendaEncalhe.setDescricaoBox("Suplementar");
+				slipVendaEncalhe.setData("01/01/2012");
+				slipVendaEncalhe.setHora("12:00");
+				slipVendaEncalhe.setUsuario("Nome do Usuário");
+				
+				slipVendaEncalhe.setCodigo("1");
+				slipVendaEncalhe.setProduto("Nome Produto Edição");
+				slipVendaEncalhe.setEdicao("2");
+				slipVendaEncalhe.setQuantidade("15");
+				slipVendaEncalhe.setPreco("R$150,00");
+				slipVendaEncalhe.setTotal("R$300,00");
+				
+				quantidadeTotal += 15;
+				valorTotal += 300;
+				slipVendaEncalhe.setQuantidadeTotal(quantidadeTotal.toString());
+				slipVendaEncalhe.setValorTotal(valorTotal.toString());
+	
+				listaSlipVendaEncalhe.add(slipVendaEncalhe);	
+				
+			}
 		}
-		return slipVendaEncalhe;
+		
+		return listaSlipVendaEncalhe;
 	}
 
 	
@@ -94,7 +119,7 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 	 * @throws JRException
 	 * @throws URISyntaxException
 	 */
-	private byte[] gerarDocumentoIreport(List<SlipDTO> list, String pathJasper) throws JRException, URISyntaxException{
+	private byte[] gerarDocumentoIreport(List<SlipVendaEncalheDTO> list, String pathJasper) throws JRException, URISyntaxException{
 
 		JRDataSource jrDataSource = new JRBeanCollectionDataSource(list);
 		
@@ -108,19 +133,20 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 	
 	
 	/**
-	  * Gera Array de Bytes do Slip de Venda de Encalhe
-	  * @param idVendaEncalhe
+	 * Gera Array de Bytes do Slip de Venda de Encalhe
+	 * @param idCota
+	 * @param dataInicio
+	 * @param dataFim
 	  * @return byte[]
-	  */
+	 */
 	@Override
 	@Transactional(readOnly = true)
-	public byte[] geraImpressaoVendaEncalhe(Long idVendaEncalhe){
+	public byte[] geraImpressaoVendaEncalhe(long idCota, Date dataInicio, Date dataFim){
 		
 		byte[] relatorio=null;
 
-		SlipDTO slipVendaEncalheDTO = this.obtemDadosSlip(idVendaEncalhe);
-		List<SlipDTO> listaSlipVendaEncalheDTO= new ArrayList<SlipDTO>();
-		listaSlipVendaEncalheDTO.add(slipVendaEncalheDTO);
+		List<SlipVendaEncalheDTO> listaSlipVendaEncalheDTO = this.obtemDadosSlip(idCota, dataInicio, dataFim); 
+
 		try{
 		    relatorio = this.gerarDocumentoIreport(listaSlipVendaEncalheDTO, "/reports/slipVendaEncalhe.jasper");
 		}
