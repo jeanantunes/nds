@@ -171,16 +171,18 @@ public interface ProdutoEdicaoRepository extends Repository<ProdutoEdicao, Long>
 	public boolean hasProdutoEdicao(Produto produto);
 	
 	/**
-	 * Verifica se o ProdutoEdicao já foi publicado.<br>
-	 * Irá verificar se a Data de Publicação da Distribuida é mais que a "Data do
-	 * Dia Corrente (hoje)" do Lançamento ({@link br.com.abril.nds.model.planejamento.Lancamento})
-	 * mais antigo associado ao ProdutoEdição.
+	 * Verifica se o ProdutoEdicao já foi publicado pela distribuidora.<br>
+	 * Irá verificar se a Data de Publicação da Distribuida é maior que a 
+	 * "Data do Dia Corrente (hoje)" do Lançamento 
+	 * ({@link br.com.abril.nds.model.planejamento.Lancamento})
+	 * com a data de Distribuição mais antiga.
 	 *  
-	 * @param idProdutoEdicao
+	 * @param idProdutoEdicao ID da Edição. (Se for passado <i>null</i> será
+	 * considerado o (zero).
 	 * 
 	 * @return
 	 * <ul>
-	 * <li>true: A Edição já foi publicada (DataPublicacaoEditora =< DataCorrente);</li>
+	 * <li>true: A Edição já foi publicada (DataPublicacaoEditora <= DataCorrente);</li>
 	 * <li>false: A Edição ainda não foi publicada (DataPublicacaoEditora > DataCorrente);</li>
 	 * </ul>
 	 */
