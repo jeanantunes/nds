@@ -12,6 +12,8 @@ import br.com.abril.nds.model.estoque.pk.FechamentoEncalhePK;
 public interface FechamentoEncalheRepository extends Repository<FechamentoEncalhe, FechamentoEncalhePK> {
 	
 	List<FechamentoFisicoLogicoDTO> buscarFechamentoEncalhe(FiltroFechamentoEncalheDTO filtro);
+
+	List<CotaAusenteEncalheDTO> buscarCotasAusentes(Date dataEncalhe, String sortorder, String sortname, int page, int rp);
 	
-	List<CotaAusenteEncalheDTO> buscarCotasAusentes(Date dataEncalhe);
+	Integer buscarTotalCotasAusentes(Date dataEncalhe);
 }

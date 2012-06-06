@@ -45,9 +45,10 @@ public class TipoProdutoRepositoryImpl extends AbstractRepository<TipoProduto,Lo
 			criteria.addOrder(Order.desc(orderBy));
 		}
 		
+		if (maxResults >= 0 && initialResult >= 0 ) {
 		criteria.setMaxResults(maxResults);
 		criteria.setFirstResult(initialResult);
-		
+		}
 		return criteria.list();
 	}
 
