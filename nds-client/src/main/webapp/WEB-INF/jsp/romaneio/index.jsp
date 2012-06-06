@@ -41,35 +41,13 @@ $(function() {
 			params: [
 						{name:'filtro.idBox', value:$('#idBox').val()},
 						{name:'filtro.idRoteiro', value:$('#idRoteiro').val()},
-						{name:'filtro.idRota', value:$('#idRota').val()}
+						{name:'filtro.idRota', value:$('#idRota').val()},
+						{name:'filtro.nomeRota',	value: $('#idRota option:selected').text()}
 						]
 		});
 		
 		$(".romaneiosGrid").flexReload();
 				
-	}
-
-	function getDados() {
-		
-		var data = [];
-		
-		data.push({name:'filtro.idBox',	value: $('#idBox')});
-		data.push({name:'filtro.idRoteiro',	value: $('#idRoteiro')});
-		data.push({name:'filtro.idRota',	value: $('#idRota')});
-		alert(data);
-		return data;
-	}
-	
-	function get(campo) {
-		
-		var elemento = $("#" + campo);
-		
-		if(elemento.attr('type') == 'checkbox') {
-			return (elemento.attr('checked') == 'checked') ;
-		} else {
-			return elemento.val();
-		}
-		
 	}
 
 	function executarPreProcessamento(resultado) {
@@ -230,8 +208,6 @@ $(function() {
 			width : 960,
 			height : 150
 		});
-		
-		
 </script>
 </body>
 </html>

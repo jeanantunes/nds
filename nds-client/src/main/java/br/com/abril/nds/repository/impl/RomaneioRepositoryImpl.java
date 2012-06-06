@@ -22,7 +22,7 @@ public class RomaneioRepositoryImpl extends AbstractRepository<Box, Long> implem
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<RomaneioDTO> buscarRomaneios(FiltroRomaneioDTO filtro) {
+	public List<RomaneioDTO> buscarRomaneios(FiltroRomaneioDTO filtro,String limitar) {
 		
 		StringBuilder hql = new StringBuilder();
 		
@@ -49,7 +49,7 @@ public class RomaneioRepositoryImpl extends AbstractRepository<Box, Long> implem
 		if(filtro.getPaginacao().getQtdResultadosPorPagina() != null) 
 			query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
 		
-		if(filtro.getPaginacao().getQtdResultadosPorPagina() != null) 
+		if(filtro.getPaginacao().getQtdResultadosPorPagina() != null && limitar.equals("limitar")) 
 			query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
 				
 		return  popularEndereco(query.list());
@@ -106,15 +106,20 @@ public class RomaneioRepositoryImpl extends AbstractRepository<Box, Long> implem
 		hql.append(" LEFT JOIN box.roteiros as roteiro ");
 		hql.append(" LEFT JOIN roteiro.rotas as rota ");
 		
+
+		boolean usarAnd = false;
 		
-		if(filtro.getIdBox() != 0 ) { 
-			hql.append( " where box.id = :idBox ");
+		if(filtro.getIdBox() != null ) { 
+			hql.append( (usarAnd ? " and ":" where ") +" box.id = :idBox ");
+			usarAnd = true;
 		}
-		if(filtro.getIdRoteiro() != 0){
-			hql.append( " and roteiro.id = :idRoteiro ");
+		if(filtro.getIdRoteiro() != null){
+			hql.append( (usarAnd ? " and ":" where ") + " roteiro.id = :idRoteiro ");
+			usarAnd = true;
 		}
-		if(filtro.getIdRota() != 0){
-			hql.append( " and rota.id = :idRota ");
+		if(filtro.getIdRota() != null){
+			hql.append( (usarAnd ? " and ":" where ") + " rota.id = :idRota ");
+			usarAnd = true;
 		}
 
 
@@ -128,9 +133,22 @@ public class RomaneioRepositoryImpl extends AbstractRepository<Box, Long> implem
 		}
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" order by roteiro.ordem asc, rota.ordem asc ");
+		boolean usarAsc = false;
 		
-		if (filtro.getPaginacao().getOrdenacao() != null) {
+		if(filtro.getIdRoteiro() == null && filtro.getIdRota() != null){
+			hql.append(" order by rota.ordem asc ");
+			usarAsc = true;
+		}
+		if(filtro.getIdRoteiro() != null && filtro.getIdRota() == null){
+			hql.append(" order by roteiro.ordem asc ");
+			usarAsc = true;
+		}
+		if(filtro.getIdRoteiro() != null && filtro.getIdRota() != null){
+			hql.append(" order by roteiro.ordem asc, rota.ordem asc ");
+			usarAsc = true;
+		}
+		
+		if (filtro.getPaginacao().getOrdenacao() != null && usarAsc) {
 			hql.append( filtro.getPaginacao().getOrdenacao().toString());
 		}
 		
@@ -141,13 +159,13 @@ public class RomaneioRepositoryImpl extends AbstractRepository<Box, Long> implem
 		
 		HashMap<String,Object> param = new HashMap<String, Object>();
 		
-		if(filtro.getIdBox() != 0 ) { 
+		if(filtro.getIdBox() != null ) { 
 			param.put("idBox", filtro.getIdBox());
 		}
-		if(filtro.getIdRoteiro() != 0){
+		if(filtro.getIdRoteiro() != null){
 			param.put("idRoteiro", filtro.getIdRoteiro());
 		}
-		if(filtro.getIdRota() != 0){
+		if(filtro.getIdRota() != null){
 			param.put("idRota", filtro.getIdRota());
 		}
 		
@@ -175,8 +193,4 @@ public class RomaneioRepositoryImpl extends AbstractRepository<Box, Long> implem
 		return (totalRegistros == null) ? 0 : totalRegistros.intValue();
 	}
 	
-	
-
-	
-
 }

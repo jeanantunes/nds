@@ -1,7 +1,12 @@
 package br.com.abril.nds.dto.filtro;
 
 import java.io.Serializable;
+import java.util.Date;
 
+import br.com.abril.nds.util.Constantes;
+import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.util.export.Export;
+import br.com.abril.nds.util.export.Export.Alignment;
 import br.com.abril.nds.util.export.Exportable;
 import br.com.abril.nds.vo.PaginacaoVO;
 
@@ -13,8 +18,7 @@ public class FiltroRomaneioDTO implements Serializable {
 	private Long idBox;
 	private Long idRoteiro;
 	private Long idRota;
-	
-	private String cota;
+	private String nomeRota;	
 	
 	private PaginacaoVO paginacao;
 	
@@ -83,13 +87,34 @@ public class FiltroRomaneioDTO implements Serializable {
 	public void setOrdenacaoColuna(ColunaOrdenacaoRomaneio ordenacaoColuna) {
 		this.ordenacaoColuna = ordenacaoColuna;
 	}
-
-	public String getCota() {
-		return cota;
-	}
-
-	public void setCota(String cota) {
-		this.cota = cota;
+	
+	@Export(label = "Roteiro" , exhibitionOrder = 1, alignment = Alignment.LEFT)
+	public String getRoteiro() {
+		return "("+ getIdRoteiro() + ")";
 	}
 	
+	@Export(label = "Entrega / Box" , exhibitionOrder = 2, alignment = Alignment.LEFT)
+	public String getBox() {
+		return getIdBox().toString();
+	}
+
+	@Export(label = "Rota" , exhibitionOrder = 3, alignment = Alignment.LEFT)
+	public String getRota() {
+		return "(" + getIdRota() + ") " + getNomeRota();
+	}
+	
+	@Export(label = "Data Geração" , exhibitionOrder = 4, alignment = Alignment.LEFT)
+	public String getDataAtual(){
+		Date dataAtual = new Date();		
+		return DateUtil.formatarData(dataAtual, Constantes.DATE_PATTERN_PT_BR);
+	}
+
+	public String getNomeRota() {
+		return nomeRota;
+	}
+
+	public void setNomeRota(String nomeRota) {
+		this.nomeRota = nomeRota;
+	}
+
 }
