@@ -765,14 +765,7 @@
         
         
         
-        //OBTEM VALIDAÇÃO DE PERMISSÃO DE POSTERGAÇÃO
-        function obterPostergacao() {
-
-        	postergarDivida();
-
-			$.postJSON("<c:url value='/financeiro/obterPostergacao' />",
-					   obterCobrancasDividasMarcadas());
-		}
+        
 		
 		
 		
@@ -858,17 +851,70 @@
 		
 		//-----------------------------------------------------
 		
+		function finalizarPostergacao() {
+			
+			$.postJSON("<c:url value='/financeiro/finalizarPostergacao' />",
+						"dataPostergacao=" + $("#dtPostergada").val() +
+						"&encargos=" + $("#ecargosPostergacao").val() +
+						"&isIsento=" + buscarValueCheckBox('checkIsIsento') +
+						"&" + obterCobrancasDividasMarcadas(),
+						function (result) {
+
+							$("#dialog-postergar").dialog("close");
+							$(".liberaDividaGrid").flexReload();
+							
+							var tipoMensagem = result.tipoMensagem;
+							var listaMensagens = result.listaMensagens;
+							
+							if (tipoMensagem && listaMensagens) {
+								
+								exibirMensagem(tipoMensagem, listaMensagens);
+							} 
+						},
+						null,
+						true
+					);	
+		}
+		
+		//OBTEM VALIDAÇÃO DE PERMISSÃO DE POSTERGAÇÃO
+        function obterPostergacao() {
+
+			$.postJSON("<c:url value='/financeiro/obterPostergacao' />",
+						obterCobrancasDividasMarcadas(),
+						function (result) {
+							if (result) {
+
+								var tipoMensagem = result.tipoMensagem;
+								var listaMensagens = result.listaMensagens;
+							
+								if (tipoMensagem && listaMensagens) {
+									
+									exibirMensagem(tipoMensagem, listaMensagens);
+								} 
+
+								if (!tipoMensagem) {
+									postergarDivida();
+								}	
+							}							
+						},
+						null,
+						true
+					);
+		}
+				
 		$(function() {
 			$( "#dtPostergada" ).datepicker({
 				showOn: "button",
 				buttonImage: "${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
 				buttonImageOnly: true
 			});
+
+			$("#ecargosPostergacao").numeric();
 		});
 		
 		function postergarDivida() {
 		
-			$( "#dialog-postergar" ).dialog({
+			$("#dialog-postergar").dialog({
 				resizable: false,
 				height:220,
 				width:300,
@@ -876,14 +922,43 @@
 				buttons: {
 					"Confirmar": function() {
 
-						$( this ).dialog( "close" );
+						finalizarPostergacao();
 					},
 					"Cancelar": function() {
 						$( this ).dialog( "close" );
+						limparModalPostergacao();
 					}
+				},
+				beforeClose: function() {
+					limparModalPostergacao();
+					clearMessageDialogTimeout();
 				}
 			});
-		};
+		}
+
+		function limparModalPostergacao() {
+
+			$("#dtPostergada").val("");
+			$("#checkIsIsento").attr('checked', false);
+			$("#ecargosPostergacao").attr('disabled', false);
+			$("#ecargosPostergacao").val("");
+		}
+
+		function insetarCobranca() {
+
+			var isChecked = buscarValueCheckBox('checkIsIsento');
+
+			if (isChecked) {
+				$("#ecargosPostergacao").attr('disabled', true);
+			} else {
+				$("#ecargosPostergacao").attr('disabled', false);
+			}
+		}
+
+		function buscarValueCheckBox(checkName) {
+			return $("#"+checkName).is(":checked");
+		}
+		;
 
 	</script>
 	
@@ -1325,11 +1400,11 @@
 			          </tr>
 			          <tr>
 			            <td>Encargos R$:</td>
-			            <td><input type="text" style="width:80px; text-align:right;" /></td>
+			            <td><input name="ecargosPostergacao" id="ecargosPostergacao" type="text" style="width:80px; text-align:right;" /></td>
 			          </tr>
 			          <tr>
 			            <td>Isentos Encargos</td>
-			            <td><input type="checkbox" name="checkbox" id="checkbox" /></td>
+			            <td><input type="checkbox" name="checkIsIsento" id="checkIsIsento" onchange="insetarCobranca();" /></td>
 			          </tr>
 			        </table>
 			    </fieldset>

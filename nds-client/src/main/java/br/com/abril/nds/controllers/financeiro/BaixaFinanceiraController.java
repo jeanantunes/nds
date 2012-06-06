@@ -5,6 +5,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -43,6 +44,7 @@ import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.CobrancaService;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.DistribuidorService;
+import br.com.abril.nds.service.DividaService;
 import br.com.abril.nds.service.LeitorArquivoBancoService;
 import br.com.abril.nds.service.PoliticaCobrancaService;
 import br.com.abril.nds.util.CellModelKeyValue;
@@ -101,6 +103,9 @@ public class BaixaFinanceiraController {
 	
 	@Autowired
 	private LeitorArquivoBancoService leitorArquivoBancoService;
+	
+	@Autowired
+	private DividaService dividaService;
 	
 	private static List<ItemDTO<TipoCobranca,String>> listaTiposCobranca =  new ArrayList<ItemDTO<TipoCobranca,String>>();
 	
@@ -543,8 +548,7 @@ public class BaixaFinanceiraController {
 		
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Dividas baixadas com sucesso."), "result").recursive().serialize();
 	}
-
-	
+		
 	/**
 	 * Método responsável por validar se é possível a negociação de dividas(Cobranças)
 	 * @param idCobrancas
@@ -573,20 +577,78 @@ public class BaixaFinanceiraController {
 	 */
 	@Post
 	@Path("obterPostergacao")
-	public void obterPostergacao(List<Long> idCobrancas){
+	public void obterPostergacao(List<Long> idCobrancas) {
 		
 		if ((idCobrancas==null) || (idCobrancas.size() <=0)){
-			throw new ValidacaoException(TipoMensagem.WARNING, "É necessário marcar ao menos uma dívida.");
+			this.result.use(
+				Results.json()).from(
+					new ValidacaoVO(TipoMensagem.WARNING, "É necessário marcar ao menos uma dívida."), "result").recursive().serialize();
+			throw new ValidacaoException();
 		}
 		
-		boolean validacaoPostergacao = true;
-		if (!validacaoPostergacao){
-		    throw new ValidacaoException(TipoMensagem.WARNING, "Postergação não permitida.");
+		CobrancaDividaVO cobrancaDivida =
+			this.cobrancaService.obterDadosCobrancas(idCobrancas);
+		
+		if (cobrancaDivida != null) {
+			this.result.use(Results.json()).from(cobrancaDivida, "result").recursive().serialize();
+		}
+	}
+	
+	@Post
+	@Path("finalizarPostergacao")
+	public void finalizarPostergacao(Date dataPostergacao, BigDecimal encargos, boolean isIsento, List<Long> idCobrancas) {
+		
+		List<String> listaMensagens = new ArrayList<String>();
+
+		if (idCobrancas == null || idCobrancas.isEmpty()) {
+			listaMensagens.add("É necessário marcar ao menos uma dívida.");
 		}
 		
-		//TO-DO: Obter dados para postergação de dívidas aqui.
+		if (dataPostergacao == null || dataPostergacao.before(Calendar.getInstance().getTime())) {
+			listaMensagens.add("A Data para postergação tem que ser maior que a data atual!");
+		}
 		
-		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "TO-DO: Postergação permitida."),Constantes.PARAM_MSGS).recursive().serialize();
+		// TODO: Pegar o id do usuário e passar.
+		Long idUsuario = 1L;
+		
+		if (idUsuario == null || idUsuario <= 0L) {
+			listaMensagens.add("Usuário inválido!");
+		}
+				
+		if (listaMensagens != null && !listaMensagens.isEmpty()) {
+			this.result.use(
+				Results.json()).from(
+					new ValidacaoVO(TipoMensagem.WARNING, listaMensagens), "result").recursive().serialize();
+			throw new ValidacaoException();
+		}
+		
+		try {
+		
+			CobrancaDividaVO cobrancaDividaVO = 
+				this.cobrancaService.obterDadosCobrancas(idCobrancas);
+			
+			// TODO: Componente para calculo de Juros e Multa.
+			BigDecimal valorJuros = BigDecimal.ZERO;
+			BigDecimal valorMulta = BigDecimal.ZERO;
+					
+			if (isIsento) {
+				valorJuros = CurrencyUtil.converterValor(cobrancaDividaVO.getValorJuros());
+				valorMulta = CurrencyUtil.converterValor(cobrancaDividaVO.getValorMulta());
+			}
+			
+			this.dividaService.postergarCobrancaCota(idCobrancas, dataPostergacao, valorJuros, valorMulta, idUsuario);
+			
+		} catch (Exception e) {
+			this.result.use(
+				Results.json()).from(
+						new ValidacaoVO(
+							TipoMensagem.ERROR, "Ocorreu um erro ao tentar postergar as cobranças!"), "result").recursive().serialize();
+			throw new ValidacaoException();
+		}
+		
+		this.result.use(
+			Results.json()).from(
+				new ValidacaoVO(TipoMensagem.SUCCESS, "Cobrança postergada com sucesso!"), "result").recursive().serialize();
 	}
 	
 	

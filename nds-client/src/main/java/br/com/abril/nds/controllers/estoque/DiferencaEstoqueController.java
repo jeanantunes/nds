@@ -384,7 +384,12 @@ public class DiferencaEstoqueController {
 		
 		BigDecimal valorDesconto = null;
 		
-		Long id = 0L+ listaDiferencas.size() + listaNovasDiferencas.size();
+		Long id = 0L;
+		
+		for (Diferenca diferenca : listaDiferencas) {
+			diferenca.setId(id);
+			id++;
+		}
 		
 		for (DiferencaVO diferencaVO : listaNovasDiferencas) {
 			
@@ -443,7 +448,7 @@ public class DiferencaEstoqueController {
 
 			listaDiferencas.add(diferenca);
 			
-			id += 1L;
+			id ++;
 		}
 		
 		Set<DiferencaVO> listaNovasDiferencasVO = 
@@ -453,7 +458,14 @@ public class DiferencaEstoqueController {
 			
 			listaNovasDiferencasVO = new HashSet<DiferencaVO>();
 		}
-			
+		
+		id = 0L;
+		
+		for (DiferencaVO diferencaVO : listaNovasDiferencasVO) {
+			diferencaVO.setId(id);
+			id++;
+		}
+		
 		listaNovasDiferencasVO.addAll(listaNovasDiferencas);
 		
 		this.httpSession.setAttribute(LISTA_NOVAS_DIFERENCAS_VO_SESSION_ATTRIBUTE, listaNovasDiferencasVO);

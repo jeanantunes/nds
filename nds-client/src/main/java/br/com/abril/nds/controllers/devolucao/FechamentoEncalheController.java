@@ -1,15 +1,15 @@
 package br.com.abril.nds.controllers.devolucao;
 
-import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.TipoBox;
+import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.BoxService;
 import br.com.abril.nds.service.DistribuidorService;
 import br.com.abril.nds.service.FornecedorService;
@@ -48,8 +48,31 @@ public class FechamentoEncalheController {
 		List<Fornecedor> listaFornecedores = fornecedorService.obterFornecedores();
 		List<Box> listaBoxes = boxService.buscarPorTipo(TipoBox.RECOLHIMENTO);
 		
-		result.include("dataOperacao", DateUtil.formatarData(dist.getDataOperacao(), "dd/MM/yyyy"));
+		result.include("dataOperacao", DateUtil.formatarDataPTBR(dist.getDataOperacao()));
 		result.include("listaFornecedores", listaFornecedores);
 		result.include("listaBoxes", listaBoxes);
+	}
+	
+	@Path("/pesquisar")
+	public void pesquisar(String dataEncalhe, Long idFornecedor, Long idBox,
+			String sortname, String sortorder, int rp, int page) {
+		
+		Date data = DateUtil.parseDataPTBR(dataEncalhe);
+		
+		
+		List listaEncalhe = null;
+		result.use(FlexiGridJson.class).from(listaEncalhe).total(listaEncalhe.size()).page(page).serialize();
+	}
+	
+	
+	@Path("/cotasAusentes")
+	public void cotasAusentes(String dataEncalhe,
+			String sortname, String sortorder, int rp, int page) {
+		
+		Date data = DateUtil.parseDataPTBR(dataEncalhe);
+		
+		
+		List listaCotas = null;
+		result.use(FlexiGridJson.class).from(listaCotas).total(listaCotas.size()).page(page).serialize();
 	}
 }
