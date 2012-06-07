@@ -26,6 +26,51 @@
 		$(".grids").show();
 	}
 	
+	function preprocessamentoGridFechamento(resultado) {
+		
+		$.each(resultado.rows, function(index, row) {
+			
+			if (row.cell.diferenca == "0") {
+				row.cell.diferenca = "";
+			}
+			
+			var valorFisico = row.cell.fisico == 0 ? "" : row.cell.fisico;
+			row.cell.fisico = '<input type="text" style="width: 60px" name="fisico[' + index + ']" value="' + valorFisico + '" onchange="onChangeFisico(this, ' + index + ')"/>';
+			
+			row.cell.replicar = '<span title="Replicar"><a href="javascript:;" onclick="replicar(' + index + ')"><img src="${pageContext.request.contextPath}/images/ico_atualizar.gif" border="0" /></a></span>';
+		});
+		
+		return resultado;
+	}
+	
+	function replicarTodos() {
+	
+		var tabela = $('.fechamentoGrid').get(0);
+		for (i=0; i<tabela.rows.length; i++) {
+			replicar(i);
+		}
+	}
+	
+	function replicar(index) {
+		
+		var tabela = $('.fechamentoGrid').get(0);
+		var valor = tabela.rows[index].cells[4].firstChild.innerHTML;
+		var campo = tabela.rows[index].cells[6].firstChild.firstChild;
+		var diferenca = tabela.rows[index].cells[7].firstChild;
+
+		campo.value = valor;
+		diferenca.innerHTML = "0";
+	}
+	
+	function onChangeFisico(campo, index) {
+		
+		var tabela = $('.fechamentoGrid').get(0);
+		var devolucao = parseInt(tabela.rows[index].cells[4].firstChild.innerHTML);
+		var diferenca = tabela.rows[index].cells[7].firstChild;
+		
+		diferenca.innerHTML = devolucao - campo.value;
+	}
+	
 	function popup_encerrarEncalhe() {
 		$( "#dialog-encerrarEncalhe" ).dialog({
 			resizable: false,
@@ -79,7 +124,7 @@
 	};
 
 	$(function() {
-		$( "#datepickerDe" ).datepicker({
+		$("#datepickerDe").datepicker({
 			showOn: "button",
 			buttonImage: "${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
 			buttonImageOnly: true
@@ -243,7 +288,7 @@
             <span class="bt_novos" title="Salvar"><a href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0" />Salvar </a></span>
 			<span class="bt_novos" title="Cotas Ausentes"><a href="javascript:;" onclick="popup_encerrarEncalhe();"><img src="${pageContext.request.contextPath}/images/ico_check.gif" hspace="5" border="0" />Cotas Ausentes</a></span>
 			<span class="bt_novos" title="Encerrar Opera&ccedil;&atilde;o Encalhe"><a href="javascript:;" onclick="popup_encerrar();"><img src="${pageContext.request.contextPath}/images/ico_check.gif" hspace="5" border="0" />Encerrar Opera&ccedil;&atilde;o Encalhe</a></span>
-			<span class="bt_sellAll" style="float:right;"><input type="checkbox" id="sel" name="Todos" onclick="checkAll();" style="float:right;margin-right:55px;"/><label for="sel">Selecionar Todos</label></span>
+			<span class="bt_sellAll" style="float:right;"><a href="javascript:;" id="sel" onclick="replicarTodos();"><img src="${pageContext.request.contextPath}/images/ico_atualizar.gif" border="0" /></a><label for="sel">Replicar Todos</label></span>
         	<br clear="all" />
 			<span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
 			<span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir </a></span>
@@ -310,6 +355,7 @@
 		});
 		$(".fechamentoGrid").flexigrid({
 			dataType : 'json',
+			preProcess: preprocessamentoGridFechamento,
 			colModel : [ {
 				display : 'C&oacute;digo',
 				name : 'codigo',
@@ -330,19 +376,19 @@
 				align : 'left'
 			}, {
 				display : 'Pre&ccedil;o Capa R$',
-				name : 'precoCapa',
+				name : 'precoCapaFormatado',
 				width : 80,
 				sortable : true,
 				align : 'right'
 			}, {
 				display : 'Exempl. Devolu&ccedil;&atilde;o',
-				name : 'exemplaresDevolucao',
+				name : 'exemplaresDevolucaoFormatado',
 				width : 100,
 				sortable : true,
 				align : 'center'
 			}, {
 				display : 'Total R$',
-				name : 'total',
+				name : 'totalFormatado',
 				width : 80,
 				sortable : true,
 				align : 'right'
@@ -360,7 +406,7 @@
 				align : 'right'
 			}, {
 				display : 'Replicar Qtde.',
-				name : 'replicarQtde',
+				name : 'replicar',
 				width : 80,
 				sortable : true,
 				align : 'center'

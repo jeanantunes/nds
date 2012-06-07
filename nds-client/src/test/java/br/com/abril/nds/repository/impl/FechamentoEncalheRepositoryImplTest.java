@@ -27,7 +27,7 @@ public class FechamentoEncalheRepositoryImplTest extends AbstractRepositoryImplT
 		FiltroFechamentoEncalheDTO filtro = new FiltroFechamentoEncalheDTO();
 		filtro.setDataEncalhe(dataEncalhe.getTime());
 		
-		List<FechamentoFisicoLogicoDTO> resultado = this.fechamentoEncalheRepository.buscarFechamentoEncalhe(filtro, "asc", "codigo", 0, 20);
+		List<FechamentoFisicoLogicoDTO> resultado = this.fechamentoEncalheRepository.buscarFechamentoEncalhe(filtro, "asc", "codigo", 2, 20);
 		
 		Assert.assertNotNull(resultado);
 	}

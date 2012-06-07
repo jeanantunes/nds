@@ -24,11 +24,15 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 	public List<FechamentoFisicoLogicoDTO> buscarFechamentoEncalhe(FiltroFechamentoEncalheDTO filtro,
 			String sortorder, String sortname, int page, int rp) {
 		
+		int startSearch = page * rp - rp;
 		
+		List<FechamentoFisicoLogicoDTO> listaFechamento = fechamentoEncalheRepository.buscarFechamentoEncalhe(filtro, sortorder, sortname, startSearch, rp);
 		
+		for (FechamentoFisicoLogicoDTO fechamento : listaFechamento) {
+			fechamento.setTotal(fechamento.getExemplaresDevolucao().multiply(fechamento.getPrecoCapa()));
+		}
 		
-		
-		return fechamentoEncalheRepository.buscarFechamentoEncalhe(filtro, sortorder, sortname, page, rp);
+		return listaFechamento;
 	}
 
 	@Override
