@@ -69,12 +69,15 @@ function executarPreProcessamento(resultado) {
 	return resultado;
 }
 
-
 function novaEdicao() {
-	editarEdicao(null);	
+	popup(null);	
 };
 
 function editarEdicao(id) {
+	popup(id);	
+}
+
+function popup(id) {
 	
 	if ($(".edicoesGrid > tbody").data() == null || $(".edicoesGrid > tbody").data() == undefined) {
 		exibirMensagem('WARNING', ['Por favor, escolha um produto para adicionar a Edi&ccedil;&atilde;o!'], "");
@@ -165,31 +168,8 @@ function editarEdicao(id) {
 					dataType: 'json',
 					data: {codigoProduto:$("#codigoProduto").val()}
 				});
-
-				/*
-				$( this ).dialog( "close" );
-				$.postJSON(
-					"<c:url value='/cadastro/edicao/salvarEdicao.json' />",
-					{ imagemCapa : $("#imagemCapa").toString(),
-					  codigoProduto : codProduto,
-					  idProdutoEdicao : $("#idProdutoEdicao").val(),
-					  codigoProdutoEdicao : $("#codigoProdutoEdicao").val(),
-					  nomeComercialProduto: $("#nomeComercialProduto").val(),
-					  tipoLancamento: $("#tipoLancamento").val()
-					},
-					function(result) {
-						var tipoMensagem = result.tipoMensagem;
-						var listaMensagens = result.listaMensagens;
-						if (tipoMensagem && listaMensagens) {
-							exibirMensagem(tipoMensagem, listaMensagens);
-						}
-
-						$(".produtosGrid").flexReload();
-					},
-					null,
-					true
-				);
-				*/
+				
+				$(".produtosGrid").flexReload();
 				$(".grids").show();
 				
 			},
@@ -325,11 +305,39 @@ function removerEdicao(id) {
 			modal: true,
 			buttons: {
 				"Confirmar": function() {
-					$( this ).dialog( "close" );
-					$("#effect").show("highlight", {}, 1000, callback);
+					$.postJSON(
+						"<c:url value='/capa/removerCapa' />",
+						{idProdutoEdicao : $("#idProdutoEdicao").val()},
+						function(result) {
+							$( "#dialog-excluir-capa" ).dialog( "close" );
+							
+							var mensagens = (result.mensagens) ? result.mensagens : result.result;
+							var tipoMensagem = mensagens.tipoMensagem;
+							var listaMensagens = mensagens.listaMensagens;
+							
+							if (tipoMensagem && listaMensagens) {
+								
+								// exibirMensagemDialog(tipoMensagem, listaMensagens);
+								exibirMensagemDialog(tipoMensagem, listaMensagens, 'dialogMensagemNovo');
+							}
+						},
+						function(result) {
+							$( "#dialog-excluir-capa" ).dialog( "close" );
+
+							var mensagens = (result.mensagens) ? result.mensagens : result.result;
+							var tipoMensagem = mensagens.tipoMensagem;
+							var listaMensagens = mensagens.listaMensagens;
+							
+							if (tipoMensagem && listaMensagens) {
+								// exibirMensagem(tipoMensagem, listaMensagens);
+								exibirMensagemDialog(tipoMensagem, listaMensagens, 'dialogMensagemNovo');
+							}
+						},
+						true
+					);
 				},
 				"Cancelar": function() {
-					$( this ).dialog( "close" );
+					$( "#dialog-excluir-capa" ).dialog( "close" );
 				}
 			}
 		});
@@ -422,6 +430,11 @@ fieldset {
 
 
 <div id="dialog-novo" title="Incluir Nova Edi&ccedil;&atilde;o">
+	
+	<jsp:include page="../messagesDialog.jsp">
+		<jsp:param value="dialogMensagemNovo" name="messageDialog"/>
+	</jsp:include> 
+	
 	<form id="formUpload" name="formUpload" method="post" enctype="multipart/form-data" >
 		<div id="tabEdicoes">
 			<ul>

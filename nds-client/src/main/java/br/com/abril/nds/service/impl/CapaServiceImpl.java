@@ -161,5 +161,13 @@ public class CapaServiceImpl implements CapaService {
 		}
 		return produtoEdicao;
 	}
+	
+	@Override
+	@Transactional(readOnly=true)
+	public void deleteCapa(long idProdutoEdicao) {
+		
+		Attachment capa = this.getCapa(idProdutoEdicao);
+		this.couchDbClient.remove(capa);
+	}
 
 }

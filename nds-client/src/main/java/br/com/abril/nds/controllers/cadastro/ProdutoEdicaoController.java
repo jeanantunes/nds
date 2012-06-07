@@ -277,6 +277,7 @@ public class ProdutoEdicaoController {
 			}
 			
 			this.result.use(Results.json()).from(vo, "result").recursive().serialize();
+
 			throw new ValidacaoException();
 		}
 
