@@ -414,10 +414,10 @@ label{ vertical-align:super;}
                 <option>Cota</option>
               </select></td>
               <td width="42">Cota:</td>
-              <td width="170"><input name="numeroCotaPesquisa" type="text" id="numeroCotaPesquisa" style="width:80px; float:left; margin-right:5px;" onkeypress="mostraCota();"/>
+              <td width="170"><input name="numeroCotaPesquisa" type="text" id="numeroCotaPesquisa" style="width:80px; float:left; margin-right:5px;" />
               <span class="classPesquisar"><a href="javascript:;" onclick="roteirizacao.buscarPvsPorCota();">&nbsp;</a></span></td>
               <td width="41">Nome:</td>
-              <td colspan="4"><span class="dadosFiltro">CGB Distribuidora de Jorn e Rev</span></td>
+              <td colspan="4"><span  id="cotaDisponivelPesquisa"> &nbsp;</span></td>
             </tr>
             <tr>
               <td>UF:</td>
@@ -442,7 +442,7 @@ label{ vertical-align:super;}
     <fieldset style="width:800px; float:left; margin-top:5px;">
 		<legend>Cotas Disponíveis</legend>
 		<table class="cotasDisponiveisGrid"></table>
-        <span class="bt_sellAll" style="float:right; margin-right:25px;"><label for="sel">Selecionar Todos</label><input type="checkbox" name="Todos" id="sel" onclick="checkAll();" style="float:left;"/></span>
+        <span class="bt_sellAll" style="float:right; margin-right:25px;"><label for="sel" id="textoCheckAllCotas" >Marcar todos</label><input type="checkbox" name="selecionaTodos" id="selecionaTodos" onclick="roteirizacao.checarTodasCotasGrid();" style="float:left;"/></span>
         
 	</fieldset>
 	<br clear="all" />

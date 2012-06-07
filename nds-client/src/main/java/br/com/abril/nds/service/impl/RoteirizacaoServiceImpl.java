@@ -9,6 +9,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.CotaDisponivelRoteirizacaoDTO;
+import br.com.abril.nds.model.LogBairro;
+import br.com.abril.nds.model.LogLocalidade;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Rota;
 import br.com.abril.nds.model.cadastro.Roteirizacao;
@@ -16,6 +18,7 @@ import br.com.abril.nds.model.cadastro.Roteiro;
 import br.com.abril.nds.model.cadastro.pdv.EnderecoPDV;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
 import br.com.abril.nds.repository.CotaRepository;
+import br.com.abril.nds.repository.Repository;
 import br.com.abril.nds.repository.RotaRepository;
 import br.com.abril.nds.repository.RoteirizacaoRepository;
 import br.com.abril.nds.repository.RoteiroRepository;
@@ -325,6 +328,24 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 			lista.add(cotaDisponivelRoteirizacaoDTO);
 		}
 		return lista;
+	}
+
+	@Override
+	@Transactional(readOnly=true)
+	public List<String> buscarUF() {
+		return roteirizacaoRepository.buscarUF();
+	}
+
+	@Override
+	@Transactional(readOnly=true)
+	public List<LogLocalidade> buscarMunicipioPorUf(String uf) {
+		return roteirizacaoRepository.buscarMunicipioPorUf(uf);
+	}
+
+	@Override
+	@Transactional(readOnly=true)
+	public List<LogBairro> buscarBairroPorMunicipio(Long municipio, String uf) {
+		return roteirizacaoRepository.buscarBairroPorMunicipio(municipio, uf);
 	}
 
 }

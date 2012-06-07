@@ -4,10 +4,11 @@ import java.util.List;
 
 import org.hibernate.criterion.MatchMode;
 import br.com.abril.nds.dto.CotaDisponivelRoteirizacaoDTO;
+import br.com.abril.nds.model.LogBairro;
+import br.com.abril.nds.model.LogLocalidade;
 import br.com.abril.nds.model.cadastro.Rota;
 import br.com.abril.nds.model.cadastro.Roteirizacao;
 import br.com.abril.nds.model.cadastro.Roteiro;
-import br.com.abril.nds.model.cadastro.pdv.PDV;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
 public interface RoteirizacaoService {
@@ -63,4 +64,12 @@ public interface RoteirizacaoService {
 	void excluirRoteirizacao(List<Long> roteirizacaoId);
 	
 	List<CotaDisponivelRoteirizacaoDTO> buscarRoteirizacaoPorEndereco (String CEP, String uf, String municipio, String bairro,  Long rotaId ,  Long roteiroId);
+	
+	List<String> buscarUF();
+	
+	List<LogLocalidade> buscarMunicipioPorUf(String uf);
+	
+	List<LogBairro> buscarBairroPorMunicipio(Long municipio, String uf);
+
 }
+	

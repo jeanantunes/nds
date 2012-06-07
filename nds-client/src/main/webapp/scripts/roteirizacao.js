@@ -1,5 +1,6 @@
 var roteiroSelecionadoAutoComplete = false;	
 var transferirRotasComNovoRoteiro = false;
+var pesquisaPorCota = false;
 
 
 function CotaDisponivelRoteirizacaoDTO  (idPontoVenda, pontoVenda, origemEndereco, endereco, numeroCota, nome, ordem  ){
@@ -636,7 +637,7 @@ var roteirizacao = {
 			roteirizacao.resetComboBairro();
 			roteirizacao.resetComboMunicipio();
 			$.each(result, function(index, row){
-				$('#comboMunicipio').append('<option>'+row+'</option>');
+				$('#comboMunicipio').append('<option value="'+row.locNu+'">'+row.locNo+'</option>');
 				}
 			);
 			
@@ -644,7 +645,7 @@ var roteirizacao = {
 		populaBairro : function(result) {
 			roteirizacao.resetComboBairro();
 			$.each(result, function(index, row){
-				$('#comboBairro').append('<option>'+row+'</option>');
+				$('#comboBairro').append('<option>'+row.baiNo+'</option>');
 				}
 			);
 			
@@ -715,6 +716,9 @@ var roteirizacao = {
 		callCotasDisponiveisGrid :  function (data){
 			
 			$.each(data.rows, function(index, value) {
+				if ( pesquisaPorCota ){
+					$('#cotaDisponivelPesquisa').html(value.cell.nome);
+				}
 				var idPontoVenda = value.cell.idPontoVenda;
 				var selecione = '<input type="checkbox" value="'+idPontoVenda +'" name="pdvCheckbox" id="pdvCheckbox" />';
 				var ordem ='<input type="input" value="'+index +'" name="pdvOrdem'+idPontoVenda+'" id="pdvOrdem'+idPontoVenda+'" size="6" length="6" />';
@@ -729,6 +733,7 @@ var roteirizacao = {
 		},
 		
 		buscarPvsPorCota : function() {
+			pesquisaPorCota = true;
 		    $(".cotasDisponiveisGrid").flexOptions({
 					'url' : contextPath + '/cadastro/roteirizacao/buscarPvsPorCota',
 					params : [{
@@ -959,6 +964,16 @@ var roteirizacao = {
 	},
 	
 	buscarPvsPorEndereco : function() {
+		pesquisaPorCota = false;
+		$('#cotaDisponivelPesquisa').html('');
+		var municipio =  $('#comboMunicipio').val() ;
+		
+		if ( municipio != "" ){
+			municipio = $('#comboMunicipio option:selected').text();	
+		}
+		
+		
+		
 		
 	    $(".cotasDisponiveisGrid").flexOptions({
 				'url' : contextPath + '/cadastro/roteirizacao/buscarPvsPorEndereco',
@@ -972,7 +987,7 @@ var roteirizacao = {
 				},
 				{
 					name : 'municipio',
-					value : $('#comboMunicipio').val()
+					value :municipio
 				},
 				{
 					name : 'bairro',
@@ -993,5 +1008,22 @@ var roteirizacao = {
 		  
 		  $(".cotasDisponiveisGrid").flexReload();
 },
+
+ checarTodasCotasGrid : function() {
+	
+	 if ( $("#selecionaTodos").is(":checked") ) {
+			$("input[type=checkbox][name='pdvCheckbox']").each(function(){
+				$(this).attr('checked', true);
+			});
+			var elem = document.getElementById("textoCheckAllCotas");
+			elem.innerHTML = "Desmarcar todos";
+	 } else {
+			$("input[type=checkbox][name='pdvCheckbox']").each(function(){
+				$(this).attr('checked', false);
+			});
+			var elem = document.getElementById("textoCheckAllCotas");
+			elem.innerHTML = "Marcar todos";
+	 }
+ } 
 
 };
