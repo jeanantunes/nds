@@ -20,10 +20,15 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 	private FechamentoEncalheRepository fechamentoEncalheRepository;
 	
 	@Override
-	public List<FechamentoFisicoLogicoDTO> buscarFechamentoEncalhe(
-			FiltroFechamentoEncalheDTO filtro) {
-		// TODO Auto-generated method stub
-		return null;
+	@Transactional(readOnly=true)
+	public List<FechamentoFisicoLogicoDTO> buscarFechamentoEncalhe(FiltroFechamentoEncalheDTO filtro,
+			String sortorder, String sortname, int page, int rp) {
+		
+		
+		
+		
+		
+		return fechamentoEncalheRepository.buscarFechamentoEncalhe(filtro, sortorder, sortname, page, rp);
 	}
 
 	@Override
