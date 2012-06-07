@@ -90,7 +90,7 @@ function popup(id) {
 	// Popular a lista de Edições:
 	$(".prodsPesqGrid").flexOptions({
 		url: "<c:url value='/cadastro/edicao/ultimasEdicoes.json' />",
-		params: [{name:'codigoProduto', value: 1 }],
+		params: [{name:'codigoProduto', value: $("#codigoProduto").val() }],
 		newp: 1,
 	});
 
