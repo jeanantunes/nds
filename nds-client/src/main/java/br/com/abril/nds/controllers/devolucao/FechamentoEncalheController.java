@@ -6,6 +6,8 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.dto.CotaAusenteEncalheDTO;
+import br.com.abril.nds.dto.FechamentoFisicoLogicoDTO;
+import br.com.abril.nds.dto.filtro.FiltroFechamentoEncalheDTO;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
@@ -57,17 +59,20 @@ public class FechamentoEncalheController {
 		result.include("listaBoxes", listaBoxes);
 	}
 	
+	
 	@Path("/pesquisar")
 	public void pesquisar(String dataEncalhe, Long idFornecedor, Long idBox,
 			String sortname, String sortorder, int rp, int page) {
 		
-		Date data = DateUtil.parseDataPTBR(dataEncalhe);
+		FiltroFechamentoEncalheDTO filtro = new FiltroFechamentoEncalheDTO();
+		filtro.setDataEncalhe(DateUtil.parseDataPTBR(dataEncalhe));
+		filtro.setFornecedorId(idFornecedor);
+		filtro.setBoxId(idBox);
 		
+		List<FechamentoFisicoLogicoDTO> listaEncalhe = fechamentoEncalheService.buscarFechamentoEncalhe(filtro, sortorder, sortname, page, rp);
 		
-		List listaEncalhe = null;
 		result.use(FlexiGridJson.class).from(listaEncalhe).total(listaEncalhe.size()).page(page).serialize();
 	}
-	
 	
 	@Path("/cotasAusentes")
 	public void cotasAusentes(Date dataEncalhe,
@@ -84,14 +89,13 @@ public class FechamentoEncalheController {
 	@Path("/postergarCotas")
 	public void postergarCotas(Date dataEncalhe, List<Long> idsCotas) {
 		
-		System.out.println(idsCotas);
-		
+		// TODO: postergar as cotas.
 	}
 
 	@Path("/cobrarCotas")
 	public void cobrarCotas(Date dataEncalhe, List<Long> idsCotas) {
 
-		System.out.println(idsCotas);
+		// TODO: cobrar as cotas.
 	}
 	
 }

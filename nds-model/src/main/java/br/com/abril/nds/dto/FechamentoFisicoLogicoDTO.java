@@ -4,19 +4,19 @@ import java.math.BigDecimal;
 
 public class FechamentoFisicoLogicoDTO {
 
-	private Long codigo;
+	private String codigo;
 	private String produto;
 	private Long edicao;
 	private BigDecimal precoCapa;
-	private Long exemplaresDevolucao;
+	private BigDecimal exemplaresDevolucao;
 	private BigDecimal total;
 	private Long fisico;
 	private Long diferenca;
 	
-	public Long getCodigo() {
+	public String getCodigo() {
 		return codigo;
 	}
-	public void setCodigo(Long codigo) {
+	public void setCodigo(String codigo) {
 		this.codigo = codigo;
 	}
 	public String getProduto() {
@@ -37,10 +37,10 @@ public class FechamentoFisicoLogicoDTO {
 	public void setPrecoCapa(BigDecimal precoCapa) {
 		this.precoCapa = precoCapa;
 	}
-	public Long getExemplaresDevolucao() {
+	public BigDecimal getExemplaresDevolucao() {
 		return exemplaresDevolucao;
 	}
-	public void setExemplaresDevolucao(Long exemplaresDevolucao) {
+	public void setExemplaresDevolucao(BigDecimal exemplaresDevolucao) {
 		this.exemplaresDevolucao = exemplaresDevolucao;
 	}
 	public BigDecimal getTotal() {
