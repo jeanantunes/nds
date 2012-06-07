@@ -69,6 +69,14 @@ public interface DividaService {
 	 * @param juros
 	 * @param multa
 	 */
-	void postergarCobrancaCota(List<Long> listaIdsCobranca, Date dataPostergacao, BigDecimal juros, BigDecimal multa, Long idUsuario);
+	void postergarCobrancaCota(List<Long> listaIdsCobranca, Date dataPostergacao, Long idUsuario, boolean isIsento);
 
+	/**
+	 * Método que calcula os encagos das cobranças.
+	 * 
+	 * @param listaIdsCobranca
+	 * @param dataPostergacao
+	 * @return
+	 */
+	BigDecimal calcularEncargosPostergacao(List<Long> listaIdsCobranca, Date dataPostergacao);
 }

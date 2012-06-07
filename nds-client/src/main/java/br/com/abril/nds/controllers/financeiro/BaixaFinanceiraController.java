@@ -577,26 +577,31 @@ public class BaixaFinanceiraController {
 	 */
 	@Post
 	@Path("obterPostergacao")
-	public void obterPostergacao(List<Long> idCobrancas) {
+	public void obterPostergacao(Date dataPostergacao, List<Long> idCobrancas) {
 		
-		if ((idCobrancas==null) || (idCobrancas.size() <=0)){
+		if ((idCobrancas==null) || (idCobrancas.size() <=0)) {
 			this.result.use(
 				Results.json()).from(
 					new ValidacaoVO(TipoMensagem.WARNING, "É necessário marcar ao menos uma dívida."), "result").recursive().serialize();
 			throw new ValidacaoException();
 		}
 		
-		CobrancaDividaVO cobrancaDivida =
-			this.cobrancaService.obterDadosCobrancas(idCobrancas);
+		if (dataPostergacao == null) {
+			dataPostergacao = Calendar.getInstance().getTime();
+		}
 		
-		if (cobrancaDivida != null) {
-			this.result.use(Results.json()).from(cobrancaDivida, "result").recursive().serialize();
+		BigDecimal encargos = this.dividaService.calcularEncargosPostergacao(idCobrancas, dataPostergacao);
+		
+		String encargosResult = CurrencyUtil.formatarValor(encargos);
+		
+		if (encargos != null) {
+			this.result.use(Results.json()).from(encargosResult, "result").recursive().serialize();
 		}
 	}
 	
 	@Post
 	@Path("finalizarPostergacao")
-	public void finalizarPostergacao(Date dataPostergacao, BigDecimal encargos, boolean isIsento, List<Long> idCobrancas) {
+	public void finalizarPostergacao(Date dataPostergacao, boolean isIsento, List<Long> idCobrancas) {
 		
 		List<String> listaMensagens = new ArrayList<String>();
 
@@ -624,19 +629,7 @@ public class BaixaFinanceiraController {
 		
 		try {
 		
-			CobrancaDividaVO cobrancaDividaVO = 
-				this.cobrancaService.obterDadosCobrancas(idCobrancas);
-			
-			// TODO: Componente para calculo de Juros e Multa.
-			BigDecimal valorJuros = BigDecimal.ZERO;
-			BigDecimal valorMulta = BigDecimal.ZERO;
-					
-			if (isIsento) {
-				valorJuros = CurrencyUtil.converterValor(cobrancaDividaVO.getValorJuros());
-				valorMulta = CurrencyUtil.converterValor(cobrancaDividaVO.getValorMulta());
-			}
-			
-			this.dividaService.postergarCobrancaCota(idCobrancas, dataPostergacao, valorJuros, valorMulta, idUsuario);
+			this.dividaService.postergarCobrancaCota(idCobrancas, dataPostergacao, idUsuario, isIsento);
 			
 		} catch (Exception e) {
 			this.result.use(
