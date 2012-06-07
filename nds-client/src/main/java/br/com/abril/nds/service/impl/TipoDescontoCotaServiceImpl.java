@@ -88,4 +88,10 @@ public class TipoDescontoCotaServiceImpl implements TipoDescontoCotaService {
 		return this.tipoDescontoCotaRepository.buscarPorId(idDesconto);
 	}
 
+	@Override
+	@Transactional
+	public List<Distribuidor> obterDistribuidores() {		 
+		return this.distribuidorRepository.buscarTodos();
+	}
+
 }
