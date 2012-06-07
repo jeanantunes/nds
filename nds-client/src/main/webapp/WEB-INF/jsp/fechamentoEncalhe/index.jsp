@@ -13,10 +13,10 @@
 				name : "dataEncalhe",
 				value : $('#datepickerDe').val()
 			}, {
-				name : "idFornecedor",
+				name : "fornecedorId",
 				value : $('#selectFornecedor').val()
 			}, {
-				name : "idBox",
+				name : "boxId",
 				value : $('#selectBoxEncalhe').val()
 			}],
 			newp:1
@@ -68,7 +68,49 @@
 		var devolucao = parseInt(tabela.rows[index].cells[4].firstChild.innerHTML);
 		var diferenca = tabela.rows[index].cells[7].firstChild;
 		
-		diferenca.innerHTML = devolucao - campo.value;
+		if (campo.value == "") {
+			diferenca.innerHTML = "";
+		} else {
+			diferenca.innerHTML = devolucao - campo.value;			
+		}
+	}
+	
+	function gerarArrayFisico() {
+		
+		var tabela = $('.fechamentoGrid').get(0);
+		var fisico;
+		var arr = new Array();
+		
+		for (i=0; i<tabela.rows.length; i++) {
+			fisico = tabela.rows[i].cells[6].firstChild.firstChild.value;
+			arr.push(fisico == "" ? 0 : fisico);
+		}
+		
+		return arr;
+	}
+	
+	function salvar() {
+		
+		$(".fechamentoGrid").flexOptions({
+			"url" : contextPath + '/devolucao/fechamentoEncalhe/salvar',
+			params : [{
+				name : "dataEncalhe",
+				value : $('#datepickerDe').val()
+			}, {
+				name : "fornecedorId",
+				value : $('#selectFornecedor').val()
+			}, {
+				name : "boxId",
+				value : $('#selectBoxEncalhe').val()
+			}, {
+				name : "fisico",
+				value : gerarArrayFisico()
+			}],
+			newp:1
+		});
+		
+		$(".fechamentoGrid").flexReload();
+		$(".grids").show();
 	}
 	
 	function popup_encerrarEncalhe() {
@@ -285,7 +327,7 @@
        	<legend> Fechamento Encalhe</legend>
         <div class="grids" style="display:none;">
 			<table class="fechamentoGrid"></table>
-            <span class="bt_novos" title="Salvar"><a href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0" />Salvar </a></span>
+            <span class="bt_novos" title="Salvar"><a href="javascript:;" onclick="salvar()"><img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0" />Salvar </a></span>
 			<span class="bt_novos" title="Cotas Ausentes"><a href="javascript:;" onclick="popup_encerrarEncalhe();"><img src="${pageContext.request.contextPath}/images/ico_check.gif" hspace="5" border="0" />Cotas Ausentes</a></span>
 			<span class="bt_novos" title="Encerrar Opera&ccedil;&atilde;o Encalhe"><a href="javascript:;" onclick="popup_encerrar();"><img src="${pageContext.request.contextPath}/images/ico_check.gif" hspace="5" border="0" />Encerrar Opera&ccedil;&atilde;o Encalhe</a></span>
 			<span class="bt_sellAll" style="float:right;"><a href="javascript:;" id="sel" onclick="replicarTodos();"><img src="${pageContext.request.contextPath}/images/ico_atualizar.gif" border="0" /></a><label for="sel">Replicar Todos</label></span>

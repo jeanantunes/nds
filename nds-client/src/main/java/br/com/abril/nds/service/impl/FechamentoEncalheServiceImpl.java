@@ -34,6 +34,19 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 		
 		return listaFechamento;
 	}
+	
+	@Override
+	@Transactional(readOnly=true)
+	public List<FechamentoFisicoLogicoDTO> salvarFechamentoEncalhe(FiltroFechamentoEncalheDTO filtro,
+			String sortorder, String sortname, int page, int rp) {
+		
+		int startSearch = page * rp - rp;
+		
+		
+		
+		
+		return this.buscarFechamentoEncalhe(filtro, sortorder, sortname, page, rp);
+	}
 
 	@Override
 	@Transactional(readOnly=true)
