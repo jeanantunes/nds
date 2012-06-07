@@ -155,29 +155,6 @@ function popup_roteirizacao() {
 		});	
 		      
 	};
-	
-		
-	function popup_tranferir_cota() {
-		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
-	
-		$( "#dialog-transfere-cotas" ).dialog({
-			resizable: false,
-			height:220,
-			width:400,
-			modal: true,
-			buttons: {
-				"Confirmar": function() {
-					$( this ).dialog( "close" );
-					$("#effect").hide("highlight", {}, 1000, callback);
-					
-				},
-				"Cancelar": function() {
-					$( this ).dialog( "close" );
-				}
-			}
-		});	
-		      
-	};
 
 	
 	
@@ -286,7 +263,7 @@ label{ vertical-align:super;}
 	<fieldset>
     	<legend>Transferir Cotas para:</legend>
         <p>Pesquise ou Digite o nome de uma Nova Rota para estas Cotas.</p>
-        <input name="lstRota_1" type="text" id="lstRota_1" style="width:300px; float:left; margin-bottom:5px;" />
+        <input name="lstRotaTranferencia" type="text" id="lstRotaTranferencia"  onkeyup="roteirizacao.autoCompletarRotaPorNome('#lstRotaTranferencia')" style="width:300px; float:left; margin-bottom:5px;" />
         <a href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_add.gif" alt="Adicionar Rota" width="16" height="16" border="0" style="float:left; margin-left:5px; margin-top:5px;" /></a>
     </fieldset>
 </div>
@@ -387,8 +364,8 @@ label{ vertical-align:super;}
 		<table class="cotasRotaGrid"></table>
         <span class="bt_novos" title="Cotas Ausentes"><a href="javascript:;" onclick="roteirizacao.abrirTelaCotas();"><img src="${pageContext.request.contextPath}/images/ico_add.gif" hspace="5" border="0"/>Adicionar</a></span>
         
-         <span class="bt_novos" title="Transferência de Roteiro"><a href="javascript:;" onclick="popup_tranferir_cota();"><img src="${pageContext.request.contextPath}/images/ico_integrar.png" hspace="5" border="0"/>Transferir</a></span>
-         <span class="bt_novos" title="Cotas Ausentes"><a href="javascript:;" onclick="popup_excluir();"><img src="${pageContext.request.contextPath}/images/ico_excluir.gif" hspace="5" border="0"/>Excluir</a></span>
+         <span class="bt_novos" title="Transferência de Roteiro"><a href="javascript:;" onclick="roteirizacao.popupTransferirCota();"><img src="${pageContext.request.contextPath}/images/ico_integrar.png" hspace="5" border="0"/>Transferir</a></span>
+         <span class="bt_novos" title="Cotas Ausentes"><a href="javascript:;" onclick="roteirizacao.popupExcluirRoteirizacao();"><img src="${pageContext.request.contextPath}/images/ico_excluir.gif" hspace="5" border="0"/>Excluir</a></span>
 	</fieldset>
     
     
@@ -456,8 +433,8 @@ label{ vertical-align:super;}
                 <option>Todos</option>
               </select></td>
               <td width="36">CEP:</td>
-              <td width="87"><input name="pesq_cota2" type="text" id="pesq_cota2" style="width:80px;" /></td>
-              <td width="79"><span class="bt_pesquisar"><a href="javascript:;" onclick="mostrar();">Pesquisar</a></span></td>
+              <td width="87"><input name="cepPesquisa" type="text" id="cepPesquisa" style="width:80px;" /></td>
+              <td width="79"><span class="bt_pesquisar"><a href="javascript:;" onclick="roteirizacao.buscarPvsPorEndereco();">Pesquisar</a></span></td>
             </tr>
           </table>
 	</fieldset>
