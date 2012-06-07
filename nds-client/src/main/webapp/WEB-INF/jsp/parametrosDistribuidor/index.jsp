@@ -45,10 +45,10 @@ function gravarDiasDistribuidorFornecedor() {
 	$.postJSON("<c:url value='/administracao/parametrosDistribuidor/gravarDiasDistribuidorFornecedor'/>", 
 			   data,
 			   function (resultado) {
-					exibirMensagem(resultado.mensagens.tipoMensagem, 
-								   resultado.mensagens.listaMensagens);
+					exibirMensagem(resultado.tipoMensagem, 
+								   resultado.listaMensagens);
+					recarregarDiasDistribuidorFornecedorGrid();
 			   });
-	recarregarDiasDistribuidorFornecedorGrid();
 }
 
 function excluirDiasDistribuidorFornecedor(id) {
@@ -56,24 +56,30 @@ function excluirDiasDistribuidorFornecedor(id) {
 	$.postJSON("<c:url value='/administracao/parametrosDistribuidor/excluirDiasDistribuicaoFornecedor'/>",
 			   data,
 			   function (resultado) {
-				   exibirMensagem(resultado.mensagens.tipoMensagem, 
-				   				  resultado.mensagens.listaMensagens);
+				   exibirMensagem(resultado.tipoMensagem, 
+				   				  resultado.listaMensagens);
+					recarregarDiasDistribuidorFornecedorGrid();
 			   });
-	recarregarDiasDistribuidorFornecedorGrid();
 }
 
 function recarregarDiasDistribuidorFornecedorGrid() {
 	$.postJSON("<c:url value='/administracao/parametrosDistribuidor/recarregarDiasDistribuidorFornecedorGrid'/>", 
+			   null,
 			   function (resultado) {
 					if (resultado.mensagens) {
 						exibirMensagem(
-							resultado.mensagens.tipoMensagem, 
-							resultado.mensagens.listaMensagens
+							resultado.tipoMensagem, 
+							resultado.listaMensagens
 						);
 					}
+					var startTag = '<table width="441" border="0" cellpadding="0" cellspacing="1" id="tableDiasDistribuidorFornecedor"><tr class="header_table"><td>Fornecedor</td><td align="center">Lançamento</td><td align="center">Recolhimento</td><td align="center">&nbsp;</td></tr>';
+					var endTag = '</table>';
+					var newTable = startTag;
 					$.each(resultado.rows, function(index, row) {
-						alert(row.cell)
+						newTable += '<tr class="class_linha_1"><td width="139">' + row.cell.fornecedor.juridica.nomeFantasia + '</td><td width="144" align="center">' + row.cell.diasLancamento + '</td><td width="125" align="center">' + row.cell.diasRecolhimento + '</td><td width="28" align="center"><a href="javascript:;" onclick="excluirDiasDistribuidorFornecedor(' + row.cell.fornecedor.id + ')" ><img src="${pageContext.request.contextPath}/images/ico_excluir.gif" width="15" height="15" alt="Excluir" /></a></td></tr>';
 					});
+					newTable += endTag;
+					document.getElementById('spanDiasDistribuidorFornecedor').innerHTML=newTable
 			   });
 }
 
@@ -226,22 +232,24 @@ $(document).ready(function() {
 		                  </tr>
 		                </table>
 		                <br />
-		                <table width="441" border="0" cellpadding="0" cellspacing="1">
-		                  <tr class="header_table">
-		                    <td>Fornecedor</td>
-		                    <td align="center">Lançamento</td>
-		                    <td align="center">Recolhimento</td>
-		                    <td align="center">&nbsp;</td>
-		                  </tr>
-                		  <c:forEach items="${listaDiaOperacaoFornecedor}" var="registroDiaOperacaoFornecedor">
-			                  <tr class="class_linha_1">
-			                    <td width="139">${registroDiaOperacaoFornecedor.fornecedor.juridica.nomeFantasia}</td>
-			                    <td width="144" align="center">${registroDiaOperacaoFornecedor.diasLancamento}</td>
-			                    <td width="125" align="center">${registroDiaOperacaoFornecedor.diasRecolhimento}</td>
-			                    <td width="28" align="center"><a href="javascript:;" onclick="excluirDiasDistribuidorFornecedor(${registroDiaOperacaoFornecedor.fornecedor.id})" ><img src="${pageContext.request.contextPath}/images/ico_excluir.gif" width="15" height="15" alt="Excluir" /></a></td>
+		                <span id="spanDiasDistribuidorFornecedor">
+			                <table width="441" border="0" cellpadding="0" cellspacing="1">
+			                  <tr class="header_table">
+			                    <td>Fornecedor</td>
+			                    <td align="center">Lançamento</td>
+			                    <td align="center">Recolhimento</td>
+			                    <td align="center">&nbsp;</td>
 			                  </tr>
-                   		  </c:forEach>
-		                </table>
+	                		  <c:forEach items="${listaDiaOperacaoFornecedor}" var="registroDiaOperacaoFornecedor">
+				                  <tr class="class_linha_1">
+				                    <td width="139">${registroDiaOperacaoFornecedor.fornecedor.juridica.nomeFantasia}</td>
+				                    <td width="144" align="center">${registroDiaOperacaoFornecedor.diasLancamento}</td>
+				                    <td width="125" align="center">${registroDiaOperacaoFornecedor.diasRecolhimento}</td>
+				                    <td width="28" align="center"><a href="javascript:;" onclick="excluirDiasDistribuidorFornecedor(${registroDiaOperacaoFornecedor.fornecedor.id})" ><img src="${pageContext.request.contextPath}/images/ico_excluir.gif" width="15" height="15" alt="Excluir" /></a></td>
+				                  </tr>
+	                   		  </c:forEach>
+			                </table>
+		                </span>
 		              </fieldset>
 			          <fieldset style="width:410px!important; margin-bottom:5px;">
 			                <legend>Recolhimento</legend>

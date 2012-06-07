@@ -11,6 +11,7 @@ import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
+import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.DistribuicaoFornecedorService;
 import br.com.abril.nds.service.DistribuidorService;
 import br.com.abril.nds.service.FornecedorService;
@@ -78,7 +79,7 @@ public class ParametrosDistribuidorController {
 	 * Retorna via json a lista de dias de distribuição e recolhimento do fornecedor
 	 */
 	public void recarregarDiasDistribuidorFornecedorGrid() {
-		result.use(Results.json()).from(distribuicaoFornecedorService.buscarDiasOperacaoFornecedor(),"result").recursive().serialize();
+		result.use(FlexiGridJson.class).from(distribuicaoFornecedorService.buscarDiasOperacaoFornecedor()).serialize();
 	}
 	
 	/**
