@@ -84,26 +84,12 @@
 			buttonImage: "${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
 			buttonImageOnly: true
 		});
-		$( "#datepickerAte" ).datepicker({
-			showOn: "button",
-			buttonImage: "${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
-			buttonImageOnly: true
-		});
-		$( "#dtOperacao" ).datepicker({
-			showOn: "button",
-			buttonImage: "${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
-			buttonImageOnly: true
-		});
 	});
 	
 	function confirmar(){
 		$(".dados").show();
 	}
 	
-	function pesqEncalhe(){
-		$(".dadosFiltro").show();
-	}
-
 	function checarTodasCotasGrid(checked) {
 				
 		if (checked) {
@@ -337,20 +323,20 @@
 				sortable : true,
 				align : 'left'
 			}, {
-				display : 'Edição',
+				display : 'Edi&ccedil;&atilde;o',
 				name : 'edicao',
 				width : 80,
 				sortable : true,
 				align : 'left'
 			}, {
-				display : 'Preço Capa R$',
+				display : 'Pre&ccedil;o Capa R$',
 				name : 'precoCapa',
 				width : 80,
 				sortable : true,
 				align : 'right'
 			}, {
-				display : 'Exempl. Devolução',
-				name : 'exemplarDevolucao',
+				display : 'Exempl. Devolu&ccedil;&atilde;o',
+				name : 'exemplaresDevolucao',
 				width : 100,
 				sortable : true,
 				align : 'center'
@@ -361,13 +347,13 @@
 				sortable : true,
 				align : 'right'
 			}, {
-				display : 'Físico',
+				display : 'F&iacute;sico',
 				name : 'fisico',
 				width : 80,
 				sortable : true,
 				align : 'center'
 			}, {
-				display : 'Diferença',
+				display : 'Diferen&ccedil;a',
 				name : 'diferenca',
 				width : 50,
 				sortable : true,

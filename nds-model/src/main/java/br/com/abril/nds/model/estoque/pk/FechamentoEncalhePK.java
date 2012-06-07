@@ -41,4 +41,37 @@ public class FechamentoEncalhePK implements Serializable {
 	public void setProdutoEdicao(ProdutoEdicao produtoEdicao) {
 		this.produtoEdicao = produtoEdicao;
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result
+				+ ((dataEncalhe == null) ? 0 : dataEncalhe.hashCode());
+		result = prime * result
+				+ ((produtoEdicao == null) ? 0 : produtoEdicao.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		FechamentoEncalhePK other = (FechamentoEncalhePK) obj;
+		if (dataEncalhe == null) {
+			if (other.dataEncalhe != null)
+				return false;
+		} else if (!dataEncalhe.equals(other.dataEncalhe))
+			return false;
+		if (produtoEdicao == null) {
+			if (other.produtoEdicao != null)
+				return false;
+		} else if (!produtoEdicao.equals(other.produtoEdicao))
+			return false;
+		return true;
+	}
 }
