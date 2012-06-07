@@ -44,7 +44,7 @@
 				}
 			},
 			beforeClose: function() {
-				clearMessageDialogTimeout();
+				clearMessageDialogTimeout('dialogMensagemNovo');
 			}
 		});
 
