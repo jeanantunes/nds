@@ -3,7 +3,6 @@ package br.com.abril.nds.dto;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
-import java.util.List;
 
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
@@ -44,13 +43,11 @@ public class ProdutoEdicaoDTO implements Serializable {
 	private String statusSituacao;
 	private String temBrinde;
 	
-	// Listas e comboBox para Incluir/Alterar:
-	private List<ProdutoEdicaoDTO> ultimasEdicoes;
-	private List<TipoLancamento> tiposLancamentos;
-	
 	// Campos para cadastrar uma nova Edição:
 	// codigoProduto;
 	private String nomeComercialProduto;
+	private String fase;
+	private String numeroLancamento;	
 	// numeroEdicao; pacotePadrao;
 	private BigDecimal precoPrevisto;
 	// precoVenda; (Real)
@@ -59,15 +56,17 @@ public class ProdutoEdicaoDTO implements Serializable {
 	private BigDecimal repartePromocional;
 	// codigoDeBarras
 	private String codigoDeBarrasCorporativo;
+	private String descricaoDesconto;
 	// desconto;
 	private String chamadaCapa;
 	// parcial;	-- Regime de Recolhimento;
 	// brinde;
 	// peso;
-	private BigDecimal altura;
-	private BigDecimal largura;
-	private String boletimInformativo;
+	private float largura;
+	private float comprimento;
+	private float espessura;
 	
+	private String boletimInformativo;
 	
 	// Lancamento:
 	// tipoLancamento;
@@ -75,6 +74,7 @@ public class ProdutoEdicaoDTO implements Serializable {
 	// dataLancamento; (Real)
 	// categoria;
 	
+	private boolean origemInterface;
 	
 	
 	/**
@@ -258,7 +258,7 @@ public class ProdutoEdicaoDTO implements Serializable {
 	}
 	
 	/**
-	 * @return the tipoLancamento
+	 * @return the statusLancamento
 	 */
 	public String getStatusLancamento() {
 		return this.statusLancamento;
@@ -287,18 +287,7 @@ public class ProdutoEdicaoDTO implements Serializable {
 	public void setTemBrinde(Boolean temBrinde) {
 		this.temBrinde = temBrinde.booleanValue() ? "Sim" : "Não";
 	}
-	/**
-	 * @return the ultimasEdicoes
-	 */
-	public List<ProdutoEdicaoDTO> getUltimasEdicoes() {
-		return ultimasEdicoes;
-	}
-	/**
-	 * @param ultimasEdicoes the ultimasEdicoes to set
-	 */
-	public void setUltimasEdicoes(List<ProdutoEdicaoDTO> ultimasEdicoes) {
-		this.ultimasEdicoes = ultimasEdicoes;
-	}
+
 	/**
 	 * @return the nomeComercialProduto
 	 */
@@ -311,18 +300,7 @@ public class ProdutoEdicaoDTO implements Serializable {
 	public void setNomeComercialProduto(String nomeComercialProduto) {
 		this.nomeComercialProduto = nomeComercialProduto;
 	}
-	/**
-	 * @return the tiposLancamentos
-	 */
-	public List<TipoLancamento> getTiposLancamentos() {
-		return tiposLancamentos;
-	}
-	/**
-	 * @param tiposLancamentos the tiposLancamentos to set
-	 */
-	public void setTiposLancamentos(List<TipoLancamento> tiposLancamentos) {
-		this.tiposLancamentos = tiposLancamentos;
-	}
+
 	/**
 	 * @return the precoPrevisto
 	 */
@@ -408,30 +386,6 @@ public class ProdutoEdicaoDTO implements Serializable {
 		this.chamadaCapa = chamadaCapa;
 	}
 	/**
-	 * @return the altura
-	 */
-	public BigDecimal getAltura() {
-		return altura;
-	}
-	/**
-	 * @param altura the altura to set
-	 */
-	public void setAltura(BigDecimal altura) {
-		this.altura = altura;
-	}
-	/**
-	 * @return the largura
-	 */
-	public BigDecimal getLargura() {
-		return largura;
-	}
-	/**
-	 * @param largura the largura to set
-	 */
-	public void setLargura(BigDecimal largura) {
-		this.largura = largura;
-	}
-	/**
 	 * @return the boletimInformativo
 	 */
 	public String getBoletimInformativo() {
@@ -442,6 +396,90 @@ public class ProdutoEdicaoDTO implements Serializable {
 	 */
 	public void setBoletimInformativo(String boletimInformativo) {
 		this.boletimInformativo = boletimInformativo;
+	}
+	/**
+	 * @return the fase
+	 */
+	public String getFase() {
+		return fase;
+	}
+	/**
+	 * @param fase the fase to set
+	 */
+	public void setFase(String fase) {
+		this.fase = fase;
+	}
+	/**
+	 * @return the numeroLancamento
+	 */
+	public String getNumeroLancamento() {
+		return numeroLancamento;
+	}
+	/**
+	 * @param numeroLancamento the numeroLancamento to set
+	 */
+	public void setNumeroLancamento(String numeroLancamento) {
+		this.numeroLancamento = numeroLancamento;
+	}
+	/**
+	 * @return the largura
+	 */
+	public float getLargura() {
+		return largura;
+	}
+	/**
+	 * @param largura the largura to set
+	 */
+	public void setLargura(float largura) {
+		this.largura = largura;
+	}
+	/**
+	 * @return the comprimento
+	 */
+	public float getComprimento() {
+		return comprimento;
+	}
+	/**
+	 * @param comprimento the comprimento to set
+	 */
+	public void setComprimento(float comprimento) {
+		this.comprimento = comprimento;
+	}
+	/**
+	 * @return the espessura
+	 */
+	public float getEspessura() {
+		return espessura;
+	}
+	/**
+	 * @param espessura the espessura to set
+	 */
+	public void setEspessura(float espessura) {
+		this.espessura = espessura;
+	}
+	/**
+	 * @return the origemInterface
+	 */
+	public boolean isOrigemInterface() {
+		return origemInterface;
+	}
+	/**
+	 * @param origemInterface the origemInterface to set
+	 */
+	public void setOrigemInterface(boolean origemInterface) {
+		this.origemInterface = origemInterface;
+	}
+	/**
+	 * @return the descricaoDesconto
+	 */
+	public String getDescricaoDesconto() {
+		return descricaoDesconto;
+	}
+	/**
+	 * @param descricaoDesconto the descricaoDesconto to set
+	 */
+	public void setDescricaoDesconto(String descricaoDesconto) {
+		this.descricaoDesconto = descricaoDesconto;
 	}
 	
 }

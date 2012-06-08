@@ -34,17 +34,29 @@
 			modal: true,
 			buttons: {
 				"Postergar": function() {
-					$( this ).dialog( "close" );
-					$("#effect").show("highlight", {}, 1000, callback);
+					postergarCotas();
 				},
 				"Cobrar": function() {
-					$( this ).dialog( "close" );
+					cobrarCotas();
 				},
 				"Cancelar": function() {
-					$( this ).dialog( "close" );
+					$(this).dialog( "close" );
 				}
+			},
+			beforeClose: function() {
+				clearMessageDialogTimeout();
 			}
 		});
+
+		var dataEncalhe = $("#datepickerDe").val();
+		
+		$(".cotasGrid").flexOptions({
+			url: "<c:url value='/devolucao/fechamentoEncalhe/cotasAusentes' />",
+			params: [{name:'dataEncalhe', value: dataEncalhe }],
+			newp: 1,
+		});
+		
+		$(".cotasGrid").flexReload();
 	};
 
 	function popup_encerrar() {
@@ -72,26 +84,96 @@
 			buttonImage: "${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
 			buttonImageOnly: true
 		});
-		$( "#datepickerAte" ).datepicker({
-			showOn: "button",
-			buttonImage: "${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
-			buttonImageOnly: true
-		});
-		$( "#dtOperacao" ).datepicker({
-			showOn: "button",
-			buttonImage: "${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
-			buttonImageOnly: true
-		});
 	});
 	
 	function confirmar(){
 		$(".dados").show();
 	}
 	
-	function pesqEncalhe(){
-		$(".dadosFiltro").show();
+	function checarTodasCotasGrid(checked) {
+				
+		if (checked) {
+			var elem = document.getElementById("textoCheckAllCotas");
+			elem.innerHTML = "Desmarcar todos";
+
+			$("input[type=checkbox][name='checkboxGridCotas']").each(function(){
+				$(this).attr('checked', true);
+			});
+				
+        } else {
+			var elem = document.getElementById("textoCheckAllCotas");
+			elem.innerHTML = "Marcar todos";
+
+			$("input[type=checkbox][name='checkboxGridCotas']").each(function(){
+				$(this).attr('checked', false);
+			});
+		}
 	}
 
+	function preprocessamentoGrid(resultado) {	
+		
+		if (resultado.mensagens) {
+			exibirMensagem(resultado.mensagens.tipoMensagem, resultado.mensagens.listaMensagens);
+			$(".cotasGrid").hide();
+			return resultado;
+		}
+		
+		document.getElementById("checkTodasCotas").checked = false;
+		checarTodasCotasGrid(false);
+		
+		$.each(resultado.rows, function(index, row) {
+
+			var checkBox = '<input type="checkbox" name="checkboxGridCotas" id="checkboxGridCotas" value="' + row.cell.idCota + '" />';	
+			
+		    row.cell.check = checkBox;
+		});
+
+		
+		$(".cotasGrid").show();
+		
+		return resultado;
+	}
+
+	function obterCotasMarcadas() {
+ 
+		var cotasAusentesSelecionadas = new Array();
+
+		$("input[type=checkbox][name='checkboxGridCotas']:checked").each(function(){
+			cotasAusentesSelecionadas.push(parseInt($(this).val()));
+		});
+
+		return cotasAusentesSelecionadas;
+	}
+	
+	function postergarCotas() {
+		
+		var dataEncalhe = $("#datepickerDe").val();
+
+		$.postJSON("<c:url value='/devolucao/fechamentoEncalhe/postergarCotas' />",
+					{ 'dataEncalhe' : dataEncalhe, 'idsCotas' : obterCotasMarcadas() },
+					function (result) {
+			
+					},
+				  	null,
+				   	true
+			);
+	}
+
+	function cobrarCotas() {
+
+		var dataEncalhe = $("#datepickerDe").val();
+		
+		$.postJSON("<c:url value='/devolucao/fechamentoEncalhe/cobrarCotas' />",
+					{ 'dataEncalhe' : dataEncalhe, 'idsCotas' : obterCotasMarcadas() },
+					function (result) {
+			
+					},
+				  	null,
+				   	true
+			);
+		
+	}
+	
 	</script>
 
 	<style type="text/css">
@@ -110,10 +192,15 @@
 	<div id="dialog-encerrarEncalhe" title="Opera&ccedil;&atilde;o de Encalhe" style="display:none;">
 		<fieldset>
 			<legend>Cotas Ausentes</legend>
-			<table class="cotasGrid"></table>
+				<form id="formGridCotas" name="formGridCotas" >
+					<table class="cotasGrid" id="tabelaGridCotas" ></table>
+				</form>
 			<span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
 			<span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir </a></span>
-			<span class="bt_sellAll" style="float:right;"><input type="checkbox" id="sel" name="Todos4" onclick="checkAll_cotas();" style="float:right;margin-right:25px;"/><label for="sel">Selecionar Todos</label></span>
+			<span class="bt_sellAll" style="float:right;">
+				<input type="checkbox" id="checkTodasCotas" name="checkTodasCotas" onchange="checarTodasCotasGrid(this.checked);" style="float:right;margin-right:25px;"/>
+				<label for="checkTodasCotas" id="textoCheckAllCotas" ></label>
+			</span>
 		</fieldset>
 	</div>
 
@@ -167,34 +254,35 @@
 
 	<script>
 		$(".cotasGrid").flexigrid({
+			preProcess: preprocessamentoGrid,
 			dataType : 'json',
 			colModel : [ {
 				display : 'Cota',
-				name : 'cota',
+				name : 'numeroCota',
 				width : 50,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Nome',
-				name : 'nome',
+				name : 'colaboradorName',
 				width : 110,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Box',
-				name : 'box',
+				name : 'boxName',
 				width : 37,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Roteiro',
-				name : 'roteiro',
+				name : 'roteiroName',
 				width : 85,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Rota',
-				name : 'rota',
+				name : 'rotaName',
 				width : 80,
 				sortable : true,
 				align : 'left'
@@ -206,12 +294,12 @@
 				align : 'left'
 			}, {
 				display : ' ',
-				name : 'sel',
+				name : 'check',
 				width : 20,
 				sortable : true,
 				align : 'center'
 			}],
-			sortname : "cota",
+			sortname : "numeroCota",
 			sortorder : "asc",
 			usepager : true,
 			useRp : true,
@@ -235,20 +323,20 @@
 				sortable : true,
 				align : 'left'
 			}, {
-				display : 'Edição',
+				display : 'Edi&ccedil;&atilde;o',
 				name : 'edicao',
 				width : 80,
 				sortable : true,
 				align : 'left'
 			}, {
-				display : 'Preço Capa R$',
+				display : 'Pre&ccedil;o Capa R$',
 				name : 'precoCapa',
 				width : 80,
 				sortable : true,
 				align : 'right'
 			}, {
-				display : 'Exempl. Devolução',
-				name : 'exemplarDevolucao',
+				display : 'Exempl. Devolu&ccedil;&atilde;o',
+				name : 'exemplaresDevolucao',
 				width : 100,
 				sortable : true,
 				align : 'center'
@@ -259,13 +347,13 @@
 				sortable : true,
 				align : 'right'
 			}, {
-				display : 'Físico',
+				display : 'F&iacute;sico',
 				name : 'fisico',
 				width : 80,
 				sortable : true,
 				align : 'center'
 			}, {
-				display : 'Diferença',
+				display : 'Diferen&ccedil;a',
 				name : 'diferenca',
 				width : 50,
 				sortable : true,

@@ -11,6 +11,8 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 
+import br.com.abril.nds.model.LogBairro;
+import br.com.abril.nds.model.LogLocalidade;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Rota;
 import br.com.abril.nds.model.cadastro.Roteirizacao;
@@ -81,4 +83,6 @@ public class RoteiroRepositoryImpl extends AbstractRepository<Roteiro, Long>
 		criteria.setProjection(Projections.max("ordem"));  
 		return (Integer) criteria.uniqueResult();  
 	}
+	
+	
 }

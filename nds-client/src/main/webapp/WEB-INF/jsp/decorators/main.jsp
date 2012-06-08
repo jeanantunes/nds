@@ -303,6 +303,8 @@ fieldset label {
 							<li><a href='<c:url value="/expedicao/resumo"/>'>Resumo
 									de Expedição</a>
 							</li>
+							<li><a href='<c:url value="/romaneio"/>'>Romaneios</a>
+							</li>
 							<li><a href="Expedicao/tratamento_arquivo_retorno_nfe.htm">Integração
 									do Arquivo de Retorno NF-e</a>
 							</li>
