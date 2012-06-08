@@ -1624,13 +1624,19 @@ public class Fixture {
 	public static ConferenciaEncalhe conferenciaEncalhe(
 			MovimentoEstoqueCota movimentoEstoqueCota,
 			ChamadaEncalheCota chamadaEncalheCota,
-			ControleConferenciaEncalheCota controleConferenciaEncalheCota) {
+			ControleConferenciaEncalheCota controleConferenciaEncalheCota,
+			Date data, BigDecimal qtdeInformada, BigDecimal qtde,
+			ProdutoEdicao produtoEdicao) {
 		
 		ConferenciaEncalhe conferenciaEncalhe = new ConferenciaEncalhe();
 		
 		conferenciaEncalhe.setMovimentoEstoqueCota(movimentoEstoqueCota);
 		conferenciaEncalhe.setChamadaEncalheCota(chamadaEncalheCota);
 		conferenciaEncalhe.setControleConferenciaEncalheCota(controleConferenciaEncalheCota);
+		conferenciaEncalhe.setData(data);
+		conferenciaEncalhe.setQtdeInformada(qtdeInformada);
+		conferenciaEncalhe.setQtde(qtde);
+		conferenciaEncalhe.setProdutoEdicao(produtoEdicao);
 		
 		return conferenciaEncalhe;
 		
