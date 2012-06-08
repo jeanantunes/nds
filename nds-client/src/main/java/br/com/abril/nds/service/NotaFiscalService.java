@@ -16,13 +16,13 @@ import br.com.abril.nds.model.fiscal.nota.RetornoComunicacaoEletronica;
 public interface NotaFiscalService {
 
 	/**
-	 * Obtém um mapa do total de itens (produtos/serviços) de notas fiscais a serem geradas por pessoa.
+	 * Obtém um mapa do total de itens (produtos/serviços) de notas fiscais a serem geradas por cota.
 	 * 
 	 * @param consultaLoteNotaFiscal - dados da consulta em lote de notas fiscais
 	 * 
-	 * @return {@link Map} de Total de Itens (produtos/serviços) por Pessoa
+	 * @return {@link Map} de Total de Itens (produtos/serviços) por Cota
 	 */
-	Map<Long, Integer> obterTotalItensNotaFiscalPorPessoaEmLote(ConsultaLoteNotaFiscalDTO dadosConsultaLoteNotaFiscal);
+	Map<Long, Integer> obterTotalItensNotaFiscalPorCotaEmLote(ConsultaLoteNotaFiscalDTO dadosConsultaLoteNotaFiscal);
 	
 	/**
 	 * Gera os dados de notas fiscais em lote.
