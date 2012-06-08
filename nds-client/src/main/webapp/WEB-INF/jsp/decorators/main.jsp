@@ -183,7 +183,7 @@ fieldset label {
 							</li>
 							<li><a href="<c:url value="/parciais/index"/>">Parciais</a>
 							</li>
-							<li><a href="cadastro/roteirizacao">Roteirização</a>
+							<li><a href="<c:url value="/cadastro/roteirizacao"/>">Roteirização</a>
 							</li>
 							<li><a href='<c:url value="/cadastro/transportador/"/>'>Transportador</a>
 							</li>
@@ -302,6 +302,8 @@ fieldset label {
 							</li>
 							<li><a href='<c:url value="/expedicao/resumo"/>'>Resumo
 									de Expedição</a>
+							</li>
+							<li><a href='<c:url value="/romaneio"/>'>Romaneios</a>
 							</li>
 							<li><a href="Expedicao/tratamento_arquivo_retorno_nfe.htm">Integração
 									do Arquivo de Retorno NF-e</a>

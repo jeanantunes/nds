@@ -244,11 +244,13 @@ public class RecebimentoFisicoController {
 		List<String> msgs = new ArrayList<String>();
 		
 		if(!fornecedor.equals("-1")){
+			
 			if(cnpj == null || cnpj.isEmpty()) {
+			
 				msgs.add("O campo CNPJ é obrigatório");
-			} else if(!verificarValidadeCnpj(cnpj)) {
-				msgs.add("O campo cnpj esta inválido");
-			}
+			
+			} 
+			
 		}	
 		
 		if(numeroNotaFiscal == null) {
@@ -261,18 +263,6 @@ public class RecebimentoFisicoController {
 
 		if(!msgs.isEmpty()) {
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, msgs));
-		}
-		
-	}
-
-	private boolean verificarValidadeCnpj(String cnpj) {
-	
-		CNPJValidator cnpjValidator = new CNPJValidator();
-		try{
-			cnpjValidator.assertValid(cnpj);
-			return true;
-		}catch(InvalidStateException e){
-			return false;
 		}
 		
 	}

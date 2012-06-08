@@ -3,12 +3,15 @@ package br.com.abril.nds.vo;
 import java.io.Serializable;
 import java.util.Date;
 
+import br.com.abril.nds.util.Intervalo;
+
 /**
  * Value Object para período.
  * 
  * @author Discover Technology
- *
+ * @deprecated usar {@link Intervalo}
  */
+@Deprecated
 public class PeriodoVO implements Serializable {
 
 	/**

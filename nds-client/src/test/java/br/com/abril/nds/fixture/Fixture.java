@@ -41,6 +41,7 @@ import br.com.abril.nds.model.cadastro.ParametroCobrancaCota;
 import br.com.abril.nds.model.cadastro.ParametroContratoCota;
 import br.com.abril.nds.model.cadastro.ParametroDistribuicaoCota;
 import br.com.abril.nds.model.cadastro.ParametroSistema;
+import br.com.abril.nds.model.cadastro.ParametroUsuarioBox;
 import br.com.abril.nds.model.cadastro.Periodicidade;
 import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
 import br.com.abril.nds.model.cadastro.Pessoa;
@@ -173,6 +174,22 @@ public class Fixture {
 		
 	}
 
+	
+	public static ParametroUsuarioBox parametroUsuarioBox(
+			Box box, 
+			Usuario usuario, 
+			boolean principal) {
+	
+		ParametroUsuarioBox parametroUsuarioBox = new ParametroUsuarioBox();
+		
+		parametroUsuarioBox.setBox(box);
+		parametroUsuarioBox.setUsuario(usuario);
+		parametroUsuarioBox.setPrincipal(principal);
+		
+		return parametroUsuarioBox;
+	}
+	
+	
 	public static PessoaJuridica juridicaDinap() {		
 		return pessoaJuridica("Dinap", "11.111.111/0001-00", "111.111.111.111",
 				"dinap@mail.com", "99.999-8");
@@ -420,6 +437,7 @@ public class Fixture {
 		produtoEdicao.setExpectativaVenda(expectativaVenda);
 		produtoEdicao.setParcial(parcial);
 		
+		produtoEdicao.setOrigemInterface(Boolean.TRUE);
 		return produtoEdicao;
 	}
 	
@@ -776,6 +794,38 @@ public class Fixture {
 	
 		return tipoMovimento;
 	}
+
+	public static TipoMovimentoEstoque tipoMovimentoRecebimentoEncalheJuramentado() {
+		TipoMovimentoEstoque tipoMovimento = new TipoMovimentoEstoque();
+		tipoMovimento.setAprovacaoAutomatica(true);
+		tipoMovimento.setDescricao("Recebimento Encalhe Juramentado");
+		tipoMovimento.setIncideDivida(true);
+		tipoMovimento.setGrupoMovimentoEstoque(GrupoMovimentoEstoque.RECEBIMENTO_ENCALHE_JURAMENTADO);
+	
+		return tipoMovimento;
+	}
+
+	public static TipoMovimentoEstoque tipoMovimentoRecebimentoEncalhe() {
+		TipoMovimentoEstoque tipoMovimento = new TipoMovimentoEstoque();
+		tipoMovimento.setAprovacaoAutomatica(true);
+		tipoMovimento.setDescricao("Recebimento Encalhe");
+		tipoMovimento.setIncideDivida(true);
+		tipoMovimento.setGrupoMovimentoEstoque(GrupoMovimentoEstoque.RECEBIMENTO_ENCALHE);
+	
+		return tipoMovimento;
+	}
+
+	public static TipoMovimentoEstoque tipoMovimentoSuplementarEnvioEncalheAnteriroProgramacao() {
+		TipoMovimentoEstoque tipoMovimento = new TipoMovimentoEstoque();
+		tipoMovimento.setAprovacaoAutomatica(true);
+		tipoMovimento.setDescricao("Suplementar Envio de Encalhe Anterior Programacao");
+		tipoMovimento.setIncideDivida(true);
+		tipoMovimento.setGrupoMovimentoEstoque(GrupoMovimentoEstoque.SUPLEMENTAR_ENVIO_ENCALHE_ANTERIOR_PROGRAMACAO);
+	
+		return tipoMovimento;
+	}
+
+	
 	
 	public static TipoMovimentoFinanceiro tipoMovimentoFinanceiroCompraEncalhe() {
 		TipoMovimentoFinanceiro tipoMovimento = new TipoMovimentoFinanceiro();
@@ -1021,6 +1071,19 @@ public class Fixture {
 		notaFiscalFornecedor.setValorDesconto(valorDesconto);
 		notaFiscalFornecedor.setValorLiquido(valorLiquido);
 
+		return notaFiscalFornecedor;
+	}
+	
+	public static NotaFiscalEntradaFornecedor notaFiscalEntradaFornecedor(Long numeroNF, String serie, String chaveAcesso, CFOP cfop,
+			PessoaJuridica emitente, Fornecedor fornecedor, TipoNotaFiscal tipoNotaFiscal,
+			Usuario usuario, BigDecimal valorBruto, BigDecimal valorDesconto, BigDecimal valorLiquido) {
+		
+		NotaFiscalEntradaFornecedor notaFiscalFornecedor = notaFiscalEntradaFornecedor(cfop, emitente, fornecedor, tipoNotaFiscal, usuario, valorBruto, valorDesconto, valorLiquido);
+		
+		notaFiscalFornecedor.setNumero(numeroNF);
+		notaFiscalFornecedor.setSerie(serie);
+		notaFiscalFornecedor.setChaveAcesso(chaveAcesso);
+		
 		return notaFiscalFornecedor;
 	}
 	
@@ -1561,13 +1624,19 @@ public class Fixture {
 	public static ConferenciaEncalhe conferenciaEncalhe(
 			MovimentoEstoqueCota movimentoEstoqueCota,
 			ChamadaEncalheCota chamadaEncalheCota,
-			ControleConferenciaEncalheCota controleConferenciaEncalheCota) {
+			ControleConferenciaEncalheCota controleConferenciaEncalheCota,
+			Date data, BigDecimal qtdeInformada, BigDecimal qtde,
+			ProdutoEdicao produtoEdicao) {
 		
 		ConferenciaEncalhe conferenciaEncalhe = new ConferenciaEncalhe();
 		
 		conferenciaEncalhe.setMovimentoEstoqueCota(movimentoEstoqueCota);
 		conferenciaEncalhe.setChamadaEncalheCota(chamadaEncalheCota);
 		conferenciaEncalhe.setControleConferenciaEncalheCota(controleConferenciaEncalheCota);
+		conferenciaEncalhe.setData(data);
+		conferenciaEncalhe.setQtdeInformada(qtdeInformada);
+		conferenciaEncalhe.setQtde(qtde);
+		conferenciaEncalhe.setProdutoEdicao(produtoEdicao);
 		
 		return conferenciaEncalhe;
 		
@@ -1824,27 +1893,44 @@ public class Fixture {
 	
 	public static ConsolidadoFinanceiroCota consolidadoFinanceiroCota(
 			List<MovimentoFinanceiroCota> movimentos, Cota cota, Date data,
-			BigDecimal valorConsolidado) {
+			BigDecimal valorConsignado,BigDecimal valorVendaEncalhe,
+			BigDecimal encalhe, BigDecimal debitoCredito, BigDecimal encargos, 
+			BigDecimal valorPostergado, BigDecimal atrasados, BigDecimal pendente) {
+		
 		ConsolidadoFinanceiroCota consolidado = new ConsolidadoFinanceiroCota();
-		consolidado.setConsignado(valorConsolidado);
 		consolidado.setMovimentos(movimentos);
 		consolidado.setCota(cota);
 		consolidado.setDataConsolidado(data);
-		consolidado.setTotal(valorConsolidado);
-		consolidado.setVendaEncalhe(valorConsolidado);
+		
+		consolidado.setConsignado(valorConsignado);
+		consolidado.setVendaEncalhe(valorVendaEncalhe);
+		consolidado.setEncalhe(encalhe);
+		consolidado.setDebitoCredito(debitoCredito);
+		consolidado.setEncargos(encargos);
+		consolidado.setValorPostergado(valorPostergado);
+		consolidado.setNumeroAtrasados(atrasados);
+		consolidado.setPendente(pendente);
+		
+		consolidado.setTotal(valorConsignado.subtract(encalhe).add(valorVendaEncalhe).add(debitoCredito).add(encargos).add(valorPostergado).add(atrasados).add(pendente));
+		
+		consolidado.setVendaEncalhe(valorVendaEncalhe);
+		
 		return consolidado;
 	}
 	
 	public static ConsolidadoFinanceiroCota consolidadoFinanceiroCotaEncalhe(
 			List<MovimentoFinanceiroCota> movimentos, Cota cota, Date data,
 			BigDecimal valorConsolidado, BigDecimal valorEncalhe) {
+		
 		ConsolidadoFinanceiroCota consolidado = new ConsolidadoFinanceiroCota();
+		
 		consolidado.setConsignado(valorConsolidado);
 		consolidado.setEncalhe(valorEncalhe);
 		consolidado.setMovimentos(movimentos);
 		consolidado.setCota(cota);
 		consolidado.setDataConsolidado(data);
 		consolidado.setTotal(valorConsolidado);
+		
 		return consolidado;
 	}
 	

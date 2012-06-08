@@ -346,7 +346,7 @@ public class ConferenciaEncalheController {
 	}
 	
 	@Post
-	public void adicionarProdutoConferido(Long idProdutoEdicao, Long quantidade) throws ChamadaEncalheCotaInexistenteException{
+	public void adicionarProdutoConferido(Long idProdutoEdicao, Long quantidade) {
 		
 		if (idProdutoEdicao == null){
 			
@@ -368,6 +368,9 @@ public class ConferenciaEncalheController {
 
 			throw new ValidacaoException(TipoMensagem.WARNING, "Não existe chamada de encalhe para produto parcial na data operação.");
 			
+		} catch (ChamadaEncalheCotaInexistenteException e) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, e.getMessage());
 		}
 		
 		this.atualizarQuantidadeConferida(idProdutoEdicao, quantidade, produtoEdicao);
@@ -421,6 +424,48 @@ public class ConferenciaEncalheController {
 		
 		this.result.use(CustomMapJson.class).put("result", dados == null ? "" : dados).serialize();
 	}
+
+	@Post
+	public void alterarQtdeValorInformado(Long idConferencia, Long qtdInformada, BigDecimal valorCapaInformado){
+		
+		List<ConferenciaEncalheDTO> listaConferencia = this.getListaConferenciaEncalheFromSession();
+		
+		ConferenciaEncalheDTO conf = null;
+		
+		if (idConferencia != null) {
+				
+			for (ConferenciaEncalheDTO dto : listaConferencia){
+				
+				if (dto.getIdConferenciaEncalhe().equals(idConferencia)){
+					
+					dto.setQtdInformada(new BigDecimal(qtdInformada));
+					
+					if (valorCapaInformado != null){
+						
+						dto.setPrecoCapaInformado(valorCapaInformado);
+					}
+					
+					conf = dto;
+					
+					break;
+				}
+			}
+		}
+		
+		Map<String, Object> dados = new HashMap<String, Object>();
+		
+		dados.put("conf", conf);
+		
+		dados.put("reparte", this.getInfoConferenciaSession().getReparte() == null ? BigDecimal.ZERO : this.getInfoConferenciaSession().getReparte());
+		
+		this.calcularValoresMonetarios(dados);
+		
+		this.calcularTotais(dados);
+		
+		this.result.use(CustomMapJson.class).put("result", dados == null ? "" : dados).serialize();
+		
+	}
+
 	
 	@Post
 	public void salvarConferencia(){
@@ -433,12 +478,16 @@ public class ConferenciaEncalheController {
 		InfoConferenciaEncalheCota info = this.getInfoConferenciaSession();
 		
 		if (info == null){
-			
 			throw new ValidacaoException(TipoMensagem.ERROR, "Sessão expirada.");
 		}
 		
 		controleConfEncalheCota.setCota(info.getCota());
 		controleConfEncalheCota.setId(this.getInfoConferenciaSession().getIdControleConferenciaEncalheCota());
+		
+		Box boxEncalhe = new Box();
+		boxEncalhe.setId((Long) this.session.getAttribute(ID_BOX_LOGADO));
+		
+		controleConfEncalheCota.setBox(boxEncalhe);
 		
 		List<ConferenciaEncalheDTO> lista = this.getListaConferenciaEncalheFromSession();
 		
@@ -467,13 +516,36 @@ public class ConferenciaEncalheController {
 			throw new ValidacaoException(TipoMensagem.WARNING, e.getMessage());
 			
 		} catch (EncalheExcedeReparteException e) {
+			
 			throw new ValidacaoException(TipoMensagem.WARNING, e.getMessage());
+		} finally {
+			
+			this.atribuirIds(lista);
 		}
 		
 		this.result.use(Results.json()).from(
 				new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."), "result").recursive().serialize();
 	}
 	
+	private void atribuirIds(List<ConferenciaEncalheDTO> lista) {
+		
+		if (lista != null){
+			for (ConferenciaEncalheDTO dto : lista){
+				
+				if (dto.getIdConferenciaEncalhe() == null){
+				
+					int id = (int) System.currentTimeMillis();
+					
+					if (id > 0){
+						id *= -1;
+					}
+						
+					dto.setIdConferenciaEncalhe(new Long(id));
+				}
+			}
+		}
+	}
+
 	private void verificarInicioConferencia() {
 		
 		Date horaInicio = (Date) this.session.getAttribute(HORA_INICIO_CONFERENCIA);
@@ -517,6 +589,9 @@ public class ConferenciaEncalheController {
 
 				this.result.use(Results.json()).from(
 						new ValidacaoVO(TipoMensagem.WARNING, "Conferência de encalhe está excedendo quantidade de reparte."), "result").recursive().serialize();
+			} finally{
+				
+				this.atribuirIds(lista);
 			}
 			
 			this.result.use(Results.json()).from(
@@ -626,7 +701,7 @@ public class ConferenciaEncalheController {
 	}
 	
 	@Post
-	public void verificarValorTotalNotaFiscal(){
+	public void verificarValorTotalNotaFiscal(BigDecimal valorCEInformado){
 		
 		NotaFiscalEntradaCota nota = (NotaFiscalEntradaCota) this.session.getAttribute(NOTA_FISCAL_CONFERENCIA);
 		
@@ -637,7 +712,10 @@ public class ConferenciaEncalheController {
 		if (nota != null && nota.getValorProdutos() != null && 
 				!nota.getValorProdutos().equals(valorTotal)){
 			
-			throw new ValidacaoException(TipoMensagem.WARNING, "Valor total dos produtos difere do valor da nota informada.");
+			throw new ValidacaoException(TipoMensagem.WARNING, "Valor total a pagar difere do valor da nota informada.");
+		} else if (!valorTotal.equals(valorCEInformado)){
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Valor total a pagar difere do valor CE jornaleiro informado.");
 		} else {
 			
 			this.finalizarConferencia();
@@ -709,7 +787,7 @@ public class ConferenciaEncalheController {
 				}
 			}
 			
-			valorVendaDia = valorVendaDia.add(info.getReparte()).subtract(valorEncalhe);
+			valorVendaDia = valorVendaDia.add(info.getReparte().subtract(valorEncalhe));
 			
 			if (info.getListaDebitoCreditoCota() != null){
 			
@@ -720,7 +798,7 @@ public class ConferenciaEncalheController {
 			}
 		}
 		
-		BigDecimal valorPagar = valorEncalhe.subtract(valorVendaDia).add(valorDebitoCredito);
+		BigDecimal valorPagar = valorVendaDia.subtract(valorEncalhe).add(valorDebitoCredito);
 		
 		if (dados != null){
 			
@@ -770,21 +848,36 @@ public class ConferenciaEncalheController {
 		
 		ConferenciaEncalheDTO conferenciaEncalheDTO = new ConferenciaEncalheDTO();
 		
-		conferenciaEncalheDTO.setIdConferenciaEncalhe(new Long((int) System.currentTimeMillis()) *-1);
+		int id = (int) System.currentTimeMillis();
+		
+		if (id > 0){
+			id *= -1;
+		}
+		
+		conferenciaEncalheDTO.setIdConferenciaEncalhe(new Long(id));
 		conferenciaEncalheDTO.setCodigo(produtoEdicao.getCodigoProduto());
 		conferenciaEncalheDTO.setCodigoDeBarras(produtoEdicao.getCodigoDeBarras());
 		conferenciaEncalheDTO.setCodigoSM(produtoEdicao.getSequenciaMatriz());
 		conferenciaEncalheDTO.setIdProdutoEdicao(produtoEdicao.getId());
 		conferenciaEncalheDTO.setNomeProduto(produtoEdicao.getNomeProduto());
 		conferenciaEncalheDTO.setNumeroEdicao(produtoEdicao.getNumeroEdicao());
+		
 		conferenciaEncalheDTO.setPrecoCapa(produtoEdicao.getPrecoVenda());
+		conferenciaEncalheDTO.setPrecoCapaInformado(produtoEdicao.getPrecoVenda());
+		
+		conferenciaEncalheDTO.setTipoChamadaEncalhe(produtoEdicao.getTipoChamadaEncalhe().name());
+		conferenciaEncalheDTO.setDataRecolhimento(produtoEdicao.getDataRecolhimentoDistribuidor());
+		
 		
 		if (quantidade != null){
 		
 			conferenciaEncalheDTO.setQtdExemplar(new BigDecimal(quantidade));
+			conferenciaEncalheDTO.setQtdInformada(new BigDecimal(quantidade));
 		} else {
 			
 			conferenciaEncalheDTO.setQtdExemplar(BigDecimal.ONE);
+			conferenciaEncalheDTO.setQtdInformada(BigDecimal.ONE);
+
 		}
 		
 		conferenciaEncalheDTO.setDesconto(produtoEdicao.getDesconto());

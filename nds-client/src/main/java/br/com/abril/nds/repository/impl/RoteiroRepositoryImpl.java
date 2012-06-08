@@ -7,9 +7,12 @@ import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 
+import br.com.abril.nds.model.LogBairro;
+import br.com.abril.nds.model.LogLocalidade;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Rota;
 import br.com.abril.nds.model.cadastro.Roteirizacao;
@@ -72,4 +75,14 @@ public class RoteiroRepositoryImpl extends AbstractRepository<Roteiro, Long>
 		
 		return criteria.list();
 	}
+	
+
+	@Override
+	public Integer buscarMaiorOrdemRoteiro(){
+		Criteria criteria  = getSession().createCriteria(Roteiro.class);
+		criteria.setProjection(Projections.max("ordem"));  
+		return (Integer) criteria.uniqueResult();  
+	}
+	
+	
 }
