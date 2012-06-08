@@ -855,7 +855,6 @@
 			
 			$.postJSON("<c:url value='/financeiro/finalizarPostergacao' />",
 						"dataPostergacao=" + $("#dtPostergada").val() +
-						"&encargos=" + $("#ecargosPostergacao").val() +
 						"&isIsento=" + buscarValueCheckBox('checkIsIsento') +
 						"&" + obterCobrancasDividasMarcadas(),
 						function (result) {
@@ -870,6 +869,8 @@
 								
 								exibirMensagem(tipoMensagem, listaMensagens);
 							} 
+							
+							limparModalPostergacao();
 						},
 						null,
 						true
@@ -880,7 +881,8 @@
         function obterPostergacao() {
 
 			$.postJSON("<c:url value='/financeiro/obterPostergacao' />",
-						obterCobrancasDividasMarcadas(),
+						"dataPostergacao=" + $("#dtPostergada").val() +
+						"&" + obterCobrancasDividasMarcadas(),
 						function (result) {
 							if (result) {
 
@@ -894,6 +896,7 @@
 
 								if (!tipoMensagem) {
 									postergarDivida();
+									$("#ecargosPostergacao").val(result)
 								}	
 							}							
 						},
@@ -940,19 +943,7 @@
 
 			$("#dtPostergada").val("");
 			$("#checkIsIsento").attr('checked', false);
-			$("#ecargosPostergacao").attr('disabled', false);
 			$("#ecargosPostergacao").val("");
-		}
-
-		function insetarCobranca() {
-
-			var isChecked = buscarValueCheckBox('checkIsIsento');
-
-			if (isChecked) {
-				$("#ecargosPostergacao").attr('disabled', true);
-			} else {
-				$("#ecargosPostergacao").attr('disabled', false);
-			}
 		}
 
 		function buscarValueCheckBox(checkName) {
@@ -1396,15 +1387,15 @@
 					<table width="230" border="0" cellspacing="2" cellpadding="0">
 			          <tr>
 			            <td width="121">Nova Data:</td>
-			            <td width="103"><input name="dtPostergada" type="text" id="dtPostergada" style="width:80px;" /></td>
+			            <td width="103"><input name="dtPostergada" type="text" id="dtPostergada" style="width:80px;" onchange="obterPostergacao();" /></td>
 			          </tr>
 			          <tr>
 			            <td>Encargos R$:</td>
-			            <td><input name="ecargosPostergacao" id="ecargosPostergacao" type="text" style="width:80px; text-align:right;" /></td>
+			            <td><input name="ecargosPostergacao" id="ecargosPostergacao" type="text" style="width:80px; text-align:right;" disabled="disabled" /></td>
 			          </tr>
 			          <tr>
 			            <td>Isentos Encargos</td>
-			            <td><input type="checkbox" name="checkIsIsento" id="checkIsIsento" onchange="insetarCobranca();" /></td>
+			            <td><input type="checkbox" name="checkIsIsento" id="checkIsIsento" /></td>
 			          </tr>
 			        </table>
 			    </fieldset>
