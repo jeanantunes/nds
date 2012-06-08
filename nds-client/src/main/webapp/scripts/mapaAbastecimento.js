@@ -17,23 +17,9 @@ function MapaAbastecimento(pathTela, objName) {
 		$(".mapaAbastecimentoGrid").flexReload();
 	},
 	
-	this.pesquisarDetalhes = function() {
-		
-
-		$(".mapaAbastecimentoDetalheGrid").flexOptions({			
-			url : pathTela + "/mapaAbastecimento/pesquisarDetalhes",
-			dataType : 'json',			
-			params:T.getDadosFiltro()
-		});
-		
-		$(".mapaAbastecimentoGrid").flexReload();
-	},
-	
-	
 	this.processaRetornoPesquisa = function(result) {
-		debugger;
-		if(result.messages)
-			exibirMensagem(result.messages.tipoMensagem,result.messages.listaMensagens);
+		if(result.mensagens)
+			exibirMensagem(result.mensagens.tipoMensagem,result.mensagens.listaMensagens);
 		
 		T.mapas = [];
 		
@@ -42,7 +28,39 @@ function MapaAbastecimento(pathTela, objName) {
 		return result;
 	},
 	
-
+	this.pesquisarDetalhes = function(indice) {
+	
+		var mapa = T.mapas[indice];
+		
+		var data = [];
+		
+		data.push({name: 'idBox' ,value: mapa.idBox});
+		data.push({name: 'data'  ,value: mapa.data});
+		
+		$(".mapaAbastecimentoDetalheGrid").flexOptions({			
+			url : pathTela + "/mapaAbastecimento/pesquisarDetalhes",
+			dataType : 'json',			
+			preProcess: T.processaRetornoPesquisaDetalhes,
+			params: data
+		
+		});		
+		
+		$(".mapaAbastecimentoDetalheGrid").flexReload();
+	},
+	
+	this.processaRetornoPesquisaDetalhes = function(result) {
+		
+		if(result.mensagens)
+			exibirMensagem(result.mensagens.tipoMensagem,result.mensagens.listaMensagens);
+		
+		T.mapas = [];
+		
+		$.each(result.rows, function(index,row){T.processarLinha(index,row.cell);} );
+		
+		return result;
+	},
+	
+	
 	this.processarLinha = function(index,cell) {
 		
 		T.mapas.push(cell);
@@ -51,7 +69,38 @@ function MapaAbastecimento(pathTela, objName) {
 					'<img src="' + pathTela + '/images/ico_detalhes.png" alt="Detalhes do box" border="0" /></a>';
 	},
 	
-	this.carregarDetalhes = function() {
+	this.atualizarBoxRota = function(isCotaDefined) {		
+
+		var data = [];
+		
+		if(isCotaDefined)
+			data.push({name: 'numeroCota' ,value: T.get('codigoCota')});
+		
+		$.postJSON(pathTela + "/mapaAbastecimento/buscarBoxRotaPorCota",
+				data,
+				function(result){T.preencherBoxRota(result,isCotaDefined);});	
+	},
+	
+	this.preencherBoxRota = function(result,isCotaDefined) {
+
+		if(!isCotaDefined)
+			result[0].splice(0,0,{"key": {"@class": "string","$": ""},"value": {"@class": "string","$": "Selecione..."}});
+		
+		result[1].splice(0,0,{"key": {"@class": "string","$": ""},"value": {"@class": "string","$": "Selecione..."}});
+		
+		var comboBox =  montarComboBox(result[0], false);
+		$('#box').html(comboBox);
+		
+		var comboRota =  montarComboBox(result[1], false);
+		$('#rota').html(comboRota);
+				
+		if(isCotaDefined)
+			$('#rota').enable();
+		
+	},
+	
+	this.carregarDetalhes = function(indice) {
+		T.pesquisarDetalhes(indice);
 		popup_detalhe_box();
 	},
 	
@@ -60,10 +109,13 @@ function MapaAbastecimento(pathTela, objName) {
 		switch (tipo) {
 			
 		case 'BOX':
+			debugger;
+			T.atualizarBoxRota();
 			T.bloquearCampos('rota','codigoProduto','nomeProduto','edicao','codigoCota','nomeCota','quebraPorCota');
 			T.desbloquearCampos('box');
 			break;
 		case 'ROTA':
+			T.atualizarBoxRota();
 			T.bloquearCampos('codigoProduto','nomeProduto','edicao','codigoCota','nomeCota','quebraPorCota');
 			T.desbloquearCampos('box','rota');
 			break;
@@ -83,6 +135,8 @@ function MapaAbastecimento(pathTela, objName) {
 	
 	this.bloquearCampos = function() {
 		for(var campo in arguments) {
+
+			$('#' + arguments[campo]).val('');
 			$('#' + arguments[campo]).disable();
 		}
 	},
@@ -110,7 +164,7 @@ function MapaAbastecimento(pathTela, objName) {
 		
 		return data;
 	},
-	
+		
 	/**
 	 * Atribui valor a um campo da tela
 	 * Obs: Checkboxs devem ser atribuidos com o valor de true ou false

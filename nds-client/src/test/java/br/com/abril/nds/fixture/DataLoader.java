@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -105,7 +104,6 @@ import br.com.abril.nds.model.estoque.RecebimentoFisico;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.financeiro.Boleto;
-import br.com.abril.nds.model.financeiro.Cobranca;
 import br.com.abril.nds.model.financeiro.CobrancaCheque;
 import br.com.abril.nds.model.financeiro.CobrancaDeposito;
 import br.com.abril.nds.model.financeiro.CobrancaDinheiro;
@@ -176,6 +174,11 @@ public class DataLoader {
 	private static TipoMovimentoEstoque tipoMovimentoRecFisico;
 	private static TipoMovimentoEstoque tipoMovimentoRecReparte;
 	private static TipoMovimentoEstoque tipoMovimentoEnvioEncalhe;
+	
+	private static TipoMovimentoEstoque tipoMovimentoRecebimentoEncalhe; 						
+	private static TipoMovimentoEstoque tipoMovimentoRecebimentoEncalheJuramentado; 				
+	private static TipoMovimentoEstoque tipoMovimentoSuplementarEnvioEncalheAnteriroProgramacao; 
+	
 	private static TipoMovimentoEstoque tipoMovimentoEstornoCotaAusente;
 	private static TipoMovimentoEstoque tipoMovimentoSuplementarCotaAusente;
 
@@ -1061,7 +1064,13 @@ public class DataLoader {
 		ControleConferenciaEncalheCota controleCota = Fixture.controleConferenciaEncalheCota(controle, cotaGuilherme, 
 				new Date(), new Date(), new Date(), StatusOperacao.CONCLUIDO, usuarioJoao, box1);
 		
-		ConferenciaEncalhe conferencia = Fixture.conferenciaEncalhe(movimento, chamadaEncalheCota, controleCota);
+		ConferenciaEncalhe conferencia = Fixture.conferenciaEncalhe(
+				movimento, chamadaEncalheCota, 
+				controleCota,
+				new Date(),
+				new BigDecimal(50),
+				new BigDecimal(50), 
+				cromoBrasileiraoEd1);
 		
 		save(session,estoque,movimento,chamadaEncalhe,chamadaEncalheCota,controle,controleCota,conferencia);
 		
@@ -1799,6 +1808,18 @@ public class DataLoader {
 		rota = Fixture.rota("006", "Rota 006");
 		rota.setRoteiro(roteiro);
 		session.save(rota);
+		
+		Roteiro roteiroTCD = Fixture.criarRoteiro("TCD",box2,TipoRoteiro.NORMAL);
+		session.save(roteiroTCD);
+		
+		Rota rota10 = Fixture.rota("001", "Rota 001");
+		rota10.setRoteiro(roteiroTCD);
+		session.save(rota10);
+		
+		
+		roteirizacao = Fixture.criarRoteirizacao(pdvGuilherme, rota10,1);
+		session.save(roteirizacao);
+		
 	}
 	
 	
@@ -3786,6 +3807,11 @@ public class DataLoader {
 
 		tipoMovimentoEnvioEncalhe = Fixture.tipoMovimentoEnvioEncalhe();
 
+		tipoMovimentoRecebimentoEncalhe 						= Fixture.tipoMovimentoRecebimentoEncalhe();
+		tipoMovimentoRecebimentoEncalheJuramentado 				= Fixture.tipoMovimentoRecebimentoEncalheJuramentado();
+		tipoMovimentoSuplementarEnvioEncalheAnteriroProgramacao = Fixture.tipoMovimentoSuplementarEnvioEncalheAnteriroProgramacao();
+		
+		
 		tipoMovimentoEstornoCotaAusente = Fixture.tipoMovimentoEstornoCotaAusente();
 
 		tipoMovimentoReparteCotaAusente = Fixture.tipoMovimentoReparteCotaAusente();
@@ -3815,7 +3841,9 @@ public class DataLoader {
 				tipoMovimentoFinanceiroCredito, tipoMovimentoFinanceiroDebito,
 				tipoMovimentoEnvioEncalhe, tipoMovimentoFinanceiroRecebimentoReparte,
 				tipoMovimentoFinanceiroJuros, tipoMovimentoFinanceiroMulta,
-				tipoMovimentoFinanceiroEnvioEncalhe, tipoMovimentoSuplementarCotaAusente);
+				tipoMovimentoFinanceiroEnvioEncalhe, tipoMovimentoSuplementarCotaAusente,
+				tipoMovimentoRecebimentoEncalhe, tipoMovimentoRecebimentoEncalheJuramentado, 				
+				tipoMovimentoSuplementarEnvioEncalheAnteriroProgramacao);
 
 	}
 
@@ -5138,7 +5166,7 @@ public class DataLoader {
 		
 		Date dataRecolhimentoChamadaEncalhe = Fixture.criarData(20, Calendar.JUNE, 2012);
 		
-		TipoChamadaEncalhe tipoChamadaEncalhe = TipoChamadaEncalhe.MATRIZ_RECOLHIMENTO;
+		TipoChamadaEncalhe tipoChamadaEncalhe = TipoChamadaEncalhe.CHAMADAO;
 				
 		boolean indChamadaEncalheCotaConferida = false; 
 		
@@ -5695,7 +5723,8 @@ public class DataLoader {
 		save(session, mec);
 
 		ConferenciaEncalhe conferenciaEncalhe = Fixture.conferenciaEncalhe(
-				mec, chamadaEncalheCota, controleConferenciaEncalheCota);
+				mec, chamadaEncalheCota, controleConferenciaEncalheCota,
+				Fixture.criarData(28, Calendar.FEBRUARY, 2012),new BigDecimal(8),new BigDecimal(8), produtoEdicaoCE);
 		save(session, conferenciaEncalhe);
 		
 		
@@ -5711,7 +5740,13 @@ public class DataLoader {
 
 		save(session, mec);
 
-		conferenciaEncalhe = Fixture.conferenciaEncalhe(mec, chamadaEncalheCota, controleConferenciaEncalheCota);
+		conferenciaEncalhe = Fixture.conferenciaEncalhe(
+				mec, chamadaEncalheCota, 
+				controleConferenciaEncalheCota,
+				Fixture.criarData(2, Calendar.MARCH, 2012),
+				new BigDecimal(8),
+				new BigDecimal(8), produtoEdicaoCE);
+		
 		save(session, conferenciaEncalhe);
 		
 		mec = Fixture.movimentoEstoqueCotaEnvioEncalhe( 
@@ -5726,7 +5761,15 @@ public class DataLoader {
 
 		save(session, mec);
 
-		conferenciaEncalhe = Fixture.conferenciaEncalhe(mec, chamadaEncalheCota, controleConferenciaEncalheCota);
+		conferenciaEncalhe = Fixture.conferenciaEncalhe(
+				mec, 
+				chamadaEncalheCota, 
+				controleConferenciaEncalheCota,
+				Fixture.criarData(3, Calendar.MARCH, 2012),
+				new BigDecimal(8),
+				new BigDecimal(8),
+				produtoEdicaoCE);
+		
 		save(session, conferenciaEncalhe);
 
 
@@ -5742,7 +5785,14 @@ public class DataLoader {
 
 		save(session, mec);
 
-		conferenciaEncalhe = Fixture.conferenciaEncalhe(mec, chamadaEncalheCota_2, controleConferenciaEncalheCota);
+		conferenciaEncalhe = Fixture.conferenciaEncalhe(
+				mec, chamadaEncalheCota_2, 
+				controleConferenciaEncalheCota,
+				Fixture.criarData(28, Calendar.FEBRUARY, 2012),
+				new BigDecimal(34),
+				new BigDecimal(34),
+				produtoEdicaoCE_2);
+		
 		save(session, conferenciaEncalhe);
 
 		
@@ -5758,9 +5808,15 @@ public class DataLoader {
 
 		save(session, mec);
 		
-		conferenciaEncalhe = Fixture.conferenciaEncalhe(mec, chamadaEncalheCota_2, controleConferenciaEncalheCota);
-		save(session, conferenciaEncalhe);
+		conferenciaEncalhe = Fixture.conferenciaEncalhe(
+				mec, chamadaEncalheCota_2, 
+				controleConferenciaEncalheCota,
+				Fixture.criarData(3, Calendar.MARCH, 2012),
+				new BigDecimal(45),
+				new BigDecimal(45),
+				produtoEdicaoCE_2);
 		
+		save(session, conferenciaEncalhe);
 		
 		mec = Fixture.movimentoEstoqueCotaEnvioEncalhe( 
 				Fixture.criarData(4, Calendar.MARCH, 2012), 
@@ -5774,7 +5830,14 @@ public class DataLoader {
 
 		save(session, mec);
 
-		conferenciaEncalhe = Fixture.conferenciaEncalhe(mec, chamadaEncalheCota_2, controleConferenciaEncalheCota);
+		conferenciaEncalhe = Fixture.conferenciaEncalhe(
+				mec, chamadaEncalheCota_2, 
+				controleConferenciaEncalheCota,
+				Fixture.criarData(4, Calendar.MARCH, 2012),
+				new BigDecimal(65),
+				new BigDecimal(65),
+				produtoEdicaoCE_2);
+		
 		save(session, conferenciaEncalhe);
 
 		mec = Fixture.movimentoEstoqueCotaEnvioEncalhe( 
@@ -5789,7 +5852,13 @@ public class DataLoader {
 
 		save(session, mec);
 
-		conferenciaEncalhe = Fixture.conferenciaEncalhe(mec, chamadaEncalheCota_3, controleConferenciaEncalheCota);
+		conferenciaEncalhe = Fixture.conferenciaEncalhe(
+				mec, chamadaEncalheCota_3, 
+				controleConferenciaEncalheCota,
+				Fixture.criarData(28, Calendar.FEBRUARY, 2012),
+				new BigDecimal(31),new BigDecimal(31),
+				produtoEdicaoCE_3);
+		
 		save(session, conferenciaEncalhe);
 
 		mec = Fixture.movimentoEstoqueCotaEnvioEncalhe( 
@@ -5804,7 +5873,14 @@ public class DataLoader {
 
 		save(session, mec);
 
-		conferenciaEncalhe = Fixture.conferenciaEncalhe(mec, chamadaEncalheCota_3, controleConferenciaEncalheCota);
+		conferenciaEncalhe = Fixture.conferenciaEncalhe(
+				mec, chamadaEncalheCota_3, 
+				controleConferenciaEncalheCota,
+				Fixture.criarData(3, Calendar.MARCH, 2012),
+				new BigDecimal(41),
+				new BigDecimal(41),
+				produtoEdicaoCE_3);
+		
 		save(session, conferenciaEncalhe);
 
 		
@@ -5820,7 +5896,13 @@ public class DataLoader {
 
 		save(session, mec);
 
-		conferenciaEncalhe = Fixture.conferenciaEncalhe(mec, chamadaEncalheCota_3, controleConferenciaEncalheCota);
+		conferenciaEncalhe = Fixture.conferenciaEncalhe(mec, chamadaEncalheCota_3, 
+				controleConferenciaEncalheCota,
+				Fixture.criarData(5, Calendar.MARCH, 2012),
+				new BigDecimal(85),
+				new BigDecimal(85),
+				produtoEdicaoCE_3);
+		
 		save(session, conferenciaEncalhe);
 
 
@@ -5836,7 +5918,12 @@ public class DataLoader {
 
 		save(session, mec);
 
-		conferenciaEncalhe = Fixture.conferenciaEncalhe(mec, chamadaEncalheCota_3, controleConferenciaEncalheCota);
+		conferenciaEncalhe = Fixture.conferenciaEncalhe(mec, chamadaEncalheCota_3, controleConferenciaEncalheCota,
+				Fixture.criarData(6, Calendar.MARCH, 2012), 
+				new BigDecimal(85),
+				new BigDecimal(85),
+				produtoEdicaoCE_3);
+		
 		save(session, conferenciaEncalhe);
 
 		mec = Fixture.movimentoEstoqueCotaEnvioEncalhe( 
@@ -5851,7 +5938,15 @@ public class DataLoader {
 
 		save(session, mec);
 
-		conferenciaEncalhe = Fixture.conferenciaEncalhe(mec, chamadaEncalheCota_3, controleConferenciaEncalheCota);
+		conferenciaEncalhe = Fixture.conferenciaEncalhe(
+				mec, 
+				chamadaEncalheCota_3, 
+				controleConferenciaEncalheCota,
+				Fixture.criarData(7, Calendar.MARCH, 2012),
+				new BigDecimal(85),
+				new BigDecimal(85),
+				produtoEdicaoCE_3);
+		
 		save(session, conferenciaEncalhe);
 
 		
@@ -5867,7 +5962,13 @@ public class DataLoader {
 
 		save(session, mec);
 
-		conferenciaEncalhe = Fixture.conferenciaEncalhe(mec, chamadaEncalheCota_3, controleConferenciaEncalheCota);
+		conferenciaEncalhe = Fixture.conferenciaEncalhe(mec, chamadaEncalheCota_3, 
+				controleConferenciaEncalheCota,
+				Fixture.criarData(7, Calendar.MARCH, 2012),
+				new BigDecimal(85),
+				new BigDecimal(85),
+				produtoEdicaoCE_3);
+		
 		save(session, conferenciaEncalhe);
 		
 	}

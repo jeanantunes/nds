@@ -1,8 +1,9 @@
 package br.com.abril.nds.dto.filtro;
 
 import java.io.Serializable;
+import java.util.Date;
 
-import br.com.abril.nds.dto.filtro.FiltroTipoMovimento.ColunaOrdenacao;
+import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.vo.PaginacaoVO;
 
 public class FiltroMapaAbastecimentoDTO  implements Serializable {
@@ -10,6 +11,7 @@ public class FiltroMapaAbastecimentoDTO  implements Serializable {
 	private static final long serialVersionUID = 5563066721323982905L;
 	
 	private String dataLancamento;
+	private Date dataDate;
 	private TipoConsulta tipoConsulta;
 	private Long box;
 	private Long Rota;
@@ -18,11 +20,11 @@ public class FiltroMapaAbastecimentoDTO  implements Serializable {
 	private Integer codigoCota;
 	private String nomeCota;
 	private Boolean quebraPorCota;
-	
-	private ColunaOrdenacao colunaOrdenacao;
-	
+			
 	private PaginacaoVO paginacao;
 	
+	private PaginacaoVO paginacaoDetalhes;
+		
 	public enum TipoConsulta {
 		
 		BOX,
@@ -56,6 +58,34 @@ public class FiltroMapaAbastecimentoDTO  implements Serializable {
 			return null;
 		}
 	}
+	
+	public enum ColunaOrdenacaoDetalhes {
+		CODIGO_PRODUTO("codigoProduto"),
+		NOME_PRODTO("nomeProduto"),
+		NUMERO_EDICAO("numeroEdicao"),
+		REPARTE("reparte"),
+		PRECO_CAPA("precoCapa"),
+		TOTAL("total");	
+		
+		private String nomeColuna;
+		
+		private ColunaOrdenacaoDetalhes(String nomeColuna) {
+			this.nomeColuna = nomeColuna;
+		}
+		
+		@Override
+		public String toString() {
+			return this.nomeColuna;
+		}
+		
+		public static ColunaOrdenacaoDetalhes getPorDescricao(String descricao) {
+			for(ColunaOrdenacaoDetalhes coluna: ColunaOrdenacaoDetalhes.values()) {
+				if(coluna.toString().equals(descricao))
+					return coluna;
+			}
+			return null;
+		}
+	}
 
 	/**
 	 * @return the dataLancamento
@@ -63,11 +93,12 @@ public class FiltroMapaAbastecimentoDTO  implements Serializable {
 	public String getDataLancamento() {
 		return dataLancamento;
 	}
-
+		
 	/**
 	 * @param dataLancamento the dataLancamento to set
 	 */
 	public void setDataLancamento(String dataLancamento) {
+		this.dataDate = DateUtil.parseDataPTBR(dataLancamento);
 		this.dataLancamento = dataLancamento;
 	}
 
@@ -183,19 +214,6 @@ public class FiltroMapaAbastecimentoDTO  implements Serializable {
 		this.quebraPorCota = quebraPorCota;
 	}
 
-	/**
-	 * @return the colunaOrdenacao
-	 */
-	public ColunaOrdenacao getColunaOrdenacao() {
-		return colunaOrdenacao;
-	}
-
-	/**
-	 * @param colunaOrdenacao the colunaOrdenacao to set
-	 */
-	public void setColunaOrdenacao(ColunaOrdenacao colunaOrdenacao) {
-		this.colunaOrdenacao = colunaOrdenacao;
-	}
 
 	/**
 	 * @return the paginacao
@@ -209,6 +227,23 @@ public class FiltroMapaAbastecimentoDTO  implements Serializable {
 	 */
 	public void setPaginacao(PaginacaoVO paginacao) {
 		this.paginacao = paginacao;
+	}
+
+	public Date getDataDate() {
+		return dataDate;
+	}
+
+	public void setDataDate(Date dataDate) {
+		this.dataDate = dataDate;
+	}
+	
+
+	public PaginacaoVO getPaginacaoDetalhes() {
+		return paginacaoDetalhes;
+	}
+
+	public void setPaginacaoDetalhes(PaginacaoVO paginacaoDetalhes) {
+		this.paginacaoDetalhes = paginacaoDetalhes;
 	}
 	
 	

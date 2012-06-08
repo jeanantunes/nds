@@ -104,5 +104,5 @@ public class EstudoCotaRepositoryImpl extends AbstractRepository<EstudoCota, Lon
 		
 		return (EstudoCota) query.uniqueResult();
 	}
-
+	
 }

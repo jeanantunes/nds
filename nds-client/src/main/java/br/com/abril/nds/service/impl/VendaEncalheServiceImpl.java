@@ -1,25 +1,22 @@
 package br.com.abril.nds.service.impl;
 
-import java.math.BigDecimal;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperRunManager;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
-
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import br.com.abril.nds.dto.SlipVendaEncalheDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.estoque.VendaEncalhe;
 import br.com.abril.nds.service.VendaEncalheService;
+import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.TipoMensagem;
 
 /**
@@ -72,12 +69,15 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 		
 		if (listaVe!=null && listaVe.size()>0) {
 			
-			Double quantidadeTotal = 0d;
-			Double valorTotal = 0d;
+			Double quantidadeTotalVista = 0d;
+			Double valorTotalVista = 0d;
+			Double quantidadeTotalPrazo = 0d;
+			Double valorTotalPrazo = 0d;
 			
 			for (VendaEncalhe itemVE:listaVe){
 			
 				slipVendaEncalhe = new SlipVendaEncalheDTO();
+				
 				
 				
 				//DADOS PARA SIMULAÇÃO - TO-DO - OBTER DO ITEM ATUAL DA ITERAÇÃO
@@ -96,10 +96,21 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 				slipVendaEncalhe.setPreco("R$150,00");
 				slipVendaEncalhe.setTotal("R$300,00");
 				
-				quantidadeTotal += 15;
-				valorTotal += 300;
-				slipVendaEncalhe.setQuantidadeTotal(quantidadeTotal.toString());
-				slipVendaEncalhe.setValorTotal(valorTotal.toString());
+				quantidadeTotalVista += 15;
+				valorTotalVista += 300;
+				quantidadeTotalPrazo += 15;
+				valorTotalPrazo += 300;
+				
+				
+				
+				slipVendaEncalhe.setQuantidadeTotalVista(quantidadeTotalVista.toString());
+				slipVendaEncalhe.setValorTotalVista(valorTotalVista.toString());
+				
+				slipVendaEncalhe.setQuantidadeTotalPrazo(quantidadeTotalPrazo.toString());
+				slipVendaEncalhe.setValorTotalPrazo(valorTotalPrazo.toString());
+				
+				slipVendaEncalhe.setQuantidadeTotalGeral(CurrencyUtil.formatarValor(quantidadeTotalVista + quantidadeTotalPrazo));
+				slipVendaEncalhe.setValorTotalGeral(CurrencyUtil.formatarValor(valorTotalVista + valorTotalPrazo));
 	
 				listaSlipVendaEncalhe.add(slipVendaEncalhe);	
 				
@@ -137,7 +148,7 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 	 * @param idCota
 	 * @param dataInicio
 	 * @param dataFim
-	  * @return byte[]
+	 * @return byte[]
 	 */
 	@Override
 	@Transactional(readOnly = true)
@@ -156,5 +167,31 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 		return relatorio;
 	}
  
+	
+	
+	
+	/**
+	 * Gera Array de Bytes do Slip de Venda de Suplementar
+	 * @param idCota
+	 * @param dataInicio
+	 * @param dataFim
+	 * @return byte[]
+	 */
+	@Override
+	@Transactional(readOnly = true)
+	public byte[] geraImpressaoVendaSuplementar(long idCota, Date dataInicio, Date dataFim){
+		
+		byte[] relatorio=null;
+
+		List<SlipVendaEncalheDTO> listaSlipVendaEncalheDTO = this.obtemDadosSlip(idCota, dataInicio, dataFim); 
+
+		try{
+		    relatorio = this.gerarDocumentoIreport(listaSlipVendaEncalheDTO, "/reports/slipVendaSuplementar.jasper");
+		}
+		catch(Exception e){
+			throw new ValidacaoException(TipoMensagem.WARNING, "Erro ao gerar Slip de Venda de Suplementar.");
+		}
+		return relatorio;
+	}
 	
 }
