@@ -52,7 +52,7 @@ public class VendaEncalheController {
 	
 	
 	/**
-	 * Exibe o contrato em formato PDF.
+	 * Exibe o Slip de Venda de Encalhe em formato PDF.
 	 * @param idCota
 	 * @param dataInicio
 	 * @param dataFim
@@ -65,7 +65,30 @@ public class VendaEncalheController {
 		byte[] b = this.vendaEncalheService.geraImpressaoVendaEncalhe(idCota,dataInicio,dataFim);
 
 		this.httpResponse.setContentType("application/pdf");
-		this.httpResponse.setHeader("Content-Disposition", "attachment; filename=SlipVE.pdf");
+		this.httpResponse.setHeader("Content-Disposition", "attachment; filename=SlipVendaEncalhe.pdf");
+
+		OutputStream output = this.httpResponse.getOutputStream();
+		output.write(b);
+
+		httpResponse.flushBuffer();
+	}
+	
+	
+	/**
+	 * Exibe o Slip de Venda Suplementar em formato PDF.
+	 * @param idCota
+	 * @param dataInicio
+	 * @param dataFim
+	 * @throws Exception
+	 */
+	@Get
+	@Path("/imprimeSlipVendaSuplementar")
+	public void imprimeSlipVendaSuplementar(Long idCota, Date dataInicio, Date dataFim) throws Exception{
+
+		byte[] b = this.vendaEncalheService.geraImpressaoVendaSuplementar(idCota,dataInicio,dataFim);
+
+		this.httpResponse.setContentType("application/pdf");
+		this.httpResponse.setHeader("Content-Disposition", "attachment; filename=SlipVendaSuplementar.pdf");
 
 		OutputStream output = this.httpResponse.getOutputStream();
 		output.write(b);

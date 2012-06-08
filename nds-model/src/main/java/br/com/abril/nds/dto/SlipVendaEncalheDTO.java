@@ -20,8 +20,12 @@ public class SlipVendaEncalheDTO {
 	String total;
 	
 	//TOTALIZAÇÕES
-	String quantidadeTotal;
-	String valorTotal;
+	String quantidadeTotalVista;
+	String valorTotalVista;
+	String quantidadeTotalPrazo;
+	String valorTotalPrazo;
+	String quantidadeTotalGeral;
+	String valorTotalGeral;
 	
 	public String getNumeroCota() {
 		return numeroCota;
@@ -127,20 +131,52 @@ public class SlipVendaEncalheDTO {
 		this.total = total;
 	}
 
-	public String getQuantidadeTotal() {
-		return quantidadeTotal;
+	public String getQuantidadeTotalVista() {
+		return quantidadeTotalVista;
 	}
 
-	public void setQuantidadeTotal(String quantidadeTotal) {
-		this.quantidadeTotal = quantidadeTotal;
+	public void setQuantidadeTotalVista(String quantidadeTotalVista) {
+		this.quantidadeTotalVista = quantidadeTotalVista;
 	}
 
-	public String getValorTotal() {
-		return valorTotal;
+	public String getValorTotalVista() {
+		return valorTotalVista;
 	}
 
-	public void setValorTotal(String valorTotal) {
-		this.valorTotal = valorTotal;
+	public void setValorTotalVista(String valorTotalVista) {
+		this.valorTotalVista = valorTotalVista;
+	}
+
+	public String getQuantidadeTotalPrazo() {
+		return quantidadeTotalPrazo;
+	}
+
+	public void setQuantidadeTotalPrazo(String quantidadeTotalPrazo) {
+		this.quantidadeTotalPrazo = quantidadeTotalPrazo;
+	}
+
+	public String getValorTotalPrazo() {
+		return valorTotalPrazo;
+	}
+
+	public void setValorTotalPrazo(String valorTotalPrazo) {
+		this.valorTotalPrazo = valorTotalPrazo;
+	}
+
+	public String getQuantidadeTotalGeral() {
+		return quantidadeTotalGeral;
+	}
+
+	public void setQuantidadeTotalGeral(String quantidadeTotalGeral) {
+		this.quantidadeTotalGeral = quantidadeTotalGeral;
+	}
+
+	public String getValorTotalGeral() {
+		return valorTotalGeral;
+	}
+
+	public void setValorTotalGeral(String valorTotalGeral) {
+		this.valorTotalGeral = valorTotalGeral;
 	}
 	
 }

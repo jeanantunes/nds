@@ -34,5 +34,15 @@ public interface VendaEncalheService {
 	  * @return byte[]
 	 */
 	 byte[] geraImpressaoVendaEncalhe(long idCota, Date dataInicio, Date dataFim);
+	 
+	 
+	 /**
+	 * Gera Array de Bytes do Slip de Venda de Suplementar
+	 * @param idCota
+	 * @param dataInicio
+	 * @param dataFim
+	  * @return byte[]
+	 */
+	 byte[] geraImpressaoVendaSuplementar(long idCota, Date dataInicio, Date dataFim);
 	
 }
