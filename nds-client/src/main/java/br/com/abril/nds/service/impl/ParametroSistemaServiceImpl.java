@@ -2,6 +2,7 @@ package br.com.abril.nds.service.impl;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.util.Collection;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -87,6 +88,12 @@ public class ParametroSistemaServiceImpl implements ParametroSistemaService {
 		// Salvar dto:
 		List<ParametroSistema> lst = dto.getParametrosSistema();
 		parametroSistemaRepository.salvar(lst);
+	}
+	
+	@Override
+	@Transactional
+	public void salvar(Collection<ParametroSistema> parametrosSistema) {
+		parametroSistemaRepository.salvar(parametrosSistema);
 	}
 	
 }

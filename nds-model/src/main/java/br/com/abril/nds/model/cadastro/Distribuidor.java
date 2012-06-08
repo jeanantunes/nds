@@ -128,7 +128,6 @@ public class Distribuidor {
 	@JoinColumn(name = "PARAMETRO_CONTRATO_COTA_ID")
 	private ParametroContratoCota parametroContratoCota;
 	
-	
 	@OneToMany(mappedBy="distribuidor")
 	private List<TipoGarantiaAceita> tiposGarantiasAceita;
 	

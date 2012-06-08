@@ -83,6 +83,24 @@ function recarregarDiasDistribuidorFornecedorGrid() {
 			   });
 }
 
+function gravar() {
+	
+	var data = [
+			{name:'parametrosDistribuidor.idBox', value:$('#idBox').val()},
+			{name:'parametrosDistribuidor.idRoteiro', value:$('#idRoteiro').val()},
+			{name:'parametrosDistribuidor.idRota', value:$('#idRota').val()},
+			{name:'parametrosDistribuidor.nomeRota',	value: $('#idRota option:selected').text()}
+		];
+	
+	$.postJSON("<c:url value='/administracao/parametrosDistribuidor/gravar'/>",
+			   data,
+			   function (resultado) {
+				   exibirMensagem(resultado.tipoMensagem, 
+				   				  resultado.listaMensagens);
+					recarregarDiasDistribuidorFornecedorGrid();
+			   });
+}
+
 function popup_confirm() {
 		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
 	
@@ -260,7 +278,7 @@ $(document).ready(function() {
 			              </tr>
 			              <tr>
 			                <td>Aceita Encalhe Juramentada:</td>
-			                <td width="22"><input name="input12" type="checkbox" value="" /></td>
+			                <td width="22"><input name="parametrosDistribuidor.aceitaEncalheJuramentada" type="checkbox" id="aceitaEncalheJuramentada" ${parametrosDistribuidor.aceitaEncalheJuramentada} /></td>
 			                <td width="15">&nbsp;</td>
 			                <td width="21">&nbsp;</td>
 			                <td width="16">&nbsp;</td>
@@ -274,21 +292,21 @@ $(document).ready(function() {
 			              </tr>
 			              <tr>
 			                <td>Dias de Recolhimento:</td>
-			                <td><input name="input14" type="checkbox" value="" /></td>
+			                <td><input name="parametrosDistribuidor.diaRecolhimentoPrimeiro" type="checkbox" id="diaRecolhimentoPrimeiro" ${parametrosDistribuidor.diaRecolhimentoPrimeiro} /></td>
 			                <td>1º</td>
-			                <td><input name="input15" type="checkbox" value="" /></td>
+			                <td><input name="parametrosDistribuidor.diaRecolhimentoSegundo" type="checkbox" id="diaRecolhimentoSegundo" ${parametrosDistribuidor.diaRecolhimentoSegundo} /></td>
 			                <td>2º</td>
-			                <td><input name="input16" type="checkbox" value="" /></td>
+			                <td><input name="parametrosDistribuidor.diaRecolhimentoTerceiro" type="checkbox" id="diaRecolhimentoTerceiro" ${parametrosDistribuidor.diaRecolhimentoTerceiro} /></td>
 			                <td>3º</td>
-			                <td><input name="input49" type="checkbox" value="" /></td>
+			                <td><input name="parametrosDistribuidor.diaRecolhimentoQuarto" type="checkbox" id="diaRecolhimentoQuarto" ${parametrosDistribuidor.diaRecolhimentoQuarto} /></td>
 			                <td>4º</td>
-			                <td><input name="input50" type="checkbox" value="" /></td>
+			                <td><input name="parametrosDistribuidor.diaRecolhimentoQuinto" type="checkbox" id="diaRecolhimentoQuinto" ${parametrosDistribuidor.diaRecolhimentoQuinto} /></td>
 			                <td>5º</td>
 			                <td>Dias</td>
 			              </tr>
 			              <tr>
 			                <td>Permite Recolher dias Posteriores:</td>
-			                <td><input name="input17" type="checkbox" value="" /></td>
+			                <td><input name="parametrosDistribuidor.limiteCEProximaSemana" type="checkbox" id="limiteCEProximaSemana" ${parametrosDistribuidor.limiteCEProximaSemana} /></td>
 			                <td colspan="10">Limite CE Próxima Semana</td>
 			              </tr>
 			              <tr>
@@ -314,8 +332,8 @@ $(document).ready(function() {
 			              </tr>
 			              <tr>
 			                <td width="123" align="center" class="class_linha_1">Conferência Cega</td>
-			                <td width="115" align="center"><input name="input13" type="checkbox" value="" /></td>
-			                <td width="148" align="center"><input name="input23" type="checkbox" value="" /></td>
+			                <td width="115" align="center"><input name="parametrosDistribuidor.conferenciaCegaRecebimento" type="checkbox" id="conferenciaCegaRecebimento" ${parametrosDistribuidor.conferenciaCegaRecebimento} /></td>
+			                <td width="148" align="center"><input name="parametrosDistribuidor.conferenciaCegaEncalhe" type="checkbox" id="conferenciaCegaEncalhe" ${parametrosDistribuidor.conferenciaCegaEncalhe} /></td>
 			              </tr>
 			            </table>
 			          </fieldset>
@@ -329,8 +347,8 @@ $(document).ready(function() {
 		                  </tr>
 		                  <tr>
 		                    <td width="123" align="center" class="class_linha_1">Exes. Homem/ Hora</td>
-		                    <td width="115" align="center"><input type="text" name="textfield10" id="textfield10" style="width:40px; text-align:center;" /></td>
-		                    <td width="148" align="center"><input type="text" name="textfield11" id="textfield11" style="width:40px; text-align:center;" /></td>
+		                    <td width="115" align="center"><input type="text" name="parametrosDistribuidor.capacidadeManuseioHomemHoraLancamento" id="capacidadeManuseioHomemHoraLancamento" value="${parametrosDistribuidor.capacidadeManuseioHomemHoraLancamento}" style="width:40px; text-align:center;" /></td>
+		                    <td width="148" align="center"><input type="text" name="parametrosDistribuidor.capacidadeManuseioHomemHoraRecolhimento" id="capacidadeManuseioHomemHoraRecolhimento" value="${parametrosDistribuidor.capacidadeManuseioHomemHoraRecolhimento}" style="width:40px; text-align:center;" /></td>
 		                  </tr>
 		                </table>
 		              </fieldset>     
@@ -339,7 +357,7 @@ $(document).ready(function() {
 			            <table width="390" border="0" cellspacing="1" cellpadding="0">
 			              <tr>
 			                <td width="222" align="left">Reutilização de Código de Cota Inativa:</td>
-			                <td width="40" align="center"><input name="textfield10" type="text" id="textfield10" style="width:40px; text-align:center;" value="06" /></td>
+			                <td width="40" align="center"><input name="parametrosDistribuidor.reutilizacaoCodigoCotaInativa" value="${parametrosDistribuidor.reutilizacaoCodigoCotaInativa}" type="text" id="reutilizacaoCodigoCotaInativa" style="width:40px; text-align:center;" value="06" /></td>
 			                <td width="124" align="left"> &nbsp;( meses )</td>
 			              </tr>
 			            </table>
@@ -347,7 +365,7 @@ $(document).ready(function() {
 		              <fieldset style="width:440px!important; margin-bottom:5px;">
 		                <legend>Parciais / Matriz de Lançamento</legend>
 		                <label>Relançamento de Parciais em D+: </label>
-		                <select name="select18" size="1" multiple="multiple" id="select18" style="width:50px; height:19px;">
+		                <select name="parametrosDistribuidor.relancamentoParciaisEmDias" size="1" multiple="multiple" id="relancamentoParciaisEmDias" style="width:50px; height:19px;">
 		                  <option selected="selected">2</option>
 		                  <option>3</option>
 		                  <option>4</option>

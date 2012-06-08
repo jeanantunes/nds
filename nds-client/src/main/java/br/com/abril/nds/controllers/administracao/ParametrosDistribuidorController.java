@@ -6,15 +6,16 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import br.com.abril.nds.client.vo.RegistroDiaOperacaoFornecedorVO;
+import br.com.abril.nds.client.vo.ParametrosDistribuidorVO;
 import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Distribuidor;
-import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.DistribuicaoFornecedorService;
 import br.com.abril.nds.service.DistribuidorService;
 import br.com.abril.nds.service.FornecedorService;
+import br.com.abril.nds.service.ParametroSistemaService;
+import br.com.abril.nds.service.ParametrosDistribuidorService;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
@@ -42,19 +43,17 @@ public class ParametrosDistribuidorController {
 	@Autowired
 	private FornecedorService fornecedorService;
 
+	@Autowired
+	private ParametrosDistribuidorService parametrosDistribuidorService;
+
+	@Autowired
+	private ParametroSistemaService parametroSistemaService;
+	
 	@Path("/")
 	public void index() {
-
-		List<RegistroDiaOperacaoFornecedorVO> listaDiaOperacaoFornecedor = distribuicaoFornecedorService.buscarDiasOperacaoFornecedor();
-		/*for (DistribuicaoFornecedor distribuicaoFornecedor : listaDistribuicaoFornecedor) {
-			distribuicaoFornecedor.getDiaSemana();
-			distribuicaoFornecedor.getFornecedor();
-		}*/
-		
-		List<Fornecedor> fornecedores = fornecedorService.obterFornecedores();
-
-		result.include("listaDiaOperacaoFornecedor", listaDiaOperacaoFornecedor);
-		result.include("fornecedores", fornecedores);
+		result.include("parametrosDistribuidor", parametrosDistribuidorService.getParametrosDistribuidor());
+		result.include("listaDiaOperacaoFornecedor", distribuicaoFornecedorService.buscarDiasOperacaoFornecedor());
+		result.include("fornecedores", fornecedorService.obterFornecedores());
 		result.include("distribuidor", distribuidorService.obter());
 	}
 
@@ -62,9 +61,10 @@ public class ParametrosDistribuidorController {
 	 * Grava as alterações de parametros realizadas para o distribuidor
 	 * @param distribuidor
 	 */
-	public void gravar(Distribuidor distribuidor) {
-		distribuidorService.alterar(distribuidor);
-		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Parâmetros do Distribuidor alterado com sucesso"),"result").recursive().serialize();
+	public void gravar(ParametrosDistribuidorVO parametrosDistribuidor) {
+		parametroSistemaService.salvar(parametrosDistribuidorService.getListaParametrosSistema(parametrosDistribuidor));
+		distribuidorService.alterar(parametrosDistribuidorService.getDistribuidor(parametrosDistribuidor));
+		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Parâmetros do Distribuidor alterados com sucesso"),"result").recursive().serialize();
 	}
 	
 	/**
@@ -88,7 +88,6 @@ public class ParametrosDistribuidorController {
 	 */
 	@Post
 	@Path("/gravarDiasDistribuidorFornecedor")
-	
 	public void gravarDiasDistribuidorFornecedor(String selectFornecedoresLancamento, String selectDiasLancamento, String selectDiasRecolhimento) throws Exception {
 		
 		List<String> listaFornecedoresLancamento = Arrays.asList(selectFornecedoresLancamento.split(","));
