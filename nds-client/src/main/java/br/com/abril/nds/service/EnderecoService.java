@@ -7,6 +7,7 @@ import java.util.Set;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.Pessoa;
+import br.com.abril.nds.model.dne.Localidade;
 
 public interface EnderecoService {
 
@@ -25,5 +26,9 @@ public interface EnderecoService {
 	List<EnderecoAssociacaoDTO> buscarEnderecosPorIdPessoa(Long idPessoa, Set<Long> idsIgnorar);
 
 	List<String> obterMunicipiosCotas();
+	
+	List<String> obterUnidadeFederacaoBrasil();
+	
+	List<Localidade> obterLocalidadesPorUF(String siglaUF);
 	
 }

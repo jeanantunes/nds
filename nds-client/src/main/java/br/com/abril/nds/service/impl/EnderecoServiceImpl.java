@@ -15,6 +15,7 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.TipoEndereco;
+import br.com.abril.nds.model.dne.Localidade;
 import br.com.abril.nds.repository.EnderecoRepository;
 import br.com.abril.nds.service.EnderecoService;
 import br.com.abril.nds.service.exception.EnderecoUniqueConstraintViolationException;
@@ -186,5 +187,30 @@ public class EnderecoServiceImpl implements EnderecoService {
 	@Transactional(readOnly = true)
 	public List<String> obterMunicipiosCotas() {
 		return enderecoRepository.obterMunicipiosCotas();
+	}
+
+	/**
+	 * {@inheritDoc} 
+	 */
+	@Override
+	@Transactional(readOnly = true)
+	public List<String> obterUnidadeFederacaoBrasil() {
+
+		return this.enderecoRepository.obterUnidadeFederacaoBrasil();
+	}
+
+	/**
+	 * {@inheritDoc} 
+	 */
+	@Override
+	@Transactional(readOnly = true)
+	public List<Localidade> obterLocalidadesPorUF(String siglaUF) {
+
+		if (siglaUF == null || siglaUF.isEmpty()) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "A escolha da UF é obrigatória.");
+		}
+		
+		return this.enderecoRepository.obterLocalidadesPorUF(siglaUF);
 	}
 }
