@@ -2,7 +2,7 @@ package br.com.abril.nds.dto;
 
 public class SlipVendaEncalheDTO {
 
-	//CABEÇALHO SLIP V.E.
+	//CABEÇALHO SLIP
 	String numeroCota;
 	String nomeCota;
 	String numeroBox;
@@ -11,7 +11,7 @@ public class SlipVendaEncalheDTO {
 	String hora;
 	String usuario;
 	
-	//ITEM SLIP V.E.
+	//ITEM SLIP
 	String codigo;
 	String produto;
 	String edicao;

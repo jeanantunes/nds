@@ -370,7 +370,7 @@ public class BancoController {
 		}
 		
 		if ((numero==null)||("".equals(numero))){
-			throw new ValidacaoException(TipoMensagem.WARNING, "Preencha o numero do banco.");
+			throw new ValidacaoException(TipoMensagem.WARNING, "Preencha o número do banco.");
 		}
 		
 		if ((nome==null)||("".equals(nome))){
@@ -402,7 +402,7 @@ public class BancoController {
 		}
 
 		if ((instrucoes==null)||("".equals(instrucoes))){
-			throw new ValidacaoException(TipoMensagem.WARNING, "Digite as intruções.");
+			throw new ValidacaoException(TipoMensagem.WARNING, "Digite as instruções.");
 		}
 		
 		if(juros==null){
