@@ -1,6 +1,9 @@
 package br.com.abril.nds.dto;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
+
+import br.com.abril.nds.util.CurrencyUtil;
 
 public class AbastecimentoDTO implements Serializable {
 
@@ -73,8 +76,8 @@ public class AbastecimentoDTO implements Serializable {
 	/**
 	 * @param totalProduto the totalProduto to set
 	 */
-	public void setTotalProduto(Integer totalProduto) {
-		this.totalProduto = totalProduto;
+	public void setTotalProduto(Long totalProduto) {
+		this.totalProduto = totalProduto.intValue();
 	}
 	/**
 	 * @return the totalReparte
@@ -85,8 +88,8 @@ public class AbastecimentoDTO implements Serializable {
 	/**
 	 * @param totalReparte the totalReparte to set
 	 */
-	public void setTotalReparte(Integer totalReparte) {
-		this.totalReparte = totalReparte;
+	public void setTotalReparte(BigDecimal totalReparte) {
+		this.totalReparte = totalReparte.intValue();
 	}
 	/**
 	 * @return the totalBox
@@ -97,8 +100,8 @@ public class AbastecimentoDTO implements Serializable {
 	/**
 	 * @param totalBox the totalBox to set
 	 */
-	public void setTotalBox(String totalBox) {
-		this.totalBox = totalBox;
+	public void setTotalBox(BigDecimal totalBox) {
+		this.totalBox = CurrencyUtil.formatarValor(totalBox);
 	}
 	
 	

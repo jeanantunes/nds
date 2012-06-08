@@ -7,12 +7,16 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.CotaRotaRoteiroDTO;
+import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Box;
+import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.repository.BoxRepository;
+import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.service.BoxService;
 import br.com.abril.nds.service.exception.RelationshipRestrictionException;
 import br.com.abril.nds.service.exception.UniqueConstraintViolationException;
+import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
 /**
@@ -27,6 +31,9 @@ public class BoxServiceImpl implements BoxService {
 
 	@Autowired
 	private BoxRepository boxRepository;
+	
+	@Autowired
+	private CotaRepository cotaRepository;
 
 	@Transactional(readOnly = true)
 	@Override
@@ -118,5 +125,17 @@ public class BoxServiceImpl implements BoxService {
 	@Override
 	public boolean hasAssociacao(long id){
 		return boxRepository.hasCotasVinculadas(id) || boxRepository.hasRoteirosVinculados(id);
+	}
+
+	@Override
+	@Transactional(readOnly=true)
+	public Box obterBoxPorCota(Integer numeroCota) {
+		
+		Cota cota = cotaRepository.obterPorNumerDaCota(numeroCota);
+		
+		if(cota == null)
+			throw new ValidacaoException(TipoMensagem.WARNING, "Cota não existe.");
+		
+		return cota.getBox();
 	}
 }

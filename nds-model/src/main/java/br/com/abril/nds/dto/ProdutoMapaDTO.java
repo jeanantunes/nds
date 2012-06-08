@@ -1,38 +1,34 @@
 package br.com.abril.nds.dto;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
+import java.util.HashMap;
 
-import br.com.abril.nds.util.CurrencyUtil;
-
-public class ProdutoAbastecimentoDTO implements Serializable{
-
-	private static final long serialVersionUID = -2951289520494037916L;
+public class ProdutoMapaDTO implements Serializable{
 	
+	private static final long serialVersionUID = 5959348243641631020L;
+
 	private String codigoProduto;
 	private String nomeProduto;
 	private Long numeroEdicao;
-	private Integer reparte;
 	private String precoCapa;
-	private String total;
+	private Integer totalReparte;
+	private HashMap<String, Integer> boxQtde;
 	
-	private String codigoBox;
-	
-	public ProdutoAbastecimentoDTO() {
+	public ProdutoMapaDTO(){
 		
 	}
 	
-	public ProdutoAbastecimentoDTO(String codigoProduto, String nomeProduto,
-			Long numeroEdicao, Integer reparte, String precoCapa, String total) {
+	public ProdutoMapaDTO(String codigoProduto, String nomeProduto,
+			Long numeroEdicao, String precoCapa, Integer totalReparte,
+			 HashMap<String, Integer> qtdeBox) {
 		super();
 		this.codigoProduto = codigoProduto;
 		this.nomeProduto = nomeProduto;
 		this.numeroEdicao = numeroEdicao;
-		this.reparte = reparte;
 		this.precoCapa = precoCapa;
-		this.total = total;
+		this.totalReparte = totalReparte;
+		this.boxQtde = qtdeBox;
 	}
-
 	/**
 	 * @return the codigoProduto
 	 */
@@ -70,19 +66,6 @@ public class ProdutoAbastecimentoDTO implements Serializable{
 		this.numeroEdicao = numeroEdicao;
 	}
 	/**
-	 * @return the reparte
-	 */
-	public Integer getReparte() {
-		return reparte;
-	}
-	/**
-	 * @param reparte the reparte to set
-	 */
-	public void setReparte(BigDecimal reparte) {
-		if(reparte!=null)
-			this.reparte = reparte.intValue();
-	}
-	/**
 	 * @return the precoCapa
 	 */
 	public String getPrecoCapa() {
@@ -91,28 +74,32 @@ public class ProdutoAbastecimentoDTO implements Serializable{
 	/**
 	 * @param precoCapa the precoCapa to set
 	 */
-	public void setPrecoCapa(BigDecimal precoCapa) {
-		this.precoCapa = CurrencyUtil.formatarValor(precoCapa);
+	public void setPrecoCapa(String precoCapa) {
+		this.precoCapa = precoCapa;
 	}
 	/**
-	 * @return the total
+	 * @return the totalReparte
 	 */
-	public String getTotal() {
-		return total;
+	public Integer getTotalReparte() {
+		return totalReparte;
 	}
 	/**
-	 * @param total the total to set
+	 * @param totalReparte the totalReparte to set
 	 */
-	public void setTotal(BigDecimal total) {
-		this.total = CurrencyUtil.formatarValor(total);
+	public void setTotalReparte(Integer totalReparte) {
+		this.totalReparte = totalReparte;
 	}
-
-	public String getCodigoBox() {
-		return codigoBox;
+	/**
+	 * @return the boxQtde
+	 */
+	public HashMap<String, Integer> getBoxQtde() {
+		return boxQtde;
 	}
-
-	public void setCodigoBox(String codigoBox) {
-		this.codigoBox = codigoBox;
+	/**
+	 * @param boxQtde the boxQtde to set
+	 */
+	public void setBoxQtde(HashMap<String, Integer> boxQtde) {
+		this.boxQtde = boxQtde;
 	}
 	
 	

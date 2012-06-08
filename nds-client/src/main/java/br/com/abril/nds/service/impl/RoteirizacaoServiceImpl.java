@@ -121,7 +121,7 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 		return  rotaRepository.buscarRotaPorNome(roteiroId, rotaNome, matchMode);
 	}
 	
-	
+	@Transactional(readOnly=true)
 	public List<Rota> buscarRotas() {
 		
 		return rotaRepository.buscarTodos();
@@ -245,6 +245,12 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 		}
 		
 		
+	}
+
+	@Override
+	@Transactional
+	public List<Rota> obterRotasPorCota(Integer numeroCota) {
+		return rotaRepository.obterRotasPorCota(numeroCota);
 	}
 
 }

@@ -56,4 +56,12 @@ public interface RotaRepository extends Repository<Rota, Long> {
 	
     List<Rota> buscarRotaDeRoteiro(String descRoteiro);
 
+    /**
+	 * Obtém rotas por número da cota
+	 * 
+	 * @param numeroCota - Número da Cota
+	 * @return Lista de Rotas
+	 */
+	List<Rota> obterRotasPorCota(Integer numeroCota);
+
 }

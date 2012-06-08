@@ -3,24 +3,28 @@ package br.com.abril.nds.controllers.expedicao;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
+import javax.persistence.criteria.CriteriaBuilder.Case;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.dto.AbastecimentoDTO;
+import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.ProdutoAbastecimentoDTO;
-import br.com.abril.nds.dto.TipoMovimentoDTO;
-import br.com.abril.nds.dto.TipoMovimentoDTO.IncideDivida;
+import br.com.abril.nds.dto.ProdutoMapaDTO;
 import br.com.abril.nds.dto.filtro.FiltroMapaAbastecimentoDTO;
-import br.com.abril.nds.dto.filtro.FiltroMapaAbastecimentoDTO.ColunaOrdenacao;
-import br.com.abril.nds.dto.filtro.FiltroTipoMovimento;
+import br.com.abril.nds.dto.filtro.FiltroMapaAbastecimentoDTO.TipoConsulta;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.cadastro.Box;
+import br.com.abril.nds.model.cadastro.Rota;
+import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
-import br.com.abril.nds.util.CellModelKeyValue;
-import br.com.abril.nds.util.DateUtil;
-import br.com.abril.nds.util.TableModel;
+import br.com.abril.nds.service.BoxService;
+import br.com.abril.nds.service.MapaAbastecimentoService;
+import br.com.abril.nds.service.RoteirizacaoService;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.caelum.vraptor.Path;
@@ -41,10 +45,18 @@ public class MapaAbastecimentoController {
 	@Autowired
 	private Result result;
 	
+	@Autowired
+	private MapaAbastecimentoService mapaAbastecimentoService;
+	
+	@Autowired
+	private BoxService boxService;
+	
+	@Autowired
+	private RoteirizacaoService roteirizacaoService;
+	
 	public void mapaAbastecimento() {
 		
 	}
-	
 	
 	/**
 	 * Inicializa dados da tela
@@ -55,86 +67,84 @@ public class MapaAbastecimentoController {
 		
 		String data = new SimpleDateFormat("dd/MM/yyyy").format(new Date());
 		
-		result.include("data",data);	
+		result.include("data",data);
+		
+		result.include("listaBoxes",carregarBoxes(boxService.buscarTodos(TipoBox.LANCAMENTO)));
+		result.include("listaRotas",carregarRota(roteirizacaoService.buscarRotas()));
 		
 		result.forwardTo(MapaAbastecimentoController.class).mapaAbastecimento();
 	}
 	
+
+	/**
+	 * Carrega a lista de Boxes
+	 * @return 
+	 */
+	private List<ItemDTO<Long, String>> carregarBoxes(List<Box> listaBoxes){
+		
+		List<ItemDTO<Long, String>> boxes = new ArrayList<ItemDTO<Long,String>>();
+				
+		for(Box box : listaBoxes){
+			
+			boxes.add(new ItemDTO<Long, String>(box.getId(),box.getCodigo()));
+		}
+		
+		return boxes;			
+	}
+		
+	/**
+	 * Retorna uma lista de Rota no formato ItemDTO
+	 * @param rotas
+	 * @return 
+	 * @return List<ItemDTO<Long, String>>
+	 */
+	private List<ItemDTO<Long, String>> carregarRota(List<Rota> rotas){
+		
+		List<ItemDTO<Long, String>> listaRotas = new ArrayList<ItemDTO<Long,String>>();
+		
+		for(Rota rota : rotas){
+			
+			listaRotas.add(new ItemDTO<Long, String>(rota.getId(),rota.getCodigoRota()));
+		}
+		
+		return listaRotas;
+	}
+	
+	
 	@Post
 	public void pesquisar(FiltroMapaAbastecimentoDTO filtro, Integer page, Integer rp, String sortname, String sortorder) {
+				
+		if(filtro.getTipoConsulta() == null)
+			throw new ValidacaoException(TipoMensagem.WARNING, " 'Tipo de consulta' deve ser selecionado.");
+				
+		if(filtro.getDataDate() == null && !filtro.getDataLancamento().isEmpty())
+			throw new ValidacaoException(TipoMensagem.WARNING, "'Data de Lançamento' não é válida.");
 		
 		if(filtro.getDataLancamento() == null || filtro.getDataLancamento().isEmpty())
 			throw new ValidacaoException(TipoMensagem.WARNING, "'Data de Lançamento' é obrigatória.");
-				
-		if(!DateUtil.isValidDatePTBR(filtro.getDataLancamento()))
-			throw new ValidacaoException(TipoMensagem.WARNING, "'Data de Lançamento' não é válida.");
 		
-		filtro.setPaginacao(new PaginacaoVO(page, rp, sortorder));
-		filtro.setColunaOrdenacao(ColunaOrdenacao.getPorDescricao(sortname));
+		filtro.setPaginacao(new PaginacaoVO(page, rp, sortorder,sortname));
+		
 		tratarFiltro(filtro);
 		
-		//TODO getRealList
-		List<AbastecimentoDTO> lista = new ArrayList<AbastecimentoDTO>();
-		lista.add(new AbastecimentoDTO("1", 1L, "1", 1, 1, "1"));
-		lista.add(new AbastecimentoDTO("1", 1L, "1", 1, 1, "1"));
-		lista.add(new AbastecimentoDTO("1", 1L, "1", 1, 1, "1"));
-		lista.add(new AbastecimentoDTO("1", 1L, "1", 1, 1, "1"));
+		List<AbastecimentoDTO> lista = mapaAbastecimentoService.obterDadosAbastecimento(filtro);
 		
-		//TODO getRealCount
-		Integer totalRegistros = 10;
+		Long totalRegistros = mapaAbastecimentoService.countObterDadosAbastecimento(filtro);
 
-		result.use(FlexiGridJson.class).from(lista).page(1).total(totalRegistros).serialize();
+		result.use(FlexiGridJson.class).from(lista).page(1).total(totalRegistros.intValue()).serialize();
 	}
 		
 	@Post
 	public void pesquisarDetalhes(Long idBox, String data, String sortname, String sortorder) {
+				
+		FiltroMapaAbastecimentoDTO filtro = (FiltroMapaAbastecimentoDTO) session.getAttribute(FILTRO_SESSION_ATTRIBUTE);		
 		
-		//FiltroMapaAbastecimentoDTO filtro = (FiltroMapaAbastecimentoDTO) session.getAttribute(FILTRO_SESSION_ATTRIBUTE);
+		filtro.setPaginacaoDetalhes(new PaginacaoVO(null, null, sortorder, sortname));
 		
-
-		//TODO getRealList
-		List<ProdutoAbastecimentoDTO> lista = new ArrayList<ProdutoAbastecimentoDTO>();
-		lista.add(new ProdutoAbastecimentoDTO("1","1",1L,1,"1","1"));
-		lista.add(new ProdutoAbastecimentoDTO("1","1",1L,1,"1","1"));
-		lista.add(new ProdutoAbastecimentoDTO("1","1",1L,1,"1","1"));
-		lista.add(new ProdutoAbastecimentoDTO("1","1",1L,1,"1","1"));
-		lista.add(new ProdutoAbastecimentoDTO("1","1",1L,1,"1","1"));
-		
-		
-		//TODO getRealCount
-		Integer totalRegistros = lista.size();
-		
-		result.use(FlexiGridJson.class).from(lista).page(1).total(totalRegistros).serialize();
+		List<ProdutoAbastecimentoDTO> lista = mapaAbastecimentoService.obterDetlhesDadosAbastecimento(idBox, filtro);
+						
+		result.use(FlexiGridJson.class).from(lista).page(1).total(lista.size()).serialize();
 	}
-	
-	
-	/**
-	 * Efetua a consulta e monta a estrutura do grid de tipos de movimento.
-	 * @param filtro
-	 * @return 
-	 */	
-	private TableModel<CellModelKeyValue<ProdutoAbastecimentoDTO>> efetuarConsultaDetalhes(Long idBox) {
-		
-		//TODO getRealList
-		List<ProdutoAbastecimentoDTO> lista = new ArrayList<ProdutoAbastecimentoDTO>();
-		lista.add(new ProdutoAbastecimentoDTO("1","1",1L,1,"1","1"));
-		lista.add(new ProdutoAbastecimentoDTO("1","1",1L,1,"1","1"));
-		lista.add(new ProdutoAbastecimentoDTO("1","1",1L,1,"1","1"));
-		lista.add(new ProdutoAbastecimentoDTO("1","1",1L,1,"1","1"));
-		lista.add(new ProdutoAbastecimentoDTO("1","1",1L,1,"1","1"));
-		
-		//TODO getRealCount
-		Integer totalRegistros = 10;
-		
-		TableModel<CellModelKeyValue<ProdutoAbastecimentoDTO>> tableModel = new TableModel<CellModelKeyValue<ProdutoAbastecimentoDTO>>();
-
-		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(lista));
-		
-		tableModel.setTotal(totalRegistros);
-		
-		return tableModel;
-	}
-	
 	
 	/**
 	 * Executa tratamento de paginação em função de alteração do filtro de pesquisa.
@@ -153,5 +163,62 @@ public class MapaAbastecimentoController {
 		
 		session.setAttribute(FILTRO_SESSION_ATTRIBUTE, filtroAtual);
 	}
+	
+	@Post
+	public void buscarBoxRotaPorCota(Integer numeroCota) {
+				
+		Object[] combos = new Object[2];
+		
+		
+		
+		if(numeroCota != null) {
+			List<Box> boxes = new ArrayList<Box>();
+			boxes.add(boxService.obterBoxPorCota(numeroCota));
+			combos[0] = carregarBoxes(boxes);
+			combos[1] = carregarRota(roteirizacaoService.obterRotasPorCota(numeroCota));
+		} else {
+			combos[0] = carregarBoxes(boxService.buscarTodos(TipoBox.LANCAMENTO));
+			combos[1] = carregarRota(roteirizacaoService.buscarRotas());
+		}
+		
+		
+		this.result.use(Results.json()).from(combos, "result").recursive().serialize();
+	}
+		
+	public void imprimirMapaAbastecimento() {
 
+		FiltroMapaAbastecimentoDTO filtro = (FiltroMapaAbastecimentoDTO) session.getAttribute(FILTRO_SESSION_ATTRIBUTE);
+		
+		if(filtro == null)
+			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhuma pesquisa foi realizada.");
+		
+		switch(filtro.getTipoConsulta()) {
+			case BOX:
+				result.forwardTo(MapaAbastecimentoController.class).impressaoPorBox(filtro);	
+				break;
+			case ROTA:
+				result.forwardTo(MapaAbastecimentoController.class).impressaoPorRota();
+				break;
+			case COTA:
+				result.forwardTo(MapaAbastecimentoController.class).impressaoPorCota();
+				break;
+			case PRODUTO:
+				result.forwardTo(MapaAbastecimentoController.class).impressaoPorProduto();
+				break;
+			default:
+				throw new ValidacaoException(TipoMensagem.WARNING, "Tipo de consulta inexistente.");
+		}
+				
+	}
+	
+	public void impressaoPorBox(FiltroMapaAbastecimentoDTO filtro) {
+		
+		HashMap<String, ProdutoMapaDTO> produtosMapa = mapaAbastecimentoService.obterMapaDeImpressaoPorBox(filtro);
+		
+		result.include("produtosMapa",produtosMapa);
+	}
+	
+	public void impressaoPorRota() {}
+	public void impressaoPorCota() {}
+	public void impressaoPorProduto() {}
 }

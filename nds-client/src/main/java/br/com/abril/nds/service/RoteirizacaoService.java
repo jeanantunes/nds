@@ -52,4 +52,12 @@ public interface RoteirizacaoService {
 	List<CotaDisponivelRoteirizacaoDTO> buscarPvsPorCota(Integer numeroCota);
 	
 	void gravaRoteirizacao(List<CotaDisponivelRoteirizacaoDTO> lista,  Long idRota);
+
+	/**
+	 * Obtém rotas por número da cota
+	 * 
+	 * @param numeroCota - Número da Cota
+	 * @return Lista de Rotas
+	 */
+	List<Rota> obterRotasPorCota(Integer numeroCota);
 }

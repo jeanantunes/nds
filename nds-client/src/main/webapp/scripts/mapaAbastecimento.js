@@ -60,12 +60,43 @@ function MapaAbastecimento(pathTela, objName) {
 		return result;
 	},
 	
+	
 	this.processarLinha = function(index,cell) {
 		
 		T.mapas.push(cell);
 		
 		cell.acao =	'<a href="javascript:;" onclick="' + objName +'.carregarDetalhes(\''+ index + '\')">' +
 					'<img src="' + pathTela + '/images/ico_detalhes.png" alt="Detalhes do box" border="0" /></a>';
+	},
+	
+	this.atualizarBoxRota = function(isCotaDefined) {		
+
+		var data = [];
+		
+		if(isCotaDefined)
+			data.push({name: 'numeroCota' ,value: T.get('codigoCota')});
+		
+		$.postJSON(pathTela + "/mapaAbastecimento/buscarBoxRotaPorCota",
+				data,
+				function(result){T.preencherBoxRota(result,isCotaDefined);});	
+	},
+	
+	this.preencherBoxRota = function(result,isCotaDefined) {
+
+		if(!isCotaDefined)
+			result[0].splice(0,0,{"key": {"@class": "string","$": ""},"value": {"@class": "string","$": "Selecione..."}});
+		
+		result[1].splice(0,0,{"key": {"@class": "string","$": ""},"value": {"@class": "string","$": "Selecione..."}});
+		
+		var comboBox =  montarComboBox(result[0], false);
+		$('#box').html(comboBox);
+		
+		var comboRota =  montarComboBox(result[1], false);
+		$('#rota').html(comboRota);
+				
+		if(isCotaDefined)
+			$('#rota').enable();
+		
 	},
 	
 	this.carregarDetalhes = function(indice) {
@@ -78,10 +109,13 @@ function MapaAbastecimento(pathTela, objName) {
 		switch (tipo) {
 			
 		case 'BOX':
+			debugger;
+			T.atualizarBoxRota();
 			T.bloquearCampos('rota','codigoProduto','nomeProduto','edicao','codigoCota','nomeCota','quebraPorCota');
 			T.desbloquearCampos('box');
 			break;
 		case 'ROTA':
+			T.atualizarBoxRota();
 			T.bloquearCampos('codigoProduto','nomeProduto','edicao','codigoCota','nomeCota','quebraPorCota');
 			T.desbloquearCampos('box','rota');
 			break;
@@ -101,6 +135,8 @@ function MapaAbastecimento(pathTela, objName) {
 	
 	this.bloquearCampos = function() {
 		for(var campo in arguments) {
+
+			$('#' + arguments[campo]).val('');
 			$('#' + arguments[campo]).disable();
 		}
 	},
