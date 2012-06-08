@@ -675,9 +675,9 @@ public class DebitoCreditoCotaController {
 
 			listaMensagens.add("O preenchimento do campo [Data de Vencimento] é obrigatório.");
 		
-		} else if (DateUtil.isDataInicialMaiorDataFinal(new Date(), dataVencimento)) {
+		} else if (DateUtil.isDataInicialMaiorDataFinal(DateUtil.adicionarDias(this.distribuidorService.obter().getDataOperacao(),1), dataVencimento)) {
 
-			listaMensagens.add("A data de vencimento deve suceder a data atual.");
+			listaMensagens.add("A data de vencimento deve suceder a data de operação atual.");
 		}
 
 		if (debitoCredito.getValor() == null) {
