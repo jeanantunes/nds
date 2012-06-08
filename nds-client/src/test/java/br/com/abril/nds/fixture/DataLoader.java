@@ -1808,6 +1808,18 @@ public class DataLoader {
 		rota = Fixture.rota("006", "Rota 006");
 		rota.setRoteiro(roteiro);
 		session.save(rota);
+		
+		Roteiro roteiroTCD = Fixture.criarRoteiro("TCD",box2,TipoRoteiro.NORMAL);
+		session.save(roteiroTCD);
+		
+		Rota rota10 = Fixture.rota("001", "Rota 001");
+		rota10.setRoteiro(roteiroTCD);
+		session.save(rota10);
+		
+		
+		roteirizacao = Fixture.criarRoteirizacao(pdvGuilherme, rota10,1);
+		session.save(roteirizacao);
+		
 	}
 	
 	

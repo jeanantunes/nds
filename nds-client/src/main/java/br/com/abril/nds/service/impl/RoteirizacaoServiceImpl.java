@@ -303,6 +303,12 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 	}
 
 	@Override
+	@Transactional
+	public List<Rota> obterRotasPorCota(Integer numeroCota) {
+		return rotaRepository.obterRotasPorCota(numeroCota);
+	}
+
+	@Override
 	@Transactional(readOnly=true)
 	public List<CotaDisponivelRoteirizacaoDTO> buscarRoteirizacaoPorEndereco(String CEP, String uf, String municipio, String bairro, Long rotaId ,  Long roteiroId) {
 		Roteiro roteiro = roteiroRepository.buscarPorId(roteiroId);
