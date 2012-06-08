@@ -665,7 +665,9 @@ public class CotaServiceImpl implements CotaService {
 		ParametroDistribuicaoCota parametros = new ParametroDistribuicaoCota();
 		parametros.setQtdePDV(dto.getQtdePDV());
 		parametros.setAssistenteComercial(dto.getAssistComercial());
-		if(dto.getTipoEntrega() != null)
+		if(dto.getTipoEntrega() == null)
+			parametros.setTipoEntrega(null);
+		else
 			parametros.setTipoEntrega(tipoEntregaRepository.buscarPorId(dto.getTipoEntrega()));
 		parametros.setArrendatario(dto.getArrendatario());
 		parametros.setObservacao(dto.getObservacao());
