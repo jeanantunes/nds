@@ -793,6 +793,38 @@ public class Fixture {
 	
 		return tipoMovimento;
 	}
+
+	public static TipoMovimentoEstoque tipoMovimentoRecebimentoEncalheJuramentado() {
+		TipoMovimentoEstoque tipoMovimento = new TipoMovimentoEstoque();
+		tipoMovimento.setAprovacaoAutomatica(true);
+		tipoMovimento.setDescricao("Recebimento Encalhe Juramentado");
+		tipoMovimento.setIncideDivida(true);
+		tipoMovimento.setGrupoMovimentoEstoque(GrupoMovimentoEstoque.RECEBIMENTO_ENCALHE_JURAMENTADO);
+	
+		return tipoMovimento;
+	}
+
+	public static TipoMovimentoEstoque tipoMovimentoRecebimentoEncalhe() {
+		TipoMovimentoEstoque tipoMovimento = new TipoMovimentoEstoque();
+		tipoMovimento.setAprovacaoAutomatica(true);
+		tipoMovimento.setDescricao("Recebimento Encalhe");
+		tipoMovimento.setIncideDivida(true);
+		tipoMovimento.setGrupoMovimentoEstoque(GrupoMovimentoEstoque.RECEBIMENTO_ENCALHE);
+	
+		return tipoMovimento;
+	}
+
+	public static TipoMovimentoEstoque tipoMovimentoSuplementarEnvioEncalheAnteriroProgramacao() {
+		TipoMovimentoEstoque tipoMovimento = new TipoMovimentoEstoque();
+		tipoMovimento.setAprovacaoAutomatica(true);
+		tipoMovimento.setDescricao("Suplementar Envio de Encalhe Anterior Programacao");
+		tipoMovimento.setIncideDivida(true);
+		tipoMovimento.setGrupoMovimentoEstoque(GrupoMovimentoEstoque.SUPLEMENTAR_ENVIO_ENCALHE_ANTERIOR_PROGRAMACAO);
+	
+		return tipoMovimento;
+	}
+
+	
 	
 	public static TipoMovimentoFinanceiro tipoMovimentoFinanceiroCompraEncalhe() {
 		TipoMovimentoFinanceiro tipoMovimento = new TipoMovimentoFinanceiro();

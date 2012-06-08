@@ -1377,6 +1377,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		conferenciaEncalheFromDB.setObservacao(conferenciaEncalheDTO.getObservacao());
 		conferenciaEncalheFromDB.setJuramentada(juramentada);
 		conferenciaEncalheFromDB.setQtdeInformada(conferenciaEncalheDTO.getQtdInformada());
+		conferenciaEncalheFromDB.setPrecoCapaInformado(conferenciaEncalheDTO.getPrecoCapaInformado());
 		conferenciaEncalheFromDB.setMovimentoEstoqueCota(movimentoEstoqueCota);
 		conferenciaEncalheFromDB.setMovimentoEstoque(movimentoEstoque);
 		conferenciaEncalheFromDB.setQtde(conferenciaEncalheDTO.getQtdExemplar());
@@ -1451,9 +1452,11 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			Map<GrupoMovimentoEstoque, TipoMovimentoEstoque> mapaTipoMovimentoEstoque,
 			Usuario usuario) {
 		
+		boolean juramentada = (conferenciaEncalheDTO.isJuramentada()) == null ? false : conferenciaEncalheDTO.isJuramentada();
+		
 		TipoMovimentoEstoque tipoMovimentoEstoque = 
 				obterTipoMovimentoEstoqueDistribuidor(
-						conferenciaEncalheDTO.isJuramentada(), 
+						juramentada, 
 						conferenciaEncalheDTO.getDataRecolhimento(),
 						dataCriacao, 
 						mapaTipoMovimentoEstoque);
@@ -1515,6 +1518,8 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		conferenciaEncalhe.setObservacao(conferenciaEncalheDTO.getObservacao());
 		
 		conferenciaEncalhe.setQtdeInformada(conferenciaEncalheDTO.getQtdInformada());
+		
+		conferenciaEncalhe.setPrecoCapaInformado(conferenciaEncalheDTO.getPrecoCapaInformado());
 		
 		conferenciaEncalhe.setQtde(conferenciaEncalheDTO.getQtdExemplar());
 		

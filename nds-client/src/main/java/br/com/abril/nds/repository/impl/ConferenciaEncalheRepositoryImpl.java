@@ -74,6 +74,8 @@ public class ConferenciaEncalheRepositoryImpl extends
 		hql.append(" SELECT                                             		");
 		hql.append(" CONF_ENCALHE.ID AS idConferenciaEncalhe,           		");
 		hql.append(" CONF_ENCALHE.QTDE AS qtdExemplar,                  		");
+		hql.append(" CONF_ENCALHE.QTDE_INFORMADA AS qtdInformada,       		");
+		hql.append(" CONF_ENCALHE.PRECO_CAPA_INFORMADO AS precoCapaInformado,   ");
 		hql.append(" CONF_ENCALHE.PRODUTO_EDICAO_ID AS idProdutoEdicao, 		");
 		hql.append(" PROD_EDICAO.CODIGO_DE_BARRAS AS codigoDeBarras,    		");
 
@@ -124,6 +126,8 @@ public class ConferenciaEncalheRepositoryImpl extends
 		
 		((SQLQuery)query).addScalar("idConferenciaEncalhe", StandardBasicTypes.LONG);
 		((SQLQuery)query).addScalar("qtdExemplar");
+		((SQLQuery)query).addScalar("qtdInformada");
+		((SQLQuery)query).addScalar("precoCapaInformado");
 		((SQLQuery)query).addScalar("tipoChamadaEncalhe");
 		((SQLQuery)query).addScalar("idProdutoEdicao", StandardBasicTypes.LONG);
 		((SQLQuery)query).addScalar("codigoDeBarras");
