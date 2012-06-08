@@ -2,6 +2,8 @@ package br.com.abril.nds.service;
 
 import java.io.InputStream;
 
+import javax.persistence.NoResultException;
+
 import org.lightcouch.Attachment;
 import org.lightcouch.NoDocumentException;
 
@@ -182,4 +184,12 @@ public interface CapaService {
 	 */
 	public void saveCapa(long idProdutoEdicao, String contentType, InputStream inputStream);
 
+	/**
+	 * Excluir a capa associada a Edição.
+	 * 
+	 * @param idProdutoEdicao
+	 */
+	public void deleteCapa(long idProdutoEdicao);
+	
 }
+	

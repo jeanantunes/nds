@@ -119,7 +119,7 @@ public interface ProdutoEdicaoRepository extends Repository<ProdutoEdicao, Long>
 	List<ProdutoEdicao> obterProdutosEdicaoPorId(Set<Long> idsProdutoEdicao);
 	
 	/**
-	 * Pesquisa as Edições já cadastradas.<br>
+	 * Pesquisa as Edições já cadastradas e traz o resultado ordenado.<br>
 	 * Possui como opções de filtro:<br>
 	 * <ul>
 	 * <li>Código do Produto;</li>
@@ -142,8 +142,8 @@ public interface ProdutoEdicaoRepository extends Repository<ProdutoEdicao, Long>
 			String sortorder, String sortname, int initialResult, int maxResults);
 	
 	/**
-	 * Obtém a quantidade de edições cadastradas filtradas pelos critérios 
-	 * escolhidos pelo usuário.
+	 * Obtém a quantidade de edições cadastradas filtradas pelas opções 
+	 * escolhidos pelo usuário na tela de pesquisa.
 	 * 
 	 * @param dto
 	 * @return
@@ -154,12 +154,12 @@ public interface ProdutoEdicaoRepository extends Repository<ProdutoEdicao, Long>
 	 * Pesquisa as últimas edições cadastradas.<br>
 	 * 
 	 * @param dto
-	 * @param maxResults
+	 * @param qtdEdicoes Quantidade de Edições a trazer.
 	 * 
 	 * @return
 	 */
 	public List<ProdutoEdicaoDTO> pesquisarUltimasEdicoes(ProdutoEdicaoDTO dto,
-			int maxResults);
+			int qtdEdicoes);
 	
 	/**
 	 * Verifica se existe alguma Edição já cadastrada para o produto.
@@ -169,5 +169,48 @@ public interface ProdutoEdicaoRepository extends Repository<ProdutoEdicao, Long>
 	 * @return 
 	 */
 	public boolean hasProdutoEdicao(Produto produto);
+	
+	/**
+	 * Verifica se o ProdutoEdicao já foi publicado pela distribuidora.<br>
+	 * Irá verificar se a Data de Publicação da Distribuida é maior que a 
+	 * "Data do Dia Corrente (hoje)" do Lançamento 
+	 * ({@link br.com.abril.nds.model.planejamento.Lancamento})
+	 * com a data de Distribuição mais antiga.
+	 *  
+	 * @param idProdutoEdicao ID da Edição. (Se for passado <i>null</i> será
+	 * considerado 0 (zero).
+	 * 
+	 * @return
+	 * <ul>
+	 * <li>true: A Edição já foi publicada (DataPublicacaoEditora <= DataCorrente);</li>
+	 * <li>false: A Edição ainda não foi publicada (DataPublicacaoEditora > DataCorrente);</li>
+	 * </ul>
+	 */
+	public boolean isProdutoEdicaoJaPublicada(Long idProdutoEdicao);
+	
+	/**
+	 * Verifica se o número da edição já foi cadastrado para outra edição 
+	 * de um mesmo Produto. 
+	 * 
+	 * @param codigoProduto Código do Produto.
+	 * @param numeroEdicao Número da Edição a ser verificada.
+	 * @param idProdutoEdicao ID da Edição (caso exista).
+	 * 
+	 * @return
+	 */
+	public boolean isNumeroEdicaoCadastrada(String codigoProduto, 
+			Long numeroEdicao, Long idProdutoEdicao);
+	
+	/**
+	 * Obtém todos os Produtos Edições que possuem exatamente o mesmo
+	 * código de barra.
+	 *  
+	 * @param codigoDeBarras
+	 * @param idProdutoEdicao
+	 * 
+	 * @return
+	 */
+	public List<ProdutoEdicao> obterProdutoEdicaoPorCodigoDeBarra(String codigoDeBarras,
+			Long idProdutoEdicao);
 	
 }

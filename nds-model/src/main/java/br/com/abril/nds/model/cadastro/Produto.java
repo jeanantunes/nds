@@ -57,7 +57,7 @@ public class Produto implements Serializable {
 	@Column(name = "DESCRICAO")
 	private String descricao;
 	
-	@ManyToMany
+	@ManyToMany(fetch=FetchType.EAGER)
 	private Set<Fornecedor> fornecedores = new HashSet<Fornecedor>();
 
 	@Enumerated(EnumType.STRING)
@@ -146,6 +146,12 @@ public class Produto implements Serializable {
 	
 	@Column(name="SUB_GRUPO_EDITORIAL", length=25, nullable = true)
 	private String subGrupoEditorial;
+	
+	
+	protected String fase;
+	
+	protected Long numeroLancamento;
+	
 	
 	public Long getId() {
 		return id;
@@ -511,6 +517,34 @@ public class Produto implements Serializable {
 
 	public void setDescontoLogistica(DescontoLogistica descontoLogistica) {
 		this.descontoLogistica = descontoLogistica;
+	}
+
+	/**
+	 * @return the fase
+	 */
+	public String getFase() {
+		return fase;
+	}
+
+	/**
+	 * @param fase the fase to set
+	 */
+	public void setFase(String fase) {
+		this.fase = fase;
+	}
+
+	/**
+	 * @return the numeroLancamento
+	 */
+	public Long getNumeroLancamento() {
+		return numeroLancamento;
+	}
+
+	/**
+	 * @param numeroLancamento the numeroLancamento to set
+	 */
+	public void setNumeroLancamento(Long numeroLancamento) {
+		this.numeroLancamento = numeroLancamento;
 	}
 	
 }
