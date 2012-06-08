@@ -36,22 +36,23 @@ public interface NotaFiscalService {
 	/**
 	 * Processa o retorno de uma nota fiscal.
 	 * 
+	 * @param id - id da nota fiscal
 	 * @param retornoComunicacaoEletronica - informações de retorno da comunicação eletrônica
 	 */
-	void processarRetornoNotaFiscal(String chaveAcesso, RetornoComunicacaoEletronica retornoComunicacaoEletronica);
+	void processarRetornoNotaFiscal(Long id, RetornoComunicacaoEletronica retornoComunicacaoEletronica);
 	
 	/**
 	 * Cancela uma nota fiscal.
 	 * 
-	 * @param chaveAcesso - chave de acesso da nota fiscal
+	 * @param id - id da nota fiscal
 	 */
-	void cancelarNotaFiscal(String chaveAcesso);
+	void cancelarNotaFiscal(Long id);
 	
 	/**
 	 * Denega uma nota fiscal.
 	 * 
-	 * @param chaveAcesso - chave de acesso da nota fiscal
+	 * @param id - id da nota fiscal
 	 */
-	void denegarNotaFiscal(String chaveAcesso);
+	void denegarNotaFiscal(Long id);
 
 }
