@@ -419,7 +419,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepository<ProdutoEdica
 	public boolean hasProdutoEdicao(Produto produto) {
 		
 		String hql = 
-				"SELECT count(pe.id) FROM ProdutoEdicao pe WHERE pe.produto = produto ";
+				"SELECT count(pe.id) FROM ProdutoEdicao pe WHERE pe.produto = :produto ";
 		
 		Query query = this.getSession().createQuery(hql);
 		query.setParameter("produto", produto);
@@ -477,10 +477,13 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepository<ProdutoEdica
 	
 	@Override
 	@SuppressWarnings("unchecked")
-	public List<ProdutoEdicao> obterProdutoEdicaoPorCodigoDeBarra(String codigoDeBarra) {
+	public List<ProdutoEdicao> obterProdutoEdicaoPorCodigoDeBarra(String codigoDeBarras,
+			Long idProdutoEdicao) {
 		
 		Criteria criteria = getSession().createCriteria(ProdutoEdicao.class);
-		criteria.add(Restrictions.eq("codigoDeBarras", codigoDeBarra));
+		criteria.add(Restrictions.eq("codigoDeBarras", codigoDeBarras));
+		criteria.add(Restrictions.ne("id", 
+				idProdutoEdicao == null ? Long.valueOf(0) : idProdutoEdicao));
 		
 		return criteria.list();
 	}

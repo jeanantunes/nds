@@ -69,23 +69,61 @@ function executarPreProcessamento(resultado) {
 	return resultado;
 }
 
+function salvaUmaEdicao() {
+	
+	$("#formUpload").ajaxSubmit({
+		success: function(responseText, statusText, xhr, $form)  { 
+			var mensagens = (responseText.mensagens) ? responseText.mensagens : responseText.result;   
+			var tipoMensagem = mensagens.tipoMensagem;
+			var listaMensagens = mensagens.listaMensagens;
+			if (tipoMensagem && listaMensagens) {
+				exibirMensagemDialog(tipoMensagem, listaMensagens, 'dialogMensagemNovo');
+			}
+			
+			prepararTela(null);
+			carregarDialog(null);
+		}, 
+		url: "<c:url value='/cadastro/edicao/salvar' />",
+		type: 'POST',
+		dataType: 'json',
+		data: { codigoProduto : $("#codigoProduto").val() }
+	});
+
+}
+
 function novaEdicao() {
-	popup(null);	
+	popup(null);
 };
 
 function editarEdicao(id) {
-	popup(id);	
+	popup(id);
 }
 
-function popup(id) {
-	
-	if ($(".edicoesGrid > tbody").data() == null || $(".edicoesGrid > tbody").data() == undefined) {
-		exibirMensagem('WARNING', ['Por favor, escolha um produto para adicionar a Edi&ccedil;&atilde;o!'], "");
-		return;
-	}
+function prepararTela(id) {
 	
 	// limpar os campos:
 	form_clear('formUpload');
+	carregarImagemCapa(id);
+	$('#formUpload').find(':input').each(
+		function() {
+			switch(this.type) {
+			case 'text':
+			case 'textarea':
+			case 'password':
+				$(this).attr("readonly", true);
+				break;
+			
+			case 'file':
+			case 'select-multiple':
+			case 'select-one':
+			case 'checkbox':
+			case 'radio':
+				$(this).attr("disabled", true);
+				break;
+			}
+		}
+	);
+	
 	
 	// Popular a lista de Edições:
 	$(".prodsPesqGrid").flexOptions({
@@ -94,8 +132,10 @@ function popup(id) {
 		newp: 1,
 	});
 
-	$(".prodsPesqGrid").flexReload();
+	$(".prodsPesqGrid").flexReload();	
+}
 
+function carregarDialog(id) {
 	
 	// Exibir os dados do Produto:
 	$.postJSON(
@@ -109,9 +149,8 @@ function popup(id) {
 				$("#nomePublicacao").val(result.nomeProduto);
 				$("#nomeComercialProduto").val(result.nomeComercialProduto);
 				$("#nomeFornecedor").val(result.nomeFornecedor);
-				//$("#situacao").val(result.situacao);
+				$("#situacao").val(result.situacao);
 				$("#numeroEdicao").val(result.numeroEdicao);
-				$("#numeroEdicao").attr("readonly", (result.numeroEdicao == 1));
 				$("#fase").val(result.fase);
 				$("#numeroLancamento").val(result.numeroLancamento);
 				$("#pacotePadrao").val(result.pacotePadrao);
@@ -119,7 +158,7 @@ function popup(id) {
 				$("#precoPrevisto").val(result.precoPrevisto);
 				$("#precoVenda").val(result.precoVenda);
 				$("#dataLancamentoPrevisto").val(result.dataLancamentoPrevisto == undefined ? '' : result.dataLancamentoPrevisto.$);
-				$("#dataLancamento").val(result.dataLancamentoPrevisto == undefined ? '' : result.dataLancamentoPrevisto.$);
+				$("#dataLancamento").val(result.dataLancamento == undefined ? '' : result.dataLancamento.$);
 				$("#repartePrevisto").val(result.repartePrevisto)
 				$("#reparteDistribuido").val(result.reparteDistribuido);
 				$("#repartePromocional").val(result.repartePromocional);
@@ -135,6 +174,35 @@ function popup(id) {
 				$('#parcial').val(result.parcial + "");
 				$('#possuiBrinde').attr('checked', result.possuiBrinde);
 				$('#boletimInformativo').val(result.boletimInformativo);
+
+				//
+				if (result.origemInterface) {
+					$("#precoVenda").attr("readonly", false);				
+				} else {
+					$("#codigoProdutoEdicao").attr("readonly", false);
+					$("#nomeComercialProduto").attr("readonly", false);
+					$("#numeroEdicao").attr("readonly", (result.numeroEdicao == 1));
+					$("#pacotePadrao").attr("readonly", false);
+					$("#tipoLancamento").attr("disabled", false);
+					$("#precoPrevisto").attr("readonly", false);
+					$("#dataLancamentoPrevisto").attr("readonly", false);
+					$("#repartePrevisto").attr("readonly", false);
+					$("#repartePromocional").attr("readonly", false);
+					//$("#categoria").val();
+					$("#codigoDeBarrasCorporativo").attr("readonly", false);
+					$('#parcial').attr("disabled", false);
+					$("#desconto").attr("readonly", false);
+					$("#largura").attr("readonly", false);
+					$("#comprimento").attr("readonly", false);
+					$("#espessura").attr("readonly", false);
+					$('#boletimInformativo').attr("readonly", false);
+				}
+				
+				$("#imagemCapa").attr("disabled", false);
+				$("#codigoDeBarras").attr("readonly", false);				
+				$("#chamadaCapa").attr("readonly", false);
+				$('#possuiBrinde').attr("disabled", false);
+				$("#peso").attr("readonly", false);
 			}
 		},
 		function(result) { 
@@ -142,6 +210,18 @@ function popup(id) {
 			},
 		true
 	);
+
+}
+
+function popup(id) {
+	
+	if ($(".edicoesGrid > tbody").data() == null || $(".edicoesGrid > tbody").data() == undefined) {
+		exibirMensagem('WARNING', ['Por favor, escolha um produto para adicionar a Edi&ccedil;&atilde;o!'], "");
+		return;
+	}
+	
+	prepararTela(id);
+	carregarDialog(id);
 
 	$( "#dialog-novo" ).dialog({
 		resizable: false,
@@ -160,38 +240,40 @@ function popup(id) {
 						var tipoMensagem = mensagens.tipoMensagem;
 						var listaMensagens = mensagens.listaMensagens;
 						if (tipoMensagem && listaMensagens) {
-							exibirMensagem(tipoMensagem, listaMensagens, "");
+							//exibirMensagemDialog(tipoMensagem, listaMensagens, 'dialogMensagemNovo');
+
+							$("#dialog-novo").dialog( "close" );
+							pesquisarEdicoes();
+							exibirMensagem(tipoMensagem, listaMensagens);
 						}
 					}, 
 					url: "<c:url value='/cadastro/edicao/salvar' />",
 					type: 'POST',
 					dataType: 'json',
-					data: {codigoProduto:$("#codigoProduto").val()}
+					data: { codigoProduto : $("#codigoProduto").val() }
 				});
-				
-				$(".produtosGrid").flexReload();
-				$(".grids").show();
-				
 			},
 			"Cancelar": function() {
-				$( this ).dialog( "close" );
+				$("#dialog-novo").dialog( "close" );
 			}
 		}
 	});
-	
-	carregarImagem( (id == 0 ? 0 : id) );
 };
 
-function carregarImagem(idProdutoEdicao) {
+function carregarImagemCapa(idProdutoEdicao) {
 
-	var imgPath = "<c:url value='/capa/' />" + idProdutoEdicao; 
-	var img = $("<img />").attr('src', imgPath).attr('width', '144').attr('height', '185').attr('alt', 'Capa')
-	.load(function() {
+	var imgPath = (idProdutoEdicao == null || idProdutoEdicao == undefined)
+		? "" : "<c:url value='/capa/' />" + idProdutoEdicao; 
+	var img = $("<img />").attr('src', imgPath).attr('width', '144').attr('height', '185').attr('alt', 'Capa');
+	$("#div_imagem_capa").empty();
+	$("#div_imagem_capa").append(img);
+	
+	img.load(function() {
 		if (!(!this.complete || typeof this.naturalWidth == "undefined" || this.naturalWidth == 0)) {
-			$("#div_imagem_capa").empty();
 			$("#div_imagem_capa").append(img);
 		}
 	});
+
 }
 
 
@@ -268,8 +350,8 @@ function removerEdicao(id) {
 							
 							exibirMensagem(tipoMensagem, listaMensagens);
 						}
-								
-						$(".edicoesGrid").flexReload();
+
+						carregarImagemCapa(null);
 					},
 					function(result) {
 				   		$("#dialog-excluir").dialog("close");
@@ -316,8 +398,6 @@ function removerEdicao(id) {
 							var listaMensagens = mensagens.listaMensagens;
 							
 							if (tipoMensagem && listaMensagens) {
-								
-								// exibirMensagemDialog(tipoMensagem, listaMensagens);
 								exibirMensagemDialog(tipoMensagem, listaMensagens, 'dialogMensagemNovo');
 							}
 						},
@@ -329,7 +409,6 @@ function removerEdicao(id) {
 							var listaMensagens = mensagens.listaMensagens;
 							
 							if (tipoMensagem && listaMensagens) {
-								// exibirMensagem(tipoMensagem, listaMensagens);
 								exibirMensagemDialog(tipoMensagem, listaMensagens, 'dialogMensagemNovo');
 							}
 						},
@@ -394,6 +473,9 @@ $(function() {
 	$("#largura").numeric();
 	$("#comprimento").numeric();
 	$("#espessura").numeric();
+
+	$("#dataLancamentoPrevisto").mask("99/99/9999");
+	$("#dataLancamento").mask("99/99/9999");
 });
 </script>
 
@@ -451,7 +533,7 @@ fieldset {
 						<table class="prodsPesqGrid"></table>
 					</fieldset>
 					
-					<span class="bt_add"><a href="javascript:;" onclick="novaEdicao();">Incluir Novo</a></span>
+					<span class="bt_add"><a href="javascript:;" onclick="salvaUmaEdicao();">Incluir Novo</a></span>
 				</div>
 				
 				<div class="ldForm">
@@ -468,13 +550,10 @@ fieldset {
 									<td width="153" rowspan="8" align="center">
 										
 										<div id="div_imagem_capa">
-											<img src="${pageContext.request.contextPath}/capa/0"  width="144" height="185" alt="Capa" />
+											<img alt="Capa" src="" width="144" height="185" />
 										</div>
 										
 										<br clear="all" />
-										<a href="javascript:;" onclick="alert('colocar esta imagem no lugar do input type=file');">
-											<img src="${pageContext.request.contextPath}/images/bt_cadastros.png" alt="Editar Capa" width="15" height="15" hspace="5" vspace="3" border="0" />
-										</a>
 										<a href="javascript:;" onclick="popup_excluir_capa();">
 											<img src="${pageContext.request.contextPath}/images/ico_excluir.gif" alt="Excluir Capa" width="15" height="15" hspace="5" vspace="3" border="0" />
 										</a>
@@ -557,7 +636,7 @@ fieldset {
 									<td width="76"><strong>Previsto:</strong></td>
 									<td width="99"><input type="text" name="precoPrevisto" id="precoPrevisto" style="width:70px; float:left;" /></td>
 									<td width="51"><strong>Real:</strong></td>
-									<td width="70"><input type="text" name="precoVenda" id="precoVenda" style="width:70px; text-align:right;" disabled="disabled" /></td>
+									<td width="70"><input type="text" name="precoVenda" id="precoVenda" style="width:70px; text-align:right;" /></td>
 								</tr>
 							</tbody>
 						</table>
@@ -587,7 +666,7 @@ fieldset {
 						<table class="prodsPesqGrid"></table>
 					</fieldset>
 					
-					<span class="bt_add"><a href="javascript:;" onclick="novaEdicao();">Incluir Novo</a></span>
+					<span class="bt_add"><a href="javascript:;" onclick="salvaUmaEdicao();">Incluir Novo</a></span>
 				</div>
 				
 				<div class="ldForm">
@@ -621,7 +700,7 @@ fieldset {
 							<thead />
 							<tbody>
 								<tr>
-									<td colspan="2"><input type="text" name="textfield9" id="textfield9" style="width:235px;" /></td>
+									<td colspan="2"><input type="text" name="descricaoDesconto" id="descricaoDesconto" style="width:235px;" /></td>
 								</tr>
 								<tr>
 									<td>Desconto:</td>
@@ -702,7 +781,7 @@ fieldset {
 						<table class="prodsPesqGrid"></table>
 					</fieldset>
 					
-					<span class="bt_add"><a href="javascript:;" onclick="novaEdicao();">Incluir Novo</a></span>
+					<span class="bt_add"><a href="javascript:;" onclick="salvaUmaEdicao();">Incluir Novo</a></span>
 				</div>
 				
 				<div class="ldForm">

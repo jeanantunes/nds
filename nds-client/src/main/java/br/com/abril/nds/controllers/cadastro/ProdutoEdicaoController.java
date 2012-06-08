@@ -2,6 +2,7 @@ package br.com.abril.nds.controllers.cadastro;
 
 import java.io.InputStream;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -58,14 +59,11 @@ public class ProdutoEdicaoController {
 			String codigoDeBarras, boolean brinde,
             String sortorder, String sortname, int page, int rp) {
 
-		/* TODO: Remover ao finalizar a implementação:
-		
 		// Validar:
 		if ((codigoProduto == null || codigoProduto.trim().isEmpty()) 
 				|| (nomeProduto == null || nomeProduto.trim().isEmpty())) {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Por favor, preencha o campo 'Código' ou 'Produto'!");
 		}
-		*/
 		
 		// Popular o DTO:
 		ProdutoEdicaoDTO dto = new ProdutoEdicaoDTO();
@@ -106,16 +104,15 @@ public class ProdutoEdicaoController {
 			nomeFornecedor = produto.getFornecedor().getJuridica().getNomeFantasia();
 		}
 		dto.setNomeFornecedor(nomeFornecedor);
-		
-		// TODO: Solicitar esses campos:
-		//dto.setFase(produto.fase);
-		//dto.setNumeroLancamento(produto.numerolancamento);
+		dto.setFase(produto.getFase());
+		dto.setNumeroLancamento(produto.getNumeroLancamento() == null 
+				? "" : produto.getNumeroLancamento().toString());
 		dto.setPacotePadrao(produto.getPacotePadrao());
-		
-		
-		//
 		dto.setPeso(produto.getPeso());
-		
+		dto.setDescricaoDesconto("");
+		dto.setDesconto(produto.getDescontoLogistica() == null 
+				? BigDecimal.ZERO : BigDecimal.valueOf(
+						produto.getDescontoLogistica().getPercentualDesconto()));
 		
 		if (idProdutoEdicao != null && Util.isLong(idProdutoEdicao)) {
 			
@@ -134,11 +131,11 @@ public class ProdutoEdicaoController {
 			dto.setChamadaCapa(pe.getChamadaCapa());
 			dto.setParcial(pe.isParcial());
 			dto.setPossuiBrinde(pe.isPossuiBrinde());
-			// descrição tipo de desconto
 			dto.setDesconto(pe.getDesconto());
 			dto.setPeso(pe.getPeso());
 			dto.setBoletimInformativo(pe.getBoletimInformativo());
-			
+			dto.setOrigemInterface(pe.getOrigemInterface());
+
 			Dimensao dimEdicao = pe.getDimensao();
 			if (dimEdicao == null) {
 				dto.setComprimento(0);
@@ -159,6 +156,10 @@ public class ProdutoEdicaoController {
 				dto.setRepartePrevisto(uLancamento.getReparte());
 				dto.setRepartePromocional(uLancamento.getRepartePromocional());
 			}
+		} else {
+			
+			// Edição criada pelo Distribuidor:
+			dto.setOrigemInterface(false);
 		}
 		
 		/* 
@@ -227,6 +228,9 @@ public class ProdutoEdicaoController {
 		dto.setParcial(parcial);
 		dto.setPossuiBrinde(possuiBrinde);
 		
+		this.validarProdutoEdicao(dto);
+		
+		
 		// Dados da Imagem:
 		String contentType = null;
 		InputStream imgInputStream = null;
@@ -235,16 +239,88 @@ public class ProdutoEdicaoController {
 			imgInputStream = imagemCapa.getFile();
 		}
 		
+		ValidacaoVO vo = null;
 		try {
 			
 			peService.salvarProdutoEdicao(dto, codigoProduto, contentType, imgInputStream);
+			vo = new ValidacaoVO(TipoMensagem.SUCCESS, "Edição salva com sucesso!");
+		} catch (ValidacaoException e) {
+			
+			vo = e.getValidacao();
 		} catch (Exception e) {
 			
-			throw new ValidacaoException(TipoMensagem.ERROR, "Erro ao tentar salvar a Edição!");
+			vo = new ValidacaoVO(TipoMensagem.ERROR, e.getMessage());
+		} finally {
+			
+			this.result.use(Results.json()).from(vo, "result").recursive().serialize();
+		}
+	}
+	
+	/**
+	 * Valida o preenchimento dos campos obrigatórios.
+	 * 
+	 * @param dto
+	 */
+	private void validarProdutoEdicao(ProdutoEdicaoDTO dto) {
+		
+		List<String> listaMensagens = new ArrayList<String>();
+		boolean origemInterface = false;
+		ProdutoEdicao pe = null;
+		try {
+			pe = peService.obterProdutoEdicao(dto.getId());
+			origemInterface = pe.getOrigemInterface().booleanValue();
+		} catch (Exception e) {
+			origemInterface = false;
 		}
 		
-		this.result.use(Results.json()).from(
-				new ValidacaoVO(TipoMensagem.SUCCESS, "Edição salva com sucesso!"), "result").recursive().serialize();
+		if (pe == null || !origemInterface) {
+			
+			// Distribuidor:
+			if (dto.getCodigoProduto() == null || dto.getCodigoProduto().trim().length() <= 0) {
+				listaMensagens.add("Campo 'Código' deve ser preenchido!");
+			}
+			if (dto.getNomeComercialProduto() == null || dto.getNomeComercialProduto().trim().length() <= 0) {
+				listaMensagens.add("Campo 'Código' deve ser preenchido!");
+			}
+			if (dto.getNumeroEdicao() == null || Long.valueOf(0).equals(dto.getNumeroEdicao())) {
+				listaMensagens.add("Por favor, digite um valor válido para o 'Número de Edição'!");
+			}
+			if (dto.getPacotePadrao() <= 0) {
+				listaMensagens.add("Por favor, digite um valor válido para o 'Pacote Padrão'!");
+			}
+			if (dto.getTipoLancamento() == null) {
+				listaMensagens.add("Por favor, selecione um 'Tipo de Lançamento'!");
+			}
+			if (dto.getPrecoPrevisto() == null) {
+				listaMensagens.add("Por favor, digite um valor válido para o 'Preço Previsto'!");
+			}
+			if (dto.getDataLancamentoPrevisto() == null) {
+				listaMensagens.add("Campo 'Data de Lançamento Previsto' deve ser preenchido!");
+			}
+			if (dto.getRepartePrevisto() == null) {
+				listaMensagens.add("Por favor, digite um valor válido para o 'Reparte Previsto'!");
+			}
+			if (dto.getRepartePromocional() == null) {
+				listaMensagens.add("Por favor, digite um valor válido para o 'Reparte Promocional'!");
+			}
+			if (dto.getCodigoDeBarrasCorporativo() == null || dto.getCodigoDeBarrasCorporativo().trim().length() <= 0) {
+				listaMensagens.add("Campo 'Código de Barras Corporativo' deve ser preenchido!");
+			}
+		} else {
+			
+			// Interface:
+			if (dto.getPrecoVenda() == null) {
+				listaMensagens.add("Por favor, digite um valor válido para o 'Preço Real'!");
+			}
+		}
+		
+		if (dto.getCodigoDeBarras() == null || dto.getCodigoDeBarras().trim().length() <= 0) {
+			listaMensagens.add("Campo 'Código de Barras' deve ser preenchido!");
+		}
+		
+		if (!listaMensagens.isEmpty()) {
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, listaMensagens));
+		}
 	}
 	
 	/**
@@ -260,30 +336,22 @@ public class ProdutoEdicaoController {
 			throw new ValidacaoException(TipoMensagem.ERROR,
 					"Por favor, selecione uma Edição válida!");
 		}
-
+		
+		ValidacaoVO vo = null;
 		try {
 
 			this.peService.excluirProdutoEdicao(idProdutoEdicao);
-
+			vo = new ValidacaoVO(TipoMensagem.SUCCESS, "Edição excluída com sucesso!");
+		} catch (ValidacaoException e) {
+			
+			vo = e.getValidacao();
 		} catch (Exception e) {
 			
-			ValidacaoVO vo = null;
-			if (e instanceof ValidacaoException) {
-				
-				vo = ((ValidacaoException) e).getValidacao();
-			} else {
-				
-				vo = new ValidacaoVO(TipoMensagem.ERROR, e.getMessage() + "");
-			}
+			vo = new ValidacaoVO(TipoMensagem.ERROR, e.getMessage());
+		} finally {
 			
 			this.result.use(Results.json()).from(vo, "result").recursive().serialize();
-
-			throw new ValidacaoException();
 		}
-
-		this.result.use(Results.json()).from(
-				new ValidacaoVO(TipoMensagem.SUCCESS,
-						"Edição excluída com sucesso!"), "result").recursive().serialize();
 	}
 
 }

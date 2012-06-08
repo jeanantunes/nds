@@ -261,6 +261,13 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 		
 		// 02) Salvar imagem:
 		if (imgInputStream != null) {
+			
+			// Verifica se o tipo do arquivo é imagem JPEG:
+			if (!contentType.toLowerCase().matches("image/[p]?jpeg")) {
+				throw new ValidacaoException(TipoMensagem.ERROR, 
+						"O formato da imagem da capa não é válido!");
+			}
+			
 			capaService.saveCapa(produtoEdicao.getId(), contentType, imgInputStream);
 		}
 		
@@ -314,7 +321,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 		/* Regra: Não deve existir duas Edições com o mesmo código de barra. */
 		List<ProdutoEdicao> lstPeCodBarra = 
 				this.produtoEdicaoRepository.obterProdutoEdicaoPorCodigoDeBarra(
-						dto.getCodigoDeBarras());
+						dto.getCodigoDeBarras(), produtoEdicao.getId());
 		if (lstPeCodBarra != null && !lstPeCodBarra.isEmpty()) {
 			
 			ProdutoEdicao peCodBarra = lstPeCodBarra.get(0);
@@ -468,7 +475,8 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 		
 		// Data lançamento:
 		lancamento.setDataLancamentoPrevista(dto.getDataLancamentoPrevisto());
-		lancamento.setDataLancamentoDistribuidor(dto.getDataLancamento());	// Data Lançamento Real;
+		lancamento.setDataLancamentoDistribuidor(dto.getDataLancamento() == null 
+				? dto.getDataLancamentoPrevisto() : dto.getDataLancamento());	// Data Lançamento Real;
 		
 		// Reparte:
 		BigDecimal repartePrevisto = dto.getRepartePrevisto() == null 
@@ -483,7 +491,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 		Calendar calPeb = Calendar.getInstance();
 		calPeb.setTime(lancamento.getDataLancamentoPrevista());
 		calPeb.add(Calendar.DAY_OF_MONTH, peb);
-		Date dtPeb = calPeb.getTime(); 
+		Date dtPeb = calPeb.getTime();
 		lancamento.setDataRecolhimentoDistribuidor(dtPeb);
 		lancamento.setDataRecolhimentoPrevista(dtPeb);
 		lancamento.setProdutoEdicao(produtoEdicao);
@@ -492,14 +500,14 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 		
 		Date dtSysdate = new Date();
 		lancamento.setDataCriacao(dtSysdate);
-		lancamento.setDataStatus(dtSysdate);			
+		lancamento.setDataStatus(dtSysdate);
 		
 		// Salvar:
 		lancamentoRepository.adicionar(lancamento);
 		
 		// Atualizar:
 		produtoEdicao.getLancamentos().add(lancamento);
-		produtoEdicaoRepository.alterar(produtoEdicao);			
+		produtoEdicaoRepository.alterar(produtoEdicao);
 	}
 	
 	@Override
@@ -529,26 +537,6 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 		} catch (Exception e) {
 			throw new ValidacaoException(TipoMensagem.ERROR, "Ocorreu um erro ao tentar excluir a edição!");
 		}
-	}
-	
-	
-	/**
-	 * Transforma o valor em formato String para BigDecimal.<br>
-	 * Caso o valor não for válido, irá retornar 0 (zero).
-	 * 
-	 * @param valor
-	 * @return
-	 */
-	private BigDecimal converterValor(String valor) {
-		
-		BigDecimal nValor = null;
-		try {
-			nValor = (new BigDecimal(valor)).setScale(2);
-		} catch (Exception e) {
-			nValor = BigDecimal.ZERO.setScale(2);
-		}
-		
-		return nValor;
 	}
 	
 }

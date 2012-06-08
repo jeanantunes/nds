@@ -205,10 +205,12 @@ public interface ProdutoEdicaoRepository extends Repository<ProdutoEdicao, Long>
 	 * Obtém todos os Produtos Edições que possuem exatamente o mesmo
 	 * código de barra.
 	 *  
-	 * @param codigoDeBarra
+	 * @param codigoDeBarras
+	 * @param idProdutoEdicao
 	 * 
 	 * @return
 	 */
-	public List<ProdutoEdicao> obterProdutoEdicaoPorCodigoDeBarra(String codigoDeBarra);
+	public List<ProdutoEdicao> obterProdutoEdicaoPorCodigoDeBarra(String codigoDeBarras,
+			Long idProdutoEdicao);
 	
 }

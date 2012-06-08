@@ -83,6 +83,8 @@ public class CapaController {
 			
 			throw new ValidacaoException(vo);
 		}
+		
+		
 	}
 
 }

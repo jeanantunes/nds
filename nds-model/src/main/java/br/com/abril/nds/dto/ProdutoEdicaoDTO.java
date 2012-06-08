@@ -3,7 +3,6 @@ package br.com.abril.nds.dto;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
-import java.util.List;
 
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
@@ -57,6 +56,7 @@ public class ProdutoEdicaoDTO implements Serializable {
 	private BigDecimal repartePromocional;
 	// codigoDeBarras
 	private String codigoDeBarrasCorporativo;
+	private String descricaoDesconto;
 	// desconto;
 	private String chamadaCapa;
 	// parcial;	-- Regime de Recolhimento;
@@ -74,6 +74,7 @@ public class ProdutoEdicaoDTO implements Serializable {
 	// dataLancamento; (Real)
 	// categoria;
 	
+	private boolean origemInterface;
 	
 	
 	/**
@@ -455,6 +456,30 @@ public class ProdutoEdicaoDTO implements Serializable {
 	 */
 	public void setEspessura(float espessura) {
 		this.espessura = espessura;
+	}
+	/**
+	 * @return the origemInterface
+	 */
+	public boolean isOrigemInterface() {
+		return origemInterface;
+	}
+	/**
+	 * @param origemInterface the origemInterface to set
+	 */
+	public void setOrigemInterface(boolean origemInterface) {
+		this.origemInterface = origemInterface;
+	}
+	/**
+	 * @return the descricaoDesconto
+	 */
+	public String getDescricaoDesconto() {
+		return descricaoDesconto;
+	}
+	/**
+	 * @param descricaoDesconto the descricaoDesconto to set
+	 */
+	public void setDescricaoDesconto(String descricaoDesconto) {
+		this.descricaoDesconto = descricaoDesconto;
 	}
 	
 }
