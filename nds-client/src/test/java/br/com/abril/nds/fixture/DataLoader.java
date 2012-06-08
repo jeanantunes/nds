@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -105,7 +104,6 @@ import br.com.abril.nds.model.estoque.RecebimentoFisico;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.financeiro.Boleto;
-import br.com.abril.nds.model.financeiro.Cobranca;
 import br.com.abril.nds.model.financeiro.CobrancaCheque;
 import br.com.abril.nds.model.financeiro.CobrancaDeposito;
 import br.com.abril.nds.model.financeiro.CobrancaDinheiro;
@@ -176,6 +174,11 @@ public class DataLoader {
 	private static TipoMovimentoEstoque tipoMovimentoRecFisico;
 	private static TipoMovimentoEstoque tipoMovimentoRecReparte;
 	private static TipoMovimentoEstoque tipoMovimentoEnvioEncalhe;
+	
+	private static TipoMovimentoEstoque tipoMovimentoRecebimentoEncalhe; 						
+	private static TipoMovimentoEstoque tipoMovimentoRecebimentoEncalheJuramentado; 				
+	private static TipoMovimentoEstoque tipoMovimentoSuplementarEnvioEncalheAnteriroProgramacao; 
+	
 	private static TipoMovimentoEstoque tipoMovimentoEstornoCotaAusente;
 	private static TipoMovimentoEstoque tipoMovimentoSuplementarCotaAusente;
 
@@ -3786,6 +3789,11 @@ public class DataLoader {
 
 		tipoMovimentoEnvioEncalhe = Fixture.tipoMovimentoEnvioEncalhe();
 
+		tipoMovimentoRecebimentoEncalhe 						= Fixture.tipoMovimentoRecebimentoEncalhe();
+		tipoMovimentoRecebimentoEncalheJuramentado 				= Fixture.tipoMovimentoRecebimentoEncalheJuramentado();
+		tipoMovimentoSuplementarEnvioEncalheAnteriroProgramacao = Fixture.tipoMovimentoSuplementarEnvioEncalheAnteriroProgramacao();
+		
+		
 		tipoMovimentoEstornoCotaAusente = Fixture.tipoMovimentoEstornoCotaAusente();
 
 		tipoMovimentoReparteCotaAusente = Fixture.tipoMovimentoReparteCotaAusente();
@@ -3815,7 +3823,9 @@ public class DataLoader {
 				tipoMovimentoFinanceiroCredito, tipoMovimentoFinanceiroDebito,
 				tipoMovimentoEnvioEncalhe, tipoMovimentoFinanceiroRecebimentoReparte,
 				tipoMovimentoFinanceiroJuros, tipoMovimentoFinanceiroMulta,
-				tipoMovimentoFinanceiroEnvioEncalhe, tipoMovimentoSuplementarCotaAusente);
+				tipoMovimentoFinanceiroEnvioEncalhe, tipoMovimentoSuplementarCotaAusente,
+				tipoMovimentoRecebimentoEncalhe, tipoMovimentoRecebimentoEncalheJuramentado, 				
+				tipoMovimentoSuplementarEnvioEncalheAnteriroProgramacao);
 
 	}
 
@@ -5138,7 +5148,7 @@ public class DataLoader {
 		
 		Date dataRecolhimentoChamadaEncalhe = Fixture.criarData(20, Calendar.JUNE, 2012);
 		
-		TipoChamadaEncalhe tipoChamadaEncalhe = TipoChamadaEncalhe.MATRIZ_RECOLHIMENTO;
+		TipoChamadaEncalhe tipoChamadaEncalhe = TipoChamadaEncalhe.CHAMADAO;
 				
 		boolean indChamadaEncalheCotaConferida = false; 
 		
