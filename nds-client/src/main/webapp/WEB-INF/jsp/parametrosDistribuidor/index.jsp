@@ -86,11 +86,96 @@ function recarregarDiasDistribuidorFornecedorGrid() {
 function gravar() {
 	
 	var data = [
-			{name:'parametrosDistribuidor.idBox', value:$('#idBox').val()},
-			{name:'parametrosDistribuidor.idRoteiro', value:$('#idRoteiro').val()},
-			{name:'parametrosDistribuidor.idRota', value:$('#idRota').val()},
-			{name:'parametrosDistribuidor.nomeRota',	value: $('#idRota option:selected').text()}
-		];
+		{name:'parametrosDistribuidor.relancamentoParciaisEmDias', value: $('#relancamentoParciaisEmDias').val()},
+		{name:'parametrosDistribuidor.aceitaEncalheJuramentada', value: $('#aceitaEncalheJuramentada').val()},
+		{name:'parametrosDistribuidor.diaRecolhimentoPrimeiro', value: $('#diaRecolhimentoPrimeiro').val()},
+		{name:'parametrosDistribuidor.diaRecolhimentoSegundo', value: $('#diaRecolhimentoSegundo').val()},
+		{name:'parametrosDistribuidor.diaRecolhimentoTerceiro', value: $('#diaRecolhimentoTerceiro').val()},
+		{name:'parametrosDistribuidor.diaRecolhimentoQuarto', value: $('#diaRecolhimentoQuarto').val()},
+		{name:'parametrosDistribuidor.diaRecolhimentoQuinto', value: $('#diaRecolhimentoQuinto').val()},
+		{name:'parametrosDistribuidor.limiteCEProximaSemana', value: $('#limiteCEProximaSemana').val()},
+		{name:'parametrosDistribuidor.conferenciaCegaRecebimento', value: $('#conferenciaCegaRecebimento').val()},
+		{name:'parametrosDistribuidor.conferenciaCegaEncalhe', value: $('#conferenciaCegaEncalhe').val()},
+		{name:'parametrosDistribuidor.capacidadeManuseioHomemHoraLancamento', value: $('#capacidadeManuseioHomemHoraLancamento').val()},
+		{name:'parametrosDistribuidor.capacidadeManuseioHomemHoraRecolhimento', value: $('#capacidadeManuseioHomemHoraRecolhimento').val()},
+		{name:'parametrosDistribuidor.reutilizacaoCodigoCotaInativa', value: $('#reutilizacaoCodigoCotaInativa').val()},
+		{name:'parametrosDistribuidor.obrigacaoFiscao', value: $('#obrigacaoFiscao').val()},
+		{name:'parametrosDistribuidor.regimeEspecial', value: $('#regimeEspecial').val()},
+		{name:'parametrosDistribuidor.distribuidor', value: $('#distribuidor').val()},
+		{name:'parametrosDistribuidor.slipImpressao', value: $('#slipImpressao').val()},
+		{name:'parametrosDistribuidor.slipEmail', value: $('#slipEmail').val()},
+		{name:'parametrosDistribuidor.boletoImpressao', value: $('#boletoImpressao').val()},
+		{name:'parametrosDistribuidor.boletoEmail', value: $('#boletoEmail').val()},
+		{name:'parametrosDistribuidor.boletoSlipImpressao', value: $('#boletoSlipImpressao').val()},
+		{name:'parametrosDistribuidor.boletoSlipEmail', value: $('#boletoSlipEmail').val()},
+		{name:'parametrosDistribuidor.reciboImpressao', value: $('#reciboImpressao').val()},
+		{name:'parametrosDistribuidor.reciboEmail', value: $('#reciboEmail').val()},
+		{name:'parametrosDistribuidor.notaEnvioImpressao', value: $('#notaEnvioImpressao').val()},
+		{name:'parametrosDistribuidor.notaEnvioEmail', value: $('#notaEnvioEmail').val()},
+		{name:'parametrosDistribuidor.chamadaEncalheImpressao', value: $('#chamadaEncalheImpressao').val()},
+		{name:'parametrosDistribuidor.chamadaEncalheEmail', value: $('#chamadaEncalheEmail').val()},
+		{name:'parametrosDistribuidor.impressaoNE', value: $('#impressaoNE').val()},
+		{name:'parametrosDistribuidor.impressaoNEFaltaDe', value: $('#impressaoNEFaltaDe').val()},
+		{name:'parametrosDistribuidor.impressaoNEFaltaEm', value: $('#impressaoNEFaltaEm').val()},
+		{name:'parametrosDistribuidor.impressaoNESobraDe', value: $('#impressaoNESobraDe').val()},
+		{name:'parametrosDistribuidor.impressaoNESobraEm', value: $('#impressaoNESobraEm').val()},
+		{name:'parametrosDistribuidor.impressaoNECADANFE', value: $('#impressaoNECADANFE').val()},
+		{name:'parametrosDistribuidor.impressaoNECADANFEFaltaDe', value: $('#impressaoNECADANFEFaltaDe').val()},
+		{name:'parametrosDistribuidor.impressaoNECADANFEFaltaEm', value: $('#impressaoNECADANFEFaltaEm').val()},
+		{name:'parametrosDistribuidor.impressaoNECADANFESobraDe', value: $('#impressaoNECADANFESobraDe').val()},
+		{name:'parametrosDistribuidor.impressaoNECADANFESobraEm', value: $('#impressaoNECADANFESobraEm').val()},
+		{name:'parametrosDistribuidor.impressaoCE', value: $('#impressaoCE').val()},
+		{name:'parametrosDistribuidor.impressaoCEFaltaDe', value: $('#impressaoCEFaltaDe').val()},
+		{name:'parametrosDistribuidor.impressaoCEFaltaEm', value: $('#impressaoCEFaltaEm').val()},
+		{name:'parametrosDistribuidor.impressaoCESobraDe', value: $('#impressaoCESobraDe').val()},
+		{name:'parametrosDistribuidor.utilizaContratoComCotas', value: $('#utilizaContratoComCotas').val()},
+		{name:'parametrosDistribuidor.prazoContrato', value: $('#prazoContrato').val()},
+		{name:'parametrosDistribuidor.informacoesComplementaresContrato', value: $('#informacoesComplementaresContrato').val()},
+		{name:'parametrosDistribuidor.utilizaProcuracaoEntregadores', value: $('#utilizaProcuracaoEntregadores').val()},
+		{name:'parametrosDistribuidor.informacoesComplementaresProcuracao', value: $('#informacoesComplementaresProcuracao').val()},
+		{name:'parametrosDistribuidor.utilizaGarantiaPdv', value: $('#utilizaGarantiaPdv').val()},
+		{name:'parametrosDistribuidor.chequeCalcao', value: $('#chequeCalcao').val()},
+		{name:'parametrosDistribuidor.chequeCalcaoValor', value: $('#chequeCalcaoValor').val()},
+		{name:'parametrosDistribuidor.fiador', value: $('#fiador').val()},
+		{name:'parametrosDistribuidor.fiadorValor', value: $('#fiadorValor').val()},
+		{name:'parametrosDistribuidor.imovel', value: $('#imovel').val()},
+		{name:'parametrosDistribuidor.imovelValor', value: $('#imovelValor').val()},
+		{name:'parametrosDistribuidor.caucaoLiquida', value: $('#caucaoLiquida').val()},
+		{name:'parametrosDistribuidor.caucaoLiquidaValor', value: $('#caucaoLiquidaValor').val()},
+		{name:'parametrosDistribuidor.notaPromissoria', value: $('#notaPromissoria').val()},
+		{name:'parametrosDistribuidor.notaPromissoriaValor', value: $('#notaPromissoriaValor').val()},
+		{name:'parametrosDistribuidor.antecedenciaValidade', value: $('#antecedenciaValidade').val()},
+		{name:'parametrosDistribuidor.antecedenciaValidadeValor', value: $('#antecedenciaValidadeValor').val()},
+		{name:'parametrosDistribuidor.indicadorReajusteCaucaoLiquida', value: $('#indicadorReajusteCaucaoLiquida').val()},
+		{name:'parametrosDistribuidor.indicadorReajusteCaucaoLiquidaValor', value: $('#indicadorReajusteCaucaoLiquidaValor').val()},
+		{name:'parametrosDistribuidor.sugereSuspensaoQuandoAtingirBoletos', value: $('#sugereSuspensaoQuandoAtingirBoletos').val()},
+		{name:'parametrosDistribuidor.sugereSuspensaoQuandoAtingirReais', value: $('#sugereSuspensaoQuandoAtingirReais').val()},
+		{name:'parametrosDistribuidor.parcelamentoDividas', value: $('#parcelamentoDividas').val()},
+		{name:'parametrosDistribuidor.negociacaoAteParcelas', value: $('#negociacaoAteParcelas').val()},
+		{name:'parametrosDistribuidor.permitePagamentoDividasDivergentes', value: $('#permitePagamentoDividasDivergentes').val()},
+		{name:'parametrosDistribuidor.utilizaControleAprovacao', value: $('#utilizaControleAprovacao').val()},
+		{name:'parametrosDistribuidor.paraDebitosCreditos', value: $('#paraDebitosCreditos').val()},
+		{name:'parametrosDistribuidor.negociacao', value: $('#negociacao').val()},
+		{name:'parametrosDistribuidor.ajusteEstoque', value: $('#ajusteEstoque').val()},
+		{name:'parametrosDistribuidor.postergacaoCobranca', value: $('#postergacaoCobranca').val()},
+		{name:'parametrosDistribuidor.devolucaoFornecedor', value: $('#devolucaoFornecedor').val()},
+		{name:'parametrosDistribuidor.recibo', value: $('#recibo').val()},
+		{name:'parametrosDistribuidor.faltasSobras', value: $('#faltasSobras').val()},
+		{name:'parametrosDistribuidor.aprovacaoFaltaDe', value: $('#aprovacaoFaltaDe').val()},
+		{name:'parametrosDistribuidor.aprovacaoSobraDe', value: $('#aprovacaoSobraDe').val()},
+		{name:'parametrosDistribuidor.aprovacaoFaltaEm', value: $('#aprovacaoFaltaEm').val()},
+		{name:'parametrosDistribuidor.aprovacaoSobraEm', value: $('#aprovacaoSobraEm').val()},
+		{name:'parametrosDistribuidor.prazoFollowUp', value: $('#prazoFollowUp').val()},
+		{name:'parametrosDistribuidor.prazoFollowUpFaltaDe', value: $('#prazoFollowUpFaltaDe').val()},
+		{name:'parametrosDistribuidor.prazoFollowUpSobraDe', value: $('#prazoFollowUpSobraDe').val()},
+		{name:'parametrosDistribuidor.prazoFollowUpFaltaEm', value: $('#prazoFollowUpFaltaEm').val()},
+		{name:'parametrosDistribuidor.prazoFollowUpSobraEm', value: $('#prazoFollowUpSobraEm').val()},
+		{name:'parametrosDistribuidor.prazoAvisoPrevioValidadeGarantia', value: $('#prazoAvisoPrevioValidadeGarantia').val()},
+		{name:'parametrosDistribuidor.prazoAvisoPrevioValidadeGarantiaFaltaDe', value: $('#prazoAvisoPrevioValidadeGarantiaFaltaDe').val()},
+		{name:'parametrosDistribuidor.prazoAvisoPrevioValidadeGarantiaSobraDe', value: $('#prazoAvisoPrevioValidadeGarantiaSobraDe').val()},
+		{name:'parametrosDistribuidor.prazoAvisoPrevioValidadeGarantiaFaltaEm', value: $('#prazoAvisoPrevioValidadeGarantiaFaltaEm').val()},
+		{name:'parametrosDistribuidor.prazoAvisoPrevioValidadeGarantiaSobraEm', value: $('#prazoAvisoPrevioValidadeGarantiaSobraEm').val()}
+	];
 	
 	$.postJSON("<c:url value='/administracao/parametrosDistribuidor/gravar'/>",
 			   data,
@@ -111,6 +196,7 @@ function popup_confirm() {
 			modal: true,
 			buttons: {
 				"Confirmar": function() {
+					gravar();
 					$( this ).dialog( "close" );
 					$("#effect").show("highlight", {}, 1000, callback);
 				},
@@ -385,13 +471,13 @@ $(document).ready(function() {
 		                  <td colspan="4"><strong>Distribuidor</strong></td>
 		                </tr>
 		                <tr>
-		                  <td width="20"><input name="input48" type="checkbox" value="" /></td>
+		                  <td width="20"><input name="parametrosDistribuidor.obrigacaoFiscao" id="obrigacaoFiscao" type="checkbox"  ${parametrosDistribuidor.obrigacaoFiscao}/></td>
 		                  <td width="97"> Obrigação Fiscal</td>
-		                  <td width="20"><input name="input29" type="checkbox" value="" /></td>
+		                  <td width="20"><input name="parametrosDistribuidor.regimeEspecial" id="regimeEspecial" type="checkbox"  ${parametrosDistribuidor.regimeEspecial}/></td>
 		                  <td width="98">Regime Especial</td>
-		                  <td width="20"><input type="radio" name="radio" id="radio" value="radio" /></td>
+		                  <td width="20"><input type="radio" name="parametrosDistribuidor.distribuidor" id="radioPrestadorServico" value="PRESTADOR_SERVICO" /></td>
 		                  <td width="101">Prestador Serviço</td>
-		                  <td width="20"><input type="radio" name="radio" id="radio2" value="radio" /></td>
+		                  <td width="20"><input type="radio" name="parametrosDistribuidor.distribuidor" id="radioMercantil" value="MERCANTIL" /></td>
 		                  <td width="50">Mercantil</td>
 		                </tr>
 		                <tr>
@@ -414,33 +500,33 @@ $(document).ready(function() {
 		                  </tr>
 		                  <tr>
 		                    <td width="203">Slip</td>
-		                    <td width="120" align="center"><input name="input4" type="checkbox" value="" /></td>
-		                    <td width="107" align="center"><input name="input19" type="checkbox" value="" /></td>
+		                    <td width="120" align="center"><input name="parametrosDistribuidor.slipImpressao" id="slipImpressao" type="checkbox"  ${parametrosDistribuidor.slipImpressao}/></td>
+		                    <td width="107" align="center"><input name="parametrosDistribuidor.slipEmail" id="slipEmail" type="checkbox"  ${parametrosDistribuidor.slipEmail}/></td>
 		                  </tr>
 		                  <tr>
 		                    <td>Boleto</td>
-		                    <td align="center"><input name="input18" type="checkbox" value="" /></td>
-		                    <td align="center"><input name="input21" type="checkbox" value="" /></td>
+		                    <td align="center"><input name="parametrosDistribuidor.boletoImpressao" id="boletoImpressao" type="checkbox"  ${parametrosDistribuidor.boletoImpressao}/></td>
+		                    <td align="center"><input name="parametrosDistribuidor.boletoEmail" id="boletoEmail" type="checkbox"  ${parametrosDistribuidor.boletoEmail}/></td>
 		                  </tr>
 		                  <tr>
 		                    <td>Boleto + Slip</td>
-		                    <td align="center"><input name="input2" type="checkbox" value="" /></td>
-		                    <td align="center"><input name="input20" type="checkbox" value="" /></td>
+		                    <td align="center"><input name="parametrosDistribuidor.boletoSlipImpressao" id="boletoSlipImpressao" type="checkbox"  ${parametrosDistribuidor.boletoSlipImpressao}/></td>
+		                    <td align="center"><input name="parametrosDistribuidor.boletoSlipEmail" id="boletoSlipEmail" type="checkbox"  ${parametrosDistribuidor.boletoSlipEmail}/></td>
 		                  </tr>
 		                  <tr>
 		                    <td>Recibo</td>
-		                    <td align="center"><input name="input27" type="checkbox" value="" /></td>
-		                    <td align="center"><input name="input22" type="checkbox" value="" /></td>
+		                    <td align="center"><input name="parametrosDistribuidor.reciboImpressao" id="reciboImpressao" type="checkbox"  ${parametrosDistribuidor.reciboImpressao}/></td>
+		                    <td align="center"><input name="parametrosDistribuidor.reciboEmail" id="reciboEmail" type="checkbox"  ${parametrosDistribuidor.reciboEmail}/></td>
 		                  </tr>
 		                  <tr>
 		                    <td>Nota de Envio</td>
-		                    <td align="center"><input name="input40" type="checkbox" value="" /></td>
-		                    <td align="center"><input name="input41" type="checkbox" value="" /></td>
+		                    <td align="center"><input name="parametrosDistribuidor.notaEnvioImpressao" id="notaEnvioImpressao" type="checkbox"  ${parametrosDistribuidor.notaEnvioImpressao}/></td>
+		                    <td align="center"><input name="parametrosDistribuidor.notaEnvioEmail" id="notaEnvioEmail" type="checkbox"  ${parametrosDistribuidor.notaEnvioEmail}/></td>
 		                  </tr>
 		                  <tr>
 		                    <td>Chamada de Encalhe</td>
-		                    <td align="center"><input name="input43" type="checkbox" value="" /></td>
-		                    <td align="center"><input name="input42" type="checkbox" value="" /></td>
+		                    <td align="center"><input name="parametrosDistribuidor.chamadaEncalheImpressao" id="chamadaEncalheImpressao" type="checkbox"  ${parametrosDistribuidor.chamadaEncalheImpressao}/></td>
+		                    <td align="center"><input name="parametrosDistribuidor.chamadaEncalheEmail" id="chamadaEncalheEmail" type="checkbox"  ${parametrosDistribuidor.chamadaEncalheEmail}/></td>
 		                  </tr>
 		                </table>
 	            </fieldset>
@@ -448,9 +534,9 @@ $(document).ready(function() {
 		           	  <legend>Impressão NE</legend>
 		                <table width="325" border="0" cellspacing="0" cellpadding="0">
 		                      <tr>
-		                        <td width="26"><input type="radio" name="radio5" id="radio5" value="radio5" /></td>
+		                        <td width="26"><input type="radio" name="parametrosDistribuidor.impressaoNE" id="impressaoNEModelo1" value="MODELO_1" /></td>
 		                        <td width="93"><a href="${pageContext.request.contextPath}/Devolucao/ce_modelo_1.htm" target="_blank">Modelo 1</a></td>
-		                        <td width="20"><input type="radio" name="radio5" id="radio6" value="radio5" /></td>
+		                        <td width="20"><input type="radio" name="parametrosDistribuidor.impressaoNE" id="impressaoNEModelo2" value="MODELO_2" /></td>
 		                        <td width="287"><a href="${pageContext.request.contextPath}/Devolucao/ce_modelo_2.html" target="_blank">Modelo 2</a></td>
 		                      </tr>
 		                      <tr>
@@ -468,15 +554,15 @@ $(document).ready(function() {
 		                        <td colspan="4">Para as Funcionalidades:</td>
 		                      </tr>
 		                      <tr>
-		                        <td width="23"><input name="input6" type="checkbox" value="" /></td>
+		                        <td width="23"><input name="parametrosDistribuidor.impressaoNEFaltaDe" id="impressaoNEFaltaDe" type="checkbox"  ${parametrosDistribuidor.impressaoNEFaltaDe}/></td>
 		                        <td width="123">Falta de</td>
-		                        <td width="20"><input name="input3" type="checkbox" value="" /></td>
+		                        <td width="20"><input name="parametrosDistribuidor.impressaoNESobraDe" id="impressaoNESobraDe" type="checkbox"  ${parametrosDistribuidor.impressaoNESobraDe}/></td>
 		                        <td width="108">Sobra de</td>
 		                      </tr>
 		                      <tr>
-		                        <td><input name="input30" type="checkbox" value="" /></td>
+		                        <td><input name="parametrosDistribuidor.impressaoNEFaltaEm" id="impressaoNEFaltaEm" type="checkbox"  ${parametrosDistribuidor.impressaoNEFaltaEm}/></td>
 		                        <td>Falta em</td>
-		                        <td><input name="input5" type="checkbox" value="" /></td>
+		                        <td><input name="parametrosDistribuidor.impressaoNESobraEm" id="impressaoNESobraEm" type="checkbox"  ${parametrosDistribuidor.impressaoNESobraEm}/></td>
 		                        <td>Sobra em</td>
 		                      </tr>
 		                      <tr>
@@ -491,11 +577,11 @@ $(document).ready(function() {
 		               	<legend>Impressão NECA / Danfe</legend>
 		                <table width="325" border="0" cellspacing="0" cellpadding="0">
 		                      <tr>
-		                        <td width="20"><input type="radio" name="radio5" id="radio5" value="radio5" /></td>
+		                        <td width="20"><input type="radio" name="parametrosDistribuidor.impressaoNECADANFE" id="impressaoNECADANFEMODELO1" value="MODELO_1" /></td>
 		                        <td width="79"><a href="${pageContext.request.contextPath}/Devolucao/ce_modelo_1.htm" target="_blank">Modelo 1</a></td>
-		                        <td width="20"><input type="radio" name="radio5" id="radio6" value="radio5" /></td>
+		                        <td width="20"><input type="radio" name="parametrosDistribuidor.impressaoNECADANFE" id="impressaoNECADANFEMODELO2" value="MODELO_2" /></td>
 		                        <td width="75"><a href="${pageContext.request.contextPath}/Devolucao/ce_modelo_3.htm" target="_blank">Modelo 2</a></td>
-		                        <td width="20"><input type="radio" name="radio5" id="radio7" value="radio5" /></td>
+		                        <td width="20"><input type="radio" name="parametrosDistribuidor.impressaoNECADANFE" id="impressaoNECADANFE" value="DANFE" /></td>
 		                        <td width="111"><a href="javascript:;" target="_blank">Danfe</a></td>
 		                      </tr>
 		                      <tr>
@@ -515,15 +601,15 @@ $(document).ready(function() {
 		                        <td colspan="4">Para as Funcionalidades:</td>
 		                      </tr>
 		                      <tr>
-		                        <td width="23"><input name="input6" type="checkbox" value="" /></td>
+		                        <td width="23"><input name="parametrosDistribuidor.impressaoNECADANFEFaltaDe" id="impressaoNECADANFEFaltaDe" type="checkbox"  ${parametrosDistribuidor.impressaoNECADANFEFaltaDe}/></td>
 		                        <td width="123">Falta de</td>
-		                        <td width="20"><input name="input3" type="checkbox" value="" /></td>
+		                        <td width="20"><input name="parametrosDistribuidor.impressaoNECADANFESobraDe" id="impressaoNECADANFESobraDe" type="checkbox"  ${parametrosDistribuidor.impressaoNECADANFESobraDe}/></td>
 		                        <td width="108">Sobra de</td>
 		                      </tr>
 		                      <tr>
-		                        <td><input name="input30" type="checkbox" value="" /></td>
+		                        <td><input name="parametrosDistribuidor.impressaoNECADANFEFaltaEm" id="impressaoNECADANFEFaltaEm" type="checkbox"  ${parametrosDistribuidor.impressaoNECADANFEFaltaEm}/></td>
 		                        <td>Falta em</td>
-		                        <td><input name="input5" type="checkbox" value="" /></td>
+		                        <td><input name="parametrosDistribuidor.impressaoNECADANFESobraEm" id="impressaoNECADANFESobraEm" type="checkbox"  ${parametrosDistribuidor.impressaoNECADANFESobraEm}/></td>
 		                        <td>Sobra em</td>
 		                      </tr>
 		                      <tr>
@@ -538,9 +624,9 @@ $(document).ready(function() {
 		           	  	<legend>Impressão CE</legend>
 		                <table width="325" border="0" cellspacing="0" cellpadding="0">
 		                      <tr>
-		                        <td width="26"><input type="radio" name="radio5" id="radio5" value="radio5" /></td>
+		                        <td width="26"><input type="radio" name="parametrosDistribuidor.impressaoCE" id="impressaoCEModelo2" value="MODELO_1" /></td>
 		                        <td width="93"><a href="${pageContext.request.contextPath}/Devolucao/ce_modelo_1.htm" target="_blank">Modelo 1</a></td>
-		                        <td width="20"><input type="radio" name="radio5" id="radio6" value="radio5" /></td>
+		                        <td width="20"><input type="radio" name="parametrosDistribuidor.impressaoCE" id="impressaoCEModelo1" value="MODELO_2" /></td>
 		                        <td width="287"><a href="${pageContext.request.contextPath}/Devolucao/ce_modelo_2.html" target="_blank">Modelo 2</a></td>
 		                      </tr>
 		                      <tr>
@@ -558,15 +644,15 @@ $(document).ready(function() {
 		                        <td colspan="4">Para as Funcionalidades:</td>
 		                      </tr>
 		                      <tr>
-		                        <td width="23"><input name="input6" type="checkbox" value="" /></td>
+		                        <td width="23"><input name="parametrosDistribuidor.impressaoCEFaltaDe" id="impressaoCEFaltaDe" type="checkbox"  ${parametrosDistribuidor.impressaoCEFaltaDe}/></td>
 		                        <td width="123">Falta de</td>
-		                        <td width="20"><input name="input3" type="checkbox" value="" /></td>
+		                        <td width="20"><input name="parametrosDistribuidor.impressaoCESobraDe" id="impressaoCESobraDe" type="checkbox"  ${parametrosDistribuidor.impressaoCESobraDe}/></td>
 		                        <td width="108">Sobra de</td>
 		                      </tr>
 		                      <tr>
-		                        <td><input name="input30" type="checkbox" value="" /></td>
+		                        <td><input name="parametrosDistribuidor.impressaoCEFaltaEm" id="impressaoCEFaltaEm" type="checkbox"  ${parametrosDistribuidor.impressaoCEFaltaEm}/></td>
 		                        <td>Falta em</td>
-		                        <td><input name="input5" type="checkbox" value="" /></td>
+		                        <td><input name="parametrosDistribuidor.impressaoCESobraEm" id="impressaoCESobraEm" type="checkbox"  ${parametrosDistribuidor.impressaoCESobraEm}/></td>
 		                        <td>Sobra em</td>
 		                      </tr>
 		                      <tr>
@@ -585,11 +671,11 @@ $(document).ready(function() {
 		                <table width="392" border="0" cellspacing="1" cellpadding="1">
 		                  <tr>
 		                    <td>Utiliza Contrato com as Cotas?</td>
-		                    <td><input name="input31" type="checkbox" value="" /></td>
+		                    <td><input name="parametrosDistribuidor.utilizaContratoComCotas" id="utilizaContratoComCotas" type="checkbox"  ${parametrosDistribuidor.utilizaContratoComCotas}/></td>
 		                  </tr>
 		                  <tr>
 		                    <td width="190">Prazo do Contrato (em meses ):</td>
-		                    <td width="195"><input type="text" name="textfield" id="textfield"  style="width:80px;" disabled="disabled"/></td>
+		                    <td width="195"><input type="text" name="parametrosDistribuidor.prazoContrato" id="prazoContrato"  style="width:80px;" disabled="disabled" value="${parametrosDistribuidor.prazoContrato}" /></td>
 		                  </tr>
 		                  <tr>
 		                    <td colspan="2">&nbsp;</td>
@@ -598,7 +684,7 @@ $(document).ready(function() {
 		                    <td colspan="2">Informações complementares do Contrato:</td>
 		                  </tr>
 		                  <tr>
-		                    <td colspan="2"><textarea name="editor" rows="4" id="editor" style="width:350px;"></textarea></td>
+		                    <td colspan="2"><textarea name="parametrosDistribuidor.informacoesComplementaresContrato" rows="4" id="informacoesComplementaresContrato" style="width:350px;" value="${parametrosDistribuidor.informacoesComplementaresContrato}" ></textarea></td>
 		                  </tr>
 		                </table>
                 </fieldset>
@@ -606,7 +692,7 @@ $(document).ready(function() {
 		                <legend>Procuração</legend>
 		                <table width="393" border="0" cellspacing="1" cellpadding="1">
 		                  <tr>
-		                    <td><input name="input32" type="checkbox" value="" /></td>
+		                    <td><input name="parametrosDistribuidor.utilizaProcuracaoEntregadores" id="utilizaProcuracaoEntregadores" type="checkbox"  ${parametrosDistribuidor.utilizaProcuracaoEntregadores}/></td>
 		                    <td width="386" align="left">Utiliza procuração para  Entregadores?</td>
 		                  </tr>
 		                  <tr>
@@ -616,7 +702,7 @@ $(document).ready(function() {
 		                    <td colspan="2">Informações complementares da Procuração:</td>
 		                  </tr>
 		                  <tr>
-		                    <td colspan="2"><textarea name="editor_1" rows="4" id="editor_1" style="width:150px;"></textarea></td>
+		                    <td colspan="2"><textarea name="parametrosDistribuidor.informacoesComplementaresProcuracao" rows="4" id="informacoesComplementaresProcuracao" style="width:150px;" value="${parametrosDistribuidor.informacoesComplementaresProcuracao}" ></textarea></td>
 		                  </tr>
 		                </table>
                 </fieldset>
@@ -626,7 +712,7 @@ $(document).ready(function() {
 		                    <table width="300" border="0" cellspacing="0" cellpadding="0">
 		                      <tr>
 		                        <td width="170">Utiliza Garantia para PDVs?</td>
-		                        <td width="25"><input name="" type="checkbox" value="" /></td>
+		                        <td width="25"><input name="parametrosDistribuidor.utilizaGarantiaPdv" id="utilizaGarantiaPdv" type="checkbox"  ${parametrosDistribuidor.utilizaGarantiaPdv}/></td>
 		                        <td width="35">&nbsp;</td>
 		                        <td width="20">&nbsp;</td>
 		                        <td width="50">&nbsp;</td>
@@ -634,31 +720,31 @@ $(document).ready(function() {
 		                    </table>
 		               <table width="780" border="0" cellspacing="1" cellpadding="1">
 		                 <tr>
-		                   <td width="20"><input name="input33" type="checkbox" value="" /></td>
+		                   <td width="20"><input name="parametrosDistribuidor.chequeCalcao" id="chequeCalcao" type="checkbox"  ${parametrosDistribuidor.chequeCalcao}/></td>
 		                   <td width="201"> Cheque Caução</td>
-		                   <td width="104"><input name="date1" type="text" style="float:left; width:60px;" id="date1" /></td>
-		                        <td width="20"><input name="input38" type="checkbox" value="" /></td>
+		                   <td width="104"><input name="parametrosDistribuidor.chequeCalcaoValor" type="text" style="float:left; width:60px;" value="${parametrosDistribuidor.chequeCalcaoValor}" id="chequeCalcaoValor" /></td>
+		                        <td width="20"><input name="parametrosDistribuidor.fiador" id="fiador" type="checkbox" ${parametrosDistribuidor.fiador}/></td>
 		                        <td width="105">Fiador</td>
-		                        <td width="78"><input name="dateFiador" type="text" style="float:left; width:60px;" id="dateFiador" /></td>
-		                        <td width="20"><input name="input34" type="checkbox" value="" /></td>
+		                        <td width="78"><input name="parametrosDistribuidor.fiadorValor" type="text" style="float:left; width:60px;" id="fiadorValor" value="${parametrosDistribuidor.fiadorValor}" /></td>
+		                        <td width="20"><input name="parametrosDistribuidor.imovel" id="imovel" type="checkbox" ${parametrosDistribuidor.imovel}/></td>
 		                        <td width="144">Imóvel</td>
-		                        <td width="60"><input name="date2" type="text" style="float:left; width:60px;" id="date2" /></td>
+		                        <td width="60"><input name="parametrosDistribuidor.imovelValor" type="text" style="float:left; width:60px;" id="imovelValor" value="${parametrosDistribuidor.imovelValor}" /></td>
 		                 </tr>
 		                 <tr>
-		                   <td><input name="input35" type="checkbox" value="" /></td>
+		                   <td><input name="parametrosDistribuidor.caucaoLiquida" id="caucaoLiquida" type="checkbox" ${parametrosDistribuidor.caucaoLiquida}/></td>
 		                   <td>Caução Líquida</td>
-		                   <td><input name="date3" type="text" style="float:left; width:60px;" id="date3" /></td>
-		                        <td><input name="input39" type="checkbox" value="" /></td>
+		                   <td><input name="parametrosDistribuidor.caucaoLiquidaValor" type="text" style="float:left; width:60px;" id="caucaoLiquidaValor" value="${parametrosDistribuidor.caucaoLiquidaValor}" /></td>
+		                        <td><input name="parametrosDistribuidor.notaPromissoria" id="notaPromissoria" type="checkbox" ${parametrosDistribuidor.notaPromissoria}/></td>
 		                        <td>Nota Promissória</td>
-		                        <td><input name="dateCaucao" type="text" style="float:left; width:60px;" id="dateCaucao" /></td>
-		                        <td><input name="input36" type="checkbox" value="" /></td>
+		                        <td><input name="parametrosDistribuidor.notaPromissoriaValor" type="text" style="float:left; width:60px;" id="notaPromissoriaValor" value="${parametrosDistribuidor.notaPromissoriaValor}" /></td>
+		                        <td><input name="parametrosDistribuidor.antecedenciaValidade" id="antecedenciaValidade" type="checkbox" ${parametrosDistribuidor.antecedenciaValidade}/></td>
 		                        <td>Antecedência da Validade</td>
-		                        <td><input name="date4" type="text" style="float:left; width:60px;" id="date4" /></td>
+		                        <td><input name="parametrosDistribuidor.antecedenciaValidadeValor" type="text" style="float:left; width:60px;" value="${parametrosDistribuidor.antecedenciaValidadeValor}" id="antecedenciaValidadeValor" /></td>
 		                 </tr>
 		                 <tr>
-		                   <td><input name="input37" type="checkbox" value="" /></td>
-		                   <td>Indicador  reajuste de caução líquida</td>
-		                   <td><input name="" type="text" style="width:60px;" /></td>
+		                   <td><input name="parametrosDistribuidor.indicadorReajusteCaucaoLiquida" id="indicadorReajusteCaucaoLiquida" type="checkbox" ${parametrosDistribuidor.indicadorReajusteCaucaoLiquida}/></td>
+		                   <td>Indicador reajuste de caução líquida</td>
+		                   <td><input name="parametrosDistribuidor.indicadorReajusteCaucaoLiquidaValor" id="indicadorReajusteCaucaoLiquidaValor" type="text" style="width:60px;" value="${parametrosDistribuidor.indicadorReajusteCaucaoLiquidaValor}" /></td>
 		                        <td>&nbsp;</td>
 		                        <td>&nbsp;</td>
 		                        <td>&nbsp;</td>
@@ -675,10 +761,10 @@ $(document).ready(function() {
 		               	<legend>Negociação de Dividas</legend>
 		                  <table width="393" border="0" cellspacing="1" cellpadding="1">
 		                      <tr>
-		                        <td colspan="2"><label>Sugere suspensão quando atingir</label><input name="input45" type="text" style="width:30px; " /> 
+		                        <td colspan="2"><label>Sugere suspensão quando atingir</label><input name="parametrosDistribuidor.sugereSuspensaoQuandoAtingirBoletos" id="sugereSuspensaoQuandoAtingirBoletos" value="${parametrosDistribuidor.sugereSuspensaoQuandoAtingirBoletos}" type="text" style="width:30px; " /> 
 		                        &nbsp;boletos 
 		                        ou R$
-		                          <input name="input46" type="text" style="width:60px; text-align:right;" value="0,00" />
+		                          <input name="parametrosDistribuidor.sugereSuspensaoQuandoAtingirReais" id="sugereSuspensaoQuandoAtingirReais" value="${parametrosDistribuidor.sugereSuspensaoQuandoAtingirReais}" type="text" style="width:60px; text-align:right;" value="0,00" />
 		                        </td>
 		                      </tr>
 		                      <tr>
@@ -686,15 +772,15 @@ $(document).ready(function() {
 		                      </tr>
 		                      <tr>
 		                        <td width="259"><label>Parcelamento de Divida:</label></td>
-		                        <td width="127"><input name="input24" type="checkbox" value="" /></td>
+		                        <td width="127"><input name="parametrosDistribuidor.parcelamentoDividas" id="parcelamentoDividas" type="checkbox" ${parametrosDistribuidor.parcelamentoDividas}/></td>
 		                      </tr>
 		                      <tr>
 		                        <td><label>Negociação em até x parcelas:</label></td>
-		                        <td><input name="input47" type="text" style="width:40px;" /></td>
+		                        <td><input name="parametrosDistribuidor.negociacaoAteParcelas" id="negociacaoAteParcelas" type="text" style="width:40px;" value="${parametrosDistribuidor.negociacaoAteParcelas}" /></td>
 		                      </tr>
 		                      <tr>
 		                        <td><label>Permite pagamento de dividas divergente:</label></td>
-		                        <td><input name="input25" type="checkbox" value="" /></td>
+		                        <td><input name="parametrosDistribuidor.permitePagamentoDividasDivergentes" id="permitePagamentoDividasDivergentes" type="checkbox" ${parametrosDistribuidor.permitePagamentoDividasDivergentes} /></td>
 		                      </tr>
 		                  </table>
                 </fieldset>
@@ -704,7 +790,7 @@ $(document).ready(function() {
 		               	<legend>Aprovação</legend>
 		                    <table width="450" border="0" cellspacing="0" cellpadding="0">
 		                      <tr>
-		                        <td width="23"><input name="input28" type="checkbox" value="" /></td>
+		                        <td width="23"><input name="parametrosDistribuidor.utilizaControleAprovacao" id="utilizaControleAprovacao" type="checkbox" ${parametrosDistribuidor.utilizaControleAprovacao} /></td>
 		                        <td width="190">Utiliza Controle de Aprovação?</td>
 		                        <td width="20">&nbsp;</td>
 		                        <td width="178">&nbsp;</td>
@@ -721,23 +807,23 @@ $(document).ready(function() {
 		                        <td colspan="6">Para as Funcionalidades:</td>
 		                      </tr>
 		                      <tr>
-		                        <td width="20"><input name="input8" type="checkbox" value="" /></td>
+		                        <td width="20"><input name="parametrosDistribuidor.paraDebitosCreditos" id="paraDebitosCreditos" type="checkbox" ${parametrosDistribuidor.paraDebitosCreditos} /></td>
 		                        <td width="143">Débitos e Créditos</td>
-		                        <td width="20"><input name="input7" type="checkbox" value="" /></td>
+		                        <td width="20"><input name="parametrosDistribuidor.negociacao" id="negociacao" type="checkbox" ${parametrosDistribuidor.negociacao} /></td>
 		                        <td width="133">Negociação</td>
-		                        <td width="20"><input name="input11" type="checkbox" value="" /></td>
+		                        <td width="20"><input name="parametrosDistribuidor.ajusteEstoque" id="ajusteEstoque" type="checkbox" ${parametrosDistribuidor.ajusteEstoque} /></td>
 		                        <td width="115">Ajuste de Estoque</td>
 		                      </tr>
 		                      <tr>
-		                        <td><input name="input10" type="checkbox" value="" /></td>
+		                        <td><input name="parametrosDistribuidor.postergacaoCobranca" type="checkbox" id="postergacaoCobranca" ${parametrosDistribuidor.postergacaoCobranca} /></td>
 		                        <td>Postergação de Cobrança</td>
-		                        <td><input name="input" type="checkbox" value="" /></td>
+		                        <td><input name="parametrosDistribuidor.devolucaoFornecedor" type="checkbox" id="devolucaoFornecedor" ${parametrosDistribuidor.devolucaoFornecedor} /></td>
 		                        <td>Devolução Fornecedor</td>
-		                        <td><input name="input44" type="checkbox" value="" /></td>
+		                        <td><input name="parametrosDistribuidor.recibo" type="checkbox" id="recibo" ${parametrosDistribuidor.recibo} /></td>
 		                        <td>Recibo</td>
 		                      </tr>
 		                      <tr>
-		                        <td><input name="input9" type="checkbox" value="" onchange="mostra_funcionalidades();" /></td>
+		                        <td><input name="parametrosDistribuidor.faltasSobras" type="checkbox" id="faltasSobras" ${parametrosDistribuidor.faltasSobras} onchange="mostra_funcionalidades();" /></td>
 		                        <td>Faltas e Sobras</td>
 		                        <td>&nbsp;</td>
 		                        <td>&nbsp;</td>
@@ -753,15 +839,15 @@ $(document).ready(function() {
 		                        <td colspan="4">Para as Funcionalidades:</td>
 		                      </tr>
 		                      <tr>
-		                        <td width="23"><input name="input6" type="checkbox" value="" /></td>
+		                        <td width="23"><input name="parametrosDistribuidor.aprovacaoFaltaDe" type="checkbox" id="aprovacaoFaltaDe" ${parametrosDistribuidor.aprovacaoFaltaDe} /></td>
 		                        <td width="123">Falta de</td>
-		                        <td width="20"><input name="input3" type="checkbox" value="" /></td>
+		                        <td width="20"><input name="parametrosDistribuidor.aprovacaoSobraDe" type="checkbox" id="aprovacaoSobraDe" ${parametrosDistribuidor.aprovacaoSobraDe} /></td>
 		                        <td width="108">Sobra de</td>
 		                      </tr>
 		                      <tr>
-		                        <td><input name="input30" type="checkbox" value="" /></td>
+		                        <td><input name="parametrosDistribuidor.aprovacaoFaltaEm" type="checkbox" id="aprovacaoFaltaEm" ${parametrosDistribuidor.aprovacaoFaltaEm} /></td>
 		                        <td>Falta em</td>
-		                        <td><input name="input5" type="checkbox" value="" /></td>
+		                        <td><input name="parametrosDistribuidor.aprovacaoSobraEm" type="checkbox" id="aprovacaoSobraEm" ${parametrosDistribuidor.aprovacaoSobraEm} /></td>
 		                        <td>Sobra em</td>
 		                      </tr>
 		                      <tr>
@@ -776,8 +862,8 @@ $(document).ready(function() {
 		              <legend>Prazo de Follow up</legend>
 		           	  <table width="280" border="0" cellspacing="0" cellpadding="0">
 		                <tr>
-		                  <td width="240">Aviso préveio para vencímento de contratos (dias)</td>
-		                  <td width="40"><input name="dateCaucao2" type="text" id="dateCaucao2" style="float:left; width:40px;" value="15" /></td>
+		                  <td width="240">Aviso prévio para vencímento de contratos (dias)</td>
+		                  <td width="40"><input name="parametrosDistribuidor.prazoFollowUp" type="text" id="prazoFollowUp" style="float:left; width:40px;" value="${parametrosDistribuidor.prazoFollowUp}" /></td>
 		                </tr>
 		              </table>
 		              <table width="274" border="0" cellspacing="0" cellpadding="0" class="funcionalidades" style="display:none;">
@@ -788,15 +874,15 @@ $(document).ready(function() {
 		                        <td colspan="4">Para as Funcionalidades:</td>
 		                      </tr>
 		                      <tr>
-		                        <td width="23"><input name="input6" type="checkbox" value="" /></td>
+		                        <td width="23"><input name="parametrosDistribuidor.prazoFollowUpFaltaDe" type="checkbox" id="prazoFollowUpFaltaDe" ${parametrosDistribuidor.prazoFollowUpFaltaDe} /></td>
 		                        <td width="123">Falta de</td>
-		                        <td width="20"><input name="input3" type="checkbox" value="" /></td>
+		                        <td width="20"><input name="parametrosDistribuidor.prazoFollowUpSobraDe" type="checkbox" id="prazoFollowUpSobraDe" ${parametrosDistribuidor.prazoFollowUpSobraDe} /></td>
 		                        <td width="108">Sobra de</td>
 		                      </tr>
 		                      <tr>
-		                        <td><input name="input30" type="checkbox" value="" /></td>
+		                        <td><input name="parametrosDistribuidor.prazoFollowUpFaltaEm" type="checkbox" id="prazoFollowUpFaltaEm" ${parametrosDistribuidor.prazoFollowUpFaltaEm} /></td>
 		                        <td>Falta em</td>
-		                        <td><input name="input5" type="checkbox" value="" /></td>
+		                        <td><input name="parametrosDistribuidor.prazoFollowUpSobraEm" type="checkbox" id="prazoFollowUpSobraEm" ${parametrosDistribuidor.prazoFollowUpSobraEm} /></td>
 		                        <td>Sobra em</td>
 		                      </tr>
 		                      <tr>
@@ -812,7 +898,7 @@ $(document).ready(function() {
 		           	  <table width="280" border="0" cellspacing="0" cellpadding="0">
 		                <tr>
 		                  <td width="240">Aviso prévio para vencimento de garantias (dias).</td>
-		                  <td width="40"><input name="dateCaucao2" type="text" id="dateCaucao2" style="float:left; width:40px;" value="15" /></td>
+		                  <td width="40"><input name="parametrosDistribuidor.prazoAvisoPrevioValidadeGarantia" type="text" id="prazoAvisoPrevioValidadeGarantia" value="${parametrosDistribuidor.prazoAvisoPrevioValidadeGarantia}" style="float:left; width:40px;" value="15" /></td>
 		                </tr>
 		              </table>
 		              <table width="274" border="0" cellspacing="0" cellpadding="0" class="funcionalidades" style="display:none;">
@@ -823,15 +909,15 @@ $(document).ready(function() {
 	                        <td colspan="4">Para as Funcionalidades:</td>
 	                      </tr>
 	                      <tr>
-	                        <td width="23"><input name="input6" type="checkbox" value="" /></td>
+	                        <td width="23"><input name="parametrosDistribuidor.prazoAvisoPrevioValidadeGarantiaFaltaDe" type="checkbox" id="prazoAvisoPrevioValidadeGarantiaFaltaDe" ${parametrosDistribuidor.prazoAvisoPrevioValidadeGarantiaFaltaDe} /></td>
 	                        <td width="123">Falta de</td>
-	                        <td width="20"><input name="input3" type="checkbox" value="" /></td>
+	                        <td width="20"><input name="parametrosDistribuidor.prazoAvisoPrevioValidadeGarantiaSobraDe" type="checkbox" id="prazoAvisoPrevioValidadeGarantiaSobraDe" ${parametrosDistribuidor.prazoAvisoPrevioValidadeGarantiaSobraDe} /></td>
 	                        <td width="108">Sobra de</td>
 	                      </tr>
 	                      <tr>
-	                        <td><input name="input30" type="checkbox" value="" /></td>
+	                        <td><input name="parametrosDistribuidor.prazoAvisoPrevioValidadeGarantiaFaltaEm" type="checkbox" id="prazoAvisoPrevioValidadeGarantiaFaltaEm" ${parametrosDistribuidor.prazoAvisoPrevioValidadeGarantiaFaltaEm} /></td>
 	                        <td>Falta em</td>
-	                        <td><input name="input5" type="checkbox" value="" /></td>
+	                        <td><input name="parametrosDistribuidor.prazoAvisoPrevioValidadeGarantiaSobraEm" type="checkbox" id="prazoAvisoPrevioValidadeGarantiaSobraEm" ${parametrosDistribuidor.prazoAvisoPrevioValidadeGarantiaSobraEm} /></td>
 	                        <td>Sobra em</td>
 	                      </tr>
 	                      <tr>

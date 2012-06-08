@@ -30,7 +30,7 @@ import br.com.caelum.vraptor.view.Results;
 @Resource
 @Path("/administracao/parametrosDistribuidor")
 public class ParametrosDistribuidorController {
-
+	
 	@Autowired
 	private Result result;
 	
