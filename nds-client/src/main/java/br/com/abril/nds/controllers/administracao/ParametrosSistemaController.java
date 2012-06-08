@@ -12,7 +12,6 @@ import br.com.abril.nds.service.ParametroSistemaService;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.UfEnum;
 import br.com.abril.nds.util.Util;
-
 import br.com.caelum.stella.validation.CNPJValidator;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
@@ -94,8 +93,8 @@ public class ParametrosSistemaController {
 		
 		// Validar imagem:
 		if (imgLogoSistema != null) {
-			String fileName = imgLogoSistema.getFileName().toLowerCase();
-			if (!fileName.matches("([A-Za-z0-9]|_|.|-)+\\.(png|gif)")) {
+			String contentType = imgLogoSistema.getContentType().toLowerCase();
+			if (!contentType.matches("image/(gif|png)")) {
 				throw new ValidacaoException(TipoMensagem.ERROR, "Por favor, selecione um formato de arquivo 'gif' ou 'png'!");
 			}
 		}

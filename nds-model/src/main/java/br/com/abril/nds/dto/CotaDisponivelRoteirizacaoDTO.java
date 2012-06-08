@@ -9,6 +9,8 @@ public class CotaDisponivelRoteirizacaoDTO  implements Serializable{
 	 */
 	private static final long serialVersionUID = 8162310820661893456L;
 
+	private Long idRoteirizacao;
+	
 	private Long idPontoVenda;
 	
 	private String pontoVenda;
@@ -77,6 +79,14 @@ public class CotaDisponivelRoteirizacaoDTO  implements Serializable{
 
 	public void setOrdem(Integer ordem) {
 		this.ordem = ordem;
+	}
+
+	public Long getIdRoteirizacao() {
+		return idRoteirizacao;
+	}
+
+	public void setIdRoteirizacao(Long idRoteirizacao) {
+		this.idRoteirizacao = idRoteirizacao;
 	}
 
 

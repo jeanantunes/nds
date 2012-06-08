@@ -276,32 +276,13 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepository<ProdutoEdica
 		return null;
 	}
 
-	/**
-	 * Pesquisa as Edições já cadastradas.<br>
-	 * Possui como opções de filtro:<br>
-	 * <ul>
-	 * <li>Código do Produto;</li>
-	 * <li>Nome do Produto;</li>
-	 * <li>Data de Lançamento;</li>
-	 * <li>Situação do Lançamento;</li>
-	 * <li>Código de Barra da Edição;</li>
-	 * <li>Contém brinde;</li>
-	 * </ul>
-	 * 
-	 * @param dto
-	 * @param sortorder
-	 * @param sortname
-	 * @param initialResult
-	 * @param maxResults
-	 * 
-	 * @return
-	 */
+	@Override
 	@SuppressWarnings("unchecked")
 	public List<ProdutoEdicaoDTO> pesquisarEdicoes(ProdutoEdicaoDTO dto,
 			String sortorder, String sortname, int initialResult, int maxResults) {
 		
 		StringBuilder hql = new StringBuilder();
-		hql.append(" SELECT pr.codigo as codigoProduto, pr.descricao as nomeProduto, ");
+		hql.append(" SELECT pe.id as id, pr.codigo as codigoProduto, pr.descricao as nomeProduto, ");
 		hql.append("        pe.numeroEdicao as numeroEdicao, jr.razaoSocial as nomeFornecedor, ");
 		hql.append("        ln.tipoLancamento as statusLancamento, ln.status as statusSituacao, ");
 		hql.append("        pe.possuiBrinde as temBrinde ");
@@ -320,13 +301,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepository<ProdutoEdica
 		}
 	}
 	
-	/**
-	 * Obtém a quantidade de edições cadastradas filtradas pelos critérios 
-	 * escolhidos pelo usuário.
-	 * 
-	 * @param dto
-	 * @return
-	 */
+	@Override
 	public Long countPesquisarEdicoes(ProdutoEdicaoDTO dto) {
 		
 		StringBuilder hql = new StringBuilder();
@@ -343,12 +318,23 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepository<ProdutoEdica
 	}
 	
 	/**
-	 * Corpo com a consulta HQL para pesquisar as edições já cadatradas.
+	 * Corpo com a consulta HQL para pesquisar e ordenar as edições já 
+	 * cadatradas.<br>
+	 * Possui como opções de filtro:<br>
+	 * <ul>
+	 * <li>Código do Produto;</li>
+	 * <li>Nome do Produto;</li>
+	 * <li>Data de Lançamento;</li>
+	 * <li>Situação do Lançamento;</li>
+	 * <li>Código de Barra da Edição;</li>
+	 * <li>Contém brinde;</li>
+	 * </ul>
 	 * 
 	 * @param hql
 	 * @param dto
 	 * @param sortname
 	 * @param sortorder
+	 * 
 	 * @return
 	 */
 	private Query queryBodyPesquisarEdicoes(StringBuilder hql, ProdutoEdicaoDTO dto, String sortname, String sortorder) {
@@ -409,25 +395,18 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepository<ProdutoEdica
 		return query;
 	}
 	
-	/**
-	 * Pesquisa as últimas edições cadastradas, .<br>
-	 * 
-	 * @param dto
-	 * @param maxResults
-	 * 
-	 * @return
-	 */
+	@Override
 	@SuppressWarnings("unchecked")
 	public List<ProdutoEdicaoDTO> pesquisarUltimasEdicoes(ProdutoEdicaoDTO dto,
-			int maxResults) {
+			int qtdEdicoes) {
 		
 		StringBuilder hql = new StringBuilder();
 		hql.append(" SELECT pe ");
 		
 		// Corpo da consulta com os filtros:
-		Query query = this.queryBodyPesquisarEdicoes(hql, dto, "codigoProduto", "DESC");
+		Query query = this.queryBodyPesquisarEdicoes(hql, dto, "numeroEdicao", "DESC");
 		
-		query.setMaxResults(maxResults);
+		query.setMaxResults(qtdEdicoes);
 		
 		try {
 			return query.list();
@@ -436,18 +415,12 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepository<ProdutoEdica
 		}
 	}
 	
-	/**
-	 * Verifica se existe alguma Edição já cadastrada para o produto.
-	 * 
-	 * @param produto
-	 * @return
-	 */
+	@Override
 	public boolean hasProdutoEdicao(Produto produto) {
 		
 		String hql = 
-				"SELECT count(pe.id) FROM ProdutoEdicao pe WHERE pe.produto = produto ";
+				"SELECT count(pe.id) FROM ProdutoEdicao pe WHERE pe.produto = :produto ";
 		
-		// Corpo da consulta com os filtros:
 		Query query = this.getSession().createQuery(hql);
 		query.setParameter("produto", produto);
 		
@@ -458,6 +431,61 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepository<ProdutoEdica
 			throw new RuntimeException(e);
 		}
 	}
+
+	@Override
+	public boolean isProdutoEdicaoJaPublicada(Long idProdutoEdicao) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" SELECT CASE WHEN (ln.dataLancamentoDistribuidor > sysdate()) THEN false ELSE true END ");
+		hql.append("   FROM Lancamento ln ");
+		hql.append("  WHERE ln.dataLancamentoDistribuidor = ");
+		hql.append("        (SELECT MIN(lnMinDate.dataLancamentoDistribuidor) ");
+		hql.append("           FROM Lancamento lnMinDate ");
+		hql.append("          WHERE lnMinDate.produtoEdicao.id = :idProdutoEdicao ) ");
+		hql.append("    AND ln.produtoEdicao.id = :idProdutoEdicao ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setLong("idProdutoEdicao", 
+				idProdutoEdicao == null ? Long.valueOf(0) : idProdutoEdicao);
+		
+		Boolean isPublicado = (Boolean) query.uniqueResult(); 
+		return (isPublicado == null ? false : isPublicado.booleanValue());
+	}
 	
+	@Override
+	public boolean isNumeroEdicaoCadastrada(String codigoProduto, 
+			Long numeroEdicao, Long idProdutoEdicao) {
+	
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append("SELECT COUNT(pe.id) ");
+		hql.append("  FROM ProdutoEdicao pe JOIN pe.produto as pr ");
+		hql.append(" WHERE pe.numeroEdicao = :numeroEdicao ");
+		hql.append("   AND pe.id != :idProdutoEdicao ");
+		hql.append("   AND pr.codigo = :codigoProduto ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setString("codigoProduto", codigoProduto);
+		query.setLong("numeroEdicao", numeroEdicao);
+		query.setLong("idProdutoEdicao", 
+				idProdutoEdicao == null ? Long.valueOf(0) : idProdutoEdicao);
+		
+		Long qtd = (Long) query.uniqueResult();
+		return qtd.intValue() > 0 ? true : false;
+	}
+	
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<ProdutoEdicao> obterProdutoEdicaoPorCodigoDeBarra(String codigoDeBarras,
+			Long idProdutoEdicao) {
+		
+		Criteria criteria = getSession().createCriteria(ProdutoEdicao.class);
+		criteria.add(Restrictions.eq("codigoDeBarras", codigoDeBarras));
+		criteria.add(Restrictions.ne("id", 
+				idProdutoEdicao == null ? Long.valueOf(0) : idProdutoEdicao));
+		
+		return criteria.list();
+	}
 }
  

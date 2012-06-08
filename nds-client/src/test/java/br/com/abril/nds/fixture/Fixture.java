@@ -437,6 +437,7 @@ public class Fixture {
 		produtoEdicao.setExpectativaVenda(expectativaVenda);
 		produtoEdicao.setParcial(parcial);
 		
+		produtoEdicao.setOrigemInterface(Boolean.TRUE);
 		return produtoEdicao;
 	}
 	
