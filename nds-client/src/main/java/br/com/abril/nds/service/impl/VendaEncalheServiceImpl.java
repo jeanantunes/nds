@@ -6,12 +6,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperRunManager;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import br.com.abril.nds.dto.SlipVendaEncalheDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.estoque.VendaEncalhe;
@@ -167,7 +170,6 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 		return relatorio;
 	}
  
-	
 	
 	
 	/**
