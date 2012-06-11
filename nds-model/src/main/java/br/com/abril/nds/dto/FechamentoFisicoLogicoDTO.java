@@ -2,21 +2,47 @@ package br.com.abril.nds.dto;
 
 import java.math.BigDecimal;
 
+import br.com.abril.nds.util.CurrencyUtil;
+
 public class FechamentoFisicoLogicoDTO {
 
-	private Long codigo;
+	private String codigo;
 	private String produto;
 	private Long edicao;
+	private Long produtoEdicao;
 	private BigDecimal precoCapa;
-	private Long exemplaresDevolucao;
+	private BigDecimal exemplaresDevolucao;
 	private BigDecimal total;
 	private Long fisico;
-	private Long diferenca;
+	private Long diferenca = Long.valueOf(0);
 	
-	public Long getCodigo() {
+	private String precoCapaFormatado;
+	private String exemplaresDevolucaoFormatado;
+	private String totalFormatado;
+	private String replicar = "";
+	
+	
+	public String getReplicar() {
+		return replicar;
+	}
+
+	public String getPrecoCapaFormatado() {
+		return this.precoCapaFormatado;
+	}
+	
+	public String getExemplaresDevolucaoFormatado() {
+		return this.exemplaresDevolucaoFormatado;
+	}
+	
+	public String getTotalFormatado() {
+		return this.totalFormatado;
+	}
+	
+	
+	public String getCodigo() {
 		return codigo;
 	}
-	public void setCodigo(Long codigo) {
+	public void setCodigo(String codigo) {
 		this.codigo = codigo;
 	}
 	public String getProduto() {
@@ -31,23 +57,32 @@ public class FechamentoFisicoLogicoDTO {
 	public void setEdicao(Long edicao) {
 		this.edicao = edicao;
 	}
+	public Long getProdutoEdicao() {
+		return produtoEdicao;
+	}
+	public void setProdutoEdicao(Long produtoEdicao) {
+		this.produtoEdicao = produtoEdicao;
+	}
 	public BigDecimal getPrecoCapa() {
 		return precoCapa;
 	}
 	public void setPrecoCapa(BigDecimal precoCapa) {
 		this.precoCapa = precoCapa;
+		this.precoCapaFormatado = CurrencyUtil.formatarValor(this.precoCapa); 
 	}
-	public Long getExemplaresDevolucao() {
+	public BigDecimal getExemplaresDevolucao() {
 		return exemplaresDevolucao;
 	}
-	public void setExemplaresDevolucao(Long exemplaresDevolucao) {
+	public void setExemplaresDevolucao(BigDecimal exemplaresDevolucao) {
 		this.exemplaresDevolucao = exemplaresDevolucao;
+		this.exemplaresDevolucaoFormatado = CurrencyUtil.formatarValorTruncado(this.exemplaresDevolucao).replaceAll("\\D", "");
 	}
 	public BigDecimal getTotal() {
 		return total;
 	}
 	public void setTotal(BigDecimal total) {
 		this.total = total;
+		this.totalFormatado = CurrencyUtil.formatarValor(this.total); 
 	}
 	public Long getFisico() {
 		return fisico;

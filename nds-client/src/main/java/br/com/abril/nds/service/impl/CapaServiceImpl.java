@@ -22,6 +22,9 @@ import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.service.CapaService;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+
 /**
  * @see CapaService
  * @author Diego Fernandes
@@ -133,6 +136,7 @@ public class CapaServiceImpl implements CapaService {
 	public void saveCapa(String codigoProduto, long numeroEdicao,
 			String contentType, InputStream inputStream) {		
 		String id = toId(codigoProduto, numeroEdicao);
+		
 		couchDbClient.saveAttachment(inputStream, id + DEFAULT_EXTENSION, contentType, toId(codigoProduto, numeroEdicao),null);
 	}
 	
@@ -160,6 +164,21 @@ public class CapaServiceImpl implements CapaService {
 					+ " não encontrado.");
 		}
 		return produtoEdicao;
+	}
+	
+	@Override
+	@Transactional
+	public void deleteCapa(long idProdutoEdicao) {
+		
+		ProdutoEdicao pe = getProdutoEdicao(idProdutoEdicao);
+		String id = toId(pe.getProduto().getCodigo(), pe.getNumeroEdicao());
+		
+		// Obter o atributo 'rev':
+		JsonObject json = couchDbClient.find(JsonObject.class, id);
+		JsonElement _rev = json.get("_rev");
+		String rev = _rev == null ? "" : _rev.toString();
+		
+		this.couchDbClient.remove(id, rev);
 	}
 
 }

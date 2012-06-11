@@ -131,7 +131,8 @@ public class FileExporter {
 	public enum FileType {
 		
 		PDF(".pdf", "application/pdf"),
-		XLS(".xls", "application/vnd.ms-excel");
+		XLS(".xls", "application/vnd.ms-excel"),
+		XML(".xml", "text/xml");
 		
 		private String extension;
 		

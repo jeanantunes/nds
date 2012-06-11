@@ -437,6 +437,7 @@ public class Fixture {
 		produtoEdicao.setExpectativaVenda(expectativaVenda);
 		produtoEdicao.setParcial(parcial);
 		
+		produtoEdicao.setOrigemInterface(Boolean.TRUE);
 		return produtoEdicao;
 	}
 	
@@ -793,6 +794,38 @@ public class Fixture {
 	
 		return tipoMovimento;
 	}
+
+	public static TipoMovimentoEstoque tipoMovimentoRecebimentoEncalheJuramentado() {
+		TipoMovimentoEstoque tipoMovimento = new TipoMovimentoEstoque();
+		tipoMovimento.setAprovacaoAutomatica(true);
+		tipoMovimento.setDescricao("Recebimento Encalhe Juramentado");
+		tipoMovimento.setIncideDivida(true);
+		tipoMovimento.setGrupoMovimentoEstoque(GrupoMovimentoEstoque.RECEBIMENTO_ENCALHE_JURAMENTADO);
+	
+		return tipoMovimento;
+	}
+
+	public static TipoMovimentoEstoque tipoMovimentoRecebimentoEncalhe() {
+		TipoMovimentoEstoque tipoMovimento = new TipoMovimentoEstoque();
+		tipoMovimento.setAprovacaoAutomatica(true);
+		tipoMovimento.setDescricao("Recebimento Encalhe");
+		tipoMovimento.setIncideDivida(true);
+		tipoMovimento.setGrupoMovimentoEstoque(GrupoMovimentoEstoque.RECEBIMENTO_ENCALHE);
+	
+		return tipoMovimento;
+	}
+
+	public static TipoMovimentoEstoque tipoMovimentoSuplementarEnvioEncalheAnteriroProgramacao() {
+		TipoMovimentoEstoque tipoMovimento = new TipoMovimentoEstoque();
+		tipoMovimento.setAprovacaoAutomatica(true);
+		tipoMovimento.setDescricao("Suplementar Envio de Encalhe Anterior Programacao");
+		tipoMovimento.setIncideDivida(true);
+		tipoMovimento.setGrupoMovimentoEstoque(GrupoMovimentoEstoque.SUPLEMENTAR_ENVIO_ENCALHE_ANTERIOR_PROGRAMACAO);
+	
+		return tipoMovimento;
+	}
+
+	
 	
 	public static TipoMovimentoFinanceiro tipoMovimentoFinanceiroCompraEncalhe() {
 		TipoMovimentoFinanceiro tipoMovimento = new TipoMovimentoFinanceiro();
@@ -834,6 +867,14 @@ public class Fixture {
 		TipoMovimentoFinanceiro tipoMovimento = new TipoMovimentoFinanceiro();
 		tipoMovimento.setAprovacaoAutomatica(true);
 		tipoMovimento.setDescricao("Débito");
+		tipoMovimento.setGrupoMovimentoFinaceiro(GrupoMovimentoFinaceiro.DEBITO);
+		return tipoMovimento;
+	}
+	
+	public static TipoMovimentoFinanceiro tipoMovimentoFinanceiroDebitoNA() {
+		TipoMovimentoFinanceiro tipoMovimento = new TipoMovimentoFinanceiro();
+		tipoMovimento.setAprovacaoAutomatica(true);
+		tipoMovimento.setDescricao("Débito NA");
 		tipoMovimento.setGrupoMovimentoFinaceiro(GrupoMovimentoFinaceiro.DEBITO);
 		return tipoMovimento;
 	}
@@ -1591,13 +1632,19 @@ public class Fixture {
 	public static ConferenciaEncalhe conferenciaEncalhe(
 			MovimentoEstoqueCota movimentoEstoqueCota,
 			ChamadaEncalheCota chamadaEncalheCota,
-			ControleConferenciaEncalheCota controleConferenciaEncalheCota) {
+			ControleConferenciaEncalheCota controleConferenciaEncalheCota,
+			Date data, BigDecimal qtdeInformada, BigDecimal qtde,
+			ProdutoEdicao produtoEdicao) {
 		
 		ConferenciaEncalhe conferenciaEncalhe = new ConferenciaEncalhe();
 		
 		conferenciaEncalhe.setMovimentoEstoqueCota(movimentoEstoqueCota);
 		conferenciaEncalhe.setChamadaEncalheCota(chamadaEncalheCota);
 		conferenciaEncalhe.setControleConferenciaEncalheCota(controleConferenciaEncalheCota);
+		conferenciaEncalhe.setData(data);
+		conferenciaEncalhe.setQtdeInformada(qtdeInformada);
+		conferenciaEncalhe.setQtde(qtde);
+		conferenciaEncalhe.setProdutoEdicao(produtoEdicao);
 		
 		return conferenciaEncalhe;
 		

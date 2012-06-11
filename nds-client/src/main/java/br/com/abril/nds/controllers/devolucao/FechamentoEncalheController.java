@@ -1,11 +1,14 @@
 package br.com.abril.nds.controllers.devolucao;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.dto.CotaAusenteEncalheDTO;
+import br.com.abril.nds.dto.FechamentoFisicoLogicoDTO;
+import br.com.abril.nds.dto.filtro.FiltroFechamentoEncalheDTO;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
@@ -57,14 +60,40 @@ public class FechamentoEncalheController {
 		result.include("listaBoxes", listaBoxes);
 	}
 	
+	
 	@Path("/pesquisar")
-	public void pesquisar(String dataEncalhe, Long idFornecedor, Long idBox,
+	public void pesquisar(String dataEncalhe, Long fornecedorId, Long boxId,
 			String sortname, String sortorder, int rp, int page) {
 		
-		Date data = DateUtil.parseDataPTBR(dataEncalhe);
+		FiltroFechamentoEncalheDTO filtro = new FiltroFechamentoEncalheDTO();
+		filtro.setDataEncalhe(DateUtil.parseDataPTBR(dataEncalhe));
+		filtro.setFornecedorId(fornecedorId);
+		filtro.setBoxId(boxId);
 		
+		List<FechamentoFisicoLogicoDTO> listaEncalhe = fechamentoEncalheService.buscarFechamentoEncalhe(filtro, sortorder, sortname, page, rp);
 		
-		List listaEncalhe = null;
+		result.use(FlexiGridJson.class).from(listaEncalhe).total(listaEncalhe.size()).page(page).serialize();
+	}
+	
+	
+	@Path("/salvar")
+	public void salvar(String dataEncalhe, Long fornecedorId, Long boxId, String fisico,
+			String sortname, String sortorder, int rp, int page) {
+		
+		String[] valoresFisico = fisico.split(",");
+		ArrayList<Long> arrayFisico = new ArrayList<Long>();
+		for (String f : valoresFisico) {
+			arrayFisico.add(f == "" ? null : Long.valueOf(f));
+		}
+	
+		FiltroFechamentoEncalheDTO filtro = new FiltroFechamentoEncalheDTO();
+		filtro.setDataEncalhe(DateUtil.parseDataPTBR(dataEncalhe));
+		filtro.setFornecedorId(fornecedorId);
+		filtro.setBoxId(boxId);
+		filtro.setFisico(arrayFisico);
+		
+		List<FechamentoFisicoLogicoDTO> listaEncalhe = fechamentoEncalheService.salvarFechamentoEncalhe(filtro, sortorder, sortname, page, rp);
+		
 		result.use(FlexiGridJson.class).from(listaEncalhe).total(listaEncalhe.size()).page(page).serialize();
 	}
 	

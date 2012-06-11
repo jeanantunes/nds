@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.hibernate.criterion.MatchMode;
 import br.com.abril.nds.dto.CotaDisponivelRoteirizacaoDTO;
+import br.com.abril.nds.model.LogBairro;
+import br.com.abril.nds.model.LogLocalidade;
 import br.com.abril.nds.model.cadastro.Rota;
 import br.com.abril.nds.model.cadastro.Roteirizacao;
 import br.com.abril.nds.model.cadastro.Roteiro;
@@ -49,11 +51,33 @@ public interface RoteirizacaoService {
 	
 	List<CotaDisponivelRoteirizacaoDTO> buscarRoterizacaoPorRota(Long rotaId);
 	
-	List<CotaDisponivelRoteirizacaoDTO> buscarPvsPorCota(Integer numeroCota);
+	List<CotaDisponivelRoteirizacaoDTO> buscarPvsPorCota(Integer numeroCota,  Long rotaId,  Long roteiroId );
 	
 	void gravaRoteirizacao(List<CotaDisponivelRoteirizacaoDTO> lista,  Long idRota);
+
+	/**
+	 * Obtém rotas por número da cota
+	 * 
+	 * @param numeroCota - Número da Cota
+	 * @return Lista de Rotas
+	 */
+	List<Rota> obterRotasPorCota(Integer numeroCota);
 	
 	Integer buscarMaiorOrdemRoteiro();
 	
 	Integer buscarMaiorOrdemRota(Long idRoteiro);
+	
+	void transferirRoteirizacao(List<Long> roteirizacaoId,Rota rota);
+	
+	void excluirRoteirizacao(List<Long> roteirizacaoId);
+	
+	List<CotaDisponivelRoteirizacaoDTO> buscarRoteirizacaoPorEndereco (String CEP, String uf, String municipio, String bairro,  Long rotaId ,  Long roteiroId);
+	
+	List<String> buscarUF();
+	
+	List<LogLocalidade> buscarMunicipioPorUf(String uf);
+	
+	List<LogBairro> buscarBairroPorMunicipio(Long municipio, String uf);
+
 }
+	
