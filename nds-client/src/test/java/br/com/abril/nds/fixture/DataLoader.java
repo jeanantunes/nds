@@ -192,6 +192,7 @@ public class DataLoader {
 
 	private static TipoMovimentoFinanceiro tipoMovimentoFinanceiroCredito;
 	private static TipoMovimentoFinanceiro tipoMovimentoFinanceiroDebito;
+	private static TipoMovimentoFinanceiro tipoMovimentoFinanceiroDebitoNA;
 	private static TipoMovimentoFinanceiro tipoMovimentoFinanceiroRecebimentoReparte;
 
 	private static TipoMovimentoFinanceiro tipoMovimentoFinanceiroJuros;
@@ -1808,6 +1809,18 @@ public class DataLoader {
 		rota = Fixture.rota("006", "Rota 006");
 		rota.setRoteiro(roteiro);
 		session.save(rota);
+		
+		Roteiro roteiroTCD = Fixture.criarRoteiro("TCD",box2,TipoRoteiro.NORMAL);
+		session.save(roteiroTCD);
+		
+		Rota rota10 = Fixture.rota("001", "Rota 001");
+		rota10.setRoteiro(roteiroTCD);
+		session.save(rota10);
+		
+		
+		roteirizacao = Fixture.criarRoteirizacao(pdvGuilherme, rota10,1);
+		session.save(roteirizacao);
+		
 	}
 	
 	
@@ -2427,6 +2440,11 @@ public class DataLoader {
 		parametroSistema = 
 			Fixture.parametroSistema(TipoParametroSistema.NUMERO_DIAS_PERMITIDO_LANCAMENTO_SOBRA_DE, "7");
 
+		session.save(parametroSistema);
+		
+		parametroSistema =
+				Fixture.parametroSistema(TipoParametroSistema.PATH_INTERFACE_NFE_IMPORTACAO, "C:/notas/");
+		
 		session.save(parametroSistema);
 	}
 
@@ -3810,6 +3828,7 @@ public class DataLoader {
 		
 		tipoMovimentoFinanceiroCredito = Fixture.tipoMovimentoFinanceiroCredito();
 		tipoMovimentoFinanceiroDebito = Fixture.tipoMovimentoFinanceiroDebito();
+		tipoMovimentoFinanceiroDebitoNA = Fixture.tipoMovimentoFinanceiroDebitoNA();
 		tipoMovimentoFinanceiroRecebimentoReparte = Fixture.tipoMovimentoFinanceiroRecebimentoReparte();
 		tipoMovimentoFinanceiroJuros = Fixture.tipoMovimentoFinanceiroJuros();
 		tipoMovimentoFinanceiroMulta = Fixture.tipoMovimentoFinanceiroMulta();
@@ -3822,11 +3841,12 @@ public class DataLoader {
 
 		tipoMovimentoFinanceiroCredito.setAprovacaoAutomatica(false);
 		tipoMovimentoFinanceiroDebito.setAprovacaoAutomatica(false);
+		tipoMovimentoFinanceiroDebitoNA.setAprovacaoAutomatica(false);
 
 		save(session, tipoMovimentoFaltaEm, tipoMovimentoFaltaDe, tipoMovimentoSuplementarCotaAusente,
 				tipoMovimentoSobraEm, tipoMovimentoSobraDe,
 				tipoMovimentoRecFisico, tipoMovimentoRecReparte,
-				tipoMovimentoFinanceiroCredito, tipoMovimentoFinanceiroDebito,
+				tipoMovimentoFinanceiroCredito, tipoMovimentoFinanceiroDebito, tipoMovimentoFinanceiroDebitoNA,
 				tipoMovimentoEnvioEncalhe, tipoMovimentoFinanceiroRecebimentoReparte,
 				tipoMovimentoFinanceiroJuros, tipoMovimentoFinanceiroMulta,
 				tipoMovimentoFinanceiroEnvioEncalhe, tipoMovimentoSuplementarCotaAusente,

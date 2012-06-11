@@ -2,8 +2,8 @@ package br.com.abril.nds.model.estoque;
 
 public enum TipoVendaEncalhe {
 	
-	ENCALHE("Venda de Encalhe"),
-	SUPLEMENTAR("Venda de Suplementar");
+	ENCALHE("Encalhe"),
+	SUPLEMENTAR("Suplementar");
 	
 	private String venda;
 	
@@ -12,6 +12,11 @@ public enum TipoVendaEncalhe {
 	}
 	
 	public String getVenda(){
+		return this.venda;
+	}
+	
+	@Override
+	public String toString() {
 		return this.venda;
 	}
 }

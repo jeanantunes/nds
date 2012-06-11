@@ -236,6 +236,7 @@
 				<artifactId>jasperreports</artifactId>
 				<version>4.5.1</version>
 			</dependency>
+			
      	    <dependency>
                 <groupId>com.lowagie</groupId>
                 <artifactId>itext</artifactId>
@@ -260,6 +261,7 @@
 	</dependencyManagement>
 
 	<dependencies>
+
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>

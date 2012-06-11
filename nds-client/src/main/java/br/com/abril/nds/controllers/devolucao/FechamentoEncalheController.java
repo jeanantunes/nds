@@ -1,5 +1,6 @@
 package br.com.abril.nds.controllers.devolucao;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -61,18 +62,41 @@ public class FechamentoEncalheController {
 	
 	
 	@Path("/pesquisar")
-	public void pesquisar(String dataEncalhe, Long idFornecedor, Long idBox,
+	public void pesquisar(String dataEncalhe, Long fornecedorId, Long boxId,
 			String sortname, String sortorder, int rp, int page) {
 		
 		FiltroFechamentoEncalheDTO filtro = new FiltroFechamentoEncalheDTO();
 		filtro.setDataEncalhe(DateUtil.parseDataPTBR(dataEncalhe));
-		filtro.setFornecedorId(idFornecedor);
-		filtro.setBoxId(idBox);
+		filtro.setFornecedorId(fornecedorId);
+		filtro.setBoxId(boxId);
 		
 		List<FechamentoFisicoLogicoDTO> listaEncalhe = fechamentoEncalheService.buscarFechamentoEncalhe(filtro, sortorder, sortname, page, rp);
 		
 		result.use(FlexiGridJson.class).from(listaEncalhe).total(listaEncalhe.size()).page(page).serialize();
 	}
+	
+	
+	@Path("/salvar")
+	public void salvar(String dataEncalhe, Long fornecedorId, Long boxId, String fisico,
+			String sortname, String sortorder, int rp, int page) {
+		
+		String[] valoresFisico = fisico.split(",");
+		ArrayList<Long> arrayFisico = new ArrayList<Long>();
+		for (String f : valoresFisico) {
+			arrayFisico.add(f == "" ? null : Long.valueOf(f));
+		}
+	
+		FiltroFechamentoEncalheDTO filtro = new FiltroFechamentoEncalheDTO();
+		filtro.setDataEncalhe(DateUtil.parseDataPTBR(dataEncalhe));
+		filtro.setFornecedorId(fornecedorId);
+		filtro.setBoxId(boxId);
+		filtro.setFisico(arrayFisico);
+		
+		List<FechamentoFisicoLogicoDTO> listaEncalhe = fechamentoEncalheService.salvarFechamentoEncalhe(filtro, sortorder, sortname, page, rp);
+		
+		result.use(FlexiGridJson.class).from(listaEncalhe).total(listaEncalhe.size()).page(page).serialize();
+	}
+	
 	
 	@Path("/cotasAusentes")
 	public void cotasAusentes(Date dataEncalhe,

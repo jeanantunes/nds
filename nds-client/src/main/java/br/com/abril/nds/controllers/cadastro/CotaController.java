@@ -974,7 +974,7 @@ public class CotaController {
 	private List<ItemDTO<Long, String>> gerarTiposEntrega() {
 		
 		List<ItemDTO<Long, String>> itens = new ArrayList<ItemDTO<Long,String>>();
-		
+				
 		for(TipoEntrega item: tipoEntregaService.obterTodos()) {
 			itens.add(new ItemDTO<Long, String>(item.getId(), item.getDescricao()));
 		}
