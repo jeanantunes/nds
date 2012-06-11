@@ -371,7 +371,9 @@ fieldset label {
 						<span class="classNFe">&nbsp;</span><a
 						href="javascript:;">NF-e</a>
 						<ul>
-							
+							<li>
+								<a href="nfe/consultaNFEEncalheTratamento/">Consulta NFE Encalhe Tratamento</a>
+							</li>
 							<li>
 								<a href="nfe/painelMonitorNFe/">Painel Monitor NF-e</a>
 							</li>
