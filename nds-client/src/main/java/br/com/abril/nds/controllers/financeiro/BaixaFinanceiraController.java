@@ -572,7 +572,7 @@ public class BaixaFinanceiraController {
 	
 	
 	/**
-	 * Método responsável por validar se é possível a negociação de dividas(Cobranças)
+	 * Método responsável por validar se é possível a postergação de dividas(Cobranças)
 	 * @param idCobrancas
 	 */
 	@Post

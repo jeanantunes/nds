@@ -252,12 +252,12 @@ var ConferenciaEncalhe = {
 					}
 					
 					innerTable +=
-						'<td style="text-align: center"><input id="qtdeInformadaFinalizarConf_'+ index +'" onchange="ConferenciaEncalhe.recalcularValoresFinalizar('+ index +');" type="text" maxlength="255" style="width:50px; text-align: center;" value="' + parseInt(value.qtdExemplar) + '"/></td>';
+						'<td style="text-align: center"><input id="qtdeInformadaFinalizarConf_'+ index +'" onchange="ConferenciaEncalhe.recalcularValoresFinalizar('+ index +');" type="text" maxlength="255" style="width:50px; text-align: center;" value="' + parseInt(value.qtdInformada) + '"/></td>';
 					
-					innerTable += "<td style='text-align: center;'>" + (value.qtdRecebida ? parseInt(value.qtdRecebida) : "0") + "</td>";
+					innerTable += "<td style='text-align: center;'>" + (value.qtdExemplar ? parseInt(value.qtdExemplar) : "0") + "</td>";
 				
 					innerTable +=
-						'<td style="text-align: center;"><input id="precoCapaFinalizarConf_'+ index +'" onchange="ConferenciaEncalhe.recalcularValoresFinalizar('+ index +');" maxlength="255" style="width:50px; text-align: right;" value="' + parseFloat(value.precoCapa).toFixed(2) + '"/></td>';
+						'<td style="text-align: center;"><input id="precoCapaFinalizarConf_'+ index +'" onchange="ConferenciaEncalhe.recalcularValoresFinalizar('+ index +');" maxlength="255" style="width:50px; text-align: right;" value="' + parseFloat(value.precoCapaInformado).toFixed(2) + '"/></td>';
 					
 					innerTable += "<td style='text-align: right;'>" + parseFloat(value.desconto).toFixed(2) + "</td>";
 					
@@ -310,11 +310,11 @@ var ConferenciaEncalhe = {
 		
 		var data = [
             {name: "idConferencia", value: $("#idConferenciaEncalheHiddenFinalizarConf_" + index).val()},
-            {name: "qtdExemplares", value: $('#qtdeInformadaFinalizarConf_' + index).val()},
-            {name: "valorCapa", value : $('#precoCapaFinalizarConf_' + index).val()}
+            {name: "qtdInformada", value: $('#qtdeInformadaFinalizarConf_' + index).val()},
+            {name: "valorCapaInformado", value : $('#precoCapaFinalizarConf_' + index).val()}
 		];
 		
-		$.postJSON(contextPath + "/devolucao/conferenciaEncalhe/recalcularConferencia", 
+		$.postJSON(contextPath + "/devolucao/conferenciaEncalhe/alterarQtdeValorInformado", 
 			data, 
 			function(result){
 				

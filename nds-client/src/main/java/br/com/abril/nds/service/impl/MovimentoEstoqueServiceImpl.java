@@ -204,7 +204,9 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 				 if( GrupoMovimentoEstoque.SUPLEMENTAR_COTA_AUSENTE.equals(tipoMovimentoEstoque.getGrupoMovimentoEstoque()) ||
 					 GrupoMovimentoEstoque.SUPLEMENTAR_ENVIO_ENCALHE_ANTERIOR_PROGRAMACAO.equals(tipoMovimentoEstoque.getGrupoMovimentoEstoque())) {
 					 
-					 novaQuantidade = estoqueProduto.getQtdeSuplementar().add(movimentoEstoque.getQtde());
+					 BigDecimal qtdeSuplementar = estoqueProduto.getQtdeSuplementar() == null ? BigDecimal.ZERO : estoqueProduto.getQtdeSuplementar();
+					 
+					 novaQuantidade = qtdeSuplementar.add(movimentoEstoque.getQtde());
 					 
 					 estoqueProduto.setQtdeSuplementar(novaQuantidade);
 					 
@@ -219,8 +221,10 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 				
 				if(GrupoMovimentoEstoque.ESTORNO_REPARTE_COTA_AUSENTE
 						.equals(tipoMovimentoEstoque.getGrupoMovimentoEstoque())) {
-					 
-					novaQuantidade = estoqueProduto.getQtdeSuplementar().subtract(movimentoEstoque.getQtde());
+					
+					BigDecimal qtdeSuplementar = estoqueProduto.getQtdeSuplementar() == null ? BigDecimal.ZERO : estoqueProduto.getQtdeSuplementar();
+					
+					novaQuantidade = qtdeSuplementar.subtract(movimentoEstoque.getQtde());
 					
 					estoqueProduto.setQtdeSuplementar(novaQuantidade);
 					 
