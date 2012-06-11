@@ -74,4 +74,7 @@ public abstract class AbstractRepository<T, K extends Serializable> implements R
 		return getSession().createCriteria(this.clazz).list();
 	}
 
+	public void flush() {
+		this.getSession().flush();
+	}
 }

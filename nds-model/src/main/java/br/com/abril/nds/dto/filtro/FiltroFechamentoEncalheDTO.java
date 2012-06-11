@@ -2,6 +2,7 @@ package br.com.abril.nds.dto.filtro;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 public class FiltroFechamentoEncalheDTO implements Serializable {
 
@@ -10,6 +11,7 @@ public class FiltroFechamentoEncalheDTO implements Serializable {
 	private Date dataEncalhe;
 	private Long fornecedorId;
 	private Long boxId;
+	private List<Long> fisico;
 	
 	
 	public Date getDataEncalhe() {
@@ -29,5 +31,11 @@ public class FiltroFechamentoEncalheDTO implements Serializable {
 	}
 	public void setBoxId(Long boxId) {
 		this.boxId = boxId;
+	}
+	public List<Long> getFisico() {
+		return fisico;
+	}
+	public void setFisico(List<Long> fisico) {
+		this.fisico = fisico;
 	}
 }

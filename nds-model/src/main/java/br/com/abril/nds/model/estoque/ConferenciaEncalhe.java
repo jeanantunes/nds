@@ -2,6 +2,7 @@ package br.com.abril.nds.model.estoque;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -12,7 +13,10 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
+import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalheCota;
 import br.com.abril.nds.model.planejamento.ChamadaEncalheCota;
 
@@ -60,10 +64,36 @@ public class ConferenciaEncalhe implements Serializable {
 	@Column(name = "JURAMENTADA")
 	private boolean juramentada;
 	
+	@Temporal(TemporalType.DATE)
+	@Column(name = "DATA", nullable = false)
+	private Date data;
+
+	
+	/**
+	 * Quantidade relativa ao item de nota fiscal de entrada
+	 * fornecida pela cota na operação de conferência de encalhe.
+	 */
 	@Column(name = "QTDE_INFORMADA")
 	private BigDecimal qtdeInformada;
 	
+	/**
+	 * Preco capa relativo ao item de nota fiscal de entrada
+	 * fornecida pela cota na operação de conferência de encalhe.
+	 */
+	@Column(name = "PRECO_CAPA_INFORMADO")
+	private BigDecimal precoCapaInformado;
 	
+	/**
+	 * Quantidade replicada na coluna qtde em movimento_estoque_cota 
+	 * relativa a conferência de encalhe
+	 */
+	@Column(name = "QTDE")
+	private BigDecimal qtde;
+	
+	@ManyToOne(optional = false)
+	@JoinColumn(name = "PRODUTO_EDICAO_ID")
+	private ProdutoEdicao produtoEdicao;
+
 	/**
 	 * Obtém id
 	 *
@@ -96,6 +126,23 @@ public class ConferenciaEncalhe implements Serializable {
 	 */
 	public void setMovimentoEstoqueCota(MovimentoEstoqueCota movimentoEstoqueCota) {
 		this.movimentoEstoqueCota = movimentoEstoqueCota;
+	}
+
+	/**
+	 * Obtém movimentoEstoque
+	 *
+	 * @return MovimentoEstoque
+	 */
+	public MovimentoEstoque getMovimentoEstoque() {
+		return movimentoEstoque;
+	}
+
+	/**
+	 * Atribuí movimentoEstoque
+	 * @param movimentoEstoque 
+	 */
+	public void setMovimentoEstoque(MovimentoEstoque movimentoEstoque) {
+		this.movimentoEstoque = movimentoEstoque;
 	}
 
 	/**
@@ -168,6 +215,23 @@ public class ConferenciaEncalhe implements Serializable {
 	}
 
 	/**
+	 * Obtém data
+	 *
+	 * @return Date
+	 */
+	public Date getData() {
+		return data;
+	}
+
+	/**
+	 * Atribuí data
+	 * @param data 
+	 */
+	public void setData(Date data) {
+		this.data = data;
+	}
+
+	/**
 	 * Obtém qtdeInformada
 	 *
 	 * @return BigDecimal
@@ -185,20 +249,54 @@ public class ConferenciaEncalhe implements Serializable {
 	}
 
 	/**
-	 * Obtém movimentoEstoque
+	 * Obtém precoCapaInformado
 	 *
-	 * @return MovimentoEstoque
+	 * @return BigDecimal
 	 */
-	public MovimentoEstoque getMovimentoEstoque() {
-		return movimentoEstoque;
+	public BigDecimal getPrecoCapaInformado() {
+		return precoCapaInformado;
 	}
 
 	/**
-	 * Atribuí movimentoEstoque
-	 * @param movimentoEstoque 
+	 * Atribuí precoCapaInformado
+	 * @param precoCapaInformado 
 	 */
-	public void setMovimentoEstoque(MovimentoEstoque movimentoEstoque) {
-		this.movimentoEstoque = movimentoEstoque;
+	public void setPrecoCapaInformado(BigDecimal precoCapaInformado) {
+		this.precoCapaInformado = precoCapaInformado;
+	}
+
+	/**
+	 * Obtém qtde
+	 *
+	 * @return BigDecimal
+	 */
+	public BigDecimal getQtde() {
+		return qtde;
+	}
+
+	/**
+	 * Atribuí qtde
+	 * @param qtde 
+	 */
+	public void setQtde(BigDecimal qtde) {
+		this.qtde = qtde;
+	}
+
+	/**
+	 * Obtém produtoEdicao
+	 *
+	 * @return ProdutoEdicao
+	 */
+	public ProdutoEdicao getProdutoEdicao() {
+		return produtoEdicao;
+	}
+
+	/**
+	 * Atribuí produtoEdicao
+	 * @param produtoEdicao 
+	 */
+	public void setProdutoEdicao(ProdutoEdicao produtoEdicao) {
+		this.produtoEdicao = produtoEdicao;
 	}
 	
 		

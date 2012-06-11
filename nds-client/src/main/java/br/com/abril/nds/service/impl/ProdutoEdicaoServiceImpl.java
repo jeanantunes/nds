@@ -539,4 +539,11 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 		}
 	}
 	
+	@Transactional(readOnly = true)
+	@Override
+	public ProdutoEdicao buscarProdutoPorCodigoBarras(String codigoBarras){
+		
+		return produtoEdicaoRepository.obterProdutoEdicaoPorCodigoBarra(codigoBarras);
+	}
+	
 }

@@ -276,7 +276,13 @@ public class ControleConferenciaEncalheCotaRepositoryImplTest extends AbstractRe
 		
 		save(mec);
 		
-		ConferenciaEncalhe conferenciaEncalhe = Fixture.conferenciaEncalhe(mec, chamadaEncalheCota, controleConferenciaEncalheCota);
+		ConferenciaEncalhe conferenciaEncalhe = Fixture.conferenciaEncalhe(
+				mec, chamadaEncalheCota, controleConferenciaEncalheCota,
+				Fixture.criarData(28, Calendar.FEBRUARY, 2012),
+				new BigDecimal(8),
+				new BigDecimal(8),
+				veja1);
+		
 		save(conferenciaEncalhe);
 		
 		mec = Fixture.movimentoEstoqueCotaEnvioEncalhe( 
@@ -289,7 +295,9 @@ public class ControleConferenciaEncalheCotaRepositoryImplTest extends AbstractRe
 		
 		save(mec);
 		
-		conferenciaEncalhe = Fixture.conferenciaEncalhe(mec, chamadaEncalheCota, controleConferenciaEncalheCota);
+		conferenciaEncalhe = Fixture.conferenciaEncalhe(
+				mec, chamadaEncalheCota, controleConferenciaEncalheCota,
+				Fixture.criarData(1, Calendar.MARCH, 2012),new BigDecimal(50),new BigDecimal(50), veja1);
 		save(conferenciaEncalhe);
 		
 		
@@ -303,7 +311,10 @@ public class ControleConferenciaEncalheCotaRepositoryImplTest extends AbstractRe
 		
 		save(mec);
 	
-		conferenciaEncalhe = Fixture.conferenciaEncalhe(mec, chamadaEncalheCota, controleConferenciaEncalheCota);
+		conferenciaEncalhe = Fixture.conferenciaEncalhe(
+				mec, chamadaEncalheCota, controleConferenciaEncalheCota,
+				Fixture.criarData(2, Calendar.MARCH, 2012),
+				new BigDecimal(45),new BigDecimal(45), veja1);
 		save(conferenciaEncalhe);
 			
 	}
