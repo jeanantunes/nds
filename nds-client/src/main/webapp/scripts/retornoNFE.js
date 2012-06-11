@@ -1,10 +1,10 @@
 function RetornoNFE(){
 	
-	this.retornoNFE = {};
+	this.sumarizacaoRetornoNFE = {};
 	
 };
 
-RetornoNFE.prototype.path ="/nfe/retornoNFe";
+RetornoNFE.prototype.path = contextPath +"/nfe/retornoNFe/";
 
 RetornoNFE.prototype.pesquisarArquivos = function() {
 	
@@ -21,7 +21,8 @@ RetornoNFE.prototype.pesquisarArquivos = function() {
 			exibirMensagem(tipoMensagem, listaMensagens, "");
 
 		} else {
-			_this.retornoNFE = data;
+			console.log(data);
+			_this.sumarizacaoRetornoNFE = data;
 			_this.gerarTabela();
 		}
 
@@ -46,7 +47,14 @@ RetornoNFE.prototype.confirmar = function() {
 	}, null, true);
 };
 
-RetornoNFE.prototype.bindEvents = function() {};
+RetornoNFE.prototype.bindEvents = function() {
+	
+	var _this = this;
+	
+	$("#retornoNFEPesquisar").click(function() {
+		_this.pesquisarArquivos();
+	});
+};
 
 RetornoNFE.prototype.dataBind = function() {};
 

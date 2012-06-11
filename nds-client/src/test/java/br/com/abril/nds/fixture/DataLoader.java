@@ -2441,6 +2441,11 @@ public class DataLoader {
 			Fixture.parametroSistema(TipoParametroSistema.NUMERO_DIAS_PERMITIDO_LANCAMENTO_SOBRA_DE, "7");
 
 		session.save(parametroSistema);
+		
+		parametroSistema =
+				Fixture.parametroSistema(TipoParametroSistema.PATH_INTERFACE_NFE_IMPORTACAO, "C:/notas/");
+		
+		session.save(parametroSistema);
 	}
 
 	private static void criarMovimentosEstoque(Session session) {

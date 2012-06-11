@@ -1,10 +1,16 @@
 package br.com.abril.nds.client.util;
 
 import java.io.File;
-import java.io.FileFilter;
-import java.util.Calendar;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
 
 import br.com.abril.nds.client.endereco.vo.ArquivoRetornoNFEVO;
+import br.com.abril.nds.client.vo.ValidacaoVO;
+import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.util.ArquivoImportFileFilter;
+import br.com.abril.nds.util.TipoMensagem;
+import br.com.abril.nds.util.export.FileExporter.FileType;
 
 /**
  * Classe utilitária que importa os arquivos de nota fiscal.
@@ -13,29 +19,25 @@ import br.com.abril.nds.client.endereco.vo.ArquivoRetornoNFEVO;
  * 
  */
 public class NFEImportUtil {
-
+	
+	
 	/**
-	 * Importa os arquivos que foram modificados na data parametrizada.
+	 * Importa os arquivos de nota gerados pelo emissor respeitando os parametros.
 	 * 
-	 * @param dataUltimaModificacao
+	 * @param dataUltimaModificacao data de modificação ou criação do arquivo
+	 * @param pathNFEImportacao path dos arquivos de nota gerado pelo emissor
 	 */
-	public void importArquivosModificadosEm(Calendar dataUltimaModificacao, final String PATH_NFE_IMPORTACAO) {
+	public static List<File> importArquivosModificadosEm(Date dataUltimaModificacao, String pathNFEImportacao) {
 
-		File diretorio = new File("/teste");
-
-		diretorio.listFiles(new FileFilter() {
-
-			@Override
-			public boolean accept(File pathname) {
+		File diretorio = new File(pathNFEImportacao);
+		
+		if (!diretorio.isDirectory()) {
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "O diretório parametrizado para geração de notas está incorreto"));
+		}
+	
+		ArquivoImportFileFilter fileFilter = new ArquivoImportFileFilter(dataUltimaModificacao, FileType.XML);
 				
-				Calendar lastModified = Calendar.getInstance();
-				
-				lastModified.setTimeInMillis(pathname.lastModified());
-				
-				return false;
-			}
-		});
-
+		return Arrays.asList(diretorio.listFiles(fileFilter));
 	}
 	
 	public ArquivoRetornoNFEVO processarArquivoRetorno(File arquivo) {
