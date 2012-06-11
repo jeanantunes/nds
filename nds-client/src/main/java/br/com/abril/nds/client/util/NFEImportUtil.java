@@ -2,7 +2,8 @@ package br.com.abril.nds.client.util;
 
 import java.io.File;
 
-import br.com.abril.nds.client.endereco.vo.ArquivoRetornoNFEVO;
+import br.com.abril.nds.client.vo.ArquivoRetornoNFEVO;
+import br.com.abril.nds.exception.ProcessamentoNFEException;
 
 /**
  * Classe utilitária que importa os arquivos de nota fiscal.
@@ -12,7 +13,7 @@ import br.com.abril.nds.client.endereco.vo.ArquivoRetornoNFEVO;
  */
 public class NFEImportUtil {
 	
-	public ArquivoRetornoNFEVO processarArquivoRetorno(File arquivo) {
+	public static ArquivoRetornoNFEVO processarArquivoRetorno(File arquivo) throws ProcessamentoNFEException {
 		//TODO: processar arquivo
 		return null;
 	}

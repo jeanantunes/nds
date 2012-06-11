@@ -56,9 +56,9 @@ public interface RoteirizacaoService {
 	void gravaRoteirizacao(List<CotaDisponivelRoteirizacaoDTO> lista,  Long idRota);
 
 	/**
-	 * Obtém rotas por número da cota
+	 * Obtem rotas por numero da cota
 	 * 
-	 * @param numeroCota - Número da Cota
+	 * @param numeroCota - Numero da Cota
 	 * @return Lista de Rotas
 	 */
 	List<Rota> obterRotasPorCota(Integer numeroCota);
