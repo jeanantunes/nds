@@ -54,7 +54,7 @@
        
         <td width="688">
         	<span class="bt_pesquisar">
-        		<a href="javascript:;" onclick="mostrar();">Pesquisar</a>
+        		<a  id="retornoNFEPesquisar" href="javascript:;">Pesquisar</a>
         	</span>
         </td>
 	</tr>
