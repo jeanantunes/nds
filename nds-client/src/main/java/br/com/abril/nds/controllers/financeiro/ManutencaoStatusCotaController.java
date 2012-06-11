@@ -405,13 +405,6 @@ public class ManutencaoStatusCotaController {
 	 */
 	private void validarPeriodoHistoricoStatusCota(PeriodoVO periodo) {
 		
-		if (periodo == null 
-				|| periodo.getDataInicial() == null 
-				|| periodo.getDataFinal() == null) {
-			
-			throw new ValidacaoException(TipoMensagem.WARNING, "Informe o período!");
-		}
-		
 		if (DateUtil.isDataInicialMaiorDataFinal(periodo.getDataInicial(), periodo.getDataFinal())) {
 			
 			throw new ValidacaoException(TipoMensagem.WARNING, "Informe um período válido!");

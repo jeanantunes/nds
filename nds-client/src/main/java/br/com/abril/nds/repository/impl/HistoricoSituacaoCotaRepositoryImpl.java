@@ -117,7 +117,15 @@ public class HistoricoSituacaoCotaRepositoryImpl extends AbstractRepository<Hist
 					
 					hql += useWhere ? " where " : " and ";
 					
-					hql += " hsc.dataInicioValidade = :dataInicial ";
+					hql += " hsc.dataInicioValidade >= :dataInicial ";
+					
+					useWhere = false;
+					
+				} else if (filtro.getPeriodo().getDataFinal() != null) {
+					
+					hql += useWhere ? " where " : " and ";
+					
+					hql += " hsc.dataInicioValidade <= :dataFinal ";
 					
 					useWhere = false;
 				}
