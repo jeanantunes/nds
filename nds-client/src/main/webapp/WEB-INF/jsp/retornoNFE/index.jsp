@@ -54,7 +54,7 @@
        
         <td width="688">
         	<span class="bt_pesquisar">
-        		<a href="javascript:;" onclick="mostrar();">Pesquisar</a>
+        		<a  id="retornoNFEPesquisar" href="javascript:;">Pesquisar</a>
         	</span>
         </td>
 	</tr>
@@ -87,9 +87,9 @@
                 <td width="189" align="center">Erros Consis.</td>
             </tr>
             <tr class="class_linha_1">
-            	<td align="center">0</td>
-                <td align="center">0</td>
-                <td align="center">0</td>
+            	<td id="numeroArquivos" align="center">0</td>
+                <td id="notasAprovadas" align="center">0</td>
+                <td id="notasRejeitadas" align="center">0</td>
             </tr>
         	</tbody>
         	</table>

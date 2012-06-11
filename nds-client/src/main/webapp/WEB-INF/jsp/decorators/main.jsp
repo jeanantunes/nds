@@ -348,7 +348,7 @@ fieldset label {
 							<li><a href="Recolhimento/liberacao_encalhe_conferido.htm">Liberação
 									do Encalhe Conferido</a>
 							</li>
-							<li><a href="Recolhimento/venda_encalhe.htm">Venda de
+							<li><a href='<c:url value="/devolucao/vendaEncalhe/"/>'>Venda de
 									Encalhe</a>
 							</li>
 							<li><a href="Recolhimento/help_recolhimento.htm">Help</a>

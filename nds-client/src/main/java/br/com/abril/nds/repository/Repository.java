@@ -27,4 +27,5 @@ public interface Repository<T, K extends Serializable> {
 
 	public abstract void removerPorId(K... id);
 
+	void flush();
 }

@@ -33,7 +33,7 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepository<Fechamen
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<FechamentoFisicoLogicoDTO> buscarFechamentoEncalhe(FiltroFechamentoEncalheDTO filtro,
+	public List<FechamentoFisicoLogicoDTO> buscarConferenciaEncalhe(FiltroFechamentoEncalheDTO filtro,
 			String sortorder, String sortname, int page, int rp) {
 
 		Criteria criteria = this.getSession().createCriteria(ConferenciaEncalhe.class, "ce");
@@ -43,11 +43,13 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepository<Fechamen
 			.add(Projections.property("p.nome"), "produto")
 			.add(Projections.property("pe.numeroEdicao"), "edicao")
 			.add(Projections.property("pe.precoVenda"), "precoCapa")
+			.add(Projections.property("pe.id"), "produtoEdicao")
 			.add(Projections.sum("mec.qtde"), "exemplaresDevolucao")
 			.add(Projections.groupProperty("p.codigo"))
 			.add(Projections.groupProperty("p.nome"))
 			.add(Projections.groupProperty("pe.numeroEdicao"))
 			.add(Projections.groupProperty("pe.precoVenda"))
+			.add(Projections.groupProperty("pe.id"))
 		);
 		
 		criteria.createAlias("ce.movimentoEstoqueCota", "mec");
@@ -82,6 +84,17 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepository<Fechamen
 		this.addOrderCriteria(criteria, sortorder, sortname);
 		criteria.setResultTransformer(Transformers.aliasToBean(FechamentoFisicoLogicoDTO.class));
 			
+		return criteria.list();
+	}
+	
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<FechamentoEncalhe> buscarFechamentoEncalhe(FiltroFechamentoEncalheDTO filtro) {
+		
+		Criteria criteria = this.getSession().createCriteria(FechamentoEncalhe.class, "fe");
+		criteria.add(Restrictions.eq("fe.fechamentoEncalhePK.dataEncalhe", filtro.getDataEncalhe()));
+		criteria.setFetchMode("fe.listFechamentoEncalheBox", FetchMode.JOIN);
+		
 		return criteria.list();
 	}
 

@@ -1,12 +1,14 @@
 package br.com.abril.nds.model.estoque;
 
 import java.io.Serializable;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinColumns;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import br.com.abril.nds.model.estoque.pk.FechamentoEncalhePK;
@@ -20,13 +22,17 @@ public class FechamentoEncalhe implements Serializable {
 	@EmbeddedId
 	private FechamentoEncalhePK fechamentoEncalhePK;
 	
-	@Enumerated(EnumType.STRING)
-	@Column(name = "STATUS", nullable = false)
-	private TipoStatusFechamentoEncalhe status;
-	
 	@Column(name="QUANTIDADE", nullable=true)
 	private Long quantidade;
+	
+	@OneToMany
+	@JoinColumns({
+        @JoinColumn(name="DATA_ENCALHE", referencedColumnName="DATA_ENCALHE"),
+        @JoinColumn(name="PRODUTO_EDICAO_ID", referencedColumnName="PRODUTO_EDICAO_ID")
+    })
+	private List<FechamentoEncalheBox> listFechamentoEncalheBox;
 
+	
 	
 	public FechamentoEncalhePK getFechamentoEncalhePK() {
 		return fechamentoEncalhePK;
@@ -36,19 +42,19 @@ public class FechamentoEncalhe implements Serializable {
 		this.fechamentoEncalhePK = fechamentoEncalhePK;
 	}
 
-	public TipoStatusFechamentoEncalhe getStatus() {
-		return status;
-	}
-
-	public void setStatus(TipoStatusFechamentoEncalhe status) {
-		this.status = status;
-	}
-
 	public Long getQuantidade() {
 		return quantidade;
 	}
 
 	public void setQuantidade(Long quantidade) {
 		this.quantidade = quantidade;
+	}
+
+	public List<FechamentoEncalheBox> getListFechamentoEncalheBox() {
+		return listFechamentoEncalheBox;
+	}
+
+	public void setListFechamentoEncalheBox(List<FechamentoEncalheBox> listFechamentoEncalheBox) {
+		this.listFechamentoEncalheBox = listFechamentoEncalheBox;
 	}
 }
