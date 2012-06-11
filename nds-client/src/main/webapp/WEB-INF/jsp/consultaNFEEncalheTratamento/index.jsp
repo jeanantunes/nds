@@ -175,7 +175,24 @@ $(function() {
 	function pesqEncalhe(){
 		$(".dadosFiltro").show();
 		
+		pesquisarNotaRecebidas();		
 	}
+	
+	function pesquisarNotaRecebidas(){
+		
+		$(".notaRecebidaGrid").flexOptions({
+			url: "<c:url value='/nfe/consultaNFEEncalheTratamento'/>",
+			dataType : 'json',
+			params: [
+						{name:'filtro.codigoCota', value:$('#idBox').val()},
+						{name:'filtro.data', value:$('#idRoteiro').val()},
+						{name:'filtro.statusNotaFiscalEntrada', value:$('#idRota').val()}						
+						]
+		});
+		
+		$(".notaRecebidaGrid").flexReload();
+	}
+	
 	function mostrar_nfes(){
 		$(".nfes").show();
 		};
@@ -321,12 +338,15 @@ $(function() {
     <td width="259"><span class="dadosFiltro">CGB Distribuidora de Jorn e Rev</span></td>
     <td width="35">Data:</td>
     <td width="105"><input name="datepickerDe" type="text" id="datepickerDe" style="width:80px;"/></td>
-    <td width="42">Status:</td><td width="173"><select name="select" id="select" style="width:150px;" onchange="mostra_status(this.value);">
-      <option selected="selected"> </option>
-      <option value="1">Notas Recebidas</option>
-      <option value="2">Pendente Recebimento</option>
-      <option value="2">Pendente Emissão</option>
-    </select></td><td width="104"><span class="bt_pesquisar"><a href="javascript:;" onclick="mostrar();pesqEncalhe();">Pesquisar</a></span></td></tr>
+    <td width="42">Status:</td>
+    <td width="173">    
+		<select name="situacaoNfe" id="situacaoNfe" style="width:290px;">
+		    <option value=""  selected="selected"></option>
+		    <c:forEach items="${comboStatusNota}" var="comboStatusNota">
+		      		<option value="${comboStatusNota.key}">${comboStatusNota.value}</option>	
+		    </c:forEach>
+	    </select>
+    </td><td width="104"><span class="bt_pesquisar"><a href="javascript:;" onclick="mostrar();pesqEncalhe();">Pesquisar</a></span></td></tr>
   </table>
       </fieldset>
       <div class="linha_separa_fields">&nbsp;</div>
