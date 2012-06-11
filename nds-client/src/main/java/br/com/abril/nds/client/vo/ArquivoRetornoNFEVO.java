@@ -108,4 +108,5 @@ public class ArquivoRetornoNFEVO {
 	public void setDataRecebimento(Date dataRecebimento) {
 		this.dataRecebimento = dataRecebimento;
 	}
+			
 }
