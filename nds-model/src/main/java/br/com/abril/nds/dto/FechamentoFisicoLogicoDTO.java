@@ -9,10 +9,11 @@ public class FechamentoFisicoLogicoDTO {
 	private String codigo;
 	private String produto;
 	private Long edicao;
+	private Long produtoEdicao;
 	private BigDecimal precoCapa;
 	private BigDecimal exemplaresDevolucao;
 	private BigDecimal total;
-	private Long fisico = Long.valueOf(0);
+	private Long fisico;
 	private Long diferenca = Long.valueOf(0);
 	
 	private String precoCapaFormatado;
@@ -55,6 +56,12 @@ public class FechamentoFisicoLogicoDTO {
 	}
 	public void setEdicao(Long edicao) {
 		this.edicao = edicao;
+	}
+	public Long getProdutoEdicao() {
+		return produtoEdicao;
+	}
+	public void setProdutoEdicao(Long produtoEdicao) {
+		this.produtoEdicao = produtoEdicao;
 	}
 	public BigDecimal getPrecoCapa() {
 		return precoCapa;

@@ -83,7 +83,7 @@ public class FechamentoEncalheController {
 		String[] valoresFisico = fisico.split(",");
 		ArrayList<Long> arrayFisico = new ArrayList<Long>();
 		for (String f : valoresFisico) {
-			arrayFisico.add(Long.valueOf(f));
+			arrayFisico.add(f == "" ? null : Long.valueOf(f));
 		}
 	
 		FiltroFechamentoEncalheDTO filtro = new FiltroFechamentoEncalheDTO();

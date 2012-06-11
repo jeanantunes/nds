@@ -10,6 +10,9 @@ import org.springframework.transaction.annotation.Transactional;
 import br.com.abril.nds.dto.CotaAusenteEncalheDTO;
 import br.com.abril.nds.dto.FechamentoFisicoLogicoDTO;
 import br.com.abril.nds.dto.filtro.FiltroFechamentoEncalheDTO;
+import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.estoque.FechamentoEncalhe;
+import br.com.abril.nds.model.estoque.pk.FechamentoEncalhePK;
 import br.com.abril.nds.repository.FechamentoEncalheRepository;
 import br.com.abril.nds.service.FechamentoEncalheService;
 
@@ -26,13 +29,23 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 		
 		int startSearch = page * rp - rp;
 		
-		List<FechamentoFisicoLogicoDTO> listaFechamento = fechamentoEncalheRepository.buscarFechamentoEncalhe(filtro, sortorder, sortname, startSearch, rp);
+		List<FechamentoFisicoLogicoDTO> listaConferencia = fechamentoEncalheRepository.buscarConferenciaEncalhe(filtro, sortorder, sortname, startSearch, rp);
+		List<FechamentoEncalhe> listaFechamento = fechamentoEncalheRepository.buscarFechamentoEncalhe(filtro);
 		
-		for (FechamentoFisicoLogicoDTO fechamento : listaFechamento) {
-			fechamento.setTotal(fechamento.getExemplaresDevolucao().multiply(fechamento.getPrecoCapa()));
+		for (FechamentoFisicoLogicoDTO conferencia : listaConferencia) {
+			
+			conferencia.setTotal(conferencia.getExemplaresDevolucao().multiply(conferencia.getPrecoCapa()));
+			
+			for (FechamentoEncalhe fechamento : listaFechamento) {
+				if (conferencia.getCodigo().equals(fechamento.getFechamentoEncalhePK().getProdutoEdicao().getProduto().getCodigo())) {
+					conferencia.setFisico(fechamento.getQuantidade());
+					break;
+				}
+			}
+			
 		}
 		
-		return listaFechamento;
+		return listaConferencia;
 	}
 	
 	@Override
@@ -42,10 +55,42 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 		
 		int startSearch = page * rp - rp;
 		
+		List<FechamentoFisicoLogicoDTO> listaConferencia = this.buscarFechamentoEncalhe(filtro, sortorder, sortname, startSearch, rp);
 		
+		FechamentoFisicoLogicoDTO fechamento;
+		Long qtd;
 		
+		for (int i=0; i < listaConferencia.size(); i++) {
+			
+			fechamento = listaConferencia.get(i);
+			qtd = filtro.getFisico().get(i);
+			
+			FechamentoEncalhePK id = new FechamentoEncalhePK();
+			id.setDataEncalhe(filtro.getDataEncalhe());
+			ProdutoEdicao pe = new ProdutoEdicao();
+			pe.setId(fechamento.getProdutoEdicao());
+			id.setProdutoEdicao(pe);
+			
+			FechamentoEncalhe fechamentoEncalhe = fechamentoEncalheRepository.buscarPorId(id);
+			
+			if (fechamentoEncalhe == null) {
+				
+				fechamentoEncalhe = new FechamentoEncalhe();
+				fechamentoEncalhe.setFechamentoEncalhePK(id);
+				fechamentoEncalhe.setQuantidade(qtd);
+				
+				fechamentoEncalheRepository.adicionar(fechamentoEncalhe);
+			
+			} else {
+				
+				fechamentoEncalhe.setQuantidade(qtd);
+				fechamentoEncalheRepository.alterar(fechamentoEncalhe);
+			}
+		}
 		
-		return this.buscarFechamentoEncalhe(filtro, sortorder, sortname, page, rp);
+		fechamentoEncalheRepository.flush();
+		
+		return listaConferencia;
 	}
 
 	@Override

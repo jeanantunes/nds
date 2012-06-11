@@ -34,7 +34,7 @@
 				row.cell.diferenca = "";
 			}
 			
-			var valorFisico = row.cell.fisico == 0 ? "" : row.cell.fisico;
+			var valorFisico = row.cell.fisico == null ? "" : row.cell.fisico;
 			row.cell.fisico = '<input type="text" style="width: 60px" name="fisico[' + index + ']" value="' + valorFisico + '" onchange="onChangeFisico(this, ' + index + ')"/>';
 			
 			row.cell.replicar = '<span title="Replicar"><a href="javascript:;" onclick="replicar(' + index + ')"><img src="${pageContext.request.contextPath}/images/ico_atualizar.gif" border="0" /></a></span>';
@@ -83,7 +83,7 @@
 		
 		for (i=0; i<tabela.rows.length; i++) {
 			fisico = tabela.rows[i].cells[6].firstChild.firstChild.value;
-			arr.push(fisico == "" ? 0 : fisico);
+			arr.push(fisico);
 		}
 		
 		return arr;
