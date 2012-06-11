@@ -215,9 +215,9 @@
 			<td>
 				<table width="300" border="0" cellspacing="0" cellpadding="0">
 					<tr>
-				        <td width="26"><input type="radio" name="radioNFE" id="radioNFEsim" value="S" /></td>
+				        <td width="26"><input type="radio" checked="checked" name="radioNFE" onchange="ConferenciaEncalhe.mostrarChaveAcesso()" id="radioNFEsim" value="S"/></td>
 				        <td width="71" valign="bottom">Sim</td>
-				        <td width="20"><input type="radio" name="radioNFE" id="radioNFEnao" value="N" /></td>
+				        <td width="20"><input type="radio"  onchange="ConferenciaEncalhe.mostrarChaveAcesso()" name="radioNFE" id="radioNFEnao" value="N" /></td>
 				        <td width="183" valign="bottom">Não</td>
 	      			</tr>
 	    		</table>
@@ -225,11 +225,20 @@
 	    	<td>&nbsp;</td>
 	    	<td>&nbsp;</td>
 		</tr>
+		
 		<tr>
-		    <td>Chave de Acesso:</td>
-	    	<td colspan="3">
-	    		<input type="text" id="chaveAcessoNFE" style="width:510px;" />
-	    	</td>
+			<td colspan="4">
+				<div id="divForChaveAcessoNFE">
+					<table>
+					    <td>
+					    	Chave de Acesso:
+					    </td>
+				    	<td colspan="3">
+				    		<input type="text" id="chaveAcessoNFE" style="width:510px;" />
+				    	</td>
+					</table>
+				</div>
+			</td>
     	</tr>
 	</table>
 </div>

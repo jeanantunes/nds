@@ -39,6 +39,7 @@ import br.com.abril.nds.service.exception.EncalheExcedeReparteException;
 import br.com.abril.nds.service.exception.EncalheRecolhimentoParcialException;
 import br.com.abril.nds.service.exception.EncalheSemPermissaoSalvarException;
 import br.com.abril.nds.util.CellModelKeyValue;
+import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.ItemAutoComplete;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
@@ -216,6 +217,8 @@ public class ConferenciaEncalheController {
 			
 			dados.put("situacao", cota.getSituacaoCadastro().toString());
 		}
+		
+		this.session.setAttribute(NOTA_FISCAL_CONFERENCIA, infoConfereciaEncalheCota.getNotaFiscalEntradaCota());
 		
 		dados.put("notaFiscal", this.session.getAttribute(NOTA_FISCAL_CONFERENCIA) == null ? "" : this.session.getAttribute(NOTA_FISCAL_CONFERENCIA));
 		
@@ -483,6 +486,7 @@ public class ConferenciaEncalheController {
 		
 		controleConfEncalheCota.setCota(info.getCota());
 		controleConfEncalheCota.setId(this.getInfoConferenciaSession().getIdControleConferenciaEncalheCota());
+		controleConfEncalheCota.setNotaFiscalEntradaCota((NotaFiscalEntradaCota) this.session.getAttribute(NOTA_FISCAL_CONFERENCIA));
 		
 		Box boxEncalhe = new Box();
 		boxEncalhe.setId((Long) this.session.getAttribute(ID_BOX_LOGADO));
@@ -506,6 +510,8 @@ public class ConferenciaEncalheController {
 					this.getListaConferenciaEncalheFromSession(), 
 					this.getSetConferenciaEncalheExcluirFromSession(), 
 					this.getUsuarioLogado());
+			
+			this.session.removeAttribute(SET_CONFERENCIA_ENCALHE_EXCLUIR);
 			
 		} catch (EncalheSemPermissaoSalvarException e) {
 			
@@ -565,9 +571,21 @@ public class ConferenciaEncalheController {
 		
 			ControleConferenciaEncalheCota controleConfEncalheCota = new ControleConferenciaEncalheCota();
 			controleConfEncalheCota.setDataInicio(horaInicio);
-			controleConfEncalheCota.setCota(this.getInfoConferenciaSession().getCota());
-			controleConfEncalheCota.setId(this.getInfoConferenciaSession().getIdControleConferenciaEncalheCota());
+			
+			InfoConferenciaEncalheCota info = this.getInfoConferenciaSession();
+			
+			if (info == null){
+				throw new ValidacaoException(TipoMensagem.ERROR, "Sessão expirada.");
+			}
+			
+			controleConfEncalheCota.setCota(info.getCota());
+			controleConfEncalheCota.setId(info.getIdControleConferenciaEncalheCota());
 			controleConfEncalheCota.setNotaFiscalEntradaCota((NotaFiscalEntradaCota) this.session.getAttribute(NOTA_FISCAL_CONFERENCIA));
+			
+			Box boxEncalhe = new Box();
+			boxEncalhe.setId((Long) this.session.getAttribute(ID_BOX_LOGADO));
+			
+			controleConfEncalheCota.setBox(boxEncalhe);
 			
 			List<ConferenciaEncalheDTO> lista = this.getListaConferenciaEncalheFromSession();
 			
@@ -580,11 +598,15 @@ public class ConferenciaEncalheController {
 			}
 			
 			try {
+				
 				this.conferenciaEncalheService.finalizarConferenciaEncalhe(
 						controleConfEncalheCota, 
 						this.getListaConferenciaEncalheFromSession(), 
 						this.getSetConferenciaEncalheExcluirFromSession(), 
 						this.getUsuarioLogado());
+				
+				this.session.removeAttribute(SET_CONFERENCIA_ENCALHE_EXCLUIR);
+				
 			} catch (EncalheExcedeReparteException e) {
 
 				this.result.use(Results.json()).from(
@@ -697,7 +719,24 @@ public class ConferenciaEncalheController {
 		
 		NotaFiscalEntradaCota nota = (NotaFiscalEntradaCota) this.session.getAttribute(NOTA_FISCAL_CONFERENCIA);
 		
-		this.result.use(Results.json()).from(nota == null ? "" : nota, "result").serialize();
+		if(nota!=null) {
+
+			Map<String, Object> dados = new HashMap<String, Object>();
+			
+			dados.put("numero", nota.getNumero());
+			dados.put("serie", 	nota.getSerie());
+			dados.put("dataEmissao", DateUtil.formatarDataPTBR(nota.getDataEmissao()));
+			dados.put("chaveAcesso", nota.getChaveAcesso());
+			dados.put("valorProdutos", nota.getValorProdutos());
+			
+			this.result.use(CustomMapJson.class).put("result", dados).serialize();
+			
+		} else {
+
+			this.result.use(Results.json()).from(nota == null ? "" : nota, "result").serialize();
+			
+		}
+		
 	}
 	
 	@Post
@@ -957,6 +996,8 @@ public class ConferenciaEncalheController {
 		if (set == null){
 			
 			set = new HashSet<Long>();
+			
+			this.session.setAttribute(SET_CONFERENCIA_ENCALHE_EXCLUIR, set);
 		}
 		
 		return set;

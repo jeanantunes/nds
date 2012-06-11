@@ -247,7 +247,7 @@ public class ImpressaoBoletosController {
 		}
 		
 
-		this.gerarCobrancaService.gerarCobranca(null, this.getUsuario().getId());
+		this.gerarCobrancaService.gerarCobranca(null, this.getUsuario().getId(), true);
 		
 		throw new ValidacaoException(TipoMensagem.SUCCESS, "As dividas foram geradas com sucesso.");
 	}

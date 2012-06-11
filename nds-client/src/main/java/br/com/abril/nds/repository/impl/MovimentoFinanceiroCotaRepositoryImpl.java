@@ -30,9 +30,9 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepository<Mo
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" from MovimentoFinanceiroCota mfc   		")
-		   .append(" inner join mfc.movimentos mec 				")
-		   .append(" where mec.id = : idMovimentoEstoqueCota 	");
+		hql.append(" select mfc from MovimentoFinanceiroCota mfc   		")
+		   .append(" inner join mfc.movimentos as mec 			")
+		   .append(" where mec.id = :idMovimentoEstoqueCota 	");
 		
 		Query query = this.getSession().createQuery(hql.toString());
 		

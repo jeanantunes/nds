@@ -200,7 +200,7 @@ public class ConferenciaEncalheRepositoryImpl extends
 		sql.append("         JOIN                                          ");
 		sql.append("             DISTRIBUIDOR DISTRIB                      ");
 		sql.append("         WHERE                                         ");
-		sql.append("             CT.ID=CH_ENCALHE_COTA.COTA_ID                ");
+		sql.append("             CT.ID=CH_ENCALHE_COTA.COTA_ID             ");
 		sql.append("             AND PE.ID=CONF_ENCALHE.PRODUTO_EDICAO_ID  ");
 		sql.append("             AND DISTRIB.ID= :idDistribuidor           ");
 		
@@ -213,7 +213,7 @@ public class ConferenciaEncalheRepositoryImpl extends
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" select sum( conferenciaEncalhe.movimentoEstoqueCota.produtoEdicao.precoVenda - ( pe.precoVenda * ("+ getSubHqlQueryValorDesconto() +") / 100 ) ) ");
+		hql.append(" select sum( conferenciaEncalhe.produtoEdicao.precoVenda - (conferenciaEncalhe.produtoEdicao.precoVenda * ("+ getSubHqlQueryValorDesconto() +") / 100 ) ) ");
 		
 		hql.append(" from ConferenciaEncalhe conferenciaEncalhe  ");
 		
@@ -251,9 +251,9 @@ public class ConferenciaEncalheRepositoryImpl extends
 		
 		hql.append(" where ");
 		
-		hql.append(" ct.id = conferenciaEncalhe.movimentoEstoqueCota.cota.id and ");
+		hql.append(" ct.id = conferenciaEncalhe.chamadaEncalheCota.cota.id and ");
 
-		hql.append(" pe.id = conferenciaEncalhe.movimentoEstoqueCota.produtoEdicao.id and ");
+		hql.append(" pe.id = conferenciaEncalhe.produtoEdicao.id and ");
 
 		hql.append(" distribuidor.id = :idDistribuidor ");
 		

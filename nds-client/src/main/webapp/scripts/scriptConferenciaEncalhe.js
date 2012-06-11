@@ -542,6 +542,20 @@ var ConferenciaEncalhe = {
 		$("#dialog-alert").show();
 	},
 
+	mostrarChaveAcesso : function() {
+		
+		if($('input:radio[name=radioNFE]:checked').val() == 'S') {
+			
+			$("#divForChaveAcessoNFE").show();
+			
+		} else {
+
+			$("#divForChaveAcessoNFE").hide();
+			
+		}
+		
+	},
+	
 	popup_notaFiscal : function() {
 		
 		ConferenciaEncalhe.modalAberta = true;
@@ -554,13 +568,28 @@ var ConferenciaEncalhe = {
 			buttons : {
 				"Confirmar" : function() {
 					
-					var data = [
-						{name : "notaFiscal.numero", value : $("#numNotaFiscal").val()},
-						{name : "notaFiscal.serie", value : $("#serieNotaFiscal").val()},
-						{name : "notaFiscal.dataEmissao", value : $("#dataNotaFiscal").val()},
-						{name : "notaFiscal.valorProdutos", value : $("#valorNotaFiscal").val()},
-						{name : "notaFiscal.chaveAcesso", value : $("#chaveAcessoNFE").val()}
-					];
+					var data = []; 
+					
+					if($('input:radio[name=radioNFE]:checked').val() == 'S') {
+						
+						data = [
+								{name : "notaFiscal.numero", value : $("#numNotaFiscal").val()},
+								{name : "notaFiscal.serie", value : $("#serieNotaFiscal").val()},
+								{name : "notaFiscal.dataEmissao", value : $("#dataNotaFiscal").val()},
+								{name : "notaFiscal.valorProdutos", value : $("#valorNotaFiscal").val()},
+								{name : "notaFiscal.chaveAcesso", value : $("#chaveAcessoNFE").val()}
+						];
+						
+					} else {
+						
+						data = [
+								{name : "notaFiscal.numero", value : $("#numNotaFiscal").val()},
+								{name : "notaFiscal.serie", value : $("#serieNotaFiscal").val()},
+								{name : "notaFiscal.dataEmissao", value : $("#dataNotaFiscal").val()},
+								{name : "notaFiscal.valorProdutos", value : $("#valorNotaFiscal").val()}
+						];
+						
+					}
 					
 					$.postJSON(contextPath + '/devolucao/conferenciaEncalhe/salvarNotaFiscal', data, 
 						function(result){
@@ -791,16 +820,11 @@ $(function() {
 
 	$('#qtdeExemplar').focus();
 
-	$("#datepickerDe").datepicker({
+	$("#dataNotaFiscal").datepicker({
 		showOn : "button",
 		buttonImage : contextPath + "/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
-		buttonImageOnly : true
-	});
-
-	$("#datepickerDe1").datepicker({
-		showOn : "button",
-		buttonImage : contextPath + "/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
-		buttonImageOnly : true
+		buttonImageOnly : true,
+		dateFormat: "dd/mm/yy"
 	});
 
 	$(".outrosVlrsGrid").flexigrid({

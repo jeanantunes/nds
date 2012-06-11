@@ -904,7 +904,10 @@ public class LancamentoRepositoryImpl extends
 		return criteria;
 	}
 	
-	
+	/*
+	 * (non-Javadoc)
+	 * @see br.com.abril.nds.repository.LancamentoRepository#obterDataUltimoLancamentoParcial(java.lang.Long, java.util.Date)
+	 */
 	public Date obterDataUltimoLancamentoParcial(Long idProdutoEdicao, Date dataOperacao) {
 		
 		StringBuffer hql = new StringBuffer();
@@ -934,6 +937,31 @@ public class LancamentoRepositoryImpl extends
 		
 	}
 
+	public Date obterDataUltimoLancamento(Long idProdutoEdicao, Date dataOperacao) {
+		
+		StringBuffer hql = new StringBuffer();
+		
+		hql.append(" select max(lancamento.dataLancamentoDistribuidor)  ");			
+		
+		hql.append(" from Lancamento lancamento ");
+		
+		hql.append(" where ");
+
+		hql.append(" lancamento.produtoEdicao.id = :idProdutoEdicao and ");
+
+		hql.append(" lancamento.dataLancamentoDistribuidor < :dataOperacao 	    ");
+		
+		Query query = getSession().createQuery(hql.toString());
+		
+		query.setParameter("idProdutoEdicao", idProdutoEdicao);
+		
+		query.setParameter("dataOperacao", dataOperacao);
+		
+		return (Date) query.uniqueResult();
+		
+	}
+
+	
 	@Override
 	public List<InformeEncalheDTO> obterLancamentoInformeRecolhimento(
 			Long idFornecedor, Calendar dataInicioRecolhimento,
