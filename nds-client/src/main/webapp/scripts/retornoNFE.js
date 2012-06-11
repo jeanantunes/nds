@@ -1,6 +1,10 @@
 function RetornoNFE(){
 	
-	this.sumarizacaoRetornoNFE = {};
+	this.sumarizacaoRetornoNFE = {
+		numeroNotasAprovadas:null,
+		numeroNotasRejeitadas:null,
+		numeroTotalArquivos:null
+	};
 	
 };
 
@@ -21,9 +25,8 @@ RetornoNFE.prototype.pesquisarArquivos = function() {
 			exibirMensagem(tipoMensagem, listaMensagens, "");
 
 		} else {
-			console.log(data);
-			_this.sumarizacaoRetornoNFE = data;
-			_this.gerarTabela();
+			_this.sumarizacaoRetornoNFE = data.sumarizacao;
+			_this.dataBind();
 		}
 
 	}, null, true);
@@ -56,13 +59,15 @@ RetornoNFE.prototype.bindEvents = function() {
 	});
 };
 
-RetornoNFE.prototype.dataBind = function() {};
-
-RetornoNFE.prototype.dataUnBind = function() {};
-
-RetornoNFE.prototype.gerarTabela = function() {
+RetornoNFE.prototype.dataBind = function() {
+	
+	$("#numeroArquivos").val(this.sumarizacaoRetornoNFE.numeroTotalArquivos);
+	$("#notasAprovadas").val(this.sumarizacaoRetornoNFE.numeroNotasAprovadas);
+	$("#notasRejeitadas").val(this.sumarizacaoRetornoNFE.numeroNotasRejeitadas);
 	
 };
+
+RetornoNFE.prototype.dataUnBind = function() {};
 
 RetornoNFE.prototype.limparTabela = function() {};
 
