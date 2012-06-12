@@ -55,7 +55,6 @@
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-context-support</artifactId>
 		</dependency>
-
 		<dependency>
 			<groupId>org.hsqldb</groupId>
 			<artifactId>hsqldb</artifactId>
@@ -143,6 +142,10 @@
 			<groupId>br.com.abril</groupId>
 			<artifactId>ndsi-canonical</artifactId>
 			<version>1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>br.com.jcomputacao</groupId>
+			<artifactId>nfexml</artifactId>
 		</dependency>
 	</dependencies>
 
