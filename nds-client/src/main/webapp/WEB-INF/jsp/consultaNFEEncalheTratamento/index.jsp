@@ -155,13 +155,13 @@ function popup() {
 		};	
 
 	function mostrar(){
-		alert('mostrar');
-	$(".grids").show();
-}	
-$(function() {
+		$(".grids").show();
+	}
+	
+	$(function() {
 		$( "#data" ).datepicker({
 			showOn: "button",
-			buttonImage: "../scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
+			buttonImage: "${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
 			buttonImageOnly: true
 		});
 		
@@ -170,11 +170,13 @@ $(function() {
 		$(".dados").show();
 	}
 	function pesqEncalhe(){
-		$(".dadosFiltro").show();
+		$(".dadosFiltro").show();		
 		var status = $('#situacaoNfe').val();
 		if(status == 'RECEBIDA'){
 			pesquisarNotaRecebidas();		
 		}
+		
+		
 	}
 	
 	function pesquisarNotaRecebidas(){
@@ -210,7 +212,7 @@ $(function() {
 				return resultado;
 			}
 			
-			$(".grids").show();
+			//$(".grids").show();
 			
 			return resultado;
 		}
@@ -352,13 +354,13 @@ $(function() {
     <td width="105"><input name="data" type="text" id="data" style="width:80px;"/></td>
     <td width="42">Status:</td>
     <td width="173">    
-		<select name="situacaoNfe" id="situacaoNfe" style="width:290px;">
+		<select name="situacaoNfe" id="situacaoNfe" style="width:290px;" onchange="mostra_status(this.value);">
 		    <option value=""  selected="selected"></option>
 		    <c:forEach items="${comboStatusNota}" var="comboStatusNota">
 		      		<option value="${comboStatusNota.key}">${comboStatusNota.value}</option>	
 		    </c:forEach>
 	    </select>
-    </td><td width="104"><span class="bt_pesquisar"><a href="javascript:;" onclick="pesqEncalhe();">Pesquisar</a></span></td></tr>
+    </td><td width="104"><span class="bt_pesquisar"><a href="javascript:;" onclick="mostrar();pesqEncalhe();">Pesquisar</a></span></td></tr>
   </table>
       </fieldset>
       <div class="linha_separa_fields">&nbsp;</div>
@@ -378,12 +380,22 @@ $(function() {
           
           
           
-          <span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;"><img src="../images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
-             <span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="../images/ico_impressora.gif" alt="Imprimir" hspace="5" border="0" />Imprimir</a></span>
+			<span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;">
+				<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />Arquivo</a>
+			</span>
+			<span class="bt_novos" title="Imprimir">
+				<a href="javascript:;">
+					<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" alt="Imprimir" hspace="5" border="0" />Imprimir</a>
+			</span>
              
-            <span class="bt_confirmar_novo" title="Confirmar Cancelamento"><a href="javascript:;" onclick="popup_nfe();"><img border="0" hspace="5" src="../images/ico_check.gif">Registrar NF-e</a></span>
+            <span class="bt_confirmar_novo" title="Confirmar Cancelamento"><a href="javascript:;" onclick="popup_nfe();">
+            	<img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_check.gif">Registrar NF-e</a>
+            </span>
             
-            <span class="bt_confirmar_novo" title="Confirmar Cancelamento"><a href="javascript:;" onclick="popup_confirmar();"><img border="0" hspace="5" src="../images/ico_check.gif">Gerar</a></span>
+            <span class="bt_confirmar_novo" title="Confirmar Cancelamento">
+            	<a href="javascript:;" onclick="popup_confirmar();">
+            	<img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_check.gif">Gerar</a>
+            </span>
             
              
              <span class="bt_sellAll" style="float:right;"><label for="sel">Selecionar Todos</label><input type="checkbox" id="sel" name="Todos" onclick="checkAll();" style="float:left; margin-right:25px;"/></span>
