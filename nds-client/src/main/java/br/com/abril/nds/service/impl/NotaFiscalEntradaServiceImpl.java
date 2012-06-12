@@ -69,19 +69,21 @@ public class NotaFiscalEntradaServiceImpl implements NotaFiscalEntradaService {
 			throw new ValidacaoException(validacao);
 		}
 		
-		if (periodo.getDataInicial() != null && periodo.getDataFinal() != null &&
-				DateUtil.isDataInicialMaiorDataFinal(periodo.getDataInicial(), periodo.getDataFinal())) {
+		if (periodo.getDataInicial() != null && periodo.getDataFinal() != null) {
+			
+			if (DateUtil.isDataInicialMaiorDataFinal(periodo.getDataInicial(), periodo.getDataFinal())) {
 
-			throw new ValidacaoException(TipoMensagem.WARNING, "A data inicial deve anteceder a data final.");
+				throw new ValidacaoException(TipoMensagem.WARNING, "A data inicial deve anteceder a data final.");
+			}
+			
+			Calendar dataFinal = Calendar.getInstance();
+			
+			dataFinal.setTime(periodo.getDataFinal());
+			
+			dataFinal.add(Calendar.DAY_OF_MONTH, 1);
+			
+			periodo.setDataFinal(DateUtil.removerTimestamp(dataFinal.getTime()));
 		}
-		
-		Calendar dataFinal = Calendar.getInstance();
-		
-		dataFinal.setTime(periodo.getDataFinal());
-		
-		dataFinal.add(Calendar.DAY_OF_MONTH, 1);
-		
-		periodo.setDataFinal(DateUtil.removerTimestamp(dataFinal.getTime()));
 		
 		return notaFiscalDAO.obterNotasFiscaisCadastradas(filtroConsultaNotaFiscal);
 	}
