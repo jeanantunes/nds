@@ -166,6 +166,31 @@ public class RoteirizacaoRepositoryImpl extends AbstractRepository<Roteirizacao,
 		criteria.addOrder(Order.asc("baiNo"));
 		return criteria.list();  
 	}
+	
+	@Override
+	public List<Roteirizacao> buscarRoteirizacao(Long boxId, Long roteiroId, Long rotaId, TipoRoteiro tipoRoteiro){
+		Criteria criteria  = getSession().createCriteria(Roteirizacao.class);
+		criteria.createAlias("rota", "rota") ;
+		criteria.createAlias("rota.roteiro", "roteiro") ;
+		criteria.createAlias("roteiro.box", "box") ;
+		if (boxId != null) { 
+			criteria.add(Restrictions.eq("roteiro.box.id", boxId));
+		}
+		
+		if (roteiroId != null) { 
+			criteria.add(Restrictions.eq("roteiro.id", roteiroId));
+		}
+		
+		if (rotaId != null) { 
+			criteria.add(Restrictions.eq("rota.id", rotaId));
+		}
+		
+		criteria.add(Restrictions.eq("roteiro.tipoRoteiro", tipoRoteiro));
+		criteria.addOrder(Order.asc("box.nome"));
+
+		
+		return criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();  
+	}
 
 }
 

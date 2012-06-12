@@ -352,6 +352,15 @@ function montarColunaEncalheCota(){
 function montarColunaConsignado(){
 
 $(".consignadoCotaGrid").flexigrid({
+	preProcess : function(data) {
+		$.each(data.rows, function(index, value) {			
+			if(!value.cell.motivo){
+				value.cell.motivo = "";
+			}				
+			});
+			return data;
+		
+	},
 	dataType : 'json',	
 	colModel : [ {
 		display : 'Código',

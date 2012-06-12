@@ -13,6 +13,7 @@ import br.com.abril.nds.model.fiscal.nota.Status;
 public class ArquivoRetornoNFEVO {
 
 	private Long idNotaFiscal;
+	private String cpfCnpj;
 	private String chaveAcesso;
 	private Status status;
 	private Long protocolo;
@@ -108,5 +109,18 @@ public class ArquivoRetornoNFEVO {
 	public void setDataRecebimento(Date dataRecebimento) {
 		this.dataRecebimento = dataRecebimento;
 	}
-			
+
+	/**
+	 * @return the cpfCnpj
+	 */
+	public String getCpfCnpj() {
+		return cpfCnpj;
+	}
+
+	/**
+	 * @param cpfCnpj the cpfCnpj to set
+	 */
+	public void setCpfCnpj(String cpfCnpj) {
+		this.cpfCnpj = cpfCnpj;
+	}
 }

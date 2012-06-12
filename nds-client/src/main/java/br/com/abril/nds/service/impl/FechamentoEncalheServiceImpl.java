@@ -10,9 +10,11 @@ import org.springframework.transaction.annotation.Transactional;
 import br.com.abril.nds.dto.CotaAusenteEncalheDTO;
 import br.com.abril.nds.dto.FechamentoFisicoLogicoDTO;
 import br.com.abril.nds.dto.filtro.FiltroFechamentoEncalheDTO;
+import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.estoque.FechamentoEncalhe;
 import br.com.abril.nds.model.estoque.pk.FechamentoEncalhePK;
+import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.FechamentoEncalheRepository;
 import br.com.abril.nds.service.FechamentoEncalheService;
 
@@ -21,6 +23,9 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 
 	@Autowired
 	private FechamentoEncalheRepository fechamentoEncalheRepository;
+	
+	@Autowired
+	private CotaRepository cotaRepository;
 	
 	@Override
 	@Transactional(readOnly=true)
@@ -97,8 +102,12 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 	@Transactional(readOnly=true)
 	public List<CotaAusenteEncalheDTO> buscarCotasAusentes(Date dataEncalhe,
 			String sortorder, String sortname, int page, int rp) {
-
-		int startSearch = page * rp - rp;
+		
+		int startSearch = 0;
+		
+		if (page >= 0) {
+			startSearch = page * rp - rp;	
+		} 
 		
 		return this.fechamentoEncalheRepository.buscarCotasAusentes(dataEncalhe, sortorder, sortname, startSearch, rp);
 	}
@@ -107,6 +116,33 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 	@Transactional(readOnly=true)
 	public Integer buscarTotalCotasAusentes(Date dataEncalhe) {
 		return this.fechamentoEncalheRepository.buscarTotalCotasAusentes(dataEncalhe);
+	}
+
+	@Override
+	@Transactional
+	public void postergarCotas(Date dataEncalhe, List<Long> idsCotas) {
+	
+		if (idsCotas == null || idsCotas.isEmpty()) {
+			throw new IllegalArgumentException("Lista de ids das cotas não pode ser nula e nem vazia.");
+		}
+		
+		if (dataEncalhe == null) {
+			throw new IllegalArgumentException("Data de encalhe não pode ser nula.");
+		}
+		
+		List<Cota> listaCotas = 
+			this.cotaRepository.obterCotasPorIDS(idsCotas);
+		
+		for (Cota cota : listaCotas) {
+			System.out.println(cota.getId());
+		}
+		
+	}
+
+	@Override
+	@Transactional
+	public void cobrarCotas(Date dataEncalhe, List<Long> idsCotas) {
+		
 	}
 
 }

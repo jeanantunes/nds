@@ -151,13 +151,10 @@ function serializeObjectToPost(objectName, object) {
 	return obj;
 };
 
-function serializeArrayToPost(listaName, lista) {	
-	
-	var obj = {};
+function serializeArrayToPost(listaName, lista, obj) {		
+	obj = (obj)?obj:new Object();
 	var i;
-	console.log(lista);
-	for(i = 0; i < lista.length;i++){
-		
+	for(i = 0; i < lista.length;i++){		
 		var object = lista[i];
 		for ( var propriedade in object) {
 			if(object[propriedade] || object[propriedade] == 0){
