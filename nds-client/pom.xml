@@ -286,7 +286,7 @@
 		<profile>
 			<id>integracaoContinua</id>
 			<properties>
-				<testDataSourceURL>jdbc:mysql://abrildgbdb01.cdgtwjqgurfb.sa-east-1.rds.amazonaws.com:3306/NDS</testDataSourceURL>
+				<testDataSourceURL>jdbc:mysql://abrildgbdb01.cdgtwjqgurfb.sa-east-1.rds.amazonaws.com:3306/nds-client-test</testDataSourceURL>
 				<testDataSourceUsername>admin</testDataSourceUsername>
 				<testDataSourcePassword>abrildgb01</testDataSourcePassword>
 			</properties>

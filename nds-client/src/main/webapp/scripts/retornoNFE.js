@@ -1,5 +1,7 @@
 function RetornoNFE(){
 	
+	this.bindEvents();
+	
 	this.sumarizacaoRetornoNFE = {
 		numeroNotasAprovadas:null,
 		numeroNotasRejeitadas:null,
@@ -12,24 +14,33 @@ RetornoNFE.prototype.path = contextPath +"/nfe/retornoNFe/";
 
 RetornoNFE.prototype.pesquisarArquivos = function() {
 	
+	this.limparTabela();
+	
 	var dataReferencia = $("#retornoNFEDataReferencia").val();
 	
-	var _this = this;
+	if(!dataReferencia) {
+		exibirMensagem("WARNING", ["O campo [Date de Referência] é obrigatório"], "");
+	} else {
 	
-	$.postJSON(this.path + 'pesquisarArquivos.json', {"dataReferencia":dataReferencia}, function(data) {
+		var _this = this;
+	
+		$.postJSON(this.path + 'pesquisarArquivos.json', {"dataReferencia":dataReferencia}, function(data) {
 
-		var tipoMensagem = data.tipoMensagem;
-		var listaMensagens = data.listaMensagens;
+			var tipoMensagem = data.tipoMensagem;
+			var listaMensagens = data.listaMensagens;
+			
+			console.log(data);
+			
+			if (tipoMensagem && listaMensagens) {
+				exibirMensagem(tipoMensagem, listaMensagens);
+				_this.limparTabela();
+			} else {
+				_this.sumarizacaoRetornoNFE = data.sumarizacao;
+				_this.dataBind();
+			}
 
-		if (tipoMensagem && listaMensagens) {
-			exibirMensagem(tipoMensagem, listaMensagens, "");
-
-		} else {
-			_this.sumarizacaoRetornoNFE = data.sumarizacao;
-			_this.dataBind();
-		}
-
-	}, null, true);
+		});
+	}
 };
 
 RetornoNFE.prototype.confirmar = function() {
@@ -40,14 +51,14 @@ RetornoNFE.prototype.confirmar = function() {
 
 		var tipoMensagem = data.tipoMensagem;
 		var listaMensagens = data.listaMensagens;
-
+		console.log(data);
 		if (tipoMensagem && listaMensagens) {
 			exibirMensagem(tipoMensagem, listaMensagens, "");
 		} 
 
 		_this.limparTabela();
 		
-	}, null, true);
+	});
 };
 
 RetornoNFE.prototype.bindEvents = function() {
@@ -57,19 +68,33 @@ RetornoNFE.prototype.bindEvents = function() {
 	$("#retornoNFEPesquisar").click(function() {
 		_this.pesquisarArquivos();
 	});
+	
+	$("#retornoNFEConfirmar").click(function() {
+		_this.confirmar();
+	});
 };
 
 RetornoNFE.prototype.dataBind = function() {
-	
-	$("#numeroArquivos").val(this.sumarizacaoRetornoNFE.numeroTotalArquivos);
-	$("#notasAprovadas").val(this.sumarizacaoRetornoNFE.numeroNotasAprovadas);
-	$("#notasRejeitadas").val(this.sumarizacaoRetornoNFE.numeroNotasRejeitadas);
+	console.log(this);
+	$("#numeroArquivos").html(this.sumarizacaoRetornoNFE.numeroTotalArquivos);
+	$("#notasAprovadas").html(this.sumarizacaoRetornoNFE.numeroNotasAprovadas);
+	$("#notasRejeitadas").html(this.sumarizacaoRetornoNFE.numeroNotasRejeitadas);
 	
 };
 
-RetornoNFE.prototype.dataUnBind = function() {};
+RetornoNFE.prototype.dataUnBind = function() {
+	this.sumarizacaoRetornoNFE.numeroTotalArquivos = $("#numeroArquivos").html();
+	this.sumarizacaoRetornoNFE.numeroNotasAprovadas = $("#notasAprovadas").html();
+	this.sumarizacaoRetornoNFE.numeroNotasRejeitadas = $("#notasRejeitadas").html();
+};
 
-RetornoNFE.prototype.limparTabela = function() {};
+RetornoNFE.prototype.limparTabela = function() {
+	
+	$("#numeroArquivos").html(0);
+	$("#notasAprovadas").html(0);
+	$("#notasRejeitadas").html(0);
+	this.dataUnBind();
+};
 
 
 

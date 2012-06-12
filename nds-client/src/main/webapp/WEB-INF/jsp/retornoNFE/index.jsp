@@ -97,7 +97,7 @@
 		<br clear="all">
           
           <span class="bt_confirmar_novo" title="Confirmar">
-          	<a onclick="popup();" href="javascript:;">
+          	<a id="retornoNFEConfirmar" href="javascript:;">
          	<img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_check.gif">Confirma</a>
           </span>
           

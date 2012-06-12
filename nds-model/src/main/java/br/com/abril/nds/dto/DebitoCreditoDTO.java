@@ -152,4 +152,26 @@ public class DebitoCreditoDTO implements Serializable {
 	public void setObservacao(String observacao) {
 		this.observacao = observacao;
 	}
+
+	public DebitoCreditoDTO(){
+		
+	}
+			
+	public DebitoCreditoDTO(Long id, String dataLancamento,
+			String dataVencimento, Integer numeroCota, String nomeCota,
+			TipoMovimentoFinanceiro tipoMovimentoFinanceiro, Long idUsuario,
+			String valor, String observacao) {
+		super();
+		this.id = id;
+		this.dataLancamento = dataLancamento;
+		this.dataVencimento = dataVencimento;
+		this.numeroCota = numeroCota;
+		this.nomeCota = nomeCota;
+		this.tipoMovimentoFinanceiro = tipoMovimentoFinanceiro;
+		this.idUsuario = idUsuario;
+		this.valor = valor;
+		this.observacao = observacao;
+	}
+	
+	
 }
