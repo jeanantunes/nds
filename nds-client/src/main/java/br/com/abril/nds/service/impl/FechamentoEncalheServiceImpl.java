@@ -51,7 +51,6 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 			}
 		}
 		
-		
 		List<FechamentoFisicoLogicoDTO> listaConferencia = fechamentoEncalheRepository.buscarConferenciaEncalhe(filtro, sortorder, srtName, startSearch, rp);
 		List<FechamentoEncalhe> listaFechamento = fechamentoEncalheRepository.buscarFechamentoEncalhe(filtro);
 		
