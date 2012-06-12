@@ -1,4 +1,4 @@
-package br.com.abril.nds.client.vo;
+package br.com.abril.nds.dto;
 
 import java.util.Date;
 
@@ -10,7 +10,7 @@ import br.com.abril.nds.model.fiscal.nota.Status;
  * @author Discover Technology
  *
  */
-public class ArquivoRetornoNFEVO {
+public class RetornoNFEDTO {
 
 	private Long idNotaFiscal;
 	private String cpfCnpj;

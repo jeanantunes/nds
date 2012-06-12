@@ -4,8 +4,8 @@ import java.util.List;
 import java.util.Map;
 
 import br.com.abril.nds.dto.ConsultaLoteNotaFiscalDTO;
+import br.com.abril.nds.dto.RetornoNFEDTO;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
-import br.com.abril.nds.model.fiscal.nota.RetornoComunicacaoEletronica;
 
 /**
  * Inteface do serviço de Nota Fiscal.
@@ -36,10 +36,9 @@ public interface NotaFiscalService {
 	/**
 	 * Processa o retorno de uma nota fiscal.
 	 * 
-	 * @param id - id da nota fiscal
-	 * @param retornoComunicacaoEletronica - informações de retorno da comunicação eletrônica
+	 * @param dadosRetornoNFE - informações de retorno da comunicação eletrônica
 	 */
-	void processarRetornoNotaFiscal(Long id, RetornoComunicacaoEletronica retornoComunicacaoEletronica);
+	void processarRetornoNotaFiscal(RetornoNFEDTO dadosRetornoNFE);
 	
 	/**
 	 * Cancela uma nota fiscal.

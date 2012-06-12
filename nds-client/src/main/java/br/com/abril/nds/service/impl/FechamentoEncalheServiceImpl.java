@@ -1,5 +1,7 @@
 package br.com.abril.nds.service.impl;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
@@ -28,13 +30,17 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 	private CotaRepository cotaRepository;
 	
 	@Override
-	@Transactional(readOnly=true)
+	@Transactional
 	public List<FechamentoFisicoLogicoDTO> buscarFechamentoEncalhe(FiltroFechamentoEncalheDTO filtro,
 			String sortorder, String sortname, int page, int rp) {
 		
 		int startSearch = page * rp - rp;
+		String sort = sortname;
+		if (sortname.equals("total")) {
+			sort = null;
+		}
 		
-		List<FechamentoFisicoLogicoDTO> listaConferencia = fechamentoEncalheRepository.buscarConferenciaEncalhe(filtro, sortorder, sortname, startSearch, rp);
+		List<FechamentoFisicoLogicoDTO> listaConferencia = fechamentoEncalheRepository.buscarConferenciaEncalhe(filtro, sortorder, sort, startSearch, rp);
 		List<FechamentoEncalhe> listaFechamento = fechamentoEncalheRepository.buscarFechamentoEncalhe(filtro);
 		
 		for (FechamentoFisicoLogicoDTO conferencia : listaConferencia) {
@@ -47,14 +53,21 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 					break;
 				}
 			}
-			
+		}
+		
+		if (sort == null) {
+			if (sortorder.equals("asc")) {
+				Collections.sort(listaConferencia, new FechamentoAscComparator());
+			} else {
+				Collections.sort(listaConferencia, new FechamentoDescComparator());
+			}
 		}
 		
 		return listaConferencia;
 	}
 	
 	@Override
-	@Transactional(readOnly=true)
+	@Transactional
 	public List<FechamentoFisicoLogicoDTO> salvarFechamentoEncalhe(FiltroFechamentoEncalheDTO filtro,
 			String sortorder, String sortname, int page, int rp) {
 		
@@ -91,6 +104,8 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 				fechamentoEncalhe.setQuantidade(qtd);
 				fechamentoEncalheRepository.alterar(fechamentoEncalhe);
 			}
+			
+			fechamento.setFisico(qtd); // retorna valor pra tela
 		}
 		
 		fechamentoEncalheRepository.flush();
@@ -117,6 +132,21 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 	public Integer buscarTotalCotasAusentes(Date dataEncalhe) {
 		return this.fechamentoEncalheRepository.buscarTotalCotasAusentes(dataEncalhe);
 	}
+
+	private class FechamentoAscComparator implements Comparator<FechamentoFisicoLogicoDTO> {
+		@Override
+		public int compare(FechamentoFisicoLogicoDTO o1, FechamentoFisicoLogicoDTO o2) {
+			return o1.getTotal().compareTo(o2.getTotal());
+		}
+	}
+	
+	private class FechamentoDescComparator implements Comparator<FechamentoFisicoLogicoDTO> {
+		@Override
+		public int compare(FechamentoFisicoLogicoDTO o1, FechamentoFisicoLogicoDTO o2) {
+			return o2.getTotal().compareTo(o1.getTotal());
+		}
+	}
+
 
 	@Override
 	@Transactional

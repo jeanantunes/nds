@@ -8,7 +8,7 @@ import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
-import br.com.abril.nds.client.vo.ArquivoRetornoNFEVO;
+import br.com.abril.nds.dto.RetornoNFEDTO;
 import br.com.abril.nds.exception.ProcessamentoNFEException;
 import br.com.abril.nds.model.fiscal.nota.Status;
 import br.inf.portalfiscal.nfe.TNFe;
@@ -31,10 +31,10 @@ public class NFEImportUtil {
 	 * @throws ProcessamentoNFEException
 	 */
 	@SuppressWarnings("unchecked")
-	public static ArquivoRetornoNFEVO processarArquivoRetorno(File arquivo)
+	public static RetornoNFEDTO processarArquivoRetorno(File arquivo)
 			throws ProcessamentoNFEException {
 
-		ArquivoRetornoNFEVO arquivoRetornoNFEVO = null;
+		RetornoNFEDTO retornoNFEDTO = null;
 		
 		JAXBContext context;
 		Unmarshaller unmarshaller;
@@ -45,7 +45,7 @@ public class NFEImportUtil {
 			unmarshaller = context.createUnmarshaller();
 			JAXBElement<TNFe> element = (JAXBElement<TNFe>) unmarshaller.unmarshal(arquivo);
 			TNFe nfe = element.getValue();
-			arquivoRetornoNFEVO = NFEImportUtil.retornoNFeAssinada(nfe);
+			retornoNFEDTO = NFEImportUtil.retornoNFeAssinada(nfe);
 		} catch (JAXBException e) {
 			exception = e;
 		}
@@ -57,7 +57,7 @@ public class NFEImportUtil {
 				unmarshaller = context.createUnmarshaller();
 				JAXBElement<TNfeProc> element = (JAXBElement<TNfeProc>) unmarshaller.unmarshal(arquivo);
 				TNfeProc nfeProc = element.getValue();
-				arquivoRetornoNFEVO = NFEImportUtil.retornoNFeProcNFe(nfeProc);
+				retornoNFEDTO = NFEImportUtil.retornoNFeProcNFe(nfeProc);
 			} catch (JAXBException e) {
 				exception = e;
 			}
@@ -70,7 +70,7 @@ public class NFEImportUtil {
 				unmarshaller = context.createUnmarshaller();
 				JAXBElement<TProcCancNFe> element = (JAXBElement<TProcCancNFe>) unmarshaller.unmarshal(arquivo);
 				TProcCancNFe procCancNFe = element.getValue();
-				arquivoRetornoNFEVO = NFEImportUtil.retornoNFeCancNFe(procCancNFe);
+				retornoNFEDTO = NFEImportUtil.retornoNFeCancNFe(procCancNFe);
 			} catch (JAXBException e) {
 				exception = e;
 			}
@@ -80,7 +80,7 @@ public class NFEImportUtil {
 			throw new ProcessamentoNFEException();
 		}
 
-		return arquivoRetornoNFEVO;
+		return retornoNFEDTO;
 	}
 
 	/**
@@ -90,8 +90,8 @@ public class NFEImportUtil {
 	 * @return
 	 * @throws ProcessamentoNFEException
 	 */
-	private static ArquivoRetornoNFEVO retornoNFeAssinada(TNFe nfe) throws ProcessamentoNFEException {
-		ArquivoRetornoNFEVO arquivoRetornoNFEVO = new ArquivoRetornoNFEVO();
+	private static RetornoNFEDTO retornoNFeAssinada(TNFe nfe) throws ProcessamentoNFEException {
+		RetornoNFEDTO retornoNFEDTO = new RetornoNFEDTO();
 
 		if (nfe != null && nfe.getInfNFe() != null
 				&& nfe.getInfNFe().getIde() != null
@@ -112,19 +112,19 @@ public class NFEImportUtil {
 			String motivo = null;
 			Status status = null;
 
-			arquivoRetornoNFEVO.setIdNotaFiscal(idNotaFiscal);
-			arquivoRetornoNFEVO.setCpfCnpj(cpfCnpj);
-			arquivoRetornoNFEVO.setChaveAcesso(chaveAcesso);
-			arquivoRetornoNFEVO.setProtocolo(protocolo);
-			arquivoRetornoNFEVO.setDataRecebimento(dataRecebimento);
-			arquivoRetornoNFEVO.setMotivo(motivo);
-			arquivoRetornoNFEVO.setStatus(status);
+			retornoNFEDTO.setIdNotaFiscal(idNotaFiscal);
+			retornoNFEDTO.setCpfCnpj(cpfCnpj);
+			retornoNFEDTO.setChaveAcesso(chaveAcesso);
+			retornoNFEDTO.setProtocolo(protocolo);
+			retornoNFEDTO.setDataRecebimento(dataRecebimento);
+			retornoNFEDTO.setMotivo(motivo);
+			retornoNFEDTO.setStatus(status);
 		} else {
 			throw new ProcessamentoNFEException();
 		}
 				
 				
-		return arquivoRetornoNFEVO;
+		return retornoNFEDTO;
 	}
 
 	/**
@@ -134,8 +134,8 @@ public class NFEImportUtil {
 	 * @return
 	 * @throws ProcessamentoNFEException
 	 */
-	private static ArquivoRetornoNFEVO retornoNFeProcNFe(TNfeProc nfeProc) throws ProcessamentoNFEException {
-		ArquivoRetornoNFEVO arquivoRetornoNFEVO = new ArquivoRetornoNFEVO();
+	private static RetornoNFEDTO retornoNFeProcNFe(TNfeProc nfeProc) throws ProcessamentoNFEException {
+		RetornoNFEDTO retornoNFEDTO = new RetornoNFEDTO();
 
 		if (nfeProc != null
 				&& nfeProc.getNFe() != null
@@ -161,17 +161,17 @@ public class NFEImportUtil {
 		String motivo = nfeProc.getProtNFe().getInfProt().getXMotivo();
 		Status status = Status.obterPeloCodigo(Integer.parseInt(nfeProc.getProtNFe().getInfProt().getCStat()));
 				
-		arquivoRetornoNFEVO.setIdNotaFiscal(idNotaFiscal);
-		arquivoRetornoNFEVO.setCpfCnpj(cpfCnpj);
-		arquivoRetornoNFEVO.setChaveAcesso(chaveAcesso);
-		arquivoRetornoNFEVO.setProtocolo(protocolo);
-		arquivoRetornoNFEVO.setDataRecebimento(dataRecebimento);
-		arquivoRetornoNFEVO.setMotivo(motivo);
-		arquivoRetornoNFEVO.setStatus(status);
+		retornoNFEDTO.setIdNotaFiscal(idNotaFiscal);
+		retornoNFEDTO.setCpfCnpj(cpfCnpj);
+		retornoNFEDTO.setChaveAcesso(chaveAcesso);
+		retornoNFEDTO.setProtocolo(protocolo);
+		retornoNFEDTO.setDataRecebimento(dataRecebimento);
+		retornoNFEDTO.setMotivo(motivo);
+		retornoNFEDTO.setStatus(status);
 	} else {
 		throw new ProcessamentoNFEException();
 	}
-		return arquivoRetornoNFEVO;
+		return retornoNFEDTO;
 	}
 
 	/**
@@ -181,8 +181,8 @@ public class NFEImportUtil {
 	 * @return
 	 * @throws ProcessamentoNFEException
 	 */
-	private static ArquivoRetornoNFEVO retornoNFeCancNFe(TProcCancNFe procCancNFe) throws ProcessamentoNFEException {
-		ArquivoRetornoNFEVO arquivoRetornoNFEVO = new ArquivoRetornoNFEVO();
+	private static RetornoNFEDTO retornoNFeCancNFe(TProcCancNFe procCancNFe) throws ProcessamentoNFEException {
+		RetornoNFEDTO retornoNFEDTO = new RetornoNFEDTO();
 
 		if (procCancNFe != null
 				&& procCancNFe.getRetCancNFe() != null
@@ -199,17 +199,17 @@ public class NFEImportUtil {
 		String motivo = procCancNFe.getRetCancNFe().getInfCanc().getXMotivo();
 		Status status = Status.obterPeloCodigo(Integer.parseInt(procCancNFe.getRetCancNFe().getInfCanc().getCStat()));
 				
-		arquivoRetornoNFEVO.setIdNotaFiscal(idNotaFiscal);
-		arquivoRetornoNFEVO.setCpfCnpj(cpfCnpj);
-		arquivoRetornoNFEVO.setChaveAcesso(chaveAcesso);
-		arquivoRetornoNFEVO.setProtocolo(protocolo);
-		arquivoRetornoNFEVO.setDataRecebimento(dataRecebimento);
-		arquivoRetornoNFEVO.setMotivo(motivo);
-		arquivoRetornoNFEVO.setStatus(status);
+		retornoNFEDTO.setIdNotaFiscal(idNotaFiscal);
+		retornoNFEDTO.setCpfCnpj(cpfCnpj);
+		retornoNFEDTO.setChaveAcesso(chaveAcesso);
+		retornoNFEDTO.setProtocolo(protocolo);
+		retornoNFEDTO.setDataRecebimento(dataRecebimento);
+		retornoNFEDTO.setMotivo(motivo);
+		retornoNFEDTO.setStatus(status);
 	} else {
 		throw new ProcessamentoNFEException();
 	}
-		return arquivoRetornoNFEVO;
+		return retornoNFEDTO;
 	}
 	
 }

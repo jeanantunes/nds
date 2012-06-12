@@ -33,7 +33,6 @@ import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
-import br.com.caelum.vraptor.view.Results;
 
 /**
  * Classe responsável pelo controle das ações referentes à
@@ -84,7 +83,7 @@ public class FechamentoEncalheController {
 		filtro.setFornecedorId(fornecedorId);
 		filtro.setBoxId(boxId);
 		
-		List<FechamentoFisicoLogicoDTO> listaEncalhe = fechamentoEncalheService.buscarFechamentoEncalhe(filtro, sortorder, sortname, page, rp);
+		List<FechamentoFisicoLogicoDTO> listaEncalhe = fechamentoEncalheService.buscarFechamentoEncalhe(filtro, sortorder, this.resolveSort(sortname), page, rp);
 		
 		this.result.use(FlexiGridJson.class).from(listaEncalhe).total(listaEncalhe.size()).page(page).serialize();
 	}
@@ -106,7 +105,7 @@ public class FechamentoEncalheController {
 		filtro.setBoxId(boxId);
 		filtro.setFisico(arrayFisico);
 		
-		List<FechamentoFisicoLogicoDTO> listaEncalhe = fechamentoEncalheService.salvarFechamentoEncalhe(filtro, sortorder, sortname, page, rp);
+		List<FechamentoFisicoLogicoDTO> listaEncalhe = fechamentoEncalheService.salvarFechamentoEncalhe(filtro, sortorder, this.resolveSort(sortname), page, rp);
 		
 		result.use(FlexiGridJson.class).from(listaEncalhe).total(listaEncalhe.size()).page(page).serialize();
 	}
@@ -212,4 +211,13 @@ public class FechamentoEncalheController {
 		return usuario;
 	}
 	
+	
+	private String resolveSort(String sortname) {
+		
+		if (sortname.endsWith("Formatado")) {
+			return sortname.substring(0, sortname.indexOf("Formatado"));
+		} else {
+			return sortname;
+		}
+	}
 }
