@@ -1055,15 +1055,35 @@ CaucaoLiquida.prototype.salva = function(callBack) {
 };
 
 CaucaoLiquida.prototype.resgatarValorCaucao = function() {
-	var caucaoLiquida = {
-			id:null,
-			atualizacao : this.formatDate(new Date()),
-			indiceReajuste: 0,
-			valor:0
-	};
+	
+	var _this = this;
+	
+	$("#dialog-confirma-resgate").dialog({
+		resizable : false,
+		height : 'auto',
+		width : 'auto',
+		modal : true,
+		buttons : {
+			"Confirmar" : function() {
 
-	this.listNovosCalcao.unshift(caucaoLiquida);		
-	this.popularGrid();
+				var caucaoLiquida = {
+						id:null,
+						atualizacao : _this.formatDate(new Date()),
+						indiceReajuste: 0,
+						valor:0
+				};
+
+				_this.listNovosCalcao.unshift(caucaoLiquida);		
+				_this.popularGrid();
+				
+				$(this).dialog("close");
+			},
+			"Cancelar" : function() {
+				$(this).dialog("close");
+			}
+		}
+	});
+	
 };
 
 CaucaoLiquida.prototype.bindEvents = function() {
