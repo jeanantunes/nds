@@ -242,26 +242,40 @@
 		$("#dialog-postergar").dialog({
 			resizable: false,
 			height:'auto',
-			width:300,
+			width:250,
 			modal: true,
 			buttons: {
 				"Confirmar": function() {
 					
-					var dataEncalhe = $("#dtPostergada").val();
+					var dataPostergacao = $("#dtPostergada").val();
 
 					$.postJSON("<c:url value='/devolucao/fechamentoEncalhe/postergarCotas' />",
-								{ 'dataEncalhe' : dataEncalhe, 'idsCotas' : obterCotasMarcadas() },
+								{ 'dataPostergacao' : dataPostergacao, 'idsCotas' : obterCotasMarcadas() },
 								function (result) {
-						
+
+									$("#dialog-postergar").dialog("close");
+									
+									var tipoMensagem = result.tipoMensagem;
+									var listaMensagens = result.listaMensagens;
+									
+									if (tipoMensagem && listaMensagens) {
+										exibirMensagemDialog(tipoMensagem, listaMensagens, 'dialogMensagemEncerrarEncalhe');
+									}
+									
 								},
 							  	null,
-							   	true
+							   	true,
+							   	'dialogMensagemEncerrarEncalhe'
 						);
 				},
 				
 				"Cancelar": function() {
 					$( this ).dialog( "close" );
 				}
+			},
+			beforeClose: function() {
+				$("#dtPostergada").val("");
+				clearMessageDialogTimeout('dialogMensagemEncerrarEncalhe');
 			}
 		});
 	}
@@ -304,11 +318,11 @@
 	</div>
 
 	<div id="dialog-postergar" title="Postergar Encalhe" style="display:none;">
-		<fieldset style="width:255px!important;">
+		<fieldset style="width:200px!important;">
 	    	<legend>Postergar Encalhe</legend>
-			<table width="230" border="0" cellspacing="2" cellpadding="0">
+			<table border="0" cellspacing="2" cellpadding="0">
 	          <tr>
-	            <td width="121">Nova Data:</td>
+	            <td width="70">Nova Data:</td>
 	            <td width="103"><input name="dtPostergada" type="text" id="dtPostergada" style="width:80px;" /></td>
 	          </tr>
 	        </table>
@@ -316,6 +330,11 @@
 	</div>
 	
 	<div id="dialog-encerrarEncalhe" title="Opera&ccedil;&atilde;o de Encalhe" style="display:none;">
+		
+		<jsp:include page="../messagesDialog.jsp">
+			<jsp:param value="dialogMensagemEncerrarEncalhe" name="messageDialog"/>
+		</jsp:include> 
+		
 		<fieldset>
 			<legend>Cotas Ausentes</legend>
 			<form id="formGridCotas" name="formGridCotas" >

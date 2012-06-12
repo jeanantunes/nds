@@ -17,7 +17,7 @@ public interface FechamentoEncalheService {
 
 	Integer buscarTotalCotasAusentes(Date dataEncalhe);
 
-	void postergarCotas(Date dataEncalhe, List<Long> idsCotas);
+	void postergarCotas(Date dataPostergacao, List<Long> idsCotas);
 	
 	void cobrarCotas(Date dataEncalhe, List<Long> idsCotas);
 	
