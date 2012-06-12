@@ -10,7 +10,7 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import br.com.abril.nds.client.util.PaginacaoUtil;
+import br.com.abril.nds.client.vo.ResultadoRomaneioVO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.RomaneioDTO;
 import br.com.abril.nds.dto.filtro.FiltroRomaneioDTO;
@@ -44,7 +44,7 @@ import br.com.caelum.vraptor.view.Results;
 @Path("/romaneio")
 public class RomaneioController {
 	
-	private static final String FILTRO_SESSION_ATTRIBUTE = "filtroRomaneio";
+	private static final String FILTRO_SESSION_ATTRIBUTE_ROMANEIOS = "filtroRomaneio";
 	
 	@Autowired
 	private BoxService boxService;
@@ -70,6 +70,7 @@ public class RomaneioController {
 	
 	@Path("/")
 	public void index() {
+		session.setAttribute(FILTRO_SESSION_ATTRIBUTE_ROMANEIOS, null);
 		carregarComboBox();
 		carregarComboRoteiro();
 		carregarComboRota(); 
@@ -93,11 +94,14 @@ public class RomaneioController {
 	private TableModel<CellModelKeyValue<RomaneioDTO>> efetuarConsultaRomaneio(
 			FiltroRomaneioDTO filtro) {
 		
-		List<RomaneioDTO> listaRomaneios = this.romaneioService.buscarRomaneio(filtro);
+		List<RomaneioDTO> listaRomaneios = this.romaneioService.buscarRomaneio(filtro, "limitar");
 		
 		TableModel<CellModelKeyValue<RomaneioDTO>> tableModel = new TableModel<CellModelKeyValue<RomaneioDTO>>();
 		
 		Integer totalRegistros = this.romaneioService.buscarTotalDeRomaneios(filtro);
+		if(totalRegistros == 0){
+			throw new ValidacaoException(TipoMensagem.WARNING, "A pesquisa realizada não obteve resultado.");
+		}
 
 		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaRomaneios));
 		
@@ -111,15 +115,19 @@ public class RomaneioController {
 	@Get
 	public void exportar(FileType fileType) throws IOException {
 		
-		FiltroRomaneioDTO filtro = (FiltroRomaneioDTO) session.getAttribute(FILTRO_SESSION_ATTRIBUTE);
+		FiltroRomaneioDTO filtro = (FiltroRomaneioDTO) session.getAttribute(FILTRO_SESSION_ATTRIBUTE_ROMANEIOS);
 		
-		List<RomaneioDTO> listaDTOParaExportacao = this.romaneioService.buscarRomaneio(filtro);
+		List<RomaneioDTO> listaDTOParaExportacao = this.romaneioService.buscarRomaneio(filtro, "naoLimitar");
 		
 		if(listaDTOParaExportacao.isEmpty()) {
 			throw new ValidacaoException(TipoMensagem.WARNING,"A última pesquisa realizada não obteve resultado.");
 		}
 		
-		FileExporter.to("romaneios", fileType).inHTTPResponse(this.getNDSFileHeader(), filtro, null, 
+		Integer totalRegistros = this.romaneioService.buscarTotalDeRomaneios(filtro);
+		ResultadoRomaneioVO romaneioVO = new ResultadoRomaneioVO();
+		romaneioVO.setTotalCotas(totalRegistros);
+		
+		FileExporter.to("romaneios", fileType).inHTTPResponse(this.getNDSFileHeader(), filtro, romaneioVO, 
 				listaDTOParaExportacao, RomaneioDTO.class, this.httpResponse);
 			
 		
@@ -153,27 +161,29 @@ public class RomaneioController {
 	}
 
 	private void validarEntrada(FiltroRomaneioDTO filtro) {
+		boolean validar = false;
 		
-		if(filtro.getIdBox()==null)
-			throw new ValidacaoException(TipoMensagem.WARNING, "Box é obrigatório.");
-		if(filtro.getIdRoteiro()==null )
-			throw new ValidacaoException(TipoMensagem.WARNING, "Roteiro é obrigatório.");
-		if(filtro.getIdRota()==null )
-			throw new ValidacaoException(TipoMensagem.WARNING, "Rota é obrigatório.");
+		if(filtro.getIdBox()==null && filtro.getIdRoteiro()==null && filtro.getIdRota()==null){
+			validar = true;
+		}
+		
+		if(validar){
+			throw new ValidacaoException(TipoMensagem.WARNING, "Pelo menos um filtro deve ser preenchido!");
+		}
 		
 	}
 	
 	private void tratarFiltro(FiltroRomaneioDTO filtroAtual) {
 
 		FiltroRomaneioDTO filtroSession = (FiltroRomaneioDTO) session
-				.getAttribute(FILTRO_SESSION_ATTRIBUTE);
+				.getAttribute(FILTRO_SESSION_ATTRIBUTE_ROMANEIOS);
 		
-		if (filtroSession != null && !filtroSession.equals(filtroAtual)) {
+		if (filtroSession != null && filtroSession.equals(filtroAtual)) {
 
 			filtroAtual.getPaginacao().setPaginaAtual(1);
 		}
 		
-		session.setAttribute(FILTRO_SESSION_ATTRIBUTE, filtroAtual);
+		session.setAttribute(FILTRO_SESSION_ATTRIBUTE_ROMANEIOS, filtroAtual);
 	}
 
 	private void carregarComboBox() {

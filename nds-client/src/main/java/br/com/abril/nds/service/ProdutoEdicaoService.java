@@ -1,11 +1,13 @@
 package br.com.abril.nds.service;
 
+import java.io.InputStream;
 import java.util.Date;
 import java.util.List;
 
 import br.com.abril.nds.dto.FuroProdutoDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoDTO;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.service.exception.UniqueConstraintViolationException;
 
 /**
  * Interface que define serviços referentes a entidade
@@ -15,6 +17,15 @@ import br.com.abril.nds.model.cadastro.ProdutoEdicao;
  */
 public interface ProdutoEdicaoService {
 
+	/**
+	 * Obtém o ProdutoEdição.
+	 * 
+	 * @param idProdutoEdicao
+	 * 
+	 * @return
+	 */
+	public ProdutoEdicao obterProdutoEdicao(Long idProdutoEdicao);
+	
 	/**
 	 * Obtém os produtos edição de acordo com o nome do produto.
 	 * 
@@ -106,8 +117,33 @@ public interface ProdutoEdicaoService {
 	 * escolhidos pelo usuário.
 	 * 
 	 * @param dto
+	 * 
 	 * @return
 	 */
 	public Long countPesquisarEdicoes(ProdutoEdicaoDTO dto);
+	
+	/**
+	 * Salva ou Atualiza um novo ProdutoEdição.
+	 * 
+	 * @param dto
+	 * @param codigoProduto
+	 * @param contentType
+	 * @param imgInputStream
+	 */
+	public void salvarProdutoEdicao(ProdutoEdicaoDTO dto, String codigoProduto, String contentType, InputStream imgInputStream);
+	
+	/**
+	 * Exclui uma Edição da base de dados.<br>
+	 * Os critérios para exclusão são:
+	 * <ul>
+	 * <li>A Edição não pode ser cadastrado via INTERFACE;</li>
+	 * <li>A Edição não pode estar sendo utilizada em outras partes dos sitema;</li>
+	 * </ul>
+	 * 
+	 * @param idProdutoEdicao
+	 * 
+	 * @exception 
+	 */
+	public void excluirProdutoEdicao(Long idProdutoEdicao) throws UniqueConstraintViolationException;
 	
 }

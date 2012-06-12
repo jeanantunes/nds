@@ -183,7 +183,7 @@ fieldset label {
 							</li>
 							<li><a href="<c:url value="/parciais/index"/>">Parciais</a>
 							</li>
-							<li><a href="cadastro/roteirizacao">Roteirização</a>
+							<li><a href="<c:url value="/cadastro/roteirizacao"/>">Roteirização</a>
 							</li>
 							<li><a href='<c:url value="/cadastro/transportador/"/>'>Transportador</a>
 							</li>
@@ -371,7 +371,9 @@ fieldset label {
 						<span class="classNFe">&nbsp;</span><a
 						href="javascript:;">NF-e</a>
 						<ul>
-							
+							<li>
+								<a href="nfe/consultaNFEEncalheTratamento/">Consulta NFE Encalhe Tratamento</a>
+							</li>
 							<li>
 								<a href="nfe/painelMonitorNFe/">Painel Monitor NF-e</a>
 							</li>

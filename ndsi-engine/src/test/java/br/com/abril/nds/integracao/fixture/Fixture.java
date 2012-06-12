@@ -396,6 +396,8 @@ public class Fixture {
 		produtoEdicao.setPrecoVenda(precoVenda);
 		produtoEdicao.setProduto(produto);
 		produtoEdicao.setNumeroEdicao(numeroEdicao);
+		
+		produtoEdicao.setOrigemInterface(Boolean.TRUE);
 		return produtoEdicao;
 	}
 

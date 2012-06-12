@@ -46,6 +46,9 @@ public class TipoDescontoDistribuidor implements Serializable {
 	@JoinColumn(name = "DISTRIBUIDOR_ID")
 	private Distribuidor distribuidor;
 	
+	@Column(name = "SEQUENCIAL")
+	private Integer sequencial;
+	
 	/**
 	 * Construtor padrão.
 	 */
@@ -122,6 +125,14 @@ public class TipoDescontoDistribuidor implements Serializable {
 	 */
 	public void setDistribuidor(Distribuidor distribuidor) {
 		this.distribuidor = distribuidor;
+	}
+	
+	public Integer getSequencial() {
+		return sequencial;
+	}
+
+	public void setSequencial(Integer sequencial) {
+		this.sequencial = sequencial;
 	}
 
 	/* (non-Javadoc)

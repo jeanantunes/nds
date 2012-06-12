@@ -110,7 +110,7 @@ function pesquisar() {
 
 function popup_roteirizacao() {
 		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
-	
+	    roteirizacao.limparTelaRoteirizacao();
 		$( "#dialog-roteirizacao" ).dialog({
 			resizable: false,
 			height:590,
@@ -141,29 +141,6 @@ function popup_roteirizacao() {
 			resizable: false,
 			height:350,
 			width:655,
-			modal: true,
-			buttons: {
-				"Confirmar": function() {
-					$( this ).dialog( "close" );
-					$("#effect").hide("highlight", {}, 1000, callback);
-					
-				},
-				"Cancelar": function() {
-					$( this ).dialog( "close" );
-				}
-			}
-		});	
-		      
-	};
-	
-		
-	function popup_tranferir_cota() {
-		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
-	
-		$( "#dialog-transfere-cotas" ).dialog({
-			resizable: false,
-			height:220,
-			width:400,
 			modal: true,
 			buttons: {
 				"Confirmar": function() {
@@ -286,7 +263,7 @@ label{ vertical-align:super;}
 	<fieldset>
     	<legend>Transferir Cotas para:</legend>
         <p>Pesquise ou Digite o nome de uma Nova Rota para estas Cotas.</p>
-        <input name="lstRota_1" type="text" id="lstRota_1" style="width:300px; float:left; margin-bottom:5px;" />
+        <input name="lstRotaTranferencia" type="text" id="lstRotaTranferencia"  onkeyup="roteirizacao.autoCompletarRotaPorNome('#lstRotaTranferencia')" style="width:300px; float:left; margin-bottom:5px;" />
         <a href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_add.gif" alt="Adicionar Rota" width="16" height="16" border="0" style="float:left; margin-left:5px; margin-top:5px;" /></a>
     </fieldset>
 </div>
@@ -335,7 +312,6 @@ label{ vertical-align:super;}
  		</select>
         
         <br clear="all" />
-
         <label>Ordem:</label>
         <input name="ordemInclusaoRoteiro" id="ordemInclusaoRoteiro" type="text" style="width:200px; float:left; margin-bottom:5px;" />       
         <br clear="all" />
@@ -357,7 +333,7 @@ label{ vertical-align:super;}
 	</jsp:include> 
      <fieldset style="width:895px; float:left; margin-bottom:10px;">
 		<legend>Roteiros</legend>
-        <input name="lstRoteiros" type="text" id="lstRoteiros" style="width:240px; float:left;"  onkeyup="roteirizacao.autoCompletarRoteiroPorNome('#lstRoteiros',roteirizacao.populaDadosRoteiro)"/>
+        <input name="lstRoteiros" type="text" id="lstRoteiros" style="width:240px; float:left;"  onkeyup="roteirizacao.autoCompletarRoteiroPorNome('#lstRoteiros',roteirizacao.populaDadosRoteiro)" onblur="roteirizacao.buscaRoteiroPorNome('#lstRoteiros')" />
 	<span class="bt_novos" title="Nova Roteiro"><a href="javascript:;" onclick="roteirizacao.abrirTelaRoteiro();"><img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0"/>Novo Roteiro</a></span>
     <span style="float:right; margin-top:12px; margin-left:20px;" id="spanDadosRoteiro"><strong>Roteiro Selecionado:</strong>&nbsp;&nbsp; <strong>Box: </strong>&nbsp;&nbsp; <strong>Ordem: </strong>&nbsp;</span>
    <input type="hidden" id="idRoteiroSelecionado" name="idRoteiroSelecionado"  >   
@@ -381,14 +357,15 @@ label{ vertical-align:super;}
     
     <fieldset style="width:596px; float:left; margin-left:3px; overflow:hidden;">
 		<legend>Cotas da Rota</legend>
-        <span style="float:left; margin-bottom:10px; margin-left:3px; margin-top:5px;"><strong>Roteiro Selecionado:</strong> Comprador - <strong>Box: </strong>230 - <strong>Ordem: </strong>2</span>
+		
+        <span style="float:left; margin-bottom:10px; margin-left:3px; margin-top:5px;" id="spanDadosRota"><strong>Rota Selecionada:</strong>&nbsp;&nbsp;&nbsp;&nbsp; <strong>Ordem: </strong>&nbsp;</span>
         <input name="rotaSelecionada" type="hidden"  id="rotaSelecionada" style="width:240px; float:left; margin-bottom:5px;"  />
         
 		<table class="cotasRotaGrid"></table>
         <span class="bt_novos" title="Cotas Ausentes"><a href="javascript:;" onclick="roteirizacao.abrirTelaCotas();"><img src="${pageContext.request.contextPath}/images/ico_add.gif" hspace="5" border="0"/>Adicionar</a></span>
         
-         <span class="bt_novos" title="Transferência de Roteiro"><a href="javascript:;" onclick="popup_tranferir_cota();"><img src="${pageContext.request.contextPath}/images/ico_integrar.png" hspace="5" border="0"/>Transferir</a></span>
-         <span class="bt_novos" title="Cotas Ausentes"><a href="javascript:;" onclick="popup_excluir();"><img src="${pageContext.request.contextPath}/images/ico_excluir.gif" hspace="5" border="0"/>Excluir</a></span>
+         <span class="bt_novos" title="Transferência de Roteiro"><a href="javascript:;" onclick="roteirizacao.popupTransferirCota();"><img src="${pageContext.request.contextPath}/images/ico_integrar.png" hspace="5" border="0"/>Transferir</a></span>
+         <span class="bt_novos" title="Cotas Ausentes"><a href="javascript:;" onclick="roteirizacao.popupExcluirRoteirizacao();"><img src="${pageContext.request.contextPath}/images/ico_excluir.gif" hspace="5" border="0"/>Excluir</a></span>
 	</fieldset>
     
     
@@ -437,10 +414,10 @@ label{ vertical-align:super;}
                 <option>Cota</option>
               </select></td>
               <td width="42">Cota:</td>
-              <td width="170"><input name="numeroCotaPesquisa" type="text" id="numeroCotaPesquisa" style="width:80px; float:left; margin-right:5px;" onkeypress="mostraCota();"/>
+              <td width="170"><input name="numeroCotaPesquisa" type="text" id="numeroCotaPesquisa" style="width:80px; float:left; margin-right:5px;" />
               <span class="classPesquisar"><a href="javascript:;" onclick="roteirizacao.buscarPvsPorCota();">&nbsp;</a></span></td>
               <td width="41">Nome:</td>
-              <td colspan="4"><span class="dadosFiltro">CGB Distribuidora de Jorn e Rev</span></td>
+              <td colspan="4"><span  id="cotaDisponivelPesquisa"> &nbsp;</span></td>
             </tr>
             <tr>
               <td>UF:</td>
@@ -456,8 +433,8 @@ label{ vertical-align:super;}
                 <option>Todos</option>
               </select></td>
               <td width="36">CEP:</td>
-              <td width="87"><input name="pesq_cota2" type="text" id="pesq_cota2" style="width:80px;" /></td>
-              <td width="79"><span class="bt_pesquisar"><a href="javascript:;" onclick="mostrar();">Pesquisar</a></span></td>
+              <td width="87"><input name="cepPesquisa" type="text" id="cepPesquisa" style="width:80px;" /></td>
+              <td width="79"><span class="bt_pesquisar"><a href="javascript:;" onclick="roteirizacao.buscarPvsPorEndereco();">Pesquisar</a></span></td>
             </tr>
           </table>
 	</fieldset>
@@ -465,7 +442,7 @@ label{ vertical-align:super;}
     <fieldset style="width:800px; float:left; margin-top:5px;">
 		<legend>Cotas Disponíveis</legend>
 		<table class="cotasDisponiveisGrid"></table>
-        <span class="bt_sellAll" style="float:right; margin-right:25px;"><label for="sel">Selecionar Todos</label><input type="checkbox" name="Todos" id="sel" onclick="checkAll();" style="float:left;"/></span>
+        <span class="bt_sellAll" style="float:right; margin-right:25px;"><label for="sel" id="textoCheckAllCotas" >Marcar todos</label><input type="checkbox" name="selecionaTodos" id="selecionaTodos" onclick="roteirizacao.checarTodasCotasGrid();" style="float:left;"/></span>
         
 	</fieldset>
 	<br clear="all" />

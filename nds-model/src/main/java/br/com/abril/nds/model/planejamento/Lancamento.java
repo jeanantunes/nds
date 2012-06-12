@@ -37,8 +37,10 @@ import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
  * @created 14-fev-2012 11:35:32
  */
 @Entity
-@Table(name = "LANCAMENTO", uniqueConstraints = { @UniqueConstraint(columnNames = {
-		"DATA_LCTO_PREVISTA", "PRODUTO_EDICAO_ID" })})
+@Table(name = "LANCAMENTO", uniqueConstraints = {
+	@UniqueConstraint(columnNames = {"DATA_LCTO_PREVISTA", "PRODUTO_EDICAO_ID" }),
+	@UniqueConstraint(columnNames = {"DATA_LCTO_DISTRIBUIDOR", "PRODUTO_EDICAO_ID" })
+})
 @SequenceGenerator(name = "LANCAMENTO_SEQ", initialValue = 1, allocationSize = 1)
 public class Lancamento implements Serializable {
 

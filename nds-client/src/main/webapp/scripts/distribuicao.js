@@ -109,7 +109,10 @@ function Distribuicao(tela) {
 	 */
 	this.montarComboTipoEntrega = function(itensDTO) {
 		
+		itensDTO.splice(0,0,{"key": {"@class": "string","$": ""},"value": {"@class": "string","$": ""}});
+		
 		var combo =  montarComboBox(itensDTO, false);
+		
 		D.$("tipoEntrega").html(combo);
 		D.$("tipoEntrega").sortOptions();
 	},

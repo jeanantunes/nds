@@ -7,12 +7,14 @@ import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.RotaRoteiroDTO;
 import br.com.abril.nds.model.cadastro.Rota;
 import br.com.abril.nds.model.cadastro.Roteirizacao;
+import br.com.abril.nds.model.cadastro.Roteiro;
 import br.com.abril.nds.repository.RotaRepository;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
@@ -141,6 +143,25 @@ public class RotaRepositoryImpl extends AbstractRepository<Rota, Long>
 		return query.list();
 	}
 	
-	
+	@SuppressWarnings("unchecked")
+	public List<Rota> obterRotasPorCota(Integer numeroCota){
+		
+		Criteria criteria =  getSession().createCriteria(Rota.class, "rota");
+		criteria.createAlias("rota.roteirizacao","roteirizacao");
+		criteria.createAlias("roteirizacao.pdv","pdv");
+		criteria.createAlias("pdv.cota","cota");
+		
+		criteria.add(Restrictions.eq("cota.numeroCota", numeroCota));
+		criteria.addOrder(Order.asc("rota.descricaoRota"));
+		
+		return criteria.list();
+	}	
+	@Override
+	public Integer buscarMaiorOrdemRota(Long idRoteiro){
+		Criteria criteria  = getSession().createCriteria(Rota.class);
+		criteria.add(Restrictions.eq("roteiro.id", idRoteiro));
+		criteria.setProjection(Projections.max("ordem"));  
+		return (Integer) criteria.uniqueResult();  
+	}
 	
 }

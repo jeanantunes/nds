@@ -21,11 +21,11 @@ public class RomaneioServiceImpl implements RomaneioService {
 	
 	@Override
 	@Transactional
-	public List<RomaneioDTO> buscarRomaneio(FiltroRomaneioDTO filtro) {
+	public List<RomaneioDTO> buscarRomaneio(FiltroRomaneioDTO filtro, String limitar) {
 		if(filtro == null) 
 			throw new ValidacaoException(TipoMensagem.WARNING, "Filtro não deve ser nulo.");
 		
-		return this.romaneioRepository.buscarRomaneios(filtro);
+		return this.romaneioRepository.buscarRomaneios(filtro, limitar);
 	}
 
 	@Override

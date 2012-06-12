@@ -70,9 +70,21 @@ public interface MovimentoFinanceiroCotaRepository extends Repository<MovimentoF
 	
 	/**
 	 * Obtém movimentos financeiros de uma cobrança por operação
+	 * 
 	 * @param idCobranca
 	 * @param operacao
 	 * @return BigDecimal valor
 	 */
 	BigDecimal obterSaldoCobrancaPorOperacao(Long idCobranca, OperacaoFinaceira operacao);
+	
+	/**
+	 * Obtém Débito e Crédito sumarizados relativos a cota.
+	 * 
+	 * @param numeroCota
+	 * @param dataOperacao
+	 * @param tiposMovimentoFinanceiroIgnorados
+	 * 
+	 * @return List - DebitoCreditoCotaDTO
+	 */
+	List<DebitoCreditoCotaDTO> obterDebitoCreditoSumarizadosParaCotaDataOperacao(Integer numeroCota, Date dataOperacao, List<TipoMovimentoFinanceiro> tiposMovimentoFinanceiroIgnorados);
 }
