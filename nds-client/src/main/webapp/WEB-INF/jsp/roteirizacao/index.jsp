@@ -3,109 +3,6 @@
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
 <script language="javascript" type="text/javascript">
 
-$(function() {
-		
-		inicializar();
-	});
-	
-function inicializar() {
-	iniciarGrid();
-	roteirizacao.iniciaRotasGrid();
-	roteirizacao.iniciaCotasRotaGrid();
-}
-
-function iniciarGrid() {
-		
-		
-		$(".rotaRoteirosGrid").flexigrid({
-		preProcess: executarPreProcessamento,
-			dataType : 'json',
-			colModel : [ {
-				display : 'Box',
-				name : 'id',
-				width : 100,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Roteiro',
-				name : 'roteiro',
-				width : 180,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Rota',
-				name : 'rota',
-				width : 180,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Cota',
-				name : 'cota',
-				width : 60,
-				sortable : true,
-				align : 'left',
-			}, {
-				display : 'Nome',
-				name : 'nome',
-				width : 360,
-				sortable : true,
-				align : 'left'
-			}],
-			sortname : "box",
-			sortorder : "asc",
-			usepager : true,
-			useRp : true,
-			rp : 15,
-			showTableToggleBtn : true,
-			width : 960,
-			height : 255,
-			singleSelect : true
-		});
-	}
-
-	function executarPreProcessamento(data) {
-		
-		if (data.mensagens) {
-
-			exibirMensagem(
-				data.mensagens.tipoMensagem, 
-				data.mensagens.listaMensagens
-			);
-			
-			$(".grids").hide();
-
-			return data;
-		}
-		$.each(data.rows, function(index, value) {
-        	value.cell.roteiro = value.cell.roteiro.descricaoRoteiro;
-			value.cell.rota = value.cell.rota.descricaoRota;
-		});
-		
-		$(".grids").show();
-		
-		return data;
-	}
-function pesquisar() {
-		
-		$(".rotaRoteirosGrid").flexOptions({
-			"url" : contextPath + '/cadastro/roteirizacao/pesquisar',
-			params : [{
-				name : "idBox",
-				value : 0
-			}, {
-				name : "idRoteiro",
-				value : 0
-			}, {
-				name : "idRota",
-				value : 0
-			}],
-			newp:1
-		});
-		
-		$(".rotaRoteirosGrid").flexReload();
-	};
-	
-	
 	
 
 function popup_roteirizacao() {
@@ -253,7 +150,7 @@ label{ vertical-align:super;}
         <input name="ordemRoteiroTranferencia" id="ordemRoteiroTranferencia" type="text" style="width:225px; float:left; margin-bottom:5px;" />    
         <br clear="all" />
         <label>Roteiro Especial:</label>
-        <input type="checkbox" name="tipoRoteiroTranferencia" value="Especial" id="tipoRoteiroTranferencia"  />
+        <input type="checkbox" name="tipoRoteiroTranferencia" value="Especial" id="tipoRoteiroTranferencia" onclick="roteirizacao.roteiroEspecial()"  />
         <br clear="all" />  
 </div>
     </fieldset>
@@ -465,7 +362,7 @@ label{ vertical-align:super;}
             <tr>
               <td width="34">Box:</td>
               <td width="121">
-	               <select name="box" id="box" style="width: 100px;">
+	               <select name="boxPesquisa" id="boxPesquisa"   onchange="roteirizacao.carregarComboRoteiro()" style="width: 100px;">
 						<option value="" selected="selected">Selecione...</option>
 						<c:forEach var="box" items="${listaBox}">
 							<option value="${box.key}">${box.value}</option>
@@ -474,7 +371,7 @@ label{ vertical-align:super;}
               </td>
                 <td width="55">Roteiro:</td>
                 <td width="277">
-                	<select name="roteiro" id="roteiro" style="width: 200px;">
+                	<select name="roteiroPesquisa" id="roteiroPesquisa"  onchange="roteirizacao.carregarComboRota()" style="width: 200px;">
 						<option value="" selected="selected">Selecione...</option>
 						<c:forEach var="roteiro" items="${listaRoteiro}">
 							<option value="${roteiro.key}">${roteiro.value}</option>
@@ -484,15 +381,14 @@ label{ vertical-align:super;}
                 </td>
                 <td width="27">Rota:</td>
                 <td width="296">
-					<select name="rota" id="rota" style="width: 190px;">
+					<select name="rotaPesquisa" id="rotaPesquisa" style="width: 190px;">
 						<option value="" selected="selected">Selecione...</option>
 						<c:forEach var="rota" items="${listaRota}">
 							<option value="${rota.key}">${rota.value}</option>
 						</c:forEach>
 				    </select>
-                 
                 </td>
-              <td width="104"><span class="bt_pesquisar"><a href="javascript:;" onclick="pesquisar();">Pesquisar</a></span></td>
+              <td width="104"><span class="bt_pesquisar"><a href="javascript:;" onclick="roteirizacao.pesquisarRoteirizacao();">Pesquisar</a></span></td>
             </tr>
             <tr>
               <td>Cota:</td>
@@ -501,7 +397,10 @@ label{ vertical-align:super;}
               <td>Nome:</td>
               <td><span class="dadosFiltro">CGB Distribuidora de Jorn e Rev</span></td>
               <td>&nbsp;</td>
-              <td>&nbsp;</td>
+              <td>&nbsp;
+              	<label>Roteiro Especial:</label>
+        		<input type="checkbox" name="tipoRoteiroPesquisa" value="Especial" id="tipoRoteiroPesquisa" onclick="roteirizacao.pesquisaComRoteiroEspecial()" />
+        	 </td>	
               <td>&nbsp;</td>
             </tr>
           </table>
@@ -530,7 +429,7 @@ label{ vertical-align:super;}
 	
 	
 
-	$(".roteirosGrid").flexigrid({
+/* 	$(".roteirosGrid").flexigrid({
 			url : '../xml/roteiros-xml.xml',
 			dataType : 'xml',
 			colModel : [ {
@@ -606,7 +505,7 @@ label{ vertical-align:super;}
 			showTableToggleBtn : true,
 			width : 960,
 			height : 255
-		});
+		}); */
 </script>
 </form>
 

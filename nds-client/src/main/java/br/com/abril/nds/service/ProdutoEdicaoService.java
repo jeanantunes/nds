@@ -145,5 +145,11 @@ public interface ProdutoEdicaoService {
 	 * @exception 
 	 */
 	public void excluirProdutoEdicao(Long idProdutoEdicao) throws UniqueConstraintViolationException;
+	/**
+	 * Retorna um produto edição dado seu código de barras
+	 * @param codigoBarras - código de barras
+	 * @return  ProdutoEdicao
+	 */
+	ProdutoEdicao buscarProdutoPorCodigoBarras(String codigoBarras);
 	
 }

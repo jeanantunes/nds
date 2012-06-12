@@ -934,7 +934,7 @@
 				},
 				beforeClose: function() {
 					limparModalPostergacao();
-					clearMessageDialogTimeout();
+					clearMessageDialogTimeout('dialogMensagemNovo');
 				}
 			});
 		}

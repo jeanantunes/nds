@@ -9,12 +9,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.dto.BalanceamentoLancamentoDTO;
+import br.com.abril.nds.dto.DadosBalanceamentoLancamentoDTO;
 import br.com.abril.nds.dto.LancamentoDTO;
+import br.com.abril.nds.dto.ProdutoLancamentoDTO;
+import br.com.abril.nds.dto.RecolhimentoDTO;
 import br.com.abril.nds.dto.ResumoPeriodoBalanceamentoDTO;
 import br.com.abril.nds.dto.SumarioLancamentosDTO;
 import br.com.abril.nds.dto.filtro.FiltroLancamentoDTO;
@@ -31,6 +36,7 @@ import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.service.MatrizLancamentoService;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.util.TipoBalanceamentoRecolhimento;
 
 @Service
 public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
@@ -44,9 +50,45 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 	protected DistribuidorRepository distribuidorRepository;
 
 	@Override
+	@Transactional(readOnly = true)
+	public BalanceamentoLancamentoDTO obterMatrizLancamento(FiltroLancamentoDTO filtro) {
+	
+		// TODO:
+		DadosBalanceamentoLancamentoDTO dadosBalanceamentoLancamento = obterDadosLancamento(filtro, true);
+		
+		return balancear(dadosBalanceamentoLancamento);
+	}
+		
+	@Override
 	@Transactional
-	public List<LancamentoDTO> buscarLancamentosBalanceamento(
-			FiltroLancamentoDTO filtro) {
+	public void confirmarMatrizLancamento(TreeMap<Date, List<ProdutoLancamentoDTO>> matrizLancamento) {
+		
+		// TODO:
+	}
+	
+	private BalanceamentoLancamentoDTO balancear(DadosBalanceamentoLancamentoDTO dadosBalanceamentoLancamento) {
+		
+		// TODO:
+		
+		return null;
+	}
+	
+	/**
+	 * Monta o DTO com as informações para realização do balanceamento.
+	 */
+	private DadosBalanceamentoLancamentoDTO obterDadosLancamento(FiltroLancamentoDTO filtro,
+			 									 				 boolean forcarBalanceamento) {
+		
+		return null;
+	}
+	
+	
+	
+	
+	@Override
+	@Transactional
+	public List<LancamentoDTO> buscarLancamentosBalanceamento(FiltroLancamentoDTO filtro) {
+		
 		List<Lancamento> lancamentos = lancamentoRepository
 				.obterBalanceamentoMatrizLancamentos(filtro);
 		List<LancamentoDTO> dtos = new ArrayList<LancamentoDTO>(

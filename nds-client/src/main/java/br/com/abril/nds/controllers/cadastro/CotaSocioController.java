@@ -31,12 +31,19 @@ public class CotaSocioController {
 		
 		List<String> listaMensagens = new ArrayList<String>();
 		
-		if(socioCota.getNome() == null || socioCota.getNome().isEmpty()){
+		if(socioCota== null){
 			listaMensagens.add("O preenchimento do campo [Nome] é obrigatório!");
-		}
-		
-		if(socioCota.getCargo() == null || socioCota.getCargo().isEmpty() ){
 			listaMensagens.add("O preenchimento do campo [Cargo] é obrigatório!");
+		}
+		else{
+			
+			if(socioCota.getNome() == null || socioCota.getNome().isEmpty()){
+				listaMensagens.add("O preenchimento do campo [Nome] é obrigatório!");
+			}
+			
+			if(socioCota.getCargo() == null || socioCota.getCargo().isEmpty() ){
+				listaMensagens.add("O preenchimento do campo [Cargo] é obrigatório!");
+			}
 		}
 		
 		if(!listaMensagens.isEmpty()){

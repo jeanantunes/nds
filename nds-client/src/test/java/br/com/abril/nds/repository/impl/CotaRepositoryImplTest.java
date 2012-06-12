@@ -1,6 +1,7 @@
 package br.com.abril.nds.repository.impl;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
@@ -372,6 +373,20 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 		Assert.assertNotNull(cotas);
 		
 		Assert.assertTrue(!cotas.isEmpty());
+	}
+	
+	@Test
+	public void buscarCotasPorIN() {
+		
+		List<Long> idsCotas = new ArrayList<Long>();
+
+		idsCotas.add(1L);
+		idsCotas.add(2L);
+		
+		List<Cota> listaCotas = 
+			this.cotaRepository.obterCotasPorIDS(idsCotas);
+		
+		Assert.assertNotNull(listaCotas);
 	}
 
 }

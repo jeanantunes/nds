@@ -37,6 +37,15 @@ function pesquisarEdicoes() {
 
 function executarPreProcessamento(resultado) {
 
+	// Exibe mensagem de erro/alerta, se houver:
+	var mensagens = (resultado.mensagens) ? resultado.mensagens : resultado.result;   
+	var tipoMensagem = (mensagens && mensagens.tipoMensagem) ? mensagens.tipoMensagem : null; 
+	var listaMensagens = (mensagens && mensagens.listaMensagens) ? mensagens.listaMensagens : null;
+	if (tipoMensagem && listaMensagens) {
+		exibirMensagem(tipoMensagem, listaMensagens);
+		return;
+	}
+	
 	var nProduto = '';
 	var cProduto = '';
 	$.each(resultado.rows, function(index, row) {
