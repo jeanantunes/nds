@@ -1,4 +1,4 @@
-package br.com.abril.nds.client.vo;
+package br.com.abril.nds.dto;
 
 import java.util.Date;
 
@@ -10,9 +10,10 @@ import br.com.abril.nds.model.fiscal.nota.Status;
  * @author Discover Technology
  *
  */
-public class ArquivoRetornoNFEVO {
+public class RetornoNFEDTO {
 
 	private Long idNotaFiscal;
+	private String cpfCnpj;
 	private String chaveAcesso;
 	private Status status;
 	private Long protocolo;
@@ -108,5 +109,18 @@ public class ArquivoRetornoNFEVO {
 	public void setDataRecebimento(Date dataRecebimento) {
 		this.dataRecebimento = dataRecebimento;
 	}
-			
+
+	/**
+	 * @return the cpfCnpj
+	 */
+	public String getCpfCnpj() {
+		return cpfCnpj;
+	}
+
+	/**
+	 * @param cpfCnpj the cpfCnpj to set
+	 */
+	public void setCpfCnpj(String cpfCnpj) {
+		this.cpfCnpj = cpfCnpj;
+	}
 }

@@ -46,6 +46,26 @@ public enum Status {
 	public Integer getCodigo() {
 		return codigo;
 	}
+	
+	/**
+	 * Obtém um Status pelo seu código.
+	 * 
+	 * @param codigo - código do status
+	 * 
+	 * @return {@link Status}
+	 */
+	public static Status obterPeloCodigo(Integer codigo) {
+		
+		for (Status status : Status.values()) {
+			
+			if (status.getCodigo().equals(codigo)) {
+				
+				return status;
+			}
+		}
+		
+		return null;
+	}
 
 	/*
 	 * (non-Javadoc)
