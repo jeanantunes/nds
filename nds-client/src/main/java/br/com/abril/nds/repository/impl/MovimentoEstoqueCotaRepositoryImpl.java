@@ -909,6 +909,12 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepository<Movim
 		hql.append("	join rota.roteiro roteiro ");
 		hql.append("	join roteiro.box box ");
 		
+		if(filtro.getUseSM() != null && filtro.getUseSM() == true) {
+			hql.append("	join movimentoCota.estudoCota estudoCota ");
+			hql.append("	join estudoCota.estudo estudo ");
+			hql.append("	join estudo.lancamentos lancamento ");
+		}
+		
 		hql.append(" where movimentoCota.tipoMovimento.grupoMovimentoEstoque='RECEBIMENTO_REPARTE' ");
 
 		hql.append(" and cota.id=pdv.cota.id ");
@@ -932,8 +938,14 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepository<Movim
 		
 		if(filtro.getCodigoProduto() != null && !filtro.getCodigoProduto().trim().isEmpty()) {
 			
-			hql.append(" and produtoEdicao.codigo =:codigoProduto ");
+			hql.append(" and produto.codigo =:codigoProduto ");
 			param.put("codigoProduto", filtro.getCodigoProduto());
+		}
+		
+		if(filtro.getEdicaoProduto() != null) {
+			
+			hql.append(" and produtoEdicao.numeroEdicao =:numeroEdicao ");
+			param.put("numeroEdicao", filtro.getEdicaoProduto());
 		}
 		
 		if(filtro.getCodigoCota() != null ) {
@@ -1065,7 +1077,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepository<Movim
 		
 		StringBuilder hql = new StringBuilder();
 				
-		hql.append(" select box.codigo, ");
+		hql.append(" select box.codigo as codigoBox, ");
 	    hql.append(" 		produto.codigo as codigoProduto, ");
 		hql.append(" 		produto.nome as nomeProduto, ");
 		hql.append(" 		produtoEdicao.numeroEdicao as numeroEdicao, ");		
@@ -1078,8 +1090,6 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepository<Movim
 		hql.append(" group by produtoEdicao.id, box.id ");
 		
 		hql.append(" order by box.codigo ");
-		
-		gerarOrdenacaoDetalhesAbastecimento(filtro, hql);		
 				
 		Query query =  getSession().createQuery(hql.toString());
 				
@@ -1090,6 +1100,144 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepository<Movim
 		query.setResultTransformer(new AliasToBeanResultTransformer(ProdutoAbastecimentoDTO.class));
 		
 		return query.list();
-	}      
+	}   
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<ProdutoAbastecimentoDTO> obterMapaAbastecimentoPorBoxRota(FiltroMapaAbastecimentoDTO filtro) {
+		
+		HashMap<String, Object> param = new HashMap<String, Object>();
+		
+		StringBuilder hql = new StringBuilder();
+				
+		hql.append(" select box.codigo as codigoBox, ");
+		hql.append(" 		rota.codigoRota as codigoRota, ");
+		hql.append(" 		produto.codigo as codigoProduto, ");
+		hql.append(" 		produto.nome as nomeProduto, ");
+		hql.append(" 		produtoEdicao.numeroEdicao as numeroEdicao, ");		
+		hql.append(" 		sum(movimentoCota.qtde) as reparte, ");
+		hql.append(" 		produtoEdicao.precoCusto as precoCapa ");
+		
+								
+		gerarFromWhereDadosAbastecimento(filtro, hql, param);
+		
+		hql.append(" group by produtoEdicao.id, box.id, rota.codigoRota ");
+		
+		hql.append(" order by box.codigo ");
+				
+		Query query =  getSession().createQuery(hql.toString());
+				
+		for(String key : param.keySet()){
+			query.setParameter(key, param.get(key));
+		}
+		
+		query.setResultTransformer(new AliasToBeanResultTransformer(ProdutoAbastecimentoDTO.class));
+		
+		return query.list();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<ProdutoAbastecimentoDTO> obterMapaAbastecimentoPorProdutoEdicao(
+			FiltroMapaAbastecimentoDTO filtro) {
+
+
+		HashMap<String, Object> param = new HashMap<String, Object>();
+		
+		StringBuilder hql = new StringBuilder();
+				
+		hql.append(" select box.codigo as codigoBox, ");
+		hql.append(" 		rota.codigoRota as codigoRota, ");
+		hql.append(" 		produto.codigo as codigoProduto, ");
+		hql.append(" 		produto.nome as nomeProduto, ");
+		hql.append(" 		produtoEdicao.numeroEdicao as numeroEdicao, ");		
+		hql.append(" 		sum(movimentoCota.qtde) as reparte, ");
+		hql.append(" 		produtoEdicao.precoCusto as precoCapa ");
+		
+								
+		gerarFromWhereDadosAbastecimento(filtro, hql, param);
+		
+		hql.append(" group by box.id, rota.codigoRota ");
+		
+		hql.append(" order by box.codigo ");
+				
+		Query query =  getSession().createQuery(hql.toString());
+				
+		for(String key : param.keySet()){
+			query.setParameter(key, param.get(key));
+		}
+		
+		query.setResultTransformer(new AliasToBeanResultTransformer(ProdutoAbastecimentoDTO.class));
+		
+		return query.list();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<ProdutoAbastecimentoDTO> obterMapaAbastecimentoPorCota(
+			FiltroMapaAbastecimentoDTO filtro) {
+		
+		HashMap<String, Object> param = new HashMap<String, Object>();
+		
+		StringBuilder hql = new StringBuilder();
+				
+		hql.append(" select produtoEdicao.id as idProdutoEdicao, ");
+		hql.append(" 		produto.nome as nomeProduto, ");
+		hql.append(" 		produtoEdicao.numeroEdicao as numeroEdicao, ");		
+		hql.append(" 		sum(movimentoCota.qtde) as reparte, ");
+		hql.append(" 		lancamento.sequenciaMatriz as sequenciaMatriz ");
+		
+		filtro.setUseSM(true);
+		
+		gerarFromWhereDadosAbastecimento(filtro, hql, param);
+		
+		hql.append(" group by produtoEdicao.id ");
+		
+		hql.append(" order by lancamento.sequenciaMatriz ");
+				
+		Query query =  getSession().createQuery(hql.toString());
+				
+		for(String key : param.keySet()){
+			query.setParameter(key, param.get(key));
+		}
+		
+		query.setResultTransformer(new AliasToBeanResultTransformer(ProdutoAbastecimentoDTO.class));
+		
+		return query.list();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<ProdutoAbastecimentoDTO> obterMapaDeImpressaoPorProdutoQuebrandoPorCota(
+			FiltroMapaAbastecimentoDTO filtro) {
+
+		HashMap<String, Object> param = new HashMap<String, Object>();
+		
+		StringBuilder hql = new StringBuilder();
+				
+		hql.append(" select cota.numeroCota as codigoCota, ");
+		hql.append(" 		produto.codigo as codigoProduto, ");
+		hql.append(" 		produto.nome as nomeProduto, ");
+		hql.append(" 		produtoEdicao.numeroEdicao as numeroEdicao, ");		
+		hql.append(" 		sum(movimentoCota.qtde) as reparte, ");
+		hql.append(" 		produtoEdicao.precoCusto as precoCapa ");
+		
+								
+		gerarFromWhereDadosAbastecimento(filtro, hql, param);
+		
+		hql.append(" group by cota.id ");
+		
+		hql.append(" order by cota.numeroCota ");
+				
+		Query query =  getSession().createQuery(hql.toString());
+				
+		for(String key : param.keySet()){
+			query.setParameter(key, param.get(key));
+		}
+		
+		query.setResultTransformer(new AliasToBeanResultTransformer(ProdutoAbastecimentoDTO.class));
+		
+		return query.list();
+	}  
 	
 }

@@ -2204,14 +2204,18 @@ public class DataLoader {
 				tipoMovimentoRecReparte, usuarioJoao, estoqueProdutoCotaVeja1,
 				BigDecimal.TEN, cotaManoel, StatusAprovacao.PENDENTE, null);
 
+		movimentoEstoqueCota1.setEstudoCota(estudoCotaManoel);
+		
 		movimentoEstoqueCota2 = Fixture.movimentoEstoqueCota(produtoEdicaoVeja1,
 				tipoMovimentoRecReparte, usuarioJoao, estoqueProdutoCotaVeja1,
 				BigDecimal.TEN, cotaManoel, StatusAprovacao.PENDENTE, null);
+		
 
 		movimentoEstoqueCota3 = Fixture.movimentoEstoqueCota(produtoEdicaoVeja2,
 				tipoMovimentoRecReparte, usuarioJoao, estoqueProdutoCotaVeja2,
 				BigDecimal.TEN, cotaManoel, StatusAprovacao.PENDENTE, null);
-
+		
+		
 		movimentoEstoqueCota4 = Fixture.movimentoEstoqueCota(produtoEdicaoVeja2,
 				tipoMovimentoRecReparte, usuarioJoao, estoqueProdutoCotaVeja2,
 				BigDecimal.TEN, cotaManoel, StatusAprovacao.PENDENTE, null);
@@ -2247,8 +2251,23 @@ public class DataLoader {
 		movimentoEstoqueCota12 = Fixture.movimentoEstoqueCota(produtoEdicaoVeja1,
 				tipoMovimentoRecReparte, usuarioJoao, estoqueProdutoCotaManoelCunhaVeja1,
 				BigDecimal.TEN, cotaManoelCunha, StatusAprovacao.PENDENTE, null);
-
 		
+		MovimentoEstoqueCota movimentoEstoqueCota333 = Fixture.movimentoEstoqueCota(produtoEdicaoInfoExame1,
+				tipoMovimentoRecReparte, usuarioJoao, estoqueProdutoCotaInfoExame1,
+				BigDecimal.TEN, cotaManoel, StatusAprovacao.PENDENTE, null);
+
+		//TODO
+		movimentoEstoqueCota2.setEstudoCota(estudoCotaManoel);
+		movimentoEstoqueCota3.setEstudoCota(estudoCotaManoel);
+		movimentoEstoqueCota4.setEstudoCota(estudoCotaManoel);
+		movimentoEstoqueCota5.setEstudoCota(estudoCotaManoel);
+		movimentoEstoqueCota6.setEstudoCota(estudoCotaManoel);
+		movimentoEstoqueCota7.setEstudoCota(estudoCotaManoel);
+		movimentoEstoqueCota8.setEstudoCota(estudoCotaManoel);
+		movimentoEstoqueCota9.setEstudoCota(estudoCotaManoel);
+		movimentoEstoqueCota10.setEstudoCota(estudoCotaManoel);
+		movimentoEstoqueCota11.setEstudoCota(estudoCotaManoel);
+		movimentoEstoqueCota333.setEstudoCota(estudoCotaManoel);
 		
 		//MOVIMENTOS TIPO ENCALHE
 		movimentoEstoqueCota13 = Fixture.movimentoEstoqueCota(produtoEdicaoVeja1,
@@ -2279,7 +2298,7 @@ public class DataLoader {
 		
 		//MOVIMENTOS TIPO CONSIGNADO
 		movimentoEstoqueCota19 = Fixture.movimentoEstoqueCota(produtoEdicaoVeja1,
-				tipoMovimentoEnvioJornaleiro, usuarioJoao, estoqueProdutoCotaManoelSuper1,
+				tipoMovimentoRecReparte, usuarioJoao, estoqueProdutoCotaManoelSuper1,
 				BigDecimal.TEN, cotaManoel, StatusAprovacao.PENDENTE, null);
 		movimentoEstoqueCota19.setEstudoCota(estudoCotaManoel);
 
@@ -2698,6 +2717,7 @@ public class DataLoader {
 				.estudo(BigDecimal.TEN, lancamentoCapricho1.getDataLancamentoDistribuidor(), produtoEdicaoCapricho1);
 		session.save(estudoCapricho1);
 
+		//TOD
 		estudoVeja1Atual = Fixture
 				.estudo(BigDecimal.TEN, new Date(), produtoEdicaoVeja1);
 		session.save(estudoVeja1Atual);
@@ -2778,7 +2798,7 @@ public class DataLoader {
 		estudoCotaSuper1Manoel = Fixture.estudoCota(new BigDecimal(10), new BigDecimal(10), estudoSuper1, cotaManoel);
 		save(session,estudoCotaSuper1Manoel);
 
-		estudoCotaManoel = Fixture.estudoCota(BigDecimal.TEN, BigDecimal.TEN, estudoVeja1Atual, cotaManoel);
+		estudoCotaManoel = Fixture.estudoCota(BigDecimal.TEN, BigDecimal.TEN, estudoVeja1, cotaManoel);
 		save(session,estudoCotaManoel);
 
 		estudoCotaVeja1JoaoEncaljeAnt = Fixture.estudoCota(new BigDecimal(10), new BigDecimal(10), estudoVeja1EncalheAnt, cotaJose);
@@ -2931,7 +2951,7 @@ public class DataLoader {
 
 						new Date(), BigDecimal.TEN, StatusLancamento.BALANCEADO,
 
-						null, 1);
+						null, 2);
 		session.save(lancamentoVeja2);
 
 		lancamentoSuper1 = Fixture
@@ -2942,7 +2962,7 @@ public class DataLoader {
 						DateUtil.adicionarDias(new Date(),
 								produtoEdicaoSuper1.getPeb()), new Date(),
 								new Date(), new BigDecimal(100), StatusLancamento.CONFIRMADO,
-								null, 1);
+								null, 3);
 		session.save(lancamentoSuper1);
 
 		lancamentoCapricho1 = Fixture
@@ -2969,7 +2989,7 @@ public class DataLoader {
 						DateUtil.adicionarDias(new Date(), 0),
 						DateUtil.adicionarDias(new Date(),+5), new Date(),
 						new Date(), BigDecimal.TEN,  StatusLancamento.EXPEDIDO,
-						null, 1);
+						null, 4);
 		session.save(lancamentoVeja1EcncalheAnt);
 
 		lancamentoVeja2EcncalheAnt = Fixture
@@ -2981,7 +3001,7 @@ public class DataLoader {
 
 						new Date(), BigDecimal.TEN, StatusLancamento.EXPEDIDO,
 
-						null, 1);
+						null, 5);
 		session.save(lancamentoVeja2EcncalheAnt);
 
 

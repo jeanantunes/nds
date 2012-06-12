@@ -4,7 +4,7 @@
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/produto.js"></script>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/cota.js"></script>
 	<script language="javascript" type="text/javascript">
-	
+		
 		var MA = new MapaAbastecimento('${pageContext.request.contextPath}', 'MA');
 	</script>
 	
@@ -36,7 +36,7 @@
 
 <div id="dialog-detalhesAbastecimento" title="Produtos do Box" style="display:none;">
 	<fieldset>
-    	<legend>Box 1</legend>
+    	<legend><span id="titleBox" ></span></legend>
 		<table class="mapaAbastecimentoDetalheGrid"></table>
 
     </fieldset>
@@ -171,7 +171,7 @@
    		  <span class="bt_novos" id="map_1" title="Imprimir">
 
 <!-- IMPRIMIR MAPA -->   		  
-<a href="${pageContext.request.contextPath}/mapaAbastecimento/imprimirMapaAbastecimento" target="_blank">
+<a href="${pageContext.request.contextPath}/mapaAbastecimento/imprimirMapaAbastecimento" target="blank">
 
 		
 		<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir Mapa</a>

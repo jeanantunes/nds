@@ -32,6 +32,8 @@ function MapaAbastecimento(pathTela, objName) {
 	
 		var mapa = T.mapas[indice];
 		
+		$('#titleBox').html(mapa.box);
+		
 		var data = [];
 		
 		data.push({name: 'idBox' ,value: mapa.idBox});
@@ -53,9 +55,6 @@ function MapaAbastecimento(pathTela, objName) {
 		if(result.mensagens)
 			exibirMensagem(result.mensagens.tipoMensagem,result.mensagens.listaMensagens);
 		
-		T.mapas = [];
-		
-		$.each(result.rows, function(index,row){T.processarLinha(index,row.cell);} );
 		
 		return result;
 	},
@@ -109,7 +108,6 @@ function MapaAbastecimento(pathTela, objName) {
 		switch (tipo) {
 			
 		case 'BOX':
-			debugger;
 			T.atualizarBoxRota();
 			T.bloquearCampos('rota','codigoProduto','nomeProduto','edicao','codigoCota','nomeCota','quebraPorCota');
 			T.desbloquearCampos('box');
@@ -157,7 +155,7 @@ function MapaAbastecimento(pathTela, objName) {
 		data.push({name:'filtro.rota',				value: T.get("rota")});
 		data.push({name:'filtro.codigoProduto',	value: T.get("codigoProduto")});
 		data.push({name:'filtro.nomeProduto',		value: T.get("nomeProduto")});
-		data.push({name:'filtro.edicao',			value: T.get("edicao")});
+		data.push({name:'filtro.edicaoProduto',			value: T.get("edicao")});
 		data.push({name:'filtro.codigoCota',		value: T.get("codigoCota")});
 		data.push({name:'filtro.nomeCota',			value: T.get("nomeCota")});
 		data.push({name:'filtro.quebraPorCota',	value: T.get("quebraPorCota")});		
@@ -209,9 +207,7 @@ function MapaAbastecimento(pathTela, objName) {
 	 * Execuçãos ao carregar Obj
 	 */
 	$(function() {
-		
-		//$("#codigo").numeric();
-		
+				
 		$("#dataLancamento").mask("99/99/9999");
 		
 		$( "#dataLancamento" ).datepicker({
