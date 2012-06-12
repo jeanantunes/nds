@@ -149,6 +149,9 @@ public class Distribuidor {
 	@Column(name = "LEIAUTE_PICKING", length = 20, nullable = true)
 	private LeiautePicking leiautePicking;
 	
+	@Column(name="QNT_DIAS_VENCIMENTO_VENDA_ENCALHE")
+	private Integer qntDiasVencinemtoVendaEncalhe;
+	
 	public Long getId() {
 		return id;
 	}
@@ -397,6 +400,20 @@ public class Distribuidor {
 	public void setLeiautePicking(LeiautePicking leiautePicking) {
 		this.leiautePicking = leiautePicking;
 	}
-	
+
+	/**
+	 * @return the qntDiasVencinemtoVendaEncalhe
+	 */
+	public Integer getQntDiasVencinemtoVendaEncalhe() {
+		return qntDiasVencinemtoVendaEncalhe;
+	}
+
+	/**
+	 * @param qntDiasVencinemtoVendaEncalhe the qntDiasVencinemtoVendaEncalhe to set
+	 */
+	public void setQntDiasVencinemtoVendaEncalhe(
+			Integer qntDiasVencinemtoVendaEncalhe) {
+		this.qntDiasVencinemtoVendaEncalhe = qntDiasVencinemtoVendaEncalhe;
+	}
 	
 }
