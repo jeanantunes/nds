@@ -171,6 +171,11 @@
 			buttonImage: "${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
 			buttonImageOnly: true
 		});
+		$("#dtPostergada").datepicker({
+			showOn: "button",
+			buttonImage: "${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
+			buttonImageOnly: true
+		});
 	});
 	
 	function confirmar(){
@@ -233,17 +238,32 @@
 	}
 	
 	function postergarCotas() {
-		
-		var dataEncalhe = $("#datepickerDe").val();
 
-		$.postJSON("<c:url value='/devolucao/fechamentoEncalhe/postergarCotas' />",
-					{ 'dataEncalhe' : dataEncalhe, 'idsCotas' : obterCotasMarcadas() },
-					function (result) {
-			
-					},
-				  	null,
-				   	true
-			);
+		$("#dialog-postergar").dialog({
+			resizable: false,
+			height:'auto',
+			width:300,
+			modal: true,
+			buttons: {
+				"Confirmar": function() {
+					
+					var dataEncalhe = $("#dtPostergada").val();
+
+					$.postJSON("<c:url value='/devolucao/fechamentoEncalhe/postergarCotas' />",
+								{ 'dataEncalhe' : dataEncalhe, 'idsCotas' : obterCotasMarcadas() },
+								function (result) {
+						
+								},
+							  	null,
+							   	true
+						);
+				},
+				
+				"Cancelar": function() {
+					$( this ).dialog( "close" );
+				}
+			}
+		});
 	}
 
 	function cobrarCotas() {
@@ -258,7 +278,15 @@
 				  	null,
 				   	true
 			);
+	}
+
+	function exportarCotasAusentes() {
+
+		var dataEncalhe = $("#datepickerDe").val();
 		
+		window.location = contextPath + "/devolucao/fechamentoEncalhe/exportarArquivo?dataEncalhe=" + dataEncalhe + "&fileType=XLS";
+
+		return false;
 	}
 	
 	</script>
@@ -275,14 +303,30 @@
 		<p>Confirma o encerramento da opera&ccedil;&atilde;o do dia 99/99/9999:</p>
 	</div>
 
+	<div id="dialog-postergar" title="Postergar Encalhe" style="display:none;">
+		<fieldset style="width:255px!important;">
+	    	<legend>Postergar Encalhe</legend>
+			<table width="230" border="0" cellspacing="2" cellpadding="0">
+	          <tr>
+	            <td width="121">Nova Data:</td>
+	            <td width="103"><input name="dtPostergada" type="text" id="dtPostergada" style="width:80px;" /></td>
+	          </tr>
+	        </table>
+	    </fieldset>
+	</div>
 	
 	<div id="dialog-encerrarEncalhe" title="Opera&ccedil;&atilde;o de Encalhe" style="display:none;">
 		<fieldset>
 			<legend>Cotas Ausentes</legend>
-				<form id="formGridCotas" name="formGridCotas" >
-					<table class="cotasGrid" id="tabelaGridCotas" ></table>
-				</form>
-			<span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
+			<form id="formGridCotas" name="formGridCotas" >
+				<table class="cotasGrid" id="tabelaGridCotas" ></table>
+			</form>
+			<span class="bt_novos" title="Gerar Arquivo" >
+				<a href="javascript:exportarCotasAusentes();">
+					<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
+					Arquivo
+				</a>
+			</span>
 			<span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir </a></span>
 			<span class="bt_sellAll" style="float:right;">
 				<input type="checkbox" id="checkTodasCotas" name="checkTodasCotas" onchange="checarTodasCotasGrid(this.checked);" style="float:right;margin-right:25px;"/>

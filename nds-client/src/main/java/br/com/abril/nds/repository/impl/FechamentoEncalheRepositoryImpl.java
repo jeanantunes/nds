@@ -108,11 +108,16 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepository<Fechamen
 			Criteria criteria = super.getSession().createCriteria(ChamadaEncalhe.class, "ce");
 			
 			this.criarCriteriaCotasAusentesEncalhe(criteria, dataEncalhe);
-			
+
 			criteria.setFirstResult(page);
-			criteria.setMaxResults(rp);
 			
-			this.addOrderCriteria(criteria, sortorder, sortname);
+			if (rp >= 0) {
+				criteria.setMaxResults(rp);
+			}
+			
+			if (sortname != null && sortorder != null) {
+				this.addOrderCriteria(criteria, sortorder, sortname);
+			}
 			
 			criteria.setResultTransformer(Transformers.aliasToBean(CotaAusenteEncalheDTO.class));
 				
