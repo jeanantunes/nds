@@ -155,47 +155,65 @@ function popup() {
 		};	
 
 	function mostrar(){
+		alert('mostrar');
 	$(".grids").show();
 }	
 $(function() {
-		$( "#datepickerDe" ).datepicker({
+		$( "#data" ).datepicker({
 			showOn: "button",
 			buttonImage: "../scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
 			buttonImageOnly: true
 		});
-		$( "#datepickerAte" ).datepicker({
-			showOn: "button",
-			buttonImage: "../scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
-			buttonImageOnly: true
-		});
+		
 	});
 	function confirmar(){
 		$(".dados").show();
 	}
 	function pesqEncalhe(){
 		$(".dadosFiltro").show();
-		
-		pesquisarNotaRecebidas();		
+		var status = $('#situacaoNfe').val();
+		if(status == 'RECEBIDA'){
+			pesquisarNotaRecebidas();		
+		}
 	}
 	
 	function pesquisarNotaRecebidas(){
 		
 		$(".notaRecebidaGrid").flexOptions({
-			url: "<c:url value='/nfe/consultaNFEEncalheTratamento'/>",
+			url: "<c:url value='/nfe/consultaNFEEncalheTratamento/pesquisarNotasRecebidas'/>",
 			dataType : 'json',
 			params: [
-						{name:'filtro.codigoCota', value:$('#idBox').val()},
-						{name:'filtro.data', value:$('#idRoteiro').val()},
-						{name:'filtro.statusNotaFiscalEntrada', value:$('#idRota').val()}						
+						{name:'filtro.codigoCota', value:$('#codigoCota').val()},
+						{name:'filtro.data', value:$('#data').val()},
+						{name:'filtro.statusNotaFiscalEntrada', value:$('#situacaoNfe').val()}						
 						]
 		});
-		
+
 		$(".notaRecebidaGrid").flexReload();
 	}
 	
 	function mostrar_nfes(){
 		$(".nfes").show();
 		};
+
+	function executarPreProcessamento(resultado) {
+			
+			if (resultado.mensagens) {
+
+				exibirMensagem(
+					resultado.mensagens.tipoMensagem, 
+					resultado.mensagens.listaMensagens
+				);
+				
+				$(".grids").hide();
+
+				return resultado;
+			}
+			
+			$(".grids").show();
+			
+			return resultado;
+		}
 </script>
 <style type="text/css">
 #dialog-nfe{display:none;}
@@ -310,12 +328,6 @@ $(function() {
 </div>
 
 
-
-
-
-
-
-
 <div class="corpo">   
     <br clear="all"/>
     <br />
@@ -332,12 +344,12 @@ $(function() {
         <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
   <tr>
     <td width="31">Cota:</td>
-    <td width="120"><input type="text" style="width:80px; float:left; margin-right:5px;"/>
+    <td width="120"><input type="text" id="codigoCota" name="codigoCota" style="width:80px; float:left; margin-right:5px;"/>
       <span class="classPesquisar"><a href="javascript:;" onclick="pesqEncalhe();">&nbsp;</a></span></td>
     <td width="35">Nome:</td>
     <td width="259"><span class="dadosFiltro">CGB Distribuidora de Jorn e Rev</span></td>
     <td width="35">Data:</td>
-    <td width="105"><input name="datepickerDe" type="text" id="datepickerDe" style="width:80px;"/></td>
+    <td width="105"><input name="data" type="text" id="data" style="width:80px;"/></td>
     <td width="42">Status:</td>
     <td width="173">    
 		<select name="situacaoNfe" id="situacaoNfe" style="width:290px;">
@@ -346,7 +358,7 @@ $(function() {
 		      		<option value="${comboStatusNota.key}">${comboStatusNota.value}</option>	
 		    </c:forEach>
 	    </select>
-    </td><td width="104"><span class="bt_pesquisar"><a href="javascript:;" onclick="mostrar();pesqEncalhe();">Pesquisar</a></span></td></tr>
+    </td><td width="104"><span class="bt_pesquisar"><a href="javascript:;" onclick="pesqEncalhe();">Pesquisar</a></span></td></tr>
   </table>
       </fieldset>
       <div class="linha_separa_fields">&nbsp;</div>
@@ -447,11 +459,11 @@ $(function() {
 			height : 250
 		});
 	$(".notaRecebidaGrid").flexigrid({
-			url : '../xml/notaRecebida-xml.xml',
-			dataType : 'xml',
+		preProcess: executarPreProcessamento,
+			dataType : 'json',
 			colModel : [ {
 				display : 'Cota',
-				name : 'cota',
+				name : 'numeroCota',
 				width : 60,
 				sortable : true,
 				align : 'left'
@@ -463,7 +475,7 @@ $(function() {
 				align : 'left'
 			}, {
 				display : 'NF-e',
-				name : 'nfe',
+				name : 'numeroNfe',
 				width : 200,
 				sortable : true,
 				align : 'left'

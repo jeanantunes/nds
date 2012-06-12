@@ -9,9 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.dto.ConsultaNFEEncalheTratamentoDTO;
 import br.com.abril.nds.dto.ItemDTO;
-import br.com.abril.nds.dto.RomaneioDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaNFEEncalheTratamento;
-import br.com.abril.nds.dto.filtro.FiltroRomaneioDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.fiscal.StatusNotaFiscalEntrada;
 import br.com.abril.nds.service.ConsultaNFEEncalheTratamentoNotasRecebidasService;
@@ -29,7 +27,7 @@ import br.com.caelum.vraptor.view.Results;
 @Path(value="/nfe/consultaNFEEncalheTratamento")
 public class ConsultaNFEEncalheTratamentoController {
 	
-	private static final String FILTRO_SESSION_ATTRIBUTE_ROMANEIOS = "filtroConsultaNFEEncalheTratamento";
+	private static final String FILTRO_SESSION_ATTRIBUTE_CONSULTA = "filtroConsultaNFEEncalheTratamento";
 	
 	@Autowired
 	private Result result;
@@ -78,7 +76,7 @@ public class ConsultaNFEEncalheTratamentoController {
 	
 	private TableModel<CellModelKeyValue<ConsultaNFEEncalheTratamentoDTO>> efetuarConsultaRomaneio(FiltroConsultaNFEEncalheTratamento filtro) {
 		
-		List<ConsultaNFEEncalheTratamentoDTO> listaRomaneios = this.consultaNFEEncalheTratamentoNotasRecebidasService.buscarNFNotasRecebidas(filtro, "limitar");
+		List<ConsultaNFEEncalheTratamentoDTO> listaNotasRecebidas = this.consultaNFEEncalheTratamentoNotasRecebidasService.buscarNFNotasRecebidas(filtro, "limitar");
 		
 		TableModel<CellModelKeyValue<ConsultaNFEEncalheTratamentoDTO>> tableModel = new TableModel<CellModelKeyValue<ConsultaNFEEncalheTratamentoDTO>>();
 		
@@ -87,7 +85,7 @@ public class ConsultaNFEEncalheTratamentoController {
 			throw new ValidacaoException(TipoMensagem.WARNING, "A pesquisa realizada não obteve resultado.");
 		}
 
-		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaRomaneios));
+		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaNotasRecebidas));
 		
 		tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
 		
@@ -111,15 +109,15 @@ public class ConsultaNFEEncalheTratamentoController {
 	
 	private void tratarFiltro(FiltroConsultaNFEEncalheTratamento filtroAtual) {
 
-		FiltroRomaneioDTO filtroSession = (FiltroRomaneioDTO) session
-				.getAttribute(FILTRO_SESSION_ATTRIBUTE_ROMANEIOS);
+		FiltroConsultaNFEEncalheTratamento filtroSession = (FiltroConsultaNFEEncalheTratamento) session
+				.getAttribute(FILTRO_SESSION_ATTRIBUTE_CONSULTA);
 		
 		if (filtroSession != null && filtroSession.equals(filtroAtual)) {
 
 			filtroAtual.getPaginacao().setPaginaAtual(1);
 		}
 		
-		session.setAttribute(FILTRO_SESSION_ATTRIBUTE_ROMANEIOS, filtroAtual);
+		session.setAttribute(FILTRO_SESSION_ATTRIBUTE_CONSULTA, filtroAtual);
 	}
 
 }

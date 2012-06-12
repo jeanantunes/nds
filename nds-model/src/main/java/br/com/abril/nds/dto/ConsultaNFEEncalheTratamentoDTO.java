@@ -1,11 +1,10 @@
 package br.com.abril.nds.dto;
 
 import java.io.Serializable;
-import java.math.BigInteger;
 
 import br.com.abril.nds.util.export.Export;
-import br.com.abril.nds.util.export.Exportable;
 import br.com.abril.nds.util.export.Export.Alignment;
+import br.com.abril.nds.util.export.Exportable;
 
 @Exportable
 public class ConsultaNFEEncalheTratamentoDTO implements Serializable {
@@ -19,13 +18,25 @@ public class ConsultaNFEEncalheTratamentoDTO implements Serializable {
 	private String nome;
 	
 	@Export(label = "NF- e", alignment=Alignment.LEFT, exhibitionOrder = 3)
-	private BigInteger numeroNfe;
+	private Long numeroNfe;
 	
 	@Export(label = "Serie", alignment=Alignment.LEFT, exhibitionOrder = 4)
 	private String serie;
 	
 	@Export(label = "Chave Acesso", alignment=Alignment.LEFT, exhibitionOrder = 5)
 	private String chaveAcesso;
+	
+	public ConsultaNFEEncalheTratamentoDTO() {}
+	
+	public ConsultaNFEEncalheTratamentoDTO(Integer numeroCota, String nome,
+			Long numeroNfe, String serie, String chaveAcesso) {
+		super();
+		this.numeroCota = numeroCota;
+		this.nome = nome;
+		this.numeroNfe = numeroNfe;
+		this.serie = serie;
+		this.chaveAcesso = chaveAcesso;
+	}
 
 	public Integer getNumeroCota() {
 		return numeroCota;
@@ -43,11 +54,11 @@ public class ConsultaNFEEncalheTratamentoDTO implements Serializable {
 		this.nome = nome;
 	}
 
-	public BigInteger getNumeroNfe() {
+	public Long getNumeroNfe() {
 		return numeroNfe;
 	}
 
-	public void setNumeroNfe(BigInteger numeroNfe) {
+	public void setNumeroNfe(Long numeroNfe) {
 		this.numeroNfe = numeroNfe;
 	}
 

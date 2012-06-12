@@ -9,5 +9,7 @@ import br.com.abril.nds.model.fiscal.NotaFiscalEntrada;
 public interface ConsultaNFEEncalheTratamentoNotasRecebidasRepository extends Repository<NotaFiscalEntrada, Long> {
 	
 	List<ConsultaNFEEncalheTratamentoDTO> buscarNFNotasRecebidas(FiltroConsultaNFEEncalheTratamento filtro, String limitar);
+	
+	Integer buscarTotalNotasRecebidas(FiltroConsultaNFEEncalheTratamento filtro);
 
 }

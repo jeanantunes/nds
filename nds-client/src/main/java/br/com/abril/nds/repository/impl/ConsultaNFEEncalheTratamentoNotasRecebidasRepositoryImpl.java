@@ -5,13 +5,14 @@ import java.util.List;
 
 import org.hibernate.Query;
 import org.hibernate.transform.AliasToBeanResultTransformer;
+import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.ConsultaNFEEncalheTratamentoDTO;
-import br.com.abril.nds.dto.RomaneioDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaNFEEncalheTratamento;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntrada;
 import br.com.abril.nds.repository.ConsultaNFEEncalheTratamentoNotasRecebidasRepository;
 
+@Repository
 public class ConsultaNFEEncalheTratamentoNotasRecebidasRepositoryImpl extends AbstractRepository<NotaFiscalEntrada, Long> implements
 		ConsultaNFEEncalheTratamentoNotasRecebidasRepository {
 
@@ -19,6 +20,7 @@ public class ConsultaNFEEncalheTratamentoNotasRecebidasRepositoryImpl extends Ab
 		super(NotaFiscalEntrada.class);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<ConsultaNFEEncalheTratamentoDTO> buscarNFNotasRecebidas(FiltroConsultaNFEEncalheTratamento filtro, String limitar) {
 		
@@ -43,7 +45,7 @@ public class ConsultaNFEEncalheTratamentoNotasRecebidasRepositoryImpl extends Ab
 		}
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(
-				RomaneioDTO.class));
+				ConsultaNFEEncalheTratamentoDTO.class));
 		
 		if(filtro.getPaginacao().getQtdResultadosPorPagina() != null) 
 			query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
@@ -51,7 +53,7 @@ public class ConsultaNFEEncalheTratamentoNotasRecebidasRepositoryImpl extends Ab
 		if(filtro.getPaginacao().getQtdResultadosPorPagina() != null && limitar.equals("limitar")) 
 			query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
 		 
-		return null;
+		return query.list();
 	}
 	
 	private String getSqlFromEWhereNotaEntrada(FiltroConsultaNFEEncalheTratamento filtro) {
@@ -64,9 +66,9 @@ public class ConsultaNFEEncalheTratamentoNotasRecebidasRepositoryImpl extends Ab
 		hql.append(" LEFT JOIN cota.pessoa as pessoa ");
 		
 
-		hql.append( " where notaCota.TIPO = 'COTA' ");
+		//hql.append( " where notaCota.TIPO = 'COTA' ");
 		
-		if(filtro.getCodigoCota() != null ) { 
+		if(filtro.getCodigoCota() != null && !filtro.getCodigoCota().equals("") ) { 
 			hql.append( " and cota.numeroCota = :numeroCota ");
 		}
 		if(filtro.getData() != null){
@@ -83,7 +85,7 @@ public class ConsultaNFEEncalheTratamentoNotasRecebidasRepositoryImpl extends Ab
 		}
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" order by cota.numeroCota asc ");
+		hql.append(" order by cota.numeroCota ");
 		
 		if (filtro.getPaginacao().getOrdenacao() != null) {
 			hql.append( filtro.getPaginacao().getOrdenacao().toString());
@@ -96,13 +98,35 @@ public class ConsultaNFEEncalheTratamentoNotasRecebidasRepositoryImpl extends Ab
 		
 		HashMap<String,Object> param = new HashMap<String, Object>();
 		
-		if(filtro.getCodigoCota() != null ) { 
+		if(filtro.getCodigoCota() != null && !filtro.getCodigoCota().equals("")) { 
 			param.put("numeroCota", filtro.getCodigoCota());
 		}
 		if(filtro.getData() != null){
 			param.put("data", filtro.getData());
 		}		
 		return param;
+	}
+
+	@Override
+	public Integer buscarTotalNotasRecebidas(
+			FiltroConsultaNFEEncalheTratamento filtro) {
+		
+		StringBuilder hql = new StringBuilder();
+		hql.append(" select count(cota) ");
+		
+		hql.append(getSqlFromEWhereNotaEntrada(filtro));
+		
+		Query query =  getSession().createQuery(hql.toString());
+		
+		HashMap<String, Object> param = buscarParametros(filtro);
+		
+		for(String key : param.keySet()){
+			query.setParameter(key, param.get(key));
+		}	
+		
+		Long totalRegistros = (Long) query.uniqueResult();
+		
+		return (totalRegistros == null) ? 0 : totalRegistros.intValue();
 	}
 
 
