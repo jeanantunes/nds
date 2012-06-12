@@ -6,28 +6,27 @@ import java.util.Date;
 
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamentoParcial;
-import br.com.abril.nds.util.Util;
 
 /**
  * @author Discover Technology
  *
  */
 public class ProdutoLancamentoDTO implements Serializable {
-
+	
 	/**
 	 * Serial Version UID
 	 */
-	private static final long serialVersionUID = -4687524586257381194L;
-	
+	private static final long serialVersionUID = 3924519267530987652L;
+
 	private Long idProdutoEdicao;
 	
 	private Long numeroEdicao;
 
 	private BigDecimal precoVenda;
 	
+	private BigDecimal precoComDesconto;
+	
 	private StatusLancamento statusLancamento;
-
-	private boolean possuiBrinde;
 
 	private BigDecimal peso;
 
@@ -37,37 +36,33 @@ public class ProdutoLancamentoDTO implements Serializable {
 
 	private String nomeProduto;
 	
+	private BigDecimal repartePrevisto;
+	
+	private BigDecimal reparteFisico;
+	
 	private Long idLancamento;
 	
 	private Integer sequencia;
 
-	private Long idFornecedor;
+	//TODO: private Long idFornecedor;
 	
-	private String nomeFornecedor;
-
-	private Long idEditor;
-
-	private String nomeEditor;
+	//TODO: private String nomeFornecedor;
 
 	private TipoLancamentoParcial parcial;
 	
-	private boolean possuiChamada;
+	private Date dataLancamentoPrevista;
 
-	private Date dataLancamento;
-
-	private Date dataRecolhimentoPrevista;
+	private Date dataLancamentoDistribuidor;
 	
-	private Date dataRecolhimentoDistribuidor;
-
-	private BigDecimal expectativaEncalheSede;
-
-	private BigDecimal expectativaEncalheAtendida;
-
-	private BigDecimal expectativaEncalhe;
+	private Date dataRecolhimentoPrevista;
 
 	private BigDecimal valorTotal;
 
-	private Date novaData;
+	private Date novaDataLancamento;
+	
+	private boolean possuiEstudo;
+	
+	private boolean possuiRecebimentoFisico;
 
 	/**
 	 * Construtor padrão.
@@ -75,7 +70,7 @@ public class ProdutoLancamentoDTO implements Serializable {
 	public ProdutoLancamentoDTO() {
 		
 	}
-	
+
 	/**
 	 * @return the idProdutoEdicao
 	 */
@@ -119,6 +114,20 @@ public class ProdutoLancamentoDTO implements Serializable {
 	}
 
 	/**
+	 * @return the precoComDesconto
+	 */
+	public BigDecimal getPrecoComDesconto() {
+		return precoComDesconto;
+	}
+
+	/**
+	 * @param precoComDesconto the precoComDesconto to set
+	 */
+	public void setPrecoComDesconto(BigDecimal precoComDesconto) {
+		this.precoComDesconto = precoComDesconto;
+	}
+
+	/**
 	 * @return the statusLancamento
 	 */
 	public StatusLancamento getStatusLancamento() {
@@ -126,24 +135,10 @@ public class ProdutoLancamentoDTO implements Serializable {
 	}
 
 	/**
-	 * @param status do lançamento em formato de String para ser convertida
+	 * @param statusLancamento the statusLancamento to set
 	 */
-	public void setStatusLancamento(String statusLancamento) {
-		this.statusLancamento = Util.getEnumByStringValue(StatusLancamento.values(), statusLancamento);
-	}
-
-	/**
-	 * @return the possuiBrinde
-	 */
-	public boolean isPossuiBrinde() {
-		return possuiBrinde;
-	}
-
-	/**
-	 * @param possuiBrinde the possuiBrinde to set
-	 */
-	public void setPossuiBrinde(boolean possuiBrinde) {
-		this.possuiBrinde = possuiBrinde;
+	public void setStatusLancamento(StatusLancamento statusLancamento) {
+		this.statusLancamento = statusLancamento;
 	}
 
 	/**
@@ -173,7 +168,7 @@ public class ProdutoLancamentoDTO implements Serializable {
 	public void setDesconto(BigDecimal desconto) {
 		this.desconto = desconto;
 	}
-	
+
 	/**
 	 * @return the codigoProduto
 	 */
@@ -200,6 +195,34 @@ public class ProdutoLancamentoDTO implements Serializable {
 	 */
 	public void setNomeProduto(String nomeProduto) {
 		this.nomeProduto = nomeProduto;
+	}
+
+	/**
+	 * @return the repartePrevisto
+	 */
+	public BigDecimal getRepartePrevisto() {
+		return repartePrevisto;
+	}
+
+	/**
+	 * @param repartePrevisto the repartePrevisto to set
+	 */
+	public void setRepartePrevisto(BigDecimal repartePrevisto) {
+		this.repartePrevisto = repartePrevisto;
+	}
+
+	/**
+	 * @return the reparteFisico
+	 */
+	public BigDecimal getReparteFisico() {
+		return reparteFisico;
+	}
+
+	/**
+	 * @param reparteFisico the reparteFisico to set
+	 */
+	public void setReparteFisico(BigDecimal reparteFisico) {
+		this.reparteFisico = reparteFisico;
 	}
 
 	/**
@@ -231,62 +254,6 @@ public class ProdutoLancamentoDTO implements Serializable {
 	}
 
 	/**
-	 * @return the idFornecedor
-	 */
-	public Long getIdFornecedor() {
-		return idFornecedor;
-	}
-
-	/**
-	 * @param idFornecedor the idFornecedor to set
-	 */
-	public void setIdFornecedor(Long idFornecedor) {
-		this.idFornecedor = idFornecedor;
-	}
-
-	/**
-	 * @return the nomeFornecedor
-	 */
-	public String getNomeFornecedor() {
-		return nomeFornecedor;
-	}
-
-	/**
-	 * @param nomeFornecedor the nomeFornecedor to set
-	 */
-	public void setNomeFornecedor(String nomeFornecedor) {
-		this.nomeFornecedor = nomeFornecedor;
-	}
-
-	/**
-	 * @return the idEditor
-	 */
-	public Long getIdEditor() {
-		return idEditor;
-	}
-
-	/**
-	 * @param idEditor the idEditor to set
-	 */
-	public void setIdEditor(Long idEditor) {
-		this.idEditor = idEditor;
-	}
-
-	/**
-	 * @return the nomeEditor
-	 */
-	public String getNomeEditor() {
-		return nomeEditor;
-	}
-
-	/**
-	 * @param nomeEditor the nomeEditor to set
-	 */
-	public void setNomeEditor(String nomeEditor) {
-		this.nomeEditor = nomeEditor;
-	}
-
-	/**
 	 * @return the parcial
 	 */
 	public TipoLancamentoParcial getParcial() {
@@ -294,109 +261,38 @@ public class ProdutoLancamentoDTO implements Serializable {
 	}
 
 	/**
-	 * @param parcial em formato de String para ser convertida.
+	 * @param parcial the parcial to set
 	 */
-	public void setParcial(String parcial) {
-		
-		this.parcial = Util.getEnumByStringValue(TipoLancamentoParcial.values(), parcial);
-	}
-	
-	/**
-	 * @return the possuiChamada
-	 */
-	public boolean isPossuiChamada() {
-		return possuiChamada;
+	public void setParcial(TipoLancamentoParcial parcial) {
+		this.parcial = parcial;
 	}
 
 	/**
-	 * @param possuiChamada the possuiChamada to set
+	 * @return the dataLancamentoPrevista
 	 */
-	public void setPossuiChamada(boolean possuiChamada) {
-		this.possuiChamada = possuiChamada;
+	public Date getDataLancamentoPrevista() {
+		return dataLancamentoPrevista;
 	}
 
 	/**
-	 * @return the dataLancamento
+	 * @param dataLancamentoPrevista the dataLancamentoPrevista to set
 	 */
-	public Date getDataLancamento() {
-		return dataLancamento;
+	public void setDataLancamentoPrevista(Date dataLancamentoPrevista) {
+		this.dataLancamentoPrevista = dataLancamentoPrevista;
 	}
 
 	/**
-	 * @param dataLancamento the dataLancamento to set
+	 * @return the dataLancamentoDistribuidor
 	 */
-	public void setDataLancamento(Date dataLancamento) {
-		this.dataLancamento = dataLancamento;
+	public Date getDataLancamentoDistribuidor() {
+		return dataLancamentoDistribuidor;
 	}
 
 	/**
-	 * @return the expectativaEncalheSede
+	 * @param dataLancamentoDistribuidor the dataLancamentoDistribuidor to set
 	 */
-	public BigDecimal getExpectativaEncalheSede() {
-		return expectativaEncalheSede;
-	}
-
-	/**
-	 * @param expectativaEncalheSede the expectativaEncalheSede to set
-	 */
-	public void setExpectativaEncalheSede(BigDecimal expectativaEncalheSede) {
-		this.expectativaEncalheSede = expectativaEncalheSede;
-	}
-
-	/**
-	 * @return the expectativaEncalheAtendida
-	 */
-	public BigDecimal getExpectativaEncalheAtendida() {
-		return expectativaEncalheAtendida;
-	}
-
-	/**
-	 * @param expectativaEncalheAtendida the expectativaEncalheAtendida to set
-	 */
-	public void setExpectativaEncalheAtendida(BigDecimal expectativaEncalheAtendida) {
-		this.expectativaEncalheAtendida = expectativaEncalheAtendida;
-	}
-
-	/**
-	 * @return the expectativaEncalhe
-	 */
-	public BigDecimal getExpectativaEncalhe() {
-		return expectativaEncalhe;
-	}
-
-	/**
-	 * @param expectativaEncalhe the expectativaEncalhe to set
-	 */
-	public void setExpectativaEncalhe(BigDecimal expectativaEncalhe) {
-		this.expectativaEncalhe = expectativaEncalhe;
-	}
-
-	/**
-	 * @return the valorTotal
-	 */
-	public BigDecimal getValorTotal() {
-		return valorTotal;
-	}
-
-	/**
-	 * @param valorTotal the valorTotal to set
-	 */
-	public void setValorTotal(BigDecimal valorTotal) {
-		this.valorTotal = valorTotal;
-	}
-
-	/**
-	 * @return the novaData
-	 */
-	public Date getNovaData() {
-		return novaData;
-	}
-
-	/**
-	 * @param novaData the novaData to set
-	 */
-	public void setNovaData(Date novaData) {
-		this.novaData = novaData;
+	public void setDataLancamentoDistribuidor(Date dataLancamentoDistribuidor) {
+		this.dataLancamentoDistribuidor = dataLancamentoDistribuidor;
 	}
 
 	/**
@@ -414,17 +310,59 @@ public class ProdutoLancamentoDTO implements Serializable {
 	}
 
 	/**
-	 * @return the dataRecolhimentoDistribuidor
+	 * @return the valorTotal
 	 */
-	public Date getDataRecolhimentoDistribuidor() {
-		return dataRecolhimentoDistribuidor;
+	public BigDecimal getValorTotal() {
+		return valorTotal;
 	}
 
 	/**
-	 * @param dataRecolhimentoDistribuidor the dataRecolhimentoDistribuidor to set
+	 * @param valorTotal the valorTotal to set
 	 */
-	public void setDataRecolhimentoDistribuidor(Date dataRecolhimentoDistribuidor) {
-		this.dataRecolhimentoDistribuidor = dataRecolhimentoDistribuidor;
+	public void setValorTotal(BigDecimal valorTotal) {
+		this.valorTotal = valorTotal;
 	}
 
+	/**
+	 * @return the novaDataLancamento
+	 */
+	public Date getNovaDataLancamento() {
+		return novaDataLancamento;
+	}
+
+	/**
+	 * @param novaDataLancamento the novaDataLancamento to set
+	 */
+	public void setNovaDataLancamento(Date novaDataLancamento) {
+		this.novaDataLancamento = novaDataLancamento;
+	}
+
+	/**
+	 * @return the possuiEstudo
+	 */
+	public boolean isPossuiEstudo() {
+		return possuiEstudo;
+	}
+
+	/**
+	 * @param possuiEstudo the possuiEstudo to set
+	 */
+	public void setPossuiEstudo(boolean possuiEstudo) {
+		this.possuiEstudo = possuiEstudo;
+	}
+
+	/**
+	 * @return the possuiRecebimentoFisico
+	 */
+	public boolean isPossuiRecebimentoFisico() {
+		return possuiRecebimentoFisico;
+	}
+
+	/**
+	 * @param possuiRecebimentoFisico the possuiRecebimentoFisico to set
+	 */
+	public void setPossuiRecebimentoFisico(boolean possuiRecebimentoFisico) {
+		this.possuiRecebimentoFisico = possuiRecebimentoFisico;
+	}
+	
 }

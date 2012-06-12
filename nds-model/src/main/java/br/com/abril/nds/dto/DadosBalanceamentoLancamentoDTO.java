@@ -15,21 +15,24 @@ import java.util.TreeSet;
  */
 public class DadosBalanceamentoLancamentoDTO implements Serializable {
 
-	private static final long serialVersionUID = -2168766293591158494L;
+	/**
+	 * Serial Version UID
+	 */
+	private static final long serialVersionUID = 4146330226397521701L;
 
-	private List<ProdutoRecolhimentoDTO> produtosRecolhimento;
+	private List<ProdutoLancamentoDTO> produtosLancamento;
 	
-	private TreeMap<Date, BigDecimal> mapaExpectativaEncalheTotalDiaria;
+	private TreeMap<Date, BigDecimal> mapaExpectativaReparteTotalDiario;
 	
-	private BigDecimal capacidadeRecolhimentoDistribuidor;
+	private BigDecimal capacidadeDistribuicao;
 	
-	private TreeSet<Date> datasRecolhimentoFornecedor;
+	private TreeSet<Date> datasDistribuicaoFornecedor;
 	
-	private TreeSet<Date> datasRecolhimentoDistribuidor;
+	private TreeSet<Date> datasDistribuicaoDistribuidor;
 	
-	private boolean balancearMatriz;
+	// TODO: private boolean balancearMatriz;
 	
-	private boolean matrizFechada;
+	// TODO: private boolean matrizFechada;
 
 	/**
 	 * Construtor padrão.
@@ -39,106 +42,76 @@ public class DadosBalanceamentoLancamentoDTO implements Serializable {
 	}
 
 	/**
-	 * @return the capacidadeRecolhimentoDistribuidor
+	 * @return the capacidadeDistribuicao
 	 */
-	public BigDecimal getCapacidadeRecolhimentoDistribuidor() {
-		return capacidadeRecolhimentoDistribuidor;
+	public BigDecimal getCapacidadeDistribuicao() {
+		return capacidadeDistribuicao;
 	}
 
 	/**
-	 * @param capacidadeRecolhimentoDistribuidor the capacidadeRecolhimentoDistribuidor to set
+	 * @param capacidadeDistribuicao the capacidadeDistribuicao to set
 	 */
-	public void setCapacidadeRecolhimentoDistribuidor(
-			BigDecimal capacidadeRecolhimentoDistribuidor) {
-		this.capacidadeRecolhimentoDistribuidor = capacidadeRecolhimentoDistribuidor;
+	public void setCapacidadeDistribuicao(BigDecimal capacidadeDistribuicao) {
+		this.capacidadeDistribuicao = capacidadeDistribuicao;
 	}
 
 	/**
-	 * @return the mapaExpectativaEncalheTotalDiaria
+	 * @return the mapaExpectativaReparteTotalDiario
 	 */
-	public TreeMap<Date, BigDecimal> getMapaExpectativaEncalheTotalDiaria() {
-		return mapaExpectativaEncalheTotalDiaria;
+	public TreeMap<Date, BigDecimal> getMapaExpectativaReparteTotalDiario() {
+		return mapaExpectativaReparteTotalDiario;
 	}
 
 	/**
-	 * @param mapaExpectativaEncalheTotalDiaria the mapaExpectativaEncalheTotalDiaria to set
+	 * @param mapaExpectativaReparteTotalDiario the mapaExpectativaReparteTotalDiario to set
 	 */
-	public void setMapaExpectativaEncalheTotalDiaria(
-			TreeMap<Date, BigDecimal> mapaExpectativaEncalheTotalDiaria) {
-		this.mapaExpectativaEncalheTotalDiaria = mapaExpectativaEncalheTotalDiaria;
+	public void setMapaExpectativaReparteTotalDiario(
+			TreeMap<Date, BigDecimal> mapaExpectativaReparteTotalDiario) {
+		this.mapaExpectativaReparteTotalDiario = mapaExpectativaReparteTotalDiario;
 	}
 
 	/**
-	 * @return the produtosRecolhimento
+	 * @return the produtosLancamento
 	 */
-	public List<ProdutoRecolhimentoDTO> getProdutosRecolhimento() {
-		return produtosRecolhimento;
+	public List<ProdutoLancamentoDTO> getProdutosLancamento() {
+		return produtosLancamento;
 	}
 
 	/**
-	 * @param produtosRecolhimento the produtosRecolhimento to set
+	 * @param produtosLancamento the produtosLancamento to set
 	 */
-	public void setProdutosRecolhimento(
-			List<ProdutoRecolhimentoDTO> produtosRecolhimento) {
-		this.produtosRecolhimento = produtosRecolhimento;
+	public void setProdutosLancamento(List<ProdutoLancamentoDTO> produtosLancamento) {
+		this.produtosLancamento = produtosLancamento;
 	}
 
 	/**
-	 * @return the datasRecolhimentoFornecedor
+	 * @return the datasDistribuicaoFornecedor
 	 */
-	public TreeSet<Date> getDatasRecolhimentoFornecedor() {
-		return datasRecolhimentoFornecedor;
+	public TreeSet<Date> getDatasDistribuicaoFornecedor() {
+		return datasDistribuicaoFornecedor;
 	}
 
 	/**
-	 * @param datasRecolhimentoFornecedor the datasRecolhimentoFornecedor to set
+	 * @param datasDistribuicaoFornecedor the datasDistribuicaoFornecedor to set
 	 */
-	public void setDatasRecolhimentoFornecedor(
-			TreeSet<Date> datasRecolhimentoFornecedor) {
-		this.datasRecolhimentoFornecedor = datasRecolhimentoFornecedor;
+	public void setDatasDistribuicaoFornecedor(
+			TreeSet<Date> datasDistribuicaoFornecedor) {
+		this.datasDistribuicaoFornecedor = datasDistribuicaoFornecedor;
 	}
 
 	/**
-	 * @return the datasRecolhimentoDistribuidor
+	 * @return the datasDistribuicaoDistribuidor
 	 */
-	public TreeSet<Date> getDatasRecolhimentoDistribuidor() {
-		return datasRecolhimentoDistribuidor;
+	public TreeSet<Date> getDatasDistribuicaoDistribuidor() {
+		return datasDistribuicaoDistribuidor;
 	}
 
 	/**
-	 * @param datasRecolhimentoDistribuidor the datasRecolhimentoDistribuidor to set
+	 * @param datasDistribuicaoDistribuidor the datasDistribuicaoDistribuidor to set
 	 */
-	public void setDatasRecolhimentoDistribuidor(
-			TreeSet<Date> datasRecolhimentoDistribuidor) {
-		this.datasRecolhimentoDistribuidor = datasRecolhimentoDistribuidor;
-	}
-
-	/**
-	 * @return the balancearMatriz
-	 */
-	public boolean getBalancearMatriz() {
-		return balancearMatriz;
-	}
-
-	/**
-	 * @param balancearMatriz the balancearMatriz to set
-	 */
-	public void setBalancearMatriz(boolean balancearMatriz) {
-		this.balancearMatriz = balancearMatriz;
-	}
-
-	/**
-	 * @return the matrizFechada
-	 */
-	public boolean isMatrizFechada() {
-		return matrizFechada;
-	}
-
-	/**
-	 * @param matrizFechada the matrizFechada to set
-	 */
-	public void setMatrizFechada(boolean matrizFechada) {
-		this.matrizFechada = matrizFechada;
+	public void setDatasDistribuicaoDistribuidor(
+			TreeSet<Date> datasDistribuicaoDistribuidor) {
+		this.datasDistribuicaoDistribuidor = datasDistribuicaoDistribuidor;
 	}
 	
 }
