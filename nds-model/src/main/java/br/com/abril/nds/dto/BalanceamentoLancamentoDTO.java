@@ -13,12 +13,12 @@ import java.util.TreeMap;
  *
  */
 public class BalanceamentoLancamentoDTO implements Serializable {
-
+	
 	/**
 	 * Serial Version UID
 	 */
-	private static final long serialVersionUID = -4498486203318581867L;
-	
+	private static final long serialVersionUID = -4648494827298814073L;
+
 	private TreeMap<Date, List<ProdutoLancamentoDTO>> matrizLancamento;
 	
 	private BigDecimal capacidadeDistribuicao;
