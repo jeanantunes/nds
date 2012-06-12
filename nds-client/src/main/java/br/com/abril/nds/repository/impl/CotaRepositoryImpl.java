@@ -970,4 +970,25 @@ public class CotaRepositoryImpl extends AbstractRepository<Cota, Long>
 		return lista;
 	}
 
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<Cota> obterCotasPorIDS(List<Long> idsCotas) {
+		
+		try {
+			
+			if (idsCotas == null || idsCotas.isEmpty()) {
+				return null;
+			}
+			 
+			Criteria criteria = super.getSession().createCriteria(Cota.class);
+			
+			criteria.add(Restrictions.in("id", idsCotas));
+			
+			return criteria.list();
+			
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
 }
