@@ -1,6 +1,5 @@
 package br.com.abril.nds.client.vo;
 
-import java.math.BigDecimal;
 
 /**
  * VO para controle dos parametros do distribuidor
@@ -33,12 +32,12 @@ public class ParametrosDistribuidorVO {
 	private String conferenciaCegaEncalhe;
 
 	// Frame Capacidade de Manuseio
-	private Long capacidadeManuseioHomemHoraLancamento;
+	private String capacidadeManuseioHomemHoraLancamento;
 	
-	private Long capacidadeManuseioHomemHoraRecolhimento;
+	private String capacidadeManuseioHomemHoraRecolhimento;
 
 	// Frame Reutilização de Código de Cota
-	private int reutilizacaoCodigoCotaInativa;
+	private String reutilizacaoCodigoCotaInativa;
 
 	// Aba Fiscal
 	
@@ -115,7 +114,7 @@ public class ParametrosDistribuidorVO {
 	// Frame Condições de Contratação
 	private String utilizaContratoComCotas;
 	
-	private int prazoContrato;
+	private String prazoContrato;
 
 	private String informacoesComplementaresContrato;
 
@@ -157,13 +156,13 @@ public class ParametrosDistribuidorVO {
 	
 	// Aba Negociação
 	// Frame Negociação de Dívidas
-	private int sugereSuspensaoQuandoAtingirBoletos;
+	private String sugereSuspensaoQuandoAtingirBoletos;
 
-	private BigDecimal sugereSuspensaoQuandoAtingirReais;
+	private String sugereSuspensaoQuandoAtingirReais;
 
 	private String parcelamentoDividas;
 	
-	private int negociacaoAteParcelas;
+	private String negociacaoAteParcelas;
 	
 	private String permitePagamentoDividasDivergentes;
 
@@ -193,7 +192,7 @@ public class ParametrosDistribuidorVO {
 
 	private String aprovacaoSobraEm;
 
-	private int prazoFollowUp;
+	private String prazoFollowUp;
 	
 	private String prazoFollowUpFaltaDe;
 	
@@ -203,7 +202,7 @@ public class ParametrosDistribuidorVO {
 
 	private String prazoFollowUpSobraEm;
 	
-	private int prazoAvisoPrevioValidadeGarantia;
+	private String prazoAvisoPrevioValidadeGarantia;
 
 	private String prazoAvisoPrevioValidadeGarantiaFaltaDe;
 	
@@ -212,7 +211,7 @@ public class ParametrosDistribuidorVO {
 	private String prazoAvisoPrevioValidadeGarantiaFaltaEm;
 
 	private String prazoAvisoPrevioValidadeGarantiaSobraEm;
-	
+
 	public int getRelancamentoParciaisEmDias() {
 		return relancamentoParciaisEmDias;
 	}
@@ -293,29 +292,30 @@ public class ParametrosDistribuidorVO {
 		this.conferenciaCegaEncalhe = conferenciaCegaEncalhe;
 	}
 
-	public Long getCapacidadeManuseioHomemHoraLancamento() {
+	public String getCapacidadeManuseioHomemHoraLancamento() {
 		return capacidadeManuseioHomemHoraLancamento;
 	}
 
 	public void setCapacidadeManuseioHomemHoraLancamento(
-			Long capacidadeManuseioHomemHoraLancamento) {
+			String capacidadeManuseioHomemHoraLancamento) {
 		this.capacidadeManuseioHomemHoraLancamento = capacidadeManuseioHomemHoraLancamento;
 	}
 
-	public Long getCapacidadeManuseioHomemHoraRecolhimento() {
+	public String getCapacidadeManuseioHomemHoraRecolhimento() {
 		return capacidadeManuseioHomemHoraRecolhimento;
 	}
 
 	public void setCapacidadeManuseioHomemHoraRecolhimento(
-			Long capacidadeManuseioHomemHoraRecolhimento) {
+			String capacidadeManuseioHomemHoraRecolhimento) {
 		this.capacidadeManuseioHomemHoraRecolhimento = capacidadeManuseioHomemHoraRecolhimento;
 	}
 
-	public int getReutilizacaoCodigoCotaInativa() {
+	public String getReutilizacaoCodigoCotaInativa() {
 		return reutilizacaoCodigoCotaInativa;
 	}
 
-	public void setReutilizacaoCodigoCotaInativa(int reutilizacaoCodigoCotaInativa) {
+	public void setReutilizacaoCodigoCotaInativa(
+			String reutilizacaoCodigoCotaInativa) {
 		this.reutilizacaoCodigoCotaInativa = reutilizacaoCodigoCotaInativa;
 	}
 
@@ -447,12 +447,76 @@ public class ParametrosDistribuidorVO {
 		this.impressaoNE = impressaoNE;
 	}
 
+	public String getImpressaoNEFaltaDe() {
+		return impressaoNEFaltaDe;
+	}
+
+	public void setImpressaoNEFaltaDe(String impressaoNEFaltaDe) {
+		this.impressaoNEFaltaDe = impressaoNEFaltaDe;
+	}
+
+	public String getImpressaoNEFaltaEm() {
+		return impressaoNEFaltaEm;
+	}
+
+	public void setImpressaoNEFaltaEm(String impressaoNEFaltaEm) {
+		this.impressaoNEFaltaEm = impressaoNEFaltaEm;
+	}
+
+	public String getImpressaoNESobraDe() {
+		return impressaoNESobraDe;
+	}
+
+	public void setImpressaoNESobraDe(String impressaoNESobraDe) {
+		this.impressaoNESobraDe = impressaoNESobraDe;
+	}
+
+	public String getImpressaoNESobraEm() {
+		return impressaoNESobraEm;
+	}
+
+	public void setImpressaoNESobraEm(String impressaoNESobraEm) {
+		this.impressaoNESobraEm = impressaoNESobraEm;
+	}
+
 	public String getImpressaoNECADANFE() {
 		return impressaoNECADANFE;
 	}
 
 	public void setImpressaoNECADANFE(String impressaoNECADANFE) {
 		this.impressaoNECADANFE = impressaoNECADANFE;
+	}
+
+	public String getImpressaoNECADANFEFaltaDe() {
+		return impressaoNECADANFEFaltaDe;
+	}
+
+	public void setImpressaoNECADANFEFaltaDe(String impressaoNECADANFEFaltaDe) {
+		this.impressaoNECADANFEFaltaDe = impressaoNECADANFEFaltaDe;
+	}
+
+	public String getImpressaoNECADANFEFaltaEm() {
+		return impressaoNECADANFEFaltaEm;
+	}
+
+	public void setImpressaoNECADANFEFaltaEm(String impressaoNECADANFEFaltaEm) {
+		this.impressaoNECADANFEFaltaEm = impressaoNECADANFEFaltaEm;
+	}
+
+	public String getImpressaoNECADANFESobraDe() {
+		return impressaoNECADANFESobraDe;
+	}
+
+	public void setImpressaoNECADANFESobraDe(String impressaoNECADANFESobraDe) {
+		this.impressaoNECADANFESobraDe = impressaoNECADANFESobraDe;
+	}
+
+	public String getImpressaoNECADANFESobraEm() {
+		return impressaoNECADANFESobraEm;
+	}
+
+	public void setImpressaoNECADANFESobraEm(String impressaoNECADANFESobraEm) {
+		this.impressaoNECADANFESobraEm = impressaoNECADANFESobraEm;
 	}
 
 	public String getImpressaoCE() {
@@ -463,6 +527,38 @@ public class ParametrosDistribuidorVO {
 		this.impressaoCE = impressaoCE;
 	}
 
+	public String getImpressaoCEFaltaDe() {
+		return impressaoCEFaltaDe;
+	}
+
+	public void setImpressaoCEFaltaDe(String impressaoCEFaltaDe) {
+		this.impressaoCEFaltaDe = impressaoCEFaltaDe;
+	}
+
+	public String getImpressaoCEFaltaEm() {
+		return impressaoCEFaltaEm;
+	}
+
+	public void setImpressaoCEFaltaEm(String impressaoCEFaltaEm) {
+		this.impressaoCEFaltaEm = impressaoCEFaltaEm;
+	}
+
+	public String getImpressaoCESobraDe() {
+		return impressaoCESobraDe;
+	}
+
+	public void setImpressaoCESobraDe(String impressaoCESobraDe) {
+		this.impressaoCESobraDe = impressaoCESobraDe;
+	}
+
+	public String getImpressaoCESobraEm() {
+		return impressaoCESobraEm;
+	}
+
+	public void setImpressaoCESobraEm(String impressaoCESobraEm) {
+		this.impressaoCESobraEm = impressaoCESobraEm;
+	}
+
 	public String getUtilizaContratoComCotas() {
 		return utilizaContratoComCotas;
 	}
@@ -471,11 +567,11 @@ public class ParametrosDistribuidorVO {
 		this.utilizaContratoComCotas = utilizaContratoComCotas;
 	}
 
-	public int getPrazoContrato() {
+	public String getPrazoContrato() {
 		return prazoContrato;
 	}
 
-	public void setPrazoContrato(int prazoContrato) {
+	public void setPrazoContrato(String prazoContrato) {
 		this.prazoContrato = prazoContrato;
 	}
 
@@ -628,21 +724,21 @@ public class ParametrosDistribuidorVO {
 		this.indicadorReajusteCaucaoLiquidaValor = indicadorReajusteCaucaoLiquidaValor;
 	}
 
-	public int getSugereSuspensaoQuandoAtingirBoletos() {
+	public String getSugereSuspensaoQuandoAtingirBoletos() {
 		return sugereSuspensaoQuandoAtingirBoletos;
 	}
 
 	public void setSugereSuspensaoQuandoAtingirBoletos(
-			int sugereSuspensaoQuandoAtingirBoletos) {
+			String sugereSuspensaoQuandoAtingirBoletos) {
 		this.sugereSuspensaoQuandoAtingirBoletos = sugereSuspensaoQuandoAtingirBoletos;
 	}
 
-	public BigDecimal getSugereSuspensaoQuandoAtingirReais() {
+	public String getSugereSuspensaoQuandoAtingirReais() {
 		return sugereSuspensaoQuandoAtingirReais;
 	}
 
 	public void setSugereSuspensaoQuandoAtingirReais(
-			BigDecimal sugereSuspensaoQuandoAtingirReais) {
+			String sugereSuspensaoQuandoAtingirReais) {
 		this.sugereSuspensaoQuandoAtingirReais = sugereSuspensaoQuandoAtingirReais;
 	}
 
@@ -654,11 +750,11 @@ public class ParametrosDistribuidorVO {
 		this.parcelamentoDividas = parcelamentoDividas;
 	}
 
-	public int getNegociacaoAteParcelas() {
+	public String getNegociacaoAteParcelas() {
 		return negociacaoAteParcelas;
 	}
 
-	public void setNegociacaoAteParcelas(int negociacaoAteParcelas) {
+	public void setNegociacaoAteParcelas(String negociacaoAteParcelas) {
 		this.negociacaoAteParcelas = negociacaoAteParcelas;
 	}
 
@@ -735,119 +831,6 @@ public class ParametrosDistribuidorVO {
 		this.faltasSobras = faltasSobras;
 	}
 
-	public int getPrazoFollowUp() {
-		return prazoFollowUp;
-	}
-
-	public void setPrazoFollowUp(int prazoFollowUp) {
-		this.prazoFollowUp = prazoFollowUp;
-	}
-
-	public int getPrazoAvisoPrevioValidadeGarantia() {
-		return prazoAvisoPrevioValidadeGarantia;
-	}
-
-	public void setPrazoAvisoPrevioValidadeGarantia(
-			int prazoAvisoPrevioValidadeGarantia) {
-		this.prazoAvisoPrevioValidadeGarantia = prazoAvisoPrevioValidadeGarantia;
-	}
-
-	public String getImpressaoNECADANFEFaltaDe() {
-		return impressaoNECADANFEFaltaDe;
-	}
-
-	public void setImpressaoNECADANFEFaltaDe(String impressaoNECADANFEFaltaDe) {
-		this.impressaoNECADANFEFaltaDe = impressaoNECADANFEFaltaDe;
-	}
-
-	public String getImpressaoNECADANFEFaltaEm() {
-		return impressaoNECADANFEFaltaEm;
-	}
-
-	public void setImpressaoNECADANFEFaltaEm(String impressaoNECADANFEFaltaEm) {
-		this.impressaoNECADANFEFaltaEm = impressaoNECADANFEFaltaEm;
-	}
-
-	public String getImpressaoNECADANFESobraDe() {
-		return impressaoNECADANFESobraDe;
-	}
-
-	public void setImpressaoNECADANFESobraDe(String impressaoNECADANFESobraDe) {
-		this.impressaoNECADANFESobraDe = impressaoNECADANFESobraDe;
-	}
-
-	public String getImpressaoNECADANFESobraEm() {
-		return impressaoNECADANFESobraEm;
-	}
-
-	public void setImpressaoNECADANFESobraEm(String impressaoNECADANFESobraEm) {
-		this.impressaoNECADANFESobraEm = impressaoNECADANFESobraEm;
-	}
-
-	public String getImpressaoCEFaltaDe() {
-		return impressaoCEFaltaDe;
-	}
-
-	public void setImpressaoCEFaltaDe(String impressaoCEFaltaDe) {
-		this.impressaoCEFaltaDe = impressaoCEFaltaDe;
-	}
-
-	public String getImpressaoCEFaltaEm() {
-		return impressaoCEFaltaEm;
-	}
-
-	public void setImpressaoCEFaltaEm(String impressaoCEFaltaEm) {
-		this.impressaoCEFaltaEm = impressaoCEFaltaEm;
-	}
-
-	public String getImpressaoCESobraDe() {
-		return impressaoCESobraDe;
-	}
-
-	public void setImpressaoCESobraDe(String impressaoCESobraDe) {
-		this.impressaoCESobraDe = impressaoCESobraDe;
-	}
-
-	public String getImpressaoCESobraEm() {
-		return impressaoCESobraEm;
-	}
-
-	public void setImpressaoCESobraEm(String impressaoCESobraEm) {
-		this.impressaoCESobraEm = impressaoCESobraEm;
-	}
-
-	public String getImpressaoNEFaltaDe() {
-		return impressaoNEFaltaDe;
-	}
-
-	public void setImpressaoNEFaltaDe(String impressaoNEFaltaDe) {
-		this.impressaoNEFaltaDe = impressaoNEFaltaDe;
-	}
-
-	public String getImpressaoNEFaltaEm() {
-		return impressaoNEFaltaEm;
-	}
-
-	public void setImpressaoNEFaltaEm(String impressaoNEFaltaEm) {
-		this.impressaoNEFaltaEm = impressaoNEFaltaEm;
-	}
-
-	public String getImpressaoNESobraDe() {
-		return impressaoNESobraDe;
-	}
-
-	public void setImpressaoNESobraDe(String impressaoNESobraDe) {
-		this.impressaoNESobraDe = impressaoNESobraDe;
-	}
-
-	public String getImpressaoNESobraEm() {
-		return impressaoNESobraEm;
-	}
-
-	public void setImpressaoNESobraEm(String impressaoNESobraEm) {
-		this.impressaoNESobraEm = impressaoNESobraEm;
-	}
-
 	public String getAprovacaoFaltaDe() {
 		return aprovacaoFaltaDe;
 	}
@@ -880,6 +863,14 @@ public class ParametrosDistribuidorVO {
 		this.aprovacaoSobraEm = aprovacaoSobraEm;
 	}
 
+	public String getPrazoFollowUp() {
+		return prazoFollowUp;
+	}
+
+	public void setPrazoFollowUp(String prazoFollowUp) {
+		this.prazoFollowUp = prazoFollowUp;
+	}
+
 	public String getPrazoFollowUpFaltaDe() {
 		return prazoFollowUpFaltaDe;
 	}
@@ -910,6 +901,15 @@ public class ParametrosDistribuidorVO {
 
 	public void setPrazoFollowUpSobraEm(String prazoFollowUpSobraEm) {
 		this.prazoFollowUpSobraEm = prazoFollowUpSobraEm;
+	}
+
+	public String getPrazoAvisoPrevioValidadeGarantia() {
+		return prazoAvisoPrevioValidadeGarantia;
+	}
+
+	public void setPrazoAvisoPrevioValidadeGarantia(
+			String prazoAvisoPrevioValidadeGarantia) {
+		this.prazoAvisoPrevioValidadeGarantia = prazoAvisoPrevioValidadeGarantia;
 	}
 
 	public String getPrazoAvisoPrevioValidadeGarantiaFaltaDe() {
@@ -947,5 +947,5 @@ public class ParametrosDistribuidorVO {
 			String prazoAvisoPrevioValidadeGarantiaSobraEm) {
 		this.prazoAvisoPrevioValidadeGarantiaSobraEm = prazoAvisoPrevioValidadeGarantiaSobraEm;
 	}
-	
+
 }
