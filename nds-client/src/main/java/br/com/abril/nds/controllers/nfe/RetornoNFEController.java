@@ -203,7 +203,7 @@ public class RetornoNFEController {
 	 * 
 	 * @param arquivo01
 	 * @param arquivo02
-	 * @return
+	 * @return Objeto com os dados dos arquivos
 	 */
 	private ArquivoRetornoNFEVO processarNotaCancelamento(ArquivoRetornoNFEVO arquivo01, ArquivoRetornoNFEVO arquivo02) {
 		
