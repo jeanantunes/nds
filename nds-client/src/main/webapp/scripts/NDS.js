@@ -156,11 +156,17 @@ function serializeArrayToPost(listaName, lista, obj) {
 	var i;
 	for(i = 0; i < lista.length;i++){		
 		var object = lista[i];
-		for ( var propriedade in object) {
-			if(object[propriedade] || object[propriedade] == 0){
-				obj[listaName +'['+i+'].'+propriedade] = object[propriedade];
+		
+		if($.isPlainObject(object)){
+			for ( var propriedade in object) {
+				if(object[propriedade] || object[propriedade] == 0){
+					obj[listaName +'['+i+'].'+propriedade] = object[propriedade];
+				}
 			}
+		}else{
+			obj[listaName +'['+i+']'] = object;
 		}
+		
 	}
 	
 	return obj;
