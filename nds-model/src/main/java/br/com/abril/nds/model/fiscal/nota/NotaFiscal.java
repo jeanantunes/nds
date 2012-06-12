@@ -3,8 +3,11 @@ package br.com.abril.nds.model.fiscal.nota;
 import java.io.Serializable;
 import java.util.List;
 
+import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
@@ -81,6 +84,13 @@ public class NotaFiscal implements Serializable {
 	 */
 	@Embedded
 	private InformacaoEletronica informacaoEletronica;
+	
+	/**
+	 * Status de processamento interno da nota fiscal
+	 */
+	@Enumerated(EnumType.STRING)
+	@Column(name = "STATUS_PROCESSAMENTO_INTERNO")
+	private StatusProcessamentoInterno statusProcessamentoInterno;
 	
 	/**
 	 * Construtor padrão.
@@ -229,6 +239,21 @@ public class NotaFiscal implements Serializable {
 	 */
 	public void setInformacaoEletronica(InformacaoEletronica informacaoEletronica) {
 		this.informacaoEletronica = informacaoEletronica;
+	}
+
+	/**
+	 * @return the statusProcessamentoInterno
+	 */
+	public StatusProcessamentoInterno getStatusProcessamentoInterno() {
+		return statusProcessamentoInterno;
+	}
+
+	/**
+	 * @param statusProcessamentoInterno the statusProcessamentoInterno to set
+	 */
+	public void setStatusProcessamentoInterno(
+			StatusProcessamentoInterno statusProcessamentoInterno) {
+		this.statusProcessamentoInterno = statusProcessamentoInterno;
 	}
 	
 }
