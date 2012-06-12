@@ -163,6 +163,15 @@ public class FechamentoEncalheController {
 		filtro.setBoxId(boxId);
 		
 		List<FechamentoFisicoLogicoDTO> listaEncalhe = fechamentoEncalheService.buscarFechamentoEncalhe(filtro, sortorder, sortname, page, rp);
+		
+		// Evitar nullpointer na impressão:
+		if (listaEncalhe == null) {
+			listaEncalhe = new ArrayList<FechamentoFisicoLogicoDTO>();
+		}
+		if (listaEncalhe.isEmpty()) {
+			listaEncalhe.add(new FechamentoFisicoLogicoDTO());
+		}
+		
 		try {
 			
 			FileExporter.to("cotas_ausentes", fileType).inHTTPResponse(
