@@ -1,6 +1,7 @@
 package br.com.abril.nds.model.fiscal.nota;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
@@ -16,14 +17,17 @@ public class RetornoComunicacaoEletronica implements Serializable {
 	private static final long serialVersionUID = 5252804668668107697L;
 
 	@Enumerated(EnumType.STRING)
-	@Column(name= "STATUS")
+	@Column(name = "STATUS")
 	private Status status;
-	
+		
 	@Column(name = "PROTOCOLO", length = 20)
 	private Long protocolo;
 	
 	@Column(name = "MOTIVO", length = 255)
 	private String motivo;
+	
+	@Column(name = "DATA_RECEBIMENTO")
+	private Date dataRecebimento;
 	
 	/**
 	 * Construtor padrão.
@@ -73,5 +77,19 @@ public class RetornoComunicacaoEletronica implements Serializable {
 	public void setMotivo(String motivo) {
 		this.motivo = motivo;
 	}
-	
+
+	/**
+	 * @return the dataRecebimento
+	 */
+	public Date getDataRecebimento() {
+		return dataRecebimento;
+	}
+
+	/**
+	 * @param dataRecebimento the dataRecebimento to set
+	 */
+	public void setDataRecebimento(Date dataRecebimento) {
+		this.dataRecebimento = dataRecebimento;
+	}
+			
 }

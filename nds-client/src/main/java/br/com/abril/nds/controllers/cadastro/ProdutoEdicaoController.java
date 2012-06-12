@@ -280,7 +280,7 @@ public class ProdutoEdicaoController {
 				listaMensagens.add("Campo 'Código' deve ser preenchido!");
 			}
 			if (dto.getNomeComercialProduto() == null || dto.getNomeComercialProduto().trim().length() <= 0) {
-				listaMensagens.add("Campo 'Código' deve ser preenchido!");
+				listaMensagens.add("Campo 'Nome Comercial Produto' deve ser preenchido!");
 			}
 			if (dto.getNumeroEdicao() == null || Long.valueOf(0).equals(dto.getNumeroEdicao())) {
 				listaMensagens.add("Por favor, digite um valor válido para o 'Número de Edição'!");
