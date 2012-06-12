@@ -304,10 +304,10 @@
 			+ "dataEncalhe=" + vDataEncalhe
 			+ "&fornecedorId="+ vFornecedorId
 			+ "&boxId=" + vBoxId
-			+ "&sortname="
-			+ "&sortorder="
-			+ "&rp="
-			+ "&page="
+			+ "&sortname=" + $(".fechamentoGrid").flexGetSortName()
+			+ "&sortorder=" + $(".fechamentoGrid").getSortOrder()
+			+ "&rp=" + $(".fechamentoGrid").flexGetRowsPerPage()
+			+ "&page=" + $(".fechamentoGrid").flexGetPageNumber()
 			+ "&fileType=" + fileType;
 
 		return false;
@@ -500,25 +500,25 @@
 				display : 'Total R$',
 				name : 'totalFormatado',
 				width : 80,
-				sortable : true,
+				sortable : false,
 				align : 'right'
 			}, {
 				display : 'F&iacute;sico',
 				name : 'fisico',
 				width : 80,
-				sortable : true,
+				sortable : false,
 				align : 'center'
 			}, {
 				display : 'Diferen&ccedil;a',
 				name : 'diferenca',
 				width : 50,
-				sortable : true,
+				sortable : false,
 				align : 'right'
 			}, {
 				display : 'Replicar Qtde.',
 				name : 'replicar',
 				width : 80,
-				sortable : true,
+				sortable : false,
 				align : 'center'
 			}],
 			sortname : "codigo",

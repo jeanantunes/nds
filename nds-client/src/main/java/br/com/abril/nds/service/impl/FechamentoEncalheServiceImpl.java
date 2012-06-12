@@ -34,7 +34,20 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 		
 		int startSearch = page * rp - rp;
 		
-		List<FechamentoFisicoLogicoDTO> listaConferencia = fechamentoEncalheRepository.buscarConferenciaEncalhe(filtro, sortorder, sortname, startSearch, rp);
+		
+		// TODO: REFACTORING - Para ordenar corretamente a table da tela: 
+		String srtName = sortname; 
+		if (sortname != null) {
+			if ("precoCapaFormatado".equals(sortname)) {
+				srtName = "precoCapa";
+			}
+			if ("exemplaresDevolucaoFormatado".equals(sortname)) {
+				srtName = "exemplaresDevolucao";
+			}
+		}
+		
+		
+		List<FechamentoFisicoLogicoDTO> listaConferencia = fechamentoEncalheRepository.buscarConferenciaEncalhe(filtro, sortorder, srtName, startSearch, rp);
 		List<FechamentoEncalhe> listaFechamento = fechamentoEncalheRepository.buscarFechamentoEncalhe(filtro);
 		
 		for (FechamentoFisicoLogicoDTO conferencia : listaConferencia) {
