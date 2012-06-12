@@ -32,7 +32,6 @@ import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
-import br.com.caelum.vraptor.view.Results;
 
 /**
  * Classe responsável pelo controle das ações referentes à
@@ -135,7 +134,6 @@ public class FechamentoEncalheController {
 		// TODO: cobrar as cotas.
 	}
 	
-	@Get
 	@Path("/exportarArquivo")
 	public void exportarArquivo(Date dataEncalhe, FileType fileType) {
 
@@ -147,6 +145,29 @@ public class FechamentoEncalheController {
 			FileExporter.to("cotas_ausentes", fileType).inHTTPResponse(
 				this.getNDSFileHeader(), null, null, listaCotasAusenteEncalhe, 
 				CotaAusenteEncalheDTO.class, this.response);
+			
+		} catch (Exception e) {
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, "Erro ao gerar o arquivo!"));
+		}
+		
+	}
+
+	@Get
+	@Path("/imprimirArquivo")
+	public void imprimirArquivo(Date dataEncalhe, Long fornecedorId, Long boxId,
+			String sortname, String sortorder, int rp, int page, FileType fileType) {
+		
+		FiltroFechamentoEncalheDTO filtro = new FiltroFechamentoEncalheDTO();
+		filtro.setDataEncalhe(dataEncalhe);
+		filtro.setFornecedorId(fornecedorId);
+		filtro.setBoxId(boxId);
+		
+		List<FechamentoFisicoLogicoDTO> listaEncalhe = fechamentoEncalheService.buscarFechamentoEncalhe(filtro, sortorder, sortname, page, rp);
+		try {
+			
+			FileExporter.to("cotas_ausentes", fileType).inHTTPResponse(
+				this.getNDSFileHeader(), null, null, listaEncalhe, 
+				FechamentoFisicoLogicoDTO.class, this.response);
 			
 		} catch (Exception e) {
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, "Erro ao gerar o arquivo!"));
