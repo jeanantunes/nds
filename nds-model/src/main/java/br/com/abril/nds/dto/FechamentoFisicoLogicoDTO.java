@@ -3,22 +3,42 @@ package br.com.abril.nds.dto;
 import java.math.BigDecimal;
 
 import br.com.abril.nds.util.CurrencyUtil;
+import br.com.abril.nds.util.export.Export;
+import br.com.abril.nds.util.export.Exportable;
+import br.com.abril.nds.util.export.Export.Alignment;
 
+@Exportable
 public class FechamentoFisicoLogicoDTO {
 
+	@Export(label = "Código", alignment = Alignment.LEFT, exhibitionOrder = 1)
 	private String codigo;
+	
+	@Export(label = "Produto", alignment = Alignment.LEFT, exhibitionOrder = 2)
 	private String produto;
+	
+	@Export(label = "Edição", alignment = Alignment.LEFT, exhibitionOrder = 3)
 	private Long edicao;
+	
 	private Long produtoEdicao;
 	private BigDecimal precoCapa;
 	private BigDecimal exemplaresDevolucao;
 	private BigDecimal total;
+	
+	@Export(label = "Físico", alignment = Alignment.RIGHT, exhibitionOrder = 7)
 	private Long fisico;
+	
+	@Export(label = "Diferença", alignment = Alignment.RIGHT, exhibitionOrder = 8)
 	private Long diferenca = Long.valueOf(0);
 	
+	@Export(label = "Preço Capa R$", alignment = Alignment.RIGHT, exhibitionOrder = 4)
 	private String precoCapaFormatado;
+
+	@Export(label = "Exempl. Devolução", alignment = Alignment.CENTER, exhibitionOrder = 5)
 	private String exemplaresDevolucaoFormatado;
+	
+	@Export(label = "Total R$", alignment = Alignment.RIGHT, exhibitionOrder = 6)
 	private String totalFormatado;
+	
 	private String replicar = "";
 	
 	
