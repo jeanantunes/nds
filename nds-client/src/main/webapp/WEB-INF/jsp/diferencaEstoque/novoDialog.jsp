@@ -255,8 +255,6 @@
 					return true;
 				}
 
-				
-				console.log(id);
 				var diferenca = 'listaNovasDiferencas[' + index + '].id=' + id + '&';
 				
 				diferenca += 'listaNovasDiferencas[' + index + '].codigoProduto=' + codigoProduto + '&';

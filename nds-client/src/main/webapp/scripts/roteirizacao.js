@@ -1024,6 +1024,214 @@ var roteirizacao = {
 			var elem = document.getElementById("textoCheckAllCotas");
 			elem.innerHTML = "Marcar todos";
 	 }
- } 
+ } ,
+
+carregarComboRoteiro : function () {
+	roteirizacao.resetComboRoteiroPesquisa();
+	roteirizacao.resetComboRotaPesquisa();
+	$.postJSON(contextPath + '/cadastro/roteirizacao/carregarComboRoteiro',
+			{ 
+				'boxId' :$('#boxPesquisa').val()
+			}
+	        ,
+			function(result) {
+	    			$.each(result, function(index, row){
+	    				$('#roteiroPesquisa').append('<option value="'+row.id+'">'+row.descricaoRoteiro+'</option>');
+	    				}
+	    			);
+	    	},
+			null,
+			true
+		);
+
+},
+
+carregarComboRota : function () {
+	roteirizacao.resetComboRotaPesquisa();
+	$.postJSON(contextPath + '/cadastro/roteirizacao/carregarComboRota',
+			{ 
+				'roteiroId' :$('#roteiroPesquisa').val()
+			}
+	        ,
+			function(result) {
+	    		$.each(result, function(index, row){
+    				$('#rotaPesquisa').append('<option value="'+row.id+'">'+row.descricaoRota+'</option>');
+    				}
+    			);
+    	
+			},
+			null,
+			true
+		);
+
+},
+
+carregarComboRoteiroEspecial : function () {
+	roteirizacao.resetComboRoteiroPesquisa();
+	roteirizacao.resetComboRotaPesquisa();
+	$.postJSON(contextPath + '/cadastro/roteirizacao/carregarComboRoteiroEspecial',null ,
+			function(result) {
+	    			$.each(result, function(index, row){
+	    				$('#roteiroPesquisa').append('<option value="'+row.id+'">'+row.descricaoRoteiro+'</option>');
+	    				}
+	    			);
+	    	},
+			null,
+			true
+		);
+
+},
+
+resetComboRoteiroPesquisa : function(){
+	$('#roteiroPesquisa > option').remove();
+	$('#roteiroPesquisa').append('<option value="" >Selecione...</option>');
+},
+resetComboRotaPesquisa : function(){
+	$('#rotaPesquisa > option').remove();
+	$('#rotaPesquisa').append('<option value="" >Selecione...</option>');
+},
+
+pesquisaComRoteiroEspecial : function() {
+	
+	 if ($("#tipoRoteiroPesquisa").is(":checked") ) {
+		 roteirizacao.resetComboRoteiroPesquisa();
+		 roteirizacao.resetComboRotaPesquisa();
+		 $('#boxPesquisa').attr("disabled", "disabled");
+		 $('#boxPesquisa').val("");
+		 roteirizacao.carregarComboRoteiroEspecial();
+		  
+	 } else {
+		 roteirizacao.resetComboRoteiroPesquisa();
+		 roteirizacao.resetComboRotaPesquisa();
+		 $('#boxPesquisa').val("");
+		 $('#roteiroPesquisa').removeAttr("disabled");
+	 }
+} ,
+roteiroEspecial : function() {
+	
+	 if ($("#tipoRoteiroTranferencia").is(":checked") ) {
+		 $('#boxRoteiroTranferencia').attr("disabled", "disabled");
+		 $('#boxRoteiroTranferencia').val("");
+		  
+	 } else {
+		 $('#boxRoteiroTranferencia').val("");
+		 $('#boxRoteiroTranferencia').removeAttr("disabled");
+	 }
+} ,
+
+
+iniciarPesquisaRoteirizacaoGrid : function () {
+		
+		
+		$(".rotaRoteirosGrid").flexigrid({
+		preProcess: roteirizacao.callBackPesquisaRoteirizacaoGrid,
+			dataType : 'json',
+			colModel : [ {
+				display : 'Box',
+				name : 'box',
+				width : 100,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Roteiro',
+				name : 'roteiro',
+				width : 180,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Rota',
+				name : 'rota',
+				width : 180,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Cota',
+				name : 'cota',
+				width : 60,
+				sortable : true,
+				align : 'left',
+			}, {
+				display : 'Nome',
+				name : 'nome',
+				width : 360,
+				sortable : true,
+				align : 'left'
+			}],
+			sortname : "box",
+			sortorder : "asc",
+			usepager : true,
+			useRp : true,
+			rp : 15,
+			showTableToggleBtn : true,
+			width : 960,
+			height : 255,
+			singleSelect : true
+		});
+	},
+
+	callBackPesquisaRoteirizacaoGrid: function (data) {
+		
+		if (data.mensagens) {
+
+			exibirMensagem(
+				data.mensagens.tipoMensagem, 
+				data.mensagens.listaMensagens
+			);
+			
+			$(".grids").hide();
+
+			return data;
+		}
+		$.each(data.rows, function(index, value) {
+			
+			value.cell.box = value.cell.rota.roteiro.box.nome
+        	value.cell.roteiro = value.cell.rota.roteiro.descricaoRoteiro;
+			value.cell.rota = value.cell.rota.descricaoRota;
+			value.cell.cota = value.cell.pdv.cota.numeroCota;
+			value.cell.nome = value.cell.pdv.cota.pessoa.nome;
+		});
+		
+		$(".grids").show();
+		
+		return data;
+	},
+	
+
+	pesquisarRoteirizacao: function () {
+		var tipoRoteiro = "NORMAL";
+		 if ($("#tipoRoteiroTranferencia").is(":checked") ) {
+			 tipoRoteiro = "ESPECIAL";
+		 }
+		
+		roteirizacao.iniciarPesquisaRoteirizacaoGrid();
+		$(".rotaRoteirosGrid").clear();
+			$(".rotaRoteirosGrid").flexOptions({
+				"url" : contextPath + '/cadastro/roteirizacao/pesquisarRoteirizacao',
+				params : [{
+					name : "boxId",
+					value : $('#boxPesquisa').val()
+				}, {
+					name : "roteiroId",
+					value : $('#roteiroPesquisa').val()
+				}, {
+					name : "rotaId",
+					value : $('#rotaPesquisa').val()
+				},
+				{
+					name : "tipoRoteiro",
+					value : tipoRoteiro
+				}],
+				
+				
+				newp:1
+			});
+			
+			$(".rotaRoteirosGrid").flexReload();
+	},
+		
+
+
+
+
 
 };

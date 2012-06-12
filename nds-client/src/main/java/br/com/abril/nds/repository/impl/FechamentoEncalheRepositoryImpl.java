@@ -91,9 +91,9 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepository<Fechamen
 	@SuppressWarnings("unchecked")
 	public List<FechamentoEncalhe> buscarFechamentoEncalhe(FiltroFechamentoEncalheDTO filtro) {
 		
-		Criteria criteria = this.getSession().createCriteria(FechamentoEncalhe.class, "fe");
-		criteria.add(Restrictions.eq("fe.fechamentoEncalhePK.dataEncalhe", filtro.getDataEncalhe()));
-		criteria.setFetchMode("fe.listFechamentoEncalheBox", FetchMode.JOIN);
+		Criteria criteria = this.getSession().createCriteria(FechamentoEncalhe.class);
+		//criteria.add(Restrictions.eq("fe.fechamentoEncalhePK.dataEncalhe", filtro.getDataEncalhe()));
+		criteria.setFetchMode("listFechamentoEncalheBox", FetchMode.JOIN);
 		
 		return criteria.list();
 	}

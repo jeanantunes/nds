@@ -33,6 +33,7 @@ public class RoteiroRepositoryImpl extends AbstractRepository<Roteiro, Long>
 	public List<Roteiro> buscarRoteiro(String sortname, Ordenacao ordenacao){
 		
 		Criteria criteria =  getSession().createCriteria(Roteiro.class);
+		
 		if(Ordenacao.ASC ==  ordenacao){
 			criteria.addOrder(Order.asc(sortname));
 		}else if(Ordenacao.DESC ==  ordenacao){
@@ -72,8 +73,8 @@ public class RoteiroRepositoryImpl extends AbstractRepository<Roteiro, Long>
 		
 		Criteria criteria  = getSession().createCriteria(Roteiro.class);
 		criteria.add(Restrictions.eq("box.id", idBox));
-		
-		return criteria.list();
+		criteria.addOrder(Order.asc("descricaoRoteiro"));
+		return  criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
 	}
 	
 
@@ -82,6 +83,15 @@ public class RoteiroRepositoryImpl extends AbstractRepository<Roteiro, Long>
 		Criteria criteria  = getSession().createCriteria(Roteiro.class);
 		criteria.setProjection(Projections.max("ordem"));  
 		return (Integer) criteria.uniqueResult();  
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Roteiro> buscarRoteiroEspecial() {
+		Criteria criteria  = getSession().createCriteria(Roteiro.class);
+		criteria.add(Restrictions.eq("tipoRoteiro", TipoRoteiro.ESPECIAL));
+		criteria.addOrder(Order.asc("descricaoRoteiro"));
+		return  criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
 	}
 	
 	

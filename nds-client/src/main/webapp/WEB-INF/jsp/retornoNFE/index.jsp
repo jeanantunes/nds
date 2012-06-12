@@ -87,9 +87,9 @@
                 <td width="189" align="center">Erros Consis.</td>
             </tr>
             <tr class="class_linha_1">
-            	<td align="center">0</td>
-                <td align="center">0</td>
-                <td align="center">0</td>
+            	<td id="numeroArquivos" align="center">0</td>
+                <td id="notasAprovadas" align="center">0</td>
+                <td id="notasRejeitadas" align="center">0</td>
             </tr>
         	</tbody>
         	</table>
@@ -97,7 +97,7 @@
 		<br clear="all">
           
           <span class="bt_confirmar_novo" title="Confirmar">
-          	<a onclick="popup();" href="javascript:;">
+          	<a id="retornoNFEConfirmar" href="javascript:;">
          	<img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_check.gif">Confirma</a>
           </span>
           

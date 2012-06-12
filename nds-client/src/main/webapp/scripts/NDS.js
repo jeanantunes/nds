@@ -155,7 +155,6 @@ function serializeArrayToPost(listaName, lista) {
 	
 	var obj = {};
 	var i;
-	console.log(lista);
 	for(i = 0; i < lista.length;i++){
 		
 		var object = lista[i];

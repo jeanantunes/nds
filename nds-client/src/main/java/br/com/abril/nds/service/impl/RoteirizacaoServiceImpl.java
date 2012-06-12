@@ -15,10 +15,10 @@ import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Rota;
 import br.com.abril.nds.model.cadastro.Roteirizacao;
 import br.com.abril.nds.model.cadastro.Roteiro;
+import br.com.abril.nds.model.cadastro.TipoRoteiro;
 import br.com.abril.nds.model.cadastro.pdv.EnderecoPDV;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
 import br.com.abril.nds.repository.CotaRepository;
-import br.com.abril.nds.repository.Repository;
 import br.com.abril.nds.repository.RotaRepository;
 import br.com.abril.nds.repository.RoteirizacaoRepository;
 import br.com.abril.nds.repository.RoteiroRepository;
@@ -353,5 +353,18 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 	public List<LogBairro> buscarBairroPorMunicipio(Long municipio, String uf) {
 		return roteirizacaoRepository.buscarBairroPorMunicipio(municipio, uf);
 	}
+	
+	@Override
+	@Transactional(readOnly=true)
+	public List<Roteiro> buscarRoteiroEspecial() {
+		return roteiroRepository.buscarRoteiroEspecial();
+	}
+	
+	@Override
+	@Transactional(readOnly=true)
+	public List<Roteirizacao> buscarRoteirizacao(Long boxId, Long roteiroId, Long rotaId, TipoRoteiro tipoRoteiro){
+		return roteirizacaoRepository.buscarRoteirizacao(boxId, roteiroId, rotaId, tipoRoteiro);
+	}
+	
 
 }

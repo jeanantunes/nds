@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FileFilter;
 import java.util.Date;
 
+import org.apache.commons.lang.time.DateUtils;
+
 import br.com.abril.nds.util.export.FileExporter.FileType;
 
 public class ArquivoImportFileFilter implements FileFilter {
@@ -19,10 +21,8 @@ public class ArquivoImportFileFilter implements FileFilter {
 
 	@Override
 	public boolean accept(File pathname) {
-		
-		Long diferencaEmDias = DateUtil.obterDiferencaDias(new Date(pathname.lastModified()), dataModificacao);
-		
-		if (diferencaEmDias == 0) {
+				
+		if (DateUtils.isSameDay(dataModificacao, new Date(pathname.lastModified()))) {
 		
 			String extension = getExtensionFile(pathname.getName());
 			

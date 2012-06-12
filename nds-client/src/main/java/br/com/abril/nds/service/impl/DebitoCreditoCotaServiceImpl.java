@@ -1,7 +1,9 @@
 package br.com.abril.nds.service.impl;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -12,6 +14,7 @@ import br.com.abril.nds.dto.MovimentoFinanceiroCotaDTO;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 import br.com.abril.nds.model.seguranca.Usuario;
+import br.com.abril.nds.repository.BoxRepository;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.TipoMovimentoFinanceiroRepository;
 import br.com.abril.nds.repository.UsuarioRepository;
@@ -26,6 +29,9 @@ public class DebitoCreditoCotaServiceImpl implements DebitoCreditoCotaService {
 
 	@Autowired
 	private CotaRepository cotaRepository;
+	
+	@Autowired
+	private BoxRepository boxRepository;
 	
 	@Autowired
 	private UsuarioRepository usuarioRepository;
@@ -67,5 +73,23 @@ public class DebitoCreditoCotaServiceImpl implements DebitoCreditoCotaService {
 		movimentoFinanceiroCotaDTO.setLancamentoManual(true);
 
 		return movimentoFinanceiroCotaDTO;
+	}
+
+	
+	/**
+	 * Obtém dados pré-configurados com informações da Cota para lançamentos de débitos e/ou créditos
+	 * @return List<DebitoCreditoDTO>
+	 */
+	@Override
+	@Transactional(readOnly=true)
+	public List<DebitoCreditoDTO> obterDadosLancamentoPorBoxRoteiroRota(Long idBox,Long idRoteiro,Long idRota) {
+		List<DebitoCreditoDTO> listaDC = new ArrayList<DebitoCreditoDTO>();
+		List<Cota> cotas = this.boxRepository.obterCotasPorBoxRoteiroRota(idBox, idRoteiro, idRota);
+		Long indice=0l;
+		for (Cota itemCota:cotas){
+			indice++;
+			listaDC.add(new DebitoCreditoDTO(indice,null,null,itemCota.getNumeroCota(),itemCota.getPessoa().getNome(),null,null,null,null));
+		}
+		return listaDC;
 	}
 }
