@@ -81,7 +81,9 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepository<Fechamen
 		
 		criteria.setFirstResult(page);
 		criteria.setMaxResults(rp);
-		this.addOrderCriteria(criteria, sortorder, sortname);
+		if (sortname != null) {
+			this.addOrderCriteria(criteria, sortorder, sortname);
+		}
 		criteria.setResultTransformer(Transformers.aliasToBean(FechamentoFisicoLogicoDTO.class));
 			
 		return criteria.list();
