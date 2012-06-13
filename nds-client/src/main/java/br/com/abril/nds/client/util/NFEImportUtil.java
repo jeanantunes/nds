@@ -4,9 +4,11 @@ import java.io.File;
 import java.util.Date;
 
 import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBElement;
-import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
+import javax.xml.validation.Schema;
+import javax.xml.validation.SchemaFactory;
+
+import org.xml.sax.SAXException;
 
 import br.com.abril.nds.dto.RetornoNFEDTO;
 import br.com.abril.nds.exception.ProcessamentoNFEException;
@@ -24,13 +26,33 @@ import br.inf.portalfiscal.nfe.TProcCancNFe;
 public class NFEImportUtil {
 	
 	/**
+	 * Constante com caminho da pasta resources
+	 */
+	private final static String PATH_MAIN_RESOURCES = "src/main/resources/";
+	
+	/**
+	 * Constante com caminho do arquivo do xsd do POJO TNFe
+	 */
+	private final static String XSD_NFE = PATH_MAIN_RESOURCES + "xsdnfe/nfe_v2.00.xsd";
+	
+	/**
+	 * Constante com caminho do arquivo do xsd do POJO TNfeProc
+	 */
+	private final static String XSD_PPROC_NFE = PATH_MAIN_RESOURCES + "xsdnfe/procNFe_v2.00.xsd";
+	
+	/**
+	 * Constante com caminho do arquivo do xsd do POJO TProcCancNFe
+	 */
+	private final static String XSD_PROC_CANC_NFE = PATH_MAIN_RESOURCES + "xsdnfe/procCancNFe_v2.00.xsd";
+	
+	/**
 	 * Obtém os dados atualizados de Status do arquivo da NFe de Retorno.
 	 * 
 	 * @param arquivo
 	 * @return
 	 * @throws ProcessamentoNFEException
+	 * @throws SAXException 
 	 */
-	@SuppressWarnings("unchecked")
 	public static RetornoNFEDTO processarArquivoRetorno(File arquivo)
 			throws ProcessamentoNFEException {
 
@@ -38,15 +60,24 @@ public class NFEImportUtil {
 		
 		JAXBContext context;
 		Unmarshaller unmarshaller;
+		SchemaFactory schemaFactory = SchemaFactory.newInstance(javax.xml.XMLConstants.W3C_XML_SCHEMA_NS_URI);
+		File xsdNFe;
+		Schema schema;
 		
 		Exception exception = null;
+
 		try {
 			context = JAXBContext.newInstance(TNFe.class);
 			unmarshaller = context.createUnmarshaller();
-			JAXBElement<TNFe> element = (JAXBElement<TNFe>) unmarshaller.unmarshal(arquivo);
-			TNFe nfe = element.getValue();
+			
+			xsdNFe = new File(NFEImportUtil.XSD_NFE);
+			schema = schemaFactory.newSchema(xsdNFe);
+			unmarshaller.setSchema(schema);
+			
+			TNFe nfe = (TNFe) unmarshaller.unmarshal(arquivo);
+
 			retornoNFEDTO = NFEImportUtil.retornoNFeAssinada(nfe);
-		} catch (JAXBException e) {
+		} catch (Exception e) {
 			exception = e;
 		}
 
@@ -55,10 +86,14 @@ public class NFEImportUtil {
 			try {
 				context = JAXBContext.newInstance(TNfeProc.class);
 				unmarshaller = context.createUnmarshaller();
-				JAXBElement<TNfeProc> element = (JAXBElement<TNfeProc>) unmarshaller.unmarshal(arquivo);
-				TNfeProc nfeProc = element.getValue();
+
+				xsdNFe = new File(NFEImportUtil.XSD_PPROC_NFE);
+				schema = schemaFactory.newSchema(xsdNFe);
+				unmarshaller.setSchema(schema);
+
+				TNfeProc nfeProc = (TNfeProc) unmarshaller.unmarshal(arquivo);
 				retornoNFEDTO = NFEImportUtil.retornoNFeProcNFe(nfeProc);
-			} catch (JAXBException e) {
+			} catch (Exception e) {
 				exception = e;
 			}
 		}
@@ -68,10 +103,14 @@ public class NFEImportUtil {
 			try {
 				context = JAXBContext.newInstance(TProcCancNFe.class);
 				unmarshaller = context.createUnmarshaller();
-				JAXBElement<TProcCancNFe> element = (JAXBElement<TProcCancNFe>) unmarshaller.unmarshal(arquivo);
-				TProcCancNFe procCancNFe = element.getValue();
+
+				xsdNFe = new File(NFEImportUtil.XSD_PROC_CANC_NFE);
+				schema = schemaFactory.newSchema(xsdNFe);
+				unmarshaller.setSchema(schema);
+
+				TProcCancNFe procCancNFe = (TProcCancNFe) unmarshaller.unmarshal(arquivo);
 				retornoNFEDTO = NFEImportUtil.retornoNFeCancNFe(procCancNFe);
-			} catch (JAXBException e) {
+			} catch (Exception e) {
 				exception = e;
 			}
 		}
@@ -97,7 +136,7 @@ public class NFEImportUtil {
 				&& nfe.getInfNFe().getIde() != null
 				&& nfe.getInfNFe().getEmit() != null
 				&& nfe.getInfNFe().getId() != null
-				&& nfe.getInfNFe().getId().substring(3).length() != 44) {
+				&& nfe.getInfNFe().getId().substring(3).length() == 44) {
 			
 			Long idNotaFiscal = Long.parseLong(nfe.getInfNFe().getIde().getCNF());
 			String cpfCnpj = null;
@@ -143,7 +182,7 @@ public class NFEImportUtil {
 				&& nfeProc.getNFe().getInfNFe().getIde() != null
 				&& nfeProc.getNFe().getInfNFe().getEmit() != null
 				&& nfeProc.getNFe().getInfNFe().getId() != null
-				&& nfeProc.getNFe().getInfNFe().getId().substring(3).length() != 44
+				&& nfeProc.getNFe().getInfNFe().getId().substring(3).length() == 44
 				&& nfeProc.getProtNFe() != null
 				&& nfeProc.getProtNFe().getInfProt() != null
 				&& nfeProc.getProtNFe().getInfProt().getDhRecbto() != null) {
@@ -158,7 +197,7 @@ public class NFEImportUtil {
 		String chaveAcesso = nfeProc.getNFe().getInfNFe().getId().substring(3);
 		Long protocolo = Long.parseLong(nfeProc.getProtNFe().getInfProt().getNProt());
 		Date dataRecebimento = nfeProc.getProtNFe().getInfProt().getDhRecbto().toGregorianCalendar().getTime();
-		String motivo = nfeProc.getProtNFe().getInfProt().getXMotivo();
+		String motivo = null;
 		Status status = Status.obterPeloCodigo(Integer.parseInt(nfeProc.getProtNFe().getInfProt().getCStat()));
 				
 		retornoNFEDTO.setIdNotaFiscal(idNotaFiscal);
@@ -188,15 +227,17 @@ public class NFEImportUtil {
 				&& procCancNFe.getRetCancNFe() != null
 				&& procCancNFe.getRetCancNFe().getInfCanc() != null
 				&& procCancNFe.getRetCancNFe().getInfCanc().getChNFe() != null
-				&& procCancNFe.getRetCancNFe().getInfCanc().getChNFe().length() != 44
-				&& procCancNFe.getRetCancNFe().getInfCanc().getDhRecbto() != null) {
+				&& procCancNFe.getRetCancNFe().getInfCanc().getChNFe().length() == 44
+				&& procCancNFe.getRetCancNFe().getInfCanc().getDhRecbto() != null
+				&& procCancNFe.getCancNFe() != null
+				&& procCancNFe.getCancNFe().getInfCanc() != null) {
 
 		Long idNotaFiscal = null;
 		String cpfCnpj = null; 
 		String chaveAcesso = procCancNFe.getRetCancNFe().getInfCanc().getChNFe();
 		Long protocolo = Long.parseLong(procCancNFe.getRetCancNFe().getInfCanc().getNProt());
 		Date dataRecebimento = procCancNFe.getRetCancNFe().getInfCanc().getDhRecbto().toGregorianCalendar().getTime();
-		String motivo = procCancNFe.getRetCancNFe().getInfCanc().getXMotivo();
+		String motivo = procCancNFe.getCancNFe().getInfCanc().getXJust();
 		Status status = Status.obterPeloCodigo(Integer.parseInt(procCancNFe.getRetCancNFe().getInfCanc().getCStat()));
 				
 		retornoNFEDTO.setIdNotaFiscal(idNotaFiscal);
