@@ -199,7 +199,7 @@
 			<dependency>
 				<groupId>org.jrimum</groupId>
 				<artifactId>jrimum-bopepo</artifactId>
-				<version>0.2.3-SNAPSHOT</version>
+				<version>0.2.3-20111228.180206-4</version>
 			</dependency>
 			<dependency>
 				<groupId>br.com.caelum.stella</groupId>
