@@ -3,6 +3,7 @@ package br.com.abril.nds.service.impl;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,20 +70,30 @@ public class NotaFiscalEntradaServiceImpl implements NotaFiscalEntradaService {
 			throw new ValidacaoException(validacao);
 		}
 		
-		if (periodo.getDataInicial() != null && periodo.getDataFinal() != null &&
-				DateUtil.isDataInicialMaiorDataFinal(periodo.getDataInicial(), periodo.getDataFinal())) {
+		Calendar data = Calendar.getInstance();
+		
+		if (periodo.getDataInicial() != null && periodo.getDataFinal() != null) {
+			
+			if (DateUtil.isDataInicialMaiorDataFinal(periodo.getDataInicial(), periodo.getDataFinal())) {
 
-			throw new ValidacaoException(TipoMensagem.WARNING, "A data inicial deve anteceder a data final.");
+				throw new ValidacaoException(TipoMensagem.WARNING, "A data inicial deve anteceder a data final.");
+			}
+			
+			data.setTime(periodo.getDataFinal());
+			
+			data.add(Calendar.DAY_OF_MONTH, 1);
+			
+			periodo.setDataFinal(DateUtil.removerTimestamp(data.getTime()));
+
+		} else {
+
+			periodo.setDataInicial(DateUtil.removerTimestamp(data.getTime()));
+
+			data.add(Calendar.DAY_OF_MONTH, 1);
+
+			periodo.setDataFinal(DateUtil.removerTimestamp(data.getTime()));
 		}
-		
-		Calendar dataFinal = Calendar.getInstance();
-		
-		dataFinal.setTime(periodo.getDataFinal());
-		
-		dataFinal.add(Calendar.DAY_OF_MONTH, 1);
-		
-		periodo.setDataFinal(DateUtil.removerTimestamp(dataFinal.getTime()));
-		
+
 		return notaFiscalDAO.obterNotasFiscaisCadastradas(filtroConsultaNotaFiscal);
 	}
 

@@ -14,6 +14,9 @@ import br.com.abril.nds.vo.PaginacaoVO;
  */
 public class FiltroLancamentoDTO implements Serializable {
 
+	/**
+	 * Serial Version UID
+	 */
 	private static final long serialVersionUID = -2638836889195236797L;
 
 	private Date data;

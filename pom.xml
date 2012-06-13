@@ -332,6 +332,11 @@
 				<enabled>true</enabled>
 			</snapshots>
 		</repository>
+		
+		<repository>
+			<id>nexus</id>
+			<url>http://177.71.177.215:8080/nexus/content/groups/public/</url>
+		</repository>
 	</repositories>
 
 	<build>

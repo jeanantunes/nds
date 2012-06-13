@@ -3,9 +3,9 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title>NDS - Novo Distrib</title>
-<link rel="stylesheet" type="text/css" href="css/NDS.css" />
-<link rel="stylesheet" type="text/css" href="css/menu_superior.css" />
-<script language="javascript" type="text/javascript" src="scripts/jquery-ui-1.8.16.custom/development-bundle/jquery-1.6.2.js"></script>
+<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/NDS.css" />
+<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/menu_superior.css" />
+<script language="javascript" type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/development-bundle/jquery-1.6.2.js"></script>
 <style type="text/css">
 body{font-size:12px!important;}
 h1{font-size:20px;}
@@ -32,7 +32,7 @@ function imprimir(){
 
 <table width="800" border="0" align="center" cellpadding="3" cellspacing="0" style="border:1px solid #000; margin-bottom:5px;">
   <tr>
-    <td width="121" height="21" align="center"><span style="border-bottom:1px solid #000;"><span class="logo"><img src="images/logo_sistema.png" width="110" height="70" alt="Novo Distrib"  /></span></span></td>
+    <td width="121" height="21" align="center"><span style="border-bottom:1px solid #000;"><span class="logo"><img src="${pageContext.request.contextPath}/images/logo_sistema.png" width="110" height="70" alt="Novo Distrib"  /></span></span></td>
     <td width="269" align="center" valign="middle"><h3>TREELOG S/A<br />
       LOGÍSTICA E DISTRIBUIÇÃO</h3></td>
     <td width="408" align="right" valign="middle"><h1>Mapa de Abastecimento&nbsp;</h1></td>
@@ -51,173 +51,43 @@ function imprimir(){
         <td width="62" align="center" style=" border-bottom:1px solid #000; border-top:1px solid #000;border-left:1px solid #000;"><strong>SM</strong></td>
         <td width="62" align="center" style=" border-bottom:1px solid #000; border-top:1px solid #000;border-left:1px solid #000;border-right:1px solid #000;"><strong>Total</strong></td>
       </tr>
-      <tr class="class_linha_1">
-        <td style="border-left:1px solid #000;border-bottom:1px solid #000;">7 DIAS COM VOCE</td>
-        <td align="center" style="border-left:1px solid #000;border-bottom:1px solid #000;">459</td>
-        <td align="center" class="class_sm" style="border-left:1px solid #000;border-bottom:1px solid #000;"><strong>2</strong></td>
-        <td align="center" class="class_total" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">23</td>
+      
+      <c:forEach items="${mapa.produtos}" var="produto" varStatus="statusProduto" end="${mapa.produtos.size()%2==0?(mapa.produtos.size()/2)-1:(mapa.produtos.size()/2)}">
+      
+      <tr class="class_linha_${statusProduto.index%2==0?1:2}">
+        <td style="border-left:1px solid #000;border-bottom:1px solid #000;">${produto.value.nomeProduto}</td>
+        <td align="center" style="border-left:1px solid #000;border-bottom:1px solid #000;">${produto.value.numeroEdicao}</td>
+        <td align="center" class="class_sm" style="border-left:1px solid #000;border-bottom:1px solid #000;"><strong>${produto.value.sm}</strong></td>
+        <td align="center" class="class_total" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">${produto.value.total}</td>
       </tr>
-      <tr class="class_linha_2">
-        <td style="border-left:1px solid #000;border-bottom:1px solid #000;">ALFA</td>
-        <td align="center" style="border-left:1px solid #000;border-bottom:1px solid #000;">19</td>
-        <td align="center" class="class_sm" style="border-left:1px solid #000;border-bottom:1px solid #000;"><strong>4</strong></td>
-        <td align="center" class="class_total" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">5</td>
-      </tr>
-      <tr class="class_linha_1">
-        <td style="border-left:1px solid #000;border-bottom:1px solid #000;">ALM. ASTRAL.</td>
-        <td align="center" style="border-left:1px solid #000;border-bottom:1px solid #000;">110</td>
-        <td align="center" class="class_sm" style="border-left:1px solid #000;border-bottom:1px solid #000;"><strong>5</strong></td>
-        <td align="center" class="class_total" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">16</td>
-      </tr>
-      <tr class="class_linha_2">
-        <td style="border-left:1px solid #000;border-bottom:1px solid #000;">COL LV FUSCA F2</td>
-        <td align="center" style="border-left:1px solid #000;border-bottom:1px solid #000;">26</td>
-        <td align="center" class="class_sm" style="border-left:1px solid #000;border-bottom:1px solid #000;"><strong>6</strong></td>
-        <td align="center" class="class_total" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">4</td>
-      </tr>
-      <tr class="class_linha_1">
-        <td style="border-left:1px solid #000;border-bottom:1px solid #000;">CONTA MAIS</td>
-        <td align="center" style="border-left:1px solid #000;border-bottom:1px solid #000;">588</td>
-        <td align="center" class="class_sm" style="border-left:1px solid #000;border-bottom:1px solid #000;"><strong>7</strong></td>
-        <td align="center" class="class_total" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">10</td>
-      </tr>
-      <tr class="class_linha_2">
-        <td style="border-left:1px solid #000;border-bottom:1px solid #000;">EPOCA</td>
-        <td align="center" style="border-left:1px solid #000;border-bottom:1px solid #000;">722</td>
-        <td align="center" class="class_sm" style="border-left:1px solid #000;border-bottom:1px solid #000;"><strong>9</strong></td>
-        <td align="center" class="class_total" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">40</td>
-      </tr>
-      <tr class="class_linha_1">
-        <td style="border-left:1px solid #000;border-bottom:1px solid #000;">GUIA DE ANGRA</td>
-        <td align="center" style="border-left:1px solid #000;border-bottom:1px solid #000;">1</td>
-        <td align="center" class="class_sm" style="border-left:1px solid #000;border-bottom:1px solid #000;"><strong>11</strong></td>
-        <td align="center" class="class_total" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">5</td>
-      </tr>
-      <tr class="class_linha_2">
-        <td style="border-left:1px solid #000;border-bottom:1px solid #000;">7 DIAS COM VOCE</td>
-        <td align="center" style="border-left:1px solid #000;border-bottom:1px solid #000;">32</td>
-        <td align="center" class="class_sm" style="border-left:1px solid #000;border-bottom:1px solid #000;"><strong>13</strong></td>
-        <td align="center" class="class_total" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">3</td>
-      </tr>
-      <tr class="class_linha_1">
-        <td style="border-left:1px solid #000;border-bottom:1px solid #000;">COL LV FUSCA F2</td>
-        <td align="center" style="border-left:1px solid #000;border-bottom:1px solid #000;">26</td>
-        <td align="center" class="class_sm" style="border-left:1px solid #000;border-bottom:1px solid #000;"><strong>16</strong></td>
-        <td align="center" class="class_total" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">45</td>
-      </tr>
-      <tr class="class_linha_2">
-        <td style="border-left:1px solid #000;border-bottom:1px solid #000;">CONTA MAIS</td>
-        <td align="center" style="border-left:1px solid #000;border-bottom:1px solid #000;">588</td>
-        <td align="center" class="class_sm" style="border-left:1px solid #000;border-bottom:1px solid #000;"><strong>17</strong></td>
-        <td align="center" class="class_total" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">66</td>
-      </tr>
-      <tr class="class_linha_1">
-        <td style="border-left:1px solid #000;border-bottom:1px solid #000;">EPOCA</td>
-        <td align="center" style="border-left:1px solid #000;border-bottom:1px solid #000;">722</td>
-        <td align="center" class="class_sm" style="border-left:1px solid #000;border-bottom:1px solid #000;"><strong>18</strong></td>
-        <td align="center" class="class_total" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">13</td>
-      </tr>
-      <tr class="class_linha_2">
-        <td style="border-left:1px solid #000;border-bottom:1px solid #000;">GUIA DE ANGRA</td>
-        <td align="center" style="border-left:1px solid #000;border-bottom:1px solid #000;">1</td>
-        <td align="center" class="class_sm" style="border-left:1px solid #000;border-bottom:1px solid #000;"><strong>19</strong></td>
-        <td align="center" class="class_total" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">34</td>
-      </tr>
-      <tr class="class_linha_1">
-        <td style="border-left:1px solid #000;border-bottom:1px solid #000;">7 DIAS COM VOCE</td>
-        <td align="center" style="border-left:1px solid #000;border-bottom:1px solid #000;">32</td>
-        <td align="center" class="class_sm" style="border-left:1px solid #000;border-bottom:1px solid #000;"><strong>20</strong></td>
-        <td align="center" class="class_total" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">16</td>
-      </tr>
+      
+      </c:forEach>
+      
     </table></td>
     <td width="20">&nbsp;&nbsp;&nbsp;</td>
-    <td width="390" valign="top"><table width="390" border="0" align="right" cellpadding="0" cellspacing="0" class="relatorios" style="margin-top:5px;">
+    <td width="390" valign="top">
+    
+    <table width="390" border="0" align="right" cellpadding="0" cellspacing="0" class="relatorios" style="margin-top:5px;">
       <tr class="class_linha_3">
         <td width="174" style="border-left:1px solid #000;border-top:1px solid #000;border-bottom:1px solid #000;"><strong>Publicação</strong></td>
         <td width="62" align="center" style=" border-bottom:1px solid #000; border-top:1px solid #000;border-left:1px solid #000;"><strong>Edição</strong></td>
         <td width="62" align="center" style=" border-bottom:1px solid #000; border-top:1px solid #000;border-left:1px solid #000;"><strong>SM</strong></td>
         <td width="62" align="center" style=" border-bottom:1px solid #000; border-top:1px solid #000;border-left:1px solid #000;border-right:1px solid #000;"><strong>Total</strong></td>
       </tr>
-      <tr class="class_linha_1">
-        <td style="border-left:1px solid #000;border-bottom:1px solid #000;">7 DIAS COM VOCE</td>
-        <td align="center" style="border-left:1px solid #000;border-bottom:1px solid #000;">459</td>
-        <td align="center" class="class_sm" style="border-left:1px solid #000;border-bottom:1px solid #000;"><strong>21</strong></td>
-        <td align="center" class="class_total1" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">19</td>
+        <c:forEach items="${mapa.produtos}" var="produto" varStatus="statusProduto" begin="${mapa.produtos.size()%2==0?mapa.produtos.size()/2:(mapa.produtos.size()/2)+1}" >
+      
+      <tr class="class_linha_${statusProduto.index%2==0?1:2}">
+        <td style="border-left:1px solid #000;border-bottom:1px solid #000;">${produto.value.nomeProduto}</td>
+        <td align="center" style="border-left:1px solid #000;border-bottom:1px solid #000;">${produto.value.numeroEdicao}</td>
+        <td align="center" class="class_sm" style="border-left:1px solid #000;border-bottom:1px solid #000;"><strong>${produto.value.sm}</strong></td>
+        <td align="center" class="class_total" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">${produto.value.total}</td>
       </tr>
-      <tr class="class_linha_2">
-        <td style="border-left:1px solid #000;border-bottom:1px solid #000;">ALFA</td>
-        <td align="center" style="border-left:1px solid #000;border-bottom:1px solid #000;">19</td>
-        <td align="center" class="class_sm" style="border-left:1px solid #000;border-bottom:1px solid #000;"><strong>22</strong></td>
-        <td align="center" class="class_total1" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">1</td>
-      </tr>
-      <tr class="class_linha_1">
-        <td style="border-left:1px solid #000;border-bottom:1px solid #000;">ALM. ASTRAL.</td>
-        <td align="center" style="border-left:1px solid #000;border-bottom:1px solid #000;">110</td>
-        <td align="center" class="class_sm" style="border-left:1px solid #000;border-bottom:1px solid #000;"><strong>23</strong></td>
-        <td align="center" class="class_total1" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">25</td>
-      </tr>
-      <tr class="class_linha_2">
-        <td style="border-left:1px solid #000;border-bottom:1px solid #000;">COL LV FUSCA F2</td>
-        <td align="center" style="border-left:1px solid #000;border-bottom:1px solid #000;">26</td>
-        <td align="center" class="class_sm" style="border-left:1px solid #000;border-bottom:1px solid #000;"><strong>24</strong></td>
-        <td align="center" class="class_total1" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">40</td>
-      </tr>
-      <tr class="class_linha_1">
-        <td style="border-left:1px solid #000;border-bottom:1px solid #000;">CONTA MAIS</td>
-        <td align="center" style="border-left:1px solid #000;border-bottom:1px solid #000;">588</td>
-        <td align="center" class="class_sm" style="border-left:1px solid #000;border-bottom:1px solid #000;"><strong>25</strong></td>
-        <td align="center" class="class_total1" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">10</td>
-      </tr>
-      <tr class="class_linha_2">
-        <td style="border-left:1px solid #000;border-bottom:1px solid #000;">EPOCA</td>
-        <td align="center" style="border-left:1px solid #000;border-bottom:1px solid #000;">722</td>
-        <td align="center" class="class_sm" style="border-left:1px solid #000;border-bottom:1px solid #000;"><strong>26</strong></td>
-        <td align="center" class="class_total1" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">40</td>
-      </tr>
-      <tr class="class_linha_1">
-        <td style="border-left:1px solid #000;border-bottom:1px solid #000;">GUIA DE ANGRA</td>
-        <td align="center" style="border-left:1px solid #000;border-bottom:1px solid #000;">1</td>
-        <td align="center" class="class_sm" style="border-left:1px solid #000;border-bottom:1px solid #000;"><strong>27</strong></td>
-        <td align="center" class="class_total1" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">5</td>
-      </tr>
-      <tr class="class_linha_2">
-        <td style="border-left:1px solid #000;border-bottom:1px solid #000;">7 DIAS COM VOCE</td>
-        <td align="center" style="border-left:1px solid #000;border-bottom:1px solid #000;">32</td>
-        <td align="center" class="class_sm" style="border-left:1px solid #000;border-bottom:1px solid #000;"><strong>28</strong></td>
-        <td align="center" class="class_total1" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">5</td>
-      </tr>
-      <tr class="class_linha_1">
-        <td style="border-left:1px solid #000;border-bottom:1px solid #000;">COL LV FUSCA F2</td>
-        <td align="center" style="border-left:1px solid #000;border-bottom:1px solid #000;">26</td>
-        <td align="center" class="class_sm" style="border-left:1px solid #000;border-bottom:1px solid #000;"><strong>29</strong></td>
-        <td align="center" class="class_total1" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">3</td>
-      </tr>
-      <tr class="class_linha_2">
-        <td style="border-left:1px solid #000;border-bottom:1px solid #000;">CONTA MAIS</td>
-        <td align="center" style="border-left:1px solid #000;border-bottom:1px solid #000;">588</td>
-        <td align="center" class="class_sm" style="border-left:1px solid #000;border-bottom:1px solid #000;"><strong>30</strong></td>
-        <td align="center" class="class_total1" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">45</td>
-      </tr>
-      <tr class="class_linha_1">
-        <td style="border-left:1px solid #000;border-bottom:1px solid #000;">EPOCA</td>
-        <td align="center" style="border-left:1px solid #000;border-bottom:1px solid #000;">722</td>
-        <td align="center" class="class_sm" style="border-left:1px solid #000;border-bottom:1px solid #000;"><strong>18</strong></td>
-        <td align="center" class="class_total1" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">16</td>
-      </tr>
-      <tr class="class_linha_2">
-        <td style="border-left:1px solid #000;border-bottom:1px solid #000;">GUIA DE ANGRA</td>
-        <td align="center" style="border-left:1px solid #000;border-bottom:1px solid #000;">1</td>
-        <td align="center" class="class_sm" style="border-left:1px solid #000;border-bottom:1px solid #000;"><strong>31</strong></td>
-        <td align="center" class="class_total1" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">4</td>
-      </tr>
-      <tr class="class_linha_1">
-        <td style="border-left:1px solid #000;border-bottom:1px solid #000;">7 DIAS COM VOCE</td>
-        <td align="center" style="border-left:1px solid #000;border-bottom:1px solid #000;">32</td>
-        <td align="center" class="class_sm" style="border-left:1px solid #000;border-bottom:1px solid #000;"><strong>32</strong></td>
-        <td align="center" class="class_total1" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">10</td>
-      </tr>
+      
+      </c:forEach>
+      
     </table></td>
   </tr>
 </table>
+</body>
 </body>
 </html>

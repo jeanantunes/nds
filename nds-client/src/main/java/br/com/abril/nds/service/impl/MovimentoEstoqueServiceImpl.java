@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
@@ -34,6 +35,7 @@ import br.com.abril.nds.repository.UsuarioRepository;
 import br.com.abril.nds.service.ControleAprovacaoService;
 import br.com.abril.nds.service.MovimentoEstoqueService;
 import br.com.abril.nds.service.exception.TipoMovimentoEstoqueInexistenteException;
+import br.com.abril.nds.util.TipoMensagem;
 
 @Service
 public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
@@ -109,6 +111,10 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 	@Transactional
 	public void enviarSuplementarCotaAusente(Date data, Long idCota,List<MovimentoEstoqueCota> listaMovimentoCota) throws TipoMovimentoEstoqueInexistenteException{
 		
+		if(listaMovimentoCota==null || listaMovimentoCota.isEmpty()) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "Cota não possui reparte na data.");
+		}
+		
 		TipoMovimentoEstoque tipoMovimento = 
 				tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.SUPLEMENTAR_COTA_AUSENTE);
 			
@@ -123,22 +129,21 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 			throw new TipoMovimentoEstoqueInexistenteException(GrupoMovimentoEstoque.ESTORNO_REPARTE_COTA_AUSENTE);
 		}
 		
-		if(listaMovimentoCota != null){
 			
-			for(MovimentoEstoqueCota movimentoCota : listaMovimentoCota){
-				
-				if(movimentoCota.getData() != null &&  movimentoCota.getProdutoEdicao()!=null
-						&& movimentoCota.getUsuario() != null
-						&&  movimentoCota.getQtde() != null ){
-					
-					gerarMovimentoEstoque(movimentoCota.getData(), movimentoCota.getProdutoEdicao().getId(), movimentoCota.getUsuario().getId(), movimentoCota.getQtde(), tipoMovimento);
-				
-					gerarMovimentoCota(movimentoCota.getData(), movimentoCota.getProdutoEdicao().getId(), movimentoCota.getCota().getId(),movimentoCota.getUsuario().getId(), movimentoCota.getQtde(), tipoMovimentoCota);
+		for(MovimentoEstoqueCota movimentoCota : listaMovimentoCota){
 			
-				}
-			}
+			if(movimentoCota.getData() != null &&  movimentoCota.getProdutoEdicao()!=null
+					&& movimentoCota.getUsuario() != null
+					&&  movimentoCota.getQtde() != null ){
+				
+				gerarMovimentoEstoque(movimentoCota.getData(), movimentoCota.getProdutoEdicao().getId(), movimentoCota.getUsuario().getId(), movimentoCota.getQtde(), tipoMovimento);
+			
+				gerarMovimentoCota(movimentoCota.getData(), movimentoCota.getProdutoEdicao().getId(), movimentoCota.getCota().getId(),movimentoCota.getUsuario().getId(), movimentoCota.getQtde(), tipoMovimentoCota);
 		
+			}
 		}
+	
+	
 	}
 	
 	@Override
