@@ -70,10 +70,11 @@
     <legend> Integra&ccedil;&atilde;o do Arquivo de Retorno NF-e</legend>
     
         <div class="grids" style="">
+        	<!-- 
 			<p><strong>Dados do Arquivo:</strong> Encontrados <strong>XXXX</strong> Respostas</p>
-        
+        	-->  
         	<br>
-          
+         
           	<table width="600" border="0" align="center" cellpadding="2" cellspacing="2">
             <tbody>
             <tr>
