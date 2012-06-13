@@ -1,10 +1,7 @@
 package br.com.abril.nds.service;
 
-import java.util.List;
-
 import br.com.abril.nds.client.vo.ParametrosDistribuidorVO;
 import br.com.abril.nds.model.cadastro.Distribuidor;
-import br.com.abril.nds.model.cadastro.ParametroSistema;
 
 /**
  * Interface de serviços do parametrosDistribuidorVO
@@ -24,12 +21,5 @@ public interface ParametrosDistribuidorService {
 	 * @return Distribuidor
 	 */
 	public Distribuidor getDistribuidor(ParametrosDistribuidorVO parametrosDistribuidor); 
-	
-	/**
-	 * Retorna a lista de Parametros do Sistema a partir do ParametrosDistribuidorVO
-	 * @param ParametrosDistribuidorVO
-	 * @return List<ParametroSistema>
-	 */
-	public List<ParametroSistema> getListaParametrosSistema(ParametrosDistribuidorVO parametrosDistribuidor);
-	
+
 }

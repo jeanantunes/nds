@@ -14,7 +14,6 @@ import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.DistribuicaoFornecedorService;
 import br.com.abril.nds.service.DistribuidorService;
 import br.com.abril.nds.service.FornecedorService;
-import br.com.abril.nds.service.ParametroSistemaService;
 import br.com.abril.nds.service.ParametrosDistribuidorService;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.caelum.vraptor.Path;
@@ -46,9 +45,6 @@ public class ParametrosDistribuidorController {
 	@Autowired
 	private ParametrosDistribuidorService parametrosDistribuidorService;
 
-	@Autowired
-	private ParametroSistemaService parametroSistemaService;
-	
 	@Path("/")
 	public void index() {
 		result.include("parametrosDistribuidor", parametrosDistribuidorService.getParametrosDistribuidor());
@@ -62,7 +58,6 @@ public class ParametrosDistribuidorController {
 	 * @param distribuidor
 	 */
 	public void gravar(ParametrosDistribuidorVO parametrosDistribuidor) {
-		//parametroSistemaService.salvar(parametrosDistribuidorService.getListaParametrosSistema(parametrosDistribuidor));
 		distribuidorService.alterar(parametrosDistribuidorService.getDistribuidor(parametrosDistribuidor));
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Parâmetros do Distribuidor alterados com sucesso"),"result").recursive().serialize();
 	}

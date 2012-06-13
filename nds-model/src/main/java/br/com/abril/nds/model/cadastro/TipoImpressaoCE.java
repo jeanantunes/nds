@@ -15,9 +15,4 @@ public enum TipoImpressaoCE {
 		return this.descricao;
 	}
 	
-	@Override
-	public String toString() {
-		return this.descricao;
-	}	
-	
 }

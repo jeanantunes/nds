@@ -15,8 +15,4 @@ public enum TipoDistribuidor {
 		return this.descricao;
 	}
 	
-	public String toString() {
-		return this.descricao;
-	}	
-	
 }
