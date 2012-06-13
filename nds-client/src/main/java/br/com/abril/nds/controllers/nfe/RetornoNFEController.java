@@ -18,8 +18,8 @@ import br.com.abril.nds.dto.RetornoNFEDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.ParametroSistema;
 import br.com.abril.nds.model.cadastro.TipoParametroSistema;
-import br.com.abril.nds.model.fiscal.nota.RetornoComunicacaoEletronica;
 import br.com.abril.nds.model.fiscal.nota.Status;
+import br.com.abril.nds.service.NotaFiscalService;
 import br.com.abril.nds.service.ParametroSistemaService;
 import br.com.abril.nds.util.FileImportUtil;
 import br.com.abril.nds.util.TipoMensagem;
@@ -47,8 +47,8 @@ public class RetornoNFEController {
 	@Autowired
 	private ParametroSistemaService parametroSistemaService;
 	
-	//@Autowired
-	//private NotaFiscalService notaFiscalService;
+	@Autowired
+	private NotaFiscalService notaFiscalService;
 	
 	@Autowired
 	private HttpSession session;
@@ -105,15 +105,7 @@ public class RetornoNFEController {
 			
 			if (Status.AUTORIZADO.equals(notaRetorno.getStatus())) {
 			
-				RetornoComunicacaoEletronica retornoComunicacaoEletronica = new RetornoComunicacaoEletronica();
-			
-				retornoComunicacaoEletronica.setMotivo(notaRetorno.getMotivo());
-				retornoComunicacaoEletronica.setProtocolo(notaRetorno.getProtocolo());
-				retornoComunicacaoEletronica.setStatus(notaRetorno.getStatus());
-				retornoComunicacaoEletronica.setDataRecebimento(notaRetorno.getDataRecebimento());
-							
-				//this.notaFiscalService.processarRetornoNotaFiscal(notaRetorno.getIdNotaFiscal(), retornoComunicacaoEletronica);
-		
+				this.notaFiscalService.processarRetornoNotaFiscal(notaRetorno);
 			} 
 		}
 		
