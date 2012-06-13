@@ -41,10 +41,17 @@
 				row.cell.diferenca = "";
 			}
 			
-			var valorFisico = row.cell.fisico == null ? "" : row.cell.fisico;
-			row.cell.fisico = '<input type="text" style="width: 60px" name="fisico[' + index + ']" value="' + valorFisico + '" onchange="onChangeFisico(this, ' + index + ')"/>';
+			var valorFisico = row.cell.fisico == null ? '' : row.cell.fisico;
+			var fechado = row.cell.fechado == false ? '' : 'disabled="disabled"';
+			row.cell.fisico = '<input type="text" style="width: 60px" name="fisico[' + index + ']" value="' + valorFisico + '" onchange="onChangeFisico(this, ' + index + ')" ' + fechado + '/>';
 			
 			row.cell.replicar = '<span title="Replicar"><a href="javascript:;" onclick="replicar(' + index + ')"><img src="${pageContext.request.contextPath}/images/ico_atualizar.gif" border="0" /></a></span>';
+			
+			if (fechado != '') {
+				$('#divBotoesPrincipais').hide();
+			} else {
+				$('#divBotoesPrincipais').show();
+			}
 		});
 		
 		return resultado;
@@ -154,6 +161,9 @@
 	};
 
 	function popup_encerrar() {
+		
+		$("#dataConfirma").html($("#datepickerDe").val());
+		
 		$( "#dialog-confirm" ).dialog({
 			resizable: false,
 			height:'auto',
@@ -162,7 +172,7 @@
 			buttons: {
 				"Confirmar": function() {
 					$( this ).dialog( "close" );
-					$("#effect").show("highlight", {}, 1000, callback);
+					$("#effect").show("highlight", {}, 1000, encerrarFechamento);
 				},
 				
 				"Cancelar": function() {
@@ -171,7 +181,26 @@
 			}
 		});
 	};
+	
+	
+	function encerrarFechamento() {
+		
+		salvar();
+		
+		/* verificar cotas pendentes */
+		
+		$.postJSON(
+			"<c:url value='/devolucao/fechamentoEncalhe/encerrarFechamento' />",
+			{ 'dataEncalhe' : $('#datepickerDe').val() },
+			function (result) {
+				
+			},
+		  	null,
+		   	true
+		);
+	}
 
+	
 	$(function() {
 		$("#datepickerDe").datepicker({
 			showOn: "button",
@@ -324,7 +353,7 @@
 <body>
 
 	<div id="dialog-confirm" title="Encerrar Opera&ccedil;&atilde;o" style="display:none;">
-		<p>Confirma o encerramento da opera&ccedil;&atilde;o do dia 99/99/9999:</p>
+		<p>Confirma o encerramento da opera&ccedil;&atilde;o do dia <span id="dataConfirma"></span>:</p>
 	</div>
 
 	<div id="dialog-postergar" title="Postergar Encalhe" style="display:none;">
@@ -394,12 +423,18 @@
     <fieldset class="classFieldset">
        	<legend> Fechamento Encalhe</legend>
         <div class="grids" style="display:none;">
+			
 			<table class="fechamentoGrid"></table>
-            <span class="bt_novos" title="Salvar"><a href="javascript:;" onclick="salvar()"><img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0" />Salvar </a></span>
-			<span class="bt_novos" title="Cotas Ausentes"><a href="javascript:;" onclick="popup_encerrarEncalhe();"><img src="${pageContext.request.contextPath}/images/ico_check.gif" hspace="5" border="0" />Cotas Ausentes</a></span>
-			<span class="bt_novos" title="Encerrar Opera&ccedil;&atilde;o Encalhe"><a href="javascript:;" onclick="popup_encerrar();"><img src="${pageContext.request.contextPath}/images/ico_check.gif" hspace="5" border="0" />Encerrar Opera&ccedil;&atilde;o Encalhe</a></span>
-			<span class="bt_sellAll" style="float:right;"><a href="javascript:;" id="sel" onclick="replicarTodos();"><img src="${pageContext.request.contextPath}/images/ico_atualizar.gif" border="0" /></a><label for="sel">Replicar Todos</label></span>
+			
+			<div id="divBotoesPrincipais" style="display:none;">
+	            <span class="bt_novos" title="Salvar"><a href="javascript:;" onclick="salvar()"><img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0" />Salvar </a></span>
+				<span class="bt_novos" title="Cotas Ausentes"><a href="javascript:;" onclick="popup_encerrarEncalhe();"><img src="${pageContext.request.contextPath}/images/ico_check.gif" hspace="5" border="0" />Cotas Ausentes</a></span>
+				<span class="bt_novos" title="Encerrar Opera&ccedil;&atilde;o Encalhe"><a href="javascript:;" onclick="popup_encerrar();"><img src="${pageContext.request.contextPath}/images/ico_check.gif" hspace="5" border="0" />Encerrar Opera&ccedil;&atilde;o Encalhe</a></span>
+				<span class="bt_sellAll" style="float:right;"><a href="javascript:;" id="sel" onclick="replicarTodos();"><img src="${pageContext.request.contextPath}/images/ico_atualizar.gif" border="0" /></a><label for="sel">Replicar Todos</label></span>
+			</div>
+			
         	<br clear="all" />
+        	
 			<span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;" onclick="imprimirArquivo('XLS');"><img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
 			<span class="bt_novos" title="Imprimir"><a href="javascript:;" onclick="imprimirArquivo('PDF');"><img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir </a></span>
         </div>

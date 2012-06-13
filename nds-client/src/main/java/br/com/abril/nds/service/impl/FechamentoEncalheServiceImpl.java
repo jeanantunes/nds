@@ -40,23 +40,14 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 			sort = null;
 		}
 		
-		// TODO: REFACTORING - Para ordenar corretamente a table da tela: 
-		String srtName = sortname; 
-		if (sortname != null) {
-			if ("precoCapaFormatado".equals(sortname)) {
-				srtName = "precoCapa";
-			}
-			if ("exemplaresDevolucaoFormatado".equals(sortname)) {
-				srtName = "exemplaresDevolucao";
-			}
-		}
-		
-		List<FechamentoFisicoLogicoDTO> listaConferencia = fechamentoEncalheRepository.buscarConferenciaEncalhe(filtro, sortorder, srtName, startSearch, rp);
+		Boolean fechado = fechamentoEncalheRepository.buscaControleFechamentoEncalhe(filtro.getDataEncalhe());
+		List<FechamentoFisicoLogicoDTO> listaConferencia = fechamentoEncalheRepository.buscarConferenciaEncalhe(filtro, sortorder, sort, startSearch, rp);
 		List<FechamentoEncalhe> listaFechamento = fechamentoEncalheRepository.buscarFechamentoEncalhe(filtro);
 		
 		for (FechamentoFisicoLogicoDTO conferencia : listaConferencia) {
 			
 			conferencia.setTotal(conferencia.getExemplaresDevolucao().multiply(conferencia.getPrecoCapa()));
+			conferencia.setFechado(fechado);
 			
 			for (FechamentoEncalhe fechamento : listaFechamento) {
 				if (conferencia.getCodigo().equals(fechamento.getFechamentoEncalhePK().getProdutoEdicao().getProduto().getCodigo())) {

@@ -18,6 +18,7 @@ import br.com.abril.nds.dto.FechamentoFisicoLogicoDTO;
 import br.com.abril.nds.dto.filtro.FiltroFechamentoEncalheDTO;
 import br.com.abril.nds.model.cadastro.TipoRoteiro;
 import br.com.abril.nds.model.estoque.ConferenciaEncalhe;
+import br.com.abril.nds.model.estoque.ControleFechamentoEncalhe;
 import br.com.abril.nds.model.estoque.FechamentoEncalhe;
 import br.com.abril.nds.model.estoque.pk.FechamentoEncalhePK;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalheCota;
@@ -87,6 +88,15 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepository<Fechamen
 		criteria.setResultTransformer(Transformers.aliasToBean(FechamentoFisicoLogicoDTO.class));
 			
 		return criteria.list();
+	}
+
+	@Override
+	public Boolean buscaControleFechamentoEncalhe(Date dataEncalhe) {
+		
+		Criteria criteria = this.getSession().createCriteria(ControleFechamentoEncalhe.class, "cfe");
+		criteria.add(Restrictions.eq("cfe.dataEncalhe", dataEncalhe));
+		
+		return !criteria.list().isEmpty();
 	}
 	
 	@Override
