@@ -8,7 +8,7 @@ var ConferenciaEncalhe = {
 	
 	pesquisarCota : function() {
 		
-		var data = [{name : 'numeroCota', value : $("#numeroCota").val()}];
+		var data = [{name : 'numeroCota', value : $("#numeroCota").val()}, { name: 'indObtemDadosFromBD', value : false}];
 		
 		$.postJSON(contextPath + "/devolucao/conferenciaEncalhe/verificarReabertura", data,
 			function(result){
@@ -162,6 +162,44 @@ var ConferenciaEncalhe = {
 		$("#statusCota").text(result.situacao);
 	},
 	
+	gerarDocumentosConferenciaEncalhe : function(tiposDocumento) {
+		
+		var fileArray = [];
+		
+		 $.each(tiposDocumento, function(index, value){
+			 
+			 if(value == 'SLIP') {
+				 fileArray[index] = contextPath + '/devolucao/conferenciaEncalhe/gerarSlip';
+			 } 
+			 
+			 if(value == 'BOLETO_OU_RECIBO') {
+				 fileArray[index] = contextPath + '/devolucao/conferenciaEncalhe/gerarBoletoOuRecibo';
+			 }
+			 
+		 });
+		
+		 var fileIndex = 0;
+
+		 $('#download-iframe').attr('src', fileArray[fileIndex]);
+		 
+		 fileIndex++;
+
+		 var interval = setInterval(function() {
+			 
+		        if(fileIndex < fileArray.length) {
+		            
+		        	$('#download-iframe').attr('src', fileArray[fileIndex]);
+		            
+		        	fileIndex++;
+		            
+		        } else {
+		            clearInterval(interval);
+		        }
+		        
+		    }, 100 );
+		
+	},
+	
 	finaliazarConferenciaPreProcess : function(result){
 		
 		if (result.mensagens){
@@ -181,11 +219,29 @@ var ConferenciaEncalhe = {
 				"Confirmar" : function() {
 					
 					$.postJSON(contextPath + '/devolucao/conferenciaEncalhe/finalizarConferencia', null,
-						function(result){
+						
+						function(conteudo){
+
+						
+							if(conteudo.tipoMensagem == 'SUCCESS') {
+
+								exibirMensagem(conteudo.tipoMensagem, conteudo.listaMensagens);
+								
+								$("#dialog-dadosNotaFiscal").dialog("close");
+								
+								if(conteudo.indGeraDocumentoConfEncalheCota == true) {
+	
+									ConferenciaEncalhe.gerarDocumentosConferenciaEncalhe(conteudo.tiposDocumento);
+									
+								}
+								
+								var data = [{name : 'numeroCota', value : $("#numeroCota").val()}, { name: 'indObtemDadosFromBD', value : true}];
+								
+								ConferenciaEncalhe.carregarListaConferencia(data);
+								
+							}
+						
 							
-							exibirMensagem(result.tipoMensagem, result.listaMensagens);
-							
-							$("#dialog-dadosNotaFiscal").dialog("close");
 						}, null, true, "idModalDadosNotaFiscal"
 					);
 				},
@@ -727,7 +783,15 @@ var ConferenciaEncalhe = {
 					
 					$.postJSON(contextPath + '/devolucao/conferenciaEncalhe/salvarConferencia', null,
 						function(result){
-							
+						
+							if(result.tipoMensagem == 'SUCCESS') {
+								
+								var data = [{name : 'numeroCota', value : $("#numeroCota").val()}, { name: 'indObtemDadosFromBD', value : true}];
+								
+								ConferenciaEncalhe.carregarListaConferencia(data);
+								
+							}
+						
 							exibirMensagem(result.tipoMensagem, result.listaMensagens);
 							
 							$("#dialog-salvar").dialog("close");
@@ -997,9 +1061,25 @@ shortcut.add("F8", function() {
 	if (!ConferenciaEncalhe.modalAberta){
 		
 		$.postJSON(contextPath + '/devolucao/conferenciaEncalhe/verificarValorTotalNotaFiscal',
-			[{name: "valorCEInformado", value: $("#vlrCE").val()}],
-			function(result){
 				
+			[{name: "valorCEInformado", value: $("#vlrCE").val()}],
+			
+			function(result){
+			
+				if(result.tipoMensagem == 'SUCCESS') {
+					
+					if(result.indGeraDocumentoConfEncalheCota == true) {
+
+						ConferenciaEncalhe.gerarDocumentosConferenciaEncalhe(result.tiposDocumento);
+						
+					}
+					
+					var data = [{name : 'numeroCota', value : $("#numeroCota").val()}, { name: 'indObtemDadosFromBD', value : true}];
+					
+					ConferenciaEncalhe.carregarListaConferencia(data);
+					
+				}
+			
 				exibirMensagem(result.tipoMensagem, result.listaMensagens);
 			},
 			function(){

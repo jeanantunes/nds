@@ -39,14 +39,14 @@ public class ConferenciaEncalheRepositoryImpl extends
 		hql.append(" conferencia.movimentoEstoqueCota.produtoEdicao.numeroEdicao as numeroEdicao,	");
 		hql.append(" conferencia.movimentoEstoqueCota.produtoEdicao.id as idProdutoEdicao,			");
 		
-		hql.append(" (conferenciaEncalhe.movimentoEstoqueCota.produtoEdicao.precoVenda -	");
-		hql.append(" ( pe.precoVenda * ("+ getSubHqlQueryValorDesconto() +") / 100 )) as precoVenda,	");
+		hql.append(" (conferencia.movimentoEstoqueCota.produtoEdicao.precoVenda -	");
+		hql.append(" ( conferencia.movimentoEstoqueCota.produtoEdicao.precoVenda * ("+ getSubHqlQueryValorDesconto() +") / 100 )) as precoVenda,	");
 		
 		hql.append(" conferencia.movimentoEstoqueCota.qtde as encalhe, ");
 		
-		hql.append(" (conferenciaEncalhe.movimentoEstoqueCota.produtoEdicao.precoVenda -  			");
-		hql.append(" ( pe.precoVenda * ("+ getSubHqlQueryValorDesconto() +") / 100 ))  ");
-		hql.append(" * conferencia.movimentoEstoqueCota.qtde as valorTotal, ");
+		hql.append(" ((conferencia.movimentoEstoqueCota.produtoEdicao.precoVenda -  			");
+		hql.append(" ( conferencia.movimentoEstoqueCota.produtoEdicao.precoVenda * ("+ getSubHqlQueryValorDesconto() +") / 100 ))  ");
+		hql.append(" * conferencia.movimentoEstoqueCota.qtde) as valorTotal ");
 		
 		hql.append(" from ConferenciaEncalhe conferencia	");
 		
@@ -54,7 +54,7 @@ public class ConferenciaEncalheRepositoryImpl extends
 		
 		hql.append(" conferencia.controleConferenciaEncalheCota.id = :idControleConferenciaEncalheCota ");
 		
-		Query query =  this.getSession().createSQLQuery(hql.toString()).setResultTransformer(new AliasToBeanResultTransformer(ConferenciaEncalheDTO.class));
+		Query query =  this.getSession().createQuery(hql.toString()).setResultTransformer(new AliasToBeanResultTransformer(ProdutoEdicaoSlipDTO.class));
 		
 		query.setParameter("idControleConferenciaEncalheCota", idControleConferenciaEncalheCota);
 		query.setParameter("idDistribuidor", idDistribuidor);
@@ -213,11 +213,11 @@ public class ConferenciaEncalheRepositoryImpl extends
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" select sum( conferenciaEncalhe.produtoEdicao.precoVenda - (conferenciaEncalhe.produtoEdicao.precoVenda * ("+ getSubHqlQueryValorDesconto() +") / 100 ) ) ");
+		hql.append(" select sum( conferencia.produtoEdicao.precoVenda - (conferencia.produtoEdicao.precoVenda * ("+ getSubHqlQueryValorDesconto() +") / 100 ) ) ");
 		
-		hql.append(" from ConferenciaEncalhe conferenciaEncalhe  ");
+		hql.append(" from ConferenciaEncalhe conferencia  ");
 		
-		hql.append(" where conferenciaEncalhe.controleConferenciaEncalheCota.id = :idControleConferenciaEncalhe  ");
+		hql.append(" where conferencia.controleConferenciaEncalheCota.id = :idControleConferenciaEncalhe  ");
 		
 		Query query =  this.getSession().createQuery(hql.toString());
 		
@@ -251,9 +251,9 @@ public class ConferenciaEncalheRepositoryImpl extends
 		
 		hql.append(" where ");
 		
-		hql.append(" ct.id = conferenciaEncalhe.chamadaEncalheCota.cota.id and ");
+		hql.append(" ct.id = conferencia.chamadaEncalheCota.cota.id and ");
 
-		hql.append(" pe.id = conferenciaEncalhe.produtoEdicao.id and ");
+		hql.append(" pe.id = conferencia.produtoEdicao.id and ");
 
 		hql.append(" distribuidor.id = :idDistribuidor ");
 		

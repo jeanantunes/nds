@@ -11,6 +11,8 @@
 
 </div>
 
+<iframe src="" id="download-iframe" style="display:none;"></iframe>
+
 <div id="dialog-outros-valores" title="Outros Valores" style="display:none;">
 	<fieldset>
         <legend>Outros Valores</legend>
