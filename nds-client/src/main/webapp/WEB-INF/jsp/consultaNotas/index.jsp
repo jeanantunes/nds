@@ -3,6 +3,14 @@
 <script language="javascript" type="text/javascript">
 	
 		function processarResultadoConsultaNF(data) {
+			
+			if ($("#datepickerDe").val() == "" && $("#datepickerAte").val() == "") {
+
+				var dataAtual = $.format.date(new Date(), "dd/MM/yyyy");
+
+				$("#datepickerDe").val(dataAtual);
+				$("#datepickerAte").val(dataAtual);
+			} 
 
 			if (data.mensagens) {
 

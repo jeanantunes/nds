@@ -101,7 +101,7 @@ public class CotaSocioController {
 		if(sociosCota != null && !sociosCota.isEmpty()){
 			
 			for(SocioCota socio : sociosCota){
-				if(socio.getPrincipal())
+				if( socio.getPrincipal()!= null && socio.getPrincipal())
 					return true;
 			}
 		}

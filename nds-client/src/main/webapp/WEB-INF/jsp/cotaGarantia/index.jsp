@@ -58,7 +58,7 @@
 			<tr>
 				<td>&nbsp;</td>
 				<td colspan="3"><span class="bt_novos" title="Imprimir"><a
-						href="javascript:void(0);"
+						href="javascript:;"
 						id="cotaGarantiaNotaPromissoriaImprimir" target="_blank"><img
 							src="${pageContext.request.contextPath}/images/ico_impressora.gif"
 							alt="Imprimir" hspace="5" border="0" />Imprimir</a></span></td>
