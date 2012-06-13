@@ -813,7 +813,7 @@ var SOCIO_COTA = {
 					nome:$("#idNomeSocio").val(),
 					cargo:$("#idCargoSocio").val(),
 					principal:($("#idSocioPrincipal").attr("checked"))?true:false,
-					id:null
+					id:($("#idSocio").val())
 			};
 			
 			return socio;
@@ -845,7 +845,7 @@ var SOCIO_COTA = {
 					
 					$.each(result, function(index, value) {
 						
-						var socio = {nome:value.nome, cargo:value.cargo,principal:value.principal};
+						var socio = {id:value.id,nome:value.nome, cargo:value.cargo,principal:value.principal};
 						
 						SOCIO_COTA.rows.push({"id": SOCIO_COTA.rows.length,"cell":socio});
 					});
@@ -884,7 +884,6 @@ var SOCIO_COTA = {
 
 				value.cell.acao = acao;
 				
-				
 				value.cell.principalFlag =(value.cell.principal == true) 
 								?'<img src="' + contextPath + '/images/ico_check.gif" border="0" hspace="5" />'
 							  	:'&nbsp';
@@ -903,6 +902,7 @@ var SOCIO_COTA = {
 			$("#idNomeSocio").val(socios.nome),
 			$("#idCargoSocio").val(socios.cargo),
 			$("#idSocioPrincipal").attr("checked",(socios.principal == true)?"checked":null);
+			$("#idSocio").val(socios.id);
 			
 			$("#btnEditarSocio").show();
 			$("#btnAddSocio").hide();
@@ -913,6 +913,7 @@ var SOCIO_COTA = {
 			$("#idNomeSocio").val(""),
 			$("#idCargoSocio").val(""),
 			$("#idSocioPrincipal").attr("checked",null);
+			$("#idSocio").val("");
 			SOCIO_COTA.itemEdicao = null;
 			
 			$("#btnEditarSocio").hide();
