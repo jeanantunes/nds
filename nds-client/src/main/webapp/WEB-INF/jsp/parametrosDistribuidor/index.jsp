@@ -243,6 +243,14 @@ function removeFornecedor(){
 	$( ".forncedoresSel" ).fadeOut('fast');
 }
 
+function habilitaPrazoContrato() {
+	if ($('#utilizaContratoComCotas').attr('checked') == "checked") {
+		$('#prazoContrato').attr("disabled", false);
+	} else {
+		$('#prazoContrato').attr("disabled", true);
+	}
+}
+
 $(document).ready(function() {
 	$('#informacoesComplementaresContrato').wysiwyg();
 	$('#informacoesComplementaresContrato').wysiwyg({controls:"font-family,italic,|,undo,redo"});
@@ -276,14 +284,48 @@ $(function() {
 		 precision:0
 	});
 
-	$("#caucaoLiquidaValor").mask("99/99/9999");
-	$("#antecedenciaValidadeValor").mask("99/99/9999");
-	$("#fiadorValor").mask("99/99/9999");
-	$("#imovelValor").mask("99/99/9999");
-	$("#chequeCalcaoValor").mask("99/99/9999");
-	$("#indicadorReajusteCaucaoLiquidaValor").mask("99/99/9999");
-	$("#notaPromissoriaValor").mask("99/99/9999");
-
+	$("input[id^='caucaoLiquidaValor']").maskMoney({
+		 thousands:'.', 
+		 decimal:',', 
+		 precision:0
+	});
+	
+	$("input[id^='antecedenciaValidadeValor']").maskMoney({
+		 thousands:'.', 
+		 decimal:',', 
+		 precision:0
+	});
+	
+	$("input[id^='fiadorValor']").maskMoney({
+		 thousands:'.', 
+		 decimal:',', 
+		 precision:0
+	});
+	
+	$("input[id^='imovelValor']").maskMoney({
+		 thousands:'.', 
+		 decimal:',', 
+		 precision:0
+	});
+	
+	$("input[id^='chequeCalcaoValor']").maskMoney({
+		 thousands:'.', 
+		 decimal:',', 
+		 precision:0
+	});
+	
+	$("input[id^='indicadorReajusteCaucaoLiquidaValor']").maskMoney({
+		 thousands:'.', 
+		 decimal:',', 
+		 precision:0
+	});
+	
+	$("input[id^='notaPromissoriaValor']").maskMoney({
+		 thousands:'.', 
+		 decimal:',', 
+		 precision:0
+	});
+	
 	$("input[id^='sugereSuspensaoQuandoAtingirBoletos']").maskMoney({
 		 thousands:'.', 
 		 decimal:',', 
@@ -747,7 +789,7 @@ $(function() {
 		                <table width="392" border="0" cellspacing="1" cellpadding="1">
 		                  <tr>
 		                    <td>Utiliza Contrato com as Cotas?</td>
-		                    <td><input name="parametrosDistribuidor.utilizaContratoComCotas" id="utilizaContratoComCotas" type="checkbox"  ${parametrosDistribuidor.utilizaContratoComCotas}/></td>
+		                    <td><input name="parametrosDistribuidor.utilizaContratoComCotas" onclick="habilitaPrazoContrato()" id="utilizaContratoComCotas" type="checkbox"  ${parametrosDistribuidor.utilizaContratoComCotas}/></td>
 		                  </tr>
 		                  <tr>
 		                    <td width="190">Prazo do Contrato (em meses ):</td>

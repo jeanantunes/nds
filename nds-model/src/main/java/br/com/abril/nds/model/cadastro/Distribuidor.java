@@ -122,6 +122,22 @@ public class Distribuidor {
 	private int fatorRelancamentoParcial;
 	
 	/**
+	 * Filtro de seleção de cotas suspensas com 
+     * valor consigando total menor ou igual ao informado 
+     * nesta coluna.
+	 */
+	@Column(name = "VALOR_CONSIGNADO_SUSPENSAO_COTAS",  nullable = false)
+	private BigDecimal valorConsignadoSuspensaoCotas;
+	
+	/**
+	 * Filtro de seleção de cotas suspensas cujos
+       dias de suspensão sejam maiores ou iguais 
+     * ao informado nesta coluna.
+	 */
+	@Column(name = "QTD_DIAS_SUSPENSAO_COTAS",  nullable = false)
+	private int quantidadeDiasSuspensaoCotas;
+	
+	/**
 	 * Parametrização do contrato entre cota e distribuidor
 	 */
 	@OneToOne
@@ -395,6 +411,23 @@ public class Distribuidor {
 	 */
 	public void setLeiautePicking(LeiautePicking leiautePicking) {
 		this.leiautePicking = leiautePicking;
+	}
+
+	public BigDecimal getValorConsignadoSuspensaoCotas() {
+		return valorConsignadoSuspensaoCotas;
+	}
+
+	public void setValorConsignadoSuspensaoCotas(
+			BigDecimal valorConsignadoSuspensaoCotas) {
+		this.valorConsignadoSuspensaoCotas = valorConsignadoSuspensaoCotas;
+	}
+
+	public int getQuantidadeDiasSuspensaoCotas() {
+		return quantidadeDiasSuspensaoCotas;
+	}
+
+	public void setQuantidadeDiasSuspensaoCotas(int quantidadeDiasSuspensaoCotas) {
+		this.quantidadeDiasSuspensaoCotas = quantidadeDiasSuspensaoCotas;
 	}
 	
 }

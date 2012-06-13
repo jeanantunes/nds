@@ -62,7 +62,7 @@ public class ParametrosDistribuidorController {
 	 * @param distribuidor
 	 */
 	public void gravar(ParametrosDistribuidorVO parametrosDistribuidor) {
-		parametroSistemaService.salvar(parametrosDistribuidorService.getListaParametrosSistema(parametrosDistribuidor));
+		//parametroSistemaService.salvar(parametrosDistribuidorService.getListaParametrosSistema(parametrosDistribuidor));
 		distribuidorService.alterar(parametrosDistribuidorService.getDistribuidor(parametrosDistribuidor));
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Parâmetros do Distribuidor alterados com sucesso"),"result").recursive().serialize();
 	}
