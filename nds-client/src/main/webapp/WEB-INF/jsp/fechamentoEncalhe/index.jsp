@@ -4,6 +4,9 @@
 	<script language="javascript" type="text/javascript">
 
 	var contextPath = '${pageContext.request.contextPath}';
+	var vDataEncalhe = '';
+	var vFornecedorId = '';
+	var vBoxId = '';
 	
 	function pesquisar() {
 		
@@ -24,6 +27,10 @@
 		
 		$(".fechamentoGrid").flexReload();
 		$(".grids").show();
+		
+		vDataEncalhe = $('#datepickerDe').val();
+		vFornecedorId = $('#selectFornecedor').val();
+		vBoxId = $('#selectBoxEncalhe').val();
 	}
 	
 	function preprocessamentoGridFechamento(resultado) {
@@ -289,6 +296,23 @@
 		return false;
 	}
 	
+	function imprimirArquivo(fileType) {
+
+		var dataEncalhe = $("#datepickerDe").val();
+		
+		window.location = contextPath + "/devolucao/fechamentoEncalhe/imprimirArquivo?"
+			+ "dataEncalhe=" + vDataEncalhe
+			+ "&fornecedorId="+ vFornecedorId
+			+ "&boxId=" + vBoxId
+			+ "&sortname=" + $(".fechamentoGrid").flexGetSortName()
+			+ "&sortorder=" + $(".fechamentoGrid").getSortOrder()
+			+ "&rp=" + $(".fechamentoGrid").flexGetRowsPerPage()
+			+ "&page=" + $(".fechamentoGrid").flexGetPageNumber()
+			+ "&fileType=" + fileType;
+
+		return false;
+	}
+	
 	</script>
 
 	<style type="text/css">
@@ -345,7 +369,7 @@
 				<td width="67">Fornecedor:</td>
 				<td width="216">
 					<select name="selectFornecedor" id="selectFornecedor" style="width:200px;">
-					<option>Selecione...</option>
+					<option value="">Selecione...</option>
 					<c:forEach var="fornecedor" items="${listaFornecedores}">
 						<option value="${fornecedor.id}">${fornecedor.juridica.razaoSocial}</option>
 					</c:forEach>
@@ -354,7 +378,7 @@
 				<td width="97">Box de Encalhe:</td>
 				<td width="239">
 					<select name="selectBoxEncalhe" id="selectBoxEncalhe" style="width:100px;">
-					<option>Selecione...</option>
+					<option value="">Selecione...</option>
 					<c:forEach var="box" items="${listaBoxes}">
 						<option value="${box.id}">${box.nome}</option>
 					</c:forEach>
@@ -376,8 +400,8 @@
 			<span class="bt_novos" title="Encerrar Opera&ccedil;&atilde;o Encalhe"><a href="javascript:;" onclick="popup_encerrar();"><img src="${pageContext.request.contextPath}/images/ico_check.gif" hspace="5" border="0" />Encerrar Opera&ccedil;&atilde;o Encalhe</a></span>
 			<span class="bt_sellAll" style="float:right;"><a href="javascript:;" id="sel" onclick="replicarTodos();"><img src="${pageContext.request.contextPath}/images/ico_atualizar.gif" border="0" /></a><label for="sel">Replicar Todos</label></span>
         	<br clear="all" />
-			<span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
-			<span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir </a></span>
+			<span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;" onclick="imprimirArquivo('XLS');"><img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
+			<span class="bt_novos" title="Imprimir"><a href="javascript:;" onclick="imprimirArquivo('PDF');"><img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir </a></span>
         </div>
 	</fieldset>
     
@@ -476,25 +500,25 @@
 				display : 'Total R$',
 				name : 'totalFormatado',
 				width : 80,
-				sortable : true,
+				sortable : false,
 				align : 'right'
 			}, {
 				display : 'F&iacute;sico',
 				name : 'fisico',
 				width : 80,
-				sortable : true,
+				sortable : false,
 				align : 'center'
 			}, {
 				display : 'Diferen&ccedil;a',
 				name : 'diferenca',
 				width : 50,
-				sortable : true,
+				sortable : false,
 				align : 'right'
 			}, {
 				display : 'Replicar Qtde.',
 				name : 'replicar',
 				width : 80,
-				sortable : true,
+				sortable : false,
 				align : 'center'
 			}],
 			sortname : "codigo",
