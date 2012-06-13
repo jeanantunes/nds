@@ -874,8 +874,16 @@ public class Fixture {
 	public static TipoMovimentoFinanceiro tipoMovimentoFinanceiroDebitoNA() {
 		TipoMovimentoFinanceiro tipoMovimento = new TipoMovimentoFinanceiro();
 		tipoMovimento.setAprovacaoAutomatica(true);
-		tipoMovimento.setDescricao("Débito NA");
+		tipoMovimento.setDescricao("NA");
 		tipoMovimento.setGrupoMovimentoFinaceiro(GrupoMovimentoFinaceiro.DEBITO);
+		return tipoMovimento;
+	}
+	
+	public static TipoMovimentoFinanceiro tipoMovimentoFinanceiroDebitoFaturamento() {
+		TipoMovimentoFinanceiro tipoMovimento = new TipoMovimentoFinanceiro();
+		tipoMovimento.setAprovacaoAutomatica(true);
+		tipoMovimento.setDescricao("Débito (Faturamento)");
+		tipoMovimento.setGrupoMovimentoFinaceiro(GrupoMovimentoFinaceiro.DEBITO_SOBRE_FATURAMENTO);
 		return tipoMovimento;
 	}
 	

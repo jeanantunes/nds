@@ -49,20 +49,21 @@
 			
 			acoes = 
 				'<a href="javascript:;" onclick="editarMovimento(' + idMovimento + ')" ' +
-				' style="cursor:pointer;border:0px;margin:5px" title="Editar endereço">' +
+				' style="cursor:pointer;border:0px;margin:5px" title="Editar movimento">' +
 				'<img src="${pageContext.request.contextPath}/images/ico_editar.gif" border="0px"/>' +
 				'</a>' +
 				'<a href="javascript:;" onclick="confirmarExclusaoMovimento(' + idMovimento + ')" ' +
-				' style="cursor:pointer;border:0px;margin:5px" title="Excluir endereço">' +
+				' style="cursor:pointer;border:0px;margin:5px" title="Excluir movimento">' +
 				'<img src="${pageContext.request.contextPath}/images/ico_excluir.gif" border="0px"/>' +
-				'</a>';
+				'</a>';	
 			
 		} else {
 			
 			acoes = 
-				'<span style="border:0px;margin:5px">' +
-				'<img src="${pageContext.request.contextPath}/images/ico_editar.gif" border="0px" style="opacity:0.4"/>' +
-				'</span>' +
+				'<a href="javascript:;" onclick="detalheMovimento(' + idMovimento + ')" ' +
+				' style="cursor:pointer;border:0px;margin:5px" title="Editar movimento">' +
+				'<img src="${pageContext.request.contextPath}/images/ico_editar.gif" border="0px"/>' +
+				'</a>' +
 				'<span style="border:0px;margin:5px">' +
 				'<img src="${pageContext.request.contextPath}/images/ico_excluir.gif" border="0px" style="opacity:0.4"/>' +
 				'</span>';
@@ -155,7 +156,7 @@
 			'<c:url value="/financeiro/debitoCreditoCota/prepararMovimentoFinanceiroCotaParaEdicao" />',
 			{ "idMovimento" : idMovimento },
 			function(result) {
-
+				
 				$("#edicaoId").val(result.id);
 				$("#edicaoTipoMovimento").val(result.tipoMovimentoFinanceiro.id);
 				$("#edicaoNumeroCota").val(result.numeroCota);
@@ -175,12 +176,38 @@
 		popup_alterar();
 	}
 	
+	function detalheMovimento(idMovimento) {
+
+		$.postJSON(
+			'<c:url value="/financeiro/debitoCreditoCota/prepararMovimentoFinanceiroCotaParaEdicao" />',
+			{ "idMovimento" : idMovimento },
+			function(result) {
+				
+				$("#detalheId").val(result.id);
+				$("#detalheTipoMovimento").val(result.tipoMovimentoFinanceiro.id);
+				$("#detalheNumeroCota").val(result.numeroCota);
+				$("#detalheNomeCota").val(result.nomeCota);
+				$("#detalheDataLancamento").val(result.dataLancamento);
+				$("#detalheDataVencimento").val(result.dataVencimento);
+				$("#detalheValor").val(result.valor);
+				$("#detalheObservacao").val(result.observacao);
+			},
+			function(result) {
+				
+				processarResultadoConsultaDebitosCreditos(result);
+			},
+			true
+		);
+		
+		popup_detalhe();
+	}
+	
 	function popup_alterar() {
 		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
 	
 		$( "#dialog-editar" ).dialog({
 			resizable: false,
-			height:340,
+			height:450,
 			width:500,
 			modal: true,
 			buttons: {
@@ -188,6 +215,22 @@
 					salvarMovimentoFinanceiro(true);
 				},
 				"Cancelar": function() {
+					$( this ).dialog( "close" );
+				}
+			}
+		});	
+	};
+	
+	function popup_detalhe() {
+		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
+	
+		$( "#dialog-detalhe" ).dialog({
+			resizable: false,
+			height:350,
+			width:500,
+			modal: true,
+			buttons: {
+				"Fechar": function() {
 					$( this ).dialog( "close" );
 				}
 			}
@@ -383,7 +426,7 @@
     <td width="310">
     <select name="debitoCredito.tipoMovimentoFinanceiro.id" id="edicaoTipoMovimento" style="width:300px;">
 		<c:forEach items="${tiposMovimentoFinanceiro}" var="tipoMovimento">
-			<option value="${tipoMovimento.id}">${tipoMovimento.descricao}</option>
+			<option value="${tipoMovimento.id}">${tipoMovimento.id}-${tipoMovimento.descricao}</option>
 		</c:forEach>
     </select>
     </td>
@@ -412,6 +455,37 @@
     	<input type="text" name="debitoCredito.dataVencimento" id="edicaoDataVencimento" style="width:80px;" />
     </td>
   </tr>
+  
+  <tr>
+    <td width="126">Percentual(%)</td>
+    <td width="310">
+    	<input type="text" style="width:80px; text-align:right;" name="debitoCredito.percentual" id="edicaoPercentual" />
+    </td>
+  </tr>
+  
+  <tr>
+    <td width="80">Base de Cálculo:</td>
+    <td width="120">
+		<select name="debitoCredito.baseCalculo.id" id="edicaoBaseCalculo" style="width:120px;">
+		
+	  		<option selected="selected"></option>
+			<c:forEach items="${basesCalculo}" var="base">
+				<option value="${base}">${base.value}</option>
+			</c:forEach>
+			
+	    </select>
+    </td>
+  </tr>
+  
+  <tr>
+    <td width="100">Período para Cálculo:</td>
+    <td width="180">
+		<input type="text" name="debitoCredito.dataPeriodoDe" id="edicaoDataPeriodoDe" style="width:80px;" />
+        até
+		<input type="text" name="debitoCredito.dataPeriodoAte" id="edicaoDataPeriodoAte" style="width:80px;" />
+    </td>
+  </tr>
+
   <tr>
     <td width="126">Valor R$:</td>
     <td width="310">
@@ -422,6 +496,59 @@
     <td width="126">Observação:</td>
     <td width="310">
     	<input type="text" style="width:300px;" name="debitoCredito.observacao" id="edicaoObservacao" />
+    </td>
+  </tr>
+</table>
+</form>
+</div>
+
+<div id="dialog-detalhe" title="Tipo de Movimento" style="display: none;">
+
+<jsp:include page="../messagesDialog.jsp" />
+
+<form id="formDetalheMovimentoFinanceiro">
+<input readonly="readonly" type="hidden" name="debitoCredito.id" id="detalheId" />
+<table width="450" border="0" cellspacing="2" cellpadding="2">
+  <tr>
+    <td width="126">Tipo de Movimento:</td>
+    <td width="310">
+    <input readonly="readonly" name="debitoCredito.tipoMovimentoFinanceiro.id" id="detalheTipoMovimento" style="width:300px;">
+    </td>
+  </tr>
+  <tr>
+    <td width="126">Cota:</td>
+    <td width="310">
+    <input readonly="readonly" type="text" style="width:80px; float:left; margin-right:5px;" 
+    	   name="debitoCredito.numeroCota" id="detalheNumeroCota"/>
+    </td>
+  </tr>
+  <tr>
+    <td width="126">Nome:</td>
+    <td width="310">
+    <input readonly="readonly" type="text" style="width:300px;" name="debitoCredito.nomeCota" id="detalheNomeCota" /></td>
+  </tr>
+  <tr>
+    <td width="126">Data Lançamento:</td>
+    <td width="310">
+    	<input readonly="readonly" type="text" name="debitoCredito.dataLancamento" id="detalheDataLancamento" style="width:80px;" />
+    </td>
+  </tr>
+  <tr>
+    <td>Data Vencimento:</td>
+    <td>
+    	<input readonly="readonly" type="text" name="debitoCredito.dataVencimento" id="detalheDataVencimento" style="width:80px;" />
+    </td>
+  </tr>
+  <tr>
+    <td width="126">Valor R$:</td>
+    <td width="310">
+    	<input readonly="readonly" type="text" style="width:80px; text-align:right;" name="debitoCredito.valor" id="detalheValor" />
+    </td>
+  </tr>
+  <tr>
+    <td width="126">Observação:</td>
+    <td width="310">
+    	<input readonly="readonly" type="text" style="width:300px;" name="debitoCredito.observacao" id="detalheObservacao" />
     </td>
   </tr>
 </table>
