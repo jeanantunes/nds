@@ -57,7 +57,7 @@ public class ParametrosDistribuidorController {
 		result.include("distribuidor", distribuidorService.obter());
 	}
 
-	/**
+	/**buscarDiasOperacaoFornecedor
 	 * Grava as alterações de parametros realizadas para o distribuidor
 	 * @param distribuidor
 	 */

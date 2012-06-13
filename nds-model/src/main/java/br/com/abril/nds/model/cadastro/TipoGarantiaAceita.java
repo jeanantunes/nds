@@ -37,7 +37,9 @@ public class TipoGarantiaAceita implements Serializable {
 	
 	@Enumerated(EnumType.STRING)
 	private TipoGarantia tipoGarantia;
-	
+
+	@Column(name = "VALOR", nullable = true)
+	private String valor;
 	
 	@ManyToOne(optional=false)
 	@JoinColumn(name="DISTRIBUIDOR_ID")
@@ -87,4 +89,17 @@ public class TipoGarantiaAceita implements Serializable {
 	public TipoGarantiaAceita() {
 	}
 
+
+
+	public String getValor() {
+		return valor;
+	}
+
+
+
+	public void setValor(String valor) {
+		this.valor = valor;
+	}
+	
+	
 }
