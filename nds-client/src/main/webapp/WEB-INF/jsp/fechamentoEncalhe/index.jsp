@@ -482,7 +482,7 @@
 				display : 'F&iacute;sico',
 				name : 'fisico',
 				width : 80,
-				sortable : true,
+				sortable : false,
 				align : 'center'
 			}, {
 				display : 'Diferen&ccedil;a',
