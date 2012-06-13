@@ -34,11 +34,18 @@ public interface NotaFiscalService {
 	List<NotaFiscal> gerarDadosNotaFicalEmLote(ConsultaLoteNotaFiscalDTO dadosConsultaLoteNotaFiscal);
 	
 	/**
-	 * Processa o retorno de uma nota fiscal.
-	 * 
-	 * @param dadosRetornoNFE - informações de retorno da comunicação eletrônica
+	 * Processa o retorno de uma nota fiscal. Validando os arquivos de notas que ja foram retornados.
+	 *  
+	 * @param listaDadosRetornoNFE - informações de retorno da comunicação eletrônica
 	 */
-	void processarRetornoNotaFiscal(RetornoNFEDTO dadosRetornoNFE);
+	List<RetornoNFEDTO> processarRetornoNotaFiscal(List<RetornoNFEDTO> listaDadosRetornoNFE);
+	
+	/**
+	 * Autoriza uma nota fiscal.
+	 * 
+	 * @param dadosRetornoNFE - dados de retorno da nota fiscal
+	 */
+	void autorizarNotaFiscal(RetornoNFEDTO dadosRetornoNFE);
 	
 	/**
 	 * Cancela uma nota fiscal.
