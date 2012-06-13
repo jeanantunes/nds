@@ -60,19 +60,19 @@ public class ConsultaNFEEncalheTratamentoNotasRecebidasRepositoryImpl extends Ab
 		
 		StringBuilder hql = new StringBuilder();
 	
-
 		hql.append(" from NotaFiscalEntradaCota as notaCota ");
 		hql.append(" LEFT JOIN notaCota.cota as cota ");
 		hql.append(" LEFT JOIN cota.pessoa as pessoa ");
 		
-
-		//hql.append( " where notaCota.TIPO = 'COTA' ");
+		boolean usarAnd = false;
 		
-		if(filtro.getCodigoCota() != null && !filtro.getCodigoCota().equals("") ) { 
-			hql.append( " and cota.numeroCota = :numeroCota ");
+		if(filtro.getCodigoCota() != null && !filtro.getCodigoCota().equals("") ) {			
+			hql.append( (usarAnd ? " and ":" where ") +" cota.numeroCota = :numeroCota ");
+			usarAnd = true;
 		}
 		if(filtro.getData() != null){
-			hql.append(" and date(notaCota.dataEmissao) = :data ");
+			hql.append( (usarAnd ? " and ":" where ") +" date(notaCota.dataEmissao) = :data ");
+			usarAnd = true;			
 		}
 
 		return hql.toString();
@@ -114,7 +114,11 @@ public class ConsultaNFEEncalheTratamentoNotasRecebidasRepositoryImpl extends Ab
 		StringBuilder hql = new StringBuilder();
 		hql.append(" select count(cota) ");
 		
-		hql.append(getSqlFromEWhereNotaEntrada(filtro));
+		if(filtro.getStatusNotaFiscalEntrada().name().equals("RECEBIDA")){
+			hql.append(getSqlFromEWhereNotaEntrada(filtro));			
+		}else{
+			hql.append(getSqlFromEWhereNotaPendente(filtro));
+		}
 		
 		Query query =  getSession().createQuery(hql.toString());
 		
@@ -129,5 +133,91 @@ public class ConsultaNFEEncalheTratamentoNotasRecebidasRepositoryImpl extends Ab
 		return (totalRegistros == null) ? 0 : totalRegistros.intValue();
 	}
 
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<ConsultaNFEEncalheTratamentoDTO> buscarNFNotasPendentes(
+			FiltroConsultaNFEEncalheTratamento filtro, String limitar) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append("SELECT cota.numeroCota as numeroCota, ");
+		hql.append("pessoa.nome as nome, ");		
+		hql.append("conf.data as dataEncalhe, ");		
+		hql.append("tipo.tipoOperacao as tipoNota, ");
+		hql.append("(conf.qtdeInformada * conf.precoCapaInformado ) as vlrNota, ");
+		hql.append("(conf.qtde * conf.precoCapaInformado ) as vlrReal, ");
+		hql.append("((conf.qtdeInformada * conf.precoCapaInformado) -  (conf.qtde * conf.precoCapaInformado)) as diferenca");
+		
+		hql.append(getSqlFromEWhereNotaPendente(filtro));
+		
+		hql.append(getOrderByNotasPendentes(filtro));
+		
+		Query query =  getSession().createQuery(hql.toString());
+		
+		HashMap<String, Object> param = buscarParametros(filtro);
+		
+		for(String key : param.keySet()){
+			query.setParameter(key, param.get(key));
+		}
+		
+		query.setResultTransformer(new AliasToBeanResultTransformer(
+				ConsultaNFEEncalheTratamentoDTO.class));
+		
+		if(filtro.getPaginacao().getQtdResultadosPorPagina() != null) 
+			query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
+		
+		if(filtro.getPaginacao().getQtdResultadosPorPagina() != null && limitar.equals("limitar")) 
+			query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
+		 
+		return query.list();
+		 
+	}
+	
+	private String getSqlFromEWhereNotaPendente(FiltroConsultaNFEEncalheTratamento filtro) {
+		
+		StringBuilder hql = new StringBuilder();
+	
+		hql.append(" from ControleConferenciaEncalheCota as controleCota ");
+		hql.append(" LEFT JOIN controleCota.notaFiscalEntradaCota as notaCota ");
+		hql.append(" LEFT JOIN notaCota.cota as cota ");
+		hql.append(" LEFT JOIN cota.pessoa as pessoa ");
+		hql.append(" LEFT JOIN notaCota.tipoNotaFiscal as tipo ");
+		hql.append(" LEFT JOIN controleCota.conferenciasEncalhe as conf");
+		
+		
+		hql.append(" where tipo.tipoOperacao = 'ENTRADA' ");
+		
+		if(filtro.getStatusNotaFiscalEntrada().name().equals("PENDENTE_RECEBIMENTO")){
+			hql.append(" and ((conf.qtdeInformada * conf.precoCapaInformado) -  (conf.qtde * conf.precoCapaInformado)) > 0 ");
+			
+		}else if(filtro.getStatusNotaFiscalEntrada().name().equals("PENDENTE_EMISAO")){
+			hql.append(" and ((conf.qtdeInformada * conf.precoCapaInformado) -  (conf.qtde * conf.precoCapaInformado)) < 0 ");
+		}
+		
+		if(filtro.getCodigoCota() != null && !filtro.getCodigoCota().equals("") ) {			
+			hql.append( " and cota.numeroCota = :numeroCota ");
+		}
+		if(filtro.getData() != null){
+			hql.append( " and date(notaCota.dataEmissao) = :data ");
+		}
 
+		return hql.toString();
+	}
+	
+	private String getOrderByNotasPendentes(FiltroConsultaNFEEncalheTratamento filtro){
+		
+		if(filtro.getPaginacao() == null || filtro.getPaginacao().getSortColumn() == null){
+			return "";
+		}
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" order by cota.numeroCota ");
+		
+		if (filtro.getPaginacao().getOrdenacao() != null) {
+			hql.append( filtro.getPaginacao().getOrdenacao().toString());
+		}
+		
+		return hql.toString();
+	}	
+	
 }

@@ -32,4 +32,11 @@ public class ConsultaNFEEncalheTratamentoNotasRecebidasServiceImpl implements
 		return this.consultaNFEEncalheTratamentoNotasRecebidasRepository.buscarTotalNotasRecebidas(filtro);
 	}
 
+	@Override
+	@Transactional
+	public List<ConsultaNFEEncalheTratamentoDTO> buscarNFNotasPendentes(
+			FiltroConsultaNFEEncalheTratamento filtro, String limitar) {
+		return this.consultaNFEEncalheTratamentoNotasRecebidasRepository.buscarNFNotasPendentes(filtro, limitar);
+	}
+
 }

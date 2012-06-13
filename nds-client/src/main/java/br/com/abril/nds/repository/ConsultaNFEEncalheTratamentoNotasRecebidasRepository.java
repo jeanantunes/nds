@@ -11,5 +11,7 @@ public interface ConsultaNFEEncalheTratamentoNotasRecebidasRepository extends Re
 	List<ConsultaNFEEncalheTratamentoDTO> buscarNFNotasRecebidas(FiltroConsultaNFEEncalheTratamento filtro, String limitar);
 	
 	Integer buscarTotalNotasRecebidas(FiltroConsultaNFEEncalheTratamento filtro);
+	
+	List<ConsultaNFEEncalheTratamentoDTO> buscarNFNotasPendentes(FiltroConsultaNFEEncalheTratamento filtro, String limitar);
 
 }

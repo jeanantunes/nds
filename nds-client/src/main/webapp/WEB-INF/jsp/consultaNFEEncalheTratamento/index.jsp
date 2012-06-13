@@ -171,11 +171,12 @@ function popup() {
 	}
 	function pesqEncalhe(){
 		$(".dadosFiltro").show();		
-		var status = $('#situacaoNfe').val();
-		if(status == 'RECEBIDA'){
+		var status = $('#situacaoNfe').val();		
+		if(status == 'RECEBIDA'){			
 			pesquisarNotaRecebidas();		
+		}else{			
+			pesquisarNotasPendente();
 		}
-		
 		
 	}
 	
@@ -192,6 +193,21 @@ function popup() {
 		});
 
 		$(".notaRecebidaGrid").flexReload();
+	}
+	
+	function pesquisarNotasPendente(){
+		
+		$(".encalheNfeGrid").flexOptions({
+			url: "<c:url value='/nfe/consultaNFEEncalheTratamento/pesquisarNotasPendentes'/>",
+			dataType : 'json',
+			params: [
+						{name:'filtro.codigoCota', value:$('#codigoCota').val()},
+						{name:'filtro.data', value:$('#data').val()},
+						{name:'filtro.statusNotaFiscalEntrada', value:$('#situacaoNfe').val()}						
+						]
+		});
+
+		$(".encalheNfeGrid").flexReload();		
 	}
 	
 	function mostrar_nfes(){
@@ -522,8 +538,8 @@ function popup() {
 	
 	
 	$(".encalheNfeGrid").flexigrid({
-			url : '../xml/nfe_encalhe_tratamento-xml.xml',
-			dataType : 'xml',
+		preProcess: executarPreProcessamento,
+		dataType : 'json',
 			colModel : [ {
 				display : 'Cota',
 				name : 'cota',
@@ -538,7 +554,7 @@ function popup() {
 				align : 'left'
 			}, {
 				display : 'Data Encalhe',
-				name : 'dtEncalhe',
+				name : 'dataEncalhe',
 				width : 70,
 				sortable : true,
 				align : 'center'

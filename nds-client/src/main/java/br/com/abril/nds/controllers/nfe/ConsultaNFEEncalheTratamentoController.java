@@ -10,12 +10,9 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import br.com.abril.nds.client.vo.ResultadoRomaneioVO;
 import br.com.abril.nds.dto.ConsultaNFEEncalheTratamentoDTO;
 import br.com.abril.nds.dto.ItemDTO;
-import br.com.abril.nds.dto.RomaneioDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaNFEEncalheTratamento;
-import br.com.abril.nds.dto.filtro.FiltroRomaneioDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.fiscal.StatusNotaFiscalEntrada;
@@ -26,8 +23,8 @@ import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.export.FileExporter;
-import br.com.abril.nds.util.export.NDSFileHeader;
 import br.com.abril.nds.util.export.FileExporter.FileType;
+import br.com.abril.nds.util.export.NDSFileHeader;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
@@ -85,15 +82,50 @@ public class ConsultaNFEEncalheTratamentoController {
 		
 		this.tratarFiltro(filtro);
 		
-		TableModel<CellModelKeyValue<ConsultaNFEEncalheTratamentoDTO>> tableModel = efetuarConsultaRomaneio(filtro);
+		TableModel<CellModelKeyValue<ConsultaNFEEncalheTratamentoDTO>> tableModel = efetuarConsultaNotasRecebidas(filtro);
 		
 		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
 		
 	}
 	
-	private TableModel<CellModelKeyValue<ConsultaNFEEncalheTratamentoDTO>> efetuarConsultaRomaneio(FiltroConsultaNFEEncalheTratamento filtro) {
+	private TableModel<CellModelKeyValue<ConsultaNFEEncalheTratamentoDTO>> efetuarConsultaNotasRecebidas(FiltroConsultaNFEEncalheTratamento filtro) {
 		
 		List<ConsultaNFEEncalheTratamentoDTO> listaNotasRecebidas = this.consultaNFEEncalheTratamentoNotasRecebidasService.buscarNFNotasRecebidas(filtro, "limitar");
+		
+		TableModel<CellModelKeyValue<ConsultaNFEEncalheTratamentoDTO>> tableModel = new TableModel<CellModelKeyValue<ConsultaNFEEncalheTratamentoDTO>>();
+		
+		Integer totalRegistros = this.consultaNFEEncalheTratamentoNotasRecebidasService.buscarTodasNFENotasRecebidas(filtro);
+		if(totalRegistros == 0){
+			throw new ValidacaoException(TipoMensagem.WARNING, "A pesquisa realizada não obteve resultado.");
+		}
+
+		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaNotasRecebidas));
+		
+		tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
+		
+		tableModel.setTotal(totalRegistros);
+		
+		return tableModel;
+	}
+	
+	@Post
+	@Path("/pesquisarNotasPendentes")
+	public void pesquisarNotasPendentes(FiltroConsultaNFEEncalheTratamento filtro, String sortorder, String sortname, int page, int rp){
+		
+		filtro.setPaginacao(new PaginacaoVO(page, rp, sortorder, sortname));
+		
+		this.validarEntrada(filtro);
+		
+		this.tratarFiltro(filtro);
+		
+		TableModel<CellModelKeyValue<ConsultaNFEEncalheTratamentoDTO>> tableModel = efetuarConsultaNotasPendentes(filtro);
+		
+		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
+	}
+	
+	private TableModel<CellModelKeyValue<ConsultaNFEEncalheTratamentoDTO>> efetuarConsultaNotasPendentes(FiltroConsultaNFEEncalheTratamento filtro) {
+		
+		List<ConsultaNFEEncalheTratamentoDTO> listaNotasRecebidas = this.consultaNFEEncalheTratamentoNotasRecebidasService.buscarNFNotasPendentes(filtro, "limitar");
 		
 		TableModel<CellModelKeyValue<ConsultaNFEEncalheTratamentoDTO>> tableModel = new TableModel<CellModelKeyValue<ConsultaNFEEncalheTratamentoDTO>>();
 		

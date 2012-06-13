@@ -10,5 +10,7 @@ public interface ConsultaNFEEncalheTratamentoNotasRecebidasService {
 	List<ConsultaNFEEncalheTratamentoDTO> buscarNFNotasRecebidas(FiltroConsultaNFEEncalheTratamento filtro, String limitar);
 	
 	Integer buscarTodasNFENotasRecebidas(FiltroConsultaNFEEncalheTratamento filtro);
-
+	
+	List<ConsultaNFEEncalheTratamentoDTO> buscarNFNotasPendentes(FiltroConsultaNFEEncalheTratamento filtro, String limitar);
+	
 }

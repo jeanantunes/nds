@@ -1,7 +1,10 @@
 package br.com.abril.nds.dto;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.Date;
 
+import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Export.Alignment;
 import br.com.abril.nds.util.export.Exportable;
@@ -11,20 +14,39 @@ public class ConsultaNFEEncalheTratamentoDTO implements Serializable {
 
 	private static final long serialVersionUID = 8366815250237375585L;
 	
-	@Export(label = "Cota", alignment=Alignment.LEFT, exhibitionOrder = 1)
+	@Export(label = "Cota", alignment=Alignment.LEFT)
 	private Integer numeroCota;
 	
-	@Export(label = "Nome", alignment=Alignment.LEFT, exhibitionOrder = 2)
+	@Export(label = "Nome", alignment=Alignment.LEFT)
 	private String nome;
 	
-	@Export(label = "NF- e", alignment=Alignment.LEFT, exhibitionOrder = 3)
+	@Export(label = "NF- e", alignment=Alignment.LEFT)
 	private Long numeroNfe;
 	
-	@Export(label = "Serie", alignment=Alignment.LEFT, exhibitionOrder = 4)
+	@Export(label = "Serie", alignment=Alignment.LEFT)
 	private String serie;
 	
-	@Export(label = "Chave Acesso", alignment=Alignment.LEFT, exhibitionOrder = 5)
+	@Export(label = "Chave Acesso", alignment=Alignment.LEFT)
 	private String chaveAcesso;
+	
+	@Export(label = "Data Encalhe", alignment=Alignment.LEFT)
+	private Date dataEncalhe;
+	
+	@Export(label = "Data Encalhe", alignment=Alignment.LEFT)
+	private TipoOperacao tipoNota;
+	
+	@Export(label = "Valor Nota R$", alignment=Alignment.LEFT)
+	private BigDecimal vlrNota;
+	
+	@Export(label = "Valor Real R$", alignment=Alignment.LEFT)
+	private BigDecimal vlrReal;
+	
+	@Export(label = "Diferença", alignment=Alignment.LEFT)
+	private BigDecimal diferenca;
+	
+	@Export(label = "Status", alignment=Alignment.LEFT)
+	private String status;
+	
 	
 	public ConsultaNFEEncalheTratamentoDTO() {}
 	
@@ -36,6 +58,19 @@ public class ConsultaNFEEncalheTratamentoDTO implements Serializable {
 		this.numeroNfe = numeroNfe;
 		this.serie = serie;
 		this.chaveAcesso = chaveAcesso;
+	}
+	
+	public ConsultaNFEEncalheTratamentoDTO(Integer numeroCota, String nome,
+			Date dataEncalhe, TipoOperacao tipoNota, BigDecimal vlrNota,
+			BigDecimal vlrReal, BigDecimal diferenca) {
+		super();
+		this.numeroCota = numeroCota;
+		this.nome = nome;
+		this.dataEncalhe = dataEncalhe;
+		this.tipoNota = tipoNota;
+		this.vlrNota = vlrNota;
+		this.vlrReal = vlrReal;
+		this.diferenca = diferenca;
 	}
 
 	public Integer getNumeroCota() {
@@ -77,6 +112,52 @@ public class ConsultaNFEEncalheTratamentoDTO implements Serializable {
 	public void setChaveAcesso(String chaveAcesso) {
 		this.chaveAcesso = chaveAcesso;
 	}
-	
 
+	public Date getDataEncalhe() {
+		return dataEncalhe;
+	}
+
+	public void setDataEncalhe(Date dataEncalhe) {
+		this.dataEncalhe = dataEncalhe;
+	}
+
+	public TipoOperacao getTipoNota() {
+		return tipoNota;
+	}
+
+	public void setTipoNota(TipoOperacao tipoNota) {
+		this.tipoNota = tipoNota;
+	}
+
+	public BigDecimal getVlrNota() {
+		return vlrNota;
+	}
+
+	public void setVlrNota(BigDecimal vlrNota) {
+		this.vlrNota = vlrNota;
+	}
+
+	public BigDecimal getVlrReal() {
+		return vlrReal;
+	}
+
+	public void setVlrReal(BigDecimal vlrReal) {
+		this.vlrReal = vlrReal;
+	}
+
+	public BigDecimal getDiferenca() {
+		return diferenca;
+	}
+
+	public void setDiferenca(BigDecimal diferenca) {
+		this.diferenca = diferenca;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
 }
