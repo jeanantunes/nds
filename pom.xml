@@ -326,10 +326,11 @@
 
 	<repositories>
 		<repository>
-			<id>nexus</id>
-			<url>http://177.71.177.215:8080/nexus/content/groups/public/</url>
-			<releases><enabled>true</enabled></releases> 
-			<snapshots><enabled>true</enabled></snapshots>
+			<id>jrimum.org</id>
+			<url>http://jrimum.org/maven/content/groups/public/</url>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
 		</repository>
 	</repositories>
 
