@@ -15,8 +15,11 @@ public class ProdutoAbastecimentoDTO implements Serializable{
 	private Integer reparte;
 	private String precoCapa;
 	private String total;
-	
+	private String codigoRota;	
 	private String codigoBox;
+	private Long idProdutoEdicao;
+	private Integer codigoCota;
+	private Integer sequenciaMatriz;
 	
 	public ProdutoAbastecimentoDTO() {
 		
@@ -113,6 +116,38 @@ public class ProdutoAbastecimentoDTO implements Serializable{
 
 	public void setCodigoBox(String codigoBox) {
 		this.codigoBox = codigoBox;
+	}
+
+	public String getCodigoRota() {
+		return codigoRota;
+	}
+
+	public void setCodigoRota(String codigoRota) {
+		this.codigoRota = codigoRota;
+	}
+
+	public Long getIdProdutoEdicao() {
+		return idProdutoEdicao;
+	}
+
+	public void setIdProdutoEdicao(Long idProdutoEdicao) {
+		this.idProdutoEdicao = idProdutoEdicao;
+	}
+
+	public Integer getSequenciaMatriz() {
+		return sequenciaMatriz;
+	}
+
+	public void setSequenciaMatriz(Integer sequenciaMatriz) {
+		this.sequenciaMatriz = sequenciaMatriz;
+	}
+
+	public Integer getCodigoCota() {
+		return codigoCota;
+	}
+
+	public void setCodigoCota(Integer codigoCota) {
+		this.codigoCota = codigoCota;
 	}
 	
 	

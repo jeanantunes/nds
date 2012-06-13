@@ -81,7 +81,9 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepository<Fechamen
 		
 		criteria.setFirstResult(page);
 		criteria.setMaxResults(rp);
-		this.addOrderCriteria(criteria, sortorder, sortname);
+		if (sortname != null) {
+			this.addOrderCriteria(criteria, sortorder, sortname);
+		}
 		criteria.setResultTransformer(Transformers.aliasToBean(FechamentoFisicoLogicoDTO.class));
 			
 		return criteria.list();
@@ -91,9 +93,9 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepository<Fechamen
 	@SuppressWarnings("unchecked")
 	public List<FechamentoEncalhe> buscarFechamentoEncalhe(FiltroFechamentoEncalheDTO filtro) {
 		
-		Criteria criteria = this.getSession().createCriteria(FechamentoEncalhe.class, "fe");
-		criteria.add(Restrictions.eq("fe.fechamentoEncalhePK.dataEncalhe", filtro.getDataEncalhe()));
-		criteria.setFetchMode("fe.listFechamentoEncalheBox", FetchMode.JOIN);
+		Criteria criteria = this.getSession().createCriteria(FechamentoEncalhe.class);
+		//criteria.add(Restrictions.eq("fe.fechamentoEncalhePK.dataEncalhe", filtro.getDataEncalhe()));
+		criteria.setFetchMode("listFechamentoEncalheBox", FetchMode.JOIN);
 		
 		return criteria.list();
 	}
@@ -108,11 +110,16 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepository<Fechamen
 			Criteria criteria = super.getSession().createCriteria(ChamadaEncalhe.class, "ce");
 			
 			this.criarCriteriaCotasAusentesEncalhe(criteria, dataEncalhe);
-			
+
 			criteria.setFirstResult(page);
-			criteria.setMaxResults(rp);
 			
-			this.addOrderCriteria(criteria, sortorder, sortname);
+			if (rp >= 0) {
+				criteria.setMaxResults(rp);
+			}
+			
+			if (sortname != null && sortorder != null) {
+				this.addOrderCriteria(criteria, sortorder, sortname);
+			}
 			
 			criteria.setResultTransformer(Transformers.aliasToBean(CotaAusenteEncalheDTO.class));
 				

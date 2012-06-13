@@ -4,6 +4,9 @@
 	<script language="javascript" type="text/javascript">
 
 	var contextPath = '${pageContext.request.contextPath}';
+	var vDataEncalhe = '';
+	var vFornecedorId = '';
+	var vBoxId = '';
 	
 	function pesquisar() {
 		
@@ -24,6 +27,10 @@
 		
 		$(".fechamentoGrid").flexReload();
 		$(".grids").show();
+		
+		vDataEncalhe = $('#datepickerDe').val();
+		vFornecedorId = $('#selectFornecedor').val();
+		vBoxId = $('#selectBoxEncalhe').val();
 	}
 	
 	function preprocessamentoGridFechamento(resultado) {
@@ -131,7 +138,7 @@
 				}
 			},
 			beforeClose: function() {
-				clearMessageDialogTimeout();
+				clearMessageDialogTimeout('dialogMensagemNovo');
 			}
 		});
 
@@ -167,6 +174,11 @@
 
 	$(function() {
 		$("#datepickerDe").datepicker({
+			showOn: "button",
+			buttonImage: "${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
+			buttonImageOnly: true
+		});
+		$("#dtPostergada").datepicker({
 			showOn: "button",
 			buttonImage: "${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
 			buttonImageOnly: true
@@ -233,17 +245,32 @@
 	}
 	
 	function postergarCotas() {
-		
-		var dataEncalhe = $("#datepickerDe").val();
 
-		$.postJSON("<c:url value='/devolucao/fechamentoEncalhe/postergarCotas' />",
-					{ 'dataEncalhe' : dataEncalhe, 'idsCotas' : obterCotasMarcadas() },
-					function (result) {
-			
-					},
-				  	null,
-				   	true
-			);
+		$("#dialog-postergar").dialog({
+			resizable: false,
+			height:'auto',
+			width:300,
+			modal: true,
+			buttons: {
+				"Confirmar": function() {
+					
+					var dataEncalhe = $("#dtPostergada").val();
+
+					$.postJSON("<c:url value='/devolucao/fechamentoEncalhe/postergarCotas' />",
+								{ 'dataEncalhe' : dataEncalhe, 'idsCotas' : obterCotasMarcadas() },
+								function (result) {
+						
+								},
+							  	null,
+							   	true
+						);
+				},
+				
+				"Cancelar": function() {
+					$( this ).dialog( "close" );
+				}
+			}
+		});
 	}
 
 	function cobrarCotas() {
@@ -258,7 +285,32 @@
 				  	null,
 				   	true
 			);
+	}
+
+	function exportarCotasAusentes() {
+
+		var dataEncalhe = $("#datepickerDe").val();
 		
+		window.location = contextPath + "/devolucao/fechamentoEncalhe/exportarArquivo?dataEncalhe=" + dataEncalhe + "&fileType=XLS";
+
+		return false;
+	}
+	
+	function imprimirArquivo(fileType) {
+
+		var dataEncalhe = $("#datepickerDe").val();
+		
+		window.location = contextPath + "/devolucao/fechamentoEncalhe/imprimirArquivo?"
+			+ "dataEncalhe=" + vDataEncalhe
+			+ "&fornecedorId="+ vFornecedorId
+			+ "&boxId=" + vBoxId
+			+ "&sortname=" + $(".fechamentoGrid").flexGetSortName()
+			+ "&sortorder=" + $(".fechamentoGrid").getSortOrder()
+			+ "&rp=" + $(".fechamentoGrid").flexGetRowsPerPage()
+			+ "&page=" + $(".fechamentoGrid").flexGetPageNumber()
+			+ "&fileType=" + fileType;
+
+		return false;
 	}
 	
 	</script>
@@ -275,14 +327,30 @@
 		<p>Confirma o encerramento da opera&ccedil;&atilde;o do dia 99/99/9999:</p>
 	</div>
 
+	<div id="dialog-postergar" title="Postergar Encalhe" style="display:none;">
+		<fieldset style="width:255px!important;">
+	    	<legend>Postergar Encalhe</legend>
+			<table width="230" border="0" cellspacing="2" cellpadding="0">
+	          <tr>
+	            <td width="121">Nova Data:</td>
+	            <td width="103"><input name="dtPostergada" type="text" id="dtPostergada" style="width:80px;" /></td>
+	          </tr>
+	        </table>
+	    </fieldset>
+	</div>
 	
 	<div id="dialog-encerrarEncalhe" title="Opera&ccedil;&atilde;o de Encalhe" style="display:none;">
 		<fieldset>
 			<legend>Cotas Ausentes</legend>
-				<form id="formGridCotas" name="formGridCotas" >
-					<table class="cotasGrid" id="tabelaGridCotas" ></table>
-				</form>
-			<span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
+			<form id="formGridCotas" name="formGridCotas" >
+				<table class="cotasGrid" id="tabelaGridCotas" ></table>
+			</form>
+			<span class="bt_novos" title="Gerar Arquivo" >
+				<a href="javascript:exportarCotasAusentes();">
+					<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
+					Arquivo
+				</a>
+			</span>
 			<span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir </a></span>
 			<span class="bt_sellAll" style="float:right;">
 				<input type="checkbox" id="checkTodasCotas" name="checkTodasCotas" onchange="checarTodasCotasGrid(this.checked);" style="float:right;margin-right:25px;"/>
@@ -301,7 +369,7 @@
 				<td width="67">Fornecedor:</td>
 				<td width="216">
 					<select name="selectFornecedor" id="selectFornecedor" style="width:200px;">
-					<option>Selecione...</option>
+					<option value="">Selecione...</option>
 					<c:forEach var="fornecedor" items="${listaFornecedores}">
 						<option value="${fornecedor.id}">${fornecedor.juridica.razaoSocial}</option>
 					</c:forEach>
@@ -310,7 +378,7 @@
 				<td width="97">Box de Encalhe:</td>
 				<td width="239">
 					<select name="selectBoxEncalhe" id="selectBoxEncalhe" style="width:100px;">
-					<option>Selecione...</option>
+					<option value="">Selecione...</option>
 					<c:forEach var="box" items="${listaBoxes}">
 						<option value="${box.id}">${box.nome}</option>
 					</c:forEach>
@@ -332,8 +400,8 @@
 			<span class="bt_novos" title="Encerrar Opera&ccedil;&atilde;o Encalhe"><a href="javascript:;" onclick="popup_encerrar();"><img src="${pageContext.request.contextPath}/images/ico_check.gif" hspace="5" border="0" />Encerrar Opera&ccedil;&atilde;o Encalhe</a></span>
 			<span class="bt_sellAll" style="float:right;"><a href="javascript:;" id="sel" onclick="replicarTodos();"><img src="${pageContext.request.contextPath}/images/ico_atualizar.gif" border="0" /></a><label for="sel">Replicar Todos</label></span>
         	<br clear="all" />
-			<span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
-			<span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir </a></span>
+			<span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;" onclick="imprimirArquivo('XLS');"><img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
+			<span class="bt_novos" title="Imprimir"><a href="javascript:;" onclick="imprimirArquivo('PDF');"><img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir </a></span>
         </div>
 	</fieldset>
     
@@ -432,25 +500,25 @@
 				display : 'Total R$',
 				name : 'totalFormatado',
 				width : 80,
-				sortable : true,
+				sortable : false,
 				align : 'right'
 			}, {
 				display : 'F&iacute;sico',
 				name : 'fisico',
 				width : 80,
-				sortable : true,
+				sortable : false,
 				align : 'center'
 			}, {
 				display : 'Diferen&ccedil;a',
 				name : 'diferenca',
 				width : 50,
-				sortable : true,
+				sortable : false,
 				align : 'right'
 			}, {
 				display : 'Replicar Qtde.',
 				name : 'replicar',
 				width : 80,
-				sortable : true,
+				sortable : false,
 				align : 'center'
 			}],
 			sortname : "codigo",

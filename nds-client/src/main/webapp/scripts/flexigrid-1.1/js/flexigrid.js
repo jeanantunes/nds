@@ -683,6 +683,27 @@
 					}
 				});
 			},
+
+			// TODO: Método personalizado
+			getPageNum: function() { // get the current page
+				return p.page;
+			},
+			
+			// TODO: Método personalizado
+			getRowsPerPage: function() { // get the rows per page
+				return p.rp;
+			},
+			
+			// TODO: Método personalizado
+			getSortName: function() { // get the sort name
+				return p.sortname;
+			},
+			
+			// TODO: Método personalizado
+			getSortOrder: function() { // get the sort order
+				return p.sortorder;
+			},
+			
 			pager: 0
 		};
 		if (p.colModel) { //create model if any
@@ -1243,4 +1264,49 @@
 			});
 		}
 	}; //end noSelect
+	
+	// TODO: Método personalizado
+	$.fn.flexGetPageNumber = function () { // get the page number.
+		var result = 1;
+		this.each( function() {
+			if (this.grid){
+				result = this.grid.getPageNum();
+			}
+		});
+		return result;
+	}; // end flexGetPageNumber
+	
+	// TODO: Método personalizado
+	$.fn.flexGetRowsPerPage = function () { // get the rows per page.
+		var result = 1;
+		this.each( function() {
+			if (this.grid){
+				result = this.grid.getRowsPerPage();
+			}
+		});
+		return result;
+	}; // end flexGetRowsPerPage
+
+	// TODO: Método personalizado
+	$.fn.flexGetSortName = function () { // get the sort name
+		var result = '';
+		this.each( function() {
+			if (this.grid){
+				result = this.grid.getSortName();
+			}
+		});
+		return result;
+	}; // end flexGetSortName
+
+	// TODO: Método personalizado
+	$.fn.getSortOrder = function () { // get the sort order
+		var result = '';
+		this.each( function() {
+			if (this.grid){
+				result = this.grid.getSortOrder();
+			}
+		});
+		return result;
+	}; // end flexGetSortOrder
+	
 })(jQuery);

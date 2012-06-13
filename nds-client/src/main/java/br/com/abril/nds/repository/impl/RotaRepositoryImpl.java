@@ -74,7 +74,7 @@ public class RotaRepositoryImpl extends AbstractRepository<Rota, Long>
 		}else if(Ordenacao.DESC ==  ordenacao){
 			criteria.addOrder(Order.desc(sortname));
 		}
-		return criteria.list();
+		return  criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
 	}
 	
 	@SuppressWarnings("unchecked")

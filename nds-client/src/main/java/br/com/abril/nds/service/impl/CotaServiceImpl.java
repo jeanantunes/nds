@@ -1552,7 +1552,7 @@ public class CotaServiceImpl implements CotaService {
 	private boolean isSocioPrincipal(List<SocioCota> sociosCota) {
 		
 		for(SocioCota socio : sociosCota){
-			if(socio.getPrincipal())
+			if(socio.getPrincipal()!= null && socio.getPrincipal())
 				return true;
 		}
 		
