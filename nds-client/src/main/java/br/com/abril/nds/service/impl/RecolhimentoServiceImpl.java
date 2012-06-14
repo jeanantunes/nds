@@ -359,7 +359,7 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 					chamadaEncalheCota = new ChamadaEncalheCota();
 					
 					chamadaEncalheCota.setChamadaEncalhe(chamadaEncalhe);
-					chamadaEncalheCota.setConferido(false);
+					chamadaEncalheCota.setFechado(false);
 					chamadaEncalheCota.setCota(cota);
 					
 					BigDecimal qtdPrevista = BigDecimal.ZERO;

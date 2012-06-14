@@ -15,10 +15,10 @@ import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Rota;
 import br.com.abril.nds.model.cadastro.Roteirizacao;
 import br.com.abril.nds.model.cadastro.Roteiro;
+import br.com.abril.nds.model.cadastro.TipoRoteiro;
 import br.com.abril.nds.model.cadastro.pdv.EnderecoPDV;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
 import br.com.abril.nds.repository.CotaRepository;
-import br.com.abril.nds.repository.Repository;
 import br.com.abril.nds.repository.RotaRepository;
 import br.com.abril.nds.repository.RoteirizacaoRepository;
 import br.com.abril.nds.repository.RoteiroRepository;
@@ -211,10 +211,17 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 	public List<CotaDisponivelRoteirizacaoDTO> buscarPvsPorCota(Integer numeroCota, Long rotaId ,  Long roteiroId ) {
 		Roteiro roteiro = roteiroRepository.buscarPorId(roteiroId);
 		
-		List<PDV> listaPDV = roteirizacaoRepository.buscarRoteirizacaoNumeroCota(numeroCota, rotaId,  roteiro  );
+		List<PDV> listaPDV = roteirizacaoRepository.buscarPdvRoteirizacaoNumeroCota(numeroCota, rotaId,  roteiro  );
 		List<CotaDisponivelRoteirizacaoDTO> lista =
 				new ArrayList<CotaDisponivelRoteirizacaoDTO>();
+		 Integer ordem = roteirizacaoRepository.buscarMaiorOrdem(rotaId);
+		 if ( ordem == null ){
+			 ordem = 0;
+		 } else {
+			 ordem++;
+		 }
 		for ( PDV pdv : listaPDV ){
+			
 			CotaDisponivelRoteirizacaoDTO cotaDisponivelRoteirizacaoDTO = new CotaDisponivelRoteirizacaoDTO();
 			Cota cota = pdv.getCota();
 			cotaDisponivelRoteirizacaoDTO.setNome(cota.getPessoa().getNome());
@@ -222,6 +229,7 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 			cotaDisponivelRoteirizacaoDTO.setPontoVenda(pdv.getNome());
 			cotaDisponivelRoteirizacaoDTO.setOrigemEndereco("Cota");
 			cotaDisponivelRoteirizacaoDTO.setIdPontoVenda(pdv.getId());
+			cotaDisponivelRoteirizacaoDTO.setOrdem(ordem);
 			
 			for (EnderecoPDV endereco : pdv.getEnderecos()){ 
 				if (endereco.isPrincipal()){
@@ -303,6 +311,12 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 	}
 
 	@Override
+	@Transactional
+	public List<Rota> obterRotasPorCota(Integer numeroCota) {
+		return rotaRepository.obterRotasPorCota(numeroCota);
+	}
+
+	@Override
 	@Transactional(readOnly=true)
 	public List<CotaDisponivelRoteirizacaoDTO> buscarRoteirizacaoPorEndereco(String CEP, String uf, String municipio, String bairro, Long rotaId ,  Long roteiroId) {
 		Roteiro roteiro = roteiroRepository.buscarPorId(roteiroId);
@@ -346,6 +360,54 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 	@Transactional(readOnly=true)
 	public List<LogBairro> buscarBairroPorMunicipio(Long municipio, String uf) {
 		return roteirizacaoRepository.buscarBairroPorMunicipio(municipio, uf);
+	}
+	
+	@Override
+	@Transactional(readOnly=true)
+	public List<Roteiro> buscarRoteiroEspecial() {
+		return roteiroRepository.buscarRoteiroEspecial();
+	}
+	
+	@Override
+	@Transactional(readOnly=true)
+	public List<Roteirizacao> buscarRoteirizacao(Long boxId, Long roteiroId, Long rotaId, TipoRoteiro tipoRoteiro, String  orderBy, Ordenacao ordenacao, int initialResult, int maxResults ){
+		return roteirizacaoRepository.buscarRoteirizacao(boxId, roteiroId, rotaId, tipoRoteiro, orderBy, ordenacao, initialResult,  maxResults);
+	}
+	
+	@Override
+	@Transactional(readOnly=true)
+	public List<Roteirizacao> buscarRoteirizacaoPorNumeroCota(Integer numeroCota, TipoRoteiro tipoRoteiro, String  orderBy, Ordenacao ordenacao, int initialResult, int maxResults) {
+		return roteirizacaoRepository.buscarRoteirizacaoPorNumeroCota(numeroCota, tipoRoteiro,  orderBy,  ordenacao,  initialResult,  maxResults);
+	}
+
+	@Override
+	@Transactional
+	public void transferirRoteirizacaoComNovaRota(List<Long> roteirizacaoId, Rota rota) {
+		this.incluirRota(rota);
+		Integer ordem = 0;
+		for (Long id : roteirizacaoId ){
+			Roteirizacao roteirizacao = roteirizacaoRepository.buscarPorId(id);
+			roteirizacao.setRota(rota);
+			roteirizacao.setOrdem(ordem++);
+			roteirizacaoRepository.merge(roteirizacao);
+		}	
+		
+	}
+	@Override
+	@Transactional
+	public void atualizaOrdenacao(Roteirizacao roteirizacao ){
+	
+	}
+	@Override
+	@Transactional
+	public void atualizaOrdenacaoAsc(Roteirizacao roteirizacao){
+		roteirizacaoRepository.atualizaOrdenacaoAsc(roteirizacao);
+	}
+	
+	@Override
+	@Transactional
+	public void atualizaOrdenacaoDesc(Roteirizacao roteirizacao ){
+		roteirizacaoRepository.atualizaOrdenacaoDesc(roteirizacao);
 	}
 
 }

@@ -42,8 +42,12 @@
 	src="${pageContext.request.contextPath}/scripts/NDS.js"></script>
 <script language="javascript" type="text/javascript"
 	src="${pageContext.request.contextPath}/scripts/utils.js"></script>
+<!-- TODO: Posteriormente incluir os métodos 'personalizados': 
 <script language="javascript" type="text/javascript"
-	src="${pageContext.request.contextPath}/scripts/flexigrid-1.1/js/flexigrid.pack.js"></script>	
+	src="${pageContext.request.contextPath}/scripts/flexigrid-1.1/js/flexigrid.pack.js"></script>
+ -->
+<script language="javascript" type="text/javascript"
+	src="${pageContext.request.contextPath}/scripts/flexigrid-1.1/js/flexigrid.js"></script>
 <script language="javascript" type="text/javascript"
 	src="${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/development-bundle/ui/jquery.ui.datepicker.js"></script>
 <script language="javascript" type="text/javascript"
@@ -348,7 +352,7 @@ fieldset label {
 							<li><a href="Recolhimento/liberacao_encalhe_conferido.htm">Liberação
 									do Encalhe Conferido</a>
 							</li>
-							<li><a href="Recolhimento/venda_encalhe.htm">Venda de
+							<li><a href='<c:url value="/devolucao/vendaEncalhe/"/>'>Venda de
 									Encalhe</a>
 							</li>
 							<li><a href="Recolhimento/help_recolhimento.htm">Help</a>
@@ -371,7 +375,9 @@ fieldset label {
 						<span class="classNFe">&nbsp;</span><a
 						href="javascript:;">NF-e</a>
 						<ul>
-							
+							<li>
+								<a href="nfe/retornoNFe/">Retorno NF-e</a>
+							</li>
 							<li>
 								<a href="nfe/painelMonitorNFe/">Painel Monitor NF-e</a>
 							</li>

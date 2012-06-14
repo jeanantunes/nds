@@ -143,7 +143,7 @@ public class ChamadaAntecipadaEncalheServiceImpl implements ChamadaAntecipadaEnc
 			cota  = cotaRepository.obterPorNumerDaCota(dto.getNumeroCota());
 			chamadaEncalheCota = new ChamadaEncalheCota();
 			chamadaEncalheCota.setChamadaEncalhe(chamadaEncalhe);
-			chamadaEncalheCota.setConferido(Boolean.FALSE);
+			chamadaEncalheCota.setFechado(Boolean.FALSE);
 			chamadaEncalheCota.setCota(cota);
 			chamadaEncalheCota.setQtdePrevista(dto.getQntExemplares());
 			

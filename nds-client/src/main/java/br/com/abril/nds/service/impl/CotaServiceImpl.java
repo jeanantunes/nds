@@ -665,7 +665,10 @@ public class CotaServiceImpl implements CotaService {
 		ParametroDistribuicaoCota parametros = new ParametroDistribuicaoCota();
 		parametros.setQtdePDV(dto.getQtdePDV());
 		parametros.setAssistenteComercial(dto.getAssistComercial());
-		parametros.setTipoEntrega(tipoEntregaRepository.buscarPorId(dto.getTipoEntrega()));
+		if(dto.getTipoEntrega() == null)
+			parametros.setTipoEntrega(null);
+		else
+			parametros.setTipoEntrega(tipoEntregaRepository.buscarPorId(dto.getTipoEntrega()));
 		parametros.setArrendatario(dto.getArrendatario());
 		parametros.setObservacao(dto.getObservacao());
 		parametros.setRepartePorPontoVenda(dto.getRepPorPontoVenda());
@@ -1549,7 +1552,7 @@ public class CotaServiceImpl implements CotaService {
 	private boolean isSocioPrincipal(List<SocioCota> sociosCota) {
 		
 		for(SocioCota socio : sociosCota){
-			if(socio.getPrincipal())
+			if(socio.getPrincipal()!= null && socio.getPrincipal())
 				return true;
 		}
 		

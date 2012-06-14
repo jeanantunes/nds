@@ -8,10 +8,12 @@ import org.hibernate.Query;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Repository;
 
+import br.com.abril.nds.dto.CotaFaturamentoDTO;
 import br.com.abril.nds.dto.DebitoCreditoCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroDebitoCreditoDTO;
 import br.com.abril.nds.dto.filtro.FiltroDebitoCreditoDTO.ColunaOrdenacao;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
+import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.OperacaoFinaceira;
 import br.com.abril.nds.model.financeiro.StatusBaixa;
@@ -180,8 +182,6 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepository<Mo
 		return query.list();
 	}
 
-	
-	
 	@Override
 	public Long obterQuantidadeMovimentoFinanceiroDataOperacao(Date dataAtual){
 		
@@ -465,4 +465,35 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepository<Mo
 		return (BigDecimal) query.uniqueResult();
 	}
 
+	/**
+	 * Obtém faturamento das cotas por período
+	 * @param cotas
+	 * @param dataInicial
+	 * @param dataFinal
+	 * @return List<CotaFaturamentoDTO>: Faturamento das Cotas
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<CotaFaturamentoDTO> obterFaturamentoCotasPorPeriodo(List<Cota> cotas,Date dataInicial, Date dataFinal) {
+
+		StringBuilder hql = new StringBuilder(" select ");
+
+		hql.append(" c.id as idCota, ");
+
+	    hql.append(" (select sum(mfc.valor - mfc.baixaCobranca.valorJuros - mfc.baixaCobranca.valorMulta + mfc.baixaCobranca.valorDesconto) from MovimentoFinanceiroCota mfc where mfc.cota = c ) as faturamentoLiquido, ");
+
+	    hql.append(" (select sum(mfc.valor - mfc.baixaCobranca.valorJuros - mfc.baixaCobranca.valorMulta + mfc.baixaCobranca.valorDesconto) from MovimentoFinanceiroCota mfc where mfc.cota = c ) as faturamentoBruto ");
+
+		hql.append(" from Cota c ");
+
+		hql.append(" where c in (:cotas) ");
+		
+		Query query = this.getSession().createQuery(hql.toString()).setResultTransformer(new AliasToBeanResultTransformer(CotaFaturamentoDTO.class));
+		
+		query.setParameterList("cotas", cotas);
+		
+		return query.list();
+	}
+
+	
 }

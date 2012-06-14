@@ -1,12 +1,14 @@
 <div id="dialog-novo" title="Incluir Novo Tipo de Movimento" style="display: none;">
 
 	<jsp:include page="../messagesDialog.jsp" />
+	
+	<input type="hidden" id="grupoMovimentoHidden" />
 
-	<table width="650" border="0" cellspacing="2" cellpadding="2">
+	<table width="760" border="0" cellspacing="2" cellpadding="2">
 	  <tr>
 	    <td width="119">Tipo de Lançamento:</td>
 	    <td width="517">
-			<select name="debitoCredito.tipoMovimentoFinanceiro.id" id="novoTipoMovimento" style="width:300px;">
+			<select onchange="configuraTelaLancamento(this.value);" name="debitoCredito.tipoMovimentoFinanceiro.id" id="novoTipoMovimento" style="width:300px;">
 		  		<option selected="selected"></option>
 				<c:forEach items="${tiposMovimentoFinanceiro}" var="tipoMovimento">
 					<option value="${tipoMovimento.id}">${tipoMovimento.descricao}</option>
@@ -14,13 +16,142 @@
 		    </select>
 	    </td>
 	  </tr>
+	</table>   
+	  
+	<table name="tabelaFaturamento" id="tabelaFaturamento" width="760" border="0">  
+	  <tr>
+	    <td width="40">Percentual(%):</td>
+	    <td width="30">
+			 <input type="text" style="width:30px;height:15px;" name="debitoCredito.percentual" id="novoPercentual" />
+	    </td>
+	    
+	    <td width="80">Base de Cálculo:</td>
+	    <td width="120">
+			<select name="debitoCredito.baseCalculo.id" id="novoBaseCalculo" style="width:120px;">
+			
+		  		<option selected="selected"></option>
+				<c:forEach items="${basesCalculo}" var="base">
+					<option value="${base}">${base.value}</option>
+				</c:forEach>
+				
+		    </select>
+	    </td>
+	    
+	    <td width="100">Período para Cálculo:</td>
+	    <td width="70">
+			<input type="text" name="debitoCredito.dataPeriodoDe" id="novoDataPeriodoDe" style="width:70px;height:15px;" />
+	    </td>
+	    
+	    <td width="20">até</td>
+	    <td width="70">
+			<input type="text" name="debitoCredito.dataPeriodoAte" id="novoDataPeriodoAte" style="width:70px;height:15px;" />
+	    </td>
+	  </tr>
+   </table>	  
+	  
+   <table width="760" border="0">  	  
+	  <tr>
+	    <td width="20">Box:</td>
+	    <td width="120">
+			<select name="debitoCredito.box.id" id="novoBox" style="width:120px;">
+			
+		  		<option value="" selected="selected"></option>
+				<c:forEach items="${boxes}" var="box">
+					<option value="${box.id}">${box.nome}</option>
+				</c:forEach>
+				
+		    </select>
+	    </td>
+	    
+	    <td width="40">Roteiro:</td>
+	    <td width="180">
+			<select name="debitoCredito.roteiro.id" id="novoRoteiro" style="width:180px;">
+			
+		  		<option value="" selected="selected"></option>
+				<c:forEach items="${roteiros}" var="roteiro">
+					<option value="${roteiro.id}">${roteiro.descricaoRoteiro}</option>
+				</c:forEach>
+				
+		    </select>
+	    </td>
+	    
+	    <td width="30">Rota:</td>
+	    <td width="180">
+			<select name="debitoCredito.rota.id" id="novoRota" style="width:180px;">
+			
+		  		<option value="" selected="selected"></option>
+				<c:forEach items="${rotas}" var="rota">
+					<option value="${rota.id}">${rota.descricaoRota}</option>
+				</c:forEach>
+				
+		    </select>
+	    </td>
+	  </tr>
+   </table>	  
+	  
+   <table width="760" border="0">   	  
+	  <tr>
+	    <td width="100">Data Vencimento:</td>
+	    <td width="100">
+			<input type="text" name="debitoCredito.dataVencimento" id="novoDataVencimento" style="width:70px;height:15px;" />
+	    </td>
+	    
+	    <td width="40" id="tituloNovoValor">Valor(R$):</td>
+	    <td width="70">
+			 <input type="text" style="width:70px;height:15px;" name="debitoCredito.valor" id="novoValor" />
+	    </td>
+	    
+	    <td width="30">Observação:</td>
+	    <td width="300">
+			 <input type="text" style="width:300px;height:15px;" name="debitoCredito.observacao" id="novoObservacao" />
+	    </td>
+	    
+	    <td width="20">
+	        <span>
+	            <a href="javascript:;" onclick="obterInformacoesParaLancamento();" style="width:20px;">
+	                <img src="${pageContext.request.contextPath}/images/ico_pesquisar.png" hspace="5" border="0" />
+	            </a>
+	        </span>
+	    </td>
+	    
+	  </tr>
 	</table>
+	
+	
+	
 	
 	<br />
 
 	<table class="debitosCreditosGrid_1" id="debitosCreditosGrid_1"></table>
 	
 	<script language="javascript" type="text/javascript">
+	
+	    
+	    $(function(){
+	    	$( "#novoDataPeriodoDe" ).datepicker({
+				showOn: "button",
+				buttonImage: "${pageContext.request.contextPath}/images/calendar.gif",
+				buttonImageOnly: true
+			});
+			$( "#novoDataPeriodoAte" ).datepicker({
+				showOn: "button",
+				buttonImage: "${pageContext.request.contextPath}/images/calendar.gif",
+				buttonImageOnly: true
+			});
+			$( "#novoDataVencimento" ).datepicker({
+				showOn: "button",
+				buttonImage: "${pageContext.request.contextPath}/images/calendar.gif",
+				buttonImageOnly: true
+			});
+			
+			$("#novoPercentual").numeric();
+			$("#novoValor").numeric();
+			$("#novoDataPeriodoDe").mask("99/99/9999");
+			$("#novoDataPeriodoAte").mask("99/99/9999");
+			$("#novoDataVencimento").mask("99/99/9999");
+			
+	    });
+	    
 
 		$(".debitosCreditosGrid_1").flexigrid({
 			preProcess: executarPreProcessamentoMovimento,
@@ -59,7 +190,7 @@
 			}],
 			disableSelect : true,
 			width : 760,
-			height : 230
+			height : 300
 		});
 		
 		function configurarCampos() {
@@ -111,8 +242,8 @@
 			
 			$("#dialog-novo").dialog({
 				resizable: false,
-				height:450,
-				width:780,
+				height:600,
+				width:800,
 				modal: true,
 				buttons: {
 					"Confirmar": function() {
@@ -127,7 +258,7 @@
 				}
 			});     
 		}
-
+		
 		function executarPreProcessamentoMovimento(resultado) {
 
 			if (resultado.mensagens) {
@@ -142,21 +273,37 @@
 
 			$.each(resultado.rows, function(index, row) {
 
+				
+				var vencimento = $("#novoDataVencimento").val();
+				var observacao = $("#novoObservacao").val();
+				var numCota='';
+				if (row.cell.numeroCota!=null){
+					numCota = row.cell.numeroCota;
+				}
+				var nomeCota='';
+				if (row.cell.nomeCota!=null){
+					nomeCota = row.cell.nomeCota;
+				}
+				var valor = $("#novoValor").val();
+				if (row.cell.valor!=null){
+					valor = row.cell.valor;
+				}
+				
 				var hiddenId = '<input type="hidden" name="idMovimento" value="' + index + '" />';
 				
 				var parametroPesquisaCota = '\'#numeroCota' + index + '\', \'#nomeCota' + index + '\', true';
 
 				var parametroAutoCompleteCota = '\'#nomeCota' + index + '\', true';
 				
-				var inputNumeroCota = '<input id="numeroCota' + index + '" maxlength="9" name="debitoCredito.numeroCota" type="text" style="width:80px; float:left; margin-right:5px;" onchange="cota.pesquisarPorNumeroCota(' + parametroPesquisaCota + ');" />';
+				var inputNumeroCota = '<input id="numeroCota' + index + '" value="' + numCota + '" maxlength="9" name="debitoCredito.numeroCota" type="text" style="width:80px; float:left; margin-right:5px;" onchange="cota.pesquisarPorNumeroCota(' + parametroPesquisaCota + ');" />';
 
-				var inputNomeCota = '<input id="nomeCota' + index + '" name="debitoCredito.nomeCota" type="text" style="width:180px;" onkeyup="cota.autoCompletarPorNome(' + parametroAutoCompleteCota + ');" onblur="cota.pesquisarPorNomeCota(' + parametroPesquisaCota + ')" />';
+				var inputNomeCota = '<input id="nomeCota' + index + '" value="' + nomeCota+ '" name="debitoCredito.nomeCota" type="text" style="width:180px;" onkeyup="cota.autoCompletarPorNome(' + parametroAutoCompleteCota + ');" onblur="cota.pesquisarPorNomeCota(' + parametroPesquisaCota + ')" />';
 				
-				var inputData = '<input id="data' + index + '" name="debitoCredito.dataVencimento" type="text" style="width:70px;" />';
+				var inputData = '<input id="data' + index + '" value="' + vencimento + '" name="debitoCredito.dataVencimento" type="text" style="width:70px;" />';
 				
-				var inputValor = '<input id="valor' + index + '" name="debitoCredito.valor" type="text" style="width:80px;" />';
+				var inputValor = '<input id="valor' + index + '" value="' + valor + '" name="debitoCredito.valor" type="text" style="width:80px;" />';
 				
-				var inputObservacao = '<input id="observacao' + index + '" name="debitoCredito.observacao" type="text" style="width:220px;" />';
+				var inputObservacao = '<input id="observacao' + index + '" value="' + observacao + '" name="debitoCredito.observacao" type="text" style="width:220px;" />';
 
 				row.cell[0] = hiddenId + inputNumeroCota;
 				row.cell[1] = inputNomeCota;
@@ -264,6 +411,67 @@
 				return true;
 			}
 		}
+		
+		function obterInformacoesParaLancamento(){
+
+			var idBox = $("#novoBox").val();
+			var idRoteiro = $("#novoRoteiro").val();
+			var idRota = $("#novoRota").val();
+			var grupoMovimento = $("#grupoMovimentoHidden").val();
+			var percentual = $("#novoPercentual").val();
+			var baseCalculo = $("#novoBaseCalculo").val();
+			var dataPeriodoInicial = $("#novoDataPeriodoDe").val();
+			var dataPeriodoFinal = $("#novoDataPeriodoAte").val();
+			
+			$(".debitosCreditosGrid_1").flexOptions({
+				url: "<c:url value='/financeiro/debitoCreditoCota/obterInformacoesParaLancamento' />",
+				params: [{name:'idBox', value:idBox},
+				         {name:'idRoteiro', value:idRoteiro},
+				         {name:'idRota', value:idRota},
+				         {name:'grupoMovimento', value:grupoMovimento},
+				         {name:'percentual', value:percentual},
+				         {name:'baseCalculo', value:baseCalculo},
+				         {name:'dataPeriodoInicial', value:dataPeriodoInicial},
+				         {name:'dataPeriodoFinal', value:dataPeriodoFinal}],
+				        newp: 1
+			},
+			null,
+			null,
+			true);
+
+			/*RECARREGA GRID CONFORME A EXECUCAO DO METODO COM OS PARAMETROS PASSADOS*/
+			$(".debitosCreditosGrid_1").flexReload();
+			
+			$(".grids").show();
+		}
+		
+		//VERIFICA SE O TIPO DE LANÇAMENTO CONSIDERA FATURAMENTO DA COTA
+		function configuraTelaLancamento(idTipoLancamento){
+			var data = [{name: 'idTipoMovimento', value: idTipoLancamento}];
+			$.postJSON("<c:url value='/financeiro/debitoCreditoCota/obterGrupoFaturamento' />",
+					   data,
+					   sucessCallbackConfiguraTelaLancamento,
+					   null,
+					   true);
+		}
+		
+		function sucessCallbackConfiguraTelaLancamento(result){
+			
+			$("#grupoMovimentoHidden").val(result);
+			
+			if (result=='DEBITO_SOBRE_FATURAMENTO'){
+				$('#tabelaFaturamento').show();
+				$('#tituloNovoValor').hide();
+				$('#novoValor').hide();
+			}
+			else{
+				$('#tabelaFaturamento').hide();
+				$('#tituloNovoValor').show();
+				$('#novoValor').show();
+			}
+			
+		}
+		
 	</script>
 	
 </div>

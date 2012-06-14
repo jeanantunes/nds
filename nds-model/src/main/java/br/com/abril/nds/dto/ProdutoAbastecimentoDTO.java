@@ -1,17 +1,25 @@
 package br.com.abril.nds.dto;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
+
+import br.com.abril.nds.util.CurrencyUtil;
 
 public class ProdutoAbastecimentoDTO implements Serializable{
 
 	private static final long serialVersionUID = -2951289520494037916L;
-
+	
 	private String codigoProduto;
 	private String nomeProduto;
 	private Long numeroEdicao;
 	private Integer reparte;
 	private String precoCapa;
 	private String total;
+	private String codigoRota;	
+	private String codigoBox;
+	private Long idProdutoEdicao;
+	private Integer codigoCota;
+	private Integer sequenciaMatriz;
 	
 	public ProdutoAbastecimentoDTO() {
 		
@@ -73,8 +81,9 @@ public class ProdutoAbastecimentoDTO implements Serializable{
 	/**
 	 * @param reparte the reparte to set
 	 */
-	public void setReparte(Integer reparte) {
-		this.reparte = reparte;
+	public void setReparte(BigDecimal reparte) {
+		if(reparte!=null)
+			this.reparte = reparte.intValue();
 	}
 	/**
 	 * @return the precoCapa
@@ -85,8 +94,8 @@ public class ProdutoAbastecimentoDTO implements Serializable{
 	/**
 	 * @param precoCapa the precoCapa to set
 	 */
-	public void setPrecoCapa(String precoCapa) {
-		this.precoCapa = precoCapa;
+	public void setPrecoCapa(BigDecimal precoCapa) {
+		this.precoCapa = CurrencyUtil.formatarValor(precoCapa);
 	}
 	/**
 	 * @return the total
@@ -97,8 +106,48 @@ public class ProdutoAbastecimentoDTO implements Serializable{
 	/**
 	 * @param total the total to set
 	 */
-	public void setTotal(String total) {
-		this.total = total;
+	public void setTotal(BigDecimal total) {
+		this.total = CurrencyUtil.formatarValor(total);
+	}
+
+	public String getCodigoBox() {
+		return codigoBox;
+	}
+
+	public void setCodigoBox(String codigoBox) {
+		this.codigoBox = codigoBox;
+	}
+
+	public String getCodigoRota() {
+		return codigoRota;
+	}
+
+	public void setCodigoRota(String codigoRota) {
+		this.codigoRota = codigoRota;
+	}
+
+	public Long getIdProdutoEdicao() {
+		return idProdutoEdicao;
+	}
+
+	public void setIdProdutoEdicao(Long idProdutoEdicao) {
+		this.idProdutoEdicao = idProdutoEdicao;
+	}
+
+	public Integer getSequenciaMatriz() {
+		return sequenciaMatriz;
+	}
+
+	public void setSequenciaMatriz(Integer sequenciaMatriz) {
+		this.sequenciaMatriz = sequenciaMatriz;
+	}
+
+	public Integer getCodigoCota() {
+		return codigoCota;
+	}
+
+	public void setCodigoCota(Integer codigoCota) {
+		this.codigoCota = codigoCota;
 	}
 	
 	

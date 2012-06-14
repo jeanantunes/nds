@@ -2,22 +2,33 @@ package br.com.abril.nds.dto;
 
 import java.io.Serializable;
 
+import br.com.abril.nds.util.export.Export;
+import br.com.abril.nds.util.export.Export.Alignment;
+import br.com.abril.nds.util.export.Exportable;
+
+@Exportable
 public class CotaAusenteEncalheDTO implements Serializable {
 
 	private static final long serialVersionUID = -5167121794665878284L;
 	
 	private Long idCota;
-	
+
+	@Export(label = "Cota", alignment = Alignment.CENTER, exhibitionOrder = 1)
 	private Integer numeroCota;
 
+	@Export(label = "Nome", alignment = Alignment.CENTER, exhibitionOrder = 2)
 	private String colaboradorName;
-	
+
+	@Export(label = "Box", alignment = Alignment.CENTER, exhibitionOrder = 3)
 	private String boxName;
-	
+
+	@Export(label = "Roteiro", alignment = Alignment.CENTER, exhibitionOrder = 4)
 	private String roteiroName;
-	
+
+	@Export(label = "Rota", alignment = Alignment.CENTER, exhibitionOrder = 5)
 	private String rotaName;
-	
+
+	@Export(label = "Ação", alignment = Alignment.CENTER, exhibitionOrder = 6)
 	private String acao = "";
 	
 	private String check;

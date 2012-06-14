@@ -177,5 +177,7 @@ public interface CotaRepository extends Repository<Cota, Long> {
 	ResultadoCurvaABCCota obterCurvaABCCotaTotal(FiltroCurvaABCCotaDTO filtroCurvaABCCotaDTO);
 	
 	List<RegistroCurvaABCCotaVO> obterCurvaABCCota(FiltroCurvaABCCotaDTO filtro);
+	
+	List<Cota> obterCotasPorIDS(List<Long> idsCotas);
 
 }

@@ -183,7 +183,7 @@ $(function() {
 			carregarGridbox(formData);
 			$("#gridProduto").hide();
 		}else{
-			var mensagens = new Array('Selecione um tipo de cosnulta!') ;
+			var mensagens = new Array('O preenchimento do campo \'Tipo de Consulta\' é obrigatório.') ;
 			exibirMensagem('WARNING',mensagens);
 		}
 		

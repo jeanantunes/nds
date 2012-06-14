@@ -55,7 +55,6 @@
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-context-support</artifactId>
 		</dependency>
-
 		<dependency>
 			<groupId>org.hsqldb</groupId>
 			<artifactId>hsqldb</artifactId>
@@ -143,6 +142,10 @@
 			<groupId>br.com.abril</groupId>
 			<artifactId>ndsi-canonical</artifactId>
 			<version>1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>br.com.jcomputacao</groupId>
+			<artifactId>nfexml</artifactId>
 		</dependency>
 	</dependencies>
 
@@ -246,6 +249,9 @@
 				<activeByDefault>true</activeByDefault>
 			</activation>
 			<properties>
+				<dataSourceURL>jdbc:mysql://localhost:3306/nds-client</dataSourceURL>
+				<dataSourceUsername>root</dataSourceUsername>
+				<dataSourcePassword>root</dataSourcePassword>
 				<testDataSourceURL>jdbc:mysql://localhost:3306/nds-client-test</testDataSourceURL>
 				<testDataSourceUsername>root</testDataSourceUsername>
 				<testDataSourcePassword>root</testDataSourcePassword>
@@ -266,6 +272,9 @@
 		<profile>
 			<id>desenvolvimento-abril</id>
 			<properties>
+				<dataSourceURL>jdbc:mysql://abrildgbdb01.cdgtwjqgurfb.sa-east-1.rds.amazonaws.com:3306/nds-client</dataSourceURL>
+				<dataSourceUsername>admin</dataSourceUsername>
+				<dataSourcePassword>abrildgb01</dataSourcePassword>
 				<testDataSourceURL>jdbc:mysql://abrildgbdb01.cdgtwjqgurfb.sa-east-1.rds.amazonaws.com:3306/nds-client-test</testDataSourceURL>
 				<testDataSourceUsername>admin</testDataSourceUsername>
 				<testDataSourcePassword>abrildgb01</testDataSourcePassword>
@@ -286,7 +295,10 @@
 		<profile>
 			<id>integracaoContinua</id>
 			<properties>
-				<testDataSourceURL>jdbc:mysql://abrildgbdb01.cdgtwjqgurfb.sa-east-1.rds.amazonaws.com:3306/NDS</testDataSourceURL>
+				<dataSourceURL>jdbc:mysql://abrildgbdb01.cdgtwjqgurfb.sa-east-1.rds.amazonaws.com:3306/nds-client</dataSourceURL>
+				<dataSourceUsername>admin</dataSourceUsername>
+				<dataSourcePassword>abrildgb01</dataSourcePassword>
+				<testDataSourceURL>jdbc:mysql://abrildgbdb01.cdgtwjqgurfb.sa-east-1.rds.amazonaws.com:3306/nds-client-test</testDataSourceURL>
 				<testDataSourceUsername>admin</testDataSourceUsername>
 				<testDataSourcePassword>abrildgb01</testDataSourcePassword>
 			</properties>

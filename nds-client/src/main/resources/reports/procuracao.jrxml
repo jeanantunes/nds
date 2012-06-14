@@ -79,7 +79,7 @@
 			</staticText>
 			<image>
 				<reportElement x="33" y="9" width="101" height="58"/>
-				<imageExpression><![CDATA["C:\\Users\\william.machado\\Desktop\\procuracao\\logo_login.png"]]></imageExpression>
+				<imageExpression><![CDATA[Thread.currentThread().getContextClassLoader().getResource("/reports/logo_login.png").toURI().getPath()]]></imageExpression>
 			</image>
 		</band>
 	</pageHeader>

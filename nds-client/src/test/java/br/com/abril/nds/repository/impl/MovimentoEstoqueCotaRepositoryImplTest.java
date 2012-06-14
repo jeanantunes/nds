@@ -10,11 +10,14 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.dto.AbastecimentoDTO;
 import br.com.abril.nds.dto.ConsultaEncalheDTO;
 import br.com.abril.nds.dto.ContagemDevolucaoDTO;
+import br.com.abril.nds.dto.ProdutoAbastecimentoDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroDigitacaoContagemDevolucaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroDigitacaoContagemDevolucaoDTO.OrdenacaoColuna;
+import br.com.abril.nds.dto.filtro.FiltroMapaAbastecimentoDTO;
 import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.StatusConfirmacao;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
@@ -24,10 +27,15 @@ import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.cadastro.Rota;
+import br.com.abril.nds.model.cadastro.Roteirizacao;
+import br.com.abril.nds.model.cadastro.Roteiro;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.cadastro.TipoFornecedor;
 import br.com.abril.nds.model.cadastro.TipoProduto;
+import br.com.abril.nds.model.cadastro.TipoRoteiro;
+import br.com.abril.nds.model.cadastro.pdv.PDV;
 import br.com.abril.nds.model.estoque.ConferenciaEncalhe;
 import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
@@ -70,6 +78,11 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 	private TipoFornecedor tipoFornecedorPublicacao;
 	private Cota cotaManoel;
 	
+	private Box box1;
+	private Box box2;
+	
+	private Rota rota1;
+	private Rota rota2;
 	
 	private ItemRecebimentoFisico itemRecebimentoFisico1Veja;
 	private ItemRecebimentoFisico itemRecebimentoFisico2Veja;
@@ -86,6 +99,7 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 	
 	@Before
 	public void setUpGeral() {
+		
 		tipoFornecedorPublicacao = Fixture.tipoFornecedorPublicacao();
 		fornecedorFC = Fixture.fornecedorFC(tipoFornecedorPublicacao);
 		fornecedorDinap = Fixture.fornecedorDinap(tipoFornecedorPublicacao);
@@ -402,6 +416,95 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 
 		save(controleContagemDevolucao);		
 	}
+	
+
+	public void setUpForMapaAbastecimento() {		
+		
+		Usuario usuarioJoao = Fixture.usuarioJoao();
+		save(usuarioJoao);
+		
+		PessoaFisica manoel = Fixture.pessoaFisica("123.456.789-00",
+				"manoel@mail.com", "Manoel da Silva");
+		save(manoel);
+		
+		PessoaFisica pedro = Fixture.pessoaFisica("124.456.789-00",
+				"pedro@mail.com", "Pedro Alvares");
+		save(pedro);
+		
+		box1 = Fixture.criarBox("Box-1", "BX-001", TipoBox.LANCAMENTO, false);
+		save(box1);
+		
+		box2 = Fixture.criarBox("Box-2", "BX-002", TipoBox.LANCAMENTO, false);
+		save(box2);
+		
+		Roteiro roteiro1 = Fixture.criarRoteiro("", box1, TipoRoteiro.NORMAL);
+		Roteiro roteiro2 = Fixture.criarRoteiro("", box2, TipoRoteiro.NORMAL);
+		save(roteiro1,roteiro2);
+		
+		rota1 = Fixture.rota("ROTA01", "Rota 1");
+		rota2 = Fixture.rota("ROTA01", "Rota 1");
+		rota1.setRoteiro(roteiro1);
+		rota2.setRoteiro(roteiro2);
+		save(rota1,rota2);
+		
+		cotaManoel = Fixture.cota(123, manoel, SituacaoCadastro.ATIVO, box1);
+		save(cotaManoel);
+		
+		Cota cotaPedro = Fixture.cota(124, pedro, SituacaoCadastro.ATIVO, box2);
+		save(cotaPedro);
+		
+		
+		EstoqueProdutoCota estoqueProdutoCota = Fixture.estoqueProdutoCota(
+				veja1, cotaManoel, BigDecimal.TEN, BigDecimal.ZERO);
+		save(estoqueProdutoCota);
+		
+		estoqueProdutoCota = Fixture.estoqueProdutoCota(
+				quatroRoda2, cotaManoel, BigDecimal.TEN, BigDecimal.ZERO);
+		save(estoqueProdutoCota);
+	
+		
+		EstoqueProdutoCota estoqueProdutoPedro = Fixture.estoqueProdutoCota(
+				veja1, cotaPedro, BigDecimal.TEN, BigDecimal.ZERO);
+		save(estoqueProdutoPedro);
+		
+		estoqueProdutoPedro = Fixture.estoqueProdutoCota(
+				quatroRoda2, cotaPedro, BigDecimal.TEN, BigDecimal.ZERO);
+		save(estoqueProdutoPedro);
+		
+		
+		TipoMovimentoEstoque tipoMovRecebReparte = Fixture.tipoMovimentoRecebimentoReparte();
+		save(tipoMovRecebReparte);
+		
+		MovimentoEstoqueCota mec0 = Fixture.movimentoEstoqueCota(veja1, tipoMovRecebReparte, usuarioJoao, 
+				estoqueProdutoCota, new BigDecimal(50), cotaManoel, StatusAprovacao.APROVADO, "");
+		save(mec0);
+		
+		MovimentoEstoqueCota mec1 = Fixture.movimentoEstoqueCota(quatroRoda2, tipoMovRecebReparte, usuarioJoao, 
+				estoqueProdutoCota, new BigDecimal(50), cotaManoel, StatusAprovacao.APROVADO, "");
+		save(mec1);
+		
+		
+		MovimentoEstoqueCota mec2 = Fixture.movimentoEstoqueCota(veja1, tipoMovRecebReparte, usuarioJoao, 
+				estoqueProdutoCota, new BigDecimal(100), cotaPedro, StatusAprovacao.APROVADO, "");
+		save(mec2);
+		
+		MovimentoEstoqueCota mec3 = Fixture.movimentoEstoqueCota(quatroRoda2, tipoMovRecebReparte, usuarioJoao, 
+				estoqueProdutoCota, new BigDecimal(100), cotaPedro, StatusAprovacao.APROVADO, "");
+		save(mec3);
+			
+		PDV pdv = Fixture.criarPDVPrincipal("Meu PDV", cotaManoel );
+		save(pdv);
+		
+		Roteirizacao roteirizacao = Fixture.criarRoteirizacao(pdv, rota1, 0);
+		save(roteirizacao);
+		
+		PDV pdv2 = Fixture.criarPDVPrincipal("Meu PDV", cotaManoel );
+		save(pdv2);
+		
+		Roteirizacao roteirizacao2 = Fixture.criarRoteirizacao(pdv2, rota2, 0);
+		save(roteirizacao2);
+	}
+	
 	
 	public void setUpForConsultaEncalhe() {
 		
@@ -768,6 +871,72 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		List<MovimentoEstoqueCota> listaMovimento = movimentoEstoqueCotaRepository.obterMovimentoCotaPorTipoMovimento(data, cotaManoel.getId(), GrupoMovimentoEstoque.ENVIO_JORNALEIRO);
 		
 		Assert.assertTrue(listaMovimento.size() == 1);
+	}
+	
+	@Test
+	public void obterDadosAbastecimentoSemFiltros() {
+		
+		setUpForMapaAbastecimento();
+		
+		FiltroMapaAbastecimentoDTO filtro = new FiltroMapaAbastecimentoDTO();
+		filtro.setDataDate(new Date());
+		filtro.setPaginacao(new PaginacaoVO(1, 10, "asc", "box"));
+		
+		List<AbastecimentoDTO> listaMovimento = movimentoEstoqueCotaRepository.obterDadosAbastecimento(filtro);
+
+		Assert.assertTrue(listaMovimento.size() == 2);
+	}	
+	
+	@Test
+	public void obterDadosAbastecimentoComFiltros() {
+		
+		setUpForMapaAbastecimento();
+		
+		FiltroMapaAbastecimentoDTO filtro = new FiltroMapaAbastecimentoDTO();
+		filtro.setDataDate(new Date());
+		filtro.setPaginacao(new PaginacaoVO(1, 10, "asc", "box"));
+		filtro.setBox(box1.getId());
+		filtro.setRota(rota1.getId());
+		filtro.setCodigoProduto(veja1.getCodigo());
+		filtro.setCodigoCota(cotaManoel.getNumeroCota());
+		
+		List<AbastecimentoDTO> listaMovimento = movimentoEstoqueCotaRepository.obterDadosAbastecimento(filtro);
+
+		Assert.assertTrue(listaMovimento.size() == 1);	
+	}
+	
+	@Test
+	public void countObterDadosAbastecimento() {
+		
+		setUpForMapaAbastecimento();
+		
+		FiltroMapaAbastecimentoDTO filtro = new FiltroMapaAbastecimentoDTO();
+		filtro.setDataDate(new Date());
+		filtro.setPaginacao(new PaginacaoVO(1, 10, "asc", "box"));
+		filtro.setBox(box1.getId());
+		filtro.setRota(rota1.getId());
+		filtro.setCodigoProduto(veja1.getCodigo());
+		filtro.setCodigoCota(cotaManoel.getNumeroCota());
+		
+		Long count = movimentoEstoqueCotaRepository.countObterDadosAbastecimento(filtro);
+
+		Assert.assertTrue(count.equals(1L));
+	}	
+	
+	@Test
+	public void obterDetalhesAbastecimento() {
+		
+		setUpForMapaAbastecimento();
+		
+		FiltroMapaAbastecimentoDTO filtro = new FiltroMapaAbastecimentoDTO();
+		filtro.setDataDate(new Date());
+		filtro.setPaginacaoDetalhes(new PaginacaoVO(1, 10, "asc", "codigoProduto"));
+		filtro.setCodigoCota(cotaManoel.getNumeroCota());
+		
+		List<ProdutoAbastecimentoDTO> listaMovimento = 
+				movimentoEstoqueCotaRepository.obterDetlhesDadosAbastecimento(box1.getId(), filtro);
+
+		Assert.assertTrue(listaMovimento.size() == 2);	
 	}
 	
 }

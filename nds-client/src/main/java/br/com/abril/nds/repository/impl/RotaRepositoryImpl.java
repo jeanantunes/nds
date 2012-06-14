@@ -74,7 +74,7 @@ public class RotaRepositoryImpl extends AbstractRepository<Rota, Long>
 		}else if(Ordenacao.DESC ==  ordenacao){
 			criteria.addOrder(Order.desc(sortname));
 		}
-		return criteria.list();
+		return  criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -143,6 +143,19 @@ public class RotaRepositoryImpl extends AbstractRepository<Rota, Long>
 		return query.list();
 	}
 	
+	@SuppressWarnings("unchecked")
+	public List<Rota> obterRotasPorCota(Integer numeroCota){
+		
+		Criteria criteria =  getSession().createCriteria(Rota.class, "rota");
+		criteria.createAlias("rota.roteirizacao","roteirizacao");
+		criteria.createAlias("roteirizacao.pdv","pdv");
+		criteria.createAlias("pdv.cota","cota");
+		
+		criteria.add(Restrictions.eq("cota.numeroCota", numeroCota));
+		criteria.addOrder(Order.asc("rota.descricaoRota"));
+		
+		return criteria.list();
+	}	
 	@Override
 	public Integer buscarMaiorOrdemRota(Long idRoteiro){
 		Criteria criteria  = getSession().createCriteria(Rota.class);

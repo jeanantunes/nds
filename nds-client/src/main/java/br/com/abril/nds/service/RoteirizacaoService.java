@@ -9,6 +9,7 @@ import br.com.abril.nds.model.LogLocalidade;
 import br.com.abril.nds.model.cadastro.Rota;
 import br.com.abril.nds.model.cadastro.Roteirizacao;
 import br.com.abril.nds.model.cadastro.Roteiro;
+import br.com.abril.nds.model.cadastro.TipoRoteiro;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
 public interface RoteirizacaoService {
@@ -54,6 +55,15 @@ public interface RoteirizacaoService {
 	List<CotaDisponivelRoteirizacaoDTO> buscarPvsPorCota(Integer numeroCota,  Long rotaId,  Long roteiroId );
 	
 	void gravaRoteirizacao(List<CotaDisponivelRoteirizacaoDTO> lista,  Long idRota);
+
+	/**
+	 * Obtem rotas por numero da cota
+	 * 
+	 * @param numeroCota - Numero da Cota
+	 * @return Lista de Rotas
+	 */
+	
+	List<Rota> obterRotasPorCota(Integer numeroCota);
 	
 	Integer buscarMaiorOrdemRoteiro();
 	
@@ -70,6 +80,20 @@ public interface RoteirizacaoService {
 	List<LogLocalidade> buscarMunicipioPorUf(String uf);
 	
 	List<LogBairro> buscarBairroPorMunicipio(Long municipio, String uf);
+	
+	List<Roteiro> buscarRoteiroEspecial();
+	
+	List<Roteirizacao> buscarRoteirizacao(Long boxId, Long roteiroId, Long rotaId, TipoRoteiro tipoRoteiro, String  orderBy, Ordenacao ordenacao, int initialResult, int maxResults);
+	
+	List<Roteirizacao> buscarRoteirizacaoPorNumeroCota(Integer numeroCota, TipoRoteiro tipoRoteiro, String  orderBy, Ordenacao ordenacao, int initialResult, int maxResults);
+	
+	void transferirRoteirizacaoComNovaRota(List<Long> roteirizacaoId,Rota rota);
+	
+	void atualizaOrdenacao(Roteirizacao roteirizacao);
+	
+	void atualizaOrdenacaoAsc(Roteirizacao roteirizacao);
+	
+	void atualizaOrdenacaoDesc(Roteirizacao roteirizacao);
 
 }
 	

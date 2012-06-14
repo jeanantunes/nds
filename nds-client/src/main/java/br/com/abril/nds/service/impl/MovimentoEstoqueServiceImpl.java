@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
@@ -34,6 +35,7 @@ import br.com.abril.nds.repository.UsuarioRepository;
 import br.com.abril.nds.service.ControleAprovacaoService;
 import br.com.abril.nds.service.MovimentoEstoqueService;
 import br.com.abril.nds.service.exception.TipoMovimentoEstoqueInexistenteException;
+import br.com.abril.nds.util.TipoMensagem;
 
 @Service
 public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
@@ -109,6 +111,10 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 	@Transactional
 	public void enviarSuplementarCotaAusente(Date data, Long idCota,List<MovimentoEstoqueCota> listaMovimentoCota) throws TipoMovimentoEstoqueInexistenteException{
 		
+		if(listaMovimentoCota==null || listaMovimentoCota.isEmpty()) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "Cota não possui reparte na data.");
+		}
+		
 		TipoMovimentoEstoque tipoMovimento = 
 				tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.SUPLEMENTAR_COTA_AUSENTE);
 			
@@ -123,32 +129,52 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 			throw new TipoMovimentoEstoqueInexistenteException(GrupoMovimentoEstoque.ESTORNO_REPARTE_COTA_AUSENTE);
 		}
 		
-		if(listaMovimentoCota != null){
 			
-			for(MovimentoEstoqueCota movimentoCota : listaMovimentoCota){
-				
-				if(movimentoCota.getData() != null &&  movimentoCota.getProdutoEdicao()!=null
-						&& movimentoCota.getUsuario() != null
-						&&  movimentoCota.getQtde() != null ){
-					
-					gerarMovimentoEstoque(movimentoCota.getData(), movimentoCota.getProdutoEdicao().getId(), movimentoCota.getUsuario().getId(), movimentoCota.getQtde(), tipoMovimento);
-				
-					gerarMovimentoCota(movimentoCota.getData(), movimentoCota.getProdutoEdicao().getId(), movimentoCota.getCota().getId(),movimentoCota.getUsuario().getId(), movimentoCota.getQtde(), tipoMovimentoCota);
+		for(MovimentoEstoqueCota movimentoCota : listaMovimentoCota){
 			
-				}
-			}
+			if(movimentoCota.getData() != null &&  movimentoCota.getProdutoEdicao()!=null
+					&& movimentoCota.getUsuario() != null
+					&&  movimentoCota.getQtde() != null ){
+				
+				gerarMovimentoEstoque(movimentoCota.getData(), movimentoCota.getProdutoEdicao().getId(), movimentoCota.getUsuario().getId(), movimentoCota.getQtde(), tipoMovimento);
+			
+				gerarMovimentoCota(movimentoCota.getData(), movimentoCota.getProdutoEdicao().getId(), movimentoCota.getCota().getId(),movimentoCota.getUsuario().getId(), movimentoCota.getQtde(), tipoMovimentoCota);
 		
+			}
 		}
+	
+	
 	}
 	
 	@Override
 	@Transactional
 	public MovimentoEstoque gerarMovimentoEstoque(Date dataLancamento, Long idProdutoEdicao, Long idUsuario, BigDecimal quantidade,TipoMovimentoEstoque tipoMovimentoEstoque) {
-		
 
-		ItemRecebimentoFisico itemRecebimentoFisico = 
-			itemRecebimentoFisicoRepository.obterItemPorDataLancamentoIdProdutoEdicao(dataLancamento, idProdutoEdicao);
-				
+		MovimentoEstoque movimentoEstoque = criarMovimentoEstoque(dataLancamento, idProdutoEdicao, idUsuario, quantidade, tipoMovimentoEstoque);
+		
+		return movimentoEstoque;
+	}
+	
+	@Override
+	@Transactional
+	public MovimentoEstoque gerarMovimentoEstoque(Long idProdutoEdicao, Long idUsuario, BigDecimal quantidade,TipoMovimentoEstoque tipoMovimentoEstoque) {
+
+		MovimentoEstoque movimentoEstoque = criarMovimentoEstoque(null, idProdutoEdicao, idUsuario, quantidade, tipoMovimentoEstoque);
+		
+		return movimentoEstoque;
+	}
+	
+	private MovimentoEstoque criarMovimentoEstoque(Date dataLancamento, Long idProdutoEdicao, Long idUsuario, BigDecimal quantidade,TipoMovimentoEstoque tipoMovimentoEstoque){
+		
+		MovimentoEstoque movimentoEstoque = new MovimentoEstoque();
+		
+		if(dataLancamento!= null){	
+			ItemRecebimentoFisico itemRecebimentoFisico = 
+				itemRecebimentoFisicoRepository.obterItemPorDataLancamentoIdProdutoEdicao(dataLancamento, idProdutoEdicao);
+			
+			movimentoEstoque.setItemRecebimentoFisico(itemRecebimentoFisico);
+		}
+		
 		ProdutoEdicao produtoEdicao = this.produtoEdicaoRepository.buscarPorId(idProdutoEdicao);
 		
 		Usuario usuario = usuarioRepository.buscarPorId(idUsuario);
@@ -166,9 +192,6 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 			this.estoqueProdutoRespository.adicionar(estoqueProduto);
 		}
 		
-		MovimentoEstoque movimentoEstoque = new MovimentoEstoque();
-		
-		movimentoEstoque.setItemRecebimentoFisico(itemRecebimentoFisico);
 		movimentoEstoque.setEstoqueProduto(estoqueProduto);
 		movimentoEstoque.setProdutoEdicao(produtoEdicao);		
 		movimentoEstoque.setData(new Date());
@@ -182,8 +205,6 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 			
 			controleAprovacaoService.realizarAprovacaoMovimento(movimentoEstoque, usuario);
 		}
-		
-		atualizarEstoqueProduto(tipoMovimentoEstoque, movimentoEstoque);
 		
 		return movimentoEstoque;
 	}
@@ -210,7 +231,15 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 					 
 					 estoqueProduto.setQtdeSuplementar(novaQuantidade);
 					 
-				 } else {
+				 } if(GrupoMovimentoEstoque.ESTORNO_VENDA_ENCALHE.equals(tipoMovimentoEstoque.getGrupoMovimentoEstoque())){
+					
+					 BigDecimal qtdeEncalhe = estoqueProduto.getQtdeDevolucaoEncalhe() == null ? BigDecimal.ZERO : estoqueProduto.getQtdeDevolucaoEncalhe();
+						
+					 novaQuantidade = qtdeEncalhe.add(movimentoEstoque.getQtde());
+						
+					 estoqueProduto.setQtdeDevolucaoEncalhe(novaQuantidade);
+				 } 				 
+				 else {
 					 
 					 novaQuantidade = estoqueProduto.getQtde().add(movimentoEstoque.getQtde());
 					 
@@ -228,7 +257,15 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 					
 					estoqueProduto.setQtdeSuplementar(novaQuantidade);
 					 
-				 } else {
+				 }else if (GrupoMovimentoEstoque.VENDA_ENCALHE.equals(tipoMovimentoEstoque.getGrupoMovimentoEstoque())){
+					
+					 BigDecimal qtdeEncalhe = estoqueProduto.getQtdeDevolucaoEncalhe() == null ? BigDecimal.ZERO : estoqueProduto.getQtdeDevolucaoEncalhe();
+						
+					 novaQuantidade = qtdeEncalhe.subtract(movimentoEstoque.getQtde());
+						
+					 estoqueProduto.setQtdeDevolucaoEncalhe(novaQuantidade);
+				 }
+				 else {
 					 
 					 novaQuantidade = estoqueProduto.getQtde().subtract(movimentoEstoque.getQtde());
 						

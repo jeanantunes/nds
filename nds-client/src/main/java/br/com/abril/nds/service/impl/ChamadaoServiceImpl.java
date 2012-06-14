@@ -141,7 +141,7 @@ public class ChamadaoServiceImpl implements ChamadaoService {
 			chamadaEncalheCota = new ChamadaEncalheCota();
 			
 			chamadaEncalheCota.setChamadaEncalhe(chamadaEncalhe);
-			chamadaEncalheCota.setConferido(Boolean.FALSE);
+			chamadaEncalheCota.setFechado(Boolean.FALSE);
 			chamadaEncalheCota.setCota(cota);
 			
 			estoqueProdutoCota =

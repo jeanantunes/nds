@@ -4,8 +4,8 @@ import java.util.List;
 import java.util.Map;
 
 import br.com.abril.nds.dto.ConsultaLoteNotaFiscalDTO;
+import br.com.abril.nds.dto.RetornoNFEDTO;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
-import br.com.abril.nds.model.fiscal.nota.RetornoComunicacaoEletronica;
 
 /**
  * Inteface do serviço de Nota Fiscal.
@@ -34,24 +34,31 @@ public interface NotaFiscalService {
 	List<NotaFiscal> gerarDadosNotaFicalEmLote(ConsultaLoteNotaFiscalDTO dadosConsultaLoteNotaFiscal);
 	
 	/**
-	 * Processa o retorno de uma nota fiscal.
-	 * 
-	 * @param retornoComunicacaoEletronica - informações de retorno da comunicação eletrônica
+	 * Processa o retorno de uma nota fiscal. Validando os arquivos de notas que ja foram retornados.
+	 *  
+	 * @param listaDadosRetornoNFE - informações de retorno da comunicação eletrônica
 	 */
-	void processarRetornoNotaFiscal(String chaveAcesso, RetornoComunicacaoEletronica retornoComunicacaoEletronica);
+	List<RetornoNFEDTO> processarRetornoNotaFiscal(List<RetornoNFEDTO> listaDadosRetornoNFE);
+	
+	/**
+	 * Autoriza uma nota fiscal.
+	 * 
+	 * @param dadosRetornoNFE - dados de retorno da nota fiscal
+	 */
+	void autorizarNotaFiscal(RetornoNFEDTO dadosRetornoNFE);
 	
 	/**
 	 * Cancela uma nota fiscal.
 	 * 
-	 * @param chaveAcesso - chave de acesso da nota fiscal
+	 * @param id - id da nota fiscal
 	 */
-	void cancelarNotaFiscal(String chaveAcesso);
+	void cancelarNotaFiscal(Long id);
 	
 	/**
 	 * Denega uma nota fiscal.
 	 * 
-	 * @param chaveAcesso - chave de acesso da nota fiscal
+	 * @param id - id da nota fiscal
 	 */
-	void denegarNotaFiscal(String chaveAcesso);
+	void denegarNotaFiscal(Long id);
 
 }

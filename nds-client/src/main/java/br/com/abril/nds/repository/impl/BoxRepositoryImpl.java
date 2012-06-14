@@ -267,5 +267,96 @@ public class BoxRepositoryImpl extends AbstractRepository<Box,Long> implements B
 		
 	}
 
+	/**
+	 * Obtém Lista de Cotas por Box, Rota e Roteiro
+	 * @param idBox
+	 * @param idRoteiro
+	 * @param idRota
+	 * @return List<Cota>
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Cota> obterCotasPorBoxRoteiroRota(Long idBox, Long idRoteiro, Long idRota) {
+        
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select c from Cota c");
+		
+		if(idRoteiro!=null){
+		    hql.append(", Roteiro rr");
+		}  
+		
+		if (idRota!=null){
+			hql.append(", Rota r");
+		}
+		
+		hql.append(" where c.box.id = :idBox");
+		
+		if(idRoteiro!=null){
+		    hql.append(" and rr.box = c.box and rr.id = :idRoteiro ");
+		    if (idRota!=null){
+				hql.append(" and r.roteiro = rr and r.id = :idRota ");
+			}
+		}
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		
+		query.setParameter("idBox", idBox);
+		
+		if (idRoteiro!=null){
+			query.setParameter("idRoteiro", idRoteiro);
+			if(idRota!=null){
+			    query.setParameter("idRota", idRota);
+			}
+		}
+		
+		return query.list();
+	}
+	
+	/**
+	 * Obtém Quantidade de Cotas por Box, Rota e Roteiro
+	 * @param idBox
+	 * @param idRoteiro
+	 * @param idRota
+	 * @return Número de Cotas encontradas
+	 */
+	@Override
+	public int obterQuantidadeCotasPorBoxRoteiroRota(Long idBox, Long idRoteiro, Long idRota) {
+        
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select c from Cota c");
+		
+		if(idRoteiro!=null){
+		    hql.append(", Roteiro rr");
+		}  
+		
+		if (idRota!=null){
+			hql.append(", Rota r");
+		}
+		
+		hql.append(" where c.box.id = :idBox");
+		
+		if(idRoteiro!=null){
+		    hql.append(" and rr.box = c.box and rr.id = :idRoteiro ");
+		    if (idRota!=null){
+				hql.append(" and r.roteiro = rr and r.id = :idRota ");
+			}
+		}
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		
+		query.setParameter("idBox", idBox);
+		
+		if (idRoteiro!=null){
+			query.setParameter("idRoteiro", idRoteiro);
+			if(idRota!=null){
+			    query.setParameter("idRota", idRota);
+			}
+		}
+		
+		return query.list().size();
+	}
+
 
 }

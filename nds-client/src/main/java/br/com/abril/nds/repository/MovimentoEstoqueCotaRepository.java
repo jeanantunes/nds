@@ -4,10 +4,13 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
+import br.com.abril.nds.dto.AbastecimentoDTO;
 import br.com.abril.nds.dto.ConsultaEncalheDTO;
 import br.com.abril.nds.dto.ContagemDevolucaoDTO;
+import br.com.abril.nds.dto.ProdutoAbastecimentoDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroDigitacaoContagemDevolucaoDTO;
+import br.com.abril.nds.dto.filtro.FiltroMapaAbastecimentoDTO;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.OperacaoEstoque;
@@ -143,4 +146,73 @@ public interface MovimentoEstoqueCotaRepository extends Repository<MovimentoEsto
 			Date dataFinal,
 			OperacaoEstoque operacaoEstoque);
 	
+	/**
+	 * Obtem dados referentes ao Mapa de Abastecimento
+	 * 
+	 * @param filtro
+	 * @return List - AbastecimentoDTO
+	 */
+	public List<AbastecimentoDTO> obterDadosAbastecimento(FiltroMapaAbastecimentoDTO filtro);
+
+	/**
+	 * Obtem quantidade de registros retornados pelo filtro de "obterDadosAbastecimento"
+	 * 
+	 * @param filtro
+	 * @return Long - Quantidade
+	 */
+	public Long countObterDadosAbastecimento(FiltroMapaAbastecimentoDTO filtro);
+
+	/**
+	 * Obtém detalhes - Mapa de Abastecimento
+	 * @param idBox 
+	 * 
+	 * @param filtro
+	 * @return
+	 */
+	public List<ProdutoAbastecimentoDTO> obterDetlhesDadosAbastecimento(Long idBox, FiltroMapaAbastecimentoDTO filtro);
+
+	/**
+	 * Obtém dados do Mapa de Abastecimento Por Box
+	 * 
+	 * @param filtro
+	 * @return
+	 */
+	List<ProdutoAbastecimentoDTO> obterMapaAbastecimentoPorBox(
+			FiltroMapaAbastecimentoDTO filtro);
+
+	/**
+	 * Obtém dados do Mapa de Abastecimento por Rota
+	 * 
+	 * @param filtro
+	 * @return
+	 */
+	List<ProdutoAbastecimentoDTO> obterMapaAbastecimentoPorBoxRota(
+			FiltroMapaAbastecimentoDTO filtro);
+
+	/**
+	 * Obtém dados do Mapa de Abastecimento por Produto Edição
+	 * 
+	 * @param filtro
+	 * @return
+	 */
+	public List<ProdutoAbastecimentoDTO> obterMapaAbastecimentoPorProdutoEdicao(
+			FiltroMapaAbastecimentoDTO filtro);
+
+	/**
+	 * Obtém dados do Mapa de Abastecimento por Cota
+	 * 
+	 * @param filtro
+	 * @return
+	 */
+	public List<ProdutoAbastecimentoDTO> obterMapaAbastecimentoPorCota(
+			FiltroMapaAbastecimentoDTO filtro);
+
+	/**
+	 * Obtém dados do Mapa de Abastecimento por com quebra por Cota
+	 * 
+	 * @param filtro
+	 * @return
+	 */
+	public List<ProdutoAbastecimentoDTO> obterMapaDeImpressaoPorProdutoQuebrandoPorCota(
+			FiltroMapaAbastecimentoDTO filtro);
 }

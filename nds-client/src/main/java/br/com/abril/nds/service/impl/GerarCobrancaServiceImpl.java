@@ -593,7 +593,9 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 	@Override
 	public Boolean validarDividaGeradaDataOperacao() {
 		
-		Long quantidadeRegistro = movimentoFinanceiroCotaRepository.obterQuantidadeMovimentoFinanceiroDataOperacao(new Date()); 
+		Distribuidor distribuidor = distribuidorRepository.obter();
+		
+		Long quantidadeRegistro = movimentoFinanceiroCotaRepository.obterQuantidadeMovimentoFinanceiroDataOperacao(distribuidor.getDataOperacao()); 
 		
 		return (quantidadeRegistro == null || quantidadeRegistro == 0) ? Boolean.FALSE : Boolean.TRUE;
 	}

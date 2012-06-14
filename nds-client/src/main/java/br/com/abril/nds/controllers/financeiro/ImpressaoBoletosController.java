@@ -242,12 +242,7 @@ public class ImpressaoBoletosController {
 	@Post
 	public void gerarDivida(){
 
-		if(!gerarCobrancaService.validarDividaGeradaDataOperacao()){
-			throw new ValidacaoException(TipoMensagem.WARNING, "Já foram geradas dividas para data de operação.");
-		}
-		
-
-		this.gerarCobrancaService.gerarCobranca(null, this.getUsuario().getId(), true);
+		this.gerarCobrancaService.gerarCobranca(null, this.getUsuario().getId());
 		
 		throw new ValidacaoException(TipoMensagem.SUCCESS, "As dividas foram geradas com sucesso.");
 	}

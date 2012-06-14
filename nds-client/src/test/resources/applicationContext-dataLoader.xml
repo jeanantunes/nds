@@ -8,35 +8,15 @@
     http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
     http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
     http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd">
-
+	
 	<!-- Ambiente de Desenvolvimento -->
 	<bean id="dataSource"
 		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
 		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
-		<property name="url" value="jdbc:mysql://localhost:3306/nds-client" />
-		<property name="username" value="root" />
-		<property name="password" value="root" />
+		<property name="url" value="${dataSourceURL}" />
+		<property name="username" value="${dataSourceUsername}" />
+		<property name="password" value="${dataSourcePassword}" />
     </bean>
-	
-     <!-- Ambiente de Testes
-	<bean id="dataSource"
-		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
-		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
-		<property name="url" value="jdbc:mysql://10.10.50.197:3306/nds-client" />
-		<property name="username" value="root" />
-		<property name="password" value="root" />
-    </bean>
-     -->
-     
-    <!-- Ambiente Homologação Abril 
-    <bean id="dataSource"
-		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
-		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
-		<property name="url" value="jdbc:mysql://abrildgbdb01.cdgtwjqgurfb.sa-east-1.rds.amazonaws.com:3306/nds-client" />
-		<property name="username" value="admin" />
-		<property name="password" value="abrildgb01" />
-    </bean>
-	-->
 
 	<bean id="sessionFactory"
 		class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean">
@@ -47,7 +27,7 @@
             <prop key="hibernate.dialect">org.hibernate.dialect.MySQL5InnoDBDialect</prop>
 		    <prop key="hibernate.show_sql">true</prop>
 		    <prop key="hibernate.format_sql">true</prop>	
-            <prop key="hibernate.hbm2ddl.auto">create</prop>
+            <prop key="hibernate.hbm2ddl.auto">create-drop</prop>
 		</props>
 		</property>
 	</bean>

@@ -51,15 +51,19 @@
 					</span></td>
 			</tr>
 			<tr>
-				<td>Tipo Logradouro:</td>
+				<td>UF:</td>
 				<td>
-					<input type="text" style="width:230px" 
-						   name="enderecoAssociacao.endereco.tipoLogradouro" id="${param.telaEndereco}tipoLogradouro" />
+					<select style="width:157px;" 
+							id="${param.telaEndereco}uf"
+							name="enderecoAssociacao.endereco.uf">
+					</select>
 				</td>
-				<td>Logradouro:</td>
+				<td>Cidade:</td>
 				<td>
-					<input type="text" style="width:250px" 
-						   name="enderecoAssociacao.endereco.logradouro" id="${param.telaEndereco}logradouro" />
+					<select style="width:250px" 
+							id="${param.telaEndereco}cidade"
+						    name="enderecoAssociacao.endereco.cidade">
+					</select>
 				</td>
 			</tr>
 			<tr>			
@@ -81,19 +85,22 @@
 					<input type="text"  style="width:230px" 
 						   name="enderecoAssociacao.endereco.bairro" id="${param.telaEndereco}bairro" />
 				</td>
-				<td>Cidade:</td>
+				
+				<td>Tipo Logradouro:</td>
 				<td>
 					<input type="text" style="width:250px" 
-						   name="enderecoAssociacao.endereco.cidade" id="${param.telaEndereco}cidade" />
+						   name="enderecoAssociacao.endereco.tipoLogradouro" id="${param.telaEndereco}tipoLogradouro" />
 				</td>
 				
 			</tr>
 			<tr>
-				<td>UF:</td>
+				
+				<td>Logradouro:</td>
 				<td>
-					<input type="text" style="width:50px;text-transform:uppercase" 
-						   name="enderecoAssociacao.endereco.uf" id="${param.telaEndereco}uf"  />
+					<input type="text" style="width:230px" 
+						   name="enderecoAssociacao.endereco.logradouro" id="${param.telaEndereco}logradouro" />
 				</td>
+				
 			    <td>Principal:</td>
 			   	<td>
 				  	<input type="checkbox" id="${param.telaEndereco}principal" 
