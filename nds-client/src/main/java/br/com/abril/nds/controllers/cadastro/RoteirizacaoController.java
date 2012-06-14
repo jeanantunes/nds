@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.hibernate.criterion.MatchMode;
+import org.hibernate.criterion.Order;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.vo.ValidacaoVO;
@@ -13,13 +14,16 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.LogBairro;
 import br.com.abril.nds.model.LogLocalidade;
 import br.com.abril.nds.model.cadastro.Box;
+import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Rota;
 import br.com.abril.nds.model.cadastro.Roteirizacao;
 import br.com.abril.nds.model.cadastro.Roteiro;
 import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.cadastro.TipoRoteiro;
+import br.com.abril.nds.model.cadastro.pdv.PDV;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.BoxService;
+import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.RoteirizacaoService;
 import br.com.abril.nds.util.ItemAutoComplete;
 import br.com.abril.nds.util.TipoMensagem;
@@ -40,6 +44,8 @@ public class RoteirizacaoController {
 	@Autowired
 	private RoteirizacaoService roteirizacaoService;
 
+	@Autowired
+	private CotaService cotaService;
 	
 	@Autowired
 	private Result result;
@@ -116,6 +122,9 @@ public class RoteirizacaoController {
 		
 		List<String> mensagens = new ArrayList<String>();
 		
+		if(TipoRoteiro.NORMAL.compareTo(roteiro.getTipoRoteiro()) == 0 &&  roteiro.getBox() == null){
+			mensagens.add("O campo Box é obrigatório.");
+		}
 		if(roteiro.getOrdem() == null){
 			mensagens.add("O campo Ordem é obrigatório.");
 		}
@@ -371,11 +380,74 @@ public class RoteirizacaoController {
 	}
 	
 	@Path("/pesquisarRoteirizacao")
-	public void pesquisarRoteirizacao(Long boxId, Long roteiroId, Long rotaId, TipoRoteiro tipoRoteiro,  String sortname, String sortorder, int rp, int page) {
-		List<Roteirizacao> lista = roteirizacaoService.buscarRoteirizacao( boxId,  roteiroId,  rotaId,  tipoRoteiro);
+	public void pesquisarRoteirizacao(Long boxId, Long roteiroId, Long rotaId, TipoRoteiro tipoRoteiro, String sortname, String sortorder, int rp, int page) {
+		List<Roteirizacao> lista = roteirizacaoService.buscarRoteirizacao( boxId,  roteiroId,  rotaId,  tipoRoteiro, sortname, Ordenacao.valueOf(sortorder.toUpperCase()), page*rp - rp , rp);
+		//String  orderBy, Ordenacao ordenacao, int initialResult, int maxResults
 		int quantidade = lista.size();
 		result.use(FlexiGridJson.class).from(lista).total(quantidade).page(page).serialize();
 	}
 	
+	@Path("/pesquisarRoteirizacaoPorCota")
+	public void pesquisarRoteirizacaoPorCota(Integer numeroCota, Long roteiroId, Long rotaId, TipoRoteiro tipoRoteiro,  String sortname, String sortorder, int rp, int page) {
+		List<Roteirizacao> lista = roteirizacaoService.buscarRoteirizacaoPorNumeroCota(numeroCota, tipoRoteiro, sortname, Ordenacao.valueOf(sortorder.toUpperCase()), page*rp - rp , rp);
+		if (lista == null || lista.isEmpty() ) {
+			result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.WARNING, "Nenhum registro encontrado."),"result").recursive().serialize();
+		} else {
+			int quantidade = lista.size();
+			result.use(FlexiGridJson.class).from(lista).total(quantidade).page(page).serialize();
+		}
+	}
 	
+	@Path("/buscaCotaPorNumero")
+	public void buscaCotaPorNumero(Integer numeroCota) {
+		if ( numeroCota == null  ) {
+			result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.WARNING, "Informe o numero da cota."),"result").recursive().serialize();
+		} else {
+			Cota cota =  cotaService.obterPorNumeroDaCota(numeroCota);
+			if (cota == null ){
+				result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.WARNING, "Nenhum registro encontrado."),"result").recursive().serialize();
+			} else {
+				result.use(Results.json()).from(cota, "result").include("pessoa").serialize();
+			}		
+		}
+	}
+	
+
+	
+	@Path("/transferirRoteirizacaoComNovaRota")
+	public void transferirRoteirizacaoComNovaRota(List<Long> roteirizacaoId, String rotaNome , Long roteiroId, Integer ordem) {
+		Rota rota = new Rota();
+		rota.setDescricaoRota(rotaNome);
+		rota.setOrdem(ordem);
+		Roteiro roteiro = new Roteiro();
+		roteiro.setId(roteiroId);
+		rota.setRoteiro(roteiro);
+		roteirizacaoService.transferirRoteirizacaoComNovaRota(roteirizacaoId, rota);
+		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Roteirização transferida com sucesso."),"result").recursive().serialize();
+
+	}
+	
+	@Path("/atualizaOrdenacaoAsc")
+	public void atualizaOrdenacaoAsc(Long roteirizacaoId, Long rotaId , Long roteiroId, Integer ordem, Long pontoVendaId , Ordenacao ordenacao) {
+		Rota rota = new Rota();
+		rota.setId(rotaId);
+		Roteiro roteiro = new Roteiro();
+		roteiro.setId(roteiroId);
+		rota.setRoteiro(roteiro);
+		PDV pdv = new PDV();
+		pdv.setId(pontoVendaId);
+		Roteirizacao roteirizacao = new Roteirizacao();
+		roteirizacao.setOrdem(ordem);
+		roteirizacao.setRota(rota);
+		roteirizacao.setPdv(pdv);
+		roteirizacao.setId(roteirizacaoId);
+		if ( Ordenacao.DESC.compareTo(ordenacao) == 0){
+			roteirizacaoService.atualizaOrdenacaoDesc(roteirizacao);
+		} else {
+			roteirizacaoService.atualizaOrdenacaoAsc(roteirizacao);
+		}
+		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Roteirização transferida com sucesso."),"result").recursive().serialize();
+
+	}
+
 }

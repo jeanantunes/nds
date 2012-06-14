@@ -83,7 +83,17 @@ public interface RoteirizacaoService {
 	
 	List<Roteiro> buscarRoteiroEspecial();
 	
-	List<Roteirizacao> buscarRoteirizacao(Long boxId, Long roteiroId, Long rotaId, TipoRoteiro tipoRoteiro);
+	List<Roteirizacao> buscarRoteirizacao(Long boxId, Long roteiroId, Long rotaId, TipoRoteiro tipoRoteiro, String  orderBy, Ordenacao ordenacao, int initialResult, int maxResults);
+	
+	List<Roteirizacao> buscarRoteirizacaoPorNumeroCota(Integer numeroCota, TipoRoteiro tipoRoteiro, String  orderBy, Ordenacao ordenacao, int initialResult, int maxResults);
+	
+	void transferirRoteirizacaoComNovaRota(List<Long> roteirizacaoId,Rota rota);
+	
+	void atualizaOrdenacao(Roteirizacao roteirizacao);
+	
+	void atualizaOrdenacaoAsc(Roteirizacao roteirizacao);
+	
+	void atualizaOrdenacaoDesc(Roteirizacao roteirizacao);
 
 }
 	
