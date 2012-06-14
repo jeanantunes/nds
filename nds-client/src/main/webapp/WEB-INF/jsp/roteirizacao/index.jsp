@@ -306,8 +306,8 @@ label{ vertical-align:super;}
         	<table class="rotaRoteirosGrid"></table>
         </div>
 		
-        <span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
-    <span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_impressora.gif" alt="Imprimir" hspace="5" border="0" />Imprimir</a></span>
+        <span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;" onclick="roteirizacao.gerarArquivoRoteirizacao('XLS');" ><img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
+    <span class="bt_novos" title="Imprimir"><a href="javascript:;" onclick="roteirizacao.imprimirArquivo('PDF');" ><img src="${pageContext.request.contextPath}/images/ico_impressora.gif" alt="Imprimir" hspace="5" border="0" />Imprimir</a></span>
        <span class="bt_novos" title="Roteiriza&ccedil;&atilde;o"><a href="javascript:;" onclick="roteirizacao.popupRoteirizacao();"><img src="${pageContext.request.contextPath}/images/bt_expedicao.png" hspace="5" border="0"/>Roteiriza&ccedil;&atilde;o</a></span>
       </fieldset>
       <div class="linha_separa_fields">&nbsp;</div>

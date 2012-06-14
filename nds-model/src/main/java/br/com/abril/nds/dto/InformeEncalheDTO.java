@@ -43,9 +43,17 @@ public class InformeEncalheDTO implements Serializable {
 	
 	private Date dataRecolhimento;
 	
-	private Date dataRecolhimentoFinal;
+	private Date dataRecolhimentoParcialFinal;
 	
 	private Integer seqCapa;
+	
+	private Date dataRecolhimentoFinal;
+	
+	private boolean brinde;
+	
+	private String nomeEditor;
+	
+	private boolean imagem;
 
 	/**
 	 * @return the idLancamento
@@ -232,15 +240,15 @@ public class InformeEncalheDTO implements Serializable {
 	/**
 	 * @return the dataRecolhimentoFinal
 	 */
-	public Date getDataRecolhimentoFinal() {
-		return dataRecolhimentoFinal;
+	public Date getDataRecolhimentoParcialFinal() {
+		return dataRecolhimentoParcialFinal;
 	}
 
 	/**
 	 * @param dataRecolhimentoFinal the dataRecolhimentoFinal to set
 	 */
-	public void setDataRecolhimentoFinal(Date dataRecolhimentoFinal) {
-		this.dataRecolhimentoFinal = dataRecolhimentoFinal;
+	public void setDataRecolhimentoParcialFinal(Date dataRecolhimentoParcialFinal) {
+		this.dataRecolhimentoParcialFinal = dataRecolhimentoParcialFinal;
 	}
 
 	/**
@@ -255,6 +263,38 @@ public class InformeEncalheDTO implements Serializable {
 	 */
 	public void setSeqCapa(Integer seqCapa) {
 		this.seqCapa = seqCapa;
+	}
+
+	public Date getDataRecolhimentoFinal() {
+		return dataRecolhimentoFinal;
+	}
+
+	public void setDataRecolhimentoFinal(Date dataRecolhimentoFinal) {
+		this.dataRecolhimentoFinal = dataRecolhimentoFinal;
+	}
+
+	public boolean isBrinde() {
+		return brinde;
+	}
+
+	public void setBrinde(boolean brinde) {
+		this.brinde = brinde;
+	}
+
+	public String getNomeEditor() {
+		return nomeEditor;
+	}
+
+	public void setNomeEditor(String nomeEditor) {
+		this.nomeEditor = nomeEditor;
+	}
+
+	public boolean isImagem() {
+		return imagem;
+	}
+
+	public void setImagem(boolean imagem) {
+		this.imagem = imagem;
 	}
 
 }

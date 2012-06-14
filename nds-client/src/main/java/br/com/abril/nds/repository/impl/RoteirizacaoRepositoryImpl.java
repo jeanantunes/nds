@@ -10,13 +10,12 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
-import org.hibernate.criterion.Subqueries;
+import org.hibernate.transform.Transformers;
 import org.springframework.stereotype.Repository;
 
-
+import br.com.abril.nds.dto.ConsultaRoteirizacaoDTO;
 import br.com.abril.nds.model.LogBairro;
 import br.com.abril.nds.model.LogLocalidade;
-import br.com.abril.nds.model.cadastro.Rota;
 import br.com.abril.nds.model.cadastro.Roteirizacao;
 import br.com.abril.nds.model.cadastro.Roteiro;
 import br.com.abril.nds.model.cadastro.TipoRoteiro;
@@ -170,7 +169,7 @@ public class RoteirizacaoRepositoryImpl extends AbstractRepository<Roteirizacao,
 	}
 	
 	@Override
-	public List<Roteirizacao> buscarRoteirizacao(Long boxId, Long roteiroId, Long rotaId, TipoRoteiro tipoRoteiro, String  orderBy, Ordenacao ordenacao, int initialResult, int maxResults){
+	public List<ConsultaRoteirizacaoDTO> buscarRoteirizacao(Long boxId, Long roteiroId, Long rotaId, TipoRoteiro tipoRoteiro, String  orderBy, Ordenacao ordenacao, int initialResult, int maxResults){
 		Criteria criteria  = getSession().createCriteria(Roteirizacao.class);
 		criteria.createAlias("rota", "rota") ;
 		criteria.createAlias("rota.roteiro", "roteiro") ;
@@ -190,46 +189,30 @@ public class RoteirizacaoRepositoryImpl extends AbstractRepository<Roteirizacao,
 			criteria.add(Restrictions.eq("rota.id", rotaId));
 		}
 		criteria.add(Restrictions.eq("roteiro.tipoRoteiro", tipoRoteiro));
-	
-//		value.cell.box = value.cell.rota.roteiro.box.nome
-//	        	value.cell.roteiro = value.cell.rota.roteiro.descricaoRoteiro;
-//				value.cell.rota = value.cell.rota.descricaoRota;
-//				value.cell.cota = value.cell.pdv.cota.numeroCota;
-//				value.cell.nome = value.cell.pdv.cota.pessoa.nome;
-//		
-		 String campoOrdenacao = getCampoOrdenacao(orderBy); 
 		
-		
+		criteria.setProjection(Projections.distinct(Projections.projectionList()
+				.add(Projections.property("box.nome"), "nomeBox")
+				.add(Projections.property("roteiro.descricaoRoteiro"), "descricaoRoteiro")
+				.add(Projections.property("rota.descricaoRota"), "descricaoRota")
+				.add(Projections.property("cota.numeroCota"), "numeroCota")
+				.add(Projections.property("pessoa.nome"), "nome")));
+
 		if(Ordenacao.ASC ==  ordenacao){
-			criteria.addOrder(Order.asc(campoOrdenacao));
+			criteria.addOrder(Order.asc(orderBy));
 		}else if(Ordenacao.DESC ==  ordenacao){
-			criteria.addOrder(Order.desc(campoOrdenacao));
+			criteria.addOrder(Order.desc(orderBy));
 		}
 		
 		criteria.setFirstResult(initialResult);
-		
-		return criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();  
+		criteria.setResultTransformer(Transformers.aliasToBean(ConsultaRoteirizacaoDTO.class));
+		return criteria.list();  
 	}
 
-	private String getCampoOrdenacao(String orderBy) {
-		String campoOrdenacao = null;
-		if (orderBy.equals("box") ) {
-			campoOrdenacao ="box.nome";
-		} else if (orderBy.equals("roteiro")){
-			campoOrdenacao ="roteiro.descricaoRoteiro";
-		} else if (orderBy.equals("rota")){
-			campoOrdenacao ="rota.descricaoRota";
-		} else if (orderBy.equals("cota")){
-			campoOrdenacao ="cota.numeroCota";
-		} else if (orderBy.equals("nome")){
-			campoOrdenacao ="pessoa.nome";
-		}
-		return campoOrdenacao;
-	}
+
 
 
 	@Override
-	public List<Roteirizacao> buscarRoteirizacaoPorNumeroCota(Integer numeroCota, TipoRoteiro tipoRoteiro, String  orderBy, Ordenacao ordenacao, int initialResult, int maxResults) {
+	public List<ConsultaRoteirizacaoDTO> buscarRoteirizacaoPorNumeroCota(Integer numeroCota, TipoRoteiro tipoRoteiro, String  orderBy, Ordenacao ordenacao, int initialResult, int maxResults) {
 		Criteria criteria  = getSession().createCriteria(Roteirizacao.class);
 		criteria.createAlias("rota", "rota") ;
 		criteria.createAlias("rota.roteiro", "roteiro") ;
@@ -240,16 +223,23 @@ public class RoteirizacaoRepositoryImpl extends AbstractRepository<Roteirizacao,
 		
 		criteria.add(Restrictions.eq("cota.numeroCota", numeroCota));
 	    criteria.add(Restrictions.eq("roteiro.tipoRoteiro", tipoRoteiro));
-	    
-	    String campoOrdenacao = getCampoOrdenacao(orderBy); 
+		criteria.setProjection(Projections.distinct(Projections.projectionList()
+				.add(Projections.property("box.nome"), "nomeBox")
+				.add(Projections.property("roteiro.descricaoRoteiro"), "descricaoRoteiro")
+				.add(Projections.property("rota.descricaoRota"), "descricaoRota")
+				.add(Projections.property("cota.numeroCota"), "numeroCota")
+				.add(Projections.property("pessoa.nome"), "nome")));
+		
 	    if(Ordenacao.ASC ==  ordenacao){
-			criteria.addOrder(Order.asc(campoOrdenacao));
+			criteria.addOrder(Order.asc(orderBy));
 		}else if(Ordenacao.DESC ==  ordenacao){
-			criteria.addOrder(Order.desc(campoOrdenacao));
+			criteria.addOrder(Order.desc(orderBy));
 		}
 		
 		criteria.setFirstResult(initialResult);
-		return criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list(); 
+		criteria.setMaxResults(maxResults);
+		criteria.setResultTransformer(Transformers.aliasToBean(ConsultaRoteirizacaoDTO.class));
+		return criteria.list(); 
 	}
 	
 	@SuppressWarnings("unchecked")
