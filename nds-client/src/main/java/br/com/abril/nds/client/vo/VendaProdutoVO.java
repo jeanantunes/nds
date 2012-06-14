@@ -19,13 +19,13 @@ public class VendaProdutoVO implements Serializable{
 	
 	private String nomeProduto;
 	
-	private Integer numeroEdicao;
+	private Long numeroEdicao;
 	
 	private String precoCapa;
 	
 	private Integer qntDisponivel;
 	
-	private Integer qntSolicitada;
+	private Long qntSolicitada;
 	
 	private String total;
 	
@@ -171,14 +171,14 @@ public class VendaProdutoVO implements Serializable{
 	/**
 	 * @return the numeroEdicao
 	 */
-	public Integer getNumeroEdicao() {
+	public Long getNumeroEdicao() {
 		return numeroEdicao;
 	}
 
 	/**
 	 * @param numeroEdicao the numeroEdicao to set
 	 */
-	public void setNumeroEdicao(Integer numeroEdicao) {
+	public void setNumeroEdicao(Long numeroEdicao) {
 		this.numeroEdicao = numeroEdicao;
 	}
 
@@ -199,14 +199,14 @@ public class VendaProdutoVO implements Serializable{
 	/**
 	 * @return the qntSolicitada
 	 */
-	public Integer getQntSolicitada() {
+	public Long getQntSolicitada() {
 		return qntSolicitada;
 	}
 
 	/**
 	 * @param qntSolicitada the qntSolicitada to set
 	 */
-	public void setQntSolicitada(Integer qntSolicitada) {
+	public void setQntSolicitada(Long qntSolicitada) {
 		this.qntSolicitada = qntSolicitada;
 	}
 

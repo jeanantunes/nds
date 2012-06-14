@@ -3,6 +3,7 @@ package br.com.abril.nds.model.estoque;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -11,7 +12,9 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -20,6 +23,7 @@ import javax.persistence.TemporalType;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
+import br.com.abril.nds.model.seguranca.Usuario;
 
 @Entity
 @Table(name = "VENDA_PRODUTO")
@@ -33,8 +37,12 @@ public class VendaProduto implements Serializable {
 	private Long id;
 	
 	@Column(name="DATA_VENDA")
-	@Temporal(TemporalType.TIMESTAMP)
+	@Temporal(TemporalType.DATE)
 	private Date dataVenda;
+	
+	@Column(name="HORARIO_VENDA")
+	@Temporal(TemporalType.TIME)
+	private Date horarioVenda;
 	
 	@Column(name="DATA_VENCIMENTO_DEBITO")
 	@Temporal(TemporalType.DATE)
@@ -53,17 +61,20 @@ public class VendaProduto implements Serializable {
 	private ProdutoEdicao produtoEdicao;
 	
 	@Column(name="QNT_PRODUTO")
-	private BigDecimal qntProduto;
+	private Long qntProduto;
 	
 	@Column(name="VALOR_TOTAL_VENDA")
 	private BigDecimal valorTotalVenda;
 	
-	@Column(name="USUARIO")
-	private String usuario;
+	@ManyToOne(optional = false)
+	@JoinColumn(name = "USUARIO_ID")
+	private Usuario usuario;
 	
-	@JoinColumn(name="ID_MOVIMENTO_ESTOQUE")
-	@ManyToOne
-	private MovimentoEstoque movimentoEstoque;
+	@JoinTable(name="VENDA_PRODUTO_MOVIMENTO_ESTOQUE", 
+			joinColumns={@JoinColumn(name="ID_VENDA_PRODUTO")}, 
+			inverseJoinColumns={@JoinColumn(name="ID_MOVIMENTO_ESTOQUE")})
+	@OneToMany(orphanRemoval=true)
+	private Set<MovimentoEstoque> movimentoEstoque;
 	
 	@JoinColumn(name="ID_MOVIMENTO_FINANCEIRO")
 	@ManyToOne
@@ -142,14 +153,14 @@ public class VendaProduto implements Serializable {
 	/**
 	 * @return the qntProduto
 	 */
-	public BigDecimal getQntProduto() {
+	public Long getQntProduto() {
 		return qntProduto;
 	}
 
 	/**
 	 * @param qntProduto the qntProduto to set
 	 */
-	public void setQntProduto(BigDecimal qntProduto) {
+	public void setQntProduto(Long qntProduto) {
 		this.qntProduto = qntProduto;
 	}
 	/**
@@ -169,14 +180,14 @@ public class VendaProduto implements Serializable {
 	/**
 	 * @return the usuario
 	 */
-	public String getUsuario() {
+	public Usuario getUsuario() {
 		return usuario;
 	}
 
 	/**
 	 * @param usuario the usuario to set
 	 */
-	public void setUsuario(String usuario) {
+	public void setUsuario(Usuario usuario) {
 		this.usuario = usuario;
 	}
 
@@ -195,20 +206,6 @@ public class VendaProduto implements Serializable {
 	}
 
 	/**
-	 * @return the movimentoEstoque
-	 */
-	public MovimentoEstoque getMovimentoEstoque() {
-		return movimentoEstoque;
-	}
-
-	/**
-	 * @param movimentoEstoque the movimentoEstoque to set
-	 */
-	public void setMovimentoEstoque(MovimentoEstoque movimentoEstoque) {
-		this.movimentoEstoque = movimentoEstoque;
-	}
-
-	/**
 	 * @return the movimentoFinanceiro
 	 */
 	public MovimentoFinanceiroCota getMovimentoFinanceiro() {
@@ -220,6 +217,34 @@ public class VendaProduto implements Serializable {
 	 */
 	public void setMovimentoFinanceiro(MovimentoFinanceiroCota movimentoFinanceiro) {
 		this.movimentoFinanceiro = movimentoFinanceiro;
+	}
+
+	/**
+	 * @return the horarioVenda
+	 */
+	public Date getHorarioVenda() {
+		return horarioVenda;
+	}
+
+	/**
+	 * @param horarioVenda the horarioVenda to set
+	 */
+	public void setHorarioVenda(Date horarioVenda) {
+		this.horarioVenda = horarioVenda;
+	}
+
+	/**
+	 * @return the movimentoEstoque
+	 */
+	public Set<MovimentoEstoque> getMovimentoEstoque() {
+		return movimentoEstoque;
+	}
+
+	/**
+	 * @param movimentoEstoque the movimentoEstoque to set
+	 */
+	public void setMovimentoEstoque(Set<MovimentoEstoque> movimentoEstoque) {
+		this.movimentoEstoque = movimentoEstoque;
 	}
 	
 	
