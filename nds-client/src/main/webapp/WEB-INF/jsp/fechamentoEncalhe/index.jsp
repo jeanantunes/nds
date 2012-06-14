@@ -301,6 +301,8 @@
 						if (tipoMensagem && listaMensagens) {
 							exibirMensagemDialog(tipoMensagem, listaMensagens, 'dialogMensagemEncerrarEncalhe');
 						}
+
+						$(".cotasGrid").flexReload();
 					},
 				  	null,
 				   	true
