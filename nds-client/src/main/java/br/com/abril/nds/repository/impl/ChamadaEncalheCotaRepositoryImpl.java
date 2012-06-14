@@ -20,6 +20,7 @@ public class ChamadaEncalheCotaRepositoryImpl extends AbstractRepository<Chamada
 	 * (non-Javadoc)
 	 * @see br.com.abril.nds.repository.ChamadaEncalheCotaRepository#obterListaIdProdutoEdicaoChamaEncalheCota(java.lang.Integer, java.util.Date, boolean, boolean)
 	 */
+	@SuppressWarnings("unchecked")
 	public List<Long> obterListaIdProdutoEdicaoChamaEncalheCota (
 			Integer numeroCota, 
 			Date dataOperacao, 
@@ -36,7 +37,7 @@ public class ChamadaEncalheCotaRepositoryImpl extends AbstractRepository<Chamada
 		
 		hql.append(" chamadaEncalheCota.cota.numeroCota = :numeroCota ");
 		
-		hql.append(" and chamadaEncalheCota.conferido = :conferido ");
+		hql.append(" and chamadaEncalheCota.fechado = :conferido ");
 		
 		if(indPesquisaCEFutura) {
 			hql.append(" and chamadaEncalheCota.chamadaEncalhe.dataRecolhimento >= :dataOperacao ");
@@ -77,7 +78,7 @@ public class ChamadaEncalheCotaRepositoryImpl extends AbstractRepository<Chamada
 		
 		hql.append(" chamadaEncalheCota.cota.numeroCota = :numeroCota ");
 		
-		hql.append(" and chamadaEncalheCota.conferido = :conferido ");
+		hql.append(" and chamadaEncalheCota.fechado = :conferido ");
 		
 		if(indPesquisaCEFutura) {
 			hql.append(" and chamadaEncalheCota.chamadaEncalhe.dataRecolhimento >= :dataOperacao ");
@@ -111,6 +112,7 @@ public class ChamadaEncalheCotaRepositoryImpl extends AbstractRepository<Chamada
 	 * (non-Javadoc)
 	 * @see br.com.abril.nds.repository.ChamadaEncalheCotaRepository#obterListaChamaEncalheCota(java.lang.Integer, java.util.Date, java.lang.Long, boolean, boolean)
 	 */
+	@SuppressWarnings("unchecked")
 	public List<ChamadaEncalheCota> obterListaChamaEncalheCota(
 			Integer numeroCota, 
 			Date dataOperacao, 
@@ -128,7 +130,7 @@ public class ChamadaEncalheCotaRepositoryImpl extends AbstractRepository<Chamada
 		
 		hql.append(" chamadaEncalheCota.cota.numeroCota = :numeroCota ");
 		
-		hql.append(" and chamadaEncalheCota.conferido = :conferido ");
+		hql.append(" and chamadaEncalheCota.fechado = :conferido ");
 		
 		if(indPesquisaCEFutura) {
 			hql.append(" and chamadaEncalheCota.chamadaEncalhe.dataRecolhimento >= :dataOperacao ");

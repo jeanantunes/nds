@@ -41,10 +41,17 @@
 				row.cell.diferenca = "";
 			}
 			
-			var valorFisico = row.cell.fisico == null ? "" : row.cell.fisico;
-			row.cell.fisico = '<input type="text" style="width: 60px" name="fisico[' + index + ']" value="' + valorFisico + '" onchange="onChangeFisico(this, ' + index + ')"/>';
+			var valorFisico = row.cell.fisico == null ? '' : row.cell.fisico;
+			var fechado = row.cell.fechado == false ? '' : 'disabled="disabled"';
+			row.cell.fisico = '<input type="text" style="width: 60px" name="fisico[' + index + ']" value="' + valorFisico + '" onchange="onChangeFisico(this, ' + index + ')" ' + fechado + '/>';
 			
 			row.cell.replicar = '<span title="Replicar"><a href="javascript:;" onclick="replicar(' + index + ')"><img src="${pageContext.request.contextPath}/images/ico_atualizar.gif" border="0" /></a></span>';
+			
+			if (fechado != '') {
+				$('#divBotoesPrincipais').hide();
+			} else {
+				$('#divBotoesPrincipais').show();
+			}
 		});
 		
 		return resultado;
@@ -154,6 +161,9 @@
 	};
 
 	function popup_encerrar() {
+		
+		$("#dataConfirma").html($("#datepickerDe").val());
+		
 		$( "#dialog-confirm" ).dialog({
 			resizable: false,
 			height:'auto',
@@ -162,7 +172,7 @@
 			buttons: {
 				"Confirmar": function() {
 					$( this ).dialog( "close" );
-					$("#effect").show("highlight", {}, 1000, callback);
+					$("#effect").show("highlight", {}, 1000, encerrarFechamento);
 				},
 				
 				"Cancelar": function() {
@@ -171,7 +181,26 @@
 			}
 		});
 	};
+	
+	
+	function encerrarFechamento() {
+		
+		salvar();
+		
+		/* verificar cotas pendentes */
+		
+		$.postJSON(
+			"<c:url value='/devolucao/fechamentoEncalhe/encerrarFechamento' />",
+			{ 'dataEncalhe' : $('#datepickerDe').val() },
+			function (result) {
+				
+			},
+		  	null,
+		   	true
+		);
+	}
 
+	
 	$(function() {
 		$("#datepickerDe").datepicker({
 			showOn: "button",
@@ -221,8 +250,14 @@
 		checarTodasCotasGrid(false);
 		
 		$.each(resultado.rows, function(index, row) {
-
-			var checkBox = '<input type="checkbox" name="checkboxGridCotas" id="checkboxGridCotas" value="' + row.cell.idCota + '" />';	
+			
+			var checkBox = '<span></span>';
+			
+			if (row.cell.acao == null || row.cell.acao == '') { 
+				checkBox = '<input type="checkbox" name="checkboxGridCotas" id="checkboxGridCotas" value="' + row.cell.idCota + '" />';	
+			} else {
+				checkBox = '<input type="checkbox" name="checkboxGridCotas" id="checkboxGridCotas" value="' + row.cell.idCota + '" disabled="disabled"/>';	
+			}
 			
 		    row.cell.check = checkBox;
 		});
@@ -249,49 +284,79 @@
 		$("#dialog-postergar").dialog({
 			resizable: false,
 			height:'auto',
-			width:300,
+			width:250,
 			modal: true,
 			buttons: {
 				"Confirmar": function() {
 					
-					var dataEncalhe = $("#dtPostergada").val();
+					var dataPostergacao = $("#dtPostergada").val();
 
 					$.postJSON("<c:url value='/devolucao/fechamentoEncalhe/postergarCotas' />",
-								{ 'dataEncalhe' : dataEncalhe, 'idsCotas' : obterCotasMarcadas() },
+								{ 'dataPostergacao' : dataPostergacao, 'idsCotas' : obterCotasMarcadas() },
 								function (result) {
-						
+
+									$("#dialog-postergar").dialog("close");
+									
+									var tipoMensagem = result.tipoMensagem;
+									var listaMensagens = result.listaMensagens;
+									
+									if (tipoMensagem && listaMensagens) {
+										exibirMensagemDialog(tipoMensagem, listaMensagens, 'dialogMensagemEncerrarEncalhe');
+									}
+									
 								},
 							  	null,
-							   	true
+							   	true,
+							   	'dialogMensagemEncerrarEncalhe'
 						);
 				},
 				
 				"Cancelar": function() {
 					$( this ).dialog( "close" );
 				}
+			},
+			beforeClose: function() {
+				$("#dtPostergada").val("");
+				clearMessageDialogTimeout('dialogMensagemEncerrarEncalhe');
 			}
 		});
 	}
 
 	function cobrarCotas() {
 
-		var dataEncalhe = $("#datepickerDe").val();
+		var dataOperacao = $("#datepickerDe").val();
 		
 		$.postJSON("<c:url value='/devolucao/fechamentoEncalhe/cobrarCotas' />",
-					{ 'dataEncalhe' : dataEncalhe, 'idsCotas' : obterCotasMarcadas() },
+					{ 'dataOperacao' : dataOperacao, 'idsCotas' : obterCotasMarcadas() },
 					function (result) {
-			
+						
+						var tipoMensagem = result.tipoMensagem;
+						var listaMensagens = result.listaMensagens;
+						
+						if (tipoMensagem && listaMensagens) {
+							exibirMensagemDialog(tipoMensagem, listaMensagens, 'dialogMensagemEncerrarEncalhe');
+						}
+
+						$(".cotasGrid").flexReload();
 					},
 				  	null,
 				   	true
 			);
 	}
 
-	function exportarCotasAusentes() {
+	function gerarArquivoCotasAusentes(fileType) {
 
 		var dataEncalhe = $("#datepickerDe").val();
 		
-		window.location = contextPath + "/devolucao/fechamentoEncalhe/exportarArquivo?dataEncalhe=" + dataEncalhe + "&fileType=XLS";
+		window.location = 
+			contextPath + 
+			"/devolucao/fechamentoEncalhe/exportarArquivo?" + 
+			"dataEncalhe=" + dataEncalhe + 
+			"&sortname=" + $(".cotasGrid").flexGetSortName() +
+			"&sortorder=" + $(".cotasGrid").getSortOrder() +
+			"&rp=" + $(".cotasGrid").flexGetRowsPerPage() +
+			"&page=" + $(".cotasGrid").flexGetPageNumber() +
+			"&fileType=" + fileType;
 
 		return false;
 	}
@@ -324,15 +389,15 @@
 <body>
 
 	<div id="dialog-confirm" title="Encerrar Opera&ccedil;&atilde;o" style="display:none;">
-		<p>Confirma o encerramento da opera&ccedil;&atilde;o do dia 99/99/9999:</p>
+		<p>Confirma o encerramento da opera&ccedil;&atilde;o do dia <span id="dataConfirma"></span>:</p>
 	</div>
 
 	<div id="dialog-postergar" title="Postergar Encalhe" style="display:none;">
-		<fieldset style="width:255px!important;">
+		<fieldset style="width:200px!important;">
 	    	<legend>Postergar Encalhe</legend>
-			<table width="230" border="0" cellspacing="2" cellpadding="0">
+			<table border="0" cellspacing="2" cellpadding="0">
 	          <tr>
-	            <td width="121">Nova Data:</td>
+	            <td width="70">Nova Data:</td>
 	            <td width="103"><input name="dtPostergada" type="text" id="dtPostergada" style="width:80px;" /></td>
 	          </tr>
 	        </table>
@@ -340,18 +405,28 @@
 	</div>
 	
 	<div id="dialog-encerrarEncalhe" title="Opera&ccedil;&atilde;o de Encalhe" style="display:none;">
+		
+		<jsp:include page="../messagesDialog.jsp">
+			<jsp:param value="dialogMensagemEncerrarEncalhe" name="messageDialog"/>
+		</jsp:include> 
+		
 		<fieldset>
 			<legend>Cotas Ausentes</legend>
 			<form id="formGridCotas" name="formGridCotas" >
 				<table class="cotasGrid" id="tabelaGridCotas" ></table>
 			</form>
 			<span class="bt_novos" title="Gerar Arquivo" >
-				<a href="javascript:exportarCotasAusentes();">
+				<a href="javascript:gerarArquivoCotasAusentes('XLS');">
 					<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
 					Arquivo
 				</a>
 			</span>
-			<span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir </a></span>
+			<span class="bt_novos" title="Imprimir">
+				<a href="javascript:gerarArquivoCotasAusentes('PDF');">
+					<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
+					Imprimir 
+				</a>
+			</span>
 			<span class="bt_sellAll" style="float:right;">
 				<input type="checkbox" id="checkTodasCotas" name="checkTodasCotas" onchange="checarTodasCotasGrid(this.checked);" style="float:right;margin-right:25px;"/>
 				<label for="checkTodasCotas" id="textoCheckAllCotas" ></label>
@@ -394,12 +469,18 @@
     <fieldset class="classFieldset">
        	<legend> Fechamento Encalhe</legend>
         <div class="grids" style="display:none;">
+			
 			<table class="fechamentoGrid"></table>
-            <span class="bt_novos" title="Salvar"><a href="javascript:;" onclick="salvar()"><img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0" />Salvar </a></span>
-			<span class="bt_novos" title="Cotas Ausentes"><a href="javascript:;" onclick="popup_encerrarEncalhe();"><img src="${pageContext.request.contextPath}/images/ico_check.gif" hspace="5" border="0" />Cotas Ausentes</a></span>
-			<span class="bt_novos" title="Encerrar Opera&ccedil;&atilde;o Encalhe"><a href="javascript:;" onclick="popup_encerrar();"><img src="${pageContext.request.contextPath}/images/ico_check.gif" hspace="5" border="0" />Encerrar Opera&ccedil;&atilde;o Encalhe</a></span>
-			<span class="bt_sellAll" style="float:right;"><a href="javascript:;" id="sel" onclick="replicarTodos();"><img src="${pageContext.request.contextPath}/images/ico_atualizar.gif" border="0" /></a><label for="sel">Replicar Todos</label></span>
+			
+			<div id="divBotoesPrincipais" style="display:none;">
+	            <span class="bt_novos" title="Salvar"><a href="javascript:;" onclick="salvar()"><img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0" />Salvar </a></span>
+				<span class="bt_novos" title="Cotas Ausentes"><a href="javascript:;" onclick="popup_encerrarEncalhe();"><img src="${pageContext.request.contextPath}/images/ico_check.gif" hspace="5" border="0" />Cotas Ausentes</a></span>
+				<span class="bt_novos" title="Encerrar Opera&ccedil;&atilde;o Encalhe"><a href="javascript:;" onclick="popup_encerrar();"><img src="${pageContext.request.contextPath}/images/ico_check.gif" hspace="5" border="0" />Encerrar Opera&ccedil;&atilde;o Encalhe</a></span>
+				<span class="bt_sellAll" style="float:right;"><a href="javascript:;" id="sel" onclick="replicarTodos();"><img src="${pageContext.request.contextPath}/images/ico_atualizar.gif" border="0" /></a><label for="sel">Replicar Todos</label></span>
+			</div>
+			
         	<br clear="all" />
+        	
 			<span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;" onclick="imprimirArquivo('XLS');"><img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
 			<span class="bt_novos" title="Imprimir"><a href="javascript:;" onclick="imprimirArquivo('PDF');"><img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir </a></span>
         </div>
@@ -461,7 +542,8 @@
 			rp : 15,
 			showTableToggleBtn : true,
 			width : 600,
-			height : 240
+			height : 240,
+			singleSelect : true
 		});
 		$(".fechamentoGrid").flexigrid({
 			dataType : 'json',
@@ -528,7 +610,8 @@
 			rp : 15,
 			showTableToggleBtn : true,
 			width : 960,
-			height : 180
+			height : 180,
+			singleSelect : true
 		});
 	</script>
 

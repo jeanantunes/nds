@@ -1,7 +1,5 @@
 package br.com.abril.nds.repository.impl;
 
-import java.math.BigDecimal;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -10,14 +8,10 @@ import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.LancamentoPorEdicaoDTO;
-import br.com.abril.nds.dto.VendaEncalheDTO;
 import br.com.abril.nds.dto.VendaProdutoDTO;
-import br.com.abril.nds.dto.filtro.FiltroVendaEncalheDTO;
-import br.com.abril.nds.dto.filtro.FiltroVendaEncalheDTO.OrdenacaoColuna;
 import br.com.abril.nds.dto.filtro.FiltroVendaProdutoDTO;
 import br.com.abril.nds.dto.filtro.FiltroVendaProdutoDTO.ColunaOrdenacao;
 import br.com.abril.nds.model.estoque.MovimentoEstoque;
-import br.com.abril.nds.model.estoque.TipoVendaEncalhe;
 import br.com.abril.nds.repository.VendaProdutoRepository;
 
 @Repository
@@ -210,190 +204,4 @@ public class VendaProdutoRepositoryImpl extends AbstractRepository<MovimentoEsto
 		return param;
 	}
 
-	@Override
-	public Long buscarQntVendaEncalhe(FiltroVendaEncalheDTO filtro){
-		
-		StringBuilder hql = new StringBuilder();
-		
-		hql.append(getSqlFromEWhereVendaEncalhe(filtro,true));
-		
-		Query query = getSession().createQuery(hql.toString());
-		
-		HashMap<String, Object> param = getParametrosVendaProdutoEncalhe(filtro);
-		
-		for(String key : param.keySet()){
-			query.setParameter(key, param.get(key));
-		}
-		
-		return (Long) query.uniqueResult();		
-	}
-	
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<VendaEncalheDTO> buscarVendasEncalhe(FiltroVendaEncalheDTO filtro){
-		
-		StringBuilder hql = new StringBuilder();
-		
-		hql.append(getSqlFromEWhereVendaEncalhe(filtro,false));
-		
-		hql.append(getOrderVendaEncalhe(filtro));
-		
-		Query query = getSession().createQuery(hql.toString());
-		
-		HashMap<String, Object> param = getParametrosVendaProdutoEncalhe(filtro);
-		
-		for(String key : param.keySet()){
-			query.setParameter(key, param.get(key));
-		}
-		
-		query.setResultTransformer(new AliasToBeanResultTransformer(VendaEncalheDTO.class));
-		
-		if(filtro.getPaginacao().getQtdResultadosPorPagina() != null) 
-			query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
-		
-		if(filtro.getPaginacao().getQtdResultadosPorPagina() != null) 
-			query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
-		
-		return query.list();
-	}
-	
-	private String getSqlFromEWhereVendaEncalhe(FiltroVendaEncalheDTO filtro, boolean isCount){
-		
-		StringBuilder hql = new StringBuilder();
-
-		hql.append(" select ");
-		
-		if(isCount){
-			
-			hql.append(" count ( venda.id ) ");
-		}
-		else{
-			
-			hql.append(" venda.id as idVenda ,")
-			.append(" venda.dataVenda as dataVenda ,")
-			.append(" case venda.cota.pessoa.class when 'F' then venda.cota.pessoa.nome when 'J' then venda.cota.pessoa.razaoSocial end  as nomeCota ,")
-			.append(" venda.cota.numeroCota as numeroCota ,")
-			.append(" venda.tipoVenda as tipoVenda ,")
-			.append(" venda.produtoEdicao.numeroEdicao as numeroEdicao ,")
-			.append(" venda.produtoEdicao.nome as nomeProduto ,")
-			.append(" venda.produtoEdicao.codigo as codigoProduto ,")
-			.append(" venda.produtoEdicao.precoVenda - venda.produtoEdicao.desconto as precoCapa ,")
-			.append(" venda.produtoEdicao.desconto as precoDesconto ,")
-			.append(" venda.valorTotalVenda as valoTotalProduto ,")
-			.append(" venda.qntProduto as qntProduto ,");
-		}
-	
-		hql.append(" from VendaProduto venda ")
-			.append(" where venda.cota.numeroCota=:numeroCota ")
-			.append(" and venda.dataVenda between :periodoInicial and :periodoFinal ");
-		
-		if(filtro.getTipoVendaEncalhe()!= null){
-			hql.append(" and venda.tipoVenda=:tipoVenda ");
-		}
-		
-		return hql.toString();
-	}
-	
-	private HashMap<String,Object> getParametrosVendaProdutoEncalhe(FiltroVendaEncalheDTO filtro){
-		
-		HashMap<String,Object> param = new HashMap<String, Object>();
-		
-		param.put("numeroCota", filtro.getNumeroCota());
-		param.put("periodoInicial", filtro.getPeriodoInicial());
-		param.put("periodoFinal", filtro.getPeriodoFinal());
-		
-		if(filtro.getTipoVendaEncalhe() != null ){ 
-			param.put("tipoVenda", filtro.getTipoVendaEncalhe());
-		}
-	
-		return param;
-	}
-	
-	private String getOrderVendaEncalhe(FiltroVendaEncalheDTO filtro){
-		
-		if(filtro.getPaginacao() == null 
-				|| filtro.getPaginacao().getSortColumn() == null
-				|| filtro.getOrdenacaoColuna() == null){
-			return "";
-		}
-
-		StringBuilder hql = new StringBuilder();
-		
-		switch (filtro.getOrdenacaoColuna()) {
-			case CODIGO_PRODUTO:	
-				hql.append(" order by codigoProduto ");
-				break;
-			case DATA:	
-				hql.append(" order by dataVenda ");
-				break;
-			case NOME_COTA:	
-				hql.append(" order by nomeCota ");
-				break;
-			case NOME_PRODUTO:	
-				hql.append(" order by nomeProduto ");
-				break;
-			case NUMERO_COTA:	
-				hql.append(" order by numeroCota ");
-				break;
-			case NUMERO_EDICAO:	
-				hql.append(" order by numeroEdicao ");
-				break;
-			case PRECO_CAPA:	
-				hql.append(" order by precoCapa ");
-				break;
-			case PRECO_DESCONTO:	
-				hql.append(" order by precoDesconto ");
-				break;
-			case QNT_PRODUTO:	
-				hql.append(" order by qntProduto ");
-				break;
-			case TIPO_VENDA:	
-				hql.append(" order by tipoVenda ");
-				break;
-			case TOTAL_VENDA:	
-				hql.append(" order by valoTotalProduto ");
-				break;
-		}
-		
-		if (filtro.getPaginacao().getOrdenacao() != null) {
-			hql.append( filtro.getPaginacao().getOrdenacao().toString());
-		}
-		
-		return hql.toString();
-	}
-	
-	@Override
-	public VendaEncalheDTO buscarVendaProdutoEncalhe(Long idVendaProduto){
-		
-		StringBuilder hql = new StringBuilder();
-
-		hql.append(" select ")
-			.append(" venda.id as idVenda ,")
-			.append(" venda.dataVenda as dataVenda ,")
-			.append(" case venda.cota.pessoa.class when 'F' then venda.cota.pessoa.nome when 'J' then venda.cota.pessoa.razaoSocial end  as nomeCota ,")
-			.append(" venda.cota.numeroCota as numeroCota ,")
-			.append(" venda.produtoEdicao.numeroEdicao as numeroEdicao ,")
-			.append(" venda.produtoEdicao.nome as nomeProduto ,")
-			.append(" venda.produtoEdicao.codigo as codigoProduto ,")
-			.append(" venda.produtoEdicao.precoVenda - venda.produtoEdicao.desconto as precoCapa ,")
-			.append(" venda.produtoEdicao.desconto as precoDesconto ,")
-			.append(" venda.valorTotalVenda as valoTotalProduto ,")
-			.append(" venda.qntProduto as qntProduto ,")
-			.append(" venda.produtoEdicao.codigoBarras as codigoBarras ,")
-			.append(" venda.produtoEdicao.produto.formaComercializacao.value as formaVenda ,")
-			.append(" venda.cota.box.codigo as codBox ,")
-			.append(" venda.tipoVenda as tipoVenda ")
-			.append(" venda.dataVencimentoDebito as dataVencimentoDebito ")
-	        .append(" from VendaProduto venda ")
-			.append(" where venda.id=:idVendaProduto");
-		
-		Query query = getSession().createQuery(hql.toString());
-		
-		query.setResultTransformer(new AliasToBeanResultTransformer(VendaEncalheDTO.class));
-		
-		query.setParameter("idVendaProduto", idVendaProduto);
-		
-		return (VendaEncalheDTO) query.uniqueResult();
-			
-	}
 }

@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.fiscal.NotaFiscalEntradaCota;
 
 public class InfoConferenciaEncalheCota implements Serializable {
 	
@@ -23,6 +24,8 @@ public class InfoConferenciaEncalheCota implements Serializable {
 	private List<ConferenciaEncalheDTO> listaConferenciaEncalhe;
 	
 	private List<DebitoCreditoCotaDTO> listaDebitoCreditoCota;
+	
+	private NotaFiscalEntradaCota notaFiscalEntradaCota;
 	
 	private BigDecimal reparte;
 	
@@ -120,7 +123,14 @@ public class InfoConferenciaEncalheCota implements Serializable {
 			Long idControleConferenciaEncalheCota) {
 		this.idControleConferenciaEncalheCota = idControleConferenciaEncalheCota;
 	}
-	
+
+	public NotaFiscalEntradaCota getNotaFiscalEntradaCota() {
+		return notaFiscalEntradaCota;
+	}
+
+	public void setNotaFiscalEntradaCota(NotaFiscalEntradaCota notaFiscalEntradaCota) {
+		this.notaFiscalEntradaCota = notaFiscalEntradaCota;
+	}
 	
 	
 }

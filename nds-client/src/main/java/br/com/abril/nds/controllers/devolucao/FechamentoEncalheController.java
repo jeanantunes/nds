@@ -1,6 +1,7 @@
 package br.com.abril.nds.controllers.devolucao;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -32,6 +33,7 @@ import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
+import br.com.caelum.vraptor.view.Results;
 
 /**
  * Classe responsável pelo controle das ações referentes à
@@ -114,42 +116,93 @@ public class FechamentoEncalheController {
 	public void cotasAusentes(Date dataEncalhe,
 			String sortname, String sortorder, int rp, int page) {
 		
-		Distribuidor distribuidor = this.distribuidorService.obter();
-		
 		List<CotaAusenteEncalheDTO> listaCotasAusenteEncalhe =
-			this.fechamentoEncalheService.buscarCotasAusentes(distribuidor.getDataOperacao(), sortorder, sortname, page, rp);
+			this.fechamentoEncalheService.buscarCotasAusentes(dataEncalhe, sortorder, sortname, page, rp);
 		
 		int total = this.fechamentoEncalheService.buscarTotalCotasAusentes(dataEncalhe);
 		
 		this.result.use(FlexiGridJson.class).from(listaCotasAusenteEncalhe).total(total).page(page).serialize();
 	}
 	
-	@Path("/postergarCotas")
-	public void postergarCotas(Date dataEncalhe, List<Long> idsCotas) {
-		// TODO: postergar as cotas.
-	}
-
-	@Path("/cobrarCotas")
-	public void cobrarCotas(Date dataEncalhe, List<Long> idsCotas) {
-		// TODO: cobrar as cotas.
+	
+	@Path("/encerrarFechamento")
+	public void encerrarFechamento(Date dataEncalhe) {
+		
+		// TODO: verificar condições para fechamento; mostrar msg erro
+		
+		
 	}
 	
-	@Path("/exportarArquivo")
-	public void exportarArquivo(Date dataEncalhe, FileType fileType) {
-
-		List<CotaAusenteEncalheDTO> listaCotasAusenteEncalhe =
-			this.fechamentoEncalheService.buscarCotasAusentes(dataEncalhe, null, null, -1, -1);
+	
+	@Path("/postergarCotas")
+	public void postergarCotas(Date dataPostergacao, List<Long> idsCotas) {
+			
+		Date dataAtual = Calendar.getInstance().getTime();
+		
+		if (dataAtual.after(dataPostergacao)) {
+			// throw new ValidacaoException();
+		}
 		
 		try {
 			
-			FileExporter.to("cotas_ausentes", fileType).inHTTPResponse(
-				this.getNDSFileHeader(), null, null, listaCotasAusenteEncalhe, 
-				CotaAusenteEncalheDTO.class, this.response);
+			this.fechamentoEncalheService.postergarCotas(dataPostergacao, idsCotas);
 			
 		} catch (Exception e) {
-			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, "Erro ao gerar o arquivo!"));
+			this.result.use(Results.json()).from(
+				new ValidacaoVO(TipoMensagem.ERROR, "Erro ao tentar postergar!"), "result").recursive().serialize();
+			throw new ValidacaoException();
 		}
 		
+		this.result.use(Results.json()).from(
+			new ValidacaoVO(TipoMensagem.SUCCESS, "Cotas postergadas com sucesso!"), "result").recursive().serialize();
+	}
+
+	@Path("/cobrarCotas")
+	public void cobrarCotas(Date dataOperacao, List<Long> idsCotas) {
+
+		if (idsCotas == null || idsCotas.isEmpty()) {
+			// validacao
+		}
+		
+		try {
+			
+			this.fechamentoEncalheService.cobrarCotas(dataOperacao, obterUsuario(), idsCotas);
+			
+		} catch (ValidacaoException e) {
+			this.result.use(Results.json()).from(e.getValidacao(), "result").recursive().serialize();
+			throw new ValidacaoException();
+		} catch (Exception e) {
+			this.result.use(Results.json()).from(
+				new ValidacaoVO(TipoMensagem.ERROR, "Erro ao tentar cobrar!"), "result").recursive().serialize();
+			throw new ValidacaoException();
+		}
+		
+		this.result.use(Results.json()).from(
+			new ValidacaoVO(TipoMensagem.SUCCESS, "Cotas cobradas com sucesso!"), "result").recursive().serialize();		
+	}
+
+	@Get
+	@Path("/exportarArquivo")
+	public void exportarArquivo(Date dataEncalhe, String sortname, String sortorder, 
+			int rp, int page, FileType fileType) {
+
+		List<CotaAusenteEncalheDTO> listaCotasAusenteEncalhe =
+			this.fechamentoEncalheService.buscarCotasAusentes(dataEncalhe, sortorder, sortname, page, rp);
+
+		if (listaCotasAusenteEncalhe != null && !listaCotasAusenteEncalhe.isEmpty()) {
+		
+			try {
+					
+				FileExporter.to("cotas_ausentes", fileType).inHTTPResponse(
+					this.getNDSFileHeader(), null, null, listaCotasAusenteEncalhe, 
+				CotaAusenteEncalheDTO.class, this.response);
+				
+			} catch (Exception e) {
+				throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, "Erro ao gerar o arquivo!"));
+			}
+		}
+	
+		this.result.use(Results.nothing());
 	}
 
 	@Get
@@ -162,7 +215,8 @@ public class FechamentoEncalheController {
 		filtro.setFornecedorId(fornecedorId);
 		filtro.setBoxId(boxId);
 		
-		List<FechamentoFisicoLogicoDTO> listaEncalhe = fechamentoEncalheService.buscarFechamentoEncalhe(filtro, sortorder, sortname, page, rp);
+		List<FechamentoFisicoLogicoDTO> listaEncalhe = fechamentoEncalheService.buscarFechamentoEncalhe(
+				filtro, sortorder, this.resolveSort(sortname), page, rp);
 		
 		// Evitar nullpointer na impressão:
 		if (listaEncalhe == null) {

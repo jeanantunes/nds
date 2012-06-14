@@ -3,6 +3,8 @@ package br.com.abril.nds.service;
 import java.util.List;
 
 import org.hibernate.criterion.MatchMode;
+
+import br.com.abril.nds.dto.ConsultaRoteirizacaoDTO;
 import br.com.abril.nds.dto.CotaDisponivelRoteirizacaoDTO;
 import br.com.abril.nds.model.LogBairro;
 import br.com.abril.nds.model.LogLocalidade;
@@ -83,7 +85,17 @@ public interface RoteirizacaoService {
 	
 	List<Roteiro> buscarRoteiroEspecial();
 	
-	List<Roteirizacao> buscarRoteirizacao(Long boxId, Long roteiroId, Long rotaId, TipoRoteiro tipoRoteiro);
+	List<ConsultaRoteirizacaoDTO> buscarRoteirizacao(Long boxId, Long roteiroId, Long rotaId, TipoRoteiro tipoRoteiro, String  orderBy, Ordenacao ordenacao, int initialResult, int maxResults);
+	
+	List<ConsultaRoteirizacaoDTO> buscarRoteirizacaoPorNumeroCota(Integer numeroCota, TipoRoteiro tipoRoteiro, String  orderBy, Ordenacao ordenacao, int initialResult, int maxResults);
+	
+	void transferirRoteirizacaoComNovaRota(List<Long> roteirizacaoId,Rota rota);
+	
+	void atualizaOrdenacao(Roteirizacao roteirizacao);
+	
+	void atualizaOrdenacaoAsc(Roteirizacao roteirizacao);
+	
+	void atualizaOrdenacaoDesc(Roteirizacao roteirizacao);
 
 }
 	

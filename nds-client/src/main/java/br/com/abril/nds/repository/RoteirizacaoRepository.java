@@ -2,12 +2,14 @@ package br.com.abril.nds.repository;
 
 import java.util.List;
 
+import br.com.abril.nds.dto.ConsultaRoteirizacaoDTO;
 import br.com.abril.nds.model.LogBairro;
 import br.com.abril.nds.model.LogLocalidade;
 import br.com.abril.nds.model.cadastro.Roteirizacao;
 import br.com.abril.nds.model.cadastro.Roteiro;
 import br.com.abril.nds.model.cadastro.TipoRoteiro;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
+import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
 public interface RoteirizacaoRepository extends Repository<Roteirizacao, Long> {
 	
@@ -23,7 +25,7 @@ public interface RoteirizacaoRepository extends Repository<Roteirizacao, Long> {
     
     Integer buscarMaiorOrdem(Long rotaId);
     
-    List<PDV> buscarRoteirizacaoNumeroCota(Integer numeroCota, Long rotaId, Roteiro roteiro  );
+    List<PDV> buscarPdvRoteirizacaoNumeroCota(Integer numeroCota, Long rotaId, Roteiro roteiro  );
     
     List<PDV> buscarRoteirizacaoPorEndereco (String CEP, String uf, String municipio, String bairro, Long rotaId , Roteiro roteiro );
     	
@@ -33,6 +35,15 @@ public interface RoteirizacaoRepository extends Repository<Roteirizacao, Long> {
 	
 	List<LogBairro> buscarBairroPorMunicipio(Long municipio, String uf);
 	
-	List<Roteirizacao> buscarRoteirizacao(Long boxId, Long roteiroId, Long rotaId, TipoRoteiro tipoRoteiro);
+	List<ConsultaRoteirizacaoDTO> buscarRoteirizacao(Long boxId, Long roteiroId, Long rotaId, TipoRoteiro tipoRoteiro, String  orderBy, Ordenacao ordenacao, int initialResult, int maxResults);
+	
+	List<ConsultaRoteirizacaoDTO>  buscarRoteirizacaoPorNumeroCota(Integer numeroCota, TipoRoteiro tipoRoteiro, String  orderBy, Ordenacao ordenacao, int initialResult, int maxResults);
+	
+	void atualizaOrdenacao(Roteirizacao roteirizacao );
+	
+	void atualizaOrdenacaoAsc(Roteirizacao roteirizacao);
+	
+	void atualizaOrdenacaoDesc(Roteirizacao roteirizacao );		 
+	 
 }
 

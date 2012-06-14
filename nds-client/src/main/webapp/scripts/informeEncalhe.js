@@ -125,6 +125,8 @@ InformeEncalhe.prototype.initGrid = function() {
 				onChangeSort :function(sortname, sortorder){
 					_this.imprimirParans.sortname = sortname;
 					_this.imprimirParans.sortorder = sortorder;
+					$("input[name='sortname']").val(sortname);
+					$("input[name='sortorder']").val(sortorder);
 				}
 			});
 
@@ -205,6 +207,7 @@ InformeEncalhe.prototype.bindEvents = function() {
 
 
 InformeEncalhe.prototype.initDialogImprimir = function() {
+	
 	var _this = this;
 	this.$dialogImprimir = $( "#dialog-imprimir" ).dialog({
 		autoOpen : false,
@@ -214,8 +217,16 @@ InformeEncalhe.prototype.initDialogImprimir = function() {
 		modal: true,
 		buttons: {
 			"Imprimir": function() {
+				
+				$("input[name='idFornecedor']").val($("#idFornecdorSelect").val());
+				$("input[name='semanaRecolhimento']").val($("#semanaRecolhimentoBox").val());
+				$("input[name='dataRecolhimento']").val($("dataRecolhimentoBox").val());
+				
 				$( this ).dialog( "close" );
-				_this.imprimir();
+				$("#form-imprimir").attr("action", contextPath + '/devolucao/informeEncalhe/relatorioInformeEncalhe');
+				$("#form-imprimir").attr("method", "POST");
+				$("#form-imprimir").attr("target", "_blank");
+				$("#form-imprimir").submit();
 
 			},
 			"Fechar": function() {
@@ -229,22 +240,22 @@ InformeEncalhe.prototype.imprimir =  function(){
 	var _this = this;	
 	
 	
-	 $('#form-imprimir').ajaxSubmit({        	
-	        success:function(responseText, statusText, xhr, $form)  { 
-	        	var mensagens = (responseText.mensagens)?responseText.mensagens:responseText.result;   
-	        	var tipoMensagem = mensagens.tipoMensagem;
-	    		var listaMensagens = mensagens.listaMensagens;
-
-	    		if (tipoMensagem && listaMensagens) {
-	    			exibirMensagemDialog(tipoMensagem, listaMensagens,"");
-	    		} 
-	    	} ,
-	        url:  _this.path + 'imprimir', 
-	        dataType:  'json',
-	        data: _this.imprimirParans,
-	        type:'POST'
-	        
-	    });
+//	 $('#form-imprimir').ajaxSubmit({        	
+//	        success:function(responseText, statusText, xhr, $form)  { 
+//	        	var mensagens = (responseText.mensagens)?responseText.mensagens:responseText.result;   
+//	        	var tipoMensagem = mensagens.tipoMensagem;
+//	    		var listaMensagens = mensagens.listaMensagens;
+//
+//	    		if (tipoMensagem && listaMensagens) {
+//	    			exibirMensagemDialog(tipoMensagem, listaMensagens,"");
+//	    		} 
+//	    	} ,
+//	        url:  _this.path + 'imprimir', 
+//	        dataType:  'json',
+//	        data: _this.imprimirParans,
+//	        type:'POST'
+//	        
+//	    });
 	
 	
 	

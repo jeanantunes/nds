@@ -59,9 +59,8 @@ public class CobrancaRepositoryImpl extends AbstractRepository<Cobranca, Long> i
 	}
 	
 	public void incrementarVia(String... nossoNumero){
-		Query query = this.getSession().createQuery("update Cobranca set vias = vias + 1, statusCobranca = :status where nossoNumero IN (:nossoNumero)");
+		Query query = this.getSession().createQuery("update Cobranca set vias = vias + 1 where nossoNumero IN (:nossoNumero)");
 		query.setParameterList("nossoNumero", nossoNumero);
-		query.setParameter("status", StatusCobranca.EMITIDO);
 		query.executeUpdate();
 	}
 	

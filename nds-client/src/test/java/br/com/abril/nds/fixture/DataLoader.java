@@ -187,12 +187,14 @@ public class DataLoader {
 
 	private static TipoMovimentoEstoque tipoMovimentoVendaEncalhe;
 	private static TipoMovimentoFinanceiro tipoMovimentoFinanceiroCompraEncalhe;
+	private static TipoMovimentoEstoque tipoMovimentoEstornoVendaEncalhe;
 
 	private static TipoMovimentoEstoque tipoMovimentoEnvioJornaleiro;
 
 	private static TipoMovimentoFinanceiro tipoMovimentoFinanceiroCredito;
 	private static TipoMovimentoFinanceiro tipoMovimentoFinanceiroDebito;
 	private static TipoMovimentoFinanceiro tipoMovimentoFinanceiroDebitoNA;
+	private static TipoMovimentoFinanceiro tipoMovimentoFinanceiroDebitoFaturamento;
 	private static TipoMovimentoFinanceiro tipoMovimentoFinanceiroRecebimentoReparte;
 
 	private static TipoMovimentoFinanceiro tipoMovimentoFinanceiroJuros;
@@ -603,6 +605,12 @@ public class DataLoader {
 	private static PDV pdvManoel;
 	private static PDV pdvJose;
 	
+	private static CFOP cfop1209;
+	private static CFOP cfop1210;
+	
+	private static ParametroEmissaoNotaFiscal parametroEmissaoNotaFiscalEntradaDevolucaoEncalhe;
+	private static ParametroEmissaoNotaFiscal parametroEmissaoNotaFiscalDevolucaoMercadoria;
+	
 
 	public static void main(String[] args) {
 		ClassPathXmlApplicationContext ctx = new ClassPathXmlApplicationContext(
@@ -667,7 +675,7 @@ public class DataLoader {
 		criarProdutosEdicao(session);
 		criarCFOP(session);
 		criarTiposMovimento(session);
-
+		criarParametroEmissaoNotaFiscal(session);
 		criarTiposNotaFiscal(session);
 		criarNotasFiscais(session);
 		criarRecebimentosFisicos(session);
@@ -3806,9 +3814,43 @@ public class DataLoader {
 	}
 
 	private static void criarCFOP(Session session) {
+		
+		cfop1209 = Fixture.cfop1209();
+		session.save(cfop1209);
+		
+		cfop1210 = Fixture.cfop1210();
+		session.save(cfop1210);
+		
 		cfop5102 = Fixture.cfop5102();
 		session.save(cfop5102);
 	}
+	
+	
+	
+	private static void criarParametroEmissaoNotaFiscal(Session session) {
+		
+		parametroEmissaoNotaFiscalEntradaDevolucaoEncalhe = 
+				Fixture.parametroEmissaoNotaFiscal(
+						cfop1209, 
+						cfop1210, 
+						GrupoNotaFiscal.RECEBIMENTO_MERCADORIAS_ENCALHE, "0002");
+
+		session.save(parametroEmissaoNotaFiscalEntradaDevolucaoEncalhe);
+
+		
+		parametroEmissaoNotaFiscalDevolucaoMercadoria = 
+				Fixture.parametroEmissaoNotaFiscal(
+						cfop1209, 
+						cfop1210, 
+						GrupoNotaFiscal.DEVOLUCAO_MERCADORIA_FORNECEDOR, 
+						"0001");
+		
+		session.save(parametroEmissaoNotaFiscalDevolucaoMercadoria);
+
+		
+	}
+	
+	
 
 	private static void criarTiposMovimento(Session session) {
 		tipoMovimentoFaltaEm = Fixture.tipoMovimentoFaltaEm();
@@ -3820,10 +3862,11 @@ public class DataLoader {
 
 
 		tipoMovimentoVendaEncalhe = Fixture.tipoMovimentoVendaEncalhe();
+		tipoMovimentoEstornoVendaEncalhe = Fixture.tipoMovimentoEstornoVendaEncalhe();
 
 		tipoMovimentoFinanceiroCompraEncalhe = Fixture.tipoMovimentoFinanceiroCompraEncalhe();
 
-		save(session, tipoMovimentoVendaEncalhe,tipoMovimentoFinanceiroCompraEncalhe);
+		save(session, tipoMovimentoVendaEncalhe,tipoMovimentoFinanceiroCompraEncalhe,tipoMovimentoEstornoVendaEncalhe);
 
 
 		tipoMovimentoSuplementarCotaAusente = Fixture.tipoMovimentoSuplementarCotaAusente();
@@ -3846,6 +3889,7 @@ public class DataLoader {
 		tipoMovimentoFinanceiroCredito = Fixture.tipoMovimentoFinanceiroCredito();
 		tipoMovimentoFinanceiroDebito = Fixture.tipoMovimentoFinanceiroDebito();
 		tipoMovimentoFinanceiroDebitoNA = Fixture.tipoMovimentoFinanceiroDebitoNA();
+		tipoMovimentoFinanceiroDebitoFaturamento = Fixture.tipoMovimentoFinanceiroDebitoFaturamento();
 		tipoMovimentoFinanceiroRecebimentoReparte = Fixture.tipoMovimentoFinanceiroRecebimentoReparte();
 		tipoMovimentoFinanceiroJuros = Fixture.tipoMovimentoFinanceiroJuros();
 		tipoMovimentoFinanceiroMulta = Fixture.tipoMovimentoFinanceiroMulta();
@@ -3864,7 +3908,7 @@ public class DataLoader {
 				tipoMovimentoSobraEm, tipoMovimentoSobraDe,
 				tipoMovimentoRecFisico, tipoMovimentoRecReparte,
 				tipoMovimentoFinanceiroCredito, tipoMovimentoFinanceiroDebito, tipoMovimentoFinanceiroDebitoNA,
-				tipoMovimentoEnvioEncalhe, tipoMovimentoFinanceiroRecebimentoReparte,
+				tipoMovimentoFinanceiroDebitoFaturamento,tipoMovimentoEnvioEncalhe, tipoMovimentoFinanceiroRecebimentoReparte,
 				tipoMovimentoFinanceiroJuros, tipoMovimentoFinanceiroMulta,
 				tipoMovimentoFinanceiroEnvioEncalhe, tipoMovimentoSuplementarCotaAusente,
 				tipoMovimentoRecebimentoEncalhe, tipoMovimentoRecebimentoEncalheJuramentado, 				
@@ -4121,6 +4165,7 @@ public class DataLoader {
 		criarProdutos(session);
 		criarProdutosEdicao(session);
 		criarCFOP(session);
+		criarParametroEmissaoNotaFiscal(session);
 		criarTiposMovimento(session);
 		criarTiposNotaFiscal(session);
 		criarNotasFiscais(session);
@@ -5106,6 +5151,9 @@ public class DataLoader {
 
 	private static void gerarCargaDadosConferenciaEncalhe(Session session) {
 		
+		TipoNotaFiscal tipoNotaFiscal = Fixture.tipoNotaFiscalRecebimentoMercadoriasEncalhe();
+		save(session, tipoNotaFiscal);
+		
 		Box boxRecolhimento = Fixture.criarBox("ENC_BOX1", "Box Encalhe", TipoBox.RECOLHIMENTO, false);
 		save(session, boxRecolhimento);
 		
@@ -5124,15 +5172,50 @@ public class DataLoader {
 		/**
 		 * COTA
 		 */
-		PessoaFisica valdomiroDevolvedorEncalhe = Fixture.pessoaFisica(
-				"3673745477623",
-				"valdomiro@devolvedor-encalhe.com.br", "Valdomiro Devolvedor Encalhe");
+		PessoaJuridica valdomiroDevolvedorEncalhe = Fixture.pessoaJuridica(
+				"Vardomiro Devolve Jornal S.A.", 
+				"12345632167", 
+				"5675123156583", 
+				"vardomiro@devolve.com", 
+				"345345345345");
+		
 		save(session, valdomiroDevolvedorEncalhe);
 
 		Cota cotaConferenciaEncalhe = Fixture.cota(5637, valdomiroDevolvedorEncalhe, SituacaoCadastro.ATIVO, box1);
+		
 		save(session, cotaConferenciaEncalhe);
+		
+		FormaCobranca formaBoleto =
+				Fixture.formaCobrancaBoleto(true, new BigDecimal(200), true, bancoHSBC,
+											BigDecimal.ONE, BigDecimal.ONE,null);
+		
+		FormaCobranca formaDeposito =
+				Fixture.formaCobrancaBoleto(true, new BigDecimal(200), true, bancoHSBC,
+											BigDecimal.ONE, BigDecimal.ONE,null);
+		FormaCobranca formaDinheiro =
+				Fixture.formaCobrancaBoleto(true, new BigDecimal(200), true, bancoHSBC,
+											BigDecimal.ONE, BigDecimal.ONE,null);
 
 		
+		save(session, formaBoleto, formaDeposito, formaDinheiro);
+		
+		Set<FormaCobranca> formasCobranca = new HashSet<FormaCobranca>();
+		
+		formasCobranca.add(formaBoleto);
+		formasCobranca.add(formaDeposito);
+		formasCobranca.add(formaDinheiro);
+		
+		ParametroCobrancaCota parametroCobrancaCotaConfEncalhe = Fixture.parametroCobrancaCota(
+				formasCobranca,
+				1, null, cotaConferenciaEncalhe, 1,
+				false, new BigDecimal(1000));
+		
+		save(session, parametroCobrancaCotaConfEncalhe);
+
+		formaBoleto.setParametroCobrancaCota(parametroCobrancaCotaConfEncalhe);
+		formaBoleto.setPrincipal(true);
+
+		save(session, formaBoleto);
 		
 		String codigoProduto = "8611"; 
 		String nomeProduto = "Produto 8611***";
@@ -5655,20 +5738,6 @@ public class DataLoader {
 
 		save(session, chamadaEncalhe_3);
 
-
-		CFOP cfop1209 = Fixture.cfop1209();
-		save(session, cfop1209);
-
-		CFOP cfop1210 = Fixture.cfop1210();
-		save(session, cfop1210);
-
-		ParametroEmissaoNotaFiscal parametroEmissaoNotaFiscal = 
-				Fixture.parametroEmissaoNotaFiscal(
-						cfop1209, 
-						cfop1210, 
-						GrupoNotaFiscal.DEVOLUCAO_MERCADORIA_FORNECEDOR, 
-						"0001");
-		save(session,parametroEmissaoNotaFiscal);
 
 		ControleNumeracaoNotaFiscal controleNumeracaoNotaFiscal = Fixture.controleNumeracaoNotaFiscal(1L, "0001");
 		save(session, controleNumeracaoNotaFiscal);

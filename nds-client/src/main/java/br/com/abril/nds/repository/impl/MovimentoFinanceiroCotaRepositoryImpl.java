@@ -8,10 +8,12 @@ import org.hibernate.Query;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Repository;
 
+import br.com.abril.nds.dto.CotaFaturamentoDTO;
 import br.com.abril.nds.dto.DebitoCreditoCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroDebitoCreditoDTO;
 import br.com.abril.nds.dto.filtro.FiltroDebitoCreditoDTO.ColunaOrdenacao;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
+import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.OperacaoFinaceira;
 import br.com.abril.nds.model.financeiro.StatusBaixa;
@@ -30,9 +32,9 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepository<Mo
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" from MovimentoFinanceiroCota mfc   		")
-		   .append(" inner join mfc.movimentos mec 				")
-		   .append(" where mec.id = : idMovimentoEstoqueCota 	");
+		hql.append(" select mfc from MovimentoFinanceiroCota mfc   		")
+		   .append(" inner join mfc.movimentos as mec 			")
+		   .append(" where mec.id = :idMovimentoEstoqueCota 	");
 		
 		Query query = this.getSession().createQuery(hql.toString());
 		
@@ -180,8 +182,6 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepository<Mo
 		return query.list();
 	}
 
-	
-	
 	@Override
 	public Long obterQuantidadeMovimentoFinanceiroDataOperacao(Date dataAtual){
 		
@@ -464,5 +464,60 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepository<Mo
 
 		return (BigDecimal) query.uniqueResult();
 	}
+	
 
+	/**
+	 * Obtém faturamento das cotas por período
+	 * @param cotas
+	 * @param dataInicial
+	 * @param dataFinal
+	 * @return List<CotaFaturamentoDTO>: Faturamento das Cotas
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<CotaFaturamentoDTO> obterFaturamentoCotasPorPeriodo(List<Cota> cotas,Date dataInicial, Date dataFinal) {
+
+		StringBuilder hql = new StringBuilder(" select ");
+
+		hql.append(" c.id as idCota, ");
+		
+		
+	    hql.append("( select ");
+
+	    hql.append(" COALESCE(sum( ( COALESCE(mec.estoqueProdutoCota.qtdeRecebida,0) - COALESCE(mec.estoqueProdutoCota.qtdeDevolvida,0))*(mec.estoqueProdutoCota.produtoEdicao.precoVenda) ),0) ");
+	    
+	    hql.append(" from MovimentoEstoqueCota mec where mec.cota = c  ");
+	    
+	    hql.append(" and ( mec.data >= :dataInicial and mec.data <= :dataFinal )  ");
+	    
+	    hql.append(" ) as faturamentoBruto, ");
+	    
+	    
+	    hql.append("( select ");
+
+	    hql.append(" COALESCE(sum( (mec.estoqueProdutoCota.produtoEdicao.precoVenda- COALESCE(mec.estoqueProdutoCota.produtoEdicao.desconto,0)) ),0) ");
+	    
+	    hql.append(" from MovimentoEstoqueCota mec where mec.cota = c  ");
+	    
+	    hql.append(" and ( mec.data >= :dataInicial and mec.data <= :dataFinal )  ");
+	    
+	    hql.append(" ) as faturamentoLiquido ");
+	    
+	    
+		hql.append(" from Cota c ");
+
+		hql.append(" where c in (:cotas) ");
+		
+		Query query = this.getSession().createQuery(hql.toString()).setResultTransformer(new AliasToBeanResultTransformer(CotaFaturamentoDTO.class));
+		
+		query.setParameterList("cotas", cotas);
+		
+		query.setParameter("dataInicial", dataInicial);
+		
+		query.setParameter("dataFinal", dataFinal);
+		
+		return query.list();
+	}
+
+	
 }

@@ -1,5 +1,6 @@
 package br.com.abril.nds.service.impl;
 
+import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -11,14 +12,29 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.CotaAusenteEncalheDTO;
 import br.com.abril.nds.dto.FechamentoFisicoLogicoDTO;
+import br.com.abril.nds.dto.MovimentoFinanceiroCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroFechamentoEncalheDTO;
+import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.TipoEdicao;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.estoque.FechamentoEncalhe;
 import br.com.abril.nds.model.estoque.pk.FechamentoEncalhePK;
+import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
+import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
+import br.com.abril.nds.model.planejamento.ChamadaEncalhe;
+import br.com.abril.nds.model.planejamento.ChamadaEncalheCota;
+import br.com.abril.nds.model.seguranca.Usuario;
+import br.com.abril.nds.repository.ChamadaEncalheRepository;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.FechamentoEncalheRepository;
+import br.com.abril.nds.repository.TipoMovimentoFinanceiroRepository;
+import br.com.abril.nds.service.DistribuidorService;
 import br.com.abril.nds.service.FechamentoEncalheService;
+import br.com.abril.nds.service.GerarCobrancaService;
+import br.com.abril.nds.service.MovimentoFinanceiroCotaService;
+import br.com.abril.nds.util.DateUtil;
 
 @Service
 public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
@@ -28,6 +44,21 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 	
 	@Autowired
 	private CotaRepository cotaRepository;
+	
+	@Autowired
+	private GerarCobrancaService gerarCobrancaService;
+
+	@Autowired
+	private DistribuidorService distribuidorService;
+	
+	@Autowired
+	private TipoMovimentoFinanceiroRepository tipoMovimentoFinanceiroRepository;
+	
+	@Autowired
+	private MovimentoFinanceiroCotaService movimentoFinanceiroCotaService;
+
+	@Autowired
+	private ChamadaEncalheRepository chamadaEncalheRepository;
 	
 	@Override
 	@Transactional
@@ -40,23 +71,14 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 			sort = null;
 		}
 		
-		// TODO: REFACTORING - Para ordenar corretamente a table da tela: 
-		String srtName = sortname; 
-		if (sortname != null) {
-			if ("precoCapaFormatado".equals(sortname)) {
-				srtName = "precoCapa";
-			}
-			if ("exemplaresDevolucaoFormatado".equals(sortname)) {
-				srtName = "exemplaresDevolucao";
-			}
-		}
-		
-		List<FechamentoFisicoLogicoDTO> listaConferencia = fechamentoEncalheRepository.buscarConferenciaEncalhe(filtro, sortorder, srtName, startSearch, rp);
+		Boolean fechado = fechamentoEncalheRepository.buscaControleFechamentoEncalhe(filtro.getDataEncalhe());
+		List<FechamentoFisicoLogicoDTO> listaConferencia = fechamentoEncalheRepository.buscarConferenciaEncalhe(filtro, sortorder, sort, startSearch, rp);
 		List<FechamentoEncalhe> listaFechamento = fechamentoEncalheRepository.buscarFechamentoEncalhe(filtro);
 		
 		for (FechamentoFisicoLogicoDTO conferencia : listaConferencia) {
 			
 			conferencia.setTotal(conferencia.getExemplaresDevolucao().multiply(conferencia.getPrecoCapa()));
+			conferencia.setFechado(fechado);
 			
 			for (FechamentoEncalhe fechamento : listaFechamento) {
 				if (conferencia.getCodigo().equals(fechamento.getFechamentoEncalhePK().getProdutoEdicao().getProduto().getCodigo())) {
@@ -135,7 +157,18 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 			startSearch = page * rp - rp;	
 		} 
 		
-		return this.fechamentoEncalheRepository.buscarCotasAusentes(dataEncalhe, sortorder, sortname, startSearch, rp);
+		List<CotaAusenteEncalheDTO> listaCotaAusenteEncalhe = 
+			this.fechamentoEncalheRepository.buscarCotasAusentes(dataEncalhe, sortorder, sortname, startSearch, rp);
+		
+		for (CotaAusenteEncalheDTO cotaAusenteEncalheDTO : listaCotaAusenteEncalhe) {
+			
+			if (cotaAusenteEncalheDTO.getFechado()) {
+				cotaAusenteEncalheDTO.setAcao(
+					"Cobrado, " + DateUtil.formatarData(cotaAusenteEncalheDTO.getDataEncalhe(), "dd/MM/yyyy"));
+			}
+		}
+		
+		return listaCotaAusenteEncalhe;
 	}
 
 	@Override
@@ -177,13 +210,85 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 		for (Cota cota : listaCotas) {
 			System.out.println(cota.getId());
 		}
-		
 	}
 
 	@Override
 	@Transactional
-	public void cobrarCotas(Date dataEncalhe, List<Long> idsCotas) {
+	public void cobrarCotas(Date dataOperacao, Usuario usuario, List<Long> idsCotas) {
+
+		if (idsCotas == null || idsCotas.isEmpty()) {
+			throw new IllegalArgumentException("Lista de ids das cotas não pode ser nula e nem vazia.");
+		}
 		
+		try {
+			
+			List<Cota> listaCotas = 
+				this.cotaRepository.obterCotasPorIDS(idsCotas);
+	
+			for (Cota cota : listaCotas) {
+	
+				Distribuidor distribuidor = this.distribuidorService.obter();
+				
+				TipoMovimentoFinanceiro tipoMovimentoFinanceiro = 
+					this.tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(GrupoMovimentoFinaceiro.ENVIO_ENCALHE);
+				
+				MovimentoFinanceiroCotaDTO movimentoFinanceiroCotaDTO = new MovimentoFinanceiroCotaDTO();
+				
+				movimentoFinanceiroCotaDTO.setCota(cota);
+				movimentoFinanceiroCotaDTO.setTipoMovimentoFinanceiro(tipoMovimentoFinanceiro);
+				movimentoFinanceiroCotaDTO.setUsuario(usuario);
+
+				// TODO: buscar na query do jonatas.
+				movimentoFinanceiroCotaDTO.setValor(this.buscarValorTotalEncalhe(dataOperacao, cota.getId()));
+				
+				movimentoFinanceiroCotaDTO.setDataOperacao(distribuidor.getDataOperacao());
+				movimentoFinanceiroCotaDTO.setBaixaCobranca(null);
+				movimentoFinanceiroCotaDTO.setDataVencimento(distribuidor.getDataOperacao());
+				movimentoFinanceiroCotaDTO.setDataAprovacao(distribuidor.getDataOperacao());
+				movimentoFinanceiroCotaDTO.setDataCriacao(distribuidor.getDataOperacao());
+				movimentoFinanceiroCotaDTO.setObservacao(null);
+				movimentoFinanceiroCotaDTO.setTipoEdicao(TipoEdicao.INCLUSAO);
+				movimentoFinanceiroCotaDTO.setAprovacaoAutomatica(true);
+				movimentoFinanceiroCotaDTO.setLancamentoManual(false);
+				
+				this.movimentoFinanceiroCotaService.gerarMovimentoFinanceiroDebitoCredito(movimentoFinanceiroCotaDTO);
+	
+				this.gerarCobrancaService.gerarCobranca(cota.getId(), usuario.getId(), true);
+				
+				List<ChamadaEncalhe> listaChamadaEncalhe = 
+					this.chamadaEncalheRepository.obterChamadasEncalhePor(dataOperacao, cota.getId());
+			
+				for (ChamadaEncalhe chamadaEncalhe : listaChamadaEncalhe) {
+					
+					chamadaEncalhe.setDataRecolhimento(distribuidor.getDataOperacao());
+					
+					for (ChamadaEncalheCota chamadaEncalheCota : chamadaEncalhe.getChamadaEncalheCotas()) {
+						
+						chamadaEncalheCota.setFechado(true);
+					}
+
+					this.chamadaEncalheRepository.merge(chamadaEncalhe);
+				}
+			}
+			
+		} catch (ValidacaoException e) {
+			throw new ValidacaoException(e.getValidacao());
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
 	}
 
+	@Override
+	@Transactional(readOnly=true)
+	public BigDecimal buscarValorTotalEncalhe(Date dataEncalhe, Long idCota) {
+		
+		List<FechamentoFisicoLogicoDTO> list = fechamentoEncalheRepository.buscarValorTotalEncalhe(dataEncalhe, idCota);
+        BigDecimal soma = BigDecimal.ZERO;
+        
+        for (FechamentoFisicoLogicoDTO dto : list) {
+               soma = soma.add(dto.getExemplaresDevolucao().multiply(dto.getPrecoCapa()));
+        }
+        
+        return soma;
+	}
 }

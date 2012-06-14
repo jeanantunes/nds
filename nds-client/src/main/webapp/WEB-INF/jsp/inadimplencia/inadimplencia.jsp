@@ -243,7 +243,7 @@ $(document).ready(function(){
 <div id="dialog-novo" title="Detalhe da Divida">
      
     <fieldset style="width:330px;">
-  <legend>Cota: 9999 - José da Silva Pereira</legend>
+  <legend>Cota: 9999 - Josï¿½ da Silva Pereira</legend>
    	<table width="330" border="0" cellspacing="1" cellpadding="1">
       <tr class="header_table">
         <td width="166" align="left"><strong>Dia Vencimento</strong></td>
@@ -269,7 +269,7 @@ $(document).ready(function(){
     
      <div id="effect" style="padding: 0 .7em;" class="ui-state-highlight ui-corner-all"> 
 				<p><span style="float: left; margin-right: .3em;" class="ui-icon ui-icon-info"></span>
-				<b>Suspensão < evento > com < status >.</b></p>
+				<b>Suspensï¿½o < evento > com < status >.</b></p>
 	</div>
     	
       <fieldset class="classFieldset">
@@ -303,8 +303,7 @@ $(document).ready(function(){
 
 <!-- NOME COTA -->
 <input type="text" name="idNomeCota" id="idNomeCota" style="width:180px;" 
-	onkeyup="cota.autoCompletarPorNome('#idNomeCota');" 
-		 	   onblur="cota.pesquisarPorNomeCota('#idNumCota', '#idNomeCota');"/></td>
+	onkeyup="cota.autoCompletarPorNome('#idNomeCota');" /></td>
             
               <td width="48">Status:</td>
               <td width="170">
