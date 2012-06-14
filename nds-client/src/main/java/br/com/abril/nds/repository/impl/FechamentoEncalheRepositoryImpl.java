@@ -216,27 +216,33 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepository<Fechamen
 	@Override
 	public FechamentoFisicoLogicoDTO buscarValorTotalEncalhe(Date dataEncalhe, Long idCota) {
 
-		Criteria criteria = this.getSession().createCriteria(ConferenciaEncalhe.class, "ce");
-		
-		criteria.setProjection(Projections.projectionList()
-			.add(Projections.sum("pe.precoVenda"), "precoCapa")
-			.add(Projections.sum("mec.qtde"), "exemplaresDevolucao")
-		);
-		
-		criteria.createAlias("ce.movimentoEstoqueCota", "mec");
-		criteria.setFetchMode("mec", FetchMode.JOIN);
-		
-		criteria.createAlias("ce.controleConferenciaEncalheCota", "ccec");
-		criteria.setFetchMode("ccec", FetchMode.JOIN);
-		
-		criteria.createAlias("mec.produtoEdicao", "pe");
-		criteria.setFetchMode("pe", FetchMode.JOIN);
-		
-		criteria.add(Restrictions.eq("ccec.dataOperacao", dataEncalhe));
-		criteria.add(Restrictions.eq("ccec.cota.id", idCota));
-		
-		criteria.setResultTransformer(Transformers.aliasToBean(FechamentoFisicoLogicoDTO.class));
+		try {
 			
-		return (FechamentoFisicoLogicoDTO) criteria.list().get(0);
+			Criteria criteria = this.getSession().createCriteria(ConferenciaEncalhe.class, "ce");
+			
+			criteria.setProjection(Projections.projectionList()
+				.add(Projections.sum("pe.precoVenda"), "precoCapa")
+				.add(Projections.sum("mec.qtde"), "exemplaresDevolucao")
+			);
+			
+			criteria.createAlias("ce.movimentoEstoqueCota", "mec");
+			criteria.setFetchMode("mec", FetchMode.JOIN);
+			
+			criteria.createAlias("ce.controleConferenciaEncalheCota", "ccec");
+			criteria.setFetchMode("ccec", FetchMode.JOIN);
+			
+			criteria.createAlias("mec.produtoEdicao", "pe");
+			criteria.setFetchMode("pe", FetchMode.JOIN);
+			
+			criteria.add(Restrictions.eq("ccec.dataOperacao", dataEncalhe));
+			criteria.add(Restrictions.eq("ccec.cota.id", idCota));
+			
+			criteria.setResultTransformer(Transformers.aliasToBean(FechamentoFisicoLogicoDTO.class));
+				
+			return (FechamentoFisicoLogicoDTO) criteria.uniqueResult();
+			
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
 	}
 }

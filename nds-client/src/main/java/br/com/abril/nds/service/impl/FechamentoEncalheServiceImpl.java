@@ -239,7 +239,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 				movimentoFinanceiroCotaDTO.setUsuario(usuario);
 
 				// TODO: buscar na query do jonatas.
-				movimentoFinanceiroCotaDTO.setValor(BigDecimal.ONE);
+				movimentoFinanceiroCotaDTO.setValor(this.buscarValorTotalEncalhe(dataOperacao, cota.getId()));
 				
 				movimentoFinanceiroCotaDTO.setDataOperacao(distribuidor.getDataOperacao());
 				movimentoFinanceiroCotaDTO.setBaixaCobranca(null);
@@ -279,7 +279,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 	}
 
 	@Override
-	@Transactional
+	@Transactional(readOnly=true)
 	public BigDecimal buscarValorTotalEncalhe(Date dataEncalhe, Long idCota) {
 		
 		FechamentoFisicoLogicoDTO dto = fechamentoEncalheRepository.buscarValorTotalEncalhe(dataEncalhe, idCota);
