@@ -1186,32 +1186,32 @@ roteiroEspecialNovo : function() {
 
 
 iniciarPesquisaRoteirizacaoGrid : function () {
-		
+	$(".rotaRoteirosGrid").clear();
 		
 		$(".rotaRoteirosGrid").flexigrid({
 		preProcess: roteirizacao.callBackPesquisaRoteirizacaoGrid,
 			dataType : 'json',
 			colModel : [ {
 				display : 'Box',
-				name : 'box',
+				name : 'nomeBox',
 				width : 100,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Roteiro',
-				name : 'roteiro',
+				name : 'descricaoRoteiro',
 				width : 180,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Rota',
-				name : 'rota',
+				name : 'descricaoRota',
 				width : 180,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Cota',
-				name : 'cota',
+				name : 'numeroCota',
 				width : 60,
 				sortable : true,
 				align : 'left',
@@ -1222,7 +1222,7 @@ iniciarPesquisaRoteirizacaoGrid : function () {
 				sortable : true,
 				align : 'left'
 			}],
-			sortname : "box",
+			sortname : "nomeBox",
 			sortorder : "asc",
 			usepager : true,
 			useRp : true,
@@ -1231,6 +1231,7 @@ iniciarPesquisaRoteirizacaoGrid : function () {
 			width : 960,
 			height : 255,
 			singleSelect : true
+			
 		});
 	},
 
@@ -1249,11 +1250,11 @@ iniciarPesquisaRoteirizacaoGrid : function () {
 		}
 		$.each(data.rows, function(index, value) {
 			
-			value.cell.box = value.cell.rota.roteiro.box.nome
-        	value.cell.roteiro = value.cell.rota.roteiro.descricaoRoteiro;
-			value.cell.rota = value.cell.rota.descricaoRota;
-			value.cell.cota = value.cell.pdv.cota.numeroCota;
-			value.cell.nome = value.cell.pdv.cota.pessoa.nome;
+//			value.cell.box = value.cell.rota.roteiro.box.nome
+//        	value.cell.roteiro = value.cell.rota.roteiro.descricaoRoteiro;
+//			value.cell.rota = value.cell.rota.descricaoRota;
+//			value.cell.cota = value.cell.pdv.cota.numeroCota;
+//			value.cell.nome = value.cell.pdv.cota.pessoa.nome;
 		});
 		
 		$(".grids").show();
@@ -1268,6 +1269,7 @@ iniciarPesquisaRoteirizacaoGrid : function () {
 		 if ($("#tipoRoteiroTranferencia").is(":checked") ) {
 			 tipoRoteiro = "ESPECIAL";
 		 }
+		 pesquisaRoteizicaoPorCota = false;
 		
 		roteirizacao.iniciarPesquisaRoteirizacaoGrid();
 		$(".rotaRoteirosGrid").clear();
@@ -1304,7 +1306,7 @@ iniciarPesquisaRoteirizacaoGrid : function () {
 		 if ($("#tipoRoteiroTranferencia").is(":checked") ) {
 			 tipoRoteiro = "ESPECIAL";
 		 }
-		
+		 pesquisaRoteizicaoPorCota = true;
 		roteirizacao.iniciarPesquisaRoteirizacaoGrid();
 		$(".rotaRoteirosGrid").clear();
 			$(".rotaRoteirosGrid").flexOptions({
@@ -1526,6 +1528,55 @@ iniciarPesquisaRoteirizacaoGrid : function () {
 			return  result
 
 		},
-	  
+		 gerarArquivoRoteirizacao : function(fileType) {
+			 var tipoRoteiro = "NORMAL";
+			 if ($("#tipoRoteiroTranferencia").is(":checked") ) {
+				 tipoRoteiro = "ESPECIAL";
+			 }
+			 
+			window.location = 
+				contextPath + 
+				"/cadastro/roteirizacao/imprimirArquivo?" + 
+				"boxId=" +  $('#boxPesquisa').val() +
+				"&roteiroId=" + $('#roteiroPesquisa').val() + 
+				"&rotaId=" + $('#rotaPesquisa').val() +
+				"&tipoRoteiro=" + tipoRoteiro +
+				"&numeroCota=" + $('#cotaPesquisa').val() +
+				"&pesquisaRoteizicaoPorCota=" +pesquisaRoteizicaoPorCota +
+				"&sortname=" + $(".rotaRoteirosGrid").flexGetSortName() +
+				"&sortorder=" + $(".rotaRoteirosGrid").getSortOrder() +
+				"&rp=" + $(".rotaRoteirosGrid").flexGetRowsPerPage() +
+				"&page=" + $(".rotaRoteirosGrid").flexGetPageNumber() +
+				"&fileType=" + fileType;
 
+
+			return false;
+		},
+		
+		imprimirArquivo : function (fileType) {
+			 var tipoRoteiro = "NORMAL";
+			 if ($("#tipoRoteiroTranferencia").is(":checked") ) {
+				 tipoRoteiro = "ESPECIAL";
+			 }
+			 
+			window.location = 
+				contextPath + 
+				"/cadastro/roteirizacao/imprimirArquivo?" + 
+				"boxId=" +  $('#boxPesquisa').val() +
+				"&roteiroId=" + $('#roteiroPesquisa').val() + 
+				"&rotaId=" + $('#rotaPesquisa').val() +
+				"&tipoRoteiro=" + tipoRoteiro +
+				"&numeroCota=" + $('#cotaPesquisa').val() +
+				"&pesquisaRoteizicaoPorCota=" +pesquisaRoteizicaoPorCota +
+				"&sortname=" + $(".rotaRoteirosGrid").flexGetSortName() +
+				"&sortorder=" + $(".rotaRoteirosGrid").getSortOrder() +
+				"&rp=" + $(".rotaRoteirosGrid").flexGetRowsPerPage() +
+				"&page=" + $(".rotaRoteirosGrid").flexGetPageNumber() +
+				"&fileType=" + fileType;
+
+			return false;
+		}
+	
+	  
+		
 };
