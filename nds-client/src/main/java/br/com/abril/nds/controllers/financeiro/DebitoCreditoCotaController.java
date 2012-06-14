@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
@@ -20,7 +19,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import br.com.abril.nds.client.vo.DebitoCreditoVO;
 import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.dto.DebitoCreditoDTO;
-import br.com.abril.nds.dto.FormaCobrancaDTO;
 import br.com.abril.nds.dto.MovimentoFinanceiroCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroDebitoCreditoDTO;
 import br.com.abril.nds.dto.filtro.FiltroDebitoCreditoDTO.ColunaOrdenacao;
@@ -36,6 +34,7 @@ import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.Rota;
 import br.com.abril.nds.model.cadastro.Roteiro;
+import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
 import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 import br.com.abril.nds.model.seguranca.Usuario;
@@ -158,6 +157,20 @@ public class DebitoCreditoCotaController {
 	}
 	
 	/**
+	 * Obtém valor calculado do movimento com base no faturamento da cota, caso o tipo de movimento for por faturamento
+	 * @param tipoMovimento
+	 */
+	@Post
+    @Path("/obterGrupoFaturamento")
+	public void obterGrupoFaturamento(Long idTipoMovimento){
+		TipoMovimentoFinanceiro tipoMovimento = null;
+		if (idTipoMovimento!=null){
+		    tipoMovimento = this.tipoMovimentoFinanceiroService.obterTipoMovimentoFincanceiroPorId(idTipoMovimento);
+		}
+		this.result.use(Results.json()).from(tipoMovimento!=null?tipoMovimento.getGrupoMovimentoFinaceiro():"", "result").recursive().serialize();
+	}
+	
+	/**
      * Retorna lançamentos pré-configurados com a cota para preencher a grid da view
      * @param idBox
      * @param idRoteiro
@@ -167,19 +180,48 @@ public class DebitoCreditoCotaController {
 	@Path("/obterInformacoesParaLancamento")
 	public void obterInformacoesParaLancamento(Long idBox, 
 			                                   Long idRoteiro, 
-			                                   Long idRota){
+			                                   Long idRota,
+			                                   GrupoMovimentoFinaceiro grupoMovimento,
+			                                   BigDecimal percentual,
+			                                   BaseCalculo baseCalculo,
+			                                   Date dataPeriodoInicial,
+			                                   Date dataPeriodoFinal){
 		
     	if ((idBox==null) && (idRoteiro==null) && (idRota==null)){
     		carregarNovosMovimentos();
     	}
     	else{
+    		
+    		if (grupoMovimento == GrupoMovimentoFinaceiro.DEBITO_SOBRE_FATURAMENTO){
+        		
+    			if (percentual == null) {
+    				throw new ValidacaoException(TipoMensagem.WARNING, "Para o lançamento baseado no faturamento é obrigatório informar o [Percentual].");
+    			}
+    			
+    			if (baseCalculo == null) {
+    				throw new ValidacaoException(TipoMensagem.WARNING, "Para o lançamento baseado no faturamento é obrigatório informar a [Base de Cálculo].");
+    			}
+    			
+    			if (dataPeriodoInicial == null) {
+    				throw new ValidacaoException(TipoMensagem.WARNING, "Para o lançamento baseado no faturamento é obrigatório informar o [Período para Cálculo].");
+    			}
+    			
+    			if (dataPeriodoFinal == null) {
+    				throw new ValidacaoException(TipoMensagem.WARNING, "Para o lançamento baseado no faturamento é obrigatório informar o [Período para Cálculo].");
+    			}
+    			
+    			if (DateUtil.isDataInicialMaiorDataFinal(dataPeriodoInicial, dataPeriodoFinal)) {
+    				throw new ValidacaoException(TipoMensagem.WARNING, "A [Data Final] deve susceder a [Data Inicial].");
+    			}
+        	}
 
-    		List<DebitoCreditoDTO> listaDebitoCredito = this.debitoCreditoCotaService.obterDadosLancamentoPorBoxRoteiroRota(idBox, idRoteiro, idRota);
-
+    		List<DebitoCreditoDTO> listaDebitoCredito = this.debitoCreditoCotaService.obterDadosLancamentoPorBoxRoteiroRota(idBox, idRoteiro, idRota, percentual, baseCalculo, dataPeriodoInicial, dataPeriodoFinal);
+            int qtd = this.debitoCreditoCotaService.obterQuantidadeCotasPorBoxRoteiroRota(idBox, idRoteiro, idRota);
+            
     		TableModel<CellModelKeyValue<DebitoCreditoDTO>> tableModel =
     				new TableModel<CellModelKeyValue<DebitoCreditoDTO>>();
     		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaDebitoCredito));
-    		tableModel.setTotal(50);
+    		tableModel.setTotal(qtd);
     		tableModel.setPage(1);
     		
     		this.result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
@@ -634,7 +676,7 @@ public class DebitoCreditoCotaController {
 							"true" : "false";
 
 			if ("true".equals(isEditavel) && StatusAprovacao.APROVADO == movimentoFinanceiroCota.getStatus()
-					|| DateUtil.isDataInicialMaiorDataFinal(DateUtil.removerTimestamp(new Date()), movimentoFinanceiroCota.getDataCriacao())) {
+					|| DateUtil.isDataInicialMaiorDataFinal(DateUtil.removerTimestamp(this.distribuidorService.obter().getDataOperacao()), movimentoFinanceiroCota.getDataCriacao())) {
 
 				isEditavel = "false"; 
 			}
@@ -795,6 +837,10 @@ public class DebitoCreditoCotaController {
 		if (idTipoMovimento == null) {
 			
 			throw new ValidacaoException(TipoMensagem.WARNING, "O preenchimento do campo [Tipo Movimento] é obrigatório.");
+		}
+		
+		if (listaNovosDebitoCredito==null || listaNovosDebitoCredito.size()<=0){
+			throw new ValidacaoException(TipoMensagem.WARNING, "Não há movimentos à serem lançados.");
 		}
 		
 		List<Long> linhasComErro = new ArrayList<Long>();

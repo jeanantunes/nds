@@ -22,6 +22,7 @@ import br.com.abril.nds.model.fiscal.nota.Status;
 import br.com.abril.nds.service.NotaFiscalService;
 import br.com.abril.nds.service.ParametroSistemaService;
 import br.com.abril.nds.util.FileImportUtil;
+import br.com.abril.nds.util.StringUtil;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.export.FileExporter.FileType;
 import br.com.caelum.vraptor.Path;
@@ -81,7 +82,9 @@ public class RetornoNFEController {
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Não foi encontrado nenhuma nota para a data informada"));
 		}
 				
-		List<RetornoNFEDTO> listaNotasRetorno = this.gerarListaNotasRetorno(listaNotas);
+		List<RetornoNFEDTO> listaNotasRetorno = 
+				this.notaFiscalService.processarRetornoNotaFiscal(
+						this.gerarParseListaNotasRetorno(listaNotas));
 						
 		this.session.setAttribute(LISTA_NOTAS_DE_RETORNO, listaNotasRetorno);
 		
@@ -103,10 +106,23 @@ public class RetornoNFEController {
 		
 		for (RetornoNFEDTO notaRetorno : listaNotasRetorno) {
 			
-			if (Status.AUTORIZADO.equals(notaRetorno.getStatus())) {
+			switch (notaRetorno.getStatus()) {
 			
-				this.notaFiscalService.processarRetornoNotaFiscal(notaRetorno);
-			} 
+			case AUTORIZADO:
+				this.notaFiscalService.autorizarNotaFiscal(notaRetorno);
+				continue;
+			
+			case CANCELAMENTO_HOMOLOGADO:
+				this.notaFiscalService.cancelarNotaFiscal(notaRetorno.getIdNotaFiscal());
+				continue;
+			
+			case USO_DENEGADO:
+				this.notaFiscalService.denegarNotaFiscal(notaRetorno.getIdNotaFiscal());
+				continue;
+			
+			default:
+				continue;
+			}
 		}
 		
 		this.limparSessao();
@@ -157,26 +173,32 @@ public class RetornoNFEController {
 	 * @param listaNotas path das notas dentro do diretório
 	 * @return lista de notas
 	 */
-	private List<RetornoNFEDTO> gerarListaNotasRetorno (List<File> arquivosNotas) {
+	private List<RetornoNFEDTO> gerarParseListaNotasRetorno (List<File> arquivosNotas) {
 		
 		HashMap<String, RetornoNFEDTO> hashNotasRetorno = new HashMap<String, RetornoNFEDTO>();
 		
 		RetornoNFEDTO arquivoRetornoAuxiliar = null;
 		
 		for (File nota : arquivosNotas) {
-									
-			RetornoNFEDTO arquivoRetorno = NFEImportUtil.processarArquivoRetorno(nota);
 			
-			if (arquivoRetornoAuxiliar == null) {
-			
-				arquivoRetornoAuxiliar = arquivoRetorno;
-							
-			} else if (arquivoRetornoAuxiliar.getChaveAcesso().equals(arquivoRetorno)) {
+			try {
 				
-				arquivoRetorno = this.processarNotaCancelamento(arquivoRetornoAuxiliar, arquivoRetorno);
-			}
+				RetornoNFEDTO arquivoRetorno = NFEImportUtil.processarArquivoRetorno(nota);
+			
+				if (arquivoRetornoAuxiliar == null) {
+			
+					arquivoRetornoAuxiliar = arquivoRetorno;
 							
-			hashNotasRetorno.put(arquivoRetorno.getChaveAcesso(), arquivoRetorno);
+				} else if (arquivoRetornoAuxiliar.getChaveAcesso().equals(arquivoRetorno)) {
+				
+					arquivoRetorno = this.processarNotaCancelamento(arquivoRetornoAuxiliar, arquivoRetorno);
+				}
+							
+				hashNotasRetorno.put(arquivoRetorno.getChaveAcesso(), arquivoRetorno);
+			
+			} catch (Exception e) { 
+				continue;
+			}
 		}
 		
 		List<RetornoNFEDTO> listaNotas = new ArrayList<RetornoNFEDTO>();
@@ -212,8 +234,12 @@ public class RetornoNFEController {
 						arquivo01.getDataRecebimento() : arquivo02.getDataRecebimento());
 		
 		notaCancelamentoMerged.setMotivo(
-				arquivo01.getMotivo() != null ?
-						arquivo01.getMotivo() : arquivo02.getMotivo());
+				StringUtil.isEmpty(arquivo01.getMotivo()) ?
+						arquivo02.getMotivo() : arquivo01.getMotivo());
+		
+		notaCancelamentoMerged.setCpfCnpj(
+				StringUtil.isEmpty(arquivo01.getCpfCnpj()) ?
+						arquivo02.getCpfCnpj() : arquivo01.getCpfCnpj());
 		
 		notaCancelamentoMerged.setProtocolo(
 				arquivo01.getProtocolo() != null ?

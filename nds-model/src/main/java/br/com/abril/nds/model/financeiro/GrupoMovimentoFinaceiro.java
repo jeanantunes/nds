@@ -55,7 +55,12 @@ public enum GrupoMovimentoFinaceiro {
 	/**
 	 * Postergação de dívida a pedido do jornaleiro.
 	 */
-	POSTERGADO_NEGOCIACAO(OperacaoFinaceira.DEBITO);
+	POSTERGADO_NEGOCIACAO(OperacaoFinaceira.DEBITO),
+	
+	/**
+	 * Débito calculado sobre faturamento da cota.
+	 */
+	DEBITO_SOBRE_FATURAMENTO(OperacaoFinaceira.DEBITO);
 	
 	
 	private OperacaoFinaceira operacaoFinaceira;

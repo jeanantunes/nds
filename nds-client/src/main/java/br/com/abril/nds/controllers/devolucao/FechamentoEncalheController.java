@@ -204,7 +204,8 @@ public class FechamentoEncalheController {
 		filtro.setFornecedorId(fornecedorId);
 		filtro.setBoxId(boxId);
 		
-		List<FechamentoFisicoLogicoDTO> listaEncalhe = fechamentoEncalheService.buscarFechamentoEncalhe(filtro, sortorder, sortname, page, rp);
+		List<FechamentoFisicoLogicoDTO> listaEncalhe = fechamentoEncalheService.buscarFechamentoEncalhe(
+				filtro, sortorder, this.resolveSort(sortname), page, rp);
 		
 		// Evitar nullpointer na impressão:
 		if (listaEncalhe == null) {

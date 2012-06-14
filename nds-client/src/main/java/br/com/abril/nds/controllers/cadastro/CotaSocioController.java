@@ -86,8 +86,18 @@ public class CotaSocioController {
 	 */
 	private void validarInclusaoSocioPrincipal(SocioCota socioCota, List<SocioCota> sociosCota) {
 		
-		if(isSocioPrincipal(sociosCota) && socioCota.getPrincipal() ){
-			throw new ValidacaoException(TipoMensagem.WARNING,"Socio principal ja foi cadastrado!");
+		if(sociosCota != null && !sociosCota.isEmpty()){
+			
+			for(SocioCota socio : sociosCota){
+				
+				if( socio.getId()== null || !(socio.getId().equals(socioCota.getId()))){
+					
+					if(socio.getPrincipal()!= null && socio.getPrincipal() && socioCota.getPrincipal()!= null && socioCota.getPrincipal()){
+						throw new ValidacaoException(TipoMensagem.WARNING,"Socio principal ja foi cadastrado!");
+					}
+				}
+					
+			}
 		}
 	}
 	
