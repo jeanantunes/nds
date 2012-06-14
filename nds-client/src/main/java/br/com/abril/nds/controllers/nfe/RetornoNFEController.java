@@ -82,7 +82,9 @@ public class RetornoNFEController {
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Não foi encontrado nenhuma nota para a data informada"));
 		}
 				
-		List<RetornoNFEDTO> listaNotasRetorno = this.gerarParseListaNotasRetorno(listaNotas);
+		List<RetornoNFEDTO> listaNotasRetorno = 
+				this.notaFiscalService.processarRetornoNotaFiscal(
+						this.gerarParseListaNotasRetorno(listaNotas));
 						
 		this.session.setAttribute(LISTA_NOTAS_DE_RETORNO, listaNotasRetorno);
 		
@@ -104,7 +106,23 @@ public class RetornoNFEController {
 		
 		for (RetornoNFEDTO notaRetorno : listaNotasRetorno) {
 			
-			//TODO: chamar rotina de acordo com o status da nota
+			switch (notaRetorno.getStatus()) {
+			
+			case AUTORIZADO:
+				this.notaFiscalService.autorizarNotaFiscal(notaRetorno);
+				continue;
+			
+			case CANCELAMENTO_HOMOLOGADO:
+				this.notaFiscalService.cancelarNotaFiscal(notaRetorno.getIdNotaFiscal());
+				continue;
+			
+			case USO_DENEGADO:
+				this.notaFiscalService.denegarNotaFiscal(notaRetorno.getIdNotaFiscal());
+				continue;
+			
+			default:
+				continue;
+			}
 		}
 		
 		this.limparSessao();

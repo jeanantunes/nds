@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -11,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.DebitoCreditoDTO;
 import br.com.abril.nds.dto.MovimentoFinanceiroCotaDTO;
+import br.com.abril.nds.model.cadastro.BaseCalculo;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 import br.com.abril.nds.model.seguranca.Usuario;
@@ -19,6 +21,7 @@ import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.TipoMovimentoFinanceiroRepository;
 import br.com.abril.nds.repository.UsuarioRepository;
 import br.com.abril.nds.service.DebitoCreditoCotaService;
+import br.com.abril.nds.service.MovimentoFinanceiroCotaService;
 import br.com.abril.nds.util.DateUtil;
 
 @Service
@@ -35,6 +38,9 @@ public class DebitoCreditoCotaServiceImpl implements DebitoCreditoCotaService {
 	
 	@Autowired
 	private UsuarioRepository usuarioRepository;
+	
+	@Autowired
+	private MovimentoFinanceiroCotaService movimentoFinanceiroCotaService;
 	
 	@Override
 	@Transactional
@@ -78,18 +84,57 @@ public class DebitoCreditoCotaServiceImpl implements DebitoCreditoCotaService {
 	
 	/**
 	 * Obtém dados pré-configurados com informações da Cota para lançamentos de débitos e/ou créditos
+	 * @param idBox
+	 * @param idRoteiro
+	 * @param idRota
+	 * @param percentual
+	 * @param baseCalculo
+	 * @param dataPeriodoInicial
+	 * @param dataPeriodoFinal
 	 * @return List<DebitoCreditoDTO>
 	 */
 	@Override
 	@Transactional(readOnly=true)
-	public List<DebitoCreditoDTO> obterDadosLancamentoPorBoxRoteiroRota(Long idBox,Long idRoteiro,Long idRota) {
+	public List<DebitoCreditoDTO> obterDadosLancamentoPorBoxRoteiroRota(Long idBox,Long idRoteiro,Long idRota,BigDecimal percentual,BaseCalculo baseCalculo,Date dataPeriodoInicial,Date dataPeriodoFinal) {
+		
 		List<DebitoCreditoDTO> listaDC = new ArrayList<DebitoCreditoDTO>();
+		
 		List<Cota> cotas = this.boxRepository.obterCotasPorBoxRoteiroRota(idBox, idRoteiro, idRota);
+		
+		Double percFat = null;
+		
+		Map<Long,BigDecimal> cotasFaturamentos = null;
+		
 		Long indice=0l;
 		for (Cota itemCota:cotas){
 			indice++;
-			listaDC.add(new DebitoCreditoDTO(indice,null,null,itemCota.getNumeroCota(),itemCota.getPessoa().getNome(),null,null,null,null));
+
+			if((percentual!=null)&&( baseCalculo!=null)&&( dataPeriodoInicial!=null)&&(dataPeriodoFinal!=null)){
+				
+				cotasFaturamentos = this.movimentoFinanceiroCotaService.obterFaturamentoCotasPeriodo(cotas, baseCalculo, dataPeriodoInicial, dataPeriodoFinal);
+				
+				if (cotasFaturamentos!=null){
+				    percFat = ((cotasFaturamentos.get(itemCota.getId()).doubleValue() / 100)*percentual.doubleValue());
+				}
+			}
+			
+			listaDC.add(new DebitoCreditoDTO(indice,null,null,itemCota.getNumeroCota(),itemCota.getPessoa().getNome(),null,null,percFat.toString(),null));
 		}
 		return listaDC;
+	}
+
+
+	/**
+	 * Obtém Quantidade de Cotas por Box, Rota e Roteiro
+	 * @param idBox
+	 * @param idRoteiro
+	 * @param idRota
+	 * @return Número de Cotas encontradas
+	 */
+	@Override
+	@Transactional(readOnly=true)
+	public int obterQuantidadeCotasPorBoxRoteiroRota(Long idBox,
+			Long idRoteiro, Long idRota) {
+		return this.boxRepository.obterQuantidadeCotasPorBoxRoteiroRota(idBox, idRoteiro, idRota);
 	}
 }

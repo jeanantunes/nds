@@ -12,14 +12,25 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.CotaAusenteEncalheDTO;
 import br.com.abril.nds.dto.FechamentoFisicoLogicoDTO;
+import br.com.abril.nds.dto.MovimentoFinanceiroCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroFechamentoEncalheDTO;
+import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.TipoEdicao;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.estoque.FechamentoEncalhe;
 import br.com.abril.nds.model.estoque.pk.FechamentoEncalhePK;
+import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
+import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
+import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.FechamentoEncalheRepository;
+import br.com.abril.nds.repository.TipoMovimentoFinanceiroRepository;
+import br.com.abril.nds.service.DistribuidorService;
 import br.com.abril.nds.service.FechamentoEncalheService;
+import br.com.abril.nds.service.GerarCobrancaService;
+import br.com.abril.nds.service.MovimentoFinanceiroCotaService;
 
 @Service
 public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
@@ -29,6 +40,18 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 	
 	@Autowired
 	private CotaRepository cotaRepository;
+	
+	@Autowired
+	private GerarCobrancaService gerarCobrancaService;
+
+	@Autowired
+	private DistribuidorService distribuidorService;
+	
+	@Autowired
+	private TipoMovimentoFinanceiroRepository tipoMovimentoFinanceiroRepository;
+	
+	@Autowired
+	private MovimentoFinanceiroCotaService movimentoFinanceiroCotaService;
 	
 	@Override
 	@Transactional
@@ -169,13 +192,68 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 		for (Cota cota : listaCotas) {
 			System.out.println(cota.getId());
 		}
-		
 	}
 
 	@Override
 	@Transactional
-	public void cobrarCotas(Date dataEncalhe, List<Long> idsCotas) {
+	public void cobrarCotas(Date dataEncalhe, Usuario usuario, List<Long> idsCotas) {
+
+		if (idsCotas == null || idsCotas.isEmpty()) {
+			throw new IllegalArgumentException("Lista de ids das cotas não pode ser nula e nem vazia.");
+		}
 		
+		if (dataEncalhe == null) {
+			throw new IllegalArgumentException("Data de encalhe não pode ser nula.");
+		}
+		
+		try {
+			
+			List<Cota> listaCotas = 
+				this.cotaRepository.obterCotasPorIDS(idsCotas);
+	
+			for (Cota cota : listaCotas) {
+	
+				Distribuidor distribuidor = this.distribuidorService.obter();
+				
+				// Long idControleConferenciaEncalheCota = controleConferenciaEncalheCota.getId();
+				/*
+				List<MovimentoEstoqueCota> movimentosEstoqueCotaOperacaoConferenciaEncalhe = 
+						movimentoEstoqueCotaRepository.obterListaMovimentoEstoqueCotaParaOperacaoConferenciaEncalhe(idControleConferenciaEncalheCota);
+				
+				BigDecimal valorTotalEncalheOperacaoConferenciaEncalhe = 
+						conferenciaEncalheRepository.obterValorTotalEncalheOperacaoConferenciaEncalhe(idControleConferenciaEncalheCota, distribuidor.getId());
+				*/
+				
+				TipoMovimentoFinanceiro tipoMovimentoFinanceiro = 
+					this.tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(GrupoMovimentoFinaceiro.ENVIO_ENCALHE);
+				
+				MovimentoFinanceiroCotaDTO movimentoFinanceiroCotaDTO = new MovimentoFinanceiroCotaDTO();
+				
+				movimentoFinanceiroCotaDTO.setCota(cota);
+				movimentoFinanceiroCotaDTO.setTipoMovimentoFinanceiro(tipoMovimentoFinanceiro);
+				movimentoFinanceiroCotaDTO.setUsuario(usuario);
+				// ERRADO
+				movimentoFinanceiroCotaDTO.setValor(BigDecimal.ONE);
+				movimentoFinanceiroCotaDTO.setDataOperacao(distribuidor.getDataOperacao());
+				movimentoFinanceiroCotaDTO.setBaixaCobranca(null);
+				movimentoFinanceiroCotaDTO.setDataVencimento(dataEncalhe);
+				movimentoFinanceiroCotaDTO.setDataAprovacao(distribuidor.getDataOperacao());
+				movimentoFinanceiroCotaDTO.setDataCriacao(distribuidor.getDataOperacao());
+				movimentoFinanceiroCotaDTO.setObservacao(null);
+				movimentoFinanceiroCotaDTO.setTipoEdicao(TipoEdicao.INCLUSAO);
+				movimentoFinanceiroCotaDTO.setAprovacaoAutomatica(true);
+				movimentoFinanceiroCotaDTO.setLancamentoManual(false);
+				// movimentoFinanceiroCotaDTO.setMovimentos(movimentosEstoqueCotaOperacaoConferenciaEncalhe);
+				
+				this.movimentoFinanceiroCotaService.gerarMovimentoFinanceiroDebitoCredito(movimentoFinanceiroCotaDTO);
+	
+				this.gerarCobrancaService.gerarCobranca(cota.getId(), usuario.getId());
+			}
+		} catch (ValidacaoException e) {
+			throw new ValidacaoException(e.getValidacao());
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	@Override

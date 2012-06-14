@@ -52,55 +52,38 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 	 */
 	@Override
 	@Transactional
-	public List<RetornoNFEDTO> processarRetornoNotaFiscal(
-			List<RetornoNFEDTO> listaDadosRetornoNFE) {
+	public List<RetornoNFEDTO> processarRetornoNotaFiscal(List<RetornoNFEDTO> listaDadosRetornoNFE) {
 
 		List<RetornoNFEDTO> listaDadosRetornoNFEProcessados = new ArrayList<RetornoNFEDTO>();
 
 		for (RetornoNFEDTO dadosRetornoNFE : listaDadosRetornoNFE) {
 
-			NotaFiscal notaFiscal = this.notaFiscalDAO
-					.buscarPorId(dadosRetornoNFE.getIdNotaFiscal());
+			NotaFiscal notaFiscal = this.notaFiscalDAO.buscarPorId(dadosRetornoNFE.getIdNotaFiscal());
 
 			if (notaFiscal != null) {
 
-				IdentificacaoEmitente emitente = notaFiscal
-						.getIdentificacaoEmitente();
+				IdentificacaoEmitente emitente = notaFiscal.getIdentificacaoEmitente();
 
-				String cpfCnpjEmitente = emitente.getPessoaEmitente()
-						.getDocumento();
+				String cpfCnpjEmitente = emitente.getPessoaEmitente().getDocumento();
 
-				InformacaoEletronica informacaoEletronica = notaFiscal
-						.getInformacaoEletronica();
+				InformacaoEletronica informacaoEletronica = notaFiscal.getInformacaoEletronica();
 
 				if (cpfCnpjEmitente.equals(dadosRetornoNFE.getCpfCnpj())) {
 
-					if (StatusProcessamentoInterno.ENVIADA.equals(notaFiscal
-							.getStatusProcessamentoInterno())) {
+					if (StatusProcessamentoInterno.ENVIADA.equals(notaFiscal.getStatusProcessamentoInterno())) {
 
-						if (Status.AUTORIZADO.equals(dadosRetornoNFE
-								.getStatus())) {
+						if (Status.AUTORIZADO.equals(dadosRetornoNFE.getStatus()) || 
+								Status.USO_DENEGADO.equals(dadosRetornoNFE.getStatus())) {
 
-							listaDadosRetornoNFEProcessados
-									.add(dadosRetornoNFE);
-
-						} else if (Status.USO_DENEGADO.equals(dadosRetornoNFE
-								.getStatus())) {
-
-							listaDadosRetornoNFEProcessados
-									.add(dadosRetornoNFE);
+							listaDadosRetornoNFEProcessados.add(dadosRetornoNFE);
 						}
 
-					} else if (StatusProcessamentoInterno.RETORNADA
-							.equals(notaFiscal.getStatusProcessamentoInterno())) {
+					} else if (StatusProcessamentoInterno.RETORNADA.equals(notaFiscal.getStatusProcessamentoInterno())) {
 
-						if (Status.AUTORIZADO.equals(informacaoEletronica
-								.getRetornoComunicacaoEletronica().getStatus())
-								&& Status.CANCELAMENTO_HOMOLOGADO
-										.equals(dadosRetornoNFE.getStatus())) {
+						if (Status.AUTORIZADO.equals(informacaoEletronica.getRetornoComunicacaoEletronica().getStatus()) && 
+								Status.CANCELAMENTO_HOMOLOGADO.equals(dadosRetornoNFE.getStatus())) {
 
-							listaDadosRetornoNFEProcessados
-									.add(dadosRetornoNFE);
+							listaDadosRetornoNFEProcessados.add(dadosRetornoNFE);
 						}
 					}
 				}

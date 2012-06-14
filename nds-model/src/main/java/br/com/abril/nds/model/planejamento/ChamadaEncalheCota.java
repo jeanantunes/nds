@@ -25,7 +25,10 @@ import br.com.abril.nds.model.cadastro.Cota;
 @SequenceGenerator(name="CHAMADA_ENCALHE_COTA_SEQ", initialValue = 1, allocationSize = 1)
 public class ChamadaEncalheCota implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -6783440794882421161L;
 
 	@Id
 	@GeneratedValue(generator = "CHAMADA_ENCALHE_COTA_SEQ")
@@ -36,8 +39,8 @@ public class ChamadaEncalheCota implements Serializable {
 	@JoinColumn(name = "COTA_ID")
 	private Cota cota;
 	
-	@Column(name = "CONFERIDO", nullable = false)
-	private boolean conferido;
+	@Column(name = "FECHADO", nullable = false)
+	private boolean fechado;
 	
 	@Column(name = "QTDE_PREVISTA", nullable = false)
 	private BigDecimal qtdePrevista;
@@ -74,20 +77,6 @@ public class ChamadaEncalheCota implements Serializable {
 		this.cota = cota;
 	}
 	
-	/**
-	 * @return the conferido
-	 */
-	public boolean isConferido() {
-		return conferido;
-	}
-
-	/**
-	 * @param conferido the conferido to set
-	 */
-	public void setConferido(boolean conferido) {
-		this.conferido = conferido;
-	}
-
 	public BigDecimal getQtdePrevista() {
 		return qtdePrevista;
 	}
@@ -109,15 +98,19 @@ public class ChamadaEncalheCota implements Serializable {
 	public void setChamadaEncalhe(ChamadaEncalhe chamadaEncalhe) {
 		this.chamadaEncalhe = chamadaEncalhe;
 	}
+	
+	/**
+	 * @return the fechado
+	 */
+	public boolean isFechado() {
+		return fechado;
+	}
 
 	/**
-	 * @return the serialversionuid
+	 * @param fechado the fechado to set
 	 */
-	public static long getSerialversionuid() {
-		return serialVersionUID;
+	public void setFechado(boolean fechado) {
+		this.fechado = fechado;
 	}
-	
-	
-	
 
 }

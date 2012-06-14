@@ -1,10 +1,14 @@
 package br.com.abril.nds.service;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import br.com.abril.nds.dto.MovimentoFinanceiroCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroDebitoCreditoDTO;
+import br.com.abril.nds.model.cadastro.BaseCalculo;
+import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
 
 public interface MovimentoFinanceiroCotaService {
@@ -22,4 +26,14 @@ public interface MovimentoFinanceiroCotaService {
 	
 	BigDecimal obterSomatorioValorMovimentosFinanceiroCota(FiltroDebitoCreditoDTO filtroDebitoCreditoDTO);
 	
+	/**
+	 * Obtém valores dos faturamentos bruto ou liquido das cotas no período
+	 * @param cotas
+	 * @param baseCalculo
+	 * @param dataInicial
+	 * @param dataFinal
+	 * @return Map<Long,BigDecimal>: Faturamentos das cotas
+	 */
+	Map<Long,BigDecimal> obterFaturamentoCotasPeriodo(List<Cota> cotas, BaseCalculo baseCalculo, Date dataInicial, Date dataFinal);
+
 }

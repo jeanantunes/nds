@@ -844,6 +844,16 @@ public class Fixture {
 	
 		return tipoMovimento;
 	}
+	
+	public static TipoMovimentoEstoque tipoMovimentoEstornoVendaEncalhe() {
+		TipoMovimentoEstoque tipoMovimento = new TipoMovimentoEstoque();
+		tipoMovimento.setAprovacaoAutomatica(true);
+		tipoMovimento.setDescricao("Estorno Venda Encalhe");
+		tipoMovimento.setIncideDivida(true);
+		tipoMovimento.setGrupoMovimentoEstoque(GrupoMovimentoEstoque.ESTORNO_VENDA_ENCALHE);
+	
+		return tipoMovimento;
+	}
 
 	public static TipoMovimentoEstoque tipoMovimentoSuplementarCotaAusente() {
 		TipoMovimentoEstoque tipoMovimento = new TipoMovimentoEstoque();
@@ -874,8 +884,16 @@ public class Fixture {
 	public static TipoMovimentoFinanceiro tipoMovimentoFinanceiroDebitoNA() {
 		TipoMovimentoFinanceiro tipoMovimento = new TipoMovimentoFinanceiro();
 		tipoMovimento.setAprovacaoAutomatica(true);
-		tipoMovimento.setDescricao("Débito NA");
+		tipoMovimento.setDescricao("NA");
 		tipoMovimento.setGrupoMovimentoFinaceiro(GrupoMovimentoFinaceiro.DEBITO);
+		return tipoMovimento;
+	}
+	
+	public static TipoMovimentoFinanceiro tipoMovimentoFinanceiroDebitoFaturamento() {
+		TipoMovimentoFinanceiro tipoMovimento = new TipoMovimentoFinanceiro();
+		tipoMovimento.setAprovacaoAutomatica(true);
+		tipoMovimento.setDescricao("Débito (Faturamento)");
+		tipoMovimento.setGrupoMovimentoFinaceiro(GrupoMovimentoFinaceiro.DEBITO_SOBRE_FATURAMENTO);
 		return tipoMovimento;
 	}
 	
@@ -1659,7 +1677,7 @@ public class Fixture {
 		ChamadaEncalheCota chamadaEncalheCota = new ChamadaEncalheCota();
 		
 		chamadaEncalheCota.setChamadaEncalhe(chamadaEncalhe);
-		chamadaEncalheCota.setConferido(conferido);
+		chamadaEncalheCota.setFechado(conferido);
 		chamadaEncalheCota.setCota(cota);
 		chamadaEncalheCota.setQtdePrevista(qtdePrevista);
 		

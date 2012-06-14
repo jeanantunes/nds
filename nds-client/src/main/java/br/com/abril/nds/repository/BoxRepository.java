@@ -107,4 +107,13 @@ public interface BoxRepository extends Repository<Box,Long> {
 	 * @return List<Cota>
 	 */
 	List<Cota> obterCotasPorBoxRoteiroRota(Long idBox, Long idRoteiro, Long idRota);
+	
+	/**
+	 * Obtém Quantidade de Cotas por Box, Rota e Roteiro
+	 * @param idBox
+	 * @param idRoteiro
+	 * @param idRota
+	 * @return Número de Cotas encontradas
+	 */
+	int obterQuantidadeCotasPorBoxRoteiroRota(Long idBox, Long idRoteiro, Long idRota);
 }

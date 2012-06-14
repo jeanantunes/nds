@@ -39,6 +39,9 @@ import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
+import br.com.caelum.stella.validation.CNPJValidator;
+import br.com.caelum.stella.validation.CPFValidator;
+import br.com.caelum.stella.validation.InvalidStateException;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
@@ -694,7 +697,10 @@ public class FiadorController {
 	}
 	
 	private void validarDadosEntradaPessoaFisica(PessoaFisica pessoa){
+		
 		List<String> msgsValidacao = new ArrayList<String>();
+		
+		CPFValidator cpfValidator = new CPFValidator(true);
 		
 		if (pessoa == null){
 			throw new ValidacaoException(TipoMensagem.WARNING, "CPF é obrigatório.");
@@ -710,6 +716,15 @@ public class FiadorController {
 		
 		if (pessoa.getCpf() == null || pessoa.getCpf().trim().isEmpty()){
 			msgsValidacao.add("CPF é obrigatório.");
+		} else {
+			
+			try{
+				
+				cpfValidator.assertValid(pessoa.getCpf());
+			} catch(InvalidStateException e){
+				
+				msgsValidacao.add("CPF inválido.");
+			}
 		}
 		
 		if (pessoa.getRg() == null || pessoa.getRg().trim().isEmpty()){
@@ -747,6 +762,15 @@ public class FiadorController {
 			
 			if (pessoa.getCpf() == null || pessoa.getCpf().trim().isEmpty()){
 				msgsValidacao.add("CPF do conjuge é obrigatório.");
+			} else {
+				
+				try{
+					
+					cpfValidator.assertValid(pessoa.getCpf());
+				} catch(InvalidStateException e){
+					
+					msgsValidacao.add("CPF do conjuge inválido.");
+				}
 			}
 			
 			if (pessoa.getRg() == null || pessoa.getRg().trim().isEmpty()){
@@ -784,6 +808,8 @@ public class FiadorController {
 		
 		List<String> msgsValidacao = new ArrayList<String>();
 		
+		CNPJValidator cnpjValidator = new CNPJValidator(true);
+		
 		if (pessoa == null){
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "CNPJ é obrigatório"));
 		}
@@ -802,6 +828,15 @@ public class FiadorController {
 		
 		if (pessoa.getCnpj() == null || pessoa.getCnpj().trim().isEmpty()){
 			msgsValidacao.add("CNPJ é obrigatório");
+		} else {
+			
+			try{
+				
+				cnpjValidator.assertValid(pessoa.getCnpj());
+			} catch(InvalidStateException e){
+				
+				msgsValidacao.add("CNPJ inválido.");
+			}
 		}
 		
 		if (pessoa.getEmail() == null || pessoa.getEmail().trim().isEmpty()){

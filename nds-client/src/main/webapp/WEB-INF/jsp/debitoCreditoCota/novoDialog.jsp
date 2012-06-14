@@ -1,12 +1,14 @@
 <div id="dialog-novo" title="Incluir Novo Tipo de Movimento" style="display: none;">
 
 	<jsp:include page="../messagesDialog.jsp" />
+	
+	<input type="hidden" id="grupoMovimentoHidden" />
 
 	<table width="760" border="0" cellspacing="2" cellpadding="2">
 	  <tr>
 	    <td width="119">Tipo de Lançamento:</td>
 	    <td width="517">
-			<select name="debitoCredito.tipoMovimentoFinanceiro.id" id="novoTipoMovimento" style="width:300px;">
+			<select onchange="configuraTelaLancamento(this.value);" name="debitoCredito.tipoMovimentoFinanceiro.id" id="novoTipoMovimento" style="width:300px;">
 		  		<option selected="selected"></option>
 				<c:forEach items="${tiposMovimentoFinanceiro}" var="tipoMovimento">
 					<option value="${tipoMovimento.id}">${tipoMovimento.descricao}</option>
@@ -16,7 +18,7 @@
 	  </tr>
 	</table>   
 	  
-	<table width="760" border="0">  
+	<table name="tabelaFaturamento" id="tabelaFaturamento" width="760" border="0">  
 	  <tr>
 	    <td width="40">Percentual(%):</td>
 	    <td width="30">
@@ -28,8 +30,8 @@
 			<select name="debitoCredito.baseCalculo.id" id="novoBaseCalculo" style="width:120px;">
 			
 		  		<option selected="selected"></option>
-				<c:forEach items="${basesCalculo}" var="baseCalculo">
-					<option value="${baseCalculo.key}">${baseCalculo.value}</option>
+				<c:forEach items="${basesCalculo}" var="base">
+					<option value="${base}">${base.value}</option>
 				</c:forEach>
 				
 		    </select>
@@ -94,7 +96,7 @@
 			<input type="text" name="debitoCredito.dataVencimento" id="novoDataVencimento" style="width:70px;height:15px;" />
 	    </td>
 	    
-	    <td width="40">Valor(R$):</td>
+	    <td width="40" id="tituloNovoValor">Valor(R$):</td>
 	    <td width="70">
 			 <input type="text" style="width:70px;height:15px;" name="debitoCredito.valor" id="novoValor" />
 	    </td>
@@ -256,26 +258,6 @@
 				}
 			});     
 		}
-
-		function obterInformacoesParaLancamento(){
-
-			var idBox = $("#novoBox").val();
-			var idRoteiro = $("#novoRoteiro").val();
-			var idRota = $("#novoRota").val();
-			
-			$(".debitosCreditosGrid_1").flexOptions({
-				url: "<c:url value='/financeiro/debitoCreditoCota/obterInformacoesParaLancamento' />",
-				params: [{name:'idBox', value:idBox},
-				         {name:'idRoteiro', value:idRoteiro},
-				         {name:'idRota', value:idRota}],
-				        newp: 1
-			});
-
-			/*RECARREGA GRID CONFORME A EXECUCAO DO METODO COM OS PARAMETROS PASSADOS*/
-			$(".debitosCreditosGrid_1").flexReload();
-			
-			$(".grids").show();
-		}
 		
 		function executarPreProcessamentoMovimento(resultado) {
 
@@ -293,7 +275,6 @@
 
 				
 				var vencimento = $("#novoDataVencimento").val();
-				var valor = $("#novoValor").val();
 				var observacao = $("#novoObservacao").val();
 				var numCota='';
 				if (row.cell.numeroCota!=null){
@@ -301,7 +282,11 @@
 				}
 				var nomeCota='';
 				if (row.cell.nomeCota!=null){
-					numCota = row.cell.nomeCota;
+					nomeCota = row.cell.nomeCota;
+				}
+				var valor = $("#novoValor").val();
+				if (row.cell.valor!=null){
+					valor = row.cell.valor;
 				}
 				
 				var hiddenId = '<input type="hidden" name="idMovimento" value="' + index + '" />';
@@ -426,6 +411,67 @@
 				return true;
 			}
 		}
+		
+		function obterInformacoesParaLancamento(){
+
+			var idBox = $("#novoBox").val();
+			var idRoteiro = $("#novoRoteiro").val();
+			var idRota = $("#novoRota").val();
+			var grupoMovimento = $("#grupoMovimentoHidden").val();
+			var percentual = $("#novoPercentual").val();
+			var baseCalculo = $("#novoBaseCalculo").val();
+			var dataPeriodoInicial = $("#novoDataPeriodoDe").val();
+			var dataPeriodoFinal = $("#novoDataPeriodoAte").val();
+			
+			$(".debitosCreditosGrid_1").flexOptions({
+				url: "<c:url value='/financeiro/debitoCreditoCota/obterInformacoesParaLancamento' />",
+				params: [{name:'idBox', value:idBox},
+				         {name:'idRoteiro', value:idRoteiro},
+				         {name:'idRota', value:idRota},
+				         {name:'grupoMovimento', value:grupoMovimento},
+				         {name:'percentual', value:percentual},
+				         {name:'baseCalculo', value:baseCalculo},
+				         {name:'dataPeriodoInicial', value:dataPeriodoInicial},
+				         {name:'dataPeriodoFinal', value:dataPeriodoFinal}],
+				        newp: 1
+			},
+			null,
+			null,
+			true);
+
+			/*RECARREGA GRID CONFORME A EXECUCAO DO METODO COM OS PARAMETROS PASSADOS*/
+			$(".debitosCreditosGrid_1").flexReload();
+			
+			$(".grids").show();
+		}
+		
+		//VERIFICA SE O TIPO DE LANÇAMENTO CONSIDERA FATURAMENTO DA COTA
+		function configuraTelaLancamento(idTipoLancamento){
+			var data = [{name: 'idTipoMovimento', value: idTipoLancamento}];
+			$.postJSON("<c:url value='/financeiro/debitoCreditoCota/obterGrupoFaturamento' />",
+					   data,
+					   sucessCallbackConfiguraTelaLancamento,
+					   null,
+					   true);
+		}
+		
+		function sucessCallbackConfiguraTelaLancamento(result){
+			
+			$("#grupoMovimentoHidden").val(result);
+			
+			if (result=='DEBITO_SOBRE_FATURAMENTO'){
+				$('#tabelaFaturamento').show();
+				$('#tituloNovoValor').hide();
+				$('#novoValor').hide();
+			}
+			else{
+				$('#tabelaFaturamento').hide();
+				$('#tituloNovoValor').show();
+				$('#novoValor').show();
+			}
+			
+		}
+		
 	</script>
 	
 </div>

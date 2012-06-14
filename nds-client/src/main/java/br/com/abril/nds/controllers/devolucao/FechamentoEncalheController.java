@@ -1,6 +1,7 @@
 package br.com.abril.nds.controllers.devolucao;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -32,6 +33,7 @@ import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
+import br.com.caelum.vraptor.view.Results;
 
 /**
  * Classe responsável pelo controle das ações referentes à
@@ -114,10 +116,8 @@ public class FechamentoEncalheController {
 	public void cotasAusentes(Date dataEncalhe,
 			String sortname, String sortorder, int rp, int page) {
 		
-		Distribuidor distribuidor = this.distribuidorService.obter();
-		
 		List<CotaAusenteEncalheDTO> listaCotasAusenteEncalhe =
-			this.fechamentoEncalheService.buscarCotasAusentes(distribuidor.getDataOperacao(), sortorder, sortname, page, rp);
+			this.fechamentoEncalheService.buscarCotasAusentes(dataEncalhe, sortorder, sortname, page, rp);
 		
 		int total = this.fechamentoEncalheService.buscarTotalCotasAusentes(dataEncalhe);
 		
@@ -135,20 +135,61 @@ public class FechamentoEncalheController {
 	
 	
 	@Path("/postergarCotas")
-	public void postergarCotas(Date dataEncalhe, List<Long> idsCotas) {
-		// TODO: postergar as cotas.
+	public void postergarCotas(Date dataPostergacao, List<Long> idsCotas) {
+			
+		Date dataAtual = Calendar.getInstance().getTime();
+		
+		if (dataAtual.after(dataPostergacao)) {
+			// throw new ValidacaoException();
+		}
+		
+		try {
+			
+			this.fechamentoEncalheService.postergarCotas(dataPostergacao, idsCotas);
+			
+		} catch (Exception e) {
+			this.result.use(Results.json()).from(
+				new ValidacaoVO(TipoMensagem.ERROR, "Erro ao tentar postergar!"), "result").recursive().serialize();
+			throw new ValidacaoException();
+		}
+		
+		this.result.use(Results.json()).from(
+			new ValidacaoVO(TipoMensagem.SUCCESS, "Cotas postergadas com sucesso!"), "result").recursive().serialize();
 	}
 
 	@Path("/cobrarCotas")
-	public void cobrarCotas(Date dataEncalhe, List<Long> idsCotas) {
-		// TODO: cobrar as cotas.
+	public void cobrarCotas(Date dataPostergacao, List<Long> idsCotas) {
+
+		Date dataAtual = Calendar.getInstance().getTime();
+		
+		if (dataAtual.after(dataPostergacao)) {
+			// throw new ValidacaoException();
+		}
+		
+		try {
+			
+			this.fechamentoEncalheService.cobrarCotas(dataPostergacao, obterUsuario(), idsCotas);
+			
+		} catch (ValidacaoException e) {
+			this.result.use(Results.json()).from(e.getValidacao(), "result").recursive().serialize();
+			throw new ValidacaoException();
+		} catch (Exception e) {
+			this.result.use(Results.json()).from(
+				new ValidacaoVO(TipoMensagem.ERROR, "Erro ao tentar cobrar!"), "result").recursive().serialize();
+			throw new ValidacaoException();
+		}
+		
+		this.result.use(Results.json()).from(
+			new ValidacaoVO(TipoMensagem.SUCCESS, "Cotas cobradas com sucesso!"), "result").recursive().serialize();		
 	}
-	
+
+	@Get
 	@Path("/exportarArquivo")
-	public void exportarArquivo(Date dataEncalhe, FileType fileType) {
+	public void exportarArquivo(Date dataEncalhe, String sortname, String sortorder, 
+			int rp, int page, FileType fileType) {
 
 		List<CotaAusenteEncalheDTO> listaCotasAusenteEncalhe =
-			this.fechamentoEncalheService.buscarCotasAusentes(dataEncalhe, null, null, -1, -1);
+			this.fechamentoEncalheService.buscarCotasAusentes(dataEncalhe, sortorder, sortname, page, rp);
 		
 		try {
 			
@@ -159,7 +200,8 @@ public class FechamentoEncalheController {
 		} catch (Exception e) {
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, "Erro ao gerar o arquivo!"));
 		}
-		
+
+		this.result.use(Results.nothing());
 	}
 
 	@Get

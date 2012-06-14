@@ -278,49 +278,79 @@
 		$("#dialog-postergar").dialog({
 			resizable: false,
 			height:'auto',
-			width:300,
+			width:250,
 			modal: true,
 			buttons: {
 				"Confirmar": function() {
 					
-					var dataEncalhe = $("#dtPostergada").val();
+					var dataPostergacao = $("#dtPostergada").val();
 
 					$.postJSON("<c:url value='/devolucao/fechamentoEncalhe/postergarCotas' />",
-								{ 'dataEncalhe' : dataEncalhe, 'idsCotas' : obterCotasMarcadas() },
+								{ 'dataPostergacao' : dataPostergacao, 'idsCotas' : obterCotasMarcadas() },
 								function (result) {
-						
+
+									$("#dialog-postergar").dialog("close");
+									
+									var tipoMensagem = result.tipoMensagem;
+									var listaMensagens = result.listaMensagens;
+									
+									if (tipoMensagem && listaMensagens) {
+										exibirMensagemDialog(tipoMensagem, listaMensagens, 'dialogMensagemEncerrarEncalhe');
+									}
+									
 								},
 							  	null,
-							   	true
+							   	true,
+							   	'dialogMensagemEncerrarEncalhe'
 						);
 				},
 				
 				"Cancelar": function() {
 					$( this ).dialog( "close" );
 				}
+			},
+			beforeClose: function() {
+				$("#dtPostergada").val("");
+				clearMessageDialogTimeout('dialogMensagemEncerrarEncalhe');
 			}
 		});
 	}
 
 	function cobrarCotas() {
 
-		var dataEncalhe = $("#datepickerDe").val();
+		var dataPostergacao = $("#datepickerDe").val();
 		
 		$.postJSON("<c:url value='/devolucao/fechamentoEncalhe/cobrarCotas' />",
-					{ 'dataEncalhe' : dataEncalhe, 'idsCotas' : obterCotasMarcadas() },
+					{ 'dataPostergacao' : dataPostergacao, 'idsCotas' : obterCotasMarcadas() },
 					function (result) {
-			
+						
+						var tipoMensagem = result.tipoMensagem;
+						var listaMensagens = result.listaMensagens;
+						
+						if (tipoMensagem && listaMensagens) {
+							exibirMensagemDialog(tipoMensagem, listaMensagens, 'dialogMensagemEncerrarEncalhe');
+						}
+
+						$(".cotasGrid").flexReload();
 					},
 				  	null,
 				   	true
 			);
 	}
 
-	function exportarCotasAusentes() {
+	function gerarArquivoCotasAusentes(fileType) {
 
 		var dataEncalhe = $("#datepickerDe").val();
 		
-		window.location = contextPath + "/devolucao/fechamentoEncalhe/exportarArquivo?dataEncalhe=" + dataEncalhe + "&fileType=XLS";
+		window.location = 
+			contextPath + 
+			"/devolucao/fechamentoEncalhe/exportarArquivo?" + 
+			"dataEncalhe=" + dataEncalhe + 
+			"&sortname=" + $(".cotasGrid").flexGetSortName() +
+			"&sortorder=" + $(".cotasGrid").getSortOrder() +
+			"&rp=" + $(".cotasGrid").flexGetRowsPerPage() +
+			"&page=" + $(".cotasGrid").flexGetPageNumber() +
+			"&fileType=" + fileType;
 
 		return false;
 	}
@@ -357,11 +387,11 @@
 	</div>
 
 	<div id="dialog-postergar" title="Postergar Encalhe" style="display:none;">
-		<fieldset style="width:255px!important;">
+		<fieldset style="width:200px!important;">
 	    	<legend>Postergar Encalhe</legend>
-			<table width="230" border="0" cellspacing="2" cellpadding="0">
+			<table border="0" cellspacing="2" cellpadding="0">
 	          <tr>
-	            <td width="121">Nova Data:</td>
+	            <td width="70">Nova Data:</td>
 	            <td width="103"><input name="dtPostergada" type="text" id="dtPostergada" style="width:80px;" /></td>
 	          </tr>
 	        </table>
@@ -369,18 +399,28 @@
 	</div>
 	
 	<div id="dialog-encerrarEncalhe" title="Opera&ccedil;&atilde;o de Encalhe" style="display:none;">
+		
+		<jsp:include page="../messagesDialog.jsp">
+			<jsp:param value="dialogMensagemEncerrarEncalhe" name="messageDialog"/>
+		</jsp:include> 
+		
 		<fieldset>
 			<legend>Cotas Ausentes</legend>
 			<form id="formGridCotas" name="formGridCotas" >
 				<table class="cotasGrid" id="tabelaGridCotas" ></table>
 			</form>
 			<span class="bt_novos" title="Gerar Arquivo" >
-				<a href="javascript:exportarCotasAusentes();">
+				<a href="javascript:gerarArquivoCotasAusentes('XLS');">
 					<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
 					Arquivo
 				</a>
 			</span>
-			<span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir </a></span>
+			<span class="bt_novos" title="Imprimir">
+				<a href="javascript:gerarArquivoCotasAusentes('PDF');">
+					<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
+					Imprimir 
+				</a>
+			</span>
 			<span class="bt_sellAll" style="float:right;">
 				<input type="checkbox" id="checkTodasCotas" name="checkTodasCotas" onchange="checarTodasCotasGrid(this.checked);" style="float:right;margin-right:25px;"/>
 				<label for="checkTodasCotas" id="textoCheckAllCotas" ></label>
@@ -496,7 +536,8 @@
 			rp : 15,
 			showTableToggleBtn : true,
 			width : 600,
-			height : 240
+			height : 240,
+			singleSelect : true
 		});
 		$(".fechamentoGrid").flexigrid({
 			dataType : 'json',
@@ -563,7 +604,8 @@
 			rp : 15,
 			showTableToggleBtn : true,
 			width : 960,
-			height : 180
+			height : 180,
+			singleSelect : true
 		});
 	</script>
 

@@ -3,10 +3,10 @@ package br.com.abril.nds.service;
 import java.util.Date;
 import java.util.List;
 
-import br.com.abril.nds.dto.SlipVendaEncalheDTO;
 import br.com.abril.nds.dto.VendaEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroVendaEncalheDTO;
 import br.com.abril.nds.model.estoque.TipoVendaEncalhe;
+import br.com.abril.nds.model.seguranca.Usuario;
 
 
 /**
@@ -17,17 +17,6 @@ import br.com.abril.nds.model.estoque.TipoVendaEncalhe;
  *
  */
 public interface VendaEncalheService {
-	
-
-	/**
-	 * Obtém dados da venda encalhe por id
-	 * @param idCota
-	 * @param dataInicio
-	 * @param dataFim
-	 * @return List<SlipVendaEncalheDTO>
-	 */
-	 List<SlipVendaEncalheDTO> obtemDadosSlip(long idCota, Date dataInicio, Date dataFim);
-		
 	 
 	 /**
 	 * Gera Array de Bytes do Slip de Venda de Encalhe
@@ -36,7 +25,7 @@ public interface VendaEncalheService {
 	 * @param dataFim
 	  * @return byte[]
 	 */
-	 byte[] geraImpressaoVendaEncalhe(long idCota, Date dataInicio, Date dataFim);
+	 byte[] geraImpressaoVendaEncalhe(List<VendaEncalheDTO> listaVendas,Long numeroCota);
 
 	 
 	 
@@ -47,7 +36,7 @@ public interface VendaEncalheService {
 	 * @param dataFim
 	  * @return byte[]
 	 */
-	 byte[] geraImpressaoVendaSuplementar(long idCota, Date dataInicio, Date dataFim);
+	 byte[] geraImpressaoVendaSuplementar(List<VendaEncalheDTO> listaVendas,Long numeroCota);
 
 
 	 /**
@@ -63,8 +52,11 @@ public interface VendaEncalheService {
 	 * Efetiva uma venda de encalhe
 	 * 
 	 * @param vendaEncalheDTO - dados referente a vernda de encalhe 
+	 * @param numeroCota - número da cota
+	 * @param dataVencimentoDebito - data de vencimento do débito
+	 * @param usuario - usúario que efetivou a venda
 	 */
-	void efetivarVendaEncalhe(VendaEncalheDTO vendaEncalheDTO);
+	void efetivarVendaEncalhe(List<VendaEncalheDTO> vendaEncalheDTO, Long numeroCota,Date dataVencimentoDebito,Usuario usuario);
 	
 	/**
 	 * Exclui uma venda de encalhe efetivada
@@ -78,7 +70,7 @@ public interface VendaEncalheService {
 	 * 
 	 * @param vendaEncalheDTO - dados referente a vernda de encalhe 
 	 */
-	void alterarVendaEncalhe(VendaEncalheDTO vendaEncalheDTO);
+	void alterarVendaEncalhe(VendaEncalheDTO vendaEncalheDTO,Date dataVencimentoDebito, Usuario usuario);
 	
 	/**
 	 * Retorna o slip no formato PDF referente a venda de encalhe.
