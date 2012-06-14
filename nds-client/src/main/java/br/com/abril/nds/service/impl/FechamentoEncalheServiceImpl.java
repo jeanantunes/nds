@@ -282,7 +282,13 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 	@Transactional(readOnly=true)
 	public BigDecimal buscarValorTotalEncalhe(Date dataEncalhe, Long idCota) {
 		
-		FechamentoFisicoLogicoDTO dto = fechamentoEncalheRepository.buscarValorTotalEncalhe(dataEncalhe, idCota);
-		return dto.getExemplaresDevolucao().multiply(dto.getPrecoCapa());
+		List<FechamentoFisicoLogicoDTO> list = fechamentoEncalheRepository.buscarValorTotalEncalhe(dataEncalhe, idCota);
+        BigDecimal soma = BigDecimal.ZERO;
+        
+        for (FechamentoFisicoLogicoDTO dto : list) {
+               soma = soma.add(dto.getExemplaresDevolucao().multiply(dto.getPrecoCapa()));
+        }
+        
+        return soma;
 	}
 }

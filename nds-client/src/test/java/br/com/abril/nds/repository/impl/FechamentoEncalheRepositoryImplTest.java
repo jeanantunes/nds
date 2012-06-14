@@ -88,10 +88,10 @@ public class FechamentoEncalheRepositoryImplTest extends AbstractRepositoryImplT
 		
 		dataEncalhe.set(2012, 1, 28);
 		
-		FechamentoFisicoLogicoDTO fechamentoFisicoLogicoDTO =
+		List<FechamentoFisicoLogicoDTO> listaFechamentoFisicoLogicoDTO =
 			this.fechamentoEncalheRepository.buscarValorTotalEncalhe(dataEncalhe.getTime(), 13L);
 		
-		Assert.assertNotNull(fechamentoFisicoLogicoDTO);
+		Assert.assertNotNull(listaFechamentoFisicoLogicoDTO);
 	}
 	
 }

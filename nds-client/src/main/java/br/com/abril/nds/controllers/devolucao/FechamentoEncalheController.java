@@ -188,17 +188,20 @@ public class FechamentoEncalheController {
 
 		List<CotaAusenteEncalheDTO> listaCotasAusenteEncalhe =
 			this.fechamentoEncalheService.buscarCotasAusentes(dataEncalhe, sortorder, sortname, page, rp);
-		
-		try {
-			
-			FileExporter.to("cotas_ausentes", fileType).inHTTPResponse(
-				this.getNDSFileHeader(), null, null, listaCotasAusenteEncalhe, 
-				CotaAusenteEncalheDTO.class, this.response);
-			
-		} catch (Exception e) {
-			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, "Erro ao gerar o arquivo!"));
-		}
 
+		if (listaCotasAusenteEncalhe != null && !listaCotasAusenteEncalhe.isEmpty()) {
+		
+			try {
+					
+				FileExporter.to("cotas_ausentes", fileType).inHTTPResponse(
+					this.getNDSFileHeader(), null, null, listaCotasAusenteEncalhe, 
+				CotaAusenteEncalheDTO.class, this.response);
+				
+			} catch (Exception e) {
+				throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, "Erro ao gerar o arquivo!"));
+			}
+		}
+	
 		this.result.use(Results.nothing());
 	}
 
