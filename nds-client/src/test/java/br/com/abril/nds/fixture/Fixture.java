@@ -844,6 +844,16 @@ public class Fixture {
 	
 		return tipoMovimento;
 	}
+	
+	public static TipoMovimentoEstoque tipoMovimentoEstornoVendaEncalhe() {
+		TipoMovimentoEstoque tipoMovimento = new TipoMovimentoEstoque();
+		tipoMovimento.setAprovacaoAutomatica(true);
+		tipoMovimento.setDescricao("Estorno Venda Encalhe");
+		tipoMovimento.setIncideDivida(true);
+		tipoMovimento.setGrupoMovimentoEstoque(GrupoMovimentoEstoque.ESTORNO_VENDA_ENCALHE);
+	
+		return tipoMovimento;
+	}
 
 	public static TipoMovimentoEstoque tipoMovimentoSuplementarCotaAusente() {
 		TipoMovimentoEstoque tipoMovimento = new TipoMovimentoEstoque();

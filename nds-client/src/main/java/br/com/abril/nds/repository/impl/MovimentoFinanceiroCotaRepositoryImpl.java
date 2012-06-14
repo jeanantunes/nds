@@ -182,8 +182,6 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepository<Mo
 		return query.list();
 	}
 
-	
-	
 	@Override
 	public Long obterQuantidadeMovimentoFinanceiroDataOperacao(Date dataAtual){
 		
