@@ -6,6 +6,7 @@ import java.util.List;
 import br.com.abril.nds.dto.CotaAusenteEncalheDTO;
 import br.com.abril.nds.dto.FechamentoFisicoLogicoDTO;
 import br.com.abril.nds.dto.filtro.FiltroFechamentoEncalheDTO;
+import br.com.abril.nds.model.seguranca.Usuario;
 
 public interface FechamentoEncalheService {
 
@@ -19,6 +20,6 @@ public interface FechamentoEncalheService {
 
 	void postergarCotas(Date dataPostergacao, List<Long> idsCotas);
 	
-	void cobrarCotas(Date dataEncalhe, List<Long> idsCotas);
+	void cobrarCotas(Date dataEncalhe, Usuario usuario, List<Long> idsCotas);
 	
 }

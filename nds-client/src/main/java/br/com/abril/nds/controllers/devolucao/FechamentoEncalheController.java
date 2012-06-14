@@ -130,7 +130,7 @@ public class FechamentoEncalheController {
 		Date dataAtual = Calendar.getInstance().getTime();
 		
 		if (dataAtual.after(dataPostergacao)) {
-			// throw validacao exception.
+			// throw new ValidacaoException();
 		}
 		
 		try {
@@ -148,15 +148,38 @@ public class FechamentoEncalheController {
 	}
 
 	@Path("/cobrarCotas")
-	public void cobrarCotas(Date dataEncalhe, List<Long> idsCotas) {
-		// TODO: cobrar as cotas.
+	public void cobrarCotas(Date dataPostergacao, List<Long> idsCotas) {
+
+		Date dataAtual = Calendar.getInstance().getTime();
+		
+		if (dataAtual.after(dataPostergacao)) {
+			// throw new ValidacaoException();
+		}
+		
+		try {
+			
+			this.fechamentoEncalheService.cobrarCotas(dataPostergacao, obterUsuario(), idsCotas);
+			
+		} catch (ValidacaoException e) {
+			this.result.use(Results.json()).from(e.getValidacao(), "result").recursive().serialize();
+			throw new ValidacaoException();
+		} catch (Exception e) {
+			this.result.use(Results.json()).from(
+				new ValidacaoVO(TipoMensagem.ERROR, "Erro ao tentar cobrar!"), "result").recursive().serialize();
+			throw new ValidacaoException();
+		}
+		
+		this.result.use(Results.json()).from(
+			new ValidacaoVO(TipoMensagem.SUCCESS, "Cotas cobradas com sucesso!"), "result").recursive().serialize();		
 	}
-	
+
+	@Get
 	@Path("/exportarArquivo")
-	public void exportarArquivo(Date dataEncalhe, FileType fileType) {
+	public void exportarArquivo(Date dataEncalhe, String sortname, String sortorder, 
+			int rp, int page, FileType fileType) {
 
 		List<CotaAusenteEncalheDTO> listaCotasAusenteEncalhe =
-			this.fechamentoEncalheService.buscarCotasAusentes(dataEncalhe, null, null, -1, -1);
+			this.fechamentoEncalheService.buscarCotasAusentes(dataEncalhe, sortorder, sortname, page, rp);
 		
 		try {
 			
@@ -167,7 +190,8 @@ public class FechamentoEncalheController {
 		} catch (Exception e) {
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, "Erro ao gerar o arquivo!"));
 		}
-		
+
+		this.result.use(Results.nothing());
 	}
 
 	@Get

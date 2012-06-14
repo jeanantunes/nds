@@ -289,23 +289,37 @@
 
 	function cobrarCotas() {
 
-		var dataEncalhe = $("#datepickerDe").val();
+		var dataPostergacao = $("#datepickerDe").val();
 		
 		$.postJSON("<c:url value='/devolucao/fechamentoEncalhe/cobrarCotas' />",
-					{ 'dataEncalhe' : dataEncalhe, 'idsCotas' : obterCotasMarcadas() },
+					{ 'dataPostergacao' : dataPostergacao, 'idsCotas' : obterCotasMarcadas() },
 					function (result) {
-			
+						
+						var tipoMensagem = result.tipoMensagem;
+						var listaMensagens = result.listaMensagens;
+						
+						if (tipoMensagem && listaMensagens) {
+							exibirMensagemDialog(tipoMensagem, listaMensagens, 'dialogMensagemEncerrarEncalhe');
+						}
 					},
 				  	null,
 				   	true
 			);
 	}
 
-	function exportarCotasAusentes() {
+	function gerarArquivoCotasAusentes(fileType) {
 
 		var dataEncalhe = $("#datepickerDe").val();
 		
-		window.location = contextPath + "/devolucao/fechamentoEncalhe/exportarArquivo?dataEncalhe=" + dataEncalhe + "&fileType=XLS";
+		window.location = 
+			contextPath + 
+			"/devolucao/fechamentoEncalhe/exportarArquivo?" + 
+			"dataEncalhe=" + dataEncalhe + 
+			"&sortname=" + $(".cotasGrid").flexGetSortName() +
+			"&sortorder=" + $(".cotasGrid").getSortOrder() +
+			"&rp=" + $(".cotasGrid").flexGetRowsPerPage() +
+			"&page=" + $(".cotasGrid").flexGetPageNumber() +
+			"&fileType=" + fileType;
 
 		return false;
 	}
@@ -365,12 +379,17 @@
 				<table class="cotasGrid" id="tabelaGridCotas" ></table>
 			</form>
 			<span class="bt_novos" title="Gerar Arquivo" >
-				<a href="javascript:exportarCotasAusentes();">
+				<a href="javascript:gerarArquivoCotasAusentes('XLS');">
 					<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
 					Arquivo
 				</a>
 			</span>
-			<span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir </a></span>
+			<span class="bt_novos" title="Imprimir">
+				<a href="javascript:gerarArquivoCotasAusentes('PDF');">
+					<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
+					Imprimir 
+				</a>
+			</span>
 			<span class="bt_sellAll" style="float:right;">
 				<input type="checkbox" id="checkTodasCotas" name="checkTodasCotas" onchange="checarTodasCotasGrid(this.checked);" style="float:right;margin-right:25px;"/>
 				<label for="checkTodasCotas" id="textoCheckAllCotas" ></label>
@@ -480,7 +499,8 @@
 			rp : 15,
 			showTableToggleBtn : true,
 			width : 600,
-			height : 240
+			height : 240,
+			singleSelect : true
 		});
 		$(".fechamentoGrid").flexigrid({
 			dataType : 'json',
@@ -547,7 +567,8 @@
 			rp : 15,
 			showTableToggleBtn : true,
 			width : 960,
-			height : 180
+			height : 180,
+			singleSelect : true
 		});
 	</script>
 
