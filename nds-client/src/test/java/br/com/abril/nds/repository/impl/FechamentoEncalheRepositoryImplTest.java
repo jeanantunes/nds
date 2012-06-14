@@ -81,4 +81,17 @@ public class FechamentoEncalheRepositoryImplTest extends AbstractRepositoryImplT
 		
 	}
 	
+	@Test
+	public void testarBuscarValorTotalEncalhe() {
+
+		Calendar dataEncalhe = Calendar.getInstance();
+		
+		dataEncalhe.set(2012, 1, 28);
+		
+		List<FechamentoFisicoLogicoDTO> listaFechamentoFisicoLogicoDTO =
+			this.fechamentoEncalheRepository.buscarValorTotalEncalhe(dataEncalhe.getTime(), 13L);
+		
+		Assert.assertNotNull(listaFechamentoFisicoLogicoDTO);
+	}
+	
 }

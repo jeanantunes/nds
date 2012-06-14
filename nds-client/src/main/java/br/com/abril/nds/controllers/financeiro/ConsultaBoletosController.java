@@ -107,7 +107,6 @@ public class ConsultaBoletosController {
 		listaStatusCombo.add(new ItemDTO<StatusCobranca,String>(null,"Todos"));
 		listaStatusCombo.add(new ItemDTO<StatusCobranca,String>(StatusCobranca.PAGO,"Pagos"));
 		listaStatusCombo.add(new ItemDTO<StatusCobranca,String>(StatusCobranca.NAO_PAGO,"Não Pagos"));
-		listaStatusCombo.add(new ItemDTO<StatusCobranca,String>(StatusCobranca.EMITIDO,"Emitidos"));
 		
 		result.include("listaStatusCombo",listaStatusCombo);
 	}

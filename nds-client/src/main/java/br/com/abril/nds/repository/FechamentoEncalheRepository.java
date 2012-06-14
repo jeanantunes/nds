@@ -21,5 +21,5 @@ public interface FechamentoEncalheRepository extends Repository<FechamentoEncalh
 	
 	Boolean buscaControleFechamentoEncalhe(Date dataEncalhe);
 	
-	FechamentoFisicoLogicoDTO buscarValorTotalEncalhe(Date dataEncalhe, Long idCota);
+	List<FechamentoFisicoLogicoDTO> buscarValorTotalEncalhe(Date dataEncalhe, Long idCota);
 }

@@ -136,7 +136,6 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepository<Fechamen
 			return criteria.list();
 		
 		} catch (Exception e) {
-			e.printStackTrace();
 			throw new RuntimeException(e);
 		}
 	}
@@ -162,7 +161,6 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepository<Fechamen
 			return listaCotasAusentes.size();
 			
 		} catch (Exception e) {
-			e.printStackTrace();
 			throw new RuntimeException(e);
 		}
 	}
@@ -189,7 +187,11 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepository<Fechamen
 				.add(Projections.property("pessoa.nome"), "colaboradorName")
 				.add(Projections.property("box.nome"), "boxName")
 				.add(Projections.property("roteiros.descricaoRoteiro"), "roteiroName")
-				.add(Projections.property("rotas.descricaoRota"), "rotaName")));
+				.add(Projections.property("rotas.descricaoRota"), "rotaName")
+				.add(Projections.property("cec.fechado"), "fechado")
+				.add(Projections.property("ce.dataRecolhimento"), "dataEncalhe")));
+				
+		// .property("cec.fechado"), "acao")
 
 		criteria.add(Restrictions.eq("ce.dataRecolhimento", dataEncalhe));
 		criteria.add(Restrictions.eq("roteiros.tipoRoteiro", TipoRoteiro.NORMAL));
@@ -212,29 +214,33 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepository<Fechamen
 	}
 	
 	@Override
-	public FechamentoFisicoLogicoDTO buscarValorTotalEncalhe(Date dataEncalhe, Long idCota) {
+	@SuppressWarnings("unchecked")
+	public List<FechamentoFisicoLogicoDTO> buscarValorTotalEncalhe(Date dataEncalhe, Long idCota) {
 
-		Criteria criteria = this.getSession().createCriteria(ConferenciaEncalhe.class, "ce");
-		
-		criteria.setProjection(Projections.projectionList()
-			.add(Projections.sum("pe.precoVenda"), "precoCapa")
-			.add(Projections.sum("mec.qtde"), "exemplaresDevolucao")
-		);
-		
-		criteria.createAlias("ce.movimentoEstoqueCota", "mec");
-		criteria.setFetchMode("mec", FetchMode.JOIN);
-		
-		criteria.createAlias("ce.controleConferenciaEncalheCota", "ccec");
-		criteria.setFetchMode("ccec", FetchMode.JOIN);
-		
-		criteria.createAlias("mec.produtoEdicao", "pe");
-		criteria.setFetchMode("pe", FetchMode.JOIN);
-		
-		criteria.add(Restrictions.eq("ccec.dataOperacao", dataEncalhe));
-		criteria.add(Restrictions.eq("ccec.cota.id", idCota));
-		
-		criteria.setResultTransformer(Transformers.aliasToBean(FechamentoFisicoLogicoDTO.class));
+		try {
 			
-		return (FechamentoFisicoLogicoDTO) criteria.list().get(0);
+			Criteria criteria = this.getSession().createCriteria(ChamadaEncalhe.class, "ce");
+            
+            criteria.setProjection(Projections.projectionList()
+                   .add(Projections.property("pe.precoVenda"), "precoCapa")
+                   .add(Projections.property("cec.qtdePrevista"), "exemplaresDevolucao")
+            );
+            
+            criteria.createAlias("ce.chamadaEncalheCotas", "cec");
+            criteria.setFetchMode("cec", FetchMode.JOIN);
+            
+            criteria.createAlias("ce.produtoEdicao", "pe");
+            criteria.setFetchMode("pe", FetchMode.JOIN);
+            
+            criteria.add(Restrictions.eq("ce.dataRecolhimento", dataEncalhe));
+            criteria.add(Restrictions.eq("cec.cota.id", idCota));
+            
+            criteria.setResultTransformer(Transformers.aliasToBean(FechamentoFisicoLogicoDTO.class));
+                   
+            return criteria.list();
+			
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
 	}
 }

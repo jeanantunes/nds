@@ -1,6 +1,7 @@
 package br.com.abril.nds.dto;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Export.Alignment;
@@ -30,6 +31,10 @@ public class CotaAusenteEncalheDTO implements Serializable {
 
 	@Export(label = "Ação", alignment = Alignment.CENTER, exhibitionOrder = 6)
 	private String acao = "";
+	
+	private Boolean fechado;
+	
+	private Date dataEncalhe;
 	
 	private String check;
 	
@@ -123,7 +128,7 @@ public class CotaAusenteEncalheDTO implements Serializable {
 	public void setAcao(String acao) {
 		this.acao = acao;
 	}
-
+	
 	/**
 	 * @return the check
 	 */
@@ -150,6 +155,34 @@ public class CotaAusenteEncalheDTO implements Serializable {
 	 */
 	public void setIdCota(Long idCota) {
 		this.idCota = idCota;
+	}
+
+	/**
+	 * @return the dataEncalhe
+	 */
+	public Date getDataEncalhe() {
+		return dataEncalhe;
+	}
+
+	/**
+	 * @param dataEncalhe the dataEncalhe to set
+	 */
+	public void setDataEncalhe(Date dataEncalhe) {
+		this.dataEncalhe = dataEncalhe;
+	}
+
+	/**
+	 * @return the fechado
+	 */
+	public Boolean getFechado() {
+		return fechado;
+	}
+
+	/**
+	 * @param fechado the fechado to set
+	 */
+	public void setFechado(Boolean fechado) {
+		this.fechado = fechado;
 	}
 	
 }

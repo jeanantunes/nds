@@ -280,7 +280,7 @@ public class BoxRepositoryImpl extends AbstractRepository<Box,Long> implements B
         
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" select c from Cota c");
+		hql.append(" select distinct c from Cota c");
 		
 		if(idRoteiro!=null){
 		    hql.append(", Roteiro rr");
@@ -325,7 +325,7 @@ public class BoxRepositoryImpl extends AbstractRepository<Box,Long> implements B
         
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" select c from Cota c");
+		hql.append(" select distinct c from Cota c");
 		
 		if(idRoteiro!=null){
 		    hql.append(", Roteiro rr");

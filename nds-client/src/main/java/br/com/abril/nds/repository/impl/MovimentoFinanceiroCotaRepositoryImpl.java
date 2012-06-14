@@ -464,6 +464,7 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepository<Mo
 
 		return (BigDecimal) query.uniqueResult();
 	}
+	
 
 	/**
 	 * Obtém faturamento das cotas por período
@@ -479,11 +480,30 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepository<Mo
 		StringBuilder hql = new StringBuilder(" select ");
 
 		hql.append(" c.id as idCota, ");
+		
+		
+	    hql.append("( select ");
 
-	    hql.append(" (select sum(mfc.valor - mfc.baixaCobranca.valorJuros - mfc.baixaCobranca.valorMulta + mfc.baixaCobranca.valorDesconto) from MovimentoFinanceiroCota mfc where mfc.cota = c ) as faturamentoLiquido, ");
+	    hql.append(" COALESCE(sum( ( COALESCE(mec.estoqueProdutoCota.qtdeRecebida,0) - COALESCE(mec.estoqueProdutoCota.qtdeDevolvida,0))*(mec.estoqueProdutoCota.produtoEdicao.precoVenda) ),0) ");
+	    
+	    hql.append(" from MovimentoEstoqueCota mec where mec.cota = c  ");
+	    
+	    hql.append(" and ( mec.data >= :dataInicial and mec.data <= :dataFinal )  ");
+	    
+	    hql.append(" ) as faturamentoBruto, ");
+	    
+	    
+	    hql.append("( select ");
 
-	    hql.append(" (select sum(mfc.valor - mfc.baixaCobranca.valorJuros - mfc.baixaCobranca.valorMulta + mfc.baixaCobranca.valorDesconto) from MovimentoFinanceiroCota mfc where mfc.cota = c ) as faturamentoBruto ");
-
+	    hql.append(" COALESCE(sum( (mec.estoqueProdutoCota.produtoEdicao.precoVenda- COALESCE(mec.estoqueProdutoCota.produtoEdicao.desconto,0)) ),0) ");
+	    
+	    hql.append(" from MovimentoEstoqueCota mec where mec.cota = c  ");
+	    
+	    hql.append(" and ( mec.data >= :dataInicial and mec.data <= :dataFinal )  ");
+	    
+	    hql.append(" ) as faturamentoLiquido ");
+	    
+	    
 		hql.append(" from Cota c ");
 
 		hql.append(" where c in (:cotas) ");
@@ -491,6 +511,10 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepository<Mo
 		Query query = this.getSession().createQuery(hql.toString()).setResultTransformer(new AliasToBeanResultTransformer(CotaFaturamentoDTO.class));
 		
 		query.setParameterList("cotas", cotas);
+		
+		query.setParameter("dataInicial", dataInicial);
+		
+		query.setParameter("dataFinal", dataFinal);
 		
 		return query.list();
 	}

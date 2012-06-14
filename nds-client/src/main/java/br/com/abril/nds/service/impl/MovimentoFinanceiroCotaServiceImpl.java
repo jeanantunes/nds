@@ -202,7 +202,7 @@ public class MovimentoFinanceiroCotaServiceImpl implements
 	        	    res.put(item.getIdCota(), item.getFaturamentoBruto());
 				}
 				if (baseCalculo == BaseCalculo.FATURAMENTO_LIQUIDO){
-	        	    res.put(item.getIdCota(), item.getFaturamentoLiquido());
+	        	    res.put(item.getIdCota(), item.getFaturamentoLiquido()); 
 				}
 	        }
 			
