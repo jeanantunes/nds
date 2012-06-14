@@ -393,7 +393,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		}
 		
 		List<Long> listaIdProdutoEdicao = 
-				chamadaEncalheCotaRepository.obterListaIdProdutoEdicaoChamaEncalheCota(numeroCota, dataOperacao, false, false);
+				chamadaEncalheCotaRepository.obterListaIdProdutoEdicaoChamaEncalheCota(numeroCota, dataOperacao, true, false);
 		
 		BigDecimal reparte = BigDecimal.ZERO;
 		
@@ -737,8 +737,6 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		} 			
 		
 		controleConfEncalheCota = inserirDadosConferenciaEncalhe(controleConfEncalheCota, listaConferenciaEncalhe, listaIdConferenciaEncalheParaExclusao, usuario, StatusOperacao.CONCLUIDO);
-		
-		executarProcedimentoDivergenciaNFEntradaDeEncalhe(controleConfEncalheCota);
 		
 		Set<String> nossoNumeroCollection = gerarCobranca(controleConfEncalheCota);
 		
@@ -2021,14 +2019,6 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 	}
 	
-	
-	private void executarProcedimentoDivergenciaNFEntradaDeEncalhe(ControleConferenciaEncalheCota controleConferenciaEncalheCota) {
-		
-		//TODO: invocar workflow das diferenças.
-		
-		//Pagina 4 paragrafo 4
-		
-	}
 
 	/**
 	 * Apos finalizar conferencia de encalhe sera verificado        

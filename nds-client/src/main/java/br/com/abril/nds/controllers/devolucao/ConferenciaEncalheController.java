@@ -493,7 +493,9 @@ public class ConferenciaEncalheController {
 		
 	}
 
-	
+	/**
+	 * Salva os dados da conferência de encalhe.
+	 */
 	@Post
 	public void salvarConferencia(){
 		
@@ -511,6 +513,7 @@ public class ConferenciaEncalheController {
 		controleConfEncalheCota.setCota(info.getCota());
 		controleConfEncalheCota.setId(this.getInfoConferenciaSession().getIdControleConferenciaEncalheCota());
 
+		@SuppressWarnings({ "rawtypes", "unchecked" })
 		Map<String, Object> dadosNotaFiscal = (Map) this.session.getAttribute(NOTA_FISCAL_CONFERENCIA);
 		
 		NotaFiscalEntradaCota notaFiscal = null;
@@ -650,6 +653,7 @@ public class ConferenciaEncalheController {
 			controleConfEncalheCota.setCota(info.getCota());
 			controleConfEncalheCota.setId(info.getIdControleConferenciaEncalheCota());
 			
+			@SuppressWarnings({ "unchecked", "rawtypes" })
 			Map<String, Object> dadosNotaFiscal = (Map) this.session.getAttribute(NOTA_FISCAL_CONFERENCIA);
 			
 			NotaFiscalEntradaCota notaFiscal = null;
@@ -864,6 +868,7 @@ public class ConferenciaEncalheController {
 	@Post
 	public void carregarNotaFiscal(){
 		
+		@SuppressWarnings("unchecked")
 		Map<String, Object> dadosNotaFiscal = (Map<String, Object>) this.session.getAttribute(NOTA_FISCAL_CONFERENCIA);
 		
 		if(dadosNotaFiscal!=null) {
@@ -878,28 +883,71 @@ public class ConferenciaEncalheController {
 		
 	}
 	
+	/**
+	 * Verifica se o valor total da nota fiscal informada é igual
+	 * ao valor de encalhe conferido na operação. 
+	 * 
+	 */
 	@Post
-	public void verificarValorTotalNotaFiscal(BigDecimal valorCEInformado){
+	public void verificarValorTotalNotaFiscal(){
 		
+		@SuppressWarnings({ "rawtypes", "unchecked" })
 		Map<String, Object> dadosNotaFiscal = (Map) this.session.getAttribute(NOTA_FISCAL_CONFERENCIA);
 		
-		BigDecimal valorTotal = this.calcularValoresMonetarios(null);
+		Map<String, Object> dados = new HashMap<String, Object>();
 		
-		valorTotal = valorTotal.round(new MathContext(2));
+		this.calcularValoresMonetarios(dados);
+		
+		BigDecimal valorEncalhe = ((BigDecimal)dados.get("valorEncalhe")).round(new MathContext(2));
 		
 		if (	dadosNotaFiscal != null && 
 				dadosNotaFiscal.get("valorProdutos") != null && 
-				!((BigDecimal)dadosNotaFiscal.get("valorProdutos")).equals(valorTotal)){
+				!((BigDecimal)dadosNotaFiscal.get("valorProdutos")).equals(valorEncalhe)){
 			
-			throw new ValidacaoException(TipoMensagem.WARNING, "Valor total a pagar difere do valor da nota informada.");
-		} else if (!valorTotal.equals(valorCEInformado)){
+			throw new ValidacaoException(TipoMensagem.WARNING, "Valor total do encalhe difere do valor da nota informada.");
 			
-			throw new ValidacaoException(TipoMensagem.WARNING, "Valor total a pagar difere do valor CE jornaleiro informado.");
-		} else {
+		}  else {
 			
 			this.finalizarConferencia();
+			
 		}
 	}
+	
+	/**
+	 * Verifica se o valor total de chamada encalhe informado é igual
+	 * ao valor de encalhe conferido na operação. 
+	 * 
+	 * @param valorCEInformado
+	 */
+	@Post
+	public void verificarValorTotalCE(BigDecimal valorCEInformado){
+
+		Map<String, Object> resultadoValidacao = new HashMap<String, Object>();
+		
+		if (valorCEInformado == null || BigDecimal.ZERO.compareTo(valorCEInformado) >= 0 ){
+			resultadoValidacao.put("valorCEInformadoValido", false);
+			resultadoValidacao.put("mensagemConfirmacao", "Valor CE jornaleiro informado inválido, Deseja continuar?");
+			this.result.use(CustomMapJson.class).put("result", resultadoValidacao).serialize();
+			return;
+		}
+		
+		Map<String, Object> valoresMonetarios = new HashMap<String, Object>();
+		this.calcularValoresMonetarios(valoresMonetarios);
+		BigDecimal valorEncalhe = ((BigDecimal) valoresMonetarios.get("valorEncalhe")).round(new MathContext(2));
+		
+		if (!valorEncalhe.equals(valorCEInformado)){
+
+			resultadoValidacao.put("valorCEInformadoValido", false);
+			resultadoValidacao.put("mensagemConfirmacao", "Valor total do encalhe difere do valor CE jornaleiro informado, Deseja continuar?");
+			this.result.use(CustomMapJson.class).put("result", resultadoValidacao).serialize();
+			return;
+		}
+		
+		resultadoValidacao.put("valorCEInformadoValido", true);
+		
+	}
+	
+	
 	
 	@Post
 	public void pesquisarProdutoEdicaoPorId(Long idProdutoEdicao){
@@ -946,7 +994,17 @@ public class ConferenciaEncalheController {
 		return (InfoConferenciaEncalheCota) this.session.getAttribute(INFO_CONFERENCIA);
 	}
 
-	private BigDecimal calcularValoresMonetarios(Map<String, Object> dados){
+	/**
+	 * Carrega o mapa passado como parâmetro com o seguinte valores:
+	 * 
+	 * valorEncalhe  		=	total do encalhe conferido até o momento nesta operação.
+	 * valorVendaDia 		=	valorReparte subtraído valorEncalhe.
+	 * valorDebitoCredito 	=	Creditos e Debitos da Cota 
+	 * valorPagar			= 	
+	 * 
+	 * @param dados
+	 */
+	private void calcularValoresMonetarios(Map<String, Object> dados){
 		
 		BigDecimal valorEncalhe = BigDecimal.ZERO;
 		BigDecimal valorVendaDia = BigDecimal.ZERO;
@@ -978,7 +1036,7 @@ public class ConferenciaEncalheController {
 			}
 		}
 		
-		BigDecimal valorPagar = valorVendaDia.subtract(valorEncalhe).add(valorDebitoCredito);
+		BigDecimal valorPagar = valorVendaDia.add(valorDebitoCredito);
 		
 		if (dados != null){
 			
@@ -988,7 +1046,6 @@ public class ConferenciaEncalheController {
 			dados.put("valorPagar", valorPagar);
 		}
 		
-		return valorPagar;
 	}
 	
 	/*
@@ -1092,10 +1149,6 @@ public class ConferenciaEncalheController {
 		tableModelDebitoCreditoCota.setPage(1);
 		
 		return tableModelDebitoCreditoCota;
-	}
-	
-	public void carregarEmSessionValorCEJornaleiro() {
-		//TODO codificar
 	}
 	
 	private List<ConferenciaEncalheDTO> getListaConferenciaEncalheFromSession() {
