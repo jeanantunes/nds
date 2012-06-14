@@ -1558,7 +1558,7 @@ public class Fixture {
 		ChamadaEncalheCota chamadaEncalheCota = new ChamadaEncalheCota();
 		
 		chamadaEncalheCota.setChamadaEncalhe(chamadaEncalhe);
-		chamadaEncalheCota.setConferido(conferido);
+		chamadaEncalheCota.setFechado(conferido);
 		chamadaEncalheCota.setCota(cota);
 		chamadaEncalheCota.setQtdePrevista(qtdePrevista);
 		
