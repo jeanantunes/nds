@@ -348,10 +348,6 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 	}
 	
-	public boolean verificarCotaEmiteNFe() {
-		return false;
-	}
-	
 	
 	/*
 	 * (non-Javadoc)

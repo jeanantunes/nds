@@ -933,9 +933,9 @@ public class ConferenciaEncalheController {
 		
 		Map<String, Object> valoresMonetarios = new HashMap<String, Object>();
 		this.calcularValoresMonetarios(valoresMonetarios);
-		BigDecimal valorEncalhe = ((BigDecimal) valoresMonetarios.get("valorEncalhe")).round(new MathContext(2));
+		BigDecimal valorEncalhe = ((BigDecimal) valoresMonetarios.get("valorEncalhe"));
 		
-		if (!valorEncalhe.equals(valorCEInformado)){
+		if (valorEncalhe.compareTo(valorCEInformado)!=0){
 
 			resultadoValidacao.put("valorCEInformadoValido", false);
 			resultadoValidacao.put("mensagemConfirmacao", "Valor total do encalhe difere do valor CE jornaleiro informado, Deseja continuar?");
@@ -944,6 +944,7 @@ public class ConferenciaEncalheController {
 		}
 		
 		resultadoValidacao.put("valorCEInformadoValido", true);
+		this.result.use(CustomMapJson.class).put("result", resultadoValidacao).serialize();
 		
 	}
 	
