@@ -124,6 +124,16 @@ public class FechamentoEncalheController {
 		this.result.use(FlexiGridJson.class).from(listaCotasAusenteEncalhe).total(total).page(page).serialize();
 	}
 	
+	
+	@Path("/encerrarFechamento")
+	public void encerrarFechamento(Date dataEncalhe) {
+		
+		// TODO: verificar condições para fechamento; mostrar msg erro
+		
+		
+	}
+	
+	
 	@Path("/postergarCotas")
 	public void postergarCotas(Date dataPostergacao, List<Long> idsCotas) {
 			
