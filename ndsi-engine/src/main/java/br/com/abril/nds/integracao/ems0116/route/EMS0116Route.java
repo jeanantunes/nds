@@ -24,7 +24,8 @@ public class EMS0116Route extends FixedLengthRouteTemplate {
 	@Autowired
 	private EMS0116MessageProcessor messageProcessor;
 	
-	private EMS0117Route ems0117Route = new EMS0117Route();
+	@Autowired
+	private EMS0117Route ems0117Route;
 	
 	@Override
 	public void onStart() {
