@@ -1,6 +1,7 @@
 package br.com.abril.nds.client.util;
 
 import java.io.File;
+import java.net.URL;
 import java.util.Date;
 
 import javax.xml.bind.JAXBContext;
@@ -33,17 +34,17 @@ public class NFEImportUtil {
 	/**
 	 * Constante com caminho do arquivo do xsd do POJO TNFe
 	 */
-	private final static String XSD_NFE = PATH_MAIN_RESOURCES + "xsdnfe/nfe_v2.00.xsd";
+	private final static String XSD_NFE = "xsdnfe/nfe_v2.00.xsd";
 	
 	/**
 	 * Constante com caminho do arquivo do xsd do POJO TNfeProc
 	 */
-	private final static String XSD_PPROC_NFE = PATH_MAIN_RESOURCES + "xsdnfe/procNFe_v2.00.xsd";
+	private final static String XSD_PPROC_NFE = "xsdnfe/procNFe_v2.00.xsd";
 	
 	/**
 	 * Constante com caminho do arquivo do xsd do POJO TProcCancNFe
 	 */
-	private final static String XSD_PROC_CANC_NFE = PATH_MAIN_RESOURCES + "xsdnfe/procCancNFe_v2.00.xsd";
+	private final static String XSD_PROC_CANC_NFE = "xsdnfe/procCancNFe_v2.00.xsd";
 	
 	/**
 	 * Obtém os dados atualizados de Status do arquivo da NFe de Retorno.
@@ -68,10 +69,9 @@ public class NFEImportUtil {
 
 		try {
 			context = JAXBContext.newInstance(TNFe.class);
-			unmarshaller = context.createUnmarshaller();
+			unmarshaller = context.createUnmarshaller();			
 			
-			xsdNFe = new File(NFEImportUtil.XSD_NFE);
-			schema = schemaFactory.newSchema(xsdNFe);
+			schema = schemaFactory.newSchema(Thread.currentThread().getContextClassLoader().getResource(NFEImportUtil.XSD_NFE));
 			unmarshaller.setSchema(schema);
 			
 			TNFe nfe = (TNFe) unmarshaller.unmarshal(arquivo);
@@ -87,8 +87,7 @@ public class NFEImportUtil {
 				context = JAXBContext.newInstance(TNfeProc.class);
 				unmarshaller = context.createUnmarshaller();
 
-				xsdNFe = new File(NFEImportUtil.XSD_PPROC_NFE);
-				schema = schemaFactory.newSchema(xsdNFe);
+				schema = schemaFactory.newSchema(Thread.currentThread().getContextClassLoader().getResource((NFEImportUtil.XSD_PPROC_NFE)));
 				unmarshaller.setSchema(schema);
 
 				TNfeProc nfeProc = (TNfeProc) unmarshaller.unmarshal(arquivo);
@@ -104,8 +103,7 @@ public class NFEImportUtil {
 				context = JAXBContext.newInstance(TProcCancNFe.class);
 				unmarshaller = context.createUnmarshaller();
 
-				xsdNFe = new File(NFEImportUtil.XSD_PROC_CANC_NFE);
-				schema = schemaFactory.newSchema(xsdNFe);
+				schema = schemaFactory.newSchema(Thread.currentThread().getContextClassLoader().getResource((NFEImportUtil.XSD_PROC_CANC_NFE)));
 				unmarshaller.setSchema(schema);
 
 				TProcCancNFe procCancNFe = (TProcCancNFe) unmarshaller.unmarshal(arquivo);

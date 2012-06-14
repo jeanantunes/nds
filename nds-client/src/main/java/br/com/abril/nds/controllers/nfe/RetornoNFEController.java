@@ -189,7 +189,7 @@ public class RetornoNFEController {
 			
 					arquivoRetornoAuxiliar = arquivoRetorno;
 							
-				} else if (arquivoRetornoAuxiliar.getChaveAcesso().equals(arquivoRetorno)) {
+				} else if (arquivoRetornoAuxiliar.getChaveAcesso().equals(arquivoRetorno.getChaveAcesso())) {
 				
 					arquivoRetorno = this.processarNotaCancelamento(arquivoRetornoAuxiliar, arquivoRetorno);
 				}
