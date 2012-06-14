@@ -143,6 +143,10 @@ public class ConsultaNFEEncalheTratamentoController {
 		
 		return tableModel;
 	}
+	
+	public void pesquisarItensPorNota(FiltroConsultaNFEEncalheTratamento filtro, String sortorder, String sortname, int page, int rp){
+		
+	}
 
 	private void validarEntrada(FiltroConsultaNFEEncalheTratamento filtro) {
 				
