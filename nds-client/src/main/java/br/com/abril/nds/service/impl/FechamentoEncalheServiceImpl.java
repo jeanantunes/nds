@@ -23,7 +23,10 @@ import br.com.abril.nds.model.estoque.FechamentoEncalhe;
 import br.com.abril.nds.model.estoque.pk.FechamentoEncalhePK;
 import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
+import br.com.abril.nds.model.planejamento.ChamadaEncalhe;
+import br.com.abril.nds.model.planejamento.ChamadaEncalheCota;
 import br.com.abril.nds.model.seguranca.Usuario;
+import br.com.abril.nds.repository.ChamadaEncalheRepository;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.FechamentoEncalheRepository;
 import br.com.abril.nds.repository.TipoMovimentoFinanceiroRepository;
@@ -52,6 +55,9 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 	
 	@Autowired
 	private MovimentoFinanceiroCotaService movimentoFinanceiroCotaService;
+
+	@Autowired
+	private ChamadaEncalheRepository chamadaEncalheRepository;
 	
 	@Override
 	@Transactional
@@ -205,14 +211,10 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 
 	@Override
 	@Transactional
-	public void cobrarCotas(Date dataEncalhe, Usuario usuario, List<Long> idsCotas) {
+	public void cobrarCotas(Date dataOperacao, Usuario usuario, List<Long> idsCotas) {
 
 		if (idsCotas == null || idsCotas.isEmpty()) {
 			throw new IllegalArgumentException("Lista de ids das cotas não pode ser nula e nem vazia.");
-		}
-		
-		if (dataEncalhe == null) {
-			throw new IllegalArgumentException("Data de encalhe não pode ser nula.");
 		}
 		
 		try {
@@ -224,15 +226,6 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 	
 				Distribuidor distribuidor = this.distribuidorService.obter();
 				
-				// Long idControleConferenciaEncalheCota = controleConferenciaEncalheCota.getId();
-				/*
-				List<MovimentoEstoqueCota> movimentosEstoqueCotaOperacaoConferenciaEncalhe = 
-						movimentoEstoqueCotaRepository.obterListaMovimentoEstoqueCotaParaOperacaoConferenciaEncalhe(idControleConferenciaEncalheCota);
-				
-				BigDecimal valorTotalEncalheOperacaoConferenciaEncalhe = 
-						conferenciaEncalheRepository.obterValorTotalEncalheOperacaoConferenciaEncalhe(idControleConferenciaEncalheCota, distribuidor.getId());
-				*/
-				
 				TipoMovimentoFinanceiro tipoMovimentoFinanceiro = 
 					this.tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(GrupoMovimentoFinaceiro.ENVIO_ENCALHE);
 				
@@ -241,23 +234,40 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 				movimentoFinanceiroCotaDTO.setCota(cota);
 				movimentoFinanceiroCotaDTO.setTipoMovimentoFinanceiro(tipoMovimentoFinanceiro);
 				movimentoFinanceiroCotaDTO.setUsuario(usuario);
-				// ERRADO
+
+				// TODO: buscar na query do jonatas.
 				movimentoFinanceiroCotaDTO.setValor(BigDecimal.ONE);
+				
 				movimentoFinanceiroCotaDTO.setDataOperacao(distribuidor.getDataOperacao());
 				movimentoFinanceiroCotaDTO.setBaixaCobranca(null);
-				movimentoFinanceiroCotaDTO.setDataVencimento(dataEncalhe);
+				movimentoFinanceiroCotaDTO.setDataVencimento(distribuidor.getDataOperacao());
 				movimentoFinanceiroCotaDTO.setDataAprovacao(distribuidor.getDataOperacao());
 				movimentoFinanceiroCotaDTO.setDataCriacao(distribuidor.getDataOperacao());
 				movimentoFinanceiroCotaDTO.setObservacao(null);
 				movimentoFinanceiroCotaDTO.setTipoEdicao(TipoEdicao.INCLUSAO);
 				movimentoFinanceiroCotaDTO.setAprovacaoAutomatica(true);
 				movimentoFinanceiroCotaDTO.setLancamentoManual(false);
-				// movimentoFinanceiroCotaDTO.setMovimentos(movimentosEstoqueCotaOperacaoConferenciaEncalhe);
 				
 				this.movimentoFinanceiroCotaService.gerarMovimentoFinanceiroDebitoCredito(movimentoFinanceiroCotaDTO);
 	
 				this.gerarCobrancaService.gerarCobranca(cota.getId(), usuario.getId());
+				
+				List<ChamadaEncalhe> listaChamadaEncalhe = 
+					this.chamadaEncalheRepository.obterChamadasEncalhePor(dataOperacao, cota.getId());
+			
+				for (ChamadaEncalhe chamadaEncalhe : listaChamadaEncalhe) {
+					
+					chamadaEncalhe.setDataRecolhimento(distribuidor.getDataOperacao());
+					
+					for (ChamadaEncalheCota chamadaEncalheCota : chamadaEncalhe.getChamadaEncalheCotas()) {
+						
+						chamadaEncalheCota.setFechado(true);
+					}
+
+					this.chamadaEncalheRepository.merge(chamadaEncalhe);
+				}
 			}
+			
 		} catch (ValidacaoException e) {
 			throw new ValidacaoException(e.getValidacao());
 		} catch (Exception e) {

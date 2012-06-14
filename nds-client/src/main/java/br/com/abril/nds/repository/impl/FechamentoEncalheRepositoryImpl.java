@@ -126,7 +126,6 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepository<Fechamen
 			return criteria.list();
 		
 		} catch (Exception e) {
-			e.printStackTrace();
 			throw new RuntimeException(e);
 		}
 	}
@@ -152,7 +151,6 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepository<Fechamen
 			return listaCotasAusentes.size();
 			
 		} catch (Exception e) {
-			e.printStackTrace();
 			throw new RuntimeException(e);
 		}
 	}
@@ -179,7 +177,10 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepository<Fechamen
 				.add(Projections.property("pessoa.nome"), "colaboradorName")
 				.add(Projections.property("box.nome"), "boxName")
 				.add(Projections.property("roteiros.descricaoRoteiro"), "roteiroName")
-				.add(Projections.property("rotas.descricaoRota"), "rotaName")));
+				.add(Projections.property("rotas.descricaoRota"), "rotaName")
+				.add(Projections.property("cec.fechado"), "acao")));
+				
+		// .property("cec.fechado"), "acao")
 
 		criteria.add(Restrictions.eq("ce.dataRecolhimento", dataEncalhe));
 		criteria.add(Restrictions.eq("roteiros.tipoRoteiro", TipoRoteiro.NORMAL));

@@ -148,17 +148,15 @@ public class FechamentoEncalheController {
 	}
 
 	@Path("/cobrarCotas")
-	public void cobrarCotas(Date dataPostergacao, List<Long> idsCotas) {
+	public void cobrarCotas(Date dataOperacao, List<Long> idsCotas) {
 
-		Date dataAtual = Calendar.getInstance().getTime();
-		
-		if (dataAtual.after(dataPostergacao)) {
-			// throw new ValidacaoException();
+		if (idsCotas == null || idsCotas.isEmpty()) {
+			// validacao
 		}
 		
 		try {
 			
-			this.fechamentoEncalheService.cobrarCotas(dataPostergacao, obterUsuario(), idsCotas);
+			this.fechamentoEncalheService.cobrarCotas(dataOperacao, obterUsuario(), idsCotas);
 			
 		} catch (ValidacaoException e) {
 			this.result.use(Results.json()).from(e.getValidacao(), "result").recursive().serialize();

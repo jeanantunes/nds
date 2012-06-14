@@ -120,8 +120,17 @@ public class CotaAusenteEncalheDTO implements Serializable {
 	/**
 	 * @param acao the acao to set
 	 */
-	public void setAcao(String acao) {
+	/*	public void setAcao(String acao) {
 		this.acao = acao;
+	}*/
+	
+	public void setAcao(Boolean acao) {
+		
+		this.acao = "";
+		
+		if (acao) {
+			this.acao = "Cobrado";
+		}
 	}
 
 	/**

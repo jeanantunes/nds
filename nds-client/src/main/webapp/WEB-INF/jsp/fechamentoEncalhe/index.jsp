@@ -289,10 +289,10 @@
 
 	function cobrarCotas() {
 
-		var dataPostergacao = $("#datepickerDe").val();
+		var dataOperacao = $("#datepickerDe").val();
 		
 		$.postJSON("<c:url value='/devolucao/fechamentoEncalhe/cobrarCotas' />",
-					{ 'dataPostergacao' : dataPostergacao, 'idsCotas' : obterCotasMarcadas() },
+					{ 'dataOperacao' : dataOperacao, 'idsCotas' : obterCotasMarcadas() },
 					function (result) {
 						
 						var tipoMensagem = result.tipoMensagem;
