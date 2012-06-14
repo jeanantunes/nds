@@ -16,12 +16,14 @@ import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.model.LogBairro;
 import br.com.abril.nds.model.LogLocalidade;
+import br.com.abril.nds.model.cadastro.Rota;
 import br.com.abril.nds.model.cadastro.Roteirizacao;
 import br.com.abril.nds.model.cadastro.Roteiro;
 import br.com.abril.nds.model.cadastro.TipoRoteiro;
 import br.com.abril.nds.model.cadastro.pdv.EnderecoPDV;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
 import br.com.abril.nds.repository.RoteirizacaoRepository;
+import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
 @Repository
 public class RoteirizacaoRepositoryImpl extends AbstractRepository<Roteirizacao, Long> implements RoteirizacaoRepository {
@@ -69,7 +71,7 @@ public class RoteirizacaoRepositoryImpl extends AbstractRepository<Roteirizacao,
 	}
 	
 	
-	public List<PDV> buscarRoteirizacaoNumeroCota(Integer numeroCota, Long rotaId , Roteiro roteiro ){
+	public List<PDV> buscarPdvRoteirizacaoNumeroCota(Integer numeroCota, Long rotaId , Roteiro roteiro ){
 		Boolean exibirPontoPrincipal =  Boolean.FALSE;
 		DetachedCriteria subquery = DetachedCriteria.forClass(Roteirizacao.class);
 		exibirPontoPrincipal = getSubqueyCotasDisponiveis(rotaId, roteiro,
@@ -168,11 +170,14 @@ public class RoteirizacaoRepositoryImpl extends AbstractRepository<Roteirizacao,
 	}
 	
 	@Override
-	public List<Roteirizacao> buscarRoteirizacao(Long boxId, Long roteiroId, Long rotaId, TipoRoteiro tipoRoteiro){
+	public List<Roteirizacao> buscarRoteirizacao(Long boxId, Long roteiroId, Long rotaId, TipoRoteiro tipoRoteiro, String  orderBy, Ordenacao ordenacao, int initialResult, int maxResults){
 		Criteria criteria  = getSession().createCriteria(Roteirizacao.class);
 		criteria.createAlias("rota", "rota") ;
 		criteria.createAlias("rota.roteiro", "roteiro") ;
 		criteria.createAlias("roteiro.box", "box") ;
+		criteria.createAlias("pdv", "pdv") ;
+		criteria.createAlias("pdv.cota", "cota") ;
+		criteria.createAlias("cota.pessoa", "pessoa") ;
 		if (boxId != null) { 
 			criteria.add(Restrictions.eq("roteiro.box.id", boxId));
 		}
@@ -184,12 +189,141 @@ public class RoteirizacaoRepositoryImpl extends AbstractRepository<Roteirizacao,
 		if (rotaId != null) { 
 			criteria.add(Restrictions.eq("rota.id", rotaId));
 		}
-		
 		criteria.add(Restrictions.eq("roteiro.tipoRoteiro", tipoRoteiro));
-		criteria.addOrder(Order.asc("box.nome"));
-
+	
+//		value.cell.box = value.cell.rota.roteiro.box.nome
+//	        	value.cell.roteiro = value.cell.rota.roteiro.descricaoRoteiro;
+//				value.cell.rota = value.cell.rota.descricaoRota;
+//				value.cell.cota = value.cell.pdv.cota.numeroCota;
+//				value.cell.nome = value.cell.pdv.cota.pessoa.nome;
+//		
+		 String campoOrdenacao = getCampoOrdenacao(orderBy); 
+		
+		
+		if(Ordenacao.ASC ==  ordenacao){
+			criteria.addOrder(Order.asc(campoOrdenacao));
+		}else if(Ordenacao.DESC ==  ordenacao){
+			criteria.addOrder(Order.desc(campoOrdenacao));
+		}
+		
+		criteria.setFirstResult(initialResult);
 		
 		return criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();  
+	}
+
+	private String getCampoOrdenacao(String orderBy) {
+		String campoOrdenacao = null;
+		if (orderBy.equals("box") ) {
+			campoOrdenacao ="box.nome";
+		} else if (orderBy.equals("roteiro")){
+			campoOrdenacao ="roteiro.descricaoRoteiro";
+		} else if (orderBy.equals("rota")){
+			campoOrdenacao ="rota.descricaoRota";
+		} else if (orderBy.equals("cota")){
+			campoOrdenacao ="cota.numeroCota";
+		} else if (orderBy.equals("nome")){
+			campoOrdenacao ="pessoa.nome";
+		}
+		return campoOrdenacao;
+	}
+
+
+	@Override
+	public List<Roteirizacao> buscarRoteirizacaoPorNumeroCota(Integer numeroCota, TipoRoteiro tipoRoteiro, String  orderBy, Ordenacao ordenacao, int initialResult, int maxResults) {
+		Criteria criteria  = getSession().createCriteria(Roteirizacao.class);
+		criteria.createAlias("rota", "rota") ;
+		criteria.createAlias("rota.roteiro", "roteiro") ;
+		criteria.createAlias("roteiro.box", "box") ;
+		criteria.createAlias("pdv", "pdv") ;
+		criteria.createAlias("pdv.cota", "cota") ;
+		criteria.createAlias("cota.pessoa", "pessoa") ;
+		
+		criteria.add(Restrictions.eq("cota.numeroCota", numeroCota));
+	    criteria.add(Restrictions.eq("roteiro.tipoRoteiro", tipoRoteiro));
+	    
+	    String campoOrdenacao = getCampoOrdenacao(orderBy); 
+	    if(Ordenacao.ASC ==  ordenacao){
+			criteria.addOrder(Order.asc(campoOrdenacao));
+		}else if(Ordenacao.DESC ==  ordenacao){
+			criteria.addOrder(Order.desc(campoOrdenacao));
+		}
+		
+		criteria.setFirstResult(initialResult);
+		return criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list(); 
+	}
+	
+	@SuppressWarnings("unchecked")
+	public void atualizaOrdenacao(Roteirizacao roteirizacao ){
+		Criteria criteria =  getSession().createCriteria(Roteirizacao.class);
+		criteria.add(Restrictions.eq("rota", roteirizacao.getRota()));
+		criteria.add(Restrictions.ge("ordem", roteirizacao.getOrdem()));
+		criteria.add(Restrictions.ne("id", roteirizacao.getId()));
+		criteria.addOrder(Order.asc("ordem"));
+		List<Roteirizacao> lista = criteria.list();
+		Integer ordem = roteirizacao.getOrdem();
+		for(Roteirizacao entity : lista ){
+			ordem++;
+			entity.setOrdem(ordem);
+			alterar(entity);
+
+		}
+	}
+
+	public void atualizaOrdenacaoAsc(Roteirizacao roteirizacao ){
+		Roteirizacao roteirizacaoAnterior = buscaRoteiricaoComOrdemAnterior(roteirizacao);
+		Integer novaOrdem = roteirizacaoAnterior.getOrdem();
+		roteirizacao.setOrdem(novaOrdem);
+		alterar(roteirizacao);
+		atualizaOrdenacao(roteirizacao);
+		
+	}
+	
+	
+
+	public void atualizaOrdenacaoDesc(Roteirizacao roteirizacao ){
+		Roteirizacao roteirizacaoPosterior = buscaRoteiricaoComOrdemPosterior(roteirizacao);
+		Integer novaOrdem = roteirizacaoPosterior.getOrdem();
+		Integer antigaOrdem = roteirizacao.getOrdem();
+		roteirizacao.setOrdem(novaOrdem);
+		roteirizacaoPosterior.setOrdem(antigaOrdem);
+		alterar(roteirizacao);
+		alterar(roteirizacaoPosterior);
+		//	atualizaOrdenacao(roteirizacao);
+		
+	}
+	
+	
+	
+	@SuppressWarnings("unchecked")
+	public Roteirizacao buscaRoteiricaoComOrdemAnterior(Roteirizacao roteirizacao ){
+		Criteria criteria =  getSession().createCriteria(Roteirizacao.class);
+		criteria.add(Restrictions.eq("rota", roteirizacao.getRota()));
+		criteria.add(Restrictions.lt("ordem", roteirizacao.getOrdem()));
+		criteria.addOrder(Order.desc("ordem"));
+		criteria.setMaxResults(1);
+		List<Roteirizacao> lista = criteria.list();
+		if (lista == null || lista.isEmpty()){
+			return null;
+		} else {
+			return lista.get(0);
+		}
+		
+	}
+	
+	@SuppressWarnings("unchecked")
+	public Roteirizacao buscaRoteiricaoComOrdemPosterior(Roteirizacao roteirizacao ){
+		Criteria criteria =  getSession().createCriteria(Roteirizacao.class);
+		criteria.add(Restrictions.eq("rota", roteirizacao.getRota()));
+		criteria.add(Restrictions.gt("ordem", roteirizacao.getOrdem()));
+		criteria.addOrder(Order.asc("ordem"));
+		criteria.setMaxResults(1);
+		List<Roteirizacao> lista = criteria.list();
+		if (lista == null || lista.isEmpty()){
+			return null;
+		} else {
+			return lista.get(0);
+		}
+		
 	}
 
 }
