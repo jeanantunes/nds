@@ -400,6 +400,15 @@ public class DividaRepositoryImpl extends AbstractRepository<Divida, Long> imple
 			params.put("numCota",filtro.getNumCota());
 		}
 		
+		if(filtro.getNomeCota() != null) {
+			
+			sql.append(whereUtilizado ? " AND " : " WHERE ");
+			whereUtilizado = true;
+			
+			sql.append("  (upper(PESSOA_.NOME) like :nomeCota or upper(PESSOA_.RAZAO_SOCIAL) like :nomeCota)");
+			params.put("nomeCota",filtro.getNomeCota().toUpperCase() + "%");
+		}
+		
 		if(filtro.getStatusCota() != null) {
 			
 			sql.append(whereUtilizado ? " AND " : " WHERE ");

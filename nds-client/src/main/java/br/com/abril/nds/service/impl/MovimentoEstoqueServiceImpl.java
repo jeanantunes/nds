@@ -149,11 +149,32 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 	@Override
 	@Transactional
 	public MovimentoEstoque gerarMovimentoEstoque(Date dataLancamento, Long idProdutoEdicao, Long idUsuario, BigDecimal quantidade,TipoMovimentoEstoque tipoMovimentoEstoque) {
-		
 
-		ItemRecebimentoFisico itemRecebimentoFisico = 
-			itemRecebimentoFisicoRepository.obterItemPorDataLancamentoIdProdutoEdicao(dataLancamento, idProdutoEdicao);
-				
+		MovimentoEstoque movimentoEstoque = criarMovimentoEstoque(dataLancamento, idProdutoEdicao, idUsuario, quantidade, tipoMovimentoEstoque);
+		
+		return movimentoEstoque;
+	}
+	
+	@Override
+	@Transactional
+	public MovimentoEstoque gerarMovimentoEstoque(Long idProdutoEdicao, Long idUsuario, BigDecimal quantidade,TipoMovimentoEstoque tipoMovimentoEstoque) {
+
+		MovimentoEstoque movimentoEstoque = criarMovimentoEstoque(null, idProdutoEdicao, idUsuario, quantidade, tipoMovimentoEstoque);
+		
+		return movimentoEstoque;
+	}
+	
+	private MovimentoEstoque criarMovimentoEstoque(Date dataLancamento, Long idProdutoEdicao, Long idUsuario, BigDecimal quantidade,TipoMovimentoEstoque tipoMovimentoEstoque){
+		
+		MovimentoEstoque movimentoEstoque = new MovimentoEstoque();
+		
+		if(dataLancamento!= null){	
+			ItemRecebimentoFisico itemRecebimentoFisico = 
+				itemRecebimentoFisicoRepository.obterItemPorDataLancamentoIdProdutoEdicao(dataLancamento, idProdutoEdicao);
+			
+			movimentoEstoque.setItemRecebimentoFisico(itemRecebimentoFisico);
+		}
+		
 		ProdutoEdicao produtoEdicao = this.produtoEdicaoRepository.buscarPorId(idProdutoEdicao);
 		
 		Usuario usuario = usuarioRepository.buscarPorId(idUsuario);
@@ -171,9 +192,6 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 			this.estoqueProdutoRespository.adicionar(estoqueProduto);
 		}
 		
-		MovimentoEstoque movimentoEstoque = new MovimentoEstoque();
-		
-		movimentoEstoque.setItemRecebimentoFisico(itemRecebimentoFisico);
 		movimentoEstoque.setEstoqueProduto(estoqueProduto);
 		movimentoEstoque.setProdutoEdicao(produtoEdicao);		
 		movimentoEstoque.setData(new Date());
@@ -187,8 +205,6 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 			
 			controleAprovacaoService.realizarAprovacaoMovimento(movimentoEstoque, usuario);
 		}
-		
-		atualizarEstoqueProduto(tipoMovimentoEstoque, movimentoEstoque);
 		
 		return movimentoEstoque;
 	}
@@ -215,7 +231,15 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 					 
 					 estoqueProduto.setQtdeSuplementar(novaQuantidade);
 					 
-				 } else {
+				 } if(GrupoMovimentoEstoque.ESTORNO_VENDA_ENCALHE.equals(tipoMovimentoEstoque.getGrupoMovimentoEstoque())){
+					
+					 BigDecimal qtdeEncalhe = estoqueProduto.getQtdeDevolucaoEncalhe() == null ? BigDecimal.ZERO : estoqueProduto.getQtdeDevolucaoEncalhe();
+						
+					 novaQuantidade = qtdeEncalhe.add(movimentoEstoque.getQtde());
+						
+					 estoqueProduto.setQtdeDevolucaoEncalhe(novaQuantidade);
+				 } 				 
+				 else {
 					 
 					 novaQuantidade = estoqueProduto.getQtde().add(movimentoEstoque.getQtde());
 					 
@@ -233,7 +257,15 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 					
 					estoqueProduto.setQtdeSuplementar(novaQuantidade);
 					 
-				 } else {
+				 }else if (GrupoMovimentoEstoque.VENDA_ENCALHE.equals(tipoMovimentoEstoque.getGrupoMovimentoEstoque())){
+					
+					 BigDecimal qtdeEncalhe = estoqueProduto.getQtdeDevolucaoEncalhe() == null ? BigDecimal.ZERO : estoqueProduto.getQtdeDevolucaoEncalhe();
+						
+					 novaQuantidade = qtdeEncalhe.subtract(movimentoEstoque.getQtde());
+						
+					 estoqueProduto.setQtdeDevolucaoEncalhe(novaQuantidade);
+				 }
+				 else {
 					 
 					 novaQuantidade = estoqueProduto.getQtde().subtract(movimentoEstoque.getQtde());
 						

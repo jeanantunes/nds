@@ -6,7 +6,8 @@
 <script type="text/javascript">
 var VENDA_PRODUTO = {
 	
-	vendaNova:true,	
+	vendaNova:true,
+	tipoVenda:"",
 		
 	executarPreProcessamento:function (resultado){
 		
@@ -68,7 +69,7 @@ var VENDA_PRODUTO = {
 		VENDA_PRODUTO.vendaNova = false;
 		
 		$("#vendaEncalhesGrid").flexOptions({
-			param:[{name:"idVendaEncalhe", value:idVenda}],
+			params:[{name:"idVendaEncalhe", value:idVenda}],
 			url: "<c:url value='/devolucao/vendaEncalhe/prepararDadosEdicaoVenda'/>",
 			newp: 1
 		});
@@ -184,16 +185,19 @@ var VENDA_PRODUTO = {
 			contextPath + "/devolucao/vendaEncalhe/exportar?fileType=" + fileType;
 	},
 	
-	novaVenda:function(){
+	novaVenda:function(tipoVenda){
 		
 		VENDA_PRODUTO.limparDadosModalVenda();
 		
 		VENDA_PRODUTO.vendaNova = true;
 		
+		VENDA_PRODUTO.tipoVenda = tipoVenda;
+		
 		 $.postJSON(contextPath + "/devolucao/vendaEncalhe/obterDatavenda", 
 					null,
 					function(resultado) {
-						 $("#span_data_venda").html(resultado.data);			
+						 $("#span_data_venda").html(resultado.data);
+						 $("#dataVencimento").val(resultado.dataVencimentoDebito);
 					},null,true);
 		
 
@@ -298,7 +302,7 @@ var VENDA_PRODUTO = {
 			
 			var parametroAutoCompleteProduto = '\'#nmProduto' + index + '\', true';
 			
-			var funcaoSucces = "function(){ VENDA_PRODUTO.pesquisarDadosProduto('\#codProduto" + index + '\', \'#numEdicao' + index + '\','+ index + ')}';
+			var funcaoSucces = "function(idCodigo, idEdicao){ VENDA_PRODUTO.pesquisarDadosProduto(idCodigo, idEdicao,"+ index + ")}";
 			
 			var parametroValidacaoEdicao = '\'#codProduto' + index + '\', \'#numEdicao' + index + '\', true, '+funcaoSucces+','+funcaoError+'';
 			
@@ -345,6 +349,8 @@ var VENDA_PRODUTO = {
 			row.cell.qntSolicitada = inputQntSolicitada;
 			row.cell.total =inputTotal;
 			row.cell.formaVenda = inputFormaVenda;
+			
+			$("#numCotaVenda").attr("disabled",null);
 		});
 		
 		return result;
@@ -592,14 +598,16 @@ var VENDA_PRODUTO = {
 				return true;
 			}
 						
-			var venda = 'listaVendas[' + index + '].idVendaEncalhe=' + id + '&';
+			var venda = 'listaVendas[' + index + '].idVenda=' + id + '&';
 			
 			venda += 'listaVendas[' + index + '].codigoProduto=' + codigoProduto + '&';
 
 			venda += 'listaVendas[' + index + '].numeroEdicao=' + numeroEdicao + '&';
 
 			venda += 'listaVendas[' + index + '].qntProduto=' + qtdeSolicitada  + '&';
-
+			
+			venda += 'listaVendas[' + index + '].tipoVendaEncalhe=' + VENDA_PRODUTO.tipoVenda  + '&';
+			
 			listaVendas = (listaVendas + venda);
 
 		});
@@ -619,12 +627,14 @@ var VENDA_PRODUTO = {
 	
 	confirmaVenda:function(){
 		
+		var metodo = (VENDA_PRODUTO.vendaNova == true)?"confirmaNovaVenda":"confirmaEdicaoVenda";
+		
 		var data = VENDA_PRODUTO.getListaProduto()  
 				   + "&numeroCota=" + $("#numCotaVenda").val()
-				   + "&dataDebito=" + $("#dataVencimento").val();
+				   + "&dataDebito=" + $("#dataVencimento").val();  
 		 
 		 $.postJSON(
-			contextPath + "/devolucao/vendaEncalhe/confirmaVenda", 
+			contextPath + "/devolucao/vendaEncalhe/"+metodo, 
 			data,
 			function(result) {
 				
@@ -635,18 +645,16 @@ var VENDA_PRODUTO = {
 				
 				$("#dialog-venda-encalhe").dialog( "close" );
 				
-				VENDA_PRODUTO.imprimeSlipVendaEncalhe();
+				VENDA_PRODUTO.imprimeSlipVendaEncalhe($("#numCotaVenda").val());
 			},
 			null, 
 			true
 		);
 	},
 	
-	imprimeSlipVendaEncalhe:function(){
-		var idCota = "1";
-		var dataInicio = "10/10/2012";
-		var dataFim = "10/10/2012";
-		document.location.assign("${pageContext.request.contextPath}/devolucao/vendaEncalhe/imprimeSlipVendaEncalhe?idCota="+idCota+"&dataInicio="+dataInicio+"&dataFim="+dataFim);
+	imprimeSlipVendaEncalhe:function(numeroCota,vendas){
+		
+		document.location.assign("${pageContext.request.contextPath}/devolucao/vendaEncalhe/imprimeSlipVendaEncalhe?numeroCota="+numeroCota);
 	},
 	
 	limparDadosModalVenda:function(){
@@ -864,7 +872,7 @@ $(function() {
 	               		</span>
 	               		
 	               		<span title="Novo" class="bt_novos">
-	               			<a onclick="VENDA_PRODUTO.novaVenda();" href="javascript:;">
+	               			<a onclick="VENDA_PRODUTO.novaVenda('ENCALHE');" href="javascript:;">
 	               				<img hspace="5" border="0" src="${pageContext.request.contextPath}/images/ico_salvar.gif">
 	               				Venda Encalhe
 	               			</a>
