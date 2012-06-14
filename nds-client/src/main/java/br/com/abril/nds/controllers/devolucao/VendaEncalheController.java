@@ -32,7 +32,6 @@ import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.DistribuidorService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.VendaEncalheService;
-import br.com.abril.nds.service.VendaProdutoService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
@@ -84,9 +83,6 @@ public class VendaEncalheController {
 	private VendaEncalheService vendaEncalheService;
 	
 	@Autowired
-	private VendaProdutoService vendaProdutoService;
-	
-	@Autowired
 	private CotaService cotaService;
 	
 	@Autowired
@@ -107,9 +103,12 @@ public class VendaEncalheController {
 	 */
 	@Get
 	@Path("/imprimeSlipVendaEncalhe")
-	public void imprimeSlipVendaEncalhe(Long idCota, Date dataInicio, Date dataFim) throws Exception{
-
-		byte[] b = this.vendaEncalheService.geraImpressaoVendaEncalhe(idCota,dataInicio,dataFim);
+	public void imprimeSlipVendaEncalhe(Long numeroCota) throws Exception{
+		
+		@SuppressWarnings("unchecked")
+		List<VendaEncalheDTO> vendas = (List<VendaEncalheDTO>) session.getAttribute("LISTA_VENDAS");
+		
+		byte[] b = this.vendaEncalheService.geraImpressaoVendaEncalhe(vendas,numeroCota);
 
 		this.httpServletResponse.setContentType("application/pdf");
 		this.httpServletResponse.setHeader("Content-Disposition", "attachment; filename=SlipVendaEncalhe.pdf");
@@ -118,6 +117,8 @@ public class VendaEncalheController {
 		output.write(b);
 
 		httpServletResponse.flushBuffer();
+		
+		 session.removeAttribute("LISTA_VENDAS");
 	}
 	
 	
@@ -132,21 +133,44 @@ public class VendaEncalheController {
 	@Path("/imprimeSlipVendaSuplementar")
 	public void imprimeSlipVendaSuplementar(Long idCota, Date dataInicio, Date dataFim) throws Exception{
 
-		byte[] b = this.vendaEncalheService.geraImpressaoVendaSuplementar(idCota,dataInicio,dataFim);
+		//byte[] b = this.vendaEncalheService.geraImpressaoVendaSuplementar(idCota,dataInicio,dataFim);
 
 		this.httpServletResponse.setContentType("application/pdf");
 		this.httpServletResponse.setHeader("Content-Disposition", "attachment; filename=SlipVE.pdf");
 
 		OutputStream output = this.httpServletResponse.getOutputStream();
 
-		output.write(b);
+	//	output.write(b);
 
 		httpServletResponse.flushBuffer();
 	}
 	
 	@Post
-	public void confirmaVenda(List<VendaEncalheDTO> listaVendas, Integer numeroCota, Date dataDebito){
+	public void confirmaNovaVenda(List<VendaEncalheDTO> listaVendas, Long numeroCota, Date dataDebito){
+		
+		confirmaVenda(listaVendas, numeroCota, dataDebito, Boolean.TRUE);
+	}
 	
+	@Post
+	public void confirmaEdicaoVenda(List<VendaEncalheDTO> listaVendas, Long numeroCota, Date dataDebito){
+		
+		confirmaVenda(listaVendas, numeroCota, dataDebito, Boolean.FALSE);
+	}
+	
+	private void confirmaVenda(List<VendaEncalheDTO> listaVendas, Long numeroCota, Date dataDebito,boolean novaVenda){
+		
+		validarParametrosVenda(listaVendas,numeroCota, dataDebito);
+		
+		if(novaVenda){
+
+			vendaEncalheService.efetivarVendaEncalhe(listaVendas,numeroCota,dataDebito,getUsuario());
+		}
+		else{
+			vendaEncalheService.alterarVendaEncalhe(listaVendas.get(0),dataDebito,getUsuario());
+		}
+		
+		session.setAttribute("LISTA_VENDAS",listaVendas);
+		
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
 				"result").recursive().serialize();
 	}
@@ -176,7 +200,23 @@ public class VendaEncalheController {
 	@Post
 	public void obterDatavenda(){
 		
-		result.use(CustomMapJson.class).put("data", DateUtil.formatarDataPTBR(new Date())).serialize();
+		Distribuidor distribuidor = distribuidorService.obter();
+		
+		Date dataVencimentoDebito = new Date();
+		
+		if(distribuidor!= null){
+			
+			Integer qntDias = distribuidor.getQntDiasVencinemtoVendaEncalhe();
+			
+			qntDias = (qntDias == null)?0: qntDias;
+			
+			dataVencimentoDebito = DateUtil.adicionarDias(dataVencimentoDebito,qntDias);
+		} 
+		
+		result.use(CustomMapJson.class)
+				.put("data", DateUtil.formatarDataPTBR(new Date()))
+				.put("dataVencimentoDebito",DateUtil.formatarDataPTBR(dataVencimentoDebito))
+				.serialize();
 	}
 	
 	@Post
@@ -200,7 +240,7 @@ public class VendaEncalheController {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Produto com o código de barras \""+codBarra+"\" não encontrado!");
 		}
 		
-		result.use(CustomMapJson.class).put("codigoProduto", produtoEdicao.getCodigo()).put("nuemroEdicao", produtoEdicao.getNumeroEdicao()).serialize();
+		result.use(CustomMapJson.class).put("codigoProduto", produtoEdicao.getProduto().getCodigo()).put("nuemroEdicao", produtoEdicao.getNumeroEdicao()).serialize();
 	}
 	
 	@Post
@@ -243,12 +283,11 @@ public class VendaEncalheController {
 		produtoVO.setId(1);
 		produtoVO.setCodigoBarras(venda.getCodigoBarras());
 		produtoVO.setCodigoProduto(venda.getCodigoProduto());
-		produtoVO.setFormaVenda(venda.getFormaVenda());
+		produtoVO.setFormaVenda(tratarValor(venda.getFormaVenda()));
 		produtoVO.setNomeProduto(venda.getNomeProduto());
 		produtoVO.setNumeroEdicao(venda.getNumeroEdicao());
 		produtoVO.setPrecoCapa(CurrencyUtil.formatarValor(venda.getPrecoCapa()));
 		produtoVO.setTotal(CurrencyUtil.formatarValor(venda.getValoTotalProduto()));
-		produtoVO.setQntDisponivel(venda.getQntDisponivelProduto());
 		produtoVO.setQntSolicitada(venda.getQntProduto());
 		produtoVO.setDataVenda(DateUtil.formatarDataPTBR(venda.getDataVenda()));
 		produtoVO.setDataVencimentoDebito(DateUtil.formatarDataPTBR(venda.getDataVencimentoDebito()));
@@ -256,7 +295,12 @@ public class VendaEncalheController {
 		produtoVO.setNumeroCota(tratarValor(venda.getNumeroCota()));
 		produtoVO.setNomeCota(venda.getNomeCota());
 		produtoVO.setIdVendaEncalhe(venda.getIdVenda());
-			
+		
+		BigDecimal qntDisponivel = new BigDecimal((venda.getQntDisponivelProduto()==null)?0:venda.getQntDisponivelProduto());
+		qntDisponivel = qntDisponivel.add(new BigDecimal(venda.getQntProduto()));
+		
+		produtoVO.setQntDisponivel(qntDisponivel.intValue());
+		
 		listaPesquisaProduto.add(produtoVO);
 		
 		TableModel<CellModelKeyValue<VendaProdutoVO>> tableModel =
@@ -271,9 +315,10 @@ public class VendaEncalheController {
 		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
 	}
 	
-	
 	@Post
 	public void excluir(Long idVenda){
+		
+		vendaEncalheService.excluirVendaEncalhe(idVenda);
 		
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
 				"result").recursive().serialize();
@@ -292,13 +337,13 @@ public class VendaEncalheController {
 		
 		validarParametrosFiltro(filtro);
 		
-		List<VendaEncalheDTO> vendas = vendaProdutoService.buscarVendasProduto(filtro);
+		List<VendaEncalheDTO> vendas = vendaEncalheService.buscarVendasProduto(filtro);
 		
 		if(vendas.isEmpty()){
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
 		}
 		
-		Long quantidade = vendaProdutoService.buscarQntVendasProduto(filtro);
+		Long quantidade = vendaEncalheService.buscarQntVendasProduto(filtro);
 		
 		List<VendaEncalheVO> listaExibicaoGrid = new ArrayList<VendaEncalheVO>();
 		
@@ -361,6 +406,29 @@ public class VendaEncalheController {
 	}
 	private String tratarValor(Object valor){
 		return (valor == null)?"":valor.toString();
+	}
+	
+	private void validarParametrosVenda(List<VendaEncalheDTO> listaVendas,Long numeroCota, Date dataDebito){
+	
+		if(listaVendas == null || listaVendas.isEmpty()){
+			throw new ValidacaoException(TipoMensagem.WARNING,"Pelomenos um produto deve ser informado para venda!");
+		}
+		
+		validarFormatoData();
+		
+		List<String> mensagensValidacao = new ArrayList<String>();
+		
+		if(numeroCota == null){
+			mensagensValidacao.add("O preenchimento do campo [Cota] é obrigatório!");
+		}
+		
+		if(dataDebito == null){
+			mensagensValidacao.add("O preenchimento do campo [Data Vencimento] é obrigatório!");
+		}
+		
+		if (!mensagensValidacao.isEmpty()){
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, mensagensValidacao));
+		}
 	}
 	
 	private void validarParametrosFiltro(FiltroVendaEncalheDTO filtro){
@@ -458,7 +526,7 @@ public class VendaEncalheController {
 		
 		FiltroVendaEncalheDTO filtro = this.obterFiltroExportacao();
 		
-		List<VendaEncalheDTO> vendas = vendaProdutoService.buscarVendasProduto(filtro);
+		List<VendaEncalheDTO> vendas = vendaEncalheService.buscarVendasProduto(filtro);
 		
 		if(vendas.isEmpty()){
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");

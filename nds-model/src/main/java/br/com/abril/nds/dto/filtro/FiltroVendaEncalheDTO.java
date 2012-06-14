@@ -62,19 +62,17 @@ public class FiltroVendaEncalheDTO implements Serializable {
 	 */
 	public enum OrdenacaoColuna{
 		
-		//TODO definir os valores de cada opção do Enum
-		
-		DATA(""),
-		NUMERO_COTA(""),
-		NOME_COTA(""),
-		CODIGO_PRODUTO(""),
-		NOME_PRODUTO(""),
-		NUMERO_EDICAO(""),
-		PRECO_CAPA(""),
-		PRECO_DESCONTO(""),
-		QNT_PRODUTO(""),
-		TOTAL_VENDA(""),
-		TIPO_VENDA("");
+		DATA("dataVenda"),
+		NUMERO_COTA("numeroCota"),
+		NOME_COTA("nomeCota"),
+		CODIGO_PRODUTO("codigoProduto"),
+		NOME_PRODUTO("nomeProduto"),
+		NUMERO_EDICAO("numeroEdicao"),
+		PRECO_CAPA("precoCapa"),
+		PRECO_DESCONTO("precoDesconto"),
+		QNT_PRODUTO("qntProduto"),
+		TOTAL_VENDA("valoTotalProduto"),
+		TIPO_VENDA("tipoVendaEncalhe");
 		
 		private String nomeColuna;
 		

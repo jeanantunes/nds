@@ -4,7 +4,9 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import br.com.abril.nds.model.cadastro.FormaComercializacao;
 import br.com.abril.nds.model.estoque.TipoVendaEncalhe;
+import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.util.export.Exportable;
 
 /**
@@ -33,11 +35,11 @@ public class VendaEncalheDTO implements Serializable {
 	
 	private String nomeProduto;
 	
-	private Integer numeroEdicao;
+	private Long numeroEdicao;
 	
 	private BigDecimal precoCapa;
 	
-	private Integer qntProduto;
+	private Long qntProduto;
 	
 	private BigDecimal precoDesconto;
 	
@@ -49,12 +51,28 @@ public class VendaEncalheDTO implements Serializable {
 	
 	private String codigoBarras;
 	
-	private String formaVenda;
+	private FormaComercializacao formaVenda;
 	
 	private Date dataVencimentoDebito;
 	
 	private String codBox;
 	
+	private Usuario usuario;
+	
+	/**
+	 * @return the usuario
+	 */
+	public Usuario getUsuario() {
+		return usuario;
+	}
+
+	/**
+	 * @param usuario the usuario to set
+	 */
+	public void setUsuario(Usuario usuario) {
+		this.usuario = usuario;
+	}
+
 	/**
 	 * @return the dataVencimentoDebito
 	 */
@@ -86,14 +104,14 @@ public class VendaEncalheDTO implements Serializable {
 	/**
 	 * @return the formaVenda
 	 */
-	public String getFormaVenda() {
+	public FormaComercializacao getFormaVenda() {
 		return formaVenda;
 	}
 
 	/**
 	 * @param formaVenda the formaVenda to set
 	 */
-	public void setFormaVenda(String formaVenda) {
+	public void setFormaVenda(FormaComercializacao formaVenda) {
 		this.formaVenda = formaVenda;
 	}
 
@@ -198,14 +216,14 @@ public class VendaEncalheDTO implements Serializable {
 	/**
 	 * @return the numeroEdicao
 	 */
-	public Integer getNumeroEdicao() {
+	public Long getNumeroEdicao() {
 		return numeroEdicao;
 	}
 
 	/**
 	 * @param numeroEdicao the numeroEdicao to set
 	 */
-	public void setNumeroEdicao(Integer numeroEdicao) {
+	public void setNumeroEdicao(Long numeroEdicao) {
 		this.numeroEdicao = numeroEdicao;
 	}
 
@@ -226,14 +244,14 @@ public class VendaEncalheDTO implements Serializable {
 	/**
 	 * @return the qntProduto
 	 */
-	public Integer getQntProduto() {
+	public Long getQntProduto() {
 		return qntProduto;
 	}
 
 	/**
 	 * @param qntProduto the qntProduto to set
 	 */
-	public void setQntProduto(Integer qntProduto) {
+	public void setQntProduto(Long qntProduto) {
 		this.qntProduto = qntProduto;
 	}
 
