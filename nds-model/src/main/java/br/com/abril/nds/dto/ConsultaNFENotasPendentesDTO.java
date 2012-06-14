@@ -5,12 +5,14 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 import br.com.abril.nds.model.fiscal.TipoOperacao;
+import br.com.abril.nds.util.Constantes;
+import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Export.Alignment;
 import br.com.abril.nds.util.export.Exportable;
 
 @Exportable
-public class ConsultaNFEEncalheTratamentoDTO implements Serializable {
+public class ConsultaNFENotasPendentesDTO implements Serializable {
 
 	private static final long serialVersionUID = 8366815250237375585L;
 	
@@ -20,17 +22,8 @@ public class ConsultaNFEEncalheTratamentoDTO implements Serializable {
 	@Export(label = "Nome", alignment=Alignment.LEFT)
 	private String nome;
 	
-	@Export(label = "NF- e", alignment=Alignment.LEFT)
-	private Long numeroNfe;
-	
-	@Export(label = "Serie", alignment=Alignment.LEFT)
-	private String serie;
-	
-	@Export(label = "Chave Acesso", alignment=Alignment.LEFT)
-	private String chaveAcesso;
-	
 	@Export(label = "Data Encalhe", alignment=Alignment.LEFT)
-	private Date dataEncalhe;
+	private String dataEncalhe;
 	
 	@Export(label = "Data Encalhe", alignment=Alignment.LEFT)
 	private TipoOperacao tipoNota;
@@ -47,22 +40,18 @@ public class ConsultaNFEEncalheTratamentoDTO implements Serializable {
 	@Export(label = "Status", alignment=Alignment.LEFT)
 	private String status;
 	
+	private Long numeroNfe;
 	
-	public ConsultaNFEEncalheTratamentoDTO() {}
+	private String serie;
 	
-	public ConsultaNFEEncalheTratamentoDTO(Integer numeroCota, String nome,
+	private String chaveAcesso;
+	
+	public ConsultaNFENotasPendentesDTO() {}
+	
+	public ConsultaNFENotasPendentesDTO(Integer numeroCota, String nome,
+			String dataEncalhe, TipoOperacao tipoNota, BigDecimal vlrNota,
+			BigDecimal vlrReal, BigDecimal diferenca, String status,
 			Long numeroNfe, String serie, String chaveAcesso) {
-		super();
-		this.numeroCota = numeroCota;
-		this.nome = nome;
-		this.numeroNfe = numeroNfe;
-		this.serie = serie;
-		this.chaveAcesso = chaveAcesso;
-	}
-	
-	public ConsultaNFEEncalheTratamentoDTO(Integer numeroCota, String nome,
-			Date dataEncalhe, TipoOperacao tipoNota, BigDecimal vlrNota,
-			BigDecimal vlrReal, BigDecimal diferenca) {
 		super();
 		this.numeroCota = numeroCota;
 		this.nome = nome;
@@ -71,22 +60,10 @@ public class ConsultaNFEEncalheTratamentoDTO implements Serializable {
 		this.vlrNota = vlrNota;
 		this.vlrReal = vlrReal;
 		this.diferenca = diferenca;
-	}
-
-	public Integer getNumeroCota() {
-		return numeroCota;
-	}
-
-	public void setNumeroCota(Integer numeroCota) {
-		this.numeroCota = numeroCota;
-	}
-
-	public String getNome() {
-		return nome;
-	}
-
-	public void setNome(String nome) {
-		this.nome = nome;
+		this.status = status;
+		this.numeroNfe = numeroNfe;
+		this.serie = serie;
+		this.chaveAcesso = chaveAcesso;
 	}
 
 	public Long getNumeroNfe() {
@@ -113,12 +90,28 @@ public class ConsultaNFEEncalheTratamentoDTO implements Serializable {
 		this.chaveAcesso = chaveAcesso;
 	}
 
-	public Date getDataEncalhe() {
+	public Integer getNumeroCota() {
+		return numeroCota;
+	}
+
+	public void setNumeroCota(Integer numeroCota) {
+		this.numeroCota = numeroCota;
+	}
+
+	public String getNome() {
+		return nome;
+	}
+
+	public void setNome(String nome) {
+		this.nome = nome;
+	}
+	
+	public String getDataEncalhe() {
 		return dataEncalhe;
 	}
 
 	public void setDataEncalhe(Date dataEncalhe) {
-		this.dataEncalhe = dataEncalhe;
+		this.dataEncalhe = DateUtil.formatarData(dataEncalhe, Constantes.DATE_PATTERN_PT_BR);;
 	}
 
 	public TipoOperacao getTipoNota() {

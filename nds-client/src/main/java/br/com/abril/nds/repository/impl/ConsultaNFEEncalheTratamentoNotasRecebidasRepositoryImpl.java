@@ -7,7 +7,8 @@ import org.hibernate.Query;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Repository;
 
-import br.com.abril.nds.dto.ConsultaNFEEncalheTratamentoDTO;
+import br.com.abril.nds.dto.ConsultaNFENotasPendentesDTO;
+import br.com.abril.nds.dto.ConsultaNFENotasRecebidasDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaNFEEncalheTratamento;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntrada;
 import br.com.abril.nds.repository.ConsultaNFEEncalheTratamentoNotasRecebidasRepository;
@@ -22,7 +23,7 @@ public class ConsultaNFEEncalheTratamentoNotasRecebidasRepositoryImpl extends Ab
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<ConsultaNFEEncalheTratamentoDTO> buscarNFNotasRecebidas(FiltroConsultaNFEEncalheTratamento filtro, String limitar) {
+	public List<ConsultaNFENotasRecebidasDTO> buscarNFNotasRecebidas(FiltroConsultaNFEEncalheTratamento filtro, String limitar) {
 		
 		StringBuilder hql = new StringBuilder();
 		
@@ -45,7 +46,7 @@ public class ConsultaNFEEncalheTratamentoNotasRecebidasRepositoryImpl extends Ab
 		}
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(
-				ConsultaNFEEncalheTratamentoDTO.class));
+				ConsultaNFENotasRecebidasDTO.class));
 		
 		if(filtro.getPaginacao().getQtdResultadosPorPagina() != null) 
 			query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
@@ -135,7 +136,7 @@ public class ConsultaNFEEncalheTratamentoNotasRecebidasRepositoryImpl extends Ab
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<ConsultaNFEEncalheTratamentoDTO> buscarNFNotasPendentes(
+	public List<ConsultaNFENotasPendentesDTO> buscarNFNotasPendentes(
 			FiltroConsultaNFEEncalheTratamento filtro, String limitar) {
 		
 		StringBuilder hql = new StringBuilder();
@@ -146,7 +147,10 @@ public class ConsultaNFEEncalheTratamentoNotasRecebidasRepositoryImpl extends Ab
 		hql.append("tipo.tipoOperacao as tipoNota, ");
 		hql.append("(conf.qtdeInformada * conf.precoCapaInformado ) as vlrNota, ");
 		hql.append("(conf.qtde * conf.precoCapaInformado ) as vlrReal, ");
-		hql.append("((conf.qtdeInformada * conf.precoCapaInformado) -  (conf.qtde * conf.precoCapaInformado)) as diferenca");
+		hql.append("((conf.qtdeInformada * conf.precoCapaInformado) -  (conf.qtde * conf.precoCapaInformado)) as diferenca, ");
+		hql.append(" notaCota.numero as numeroNfe, ");
+		hql.append(" notaCota.serie as serie, ");
+		hql.append(" notaCota.chaveAcesso as chaveAcesso ");
 		
 		hql.append(getSqlFromEWhereNotaPendente(filtro));
 		
@@ -161,7 +165,7 @@ public class ConsultaNFEEncalheTratamentoNotasRecebidasRepositoryImpl extends Ab
 		}
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(
-				ConsultaNFEEncalheTratamentoDTO.class));
+				ConsultaNFENotasPendentesDTO.class));
 		
 		if(filtro.getPaginacao().getQtdResultadosPorPagina() != null) 
 			query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());

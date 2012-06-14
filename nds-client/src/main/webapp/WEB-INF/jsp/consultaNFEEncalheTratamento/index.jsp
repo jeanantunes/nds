@@ -81,8 +81,13 @@ function popup() {
 			}
 		});
 	};
-	function popup_dadosNotaFiscal() {
-		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
+	function popup_dadosNotaFiscal(numeroNfe, dataEncalhe, chaveAcesso, serie, vlrNota) {
+		
+		$('#numeroNotaFiscalPopUp').text(numeroNfe);
+		$('#dataNotaFiscalPopUp').text(dataEncalhe);
+		$('#chaveAcessoNotaFiscalPopUp').text(chaveAcesso);
+		$('#serieNotaFiscalPopUp').text(serie);
+		$('#valorNotaFiscalPopUp').text(vlrNota);
 	
 		$( "#dialog-dadosNotaFiscal" ).dialog({
 			resizable: false,
@@ -99,6 +104,18 @@ function popup() {
 					$( this ).dialog( "close" );
 				}
 			}
+		
+		$(".pesqProdutosNotaGrid").flexOptions({
+			url: "<c:url value='/nfe/consultaNFEEncalheTratamento/pesquisarNotasRecebidas'/>",
+			dataType : 'json',
+			params: [
+						{name:'filtro.codigoCota', value:$('#codigoCota').val()},
+						{name:'filtro.data', value:$('#data').val()},
+						{name:'filtro.statusNotaFiscalEntrada', value:$('#situacaoNfe').val()}						
+						]
+		});
+
+		$(".pesqProdutosNotaGrid").flexReload();
 		});	
 		      
 	};
@@ -227,8 +244,34 @@ function popup() {
 
 				return resultado;
 			}
+			var status = $('#situacaoNfe').val();					
+			if(status == 'RECEBIDA'){
+				$.each(resultado.rows, function(index, row) {
+					
+					var linkAviso = '<a href="javascript:;" style="cursor:pointer">' +
+									   	 '<img title="Lançamentos da Edição" src="${pageContext.request.contextPath}/images/ico_alert.gif" hspace="5" border="0px" />' +
+									   '</a>';
+					
+					row.cell.acao = linkAviso;
+				});
+				
+			}else{
+				
+				$.each(resultado.rows, function(index, row) {					
+					
+					var linkLancamento = '<a href="javascript:;" onclick="popup_nfe();" style="cursor:pointer">' +
+									   	 '<img title="Lançamentos da Edição" src="${pageContext.request.contextPath}/images/bt_lancamento.png" hspace="5" border="0px" />' +
+									   '</a>';
+				   var linkCadastro = '<a href="javascript:;" onclick="popup_dadosNotaFiscal('+row.cell.numeroNfe+','+row.cell.dataEncalhe+','+row.cell.chaveAcesso+','+row.cell.serie+','+row.cell.vlrNota+');" style="cursor:pointer">' +
+								   	 '<img title="Lançamentos da Edição" src="${pageContext.request.contextPath}/images/bt_cadastros.png" hspace="5" border="0px" />' +
+			                         '</a>';
+                   var checkBox = '<input type="checkbox" id="checkNota" name="checkNota" />';
+					
+					row.cell.acao = linkLancamento + linkCadastro;
+					row.cell.sel = checkBox;
+				});
 			
-			//$(".grids").show();
+			}
 			
 			return resultado;
 		}
@@ -251,19 +294,19 @@ function popup() {
         <table width="670" border="0" cellspacing="1" cellpadding="1" style="color:#666;">
           <tr>
             <td width="133">Núm. Nota Fiscal:</td>
-            <td width="307">12121212121</td>
+            <td width="307" id="numeroNotaFiscalPopUp"></td>
             <td width="106">Série:</td>
-            <td width="111">1</td>
+            <td width="111" id="serieNotaFiscalPopUp"></td>
           </tr>
           <tr>
             <td>Data:</td>
-            <td>09/04/2012</td>
+            <td id="dataNotaFiscalPopUp"></td>
             <td>Valor Total R$:</td>
-            <td>29,34</td>
+            <td id="valorNotaFiscalPopUp"></td>
           </tr>
           <tr>
             <td>Chave de Acesso:</td>
-            <td colspan="3">32123123323123123123124235453456434234234234234234234</td>
+            <td colspan="3" id="chaveAcessoNotaFiscalPopUp"></td>
           </tr>
         </table>
      </fieldset>
@@ -396,12 +439,17 @@ function popup() {
           
           
           
-			<span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;">
-				<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />Arquivo</a>
+			<span class="bt_novos" title="Gerar Arquivo">
+				<a href="${pageContext.request.contextPath}/nfe/consultaNFEEncalheTratamento/exportar?fileType=XLS">
+					<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
+					Arquivo
+				</a>
 			</span>
 			<span class="bt_novos" title="Imprimir">
-				<a href="javascript:;">
-					<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" alt="Imprimir" hspace="5" border="0" />Imprimir</a>
+				<a href="${pageContext.request.contextPath}/nfe/consultaNFEEncalheTratamento/exportar?fileType=PDF">
+					<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" alt="Imprimir" hspace="5" border="0" />
+					Imprimir
+				</a>
 			</span>
              
             <span class="bt_confirmar_novo" title="Confirmar Cancelamento"><a href="javascript:;" onclick="popup_nfe();">
@@ -542,7 +590,7 @@ function popup() {
 		dataType : 'json',
 			colModel : [ {
 				display : 'Cota',
-				name : 'cota',
+				name : 'numeroCota',
 				width : 60,
 				sortable : true,
 				align : 'left'

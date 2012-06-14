@@ -10,7 +10,8 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import br.com.abril.nds.dto.ConsultaNFEEncalheTratamentoDTO;
+import br.com.abril.nds.dto.ConsultaNFENotasPendentesDTO;
+import br.com.abril.nds.dto.ConsultaNFENotasRecebidasDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaNFEEncalheTratamento;
 import br.com.abril.nds.exception.ValidacaoException;
@@ -82,23 +83,23 @@ public class ConsultaNFEEncalheTratamentoController {
 		
 		this.tratarFiltro(filtro);
 		
-		TableModel<CellModelKeyValue<ConsultaNFEEncalheTratamentoDTO>> tableModel = efetuarConsultaNotasRecebidas(filtro);
+		TableModel<CellModelKeyValue<ConsultaNFENotasRecebidasDTO>> tableModel = efetuarConsultaNotasRecebidas(filtro);
 		
 		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
 		
 	}
 	
-	private TableModel<CellModelKeyValue<ConsultaNFEEncalheTratamentoDTO>> efetuarConsultaNotasRecebidas(FiltroConsultaNFEEncalheTratamento filtro) {
+	private TableModel<CellModelKeyValue<ConsultaNFENotasRecebidasDTO>> efetuarConsultaNotasRecebidas(FiltroConsultaNFEEncalheTratamento filtro) {
 		
-		List<ConsultaNFEEncalheTratamentoDTO> listaNotasRecebidas = this.consultaNFEEncalheTratamentoNotasRecebidasService.buscarNFNotasRecebidas(filtro, "limitar");
+		List<ConsultaNFENotasRecebidasDTO> listaNotasRecebidas = this.consultaNFEEncalheTratamentoNotasRecebidasService.buscarNFNotasRecebidas(filtro, "limitar");
 		
-		TableModel<CellModelKeyValue<ConsultaNFEEncalheTratamentoDTO>> tableModel = new TableModel<CellModelKeyValue<ConsultaNFEEncalheTratamentoDTO>>();
+		TableModel<CellModelKeyValue<ConsultaNFENotasRecebidasDTO>> tableModel = new TableModel<CellModelKeyValue<ConsultaNFENotasRecebidasDTO>>();
 		
 		Integer totalRegistros = this.consultaNFEEncalheTratamentoNotasRecebidasService.buscarTodasNFENotasRecebidas(filtro);
 		if(totalRegistros == 0){
 			throw new ValidacaoException(TipoMensagem.WARNING, "A pesquisa realizada não obteve resultado.");
 		}
-
+		
 		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaNotasRecebidas));
 		
 		tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
@@ -118,16 +119,16 @@ public class ConsultaNFEEncalheTratamentoController {
 		
 		this.tratarFiltro(filtro);
 		
-		TableModel<CellModelKeyValue<ConsultaNFEEncalheTratamentoDTO>> tableModel = efetuarConsultaNotasPendentes(filtro);
+		TableModel<CellModelKeyValue<ConsultaNFENotasPendentesDTO>> tableModel = efetuarConsultaNotasPendentes(filtro);
 		
 		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
 	}
 	
-	private TableModel<CellModelKeyValue<ConsultaNFEEncalheTratamentoDTO>> efetuarConsultaNotasPendentes(FiltroConsultaNFEEncalheTratamento filtro) {
+	private TableModel<CellModelKeyValue<ConsultaNFENotasPendentesDTO>> efetuarConsultaNotasPendentes(FiltroConsultaNFEEncalheTratamento filtro) {
 		
-		List<ConsultaNFEEncalheTratamentoDTO> listaNotasRecebidas = this.consultaNFEEncalheTratamentoNotasRecebidasService.buscarNFNotasPendentes(filtro, "limitar");
+		List<ConsultaNFENotasPendentesDTO> listaNotasRecebidas = this.consultaNFEEncalheTratamentoNotasRecebidasService.buscarNFNotasPendentes(filtro, "limitar");
 		
-		TableModel<CellModelKeyValue<ConsultaNFEEncalheTratamentoDTO>> tableModel = new TableModel<CellModelKeyValue<ConsultaNFEEncalheTratamentoDTO>>();
+		TableModel<CellModelKeyValue<ConsultaNFENotasPendentesDTO>> tableModel = new TableModel<CellModelKeyValue<ConsultaNFENotasPendentesDTO>>();
 		
 		Integer totalRegistros = this.consultaNFEEncalheTratamentoNotasRecebidasService.buscarTodasNFENotasRecebidas(filtro);
 		if(totalRegistros == 0){
@@ -168,14 +169,27 @@ public class ConsultaNFEEncalheTratamentoController {
 		
 		FiltroConsultaNFEEncalheTratamento filtro = (FiltroConsultaNFEEncalheTratamento) session.getAttribute(FILTRO_SESSION_ATTRIBUTE_CONSULTA);
 		
-		List<ConsultaNFEEncalheTratamentoDTO> listaNotasRecebidas = this.consultaNFEEncalheTratamentoNotasRecebidasService.buscarNFNotasRecebidas(filtro, "naoLimitar");
-		
-		if(listaNotasRecebidas.isEmpty()) {
-			throw new ValidacaoException(TipoMensagem.WARNING,"A última pesquisa realizada não obteve resultado.");
+		if(filtro.getStatusNotaFiscalEntrada().name().equals("RECEBIDA")){
+			List<ConsultaNFENotasRecebidasDTO> listaNotasRecebidas = this.consultaNFEEncalheTratamentoNotasRecebidasService.buscarNFNotasRecebidas(filtro, "naoLimitar");
+			
+			if(listaNotasRecebidas.isEmpty()) {
+				throw new ValidacaoException(TipoMensagem.WARNING,"A última pesquisa realizada não obteve resultado.");
+			}
+			
+			FileExporter.to("consulta_notas_recebidas", fileType).inHTTPResponse(this.getNDSFileHeader(), filtro, null, 
+					listaNotasRecebidas, ConsultaNFENotasRecebidasDTO.class, this.httpResponse);			
+		}else{
+			
+			List<ConsultaNFENotasPendentesDTO> listaNotasRecebidas = this.consultaNFEEncalheTratamentoNotasRecebidasService.buscarNFNotasPendentes(filtro, "naoLimitar");
+			
+			if(listaNotasRecebidas.isEmpty()) {
+				throw new ValidacaoException(TipoMensagem.WARNING,"A última pesquisa realizada não obteve resultado.");
+			}
+			
+			FileExporter.to("consulta_notas_pendentes", fileType).inHTTPResponse(this.getNDSFileHeader(), filtro, null, 
+					listaNotasRecebidas, ConsultaNFENotasPendentesDTO.class, this.httpResponse);
+			
 		}
-		
-		FileExporter.to("consulta_notas_recebidas", fileType).inHTTPResponse(this.getNDSFileHeader(), filtro, null, 
-				listaNotasRecebidas, ConsultaNFEEncalheTratamentoDTO.class, this.httpResponse);
 			
 		
 		result.nothing();
