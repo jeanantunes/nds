@@ -34,6 +34,7 @@ import br.com.abril.nds.service.DistribuidorService;
 import br.com.abril.nds.service.FechamentoEncalheService;
 import br.com.abril.nds.service.GerarCobrancaService;
 import br.com.abril.nds.service.MovimentoFinanceiroCotaService;
+import br.com.abril.nds.util.DateUtil;
 
 @Service
 public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
@@ -165,7 +166,18 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 			startSearch = page * rp - rp;	
 		} 
 		
-		return this.fechamentoEncalheRepository.buscarCotasAusentes(dataEncalhe, sortorder, sortname, startSearch, rp);
+		List<CotaAusenteEncalheDTO> listaCotaAusenteEncalhe = 
+			this.fechamentoEncalheRepository.buscarCotasAusentes(dataEncalhe, sortorder, sortname, startSearch, rp);
+		
+		for (CotaAusenteEncalheDTO cotaAusenteEncalheDTO : listaCotaAusenteEncalhe) {
+			
+			if (cotaAusenteEncalheDTO.getFechado()) {
+				cotaAusenteEncalheDTO.setAcao(
+					"Cobrado, " + DateUtil.formatarData(cotaAusenteEncalheDTO.getDataEncalhe(), "dd/MM/yyyy"));
+			}
+		}
+		
+		return listaCotaAusenteEncalhe;
 	}
 
 	@Override

@@ -221,8 +221,14 @@
 		checarTodasCotasGrid(false);
 		
 		$.each(resultado.rows, function(index, row) {
-
-			var checkBox = '<input type="checkbox" name="checkboxGridCotas" id="checkboxGridCotas" value="' + row.cell.idCota + '" />';	
+			
+			var checkBox = '<span></span>';
+			
+			if (row.cell.acao == null || row.cell.acao == '') { 
+				checkBox = '<input type="checkbox" name="checkboxGridCotas" id="checkboxGridCotas" value="' + row.cell.idCota + '" />';	
+			} else {
+				checkBox = '<input type="checkbox" name="checkboxGridCotas" id="checkboxGridCotas" value="' + row.cell.idCota + '" disabled="disabled"/>';	
+			}
 			
 		    row.cell.check = checkBox;
 		});
