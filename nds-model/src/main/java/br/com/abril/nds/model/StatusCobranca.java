@@ -8,8 +8,7 @@ package br.com.abril.nds.model;
 public enum StatusCobranca {
 	
 	PAGO("Pago"),
-	NAO_PAGO("Não pago"),
-	EMITIDO("Emitido");
+	NAO_PAGO("Não pago");
 	
 	private String descricao;
 	
