@@ -1,5 +1,6 @@
 package br.com.abril.nds.service;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -21,4 +22,5 @@ public interface FechamentoEncalheService {
 	
 	void cobrarCotas(Date dataEncalhe, List<Long> idsCotas);
 	
+	BigDecimal buscarValorTotalEncalhe(Date dataEncalhe, Long idCota);
 }

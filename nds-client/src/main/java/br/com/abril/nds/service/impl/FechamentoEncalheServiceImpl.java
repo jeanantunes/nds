@@ -1,5 +1,6 @@
 package br.com.abril.nds.service.impl;
 
+import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -177,4 +178,11 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 		
 	}
 
+	@Override
+	@Transactional
+	public BigDecimal buscarValorTotalEncalhe(Date dataEncalhe, Long idCota) {
+		
+		FechamentoFisicoLogicoDTO dto = fechamentoEncalheRepository.buscarValorTotalEncalhe(dataEncalhe, idCota);
+		return dto.getExemplaresDevolucao().multiply(dto.getPrecoCapa());
+	}
 }
