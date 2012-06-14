@@ -24,6 +24,10 @@ import br.com.abril.nds.model.cadastro.TipoImpressaoNE;
 import br.com.abril.nds.model.cadastro.TipoImpressaoNECADANFE;
 import br.com.abril.nds.model.cadastro.TipoParametrosDistribuidorEmissaoDocumento;
 import br.com.abril.nds.model.cadastro.TipoParametrosDistribuidorFaltasSobras;
+import br.com.abril.nds.repository.ParametroContratoCotaRepository;
+import br.com.abril.nds.repository.ParametrosDistribuidorEmissaoDocumentoRepository;
+import br.com.abril.nds.repository.ParametrosDistribuidorFaltasSobrasRepository;
+import br.com.abril.nds.repository.TipoGarantiaAceitaRepository;
 import br.com.abril.nds.service.DistribuidorService;
 import br.com.abril.nds.service.ParametrosDistribuidorService;
 import br.com.abril.nds.util.CurrencyUtil;
@@ -41,7 +45,19 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 	
 	@Autowired
 	DistribuidorService distribuidorService;
-	
+
+	@Autowired
+	ParametroContratoCotaRepository parametroContratoCotaRepository;
+
+	@Autowired
+	ParametrosDistribuidorEmissaoDocumentoRepository parametrosDistribuidorEmissaoDocumentoRepository;
+
+	@Autowired
+	ParametrosDistribuidorFaltasSobrasRepository parametrosDistribuidorFaltasSobrasRepository;
+
+	@Autowired
+	TipoGarantiaAceitaRepository tipoGarantiaAceitaRepository;
+
 	/* (non-Javadoc)
 	 * @see br.com.abril.nds.service.ParametrosDistribuidorService#getParametrosDistribuidor()
 	 */
@@ -128,28 +144,32 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		parametrosDistribuidor.setInformacoesComplementaresProcuracao(distribuidor.getInformacoesComplementaresProcuracao());
 		
 		// Garantia
+		parametrosDistribuidor.setUtilizaGarantiaPdv(verificaCheckString(distribuidor.isUtilizaGarantiaPdv()));
+		
 		for (TipoGarantiaAceita tipoGarantiaAceita : distribuidor.getTiposGarantiasAceita()) {
-			if (tipoGarantiaAceita.getTipoGarantia() == TipoGarantia.CHEQUE_CAUCAO) {
-				parametrosDistribuidor.setChequeCalcao(CHECKED);
-				parametrosDistribuidor.setChequeCalcaoValor(tipoGarantiaAceita.getValor());
-			} else if (tipoGarantiaAceita.getTipoGarantia() == TipoGarantia.FIADOR) {
-				parametrosDistribuidor.setFiador(CHECKED);
-				parametrosDistribuidor.setFiadorValor(tipoGarantiaAceita.getValor());
-			} else if (tipoGarantiaAceita.getTipoGarantia() == TipoGarantia.IMOVEL) {
-				parametrosDistribuidor.setImovel(CHECKED);
-				parametrosDistribuidor.setImovelValor(tipoGarantiaAceita.getValor());
-			} else if (tipoGarantiaAceita.getTipoGarantia() == TipoGarantia.CAUCAO_LIQUIDA) {
-				parametrosDistribuidor.setCaucaoLiquida(CHECKED);
-				parametrosDistribuidor.setCaucaoLiquidaValor(tipoGarantiaAceita.getValor());
-			} else if (tipoGarantiaAceita.getTipoGarantia() == TipoGarantia.NOTA_PROMISSORIA) {
-				parametrosDistribuidor.setNotaPromissoria(CHECKED);
-				parametrosDistribuidor.setNotaPromissoriaValor(tipoGarantiaAceita.getValor());
-			} else if (tipoGarantiaAceita.getTipoGarantia() == TipoGarantia.ANTECEDENCIA_VALIDADE) {
-				parametrosDistribuidor.setAntecedenciaValidade(CHECKED);
-				parametrosDistribuidor.setAntecedenciaValidadeValor(tipoGarantiaAceita.getValor());
-			} else if (tipoGarantiaAceita.getTipoGarantia() == TipoGarantia.INDICADOR_REAJUSTE_CAUCAO_LIQUIDA) {
-				parametrosDistribuidor.setIndicadorReajusteCaucaoLiquida(CHECKED);
-				parametrosDistribuidor.setIndicadorReajusteCaucaoLiquida(tipoGarantiaAceita.getValor());
+			if (tipoGarantiaAceita.isUtilizar()) {
+				if (tipoGarantiaAceita.getTipoGarantia() == TipoGarantia.CHEQUE_CAUCAO) {
+					parametrosDistribuidor.setChequeCalcao(CHECKED);
+					parametrosDistribuidor.setChequeCalcaoValor(tipoGarantiaAceita.getValor());
+				} else if (tipoGarantiaAceita.getTipoGarantia() == TipoGarantia.FIADOR) {
+					parametrosDistribuidor.setFiador(CHECKED);
+					parametrosDistribuidor.setFiadorValor(tipoGarantiaAceita.getValor());
+				} else if (tipoGarantiaAceita.getTipoGarantia() == TipoGarantia.IMOVEL) {
+					parametrosDistribuidor.setImovel(CHECKED);
+					parametrosDistribuidor.setImovelValor(tipoGarantiaAceita.getValor());
+				} else if (tipoGarantiaAceita.getTipoGarantia() == TipoGarantia.CAUCAO_LIQUIDA) {
+					parametrosDistribuidor.setCaucaoLiquida(CHECKED);
+					parametrosDistribuidor.setCaucaoLiquidaValor(tipoGarantiaAceita.getValor());
+				} else if (tipoGarantiaAceita.getTipoGarantia() == TipoGarantia.NOTA_PROMISSORIA) {
+					parametrosDistribuidor.setNotaPromissoria(CHECKED);
+					parametrosDistribuidor.setNotaPromissoriaValor(tipoGarantiaAceita.getValor());
+				} else if (tipoGarantiaAceita.getTipoGarantia() == TipoGarantia.ANTECEDENCIA_VALIDADE) {
+					parametrosDistribuidor.setAntecedenciaValidade(CHECKED);
+					parametrosDistribuidor.setAntecedenciaValidadeValor(tipoGarantiaAceita.getValor());
+				} else if (tipoGarantiaAceita.getTipoGarantia() == TipoGarantia.INDICADOR_REAJUSTE_CAUCAO_LIQUIDA) {
+					parametrosDistribuidor.setIndicadorReajusteCaucaoLiquida(CHECKED);
+					parametrosDistribuidor.setIndicadorReajusteCaucaoLiquida(tipoGarantiaAceita.getValor());
+				}
 			}
 		}
 		
@@ -220,7 +240,7 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 	/* (non-Javadoc)
 	 * @see br.com.abril.nds.service.ParametrosDistribuidorService#getDistribuidor(br.com.abril.nds.client.vo.ParametrosDistribuidorVO)
 	 */
-	@Transactional(readOnly = true)
+	@Transactional(readOnly = false)
 	@Override
 	public Distribuidor getDistribuidor(ParametrosDistribuidorVO parametrosDistribuidor) {
 		Distribuidor distribuidor = distribuidorService.obter();
@@ -317,6 +337,13 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 
 		List<ParametrosDistribuidorEmissaoDocumento> listaParametrosDistribuidorEmissaoDocumentos = new ArrayList<ParametrosDistribuidorEmissaoDocumento>();
 
+		parametrosDistribuidorEmissaoDocumentoRepository.alterarOuCriar(parametrosDistribuidorEmissaoDocumentoBoleto);
+		parametrosDistribuidorEmissaoDocumentoRepository.alterarOuCriar(parametrosDistribuidorEmissaoDocumentoBoletoSlip);
+		parametrosDistribuidorEmissaoDocumentoRepository.alterarOuCriar(parametrosDistribuidorEmissaoDocumentoChamadaEncalhe);
+		parametrosDistribuidorEmissaoDocumentoRepository.alterarOuCriar(parametrosDistribuidorEmissaoDocumentoNotaEnvio);
+		parametrosDistribuidorEmissaoDocumentoRepository.alterarOuCriar(parametrosDistribuidorEmissaoDocumentoRecibo);
+		parametrosDistribuidorEmissaoDocumentoRepository.alterarOuCriar(parametrosDistribuidorEmissaoDocumentoSlip);
+		
 		listaParametrosDistribuidorEmissaoDocumentos.add(parametrosDistribuidorEmissaoDocumentoBoleto);
 		listaParametrosDistribuidorEmissaoDocumentos.add(parametrosDistribuidorEmissaoDocumentoBoletoSlip);
 		listaParametrosDistribuidorEmissaoDocumentos.add(parametrosDistribuidorEmissaoDocumentoChamadaEncalhe);
@@ -352,14 +379,23 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		// Condições de Contratação:
 		boolean utilizaContratoComCotas = verificaCheckBoolean(parametrosDistribuidor.getUtilizaContratoComCotas());
 		if (utilizaContratoComCotas) {
-			ParametroContratoCota parametroContratoCota = new ParametroContratoCota();
+			ParametroContratoCota parametroContratoCota = null;
+			if (distribuidor.getParametroContratoCota() != null) {
+				parametroContratoCota = distribuidor.getParametroContratoCota();
+			} else {
+				parametroContratoCota = new ParametroContratoCota();
+			}
 			if (parametrosDistribuidor.getPrazoContrato() != null && !parametrosDistribuidor.getPrazoContrato().isEmpty()) {
 				parametroContratoCota.setDuracaoContratoCota(CurrencyUtil.converterValor(parametrosDistribuidor.getPrazoContrato()).intValue());
 			} else {
 				parametroContratoCota.setDuracaoContratoCota(2); // DEFAULT, entretanto, nunca deverá cair aqui
 			}
 			parametroContratoCota.setComplementoContrato(parametrosDistribuidor.getInformacoesComplementaresContrato());
+			
+			parametroContratoCotaRepository.alterar(parametroContratoCota);
+
 			distribuidor.setParametroContratoCota(parametroContratoCota);
+
 		} else {
 			distribuidor.setParametroContratoCota(null);
 		}
@@ -367,58 +403,79 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		// Procuração
 		distribuidor.setUtilizaProcuracaoEntregadores(verificaCheckBoolean(parametrosDistribuidor.getUtilizaProcuracaoEntregadores()));
 		distribuidor.setInformacoesComplementaresProcuracao(parametrosDistribuidor.getInformacoesComplementaresProcuracao());
-		
+
 		List<TipoGarantiaAceita> listaTipoGarantiaAceitas = new ArrayList<TipoGarantiaAceita>();
+
+		distribuidor.setUtilizaGarantiaPdv(verificaCheckBoolean(parametrosDistribuidor.getUtilizaGarantiaPdv()));
 		
-		if (verificaCheckBoolean(parametrosDistribuidor.getChequeCalcao())) {
-			TipoGarantiaAceita tipoGarantiaAceitaChequeCaucao = new TipoGarantiaAceita();
-			tipoGarantiaAceitaChequeCaucao.setTipoGarantia(TipoGarantia.CHEQUE_CAUCAO);
-			tipoGarantiaAceitaChequeCaucao.setValor(parametrosDistribuidor.getChequeCalcaoValor());
-			listaTipoGarantiaAceitas.add(tipoGarantiaAceitaChequeCaucao);
+		TipoGarantiaAceita tipoGarantiaAceitaChequeCaucao = new TipoGarantiaAceita();
+		tipoGarantiaAceitaChequeCaucao.setTipoGarantia(TipoGarantia.CHEQUE_CAUCAO);
+		tipoGarantiaAceitaChequeCaucao.setValor(parametrosDistribuidor.getChequeCalcaoValor());
+		if (verificaCheckBoolean(parametrosDistribuidor.getChequeCalcao()))
+			tipoGarantiaAceitaChequeCaucao.setUtilizar(true);
+		else
+			tipoGarantiaAceitaChequeCaucao.setUtilizar(false);
+		listaTipoGarantiaAceitas.add(tipoGarantiaAceitaChequeCaucao);
+
+		TipoGarantiaAceita tipoGarantiaAceitaFiador = new TipoGarantiaAceita();
+		tipoGarantiaAceitaFiador.setTipoGarantia(TipoGarantia.FIADOR);
+		tipoGarantiaAceitaFiador.setValor(parametrosDistribuidor.getFiadorValor());
+		if (verificaCheckBoolean(parametrosDistribuidor.getFiador()))
+			tipoGarantiaAceitaFiador.setUtilizar(true);
+		else
+			tipoGarantiaAceitaFiador.setUtilizar(false);
+		listaTipoGarantiaAceitas.add(tipoGarantiaAceitaFiador);
+
+		TipoGarantiaAceita tipoGarantiaAceitaImovel = new TipoGarantiaAceita();
+		tipoGarantiaAceitaImovel.setTipoGarantia(TipoGarantia.IMOVEL);
+		tipoGarantiaAceitaImovel.setValor(parametrosDistribuidor.getImovelValor());
+		if (verificaCheckBoolean(parametrosDistribuidor.getImovel()))
+			tipoGarantiaAceitaImovel.setUtilizar(true);
+		else
+			tipoGarantiaAceitaImovel.setUtilizar(false);
+		listaTipoGarantiaAceitas.add(tipoGarantiaAceitaImovel);
+
+		TipoGarantiaAceita tipoGarantiaAceitaCaucaoLiquida = new TipoGarantiaAceita();
+		tipoGarantiaAceitaCaucaoLiquida.setTipoGarantia(TipoGarantia.CAUCAO_LIQUIDA);
+		tipoGarantiaAceitaCaucaoLiquida.setValor(parametrosDistribuidor.getCaucaoLiquidaValor());
+		if (verificaCheckBoolean(parametrosDistribuidor.getCaucaoLiquida()))
+			tipoGarantiaAceitaCaucaoLiquida.setUtilizar(true);
+		else
+			tipoGarantiaAceitaCaucaoLiquida.setUtilizar(false);
+		listaTipoGarantiaAceitas.add(tipoGarantiaAceitaCaucaoLiquida);
+
+		TipoGarantiaAceita tipoGarantiaAceitaNotaPromissoria = new TipoGarantiaAceita();
+		tipoGarantiaAceitaNotaPromissoria.setTipoGarantia(TipoGarantia.NOTA_PROMISSORIA);
+		tipoGarantiaAceitaNotaPromissoria.setValor(parametrosDistribuidor.getNotaPromissoriaValor());
+		if (verificaCheckBoolean(parametrosDistribuidor.getNotaPromissoria()))
+			tipoGarantiaAceitaNotaPromissoria.setUtilizar(true);
+		else
+			tipoGarantiaAceitaNotaPromissoria.setUtilizar(false);
+		listaTipoGarantiaAceitas.add(tipoGarantiaAceitaNotaPromissoria);
+
+		TipoGarantiaAceita tipoGarantiaAceitaAntecedenciaValidade = new TipoGarantiaAceita();
+		tipoGarantiaAceitaAntecedenciaValidade.setTipoGarantia(TipoGarantia.ANTECEDENCIA_VALIDADE);
+		tipoGarantiaAceitaAntecedenciaValidade.setValor(parametrosDistribuidor.getAntecedenciaValidadeValor());
+		if (verificaCheckBoolean(parametrosDistribuidor.getAntecedenciaValidade()))
+			tipoGarantiaAceitaAntecedenciaValidade.setUtilizar(true);
+		else
+			tipoGarantiaAceitaAntecedenciaValidade.setUtilizar(false);
+		listaTipoGarantiaAceitas.add(tipoGarantiaAceitaAntecedenciaValidade);
+
+		TipoGarantiaAceita tipoGarantiaAceitaIndicadorReajusteCaucaoLiquida = new TipoGarantiaAceita();
+		tipoGarantiaAceitaIndicadorReajusteCaucaoLiquida.setTipoGarantia(TipoGarantia.INDICADOR_REAJUSTE_CAUCAO_LIQUIDA);
+		tipoGarantiaAceitaIndicadorReajusteCaucaoLiquida.setValor(parametrosDistribuidor.getIndicadorReajusteCaucaoLiquidaValor());
+		if (verificaCheckBoolean(parametrosDistribuidor.getIndicadorReajusteCaucaoLiquida()))
+			tipoGarantiaAceitaIndicadorReajusteCaucaoLiquida.setUtilizar(true);
+		else
+			tipoGarantiaAceitaIndicadorReajusteCaucaoLiquida.setUtilizar(false);
+		listaTipoGarantiaAceitas.add(tipoGarantiaAceitaIndicadorReajusteCaucaoLiquida);
+
+		for (TipoGarantiaAceita tipoGarantiaAceita : listaTipoGarantiaAceitas) {
+			tipoGarantiaAceita.setDistribuidor(distribuidor);
+			tipoGarantiaAceitaRepository.alterarOuCriar(tipoGarantiaAceita);
 		}
-
-		if (verificaCheckBoolean(parametrosDistribuidor.getFiador())) {
-			TipoGarantiaAceita tipoGarantiaAceitaFiador = new TipoGarantiaAceita();
-			tipoGarantiaAceitaFiador.setTipoGarantia(TipoGarantia.FIADOR);
-			tipoGarantiaAceitaFiador.setValor(parametrosDistribuidor.getFiadorValor());
-			listaTipoGarantiaAceitas.add(tipoGarantiaAceitaFiador);
-		}
-
-		if (verificaCheckBoolean(parametrosDistribuidor.getImovel())) {
-			TipoGarantiaAceita tipoGarantiaAceitaImovel = new TipoGarantiaAceita();
-			tipoGarantiaAceitaImovel.setTipoGarantia(TipoGarantia.IMOVEL);
-			tipoGarantiaAceitaImovel.setValor(parametrosDistribuidor.getImovelValor());
-			listaTipoGarantiaAceitas.add(tipoGarantiaAceitaImovel);
-		}		
-
-		if (verificaCheckBoolean(parametrosDistribuidor.getCaucaoLiquida())) {
-			TipoGarantiaAceita tipoGarantiaAceitaCaucaoLiquida = new TipoGarantiaAceita();
-			tipoGarantiaAceitaCaucaoLiquida.setTipoGarantia(TipoGarantia.CAUCAO_LIQUIDA);
-			tipoGarantiaAceitaCaucaoLiquida.setValor(parametrosDistribuidor.getCaucaoLiquidaValor());
-			listaTipoGarantiaAceitas.add(tipoGarantiaAceitaCaucaoLiquida);
-		}		
-
-		if (verificaCheckBoolean(parametrosDistribuidor.getNotaPromissoria())) {
-			TipoGarantiaAceita tipoGarantiaAceitaNotaPromissoria = new TipoGarantiaAceita();
-			tipoGarantiaAceitaNotaPromissoria.setTipoGarantia(TipoGarantia.NOTA_PROMISSORIA);
-			tipoGarantiaAceitaNotaPromissoria.setValor(parametrosDistribuidor.getNotaPromissoriaValor());
-			listaTipoGarantiaAceitas.add(tipoGarantiaAceitaNotaPromissoria);
-		}
-
-		if (verificaCheckBoolean(parametrosDistribuidor.getAntecedenciaValidade())) {
-			TipoGarantiaAceita tipoGarantiaAceitaAntecedenciaValidade = new TipoGarantiaAceita();
-			tipoGarantiaAceitaAntecedenciaValidade.setTipoGarantia(TipoGarantia.ANTECEDENCIA_VALIDADE);
-			tipoGarantiaAceitaAntecedenciaValidade.setValor(parametrosDistribuidor.getAntecedenciaValidadeValor());
-			listaTipoGarantiaAceitas.add(tipoGarantiaAceitaAntecedenciaValidade);
-		}
-
-		if (verificaCheckBoolean(parametrosDistribuidor.getIndicadorReajusteCaucaoLiquida())) {
-			TipoGarantiaAceita tipoGarantiaAceitaIndicadorReajusteCaucaoLiquida = new TipoGarantiaAceita();
-			tipoGarantiaAceitaIndicadorReajusteCaucaoLiquida.setTipoGarantia(TipoGarantia.INDICADOR_REAJUSTE_CAUCAO_LIQUIDA);
-			tipoGarantiaAceitaIndicadorReajusteCaucaoLiquida.setValor(parametrosDistribuidor.getIndicadorReajusteCaucaoLiquidaValor());
-			listaTipoGarantiaAceitas.add(tipoGarantiaAceitaIndicadorReajusteCaucaoLiquida);
-		}
-
+		
 		distribuidor.setTiposGarantiasAceita(listaTipoGarantiaAceitas);
 		
 		PoliticaSuspensao politicaSuspensao = new PoliticaSuspensao();
@@ -445,7 +502,7 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		distribuidor.setPermitePagamentoDividasDivergentes(verificaCheckBoolean(parametrosDistribuidor.getPermitePagamentoDividasDivergentes()));
 		
 		// Aprovação
-		parametrosDistribuidor.setUtilizaControleAprovacao(verificaCheckString(distribuidor.isUtilizaControleAprovacao()));
+		distribuidor.setUtilizaControleAprovacao(verificaCheckBoolean(parametrosDistribuidor.getUtilizaControleAprovacao()));
 		
 		ParametrosAprovacaoDistribuidor parametrosAprovacaoDistribuidor = new ParametrosAprovacaoDistribuidor();
 		parametrosAprovacaoDistribuidor.setDebitoCredito(verificaCheckBoolean(parametrosDistribuidor.getParaDebitosCreditos()));
@@ -456,7 +513,8 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		parametrosAprovacaoDistribuidor.setDevolucaoFornecedor(verificaCheckBoolean(parametrosDistribuidor.getDevolucaoFornecedor()));
 		parametrosAprovacaoDistribuidor.setRecibo(verificaCheckBoolean(parametrosDistribuidor.getRecibo()));
 		parametrosAprovacaoDistribuidor.setFaltasSobras(verificaCheckBoolean(parametrosDistribuidor.getFaltasSobras()));
-
+		distribuidor.setParametrosAprovacaoDistribuidor(parametrosAprovacaoDistribuidor);
+		
 		if (parametrosDistribuidor.getPrazoFollowUp() != null && !parametrosDistribuidor.getPrazoFollowUp().isEmpty())
 			distribuidor.setPrazoFollowUp(CurrencyUtil.converterValor(parametrosDistribuidor.getPrazoFollowUp()).intValueExact());
 		else
@@ -469,7 +527,6 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		
 		List<ParametrosDistribuidorFaltasSobras> listaParametrosDistribuidorFaltasSobras = new ArrayList<ParametrosDistribuidorFaltasSobras>();
 		
-		// STOPED HERE
 		if (verificaCheckBoolean(parametrosDistribuidor.getFaltasSobras())) {
 			
 			ParametrosDistribuidorFaltasSobras parametrosAprovacao = new ParametrosDistribuidorFaltasSobras();
@@ -520,6 +577,11 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 			parametrosImpressaoPrazoFollowUp.setSobraEm(verificaCheckBoolean(parametrosDistribuidor.getPrazoFollowUpSobraEm()));
 			listaParametrosDistribuidorFaltasSobras.add(parametrosImpressaoPrazoFollowUp);
 
+			for (ParametrosDistribuidorFaltasSobras parametrosDistribuidorFaltasSobras : listaParametrosDistribuidorFaltasSobras) {
+				parametrosDistribuidorFaltasSobras.setDistribuidor(distribuidor);
+				parametrosDistribuidorFaltasSobrasRepository.alterarOuCriar(parametrosDistribuidorFaltasSobras);
+			}
+			
 			distribuidor.setParametrosDistribuidorFaltasSobras(listaParametrosDistribuidorFaltasSobras);
 			
 		} else {

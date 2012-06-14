@@ -101,7 +101,7 @@ function gravar() {
 		{name:'parametrosDistribuidor.reutilizacaoCodigoCotaInativa', value: $('#reutilizacaoCodigoCotaInativa').val()},
 		{name:'parametrosDistribuidor.obrigacaoFiscao', value: $('#obrigacaoFiscao').attr('checked')},
 		{name:'parametrosDistribuidor.regimeEspecial', value: $('#regimeEspecial').attr('checked')},
-		{name:'parametrosDistribuidor.distribuidor', value: $("input[name='parametrosDistribuidor.distribuidor']:checked").val()},
+		{name:'parametrosDistribuidor.distribuidor', value: $("input[name='distribuidor']:checked").val()},
 		{name:'parametrosDistribuidor.slipImpressao', value: $('#slipImpressao').attr('checked')},
 		{name:'parametrosDistribuidor.slipEmail', value: $('#slipEmail').attr('checked')},
 		{name:'parametrosDistribuidor.boletoImpressao', value: $('#boletoImpressao').attr('checked')},
@@ -114,17 +114,17 @@ function gravar() {
 		{name:'parametrosDistribuidor.notaEnvioEmail', value: $('#notaEnvioEmail').attr('checked')},
 		{name:'parametrosDistribuidor.chamadaEncalheImpressao', value: $('#chamadaEncalheImpressao').attr('checked')},
 		{name:'parametrosDistribuidor.chamadaEncalheEmail', value: $('#chamadaEncalheEmail').attr('checked')},
-		{name:'parametrosDistribuidor.impressaoNE', value: $("input[name='parametrosDistribuidor.impressaoNE']:checked").val()},
+		{name:'parametrosDistribuidor.impressaoNE', value: $("input[name='impressaoNE']:checked").val()},
 		{name:'parametrosDistribuidor.impressaoNEFaltaDe', value: $('#impressaoNEFaltaDe').attr('checked')},
 		{name:'parametrosDistribuidor.impressaoNEFaltaEm', value: $('#impressaoNEFaltaEm').attr('checked')},
 		{name:'parametrosDistribuidor.impressaoNESobraDe', value: $('#impressaoNESobraDe').attr('checked')},
 		{name:'parametrosDistribuidor.impressaoNESobraEm', value: $('#impressaoNESobraEm').attr('checked')},
-		{name:'parametrosDistribuidor.impressaoNECADANFE', value: $("input[name='parametrosDistribuidor.impressaoNECADANFE']:checked").val()},
+		{name:'parametrosDistribuidor.impressaoNECADANFE', value: $("input[name='impressaoNECADANFE']:checked").val()},
 		{name:'parametrosDistribuidor.impressaoNECADANFEFaltaDe', value: $('#impressaoNECADANFEFaltaDe').attr('checked')},
 		{name:'parametrosDistribuidor.impressaoNECADANFEFaltaEm', value: $('#impressaoNECADANFEFaltaEm').attr('checked')},
 		{name:'parametrosDistribuidor.impressaoNECADANFESobraDe', value: $('#impressaoNECADANFESobraDe').attr('checked')},
 		{name:'parametrosDistribuidor.impressaoNECADANFESobraEm', value: $('#impressaoNECADANFESobraEm').attr('checked')},
-		{name:'parametrosDistribuidor.impressaoCE', value: $("input[name='parametrosDistribuidor.impressaoCE']:checked").val()},
+		{name:'parametrosDistribuidor.impressaoCE', value: $("input[name='impressaoCE']:checked").val()},
 		{name:'parametrosDistribuidor.impressaoCEFaltaDe', value: $('#impressaoCEFaltaDe').attr('checked')},
 		{name:'parametrosDistribuidor.impressaoCEFaltaEm', value: $('#impressaoCEFaltaEm').attr('checked')},
 		{name:'parametrosDistribuidor.impressaoCESobraDe', value: $('#impressaoCESobraDe').attr('checked')},
@@ -236,7 +236,11 @@ function callback() {
 };	
 
 function mostra_funcionalidades(){
-	$('.funcionalidades').show();
+	if ($('#faltasSobras').attr('checked') == 'checked') {
+		$('.funcionalidades').show();
+	} else {
+		$('.funcionalidades').hide();
+	}
 }
 
 function removeFornecedor(){
@@ -254,8 +258,10 @@ function habilitaPrazoContrato() {
 $(document).ready(function() {
 	$('#informacoesComplementaresContrato').wysiwyg();
 	$('#informacoesComplementaresContrato').wysiwyg({controls:"font-family,italic,|,undo,redo"});
+	$('#informacoesComplementaresContrato').wysiwyg('setContent','${parametrosDistribuidor.informacoesComplementaresContrato}')
 	$('#informacoesComplementaresProcuracao').wysiwyg();
 	$('#informacoesComplementaresProcuracao').wysiwyg({controls:"font-family,italic,|,undo,redo"});
+	$('#informacoesComplementaresProcuracao').wysiwyg('setContent','${parametrosDistribuidor.informacoesComplementaresProcuracao}')
 });
 
 $(function() {
@@ -356,16 +362,15 @@ $(function() {
 		 precision:0
 	});	
 	
-	$("input[id^='relancamentoParciaisEmDias']").maskMoney({
-		 thousands:'.', 
-		 decimal:',', 
-		 precision:0
-	});	
+	$("#relancamentoParciaisEmDias").val(${parametrosDistribuidor.relancamentoParciaisEmDias});
 	
-	$('input:radio[name=parametrosDistribuidor.distribuidor][value=${parametrosDistribuidor.distribuidor}]').click();
-	$('input:radio[name=parametrosDistribuidor.impressaoNE][value=${parametrosDistribuidor.impressaoNE}]').click();
-	$('input:radio[name=parametrosDistribuidor.impressaoNECADANFE][value=${parametrosDistribuidor.impressaoNECADANFE}]').click();
-	$('input:radio[name=parametrosDistribuidor.impressaoCE][value=${parametrosDistribuidor.impressaoCE}]').click();
+	$('input:radio[name=distribuidor][value=${parametrosDistribuidor.distribuidor}]').click();
+	$('input:radio[name=impressaoNE][value=${parametrosDistribuidor.impressaoNE}]').click();
+	$('input:radio[name=impressaoNECADANFE][value=${parametrosDistribuidor.impressaoNECADANFE}]').click();
+	$('input:radio[name=impressaoCE][value=${parametrosDistribuidor.impressaoCE}]').click();
+	
+	mostra_funcionalidades();
+	habilitaPrazoContrato();
 	
 	$("#tabDistribuidor").tabs();
 });
@@ -570,10 +575,10 @@ $(function() {
 		                <legend>Parciais / Matriz de Lançamento</legend>
 		                <label>Relançamento de Parciais em D+: </label>
 		                <select name="parametrosDistribuidor.relancamentoParciaisEmDias" size="1" id="relancamentoParciaisEmDias" style="width:50px; height:19px;">
-		                  <option selected="selected">2</option>
-		                  <option>3</option>
-		                  <option>4</option>
-		                  <option>5</option>
+		                  <option value="2" selected="selected">2</option>
+		                  <option value="3">3</option>
+		                  <option value="4">4</option>
+		                  <option value="5">5</option>
 		                </select>
 		              </fieldset>
 			</div>
@@ -593,9 +598,9 @@ $(function() {
 		                  <td width="97"> Obrigação Fiscal</td>
 		                  <td width="20"><input name="parametrosDistribuidor.regimeEspecial" id="regimeEspecial" type="checkbox"  ${parametrosDistribuidor.regimeEspecial}/></td>
 		                  <td width="98">Regime Especial</td>
-		                  <td width="20"><input type="radio" name="parametrosDistribuidor.distribuidor" id="radioPrestadorServico" value="PRESTADOR_SERVICO" </td>
+		                  <td width="20"><input type="radio" name="distribuidor" id="radioPrestadorServico" value="PRESTADOR_SERVICO" </td>
 		                  <td width="101">Prestador Serviço</td>
-		                  <td width="20"><input type="radio" name="parametrosDistribuidor.distribuidor" id="radioMercantil" value="MERCANTIL" /></td>
+		                  <td width="20"><input type="radio" name="distribuidor" id="radioMercantil" value="MERCANTIL" /></td>
 		                  <td width="50">Mercantil</td>
 		                </tr>
 		                <tr>
@@ -652,9 +657,9 @@ $(function() {
 		           	  <legend>Impressão NE</legend>
 		                <table width="325" border="0" cellspacing="0" cellpadding="0">
 		                      <tr>
-		                        <td width="26"><input type="radio" name="parametrosDistribuidor.impressaoNE" id="impressaoNEModelo1" value="MODELO_1" /></td>
+		                        <td width="26"><input type="radio" name="impressaoNE" id="impressaoNEModelo1" value="MODELO_1" /></td>
 		                        <td width="93"><a href="${pageContext.request.contextPath}/modelos/ce_modelo_1.htm" target="_blank">Modelo 1</a></td>
-		                        <td width="20"><input type="radio" name="parametrosDistribuidor.impressaoNE" id="impressaoNEModelo2" value="MODELO_2" /></td>
+		                        <td width="20"><input type="radio" name="impressaoNE" id="impressaoNEModelo2" value="MODELO_2" /></td>
 		                        <td width="287"><a href="${pageContext.request.contextPath}/modelos/ce_modelo_2.html" target="_blank">Modelo 2</a></td>
 		                      </tr>
 		                      <tr>
@@ -695,11 +700,11 @@ $(function() {
 		               	<legend>Impressão NECA / Danfe</legend>
 		                <table width="325" border="0" cellspacing="0" cellpadding="0">
 		                      <tr>
-		                        <td width="20"><input type="radio" name="parametrosDistribuidor.impressaoNECADANFE" id="impressaoNECADANFEMODELO1" value="MODELO_1" /></td>
+		                        <td width="20"><input type="radio" name="impressaoNECADANFE" id="impressaoNECADANFEMODELO1" value="MODELO_1" /></td>
 		                        <td width="79"><a href="${pageContext.request.contextPath}/modelos/ce_modelo_1.htm" target="_blank">Modelo 1</a></td>
-		                        <td width="20"><input type="radio" name="parametrosDistribuidor.impressaoNECADANFE" id="impressaoNECADANFEMODELO2" value="MODELO_2" /></td>
+		                        <td width="20"><input type="radio" name="impressaoNECADANFE" id="impressaoNECADANFEMODELO2" value="MODELO_2" /></td>
 		                        <td width="75"><a href="${pageContext.request.contextPath}/modelos/ce_modelo_3.htm" target="_blank">Modelo 2</a></td>
-		                        <td width="20"><input type="radio" name="parametrosDistribuidor.impressaoNECADANFE" id="impressaoNECADANFE" value="DANFE" /></td>
+		                        <td width="20"><input type="radio" name="impressaoNECADANFE" id="impressaoNECADANFE" value="DANFE" /></td>
 		                        <td width="111"><a href="javascript:;" target="_blank">Danfe</a></td>
 		                      </tr>
 		                      <tr>
@@ -742,9 +747,9 @@ $(function() {
 		           	  	<legend>Impressão CE</legend>
 		                <table width="325" border="0" cellspacing="0" cellpadding="0">
 		                      <tr>
-		                        <td width="26"><input type="radio" name="parametrosDistribuidor.impressaoCE" id="impressaoCEModelo2" value="MODELO_1" /></td>
+		                        <td width="26"><input type="radio" name="impressaoCE" id="impressaoCEModelo2" value="MODELO_1" /></td>
 		                        <td width="93"><a href="${pageContext.request.contextPath}/modelos/ce_modelo_1.htm" target="_blank">Modelo 1</a></td>
-		                        <td width="20"><input type="radio" name="parametrosDistribuidor.impressaoCE" id="impressaoCEModelo1" value="MODELO_2" /></td>
+		                        <td width="20"><input type="radio" name="impressaoCE" id="impressaoCEModelo1" value="MODELO_2" /></td>
 		                        <td width="287"><a href="${pageContext.request.contextPath}/modelos/ce_modelo_2.html" target="_blank">Modelo 2</a></td>
 		                      </tr>
 		                      <tr>
@@ -802,7 +807,7 @@ $(function() {
 		                    <td colspan="2">Informações complementares do Contrato:</td>
 		                  </tr>
 		                  <tr>
-		                    <td colspan="2"><textarea name="parametrosDistribuidor.informacoesComplementaresContrato" rows="4" id="informacoesComplementaresContrato" style="width:350px;" value="${parametrosDistribuidor.informacoesComplementaresContrato}" ></textarea></td>
+		                    <td colspan="2"><textarea name="parametrosDistribuidor.informacoesComplementaresContrato" rows="4" id="informacoesComplementaresContrato" style="width:350px;" ></textarea></td>
 		                  </tr>
 		                </table>
                 </fieldset>
@@ -820,7 +825,7 @@ $(function() {
 		                    <td colspan="2">Informações complementares da Procuração:</td>
 		                  </tr>
 		                  <tr>
-		                    <td colspan="2"><textarea name="parametrosDistribuidor.informacoesComplementaresProcuracao" rows="4" id="informacoesComplementaresProcuracao" style="width:150px;" value="${parametrosDistribuidor.informacoesComplementaresProcuracao}" ></textarea></td>
+		                    <td colspan="2"><textarea name="parametrosDistribuidor.informacoesComplementaresProcuracao" rows="4" id="informacoesComplementaresProcuracao" style="width:150px;" ></textarea></td>
 		                  </tr>
 		                </table>
                 </fieldset>
