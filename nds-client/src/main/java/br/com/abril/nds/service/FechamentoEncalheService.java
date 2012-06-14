@@ -21,7 +21,7 @@ public interface FechamentoEncalheService {
 
 	void postergarCotas(Date dataPostergacao, List<Long> idsCotas);
 	
-	void cobrarCotas(Date dataEncalhe, Usuario usuario, List<Long> idsCotas);
+	void cobrarCotas(Date dataOperacao, Usuario usuario, List<Long> idsCotas);
 	
 	BigDecimal buscarValorTotalEncalhe(Date dataEncalhe, Long idCota);
 }

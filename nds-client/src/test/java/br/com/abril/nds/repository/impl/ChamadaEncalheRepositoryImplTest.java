@@ -211,4 +211,19 @@ public class ChamadaEncalheRepositoryImplTest extends AbstractRepositoryImplTest
 		Assert.assertTrue(listaChamadaEncalhe.size() == idsLancamento.size());
 	}
 	
+	@Test
+	public void testObterChamadasEncalhePor() {
+		
+		Calendar dataOperacao = Calendar.getInstance();
+		
+		dataOperacao.set(2012, 5, 20);
+		
+		Long idCota = 1L;
+		
+		List<ChamadaEncalhe> listaChamadaEncalhes = 
+			this.chamadaEncalheRepository.obterChamadasEncalhePor(dataOperacao.getTime(), idCota);
+	
+		Assert.assertNotNull(listaChamadaEncalhes);
+	}
+	
 }

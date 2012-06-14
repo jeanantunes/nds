@@ -250,8 +250,14 @@
 		checarTodasCotasGrid(false);
 		
 		$.each(resultado.rows, function(index, row) {
-
-			var checkBox = '<input type="checkbox" name="checkboxGridCotas" id="checkboxGridCotas" value="' + row.cell.idCota + '" />';	
+			
+			var checkBox = '<span></span>';
+			
+			if (row.cell.acao == null || row.cell.acao == '') { 
+				checkBox = '<input type="checkbox" name="checkboxGridCotas" id="checkboxGridCotas" value="' + row.cell.idCota + '" />';	
+			} else {
+				checkBox = '<input type="checkbox" name="checkboxGridCotas" id="checkboxGridCotas" value="' + row.cell.idCota + '" disabled="disabled"/>';	
+			}
 			
 		    row.cell.check = checkBox;
 		});
@@ -318,10 +324,10 @@
 
 	function cobrarCotas() {
 
-		var dataPostergacao = $("#datepickerDe").val();
+		var dataOperacao = $("#datepickerDe").val();
 		
 		$.postJSON("<c:url value='/devolucao/fechamentoEncalhe/cobrarCotas' />",
-					{ 'dataPostergacao' : dataPostergacao, 'idsCotas' : obterCotasMarcadas() },
+					{ 'dataOperacao' : dataOperacao, 'idsCotas' : obterCotasMarcadas() },
 					function (result) {
 						
 						var tipoMensagem = result.tipoMensagem;
