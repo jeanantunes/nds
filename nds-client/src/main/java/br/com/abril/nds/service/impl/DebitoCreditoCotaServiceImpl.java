@@ -101,12 +101,15 @@ public class DebitoCreditoCotaServiceImpl implements DebitoCreditoCotaService {
 		
 		List<Cota> cotas = this.boxRepository.obterCotasPorBoxRoteiroRota(idBox, idRoteiro, idRota);
 		
-		Double percFat = null;
+		Double percFat;
 		
 		Map<Long,BigDecimal> cotasFaturamentos = null;
 		
 		Long indice=0l;
 		for (Cota itemCota:cotas){
+
+			percFat = null;
+			
 			indice++;
 
 			if((percentual!=null)&&( baseCalculo!=null)&&( dataPeriodoInicial!=null)&&(dataPeriodoFinal!=null)){
@@ -114,11 +117,15 @@ public class DebitoCreditoCotaServiceImpl implements DebitoCreditoCotaService {
 				cotasFaturamentos = this.movimentoFinanceiroCotaService.obterFaturamentoCotasPeriodo(cotas, baseCalculo, dataPeriodoInicial, dataPeriodoFinal);
 				
 				if (cotasFaturamentos!=null){
-				    percFat = ((cotasFaturamentos.get(itemCota.getId()).doubleValue() / 100)*percentual.doubleValue());
+					
+					if( cotasFaturamentos.get(itemCota.getId()).doubleValue() > 0 ){
+				        percFat = ((cotasFaturamentos.get(itemCota.getId()).doubleValue() / 100)*percentual.doubleValue());
+					}
+					
 				}
 			}
 			
-			listaDC.add(new DebitoCreditoDTO(indice,null,null,itemCota.getNumeroCota(),itemCota.getPessoa().getNome(),null,null,percFat.toString(),null));
+			listaDC.add(new DebitoCreditoDTO(indice,null,null,itemCota.getNumeroCota(),itemCota.getPessoa().getNome(),null,null,(percFat!=null?percFat.toString():null),null));
 		}
 		return listaDC;
 	}
