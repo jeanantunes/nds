@@ -18,6 +18,7 @@ import br.com.abril.nds.dto.FechamentoFisicoLogicoDTO;
 import br.com.abril.nds.dto.filtro.FiltroFechamentoEncalheDTO;
 import br.com.abril.nds.model.cadastro.TipoRoteiro;
 import br.com.abril.nds.model.estoque.ConferenciaEncalhe;
+import br.com.abril.nds.model.estoque.ControleFechamentoEncalhe;
 import br.com.abril.nds.model.estoque.FechamentoEncalhe;
 import br.com.abril.nds.model.estoque.pk.FechamentoEncalhePK;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalheCota;
@@ -87,6 +88,15 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepository<Fechamen
 		criteria.setResultTransformer(Transformers.aliasToBean(FechamentoFisicoLogicoDTO.class));
 			
 		return criteria.list();
+	}
+
+	@Override
+	public Boolean buscaControleFechamentoEncalhe(Date dataEncalhe) {
+		
+		Criteria criteria = this.getSession().createCriteria(ControleFechamentoEncalhe.class, "cfe");
+		criteria.add(Restrictions.eq("cfe.dataEncalhe", dataEncalhe));
+		
+		return !criteria.list().isEmpty();
 	}
 	
 	@Override
@@ -201,4 +211,30 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepository<Fechamen
 		}
 	}
 	
+	@Override
+	public FechamentoFisicoLogicoDTO buscarValorTotalEncalhe(Date dataEncalhe, Long idCota) {
+
+		Criteria criteria = this.getSession().createCriteria(ConferenciaEncalhe.class, "ce");
+		
+		criteria.setProjection(Projections.projectionList()
+			.add(Projections.sum("pe.precoVenda"), "precoCapa")
+			.add(Projections.sum("mec.qtde"), "exemplaresDevolucao")
+		);
+		
+		criteria.createAlias("ce.movimentoEstoqueCota", "mec");
+		criteria.setFetchMode("mec", FetchMode.JOIN);
+		
+		criteria.createAlias("ce.controleConferenciaEncalheCota", "ccec");
+		criteria.setFetchMode("ccec", FetchMode.JOIN);
+		
+		criteria.createAlias("mec.produtoEdicao", "pe");
+		criteria.setFetchMode("pe", FetchMode.JOIN);
+		
+		criteria.add(Restrictions.eq("ccec.dataOperacao", dataEncalhe));
+		criteria.add(Restrictions.eq("ccec.cota.id", idCota));
+		
+		criteria.setResultTransformer(Transformers.aliasToBean(FechamentoFisicoLogicoDTO.class));
+			
+		return (FechamentoFisicoLogicoDTO) criteria.list().get(0);
+	}
 }
