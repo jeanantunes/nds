@@ -54,6 +54,8 @@ import br.com.abril.nds.model.cadastro.ParametroContratoCota;
 import br.com.abril.nds.model.cadastro.ParametroDistribuicaoCota;
 import br.com.abril.nds.model.cadastro.ParametroSistema;
 import br.com.abril.nds.model.cadastro.ParametroUsuarioBox;
+import br.com.abril.nds.model.cadastro.ParametrosAprovacaoDistribuidor;
+import br.com.abril.nds.model.cadastro.ParametrosRecolhimentoDistribuidor;
 import br.com.abril.nds.model.cadastro.Periodicidade;
 import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
 import br.com.abril.nds.model.cadastro.Pessoa;
@@ -3473,9 +3475,30 @@ public class DataLoader {
 																					 , "neste ato, por seus representantes infra-assinados, doravante denominada simplesmente CONTRATADA.", 30, 30);
 		save(session, parametroContrato);
 		
+	
+		ParametrosAprovacaoDistribuidor parametrosAprovacaoDistribuidor = new ParametrosAprovacaoDistribuidor();
+		
+		parametrosAprovacaoDistribuidor.setAjusteEstoque(true);
+		parametrosAprovacaoDistribuidor.setDebitoCredito(true);
+		parametrosAprovacaoDistribuidor.setDevolucaoFornecedor(true);
+		parametrosAprovacaoDistribuidor.setFaltasSobras(true);
+		parametrosAprovacaoDistribuidor.setNegociacao(true);
+		parametrosAprovacaoDistribuidor.setPostergacaoCobranca(true);
+		parametrosAprovacaoDistribuidor.setRecibo(true);
+		
+		ParametrosRecolhimentoDistribuidor parametrosRecolhimentoDistribuidor = new ParametrosRecolhimentoDistribuidor();
+
 		distribuidor.setParametroContratoCota(parametroContrato);
 
 		distribuidor.setFatorRelancamentoParcial(5);
+		distribuidor.setInformacoesComplementaresProcuracao("informacoesComplementaresProcuracao");
+		distribuidor.setNegociacaoAteParcelas(10);
+		distribuidor.setParametrosAprovacaoDistribuidor(parametrosAprovacaoDistribuidor);
+		distribuidor.setParametrosRecolhimentoDistribuidor(parametrosRecolhimentoDistribuidor);
+		distribuidor.setPrazoAvisoPrevioValidadeGarantia(40);
+		distribuidor.setPrazoFollowUp(50);
+		distribuidor.setValorConsignadoSuspensaoCotas(new BigDecimal(9999999));
+		
 		
 		save(session, distribuidor);
 		
