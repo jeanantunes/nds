@@ -71,7 +71,9 @@ var roteirizacao = {
 			
 			$(idRoteiro).autocomplete({source: ""});
 			
+			roteiroSelecionadoAutoComplete = false;	
 			if (descricao && descricao.length > 1) {
+			
 				
 				$.postJSON(
 					contextPath + "/cadastro/roteirizacao/autoCompletarRoteiroPorDescricao",
@@ -92,10 +94,13 @@ var roteirizacao = {
 			$(idCampo).autocomplete({
 				source: result,
 				focus : function(event, ui) {
+					roteiroSelecionadoAutoComplete = true;	
 				},
 				close : function(event, ui) {
+					roteiroSelecionadoAutoComplete = true;	
 				},
 				select : function(event, ui) {
+					roteiroSelecionadoAutoComplete = true;	
 					if (callBack){ 
 					  callBack(ui.item.chave,true);
 					} 
@@ -1443,6 +1448,7 @@ iniciarPesquisaRoteirizacaoGrid : function () {
 		$('botaoNovaRotaNome').val('');
 		roteirizacao.desabilitaBotao('botaoNovaRotaNome');
 		$('#nomeRota').attr("readonly","true");
+		$('#lstRoteiros').val('');
 		roteirizacao.escondeRotaNovaTranferencia();
 		
 		
