@@ -19,6 +19,7 @@ import br.com.abril.nds.model.TipoEdicao;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.estoque.ControleFechamentoEncalhe;
 import br.com.abril.nds.model.estoque.FechamentoEncalhe;
 import br.com.abril.nds.model.estoque.pk.FechamentoEncalhePK;
 import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
@@ -35,6 +36,7 @@ import br.com.abril.nds.service.FechamentoEncalheService;
 import br.com.abril.nds.service.GerarCobrancaService;
 import br.com.abril.nds.service.MovimentoFinanceiroCotaService;
 import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.util.TipoMensagem;
 
 @Service
 public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
@@ -59,7 +61,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 
 	@Autowired
 	private ChamadaEncalheRepository chamadaEncalheRepository;
-	
+		
 	@Override
 	@Transactional
 	public List<FechamentoFisicoLogicoDTO> buscarFechamentoEncalhe(FiltroFechamentoEncalheDTO filtro,
@@ -237,10 +239,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 				movimentoFinanceiroCotaDTO.setCota(cota);
 				movimentoFinanceiroCotaDTO.setTipoMovimentoFinanceiro(tipoMovimentoFinanceiro);
 				movimentoFinanceiroCotaDTO.setUsuario(usuario);
-
-				// TODO: buscar na query do jonatas.
 				movimentoFinanceiroCotaDTO.setValor(this.buscarValorTotalEncalhe(dataOperacao, cota.getId()));
-				
 				movimentoFinanceiroCotaDTO.setDataOperacao(distribuidor.getDataOperacao());
 				movimentoFinanceiroCotaDTO.setBaixaCobranca(null);
 				movimentoFinanceiroCotaDTO.setDataVencimento(distribuidor.getDataOperacao());
@@ -290,5 +289,29 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
         }
         
         return soma;
+	}
+
+	@Override
+	@Transactional
+	public void encerrarOperacaoEncalhe(Date dataEncalhe) {
+	
+		try {
+			
+			Integer totalCotasAusentes = 
+				this.buscarTotalCotasAusentes(dataEncalhe);
+			
+			if (totalCotasAusentes > 0) {
+				throw new ValidacaoException(TipoMensagem.ERROR, "Cotas ausentes existentes!");
+			}
+			
+			ControleFechamentoEncalhe controleFechamentoEncalhe = new ControleFechamentoEncalhe();
+			
+			controleFechamentoEncalhe.setDataEncalhe(dataEncalhe);
+			
+			this.fechamentoEncalheRepository.salvarControleFechamentoEncalhe(controleFechamentoEncalhe);
+			
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
 	}
 }

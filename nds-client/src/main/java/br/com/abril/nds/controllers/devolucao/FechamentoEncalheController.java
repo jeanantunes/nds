@@ -193,7 +193,7 @@ public class FechamentoEncalheController {
 		
 			try {
 					
-				FileExporter.to("cotas_ausentes", fileType).inHTTPResponse(
+				FileExporter.to("cotas-ausentes", fileType).inHTTPResponse(
 					this.getNDSFileHeader(), null, null, listaCotasAusenteEncalhe, 
 				CotaAusenteEncalheDTO.class, this.response);
 				
@@ -236,6 +236,55 @@ public class FechamentoEncalheController {
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, "Erro ao gerar o arquivo!"));
 		}
 		
+	}
+
+	@Path("/encerrarOperacaoEncalhe")
+	public void encerrarOperacaoEncalhe(Date dataEncalhe) {
+		
+		try {
+		
+			if (dataEncalhe == null || Calendar.getInstance().getTime().before(dataEncalhe)) {
+				this.result.use(Results.json()).from(
+					new ValidacaoVO(TipoMensagem.WARNING, "Data de encalhe inválida!"), "result").recursive().serialize();
+				throw new ValidacaoException();
+			}
+			
+			this.fechamentoEncalheService.encerrarOperacaoEncalhe(dataEncalhe);
+			
+		} catch (ValidacaoException e) {
+			this.result.use(Results.json()).from(e.getValidacao(), "result").recursive().serialize();
+			throw new ValidacaoException();
+		} catch (Exception e) {
+			this.result.use(
+				Results.json()).from(
+					new ValidacaoVO(TipoMensagem.ERROR, "Erro ao tentar encerrar a operação de encalhe!"), "result").recursive().serialize();
+			throw new ValidacaoException();
+		}
+		
+		this.result.use(Results.json()).from(
+			new ValidacaoVO(TipoMensagem.SUCCESS, "Operação de encalhe encerrada com sucesso!"), "result").recursive().serialize();
+	}
+	
+	@Path("/verificarEncerrarOperacaoEncalhe")
+	public void verificarEncerrarOperacaoEncalhe(Date dataEncalhe) {
+		
+		try {
+			
+			Integer totalCotasAusentes =
+				this.fechamentoEncalheService.buscarTotalCotasAusentes(dataEncalhe);
+			
+			if (totalCotasAusentes > 0) {
+				this.result.use(Results.json()).from("NAO_ENCERRAR", "result").recursive().serialize();
+			} else {
+				this.result.use(Results.json()).from("ENCERRAR", "result").recursive().serialize();
+			}
+			
+		} catch (Exception e) {
+			this.result.use(
+				Results.json()).from(
+					new ValidacaoVO(TipoMensagem.ERROR, "Erro ao tentar encerrar a operação de encalhe!"), "result").recursive().serialize();
+			throw new ValidacaoException();
+		}
 	}
 
 	/**
