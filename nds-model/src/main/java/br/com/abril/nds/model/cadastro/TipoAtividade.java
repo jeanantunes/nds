@@ -1,13 +1,13 @@
 package br.com.abril.nds.model.cadastro;
 
-public enum TipoDistribuidor {
+public enum TipoAtividade {
 
 	PRESTADOR_SERVICO("Prestador Serviço"),
 	MERCANTIL("Mercantil");
 	
 	private String descricao;
 	
-	private TipoDistribuidor(String descricao) {
+	private TipoAtividade(String descricao) {
 		this.descricao = descricao;
 	}
 	
