@@ -184,7 +184,6 @@ function carregarDialog(id) {
 				$('#possuiBrinde').attr('checked', result.possuiBrinde);
 				$('#boletimInformativo').val(result.boletimInformativo);
 
-				//
 				if (result.origemInterface) {
 					$("#precoVenda").attr("readonly", false);				
 				} else {
@@ -197,7 +196,6 @@ function carregarDialog(id) {
 					$("#dataLancamentoPrevisto").attr("readonly", false);
 					$("#repartePrevisto").attr("readonly", false);
 					$("#repartePromocional").attr("readonly", false);
-					//$("#categoria").val();
 					$("#codigoDeBarrasCorporativo").attr("readonly", false);
 					$('#parcial').attr("disabled", false);
 					$("#desconto").attr("readonly", false);
@@ -206,7 +204,8 @@ function carregarDialog(id) {
 					$("#espessura").attr("readonly", false);
 					$('#boletimInformativo').attr("readonly", false);
 				}
-				
+
+				$("#numeroLancamento").attr("readonly", false); 
 				$("#imagemCapa").attr("disabled", false);
 				$("#codigoDeBarras").attr("readonly", false);				
 				$("#chamadaCapa").attr("readonly", false);
@@ -482,6 +481,7 @@ $(function() {
 	$("#largura").numeric();
 	$("#comprimento").numeric();
 	$("#espessura").numeric();
+	$("#numeroLancamento").numeric();
 
 	$("#dataLancamentoPrevisto").mask("99/99/9999");
 	$("#dataLancamento").mask("99/99/9999");
@@ -592,7 +592,7 @@ fieldset {
 								</tr>
 								<tr>
 									<td><strong>N&ordm; Lancto:</strong></td>
-									<td><input type="text" name="numeroLancamento" id="numeroLancamento" style="width:50px;" disabled="disabled"  /></td>
+									<td><input type="text" name="numeroLancamento" id="numeroLancamento" style="width:50px;" maxlength="9" /></td>
 									<td><strong>Pct. Padr&atilde;o:</strong></td>
 									<td><input type="text" name="pacotePadrao" id="pacotePadrao" style="width:50px;" /></td>
 								</tr>
@@ -969,7 +969,8 @@ fieldset {
 				align : 'center'
 			}],
 			width : 620,
-			height : 120
+			height : 120,
+			singleSelect : true
 		});
 
 	$(".prodsPesqGrid").flexigrid({
@@ -988,7 +989,8 @@ fieldset {
 				align : 'left'
 			}],
 			width : 200,
-			height : 350
+			height : 350,
+			singleSelect : true
 		});
 		
 		
@@ -1051,7 +1053,8 @@ fieldset {
 			rp : 15,
 			showTableToggleBtn : true,
 			width : 960,
-			height : 255
+			height : 255,
+			singleSelect : true
 		});
 		
 		
@@ -1084,7 +1087,8 @@ fieldset {
 				align : 'center',
 			}],
 			width : 640,
-			height : 120
+			height : 120,
+			singleSelect : true
 		});
 </script>
 </body>
