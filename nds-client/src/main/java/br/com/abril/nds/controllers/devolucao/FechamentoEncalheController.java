@@ -218,24 +218,20 @@ public class FechamentoEncalheController {
 		List<FechamentoFisicoLogicoDTO> listaEncalhe = fechamentoEncalheService.buscarFechamentoEncalhe(
 				filtro, sortorder, this.resolveSort(sortname), page, rp);
 		
-		// Evitar nullpointer na impressão:
-		if (listaEncalhe == null) {
-			listaEncalhe = new ArrayList<FechamentoFisicoLogicoDTO>();
-		}
-		if (listaEncalhe.isEmpty()) {
-			listaEncalhe.add(new FechamentoFisicoLogicoDTO());
+		if (listaEncalhe != null && !listaEncalhe.isEmpty()) {
+		
+			try {
+				
+				FileExporter.to("fechamentos-encalhe", fileType).inHTTPResponse(
+					this.getNDSFileHeader(), null, null, listaEncalhe, 
+					FechamentoFisicoLogicoDTO.class, this.response);
+				
+			} catch (Exception e) {
+				throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, "Erro ao gerar o arquivo!"));
+			}
 		}
 		
-		try {
-			
-			FileExporter.to("cotas_ausentes", fileType).inHTTPResponse(
-				this.getNDSFileHeader(), null, null, listaEncalhe, 
-				FechamentoFisicoLogicoDTO.class, this.response);
-			
-		} catch (Exception e) {
-			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, "Erro ao gerar o arquivo!"));
-		}
-		
+		this.result.use(Results.nothing());
 	}
 
 	@Path("/encerrarOperacaoEncalhe")
