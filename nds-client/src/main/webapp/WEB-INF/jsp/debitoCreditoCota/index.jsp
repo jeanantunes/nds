@@ -129,8 +129,8 @@
 				sortable : false,
 				align : 'center'
 			}],
-			sortname : "tipoLancamento",
-			sortorder : "asc",
+			sortname : "dataLancamento",
+			sortorder : "desc",
 			usepager : true,
 			useRp : true,
 			params: formData,

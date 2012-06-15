@@ -27,6 +27,12 @@ public class DistribuidorServiceImpl implements DistribuidorService {
 
 	@Override
 	@Transactional
+	public void alterar(Distribuidor distribuidor) {
+		distribuidorRepository.alterar(distribuidor);
+	}
+
+	@Override
+	@Transactional
 	public List<RegistroCurvaABCDistribuidorVO> obterCurvaABCDistribuidor(FiltroCurvaABCDistribuidorDTO filtroCurvaABCDistribuidorDTO) {
 		return distribuidorRepository.obterCurvaABCDistribuidor(filtroCurvaABCDistribuidorDTO);
 	}

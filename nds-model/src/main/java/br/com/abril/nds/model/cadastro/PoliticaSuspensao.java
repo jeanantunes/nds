@@ -36,4 +36,8 @@ public class PoliticaSuspensao implements Serializable {
 		this.valor = valor;
 	}
 
+	public Integer getNumeroAcumuloDividaWrapped() {
+		return numeroAcumuloDivida;
+	}
+
 }

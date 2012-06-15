@@ -41,6 +41,8 @@ public class FechamentoFisicoLogicoDTO {
 	
 	private String replicar = "";
 	
+	private Boolean fechado;
+	
 	
 	public String getReplicar() {
 		return replicar;
@@ -115,5 +117,11 @@ public class FechamentoFisicoLogicoDTO {
 	}
 	public void setDiferenca(Long diferenca) {
 		this.diferenca = diferenca;
+	}
+	public Boolean getFechado() {
+		return fechado;
+	}
+	public void setFechado(Boolean fechado) {
+		this.fechado = fechado;
 	}
 }

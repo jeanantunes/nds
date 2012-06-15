@@ -16,4 +16,6 @@ public interface ChamadaEncalheRepository extends Repository<ChamadaEncalhe, Lon
 	List<ChamadaEncalhe> obterPorPeriodoTipoChamadaEncalhe(Date dataInicialRecolhimento,
 													   	   Date dataFinalRecolhimento,
 													   	   TipoChamadaEncalhe tipoChamadaEncalhe);
+	
+	List<ChamadaEncalhe> obterChamadasEncalhePor(Date dataOperacao, Long idCota);
 }

@@ -4,8 +4,10 @@ public enum GrupoNotaFiscal {
 
 	RECEBIMENTO_MERCADORIAS(TipoOperacao.ENTRADA), 
 	
-	DEVOLUCAO_MERCADORIA_FORNECEDOR(TipoOperacao.SAIDA);
+	DEVOLUCAO_MERCADORIA_FORNECEDOR(TipoOperacao.SAIDA),
 
+	RECEBIMENTO_MERCADORIAS_ENCALHE(TipoOperacao.ENTRADA);
+	
 	private TipoOperacao tipoOperacao;
 	
 	private GrupoNotaFiscal(TipoOperacao tipoOperacao) {

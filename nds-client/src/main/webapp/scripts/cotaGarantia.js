@@ -657,10 +657,13 @@ TipoCotaGarantia.prototype.getData = function() {
 			_this.cotaGarantia.controllerType = data.tipo;
 			_this.changeController(data.tipo);
 			$("#tipoGarantiaSelect").val(data.tipo);
+		} else if (!data || !data.cotaGarantia) {
+			_this.changeController(null);
 		}
 
 	}, null, true);
 };
+
 TipoCotaGarantia.prototype.bindData = function(data) {
 	var select = document.getElementById("tipoGarantiaSelect");
 	for ( var index = select.options.length; index > 0; index--) {
@@ -712,9 +715,19 @@ TipoCotaGarantia.prototype.changeController = function(newControllerType) {
 		}		
 		delete this.controller;
 	}
-	var obj = this.tipo[newControllerType].controller;
-	this.controller = new obj(this.getIdCota(), this.cotaGarantia);
-	this.controllerType = newControllerType;
+	if(newControllerType){		
+	
+		var obj = this.tipo[newControllerType].controller;
+		this.controller = new obj(this.getIdCota(), this.cotaGarantia);
+		this.controllerType = newControllerType;
+	}else{
+		$("#tipoGarantiaSelect").val("");
+		this.controller = null;
+		this.controllerType = null;
+		if (this.cotaGarantia) {
+			this.cotaGarantia = null;
+		}
+	}
 
 };
 
@@ -868,7 +881,7 @@ Fiador.prototype.bindData = function() {
 		nome = this.fiador.pessoa.nome;
 		doc = this.fiador.pessoa.cpf;
 	}
-	console.log(this.fiador);
+	
 	$("#cotaGarantiaFiadorNome").html(nome);
 	$("#cotaGarantiaFiadorDoc").html(doc);
 
@@ -926,6 +939,11 @@ Fiador.prototype.initGrid = function() {
 		height : 150
 	});
 };
+
+Fiador.prototype.destroy = function() {
+	this.toggleDados(false);
+};
+
 Fiador.prototype.salva = function(callBack) {
 	var _this = this;
 	$.postJSON(this.path + "salvaFiador.json", {
@@ -1034,7 +1052,6 @@ CaucaoLiquida.prototype.popularGrid = function() {
 
 CaucaoLiquida.prototype.salva = function(callBack) {
 	
-	console.log(this.listNovosCalcao);
 	var postData = serializeArrayToPost('listaCaucaoLiquida', this.listNovosCalcao);
 		
 	postData['idCota'] = this.idCota;

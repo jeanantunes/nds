@@ -1,5 +1,7 @@
 package br.com.abril.nds.controllers.devolucao;
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.util.ArrayList;
@@ -17,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.dto.ConferenciaEncalheDTO;
+import br.com.abril.nds.dto.DadosDocumentacaoConfEncalheCotaDTO;
 import br.com.abril.nds.dto.DebitoCreditoCotaDTO;
 import br.com.abril.nds.dto.InfoConferenciaEncalheCota;
 import br.com.abril.nds.dto.ProdutoEdicaoDTO;
@@ -38,7 +41,9 @@ import br.com.abril.nds.service.exception.ConferenciaEncalheFinalizadaException;
 import br.com.abril.nds.service.exception.EncalheExcedeReparteException;
 import br.com.abril.nds.service.exception.EncalheRecolhimentoParcialException;
 import br.com.abril.nds.service.exception.EncalheSemPermissaoSalvarException;
+import br.com.abril.nds.service.impl.ConferenciaEncalheServiceImpl.TipoDocumentoConferenciaEncalhe;
 import br.com.abril.nds.util.CellModelKeyValue;
+import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.ItemAutoComplete;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
@@ -51,6 +56,8 @@ import br.com.caelum.vraptor.view.Results;
 @Resource
 @Path(value="/devolucao/conferenciaEncalhe")
 public class ConferenciaEncalheController {
+	
+	private static final String DADOS_DOCUMENTACAO_CONF_ENCALHE_COTA = "dadosDocumentacaoConfEncalheCota";
 	
 	private static final String VALOR_ENCALHE_JORNALEIRO = "valorEncalheJornaleiro";
 	
@@ -166,7 +173,7 @@ public class ConferenciaEncalheController {
 	}
 	*/
 	@Post
-	public void carregarListaConferencia(Integer numeroCota){
+	public void carregarListaConferencia(Integer numeroCota, boolean indObtemDadosFromBD){
 		
 		if (numeroCota == null){
 			
@@ -185,7 +192,7 @@ public class ConferenciaEncalheController {
 		
 		InfoConferenciaEncalheCota infoConfereciaEncalheCota = this.getInfoConferenciaSession();
 		
-		if (infoConfereciaEncalheCota == null){
+		if (infoConfereciaEncalheCota == null || indObtemDadosFromBD){
 			
 			infoConfereciaEncalheCota = 
 					conferenciaEncalheService.obterInfoConferenciaEncalheCota(numeroCota);
@@ -217,7 +224,27 @@ public class ConferenciaEncalheController {
 			dados.put("situacao", cota.getSituacaoCadastro().toString());
 		}
 		
-		dados.put("notaFiscal", this.session.getAttribute(NOTA_FISCAL_CONFERENCIA) == null ? "" : this.session.getAttribute(NOTA_FISCAL_CONFERENCIA));
+		if(infoConfereciaEncalheCota.getNotaFiscalEntradaCota()!=null) {
+
+			Map<String, Object> dadosNotaFiscal = new HashMap<String, Object>();
+			
+			dadosNotaFiscal.put("numero", infoConfereciaEncalheCota.getNotaFiscalEntradaCota().getNumero());
+			dadosNotaFiscal.put("serie", 	infoConfereciaEncalheCota.getNotaFiscalEntradaCota().getSerie());
+			dadosNotaFiscal.put("dataEmissao", DateUtil.formatarDataPTBR(infoConfereciaEncalheCota.getNotaFiscalEntradaCota().getDataEmissao()));
+			dadosNotaFiscal.put("chaveAcesso", infoConfereciaEncalheCota.getNotaFiscalEntradaCota().getChaveAcesso());
+			dadosNotaFiscal.put("valorProdutos", infoConfereciaEncalheCota.getNotaFiscalEntradaCota().getValorProdutos());
+			
+			this.session.setAttribute(NOTA_FISCAL_CONFERENCIA, dadosNotaFiscal);
+
+			dados.put("notaFiscal", dadosNotaFiscal);
+
+			
+		} else {
+			
+			dados.put("notaFiscal", "");
+			
+		}
+		
 		
 		this.calcularTotais(dados);
 		
@@ -375,7 +402,7 @@ public class ConferenciaEncalheController {
 		
 		this.atualizarQuantidadeConferida(idProdutoEdicao, quantidade, produtoEdicao);
 		
-		this.carregarListaConferencia(null);
+		this.carregarListaConferencia(null, false);
 	}
 	
 	@Post
@@ -466,7 +493,9 @@ public class ConferenciaEncalheController {
 		
 	}
 
-	
+	/**
+	 * Salva os dados da conferência de encalhe.
+	 */
 	@Post
 	public void salvarConferencia(){
 		
@@ -483,6 +512,25 @@ public class ConferenciaEncalheController {
 		
 		controleConfEncalheCota.setCota(info.getCota());
 		controleConfEncalheCota.setId(this.getInfoConferenciaSession().getIdControleConferenciaEncalheCota());
+
+		@SuppressWarnings({ "rawtypes", "unchecked" })
+		Map<String, Object> dadosNotaFiscal = (Map) this.session.getAttribute(NOTA_FISCAL_CONFERENCIA);
+		
+		NotaFiscalEntradaCota notaFiscal = null;
+		
+		if(dadosNotaFiscal!=null) {
+			
+			notaFiscal = new NotaFiscalEntradaCota();
+			
+			notaFiscal.setNumero((Long) dadosNotaFiscal.get("numero"));
+			notaFiscal.setSerie((String) dadosNotaFiscal.get("serie"));
+			notaFiscal.setDataEmissao( DateUtil.parseDataPTBR((String) dadosNotaFiscal.get("dataEmissao")));
+			notaFiscal.setChaveAcesso((String) dadosNotaFiscal.get("chaveAcesso"));
+			notaFiscal.setValorProdutos((BigDecimal) dadosNotaFiscal.get("valorProdutos"));
+			
+		}
+		
+		controleConfEncalheCota.setNotaFiscalEntradaCota(notaFiscal);
 		
 		Box boxEncalhe = new Box();
 		boxEncalhe.setId((Long) this.session.getAttribute(ID_BOX_LOGADO));
@@ -501,11 +549,15 @@ public class ConferenciaEncalheController {
 		
 		try {
 			
-			this.conferenciaEncalheService.salvarDadosConferenciaEncalhe(
+			Long idControleConferenciaEncalheCota = this.conferenciaEncalheService.salvarDadosConferenciaEncalhe(
 					controleConfEncalheCota, 
 					this.getListaConferenciaEncalheFromSession(), 
 					this.getSetConferenciaEncalheExcluirFromSession(), 
 					this.getUsuarioLogado());
+			
+			this.session.removeAttribute(SET_CONFERENCIA_ENCALHE_EXCLUIR);
+			
+			this.getInfoConferenciaSession().setIdControleConferenciaEncalheCota(idControleConferenciaEncalheCota);
 			
 		} catch (EncalheSemPermissaoSalvarException e) {
 			
@@ -554,20 +606,76 @@ public class ConferenciaEncalheController {
 			
 			throw new ValidacaoException(TipoMensagem.WARNING, "Conferência não iniciada.");
 		}
+		
 	}
 
+	public void gerarSlip() throws IOException {
+		
+		DadosDocumentacaoConfEncalheCotaDTO dadosDocumentacaoConfEncalheCota = 
+				(DadosDocumentacaoConfEncalheCotaDTO) this.session.getAttribute(DADOS_DOCUMENTACAO_CONF_ENCALHE_COTA);
+		
+		byte[] slip = conferenciaEncalheService.gerarDocumentosConferenciaEncalhe(dadosDocumentacaoConfEncalheCota, TipoDocumentoConferenciaEncalhe.SLIP);
+	
+		escreverArquivoParaResponse(slip, "slip");
+		
+	}
+
+	public void gerarBoletoOuRecibo() throws IOException {
+		
+		DadosDocumentacaoConfEncalheCotaDTO dadosDocumentacaoConfEncalheCota = 
+				(DadosDocumentacaoConfEncalheCotaDTO) this.session.getAttribute(DADOS_DOCUMENTACAO_CONF_ENCALHE_COTA);
+		
+		byte[] boletoOuRecibo = conferenciaEncalheService.gerarDocumentosConferenciaEncalhe(dadosDocumentacaoConfEncalheCota, TipoDocumentoConferenciaEncalhe.BOLETO_OU_RECIBO);
+	
+		escreverArquivoParaResponse(boletoOuRecibo, "boletoOuRecibo");
+		
+	}
+
+	
 	@Post
 	public void finalizarConferencia(){
 		
 		Date horaInicio = (Date) this.session.getAttribute(HORA_INICIO_CONFERENCIA);
 		
+		DadosDocumentacaoConfEncalheCotaDTO dadosDocumentacaoConfEncalheCota = null;
+		
 		if (horaInicio != null){
 		
 			ControleConferenciaEncalheCota controleConfEncalheCota = new ControleConferenciaEncalheCota();
 			controleConfEncalheCota.setDataInicio(horaInicio);
-			controleConfEncalheCota.setCota(this.getInfoConferenciaSession().getCota());
-			controleConfEncalheCota.setId(this.getInfoConferenciaSession().getIdControleConferenciaEncalheCota());
-			controleConfEncalheCota.setNotaFiscalEntradaCota((NotaFiscalEntradaCota) this.session.getAttribute(NOTA_FISCAL_CONFERENCIA));
+			
+			InfoConferenciaEncalheCota info = this.getInfoConferenciaSession();
+			
+			if (info == null){
+				throw new ValidacaoException(TipoMensagem.ERROR, "Sessão expirada.");
+			}
+			
+			controleConfEncalheCota.setCota(info.getCota());
+			controleConfEncalheCota.setId(info.getIdControleConferenciaEncalheCota());
+			
+			@SuppressWarnings({ "unchecked", "rawtypes" })
+			Map<String, Object> dadosNotaFiscal = (Map) this.session.getAttribute(NOTA_FISCAL_CONFERENCIA);
+			
+			NotaFiscalEntradaCota notaFiscal = null;
+			
+			if(dadosNotaFiscal!=null) {
+				
+				notaFiscal = new NotaFiscalEntradaCota();
+				
+				notaFiscal.setNumero((Long) dadosNotaFiscal.get("numero"));
+				notaFiscal.setSerie((String) dadosNotaFiscal.get("serie"));
+				notaFiscal.setDataEmissao( DateUtil.parseDataPTBR((String) dadosNotaFiscal.get("dataEmissao")));
+				notaFiscal.setChaveAcesso((String) dadosNotaFiscal.get("chaveAcesso"));
+				notaFiscal.setValorProdutos((BigDecimal) dadosNotaFiscal.get("valorProdutos"));
+				
+			}
+			
+			controleConfEncalheCota.setNotaFiscalEntradaCota(notaFiscal);
+			
+			Box boxEncalhe = new Box();
+			boxEncalhe.setId((Long) this.session.getAttribute(ID_BOX_LOGADO));
+			
+			controleConfEncalheCota.setBox(boxEncalhe);
 			
 			List<ConferenciaEncalheDTO> lista = this.getListaConferenciaEncalheFromSession();
 			
@@ -580,11 +688,21 @@ public class ConferenciaEncalheController {
 			}
 			
 			try {
-				this.conferenciaEncalheService.finalizarConferenciaEncalhe(
-						controleConfEncalheCota, 
-						this.getListaConferenciaEncalheFromSession(), 
-						this.getSetConferenciaEncalheExcluirFromSession(), 
-						this.getUsuarioLogado());
+				
+				dadosDocumentacaoConfEncalheCota = 
+						
+						this.conferenciaEncalheService.finalizarConferenciaEncalhe(
+								controleConfEncalheCota, 
+								this.getListaConferenciaEncalheFromSession(), 
+								this.getSetConferenciaEncalheExcluirFromSession(), 
+								this.getUsuarioLogado());
+				
+				this.session.setAttribute(DADOS_DOCUMENTACAO_CONF_ENCALHE_COTA, dadosDocumentacaoConfEncalheCota);
+				
+				this.session.removeAttribute(SET_CONFERENCIA_ENCALHE_EXCLUIR);
+				
+				this.getInfoConferenciaSession().setIdControleConferenciaEncalheCota(dadosDocumentacaoConfEncalheCota.getIdControleConferenciaEncalheCota());
+				
 			} catch (EncalheExcedeReparteException e) {
 
 				this.result.use(Results.json()).from(
@@ -594,14 +712,59 @@ public class ConferenciaEncalheController {
 				this.atribuirIds(lista);
 			}
 			
-			this.result.use(Results.json()).from(
-					new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."), "result").recursive().serialize();
+			
+			Map<String, Object> dados = new HashMap<String, Object>();
+			
+			dados.put("tipoMensagem", TipoMensagem.SUCCESS);
+			dados.put("listaMensagem", 	new String[]{"Operação efetuada com sucesso."});
+
+			if(dadosDocumentacaoConfEncalheCota!=null && dadosDocumentacaoConfEncalheCota.isIndGeraDocumentacaoConferenciaEncalhe()) {
+
+				String[] tiposDocumento = null;
+				
+				if(	dadosDocumentacaoConfEncalheCota.getNossoNumero()!=null && 
+					!dadosDocumentacaoConfEncalheCota.getNossoNumero().isEmpty()) {
+					
+					tiposDocumento = new String[]{
+							TipoDocumentoConferenciaEncalhe.SLIP.name(), 
+							TipoDocumentoConferenciaEncalhe.BOLETO_OU_RECIBO.name()};
+				} else {
+					
+					tiposDocumento = new String[]{TipoDocumentoConferenciaEncalhe.SLIP.name()};
+					
+				}
+				
+				dados.put("tiposDocumento", tiposDocumento);
+				
+				dados.put("indGeraDocumentoConfEncalheCota", dadosDocumentacaoConfEncalheCota.isIndGeraDocumentacaoConferenciaEncalhe());
+			}
+
+			
+			this.result.use(CustomMapJson.class).put("result", dados).serialize();			
+			
 		} else {
 			
 			this.result.use(Results.json()).from(
 					new ValidacaoVO(TipoMensagem.WARNING, "Conferência não iniciada."), "result").recursive().serialize();
 		}
 	}
+	
+	private void escreverArquivoParaResponse(byte[] arquivo, String nomeArquivo) throws IOException {
+		
+		this.httpResponse.setContentType("application/pdf");
+		
+		this.httpResponse.setHeader("Content-Disposition", "attachment; filename="+nomeArquivo +".pdf");
+
+		OutputStream output = this.httpResponse.getOutputStream();
+		
+		output.write(arquivo);
+
+		httpResponse.getOutputStream().close();
+		
+		result.use(Results.nothing());
+		
+	}
+
 	
 	@Post
 	public void pesquisarProdutoPorCodigoNome(String codigoNomeProduto){
@@ -664,8 +827,10 @@ public class ConferenciaEncalheController {
 			}
 		}
 		
-		this.carregarListaConferencia(null);
+		this.carregarListaConferencia(null, false);
 	}
+	
+
 	
 	@Post
 	public void gravarObservacaoConferecnia(Long idConferenciaEncalhe, String observacao){
@@ -687,7 +852,15 @@ public class ConferenciaEncalheController {
 	@Post
 	public void salvarNotaFiscal(NotaFiscalEntradaCota notaFiscal){
 		
-		this.session.setAttribute(NOTA_FISCAL_CONFERENCIA, notaFiscal);
+		Map<String, Object> dadosNotaFiscal = new HashMap<String, Object>();
+		
+		dadosNotaFiscal.put("numero", notaFiscal.getNumero());
+		dadosNotaFiscal.put("serie", 	notaFiscal.getSerie());
+		dadosNotaFiscal.put("dataEmissao", DateUtil.formatarDataPTBR(notaFiscal.getDataEmissao()));
+		dadosNotaFiscal.put("chaveAcesso", notaFiscal.getChaveAcesso());
+		dadosNotaFiscal.put("valorProdutos", notaFiscal.getValorProdutos());
+		
+		this.session.setAttribute(NOTA_FISCAL_CONFERENCIA, dadosNotaFiscal);
 		
 		this.result.use(Results.json()).from("").serialize();
 	}
@@ -695,32 +868,87 @@ public class ConferenciaEncalheController {
 	@Post
 	public void carregarNotaFiscal(){
 		
-		NotaFiscalEntradaCota nota = (NotaFiscalEntradaCota) this.session.getAttribute(NOTA_FISCAL_CONFERENCIA);
+		@SuppressWarnings("unchecked")
+		Map<String, Object> dadosNotaFiscal = (Map<String, Object>) this.session.getAttribute(NOTA_FISCAL_CONFERENCIA);
 		
-		this.result.use(Results.json()).from(nota == null ? "" : nota, "result").serialize();
+		if(dadosNotaFiscal!=null) {
+
+			this.result.use(CustomMapJson.class).put("result", dadosNotaFiscal).serialize();
+			
+		} else {
+
+			this.result.use(Results.json()).from("","result").serialize();
+			
+		}
+		
 	}
 	
+	/**
+	 * Verifica se o valor total da nota fiscal informada é igual
+	 * ao valor de encalhe conferido na operação. 
+	 * 
+	 */
 	@Post
-	public void verificarValorTotalNotaFiscal(BigDecimal valorCEInformado){
+	public void verificarValorTotalNotaFiscal(){
 		
-		NotaFiscalEntradaCota nota = (NotaFiscalEntradaCota) this.session.getAttribute(NOTA_FISCAL_CONFERENCIA);
+		@SuppressWarnings({ "rawtypes", "unchecked" })
+		Map<String, Object> dadosNotaFiscal = (Map) this.session.getAttribute(NOTA_FISCAL_CONFERENCIA);
 		
-		BigDecimal valorTotal = this.calcularValoresMonetarios(null);
+		Map<String, Object> dados = new HashMap<String, Object>();
 		
-		valorTotal = valorTotal.round(new MathContext(2));
+		this.calcularValoresMonetarios(dados);
 		
-		if (nota != null && nota.getValorProdutos() != null && 
-				!nota.getValorProdutos().equals(valorTotal)){
+		BigDecimal valorEncalhe = ((BigDecimal)dados.get("valorEncalhe")).round(new MathContext(2));
+		
+		if (	dadosNotaFiscal != null && 
+				dadosNotaFiscal.get("valorProdutos") != null && 
+				!((BigDecimal)dadosNotaFiscal.get("valorProdutos")).equals(valorEncalhe)){
 			
-			throw new ValidacaoException(TipoMensagem.WARNING, "Valor total a pagar difere do valor da nota informada.");
-		} else if (!valorTotal.equals(valorCEInformado)){
+			throw new ValidacaoException(TipoMensagem.WARNING, "Valor total do encalhe difere do valor da nota informada.");
 			
-			throw new ValidacaoException(TipoMensagem.WARNING, "Valor total a pagar difere do valor CE jornaleiro informado.");
-		} else {
+		}  else {
 			
 			this.finalizarConferencia();
+			
 		}
 	}
+	
+	/**
+	 * Verifica se o valor total de chamada encalhe informado é igual
+	 * ao valor de encalhe conferido na operação. 
+	 * 
+	 * @param valorCEInformado
+	 */
+	@Post
+	public void verificarValorTotalCE(BigDecimal valorCEInformado){
+
+		Map<String, Object> resultadoValidacao = new HashMap<String, Object>();
+		
+		if (valorCEInformado == null || BigDecimal.ZERO.compareTo(valorCEInformado) >= 0 ){
+			resultadoValidacao.put("valorCEInformadoValido", false);
+			resultadoValidacao.put("mensagemConfirmacao", "Valor CE jornaleiro informado inválido, Deseja continuar?");
+			this.result.use(CustomMapJson.class).put("result", resultadoValidacao).serialize();
+			return;
+		}
+		
+		Map<String, Object> valoresMonetarios = new HashMap<String, Object>();
+		this.calcularValoresMonetarios(valoresMonetarios);
+		BigDecimal valorEncalhe = ((BigDecimal) valoresMonetarios.get("valorEncalhe"));
+		
+		if (valorEncalhe.compareTo(valorCEInformado)!=0){
+
+			resultadoValidacao.put("valorCEInformadoValido", false);
+			resultadoValidacao.put("mensagemConfirmacao", "Valor total do encalhe difere do valor CE jornaleiro informado, Deseja continuar?");
+			this.result.use(CustomMapJson.class).put("result", resultadoValidacao).serialize();
+			return;
+		}
+		
+		resultadoValidacao.put("valorCEInformadoValido", true);
+		this.result.use(CustomMapJson.class).put("result", resultadoValidacao).serialize();
+		
+	}
+	
+	
 	
 	@Post
 	public void pesquisarProdutoEdicaoPorId(Long idProdutoEdicao){
@@ -759,6 +987,7 @@ public class ConferenciaEncalheController {
 		this.session.removeAttribute(NOTA_FISCAL_CONFERENCIA);
 		this.session.removeAttribute(SET_CONFERENCIA_ENCALHE_EXCLUIR);
 		this.session.removeAttribute(HORA_INICIO_CONFERENCIA);
+		this.session.removeAttribute(DADOS_DOCUMENTACAO_CONF_ENCALHE_COTA);
 	}
 	
 	private InfoConferenciaEncalheCota getInfoConferenciaSession() {
@@ -766,7 +995,17 @@ public class ConferenciaEncalheController {
 		return (InfoConferenciaEncalheCota) this.session.getAttribute(INFO_CONFERENCIA);
 	}
 
-	private BigDecimal calcularValoresMonetarios(Map<String, Object> dados){
+	/**
+	 * Carrega o mapa passado como parâmetro com o seguinte valores:
+	 * 
+	 * valorEncalhe  		=	total do encalhe conferido até o momento nesta operação.
+	 * valorVendaDia 		=	valorReparte subtraído valorEncalhe.
+	 * valorDebitoCredito 	=	Creditos e Debitos da Cota 
+	 * valorPagar			= 	
+	 * 
+	 * @param dados
+	 */
+	private void calcularValoresMonetarios(Map<String, Object> dados){
 		
 		BigDecimal valorEncalhe = BigDecimal.ZERO;
 		BigDecimal valorVendaDia = BigDecimal.ZERO;
@@ -798,7 +1037,7 @@ public class ConferenciaEncalheController {
 			}
 		}
 		
-		BigDecimal valorPagar = valorVendaDia.subtract(valorEncalhe).add(valorDebitoCredito);
+		BigDecimal valorPagar = valorVendaDia.add(valorDebitoCredito);
 		
 		if (dados != null){
 			
@@ -808,7 +1047,6 @@ public class ConferenciaEncalheController {
 			dados.put("valorPagar", valorPagar);
 		}
 		
-		return valorPagar;
 	}
 	
 	/*
@@ -914,10 +1152,6 @@ public class ConferenciaEncalheController {
 		return tableModelDebitoCreditoCota;
 	}
 	
-	public void carregarEmSessionValorCEJornaleiro() {
-		//TODO codificar
-	}
-	
 	private List<ConferenciaEncalheDTO> getListaConferenciaEncalheFromSession() {
 		
 		InfoConferenciaEncalheCota info = this.getInfoConferenciaSession();
@@ -957,6 +1191,8 @@ public class ConferenciaEncalheController {
 		if (set == null){
 			
 			set = new HashSet<Long>();
+			
+			this.session.setAttribute(SET_CONFERENCIA_ENCALHE_EXCLUIR, set);
 		}
 		
 		return set;

@@ -124,6 +124,16 @@ public class FechamentoEncalheController {
 		this.result.use(FlexiGridJson.class).from(listaCotasAusenteEncalhe).total(total).page(page).serialize();
 	}
 	
+	
+	@Path("/encerrarFechamento")
+	public void encerrarFechamento(Date dataEncalhe) {
+		
+		// TODO: verificar condições para fechamento; mostrar msg erro
+		
+		
+	}
+	
+	
 	@Path("/postergarCotas")
 	public void postergarCotas(Date dataPostergacao, List<Long> idsCotas) {
 			
@@ -148,17 +158,15 @@ public class FechamentoEncalheController {
 	}
 
 	@Path("/cobrarCotas")
-	public void cobrarCotas(Date dataPostergacao, List<Long> idsCotas) {
+	public void cobrarCotas(Date dataOperacao, List<Long> idsCotas) {
 
-		Date dataAtual = Calendar.getInstance().getTime();
-		
-		if (dataAtual.after(dataPostergacao)) {
-			// throw new ValidacaoException();
+		if (idsCotas == null || idsCotas.isEmpty()) {
+			// validacao
 		}
 		
 		try {
 			
-			this.fechamentoEncalheService.cobrarCotas(dataPostergacao, obterUsuario(), idsCotas);
+			this.fechamentoEncalheService.cobrarCotas(dataOperacao, obterUsuario(), idsCotas);
 			
 		} catch (ValidacaoException e) {
 			this.result.use(Results.json()).from(e.getValidacao(), "result").recursive().serialize();
@@ -180,17 +188,20 @@ public class FechamentoEncalheController {
 
 		List<CotaAusenteEncalheDTO> listaCotasAusenteEncalhe =
 			this.fechamentoEncalheService.buscarCotasAusentes(dataEncalhe, sortorder, sortname, page, rp);
-		
-		try {
-			
-			FileExporter.to("cotas_ausentes", fileType).inHTTPResponse(
-				this.getNDSFileHeader(), null, null, listaCotasAusenteEncalhe, 
-				CotaAusenteEncalheDTO.class, this.response);
-			
-		} catch (Exception e) {
-			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, "Erro ao gerar o arquivo!"));
-		}
 
+		if (listaCotasAusenteEncalhe != null && !listaCotasAusenteEncalhe.isEmpty()) {
+		
+			try {
+					
+				FileExporter.to("cotas_ausentes", fileType).inHTTPResponse(
+					this.getNDSFileHeader(), null, null, listaCotasAusenteEncalhe, 
+				CotaAusenteEncalheDTO.class, this.response);
+				
+			} catch (Exception e) {
+				throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, "Erro ao gerar o arquivo!"));
+			}
+		}
+	
 		this.result.use(Results.nothing());
 	}
 

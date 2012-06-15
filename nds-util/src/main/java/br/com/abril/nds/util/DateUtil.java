@@ -375,4 +375,25 @@ public class DateUtil {
 		return false;
 	}
 	
+	public static String obterDiaSemana(int codigoDiaSemana){
+		
+		switch(codigoDiaSemana){
+			case Calendar.SUNDAY:
+				return "domingo";
+			case Calendar.MONDAY:
+				return "segunda-feira";
+			case Calendar.TUESDAY:
+				return "segunda-feira";
+			case Calendar.WEDNESDAY:
+				return "segunda-feira";
+			case Calendar.THURSDAY:
+				return "segunda-feira";
+			case Calendar.FRIDAY:
+				return "segunda-feira";
+			case Calendar.SATURDAY:
+				return "segunda-feira";
+			default:
+				return "segunda-feira";
+		}
+	}
 }
