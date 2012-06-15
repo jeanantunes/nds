@@ -25,9 +25,6 @@ import br.com.abril.nds.model.cadastro.Cota;
 @SequenceGenerator(name="CHAMADA_ENCALHE_COTA_SEQ", initialValue = 1, allocationSize = 1)
 public class ChamadaEncalheCota implements Serializable {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -6783440794882421161L;
 
 	@Id
@@ -41,6 +38,9 @@ public class ChamadaEncalheCota implements Serializable {
 	
 	@Column(name = "FECHADO", nullable = false)
 	private boolean fechado;
+	
+	@Column(name = "POSTERGADO", nullable = false)
+	private boolean postergado;
 	
 	@Column(name = "QTDE_PREVISTA", nullable = false)
 	private BigDecimal qtdePrevista;
@@ -111,6 +111,14 @@ public class ChamadaEncalheCota implements Serializable {
 	 */
 	public void setFechado(boolean fechado) {
 		this.fechado = fechado;
+	}
+
+	public boolean isPostergado() {
+		return postergado;
+	}
+
+	public void setPostergado(boolean postergado) {
+		this.postergado = postergado;
 	}
 
 }
