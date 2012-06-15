@@ -25,7 +25,6 @@ public class EditorRepositoryImpl extends AbstractRepository<Editor, Long> imple
 
 	public EditorRepositoryImpl() {
 		super(Editor.class);
-		// TODO Auto-generated constructor stub
 	}
 
 	/* (non-Javadoc)

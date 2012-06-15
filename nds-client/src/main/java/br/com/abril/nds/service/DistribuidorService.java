@@ -12,5 +12,6 @@ public interface DistribuidorService {
 	Distribuidor obter();
 	public List<RegistroCurvaABCDistribuidorVO> obterCurvaABCDistribuidor(FiltroCurvaABCDistribuidorDTO filtroCurvaABCDistribuidorDTO);
 	public ResultadoCurvaABCDistribuidor obterCurvaABCDistribuidorTotal(FiltroCurvaABCDistribuidorDTO filtroCurvaABCDistribuidorDTO);
+	public void alterar(Distribuidor distribuidor);
 	
 }

@@ -1,6 +1,7 @@
 package br.com.abril.nds.service;
 
 import java.io.InputStream;
+import java.util.Collection;
 
 import br.com.abril.nds.dto.ParametroSistemaGeralDTO;
 import br.com.abril.nds.model.cadastro.ParametroSistema;
@@ -57,5 +58,11 @@ public interface ParametroSistemaService {
 	 * @param imgContentType
 	 */
 	public void salvar(ParametroSistemaGeralDTO dto, InputStream imgLogotipo, String imgContentType);
+
+	/**
+	 * Salva os Parâmetros do sisetam com uma lista de ParametroSistema
+	 * @param collection<ParametroSistema>
+	 */
+	public void salvar(Collection<ParametroSistema> collectionParametroSistema);
 	
 }
