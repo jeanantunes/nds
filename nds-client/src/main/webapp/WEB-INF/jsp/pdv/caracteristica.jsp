@@ -20,10 +20,7 @@
 <table width="777" border="0" cellspacing="1" cellpadding="1">
   <tr>
     <td colspan="2" class="complementar" colspan="2">
-    	  <input name="pontoPrincipal" type="checkbox" value="" id="ptoPrincipal" />
-	      <label for="pontoPrincipal" >Ponto Principal</label>
-	      <br clear="all" />
-	      <input name="balcaoCentral" type="checkbox" value="" id="balcaoCentral" />
+    	  <input name="balcaoCentral" type="checkbox" value="" id="balcaoCentral" />
 	      <label for="balcaoCentral" >Balcão Central</label>
 	      <br clear="all" />
 	      <input name="temComputador" type="checkbox" value="" id="temComputador" />

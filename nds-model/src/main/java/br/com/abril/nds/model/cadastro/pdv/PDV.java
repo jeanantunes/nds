@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -108,6 +107,12 @@ public class PDV implements Serializable {
 	 */
 	@Column(name = "DENTRO_OUTRO_ESTABELECIMENTO")
 	private boolean dentroOutroEstabelecimento;
+	
+	/**
+	 * Flag indicando se o pdv possui arrendatário
+	 */
+	@Column(name = "ARRENDATARIO")
+	private boolean arrendatario;
 	
 	/**
 	 * Tipo de estabelecimento ao qual o PDV está inserido
@@ -473,5 +478,19 @@ public class PDV implements Serializable {
 		} else if (!id.equals(other.id))
 			return false;
 		return true;
+	}
+
+	/**
+	 * @return the arrendatario
+	 */
+	public boolean isArrendatario() {
+		return arrendatario;
+	}
+
+	/**
+	 * @param arrendatario the arrendatario to set
+	 */
+	public void setArrendatario(boolean arrendatario) {
+		this.arrendatario = arrendatario;
 	}
 }

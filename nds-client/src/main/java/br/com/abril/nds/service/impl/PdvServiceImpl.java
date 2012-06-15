@@ -47,7 +47,6 @@ import br.com.abril.nds.repository.AreaInfluenciaPDVRepository;
 import br.com.abril.nds.repository.ClusterPDVRepository;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.EnderecoPDVRepository;
-import br.com.abril.nds.repository.EnderecoRepository;
 import br.com.abril.nds.repository.EspecialidadePDVRepository;
 import br.com.abril.nds.repository.GeradorFluxoPDVRepository;
 import br.com.abril.nds.repository.MaterialPromocionalRepository;
@@ -119,9 +118,6 @@ public class PdvServiceImpl implements PdvService {
 	@Autowired
 	private TelefoneService telefoneService;
 	
-	@Autowired
-	private EnderecoRepository enderecoRepository;
-
 	
 	@Transactional(readOnly=true)
 	@Override
@@ -356,6 +352,10 @@ public class PdvServiceImpl implements PdvService {
 				
 				if(pdvRepository.existePDVPrincipal()){
 					throw new ValidacaoException(TipoMensagem.WARNING,"PDV não pode ser incluído! Já existe PDV incluído como principal.");
+				}
+			} else if (pdvDTO.getCaracteristicaDTO()!= null && !pdvDTO.getCaracteristicaDTO().isPontoPrincipal()) {
+				if(!pdvRepository.existePDVPrincipal()){
+					throw new ValidacaoException(TipoMensagem.WARNING,"É obrigatório ter um PDV principal.");
 				}
 			}
 			
@@ -739,6 +739,7 @@ public class PdvServiceImpl implements PdvService {
 		pdvDTO.setEmail(pdv.getEmail());
 		pdvDTO.setPontoReferencia(pdv.getPontoReferencia());
 		pdvDTO.setDentroOutroEstabelecimento(pdv.isDentroOutroEstabelecimento());
+		pdvDTO.setArrendatario(pdv.isArrendatario());
 		pdvDTO.setTipoEstabelecimentoAssociacaoPDV(pdv.getTipoEstabelecimentoPDV());
 		pdvDTO.setTamanhoPDV(pdv.getTamanhoPDV());
 		pdvDTO.setSistemaIPV(pdv.isPossuiSistemaIPV());

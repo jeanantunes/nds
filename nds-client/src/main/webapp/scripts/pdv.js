@@ -61,7 +61,8 @@ var PDV = {
 			$("#idPDV").val(result.pdvDTO.id);
 			$("#idCotaImagem").val(result.pdvDTO.idCota);
 			$("#selectStatus").val(result.pdvDTO.statusPDV);
-			$("#dataInicio").val(result.pdvDTO.dataInicio.$.substr(0,10));
+			if(result.pdvDTO.dataInicio)
+				$("#dataInicio").val(result.pdvDTO.dataInicio.$.substr(0,10));
 			$("#nomePDV").val(result.pdvDTO.nomePDV);
 			$("#contatoPDV").val(result.pdvDTO.contato);
 			$("#sitePDV").val(result.pdvDTO.site);
@@ -75,7 +76,8 @@ var PDV = {
 			$("#selectTipoLicenca").val(result.pdvDTO.tipoLicencaMunicipal.codigo);
 			$("#numerolicenca").val(result.pdvDTO.numeroLicenca);
 			$("#nomeLicenca").val(result.pdvDTO.nomeLicenca);
-			
+			$("#arrendatario").attr("checked", result.pdvDTO.arrendatario ? "checked" : null);
+			$("#ptoPrincipal").attr("checked", result.pdvDTO.caracteristicaDTO.pontoPrincipal ? "checked" : null);
 			$("#dentroOutroEstabelecimento").attr(
 					"checked", result.pdvDTO.dentroOutroEstabelecimento ? "checked" : null);
 			
@@ -105,7 +107,6 @@ var PDV = {
 		
 		carregarAbaCaracteristica: function (result){
 			
-			PDV.atribuirValorChecked(result.pdvDTO.caracteristicaDTO.pontoPrincipal,"#ptoPrincipal");
 			PDV.atribuirValorChecked(result.pdvDTO.caracteristicaDTO.balcaoCentral,"#balcaoCentral");
 			PDV.atribuirValorChecked(result.pdvDTO.caracteristicaDTO.temComputador,"#temComputador");
 			PDV.atribuirValorChecked(result.pdvDTO.caracteristicaDTO.luminoso,"#luminoso");
@@ -289,6 +290,8 @@ var PDV = {
 				"pdvDTO.email="									+$("#emailPDV").val()+ "&" +
 				"pdvDTO.pontoReferencia="						+$("#pontoReferenciaPDV").val()+ "&" +
 				"pdvDTO.dentroOutroEstabelecimento="	 		+this.isChecked("#dentroOutroEstabelecimento") + "&" +
+				"pdvDTO.arrendatario="	 						+this.isChecked("#arrendatario") + "&" +
+				"pdvDTO.caracteristicaDTO.pontoPrincipal=" 		+ this.isChecked("#ptoPrincipal") +"&"+
 				"pdvDTO.tipoEstabelecimentoAssociacaoPDV.codigo="	+$("#selectTipoEstabelecimento").val()+ "&" +
 				"pdvDTO.tamanhoPDV="							+$("#selectTamanhoPDV").val()+ "&" +
 				"pdvDTO.qtdeFuncionarios="						+$("#qntFuncionarios").val()+ "&" +
@@ -311,8 +314,7 @@ var PDV = {
 				
 		getDadosCaracteristica: function (){
 			
-			var dados =
-	              "pdvDTO.caracteristicaDTO.pontoPrincipal=" + this.isChecked("#ptoPrincipal") +"&"+
+			var dados =	              
 	              "pdvDTO.caracteristicaDTO.balcaoCentral="  + this.isChecked("#balcaoCentral")+"&"+
 	              "pdvDTO.caracteristicaDTO.temComputador="  + this.isChecked("#temComputador")+"&"+
 	              "pdvDTO.caracteristicaDTO.luminoso="       + this.isChecked("#luminoso")+"&"+
@@ -864,6 +866,7 @@ var PDV = {
 			$("#emailPDV").val("");
 			$("#pontoReferenciaPDV").val("");
 			$("#dentroOutroEstabelecimento").attr("checked",null);
+			$("#arrendatario").attr("checked",null);
 			$("#selectTipoEstabelecimento").val("");
 			$("#selectTamanhoPDV").val("");
 			$("#qntFuncionarios").val("");

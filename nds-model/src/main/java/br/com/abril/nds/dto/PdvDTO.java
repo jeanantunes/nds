@@ -48,6 +48,8 @@ public class PdvDTO implements Serializable {
 	
 	private boolean dentroOutroEstabelecimento;
 	
+	private boolean arrendatario;
+	
 	private TamanhoPDV tamanhoPDV;
 	
 	private int qtdeFuncionarios;
@@ -613,6 +615,14 @@ public class PdvDTO implements Serializable {
 
 	public void setPathAplicacao(String pathAplicacao) {
 		this.pathAplicacao = pathAplicacao;
+	}
+
+	public boolean isArrendatario() {
+		return arrendatario;
+	}
+
+	public void setArrendatario(boolean arrendatario) {
+		this.arrendatario = arrendatario;
 	}
 	
 }
