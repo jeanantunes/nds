@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.ConsultaNFENotasPendentesDTO;
 import br.com.abril.nds.dto.ConsultaNFENotasRecebidasDTO;
+import br.com.abril.nds.dto.ItemNotaFiscalPendenteDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaNFEEncalheTratamento;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntrada;
 import br.com.abril.nds.repository.ConsultaNFEEncalheTratamentoNotasRecebidasRepository;
@@ -150,7 +151,8 @@ public class ConsultaNFEEncalheTratamentoNotasRecebidasRepositoryImpl extends Ab
 		hql.append("((conf.qtdeInformada * conf.precoCapaInformado) -  (conf.qtde * conf.precoCapaInformado)) as diferenca, ");
 		hql.append(" notaCota.numero as numeroNfe, ");
 		hql.append(" notaCota.serie as serie, ");
-		hql.append(" notaCota.chaveAcesso as chaveAcesso ");
+		hql.append(" notaCota.chaveAcesso as chaveAcesso, ");
+		hql.append(" notaCota.id as idNotaFiscalEntrada ");
 		
 		hql.append(getSqlFromEWhereNotaPendente(filtro));
 		
@@ -171,7 +173,7 @@ public class ConsultaNFEEncalheTratamentoNotasRecebidasRepositoryImpl extends Ab
 			query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
 		
 		if(filtro.getPaginacao().getQtdResultadosPorPagina() != null && limitar.equals("limitar")) 
-			query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
+			query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());			
 		 
 		return query.list();
 		 
@@ -222,6 +224,67 @@ public class ConsultaNFEEncalheTratamentoNotasRecebidasRepositoryImpl extends Ab
 		}
 		
 		return hql.toString();
-	}	
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<ItemNotaFiscalPendenteDTO> buscarItensPorNota(
+			FiltroConsultaNFEEncalheTratamento filtro) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append("SELECT produto.codigo as codigoProduto, ");
+		hql.append("produto.nome as nomeProduto, ");		
+		hql.append("produtoEdicao.numeroEdicao as numeroEdicao ");		
+		
+		
+		hql.append(" from ItemNotaFiscalEntrada as item ");
+		hql.append(" LEFT JOIN item.notaFiscal as nf ");
+		hql.append(" LEFT JOIN item.produtoEdicao as produtoEdicao ");
+		hql.append(" LEFT JOIN produtoEdicao.produto as produto ");
+		
+		hql.append(" WHERE nf.id = :idNota ");
+		
+		Query query =  getSession().createQuery(hql.toString());
+		query.setParameter("idNota", filtro.getCodigoNota());
+		
+		query.setResultTransformer(new AliasToBeanResultTransformer(
+				ItemNotaFiscalPendenteDTO.class));
+		
+		if(filtro.getPaginacao().getQtdResultadosPorPagina() != null) 
+			query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
+		
+		if(filtro.getPaginacao().getQtdResultadosPorPagina() != null) 
+			query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());			
+		 
+		return query.list();		 
+		
+	}
+	
+//	private String getSubHqlQueryValorDesconto() {
+//
+//		StringBuilder hql = new StringBuilder();
+//
+//		hql.append(" select case when ( pe.desconto is not null ) then pe.desconto else ");
+//
+//		hql.append(" ( case when ( ct.fatorDesconto is not null ) then ct.fatorDesconto else ");
+//
+//		hql.append(" ( case when ( distribuidor.fatorDesconto is not null ) then distribuidor.fatorDesconto else 0 end ) end ");
+//
+//		hql.append(" ) end ");
+//
+//		hql.append(" from ProdutoEdicao pe, Cota ct, Distribuidor distribuidor ");
+//
+//		hql.append(" where ");
+//
+//		hql.append(" ct.id = conferencia.chamadaEncalheCota.cota.id and ");
+//
+//		hql.append(" pe.id = conferencia.produtoEdicao.id and ");
+//
+//		hql.append(" distribuidor.id = :idDistribuidor ");
+//
+//		return hql.toString();
+//
+//		}
 	
 }

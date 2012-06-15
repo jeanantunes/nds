@@ -4,6 +4,7 @@ import java.util.List;
 
 import br.com.abril.nds.dto.ConsultaNFENotasPendentesDTO;
 import br.com.abril.nds.dto.ConsultaNFENotasRecebidasDTO;
+import br.com.abril.nds.dto.ItemNotaFiscalPendenteDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaNFEEncalheTratamento;
 
 public interface ConsultaNFEEncalheTratamentoNotasRecebidasService {
@@ -13,5 +14,7 @@ public interface ConsultaNFEEncalheTratamentoNotasRecebidasService {
 	Integer buscarTodasNFENotasRecebidas(FiltroConsultaNFEEncalheTratamento filtro);
 	
 	List<ConsultaNFENotasPendentesDTO> buscarNFNotasPendentes(FiltroConsultaNFEEncalheTratamento filtro, String limitar);
+	
+	List<ItemNotaFiscalPendenteDTO> buscarItensPorNota(FiltroConsultaNFEEncalheTratamento filtro);
 	
 }

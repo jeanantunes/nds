@@ -16,6 +16,7 @@ public class FiltroConsultaNFEEncalheTratamento implements Serializable{
 	private String codigoCota;
 	private Date data;
 	private StatusNotaFiscalEntrada statusNotaFiscalEntrada;
+	private Long codigoNota;
 	
 	private PaginacaoVO paginacao;
 	
@@ -85,10 +86,13 @@ public class FiltroConsultaNFEEncalheTratamento implements Serializable{
 	public void setOrdenacaoColuna(ColunaOrdenacaoRomaneio ordenacaoColuna) {
 		this.ordenacaoColuna = ordenacaoColuna;
 	}
-	
-	
-	
-	
-	
 
+	public Long getCodigoNota() {
+		return codigoNota;
+	}
+
+	public void setCodigoNota(Long codigoNota) {
+		this.codigoNota = codigoNota;
+	}
+	
 }

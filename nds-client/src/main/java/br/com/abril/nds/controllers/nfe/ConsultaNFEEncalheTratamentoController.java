@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import br.com.abril.nds.dto.ConsultaNFENotasPendentesDTO;
 import br.com.abril.nds.dto.ConsultaNFENotasRecebidasDTO;
 import br.com.abril.nds.dto.ItemDTO;
+import br.com.abril.nds.dto.ItemNotaFiscalPendenteDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaNFEEncalheTratamento;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Distribuidor;
@@ -144,8 +145,38 @@ public class ConsultaNFEEncalheTratamentoController {
 		return tableModel;
 	}
 	
+	@Post
+	@Path("/pesquisarItensPorNota")
 	public void pesquisarItensPorNota(FiltroConsultaNFEEncalheTratamento filtro, String sortorder, String sortname, int page, int rp){
 		
+		filtro.setPaginacao(new PaginacaoVO(page, rp, sortorder, sortname));
+		
+		this.tratarFiltro(filtro);
+		
+		TableModel<CellModelKeyValue<ItemNotaFiscalPendenteDTO>> tableModel = efetuarConsultaItensPorNota(filtro);
+		
+		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
+		
+	}
+	
+	private TableModel<CellModelKeyValue<ItemNotaFiscalPendenteDTO>> efetuarConsultaItensPorNota(FiltroConsultaNFEEncalheTratamento filtro) {
+		
+		List<ItemNotaFiscalPendenteDTO> listaNotasRecebidas = this.consultaNFEEncalheTratamentoNotasRecebidasService.buscarItensPorNota(filtro);
+		
+		TableModel<CellModelKeyValue<ItemNotaFiscalPendenteDTO>> tableModel = new TableModel<CellModelKeyValue<ItemNotaFiscalPendenteDTO>>();
+		
+//		Integer totalRegistros = this.consultaNFEEncalheTratamentoNotasRecebidasService.buscarTodasNFENotasRecebidas(filtro);
+//		if(totalRegistros == 0){
+//			throw new ValidacaoException(TipoMensagem.WARNING, "A pesquisa realizada não obteve resultado.");
+//		}
+
+		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaNotasRecebidas));
+		
+		tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
+		
+		tableModel.setTotal(15);
+		
+		return tableModel;
 	}
 
 	private void validarEntrada(FiltroConsultaNFEEncalheTratamento filtro) {

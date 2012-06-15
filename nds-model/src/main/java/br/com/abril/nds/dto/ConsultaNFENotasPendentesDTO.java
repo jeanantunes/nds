@@ -46,12 +46,14 @@ public class ConsultaNFENotasPendentesDTO implements Serializable {
 	
 	private String chaveAcesso;
 	
+	private Long idNotaFiscalEntrada;
+	
 	public ConsultaNFENotasPendentesDTO() {}
 	
 	public ConsultaNFENotasPendentesDTO(Integer numeroCota, String nome,
 			String dataEncalhe, TipoOperacao tipoNota, BigDecimal vlrNota,
 			BigDecimal vlrReal, BigDecimal diferenca, String status,
-			Long numeroNfe, String serie, String chaveAcesso) {
+			Long numeroNfe, String serie, String chaveAcesso, Long idNotaFiscalEntrada) {
 		super();
 		this.numeroCota = numeroCota;
 		this.nome = nome;
@@ -64,6 +66,7 @@ public class ConsultaNFENotasPendentesDTO implements Serializable {
 		this.numeroNfe = numeroNfe;
 		this.serie = serie;
 		this.chaveAcesso = chaveAcesso;
+		this.idNotaFiscalEntrada = idNotaFiscalEntrada;
 	}
 
 	public Long getNumeroNfe() {
@@ -153,4 +156,13 @@ public class ConsultaNFENotasPendentesDTO implements Serializable {
 	public void setStatus(String status) {
 		this.status = status;
 	}
+
+	public Long getIdNotaFiscalEntrada() {
+		return idNotaFiscalEntrada;
+	}
+
+	public void setIdNotaFiscalEntrada(Long idNotaFiscalEntrada) {
+		this.idNotaFiscalEntrada = idNotaFiscalEntrada;
+	}
+	
 }

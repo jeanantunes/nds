@@ -81,13 +81,21 @@ function popup() {
 			}
 		});
 	};
-	function popup_dadosNotaFiscal(numeroNfe, dataEncalhe, chaveAcesso, serie, vlrNota) {
+	function popup_dadosNotaFiscal(numeroNfe, dataEncalhe, chaveAcesso, serie, vlrNota, idNotaFiscalEntrada) {
 		
 		$('#numeroNotaFiscalPopUp').text(numeroNfe);
 		$('#dataNotaFiscalPopUp').text(dataEncalhe);
 		$('#chaveAcessoNotaFiscalPopUp').text(chaveAcesso);
 		$('#serieNotaFiscalPopUp').text(serie);
 		$('#valorNotaFiscalPopUp').text(vlrNota);
+		
+		$(".pesqProdutosNotaGrid").flexOptions({
+			url: "<c:url value='/nfe/consultaNFEEncalheTratamento/pesquisarItensPorNota'/>",
+			dataType : 'json',
+			params: [{name:'filtro.codigoNota', value:idNotaFiscalEntrada}]
+		});
+
+		$(".pesqProdutosNotaGrid").flexReload();
 	
 		$( "#dialog-dadosNotaFiscal" ).dialog({
 			resizable: false,
@@ -105,17 +113,7 @@ function popup() {
 				}
 			}
 		
-		$(".pesqProdutosNotaGrid").flexOptions({
-			url: "<c:url value='/nfe/consultaNFEEncalheTratamento/pesquisarNotasRecebidas'/>",
-			dataType : 'json',
-			params: [
-						{name:'filtro.codigoCota', value:$('#codigoCota').val()},
-						{name:'filtro.data', value:$('#data').val()},
-						{name:'filtro.statusNotaFiscalEntrada', value:$('#situacaoNfe').val()}						
-						]
-		});
-
-		$(".pesqProdutosNotaGrid").flexReload();
+		
 		});	
 		      
 	};
@@ -262,7 +260,7 @@ function popup() {
 					var linkLancamento = '<a href="javascript:;" onclick="popup_nfe();" style="cursor:pointer">' +
 									   	 '<img title="Lançamentos da Edição" src="${pageContext.request.contextPath}/images/bt_lancamento.png" hspace="5" border="0px" />' +
 									   '</a>';
-				   var linkCadastro = '<a href="javascript:;" onclick="popup_dadosNotaFiscal('+row.cell.numeroNfe+','+row.cell.dataEncalhe+','+row.cell.chaveAcesso+','+row.cell.serie+','+row.cell.vlrNota+');" style="cursor:pointer">' +
+				   var linkCadastro = '<a href="javascript:;" onclick="popup_dadosNotaFiscal('+row.cell.numeroNfe+','+row.cell.dataEncalhe+','+row.cell.chaveAcesso+','+row.cell.serie+','+row.cell.vlrNota+','+row.cell.idNotaFiscalEntrada+');" style="cursor:pointer">' +
 								   	 '<img title="Lançamentos da Edição" src="${pageContext.request.contextPath}/images/bt_cadastros.png" hspace="5" border="0px" />' +
 			                         '</a>';
                    var checkBox = '<input type="checkbox" id="checkNota" name="checkNota" />';
@@ -474,23 +472,23 @@ function popup() {
 </form>
 <script>
 	$(".pesqProdutosNotaGrid").flexigrid({
-			url : '../xml/pesq_produtosNF-xml.xml',
-			dataType : 'xml',
+		preProcess: executarPreProcessamento,
+		dataType : 'json',
 			colModel : [ {
 				display : 'Código',
-				name : 'codigo',
+				name : 'codigoProduto',
 				width : 50,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Produto',
-				name : 'produto',
+				name : 'nomeProduto',
 				width : 120,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Edição',
-				name : 'edicao',
+				name : 'numeroEdicao',
 				width : 50,
 				sortable : true,
 				align : 'center'

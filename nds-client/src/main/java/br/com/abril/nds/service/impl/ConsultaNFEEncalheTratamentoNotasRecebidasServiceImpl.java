@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.ConsultaNFENotasPendentesDTO;
 import br.com.abril.nds.dto.ConsultaNFENotasRecebidasDTO;
+import br.com.abril.nds.dto.ItemNotaFiscalPendenteDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaNFEEncalheTratamento;
 import br.com.abril.nds.repository.ConsultaNFEEncalheTratamentoNotasRecebidasRepository;
 import br.com.abril.nds.service.ConsultaNFEEncalheTratamentoNotasRecebidasService;
@@ -44,6 +45,13 @@ public class ConsultaNFEEncalheTratamentoNotasRecebidasServiceImpl implements
 			listaRetorno.add(dto);
 		}
 		return listaRetorno;
+	}
+
+	@Override
+	@Transactional
+	public List<ItemNotaFiscalPendenteDTO> buscarItensPorNota(
+			FiltroConsultaNFEEncalheTratamento filtro) {		 
+		return this.consultaNFEEncalheTratamentoNotasRecebidasRepository.buscarItensPorNota(filtro);
 	}
 
 }
