@@ -56,7 +56,7 @@ public class TipoNotaFiscal {
 
 	// Descrição natureza da operação
 	@Export(label = "Tipo de Nota", exhibitionOrder = 1)
-	@Column(name = "NOP_DESCRICAO", nullable = false)
+	@Column(name = "NOP_DESCRICAO", nullable = true)
 	private String nopDescricao;
 	
 	@Enumerated(EnumType.STRING)

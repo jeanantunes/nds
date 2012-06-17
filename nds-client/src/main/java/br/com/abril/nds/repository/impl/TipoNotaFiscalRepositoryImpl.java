@@ -109,13 +109,11 @@ public class TipoNotaFiscalRepositoryImpl extends AbstractRepository<TipoNotaFis
 		
 		if(!StringUtil.isEmpty(cfop)) {
 			// Busca apenas pelo código (sem o primeiro dígito de identificação dentro do estado e fora do estado) 
+			criteria.createCriteria("cfopEstado", "cfopEstado", Criteria.LEFT_JOIN);
+			criteria.createCriteria("cfopOutrosEstados", "cfopOutrosEstados", Criteria.LEFT_JOIN);
 			if (cfop.length() == 3) {
-				criteria.createCriteria("cfopEstado", "cfopEstado", Criteria.LEFT_JOIN);
-				criteria.createCriteria("cfopOutrosEstados", "cfopOutrosEstados", Criteria.LEFT_JOIN);
 				criteria.add(Restrictions.or(Restrictions.ilike("cfopEstado.codigo", cfop), Restrictions.ilike("cfopOutrosEstados.codigo", cfop)));
 			} else {
-				criteria.createCriteria("cfopEstado", "cfopEstado", Criteria.LEFT_JOIN);
-				criteria.createCriteria("cfopOutrosEstados", "cfopOutrosEstados", Criteria.LEFT_JOIN);
 				criteria.add(Restrictions.or(Restrictions.eq("cfopEstado.codigo", cfop), Restrictions.eq("cfopOutrosEstados.codigo", cfop)));
 			}
 		}
@@ -125,11 +123,10 @@ public class TipoNotaFiscalRepositoryImpl extends AbstractRepository<TipoNotaFis
 		}
 		
 		if (tipoAtividade != null) {
-			criteria.add(Restrictions.eq("tipoAtividade", true));
+			criteria.add(Restrictions.eq("tipoAtividade", tipoAtividade));
 		}
 		
 		return criteria;
 	}
 	
 }
-

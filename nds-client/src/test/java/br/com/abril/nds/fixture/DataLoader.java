@@ -1,8 +1,6 @@
 package br.com.abril.nds.fixture;
 
 import java.math.BigDecimal;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -73,6 +71,7 @@ import br.com.abril.nds.model.cadastro.Telefone;
 import br.com.abril.nds.model.cadastro.TelefoneDistribuidor;
 import br.com.abril.nds.model.cadastro.TelefoneEntregador;
 import br.com.abril.nds.model.cadastro.TelefoneFornecedor;
+import br.com.abril.nds.model.cadastro.TipoAtividade;
 import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.cadastro.TipoDesconto;
 import br.com.abril.nds.model.cadastro.TipoEndereco;
@@ -131,6 +130,8 @@ import br.com.abril.nds.model.fiscal.ParametroEmissaoNotaFiscal;
 import br.com.abril.nds.model.fiscal.StatusEmissaoNfe;
 import br.com.abril.nds.model.fiscal.TipoEmissaoNfe;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
+import br.com.abril.nds.model.fiscal.TipoOperacao;
+import br.com.abril.nds.model.fiscal.TipoUsuarioNotaFiscal;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalhe;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalheCota;
 import br.com.abril.nds.model.movimentacao.CotaAusente;
@@ -613,6 +614,20 @@ public class DataLoader {
 	private static ParametroEmissaoNotaFiscal parametroEmissaoNotaFiscalEntradaDevolucaoEncalhe;
 	private static ParametroEmissaoNotaFiscal parametroEmissaoNotaFiscalDevolucaoMercadoria;
 	
+	private static CFOP cfop6115;
+	private static CFOP cfop5115;
+	private static CFOP cfop2949;
+	private static CFOP cfop1949;
+	private static CFOP cfop6949;
+	private static CFOP cfop5949;
+	private static CFOP cfop6114;
+	private static CFOP cfop5114;
+	private static CFOP cfop2919;
+	private static CFOP cfop1919;
+	private static CFOP cfop2918;
+	private static CFOP cfop1918;
+	private static CFOP cfop6917;
+	private static CFOP cfop5917;	
 
 	public static void main(String[] args) {
 		ClassPathXmlApplicationContext ctx = new ClassPathXmlApplicationContext(
@@ -654,6 +669,9 @@ public class DataLoader {
 	}
 
 	private static void carregarDados(Session session) {
+		
+		gerarCfops(session);
+		
 		criarAlgoritmos(session);
 		criarCarteira(session);
 		criarBanco(session);
@@ -761,13 +779,10 @@ public class DataLoader {
 		
 		criarDadosBalanceamentoRecolhimento(session);
 
-		criarEnderecoCotaRelatorioVendas(session);
-		
-		criarDadosRelatorioVendas(session);
-		
-		criarDadosEdicoesFechadas(session);
-		
 		gerarCargaDadosConferenciaEncalhe(session);
+		
+		gerarTiposNotas(session);
+		
 	}
 
 	private static void criarAlgoritmos(Session session) {
@@ -776,198 +791,6 @@ public class DataLoader {
 		Algoritmo algoritmoRJ = Fixture.criarAlgoritmo("Rota RJ");
 		
 		save(session, algoritmoRJ, algoritmoSP);
-	}
-
-	private static void criarDadosRelatorioVendas(Session session) {
-		for (int i=2; i<28; i++) {
-
-			Produto guiaQuatroRodas = Fixture.produto("3111" + i, "Guia Quatro Rodas" + i, "Guia Quatro Rodas" + i, PeriodicidadeProduto.ANUAL, tipoProdutoRevista, 5, 5, BigDecimal.TEN);
-			guiaQuatroRodas.addFornecedor(fornecedorDinap);
-			
-			Produto cromoBrasileirao = Fixture.produto("3333" + i, "Cromo Brasileirão" + i, "Cromo Brasileirão" + i, PeriodicidadeProduto.ANUAL, tipoCromo, 5, 5, BigDecimal.TEN);
-			cromoBrasileirao.addFornecedor(fornecedorFc);
-			
-			Produto guiaViagem = Fixture.produto("3113" + i, "Guia Viagem" + i, "Guia Viagem" + i, PeriodicidadeProduto.ANUAL, tipoProdutoRevista, 5, 5, BigDecimal.TEN);
-			guiaViagem.addFornecedor(fornecedorDinap);
-			
-			save(session,guiaQuatroRodas,cromoBrasileirao,guiaViagem);
-			
-			ProdutoEdicao produtoEdicao = Fixture.produtoEdicao("COD_AA_0" + i, 1L + i, 5 + i, 30 + i, 
-					new BigDecimal(50 + i), new BigDecimal(100 + i), new BigDecimal(100 + i), "5546" + i, 0L + i, guiaQuatroRodas, null, false);
-			produtoEdicao.setParcial(true);
-			
-			ProdutoEdicao cromoBrasileiraoEd1 = Fixture.produtoEdicao("COD_BB_0" + i, 1L + i, 5 + i, 30 + i, 
-					new BigDecimal(50 + i), new BigDecimal(100 + i), new BigDecimal(100 + i), "3333" + i, 0L + i, cromoBrasileirao, null, false);
-			cromoBrasileiraoEd1.setParcial(true);
-			
-			ProdutoEdicao guiaViagemEd1 = Fixture.produtoEdicao("COD_CC_0" + i, 1L + i, 5 + i, 30 + i, 
-					new BigDecimal(50 + i), new BigDecimal(100 + i), new BigDecimal(100 + i), "2231" + i, 0L + i, guiaViagem, null, false);
-			guiaViagemEd1.setParcial(true);
-			
-			save(session,produtoEdicao,cromoBrasileiraoEd1,guiaViagemEd1);
-			
-			
-			LancamentoParcial lancamentoParcial1 = Fixture.criarLancamentoParcial(
-					produtoEdicao, Fixture.criarData(1 + i, 1 + i, 2009 + i), Fixture.criarData(1 + i, 1 + i, 2010 + i), StatusLancamentoParcial.RECOLHIDO);
-			
-			LancamentoParcial lancamentoParcial2 = Fixture.criarLancamentoParcial(
-					cromoBrasileiraoEd1, Fixture.criarData(1 + i, 2 + i, 2011 + i), Fixture.criarData(1 + i, 2 + i, 2012 + i), StatusLancamentoParcial.PROJETADO);
-			
-			LancamentoParcial lancamentoParcial3 = Fixture.criarLancamentoParcial(
-					guiaViagemEd1, Fixture.criarData(1 + i, 3 + i, 2011 + i), Fixture.criarData(1 + i, 3 + i, 2012 + i), StatusLancamentoParcial.PROJETADO);
-			
-					
-			save(session, lancamentoParcial1,lancamentoParcial2,lancamentoParcial3);
-			
-			Lancamento lancamentoPeriodo = Fixture.lancamento(TipoLancamento.PARCIAL, cromoBrasileiraoEd1,
-					Fixture.criarData(1, 2, 2011),
-					Fixture.criarData(1, 3, 2011),
-					new Date(),
-					new Date(),
-					new BigDecimal(100 + i),
-					StatusLancamento.RECOLHIDO, null, 1);
-			save(session,lancamentoPeriodo);
-			
-			Lancamento lancamentoPeriodo2 = Fixture.lancamento(TipoLancamento.PARCIAL, cromoBrasileiraoEd1,
-					Fixture.criarData(5, 3, 2011),
-					Fixture.criarData(5, 4, 2011),
-					new Date(),
-					new Date(),
-					new BigDecimal(80 + i),
-					StatusLancamento.PLANEJADO, null, 1);
-			save(session,lancamentoPeriodo2);
-			
-			Estudo estudo = Fixture.estudo(new BigDecimal(200 + i), Fixture.criarData(1, 2, 2011), cromoBrasileiraoEd1);
-			save(session,estudo);
-			
-			TipoMovimentoEstoque tipoMovimentoEncalhe = Fixture.tipoMovimentoEnvioEncalhe();
-			save(session,tipoMovimentoEncalhe);
-			
-			//kame
-			EstoqueProdutoCota estoque = null;
-			if (i == 2)
-				estoque = Fixture.estoqueProdutoCota(produtoEdicao, new BigDecimal(50 + i), cotaJose, null);
-			else if (i == 3)
-				estoque = Fixture.estoqueProdutoCota(produtoEdicao, new BigDecimal(50 + i), cotaManoel, null);
-			else if (i == 4)
-				estoque = Fixture.estoqueProdutoCota(produtoEdicao, new BigDecimal(50 + i), cotaManoelCunha, null);
-			else if (i == 5)
-				estoque = Fixture.estoqueProdutoCota(produtoEdicao, new BigDecimal(50 + i), cotaMaria, null);
-			else if (i == 6)
-				estoque = Fixture.estoqueProdutoCota(produtoEdicao, new BigDecimal(50 + i), cotaLuis, null);
-			else if (i == 7)
-				estoque = Fixture.estoqueProdutoCota(produtoEdicao, new BigDecimal(50 + i), cotaJoao, null);
-			else if (i == 8)
-				estoque = Fixture.estoqueProdutoCota(produtoEdicao, new BigDecimal(50 + i), cotaGuilherme, null);
-			else if (i == 9)
-				estoque = Fixture.estoqueProdutoCota(produtoEdicao, new BigDecimal(50 + i), cotaMurilo, null);
-			else if (i == 10)
-				estoque = Fixture.estoqueProdutoCota(produtoEdicao, new BigDecimal(50 + i), cotaMariana, null);
-			else
-				estoque = Fixture.estoqueProdutoCota(produtoEdicao, new BigDecimal(50 + i), cotaOrlando, null);
-
-			save(session, estoque);
-		}
-	}
-
-	private static void criarDadosEdicoesFechadas(Session session) {
-		
-		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-		Date dataAtual = new Date();
-		
-		try {
-		
-			for (int i=0; i<22; i++) {
-			
-				Usuario usuario = Fixture.usuarioJoao();
-				save(session,usuario);
-	
-				TipoMovimentoEstoque tipoMovimentoEncalhe = Fixture.tipoMovimentoEnvioEncalhe();
-				save(session,tipoMovimentoEncalhe);
-	
-				TipoMovimentoEstoque tipoMovimentoVenda = Fixture.tipoMovimentoVendaEncalhe();
-				save(session,tipoMovimentoVenda);
-	
-				TipoMovimentoEstoque tipoMovimentoConsignado = Fixture.tipoMovimentoEnvioJornaleiro();
-				save(session,tipoMovimentoConsignado);
-	
-				TipoProduto tipoProduto = Fixture.tipoProduto("Revista EdicoesFechadas" + i, GrupoProduto.REVISTA, "44358941", "4723744581", 147L + i);
-				save(session,tipoProduto);
-	
-				TipoFornecedor tipoFornecedor = Fixture.tipoFornecedorPublicacao();
-				save(session,tipoFornecedor);
-	
-				TipoFornecedor tipoFornecedorPublicacao = Fixture.tipoFornecedorPublicacao();
-				save(session,tipoFornecedorPublicacao);
-
-				NotaFiscalEntradaFornecedor notaFiscal = Fixture.notaFiscalEntradaFornecedor(cfop5102, juridicaFc, fornecedorFc, tipoNotaFiscalRecebimento, usuario, new BigDecimal(145),  new BigDecimal(10),  new BigDecimal(10));
-				save(session,notaFiscal);
-	
-				RecebimentoFisico recebimentoFisico = Fixture.recebimentoFisico(notaFiscal, usuario, new Date(), new Date(), StatusConfirmacao.PENDENTE);
-				save(session,recebimentoFisico);
-
-				ProdutoEdicao produtoEdicao = Fixture.produtoEdicao("COD_DD_0" + i, 273L + i, 10 + i, 30 + i,
-						new BigDecimal(0.12), new BigDecimal(17), new BigDecimal(20),
-						"YZ2", 11L, produtoBravo, null, false);
-				session.save(produtoEdicao);
-
-				ItemNotaFiscalEntrada itemNotaFiscal= 
-						Fixture.itemNotaFiscal(
-								produtoEdicao, 
-								usuario, 
-								notaFiscal, 
-								new Date(), 
-								new Date(),
-								TipoLancamento.LANCAMENTO,
-								new BigDecimal(12));
-				save(session,itemNotaFiscal);			
-				
-				ItemRecebimentoFisico itemRecebimentoFisico= Fixture.itemRecebimentoFisico(itemNotaFiscal, recebimentoFisico, new BigDecimal(12));
-				save(session,itemRecebimentoFisico);
-	
-				TipoMovimentoEstoque tipoMovimentoEstoque = Fixture.tipoMovimentoSobraDe();
-				save(session,tipoMovimentoEstoque);
-
-				Lancamento lancamento1 = Fixture.lancamento(TipoLancamento.PARCIAL, produtoEdicao,
-						Fixture.criarData(1, 4, 2012),
-						Fixture.criarData(1, 4, 2012),
-						Fixture.criarData(27, 4, 2012),
-						Fixture.criarData(27, 4, 2012),
-						new BigDecimal(100),
-						StatusLancamento.RECOLHIDO, null, 1);
-				save(session,lancamento1);
-				
-				Lancamento lancamento2 = Fixture.lancamento(TipoLancamento.PARCIAL, produtoEdicao,
-						Fixture.criarData(1, 5, 2012),
-						Fixture.criarData(1, 5, 2012),
-						Fixture.criarData(14, 5, 2012),
-						Fixture.criarData(14, 5, 2012),
-						new BigDecimal(80),
-						StatusLancamento.PLANEJADO, null, 1);
-				save(session,lancamento2);
-
-				lancamento1.setDataRecolhimentoDistribuidor(sdf.parse("26/05/2012"));
-				lancamento2.setDataRecolhimentoDistribuidor(sdf.parse("23/05/2012"));
-				
-				Set<Lancamento> lancamentos = new HashSet<Lancamento>();
-				lancamentos.add(lancamento1);
-				lancamentos.add(lancamento2);
-
-				produtoEdicao.setLancamentos(lancamentos);
-				produtoEdicao.setDataDesativacao(sdf.parse("27/05/2012"));
-				
-				EstoqueProduto estoqueProduto = Fixture.estoqueProduto(produtoEdicao, new BigDecimal(45));
-				save(session,estoqueProduto);
-	
-				MovimentoEstoque movimentoEstoque = Fixture.movimentoEstoque(itemRecebimentoFisico, produtoEdicao, tipoMovimentoEstoque, usuario, estoqueProduto, dataAtual, new BigDecimal(12), StatusAprovacao.APROVADO , "MOTIVO B");
-				save(session,movimentoEstoque);
-			
-			}
-			
-		} catch(ParseException e) {
-			e.printStackTrace();
-		}
-		
 	}
 
 	private static void gerarDescontos(Session session){
@@ -992,6 +815,283 @@ public class DataLoader {
 		save(session, tipoDesconto);
 		tipoDesconto = Fixture.criarTipoDesconto("010", "Importadas MagExpress", new BigDecimal(10));
 		save(session, tipoDesconto);
+	}
+	
+	private static void gerarCfops(Session session) {
+
+		cfop5917 = new CFOP();
+		cfop5917.setCodigo("5917");
+		cfop5917.setDescricao("Outra saída de mercadoria ou prestação de serviço não especificado");
+		save(session, cfop5917);
+		
+		cfop6917 = new CFOP();
+		cfop6917.setCodigo("6917");
+		cfop6917.setDescricao("Remessa de mercadoria em consignação mercantil ou industrial");
+		save(session, cfop6917);
+
+		cfop1918 = new CFOP();
+		cfop1918.setCodigo("1918");
+		cfop1918.setDescricao("Devolução de mercadoria recebida em consignação mercantil ou industrial");
+		save(session, cfop1918);
+
+		cfop2918 = new CFOP();
+		cfop2918.setCodigo("2918");
+		cfop2918.setDescricao("Devolução de mercadoria remetida em consignação mercantil ou industrial");
+		save(session, cfop2918);
+
+		cfop1919 = new CFOP();
+		cfop1919.setCodigo("1919");
+		cfop1919.setDescricao("Devolução simbólica de mercadoria vendida ou utilizada em processo industrial, remetida anteriormente em consignação mercantil ou industrial");
+		save(session, cfop1919);
+
+		cfop2919 = new CFOP();
+		cfop2919.setCodigo("2919");
+		cfop2919.setDescricao("Devolução simbólica de mercadoria vendida ou utilizada em processo industrial, remetida anteriormente em consignação mercantil ou industrial");
+		save(session, cfop2919);
+
+		cfop5114 = new CFOP();
+		cfop5114.setCodigo("5114");
+		cfop5114.setDescricao("Venda de mercadoria adquirida ou recebida de terceiros remetida anteriormente em consignação mercantil");
+		save(session, cfop5114);
+
+		cfop6114 = new CFOP();
+		cfop6114.setCodigo("6114");
+		cfop6114.setDescricao("Venda de mercadoria adquirida ou recebida de terceiros remetida anteriormente em consignação mercantil");
+		save(session, cfop6114);
+
+		cfop5949 = new CFOP();
+		cfop5949.setCodigo("5949");
+		cfop5949.setDescricao("Outra saída de mercadoria ou prestação de serviço não especificado");
+		save(session, cfop5949);
+
+		cfop6949 = new CFOP();
+		cfop6949.setCodigo("6949");
+		cfop6949.setDescricao("Outra saída de mercadoria ou prestação de serviço não especificado");
+		save(session, cfop6949);
+
+		cfop1949 = new CFOP();
+		cfop1949.setCodigo("1949");
+		cfop1949.setDescricao("Outra entrada de mercadoria ou prestação de serviço não especificada");
+		save(session, cfop1949);
+
+		cfop2949 = new CFOP();
+		cfop2949.setCodigo("2949");
+		cfop2949.setDescricao("Outra entrada de mercadoria ou prestação de serviço não especificado");
+		save(session, cfop2949);
+		
+		cfop5115 = new CFOP();
+		cfop5115.setCodigo("5115");
+		cfop5115.setDescricao("Venda de mercadoria adquirida ou recebida de terceiros, recebida anteriormente em consignação mercantil");
+		save(session, cfop5115);
+
+		cfop6115 = new CFOP();
+		cfop6115.setCodigo("6115");
+		cfop6115.setDescricao("Venda de mercadoria adquirida ou recebida de terceiros, recebida anteriormente em consignação mercantil");
+		save(session, cfop6115);
+
+	}
+	
+	private static void gerarTiposNotas(Session session) {
+
+		// Tipo de Nota - Mercantil - Cota Contribuinte
+		TipoNotaFiscal nfeRemessaConsignacaoContribuinte = new TipoNotaFiscal();
+		nfeRemessaConsignacaoContribuinte.setCfopEstado(cfop5917);
+		nfeRemessaConsignacaoContribuinte.setCfopOutrosEstados(cfop6917);
+		nfeRemessaConsignacaoContribuinte.setNopDescricao("NF-e de Remessa em Consignação (NECE / DANFE)");
+		nfeRemessaConsignacaoContribuinte.setEmitente(TipoUsuarioNotaFiscal.DISTRIBUIDOR);
+		nfeRemessaConsignacaoContribuinte.setDestinatario(TipoUsuarioNotaFiscal.COTA);
+		nfeRemessaConsignacaoContribuinte.setContribuinte(true);
+		nfeRemessaConsignacaoContribuinte.setDescricao("");
+		nfeRemessaConsignacaoContribuinte.setNopCodigo(0L);
+		nfeRemessaConsignacaoContribuinte.setTipoOperacao(TipoOperacao.SAIDA);
+		nfeRemessaConsignacaoContribuinte.setGrupoNotaFiscal(GrupoNotaFiscal.DEVOLUCAO_MERCADORIA_FORNECEDOR);
+		nfeRemessaConsignacaoContribuinte.setTipoAtividade(TipoAtividade.MERCANTIL);
+		save(session,nfeRemessaConsignacaoContribuinte);
+		
+		TipoNotaFiscal nfeEntradaDevolucaoRemessaConsignacaoContribuinte = new TipoNotaFiscal();
+		nfeEntradaDevolucaoRemessaConsignacaoContribuinte.setCfopEstado(cfop1918);
+		nfeEntradaDevolucaoRemessaConsignacaoContribuinte.setCfopOutrosEstados(cfop2918);
+		nfeEntradaDevolucaoRemessaConsignacaoContribuinte.setNopDescricao("NF-e de Remessa em Devolução de Remessa em Consignação");
+		nfeEntradaDevolucaoRemessaConsignacaoContribuinte.setEmitente(TipoUsuarioNotaFiscal.DISTRIBUIDOR);
+		nfeEntradaDevolucaoRemessaConsignacaoContribuinte.setDestinatario(TipoUsuarioNotaFiscal.DISTRIBUIDOR);
+		nfeEntradaDevolucaoRemessaConsignacaoContribuinte.setContribuinte(true);
+		nfeEntradaDevolucaoRemessaConsignacaoContribuinte.setDescricao("");
+		nfeEntradaDevolucaoRemessaConsignacaoContribuinte.setNopCodigo(0L);
+		nfeEntradaDevolucaoRemessaConsignacaoContribuinte.setTipoOperacao(TipoOperacao.ENTRADA);
+		nfeEntradaDevolucaoRemessaConsignacaoContribuinte.setGrupoNotaFiscal(GrupoNotaFiscal.DEVOLUCAO_MERCADORIA_FORNECEDOR);
+		nfeEntradaDevolucaoRemessaConsignacaoContribuinte.setTipoAtividade(TipoAtividade.MERCANTIL);
+		save(session, nfeEntradaDevolucaoRemessaConsignacaoContribuinte);
+
+		TipoNotaFiscal nfeDevolucaoSimbolicaMercadoriasVendidasContribuinte = new TipoNotaFiscal();
+		nfeDevolucaoSimbolicaMercadoriasVendidasContribuinte.setCfopEstado(cfop1919);
+		nfeDevolucaoSimbolicaMercadoriasVendidasContribuinte.setCfopOutrosEstados(cfop2919);
+		nfeDevolucaoSimbolicaMercadoriasVendidasContribuinte.setNopDescricao("NF-e de Devolução Simbólica de Mercadorias Vendidas");
+		nfeDevolucaoSimbolicaMercadoriasVendidasContribuinte.setEmitente(TipoUsuarioNotaFiscal.DISTRIBUIDOR);
+		nfeDevolucaoSimbolicaMercadoriasVendidasContribuinte.setDestinatario(TipoUsuarioNotaFiscal.DISTRIBUIDOR);
+		nfeDevolucaoSimbolicaMercadoriasVendidasContribuinte.setContribuinte(true);
+		nfeDevolucaoSimbolicaMercadoriasVendidasContribuinte.setDescricao("");
+		nfeDevolucaoSimbolicaMercadoriasVendidasContribuinte.setNopCodigo(0L);
+		nfeDevolucaoSimbolicaMercadoriasVendidasContribuinte.setTipoOperacao(TipoOperacao.ENTRADA);
+		nfeDevolucaoSimbolicaMercadoriasVendidasContribuinte.setGrupoNotaFiscal(GrupoNotaFiscal.DEVOLUCAO_MERCADORIA_FORNECEDOR);
+		nfeDevolucaoSimbolicaMercadoriasVendidasContribuinte.setTipoAtividade(TipoAtividade.MERCANTIL);
+		save(session, nfeDevolucaoSimbolicaMercadoriasVendidasContribuinte);
+		
+		TipoNotaFiscal nfeVendasContribuinte = new TipoNotaFiscal();
+		nfeVendasContribuinte.setCfopEstado(cfop5114);
+		nfeVendasContribuinte.setCfopOutrosEstados(cfop6114);
+		nfeVendasContribuinte.setNopDescricao("NF-e Venda");
+		nfeVendasContribuinte.setEmitente(TipoUsuarioNotaFiscal.DISTRIBUIDOR);
+		nfeVendasContribuinte.setDestinatario(TipoUsuarioNotaFiscal.COTA);
+		nfeVendasContribuinte.setContribuinte(true);
+		nfeVendasContribuinte.setDescricao("");
+		nfeVendasContribuinte.setNopCodigo(0L);
+		nfeVendasContribuinte.setTipoOperacao(TipoOperacao.SAIDA);
+		nfeVendasContribuinte.setGrupoNotaFiscal(GrupoNotaFiscal.DEVOLUCAO_MERCADORIA_FORNECEDOR);
+		nfeVendasContribuinte.setTipoAtividade(TipoAtividade.MERCANTIL);
+		save(session, nfeVendasContribuinte);
+		
+		// Tipo de Nota - Mercantil - Cota não Contribuinte (cota que não emite NF-e)
+		TipoNotaFiscal nfeRemessaConsignacao = new TipoNotaFiscal();
+		nfeRemessaConsignacao.setCfopEstado(cfop5917);
+		nfeRemessaConsignacao.setCfopOutrosEstados(cfop6917);
+		nfeRemessaConsignacao.setNopDescricao("NF-e de Remessa em Consignação (NECE / DANFE)");
+		nfeRemessaConsignacao.setEmitente(TipoUsuarioNotaFiscal.DISTRIBUIDOR);
+		nfeRemessaConsignacao.setDestinatario(TipoUsuarioNotaFiscal.COTA);
+		nfeRemessaConsignacao.setContribuinte(false);
+		nfeRemessaConsignacao.setDescricao("");
+		nfeRemessaConsignacao.setNopCodigo(0L);
+		nfeRemessaConsignacao.setTipoOperacao(TipoOperacao.SAIDA);
+		nfeRemessaConsignacao.setGrupoNotaFiscal(GrupoNotaFiscal.DEVOLUCAO_MERCADORIA_FORNECEDOR);
+		nfeRemessaConsignacao.setTipoAtividade(TipoAtividade.MERCANTIL);
+		save(session,nfeRemessaConsignacao);
+		
+		TipoNotaFiscal nfeEntradaDevolucaoRemessaConsignacao = new TipoNotaFiscal();
+		nfeEntradaDevolucaoRemessaConsignacao.setCfopEstado(cfop1918);
+		nfeEntradaDevolucaoRemessaConsignacao.setCfopOutrosEstados(cfop2918);
+		nfeEntradaDevolucaoRemessaConsignacao.setNopDescricao("NF-e de Remessa em Devolução de Remessa em Consignação");
+		nfeEntradaDevolucaoRemessaConsignacao.setEmitente(TipoUsuarioNotaFiscal.DISTRIBUIDOR);
+		nfeEntradaDevolucaoRemessaConsignacao.setDestinatario(TipoUsuarioNotaFiscal.DISTRIBUIDOR);
+		nfeEntradaDevolucaoRemessaConsignacao.setContribuinte(false);
+		nfeEntradaDevolucaoRemessaConsignacao.setDescricao("");
+		nfeEntradaDevolucaoRemessaConsignacao.setNopCodigo(0L);
+		nfeEntradaDevolucaoRemessaConsignacao.setTipoOperacao(TipoOperacao.ENTRADA);
+		nfeEntradaDevolucaoRemessaConsignacao.setGrupoNotaFiscal(GrupoNotaFiscal.DEVOLUCAO_MERCADORIA_FORNECEDOR);
+		nfeEntradaDevolucaoRemessaConsignacao.setTipoAtividade(TipoAtividade.MERCANTIL);
+		save(session, nfeEntradaDevolucaoRemessaConsignacao);
+
+		TipoNotaFiscal nfeDevolucaoSimbolicaMercadoriasVendidas = new TipoNotaFiscal();
+		nfeDevolucaoSimbolicaMercadoriasVendidas.setCfopEstado(cfop1919);
+		nfeDevolucaoSimbolicaMercadoriasVendidas.setCfopOutrosEstados(cfop2919);
+		nfeDevolucaoSimbolicaMercadoriasVendidas.setNopDescricao("NF-e de Devolução Simbólica de Mercadorias Vendidas");
+		nfeDevolucaoSimbolicaMercadoriasVendidas.setEmitente(TipoUsuarioNotaFiscal.DISTRIBUIDOR);
+		nfeDevolucaoSimbolicaMercadoriasVendidas.setDestinatario(TipoUsuarioNotaFiscal.DISTRIBUIDOR);
+		nfeDevolucaoSimbolicaMercadoriasVendidas.setContribuinte(false);
+		nfeDevolucaoSimbolicaMercadoriasVendidas.setDescricao("");
+		nfeDevolucaoSimbolicaMercadoriasVendidas.setNopCodigo(0L);
+		nfeDevolucaoSimbolicaMercadoriasVendidas.setTipoOperacao(TipoOperacao.ENTRADA);		
+		nfeDevolucaoSimbolicaMercadoriasVendidas.setGrupoNotaFiscal(GrupoNotaFiscal.DEVOLUCAO_MERCADORIA_FORNECEDOR);
+		nfeDevolucaoSimbolicaMercadoriasVendidas.setTipoAtividade(TipoAtividade.MERCANTIL);
+		save(session, nfeDevolucaoSimbolicaMercadoriasVendidas);
+		
+		TipoNotaFiscal nfeVendas = new TipoNotaFiscal();
+		nfeVendas.setCfopEstado(cfop5114);
+		nfeVendas.setCfopOutrosEstados(cfop6114);
+		nfeVendas.setNopDescricao("NF-e Venda");
+		nfeVendas.setEmitente(TipoUsuarioNotaFiscal.DISTRIBUIDOR);
+		nfeVendas.setDestinatario(TipoUsuarioNotaFiscal.COTA);
+		nfeVendas.setContribuinte(false);
+		nfeVendas.setDescricao("");
+		nfeVendas.setNopCodigo(0L);
+		nfeVendas.setTipoOperacao(TipoOperacao.SAIDA);		
+		nfeVendas.setGrupoNotaFiscal(GrupoNotaFiscal.DEVOLUCAO_MERCADORIA_FORNECEDOR);
+		nfeVendas.setTipoAtividade(TipoAtividade.MERCANTIL);
+		save(session, nfeVendas);
+		
+		// Tipo de Nota - Prestador de Serviço - Cota Contribuinte
+		TipoNotaFiscal nfeRemessaDistribuicao1 = new TipoNotaFiscal();
+		nfeRemessaDistribuicao1.setCfopEstado(cfop5949);
+		nfeRemessaDistribuicao1.setCfopOutrosEstados(cfop6949);
+		nfeRemessaDistribuicao1.setNopDescricao("NF-e de Remessa para Distribuição (NECA / DANFE)");
+		nfeRemessaDistribuicao1.setEmitente(TipoUsuarioNotaFiscal.DISTRIBUIDOR);
+		nfeRemessaDistribuicao1.setDestinatario(TipoUsuarioNotaFiscal.COTA);
+		nfeRemessaDistribuicao1.setContribuinte(true);
+		nfeRemessaDistribuicao1.setDescricao("");
+		nfeRemessaDistribuicao1.setNopCodigo(0L);
+		nfeRemessaDistribuicao1.setTipoOperacao(TipoOperacao.SAIDA);
+		nfeRemessaDistribuicao1.setGrupoNotaFiscal(GrupoNotaFiscal.DEVOLUCAO_MERCADORIA_FORNECEDOR);
+		nfeRemessaDistribuicao1.setTipoAtividade(TipoAtividade.PRESTADOR_SERVICO);
+		save(session, nfeRemessaDistribuicao1);
+
+		TipoNotaFiscal nfeDevolucaoRemessaDistribuicao1 = new TipoNotaFiscal();
+		nfeDevolucaoRemessaDistribuicao1.setCfopEstado(cfop5949);
+		nfeDevolucaoRemessaDistribuicao1.setCfopOutrosEstados(cfop6949);
+		nfeDevolucaoRemessaDistribuicao1.setNopDescricao("NF-e de Devolução de Remessa para Distribuição");
+		nfeDevolucaoRemessaDistribuicao1.setEmitente(TipoUsuarioNotaFiscal.COTA);
+		nfeDevolucaoRemessaDistribuicao1.setDestinatario(TipoUsuarioNotaFiscal.DISTRIBUIDOR);
+		nfeDevolucaoRemessaDistribuicao1.setContribuinte(true);
+		nfeDevolucaoRemessaDistribuicao1.setDescricao("");
+		nfeDevolucaoRemessaDistribuicao1.setNopCodigo(0L);
+		nfeDevolucaoRemessaDistribuicao1.setTipoOperacao(TipoOperacao.SAIDA);
+		nfeDevolucaoRemessaDistribuicao1.setGrupoNotaFiscal(GrupoNotaFiscal.DEVOLUCAO_MERCADORIA_FORNECEDOR);
+		nfeDevolucaoRemessaDistribuicao1.setTipoAtividade(TipoAtividade.PRESTADOR_SERVICO);
+		save(session, nfeDevolucaoRemessaDistribuicao1);
+		
+		TipoNotaFiscal nfeVenda1 = new TipoNotaFiscal();
+		nfeVenda1.setCfopEstado(cfop5115);
+		nfeVenda1.setCfopOutrosEstados(cfop6115);
+		nfeVenda1.setNopDescricao("NF-e Venda");
+		nfeVenda1.setEmitente(TipoUsuarioNotaFiscal.TREELOG);
+		nfeVenda1.setDestinatario(TipoUsuarioNotaFiscal.COTA);
+		nfeVenda1.setContribuinte(true);
+		nfeVenda1.setDescricao("");
+		nfeVenda1.setNopCodigo(0L);
+		nfeVenda1.setTipoOperacao(TipoOperacao.SAIDA);
+		nfeVenda1.setGrupoNotaFiscal(GrupoNotaFiscal.DEVOLUCAO_MERCADORIA_FORNECEDOR);
+		nfeVenda1.setTipoAtividade(TipoAtividade.PRESTADOR_SERVICO);
+		save(session, nfeVenda1);		
+		
+		// Tipo de Nota - Prestarore de Serviço - Cota NÃO Contribuinte
+		TipoNotaFiscal nfeRemessaDistribuicao2 = new TipoNotaFiscal();
+		nfeRemessaDistribuicao2.setCfopEstado(cfop5949);
+		nfeRemessaDistribuicao2.setCfopOutrosEstados(cfop6949);
+		nfeRemessaDistribuicao2.setNopDescricao("NF-e de Remessa para Distribuição (NECA / DANFE)");
+		nfeRemessaDistribuicao2.setEmitente(TipoUsuarioNotaFiscal.DISTRIBUIDOR);
+		nfeRemessaDistribuicao2.setDestinatario(TipoUsuarioNotaFiscal.COTA);
+		nfeRemessaDistribuicao2.setContribuinte(false);
+		nfeRemessaDistribuicao2.setDescricao("");
+		nfeRemessaDistribuicao2.setNopCodigo(0L);
+		nfeRemessaDistribuicao2.setTipoOperacao(TipoOperacao.SAIDA);
+		nfeRemessaDistribuicao2.setGrupoNotaFiscal(GrupoNotaFiscal.DEVOLUCAO_MERCADORIA_FORNECEDOR);
+		nfeRemessaDistribuicao2.setTipoAtividade(TipoAtividade.PRESTADOR_SERVICO);
+		save(session, nfeRemessaDistribuicao2);		
+		
+		TipoNotaFiscal nfeDevolucaoRemessaDistribuicao2 = new TipoNotaFiscal();
+		nfeDevolucaoRemessaDistribuicao2.setCfopEstado(cfop1949);
+		nfeDevolucaoRemessaDistribuicao2.setCfopOutrosEstados(cfop2949);
+		nfeDevolucaoRemessaDistribuicao2.setNopDescricao("NF-e de Devolução de Remessa para Distruibuição");
+		nfeDevolucaoRemessaDistribuicao2.setEmitente(TipoUsuarioNotaFiscal.DISTRIBUIDOR);
+		nfeDevolucaoRemessaDistribuicao2.setDestinatario(TipoUsuarioNotaFiscal.DISTRIBUIDOR);
+		nfeDevolucaoRemessaDistribuicao2.setContribuinte(false);
+		nfeDevolucaoRemessaDistribuicao2.setDescricao("");
+		nfeDevolucaoRemessaDistribuicao2.setNopCodigo(0L);
+		nfeDevolucaoRemessaDistribuicao2.setTipoOperacao(TipoOperacao.ENTRADA);
+		nfeDevolucaoRemessaDistribuicao2.setGrupoNotaFiscal(GrupoNotaFiscal.DEVOLUCAO_MERCADORIA_FORNECEDOR);
+		nfeDevolucaoRemessaDistribuicao2.setTipoAtividade(TipoAtividade.PRESTADOR_SERVICO);
+		save(session, nfeDevolucaoRemessaDistribuicao2);		
+		
+		TipoNotaFiscal nfeVenda2 = new TipoNotaFiscal();
+		nfeVenda2.setCfopEstado(cfop5115);
+		nfeVenda2.setCfopOutrosEstados(cfop6115);
+		nfeVenda2.setNopDescricao("NF-e Venda");
+		nfeVenda2.setEmitente(TipoUsuarioNotaFiscal.TREELOG);
+		nfeVenda2.setDestinatario(TipoUsuarioNotaFiscal.COTA);
+		nfeVenda2.setContribuinte(false);
+		nfeVenda2.setDescricao("");
+		nfeVenda2.setNopCodigo(0L);
+		nfeVenda2.setTipoOperacao(TipoOperacao.SAIDA);
+		nfeVenda2.setGrupoNotaFiscal(GrupoNotaFiscal.DEVOLUCAO_MERCADORIA_FORNECEDOR);
+		nfeVenda2.setTipoAtividade(TipoAtividade.PRESTADOR_SERVICO);
+		save(session, nfeVenda2);				
 	}
 	
 	private static void gerarParciais(Session session) {
@@ -3827,8 +3927,8 @@ public class DataLoader {
 	}
 
 	private static void criarTiposNotaFiscal(Session session) {
-		tipoNotaFiscalRecebimento = Fixture.tipoNotaFiscalRecebimento();
-		tipoNotaFiscalDevolucao = Fixture.tipoNotaFiscalDevolucao();
+		tipoNotaFiscalRecebimento = Fixture.tipoNotaFiscalRecebimento(cfop1918, cfop1209);
+		tipoNotaFiscalDevolucao = Fixture.tipoNotaFiscalDevolucao(cfop5917, cfop6917);
 
 		save(session, tipoNotaFiscalRecebimento, tipoNotaFiscalDevolucao);
 
@@ -4508,47 +4608,6 @@ public class DataLoader {
 
 		save(session, feriadoProclamacao);
 	}
-
-	private static void criarEnderecoCotaRelatorioVendas(Session session) {
-
-		for (int i=0; i<=9; i++) {
-			
-			Endereco endereco = Fixture.criarEndereco(
-					TipoEndereco.COMERCIAL, "13730-000", "Rua Marechal Deodoro", 50, "Centro", "Mococa", "SP");
-
-			EnderecoCota enderecoCota = new EnderecoCota();
-
-			if ( i == 0)
-				enderecoCota.setCota(cotaJose);
-			else if (i == 1)
-				enderecoCota.setCota(cotaManoel);
-			else if (i == 2)
-				enderecoCota.setCota(cotaManoelCunha);
-			else if (i == 3)
-				enderecoCota.setCota(cotaMaria);
-			else if (i == 4)
-				enderecoCota.setCota(cotaLuis);
-			else if (i == 5)
-				enderecoCota.setCota(cotaJoao);
-			else if (i == 6)
-				enderecoCota.setCota(cotaGuilherme);
-			else if (i == 7)
-				enderecoCota.setCota(cotaMurilo);
-			else if (i == 8)
-				enderecoCota.setCota(cotaMariana);
-			else if (i == 9)
-				enderecoCota.setCota(cotaOrlando);
-			else
-				enderecoCota.setCota(cotaManoel);
-				
-			enderecoCota.setEndereco(endereco);
-			enderecoCota.setPrincipal(true);
-			enderecoCota.setTipoEndereco(TipoEndereco.COBRANCA);
-
-			save(session, endereco, enderecoCota);
-
-		}
-	}
 	
 	private static void criarEnderecoCotaPF(Session session) {
 		Endereco endereco = Fixture.criarEndereco(
@@ -5174,7 +5233,7 @@ public class DataLoader {
 
 	private static void gerarCargaDadosConferenciaEncalhe(Session session) {
 		
-		TipoNotaFiscal tipoNotaFiscal = Fixture.tipoNotaFiscalRecebimentoMercadoriasEncalhe();
+		TipoNotaFiscal tipoNotaFiscal = Fixture.tipoNotaFiscalRecebimentoMercadoriasEncalhe(cfop1949, cfop2949);
 		save(session, tipoNotaFiscal);
 		
 		Box boxRecolhimento = Fixture.criarBox("ENC_BOX1", "Box Encalhe", TipoBox.RECOLHIMENTO, false);

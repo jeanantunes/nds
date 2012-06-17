@@ -98,6 +98,10 @@ public class CadastroTipoNotaController {
 		gravarFiltroSessao(sortname, cfop, tipoNota);
 		
 		List<TipoNotaFiscal> lista = tipoNotaFiscalService.obterTiposNotasFiscais(cfop, tipoNota, distribuidor.getTipoAtividade(), sortname, Ordenacao.valueOf(sortorder.toUpperCase()), page*rp - rp , rp);
+		
+		if (lista == null || lista.isEmpty())
+			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
+		
 		Long quantidade = tipoNotaFiscalService.obterQuantidadeTiposNotasFiscais(cfop, tipoNota, distribuidor.getTipoAtividade());
 		result.use(FlexiGridJson.class).from(lista).total(quantidade.intValue()).page(page).serialize();
 	}

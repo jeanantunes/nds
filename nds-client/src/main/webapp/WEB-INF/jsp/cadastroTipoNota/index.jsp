@@ -141,13 +141,13 @@ function popup_excluir() {
 					align : 'left'
 				},{
 					display : 'CFOP Dentro UF',
-					name : 'cfopEstado',
+					name : 'cfopEstado.codigo',
 					width : 150,
 					sortable : true,
 					align : 'left'
 				},{
 					display : 'CFOP Fora UF',
-					name : 'cfopOutrosEstados',
+					name : 'cfopOutrosEstados.codigo',
 					width : 150,
 					sortable : true,
 					align : 'left'
@@ -173,7 +173,7 @@ function popup_excluir() {
 			}
 
 			mostrar();
-			return resultado.tableModel;
+			return resultado;
 		}
 		
 	</script>
