@@ -442,6 +442,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 		// Característica Física:
 		produtoEdicao.setPeso(dto.getPeso());
 		
+		produtoEdicao.setNumeroLancamento(dto.getNumeroLancamento());
 		
 		if (produtoEdicao.getId() == null) {
 			

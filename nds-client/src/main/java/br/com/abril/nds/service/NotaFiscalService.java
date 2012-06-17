@@ -1,5 +1,7 @@
 package br.com.abril.nds.service;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -61,4 +63,19 @@ public interface NotaFiscalService {
 	 */
 	void denegarNotaFiscal(Long id);
 
+	/**
+	 * Envia uma nota fiscal.
+	 * 
+	 * @param id - id da nota fiscal
+	 */
+	void enviarNotaFiscal(Long id);
+	
+	/**
+	 * Exporta um arquivo contendo as NFes que serão enviadas para o Software Emissor Gratuito do Governo
+	 * 
+	 * @throws FileNotFoundException caso o diretório parametrizado de exportação das seja inválido. 
+	 * @throws IOException caso ocarra erros durante a gravação do arquivo no diretório
+	 */
+	void exportarNotasFiscais() throws FileNotFoundException, IOException; 
+	
 }
