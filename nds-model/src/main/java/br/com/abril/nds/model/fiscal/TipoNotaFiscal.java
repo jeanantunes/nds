@@ -12,15 +12,12 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import br.com.abril.nds.model.cadastro.TipoAtividade;
-import br.com.abril.nds.util.export.Export;
-import br.com.abril.nds.util.export.Exportable;
 
 /**
  * @author francisco.garcia
  * @version 1.0
  * @created 14-fev-2012 11:35:33
  */
-@Exportable
 @Entity
 @Table(name = "TIPO_NOTA_FISCAL")
 @SequenceGenerator(name="TP_NOTA_FISCAL_SEQ", initialValue = 1, allocationSize = 1)
@@ -55,7 +52,6 @@ public class TipoNotaFiscal {
 	private Long nopCodigo;
 
 	// Descrição natureza da operação
-	@Export(label = "Tipo de Nota", exhibitionOrder = 1)
 	@Column(name = "NOP_DESCRICAO", nullable = true)
 	private String nopDescricao;
 	
@@ -63,12 +59,10 @@ public class TipoNotaFiscal {
 	@Column(name = "TIPO_ATIVIDADE", nullable = false)
 	private TipoAtividade tipoAtividade;
 	
-	@Export(label = "Emitente", exhibitionOrder = 2)
 	@Enumerated(EnumType.STRING)
 	@Column(name = "EMITENTE", nullable = false)
 	private TipoUsuarioNotaFiscal emitente;
 	
-	@Export(label = "Destinatário", exhibitionOrder = 3)
 	@Enumerated(EnumType.STRING)
 	@Column(name = "DESTINATARIO", nullable = false)
 	private TipoUsuarioNotaFiscal destinatario;

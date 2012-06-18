@@ -1,6 +1,7 @@
 package br.com.abril.nds.controllers.administracao;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -9,6 +10,7 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.client.vo.RegistroTipoNotaFiscalVO;
 import br.com.abril.nds.dto.filtro.FiltroCadastroTipoNotaDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Distribuidor;
@@ -22,6 +24,7 @@ import br.com.abril.nds.util.Util;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
 import br.com.abril.nds.util.export.NDSFileHeader;
+import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
@@ -76,7 +79,7 @@ public class CadastroTipoNotaController {
 
 		List<TipoNotaFiscal> lista = tipoNotaFiscalService.obterTiposNotasFiscais(filtro.getCfop(), filtro.getTipoNota(), distribuidor.getTipoAtividade());
 		
-		FileExporter.to("consulta-edicoes-fechadas-com-saldo", fileType).inHTTPResponse(this.getNDSFileHeader(), filtro, null, lista, TipoNotaFiscal.class, this.httpServletResponse);
+		FileExporter.to("consulta-edicoes-fechadas-com-saldo", fileType).inHTTPResponse(this.getNDSFileHeader(), filtro, null, getResultadoVO(lista), RegistroTipoNotaFiscalVO.class, this.httpServletResponse);
 	}
 	
 	/**
@@ -95,7 +98,7 @@ public class CadastroTipoNotaController {
 		
 		Distribuidor distribuidor = distribuidorService.obter();
 		
-		gravarFiltroSessao(sortname, cfop, tipoNota);
+		gravarFiltroSessao(cfop, tipoNota, sortname, sortorder, rp, page);
 		
 		List<TipoNotaFiscal> lista = tipoNotaFiscalService.obterTiposNotasFiscais(cfop, tipoNota, distribuidor.getTipoAtividade(), sortname, Ordenacao.valueOf(sortorder.toUpperCase()), page*rp - rp , rp);
 		
@@ -103,7 +106,7 @@ public class CadastroTipoNotaController {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
 		
 		Long quantidade = tipoNotaFiscalService.obterQuantidadeTiposNotasFiscais(cfop, tipoNota, distribuidor.getTipoAtividade());
-		result.use(FlexiGridJson.class).from(lista).total(quantidade.intValue()).page(page).serialize();
+		result.use(FlexiGridJson.class).from(getResultadoVO(lista)).total(quantidade.intValue()).page(page).serialize();
 	}
 	
 	/**
@@ -112,10 +115,14 @@ public class CadastroTipoNotaController {
 	 * @param sortname2 
 	 * @param tipoNota 
 	 */
-	private void gravarFiltroSessao(String sortname, String tipoNota, String cfop) {
+	private void gravarFiltroSessao(String cfop, String tipoNota, String sortname, String sortorder, int rp, int page) {
 		FiltroCadastroTipoNotaDTO filtro = new FiltroCadastroTipoNotaDTO();
 		filtro.setTipoNota(tipoNota);
 		filtro.setCfop(cfop);
+		
+		PaginacaoVO paginacao = new PaginacaoVO(page, rp, sortorder);
+		filtro.setPaginacao(paginacao);
+		
 		filtro.setOrdenacaoColuna(Util.getEnumByStringValue(FiltroCadastroTipoNotaDTO.OrdenacaoColunaConsulta.values(), sortname));
 		session.setAttribute(FILTRO_CADASTRO_TIPO_NOTA_SESSION_ATTRIBUTE, filtro);
 	}
@@ -164,6 +171,31 @@ public class CadastroTipoNotaController {
 		usuario.setId(1L);
 		usuario.setNome("Jornaleiro da Silva");
 		return usuario;
+	}
+	
+	/**
+	 * Popula uma lista de VO para exibir na view
+	 * @param listaTipoNotaFiscal
+	 * @return List<RegistroTipoNotaFiscalVO>
+	 */
+	private List<RegistroTipoNotaFiscalVO> getResultadoVO(List<TipoNotaFiscal> listaTipoNotaFiscal) {
+		
+		List<RegistroTipoNotaFiscalVO> listaResultado = new ArrayList<RegistroTipoNotaFiscalVO>();
+		
+		RegistroTipoNotaFiscalVO resultado = null;
+		
+		for (TipoNotaFiscal tipoNotaFiscal : listaTipoNotaFiscal) {
+			
+			resultado = new RegistroTipoNotaFiscalVO();
+			resultado.setNopDescricao(tipoNotaFiscal.getNopDescricao());
+			resultado.setCfopEstado(tipoNotaFiscal.getCfopEstado().getCodigo());
+			resultado.setCfopOutrosEstados(tipoNotaFiscal.getCfopOutrosEstados().getCodigo());
+			
+			listaResultado.add(resultado);
+			
+		}
+		
+		return listaResultado;
 	}
 	
 }

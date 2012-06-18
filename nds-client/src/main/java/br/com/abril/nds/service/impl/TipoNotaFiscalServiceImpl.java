@@ -46,7 +46,7 @@ public class TipoNotaFiscalServiceImpl implements TipoNotaFiscalService {
 	@Override
 	@Transactional(readOnly=true)
 	public List<TipoNotaFiscal> obterTiposNotasFiscais(String cfop, String tipoNota, TipoAtividade tipoAtividade) {
-		return tipoNotaFiscalRepository.obterTiposNotasFiscais(cfop, tipoNota, tipoAtividade, null, null, 0, 0);
+		return tipoNotaFiscalRepository.obterTiposNotasFiscais(cfop, tipoNota, tipoAtividade, null, null, null, null);
 	}
 	
 	/* (non-Javadoc)

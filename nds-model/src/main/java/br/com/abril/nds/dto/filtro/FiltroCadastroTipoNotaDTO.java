@@ -9,11 +9,14 @@ public class FiltroCadastroTipoNotaDTO extends FiltroDTO implements Serializable
 
 	private static final long serialVersionUID = -733782325727284635L;
 
-	private OrdenacaoColunaConsulta ordenacaoColuna;
-	
 	private String cfop;
 	
 	private String tipoNota;
+
+	private OrdenacaoColunaConsulta ordenacaoColuna;
+	
+	public FiltroCadastroTipoNotaDTO() {
+	}
 	
 	public enum OrdenacaoColunaConsulta {
 		

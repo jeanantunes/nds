@@ -21,6 +21,10 @@ import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 public class TipoNotaFiscalRepositoryImpl extends AbstractRepository<TipoNotaFiscal, Long> 
 										  implements TipoNotaFiscalRepository {
 
+	private final static String CFOP = "cfop";
+	private final static String CODIGO_CFOP = ".codigo";
+	private final static String PORCENTAGEM = "%";
+	
 	public TipoNotaFiscalRepositoryImpl() {
 		super(TipoNotaFiscal.class);
 	}
@@ -69,6 +73,12 @@ public class TipoNotaFiscalRepositoryImpl extends AbstractRepository<TipoNotaFis
 		Criteria criteria = addRestrictions(cfop, tipoNota, tipoAtividade);
 		
 		if (!StringUtil.isEmpty(orderBy) && ordenacao != null) {
+
+			// Caso tenha que fazer ordenação pelo código do CFOP
+			if (orderBy.toLowerCase().startsWith(CFOP)) {
+				orderBy = orderBy + CODIGO_CFOP;
+			}
+
 			if(Ordenacao.ASC ==  ordenacao){
 				criteria.addOrder(Order.asc(orderBy));
 			}else if(Ordenacao.DESC ==  ordenacao){
@@ -106,20 +116,22 @@ public class TipoNotaFiscalRepositoryImpl extends AbstractRepository<TipoNotaFis
 	 */
 	private Criteria addRestrictions(String cfop, String tipoNota, TipoAtividade tipoAtividade) {
 		Criteria criteria =  getSession().createCriteria(TipoNotaFiscal.class);	
-		
+
+		// Relacionamentos com a tabela CFOP
+		criteria.createCriteria("cfopEstado", "cfopEstado", Criteria.LEFT_JOIN);
+		criteria.createCriteria("cfopOutrosEstados", "cfopOutrosEstados", Criteria.LEFT_JOIN);
+
 		if(!StringUtil.isEmpty(cfop)) {
 			// Busca apenas pelo código (sem o primeiro dígito de identificação dentro do estado e fora do estado) 
-			criteria.createCriteria("cfopEstado", "cfopEstado", Criteria.LEFT_JOIN);
-			criteria.createCriteria("cfopOutrosEstados", "cfopOutrosEstados", Criteria.LEFT_JOIN);
 			if (cfop.length() == 3) {
-				criteria.add(Restrictions.or(Restrictions.ilike("cfopEstado.codigo", cfop), Restrictions.ilike("cfopOutrosEstados.codigo", cfop)));
+				criteria.add(Restrictions.or(Restrictions.ilike("cfopEstado.codigo", PORCENTAGEM + cfop), Restrictions.ilike("cfopOutrosEstados.codigo", PORCENTAGEM + cfop)));
 			} else {
 				criteria.add(Restrictions.or(Restrictions.eq("cfopEstado.codigo", cfop), Restrictions.eq("cfopOutrosEstados.codigo", cfop)));
 			}
 		}
 		
 		if(!StringUtil.isEmpty(tipoNota)) {
-			criteria.add(Restrictions.ilike("nopDescricao", tipoNota));
+			criteria.add(Restrictions.ilike("nopDescricao", PORCENTAGEM + tipoNota.toLowerCase() + PORCENTAGEM));
 		}
 		
 		if (tipoAtividade != null) {
