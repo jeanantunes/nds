@@ -105,8 +105,12 @@ public class FechamentoEncalheController {
 		filtro.setFornecedorId(fornecedorId);
 		filtro.setBoxId(boxId);
 		filtro.setFisico(arrayFisico);
-		
-		List<FechamentoFisicoLogicoDTO> listaEncalhe = fechamentoEncalheService.salvarFechamentoEncalhe(filtro, sortorder, this.resolveSort(sortname), page, rp);
+		List<FechamentoFisicoLogicoDTO> listaEncalhe = new ArrayList<FechamentoFisicoLogicoDTO>();
+		if (boxId == null){ 
+			listaEncalhe = fechamentoEncalheService.salvarFechamentoEncalhe(filtro, sortorder, this.resolveSort(sortname), page, rp);
+		} else {
+			listaEncalhe = fechamentoEncalheService.salvarFechamentoEncalheBox(filtro, sortorder, this.resolveSort(sortname), page, rp);
+		}
 		
 		result.use(FlexiGridJson.class).from(listaEncalhe).total(listaEncalhe.size()).page(page).serialize();
 	}

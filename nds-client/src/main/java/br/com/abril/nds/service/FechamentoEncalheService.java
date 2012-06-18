@@ -24,4 +24,6 @@ public interface FechamentoEncalheService {
 	void cobrarCotas(Date dataOperacao, Usuario usuario, List<Long> idsCotas);
 	
 	BigDecimal buscarValorTotalEncalhe(Date dataEncalhe, Long idCota);
+	
+	List<FechamentoFisicoLogicoDTO> salvarFechamentoEncalheBox(FiltroFechamentoEncalheDTO filtro, String sortorder, String sortname, int page, int rp);
 }
