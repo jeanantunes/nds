@@ -39,11 +39,11 @@ public class TipoNotaFiscal {
 	@Column(name = "TIPO_OPERACAO", nullable = false)
 	private TipoOperacao tipoOperacao;
 	
-	@ManyToOne(optional = false)
+	@ManyToOne(optional = true)
 	@JoinColumn(name = "CFOP_ESTADO")
 	private CFOP cfopEstado;
 	
-	@ManyToOne(optional = false)
+	@ManyToOne(optional = true)
 	@JoinColumn(name = "CFOP_OUTROS_ESTADOS")
 	private CFOP cfopOutrosEstados;
 	
