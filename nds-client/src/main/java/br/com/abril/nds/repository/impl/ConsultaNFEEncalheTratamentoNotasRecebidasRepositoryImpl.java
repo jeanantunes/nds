@@ -5,14 +5,17 @@ import java.util.List;
 
 import org.hibernate.Query;
 import org.hibernate.transform.AliasToBeanResultTransformer;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.ConsultaNFENotasPendentesDTO;
 import br.com.abril.nds.dto.ConsultaNFENotasRecebidasDTO;
 import br.com.abril.nds.dto.ItemNotaFiscalPendenteDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaNFEEncalheTratamento;
+import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntrada;
 import br.com.abril.nds.repository.ConsultaNFEEncalheTratamentoNotasRecebidasRepository;
+import br.com.abril.nds.service.DistribuidorService;
 
 @Repository
 public class ConsultaNFEEncalheTratamentoNotasRecebidasRepositoryImpl extends AbstractRepository<NotaFiscalEntrada, Long> implements
@@ -21,6 +24,9 @@ public class ConsultaNFEEncalheTratamentoNotasRecebidasRepositoryImpl extends Ab
 	public ConsultaNFEEncalheTratamentoNotasRecebidasRepositoryImpl() {
 		super(NotaFiscalEntrada.class);
 	}
+	
+	@Autowired
+	private DistribuidorService distribuidorService;
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -231,22 +237,32 @@ public class ConsultaNFEEncalheTratamentoNotasRecebidasRepositoryImpl extends Ab
 	public List<ItemNotaFiscalPendenteDTO> buscarItensPorNota(
 			FiltroConsultaNFEEncalheTratamento filtro) {
 		
+		Distribuidor distribuidor = this.distribuidorService.obter();
+		
 		StringBuilder hql = new StringBuilder();
 		
 		hql.append("SELECT produto.codigo as codigoProduto, ");
 		hql.append("produto.nome as nomeProduto, ");		
-		hql.append("produtoEdicao.numeroEdicao as numeroEdicao ");		
+		hql.append("produtoEdicao.numeroEdicao as numeroEdicao, ");		
+		hql.append("conf.qtdeInformada as qtdInformada, ");
+		hql.append("conf.qtde as qtdRecebida, ");
+		hql.append("conf.precoCapaInformado as precoCapa, ");
 		
+		hql.append("        ( conf.precoCapaInformado *  ( ");
+		hql.append(    getSubSqlQueryValorDesconto()			);		
+		hql.append("         ) / 100 ) AS precoDesconto        ");
 		
-		hql.append(" from ItemNotaFiscalEntrada as item ");
+		hql.append(" from ItemNotaFiscalEntrada as item, ControleConferenciaEncalheCota as confCota ");
 		hql.append(" LEFT JOIN item.notaFiscal as nf ");
 		hql.append(" LEFT JOIN item.produtoEdicao as produtoEdicao ");
-		hql.append(" LEFT JOIN produtoEdicao.produto as produto ");
+		hql.append(" LEFT JOIN produtoEdicao.produto as produto ");		
+		hql.append(" left join confCota.conferenciasEncalhe as conf  ");
 		
-		hql.append(" WHERE nf.id = :idNota ");
+		hql.append(" WHERE confCota.notaFiscalEntradaCota.id = nf.id  and nf.id = :idNota ");
 		
 		Query query =  getSession().createQuery(hql.toString());
 		query.setParameter("idNota", filtro.getCodigoNota());
+		query.setParameter("idDistribuidor", distribuidor.getId());
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(
 				ItemNotaFiscalPendenteDTO.class));
@@ -259,32 +275,35 @@ public class ConsultaNFEEncalheTratamentoNotasRecebidasRepositoryImpl extends Ab
 		 
 		return query.list();		 
 		
-	}
+	}	
 	
-//	private String getSubHqlQueryValorDesconto() {
-//
-//		StringBuilder hql = new StringBuilder();
-//
-//		hql.append(" select case when ( pe.desconto is not null ) then pe.desconto else ");
-//
-//		hql.append(" ( case when ( ct.fatorDesconto is not null ) then ct.fatorDesconto else ");
-//
-//		hql.append(" ( case when ( distribuidor.fatorDesconto is not null ) then distribuidor.fatorDesconto else 0 end ) end ");
-//
-//		hql.append(" ) end ");
-//
-//		hql.append(" from ProdutoEdicao pe, Cota ct, Distribuidor distribuidor ");
-//
-//		hql.append(" where ");
-//
-//		hql.append(" ct.id = conferencia.chamadaEncalheCota.cota.id and ");
-//
-//		hql.append(" pe.id = conferencia.produtoEdicao.id and ");
-//
-//		hql.append(" distribuidor.id = :idDistribuidor ");
-//
-//		return hql.toString();
-//
-//		}
+	
+	private String getSubSqlQueryValorDesconto() {
+		
+		StringBuffer hql = new StringBuffer();
+		
+		hql.append("            SELECT                                                                                   ");
+		hql.append("             CASE                                                                                    ");
+		hql.append("                 WHEN PE.desconto IS NOT NULL THEN PE.desconto                                       ");
+		hql.append("                 ELSE CASE                                                                           ");
+		hql.append("                     WHEN CT.fatorDesconto IS NOT NULL THEN CT.fatorDesconto                         ");
+		hql.append("                     ELSE CASE                                                                       ");
+		hql.append("                         WHEN DISTRIB.fatorDesconto IS NOT NULL THEN DISTRIB.fatorDesconto         ");
+		hql.append("                         ELSE 0                        ");
+		hql.append("                     END                               ");
+		hql.append("                 END                                   ");
+		hql.append("             END                                       ");
+		hql.append("         FROM                                          ");
+		hql.append("             ProdutoEdicao as PE, 		                   ");
+		hql.append("             Cota as CT, 		                           ");
+		hql.append("             Distribuidor as DISTRIB                      ");
+		hql.append("         WHERE                                         ");
+		hql.append("             CT.id=confCota.cota.id       ");
+		hql.append("             AND PE.id=conf.produtoEdicao.id  ");
+		hql.append("             AND DISTRIB.id= :idDistribuidor           ");
+		
+		return hql.toString();
+		
+	}
 	
 }

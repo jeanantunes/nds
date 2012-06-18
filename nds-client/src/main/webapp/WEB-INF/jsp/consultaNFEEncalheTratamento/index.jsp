@@ -499,13 +499,13 @@ function popup() {
 				align : 'center'
 			}, {
 				display : 'Qtde. Info',
-				name : 'qtdeInformada',
+				name : 'qtdInformada',
 				width : 60,
 				sortable : true,
 				align : 'center'
 			}, {
 				display : 'Qtde. Recebida',
-				name : 'qtdeRecebida',
+				name : 'qtdRecebida',
 				width : 90,
 				sortable : true,
 				align : 'center'
@@ -517,7 +517,7 @@ function popup() {
 				align : 'right'
 			}, {
 				display : 'Preço Desc R$',
-				name : 'precoDesc',
+				name : 'precoDesconto',
 				width : 80,
 				sortable : true,
 				align : 'right'
