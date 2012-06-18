@@ -195,7 +195,7 @@ public class ConferenciaEncalheController {
 		if (infoConfereciaEncalheCota == null || indObtemDadosFromBD){
 			
 			infoConfereciaEncalheCota = 
-					conferenciaEncalheService.obterInfoConferenciaEncalheCota(numeroCota);
+					conferenciaEncalheService.obterInfoConferenciaEncalheCota(numeroCota, false);
 			
 			this.session.setAttribute(INFO_CONFERENCIA, infoConfereciaEncalheCota);
 			
