@@ -132,7 +132,7 @@ public class ChamadaoController {
 			chamadaoVO.setPrecoDesconto(
 				CurrencyUtil.formatarValor(consignadoCotaChamadao.getPrecoDesconto()));
 			
-			chamadaoVO.setReparte(consignadoCotaChamadao.getReparte().toString());
+			chamadaoVO.setReparte(String.valueOf(consignadoCotaChamadao.getReparte().longValue()));
 			chamadaoVO.setFornecedor(consignadoCotaChamadao.getNomeFornecedor());
 			
 			chamadaoVO.setDataRecolhimento(
@@ -374,7 +374,7 @@ public class ChamadaoController {
 				chamadaoVO.setPrecoDesconto("");
 			}
 			
-			chamadaoVO.setReparte(consignadoCotaChamadao.getReparte().toString());
+			chamadaoVO.setReparte(String.valueOf(consignadoCotaChamadao.getReparte().longValue()));
 			chamadaoVO.setFornecedor(consignadoCotaChamadao.getNomeFornecedor());
 			
 			chamadaoVO.setDataRecolhimento(

@@ -18,6 +18,7 @@ import br.com.abril.nds.dto.FechamentoFisicoLogicoDTO;
 import br.com.abril.nds.dto.filtro.FiltroFechamentoEncalheDTO;
 import br.com.abril.nds.model.cadastro.TipoRoteiro;
 import br.com.abril.nds.model.estoque.ConferenciaEncalhe;
+import br.com.abril.nds.model.estoque.ControleFechamentoEncalhe;
 import br.com.abril.nds.model.estoque.FechamentoEncalhe;
 import br.com.abril.nds.model.estoque.pk.FechamentoEncalhePK;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalheCota;
@@ -33,7 +34,7 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepository<Fechamen
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<FechamentoFisicoLogicoDTO> buscarFechamentoEncalhe(FiltroFechamentoEncalheDTO filtro,
+	public List<FechamentoFisicoLogicoDTO> buscarConferenciaEncalhe(FiltroFechamentoEncalheDTO filtro,
 			String sortorder, String sortname, int page, int rp) {
 
 		Criteria criteria = this.getSession().createCriteria(ConferenciaEncalhe.class, "ce");
@@ -43,11 +44,13 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepository<Fechamen
 			.add(Projections.property("p.nome"), "produto")
 			.add(Projections.property("pe.numeroEdicao"), "edicao")
 			.add(Projections.property("pe.precoVenda"), "precoCapa")
+			.add(Projections.property("pe.id"), "produtoEdicao")
 			.add(Projections.sum("mec.qtde"), "exemplaresDevolucao")
 			.add(Projections.groupProperty("p.codigo"))
 			.add(Projections.groupProperty("p.nome"))
 			.add(Projections.groupProperty("pe.numeroEdicao"))
 			.add(Projections.groupProperty("pe.precoVenda"))
+			.add(Projections.groupProperty("pe.id"))
 		);
 		
 		criteria.createAlias("ce.movimentoEstoqueCota", "mec");
@@ -79,9 +82,31 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepository<Fechamen
 		
 		criteria.setFirstResult(page);
 		criteria.setMaxResults(rp);
-		this.addOrderCriteria(criteria, sortorder, sortname);
+		if (sortname != null) {
+			this.addOrderCriteria(criteria, sortorder, sortname);
+		}
 		criteria.setResultTransformer(Transformers.aliasToBean(FechamentoFisicoLogicoDTO.class));
 			
+		return criteria.list();
+	}
+
+	@Override
+	public Boolean buscaControleFechamentoEncalhe(Date dataEncalhe) {
+		
+		Criteria criteria = this.getSession().createCriteria(ControleFechamentoEncalhe.class, "cfe");
+		criteria.add(Restrictions.eq("cfe.dataEncalhe", dataEncalhe));
+		
+		return !criteria.list().isEmpty();
+	}
+	
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<FechamentoEncalhe> buscarFechamentoEncalhe(FiltroFechamentoEncalheDTO filtro) {
+		
+		Criteria criteria = this.getSession().createCriteria(FechamentoEncalhe.class);
+		//criteria.add(Restrictions.eq("fe.fechamentoEncalhePK.dataEncalhe", filtro.getDataEncalhe()));
+		criteria.setFetchMode("listFechamentoEncalheBox", FetchMode.JOIN);
+		
 		return criteria.list();
 	}
 
@@ -95,18 +120,22 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepository<Fechamen
 			Criteria criteria = super.getSession().createCriteria(ChamadaEncalhe.class, "ce");
 			
 			this.criarCriteriaCotasAusentesEncalhe(criteria, dataEncalhe);
-			
+
 			criteria.setFirstResult(page);
-			criteria.setMaxResults(rp);
 			
-			this.addOrderCriteria(criteria, sortorder, sortname);
+			if (rp >= 0) {
+				criteria.setMaxResults(rp);
+			}
+			
+			if (sortname != null && sortorder != null) {
+				this.addOrderCriteria(criteria, sortorder, sortname);
+			}
 			
 			criteria.setResultTransformer(Transformers.aliasToBean(CotaAusenteEncalheDTO.class));
 				
 			return criteria.list();
 		
 		} catch (Exception e) {
-			e.printStackTrace();
 			throw new RuntimeException(e);
 		}
 	}
@@ -132,7 +161,6 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepository<Fechamen
 			return listaCotasAusentes.size();
 			
 		} catch (Exception e) {
-			e.printStackTrace();
 			throw new RuntimeException(e);
 		}
 	}
@@ -159,7 +187,11 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepository<Fechamen
 				.add(Projections.property("pessoa.nome"), "colaboradorName")
 				.add(Projections.property("box.nome"), "boxName")
 				.add(Projections.property("roteiros.descricaoRoteiro"), "roteiroName")
-				.add(Projections.property("rotas.descricaoRota"), "rotaName")));
+				.add(Projections.property("rotas.descricaoRota"), "rotaName")
+				.add(Projections.property("cec.fechado"), "fechado")
+				.add(Projections.property("ce.dataRecolhimento"), "dataEncalhe")));
+				
+		// .property("cec.fechado"), "acao")
 
 		criteria.add(Restrictions.eq("ce.dataRecolhimento", dataEncalhe));
 		criteria.add(Restrictions.eq("roteiros.tipoRoteiro", TipoRoteiro.NORMAL));
@@ -181,4 +213,40 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepository<Fechamen
 		}
 	}
 	
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<FechamentoFisicoLogicoDTO> buscarValorTotalEncalhe(Date dataEncalhe, Long idCota) {
+
+		try {
+			
+			Criteria criteria = this.getSession().createCriteria(ChamadaEncalhe.class, "ce");
+            
+            criteria.setProjection(Projections.projectionList()
+                   .add(Projections.property("pe.precoVenda"), "precoCapa")
+                   .add(Projections.property("cec.qtdePrevista"), "exemplaresDevolucao")
+            );
+            
+            criteria.createAlias("ce.chamadaEncalheCotas", "cec");
+            criteria.setFetchMode("cec", FetchMode.JOIN);
+            
+            criteria.createAlias("ce.produtoEdicao", "pe");
+            criteria.setFetchMode("pe", FetchMode.JOIN);
+            
+            criteria.add(Restrictions.eq("ce.dataRecolhimento", dataEncalhe));
+            criteria.add(Restrictions.eq("cec.cota.id", idCota));
+            
+            criteria.setResultTransformer(Transformers.aliasToBean(FechamentoFisicoLogicoDTO.class));
+                   
+            return criteria.list();
+			
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	@Override
+	public void salvarControleFechamentoEncalhe(
+			ControleFechamentoEncalhe controleFechamentoEncalhe) {
+		this.getSession().save(controleFechamentoEncalhe);
+	}
 }

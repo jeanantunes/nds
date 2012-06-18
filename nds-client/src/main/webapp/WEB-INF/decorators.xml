@@ -8,6 +8,8 @@
         <pattern>/css/*</pattern>
         <pattern>/upload/*</pattern>
         <pattern>**impriNotaPromissoria*</pattern>
+        <pattern>**/mapaAbastecimento/imprimir*</pattern>
+        
     </excludes>
               
     <decorator name="main" page="main.jsp">

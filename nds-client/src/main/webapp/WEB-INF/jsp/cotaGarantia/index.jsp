@@ -8,10 +8,8 @@
 <script language="text/javascript" type="text/javascript"
 	src="${pageContext.request.contextPath}/scripts/confirmDialog.js"></script>
 <script type="text/javascript">
-	var tipoCotaGarantia;
-	$(function() {
-		tipoCotaGarantia = new TipoCotaGarantia();
-	});
+	var tipoCotaGarantia = new TipoCotaGarantia();
+		
 </script>
 
 
@@ -60,7 +58,7 @@
 			<tr>
 				<td>&nbsp;</td>
 				<td colspan="3"><span class="bt_novos" title="Imprimir"><a
-						href="javascript:void(0);"
+						href="javascript:;"
 						id="cotaGarantiaNotaPromissoriaImprimir" target="_blank"><img
 							src="${pageContext.request.contextPath}/images/ico_impressora.gif"
 							alt="Imprimir" hspace="5" border="0" />Imprimir</a></span></td>
@@ -277,7 +275,13 @@
 </div>
 
 <div id="cotaGarantiaCaucaoLiquida" style="display: none;">
-
+	
+	<div id="dialog-confirma-resgate" title="Confirmar Resgate Caução Líquida" style="display:none;" >
+		<fieldset style="width: 380px;">
+			<legend>Resgate de Cau&ccedil;&atilde;o L&iacute;quida</legend>
+    		<p>Confirma o Resgate da Cau&ccedil;&atilde;o L&iacute;quida?</p>
+		</fieldset>
+	</div>
 	<fieldset>
 	   	<legend>Cau&ccedil;&atilde;o L&iacute;quida</legend>
         <table width="755" cellpadding="2" cellspacing="2" style="text-align:left;">

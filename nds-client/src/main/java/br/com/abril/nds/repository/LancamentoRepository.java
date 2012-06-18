@@ -124,18 +124,7 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 	 */
 	List<Lancamento> obterLancamentosPorId(Set<Long> idsLancamento);
 
-	/**
-	 * Obtém o lancamento para determinada dataRecolhimentoDistribuidor e
-	 * idProdutoEdicao.
-	 * 
-	 * @param dataRecolhimentoDistribuidor
-	 * @param idProdutoEdicao
-	 * 
-	 * @return Lancamento
-	 */
-	Lancamento obterLancamentoPorDataRecolhimentoProdutoEdicao(
-			Date dataRecolhimentoDistribuidor, Long idProdutoEdicao);
-
+	
 	/**
 	 * Obtem a quantidade de registros de lançamentos respeitantdo os
 	 * paramentros.
@@ -180,7 +169,7 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 	 * 
 	 * Obtém a ultima (mais atual) dataLancamentoDistribuidor de determinado
 	 * produtoEdicao, sendo esta dataLancamentoDistribuidor anterior a
-	 * dataOperacao passada como parâmetro.
+	 * dataOperacao passada como parâmetro. É feito inner join com lancamentoParcial.
 	 * 
 	 * @param idProdutoEdicao
 	 * @param dataOperacao
@@ -190,6 +179,19 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 	public abstract Date obterDataUltimoLancamentoParcial(Long idProdutoEdicao,
 			Date dataOperacao);
 
+	/**
+	 * Obtém a ultima (mais atual) dataLancamentoDistribuidor de determinado
+	 * produtoEdicao, sendo esta dataLancamentoDistribuidor anterior a
+	 * dataOperacao passada como parâmetro.
+	 * 
+	 * @param idProdutoEdicao
+	 * @param dataOperacao
+	 * 
+	 * @return Date.
+	 */
+	public Date obterDataUltimoLancamento(Long idProdutoEdicao, Date dataOperacao);
+
+	
 	/**
 	 * Obtem Dados de informe encalhe dos lançamentos respeitando os parametros.
 	 * 

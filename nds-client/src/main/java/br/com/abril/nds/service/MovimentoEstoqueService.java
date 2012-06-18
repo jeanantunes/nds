@@ -24,4 +24,7 @@ public interface MovimentoEstoqueService {
 	
 	void atualizarEstoqueProdutoCota(TipoMovimentoEstoque tipoMovimentoEstoque,
 								 	 MovimentoEstoqueCota movimentoEstoqueCota);
+	
+	MovimentoEstoque gerarMovimentoEstoque(Long idProdutoEdicao, Long idUsuario, BigDecimal quantidade,TipoMovimentoEstoque tipoMovimentoEstoque);
+
 }

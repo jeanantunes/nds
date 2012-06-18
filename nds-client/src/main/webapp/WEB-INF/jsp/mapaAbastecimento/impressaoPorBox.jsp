@@ -3,9 +3,9 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title>NDS - Novo Distrib</title>
-<link rel="stylesheet" type="text/css" href="css/NDS.css" />
-<link rel="stylesheet" type="text/css" href="css/menu_superior.css" />
-<script language="javascript" type="text/javascript" src="scripts/jquery-ui-1.8.16.custom/development-bundle/jquery-1.6.2.js"></script>
+<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/NDS.css" />
+<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/menu_superior.css" />
+<script language="javascript" type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/development-bundle/jquery-1.6.2.js"></script>
 <style type="text/css">
 body{font-size:12px!important;}
 h1{font-size:20px;}
@@ -26,9 +26,10 @@ function imprimir(){
 
 <body>
 
+
 <table width="800" border="0" align="center" cellpadding="3" cellspacing="0" style="border:1px solid #000; margin-bottom:5px;">
   <tr>
-    <td width="121" height="21" align="center"><span style="border-bottom:1px solid #000;"><span class="logo"><img src="images/logo_sistema.png" width="110" height="70" alt="Novo Distrib"  /></span></span></td>
+    <td width="121" height="21" align="center"><span style="border-bottom:1px solid #000;"><span class="logo"><img src="${pageContext.request.contextPath}/images/logo_sistema.png" width="110" height="70" alt="Novo Distrib"  /></span></span></td>
     <td width="269" align="center" valign="middle"><h3>TREELOG S/A<br />
       LOGÍSTICA E DISTRIBUIÇÃO</h3></td>
     <td width="408" align="right" valign="middle"><h1>Mapa de Abastecimento&nbsp;</h1></td>
@@ -48,247 +49,44 @@ function imprimir(){
               <td width="151" class="relatorios" style="padding-left:5px; border-bottom:1px solid #000; border-left:1px solid #000;"><strong>Código</strong></td>
               <td width="89" style="padding-left:5px; border-bottom:1px solid #000; border-right:1px solid #000;" class="relatorios"><strong>Preço Capa</strong></td>
             </tr>
-            <tr class="class_linha_1">
-              <td style="border-left:1px solid #000;padding-left:5px; ">7 DIAS COM VOCE</td>
-              <td style="border-right:1px solid #000;padding-left:5px; ">459</td>
+            
+         <c:forEach items="${produtosMapa}" var="produto" varStatus="status">
+            
+            <tr class="class_linha_${status.index%2==0 ? 1:2}">
+              <td style="border-left:1px solid #000;padding-left:5px; ">${produto.nomeProduto}</td>
+              <td style="border-right:1px solid #000;padding-left:5px; ">${produto.numeroEdicao}</td>
               <td rowspan="2">
               <table width="100%" border="0" cellspacing="0" cellpadding="0" style="height:63px;">
                 <tr class="box_rel">
-                  <td width="60" align="center" style="border-right:1px solid #000; border-bottom:1px solid #000;">21</td>
-                  <td width="60" align="center" style=" border-right:1px solid #000; border-bottom:1px solid #000;">22</td>
-                  <td width="60" align="center" style=" border-right:1px solid #000; border-bottom:1px solid #000;">23</td>
-                  <td width="60" align="center" style=" border-right:1px solid #000; border-bottom:1px solid #000;">24</td>
-                  <td width="60" align="center" style=" border-right:1px solid #000; border-bottom:1px solid #000;">25</td>
-                  <td width="60" align="center" style=" border-right:1px solid #000; border-bottom:1px solid #000;">26</td>
-                  <td width="60" align="center" style=" border-right:1px solid #000; border-bottom:1px solid #000;">27</td>
+                
+                   <c:forEach items="${produto.boxQtde}" var="box" varStatus="statusBox">                
+                 		<td width="60" align="center" style="border-right:1px solid #000; border-bottom:1px solid #000;">${box.key}</td>
+                  </c:forEach>
+                  
                   <td width="80" align="center" style=" border-right:1px solid #000; border-bottom:1px solid #000;"><strong>Reparte</strong></td>
                 </tr>
                 <tr class="box_dados">
-                  <td align="center" style=" border-bottom:1px solid #000; border-right:1px solid #000;">10</td>
-                  <td align="center"style=" border-bottom:1px solid #000; border-right:1px solid #000;">20</td>
-                  <td align="center"style=" border-bottom:1px solid #000; border-right:1px solid #000;">15</td>
-                  <td align="center"style=" border-bottom:1px solid #000; border-right:1px solid #000;">22</td>
-                  <td align="center"style=" border-bottom:1px solid #000; border-right:1px solid #000;">50</td>
-                  <td align="center"style=" border-bottom:1px solid #000; border-right:1px solid #000;">11</td>
-                  <td align="center"style=" border-bottom:1px solid #000; border-right:1px solid #000;">&nbsp;</td>
-                  <td align="center"style=" border-bottom:1px solid #000; border-right:1px solid #000;">128</td>
+                  <c:forEach items="${produto.boxQtde}" var="box" varStatus="statusBox">                
+                 		<td align="center" style=" border-bottom:1px solid #000; border-right:1px solid #000;">${box.value eq 0 ? '': box.value}</td>
+                  </c:forEach>
+                  
+                  <td align="center"style=" border-bottom:1px solid #000; border-right:1px solid #000;">${produto.totalReparte}</td>
                 </tr>
-              </table></td>
+                
+              </table>
+              
+              </td>
+              
             </tr>
-            <tr class="class_linha_1">
-              <td style="padding-left:5px;  border-left:1px solid #000; border-bottom:1px solid #000;">34546421</td>
-              <td style="padding-left:5px; border-right:1px solid #000; border-bottom:1px solid #000;"><strong> R$</strong> 1,49</td>
+
+            <tr class="class_linha_${status.index%2==0 ? 1:2}">
+              <td style="padding-left:5px;  border-left:1px solid #000; border-bottom:1px solid #000;">${produto.codigoProduto}</td>
+              <td style="padding-left:5px; border-right:1px solid #000; border-bottom:1px solid #000;"><strong> R$</strong> ${produto.precoCapa}</td>
             </tr>
-            <tr class="class_linha_2">
-              <td style="border-left:1px solid #000;padding-left:5px; ">ALFA</td>
-              <td style="border-right:1px solid #000;padding-left:5px; ">459</td>
-              <td rowspan="2"><table width="100%" border="0" cellspacing="0" cellpadding="0" style="height:63px;">
-                <tr class="box_rel">
-                  <td width="60" align="center" style="border-right:1px solid #000; border-bottom:1px solid #000;">21</td>
-                  <td width="60" align="center" style=" border-right:1px solid #000; border-bottom:1px solid #000;">22</td>
-                  <td width="60" align="center" style=" border-right:1px solid #000; border-bottom:1px solid #000;">23</td>
-                  <td width="60" align="center" style=" border-right:1px solid #000; border-bottom:1px solid #000;">24</td>
-                  <td width="60" align="center" style=" border-right:1px solid #000; border-bottom:1px solid #000;">25</td>
-                  <td width="60" align="center" style=" border-right:1px solid #000; border-bottom:1px solid #000;">26</td>
-                  <td width="60" align="center" style=" border-right:1px solid #000; border-bottom:1px solid #000;">27</td>
-                  <td width="80" align="center" style=" border-right:1px solid #000; border-bottom:1px solid #000;"><strong>Reparte</strong></td>
-                </tr>
-                <tr class="box_dados">
-                  <td align="center" style=" border-bottom:1px solid #000; border-right:1px solid #000;">75</td>
-                  <td align="center"style=" border-bottom:1px solid #000; border-right:1px solid #000;">50</td>
-                  <td align="center"style=" border-bottom:1px solid #000; border-right:1px solid #000;">20</td>
-                  <td align="center"style=" border-bottom:1px solid #000; border-right:1px solid #000;">10</td>
-                  <td align="center"style=" border-bottom:1px solid #000; border-right:1px solid #000;">&nbsp;</td>
-                  <td align="center"style=" border-bottom:1px solid #000; border-right:1px solid #000;">&nbsp;</td>
-                  <td align="center"style=" border-bottom:1px solid #000; border-right:1px solid #000;">5</td>
-                  <td align="center"style=" border-bottom:1px solid #000; border-right:1px solid #000;">160</td>
-                </tr>
-              </table></td>
-            </tr>
-            <tr class="class_linha_2">
-              <td style=" border-left:1px solid #000; border-bottom:1px solid #000;padding-left:5px; ">34546421</td>
-              <td style="padding-left:5px; border-right:1px solid #000; border-bottom:1px solid #000;"> <strong> R$</strong> 12,90</td>
-            </tr>
-            <tr class="class_linha_1">
-              <td style="padding-left:5px; border-left:1px solid #000;">BOA SORTE</td>
-              <td style="padding-left:5px; border-right:1px solid #000;">459</td>
-              <td rowspan="2"><table width="100%" border="0" cellspacing="0" cellpadding="0" style="height:63px;">
-                <tr class="box_rel">
-                  <td width="60" align="center" style="border-right:1px solid #000; border-bottom:1px solid #000;">21</td>
-                  <td width="60" align="center" style=" border-right:1px solid #000; border-bottom:1px solid #000;">22</td>
-                  <td width="60" align="center" style=" border-right:1px solid #000; border-bottom:1px solid #000;">23</td>
-                  <td width="60" align="center" style=" border-right:1px solid #000; border-bottom:1px solid #000;">24</td>
-                  <td width="60" align="center" style=" border-right:1px solid #000; border-bottom:1px solid #000;">25</td>
-                  <td width="60" align="center" style=" border-right:1px solid #000; border-bottom:1px solid #000;">26</td>
-                  <td width="60" align="center" style=" border-right:1px solid #000; border-bottom:1px solid #000;">27</td>
-                  <td width="80" align="center" style=" border-right:1px solid #000; border-bottom:1px solid #000;"><strong>Reparte</strong></td>
-                </tr>
-                <tr class="box_dados">
-                  <td align="center" style=" border-bottom:1px solid #000; border-right:1px solid #000;">23</td>
-                  <td align="center"style=" border-bottom:1px solid #000; border-right:1px solid #000;">56</td>
-                  <td align="center"style=" border-bottom:1px solid #000; border-right:1px solid #000;">11</td>
-                  <td align="center"style=" border-bottom:1px solid #000; border-right:1px solid #000;">6</td>
-                  <td align="center"style=" border-bottom:1px solid #000; border-right:1px solid #000;">6</td>
-                  <td align="center"style=" border-bottom:1px solid #000; border-right:1px solid #000;">9</td>
-                  <td align="center"style=" border-bottom:1px solid #000; border-right:1px solid #000;">4</td>
-                  <td align="center"style=" border-bottom:1px solid #000; border-right:1px solid #000;">115</td>
-                </tr>
-              </table></td>
-            </tr>
-            <tr class="class_linha_1">
-              <td style=" border-left:1px solid #000; border-bottom:1px solid #000;padding-left:5px; ">34546421</td>
-              <td style="padding-left:5px; border-right:1px solid #000; border-bottom:1px solid #000;"><strong> R$</strong> 1,50</td>
-            </tr>
-            <tr class="class_linha_2">
-              <td style="padding-left:5px; border-left:1px solid #000;">CIRANDA INCLUSAO</td>
-              <td style="padding-left:5px; border-right:1px solid #000;">459</td>
-              <td rowspan="2"><table width="100%" border="0" cellspacing="0" cellpadding="0" style="height:63px;">
-                <tr class="box_rel">
-                  <td width="60" align="center" style="border-right:1px solid #000; border-bottom:1px solid #000;">21</td>
-                  <td width="60" align="center" style=" border-right:1px solid #000; border-bottom:1px solid #000;">22</td>
-                  <td width="60" align="center" style=" border-right:1px solid #000; border-bottom:1px solid #000;">23</td>
-                  <td width="60" align="center" style=" border-right:1px solid #000; border-bottom:1px solid #000;">24</td>
-                  <td width="60" align="center" style=" border-right:1px solid #000; border-bottom:1px solid #000;">25</td>
-                  <td width="60" align="center" style=" border-right:1px solid #000; border-bottom:1px solid #000;">26</td>
-                  <td width="60" align="center" style=" border-right:1px solid #000; border-bottom:1px solid #000;">27</td>
-                  <td width="80" align="center" style=" border-right:1px solid #000; border-bottom:1px solid #000;"><strong>Reparte</strong></td>
-                </tr>
-                <tr class="box_dados">
-                  <td align="center" style=" border-bottom:1px solid #000; border-right:1px solid #000;">10</td>
-                  <td align="center"style=" border-bottom:1px solid #000; border-right:1px solid #000;">20</td>
-                  <td align="center"style=" border-bottom:1px solid #000; border-right:1px solid #000;">15</td>
-                  <td align="center"style=" border-bottom:1px solid #000; border-right:1px solid #000;">22</td>
-                  <td align="center"style=" border-bottom:1px solid #000; border-right:1px solid #000;">50</td>
-                  <td align="center"style=" border-bottom:1px solid #000; border-right:1px solid #000;">11</td>
-                  <td align="center"style=" border-bottom:1px solid #000; border-right:1px solid #000;">&nbsp;</td>
-                  <td align="center"style=" border-bottom:1px solid #000; border-right:1px solid #000;">128</td>
-                </tr>
-              </table></td>
-            </tr>
-            <tr class="class_linha_2">
-              <td style="padding-left:5px;  border-left:1px solid #000; border-bottom:1px solid #000;">34546421</td>
-              <td style="padding-left:5px; border-right:1px solid #000; border-bottom:1px solid #000;"><strong> R$</strong> 7,90</td>
-            </tr>
-            <tr class="class_linha_1">
-              <td style="padding-left:5px; border-left:1px solid #000;">7 DIAS COM VOCE</td>
-              <td style="padding-left:5px; border-right:1px solid #000;">459</td>
-              <td rowspan="2"><table width="100%" border="0" cellspacing="0" cellpadding="0" style="height:63px;">
-                <tr class="box_rel">
-                  <td width="60" align="center" style="border-right:1px solid #000; border-bottom:1px solid #000;">21</td>
-                  <td width="60" align="center" style=" border-right:1px solid #000; border-bottom:1px solid #000;">22</td>
-                  <td width="60" align="center" style=" border-right:1px solid #000; border-bottom:1px solid #000;">23</td>
-                  <td width="60" align="center" style=" border-right:1px solid #000; border-bottom:1px solid #000;">24</td>
-                  <td width="60" align="center" style=" border-right:1px solid #000; border-bottom:1px solid #000;">25</td>
-                  <td width="60" align="center" style=" border-right:1px solid #000; border-bottom:1px solid #000;">26</td>
-                  <td width="60" align="center" style=" border-right:1px solid #000; border-bottom:1px solid #000;">27</td>
-                  <td width="80" align="center" style=" border-right:1px solid #000; border-bottom:1px solid #000;"><strong>Reparte</strong></td>
-                </tr>
-                <tr class="box_dados">
-                  <td align="center" style=" border-bottom:1px solid #000; border-right:1px solid #000;">10</td>
-                  <td align="center"style=" border-bottom:1px solid #000; border-right:1px solid #000;">20</td>
-                  <td align="center"style=" border-bottom:1px solid #000; border-right:1px solid #000;">15</td>
-                  <td align="center"style=" border-bottom:1px solid #000; border-right:1px solid #000;">22</td>
-                  <td align="center"style=" border-bottom:1px solid #000; border-right:1px solid #000;">50</td>
-                  <td align="center"style=" border-bottom:1px solid #000; border-right:1px solid #000;">11</td>
-                  <td align="center"style=" border-bottom:1px solid #000; border-right:1px solid #000;">&nbsp;</td>
-                  <td align="center"style=" border-bottom:1px solid #000; border-right:1px solid #000;">128</td>
-                </tr>
-              </table></td>
-            </tr>
-            <tr class="class_linha_1">
-              <td style="padding-left:5px;  border-left:1px solid #000; border-bottom:1px solid #000;">34546421</td>
-              <td style="padding-left:5px; border-right:1px solid #000; border-bottom:1px solid #000;"><strong> R$</strong> 1,49</td>
-            </tr>
-            <tr class="class_linha_2">
-              <td style="padding-left:5px; border-left:1px solid #000;">GUIA DE ANGRA</td>
-              <td style="padding-left:5px; border-right:1px solid #000;">459</td>
-              <td rowspan="2"><table width="100%" border="0" cellspacing="0" cellpadding="0" style="height:63px;">
-                <tr class="box_rel">
-                  <td width="60" align="center" style="border-right:1px solid #000; border-bottom:1px solid #000;">21</td>
-                  <td width="60" align="center" style=" border-right:1px solid #000; border-bottom:1px solid #000;">22</td>
-                  <td width="60" align="center" style=" border-right:1px solid #000; border-bottom:1px solid #000;">23</td>
-                  <td width="60" align="center" style=" border-right:1px solid #000; border-bottom:1px solid #000;">24</td>
-                  <td width="60" align="center" style=" border-right:1px solid #000; border-bottom:1px solid #000;">25</td>
-                  <td width="60" align="center" style=" border-right:1px solid #000; border-bottom:1px solid #000;">26</td>
-                  <td width="60" align="center" style=" border-right:1px solid #000; border-bottom:1px solid #000;">27</td>
-                  <td width="80" align="center" style=" border-right:1px solid #000; border-bottom:1px solid #000;"><strong>Reparte</strong></td>
-                </tr>
-                <tr class="box_dados">
-                  <td align="center" style=" border-bottom:1px solid #000; border-right:1px solid #000;">10</td>
-                  <td align="center"style=" border-bottom:1px solid #000; border-right:1px solid #000;">20</td>
-                  <td align="center"style=" border-bottom:1px solid #000; border-right:1px solid #000;">15</td>
-                  <td align="center"style=" border-bottom:1px solid #000; border-right:1px solid #000;">22</td>
-                  <td align="center"style=" border-bottom:1px solid #000; border-right:1px solid #000;">50</td>
-                  <td align="center"style=" border-bottom:1px solid #000; border-right:1px solid #000;">11</td>
-                  <td align="center"style=" border-bottom:1px solid #000; border-right:1px solid #000;">&nbsp;</td>
-                  <td align="center"style=" border-bottom:1px solid #000; border-right:1px solid #000;">128</td>
-                </tr>
-              </table></td>
-            </tr>
-            <tr class="class_linha_2">
-              <td style="padding-left:5px;  border-left:1px solid #000; border-bottom:1px solid #000;">34546421</td>
-              <td style="padding-left:5px; border-right:1px solid #000; border-bottom:1px solid #000;"><strong> R$</strong> 14,90</td>
-            </tr>
-            <tr class="class_linha_1">
-              <td style="padding-left:5px; border-left:1px solid #000;">GUIA DE ANGRA</td>
-              <td style="padding-left:5px; border-right:1px solid #000;">459</td>
-              <td rowspan="2"><table width="100%" border="0" cellspacing="0" cellpadding="0" style="height:63px;">
-                <tr class="box_rel">
-                  <td width="60" align="center" style="border-right:1px solid #000; border-bottom:1px solid #000;">21</td>
-                  <td width="60" align="center" style=" border-right:1px solid #000; border-bottom:1px solid #000;">22</td>
-                  <td width="60" align="center" style=" border-right:1px solid #000; border-bottom:1px solid #000;">23</td>
-                  <td width="60" align="center" style=" border-right:1px solid #000; border-bottom:1px solid #000;">24</td>
-                  <td width="60" align="center" style=" border-right:1px solid #000; border-bottom:1px solid #000;">25</td>
-                  <td width="60" align="center" style=" border-right:1px solid #000; border-bottom:1px solid #000;">26</td>
-                  <td width="60" align="center" style=" border-right:1px solid #000; border-bottom:1px solid #000;">27</td>
-                  <td width="80" align="center" style=" border-right:1px solid #000; border-bottom:1px solid #000;"><strong>Reparte</strong></td>
-                </tr>
-                <tr class="box_dados">
-                  <td align="center" style=" border-bottom:1px solid #000; border-right:1px solid #000;">10</td>
-                  <td align="center"style=" border-bottom:1px solid #000; border-right:1px solid #000;">20</td>
-                  <td align="center"style=" border-bottom:1px solid #000; border-right:1px solid #000;">15</td>
-                  <td align="center"style=" border-bottom:1px solid #000; border-right:1px solid #000;">22</td>
-                  <td align="center"style=" border-bottom:1px solid #000; border-right:1px solid #000;">50</td>
-                  <td align="center"style=" border-bottom:1px solid #000; border-right:1px solid #000;">11</td>
-                  <td align="center"style=" border-bottom:1px solid #000; border-right:1px solid #000;">&nbsp;</td>
-                  <td align="center"style=" border-bottom:1px solid #000; border-right:1px solid #000;">128</td>
-                </tr>
-              </table></td>
-            </tr>
-            <tr class="class_linha_1">
-              <td style="padding-left:5px;  border-left:1px solid #000; border-bottom:1px solid #000;">34546421</td>
-              <td style="padding-left:5px; border-right:1px solid #000; border-bottom:1px solid #000;"><strong> R$</strong> 14,90</td>
-            </tr>
-            <tr class="class_linha_2">
-              <td style="padding-left:5px; border-left:1px solid #000;">7 DIAS COM VOCE</td>
-              <td style="padding-left:5px; border-right:1px solid #000;">459</td>
-              <td rowspan="2"><table width="100%" border="0" cellspacing="0" cellpadding="0" style="height:63px;">
-                <tr class="box_rel">
-                  <td width="60" align="center" style="border-right:1px solid #000; border-bottom:1px solid #000;">21</td>
-                  <td width="60" align="center" style=" border-right:1px solid #000; border-bottom:1px solid #000;">22</td>
-                  <td width="60" align="center" style=" border-right:1px solid #000; border-bottom:1px solid #000;">23</td>
-                  <td width="60" align="center" style=" border-right:1px solid #000; border-bottom:1px solid #000;">24</td>
-                  <td width="60" align="center" style=" border-right:1px solid #000; border-bottom:1px solid #000;">25</td>
-                  <td width="60" align="center" style=" border-right:1px solid #000; border-bottom:1px solid #000;">26</td>
-                  <td width="60" align="center" style=" border-right:1px solid #000; border-bottom:1px solid #000;">27</td>
-                  <td width="80" align="center" style=" border-right:1px solid #000; border-bottom:1px solid #000;"><strong>Reparte</strong></td>
-                </tr>
-                <tr class="box_dados">
-                  <td align="center" style=" border-bottom:1px solid #000; border-right:1px solid #000;">10</td>
-                  <td align="center"style=" border-bottom:1px solid #000; border-right:1px solid #000;">20</td>
-                  <td align="center"style=" border-bottom:1px solid #000; border-right:1px solid #000;">15</td>
-                  <td align="center"style=" border-bottom:1px solid #000; border-right:1px solid #000;">22</td>
-                  <td align="center"style=" border-bottom:1px solid #000; border-right:1px solid #000;">50</td>
-                  <td align="center"style=" border-bottom:1px solid #000; border-right:1px solid #000;">11</td>
-                  <td align="center"style=" border-bottom:1px solid #000; border-right:1px solid #000;">&nbsp;</td>
-                  <td align="center"style=" border-bottom:1px solid #000; border-right:1px solid #000;">128</td>
-                </tr>
-              </table></td>
-            </tr>
-            <tr class="class_linha_2">
-              <td style="padding-left:5px;  border-left:1px solid #000; border-bottom:1px solid #000;">34546421</td>
-              <td style="padding-left:5px; border-right:1px solid #000; border-bottom:1px solid #000;"><strong> R$</strong> 12,90</td>
-            </tr>
+           
+		
+         </c:forEach>
+         
 </table>
 </body>
 </html>

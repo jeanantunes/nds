@@ -40,6 +40,9 @@ $(".sociosPjGrid").flexigrid({
 </div>
 
 <table width="300" cellspacing="2" cellpadding="2" border="0">
+    
+    <input type="hidden" id="idSocio" value=""/>
+    
     <tbody><tr>
       <td>Nome:</td>
       <td><input type="text" id="idNomeSocio"></td>

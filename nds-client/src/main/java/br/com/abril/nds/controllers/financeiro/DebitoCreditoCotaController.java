@@ -25,18 +25,25 @@ import br.com.abril.nds.dto.filtro.FiltroDebitoCreditoDTO.ColunaOrdenacao;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.TipoEdicao;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
+import br.com.abril.nds.model.cadastro.BaseCalculo;
+import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
+import br.com.abril.nds.model.cadastro.Rota;
+import br.com.abril.nds.model.cadastro.Roteiro;
+import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
 import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 import br.com.abril.nds.model.seguranca.Usuario;
+import br.com.abril.nds.service.BoxService;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.DebitoCreditoCotaService;
 import br.com.abril.nds.service.DistribuidorService;
 import br.com.abril.nds.service.MovimentoFinanceiroCotaService;
+import br.com.abril.nds.service.RoteirizacaoService;
 import br.com.abril.nds.service.TipoMovimentoFinanceiroService;
 import br.com.abril.nds.util.CellModel;
 import br.com.abril.nds.util.CellModelKeyValue;
@@ -81,6 +88,12 @@ public class DebitoCreditoCotaController {
 	private DebitoCreditoCotaService debitoCreditoCotaService;
 
 	@Autowired
+	private BoxService boxService;
+	
+	@Autowired
+	private RoteirizacaoService roteirizacaoService;
+
+	@Autowired
 	private HttpSession session;
 	
 	@Autowired
@@ -93,8 +106,11 @@ public class DebitoCreditoCotaController {
 
 	@Path("/")
 	public void index() { 
-
 		preencherComboTipoMovimento();
+		preencherComboBaseCalculo();
+		preencherComboBox();
+		preencherComboRoteiro();
+		preencherComboRota();
 	}
 
 	private void preencherComboTipoMovimento() {
@@ -104,6 +120,113 @@ public class DebitoCreditoCotaController {
 
 		this.result.include("tiposMovimentoFinanceiro", tiposMovimentoFinanceiro);
 	}
+
+	/**
+	 * Obtém lista de Bases de Cálculos para popular combo da view
+	 */
+	private void preencherComboBaseCalculo() {
+		List<BaseCalculo> basesCalculo = new ArrayList<BaseCalculo>();
+		for(BaseCalculo item:BaseCalculo.values()){
+			basesCalculo.add(item);
+		}
+		this.result.include("basesCalculo", basesCalculo);
+	}
+	
+	/**
+	 * Obtém lista de Boxes para popular combo da view
+	 */
+	private void preencherComboBox() {
+		List<Box> boxes = this.boxService.buscarTodos(null);
+		this.result.include("boxes", boxes);
+	}
+	
+	/**
+	 * Obtém lista de Roteiros para popular combo da view
+	 */
+	private void preencherComboRoteiro() {
+		List<Roteiro> roteiros = this.roteirizacaoService.buscarRoteiros();
+		this.result.include("roteiros", roteiros);
+	}
+	
+	/**
+	 * Obtém lista de Rotas de Cálculos para popular combo da view
+	 */
+	private void preencherComboRota() {
+		List<Rota> rotas = this.roteirizacaoService.buscarRotas();
+		this.result.include("rotas", rotas);
+	}
+	
+	/**
+	 * Obtém valor calculado do movimento com base no faturamento da cota, caso o tipo de movimento for por faturamento
+	 * @param tipoMovimento
+	 */
+	@Post
+    @Path("/obterGrupoFaturamento")
+	public void obterGrupoFaturamento(Long idTipoMovimento){
+		TipoMovimentoFinanceiro tipoMovimento = null;
+		if (idTipoMovimento!=null){
+		    tipoMovimento = this.tipoMovimentoFinanceiroService.obterTipoMovimentoFincanceiroPorId(idTipoMovimento);
+		}
+		this.result.use(Results.json()).from(tipoMovimento!=null?tipoMovimento.getGrupoMovimentoFinaceiro():"", "result").recursive().serialize();
+	}
+	
+	/**
+     * Retorna lançamentos pré-configurados com a cota para preencher a grid da view
+     * @param idBox
+     * @param idRoteiro
+     * @param idRota
+     */
+    @Post
+	@Path("/obterInformacoesParaLancamento")
+	public void obterInformacoesParaLancamento(Long idBox, 
+			                                   Long idRoteiro, 
+			                                   Long idRota,
+			                                   GrupoMovimentoFinaceiro grupoMovimento,
+			                                   BigDecimal percentual,
+			                                   BaseCalculo baseCalculo,
+			                                   Date dataPeriodoInicial,
+			                                   Date dataPeriodoFinal){
+		
+    	if ((idBox==null) && (idRoteiro==null) && (idRota==null)){
+    		carregarNovosMovimentos();
+    	}
+    	else{
+    		
+    		if (grupoMovimento == GrupoMovimentoFinaceiro.DEBITO_SOBRE_FATURAMENTO){
+        		
+    			if (percentual == null) {
+    				throw new ValidacaoException(TipoMensagem.WARNING, "Para o lançamento baseado no faturamento é obrigatório informar o [Percentual].");
+    			}
+    			
+    			if (baseCalculo == null) {
+    				throw new ValidacaoException(TipoMensagem.WARNING, "Para o lançamento baseado no faturamento é obrigatório informar a [Base de Cálculo].");
+    			}
+    			
+    			if (dataPeriodoInicial == null) {
+    				throw new ValidacaoException(TipoMensagem.WARNING, "Para o lançamento baseado no faturamento é obrigatório informar o [Período para Cálculo].");
+    			}
+    			
+    			if (dataPeriodoFinal == null) {
+    				throw new ValidacaoException(TipoMensagem.WARNING, "Para o lançamento baseado no faturamento é obrigatório informar o [Período para Cálculo].");
+    			}
+    			
+    			if (DateUtil.isDataInicialMaiorDataFinal(dataPeriodoInicial, dataPeriodoFinal)) {
+    				throw new ValidacaoException(TipoMensagem.WARNING, "A [Data Final] deve susceder a [Data Inicial].");
+    			}
+        	}
+
+    		List<DebitoCreditoDTO> listaDebitoCredito = this.debitoCreditoCotaService.obterDadosLancamentoPorBoxRoteiroRota(idBox, idRoteiro, idRota, percentual, baseCalculo, dataPeriodoInicial, dataPeriodoFinal);
+            int qtd = this.debitoCreditoCotaService.obterQuantidadeCotasPorBoxRoteiroRota(idBox, idRoteiro, idRota);
+            
+    		TableModel<CellModelKeyValue<DebitoCreditoDTO>> tableModel =
+    				new TableModel<CellModelKeyValue<DebitoCreditoDTO>>();
+    		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaDebitoCredito));
+    		tableModel.setTotal(qtd);
+    		tableModel.setPage(1);
+    		
+    		this.result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
+    	}
+    }
 
 	public void buscarCotaPorNumero(Integer numeroCota) {
 		
@@ -553,7 +676,7 @@ public class DebitoCreditoCotaController {
 							"true" : "false";
 
 			if ("true".equals(isEditavel) && StatusAprovacao.APROVADO == movimentoFinanceiroCota.getStatus()
-					|| DateUtil.isDataInicialMaiorDataFinal(DateUtil.removerTimestamp(new Date()), movimentoFinanceiroCota.getDataCriacao())) {
+					|| DateUtil.isDataInicialMaiorDataFinal(DateUtil.removerTimestamp(this.distribuidorService.obter().getDataOperacao()), movimentoFinanceiroCota.getDataCriacao())) {
 
 				isEditavel = "false"; 
 			}
@@ -714,6 +837,10 @@ public class DebitoCreditoCotaController {
 		if (idTipoMovimento == null) {
 			
 			throw new ValidacaoException(TipoMensagem.WARNING, "O preenchimento do campo [Tipo Movimento] é obrigatório.");
+		}
+		
+		if (listaNovosDebitoCredito==null || listaNovosDebitoCredito.size()<=0){
+			throw new ValidacaoException(TipoMensagem.WARNING, "Não há movimentos à serem lançados.");
 		}
 		
 		List<Long> linhasComErro = new ArrayList<Long>();

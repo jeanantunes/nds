@@ -38,7 +38,7 @@ import br.com.caelum.vraptor.view.Results;
 public class TipoProdutoController {
 
 	@Autowired
-	private Result resutl;
+	private Result result;
 	
 	@Autowired
 	private HttpServletResponse response;
@@ -72,7 +72,7 @@ public class TipoProdutoController {
 		this.gerarFiltro(codigo, codigoNBM, codigoNCM, descricao, 
 				Ordenacao.valueOf(sortorder.toUpperCase()), sortname);
 		
-		this.resutl.use(FlexiGridJson.class).from(listaTipoProdutos)
+		this.result.use(FlexiGridJson.class).from(listaTipoProdutos)
 			.total(quantidade.intValue()).page(page).serialize();
 	}
 	
@@ -81,7 +81,7 @@ public class TipoProdutoController {
 		
 		TipoProduto tipoProduto = this.tipoProdutoService.buscaPorId(id);
 		
-		this.resutl.use(Results.json()).from(tipoProduto, "tipoProduto").serialize();
+		this.result.use(Results.json()).from(tipoProduto, "tipoProduto").serialize();
 	}
 	
 	@Post("/salva.json")
@@ -91,7 +91,7 @@ public class TipoProdutoController {
 			
 		this.tipoProdutoService.merge(tipoProduto);
 		
-		this.resutl.use(Results.json()).from(new ValidacaoVO
+		this.result.use(Results.json()).from(new ValidacaoVO
 				(TipoMensagem.SUCCESS, "Tipo de Produto salvo com Sucesso."), "result").recursive().serialize();
 	}
 	
@@ -104,14 +104,14 @@ public class TipoProdutoController {
 			throw new ValidacaoException(TipoMensagem.WARNING, e.getMessage());
 		}
 				
-		this.resutl.use(Results.json()).from("OK").serialize();
+		this.result.use(Results.json()).from("OK").serialize();
 	}
 	
 	@Post("/getCodigoSugerido.json")
 	public void getCodigoSugerido() {
 		String codigo = this.tipoProdutoService.getCodigoSugerido();
 		
-		this.resutl.use(Results.json()).from(codigo, "codigo").serialize();
+		this.result.use(Results.json()).from(codigo, "codigo").serialize();
 	}
 	
 	/**

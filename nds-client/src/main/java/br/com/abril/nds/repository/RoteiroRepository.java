@@ -4,8 +4,6 @@ import java.util.List;
 
 import org.hibernate.criterion.MatchMode;
 
-import br.com.abril.nds.model.LogBairro;
-import br.com.abril.nds.model.LogLocalidade;
 import br.com.abril.nds.model.cadastro.Roteiro;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
@@ -20,6 +18,8 @@ public interface RoteiroRepository extends Repository<Roteiro, Long> {
 	List<Roteiro> buscarRoteiroDeBox(Long idBox);
 	
 	Integer buscarMaiorOrdemRoteiro();
-;
+	
+    List<Roteiro> buscarRoteiroEspecial();
+
 	
 }

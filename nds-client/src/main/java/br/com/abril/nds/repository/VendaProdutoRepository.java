@@ -12,5 +12,4 @@ public interface VendaProdutoRepository extends Repository<MovimentoEstoque, Lon
 	List<VendaProdutoDTO> buscarVendaPorProduto(FiltroVendaProdutoDTO filtro);
 	
 	List<LancamentoPorEdicaoDTO> buscarLancamentoPorEdicao(FiltroVendaProdutoDTO filtro);
-
 }

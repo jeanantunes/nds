@@ -31,12 +31,19 @@ public class CotaSocioController {
 		
 		List<String> listaMensagens = new ArrayList<String>();
 		
-		if(socioCota.getNome() == null || socioCota.getNome().isEmpty()){
+		if(socioCota== null){
 			listaMensagens.add("O preenchimento do campo [Nome] é obrigatório!");
-		}
-		
-		if(socioCota.getCargo() == null || socioCota.getCargo().isEmpty() ){
 			listaMensagens.add("O preenchimento do campo [Cargo] é obrigatório!");
+		}
+		else{
+			
+			if(socioCota.getNome() == null || socioCota.getNome().isEmpty()){
+				listaMensagens.add("O preenchimento do campo [Nome] é obrigatório!");
+			}
+			
+			if(socioCota.getCargo() == null || socioCota.getCargo().isEmpty() ){
+				listaMensagens.add("O preenchimento do campo [Cargo] é obrigatório!");
+			}
 		}
 		
 		if(!listaMensagens.isEmpty()){
@@ -79,8 +86,18 @@ public class CotaSocioController {
 	 */
 	private void validarInclusaoSocioPrincipal(SocioCota socioCota, List<SocioCota> sociosCota) {
 		
-		if(isSocioPrincipal(sociosCota) && socioCota.getPrincipal() ){
-			throw new ValidacaoException(TipoMensagem.WARNING,"Socio principal ja foi cadastrado!");
+		if(sociosCota != null && !sociosCota.isEmpty()){
+			
+			for(SocioCota socio : sociosCota){
+				
+				if( socio.getId()== null || !(socio.getId().equals(socioCota.getId()))){
+					
+					if(socio.getPrincipal()!= null && socio.getPrincipal() && socioCota.getPrincipal()!= null && socioCota.getPrincipal()){
+						throw new ValidacaoException(TipoMensagem.WARNING,"Socio principal ja foi cadastrado!");
+					}
+				}
+					
+			}
 		}
 	}
 	
@@ -94,7 +111,7 @@ public class CotaSocioController {
 		if(sociosCota != null && !sociosCota.isEmpty()){
 			
 			for(SocioCota socio : sociosCota){
-				if(socio.getPrincipal())
+				if( socio.getPrincipal()!= null && socio.getPrincipal())
 					return true;
 			}
 		}

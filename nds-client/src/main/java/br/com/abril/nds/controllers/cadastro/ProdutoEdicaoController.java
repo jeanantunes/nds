@@ -105,8 +105,6 @@ public class ProdutoEdicaoController {
 		}
 		dto.setNomeFornecedor(nomeFornecedor);
 		dto.setFase(produto.getFase());
-		dto.setNumeroLancamento(produto.getNumeroLancamento() == null 
-				? "" : produto.getNumeroLancamento().toString());
 		dto.setPacotePadrao(produto.getPacotePadrao());
 		dto.setPeso(produto.getPeso());
 		dto.setDescricaoDesconto("");
@@ -135,6 +133,7 @@ public class ProdutoEdicaoController {
 			dto.setPeso(pe.getPeso());
 			dto.setBoletimInformativo(pe.getBoletimInformativo());
 			dto.setOrigemInterface(pe.getOrigemInterface());
+			dto.setNumeroLancamento(pe.getNumeroLancamento());
 
 			Dimensao dimEdicao = pe.getDimensao();
 			if (dimEdicao == null) {
@@ -202,7 +201,7 @@ public class ProdutoEdicaoController {
 			BigDecimal desconto, BigDecimal peso, 
 			BigDecimal largura, BigDecimal comprimento, BigDecimal espessura,
 			String chamadaCapa, boolean parcial, boolean possuiBrinde,
-			String boletimInformativo) {
+			String boletimInformativo, Integer numeroLancamento) {
 		
 		// DTO para transportar os dados:
 		ProdutoEdicaoDTO dto = new ProdutoEdicaoDTO();
@@ -227,6 +226,7 @@ public class ProdutoEdicaoController {
 		dto.setChamadaCapa(chamadaCapa);
 		dto.setParcial(parcial);
 		dto.setPossuiBrinde(possuiBrinde);
+		dto.setNumeroLancamento(numeroLancamento);
 		
 		this.validarProdutoEdicao(dto);
 		
@@ -280,7 +280,7 @@ public class ProdutoEdicaoController {
 				listaMensagens.add("Campo 'Código' deve ser preenchido!");
 			}
 			if (dto.getNomeComercialProduto() == null || dto.getNomeComercialProduto().trim().length() <= 0) {
-				listaMensagens.add("Campo 'Código' deve ser preenchido!");
+				listaMensagens.add("Campo 'Nome Comercial Produto' deve ser preenchido!");
 			}
 			if (dto.getNumeroEdicao() == null || Long.valueOf(0).equals(dto.getNumeroEdicao())) {
 				listaMensagens.add("Por favor, digite um valor válido para o 'Número de Edição'!");

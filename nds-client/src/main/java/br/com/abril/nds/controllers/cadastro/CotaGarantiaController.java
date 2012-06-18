@@ -97,7 +97,7 @@ public class CotaGarantiaController {
 		cotaGarantiaService.salvarCaucaoLiquida(listaCaucaoLiquida, idCota);
 		
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS,
-				"Imóveis salvos com Sucesso."), "result").recursive()
+				"Caução Líquida salva com Sucesso."), "result").recursive()
 		.serialize();
 	}
 	

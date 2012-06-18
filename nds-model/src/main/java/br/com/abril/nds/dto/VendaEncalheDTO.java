@@ -4,10 +4,10 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import br.com.abril.nds.model.cadastro.FormaComercializacao;
 import br.com.abril.nds.model.estoque.TipoVendaEncalhe;
-import br.com.abril.nds.util.export.Export;
+import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.util.export.Exportable;
-import br.com.abril.nds.util.export.Export.Alignment;
 
 /**
  *  DTO que agrupa os parâmetros do sistema a serem exibidos/alterados na tela
@@ -23,38 +23,125 @@ public class VendaEncalheDTO implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	@Export(label = "Data", alignment = Alignment.LEFT)
+	private Long idVenda;
+	
 	private Date dataVenda;
 	
-	@Export(label = "Cota", alignment = Alignment.LEFT)
 	private Integer numeroCota;
-	
-	@Export(label = "Nome", alignment = Alignment.LEFT)
+
 	private String nomeCota;
-	
-	@Export(label = "Código", alignment = Alignment.LEFT)
+		
 	private String codigoProduto;
 	
-	@Export(label = "Produto", alignment = Alignment.LEFT)
 	private String nomeProduto;
 	
-	@Export(label = "Edição", alignment = Alignment.CENTER)
-	private Integer numeroEdicao;
+	private Long numeroEdicao;
 	
-	@Export(label = "Preço Capa R$", alignment = Alignment.RIGHT)
 	private BigDecimal precoCapa;
 	
-	@Export(label = "Quantidade", alignment = Alignment.CENTER)
-	private Integer qntProduto;
+	private Long qntProduto;
 	
-	@Export(label = "Preço Desc. R$", alignment = Alignment.RIGHT)
 	private BigDecimal precoDesconto;
 	
-	@Export(label = "Toral R$", alignment = Alignment.RIGHT)
 	private BigDecimal valoTotalProduto;
 
-	@Export(label = "Tipo Venda", alignment = Alignment.CENTER)
 	private TipoVendaEncalhe tipoVendaEncalhe;
+
+	private Integer qntDisponivelProduto;
+	
+	private String codigoBarras;
+	
+	private FormaComercializacao formaVenda;
+	
+	private Date dataVencimentoDebito;
+	
+	private String codBox;
+	
+	private Usuario usuario;
+	
+	/**
+	 * @return the usuario
+	 */
+	public Usuario getUsuario() {
+		return usuario;
+	}
+
+	/**
+	 * @param usuario the usuario to set
+	 */
+	public void setUsuario(Usuario usuario) {
+		this.usuario = usuario;
+	}
+
+	/**
+	 * @return the dataVencimentoDebito
+	 */
+	public Date getDataVencimentoDebito() {
+		return dataVencimentoDebito;
+	}
+
+	/**
+	 * @param dataVencimentoDebito the dataVencimentoDebito to set
+	 */
+	public void setDataVencimentoDebito(Date dataVencimentoDebito) {
+		this.dataVencimentoDebito = dataVencimentoDebito;
+	}
+
+	/**
+	 * @return the codBox
+	 */
+	public String getCodBox() {
+		return codBox;
+	}
+
+	/**
+	 * @param codBox the codBox to set
+	 */
+	public void setCodBox(String codBox) {
+		this.codBox = codBox;
+	}
+
+	/**
+	 * @return the formaVenda
+	 */
+	public FormaComercializacao getFormaVenda() {
+		return formaVenda;
+	}
+
+	/**
+	 * @param formaVenda the formaVenda to set
+	 */
+	public void setFormaVenda(FormaComercializacao formaVenda) {
+		this.formaVenda = formaVenda;
+	}
+
+	/**
+	 * @return the codigoBarras
+	 */
+	public String getCodigoBarras() {
+		return codigoBarras;
+	}
+
+	/**
+	 * @param codigoBarras the codigoBarras to set
+	 */
+	public void setCodigoBarras(String codigoBarras) {
+		this.codigoBarras = codigoBarras;
+	}
+
+	/**
+	 * @return the idVenda
+	 */
+	public Long getIdVenda() {
+		return idVenda;
+	}
+
+	/**
+	 * @param idVenda the idVenda to set
+	 */
+	public void setIdVenda(Long idVenda) {
+		this.idVenda = idVenda;
+	}
 
 	/**
 	 * @return the dataVenda
@@ -129,14 +216,14 @@ public class VendaEncalheDTO implements Serializable {
 	/**
 	 * @return the numeroEdicao
 	 */
-	public Integer getNumeroEdicao() {
+	public Long getNumeroEdicao() {
 		return numeroEdicao;
 	}
 
 	/**
 	 * @param numeroEdicao the numeroEdicao to set
 	 */
-	public void setNumeroEdicao(Integer numeroEdicao) {
+	public void setNumeroEdicao(Long numeroEdicao) {
 		this.numeroEdicao = numeroEdicao;
 	}
 
@@ -157,14 +244,14 @@ public class VendaEncalheDTO implements Serializable {
 	/**
 	 * @return the qntProduto
 	 */
-	public Integer getQntProduto() {
+	public Long getQntProduto() {
 		return qntProduto;
 	}
 
 	/**
 	 * @param qntProduto the qntProduto to set
 	 */
-	public void setQntProduto(Integer qntProduto) {
+	public void setQntProduto(Long qntProduto) {
 		this.qntProduto = qntProduto;
 	}
 
@@ -208,6 +295,20 @@ public class VendaEncalheDTO implements Serializable {
 	 */
 	public void setTipoVendaEncalhe(TipoVendaEncalhe tipoVendaEncalhe) {
 		this.tipoVendaEncalhe = tipoVendaEncalhe;
+	}
+
+	/**
+	 * @return the qntDisponivelProduto
+	 */
+	public Integer getQntDisponivelProduto() {
+		return qntDisponivelProduto;
+	}
+
+	/**
+	 * @param qntDisponivelProduto the qntDisponivelProduto to set
+	 */
+	public void setQntDisponivelProduto(Integer qntDisponivelProduto) {
+		this.qntDisponivelProduto = qntDisponivelProduto;
 	}
 	
 	

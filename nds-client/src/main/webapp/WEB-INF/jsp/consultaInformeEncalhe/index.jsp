@@ -47,11 +47,14 @@ fieldset label {
 <body>
 	<div id="dialog-imprimir" title="Imprimir Informe de Encalhe">
 		<form id="form-imprimir">
+			<input type="hidden" name="idFornecedor"/>
+			<input type="hidden" name="semanaRecolhimento"/>
+			<input type="hidden" name="dataRecolhimento"/>
+			<input type="hidden" name="sortname" value="nomeProduto"/>
+			<input type="hidden" name="sortorder" value="asc"/>
+			
 			<fieldset>
 				<legend>Tipo de Impress&atilde;o</legend>
-				<input type="checkbox" checked="checked"
-					id="checkTipoImpressaoDados" name="tipoImpressao.dados" /><label
-					for="checkTipoImpressaoDados">Dados</label>
 				<div id="buttonsetTipoImpressaoCapas">
 					<input type="radio" id="radioTipoImpressaoCapasNAO"
 						name="tipoImpressao.capas" value="NAO" checked="checked" /><label

@@ -94,6 +94,11 @@ public enum GrupoMovimentoEstoque  {
 	VENDA_ENCALHE(OperacaoEstoque.SAIDA, Dominio.DISTRIBUIDOR),
 	
 	/**
+	 * Estorno de encalhe vendido, devido a um cancelamento da venda.
+	 */
+	ESTORNO_VENDA_ENCALHE(OperacaoEstoque.ENTRADA,Dominio.DISTRIBUIDOR),
+	
+	/**
 	 * 
 	 */
 	ENCALHE_ANTECIPADO(OperacaoEstoque.ENTRADA,Dominio.COTA),

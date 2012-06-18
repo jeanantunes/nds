@@ -3,9 +3,9 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title>NDS - Novo Distrib</title>
-<link rel="stylesheet" type="text/css" href="css/NDS.css" />
-<link rel="stylesheet" type="text/css" href="css/menu_superior.css" />
-<script language="javascript" type="text/javascript" src="scripts/jquery-ui-1.8.16.custom/development-bundle/jquery-1.6.2.js"></script>
+<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/NDS.css" />
+<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/menu_superior.css" />
+<script language="javascript" type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/development-bundle/jquery-1.6.2.js"></script>
 <style type="text/css">
 body{font-size:12px!important;}
 h1{font-size:20px;}
@@ -32,7 +32,7 @@ function imprimir(){
 
 <table width="800" border="0" align="center" cellpadding="3" cellspacing="0" style="border:1px solid #000; margin-bottom:5px;">
   <tr>
-    <td width="120" height="21" align="center"><span style="border-bottom:1px solid #000;"><span class="logo"><img src="images/logo_sistema.png" width="110" height="70" alt="Novo Distrib"  /></span></span></td>
+    <td width="120" height="21" align="center"><span style="border-bottom:1px solid #000;"><span class="logo"><img src="${pageContext.request.contextPath}/images/logo_sistema.png" width="110" height="70" alt="Novo Distrib"  /></span></span></td>
     <td width="301" align="center" valign="middle"><h3>TREELOG S/A<br />
       LOGÍSTICA E DISTRIBUIÇÃO</h3></td>
     <td width="359" align="right" valign="middle"><h1>Mapa de Abastecimento de Produto por Cota</h1></td>
@@ -46,312 +46,62 @@ function imprimir(){
     <td width="660" class="relatorios" style="padding-left:5px; border-left:1px solid #000; border-top:1px solid #000; border-bottom:1px solid #000;border-right:1px solid #000;"><table width="100%" border="0" cellspacing="1" cellpadding="1">
       <tr>
         <td width="8%"><strong>Produto</strong>: </td>
-        <td width="46%"><strong>SUPER INTERESSANTE</strong></td>
+        <td width="46%"><strong>${mapa.nomeProduto}</strong></td>
         <td width="14%"><strong>Código:</strong></td>
-        <td width="32%">34080928</td>
+        <td width="32%">${mapa.codigoProduto}</td>
       </tr>
       <tr>
         <td><strong>Edição:</strong></td>
-        <td>402</td>
+        <td>${mapa.numeroEdicao}</td>
         <td><strong>Preço Capa R$:</strong></td>
-        <td>9,90</td>
+        <td>${mapa.precoCapa}</td>
       </tr>
     </table></td>
   </tr>
 </table>
-<table width="800" border="0" align="center" cellpadding="0" cellspacing="0">
+<table width="800" border="0" align="center" cellpadding="0" cellspacing="0" >
+ 
   <tr>
-    <td width="167" align="left" valign="top"><table width="160" border="0" cellpadding="0" cellspacing="0" style="margin-top:5px;" class="relatorios">
+    <td width="167" align="left" valign="top">
+    <table width="160"  border="0" cellpadding="0" cellspacing="0" style="margin-top:5px;" class="relatorios">
+    
       <tr class="class_linha_3">
         <td width="89" style="border-left:1px solid #000;border-top:1px solid #000;border-bottom:1px solid #000;"><strong>Cota</strong></td>
         <td width="73" align="center" style=" border-bottom:1px solid #000; border-top:1px solid #000;border-left:1px solid #000;border-right:1px solid #000;"><strong>Total</strong></td>
       </tr>
-      <tr class="class_linha_1">
-        <td style="border-left:1px solid #000;border-bottom:1px solid #000;">1</td>
-        <td align="center" class="class_total" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">23</td>
-      </tr>
-      <tr class="class_linha_2">
-        <td style="border-left:1px solid #000;border-bottom:1px solid #000;">2</td>
-        <td align="center" class="class_total" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">5</td>
-      </tr>
-      <tr class="class_linha_1">
-        <td style="border-left:1px solid #000;border-bottom:1px solid #000;">3</td>
-        <td align="center" class="class_total" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">16</td>
-      </tr>
-      <tr class="class_linha_2">
-        <td style="border-left:1px solid #000;border-bottom:1px solid #000;">4</td>
-        <td align="center" class="class_total" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">4</td>
-      </tr>
-      <tr class="class_linha_1">
-        <td style="border-left:1px solid #000;border-bottom:1px solid #000;">5</td>
-        <td align="center" class="class_total" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">10</td>
-      </tr>
-      <tr class="class_linha_2">
-        <td style="border-left:1px solid #000;border-bottom:1px solid #000;">6</td>
-        <td align="center" class="class_total" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">40</td>
-      </tr>
-      <tr class="class_linha_1">
-        <td style="border-left:1px solid #000;border-bottom:1px solid #000;">7</td>
-        <td align="center" class="class_total" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">5</td>
-      </tr>
-      <tr class="class_linha_2">
-        <td style="border-left:1px solid #000;border-bottom:1px solid #000;">8</td>
-        <td align="center" class="class_total" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">3</td>
-      </tr>
-      <tr class="class_linha_1">
-        <td style="border-left:1px solid #000;border-bottom:1px solid #000;">9</td>
-        <td align="center" class="class_total" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">45</td>
-      </tr>
-      <tr class="class_linha_2">
-        <td style="border-left:1px solid #000;border-bottom:1px solid #000;">10</td>
-        <td align="center" class="class_total" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">66</td>
-      </tr>
-      <tr class="class_linha_1">
-        <td style="border-left:1px solid #000;border-bottom:1px solid #000;">11</td>
-        <td align="center" class="class_total" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">13</td>
-      </tr>
-      <tr class="class_linha_2">
-        <td style="border-left:1px solid #000;border-bottom:1px solid #000;">12</td>
-        <td align="center" class="class_total" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">34</td>
-      </tr>
-      <tr class="class_linha_1">
-        <td style="border-left:1px solid #000;border-bottom:1px solid #000;">13</td>
-        <td align="center" class="class_total" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">16</td>
-      </tr>
-    </table></td>
-    <td width="158" valign="top"><table width="150" border="0" cellpadding="0" cellspacing="0" style="margin-top:5px;" class="relatorios">
-        <tr class="class_linha_3">
-          <td width="127" style="border-left:1px solid #000;border-top:1px solid #000;border-bottom:1px solid #000;"><strong>Cota</strong></td>
-          <td width="78" align="center" style=" border-bottom:1px solid #000; border-top:1px solid #000;border-left:1px solid #000;border-right:1px solid #000;"><strong>Total</strong></td>
-        </tr>
-        <tr class="class_linha_1">
-          <td style="border-left:1px solid #000;border-bottom:1px solid #000;">1</td>
-          <td align="center" class="class_total1" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">23</td>
-        </tr>
-        <tr class="class_linha_2">
-          <td style="border-left:1px solid #000;border-bottom:1px solid #000;">2</td>
-          <td align="center" class="class_total1" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">5</td>
-        </tr>
-        <tr class="class_linha_1">
-          <td style="border-left:1px solid #000;border-bottom:1px solid #000;">3</td>
-          <td align="center" class="class_total1" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">16</td>
-        </tr>
-        <tr class="class_linha_2">
-          <td style="border-left:1px solid #000;border-bottom:1px solid #000;">4</td>
-          <td align="center" class="class_total1" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">4</td>
-        </tr>
-        <tr class="class_linha_1">
-          <td style="border-left:1px solid #000;border-bottom:1px solid #000;">5</td>
-          <td align="center" class="class_total1" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">10</td>
-        </tr>
-        <tr class="class_linha_2">
-          <td style="border-left:1px solid #000;border-bottom:1px solid #000;">6</td>
-          <td align="center" class="class_total1" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">40</td>
-        </tr>
-        <tr class="class_linha_1">
-          <td style="border-left:1px solid #000;border-bottom:1px solid #000;">7</td>
-          <td align="center" class="class_total1" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">5</td>
-        </tr>
-        <tr class="class_linha_2">
-          <td style="border-left:1px solid #000;border-bottom:1px solid #000;">8</td>
-          <td align="center" class="class_total1" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">3</td>
-        </tr>
-        <tr class="class_linha_1">
-          <td style="border-left:1px solid #000;border-bottom:1px solid #000;">9</td>
-          <td align="center" class="class_total1" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">45</td>
-        </tr>
-        <tr class="class_linha_2">
-          <td style="border-left:1px solid #000;border-bottom:1px solid #000;">10</td>
-          <td align="center" class="class_total1" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">66</td>
-        </tr>
-        <tr class="class_linha_1">
-          <td style="border-left:1px solid #000;border-bottom:1px solid #000;">11</td>
-          <td align="center" class="class_total1" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">13</td>
-        </tr>
-        <tr class="class_linha_2">
-          <td style="border-left:1px solid #000;border-bottom:1px solid #000;">12</td>
-          <td align="center" class="class_total1" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">34</td>
-        </tr>
-        <tr class="class_linha_1">
-          <td style="border-left:1px solid #000;border-bottom:1px solid #000;">13</td>
-          <td align="center" class="class_total1" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">16</td>
-        </tr>
-    </table></td>
-    <td width="157" valign="top"><table width="150" border="0" cellpadding="0" cellspacing="0" style="margin-top:5px;" class="relatorios">
-      <tr class="class_linha_3">
-        <td width="127" style="border-left:1px solid #000;border-top:1px solid #000;border-bottom:1px solid #000;"><strong>Cota</strong></td>
-        <td width="78" align="center" style=" border-bottom:1px solid #000; border-top:1px solid #000;border-left:1px solid #000;border-right:1px solid #000;"><strong>Total</strong></td>
-      </tr>
-      <tr class="class_linha_1">
-        <td style="border-left:1px solid #000;border-bottom:1px solid #000;">1</td>
-        <td align="center" class="class_total1" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">23</td>
-      </tr>
-      <tr class="class_linha_2">
-        <td style="border-left:1px solid #000;border-bottom:1px solid #000;">2</td>
-        <td align="center" class="class_total1" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">5</td>
-      </tr>
-      <tr class="class_linha_1">
-        <td style="border-left:1px solid #000;border-bottom:1px solid #000;">3</td>
-        <td align="center" class="class_total1" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">16</td>
-      </tr>
-      <tr class="class_linha_2">
-        <td style="border-left:1px solid #000;border-bottom:1px solid #000;">4</td>
-        <td align="center" class="class_total1" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">4</td>
-      </tr>
-      <tr class="class_linha_1">
-        <td style="border-left:1px solid #000;border-bottom:1px solid #000;">5</td>
-        <td align="center" class="class_total1" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">10</td>
-      </tr>
-      <tr class="class_linha_2">
-        <td style="border-left:1px solid #000;border-bottom:1px solid #000;">6</td>
-        <td align="center" class="class_total1" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">40</td>
-      </tr>
-      <tr class="class_linha_1">
-        <td style="border-left:1px solid #000;border-bottom:1px solid #000;">7</td>
-        <td align="center" class="class_total1" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">5</td>
-      </tr>
-      <tr class="class_linha_2">
-        <td style="border-left:1px solid #000;border-bottom:1px solid #000;">8</td>
-        <td align="center" class="class_total1" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">3</td>
-      </tr>
-      <tr class="class_linha_1">
-        <td style="border-left:1px solid #000;border-bottom:1px solid #000;">9</td>
-        <td align="center" class="class_total1" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">45</td>
-      </tr>
-      <tr class="class_linha_2">
-        <td style="border-left:1px solid #000;border-bottom:1px solid #000;">10</td>
-        <td align="center" class="class_total1" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">66</td>
-      </tr>
-      <tr class="class_linha_1">
-        <td style="border-left:1px solid #000;border-bottom:1px solid #000;">11</td>
-        <td align="center" class="class_total1" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">13</td>
-      </tr>
-      <tr class="class_linha_2">
-        <td style="border-left:1px solid #000;border-bottom:1px solid #000;">12</td>
-        <td align="center" class="class_total1" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">34</td>
-      </tr>
-      <tr class="class_linha_1">
-        <td style="border-left:1px solid #000;border-bottom:1px solid #000;">13</td>
-        <td align="center" class="class_total1" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">16</td>
-      </tr>
-    </table></td>
-    <td width="159" valign="top"><table width="150" border="0" cellpadding="0" cellspacing="0" style="margin-top:5px;" class="relatorios">
-      <tr class="class_linha_3">
-        <td width="127" style="border-left:1px solid #000;border-top:1px solid #000;border-bottom:1px solid #000;"><strong>Cota</strong></td>
-        <td width="78" align="center" style=" border-bottom:1px solid #000; border-top:1px solid #000;border-left:1px solid #000;border-right:1px solid #000;"><strong>Total</strong></td>
-      </tr>
-      <tr class="class_linha_1">
-        <td style="border-left:1px solid #000;border-bottom:1px solid #000;">1</td>
-        <td align="center" class="class_total1" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">23</td>
-      </tr>
-      <tr class="class_linha_2">
-        <td style="border-left:1px solid #000;border-bottom:1px solid #000;">2</td>
-        <td align="center" class="class_total1" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">5</td>
-      </tr>
-      <tr class="class_linha_1">
-        <td style="border-left:1px solid #000;border-bottom:1px solid #000;">3</td>
-        <td align="center" class="class_total1" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">16</td>
-      </tr>
-      <tr class="class_linha_2">
-        <td style="border-left:1px solid #000;border-bottom:1px solid #000;">4</td>
-        <td align="center" class="class_total1" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">4</td>
-      </tr>
-      <tr class="class_linha_1">
-        <td style="border-left:1px solid #000;border-bottom:1px solid #000;">5</td>
-        <td align="center" class="class_total1" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">10</td>
-      </tr>
-      <tr class="class_linha_2">
-        <td style="border-left:1px solid #000;border-bottom:1px solid #000;">6</td>
-        <td align="center" class="class_total1" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">40</td>
-      </tr>
-      <tr class="class_linha_1">
-        <td style="border-left:1px solid #000;border-bottom:1px solid #000;">7</td>
-        <td align="center" class="class_total1" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">5</td>
-      </tr>
-      <tr class="class_linha_2">
-        <td style="border-left:1px solid #000;border-bottom:1px solid #000;">8</td>
-        <td align="center" class="class_total1" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">3</td>
-      </tr>
-      <tr class="class_linha_1">
-        <td style="border-left:1px solid #000;border-bottom:1px solid #000;">9</td>
-        <td align="center" class="class_total1" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">45</td>
-      </tr>
-      <tr class="class_linha_2">
-        <td style="border-left:1px solid #000;border-bottom:1px solid #000;">10</td>
-        <td align="center" class="class_total1" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">66</td>
-      </tr>
-      <tr class="class_linha_1">
-        <td style="border-left:1px solid #000;border-bottom:1px solid #000;">11</td>
-        <td align="center" class="class_total1" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">13</td>
-      </tr>
-      <tr class="class_linha_2">
-        <td style="border-left:1px solid #000;border-bottom:1px solid #000;">12</td>
-        <td align="center" class="class_total1" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">34</td>
-      </tr>
-      <tr class="class_linha_1">
-        <td style="border-left:1px solid #000;border-bottom:1px solid #000;">13</td>
-        <td align="center" class="class_total1" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">16</td>
-      </tr>
-    </table></td>
-    <td width="159" valign="top"><table width="158" border="0" cellpadding="0" cellspacing="0" style="margin-top:5px;" class="relatorios">
-      <tr class="class_linha_3">
-        <td width="89" style="border-left:1px solid #000;border-top:1px solid #000;border-bottom:1px solid #000;"><strong>Cota</strong></td>
-        <td width="69" align="center" style=" border-bottom:1px solid #000; border-top:1px solid #000;border-left:1px solid #000;border-right:1px solid #000;"><strong>Total</strong></td>
-      </tr>
-      <tr class="class_linha_1">
-        <td style="border-left:1px solid #000;border-bottom:1px solid #000;">1</td>
-        <td align="center" class="class_total1" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">23</td>
-      </tr>
-      <tr class="class_linha_2">
-        <td style="border-left:1px solid #000;border-bottom:1px solid #000;">2</td>
-        <td align="center" class="class_total1" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">5</td>
-      </tr>
-      <tr class="class_linha_1">
-        <td style="border-left:1px solid #000;border-bottom:1px solid #000;">3</td>
-        <td align="center" class="class_total1" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">16</td>
-      </tr>
-      <tr class="class_linha_2">
-        <td style="border-left:1px solid #000;border-bottom:1px solid #000;">4</td>
-        <td align="center" class="class_total1" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">4</td>
-      </tr>
-      <tr class="class_linha_1">
-        <td style="border-left:1px solid #000;border-bottom:1px solid #000;">5</td>
-        <td align="center" class="class_total1" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">10</td>
-      </tr>
-      <tr class="class_linha_2">
-        <td style="border-left:1px solid #000;border-bottom:1px solid #000;">6</td>
-        <td align="center" class="class_total1" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">40</td>
-      </tr>
-      <tr class="class_linha_1">
-        <td style="border-left:1px solid #000;border-bottom:1px solid #000;">7</td>
-        <td align="center" class="class_total1" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">5</td>
-      </tr>
-      <tr class="class_linha_2">
-        <td style="border-left:1px solid #000;border-bottom:1px solid #000;">8</td>
-        <td align="center" class="class_total1" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">3</td>
-      </tr>
-      <tr class="class_linha_1">
-        <td style="border-left:1px solid #000;border-bottom:1px solid #000;">9</td>
-        <td align="center" class="class_total1" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">45</td>
-      </tr>
-      <tr class="class_linha_2">
-        <td style="border-left:1px solid #000;border-bottom:1px solid #000;">10</td>
-        <td align="center" class="class_total1" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">66</td>
-      </tr>
-      <tr class="class_linha_1">
-        <td style="border-left:1px solid #000;border-bottom:1px solid #000;">11</td>
-        <td align="center" class="class_total1" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">13</td>
-      </tr>
-      <tr class="class_linha_2">
-        <td style="border-left:1px solid #000;border-bottom:1px solid #000;">12</td>
-        <td align="center" class="class_total1" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">34</td>
-      </tr>
-      <tr class="class_linha_1">
-        <td style="border-left:1px solid #000;border-bottom:1px solid #000;">13</td>
-        <td align="center" class="class_total1" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">16</td>
-      </tr>
-    </table></td>
+      
+      <c:forEach items="${mapa.cotasQtdes}" var="cota" varStatus="statusCota" end="${mapa.cotasQtdes.size()/4 + (mapa.cotasQtdes.size()%4!=0?1:0)}">
+      
+	      <tr class="class_linha_${statusCota.index%2==0?1:2}">
+	        <td style="border-left:1px solid #000;border-bottom:1px solid #000;">${cota.key}</td>
+	        <td align="center" class="class_total" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">${cota.value}</td>
+	      </tr>
+	      
+	      <c:if test="${statusCota.index+1!=mapa.cotasQtdes.size() and (statusCota.index%(mapa.cotasQtdes.size()/4)==0 or mapa.cotasQtdes.size<4)}">
+	      	
+		    </table>
+		    
+		    </td>
+		    <td width="158" valign="top">
+		    
+		    <table width="150" border="0" cellpadding="0" cellspacing="0" style="margin-top:5px;" class="relatorios">
+		    
+		    <tr class="class_linha_3">
+		        <td width="89" style="border-left:1px solid #000;border-top:1px solid #000;border-bottom:1px solid #000;"><strong>Cota</strong></td>
+		        <td width="73" align="center" style=" border-bottom:1px solid #000; border-top:1px solid #000;border-left:1px solid #000;border-right:1px solid #000;"><strong>Total</strong></td>
+		      </tr>
+		    
+	      </c:if>
+	      
+      </c:forEach>
+      
+    </table>
+    
+    </td>
+    
   </tr>
+ 
+  <tr><td>&nbsp</td><td>&nbsp</td><td>&nbsp</td><td>&nbsp</td></tr>
 </table>
 </body>
 </html>

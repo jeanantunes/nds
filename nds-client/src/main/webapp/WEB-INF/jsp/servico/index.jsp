@@ -296,7 +296,7 @@
 					}
 				},
 				beforeClose: function() {
-					clearMessageDialogTimeout();
+					clearMessageDialogTimeout('dialogMensagemNovo');
 					limparModalCadastro();
 				}
 			});
@@ -337,7 +337,7 @@
 					}
 				},
 				beforeClose: function() {
-					clearMessageDialogTimeout();
+					clearMessageDialogTimeout('dialogMensagemNovo');
 				}
 			});
 		}

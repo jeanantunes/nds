@@ -442,6 +442,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 		// Característica Física:
 		produtoEdicao.setPeso(dto.getPeso());
 		
+		produtoEdicao.setNumeroLancamento(dto.getNumeroLancamento());
 		
 		if (produtoEdicao.getId() == null) {
 			
@@ -537,6 +538,13 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 		} catch (Exception e) {
 			throw new ValidacaoException(TipoMensagem.ERROR, "Ocorreu um erro ao tentar excluir a edição!");
 		}
+	}
+	
+	@Transactional(readOnly = true)
+	@Override
+	public ProdutoEdicao buscarProdutoPorCodigoBarras(String codigoBarras){
+		
+		return produtoEdicaoRepository.obterProdutoEdicaoPorCodigoBarra(codigoBarras);
 	}
 	
 }

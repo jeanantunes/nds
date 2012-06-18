@@ -6,17 +6,19 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
-import javax.persistence.criteria.CriteriaBuilder.Case;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.dto.AbastecimentoDTO;
 import br.com.abril.nds.dto.ItemDTO;
+import br.com.abril.nds.dto.MapaCotaDTO;
+import br.com.abril.nds.dto.MapaProdutoCotasDTO;
 import br.com.abril.nds.dto.ProdutoAbastecimentoDTO;
+import br.com.abril.nds.dto.ProdutoEdicaoMapaDTO;
 import br.com.abril.nds.dto.ProdutoMapaDTO;
+import br.com.abril.nds.dto.ProdutoMapaRotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroMapaAbastecimentoDTO;
-import br.com.abril.nds.dto.filtro.FiltroMapaAbastecimentoDTO.TipoConsulta;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Rota;
@@ -153,6 +155,23 @@ public class MapaAbastecimentoController {
 	 */
 	private void tratarFiltro(FiltroMapaAbastecimentoDTO filtroAtual) {
 
+		switch(filtroAtual.getTipoConsulta()) {
+			case BOX:
+				if(filtroAtual.getBox()==null)
+					throw new ValidacaoException(TipoMensagem.WARNING, "'Box' não foi preenchido.");	
+				break;
+			case COTA:
+				if(filtroAtual.getCodigoCota()==null)
+					throw new ValidacaoException(TipoMensagem.WARNING, "'Cota' não foi preenchida.");
+				break;
+			case PRODUTO:
+				if(filtroAtual.getCodigoProduto()==null)
+					throw new ValidacaoException(TipoMensagem.WARNING, "'Produto' não foi preenchido.");
+				break;
+			default:
+				throw new ValidacaoException(TipoMensagem.WARNING, "Tipo de consulta inexistente.");
+		}
+		
 		FiltroMapaAbastecimentoDTO filtroSession = (FiltroMapaAbastecimentoDTO) session
 				.getAttribute(FILTRO_SESSION_ATTRIBUTE);
 		
@@ -189,24 +208,37 @@ public class MapaAbastecimentoController {
 
 		FiltroMapaAbastecimentoDTO filtro = (FiltroMapaAbastecimentoDTO) session.getAttribute(FILTRO_SESSION_ATTRIBUTE);
 		
-		if(filtro == null)
-			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhuma pesquisa foi realizada.");
+		if(filtro == null) {	
+			result.forwardTo(MapaAbastecimentoController.class).impressaoFalha("Nenhuma pesquisa foi realizada.");
+			return;
+		}
 		
-		switch(filtro.getTipoConsulta()) {
-			case BOX:
-				result.forwardTo(MapaAbastecimentoController.class).impressaoPorBox(filtro);	
-				break;
-			case ROTA:
-				result.forwardTo(MapaAbastecimentoController.class).impressaoPorRota();
-				break;
-			case COTA:
-				result.forwardTo(MapaAbastecimentoController.class).impressaoPorCota();
-				break;
-			case PRODUTO:
-				result.forwardTo(MapaAbastecimentoController.class).impressaoPorProduto();
-				break;
-			default:
-				throw new ValidacaoException(TipoMensagem.WARNING, "Tipo de consulta inexistente.");
+		try {
+		
+			switch(filtro.getTipoConsulta()) {
+				case BOX:
+					result.forwardTo(MapaAbastecimentoController.class).impressaoPorBox(filtro);	
+					break;
+				case ROTA:
+					result.forwardTo(MapaAbastecimentoController.class).impressaoPorRota(filtro);
+					break;
+				case COTA:
+					result.forwardTo(MapaAbastecimentoController.class).impressaoPorCota(filtro);
+					break;
+				case PRODUTO:
+					if(filtro.getQuebraPorCota()) 
+						result.forwardTo(MapaAbastecimentoController.class).impressaoPorProdutoQuebraCota(filtro);
+					else if(filtro.getEdicaoProduto()!=null)	
+						result.forwardTo(MapaAbastecimentoController.class).impressaoPorProdutoEdicao(filtro);
+					else 
+						result.forwardTo(MapaAbastecimentoController.class).impressaoPorProduto(filtro);
+					break;
+				default:
+					throw new ValidacaoException(TipoMensagem.WARNING, "Tipo de consulta inexistente.");
+			}
+		
+		}catch(ValidacaoException e) {
+			impressaoFalha(e.getMessage());
 		}
 				
 	}
@@ -215,10 +247,50 @@ public class MapaAbastecimentoController {
 		
 		HashMap<String, ProdutoMapaDTO> produtosMapa = mapaAbastecimentoService.obterMapaDeImpressaoPorBox(filtro);
 		
-		result.include("produtosMapa",produtosMapa);
+		result.include("produtosMapa",produtosMapa.values());
 	}
 	
-	public void impressaoPorRota() {}
-	public void impressaoPorCota() {}
-	public void impressaoPorProduto() {}
+	public void impressaoPorRota(FiltroMapaAbastecimentoDTO filtro) {
+		
+		HashMap<String, HashMap<String, ProdutoMapaRotaDTO>> produtosMapa = mapaAbastecimentoService.obterMapaDeImpressaoPorBoxRota(filtro);
+		
+		result.include("mapa",produtosMapa);
+		
+	}
+	
+	public void impressaoPorProduto(FiltroMapaAbastecimentoDTO filtro) {
+		
+		MapaCotaDTO mapaCota = mapaAbastecimentoService.obterMapaDeImpressaoPorCota(filtro);
+		
+		result.include("mapa", mapaCota);
+		
+	}
+	
+	public void impressaoPorCota(FiltroMapaAbastecimentoDTO filtro) {
+				
+		MapaCotaDTO mapaCota = mapaAbastecimentoService.obterMapaDeImpressaoPorCota(filtro);
+		
+		result.include("mapa", mapaCota);
+		
+	}
+	
+	public void impressaoPorProdutoEdicao(FiltroMapaAbastecimentoDTO filtro) {		
+
+		ProdutoEdicaoMapaDTO produtoEdicaoMapa = mapaAbastecimentoService.obterMapaDeImpressaoPorProdutoEdicao(filtro);
+		
+		result.include("mapa",produtoEdicaoMapa);
+		
+	}
+	
+	public void impressaoPorProdutoQuebraCota(FiltroMapaAbastecimentoDTO filtro) {		
+
+		MapaProdutoCotasDTO produtoCotaMapa = mapaAbastecimentoService.obterMapaDeImpressaoPorProdutoQuebrandoPorCota(filtro);
+		
+		result.include("mapa",produtoCotaMapa);
+		
+	}
+	
+	public void impressaoFalha(String mensagemErro){
+		result.include(mensagemErro);					
+	}
 }

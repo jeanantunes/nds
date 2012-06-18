@@ -1,24 +1,40 @@
 package br.com.abril.nds.dto;
 
 import java.io.Serializable;
+import java.util.Date;
 
+import br.com.abril.nds.util.export.Export;
+import br.com.abril.nds.util.export.Export.Alignment;
+import br.com.abril.nds.util.export.Exportable;
+
+@Exportable
 public class CotaAusenteEncalheDTO implements Serializable {
 
 	private static final long serialVersionUID = -5167121794665878284L;
 	
 	private Long idCota;
-	
+
+	@Export(label = "Cota", alignment = Alignment.CENTER, exhibitionOrder = 1)
 	private Integer numeroCota;
 
+	@Export(label = "Nome", alignment = Alignment.CENTER, exhibitionOrder = 2)
 	private String colaboradorName;
-	
+
+	@Export(label = "Box", alignment = Alignment.CENTER, exhibitionOrder = 3)
 	private String boxName;
-	
+
+	@Export(label = "Roteiro", alignment = Alignment.CENTER, exhibitionOrder = 4)
 	private String roteiroName;
-	
+
+	@Export(label = "Rota", alignment = Alignment.CENTER, exhibitionOrder = 5)
 	private String rotaName;
-	
+
+	@Export(label = "Ação", alignment = Alignment.CENTER, exhibitionOrder = 6)
 	private String acao = "";
+	
+	private Boolean fechado;
+	
+	private Date dataEncalhe;
 	
 	private String check;
 	
@@ -112,7 +128,7 @@ public class CotaAusenteEncalheDTO implements Serializable {
 	public void setAcao(String acao) {
 		this.acao = acao;
 	}
-
+	
 	/**
 	 * @return the check
 	 */
@@ -139,6 +155,34 @@ public class CotaAusenteEncalheDTO implements Serializable {
 	 */
 	public void setIdCota(Long idCota) {
 		this.idCota = idCota;
+	}
+
+	/**
+	 * @return the dataEncalhe
+	 */
+	public Date getDataEncalhe() {
+		return dataEncalhe;
+	}
+
+	/**
+	 * @param dataEncalhe the dataEncalhe to set
+	 */
+	public void setDataEncalhe(Date dataEncalhe) {
+		this.dataEncalhe = dataEncalhe;
+	}
+
+	/**
+	 * @return the fechado
+	 */
+	public Boolean getFechado() {
+		return fechado;
+	}
+
+	/**
+	 * @param fechado the fechado to set
+	 */
+	public void setFechado(Boolean fechado) {
+		this.fechado = fechado;
 	}
 	
 }
