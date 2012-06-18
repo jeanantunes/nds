@@ -26,6 +26,9 @@
 	      <input name="temComputador" type="checkbox" value="" id="temComputador" />
 	      <label for="temComputador" >Tem Computador?</label>
 	      <br clear="all" />
+	      <input name="possuiCartao" type="checkbox" value="" id="possuiCartao" />
+	      <label for="possuiCartao" >Possui cartão de Crédito/Débito?</label>
+	      <br clear="all" />
 	      <input name="luminoso" type="checkbox" value="" id="luminoso" onclick="PDV.opcaoTextoLuminoso('#luminoso')" />
 	      <label for="luminoso" >Luminoso</label>
 	      <textarea name="textoLuminoso" cols="" rows="2" style="width:610px;" id="textoLuminoso" disabled="disabled"></textarea>
@@ -71,16 +74,7 @@
 	  	   </c:forEach>
 	    </select></td>
     </tr>
-  <tr>
-    <td>Cluster:</td>
-    <td>
-	    <select name="selectCluster" id="selectCluster" style="width:232px;">
-	      <option selected="selected">Selecione...</option>
-	      <c:forEach items="${listaClusterPDV}" var="item">
-	    	  <option value="${item.key}">${item.value}</option>	          
-	  	   </c:forEach>
-	    </select></td>
-    </tr>
+ 
     </table>
  </fieldset>
  

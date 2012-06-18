@@ -110,12 +110,12 @@ var PDV = {
 			PDV.atribuirValorChecked(result.pdvDTO.caracteristicaDTO.balcaoCentral,"#balcaoCentral");
 			PDV.atribuirValorChecked(result.pdvDTO.caracteristicaDTO.temComputador,"#temComputador");
 			PDV.atribuirValorChecked(result.pdvDTO.caracteristicaDTO.luminoso,"#luminoso");
-
+			PDV.atribuirValorChecked(result.pdvDTO.caracteristicaDTO.possuiCartao,"#possuiCartao");
+			
 			$("#textoLuminoso").val(result.pdvDTO.caracteristicaDTO.textoLuminoso);
 	        $("#selectdTipoPonto").val(result.pdvDTO.caracteristicaDTO.tipoPonto);
 	        $("#selectCaracteristica").val(result.pdvDTO.caracteristicaDTO.tipoCaracteristicaSegmentacaoPDV);
 	        $("#selectAreainfluencia").val(result.pdvDTO.caracteristicaDTO.areaInfluencia);
-	        $("#selectCluster").val(result.pdvDTO.caracteristicaDTO.cluster);
 	        
 	        if(this.isChecked("#luminoso")){
 				$("#textoLuminoso").removeAttr("disabled");
@@ -132,27 +132,7 @@ var PDV = {
 			
 			$(idChecked).attr("checked",cheked);
 		},
-		
-		carregarAbaEspecialidade: function (result){
-	
-			var parametros = [];
-			
-			$.each(result.pdvDTO.especialidades, function(index, valor) {
 				
-				parametros.push({name:'codigos['+ index +']', value: valor});
-		  	});
-			
-			if(parametros.length > 0){
-				
-				PDV.carregarEspecialidade(parametros);
-				PDV.carregarEspecialidadesNotIn(parametros);
-			}
-			else{
-				PDV.carregarCaracteristicaEspecialidade(null);
-			}
-
-		},
-		
 		carregarAbaGeradorFluxo: function (result){
 			
 			var parametros = [];
@@ -237,7 +217,6 @@ var PDV = {
 			PDV.popup_novoPdv();
 			PDV.carregarAbaDadosBasico(result);
 			PDV.carregarAbaCaracteristica(result);
-			PDV.carregarAbaEspecialidade(result);
 			PDV.carregarAbaGeradorFluxo(result);
 			PDV.carregarAbaMap(result);
 		},
@@ -246,8 +225,7 @@ var PDV = {
 	
 			$.postJSON(contextPath + "/cadastro/pdv/salvar",
 					this.getDadosBasico() +"&" +
-					this.getDadosCaracteristica() +"&" + 
-					this.getDadosEspecialidade() +"&" + 
+					this.getDadosCaracteristica() +"&" +
 					this.getDadosGeradorFluxo()  +"&" +
 					this.getDadosMap(), function(result){
 			
@@ -313,29 +291,18 @@ var PDV = {
 		
 				
 		getDadosCaracteristica: function (){
-			
+			debugger;
 			var dados =	              
 	              "pdvDTO.caracteristicaDTO.balcaoCentral="  + this.isChecked("#balcaoCentral")+"&"+
 	              "pdvDTO.caracteristicaDTO.temComputador="  + this.isChecked("#temComputador")+"&"+
+	              "pdvDTO.caracteristicaDTO.possuiCartao="  + this.isChecked("#possuiCartao")+"&"+
 	              "pdvDTO.caracteristicaDTO.luminoso="       + this.isChecked("#luminoso")+"&"+
 	              "pdvDTO.caracteristicaDTO.textoLuminoso="  + $("#textoLuminoso").val()+"&"+
 	              "pdvDTO.caracteristicaDTO.tipoPonto="      + $("#selectdTipoPonto").val()+"&"+
 	              "pdvDTO.caracteristicaDTO.tipoCaracteristicaSegmentacaoPDV="+$("#selectCaracteristica").val()+"&"+
-	              "pdvDTO.caracteristicaDTO.areaInfluencia=" + $("#selectAreainfluencia").val()+"&"+
-	              "pdvDTO.caracteristicaDTO.cluster="        + $("#selectCluster").val();
+	              "pdvDTO.caracteristicaDTO.areaInfluencia=" + $("#selectAreainfluencia").val();
 						
 			return dados;
-		},
-
-		getDadosEspecialidade: function (){
-			
-			var listaEspecialidades ="";
-			
-			 $("#especialidades_options option").each(function (index) {
-				 listaEspecialidades = listaEspecialidades + "pdvDTO.especialidades["+index+"]="+ $(this).val() +"&";
-             });
-   
-			return listaEspecialidades;
 		},
 		
 		getDadosGeradorFluxo: function (){
@@ -610,7 +577,6 @@ var PDV = {
 			PDV.limparCamposTela();
 			PDV.carregarMaterialPromocional(null);
 			PDV.carregarGeradorFluxo(null);
-			PDV.carregarCaracteristicaEspecialidade(null);
 			PDV.carregarPeriodosFuncionamento();
 			
 			PDV.diasFuncionamento = [];
@@ -781,39 +747,8 @@ var PDV = {
 							$("#selectMap").html(combo);
 							$("#selectMap").sortOptions();
 			},null,true,"idModalPDV");
-		},
-			
-		carregarEspecialidade:function(data){
-			$.postJSON(contextPath + "/cadastro/pdv/carregarEspecialidades",
-					   data, 
-					   function(result){
-							var combo =  montarComboBox(result, false);
-							$("#especialidades_options").html(combo);
-							$("#especialidades_options").sortOptions();
-			},null,true,"idModalPDV");
-		},
+		},				
 		
-		
-		carregarCaracteristicaEspecialidade:function(data){
-			$.postJSON(contextPath + "/cadastro/pdv/carregarEspecialidades",
-					   data, 
-					   function(result){
-							var combo =  montarComboBox(result, false);
-							$("#caract_options").html(combo);
-							$("#caract_options").sortOptions();
-			},null,true,"idModalPDV");
-		},
-		
-		carregarEspecialidadesNotIn:function(data){
-			$.postJSON(contextPath + "/cadastro/pdv/carregarEspecialidadesNotIn",
-					   data, 
-					   function(result){
-							var combo =  montarComboBox(result, false);
-							$("#caract_options").html(combo);
-							$("#caract_options").sortOptions();
-			},null,true,"idModalPDV");
-		},
-
 		carregarGeradorFluxoNotIn:function(data){
 			$.postJSON(contextPath + "/cadastro/pdv/carregarGeradorFluxoNotIn",
 					   data, 
@@ -887,15 +822,14 @@ var PDV = {
 			$("#ptoPrincipal").attr("checked",null);
             $("#balcaoCentral").attr("checked",null);
             $("#temComputador").attr("checked",null);
+            $("#possuiCartao").attr("checked",null);
+                        
             $("#luminoso").attr("checked",null);
             $("#textoLuminoso").val("");
             $("#selectdTipoPonto").val("");
             $("#selectCaracteristica").val("");
             $("#selectAreainfluencia").val("");
-            $("#selectCluster").val("");
-            
-            $("#especialidades_options option").remove();
-            
+                     
             $("#selectFluxoSecundario option").remove();
             
             $("#selectMap option").remove();

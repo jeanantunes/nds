@@ -31,9 +31,7 @@ import br.com.abril.nds.model.cadastro.TipoLicencaMunicipal;
 import br.com.abril.nds.model.cadastro.TipoParametroSistema;
 import br.com.abril.nds.model.cadastro.pdv.AreaInfluenciaPDV;
 import br.com.abril.nds.model.cadastro.pdv.CaracteristicasPDV;
-import br.com.abril.nds.model.cadastro.pdv.ClusterPDV;
 import br.com.abril.nds.model.cadastro.pdv.EnderecoPDV;
-import br.com.abril.nds.model.cadastro.pdv.EspecialidadePDV;
 import br.com.abril.nds.model.cadastro.pdv.GeradorFluxoPDV;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
 import br.com.abril.nds.model.cadastro.pdv.PeriodoFuncionamentoPDV;
@@ -44,10 +42,8 @@ import br.com.abril.nds.model.cadastro.pdv.TipoGeradorFluxoPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoPeriodoFuncionamentoPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoPontoPDV;
 import br.com.abril.nds.repository.AreaInfluenciaPDVRepository;
-import br.com.abril.nds.repository.ClusterPDVRepository;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.EnderecoPDVRepository;
-import br.com.abril.nds.repository.EspecialidadePDVRepository;
 import br.com.abril.nds.repository.GeradorFluxoPDVRepository;
 import br.com.abril.nds.repository.MaterialPromocionalRepository;
 import br.com.abril.nds.repository.ParametroSistemaRepository;
@@ -74,9 +70,6 @@ public class PdvServiceImpl implements PdvService {
 	private CotaRepository cotaRepository;
 	
 	@Autowired
-	private EspecialidadePDVRepository especialidadePDVRepository;
-	
-	@Autowired
 	private GeradorFluxoPDVRepository fluxoPDVRepository;
 	
 	@Autowired
@@ -90,10 +83,7 @@ public class PdvServiceImpl implements PdvService {
 	
 	@Autowired
 	private AreaInfluenciaPDVRepository areaInfluenciaPDVRepository;
-	
-	@Autowired
-	private ClusterPDVRepository clusterPDVRepository;
-	
+		
 	@Autowired
 	private TipoPontoPDVRepository tipoPontoPDVRepository;
 	
@@ -132,38 +122,7 @@ public class PdvServiceImpl implements PdvService {
 		
 		return areaInfluenciaPDVRepository.buscarTodos(); 
 	}
-	
-	@Transactional(readOnly=true)
-	@Override
-	public List<ClusterPDV> obterClustersPDV(){
 		
-		return clusterPDVRepository.buscarTodos();
-	}
-	
-	@Transactional(readOnly=true)
-	@Override
-	public List<EspecialidadePDV> obterEspecialidadesPDV(Long... codigos){
-		
-		if(codigos.length == 0){
-			
-			return especialidadePDVRepository.buscarTodos();
-		}
-		
-		return especialidadePDVRepository.obterEspecialidades(codigos);
-	}
-	
-	@Transactional(readOnly=true)
-	@Override
-	public List<EspecialidadePDV> obterEspecialidadesPDVNotIn(Long... codigos){
-		
-		if(codigos.length > 0){
-			
-			return especialidadePDVRepository.obterEspecialidadesNotIn(codigos);
-		}
-		
-		return new ArrayList<EspecialidadePDV>();
-	}
-	
 	@Transactional(readOnly=true)
 	@Override
 	public List<TipoGeradorFluxoPDV> obterTiposGeradorFluxo(Long... codigos){
@@ -288,7 +247,6 @@ public class PdvServiceImpl implements PdvService {
 			
 			atribuirValorDadosBasico(pdv, pdvDTO);
 			atribuirValorCaracteristica(pdv, pdvDTO);
-			atribuirValorEspecialidade(pdv, pdvDTO);
 			atribuirValorGeradorFluxo(pdv, pdvDTO);
 			atribuirValorMaterialPromocional(pdv, pdvDTO);
 		}
@@ -332,7 +290,7 @@ public class PdvServiceImpl implements PdvService {
 		if(cota == null){
 			throw new ValidacaoException(TipoMensagem.ERROR,"Não foi encontrado Cota para inclusão do PDV.");
 		}
-	
+			
 		salvarPDV(pdvDTO, cota);	
 	}
 	
@@ -407,7 +365,6 @@ public class PdvServiceImpl implements PdvService {
 		pdv.setStatus(pdvDTO.getStatusPDV());
 		pdv.setTamanhoPDV(pdvDTO.getTamanhoPDV());
 		pdv.setDentroOutroEstabelecimento(pdvDTO.isDentroOutroEstabelecimento());
-		pdv.setEspecialidades(obterEspecialidadesPDV(pdvDTO));
 		pdv.setLicencaMunicipal(obterLicencaMunicipalPDV(pdvDTO,pdv));
 		pdv.setCaracteristicas(obterCaracteristicaPDV(pdvDTO,pdv));
 		pdv.setMateriais(obterMateriaisPDV(pdvDTO));
@@ -592,27 +549,21 @@ public class PdvServiceImpl implements PdvService {
 		}
 		
 		CaracteristicaDTO caracteristicaDTO = pdvDTO.getCaracteristicaDTO();
-		AreaInfluenciaPDV areaInfluenciaPDV = null;
-		ClusterPDV clusterPDV = null;
+		AreaInfluenciaPDV areaInfluenciaPDV = null;	
 		TipoPontoPDV tipoPontoPDV = null;
 		
 		if(pdvDTO.getCaracteristicaDTO()!= null){
 			
 			if(caracteristicaDTO.getAreaInfluencia()!= null){
 				areaInfluenciaPDV = areaInfluenciaPDVRepository.buscarPorId(caracteristicaDTO.getAreaInfluencia());
-			}
-			
-			if(caracteristicaDTO.getCluster()!= null){
-				clusterPDV = clusterPDVRepository.buscarPorId(caracteristicaDTO.getCluster());
-			}
-			
+			}			
+						
 			if(caracteristicaDTO.getTipoPonto()!= null){
 				tipoPontoPDV = tipoPontoPDVRepository.buscarPorId(caracteristicaDTO.getTipoPonto());
 			}
 		}
 			
 		segmaSegmentacaoPDV.setAreaInfluenciaPDV(areaInfluenciaPDV);
-		segmaSegmentacaoPDV.setClusterPDV(clusterPDV);
 		segmaSegmentacaoPDV.setTipoCaracteristica(caracteristicaDTO.getTipoCaracteristicaSegmentacaoPDV());
 		segmaSegmentacaoPDV.setTipoPontoPDV(tipoPontoPDV);
 		
@@ -687,17 +638,6 @@ public class PdvServiceImpl implements PdvService {
 		return fluxoPDV;
 	}
 	
-	private Set<EspecialidadePDV> obterEspecialidadesPDV(PdvDTO pdvDTO) {
-		
-		Set<EspecialidadePDV> especialidadePDVs = new HashSet<EspecialidadePDV>();
-		
-		if(pdvDTO.getEspecialidades() != null){
-			especialidadePDVs.addAll(especialidadePDVRepository.obterEspecialidades((pdvDTO.getEspecialidades().toArray(new Long[]{}))));
-		}
-		
-		return especialidadePDVs;
-	}
-
 	private Cota obterCotaPDV(PdvDTO pdvDTO) {
 		
 		return cotaRepository.buscarPorId(pdvDTO.getIdCota());
@@ -717,6 +657,7 @@ public class PdvServiceImpl implements PdvService {
 		caracteristicasPDV.setPontoPrincipal(carct.isPontoPrincipal());
 		caracteristicasPDV.setPossuiComputador(carct.isTemComputador());
 		caracteristicasPDV.setPossuiLuminoso(carct.isLuminoso());
+		caracteristicasPDV.setPossuiCartaoCredito(carct.isPossuiCartao());
 		
 		if(carct.isLuminoso()){
 			caracteristicasPDV.setTextoLuminoso(carct.getTextoLuminoso());
@@ -778,7 +719,6 @@ public class PdvServiceImpl implements PdvService {
 		if(pdv.getSegmentacao()!= null){
 
 			caracteristicaDTO.setAreaInfluencia( (pdv.getSegmentacao().getAreaInfluenciaPDV()!= null)? pdv.getSegmentacao().getAreaInfluenciaPDV().getCodigo():null);
-			caracteristicaDTO.setCluster( (pdv.getSegmentacao().getClusterPDV()!=null)? pdv.getSegmentacao().getClusterPDV().getCodigo():null);
 			caracteristicaDTO.setTipoCaracteristicaSegmentacaoPDV(pdv.getSegmentacao().getTipoCaracteristica());
 			caracteristicaDTO.setTipoPonto((pdv.getSegmentacao().getTipoPontoPDV()!= null)? pdv.getSegmentacao().getTipoPontoPDV().getCodigo():null);
 		}
@@ -790,23 +730,11 @@ public class PdvServiceImpl implements PdvService {
 			caracteristicaDTO.setPontoPrincipal(pdv.getCaracteristicas().isPontoPrincipal());
 			caracteristicaDTO.setTemComputador(pdv.getCaracteristicas().isPossuiComputador());
 			caracteristicaDTO.setTextoLuminoso(pdv.getCaracteristicas().getTextoLuminoso());
+			caracteristicaDTO.setPossuiCartao(pdv.getCaracteristicas().isPossuiCartaoCredito());
 		}
 		
 		pdvDTO.setCaracteristicaDTO(caracteristicaDTO);
-	}
-	
-	private void atribuirValorEspecialidade(PDV pdv, PdvDTO pdvDTO){
-		
-		pdvDTO.setEspecialidades(new ArrayList<Long>());
-		
-		if(pdv.getEspecialidades()!= null && !pdv.getEspecialidades().isEmpty()){
-			
-			for(EspecialidadePDV esp: pdv.getEspecialidades()){
-				pdvDTO.getEspecialidades().add(esp.getCodigo());
-			}
-		}
-	}
-	
+	}	
 	private void atribuirValorGeradorFluxo(PDV pdv, PdvDTO pdvDTO){
 		
 		pdvDTO.setGeradorFluxoSecundario(new ArrayList<Long>());

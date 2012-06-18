@@ -78,8 +78,6 @@ public class PdvDTO implements Serializable {
 	
     private CaracteristicaDTO caracteristicaDTO;
     
-    private List<Long> especialidades;
-  
 	private List<Long> geradorFluxoSecundario;
     
     private Long geradorFluxoPrincipal;
@@ -409,20 +407,6 @@ public class PdvDTO implements Serializable {
 	public void setTipoEstabelecimentoAssociacaoPDV(
 			TipoEstabelecimentoAssociacaoPDV tipoEstabelecimentoAssociacaoPDV) {
 		this.tipoEstabelecimentoAssociacaoPDV = tipoEstabelecimentoAssociacaoPDV;
-	}
-
-	/**
-	 * @return the especialidades
-	 */
-	public List<Long> getEspecialidades() {
-		return especialidades;
-	}
-
-	/**
-	 * @param especialidades the especialidades to set
-	 */
-	public void setEspecialidades(List<Long> especialidades) {
-		this.especialidades = especialidades;
 	}
 
 	/**

@@ -86,8 +86,6 @@ import br.com.abril.nds.model.cadastro.TipoRegistroCobranca;
 import br.com.abril.nds.model.cadastro.TipoRoteiro;
 import br.com.abril.nds.model.cadastro.TipoTelefone;
 import br.com.abril.nds.model.cadastro.pdv.AreaInfluenciaPDV;
-import br.com.abril.nds.model.cadastro.pdv.ClusterPDV;
-import br.com.abril.nds.model.cadastro.pdv.EspecialidadePDV;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoEstabelecimentoAssociacaoPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoGeradorFluxoPDV;
@@ -741,10 +739,6 @@ public class DataLoader {
 			
 		gerarAreaInfluenciaPDV(session);
 		
-		gerarClusterPDV(session);
-		
-		gerarEspecialidadePDV(session);
-		
 		gerarTipoGeradorFluxoPDV(session);
 		
 		gerarMaterialPromocionalPDV(session);
@@ -1143,27 +1137,6 @@ public class DataLoader {
 		TipoGeradorFluxoPDV tipoGeradorFluxoPDV4 = Fixture.criarTipoGeradorFluxoPDV(5L, "Pre-Escola");
 		
 		save(session,tipoGeradorFluxoPDV,tipoGeradorFluxoPDV1,tipoGeradorFluxoPDV2,tipoGeradorFluxoPDV3,tipoGeradorFluxoPDV4);
-	}
-
-	private static void gerarEspecialidadePDV(Session session) {
-		
-		EspecialidadePDV especialidadePDV = Fixture.criarEspecialidadesPDV(1L, "Moda");
-		EspecialidadePDV especialidadePDV1 = Fixture.criarEspecialidadesPDV(2L, "Decoração");
-		EspecialidadePDV especialidadePDV2 = Fixture.criarEspecialidadesPDV(3L, "Informatica");
-		EspecialidadePDV especialidadePDV3 = Fixture.criarEspecialidadesPDV(4L, "Sexo");
-		EspecialidadePDV especialidadePDV4 = Fixture.criarEspecialidadesPDV(5L, "Quadrinhos");
-		EspecialidadePDV especialidadePDV5 = Fixture.criarEspecialidadesPDV(6L, "Moda");
-		
-		save(session,especialidadePDV,especialidadePDV1,especialidadePDV2,especialidadePDV3,especialidadePDV4,especialidadePDV5);
-	}
-
-	private static void gerarClusterPDV(Session session) {
-		
-		ClusterPDV clusterPDV = Fixture.criarClusterPDV(1L, "Basico");
-		ClusterPDV clusterPDV1 = Fixture.criarClusterPDV(1L, "Monaco");
-		ClusterPDV clusterPDV2 = Fixture.criarClusterPDV(1L, "Exportador");
-		
-		save(session,clusterPDV,clusterPDV1,clusterPDV2);
 	}
 
 	private static void gerarAreaInfluenciaPDV(Session session) {
