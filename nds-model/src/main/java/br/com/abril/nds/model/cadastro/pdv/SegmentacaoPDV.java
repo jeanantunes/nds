@@ -37,14 +37,7 @@ public class SegmentacaoPDV {
 	@ManyToOne 
 	@JoinColumn(name = "AREA_INFLUENCIA_PDV_ID")
 	private AreaInfluenciaPDV areaInfluenciaPDV;
-	
-	/**
-	 * Cluster PDV
-	 */
-	@ManyToOne 
-	@JoinColumn(name = "CLUSTER_PDV_ID")
-	private ClusterPDV clusterPDV;
-	
+		
 	/**
 	 * Tipo de Cluster do PDV
 	 */
@@ -75,15 +68,6 @@ public class SegmentacaoPDV {
 	
 	public void setAreaInfluenciaPDV(AreaInfluenciaPDV areaInfluenciaPDV) {
 		this.areaInfluenciaPDV = areaInfluenciaPDV;
-	}
-
-	
-	public ClusterPDV getClusterPDV() {
-		return clusterPDV;
-	}
-
-	public void setClusterPDV(ClusterPDV clusterPDV) {
-		this.clusterPDV = clusterPDV;
 	}
 	
 	public TipoClusterPDV getTipoClusterPDV() {

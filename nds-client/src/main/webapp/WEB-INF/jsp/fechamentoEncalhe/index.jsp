@@ -128,26 +128,8 @@
 	}
 	
 	function popup_encerrarEncalhe() {
-		$( "#dialog-encerrarEncalhe" ).dialog({
-			resizable: false,
-			height:500,
-			width:650,
-			modal: true,
-			buttons: {
-				"Postergar": function() {
-					postergarCotas();
-				},
-				"Cobrar": function() {
-					cobrarCotas();
-				},
-				"Cancelar": function() {
-					$(this).dialog( "close" );
-				}
-			},
-			beforeClose: function() {
-				clearMessageDialogTimeout('dialogMensagemNovo');
-			}
-		});
+		
+		
 
 		var dataEncalhe = $("#datepickerDe").val();
 		
@@ -292,6 +274,27 @@
 			$(".cotasGrid").hide();
 			return resultado;
 		}
+
+		$( "#dialog-encerrarEncalhe" ).dialog({
+			resizable: false,
+			height:500,
+			width:650,
+			modal: true,
+			buttons: {
+				"Postergar": function() {
+					postergarCotas();
+				},
+				"Cobrar": function() {
+					cobrarCotas();
+				},
+				"Cancelar": function() {
+					$(this).dialog( "close" );
+				}
+			},
+			beforeClose: function() {
+				clearMessageDialogTimeout('dialogMensagemNovo');
+			}
+		});
 		
 		document.getElementById("checkTodasCotas").checked = false;
 		checarTodasCotasGrid(false);
@@ -328,58 +331,68 @@
 	
 	function postergarCotas() {
 
-		$("#dialog-postergar").dialog({
-			resizable: false,
-			height:'auto',
-			width:250,
-			modal: true,
-			buttons: {
-				"Confirmar": function() {
-					
-					var dataPostergacao = $("#dtPostergada").val();
-					var dataEncalhe = $("#datepickerDe").val();
-					
-					$.postJSON("<c:url value='/devolucao/fechamentoEncalhe/postergarCotas' />",
-								{ 'dataPostergacao' : dataPostergacao, 
-								  'dataEncalhe' : dataEncalhe, 
-								  'idsCotas' : obterCotasMarcadas() },
-								function (result) {
+		var cotasSelecionadas = obterCotasMarcadas();
 
-									$("#dialog-postergar").dialog("close");
-									
-									var tipoMensagem = result.tipoMensagem;
-									var listaMensagens = result.listaMensagens;
-									
-									if (tipoMensagem && listaMensagens) {
-										exibirMensagemDialog(tipoMensagem, listaMensagens, 'dialogMensagemEncerrarEncalhe');
-									}
-									
-								},
-							  	null,
-							   	true,
-							   	'dialogMensagemEncerrarEncalhe'
-						);
+		if (cotasSelecionadas.lenght > 0) {
+			
+			$("#dialog-postergar").dialog({
+				resizable: false,
+				height:'auto',
+				width:250,
+				modal: true,
+				buttons: {
+					"Confirmar": function() {
+						
+						var dataPostergacao = $("#dtPostergada").val();
+						var dataEncalhe = $("#datepickerDe").val();
+						
+						$.postJSON("<c:url value='/devolucao/fechamentoEncalhe/postergarCotas' />",
+									{ 'dataPostergacao' : dataPostergacao, 
+									  'dataEncalhe' : dataEncalhe, 
+									  'idsCotas' : obterCotasMarcadas() },
+									function (result) {
+	
+										$("#dialog-postergar").dialog("close");
+										
+										var tipoMensagem = result.tipoMensagem;
+										var listaMensagens = result.listaMensagens;
+										
+										if (tipoMensagem && listaMensagens) {
+											exibirMensagemDialog(tipoMensagem, listaMensagens, 'dialogMensagemEncerrarEncalhe');
+										}
+										
+									},
+								  	null,
+								   	true,
+								   	'dialogMensagemEncerrarEncalhe'
+							);
+					},
+					
+					"Cancelar": function() {
+						$( this ).dialog( "close" );
+					}
 				},
-				
-				"Cancelar": function() {
-					$( this ).dialog( "close" );
+				beforeClose: function() {
+					$("#dtPostergada").val("");
+					clearMessageDialogTimeout('dialogMensagemEncerrarEncalhe');
 				}
-			},
-			beforeClose: function() {
-				$("#dtPostergada").val("");
-				clearMessageDialogTimeout('dialogMensagemEncerrarEncalhe');
-			}
-		});
-
-		carregarDataPostergacao();
+			});
+	
+			carregarDataPostergacao();
+		} else {
+			var listaMensagens = new Array();
+			listaMensagens.push('Selecione pelo menos uma cota para postergar!');
+			exibirMensagemDialog('WARNING', listaMensagens, 'dialogMensagemEncerrarEncalhe');
+		}
 	}
 
 	function carregarDataPostergacao() {
 
 		var dataPostergacao = $("#dtPostergada").val();
+		var dataEncalhe = $("#datepickerDe").val();
 		
 		$.postJSON("<c:url value='/devolucao/fechamentoEncalhe/carregarDataPostergacao' />",
-				{ 'dataPostergacao' : dataPostergacao },
+				{ 'dataEncalhe' : dataEncalhe, 'dataPostergacao' : dataPostergacao },
 				function (result) {
 
 					var tipoMensagem = result.tipoMensagem;

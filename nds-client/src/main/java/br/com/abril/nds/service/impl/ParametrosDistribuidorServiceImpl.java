@@ -16,7 +16,7 @@ import br.com.abril.nds.model.cadastro.ParametrosDistribuidorEmissaoDocumento;
 import br.com.abril.nds.model.cadastro.ParametrosDistribuidorFaltasSobras;
 import br.com.abril.nds.model.cadastro.ParametrosRecolhimentoDistribuidor;
 import br.com.abril.nds.model.cadastro.PoliticaSuspensao;
-import br.com.abril.nds.model.cadastro.TipoDistribuidor;
+import br.com.abril.nds.model.cadastro.TipoAtividade;
 import br.com.abril.nds.model.cadastro.TipoGarantia;
 import br.com.abril.nds.model.cadastro.TipoGarantiaAceita;
 import br.com.abril.nds.model.cadastro.TipoImpressaoCE;
@@ -93,8 +93,8 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		// Fiscal
 		parametrosDistribuidor.setObrigacaoFiscao(verificaCheckString(distribuidor.isObrigacaoFiscao()));
 		parametrosDistribuidor.setRegimeEspecial(verificaCheckString(distribuidor.isRegimeEspecial()));
-		if (distribuidor.getTipoDistribuidor() != null)
-			parametrosDistribuidor.setDistribuidor(distribuidor.getTipoDistribuidor().name());
+		if (distribuidor.getTipoAtividade() != null)
+			parametrosDistribuidor.setDistribuidor(distribuidor.getTipoAtividade().name());
 
 		// Emissão de Documentos
 		for (ParametrosDistribuidorEmissaoDocumento emissaoDocumentos : distribuidor.getParametrosDistribuidorEmissaoDocumentos()) {
@@ -292,10 +292,10 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		distribuidor.setRegimeEspecial(verificaCheckBoolean(parametrosDistribuidor.getRegimeEspecial()));
 
 		if (parametrosDistribuidor.getDistribuidor() != null && !parametrosDistribuidor.getDistribuidor().isEmpty()) {
-			TipoDistribuidor tipoDistribuidor = Enum.valueOf(TipoDistribuidor.class, parametrosDistribuidor.getDistribuidor());
-			distribuidor.setTipoDistribuidor(tipoDistribuidor);
+			TipoAtividade tipoDistribuidor = Enum.valueOf(TipoAtividade.class, parametrosDistribuidor.getDistribuidor());
+			distribuidor.setTipoAtividade(tipoDistribuidor);
 		} else {
-			distribuidor.setTipoDistribuidor(null);
+			distribuidor.setTipoAtividade(null);
 		}
 		
 		// Emissão de Documentos

@@ -42,6 +42,9 @@ public class CaracteristicasPDV {
 	@Column(name = "TEXTO_LUMINOSO")
 	private String textoLuminoso;
 
+	@Column(name="POSSUI_CARTAO_CREDITO")
+	private boolean possuiCartaoCredito;
+	
 	public boolean isPontoPrincipal() {
 		return pontoPrincipal;
 	}
@@ -80,6 +83,14 @@ public class CaracteristicasPDV {
 
 	public void setTextoLuminoso(String textoLuminoso) {
 		this.textoLuminoso = textoLuminoso;
+	}
+
+	public boolean isPossuiCartaoCredito() {
+		return possuiCartaoCredito;
+	}
+
+	public void setPossuiCartaoCredito(boolean possuiCartaoCredito) {
+		this.possuiCartaoCredito = possuiCartaoCredito;
 	}
 	
 }

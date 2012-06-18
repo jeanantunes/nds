@@ -155,7 +155,7 @@ public class ProdutoEdicao implements Serializable {
 	private Boolean origemInterface;
 	
 	@Column(name = "NUMERO_LANCAMENTO", nullable = true)
-	private int numeroLancamento;
+	private Integer numeroLancamento;
 	
 	/**
 	 * Dimensões do produto (largura, etc)

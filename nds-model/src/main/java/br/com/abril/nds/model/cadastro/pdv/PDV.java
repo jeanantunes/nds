@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -110,6 +109,12 @@ public class PDV implements Serializable {
 	private boolean dentroOutroEstabelecimento;
 	
 	/**
+	 * Flag indicando se o pdv possui arrendatário
+	 */
+	@Column(name = "ARRENDATARIO")
+	private boolean arrendatario;
+	
+	/**
 	 * Tipo de estabelecimento ao qual o PDV está inserido
 	 */
 	@OneToOne
@@ -164,16 +169,7 @@ public class PDV implements Serializable {
 	 * Segmentação do PDV
 	 */
 	@Embedded
-	private SegmentacaoPDV segmentacao;
-	
-	/**
-	 * Especialidades do PDV
-	 * 
-	 */
-	@ManyToMany(cascade=CascadeType.REMOVE)
-	@JoinTable(name = "PDV_ESPECIALIDADE_PDV", joinColumns = { @JoinColumn(name = "PDV_ID") }, 
-		inverseJoinColumns = { @JoinColumn(name = "ESPECIALIDADE_PDV_ID") })
-	private Set<EspecialidadePDV> especialidades = new HashSet<EspecialidadePDV>();
+	private SegmentacaoPDV segmentacao;	
 	
 	/**
 	 * Materiais promocionais do PDV
@@ -356,15 +352,7 @@ public class PDV implements Serializable {
 	public void setSegmentacao(SegmentacaoPDV segmentacao) {
 		this.segmentacao = segmentacao;
 	}
-	
-	public Set<EspecialidadePDV> getEspecialidades() {
-		return especialidades;
-	}
-	
-	public void setEspecialidades(Set<EspecialidadePDV> especialidades) {
-		this.especialidades = especialidades;
-	}
-	
+		
 	public Set<MaterialPromocional> getMateriais() {
 		return materiais;
 	}
@@ -474,4 +462,19 @@ public class PDV implements Serializable {
 			return false;
 		return true;
 	}
+
+	/**
+	 * @return the arrendatario
+	 */
+	public boolean isArrendatario() {
+		return arrendatario;
+	}
+
+	/**
+	 * @param arrendatario the arrendatario to set
+	 */
+	public void setArrendatario(boolean arrendatario) {
+		this.arrendatario = arrendatario;
+	}
+
 }
