@@ -125,7 +125,6 @@ $("#btnSalvarPDV").keypress(function() {
 	        <li><a href="#tabpdv-2" onclick="ENDERECO_PDV.popularGridEnderecos();">Endereços</a></li>
 	        <li><a href="#tabpdv-3" onclick="TELEFONE_PDV.carregarTelefones();">Telefones</a></li>
 	        <li><a href="#tabpdv-4">Caract. / Segmentação</a></li>
-	        <li><a href="#tabpdv-5">Especialidade</a></li>
 	        <li><a href="#tabpdv-6">Gerador de Fluxo</a></li>
 	        <li><a href="#tabpdv-7">MAP</a></li>
 	       
@@ -137,8 +136,6 @@ $("#btnSalvarPDV").keypress(function() {
 		   <div id="tabpdv-3"> 	<jsp:include page="telefone.jsp"/> 	</div>
 		   
 		   <div id="tabpdv-4"> <jsp:include page="caracteristica.jsp"/> </div>
-		   
-		   <div id="tabpdv-5"> <jsp:include page="especialidade.jsp"/> </div>
 		   
 		   <div id="tabpdv-6"> <jsp:include page="geradorFluxo.jsp"/> </div>
 		   

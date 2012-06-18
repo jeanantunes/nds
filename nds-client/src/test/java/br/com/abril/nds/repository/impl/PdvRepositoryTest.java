@@ -26,7 +26,6 @@ import br.com.abril.nds.model.cadastro.TipoLicencaMunicipal;
 import br.com.abril.nds.model.cadastro.TipoTelefone;
 import br.com.abril.nds.model.cadastro.pdv.AreaInfluenciaPDV;
 import br.com.abril.nds.model.cadastro.pdv.CaracteristicasPDV;
-import br.com.abril.nds.model.cadastro.pdv.ClusterPDV;
 import br.com.abril.nds.model.cadastro.pdv.EnderecoPDV;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
 import br.com.abril.nds.model.cadastro.pdv.SegmentacaoPDV;
@@ -65,17 +64,14 @@ public class PdvRepositoryTest extends AbstractRepositoryImplTest {
 		
 		AreaInfluenciaPDV areaInfluenciaPDV = Fixture.criarAreaInfluenciaPDV(10L, "Area influencia");
 		save(areaInfluenciaPDV);
-		
-		ClusterPDV clusterPDV = Fixture.criarClusterPDV(10L, "Cluster X");
-		save(clusterPDV);
-		
+			
 		TipoPontoPDV tipoPontoPDV = Fixture.criarTipoPontoPDV(10L, "Tipo Ponto");
 		save(tipoPontoPDV);
 		
 		TipoClusterPDV tipoClusterPDV = Fixture.criarTipoClusterPDV(10L, "Tipo Cluster");
 		save(tipoClusterPDV);
 		
-		SegmentacaoPDV segmentacao = Fixture.criarSegmentacaoPdv(areaInfluenciaPDV, clusterPDV, 
+		SegmentacaoPDV segmentacao = Fixture.criarSegmentacaoPdv(areaInfluenciaPDV, 
 																TipoCaracteristicaSegmentacaoPDV.ALTERNATIVO, 
 																tipoPontoPDV, tipoClusterPDV);
 		

@@ -75,7 +75,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 
 				IdentificacaoEmitente emitente = notaFiscal.getIdentificacaoEmitente();
 
-				String cpfCnpjEmitente = emitente.getPessoaEmitente().getDocumento();
+				String cpfCnpjEmitente = emitente.getPessoaEmitenteReferencia().getDocumento();
 
 				InformacaoEletronica informacaoEletronica = notaFiscal.getInformacaoEletronica();
 

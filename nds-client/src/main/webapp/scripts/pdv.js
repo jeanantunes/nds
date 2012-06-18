@@ -61,7 +61,8 @@ var PDV = {
 			$("#idPDV").val(result.pdvDTO.id);
 			$("#idCotaImagem").val(result.pdvDTO.idCota);
 			$("#selectStatus").val(result.pdvDTO.statusPDV);
-			$("#dataInicio").val(result.pdvDTO.dataInicio.$.substr(0,10));
+			if(result.pdvDTO.dataInicio)
+				$("#dataInicio").val(result.pdvDTO.dataInicio.$.substr(0,10));
 			$("#nomePDV").val(result.pdvDTO.nomePDV);
 			$("#contatoPDV").val(result.pdvDTO.contato);
 			$("#sitePDV").val(result.pdvDTO.site);
@@ -75,7 +76,8 @@ var PDV = {
 			$("#selectTipoLicenca").val(result.pdvDTO.tipoLicencaMunicipal.codigo);
 			$("#numerolicenca").val(result.pdvDTO.numeroLicenca);
 			$("#nomeLicenca").val(result.pdvDTO.nomeLicenca);
-			
+			$("#arrendatario").attr("checked", result.pdvDTO.arrendatario ? "checked" : null);
+			$("#ptoPrincipal").attr("checked", result.pdvDTO.caracteristicaDTO.pontoPrincipal ? "checked" : null);
 			$("#dentroOutroEstabelecimento").attr(
 					"checked", result.pdvDTO.dentroOutroEstabelecimento ? "checked" : null);
 			
@@ -105,16 +107,15 @@ var PDV = {
 		
 		carregarAbaCaracteristica: function (result){
 			
-			PDV.atribuirValorChecked(result.pdvDTO.caracteristicaDTO.pontoPrincipal,"#ptoPrincipal");
 			PDV.atribuirValorChecked(result.pdvDTO.caracteristicaDTO.balcaoCentral,"#balcaoCentral");
 			PDV.atribuirValorChecked(result.pdvDTO.caracteristicaDTO.temComputador,"#temComputador");
 			PDV.atribuirValorChecked(result.pdvDTO.caracteristicaDTO.luminoso,"#luminoso");
-
+			PDV.atribuirValorChecked(result.pdvDTO.caracteristicaDTO.possuiCartao,"#possuiCartao");
+			
 			$("#textoLuminoso").val(result.pdvDTO.caracteristicaDTO.textoLuminoso);
 	        $("#selectdTipoPonto").val(result.pdvDTO.caracteristicaDTO.tipoPonto);
 	        $("#selectCaracteristica").val(result.pdvDTO.caracteristicaDTO.tipoCaracteristicaSegmentacaoPDV);
 	        $("#selectAreainfluencia").val(result.pdvDTO.caracteristicaDTO.areaInfluencia);
-	        $("#selectCluster").val(result.pdvDTO.caracteristicaDTO.cluster);
 	        
 	        if(this.isChecked("#luminoso")){
 				$("#textoLuminoso").removeAttr("disabled");
@@ -131,27 +132,7 @@ var PDV = {
 			
 			$(idChecked).attr("checked",cheked);
 		},
-		
-		carregarAbaEspecialidade: function (result){
-	
-			var parametros = [];
-			
-			$.each(result.pdvDTO.especialidades, function(index, valor) {
 				
-				parametros.push({name:'codigos['+ index +']', value: valor});
-		  	});
-			
-			if(parametros.length > 0){
-				
-				PDV.carregarEspecialidade(parametros);
-				PDV.carregarEspecialidadesNotIn(parametros);
-			}
-			else{
-				PDV.carregarCaracteristicaEspecialidade(null);
-			}
-
-		},
-		
 		carregarAbaGeradorFluxo: function (result){
 			
 			var parametros = [];
@@ -236,7 +217,6 @@ var PDV = {
 			PDV.popup_novoPdv();
 			PDV.carregarAbaDadosBasico(result);
 			PDV.carregarAbaCaracteristica(result);
-			PDV.carregarAbaEspecialidade(result);
 			PDV.carregarAbaGeradorFluxo(result);
 			PDV.carregarAbaMap(result);
 		},
@@ -245,8 +225,7 @@ var PDV = {
 	
 			$.postJSON(contextPath + "/cadastro/pdv/salvar",
 					this.getDadosBasico() +"&" +
-					this.getDadosCaracteristica() +"&" + 
-					this.getDadosEspecialidade() +"&" + 
+					this.getDadosCaracteristica() +"&" +
 					this.getDadosGeradorFluxo()  +"&" +
 					this.getDadosMap(), function(result){
 			
@@ -289,6 +268,8 @@ var PDV = {
 				"pdvDTO.email="									+$("#emailPDV").val()+ "&" +
 				"pdvDTO.pontoReferencia="						+$("#pontoReferenciaPDV").val()+ "&" +
 				"pdvDTO.dentroOutroEstabelecimento="	 		+this.isChecked("#dentroOutroEstabelecimento") + "&" +
+				"pdvDTO.arrendatario="	 						+this.isChecked("#arrendatario") + "&" +
+				"pdvDTO.caracteristicaDTO.pontoPrincipal=" 		+ this.isChecked("#ptoPrincipal") +"&"+
 				"pdvDTO.tipoEstabelecimentoAssociacaoPDV.codigo="	+$("#selectTipoEstabelecimento").val()+ "&" +
 				"pdvDTO.tamanhoPDV="							+$("#selectTamanhoPDV").val()+ "&" +
 				"pdvDTO.qtdeFuncionarios="						+$("#qntFuncionarios").val()+ "&" +
@@ -310,30 +291,18 @@ var PDV = {
 		
 				
 		getDadosCaracteristica: function (){
-			
-			var dados =
-	              "pdvDTO.caracteristicaDTO.pontoPrincipal=" + this.isChecked("#ptoPrincipal") +"&"+
+			debugger;
+			var dados =	              
 	              "pdvDTO.caracteristicaDTO.balcaoCentral="  + this.isChecked("#balcaoCentral")+"&"+
 	              "pdvDTO.caracteristicaDTO.temComputador="  + this.isChecked("#temComputador")+"&"+
+	              "pdvDTO.caracteristicaDTO.possuiCartao="  + this.isChecked("#possuiCartao")+"&"+
 	              "pdvDTO.caracteristicaDTO.luminoso="       + this.isChecked("#luminoso")+"&"+
 	              "pdvDTO.caracteristicaDTO.textoLuminoso="  + $("#textoLuminoso").val()+"&"+
 	              "pdvDTO.caracteristicaDTO.tipoPonto="      + $("#selectdTipoPonto").val()+"&"+
 	              "pdvDTO.caracteristicaDTO.tipoCaracteristicaSegmentacaoPDV="+$("#selectCaracteristica").val()+"&"+
-	              "pdvDTO.caracteristicaDTO.areaInfluencia=" + $("#selectAreainfluencia").val()+"&"+
-	              "pdvDTO.caracteristicaDTO.cluster="        + $("#selectCluster").val();
+	              "pdvDTO.caracteristicaDTO.areaInfluencia=" + $("#selectAreainfluencia").val();
 						
 			return dados;
-		},
-
-		getDadosEspecialidade: function (){
-			
-			var listaEspecialidades ="";
-			
-			 $("#especialidades_options option").each(function (index) {
-				 listaEspecialidades = listaEspecialidades + "pdvDTO.especialidades["+index+"]="+ $(this).val() +"&";
-             });
-   
-			return listaEspecialidades;
 		},
 		
 		getDadosGeradorFluxo: function (){
@@ -608,7 +577,6 @@ var PDV = {
 			PDV.limparCamposTela();
 			PDV.carregarMaterialPromocional(null);
 			PDV.carregarGeradorFluxo(null);
-			PDV.carregarCaracteristicaEspecialidade(null);
 			PDV.carregarPeriodosFuncionamento();
 			
 			PDV.diasFuncionamento = [];
@@ -779,39 +747,8 @@ var PDV = {
 							$("#selectMap").html(combo);
 							$("#selectMap").sortOptions();
 			},null,true,"idModalPDV");
-		},
-			
-		carregarEspecialidade:function(data){
-			$.postJSON(contextPath + "/cadastro/pdv/carregarEspecialidades",
-					   data, 
-					   function(result){
-							var combo =  montarComboBox(result, false);
-							$("#especialidades_options").html(combo);
-							$("#especialidades_options").sortOptions();
-			},null,true,"idModalPDV");
-		},
+		},				
 		
-		
-		carregarCaracteristicaEspecialidade:function(data){
-			$.postJSON(contextPath + "/cadastro/pdv/carregarEspecialidades",
-					   data, 
-					   function(result){
-							var combo =  montarComboBox(result, false);
-							$("#caract_options").html(combo);
-							$("#caract_options").sortOptions();
-			},null,true,"idModalPDV");
-		},
-		
-		carregarEspecialidadesNotIn:function(data){
-			$.postJSON(contextPath + "/cadastro/pdv/carregarEspecialidadesNotIn",
-					   data, 
-					   function(result){
-							var combo =  montarComboBox(result, false);
-							$("#caract_options").html(combo);
-							$("#caract_options").sortOptions();
-			},null,true,"idModalPDV");
-		},
-
 		carregarGeradorFluxoNotIn:function(data){
 			$.postJSON(contextPath + "/cadastro/pdv/carregarGeradorFluxoNotIn",
 					   data, 
@@ -864,6 +801,7 @@ var PDV = {
 			$("#emailPDV").val("");
 			$("#pontoReferenciaPDV").val("");
 			$("#dentroOutroEstabelecimento").attr("checked",null);
+			$("#arrendatario").attr("checked",null);
 			$("#selectTipoEstabelecimento").val("");
 			$("#selectTamanhoPDV").val("");
 			$("#qntFuncionarios").val("");
@@ -884,15 +822,14 @@ var PDV = {
 			$("#ptoPrincipal").attr("checked",null);
             $("#balcaoCentral").attr("checked",null);
             $("#temComputador").attr("checked",null);
+            $("#possuiCartao").attr("checked",null);
+                        
             $("#luminoso").attr("checked",null);
             $("#textoLuminoso").val("");
             $("#selectdTipoPonto").val("");
             $("#selectCaracteristica").val("");
             $("#selectAreainfluencia").val("");
-            $("#selectCluster").val("");
-            
-            $("#especialidades_options option").remove();
-            
+                     
             $("#selectFluxoSecundario option").remove();
             
             $("#selectMap option").remove();

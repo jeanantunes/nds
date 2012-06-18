@@ -104,7 +104,7 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepository<Fechamen
 	public List<FechamentoEncalhe> buscarFechamentoEncalhe(FiltroFechamentoEncalheDTO filtro) {
 		
 		Criteria criteria = this.getSession().createCriteria(FechamentoEncalhe.class);
-		//criteria.add(Restrictions.eq("fe.fechamentoEncalhePK.dataEncalhe", filtro.getDataEncalhe()));
+		criteria.add(Restrictions.eq("fechamentoEncalhePK.dataEncalhe", filtro.getDataEncalhe()));
 		criteria.setFetchMode("listFechamentoEncalheBox", FetchMode.JOIN);
 		
 		return criteria.list();
@@ -249,4 +249,6 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepository<Fechamen
 			ControleFechamentoEncalhe controleFechamentoEncalhe) {
 		this.getSession().save(controleFechamentoEncalhe);
 	}
+
+
 }

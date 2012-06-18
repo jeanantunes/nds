@@ -186,8 +186,8 @@ public class Distribuidor {
 	private Integer qntDiasVencinemtoVendaEncalhe;
 	
 	@Enumerated(EnumType.STRING)
-	@Column(name = "TIPO_DISTRIBUIDOR", nullable = true)
-	private TipoDistribuidor tipoDistribuidor = TipoDistribuidor.MERCANTIL;
+	@Column(name = "TIPO_ATIVIDADE", nullable = true)
+	private TipoAtividade tipoAtividade = TipoAtividade.MERCANTIL;
 
 	@Column(name = "OBRIGACAO_FISCAL", nullable = false)
 	private boolean obrigacaoFiscao;	
@@ -234,6 +234,9 @@ public class Distribuidor {
 	@Column(name = "PRAZO_AVISO_PREVIO_VALIDADE_GARANTIA", nullable = false)
 	private Integer prazoAvisoPrevioValidadeGarantia;
 
+	@Column(name="QTD_DIAS_LIMITE_PARA_REPROG_LANCAMENTO", nullable = true)
+	private Integer qtdDiasLimiteParaReprogLancamento;
+	
 	public Long getId() {
 		return id;
 	}
@@ -550,12 +553,12 @@ public class Distribuidor {
 		this.parametrosAprovacaoDistribuidor = parametrosAprovacaoDistribuidor;
 	}
 
-	public TipoDistribuidor getTipoDistribuidor() {
-		return tipoDistribuidor;
+	public TipoAtividade getTipoAtividade() {
+		return tipoAtividade;
 	}
 
-	public void setTipoDistribuidor(TipoDistribuidor tipoDistribuidor) {
-		this.tipoDistribuidor = tipoDistribuidor;
+	public void setTipoAtividade(TipoAtividade tipoAtividade) {
+		this.tipoAtividade = tipoAtividade;
 	}
 
 	public boolean isObrigacaoFiscao() {
@@ -675,4 +678,19 @@ public class Distribuidor {
 		this.prazoAvisoPrevioValidadeGarantia = prazoAvisoPrevioValidadeGarantia;
 	}
 
+	/**
+	 * @return the qtdDiasLimiteParaReprogLancamento
+	 */
+	public Integer getQtdDiasLimiteParaReprogLancamento() {
+		return qtdDiasLimiteParaReprogLancamento;
+	}
+
+	/**
+	 * @param qtdDiasLimiteParaReprogLancamento the qtdDiasLimiteParaReprogLancamento to set
+	 */
+	public void setQtdDiasLimiteParaReprogLancamento(
+			Integer qtdDiasLimiteParaReprogLancamento) {
+		this.qtdDiasLimiteParaReprogLancamento = qtdDiasLimiteParaReprogLancamento;
+	}
+	
 }
