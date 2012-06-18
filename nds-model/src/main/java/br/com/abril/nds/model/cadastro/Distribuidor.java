@@ -234,6 +234,9 @@ public class Distribuidor {
 	@Column(name = "PRAZO_AVISO_PREVIO_VALIDADE_GARANTIA", nullable = false)
 	private Integer prazoAvisoPrevioValidadeGarantia;
 
+	@Column(name="QTD_DIAS_LIMITE_PARA_REPROG_LANCAMENTO", nullable = true)
+	private Integer qtdDiasLimiteParaReprogLancamento;
+	
 	public Long getId() {
 		return id;
 	}
@@ -675,4 +678,19 @@ public class Distribuidor {
 		this.prazoAvisoPrevioValidadeGarantia = prazoAvisoPrevioValidadeGarantia;
 	}
 
+	/**
+	 * @return the qtdDiasLimiteParaReprogLancamento
+	 */
+	public Integer getQtdDiasLimiteParaReprogLancamento() {
+		return qtdDiasLimiteParaReprogLancamento;
+	}
+
+	/**
+	 * @param qtdDiasLimiteParaReprogLancamento the qtdDiasLimiteParaReprogLancamento to set
+	 */
+	public void setQtdDiasLimiteParaReprogLancamento(
+			Integer qtdDiasLimiteParaReprogLancamento) {
+		this.qtdDiasLimiteParaReprogLancamento = qtdDiasLimiteParaReprogLancamento;
+	}
+	
 }
