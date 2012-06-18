@@ -3471,7 +3471,7 @@ public class DataLoader {
 		distribuidor.setPrazoAvisoPrevioValidadeGarantia(40);
 		distribuidor.setPrazoFollowUp(50);
 		distribuidor.setValorConsignadoSuspensaoCotas(new BigDecimal(9999999));
-		
+		distribuidor.setQtdDiasLimiteParaReprogLancamento(2);
 		
 		save(session, distribuidor);
 		
