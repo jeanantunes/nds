@@ -60,6 +60,8 @@ public class ProdutoLancamentoDTO implements Serializable {
 
 	private Date novaDataLancamento;
 	
+	private Integer numeroReprogramacoes;
+	
 	private boolean possuiEstudo;
 	
 	private boolean possuiRecebimentoFisico;
@@ -335,6 +337,20 @@ public class ProdutoLancamentoDTO implements Serializable {
 	 */
 	public void setNovaDataLancamento(Date novaDataLancamento) {
 		this.novaDataLancamento = novaDataLancamento;
+	}
+
+	/**
+	 * @return the numeroReprogramacoes
+	 */
+	public Integer getNumeroReprogramacoes() {
+		return numeroReprogramacoes;
+	}
+
+	/**
+	 * @param numeroReprogramacoes the numeroReprogramacoes to set
+	 */
+	public void setNumeroReprogramacoes(Integer numeroReprogramacoes) {
+		this.numeroReprogramacoes = numeroReprogramacoes;
 	}
 
 	/**

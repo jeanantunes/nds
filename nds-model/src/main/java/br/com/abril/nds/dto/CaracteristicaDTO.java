@@ -19,6 +19,8 @@ public class CaracteristicaDTO implements Serializable {
 	
 	private boolean luminoso;
 	
+	private boolean possuiCartao;
+	
 	private String textoLuminoso;
 	
 	private Long tipoPonto;
@@ -26,9 +28,7 @@ public class CaracteristicaDTO implements Serializable {
 	private Long caracteristica;
 	
 	private Long areaInfluencia;
-	
-	private Long cluster;
-	
+		
 	private TipoCaracteristicaSegmentacaoPDV tipoCaracteristicaSegmentacaoPDV;
 	
 
@@ -159,18 +159,12 @@ public class CaracteristicaDTO implements Serializable {
 		this.areaInfluencia = areaInfluencia;
 	}
 
-	/**
-	 * @return the cluster
-	 */
-	public Long getCluster() {
-		return cluster;
+	public boolean isPossuiCartao() {
+		return possuiCartao;
 	}
 
-	/**
-	 * @param cluster the cluster to set
-	 */
-	public void setCluster(Long cluster) {
-		this.cluster = cluster;
+	public void setPossuiCartao(boolean possuiCartao) {
+		this.possuiCartao = possuiCartao;
 	}
 
 }

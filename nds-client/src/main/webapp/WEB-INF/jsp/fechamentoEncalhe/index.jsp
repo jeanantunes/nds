@@ -337,9 +337,12 @@
 				"Confirmar": function() {
 					
 					var dataPostergacao = $("#dtPostergada").val();
-
+					var dataEncalhe = $("#datepickerDe").val();
+					
 					$.postJSON("<c:url value='/devolucao/fechamentoEncalhe/postergarCotas' />",
-								{ 'dataPostergacao' : dataPostergacao, 'idsCotas' : obterCotasMarcadas() },
+								{ 'dataPostergacao' : dataPostergacao, 
+								  'dataEncalhe' : dataEncalhe, 
+								  'idsCotas' : obterCotasMarcadas() },
 								function (result) {
 
 									$("#dialog-postergar").dialog("close");
@@ -367,8 +370,34 @@
 				clearMessageDialogTimeout('dialogMensagemEncerrarEncalhe');
 			}
 		});
+
+		carregarDataPostergacao();
 	}
 
+	function carregarDataPostergacao() {
+
+		var dataPostergacao = $("#dtPostergada").val();
+		
+		$.postJSON("<c:url value='/devolucao/fechamentoEncalhe/carregarDataPostergacao' />",
+				{ 'dataPostergacao' : dataPostergacao },
+				function (result) {
+
+					var tipoMensagem = result.tipoMensagem;
+					var listaMensagens = result.listaMensagens;
+					
+					if (tipoMensagem && listaMensagens) {
+						exibirMensagemDialog(tipoMensagem, listaMensagens, 'dialogMensagemPostergarCotas');
+					} else {
+						$("#dtPostergada").val(result);
+					}
+				},
+			  	null,
+			   	true,
+			   	'dialogMensagemPostergarCotas'
+		);
+
+	}
+	
 	function cobrarCotas() {
 
 		var dataOperacao = $("#datepickerDe").val();
@@ -440,12 +469,17 @@
 	</div>
 
 	<div id="dialog-postergar" title="Postergar Encalhe" style="display:none;">
+	
+		<jsp:include page="../messagesDialog.jsp">
+			<jsp:param value="dialogMensagemPostergarCotas" name="messageDialog"/>
+		</jsp:include> 
+		
 		<fieldset style="width:200px!important;">
 	    	<legend>Postergar Encalhe</legend>
 			<table border="0" cellspacing="2" cellpadding="0">
 	          <tr>
 	            <td width="70">Nova Data:</td>
-	            <td width="103"><input name="dtPostergada" type="text" id="dtPostergada" style="width:80px;" /></td>
+	            <td width="103"><input name="dtPostergada" type="text" id="dtPostergada" style="width:80px;" onchange="carregarDataPostergacao();" /></td>
 	          </tr>
 	        </table>
 	    </fieldset>

@@ -99,13 +99,13 @@ function tratarRetornoUploadImagem(data) {
         </td>
         </tr>
       <tr>
-        <td>Site:</td>
+        <td>Site PDV:</td>
         <td colspan="3">
         	<input type="text" name="sitePDV" id="sitePDV" style="width:300px;"/>
         </td>
         </tr>
       <tr>
-        <td>E-mail:</td>
+        <td>E-mail PDV:</td>
         <td colspan="3">
         	<input type="text" name="emailPDV" onchange="PDV.validarEmail(this.value);" id="emailPDV" style="width:300px;"/>
         </td>
@@ -140,6 +140,26 @@ function tratarRetornoUploadImagem(data) {
             </select>
             </div>
         </td>
+        
+        <tr>
+	        <td align="right">
+
+<!-- Arrendatário -->
+<input type="checkbox" name="checkbox" id="checkbox" id="arrendatario"></td>
+	        <td colspan="3">Arrendatário</td>
+ 		 </tr>
+ 		 
+ 		 
+ 		  <tr>
+	        <td align="right">
+
+<!-- Arrendatário -->
+ <input name="pontoPrincipal" type="checkbox" value="" id="ptoPrincipal" />
+ 
+ 			</td>
+	        <td colspan="3">Ponto Principal</td>
+ 		 </tr>
+ 		
         </tr>
       </table>
       <br />
