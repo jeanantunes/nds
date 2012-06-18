@@ -140,14 +140,16 @@ public class FechamentoEncalheController {
 		
 		try {
 			
+			int quantidadeDias = 0;
+			
 			if (dataPostergacao == null) {
+				quantidadeDias = 1;
 				dataPostergacao = Calendar.getInstance().getTime();
 			}
 			
-			// validar p/ msm semana
 			
 			dataPostergacao = 
-				this.calendarioService.adicionarDiasRetornarDiaUtil(dataPostergacao, 0);
+				this.calendarioService.adicionarDiasRetornarDiaUtil(dataPostergacao, quantidadeDias);
 			
 			if (dataPostergacao != null) {
 				String dataFormatada = DateUtil.formatarData(dataPostergacao, "dd/MM/yyyy");
