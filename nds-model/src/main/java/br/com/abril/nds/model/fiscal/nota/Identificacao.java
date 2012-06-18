@@ -1,7 +1,7 @@
 package br.com.abril.nds.model.fiscal.nota;
 
 import java.io.Serializable;
-import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -12,14 +12,16 @@ import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import br.com.abril.nds.util.export.fiscal.nota.NFEExport;
+
 @Embeddable
 public class Identificacao implements Serializable {
 	
-	enum FormaPagamento {
+	public enum FormaPagamento {
 		A_VISTA, A_PRAZO, OUTROS;
 	}
 	
-	enum TipoOpercao{
+	public enum TipoOperacao{
 		ENTRADA, SAIDA
 	}
 
@@ -32,12 +34,14 @@ public class Identificacao implements Serializable {
 	 * cNF
 	 */
 	@Column(name = "CODIGO_CHAVE_ACESSO", length = 8, nullable = false, columnDefinition = "Código Numérico que compõe a Chave de Acesso")
+	@NFEExport(secao="B", posicao=1, tamanho=9)
 	private Integer codigoChaveAcesso;
 
 	/**
 	 * cDV
 	 */
 	@Column(name = "DV_CHAVE_ACESSO", length = 1, nullable = false)
+	@NFEExport(secao="B", posicao=13, tamanho=1)
 	private Integer digitoVerificadorChaveAcesso;
 
 	/**
@@ -45,9 +49,9 @@ public class Identificacao implements Serializable {
 	 */
 	@Enumerated(EnumType.ORDINAL)
 	@Column(name = "TIPO_OPERACAO", length = 1, nullable = false)
-	private TipoOpercao tipoOperacao;
+	@NFEExport(secao="B", posicao=9, tamanho=1)
+	private TipoOperacao tipoOperacao;
 
-		
 	/**
 	 * natOp
 	 */
@@ -81,7 +85,7 @@ public class Identificacao implements Serializable {
 	 */
 	@Temporal(TemporalType.DATE)
 	@Column(name = "dataEmissao", nullable = false, columnDefinition = "Data de emissão do Documento Fiscal")
-	private Calendar dataEmissao;
+	private Date dataEmissao;
 	
 	
 	/**
@@ -90,17 +94,17 @@ public class Identificacao implements Serializable {
 	 */
 	@Temporal(TemporalType.DATE)
 	@Column(name = "dataSaidaEntrada", nullable = true, columnDefinition = "Data de Saída ou da Entrada da Mercadoria/Produto")
-	private Calendar dataSaidaEntrada;
+	private Date dataSaidaEntrada;
 	
 	/**
 	 * dEmi
 	 */
 	@Temporal(TemporalType.TIME)
 	@Column(name = "horaSaidaEntrada", nullable = true, columnDefinition = "Hora de Saída ou da Entrada da Mercadoria/Produto")
-	private Calendar horaSaidaEntrada;
+	private Date horaSaidaEntrada;
 	
 	
-	@OneToMany(mappedBy="notaFiscal")
+	@OneToMany(mappedBy="pk.notaFiscal")
 	private List<NotaFiscalReferenciada> listReferenciadas;
 	
 	
@@ -109,7 +113,7 @@ public class Identificacao implements Serializable {
 	 */
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name="DATA_ENTRADA_CONTIGENCIA", nullable=true, columnDefinition="Data hora da entrada em Contigencia")
-	private Calendar dataEntradaContigencia;
+	private Date dataEntradaContigencia;
 	
 	/**
 	 * xJust
@@ -159,14 +163,14 @@ public class Identificacao implements Serializable {
 	/**
 	 * @return the tipoOperacao
 	 */
-	public TipoOpercao getTipoOperacao() {
+	public TipoOperacao getTipoOperacao() {
 		return tipoOperacao;
 	}
 
 	/**
 	 * @param tipoOperacao the tipoOperacao to set
 	 */
-	public void setTipoOperacao(TipoOpercao tipoOperacao) {
+	public void setTipoOperacao(TipoOperacao tipoOperacao) {
 		this.tipoOperacao = tipoOperacao;
 	}
 
@@ -229,42 +233,42 @@ public class Identificacao implements Serializable {
 	/**
 	 * @return the dataEmissao
 	 */
-	public Calendar getDataEmissao() {
+	public Date getDataEmissao() {
 		return dataEmissao;
 	}
 
 	/**
 	 * @param dataEmissao the dataEmissao to set
 	 */
-	public void setDataEmissao(Calendar dataEmissao) {
+	public void setDataEmissao(Date dataEmissao) {
 		this.dataEmissao = dataEmissao;
 	}
 
 	/**
 	 * @return the dataSaidaEntrada
 	 */
-	public Calendar getDataSaidaEntrada() {
+	public Date getDataSaidaEntrada() {
 		return dataSaidaEntrada;
 	}
 
 	/**
 	 * @param dataSaidaEntrada the dataSaidaEntrada to set
 	 */
-	public void setDataSaidaEntrada(Calendar dataSaidaEntrada) {
+	public void setDataSaidaEntrada(Date dataSaidaEntrada) {
 		this.dataSaidaEntrada = dataSaidaEntrada;
 	}
 
 	/**
 	 * @return the horaSaidaEntrada
 	 */
-	public Calendar getHoraSaidaEntrada() {
+	public Date getHoraSaidaEntrada() {
 		return horaSaidaEntrada;
 	}
 
 	/**
 	 * @param horaSaidaEntrada the horaSaidaEntrada to set
 	 */
-	public void setHoraSaidaEntrada(Calendar horaSaidaEntrada) {
+	public void setHoraSaidaEntrada(Date horaSaidaEntrada) {
 		this.horaSaidaEntrada = horaSaidaEntrada;
 	}
 
@@ -285,14 +289,14 @@ public class Identificacao implements Serializable {
 	/**
 	 * @return the dataEntradaContigencia
 	 */
-	public Calendar getDataEntradaContigencia() {
+	public Date getDataEntradaContigencia() {
 		return dataEntradaContigencia;
 	}
 
 	/**
 	 * @param dataEntradaContigencia the dataEntradaContigencia to set
 	 */
-	public void setDataEntradaContigencia(Calendar dataEntradaContigencia) {
+	public void setDataEntradaContigencia(Date dataEntradaContigencia) {
 		this.dataEntradaContigencia = dataEntradaContigencia;
 	}
 

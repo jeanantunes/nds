@@ -2,7 +2,7 @@ package br.com.abril.nds.model.fiscal.nota;
 
 import java.io.Serializable;
 import java.math.BigInteger;
-import java.util.Calendar;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
@@ -47,7 +47,7 @@ public class NotaFiscalReferenciada implements Serializable {
 	 */
 	@Temporal(TemporalType.DATE)
 	@Column(name="DATA_EMISSAO", nullable=false, columnDefinition="Ano e Mês de emissão da NF-e")
-	private Calendar dataEmissao;
+	private Date dataEmissao;
 	
 	/**
 	 * CNPJ
@@ -130,14 +130,14 @@ public class NotaFiscalReferenciada implements Serializable {
 	/**
 	 * @return the dataEmissao
 	 */
-	public Calendar getDataEmissao() {
+	public Date getDataEmissao() {
 		return dataEmissao;
 	}
 
 	/**
 	 * @param dataEmissao the dataEmissao to set
 	 */
-	public void setDataEmissao(Calendar dataEmissao) {
+	public void setDataEmissao(Date dataEmissao) {
 		this.dataEmissao = dataEmissao;
 	}
 
