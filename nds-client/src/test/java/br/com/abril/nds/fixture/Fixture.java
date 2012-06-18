@@ -136,6 +136,7 @@ import br.com.abril.nds.model.fiscal.TipoEmissaoNfe;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
 import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.model.fiscal.TipoUsuarioNotaFiscal;
+import br.com.abril.nds.model.integracao.InterfaceExecucao;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalhe;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalheCota;
 import br.com.abril.nds.model.movimentacao.ControleContagemDevolucao;
@@ -2735,6 +2736,15 @@ public class Fixture {
 		algoritmo.setDescricao(descricao);
 		
 		return algoritmo;
+	}
+	
+	public static InterfaceExecucao criarInterfaceExecucao(Long id, String nome) {
+		
+		InterfaceExecucao ie = new InterfaceExecucao();
+		ie.setId(id);
+		ie.setNome(nome);
+		
+		return ie;
 	}
 	
 }
