@@ -40,7 +40,7 @@
 	
 	<bean id="couchDbProperties" class="br.com.abril.nds.integracao.couchdb.CouchDbProperties">
 		<property name="protocol" value="http" />
-		<property name="host" value="127.0.0.1" />
+		<property name="host" value="localhost" />
 		<property name="port" value="5984" />
 		<property name="username" value="" />
 		<property name="password" value="" />
