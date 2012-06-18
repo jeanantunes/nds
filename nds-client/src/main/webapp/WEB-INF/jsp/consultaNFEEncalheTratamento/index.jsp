@@ -118,7 +118,6 @@ function popup() {
 		      
 	};
 	function popup_confirmar() {
-		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
 	
 		$( "#dialog-confirmar-cancelamento" ).dialog({
 			resizable: false,
