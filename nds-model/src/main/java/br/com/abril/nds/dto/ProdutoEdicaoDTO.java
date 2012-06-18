@@ -47,7 +47,7 @@ public class ProdutoEdicaoDTO implements Serializable {
 	// codigoProduto;
 	private String nomeComercialProduto;
 	private String fase;
-	private String numeroLancamento;	
+	private Integer numeroLancamento;	
 	// numeroEdicao; pacotePadrao;
 	private BigDecimal precoPrevisto;
 	// precoVenda; (Real)
@@ -412,13 +412,13 @@ public class ProdutoEdicaoDTO implements Serializable {
 	/**
 	 * @return the numeroLancamento
 	 */
-	public String getNumeroLancamento() {
+	public Integer getNumeroLancamento() {
 		return numeroLancamento;
 	}
 	/**
 	 * @param numeroLancamento the numeroLancamento to set
 	 */
-	public void setNumeroLancamento(String numeroLancamento) {
+	public void setNumeroLancamento(Integer numeroLancamento) {
 		this.numeroLancamento = numeroLancamento;
 	}
 	/**
