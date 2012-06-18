@@ -10,6 +10,8 @@
 	
 	function pesquisar() {
 		
+		$('#divBotoesPrincipais').show();
+		
 		$(".fechamentoGrid").flexOptions({
 			"url" : contextPath + '/devolucao/fechamentoEncalhe/pesquisar',
 			params : [{
@@ -49,8 +51,6 @@
 			
 			if (fechado != '') {
 				$('#divBotoesPrincipais').hide();
-			} else {
-				$('#divBotoesPrincipais').show();
 			}
 		});
 		

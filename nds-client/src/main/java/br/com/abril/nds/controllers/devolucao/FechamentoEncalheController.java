@@ -173,7 +173,7 @@ public class FechamentoEncalheController {
 		
 		try {
 			
-			this.fechamentoEncalheService.postergarCotas(dataPostergacao, idsCotas);
+			this.fechamentoEncalheService.postergarCotas(dataEncalhe, dataPostergacao, idsCotas);
 			
 		} catch (Exception e) {
 			this.result.use(Results.json()).from(
