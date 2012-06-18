@@ -671,6 +671,7 @@ public class DataLoader {
 		
 		gerarCfops(session);
 		
+		criarParametrosSistema(session);
 		criarInterfaceExecucao(session);
 		criarAlgoritmos(session);
 		criarCarteira(session);
@@ -679,7 +680,6 @@ public class DataLoader {
 		criarDistribuidor(session);
 		criarEnderecoDistribuidor(session);
 		criarTelefoneDistribuidor(session);
-		criarParametrosSistema(session);
 		criarUsuarios(session);
 		criarTiposFornecedores(session);
 		criarBox(session);
@@ -708,7 +708,6 @@ public class DataLoader {
 		criarMovimentosEstoqueCota(session);
 		criarFeriado(session);		
 		criarEnderecoCotaPF(session);
-		criarParametroEmail(session);
 		criarMovimentosFinanceiroCota(session);
 		criarDivida(session);
 
@@ -2506,42 +2505,85 @@ public class DataLoader {
 	}
 
 	private static void criarParametrosSistema(Session session) {
-
-		ParametroSistema parametroSistema = 
-			Fixture.parametroSistema(
-				TipoParametroSistema.PATH_IMAGENS_CAPA, "C:\\apache-tomcat-7.0.25\\webapps\\nds-client\\capas\\");
-
-		session.save(parametroSistema);
 		
-		ParametroSistema parametroPathImagemPDV = 
-				Fixture.parametroSistema(
-					TipoParametroSistema.PATH_IMAGENS_PDV, "\\images\\pdv\\");
-		session.save(parametroPathImagemPDV);
-				
-		parametroSistema = 
-			Fixture.parametroSistema(TipoParametroSistema.NUMERO_DIAS_PERMITIDO_LANCAMENTO_FALTA_DE, "7");
-
-		session.save(parametroSistema);
-
-		parametroSistema = 
-			Fixture.parametroSistema(TipoParametroSistema.NUMERO_DIAS_PERMITIDO_LANCAMENTO_FALTA_EM, "7");
-
-		session.save(parametroSistema);
-
-		parametroSistema = 
-			Fixture.parametroSistema(TipoParametroSistema.NUMERO_DIAS_PERMITIDO_LANCAMENTO_SOBRA_EM, "7");
-
-		session.save(parametroSistema);
-
-		parametroSistema = 
-			Fixture.parametroSistema(TipoParametroSistema.NUMERO_DIAS_PERMITIDO_LANCAMENTO_SOBRA_DE, "7");
-
-		session.save(parametroSistema);
+		// Os dados do email são utilizados em outro trecho:
+		merge(session, Fixture.parametroSistema(1L, TipoParametroSistema.EMAIL_HOST, "smtp.gmail.com"));
+		merge(session, Fixture.parametroSistema(2L, TipoParametroSistema.EMAIL_PROTOCOLO, "smtps"));
+		merge(session, Fixture.parametroSistema(3L, TipoParametroSistema.EMAIL_USUARIO, "sys.discover@gmail.com"));
+		merge(session, Fixture.parametroSistema(4L, TipoParametroSistema.EMAIL_SENHA, "discover10"));
+		merge(session, Fixture.parametroSistema(5L, TipoParametroSistema.EMAIL_PORTA, "465"));
 		
-		parametroSistema =
-				Fixture.parametroSistema(TipoParametroSistema.PATH_INTERFACE_NFE_IMPORTACAO, "C:/notas/");
-		
-		session.save(parametroSistema);
+		save(session, Fixture.parametroSistema(TipoParametroSistema.PATH_IMAGENS_CAPA, 
+				"C:\\apache-tomcat-7.0.25\\webapps\\nds-client\\capas\\"));	// windows;
+//				"/opt/tomcat/webapps/nds-client/capas/"));					// linux;
+		save(session, Fixture.parametroSistema(TipoParametroSistema.PATH_IMAGENS_PDV,
+				"/images/pdv/"));		// windows;
+//				"\\images\\pdv\\"));	// linux;
+		save(session, Fixture.parametroSistema(TipoParametroSistema.NUMERO_DIAS_PERMITIDO_LANCAMENTO_FALTA_DE, "7"));
+		save(session, Fixture.parametroSistema(TipoParametroSistema.NUMERO_DIAS_PERMITIDO_LANCAMENTO_FALTA_EM, "7"));
+		save(session, Fixture.parametroSistema(TipoParametroSistema.NUMERO_DIAS_PERMITIDO_LANCAMENTO_SOBRA_EM, "7"));
+		save(session, Fixture.parametroSistema(TipoParametroSistema.NUMERO_DIAS_PERMITIDO_LANCAMENTO_SOBRA_DE, "7"));
+		save(session, Fixture.parametroSistema(TipoParametroSistema.PATH_INTERFACE_NFE_IMPORTACAO, 
+				"C:\\notas\\"));			// windows;
+//				"/opt/interface/notas/"));	// linux;
+		save(session, Fixture.parametroSistema(TipoParametroSistema.PATH_INTERFACE_MDC_IMPORTACAO, 
+				"C:\\interface_mdc\\"));		// windows;
+//				"/opt/interface/inbound"));		// linux;
+		save(session, Fixture.parametroSistema(TipoParametroSistema.PATH_INTERFACE_MDC_EXPORTACAO, 
+				"C:\\interface_mdc\\"));		// windows;
+//				"/opt/interface/outbound"));	// linux;
+		save(session, Fixture.parametroSistema(TipoParametroSistema.PATH_INTERFACE_MDC_BACKUP, 
+				"C:\\interface_mdc\\"));		// windows;
+//				"/opt/interface/archive"));		// linux;
+		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0106_ARCHIVE, "/opt/interface/ems0106/archive"));
+		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0106_INBOUND, "/opt/interface/ems0106/inbound"));
+		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0106_IN_FILEMASK, "(?i:DEAPR19.NEW)"));
+		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0107_ARCHIVE, "/opt/interface/ems0107/archive"));
+		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0107_INBOUND, "/opt/interface/ems0107/inbound"));
+		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0107_OUTBOUND, "/opt/interface/ems0107/outbound"));
+		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0107_IN_FILEMASK, "(?i:DEAJO19.NEW)"));
+		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0107_OUT_FILEMASK, "DEAPR19.NEW"));
+		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0108_ARCHIVE, "/opt/interface/ems0108/archive"));
+		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0108_INBOUND, "/opt/interface/ems0108/inbound"));
+		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0108_IN_FILEMASK, "(?i:MATRIZ.NEW)"));
+		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0109_ARCHIVE, "/opt/interface/ems0109/archive"));
+		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0109_INBOUND, "/opt/interface/ems0109/inbound"));
+		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0110_ARCHIVE, "/opt/interface/ems0110/archive"));
+		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0110_INBOUND, "/opt/interface/ems0110/inbound"));
+		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0110_OUTBOUND, "/opt/interface/ems0110/outbound"));
+		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0110_IN_FILEMASK, "([0-9]{8}).prd"));
+		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0112_ARCHIVE, "/opt/interface/ems0112/archive"));
+		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0112_INBOUND, "/opt/interface/ems0112/inbound"));
+		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0112_IN_FILEMASK, "(?i:[0-9]{8}.edi)"));
+		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0114_ARCHIVE, "/opt/interface/ems0114/archive"));
+		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0114_INBOUND, "/opt/interface/ems0114/inbound"));
+		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0114_OUTBOUND, "/opt/interface/ems0114/outbound"));
+		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0114_IN_FILEMASK, "([0-9]{8}).rec"));
+		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0116_ARCHIVE, "/opt/interface/ems0116/archive"));
+		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0116_INBOUND, "/opt/interface/ems0116/inbound"));
+		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0116_OUTBOUND, "/opt/interface/ems0116/outbound"));
+		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0116_IN_FILEMASK, "(?i:BANCA.NEW)"));
+		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0117_ARCHIVE, "/opt/interfaceOLD/ems0117/archive"));
+		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0117_INBOUND, "/opt/interfaceOLD/ems0117/inbound"));
+		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0117_OUTBOUND, "/opt/interfaceOLD/ems0117/outbound"));
+		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0117_IN_FILEMASK, "COTA.NEW"));
+		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0118_ARCHIVE, "/opt/interface/ems0118/archive"));
+		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0118_INBOUND, "/opt/interface/ems0118/inbound"));
+		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0118_IN_FILEMASK, "(?i:PRECO.NEW)"));
+		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0119_ARCHIVE, "/opt/interface/ems0119/archive"));
+		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0119_INBOUND, "/opt/interface/ems0119/inbound"));
+		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0119_IN_FILEMASK, "(?i:PRODUTO.NEW)"));
+		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0120_OUTBOUND, "/opt/interface/ems0120/outbound"));
+		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0121_OUTBOUND, "/opt/interface/ems0121/outbound"));
+		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0122_OUTBOUND, "/opt/interface/ems0122/outbound"));
+		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0123_OUTBOUND, "/opt/interface/ems0123/outbound"));
+		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0124_OUTBOUND, "/opt/interface/ems0124/outbound"));
+		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0129_ARCHIVE, "/opt/interface/ems0129/archive"));
+		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0129_OUTBOUND, "/opt/interface/ems0129/outbound"));
+		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0129_OUT_FILEMASK, "PICKING1.NEW"));
+		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0131_OUTBOUND, "/opt/interface/ems0131/outbound"));
+		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0133_OUTBOUND, "/opt/interface/ems0133/outbound"));
+		save(session, Fixture.parametroSistema(TipoParametroSistema.OUTBOUND_FOLDER, "/opt/interface"));
 	}
 
 	private static void criarMovimentosEstoque(Session session) {
@@ -4119,7 +4161,17 @@ public class DataLoader {
 		}
 	}
 
-
+	@SuppressWarnings("unchecked")
+	protected static <T extends Object> T merge(Session session, T entidade) {
+		
+		entidade = (T) session.merge(entidade);
+		
+		session.flush();
+		session.clear();
+		
+		return entidade;
+	}
+	
 	/**
 	 * Gera massa de dados para o teste de Resumo de Expedicao agrupadas por produto
 	 * @param session
@@ -4724,10 +4776,6 @@ public class DataLoader {
 			TipoMovimento tipoMovimento2 = Fixture.tipoMovimentoEnvioJornaleiro();
 			save(session,tipoMovimento,tipoMovimento2);
 		}
-	}
-
-	private static void criarParametroEmail(Session session){
-		save(session, Fixture.criarParametrosEmail());
 	}
 
 	private static void criarBanco(Session session) {
