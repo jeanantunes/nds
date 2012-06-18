@@ -12,9 +12,9 @@
 	<bean id="dataSource"
 		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
 		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
-		<property name="url" value="jdbc:mysql://10.100.1.98:3306/nds-client" />
-		<property name="username" value="mysqluser" />
-		<property name="password" value="Discover1" />
+		<property name="url" value="jdbc:mysql://localhost:3306/nds-client" />
+		<property name="username" value="root" />
+		<property name="password" value="root" />
     </bean>
 
 	<bean id="sessionFactory"

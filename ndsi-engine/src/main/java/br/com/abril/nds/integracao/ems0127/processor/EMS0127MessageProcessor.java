@@ -69,19 +69,23 @@ public class EMS0127MessageProcessor implements MessageProcessor {
 	
 	private List<EMS0127Detalhe> obterEncalhe(List<EMS0127Detalhe> Encalhes) {
 		
-		String sql = "select new br.com.abril.nds.integracao.ems0127.outbound.EMS0127Detalhe(p.codigo as codProduto,  day(ce.dataRecolhimento) as diaRecolhimento) from Lancamento l ";
-		sql += " join  l.produtoEdicao pe ";
-		sql += " join e.produto p ";
-		sql += " join  ";
-		sql += " join pe.produto p ";
-		sql += " where pe.numeroEdicao = :codigoPublicacao ";
+		StringBuilder hql = new StringBuilder();
+		hql.append(" select new br.com.abril.nds.integracao.ems0127.outbound.EMS0127Detalhe( ");
+		hql.append(" p.codigo as codProduto, ce.dataRecolhimento as diaRecolhimento) ");
+		hql.append("   from Lancamento l ");
+		hql.append("   join l.produtoEdicao pe ");
+		hql.append("   join pe.produto p ");
+		hql.append("   join pe.chamadaEncalhes ce ");
+		
+		// FIXME: Verificar se isto esta certo!!!
+		//hql.append("   where pe.numeroEdicao = :codigoPublicacao ");
 
-		TypedQuery<EMS0127Detalhe> query = this.entityManager.createQuery(sql,
+		TypedQuery<EMS0127Detalhe> query = this.entityManager.createQuery(hql.toString(),
 				EMS0127Detalhe.class);
 
+		// FIXME: Verificar se isto esta certo!!!
 		// query.setParameter("codigoPublicacao", codigoPublicacao);
 
 		return query.getResultList();
-
 	}
 }

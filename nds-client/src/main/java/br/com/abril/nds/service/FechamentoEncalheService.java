@@ -26,4 +26,7 @@ public interface FechamentoEncalheService {
 	BigDecimal buscarValorTotalEncalhe(Date dataEncalhe, Long idCota);
 	
 	List<FechamentoFisicoLogicoDTO> salvarFechamentoEncalheBox(FiltroFechamentoEncalheDTO filtro, String sortorder, String sortname, int page, int rp);
+	
+	void encerrarOperacaoEncalhe(Date dataEncalhe);
+
 }
