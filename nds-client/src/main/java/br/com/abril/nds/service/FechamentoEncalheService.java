@@ -28,5 +28,9 @@ public interface FechamentoEncalheService {
 	List<FechamentoFisicoLogicoDTO> salvarFechamentoEncalheBox(FiltroFechamentoEncalheDTO filtro, String sortorder, String sortname, int page, int rp);
 	
 	void encerrarOperacaoEncalhe(Date dataEncalhe);
+	
+	Boolean existeFechamentoEncalhe(FiltroFechamentoEncalheDTO filtro);
+	
+	Boolean existeFechamentoEncalheBox(FiltroFechamentoEncalheDTO filtro);
 
 }
