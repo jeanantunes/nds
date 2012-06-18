@@ -1,6 +1,7 @@
 package br.com.abril.nds.repository.impl;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
@@ -405,6 +406,25 @@ public class ConferenciaEncalheRepositoryImplTest extends AbstractRepositoryImpl
 		
 	}
 
+	
+	@Test
+	public void testObterListaConferenciaEncalheCotaContingencia() {
+		
+		Long idCota = 1L;
+		Date dataInicial 		= Fixture.criarData(1, Calendar.JANUARY, 2012);
+		Date dataFinal 			= Fixture.criarData(1, Calendar.JANUARY, 2012);
+		boolean indFechado 		= false;
+		boolean indPostergado 	= false;
+		Set<Long> listaIdProdutoEdicao = new HashSet<Long>();
+		
+		
+		
+		List<ConferenciaEncalheDTO> listaConferenciaEncalhe =  
+				conferenciaEncalheRepository.obterListaConferenciaEncalheDTOContingencia(
+						idCota, dataInicial, dataFinal, indFechado, indPostergado, listaIdProdutoEdicao);
+		
+		
+	}
 	
 	
 

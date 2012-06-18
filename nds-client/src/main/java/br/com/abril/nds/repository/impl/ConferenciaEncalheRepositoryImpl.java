@@ -1,7 +1,9 @@
 package br.com.abril.nds.repository.impl;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import org.hibernate.Hibernate;
 import org.hibernate.Query;
@@ -61,6 +63,92 @@ public class ConferenciaEncalheRepositoryImpl extends
 		
 		return query.list();
 	
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see br.com.abril.nds.repository.ConferenciaEncalheRepository#obterListaConferenciaEncalheDTOContingencia(java.lang.Long, java.util.Date, java.util.Date, boolean, boolean, java.util.List)
+	 */
+	public List<ConferenciaEncalheDTO> obterListaConferenciaEncalheDTOContingencia(
+			Long idCota,
+			Date dataInicial,
+			Date dataFinal,
+			boolean indFechado,
+			boolean indPostergado,
+			Set<Long> listaIdProdutoEdicao) {
+		
+		StringBuffer hql = new StringBuffer();
+		
+		hql.append(" select	");
+		
+		hql.append(" PROD_EDICAO.ID as idProdutoEdicao,	");
+		hql.append(" PROD_EDICAO.CODIGO_DE_BARRAS as codigoDeBarras, ");
+		
+		hql.append(" ( ");
+		hql.append( subSqlQuerySequenciaMatriz() );
+		hql.append(" ) AS codigoSM, ");
+		
+		hql.append(" CH_ENCALHE.DATA_RECOLHIMENTO AS dataRecolhimento,  	 ");
+		hql.append(" CH_ENCALHE.TIPO_CHAMADA_ENCALHE AS tipoChamadaEncalhe,	 ");
+		hql.append(" PROD.CODIGO AS codigo,");
+		hql.append(" PROD.NOME AS nomeProduto,                               ");
+		
+		hql.append(" PROD_EDICAO.NUMERO_EDICAO AS numeroEdicao,              ");
+		hql.append(" PROD_EDICAO.PRECO_VENDA AS precoCapa,                   ");		
+		
+		hql.append("        ( PROD_EDICAO.PRECO_VENDA *  (  ");
+		hql.append(    getSubSqlQueryValorDesconto()	     );		
+		hql.append("         ) / 100 ) AS desconto         	");
+		
+		hql.append("    FROM    ");
+		
+		hql.append("    CHAMADA_ENCALHE_COTA AS CH_ENCALHE_COTA 	");
+		
+		hql.append("	inner join CHAMADA_ENCALHE AS CH_ENCALHE ON ");
+		hql.append("	(CH_ENCALHE_COTA.CHAMADA_ENCALHE_ID = CH_ENCALHE.ID)	");
+		
+		hql.append("	inner join PRODUTO_EDICAO as PROD_EDICAO ON ");
+		hql.append("	(PROD_EDICAO.ID = CH_ENCALHE.PRODUTO_EDICAO_ID)	");
+
+		hql.append("	inner join PRODUTO as PROD ON ");
+		hql.append("	(PROD_EDICAO.PRODUTO_ID = PROD.ID)	");
+
+		hql.append("	WHERE   ");
+		
+		hql.append("	CH_ENCALHE_COTA.COTA_ID = :idCota AND ");
+		
+		hql.append("	(CH_ENCALHE.DATA_RECOLHIMENTO between :dataInicial AND :dataFinal) AND ");
+		
+		hql.append("	CH_ENCALHE.FECHADO = :indFechado AND	");
+
+		hql.append("	CH_ENCALHE.POSTERGADO = :indPostergado AND	");
+		
+		hql.append("    CH_ENCALHE.PRODUTO_EDICAO_ID NOT IN :listaIdProdutoEdicao ");
+		
+		hql.append("  	ORDER BY codigoSM ");
+		
+		Query query =  this.getSession().createSQLQuery(hql.toString()).setResultTransformer(new AliasToBeanResultTransformer(ConferenciaEncalheDTO.class));
+		
+		((SQLQuery)query).addScalar("idProdutoEdicao", StandardBasicTypes.LONG);
+		((SQLQuery)query).addScalar("codigoDeBarras");
+		((SQLQuery)query).addScalar("codigoSM", StandardBasicTypes.INTEGER);
+		((SQLQuery)query).addScalar("dataRecolhimento");
+		((SQLQuery)query).addScalar("tipoChamadaEncalhe");
+		((SQLQuery)query).addScalar("codigo");
+		((SQLQuery)query).addScalar("nomeProduto");
+		((SQLQuery)query).addScalar("numeroEdicao", StandardBasicTypes.LONG);
+		((SQLQuery)query).addScalar("precoCapa");
+		((SQLQuery)query).addScalar("desconto");
+		
+		query.setParameter("idCota", idCota);
+		query.setParameter("dataInicial", dataInicial);
+		query.setParameter("dataFinal", dataFinal);
+		query.setParameter("indFechado", indFechado);
+		query.setParameter("indPostergado", indPostergado);
+		query.setParameterList("listaIdProdutoEdicao", listaIdProdutoEdicao);
+		
+		return query.list();
+		
 	}
 	
 	/*

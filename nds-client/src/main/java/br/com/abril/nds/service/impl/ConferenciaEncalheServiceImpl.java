@@ -6,6 +6,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -348,13 +349,54 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 	}
 	
-	
-	/*
-	 * (non-Javadoc)
-	 * @see br.com.abril.nds.service.ConferenciaEncalheService#obterInfoConferenciaEncalheCota(java.lang.Integer)
+	/**
+	 * Obtém lista de conferenciaEncalhe com os produtosEdicao que fazem parte da chamaEncalhe atual para 
+	 * a cota em questão ou que estejam dentro da semana de recolhimento. Caso uma operação de conferencia de 
+	 * encalhe esteja sendo realizada, serão adicionados apenas produtosEdicao ainda não tenham sido adicionados
+	 * a lista de conferencia de encalhe existente.
+	 * 
+	 * @param idControleConferenciaEncalheCota
+	 * @param listaConferenciaEncalhe
 	 */
+	public List<ConferenciaEncalheDTO> obterListaConferenciaEncalheContingencia(List<ConferenciaEncalheDTO> listaConferenciaEncalhe) {
+		
+		Set<Long> listaIdProdutoEdicao = new HashSet<Long>();
+		
+		if(listaConferenciaEncalhe!=null && !listaConferenciaEncalhe.isEmpty()) {
+			
+			for(ConferenciaEncalheDTO conferencia : listaConferenciaEncalhe){
+				
+				listaIdProdutoEdicao.add(conferencia.getIdProdutoEdicao());
+				
+			}
+			
+		}
+		
+		Long idCota = null;
+		Date dataInicial = null;
+		Date dataFinal = null;
+		boolean indFechado = false;
+		boolean indPostergado = false;
+		listaIdProdutoEdicao = null;
+		
+		List<ConferenciaEncalheDTO> listaConferenciaEncalheContingencia = 
+			conferenciaEncalheRepository.obterListaConferenciaEncalheDTOContingencia(
+				idCota, 
+				dataInicial, 
+				dataFinal, 
+				indFechado, 
+				indPostergado, 
+				listaIdProdutoEdicao);
+		
+		
+		return listaConferenciaEncalheContingencia;
+		
+		
+	}
+	
+	
 	@Transactional(readOnly = true)
-	public InfoConferenciaEncalheCota obterInfoConferenciaEncalheCota(Integer numeroCota) {
+	public InfoConferenciaEncalheCota obterInfoConferenciaEncalheCota(Integer numeroCota, boolean indConferenciaContingencia) {
 		
 		Distribuidor distribuidor = distribuidorService.obter();
 		
