@@ -26,13 +26,14 @@ public class DadosBalanceamentoLancamentoDTO implements Serializable {
 	
 	private BigDecimal capacidadeDistribuicao;
 	
+	// TODO: verificar a necessidade das datas de distribuição
 	private TreeSet<Date> datasDistribuicaoFornecedor;
 	
 	private TreeSet<Date> datasDistribuicaoDistribuidor;
 	
-	// TODO: private boolean balancearMatriz;
+	private TreeSet<Date> datasDistribuicaoFornecedorDistribuidor;
 	
-	// TODO: private boolean matrizFechada;
+	private Integer qtdDiasLimiteParaReprogLancamento;
 
 	/**
 	 * Construtor padrão.
@@ -112,6 +113,36 @@ public class DadosBalanceamentoLancamentoDTO implements Serializable {
 	public void setDatasDistribuicaoDistribuidor(
 			TreeSet<Date> datasDistribuicaoDistribuidor) {
 		this.datasDistribuicaoDistribuidor = datasDistribuicaoDistribuidor;
+	}
+
+	/**
+	 * @return the datasDistribuicaoFornecedorDistribuidor
+	 */
+	public TreeSet<Date> getDatasDistribuicaoFornecedorDistribuidor() {
+		return datasDistribuicaoFornecedorDistribuidor;
+	}
+
+	/**
+	 * @param datasDistribuicaoFornecedorDistribuidor the datasDistribuicaoFornecedorDistribuidor to set
+	 */
+	public void setDatasDistribuicaoFornecedorDistribuidor(
+			TreeSet<Date> datasDistribuicaoFornecedorDistribuidor) {
+		this.datasDistribuicaoFornecedorDistribuidor = datasDistribuicaoFornecedorDistribuidor;
+	}
+
+	/**
+	 * @return the qtdDiasLimiteParaReprogLancamento
+	 */
+	public Integer getQtdDiasLimiteParaReprogLancamento() {
+		return qtdDiasLimiteParaReprogLancamento;
+	}
+
+	/**
+	 * @param qtdDiasLimiteParaReprogLancamento the qtdDiasLimiteParaReprogLancamento to set
+	 */
+	public void setQtdDiasLimiteParaReprogLancamento(
+			Integer qtdDiasLimiteParaReprogLancamento) {
+		this.qtdDiasLimiteParaReprogLancamento = qtdDiasLimiteParaReprogLancamento;
 	}
 	
 }

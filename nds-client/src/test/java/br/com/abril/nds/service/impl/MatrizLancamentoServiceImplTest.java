@@ -86,6 +86,8 @@ public class MatrizLancamentoServiceImplTest {
 		
 		distribuidor = Fixture.distribuidor(1, juridicaDistrib, new Date(), politicasCobranca);
 		
+		distribuidor.setQtdDiasLimiteParaReprogLancamento(3);
+		
 		PessoaJuridica juridicaDinap = Fixture.pessoaJuridica("Dinap",
 				"11.111.111/0001-11", "111.111.111.111", "dinap@mail.com", "99.999-9");
 		PessoaJuridica juridicaFc = Fixture.pessoaJuridica("FC",
@@ -172,12 +174,10 @@ public class MatrizLancamentoServiceImplTest {
 		BalanceamentoLancamentoDTO balanceamentoLancamento =
 			service.obterMatrizLancamento(this.montarFiltro());
 		
-		Assert.assertNull(balanceamentoLancamento);
+		Assert.assertNotNull(balanceamentoLancamento);
 	}
 	
 	private FiltroLancamentoDTO montarFiltro() {
-		
-		Date data = Fixture.criarData(11, 5, 2012);
 		
 		List<Long> idsFornecedores = new ArrayList<Long>();
 		
@@ -185,7 +185,7 @@ public class MatrizLancamentoServiceImplTest {
 		idsFornecedores.add(fornecedorFc.getId());
 		
 		FiltroLancamentoDTO filtro =
-			new FiltroLancamentoDTO(data, idsFornecedores, null, "codigoProduto");
+			new FiltroLancamentoDTO(new Date(), idsFornecedores, null, "codigoProduto");
 		
 		return filtro;
 	}

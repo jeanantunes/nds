@@ -23,6 +23,19 @@ public class EMS0127Detalhe {
 	private Date dataLancamento;
 	private Date dataRecolhimento;
 	
+	
+	/**
+	 * Método construtor que recebe o código do produto e o dia de recolhimento.
+	 * 
+	 * @param codProduto
+	 * @param diaRecolhimento
+	 */
+	public EMS0127Detalhe(String codProduto, Date diaRecolhimento) {
+		this.codProduto = codProduto;
+		this.diaRecolhimento = diaRecolhimento;
+	}
+	
+	
 	@Field(offset = 1, length = 2, paddingChar = '2')
 	public String getTipoRegistro() {
 		return tipoRegistro;

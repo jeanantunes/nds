@@ -243,4 +243,10 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepository<Fechamen
 			throw new RuntimeException(e);
 		}
 	}
+
+	@Override
+	public void salvarControleFechamentoEncalhe(
+			ControleFechamentoEncalhe controleFechamentoEncalhe) {
+		this.getSession().save(controleFechamentoEncalhe);
+	}
 }
