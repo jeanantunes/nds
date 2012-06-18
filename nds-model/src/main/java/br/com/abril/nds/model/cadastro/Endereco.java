@@ -39,7 +39,7 @@ public class Endereco implements Serializable {
 	@Column(name = "BAIRRO", length=60)
 	private String bairro;
 	
-	@Column(name = "CEP", length=8)
+	@Column(name = "CEP", length=9)
 	private String cep;
 	
 	@Column(name = "CODIGO_CIDADE_IBGE", nullable = true, length=7)
