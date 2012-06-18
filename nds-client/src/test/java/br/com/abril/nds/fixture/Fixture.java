@@ -1041,8 +1041,8 @@ public class Fixture {
 		tipoNotaFiscal.setDescricao("RECEBIMENTO");
 		tipoNotaFiscal.setGrupoNotaFiscal(GrupoNotaFiscal.RECEBIMENTO_MERCADORIAS);
 		
-		/*tipoNotaFiscal.setCfopEstado(cfopEstado);
-		tipoNotaFiscal.setCfopOutrosEstados(cfopOutroEstado);*/
+		tipoNotaFiscal.setCfopEstado(cfop1209());
+		tipoNotaFiscal.setCfopOutrosEstados(cfop1209());
 		tipoNotaFiscal.setNopDescricao("NF-e de Devolução de Remessa para Distruibuição");
 		tipoNotaFiscal.setEmitente(TipoUsuarioNotaFiscal.DISTRIBUIDOR);
 		tipoNotaFiscal.setDestinatario(TipoUsuarioNotaFiscal.DISTRIBUIDOR);
@@ -1089,8 +1089,8 @@ public class Fixture {
 		tipoNotaFiscal.setDescricao("DEVOLUCAO");
 		tipoNotaFiscal.setGrupoNotaFiscal(GrupoNotaFiscal.DEVOLUCAO_MERCADORIA_FORNECEDOR);
 
-		/*tipoNotaFiscal.setCfopEstado(cfopEstado);
-		tipoNotaFiscal.setCfopOutrosEstados(cfopOutroEstado);*/
+		tipoNotaFiscal.setCfopEstado(cfop5102());
+		tipoNotaFiscal.setCfopOutrosEstados(cfop5102());
 		tipoNotaFiscal.setNopDescricao("NF-e de Remessa em Consignação (NECE / DANFE)");
 		tipoNotaFiscal.setEmitente(TipoUsuarioNotaFiscal.DISTRIBUIDOR);
 		tipoNotaFiscal.setDestinatario(TipoUsuarioNotaFiscal.COTA);
@@ -1107,8 +1107,8 @@ public class Fixture {
 		tipoNotaFiscal.setDescricao("RECEBIMENTO DE MERCADORIAS ENCALHE");
 		tipoNotaFiscal.setGrupoNotaFiscal(GrupoNotaFiscal.RECEBIMENTO_MERCADORIAS_ENCALHE);
 
-		/*tipoNotaFiscal.setCfopEstado(cfopEstado);
-		tipoNotaFiscal.setCfopOutrosEstados(cfopOutroEstado);*/
+		tipoNotaFiscal.setCfopEstado(cfop1210());
+		tipoNotaFiscal.setCfopOutrosEstados(cfop1210());
 		tipoNotaFiscal.setNopDescricao("NF-e de Devolução de Remessa para Distruibuição");
 		tipoNotaFiscal.setEmitente(TipoUsuarioNotaFiscal.DISTRIBUIDOR);
 		tipoNotaFiscal.setDestinatario(TipoUsuarioNotaFiscal.DISTRIBUIDOR);

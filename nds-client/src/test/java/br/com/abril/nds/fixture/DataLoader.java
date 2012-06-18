@@ -3927,8 +3927,8 @@ public class DataLoader {
 	}
 
 	private static void criarTiposNotaFiscal(Session session) {
-		tipoNotaFiscalRecebimento = Fixture.tipoNotaFiscalRecebimento(cfop1918, cfop1209);
-		tipoNotaFiscalDevolucao = Fixture.tipoNotaFiscalDevolucao(cfop5917, cfop6917);
+		tipoNotaFiscalRecebimento = Fixture.tipoNotaFiscalRecebimento();
+		tipoNotaFiscalDevolucao = Fixture.tipoNotaFiscalDevolucao();
 
 		save(session, tipoNotaFiscalRecebimento, tipoNotaFiscalDevolucao);
 
@@ -5233,7 +5233,7 @@ public class DataLoader {
 
 	private static void gerarCargaDadosConferenciaEncalhe(Session session) {
 		
-		TipoNotaFiscal tipoNotaFiscal = Fixture.tipoNotaFiscalRecebimentoMercadoriasEncalhe(cfop1949, cfop2949);
+		TipoNotaFiscal tipoNotaFiscal = Fixture.tipoNotaFiscalRecebimentoMercadoriasEncalhe();
 		save(session, tipoNotaFiscal);
 		
 		Box boxRecolhimento = Fixture.criarBox("ENC_BOX1", "Box Encalhe", TipoBox.RECOLHIMENTO, false);
