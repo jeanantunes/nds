@@ -133,7 +133,7 @@ public class LancamentoParcialRepositoryImpl extends AbstractRepository<Lancamen
 		}
 		
 		if(filtro.getDataFinalDate() != null) { 
-			hql.append( (usarAnd ? " and ":" where ") + " lancamentoParcial.recolhimentoFinal<=:dtFinal ");
+			hql.append( (usarAnd ? " and ":" where ") + " lancamentoParcial.lancamentoInicial<=:dtFinal ");
 			usarAnd = true;
 		}
 		

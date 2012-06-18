@@ -20,14 +20,14 @@
 <table width="777" border="0" cellspacing="1" cellpadding="1">
   <tr>
     <td colspan="2" class="complementar" colspan="2">
-    	  <input name="pontoPrincipal" type="checkbox" value="" id="ptoPrincipal" />
-	      <label for="pontoPrincipal" >Ponto Principal</label>
-	      <br clear="all" />
-	      <input name="balcaoCentral" type="checkbox" value="" id="balcaoCentral" />
+    	  <input name="balcaoCentral" type="checkbox" value="" id="balcaoCentral" />
 	      <label for="balcaoCentral" >Balcão Central</label>
 	      <br clear="all" />
 	      <input name="temComputador" type="checkbox" value="" id="temComputador" />
 	      <label for="temComputador" >Tem Computador?</label>
+	      <br clear="all" />
+	      <input name="possuiCartao" type="checkbox" value="" id="possuiCartao" />
+	      <label for="possuiCartao" >Possui cartão de Crédito/Débito?</label>
 	      <br clear="all" />
 	      <input name="luminoso" type="checkbox" value="" id="luminoso" onclick="PDV.opcaoTextoLuminoso('#luminoso')" />
 	      <label for="luminoso" >Luminoso</label>
@@ -74,16 +74,7 @@
 	  	   </c:forEach>
 	    </select></td>
     </tr>
-  <tr>
-    <td>Cluster:</td>
-    <td>
-	    <select name="selectCluster" id="selectCluster" style="width:232px;">
-	      <option selected="selected">Selecione...</option>
-	      <c:forEach items="${listaClusterPDV}" var="item">
-	    	  <option value="${item.key}">${item.value}</option>	          
-	  	   </c:forEach>
-	    </select></td>
-    </tr>
+ 
     </table>
  </fieldset>
  
