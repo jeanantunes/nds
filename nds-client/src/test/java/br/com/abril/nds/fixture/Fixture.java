@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Set;
 
 import br.com.abril.nds.model.DiaSemana;
+import br.com.abril.nds.model.LeiautePicking;
 import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.StatusCobranca;
 import br.com.abril.nds.model.StatusConfirmacao;
@@ -589,6 +590,7 @@ public class Fixture {
 		distribuidor.setCapacidadeDistribuicao(new BigDecimal("10000"));
 		distribuidor.setCapacidadeRecolhimento(new BigDecimal("1000"));
 		distribuidor.setPreenchimentoAutomaticoPDV(true);
+		distribuidor.setLeiautePicking(LeiautePicking.DOIS);
 		
 		return distribuidor;
 	}
