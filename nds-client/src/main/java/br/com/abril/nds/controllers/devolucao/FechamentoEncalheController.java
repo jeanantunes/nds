@@ -21,6 +21,7 @@ import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.BoxService;
+import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.DistribuidorService;
 import br.com.abril.nds.service.FechamentoEncalheService;
 import br.com.abril.nds.service.FornecedorService;
@@ -62,6 +63,9 @@ public class FechamentoEncalheController {
 
 	@Autowired
 	private HttpServletResponse response;
+	
+	@Autowired
+	private CalendarioService calendarioService;
 	
 	@Path("/")
 	public void index() {
@@ -129,13 +133,37 @@ public class FechamentoEncalheController {
 	public void encerrarFechamento(Date dataEncalhe) {
 		
 		// TODO: verificar condições para fechamento; mostrar msg erro
+	}
+	
+	@Path("carregarDataPostergacao")
+	public void carregarDataPostergacao(Date dataPostergacao) {
 		
+		try {
+			
+			int quantidadeDias = 0;
+			
+			if (dataPostergacao == null) {
+				quantidadeDias = 1;
+				dataPostergacao = Calendar.getInstance().getTime();
+			}
+			
+			
+			dataPostergacao = 
+				this.calendarioService.adicionarDiasRetornarDiaUtil(dataPostergacao, quantidadeDias);
+			
+			if (dataPostergacao != null) {
+				String dataFormatada = DateUtil.formatarData(dataPostergacao, "dd/MM/yyyy");
+				this.result.use(Results.json()).from(dataFormatada, "result").recursive().serialize();
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		
 	}
 	
-	
 	@Path("/postergarCotas")
-	public void postergarCotas(Date dataPostergacao, List<Long> idsCotas) {
+	public void postergarCotas(Date dataPostergacao, Date dataEncalhe, List<Long> idsCotas) {
 			
 		Date dataAtual = Calendar.getInstance().getTime();
 		
