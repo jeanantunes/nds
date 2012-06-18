@@ -14,6 +14,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import br.com.abril.nds.integracao.model.canonic.InterfaceEnum;
 import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.StatusCobranca;
 import br.com.abril.nds.model.StatusConfirmacao;
@@ -670,6 +671,7 @@ public class DataLoader {
 		
 		gerarCfops(session);
 		
+		criarInterfaceExecucao(session);
 		criarAlgoritmos(session);
 		criarCarteira(session);
 		criarBanco(session);
@@ -778,7 +780,7 @@ public class DataLoader {
 		gerarTiposNotas(session);
 		
 	}
-
+	
 	private static void criarAlgoritmos(Session session) {
 
 		Algoritmo algoritmoSP = Fixture.criarAlgoritmo("Rota SP");
@@ -8588,4 +8590,38 @@ public class DataLoader {
 					  chamadaEncalheCotaManoelBravo102, chamadaEncalheCotaAcmeBravo102,
 					  chamadaEncalheCotaManoelWomenHealth102, chamadaEncalheCotaAcmeWomenHealth102);
 	}
+	
+	
+	private static void criarInterfaceExecucao(Session session) {
+		
+		save(session, Fixture.criarInterfaceExecucao(106L, "EMS0106"));
+		save(session, Fixture.criarInterfaceExecucao(107L, "EMS0107"));
+		save(session, Fixture.criarInterfaceExecucao(108L, "EMS0108"));
+		save(session, Fixture.criarInterfaceExecucao(InterfaceEnum.EMS0109.getCodigoInterface(), "EMS0109"));
+		save(session, Fixture.criarInterfaceExecucao(InterfaceEnum.EMS0110.getCodigoInterface(), "EMS0110"));
+		save(session, Fixture.criarInterfaceExecucao(InterfaceEnum.EMS0111.getCodigoInterface(), "EMS0111"));
+		save(session, Fixture.criarInterfaceExecucao(InterfaceEnum.EMS0112.getCodigoInterface(), "EMS0112"));
+		save(session, Fixture.criarInterfaceExecucao(InterfaceEnum.EMS0113.getCodigoInterface(), "EMS0113"));
+		save(session, Fixture.criarInterfaceExecucao(InterfaceEnum.EMS0114.getCodigoInterface(), "EMS0114"));
+		save(session, Fixture.criarInterfaceExecucao(116L, "EMS0116"));
+		save(session, Fixture.criarInterfaceExecucao(117L, "EMS0117"));
+		save(session, Fixture.criarInterfaceExecucao(118L, "EMS0118"));
+		save(session, Fixture.criarInterfaceExecucao(InterfaceEnum.EMS0119.getCodigoInterface(), "EMS0119"));
+		save(session, Fixture.criarInterfaceExecucao(120L, "EMS0120"));
+		save(session, Fixture.criarInterfaceExecucao(121L, "EMS0121"));
+		save(session, Fixture.criarInterfaceExecucao(122L, "EMS0122"));
+		save(session, Fixture.criarInterfaceExecucao(123L, "EMS0123"));
+		save(session, Fixture.criarInterfaceExecucao(124L, "EMS0124"));
+		save(session, Fixture.criarInterfaceExecucao(InterfaceEnum.EMS0125.getCodigoInterface(), "EMS0125"));
+		save(session, Fixture.criarInterfaceExecucao(InterfaceEnum.EMS0126.getCodigoInterface(), "EMS0126"));
+		save(session, Fixture.criarInterfaceExecucao(129L, "EMS0129"));
+		save(session, Fixture.criarInterfaceExecucao(130L, "EMS0130"));
+		save(session, Fixture.criarInterfaceExecucao(131L, "EMS0131"));
+		save(session, Fixture.criarInterfaceExecucao(132L, "EMS0132"));
+		save(session, Fixture.criarInterfaceExecucao(133L, "EMS0133"));
+		save(session, Fixture.criarInterfaceExecucao(InterfaceEnum.EMS0134.getCodigoInterface(), "EMS0134"));
+		save(session, Fixture.criarInterfaceExecucao(InterfaceEnum.EMS0185.getCodigoInterface(), "EMS0185"));
+		save(session, Fixture.criarInterfaceExecucao(197L, "EMS0197"));
+	}
+	
 }
