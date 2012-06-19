@@ -43,6 +43,8 @@ import br.com.abril.nds.model.cadastro.ParametroContratoCota;
 import br.com.abril.nds.model.cadastro.ParametroDistribuicaoCota;
 import br.com.abril.nds.model.cadastro.ParametroSistema;
 import br.com.abril.nds.model.cadastro.ParametroUsuarioBox;
+import br.com.abril.nds.model.cadastro.ParametrosAprovacaoDistribuidor;
+import br.com.abril.nds.model.cadastro.ParametrosRecolhimentoDistribuidor;
 import br.com.abril.nds.model.cadastro.Periodicidade;
 import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
 import br.com.abril.nds.model.cadastro.Pessoa;
@@ -592,7 +594,45 @@ public class Fixture {
 		distribuidor.setCapacidadeDistribuicao(new BigDecimal("10000"));
 		distribuidor.setCapacidadeRecolhimento(new BigDecimal("1000"));
 		distribuidor.setPreenchimentoAutomaticoPDV(true);
+		distribuidor.setExecutaRecolhimentoParcial(true);
+		distribuidor.setFatorRelancamentoParcial(7);
+		distribuidor.setQuantidadeDiasSuspensaoCotas(7);
+		distribuidor.setValorConsignadoSuspensaoCotas(BigDecimal.TEN);
 		distribuidor.setLeiautePicking(LeiautePicking.DOIS);
+		distribuidor.setRequerAutorizacaoEncalheSuperaReparte(false);
+		distribuidor.setObrigacaoFiscao(true);
+		distribuidor.setRegimeEspecial(true);
+		distribuidor.setUtilizaProcuracaoEntregadores(true);
+		distribuidor.setInformacoesComplementaresProcuracao("Info Complementares Procuração");
+		distribuidor.setUtilizaGarantiaPdv(false);
+		distribuidor.setParcelamentoDividas(false);
+		distribuidor.setNegociacaoAteParcelas(Integer.valueOf(3));
+		distribuidor.setPermitePagamentoDividasDivergentes(false);
+		distribuidor.setUtilizaControleAprovacao(false);
+		distribuidor.setPrazoFollowUp(Integer.valueOf(7));
+		distribuidor.setPrazoAvisoPrevioValidadeGarantia(Integer.valueOf(7));
+		distribuidor.setQtdDiasLimiteParaReprogLancamento(Integer.valueOf(7));
+		
+		ParametrosRecolhimentoDistribuidor prd = new ParametrosRecolhimentoDistribuidor();
+		prd.setConferenciaCegaEncalhe(false);
+		prd.setConferenciaCegaRecebimento(false);
+		prd.setDiaRecolhimentoPrimeiro(false);
+		prd.setDiaRecolhimentoSegundo(false);
+		prd.setDiaRecolhimentoTerceiro(false);
+		prd.setDiaRecolhimentoQuarto(false);
+		prd.setDiaRecolhimentoQuinto(false);
+		prd.setPermiteRecolherDiasPosteriores(false);
+		distribuidor.setParametrosRecolhimentoDistribuidor(prd);
+		
+		ParametrosAprovacaoDistribuidor pad = new ParametrosAprovacaoDistribuidor();
+		pad.setDebitoCredito(false);
+		pad.setNegociacao(false);
+		pad.setAjusteEstoque(false);
+		pad.setPostergacaoCobranca(false);
+		pad.setDevolucaoFornecedor(false);
+		pad.setRecibo(false);
+		pad.setFaltasSobras(false);
+		distribuidor.setParametrosAprovacaoDistribuidor(pad);
 		
 		return distribuidor;
 	}
