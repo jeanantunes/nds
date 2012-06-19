@@ -2515,27 +2515,27 @@ public class DataLoader {
 		merge(session, Fixture.parametroSistema(5L, TipoParametroSistema.EMAIL_PORTA, "465"));
 		
 		save(session, Fixture.parametroSistema(TipoParametroSistema.PATH_IMAGENS_CAPA, 
-				"C:\\apache-tomcat-7.0.25\\webapps\\nds-client\\capas\\"));	// windows;
-//				"/opt/tomcat/webapps/nds-client/capas/"));					// linux;
+//				"C:\\apache-tomcat-7.0.25\\webapps\\nds-client\\capas\\"));	// windows;
+				"/opt/tomcat/webapps/nds-client/capas/"));					// linux;
 		save(session, Fixture.parametroSistema(TipoParametroSistema.PATH_IMAGENS_PDV,
-				"/images/pdv/"));		// windows;
-//				"\\images\\pdv\\"));	// linux;
+//				"/images/pdv/"));		// windows;
+				"\\images\\pdv\\"));	// linux;
 		save(session, Fixture.parametroSistema(TipoParametroSistema.NUMERO_DIAS_PERMITIDO_LANCAMENTO_FALTA_DE, "7"));
 		save(session, Fixture.parametroSistema(TipoParametroSistema.NUMERO_DIAS_PERMITIDO_LANCAMENTO_FALTA_EM, "7"));
 		save(session, Fixture.parametroSistema(TipoParametroSistema.NUMERO_DIAS_PERMITIDO_LANCAMENTO_SOBRA_EM, "7"));
 		save(session, Fixture.parametroSistema(TipoParametroSistema.NUMERO_DIAS_PERMITIDO_LANCAMENTO_SOBRA_DE, "7"));
 		save(session, Fixture.parametroSistema(TipoParametroSistema.PATH_INTERFACE_NFE_IMPORTACAO, 
-				"C:\\notas\\"));			// windows;
-//				"/opt/interface/notas/"));	// linux;
+//				"C:\\notas\\"));			// windows;
+				"/opt/interface/notas/"));	// linux;
 		save(session, Fixture.parametroSistema(TipoParametroSistema.PATH_INTERFACE_MDC_IMPORTACAO, 
-				"C:\\interface_mdc\\"));		// windows;
-//				"/opt/interface/inbound"));		// linux;
+//				"C:\\interface_mdc\\"));		// windows;
+				"/opt/interface/inbound"));		// linux;
 		save(session, Fixture.parametroSistema(TipoParametroSistema.PATH_INTERFACE_MDC_EXPORTACAO, 
-				"C:\\interface_mdc\\"));		// windows;
-//				"/opt/interface/outbound"));	// linux;
+//				"C:\\interface_mdc\\"));		// windows;
+				"/opt/interface/outbound"));	// linux;
 		save(session, Fixture.parametroSistema(TipoParametroSistema.PATH_INTERFACE_MDC_BACKUP, 
-				"C:\\interface_mdc\\"));		// windows;
-//				"/opt/interface/archive"));		// linux;
+//				"C:\\interface_mdc\\"));		// windows;
+				"/opt/interface/archive"));		// linux;
 		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0106_ARCHIVE, "/opt/interface/ems0106/archive"));
 		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0106_INBOUND, "/opt/interface/ems0106/inbound"));
 		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0106_IN_FILEMASK, "(?i:DEAPR19.NEW)"));
