@@ -131,6 +131,7 @@ import br.com.abril.nds.model.fiscal.TipoEmissaoNfe;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
 import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.model.fiscal.TipoUsuarioNotaFiscal;
+import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalhe;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalheCota;
 import br.com.abril.nds.model.movimentacao.CotaAusente;
@@ -673,6 +674,7 @@ public class DataLoader {
 		
 		criarParametrosSistema(session);
 		criarInterfaceExecucao(session);
+		criarEventoExecucao(session);
 		criarAlgoritmos(session);
 		criarCarteira(session);
 		criarBanco(session);
@@ -8670,6 +8672,17 @@ public class DataLoader {
 		save(session, Fixture.criarInterfaceExecucao(InterfaceEnum.EMS0134.getCodigoInterface(), "EMS0134"));
 		save(session, Fixture.criarInterfaceExecucao(InterfaceEnum.EMS0185.getCodigoInterface(), "EMS0185"));
 		save(session, Fixture.criarInterfaceExecucao(197L, "EMS0197"));
+	}
+	
+	private static void criarEventoExecucao(Session session) {
+		
+		save(session, Fixture.criarEventoExecucao(EventoExecucaoEnum.ERRO_INFRA.getCodigo(), "Erro Infra", "Erro de infraestrutura"));
+		save(session, Fixture.criarEventoExecucao(EventoExecucaoEnum.SEM_DOMINIO.getCodigo(), "Dominio", "Sem Domínio"));
+		save(session, Fixture.criarEventoExecucao(EventoExecucaoEnum.HIERARQUIA.getCodigo(), "Hierarquia", "Hierarquia Corrompida"));
+		save(session, Fixture.criarEventoExecucao(EventoExecucaoEnum.RELACIONAMENTO.getCodigo(), "Relacionamento", "Relacionamento Não Encontrado"));
+		save(session, Fixture.criarEventoExecucao(EventoExecucaoEnum.GERACAO_DE_ARQUIVO.getCodigo(), "Arquivo", "Geração de Arquivo"));
+		save(session, Fixture.criarEventoExecucao(EventoExecucaoEnum.INF_DADO_ALTERADO.getCodigo(), "Alteração Dado", "Informação de dado Alterado"));
+		save(session, Fixture.criarEventoExecucao(EventoExecucaoEnum.REGISTRO_JA_EXISTENTE.getCodigo(), "Registro já existente", "Registro já existente"));
 	}
 	
 }
