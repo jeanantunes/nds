@@ -144,7 +144,7 @@ public class Distribuidor {
      * valor consigando total menor ou igual ao informado 
      * nesta coluna.
 	 */
-	@Column(name = "VALOR_CONSIGNADO_SUSPENSAO_COTAS",  nullable = false)
+	@Column(name = "VALOR_CONSIGNADO_SUSPENSAO_COTAS",  nullable = true)
 	private BigDecimal valorConsignadoSuspensaoCotas;
 	
 	/**
@@ -152,7 +152,7 @@ public class Distribuidor {
        dias de suspensão sejam maiores ou iguais 
      * ao informado nesta coluna.
 	 */
-	@Column(name = "QTD_DIAS_SUSPENSAO_COTAS",  nullable = false)
+	@Column(name = "QTD_DIAS_SUSPENSAO_COTAS",  nullable = true)
 	private int quantidadeDiasSuspensaoCotas;
 	
 	/**
@@ -207,31 +207,31 @@ public class Distribuidor {
 	@Column(name = "TIPO_IMPRESSAO_NECA_DANFE", nullable = true)
 	private TipoImpressaoNECADANFE tipoImpressaoNECADANFE = TipoImpressaoNECADANFE.MODELO_1;	
 
-	@Column(name = "UTILIZA_PROCURACAO_ENTREGADORES", nullable = false)
+	@Column(name = "UTILIZA_PROCURACAO_ENTREGADORES", nullable = true)
 	private boolean utilizaProcuracaoEntregadores;	
 	
-	@Column(name = "INFORMACOES_COMPLEMENTARES_PROCURACAO", nullable = false)
+	@Column(name = "INFORMACOES_COMPLEMENTARES_PROCURACAO", nullable = true)
 	private String informacoesComplementaresProcuracao;
 
-	@Column(name = "UTILIZA_GARANTIA_PDV", nullable = false)
+	@Column(name = "UTILIZA_GARANTIA_PDV", nullable = true)
 	private boolean utilizaGarantiaPdv;	
 
-	@Column(name = "PARCELAMENTO_DIVIDAS", nullable = false)
+	@Column(name = "PARCELAMENTO_DIVIDAS", nullable = true)
 	private boolean parcelamentoDividas;	
 	
-	@Column(name = "NEGOCIACAO_ATE_PARCELAS", nullable = false)
+	@Column(name = "NEGOCIACAO_ATE_PARCELAS", nullable = true)
 	private Integer negociacaoAteParcelas;
 	
-	@Column(name = "PERMITE_PAGAMENTO_DIVIDAS_DIVERGENTES", nullable = false)
+	@Column(name = "PERMITE_PAGAMENTO_DIVIDAS_DIVERGENTES", nullable = true)
 	private boolean permitePagamentoDividasDivergentes;	
 
-	@Column(name = "UTILIZA_CONTROLE_APROVACAO", nullable = false)
+	@Column(name = "UTILIZA_CONTROLE_APROVACAO", nullable = true)
 	private boolean utilizaControleAprovacao;	
 
-	@Column(name = "PRAZO_FOLLOW_UP", nullable = false)
+	@Column(name = "PRAZO_FOLLOW_UP", nullable = true)
 	private Integer prazoFollowUp;
 	
-	@Column(name = "PRAZO_AVISO_PREVIO_VALIDADE_GARANTIA", nullable = false)
+	@Column(name = "PRAZO_AVISO_PREVIO_VALIDADE_GARANTIA", nullable = true)
 	private Integer prazoAvisoPrevioValidadeGarantia;
 
 	@Column(name="QTD_DIAS_LIMITE_PARA_REPROG_LANCAMENTO", nullable = true)
