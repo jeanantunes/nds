@@ -282,19 +282,18 @@ public class BoxRepositoryImpl extends AbstractRepository<Box,Long> implements B
 		
 		hql.append(" select distinct c from Cota c");
 		
-		if(idRoteiro!=null){
+		if(idRoteiro!=null && idRoteiro>0){
 		    hql.append(", Roteiro rr");
+		    if (idRota!=null && idRota>0){
+				hql.append(", Rota r");
+			}
 		}  
-		
-		if (idRota!=null){
-			hql.append(", Rota r");
-		}
 		
 		hql.append(" where c.box.id = :idBox");
 		
-		if(idRoteiro!=null){
+		if(idRoteiro!=null && idRoteiro>0){
 		    hql.append(" and rr.box = c.box and rr.id = :idRoteiro ");
-		    if (idRota!=null){
+		    if (idRota!=null && idRota>0){
 				hql.append(" and r.roteiro = rr and r.id = :idRota ");
 			}
 		}
@@ -303,9 +302,9 @@ public class BoxRepositoryImpl extends AbstractRepository<Box,Long> implements B
 		
 		query.setParameter("idBox", idBox);
 		
-		if (idRoteiro!=null){
+		if (idRoteiro!=null && idRoteiro>0){
 			query.setParameter("idRoteiro", idRoteiro);
-			if(idRota!=null){
+			if(idRota!=null && idRota>0){
 			    query.setParameter("idRota", idRota);
 			}
 		}
@@ -327,19 +326,18 @@ public class BoxRepositoryImpl extends AbstractRepository<Box,Long> implements B
 		
 		hql.append(" select distinct c from Cota c");
 		
-		if(idRoteiro!=null){
+		if(idRoteiro!=null && idRoteiro>0){
 		    hql.append(", Roteiro rr");
+		    if (idRota!=null && idRota>0){
+				hql.append(", Rota r");
+			}
 		}  
-		
-		if (idRota!=null){
-			hql.append(", Rota r");
-		}
 		
 		hql.append(" where c.box.id = :idBox");
 		
-		if(idRoteiro!=null){
+		if(idRoteiro!=null && idRoteiro>0){
 		    hql.append(" and rr.box = c.box and rr.id = :idRoteiro ");
-		    if (idRota!=null){
+		    if (idRota!=null && idRota>0){
 				hql.append(" and r.roteiro = rr and r.id = :idRota ");
 			}
 		}
@@ -348,9 +346,9 @@ public class BoxRepositoryImpl extends AbstractRepository<Box,Long> implements B
 		
 		query.setParameter("idBox", idBox);
 		
-		if (idRoteiro!=null){
+		if (idRoteiro!=null && idRoteiro>0){
 			query.setParameter("idRoteiro", idRoteiro);
-			if(idRota!=null){
+			if(idRota!=null && idRota>0){
 			    query.setParameter("idRota", idRota);
 			}
 		}
