@@ -243,20 +243,27 @@ public class ConsultaNFEEncalheTratamentoNotasRecebidasRepositoryImpl extends Ab
 		
 		hql.append("SELECT produto.codigo as codigoProduto, ");
 		hql.append("produto.nome as nomeProduto, ");		
-		hql.append("produtoEdicao.numeroEdicao as numeroEdicao, ");		
+		hql.append("produtoEdicao.numeroEdicao as numeroEdicao, ");
+		hql.append("produtoEdicao.numeroEdicao as numeroEdicao, ");
 		hql.append("conf.qtdeInformada as qtdInformada, ");
 		hql.append("conf.qtde as qtdRecebida, ");
 		hql.append("conf.precoCapaInformado as precoCapa, ");
 		
-		hql.append("        ( conf.precoCapaInformado *  ( ");
+		hql.append("        ( conf.precoCapaInformado -  ( ");
 		hql.append(    getSubSqlQueryValorDesconto()			);		
-		hql.append("         ) / 100 ) AS precoDesconto        ");
+		hql.append("         )  ) AS precoDesconto,        ");
+		
+		hql.append("        ( conf.precoCapaInformado -  ( ");
+		hql.append(    getSubSqlQueryValorDesconto()			);		
+		hql.append("         ) * conf.qtdeInformada) AS totalDoItem ");
 		
 		hql.append(" from ItemNotaFiscalEntrada as item, ControleConferenciaEncalheCota as confCota ");
 		hql.append(" LEFT JOIN item.notaFiscal as nf ");
 		hql.append(" LEFT JOIN item.produtoEdicao as produtoEdicao ");
 		hql.append(" LEFT JOIN produtoEdicao.produto as produto ");		
 		hql.append(" left join confCota.conferenciasEncalhe as conf  ");
+		hql.append(" left join conf.chamadaEncalheCota as chamadaCota  ");
+		hql.append(" left join chamadaCota.chamadaEncalhe chamadaEncalhe  ");
 		
 		hql.append(" WHERE confCota.notaFiscalEntradaCota.id = nf.id  and nf.id = :idNota ");
 		

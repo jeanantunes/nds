@@ -511,19 +511,19 @@ function popup() {
 				align : 'center'
 			}, {
 				display : 'Preço Capa R$',
-				name : 'precoCapa',
+				name : 'precoCapaFormatado',
 				width : 80,
 				sortable : true,
 				align : 'right'
 			}, {
 				display : 'Preço Desc R$',
-				name : 'precoDesconto',
+				name : 'precoDescontoFormatado',
 				width : 80,
 				sortable : true,
 				align : 'right'
 			}, {
 				display : 'Total R$',
-				name : 'vlrTotal',
+				name : 'totalDoItemFormatado',
 				width : 80,
 				sortable : true,
 				align : 'right'
