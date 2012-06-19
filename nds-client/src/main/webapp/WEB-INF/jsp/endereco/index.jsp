@@ -9,7 +9,6 @@
 	var ${param.telaEndereco} = new Endereco('${param.telaEndereco}','${param.message}');
 	
 </script>
-    
 
 </head>
 
@@ -20,13 +19,19 @@
 	</div>
 
 	<form name="${param.telaEndereco}formEnderecos" id="${param.telaEndereco}formEnderecos">
-		
+
 		<input type="hidden" name="enderecoAssociacao.id" id="${param.telaEndereco}idEndereco"/>
 		
 		<input type="hidden" name="enderecoAssociacao.endereco.id" id="${param.telaEndereco}enderecoid"/>
 		
 		<input type="hidden" name="tela" id="${param.telaEndereco}telaEndereco" value="${param.telaEndereco}"/>
 		
+		<input type="hidden" name="enderecoAssociacao.endereco.codigoBairro" id="${param.telaEndereco}codigoBairro"/>
+		
+		<input type="hidden" name="enderecoAssociacao.endereco.codigoCidadeIBGE" id="${param.telaEndereco}codigoCidadeIBGE"/>
+		
+		<input type="hidden" id="${param.telaEndereco}idLocalidade"/>
+
 		<table width="754" cellpadding="2" cellspacing="2" style="text-align:left ">
 			<tr>
 				
@@ -60,10 +65,11 @@
 				</td>
 				<td>Cidade:</td>
 				<td>
-					<select style="width:250px" 
-							id="${param.telaEndereco}cidade"
-						    name="enderecoAssociacao.endereco.cidade">
-					</select>
+					<input type="text" style="width:250px" 
+						   id="${param.telaEndereco}cidade" 
+						   onkeyup="${param.telaEndereco}.autoCompletarLocalidades();"
+						   onblur="${param.telaEndereco}.autoCompletarLocalidades(true);"
+						   name="enderecoAssociacao.endereco.cidade" />
 				</td>
 			</tr>
 			<tr>			
@@ -82,13 +88,17 @@
 			
 				<td>Bairro:</td>
 				<td>
-					<input type="text"  style="width:230px" 
+					<input type="text"  style="width:230px"
+						   onkeyup="${param.telaEndereco}.autoCompletarBairros();"
+						   onblur="${param.telaEndereco}.autoCompletarBairros(true);"
 						   name="enderecoAssociacao.endereco.bairro" id="${param.telaEndereco}bairro" />
 				</td>
 				
 				<td>Tipo Logradouro:</td>
 				<td>
 					<input type="text" style="width:250px" 
+						   onkeyup="${param.telaEndereco}.autoCompletarTipoLogradouro();"
+						   onblur="${param.telaEndereco}.autoCompletarTipoLogradouro(true);"
 						   name="enderecoAssociacao.endereco.tipoLogradouro" id="${param.telaEndereco}tipoLogradouro" />
 				</td>
 				
@@ -97,7 +107,9 @@
 				
 				<td>Logradouro:</td>
 				<td>
-					<input type="text" style="width:230px" 
+					<input type="text" style="width:230px"
+						   onkeyup="${param.telaEndereco}.autoCompletarLogradouros();"
+						   onblur="${param.telaEndereco}.autoCompletarLogradouros(true);" 
 						   name="enderecoAssociacao.endereco.logradouro" id="${param.telaEndereco}logradouro" />
 				</td>
 				
