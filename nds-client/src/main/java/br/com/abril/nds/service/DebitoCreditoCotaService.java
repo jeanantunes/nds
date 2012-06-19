@@ -13,7 +13,7 @@ public interface DebitoCreditoCotaService {
 	MovimentoFinanceiroCotaDTO gerarMovimentoFinanceiroCotaDTO(DebitoCreditoDTO debitoCreditoDTO);
 	
 	/**
-	 * Obtém dados pré-configurados com informações da Cota para lançamentos de débitos e/ou créditos
+	 * Obtém dados pré-configurados com informações das Cotas do Box, Rota e Roteiro. Para lançamentos de débitos e/ou créditos
 	 * @param idBox
 	 * @param idRoteiro
 	 * @param idRota
@@ -33,4 +33,15 @@ public interface DebitoCreditoCotaService {
 	 * @return Número de Cotas encontradas
 	 */
 	int obterQuantidadeCotasPorBoxRoteiroRota(Long idBox, Long idRoteiro, Long idRota);
+	
+	/**
+	 * Obtém dados pré-configurados com informações da Cota para lançamento de débito e/ou crédito
+	 * @param numeroCota
+	 * @param percentual
+	 * @param baseCalculo
+	 * @param dataPeriodoInicial
+	 * @param dataPeriodoFinal
+	 * @return DebitoCreditoDTO
+	 */
+	DebitoCreditoDTO obterDadosLancamentoPorCota(Integer numeroCota,BigDecimal percentual,BaseCalculo baseCalculo,Date dataPeriodoInicial,Date dataPeriodoFinal,Long index);
 }

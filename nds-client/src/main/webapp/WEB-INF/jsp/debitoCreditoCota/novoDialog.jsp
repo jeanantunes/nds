@@ -22,7 +22,7 @@
 	  <tr>
 	    <td width="40">Percentual(%):</td>
 	    <td width="30">
-			 <input type="text" style="width:30px;height:15px;" name="debitoCredito.percentual" id="novoPercentual" />
+			 <input type="text" maxlength="3" style="width:30px;height:15px;" name="debitoCredito.percentual" id="novoPercentual" />
 	    </td>
 	    
 	    <td width="80">Base de Cálculo:</td>
@@ -53,9 +53,9 @@
 	  <tr>
 	    <td width="20">Box:</td>
 	    <td width="120">
-			<select name="debitoCredito.box.id" id="novoBox" style="width:120px;">
+			<select name="debitoCredito.box.id" id="novoBox" onchange="carregarRoteiros(this.value,0);carregarRotas(0,0);" style="width:120px;">
 			
-		  		<option value="" selected="selected"></option>
+		  		<option value="0" selected="selected"></option>
 				<c:forEach items="${boxes}" var="box">
 					<option value="${box.id}">${box.nome}</option>
 				</c:forEach>
@@ -63,28 +63,14 @@
 		    </select>
 	    </td>
 	    
-	    <td width="40">Roteiro:</td>
+	    <td width="40" id="tituloNovoRoteiro">Roteiro:</td>
 	    <td width="180">
-			<select name="debitoCredito.roteiro.id" id="novoRoteiro" style="width:180px;">
-			
-		  		<option value="" selected="selected"></option>
-				<c:forEach items="${roteiros}" var="roteiro">
-					<option value="${roteiro.id}">${roteiro.descricaoRoteiro}</option>
-				</c:forEach>
-				
-		    </select>
+		    <div id="roteirosBox"/>
 	    </td>
 	    
-	    <td width="30">Rota:</td>
+	    <td width="30" id="tituloNovoRota">Rota:</td>
 	    <td width="180">
-			<select name="debitoCredito.rota.id" id="novoRota" style="width:180px;">
-			
-		  		<option value="" selected="selected"></option>
-				<c:forEach items="${rotas}" var="rota">
-					<option value="${rota.id}">${rota.descricaoRota}</option>
-				</c:forEach>
-				
-		    </select>
+			<div id="rotasRoteiro"/>
 	    </td>
 	  </tr>
    </table>	  
@@ -98,12 +84,12 @@
 	    
 	    <td width="40" id="tituloNovoValor">Valor(R$):</td>
 	    <td width="70">
-			 <input type="text" style="width:70px;height:15px;" name="debitoCredito.valor" id="novoValor" />
+			 <input maxlength="16" type="text" style="width:70px;height:15px;" name="debitoCredito.valor" id="novoValor" />
 	    </td>
 	    
 	    <td width="30">Observação:</td>
 	    <td width="300">
-			 <input type="text" style="width:300px;height:15px;" name="debitoCredito.observacao" id="novoObservacao" />
+			 <input maxlength="150" type="text" style="width:300px;height:15px;" name="debitoCredito.observacao" id="novoObservacao" />
 	    </td>
 	    
 	    <td width="20">
@@ -121,8 +107,24 @@
 	
 	
 	<br />
+	
+	<form name="formularioListaLancamentos" id="formularioListaLancamentos">
 
-	<table class="debitosCreditosGrid_1" id="debitosCreditosGrid_1"></table>
+		<table class="debitosCreditosGrid_1" id="debitosCreditosGrid_1"></table>
+		
+		<table width="770">
+		    <td width="650"></td>    
+			<td width="120">    
+		        <span class="checar">
+		            <label for="textoSelTodos" id="textoSelTodos">
+		                Marcar Todos
+		            </label>
+		            <input title="Selecionar todos os lançamentos" type="checkbox" id="selTodos" name="selTodos" onclick="selecionarTodos(this.checked);" style="float:left;"/>
+		        </span>
+		    </td>
+	    </table>
+	
+	</form>
 	
 	<script language="javascript" type="text/javascript">
 	
@@ -150,6 +152,9 @@
 			$("#novoDataPeriodoAte").mask("99/99/9999");
 			$("#novoDataVencimento").mask("99/99/9999");
 			
+			carregarRoteiros(0,0);
+			carregarRotas(0,0);
+			
 	    });
 	    
 
@@ -160,7 +165,7 @@
 			colModel : [ {
 				display : 'Cota',
 				name : 'cota',
-				width : 90,
+				width : 70,
 				sortable : false,
 				align : 'left'
 			},{
@@ -187,9 +192,15 @@
 				width : 230,
 				sortable : false,
 				align : 'left'
+			}, {
+				display : '',
+				name : 'check',
+				width : 20,
+				sortable : false,
+				align : 'center',
 			}],
 			disableSelect : true,
-			width : 760,
+			width : 770,
 			height : 300
 		});
 		
@@ -232,13 +243,31 @@
 
 		function popupNovoDialog() {
 			
+			$('#tabelaFaturamento').hide();
+			$('#tituloNovoValor').show();
+			$('#novoValor').show();
+			
 			$("#novoTipoMovimento").val(0);
+			$("#grupoMovimentoHidden").val('');
+			$("#novoBaseCalculo").val(0);
+			$("#novoBox").val(0);
+			$("#novoRoteiro").val(0);
+			$("#novoRota").val(0);
+			
+			$("#novoPercentual").val('');
+			$("#novoDataVencimento").val('');
+			$("#novoDataPeriodoDe").val('');
+			$("#novoDataPeriodoAte").val('');
+			$("#novoValor").val('');
+			$("#novoObservacao").val('');
 
 			$("#debitosCreditosGrid_1").flexOptions({
 				url : '<c:url value="/financeiro/debitoCreditoCota/novoMovimento" />', 
 			});
 			
 			$("#debitosCreditosGrid_1").flexReload();
+			
+			var closeEnable = false;
 			
 			$("#dialog-novo").dialog({
 				resizable: false,
@@ -247,16 +276,29 @@
 				modal: true,
 				buttons: {
 					"Confirmar": function() {
+						closeEnable = true;
 						salvarMovimentoFinanceiro();
 					},
 					"Cancelar": function() {
+						closeEnable = true;
 						$(this).dialog("close");
 					}
 				},
 				beforeClose: function() {
+					
+					if (closeEnable!=true){
+					    return !existMovimentos();
+					}
+					
 					clearMessageDialogTimeout();
 				}
 			});     
+		}
+		
+		function obterVencimentoLancamentoAnterior(index){
+			if (index > 0){
+				$("#data" + (index)).val($("#data" + (index-1)).val());
+			}    
 		}
 		
 		function executarPreProcessamentoMovimento(resultado) {
@@ -265,15 +307,17 @@
 
 				exibirMensagemDialog(
 					resultado.mensagens.tipoMensagem, 
-					resultado.mensagens.listaMensagens
+					resultado.mensagens.listaMensagens,
+					""
 				);
 
 				return resultado;
 			}
 
+			var grupoMovimento = $("#grupoMovimentoHidden").val();
+			
 			$.each(resultado.rows, function(index, row) {
 
-				
 				var vencimento = $("#novoDataVencimento").val();
 				var observacao = $("#novoObservacao").val();
 				var numCota='';
@@ -295,22 +339,32 @@
 
 				var parametroAutoCompleteCota = '\'#nomeCota' + index + '\', true';
 				
-				var inputNumeroCota = '<input id="numeroCota' + index + '" value="' + numCota + '" maxlength="9" name="debitoCredito.numeroCota" type="text" style="width:80px; float:left; margin-right:5px;" onchange="cota.pesquisarPorNumeroCota(' + parametroPesquisaCota + ');" />';
+				var inputNumeroCota = '<input id="numeroCota' + index + '" value="' + numCota + '" maxlength="9" name="debitoCredito.numeroCota" type="text" style="width:60px; float:left; margin-right:5px;" onchange="cota.pesquisarPorNumeroCota(' + parametroPesquisaCota + '); obterInformacoesParaLancamentoIndividual(this.value, '+index+'); obterVencimentoLancamentoAnterior('+index+'); " />';
 
 				var inputNomeCota = '<input id="nomeCota' + index + '" value="' + nomeCota+ '" name="debitoCredito.nomeCota" type="text" style="width:180px;" onkeyup="cota.autoCompletarPorNome(' + parametroAutoCompleteCota + ');" onblur="cota.pesquisarPorNomeCota(' + parametroPesquisaCota + ')" />';
 				
 				var inputData = '<input id="data' + index + '" value="' + vencimento + '" name="debitoCredito.dataVencimento" type="text" style="width:70px;" />';
 				
 				var inputValor = '<input id="valor' + index + '" value="' + valor + '" name="debitoCredito.valor" type="text" style="width:80px;" />';
+				if (grupoMovimento=="DEBITO_SOBRE_FATURAMENTO"){
+					inputValor = '<input readonly="readonly" id="valor' + index + '" value="' + valor + '" name="debitoCredito.valor" type="text" style="width:80px;" />';
+				}
 				
 				var inputObservacao = '<input id="observacao' + index + '" value="' + observacao + '" name="debitoCredito.observacao" type="text" style="width:220px;" />';
+
+				var checkBox = '<input id="checkbox'+ index +'" title="Selecionar Lançamento" type="checkbox" name="debitoCredito.checkboxGrid" />';
 
 				row.cell[0] = hiddenId + inputNumeroCota;
 				row.cell[1] = inputNomeCota;
 				row.cell[2] = inputData;
 				row.cell[3] = inputValor;
 				row.cell[4] = inputObservacao;
+				row.cell[5] = checkBox;
+				
 			});
+			
+			document.getElementById("selTodos").checked = false;
+			selecionarTodos(false);
 			
 			return resultado;
 		}
@@ -357,7 +411,8 @@
 				var colunaData = linha.find("td")[2];
 				var colunaValor = linha.find("td")[3];
 				var colunaObservacao = linha.find("td")[4];
-				var colunaIdMovimento = linha.find("td")[5];
+				var colunaChecked = linha.find("td")[5];
+				var colunaIdMovimento = linha.find("td")[6];
 				
 				var numeroCota = 
 					$(colunaNumeroCota).find("div").find('input[name="debitoCredito.numeroCota"]').val();
@@ -381,23 +436,87 @@
 
 					return true;
 				}
-
-				var movimento = 'listaNovosDebitoCredito[' + index + '].numeroCota=' + numeroCota + '&';
-
-				movimento += 'listaNovosDebitoCredito[' + index + '].nomeCota=' + nomeCota + '&';
 	
-				movimento += 'listaNovosDebitoCredito[' + index + '].dataVencimento=' + data + '&';
+				var checked = document.getElementById("checkbox"+index).checked;
+				if (checked == true) {
+					
+					var movimento = 'listaNovosDebitoCredito[' + index + '].numeroCota=' + numeroCota + '&';
 	
-				movimento += 'listaNovosDebitoCredito[' + index + '].valor=' + valor + '&';
-				
-				movimento += 'listaNovosDebitoCredito[' + index + '].observacao=' + observacao + '&';
+					movimento += 'listaNovosDebitoCredito[' + index + '].nomeCota=' + nomeCota + '&';
+		
+					movimento += 'listaNovosDebitoCredito[' + index + '].dataVencimento=' + data + '&';
+		
+					movimento += 'listaNovosDebitoCredito[' + index + '].valor=' + valor + '&';
+					
+					movimento += 'listaNovosDebitoCredito[' + index + '].observacao=' + observacao + '&';
+	
+					movimento += 'listaNovosDebitoCredito[' + index + '].id=' + idMovimento + '&';
 
-				movimento += 'listaNovosDebitoCredito[' + index + '].id=' + idMovimento + '&';
-				
-				listaMovimentos = (listaMovimentos + movimento);
+					listaMovimentos = (listaMovimentos + movimento);
+
+				}
+
 			});
 
 			return listaMovimentos;
+		}
+
+		function existMovimentos() {
+
+			var linhasDaGrid = $(".debitosCreditosGrid_1 tr");
+			
+			var isMovimentos = false;
+
+			$.each(linhasDaGrid, function(index, value) {
+
+				var linha = $(value);
+				
+				var colunaNumeroCota = linha.find("td")[0];
+				var colunaNomeCota = linha.find("td")[1];
+				var colunaData = linha.find("td")[2];
+				var colunaValor = linha.find("td")[3];
+				var colunaObservacao = linha.find("td")[4];
+				
+				var numeroCota = 
+					$(colunaNumeroCota).find("div").find('input[name="debitoCredito.numeroCota"]').val();
+				
+				var nomeCota = 
+					$(colunaNomeCota).find("div").find('input[name="debitoCredito.nomeCota"]').val();
+
+				var data = 
+					$(colunaData).find("div").find('input[name="debitoCredito.dataVencimento"]').val();
+
+				var valor =
+					$(colunaValor).find("div").find('input[name="debitoCredito.valor"]').val();
+				
+				var observacao =
+					$(colunaObservacao).find("div").find('input[name="debitoCredito.observacao"]').val();
+
+				
+				if (!isAtributosMovimentoVazios(numeroCota, nomeCota, data, valor, observacao)) {
+					isMovimentos = true;
+					return isMovimentos;
+				}
+
+			});
+
+			return isMovimentos;
+		}
+		
+		function habilitaValor(habilita){
+			
+            var linhasDaGrid = $(".debitosCreditosGrid_1 tr");
+            
+			$.each(linhasDaGrid, function(index, value) {
+				$("#valor"+index).val('');
+				if (!habilita){
+				    $("#valor"+index).attr('readonly','readonly');
+				}
+				else{
+					$('#valor'+index).removeAttr("readonly"); 
+				}
+			});	
+			
 		}
 
 		function isAtributosMovimentoVazios(numeroCota, nomeCota, data, valor, observacao) {
@@ -441,8 +560,37 @@
 
 			/*RECARREGA GRID CONFORME A EXECUCAO DO METODO COM OS PARAMETROS PASSADOS*/
 			$(".debitosCreditosGrid_1").flexReload();
-			
+
 			$(".grids").show();
+		}
+
+		function obterInformacoesParaLancamentoIndividual(numeroCota,indexValor){
+
+			var grupoMovimento = $("#grupoMovimentoHidden").val();
+			var percentual = $("#novoPercentual").val();
+			var baseCalculo = $("#novoBaseCalculo").val();
+			var dataPeriodoInicial = $("#novoDataPeriodoDe").val();
+			var dataPeriodoFinal = $("#novoDataPeriodoAte").val();
+
+			if (grupoMovimento == "DEBITO_SOBRE_FATURAMENTO"){
+
+				var data = [{name:'numeroCota', value:numeroCota},
+					        {name:'grupoMovimento', value:grupoMovimento},
+					        {name:'percentual', value:percentual},
+					        {name:'baseCalculo', value:baseCalculo},
+					        {name:'dataPeriodoInicial', value:dataPeriodoInicial},
+					        {name:'dataPeriodoFinal', value:dataPeriodoFinal},
+					        {name:'index', value:indexValor}];
+				
+				$.postJSON("<c:url value='/financeiro/debitoCreditoCota/obterInformacoesParaLancamentoIndividual' />",
+						    data,
+							function(result){
+								$("#valor"+indexValor).val(result.valor);
+							},
+							null,
+							true);
+				
+			}	
 		}
 		
 		//VERIFICA SE O TIPO DE LANÇAMENTO CONSIDERA FATURAMENTO DA COTA
@@ -463,15 +611,98 @@
 				$('#tabelaFaturamento').show();
 				$('#tituloNovoValor').hide();
 				$('#novoValor').hide();
+				
+				habilitaValor(false); 
 			}
 			else{
 				$('#tabelaFaturamento').hide();
 				$('#tituloNovoValor').show();
 				$('#novoValor').show();
+				
+				$("#novoBaseCalculo").val(0);
+				$("#novoPercentual").val('');
+				$("#novoDataPeriodoDe").val('');
+				$("#novoDataPeriodoAte").val('');
+				
+				habilitaValor(true);
 			}
-			
+
 		}
 		
+		function montarComboBox(result,name,onChange,selected) {
+
+			var options = "";
+			
+			options += "<select name='"+name+"' id='"+name+"' style='width:150px;' onchange='"+onChange+"'>";
+			options += "<option value='0'></option>";
+			$.each(result, function(index, row) {
+				if (selected == row.key.$){
+				    options += "<option selected='true' value='" + row.key.$ + "'>"+ row.value.$ +"</option>";	
+				}
+				else{
+					options += "<option value='" + row.key.$ + "'>"+ row.value.$ +"</option>";	
+				}
+			});
+			options += "</select>";
+			
+			return options;
+		}
+		
+		function carregarRoteiros(idBox,selected){
+			var data = [{name: 'idBox', value: idBox}];
+			$.postJSON("<c:url value='/financeiro/debitoCreditoCota/obterRoteirosBox' />",
+					   data,
+					   function(resultado){
+				           criaComponenteRoteiros(resultado,selected)
+			           }
+					   ,
+					   null,
+					   true);
+		}
+		
+		function criaComponenteRoteiros(result,selected) {
+		    var comboRoteiros =  montarComboBox(result,"novoRoteiro","carregarRotas(this.value,0);",selected);
+			$("#roteirosBox").html(comboRoteiros);
+		}
+		
+		function carregarRotas(idRoteiro,selected){
+			var data = [{name: 'idRoteiro', value: idRoteiro}];
+			$.postJSON("<c:url value='/financeiro/debitoCreditoCota/obterRotasRoteiro' />",
+					   data,
+					   function(resultado){
+				           criaComponenteRotas(resultado,selected)
+			           }
+					   ,
+					   null,
+					   true);
+		}
+		
+		function criaComponenteRotas(result,selected) {
+		    var comboRotas =  montarComboBox(result,"novoRota","",selected);
+			$("#rotasRoteiro").html(comboRotas);
+		}
+
+		//SELECIONAR TODOS OS LANÇAMENTOS
+		function selecionarTodos(checked){
+			
+			for (var i=0;i<document.formularioListaLancamentos.elements.length;i++) {
+			     var x = document.formularioListaLancamentos.elements[i];
+			     if (x.name == 'debitoCredito.checkboxGrid') {
+			    	 x.checked = checked;
+			     }    
+			}
+			
+			if (checked){
+				var elem = document.getElementById("textoSelTodos");
+				elem.innerHTML = "Desmarcar todos";
+            }
+			
+			else{
+				var elem = document.getElementById("textoSelTodos");
+				elem.innerHTML = "Marcar todos";
+			}
+		}
+	
 	</script>
 	
 </div>

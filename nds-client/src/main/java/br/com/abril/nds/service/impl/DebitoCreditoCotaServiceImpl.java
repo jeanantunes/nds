@@ -2,6 +2,7 @@ package br.com.abril.nds.service.impl;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -22,6 +23,7 @@ import br.com.abril.nds.repository.TipoMovimentoFinanceiroRepository;
 import br.com.abril.nds.repository.UsuarioRepository;
 import br.com.abril.nds.service.DebitoCreditoCotaService;
 import br.com.abril.nds.service.MovimentoFinanceiroCotaService;
+import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 
 @Service
@@ -83,7 +85,7 @@ public class DebitoCreditoCotaServiceImpl implements DebitoCreditoCotaService {
 
 	
 	/**
-	 * Obtém dados pré-configurados com informações da Cota para lançamentos de débitos e/ou créditos
+	 * Obtém dados pré-configurados com informações das Cotas do Box, Rota e Roteiro. Para lançamentos de débitos e/ou créditos
 	 * @param idBox
 	 * @param idRoteiro
 	 * @param idRota
@@ -125,7 +127,7 @@ public class DebitoCreditoCotaServiceImpl implements DebitoCreditoCotaService {
 				}
 			}
 			
-			listaDC.add(new DebitoCreditoDTO(indice,null,null,itemCota.getNumeroCota(),itemCota.getPessoa().getNome(),null,null,(percFat!=null?percFat.toString():null),null));
+			listaDC.add(new DebitoCreditoDTO(indice,null,null,itemCota.getNumeroCota(),itemCota.getPessoa().getNome(),null,null,(percFat!=null?CurrencyUtil.formatarValor(percFat):null),null));
 		}
 		return listaDC;
 	}
@@ -144,4 +146,55 @@ public class DebitoCreditoCotaServiceImpl implements DebitoCreditoCotaService {
 			Long idRoteiro, Long idRota) {
 		return this.boxRepository.obterQuantidadeCotasPorBoxRoteiroRota(idBox, idRoteiro, idRota);
 	}
+
+
+	/**
+	 * Obtém dados pré-configurados com informações da Cota para lançamento de débito e/ou crédito
+	 * @param numeroCota
+	 * @param percentual
+	 * @param baseCalculo
+	 * @param dataPeriodoInicial
+	 * @param dataPeriodoFinal
+	 * @return DebitoCreditoDTO
+	 */
+	@Override
+	@Transactional(readOnly=true)
+	public DebitoCreditoDTO obterDadosLancamentoPorCota(Integer numeroCota,
+			BigDecimal percentual, BaseCalculo baseCalculo,
+			Date dataPeriodoInicial, Date dataPeriodoFinal, Long index) {
+		
+		DebitoCreditoDTO dc = new DebitoCreditoDTO();
+		Long indice=index;
+		Cota cota = null;
+		
+		if (numeroCota!=null){
+		
+			cota = this.cotaRepository.obterPorNumerDaCota(numeroCota);
+			
+			if (cota!=null){
+			
+				Double percFat = null;
+				
+				Map<Long,BigDecimal> cotasFaturamentos = null;
+		
+				if((percentual!=null)&&( baseCalculo!=null)&&( dataPeriodoInicial!=null)&&(dataPeriodoFinal!=null)){
+					
+					cotasFaturamentos = this.movimentoFinanceiroCotaService.obterFaturamentoCotasPeriodo(Arrays.asList(cota), baseCalculo, dataPeriodoInicial, dataPeriodoFinal);
+					
+					if (cotasFaturamentos!=null){
+						
+						if( cotasFaturamentos.get(cota.getId()).doubleValue() > 0 ){
+					        percFat = ((cotasFaturamentos.get(cota.getId()).doubleValue() / 100)*percentual.doubleValue());
+						}
+						
+					}
+				}
+				
+				dc = new DebitoCreditoDTO(indice,null,null,cota.getNumeroCota(),cota.getPessoa().getNome(),null,null,(percFat!=null?CurrencyUtil.formatarValor(percFat):null),null);
+			}
+		}
+
+		return dc;
+	}
+	
 }

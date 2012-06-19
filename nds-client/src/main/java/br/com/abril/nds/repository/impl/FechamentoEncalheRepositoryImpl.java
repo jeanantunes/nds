@@ -23,6 +23,7 @@ import br.com.abril.nds.model.estoque.FechamentoEncalhe;
 import br.com.abril.nds.model.estoque.pk.FechamentoEncalhePK;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalheCota;
 import br.com.abril.nds.model.planejamento.ChamadaEncalhe;
+import br.com.abril.nds.model.planejamento.ChamadaEncalheCota;
 import br.com.abril.nds.repository.FechamentoEncalheRepository;
 
 @Repository
@@ -255,6 +256,21 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepository<Fechamen
 			ControleFechamentoEncalhe controleFechamentoEncalhe) {
 		this.getSession().save(controleFechamentoEncalhe);
 	}
-
-
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<ChamadaEncalheCota> buscarChamadaEncalheCota(Date dataEncalhe, Long idCota) {
+		
+		Criteria criteria = this.getSession().createCriteria(ChamadaEncalheCota.class, "cec");
+		
+		criteria.createAlias("cec.chamadaEncalhe", "ce");
+        criteria.setFetchMode("ce", FetchMode.JOIN);
+        
+        criteria.add(Restrictions.eq("ce.dataRecolhimento", dataEncalhe));
+        criteria.add(Restrictions.eq("cec.cota.id", idCota));
+        criteria.add(Restrictions.eq("cec.fechado", false));
+        criteria.add(Restrictions.eq("cec.postergado", false));
+        
+		return criteria.list();
+	}
 }

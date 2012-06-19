@@ -13,6 +13,9 @@ import javax.persistence.Table;
 
 import org.codehaus.jackson.annotate.JsonBackReference;
 
+import br.com.abril.nds.util.export.fiscal.nota.NFEExport;
+import br.com.abril.nds.util.export.fiscal.nota.NFEExports;
+
 /**
  * @author francisco.garcia
  * @version 1.0
@@ -36,32 +39,41 @@ public class Endereco implements Serializable {
 	@Column(name = "CODIGO_BAIRRO", nullable = true)
 	private Integer codigoBairro;
 	
-	@Column(name = "BAIRRO")
+	@Column(name = "BAIRRO", length=60)
+	@NFEExports({@NFEExport(secao="C05", posicao=3, tamanho=60), @NFEExport(secao="E05", posicao=3 , tamanho=60)})
 	private String bairro;
 	
-	@Column(name = "CEP")
+	@Column(name = "CEP", length=9)
+	@NFEExports({@NFEExport(secao="C05", posicao=7, tamanho=8), @NFEExport(secao="E05", posicao=7 , tamanho=8)})
 	private String cep;
 	
-	@Column(name = "CODIGO_CIDADE_IBGE", nullable = true)
+	@Column(name = "CODIGO_CIDADE_IBGE", nullable = true, length=7)
+	@NFEExports({@NFEExport(secao="C05", posicao=4, tamanho=7), @NFEExport(secao="E05", posicao=4 , tamanho=7)})
 	private Integer codigoCidadeIBGE;
 	
-	@Column(name = "CIDADE")
+	@Column(name = "CIDADE", length=60)
+	@NFEExports({@NFEExport(secao="C05", posicao=5, tamanho=60), @NFEExport(secao="E05", posicao=5 , tamanho=60)})
 	private String cidade;
 	
-	@Column(name = "COMPLEMENTO")
+	@Column(name = "COMPLEMENTO", length=60)
+	@NFEExports({@NFEExport(secao="C05", posicao=2, tamanho=60), @NFEExport(secao="E05", posicao=2 , tamanho=60)})
 	private String complemento;
 	
 	@Column(name = "TIPO_LOGRADOURO")
 	private String tipoLogradouro;
 	
-	@Column(name = "LOGRADOURO")
+	@Column(name = "LOGRADOURO", length=60)
+	@NFEExports({@NFEExport(secao="C05", posicao=0, tamanho=60), @NFEExport(secao="E05", posicao=0, tamanho=60)})
 	private String logradouro;
 	
-	@Column(name = "NUMERO", nullable = true)
+	@Column(name = "NUMERO", nullable = true, length=60)
+	@NFEExports({@NFEExport(secao="C05", posicao=1, tamanho=60), @NFEExport(secao="E05", posicao=1 , tamanho=60)})
 	private Integer numero;
 	
-	@Column(name = "UF")
+	@Column(name = "UF", length=2)
+	@NFEExports({@NFEExport(secao="C05", posicao=6, tamanho=2), @NFEExport(secao="E05", posicao=6 , tamanho=2)})
 	private String uf;
+	
 	@JsonBackReference
 	@ManyToOne
 	@JoinColumn(name = "PESSOA_ID")

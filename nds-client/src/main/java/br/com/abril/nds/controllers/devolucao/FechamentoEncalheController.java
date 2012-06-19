@@ -121,7 +121,6 @@ public class FechamentoEncalheController {
 		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "informação gravada com sucesso!"), "result").recursive().serialize();
 	}
 	
-	
 	@Path("/cotasAusentes")
 	public void cotasAusentes(Date dataEncalhe,
 			String sortname, String sortorder, int rp, int page) {
@@ -131,9 +130,12 @@ public class FechamentoEncalheController {
 		
 		int total = this.fechamentoEncalheService.buscarTotalCotasAusentes(dataEncalhe);
 		
+		if (listaCotasAusenteEncalhe == null || listaCotasAusenteEncalhe.isEmpty()) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhuma cota ausente!");
+		}
+		
 		this.result.use(FlexiGridJson.class).from(listaCotasAusenteEncalhe).total(total).page(page).serialize();
 	}
-	
 	
 	@Path("/encerrarFechamento")
 	public void encerrarFechamento(Date dataEncalhe) {
@@ -142,7 +144,7 @@ public class FechamentoEncalheController {
 	}
 	
 	@Path("carregarDataPostergacao")
-	public void carregarDataPostergacao(Date dataPostergacao) {
+	public void carregarDataPostergacao(Date dataEncalhe, Date dataPostergacao) {
 		
 		try {
 			
@@ -150,7 +152,7 @@ public class FechamentoEncalheController {
 			
 			if (dataPostergacao == null) {
 				quantidadeDias = 1;
-				dataPostergacao = Calendar.getInstance().getTime();
+				dataPostergacao = dataEncalhe;
 			}
 			
 			
@@ -170,16 +172,14 @@ public class FechamentoEncalheController {
 	
 	@Path("/postergarCotas")
 	public void postergarCotas(Date dataPostergacao, Date dataEncalhe, List<Long> idsCotas) {
-			
-		Date dataAtual = Calendar.getInstance().getTime();
 		
-		if (dataAtual.after(dataPostergacao)) {
-			// throw new ValidacaoException();
+		if (dataEncalhe != null && dataEncalhe.after(dataPostergacao)) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "Postergação não pode ser realizada antes da data atual!");
 		}
 		
 		try {
 			
-			this.fechamentoEncalheService.postergarCotas(dataPostergacao, idsCotas);
+			this.fechamentoEncalheService.postergarCotas(dataEncalhe, dataPostergacao, idsCotas);
 			
 		} catch (Exception e) {
 			this.result.use(Results.json()).from(
@@ -195,7 +195,9 @@ public class FechamentoEncalheController {
 	public void cobrarCotas(Date dataOperacao, List<Long> idsCotas) {
 
 		if (idsCotas == null || idsCotas.isEmpty()) {
-			// validacao
+			this.result.use(Results.json()).from(
+				new ValidacaoVO(TipoMensagem.WARNING, "Selecine pelo menos uma Cota para cobrar!"), "result").recursive().serialize();
+			throw new ValidacaoException();
 		}
 		
 		try {

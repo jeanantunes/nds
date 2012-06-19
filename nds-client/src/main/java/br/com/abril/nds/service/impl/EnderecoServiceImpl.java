@@ -9,13 +9,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.client.endereco.vo.EnderecoVO;
 import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.TipoEndereco;
+import br.com.abril.nds.model.dne.Bairro;
 import br.com.abril.nds.model.dne.Localidade;
+import br.com.abril.nds.model.dne.Logradouro;
+import br.com.abril.nds.model.dne.TipoLogradouro;
 import br.com.abril.nds.repository.EnderecoRepository;
 import br.com.abril.nds.service.EnderecoService;
 import br.com.abril.nds.service.exception.EnderecoUniqueConstraintViolationException;
@@ -204,13 +208,58 @@ public class EnderecoServiceImpl implements EnderecoService {
 	 */
 	@Override
 	@Transactional(readOnly = true)
-	public List<Localidade> obterLocalidadesPorUF(String siglaUF) {
+	public List<Localidade> obterLocalidadesPorUFNome(String nome, String siglaUF) {
 
 		if (siglaUF == null || siglaUF.isEmpty()) {
 			
 			throw new ValidacaoException(TipoMensagem.WARNING, "A escolha da UF é obrigatória.");
 		}
 		
-		return this.enderecoRepository.obterLocalidadesPorUF(siglaUF);
+		return this.enderecoRepository.obterLocalidadesPorUFNome(nome, siglaUF);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@Transactional
+	public EnderecoVO obterEnderecoPorCep(String cep) {
+
+		if (cep == null || cep.trim().isEmpty()) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "O CEP é obrigatório para a pesquisa.");
+		}
+		
+		return this.enderecoRepository.obterEnderecoPorCep(cep);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@Transactional
+	public List<Bairro> obterBairrosPorCodigoIBGENome(String nome, String codigoIBGE) {
+
+		return this.enderecoRepository.obterBairrosPorCodigoIBGENome(nome, codigoIBGE);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@Transactional
+	public List<TipoLogradouro> obterTiposLogradouroNome(String tipoLogradouro) {
+
+		return this.enderecoRepository.obterTiposLogradouroNome(tipoLogradouro);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@Transactional
+	public List<Logradouro> obterLogradourosPorCodigoBairroNome(Long codigoBairro, String nomeLogradouro) {
+
+		return this.enderecoRepository.obterLogradourosPorCodigoBairroNome(codigoBairro, nomeLogradouro);
 	}
 }

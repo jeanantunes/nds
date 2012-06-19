@@ -30,6 +30,7 @@ import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 import br.com.abril.nds.model.planejamento.ChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.ChamadaEncalheCota;
 import br.com.abril.nds.model.seguranca.Usuario;
+import br.com.abril.nds.repository.ChamadaEncalheCotaRepository;
 import br.com.abril.nds.repository.ChamadaEncalheRepository;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.FechamentoEncalheBoxRepository;
@@ -65,7 +66,9 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 
 	@Autowired
 	private ChamadaEncalheRepository chamadaEncalheRepository;
-
+	
+	@Autowired
+	private ChamadaEncalheCotaRepository chamadaEncalheCotaRepository;
 	
 	@Autowired
 	private FechamentoEncalheBoxRepository fechamentoEncalheBoxRepository;
@@ -221,7 +224,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 
 	@Override
 	@Transactional
-	public void postergarCotas(Date dataEncalhe, List<Long> idsCotas) {
+	public void postergarCotas(Date dataEncalhe, Date dataPostergacao, List<Long> idsCotas) {
 	
 		if (idsCotas == null || idsCotas.isEmpty()) {
 			throw new IllegalArgumentException("Lista de ids das cotas não pode ser nula e nem vazia.");
@@ -231,12 +234,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 			throw new IllegalArgumentException("Data de encalhe não pode ser nula.");
 		}
 		
-		List<Cota> listaCotas = 
-			this.cotaRepository.obterCotasPorIDS(idsCotas);
-		
-		for (Cota cota : listaCotas) {
-			System.out.println(cota.getId());
-		}
+		this.postergar(dataEncalhe, dataPostergacao, idsCotas);
 	}
 
 	@Override
@@ -341,7 +339,46 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 		}
 	}
 	
+	@Transactional
+	private void postergar(Date dataEncalhe, Date dataPostergacao, List<Long> cotas) {
+		
+		ChamadaEncalhe chamadaEncalhe = null;
 	
+		for (Long idCota : cotas) {
+			
+			List<ChamadaEncalheCota> listChamadaEncalheCota = this.fechamentoEncalheRepository.buscarChamadaEncalheCota(dataEncalhe, idCota);
+			
+			for (ChamadaEncalheCota chamadaEncalheCota : listChamadaEncalheCota) {
+				
+				// Atualizando para postergado
+				chamadaEncalheCota.setPostergado(true);
+				this.chamadaEncalheCotaRepository.merge(chamadaEncalheCota);
+				
+				// Criando chamada de encalhe
+				chamadaEncalhe = this.chamadaEncalheRepository.obterPorNumeroEdicaoEDataRecolhimento(
+						chamadaEncalheCota.getChamadaEncalhe().getProdutoEdicao(), 
+						dataPostergacao, 
+						chamadaEncalheCota.getChamadaEncalhe().getTipoChamadaEncalhe());
+				
+				if (chamadaEncalhe == null) {
+					
+					chamadaEncalhe = new ChamadaEncalhe();
+					chamadaEncalhe.setDataRecolhimento(dataPostergacao);
+					chamadaEncalhe.setProdutoEdicao(chamadaEncalheCota.getChamadaEncalhe().getProdutoEdicao());
+					chamadaEncalhe.setTipoChamadaEncalhe(chamadaEncalheCota.getChamadaEncalhe().getTipoChamadaEncalhe());
+					this.chamadaEncalheRepository.adicionar(chamadaEncalhe);
+				} 
+				
+				// Criando novo chamadaEncalheCota
+				ChamadaEncalheCota cce = new ChamadaEncalheCota();
+				cce.setChamadaEncalhe(chamadaEncalhe);
+				cce.setCota(chamadaEncalheCota.getCota());
+				cce.setQtdePrevista(chamadaEncalheCota.getQtdePrevista());
+				this.chamadaEncalheCotaRepository.adicionar(cce);
+			}
+		}
+	}
+
 	@Override
 	@Transactional
 	public List<FechamentoFisicoLogicoDTO> salvarFechamentoEncalheBox(FiltroFechamentoEncalheDTO filtro, List<FechamentoFisicoLogicoDTO> listaFechamento) {

@@ -70,9 +70,7 @@ import br.com.abril.nds.model.cadastro.TipoRegistroCobranca;
 import br.com.abril.nds.model.cadastro.TipoTelefone;
 import br.com.abril.nds.model.cadastro.pdv.AreaInfluenciaPDV;
 import br.com.abril.nds.model.cadastro.pdv.CaracteristicasPDV;
-import br.com.abril.nds.model.cadastro.pdv.ClusterPDV;
 import br.com.abril.nds.model.cadastro.pdv.EnderecoPDV;
-import br.com.abril.nds.model.cadastro.pdv.EspecialidadePDV;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
 import br.com.abril.nds.model.cadastro.pdv.PeriodoFuncionamentoPDV;
 import br.com.abril.nds.model.cadastro.pdv.SegmentacaoPDV;
@@ -2296,15 +2294,6 @@ public class Fixture {
 		return caracteristicasPDV;
 	}
 	
-	public static EspecialidadePDV criarEspecialidadesPDV(Long codigo, String descricao){
-		
-		EspecialidadePDV especialidadePDV  = new EspecialidadePDV();
-		especialidadePDV.setCodigo(codigo);
-		especialidadePDV.setDescricao(descricao);
-		
-		return especialidadePDV;
-	}
-	
 	public static LicencaMunicipal criarLicencaMunicipal(String nomeLicenca, String numeroLicenca, 
 														 TipoLicencaMunicipal tipoLicencaMunicipal){
 		
@@ -2325,13 +2314,12 @@ public class Fixture {
 		return materialPromocional;
 	}
 	
-	public static SegmentacaoPDV criarSegmentacaoPdv(AreaInfluenciaPDV areaInfluenciaPDV, ClusterPDV clusterPDV, 
+	public static SegmentacaoPDV criarSegmentacaoPdv(AreaInfluenciaPDV areaInfluenciaPDV, 
 													 TipoCaracteristicaSegmentacaoPDV tipoCaracteristica, 
 													 TipoPontoPDV tipoPontoPDV, TipoClusterPDV tipoClusterPDV){
 		
 		SegmentacaoPDV segmentacaoPDV = new SegmentacaoPDV();
 		segmentacaoPDV.setAreaInfluenciaPDV(areaInfluenciaPDV);
-		segmentacaoPDV.setClusterPDV(clusterPDV);
 		segmentacaoPDV.setTipoCaracteristica(tipoCaracteristica);
 		segmentacaoPDV.setTipoPontoPDV(tipoPontoPDV);
 		segmentacaoPDV.setTipoClusterPDV(tipoClusterPDV);
@@ -2347,15 +2335,6 @@ public class Fixture {
 		areaInfluenciaPDV.setDescricao(descricao);
 		
 		return areaInfluenciaPDV;
-	}
-	
-	public static ClusterPDV criarClusterPDV(Long codigo, String descricao){
-		
-		ClusterPDV clusterPDV = new ClusterPDV();
-		clusterPDV.setCodigo(codigo);
-		clusterPDV.setDescricao(descricao);
-		
-		return clusterPDV;
 	}
 	
 	public static TipoPontoPDV criarTipoPontoPDV (Long codigo, String descricao){
