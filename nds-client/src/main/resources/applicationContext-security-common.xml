@@ -6,7 +6,22 @@
 	http://www.springframework.org/schema/security
 	http://www.springframework.org/schema/security/spring-security-3.0.xsd">
 	
+	<http auto-config="true">
+		<!-- 
+		<form-login login-page="/login.jsp"
+			authentication-failure-url="/login.jsp?error=invalido" />
+		-->
+		
+		<intercept-url pattern="/scripts/**" access="IS_AUTHENTICATED_ANONYMOUSLY" />
+		<intercept-url pattern="/css/**" access="IS_AUTHENTICATED_ANONYMOUSLY" />
+		<intercept-url pattern="/spring_security_login/**" access="IS_AUTHENTICATED_ANONYMOUSLY" />
+		<intercept-url pattern="/**" access="IS_AUTHENTICATED_FULLY" />
+	</http>
+	
+	
 	<global-method-security pre-post-annotations="enabled" />
+	
+	<beans:bean class="org.springframework.security.web.access.expression.DefaultWebSecurityExpressionHandler"/>
 	
 	<jdbc-user-service role-prefix="none" data-source-ref="dataSource"
 		users-by-username-query="SELECT usuario_login, usuario_senha, 'true' as enable FROM usuario WHERE usuario_login=?"
