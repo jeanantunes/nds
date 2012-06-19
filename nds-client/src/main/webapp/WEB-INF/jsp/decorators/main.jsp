@@ -4,6 +4,9 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <%@page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
+
 <!-- %@taglib tagdir="/WEB-INF/tags" prefix="nds" % -->
 
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -169,16 +172,26 @@ fieldset label {
 								<a href='<c:url value="/produto"/>'>Produtos</a>
 							</li>
 							<li><a href='<c:url value="/cadastro/edicao"/>'>Edi&ccedil;&atilde;o</a></li>
-							<li><a href='<c:url value="/banco/bancos"/>'>Bancos</a>
-							</li>
+							
+							<!-- SPRING SECURITY - AUTORIZACAO -->
+							<sec:authorize access="hasRole('Financeiro.Cadastro.Banco')">
+								<li><a href='<c:url value="/banco/bancos"/>'>Bancos</a>
+								</li>
+							</sec:authorize>
+							
 							<li><a href='<c:url value="/cadastro/box"/>'>Box</a>
 							</li>
 							<li><a href='<c:url value="/cadastro/cota"/>'>Cotas</a>
 							</li>
 							<li><a href="<c:url value="/cadastro/entregador"/>">Entregador</a>
 							</li>
-							<li><a href='<c:url value="/cadastro/fiador/"/>'>Fiador</a>
-							</li>
+							
+							<!-- SPRING SECURITY - AUTORIZACAO -->
+							<sec:authorize access="hasRole('Financeiro.Cadastro.FIADOR')">
+								<li><a href='<c:url value="/cadastro/fiador/"/>'>Fiador</a>
+								</li>
+							</sec:authorize>
+							
 							<li><a href='<c:url value="/cadastro/fornecedor"/>'>Fornecedor</a>
 							</li>
 							<li><a href="<c:url value="/parciais/index"/>">Parciais</a>
@@ -377,36 +390,40 @@ fieldset label {
 						</ul>
 					</li>
 					
-					<li><span class="classAdministracao">&nbsp;</span><a
-						href="javascript:;">Administração</a>
-						<ul>
-							<li>
-								<a href='<c:url value="/administracao/controleAprovacao"/>'>
-									Controle Aprovação
-								</a>
-							</li>
-							<li><a href='<c:url value="/administracao/cadastroCalendario"/>'>Calendário</a></li>
-							<li><a href='<c:url value="/administracao/tipoDescontoCota"/>'>Tipo de Desconto Cota</a></li>
-							
-							<li><a href="<c:url value="/tipoMovimento/index"/>">Tipo de Movimento</a></li>
-							
-							
-							<li><a href="Administracao/iniciar_dia.htm">Iniciar o
-									Dia</a>
-							</li>
-							<li><a href="Administracao/fechar_dia.htm">Fechar o Dia</a>
-							</li>
-							<li><a href='<c:url value="/servico/cadastroServico"/>'>Serviço de Entrega</a>
-							</li>
-							<li><a href='<c:url value="/administracao/tipoProduto"/>'>Tipo de Produto</a>
-							</li>
-							<li><a href="Administracao/help_administracao.htm">Help</a>
-							</li>
-							<li><a href='<c:url value="/distribuidor/parametroCobranca/index"/>'>Parâmetros de Cobrança</a>
-							</li>
-							<li><a href='<c:url value="administracao/parametrosSistema"/>'>Par&acirc;metros do Sistema</a></li>
-						</ul>
-					</li>
+					<!-- SPRING SECURITY - AUTORIZACAO -->
+					<sec:authorize access="hasRole('Admin')">
+						<li><span class="classAdministracao">&nbsp;</span><a
+							href="javascript:;">Administração</a>
+							<ul>
+								<li>
+									<a href='<c:url value="/administracao/controleAprovacao"/>'>
+										Controle Aprovação
+									</a>
+								</li>
+								<li><a href='<c:url value="/administracao/cadastroCalendario"/>'>Calendário</a></li>
+								<li><a href='<c:url value="/administracao/tipoDescontoCota"/>'>Tipo de Desconto Cota</a></li>
+								
+								<li><a href="<c:url value="/tipoMovimento/index"/>">Tipo de Movimento</a></li>
+								
+								
+								<li><a href="Administracao/iniciar_dia.htm">Iniciar o
+										Dia</a>
+								</li>
+								<li><a href="Administracao/fechar_dia.htm">Fechar o Dia</a>
+								</li>
+								<li><a href='<c:url value="/servico/cadastroServico"/>'>Serviço de Entrega</a>
+								</li>
+								<li><a href='<c:url value="/administracao/tipoProduto"/>'>Tipo de Produto</a>
+								</li>
+								<li><a href="Administracao/help_administracao.htm">Help</a>
+								</li>
+								<li><a href='<c:url value="/distribuidor/parametroCobranca/index"/>'>Parâmetros de Cobrança</a>
+								</li>
+								<li><a href='<c:url value="administracao/parametrosSistema"/>'>Par&acirc;metros do Sistema</a></li>
+							</ul>
+						</li>
+					</sec:authorize>
+					
 					<li><span class="classHelp">&nbsp;</span><a href="help.htm">Help</a>
 					</li>
 				</ul>

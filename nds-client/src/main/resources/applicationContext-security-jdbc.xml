@@ -7,16 +7,19 @@
 	http://www.springframework.org/schema/security/spring-security-3.0.xsd">
 	
 	<http auto-config="true">
+		<!-- 
 		<form-login login-page="/login.jsp"
 			authentication-failure-url="/login.jsp?error=invalido" />
+		
 		<intercept-url pattern="/admin/**" access="ROLE_ADMIN" />
+		-->
 	</http>
 	
 	<authentication-manager>
 		<authentication-provider>
-			<jdbc-user-service data-source-ref="dataSource"
-				users-by-username-query="SELECT username, password, 'true' as enable FROM users WHERE username=?"
-				authorities-by-username-query="SELECT username, authority FROM users WHERE username=?" />
+			<password-encoder hash="md5" />
 		</authentication-provider>
 	</authentication-manager>
+	
+	<beans:import resource="applicationContext-security-common.xml"/>
 </beans:beans>
