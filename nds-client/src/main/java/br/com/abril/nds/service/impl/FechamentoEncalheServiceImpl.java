@@ -371,10 +371,11 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 				} 
 				
 				// Criando novo chamadaEncalheCota
-				chamadaEncalheCota.setId(null);
-				chamadaEncalheCota.setChamadaEncalhe(chamadaEncalhe);
-				chamadaEncalheCota.setPostergado(false);
-				this.chamadaEncalheCotaRepository.adicionar(chamadaEncalheCota);
+				ChamadaEncalheCota cce = new ChamadaEncalheCota();
+				cce.setChamadaEncalhe(chamadaEncalhe);
+				cce.setCota(chamadaEncalheCota.getCota());
+				cce.setQtdePrevista(chamadaEncalheCota.getQtdePrevista());
+				this.chamadaEncalheCotaRepository.adicionar(cce);
 			}
 		}
 	}
