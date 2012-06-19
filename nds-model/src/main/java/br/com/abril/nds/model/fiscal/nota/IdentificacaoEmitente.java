@@ -46,7 +46,7 @@ public class IdentificacaoEmitente implements Serializable {
 	/**
 	 * CNPJ CPF
 	 */
-	@Column(name="DOCUMENTO", nullable=false, length=14, columnDefinition="CPJ ou CNPJ do emitente")
+	@Column(name="DOCUMENTO_EMITENTE", nullable=false, length=14, columnDefinition="CPJ ou CNPJ do emitente")
 	private String documento;
 	
 	/**
