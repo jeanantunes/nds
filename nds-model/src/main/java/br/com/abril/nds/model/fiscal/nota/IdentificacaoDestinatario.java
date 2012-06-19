@@ -11,6 +11,8 @@ import javax.persistence.OneToOne;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.Telefone;
+import br.com.abril.nds.util.export.fiscal.nota.NFEExport;
+import br.com.abril.nds.util.export.fiscal.nota.NFEExports;
 
 @Embeddable
 public class IdentificacaoDestinatario implements Serializable {
@@ -29,12 +31,14 @@ public class IdentificacaoDestinatario implements Serializable {
 	 * CNPJ CPF
 	 */
 	@Column(name="DOCUMENTO_DESTINATARIO", nullable=false, length=14, columnDefinition="CPJ ou CNPJ do emitente")
+	@NFEExports({@NFEExport(secao="E02", posicao=0, tamanho=14), @NFEExport(secao="E03", posicao=0, tamanho=11)})
 	private String documento;
 	
 	/**
 	 * xNome
 	 */	
 	@Column(name="NOME_DESTINATARIO", nullable=false, length=60, columnDefinition="Razão Social ou nome do emitente")
+	@NFEExport(secao="E", posicao=0, tamanho=60)
 	private String nome;
 	
 	/**
@@ -47,12 +51,14 @@ public class IdentificacaoDestinatario implements Serializable {
 	 * IE
 	 */
 	@Column(name="IE_DESTINATARIO", nullable=false, length=14, columnDefinition="Inscrisão Estadual")
+	@NFEExport(secao="E", posicao=1, tamanho=14)
 	private String inscricaoEstual;
 	
 	/**
 	 * ISUF
 	 */
 	@Column(name="ISUF_DESTINATARIO", nullable=true, length=9, columnDefinition="Inscrição na SUFRAMA")
+	@NFEExport(secao="E", posicao=2, tamanho=9)
 	private String inscricaoSuframa;
 	
 	/**
