@@ -136,6 +136,8 @@ import br.com.abril.nds.model.fiscal.TipoEmissaoNfe;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
 import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.model.fiscal.TipoUsuarioNotaFiscal;
+import br.com.abril.nds.model.integracao.EventoExecucao;
+import br.com.abril.nds.model.integracao.InterfaceExecucao;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalhe;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalheCota;
 import br.com.abril.nds.model.movimentacao.ControleContagemDevolucao;
@@ -1606,12 +1608,19 @@ public class Fixture {
 		return movimentoEstoque;
 	}
 	
-	public static ParametroSistema parametroSistema(TipoParametroSistema tipoParametroSistema, String valor){
+	public static ParametroSistema parametroSistema(TipoParametroSistema tipoParametroSistema, String valor) {
 		ParametroSistema parametroSistema = new ParametroSistema();
 		parametroSistema.setTipoParametroSistema(tipoParametroSistema);
 		parametroSistema.setValor(valor);
 		
 		return parametroSistema;
+	}
+	
+	public static ParametroSistema parametroSistema(Long id, TipoParametroSistema tipoParametroSistema, String valor) {
+		ParametroSistema ps = parametroSistema(tipoParametroSistema, valor);
+		ps.setId(id);
+		
+		return ps;
 	}
 	
 	public static Diferenca diferenca(BigDecimal qtde,
@@ -1883,17 +1892,16 @@ public class Fixture {
 		return endereco;
 	}
 	
-	public static ParametroSistema[] criarParametrosEmail(){
+	public static ParametroSistema[] criarParametrosEmail() {
 		
 		ParametroSistema[] parametrosEmail = new ParametroSistema[5];
-		parametrosEmail[0] = Fixture.parametroSistema(TipoParametroSistema.EMAIL_HOST,"smtp.gmail.com");
-		parametrosEmail[1] = Fixture.parametroSistema(TipoParametroSistema.EMAIL_PROTOCOLO,"smtps");
-		parametrosEmail[2] = Fixture.parametroSistema(TipoParametroSistema.EMAIL_USUARIO, "sys.discover@gmail.com");
-		parametrosEmail[3] = Fixture.parametroSistema(TipoParametroSistema.EMAIL_SENHA, "discover10");
-		parametrosEmail[4] = Fixture.parametroSistema(TipoParametroSistema.EMAIL_PORTA, "465");
+		parametrosEmail[0] = Fixture.parametroSistema(1L, TipoParametroSistema.EMAIL_HOST,"smtp.gmail.com");
+		parametrosEmail[1] = Fixture.parametroSistema(2L, TipoParametroSistema.EMAIL_PROTOCOLO,"smtps");
+		parametrosEmail[2] = Fixture.parametroSistema(3L, TipoParametroSistema.EMAIL_USUARIO, "sys.discover@gmail.com");
+		parametrosEmail[3] = Fixture.parametroSistema(4L, TipoParametroSistema.EMAIL_SENHA, "discover10");
+		parametrosEmail[4] = Fixture.parametroSistema(5L, TipoParametroSistema.EMAIL_PORTA, "465");
 		
 		return parametrosEmail;
-		
 	}
 	
 	public static Banco banco(Long agencia, boolean ativo, Carteira carteira, String codigoCedente, Long conta, String dvAgencia,
@@ -2735,6 +2743,25 @@ public class Fixture {
 		algoritmo.setDescricao(descricao);
 		
 		return algoritmo;
+	}
+	
+	public static InterfaceExecucao criarInterfaceExecucao(Long id, String nome) {
+		
+		InterfaceExecucao ie = new InterfaceExecucao();
+		ie.setId(id);
+		ie.setNome(nome);
+		
+		return ie;
+	}
+	
+	public static EventoExecucao criarEventoExecucao(Long id, String nome, String descricao) {
+		
+		EventoExecucao ee = new EventoExecucao();
+		ee.setId(id);
+		ee.setNome(nome);
+		ee.setDescricao(descricao);
+		
+		return ee;
 	}
 	
 }
