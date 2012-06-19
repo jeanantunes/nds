@@ -34,6 +34,9 @@ public class BaixaManual extends BaixaCobranca {
 	@Column(name = "STATUS_APROVACAO")
 	private StatusAprovacao statusAprovacao;
 	
+	@Column(name = "OBSERVACAO")
+	private String observacao;
+	
 	public Usuario getResponsavel() {
 		return responsavel;
 	}
@@ -72,6 +75,14 @@ public class BaixaManual extends BaixaCobranca {
 
 	public void setStatusAprovacao(StatusAprovacao statusAprovacao) {
 		this.statusAprovacao = statusAprovacao;
+	}
+
+	public String getObservacao() {
+		return observacao;
+	}
+
+	public void setObservacao(String observacao) {
+		this.observacao = observacao;
 	}
 
 }

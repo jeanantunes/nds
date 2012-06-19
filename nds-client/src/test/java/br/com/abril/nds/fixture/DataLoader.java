@@ -1533,35 +1533,35 @@ public class DataLoader {
 	private static void criarEstoqueProdutoCota(Session session) {
 
 		estoqueProdutoCotaVeja1 = Fixture.estoqueProdutoCota(
-				produtoEdicaoVeja1, cotaGuilherme, BigDecimal.TEN, BigDecimal.TEN);
+				produtoEdicaoVeja1, cotaGuilherme, new BigDecimal(100), BigDecimal.TEN);
 		save(session, estoqueProdutoCotaVeja1);
 
 		estoqueProdutoCotaVeja2 = Fixture.estoqueProdutoCota(
-				produtoEdicaoVeja2, cotaGuilherme, BigDecimal.TEN, BigDecimal.TEN);
+				produtoEdicaoVeja2, cotaGuilherme, new BigDecimal(100), BigDecimal.TEN);
 		save(session, estoqueProdutoCotaVeja2);
 
 		estoqueProdutoCotaVeja3 = Fixture.estoqueProdutoCota(
-				produtoEdicaoVeja3, cotaGuilherme, BigDecimal.TEN, BigDecimal.TEN);
+				produtoEdicaoVeja3, cotaGuilherme, new BigDecimal(100), BigDecimal.TEN);
 		save(session, estoqueProdutoCotaVeja3);
 
 		estoqueProdutoCotaVeja4 = Fixture.estoqueProdutoCota(
-				produtoEdicaoVeja4, cotaGuilherme, BigDecimal.TEN, BigDecimal.TEN);
+				produtoEdicaoVeja4, cotaGuilherme, new BigDecimal(100), BigDecimal.TEN);
 		save(session, estoqueProdutoCotaVeja4);
 
 		estoqueProdutoCotaSuper1 = Fixture.estoqueProdutoCota(
-				produtoEdicaoSuper1, cotaMurilo, BigDecimal.TEN, BigDecimal.TEN);
+				produtoEdicaoSuper1, cotaMurilo, new BigDecimal(100), BigDecimal.TEN);
 		save(session, estoqueProdutoCotaSuper1);
 
 		estoqueProdutoCotaCapricho1 = Fixture.estoqueProdutoCota(
-				produtoEdicaoCapricho1, cotaMariana, BigDecimal.TEN, BigDecimal.TEN);
+				produtoEdicaoCapricho1, cotaMariana, new BigDecimal(100), BigDecimal.TEN);
 		save(session, estoqueProdutoCotaCapricho1);
 
 		estoqueProdutoCotaQuatroRodas1 = Fixture.estoqueProdutoCota(
-				produtoEdicaoQuatroRodas1, cotaOrlando, BigDecimal.TEN, BigDecimal.TEN);
+				produtoEdicaoQuatroRodas1, cotaOrlando, new BigDecimal(100), BigDecimal.TEN);
 		save(session, estoqueProdutoCotaQuatroRodas1);
 
 		estoqueProdutoCotaInfoExame1 = Fixture.estoqueProdutoCota(
-				produtoEdicaoInfoExame1, cotaOrlando, BigDecimal.TEN, BigDecimal.TEN);
+				produtoEdicaoInfoExame1, cotaOrlando, new BigDecimal(100), BigDecimal.TEN);
 		save(session, estoqueProdutoCotaInfoExame1);
 
 		estoqueProdutoCotaJoseVeja1EncalheAnt = Fixture.estoqueProdutoCota(
@@ -1613,60 +1613,60 @@ public class DataLoader {
 		save(session, estoqueProdutoCotaMariaSuper2EncalheAnt);
 		
 		estoqueProdutoCotaManoelCunhaVeja1 = Fixture.estoqueProdutoCota(
-				produtoEdicaoVeja1, cotaManoelCunha, BigDecimal.TEN, BigDecimal.TEN);
+				produtoEdicaoVeja1, cotaManoelCunha, new BigDecimal(100), BigDecimal.TEN);
 		save(session, estoqueProdutoCotaManoelCunhaVeja1);
 
 		estoqueProdutoCotaManoelCunhaVeja2 = Fixture.estoqueProdutoCota(
-				produtoEdicaoVeja2, cotaManoelCunha, BigDecimal.TEN, BigDecimal.TEN);
+				produtoEdicaoVeja2, cotaManoelCunha, new BigDecimal(100), BigDecimal.TEN);
 		save(session, estoqueProdutoCotaManoelCunhaVeja2);
 
 		estoqueProdutoCotaManoelCunhaVeja3 = Fixture.estoqueProdutoCota(
-				produtoEdicaoVeja3, cotaManoelCunha, BigDecimal.TEN, BigDecimal.TEN);
+				produtoEdicaoVeja3, cotaManoelCunha, new BigDecimal(100), BigDecimal.TEN);
 		save(session, estoqueProdutoCotaManoelCunhaVeja3);
 
 		estoqueProdutoCotaManoelCunhaVeja4 = Fixture.estoqueProdutoCota(
-				produtoEdicaoVeja4, cotaManoelCunha, BigDecimal.TEN, BigDecimal.TEN);
+				produtoEdicaoVeja4, cotaManoelCunha, new BigDecimal(100), BigDecimal.TEN);
 		save(session, estoqueProdutoCotaManoelCunhaVeja4);
 
 		estoqueProdutoCotaManoelCunhaSuper1 = Fixture.estoqueProdutoCota(
-				produtoEdicaoSuper1, cotaManoelCunha, BigDecimal.TEN, BigDecimal.TEN);
+				produtoEdicaoSuper1, cotaManoelCunha, new BigDecimal(100), BigDecimal.TEN);
 		save(session, estoqueProdutoCotaManoelCunhaSuper1);
 
 		estoqueProdutoCotaManoelCunhaCapricho1 = Fixture.estoqueProdutoCota(
-				produtoEdicaoCapricho1, cotaManoelCunha, BigDecimal.TEN, BigDecimal.TEN);
+				produtoEdicaoCapricho1, cotaManoelCunha, new BigDecimal(100), BigDecimal.TEN);
 		save(session, estoqueProdutoCotaManoelCunhaCapricho1);
 
 		estoqueProdutoCotaManoelCunhaQuatroRodas1 = Fixture.estoqueProdutoCota(
-				produtoEdicaoQuatroRodas1, cotaManoelCunha, BigDecimal.TEN, BigDecimal.TEN);
+				produtoEdicaoQuatroRodas1, cotaManoelCunha, new BigDecimal(100), BigDecimal.TEN);
 		save(session, estoqueProdutoCotaManoelCunhaQuatroRodas1);
 		
 		
 		estoqueProdutoCotaManoelVeja1 = Fixture.estoqueProdutoCota(
-				produtoEdicaoVeja1, cotaManoel, BigDecimal.TEN, BigDecimal.TEN);
+				produtoEdicaoVeja1, cotaManoel, new BigDecimal(100), BigDecimal.TEN);
 		save(session, estoqueProdutoCotaManoelVeja1);
 		
 		estoqueProdutoCotaManoelVeja2 = Fixture.estoqueProdutoCota(
-				produtoEdicaoVeja2, cotaManoel, BigDecimal.TEN, BigDecimal.TEN);
+				produtoEdicaoVeja2, cotaManoel, new BigDecimal(100), BigDecimal.TEN);
 		save(session, estoqueProdutoCotaManoelVeja2);
 		
 		estoqueProdutoCotaManoelVeja3 = Fixture.estoqueProdutoCota(
-				produtoEdicaoVeja3, cotaManoel, BigDecimal.TEN, BigDecimal.TEN);
+				produtoEdicaoVeja3, cotaManoel, new BigDecimal(100), BigDecimal.TEN);
 		save(session, estoqueProdutoCotaManoelVeja3);
 		
 		estoqueProdutoCotaManoelVeja4 = Fixture.estoqueProdutoCota(
-				produtoEdicaoVeja4, cotaManoel, BigDecimal.TEN, BigDecimal.TEN);
+				produtoEdicaoVeja4, cotaManoel, new BigDecimal(100), BigDecimal.TEN);
 		save(session, estoqueProdutoCotaManoelVeja4);
 		
 		estoqueProdutoCotaManoelCapricho1 = Fixture.estoqueProdutoCota(
-				produtoEdicaoCapricho1, cotaManoel, BigDecimal.TEN, BigDecimal.TEN);
+				produtoEdicaoCapricho1, cotaManoel, new BigDecimal(100), BigDecimal.TEN);
 		save(session, estoqueProdutoCotaManoelCapricho1);
 		
 		estoqueProdutoCotaManoelQuatroRodas1 = Fixture.estoqueProdutoCota(
-				produtoEdicaoQuatroRodas1, cotaManoel, BigDecimal.TEN, BigDecimal.TEN);
+				produtoEdicaoQuatroRodas1, cotaManoel, new BigDecimal(100), BigDecimal.TEN);
 		save(session, estoqueProdutoCotaManoelQuatroRodas1);
 		
 		estoqueProdutoCotaManoelSuper1 = Fixture.estoqueProdutoCota(
-				produtoEdicaoSuper1, cotaManoel, BigDecimal.TEN, BigDecimal.TEN);
+				produtoEdicaoSuper1, cotaManoel, new BigDecimal(100), BigDecimal.TEN);
 		save(session, estoqueProdutoCotaManoelSuper1);
 		
 	

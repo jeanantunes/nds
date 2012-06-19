@@ -274,7 +274,7 @@ public class CobrancaServiceImpl implements CobrancaService {
 			}
 			
 			cobranca.setCota(cota);
-			cobranca.setBanco(cob.getBanco().getNome());
+			cobranca.setBanco((cob.getBanco()!=null?cob.getBanco().getNome():""));
 			cobranca.setDataVencimento((cob.getDataVencimento()!=null?DateUtil.formatarDataPTBR(cob.getDataVencimento()):""));
 			cobranca.setDataEmissao((cob.getDataEmissao()!=null?DateUtil.formatarDataPTBR(cob.getDataEmissao()):""));
 			cobranca.setValor(CurrencyUtil.formatarValor(cob.getValor()));
@@ -541,6 +541,7 @@ public class CobrancaServiceImpl implements CobrancaService {
 		baixaManual.setValorDesconto(pagamento.getValorDesconto());
 		baixaManual.setStatus(status);
 		baixaManual.setStatusAprovacao(statusAprovacao);
+		baixaManual.setObservacao(pagamento.getObservacoes());
 		
 		baixaCobrancaRepository.adicionar(baixaManual);
 
