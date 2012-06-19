@@ -84,12 +84,12 @@
 	    
 	    <td width="40" id="tituloNovoValor">Valor(R$):</td>
 	    <td width="70">
-			 <input type="text" style="width:70px;height:15px;" name="debitoCredito.valor" id="novoValor" />
+			 <input maxlength="16" type="text" style="width:70px;height:15px;" name="debitoCredito.valor" id="novoValor" />
 	    </td>
 	    
 	    <td width="30">Observação:</td>
 	    <td width="300">
-			 <input type="text" style="width:300px;height:15px;" name="debitoCredito.observacao" id="novoObservacao" />
+			 <input maxlength="150" type="text" style="width:300px;height:15px;" name="debitoCredito.observacao" id="novoObservacao" />
 	    </td>
 	    
 	    <td width="20">
@@ -248,6 +248,7 @@
 			$('#novoValor').show();
 			
 			$("#novoTipoMovimento").val(0);
+			$("#grupoMovimentoHidden").val('');
 			$("#novoBaseCalculo").val(0);
 			$("#novoBox").val(0);
 			$("#novoRoteiro").val(0);
@@ -313,6 +314,8 @@
 				return resultado;
 			}
 
+			var grupoMovimento = $("#grupoMovimentoHidden").val();
+			
 			$.each(resultado.rows, function(index, row) {
 
 				var vencimento = $("#novoDataVencimento").val();
@@ -343,6 +346,9 @@
 				var inputData = '<input id="data' + index + '" value="' + vencimento + '" name="debitoCredito.dataVencimento" type="text" style="width:70px;" />';
 				
 				var inputValor = '<input id="valor' + index + '" value="' + valor + '" name="debitoCredito.valor" type="text" style="width:80px;" />';
+				if (grupoMovimento=="DEBITO_SOBRE_FATURAMENTO"){
+					inputValor = '<input readonly="readonly" id="valor' + index + '" value="' + valor + '" name="debitoCredito.valor" type="text" style="width:80px;" />';
+				}
 				
 				var inputObservacao = '<input id="observacao' + index + '" value="' + observacao + '" name="debitoCredito.observacao" type="text" style="width:220px;" />';
 
@@ -496,6 +502,22 @@
 
 			return isMovimentos;
 		}
+		
+		function habilitaValor(habilita){
+			
+            var linhasDaGrid = $(".debitosCreditosGrid_1 tr");
+            
+			$.each(linhasDaGrid, function(index, value) {
+				$("#valor"+index).val('');
+				if (!habilita){
+				    $("#valor"+index).attr('readonly','readonly');
+				}
+				else{
+					$('#valor'+index).removeAttr("readonly"); 
+				}
+			});	
+			
+		}
 
 		function isAtributosMovimentoVazios(numeroCota, nomeCota, data, valor, observacao) {
 
@@ -538,7 +560,7 @@
 
 			/*RECARREGA GRID CONFORME A EXECUCAO DO METODO COM OS PARAMETROS PASSADOS*/
 			$(".debitosCreditosGrid_1").flexReload();
-			
+
 			$(".grids").show();
 		}
 
@@ -589,6 +611,8 @@
 				$('#tabelaFaturamento').show();
 				$('#tituloNovoValor').hide();
 				$('#novoValor').hide();
+				
+				habilitaValor(false); 
 			}
 			else{
 				$('#tabelaFaturamento').hide();
@@ -599,8 +623,10 @@
 				$("#novoPercentual").val('');
 				$("#novoDataPeriodoDe").val('');
 				$("#novoDataPeriodoAte").val('');
+				
+				habilitaValor(true);
 			}
-			
+
 		}
 		
 		function montarComboBox(result,name,onChange,selected) {

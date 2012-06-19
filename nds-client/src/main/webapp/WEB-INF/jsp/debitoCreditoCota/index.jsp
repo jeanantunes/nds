@@ -378,6 +378,7 @@
 	function sucessCallbackConfiguraTelaEdicao(result){
 		
 		$("#grupoMovimentoHidden").val(result);
+		$("#edicaoValor").val('');
 		
 		if (result=='DEBITO_SOBRE_FATURAMENTO'){
 			
@@ -389,7 +390,7 @@
 			$('#tituloEdicaoPercentual').show();
 			$('#tituloEdicaoDataPeriodo').show();
 			
-			$("#edicaoValor").val('');
+			$("#edicaoValor").attr('readonly','readonly'); 
 		}
 		else{	
 			
@@ -405,8 +406,9 @@
 			$('#tituloEdicaoBaseCalculo').hide();
 			$('#tituloEdicaoPercentual').hide();
 			$('#tituloEdicaoDataPeriodo').hide();
+			
+			$('#edicaoValor').removeAttr("readonly"); 
 		}
-		
 	}
  	
  	function obterInformacoesParaEdicao(){
@@ -493,6 +495,8 @@
 			buttonImageOnly: true
 		});
 		
+		$("#edicaoNumeroCota").numeric();
+		$("#edicaoPercentual").numeric();
 	});
 </script>
 
@@ -524,14 +528,14 @@
   <tr>
     <td width="126">Cota:</td>
     <td width="310">
-    <input type="text" style="width:80px; float:left; margin-right:5px;" 
+    <input maxlength="11" type="text" style="width:80px; float:left; margin-right:5px;" 
     	   name="debitoCredito.numeroCota" id="edicaoNumeroCota" onblur="pesquisarCota(true);"/>
     </td>
   </tr>
   <tr>
     <td width="126">Nome:</td>
     <td width="310">
-    <input type="text" style="width:300px;" name="debitoCredito.nomeCota" id="edicaoNomeCota" /></td>
+    <input maxlength="80" type="text" style="width:300px;" name="debitoCredito.nomeCota" id="edicaoNomeCota" /></td>
   </tr>
   <tr>
     <td width="126">Data Lançamento:</td>
@@ -549,14 +553,14 @@
   <tr>
     <td width="126" id="tituloEdicaoPercentual" >Percentual(%)</td>
     <td width="310">
-    	<input type="text" style="width:80px; text-align:right;" name="debitoCredito.percentual" id="edicaoPercentual" onchange="obterInformacoesParaEdicao();" />
+    	<input  maxlength="3" type="text" style="width:80px; text-align:right;" name="edicaoPercentual" id="edicaoPercentual" onchange="obterInformacoesParaEdicao();" />
     </td>
   </tr>
   
   <tr>
     <td width="80" id="tituloEdicaoBaseCalculo">Base de Cálculo:</td>
     <td width="120">
-		<select name="debitoCredito.baseCalculo.id" id="edicaoBaseCalculo" style="width:120px;" onchange="obterInformacoesParaEdicao();" >
+		<select name="edicaoBaseCalculo" id="edicaoBaseCalculo" style="width:120px;" onchange="obterInformacoesParaEdicao();" >
 		
 	  		<option selected="selected"></option>
 			<c:forEach items="${basesCalculo}" var="base">
@@ -570,22 +574,22 @@
   <tr>
     <td width="100" id="tituloEdicaoDataPeriodo">Período para Cálculo:</td>
     <td width="180" id="edicaoDataPeriodo">
-		<input type="text" name="debitoCredito.dataPeriodoDe" id="edicaoDataPeriodoDe" style="width:80px;" onchange="obterInformacoesParaEdicao();" />
+		<input type="text" name="edicaoDataPeriodoDe" id="edicaoDataPeriodoDe" style="width:80px;" onchange="obterInformacoesParaEdicao();" />
         até
-		<input type="text" name="debitoCredito.dataPeriodoAte" id="edicaoDataPeriodoAte" style="width:80px;" onchange="obterInformacoesParaEdicao();" />
+		<input type="text" name="edicaoDataPeriodoAte" id="edicaoDataPeriodoAte" style="width:80px;" onchange="obterInformacoesParaEdicao();" />
     </td>
   </tr>
 
   <tr>
     <td width="126">Valor R$:</td>
     <td width="310">
-    	<input type="text" style="width:80px; text-align:right;" name="debitoCredito.valor" id="edicaoValor" />
+    	<input  maxlength="16" type="text" style="width:80px; text-align:right;" name="debitoCredito.valor" id="edicaoValor" />
     </td>
   </tr>
   <tr>
     <td width="126">Observação:</td>
     <td width="310">
-    	<input type="text" style="width:300px;" name="debitoCredito.observacao" id="edicaoObservacao" />
+    	<input  maxlength="150" type="text" style="width:300px;" name="debitoCredito.observacao" id="edicaoObservacao" />
     </td>
   </tr>
 </table>
