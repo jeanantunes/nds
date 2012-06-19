@@ -170,11 +170,9 @@ public class FechamentoEncalheController {
 	
 	@Path("/postergarCotas")
 	public void postergarCotas(Date dataPostergacao, Date dataEncalhe, List<Long> idsCotas) {
-			
-		Date dataAtual = Calendar.getInstance().getTime();
 		
-		if (dataAtual.after(dataPostergacao)) {
-			// throw new ValidacaoException();
+		if (dataEncalhe != null && dataEncalhe.after(dataPostergacao)) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "Postergação não pode ser realizada antes da data atual!");
 		}
 		
 		try {
@@ -195,7 +193,9 @@ public class FechamentoEncalheController {
 	public void cobrarCotas(Date dataOperacao, List<Long> idsCotas) {
 
 		if (idsCotas == null || idsCotas.isEmpty()) {
-			// validacao
+			this.result.use(Results.json()).from(
+				new ValidacaoVO(TipoMensagem.WARNING, "Selecine pelo menos uma Cota para cobrar!"), "result").recursive().serialize();
+			throw new ValidacaoException();
 		}
 		
 		try {
