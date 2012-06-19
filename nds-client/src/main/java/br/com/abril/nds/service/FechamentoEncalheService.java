@@ -19,9 +19,18 @@ public interface FechamentoEncalheService {
 
 	Integer buscarTotalCotasAusentes(Date dataEncalhe);
 
-	void postergarCotas(Date dataPostergacao, List<Long> idsCotas);
+	void postergarCotas(Date dataEncalhe, Date dataPostergacao, List<Long> idsCotas);
 	
 	void cobrarCotas(Date dataOperacao, Usuario usuario, List<Long> idsCotas);
 	
 	BigDecimal buscarValorTotalEncalhe(Date dataEncalhe, Long idCota);
+	
+	List<FechamentoFisicoLogicoDTO> salvarFechamentoEncalheBox(FiltroFechamentoEncalheDTO filtro, String sortorder, String sortname, int page, int rp);
+	
+	void encerrarOperacaoEncalhe(Date dataEncalhe);
+	
+	Boolean existeFechamentoEncalhe(FiltroFechamentoEncalheDTO filtro);
+	
+	Boolean existeFechamentoEncalheBox(FiltroFechamentoEncalheDTO filtro);
+
 }

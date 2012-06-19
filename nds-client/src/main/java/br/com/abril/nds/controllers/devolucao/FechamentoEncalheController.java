@@ -21,6 +21,7 @@ import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.BoxService;
+import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.DistribuidorService;
 import br.com.abril.nds.service.FechamentoEncalheService;
 import br.com.abril.nds.service.FornecedorService;
@@ -62,6 +63,9 @@ public class FechamentoEncalheController {
 
 	@Autowired
 	private HttpServletResponse response;
+	
+	@Autowired
+	private CalendarioService calendarioService;
 	
 	@Path("/")
 	public void index() {
@@ -105,12 +109,15 @@ public class FechamentoEncalheController {
 		filtro.setFornecedorId(fornecedorId);
 		filtro.setBoxId(boxId);
 		filtro.setFisico(arrayFisico);
-		
-		List<FechamentoFisicoLogicoDTO> listaEncalhe = fechamentoEncalheService.salvarFechamentoEncalhe(filtro, sortorder, this.resolveSort(sortname), page, rp);
+		List<FechamentoFisicoLogicoDTO> listaEncalhe = new ArrayList<FechamentoFisicoLogicoDTO>();
+		if (boxId == null){ 
+			listaEncalhe = fechamentoEncalheService.salvarFechamentoEncalhe(filtro, sortorder, this.resolveSort(sortname), page, rp);
+		} else {
+			listaEncalhe = fechamentoEncalheService.salvarFechamentoEncalheBox(filtro, sortorder, this.resolveSort(sortname), page, rp);
+		}
 		
 		result.use(FlexiGridJson.class).from(listaEncalhe).total(listaEncalhe.size()).page(page).serialize();
 	}
-	
 	
 	@Path("/cotasAusentes")
 	public void cotasAusentes(Date dataEncalhe,
@@ -121,21 +128,48 @@ public class FechamentoEncalheController {
 		
 		int total = this.fechamentoEncalheService.buscarTotalCotasAusentes(dataEncalhe);
 		
+		if (listaCotasAusenteEncalhe == null || listaCotasAusenteEncalhe.isEmpty()) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhuma cota ausente!");
+		}
+		
 		this.result.use(FlexiGridJson.class).from(listaCotasAusenteEncalhe).total(total).page(page).serialize();
 	}
-	
 	
 	@Path("/encerrarFechamento")
 	public void encerrarFechamento(Date dataEncalhe) {
 		
 		// TODO: verificar condições para fechamento; mostrar msg erro
+	}
+	
+	@Path("carregarDataPostergacao")
+	public void carregarDataPostergacao(Date dataEncalhe, Date dataPostergacao) {
 		
+		try {
+			
+			int quantidadeDias = 0;
+			
+			if (dataPostergacao == null) {
+				quantidadeDias = 1;
+				dataPostergacao = dataEncalhe;
+			}
+			
+			
+			dataPostergacao = 
+				this.calendarioService.adicionarDiasRetornarDiaUtil(dataPostergacao, quantidadeDias);
+			
+			if (dataPostergacao != null) {
+				String dataFormatada = DateUtil.formatarData(dataPostergacao, "dd/MM/yyyy");
+				this.result.use(Results.json()).from(dataFormatada, "result").recursive().serialize();
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		
 	}
 	
-	
 	@Path("/postergarCotas")
-	public void postergarCotas(Date dataPostergacao, List<Long> idsCotas) {
+	public void postergarCotas(Date dataPostergacao, Date dataEncalhe, List<Long> idsCotas) {
 			
 		Date dataAtual = Calendar.getInstance().getTime();
 		
@@ -145,7 +179,7 @@ public class FechamentoEncalheController {
 		
 		try {
 			
-			this.fechamentoEncalheService.postergarCotas(dataPostergacao, idsCotas);
+			this.fechamentoEncalheService.postergarCotas(dataEncalhe, dataPostergacao, idsCotas);
 			
 		} catch (Exception e) {
 			this.result.use(Results.json()).from(
@@ -193,7 +227,7 @@ public class FechamentoEncalheController {
 		
 			try {
 					
-				FileExporter.to("cotas_ausentes", fileType).inHTTPResponse(
+				FileExporter.to("cotas-ausentes", fileType).inHTTPResponse(
 					this.getNDSFileHeader(), null, null, listaCotasAusenteEncalhe, 
 				CotaAusenteEncalheDTO.class, this.response);
 				
@@ -218,24 +252,69 @@ public class FechamentoEncalheController {
 		List<FechamentoFisicoLogicoDTO> listaEncalhe = fechamentoEncalheService.buscarFechamentoEncalhe(
 				filtro, sortorder, this.resolveSort(sortname), page, rp);
 		
-		// Evitar nullpointer na impressão:
-		if (listaEncalhe == null) {
-			listaEncalhe = new ArrayList<FechamentoFisicoLogicoDTO>();
+		if (listaEncalhe != null && !listaEncalhe.isEmpty()) {
+		
+			try {
+				
+				FileExporter.to("fechamentos-encalhe", fileType).inHTTPResponse(
+					this.getNDSFileHeader(), null, null, listaEncalhe, 
+					FechamentoFisicoLogicoDTO.class, this.response);
+				
+			} catch (Exception e) {
+				throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, "Erro ao gerar o arquivo!"));
+			}
 		}
-		if (listaEncalhe.isEmpty()) {
-			listaEncalhe.add(new FechamentoFisicoLogicoDTO());
+		
+		this.result.use(Results.nothing());
+	}
+
+	@Path("/encerrarOperacaoEncalhe")
+	public void encerrarOperacaoEncalhe(Date dataEncalhe) {
+		
+		try {
+		
+			if (dataEncalhe == null || Calendar.getInstance().getTime().before(dataEncalhe)) {
+				this.result.use(Results.json()).from(
+					new ValidacaoVO(TipoMensagem.WARNING, "Data de encalhe inválida!"), "result").recursive().serialize();
+				throw new ValidacaoException();
+			}
+			
+			this.fechamentoEncalheService.encerrarOperacaoEncalhe(dataEncalhe);
+			
+		} catch (ValidacaoException e) {
+			this.result.use(Results.json()).from(e.getValidacao(), "result").recursive().serialize();
+			throw new ValidacaoException();
+		} catch (Exception e) {
+			this.result.use(
+				Results.json()).from(
+					new ValidacaoVO(TipoMensagem.ERROR, "Erro ao tentar encerrar a operação de encalhe!"), "result").recursive().serialize();
+			throw new ValidacaoException();
 		}
+		
+		this.result.use(Results.json()).from(
+			new ValidacaoVO(TipoMensagem.SUCCESS, "Operação de encalhe encerrada com sucesso!"), "result").recursive().serialize();
+	}
+	
+	@Path("/verificarEncerrarOperacaoEncalhe")
+	public void verificarEncerrarOperacaoEncalhe(Date dataEncalhe) {
 		
 		try {
 			
-			FileExporter.to("cotas_ausentes", fileType).inHTTPResponse(
-				this.getNDSFileHeader(), null, null, listaEncalhe, 
-				FechamentoFisicoLogicoDTO.class, this.response);
+			Integer totalCotasAusentes =
+				this.fechamentoEncalheService.buscarTotalCotasAusentes(dataEncalhe);
+			
+			if (totalCotasAusentes > 0) {
+				this.result.use(Results.json()).from("NAO_ENCERRAR", "result").recursive().serialize();
+			} else {
+				this.result.use(Results.json()).from("ENCERRAR", "result").recursive().serialize();
+			}
 			
 		} catch (Exception e) {
-			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, "Erro ao gerar o arquivo!"));
+			this.result.use(
+				Results.json()).from(
+					new ValidacaoVO(TipoMensagem.ERROR, "Erro ao tentar encerrar a operação de encalhe!"), "result").recursive().serialize();
+			throw new ValidacaoException();
 		}
-		
 	}
 
 	/**

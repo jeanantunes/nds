@@ -419,8 +419,6 @@
                     		<c:forEach items="${fornecedores}" var="fornecedor">
 								<option value="${fornecedor.id}">${fornecedor.juridica.nomeFantasia}</option>
                    			</c:forEach> 
-							<option>Dinap</option>
-							<option>FC</option>
 					</select></td>
 					<td width="47" colspan="-1">Código:</td>
 					<td width="108"><input type="text" style="width: 80px;" name="codigoProduto" id="codigoProduto" /></td>

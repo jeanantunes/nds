@@ -10,6 +10,8 @@
 	
 	function pesquisar() {
 		
+		$('#divBotoesPrincipais').show();
+		
 		$(".fechamentoGrid").flexOptions({
 			"url" : contextPath + '/devolucao/fechamentoEncalhe/pesquisar',
 			params : [{
@@ -49,8 +51,6 @@
 			
 			if (fechado != '') {
 				$('#divBotoesPrincipais').hide();
-			} else {
-				$('#divBotoesPrincipais').show();
 			}
 		});
 		
@@ -128,26 +128,8 @@
 	}
 	
 	function popup_encerrarEncalhe() {
-		$( "#dialog-encerrarEncalhe" ).dialog({
-			resizable: false,
-			height:500,
-			width:650,
-			modal: true,
-			buttons: {
-				"Postergar": function() {
-					postergarCotas();
-				},
-				"Cobrar": function() {
-					cobrarCotas();
-				},
-				"Cancelar": function() {
-					$(this).dialog( "close" );
-				}
-			},
-			beforeClose: function() {
-				clearMessageDialogTimeout('dialogMensagemNovo');
-			}
-		});
+		
+		
 
 		var dataEncalhe = $("#datepickerDe").val();
 		
@@ -160,6 +142,34 @@
 		$(".cotasGrid").flexReload();
 	};
 
+	function verificarEncerrarOperacaoEncalhe() {
+
+		$.postJSON(
+			"<c:url value='/devolucao/fechamentoEncalhe/verificarEncerrarOperacaoEncalhe' />",
+			{ 'dataEncalhe' : $('#datepickerDe').val() },
+			function (result) {
+
+				var tipoMensagem = result.tipoMensagem;
+				var listaMensagens = result.listaMensagens;
+				
+				if (tipoMensagem && listaMensagens) {
+					exibirMensagem(tipoMensagem, listaMensagens);
+				}
+
+				if (result == 'NAO_ENCERRAR') {
+					popup_encerrarEncalhe();
+				} else if (result == 'ENCERRAR'){
+					popup_encerrar();
+				}			
+			},
+		  	null,
+		   	false
+		);
+
+		
+	}
+
+	
 	function popup_encerrar() {
 		
 		$("#dataConfirma").html($("#datepickerDe").val());
@@ -171,13 +181,32 @@
 			modal: true,
 			buttons: {
 				"Confirmar": function() {
-					$( this ).dialog( "close" );
-					$("#effect").show("highlight", {}, 1000, encerrarFechamento);
+
+					$.postJSON(
+						"<c:url value='/devolucao/fechamentoEncalhe/encerrarOperacaoEncalhe' />",
+						{ 'dataEncalhe' : $('#datepickerDe').val() },
+						function (result) {
+
+							$("#dialog-confirm").dialog("close");
+							
+							var tipoMensagem = result.tipoMensagem;
+							var listaMensagens = result.listaMensagens;
+							
+							if (tipoMensagem && listaMensagens) {
+								exibirMensagem(tipoMensagem, listaMensagens);
+							}
+						},
+					  	null,
+					   	false
+					);
 				},
 				
 				"Cancelar": function() {
 					$( this ).dialog( "close" );
 				}
+			},
+			beforeClose: function() {
+				$(".fechamentoGrid").flexReload();
 			}
 		});
 	};
@@ -245,6 +274,27 @@
 			$(".cotasGrid").hide();
 			return resultado;
 		}
+
+		$( "#dialog-encerrarEncalhe" ).dialog({
+			resizable: false,
+			height:500,
+			width:650,
+			modal: true,
+			buttons: {
+				"Postergar": function() {
+					postergarCotas();
+				},
+				"Cobrar": function() {
+					cobrarCotas();
+				},
+				"Cancelar": function() {
+					$(this).dialog( "close" );
+				}
+			},
+			beforeClose: function() {
+				clearMessageDialogTimeout('dialogMensagemNovo');
+			}
+		});
 		
 		document.getElementById("checkTodasCotas").checked = false;
 		checarTodasCotasGrid(false);
@@ -281,47 +331,86 @@
 	
 	function postergarCotas() {
 
-		$("#dialog-postergar").dialog({
-			resizable: false,
-			height:'auto',
-			width:250,
-			modal: true,
-			buttons: {
-				"Confirmar": function() {
+		var cotasSelecionadas = obterCotasMarcadas();
+
+		if (cotasSelecionadas.lenght > 0) {
+			
+			$("#dialog-postergar").dialog({
+				resizable: false,
+				height:'auto',
+				width:250,
+				modal: true,
+				buttons: {
+					"Confirmar": function() {
+						
+						var dataPostergacao = $("#dtPostergada").val();
+						var dataEncalhe = $("#datepickerDe").val();
+						
+						$.postJSON("<c:url value='/devolucao/fechamentoEncalhe/postergarCotas' />",
+									{ 'dataPostergacao' : dataPostergacao, 
+									  'dataEncalhe' : dataEncalhe, 
+									  'idsCotas' : obterCotasMarcadas() },
+									function (result) {
+	
+										$("#dialog-postergar").dialog("close");
+										
+										var tipoMensagem = result.tipoMensagem;
+										var listaMensagens = result.listaMensagens;
+										
+										if (tipoMensagem && listaMensagens) {
+											exibirMensagemDialog(tipoMensagem, listaMensagens, 'dialogMensagemEncerrarEncalhe');
+										}
+										
+									},
+								  	null,
+								   	true,
+								   	'dialogMensagemEncerrarEncalhe'
+							);
+					},
 					
-					var dataPostergacao = $("#dtPostergada").val();
-
-					$.postJSON("<c:url value='/devolucao/fechamentoEncalhe/postergarCotas' />",
-								{ 'dataPostergacao' : dataPostergacao, 'idsCotas' : obterCotasMarcadas() },
-								function (result) {
-
-									$("#dialog-postergar").dialog("close");
-									
-									var tipoMensagem = result.tipoMensagem;
-									var listaMensagens = result.listaMensagens;
-									
-									if (tipoMensagem && listaMensagens) {
-										exibirMensagemDialog(tipoMensagem, listaMensagens, 'dialogMensagemEncerrarEncalhe');
-									}
-									
-								},
-							  	null,
-							   	true,
-							   	'dialogMensagemEncerrarEncalhe'
-						);
+					"Cancelar": function() {
+						$( this ).dialog( "close" );
+					}
 				},
-				
-				"Cancelar": function() {
-					$( this ).dialog( "close" );
+				beforeClose: function() {
+					$("#dtPostergada").val("");
+					clearMessageDialogTimeout('dialogMensagemEncerrarEncalhe');
 				}
-			},
-			beforeClose: function() {
-				$("#dtPostergada").val("");
-				clearMessageDialogTimeout('dialogMensagemEncerrarEncalhe');
-			}
-		});
+			});
+	
+			carregarDataPostergacao();
+		} else {
+			var listaMensagens = new Array();
+			listaMensagens.push('Selecione pelo menos uma cota para postergar!');
+			exibirMensagemDialog('WARNING', listaMensagens, 'dialogMensagemEncerrarEncalhe');
+		}
 	}
 
+	function carregarDataPostergacao() {
+
+		var dataPostergacao = $("#dtPostergada").val();
+		var dataEncalhe = $("#datepickerDe").val();
+		
+		$.postJSON("<c:url value='/devolucao/fechamentoEncalhe/carregarDataPostergacao' />",
+				{ 'dataEncalhe' : dataEncalhe, 'dataPostergacao' : dataPostergacao },
+				function (result) {
+
+					var tipoMensagem = result.tipoMensagem;
+					var listaMensagens = result.listaMensagens;
+					
+					if (tipoMensagem && listaMensagens) {
+						exibirMensagemDialog(tipoMensagem, listaMensagens, 'dialogMensagemPostergarCotas');
+					} else {
+						$("#dtPostergada").val(result);
+					}
+				},
+			  	null,
+			   	true,
+			   	'dialogMensagemPostergarCotas'
+		);
+
+	}
+	
 	function cobrarCotas() {
 
 		var dataOperacao = $("#datepickerDe").val();
@@ -393,12 +482,17 @@
 	</div>
 
 	<div id="dialog-postergar" title="Postergar Encalhe" style="display:none;">
+	
+		<jsp:include page="../messagesDialog.jsp">
+			<jsp:param value="dialogMensagemPostergarCotas" name="messageDialog"/>
+		</jsp:include> 
+		
 		<fieldset style="width:200px!important;">
 	    	<legend>Postergar Encalhe</legend>
 			<table border="0" cellspacing="2" cellpadding="0">
 	          <tr>
 	            <td width="70">Nova Data:</td>
-	            <td width="103"><input name="dtPostergada" type="text" id="dtPostergada" style="width:80px;" /></td>
+	            <td width="103"><input name="dtPostergada" type="text" id="dtPostergada" style="width:80px;" onchange="carregarDataPostergacao();" /></td>
 	          </tr>
 	        </table>
 	    </fieldset>
@@ -475,7 +569,7 @@
 			<div id="divBotoesPrincipais" style="display:none;">
 	            <span class="bt_novos" title="Salvar"><a href="javascript:;" onclick="salvar()"><img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0" />Salvar </a></span>
 				<span class="bt_novos" title="Cotas Ausentes"><a href="javascript:;" onclick="popup_encerrarEncalhe();"><img src="${pageContext.request.contextPath}/images/ico_check.gif" hspace="5" border="0" />Cotas Ausentes</a></span>
-				<span class="bt_novos" title="Encerrar Opera&ccedil;&atilde;o Encalhe"><a href="javascript:;" onclick="popup_encerrar();"><img src="${pageContext.request.contextPath}/images/ico_check.gif" hspace="5" border="0" />Encerrar Opera&ccedil;&atilde;o Encalhe</a></span>
+				<span class="bt_novos" title="Encerrar Opera&ccedil;&atilde;o Encalhe"><a href="javascript:;" onclick="verificarEncerrarOperacaoEncalhe();"><img src="${pageContext.request.contextPath}/images/ico_check.gif" hspace="5" border="0" />Encerrar Opera&ccedil;&atilde;o Encalhe</a></span>
 				<span class="bt_sellAll" style="float:right;"><a href="javascript:;" id="sel" onclick="replicarTodos();"><img src="${pageContext.request.contextPath}/images/ico_atualizar.gif" border="0" /></a><label for="sel">Replicar Todos</label></span>
 			</div>
 			

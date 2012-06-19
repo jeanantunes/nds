@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Set;
 
 import br.com.abril.nds.model.DiaSemana;
+import br.com.abril.nds.model.LeiautePicking;
 import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.StatusCobranca;
 import br.com.abril.nds.model.StatusConfirmacao;
@@ -59,6 +60,7 @@ import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.Telefone;
 import br.com.abril.nds.model.cadastro.TelefoneDistribuidor;
 import br.com.abril.nds.model.cadastro.TelefoneEntregador;
+import br.com.abril.nds.model.cadastro.TipoAtividade;
 import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.cadastro.TipoDesconto;
@@ -76,9 +78,7 @@ import br.com.abril.nds.model.cadastro.TipoRoteiro;
 import br.com.abril.nds.model.cadastro.TipoTelefone;
 import br.com.abril.nds.model.cadastro.pdv.AreaInfluenciaPDV;
 import br.com.abril.nds.model.cadastro.pdv.CaracteristicasPDV;
-import br.com.abril.nds.model.cadastro.pdv.ClusterPDV;
 import br.com.abril.nds.model.cadastro.pdv.EnderecoPDV;
-import br.com.abril.nds.model.cadastro.pdv.EspecialidadePDV;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
 import br.com.abril.nds.model.cadastro.pdv.PeriodoFuncionamentoPDV;
 import br.com.abril.nds.model.cadastro.pdv.SegmentacaoPDV;
@@ -134,6 +134,8 @@ import br.com.abril.nds.model.fiscal.StatusEmissaoNfe;
 import br.com.abril.nds.model.fiscal.StatusNotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.TipoEmissaoNfe;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
+import br.com.abril.nds.model.fiscal.TipoOperacao;
+import br.com.abril.nds.model.fiscal.TipoUsuarioNotaFiscal;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalhe;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalheCota;
 import br.com.abril.nds.model.movimentacao.ControleContagemDevolucao;
@@ -588,6 +590,7 @@ public class Fixture {
 		distribuidor.setCapacidadeDistribuicao(new BigDecimal("10000"));
 		distribuidor.setCapacidadeRecolhimento(new BigDecimal("1000"));
 		distribuidor.setPreenchimentoAutomaticoPDV(true);
+		distribuidor.setLeiautePicking(LeiautePicking.DOIS);
 		
 		return distribuidor;
 	}
@@ -1037,6 +1040,17 @@ public class Fixture {
 		TipoNotaFiscal tipoNotaFiscal = new TipoNotaFiscal();
 		tipoNotaFiscal.setDescricao("RECEBIMENTO");
 		tipoNotaFiscal.setGrupoNotaFiscal(GrupoNotaFiscal.RECEBIMENTO_MERCADORIAS);
+		
+		/*tipoNotaFiscal.setCfopEstado(Fixture.cfop1209());
+		tipoNotaFiscal.setCfopOutrosEstados(Fixture.cfop1209());*/
+		tipoNotaFiscal.setNopDescricao("NF-e de Devolução de Remessa para Distruibuição");
+		tipoNotaFiscal.setEmitente(TipoUsuarioNotaFiscal.DISTRIBUIDOR);
+		tipoNotaFiscal.setDestinatario(TipoUsuarioNotaFiscal.DISTRIBUIDOR);
+		tipoNotaFiscal.setContribuinte(false);
+		tipoNotaFiscal.setNopCodigo(0L);
+		tipoNotaFiscal.setTipoOperacao(TipoOperacao.ENTRADA);		
+		tipoNotaFiscal.setTipoAtividade(TipoAtividade.PRESTADOR_SERVICO);
+		
 		return tipoNotaFiscal;
 	}
 
@@ -1074,6 +1088,35 @@ public class Fixture {
 		TipoNotaFiscal tipoNotaFiscal = new TipoNotaFiscal();
 		tipoNotaFiscal.setDescricao("DEVOLUCAO");
 		tipoNotaFiscal.setGrupoNotaFiscal(GrupoNotaFiscal.DEVOLUCAO_MERCADORIA_FORNECEDOR);
+
+		/*tipoNotaFiscal.setCfopEstado(Fixture.cfop5102());
+		tipoNotaFiscal.setCfopOutrosEstados(Fixture.cfop5102());*/
+		tipoNotaFiscal.setNopDescricao("NF-e de Remessa em Consignação (NECE / DANFE)");
+		tipoNotaFiscal.setEmitente(TipoUsuarioNotaFiscal.DISTRIBUIDOR);
+		tipoNotaFiscal.setDestinatario(TipoUsuarioNotaFiscal.COTA);
+		tipoNotaFiscal.setContribuinte(true);
+		tipoNotaFiscal.setNopCodigo(0L);
+		tipoNotaFiscal.setTipoOperacao(TipoOperacao.SAIDA);
+		tipoNotaFiscal.setTipoAtividade(TipoAtividade.MERCANTIL);
+		
+		return tipoNotaFiscal;
+	}
+
+	public static TipoNotaFiscal tipoNotaFiscalRecebimentoMercadoriasEncalhe() {
+		TipoNotaFiscal tipoNotaFiscal = new TipoNotaFiscal();
+		tipoNotaFiscal.setDescricao("RECEBIMENTO DE MERCADORIAS ENCALHE");
+		tipoNotaFiscal.setGrupoNotaFiscal(GrupoNotaFiscal.RECEBIMENTO_MERCADORIAS_ENCALHE);
+
+		/*tipoNotaFiscal.setCfopEstado(Fixture.cfop1210());
+		tipoNotaFiscal.setCfopOutrosEstados(Fixture.cfop1210());*/
+		tipoNotaFiscal.setNopDescricao("NF-e de Devolução de Remessa para Distruibuição");
+		tipoNotaFiscal.setEmitente(TipoUsuarioNotaFiscal.DISTRIBUIDOR);
+		tipoNotaFiscal.setDestinatario(TipoUsuarioNotaFiscal.DISTRIBUIDOR);
+		tipoNotaFiscal.setContribuinte(false);
+		tipoNotaFiscal.setNopCodigo(0L);
+		tipoNotaFiscal.setTipoOperacao(TipoOperacao.ENTRADA);
+		tipoNotaFiscal.setTipoAtividade(TipoAtividade.PRESTADOR_SERVICO);
+		
 		return tipoNotaFiscal;
 	}
 	
@@ -2431,15 +2474,6 @@ public class Fixture {
 		return caracteristicasPDV;
 	}
 	
-	public static EspecialidadePDV criarEspecialidadesPDV(Long codigo, String descricao){
-		
-		EspecialidadePDV especialidadePDV  = new EspecialidadePDV();
-		especialidadePDV.setCodigo(codigo);
-		especialidadePDV.setDescricao(descricao);
-		
-		return especialidadePDV;
-	}
-	
 	public static LicencaMunicipal criarLicencaMunicipal(String nomeLicenca, String numeroLicenca, 
 														 TipoLicencaMunicipal tipoLicencaMunicipal){
 		
@@ -2460,13 +2494,12 @@ public class Fixture {
 		return materialPromocional;
 	}
 	
-	public static SegmentacaoPDV criarSegmentacaoPdv(AreaInfluenciaPDV areaInfluenciaPDV, ClusterPDV clusterPDV, 
+	public static SegmentacaoPDV criarSegmentacaoPdv(AreaInfluenciaPDV areaInfluenciaPDV,   
 													 TipoCaracteristicaSegmentacaoPDV tipoCaracteristica, 
 													 TipoPontoPDV tipoPontoPDV, TipoClusterPDV tipoClusterPDV){
 		
 		SegmentacaoPDV segmentacaoPDV = new SegmentacaoPDV();
 		segmentacaoPDV.setAreaInfluenciaPDV(areaInfluenciaPDV);
-		segmentacaoPDV.setClusterPDV(clusterPDV);
 		segmentacaoPDV.setTipoCaracteristica(tipoCaracteristica);
 		segmentacaoPDV.setTipoPontoPDV(tipoPontoPDV);
 		segmentacaoPDV.setTipoClusterPDV(tipoClusterPDV);
@@ -2482,15 +2515,6 @@ public class Fixture {
 		areaInfluenciaPDV.setDescricao(descricao);
 		
 		return areaInfluenciaPDV;
-	}
-	
-	public static ClusterPDV criarClusterPDV(Long codigo, String descricao){
-		
-		ClusterPDV clusterPDV = new ClusterPDV();
-		clusterPDV.setCodigo(codigo);
-		clusterPDV.setDescricao(descricao);
-		
-		return clusterPDV;
 	}
 	
 	public static TipoPontoPDV criarTipoPontoPDV (Long codigo, String descricao){

@@ -25,6 +25,7 @@ public class FechamentoEncalhe implements Serializable {
 	@Column(name="QUANTIDADE", nullable=true)
 	private Long quantidade;
 	
+	
 	@OneToMany
 	@JoinColumns({
         @JoinColumn(name="DATA_ENCALHE", referencedColumnName="DATA_ENCALHE"),

@@ -397,7 +397,8 @@ fieldset label {
 							<li><a href='<c:url value="/administracao/tipoDescontoCota"/>'>Tipo de Desconto Cota</a></li>
 							
 							<li><a href="<c:url value="/tipoMovimento/index"/>">Tipo de Movimento</a></li>
-							
+
+							<li><a href="<c:url value="/administracao/cadastroTipoNota"/>">Tipo de Nota</a></li>
 							
 							<li><a href="Administracao/iniciar_dia.htm">Iniciar o
 									Dia</a>
@@ -413,6 +414,7 @@ fieldset label {
 							<li><a href='<c:url value="/distribuidor/parametroCobranca/index"/>'>Parâmetros de Cobrança</a>
 							</li>
 							<li><a href='<c:url value="administracao/parametrosSistema"/>'>Par&acirc;metros do Sistema</a></li>
+							<li><a href='<c:url value="/administracao/parametrosDistribuidor"/>'>Par&acirc;metros do Distribuidor</a></li>
 						</ul>
 					</li>
 					<li><span class="classHelp">&nbsp;</span><a href="help.htm">Help</a>

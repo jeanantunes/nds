@@ -115,13 +115,18 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 	
 	@Override
 	@Transactional
-	public Set<String> gerarCobranca(Long idCota, Long idUsuario) {
+	public Set<String> gerarCobranca(Long idCota, Long idUsuario, boolean indValidaConclusaoOperacaoConferencia) {
 		
-		// verificar se a operação de conferencia ja foi concluida
-		StatusOperacao statusOperacao = this.controleConferenciaEncalheRepository.obterStatusConferenciaDataOperacao();
-		
-		if (statusOperacao == null || !StatusOperacao.CONCLUIDO.equals(statusOperacao)){
-			throw new ValidacaoException(TipoMensagem.ERROR, "A conferência de box de encalhe deve ser concluída antes de gerar dívidas.");
+		if (indValidaConclusaoOperacaoConferencia) {
+
+			// verificar se a operação de conferencia ja foi concluida
+			StatusOperacao statusOperacao = this.controleConferenciaEncalheRepository.obterStatusConferenciaDataOperacao();
+			
+			if(statusOperacao == null || !StatusOperacao.CONCLUIDO.equals(statusOperacao)){
+				throw new ValidacaoException(TipoMensagem.ERROR, "A conferência de box de encalhe deve ser concluída antes de gerar dívidas.");
+			}
+
+			
 		}
 		
 		//Caso esteja gerando cobrança para uma única cota

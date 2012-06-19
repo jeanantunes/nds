@@ -43,7 +43,13 @@ public class Distribuidor {
 	
 	@Embedded
 	private ParametroCobrancaDistribuidor parametroCobrancaDistribuidor;
-	
+
+	@Embedded
+	private ParametrosRecolhimentoDistribuidor parametrosRecolhimentoDistribuidor;
+
+	@Embedded
+	private ParametrosAprovacaoDistribuidor parametrosAprovacaoDistribuidor;
+
 	@Column(name = "CODIGO", nullable = false)
 	private Integer codigo;
 	
@@ -69,6 +75,18 @@ public class Distribuidor {
 	
 	@OneToMany(mappedBy = "distribuidor")
 	private List<TelefoneDistribuidor> telefones = new ArrayList<TelefoneDistribuidor>();
+	
+	/**
+	 * Emissões de documentos controladas pelo distribuidor
+	 */
+	@OneToMany(mappedBy = "distribuidor")
+	private List<ParametrosDistribuidorEmissaoDocumento> parametrosDistribuidorEmissaoDocumentos = new ArrayList<ParametrosDistribuidorEmissaoDocumento>();
+
+	/**
+	 * Faltas e sobras controladas pelo distribuidor
+	 */
+	@OneToMany(mappedBy = "distribuidor")
+	private List<ParametrosDistribuidorFaltasSobras> parametrosDistribuidorFaltasSobras = new ArrayList<ParametrosDistribuidorFaltasSobras>();
 	
 	/**
 	 * Flag que indica se o distribuidor aceita a conferência de um encalhe juramentado.
@@ -122,12 +140,27 @@ public class Distribuidor {
 	private int fatorRelancamentoParcial;
 	
 	/**
+	 * Filtro de seleção de cotas suspensas com 
+     * valor consigando total menor ou igual ao informado 
+     * nesta coluna.
+	 */
+	@Column(name = "VALOR_CONSIGNADO_SUSPENSAO_COTAS",  nullable = false)
+	private BigDecimal valorConsignadoSuspensaoCotas;
+	
+	/**
+	 * Filtro de seleção de cotas suspensas cujos
+       dias de suspensão sejam maiores ou iguais 
+     * ao informado nesta coluna.
+	 */
+	@Column(name = "QTD_DIAS_SUSPENSAO_COTAS",  nullable = false)
+	private int quantidadeDiasSuspensaoCotas;
+	
+	/**
 	 * Parametrização do contrato entre cota e distribuidor
 	 */
 	@OneToOne
 	@JoinColumn(name = "PARAMETRO_CONTRATO_COTA_ID")
 	private ParametroContratoCota parametroContratoCota;
-	
 	
 	@OneToMany(mappedBy="distribuidor")
 	private List<TipoGarantiaAceita> tiposGarantiasAceita;
@@ -151,6 +184,58 @@ public class Distribuidor {
 	
 	@Column(name="QNT_DIAS_VENCIMENTO_VENDA_ENCALHE")
 	private Integer qntDiasVencinemtoVendaEncalhe;
+	
+	@Enumerated(EnumType.STRING)
+	@Column(name = "TIPO_ATIVIDADE", nullable = true)
+	private TipoAtividade tipoAtividade = TipoAtividade.MERCANTIL;
+
+	@Column(name = "OBRIGACAO_FISCAL", nullable = false)
+	private boolean obrigacaoFiscao;	
+	
+	@Column(name = "REGIME_ESPECIAL", nullable = false)
+	private boolean regimeEspecial;
+	
+	@Enumerated(EnumType.STRING)
+	@Column(name = "TIPO_IMPRESSAO_CE", nullable = true)
+	private TipoImpressaoCE tipoImpressaoCE = TipoImpressaoCE.MODELO_1;	
+	
+	@Enumerated(EnumType.STRING)
+	@Column(name = "TIPO_IMPRESSAO_NE", nullable = true)
+	private TipoImpressaoNE tipoImpressaoNE = TipoImpressaoNE.MODELO_1; 	
+	
+	@Enumerated(EnumType.STRING)
+	@Column(name = "TIPO_IMPRESSAO_NECA_DANFE", nullable = true)
+	private TipoImpressaoNECADANFE tipoImpressaoNECADANFE = TipoImpressaoNECADANFE.MODELO_1;	
+
+	@Column(name = "UTILIZA_PROCURACAO_ENTREGADORES", nullable = false)
+	private boolean utilizaProcuracaoEntregadores;	
+	
+	@Column(name = "INFORMACOES_COMPLEMENTARES_PROCURACAO", nullable = false)
+	private String informacoesComplementaresProcuracao;
+
+	@Column(name = "UTILIZA_GARANTIA_PDV", nullable = false)
+	private boolean utilizaGarantiaPdv;	
+
+	@Column(name = "PARCELAMENTO_DIVIDAS", nullable = false)
+	private boolean parcelamentoDividas;	
+	
+	@Column(name = "NEGOCIACAO_ATE_PARCELAS", nullable = false)
+	private Integer negociacaoAteParcelas;
+	
+	@Column(name = "PERMITE_PAGAMENTO_DIVIDAS_DIVERGENTES", nullable = false)
+	private boolean permitePagamentoDividasDivergentes;	
+
+	@Column(name = "UTILIZA_CONTROLE_APROVACAO", nullable = false)
+	private boolean utilizaControleAprovacao;	
+
+	@Column(name = "PRAZO_FOLLOW_UP", nullable = false)
+	private Integer prazoFollowUp;
+	
+	@Column(name = "PRAZO_AVISO_PREVIO_VALIDADE_GARANTIA", nullable = false)
+	private Integer prazoAvisoPrevioValidadeGarantia;
+
+	@Column(name="QTD_DIAS_LIMITE_PARA_REPROG_LANCAMENTO", nullable = true)
+	private Integer qtdDiasLimiteParaReprogLancamento;
 	
 	public Long getId() {
 		return id;
@@ -401,6 +486,23 @@ public class Distribuidor {
 		this.leiautePicking = leiautePicking;
 	}
 
+	public BigDecimal getValorConsignadoSuspensaoCotas() {
+		return valorConsignadoSuspensaoCotas;
+	}
+
+	public void setValorConsignadoSuspensaoCotas(
+			BigDecimal valorConsignadoSuspensaoCotas) {
+		this.valorConsignadoSuspensaoCotas = valorConsignadoSuspensaoCotas;
+	}
+
+	public int getQuantidadeDiasSuspensaoCotas() {
+		return quantidadeDiasSuspensaoCotas;
+	}
+
+	public void setQuantidadeDiasSuspensaoCotas(int quantidadeDiasSuspensaoCotas) {
+		this.quantidadeDiasSuspensaoCotas = quantidadeDiasSuspensaoCotas;
+	}
+	
 	/**
 	 * @return the qntDiasVencinemtoVendaEncalhe
 	 */
@@ -411,9 +513,184 @@ public class Distribuidor {
 	/**
 	 * @param qntDiasVencinemtoVendaEncalhe the qntDiasVencinemtoVendaEncalhe to set
 	 */
-	public void setQntDiasVencinemtoVendaEncalhe(
-			Integer qntDiasVencinemtoVendaEncalhe) {
+	public void setQntDiasVencinemtoVendaEncalhe(Integer qntDiasVencinemtoVendaEncalhe) {
 		this.qntDiasVencinemtoVendaEncalhe = qntDiasVencinemtoVendaEncalhe;
+	}
+
+	public List<ParametrosDistribuidorEmissaoDocumento> getParametrosDistribuidorEmissaoDocumentos() {
+		return parametrosDistribuidorEmissaoDocumentos;
+	}
+
+	public void setParametrosDistribuidorEmissaoDocumentos(
+			List<ParametrosDistribuidorEmissaoDocumento> parametrosDistribuidorEmissaoDocumentos) {
+		this.parametrosDistribuidorEmissaoDocumentos = parametrosDistribuidorEmissaoDocumentos;
+	}
+
+	public List<ParametrosDistribuidorFaltasSobras> getParametrosDistribuidorFaltasSobras() {
+		return parametrosDistribuidorFaltasSobras;
+	}
+
+	public void setParametrosDistribuidorFaltasSobras(
+			List<ParametrosDistribuidorFaltasSobras> parametrosDistribuidorFaltasSobras) {
+		this.parametrosDistribuidorFaltasSobras = parametrosDistribuidorFaltasSobras;
+	}
+
+	public ParametrosRecolhimentoDistribuidor getParametrosRecolhimentoDistribuidor() {
+		return parametrosRecolhimentoDistribuidor;
+	}
+
+	public void setParametrosRecolhimentoDistribuidor(
+			ParametrosRecolhimentoDistribuidor parametrosRecolhimentoDistribuidor) {
+		this.parametrosRecolhimentoDistribuidor = parametrosRecolhimentoDistribuidor;
+	}
+
+	public ParametrosAprovacaoDistribuidor getParametrosAprovacaoDistribuidor() {
+		return parametrosAprovacaoDistribuidor;
+	}
+
+	public void setParametrosAprovacaoDistribuidor(
+			ParametrosAprovacaoDistribuidor parametrosAprovacaoDistribuidor) {
+		this.parametrosAprovacaoDistribuidor = parametrosAprovacaoDistribuidor;
+	}
+
+	public TipoAtividade getTipoAtividade() {
+		return tipoAtividade;
+	}
+
+	public void setTipoAtividade(TipoAtividade tipoAtividade) {
+		this.tipoAtividade = tipoAtividade;
+	}
+
+	public boolean isObrigacaoFiscao() {
+		return obrigacaoFiscao;
+	}
+
+	public void setObrigacaoFiscao(boolean obrigacaoFiscao) {
+		this.obrigacaoFiscao = obrigacaoFiscao;
+	}
+
+	public boolean isRegimeEspecial() {
+		return regimeEspecial;
+	}
+
+	public void setRegimeEspecial(boolean regimeEspecial) {
+		this.regimeEspecial = regimeEspecial;
+	}
+
+	public TipoImpressaoCE getTipoImpressaoCE() {
+		return tipoImpressaoCE;
+	}
+
+	public void setTipoImpressaoCE(TipoImpressaoCE tipoImpressaoCE) {
+		this.tipoImpressaoCE = tipoImpressaoCE;
+	}
+
+	public TipoImpressaoNE getTipoImpressaoNE() {
+		return tipoImpressaoNE;
+	}
+
+	public void setTipoImpressaoNE(TipoImpressaoNE tipoImpressaoNE) {
+		this.tipoImpressaoNE = tipoImpressaoNE;
+	}
+
+	public TipoImpressaoNECADANFE getTipoImpressaoNECADANFE() {
+		return tipoImpressaoNECADANFE;
+	}
+
+	public void setTipoImpressaoNECADANFE(
+			TipoImpressaoNECADANFE tipoImpressaoNECADANFE) {
+		this.tipoImpressaoNECADANFE = tipoImpressaoNECADANFE;
+	}
+
+	public boolean isUtilizaProcuracaoEntregadores() {
+		return utilizaProcuracaoEntregadores;
+	}
+
+	public void setUtilizaProcuracaoEntregadores(
+			boolean utilizaProcuracaoEntregadores) {
+		this.utilizaProcuracaoEntregadores = utilizaProcuracaoEntregadores;
+	}
+
+	public String getInformacoesComplementaresProcuracao() {
+		return informacoesComplementaresProcuracao;
+	}
+
+	public void setInformacoesComplementaresProcuracao(
+			String informacoesComplementaresProcuracao) {
+		this.informacoesComplementaresProcuracao = informacoesComplementaresProcuracao;
+	}
+
+	public boolean isUtilizaGarantiaPdv() {
+		return utilizaGarantiaPdv;
+	}
+
+	public void setUtilizaGarantiaPdv(boolean utilizaGarantiaPdv) {
+		this.utilizaGarantiaPdv = utilizaGarantiaPdv;
+	}
+
+	public boolean isParcelamentoDividas() {
+		return parcelamentoDividas;
+	}
+
+	public void setParcelamentoDividas(boolean parcelamentoDividas) {
+		this.parcelamentoDividas = parcelamentoDividas;
+	}
+
+	public Integer getNegociacaoAteParcelas() {
+		return negociacaoAteParcelas;
+	}
+
+	public void setNegociacaoAteParcelas(Integer negociacaoAteParcelas) {
+		this.negociacaoAteParcelas = negociacaoAteParcelas;
+	}
+
+	public boolean isPermitePagamentoDividasDivergentes() {
+		return permitePagamentoDividasDivergentes;
+	}
+
+	public void setPermitePagamentoDividasDivergentes(
+			boolean permitePagamentoDividasDivergentes) {
+		this.permitePagamentoDividasDivergentes = permitePagamentoDividasDivergentes;
+	}
+
+	public boolean isUtilizaControleAprovacao() {
+		return utilizaControleAprovacao;
+	}
+
+	public void setUtilizaControleAprovacao(boolean utilizaControleAprovacao) {
+		this.utilizaControleAprovacao = utilizaControleAprovacao;
+	}
+
+	public Integer getPrazoFollowUp() {
+		return prazoFollowUp;
+	}
+
+	public void setPrazoFollowUp(Integer prazoFollowUp) {
+		this.prazoFollowUp = prazoFollowUp;
+	}
+
+	public Integer getPrazoAvisoPrevioValidadeGarantia() {
+		return prazoAvisoPrevioValidadeGarantia;
+	}
+
+	public void setPrazoAvisoPrevioValidadeGarantia(
+			Integer prazoAvisoPrevioValidadeGarantia) {
+		this.prazoAvisoPrevioValidadeGarantia = prazoAvisoPrevioValidadeGarantia;
+	}
+
+	/**
+	 * @return the qtdDiasLimiteParaReprogLancamento
+	 */
+	public Integer getQtdDiasLimiteParaReprogLancamento() {
+		return qtdDiasLimiteParaReprogLancamento;
+	}
+
+	/**
+	 * @param qtdDiasLimiteParaReprogLancamento the qtdDiasLimiteParaReprogLancamento to set
+	 */
+	public void setQtdDiasLimiteParaReprogLancamento(
+			Integer qtdDiasLimiteParaReprogLancamento) {
+		this.qtdDiasLimiteParaReprogLancamento = qtdDiasLimiteParaReprogLancamento;
 	}
 	
 }

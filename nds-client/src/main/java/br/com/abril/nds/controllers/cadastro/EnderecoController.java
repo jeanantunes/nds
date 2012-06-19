@@ -195,6 +195,9 @@ public class EnderecoController {
 			enderecoAssociacao.getEndereco().setCep(retirarFormatacaoCep(enderecoAssociacao.getEndereco().getCep()));
 		}
 		
+		if(tela.equals(Tela.ENDERECO_PDV))
+			validarDuplicidadeEnderecoPDV();
+		
 		List<EnderecoAssociacaoDTO> listaEnderecoAssociacao = this.obterEnderecosSessaoSalvar();
 		
 		if (enderecoAssociacao.getId() != null){
@@ -244,6 +247,40 @@ public class EnderecoController {
 		List<String> ufs = this.enderecoService.obterUnidadeFederacaoBrasil();
 		
 		this.result.use(Results.json()).from(ufs, "result").serialize();
+	}
+
+	private void validarDuplicidadeEnderecoPDV() {
+		
+		List<EnderecoAssociacaoDTO> listaSalvar = this.obterEnderecosSessaoSalvar();
+		
+		for (int index = 0 ; index < listaSalvar.size() ; index++){
+			
+			if (listaSalvar.get(index).getTipoEndereco() != null){
+				throw new ValidacaoException(TipoMensagem.WARNING,"Já existe associação de endereço para este PDV.");
+			}
+		}
+		
+		List<EnderecoAssociacaoDTO> listaExibir = this.obterEnderecosSessaoExibir();
+			
+		for (int index = 0 ; index < listaExibir.size() ; index++){
+			
+			if (listaExibir.get(index).getTipoEndereco() != null){
+				
+				List<EnderecoAssociacaoDTO> listaExclusao = this.obterEnderecosSessaoRemover();
+				
+				for (int i = 0 ; i < listaExclusao.size() ; i++){
+					
+					boolean encontrado = false;
+					
+					if (listaExclusao.get(index).getTipoEndereco() != null){
+						encontrado = true;						
+					}
+					
+					if(encontrado == false) 
+						throw new ValidacaoException(TipoMensagem.WARNING,"Já existe associação de endereço para este PDV.");
+				}	
+			}
+		}			
 	}
 
 	/**
