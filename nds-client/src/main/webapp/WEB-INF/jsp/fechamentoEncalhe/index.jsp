@@ -509,33 +509,6 @@
 		});
 	}
 
-
-	
-
-	function brunoTeste() {
-		var param =eval('[{name:"lista[0].produtoEdicao",value:1}, {name:"lista[1].produtoEdicao",value:2}]');
-		$.postJSON(
-			"<c:url value='/devolucao/fechamentoEncalhe/brunoTeste' />",
-				param
-		    ,
-			function (result) {
-
-				var tipoMensagem = result.tipoMensagem;
-				var listaMensagens = result.listaMensagens;
-				
-				if (tipoMensagem && listaMensagens) {
-					$('#mensagemConsistenciaDados').html(listaMensagens[0])
-					popup_mensagem_consistencia_dados();
-				} else {
-					pesquisar(false);
-				}
-
-    		},
-		  	null,
-		   	false
-		);
-	}	
-
 	 function populaParamentrosFechamentoEncalheInformados(){
 		var dados ="";
 		var index = 0;
