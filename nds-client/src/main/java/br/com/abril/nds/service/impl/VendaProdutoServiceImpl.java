@@ -38,5 +38,4 @@ public class VendaProdutoServiceImpl implements VendaProdutoService {
 		 
 		return vendaProdutoRepository.buscarLancamentoPorEdicao(filtro);
 	}
-
 }

@@ -1,9 +1,10 @@
 <head>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/mapaAbastecimento.js"></script>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
-	
+	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/produto.js"></script>
+	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/cota.js"></script>
 	<script language="javascript" type="text/javascript">
-	
+		
 		var MA = new MapaAbastecimento('${pageContext.request.contextPath}', 'MA');
 	</script>
 	
@@ -14,8 +15,8 @@
 			
 				$( "#dialog-detalhesAbastecimento" ).dialog({
 					resizable: false,
-					height:400,
-					width:700,
+					height:410,
+					width:710,
 					modal: true,
 					buttons: {
 						"Fechar": function() {
@@ -35,7 +36,7 @@
 
 <div id="dialog-detalhesAbastecimento" title="Produtos do Box" style="display:none;">
 	<fieldset>
-    	<legend>Box 1</legend>
+    	<legend><span id="titleBox" ></span></legend>
 		<table class="mapaAbastecimentoDetalheGrid"></table>
 
     </fieldset>
@@ -58,7 +59,7 @@
               <td>
               
 <!-- Data Lançamento -->              
-<input id="dataLancamento" type="text"  style="width:100px;"/></td>
+<input value="${data}" id="dataLancamento" type="text"  style="width:100px;"/></td>
 
               <td>&nbsp;</td>
               <td>&nbsp;</td>
@@ -84,19 +85,18 @@
               <td>
               
 <!-- Box -->
-<select id="box" name="select" style="width:120px;" onchange="opcaoImpressao(this.value);">
-       <option value="2">Selecione...</option>
-       <option value="1">Box 1</option>
-       <option value="1">Box 2</option>
-       <option value="1">Box 3</option>
-       <option value="1">Box 4</option>
+<select id="box" disabled="disabled" name="select" style="width:120px;">
+       <option selected="selected" value="">Selecione...</option>
+	        
 </select>
 				</td>
               <td>Rota:</td>
               <td>
               
 <!-- Rota -->              
-<select id="rota" name="select2" style="width:120px;">
+<select id="rota" disabled="disabled" name="select2" style="width:120px;">
+	 <option selected="selected" value="">Selecione...</option>
+	 
 </select>
 			
 			</td>
@@ -107,20 +107,24 @@
               <td>
               
 <!-- Código Produto -->              
-<input id="codigoProduto" type="text" style="width:80px; float:left; margin-right:5px;"/>
-
-                <span class="classPesquisar"><a href="javascript:;">&nbsp;</a></span></td>
+<input id="codigoProduto" disabled="disabled" type="text" style="width:80px; float:left; margin-right:5px;"
+		 onchange="produto.pesquisarPorCodigoProdutoAutoCompleteEdicao('#codigoProduto', '#nomeProduto', null , false);" />
+			  
+			  </td>
               <td width="73">Produto:</td>              
               <td width="236">
          
 <!-- Nome Produto -->              
-<input id= "nomeProduto" type="text" class="nome_jornaleiro" style="width:220px;"/></td>
+<input id= "nomeProduto" disabled="disabled" type="text" class="nome_jornaleiro" style="width:220px;"
+		 onkeyup="produto.autoCompletarPorNomeProduto('#nomeProduto', false);"
+		 onblur="produto.pesquisarPorNomeProduto('#codigoProduto', '#nomeProduto', null, false);"/>
 
-              <td width="45">Edição:</td>
+			  </td>
+			  <td width="45">Edição:</td>
               <td width="173">
               
 <!-- EdiçãoProduto -->              
-<input id="edicao" type="text" style="width:112px; float:left; margin-right:5px;"/></td>
+<input id="edicao" disabled="disabled" type="text" style="width:112px; float:left; margin-right:5px;"/></td>
 
               <td width="104">&nbsp;</td>
             </tr>
@@ -129,19 +133,24 @@
               <td width="177">
               
 <!-- Código Cota -->              
-<input id="codigoCota" type="text" style="width:80px; float:left; margin-right:5px;"/>
+<input id="codigoCota" disabled="disabled" type="text" style="width:80px; float:left; margin-right:5px;"
+			onchange="cota.pesquisarPorNumeroCota('#codigoCota', '#nomeCota',false,function(){MA.atualizarBoxRota(true)});"/>
 
-			  <span class="classPesquisar"><a href="javascript:;">&nbsp;</a></span></td>
+			  </td>
               <td>Nome:</td>
               <td>
               
 <!-- Nome Cota -->              
-<input id="nomeCota" type="text" class="nome_jornaleiro" style="width:220px;"/></td>
+<input id="nomeCota" disabled="disabled" type="text" class="nome_jornaleiro" style="width:220px;"
+		onkeyup="cota.autoCompletarPorNome('#nomeCota');" 
+		 	   onblur="cota.pesquisarPorNomeCota('#codigoCota', '#nomeCota');"/>
+
+			 </td>
 
               <td align="right">
               
 <!-- Quebra por Cota -->              
-<input id="quebraPorCota" type="checkbox" name="checkbox"/></td>
+<input id="quebraPorCota" disabled="disabled" type="checkbox" name="checkbox"/></td>
 
               <td>Quebra por Cota</td>
               <td><span class="bt_pesquisar">
@@ -159,9 +168,16 @@
         <div class="grids" style="display:none;">
        	  <table class="mapaAbastecimentoGrid"></table>
           <br />
-   		  <span class="bt_novos" id="map_1" title="Imprimir"><a href="${pageContext.request.contextPath}/mapa_abastecimento_1.htm" target="_blank"><img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir Mapa</a></span>
-          
-          <span class="bt_novos" id="map_2" title="Imprimir" style="display:none;"><a href="${pageContext.request.contextPath}/mapa_abastecimento_2.html" target="_blank"><img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir Mapa</a></span>
+   		  <span class="bt_novos" id="map_1" title="Imprimir">
+
+<!-- IMPRIMIR MAPA -->   		  
+<a href="${pageContext.request.contextPath}/mapaAbastecimento/imprimirMapaAbastecimento" target="blank">
+
+		
+		<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir Mapa</a>
+		
+		</span>          
+       
         </div>
         
       </fieldset>
@@ -237,7 +253,7 @@ $(function() {
 				align : 'left'
 			}, {
 				display : 'Edição',
-				name : 'numeroProduto',
+				name : 'numeroEdicao',
 				width : 60,
 				sortable : true,
 				align : 'center'
@@ -260,6 +276,8 @@ $(function() {
 				sortable : true,
 				align : 'right'
 			}],
+			sortname : "nomeProduto",
+			sortorder : "asc",
 			width : 650,
 			height : 255
 	})); 	

@@ -1,4 +1,9 @@
 <div id="dialog-salvar" title="Salvar Conferência" style="display: none;">
+	
+	<jsp:include page="../messagesDialog.jsp">
+		<jsp:param value="idModalConfirmarSalvarConf" name="messageDialog"/>
+	</jsp:include>
+	
 	<fieldset style="width: 410px;">
 		<legend>Salvar Conferência</legend>
 		<p>Confima a Conferência de Encalhe?</p>
@@ -137,10 +142,6 @@
 	<br />
 </div>
 
-<div id="dialog-conferencia" title="Liberação de Encalhe">
-	<p>Confirma a Liberação de Encalhe?</p>
-</div>
-
 <div id="dialog-novo" title="Conferência de Encalhe">
 	<p>Confirma o Encalhe?</p>
 </div>
@@ -151,4 +152,71 @@
 	    <p>Já existe conferencia de encalhe para esta cota.<br/>
 	    Efetuar reabertura?</p>
 	</fieldset>
+</div>
+
+<div id="dialog-dadosNotaFiscal" title="Dados da Nota Fiscal" style="display:none;">
+	
+	<jsp:include page="../messagesDialog.jsp">
+		<jsp:param value="idModalDadosNotaFiscal" name="messageDialog"/>
+	</jsp:include>
+	
+	<fieldset>
+    	<legend>Nota Fiscal</legend>
+        	<table width="830" border="0" cellspacing="1" cellpadding="1" style="color:#666;">
+          		<tr>
+		            <td width="133">Núm. Nota Fiscal:</td>
+		            <td width="307" id="numeroNotaFiscalExibir"></td>
+		            <td width="106">Série:</td>
+		            <td width="111" id="serieExibir"></td>
+          		</tr>
+          		<tr>
+		            <td>Data:</td>
+		            <td id="dataExibir"></td>
+		            <td>Valor Total R$:</td>
+		            <td id="valorTotalNotaFiscalExibir"></td>
+          		</tr>
+          		<tr>
+		            <td>Chave de Acesso:</td>
+		            <td colspan="3" id="chaveAcessoExibir"></td>
+          		</tr>
+        	</table>
+    </fieldset>
+	<br clear="all" />
+    <br />
+    
+	<fieldset>
+        <legend>Produtos Nota Fiscal</legend>
+        <div style="overflow: auto; height: 250px; width: 828px; border: 1px #EEEEEE solid;">
+			<table class="pesqProdutosNotaGrid gridTeste" style="width: 811px;" id="dadosGridConferenciaEncalheFinalizar">
+				<tr class="header_table">
+					<td style="width: 50px; text-align: left;">Código</td>
+					<td style="width: 100px; text-align: left;">Produto</td>
+					<td style="width: 50px; text-align: center;">Edição</td>
+					<td style="width: 70px; text-align: left;">Dia</td>
+					<td style="width: 70px; text-align: left;">Qtde. info</td>
+					<td style="width: 101px; text-align: left;">Qtde. Recebida</td>
+					<td style="width: 80px; text-align: right;" nowrap="nowrap">Preço Capa R$</td>
+					<td style="width: 80px; text-align: right;" nowrap="nowrap">Preço Desconto R$</td>
+					<td style="width: 60px; text-align: right;">Total R$</td>
+					<td style="width: 30px; text-align: center;">Ação</td>
+				</tr>
+			</table>
+		</div>
+        
+		<table width="800" border="0" cellspacing="1" cellpadding="1">
+			<tr>
+				<td style="width: 50px;"></td>
+				<td style="width: 100px;"></td>
+				<td style="width: 50px;"></td>
+				<td style="width: 70px;"><strong>Total:</strong></td>
+				<td style="width: 70px; text-align: center;" id="somatorioQtdInformada"></td>
+				<td style="width: 101px; text-align: center;" id="somatorioQtdRecebida"></td>
+				<td style="width: 80px;"></td>
+				<td style="width: 80px;"></td>
+				<td style="width: 60px; text-align: right;" id="somatorioTotal"></td>
+				<td style="width: 30px;"></td>
+		  	</tr>
+		</table>
+	</fieldset>
+
 </div>

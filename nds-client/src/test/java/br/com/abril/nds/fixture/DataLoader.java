@@ -1,8 +1,6 @@
 package br.com.abril.nds.fixture;
 
 import java.math.BigDecimal;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -53,6 +51,9 @@ import br.com.abril.nds.model.cadastro.ParametroCobrancaCota;
 import br.com.abril.nds.model.cadastro.ParametroContratoCota;
 import br.com.abril.nds.model.cadastro.ParametroDistribuicaoCota;
 import br.com.abril.nds.model.cadastro.ParametroSistema;
+import br.com.abril.nds.model.cadastro.ParametroUsuarioBox;
+import br.com.abril.nds.model.cadastro.ParametrosAprovacaoDistribuidor;
+import br.com.abril.nds.model.cadastro.ParametrosRecolhimentoDistribuidor;
 import br.com.abril.nds.model.cadastro.Periodicidade;
 import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
 import br.com.abril.nds.model.cadastro.Pessoa;
@@ -70,6 +71,7 @@ import br.com.abril.nds.model.cadastro.Telefone;
 import br.com.abril.nds.model.cadastro.TelefoneDistribuidor;
 import br.com.abril.nds.model.cadastro.TelefoneEntregador;
 import br.com.abril.nds.model.cadastro.TelefoneFornecedor;
+import br.com.abril.nds.model.cadastro.TipoAtividade;
 import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.cadastro.TipoDesconto;
 import br.com.abril.nds.model.cadastro.TipoEndereco;
@@ -83,8 +85,6 @@ import br.com.abril.nds.model.cadastro.TipoRegistroCobranca;
 import br.com.abril.nds.model.cadastro.TipoRoteiro;
 import br.com.abril.nds.model.cadastro.TipoTelefone;
 import br.com.abril.nds.model.cadastro.pdv.AreaInfluenciaPDV;
-import br.com.abril.nds.model.cadastro.pdv.ClusterPDV;
-import br.com.abril.nds.model.cadastro.pdv.EspecialidadePDV;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoEstabelecimentoAssociacaoPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoGeradorFluxoPDV;
@@ -94,6 +94,7 @@ import br.com.abril.nds.model.estoque.Diferenca;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
 import br.com.abril.nds.model.estoque.Expedicao;
+import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
 import br.com.abril.nds.model.estoque.MovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
@@ -102,7 +103,6 @@ import br.com.abril.nds.model.estoque.RecebimentoFisico;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.financeiro.Boleto;
-import br.com.abril.nds.model.financeiro.Cobranca;
 import br.com.abril.nds.model.financeiro.CobrancaCheque;
 import br.com.abril.nds.model.financeiro.CobrancaDeposito;
 import br.com.abril.nds.model.financeiro.CobrancaDinheiro;
@@ -110,6 +110,7 @@ import br.com.abril.nds.model.financeiro.CobrancaTransferenciaBancaria;
 import br.com.abril.nds.model.financeiro.ConsolidadoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.ControleBaixaBancaria;
 import br.com.abril.nds.model.financeiro.Divida;
+import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
 import br.com.abril.nds.model.financeiro.HistoricoAcumuloDivida;
 import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.StatusDivida;
@@ -127,6 +128,8 @@ import br.com.abril.nds.model.fiscal.ParametroEmissaoNotaFiscal;
 import br.com.abril.nds.model.fiscal.StatusEmissaoNfe;
 import br.com.abril.nds.model.fiscal.TipoEmissaoNfe;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
+import br.com.abril.nds.model.fiscal.TipoOperacao;
+import br.com.abril.nds.model.fiscal.TipoUsuarioNotaFiscal;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalhe;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalheCota;
 import br.com.abril.nds.model.movimentacao.CotaAusente;
@@ -172,6 +175,11 @@ public class DataLoader {
 	private static TipoMovimentoEstoque tipoMovimentoRecFisico;
 	private static TipoMovimentoEstoque tipoMovimentoRecReparte;
 	private static TipoMovimentoEstoque tipoMovimentoEnvioEncalhe;
+	
+	private static TipoMovimentoEstoque tipoMovimentoRecebimentoEncalhe; 						
+	private static TipoMovimentoEstoque tipoMovimentoRecebimentoEncalheJuramentado; 				
+	private static TipoMovimentoEstoque tipoMovimentoSuplementarEnvioEncalheAnteriroProgramacao; 
+	
 	private static TipoMovimentoEstoque tipoMovimentoEstornoCotaAusente;
 	private static TipoMovimentoEstoque tipoMovimentoSuplementarCotaAusente;
 
@@ -180,11 +188,14 @@ public class DataLoader {
 
 	private static TipoMovimentoEstoque tipoMovimentoVendaEncalhe;
 	private static TipoMovimentoFinanceiro tipoMovimentoFinanceiroCompraEncalhe;
+	private static TipoMovimentoEstoque tipoMovimentoEstornoVendaEncalhe;
 
 	private static TipoMovimentoEstoque tipoMovimentoEnvioJornaleiro;
 
 	private static TipoMovimentoFinanceiro tipoMovimentoFinanceiroCredito;
 	private static TipoMovimentoFinanceiro tipoMovimentoFinanceiroDebito;
+	private static TipoMovimentoFinanceiro tipoMovimentoFinanceiroDebitoNA;
+	private static TipoMovimentoFinanceiro tipoMovimentoFinanceiroDebitoFaturamento;
 	private static TipoMovimentoFinanceiro tipoMovimentoFinanceiroRecebimentoReparte;
 
 	private static TipoMovimentoFinanceiro tipoMovimentoFinanceiroJuros;
@@ -203,6 +214,25 @@ public class DataLoader {
 	private static MovimentoEstoqueCota movimentoEstoqueCota10;
 	private static MovimentoEstoqueCota movimentoEstoqueCota11;
 	private static MovimentoEstoqueCota movimentoEstoqueCota12;
+	private static MovimentoEstoqueCota movimentoEstoqueCota13;
+	private static MovimentoEstoqueCota movimentoEstoqueCota14;
+	private static MovimentoEstoqueCota movimentoEstoqueCota15;
+	private static MovimentoEstoqueCota movimentoEstoqueCota16;
+	private static MovimentoEstoqueCota movimentoEstoqueCota17;
+	private static MovimentoEstoqueCota movimentoEstoqueCota18;
+	private static MovimentoEstoqueCota movimentoEstoqueCota19;
+	private static MovimentoEstoqueCota movimentoEstoqueCota20;
+	private static MovimentoEstoqueCota movimentoEstoqueCota21;
+	private static MovimentoEstoqueCota movimentoEstoqueCota22;
+	private static MovimentoEstoqueCota movimentoEstoqueCota23;
+	private static MovimentoEstoqueCota movimentoEstoqueCota24;
+	private static MovimentoEstoqueCota movimentoEstoqueCota25;
+	private static MovimentoEstoqueCota movimentoEstoqueCota26;
+	private static MovimentoEstoqueCota movimentoEstoqueCota27;
+	private static MovimentoEstoqueCota movimentoEstoqueCota28;
+	private static MovimentoEstoqueCota movimentoEstoqueCota29;
+	private static MovimentoEstoqueCota movimentoEstoqueCota30;
+
 
 	private static MovimentoFinanceiroCota movimentoFinanceiroCota1;
 	private static MovimentoFinanceiroCota movimentoFinanceiroCota2;
@@ -216,12 +246,31 @@ public class DataLoader {
 	private static MovimentoFinanceiroCota movimentoFinanceiroCota10;
 	private static MovimentoFinanceiroCota movimentoFinanceiroCota11;
 	private static MovimentoFinanceiroCota movimentoFinanceiroCota12;
+	private static MovimentoFinanceiroCota movimentoFinanceiroCota13;
+	private static MovimentoFinanceiroCota movimentoFinanceiroCota14;
+	private static MovimentoFinanceiroCota movimentoFinanceiroCota15;
+	private static MovimentoFinanceiroCota movimentoFinanceiroCota16;
+	private static MovimentoFinanceiroCota movimentoFinanceiroCota17;
+	private static MovimentoFinanceiroCota movimentoFinanceiroCota18;
+	private static MovimentoFinanceiroCota movimentoFinanceiroCota19;
+	private static MovimentoFinanceiroCota movimentoFinanceiroCota20;
+	private static MovimentoFinanceiroCota movimentoFinanceiroCota21;
+	private static MovimentoFinanceiroCota movimentoFinanceiroCota22;
+	private static MovimentoFinanceiroCota movimentoFinanceiroCota23;
+	private static MovimentoFinanceiroCota movimentoFinanceiroCota24;
+	private static MovimentoFinanceiroCota movimentoFinanceiroCota25;
+	private static MovimentoFinanceiroCota movimentoFinanceiroCota26;
+	private static MovimentoFinanceiroCota movimentoFinanceiroCota27;
+	private static MovimentoFinanceiroCota movimentoFinanceiroCota28;
+	private static MovimentoFinanceiroCota movimentoFinanceiroCota29;
+	private static MovimentoFinanceiroCota movimentoFinanceiroCota30;
 
 	private static Carteira carteiraRegistrada;
 	private static Carteira carteiraSemRegistro;
 
 	private static CFOP cfop5102;
 	private static TipoNotaFiscal tipoNotaFiscalRecebimento;
+	private static TipoNotaFiscal tipoNotaFiscalDevolucao;
 	private static Usuario usuarioJoao;
 	private static Fornecedor fornecedorAcme;
 	private static Fornecedor fornecedorDinap;
@@ -485,6 +534,21 @@ public class DataLoader {
 	private static EstoqueProdutoCota estoqueProdutoCotaJoseSuper2EncalheAnt;
 	private static EstoqueProdutoCota estoqueProdutoCotaManoelSuper2EncalheAnt;
 	private static EstoqueProdutoCota estoqueProdutoCotaMariaSuper2EncalheAnt;
+	private static EstoqueProdutoCota estoqueProdutoCotaManoelCunhaVeja1;
+	private static EstoqueProdutoCota estoqueProdutoCotaManoelCunhaVeja2;
+	private static EstoqueProdutoCota estoqueProdutoCotaManoelCunhaVeja3;
+	private static EstoqueProdutoCota estoqueProdutoCotaManoelCunhaVeja4;
+	private static EstoqueProdutoCota estoqueProdutoCotaManoelCunhaSuper1;
+	private static EstoqueProdutoCota estoqueProdutoCotaManoelCunhaCapricho1;
+	private static EstoqueProdutoCota estoqueProdutoCotaManoelCunhaQuatroRodas1;
+	private static EstoqueProdutoCota estoqueProdutoCotaManoelVeja1;
+	private static EstoqueProdutoCota estoqueProdutoCotaManoelVeja2;
+	private static EstoqueProdutoCota estoqueProdutoCotaManoelVeja3;
+	private static EstoqueProdutoCota estoqueProdutoCotaManoelVeja4;
+	private static EstoqueProdutoCota estoqueProdutoCotaManoelCapricho1;
+	private static EstoqueProdutoCota estoqueProdutoCotaManoelQuatroRodas1;
+	private static EstoqueProdutoCota estoqueProdutoCotaManoelSuper1;
+	
 
 	private static CobrancaDinheiro cobrancaGuilherme1;
 	private static CobrancaDinheiro cobrancaGuilherme2;
@@ -542,6 +606,26 @@ public class DataLoader {
 	private static PDV pdvManoel;
 	private static PDV pdvJose;
 	
+	private static CFOP cfop1209;
+	private static CFOP cfop1210;
+	
+	private static ParametroEmissaoNotaFiscal parametroEmissaoNotaFiscalEntradaDevolucaoEncalhe;
+	private static ParametroEmissaoNotaFiscal parametroEmissaoNotaFiscalDevolucaoMercadoria;
+	
+	private static CFOP cfop6115;
+	private static CFOP cfop5115;
+	private static CFOP cfop2949;
+	private static CFOP cfop1949;
+	private static CFOP cfop6949;
+	private static CFOP cfop5949;
+	private static CFOP cfop6114;
+	private static CFOP cfop5114;
+	private static CFOP cfop2919;
+	private static CFOP cfop1919;
+	private static CFOP cfop2918;
+	private static CFOP cfop1918;
+	private static CFOP cfop6917;
+	private static CFOP cfop5917;	
 
 	public static void main(String[] args) {
 		ClassPathXmlApplicationContext ctx = new ClassPathXmlApplicationContext(
@@ -583,6 +667,9 @@ public class DataLoader {
 	}
 
 	private static void carregarDados(Session session) {
+		
+		gerarCfops(session);
+		
 		criarAlgoritmos(session);
 		criarCarteira(session);
 		criarBanco(session);
@@ -606,7 +693,7 @@ public class DataLoader {
 		criarProdutosEdicao(session);
 		criarCFOP(session);
 		criarTiposMovimento(session);
-
+		criarParametroEmissaoNotaFiscal(session);
 		criarTiposNotaFiscal(session);
 		criarNotasFiscais(session);
 		criarRecebimentosFisicos(session);
@@ -620,6 +707,7 @@ public class DataLoader {
 		criarFeriado(session);		
 		criarEnderecoCotaPF(session);
 		criarParametroEmail(session);
+		criarMovimentosFinanceiroCota(session);
 		criarDivida(session);
 
 		criarCobrancas(session);
@@ -629,7 +717,6 @@ public class DataLoader {
 		criarCobrancaDepositoBancaria(session);
 		criarCobrancaDinheiro(session);
 		criarCobrancaTranferenciaBancaria(session);
-		criarMovimentosFinanceiroCota(session);
 		criarNotasFiscaisEntradaFornecedor(session);
 		criarRotaRoteiroCota(session);		
 		criarControleBaixaBancaria(session);
@@ -638,9 +725,9 @@ public class DataLoader {
 		gerarCotasAusentes(session);
 		gerarHistoricosAculoDivida(session);
 
-		massaDadosContaCorrenteTipoMovimento(session);
-
-		criarDadosContaCorrenteConsigando(session);
+		//massaDadosContaCorrenteTipoMovimento(session);
+		
+		//criarDadosContaCorrenteConsigando(session);
 
 		gerarCargaDiferencaEstoque(
 			session, 50, produtoEdicaoVeja1, tipoMovimentoFaltaEm, 
@@ -670,10 +757,6 @@ public class DataLoader {
 			
 		gerarAreaInfluenciaPDV(session);
 		
-		gerarClusterPDV(session);
-		
-		gerarEspecialidadePDV(session);
-		
 		gerarTipoGeradorFluxoPDV(session);
 		
 		gerarMaterialPromocionalPDV(session);
@@ -690,11 +773,10 @@ public class DataLoader {
 		
 		criarDadosBalanceamentoRecolhimento(session);
 
-		criarEnderecoCotaRelatorioVendas(session);
+		gerarCargaDadosConferenciaEncalhe(session);
 		
-		criarDadosRelatorioVendas(session);
+		gerarTiposNotas(session);
 		
-		criarDadosEdicoesFechadas(session);
 	}
 
 	private static void criarAlgoritmos(Session session) {
@@ -703,201 +785,6 @@ public class DataLoader {
 		Algoritmo algoritmoRJ = Fixture.criarAlgoritmo("Rota RJ");
 		
 		save(session, algoritmoRJ, algoritmoSP);
-	}
-
-	private static void criarDadosRelatorioVendas(Session session) {
-		for (int i=2; i<28; i++) {
-
-			Produto guiaQuatroRodas = Fixture.produto("3111" + i, "Guia Quatro Rodas" + i, "Guia Quatro Rodas" + i, PeriodicidadeProduto.ANUAL, tipoProdutoRevista, 5, 5, BigDecimal.TEN);
-			guiaQuatroRodas.addFornecedor(fornecedorDinap);
-			
-			Produto cromoBrasileirao = Fixture.produto("3333" + i, "Cromo Brasileirão" + i, "Cromo Brasileirão" + i, PeriodicidadeProduto.ANUAL, tipoCromo, 5, 5, BigDecimal.TEN);
-			cromoBrasileirao.addFornecedor(fornecedorFc);
-			
-			Produto guiaViagem = Fixture.produto("3113" + i, "Guia Viagem" + i, "Guia Viagem" + i, PeriodicidadeProduto.ANUAL, tipoProdutoRevista, 5, 5, BigDecimal.TEN);
-			guiaViagem.addFornecedor(fornecedorDinap);
-			
-			save(session,guiaQuatroRodas,cromoBrasileirao,guiaViagem);
-			
-			ProdutoEdicao produtoEdicao = Fixture.produtoEdicao("COD_AA_0" + i, 1L + i, 5 + i, 30 + i, 
-					new BigDecimal(50 + i), new BigDecimal(100 + i), new BigDecimal(100 + i), "5546" + i, 0L + i, guiaQuatroRodas, null, false);
-			produtoEdicao.setParcial(true);
-			
-			ProdutoEdicao cromoBrasileiraoEd1 = Fixture.produtoEdicao("COD_BB_0" + i, 1L + i, 5 + i, 30 + i, 
-					new BigDecimal(50 + i), new BigDecimal(100 + i), new BigDecimal(100 + i), "3333" + i, 0L + i, cromoBrasileirao, null, false);
-			cromoBrasileiraoEd1.setParcial(true);
-			
-			ProdutoEdicao guiaViagemEd1 = Fixture.produtoEdicao("COD_CC_0" + i, 1L + i, 5 + i, 30 + i, 
-					new BigDecimal(50 + i), new BigDecimal(100 + i), new BigDecimal(100 + i), "2231" + i, 0L + i, guiaViagem, null, false);
-			guiaViagemEd1.setParcial(true);
-			
-			save(session,produtoEdicao,cromoBrasileiraoEd1,guiaViagemEd1);
-			
-			
-			LancamentoParcial lancamentoParcial1 = Fixture.criarLancamentoParcial(
-					produtoEdicao, Fixture.criarData(1 + i, 1 + i, 2009 + i), Fixture.criarData(1 + i, 1 + i, 2010 + i), StatusLancamentoParcial.RECOLHIDO);
-			
-			LancamentoParcial lancamentoParcial2 = Fixture.criarLancamentoParcial(
-					cromoBrasileiraoEd1, Fixture.criarData(1 + i, 2 + i, 2011 + i), Fixture.criarData(1 + i, 2 + i, 2012 + i), StatusLancamentoParcial.PROJETADO);
-			
-			LancamentoParcial lancamentoParcial3 = Fixture.criarLancamentoParcial(
-					guiaViagemEd1, Fixture.criarData(1 + i, 3 + i, 2011 + i), Fixture.criarData(1 + i, 3 + i, 2012 + i), StatusLancamentoParcial.PROJETADO);
-			
-					
-			save(session, lancamentoParcial1,lancamentoParcial2,lancamentoParcial3);
-			
-			Lancamento lancamentoPeriodo = Fixture.lancamento(TipoLancamento.PARCIAL, cromoBrasileiraoEd1,
-					Fixture.criarData(1, 2, 2011),
-					Fixture.criarData(1, 3, 2011),
-					new Date(),
-					new Date(),
-					new BigDecimal(100 + i),
-					StatusLancamento.RECOLHIDO, null, 1);
-			save(session,lancamentoPeriodo);
-			
-			Lancamento lancamentoPeriodo2 = Fixture.lancamento(TipoLancamento.PARCIAL, cromoBrasileiraoEd1,
-					Fixture.criarData(5, 3, 2011),
-					Fixture.criarData(5, 4, 2011),
-					new Date(),
-					new Date(),
-					new BigDecimal(80 + i),
-					StatusLancamento.PLANEJADO, null, 1);
-			save(session,lancamentoPeriodo2);
-			
-			Estudo estudo = Fixture.estudo(new BigDecimal(200 + i), Fixture.criarData(1, 2, 2011), cromoBrasileiraoEd1);
-			save(session,estudo);
-			
-			TipoMovimentoEstoque tipoMovimentoEncalhe = Fixture.tipoMovimentoEnvioEncalhe();
-			save(session,tipoMovimentoEncalhe);
-			
-			//kame
-			EstoqueProdutoCota estoque = null;
-			if (i == 2)
-				estoque = Fixture.estoqueProdutoCota(produtoEdicao, new BigDecimal(50 + i), cotaJose, null);
-			else if (i == 3)
-				estoque = Fixture.estoqueProdutoCota(produtoEdicao, new BigDecimal(50 + i), cotaManoel, null);
-			else if (i == 4)
-				estoque = Fixture.estoqueProdutoCota(produtoEdicao, new BigDecimal(50 + i), cotaManoelCunha, null);
-			else if (i == 5)
-				estoque = Fixture.estoqueProdutoCota(produtoEdicao, new BigDecimal(50 + i), cotaMaria, null);
-			else if (i == 6)
-				estoque = Fixture.estoqueProdutoCota(produtoEdicao, new BigDecimal(50 + i), cotaLuis, null);
-			else if (i == 7)
-				estoque = Fixture.estoqueProdutoCota(produtoEdicao, new BigDecimal(50 + i), cotaJoao, null);
-			else if (i == 8)
-				estoque = Fixture.estoqueProdutoCota(produtoEdicao, new BigDecimal(50 + i), cotaGuilherme, null);
-			else if (i == 9)
-				estoque = Fixture.estoqueProdutoCota(produtoEdicao, new BigDecimal(50 + i), cotaMurilo, null);
-			else if (i == 10)
-				estoque = Fixture.estoqueProdutoCota(produtoEdicao, new BigDecimal(50 + i), cotaMariana, null);
-			else
-				estoque = Fixture.estoqueProdutoCota(produtoEdicao, new BigDecimal(50 + i), cotaOrlando, null);
-
-			save(session, estoque);
-		}
-	}
-
-	private static void criarDadosEdicoesFechadas(Session session) {
-		
-		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-		Date dataAtual = new Date();
-		
-		try {
-		
-			for (int i=0; i<22; i++) {
-			
-				Usuario usuario = Fixture.usuarioJoao();
-				save(session,usuario);
-	
-				TipoMovimentoEstoque tipoMovimentoEncalhe = Fixture.tipoMovimentoEnvioEncalhe();
-				save(session,tipoMovimentoEncalhe);
-	
-				TipoMovimentoEstoque tipoMovimentoVenda = Fixture.tipoMovimentoVendaEncalhe();
-				save(session,tipoMovimentoVenda);
-	
-				TipoMovimentoEstoque tipoMovimentoConsignado = Fixture.tipoMovimentoEnvioJornaleiro();
-				save(session,tipoMovimentoConsignado);
-	
-				TipoProduto tipoProduto = Fixture.tipoProduto("Revista EdicoesFechadas" + i, GrupoProduto.REVISTA, "44358941", "4723744581", 147L + i);
-				save(session,tipoProduto);
-	
-				TipoFornecedor tipoFornecedor = Fixture.tipoFornecedorPublicacao();
-				save(session,tipoFornecedor);
-	
-				TipoFornecedor tipoFornecedorPublicacao = Fixture.tipoFornecedorPublicacao();
-				save(session,tipoFornecedorPublicacao);
-	
-				TipoNotaFiscal tipoNotaFiscal = Fixture.tipoNotaFiscalRecebimento();
-				save(session,tipoNotaFiscal);
-	
-				NotaFiscalEntradaFornecedor notaFiscal = Fixture.notaFiscalEntradaFornecedor(cfop5102, juridicaFc, fornecedorFc, tipoNotaFiscal, usuario, new BigDecimal(145),  new BigDecimal(10),  new BigDecimal(10));
-				save(session,notaFiscal);
-	
-				RecebimentoFisico recebimentoFisico = Fixture.recebimentoFisico(notaFiscal, usuario, new Date(), new Date(), StatusConfirmacao.PENDENTE);
-				save(session,recebimentoFisico);
-
-				ProdutoEdicao produtoEdicao = Fixture.produtoEdicao("COD_DD_0" + i, 273L + i, 10 + i, 30 + i,
-						new BigDecimal(0.12), new BigDecimal(17), new BigDecimal(20),
-						"YZ2", 11L, produtoBravo, null, false);
-				session.save(produtoEdicao);
-
-				ItemNotaFiscalEntrada itemNotaFiscal= 
-						Fixture.itemNotaFiscal(
-								produtoEdicao, 
-								usuario, 
-								notaFiscal, 
-								new Date(), 
-								new Date(),
-								TipoLancamento.LANCAMENTO,
-								new BigDecimal(12));
-				save(session,itemNotaFiscal);			
-				
-				ItemRecebimentoFisico itemRecebimentoFisico= Fixture.itemRecebimentoFisico(itemNotaFiscal, recebimentoFisico, new BigDecimal(12));
-				save(session,itemRecebimentoFisico);
-	
-				TipoMovimentoEstoque tipoMovimentoEstoque = Fixture.tipoMovimentoSobraDe();
-				save(session,tipoMovimentoEstoque);
-
-				Lancamento lancamento1 = Fixture.lancamento(TipoLancamento.PARCIAL, produtoEdicao,
-						Fixture.criarData(1, 4, 2012),
-						Fixture.criarData(1, 4, 2012),
-						Fixture.criarData(27, 4, 2012),
-						Fixture.criarData(27, 4, 2012),
-						new BigDecimal(100),
-						StatusLancamento.RECOLHIDO, null, 1);
-				save(session,lancamento1);
-				
-				Lancamento lancamento2 = Fixture.lancamento(TipoLancamento.PARCIAL, produtoEdicao,
-						Fixture.criarData(1, 5, 2012),
-						Fixture.criarData(1, 5, 2012),
-						Fixture.criarData(14, 5, 2012),
-						Fixture.criarData(14, 5, 2012),
-						new BigDecimal(80),
-						StatusLancamento.PLANEJADO, null, 1);
-				save(session,lancamento2);
-
-				lancamento1.setDataRecolhimentoDistribuidor(sdf.parse("26/05/2012"));
-				lancamento2.setDataRecolhimentoDistribuidor(sdf.parse("23/05/2012"));
-				
-				Set<Lancamento> lancamentos = new HashSet<Lancamento>();
-				lancamentos.add(lancamento1);
-				lancamentos.add(lancamento2);
-
-				produtoEdicao.setLancamentos(lancamentos);
-				produtoEdicao.setDataDesativacao(sdf.parse("27/05/2012"));
-				
-				EstoqueProduto estoqueProduto = Fixture.estoqueProduto(produtoEdicao, new BigDecimal(45));
-				save(session,estoqueProduto);
-	
-				MovimentoEstoque movimentoEstoque = Fixture.movimentoEstoque(itemRecebimentoFisico, produtoEdicao, tipoMovimentoEstoque, usuario, estoqueProduto, dataAtual, new BigDecimal(12), StatusAprovacao.APROVADO , "MOTIVO B");
-				save(session,movimentoEstoque);
-			
-			}
-			
-		} catch(ParseException e) {
-			e.printStackTrace();
-		}
-		
 	}
 
 	private static void gerarDescontos(Session session){
@@ -922,6 +809,283 @@ public class DataLoader {
 		save(session, tipoDesconto);
 		tipoDesconto = Fixture.criarTipoDesconto("010", "Importadas MagExpress", new BigDecimal(10));
 		save(session, tipoDesconto);
+	}
+	
+	private static void gerarCfops(Session session) {
+
+		cfop5917 = new CFOP();
+		cfop5917.setCodigo("5917");
+		cfop5917.setDescricao("Outra saída de mercadoria ou prestação de serviço não especificado");
+		save(session, cfop5917);
+		
+		cfop6917 = new CFOP();
+		cfop6917.setCodigo("6917");
+		cfop6917.setDescricao("Remessa de mercadoria em consignação mercantil ou industrial");
+		save(session, cfop6917);
+
+		cfop1918 = new CFOP();
+		cfop1918.setCodigo("1918");
+		cfop1918.setDescricao("Devolução de mercadoria recebida em consignação mercantil ou industrial");
+		save(session, cfop1918);
+
+		cfop2918 = new CFOP();
+		cfop2918.setCodigo("2918");
+		cfop2918.setDescricao("Devolução de mercadoria remetida em consignação mercantil ou industrial");
+		save(session, cfop2918);
+
+		cfop1919 = new CFOP();
+		cfop1919.setCodigo("1919");
+		cfop1919.setDescricao("Devolução simbólica de mercadoria vendida ou utilizada em processo industrial, remetida anteriormente em consignação mercantil ou industrial");
+		save(session, cfop1919);
+
+		cfop2919 = new CFOP();
+		cfop2919.setCodigo("2919");
+		cfop2919.setDescricao("Devolução simbólica de mercadoria vendida ou utilizada em processo industrial, remetida anteriormente em consignação mercantil ou industrial");
+		save(session, cfop2919);
+
+		cfop5114 = new CFOP();
+		cfop5114.setCodigo("5114");
+		cfop5114.setDescricao("Venda de mercadoria adquirida ou recebida de terceiros remetida anteriormente em consignação mercantil");
+		save(session, cfop5114);
+
+		cfop6114 = new CFOP();
+		cfop6114.setCodigo("6114");
+		cfop6114.setDescricao("Venda de mercadoria adquirida ou recebida de terceiros remetida anteriormente em consignação mercantil");
+		save(session, cfop6114);
+
+		cfop5949 = new CFOP();
+		cfop5949.setCodigo("5949");
+		cfop5949.setDescricao("Outra saída de mercadoria ou prestação de serviço não especificado");
+		save(session, cfop5949);
+
+		cfop6949 = new CFOP();
+		cfop6949.setCodigo("6949");
+		cfop6949.setDescricao("Outra saída de mercadoria ou prestação de serviço não especificado");
+		save(session, cfop6949);
+
+		cfop1949 = new CFOP();
+		cfop1949.setCodigo("1949");
+		cfop1949.setDescricao("Outra entrada de mercadoria ou prestação de serviço não especificada");
+		save(session, cfop1949);
+
+		cfop2949 = new CFOP();
+		cfop2949.setCodigo("2949");
+		cfop2949.setDescricao("Outra entrada de mercadoria ou prestação de serviço não especificado");
+		save(session, cfop2949);
+		
+		cfop5115 = new CFOP();
+		cfop5115.setCodigo("5115");
+		cfop5115.setDescricao("Venda de mercadoria adquirida ou recebida de terceiros, recebida anteriormente em consignação mercantil");
+		save(session, cfop5115);
+
+		cfop6115 = new CFOP();
+		cfop6115.setCodigo("6115");
+		cfop6115.setDescricao("Venda de mercadoria adquirida ou recebida de terceiros, recebida anteriormente em consignação mercantil");
+		save(session, cfop6115);
+
+	}
+	
+	private static void gerarTiposNotas(Session session) {
+
+		// Tipo de Nota - Mercantil - Cota Contribuinte
+		TipoNotaFiscal nfeRemessaConsignacaoContribuinte = new TipoNotaFiscal();
+		nfeRemessaConsignacaoContribuinte.setCfopEstado(cfop5917);
+		nfeRemessaConsignacaoContribuinte.setCfopOutrosEstados(cfop6917);
+		nfeRemessaConsignacaoContribuinte.setNopDescricao("NF-e de Remessa em Consignação (NECE / DANFE)");
+		nfeRemessaConsignacaoContribuinte.setEmitente(TipoUsuarioNotaFiscal.DISTRIBUIDOR);
+		nfeRemessaConsignacaoContribuinte.setDestinatario(TipoUsuarioNotaFiscal.COTA);
+		nfeRemessaConsignacaoContribuinte.setContribuinte(true);
+		nfeRemessaConsignacaoContribuinte.setDescricao("");
+		nfeRemessaConsignacaoContribuinte.setNopCodigo(0L);
+		nfeRemessaConsignacaoContribuinte.setTipoOperacao(TipoOperacao.SAIDA);
+		nfeRemessaConsignacaoContribuinte.setGrupoNotaFiscal(GrupoNotaFiscal.DEVOLUCAO_MERCADORIA_FORNECEDOR);
+		nfeRemessaConsignacaoContribuinte.setTipoAtividade(TipoAtividade.MERCANTIL);
+		save(session,nfeRemessaConsignacaoContribuinte);
+		
+		TipoNotaFiscal nfeEntradaDevolucaoRemessaConsignacaoContribuinte = new TipoNotaFiscal();
+		nfeEntradaDevolucaoRemessaConsignacaoContribuinte.setCfopEstado(cfop1918);
+		nfeEntradaDevolucaoRemessaConsignacaoContribuinte.setCfopOutrosEstados(cfop2918);
+		nfeEntradaDevolucaoRemessaConsignacaoContribuinte.setNopDescricao("NF-e de Remessa em Devolução de Remessa em Consignação");
+		nfeEntradaDevolucaoRemessaConsignacaoContribuinte.setEmitente(TipoUsuarioNotaFiscal.DISTRIBUIDOR);
+		nfeEntradaDevolucaoRemessaConsignacaoContribuinte.setDestinatario(TipoUsuarioNotaFiscal.DISTRIBUIDOR);
+		nfeEntradaDevolucaoRemessaConsignacaoContribuinte.setContribuinte(true);
+		nfeEntradaDevolucaoRemessaConsignacaoContribuinte.setDescricao("");
+		nfeEntradaDevolucaoRemessaConsignacaoContribuinte.setNopCodigo(0L);
+		nfeEntradaDevolucaoRemessaConsignacaoContribuinte.setTipoOperacao(TipoOperacao.ENTRADA);
+		nfeEntradaDevolucaoRemessaConsignacaoContribuinte.setGrupoNotaFiscal(GrupoNotaFiscal.DEVOLUCAO_MERCADORIA_FORNECEDOR);
+		nfeEntradaDevolucaoRemessaConsignacaoContribuinte.setTipoAtividade(TipoAtividade.MERCANTIL);
+		save(session, nfeEntradaDevolucaoRemessaConsignacaoContribuinte);
+
+		TipoNotaFiscal nfeDevolucaoSimbolicaMercadoriasVendidasContribuinte = new TipoNotaFiscal();
+		nfeDevolucaoSimbolicaMercadoriasVendidasContribuinte.setCfopEstado(cfop1919);
+		nfeDevolucaoSimbolicaMercadoriasVendidasContribuinte.setCfopOutrosEstados(cfop2919);
+		nfeDevolucaoSimbolicaMercadoriasVendidasContribuinte.setNopDescricao("NF-e de Devolução Simbólica de Mercadorias Vendidas");
+		nfeDevolucaoSimbolicaMercadoriasVendidasContribuinte.setEmitente(TipoUsuarioNotaFiscal.DISTRIBUIDOR);
+		nfeDevolucaoSimbolicaMercadoriasVendidasContribuinte.setDestinatario(TipoUsuarioNotaFiscal.DISTRIBUIDOR);
+		nfeDevolucaoSimbolicaMercadoriasVendidasContribuinte.setContribuinte(true);
+		nfeDevolucaoSimbolicaMercadoriasVendidasContribuinte.setDescricao("");
+		nfeDevolucaoSimbolicaMercadoriasVendidasContribuinte.setNopCodigo(0L);
+		nfeDevolucaoSimbolicaMercadoriasVendidasContribuinte.setTipoOperacao(TipoOperacao.ENTRADA);
+		nfeDevolucaoSimbolicaMercadoriasVendidasContribuinte.setGrupoNotaFiscal(GrupoNotaFiscal.DEVOLUCAO_MERCADORIA_FORNECEDOR);
+		nfeDevolucaoSimbolicaMercadoriasVendidasContribuinte.setTipoAtividade(TipoAtividade.MERCANTIL);
+		save(session, nfeDevolucaoSimbolicaMercadoriasVendidasContribuinte);
+		
+		TipoNotaFiscal nfeVendasContribuinte = new TipoNotaFiscal();
+		nfeVendasContribuinte.setCfopEstado(cfop5114);
+		nfeVendasContribuinte.setCfopOutrosEstados(cfop6114);
+		nfeVendasContribuinte.setNopDescricao("NF-e Venda");
+		nfeVendasContribuinte.setEmitente(TipoUsuarioNotaFiscal.DISTRIBUIDOR);
+		nfeVendasContribuinte.setDestinatario(TipoUsuarioNotaFiscal.COTA);
+		nfeVendasContribuinte.setContribuinte(true);
+		nfeVendasContribuinte.setDescricao("");
+		nfeVendasContribuinte.setNopCodigo(0L);
+		nfeVendasContribuinte.setTipoOperacao(TipoOperacao.SAIDA);
+		nfeVendasContribuinte.setGrupoNotaFiscal(GrupoNotaFiscal.DEVOLUCAO_MERCADORIA_FORNECEDOR);
+		nfeVendasContribuinte.setTipoAtividade(TipoAtividade.MERCANTIL);
+		save(session, nfeVendasContribuinte);
+		
+		// Tipo de Nota - Mercantil - Cota não Contribuinte (cota que não emite NF-e)
+		TipoNotaFiscal nfeRemessaConsignacao = new TipoNotaFiscal();
+		nfeRemessaConsignacao.setCfopEstado(cfop5917);
+		nfeRemessaConsignacao.setCfopOutrosEstados(cfop6917);
+		nfeRemessaConsignacao.setNopDescricao("NF-e de Remessa em Consignação (NECE / DANFE)");
+		nfeRemessaConsignacao.setEmitente(TipoUsuarioNotaFiscal.DISTRIBUIDOR);
+		nfeRemessaConsignacao.setDestinatario(TipoUsuarioNotaFiscal.COTA);
+		nfeRemessaConsignacao.setContribuinte(false);
+		nfeRemessaConsignacao.setDescricao("");
+		nfeRemessaConsignacao.setNopCodigo(0L);
+		nfeRemessaConsignacao.setTipoOperacao(TipoOperacao.SAIDA);
+		nfeRemessaConsignacao.setGrupoNotaFiscal(GrupoNotaFiscal.DEVOLUCAO_MERCADORIA_FORNECEDOR);
+		nfeRemessaConsignacao.setTipoAtividade(TipoAtividade.MERCANTIL);
+		save(session,nfeRemessaConsignacao);
+		
+		TipoNotaFiscal nfeEntradaDevolucaoRemessaConsignacao = new TipoNotaFiscal();
+		nfeEntradaDevolucaoRemessaConsignacao.setCfopEstado(cfop1918);
+		nfeEntradaDevolucaoRemessaConsignacao.setCfopOutrosEstados(cfop2918);
+		nfeEntradaDevolucaoRemessaConsignacao.setNopDescricao("NF-e de Remessa em Devolução de Remessa em Consignação");
+		nfeEntradaDevolucaoRemessaConsignacao.setEmitente(TipoUsuarioNotaFiscal.DISTRIBUIDOR);
+		nfeEntradaDevolucaoRemessaConsignacao.setDestinatario(TipoUsuarioNotaFiscal.DISTRIBUIDOR);
+		nfeEntradaDevolucaoRemessaConsignacao.setContribuinte(false);
+		nfeEntradaDevolucaoRemessaConsignacao.setDescricao("");
+		nfeEntradaDevolucaoRemessaConsignacao.setNopCodigo(0L);
+		nfeEntradaDevolucaoRemessaConsignacao.setTipoOperacao(TipoOperacao.ENTRADA);
+		nfeEntradaDevolucaoRemessaConsignacao.setGrupoNotaFiscal(GrupoNotaFiscal.DEVOLUCAO_MERCADORIA_FORNECEDOR);
+		nfeEntradaDevolucaoRemessaConsignacao.setTipoAtividade(TipoAtividade.MERCANTIL);
+		save(session, nfeEntradaDevolucaoRemessaConsignacao);
+
+		TipoNotaFiscal nfeDevolucaoSimbolicaMercadoriasVendidas = new TipoNotaFiscal();
+		nfeDevolucaoSimbolicaMercadoriasVendidas.setCfopEstado(cfop1919);
+		nfeDevolucaoSimbolicaMercadoriasVendidas.setCfopOutrosEstados(cfop2919);
+		nfeDevolucaoSimbolicaMercadoriasVendidas.setNopDescricao("NF-e de Devolução Simbólica de Mercadorias Vendidas");
+		nfeDevolucaoSimbolicaMercadoriasVendidas.setEmitente(TipoUsuarioNotaFiscal.DISTRIBUIDOR);
+		nfeDevolucaoSimbolicaMercadoriasVendidas.setDestinatario(TipoUsuarioNotaFiscal.DISTRIBUIDOR);
+		nfeDevolucaoSimbolicaMercadoriasVendidas.setContribuinte(false);
+		nfeDevolucaoSimbolicaMercadoriasVendidas.setDescricao("");
+		nfeDevolucaoSimbolicaMercadoriasVendidas.setNopCodigo(0L);
+		nfeDevolucaoSimbolicaMercadoriasVendidas.setTipoOperacao(TipoOperacao.ENTRADA);		
+		nfeDevolucaoSimbolicaMercadoriasVendidas.setGrupoNotaFiscal(GrupoNotaFiscal.DEVOLUCAO_MERCADORIA_FORNECEDOR);
+		nfeDevolucaoSimbolicaMercadoriasVendidas.setTipoAtividade(TipoAtividade.MERCANTIL);
+		save(session, nfeDevolucaoSimbolicaMercadoriasVendidas);
+		
+		TipoNotaFiscal nfeVendas = new TipoNotaFiscal();
+		nfeVendas.setCfopEstado(cfop5114);
+		nfeVendas.setCfopOutrosEstados(cfop6114);
+		nfeVendas.setNopDescricao("NF-e Venda");
+		nfeVendas.setEmitente(TipoUsuarioNotaFiscal.DISTRIBUIDOR);
+		nfeVendas.setDestinatario(TipoUsuarioNotaFiscal.COTA);
+		nfeVendas.setContribuinte(false);
+		nfeVendas.setDescricao("");
+		nfeVendas.setNopCodigo(0L);
+		nfeVendas.setTipoOperacao(TipoOperacao.SAIDA);		
+		nfeVendas.setGrupoNotaFiscal(GrupoNotaFiscal.DEVOLUCAO_MERCADORIA_FORNECEDOR);
+		nfeVendas.setTipoAtividade(TipoAtividade.MERCANTIL);
+		save(session, nfeVendas);
+		
+		// Tipo de Nota - Prestador de Serviço - Cota Contribuinte
+		TipoNotaFiscal nfeRemessaDistribuicao1 = new TipoNotaFiscal();
+		nfeRemessaDistribuicao1.setCfopEstado(cfop5949);
+		nfeRemessaDistribuicao1.setCfopOutrosEstados(cfop6949);
+		nfeRemessaDistribuicao1.setNopDescricao("NF-e de Remessa para Distribuição (NECA / DANFE)");
+		nfeRemessaDistribuicao1.setEmitente(TipoUsuarioNotaFiscal.DISTRIBUIDOR);
+		nfeRemessaDistribuicao1.setDestinatario(TipoUsuarioNotaFiscal.COTA);
+		nfeRemessaDistribuicao1.setContribuinte(true);
+		nfeRemessaDistribuicao1.setDescricao("");
+		nfeRemessaDistribuicao1.setNopCodigo(0L);
+		nfeRemessaDistribuicao1.setTipoOperacao(TipoOperacao.SAIDA);
+		nfeRemessaDistribuicao1.setGrupoNotaFiscal(GrupoNotaFiscal.DEVOLUCAO_MERCADORIA_FORNECEDOR);
+		nfeRemessaDistribuicao1.setTipoAtividade(TipoAtividade.PRESTADOR_SERVICO);
+		save(session, nfeRemessaDistribuicao1);
+
+		TipoNotaFiscal nfeDevolucaoRemessaDistribuicao1 = new TipoNotaFiscal();
+		nfeDevolucaoRemessaDistribuicao1.setCfopEstado(cfop5949);
+		nfeDevolucaoRemessaDistribuicao1.setCfopOutrosEstados(cfop6949);
+		nfeDevolucaoRemessaDistribuicao1.setNopDescricao("NF-e de Devolução de Remessa para Distribuição");
+		nfeDevolucaoRemessaDistribuicao1.setEmitente(TipoUsuarioNotaFiscal.COTA);
+		nfeDevolucaoRemessaDistribuicao1.setDestinatario(TipoUsuarioNotaFiscal.DISTRIBUIDOR);
+		nfeDevolucaoRemessaDistribuicao1.setContribuinte(true);
+		nfeDevolucaoRemessaDistribuicao1.setDescricao("");
+		nfeDevolucaoRemessaDistribuicao1.setNopCodigo(0L);
+		nfeDevolucaoRemessaDistribuicao1.setTipoOperacao(TipoOperacao.SAIDA);
+		nfeDevolucaoRemessaDistribuicao1.setGrupoNotaFiscal(GrupoNotaFiscal.DEVOLUCAO_MERCADORIA_FORNECEDOR);
+		nfeDevolucaoRemessaDistribuicao1.setTipoAtividade(TipoAtividade.PRESTADOR_SERVICO);
+		save(session, nfeDevolucaoRemessaDistribuicao1);
+		
+		TipoNotaFiscal nfeVenda1 = new TipoNotaFiscal();
+		nfeVenda1.setCfopEstado(cfop5115);
+		nfeVenda1.setCfopOutrosEstados(cfop6115);
+		nfeVenda1.setNopDescricao("NF-e Venda");
+		nfeVenda1.setEmitente(TipoUsuarioNotaFiscal.TREELOG);
+		nfeVenda1.setDestinatario(TipoUsuarioNotaFiscal.COTA);
+		nfeVenda1.setContribuinte(true);
+		nfeVenda1.setDescricao("");
+		nfeVenda1.setNopCodigo(0L);
+		nfeVenda1.setTipoOperacao(TipoOperacao.SAIDA);
+		nfeVenda1.setGrupoNotaFiscal(GrupoNotaFiscal.DEVOLUCAO_MERCADORIA_FORNECEDOR);
+		nfeVenda1.setTipoAtividade(TipoAtividade.PRESTADOR_SERVICO);
+		save(session, nfeVenda1);		
+		
+		// Tipo de Nota - Prestarore de Serviço - Cota NÃO Contribuinte
+		TipoNotaFiscal nfeRemessaDistribuicao2 = new TipoNotaFiscal();
+		nfeRemessaDistribuicao2.setCfopEstado(cfop5949);
+		nfeRemessaDistribuicao2.setCfopOutrosEstados(cfop6949);
+		nfeRemessaDistribuicao2.setNopDescricao("NF-e de Remessa para Distribuição (NECA / DANFE)");
+		nfeRemessaDistribuicao2.setEmitente(TipoUsuarioNotaFiscal.DISTRIBUIDOR);
+		nfeRemessaDistribuicao2.setDestinatario(TipoUsuarioNotaFiscal.COTA);
+		nfeRemessaDistribuicao2.setContribuinte(false);
+		nfeRemessaDistribuicao2.setDescricao("");
+		nfeRemessaDistribuicao2.setNopCodigo(0L);
+		nfeRemessaDistribuicao2.setTipoOperacao(TipoOperacao.SAIDA);
+		nfeRemessaDistribuicao2.setGrupoNotaFiscal(GrupoNotaFiscal.DEVOLUCAO_MERCADORIA_FORNECEDOR);
+		nfeRemessaDistribuicao2.setTipoAtividade(TipoAtividade.PRESTADOR_SERVICO);
+		save(session, nfeRemessaDistribuicao2);		
+		
+		TipoNotaFiscal nfeDevolucaoRemessaDistribuicao2 = new TipoNotaFiscal();
+		nfeDevolucaoRemessaDistribuicao2.setCfopEstado(cfop1949);
+		nfeDevolucaoRemessaDistribuicao2.setCfopOutrosEstados(cfop2949);
+		nfeDevolucaoRemessaDistribuicao2.setNopDescricao("NF-e de Devolução de Remessa para Distruibuição");
+		nfeDevolucaoRemessaDistribuicao2.setEmitente(TipoUsuarioNotaFiscal.DISTRIBUIDOR);
+		nfeDevolucaoRemessaDistribuicao2.setDestinatario(TipoUsuarioNotaFiscal.DISTRIBUIDOR);
+		nfeDevolucaoRemessaDistribuicao2.setContribuinte(false);
+		nfeDevolucaoRemessaDistribuicao2.setDescricao("");
+		nfeDevolucaoRemessaDistribuicao2.setNopCodigo(0L);
+		nfeDevolucaoRemessaDistribuicao2.setTipoOperacao(TipoOperacao.ENTRADA);
+		nfeDevolucaoRemessaDistribuicao2.setGrupoNotaFiscal(GrupoNotaFiscal.DEVOLUCAO_MERCADORIA_FORNECEDOR);
+		nfeDevolucaoRemessaDistribuicao2.setTipoAtividade(TipoAtividade.PRESTADOR_SERVICO);
+		save(session, nfeDevolucaoRemessaDistribuicao2);		
+		
+		TipoNotaFiscal nfeVenda2 = new TipoNotaFiscal();
+		nfeVenda2.setCfopEstado(cfop5115);
+		nfeVenda2.setCfopOutrosEstados(cfop6115);
+		nfeVenda2.setNopDescricao("NF-e Venda");
+		nfeVenda2.setEmitente(TipoUsuarioNotaFiscal.TREELOG);
+		nfeVenda2.setDestinatario(TipoUsuarioNotaFiscal.COTA);
+		nfeVenda2.setContribuinte(false);
+		nfeVenda2.setDescricao("");
+		nfeVenda2.setNopCodigo(0L);
+		nfeVenda2.setTipoOperacao(TipoOperacao.SAIDA);
+		nfeVenda2.setGrupoNotaFiscal(GrupoNotaFiscal.DEVOLUCAO_MERCADORIA_FORNECEDOR);
+		nfeVenda2.setTipoAtividade(TipoAtividade.PRESTADOR_SERVICO);
+		save(session, nfeVenda2);				
 	}
 	
 	private static void gerarParciais(Session session) {
@@ -1003,7 +1167,13 @@ public class DataLoader {
 		ControleConferenciaEncalheCota controleCota = Fixture.controleConferenciaEncalheCota(controle, cotaGuilherme, 
 				new Date(), new Date(), new Date(), StatusOperacao.CONCLUIDO, usuarioJoao, box1);
 		
-		ConferenciaEncalhe conferencia = Fixture.conferenciaEncalhe(movimento, chamadaEncalheCota, controleCota);
+		ConferenciaEncalhe conferencia = Fixture.conferenciaEncalhe(
+				movimento, chamadaEncalheCota, 
+				controleCota,
+				new Date(),
+				new BigDecimal(50),
+				new BigDecimal(50), 
+				cromoBrasileiraoEd1);
 		
 		save(session,estoque,movimento,chamadaEncalhe,chamadaEncalheCota,controle,controleCota,conferencia);
 		
@@ -1069,27 +1239,6 @@ public class DataLoader {
 		save(session,tipoGeradorFluxoPDV,tipoGeradorFluxoPDV1,tipoGeradorFluxoPDV2,tipoGeradorFluxoPDV3,tipoGeradorFluxoPDV4);
 	}
 
-	private static void gerarEspecialidadePDV(Session session) {
-		
-		EspecialidadePDV especialidadePDV = Fixture.criarEspecialidadesPDV(1L, "Moda");
-		EspecialidadePDV especialidadePDV1 = Fixture.criarEspecialidadesPDV(2L, "Decoração");
-		EspecialidadePDV especialidadePDV2 = Fixture.criarEspecialidadesPDV(3L, "Informatica");
-		EspecialidadePDV especialidadePDV3 = Fixture.criarEspecialidadesPDV(4L, "Sexo");
-		EspecialidadePDV especialidadePDV4 = Fixture.criarEspecialidadesPDV(5L, "Quadrinhos");
-		EspecialidadePDV especialidadePDV5 = Fixture.criarEspecialidadesPDV(6L, "Moda");
-		
-		save(session,especialidadePDV,especialidadePDV1,especialidadePDV2,especialidadePDV3,especialidadePDV4,especialidadePDV5);
-	}
-
-	private static void gerarClusterPDV(Session session) {
-		
-		ClusterPDV clusterPDV = Fixture.criarClusterPDV(1L, "Basico");
-		ClusterPDV clusterPDV1 = Fixture.criarClusterPDV(1L, "Monaco");
-		ClusterPDV clusterPDV2 = Fixture.criarClusterPDV(1L, "Exportador");
-		
-		save(session,clusterPDV,clusterPDV1,clusterPDV2);
-	}
-
 	private static void gerarAreaInfluenciaPDV(Session session) {
 		
 		AreaInfluenciaPDV areaInfluenciaPDV = Fixture.criarAreaInfluenciaPDV(1L, "Residencial");
@@ -1130,7 +1279,7 @@ public class DataLoader {
 	}
 
 	private static void criarDadosContaCorrenteConsigando(Session session){
-
+           
 		Date dataAtual = new Date();
 		MovimentoEstoqueCota movimento = new MovimentoEstoqueCota();
 		List<MovimentoEstoqueCota> listaMovimentoEstoqueCota = new ArrayList<MovimentoEstoqueCota>();
@@ -1166,11 +1315,8 @@ public class DataLoader {
 
 		TipoFornecedor tipoFornecedorPublicacao = Fixture.tipoFornecedorPublicacao();
 		save(session,tipoFornecedorPublicacao);
-
-		TipoNotaFiscal tipoNotaFiscal = Fixture.tipoNotaFiscalRecebimento();
-		save(session,tipoNotaFiscal);
-
-		NotaFiscalEntradaFornecedor notaFiscal = Fixture.notaFiscalEntradaFornecedor(cfop5102, juridicaFc, fornecedorFc, tipoNotaFiscal, usuario, new BigDecimal(145),  new BigDecimal(10),  new BigDecimal(10));
+		
+		NotaFiscalEntradaFornecedor notaFiscal = Fixture.notaFiscalEntradaFornecedor(cfop5102, juridicaFc, fornecedorFc, tipoNotaFiscalRecebimento, usuario, new BigDecimal(145),  new BigDecimal(10),  new BigDecimal(10));
 		save(session,notaFiscal);
 
 		RecebimentoFisico recebimentoFisico = Fixture.recebimentoFisico(notaFiscal, usuario, new Date(), new Date(), StatusConfirmacao.PENDENTE);
@@ -1250,12 +1396,10 @@ public class DataLoader {
 		List<MovimentoEstoqueCota>  listMovimentoEstoqueCotaVenda= new ArrayList<MovimentoEstoqueCota>();
 		listMovimentoEstoqueCotaVenda.add(movimentoEnvioJornaleiro);
 
-
-
 		List<MovimentoFinanceiroCota> listaMovimentoFinanceiroCota = new ArrayList<MovimentoFinanceiroCota>();
  		listaMovimentoFinanceiroCota.add(movimentoFinanceiroCota);
 
-		ConsolidadoFinanceiroCota consolidadoFinanceiroCota = Fixture.consolidadoFinanceiroCota(listaMovimentoFinanceiroCota, cotaManoel, dataAtual, new BigDecimal(230));
+		ConsolidadoFinanceiroCota consolidadoFinanceiroCota = Fixture.consolidadoFinanceiroCota(listaMovimentoFinanceiroCota, cotaManoel, dataAtual, new BigDecimal(230), new BigDecimal(230), new BigDecimal(180), new BigDecimal(180), new BigDecimal(180), new BigDecimal(45), new BigDecimal(170), new BigDecimal(25));
 		save(session,consolidadoFinanceiroCota);
 
 
@@ -1263,89 +1407,88 @@ public class DataLoader {
 
 	private static void massaDadosContaCorrenteTipoMovimento(Session session){
 
-	Date dataAtual = new Date();
-	List<MovimentoEstoqueCota> listaMovimentoEstoqueCota = new ArrayList<MovimentoEstoqueCota>();
+		Date dataAtual = new Date();
+		List<MovimentoEstoqueCota> listaMovimentoEstoqueCota = new ArrayList<MovimentoEstoqueCota>();
+	
+		PessoaFisica manoel = Fixture.pessoaFisica("12345678900",
+				"manoel@mail.com", "Manoel da Silva");
+				save(session, manoel);
+	
+		save(session, box1);
+	
+		Usuario usuario = Fixture.usuarioJoao();
+		save(session, usuario);
+	
+		TipoProduto tipoProduto = Fixture.tipoProduto("Revista C.C.Movimento", GrupoProduto.REVISTA, "431251324", "513543", 004L);
+		save(session, tipoProduto);
+	
+		TipoFornecedor tipoFornecedor = Fixture.tipoFornecedor("Tipo A",GrupoFornecedor.PUBLICACAO);
+		save(session, tipoFornecedor);
+	
+	
+		produtoBravo.addFornecedor(fornecedorAcme);
+		save(session, produtoBravo);
+	
+		ProdutoEdicao produtoEdicao = Fixture.produtoEdicao("COD_HH", 234L,12 , 1, new BigDecimal(9), new BigDecimal(8), 
+				new BigDecimal(10), "ABCDEFGHIJKLMNOPQRSTU", 1L, produtoBravo, null, false);
+		save(session, produtoEdicao);
+	
+		TipoFornecedor tipoFornecedorPublicacao = Fixture.tipoFornecedorPublicacao();
+		save(session, tipoFornecedorPublicacao);
+	
+		NotaFiscalEntradaFornecedor notaFiscal = Fixture.notaFiscalEntradaFornecedor(cfop5102, juridicaDinap, fornecedorAcme, tipoNotaFiscalRecebimento, usuario, new BigDecimal(145),  new BigDecimal(10),  new BigDecimal(10));
+		save(session, notaFiscal);
+	
+		RecebimentoFisico recebimentoFisico = Fixture.recebimentoFisico(notaFiscal, usuario, new Date(), new Date(), StatusConfirmacao.PENDENTE);
+		save(session, recebimentoFisico);
+	
+		ItemNotaFiscalEntrada itemNotaFiscal= 
+				Fixture.itemNotaFiscal(
+						produtoEdicao, 
+						usuario, 
+						notaFiscal, 
+						new Date(), 
+						new Date(),
+						TipoLancamento.LANCAMENTO,
+						new BigDecimal(12));
+		save(session, itemNotaFiscal);
+	
+		ItemRecebimentoFisico itemRecebimentoFisico= Fixture.itemRecebimentoFisico(itemNotaFiscal, recebimentoFisico, new BigDecimal(12));
+		save(session, itemRecebimentoFisico);
+	
+		Lancamento lancamento = Fixture.lancamento(TipoLancamento.LANCAMENTO, produtoEdicao, dataAtual, dataAtual, dataAtual, dataAtual, new BigDecimal(30), StatusLancamento.ESTUDO_FECHADO, itemRecebimentoFisico, 1);
+		save(session, lancamento);	
+	
+		Estudo estudo = Fixture.estudo(BigDecimal.TEN, dataAtual, produtoEdicao);
+		save(session, estudo);
+	
+		EstudoCota estudoCota = Fixture.estudoCota(new BigDecimal(30), new BigDecimal(30), estudo, cotaManoel);
+		save(session, estudoCota);
+	
+		Expedicao expedicao = Fixture.expedicao(usuario, dataAtual);
+		save(session, expedicao);
+	
+		EstoqueProdutoCota estoqueProdutoCota = new EstoqueProdutoCota();
+		estoqueProdutoCota = Fixture.estoqueProdutoCota(produtoEdicao,new BigDecimal(30), cotaManoel, listaMovimentoEstoqueCota);
+		save(session, estoqueProdutoCota);
+	
+	
+	
+	
+		massaDadosContaCorrenteMovimento(session, tipoMovimentoVendaEncalhe,
+				tipoMovimentoFinanceiroCompraEncalhe, dataAtual, listaMovimentoEstoqueCota,
+				usuario, produtoEdicao, estoqueProdutoCota);
 
-	PessoaFisica manoel = Fixture.pessoaFisica("12345678900",
-			"manoel@mail.com", "Manoel da Silva");
-			save(session, manoel);
+    }
 
-	save(session, box1);
-
-	Usuario usuario = Fixture.usuarioJoao();
-	save(session, usuario);
-
-	TipoProduto tipoProduto = Fixture.tipoProduto("Revista C.C.Movimento", GrupoProduto.REVISTA, "431251324", "513543", 004L);
-	save(session, tipoProduto);
-
-	TipoFornecedor tipoFornecedor = Fixture.tipoFornecedor("Tipo A",GrupoFornecedor.PUBLICACAO);
-	save(session, tipoFornecedor);
-
-
-	produtoBravo.addFornecedor(fornecedorAcme);
-	save(session, produtoBravo);
-
-	ProdutoEdicao produtoEdicao = Fixture.produtoEdicao("COD_HH", 234L,12 , 1, new BigDecimal(9), new BigDecimal(8), 
-			new BigDecimal(10), "ABCDEFGHIJKLMNOPQRSTU", 1L, produtoBravo, null, false);
-	save(session, produtoEdicao);
-
-	TipoFornecedor tipoFornecedorPublicacao = Fixture.tipoFornecedorPublicacao();
-	save(session, tipoFornecedorPublicacao);
-
-	TipoNotaFiscal tipoNotaFiscal = Fixture.tipoNotaFiscalRecebimento();
-	save(session, tipoNotaFiscal);
-
-	NotaFiscalEntradaFornecedor notaFiscal = Fixture.notaFiscalEntradaFornecedor(cfop5102, juridicaDinap, fornecedorAcme, tipoNotaFiscal, usuario, new BigDecimal(145),  new BigDecimal(10),  new BigDecimal(10));
-	save(session, notaFiscal);
-
-	RecebimentoFisico recebimentoFisico = Fixture.recebimentoFisico(notaFiscal, usuario, new Date(), new Date(), StatusConfirmacao.PENDENTE);
-	save(session, recebimentoFisico);
-
-	ItemNotaFiscalEntrada itemNotaFiscal= 
-			Fixture.itemNotaFiscal(
-					produtoEdicao, 
-					usuario, 
-					notaFiscal, 
-					new Date(), 
-					new Date(),
-					TipoLancamento.LANCAMENTO,
-					new BigDecimal(12));
-	save(session, itemNotaFiscal);
-
-	ItemRecebimentoFisico itemRecebimentoFisico= Fixture.itemRecebimentoFisico(itemNotaFiscal, recebimentoFisico, new BigDecimal(12));
-	save(session, itemRecebimentoFisico);
-
-	Lancamento lancamento = Fixture.lancamento(TipoLancamento.LANCAMENTO, produtoEdicao, dataAtual, dataAtual, dataAtual, dataAtual, new BigDecimal(30), StatusLancamento.ESTUDO_FECHADO, itemRecebimentoFisico, 1);
-	save(session, lancamento);	
-
-	Estudo estudo = Fixture.estudo(BigDecimal.TEN, dataAtual, produtoEdicao);
-	save(session, estudo);
-
-	EstudoCota estudoCota = Fixture.estudoCota(new BigDecimal(30), new BigDecimal(30), estudo, cotaManoel);
-	save(session, estudoCota);
-
-	Expedicao expedicao = Fixture.expedicao(usuario, dataAtual);
-	save(session, expedicao);
-
-	EstoqueProdutoCota estoqueProdutoCota = new EstoqueProdutoCota();
-	estoqueProdutoCota = Fixture.estoqueProdutoCota(produtoEdicao,new BigDecimal(30), cotaManoel, listaMovimentoEstoqueCota);
-	save(session, estoqueProdutoCota);
-
-
-
-
-	massaDadosContaCorrenteMovimento(session, tipoMovimentoVendaEncalhe,
-			tipoMovimentoFinanceiroCompraEncalhe, dataAtual, listaMovimentoEstoqueCota,
-			usuario, produtoEdicao, estoqueProdutoCota);
-
-}
 
 	private static void massaDadosContaCorrenteMovimento(Session session,
-			TipoMovimentoEstoque tipoMovimento,
-			TipoMovimentoFinanceiro tipoMovimentoFinanceiro, Date dataAtual,
-			List<MovimentoEstoqueCota> listaMovimentoEstoqueCota,
-			Usuario usuario, ProdutoEdicao produtoEdicao,
-			EstoqueProdutoCota estoqueProdutoCota) {
+														 TipoMovimentoEstoque tipoMovimento,
+														 TipoMovimentoFinanceiro tipoMovimentoFinanceiro, Date dataAtual,
+														 List<MovimentoEstoqueCota> listaMovimentoEstoqueCota,
+														 Usuario usuario, ProdutoEdicao produtoEdicao,
+														 EstoqueProdutoCota estoqueProdutoCota) {
+		
 		MovimentoEstoqueCota movimento = new MovimentoEstoqueCota();
 		movimento = Fixture.movimentoEstoqueCota(produtoEdicao, tipoMovimento, usuario, estoqueProdutoCota, new BigDecimal(23), cotaManoel, StatusAprovacao.APROVADO, "motivo");
 		save(session, movimento);
@@ -1369,7 +1512,7 @@ public class DataLoader {
 		listaMovimentoFinanceiroCota.add(movimentoFinanceiroCota);
 		listaMovimentoFinanceiroCota.add(movimentoFinanceiroCompraEncalhe);
 
-		ConsolidadoFinanceiroCota consolidadoFinanceiroCota = Fixture.consolidadoFinanceiroCota(listaMovimentoFinanceiroCota, cotaManoel, dataAtual, new BigDecimal(230));
+		ConsolidadoFinanceiroCota consolidadoFinanceiroCota = Fixture.consolidadoFinanceiroCota(listaMovimentoFinanceiroCota, cotaManoel, dataAtual, new BigDecimal(230), new BigDecimal(230), new BigDecimal(180), new BigDecimal(180), new BigDecimal(180), new BigDecimal(45), new BigDecimal(170), new BigDecimal(25));
 		save(session, consolidadoFinanceiroCota);
 	}
 
@@ -1465,7 +1608,65 @@ public class DataLoader {
 		estoqueProdutoCotaMariaSuper2EncalheAnt = Fixture.estoqueProdutoCota(
 				produtoEdicaoSuper2EncalheAnt, cotaMaria, new BigDecimal(7), BigDecimal.ONE);
 		save(session, estoqueProdutoCotaMariaSuper2EncalheAnt);
+		
+		estoqueProdutoCotaManoelCunhaVeja1 = Fixture.estoqueProdutoCota(
+				produtoEdicaoVeja1, cotaManoelCunha, BigDecimal.TEN, BigDecimal.TEN);
+		save(session, estoqueProdutoCotaManoelCunhaVeja1);
 
+		estoqueProdutoCotaManoelCunhaVeja2 = Fixture.estoqueProdutoCota(
+				produtoEdicaoVeja2, cotaManoelCunha, BigDecimal.TEN, BigDecimal.TEN);
+		save(session, estoqueProdutoCotaManoelCunhaVeja2);
+
+		estoqueProdutoCotaManoelCunhaVeja3 = Fixture.estoqueProdutoCota(
+				produtoEdicaoVeja3, cotaManoelCunha, BigDecimal.TEN, BigDecimal.TEN);
+		save(session, estoqueProdutoCotaManoelCunhaVeja3);
+
+		estoqueProdutoCotaManoelCunhaVeja4 = Fixture.estoqueProdutoCota(
+				produtoEdicaoVeja4, cotaManoelCunha, BigDecimal.TEN, BigDecimal.TEN);
+		save(session, estoqueProdutoCotaManoelCunhaVeja4);
+
+		estoqueProdutoCotaManoelCunhaSuper1 = Fixture.estoqueProdutoCota(
+				produtoEdicaoSuper1, cotaManoelCunha, BigDecimal.TEN, BigDecimal.TEN);
+		save(session, estoqueProdutoCotaManoelCunhaSuper1);
+
+		estoqueProdutoCotaManoelCunhaCapricho1 = Fixture.estoqueProdutoCota(
+				produtoEdicaoCapricho1, cotaManoelCunha, BigDecimal.TEN, BigDecimal.TEN);
+		save(session, estoqueProdutoCotaManoelCunhaCapricho1);
+
+		estoqueProdutoCotaManoelCunhaQuatroRodas1 = Fixture.estoqueProdutoCota(
+				produtoEdicaoQuatroRodas1, cotaManoelCunha, BigDecimal.TEN, BigDecimal.TEN);
+		save(session, estoqueProdutoCotaManoelCunhaQuatroRodas1);
+		
+		
+		estoqueProdutoCotaManoelVeja1 = Fixture.estoqueProdutoCota(
+				produtoEdicaoVeja1, cotaManoel, BigDecimal.TEN, BigDecimal.TEN);
+		save(session, estoqueProdutoCotaManoelVeja1);
+		
+		estoqueProdutoCotaManoelVeja2 = Fixture.estoqueProdutoCota(
+				produtoEdicaoVeja2, cotaManoel, BigDecimal.TEN, BigDecimal.TEN);
+		save(session, estoqueProdutoCotaManoelVeja2);
+		
+		estoqueProdutoCotaManoelVeja3 = Fixture.estoqueProdutoCota(
+				produtoEdicaoVeja3, cotaManoel, BigDecimal.TEN, BigDecimal.TEN);
+		save(session, estoqueProdutoCotaManoelVeja3);
+		
+		estoqueProdutoCotaManoelVeja4 = Fixture.estoqueProdutoCota(
+				produtoEdicaoVeja4, cotaManoel, BigDecimal.TEN, BigDecimal.TEN);
+		save(session, estoqueProdutoCotaManoelVeja4);
+		
+		estoqueProdutoCotaManoelCapricho1 = Fixture.estoqueProdutoCota(
+				produtoEdicaoCapricho1, cotaManoel, BigDecimal.TEN, BigDecimal.TEN);
+		save(session, estoqueProdutoCotaManoelCapricho1);
+		
+		estoqueProdutoCotaManoelQuatroRodas1 = Fixture.estoqueProdutoCota(
+				produtoEdicaoQuatroRodas1, cotaManoel, BigDecimal.TEN, BigDecimal.TEN);
+		save(session, estoqueProdutoCotaManoelQuatroRodas1);
+		
+		estoqueProdutoCotaManoelSuper1 = Fixture.estoqueProdutoCota(
+				produtoEdicaoSuper1, cotaManoel, BigDecimal.TEN, BigDecimal.TEN);
+		save(session, estoqueProdutoCotaManoelSuper1);
+		
+	
 	}
 
 	private static void criarCobrancas(Session session) {
@@ -1524,10 +1725,6 @@ public class DataLoader {
 				"TIPO_BAIXA", "ACAO", StatusCobranca.NAO_PAGO,
 				cotaOrlando, bancoHSBC, dividaOrlando,1);
 
-
-
-
-
 		cobrancaAcumuloGuilherme1= Fixture.criarCobrancaDinheiro("3234567890123", 
 				new Date(),Fixture.criarData(1, 1, 2010),  null,
                 BigDecimal.ZERO, new BigDecimal(210),
@@ -1557,277 +1754,9 @@ public class DataLoader {
 				cobrancaMariana1, cobrancaMariana2, 
 				cobrancaOrlando,
 				cobrancaAcumuloGuilherme1,cobrancaAcumuloGuilherme2,cobrancaAcumuloMariana1,cobrancaAcumuloMurilo1);
-	
-		
-		criarDividasCobrancas(session);
 		
 	}
 
-	
-	private static void criarDividasCobrancas(Session session){
-		
-		
-		
-		ConsolidadoFinanceiroCota consolidadoManoel1 = Fixture.consolidadoFinanceiroCota(null, cotaManoel ,
-				new Date(), new BigDecimal(500));
-        save(session,consolidadoManoel1);  
-        
-		Divida dividaManoel1 = Fixture.divida(consolidadoManoel1, cotaManoel, new Date(),
-				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(500),false);
-		save(session,dividaManoel1);  
-		
-		Cobranca cobrancaManoel1 = Fixture.criarCobrancaDinheiro("1234567890023", 
-				new Date(),  new Date(),
-                null, BigDecimal.ZERO, new BigDecimal(500),
-				"TIPO_BAIXA", "ACAO", StatusCobranca.NAO_PAGO,
-				cotaManoel, bancoHSBC, dividaManoel1,1);
-
-		
-		
-		ConsolidadoFinanceiroCota consolidadoManoel2 = Fixture.consolidadoFinanceiroCota(null, cotaManoel ,
-				new Date(), new BigDecimal(200));
-        save(session,consolidadoManoel2);  
-        
-		Divida dividaManoel2 = Fixture.divida(consolidadoManoel2, cotaManoel, new Date(),
-				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200),false);
-		save(session,dividaManoel2);
-		
-		Cobranca cobrancaManoel2 = Fixture.criarCobrancaDinheiro("1234567890024", 
-				new Date(),  new Date(),
-                null, BigDecimal.ZERO, new BigDecimal(200),
-				"TIPO_BAIXA", "ACAO", StatusCobranca.NAO_PAGO,
-				cotaManoel, bancoHSBC, dividaManoel2,1);
-		
-		
-		
-		ConsolidadoFinanceiroCota consolidadoManoel3 = Fixture.consolidadoFinanceiroCota(null, cotaManoel ,
-				new Date(), new BigDecimal(300));
-        save(session,consolidadoManoel3);  
-        
-		Divida dividaManoel3 = Fixture.divida(consolidadoManoel3, cotaManoel, new Date(),
-				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(300),false);
-		save(session,dividaManoel3);
-		
-		Cobranca cobrancaManoel3 = Fixture.criarCobrancaDinheiro("1234567890025", 
-				new Date(),  new Date(),
-                null, BigDecimal.ZERO, new BigDecimal(300),
-				"TIPO_BAIXA", "ACAO", StatusCobranca.NAO_PAGO,
-				cotaManoel, bancoHSBC, dividaManoel3,1);
-
-		
-		ConsolidadoFinanceiroCota consolidadoManoel4 = Fixture.consolidadoFinanceiroCota(null, cotaManoel ,
-				new Date(), new BigDecimal(1000));
-        save(session,consolidadoManoel4);  
-		
-		Divida dividaManoel4 = Fixture.divida(consolidadoManoel4, cotaManoel, new Date(),
-				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(1000),false);
-		save(session,dividaManoel4);
-		
-		Cobranca cobrancaManoel4 = Fixture.boleto("1234567890026", "41235", "1234567890126023",
-				new Date(),  new Date(),
-                null, BigDecimal.ZERO, new BigDecimal(1000),
-				"TIPO_BAIXA", "ACAO", StatusCobranca.NAO_PAGO,
-				cotaManoel, bancoHSBC, dividaManoel4,1);
-
-		
-		
-		ConsolidadoFinanceiroCota consolidadoManoel5 = Fixture.consolidadoFinanceiroCota(null, cotaManoel ,
-				Fixture.criarData(9, 1, 2010), new BigDecimal(2000));
-        save(session,consolidadoManoel5);  
-		
-		Divida dividaManoel5 = Fixture.divida(consolidadoManoel5, cotaManoel, Fixture.criarData(9, 1, 2010),
-				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(2000),false);
-		save(session,dividaManoel5);
-		
-		Cobranca cobrancaManoel5 = Fixture.boleto("1234567890027", "4124", "1234567890127133",
-				Fixture.criarData(1, 5, 2012),  new Date(),
-                null, BigDecimal.ZERO, new BigDecimal(2000),
-				"TIPO_BAIXA", "ACAO", StatusCobranca.NAO_PAGO,
-				cotaManoel, bancoHSBC, dividaManoel5,1);
-
-		
-		
-		ConsolidadoFinanceiroCota consolidadoManoel6 = Fixture.consolidadoFinanceiroCota(null, cotaManoel ,
-				Fixture.criarData(9, 1, 2010), new BigDecimal(2200));
-        save(session,consolidadoManoel6);  
-        
-		Divida dividaManoel6 = Fixture.divida(consolidadoManoel6, cotaManoel, Fixture.criarData(9, 1, 2010),
-				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(2200),false);
-		save(session,dividaManoel6);
-		
-		Cobranca cobrancaManoel6 = Fixture.boleto("1234567890028", "4125", "1234567890128143",
-				Fixture.criarData(1, 5, 2012),  new Date(),
-                null, BigDecimal.ZERO, new BigDecimal(2200),
-				"TIPO_BAIXA", "ACAO", StatusCobranca.NAO_PAGO,
-				cotaManoel, bancoHSBC, dividaManoel6,1);
-
-		
-		
-		ConsolidadoFinanceiroCota consolidadoManoel7 = Fixture.consolidadoFinanceiroCota(null, cotaManoel ,
-				Fixture.criarData(9, 1, 2010), new BigDecimal(300));
-        save(session,consolidadoManoel7);  
-        
-		Divida dividaManoel7 = Fixture.divida(consolidadoManoel7, cotaManoel, Fixture.criarData(9, 1, 2010),
-				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(300),false);
-		save(session,dividaManoel7);
-		
-		Cobranca cobrancaManoel7 = Fixture.boleto("1234567890029", "4126", "1234567890129153",
-				Fixture.criarData(1, 5, 2012),  new Date(),
-                null, BigDecimal.ZERO, new BigDecimal(300),
-				"TIPO_BAIXA", "ACAO", StatusCobranca.NAO_PAGO,
-				cotaManoel, bancoHSBC, dividaManoel7,1);
-
-		
-		
-		ConsolidadoFinanceiroCota consolidadoManoel8 = Fixture.consolidadoFinanceiroCota(null, cotaManoel ,
-				Fixture.criarData(9, 1, 2010), new BigDecimal(200));
-        save(session,consolidadoManoel8);  
-		
-		Divida dividaManoel8 = Fixture.divida(consolidadoManoel8, cotaManoel, Fixture.criarData(9, 1, 2010),
-				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200),false);
-		save(session,dividaManoel8);
-		
-		Cobranca cobrancaManoel8 = Fixture.boleto("1234567890030", "4123", "1234567890120154",
-				Fixture.criarData(1, 5, 2012),  new Date(),
-                null, BigDecimal.ZERO, new BigDecimal(200),
-				"TIPO_BAIXA", "ACAO", StatusCobranca.NAO_PAGO,
-				cotaManoel, bancoHSBC, dividaManoel8,1);
-		
-		
-		
-		ConsolidadoFinanceiroCota consolidadoManoel9 = Fixture.consolidadoFinanceiroCota(null, cotaManoel ,
-				Fixture.criarData(9, 1, 2010), new BigDecimal(200));
-        save(session,consolidadoManoel9);  
-        
-		Divida dividaManoel9 = Fixture.divida(consolidadoManoel9, cotaManoel, Fixture.criarData(9, 1, 2010),
-				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200),false);
-		save(session,dividaManoel9);
-		
-		Cobranca cobrancaManoel9 = Fixture.criarCobrancaDeposito("1234567890140", 
-				Fixture.criarData(1, 5, 2012),  new Date(),
-                null, BigDecimal.ZERO, new BigDecimal(200),
-				"TIPO_BAIXA", "ACAO", StatusCobranca.NAO_PAGO,
-				cotaManoel, bancoHSBC, dividaManoel9,1);
-		
-		
-		
-		ConsolidadoFinanceiroCota consolidadoManoel10 = Fixture.consolidadoFinanceiroCota(null, cotaManoel ,
-				Fixture.criarData(9, 1, 2010), new BigDecimal(200));
-        save(session,consolidadoManoel10);  
-		
-		Divida dividaManoel10 = Fixture.divida(consolidadoManoel10, cotaManoel, Fixture.criarData(9, 1, 2010),
-				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200),false);
-		save(session,dividaManoel10);
-		
-		Cobranca cobrancaManoel10 = Fixture.criarCobrancaDeposito("1234567890141", 
-				Fixture.criarData(1, 5, 2012),  new Date(),
-                null, BigDecimal.ZERO, new BigDecimal(200),
-				"TIPO_BAIXA", "ACAO", StatusCobranca.NAO_PAGO,
-				cotaManoel, bancoHSBC, dividaManoel10,1);
-		
-		
-		
-		ConsolidadoFinanceiroCota consolidadoManoel11 = Fixture.consolidadoFinanceiroCota(null, cotaManoel ,
-				Fixture.criarData(9, 1, 2010), new BigDecimal(210));
-        save(session,consolidadoManoel11);  
-		
-		Divida dividaManoel11 = Fixture.divida(consolidadoManoel11, cotaManoel, Fixture.criarData(9, 1, 2010),
-				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(210),false);
-		save(session,dividaManoel11);
-		
-		Cobranca cobrancaManoel11 = Fixture.criarCobrancaDeposito("1234567890142", 
-				Fixture.criarData(1, 3, 2012),  new Date(),
-                null, BigDecimal.ZERO, new BigDecimal(210),
-				"TIPO_BAIXA", "ACAO", StatusCobranca.NAO_PAGO,
-				cotaManoel, bancoHSBC, dividaManoel11,1);
-		
-		
-		
-		ConsolidadoFinanceiroCota consolidadoManoel12 = Fixture.consolidadoFinanceiroCota(null, cotaManoel ,
-				Fixture.criarData(9, 1, 2010), new BigDecimal(200));
-        save(session,consolidadoManoel12);  
-		
-		Divida dividaManoel12 = Fixture.divida(consolidadoManoel12, cotaManoel, Fixture.criarData(9, 1, 2010),
-				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200),false);
-		save(session,dividaManoel12);
-		
-		Cobranca cobrancaManoel12 = Fixture.criarCobrancaDeposito("1234567890143", 
-				Fixture.criarData(1, 5, 2012),  new Date(),
-                null, BigDecimal.ZERO, new BigDecimal(200),
-				"TIPO_BAIXA", "ACAO", StatusCobranca.NAO_PAGO,
-				cotaManoel, bancoHSBC, dividaManoel12,1);
-		
-		
-		
-		ConsolidadoFinanceiroCota consolidadoManoel13 = Fixture.consolidadoFinanceiroCota(null, cotaManoel ,
-				Fixture.criarData(9, 1, 2010), new BigDecimal(210));
-        save(session,consolidadoManoel13);  
-		
-		Divida dividaAcumuladaManoel1 = Fixture.divida(consolidadoManoel13, cotaManoel, Fixture.criarData(1, 2, 2010),
-				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(210),true);
-		save(session,dividaAcumuladaManoel1);
-		
-		Cobranca cobrancaAcumuloManoel1= Fixture.criarCobrancaDinheiro("3234567890135", 
-				Fixture.criarData(1, 5, 2012),  new Date(),
-				null,BigDecimal.ZERO, new BigDecimal(210),
-				"TIPO_BAIXA", "ACAO", StatusCobranca.NAO_PAGO,
-				cotaManoel, bancoHSBC, dividaAcumuladaManoel1,1);
-
-		
-		
-		ConsolidadoFinanceiroCota consolidadoManoel14 = Fixture.consolidadoFinanceiroCota(null, cotaManoel ,
-				Fixture.criarData(9, 1, 2010), new BigDecimal(250));
-        save(session,consolidadoManoel14);  
-		
-		Divida dividaAcumuladaManoel2 = Fixture.divida(consolidadoManoel14, cotaManoel, Fixture.criarData(1, 2, 2010),
-				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(250),true);
-		save(session,dividaAcumuladaManoel2);
-		
-		Cobranca cobrancaAcumuloManoel2 = Fixture.criarCobrancaDinheiro("3234567890136", 
-				new Date(),Fixture.criarData(1, 1, 2010),  
-				Fixture.criarData(2, 2, 2010),BigDecimal.ZERO, new BigDecimal(250),
-				"TIPO_BAIXA", "ACAO", StatusCobranca.NAO_PAGO,
-				cotaManoel, bancoHSBC, dividaAcumuladaManoel2,1);
-
-		
-		
-		ConsolidadoFinanceiroCota consolidadoManoel15 = Fixture.consolidadoFinanceiroCota(null, cotaManoel ,
-				Fixture.criarData(9, 1, 2010), new BigDecimal(290));
-        save(session,consolidadoManoel15);  
-        
-		Divida dividaAcumuladaManoel3 = Fixture.divida(consolidadoManoel15, cotaManoel, Fixture.criarData(1, 2, 2010),
-				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(290),true);
-		save(session,dividaAcumuladaManoel3);
-		
-		Cobranca cobrancaAcumuloManoel3 = Fixture.boleto("3234567890137", "323", "3234567890126137",
-				new Date(),Fixture.criarData(1, 1, 2010),  
-				Fixture.criarData(4, 2, 2010),BigDecimal.ZERO, new BigDecimal(290),
-				"TIPO_BAIXA", "ACAO", StatusCobranca.NAO_PAGO,
-				cotaManoel, bancoHSBC, dividaAcumuladaManoel3,1);
-
-		
-		
-		ConsolidadoFinanceiroCota consolidadoManoel16 = Fixture.consolidadoFinanceiroCota(null, cotaManoel ,
-				Fixture.criarData(9, 1, 2010), new BigDecimal(802));
-        save(session,consolidadoManoel16);  
-        
-		Divida dividaAcumuladaManoel4 = Fixture.divida(consolidadoManoel16, cotaManoel, Fixture.criarData(1, 2, 2010),
-				usuarioJoao, StatusDivida.QUITADA, new BigDecimal(802),true);
-		save(session,dividaAcumuladaManoel4);
-		
-		Cobranca cobrancaAcumuloManoel4 = Fixture.boleto("3234567890138", "323", "3234567890129138",
-				new Date(),Fixture.criarData(5, 1, 2010),  
-				Fixture.criarData(7, 2, 2010),BigDecimal.ZERO, new BigDecimal(802),
-				"TIPO_BAIXA", "ACAO", StatusCobranca.PAGO,
-				cotaManoel, bancoHSBC, dividaAcumuladaManoel4,1);
-		
-		
-		
-		save(session,cobrancaManoel1,cobrancaManoel2,cobrancaManoel3,cobrancaManoel4,cobrancaManoel5,cobrancaManoel6,
-				     cobrancaManoel7,cobrancaManoel8,cobrancaManoel9,cobrancaManoel10,cobrancaManoel11,cobrancaManoel12,
-				     cobrancaAcumuloManoel1,cobrancaAcumuloManoel2,cobrancaAcumuloManoel3,cobrancaAcumuloManoel4);
-
-	}
 	
 	private static void criarParametrosCobrancaCota(Session session) {
 
@@ -1955,163 +1884,273 @@ public class DataLoader {
 		rota = Fixture.rota("006", "Rota 006");
 		rota.setRoteiro(roteiro);
 		session.save(rota);
+		
+		Roteiro roteiroTCD = Fixture.criarRoteiro("TCD",box2,TipoRoteiro.NORMAL);
+		session.save(roteiroTCD);
+		
+		Rota rota10 = Fixture.rota("001", "Rota 001");
+		rota10.setRoteiro(roteiroTCD);
+		session.save(rota10);
+		
+		
+		roteirizacao = Fixture.criarRoteirizacao(pdvGuilherme, rota10,1);
+		session.save(roteirizacao);
+		
 	}
+	
+	
+	
 
+	private static BigDecimal getTotalEncalhe(List<MovimentoFinanceiroCota> movimentosF){
+        Double totalD=0d;
+		List<MovimentoEstoqueCota> movimentosE = new ArrayList<MovimentoEstoqueCota>();
+		for (MovimentoFinanceiroCota movF:movimentosF){
+			if (  ((TipoMovimentoFinanceiro) movF.getTipoMovimento()).getGrupoMovimentoFinaceiro() == GrupoMovimentoFinaceiro.ENVIO_ENCALHE){
+				movimentosE = movF.getMovimentos();
+				for (MovimentoEstoqueCota movE:movimentosE){
+					if (  ((TipoMovimentoEstoque) movE.getTipoMovimento()).getGrupoMovimentoEstoque() == GrupoMovimentoEstoque.ENVIO_ENCALHE){
+					    Double totalItem = (movE.getQtde().doubleValue())*movE.getEstoqueProdutoCota().getProdutoEdicao().getPrecoVenda().doubleValue() - movE.getEstoqueProdutoCota().getProdutoEdicao().getDesconto().doubleValue();
+					    totalD+=totalItem;
+				    }    
+				}
+		    }
+		}
+		return (new BigDecimal(totalD));
+	}
+	
+    private static BigDecimal getTotalConsignado(List<MovimentoFinanceiroCota> movimentosF){
+        Double totalD=0d;
+		List<MovimentoEstoqueCota> movimentosE = new ArrayList<MovimentoEstoqueCota>();
+		for (MovimentoFinanceiroCota movF:movimentosF){
+			if (  ((TipoMovimentoFinanceiro) movF.getTipoMovimento()).getGrupoMovimentoFinaceiro() == GrupoMovimentoFinaceiro.RECEBIMENTO_REPARTE){
+				movimentosE = movF.getMovimentos();
+				for (MovimentoEstoqueCota movE:movimentosE){
+					if (  ((TipoMovimentoEstoque) movE.getTipoMovimento()).getGrupoMovimentoEstoque() == GrupoMovimentoEstoque.ENVIO_JORNALEIRO){
+						Double totalItem = (movE.getQtde().doubleValue())*(movE.getEstoqueProdutoCota().getProdutoEdicao().getPrecoVenda().doubleValue() - movE.getEstoqueProdutoCota().getProdutoEdicao().getDesconto().doubleValue());
+					    totalD+=totalItem;
+				    }    
+				}
+		    }
+		}
+		return (new BigDecimal(totalD));
+	}
+    
+    private static BigDecimal getTotalVendaEncalhe(List<MovimentoFinanceiroCota> movimentosF){
+        Double totalD=0d;
+		List<MovimentoEstoqueCota> movimentosE = new ArrayList<MovimentoEstoqueCota>();
+		for (MovimentoFinanceiroCota movF:movimentosF){
+			if (  ((TipoMovimentoFinanceiro) movF.getTipoMovimento()).getGrupoMovimentoFinaceiro() == GrupoMovimentoFinaceiro.COMPRA_ENCALHE){
+				movimentosE = movF.getMovimentos();
+				for (MovimentoEstoqueCota movE:movimentosE){
+					if (  ((TipoMovimentoEstoque) movE.getTipoMovimento()).getGrupoMovimentoEstoque() == GrupoMovimentoEstoque.VENDA_ENCALHE){
+						Double totalItem = (movE.getQtde().doubleValue())*(movE.getEstoqueProdutoCota().getProdutoEdicao().getPrecoVenda().doubleValue() - movE.getEstoqueProdutoCota().getProdutoEdicao().getDesconto().doubleValue());
+					    totalD+=totalItem;
+				    }    
+				}
+		    }
+		}
+		return (new BigDecimal(totalD));
+	}
+    
+    
+    
+	
 	private static void criarDivida(Session session) {
+		
+		List<MovimentoFinanceiroCota> movimentosF = new ArrayList<MovimentoFinanceiroCota>();
 
+		movimentosF = Arrays.asList(movimentoFinanceiroCota1,movimentoFinanceiroCota13,movimentoFinanceiroCota16,movimentoFinanceiroCota15,movimentoFinanceiroCota22,
+				                    movimentoFinanceiroCota28,movimentoFinanceiroCota29,movimentoFinanceiroCota30,
+				                    movimentoFinanceiroCota21,movimentoFinanceiroCota17,movimentoFinanceiroCota18,movimentoFinanceiroCota19,
+				                    movimentoFinanceiroCota26,movimentoFinanceiroCota27);
+		
 		ConsolidadoFinanceiroCota consolidado1 = Fixture
 				.consolidadoFinanceiroCota(
-						Arrays.asList(movimentoFinanceiroCota1), cotaManoel,
-						new Date(), new BigDecimal(200));
+						movimentosF, cotaManoel,
+						Fixture.criarData(1, 6, 2012), getTotalConsignado(movimentosF), getTotalVendaEncalhe(movimentosF), getTotalEncalhe(movimentosF), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0));
 
+		
+		movimentosF = Arrays.asList(movimentoFinanceiroCota2, movimentoFinanceiroCota14, movimentoFinanceiroCota20,movimentoFinanceiroCota23,
+				                    movimentoFinanceiroCota24, movimentoFinanceiroCota25);
+		
 		ConsolidadoFinanceiroCota consolidado2 = Fixture
 				.consolidadoFinanceiroCota(
-						Arrays.asList(movimentoFinanceiroCota2), cotaJose,
-						new Date(), new BigDecimal(200));
-
+						movimentosF, cotaManoel,
+						Fixture.criarData(2, 6, 2012), getTotalConsignado(movimentosF), getTotalVendaEncalhe(movimentosF), getTotalEncalhe(movimentosF), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0));
+		
+		movimentosF = Arrays.asList(movimentoFinanceiroCota3);
+		
 		ConsolidadoFinanceiroCota consolidado3 = Fixture
 				.consolidadoFinanceiroCota(
-						Arrays.asList(movimentoFinanceiroCota3), cotaMaria,
-						new Date(), new BigDecimal(200));
+						movimentosF, cotaManoel,
+						Fixture.criarData(3, 6, 2012), getTotalConsignado(movimentosF), getTotalVendaEncalhe(movimentosF), getTotalEncalhe(movimentosF), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0));
+
+		movimentosF = Arrays.asList(movimentoFinanceiroCota4);
 
 		ConsolidadoFinanceiroCota consolidado4 = Fixture
 				.consolidadoFinanceiroCota(
-						Arrays.asList(movimentoFinanceiroCota4), cotaManoel,
-						new Date(), new BigDecimal(200));
+						movimentosF, cotaManoel,
+						Fixture.criarData(4, 6, 2012), getTotalConsignado(movimentosF), getTotalVendaEncalhe(movimentosF), getTotalEncalhe(movimentosF), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0));
+
+		movimentosF = Arrays.asList(movimentoFinanceiroCota5);
 
 		ConsolidadoFinanceiroCota consolidado5 = Fixture
 				.consolidadoFinanceiroCota(
-						Arrays.asList(movimentoFinanceiroCota5), cotaJose,
-						new Date(), new BigDecimal(200));
+						movimentosF, cotaManoel,
+						Fixture.criarData(5, 6, 2012), getTotalConsignado(movimentosF), getTotalVendaEncalhe(movimentosF), getTotalEncalhe(movimentosF), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0));
+
+		movimentosF = Arrays.asList(movimentoFinanceiroCota6);
 
 		ConsolidadoFinanceiroCota consolidado6 = Fixture
 				.consolidadoFinanceiroCota(
-						Arrays.asList(movimentoFinanceiroCota6), cotaMaria,
-						new Date(), new BigDecimal(200));
+						movimentosF, cotaManoel,
+						Fixture.criarData(6, 6, 2012), getTotalConsignado(movimentosF), getTotalVendaEncalhe(movimentosF), getTotalEncalhe(movimentosF), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0));
+
+		movimentosF = Arrays.asList(movimentoFinanceiroCota7);
 
 		ConsolidadoFinanceiroCota consolidado7 = Fixture
 				.consolidadoFinanceiroCota(
-						null, cotaManoel,
-						new Date(), new BigDecimal(200));
+						movimentosF, cotaManoel,
+						Fixture.criarData(7, 6, 2012), getTotalConsignado(movimentosF), getTotalVendaEncalhe(movimentosF), getTotalEncalhe(movimentosF), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0));
+
+		movimentosF = Arrays.asList(movimentoFinanceiroCota8);
 
 		ConsolidadoFinanceiroCota consolidado8 = Fixture
 				.consolidadoFinanceiroCota(
-						null, cotaJose,
-						new Date(), new BigDecimal(200));
+						movimentosF, cotaManoel,
+						Fixture.criarData(8, 6, 2012), getTotalConsignado(movimentosF), getTotalVendaEncalhe(movimentosF), getTotalEncalhe(movimentosF), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0));
+
+		movimentosF = Arrays.asList(movimentoFinanceiroCota9);
 
 		ConsolidadoFinanceiroCota consolidado9 = Fixture
 				.consolidadoFinanceiroCota(
-						null, cotaMaria,
-						new Date(), new BigDecimal(200));
-
-		ConsolidadoFinanceiroCota consolidado10 = Fixture
-				.consolidadoFinanceiroCota(
-						null, cotaManoel,
-						new Date(), new BigDecimal(200));
-
-		ConsolidadoFinanceiroCota consolidado11 = Fixture
-				.consolidadoFinanceiroCota(
-						null, cotaLuis,
-						new Date(), new BigDecimal(200));
-
-		ConsolidadoFinanceiroCota consolidado12 = Fixture
-				.consolidadoFinanceiroCota(
-						Arrays.asList(movimentoFinanceiroCota7), cotaJoao,
-						new Date(), new BigDecimal(200));
-
-		ConsolidadoFinanceiroCota consolidado13 = Fixture
-				.consolidadoFinanceiroCota(
-						Arrays.asList(movimentoFinanceiroCota8), cotaJose,
-						new Date(), new BigDecimal(200));
-
-		ConsolidadoFinanceiroCota consolidado14 = Fixture
-				.consolidadoFinanceiroCota(
-						Arrays.asList(movimentoFinanceiroCota9), cotaJose,
-						new Date(), new BigDecimal(200));
+						movimentosF, cotaManoel,
+						Fixture.criarData(9, 6, 2012), getTotalConsignado(movimentosF), getTotalVendaEncalhe(movimentosF), getTotalEncalhe(movimentosF), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0));
 		
+		
+		movimentosF = Arrays.asList(movimentoFinanceiroCota10);
+
 		ConsolidadoFinanceiroCota consolidado15 = Fixture
 				.consolidadoFinanceiroCota(
 						Arrays.asList(movimentoFinanceiroCota10), cotaManoelCunha,
-						new Date(), new BigDecimal(200));
+						Fixture.criarData(10, 6, 2012), getTotalConsignado(movimentosF), getTotalVendaEncalhe(movimentosF), getTotalEncalhe(movimentosF), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0));
+
 		
+		movimentosF = Arrays.asList(movimentoFinanceiroCota11);
+
 		ConsolidadoFinanceiroCota consolidado16 = Fixture
 				.consolidadoFinanceiroCota(
 						Arrays.asList(movimentoFinanceiroCota11), cotaManoelCunha,
-						new Date(), new BigDecimal(200));
+						Fixture.criarData(11, 6, 2012), getTotalConsignado(movimentosF), getTotalVendaEncalhe(movimentosF), getTotalEncalhe(movimentosF), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0));
+
 		
+		movimentosF = Arrays.asList(movimentoFinanceiroCota12);
+
 		ConsolidadoFinanceiroCota consolidado17 = Fixture
 				.consolidadoFinanceiroCota(
 						Arrays.asList(movimentoFinanceiroCota12), cotaManoelCunha,
-						new Date(), new BigDecimal(200));
+						Fixture.criarData(12, 6, 2012), getTotalConsignado(movimentosF), getTotalVendaEncalhe(movimentosF), getTotalEncalhe(movimentosF), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0));
 
 
+
+		
+		ConsolidadoFinanceiroCota consolidado10 = Fixture
+				.consolidadoFinanceiroCota(
+						null, cotaMaria,
+						Fixture.criarData(13, 1, 2010), new BigDecimal(200), new BigDecimal(230), new BigDecimal(180), new BigDecimal(180), new BigDecimal(180), new BigDecimal(45), new BigDecimal(170), new BigDecimal(25));
+
+		
+		ConsolidadoFinanceiroCota consolidado11 = Fixture
+				.consolidadoFinanceiroCota(
+						null, cotaLuis,
+						Fixture.criarData(14, 1, 2010), new BigDecimal(200), new BigDecimal(230), new BigDecimal(180), new BigDecimal(180), new BigDecimal(180), new BigDecimal(45), new BigDecimal(170), new BigDecimal(25));
+
+		
+		ConsolidadoFinanceiroCota consolidado12 = Fixture
+				.consolidadoFinanceiroCota(
+						null, cotaJoao,
+						Fixture.criarData(15, 1, 2010), new BigDecimal(200), new BigDecimal(230), new BigDecimal(180), new BigDecimal(180), new BigDecimal(180), new BigDecimal(45), new BigDecimal(170), new BigDecimal(25));
+
+		
+		ConsolidadoFinanceiroCota consolidado13 = Fixture
+				.consolidadoFinanceiroCota(
+						null, cotaJose,
+						Fixture.criarData(16, 1, 2010), new BigDecimal(200), new BigDecimal(230), new BigDecimal(180), new BigDecimal(180), new BigDecimal(180), new BigDecimal(45), new BigDecimal(170), new BigDecimal(25));
+
+		
+		ConsolidadoFinanceiroCota consolidado14 = Fixture
+				.consolidadoFinanceiroCota(
+						null, cotaJose,
+						Fixture.criarData(17, 1, 2010), new BigDecimal(200), new BigDecimal(230), new BigDecimal(180), new BigDecimal(180), new BigDecimal(180), new BigDecimal(45), new BigDecimal(170), new BigDecimal(25));
+
+		
 		ConsolidadoFinanceiroCota consolidadoGuilherme1 = Fixture
 				.consolidadoFinanceiroCota(null, cotaGuilherme,
-						Fixture.criarData(1, 1, 2010), new BigDecimal(200));
+						Fixture.criarData(1, 1, 2010), new BigDecimal(200), new BigDecimal(230), new BigDecimal(180), new BigDecimal(180), new BigDecimal(180), new BigDecimal(45), new BigDecimal(170), new BigDecimal(25));
 
 		ConsolidadoFinanceiroCota consolidadoGuilherme2 = Fixture
 				.consolidadoFinanceiroCota(null, cotaGuilherme,
-						Fixture.criarData(2, 1, 2010), new BigDecimal(200));
+						Fixture.criarData(2, 1, 2010), new BigDecimal(200), new BigDecimal(230), new BigDecimal(180), new BigDecimal(180), new BigDecimal(180), new BigDecimal(45), new BigDecimal(170), new BigDecimal(25));
 
 		ConsolidadoFinanceiroCota consolidadoGuilherme3 = Fixture
 				.consolidadoFinanceiroCota(null, cotaGuilherme,
-						Fixture.criarData(3, 1, 2010), new BigDecimal(200));
+						Fixture.criarData(3, 1, 2010), new BigDecimal(200), new BigDecimal(230), new BigDecimal(180), new BigDecimal(180), new BigDecimal(180), new BigDecimal(45), new BigDecimal(170), new BigDecimal(25));
 
 		ConsolidadoFinanceiroCota consolidadoMurilo1 = Fixture
 				.consolidadoFinanceiroCota(null, cotaMurilo,
-						Fixture.criarData(4, 1, 2010), new BigDecimal(200));
+						Fixture.criarData(4, 1, 2010), new BigDecimal(200), new BigDecimal(230), new BigDecimal(180), new BigDecimal(180), new BigDecimal(180), new BigDecimal(45), new BigDecimal(170), new BigDecimal(25));
 
 		ConsolidadoFinanceiroCota consolidadoMurilo2 = Fixture
 				.consolidadoFinanceiroCota(null, cotaMurilo,
-						Fixture.criarData(5, 1, 2010), new BigDecimal(200));
+						Fixture.criarData(5, 1, 2010), new BigDecimal(200), new BigDecimal(230), new BigDecimal(180), new BigDecimal(180), new BigDecimal(180), new BigDecimal(45), new BigDecimal(170), new BigDecimal(25));
 
 		ConsolidadoFinanceiroCota consolidadoMurilo3 = Fixture
 				.consolidadoFinanceiroCota(null, cotaMurilo,
-						Fixture.criarData(6, 1, 2010), new BigDecimal(200));
+						Fixture.criarData(6, 1, 2010), new BigDecimal(200), new BigDecimal(230), new BigDecimal(180), new BigDecimal(180), new BigDecimal(180), new BigDecimal(45), new BigDecimal(170), new BigDecimal(25));
 
 		ConsolidadoFinanceiroCota consolidadoMariana1 = Fixture
 				.consolidadoFinanceiroCota(null, cotaMariana,
-						Fixture.criarData(7, 1, 2010), new BigDecimal(200));
+						Fixture.criarData(7, 1, 2010), new BigDecimal(200), new BigDecimal(230), new BigDecimal(180), new BigDecimal(180), new BigDecimal(180), new BigDecimal(45), new BigDecimal(170), new BigDecimal(25));
 
 		ConsolidadoFinanceiroCota consolidadoMariana2 = Fixture
 				.consolidadoFinanceiroCota(null, cotaMariana,
-						Fixture.criarData(8, 1, 2010), new BigDecimal(200));
+						Fixture.criarData(8, 1, 2010), new BigDecimal(200), new BigDecimal(230), new BigDecimal(180), new BigDecimal(180), new BigDecimal(180), new BigDecimal(45), new BigDecimal(170), new BigDecimal(25));
 
 		ConsolidadoFinanceiroCota consolidadoOrlando1 = Fixture
 				.consolidadoFinanceiroCota(null, cotaOrlando ,
-						Fixture.criarData(9, 1, 2010), new BigDecimal(200));
+						Fixture.criarData(9, 1, 2010), new BigDecimal(200), new BigDecimal(230), new BigDecimal(180), new BigDecimal(180), new BigDecimal(180), new BigDecimal(45), new BigDecimal(170), new BigDecimal(25));
 
 		ConsolidadoFinanceiroCota consolidadoOrlando2 = Fixture
 				.consolidadoFinanceiroCota(null, cotaOrlando ,
-						Fixture.criarData(10, 1, 2010), new BigDecimal(200));
+						Fixture.criarData(10, 1, 2010), new BigDecimal(200), new BigDecimal(230), new BigDecimal(180), new BigDecimal(180), new BigDecimal(180), new BigDecimal(45), new BigDecimal(170), new BigDecimal(25));
 
 
 		ConsolidadoFinanceiroCota consolidadoAcumuloGuilherme1 = Fixture
 				.consolidadoFinanceiroCota(null, cotaGuilherme,
-						Fixture.criarData(1, 2, 2010), new BigDecimal(210));
+						Fixture.criarData(1, 2, 2010), new BigDecimal(210), new BigDecimal(230), new BigDecimal(180), new BigDecimal(180), new BigDecimal(180), new BigDecimal(45), new BigDecimal(170), new BigDecimal(25));
 
 		ConsolidadoFinanceiroCota consolidadoAcumuloGuilherme2 = Fixture
 				.consolidadoFinanceiroCota(null, cotaGuilherme,
-						Fixture.criarData(2, 2, 2010), new BigDecimal(210));
+						Fixture.criarData(2, 2, 2010), new BigDecimal(210), new BigDecimal(230), new BigDecimal(180), new BigDecimal(180), new BigDecimal(180), new BigDecimal(45), new BigDecimal(170), new BigDecimal(25));
 
 		ConsolidadoFinanceiroCota consolidadoAcumuloMurilo1 = Fixture
 				.consolidadoFinanceiroCota(null, cotaMurilo,
-						Fixture.criarData(4, 2, 2010), new BigDecimal(210));
+						Fixture.criarData(4, 2, 2010), new BigDecimal(210), new BigDecimal(230), new BigDecimal(180), new BigDecimal(180), new BigDecimal(180), new BigDecimal(45), new BigDecimal(170), new BigDecimal(25));
 
 		ConsolidadoFinanceiroCota consolidadoAcumuloMariana1 = Fixture
 				.consolidadoFinanceiroCota(null, cotaMariana,
-						Fixture.criarData(7, 2, 2010), new BigDecimal(210));
+						Fixture.criarData(7, 2, 2010), new BigDecimal(210), new BigDecimal(230), new BigDecimal(180), new BigDecimal(180), new BigDecimal(180), new BigDecimal(45), new BigDecimal(170), new BigDecimal(25));
 
-		save(session, consolidado1, consolidado2, consolidado3,
-					  consolidado4, consolidado5, consolidado6,
-					  consolidado7, consolidado8, consolidado9,
-					  consolidado10, consolidado11,consolidado12,
-					  consolidado13,consolidado14,consolidado15,consolidado16,consolidado17,
-					  consolidadoGuilherme1, consolidadoGuilherme2, consolidadoGuilherme3,
-					  consolidadoMurilo1, consolidadoMurilo2, consolidadoMurilo3,
-					  consolidadoMariana1, consolidadoMariana2,
-					  consolidadoOrlando1, consolidadoOrlando2,
-					  consolidadoAcumuloGuilherme1,consolidadoAcumuloGuilherme2,consolidadoAcumuloMariana1,consolidadoAcumuloMurilo1);
+		save(session,consolidado1, consolidado2, consolidado3,
+					 consolidado4, consolidado5, consolidado6,
+					 consolidado7, consolidado8, consolidado9,
+					 consolidado10, consolidado11,consolidado12,
+					 consolidado13,consolidado14,consolidado15,consolidado16,consolidado17,
+					 consolidadoGuilherme1, consolidadoGuilherme2, consolidadoGuilherme3,
+					 consolidadoMurilo1, consolidadoMurilo2, consolidadoMurilo3,
+					 consolidadoMariana1, consolidadoMariana2,
+					 consolidadoOrlando1, consolidadoOrlando2,
+					 consolidadoAcumuloGuilherme1,consolidadoAcumuloGuilherme2,consolidadoAcumuloMariana1,consolidadoAcumuloMurilo1);
 
 
 
@@ -2139,8 +2178,9 @@ public class DataLoader {
 		divida8 = Fixture.divida(consolidado8, cotaManoel, new Date(),
 				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200),false);
 
-		divida9 = Fixture.divida(consolidado9, cotaMaria, new Date(),
+		divida9 = Fixture.divida(consolidado9, cotaManoel, new Date(),
 				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200),false);
+		
 
 		divida10 = Fixture.divida(consolidado10, cotaMaria, new Date(),
 				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200),false);
@@ -2156,6 +2196,7 @@ public class DataLoader {
 
 		divida14 = Fixture.divida(consolidado14, cotaJose, new Date(),
 				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200),false);
+		
 		
 		divida15 = Fixture.divida(consolidado15, cotaManoelCunha, new Date(),
 				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200),false);
@@ -2194,8 +2235,7 @@ public class DataLoader {
 		dividaOrlando = Fixture.divida(consolidadoOrlando1, cotaOrlando, Fixture.criarData(9, 1, 2010),
 				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200),false);
 
-
-
+		
 		dividaAcumuladaGuilherme1 = Fixture.divida(consolidadoAcumuloGuilherme1, cotaGuilherme, Fixture.criarData(1, 2, 2010),
 				usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(210),true);
 
@@ -2207,6 +2247,7 @@ public class DataLoader {
 
 		dividaAcumuladaMariana1 = Fixture.divida(consolidadoAcumuloMariana1, cotaMariana, Fixture.criarData(7, 2, 2010),
 				usuarioJoao, StatusDivida.QUITADA, new BigDecimal(210),true);
+		
 
 		save(session, divida1, divida2, divida3, divida4, divida5, divida6,
 				      divida7, divida8, divida9, divida10, divida11,
@@ -2238,14 +2279,18 @@ public class DataLoader {
 				tipoMovimentoRecReparte, usuarioJoao, estoqueProdutoCotaVeja1,
 				BigDecimal.TEN, cotaManoel, StatusAprovacao.PENDENTE, null);
 
+		movimentoEstoqueCota1.setEstudoCota(estudoCotaManoel);
+		
 		movimentoEstoqueCota2 = Fixture.movimentoEstoqueCota(produtoEdicaoVeja1,
 				tipoMovimentoRecReparte, usuarioJoao, estoqueProdutoCotaVeja1,
 				BigDecimal.TEN, cotaManoel, StatusAprovacao.PENDENTE, null);
+		
 
 		movimentoEstoqueCota3 = Fixture.movimentoEstoqueCota(produtoEdicaoVeja2,
 				tipoMovimentoRecReparte, usuarioJoao, estoqueProdutoCotaVeja2,
 				BigDecimal.TEN, cotaManoel, StatusAprovacao.PENDENTE, null);
-
+		
+		
 		movimentoEstoqueCota4 = Fixture.movimentoEstoqueCota(produtoEdicaoVeja2,
 				tipoMovimentoRecReparte, usuarioJoao, estoqueProdutoCotaVeja2,
 				BigDecimal.TEN, cotaManoel, StatusAprovacao.PENDENTE, null);
@@ -2271,34 +2316,138 @@ public class DataLoader {
 				BigDecimal.TEN, cotaManoel, StatusAprovacao.PENDENTE, null);
 		
 		movimentoEstoqueCota10 = Fixture.movimentoEstoqueCota(produtoEdicaoVeja1,
-				tipoMovimentoRecReparte, usuarioJoao, estoqueProdutoCotaVeja1,
+				tipoMovimentoRecReparte, usuarioJoao, estoqueProdutoCotaManoelCunhaVeja1,
 				BigDecimal.TEN, cotaManoelCunha, StatusAprovacao.PENDENTE, null);
 		
 		movimentoEstoqueCota11 = Fixture.movimentoEstoqueCota(produtoEdicaoVeja1,
-				tipoMovimentoRecReparte, usuarioJoao, estoqueProdutoCotaVeja1,
+				tipoMovimentoRecReparte, usuarioJoao, estoqueProdutoCotaManoelCunhaVeja1,
 				BigDecimal.TEN, cotaManoelCunha, StatusAprovacao.PENDENTE, null);
 		
 		movimentoEstoqueCota12 = Fixture.movimentoEstoqueCota(produtoEdicaoVeja1,
-				tipoMovimentoRecReparte, usuarioJoao, estoqueProdutoCotaVeja1,
+				tipoMovimentoRecReparte, usuarioJoao, estoqueProdutoCotaManoelCunhaVeja1,
 				BigDecimal.TEN, cotaManoelCunha, StatusAprovacao.PENDENTE, null);
+		
+		MovimentoEstoqueCota movimentoEstoqueCota333 = Fixture.movimentoEstoqueCota(produtoEdicaoInfoExame1,
+				tipoMovimentoRecReparte, usuarioJoao, estoqueProdutoCotaInfoExame1,
+				BigDecimal.TEN, cotaManoel, StatusAprovacao.PENDENTE, null);
 
-		MovimentoEstoqueCota movimentoEstoqueCota13 = Fixture.movimentoEstoqueCota(produtoEdicaoVeja1,
+		//TODO
+		movimentoEstoqueCota2.setEstudoCota(estudoCotaManoel);
+		movimentoEstoqueCota3.setEstudoCota(estudoCotaManoel);
+		movimentoEstoqueCota4.setEstudoCota(estudoCotaManoel);
+		movimentoEstoqueCota5.setEstudoCota(estudoCotaManoel);
+		movimentoEstoqueCota6.setEstudoCota(estudoCotaManoel);
+		movimentoEstoqueCota7.setEstudoCota(estudoCotaManoel);
+		movimentoEstoqueCota8.setEstudoCota(estudoCotaManoel);
+		movimentoEstoqueCota9.setEstudoCota(estudoCotaManoel);
+		movimentoEstoqueCota10.setEstudoCota(estudoCotaManoel);
+		movimentoEstoqueCota11.setEstudoCota(estudoCotaManoel);
+		movimentoEstoqueCota333.setEstudoCota(estudoCotaManoel);
+		
+		//MOVIMENTOS TIPO ENCALHE
+		movimentoEstoqueCota13 = Fixture.movimentoEstoqueCota(produtoEdicaoVeja1,
+				tipoMovimentoEnvioEncalhe, usuarioJoao, estoqueProdutoCotaManoelVeja1,
+				BigDecimal.TEN, cotaManoel, StatusAprovacao.PENDENTE, null);
+
+		movimentoEstoqueCota14 = Fixture.movimentoEstoqueCota(produtoEdicaoVeja1,
+				tipoMovimentoEnvioEncalhe, usuarioJoao, estoqueProdutoCotaManoelVeja2,
+				BigDecimal.TEN, cotaManoel, StatusAprovacao.PENDENTE, null);
+
+		movimentoEstoqueCota15 = Fixture.movimentoEstoqueCota(produtoEdicaoVeja1,
+				tipoMovimentoEnvioEncalhe, usuarioJoao, estoqueProdutoCotaManoelVeja3,
+				BigDecimal.TEN, cotaManoel, StatusAprovacao.PENDENTE, null);
+		
+		movimentoEstoqueCota16 = Fixture.movimentoEstoqueCota(produtoEdicaoVeja1,
+				tipoMovimentoEnvioEncalhe, usuarioJoao, estoqueProdutoCotaManoelVeja4,
+				BigDecimal.TEN, cotaManoel, StatusAprovacao.PENDENTE, null);
+		
+		movimentoEstoqueCota17 = Fixture.movimentoEstoqueCota(produtoEdicaoVeja1,
+				tipoMovimentoEnvioEncalhe, usuarioJoao, estoqueProdutoCotaManoelCapricho1,
+				BigDecimal.TEN, cotaManoel, StatusAprovacao.PENDENTE, null);
+		
+		movimentoEstoqueCota18 = Fixture.movimentoEstoqueCota(produtoEdicaoVeja1,
+				tipoMovimentoEnvioEncalhe, usuarioJoao, estoqueProdutoCotaManoelQuatroRodas1,
+				BigDecimal.TEN, cotaManoel, StatusAprovacao.PENDENTE, null);
+
+		
+		
+		//MOVIMENTOS TIPO CONSIGNADO
+		movimentoEstoqueCota19 = Fixture.movimentoEstoqueCota(produtoEdicaoVeja1,
+				tipoMovimentoRecReparte, usuarioJoao, estoqueProdutoCotaManoelSuper1,
+				BigDecimal.TEN, cotaManoel, StatusAprovacao.PENDENTE, null);
+		movimentoEstoqueCota19.setEstudoCota(estudoCotaManoel);
+
+		movimentoEstoqueCota20 = Fixture.movimentoEstoqueCota(produtoEdicaoVeja1,
+				tipoMovimentoEnvioJornaleiro, usuarioJoao, estoqueProdutoCotaManoelQuatroRodas1,
+				BigDecimal.TEN, cotaManoel, StatusAprovacao.PENDENTE, null);
+		movimentoEstoqueCota20.setEstudoCota(estudoCotaManoel);
+
+		movimentoEstoqueCota21 = Fixture.movimentoEstoqueCota(produtoEdicaoVeja1,
+				tipoMovimentoEnvioJornaleiro, usuarioJoao, estoqueProdutoCotaManoelCapricho1,
+				BigDecimal.TEN, cotaManoel, StatusAprovacao.PENDENTE, null);
+		movimentoEstoqueCota21.setEstudoCota(estudoCotaManoel);
+		
+		movimentoEstoqueCota22 = Fixture.movimentoEstoqueCota(produtoEdicaoVeja1,
+				tipoMovimentoEnvioJornaleiro, usuarioJoao, estoqueProdutoCotaManoelVeja4,
+				BigDecimal.TEN, cotaManoel, StatusAprovacao.PENDENTE, null);
+		movimentoEstoqueCota22.setEstudoCota(estudoCotaManoel);
+		
+		movimentoEstoqueCota23 = Fixture.movimentoEstoqueCota(produtoEdicaoVeja1,
+				tipoMovimentoEnvioJornaleiro, usuarioJoao, estoqueProdutoCotaManoelVeja3,
+				BigDecimal.TEN, cotaManoel, StatusAprovacao.PENDENTE, null);
+		movimentoEstoqueCota23.setEstudoCota(estudoCotaManoel);
+		
+		movimentoEstoqueCota24 = Fixture.movimentoEstoqueCota(produtoEdicaoVeja1,
+				tipoMovimentoEnvioJornaleiro, usuarioJoao, estoqueProdutoCotaManoelVeja2,
+				BigDecimal.TEN, cotaManoel, StatusAprovacao.PENDENTE, null);
+		movimentoEstoqueCota24.setEstudoCota(estudoCotaManoel);
+		
+		
+		
+		//MOVIMENTOS VENDA_ENCALHE
+		movimentoEstoqueCota25 = Fixture.movimentoEstoqueCota(produtoEdicaoVeja1,
+				tipoMovimentoVendaEncalhe, usuarioJoao, estoqueProdutoCotaManoelVeja1,
+				BigDecimal.TEN, cotaManoel, StatusAprovacao.PENDENTE, null);
+
+		movimentoEstoqueCota26 = Fixture.movimentoEstoqueCota(produtoEdicaoVeja1,
+				tipoMovimentoVendaEncalhe, usuarioJoao, estoqueProdutoCotaManoelVeja3,
+				BigDecimal.TEN, cotaManoel, StatusAprovacao.PENDENTE, null);
+
+		movimentoEstoqueCota27 = Fixture.movimentoEstoqueCota(produtoEdicaoVeja1,
+				tipoMovimentoVendaEncalhe, usuarioJoao, estoqueProdutoCotaManoelVeja4,
+				BigDecimal.TEN, cotaManoel, StatusAprovacao.PENDENTE, null);
+		
+		movimentoEstoqueCota28 = Fixture.movimentoEstoqueCota(produtoEdicaoVeja1,
+				tipoMovimentoVendaEncalhe, usuarioJoao, estoqueProdutoCotaManoelVeja2,
+				BigDecimal.TEN, cotaManoel, StatusAprovacao.PENDENTE, null);
+		
+		movimentoEstoqueCota29 = Fixture.movimentoEstoqueCota(produtoEdicaoVeja1,
+				tipoMovimentoVendaEncalhe, usuarioJoao, estoqueProdutoCotaManoelQuatroRodas1,
+				BigDecimal.TEN, cotaManoel, StatusAprovacao.PENDENTE, null);
+		
+		movimentoEstoqueCota30 = Fixture.movimentoEstoqueCota(produtoEdicaoVeja1,
+				tipoMovimentoVendaEncalhe, usuarioJoao, estoqueProdutoCotaManoelSuper1,
+				BigDecimal.TEN, cotaManoel, StatusAprovacao.PENDENTE, null);
+		
+
+		
+		MovimentoEstoqueCota movimentoEstoqueCota31 = Fixture.movimentoEstoqueCota(produtoEdicaoVeja1,
 				tipoMovimentoRecReparte, usuarioJoao, estoqueProdutoCotaVeja1,
 				BigDecimal.TEN, cotaGuilherme, StatusAprovacao.PENDENTE, null);
 
-		MovimentoEstoqueCota movimentoEstoqueCota14 = Fixture.movimentoEstoqueCota(produtoEdicaoInfoExame1,
+		MovimentoEstoqueCota movimentoEstoqueCota32 = Fixture.movimentoEstoqueCota(produtoEdicaoInfoExame1,
 				tipoMovimentoRecReparte, usuarioJoao, estoqueProdutoCotaInfoExame1,
 				new BigDecimal(55), cotaGuilherme, StatusAprovacao.PENDENTE, null);
 
-		MovimentoEstoqueCota movimentoEstoqueCota15 = Fixture.movimentoEstoqueCota(produtoEdicaoSuper1,
+		MovimentoEstoqueCota movimentoEstoqueCota33 = Fixture.movimentoEstoqueCota(produtoEdicaoSuper1,
 				tipoMovimentoRecReparte, usuarioJoao, estoqueProdutoCotaSuper1,
 				BigDecimal.TEN, cotaMurilo, StatusAprovacao.PENDENTE, null);
 
-		MovimentoEstoqueCota movimentoEstoqueCota16 = Fixture.movimentoEstoqueCota(produtoEdicaoCapricho1,
+		MovimentoEstoqueCota movimentoEstoqueCota34 = Fixture.movimentoEstoqueCota(produtoEdicaoCapricho1,
 				tipoMovimentoRecReparte, usuarioJoao, estoqueProdutoCotaCapricho1,
 				BigDecimal.TEN, cotaMariana, StatusAprovacao.PENDENTE, null);
 
-		MovimentoEstoqueCota movimentoEstoqueCota17 = Fixture.movimentoEstoqueCota(produtoEdicaoQuatroRodas1,
+		MovimentoEstoqueCota movimentoEstoqueCota35 = Fixture.movimentoEstoqueCota(produtoEdicaoQuatroRodas1,
 				tipoMovimentoRecReparte, usuarioJoao, estoqueProdutoCotaQuatroRodas1,
 				BigDecimal.TEN, cotaOrlando, StatusAprovacao.PENDENTE, null);
 
@@ -2307,7 +2456,13 @@ public class DataLoader {
 			 movimentoEstoqueCota7, movimentoEstoqueCota8, movimentoEstoqueCota9,
 			 movimentoEstoqueCota10, movimentoEstoqueCota11, movimentoEstoqueCota12,
 			 movimentoEstoqueCota13, movimentoEstoqueCota14, movimentoEstoqueCota15,
-			 movimentoEstoqueCota16, movimentoEstoqueCota17);
+			 movimentoEstoqueCota16, movimentoEstoqueCota17, movimentoEstoqueCota18,
+			 movimentoEstoqueCota19, movimentoEstoqueCota20, movimentoEstoqueCota21,
+			 movimentoEstoqueCota22, movimentoEstoqueCota23, movimentoEstoqueCota24,
+			 movimentoEstoqueCota25, movimentoEstoqueCota26, movimentoEstoqueCota27,
+			 movimentoEstoqueCota28, movimentoEstoqueCota29, movimentoEstoqueCota30,
+			 movimentoEstoqueCota31, movimentoEstoqueCota32,movimentoEstoqueCota33, 
+			 movimentoEstoqueCota34,movimentoEstoqueCota35);
 	}
 
 	private static void criarMovimentosEstoqueCotaConferenciaEncalhe(Session session) {
@@ -2380,6 +2535,11 @@ public class DataLoader {
 			Fixture.parametroSistema(TipoParametroSistema.NUMERO_DIAS_PERMITIDO_LANCAMENTO_SOBRA_DE, "7");
 
 		session.save(parametroSistema);
+		
+		parametroSistema =
+				Fixture.parametroSistema(TipoParametroSistema.PATH_INTERFACE_NFE_IMPORTACAO, "C:/notas/");
+		
+		session.save(parametroSistema);
 	}
 
 	private static void criarMovimentosEstoque(Session session) {
@@ -2443,10 +2603,11 @@ public class DataLoader {
 					 				 estoqueProdutoVeja2, new Date(), new BigDecimal(1),
 					 				 StatusAprovacao.PENDENTE, null);
 		session.save(movimentoRecFisicoVeja2);
-
+		
+		
 		MovimentoEstoque movimentoRecFisicoVeja3 =
 			Fixture.movimentoEstoque(null, produtoEdicaoVeja3, tipoMovimentoRecFisico, usuarioJoao,
-					 				 estoqueProdutoVeja3, new Date(), new BigDecimal(1),
+					 				 estoqueProdutoVeja3, DateUtil.subtrairDias(new Date(), 6), new BigDecimal(1),
 					 				 StatusAprovacao.PENDENTE, null);
 		session.save(movimentoRecFisicoVeja3);
 
@@ -2473,6 +2634,12 @@ public class DataLoader {
 					 				 estoqueProdutoVeja2, new Date(), new BigDecimal(1),
 					 				 StatusAprovacao.PENDENTE, null);
 		session.save(movimentoEnvioEncalheVeja2);
+		
+		MovimentoEstoque movimentoEnvioEncalheVeja4 =
+				Fixture.movimentoEstoque(null, produtoEdicaoVeja4, tipoMovimentoEnvioEncalhe, usuarioJoao,
+						 				 estoqueProdutoVeja4, new Date(), new BigDecimal(1),
+						 				 StatusAprovacao.PENDENTE, null);
+			session.save(movimentoEnvioEncalheVeja4);
 	}
 
 	private static void criarEstoquesProdutos(Session session) {
@@ -2630,6 +2797,7 @@ public class DataLoader {
 				.estudo(BigDecimal.TEN, lancamentoCapricho1.getDataLancamentoDistribuidor(), produtoEdicaoCapricho1);
 		session.save(estudoCapricho1);
 
+		//TOD
 		estudoVeja1Atual = Fixture
 				.estudo(BigDecimal.TEN, new Date(), produtoEdicaoVeja1);
 		session.save(estudoVeja1Atual);
@@ -2710,7 +2878,7 @@ public class DataLoader {
 		estudoCotaSuper1Manoel = Fixture.estudoCota(new BigDecimal(10), new BigDecimal(10), estudoSuper1, cotaManoel);
 		save(session,estudoCotaSuper1Manoel);
 
-		estudoCotaManoel = Fixture.estudoCota(BigDecimal.TEN, BigDecimal.TEN, estudoVeja1Atual, cotaManoel);
+		estudoCotaManoel = Fixture.estudoCota(BigDecimal.TEN, BigDecimal.TEN, estudoVeja1, cotaManoel);
 		save(session,estudoCotaManoel);
 
 		estudoCotaVeja1JoaoEncaljeAnt = Fixture.estudoCota(new BigDecimal(10), new BigDecimal(10), estudoVeja1EncalheAnt, cotaJose);
@@ -2863,7 +3031,7 @@ public class DataLoader {
 
 						new Date(), BigDecimal.TEN, StatusLancamento.BALANCEADO,
 
-						null, 1);
+						null, 2);
 		session.save(lancamentoVeja2);
 
 		lancamentoSuper1 = Fixture
@@ -2874,7 +3042,7 @@ public class DataLoader {
 						DateUtil.adicionarDias(new Date(),
 								produtoEdicaoSuper1.getPeb()), new Date(),
 								new Date(), new BigDecimal(100), StatusLancamento.CONFIRMADO,
-								null, 1);
+								null, 3);
 		session.save(lancamentoSuper1);
 
 		lancamentoCapricho1 = Fixture
@@ -2901,7 +3069,7 @@ public class DataLoader {
 						DateUtil.adicionarDias(new Date(), 0),
 						DateUtil.adicionarDias(new Date(),+5), new Date(),
 						new Date(), BigDecimal.TEN,  StatusLancamento.EXPEDIDO,
-						null, 1);
+						null, 4);
 		session.save(lancamentoVeja1EcncalheAnt);
 
 		lancamentoVeja2EcncalheAnt = Fixture
@@ -2913,7 +3081,7 @@ public class DataLoader {
 
 						new Date(), BigDecimal.TEN, StatusLancamento.EXPEDIDO,
 
-						null, 1);
+						null, 5);
 		session.save(lancamentoVeja2EcncalheAnt);
 
 
@@ -3380,9 +3548,30 @@ public class DataLoader {
 																					 , "neste ato, por seus representantes infra-assinados, doravante denominada simplesmente CONTRATADA.", 30, 30);
 		save(session, parametroContrato);
 		
+	
+		ParametrosAprovacaoDistribuidor parametrosAprovacaoDistribuidor = new ParametrosAprovacaoDistribuidor();
+		
+		parametrosAprovacaoDistribuidor.setAjusteEstoque(true);
+		parametrosAprovacaoDistribuidor.setDebitoCredito(true);
+		parametrosAprovacaoDistribuidor.setDevolucaoFornecedor(true);
+		parametrosAprovacaoDistribuidor.setFaltasSobras(true);
+		parametrosAprovacaoDistribuidor.setNegociacao(true);
+		parametrosAprovacaoDistribuidor.setPostergacaoCobranca(true);
+		parametrosAprovacaoDistribuidor.setRecibo(true);
+		
+		ParametrosRecolhimentoDistribuidor parametrosRecolhimentoDistribuidor = new ParametrosRecolhimentoDistribuidor();
+
 		distribuidor.setParametroContratoCota(parametroContrato);
 
 		distribuidor.setFatorRelancamentoParcial(5);
+		distribuidor.setInformacoesComplementaresProcuracao("informacoesComplementaresProcuracao");
+		distribuidor.setNegociacaoAteParcelas(10);
+		distribuidor.setParametrosAprovacaoDistribuidor(parametrosAprovacaoDistribuidor);
+		distribuidor.setParametrosRecolhimentoDistribuidor(parametrosRecolhimentoDistribuidor);
+		distribuidor.setPrazoAvisoPrevioValidadeGarantia(40);
+		distribuidor.setPrazoFollowUp(50);
+		distribuidor.setValorConsignadoSuspensaoCotas(new BigDecimal(9999999));
+		distribuidor.setQtdDiasLimiteParaReprogLancamento(2);
 		
 		save(session, distribuidor);
 		
@@ -3712,13 +3901,52 @@ public class DataLoader {
 
 	private static void criarTiposNotaFiscal(Session session) {
 		tipoNotaFiscalRecebimento = Fixture.tipoNotaFiscalRecebimento();
+		tipoNotaFiscalDevolucao = Fixture.tipoNotaFiscalDevolucao();
+
+		save(session, tipoNotaFiscalRecebimento, tipoNotaFiscalDevolucao);
+
+
 		session.save(tipoNotaFiscalRecebimento);
 	}
 
 	private static void criarCFOP(Session session) {
+		
+		cfop1209 = Fixture.cfop1209();
+		session.save(cfop1209);
+		
+		cfop1210 = Fixture.cfop1210();
+		session.save(cfop1210);
+		
 		cfop5102 = Fixture.cfop5102();
 		session.save(cfop5102);
 	}
+	
+	
+	
+	private static void criarParametroEmissaoNotaFiscal(Session session) {
+		
+		parametroEmissaoNotaFiscalEntradaDevolucaoEncalhe = 
+				Fixture.parametroEmissaoNotaFiscal(
+						cfop1209, 
+						cfop1210, 
+						GrupoNotaFiscal.RECEBIMENTO_MERCADORIAS_ENCALHE, "0002");
+
+		session.save(parametroEmissaoNotaFiscalEntradaDevolucaoEncalhe);
+
+		
+		parametroEmissaoNotaFiscalDevolucaoMercadoria = 
+				Fixture.parametroEmissaoNotaFiscal(
+						cfop1209, 
+						cfop1210, 
+						GrupoNotaFiscal.DEVOLUCAO_MERCADORIA_FORNECEDOR, 
+						"0001");
+		
+		session.save(parametroEmissaoNotaFiscalDevolucaoMercadoria);
+
+		
+	}
+	
+	
 
 	private static void criarTiposMovimento(Session session) {
 		tipoMovimentoFaltaEm = Fixture.tipoMovimentoFaltaEm();
@@ -3730,16 +3958,22 @@ public class DataLoader {
 
 
 		tipoMovimentoVendaEncalhe = Fixture.tipoMovimentoVendaEncalhe();
+		tipoMovimentoEstornoVendaEncalhe = Fixture.tipoMovimentoEstornoVendaEncalhe();
 
 		tipoMovimentoFinanceiroCompraEncalhe = Fixture.tipoMovimentoFinanceiroCompraEncalhe();
 
-		save(session, tipoMovimentoVendaEncalhe,tipoMovimentoFinanceiroCompraEncalhe);
+		save(session, tipoMovimentoVendaEncalhe,tipoMovimentoFinanceiroCompraEncalhe,tipoMovimentoEstornoVendaEncalhe);
 
 
 		tipoMovimentoSuplementarCotaAusente = Fixture.tipoMovimentoSuplementarCotaAusente();
 
 		tipoMovimentoEnvioEncalhe = Fixture.tipoMovimentoEnvioEncalhe();
 
+		tipoMovimentoRecebimentoEncalhe 						= Fixture.tipoMovimentoRecebimentoEncalhe();
+		tipoMovimentoRecebimentoEncalheJuramentado 				= Fixture.tipoMovimentoRecebimentoEncalheJuramentado();
+		tipoMovimentoSuplementarEnvioEncalheAnteriroProgramacao = Fixture.tipoMovimentoSuplementarEnvioEncalheAnteriroProgramacao();
+		
+		
 		tipoMovimentoEstornoCotaAusente = Fixture.tipoMovimentoEstornoCotaAusente();
 
 		tipoMovimentoReparteCotaAusente = Fixture.tipoMovimentoReparteCotaAusente();
@@ -3750,6 +3984,8 @@ public class DataLoader {
 		
 		tipoMovimentoFinanceiroCredito = Fixture.tipoMovimentoFinanceiroCredito();
 		tipoMovimentoFinanceiroDebito = Fixture.tipoMovimentoFinanceiroDebito();
+		tipoMovimentoFinanceiroDebitoNA = Fixture.tipoMovimentoFinanceiroDebitoNA();
+		tipoMovimentoFinanceiroDebitoFaturamento = Fixture.tipoMovimentoFinanceiroDebitoFaturamento();
 		tipoMovimentoFinanceiroRecebimentoReparte = Fixture.tipoMovimentoFinanceiroRecebimentoReparte();
 		tipoMovimentoFinanceiroJuros = Fixture.tipoMovimentoFinanceiroJuros();
 		tipoMovimentoFinanceiroMulta = Fixture.tipoMovimentoFinanceiroMulta();
@@ -3762,14 +3998,17 @@ public class DataLoader {
 
 		tipoMovimentoFinanceiroCredito.setAprovacaoAutomatica(false);
 		tipoMovimentoFinanceiroDebito.setAprovacaoAutomatica(false);
+		tipoMovimentoFinanceiroDebitoNA.setAprovacaoAutomatica(false);
 
 		save(session, tipoMovimentoFaltaEm, tipoMovimentoFaltaDe, tipoMovimentoSuplementarCotaAusente,
 				tipoMovimentoSobraEm, tipoMovimentoSobraDe,
 				tipoMovimentoRecFisico, tipoMovimentoRecReparte,
-				tipoMovimentoFinanceiroCredito, tipoMovimentoFinanceiroDebito,
-				tipoMovimentoEnvioEncalhe, tipoMovimentoFinanceiroRecebimentoReparte,
+				tipoMovimentoFinanceiroCredito, tipoMovimentoFinanceiroDebito, tipoMovimentoFinanceiroDebitoNA,
+				tipoMovimentoFinanceiroDebitoFaturamento,tipoMovimentoEnvioEncalhe, tipoMovimentoFinanceiroRecebimentoReparte,
 				tipoMovimentoFinanceiroJuros, tipoMovimentoFinanceiroMulta,
-				tipoMovimentoFinanceiroEnvioEncalhe, tipoMovimentoSuplementarCotaAusente);
+				tipoMovimentoFinanceiroEnvioEncalhe, tipoMovimentoSuplementarCotaAusente,
+				tipoMovimentoRecebimentoEncalhe, tipoMovimentoRecebimentoEncalheJuramentado, 				
+				tipoMovimentoSuplementarEnvioEncalheAnteriroProgramacao);
 
 	}
 
@@ -3926,19 +4165,16 @@ public class DataLoader {
 			session.save(produtoEdicao);
 
 
-			TipoNotaFiscal tipoNotaFiscal = Fixture.tipoNotaFiscalRecebimento();
-			session.save(tipoNotaFiscal);
-
 
 			List<ItemRecebimentoFisico> listaRecebimentos = new ArrayList<ItemRecebimentoFisico>() ;
 
 			EstoqueProduto estoque  =  Fixture.estoqueProduto(produtoEdicao, BigDecimal.ZERO);
 			session.save(estoque);
-
+			
 			for(int x= 1; x< 3 ;x++){
 
 				NotaFiscalEntradaFornecedor notaFiscalFornecedor = Fixture
-						.notaFiscalEntradaFornecedor(cfop, juridica, fornecedor, tipoNotaFiscal,
+						.notaFiscalEntradaFornecedor(cfop, juridica, fornecedor, tipoNotaFiscalDevolucao,
 								usuario, new BigDecimal(1),new BigDecimal(1),new BigDecimal(1));
 				session.save(notaFiscalFornecedor);
 
@@ -4025,6 +4261,7 @@ public class DataLoader {
 		criarProdutos(session);
 		criarProdutosEdicao(session);
 		criarCFOP(session);
+		criarParametroEmissaoNotaFiscal(session);
 		criarTiposMovimento(session);
 		criarTiposNotaFiscal(session);
 		criarNotasFiscais(session);
@@ -4344,47 +4581,6 @@ public class DataLoader {
 
 		save(session, feriadoProclamacao);
 	}
-
-	private static void criarEnderecoCotaRelatorioVendas(Session session) {
-
-		for (int i=0; i<=9; i++) {
-			
-			Endereco endereco = Fixture.criarEndereco(
-					TipoEndereco.COMERCIAL, "13730-000", "Rua Marechal Deodoro", 50, "Centro", "Mococa", "SP");
-
-			EnderecoCota enderecoCota = new EnderecoCota();
-
-			if ( i == 0)
-				enderecoCota.setCota(cotaJose);
-			else if (i == 1)
-				enderecoCota.setCota(cotaManoel);
-			else if (i == 2)
-				enderecoCota.setCota(cotaManoelCunha);
-			else if (i == 3)
-				enderecoCota.setCota(cotaMaria);
-			else if (i == 4)
-				enderecoCota.setCota(cotaLuis);
-			else if (i == 5)
-				enderecoCota.setCota(cotaJoao);
-			else if (i == 6)
-				enderecoCota.setCota(cotaGuilherme);
-			else if (i == 7)
-				enderecoCota.setCota(cotaMurilo);
-			else if (i == 8)
-				enderecoCota.setCota(cotaMariana);
-			else if (i == 9)
-				enderecoCota.setCota(cotaOrlando);
-			else
-				enderecoCota.setCota(cotaManoel);
-				
-			enderecoCota.setEndereco(endereco);
-			enderecoCota.setPrincipal(true);
-			enderecoCota.setTipoEndereco(TipoEndereco.COBRANCA);
-
-			save(session, endereco, enderecoCota);
-
-		}
-	}
 	
 	private static void criarEnderecoCotaPF(Session session) {
 		Endereco endereco = Fixture.criarEndereco(
@@ -4469,12 +4665,8 @@ public class DataLoader {
 					new BigDecimal(30), new BigDecimal(20), new BigDecimal(10), "ZZ2", 25L, produto, null, false);
 			save(session,produtoEdicao);
 
-
-			TipoNotaFiscal tipoNotaFiscal = Fixture.tipoNotaFiscalRecebimento();
-			save(session,tipoNotaFiscal);
-
 			NotaFiscalEntradaFornecedor notaFiscalFornecedor = Fixture
-					.notaFiscalEntradaFornecedor(cfop, juridica, fornecedor, tipoNotaFiscal,
+					.notaFiscalEntradaFornecedor(cfop, juridica, fornecedor, tipoNotaFiscalRecebimento,
 							usuario, new BigDecimal(1),new BigDecimal(1),new BigDecimal(1));
 			save(session,notaFiscalFornecedor);
 
@@ -5010,10 +5202,356 @@ public class DataLoader {
 
 		}
 
-
-
 	}
 
+	private static void gerarCargaDadosConferenciaEncalhe(Session session) {
+		
+		TipoNotaFiscal tipoNotaFiscal = Fixture.tipoNotaFiscalRecebimentoMercadoriasEncalhe();
+		save(session, tipoNotaFiscal);
+		
+		Box boxRecolhimento = Fixture.criarBox("ENC_BOX1", "Box Encalhe", TipoBox.RECOLHIMENTO, false);
+		save(session, boxRecolhimento);
+		
+		ParametroUsuarioBox parametroUsuarioBox = Fixture.parametroUsuarioBox(boxRecolhimento, usuarioJoao, true);
+		save(session, parametroUsuarioBox);
+		
+		boxRecolhimento = Fixture.criarBox("ENC_BOX2", "Box Encalhe_2", TipoBox.RECOLHIMENTO, false);
+		save(session, boxRecolhimento);
+		
+		boxRecolhimento = Fixture.criarBox("ENC_BOX3", "Box Encalhe_3", TipoBox.RECOLHIMENTO, false);
+		save(session, boxRecolhimento);
+		
+		boxRecolhimento = Fixture.criarBox("ENC_BOX4", "Box Encalhe_4", TipoBox.RECOLHIMENTO, false);
+		save(session, boxRecolhimento);
+		
+		/**
+		 * COTA
+		 */
+		PessoaJuridica valdomiroDevolvedorEncalhe = Fixture.pessoaJuridica(
+				"Vardomiro Devolve Jornal S.A.", 
+				"12345632167", 
+				"5675123156583", 
+				"vardomiro@devolve.com", 
+				"345345345345");
+		
+		save(session, valdomiroDevolvedorEncalhe);
+
+		Cota cotaConferenciaEncalhe = Fixture.cota(5637, valdomiroDevolvedorEncalhe, SituacaoCadastro.ATIVO, box1);
+		
+		save(session, cotaConferenciaEncalhe);
+		
+		FormaCobranca formaBoleto =
+				Fixture.formaCobrancaBoleto(true, new BigDecimal(200), true, bancoHSBC,
+											BigDecimal.ONE, BigDecimal.ONE,null);
+		
+		FormaCobranca formaDeposito =
+				Fixture.formaCobrancaBoleto(true, new BigDecimal(200), true, bancoHSBC,
+											BigDecimal.ONE, BigDecimal.ONE,null);
+		FormaCobranca formaDinheiro =
+				Fixture.formaCobrancaBoleto(true, new BigDecimal(200), true, bancoHSBC,
+											BigDecimal.ONE, BigDecimal.ONE,null);
+
+		
+		save(session, formaBoleto, formaDeposito, formaDinheiro);
+		
+		Set<FormaCobranca> formasCobranca = new HashSet<FormaCobranca>();
+		
+		formasCobranca.add(formaBoleto);
+		formasCobranca.add(formaDeposito);
+		formasCobranca.add(formaDinheiro);
+		
+		ParametroCobrancaCota parametroCobrancaCotaConfEncalhe = Fixture.parametroCobrancaCota(
+				formasCobranca,
+				1, null, cotaConferenciaEncalhe, 1,
+				false, new BigDecimal(1000));
+		
+		save(session, parametroCobrancaCotaConfEncalhe);
+
+		formaBoleto.setParametroCobrancaCota(parametroCobrancaCotaConfEncalhe);
+		formaBoleto.setPrincipal(true);
+
+		save(session, formaBoleto);
+		
+		String codigoProduto = "8611"; 
+		String nomeProduto = "Produto 8611***";
+		String descProduto = "Produto 8611";
+		PeriodicidadeProduto periodicidade = PeriodicidadeProduto.MENSAL;
+		int produtoPeb = 1;
+		int produtoPacotePadrao = 10;
+		BigDecimal produtoPeso = BigDecimal.TEN;
+		
+		String codigoProdutoEdicao = "8611";
+		Long numeroEdicao = 8611L; 
+		int pacotePadrao = 10; 
+		int peb = 1; 
+		BigDecimal peso = BigDecimal.TEN; 
+		
+		BigDecimal precoCusto = new BigDecimal(16);
+		BigDecimal precoVenda = new BigDecimal(16); 
+		String codigoDeBarras = "BYX8611"; 
+		
+		BigDecimal expectativaVenda = BigDecimal.TEN; 
+		
+		boolean parcial = false;
+		
+		Long numeroNF = 8611L;
+		String serie = "8611";
+		String chaveAcesso = "8611";
+		
+		BigDecimal valorBruto = new BigDecimal(17);
+		BigDecimal valorDesconto = BigDecimal.ONE;
+		BigDecimal valorLiquido = new BigDecimal(16);
+		
+		Date dataLancamento = Fixture.criarData(1, Calendar.JUNE, 2012);
+		Date dataRecolhimento = Fixture.criarData(20, Calendar.JUNE, 2012);
+		TipoLancamento tipoLancamento = TipoLancamento.LANCAMENTO;
+		
+		BigDecimal qtdeItemNota = new BigDecimal(80);
+		
+		Date dataRecebimentoFisico = Fixture.criarData(1, Calendar.JUNE, 2012);
+		BigDecimal qtdeItemRecebimentoFisico  = new BigDecimal(80);
+		
+		BigDecimal qtdeReparteLancamento = new BigDecimal(80);
+		Integer codigoSM = 8611;
+		
+		BigDecimal qtdeReparteEstudo = new BigDecimal(80);
+		Date dataEstudo = Fixture.criarData(1, Calendar.JUNE, 2012);
+
+		BigDecimal estoqueProdCotaQtdeRecebida = new BigDecimal(80);
+		BigDecimal estoqueProdCotaQtdeDevolvida = BigDecimal.ZERO;
+		
+		Date dataRecolhimentoChamadaEncalhe = Fixture.criarData(20, Calendar.JUNE, 2012);
+		
+		TipoChamadaEncalhe tipoChamadaEncalhe = TipoChamadaEncalhe.CHAMADAO;
+				
+		boolean indChamadaEncalheCotaConferida = false; 
+		
+		BigDecimal qtdePrevistaChamadaEncCota = new BigDecimal(80);
+		
+		int contador = 0;
+		
+		while(contador++ < 30) {
+			
+			codigoProduto 		= "8611"; 
+			nomeProduto 		= "Produto 8611";
+			codigoProdutoEdicao = "8611";
+			numeroEdicao 		= 8611L; 
+			codigoSM 			= 8611;
+			codigoDeBarras 		= "BYX8611"; 
+			
+			nomeProduto 		= nomeProduto 			+ contador;
+			codigoProduto 		= codigoProduto 		+ contador;
+			numeroEdicao 		= numeroEdicao 			+ contador;
+			codigoProdutoEdicao = codigoProdutoEdicao 	+ contador;
+			codigoSM 			= codigoSM 				+ contador; 
+			codigoDeBarras 		= codigoDeBarras 		+ contador;
+			
+			geraMassaParaConferenciaEncalheCota(
+					session, cotaConferenciaEncalhe, codigoProduto, 
+					nomeProduto, descProduto, periodicidade, 
+					produtoPeb, produtoPacotePadrao, produtoPeso, 
+					codigoProdutoEdicao, numeroEdicao, pacotePadrao, 
+					peb, peso, precoCusto, 
+					precoVenda, codigoDeBarras, expectativaVenda, 
+					parcial, numeroNF, serie, 
+					chaveAcesso, valorBruto, valorDesconto, 
+					valorLiquido, dataLancamento, dataRecolhimento, 
+					tipoLancamento, qtdeItemNota, dataRecebimentoFisico, 
+					qtdeItemRecebimentoFisico, qtdeReparteLancamento, codigoSM, 
+					qtdeReparteEstudo, dataEstudo, estoqueProdCotaQtdeRecebida, 
+					estoqueProdCotaQtdeDevolvida, dataRecolhimentoChamadaEncalhe, tipoChamadaEncalhe, 
+					indChamadaEncalheCotaConferida, qtdePrevistaChamadaEncCota);
+			
+		}
+		
+		
+	}
+	
+	private static void geraMassaParaConferenciaEncalheCota(
+			
+			Session session, 
+			
+			Cota cotaConferenciaEncalhe,
+			String codigoProduto, 
+			String nomeProduto,
+			String descProduto,
+			PeriodicidadeProduto periodicidade,
+			int produtoPeb,
+			int produtoPacotePadrao,
+			BigDecimal produtoPeso,
+			
+			String codigoProdutoEdicao,
+			Long numeroEdicao, 
+			int pacotePadrao, 
+			int peb, 
+			BigDecimal peso, 
+			BigDecimal precoCusto,
+			BigDecimal precoVenda, 
+			String codigoDeBarras, 
+			BigDecimal expectativaVenda, 
+			boolean parcial,
+			
+			Long numeroNF,
+			String serie,
+			String chaveAcesso,
+			
+			BigDecimal valorBruto,
+			BigDecimal valorDesconto,
+			BigDecimal valorLiquido,
+			
+			Date dataLancamento,
+			Date dataRecolhimento,
+			TipoLancamento tipoLancamento,
+			BigDecimal qtdeItemNota,
+			Date dataRecebimentoFisico,
+			BigDecimal qtdeItemRecebimentoFisico,
+			
+			BigDecimal qtdeReparteLancamento,
+			Integer codigoSM,
+			
+			BigDecimal qtdeReparteEstudo,
+			Date dataEstudo,
+
+			BigDecimal estoqueProdCotaQtdeRecebida, 
+			BigDecimal estoqueProdCotaQtdeDevolvida,
+			
+			Date dataRecolhimentoChamadaEncalhe,
+			TipoChamadaEncalhe tipoChamadaEncalhe,
+			boolean indChamadaEncalheCotaConferida, 
+			BigDecimal qtdePrevistaChamadaEncCota
+			
+			
+			) {
+	
+		ItemRecebimentoFisico itemRecebimentoFisicoProdutoCE = null;
+
+		/**
+		 * PRODUTO EDICAO
+		 */
+		
+		Lancamento lancamentoRevistaCE = null;
+
+		ProdutoEdicao produtoEdicaoCE = null;
+
+		Produto produtoCE = Fixture.produto(codigoProduto, descProduto, nomeProduto, periodicidade, tipoProdutoRevista, produtoPeb, produtoPacotePadrao, produtoPeso);
+
+		produtoCE.addFornecedor(fornecedorDinap);
+		
+		save(session, produtoCE);
+
+		produtoEdicaoCE = Fixture.produtoEdicao(codigoProdutoEdicao, numeroEdicao, pacotePadrao, peb,
+				peso, precoCusto, precoVenda, codigoDeBarras, null, produtoCE, expectativaVenda, parcial);
+		produtoEdicaoCE.setDesconto(BigDecimal.ZERO);
+
+		save(session, produtoEdicaoCE);
+
+		/**
+		 * RECEBIMENTO FISICO
+		 */
+		NotaFiscalEntradaFornecedor notaFiscalProdutoCE = 
+				Fixture.notaFiscalEntradaFornecedor(
+						numeroNF, 
+						serie, 
+						chaveAcesso,
+						cfop5102, 
+						fornecedorFc.getJuridica(), 
+						fornecedorFc, 
+						tipoNotaFiscalRecebimento,
+						usuarioJoao, 
+						valorBruto, 
+						valorDesconto, 
+						valorLiquido);
+
+		save(session, notaFiscalProdutoCE);
+
+		ItemNotaFiscalEntrada itemNotaFiscalProdutoCE = 
+				Fixture.itemNotaFiscal(
+						produtoEdicaoCE, 
+						usuarioJoao,
+						notaFiscalProdutoCE, 
+						dataLancamento,
+						dataRecolhimento,
+						tipoLancamento,
+						qtdeItemNota);
+
+		save(session, itemNotaFiscalProdutoCE);
+
+		RecebimentoFisico recebimentoFisicoProdutoCE = 
+				Fixture.recebimentoFisico(
+						notaFiscalProdutoCE, 
+						usuarioJoao, 
+						dataRecebimentoFisico,
+						dataRecebimentoFisico, 
+						StatusConfirmacao.CONFIRMADO);
+
+		save(session, recebimentoFisicoProdutoCE);
+
+		itemRecebimentoFisicoProdutoCE = 
+				Fixture.itemRecebimentoFisico(
+						itemNotaFiscalProdutoCE, 
+						recebimentoFisicoProdutoCE, 
+						qtdeItemRecebimentoFisico);
+
+		save(session, itemRecebimentoFisicoProdutoCE);
+
+		/**
+		 * LANCAMENTOS
+		 */
+		
+		lancamentoRevistaCE = Fixture.lancamento(
+				tipoLancamento, 
+				produtoEdicaoCE,
+				dataLancamento,
+				dataRecolhimento,
+				new Date(),
+				new Date(),
+				qtdeReparteLancamento,
+				StatusLancamento.BALANCEADO_RECOLHIMENTO, 
+				itemRecebimentoFisicoProdutoCE,
+				codigoSM);
+
+		Estudo estudo = Fixture.estudo(
+				qtdeReparteEstudo,
+				dataEstudo, 
+				produtoEdicaoCE);
+
+		save(session, lancamentoRevistaCE, estudo);
+		
+		/**
+		 * ESTOQUE DA COTA
+		 */
+		EstoqueProdutoCota estoqueProdutoCotaConferenciaEncalhe = 
+				Fixture.estoqueProdutoCota(
+						produtoEdicaoCE, 
+						cotaConferenciaEncalhe, 
+						estoqueProdCotaQtdeRecebida, 
+						estoqueProdCotaQtdeDevolvida);
+		save(session, estoqueProdutoCotaConferenciaEncalhe);
+
+		/**
+		 * CHAMADA ENCALHE 
+		 */
+		ChamadaEncalhe chamadaEncalhe = Fixture.chamadaEncalhe(
+				dataRecolhimentoChamadaEncalhe,
+				produtoEdicaoCE, 
+				tipoChamadaEncalhe);
+		
+		save(session, chamadaEncalhe);
+		
+
+		/**
+		 * CHAMADA ENCALHE COTA
+		 */
+		ChamadaEncalheCota chamadaEncalheCota = Fixture.chamadaEncalheCota(
+				chamadaEncalhe, 
+				indChamadaEncalheCotaConferida, 
+				cotaConferenciaEncalhe, 
+				qtdePrevistaChamadaEncCota);
+		save(session, chamadaEncalheCota);
+		
+	}
+	
+	
 	private static void gerarCargaDadosConsultaEncalhe(Session session) {
 
 		ItemRecebimentoFisico itemRecebimentoFisicoProdutoCE = null;
@@ -5256,25 +5794,8 @@ public class DataLoader {
 		save(session, chamadaEncalhe_3);
 
 
-		CFOP cfop1209 = Fixture.cfop1209();
-		save(session, cfop1209);
-
-		CFOP cfop1210 = Fixture.cfop1210();
-		save(session, cfop1210);
-
-		ParametroEmissaoNotaFiscal parametroEmissaoNotaFiscal = 
-				Fixture.parametroEmissaoNotaFiscal(
-						cfop1209, 
-						cfop1210, 
-						GrupoNotaFiscal.DEVOLUCAO_MERCADORIA_FORNECEDOR, 
-						"0001");
-		save(session,parametroEmissaoNotaFiscal);
-
 		ControleNumeracaoNotaFiscal controleNumeracaoNotaFiscal = Fixture.controleNumeracaoNotaFiscal(1L, "0001");
 		save(session, controleNumeracaoNotaFiscal);
-
-		TipoNotaFiscal tipoNotaFiscal = Fixture.tipoNotaFiscalDevolucao();
-		save(session, tipoNotaFiscal);
 
 		/**
 		 * CHAMADA ENCALHE COTA
@@ -5341,7 +5862,8 @@ public class DataLoader {
 		save(session, mec);
 
 		ConferenciaEncalhe conferenciaEncalhe = Fixture.conferenciaEncalhe(
-				mec, chamadaEncalheCota, controleConferenciaEncalheCota);
+				mec, chamadaEncalheCota, controleConferenciaEncalheCota,
+				Fixture.criarData(28, Calendar.FEBRUARY, 2012),new BigDecimal(8),new BigDecimal(8), produtoEdicaoCE);
 		save(session, conferenciaEncalhe);
 		
 		
@@ -5357,7 +5879,13 @@ public class DataLoader {
 
 		save(session, mec);
 
-		conferenciaEncalhe = Fixture.conferenciaEncalhe(mec, chamadaEncalheCota, controleConferenciaEncalheCota);
+		conferenciaEncalhe = Fixture.conferenciaEncalhe(
+				mec, chamadaEncalheCota, 
+				controleConferenciaEncalheCota,
+				Fixture.criarData(2, Calendar.MARCH, 2012),
+				new BigDecimal(8),
+				new BigDecimal(8), produtoEdicaoCE);
+		
 		save(session, conferenciaEncalhe);
 		
 		mec = Fixture.movimentoEstoqueCotaEnvioEncalhe( 
@@ -5372,7 +5900,15 @@ public class DataLoader {
 
 		save(session, mec);
 
-		conferenciaEncalhe = Fixture.conferenciaEncalhe(mec, chamadaEncalheCota, controleConferenciaEncalheCota);
+		conferenciaEncalhe = Fixture.conferenciaEncalhe(
+				mec, 
+				chamadaEncalheCota, 
+				controleConferenciaEncalheCota,
+				Fixture.criarData(3, Calendar.MARCH, 2012),
+				new BigDecimal(8),
+				new BigDecimal(8),
+				produtoEdicaoCE);
+		
 		save(session, conferenciaEncalhe);
 
 
@@ -5388,7 +5924,14 @@ public class DataLoader {
 
 		save(session, mec);
 
-		conferenciaEncalhe = Fixture.conferenciaEncalhe(mec, chamadaEncalheCota_2, controleConferenciaEncalheCota);
+		conferenciaEncalhe = Fixture.conferenciaEncalhe(
+				mec, chamadaEncalheCota_2, 
+				controleConferenciaEncalheCota,
+				Fixture.criarData(28, Calendar.FEBRUARY, 2012),
+				new BigDecimal(34),
+				new BigDecimal(34),
+				produtoEdicaoCE_2);
+		
 		save(session, conferenciaEncalhe);
 
 		
@@ -5404,9 +5947,15 @@ public class DataLoader {
 
 		save(session, mec);
 		
-		conferenciaEncalhe = Fixture.conferenciaEncalhe(mec, chamadaEncalheCota_2, controleConferenciaEncalheCota);
-		save(session, conferenciaEncalhe);
+		conferenciaEncalhe = Fixture.conferenciaEncalhe(
+				mec, chamadaEncalheCota_2, 
+				controleConferenciaEncalheCota,
+				Fixture.criarData(3, Calendar.MARCH, 2012),
+				new BigDecimal(45),
+				new BigDecimal(45),
+				produtoEdicaoCE_2);
 		
+		save(session, conferenciaEncalhe);
 		
 		mec = Fixture.movimentoEstoqueCotaEnvioEncalhe( 
 				Fixture.criarData(4, Calendar.MARCH, 2012), 
@@ -5420,7 +5969,14 @@ public class DataLoader {
 
 		save(session, mec);
 
-		conferenciaEncalhe = Fixture.conferenciaEncalhe(mec, chamadaEncalheCota_2, controleConferenciaEncalheCota);
+		conferenciaEncalhe = Fixture.conferenciaEncalhe(
+				mec, chamadaEncalheCota_2, 
+				controleConferenciaEncalheCota,
+				Fixture.criarData(4, Calendar.MARCH, 2012),
+				new BigDecimal(65),
+				new BigDecimal(65),
+				produtoEdicaoCE_2);
+		
 		save(session, conferenciaEncalhe);
 
 		mec = Fixture.movimentoEstoqueCotaEnvioEncalhe( 
@@ -5435,7 +5991,13 @@ public class DataLoader {
 
 		save(session, mec);
 
-		conferenciaEncalhe = Fixture.conferenciaEncalhe(mec, chamadaEncalheCota_3, controleConferenciaEncalheCota);
+		conferenciaEncalhe = Fixture.conferenciaEncalhe(
+				mec, chamadaEncalheCota_3, 
+				controleConferenciaEncalheCota,
+				Fixture.criarData(28, Calendar.FEBRUARY, 2012),
+				new BigDecimal(31),new BigDecimal(31),
+				produtoEdicaoCE_3);
+		
 		save(session, conferenciaEncalhe);
 
 		mec = Fixture.movimentoEstoqueCotaEnvioEncalhe( 
@@ -5450,7 +6012,14 @@ public class DataLoader {
 
 		save(session, mec);
 
-		conferenciaEncalhe = Fixture.conferenciaEncalhe(mec, chamadaEncalheCota_3, controleConferenciaEncalheCota);
+		conferenciaEncalhe = Fixture.conferenciaEncalhe(
+				mec, chamadaEncalheCota_3, 
+				controleConferenciaEncalheCota,
+				Fixture.criarData(3, Calendar.MARCH, 2012),
+				new BigDecimal(41),
+				new BigDecimal(41),
+				produtoEdicaoCE_3);
+		
 		save(session, conferenciaEncalhe);
 
 		
@@ -5466,7 +6035,13 @@ public class DataLoader {
 
 		save(session, mec);
 
-		conferenciaEncalhe = Fixture.conferenciaEncalhe(mec, chamadaEncalheCota_3, controleConferenciaEncalheCota);
+		conferenciaEncalhe = Fixture.conferenciaEncalhe(mec, chamadaEncalheCota_3, 
+				controleConferenciaEncalheCota,
+				Fixture.criarData(5, Calendar.MARCH, 2012),
+				new BigDecimal(85),
+				new BigDecimal(85),
+				produtoEdicaoCE_3);
+		
 		save(session, conferenciaEncalhe);
 
 
@@ -5482,7 +6057,12 @@ public class DataLoader {
 
 		save(session, mec);
 
-		conferenciaEncalhe = Fixture.conferenciaEncalhe(mec, chamadaEncalheCota_3, controleConferenciaEncalheCota);
+		conferenciaEncalhe = Fixture.conferenciaEncalhe(mec, chamadaEncalheCota_3, controleConferenciaEncalheCota,
+				Fixture.criarData(6, Calendar.MARCH, 2012), 
+				new BigDecimal(85),
+				new BigDecimal(85),
+				produtoEdicaoCE_3);
+		
 		save(session, conferenciaEncalhe);
 
 		mec = Fixture.movimentoEstoqueCotaEnvioEncalhe( 
@@ -5497,7 +6077,15 @@ public class DataLoader {
 
 		save(session, mec);
 
-		conferenciaEncalhe = Fixture.conferenciaEncalhe(mec, chamadaEncalheCota_3, controleConferenciaEncalheCota);
+		conferenciaEncalhe = Fixture.conferenciaEncalhe(
+				mec, 
+				chamadaEncalheCota_3, 
+				controleConferenciaEncalheCota,
+				Fixture.criarData(7, Calendar.MARCH, 2012),
+				new BigDecimal(85),
+				new BigDecimal(85),
+				produtoEdicaoCE_3);
+		
 		save(session, conferenciaEncalhe);
 
 		
@@ -5513,104 +6101,234 @@ public class DataLoader {
 
 		save(session, mec);
 
-		conferenciaEncalhe = Fixture.conferenciaEncalhe(mec, chamadaEncalheCota_3, controleConferenciaEncalheCota);
+		conferenciaEncalhe = Fixture.conferenciaEncalhe(mec, chamadaEncalheCota_3, 
+				controleConferenciaEncalheCota,
+				Fixture.criarData(7, Calendar.MARCH, 2012),
+				new BigDecimal(85),
+				new BigDecimal(85),
+				produtoEdicaoCE_3);
+		
 		save(session, conferenciaEncalhe);
 		
 	}
 
+	private static BigDecimal obterValorMovimentosEstoque(List<MovimentoEstoqueCota> movimentosE){
+		Double total = 0d;
+		for (MovimentoEstoqueCota movE:movimentosE){
+			total+=( movE.getQtde().doubleValue() * (movE.getEstoqueProdutoCota().getProdutoEdicao().getPrecoVenda().doubleValue() - movE.getEstoqueProdutoCota().getProdutoEdicao().getDesconto().doubleValue()));
+		}
+		return new BigDecimal(total);
+	}
 
 	private static void criarMovimentosFinanceiroCota(Session session) {
 
 		movimentoFinanceiroCota1 = Fixture.movimentoFinanceiroCota(
 			cotaManoel, tipoMovimentoFinanceiroRecebimentoReparte, usuarioJoao,
-			new BigDecimal(200), Arrays.asList(movimentoEstoqueCota1),
+			obterValorMovimentosEstoque(Arrays.asList(movimentoEstoqueCota1)), Arrays.asList(movimentoEstoqueCota1),
 			StatusAprovacao.PENDENTE, new Date(), true);
 
 		movimentoFinanceiroCota2 = Fixture.movimentoFinanceiroCota(
 			cotaManoel, tipoMovimentoFinanceiroRecebimentoReparte, usuarioJoao,
-			new BigDecimal(200), Arrays.asList(movimentoEstoqueCota2),
+			obterValorMovimentosEstoque(Arrays.asList(movimentoEstoqueCota2)), Arrays.asList(movimentoEstoqueCota2),
 			StatusAprovacao.PENDENTE, new Date(), true);
 
 		movimentoFinanceiroCota3 = Fixture.movimentoFinanceiroCota(
 			cotaManoel, tipoMovimentoFinanceiroRecebimentoReparte, usuarioJoao,
-			new BigDecimal(200), Arrays.asList(movimentoEstoqueCota3),
+			obterValorMovimentosEstoque(Arrays.asList(movimentoEstoqueCota3)), Arrays.asList(movimentoEstoqueCota3),
 			StatusAprovacao.PENDENTE, new Date(), true);
 
 		movimentoFinanceiroCota4 = Fixture.movimentoFinanceiroCota(
 			cotaManoel, tipoMovimentoFinanceiroRecebimentoReparte, usuarioJoao,
-			new BigDecimal(200), Arrays.asList(movimentoEstoqueCota4),
+			obterValorMovimentosEstoque(Arrays.asList(movimentoEstoqueCota4)), Arrays.asList(movimentoEstoqueCota4),
 			StatusAprovacao.PENDENTE, new Date(), true);
 
 		movimentoFinanceiroCota5 = Fixture.movimentoFinanceiroCota(
 			cotaManoel, tipoMovimentoFinanceiroRecebimentoReparte, usuarioJoao,
-			new BigDecimal(200), Arrays.asList(movimentoEstoqueCota5),
+			obterValorMovimentosEstoque(Arrays.asList(movimentoEstoqueCota5)), Arrays.asList(movimentoEstoqueCota5),
 			StatusAprovacao.PENDENTE, new Date(), true);
 
 		movimentoFinanceiroCota6 = Fixture.movimentoFinanceiroCota(
 			cotaManoel, tipoMovimentoFinanceiroRecebimentoReparte, usuarioJoao,
-			new BigDecimal(200), Arrays.asList(movimentoEstoqueCota6),
+			obterValorMovimentosEstoque(Arrays.asList(movimentoEstoqueCota6)), Arrays.asList(movimentoEstoqueCota6),
 			StatusAprovacao.PENDENTE, new Date(), true);
 
 		movimentoFinanceiroCota7 = Fixture.movimentoFinanceiroCota(
 			cotaManoel, tipoMovimentoFinanceiroRecebimentoReparte, usuarioJoao,
-			new BigDecimal(200), Arrays.asList(movimentoEstoqueCota7),
+			obterValorMovimentosEstoque(Arrays.asList(movimentoEstoqueCota7)), Arrays.asList(movimentoEstoqueCota7),
 			StatusAprovacao.PENDENTE, new Date(), true);
 
 		movimentoFinanceiroCota8 = Fixture.movimentoFinanceiroCota(
 			cotaManoel, tipoMovimentoFinanceiroRecebimentoReparte, usuarioJoao,
-			new BigDecimal(200), Arrays.asList(movimentoEstoqueCota8),
+			obterValorMovimentosEstoque(Arrays.asList(movimentoEstoqueCota8)), Arrays.asList(movimentoEstoqueCota8),
 			StatusAprovacao.PENDENTE, new Date(), true);
 
 		movimentoFinanceiroCota9 = Fixture.movimentoFinanceiroCota(
 			cotaManoel, tipoMovimentoFinanceiroRecebimentoReparte, usuarioJoao,
-			new BigDecimal(200), Arrays.asList(movimentoEstoqueCota9),
+			obterValorMovimentosEstoque(Arrays.asList(movimentoEstoqueCota9)), Arrays.asList(movimentoEstoqueCota9),
 			StatusAprovacao.PENDENTE, new Date(), true);
 		
 		movimentoFinanceiroCota10 = Fixture.movimentoFinanceiroCota(
 				cotaManoelCunha, tipoMovimentoFinanceiroRecebimentoReparte, usuarioJoao,
-				new BigDecimal(200), Arrays.asList(movimentoEstoqueCota10),
+				obterValorMovimentosEstoque(Arrays.asList(movimentoEstoqueCota10)), Arrays.asList(movimentoEstoqueCota10),
 				StatusAprovacao.PENDENTE, new Date(), true);
 		
 		movimentoFinanceiroCota11 = Fixture.movimentoFinanceiroCota(
 				cotaManoelCunha, tipoMovimentoFinanceiroRecebimentoReparte, usuarioJoao,
-				new BigDecimal(200), Arrays.asList(movimentoEstoqueCota11),
+				obterValorMovimentosEstoque(Arrays.asList(movimentoEstoqueCota11)), Arrays.asList(movimentoEstoqueCota11),
 				StatusAprovacao.PENDENTE, new Date(), true);
 		
 		movimentoFinanceiroCota12 = Fixture.movimentoFinanceiroCota(
 				cotaManoelCunha, tipoMovimentoFinanceiroRecebimentoReparte, usuarioJoao,
-				new BigDecimal(200), Arrays.asList(movimentoEstoqueCota12),
+				obterValorMovimentosEstoque(Arrays.asList(movimentoEstoqueCota12)), Arrays.asList(movimentoEstoqueCota12),
 				StatusAprovacao.PENDENTE, new Date(), true);
+		
+		
+		
+		
+		//MOVIMENTOS TIPO ENCALHE
+		movimentoFinanceiroCota13 = Fixture.movimentoFinanceiroCota(
+				cotaManoel, tipoMovimentoFinanceiroEnvioEncalhe, usuarioJoao,
+				obterValorMovimentosEstoque(Arrays.asList(movimentoEstoqueCota13)), Arrays.asList(movimentoEstoqueCota13),
+				StatusAprovacao.PENDENTE, new Date(), true);
+
+		movimentoFinanceiroCota14 = Fixture.movimentoFinanceiroCota(
+				cotaManoel, tipoMovimentoFinanceiroEnvioEncalhe, usuarioJoao,
+				obterValorMovimentosEstoque(Arrays.asList(movimentoEstoqueCota14)), Arrays.asList(movimentoEstoqueCota14),
+			StatusAprovacao.PENDENTE, new Date(), true);
+
+		movimentoFinanceiroCota15 = Fixture.movimentoFinanceiroCota(
+				cotaManoel, tipoMovimentoFinanceiroEnvioEncalhe, usuarioJoao,
+				obterValorMovimentosEstoque(Arrays.asList(movimentoEstoqueCota15)), Arrays.asList(movimentoEstoqueCota15),
+			    StatusAprovacao.PENDENTE, new Date(), true);
+		
+		
+		movimentoFinanceiroCota16 = Fixture.movimentoFinanceiroCota(
+				cotaManoel, tipoMovimentoFinanceiroEnvioEncalhe, usuarioJoao,
+				obterValorMovimentosEstoque(Arrays.asList(movimentoEstoqueCota16)), Arrays.asList(movimentoEstoqueCota16),
+				StatusAprovacao.PENDENTE, new Date(), true);
+		
+		movimentoFinanceiroCota17 = Fixture.movimentoFinanceiroCota(
+				cotaManoel, tipoMovimentoFinanceiroEnvioEncalhe, usuarioJoao,
+				obterValorMovimentosEstoque(Arrays.asList(movimentoEstoqueCota17)), Arrays.asList(movimentoEstoqueCota17),
+				StatusAprovacao.PENDENTE, new Date(), true);
+		
+		movimentoFinanceiroCota18 = Fixture.movimentoFinanceiroCota(
+				cotaManoel, tipoMovimentoFinanceiroEnvioEncalhe, usuarioJoao,
+				obterValorMovimentosEstoque(Arrays.asList(movimentoEstoqueCota18)), Arrays.asList(movimentoEstoqueCota18),
+				StatusAprovacao.PENDENTE, new Date(), true);
+		
+		
+		
+		//MOVIMENTOS TIPO CONSIGNADO
+		movimentoFinanceiroCota19 = Fixture.movimentoFinanceiroCota(
+				cotaManoel, tipoMovimentoFinanceiroRecebimentoReparte, usuarioJoao,
+				obterValorMovimentosEstoque(Arrays.asList(movimentoEstoqueCota19)), Arrays.asList(movimentoEstoqueCota19),
+				StatusAprovacao.PENDENTE, new Date(), true);
+
+		movimentoFinanceiroCota20 = Fixture.movimentoFinanceiroCota(
+				cotaManoel, tipoMovimentoFinanceiroRecebimentoReparte, usuarioJoao,
+				obterValorMovimentosEstoque(Arrays.asList(movimentoEstoqueCota20)), Arrays.asList(movimentoEstoqueCota20),
+				StatusAprovacao.PENDENTE, new Date(), true);
+
+		movimentoFinanceiroCota21 = Fixture.movimentoFinanceiroCota(
+				cotaManoel, tipoMovimentoFinanceiroRecebimentoReparte, usuarioJoao,
+				obterValorMovimentosEstoque(Arrays.asList(movimentoEstoqueCota21)), Arrays.asList(movimentoEstoqueCota21),
+				StatusAprovacao.PENDENTE, new Date(), true);
+		
+		movimentoFinanceiroCota22 = Fixture.movimentoFinanceiroCota(
+				cotaManoel, tipoMovimentoFinanceiroRecebimentoReparte, usuarioJoao,
+				obterValorMovimentosEstoque(Arrays.asList(movimentoEstoqueCota22)), Arrays.asList(movimentoEstoqueCota22),
+				StatusAprovacao.PENDENTE, new Date(), true);
+		
+		movimentoFinanceiroCota23 = Fixture.movimentoFinanceiroCota(
+				cotaManoel, tipoMovimentoFinanceiroRecebimentoReparte, usuarioJoao,
+				obterValorMovimentosEstoque(Arrays.asList(movimentoEstoqueCota23)), Arrays.asList(movimentoEstoqueCota23),
+				StatusAprovacao.PENDENTE, new Date(), true);
+		
+		movimentoFinanceiroCota24 = Fixture.movimentoFinanceiroCota(
+				cotaManoel, tipoMovimentoFinanceiroRecebimentoReparte, usuarioJoao,
+				obterValorMovimentosEstoque(Arrays.asList(movimentoEstoqueCota24)), Arrays.asList(movimentoEstoqueCota24),
+				StatusAprovacao.PENDENTE, new Date(), true);
+		
+		
+		
+		//MOVIMENTOS TIPO VENDA_ENCALHE
+		movimentoFinanceiroCota25 = Fixture.movimentoFinanceiroCota(
+				cotaManoel, tipoMovimentoFinanceiroCompraEncalhe, usuarioJoao,
+				obterValorMovimentosEstoque(Arrays.asList(movimentoEstoqueCota25)), Arrays.asList(movimentoEstoqueCota25),
+				StatusAprovacao.PENDENTE, new Date(), true);
+
+		movimentoFinanceiroCota26 = Fixture.movimentoFinanceiroCota(
+				cotaManoel, tipoMovimentoFinanceiroCompraEncalhe, usuarioJoao,
+				obterValorMovimentosEstoque(Arrays.asList(movimentoEstoqueCota26)), Arrays.asList(movimentoEstoqueCota26),
+				StatusAprovacao.PENDENTE, new Date(), true);
+
+		movimentoFinanceiroCota27 = Fixture.movimentoFinanceiroCota(
+				cotaManoel, tipoMovimentoFinanceiroCompraEncalhe, usuarioJoao,
+				obterValorMovimentosEstoque(Arrays.asList(movimentoEstoqueCota27)), Arrays.asList(movimentoEstoqueCota27),
+				StatusAprovacao.PENDENTE, new Date(), true);
+		
+		movimentoFinanceiroCota28 = Fixture.movimentoFinanceiroCota(
+				cotaManoel, tipoMovimentoFinanceiroCompraEncalhe, usuarioJoao,
+				obterValorMovimentosEstoque(Arrays.asList(movimentoEstoqueCota28)), Arrays.asList(movimentoEstoqueCota28),
+				StatusAprovacao.PENDENTE, new Date(), true);
+		
+		movimentoFinanceiroCota29 = Fixture.movimentoFinanceiroCota(
+				cotaManoel, tipoMovimentoFinanceiroCompraEncalhe, usuarioJoao,
+				obterValorMovimentosEstoque(Arrays.asList(movimentoEstoqueCota29)), Arrays.asList(movimentoEstoqueCota29),
+				StatusAprovacao.PENDENTE, new Date(), true);
+		
+		movimentoFinanceiroCota30 = Fixture.movimentoFinanceiroCota(
+				cotaManoel, tipoMovimentoFinanceiroCompraEncalhe, usuarioJoao,
+				obterValorMovimentosEstoque(Arrays.asList(movimentoEstoqueCota30)), Arrays.asList(movimentoEstoqueCota30),
+				StatusAprovacao.PENDENTE, new Date(), true);
+		
+		
 
 		save(session, movimentoFinanceiroCota1, movimentoFinanceiroCota2,
 					  movimentoFinanceiroCota3, movimentoFinanceiroCota4,
 					  movimentoFinanceiroCota5, movimentoFinanceiroCota6,
 					  movimentoFinanceiroCota7, movimentoFinanceiroCota8,
 					  movimentoFinanceiroCota9,  movimentoFinanceiroCota10, 
-					  movimentoFinanceiroCota11, movimentoFinanceiroCota12);
+					  movimentoFinanceiroCota11, movimentoFinanceiroCota12,
+					  movimentoFinanceiroCota13, movimentoFinanceiroCota14,
+					  movimentoFinanceiroCota15,  movimentoFinanceiroCota16, 
+					  movimentoFinanceiroCota17, movimentoFinanceiroCota18,
+					  movimentoFinanceiroCota19, movimentoFinanceiroCota20,
+					  movimentoFinanceiroCota21,  movimentoFinanceiroCota22, 
+					  movimentoFinanceiroCota23, movimentoFinanceiroCota24,
+					  movimentoFinanceiroCota25, movimentoFinanceiroCota26,
+					  movimentoFinanceiroCota27,  movimentoFinanceiroCota28, 
+					  movimentoFinanceiroCota29, movimentoFinanceiroCota30);
 
-		MovimentoFinanceiroCota movimentoFinanceiroCota13 =
+		
+
+		
+		MovimentoFinanceiroCota movimentoFinanceiroCota31 =
 			Fixture.movimentoFinanceiroCota(
 				cotaManoel, tipoMovimentoFinanceiroCredito, usuarioJoao,
 				new BigDecimal(225), null, StatusAprovacao.PENDENTE,
 				DateUtil.adicionarDias(new Date(), 10), true);
 
-		MovimentoFinanceiroCota movimentoFinanceiroCota14 =
+		MovimentoFinanceiroCota movimentoFinanceiroCota32 =
 			Fixture.movimentoFinanceiroCota(
 				cotaManoel, tipoMovimentoFinanceiroDebito, usuarioJoao,
 				new BigDecimal(225), null, StatusAprovacao.APROVADO,
 				DateUtil.adicionarDias(new Date(), 20), true);		
 
-		MovimentoFinanceiroCota movimentoFinanceiroCota15 = 
+		MovimentoFinanceiroCota movimentoFinanceiroCota33 = 
 			Fixture.movimentoFinanceiroCota(
 				cotaManoel, tipoMovimentoFinanceiroRecebimentoReparte, usuarioJoao,
 				new BigDecimal(225), null, StatusAprovacao.PENDENTE,
 				DateUtil.adicionarDias(new Date(), 30), true);
 
-		MovimentoFinanceiroCota movimentoFinanceiroCota16 =
+		MovimentoFinanceiroCota movimentoFinanceiroCota34 =
 			Fixture.movimentoFinanceiroCota(
 				cotaManoel, tipoMovimentoFinanceiroRecebimentoReparte, usuarioJoao,
 				new BigDecimal(650), null, StatusAprovacao.APROVADO,
 				DateUtil.adicionarDias(new Date(), 60), true);
+		
+		
 
 		MovimentoFinanceiroCota movimentoFinanceiroDebito1 =
 				Fixture.movimentoFinanceiroCota(
@@ -5672,45 +6390,49 @@ public class DataLoader {
 					new BigDecimal(650), null, StatusAprovacao.PENDENTE,
 					new Date(), true);
 
-		save(session, movimentoFinanceiroCota13, movimentoFinanceiroCota14,
-				  	  movimentoFinanceiroCota15, movimentoFinanceiroCota16,
+		save(session, movimentoFinanceiroCota31, movimentoFinanceiroCota32,
+				  	  movimentoFinanceiroCota33, movimentoFinanceiroCota34,
 				  	  movimentoFinanceiroDebito1, movimentoFinanceiroDebito2,
 				  	  movimentoFinanceiroCredito1, movimentoFinanceiroCredito2,
 				  	  movimentoFinanceiroJuros1, movimentoFinanceiroJuros2,
 				  	  movimentoFinanceiroMulta1, movimentoFinanceiroMulta2,
 				  	  movimentoFinanceiroEnvioEncalhe1, movimentoFinanceiroEnvioEncalhe2);
 		
-		movimentoFinanceiroCota13 =
+		
+		
+		movimentoFinanceiroCota31 =
 				Fixture.movimentoFinanceiroCota(
 					cotaManoel, tipoMovimentoFinanceiroCredito, usuarioJoao,
 					new BigDecimal(225), null, StatusAprovacao.PENDENTE,
 					DateUtil.adicionarDias(new Date(), 10), true);
 		
-		movimentoFinanceiroCota13.setDataCriacao(DateUtil.adicionarDias(new Date(), -2));
+		movimentoFinanceiroCota31.setDataCriacao(DateUtil.adicionarDias(new Date(), -2));
 
-		movimentoFinanceiroCota14 =
+		movimentoFinanceiroCota32 =
 				Fixture.movimentoFinanceiroCota(
 					cotaManoel, tipoMovimentoFinanceiroDebito, usuarioJoao,
 					new BigDecimal(225), null, StatusAprovacao.APROVADO,
 					DateUtil.adicionarDias(new Date(), 20), true);
 		
-		movimentoFinanceiroCota14.setDataCriacao(DateUtil.adicionarDias(new Date(), -6));
+		movimentoFinanceiroCota32.setDataCriacao(DateUtil.adicionarDias(new Date(), -6));
 
-		movimentoFinanceiroCota15 = 
+		movimentoFinanceiroCota33 = 
 				Fixture.movimentoFinanceiroCota(
 					cotaManoel, tipoMovimentoFinanceiroRecebimentoReparte, usuarioJoao,
 					new BigDecimal(225), null, StatusAprovacao.PENDENTE,
 					DateUtil.adicionarDias(new Date(), 30), true);
 		
-		movimentoFinanceiroCota15.setDataCriacao(DateUtil.adicionarDias(new Date(), -6));
+		movimentoFinanceiroCota33.setDataCriacao(DateUtil.adicionarDias(new Date(), -6));
 
-		movimentoFinanceiroCota16 =
+		movimentoFinanceiroCota34 =
 				Fixture.movimentoFinanceiroCota(
 					cotaManoel, tipoMovimentoFinanceiroRecebimentoReparte, usuarioJoao,
 					new BigDecimal(650), null, StatusAprovacao.APROVADO,
 					DateUtil.adicionarDias(new Date(), 60), true);
 		
-		movimentoFinanceiroCota16.setDataCriacao(DateUtil.adicionarDias(new Date(), -2));
+		movimentoFinanceiroCota34.setDataCriacao(DateUtil.adicionarDias(new Date(), -2));
+		
+		
 
 		movimentoFinanceiroDebito1 =
 					Fixture.movimentoFinanceiroCota(
@@ -5792,8 +6514,8 @@ public class DataLoader {
 		
 		movimentoFinanceiroEnvioEncalhe2.setDataCriacao(DateUtil.adicionarDias(new Date(), -8));
 
-		save(session, movimentoFinanceiroCota13, movimentoFinanceiroCota14,
-				  	  movimentoFinanceiroCota15, movimentoFinanceiroCota16,
+		save(session, movimentoFinanceiroCota31, movimentoFinanceiroCota32,
+				  	  movimentoFinanceiroCota33, movimentoFinanceiroCota34,
 				  	  movimentoFinanceiroDebito1, movimentoFinanceiroDebito2,
 				  	  movimentoFinanceiroCredito1, movimentoFinanceiroCredito2,
 				  	  movimentoFinanceiroJuros1, movimentoFinanceiroJuros2,
@@ -5807,8 +6529,10 @@ public class DataLoader {
 
 			Calendar calendar = Calendar.getInstance();
 
+			TipoNotaFiscal tipoNotaFiscal = i % 2 == 0 ? tipoNotaFiscalRecebimento : tipoNotaFiscalDevolucao;
+
 			notaFiscalFornecedor = Fixture
-					.notaFiscalEntradaFornecedor(cfop5102, fornecedorDinap.getJuridica(), fornecedorDinap, tipoNotaFiscalRecebimento,
+					.notaFiscalEntradaFornecedor(cfop5102, fornecedorDinap.getJuridica(), fornecedorDinap, tipoNotaFiscal,
 							usuarioJoao, new BigDecimal(15), new BigDecimal(5), BigDecimal.TEN);
 
 			calendar.add(Calendar.DATE, i * 3);

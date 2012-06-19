@@ -1,6 +1,7 @@
 package br.com.abril.nds.repository.impl;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
@@ -161,7 +162,7 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 		save(movimentoFinanceiroCota);
 		
 		
-		ConsolidadoFinanceiroCota consolidado1 = Fixture.consolidadoFinanceiroCota(null, cota, new Date(), new BigDecimal(10));
+		ConsolidadoFinanceiroCota consolidado1 = Fixture.consolidadoFinanceiroCota(null, cota, new Date(), new BigDecimal(10), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0));
 		save(consolidado1);
 		Divida divida1 = Fixture.divida(consolidado1, cota, Fixture.criarData(1, 10, 2010), usuario, StatusDivida.EM_ABERTO, new BigDecimal(10),false);
 		save(divida1);
@@ -181,7 +182,7 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 				divida1,0);
 		save(boleto1);
 		
-		ConsolidadoFinanceiroCota consolidado2 = Fixture.consolidadoFinanceiroCota(null, cota, new Date(), new BigDecimal(10));
+		ConsolidadoFinanceiroCota consolidado2 = Fixture.consolidadoFinanceiroCota(null, cota, new Date(), new BigDecimal(10), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0));
 		save(consolidado2);
 		Divida divida2 = Fixture.divida(consolidado2, cota, Fixture.criarData(2, 10, 2010), usuario, StatusDivida.EM_ABERTO, new BigDecimal(10),false);
 		save(divida2);
@@ -372,6 +373,20 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 		Assert.assertNotNull(cotas);
 		
 		Assert.assertTrue(!cotas.isEmpty());
+	}
+	
+	@Test
+	public void buscarCotasPorIN() {
+		
+		List<Long> idsCotas = new ArrayList<Long>();
+
+		idsCotas.add(1L);
+		idsCotas.add(2L);
+		
+		List<Cota> listaCotas = 
+			this.cotaRepository.obterCotasPorIDS(idsCotas);
+		
+		Assert.assertNotNull(listaCotas);
 	}
 
 }

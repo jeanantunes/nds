@@ -396,6 +396,8 @@ public class Fixture {
 		produtoEdicao.setPrecoVenda(precoVenda);
 		produtoEdicao.setProduto(produto);
 		produtoEdicao.setNumeroEdicao(numeroEdicao);
+		
+		produtoEdicao.setOrigemInterface(Boolean.TRUE);
 		return produtoEdicao;
 	}
 
@@ -1556,7 +1558,7 @@ public class Fixture {
 		ChamadaEncalheCota chamadaEncalheCota = new ChamadaEncalheCota();
 		
 		chamadaEncalheCota.setChamadaEncalhe(chamadaEncalhe);
-		chamadaEncalheCota.setConferido(conferido);
+		chamadaEncalheCota.setFechado(conferido);
 		chamadaEncalheCota.setCota(cota);
 		chamadaEncalheCota.setQtdePrevista(qtdePrevista);
 		

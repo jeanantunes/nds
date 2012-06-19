@@ -2,16 +2,21 @@ package br.com.abril.nds.service.impl;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.dto.CotaFaturamentoDTO;
 import br.com.abril.nds.dto.MovimentoFinanceiroCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroDebitoCreditoDTO;
 import br.com.abril.nds.model.TipoEdicao;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
+import br.com.abril.nds.model.cadastro.BaseCalculo;
+import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.financeiro.HistoricoMovimentoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
@@ -170,5 +175,39 @@ public class MovimentoFinanceiroCotaServiceImpl implements
 		historicoMovimentoFinanceiroCota.setData(movimentoFinanceiroCota.getData());
 		
 		this.historicoMovimentoFinanceiroCotaRepository.adicionar(historicoMovimentoFinanceiroCota);
+	}
+
+    
+	/**
+	 * Obtém valores dos faturamentos bruto ou liquido das cotas no período
+	 * @param cotas
+	 * @param baseCalculo
+	 * @param dataInicial
+	 * @param dataFinal
+	 * @return Map<Long,BigDecimal>: Faturamentos das cotas
+	 */
+	@Override
+	@Transactional(readOnly=true)
+	public Map<Long,BigDecimal> obterFaturamentoCotasPeriodo(List<Cota> cotas, BaseCalculo baseCalculo, Date dataInicial, Date dataFinal)
+    {
+		
+		Map<Long,BigDecimal> res = null;
+		
+		List<CotaFaturamentoDTO> cotasFaturamento = this.movimentoFinanceiroCotaRepository.obterFaturamentoCotasPorPeriodo(cotas, dataInicial, dataFinal);
+
+		if(cotasFaturamento!=null && cotasFaturamento.size()>0){
+			res = new HashMap<Long,BigDecimal>();
+			for(CotaFaturamentoDTO item:cotasFaturamento){
+				if (baseCalculo == BaseCalculo.FATURAMENTO_BRUTO){
+	        	    res.put(item.getIdCota(), item.getFaturamentoBruto());
+				}
+				if (baseCalculo == BaseCalculo.FATURAMENTO_LIQUIDO){
+	        	    res.put(item.getIdCota(), item.getFaturamentoLiquido()); 
+				}
+	        }
+			
+	    }
+				
+		return res;
 	}
 }

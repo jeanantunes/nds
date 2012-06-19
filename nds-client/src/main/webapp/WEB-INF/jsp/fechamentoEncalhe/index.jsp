@@ -3,32 +3,177 @@
 	
 	<script language="javascript" type="text/javascript">
 
-	function mostrar(){
+	var contextPath = '${pageContext.request.contextPath}';
+	var vDataEncalhe = '';
+	var vFornecedorId = '';
+	var vBoxId = '';
+	
+	function pesquisar() {
+		
+		$('#divBotoesPrincipais').show();
+		
+		$(".fechamentoGrid").flexOptions({
+			"url" : contextPath + '/devolucao/fechamentoEncalhe/pesquisar',
+			params : [{
+				name : "dataEncalhe",
+				value : $('#datepickerDe').val()
+			}, {
+				name : "fornecedorId",
+				value : $('#selectFornecedor').val()
+			}, {
+				name : "boxId",
+				value : $('#selectBoxEncalhe').val()
+			}],
+			newp:1
+		});
+		
+		$(".fechamentoGrid").flexReload();
+		$(".grids").show();
+		
+		vDataEncalhe = $('#datepickerDe').val();
+		vFornecedorId = $('#selectFornecedor').val();
+		vBoxId = $('#selectBoxEncalhe').val();
+	}
+	
+	function preprocessamentoGridFechamento(resultado) {
+		
+		$.each(resultado.rows, function(index, row) {
+			
+			if (row.cell.diferenca == "0") {
+				row.cell.diferenca = "";
+			}
+			
+			var valorFisico = row.cell.fisico == null ? '' : row.cell.fisico;
+			var fechado = row.cell.fechado == false ? '' : 'disabled="disabled"';
+			row.cell.fisico = '<input type="text" style="width: 60px" name="fisico[' + index + ']" value="' + valorFisico + '" onchange="onChangeFisico(this, ' + index + ')" ' + fechado + '/>';
+			
+			row.cell.replicar = '<span title="Replicar"><a href="javascript:;" onclick="replicar(' + index + ')"><img src="${pageContext.request.contextPath}/images/ico_atualizar.gif" border="0" /></a></span>';
+			
+			if (fechado != '') {
+				$('#divBotoesPrincipais').hide();
+			}
+		});
+		
+		return resultado;
+	}
+	
+	function replicarTodos() {
+	
+		var tabela = $('.fechamentoGrid').get(0);
+		for (i=0; i<tabela.rows.length; i++) {
+			replicar(i);
+		}
+	}
+	
+	function replicar(index) {
+		
+		var tabela = $('.fechamentoGrid').get(0);
+		var valor = tabela.rows[index].cells[4].firstChild.innerHTML;
+		var campo = tabela.rows[index].cells[6].firstChild.firstChild;
+		var diferenca = tabela.rows[index].cells[7].firstChild;
+
+		campo.value = valor;
+		diferenca.innerHTML = "0";
+	}
+	
+	function onChangeFisico(campo, index) {
+		
+		var tabela = $('.fechamentoGrid').get(0);
+		var devolucao = parseInt(tabela.rows[index].cells[4].firstChild.innerHTML);
+		var diferenca = tabela.rows[index].cells[7].firstChild;
+		
+		if (campo.value == "") {
+			diferenca.innerHTML = "";
+		} else {
+			diferenca.innerHTML = devolucao - campo.value;			
+		}
+	}
+	
+	function gerarArrayFisico() {
+		
+		var tabela = $('.fechamentoGrid').get(0);
+		var fisico;
+		var arr = new Array();
+		
+		for (i=0; i<tabela.rows.length; i++) {
+			fisico = tabela.rows[i].cells[6].firstChild.firstChild.value;
+			arr.push(fisico);
+		}
+		
+		return arr;
+	}
+	
+	function salvar() {
+		
+		$(".fechamentoGrid").flexOptions({
+			"url" : contextPath + '/devolucao/fechamentoEncalhe/salvar',
+			params : [{
+				name : "dataEncalhe",
+				value : $('#datepickerDe').val()
+			}, {
+				name : "fornecedorId",
+				value : $('#selectFornecedor').val()
+			}, {
+				name : "boxId",
+				value : $('#selectBoxEncalhe').val()
+			}, {
+				name : "fisico",
+				value : gerarArrayFisico()
+			}],
+			newp:1
+		});
+		
+		$(".fechamentoGrid").flexReload();
 		$(".grids").show();
 	}
 	
 	function popup_encerrarEncalhe() {
-		$( "#dialog-encerrarEncalhe" ).dialog({
-			resizable: false,
-			height:500,
-			width:650,
-			modal: true,
-			buttons: {
-				"Postergar": function() {
-					$( this ).dialog( "close" );
-					$("#effect").show("highlight", {}, 1000, callback);
-				},
-				"Cobrar": function() {
-					$( this ).dialog( "close" );
-				},
-				"Cancelar": function() {
-					$( this ).dialog( "close" );
-				}
-			}
+		
+		
+
+		var dataEncalhe = $("#datepickerDe").val();
+		
+		$(".cotasGrid").flexOptions({
+			url: "<c:url value='/devolucao/fechamentoEncalhe/cotasAusentes' />",
+			params: [{name:'dataEncalhe', value: dataEncalhe }],
+			newp: 1,
 		});
+		
+		$(".cotasGrid").flexReload();
 	};
 
+	function verificarEncerrarOperacaoEncalhe() {
+
+		$.postJSON(
+			"<c:url value='/devolucao/fechamentoEncalhe/verificarEncerrarOperacaoEncalhe' />",
+			{ 'dataEncalhe' : $('#datepickerDe').val() },
+			function (result) {
+
+				var tipoMensagem = result.tipoMensagem;
+				var listaMensagens = result.listaMensagens;
+				
+				if (tipoMensagem && listaMensagens) {
+					exibirMensagem(tipoMensagem, listaMensagens);
+				}
+
+				if (result == 'NAO_ENCERRAR') {
+					popup_encerrarEncalhe();
+				} else if (result == 'ENCERRAR'){
+					popup_encerrar();
+				}			
+			},
+		  	null,
+		   	false
+		);
+
+		
+	}
+
+	
 	function popup_encerrar() {
+		
+		$("#dataConfirma").html($("#datepickerDe").val());
+		
 		$( "#dialog-confirm" ).dialog({
 			resizable: false,
 			height:'auto',
@@ -36,29 +181,62 @@
 			modal: true,
 			buttons: {
 				"Confirmar": function() {
-					$( this ).dialog( "close" );
-					$("#effect").show("highlight", {}, 1000, callback);
+
+					$.postJSON(
+						"<c:url value='/devolucao/fechamentoEncalhe/encerrarOperacaoEncalhe' />",
+						{ 'dataEncalhe' : $('#datepickerDe').val() },
+						function (result) {
+
+							$("#dialog-confirm").dialog("close");
+							
+							var tipoMensagem = result.tipoMensagem;
+							var listaMensagens = result.listaMensagens;
+							
+							if (tipoMensagem && listaMensagens) {
+								exibirMensagem(tipoMensagem, listaMensagens);
+							}
+						},
+					  	null,
+					   	false
+					);
 				},
 				
 				"Cancelar": function() {
 					$( this ).dialog( "close" );
 				}
+			},
+			beforeClose: function() {
+				$(".fechamentoGrid").flexReload();
 			}
 		});
 	};
+	
+	
+	function encerrarFechamento() {
+		
+		salvar();
+		
+		/* verificar cotas pendentes */
+		
+		$.postJSON(
+			"<c:url value='/devolucao/fechamentoEncalhe/encerrarFechamento' />",
+			{ 'dataEncalhe' : $('#datepickerDe').val() },
+			function (result) {
+				
+			},
+		  	null,
+		   	true
+		);
+	}
 
+	
 	$(function() {
-		$( "#datepickerDe" ).datepicker({
+		$("#datepickerDe").datepicker({
 			showOn: "button",
 			buttonImage: "${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
 			buttonImageOnly: true
 		});
-		$( "#datepickerAte" ).datepicker({
-			showOn: "button",
-			buttonImage: "${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
-			buttonImageOnly: true
-		});
-		$( "#dtOperacao" ).datepicker({
+		$("#dtPostergada").datepicker({
 			showOn: "button",
 			buttonImage: "${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
 			buttonImageOnly: true
@@ -69,10 +247,226 @@
 		$(".dados").show();
 	}
 	
-	function pesqEncalhe(){
-		$(".dadosFiltro").show();
+	function checarTodasCotasGrid(checked) {
+				
+		if (checked) {
+			var elem = document.getElementById("textoCheckAllCotas");
+			elem.innerHTML = "Desmarcar todos";
+
+			$("input[type=checkbox][name='checkboxGridCotas']").each(function(){
+				$(this).attr('checked', true);
+			});
+				
+        } else {
+			var elem = document.getElementById("textoCheckAllCotas");
+			elem.innerHTML = "Marcar todos";
+
+			$("input[type=checkbox][name='checkboxGridCotas']").each(function(){
+				$(this).attr('checked', false);
+			});
+		}
 	}
 
+	function preprocessamentoGrid(resultado) {	
+		
+		if (resultado.mensagens) {
+			exibirMensagem(resultado.mensagens.tipoMensagem, resultado.mensagens.listaMensagens);
+			$(".cotasGrid").hide();
+			return resultado;
+		}
+
+		$( "#dialog-encerrarEncalhe" ).dialog({
+			resizable: false,
+			height:500,
+			width:650,
+			modal: true,
+			buttons: {
+				"Postergar": function() {
+					postergarCotas();
+				},
+				"Cobrar": function() {
+					cobrarCotas();
+				},
+				"Cancelar": function() {
+					$(this).dialog( "close" );
+				}
+			},
+			beforeClose: function() {
+				clearMessageDialogTimeout('dialogMensagemNovo');
+			}
+		});
+		
+		document.getElementById("checkTodasCotas").checked = false;
+		checarTodasCotasGrid(false);
+		
+		$.each(resultado.rows, function(index, row) {
+			
+			var checkBox = '<span></span>';
+			
+			if (row.cell.acao == null || row.cell.acao == '') { 
+				checkBox = '<input type="checkbox" name="checkboxGridCotas" id="checkboxGridCotas" value="' + row.cell.idCota + '" />';	
+			} else {
+				checkBox = '<input type="checkbox" name="checkboxGridCotas" id="checkboxGridCotas" value="' + row.cell.idCota + '" disabled="disabled"/>';	
+			}
+			
+		    row.cell.check = checkBox;
+		});
+
+		
+		$(".cotasGrid").show();
+		
+		return resultado;
+	}
+
+	function obterCotasMarcadas() {
+ 
+		var cotasAusentesSelecionadas = new Array();
+
+		$("input[type=checkbox][name='checkboxGridCotas']:checked").each(function(){
+			cotasAusentesSelecionadas.push(parseInt($(this).val()));
+		});
+
+		return cotasAusentesSelecionadas;
+	}
+	
+	function postergarCotas() {
+
+		var cotasSelecionadas = obterCotasMarcadas();
+
+		if (cotasSelecionadas.lenght > 0) {
+			
+			$("#dialog-postergar").dialog({
+				resizable: false,
+				height:'auto',
+				width:250,
+				modal: true,
+				buttons: {
+					"Confirmar": function() {
+						
+						var dataPostergacao = $("#dtPostergada").val();
+						var dataEncalhe = $("#datepickerDe").val();
+						
+						$.postJSON("<c:url value='/devolucao/fechamentoEncalhe/postergarCotas' />",
+									{ 'dataPostergacao' : dataPostergacao, 
+									  'dataEncalhe' : dataEncalhe, 
+									  'idsCotas' : obterCotasMarcadas() },
+									function (result) {
+	
+										$("#dialog-postergar").dialog("close");
+										
+										var tipoMensagem = result.tipoMensagem;
+										var listaMensagens = result.listaMensagens;
+										
+										if (tipoMensagem && listaMensagens) {
+											exibirMensagemDialog(tipoMensagem, listaMensagens, 'dialogMensagemEncerrarEncalhe');
+										}
+										
+									},
+								  	null,
+								   	true,
+								   	'dialogMensagemEncerrarEncalhe'
+							);
+					},
+					
+					"Cancelar": function() {
+						$( this ).dialog( "close" );
+					}
+				},
+				beforeClose: function() {
+					$("#dtPostergada").val("");
+					clearMessageDialogTimeout('dialogMensagemEncerrarEncalhe');
+				}
+			});
+	
+			carregarDataPostergacao();
+		} else {
+			var listaMensagens = new Array();
+			listaMensagens.push('Selecione pelo menos uma cota para postergar!');
+			exibirMensagemDialog('WARNING', listaMensagens, 'dialogMensagemEncerrarEncalhe');
+		}
+	}
+
+	function carregarDataPostergacao() {
+
+		var dataPostergacao = $("#dtPostergada").val();
+		var dataEncalhe = $("#datepickerDe").val();
+		
+		$.postJSON("<c:url value='/devolucao/fechamentoEncalhe/carregarDataPostergacao' />",
+				{ 'dataEncalhe' : dataEncalhe, 'dataPostergacao' : dataPostergacao },
+				function (result) {
+
+					var tipoMensagem = result.tipoMensagem;
+					var listaMensagens = result.listaMensagens;
+					
+					if (tipoMensagem && listaMensagens) {
+						exibirMensagemDialog(tipoMensagem, listaMensagens, 'dialogMensagemPostergarCotas');
+					} else {
+						$("#dtPostergada").val(result);
+					}
+				},
+			  	null,
+			   	true,
+			   	'dialogMensagemPostergarCotas'
+		);
+
+	}
+	
+	function cobrarCotas() {
+
+		var dataOperacao = $("#datepickerDe").val();
+		
+		$.postJSON("<c:url value='/devolucao/fechamentoEncalhe/cobrarCotas' />",
+					{ 'dataOperacao' : dataOperacao, 'idsCotas' : obterCotasMarcadas() },
+					function (result) {
+						
+						var tipoMensagem = result.tipoMensagem;
+						var listaMensagens = result.listaMensagens;
+						
+						if (tipoMensagem && listaMensagens) {
+							exibirMensagemDialog(tipoMensagem, listaMensagens, 'dialogMensagemEncerrarEncalhe');
+						}
+
+						$(".cotasGrid").flexReload();
+					},
+				  	null,
+				   	true
+			);
+	}
+
+	function gerarArquivoCotasAusentes(fileType) {
+
+		var dataEncalhe = $("#datepickerDe").val();
+		
+		window.location = 
+			contextPath + 
+			"/devolucao/fechamentoEncalhe/exportarArquivo?" + 
+			"dataEncalhe=" + dataEncalhe + 
+			"&sortname=" + $(".cotasGrid").flexGetSortName() +
+			"&sortorder=" + $(".cotasGrid").getSortOrder() +
+			"&rp=" + $(".cotasGrid").flexGetRowsPerPage() +
+			"&page=" + $(".cotasGrid").flexGetPageNumber() +
+			"&fileType=" + fileType;
+
+		return false;
+	}
+	
+	function imprimirArquivo(fileType) {
+
+		var dataEncalhe = $("#datepickerDe").val();
+		
+		window.location = contextPath + "/devolucao/fechamentoEncalhe/imprimirArquivo?"
+			+ "dataEncalhe=" + vDataEncalhe
+			+ "&fornecedorId="+ vFornecedorId
+			+ "&boxId=" + vBoxId
+			+ "&sortname=" + $(".fechamentoGrid").flexGetSortName()
+			+ "&sortorder=" + $(".fechamentoGrid").getSortOrder()
+			+ "&rp=" + $(".fechamentoGrid").flexGetRowsPerPage()
+			+ "&page=" + $(".fechamentoGrid").flexGetPageNumber()
+			+ "&fileType=" + fileType;
+
+		return false;
+	}
+	
 	</script>
 
 	<style type="text/css">
@@ -84,17 +478,53 @@
 <body>
 
 	<div id="dialog-confirm" title="Encerrar Opera&ccedil;&atilde;o" style="display:none;">
-		<p>Confirma o encerramento da opera&ccedil;&atilde;o do dia 99/99/9999:</p>
+		<p>Confirma o encerramento da opera&ccedil;&atilde;o do dia <span id="dataConfirma"></span>:</p>
 	</div>
 
+	<div id="dialog-postergar" title="Postergar Encalhe" style="display:none;">
+	
+		<jsp:include page="../messagesDialog.jsp">
+			<jsp:param value="dialogMensagemPostergarCotas" name="messageDialog"/>
+		</jsp:include> 
+		
+		<fieldset style="width:200px!important;">
+	    	<legend>Postergar Encalhe</legend>
+			<table border="0" cellspacing="2" cellpadding="0">
+	          <tr>
+	            <td width="70">Nova Data:</td>
+	            <td width="103"><input name="dtPostergada" type="text" id="dtPostergada" style="width:80px;" onchange="carregarDataPostergacao();" /></td>
+	          </tr>
+	        </table>
+	    </fieldset>
+	</div>
 	
 	<div id="dialog-encerrarEncalhe" title="Opera&ccedil;&atilde;o de Encalhe" style="display:none;">
+		
+		<jsp:include page="../messagesDialog.jsp">
+			<jsp:param value="dialogMensagemEncerrarEncalhe" name="messageDialog"/>
+		</jsp:include> 
+		
 		<fieldset>
 			<legend>Cotas Ausentes</legend>
-			<table class="cotasGrid"></table>
-			<span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
-			<span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir </a></span>
-			<span class="bt_sellAll" style="float:right;"><input type="checkbox" id="sel" name="Todos4" onclick="checkAll_cotas();" style="float:right;margin-right:25px;"/><label for="sel">Selecionar Todos</label></span>
+			<form id="formGridCotas" name="formGridCotas" >
+				<table class="cotasGrid" id="tabelaGridCotas" ></table>
+			</form>
+			<span class="bt_novos" title="Gerar Arquivo" >
+				<a href="javascript:gerarArquivoCotasAusentes('XLS');">
+					<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
+					Arquivo
+				</a>
+			</span>
+			<span class="bt_novos" title="Imprimir">
+				<a href="javascript:gerarArquivoCotasAusentes('PDF');">
+					<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
+					Imprimir 
+				</a>
+			</span>
+			<span class="bt_sellAll" style="float:right;">
+				<input type="checkbox" id="checkTodasCotas" name="checkTodasCotas" onchange="checarTodasCotasGrid(this.checked);" style="float:right;margin-right:25px;"/>
+				<label for="checkTodasCotas" id="textoCheckAllCotas" ></label>
+			</span>
 		</fieldset>
 	</div>
 
@@ -108,7 +538,7 @@
 				<td width="67">Fornecedor:</td>
 				<td width="216">
 					<select name="selectFornecedor" id="selectFornecedor" style="width:200px;">
-					<option>Selecione...</option>
+					<option value="">Selecione...</option>
 					<c:forEach var="fornecedor" items="${listaFornecedores}">
 						<option value="${fornecedor.id}">${fornecedor.juridica.razaoSocial}</option>
 					</c:forEach>
@@ -117,13 +547,13 @@
 				<td width="97">Box de Encalhe:</td>
 				<td width="239">
 					<select name="selectBoxEncalhe" id="selectBoxEncalhe" style="width:100px;">
-					<option>Selecione...</option>
+					<option value="">Selecione...</option>
 					<c:forEach var="box" items="${listaBoxes}">
 						<option value="${box.id}">${box.nome}</option>
 					</c:forEach>
 					</select>
 				</td>
-				<td width="106"><span class="bt_pesquisar"><a href="javascript:;" onclick="mostrar();">Pesquisar</a></span></td>
+				<td width="106"><span class="bt_pesquisar"><a href="javascript:;" onclick="pesquisar();">Pesquisar</a></span></td>
 			</tr>
 		</table>
     </fieldset>
@@ -133,14 +563,20 @@
     <fieldset class="classFieldset">
        	<legend> Fechamento Encalhe</legend>
         <div class="grids" style="display:none;">
+			
 			<table class="fechamentoGrid"></table>
-            <span class="bt_novos" title="Salvar"><a href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0" />Salvar </a></span>
-			<span class="bt_novos" title="Cotas Ausentes"><a href="javascript:;" onclick="popup_encerrarEncalhe();"><img src="${pageContext.request.contextPath}/images/ico_check.gif" hspace="5" border="0" />Cotas Ausentes</a></span>
-			<span class="bt_novos" title="Encerrar Operação Encalhe"><a href="javascript:;" onclick="popup_encerrar();"><img src="${pageContext.request.contextPath}/images/ico_check.gif" hspace="5" border="0" />Encerrar Operação Encalhe</a></span>
-			<span class="bt_sellAll" style="float:right;"><input type="checkbox" id="sel" name="Todos" onclick="checkAll();" style="float:right;margin-right:55px;"/><label for="sel">Selecionar Todos</label></span>
+			
+			<div id="divBotoesPrincipais" style="display:none;">
+	            <span class="bt_novos" title="Salvar"><a href="javascript:;" onclick="salvar()"><img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0" />Salvar </a></span>
+				<span class="bt_novos" title="Cotas Ausentes"><a href="javascript:;" onclick="popup_encerrarEncalhe();"><img src="${pageContext.request.contextPath}/images/ico_check.gif" hspace="5" border="0" />Cotas Ausentes</a></span>
+				<span class="bt_novos" title="Encerrar Opera&ccedil;&atilde;o Encalhe"><a href="javascript:;" onclick="verificarEncerrarOperacaoEncalhe();"><img src="${pageContext.request.contextPath}/images/ico_check.gif" hspace="5" border="0" />Encerrar Opera&ccedil;&atilde;o Encalhe</a></span>
+				<span class="bt_sellAll" style="float:right;"><a href="javascript:;" id="sel" onclick="replicarTodos();"><img src="${pageContext.request.contextPath}/images/ico_atualizar.gif" border="0" /></a><label for="sel">Replicar Todos</label></span>
+			</div>
+			
         	<br clear="all" />
-			<span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
-			<span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir </a></span>
+        	
+			<span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;" onclick="imprimirArquivo('XLS');"><img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
+			<span class="bt_novos" title="Imprimir"><a href="javascript:;" onclick="imprimirArquivo('PDF');"><img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir </a></span>
         </div>
 	</fieldset>
     
@@ -148,35 +584,35 @@
 
 	<script>
 		$(".cotasGrid").flexigrid({
-			url : '../xml/cotas_fechamento-xml.xml',
-			dataType : 'xml',
+			preProcess: preprocessamentoGrid,
+			dataType : 'json',
 			colModel : [ {
 				display : 'Cota',
-				name : 'cota',
+				name : 'numeroCota',
 				width : 50,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Nome',
-				name : 'nome',
+				name : 'colaboradorName',
 				width : 110,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Box',
-				name : 'box',
+				name : 'boxName',
 				width : 37,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Roteiro',
-				name : 'roteiro',
+				name : 'roteiroName',
 				width : 85,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Rota',
-				name : 'rota',
+				name : 'rotaName',
 				width : 80,
 				sortable : true,
 				align : 'left'
@@ -188,25 +624,26 @@
 				align : 'left'
 			}, {
 				display : ' ',
-				name : 'sel',
+				name : 'check',
 				width : 20,
 				sortable : true,
 				align : 'center'
 			}],
-			sortname : "cota",
+			sortname : "numeroCota",
 			sortorder : "asc",
 			usepager : true,
 			useRp : true,
 			rp : 15,
 			showTableToggleBtn : true,
 			width : 600,
-			height : 240
+			height : 240,
+			singleSelect : true
 		});
 		$(".fechamentoGrid").flexigrid({
-			url : '../xml/fechamento-xml.xml',
-			dataType : 'xml',
+			dataType : 'json',
+			preProcess: preprocessamentoGridFechamento,
 			colModel : [ {
-				display : 'Código',
+				display : 'C&oacute;digo',
 				name : 'codigo',
 				width : 60,
 				sortable : true,
@@ -218,46 +655,46 @@
 				sortable : true,
 				align : 'left'
 			}, {
-				display : 'Edição',
+				display : 'Edi&ccedil;&atilde;o',
 				name : 'edicao',
 				width : 80,
 				sortable : true,
 				align : 'left'
 			}, {
-				display : 'Preço Capa R$',
-				name : 'precoCapa',
+				display : 'Pre&ccedil;o Capa R$',
+				name : 'precoCapaFormatado',
 				width : 80,
 				sortable : true,
 				align : 'right'
 			}, {
-				display : 'Exempl. Devolução',
-				name : 'exemplarDevolucao',
+				display : 'Exempl. Devolu&ccedil;&atilde;o',
+				name : 'exemplaresDevolucaoFormatado',
 				width : 100,
 				sortable : true,
 				align : 'center'
 			}, {
 				display : 'Total R$',
-				name : 'total',
+				name : 'totalFormatado',
 				width : 80,
-				sortable : true,
+				sortable : false,
 				align : 'right'
 			}, {
-				display : 'Físico',
+				display : 'F&iacute;sico',
 				name : 'fisico',
 				width : 80,
-				sortable : true,
+				sortable : false,
 				align : 'center'
 			}, {
-				display : 'Diferença',
+				display : 'Diferen&ccedil;a',
 				name : 'diferenca',
 				width : 50,
-				sortable : true,
+				sortable : false,
 				align : 'right'
 			}, {
 				display : 'Replicar Qtde.',
-				name : 'replicarQtde',
+				name : 'replicar',
 				width : 80,
-				sortable : true,
+				sortable : false,
 				align : 'center'
 			}],
 			sortname : "codigo",
@@ -267,7 +704,8 @@
 			rp : 15,
 			showTableToggleBtn : true,
 			width : 960,
-			height : 180
+			height : 180,
+			singleSelect : true
 		});
 	</script>
 

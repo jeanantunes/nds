@@ -7,7 +7,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -121,7 +120,6 @@ public class PdvController {
 		result.include("listaTipoPontoPDV",getListaDescricao(pdvService.obterTiposPontoPDV()));
 		result.include("listaCaracteristicaPDV",getListaCaracteristica());
 		result.include("listaAreaInfluenciaPDV",getListaDescricao(pdvService.obterAreasInfluenciaPDV()));
-		result.include("listaClusterPDV",getListaDescricao(pdvService.obterClustersPDV()));
 		
 	}
 	
@@ -161,24 +159,7 @@ public class PdvController {
 		result.use(Results.json()).from(getListaDescricao(pdvService.obterTiposGeradorFluxoNotIn(cod)), "result").recursive().serialize();
 	}
 	
-	@Post
-	@Path("/carregarEspecialidades")
-	public void carregarEspecialidades(List<Long> codigos){
-		
-		Long[] cod = (codigos == null)? new Long[]{} : codigos.toArray(new Long[]{});
-		
-		result.use(Results.json()).from(getListaDescricao(pdvService.obterEspecialidadesPDV(cod)), "result").recursive().serialize();
-	}
 	
-	@Post
-	@Path("/carregarEspecialidadesNotIn")
-	public void carregarEspecialidadesNotIn(List<Long> codigos){
-		
-		Long[] cod = (codigos == null)? new Long[]{} : codigos.toArray(new Long[]{});
-		
-		result.use(Results.json()).from(getListaDescricao(pdvService.obterEspecialidadesPDVNotIn(cod)), "result").recursive().serialize();
-	}
-
 	@Post
 	@Path("/carregarPeriodoFuncionamento")
 	public void carregarPeriodoFuncionamento(){

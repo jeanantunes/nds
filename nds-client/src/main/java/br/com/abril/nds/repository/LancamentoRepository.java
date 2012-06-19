@@ -21,146 +21,190 @@ import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 import br.com.abril.nds.vo.PeriodoVO;
 
 public interface LancamentoRepository extends Repository<Lancamento, Long> {
-	
-	List<Lancamento> obterBalanceamentoMatrizLancamentos(FiltroLancamentoDTO filtro);
-	
-	SumarioLancamentosDTO sumarioBalanceamentoMatrizLancamentos(Date data, List<Long> idsFornecedores);
+
+	List<Lancamento> obterBalanceamentoMatrizLancamentos(
+			FiltroLancamentoDTO filtro);
+
+	SumarioLancamentosDTO sumarioBalanceamentoMatrizLancamentos(Date data,
+			List<Long> idsFornecedores);
 
 	void atualizarLancamento(Long idLancamento, Date novaDataLancamentoPrevista);
 
 	List<ResumoPeriodoBalanceamentoDTO> buscarResumosPeriodo(
-			List<Date> periodoDistribuicao, List<Long> fornecedores, GrupoProduto grupoCromo);
-	
-	List<Lancamento> obterLancamentosNaoExpedidos(
-			PaginacaoVO paginacaoVO, Date data, Long idFornecedor, Boolean estudo);
-	
-	Long obterTotalLancamentosNaoExpedidos(Date data, Long idFornecedor, Boolean estudo);
-	
-	 Lancamento obterLancamentoPorItensRecebimentoFisico(Date dataPrevista, TipoLancamento tipoLancamento, Long idProdutoEdicao);
-	 
-	 Date obterDataRecolhimentoPrevista(String codigoProduto, Long numeroEdicao);
-	 
-	 /**
-	  * Método que retorna o balanceamento do recolhimento referentes a um periodo e determinados fornecedores.
-	  * 
-	  * @param periodoRecolhimento
-	  * 
-	  * @param listaIdsFornecedores 
-	  * 
-	  * @param grupoCromo
-	  * 
-	  * @return List<ProdutoRecolhimentoDTO>
-	  */
-	 List<ProdutoRecolhimentoDTO> obterBalanceamentoRecolhimento(PeriodoVO periodoRecolhimento, 
-					 											 List<Long> fornecedores,
-					 											 GrupoProduto grupoCromo);
-	 
-	 /**
-	  * Método que retorna o balanceamento do recolhimento referentes a um periodo 
-	  * ordernados por editor e data de recolhimento do distribuidor.
-	  * 
-	  * @param periodoRecolhimento
-	  * 
-	  * @param listaIdsFornecedores 
-	  * 
-	  * @param grupoCromo
-	  * 
-	  * @return List<ProdutoRecolhimentoDTO>
-	  */
-	 List<ProdutoRecolhimentoDTO> obterBalanceamentoRecolhimentoPorEditorData(PeriodoVO periodoRecolhimento, 
-								 											  List<Long> fornecedores,
-								 											  GrupoProduto grupoCromo);
+			List<Date> periodoDistribuicao, List<Long> fornecedores,
+			GrupoProduto grupoCromo);
 
-	 /**
-	  * Método que retorna expectativas de encalhe baseadas nas datas do período informado. 
-	  * 
-	  * @param periodoRecolhimento
-	  * 
-	  * @param fornecedores
-	  * 
-	  * @param grupoCromo
-	  * 
-	  * @return Map<Date, BigDecimal>
-	  */
-	 TreeMap<Date, BigDecimal> obterExpectativasEncalhePorData(PeriodoVO periodoRecolhimento, 
-															   List<Long> fornecedores,
-															   GrupoProduto grupoCromo);
-	 
-	 /**
-	  * Método que verifica a existência de uma chamada de encalhe do tipo Matriz Recolhimento
-	  * para o período especificado.
-	  * 
-	  * @param periodo - Período a ser utilizado na pesquisa.
-	  * 
-	  * @return caso exista chamada: true, caso não exista: false.
-	  */
-	 boolean verificarExistenciaChamadaEncalheMatrizRecolhimento(PeriodoVO periodo);
+	List<Lancamento> obterLancamentosNaoExpedidos(PaginacaoVO paginacaoVO,
+			Date data, Long idFornecedor, Boolean estudo);
 
-	 /**
-	  * Obtém o último Lancamento de determinado ProdutoEdicao
-	  * 
-	  * @param idProdutoEdicao - Id do ProdutoEdicao
-	  * @return Lancamento
-	  */
-	Lancamento obterUltimoLancamentoDaEdicao(Long idProdutoEdicao);
-	 
-	 /**
-	  * Obtém uma lista de lancamentos de acordo com o parâmetro informado
-	  * 
-	  * @param idsLancamento - identificadores de lancamento
-	  * 
-	  * @return {@link List<Lancamento>}
-	  */
-	List<Lancamento> obterLancamentosPorId(Set<Long> idsLancamento);
-	
+	Long obterTotalLancamentosNaoExpedidos(Date data, Long idFornecedor,
+			Boolean estudo);
+
+	Lancamento obterLancamentoPorItensRecebimentoFisico(Date dataPrevista,
+			TipoLancamento tipoLancamento, Long idProdutoEdicao);
+
+	Date obterDataRecolhimentoPrevista(String codigoProduto, Long numeroEdicao);
+
 	/**
-	 * Obtém o lancamento para determinada dataRecolhimentoDistribuidor e idProdutoEdicao.
+	 * Método que retorna o balanceamento do recolhimento referentes a um
+	 * periodo e determinados fornecedores.
 	 * 
-	 * @param dataRecolhimentoDistribuidor
+	 * @param periodoRecolhimento
+	 * 
+	 * @param listaIdsFornecedores
+	 * 
+	 * @param grupoCromo
+	 * 
+	 * @return List<ProdutoRecolhimentoDTO>
+	 */
+	List<ProdutoRecolhimentoDTO> obterBalanceamentoRecolhimento(
+			PeriodoVO periodoRecolhimento, List<Long> fornecedores,
+			GrupoProduto grupoCromo);
+
+	/**
+	 * Método que retorna o balanceamento do recolhimento referentes a um
+	 * periodo ordernados por editor e data de recolhimento do distribuidor.
+	 * 
+	 * @param periodoRecolhimento
+	 * 
+	 * @param listaIdsFornecedores
+	 * 
+	 * @param grupoCromo
+	 * 
+	 * @return List<ProdutoRecolhimentoDTO>
+	 */
+	List<ProdutoRecolhimentoDTO> obterBalanceamentoRecolhimentoPorEditorData(
+			PeriodoVO periodoRecolhimento, List<Long> fornecedores,
+			GrupoProduto grupoCromo);
+
+	/**
+	 * Método que retorna expectativas de encalhe baseadas nas datas do período
+	 * informado.
+	 * 
+	 * @param periodoRecolhimento
+	 * 
+	 * @param fornecedores
+	 * 
+	 * @param grupoCromo
+	 * 
+	 * @return Map<Date, BigDecimal>
+	 */
+	TreeMap<Date, BigDecimal> obterExpectativasEncalhePorData(
+			PeriodoVO periodoRecolhimento, List<Long> fornecedores,
+			GrupoProduto grupoCromo);
+
+	/**
+	 * Método que verifica a existência de uma chamada de encalhe do tipo Matriz
+	 * Recolhimento para o período especificado.
+	 * 
+	 * @param periodo
+	 *            - Período a ser utilizado na pesquisa.
+	 * 
+	 * @return caso exista chamada: true, caso não exista: false.
+	 */
+	boolean verificarExistenciaChamadaEncalheMatrizRecolhimento(
+			PeriodoVO periodo);
+
+	/**
+	 * Obtém o último Lancamento de determinado ProdutoEdicao
+	 * 
 	 * @param idProdutoEdicao
-	 * 
+	 *            - Id do ProdutoEdicao
 	 * @return Lancamento
 	 */
-	Lancamento obterLancamentoPorDataRecolhimentoProdutoEdicao(Date dataRecolhimentoDistribuidor, Long idProdutoEdicao);
-	
+	Lancamento obterUltimoLancamentoDaEdicao(Long idProdutoEdicao);
+
+	/**
+	 * Obtém uma lista de lancamentos de acordo com o parâmetro informado
+	 * 
+	 * @param idsLancamento
+	 *            - identificadores de lancamento
+	 * 
+	 * @return {@link List<Lancamento>}
+	 */
+	List<Lancamento> obterLancamentosPorId(Set<Long> idsLancamento);
+
 	
 	/**
-	 * Obtem a quantidade de registros de lançamentos respeitantdo os paramentros.
-	 * @param idFornecedor (Opcional) Identificador do {@link Fornecedor}
-	 * @param dataInicioRecolhimento Inicio do intervalo para recolhimento.
-	 * @param dataFimRecolhimento Fim do intervalo para recolhimento.
+	 * Obtem a quantidade de registros de lançamentos respeitantdo os
+	 * paramentros.
+	 * 
+	 * @param idFornecedor
+	 *            (Opcional) Identificador do {@link Fornecedor}
+	 * @param dataInicioRecolhimento
+	 *            Inicio do intervalo para recolhimento.
+	 * @param dataFimRecolhimento
+	 *            Fim do intervalo para recolhimento.
 	 * @return
 	 */
 	public abstract Long quantidadeLancamentoInformeRecolhimento(
-			Long idFornecedor, Calendar dataInicioRecolhimento, Calendar dataFimRecolhimento);
-	
+			Long idFornecedor, Calendar dataInicioRecolhimento,
+			Calendar dataFimRecolhimento);
+
 	/**
 	 * Obtem Dados de informe encalhe dos lançamentos respeitando os parametros.
-	 * @param idFornecedor (Opcional) Identificador do {@link Fornecedor}
-	 * @param dataInicioRecolhimento Inicio do intervalo para recolhimento.
-	 * @param dataFimRecolhimento Fim do intervalo para recolhimento.
-	 * @param orderBy (Opcional) nome do campo para compor a ordenação
-	 * @param ordenacao (Opcional) tipo da ordenação
-	 * @param initialResult resultado inicial
-	 * @param maxResults numero maximo de resultados
+	 * 
+	 * @param idFornecedor
+	 *            (Opcional) Identificador do {@link Fornecedor}
+	 * @param dataInicioRecolhimento
+	 *            Inicio do intervalo para recolhimento.
+	 * @param dataFimRecolhimento
+	 *            Fim do intervalo para recolhimento.
+	 * @param orderBy
+	 *            (Opcional) nome do campo para compor a ordenação
+	 * @param ordenacao
+	 *            (Opcional) tipo da ordenação
+	 * @param initialResult
+	 *            resultado inicial
+	 * @param maxResults
+	 *            numero maximo de resultados
 	 * @return
 	 */
-	public abstract List<InformeEncalheDTO> obterLancamentoInformeRecolhimento(Long idFornecedor,
-			Calendar dataInicioRecolhimento, Calendar dataFimRecolhimento, String  orderBy, Ordenacao ordenacao, int initialResult,
-			int maxResults);
+	public abstract List<InformeEncalheDTO> obterLancamentoInformeRecolhimento(
+			Long idFornecedor, Calendar dataInicioRecolhimento,
+			Calendar dataFimRecolhimento, String orderBy, Ordenacao ordenacao,
+			Integer initialResult, Integer maxResults);
 
-	
 	/**
 	 * 
-	 * Obtém a ultima (mais atual) dataLancamentoDistribuidor de determinado 
-	 * produtoEdicao, sendo esta dataLancamentoDistribuidor anterior a dataOperacao passada
-	 * como parâmetro.
+	 * Obtém a ultima (mais atual) dataLancamentoDistribuidor de determinado
+	 * produtoEdicao, sendo esta dataLancamentoDistribuidor anterior a
+	 * dataOperacao passada como parâmetro. É feito inner join com lancamentoParcial.
 	 * 
 	 * @param idProdutoEdicao
 	 * @param dataOperacao
 	 * 
 	 * @return Date
 	 */
-	public Date obterDataUltimoLancamentoParcial(Long idProdutoEdicao, Date dataOperacao);
+	public abstract Date obterDataUltimoLancamentoParcial(Long idProdutoEdicao,
+			Date dataOperacao);
+
+	/**
+	 * Obtém a ultima (mais atual) dataLancamentoDistribuidor de determinado
+	 * produtoEdicao, sendo esta dataLancamentoDistribuidor anterior a
+	 * dataOperacao passada como parâmetro.
+	 * 
+	 * @param idProdutoEdicao
+	 * @param dataOperacao
+	 * 
+	 * @return Date.
+	 */
+	public Date obterDataUltimoLancamento(Long idProdutoEdicao, Date dataOperacao);
+
 	
+	/**
+	 * Obtem Dados de informe encalhe dos lançamentos respeitando os parametros.
+	 * 
+	 * @param idFornecedor
+	 *            (Opcional) Identificador do {@link Fornecedor}
+	 * @param dataInicioRecolhimento
+	 *            Inicio do intervalo para recolhimento.
+	 * @param dataFimRecolhimento
+	 *            Fim do intervalo para recolhimento.
+	 * @return
+	 */
+	public abstract List<InformeEncalheDTO> obterLancamentoInformeRecolhimento(
+			Long idFornecedor, Calendar dataInicioRecolhimento,
+			Calendar dataFimRecolhimento);
+
 }

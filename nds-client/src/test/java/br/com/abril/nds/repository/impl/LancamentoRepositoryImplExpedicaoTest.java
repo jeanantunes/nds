@@ -67,6 +67,9 @@ public class LancamentoRepositoryImplExpedicaoTest extends AbstractRepositoryImp
 		TipoFornecedor tipoFornecedorPublicacao = Fixture.tipoFornecedorPublicacao();
 		save(tipoFornecedorPublicacao);
 		
+		Editor abril = Fixture.editoraAbril();
+		save(abril);
+		
 		for(Integer i=1000;i<1010; i++) {
 			
 			PessoaJuridica juridica = Fixture.pessoaJuridica("PessoaJ"+i,
@@ -75,9 +78,6 @@ public class LancamentoRepositoryImplExpedicaoTest extends AbstractRepositoryImp
 			
 			Fornecedor fornecedor = Fixture.fornecedor(juridica, SituacaoCadastro.ATIVO, true, tipoFornecedorPublicacao, null);
 			save(fornecedor);
-			
-			Editor abril = Fixture.editoraAbril();
-			save(abril);
 			
 			Produto produto = Fixture.produto("00"+i, "descricao"+i, "nome"+i, PeriodicidadeProduto.ANUAL, tipoRevista, 5, 5, BigDecimal.TEN);
 			produto.addFornecedor(fornecedor);

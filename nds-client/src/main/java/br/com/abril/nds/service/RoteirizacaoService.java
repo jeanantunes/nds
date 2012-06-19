@@ -3,10 +3,15 @@ package br.com.abril.nds.service;
 import java.util.List;
 
 import org.hibernate.criterion.MatchMode;
+
+import br.com.abril.nds.dto.ConsultaRoteirizacaoDTO;
 import br.com.abril.nds.dto.CotaDisponivelRoteirizacaoDTO;
+import br.com.abril.nds.model.LogBairro;
+import br.com.abril.nds.model.LogLocalidade;
 import br.com.abril.nds.model.cadastro.Rota;
 import br.com.abril.nds.model.cadastro.Roteirizacao;
 import br.com.abril.nds.model.cadastro.Roteiro;
+import br.com.abril.nds.model.cadastro.TipoRoteiro;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
 public interface RoteirizacaoService {
@@ -23,7 +28,7 @@ public interface RoteirizacaoService {
 	
 	void incluirRota(Rota rota);
 	
-	void excluirListaRota(List<Long> rotasId);
+	void excluirListaRota(List<Long> rotasId, Long roteiroId);
 	
 	void transferirListaRota(List<Long> rotasId, Long roteiroId);
 	
@@ -49,7 +54,48 @@ public interface RoteirizacaoService {
 	
 	List<CotaDisponivelRoteirizacaoDTO> buscarRoterizacaoPorRota(Long rotaId);
 	
-	List<CotaDisponivelRoteirizacaoDTO> buscarPvsPorCota(Integer numeroCota);
+	List<CotaDisponivelRoteirizacaoDTO> buscarPvsPorCota(Integer numeroCota,  Long rotaId,  Long roteiroId );
 	
 	void gravaRoteirizacao(List<CotaDisponivelRoteirizacaoDTO> lista,  Long idRota);
+
+	/**
+	 * Obtem rotas por numero da cota
+	 * 
+	 * @param numeroCota - Numero da Cota
+	 * @return Lista de Rotas
+	 */
+	
+	List<Rota> obterRotasPorCota(Integer numeroCota);
+	
+	Integer buscarMaiorOrdemRoteiro();
+	
+	Integer buscarMaiorOrdemRota(Long idRoteiro);
+	
+	void transferirRoteirizacao(List<Long> roteirizacaoId,Rota rota);
+	
+	void excluirRoteirizacao(List<Long> roteirizacaoId);
+	
+	List<CotaDisponivelRoteirizacaoDTO> buscarRoteirizacaoPorEndereco (String CEP, String uf, String municipio, String bairro,  Long rotaId ,  Long roteiroId);
+	
+	List<String> buscarUF();
+	
+	List<LogLocalidade> buscarMunicipioPorUf(String uf);
+	
+	List<LogBairro> buscarBairroPorMunicipio(Long municipio, String uf);
+	
+	List<Roteiro> buscarRoteiroEspecial();
+	
+	List<ConsultaRoteirizacaoDTO> buscarRoteirizacao(Long boxId, Long roteiroId, Long rotaId, TipoRoteiro tipoRoteiro, String  orderBy, Ordenacao ordenacao, int initialResult, int maxResults);
+	
+	List<ConsultaRoteirizacaoDTO> buscarRoteirizacaoPorNumeroCota(Integer numeroCota, TipoRoteiro tipoRoteiro, String  orderBy, Ordenacao ordenacao, int initialResult, int maxResults);
+	
+	void transferirRoteirizacaoComNovaRota(List<Long> roteirizacaoId,Rota rota);
+	
+	void atualizaOrdenacao(Roteirizacao roteirizacao);
+	
+	void atualizaOrdenacaoAsc(Roteirizacao roteirizacao);
+	
+	void atualizaOrdenacaoDesc(Roteirizacao roteirizacao);
+
 }
+	

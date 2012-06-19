@@ -17,6 +17,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinColumns;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -36,8 +37,10 @@ import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
  * @created 14-fev-2012 11:35:32
  */
 @Entity
-@Table(name = "LANCAMENTO", uniqueConstraints = { @UniqueConstraint(columnNames = {
-		"DATA_LCTO_PREVISTA", "PRODUTO_EDICAO_ID" })})
+@Table(name = "LANCAMENTO", uniqueConstraints = {
+	@UniqueConstraint(columnNames = {"DATA_LCTO_PREVISTA", "PRODUTO_EDICAO_ID" }),
+	@UniqueConstraint(columnNames = {"DATA_LCTO_DISTRIBUIDOR", "PRODUTO_EDICAO_ID" })
+})
 @SequenceGenerator(name = "LANCAMENTO_SEQ", initialValue = 1, allocationSize = 1)
 public class Lancamento implements Serializable {
 
@@ -112,6 +115,10 @@ public class Lancamento implements Serializable {
 	@ManyToOne(optional = true)
 	@JoinColumn(name = "EXPEDICAO_ID")
 	private Expedicao expedicao;
+	
+	
+	@OneToOne(mappedBy="lancamento")
+	private PeriodoLancamentoParcial periodoLancamentoParcial;
 
 	public Long getId() {
 		return id;
@@ -289,6 +296,21 @@ public class Lancamento implements Serializable {
 	 */
 	public void setRepartePromocional(BigDecimal repartePromocional) {
 		this.repartePromocional = repartePromocional;
+	}
+
+	/**
+	 * @return the periodoLancamentoParcial
+	 */
+	public PeriodoLancamentoParcial getPeriodoLancamentoParcial() {
+		return periodoLancamentoParcial;
+	}
+
+	/**
+	 * @param periodoLancamentoParcial the periodoLancamentoParcial to set
+	 */
+	public void setPeriodoLancamentoParcial(
+			PeriodoLancamentoParcial periodoLancamentoParcial) {
+		this.periodoLancamentoParcial = periodoLancamentoParcial;
 	}
 	
 

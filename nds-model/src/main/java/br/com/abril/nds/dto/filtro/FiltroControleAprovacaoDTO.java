@@ -3,6 +3,8 @@ package br.com.abril.nds.dto.filtro;
 import java.io.Serializable;
 import java.util.Date;
 
+import br.com.abril.nds.model.aprovacao.StatusAprovacao;
+
 /**
  * Data Transfer Object para filtro da pesquisa de 
  * controle de aprovação.
@@ -17,6 +19,8 @@ public class FiltroControleAprovacaoDTO extends FiltroDTO implements Serializabl
 	
 	private Long idTipoMovimento;
 	
+	private StatusAprovacao statusAprovacao;
+	
 	private OrdenacaoColunaControleAprovacao ordenacaoColuna;
 	
 	/**
@@ -26,18 +30,31 @@ public class FiltroControleAprovacaoDTO extends FiltroDTO implements Serializabl
 		
 	}
 	
+//	/**
+//	 * Construtor.
+//	 * 
+//	 * @param dataMovimento - data de movimento
+//	 * @param idTipoMovimento - id tipo de movimento
+//	 */
+//	public FiltroControleAprovacaoDTO(Date dataMovimento, Long idTipoMovimento) {
+//		
+//		this.dataMovimento = dataMovimento;
+//		this.idTipoMovimento = idTipoMovimento;
+//	}
+	
 	/**
 	 * Construtor.
 	 * 
 	 * @param dataMovimento - data de movimento
 	 * @param idTipoMovimento - id tipo de movimento
 	 */
-	public FiltroControleAprovacaoDTO(Date dataMovimento, Long idTipoMovimento) {
+	public FiltroControleAprovacaoDTO(Date dataMovimento, Long idTipoMovimento, StatusAprovacao status) {
 		
 		this.dataMovimento = dataMovimento;
 		this.idTipoMovimento = idTipoMovimento;
+		this.statusAprovacao = status;
 	}
-
+	
 	/**
 	 * Enum para ordenação das colunas do filtro.
 	 * 
@@ -52,7 +69,8 @@ public class FiltroControleAprovacaoDTO extends FiltroDTO implements Serializabl
 		VALOR("valor"),
 		PARCELAS("parcelas"),
 		PRAZO("prazo"),
-		REQUERENTE("requerente");
+		REQUERENTE("requerente"), 
+		STATUS("status");
 		
 		private String nomeColuna;
 		
@@ -109,6 +127,20 @@ public class FiltroControleAprovacaoDTO extends FiltroDTO implements Serializabl
 	public void setOrdenacaoColuna(OrdenacaoColunaControleAprovacao ordenacaoColuna) {
 		this.ordenacaoColuna = ordenacaoColuna;
 	}
+			
+	/**
+	 * @return the statusAprovacao
+	 */
+	public StatusAprovacao getStatusAprovacao() {
+		return statusAprovacao;
+	}
+
+	/**
+	 * @param statusAprovacao the statusAprovacao to set
+	 */
+	public void setStatusAprovacao(StatusAprovacao statusAprovacao) {
+		this.statusAprovacao = statusAprovacao;
+	}
 
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
@@ -116,7 +148,7 @@ public class FiltroControleAprovacaoDTO extends FiltroDTO implements Serializabl
 	@Override
 	public int hashCode() {
 		final int prime = 31;
-		int result = 1;
+		int result = super.hashCode();
 		result = prime * result
 				+ ((dataMovimento == null) ? 0 : dataMovimento.hashCode());
 		result = prime * result
@@ -124,7 +156,7 @@ public class FiltroControleAprovacaoDTO extends FiltroDTO implements Serializabl
 		result = prime * result
 				+ ((ordenacaoColuna == null) ? 0 : ordenacaoColuna.hashCode());
 		result = prime * result
-				+ ((super.paginacao == null) ? 0 : super.paginacao.hashCode());
+				+ ((statusAprovacao == null) ? 0 : statusAprovacao.hashCode());
 		return result;
 	}
 
@@ -135,7 +167,7 @@ public class FiltroControleAprovacaoDTO extends FiltroDTO implements Serializabl
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
-		if (obj == null)
+		if (!super.equals(obj))
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
@@ -152,10 +184,7 @@ public class FiltroControleAprovacaoDTO extends FiltroDTO implements Serializabl
 			return false;
 		if (ordenacaoColuna != other.ordenacaoColuna)
 			return false;
-		if (super.paginacao == null) {
-			if (other.paginacao != null)
-				return false;
-		} else if (!super.paginacao.equals(other.paginacao))
+		if (statusAprovacao != other.statusAprovacao)
 			return false;
 		return true;
 	}

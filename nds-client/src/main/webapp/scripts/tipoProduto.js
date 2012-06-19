@@ -10,7 +10,8 @@ function TipoProduto() {
 		descricao : null,
 		grupoProduto : null
 	};
-
+	
+	$('.file-export').hide();
 };
 
 TipoProduto.prototype.path = contextPath + "/administracao/tipoProduto/";
@@ -196,6 +197,7 @@ TipoProduto.prototype.pesquisa = function() {
 		newp : 1
 	});
 	$(".tipoProdutoGrid").flexReload();
+	$('.file-export').show();
 };
 
 

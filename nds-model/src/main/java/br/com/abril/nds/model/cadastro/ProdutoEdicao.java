@@ -138,7 +138,7 @@ public class ProdutoEdicao implements Serializable {
 	@Column(name = "PARCIAL")
 	private boolean parcial;
 
-	@Column(name = "CHAMADA_CAPA", nullable = true)
+	@Column(name = "CHAMADA_CAPA", nullable = true, length = 255)
 	private String chamadaCapa;
 	
 	@Column(name = "ATIVO", nullable = false)
@@ -153,6 +153,9 @@ public class ProdutoEdicao implements Serializable {
 	 */
 	@Column(name = "ORIGEM_INTERFACE", nullable = true)
 	private Boolean origemInterface;
+	
+	@Column(name = "NUMERO_LANCAMENTO", nullable = true)
+	private Integer numeroLancamento;
 	
 	/**
 	 * Dimensões do produto (largura, etc)
@@ -508,6 +511,20 @@ public class ProdutoEdicao implements Serializable {
 	 */
 	public void setBoletimInformativo(String boletimInformativo) {
 		this.boletimInformativo = boletimInformativo;
+	}
+
+	/**
+	 * @return the numeroLancamento
+	 */
+	public Integer getNumeroLancamento() {
+		return numeroLancamento;
+	}
+
+	/**
+	 * @param numeroLancamento the numeroLancamento to set
+	 */
+	public void setNumeroLancamento(Integer numeroLancamento) {
+		this.numeroLancamento = numeroLancamento;
 	}
 	
 }

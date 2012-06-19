@@ -97,5 +97,10 @@ public interface BoxService {
 	 */
 	public abstract boolean hasAssociacao(long id); 
 
-	
+	/**
+	 * Obtém box ligado a cota
+	 * @param idCota
+	 * @return
+	 */
+	public Box obterBoxPorCota(Integer numeroCota);
 }

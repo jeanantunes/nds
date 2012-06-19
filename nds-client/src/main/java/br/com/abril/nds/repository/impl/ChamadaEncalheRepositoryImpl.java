@@ -3,7 +3,9 @@ package br.com.abril.nds.repository.impl;
 import java.util.Date;
 import java.util.List;
 
+import org.hibernate.FetchMode;
 import org.hibernate.Query;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
@@ -60,6 +62,25 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepository<ChamadaEnca
 		query.setParameter("tipoChamadaEncalhe", tipoChamadaEncalhe);
 		
 		return query.list();
+	}
+
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<ChamadaEncalhe> obterChamadasEncalhePor(Date dataOperacao, Long idCota) {
+		
+		try {
+			
+			return super.getSession().createCriteria(ChamadaEncalhe.class, "chamadaEncalhe")
+					.createAlias("chamadaEncalhe.chamadaEncalheCotas", "chamadaEncalheCotas")
+					.setFetchMode("chamadaEncalheCotas", FetchMode.JOIN)
+					.setFetchMode("chamadaEncalhe.produtoEdicao", FetchMode.JOIN)
+					.setFetchMode("chamadaEncalheCotas.cota", FetchMode.JOIN)
+					.add(Restrictions.eq("chamadaEncalhe.dataRecolhimento", dataOperacao))
+					.add(Restrictions.eq("chamadaEncalheCotas.cota.id", idCota)).list();
+			
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 }

@@ -42,8 +42,12 @@
 	src="${pageContext.request.contextPath}/scripts/NDS.js"></script>
 <script language="javascript" type="text/javascript"
 	src="${pageContext.request.contextPath}/scripts/utils.js"></script>
+<!-- TODO: Posteriormente incluir os métodos 'personalizados': 
 <script language="javascript" type="text/javascript"
-	src="${pageContext.request.contextPath}/scripts/flexigrid-1.1/js/flexigrid.pack.js"></script>	
+	src="${pageContext.request.contextPath}/scripts/flexigrid-1.1/js/flexigrid.pack.js"></script>
+ -->
+<script language="javascript" type="text/javascript"
+	src="${pageContext.request.contextPath}/scripts/flexigrid-1.1/js/flexigrid.js"></script>
 <script language="javascript" type="text/javascript"
 	src="${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/development-bundle/ui/jquery.ui.datepicker.js"></script>
 <script language="javascript" type="text/javascript"
@@ -183,7 +187,7 @@ fieldset label {
 							</li>
 							<li><a href="<c:url value="/parciais/index"/>">Parciais</a>
 							</li>
-							<li><a href="cadastro/roteirizacao">Roteirização</a>
+							<li><a href="<c:url value="/cadastro/roteirizacao"/>">Roteirização</a>
 							</li>
 							<li><a href='<c:url value="/cadastro/transportador/"/>'>Transportador</a>
 							</li>
@@ -303,6 +307,8 @@ fieldset label {
 							<li><a href='<c:url value="/expedicao/resumo"/>'>Resumo
 									de Expedição</a>
 							</li>
+							<li><a href='<c:url value="/romaneio"/>'>Romaneios</a>
+							</li>
 							<li><a href="Expedicao/tratamento_arquivo_retorno_nfe.htm">Integração
 									do Arquivo de Retorno NF-e</a>
 							</li>
@@ -346,7 +352,7 @@ fieldset label {
 							<li><a href="Recolhimento/liberacao_encalhe_conferido.htm">Liberação
 									do Encalhe Conferido</a>
 							</li>
-							<li><a href="Recolhimento/venda_encalhe.htm">Venda de
+							<li><a href='<c:url value="/devolucao/vendaEncalhe/"/>'>Venda de
 									Encalhe</a>
 							</li>
 							<li><a href="Recolhimento/help_recolhimento.htm">Help</a>
@@ -369,7 +375,9 @@ fieldset label {
 						<span class="classNFe">&nbsp;</span><a
 						href="javascript:;">NF-e</a>
 						<ul>
-							
+							<li>
+								<a href="nfe/retornoNFe/">Retorno NF-e</a>
+							</li>
 							<li>
 								<a href="nfe/painelMonitorNFe/">Painel Monitor NF-e</a>
 							</li>
@@ -390,7 +398,8 @@ fieldset label {
 							<li><a href='<c:url value="/administracao/tipoDescontoCota"/>'>Tipo de Desconto Cota</a></li>
 							
 							<li><a href="<c:url value="/tipoMovimento/index"/>">Tipo de Movimento</a></li>
-							
+
+							<li><a href="<c:url value="/administracao/cadastroTipoNota"/>">Tipo de Nota</a></li>
 							
 							<li><a href="Administracao/iniciar_dia.htm">Iniciar o
 									Dia</a>
@@ -406,6 +415,7 @@ fieldset label {
 							<li><a href='<c:url value="/distribuidor/parametroCobranca/index"/>'>Parâmetros de Cobrança</a>
 							</li>
 							<li><a href='<c:url value="administracao/parametrosSistema"/>'>Par&acirc;metros do Sistema</a></li>
+							<li><a href='<c:url value="/administracao/parametrosDistribuidor"/>'>Par&acirc;metros do Distribuidor</a></li>
 						</ul>
 					</li>
 					<li><span class="classHelp">&nbsp;</span><a href="help.htm">Help</a>

@@ -9,15 +9,19 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import br.com.abril.nds.dto.BalanceamentoLancamentoDTO;
 import br.com.abril.nds.dto.ResumoPeriodoBalanceamentoDTO;
+import br.com.abril.nds.dto.filtro.FiltroLancamentoDTO;
 import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.Carteira;
+import br.com.abril.nds.model.cadastro.DistribuicaoDistribuidor;
 import br.com.abril.nds.model.cadastro.DistribuicaoFornecedor;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
@@ -45,6 +49,11 @@ public class MatrizLancamentoServiceImplTest {
 	private DistribuicaoFornecedor dinapSexta;
 	private DistribuicaoFornecedor fcSegunda;
 	private DistribuicaoFornecedor fcSexta;
+	
+	private Distribuidor distribuidor;
+	
+	private Fornecedor fornecedorDinap;
+	private Fornecedor fornecedorFc;
 	
 	@Before
 	public void setUp() {
@@ -74,17 +83,25 @@ public class MatrizLancamentoServiceImplTest {
 		
 		PessoaJuridica juridicaDistrib = Fixture.pessoaJuridica("Distribuidor Acme",
 				"33.333.333/0001-33", "333.333.333.333", "distrib_acme@mail.com", "99.999-9");
-		Distribuidor distribuidor = Fixture.distribuidor(1, juridicaDistrib, new Date(), politicasCobranca);
+		
+		distribuidor = Fixture.distribuidor(1, juridicaDistrib, new Date(), politicasCobranca);
+		
+		distribuidor.setQtdDiasLimiteParaReprogLancamento(3);
 		
 		PessoaJuridica juridicaDinap = Fixture.pessoaJuridica("Dinap",
 				"11.111.111/0001-11", "111.111.111.111", "dinap@mail.com", "99.999-9");
 		PessoaJuridica juridicaFc = Fixture.pessoaJuridica("FC",
 				"22.222.222/0001-22", "222.222.222.222", "fc@mail.com", "99.999-9");
 		
-		Fornecedor fornecedorDinap = Fixture.fornecedor(juridicaDinap,
+		fornecedorDinap = Fixture.fornecedor(juridicaDinap,
 				SituacaoCadastro.ATIVO, true, Fixture.tipoFornecedorPublicacao(), null);
-		Fornecedor fornecedorFc = Fixture.fornecedor(juridicaFc,
+		
+		fornecedorDinap.setId(1L);
+		
+		fornecedorFc = Fixture.fornecedor(juridicaFc,
 				SituacaoCadastro.ATIVO, true, Fixture.tipoFornecedorPublicacao(), null);
+		
+		fornecedorFc.setId(2L);
 		
 		dinapSegunda = Fixture.distribuicaoFornecedor(
 				fornecedorDinap, DiaSemana.SEGUNDA_FEIRA,
@@ -133,5 +150,97 @@ public class MatrizLancamentoServiceImplTest {
 				fornecedores, GrupoProduto.CROMO);
 	}
 	
+	@Test
+	public void balancear() {
+		
+		FiltroLancamentoDTO filtro = this.montarFiltro();
+		
+		List<DistribuicaoFornecedor> listaDistribuicaoFornecedor =
+			this.listaDistribuicaoFornecedor();
+		
+		List<DistribuicaoDistribuidor> listaDistribuicaoDistribuidor =
+			this.listaDistribuicaoDistribuidor();
+		
+		Mockito.when(this.distribuidorRepository.obter()).thenReturn(distribuidor);
+		
+		Mockito.when(
+			this.distribuidorRepository.buscarDiasDistribuicaoFornecedor(
+				filtro.getIdsFornecedores(), OperacaoDistribuidor.DISTRIBUICAO)).thenReturn(listaDistribuicaoFornecedor);
+		
+		Mockito.when(
+			this.distribuidorRepository.buscarDiasDistribuicaoDistribuidor(
+				distribuidor.getId(), OperacaoDistribuidor.DISTRIBUICAO)).thenReturn(listaDistribuicaoDistribuidor);
+		
+		BalanceamentoLancamentoDTO balanceamentoLancamento =
+			service.obterMatrizLancamento(this.montarFiltro());
+		
+		Assert.assertNotNull(balanceamentoLancamento);
+	}
+	
+	private FiltroLancamentoDTO montarFiltro() {
+		
+		List<Long> idsFornecedores = new ArrayList<Long>();
+		
+		idsFornecedores.add(fornecedorDinap.getId());
+		idsFornecedores.add(fornecedorFc.getId());
+		
+		FiltroLancamentoDTO filtro =
+			new FiltroLancamentoDTO(new Date(), idsFornecedores, null, "codigoProduto");
+		
+		return filtro;
+	}
+	
+	private List<DistribuicaoFornecedor> listaDistribuicaoFornecedor() {
+		
+		List<DistribuicaoFornecedor> listaDistribuicaoFornecedor =
+			new ArrayList<DistribuicaoFornecedor>();
+		
+		DistribuicaoFornecedor distribuicaoFornecedorDinapTerca =
+			Fixture.distribuicaoFornecedor(fornecedorDinap, DiaSemana.TERCA_FEIRA,
+										   OperacaoDistribuidor.DISTRIBUICAO, distribuidor);
+
+		DistribuicaoFornecedor distribuicaoFornecedorDinapQuinta =
+			Fixture.distribuicaoFornecedor(fornecedorDinap, DiaSemana.QUINTA_FEIRA,
+										   OperacaoDistribuidor.DISTRIBUICAO, distribuidor);
+		
+		DistribuicaoFornecedor distribuicaoFornecedorFcQuarta =
+			Fixture.distribuicaoFornecedor(fornecedorFc, DiaSemana.QUARTA_FEIRA,
+										   OperacaoDistribuidor.DISTRIBUICAO, distribuidor);
+
+		DistribuicaoFornecedor distribuicaoFornecedorFCSexta =
+			Fixture.distribuicaoFornecedor(fornecedorFc, DiaSemana.SEXTA_FEIRA,
+										   OperacaoDistribuidor.DISTRIBUICAO, distribuidor);
+		
+		listaDistribuicaoFornecedor.add(distribuicaoFornecedorDinapTerca);
+		listaDistribuicaoFornecedor.add(distribuicaoFornecedorDinapQuinta);
+		listaDistribuicaoFornecedor.add(distribuicaoFornecedorFcQuarta);
+		listaDistribuicaoFornecedor.add(distribuicaoFornecedorFCSexta);
+		
+		return listaDistribuicaoFornecedor;
+	}
+	
+	private List<DistribuicaoDistribuidor> listaDistribuicaoDistribuidor() {
+		
+		List<DistribuicaoDistribuidor> listaDistribuicaoDistribuidor =
+			new ArrayList<DistribuicaoDistribuidor>();
+		
+		DistribuicaoDistribuidor distribuicaoDistribuidorTerca =
+			Fixture.distribuicaoDistribuidor(distribuidor, DiaSemana.TERCA_FEIRA,
+										   	 OperacaoDistribuidor.DISTRIBUICAO);
+
+		DistribuicaoDistribuidor distribuicaoDistribuidorQuinta =
+			Fixture.distribuicaoDistribuidor(distribuidor, DiaSemana.QUINTA_FEIRA,
+				   	 						 OperacaoDistribuidor.DISTRIBUICAO);
+		
+		DistribuicaoDistribuidor distribuicaoDistribuidorSexta =
+			Fixture.distribuicaoDistribuidor(distribuidor, DiaSemana.SEXTA_FEIRA,
+				   	 						 OperacaoDistribuidor.DISTRIBUICAO);
+		
+		listaDistribuicaoDistribuidor.add(distribuicaoDistribuidorTerca);
+		listaDistribuicaoDistribuidor.add(distribuicaoDistribuidorQuinta);
+		listaDistribuicaoDistribuidor.add(distribuicaoDistribuidorSexta);
+		
+		return listaDistribuicaoDistribuidor;
+	}
 
 }

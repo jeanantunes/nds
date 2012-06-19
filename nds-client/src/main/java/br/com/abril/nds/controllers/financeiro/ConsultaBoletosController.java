@@ -105,12 +105,10 @@ public class ConsultaBoletosController {
     public void consulta(){ 
 		listaStatusCombo.clear();
 		listaStatusCombo.add(new ItemDTO<StatusCobranca,String>(null,"Todos"));
-		listaStatusCombo.add(new ItemDTO<StatusCobranca,String>(StatusCobranca.NAO_PAGO,"Não Pagos"));
 		listaStatusCombo.add(new ItemDTO<StatusCobranca,String>(StatusCobranca.PAGO,"Pagos"));
+		listaStatusCombo.add(new ItemDTO<StatusCobranca,String>(StatusCobranca.NAO_PAGO,"Não Pagos"));
 		
 		result.include("listaStatusCombo",listaStatusCombo);
-		result.include("dataDe", DateUtil.formatarData(Calendar.getInstance().getTime(), "dd/MM/yyyy"));
-		result.include("dataAte",DateUtil.formatarData(Calendar.getInstance().getTime(), "dd/MM/yyyy"));
 	}
 
     /**
@@ -262,6 +260,9 @@ public class ConsultaBoletosController {
 		
 		boletoService.enviarBoletoEmail(nossoNumero);
 		
+		//CONTROLE DE VIAS IMPRESSAS
+		boletoService.incrementarVia(nossoNumero);
+		
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Boleto "+nossoNumero+" enviado com sucesso."),Constantes.PARAM_MSGS).recursive().serialize();
 	}
 	
@@ -288,7 +289,7 @@ public class ConsultaBoletosController {
 		}
 		
 		if (numCota==null || numCota<=0){
-			throw new ValidacaoException(TipoMensagem.WARNING, "Digite o número da cota.");
+			throw new ValidacaoException(TipoMensagem.WARNING, "É obrigatório informar a [Cota].");
 		}
 		
 		if ( (dataDe!=null) && (dataAte!=null) ){
@@ -304,7 +305,7 @@ public class ConsultaBoletosController {
 	 */
 	public boolean validarBoletoPago(String nossoNumero){
 		Boleto boleto = boletoService.obterBoletoPorNossoNumero(nossoNumero,null);
-		return (boleto.getStatusCobranca()==StatusCobranca.NAO_PAGO);
+		return (boleto.getStatusCobranca()!=StatusCobranca.PAGO);
 	}
 	
 	/**

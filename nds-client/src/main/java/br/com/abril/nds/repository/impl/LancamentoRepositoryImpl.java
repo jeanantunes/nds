@@ -790,32 +790,15 @@ public class LancamentoRepositoryImpl extends
 		return query.list();
 	}
 	
-	public Lancamento obterLancamentoPorDataRecolhimentoProdutoEdicao(Date dataRecolhimentoDistribuidor, Long idProdutoEdicao) {
-		
-		StringBuilder hql = new StringBuilder();
-		
-		hql.append(" from Lancamento lancamento ");
-		
-		hql.append(" where lancamento.dataRecolhimentoDistribuidor = :dataRecolhimentoDistribuidor ");
-		
-		hql.append(" and lancamento.produtoEdicao.id = :idProdutoEdicao");
-		
-		Query query = getSession().createQuery(hql.toString());
-		
-		query.setDate("dataRecolhimentoDistribuidor", dataRecolhimentoDistribuidor);
-		
-		query.setLong("idProdutoEdicao", idProdutoEdicao);
-		
-		return (Lancamento) query.uniqueResult();
-	}
 	
 	/*
 	 * (non-Javadoc)
 	 * @see br.com.abril.nds.repository.LancamentoRepository#obterLancamentoInformeRecolhimento(java.lang.Long, java.util.Calendar, java.util.Calendar, java.lang.String, br.com.abril.nds.vo.PaginacaoVO.Ordenacao, int, int)
 	 */
-	@Override
 	@SuppressWarnings("unchecked")
-	public List<InformeEncalheDTO> obterLancamentoInformeRecolhimento(Long idFornecedor, Calendar dataInicioRecolhimento, Calendar dataFimRecolhimento, String  orderBy, Ordenacao ordenacao, int initialResult, int maxResults){
+	@Override
+	public List<InformeEncalheDTO> obterLancamentoInformeRecolhimento(Long idFornecedor, Calendar dataInicioRecolhimento, Calendar dataFimRecolhimento, String  orderBy, Ordenacao ordenacao, Integer initialResult, Integer maxResults){
+	
 		Criteria criteria  = addRestrictions(idFornecedor,
 				dataInicioRecolhimento, dataFimRecolhimento);
 		
@@ -835,7 +818,8 @@ public class LancamentoRepositoryImpl extends
 		projectionList.add(Projections.sqlProjection("(produtoedi1_.PRECO_VENDA - produtoedi1_.DESCONTO) as precoDesconto", new String[]{"precoDesconto"}, new Type[] {StandardBasicTypes.BIG_DECIMAL}));
 		projectionList.add(Projections.property("dataLancamentoDistribuidor"),"dataLancamento");
 		projectionList.add(Projections.property("dataRecolhimentoDistribuidor"),"dataRecolhimento");
-		projectionList.add(Projections.groupProperty("id"));
+		projectionList.add(Projections.groupProperty("id"));		
+		projectionList.add(Projections.property("lancamentoParcial.recolhimentoFinal"),"dataRecolhimentoFinal");
 		criteria.setProjection(projectionList);		
 		
 		
@@ -846,8 +830,12 @@ public class LancamentoRepositoryImpl extends
 			criteria.addOrder(Order.desc(orderBy));
 		}
 		
-		criteria.setMaxResults(maxResults);
-		criteria.setFirstResult(initialResult);
+		if (maxResults != null) {
+			criteria.setMaxResults(maxResults);
+		}
+		if (initialResult !=null) {
+			criteria.setFirstResult(initialResult);
+		}
 		criteria.setResultTransformer(new AliasToBeanResultTransformer(InformeEncalheDTO.class));
 		
 		return criteria.list();
@@ -887,6 +875,8 @@ public class LancamentoRepositoryImpl extends
 		criteria.createAlias("produtoEdicao","produtoEdicao");
 		criteria.createAlias("produtoEdicao.produto","produto");
 		criteria.createAlias("produtoEdicao.produto.fornecedores", "fornecedores");
+		criteria.createAlias("periodoLancamentoParcial", "periodoLancamentoParcial",Criteria.LEFT_JOIN );
+		criteria.createAlias("periodoLancamentoParcial.lancamentoParcial", "lancamentoParcial",Criteria.LEFT_JOIN );
 		
 		criteria.add(Restrictions.between("dataRecolhimentoDistribuidor", dataInicioRecolhimento.getTime(), dataFimRecolhimento.getTime()));
 		if (idFornecedor != null) {
@@ -896,7 +886,10 @@ public class LancamentoRepositoryImpl extends
 		return criteria;
 	}
 	
-	
+	/*
+	 * (non-Javadoc)
+	 * @see br.com.abril.nds.repository.LancamentoRepository#obterDataUltimoLancamentoParcial(java.lang.Long, java.util.Date)
+	 */
 	public Date obterDataUltimoLancamentoParcial(Long idProdutoEdicao, Date dataOperacao) {
 		
 		StringBuffer hql = new StringBuffer();
@@ -924,6 +917,40 @@ public class LancamentoRepositoryImpl extends
 		
 		return (Date) query.uniqueResult();
 		
+	}
+
+	public Date obterDataUltimoLancamento(Long idProdutoEdicao, Date dataOperacao) {
+		
+		StringBuffer hql = new StringBuffer();
+		
+		hql.append(" select max(lancamento.dataLancamentoDistribuidor)  ");			
+		
+		hql.append(" from Lancamento lancamento ");
+		
+		hql.append(" where ");
+
+		hql.append(" lancamento.produtoEdicao.id = :idProdutoEdicao and ");
+
+		hql.append(" lancamento.dataLancamentoDistribuidor < :dataOperacao 	    ");
+		
+		Query query = getSession().createQuery(hql.toString());
+		
+		query.setParameter("idProdutoEdicao", idProdutoEdicao);
+		
+		query.setParameter("dataOperacao", dataOperacao);
+		
+		return (Date) query.uniqueResult();
+		
+	}
+
+	
+	@Override
+	public List<InformeEncalheDTO> obterLancamentoInformeRecolhimento(
+			Long idFornecedor, Calendar dataInicioRecolhimento,
+			Calendar dataFimRecolhimento) {
+		return obterLancamentoInformeRecolhimento(idFornecedor,
+				dataInicioRecolhimento, dataFimRecolhimento, null,
+				null, null, null);
 	}
 	
 }

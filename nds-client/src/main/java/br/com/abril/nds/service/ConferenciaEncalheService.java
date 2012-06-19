@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Set;
 
 import br.com.abril.nds.dto.ConferenciaEncalheDTO;
+import br.com.abril.nds.dto.DadosDocumentacaoConfEncalheCotaDTO;
 import br.com.abril.nds.dto.InfoConferenciaEncalheCota;
 import br.com.abril.nds.dto.ProdutoEdicaoDTO;
 import br.com.abril.nds.model.cadastro.Box;
@@ -15,6 +16,7 @@ import br.com.abril.nds.service.exception.ConferenciaEncalheFinalizadaException;
 import br.com.abril.nds.service.exception.EncalheExcedeReparteException;
 import br.com.abril.nds.service.exception.EncalheRecolhimentoParcialException;
 import br.com.abril.nds.service.exception.EncalheSemPermissaoSalvarException;
+import br.com.abril.nds.service.impl.ConferenciaEncalheServiceImpl.TipoDocumentoConferenciaEncalhe;
 
 public interface ConferenciaEncalheService {
 	
@@ -56,7 +58,20 @@ public interface ConferenciaEncalheService {
 	 * @return InfoConferenciaEncalheCota
 	 */
 	public InfoConferenciaEncalheCota obterInfoConferenciaEncalheCota(Integer numeroCota);
+	
+	/**
+	 * Gera documentação referente a conferência de encalhe.
+	 * 
+	 * @param dadosDocumentacaoConfEncalheCotaDTO
+	 * @param tipoDocumentoConferenciaEncalhe
+	 * 
+	 * @return byte
+	 */
+	public byte[] gerarDocumentosConferenciaEncalhe(
+			DadosDocumentacaoConfEncalheCotaDTO dadosDocumentacaoConfEncalheCotaDTO, 
+			TipoDocumentoConferenciaEncalhe tipoDocumentoConferenciaEncalhe);
 
+	
 	/**
 	 * Obtém dados do produtoEdicao através do id do mesmo se houver chamada de encalhe.
 	 * 
@@ -118,8 +133,10 @@ public interface ConferenciaEncalheService {
 	 * @throws EncalheSemPermissaoSalvarException
 	 * @throws ConferenciaEncalheFinalizadaException
 	 * @throws EncalheExcedeReparteException
+	 * 
+	 * @return Long
 	 */
-	public void salvarDadosConferenciaEncalhe(
+	public Long salvarDadosConferenciaEncalhe(
 			ControleConferenciaEncalheCota controleConfEncalheCota, 
 			List<ConferenciaEncalheDTO> listaConferenciaEncalhe, 
 			Set<Long> listaIdConferenciaEncalheParaExclusao,
@@ -130,6 +147,9 @@ public interface ConferenciaEncalheService {
 	 * Finaliza uma conferência de encalhe gerando os movimentos financeiros 
 	 * relativos a mesma, faz chamada também ao rotinas relativas a cobrança.
 	 * 
+	 * Retorna objeto com dados da conferencia finalizada para a geração de
+	 * documentos relativos a mesma.
+	 * 
 	 * @param controleConfEncalheCota
 	 * @param listaConferenciaEncalhe
 	 * @param listaIdConferenciaEncalheParaExclusao
@@ -137,7 +157,7 @@ public interface ConferenciaEncalheService {
 	 * 
 	 * @throws EncalheExcedeReparteException
 	 */
-	public void finalizarConferenciaEncalhe(
+	public DadosDocumentacaoConfEncalheCotaDTO finalizarConferenciaEncalhe(
 			ControleConferenciaEncalheCota controleConfEncalheCota, 
 			List<ConferenciaEncalheDTO> listaConferenciaEncalhe, 
 			Set<Long> listaIdConferenciaEncalheParaExclusao,

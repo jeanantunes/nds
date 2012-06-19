@@ -48,6 +48,8 @@ public class PdvDTO implements Serializable {
 	
 	private boolean dentroOutroEstabelecimento;
 	
+	private boolean arrendatario;
+	
 	private TamanhoPDV tamanhoPDV;
 	
 	private int qtdeFuncionarios;
@@ -76,8 +78,6 @@ public class PdvDTO implements Serializable {
 	
     private CaracteristicaDTO caracteristicaDTO;
     
-    private List<Long> especialidades;
-  
 	private List<Long> geradorFluxoSecundario;
     
     private Long geradorFluxoPrincipal;
@@ -410,20 +410,6 @@ public class PdvDTO implements Serializable {
 	}
 
 	/**
-	 * @return the especialidades
-	 */
-	public List<Long> getEspecialidades() {
-		return especialidades;
-	}
-
-	/**
-	 * @param especialidades the especialidades to set
-	 */
-	public void setEspecialidades(List<Long> especialidades) {
-		this.especialidades = especialidades;
-	}
-
-	/**
 	 * @return the maps
 	 */
 	public List<Long> getMaps() {
@@ -613,6 +599,14 @@ public class PdvDTO implements Serializable {
 
 	public void setPathAplicacao(String pathAplicacao) {
 		this.pathAplicacao = pathAplicacao;
+	}
+
+	public boolean isArrendatario() {
+		return arrendatario;
+	}
+
+	public void setArrendatario(boolean arrendatario) {
+		this.arrendatario = arrendatario;
 	}
 	
 }

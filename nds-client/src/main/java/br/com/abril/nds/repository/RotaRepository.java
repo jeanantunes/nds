@@ -55,5 +55,15 @@ public interface RotaRepository extends Repository<Rota, Long> {
 	List<Rota> buscarRotaDeBox(Long idBox);
 	
     List<Rota> buscarRotaDeRoteiro(String descRoteiro);
+    
+    Integer buscarMaiorOrdemRota(Long idRoteiro);
+
+    /**
+	 * Obtém rotas por número da cota
+	 * 
+	 * @param numeroCota - Número da Cota
+	 * @return Lista de Rotas
+	 */
+	List<Rota> obterRotasPorCota(Integer numeroCota);
 
 }

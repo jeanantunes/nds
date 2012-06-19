@@ -289,7 +289,8 @@ fieldset label{ float: left; line-height: 23px; margin-bottom: 6px; margin-left:
 
 
 .class_linha_1{background:#f0f0f0; line-height:28px;}
-.class_linha_2{background:#f8f8f8; line-height:28px;	}
+.class_linha_2{background:#f8f8f8; line-height:28px;}
+.class_linha_3 {background: #CCC;line-height: 28px;}
 
 .linha_separa_fields{height:12px; width:980px;  float:left; overflow:hidden;}
 .linha_separa_fields_2{height:12px; width:700px;  float:left; overflow:hidden;}

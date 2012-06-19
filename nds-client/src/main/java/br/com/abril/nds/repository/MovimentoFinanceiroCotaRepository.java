@@ -4,8 +4,10 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
+import br.com.abril.nds.dto.CotaFaturamentoDTO;
 import br.com.abril.nds.dto.DebitoCreditoCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroDebitoCreditoDTO;
+import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.OperacaoFinaceira;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
@@ -70,9 +72,32 @@ public interface MovimentoFinanceiroCotaRepository extends Repository<MovimentoF
 	
 	/**
 	 * Obtém movimentos financeiros de uma cobrança por operação
+	 * 
 	 * @param idCobranca
 	 * @param operacao
 	 * @return BigDecimal valor
 	 */
 	BigDecimal obterSaldoCobrancaPorOperacao(Long idCobranca, OperacaoFinaceira operacao);
+	
+	/**
+	 * Obtém Débito e Crédito sumarizados relativos a cota.
+	 * 
+	 * @param numeroCota
+	 * @param dataOperacao
+	 * @param tiposMovimentoFinanceiroIgnorados
+	 * 
+	 * @return List - DebitoCreditoCotaDTO
+	 */
+	List<DebitoCreditoCotaDTO> obterDebitoCreditoSumarizadosParaCotaDataOperacao(Integer numeroCota, Date dataOperacao, List<TipoMovimentoFinanceiro> tiposMovimentoFinanceiroIgnorados);
+
+
+	/**
+	 * Obtém faturamento das cotas por período
+	 * @param cotas
+	 * @param dataInicial
+	 * @param dataFinal
+	 * @return List<CotaFaturamentoDTO>: Faturamento das Cotas
+	 */
+	List<CotaFaturamentoDTO> obterFaturamentoCotasPorPeriodo(List<Cota> cotas, Date dataInicial, Date dataFinal);
+
 }

@@ -242,7 +242,7 @@
 				},
 				beforeClose: function() {
 					limparModalCadastro();
-					clearMessageDialogTimeout();
+					clearMessageDialogTimeout('dialogMensagemNovo');
 				}
 			});
 			
@@ -336,7 +336,7 @@
 					}
 				},
 				beforeClose: function() {
-					clearMessageDialogTimeout();
+					clearMessageDialogTimeout('dialogMensagemNovo');
 				}
 			});
 		}
@@ -361,7 +361,7 @@
 				},
 				beforeClose: function() {
 					limparModalCadastro();
-					clearMessageDialogTimeout();
+					clearMessageDialogTimeout('dialogMensagemNovo');
 				}
 			});
 

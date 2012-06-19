@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -25,7 +26,7 @@ public class CapaServiceImplTest extends AbstractRepositoryImplTest{
 		capaService.hasCapa("123", 99);
 	}
 
-	
+	@Ignore
 	@Test
 	public void testSaveCapaStringLongStringByteArray() throws IOException  {
 		InputStream inputStream = null;

@@ -30,9 +30,15 @@ public class ConferenciaEncalheDTO implements Serializable {
 	private BigDecimal qtdExemplar;
 
 	/**
-	 *  Quantidade informada. Refere-se a qtd do item da nota fiscal de entrada da cota.
+	 *  Quantidade informada. Refere-se a qtde do item da nota fiscal de entrada da cota.
 	 */
 	private BigDecimal qtdInformada;
+	
+	/**
+	 * Preco Capa informado. Refere-se ao preco do item da nota fiscal de entrada da cota.
+	 */
+	private BigDecimal precoCapaInformado;
+	
 	
 	private String codigoDeBarras;
 	
@@ -236,8 +242,17 @@ public class ConferenciaEncalheDTO implements Serializable {
 		return tipoChamadaEncalhe;
 	}
 
-	public void setTipoChamadaEncalhe(TipoChamadaEncalhe tipoChamadaEncalhe) {
-		this.tipoChamadaEncalhe = tipoChamadaEncalhe;
+	public void setTipoChamadaEncalhe(String tipoChamadaEncalhe) {
+		this.tipoChamadaEncalhe = TipoChamadaEncalhe.valueOf(tipoChamadaEncalhe);
 	}
+
+	public BigDecimal getPrecoCapaInformado() {
+		return precoCapaInformado;
+	}
+
+	public void setPrecoCapaInformado(BigDecimal precoCapaInformado) {
+		this.precoCapaInformado = precoCapaInformado;
+	}
+	
 	
 }

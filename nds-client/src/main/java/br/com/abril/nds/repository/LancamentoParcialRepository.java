@@ -31,11 +31,11 @@ public interface LancamentoParcialRepository extends Repository<LancamentoParcia
 	 * Obter lancamentoParcial a partir de idProdutoEdicao e dataRecolhimentoFinal.
 	 * 
 	 * @param idProdutoEdicao
-	 * @param dataRecolhimento
+	 * @param dataRecolhimentoFinal
 	 * 
 	 * @return LancamentoParcial
 	 */
-	LancamentoParcial obterLancamentoParcial(Long idProdutoEdicao, Date dataRecolhimento);
+	LancamentoParcial obterLancamentoParcial(Long idProdutoEdicao, Date dataRecolhimentoFinal);
 
 	
 }

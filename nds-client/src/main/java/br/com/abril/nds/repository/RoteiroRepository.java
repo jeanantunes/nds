@@ -16,4 +16,10 @@ public interface RoteiroRepository extends Repository<Roteiro, Long> {
 	void atualizaOrdenacao(Roteiro roteiro);
 	
 	List<Roteiro> buscarRoteiroDeBox(Long idBox);
+	
+	Integer buscarMaiorOrdemRoteiro();
+	
+    List<Roteiro> buscarRoteiroEspecial();
+
+	
 }
