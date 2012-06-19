@@ -285,7 +285,7 @@ public class BoxRepositoryImpl extends AbstractRepository<Box,Long> implements B
 		if(idRoteiro!=null && idRoteiro>0){
 		    hql.append(", Roteiro rr");
 		    if (idRota!=null && idRota>0){
-				hql.append(", Rota r");
+				hql.append(", Roteirizacao r");
 			}
 		}  
 		
@@ -294,7 +294,7 @@ public class BoxRepositoryImpl extends AbstractRepository<Box,Long> implements B
 		if(idRoteiro!=null && idRoteiro>0){
 		    hql.append(" and rr.box = c.box and rr.id = :idRoteiro ");
 		    if (idRota!=null && idRota>0){
-				hql.append(" and r.roteiro = rr and r.id = :idRota ");
+		    	hql.append(" and r.rota.roteiro = rr and r.rota.id = :idRota and r.pdv.cota = c");
 			}
 		}
 		
@@ -329,7 +329,7 @@ public class BoxRepositoryImpl extends AbstractRepository<Box,Long> implements B
 		if(idRoteiro!=null && idRoteiro>0){
 		    hql.append(", Roteiro rr");
 		    if (idRota!=null && idRota>0){
-				hql.append(", Rota r");
+				hql.append(", Roteirizacao r");
 			}
 		}  
 		
@@ -338,7 +338,7 @@ public class BoxRepositoryImpl extends AbstractRepository<Box,Long> implements B
 		if(idRoteiro!=null && idRoteiro>0){
 		    hql.append(" and rr.box = c.box and rr.id = :idRoteiro ");
 		    if (idRota!=null && idRota>0){
-				hql.append(" and r.roteiro = rr and r.id = :idRota ");
+				hql.append(" and r.rota.roteiro = rr and r.rota.id = :idRota and r.pdv.cota = c");
 			}
 		}
 		

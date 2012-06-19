@@ -33,10 +33,11 @@ public class FiltroConsultaDividasCotaDTO implements Serializable {
 	@Export(label = "Status da Cobrança")
 	private StatusCobranca statusCobranca;
 	
-	@Export(label = "Acumula Divida")
 	private boolean acumulaDivida;
-
 	
+	@Export(label = "Acumula Divida")
+	private String descricaoAcumulaDivida;
+
 	
 	
 	private PaginacaoVO paginacao;
@@ -165,6 +166,22 @@ public class FiltroConsultaDividasCotaDTO implements Serializable {
 
 	public void setAcumulaDivida(boolean acumulaDivida) {
 		this.acumulaDivida = acumulaDivida;
+		setDescricaoAcumulaDivida(acumulaDivida);
+	}
+
+	/**
+	 * @return tradução da opção acumulaDivida
+	 */
+	public String getDescricaoAcumulaDivida() {
+		return descricaoAcumulaDivida;
+	}
+
+	/**
+	 * Traduz acumulaDivida de boolean para String
+	 * @param acumulaDivida
+	 */
+	public void setDescricaoAcumulaDivida(boolean acumulaDivida) {
+		this.descricaoAcumulaDivida = (acumulaDivida?"Sim":"Não");
 	}
 
 	@Override
