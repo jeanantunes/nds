@@ -13,9 +13,13 @@ import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Endereco;
-import br.com.abril.nds.service.ConsultaBaseEnderecoService;
+import br.com.abril.nds.model.dne.Bairro;
+import br.com.abril.nds.model.dne.Localidade;
+import br.com.abril.nds.model.dne.Logradouro;
+import br.com.abril.nds.model.dne.TipoLogradouro;
 import br.com.abril.nds.service.EnderecoService;
 import br.com.abril.nds.util.CellModel;
+import br.com.abril.nds.util.ItemAutoComplete;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
@@ -56,10 +60,7 @@ public class EnderecoController {
 
 	@Autowired
 	private HttpSession session;
-	
-	@Autowired
-	private ConsultaBaseEnderecoService consultaBaseEnderecoService;
-	
+		
 	@Autowired
 	private EnderecoService enderecoService;
 	
@@ -189,6 +190,11 @@ public class EnderecoController {
 			validarExistenciaEnderecoPrincipal(enderecoAssociacao);
 		}
 		
+		if (enderecoAssociacao.getEndereco() != null && enderecoAssociacao.getEndereco().getCep() != null) {
+
+			enderecoAssociacao.getEndereco().setCep(retirarFormatacaoCep(enderecoAssociacao.getEndereco().getCep()));
+		}
+		
 		List<EnderecoAssociacaoDTO> listaEnderecoAssociacao = this.obterEnderecosSessaoSalvar();
 		
 		if (enderecoAssociacao.getId() != null){
@@ -226,6 +232,130 @@ public class EnderecoController {
 		this.session.setAttribute(ATRIBUTO_SESSAO_LISTA_ENDERECOS_SALVAR, listaEnderecoAssociacao);
 		
 		this.pesquisarEnderecos(tela,null, null);
+	}
+	
+	/**
+	 * Método responsável pela obtenção dos dados que irão preencher o combo de UF's.
+	 * 
+	 * @param tela
+	 */
+	public void obterDadosComboUF() {
+		
+		List<String> ufs = this.enderecoService.obterUnidadeFederacaoBrasil();
+		
+		this.result.use(Results.json()).from(ufs, "result").serialize();
+	}
+
+	/**
+	 * Método responsável pela obtenção dos dados que irão preencher o combo de Cidades.
+	 * 
+	 * @param tela
+	 * 
+	 * @param siglaUF
+	 */
+	public void autoCompletarLocalidadePorNome(String nomeLocalidade, String siglaUF) {
+
+		if (siglaUF == null || siglaUF.isEmpty()) {
+			
+			this.result.use(Results.json()).from("", "result").serialize();
+			
+			return;
+		}
+		
+		List<Localidade> localidades = this.enderecoService.obterLocalidadesPorUFNome(nomeLocalidade, siglaUF);
+		
+		List<ItemAutoComplete> listaAutoComplete = new ArrayList<ItemAutoComplete>();
+		
+		if (localidades != null && !localidades.isEmpty()) {
+			
+			for (Localidade localidade : localidades) {
+				
+				String nomeExibicao = localidade.getNome();
+				
+				String chave = localidade.getCodigoMunicipioIBGE();
+				
+				listaAutoComplete.add(new ItemAutoComplete(nomeExibicao, null, chave));
+			}
+		}
+		
+		this.result.use(Results.json()).from(listaAutoComplete, "result").include("value", "chave").serialize();
+	}
+	
+	public void autoCompletarBairroPorNome(String codigoIBGE, String nomeBairro) {
+
+		if (codigoIBGE == null || codigoIBGE.isEmpty()) {
+			
+			this.result.use(Results.json()).from("", "result").serialize();
+			
+			return;
+		}
+		
+		List<Bairro> bairros = this.enderecoService.obterBairrosPorCodigoIBGENome(nomeBairro, codigoIBGE);
+		
+		List<ItemAutoComplete> listaAutoComplete = new ArrayList<ItemAutoComplete>();
+		
+		if (bairros != null && !bairros.isEmpty()) {
+			
+			for (Bairro bairro : bairros) {
+				
+				String nomeExibicao = bairro.getNome();
+				
+				String chave = bairro.getId();
+				
+				listaAutoComplete.add(new ItemAutoComplete(nomeExibicao, null, chave));
+			}
+		}
+
+		this.result.use(Results.json()).from(listaAutoComplete, "result").include("value", "chave").serialize();
+	}
+
+	public void autoCompletarLogradourosPorNome(Long codigoBairro, String nomeLogradouro) {
+
+		if (codigoBairro == null) {
+			
+			this.result.use(Results.json()).from("", "result").serialize();
+			
+			return;
+		}
+		
+		List<Logradouro> logradouros = this.enderecoService.obterLogradourosPorCodigoBairroNome(codigoBairro, nomeLogradouro);
+		
+		List<ItemAutoComplete> listaAutoComplete = new ArrayList<ItemAutoComplete>();
+		
+		if (logradouros != null && !logradouros.isEmpty()) {
+			
+			for (Logradouro logradouro : logradouros) {
+				
+				String nomeExibicao = logradouro.getNome();
+				
+				String chave = logradouro.getId();
+				
+				listaAutoComplete.add(new ItemAutoComplete(nomeExibicao, null, chave));
+			}
+		}
+
+		this.result.use(Results.json()).from(listaAutoComplete, "result").include("value", "chave").serialize();
+	}
+
+	public void autoCompletarTipoLogradouroPorNome(String nomeTipoLogradouro) {
+		
+		List<TipoLogradouro> tiposLogradouro = this.enderecoService.obterTiposLogradouroNome(nomeTipoLogradouro);
+		
+		List<ItemAutoComplete> listaAutoComplete = new ArrayList<ItemAutoComplete>();
+		
+		if (tiposLogradouro != null && !tiposLogradouro.isEmpty()) {
+			
+			for (TipoLogradouro tipoLogradouro : tiposLogradouro) {
+				
+				String nomeExibicao = tipoLogradouro.getNome();
+				
+				String chave = tipoLogradouro.getId();
+				
+				listaAutoComplete.add(new ItemAutoComplete(nomeExibicao, null, chave));
+			}
+		}
+		
+		this.result.use(Results.json()).from(listaAutoComplete, "result").include("value", "chave").serialize();
 	}
 
 	/**
@@ -315,6 +445,11 @@ public class EnderecoController {
 		if (enderecoAssociacao == null){
 			
 			Endereco endereco = this.enderecoService.buscarEnderecoPorId(idEnderecoAssociacao);
+
+			if (endereco.getCep() != null) {
+			
+				endereco.setCep(retirarFormatacaoCep(endereco.getCep()));
+			}
 			
 			if (endereco != null){
 				
@@ -332,7 +467,6 @@ public class EnderecoController {
 				
 				this.session.setAttribute(ATRIBUTO_SESSAO_LISTA_ENDERECOS_SALVAR, listaEnderecoAssociacao);
 			}
-			
 		}
 
 		this.result.use(Results.json()).from(enderecoAssociacao, "result").recursive().exclude("endereco.pessoa").serialize();
@@ -348,58 +482,16 @@ public class EnderecoController {
 		
 		cep = retirarFormatacaoCep(cep);
 		
-		EnderecoVO enderecoRetornado = this.consultaBaseEnderecoService.buscarPorCep(cep);
+		EnderecoVO enderecoRetornado = this.enderecoService.obterEnderecoPorCep(cep);
 		
 		if (enderecoRetornado == null) {
 			
-			this.result.nothing();
+			this.result.use(Results.json()).from("", "result").recursive().serialize();
 		
 		} else {
 
-			Endereco endereco = parseEndereco(enderecoRetornado);
-			
-			endereco.setCep(cep);
-
-			EnderecoAssociacaoDTO enderecoAssociacao = new EnderecoAssociacaoDTO();
-
-			enderecoAssociacao.setEndereco(endereco);
-
-			enderecoAssociacao.setEnderecoPrincipal(false);
-
-			this.result.use(Results.json()).from(enderecoAssociacao, "result").recursive().serialize();
+			this.result.use(Results.json()).from(enderecoRetornado, "result").recursive().serialize();
 		}
-	}
-
-	private Endereco parseEndereco(EnderecoVO enderecoRetornado) {
-		
-		String bairro = enderecoRetornado.getBairro() == null 
-					? "" : enderecoRetornado.getBairro().getNome();
-		
-		String cidade = enderecoRetornado.getLocalidade() == null 
-					? "" : enderecoRetornado.getLocalidade().getNome();
-		
-		String tipoLogradouro = enderecoRetornado.getTipoLogradouro() == null 
-				? "" : enderecoRetornado.getTipoLogradouro().getNome();
-		
-		String logradouro = enderecoRetornado.getLogradouro() == null 
-					? "" : enderecoRetornado.getLogradouro().getNome();
-		
-		String uf = enderecoRetornado.getUnidadeFederecao() == null 
-					? "" : enderecoRetornado.getUnidadeFederecao().getSigla();
-		
-		Endereco endereco = new Endereco();
-
-		endereco.setBairro(bairro);
-
-		endereco.setCidade(cidade);
-
-		endereco.setTipoLogradouro(tipoLogradouro);
-		
-		endereco.setLogradouro(logradouro);
-
-		endereco.setUf(uf);
-		
-		return endereco;
 	}
 
 	private String retirarFormatacaoCep(String cep) {
