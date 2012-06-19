@@ -102,10 +102,10 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepository<Fechamen
 	
 	@Override
 	@SuppressWarnings("unchecked")
-	public List<FechamentoEncalhe> buscarFechamentoEncalhe(FiltroFechamentoEncalheDTO filtro) {
+	public List<FechamentoEncalhe> buscarFechamentoEncalhe(Date dataEncalhe) {
 		
 		Criteria criteria = this.getSession().createCriteria(FechamentoEncalhe.class);
-		criteria.add(Restrictions.eq("fechamentoEncalhePK.dataEncalhe", filtro.getDataEncalhe()));
+		criteria.add(Restrictions.eq("fechamentoEncalhePK.dataEncalhe", dataEncalhe));
 		criteria.setFetchMode("listFechamentoEncalheBox", FetchMode.JOIN);
 		
 		return criteria.list();
@@ -266,5 +266,26 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepository<Fechamen
         criteria.add(Restrictions.eq("cec.postergado", false));
         
 		return criteria.list();
+	}
+	
+	@Override
+	public int buscaQuantidadeConferencia(Date dataEncalhe, boolean porBox) {
+		
+		Criteria criteria = this.getSession().createCriteria(ConferenciaEncalhe.class, "ce");
+		
+		criteria.setProjection(Projections.projectionList()
+			.add(Projections.groupProperty("mec.produtoEdicao.id"))
+			.add(Projections.groupProperty("ccec.box.id"))
+		);
+		
+		criteria.createAlias("ce.movimentoEstoqueCota", "mec");
+		criteria.setFetchMode("mec", FetchMode.SELECT);
+		
+		criteria.createAlias("ce.controleConferenciaEncalheCota", "ccec");
+		criteria.setFetchMode("ccec", FetchMode.SELECT);
+		
+		criteria.add(Restrictions.eq("ccec.dataOperacao", dataEncalhe));
+
+		return criteria.list().size();
 	}
 }
