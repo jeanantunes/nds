@@ -48,7 +48,7 @@ import br.com.caelum.vraptor.view.Results;
 @Resource
 @Path("/estoque/edicoesFechadas")
 public class EdicoesFechadasController {
-
+	
 	@Autowired
 	private Result result;
 
@@ -211,11 +211,10 @@ public class EdicoesFechadasController {
 	/**
 	 * Exporta o arquivo para o tipo selecionado
 	 * @param fileType
-	 * @param tipoDesconto
 	 * @throws IOException
 	 */
 	@Get
-	public void exportar(FileType fileType, String tipoDesconto) throws IOException {
+	public void exportar(FileType fileType) throws IOException {
 		if (fileType == null) {
 			throw new ValidacaoException(TipoMensagem.ERROR, "Tipo de arquivo não encontrado!");
 		}

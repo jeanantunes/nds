@@ -109,12 +109,15 @@ public class FechamentoEncalheController {
 		filtro.setFornecedorId(fornecedorId);
 		filtro.setBoxId(boxId);
 		filtro.setFisico(arrayFisico);
-		
-		List<FechamentoFisicoLogicoDTO> listaEncalhe = fechamentoEncalheService.salvarFechamentoEncalhe(filtro, sortorder, this.resolveSort(sortname), page, rp);
+		List<FechamentoFisicoLogicoDTO> listaEncalhe = new ArrayList<FechamentoFisicoLogicoDTO>();
+		if (boxId == null){ 
+			listaEncalhe = fechamentoEncalheService.salvarFechamentoEncalhe(filtro, sortorder, this.resolveSort(sortname), page, rp);
+		} else {
+			listaEncalhe = fechamentoEncalheService.salvarFechamentoEncalheBox(filtro, sortorder, this.resolveSort(sortname), page, rp);
+		}
 		
 		result.use(FlexiGridJson.class).from(listaEncalhe).total(listaEncalhe.size()).page(page).serialize();
 	}
-	
 	
 	@Path("/cotasAusentes")
 	public void cotasAusentes(Date dataEncalhe,
@@ -125,9 +128,12 @@ public class FechamentoEncalheController {
 		
 		int total = this.fechamentoEncalheService.buscarTotalCotasAusentes(dataEncalhe);
 		
+		if (listaCotasAusenteEncalhe == null || listaCotasAusenteEncalhe.isEmpty()) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhuma cota ausente!");
+		}
+		
 		this.result.use(FlexiGridJson.class).from(listaCotasAusenteEncalhe).total(total).page(page).serialize();
 	}
-	
 	
 	@Path("/encerrarFechamento")
 	public void encerrarFechamento(Date dataEncalhe) {
@@ -136,7 +142,7 @@ public class FechamentoEncalheController {
 	}
 	
 	@Path("carregarDataPostergacao")
-	public void carregarDataPostergacao(Date dataPostergacao) {
+	public void carregarDataPostergacao(Date dataEncalhe, Date dataPostergacao) {
 		
 		try {
 			
@@ -144,7 +150,7 @@ public class FechamentoEncalheController {
 			
 			if (dataPostergacao == null) {
 				quantidadeDias = 1;
-				dataPostergacao = Calendar.getInstance().getTime();
+				dataPostergacao = dataEncalhe;
 			}
 			
 			
@@ -173,7 +179,7 @@ public class FechamentoEncalheController {
 		
 		try {
 			
-			this.fechamentoEncalheService.postergarCotas(dataPostergacao, idsCotas);
+			this.fechamentoEncalheService.postergarCotas(dataEncalhe, dataPostergacao, idsCotas);
 			
 		} catch (Exception e) {
 			this.result.use(Results.json()).from(

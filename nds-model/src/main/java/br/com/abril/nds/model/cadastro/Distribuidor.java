@@ -186,8 +186,8 @@ public class Distribuidor {
 	private Integer qntDiasVencinemtoVendaEncalhe;
 	
 	@Enumerated(EnumType.STRING)
-	@Column(name = "TIPO_DISTRIBUIDOR", nullable = true)
-	private TipoDistribuidor tipoDistribuidor = TipoDistribuidor.MERCANTIL;
+	@Column(name = "TIPO_ATIVIDADE", nullable = true)
+	private TipoAtividade tipoAtividade = TipoAtividade.MERCANTIL;
 
 	@Column(name = "OBRIGACAO_FISCAL", nullable = false)
 	private boolean obrigacaoFiscao;	
@@ -553,12 +553,12 @@ public class Distribuidor {
 		this.parametrosAprovacaoDistribuidor = parametrosAprovacaoDistribuidor;
 	}
 
-	public TipoDistribuidor getTipoDistribuidor() {
-		return tipoDistribuidor;
+	public TipoAtividade getTipoAtividade() {
+		return tipoAtividade;
 	}
 
-	public void setTipoDistribuidor(TipoDistribuidor tipoDistribuidor) {
-		this.tipoDistribuidor = tipoDistribuidor;
+	public void setTipoAtividade(TipoAtividade tipoAtividade) {
+		this.tipoAtividade = tipoAtividade;
 	}
 
 	public boolean isObrigacaoFiscao() {
