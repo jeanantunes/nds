@@ -26,17 +26,19 @@ public interface ConferenciaEncalheRepository extends Repository<ConferenciaEnca
 	/**
 	 * Obtém lista de conferenciaEncalhe em contingência.
 	 * 
-	 * @param idCota
+	 * @param idDistribuidor
+	 * @param numeroCota
 	 * @param dataInicial
 	 * @param dataFinal
 	 * @param indFechado
 	 * @param indPostergado
 	 * @param listaIdProdutoEdicao
 	 * 
-	 * @return ConferenciaEncalheDTO
+	 * @return List - ConferenciaEncalheDTO
 	 */
 	public List<ConferenciaEncalheDTO> obterListaConferenciaEncalheDTOContingencia(
-			Long idCota,
+			Long idDistribuidor,
+			Integer numeroCota,
 			Date dataInicial,
 			Date dataFinal,
 			boolean indFechado,

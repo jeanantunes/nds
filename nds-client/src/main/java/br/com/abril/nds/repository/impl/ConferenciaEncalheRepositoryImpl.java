@@ -67,10 +67,11 @@ public class ConferenciaEncalheRepositoryImpl extends
 	
 	/*
 	 * (non-Javadoc)
-	 * @see br.com.abril.nds.repository.ConferenciaEncalheRepository#obterListaConferenciaEncalheDTOContingencia(java.lang.Long, java.util.Date, java.util.Date, boolean, boolean, java.util.List)
+	 * @see br.com.abril.nds.repository.ConferenciaEncalheRepository#obterListaConferenciaEncalheDTOContingencia(java.lang.Long, java.lang.Integer, java.util.Date, java.util.Date, boolean, boolean, java.util.Set)
 	 */
 	public List<ConferenciaEncalheDTO> obterListaConferenciaEncalheDTOContingencia(
-			Long idCota,
+			Long idDistribuidor,
+			Integer numeroCota,
 			Date dataInicial,
 			Date dataFinal,
 			boolean indFechado,
@@ -104,6 +105,9 @@ public class ConferenciaEncalheRepositoryImpl extends
 		
 		hql.append("    CHAMADA_ENCALHE_COTA AS CH_ENCALHE_COTA 	");
 		
+		hql.append("	inner join COTA AS COTA ON ");
+		hql.append("	(COTA.ID = CH_ENCALHE_COTA.COTA_ID)	");
+		
 		hql.append("	inner join CHAMADA_ENCALHE AS CH_ENCALHE ON ");
 		hql.append("	(CH_ENCALHE_COTA.CHAMADA_ENCALHE_ID = CH_ENCALHE.ID)	");
 		
@@ -115,15 +119,16 @@ public class ConferenciaEncalheRepositoryImpl extends
 
 		hql.append("	WHERE   ");
 		
-		hql.append("	CH_ENCALHE_COTA.COTA_ID = :idCota AND ");
-		
+		hql.append("	COTA.NUMERO_COTA = :numeroCota AND ");
 		hql.append("	(CH_ENCALHE.DATA_RECOLHIMENTO between :dataInicial AND :dataFinal) AND ");
+		hql.append("	CH_ENCALHE_COTA.FECHADO = :indFechado AND	");
+		hql.append("	CH_ENCALHE_COTA.POSTERGADO = :indPostergado 	");
 		
-		hql.append("	CH_ENCALHE.FECHADO = :indFechado AND	");
-
-		hql.append("	CH_ENCALHE.POSTERGADO = :indPostergado AND	");
-		
-		hql.append("    CH_ENCALHE.PRODUTO_EDICAO_ID NOT IN :listaIdProdutoEdicao ");
+		if(listaIdProdutoEdicao!=null && !listaIdProdutoEdicao.isEmpty()) {
+			
+			hql.append(" AND CH_ENCALHE.PRODUTO_EDICAO_ID NOT IN (:listaIdProdutoEdicao) ");
+			
+		}
 		
 		hql.append("  	ORDER BY codigoSM ");
 		
@@ -140,12 +145,18 @@ public class ConferenciaEncalheRepositoryImpl extends
 		((SQLQuery)query).addScalar("precoCapa");
 		((SQLQuery)query).addScalar("desconto");
 		
-		query.setParameter("idCota", idCota);
+		query.setParameter("idDistribuidor", idDistribuidor);
+		query.setParameter("numeroCota", numeroCota);
 		query.setParameter("dataInicial", dataInicial);
 		query.setParameter("dataFinal", dataFinal);
 		query.setParameter("indFechado", indFechado);
 		query.setParameter("indPostergado", indPostergado);
-		query.setParameterList("listaIdProdutoEdicao", listaIdProdutoEdicao);
+		
+		if(listaIdProdutoEdicao!=null && !listaIdProdutoEdicao.isEmpty()) {
+			
+			query.setParameterList("listaIdProdutoEdicao", listaIdProdutoEdicao);
+			
+		}
 		
 		return query.list();
 		
@@ -289,7 +300,7 @@ public class ConferenciaEncalheRepositoryImpl extends
 		sql.append("             DISTRIBUIDOR DISTRIB                      ");
 		sql.append("         WHERE                                         ");
 		sql.append("             CT.ID=CH_ENCALHE_COTA.COTA_ID             ");
-		sql.append("             AND PE.ID=CONF_ENCALHE.PRODUTO_EDICAO_ID  ");
+		sql.append("             AND PE.ID=CH_ENCALHE.PRODUTO_EDICAO_ID  ");
 		sql.append("             AND DISTRIB.ID= :idDistribuidor           ");
 		
 		return sql.toString();

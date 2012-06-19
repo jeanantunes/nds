@@ -358,13 +358,17 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	 * @param idControleConferenciaEncalheCota
 	 * @param listaConferenciaEncalhe
 	 */
-	public List<ConferenciaEncalheDTO> obterListaConferenciaEncalheContingencia(List<ConferenciaEncalheDTO> listaConferenciaEncalhe) {
+	private List<ConferenciaEncalheDTO> obterListaConferenciaEncalheContingencia(
+			Long idDistribuidor, 
+			Integer numeroCota,
+			Date dataOperacao,
+			List<ConferenciaEncalheDTO> listaConferenciaEncalhe) {
 		
 		Set<Long> listaIdProdutoEdicao = new HashSet<Long>();
 		
 		if(listaConferenciaEncalhe!=null && !listaConferenciaEncalhe.isEmpty()) {
 			
-			for(ConferenciaEncalheDTO conferencia : listaConferenciaEncalhe){
+			for(ConferenciaEncalheDTO conferencia : listaConferenciaEncalhe) {
 				
 				listaIdProdutoEdicao.add(conferencia.getIdProdutoEdicao());
 				
@@ -372,22 +376,20 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			
 		}
 		
-		Long idCota = null;
-		Date dataInicial = null;
-		Date dataFinal = null;
+		Date dataInicial = obterDataRecolhimentoReferencia();
+		Date dataFinal = dataOperacao;
 		boolean indFechado = false;
 		boolean indPostergado = false;
-		listaIdProdutoEdicao = null;
 		
 		List<ConferenciaEncalheDTO> listaConferenciaEncalheContingencia = 
 			conferenciaEncalheRepository.obterListaConferenciaEncalheDTOContingencia(
-				idCota, 
+				idDistribuidor,
+				numeroCota, 
 				dataInicial, 
 				dataFinal, 
 				indFechado, 
 				indPostergado, 
 				listaIdProdutoEdicao);
-		
 		
 		return listaConferenciaEncalheContingencia;
 		
@@ -429,6 +431,18 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			infoConfereciaEncalheCota.setEncalhe(BigDecimal.ZERO);
 			
 		}
+		
+		if(indConferenciaContingencia) {
+			
+			infoConfereciaEncalheCota.setListaConferenciaEncalhe(
+					obterListaConferenciaEncalheContingencia(
+							distribuidor.getId(), 
+							numeroCota, 
+							dataOperacao,
+							infoConfereciaEncalheCota.getListaConferenciaEncalhe()));
+			
+		}
+		
 		
 		List<Long> listaIdProdutoEdicao = 
 				chamadaEncalheCotaRepository.obterListaIdProdutoEdicaoChamaEncalheCota(numeroCota, dataOperacao, true, false);
