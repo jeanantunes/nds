@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.Set;
 
+import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
 import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.vo.PaginacaoVO;
 
@@ -22,7 +23,11 @@ public class ConsultaLoteNotaFiscalDTO implements Serializable {
 
 	private Set<Long> idsCotasDestinatarias;
 	
+	private Date dateEmissao;
+	
 	private Intervalo<Date> periodoMovimento;
+	
+	private TipoNotaFiscal tipoNotaFiscal;
 	
 	private PaginacaoVO paginacao;
 	
@@ -73,6 +78,34 @@ public class ConsultaLoteNotaFiscalDTO implements Serializable {
 	 */
 	public void setPaginacao(PaginacaoVO paginacao) {
 		this.paginacao = paginacao;
+	}
+
+	/**
+	 * @return the tipoNotaFiscal
+	 */
+	public TipoNotaFiscal getTipoNotaFiscal() {
+		return tipoNotaFiscal;
+	}
+
+	/**
+	 * @param tipoNotaFiscal the tipoNotaFiscal to set
+	 */
+	public void setTipoNotaFiscal(TipoNotaFiscal tipoNotaFiscal) {
+		this.tipoNotaFiscal = tipoNotaFiscal;
+	}
+
+	/**
+	 * @return the dateEmissao
+	 */
+	public Date getDateEmissao() {
+		return dateEmissao;
+	}
+
+	/**
+	 * @param dateEmissao the dateEmissao to set
+	 */
+	public void setDateEmissao(Date dateEmissao) {
+		this.dateEmissao = dateEmissao;
 	}
 
 }

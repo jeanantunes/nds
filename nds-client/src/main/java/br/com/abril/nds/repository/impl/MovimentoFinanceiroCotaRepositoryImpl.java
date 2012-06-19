@@ -484,8 +484,8 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepository<Mo
 		
 	    hql.append("( select ");
 
-	    hql.append(" COALESCE(sum( ( COALESCE(mec.estoqueProdutoCota.qtdeRecebida,0) - COALESCE(mec.estoqueProdutoCota.qtdeDevolvida,0))*(mec.estoqueProdutoCota.produtoEdicao.precoVenda) ),0) ");
-	    
+	    hql.append(" COALESCE(sum( (COALESCE(mec.estoqueProdutoCota.qtdeRecebida,0) - COALESCE(mec.estoqueProdutoCota.qtdeDevolvida,0))*COALESCE(mec.estoqueProdutoCota.produtoEdicao.precoVenda,0) ),0) ");
+	     
 	    hql.append(" from MovimentoEstoqueCota mec where mec.cota = c  ");
 	    
 	    hql.append(" and ( mec.data >= :dataInicial and mec.data <= :dataFinal )  ");
@@ -495,7 +495,7 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepository<Mo
 	    
 	    hql.append("( select ");
 
-	    hql.append(" COALESCE(sum( (mec.estoqueProdutoCota.produtoEdicao.precoVenda- COALESCE(mec.estoqueProdutoCota.produtoEdicao.desconto,0)) ),0) ");
+	    hql.append(" COALESCE(sum( (COALESCE(mec.estoqueProdutoCota.qtdeRecebida,0) - COALESCE(mec.estoqueProdutoCota.qtdeDevolvida,0))*(COALESCE(mec.estoqueProdutoCota.produtoEdicao.precoVenda,0) - COALESCE(mec.estoqueProdutoCota.produtoEdicao.desconto,0)) ),0) ");
 	    
 	    hql.append(" from MovimentoEstoqueCota mec where mec.cota = c  ");
 	    

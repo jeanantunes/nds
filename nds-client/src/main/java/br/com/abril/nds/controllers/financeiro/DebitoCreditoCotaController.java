@@ -9,6 +9,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -19,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import br.com.abril.nds.client.vo.DebitoCreditoVO;
 import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.dto.DebitoCreditoDTO;
+import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.MovimentoFinanceiroCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroDebitoCreditoDTO;
 import br.com.abril.nds.dto.filtro.FiltroDebitoCreditoDTO.ColunaOrdenacao;
@@ -101,6 +103,10 @@ public class DebitoCreditoCotaController {
 
 	@Autowired
 	private HttpServletResponse httpResponse;
+	
+	private static List<ItemDTO<Long,String>> listaRoteiros =  new ArrayList<ItemDTO<Long,String>>();
+
+	private static List<ItemDTO<Long,String>> listaRotas =  new ArrayList<ItemDTO<Long,String>>();
 
 	private static final String FILTRO_SESSION_ATTRIBUTE = "pesquisaDebitoCreditoCota";
 
@@ -109,8 +115,6 @@ public class DebitoCreditoCotaController {
 		preencherComboTipoMovimento();
 		preencherComboBaseCalculo();
 		preencherComboBox();
-		preencherComboRoteiro();
-		preencherComboRota();
 	}
 
 	private void preencherComboTipoMovimento() {
@@ -139,21 +143,39 @@ public class DebitoCreditoCotaController {
 		List<Box> boxes = this.boxService.buscarTodos(null);
 		this.result.include("boxes", boxes);
 	}
-	
+
 	/**
-	 * Obtém lista de Roteiros para popular combo da view
+	 * Obtém lista de Roteiros do Box para popular combo da view
+	 * @param idBox
 	 */
-	private void preencherComboRoteiro() {
-		List<Roteiro> roteiros = this.roteirizacaoService.buscarRoteiros();
-		this.result.include("roteiros", roteiros);
+	@Post
+	@Path("/obterRoteirosBox")
+	public void obterRoteirosBox(Long idBox){
+		listaRoteiros.clear();
+		if (idBox!=null){
+			List<Roteiro> roteiros = this.roteirizacaoService.buscarRoteiroDeBox(idBox);
+			for(Roteiro item:roteiros){
+				listaRoteiros.add(new ItemDTO<Long,String>(item.getId(), item.getDescricaoRoteiro()));
+			}
+		}
+		result.use(Results.json()).from(listaRoteiros, "result").recursive().serialize();
 	}
 	
 	/**
-	 * Obtém lista de Rotas de Cálculos para popular combo da view
+	 * Obtém lista de Rotas do Roteiro para popular combo da view
+	 * @param idRoteiro
 	 */
-	private void preencherComboRota() {
-		List<Rota> rotas = this.roteirizacaoService.buscarRotas();
-		this.result.include("rotas", rotas);
+	@Post
+	@Path("/obterRotasRoteiro")
+	public void obterRotasRoteiro(Long idRoteiro){
+		listaRotas.clear();
+		if (idRoteiro!=null){
+			List<Rota> rotas = this.roteirizacaoService.buscarRotaPorRoteiro(idRoteiro);
+			for(Rota item:rotas){
+				listaRotas.add(new ItemDTO<Long,String>(item.getId(), item.getDescricaoRota()));
+			} 
+		}
+		result.use(Results.json()).from(listaRotas, "result").recursive().serialize();
 	}
 	
 	/**
@@ -171,11 +193,16 @@ public class DebitoCreditoCotaController {
 	}
 	
 	/**
-     * Retorna lançamentos pré-configurados com a cota para preencher a grid da view
-     * @param idBox
-     * @param idRoteiro
-     * @param idRota
-     */
+     * Retorna lançamentos pré-configurados com as cotas e informações referentes à percentual sobre faturamento para preencher a grid da view
+	 * @param idBox
+	 * @param idRoteiro
+	 * @param idRota
+	 * @param grupoMovimento
+	 * @param percentual
+	 * @param baseCalculo
+	 * @param dataPeriodoInicial
+	 * @param dataPeriodoFinal
+	 */
     @Post
 	@Path("/obterInformacoesParaLancamento")
 	public void obterInformacoesParaLancamento(Long idBox, 
@@ -186,8 +213,8 @@ public class DebitoCreditoCotaController {
 			                                   BaseCalculo baseCalculo,
 			                                   Date dataPeriodoInicial,
 			                                   Date dataPeriodoFinal){
-		
-    	if ((idBox==null) && (idRoteiro==null) && (idRota==null)){
+    	
+    	if ((idBox==null || idBox==0) && (idRoteiro==null || idRoteiro==0) && (idRota==null || idRota==0)){
     		carregarNovosMovimentos();
     	}
     	else{
@@ -216,7 +243,12 @@ public class DebitoCreditoCotaController {
         	}
 
     		List<DebitoCreditoDTO> listaDebitoCredito = this.debitoCreditoCotaService.obterDadosLancamentoPorBoxRoteiroRota(idBox, idRoteiro, idRota, percentual, baseCalculo, dataPeriodoInicial, dataPeriodoFinal);
-            int qtd = this.debitoCreditoCotaService.obterQuantidadeCotasPorBoxRoteiroRota(idBox, idRoteiro, idRota);
+            
+    		if (listaDebitoCredito==null || listaDebitoCredito.size()<=0){
+    			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhuma informação encontrada para os filtros escolhidos.");
+    		}
+    		
+    		int qtd = this.debitoCreditoCotaService.obterQuantidadeCotasPorBoxRoteiroRota(idBox, idRoteiro, idRota);
             
     		TableModel<CellModelKeyValue<DebitoCreditoDTO>> tableModel =
     				new TableModel<CellModelKeyValue<DebitoCreditoDTO>>();
@@ -227,7 +259,56 @@ public class DebitoCreditoCotaController {
     		this.result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
     	}
     }
+    
+    /**
+     * Retorna dados da cota referentes à percentual sobre faturamento
+     * @param numeroCota
+     * @param grupoMovimento
+     * @param percentual
+     * @param baseCalculo
+     * @param dataPeriodoInicial
+     * @param dataPeriodoFinal
+     */
+    @Post
+	@Path("/obterInformacoesParaLancamentoIndividual")
+	public void obterInformacoesParaLancamentoIndividual(Integer numeroCota,
+						                                 GrupoMovimentoFinaceiro grupoMovimento,
+						                                 BigDecimal percentual,
+						                                 BaseCalculo baseCalculo,
+						                                 Date dataPeriodoInicial,
+						                                 Date dataPeriodoFinal,
+						                                 Long index){
+    		
+		if (grupoMovimento == GrupoMovimentoFinaceiro.DEBITO_SOBRE_FATURAMENTO){
+    		
+			if (percentual == null) {
+				throw new ValidacaoException(TipoMensagem.WARNING, "Para o lançamento baseado no faturamento é obrigatório informar o [Percentual].");
+			}
+			
+			if (baseCalculo == null) {
+				throw new ValidacaoException(TipoMensagem.WARNING, "Para o lançamento baseado no faturamento é obrigatório informar a [Base de Cálculo].");
+			}
+			
+			if (dataPeriodoInicial == null) {
+				throw new ValidacaoException(TipoMensagem.WARNING, "Para o lançamento baseado no faturamento é obrigatório informar o [Período para Cálculo].");
+			}
+			
+			if (dataPeriodoFinal == null) {
+				throw new ValidacaoException(TipoMensagem.WARNING, "Para o lançamento baseado no faturamento é obrigatório informar o [Período para Cálculo].");
+			}
+			
+			if (DateUtil.isDataInicialMaiorDataFinal(dataPeriodoInicial, dataPeriodoFinal)) {
+				throw new ValidacaoException(TipoMensagem.WARNING, "A [Data Final] deve susceder a [Data Inicial].");
+			}
+    	}
 
+		DebitoCreditoDTO debitoCredito = this.debitoCreditoCotaService.obterDadosLancamentoPorCota(numeroCota, percentual, baseCalculo, dataPeriodoInicial, dataPeriodoFinal, index);
+
+		this.result.use(Results.json()).from(debitoCredito!=null?debitoCredito:"", "result").recursive().serialize();
+ 
+    }
+
+    
 	public void buscarCotaPorNumero(Integer numeroCota) {
 		
 		Cota cota = this.cotaService.obterPorNumeroDaCota(numeroCota);
@@ -840,7 +921,7 @@ public class DebitoCreditoCotaController {
 		}
 		
 		if (listaNovosDebitoCredito==null || listaNovosDebitoCredito.size()<=0){
-			throw new ValidacaoException(TipoMensagem.WARNING, "Não há movimentos à serem lançados.");
+			throw new ValidacaoException(TipoMensagem.WARNING, "Não há movimentos para serem lançados.");
 		}
 		
 		List<Long> linhasComErro = new ArrayList<Long>();

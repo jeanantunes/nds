@@ -165,6 +165,9 @@
 				$("#edicaoDataVencimento").val(result.dataVencimento);
 				$("#edicaoValor").val(result.valor);
 				$("#edicaoObservacao").val(result.observacao);
+				
+				configuraTelaEdicao(result.tipoMovimentoFinanceiro.id);
+					
 			},
 			function(result) {
 				
@@ -184,7 +187,7 @@
 			function(result) {
 				
 				$("#detalheId").val(result.id);
-				$("#detalheTipoMovimento").val(result.tipoMovimentoFinanceiro.id);
+				$("#detalheTipoMovimento").val(result.tipoMovimentoFinanceiro.descricao);
 				$("#detalheNumeroCota").val(result.numeroCota);
 				$("#detalheNomeCota").val(result.nomeCota);
 				$("#detalheDataLancamento").val(result.dataLancamento);
@@ -361,7 +364,82 @@
 			true
 		);
  	}
+
+ 	//VERIFICA SE O TIPO DE LANÇAMENTO CONSIDERA FATURAMENTO DA COTA
+	function configuraTelaEdicao(idTipoLancamento){
+		var data = [{name: 'idTipoMovimento', value: idTipoLancamento}];
+		$.postJSON("<c:url value='/financeiro/debitoCreditoCota/obterGrupoFaturamento' />",
+				   data,
+				   sucessCallbackConfiguraTelaEdicao,
+				   null,
+				   true);
+	}
 	
+	function sucessCallbackConfiguraTelaEdicao(result){
+		
+		$("#grupoMovimentoHidden").val(result);
+		
+		if (result=='DEBITO_SOBRE_FATURAMENTO'){
+			
+			$('#edicaoBaseCalculo').show();
+			$('#edicaoPercentual').show();
+			$('#edicaoDataPeriodo').show();
+			
+			$('#tituloEdicaoBaseCalculo').show();
+			$('#tituloEdicaoPercentual').show();
+			$('#tituloEdicaoDataPeriodo').show();
+			
+			$("#edicaoValor").val('');
+		}
+		else{	
+			
+			$("#edicaoBaseCalculo").val(0);
+			$("#edicaoPercentual").val('');
+			$("#edicaoDataPeriodoDe").val('');
+			$("#edicaoDataPeriodoAte").val('');
+			
+			$('#edicaoBaseCalculo').hide();
+			$('#edicaoPercentual').hide();
+			$('#edicaoDataPeriodo').hide();
+			
+			$('#tituloEdicaoBaseCalculo').hide();
+			$('#tituloEdicaoPercentual').hide();
+			$('#tituloEdicaoDataPeriodo').hide();
+		}
+		
+	}
+ 	
+ 	function obterInformacoesParaEdicao(){
+
+		var grupoMovimento = $("#grupoMovimentoHidden").val();
+		var percentual = $("#edicaoPercentual").val();
+		var baseCalculo = $("#edicaoBaseCalculo").val();
+		var dataPeriodoInicial = $("#edicaoDataPeriodoDe").val();
+		var dataPeriodoFinal = $("#edicaoDataPeriodoAte").val();
+        var numeroCota = $("#edicaoNumeroCota").val();
+        var indexValor = 0;
+		
+		if ((grupoMovimento == "DEBITO_SOBRE_FATURAMENTO") && (percentual!='') && (baseCalculo!='') && (dataPeriodoInicial!='') && (dataPeriodoFinal!='')){
+
+			var data = [{name:'numeroCota', value:numeroCota},
+				        {name:'grupoMovimento', value:grupoMovimento},
+				        {name:'percentual', value:percentual},
+				        {name:'baseCalculo', value:baseCalculo},
+				        {name:'dataPeriodoInicial', value:dataPeriodoInicial},
+				        {name:'dataPeriodoFinal', value:dataPeriodoFinal},
+				        {name:'index', value:indexValor}];
+			
+			$.postJSON("<c:url value='/financeiro/debitoCreditoCota/obterInformacoesParaLancamentoIndividual' />",
+					    data,
+						function(result){
+							$("#edicaoValor").val(result.valor);
+						},
+						null,
+						true);
+			
+		}	
+	}
+ 	
 	$(function() {
 		$( "#datepickerDe" ).datepicker({
 			showOn: "button",
@@ -403,6 +481,18 @@
 			buttonImageOnly: true
 		});
 		
+		$( "#edicaoDataPeriodoDe" ).datepicker({
+			showOn: "button",
+			buttonImage: "${pageContext.request.contextPath}/images/calendar.gif",
+			buttonImageOnly: true
+		});
+		
+		$( "#edicaoDataPeriodoAte" ).datepicker({
+			showOn: "button",
+			buttonImage: "${pageContext.request.contextPath}/images/calendar.gif",
+			buttonImageOnly: true
+		});
+		
 	});
 </script>
 
@@ -424,7 +514,7 @@
   <tr>
     <td width="126">Tipo de Movimento:</td>
     <td width="310">
-    <select name="debitoCredito.tipoMovimentoFinanceiro.id" id="edicaoTipoMovimento" style="width:300px;">
+    <select name="debitoCredito.tipoMovimentoFinanceiro.id" id="edicaoTipoMovimento" style="width:300px;" onchange="configuraTelaEdicao(this.value);">
 		<c:forEach items="${tiposMovimentoFinanceiro}" var="tipoMovimento">
 			<option value="${tipoMovimento.id}">${tipoMovimento.id}-${tipoMovimento.descricao}</option>
 		</c:forEach>
@@ -457,16 +547,16 @@
   </tr>
   
   <tr>
-    <td width="126">Percentual(%)</td>
+    <td width="126" id="tituloEdicaoPercentual" >Percentual(%)</td>
     <td width="310">
-    	<input type="text" style="width:80px; text-align:right;" name="debitoCredito.percentual" id="edicaoPercentual" />
+    	<input type="text" style="width:80px; text-align:right;" name="debitoCredito.percentual" id="edicaoPercentual" onchange="obterInformacoesParaEdicao();" />
     </td>
   </tr>
   
   <tr>
-    <td width="80">Base de Cálculo:</td>
+    <td width="80" id="tituloEdicaoBaseCalculo">Base de Cálculo:</td>
     <td width="120">
-		<select name="debitoCredito.baseCalculo.id" id="edicaoBaseCalculo" style="width:120px;">
+		<select name="debitoCredito.baseCalculo.id" id="edicaoBaseCalculo" style="width:120px;" onchange="obterInformacoesParaEdicao();" >
 		
 	  		<option selected="selected"></option>
 			<c:forEach items="${basesCalculo}" var="base">
@@ -478,11 +568,11 @@
   </tr>
   
   <tr>
-    <td width="100">Período para Cálculo:</td>
-    <td width="180">
-		<input type="text" name="debitoCredito.dataPeriodoDe" id="edicaoDataPeriodoDe" style="width:80px;" />
+    <td width="100" id="tituloEdicaoDataPeriodo">Período para Cálculo:</td>
+    <td width="180" id="edicaoDataPeriodo">
+		<input type="text" name="debitoCredito.dataPeriodoDe" id="edicaoDataPeriodoDe" style="width:80px;" onchange="obterInformacoesParaEdicao();" />
         até
-		<input type="text" name="debitoCredito.dataPeriodoAte" id="edicaoDataPeriodoAte" style="width:80px;" />
+		<input type="text" name="debitoCredito.dataPeriodoAte" id="edicaoDataPeriodoAte" style="width:80px;" onchange="obterInformacoesParaEdicao();" />
     </td>
   </tr>
 
