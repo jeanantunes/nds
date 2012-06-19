@@ -119,7 +119,6 @@ public class EMS0116MessageProcessor implements MessageProcessor {
 													
 					segmentacaoPDV = new SegmentacaoPDV();
 					segmentacaoPDV.setAreaInfluenciaPDV(null);
-					segmentacaoPDV.setClusterPDV(null);
 					segmentacaoPDV.setTipoCaracteristica(null);
 					segmentacaoPDV.setTipoClusterPDV(null);
 					segmentacaoPDV.setTipoPontoPDV(tpdvs.get(0));
