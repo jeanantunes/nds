@@ -333,7 +333,7 @@
 
 		var cotasSelecionadas = obterCotasMarcadas();
 
-		if (cotasSelecionadas.lenght > 0) {
+		if (cotasSelecionadas.length > 0) {
 			
 			$("#dialog-postergar").dialog({
 				resizable: false,
