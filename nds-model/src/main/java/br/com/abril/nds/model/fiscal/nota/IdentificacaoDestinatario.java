@@ -34,39 +34,39 @@ public class IdentificacaoDestinatario implements Serializable {
 	/**
 	 * xNome
 	 */	
-	@Column(name="NOME", nullable=false, length=60, columnDefinition="Razão Social ou nome do emitente")
+	@Column(name="NOME_DESTINATARIO", nullable=false, length=60, columnDefinition="Razão Social ou nome do emitente")
 	private String nome;
 	
 	/**
 	 * xFant
 	 */
-	@Column(name="NOME_FANTASIA", nullable=true, length=60, columnDefinition="Nome Fantasia")
+	@Column(name="NOME_FANTASIA_DESTINATARIO", nullable=true, length=60, columnDefinition="Nome Fantasia")
 	private String nomeFantasia;
 	
 	/**
 	 * IE
 	 */
-	@Column(name="IE", nullable=false, length=14, columnDefinition="Inscrisão Estadual")
+	@Column(name="IE_DESTINATARIO", nullable=false, length=14, columnDefinition="Inscrisão Estadual")
 	private String inscricaoEstual;
 	
 	/**
 	 * ISUF
 	 */
-	@Column(name="ISUF", nullable=true, length=9, columnDefinition="Inscrição na SUFRAMA")
+	@Column(name="ISUF_DESTINATARIO", nullable=true, length=9, columnDefinition="Inscrição na SUFRAMA")
 	private String inscricaoSuframa;
 	
 	/**
 	 * EMAIL
 	 */
-	@Column(name="EMAIL", nullable=true, length=60, columnDefinition="EMAIL do destinatário.")
+	@Column(name="EMAIL_DESTINATARIO", nullable=true, length=60, columnDefinition="EMAIL do destinatário.")
 	private String email;
 	
 	@OneToOne(optional=false)
-	@JoinColumn(name="ENDERECO_ID")
+	@JoinColumn(name="ENDERECO_ID_DESTINATARIO")
 	private Endereco endereco;
 	
 	@OneToOne(optional=true)
-	@JoinColumn(name="TELEFONE_ID")
+	@JoinColumn(name="TELEFONE_ID_DESTINATARIO")
 	private Telefone telefone;
 	
 	

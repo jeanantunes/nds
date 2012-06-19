@@ -52,52 +52,52 @@ public class IdentificacaoEmitente implements Serializable {
 	/**
 	 * xNome
 	 */	
-	@Column(name="NOME", nullable=false, length=60, columnDefinition="Razão Social ou nome do emitente")
+	@Column(name="NOME_EMITENTE", nullable=false, length=60, columnDefinition="Razão Social ou nome do emitente")
 	private String nome;
 	
 	/**
 	 * xFant
 	 */
-	@Column(name="NOME_FANTASIA", nullable=true, length=60, columnDefinition="Nome Fantasia")
+	@Column(name="NOME_FANTASIA_EMITENTE", nullable=true, length=60, columnDefinition="Nome Fantasia")
 	private String nomeFantasia;
 	
 	/**
 	 * IE
 	 */
-	@Column(name="IE", nullable=false, length=14, columnDefinition="Inscrisão Estadual")
+	@Column(name="IE_EMITENTE", nullable=false, length=14, columnDefinition="Inscrisão Estadual")
 	private String inscricaoEstual;
 	
 	/**
 	 * IEST
 	 */
-	@Column(name="IE_SUBSTITUTO_TRIBUTARIO", length=14, nullable=true, columnDefinition="Inscrisão Estadual do Substituto Tributário")
+	@Column(name="IE_SUBSTITUTO_TRIBUTARIO_EMITENTE", length=14, nullable=true, columnDefinition="Inscrisão Estadual do Substituto Tributário")
 	private String inscricaoEstualSubstituto;
 	
 	/**
 	 * IM
 	 */	
-	@Column(name="IM", length=15, nullable=true, columnDefinition="Inscrisão Municipal")
+	@Column(name="IM_EMITENTE", length=15, nullable=true, columnDefinition="Inscrisão Municipal")
 	private String inscricaoMunicipal;
 	
 	/**
 	 * CNAE
 	 */
-	@Column(name="CNAE", length=1, nullable=true, columnDefinition="Classificação Nacional de Atividades Econômicas-Fiscal")
+	@Column(name="CNAE_EMITENTE", length=1, nullable=true, columnDefinition="Classificação Nacional de Atividades Econômicas-Fiscal")
 	private String cnae;
 	
 	/**
 	 * CRT
 	 */
 	@Enumerated(EnumType.ORDINAL)
-	@Column(name="CRT",length=1, nullable=true, columnDefinition = "Código de Regime Tributário")
+	@Column(name="CRT_EMITENTE",length=1, nullable=true, columnDefinition = "Código de Regime Tributário")
 	private RegimeTributario regimeTributario;
 	
 	@OneToOne(optional=false)
-	@JoinColumn(name="ENDERECO_ID")
+	@JoinColumn(name="ENDERECO_ID_EMITENTE")
 	private Endereco endereco;
 	
 	@OneToOne(optional=true)
-	@JoinColumn(name="TELEFONE_ID")
+	@JoinColumn(name="TELEFONE_ID_EMITENTE")
 	private Telefone telefone;
 	
 	
