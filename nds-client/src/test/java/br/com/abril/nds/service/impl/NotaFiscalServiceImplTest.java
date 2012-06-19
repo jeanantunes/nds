@@ -14,8 +14,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.dto.RetornoNFEDTO;
 import br.com.abril.nds.fixture.Fixture;
+import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
+import br.com.abril.nds.model.cadastro.TipoEndereco;
 import br.com.abril.nds.model.fiscal.nota.Identificacao;
 import br.com.abril.nds.model.fiscal.nota.Identificacao.FormaPagamento;
 import br.com.abril.nds.model.fiscal.nota.IdentificacaoDestinatario;
@@ -37,8 +39,10 @@ public class NotaFiscalServiceImplTest extends AbstractRepositoryImplTest {
 	private HashMap<StatusProcessamentoInterno, NotaFiscal> listaNotasFiscais = new HashMap<StatusProcessamentoInterno, NotaFiscal>();
 	
 	@Before
-	@Ignore
 	public void setup() {
+	
+		Endereco endereco = Fixture.criarEndereco(TipoEndereco.COMERCIAL, "13720000", "Logradouro", 123, "Bairro", "Cidade", "SP");
+		save(endereco);
 		
 		PessoaFisica pessoaFisicaEmitente = Fixture.pessoaFisica("37712543534", "email@email.com", "Joao");
 		save(pessoaFisicaEmitente);				
@@ -48,16 +52,17 @@ public class NotaFiscalServiceImplTest extends AbstractRepositoryImplTest {
 		
 		NotaFiscal notaFiscalRetornadaAutorizada = 
 				gerarNotaFiscal(Status.AUTORIZADO, "33111102737654003496550550000483081131621856", 
-						StatusProcessamentoInterno.RETORNADA, pessoaFisicaDestinatario, pessoaFisicaEmitente);
+						StatusProcessamentoInterno.RETORNADA, pessoaFisicaDestinatario, pessoaFisicaEmitente, endereco);
 		
 		notaFiscalRetornadaAutorizada = merge(notaFiscalRetornadaAutorizada);
+		
 		
 		listaNotasFiscais.put(notaFiscalRetornadaAutorizada.getStatusProcessamentoInterno(), 
 																notaFiscalRetornadaAutorizada);
 		
 		NotaFiscal notaFiscalEnviadaAutorizada = 
 				gerarNotaFiscal(Status.SERVICO_EM_OPERACAO, "33111102737654003496550550000483081131621856", 
-						StatusProcessamentoInterno.ENVIADA, pessoaFisicaDestinatario, pessoaFisicaEmitente);
+						StatusProcessamentoInterno.ENVIADA, pessoaFisicaDestinatario, pessoaFisicaEmitente, endereco);
 		
 		notaFiscalEnviadaAutorizada = merge(notaFiscalEnviadaAutorizada);
 		
@@ -66,7 +71,6 @@ public class NotaFiscalServiceImplTest extends AbstractRepositoryImplTest {
 	}
 	
 	@Test
-	@Ignore
 	public void testSumarizarNotasFiscais() {
 		
 		List<RetornoNFEDTO> listaDadosRetornoNFE = new ArrayList<RetornoNFEDTO>();
@@ -102,12 +106,14 @@ public class NotaFiscalServiceImplTest extends AbstractRepositoryImplTest {
 	}
 	
 	private NotaFiscal gerarNotaFiscal(Status status, String chaveAcesso, 
-			StatusProcessamentoInterno statusProcessamentoInterno, Pessoa destinatario, Pessoa emitente) {
+			StatusProcessamentoInterno statusProcessamentoInterno, Pessoa destinatario, Pessoa emitente, Endereco endereco) {
 		
 		IdentificacaoEmitente identificacaoEmitente = new IdentificacaoEmitente();
 		identificacaoEmitente.setPessoaEmitenteReferencia(emitente);
 		identificacaoEmitente.setDocumento("37712543534");
-
+		identificacaoEmitente.setEndereco(endereco);
+		identificacaoEmitente.setInscricaoEstual("InscricaoEstadua");
+		identificacaoEmitente.setNome("NomeEmitente");
 		
 		IdentificacaoDestinatario identificacaoDestinatario = new IdentificacaoDestinatario();
 		identificacaoDestinatario.setPessoaDestinatarioReferencia(destinatario);
@@ -132,7 +138,6 @@ public class NotaFiscalServiceImplTest extends AbstractRepositoryImplTest {
 		identificacao.setFormaPagamento(FormaPagamento.A_VISTA);
 		identificacao.setDescricaoNaturezaOperacao("Natureza Operacao");
 		identificacao.setCodigoChaveAcesso(31234);
-		
 		
 		NotaFiscal notaFiscal = new NotaFiscal();
 		notaFiscal.setIdentificacaoEmitente(identificacaoEmitente);
