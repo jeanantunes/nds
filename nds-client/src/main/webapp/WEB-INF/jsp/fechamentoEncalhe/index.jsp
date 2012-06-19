@@ -8,7 +8,10 @@
 	var vFornecedorId = '';
 	var vBoxId = '';
 	
-	function pesquisar() {
+	function pesquisar(aplicaRegraMudancaTipo ) {
+		if (aplicaRegraMudancaTipo == null ){
+			aplicaRegraMudancaTipo = false;
+		}
 		
 		$(".fechamentoGrid").flexOptions({
 			"url" : contextPath + '/devolucao/fechamentoEncalhe/pesquisar',
@@ -21,7 +24,14 @@
 			}, {
 				name : "boxId",
 				value : $('#selectBoxEncalhe').val()
+			},
+			{
+				name : "aplicaRegraMudancaTipo",
+				value : aplicaRegraMudancaTipo
 			}],
+
+
+			
 			newp:1
 		});
 		
@@ -43,7 +53,7 @@
 			
 			var valorFisico = row.cell.fisico == null ? '' : row.cell.fisico;
 			var fechado = row.cell.fechado == false ? '' : 'disabled="disabled"';
-			row.cell.fisico = '<input type="text" style="width: 60px" name="fisico[' + index + ']" value="' + valorFisico + '" onchange="onChangeFisico(this, ' + index + ')" ' + fechado + '/>';
+			row.cell.fisico = '<input type="text" style="width: 60px" id = "'+row.cell.produtoEdicao+'"  name="fisico" value="' + valorFisico + '" onchange="onChangeFisico(this, ' + index + ')" ' + fechado + '/>';
 			
 			row.cell.replicar = '<span title="Replicar"><a href="javascript:;" onclick="replicar(' + index + ')"><img src="${pageContext.request.contextPath}/images/ico_atualizar.gif" border="0" /></a></span>';
 			
@@ -104,28 +114,25 @@
 	}
 	
 	function salvar() {
-		
-		$(".fechamentoGrid").flexOptions({
-			"url" : contextPath + '/devolucao/fechamentoEncalhe/salvar',
-			params : [{
-				name : "dataEncalhe",
-				value : $('#datepickerDe').val()
-			}, {
-				name : "fornecedorId",
-				value : $('#selectFornecedor').val()
-			}, {
-				name : "boxId",
-				value : $('#selectBoxEncalhe').val()
-			}, {
-				name : "fisico",
-				value : gerarArrayFisico()
-			}],
-			newp:1
-		});
-		
-		$(".fechamentoGrid").flexReload();
-		$(".grids").show();
-	}
+			$.postJSON(
+				"<c:url value='/devolucao/fechamentoEncalhe/salvar' />",
+				populaParamentrosFechamentoEncalheInformados(),
+				function (result) {
+
+					var tipoMensagem = result.tipoMensagem;
+					var listaMensagens = result.listaMensagens;
+					
+					if (tipoMensagem && listaMensagens) {
+						exibirMensagem(tipoMensagem, listaMensagens);
+					}
+					pesquisar();
+					
+				},
+			  	null,
+			   	false
+			);
+			
+		}
 	
 	function popup_encerrarEncalhe() {
 		$( "#dialog-encerrarEncalhe" ).dialog({
@@ -453,6 +460,113 @@
 
 		return false;
 	}
+
+	function verificarMensagemConsistenciaDados() {
+		$.postJSON(
+			"<c:url value='/devolucao/fechamentoEncalhe/verificarMensagemConsistenciaDados' />",
+			{ 
+			    'dataEncalhe' : $('#datepickerDe').val(),
+			    'fornecedorId' : $('#selectFornecedor').val(),
+				'boxId' :  $('#selectBoxEncalhe').val()
+		    },
+			function (result) {
+
+				var tipoMensagem = result.tipoMensagem;
+				var listaMensagens = result.listaMensagens;
+				
+				if (tipoMensagem && listaMensagens) {
+					$('#mensagemConsistenciaDados').html(listaMensagens[0])
+					popup_mensagem_consistencia_dados();
+				} else {
+					pesquisar(false);
+				}
+
+    		},
+		  	null,
+		   	false
+		);
+	}	
+
+	function popup_mensagem_consistencia_dados() {
+		$( "#dialog-mensagem-consistencia-dados" ).dialog({
+			resizable: false,
+			height:'auto',
+			width:400,
+			modal: true,
+			buttons: {
+				"Confirmar": function() {
+					pesquisar(true);
+					$(this).dialog( "close" );
+				},
+				
+				"Cancelar": function() {
+					$(this).dialog( "close" );
+				}
+			},
+			beforeClose: function() {
+				//clearMessageDialogTimeout('dialogMensagemNovo');
+			}
+		});
+	}
+
+
+	
+
+	function brunoTeste() {
+		var param =eval('[{name:"lista[0].produtoEdicao",value:1}, {name:"lista[1].produtoEdicao",value:2}]');
+		$.postJSON(
+			"<c:url value='/devolucao/fechamentoEncalhe/brunoTeste' />",
+				param
+		    ,
+			function (result) {
+
+				var tipoMensagem = result.tipoMensagem;
+				var listaMensagens = result.listaMensagens;
+				
+				if (tipoMensagem && listaMensagens) {
+					$('#mensagemConsistenciaDados').html(listaMensagens[0])
+					popup_mensagem_consistencia_dados();
+				} else {
+					pesquisar(false);
+				}
+
+    		},
+		  	null,
+		   	false
+		);
+	}	
+
+	 function populaParamentrosFechamentoEncalheInformados(){
+		var dados ="";
+		var index = 0;
+		$("input[type=text][name='fisico']").each(function(){
+			if (dados != ""){
+				dados+=",";
+			}
+
+		    if ( $(this).val() != null &&  $(this).val() !=  "" ){
+				  var  qtd = parseInt($(this).val());
+		     	  dados+='{name:"listaFechamento['+index+'].produtoEdicao",value:'+$(this).attr('id')+'}, {name:"listaFechamento['+index+'].fisico",value:'+qtd+'}';
+		     	  index++;
+		    }
+			
+		});
+		var fornecedorId = null;
+		if ($('#selectFornecedor').val() !=""){
+		    fornecedorId = $('#selectFornecedor').val();
+		}
+		
+		var boxId = null;
+		if ($('#selectBoxEncalhe').val() !=""){
+		    boxId = $('#selectBoxEncalhe').val();
+		}
+		
+		dados+=',{name:"dataEncalhe",value:"'+$('#datepickerDe').val()+'"},{name:"fornecedorId",value:'+fornecedorId+'},{name:"boxId",value:'+boxId+'}';
+		var params = '['+dados+ ']';
+		return eval(params);
+	}
+	 
+
 	
 	</script>
 
@@ -466,6 +580,10 @@
 
 	<div id="dialog-confirm" title="Encerrar Opera&ccedil;&atilde;o" style="display:none;">
 		<p>Confirma o encerramento da opera&ccedil;&atilde;o do dia <span id="dataConfirma"></span>:</p>
+	</div>
+	
+	<div id="dialog-mensagem-consistencia-dados" title="Fechamento Encalhe" style="display:none;">
+		<p id="mensagemConsistenciaDados" ></p>
 	</div>
 
 	<div id="dialog-postergar" title="Postergar Encalhe" style="display:none;">
@@ -540,7 +658,7 @@
 					</c:forEach>
 					</select>
 				</td>
-				<td width="106"><span class="bt_pesquisar"><a href="javascript:;" onclick="pesquisar();">Pesquisar</a></span></td>
+				<td width="106"><span class="bt_pesquisar"><a href="javascript:;" onclick="verificarMensagemConsistenciaDados();">Pesquisar</a></span></td>
 			</tr>
 		</table>
     </fieldset>
@@ -604,7 +722,7 @@
 				sortable : true,
 				align : 'left'
 			}, {
-				display : 'Ação',
+				display : 'A褯',
 				name : 'acao',
 				width : 110,
 				sortable : true,
