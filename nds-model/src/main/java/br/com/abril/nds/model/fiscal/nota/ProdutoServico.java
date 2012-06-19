@@ -14,6 +14,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.util.export.fiscal.nota.NFEExport;
 
 @Entity
 @Table(name = "PRODUTO_SERVICO_NOTA_FISCAL")
@@ -44,7 +45,72 @@ public class ProdutoServico implements Serializable {
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "PRODUTO_EDICAO_ID")
 	private ProdutoEdicao produtoEdicao;
-
+	
+	/**
+	 * cProd
+	 */
+	@Column(name="CODIGO_PRODUTO", length=60, nullable=false, columnDefinition="Código do Produto ou Serviço")
+	@NFEExport(secao="I", posicao=0, tamanho=60)
+	private String codigoProduto;
+	
+	/**
+	 * cEAN
+	 */
+	@Column(name="CODIGO_BARRAS", length=14, nullable=false, columnDefinition="GTIN (Global Trade Item Number) do produto, antigo código EAN ou código de barras")
+	@NFEExport(secao="I", posicao=1, tamanho=14)
+	private Long codigoBarras;
+	
+	/**
+	 * xProd
+	 */
+	@Column(name="DESCRICAO_PRODUTO", length=120, nullable=false, columnDefinition="Descrição do produto ou serviço")
+	@NFEExport(secao="I", posicao=2, tamanho=120)
+	private String descricaoProduto;
+	
+	/**
+	 * NCM
+	 */
+	@Column(name="NCM", length=8, nullable=false, columnDefinition="Nomenclatura Comum do MERCOSUL")
+	@NFEExport(secao="I", posicao=3, tamanho=8)
+	private Long ncm;
+	
+	/**
+	 * EXTIPI
+	 */
+	@Column(name="EXTIPI", length=2, nullable=true, columnDefinition="")
+	@NFEExport(secao="I", posicao=4, tamanho=3)
+	private Long extipi;
+	
+	/**
+	 * CFOP
+	 */
+	@Column(name="CFOP", length=4, nullable=false, columnDefinition="Código Fiscal de Operações e Prestações")
+	@NFEExport(secao="I", posicao=6, tamanho=4)
+	private Integer cfop;
+	
+	/**
+	 * uCom
+	 */
+	@Column(name="UNIDADE_COMERCIAL", length=6, nullable=false, columnDefinition="Unidade Comercial")
+	@NFEExport(secao="I", posicao=7, tamanho=6)
+	private String unidade;
+	
+	/**
+	 * qCom
+	 */
+	@Column(name="QUANTIDADE_COMERCIAL", length=15, nullable=false, columnDefinition="Quantidade Comercial")
+	@NFEExport(secao="I", posicao=8, tamanho=12)
+	private Long quantidade;
+	
+	/**
+	 * vUnCom
+	 */
+	@Column(name="VALOR_UNITARIO_COMERCIAL", length=21, nullable=false, columnDefinition="Valor Unitário de Comercialização")
+	@NFEExport(secao="I", posicao=9, tamanho=16)
+	private Double valorUnitario;
+	
+	
+	
 	/**
 	 * @return the id
 	 */

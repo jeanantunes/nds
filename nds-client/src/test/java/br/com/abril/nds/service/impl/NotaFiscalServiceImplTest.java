@@ -110,7 +110,7 @@ public class NotaFiscalServiceImplTest extends AbstractRepositoryImplTest {
 
 		
 		IdentificacaoDestinatario identificacaoDestinatario = new IdentificacaoDestinatario();
-		identificacaoDestinatario.setPessoaDestinatario(destinatario);
+		identificacaoDestinatario.setPessoaDestinatarioReferencia(destinatario);
 		
 		RetornoComunicacaoEletronica retornoComunicacaoEletronica = new RetornoComunicacaoEletronica();
 		retornoComunicacaoEletronica.setDataRecebimento(new Date());

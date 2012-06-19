@@ -2,11 +2,15 @@ package br.com.abril.nds.model.fiscal.nota;
 
 import java.io.Serializable;
 
+import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 
+import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.Pessoa;
+import br.com.abril.nds.model.cadastro.Telefone;
 
 @Embeddable
 public class IdentificacaoDestinatario implements Serializable {
@@ -16,9 +20,56 @@ public class IdentificacaoDestinatario implements Serializable {
 	 */
 	private static final long serialVersionUID = -3558149602330018787L;
 	
-	@ManyToOne(optional = false)
-	@JoinColumn(name = "PESSOA_DESTINATARIO_ID")
-	private Pessoa pessoaDestinatario;
+	@ManyToOne(optional = true)
+	@JoinColumn(name = "PESSOA_DESTINATARIO_ID_REFERENCIA")
+	private Pessoa pessoaDestinatarioReferencia;
+	
+	
+	/**
+	 * CNPJ CPF
+	 */
+	@Column(name="DOCUMENTO", nullable=false, length=14, columnDefinition="CPJ ou CNPJ do emitente")
+	private String documento;
+	
+	/**
+	 * xNome
+	 */	
+	@Column(name="NOME", nullable=false, length=60, columnDefinition="Razão Social ou nome do emitente")
+	private String nome;
+	
+	/**
+	 * xFant
+	 */
+	@Column(name="NOME_FANTASIA", nullable=true, length=60, columnDefinition="Nome Fantasia")
+	private String nomeFantasia;
+	
+	/**
+	 * IE
+	 */
+	@Column(name="IE", nullable=false, length=14, columnDefinition="Inscrisão Estadual")
+	private String inscricaoEstual;
+	
+	/**
+	 * ISUF
+	 */
+	@Column(name="ISUF", nullable=true, length=9, columnDefinition="Inscrição na SUFRAMA")
+	private String inscricaoSuframa;
+	
+	/**
+	 * EMAIL
+	 */
+	@Column(name="EMAIL", nullable=true, length=60, columnDefinition="EMAIL do destinatário.")
+	private String email;
+	
+	@OneToOne(optional=false)
+	@JoinColumn(name="ENDERECO_ID")
+	private Endereco endereco;
+	
+	@OneToOne(optional=true)
+	@JoinColumn(name="TELEFONE_ID")
+	private Telefone telefone;
+	
+	
 	
 	/**
 	 * Construtor padrão.
@@ -27,18 +78,142 @@ public class IdentificacaoDestinatario implements Serializable {
 		
 	}
 
-	/**
-	 * @return the pessoaDestinatario
-	 */
-	public Pessoa getPessoaDestinatario() {
-		return pessoaDestinatario;
+	
+	public Pessoa getPessoaDestinatarioReferencia() {
+		return pessoaDestinatarioReferencia;
 	}
 
+	
+	public void setPessoaDestinatarioReferencia(Pessoa pessoaDestinatarioReferencia) {
+		this.pessoaDestinatarioReferencia = pessoaDestinatarioReferencia;
+	}
+
+
 	/**
-	 * @param pessoaDestinatario the pessoaDestinatario to set
+	 * @return the documento
 	 */
-	public void setPessoaDestinatario(Pessoa pessoaDestinatario) {
-		this.pessoaDestinatario = pessoaDestinatario;
+	public String getDocumento() {
+		return documento;
+	}
+
+
+	/**
+	 * @param documento the documento to set
+	 */
+	public void setDocumento(String documento) {
+		this.documento = documento;
+	}
+
+
+	/**
+	 * @return the nome
+	 */
+	public String getNome() {
+		return nome;
+	}
+
+
+	/**
+	 * @param nome the nome to set
+	 */
+	public void setNome(String nome) {
+		this.nome = nome;
+	}
+
+
+	/**
+	 * @return the nomeFantasia
+	 */
+	public String getNomeFantasia() {
+		return nomeFantasia;
+	}
+
+
+	/**
+	 * @param nomeFantasia the nomeFantasia to set
+	 */
+	public void setNomeFantasia(String nomeFantasia) {
+		this.nomeFantasia = nomeFantasia;
+	}
+
+
+	/**
+	 * @return the inscricaoEstual
+	 */
+	public String getInscricaoEstual() {
+		return inscricaoEstual;
+	}
+
+
+	/**
+	 * @param inscricaoEstual the inscricaoEstual to set
+	 */
+	public void setInscricaoEstual(String inscricaoEstual) {
+		this.inscricaoEstual = inscricaoEstual;
+	}
+
+
+	/**
+	 * @return the inscricaoSuframa
+	 */
+	public String getInscricaoSuframa() {
+		return inscricaoSuframa;
+	}
+
+
+	/**
+	 * @param inscricaoSuframa the inscricaoSuframa to set
+	 */
+	public void setInscricaoSuframa(String inscricaoSuframa) {
+		this.inscricaoSuframa = inscricaoSuframa;
+	}
+
+
+	/**
+	 * @return the email
+	 */
+	public String getEmail() {
+		return email;
+	}
+
+
+	/**
+	 * @param email the email to set
+	 */
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+
+	/**
+	 * @return the endereco
+	 */
+	public Endereco getEndereco() {
+		return endereco;
+	}
+
+
+	/**
+	 * @param endereco the endereco to set
+	 */
+	public void setEndereco(Endereco endereco) {
+		this.endereco = endereco;
+	}
+
+
+	/**
+	 * @return the telefone
+	 */
+	public Telefone getTelefone() {
+		return telefone;
+	}
+
+
+	/**
+	 * @param telefone the telefone to set
+	 */
+	public void setTelefone(Telefone telefone) {
+		this.telefone = telefone;
 	}
 
 }
