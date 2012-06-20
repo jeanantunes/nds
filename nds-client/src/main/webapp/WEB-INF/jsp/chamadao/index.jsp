@@ -276,8 +276,8 @@
 		
 		$("#qtdExemplaresParcial").priceFormat({
 			allowNegative: true,
-			centsSeparator: '.',
-		    thousandsSeparator: ''
+			centsSeparator: '',
+		    thousandsSeparator: '.'
 		});
 		
 		$("#valorParcial").priceFormat({

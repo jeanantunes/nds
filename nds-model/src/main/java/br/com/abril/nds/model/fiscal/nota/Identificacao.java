@@ -56,6 +56,7 @@ public class Identificacao implements Serializable {
 	 * natOp
 	 */
 	@Column(name="DESCRICAO_NATUREZA_OPERACAO", length=60,nullable=false ,columnDefinition="Descrição da Natureza da Operação")
+	@NFEExport(secao="B", posicao=2, tamanho=60)
 	private String descricaoNaturezaOperacao;
 	
 	
@@ -64,6 +65,7 @@ public class Identificacao implements Serializable {
 	 */
 	@Enumerated(EnumType.ORDINAL)
 	@Column(name="INDICADOR_FORMA_PAGAMENTO", length=1, nullable=false, columnDefinition="Indicador da forma de pagamento")
+	@NFEExport(secao="B", posicao=3, tamanho=1)
 	private FormaPagamento formaPagamento;
 	
 		
@@ -71,6 +73,7 @@ public class Identificacao implements Serializable {
 	 * serie
 	 */
 	@Column(name = "SERIE", length = 3, nullable = false, columnDefinition = "Série do Documento Fiscal")
+	@NFEExport(secao="B", posicao=5, tamanho=3)
 	private Integer serie;
 	
 	
@@ -78,6 +81,7 @@ public class Identificacao implements Serializable {
 	 * nNF
 	 */
 	@Column(name = "NUMERO_DOCUMENTO_FISCAL", length = 9, nullable = false, columnDefinition = "Número do Documento Fiscal")
+	@NFEExport(secao="B", posicao=6 , tamanho=9)
 	private Long numeroDocumentoFiscal;
 	
 	/**
@@ -85,15 +89,16 @@ public class Identificacao implements Serializable {
 	 */
 	@Temporal(TemporalType.DATE)
 	@Column(name = "dataEmissao", nullable = false, columnDefinition = "Data de emissão do Documento Fiscal")
+	@NFEExport(secao="B", posicao=7)
 	private Date dataEmissao;
 	
 	
 	/**
 	 * dSaiEnt
-
 	 */
 	@Temporal(TemporalType.DATE)
 	@Column(name = "dataSaidaEntrada", nullable = true, columnDefinition = "Data de Saída ou da Entrada da Mercadoria/Produto")
+	@NFEExport(secao="B", posicao=8)
 	private Date dataSaidaEntrada;
 	
 	/**

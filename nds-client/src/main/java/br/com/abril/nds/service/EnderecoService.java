@@ -4,10 +4,14 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
+import br.com.abril.nds.client.endereco.vo.EnderecoVO;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.Pessoa;
+import br.com.abril.nds.model.dne.Bairro;
 import br.com.abril.nds.model.dne.Localidade;
+import br.com.abril.nds.model.dne.Logradouro;
+import br.com.abril.nds.model.dne.TipoLogradouro;
 
 public interface EnderecoService {
 
@@ -29,6 +33,14 @@ public interface EnderecoService {
 	
 	List<String> obterUnidadeFederacaoBrasil();
 	
-	List<Localidade> obterLocalidadesPorUF(String siglaUF);
+	List<Localidade> obterLocalidadesPorUFNome(String nome, String siglaUF);
+	
+	List<Bairro> obterBairrosPorCodigoIBGENome(String nome, String codigoIBGE);
+	
+	List<TipoLogradouro> obterTiposLogradouroNome(String tipoLogradouro);
+	
+	List<Logradouro> obterLogradourosPorCodigoBairroNome(Long codigoBairro, String nomeLogradouro);
+	
+	EnderecoVO obterEnderecoPorCep(String cep);
 	
 }

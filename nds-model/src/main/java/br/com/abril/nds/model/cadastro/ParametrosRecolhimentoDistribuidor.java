@@ -10,28 +10,28 @@ public class ParametrosRecolhimentoDistribuidor implements Serializable {
 
 	private static final long serialVersionUID = 1755370508652128006L;
 
-	@Column(name = "CONFERENCIA_CEGA_ENCALHE",nullable=false)
+	@Column(name = "CONFERENCIA_CEGA_ENCALHE",nullable=true)
 	private boolean conferenciaCegaEncalhe;	
 	
-	@Column(name = "CONFERENCIA_CEGA_RECEBIMENTO",nullable=false)
+	@Column(name = "CONFERENCIA_CEGA_RECEBIMENTO",nullable=true)
 	private boolean conferenciaCegaRecebimento;
 	
-	@Column(name = "DIA_RECOLHIMENTO_PRIMEIRO",nullable=false)
+	@Column(name = "DIA_RECOLHIMENTO_PRIMEIRO",nullable=true)
 	private boolean diaRecolhimentoPrimeiro;
 	
-	@Column(name = "DIA_RECOLHIMENTO_SEGUNDO",nullable=false)
+	@Column(name = "DIA_RECOLHIMENTO_SEGUNDO",nullable=true)
 	private boolean diaRecolhimentoSegundo;	
 	
-	@Column(name = "DIA_RECOLHIMENTO_TERCEIRO",nullable=false)
+	@Column(name = "DIA_RECOLHIMENTO_TERCEIRO",nullable=true)
 	private boolean diaRecolhimentoTerceiro;
 	
-	@Column(name = "DIA_RECOLHIMENTO_QUARTO",nullable=false)
+	@Column(name = "DIA_RECOLHIMENTO_QUARTO",nullable=true)
 	private boolean diaRecolhimentoQuarto;
 	
-	@Column(name = "DIA_RECOLHIMENTO_QUINTO",nullable=false)
+	@Column(name = "DIA_RECOLHIMENTO_QUINTO",nullable=true)
 	private boolean diaRecolhimentoQuinto;
 	
-	@Column(name = "PERMITE_RECOLHER_DIAS_POSTERIORES",nullable=false)
+	@Column(name = "PERMITE_RECOLHER_DIAS_POSTERIORES",nullable=true)
 	private boolean permiteRecolherDiasPosteriores;
 
 	public boolean isConferenciaCegaEncalhe() {

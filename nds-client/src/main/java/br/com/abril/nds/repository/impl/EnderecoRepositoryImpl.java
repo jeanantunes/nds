@@ -4,11 +4,19 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
+import org.hibernate.Criteria;
 import org.hibernate.Query;
+import org.hibernate.criterion.MatchMode;
+import org.hibernate.criterion.Restrictions;
+import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Repository;
 
+import br.com.abril.nds.client.endereco.vo.EnderecoVO;
 import br.com.abril.nds.model.cadastro.Endereco;
+import br.com.abril.nds.model.dne.Bairro;
 import br.com.abril.nds.model.dne.Localidade;
+import br.com.abril.nds.model.dne.Logradouro;
+import br.com.abril.nds.model.dne.TipoLogradouro;
 import br.com.abril.nds.repository.EnderecoRepository;
 
 /**
@@ -111,20 +119,93 @@ public class EnderecoRepositoryImpl extends AbstractRepository<Endereco, Long> i
 	 */
 	@Override
 	@SuppressWarnings("unchecked")
-	public List<Localidade> obterLocalidadesPorUF(String siglaUF) {
+	public List<Localidade> obterLocalidadesPorUFNome(String nome, String siglaUF) {
+
+		Criteria criteria = super.getSession().createCriteria(Localidade.class);
+
+		criteria.createAlias("unidadeFederacao", "uf");
+
+		criteria.add(Restrictions.and(Restrictions.eq("uf.sigla", siglaUF),
+									  Restrictions.ilike("nome",
+											  nome, MatchMode.START)));
+
+		return criteria.list();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public EnderecoVO obterEnderecoPorCep(String cep) {
 
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" from Localidade localidade ")
-		   .append(" where localidade.uf.sigla = :siglaUF ")
-		   .append(" order by localidade.nome "); 
+		hql.append(" select ")
+		   .append(" logradouro.uf as uf, ")
+		   .append(" logradouro.localidade.codigoMunicipioIBGE as codigoCidadeIBGE, ")
+		   .append(" logradouro.localidade.nome as localidade, ")
+		   .append(" logradouro.tipoLogradouro as tipoLogradouro, ")
+		   .append(" logradouro.nome as logradouro, ")
+		   .append(" _bairro.id as codigoBairro, ")
+		   .append(" _bairro.nome as bairro ")
+		   .append(" from Logradouro logradouro, Bairro _bairro ")
+		   .append(" where logradouro.cep = :cep ")
+		   .append(" and logradouro.chaveBairroInicial = _bairro.id ");
 
 		Query query = this.getSession().createQuery(hql.toString());
 		
-		query.setParameter("siglaUF", siglaUF);
+		query.setResultTransformer(new AliasToBeanResultTransformer(EnderecoVO.class));
 		
-		return query.list();
+		query.setParameter("cep", cep);
+		
+		return (EnderecoVO) query.uniqueResult();
 	}
-	
-	
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<Bairro> obterBairrosPorCodigoIBGENome(String nome, String codigoIBGE) {
+
+		Criteria criteria = super.getSession().createCriteria(Bairro.class);
+
+		criteria.createAlias("localidade", "localidade");
+
+		criteria.add(Restrictions.and(Restrictions.eq("localidade.codigoMunicipioIBGE", codigoIBGE),
+									  Restrictions.ilike("nome",
+											  nome, MatchMode.START)));
+
+		return criteria.list();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<TipoLogradouro> obterTiposLogradouroNome(String tipoLogradouro) {
+		
+		Criteria criteria = super.getSession().createCriteria(TipoLogradouro.class);
+
+		criteria.add(Restrictions.ilike("nome", tipoLogradouro, MatchMode.START));
+
+		return criteria.list();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<Logradouro> obterLogradourosPorCodigoBairroNome(Long codigoBairro, String nomeLogradouro) {
+
+		Criteria criteria = super.getSession().createCriteria(Logradouro.class);
+
+		criteria.add(Restrictions.and(Restrictions.eq("chaveBairroInicial", codigoBairro),
+									  Restrictions.ilike("nome",
+											  nomeLogradouro, MatchMode.START)));
+
+		return criteria.list();
+	}	
 }
