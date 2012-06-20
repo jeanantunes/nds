@@ -135,7 +135,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 	
 	@Override
 	@Transactional
-	public List<FechamentoFisicoLogicoDTO> salvarFechamentoEncalhe(FiltroFechamentoEncalheDTO filtro, List<FechamentoFisicoLogicoDTO> listaFechamento) {
+	public void salvarFechamentoEncalhe(FiltroFechamentoEncalheDTO filtro, List<FechamentoFisicoLogicoDTO> listaFechamento) {
 		
 		
 		FechamentoFisicoLogicoDTO fechamento;
@@ -173,7 +173,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 		
 		fechamentoEncalheRepository.flush();
 		
-		return listaFechamento;
+		
 	}
 
 	@Override
@@ -381,7 +381,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 
 	@Override
 	@Transactional
-	public List<FechamentoFisicoLogicoDTO> salvarFechamentoEncalheBox(FiltroFechamentoEncalheDTO filtro, List<FechamentoFisicoLogicoDTO> listaFechamento) {
+	public void salvarFechamentoEncalheBox(FiltroFechamentoEncalheDTO filtro, List<FechamentoFisicoLogicoDTO> listaFechamento) {
 		
 		
 		FechamentoFisicoLogicoDTO fechamento;
@@ -432,8 +432,6 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 		}
 		
 		
-		
-		return listaFechamento;
 	}
 
 	
@@ -499,6 +497,8 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 	
 	@Transactional
 	public void removeFechamentoDetalhado(FiltroFechamentoEncalheDTO filtro) {
+		filtro.setBoxId(null);
+		filtro.setFornecedorId(null);
 		List<FechamentoFisicoLogicoDTO> listaConferencia = this.buscarFechamentoEncalhe(filtro, null, "codigo", null, null);
 		FechamentoFisicoLogicoDTO fechamento;
 		for (int i=0; i < listaConferencia.size(); i++) {
