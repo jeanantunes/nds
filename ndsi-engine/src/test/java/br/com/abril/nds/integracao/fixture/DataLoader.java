@@ -2518,8 +2518,8 @@ public class DataLoader {
 //				"C:\\apache-tomcat-7.0.25\\webapps\\nds-client\\capas\\"));	// windows;
 				"/opt/tomcat/webapps/nds-client/capas/"));					// linux;
 		save(session, Fixture.parametroSistema(TipoParametroSistema.PATH_IMAGENS_PDV,
-//				"/images/pdv/"));		// windows;
-				"\\images\\pdv\\"));	// linux;
+//				"\\images\\pdv\\"));	// windows;
+				"/images/pdv/"));		// linux;
 		save(session, Fixture.parametroSistema(TipoParametroSistema.NUMERO_DIAS_PERMITIDO_LANCAMENTO_FALTA_DE, "7"));
 		save(session, Fixture.parametroSistema(TipoParametroSistema.NUMERO_DIAS_PERMITIDO_LANCAMENTO_FALTA_EM, "7"));
 		save(session, Fixture.parametroSistema(TipoParametroSistema.NUMERO_DIAS_PERMITIDO_LANCAMENTO_SOBRA_EM, "7"));
