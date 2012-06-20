@@ -6,6 +6,7 @@ import java.util.Date;
 
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamentoParcial;
+import br.com.abril.nds.util.Util;
 
 /**
  * @author Discover Technology
@@ -19,6 +20,8 @@ public class ProdutoLancamentoDTO implements Serializable {
 	private static final long serialVersionUID = 3924519267530987652L;
 
 	private Long idProdutoEdicao;
+	
+	private Long idProduto;
 	
 	private Long numeroEdicao;
 
@@ -42,7 +45,7 @@ public class ProdutoLancamentoDTO implements Serializable {
 	
 	private Long idLancamento;
 	
-	private Integer sequencia;
+	//TODO: private Integer sequencia;
 
 	//TODO: private Long idFornecedor;
 	
@@ -85,6 +88,20 @@ public class ProdutoLancamentoDTO implements Serializable {
 	 */
 	public void setIdProdutoEdicao(Long idProdutoEdicao) {
 		this.idProdutoEdicao = idProdutoEdicao;
+	}
+
+	/**
+	 * @return the idProduto
+	 */
+	public Long getIdProduto() {
+		return idProduto;
+	}
+
+	/**
+	 * @param idProduto the idProduto to set
+	 */
+	public void setIdProduto(Long idProduto) {
+		this.idProduto = idProduto;
 	}
 
 	/**
@@ -137,10 +154,11 @@ public class ProdutoLancamentoDTO implements Serializable {
 	}
 
 	/**
-	 * @param statusLancamento the statusLancamento to set
+	 * @param status do lançamento em formato de String para ser convertida
 	 */
-	public void setStatusLancamento(StatusLancamento statusLancamento) {
-		this.statusLancamento = statusLancamento;
+	public void setStatusLancamento(String statusLancamento) {
+		
+		this.statusLancamento = Util.getEnumByStringValue(StatusLancamento.values(), statusLancamento);
 	}
 
 	/**
@@ -242,20 +260,6 @@ public class ProdutoLancamentoDTO implements Serializable {
 	}
 
 	/**
-	 * @return the sequencia
-	 */
-	public Integer getSequencia() {
-		return sequencia;
-	}
-
-	/**
-	 * @param sequencia the sequencia to set
-	 */
-	public void setSequencia(Integer sequencia) {
-		this.sequencia = sequencia;
-	}
-
-	/**
 	 * @return the parcial
 	 */
 	public TipoLancamentoParcial getParcial() {
@@ -263,10 +267,11 @@ public class ProdutoLancamentoDTO implements Serializable {
 	}
 
 	/**
-	 * @param parcial the parcial to set
+	 * @param parcial em formato de String para ser convertida.
 	 */
-	public void setParcial(TipoLancamentoParcial parcial) {
-		this.parcial = parcial;
+	public void setParcial(String parcial) {
+		
+		this.parcial = Util.getEnumByStringValue(TipoLancamentoParcial.values(), parcial);
 	}
 
 	/**
