@@ -135,8 +135,6 @@
 		}
 	
 	function popup_encerrarEncalhe() {
-		
-		
 
 		var dataEncalhe = $("#datepickerDe").val();
 		
@@ -153,7 +151,8 @@
 
 		$.postJSON(
 			"<c:url value='/devolucao/fechamentoEncalhe/verificarEncerrarOperacaoEncalhe' />",
-			{ 'dataEncalhe' : $('#datepickerDe').val() },
+			{ 'dataEncalhe' : $('#datepickerDe').val() , 
+			  'operacao' : 'VERIFICACAO' },
 			function (result) {
 
 				var tipoMensagem = result.tipoMensagem;
@@ -172,10 +171,7 @@
 		  	null,
 		   	false
 		);
-
-		
 	}
-
 	
 	function popup_encerrar() {
 		
@@ -190,8 +186,9 @@
 				"Confirmar": function() {
 
 					$.postJSON(
-						"<c:url value='/devolucao/fechamentoEncalhe/encerrarOperacaoEncalhe' />",
-						{ 'dataEncalhe' : $('#datepickerDe').val() },
+						"<c:url value='/devolucao/fechamentoEncalhe/verificarEncerrarOperacaoEncalhe' />",
+						{ 'dataEncalhe' : $('#datepickerDe').val() , 
+						  'operacao' : 'CONFIRMACAO' },
 						function (result) {
 
 							$("#dialog-confirm").dialog("close");
@@ -201,6 +198,12 @@
 							
 							if (tipoMensagem && listaMensagens) {
 								exibirMensagem(tipoMensagem, listaMensagens);
+							}
+
+							if (result == 'NAO_ENCERRAR') {
+								popup_encerrarEncalhe();
+							} else if (result == 'ENCERRAR'){
+								popup_encerrar();
 							}
 						},
 					  	null,
@@ -257,11 +260,12 @@
 	function checarTodasCotasGrid(checked) {
 				
 		if (checked) {
-			var elem = document.getElementById("textoCheckAllCotas");
-			elem.innerHTML = "Desmarcar todos";
-
-			$("input[type=checkbox][name='checkboxGridCotas']").each(function(){
-				$(this).attr('checked', true);
+			$("input[type=checkbox][name='checkboxGridCotas']").each(function() {
+				if (this.disabled == false) {
+					var elem = document.getElementById("textoCheckAllCotas");
+					elem.innerHTML = "Desmarcar todos";
+					$(this).attr('checked', true);
+				}
 			});
 				
         } else {
@@ -367,7 +371,8 @@
 										if (tipoMensagem && listaMensagens) {
 											exibirMensagemDialog(tipoMensagem, listaMensagens, 'dialogMensagemEncerrarEncalhe');
 										}
-										
+
+										$(".cotasGrid").flexReload();
 									},
 								  	null,
 								   	true,
@@ -386,6 +391,7 @@
 			});
 	
 			carregarDataPostergacao();
+			
 		} else {
 			var listaMensagens = new Array();
 			listaMensagens.push('Selecione pelo menos uma cota para postergar!');
@@ -708,7 +714,7 @@
 				sortable : true,
 				align : 'left'
 			}, {
-				display : 'Aè¤¯',
+				display : 'A&ccedil;ao¯',
 				name : 'acao',
 				width : 110,
 				sortable : true,

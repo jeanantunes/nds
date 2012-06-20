@@ -292,29 +292,42 @@ public class FechamentoEncalheController {
 	}
 	
 	@Path("/verificarEncerrarOperacaoEncalhe")
-	public void verificarEncerrarOperacaoEncalhe(Date dataEncalhe) {
+	public void verificarEncerrarOperacaoEncalhe(Date dataEncalhe, String operacao) {
+
+		if (dataEncalhe == null || Calendar.getInstance().getTime().before(dataEncalhe)) {
+			this.result.use(Results.json()).from(
+				new ValidacaoVO(TipoMensagem.WARNING, "Data de encalhe inválida!"), "result").recursive().serialize();
+			throw new ValidacaoException();
+		}
 		
+		int totalCotasAusentes =
+			this.fechamentoEncalheService.buscarQuantidadeCotasAusentes(dataEncalhe);
+		
+		if (totalCotasAusentes > 0 && ("VERIFICACAO").equalsIgnoreCase(operacao)) {
+			this.result.use(Results.json()).from("NAO_ENCERRAR", "result").recursive().serialize();
+			throw new ValidacaoException();
+		} else if (totalCotasAusentes <= 0 && ("VERIFICACAO").equalsIgnoreCase(operacao)) {
+			this.result.use(Results.json()).from("ENCERRAR", "result").recursive().serialize();
+			throw new ValidacaoException();
+		}
+			
 		try {
 			
-			Integer totalCotasAusentes =
-				this.fechamentoEncalheService.buscarTotalCotasAusentes(dataEncalhe);
+			this.fechamentoEncalheService.encerrarOperacaoEncalhe(dataEncalhe);
 			
-			if (totalCotasAusentes > 0) {
-				this.result.use(Results.json()).from("NAO_ENCERRAR", "result").recursive().serialize();
-			} else {
-				this.result.use(Results.json()).from("ENCERRAR", "result").recursive().serialize();
-			}
-			
+		} catch (ValidacaoException e) {
+			this.result.use(Results.json()).from(e.getValidacao(), "result").recursive().serialize();
+			throw new ValidacaoException();
 		} catch (Exception e) {
 			this.result.use(
 				Results.json()).from(
 					new ValidacaoVO(TipoMensagem.ERROR, "Erro ao tentar encerrar a operação de encalhe!"), "result").recursive().serialize();
 			throw new ValidacaoException();
 		}
+
+		this.result.use(Results.json()).from(
+			new ValidacaoVO(TipoMensagem.SUCCESS, "Operação de encalhe encerrada com sucesso!"), "result").recursive().serialize();
 	}
-
-
-	
 
 	/**
 	 * Obtém os dados do cabeçalho de exportação.
