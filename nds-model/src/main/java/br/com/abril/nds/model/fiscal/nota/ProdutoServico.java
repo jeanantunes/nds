@@ -15,6 +15,7 @@ import javax.persistence.Table;
 
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.util.export.fiscal.nota.NFEExport;
+import br.com.abril.nds.util.export.fiscal.nota.NFEExports;
 
 @Entity
 @Table(name = "PRODUTO_SERVICO_NOTA_FISCAL")
@@ -57,7 +58,7 @@ public class ProdutoServico implements Serializable {
 	 * cEAN
 	 */
 	@Column(name="CODIGO_BARRAS", length=14, nullable=false, columnDefinition="GTIN (Global Trade Item Number) do produto, antigo código EAN ou código de barras")
-	@NFEExport(secao="I", posicao=1, tamanho=14)
+	@NFEExports({@NFEExport(secao="I", posicao=1, tamanho=14), @NFEExport(secao="I", posicao=11, tamanho=14)})
 	private Long codigoBarras;
 	
 	/**
@@ -92,21 +93,21 @@ public class ProdutoServico implements Serializable {
 	 * uCom
 	 */
 	@Column(name="UNIDADE_COMERCIAL", length=6, nullable=false, columnDefinition="Unidade Comercial")
-	@NFEExport(secao="I", posicao=7, tamanho=6)
+	@NFEExports({@NFEExport(secao="I", posicao=7, tamanho=6),@NFEExport(secao="I", posicao=12, tamanho=6)})
 	private String unidade;
 	
 	/**
 	 * qCom
 	 */
 	@Column(name="QUANTIDADE_COMERCIAL", length=15, nullable=false, columnDefinition="Quantidade Comercial")
-	@NFEExport(secao="I", posicao=8, tamanho=12)
+	@NFEExports({@NFEExport(secao="I", posicao=8, tamanho=12),@NFEExport(secao="I", posicao=13, tamanho=12)})
 	private Long quantidade;
 	
 	/**
 	 * vUnCom
 	 */
 	@Column(name="VALOR_UNITARIO_COMERCIAL", length=21, nullable=false, columnDefinition="Valor Unitário de Comercialização")
-	@NFEExport(secao="I", posicao=9, tamanho=16)
+	@NFEExports({@NFEExport(secao="I", posicao=9, tamanho=16),@NFEExport(secao="I", posicao=14, tamanho=16)})
 	private Double valorUnitario;
 	
 	/**
@@ -119,18 +120,21 @@ public class ProdutoServico implements Serializable {
 	 * vFrete
 	 */
 	@Column(name="VALOR_FRETE", length=15, nullable=true, columnDefinition="Valor Total do Frente")
+	@NFEExport(secao="I", posicao=15, tamanho=15)
 	private Double valorFrete;
 	
 	/**
 	 * vSeg
 	 */
 	@Column(name="VALOR_SERGURO", length=15, nullable=true, columnDefinition="Valor Total do Seguro")
+	@NFEExport(secao="I", posicao=16, tamanho=15)
 	private Double valorSeguro;
 	
 	/**
 	 * vDesc
 	 */
 	@Column(name="VALOR_DESCONTO", length=15, nullable=true, columnDefinition="Valor do Desconto")
+	@NFEExport(secao="I", posicao=17, tamanho=15)
 	private Double valorDesconto;
 	
 	/**

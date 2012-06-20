@@ -72,6 +72,11 @@ public class TipoProdutoController {
 		this.gerarFiltro(codigo, codigoNBM, codigoNCM, descricao, 
 				Ordenacao.valueOf(sortorder.toUpperCase()), sortname);
 		
+		if(listaTipoProdutos.isEmpty()) {
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING,
+					"Nenhum tipo de produto foi encontrado"));
+		}
+		
 		this.result.use(FlexiGridJson.class).from(listaTipoProdutos)
 			.total(quantidade.intValue()).page(page).serialize();
 	}

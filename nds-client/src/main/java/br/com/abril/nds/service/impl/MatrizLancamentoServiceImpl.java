@@ -92,7 +92,7 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 		if (filtro == null) {
 			
 			throw new ValidacaoException(TipoMensagem.WARNING,
-				"Os dados do filtro da tela devem ser informados!");
+				"Os dados do filtro devem ser informados!");
 			
 		} else {
 		
@@ -885,12 +885,16 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 				produtoLancamento.setDataLancamentoDistribuidor(data);
 				produtoLancamento.setRepartePrevisto(repartePrevisto);
 				produtoLancamento.setDataRecolhimentoPrevista(dataRecolhimentoPrevista);
+				produtoLancamento.setPeso(new BigDecimal(10));
+				produtoLancamento.setValorTotal(new BigDecimal(2));
+				produtoLancamento.setReparteFisico(new BigDecimal(5));
 				
 				if (x == 101) {
-					produtoLancamento.setStatusLancamento(StatusLancamento.CANCELADO_GD);
+					produtoLancamento.setStatusLancamento(StatusLancamento.CANCELADO_GD.toString());
 				}
 				
 				produtosLancamento.add(produtoLancamento);
+				
 				
 				x++;
 			}
