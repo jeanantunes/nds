@@ -16,10 +16,15 @@ import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.ItemNotaFiscalPendenteDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaNFEEncalheTratamento;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.cadastro.Pessoa;
+import br.com.abril.nds.model.cadastro.PessoaFisica;
+import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.fiscal.StatusNotaFiscalEntrada;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.service.ConsultaNFEEncalheTratamentoNotasRecebidasService;
+import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.DistribuidorService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.TableModel;
@@ -55,6 +60,9 @@ public class ConsultaNFEEncalheTratamentoController {
 	
 	@Autowired
 	private HttpServletResponse httpResponse;
+	
+	@Autowired
+	private CotaService cotaService;
 	
 	@Path("/")
 	public void index(){
@@ -165,16 +173,16 @@ public class ConsultaNFEEncalheTratamentoController {
 		
 		TableModel<CellModelKeyValue<ItemNotaFiscalPendenteDTO>> tableModel = new TableModel<CellModelKeyValue<ItemNotaFiscalPendenteDTO>>();
 		
-//		Integer totalRegistros = this.consultaNFEEncalheTratamentoNotasRecebidasService.buscarTodasNFENotasRecebidas(filtro);
-//		if(totalRegistros == 0){
-//			throw new ValidacaoException(TipoMensagem.WARNING, "A pesquisa realizada não obteve resultado.");
-//		}
+		Integer totalRegistros = this.consultaNFEEncalheTratamentoNotasRecebidasService.buscarTodasItensPorNota(filtro);
+		if(totalRegistros == 0){
+			throw new ValidacaoException(TipoMensagem.WARNING, "A pesquisa realizada não obteve resultado.");
+		}
 
 		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaNotasRecebidas));
 		
 		tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
 		
-		tableModel.setTotal(15);
+		tableModel.setTotal(totalRegistros);
 		
 		return tableModel;
 	}
@@ -228,6 +236,33 @@ public class ConsultaNFEEncalheTratamentoController {
 			
 		
 		result.nothing();
+	}
+	
+	@Post
+	@Path("/buscarCotaPorNumero")
+	public void buscarCotaPorNumero(Integer numeroCota) {
+		
+		Cota cota = this.cotaService.obterPorNumeroDaCota(numeroCota);
+		
+		if (cota == null) {
+
+			throw new ValidacaoException(TipoMensagem.WARNING, "Cota inexistente.");
+		}
+
+		Pessoa pessoa = cota.getPessoa();
+
+		String nomeCota = null;
+
+		if (pessoa instanceof PessoaFisica) {
+
+			nomeCota = ((PessoaFisica) pessoa).getNome();
+
+		} else if (pessoa instanceof PessoaJuridica) {
+
+			nomeCota = ((PessoaJuridica) pessoa).getRazaoSocial();
+		}
+
+		this.result.use(Results.json()).from(nomeCota, "result").recursive().serialize();
 	}
 	
 	private NDSFileHeader getNDSFileHeader() {

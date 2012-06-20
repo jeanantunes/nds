@@ -6,6 +6,7 @@ import java.util.Date;
 
 import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.util.Constantes;
+import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Export.Alignment;
@@ -16,28 +17,25 @@ public class ConsultaNFENotasPendentesDTO implements Serializable {
 
 	private static final long serialVersionUID = 8366815250237375585L;
 	
-	@Export(label = "Cota", alignment=Alignment.LEFT)
+	@Export(label = "Cota", alignment=Alignment.LEFT, exhibitionOrder = 1)
 	private Integer numeroCota;
 	
-	@Export(label = "Nome", alignment=Alignment.LEFT)
+	@Export(label = "Nome", alignment=Alignment.LEFT, exhibitionOrder = 2)
 	private String nome;
 	
-	@Export(label = "Data Encalhe", alignment=Alignment.LEFT)
+	@Export(label = "Data Encalhe", alignment=Alignment.CENTER, exhibitionOrder = 3)
 	private String dataEncalhe;
 	
-	@Export(label = "Data Encalhe", alignment=Alignment.LEFT)
+	@Export(label = "Tipo de Nota", alignment=Alignment.LEFT, exhibitionOrder = 4)
 	private TipoOperacao tipoNota;
 	
-	@Export(label = "Valor Nota R$", alignment=Alignment.LEFT)
 	private BigDecimal vlrNota;
 	
-	@Export(label = "Valor Real R$", alignment=Alignment.LEFT)
 	private BigDecimal vlrReal;
 	
-	@Export(label = "Diferença", alignment=Alignment.LEFT)
 	private BigDecimal diferenca;
 	
-	@Export(label = "Status", alignment=Alignment.LEFT)
+	@Export(label = "Status", alignment=Alignment.LEFT, exhibitionOrder = 8)
 	private String status;
 	
 	private Long numeroNfe;
@@ -47,6 +45,11 @@ public class ConsultaNFENotasPendentesDTO implements Serializable {
 	private String chaveAcesso;
 	
 	private Long idNotaFiscalEntrada;
+	
+	private String vlrNotaFormatado;
+	private String vlrRealFormatado;
+	private String diferencaFormatado;
+	
 	
 	public ConsultaNFENotasPendentesDTO() {}
 	
@@ -126,11 +129,19 @@ public class ConsultaNFENotasPendentesDTO implements Serializable {
 	}
 
 	public BigDecimal getVlrNota() {
-		return vlrNota;
+		return vlrNota;		
 	}
-
+	
 	public void setVlrNota(BigDecimal vlrNota) {
 		this.vlrNota = vlrNota;
+		if(vlrNota != null){
+			vlrNotaFormatado = CurrencyUtil.formatarValor(vlrNota);
+		}
+	}
+	
+	@Export(label = "Valor Nota R$", alignment=Alignment.RIGHT, exhibitionOrder = 5)
+	public String getVlrNotaFormatado() {
+		return vlrNotaFormatado;
 	}
 
 	public BigDecimal getVlrReal() {
@@ -139,6 +150,14 @@ public class ConsultaNFENotasPendentesDTO implements Serializable {
 
 	public void setVlrReal(BigDecimal vlrReal) {
 		this.vlrReal = vlrReal;
+		if(vlrReal != null){
+			vlrRealFormatado = CurrencyUtil.formatarValor(vlrReal);
+		}
+	}
+	
+	@Export(label = "Valor Real R$", alignment=Alignment.RIGHT, exhibitionOrder = 6)
+	public String getVlrRealFormatado() {
+		return vlrRealFormatado;
 	}
 
 	public BigDecimal getDiferenca() {
@@ -147,6 +166,14 @@ public class ConsultaNFENotasPendentesDTO implements Serializable {
 
 	public void setDiferenca(BigDecimal diferenca) {
 		this.diferenca = diferenca;
+		if(diferenca != null){
+			diferencaFormatado = CurrencyUtil.formatarValor(diferenca);
+		}
+	}
+	
+	@Export(label = "Diferença", alignment=Alignment.RIGHT, exhibitionOrder = 7)
+	public String getDiferencaFormatado() {
+		return diferencaFormatado;
 	}
 
 	public String getStatus() {

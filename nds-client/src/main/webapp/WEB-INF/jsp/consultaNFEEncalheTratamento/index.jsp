@@ -168,9 +168,7 @@ function popup() {
 			}, 1000 );
 		};	
 
-	function mostrar(){
-		$(".grids").show();
-	}
+	
 	
 	$(function() {
 		$( "#data" ).datepicker({
@@ -259,7 +257,12 @@ function popup() {
 					var linkLancamento = '<a href="javascript:;" onclick="popup_nfe();" style="cursor:pointer">' +
 									   	 '<img title="Lançamentos da Edição" src="${pageContext.request.contextPath}/images/bt_lancamento.png" hspace="5" border="0px" />' +
 									   '</a>';
-				   var linkCadastro = '<a href="javascript:;" onclick="popup_dadosNotaFiscal('+row.cell.numeroNfe+','+row.cell.dataEncalhe+','+row.cell.chaveAcesso+','+row.cell.serie+','+row.cell.vlrNota+','+row.cell.idNotaFiscalEntrada+');" style="cursor:pointer">' +
+				   var linkCadastro = '<a href="javascript:;" onclick="popup_dadosNotaFiscal('+row.cell.numeroNfe+','
+						   																		+row.cell.dataEncalhe+','
+						   																		+row.cell.chaveAcesso+','
+						   																		+row.cell.serie+','
+						   																		+row.cell.vlrNota+','
+						   																		+row.cell.idNotaFiscalEntrada+');" style="cursor:pointer">' +
 								   	 '<img title="Lançamentos da Edição" src="${pageContext.request.contextPath}/images/bt_cadastros.png" hspace="5" border="0px" />' +
 			                         '</a>';
                    var checkBox = '<input type="checkbox" id="checkNota" name="checkNota" />';
@@ -270,8 +273,27 @@ function popup() {
 			
 			}
 			
+			$(".grids").show();
+			
 			return resultado;
 		}
+	
+	function pesquisarCota() {
+ 		
+		numeroCota = $("#codigoCota").val();
+ 		
+ 		$.postJSON(
+			'<c:url value="/nfe/consultaNFEEncalheTratamento/buscarCotaPorNumero" />',
+			{ "numeroCota": numeroCota },
+			function(result) {
+
+				$("#nomeCota").html(result);
+				
+			},
+			null,
+			true
+		);
+ 	}
 </script>
 <style type="text/css">
 #dialog-nfe{display:none;}
@@ -402,10 +424,9 @@ function popup() {
         <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
   <tr>
     <td width="31">Cota:</td>
-    <td width="120"><input type="text" id="codigoCota" name="codigoCota" style="width:80px; float:left; margin-right:5px;"/>
-      <span class="classPesquisar"><a href="javascript:;" onclick="pesqEncalhe();">&nbsp;</a></span></td>
-    <td width="35">Nome:</td>
-    <td width="259"><span class="dadosFiltro">CGB Distribuidora de Jorn e Rev</span></td>
+    <td width="120"><input type="text" id="codigoCota" name="codigoCota" style="width:80px; float:left; margin-right:5px;" onblur="pesquisarCota();"/></td>
+    <td width="35">Nome:</td>    
+    <td width="259"><span name="nomeCota" id="nomeCota"></span></td>
     <td width="35">Data:</td>
     <td width="105"><input name="data" type="text" id="data" style="width:80px;"/></td>
     <td width="42">Status:</td>
@@ -416,7 +437,7 @@ function popup() {
 		      		<option value="${comboStatusNota.key}">${comboStatusNota.value}</option>	
 		    </c:forEach>
 	    </select>
-    </td><td width="104"><span class="bt_pesquisar"><a href="javascript:;" onclick="mostrar();pesqEncalhe();">Pesquisar</a></span></td></tr>
+    </td><td width="104"><span class="bt_pesquisar"><a href="javascript:;" onclick="pesqEncalhe();">Pesquisar</a></span></td></tr>
   </table>
       </fieldset>
       <div class="linha_separa_fields">&nbsp;</div>
@@ -611,19 +632,19 @@ function popup() {
 				align : 'left'
 			}, {
 				display : 'Valor Nota R$',
-				name : 'vlrNota',
+				name : 'vlrNotaFormatado',
 				width : 90,
 				sortable : true,
 				align : 'right'
 			}, {
 				display : 'Valor Real R$',
-				name : 'vlrReal',
+				name : 'vlrRealFormatado',
 				width : 90,
 				sortable : true,
 				align : 'right'
 			}, {
 				display : 'Diferença',
-				name : 'diferenca',
+				name : 'diferencaFormatado',
 				width : 60,
 				sortable : true,
 				align : 'right'

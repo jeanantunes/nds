@@ -13,6 +13,7 @@ import br.com.abril.nds.dto.ItemNotaFiscalPendenteDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaNFEEncalheTratamento;
 import br.com.abril.nds.repository.ConsultaNFEEncalheTratamentoNotasRecebidasRepository;
 import br.com.abril.nds.service.ConsultaNFEEncalheTratamentoNotasRecebidasService;
+import br.com.abril.nds.util.DateUtil;
 
 @Service
 public class ConsultaNFEEncalheTratamentoNotasRecebidasServiceImpl implements
@@ -50,8 +51,22 @@ public class ConsultaNFEEncalheTratamentoNotasRecebidasServiceImpl implements
 	@Override
 	@Transactional
 	public List<ItemNotaFiscalPendenteDTO> buscarItensPorNota(
-			FiltroConsultaNFEEncalheTratamento filtro) {		 
-		return this.consultaNFEEncalheTratamentoNotasRecebidasRepository.buscarItensPorNota(filtro);
+			FiltroConsultaNFEEncalheTratamento filtro) {		
+		List<ItemNotaFiscalPendenteDTO> listaAux =  this.consultaNFEEncalheTratamentoNotasRecebidasRepository.buscarItensPorNota(filtro);
+		List<ItemNotaFiscalPendenteDTO> listaRetorno =  new ArrayList<ItemNotaFiscalPendenteDTO>();
+		for(ItemNotaFiscalPendenteDTO dto: listaAux){
+			Long qtdDiferencaDias = DateUtil.obterDiferencaDias(dto.getDataConferenciaEncalhe(), dto.getDataChamadaEncalhe()) + 1;			
+			dto.setDia(qtdDiferencaDias.toString() + "°");		
+			listaRetorno.add(dto);
+		}
+		return listaRetorno;
+	}
+
+	@Override
+	@Transactional
+	public Integer buscarTodasItensPorNota(
+			FiltroConsultaNFEEncalheTratamento filtro) {		
+		return this.consultaNFEEncalheTratamentoNotasRecebidasRepository.buscarTodasItensPorNota(filtro);
 	}
 
 }

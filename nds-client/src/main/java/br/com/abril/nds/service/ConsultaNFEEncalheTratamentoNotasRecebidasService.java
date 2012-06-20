@@ -17,4 +17,6 @@ public interface ConsultaNFEEncalheTratamentoNotasRecebidasService {
 	
 	List<ItemNotaFiscalPendenteDTO> buscarItensPorNota(FiltroConsultaNFEEncalheTratamento filtro);
 	
+	Integer buscarTodasItensPorNota(FiltroConsultaNFEEncalheTratamento filtro);
+	
 }

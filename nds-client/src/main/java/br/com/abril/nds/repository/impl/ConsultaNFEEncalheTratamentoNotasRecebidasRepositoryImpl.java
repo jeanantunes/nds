@@ -107,7 +107,7 @@ public class ConsultaNFEEncalheTratamentoNotasRecebidasRepositoryImpl extends Ab
 		HashMap<String,Object> param = new HashMap<String, Object>();
 		
 		if(filtro.getCodigoCota() != null && !filtro.getCodigoCota().equals("")) { 
-			param.put("numeroCota", filtro.getCodigoCota());
+			param.put("numeroCota", Integer.parseInt(filtro.getCodigoCota()));
 		}
 		if(filtro.getData() != null){
 			param.put("data", filtro.getData());
@@ -253,19 +253,14 @@ public class ConsultaNFEEncalheTratamentoNotasRecebidasRepositoryImpl extends Ab
 		hql.append(    getSubSqlQueryValorDesconto()			);		
 		hql.append("         )  ) AS precoDesconto,        ");
 		
-		hql.append("        ( conf.precoCapaInformado -  ( ");
+		hql.append("        ( (conf.precoCapaInformado -  ( ");
 		hql.append(    getSubSqlQueryValorDesconto()			);		
-		hql.append("         ) * conf.qtdeInformada) AS totalDoItem ");
+		hql.append("         ) )* conf.qtdeInformada) AS totalDoItem, ");
+		hql.append("conf.qtde as qtdRecebida, ");
+		hql.append("conf.data as dataConferenciaEncalhe, ");
+		hql.append("chamadaEncalhe.dataRecolhimento as dataChamadaEncalhe ");
 		
-		hql.append(" from ItemNotaFiscalEntrada as item, ControleConferenciaEncalheCota as confCota ");
-		hql.append(" LEFT JOIN item.notaFiscal as nf ");
-		hql.append(" LEFT JOIN item.produtoEdicao as produtoEdicao ");
-		hql.append(" LEFT JOIN produtoEdicao.produto as produto ");		
-		hql.append(" left join confCota.conferenciasEncalhe as conf  ");
-		hql.append(" left join conf.chamadaEncalheCota as chamadaCota  ");
-		hql.append(" left join chamadaCota.chamadaEncalhe chamadaEncalhe  ");
-		
-		hql.append(" WHERE confCota.notaFiscalEntradaCota.id = nf.id  and nf.id = :idNota ");
+		hql.append(getHqlFromEWhereItensPendentes(filtro));
 		
 		Query query =  getSession().createQuery(hql.toString());
 		query.setParameter("idNota", filtro.getCodigoNota());
@@ -282,7 +277,24 @@ public class ConsultaNFEEncalheTratamentoNotasRecebidasRepositoryImpl extends Ab
 		 
 		return query.list();		 
 		
-	}	
+	}
+	
+	private String getHqlFromEWhereItensPendentes(FiltroConsultaNFEEncalheTratamento filtro) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" from ItemNotaFiscalEntrada as item, ControleConferenciaEncalheCota as confCota ");
+		hql.append(" LEFT JOIN item.notaFiscal as nf ");
+		hql.append(" LEFT JOIN item.produtoEdicao as produtoEdicao ");
+		hql.append(" LEFT JOIN produtoEdicao.produto as produto ");		
+		hql.append(" left join confCota.conferenciasEncalhe as conf  ");
+		hql.append(" left join conf.chamadaEncalheCota as chamadaCota  ");
+		hql.append(" left join chamadaCota.chamadaEncalhe chamadaEncalhe  ");
+		
+		hql.append(" WHERE confCota.notaFiscalEntradaCota.id = nf.id  and nf.id = :idNota ");
+		
+		return hql.toString();
+	}
 	
 	
 	private String getSubSqlQueryValorDesconto() {
@@ -311,6 +323,23 @@ public class ConsultaNFEEncalheTratamentoNotasRecebidasRepositoryImpl extends Ab
 		
 		return hql.toString();
 		
+	}
+
+	@Override
+	public Integer buscarTodasItensPorNota(FiltroConsultaNFEEncalheTratamento filtro) {
+		
+		StringBuilder hql = new StringBuilder();
+		hql.append(" select count(produto.codigo) ");		
+		
+		hql.append(getHqlFromEWhereItensPendentes(filtro));
+		
+		Query query =  getSession().createQuery(hql.toString());
+		query.setParameter("idNota", filtro.getCodigoNota());
+		
+		Long totalRegistros = (Long) query.uniqueResult();
+		
+		return (totalRegistros == null) ? 0 : totalRegistros.intValue();
+		 
 	}
 	
 }
