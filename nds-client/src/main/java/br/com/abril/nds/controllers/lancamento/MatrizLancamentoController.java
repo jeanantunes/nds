@@ -10,7 +10,6 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import br.com.abril.nds.client.vo.FiltroPesquisaMatrizRecolhimentoVO;
 import br.com.abril.nds.client.vo.ResultadoResumoBalanceamentoVO;
 import br.com.abril.nds.client.vo.ResumoPeriodoBalanceamentoVO;
 import br.com.abril.nds.client.vo.ValidacaoVO;
@@ -36,9 +35,7 @@ import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
-import br.com.caelum.vraptor.Validator;
 import br.com.caelum.vraptor.core.Localization;
-import br.com.caelum.vraptor.validator.Message;
 import br.com.caelum.vraptor.view.Results;
 
 @Resource
@@ -346,6 +343,10 @@ public class MatrizLancamentoController {
 						valorTotal = valorTotal.add(produtoBalanceamento.getValorTotal());
 					}
 					
+					if (produtoBalanceamento.getRepartePrevisto() != null) {
+						
+						qtdeExemplares = qtdeExemplares.add(produtoBalanceamento.getRepartePrevisto());
+					}
 				}
 				
 				boolean excedeCapacidadeDistribuidor = false;

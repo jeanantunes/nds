@@ -885,12 +885,16 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 				produtoLancamento.setDataLancamentoDistribuidor(data);
 				produtoLancamento.setRepartePrevisto(repartePrevisto);
 				produtoLancamento.setDataRecolhimentoPrevista(dataRecolhimentoPrevista);
+				produtoLancamento.setPeso(new BigDecimal(10));
+				produtoLancamento.setValorTotal(new BigDecimal(2));
+				produtoLancamento.setReparteFisico(new BigDecimal(5));
 				
 				if (x == 101) {
 					produtoLancamento.setStatusLancamento(StatusLancamento.CANCELADO_GD);
 				}
 				
 				produtosLancamento.add(produtoLancamento);
+				
 				
 				x++;
 			}
