@@ -196,10 +196,9 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepository<Fechamen
 				.add(Projections.property("roteiros.descricaoRoteiro"), "roteiroName")
 				.add(Projections.property("rotas.descricaoRota"), "rotaName")
 				.add(Projections.property("cec.fechado"), "fechado")
+				.add(Projections.property("cec.postergado"), "postergado")
 				.add(Projections.property("ce.dataRecolhimento"), "dataEncalhe")));
 				
-		// .property("cec.fechado"), "acao")
-
 		criteria.add(Restrictions.eq("ce.dataRecolhimento", dataEncalhe));
 		criteria.add(Restrictions.eq("roteiros.tipoRoteiro", TipoRoteiro.NORMAL));
 

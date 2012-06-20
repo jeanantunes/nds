@@ -195,6 +195,9 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 			if (cotaAusenteEncalheDTO.getFechado()) {
 				cotaAusenteEncalheDTO.setAcao(
 					"Cobrado, " + DateUtil.formatarData(cotaAusenteEncalheDTO.getDataEncalhe(), "dd/MM/yyyy"));
+			} else if (cotaAusenteEncalheDTO.getPostergado()) {
+				cotaAusenteEncalheDTO.setAcao(
+					"Postergado, " + DateUtil.formatarData(cotaAusenteEncalheDTO.getDataEncalhe(), "dd/MM/yyyy"));
 			}
 		}
 		
@@ -204,9 +207,29 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 	@Override
 	@Transactional(readOnly=true)
 	public Integer buscarTotalCotasAusentes(Date dataEncalhe) {
+		
 		return this.fechamentoEncalheRepository.buscarTotalCotasAusentes(dataEncalhe);
 	}
 
+	@Override
+	@Transactional(readOnly=true)
+	public int buscarQuantidadeCotasAusentes(Date dataEncalhe) {
+		
+		List<CotaAusenteEncalheDTO> listaCotaAusenteEncalhe = 
+			this.fechamentoEncalheRepository.buscarCotasAusentes(dataEncalhe, "asc", "numeroCota", 0, 0);
+		
+		int total = 0;
+		
+		for (CotaAusenteEncalheDTO cotaAusenteEncalheDTO : listaCotaAusenteEncalhe) {
+			
+			if (cotaAusenteEncalheDTO.getFechado() || cotaAusenteEncalheDTO.getPostergado()) {
+				total++;
+			}
+		}
+		
+		return total;
+	}
+	
 	private class FechamentoAscComparator implements Comparator<FechamentoFisicoLogicoDTO> {
 		@Override
 		public int compare(FechamentoFisicoLogicoDTO o1, FechamentoFisicoLogicoDTO o2) {
@@ -318,19 +341,19 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 	@Override
 	@Transactional
 	public void encerrarOperacaoEncalhe(Date dataEncalhe) {
-	
+
+		Integer totalCotasAusentes = 
+			this.buscarQuantidadeCotasAusentes(dataEncalhe);
+		
+		if (totalCotasAusentes > 0) {
+			throw new ValidacaoException(TipoMensagem.ERROR, "Cotas ausentes existentes!");
+		}
+		
+		if (!this.validarEncerramentoOperacao(dataEncalhe)) {
+			throw new ValidacaoException(TipoMensagem.ERROR, "Encalhe não totalmente fechado");
+		}
+		
 		try {
-			
-			Integer totalCotasAusentes = 
-				this.buscarTotalCotasAusentes(dataEncalhe);
-			
-			if (totalCotasAusentes > 0) {
-				throw new ValidacaoException(TipoMensagem.ERROR, "Cotas ausentes existentes!");
-			}
-			
-			if (!this.validarEncerramentoOperacao(dataEncalhe)) {
-				throw new ValidacaoException(TipoMensagem.ERROR, "Encalhe não totalmente fechado");
-			}
 			
 			ControleFechamentoEncalhe controleFechamentoEncalhe = new ControleFechamentoEncalhe();
 			

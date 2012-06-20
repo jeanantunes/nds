@@ -36,5 +36,6 @@ public interface FechamentoEncalheService {
 	void converteFechamentoDetalhadoEmConsolidado(FiltroFechamentoEncalheDTO filtro);
 	
 	void removeFechamentoDetalhado(FiltroFechamentoEncalheDTO filtro);
-
+	
+	int buscarQuantidadeCotasAusentes(Date dataEncalhe);
 }
