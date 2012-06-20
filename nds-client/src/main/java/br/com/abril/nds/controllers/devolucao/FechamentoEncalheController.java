@@ -1,6 +1,5 @@
 package br.com.abril.nds.controllers.devolucao;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -92,7 +91,9 @@ public class FechamentoEncalheController {
 			if (boxId == null) {
 				fechamentoEncalheService.converteFechamentoDetalhadoEmConsolidado(filtro);
 			} else {
-				fechamentoEncalheService.removeFechamentoDetalhado(filtro);
+				FiltroFechamentoEncalheDTO filtroRevomecao = new FiltroFechamentoEncalheDTO(); 
+				filtroRevomecao.setDataEncalhe(DateUtil.parseDataPTBR(dataEncalhe));
+				fechamentoEncalheService.removeFechamentoDetalhado(filtroRevomecao);
 			}
 			
 		} 
@@ -111,14 +112,13 @@ public class FechamentoEncalheController {
 		filtro.setDataEncalhe(DateUtil.parseDataPTBR(dataEncalhe));
 		filtro.setFornecedorId(fornecedorId);
 		filtro.setBoxId(boxId);
-		List<FechamentoFisicoLogicoDTO> listaEncalhe = new ArrayList<FechamentoFisicoLogicoDTO>();
 		if (boxId == null){ 
-			listaEncalhe = fechamentoEncalheService.salvarFechamentoEncalhe(filtro,listaFechamento);
+			fechamentoEncalheService.salvarFechamentoEncalhe(filtro,listaFechamento);
 		} else {
-			listaEncalhe = fechamentoEncalheService.salvarFechamentoEncalheBox(filtro, listaFechamento);
+			fechamentoEncalheService.salvarFechamentoEncalheBox(filtro, listaFechamento);
 		}
 		
-		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "informação gravada com sucesso!"), "result").recursive().serialize();
+		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Informação gravada com sucesso!"), "result").recursive().serialize();
 	}
 	
 	@Path("/cotasAusentes")
