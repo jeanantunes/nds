@@ -557,7 +557,13 @@
 		var params = '['+dados+ ']';
 		return eval(params);
 	}
-	 
+
+	 function limpaGridPesquisa(){
+		 $(".fechamentoGrid").clear();
+		 $('#divFechamentoGrid').css("display", "none");
+		// $(".fechamentoGrid").hide();
+		 
+	}
 
 	
 	</script>
@@ -631,10 +637,10 @@
    	    <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
 			<tr>
 				<td width="75">Data Encalhe:</td>
-				<td width="114"><input name="datepickerDe" type="text" id="datepickerDe" style="width:80px;" value="${dataOperacao}" /></td>
+				<td width="114"><input name="datepickerDe" type="text" id="datepickerDe" style="width:80px;" value="${dataOperacao}" onchange="limpaGridPesquisa()" /></td>
 				<td width="67">Fornecedor:</td>
 				<td width="216">
-					<select name="selectFornecedor" id="selectFornecedor" style="width:200px;">
+					<select name="selectFornecedor" id="selectFornecedor" style="width:200px;" onchange="limpaGridPesquisa()">
 					<option value="">Selecione...</option>
 					<c:forEach var="fornecedor" items="${listaFornecedores}">
 						<option value="${fornecedor.id}">${fornecedor.juridica.razaoSocial}</option>
@@ -643,7 +649,7 @@
 				</td>
 				<td width="97">Box de Encalhe:</td>
 				<td width="239">
-					<select name="selectBoxEncalhe" id="selectBoxEncalhe" style="width:100px;">
+					<select name="selectBoxEncalhe" id="selectBoxEncalhe" style="width:100px;" onchange="limpaGridPesquisa()">
 					<option value="">Selecione...</option>
 					<c:forEach var="box" items="${listaBoxes}">
 						<option value="${box.id}">${box.nome}</option>
@@ -659,7 +665,7 @@
       
     <fieldset class="classFieldset">
        	<legend> Fechamento Encalhe</legend>
-        <div class="grids" style="display:none;">
+        <div class="grids" style="display:none;" id="divFechamentoGrid">
 			
 			<table class="fechamentoGrid"></table>
 			
