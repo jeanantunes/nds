@@ -143,7 +143,8 @@
 				
 				if(result == "false"){
 					GeraDivida.dialogPesquisaInvalida();
-					$("#pesquisaInvalida").show();		
+					$("#pesquisaInvalida").show();
+					$("#grids").hide();
 				}else{
 					GeraDivida.pesquisar();
 				}	
