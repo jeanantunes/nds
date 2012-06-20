@@ -112,16 +112,17 @@
 
 		<table class="debitosCreditosGrid_1" id="debitosCreditosGrid_1"></table>
 		
-		<table width="770">
-		    <td width="650"></td>    
-			<td width="120">    
-		        <span class="checar">
-		            <label for="textoSelTodos" id="textoSelTodos">
-		                Marcar Todos
-		            </label>
-		            <input title="Selecionar todos os lançamentos" type="checkbox" id="selTodos" name="selTodos" onclick="selecionarTodos(this.checked);" style="float:left;"/>
-		        </span>
-		    </td>
+		<table  width="100%" border="0" cellspacing="2" cellpadding="2" >
+		    <tr>
+			    <td width="80%"></td>    
+			    
+				<td width="20%">    
+			        <span class="checar">
+			            <label for="textoSelTodos" id="textoSelTodos" style="float:left;">Marcar Todos</label>
+			            <input title="Selecionar todos os lançamentos" type="checkbox" id="selTodos" name="selTodos" onclick="selecionarTodos(this.checked);" style="float:left;"/>
+			        </span>
+			    </td>
+            </tr> 
 	    </table>
 	
 	</form>

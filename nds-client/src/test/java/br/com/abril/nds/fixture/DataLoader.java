@@ -2034,7 +2034,7 @@ public class DataLoader {
 
 		ConsolidadoFinanceiroCota consolidado15 = Fixture
 				.consolidadoFinanceiroCota(
-						Arrays.asList(movimentoFinanceiroCota10), cotaManoelCunha,
+						movimentosF, cotaManoelCunha,
 						Fixture.criarData(10, 6, 2012), getTotalConsignado(movimentosF), getTotalVendaEncalhe(movimentosF), getTotalEncalhe(movimentosF), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0));
 
 		
@@ -2042,7 +2042,7 @@ public class DataLoader {
 
 		ConsolidadoFinanceiroCota consolidado16 = Fixture
 				.consolidadoFinanceiroCota(
-						Arrays.asList(movimentoFinanceiroCota11), cotaManoelCunha,
+						movimentosF, cotaManoelCunha,
 						Fixture.criarData(11, 6, 2012), getTotalConsignado(movimentosF), getTotalVendaEncalhe(movimentosF), getTotalEncalhe(movimentosF), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0));
 
 		
@@ -2050,7 +2050,7 @@ public class DataLoader {
 
 		ConsolidadoFinanceiroCota consolidado17 = Fixture
 				.consolidadoFinanceiroCota(
-						Arrays.asList(movimentoFinanceiroCota12), cotaManoelCunha,
+						movimentosF, cotaManoelCunha,
 						Fixture.criarData(12, 6, 2012), getTotalConsignado(movimentosF), getTotalVendaEncalhe(movimentosF), getTotalEncalhe(movimentosF), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0));
 
 
@@ -4105,12 +4105,21 @@ public class DataLoader {
 			Fixture.distribuicaoDistribuidor(distribuidor, DiaSemana.TERCA_FEIRA,
 											 OperacaoDistribuidor.DISTRIBUICAO);
 		
-		DistribuicaoDistribuidor distribuicaoDistribuidorQuinta =
-			Fixture.distribuicaoDistribuidor(distribuidor, DiaSemana.QUINTA_FEIRA,
+		DistribuicaoDistribuidor distribuicaoDistribuidorSegunda =
+			Fixture.distribuicaoDistribuidor(distribuidor, DiaSemana.SEGUNDA_FEIRA,
 											 OperacaoDistribuidor.DISTRIBUICAO);
 		
+		DistribuicaoDistribuidor distribuicaoDistribuidorQuinta =
+				Fixture.distribuicaoDistribuidor(distribuidor, DiaSemana.QUINTA_FEIRA,
+												 OperacaoDistribuidor.DISTRIBUICAO);
+		
+		DistribuicaoDistribuidor distribuicaoDistribuidorSexta =
+				Fixture.distribuicaoDistribuidor(distribuidor, DiaSemana.SEXTA_FEIRA,
+												 OperacaoDistribuidor.DISTRIBUICAO);
+		
 		save(session, recolhimentoDistribuidorTerca, recolhimentoDistribuidorQuinta,
-					  distribuicaoDistribuidorTerca, distribuicaoDistribuidorQuinta);
+					  distribuicaoDistribuidorTerca, distribuicaoDistribuidorSegunda,
+					  distribuicaoDistribuidorQuinta, distribuicaoDistribuidorSexta);
 	}
 	
 	private static void gerarCargaDiferencaEstoque(Session session,
@@ -6176,62 +6185,62 @@ public class DataLoader {
 		movimentoFinanceiroCota1 = Fixture.movimentoFinanceiroCota(
 			cotaManoel, tipoMovimentoFinanceiroRecebimentoReparte, usuarioJoao,
 			obterValorMovimentosEstoque(Arrays.asList(movimentoEstoqueCota1)), Arrays.asList(movimentoEstoqueCota1),
-			StatusAprovacao.PENDENTE, new Date(), true);
+			StatusAprovacao.APROVADO, new Date(), true);
 
 		movimentoFinanceiroCota2 = Fixture.movimentoFinanceiroCota(
 			cotaManoel, tipoMovimentoFinanceiroRecebimentoReparte, usuarioJoao,
 			obterValorMovimentosEstoque(Arrays.asList(movimentoEstoqueCota2)), Arrays.asList(movimentoEstoqueCota2),
-			StatusAprovacao.PENDENTE, new Date(), true);
+			StatusAprovacao.APROVADO, new Date(), true);
 
 		movimentoFinanceiroCota3 = Fixture.movimentoFinanceiroCota(
 			cotaManoel, tipoMovimentoFinanceiroRecebimentoReparte, usuarioJoao,
 			obterValorMovimentosEstoque(Arrays.asList(movimentoEstoqueCota3)), Arrays.asList(movimentoEstoqueCota3),
-			StatusAprovacao.PENDENTE, new Date(), true);
+			StatusAprovacao.APROVADO, new Date(), true);
 
 		movimentoFinanceiroCota4 = Fixture.movimentoFinanceiroCota(
 			cotaManoel, tipoMovimentoFinanceiroRecebimentoReparte, usuarioJoao,
 			obterValorMovimentosEstoque(Arrays.asList(movimentoEstoqueCota4)), Arrays.asList(movimentoEstoqueCota4),
-			StatusAprovacao.PENDENTE, new Date(), true);
+			StatusAprovacao.APROVADO, new Date(), true);
 
 		movimentoFinanceiroCota5 = Fixture.movimentoFinanceiroCota(
 			cotaManoel, tipoMovimentoFinanceiroRecebimentoReparte, usuarioJoao,
 			obterValorMovimentosEstoque(Arrays.asList(movimentoEstoqueCota5)), Arrays.asList(movimentoEstoqueCota5),
-			StatusAprovacao.PENDENTE, new Date(), true);
+			StatusAprovacao.APROVADO, new Date(), true);
 
 		movimentoFinanceiroCota6 = Fixture.movimentoFinanceiroCota(
 			cotaManoel, tipoMovimentoFinanceiroRecebimentoReparte, usuarioJoao,
 			obterValorMovimentosEstoque(Arrays.asList(movimentoEstoqueCota6)), Arrays.asList(movimentoEstoqueCota6),
-			StatusAprovacao.PENDENTE, new Date(), true);
+			StatusAprovacao.APROVADO, new Date(), true);
 
 		movimentoFinanceiroCota7 = Fixture.movimentoFinanceiroCota(
 			cotaManoel, tipoMovimentoFinanceiroRecebimentoReparte, usuarioJoao,
 			obterValorMovimentosEstoque(Arrays.asList(movimentoEstoqueCota7)), Arrays.asList(movimentoEstoqueCota7),
-			StatusAprovacao.PENDENTE, new Date(), true);
+			StatusAprovacao.APROVADO, new Date(), true);
 
 		movimentoFinanceiroCota8 = Fixture.movimentoFinanceiroCota(
 			cotaManoel, tipoMovimentoFinanceiroRecebimentoReparte, usuarioJoao,
 			obterValorMovimentosEstoque(Arrays.asList(movimentoEstoqueCota8)), Arrays.asList(movimentoEstoqueCota8),
-			StatusAprovacao.PENDENTE, new Date(), true);
+			StatusAprovacao.APROVADO, new Date(), true);
 
 		movimentoFinanceiroCota9 = Fixture.movimentoFinanceiroCota(
 			cotaManoel, tipoMovimentoFinanceiroRecebimentoReparte, usuarioJoao,
 			obterValorMovimentosEstoque(Arrays.asList(movimentoEstoqueCota9)), Arrays.asList(movimentoEstoqueCota9),
-			StatusAprovacao.PENDENTE, new Date(), true);
+			StatusAprovacao.APROVADO, new Date(), true);
 		
 		movimentoFinanceiroCota10 = Fixture.movimentoFinanceiroCota(
 				cotaManoelCunha, tipoMovimentoFinanceiroRecebimentoReparte, usuarioJoao,
 				obterValorMovimentosEstoque(Arrays.asList(movimentoEstoqueCota10)), Arrays.asList(movimentoEstoqueCota10),
-				StatusAprovacao.PENDENTE, new Date(), true);
+				StatusAprovacao.APROVADO, new Date(), true);
 		
 		movimentoFinanceiroCota11 = Fixture.movimentoFinanceiroCota(
 				cotaManoelCunha, tipoMovimentoFinanceiroRecebimentoReparte, usuarioJoao,
 				obterValorMovimentosEstoque(Arrays.asList(movimentoEstoqueCota11)), Arrays.asList(movimentoEstoqueCota11),
-				StatusAprovacao.PENDENTE, new Date(), true);
+				StatusAprovacao.APROVADO, new Date(), true);
 		
 		movimentoFinanceiroCota12 = Fixture.movimentoFinanceiroCota(
 				cotaManoelCunha, tipoMovimentoFinanceiroRecebimentoReparte, usuarioJoao,
 				obterValorMovimentosEstoque(Arrays.asList(movimentoEstoqueCota12)), Arrays.asList(movimentoEstoqueCota12),
-				StatusAprovacao.PENDENTE, new Date(), true);
+				StatusAprovacao.APROVADO, new Date(), true);
 		
 		
 		
@@ -6240,33 +6249,33 @@ public class DataLoader {
 		movimentoFinanceiroCota13 = Fixture.movimentoFinanceiroCota(
 				cotaManoel, tipoMovimentoFinanceiroEnvioEncalhe, usuarioJoao,
 				obterValorMovimentosEstoque(Arrays.asList(movimentoEstoqueCota13)), Arrays.asList(movimentoEstoqueCota13),
-				StatusAprovacao.PENDENTE, new Date(), true);
+				StatusAprovacao.APROVADO, new Date(), true);
 
 		movimentoFinanceiroCota14 = Fixture.movimentoFinanceiroCota(
 				cotaManoel, tipoMovimentoFinanceiroEnvioEncalhe, usuarioJoao,
 				obterValorMovimentosEstoque(Arrays.asList(movimentoEstoqueCota14)), Arrays.asList(movimentoEstoqueCota14),
-			StatusAprovacao.PENDENTE, new Date(), true);
+			StatusAprovacao.APROVADO, new Date(), true);
 
 		movimentoFinanceiroCota15 = Fixture.movimentoFinanceiroCota(
 				cotaManoel, tipoMovimentoFinanceiroEnvioEncalhe, usuarioJoao,
 				obterValorMovimentosEstoque(Arrays.asList(movimentoEstoqueCota15)), Arrays.asList(movimentoEstoqueCota15),
-			    StatusAprovacao.PENDENTE, new Date(), true);
+			    StatusAprovacao.APROVADO, new Date(), true);
 		
 		
 		movimentoFinanceiroCota16 = Fixture.movimentoFinanceiroCota(
 				cotaManoel, tipoMovimentoFinanceiroEnvioEncalhe, usuarioJoao,
 				obterValorMovimentosEstoque(Arrays.asList(movimentoEstoqueCota16)), Arrays.asList(movimentoEstoqueCota16),
-				StatusAprovacao.PENDENTE, new Date(), true);
+				StatusAprovacao.APROVADO, new Date(), true);
 		
 		movimentoFinanceiroCota17 = Fixture.movimentoFinanceiroCota(
 				cotaManoel, tipoMovimentoFinanceiroEnvioEncalhe, usuarioJoao,
 				obterValorMovimentosEstoque(Arrays.asList(movimentoEstoqueCota17)), Arrays.asList(movimentoEstoqueCota17),
-				StatusAprovacao.PENDENTE, new Date(), true);
+				StatusAprovacao.APROVADO, new Date(), true);
 		
 		movimentoFinanceiroCota18 = Fixture.movimentoFinanceiroCota(
 				cotaManoel, tipoMovimentoFinanceiroEnvioEncalhe, usuarioJoao,
 				obterValorMovimentosEstoque(Arrays.asList(movimentoEstoqueCota18)), Arrays.asList(movimentoEstoqueCota18),
-				StatusAprovacao.PENDENTE, new Date(), true);
+				StatusAprovacao.APROVADO, new Date(), true);
 		
 		
 		
@@ -6274,32 +6283,32 @@ public class DataLoader {
 		movimentoFinanceiroCota19 = Fixture.movimentoFinanceiroCota(
 				cotaManoel, tipoMovimentoFinanceiroRecebimentoReparte, usuarioJoao,
 				obterValorMovimentosEstoque(Arrays.asList(movimentoEstoqueCota19)), Arrays.asList(movimentoEstoqueCota19),
-				StatusAprovacao.PENDENTE, new Date(), true);
+				StatusAprovacao.APROVADO, new Date(), true);
 
 		movimentoFinanceiroCota20 = Fixture.movimentoFinanceiroCota(
 				cotaManoel, tipoMovimentoFinanceiroRecebimentoReparte, usuarioJoao,
 				obterValorMovimentosEstoque(Arrays.asList(movimentoEstoqueCota20)), Arrays.asList(movimentoEstoqueCota20),
-				StatusAprovacao.PENDENTE, new Date(), true);
+				StatusAprovacao.APROVADO, new Date(), true);
 
 		movimentoFinanceiroCota21 = Fixture.movimentoFinanceiroCota(
 				cotaManoel, tipoMovimentoFinanceiroRecebimentoReparte, usuarioJoao,
 				obterValorMovimentosEstoque(Arrays.asList(movimentoEstoqueCota21)), Arrays.asList(movimentoEstoqueCota21),
-				StatusAprovacao.PENDENTE, new Date(), true);
+				StatusAprovacao.APROVADO, new Date(), true);
 		
 		movimentoFinanceiroCota22 = Fixture.movimentoFinanceiroCota(
 				cotaManoel, tipoMovimentoFinanceiroRecebimentoReparte, usuarioJoao,
 				obterValorMovimentosEstoque(Arrays.asList(movimentoEstoqueCota22)), Arrays.asList(movimentoEstoqueCota22),
-				StatusAprovacao.PENDENTE, new Date(), true);
+				StatusAprovacao.APROVADO, new Date(), true);
 		
 		movimentoFinanceiroCota23 = Fixture.movimentoFinanceiroCota(
 				cotaManoel, tipoMovimentoFinanceiroRecebimentoReparte, usuarioJoao,
 				obterValorMovimentosEstoque(Arrays.asList(movimentoEstoqueCota23)), Arrays.asList(movimentoEstoqueCota23),
-				StatusAprovacao.PENDENTE, new Date(), true);
+				StatusAprovacao.APROVADO, new Date(), true);
 		
 		movimentoFinanceiroCota24 = Fixture.movimentoFinanceiroCota(
 				cotaManoel, tipoMovimentoFinanceiroRecebimentoReparte, usuarioJoao,
 				obterValorMovimentosEstoque(Arrays.asList(movimentoEstoqueCota24)), Arrays.asList(movimentoEstoqueCota24),
-				StatusAprovacao.PENDENTE, new Date(), true);
+				StatusAprovacao.APROVADO, new Date(), true);
 		
 		
 		
@@ -6307,32 +6316,32 @@ public class DataLoader {
 		movimentoFinanceiroCota25 = Fixture.movimentoFinanceiroCota(
 				cotaManoel, tipoMovimentoFinanceiroCompraEncalhe, usuarioJoao,
 				obterValorMovimentosEstoque(Arrays.asList(movimentoEstoqueCota25)), Arrays.asList(movimentoEstoqueCota25),
-				StatusAprovacao.PENDENTE, new Date(), true);
+				StatusAprovacao.APROVADO, new Date(), true);
 
 		movimentoFinanceiroCota26 = Fixture.movimentoFinanceiroCota(
 				cotaManoel, tipoMovimentoFinanceiroCompraEncalhe, usuarioJoao,
 				obterValorMovimentosEstoque(Arrays.asList(movimentoEstoqueCota26)), Arrays.asList(movimentoEstoqueCota26),
-				StatusAprovacao.PENDENTE, new Date(), true);
+				StatusAprovacao.APROVADO, new Date(), true);
 
 		movimentoFinanceiroCota27 = Fixture.movimentoFinanceiroCota(
 				cotaManoel, tipoMovimentoFinanceiroCompraEncalhe, usuarioJoao,
 				obterValorMovimentosEstoque(Arrays.asList(movimentoEstoqueCota27)), Arrays.asList(movimentoEstoqueCota27),
-				StatusAprovacao.PENDENTE, new Date(), true);
+				StatusAprovacao.APROVADO, new Date(), true);
 		
 		movimentoFinanceiroCota28 = Fixture.movimentoFinanceiroCota(
 				cotaManoel, tipoMovimentoFinanceiroCompraEncalhe, usuarioJoao,
 				obterValorMovimentosEstoque(Arrays.asList(movimentoEstoqueCota28)), Arrays.asList(movimentoEstoqueCota28),
-				StatusAprovacao.PENDENTE, new Date(), true);
+				StatusAprovacao.APROVADO, new Date(), true);
 		
 		movimentoFinanceiroCota29 = Fixture.movimentoFinanceiroCota(
 				cotaManoel, tipoMovimentoFinanceiroCompraEncalhe, usuarioJoao,
 				obterValorMovimentosEstoque(Arrays.asList(movimentoEstoqueCota29)), Arrays.asList(movimentoEstoqueCota29),
-				StatusAprovacao.PENDENTE, new Date(), true);
+				StatusAprovacao.APROVADO, new Date(), true);
 		
 		movimentoFinanceiroCota30 = Fixture.movimentoFinanceiroCota(
 				cotaManoel, tipoMovimentoFinanceiroCompraEncalhe, usuarioJoao,
 				obterValorMovimentosEstoque(Arrays.asList(movimentoEstoqueCota30)), Arrays.asList(movimentoEstoqueCota30),
-				StatusAprovacao.PENDENTE, new Date(), true);
+				StatusAprovacao.APROVADO, new Date(), true);
 		
 		
 

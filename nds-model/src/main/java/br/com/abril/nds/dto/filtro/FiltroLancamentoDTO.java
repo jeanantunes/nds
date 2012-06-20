@@ -32,6 +32,11 @@ public class FiltroLancamentoDTO implements Serializable {
 		this.colunaOrdenacao = ColunaOrdenacao.getByNomeColuna(sortName);
 	}
 
+	public FiltroLancamentoDTO(Date data, List<Long> idsFornecedores) {
+		this.data = data;
+		this.idsFornecedores = idsFornecedores;
+	}
+	
 	public Date getData() {
 		return data;
 	}

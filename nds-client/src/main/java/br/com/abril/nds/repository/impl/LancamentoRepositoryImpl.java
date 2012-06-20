@@ -1,6 +1,7 @@
 package br.com.abril.nds.repository.impl;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -23,6 +24,7 @@ import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.InformeEncalheDTO;
 import br.com.abril.nds.dto.LancamentoNaoExpedidoDTO;
+import br.com.abril.nds.dto.ProdutoLancamentoDTO;
 import br.com.abril.nds.dto.ProdutoRecolhimentoDTO;
 import br.com.abril.nds.dto.ResumoPeriodoBalanceamentoDTO;
 import br.com.abril.nds.dto.SumarioLancamentosDTO;
@@ -36,6 +38,7 @@ import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamentoParcial;
 import br.com.abril.nds.repository.LancamentoRepository;
+import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 import br.com.abril.nds.vo.PeriodoVO;
@@ -951,6 +954,240 @@ public class LancamentoRepositoryImpl extends
 		return obterLancamentoInformeRecolhimento(idFornecedor,
 				dataInicioRecolhimento, dataFimRecolhimento, null,
 				null, null, null);
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<ProdutoLancamentoDTO> obterBalanceamentoLancamento(Intervalo<Date> periodoLancamento,
+																   List<Long> fornecedores,
+																   GrupoProduto grupoCromo) {
+
+		String sql = this.montarConsultaBalanceamentoLancamentoAnalitico()
+				   + " order by dataLancamentoDistribuidor ";
+		
+		Query query = this.getQueryBalanceamentoRecolhimento(periodoLancamento,
+															 fornecedores,
+															 grupoCromo,
+															 sql);
+
+		return query.list();
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@SuppressWarnings("unchecked")
+	public TreeMap<Date, BigDecimal> obterExpectativasRepartePorData(Intervalo<Date> periodoLancamento,
+			   														 List<Long> fornecedores,
+			   														 GrupoProduto grupoCromo) {
+
+		String sql = this.montarConsultaExpectativaRepartePorData();
+		
+		Query query = getSession().createSQLQuery(sql); 
+
+		String[] statusLancamentoArray = {StatusLancamento.PLANEJADO.toString()};
+		
+		List<String> listaStatusLancamento = Arrays.asList(statusLancamentoArray);
+		
+		query.setParameterList("idsFornecedores", fornecedores);
+		query.setParameter("periodoInicial", periodoLancamento.getDe());
+		query.setParameter("periodoFinal", periodoLancamento.getAte());
+		query.setParameter("grupoCromo", grupoCromo);
+		query.setParameter("tipoParcial", TipoLancamentoParcial.PARCIAL);
+		query.setParameterList("statusLancamento", listaStatusLancamento);
+		
+		List<Object[]> expectativasReparteDia = query.list();
+
+		TreeMap<Date, BigDecimal> mapaExpectativaReparteDia = new TreeMap<Date, BigDecimal>();
+
+		for (Object[] expectativa : expectativasReparteDia) {
+
+			Date data = (Date) expectativa[0];
+
+			BigDecimal expectativaReparte = (BigDecimal) expectativa[1];
+
+			mapaExpectativaReparteDia.put(data, expectativaReparte);
+		}
+
+		return mapaExpectativaReparteDia;
+	}
+	
+	private String montarConsultaExpectativaRepartePorData() {
+		
+		String sql = " select analitica.dataLancamentoPrevista, "
+				   + " sum(analitica.expectativaReparte) "
+				   + " from "
+				   + " ( "
+				   + " select "
+				   + " lancamento.DATA_LCTO_PREVISTA as dataLancamentoPrevista, "
+				   + " case "
+				   + " when tipoProduto.GRUPO_PRODUTO = :grupoCromo "
+				   + " and periodoLancamentoParcial.TIPO <> :tipoParcial then "
+				   + " sum((lancamento.REPARTE / produtoEdicao.PACOTE_PADRAO) * (produtoEdicao.PRECO_VENDA - produtoEdicao.DESCONTO)) "
+				   + " else "
+				   + " sum(lancamento.REPARTE * (produtoEdicao.PRECO_VENDA - produtoEdicao.DESCONTO)) "
+				   + " end as expectativaReparte ";
+		
+		String clausulaFrom = this.montarConsultaBalanceamentoLancamentoAnalitico();
+		
+		clausulaFrom = clausulaFrom.substring(clausulaFrom.lastIndexOf(" from "));
+		
+		sql += clausulaFrom;
+		sql += " ) as analitica ";
+		sql += " group by analitica.dataLancamentoPrevista ";
+		
+		return sql;
+	}
+	
+	private String montarConsultaBalanceamentoLancamentoAnalitico() {
+		
+		StringBuilder sql = new StringBuilder();
+
+		sql.append(" select ");
+		sql.append(" periodoLancamentoParcial.TIPO as parcial, ");
+		sql.append(" lancamento.STATUS as statusLancamento, ");
+		sql.append(" lancamento.ID as idLancamento, ");
+		sql.append(" lancamento.DATA_LCTO_PREVISTA as dataLancamentoPrevista, ");
+		sql.append(" lancamento.DATA_LCTO_DISTRIBUIDOR as dataLancamentoDistribuidor, ");
+		sql.append(" lancamento.DATA_REC_PREVISTA as dataRecolhimentoPrevista, ");
+		sql.append(" lancamento.DATA_LCTO_DISTRIBUIDOR as novaDataLancamento, ");
+		sql.append(" lancamento.REPARTE as repartePrevisto, ");
+		sql.append(" lancamento.NUMERO_REPROGRAMACOES as numeroReprogramacoes, ");
+		sql.append(" estudo.QTDE_REPARTE as reparteFisico, ");
+		sql.append(" case ");
+		sql.append(" when tipoProduto.GRUPO_PRODUTO = :grupoCromo ");
+		sql.append(" and periodoLancamentoParcial.TIPO <> :tipoParcial then ");
+		sql.append(" sum((lancamento.REPARTE / produtoEdicao.PACOTE_PADRAO) * (produtoEdicao.PRECO_VENDA - produtoEdicao.DESCONTO)) ");
+		sql.append(" else ");
+		sql.append(" sum(lancamento.REPARTE * (produtoEdicao.PRECO_VENDA - produtoEdicao.DESCONTO)) ");
+		sql.append(" end as valorTotal, ");
+		sql.append(" produtoEdicao.ID as idProdutoEdicao, ");
+		sql.append(" produtoEdicao.DESCONTO as desconto, ");
+		sql.append(" produtoEdicao.NUMERO_EDICAO as numeroEdicao, ");
+		sql.append(" produtoEdicao.PESO as peso, ");
+		sql.append(" produtoEdicao.PRECO_VENDA as precoVenda, ");
+		sql.append(" produto.codigo as codigoProduto, ");
+		sql.append(" produto.nome as nomeProduto, ");
+		
+		sql.append(" case ");
+		sql.append(" when (estudo.ID is not null) and (estudoCota.ID is not null) then ");
+		sql.append(" true ");
+		sql.append(" else ");
+		sql.append(" false ");
+		sql.append(" end as possuiEstudo, ");
+
+		sql.append(" case ");
+		sql.append(" when recebimentoFisico.ID is not null then ");
+		sql.append(" true ");
+		sql.append(" else ");
+		sql.append(" false ");
+		sql.append(" end as possuiRecebimentoFisico ");
+
+		sql.append(" from ");
+		sql.append(" LANCAMENTO lancamento ");
+		sql.append(" inner join ");
+		sql.append(" PRODUTO_EDICAO produtoEdicao ");
+		sql.append(" on lancamento.PRODUTO_EDICAO_ID = produtoEdicao.ID ");
+		sql.append(" left join ");
+		sql.append(" ESTUDO estudo ");
+		sql.append(" on ( ");
+		sql.append(" estudo.PRODUTO_EDICAO_ID = lancamento.PRODUTO_EDICAO_ID ");
+		sql.append(" and estudo.DATA_LANCAMENTO = lancamento.DATA_LCTO_DISTRIBUIDOR ");
+		sql.append(" ) ");
+		sql.append(" left join ");
+		sql.append(" ESTUDO_COTA estudoCota ");
+		sql.append(" on estudo.ID = estudoCota.ESTUDO_ID ");
+		sql.append(" inner join ");
+		sql.append(" PRODUTO produto ");
+		sql.append(" on produtoEdicao.PRODUTO_ID = produto.ID ");
+		sql.append(" inner join ");
+		sql.append(" PRODUTO_FORNECEDOR produtoFornecedor ");
+		sql.append(" on produto.ID = produtoFornecedor.PRODUTO_ID ");
+		sql.append(" left join ");
+		sql.append(" LANCAMENTO_PARCIAL lancamentoParcial ");
+		sql.append(" on lancamentoParcial.PRODUTO_EDICAO_ID = produtoEdicao.ID ");
+		sql.append(" left join ");
+		sql.append(" PERIODO_LANCAMENTO_PARCIAL periodoLancamentoParcial ");
+		sql.append(" on periodoLancamentoParcial.LANCAMENTO_PARCIAL_ID = lancamentoParcial.ID ");
+		sql.append(" inner join ");
+		sql.append(" FORNECEDOR fornecedor ");
+		sql.append(" on produtoFornecedor.fornecedores_ID = fornecedor.ID ");
+		sql.append(" left join ");
+		sql.append(" LANCAMENTO_ITEM_RECEB_FISICO lancamentoItemRecebFisico ");
+		sql.append(" on lancamentoItemRecebFisico.LANCAMENTO_ID = lancamento.ID ");
+		sql.append(" left join ");
+		sql.append(" ITEM_RECEB_FISICO itemRecebFisico ");
+		sql.append(" on itemRecebFisico.ID = lancamentoItemRecebFisico.RECEBIMENTOS_ID ");
+		sql.append(" left join ");
+		sql.append(" RECEBIMENTO_FISICO recebimentoFisico ");
+		sql.append(" on recebimentoFisico.ID = itemRecebFisico.RECEBIMENTO_FISICO_ID, ");
+		sql.append(" PESSOA pessoaFornecedor, ");
+		sql.append(" TIPO_PRODUTO tipoProduto ");
+
+		sql.append(" where ");
+		sql.append(" fornecedor.JURIDICA_ID = pessoaFornecedor.ID ");
+		sql.append(" and produto.TIPO_PRODUTO_ID = tipoProduto.ID ");
+		sql.append(" and lancamento.DATA_LCTO_PREVISTA between :periodoInicial and :periodoFinal ");
+		sql.append(" and fornecedor.ID in ( ");
+		sql.append(" :idsFornecedores ");
+		sql.append(" ) ");
+		sql.append(" and lancamento.STATUS in ( ");
+		sql.append(" :statusLancamento ");
+		sql.append(" ) ");
+		sql.append(" group by lancamento.ID ");
+		
+		// TODO: status lançamento
+		
+		// TODO: data filtro e ordenação
+		
+		return sql.toString();
+	}
+	
+	private Query getQueryBalanceamentoRecolhimento(Intervalo<Date> periodoLancamento,
+											        List<Long> fornecedores,
+											        GrupoProduto grupoCromo,
+											        String sql) {
+
+		Query query = getSession().createSQLQuery(sql).addScalar("parcial")
+			.addScalar("statusLancamento")
+			.addScalar("idLancamento", StandardBasicTypes.LONG)
+			.addScalar("dataLancamentoPrevista")
+			.addScalar("dataLancamentoDistribuidor")
+			.addScalar("dataRecolhimentoPrevista")
+			.addScalar("novaDataLancamento")
+			.addScalar("repartePrevisto")
+			.addScalar("numeroReprogramacoes", StandardBasicTypes.INTEGER)
+			.addScalar("reparteFisico")
+			.addScalar("valorTotal")
+			.addScalar("idProdutoEdicao", StandardBasicTypes.LONG)
+			.addScalar("desconto")
+			.addScalar("numeroEdicao", StandardBasicTypes.LONG)
+			.addScalar("peso")
+			.addScalar("precoVenda")
+			.addScalar("codigoProduto")
+			.addScalar("nomeProduto")
+			.addScalar("possuiEstudo", StandardBasicTypes.BOOLEAN)
+			.addScalar("possuiRecebimentoFisico", StandardBasicTypes.BOOLEAN);
+
+
+		String[] statusLancamentoArray = {StatusLancamento.PLANEJADO.toString()};
+		
+		List<String> listaStatusLancamento = Arrays.asList(statusLancamentoArray);
+		
+		query.setParameterList("idsFornecedores", fornecedores);
+		query.setParameter("periodoInicial", periodoLancamento.getDe());
+		query.setParameter("periodoFinal", periodoLancamento.getAte());
+		query.setParameter("grupoCromo", grupoCromo);
+		query.setParameter("tipoParcial", TipoLancamentoParcial.PARCIAL);
+		query.setParameterList("statusLancamento", listaStatusLancamento);
+
+		query.setResultTransformer(new AliasToBeanResultTransformer(ProdutoLancamentoDTO.class));
+
+		return query;
 	}
 	
 }
