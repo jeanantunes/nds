@@ -33,6 +33,9 @@ public class BoxRepositoryImplTest extends AbstractRepositoryImplTest {
 			"postoAvancado" };
 
 	private Box box;
+	private Roteiro roteiro;
+	private Rota rota;
+	private Roteirizacao roteirizacao;
 
 	@Before
 	public void setUp() throws Exception {
@@ -62,17 +65,17 @@ public class BoxRepositoryImplTest extends AbstractRepositoryImplTest {
 		cota.setSugereSuspensao(true);
 		save(cota);
 		
-		Roteiro roteiro = Fixture.criarRoteiro("Pinheiros", box,TipoRoteiro.NORMAL);
+		roteiro = Fixture.criarRoteiro("Pinheiros", box,TipoRoteiro.NORMAL);
 		save(roteiro);
 		
-		Rota rota = Fixture.rota("005", "Rota 005");
+		rota = Fixture.rota("005", "Rota 005");
 		rota.setRoteiro(roteiro);
 		save(rota);
 		
 		PDV pdv = Fixture.criarPDVPrincipal("Pdv 1", cota);
 		save(pdv);
 		
-		Roteirizacao roteirizacao = Fixture.criarRoteirizacao(pdv, rota, 1);
+		roteirizacao = Fixture.criarRoteirizacao(pdv, rota, 1);
 		save(roteirizacao);
 		
 		cota = Fixture
@@ -144,7 +147,12 @@ public class BoxRepositoryImplTest extends AbstractRepositoryImplTest {
 		
 		
 	}
-
 	
+	@Test
+	public void testObterCotasPorBoxRoteiroRota() {
+	    List<Cota> cotas = boxRepository.obterCotasPorBoxRoteiroRota(box.getId(), roteiro.getId(), rota.getId());
+	    Assert.assertEquals(cotas.size(), 1);
+	    Assert.assertEquals(cotas.get(0).getNumeroCota(), new Integer(2));
+	}
 	
 }
