@@ -91,7 +91,9 @@ public class FechamentoEncalheController {
 			if (boxId == null) {
 				fechamentoEncalheService.converteFechamentoDetalhadoEmConsolidado(filtro);
 			} else {
-				fechamentoEncalheService.removeFechamentoDetalhado(filtro);
+				FiltroFechamentoEncalheDTO filtroRevomecao = new FiltroFechamentoEncalheDTO(); 
+				filtroRevomecao.setDataEncalhe(DateUtil.parseDataPTBR(dataEncalhe));
+				fechamentoEncalheService.removeFechamentoDetalhado(filtroRevomecao);
 			}
 			
 		} 
@@ -116,7 +118,7 @@ public class FechamentoEncalheController {
 			fechamentoEncalheService.salvarFechamentoEncalheBox(filtro, listaFechamento);
 		}
 		
-		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "informação gravada com sucesso!"), "result").recursive().serialize();
+		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Informação gravada com sucesso!"), "result").recursive().serialize();
 	}
 	
 	@Path("/cotasAusentes")
