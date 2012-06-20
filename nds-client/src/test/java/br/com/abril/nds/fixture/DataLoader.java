@@ -4105,12 +4105,21 @@ public class DataLoader {
 			Fixture.distribuicaoDistribuidor(distribuidor, DiaSemana.TERCA_FEIRA,
 											 OperacaoDistribuidor.DISTRIBUICAO);
 		
-		DistribuicaoDistribuidor distribuicaoDistribuidorQuinta =
-			Fixture.distribuicaoDistribuidor(distribuidor, DiaSemana.QUINTA_FEIRA,
+		DistribuicaoDistribuidor distribuicaoDistribuidorSegunda =
+			Fixture.distribuicaoDistribuidor(distribuidor, DiaSemana.SEGUNDA_FEIRA,
 											 OperacaoDistribuidor.DISTRIBUICAO);
 		
+		DistribuicaoDistribuidor distribuicaoDistribuidorQuinta =
+				Fixture.distribuicaoDistribuidor(distribuidor, DiaSemana.QUINTA_FEIRA,
+												 OperacaoDistribuidor.DISTRIBUICAO);
+		
+		DistribuicaoDistribuidor distribuicaoDistribuidorSexta =
+				Fixture.distribuicaoDistribuidor(distribuidor, DiaSemana.SEXTA_FEIRA,
+												 OperacaoDistribuidor.DISTRIBUICAO);
+		
 		save(session, recolhimentoDistribuidorTerca, recolhimentoDistribuidorQuinta,
-					  distribuicaoDistribuidorTerca, distribuicaoDistribuidorQuinta);
+					  distribuicaoDistribuidorTerca, distribuicaoDistribuidorSegunda,
+					  distribuicaoDistribuidorQuinta, distribuicaoDistribuidorSexta);
 	}
 	
 	private static void gerarCargaDiferencaEstoque(Session session,
