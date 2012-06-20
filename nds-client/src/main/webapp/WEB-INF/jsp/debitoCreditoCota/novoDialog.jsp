@@ -609,6 +609,7 @@
 			
 			if (result=='DEBITO_SOBRE_FATURAMENTO'){
 				$('#tabelaFaturamento').show();
+				$("#novoValor").val('');
 				$('#tituloNovoValor').hide();
 				$('#novoValor').hide();
 				
