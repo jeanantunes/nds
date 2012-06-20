@@ -148,7 +148,7 @@ fieldset label {
 				</div>
 
 				<div class="usuario">
-					<a href="index.htm"><img src="${pageContext.request.contextPath}/images/bt_sair.jpg"
+					<a href="${pageContext.request.contextPath}/j_spring_security_logout"><img src="${pageContext.request.contextPath}/images/bt_sair.jpg"
 						alt="Sair do Sistema" title="Sair do Sistema" width="63"
 						height="27" border="0" align="right" />
 					</a> <br clear="all" /> <span>Usuário: Junior Fonseca</span> <span>
