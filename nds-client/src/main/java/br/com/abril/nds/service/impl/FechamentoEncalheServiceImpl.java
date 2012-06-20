@@ -90,7 +90,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 		Boolean fechado = fechamentoEncalheRepository.buscaControleFechamentoEncalhe(filtro.getDataEncalhe());
 		List<FechamentoFisicoLogicoDTO> listaConferencia = fechamentoEncalheRepository.buscarConferenciaEncalhe(filtro, sortorder, sort, startSearch, rp);
 		if (filtro.getBoxId() == null ){ 
-			List<FechamentoEncalhe> listaFechamento = fechamentoEncalheRepository.buscarFechamentoEncalhe(filtro);
+			List<FechamentoEncalhe> listaFechamento = fechamentoEncalheRepository.buscarFechamentoEncalhe(filtro.getDataEncalhe());
 			for (FechamentoFisicoLogicoDTO conferencia : listaConferencia) {
 				
 				conferencia.setTotal(conferencia.getExemplaresDevolucao().multiply(conferencia.getPrecoCapa()));
@@ -328,6 +328,10 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 				throw new ValidacaoException(TipoMensagem.ERROR, "Cotas ausentes existentes!");
 			}
 			
+			if (!this.validarEncerramentoOperacao(dataEncalhe)) {
+				throw new ValidacaoException(TipoMensagem.ERROR, "Encalhe não totalmente fechado");
+			}
+			
 			ControleFechamentoEncalhe controleFechamentoEncalhe = new ControleFechamentoEncalhe();
 			
 			controleFechamentoEncalhe.setDataEncalhe(dataEncalhe);
@@ -337,6 +341,37 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
+	}
+	
+	@Transactional
+	private boolean validarEncerramentoOperacao(Date dataEncalhe) {
+		
+		int countFechamento = 0;
+		int countConferencia = 0;
+		boolean porBox;
+		
+		List<FechamentoEncalhe> listFechamentoEncalhe = this.fechamentoEncalheRepository.buscarFechamentoEncalhe(dataEncalhe);
+		
+		if (listFechamentoEncalhe.isEmpty()) {
+			// Não tem nada salvo
+			return false;
+		}
+		
+		if (listFechamentoEncalhe.get(0).getListFechamentoEncalheBox() == null || listFechamentoEncalhe.get(0).getListFechamentoEncalheBox().isEmpty()) {
+			// consolidado
+			porBox = false;
+			countFechamento = listFechamentoEncalhe.size();
+		} else {
+			// por box
+			porBox = true;
+			for (FechamentoEncalhe fechamentoEncalhe : listFechamentoEncalhe) {
+				countFechamento += fechamentoEncalhe.getListFechamentoEncalheBox().size();
+			}
+		}
+		
+		countConferencia = this.fechamentoEncalheRepository.buscaQuantidadeConferencia(dataEncalhe, porBox);
+		
+		return countFechamento == countConferencia;
 	}
 	
 	@Transactional
@@ -434,10 +469,10 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 		
 	}
 
-	
+	@Override
 	@Transactional(readOnly=true)
 	public Boolean existeFechamentoEncalheDetalhado(FiltroFechamentoEncalheDTO filtro) {
-		List<FechamentoEncalhe> listaFechamento = fechamentoEncalheRepository.buscarFechamentoEncalhe(filtro);
+		List<FechamentoEncalhe> listaFechamento = fechamentoEncalheRepository.buscarFechamentoEncalhe(filtro.getDataEncalhe());
 		if (listaFechamento == null || listaFechamento.isEmpty() ){
 			return Boolean.FALSE;
 		} else if (listaFechamento.get(0).getQuantidade() == null ){
@@ -451,7 +486,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 	@Override
 	@Transactional(readOnly=true)
 	public Boolean existeFechamentoEncalheConsolidado(FiltroFechamentoEncalheDTO filtro) {
-		List<FechamentoEncalhe> listaFechamento = fechamentoEncalheRepository.buscarFechamentoEncalhe(filtro);
+		List<FechamentoEncalhe> listaFechamento = fechamentoEncalheRepository.buscarFechamentoEncalhe(filtro.getDataEncalhe());
 		if (listaFechamento == null || listaFechamento.isEmpty() ){
 			return Boolean.FALSE;
 		} else if (listaFechamento.get(0).getQuantidade() != null ){

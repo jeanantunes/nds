@@ -15,7 +15,7 @@ public interface FechamentoEncalheRepository extends Repository<FechamentoEncalh
 	
 	List<FechamentoFisicoLogicoDTO> buscarConferenciaEncalhe(FiltroFechamentoEncalheDTO filtro, String sortorder, String sortname, Integer page, Integer rp);
 	
-	List<FechamentoEncalhe> buscarFechamentoEncalhe(FiltroFechamentoEncalheDTO filtro);
+	List<FechamentoEncalhe> buscarFechamentoEncalhe(Date dataEncalhe);
 
 	List<CotaAusenteEncalheDTO> buscarCotasAusentes(Date dataEncalhe, String sortorder, String sortname, int page, int rp);
 	
@@ -26,7 +26,8 @@ public interface FechamentoEncalheRepository extends Repository<FechamentoEncalh
 	List<FechamentoFisicoLogicoDTO> buscarValorTotalEncalhe(Date dataEncalhe, Long idCota);
 	
 	void salvarControleFechamentoEncalhe(ControleFechamentoEncalhe controleFechamentoEncalhe);
-
 	
 	List<ChamadaEncalheCota> buscarChamadaEncalheCota(Date dataEncalhe, Long idCota);
+	
+	int buscaQuantidadeConferencia(Date dataEncalhe, boolean porBox);
 }
