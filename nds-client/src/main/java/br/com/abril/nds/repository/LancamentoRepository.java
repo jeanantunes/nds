@@ -8,6 +8,7 @@ import java.util.Set;
 import java.util.TreeMap;
 
 import br.com.abril.nds.dto.InformeEncalheDTO;
+import br.com.abril.nds.dto.ProdutoLancamentoDTO;
 import br.com.abril.nds.dto.ProdutoRecolhimentoDTO;
 import br.com.abril.nds.dto.ResumoPeriodoBalanceamentoDTO;
 import br.com.abril.nds.dto.SumarioLancamentosDTO;
@@ -16,6 +17,7 @@ import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
+import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 import br.com.abril.nds.vo.PeriodoVO;
@@ -206,5 +208,33 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 	public abstract List<InformeEncalheDTO> obterLancamentoInformeRecolhimento(
 			Long idFornecedor, Calendar dataInicioRecolhimento,
 			Calendar dataFimRecolhimento);
+	
+	/**
+	 * Método que retorna os produtos do balanceamento do lançamento
+	 * referentes a um periodo e determinados fornecedores.
+	 * 
+	 * @param periodoLancamento - período de lançamento
+	 * @param fornecedores - fornecedores
+	 * @param grupoCromo - grupo cromo
+	 * 
+	 * @return lista de produtos do balanceamento do lançamento
+	 */
+	List<ProdutoLancamentoDTO> obterBalanceamentoLancamento(Intervalo<Date> periodoLancamento,
+			   												List<Long> fornecedores,
+			   												GrupoProduto grupoCromo);
+	
+	/**
+	 * Método que retorna expectativas de reparte do balanceamento do lançamento
+	 * referentes a um periodo e determinados fornecedores.
+	 * 
+	 * @param periodoLancamento - período de lançamento
+	 * @param fornecedores - fornecedores
+	 * @param grupoCromo - grupo cromo
+	 * 
+	 * @return mapa contendo as expectativas de reparte por data
+	 */
+	TreeMap<Date, BigDecimal> obterExpectativasRepartePorData(Intervalo<Date> periodoLancamento,
+															  List<Long> fornecedores,
+															  GrupoProduto grupoCromo);
 
 }

@@ -24,32 +24,104 @@ import br.com.abril.nds.util.StringUtil;
  */
 public class NFEExporter {
 
+	/**
+	 * Separador de campos nas seções.
+	 */
 	public static final String SEPARADOR_SECAO = "|"; 
 
-	public static final String MASCARA_DATA = "yyyy-MM-dd"; 
-	public static final String MASCARA_NUMBER = "#,#"; 
-
-	public static final String STRING_VAZIA = ""; 
-	
+	/**
+	 * Máscara padrão de data.
+	 */
+	public static final String MASCARA_DATA = "yyyy-MM-dd";
 	
 	/**
-	 * Exporta o dados de um objeto da para uma String.
-	 * 
-	 * @param notaFiscal - Objeto da Nota Fiscal.
-	 * @return - String com toda as seções.
-	 * @throws IllegalAccessException 
-	 * @throws IllegalArgumentException 
-	 * @throws InvocationTargetException 
+	 * Máscara padrão de número.
 	 */
-	public static <NF> String toString(NF notaFiscal) throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
-		Map<String, String> listaSecoes = new HashMap<String, String>();
-		
-		for (Method metodo : notaFiscal.getClass().getMethods()) {
-			Object valor = metodo.invoke(notaFiscal, new Object[]{});
+	public static final String MASCARA_NUMBER = "#.####"; 
+
+	/**
+	 * String vázia.
+	 */
+	public static final String STRING_VAZIA = ""; 
+	
+	/**
+	 * String quebra de linha.
+	 */
+	public static final String QUEBRA_LINHA = "\n"; 
+	
+	/**
+	 * Lista de seções atuais.
+	 */
+	private Map<String, String> listaSecoes;
+	
+	/**
+	 * Construtor padrão
+	 */
+	public NFEExporter(){
+		this.clear();
+	}
+	
+	/**
+	 * Limpa todas as seções atuais.
+	 */
+	public void clear(){
+		this.listaSecoes = new HashMap<String, String>();
+	}
+	
+	/**
+	 * Faz a varredura de um objeto buscando as anotações NFEExport ou
+	 * NFEExports e adicona os dados nas lista de seções.
+	 * 
+	 * @param notaFiscal
+	 *            - Objeto da Nota Fiscal.
+	 * @return - String com toda as seções.
+	 * @throws IllegalAccessException
+	 * @throws IllegalArgumentException
+	 * @throws InvocationTargetException
+	 */
+	public <NF> void execute(NF notaFiscal) throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
+		for (Method metodo : notaFiscal.getClass().getDeclaredMethods()) {
+			NFEExports nfeExports = metodo.getAnnotation(NFEExports.class);
+			NFEExport nfeExport = metodo.getAnnotation(NFEExport.class);
+			
+			NFEExport listaNFEExport[] = new NFEExport[(nfeExports != null? nfeExports.value().length : 0) + (nfeExport != null? 1 : 0)];
+			int index = 0;
+			if (nfeExports != null){
+				for (NFEExport nfeExp: nfeExports.value()) {
+					listaNFEExport[index++] = nfeExp;
+				}
+			}
+			if (nfeExport != null) {
+				listaNFEExport[index++] = nfeExport; 
+			}
+
+			if (listaNFEExport != null && listaNFEExport.length > 0) {
+				Object valor = metodo.invoke(notaFiscal, new Object[] {});
+
+				if (isNumeric(valor) || isDate(valor) || isLiteral(valor)) {
+					for (NFEExport nfeExp : listaNFEExport) {
+						if (nfeExp != null) {
+							String secao = this.listaSecoes.get(nfeExp.secao());
+
+							secao = executarAnotacao(secao, nfeExp, valor);
+
+							this.listaSecoes.put(nfeExp.secao(), secao);
+						}
+					}
+				} else if (valor != null) {
+					execute(valor);
+				}
+			}
+
+		}
+
+		for (Field campo : notaFiscal.getClass().getDeclaredFields()) {
+			campo.setAccessible(true);
+			Object valor = campo.get(notaFiscal);
 
 			if (isNumeric(valor) || isDate(valor) || isLiteral(valor)) {
-				NFEExports nfeExports = metodo.getAnnotation(NFEExports.class);
-				NFEExport nfeExport = metodo.getAnnotation(NFEExport.class);
+				NFEExports nfeExports = campo.getAnnotation(NFEExports.class);
+				NFEExport nfeExport = campo.getAnnotation(NFEExport.class);
 				
 				NFEExport listaNFEExport[] = new NFEExport[(nfeExports != null? nfeExports.value().length : 0) + (nfeExport != null? 1 : 0)];
 				int index = 0;
@@ -62,42 +134,38 @@ public class NFEExporter {
 					listaNFEExport[index++] = nfeExport; 
 				}
 
-				for (NFEExport nfeExp: listaNFEExport) {
-					if (nfeExp != null) {
-						String secao = listaSecoes.get(nfeExp.secao());
+				if (listaNFEExport != null && listaNFEExport.length > 0) {
+						for (NFEExport nfeExp : listaNFEExport) {
+							if (nfeExp != null) {
+								String secao = this.listaSecoes.get(nfeExp.secao());
 
-						executarAnotacao(secao, nfeExp, valor);
+								secao = executarAnotacao(secao, nfeExp, valor);
 
-						listaSecoes.put(nfeExp.secao(), secao);
-					}
+								this.listaSecoes.put(nfeExp.secao(), secao);
+							}
+						}
 				}
-			} else {
-				toString(valor);
+				
+			} else if (valor != null) {
+				execute(valor);
 			}
 
 		}
-
-		for (Field campo : notaFiscal.getClass().getFields()) {
-			campo.setAccessible(true);
-			Object valor = campo.get(notaFiscal);
-
-			if (isNumeric(valor) || isDate(valor) || isLiteral(valor)) {
-				NFEExport nfeExport = campo.getAnnotation(NFEExport.class);
-
-				if (nfeExport != null) {
-					String secao = listaSecoes.get(nfeExport.secao());
-
-					executarAnotacao(secao, nfeExport, valor);
-
-					listaSecoes.put(nfeExport.secao(), secao);
-				}
-
-			} else {
-				toString(valor);
-			}
+	}
+	
+	/**
+	 * Extrai a lista de seções para um String.
+	 * 
+	 * @see java.lang.Object#toString()
+	 */
+	public String toString(){
+		String conteudo = STRING_VAZIA;
+		
+		for (String secao: this.listaSecoes.values()) {
+			conteudo += secao + QUEBRA_LINHA;
 		}
-
-		 return null;
+		
+		return conteudo;
 	}
 	
 	/**
@@ -109,13 +177,13 @@ public class NFEExporter {
 	 * @param valor - Valor a ser incluido na seção.
 	 * @return - Linha com todos os campos da seção.
 	 */
-	private static String executarAnotacao(String secao, NFEExport nfeExport, Object valor){
+	private String executarAnotacao(String secao, NFEExport nfeExport, Object valor){
 		String secaoNome = nfeExport.secao();
 		int tamanho = nfeExport.tamanho();
 		int posicao = nfeExport.posicao();
 		String mascara = nfeExport.mascara();
 
-		if (secao == null) {
+		if (StringUtil.isEmpty(secao)) {
 			secao = secaoNome + SEPARADOR_SECAO;
 		}
 
@@ -135,29 +203,37 @@ public class NFEExporter {
 	 * @param tamanho - Tamanho a ser truncado.
 	 * @return - Valor convertido, mascarado e truncado.
 	 */
-	private static String converteCampoParaString(Object valor, String mascara, int tamanho){
+	private String converteCampoParaString(Object valor, String mascara, int tamanho){
 		
-		String valorString = null;
+		String valorString = STRING_VAZIA;
 		String mascaraUsada;
 		
-		if (isDate(valor)) {
+		if (valor != null) {
+			if (isDate(valor)) {
+				Date data;
+				mascaraUsada = (StringUtil.isEmpty(mascara)) ? MASCARA_DATA	: mascara;
+				if (valor instanceof Date) {
+					data = (Date) valor;
+				} else {
+					data = ((Calendar) valor).getTime();
+				}
+				valorString = DateUtil.formatarData(data, mascaraUsada);
+			} else if (isNumeric(valor)) {
 
-			Date data;
-			mascaraUsada = (StringUtil.isEmpty(mascara)) ? MASCARA_DATA : mascara;
-			if (valor instanceof Date) {
-				data = (Date) valor;
+				mascaraUsada = (StringUtil.isEmpty(mascara)) ? MASCARA_NUMBER : mascara;
+
+				valorString = new DecimalFormat(mascaraUsada, new DecimalFormatSymbols(new Locale("en_US"))) .format(valor);
+				if (StringUtil.isEmpty(mascara)) {
+					valorString = valorString.replace(",", "");
+				}
 			} else {
-				data = ((Calendar) valor).getTime();
+				valorString = valor.toString();
+				if (tamanho > 0) {
+					valorString = valorString.replace(SEPARADOR_SECAO, STRING_VAZIA).substring(0, tamanho);
+				}
 			}
-			valorString = DateUtil.formatarData(data, mascaraUsada);
-		} else if (isNumeric(valor)) {
-			
-			mascaraUsada = (StringUtil.isEmpty(mascara)) ? MASCARA_NUMBER : mascara;
-
-			valorString = new DecimalFormat(mascaraUsada, new DecimalFormatSymbols(new Locale("en_US"))).format(valor);
-			valorString = valorString.replace(",", "");
 		} else {
-			valorString = valor.toString().substring(0, tamanho);
+			valorString = STRING_VAZIA;
 		}
 		
 		return valorString.replace(SEPARADOR_SECAO, STRING_VAZIA);
@@ -171,7 +247,7 @@ public class NFEExporter {
 	 * @param posicao - Posição que será incluído na linha.
 	 * @return - Linha da seção com o campo adicionado.
 	 */
-	private static String addCampoToSecao(String secao, String valor, int posicao){
+	private String addCampoToSecao(String secao, String valor, int posicao){
 		
 		if (!secao.endsWith(SEPARADOR_SECAO)) {
 			secao += SEPARADOR_SECAO;
@@ -208,7 +284,7 @@ public class NFEExporter {
 	 * @param vezes - Quantidade de vezes.
 	 * @return - String com os valores repetidos.
 	 */
-	private static String repetirStringNoFinal(String valor, String separador, int vezes){
+	private String repetirStringNoFinal(String valor, String separador, int vezes){
 		String repeticao = STRING_VAZIA;
 		for (int i = 0; i < vezes; i++) {
 			repeticao += SEPARADOR_SECAO;
@@ -223,7 +299,7 @@ public class NFEExporter {
 	 * @param separador - Valor que será contado.
 	 * @return - Quantidade de separadores achados.
 	 */
-	private static int countSeparator(String valor, String separador){
+	private int countSeparator(String valor, String separador){
 		int count = 0; 
 		int passaSeparador = 0;
 		for (int i = 0; i <= valor.length() - separador.length(); i++) {
@@ -244,7 +320,7 @@ public class NFEExporter {
 	 * @param separador - String de separação.
 	 * @return Array de String.
 	 */
-	private static String[] divideStringBySeparator(String valor, String separador){
+	private String[] divideStringBySeparator(String valor, String separador){
 
 		int count = countSeparator(valor, separador); 
 		int index = 0;
@@ -272,10 +348,12 @@ public class NFEExporter {
 	 * @param valor - valor a ser comprado.
 	 * @return - True se for e False se não for. 
 	 */
-	private static boolean isNumeric(Object valor) {
-		return (valor instanceof BigDecimal) || (valor instanceof Double)
+	private boolean isNumeric(Object valor) {
+		return ((valor instanceof BigDecimal) || (valor instanceof Double)
 				|| (valor instanceof Integer) || (valor instanceof Long)
-				|| (valor instanceof BigInteger);
+				|| (valor instanceof BigInteger) || (valor instanceof Byte)
+				|| (valor instanceof Short) || (valor instanceof Float))
+				&& (valor != null);
 	}
 
 	/**
@@ -284,8 +362,9 @@ public class NFEExporter {
 	 * @param valor - valor a ser comprado.
 	 * @return - True se for e False se não for. 
 	 */
-	private static boolean isLiteral(Object valor) {
-		return (valor instanceof String) || (valor instanceof Character);
+	private boolean isLiteral(Object valor) {
+		return ((valor instanceof String) || (valor instanceof Character))
+				&& (valor != null);
 	}
 
 	/**
@@ -294,7 +373,8 @@ public class NFEExporter {
 	 * @param valor - valor a ser comprado.
 	 * @return - True se for e False se não for. 
 	 */
-	private static boolean isDate(Object valor) {
-		return (valor instanceof Date) || (valor instanceof Calendar);
+	private boolean isDate(Object valor) {
+		return ((valor instanceof Date) || (valor instanceof Calendar))
+				&& (valor != null);
 	}
 }
