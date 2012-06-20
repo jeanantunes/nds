@@ -29,7 +29,7 @@ public class EmailServiceImplTest extends AbstractRepositoryImplTest  {
 	@Before
 	public void setup() {
 		
-		save(Fixture.criarParametrosEmail());
+		update(Fixture.criarParametrosEmail());
 	}
 	//@Ignore(value = "Teste falha com ResourceNotFoundException")
 	@Test

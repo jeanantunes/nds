@@ -85,6 +85,8 @@ function Endereco(paramTela,paramMessage) {
 				});	
 				
 				_this.limparFormEndereco();
+
+				_this.preencherComboUF();
 				
 				$("#"+paramTela+"tipoEndereco").focus();
 			},
@@ -148,6 +150,8 @@ function Endereco(paramTela,paramMessage) {
 				$("#"+paramTela+"cidade").val(result.endereco.cidade);
 				$("#"+paramTela+"uf").val(result.endereco.uf);
 				$("#"+paramTela+"principal").attr("checked", result.enderecoPrincipal);
+				$("#"+paramTela+"codigoBairro").val(result.endereco.codigoBairro);
+				$("#"+paramTela+"codigoCidadeIBGE").val(result.endereco.codigoCidadeIBGE);
 			},
 			null, 
 			true,
@@ -242,29 +246,195 @@ function Endereco(paramTela,paramMessage) {
 	
 	this.pesquisarEnderecoPorCep = function () {
 	
-		var cep =  $("#"+paramTela+"cep").val();
-		
+		var cep = $("#"+paramTela+"cep").val();
+
 		$.postJSON(
-				contextPath+'/cadastro/endereco/obterEnderecoPorCep',
+			contextPath+'/cadastro/endereco/obterEnderecoPorCep',
 			{ "cep": cep },			 
 			function(result) {
 				$("#"+paramTela+"idEndereco").val(result.id);
-				$("#"+paramTela+"tipoEndereco").val(result.tipoEndereco);
-				$("#"+paramTela+"cep").val(result.endereco.cep);
-				$("#"+paramTela+"tipoLogradouro").val(result.endereco.tipoLogradouro);
-				$("#"+paramTela+"logradouro").val(result.endereco.logradouro);
-				$("#"+paramTela+"numero").val(result.endereco.numero);
-				$("#"+paramTela+"complemento").val(result.endereco.complemento);
-				$("#"+paramTela+"bairro").val(result.endereco.bairro);
-				$("#"+paramTela+"cidade").val(result.endereco.cidade);
-				$("#"+paramTela+"uf").val(result.endereco.uf);
-				$("#"+paramTela+"principal").attr("checked", result.enderecoPrincipal);
+				$("#"+paramTela+"tipoLogradouro").val(result.tipoLogradouro);
+				$("#"+paramTela+"logradouro").val(result.logradouro);
+				$("#"+paramTela+"codigoBairro").val(result.codigoBairro);
+				$("#"+paramTela+"bairro").val(result.bairro);
+				$("#"+paramTela+"uf").val(result.uf);
+				$("#"+paramTela+"codigoCidadeIBGE").val(result.codigoCidadeIBGE);
+				$("#"+paramTela+"cidade").val(result.localidade);
 			},
 			null, 
 			true,
 			paramMessage
 		);
 	};
+	
+	this.preencherComboUF = function () {
+
+		var idComboUF = "#" + paramTela + "uf";
+
+		$.postJSON(
+			contextPath + '/cadastro/endereco/obterDadosComboUF',
+			null,
+			function(result) {
+
+				$(idComboUF).html("");
+				
+				$(idComboUF).append('<option selected="selected"></option>');
+
+				$.each(result, function(index, value) {
+
+					var option = "<option value='" + value + "'>" + value + "</option>";
+
+					$(idComboUF).append(option);	
+				});
+			},
+			null,
+			true
+		);
+	}
+
+	this.autoCompletarLocalidades = function(isOnBlur) {
+
+		var idComboUF = "#" + paramTela + "uf";
+
+		var uf = $(idComboUF).val();
+
+		var idCampoCidade = "#" + paramTela + "cidade";
+		
+		var nomeLocalidade = $(idCampoCidade).val();
+		
+		if (nomeLocalidade && nomeLocalidade.length > 2 && uf) {
+
+			$.postJSON(
+				contextPath + '/cadastro/endereco/autoCompletarLocalidadePorNome',
+				{ 
+					'siglaUF' : uf,
+					'nomeLocalidade' : nomeLocalidade
+				},
+				function(result) {
+
+					if (isOnBlur) {
+
+						var valor = result[0] ? result[0].value : "";
+
+						var codigoIBGE = result[0] ? result[0].chave.$ : "";
+
+						$(idCampoCidade).val(valor);
+
+						$("#"+paramTela+"codigoCidadeIBGE").val(codigoIBGE);
+
+					} else {
+
+						$(idCampoCidade).autocomplete({
+							source: result
+						});	
+					}
+				},
+				null,
+				true
+			);
+		}
+	}
+
+	this.autoCompletarBairros = function(isOnBlur) {
+
+		var nomeBairro = $("#"+paramTela+"bairro").val();
+		
+		var codigoIBGE = $("#"+paramTela+"codigoCidadeIBGE").val();
+		
+		if (nomeBairro && nomeBairro.length > 2 && codigoIBGE) {
+
+			$.postJSON(
+				contextPath + '/cadastro/endereco/autoCompletarBairroPorNome',
+				{ 
+					'codigoIBGE' : codigoIBGE,
+					'nomeBairro' : nomeBairro
+				},
+				function(result) {
+
+					if (isOnBlur) {
+
+						var nome = result[0] ? result[0].value : "";
+
+						var codigoBairro = result[0] ? result[0].chave.$ : "";
+
+						$("#"+paramTela+"bairro").val(nome);
+
+						$("#"+paramTela+"codigoBairro").val(codigoBairro);
+
+					} else {
+
+						$("#"+paramTela+"bairro").autocomplete({
+							source: result
+						});	
+					}					
+				},
+				null,
+				true
+			);
+		}
+	}
+	
+	this.autoCompletarLogradouros = function(isOnBlur) {
+
+		var codigoBairro = $("#"+paramTela+"codigoBairro").val();
+		
+		var nomeLogradouros = $("#"+paramTela+"logradouro").val();
+
+		if (nomeLogradouros && nomeLogradouros.length > 2 && codigoBairro) {
+
+			$.postJSON(
+				contextPath + '/cadastro/endereco/autoCompletarLogradourosPorNome',
+				{ 
+					'codigoBairro' : codigoBairro,
+					'nomeLogradouro' : nomeLogradouros
+				},
+				function(result) {
+
+					if (isOnBlur) {
+
+						var nome = result[0] ? result[0].value : nomeLogradouros;
+
+						$("#"+paramTela+"logradouro").val(nome);
+
+					} else {
+
+						$("#"+paramTela+"logradouro").autocomplete({
+							source: result
+						});	
+					}					
+				},
+				null,
+				true
+			);
+		}
+	}
+	
+	this.autoCompletarTipoLogradouro = function(isOnBlur) {
+
+		var nomeTipoLogradouro = $("#"+paramTela+"tipoLogradouro").val();
+		
+		$.postJSON(
+			contextPath + '/cadastro/endereco/autoCompletarTipoLogradouroPorNome',
+			{ 'nomeTipoLogradouro' : nomeTipoLogradouro },
+			function(result) {
+
+				if (isOnBlur) {
+
+					var nome = result[0] ? result[0].value : "";
+
+					$("#"+paramTela+"tipoLogradouro").val(nome);
+
+				} else {
+
+					$("#"+paramTela+"tipoLogradouro").autocomplete({
+						source: result
+					});	
+				}					
+			},
+			null,
+			true
+		);
+	}
 	
 	this.popularGrid = function(){
 		

@@ -7,59 +7,147 @@ public class EnderecoVO implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	
-	private TipoLogradouroVO tipoLogradouro;
-	private LogradouroVO logradouro;
-	private BairroVO bairro;
-	private LocalidadeVO localidade;
-	private UnidadeFederacaoVO unidadeFederecao;
-	private PaisVO pais;
+	private String uf;
 	
-	public TipoLogradouroVO getTipoLogradouro() {
-		return tipoLogradouro;
-	}
+	private String cep;
 	
-	public void setTipoLogradouro(TipoLogradouroVO tipoLogradouro) {
-		this.tipoLogradouro = tipoLogradouro;
-	}
+	private String codigoCidadeIBGE;
 	
-	public LogradouroVO getLogradouro() {
-		return logradouro;
-	}
+	private String idLocalidade;
 	
-	public void setLogradouro(LogradouroVO logradouro) {
-		this.logradouro = logradouro;
-	}
+	private String localidade;
 	
-	public BairroVO getBairro() {
-		return bairro;
-	}
+	private String logradouro;
 	
-	public void setBairro(BairroVO bairro) {
-		this.bairro = bairro;
-	}
+	private String tipoLogradouro;
 	
-	public LocalidadeVO getLocalidade() {
-		return localidade;
-	}
+	private String codigoBairro;
 	
-	public void setLocalidade(LocalidadeVO localidade) {
-		this.localidade = localidade;
-	}
-	
-	public UnidadeFederacaoVO getUnidadeFederecao() {
-		return unidadeFederecao;
-	}
-	
-	public void setUnidadeFederecao(UnidadeFederacaoVO unidadeFederecao) {
-		this.unidadeFederecao = unidadeFederecao;
-	}
-	
-	public PaisVO getPais() {
-		return pais;
-	}
-	
-	public void setPais(PaisVO pais) {
-		this.pais = pais;
+	private String bairro;
+
+	/**
+	 * @return the uf
+	 */
+	public String getUf() {
+		return uf;
 	}
 
+	/**
+	 * @param uf the uf to set
+	 */
+	public void setUf(String uf) {
+		this.uf = uf;
+	}
+
+	/**
+	 * @return the cep
+	 */
+	public String getCep() {
+		return cep;
+	}
+
+	/**
+	 * @param cep the cep to set
+	 */
+	public void setCep(String cep) {
+		this.cep = cep;
+	}
+
+	/**
+	 * @return the codigoCidadeIBGE
+	 */
+	public String getCodigoCidadeIBGE() {
+		return codigoCidadeIBGE;
+	}
+
+	/**
+	 * @param codigoCidadeIBGE the codigoCidadeIBGE to set
+	 */
+	public void setCodigoCidadeIBGE(String codigoCidadeIBGE) {
+		this.codigoCidadeIBGE = codigoCidadeIBGE;
+	}
+	
+	/**
+	 * @return the idLocalidade
+	 */
+	public String getIdLocalidade() {
+		return idLocalidade;
+	}
+
+	/**
+	 * @param idLocalidade the idLocalidade to set
+	 */
+	public void setIdLocalidade(String idLocalidade) {
+		this.idLocalidade = idLocalidade;
+	}
+
+	/**
+	 * @return the localidade
+	 */
+	public String getLocalidade() {
+		return localidade;
+	}
+
+	/**
+	 * @param localidade the localidade to set
+	 */
+	public void setLocalidade(String localidade) {
+		this.localidade = localidade;
+	}
+
+	/**
+	 * @return the logradouro
+	 */
+	public String getLogradouro() {
+		return logradouro;
+	}
+
+	/**
+	 * @param logradouro the logradouro to set
+	 */
+	public void setLogradouro(String logradouro) {
+		this.logradouro = logradouro;
+	}
+
+	/**
+	 * @return the tipoLogradouro
+	 */
+	public String getTipoLogradouro() {
+		return tipoLogradouro;
+	}
+
+	/**
+	 * @param tipoLogradouro the tipoLogradouro to set
+	 */
+	public void setTipoLogradouro(String tipoLogradouro) {
+		this.tipoLogradouro = tipoLogradouro;
+	}
+
+	/**
+	 * @return the codigoBairro
+	 */
+	public String getCodigoBairro() {
+		return codigoBairro;
+	}
+
+	/**
+	 * @param codigoBairro the codigoBairro to set
+	 */
+	public void setCodigoBairro(String codigoBairro) {
+		this.codigoBairro = codigoBairro;
+	}
+
+	/**
+	 * @return the bairro
+	 */
+	public String getBairro() {
+		return bairro;
+	}
+
+	/**
+	 * @param bairro the bairro to set
+	 */
+	public void setBairro(String bairro) {
+		this.bairro = bairro;
+	}
 }
