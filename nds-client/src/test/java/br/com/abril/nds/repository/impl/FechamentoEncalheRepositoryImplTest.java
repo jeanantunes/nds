@@ -39,10 +39,7 @@ public class FechamentoEncalheRepositoryImplTest extends AbstractRepositoryImplT
 		Calendar dataEncalhe = Calendar.getInstance();
 		dataEncalhe.set(2012, 1, 28);
 		
-		FiltroFechamentoEncalheDTO filtro = new FiltroFechamentoEncalheDTO();
-		filtro.setDataEncalhe(dataEncalhe.getTime());
-		
-		List<FechamentoEncalhe> resultado = this.fechamentoEncalheRepository.buscarFechamentoEncalhe(filtro);
+		List<FechamentoEncalhe> resultado = this.fechamentoEncalheRepository.buscarFechamentoEncalhe(dataEncalhe.getTime());
 		
 		Assert.assertNotNull(resultado);
 	}
@@ -94,4 +91,16 @@ public class FechamentoEncalheRepositoryImplTest extends AbstractRepositoryImplT
 		Assert.assertNotNull(listaFechamentoFisicoLogicoDTO);
 	}
 	
+	@Test
+	public void testarBuscaQuantidadeConferencia() {
+		
+		Calendar dataEncalhe = Calendar.getInstance();
+		dataEncalhe.set(2012, 1, 28);
+		
+		int count = this.fechamentoEncalheRepository.buscaQuantidadeConferencia(dataEncalhe.getTime(), true);
+		
+		System.out.println(count);
+		
+		assert count > 0;
+	}
 }
