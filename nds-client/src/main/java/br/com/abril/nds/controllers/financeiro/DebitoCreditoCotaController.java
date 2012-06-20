@@ -757,7 +757,7 @@ public class DebitoCreditoCotaController {
 							"true" : "false";
 
 			if ("true".equals(isEditavel) && StatusAprovacao.APROVADO == movimentoFinanceiroCota.getStatus()
-					|| DateUtil.isDataInicialMaiorDataFinal(DateUtil.removerTimestamp(this.distribuidorService.obter().getDataOperacao()), movimentoFinanceiroCota.getDataCriacao())) {
+					|| DateUtil.isDataInicialMaiorDataFinal(DateUtil.removerTimestamp(this.distribuidorService.obter().getDataOperacao()), movimentoFinanceiroCota.getData())) {
 
 				isEditavel = "false"; 
 			}

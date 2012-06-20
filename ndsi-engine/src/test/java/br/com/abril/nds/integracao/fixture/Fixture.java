@@ -7,11 +7,13 @@ import java.util.List;
 import java.util.Set;
 
 import br.com.abril.nds.model.DiaSemana;
+import br.com.abril.nds.model.LeiautePicking;
 import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.StatusCobranca;
 import br.com.abril.nds.model.StatusConfirmacao;
 import br.com.abril.nds.model.StatusControle;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
+import br.com.abril.nds.model.cadastro.Algoritmo;
 import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Carteira;
@@ -40,6 +42,10 @@ import br.com.abril.nds.model.cadastro.ParametroCobrancaCota;
 import br.com.abril.nds.model.cadastro.ParametroContratoCota;
 import br.com.abril.nds.model.cadastro.ParametroDistribuicaoCota;
 import br.com.abril.nds.model.cadastro.ParametroSistema;
+import br.com.abril.nds.model.cadastro.ParametroUsuarioBox;
+import br.com.abril.nds.model.cadastro.ParametrosAprovacaoDistribuidor;
+import br.com.abril.nds.model.cadastro.ParametrosRecolhimentoDistribuidor;
+import br.com.abril.nds.model.cadastro.Periodicidade;
 import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
 import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
@@ -50,13 +56,16 @@ import br.com.abril.nds.model.cadastro.ProcuracaoEntregador;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.Rota;
+import br.com.abril.nds.model.cadastro.Roteirizacao;
 import br.com.abril.nds.model.cadastro.Roteiro;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.Telefone;
 import br.com.abril.nds.model.cadastro.TelefoneDistribuidor;
 import br.com.abril.nds.model.cadastro.TelefoneEntregador;
+import br.com.abril.nds.model.cadastro.TipoAtividade;
 import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
+import br.com.abril.nds.model.cadastro.TipoDesconto;
 import br.com.abril.nds.model.cadastro.TipoEndereco;
 import br.com.abril.nds.model.cadastro.TipoEntrega;
 import br.com.abril.nds.model.cadastro.TipoFormaCobranca;
@@ -67,6 +76,7 @@ import br.com.abril.nds.model.cadastro.TipoLicencaMunicipal;
 import br.com.abril.nds.model.cadastro.TipoParametroSistema;
 import br.com.abril.nds.model.cadastro.TipoProduto;
 import br.com.abril.nds.model.cadastro.TipoRegistroCobranca;
+import br.com.abril.nds.model.cadastro.TipoRoteiro;
 import br.com.abril.nds.model.cadastro.TipoTelefone;
 import br.com.abril.nds.model.cadastro.pdv.AreaInfluenciaPDV;
 import br.com.abril.nds.model.cadastro.pdv.CaracteristicasPDV;
@@ -126,6 +136,8 @@ import br.com.abril.nds.model.fiscal.StatusEmissaoNfe;
 import br.com.abril.nds.model.fiscal.StatusNotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.TipoEmissaoNfe;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
+import br.com.abril.nds.model.fiscal.TipoOperacao;
+import br.com.abril.nds.model.fiscal.TipoUsuarioNotaFiscal;
 import br.com.abril.nds.model.integracao.EventoExecucao;
 import br.com.abril.nds.model.integracao.InterfaceExecucao;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalhe;
@@ -148,14 +160,19 @@ import br.com.abril.nds.model.planejamento.TipoLancamentoParcial;
 import br.com.abril.nds.model.seguranca.Usuario;
 
 public class Fixture {
-
+	
+	public static PessoaJuridica juridicaAbril() {
+		return pessoaJuridica("Abril", "00.000.000/0002-00", "010.000.000.000",
+				"abril@mail.com", "99.999-1");
+	}
+	
 	public static PessoaJuridica juridicaFC() {
 		return pessoaJuridica("FC", "00.000.000/0001-00", "000.000.000.000",
 				"fc@mail.com", "99.999-9");
 	}
 	
 	public static CotaAusente cotaAusenteAtivo(){
-		Box box1 = Fixture.criarBox("Box-1", "BX-001", TipoBox.LANCAMENTO);
+		Box box1 = Fixture.criarBox("Box-1", "BX-001", TipoBox.LANCAMENTO, false);
 		Pessoa manoel = Fixture.pessoaFisica("123.456.789-00",
 				"sys.discover@gmail.com", "Manoel da Silva");	
 		Cota cotaManoel = Fixture.cota(123, manoel, SituacaoCadastro.ATIVO, box1);
@@ -163,6 +180,22 @@ public class Fixture {
 		
 	}
 
+	
+	public static ParametroUsuarioBox parametroUsuarioBox(
+			Box box, 
+			Usuario usuario, 
+			boolean principal) {
+	
+		ParametroUsuarioBox parametroUsuarioBox = new ParametroUsuarioBox();
+		
+		parametroUsuarioBox.setBox(box);
+		parametroUsuarioBox.setUsuario(usuario);
+		parametroUsuarioBox.setPrincipal(principal);
+		
+		return parametroUsuarioBox;
+	}
+	
+	
 	public static PessoaJuridica juridicaDinap() {		
 		return pessoaJuridica("Dinap", "11.111.111/0001-00", "111.111.111.111",
 				"dinap@mail.com", "99.999-8");
@@ -174,99 +207,99 @@ public class Fixture {
 	}
 
 	public static Fornecedor fornecedorFC(TipoFornecedor tipoFornecedor) {
-		return fornecedor(juridicaFC(), SituacaoCadastro.ATIVO, true, tipoFornecedor);
+		return fornecedor(juridicaFC(), SituacaoCadastro.ATIVO, true, tipoFornecedor, 1);
 	}
 
 	public static Fornecedor fornecedorDinap(TipoFornecedor tipoFornecedor) {
-		return fornecedor(juridicaDinap(), SituacaoCadastro.ATIVO, true, tipoFornecedor);
+		return fornecedor(juridicaDinap(), SituacaoCadastro.ATIVO, true, tipoFornecedor, 2);
 	}
 	
 	public static Fornecedor fornecedorAcme(TipoFornecedor tipoFornecedor) {
-		return fornecedor(juridicaAcme(), SituacaoCadastro.ATIVO, false, tipoFornecedor);
+		return fornecedor(juridicaAcme(), SituacaoCadastro.ATIVO, false, tipoFornecedor, 3);
 	}
 
 	public static Produto produtoVeja(TipoProduto tipoProduto) {
 		return produto("1", "Veja", "Veja", PeriodicidadeProduto.SEMANAL,
-				tipoProduto);
+				tipoProduto, 5, 5, BigDecimal.TEN);
 	}
 
 	public static Produto produtoQuatroRodas(TipoProduto tipoProduto) {
 		return produto("2", "Quatro Rodas", "Quatro Rodas",
-				PeriodicidadeProduto.MENSAL, tipoProduto);
+				PeriodicidadeProduto.MENSAL, tipoProduto, 5, 5, BigDecimal.TEN);
 	}
 
 	public static Produto produtoInfoExame(TipoProduto tipoProduto) {
 		return produto("3", "Info Exame", "Info Exame",
-				PeriodicidadeProduto.MENSAL, tipoProduto);
+				PeriodicidadeProduto.MENSAL, tipoProduto, 5, 5, BigDecimal.TEN);
 	}
 
 	public static Produto produtoCapricho(TipoProduto tipoProduto) {
 		return produto("4", "Capricho", "Capricho",
-				PeriodicidadeProduto.QUINZENAL, tipoProduto);
+				PeriodicidadeProduto.QUINZENAL, tipoProduto, 5, 5, BigDecimal.TEN);
 	}
 	
 	public static Produto produtoSuperInteressante(TipoProduto tipoProduto) {
 		return produto("5",
 				"Superinteressante", "Superinteressante",
-				PeriodicidadeProduto.MENSAL, tipoProduto);
+				PeriodicidadeProduto.MENSAL, tipoProduto, 5, 5, BigDecimal.TEN);
 	}
 	
 	public static Produto produtoBoaForma(TipoProduto tipoProduto) {
 		return produto("6", "Boa Forma", "Boa Forma",
-				PeriodicidadeProduto.MENSAL, tipoProduto);
+				PeriodicidadeProduto.MENSAL, tipoProduto, 5, 5, BigDecimal.TEN);
 	}
 	
 	public static Produto produtoBravo(TipoProduto tipoProduto) {
 		return produto("7", "Bravo", "Bravo",
-				PeriodicidadeProduto.MENSAL, tipoProduto);
+				PeriodicidadeProduto.MENSAL, tipoProduto, 5, 5, BigDecimal.TEN);
 	}
 	
 	public static Produto produtoContigo(TipoProduto tipoProduto) {
 		return produto("8", "Contigo", "Contigo",
-				PeriodicidadeProduto.QUINZENAL, tipoProduto);
+				PeriodicidadeProduto.QUINZENAL, tipoProduto, 5, 5, BigDecimal.TEN);
 	}
 	
 	public static Produto produtoCaras(TipoProduto tipoProduto) {
 		return produto("9", "Caras", "Caras",
-				PeriodicidadeProduto.MENSAL, tipoProduto);
+				PeriodicidadeProduto.MENSAL, tipoProduto, 5, 5, BigDecimal.TEN);
 	}
 	
 	public static Produto produtoClaudia(TipoProduto tipoProduto) {
 		return produto("10", "Claudia", "Claudia",
-				PeriodicidadeProduto.SEMANAL, tipoProduto);
+				PeriodicidadeProduto.SEMANAL, tipoProduto, 5, 5, BigDecimal.TEN);
 	}
 	
 	public static Produto produtoCasaClaudia(TipoProduto tipoProduto) {
 		return produto("11", "Casa Claudia", "Casa Claudia",
-				PeriodicidadeProduto.MENSAL, tipoProduto);
+				PeriodicidadeProduto.MENSAL, tipoProduto, 5, 5, BigDecimal.TEN);
 	}
 	
 	public static Produto produtoManequim(TipoProduto tipoProduto) {
 		return produto("12", "Manequim", "Manequim",
-				PeriodicidadeProduto.SEMANAL, tipoProduto);
+				PeriodicidadeProduto.SEMANAL, tipoProduto, 5, 5, BigDecimal.TEN);
 	}
 	
 	public static Produto produtoNationalGeographic(TipoProduto tipoProduto) {
 		return produto("13", "National Geographic", "National Geographic",
-				PeriodicidadeProduto.MENSAL, tipoProduto);
+				PeriodicidadeProduto.MENSAL, tipoProduto, 5, 5, BigDecimal.TEN);
 	}
 	
 	public static Produto produtoPlacar(TipoProduto tipoProduto) {
 		return produto("14", "Placar", "Placar",
-				PeriodicidadeProduto.MENSAL, tipoProduto);
+				PeriodicidadeProduto.MENSAL, tipoProduto, 5, 5, BigDecimal.TEN);
 	}
 	
 	public static Produto produtoCromoReiLeao(TipoProduto tipoProduto) {
 		return produto("15", "Cromo Rei Leao", "Cromo Rei Leao",
-				PeriodicidadeProduto.SEMANAL, tipoProduto);
+				PeriodicidadeProduto.SEMANAL, tipoProduto, 5, 5, BigDecimal.TEN);
 	}
 
 	public static TipoProduto tipoRevista() {
-		return tipoProduto("Revistas", GrupoProduto.REVISTA, "99000642");
+		return tipoProduto("Revistas", GrupoProduto.REVISTA, "99000642", null, 001L);
 	}
 	
 	public static TipoProduto tipoCromo() {
-		return tipoProduto("Cromos", GrupoProduto.CROMO, "1230004560");
+		return tipoProduto("Cromos", GrupoProduto.CROMO, "1230004560", null, 002L);
 	}
 	
 	public static TipoFornecedor tipoFornecedorPublicacao() {
@@ -278,7 +311,7 @@ public class Fixture {
 	}
 	
 	public static Box boxReparte300() {
-		return criarBox("300", "Box 300", TipoBox.LANCAMENTO);
+		return criarBox("300", "Box 300", TipoBox.LANCAMENTO, false);
 	}
 	
 	public static Banco hsbc(Carteira carteira) {
@@ -287,7 +320,7 @@ public class Fixture {
 	}
 	
 	public static Editor editoraAbril() {
-		return criarEditor("Editora Abril", 10L);
+		return criarEditor("Editora Abril", 10L, juridicaAbril(), true);
 	}
 
 	public static Date criarData(int dia, int mes, int ano) {
@@ -346,21 +379,25 @@ public class Fixture {
 
 	public static Fornecedor fornecedor(PessoaJuridica juridica,
 			SituacaoCadastro situacaoCadastro, boolean permiteBalanceamento,
-			TipoFornecedor tipo) {
+			TipoFornecedor tipo, Integer codigoInterface) {
 		Fornecedor fornecedor = new Fornecedor();
 		fornecedor.setJuridica(juridica);
 		fornecedor.setSituacaoCadastro(situacaoCadastro);
 		fornecedor.setPermiteBalanceamento(permiteBalanceamento);
 		fornecedor.setTipoFornecedor(tipo);
+		fornecedor.setInicioAtividade(new Date());
+		fornecedor.setCodigoInterface(codigoInterface);
 		return fornecedor;
 	}
 
 	public static TipoProduto tipoProduto(String descricao, GrupoProduto grupo,
-			String ncm) {
+			String codigoNCM, String codigoNBM, Long codigo) {
 		TipoProduto tipoProduto = new TipoProduto();
 		tipoProduto.setDescricao(descricao);
 		tipoProduto.setGrupoProduto(grupo);
-		//tipoProduto.setNcm(ncm);
+		tipoProduto.setCodigo(codigo);
+		tipoProduto.setCodigoNBM(codigoNBM);
+		tipoProduto.setCodigoNCM(codigoNCM);
 		return tipoProduto;
 	}
 	
@@ -372,20 +409,29 @@ public class Fixture {
 	}
 
 	public static Produto produto(String codigo, String descricao, String nome,
-			PeriodicidadeProduto periodicidade, TipoProduto tipo) {
+								  PeriodicidadeProduto periodicidade, TipoProduto tipo, 
+								  int peb, int pacotePadrao, BigDecimal peso) {
+		
 		Produto produto = new Produto();
 		produto.setCodigo(codigo);
 		produto.setDescricao(descricao);
 		produto.setNome(nome);
 		produto.setPeriodicidade(periodicidade);
 		produto.setTipoProduto(tipo);
+		produto.setPeb(peb);
+		produto.setPacotePadrao(pacotePadrao);
+		produto.setPeso(peso);
+		
 		return produto;
 	}
 
-	public static ProdutoEdicao produtoEdicao(Long numeroEdicao,
+	public static ProdutoEdicao produtoEdicao(String codigoProdutoEdicao, Long numeroEdicao, 
 			int pacotePadrao, int peb, BigDecimal peso, BigDecimal precoCusto,
-			BigDecimal precoVenda, Produto produto) {
+			BigDecimal precoVenda, String codigoDeBarras, Long cdSMNotUsedAnyMore, Produto produto, 
+			BigDecimal expectativaVenda, boolean parcial) {
+		
 		ProdutoEdicao produtoEdicao = new ProdutoEdicao();
+		produtoEdicao.setCodigo(codigoProdutoEdicao);
 		produtoEdicao.setNumeroEdicao(numeroEdicao);
 		produtoEdicao.setPacotePadrao(pacotePadrao);
 		produtoEdicao.setPeb(peb);
@@ -393,12 +439,14 @@ public class Fixture {
 		produtoEdicao.setPrecoCusto(precoCusto);
 		produtoEdicao.setPrecoVenda(precoVenda);
 		produtoEdicao.setProduto(produto);
-		produtoEdicao.setNumeroEdicao(numeroEdicao);
+		produtoEdicao.setCodigoDeBarras(codigoDeBarras);
+		produtoEdicao.setExpectativaVenda(expectativaVenda);
+		produtoEdicao.setParcial(parcial);
 		
 		produtoEdicao.setOrigemInterface(Boolean.TRUE);
 		return produtoEdicao;
 	}
-
+	
 	public static Lancamento lancamento(TipoLancamento tipoLancamento,
 			ProdutoEdicao produtoEdicao, Date dlp, Date drp, Date dataCriacao,
 			Date dataStatus, BigDecimal reparte, StatusLancamento statusLancamento,
@@ -476,7 +524,9 @@ public class Fixture {
 			Date dataInicio,
 			Date dataFim,
 			Date dataOperacao,
-			StatusOperacao statusOperacao) {
+			StatusOperacao statusOperacao,
+			Usuario usuario,
+			Box box) {
 		
 		ControleConferenciaEncalheCota controleConferenciaEncalheCota = new ControleConferenciaEncalheCota();
 		
@@ -486,6 +536,8 @@ public class Fixture {
 		controleConferenciaEncalheCota.setDataFim(dataFim);
 		controleConferenciaEncalheCota.setDataOperacao(dataOperacao);
 		controleConferenciaEncalheCota.setStatus(statusOperacao);
+		controleConferenciaEncalheCota.setUsuario(usuario);
+		controleConferenciaEncalheCota.setBox(box);
 		
 		return controleConferenciaEncalheCota;
 	}
@@ -540,8 +592,47 @@ public class Fixture {
 		distribuidor.setJuridica(juridica);
 		distribuidor.setPoliticasCobranca(politicasCobranca);
 		distribuidor.setCapacidadeDistribuicao(new BigDecimal("10000"));
-		distribuidor.setCapacidadeRecolhimento(new BigDecimal("10000"));
+		distribuidor.setCapacidadeRecolhimento(new BigDecimal("1000"));
 		distribuidor.setPreenchimentoAutomaticoPDV(true);
+		distribuidor.setExecutaRecolhimentoParcial(true);
+		distribuidor.setFatorRelancamentoParcial(7);
+		distribuidor.setQuantidadeDiasSuspensaoCotas(7);
+		distribuidor.setValorConsignadoSuspensaoCotas(BigDecimal.TEN);
+		distribuidor.setLeiautePicking(LeiautePicking.DOIS);
+		distribuidor.setRequerAutorizacaoEncalheSuperaReparte(false);
+		distribuidor.setObrigacaoFiscao(true);
+		distribuidor.setRegimeEspecial(true);
+		distribuidor.setUtilizaProcuracaoEntregadores(true);
+		distribuidor.setInformacoesComplementaresProcuracao("Info Complementares Procuração");
+		distribuidor.setUtilizaGarantiaPdv(false);
+		distribuidor.setParcelamentoDividas(false);
+		distribuidor.setNegociacaoAteParcelas(Integer.valueOf(3));
+		distribuidor.setPermitePagamentoDividasDivergentes(false);
+		distribuidor.setUtilizaControleAprovacao(false);
+		distribuidor.setPrazoFollowUp(Integer.valueOf(7));
+		distribuidor.setPrazoAvisoPrevioValidadeGarantia(Integer.valueOf(7));
+		distribuidor.setQtdDiasLimiteParaReprogLancamento(Integer.valueOf(7));
+		
+		ParametrosRecolhimentoDistribuidor prd = new ParametrosRecolhimentoDistribuidor();
+		prd.setConferenciaCegaEncalhe(false);
+		prd.setConferenciaCegaRecebimento(false);
+		prd.setDiaRecolhimentoPrimeiro(false);
+		prd.setDiaRecolhimentoSegundo(false);
+		prd.setDiaRecolhimentoTerceiro(false);
+		prd.setDiaRecolhimentoQuarto(false);
+		prd.setDiaRecolhimentoQuinto(false);
+		prd.setPermiteRecolherDiasPosteriores(false);
+		distribuidor.setParametrosRecolhimentoDistribuidor(prd);
+		
+		ParametrosAprovacaoDistribuidor pad = new ParametrosAprovacaoDistribuidor();
+		pad.setDebitoCredito(false);
+		pad.setNegociacao(false);
+		pad.setAjusteEstoque(false);
+		pad.setPostergacaoCobranca(false);
+		pad.setDevolucaoFornecedor(false);
+		pad.setRecibo(false);
+		pad.setFaltasSobras(false);
+		distribuidor.setParametrosAprovacaoDistribuidor(pad);
 		
 		return distribuidor;
 	}
@@ -748,6 +839,38 @@ public class Fixture {
 	
 		return tipoMovimento;
 	}
+
+	public static TipoMovimentoEstoque tipoMovimentoRecebimentoEncalheJuramentado() {
+		TipoMovimentoEstoque tipoMovimento = new TipoMovimentoEstoque();
+		tipoMovimento.setAprovacaoAutomatica(true);
+		tipoMovimento.setDescricao("Recebimento Encalhe Juramentado");
+		tipoMovimento.setIncideDivida(true);
+		tipoMovimento.setGrupoMovimentoEstoque(GrupoMovimentoEstoque.RECEBIMENTO_ENCALHE_JURAMENTADO);
+	
+		return tipoMovimento;
+	}
+
+	public static TipoMovimentoEstoque tipoMovimentoRecebimentoEncalhe() {
+		TipoMovimentoEstoque tipoMovimento = new TipoMovimentoEstoque();
+		tipoMovimento.setAprovacaoAutomatica(true);
+		tipoMovimento.setDescricao("Recebimento Encalhe");
+		tipoMovimento.setIncideDivida(true);
+		tipoMovimento.setGrupoMovimentoEstoque(GrupoMovimentoEstoque.RECEBIMENTO_ENCALHE);
+	
+		return tipoMovimento;
+	}
+
+	public static TipoMovimentoEstoque tipoMovimentoSuplementarEnvioEncalheAnteriroProgramacao() {
+		TipoMovimentoEstoque tipoMovimento = new TipoMovimentoEstoque();
+		tipoMovimento.setAprovacaoAutomatica(true);
+		tipoMovimento.setDescricao("Suplementar Envio de Encalhe Anterior Programacao");
+		tipoMovimento.setIncideDivida(true);
+		tipoMovimento.setGrupoMovimentoEstoque(GrupoMovimentoEstoque.SUPLEMENTAR_ENVIO_ENCALHE_ANTERIOR_PROGRAMACAO);
+	
+		return tipoMovimento;
+	}
+
+	
 	
 	public static TipoMovimentoFinanceiro tipoMovimentoFinanceiroCompraEncalhe() {
 		TipoMovimentoFinanceiro tipoMovimento = new TipoMovimentoFinanceiro();
@@ -763,6 +886,16 @@ public class Fixture {
 		tipoMovimento.setDescricao("Venda Encalhe");
 		tipoMovimento.setIncideDivida(true);
 		tipoMovimento.setGrupoMovimentoEstoque(GrupoMovimentoEstoque.VENDA_ENCALHE);
+	
+		return tipoMovimento;
+	}
+	
+	public static TipoMovimentoEstoque tipoMovimentoEstornoVendaEncalhe() {
+		TipoMovimentoEstoque tipoMovimento = new TipoMovimentoEstoque();
+		tipoMovimento.setAprovacaoAutomatica(true);
+		tipoMovimento.setDescricao("Estorno Venda Encalhe");
+		tipoMovimento.setIncideDivida(true);
+		tipoMovimento.setGrupoMovimentoEstoque(GrupoMovimentoEstoque.ESTORNO_VENDA_ENCALHE);
 	
 		return tipoMovimento;
 	}
@@ -790,6 +923,22 @@ public class Fixture {
 		tipoMovimento.setAprovacaoAutomatica(true);
 		tipoMovimento.setDescricao("Débito");
 		tipoMovimento.setGrupoMovimentoFinaceiro(GrupoMovimentoFinaceiro.DEBITO);
+		return tipoMovimento;
+	}
+	
+	public static TipoMovimentoFinanceiro tipoMovimentoFinanceiroDebitoNA() {
+		TipoMovimentoFinanceiro tipoMovimento = new TipoMovimentoFinanceiro();
+		tipoMovimento.setAprovacaoAutomatica(true);
+		tipoMovimento.setDescricao("NA");
+		tipoMovimento.setGrupoMovimentoFinaceiro(GrupoMovimentoFinaceiro.DEBITO);
+		return tipoMovimento;
+	}
+	
+	public static TipoMovimentoFinanceiro tipoMovimentoFinanceiroDebitoFaturamento() {
+		TipoMovimentoFinanceiro tipoMovimento = new TipoMovimentoFinanceiro();
+		tipoMovimento.setAprovacaoAutomatica(true);
+		tipoMovimento.setDescricao("Débito (Faturamento)");
+		tipoMovimento.setGrupoMovimentoFinaceiro(GrupoMovimentoFinaceiro.DEBITO_SOBRE_FATURAMENTO);
 		return tipoMovimento;
 	}
 	
@@ -933,6 +1082,17 @@ public class Fixture {
 		TipoNotaFiscal tipoNotaFiscal = new TipoNotaFiscal();
 		tipoNotaFiscal.setDescricao("RECEBIMENTO");
 		tipoNotaFiscal.setGrupoNotaFiscal(GrupoNotaFiscal.RECEBIMENTO_MERCADORIAS);
+		
+		/*tipoNotaFiscal.setCfopEstado(Fixture.cfop1209());
+		tipoNotaFiscal.setCfopOutrosEstados(Fixture.cfop1209());*/
+		tipoNotaFiscal.setNopDescricao("NF-e de Devolução de Remessa para Distruibuição");
+		tipoNotaFiscal.setEmitente(TipoUsuarioNotaFiscal.DISTRIBUIDOR);
+		tipoNotaFiscal.setDestinatario(TipoUsuarioNotaFiscal.DISTRIBUIDOR);
+		tipoNotaFiscal.setContribuinte(false);
+		tipoNotaFiscal.setNopCodigo(0L);
+		tipoNotaFiscal.setTipoOperacao(TipoOperacao.ENTRADA);		
+		tipoNotaFiscal.setTipoAtividade(TipoAtividade.PRESTADOR_SERVICO);
+		
 		return tipoNotaFiscal;
 	}
 
@@ -970,6 +1130,35 @@ public class Fixture {
 		TipoNotaFiscal tipoNotaFiscal = new TipoNotaFiscal();
 		tipoNotaFiscal.setDescricao("DEVOLUCAO");
 		tipoNotaFiscal.setGrupoNotaFiscal(GrupoNotaFiscal.DEVOLUCAO_MERCADORIA_FORNECEDOR);
+
+		/*tipoNotaFiscal.setCfopEstado(Fixture.cfop5102());
+		tipoNotaFiscal.setCfopOutrosEstados(Fixture.cfop5102());*/
+		tipoNotaFiscal.setNopDescricao("NF-e de Remessa em Consignação (NECE / DANFE)");
+		tipoNotaFiscal.setEmitente(TipoUsuarioNotaFiscal.DISTRIBUIDOR);
+		tipoNotaFiscal.setDestinatario(TipoUsuarioNotaFiscal.COTA);
+		tipoNotaFiscal.setContribuinte(true);
+		tipoNotaFiscal.setNopCodigo(0L);
+		tipoNotaFiscal.setTipoOperacao(TipoOperacao.SAIDA);
+		tipoNotaFiscal.setTipoAtividade(TipoAtividade.MERCANTIL);
+		
+		return tipoNotaFiscal;
+	}
+
+	public static TipoNotaFiscal tipoNotaFiscalRecebimentoMercadoriasEncalhe() {
+		TipoNotaFiscal tipoNotaFiscal = new TipoNotaFiscal();
+		tipoNotaFiscal.setDescricao("RECEBIMENTO DE MERCADORIAS ENCALHE");
+		tipoNotaFiscal.setGrupoNotaFiscal(GrupoNotaFiscal.RECEBIMENTO_MERCADORIAS_ENCALHE);
+
+		/*tipoNotaFiscal.setCfopEstado(Fixture.cfop1210());
+		tipoNotaFiscal.setCfopOutrosEstados(Fixture.cfop1210());*/
+		tipoNotaFiscal.setNopDescricao("NF-e de Devolução de Remessa para Distruibuição");
+		tipoNotaFiscal.setEmitente(TipoUsuarioNotaFiscal.DISTRIBUIDOR);
+		tipoNotaFiscal.setDestinatario(TipoUsuarioNotaFiscal.DISTRIBUIDOR);
+		tipoNotaFiscal.setContribuinte(false);
+		tipoNotaFiscal.setNopCodigo(0L);
+		tipoNotaFiscal.setTipoOperacao(TipoOperacao.ENTRADA);
+		tipoNotaFiscal.setTipoAtividade(TipoAtividade.PRESTADOR_SERVICO);
+		
 		return tipoNotaFiscal;
 	}
 	
@@ -993,6 +1182,19 @@ public class Fixture {
 		notaFiscalFornecedor.setValorDesconto(valorDesconto);
 		notaFiscalFornecedor.setValorLiquido(valorLiquido);
 
+		return notaFiscalFornecedor;
+	}
+	
+	public static NotaFiscalEntradaFornecedor notaFiscalEntradaFornecedor(Long numeroNF, String serie, String chaveAcesso, CFOP cfop,
+			PessoaJuridica emitente, Fornecedor fornecedor, TipoNotaFiscal tipoNotaFiscal,
+			Usuario usuario, BigDecimal valorBruto, BigDecimal valorDesconto, BigDecimal valorLiquido) {
+		
+		NotaFiscalEntradaFornecedor notaFiscalFornecedor = notaFiscalEntradaFornecedor(cfop, emitente, fornecedor, tipoNotaFiscal, usuario, valorBruto, valorDesconto, valorLiquido);
+		
+		notaFiscalFornecedor.setNumero(numeroNF);
+		notaFiscalFornecedor.setSerie(serie);
+		notaFiscalFornecedor.setChaveAcesso(chaveAcesso);
+		
 		return notaFiscalFornecedor;
 	}
 	
@@ -1446,12 +1648,19 @@ public class Fixture {
 		return movimentoEstoque;
 	}
 	
-	public static ParametroSistema parametroSistema(TipoParametroSistema tipoParametroSistema, String valor){
+	public static ParametroSistema parametroSistema(TipoParametroSistema tipoParametroSistema, String valor) {
 		ParametroSistema parametroSistema = new ParametroSistema();
 		parametroSistema.setTipoParametroSistema(tipoParametroSistema);
 		parametroSistema.setValor(valor);
 		
 		return parametroSistema;
+	}
+	
+	public static ParametroSistema parametroSistema(Long id, TipoParametroSistema tipoParametroSistema, String valor) {
+		ParametroSistema ps = parametroSistema(tipoParametroSistema, valor);
+		ps.setId(id);
+		
+		return ps;
 	}
 	
 	public static Diferenca diferenca(BigDecimal qtde,
@@ -1531,17 +1740,21 @@ public class Fixture {
 	}
 	
 	public static ConferenciaEncalhe conferenciaEncalhe(
-			Lancamento lancamento, 
 			MovimentoEstoqueCota movimentoEstoqueCota,
 			ChamadaEncalheCota chamadaEncalheCota,
-			ControleConferenciaEncalheCota controleConferenciaEncalheCota) {
+			ControleConferenciaEncalheCota controleConferenciaEncalheCota,
+			Date data, BigDecimal qtdeInformada, BigDecimal qtde,
+			ProdutoEdicao produtoEdicao) {
 		
 		ConferenciaEncalhe conferenciaEncalhe = new ConferenciaEncalhe();
 		
-//		conferenciaEncalhe.setLancamento(lancamento);
 		conferenciaEncalhe.setMovimentoEstoqueCota(movimentoEstoqueCota);
 		conferenciaEncalhe.setChamadaEncalheCota(chamadaEncalheCota);
 		conferenciaEncalhe.setControleConferenciaEncalheCota(controleConferenciaEncalheCota);
+		conferenciaEncalhe.setData(data);
+		conferenciaEncalhe.setQtdeInformada(qtdeInformada);
+		conferenciaEncalhe.setQtde(qtde);
+		conferenciaEncalhe.setProdutoEdicao(produtoEdicao);
 		
 		return conferenciaEncalhe;
 		
@@ -1608,11 +1821,12 @@ public class Fixture {
 		return lancamento;
 	}
 	
-	public static Box criarBox(String codigo, String nome, TipoBox tipoBox) {
+	public static Box criarBox(String codigo, String nome, TipoBox tipoBox, boolean postoAvancado) {
 		Box box = new Box();
 		box.setCodigo(codigo);
 		box.setNome(nome);
 		box.setTipoBox(tipoBox);
+		box.setPostoAvancado(postoAvancado);
 		return box;
 	}
 	
@@ -1669,7 +1883,7 @@ public class Fixture {
 		contratoCota.setAvisoPrevioRescisao(aviso);
 		return contratoCota;
 	}
-	
+
 	public static PoliticaCobranca criarPoliticaCobranca(
 			Distribuidor distribuidor, FormaCobranca formaCobranca, 
 			boolean aceitaBaixaPagamentoMaior, boolean aceitaBaixaPagamentoMenor,
@@ -1718,17 +1932,16 @@ public class Fixture {
 		return endereco;
 	}
 	
-	public static ParametroSistema[] criarParametrosEmail(){
+	public static ParametroSistema[] criarParametrosEmail() {
 		
 		ParametroSistema[] parametrosEmail = new ParametroSistema[5];
-		parametrosEmail[0] = Fixture.parametroSistema(TipoParametroSistema.EMAIL_HOST,"smtp.gmail.com");
-		parametrosEmail[1] = Fixture.parametroSistema(TipoParametroSistema.EMAIL_PROTOCOLO,"smtps");
-		parametrosEmail[2] = Fixture.parametroSistema(TipoParametroSistema.EMAIL_USUARIO, "sys.discover@gmail.com");
-		parametrosEmail[3] = Fixture.parametroSistema(TipoParametroSistema.EMAIL_SENHA, "discover10");
-		parametrosEmail[4] = Fixture.parametroSistema(TipoParametroSistema.EMAIL_PORTA, "465");
+		parametrosEmail[0] = Fixture.parametroSistema(1L, TipoParametroSistema.EMAIL_HOST,"smtp.gmail.com");
+		parametrosEmail[1] = Fixture.parametroSistema(2L, TipoParametroSistema.EMAIL_PROTOCOLO,"smtps");
+		parametrosEmail[2] = Fixture.parametroSistema(3L, TipoParametroSistema.EMAIL_USUARIO, "sys.discover@gmail.com");
+		parametrosEmail[3] = Fixture.parametroSistema(4L, TipoParametroSistema.EMAIL_SENHA, "discover10");
+		parametrosEmail[4] = Fixture.parametroSistema(5L, TipoParametroSistema.EMAIL_PORTA, "465");
 		
 		return parametrosEmail;
-		
 	}
 	
 	public static Banco banco(Long agencia, boolean ativo, Carteira carteira, String codigoCedente, Long conta, String dvAgencia,
@@ -1797,33 +2010,50 @@ public class Fixture {
 	
 	public static ConsolidadoFinanceiroCota consolidadoFinanceiroCota(
 			List<MovimentoFinanceiroCota> movimentos, Cota cota, Date data,
-			BigDecimal valorConsolidado) {
+			BigDecimal valorConsignado,BigDecimal valorVendaEncalhe,
+			BigDecimal encalhe, BigDecimal debitoCredito, BigDecimal encargos, 
+			BigDecimal valorPostergado, BigDecimal atrasados, BigDecimal pendente) {
+		
 		ConsolidadoFinanceiroCota consolidado = new ConsolidadoFinanceiroCota();
-		consolidado.setConsignado(valorConsolidado);
 		consolidado.setMovimentos(movimentos);
 		consolidado.setCota(cota);
 		consolidado.setDataConsolidado(data);
-		consolidado.setTotal(valorConsolidado);
-		consolidado.setVendaEncalhe(valorConsolidado);
+		
+		consolidado.setConsignado(valorConsignado);
+		consolidado.setVendaEncalhe(valorVendaEncalhe);
+		consolidado.setEncalhe(encalhe);
+		consolidado.setDebitoCredito(debitoCredito);
+		consolidado.setEncargos(encargos);
+		consolidado.setValorPostergado(valorPostergado);
+		consolidado.setNumeroAtrasados(atrasados);
+		consolidado.setPendente(pendente);
+		
+		consolidado.setTotal(valorConsignado.subtract(encalhe).add(valorVendaEncalhe).add(debitoCredito).add(encargos).add(valorPostergado).add(atrasados).add(pendente));
+		
+		consolidado.setVendaEncalhe(valorVendaEncalhe);
+		
 		return consolidado;
 	}
 	
 	public static ConsolidadoFinanceiroCota consolidadoFinanceiroCotaEncalhe(
 			List<MovimentoFinanceiroCota> movimentos, Cota cota, Date data,
 			BigDecimal valorConsolidado, BigDecimal valorEncalhe) {
+		
 		ConsolidadoFinanceiroCota consolidado = new ConsolidadoFinanceiroCota();
+		
 		consolidado.setConsignado(valorConsolidado);
 		consolidado.setEncalhe(valorEncalhe);
 		consolidado.setMovimentos(movimentos);
 		consolidado.setCota(cota);
 		consolidado.setDataConsolidado(data);
 		consolidado.setTotal(valorConsolidado);
+		
 		return consolidado;
 	}
 	
 	public static Divida divida(ConsolidadoFinanceiroCota consolidado,
 			Cota cota, Date data, Usuario usuario, StatusDivida status,
-			BigDecimal valor) {
+			BigDecimal valor, boolean acumulada) {
 		Divida divida = new Divida();
 		divida.setConsolidado(consolidado);
 		divida.setCota(cota);
@@ -1831,6 +2061,7 @@ public class Fixture {
 		divida.setResponsavel(usuario);
 		divida.setStatus(status);
 		divida.setValor(valor);
+		divida.setAcumulada(acumulada);
 		return divida;
 	}
 	
@@ -1958,27 +2189,17 @@ public class Fixture {
 		Rota rota = new Rota();
 		rota.setCodigoRota(codigoRota);
 		rota.setDescricaoRota(descricaoRota);
+		rota.setOrdem(0);
 		return rota;
 	}
 	
 	public static Roteiro roteiro(String descricaoRoteiro){
 		Roteiro rota = new Roteiro();
 		rota.setDescricaoRoteiro(descricaoRoteiro);
+		rota.setOrdem(0);
+		rota.setTipoRoteiro(TipoRoteiro.ESPECIAL);
 		return rota;
 	}
-	
-	/*public static RotaRoteiroOperacao rotaRoteiroOperacao (Rota rota,Roteiro roteiro,Cota cota, TipoOperacao tipoOperacao){
-		
-		RotaRoteiroOperacao rotaRoteiroOperacao = new RotaRoteiroOperacao();
-		rotaRoteiroOperacao.setRota(rota);
-		rotaRoteiroOperacao.setRoteiro(roteiro);
-		rotaRoteiroOperacao.setCota(cota);
-		rotaRoteiroOperacao.setTipoOperacao(tipoOperacao);
-		
-		return rotaRoteiroOperacao;
-
-
-	}*/
 
 	public static CobrancaDinheiro criarCobrancaDinheiro(String nossoNumero,
             Date dataEmissao,
@@ -2210,10 +2431,17 @@ public class Fixture {
 		return telefone;
 	}
 	
-	public static Editor criarEditor(String nome, Long codigo) {
+	public static Editor criarEditor(String nome, Long codigo, 
+									 PessoaJuridica pessoaJuridica,
+									 boolean ativo) {
+		
 		Editor editor = new Editor();
+		
 		editor.setNome(nome);
 		editor.setCodigo(10L);
+		editor.setPessoaJuridica(pessoaJuridica);
+		editor.setAtivo(ativo);
+		
 		return editor;
 	}	
 	
@@ -2314,7 +2542,7 @@ public class Fixture {
 		return materialPromocional;
 	}
 	
-	public static SegmentacaoPDV criarSegmentacaoPdv(AreaInfluenciaPDV areaInfluenciaPDV, 
+	public static SegmentacaoPDV criarSegmentacaoPdv(AreaInfluenciaPDV areaInfluenciaPDV,   
 													 TipoCaracteristicaSegmentacaoPDV tipoCaracteristica, 
 													 TipoPontoPDV tipoPontoPDV, TipoClusterPDV tipoClusterPDV){
 		
@@ -2428,11 +2656,13 @@ public class Fixture {
 		return parametroContratoCota;
 	}
 
-	public static TipoEntrega criarTipoEntrega(Long id, String descricao) {
+	public static TipoEntrega criarTipoEntrega(Long id, String descricao, Periodicidade periodicidade) {
+		
 		TipoEntrega tipoEntrega = new TipoEntrega();
 		
 		tipoEntrega.setId(id);
 		tipoEntrega.setDescricao(descricao);
+		tipoEntrega.setPeriodicidade(periodicidade);
 		
 		return tipoEntrega;
 	}
@@ -2476,30 +2706,29 @@ public class Fixture {
 	
 	public static LancamentoParcial criarLancamentoParcial(ProdutoEdicao produtoEdicao, 
 														   Date lancamentoInicial, 
-														   Date recolhimentoFinal) {
+														   Date recolhimentoFinal,
+														   StatusLancamentoParcial status) {
 		
 		LancamentoParcial lancamentoParcial = new LancamentoParcial();
 		
 		lancamentoParcial.setProdutoEdicao(produtoEdicao);
 		lancamentoParcial.setLancamentoInicial(lancamentoInicial);
 		lancamentoParcial.setRecolhimentoFinal(recolhimentoFinal);
+		lancamentoParcial.setStatus(status);
 		
 		return lancamentoParcial;
 	}
 	
-	public static PeriodoLancamentoParcial criarPeriodoLancamentoParcial(Date lancamento, 
+	public static PeriodoLancamentoParcial criarPeriodoLancamentoParcial(Lancamento lancamento, 
 																		 LancamentoParcial lancamentoParcial,
-																		 Date recolhimento,
 																		 StatusLancamentoParcial status,
 																		 TipoLancamentoParcial tipo) {
 		
 		PeriodoLancamentoParcial parcial = new PeriodoLancamentoParcial();
 		
-//		parcial.setLancamento(lancamento);
+		parcial.setLancamento(lancamento);
 		
 		parcial.setLancamentoParcial(lancamentoParcial);
-		
-//		parcial.setRecolhimento(recolhimento);
 		
 		parcial.setStatus(status);
 		
@@ -2507,26 +2736,72 @@ public class Fixture {
 		
 		return parcial;
 	}
-
-	public static InterfaceExecucao interfaceExecucao(Long id, String nome) {
+	
+	public static TipoDesconto criarTipoDesconto(String codigo, String descricao, BigDecimal porcentagem){
 		
-		InterfaceExecucao interfaceExecucao = new InterfaceExecucao();
+		TipoDesconto tipoDesconto = new TipoDesconto();
+		tipoDesconto.setCodigo(codigo);
+		tipoDesconto.setDescricao(descricao);
+		tipoDesconto.setPorcentagem(porcentagem);
 		
-		interfaceExecucao.setId(id);
-		interfaceExecucao.setNome(nome);
-		
-		return interfaceExecucao;
+		return tipoDesconto;
 	}
 	
-	public static EventoExecucao eventoExecucao(Long id, String nome, String descricao) {
+	public static Roteirizacao criarRoteirizacao(PDV pdv, Rota rota,Integer ordem ){
 		
-		EventoExecucao eventoExecucao = new EventoExecucao();
+		Roteirizacao roteirizacao = new Roteirizacao();
+		roteirizacao.setPdv(pdv);
+		roteirizacao.setRota(rota);
+		roteirizacao.setOrdem(ordem);
 		
-		eventoExecucao.setId(id);
-		eventoExecucao.setNome(nome);
-		eventoExecucao.setDescricao(descricao);
+		return roteirizacao;
+	}
+	
+	public static Roteiro criarRoteiro(String descricaoRoteiro,Box box, TipoRoteiro tipoRoteiro ){
+		Roteiro rota = new Roteiro();
+		rota.setDescricaoRoteiro(descricaoRoteiro);
+		rota.setOrdem(0);
+		rota.setTipoRoteiro(tipoRoteiro);
+		rota.setBox(box);
+		return rota;
+	}
+	
+	public static  PDV criarPDVPrincipal(String nome, Cota cota){
 		
-		return eventoExecucao;
+		PDV pdv = new PDV();
+		pdv.setNome(nome);
+		pdv.setCota(cota);
+		pdv.setCaracteristicas(new CaracteristicasPDV());
+		pdv.getCaracteristicas().setPontoPrincipal(true);
+		
+		return pdv;
+	}
+
+	public static Algoritmo criarAlgoritmo(String descricao) {
+		Algoritmo algoritmo = new Algoritmo();
+		
+		algoritmo.setDescricao(descricao);
+		
+		return algoritmo;
+	}
+	
+	public static InterfaceExecucao criarInterfaceExecucao(Long id, String nome) {
+		
+		InterfaceExecucao ie = new InterfaceExecucao();
+		ie.setId(id);
+		ie.setNome(nome);
+		
+		return ie;
+	}
+	
+	public static EventoExecucao criarEventoExecucao(Long id, String nome, String descricao) {
+		
+		EventoExecucao ee = new EventoExecucao();
+		ee.setId(id);
+		ee.setNome(nome);
+		ee.setDescricao(descricao);
+		
+		return ee;
 	}
 	
 }
