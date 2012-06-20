@@ -1,19 +1,17 @@
 
 <head>
 
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/balanceamento.js"></script>
+
 <script type="text/javascript">
+
+var pathTela = "${pageContext.request.contextPath}";
+
+var B = new Balanceamento(pathTela);
 
 var linhasDestacadas = [];
 var lancamentosSelecionados = [];
 
-function pesquisar(){
-	$(".grids").show();
-	$("#lancamentosProgramadosGrid").flexReload();
-	$("#resumoPeriodo").show();
-	linhasDestacadas = [];
-	lancamentosSelecionados = [];
-	$('#selRep').uncheck();
-}
 
 function popup_reprogramar() {
 	$( "#dialog-reprogramar" ).dialog({
@@ -121,10 +119,12 @@ function voltarConfiguracaoOriginal() {
 <div class="corpo">
    
      <div class="container">	
-    <div id="effect" style="padding: 0 .7em;" class="ui-state-highlight ui-corner-all"> 
-				<p><span style="float: left; margin-right: .3em;" class="ui-icon ui-icon-info"></span>
-				<b>Lançamento Programado < evento > com < status >.</b></p>
-	</div>
+   
+   	<jsp:include page="../messagesDialog.jsp">
+		<jsp:param value="dialog-novo" name="messageDialog"/>
+	</jsp:include>
+     
+   
       <fieldset class="classFieldset">
    	    <legend>Pesquisar Balanceamento da Matriz de Lançamento
         </legend>
@@ -150,7 +150,7 @@ function voltarConfiguracaoOriginal() {
    	        <td width="109"><input type="text" name="datepickerDe" id="datepickerDe" style="width:80px;" value="${data}" /></td>
    	        <td width="47" align="center">&nbsp;</td>
    	        <td width="112">&nbsp;</td>
-   	        <td width="104"><span class="bt_pesquisar"><a href="javascript:;" onclick="pesquisar();">Pesquisar</a></span></td>
+   	        <td width="104"><span class="bt_pesquisar"><a href="javascript:;" onclick="B.pesquisar();">Pesquisar</a></span></td>
           </tr>
         </table>
       </fieldset>
@@ -170,7 +170,7 @@ function voltarConfiguracaoOriginal() {
               <span class="bt_novos" title="Reprogramar"><a href="javascript:;" onclick="abrirReprogramar();"><img src="<c:url value='images/ico_reprogramar.gif'/>"  hspace="5" border="0" />Reprogramar</a></span>
          	  <div style="margin-top:15px; margin-left:30px; float:left;"><strong>Valor Total R$: <span id="valorTotal"></span></strong></div>
           
-              <span class="bt_sellAll" style="float:right; margin-right:60px;"><label for="selRep">Selecionar Todos</label><input type="checkbox" id="selRep" name="Todos" onclick="checkAll(this, 'checkgroup');"/></span>
+              <span class="bt_sellAll" style="float:right; margin-right:60px;"><label for="selTodos">Selecionar Todos</label><input type="checkbox" id="selTodos" name="Todos" onclick="checkAll(this, 'checkgroup');"/></span>
         </div>
       </fieldset>
       <div class="linha_separa_fields">&nbsp;</div>      
@@ -185,22 +185,8 @@ function voltarConfiguracaoOriginal() {
 
 <script>
 	
+$(function() {
 	$("#lancamentosProgramadosGrid").flexigrid({
-			url : '<c:url value="/matrizLancamento/matrizLancamento"/>',
-			dataType : 'json',
-			autoload: false,
-			singleSelect: true,
-			onSuccess: buscarResumoPeriodo,
-			preProcess : processarColunasLancamentos,
-			onSubmit : function(){
-				var parametros = new Array();
-				parametros.push({name:'data', value: $("#datepickerDe").val()});
-				$("input[name='checkgroup_menu']:checked").each(function(i) {
-					parametros.push({name:'idsFornecedores', value: $(this).val()});
-				});
-				$("#lancamentosProgramadosGrid").flexOptions({params: parametros});
-		        return true;
-		    },
 			colModel : [  {
 				display : 'Código',
 				name : 'codigoProduto',
@@ -302,107 +288,8 @@ function voltarConfiguracaoOriginal() {
 			height : 180,
 			disableSelect : true
 		});
-
-		function processarColunasLancamentos(data) {
-			$("#tableResumoPeriodo").clear();
-			$("#valorTotal").clear();
-			if (data.mensagens) {
-				exibirMensagem(
-					data.mensagens.tipoMensagem, 
-					data.mensagens.listaMensagens
-				);
-				return data;
-			}
-			linhasDestacadas = [];
-			$("#valorTotal").html(data[1]);
-			$.each(data[0].rows, function(i, row){
-				var emEstudoExpedido = row.cell.estudoFechado || row.cell.expedido;
-				if (!emEstudoExpedido) {
-					var dataDistrib = '<input type="text" name="datepickerDe10" id="datepickerDe10" style="width:70px; float:left;" value="'+row.cell.dataMatrizDistrib+'"/>';
-					dataDistrib+='<span class="bt_atualizarIco" title="Atualizar Datas">';
-					dataDistrib+='<a href="javascript:;">&nbsp;</a></span>';
-					row.cell.dataMatrizDistrib = dataDistrib;
-					var id = row.cell.id.toString(); 					
-					var reprogramar = '<input type="checkbox" value="'+id+'" name="checkgroup" ';
-					if ($.inArray(id, lancamentosSelecionados) != -1) {
-						reprogramar+='checked="checked" ';					
-					}
-					reprogramar+='onclick="verifyCheck($(\'#selRep\'));" />';	
-					row.cell.reprogramar=reprogramar;
-				} else {
-					var dataDistrib = '<input type="text" disabled="disabled" style="width:70px; float:left;" value="'+row.cell.dataMatrizDistrib+'"/>';
-					row.cell.dataMatrizDistrib = dataDistrib;
-					row.cell.reprogramar='<input type="checkbox" name="checkgroup" value="'+row.cell.id+'" disabled="disabled" onclick="verifyCheck($(\'#selRep\'));" />';
-				}
-				if (row.cell.semFisico || row.cell.cancelamentoGD || row.cell.furo ) {
-					linhasDestacadas.push(i+1);
-				}
-			});
-			return data[0];
-		}
+});
 		
-		function buscarResumoPeriodo() {
-			var parametros = [];
-			parametros.push({name:'dataInicial', value: $("#datepickerDe").val()});
-			$("input[name='checkgroup_menu']:checked").each(function(i) {
-				parametros.push({name:'idsFornecedores', value: $(this).val()});
-			});
-			var data = parametros;
-			$.ajax({
-				type:"GET",
-				url:'<c:url value="/matrizLancamento/resumoPeriodo"/>',
-				data: data,
-				cache: false,
-				dataType: "json",
-				success: function(data) {
-					popularResumoPeriodo(data);
-				}
-			});
-		}
-		
-		function popularResumoPeriodo(data) {
-			if (data.mensagens) {
-				exibirMensagem(
-					data.mensagens.tipoMensagem, 
-					data.mensagens.listaMensagens
-				);
-				return data;
-			}
-			
-			var rows='<tr>';
-			$.each(data, function(index, resumo){
-				  rows+='<td>';
-				  rows+='<div class="box_resumo">';
-				  rows+='<label>'+ resumo.dataFormatada +'</label>';
-				  rows+='<span class="span_1">Qtde. Títulos:</span>';	 
-				  rows+='<span class="span_2">'+ resumo.qtdeTitulos +'</span>';	
-				  rows+='<span class="span_1">Qtde. Exempl.:</span>';	
-				  rows+='<span class="span_2">'+ resumo.qtdeExemplaresFormatada +'</span>';	
-				  rows+='<span class="span_1">Peso Total:</span>';
-				  rows+='<span class="span_2">'+ resumo.pesoTotalFormatado +'</span>';
-				  rows+='<span class="span_1">Valor Total:</span>';
-				  rows+='<span class="span_2">'+ resumo.valorTotalFormatado +'</span>'
-				  rows+='</div>';
-				  rows+='</td>';					  
-		    });	
-		    rows+="</tr>";
-		    $("#tableResumoPeriodo").append(rows);
-		    
-		    $(linhasDestacadas).each(function(i, item){
-			 id = '#row' + item;			    	
-			 $(id).removeClass("erow").addClass("gridLinhaDestacada");
-			 $(id).children("td").removeClass("sorted");
-		   });
-
-		   $('input[name=checkgroup]').bind('change', function() {
-			var id = this.value.toString();  			
-			if (this.checked && $.inArray(id, lancamentosSelecionados) == -1) {
-			  lancamentosSelecionados.push(id);					
-			} else {
-			  lancamentosSelecionados = removeFromArray(lancamentosSelecionados, id);				
-			}
-		   });	
-		}
 		
 	
 </script>
