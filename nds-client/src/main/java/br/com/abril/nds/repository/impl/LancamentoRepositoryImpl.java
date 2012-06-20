@@ -996,8 +996,6 @@ public class LancamentoRepositoryImpl extends
 		query.setParameterList("idsFornecedores", fornecedores);
 		query.setParameter("periodoInicial", periodoLancamento.getDe());
 		query.setParameter("periodoFinal", periodoLancamento.getAte());
-		query.setParameter("grupoCromo", grupoCromo);
-		query.setParameter("tipoParcial", TipoLancamentoParcial.PARCIAL);
 		query.setParameterList("statusLancamento", listaStatusLancamento);
 		
 		List<Object[]> expectativasReparteDia = query.list();
@@ -1018,19 +1016,13 @@ public class LancamentoRepositoryImpl extends
 	
 	private String montarConsultaExpectativaRepartePorData() {
 		
-		String sql = " select analitica.dataLancamentoPrevista, "
-				   + " sum(analitica.expectativaReparte) "
+		String sql = " select analitica.dataLancamentoDistribuidor, "
+				   + " sum(analitica.repartePrevisto) "
 				   + " from "
 				   + " ( "
 				   + " select "
-				   + " lancamento.DATA_LCTO_PREVISTA as dataLancamentoPrevista, "
-				   + " case "
-				   + " when tipoProduto.GRUPO_PRODUTO = :grupoCromo "
-				   + " and periodoLancamentoParcial.TIPO <> :tipoParcial then "
-				   + " sum((lancamento.REPARTE / produtoEdicao.PACOTE_PADRAO) * (produtoEdicao.PRECO_VENDA - produtoEdicao.DESCONTO)) "
-				   + " else "
-				   + " sum(lancamento.REPARTE * (produtoEdicao.PRECO_VENDA - produtoEdicao.DESCONTO)) "
-				   + " end as expectativaReparte ";
+				   + " lancamento.DATA_LCTO_DISTRIBUIDOR as dataLancamentoDistribuidor, "
+				   + " lancamento.REPARTE as repartePrevisto ";
 		
 		String clausulaFrom = this.montarConsultaBalanceamentoLancamentoAnalitico();
 		
@@ -1038,7 +1030,7 @@ public class LancamentoRepositoryImpl extends
 		
 		sql += clausulaFrom;
 		sql += " ) as analitica ";
-		sql += " group by analitica.dataLancamentoPrevista ";
+		sql += " group by analitica.dataLancamentoDistribuidor ";
 		
 		return sql;
 	}
