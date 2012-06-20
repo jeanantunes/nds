@@ -36,7 +36,7 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepository<Fechamen
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<FechamentoFisicoLogicoDTO> buscarConferenciaEncalhe(FiltroFechamentoEncalheDTO filtro,
-			String sortorder, String sortname, int page, int rp) {
+			String sortorder, String sortname, Integer page, Integer rp) {
 
 		Criteria criteria = this.getSession().createCriteria(ConferenciaEncalhe.class, "ce");
 		
@@ -81,8 +81,14 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepository<Fechamen
 			criteria.add(Restrictions.eq("pf.id", filtro.getFornecedorId()));
 		}
 		
-		criteria.setFirstResult(page);
-		criteria.setMaxResults(rp);
+		if (page != null){
+			criteria.setFirstResult(page);
+		}
+		
+		if (rp != null){
+			criteria.setMaxResults(rp);
+		}
+		
 		if (sortname != null) {
 			this.addOrderCriteria(criteria, sortorder, sortname);
 		}

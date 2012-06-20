@@ -14,6 +14,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.util.export.fiscal.nota.NFEExport;
 
 @Entity
 @Table(name = "PRODUTO_SERVICO_NOTA_FISCAL")
@@ -44,7 +45,103 @@ public class ProdutoServico implements Serializable {
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "PRODUTO_EDICAO_ID")
 	private ProdutoEdicao produtoEdicao;
-
+	
+	/**
+	 * cProd
+	 */
+	@Column(name="CODIGO_PRODUTO", length=60, nullable=false, columnDefinition="Código do Produto ou Serviço")
+	@NFEExport(secao="I", posicao=0, tamanho=60)
+	private String codigoProduto;
+	
+	/**
+	 * cEAN
+	 */
+	@Column(name="CODIGO_BARRAS", length=14, nullable=false, columnDefinition="GTIN (Global Trade Item Number) do produto, antigo código EAN ou código de barras")
+	@NFEExport(secao="I", posicao=1, tamanho=14)
+	private Long codigoBarras;
+	
+	/**
+	 * xProd
+	 */
+	@Column(name="DESCRICAO_PRODUTO", length=120, nullable=false, columnDefinition="Descrição do produto ou serviço")
+	@NFEExport(secao="I", posicao=2, tamanho=120)
+	private String descricaoProduto;
+	
+	/**
+	 * NCM
+	 */
+	@Column(name="NCM", length=8, nullable=false, columnDefinition="Nomenclatura Comum do MERCOSUL")
+	@NFEExport(secao="I", posicao=3, tamanho=8)
+	private Long ncm;
+	
+	/**
+	 * EXTIPI
+	 */
+	@Column(name="EXTIPI", length=2, nullable=true, columnDefinition="")
+	@NFEExport(secao="I", posicao=4, tamanho=3)
+	private Long extipi;
+	
+	/**
+	 * CFOP
+	 */
+	@Column(name="CFOP", length=4, nullable=false, columnDefinition="Código Fiscal de Operações e Prestações")
+	@NFEExport(secao="I", posicao=6, tamanho=4)
+	private Integer cfop;
+	
+	/**
+	 * uCom
+	 */
+	@Column(name="UNIDADE_COMERCIAL", length=6, nullable=false, columnDefinition="Unidade Comercial")
+	@NFEExport(secao="I", posicao=7, tamanho=6)
+	private String unidade;
+	
+	/**
+	 * qCom
+	 */
+	@Column(name="QUANTIDADE_COMERCIAL", length=15, nullable=false, columnDefinition="Quantidade Comercial")
+	@NFEExport(secao="I", posicao=8, tamanho=12)
+	private Long quantidade;
+	
+	/**
+	 * vUnCom
+	 */
+	@Column(name="VALOR_UNITARIO_COMERCIAL", length=21, nullable=false, columnDefinition="Valor Unitário de Comercialização")
+	@NFEExport(secao="I", posicao=9, tamanho=16)
+	private Double valorUnitario;
+	
+	/**
+	 * vProd
+	 */
+	@Column(name="VALOR_TOTAL_BRUTO", length=15, nullable=false, columnDefinition="Valor Total Bruto dos Produtos ou Serviços")
+	private Double valorTotalBruto;
+	
+	/**
+	 * vFrete
+	 */
+	@Column(name="VALOR_FRETE", length=15, nullable=true, columnDefinition="Valor Total do Frente")
+	private Double valorFrete;
+	
+	/**
+	 * vSeg
+	 */
+	@Column(name="VALOR_SERGURO", length=15, nullable=true, columnDefinition="Valor Total do Seguro")
+	private Double valorSeguro;
+	
+	/**
+	 * vDesc
+	 */
+	@Column(name="VALOR_DESCONTO", length=15, nullable=true, columnDefinition="Valor do Desconto")
+	private Double valorDesconto;
+	
+	/**
+	 * vOutro
+	 */
+	@Column(name="VALOR_OUTROS", length=15, nullable=true , columnDefinition="Outras despesas acessórias")
+	private Double valorOutros;
+	
+	
+	
+	
 	/**
 	 * @return the id
 	 */
@@ -130,6 +227,202 @@ public class ProdutoServico implements Serializable {
 		} else if (!id.equals(other.id))
 			return false;
 		return true;
+	}
+
+	/**
+	 * @return the codigoProduto
+	 */
+	public String getCodigoProduto() {
+		return codigoProduto;
+	}
+
+	/**
+	 * @param codigoProduto the codigoProduto to set
+	 */
+	public void setCodigoProduto(String codigoProduto) {
+		this.codigoProduto = codigoProduto;
+	}
+
+	/**
+	 * @return the codigoBarras
+	 */
+	public Long getCodigoBarras() {
+		return codigoBarras;
+	}
+
+	/**
+	 * @param codigoBarras the codigoBarras to set
+	 */
+	public void setCodigoBarras(Long codigoBarras) {
+		this.codigoBarras = codigoBarras;
+	}
+
+	/**
+	 * @return the descricaoProduto
+	 */
+	public String getDescricaoProduto() {
+		return descricaoProduto;
+	}
+
+	/**
+	 * @param descricaoProduto the descricaoProduto to set
+	 */
+	public void setDescricaoProduto(String descricaoProduto) {
+		this.descricaoProduto = descricaoProduto;
+	}
+
+	/**
+	 * @return the ncm
+	 */
+	public Long getNcm() {
+		return ncm;
+	}
+
+	/**
+	 * @param ncm the ncm to set
+	 */
+	public void setNcm(Long ncm) {
+		this.ncm = ncm;
+	}
+
+	/**
+	 * @return the extipi
+	 */
+	public Long getExtipi() {
+		return extipi;
+	}
+
+	/**
+	 * @param extipi the extipi to set
+	 */
+	public void setExtipi(Long extipi) {
+		this.extipi = extipi;
+	}
+
+	/**
+	 * @return the cfop
+	 */
+	public Integer getCfop() {
+		return cfop;
+	}
+
+	/**
+	 * @param cfop the cfop to set
+	 */
+	public void setCfop(Integer cfop) {
+		this.cfop = cfop;
+	}
+
+	/**
+	 * @return the unidade
+	 */
+	public String getUnidade() {
+		return unidade;
+	}
+
+	/**
+	 * @param unidade the unidade to set
+	 */
+	public void setUnidade(String unidade) {
+		this.unidade = unidade;
+	}
+
+	/**
+	 * @return the quantidade
+	 */
+	public Long getQuantidade() {
+		return quantidade;
+	}
+
+	/**
+	 * @param quantidade the quantidade to set
+	 */
+	public void setQuantidade(Long quantidade) {
+		this.quantidade = quantidade;
+	}
+
+	/**
+	 * @return the valorUnitario
+	 */
+	public Double getValorUnitario() {
+		return valorUnitario;
+	}
+
+	/**
+	 * @param valorUnitario the valorUnitario to set
+	 */
+	public void setValorUnitario(Double valorUnitario) {
+		this.valorUnitario = valorUnitario;
+	}
+
+	/**
+	 * @return the valorTotalBruto
+	 */
+	public Double getValorTotalBruto() {
+		return valorTotalBruto;
+	}
+
+	/**
+	 * @param valorTotalBruto the valorTotalBruto to set
+	 */
+	public void setValorTotalBruto(Double valorTotalBruto) {
+		this.valorTotalBruto = valorTotalBruto;
+	}
+
+	/**
+	 * @return the valorFrete
+	 */
+	public Double getValorFrete() {
+		return valorFrete;
+	}
+
+	/**
+	 * @param valorFrete the valorFrete to set
+	 */
+	public void setValorFrete(Double valorFrete) {
+		this.valorFrete = valorFrete;
+	}
+
+	/**
+	 * @return the valorSeguro
+	 */
+	public Double getValorSeguro() {
+		return valorSeguro;
+	}
+
+	/**
+	 * @param valorSeguro the valorSeguro to set
+	 */
+	public void setValorSeguro(Double valorSeguro) {
+		this.valorSeguro = valorSeguro;
+	}
+
+	/**
+	 * @return the valorDesconto
+	 */
+	public Double getValorDesconto() {
+		return valorDesconto;
+	}
+
+	/**
+	 * @param valorDesconto the valorDesconto to set
+	 */
+	public void setValorDesconto(Double valorDesconto) {
+		this.valorDesconto = valorDesconto;
+	}
+
+	/**
+	 * @return the valorOutros
+	 */
+	public Double getValorOutros() {
+		return valorOutros;
+	}
+
+	/**
+	 * @param valorOutros the valorOutros to set
+	 */
+	public void setValorOutros(Double valorOutros) {
+		this.valorOutros = valorOutros;
 	}
 	
 }

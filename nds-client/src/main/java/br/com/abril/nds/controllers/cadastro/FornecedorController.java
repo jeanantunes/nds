@@ -275,8 +275,10 @@ public class FornecedorController {
 			}
 		}
 
+		String cnpj = fornecedorDTO.getCnpj().replaceAll("\\.", "").replaceAll("-", "").replaceAll("/", "");
+		
 		PessoaJuridica juridica = 
-				this.pessoaJuridicaService.buscarPorCnpj(fornecedorDTO.getCnpj());
+				this.pessoaJuridicaService.buscarPorCnpj(cnpj);
 		
 		boolean juridicaCadastrada = 
 				this.fornecedorService.isPessoaJaCadastrada(juridica.getId(), fornecedorDTO.getIdFornecedor());

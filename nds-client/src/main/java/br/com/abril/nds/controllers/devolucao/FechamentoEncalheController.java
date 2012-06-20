@@ -80,13 +80,23 @@ public class FechamentoEncalheController {
 	}
 	
 	@Path("/pesquisar")
-	public void pesquisar(String dataEncalhe, Long fornecedorId, Long boxId,
+	public void pesquisar(String dataEncalhe, Long fornecedorId, Long boxId, Boolean aplicaRegraMudancaTipo,
 			String sortname, String sortorder, int rp, int page) {
 		
 		FiltroFechamentoEncalheDTO filtro = new FiltroFechamentoEncalheDTO();
 		filtro.setDataEncalhe(DateUtil.parseDataPTBR(dataEncalhe));
 		filtro.setFornecedorId(fornecedorId);
 		filtro.setBoxId(boxId);
+		
+		if (aplicaRegraMudancaTipo){
+			if (boxId == null) {
+				fechamentoEncalheService.converteFechamentoDetalhadoEmConsolidado(filtro);
+			} else {
+				fechamentoEncalheService.removeFechamentoDetalhado(filtro);
+			}
+			
+		} 
+		
 		
 		List<FechamentoFisicoLogicoDTO> listaEncalhe = fechamentoEncalheService.buscarFechamentoEncalhe(filtro, sortorder, this.resolveSort(sortname), page, rp);
 		
@@ -95,28 +105,20 @@ public class FechamentoEncalheController {
 	
 	
 	@Path("/salvar")
-	public void salvar(String dataEncalhe, Long fornecedorId, Long boxId, String fisico,
-			String sortname, String sortorder, int rp, int page) {
+	public void salvar(List<FechamentoFisicoLogicoDTO> listaFechamento, String dataEncalhe, Long fornecedorId, Long boxId) {
 		
-		String[] valoresFisico = fisico.split(",");
-		ArrayList<Long> arrayFisico = new ArrayList<Long>();
-		for (String f : valoresFisico) {
-			arrayFisico.add(f == "" ? null : Long.valueOf(f));
-		}
-	
 		FiltroFechamentoEncalheDTO filtro = new FiltroFechamentoEncalheDTO();
 		filtro.setDataEncalhe(DateUtil.parseDataPTBR(dataEncalhe));
 		filtro.setFornecedorId(fornecedorId);
 		filtro.setBoxId(boxId);
-		filtro.setFisico(arrayFisico);
 		List<FechamentoFisicoLogicoDTO> listaEncalhe = new ArrayList<FechamentoFisicoLogicoDTO>();
 		if (boxId == null){ 
-			listaEncalhe = fechamentoEncalheService.salvarFechamentoEncalhe(filtro, sortorder, this.resolveSort(sortname), page, rp);
+			listaEncalhe = fechamentoEncalheService.salvarFechamentoEncalhe(filtro,listaFechamento);
 		} else {
-			listaEncalhe = fechamentoEncalheService.salvarFechamentoEncalheBox(filtro, sortorder, this.resolveSort(sortname), page, rp);
+			listaEncalhe = fechamentoEncalheService.salvarFechamentoEncalheBox(filtro, listaFechamento);
 		}
 		
-		result.use(FlexiGridJson.class).from(listaEncalhe).total(listaEncalhe.size()).page(page).serialize();
+		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "informação gravada com sucesso!"), "result").recursive().serialize();
 	}
 	
 	@Path("/cotasAusentes")
@@ -133,12 +135,6 @@ public class FechamentoEncalheController {
 		}
 		
 		this.result.use(FlexiGridJson.class).from(listaCotasAusenteEncalhe).total(total).page(page).serialize();
-	}
-	
-	@Path("/encerrarFechamento")
-	public void encerrarFechamento(Date dataEncalhe) {
-		
-		// TODO: verificar condições para fechamento; mostrar msg erro
 	}
 	
 	@Path("carregarDataPostergacao")
@@ -170,11 +166,9 @@ public class FechamentoEncalheController {
 	
 	@Path("/postergarCotas")
 	public void postergarCotas(Date dataPostergacao, Date dataEncalhe, List<Long> idsCotas) {
-			
-		Date dataAtual = Calendar.getInstance().getTime();
 		
-		if (dataAtual.after(dataPostergacao)) {
-			// throw new ValidacaoException();
+		if (dataEncalhe != null && dataEncalhe.after(dataPostergacao)) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "Postergação não pode ser realizada antes da data atual!");
 		}
 		
 		try {
@@ -195,7 +189,9 @@ public class FechamentoEncalheController {
 	public void cobrarCotas(Date dataOperacao, List<Long> idsCotas) {
 
 		if (idsCotas == null || idsCotas.isEmpty()) {
-			// validacao
+			this.result.use(Results.json()).from(
+				new ValidacaoVO(TipoMensagem.WARNING, "Selecine pelo menos uma Cota para cobrar!"), "result").recursive().serialize();
+			throw new ValidacaoException();
 		}
 		
 		try {
@@ -317,6 +313,9 @@ public class FechamentoEncalheController {
 		}
 	}
 
+
+	
+
 	/**
 	 * Obtém os dados do cabeçalho de exportação.
 	 * 
@@ -367,4 +366,25 @@ public class FechamentoEncalheController {
 			return sortname;
 		}
 	}
+	
+	
+	@Path("/verificarMensagemConsistenciaDados")
+	public void verificarMensagemConsistenciaDados(String dataEncalhe, Long fornecedorId, Long boxId) {
+		FiltroFechamentoEncalheDTO filtro = new FiltroFechamentoEncalheDTO();
+		filtro.setDataEncalhe(DateUtil.parseDataPTBR(dataEncalhe));
+		filtro.setFornecedorId(fornecedorId);
+		filtro.setBoxId(boxId);
+		if (boxId == null){
+			if (fechamentoEncalheService.existeFechamentoEncalheDetalhado(filtro)){
+				this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.WARNING, "Você está tentando fazer uma pesquisa em modo consolidado (soma de todos os boxes). Já existem dados salvos em modo de pesquisa por box. Se você continuar, os dados serão sumarizados e não será possível desfazer a operação. Tem certeza que deseja continuar ?"), "result").recursive().serialize();
+			} else {
+				this.result.use(Results.json()).from("pesquisa","result").serialize() ;   
+			}
+		} else if ( fechamentoEncalheService.existeFechamentoEncalheConsolidado(filtro)){
+			this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.WARNING, "Você está tentando fazer uma pesquisa por box. Já existem dados salvos em modo de pesquisa consolidado (soma de todos os boxes). Se você continuar, os dados serão perdidos. Tem certeza que deseja continuar ?"), "result").recursive().serialize();
+		} else {
+			this.result.use(Results.json()).from("pesquisa","result").serialize() ;   
+		 }
+	}
+	
 }
