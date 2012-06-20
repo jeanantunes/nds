@@ -137,12 +137,6 @@ public class FechamentoEncalheController {
 		this.result.use(FlexiGridJson.class).from(listaCotasAusenteEncalhe).total(total).page(page).serialize();
 	}
 	
-	@Path("/encerrarFechamento")
-	public void encerrarFechamento(Date dataEncalhe) {
-		
-		// TODO: verificar condições para fechamento; mostrar msg erro
-	}
-	
 	@Path("carregarDataPostergacao")
 	public void carregarDataPostergacao(Date dataEncalhe, Date dataPostergacao) {
 		
@@ -392,12 +386,5 @@ public class FechamentoEncalheController {
 			this.result.use(Results.json()).from("pesquisa","result").serialize() ;   
 		 }
 	}
-	
-	@Path("/brunoTeste")
-	public void brunoTeste(List<FechamentoFisicoLogicoDTO> lista) {
-		FiltroFechamentoEncalheDTO filtro = new FiltroFechamentoEncalheDTO();
-		this.result.use(Results.json()).from("pesquisa","result").serialize() ;   
-	}
-	
 	
 }
