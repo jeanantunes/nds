@@ -193,11 +193,16 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 		for (CotaAusenteEncalheDTO cotaAusenteEncalheDTO : listaCotaAusenteEncalhe) {
 			
 			if (cotaAusenteEncalheDTO.getFechado()) {
-				cotaAusenteEncalheDTO.setAcao(
-					"Cobrado, " + DateUtil.formatarData(cotaAusenteEncalheDTO.getDataEncalhe(), "dd/MM/yyyy"));
+				cotaAusenteEncalheDTO.setAcao("Cobrado");
+				
 			} else if (cotaAusenteEncalheDTO.getPostergado()) {
+
+				Date dataPostergacao = 
+					this.fechamentoEncalheRepository.obterChamdasEncalhePostergadas(
+						cotaAusenteEncalheDTO.getIdCota(), cotaAusenteEncalheDTO.getDataEncalhe());
+				
 				cotaAusenteEncalheDTO.setAcao(
-					"Postergado, " + DateUtil.formatarData(cotaAusenteEncalheDTO.getDataEncalhe(), "dd/MM/yyyy"));
+					"Postergado, " + DateUtil.formatarData(dataPostergacao, "dd/MM/yyyy"));
 			}
 		}
 		
