@@ -89,6 +89,11 @@ public class ConferenciaEncalheRepositoryImpl extends
 		hql.append( subSqlQuerySequenciaMatriz() );
 		hql.append(" ) AS codigoSM, ");
 		
+		hql.append(" 0 AS qtdExemplar, 		");
+		hql.append(" 0 AS qtdInformada, 	");
+		hql.append(" 0 AS valorTotal, 		");
+		hql.append(" PROD_EDICAO.PRECO_VENDA AS precoCapaInformado,                   ");
+		
 		hql.append(" CH_ENCALHE.DATA_RECOLHIMENTO AS dataRecolhimento,  	 ");
 		hql.append(" CH_ENCALHE.TIPO_CHAMADA_ENCALHE AS tipoChamadaEncalhe,	 ");
 		hql.append(" PROD.CODIGO AS codigo,");
@@ -137,6 +142,13 @@ public class ConferenciaEncalheRepositoryImpl extends
 		((SQLQuery)query).addScalar("idProdutoEdicao", StandardBasicTypes.LONG);
 		((SQLQuery)query).addScalar("codigoDeBarras");
 		((SQLQuery)query).addScalar("codigoSM", StandardBasicTypes.INTEGER);
+		
+		((SQLQuery)query).addScalar("qtdExemplar", StandardBasicTypes.BIG_DECIMAL);
+		((SQLQuery)query).addScalar("qtdInformada", StandardBasicTypes.BIG_DECIMAL);
+		((SQLQuery)query).addScalar("precoCapaInformado", StandardBasicTypes.BIG_DECIMAL);
+		((SQLQuery)query).addScalar("valorTotal", StandardBasicTypes.BIG_DECIMAL);
+						
+		
 		((SQLQuery)query).addScalar("dataRecolhimento");
 		((SQLQuery)query).addScalar("tipoChamadaEncalhe");
 		((SQLQuery)query).addScalar("codigo");

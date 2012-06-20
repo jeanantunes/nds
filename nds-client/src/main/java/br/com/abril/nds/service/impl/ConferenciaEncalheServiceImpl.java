@@ -381,6 +381,10 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		boolean indFechado = false;
 		boolean indPostergado = false;
 		
+		int idInicial = (int) System.currentTimeMillis();
+		idInicial = (idInicial - (1000000));
+		
+		
 		List<ConferenciaEncalheDTO> listaConferenciaEncalheContingencia = 
 			conferenciaEncalheRepository.obterListaConferenciaEncalheDTOContingencia(
 				idDistribuidor,
@@ -390,6 +394,11 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 				indFechado, 
 				indPostergado, 
 				listaIdProdutoEdicao);
+		
+		for(ConferenciaEncalheDTO conferencia : listaConferenciaEncalheContingencia) {
+			int id = (-1 * (idInicial++));
+			conferencia.setIdConferenciaEncalhe(new Long(id));
+		}
 		
 		return listaConferenciaEncalheContingencia;
 		
@@ -411,10 +420,11 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		InfoConferenciaEncalheCota infoConfereciaEncalheCota = new InfoConferenciaEncalheCota();
 		
+		List<ConferenciaEncalheDTO> listaConferenciaEncalheDTO = null;
+		
 		if(controleConferenciaEncalheCota!=null) {
 			
-			List<ConferenciaEncalheDTO> listaConferenciaEncalheDTO = 
-					conferenciaEncalheRepository.obterListaConferenciaEncalheDTO(
+			listaConferenciaEncalheDTO = conferenciaEncalheRepository.obterListaConferenciaEncalheDTO(
 							controleConferenciaEncalheCota.getId(), 
 							distribuidor.getId());
 			
@@ -434,12 +444,25 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		if(indConferenciaContingencia) {
 			
-			infoConfereciaEncalheCota.setListaConferenciaEncalhe(
+			List<ConferenciaEncalheDTO> listaConferenciaEncalheContingencia = 
 					obterListaConferenciaEncalheContingencia(
 							distribuidor.getId(), 
 							numeroCota, 
 							dataOperacao,
-							infoConfereciaEncalheCota.getListaConferenciaEncalhe()));
+							infoConfereciaEncalheCota.getListaConferenciaEncalhe());
+			
+			if(listaConferenciaEncalheDTO!=null && !listaConferenciaEncalheDTO.isEmpty()) {
+				
+				listaConferenciaEncalheDTO.addAll(listaConferenciaEncalheContingencia);
+				
+				infoConfereciaEncalheCota.setListaConferenciaEncalhe(listaConferenciaEncalheDTO);
+				
+			} else {
+				
+				infoConfereciaEncalheCota.setListaConferenciaEncalhe(listaConferenciaEncalheContingencia);
+				
+			}
+			
 			
 		}
 		
