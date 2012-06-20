@@ -12,7 +12,7 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.integracao.LogExecucao;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
-import br.com.abril.nds.service.LogExecucaoService;
+import br.com.abril.nds.service.LogExecucaoMensagemService;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.export.FileExporter.FileType;
 import br.com.abril.nds.util.export.NDSFileHeader;
@@ -39,7 +39,7 @@ public class PainelProcessamentoController {
 	private static final String FILTRO_PESQUISA_INTERFACES_SESSION_ATTRIBUTE = "filtroPesquisaInterfaces";
 
 	@Autowired
-	private LogExecucaoService logExecucaoService;
+	private LogExecucaoMensagemService logExecucaoMensagemService;
 	
 	@Path("/")
 	public void index() {
@@ -50,7 +50,7 @@ public class PainelProcessamentoController {
 
 		List<LogExecucao> resultado = null;
 		try {
-			resultado = logExecucaoService.buscaPaginada(sortname, Ordenacao.valueOf(sortorder.toUpperCase()), page*rp - rp , rp);
+			resultado = logExecucaoMensagemService.buscaPaginada(sortname, Ordenacao.valueOf(sortorder.toUpperCase()), page*rp - rp , rp);
 		} catch (Exception e) {
 			if (e instanceof ValidacaoException) {
 				throw e;

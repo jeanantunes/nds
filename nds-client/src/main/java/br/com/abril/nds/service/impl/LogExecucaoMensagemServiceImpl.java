@@ -7,8 +7,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.model.integracao.LogExecucao;
-import br.com.abril.nds.repository.LogExecucaoRepository;
-import br.com.abril.nds.service.LogExecucaoService;
+import br.com.abril.nds.repository.LogExecucaoMensagemRepository;
+import br.com.abril.nds.service.LogExecucaoMensagemService;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
 /**
@@ -18,10 +18,10 @@ import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
  * @author InfoA2
  */
 @Service
-public class LogExecucaoServiceImpl implements LogExecucaoService {
+public class LogExecucaoMensagemServiceImpl implements LogExecucaoMensagemService {
 
 	@Autowired
-	private LogExecucaoRepository LogExecucaoRepository;
+	private LogExecucaoMensagemRepository LogExecucaoMensagemRepository;
 
 	/**
 	 * Busca os LogExecucao respeitando as restricoes parametrizadas.
@@ -34,7 +34,7 @@ public class LogExecucaoServiceImpl implements LogExecucaoService {
 	@Transactional(readOnly = true)
 	@Override
 	public List<LogExecucao> buscaPaginada(String orderBy, Ordenacao ordenacao, int initialResult, int maxResults) {
-		return LogExecucaoRepository.buscaPaginada(orderBy, ordenacao, initialResult, maxResults);
+		return LogExecucaoMensagemRepository.buscaPaginada(orderBy, ordenacao, initialResult, maxResults);
 	}
 
 }

@@ -10,7 +10,7 @@ import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
  * {@link br.com.abril.nds.model.integracao.LogExecucao }  
  * @author infoA2
  */
-public interface LogExecucaoService {
+public interface LogExecucaoMensagemService {
 
 	/**
 	 * Busca os LogExecucao respeitando as restricoes parametrizadas.

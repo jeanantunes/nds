@@ -3,6 +3,7 @@ package br.com.abril.nds.repository;
 import java.util.List;
 
 import br.com.abril.nds.model.integracao.LogExecucao;
+import br.com.abril.nds.model.integracao.LogExecucaoMensagem;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
 /**
@@ -10,7 +11,7 @@ import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
  * {@link br.com.abril.nds.model.integracao.LogExecucao }  
  * @author InfoA2
  */
-public interface LogExecucaoRepository extends Repository<LogExecucao,Long> {
+public interface LogExecucaoMensagemRepository extends Repository<LogExecucaoMensagem,Long> {
 
 	/**
 	 * Busca os LogExecucao respeitando as restricoes parametrizadas.
