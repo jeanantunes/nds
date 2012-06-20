@@ -10,25 +10,25 @@ public class ParametrosAprovacaoDistribuidor implements Serializable {
 
 	private static final long serialVersionUID = 556923148720562261L;
 
-	@Column(name = "DEBITO_CREDITO",nullable=false)
+	@Column(name = "DEBITO_CREDITO",nullable=true)
 	private boolean debitoCredito;
 	
-	@Column(name = "NEGOCIACAO",nullable=false)
+	@Column(name = "NEGOCIACAO",nullable=true)
 	private boolean negociacao;
 	
-	@Column(name = "AJUSTE_ESTOQUE",nullable=false)
+	@Column(name = "AJUSTE_ESTOQUE",nullable=true)
 	private boolean ajusteEstoque;
 	
-	@Column(name = "POSTERGACAO_COBRANCA",nullable=false)
+	@Column(name = "POSTERGACAO_COBRANCA",nullable=true)
 	private boolean postergacaoCobranca;
 	
-	@Column(name = "DEVOLUCAO_FORNECEDOR",nullable=false)
+	@Column(name = "DEVOLUCAO_FORNECEDOR",nullable=true)
 	private boolean devolucaoFornecedor;
 	
-	@Column(name = "RECIBO",nullable=false)
+	@Column(name = "RECIBO",nullable=true)
 	private boolean recibo;
 	
-	@Column(name = "FALTAS_SOBRAS",nullable=false)
+	@Column(name = "FALTAS_SOBRAS",nullable=true)
 	private boolean faltasSobras;
 
 	public boolean isDebitoCredito() {
