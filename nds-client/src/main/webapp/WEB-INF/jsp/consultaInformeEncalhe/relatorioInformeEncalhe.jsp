@@ -345,7 +345,7 @@
 			        
 	        		<c:if test="${dado.idProdutoEdicao != null}">
 						<td align="center">
-							<div align="center"><strong>${dado.seqCapa}</strong></div>
+							<div align="center"><strong>${dado.seqCapa == null ? '-' : dado.seqCapa}</strong></div>
 							<img src="<c:url value='/capa/${dado.idProdutoEdicao}'></c:url>" width="110" height="143"></img>
 						<td>
 					</c:if>

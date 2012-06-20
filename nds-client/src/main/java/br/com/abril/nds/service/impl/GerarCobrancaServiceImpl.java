@@ -119,20 +119,21 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		
 		if (indValidaConclusaoOperacaoConferencia) {
 
+			
+			//TODO: alteração na EMS 0028, agora deve verificar se o Fechamento do Encalhe(EMS 0181) tenha sido finalizado
+			
 			// verificar se a operação de conferencia ja foi concluida
-			StatusOperacao statusOperacao = this.controleConferenciaEncalheRepository.obterStatusConferenciaDataOperacao();
-			
-			if(statusOperacao == null || !StatusOperacao.CONCLUIDO.equals(statusOperacao)){
-				throw new ValidacaoException(TipoMensagem.ERROR, "A conferência de box de encalhe deve ser concluída antes de gerar dívidas.");
-			}
-
-			
+//			StatusOperacao statusOperacao = this.controleConferenciaEncalheRepository.obterStatusConferenciaDataOperacao();
+//			
+//			if(statusOperacao == null || !StatusOperacao.CONCLUIDO.equals(statusOperacao)){
+//				throw new ValidacaoException(TipoMensagem.ERROR, "A conferência de box de encalhe deve ser concluída antes de gerar dívidas.");
+//			}
 		}
 		
 		//Caso esteja gerando cobrança para uma única cota
 		if (idCota != null){
 			boolean existeCobranca = 
-					this.consolidadoFinanceiroRepository.verificarConsodidadoCotaPorData(idCota, new Date());
+					this.consolidadoFinanceiroRepository.verificarConsodidadoCotaPorData(idCota);
 			
 			if (existeCobranca){
 				throw new ValidacaoException(TipoMensagem.WARNING, "Já foi gerada cobrança para esta cota na data de hoje.");
@@ -154,7 +155,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		if (TipoCobranca.BOLETO.equals(politicaPrincipal.getFormaCobranca().getTipoCobranca())){
 			ControleBaixaBancaria controleBaixaBancaria = this.controleBaixaBancariaRepository.obterPorData(new Date());
 			
-			if (controleBaixaBancaria == null || !StatusControle.CONCLUIDO_SUCESSO.equals(controleBaixaBancaria.getStatus())){
+			if (controleBaixaBancaria == null || StatusControle.INICIADO.equals(controleBaixaBancaria.getStatus())){
 				throw new ValidacaoException(TipoMensagem.ERROR, "Baixa Automática ainda não executada.");
 			}
 		}
@@ -165,7 +166,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		
 		// buscar movimentos financeiros da cota para a data de operação em andamento
 		List<MovimentoFinanceiroCota> listaMovimentoFinanceiroCota = 
-				this.movimentoFinanceiroCotaRepository.obterMovimentoFinanceiroCotaDataOperacao(idCota, new Date());
+				this.movimentoFinanceiroCotaRepository.obterMovimentoFinanceiroCota(idCota, new Date());
 		
 		if (listaMovimentoFinanceiroCota != null && !listaMovimentoFinanceiroCota.isEmpty()){
 			

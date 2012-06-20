@@ -16,7 +16,7 @@ public interface ConsolidadoFinanceiroRepository extends Repository<ConsolidadoF
 	
 	List<ViewContaCorrenteCotaDTO> buscarListaDeConsolidado(Integer idCota);
 	
-	boolean verificarConsodidadoCotaPorData(Long idCota, Date data);
+	boolean verificarConsodidadoCotaPorData(Long idCota);
 	
 	List<EncalheCotaDTO> obterMovimentoEstoqueCotaEncalhe(FiltroConsolidadoEncalheCotaDTO filtro);
 	

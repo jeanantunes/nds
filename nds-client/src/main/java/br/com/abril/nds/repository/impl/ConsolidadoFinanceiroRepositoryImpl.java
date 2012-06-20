@@ -1,6 +1,5 @@
 package br.com.abril.nds.repository.impl;
 
-import java.util.Date;
 import java.util.List;
 
 import org.hibernate.Query;
@@ -10,9 +9,9 @@ import org.hibernate.transform.ResultTransformer;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.ConsignadoCotaDTO;
+import br.com.abril.nds.dto.ConsultaVendaEncalheDTO;
 import br.com.abril.nds.dto.EncalheCotaDTO;
 import br.com.abril.nds.dto.FiltroConsolidadoConsignadoCotaDTO;
-import br.com.abril.nds.dto.ConsultaVendaEncalheDTO;
 import br.com.abril.nds.dto.ViewContaCorrenteCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsolidadoEncalheCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsolidadoVendaCotaDTO;
@@ -73,15 +72,14 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 		return query.list();
 	}
 
-	public boolean verificarConsodidadoCotaPorData(Long idCota, Date data) {
+	public boolean verificarConsodidadoCotaPorData(Long idCota) {
 		StringBuilder hql = new StringBuilder(
-				"select count (c.id) from ConsolidadoFinanceiroCota c ");
+				"select count (c.id) from ConsolidadoFinanceiroCota c, Distribuidor d ");
 		hql.append(" where c.cota.id = :idCota ").append(
-				" and c.dataConsolidado = :data ");
+				" and c.dataConsolidado = d.dataOperacao ");
 
 		Query query = this.getSession().createQuery(hql.toString());
 		query.setParameter("idCota", idCota);
-		query.setParameter("data", data);
 
 		Long quant = (Long) query.uniqueResult();
 

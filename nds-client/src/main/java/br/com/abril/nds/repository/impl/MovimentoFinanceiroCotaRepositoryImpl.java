@@ -45,7 +45,7 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepository<Mo
 	}
 	
 	@SuppressWarnings("unchecked")
-	public List<MovimentoFinanceiroCota> obterMovimentoFinanceiroCotaDataOperacao(Long idCota, Date dataAtual){
+	public List<MovimentoFinanceiroCota> obterMovimentoFinanceiroCota(Long idCota, Date dataAtual){
 		
 		StringBuilder hql = new StringBuilder("select mfc ");
 		hql.append(" from MovimentoFinanceiroCota mfc, Distribuidor d ")
