@@ -50,97 +50,97 @@ public class ProdutoServico implements Serializable {
 	/**
 	 * cProd
 	 */
-	@Column(name="CODIGO_PRODUTO", length=60, nullable=false, columnDefinition="Código do Produto ou Serviço")
+	@Column(name="CODIGO_PRODUTO", length=60, nullable=false)
 	@NFEExport(secao="I", posicao=0, tamanho=60)
 	private String codigoProduto;
 	
 	/**
 	 * cEAN
 	 */
-	@Column(name="CODIGO_BARRAS", length=14, nullable=false, columnDefinition="GTIN (Global Trade Item Number) do produto, antigo código EAN ou código de barras")
+	@Column(name="CODIGO_BARRAS", length=14, nullable=false)
 	@NFEExports({@NFEExport(secao="I", posicao=1, tamanho=14), @NFEExport(secao="I", posicao=11, tamanho=14)})
 	private Long codigoBarras;
 	
 	/**
 	 * xProd
 	 */
-	@Column(name="DESCRICAO_PRODUTO", length=120, nullable=false, columnDefinition="Descrição do produto ou serviço")
+	@Column(name="DESCRICAO_PRODUTO", length=120, nullable=false)
 	@NFEExport(secao="I", posicao=2, tamanho=120)
 	private String descricaoProduto;
 	
 	/**
 	 * NCM
 	 */
-	@Column(name="NCM", length=8, nullable=false, columnDefinition="Nomenclatura Comum do MERCOSUL")
+	@Column(name="NCM", length=8, nullable=false)
 	@NFEExport(secao="I", posicao=3, tamanho=8)
 	private Long ncm;
 	
 	/**
 	 * EXTIPI
 	 */
-	@Column(name="EXTIPI", length=2, nullable=true, columnDefinition="")
+	@Column(name="EXTIPI", length=2, nullable=true)
 	@NFEExport(secao="I", posicao=4, tamanho=3)
 	private Long extipi;
 	
 	/**
 	 * CFOP
 	 */
-	@Column(name="CFOP", length=4, nullable=false, columnDefinition="Código Fiscal de Operações e Prestações")
+	@Column(name="CFOP", length=4, nullable=false)
 	@NFEExport(secao="I", posicao=6, tamanho=4)
 	private Integer cfop;
 	
 	/**
 	 * uCom
 	 */
-	@Column(name="UNIDADE_COMERCIAL", length=6, nullable=false, columnDefinition="Unidade Comercial")
+	@Column(name="UNIDADE_COMERCIAL", length=6, nullable=false)
 	@NFEExports({@NFEExport(secao="I", posicao=7, tamanho=6),@NFEExport(secao="I", posicao=12, tamanho=6)})
 	private String unidade;
 	
 	/**
 	 * qCom
 	 */
-	@Column(name="QUANTIDADE_COMERCIAL", length=15, nullable=false, columnDefinition="Quantidade Comercial")
+	@Column(name="QUANTIDADE_COMERCIAL", length=15, nullable=false)
 	@NFEExports({@NFEExport(secao="I", posicao=8, tamanho=12),@NFEExport(secao="I", posicao=13, tamanho=12)})
 	private Long quantidade;
 	
 	/**
 	 * vUnCom
 	 */
-	@Column(name="VALOR_UNITARIO_COMERCIAL", length=21, nullable=false, columnDefinition="Valor Unitário de Comercialização")
+	@Column(name="VALOR_UNITARIO_COMERCIAL", length=21, nullable=false)
 	@NFEExports({@NFEExport(secao="I", posicao=9, tamanho=16),@NFEExport(secao="I", posicao=14, tamanho=16)})
 	private Double valorUnitario;
 	
 	/**
 	 * vProd
 	 */
-	@Column(name="VALOR_TOTAL_BRUTO", length=15, nullable=false, columnDefinition="Valor Total Bruto dos Produtos ou Serviços")
+	@Column(name="VALOR_TOTAL_BRUTO", length=15, nullable=false)
 	private Double valorTotalBruto;
 	
 	/**
 	 * vFrete
 	 */
-	@Column(name="VALOR_FRETE", length=15, nullable=true, columnDefinition="Valor Total do Frente")
+	@Column(name="VALOR_FRETE", length=15, nullable=true)
 	@NFEExport(secao="I", posicao=15, tamanho=15)
 	private Double valorFrete;
 	
 	/**
 	 * vSeg
 	 */
-	@Column(name="VALOR_SERGURO", length=15, nullable=true, columnDefinition="Valor Total do Seguro")
+	@Column(name="VALOR_SERGURO", length=15, nullable=true)
 	@NFEExport(secao="I", posicao=16, tamanho=15)
 	private Double valorSeguro;
 	
 	/**
 	 * vDesc
 	 */
-	@Column(name="VALOR_DESCONTO", length=15, nullable=true, columnDefinition="Valor do Desconto")
+	@Column(name="VALOR_DESCONTO", length=15, nullable=true)
 	@NFEExport(secao="I", posicao=17, tamanho=15)
 	private Double valorDesconto;
 	
 	/**
 	 * vOutro
 	 */
-	@Column(name="VALOR_OUTROS", length=15, nullable=true , columnDefinition="Outras despesas acessórias")
+	@Column(name="VALOR_OUTROS", length=15, nullable=true)
 	private Double valorOutros;
 	
 	
