@@ -89,6 +89,11 @@ import br.com.abril.nds.model.cadastro.pdv.PDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoEstabelecimentoAssociacaoPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoGeradorFluxoPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoPontoPDV;
+import br.com.abril.nds.model.dne.Bairro;
+import br.com.abril.nds.model.dne.Localidade;
+import br.com.abril.nds.model.dne.Logradouro;
+import br.com.abril.nds.model.dne.Pais;
+import br.com.abril.nds.model.dne.UnidadeFederacao;
 import br.com.abril.nds.model.estoque.ConferenciaEncalhe;
 import br.com.abril.nds.model.estoque.Diferenca;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
@@ -153,6 +158,7 @@ import br.com.abril.nds.util.DateUtil;
 
 public class DataLoader {
 
+	private static final String PARAM_SKIP_DATA = "skipData";
 	private static PessoaJuridica juridicaAcme;
 	private static PessoaJuridica juridicaDinap;
 	private static PessoaJuridica juridicaFc;
@@ -179,7 +185,9 @@ public class DataLoader {
 	
 	private static TipoMovimentoEstoque tipoMovimentoRecebimentoEncalhe; 						
 	private static TipoMovimentoEstoque tipoMovimentoRecebimentoEncalheJuramentado; 				
-	private static TipoMovimentoEstoque tipoMovimentoSuplementarEnvioEncalheAnteriroProgramacao; 
+	private static TipoMovimentoEstoque tipoMovimentoSuplementarEnvioEncalheAnteriroProgramacao;
+	private static TipoMovimentoEstoque tipoMovimentoEstoqueCompraSuplementar;
+	private static TipoMovimentoEstoque tipoMovimentoEstoqueEstornoCompraSuplementar;	
 	
 	private static TipoMovimentoEstoque tipoMovimentoEstornoCotaAusente;
 	private static TipoMovimentoEstoque tipoMovimentoSuplementarCotaAusente;
@@ -190,7 +198,9 @@ public class DataLoader {
 	private static TipoMovimentoEstoque tipoMovimentoVendaEncalhe;
 	private static TipoMovimentoFinanceiro tipoMovimentoFinanceiroCompraEncalhe;
 	private static TipoMovimentoEstoque tipoMovimentoEstornoVendaEncalhe;
-
+	private static TipoMovimentoEstoque tipoMovimentoVendaEncalheSuplementar;
+	private static TipoMovimentoEstoque tipoMovimentoEstornoVendaEncalheSuplementar;
+	
 	private static TipoMovimentoEstoque tipoMovimentoEnvioJornaleiro;
 
 	private static TipoMovimentoFinanceiro tipoMovimentoFinanceiroCredito;
@@ -626,7 +636,8 @@ public class DataLoader {
 	private static CFOP cfop2918;
 	private static CFOP cfop1918;
 	private static CFOP cfop6917;
-	private static CFOP cfop5917;	
+	private static CFOP cfop5917;
+
 
 	public static void main(String[] args) {
 		ClassPathXmlApplicationContext ctx = new ClassPathXmlApplicationContext(
@@ -635,25 +646,31 @@ public class DataLoader {
 		Session session = null;
 		Transaction tx = null;
 		boolean commit = false;
-		try {
-			sf = ctx.getBean(SessionFactory.class);
-			session = sf.openSession();
-			tx = session.beginTransaction();			
-			carregarDados(session);
-			commit = true;
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			if (commit) {
-				tx.commit();
-			} else {
-				tx.rollback();
-			}
-			if (session != null) {
-				session.close();
-			}
-			if (sf != null) {
-				sf.close();
+		
+		List<String> parans =  Arrays.asList(args);
+		if(!parans.contains(PARAM_SKIP_DATA)){
+			try {
+				sf = ctx.getBean(SessionFactory.class);
+				session = sf.openSession();
+				tx = session.beginTransaction();				
+				
+				carregarDados(session);
+				
+				commit = true;
+			} catch (Exception e) {
+				e.printStackTrace();
+			} finally {
+				if (commit) {
+					tx.commit();
+				} else {
+					tx.rollback();
+				}
+				if (session != null) {
+					session.close();
+				}
+				if (sf != null) {
+					sf.close();
+				}
 			}
 		}
 	}
@@ -779,6 +796,7 @@ public class DataLoader {
 		
 		gerarTiposNotas(session);
 		
+		criarLogradouros(session);
 	}
 	
 	private static void criarAlgoritmos(Session session) {
@@ -3990,8 +4008,6 @@ public class DataLoader {
 
 		
 	}
-	
-	
 
 	private static void criarTiposMovimento(Session session) {
 		tipoMovimentoFaltaEm = Fixture.tipoMovimentoFaltaEm();
@@ -4004,10 +4020,16 @@ public class DataLoader {
 
 		tipoMovimentoVendaEncalhe = Fixture.tipoMovimentoVendaEncalhe();
 		tipoMovimentoEstornoVendaEncalhe = Fixture.tipoMovimentoEstornoVendaEncalhe();
+		
+		tipoMovimentoVendaEncalheSuplementar = Fixture.tipoMovimentoVendaEncalheSuplementar();
+		tipoMovimentoEstornoVendaEncalheSuplementar = Fixture.tipoMovimentoEstornoVendaEncalheSuplementar();
+		tipoMovimentoEstoqueCompraSuplementar = Fixture.tipoMovimentoCompraSuplementar();
+		tipoMovimentoEstoqueEstornoCompraSuplementar = Fixture.tipoMovimentoEstornoCompraSuplementar();
 
 		tipoMovimentoFinanceiroCompraEncalhe = Fixture.tipoMovimentoFinanceiroCompraEncalhe();
 
-		save(session, tipoMovimentoVendaEncalhe,tipoMovimentoFinanceiroCompraEncalhe,tipoMovimentoEstornoVendaEncalhe);
+		save(session, tipoMovimentoVendaEncalhe,tipoMovimentoFinanceiroCompraEncalhe,tipoMovimentoEstornoVendaEncalhe,tipoMovimentoVendaEncalheSuplementar,
+					  tipoMovimentoEstornoVendaEncalheSuplementar,tipoMovimentoEstoqueCompraSuplementar,tipoMovimentoEstoqueEstornoCompraSuplementar);
 
 
 		tipoMovimentoSuplementarCotaAusente = Fixture.tipoMovimentoSuplementarCotaAusente();
@@ -8691,6 +8713,35 @@ public class DataLoader {
 		save(session, Fixture.criarEventoExecucao(EventoExecucaoEnum.GERACAO_DE_ARQUIVO.getCodigo(), "Arquivo", "Geração de Arquivo"));
 		save(session, Fixture.criarEventoExecucao(EventoExecucaoEnum.INF_DADO_ALTERADO.getCodigo(), "Alteração Dado", "Informação de dado Alterado"));
 		save(session, Fixture.criarEventoExecucao(EventoExecucaoEnum.REGISTRO_JA_EXISTENTE.getCodigo(), "Registro já existente", "Registro já existente"));
+	}
+	
+	private static void criarLogradouros(Session session) {
+		
+		Pais pais = Fixture.criarPais("BR", "Brasil");
+		save(session, pais);
+		
+		UnidadeFederacao sp = Fixture.criarUnidadeFederacao(13246L, "SP", "São Paulo", pais);
+		UnidadeFederacao mg = Fixture.criarUnidadeFederacao(13247L, "MG", "Minas Gerais", pais);
+		save(session, sp, mg);
+		
+		Localidade mococa = Fixture.criarLocalidade("132", "Mococa", "582", sp);
+		Localidade arcerburgo = Fixture.criarLocalidade("134", "Arceburgo", "584", mg);
+		save(session, mococa, arcerburgo);
+		
+		Bairro vilaCarvalho = Fixture.criarBairro("1", "Vila Carvalho", mococa);
+		Bairro descanso = Fixture.criarBairro("2", "Descanso", mococa);
+		Bairro centro = Fixture.criarBairro("3", "Centro", arcerburgo);
+		save(session, vilaCarvalho, descanso, centro);
+		
+		Logradouro joseCristovam = Fixture.criarLogradouro(
+				"1", "Capitão José Cristovam de Lima", "13735430", 1L, mococa, "RUA");
+		Logradouro avenidaBrasil = Fixture.criarLogradouro(
+				"2", "Avenida Brasil", "13500213", 3L, arcerburgo, "AVENIDA");
+		Logradouro antonioCristovao = Fixture.criarLogradouro(
+				"3", "Antonio Cristovão", "13730000", 2L, mococa, "RUA");
+		Logradouro avenidaMarginal = Fixture.criarLogradouro(
+				"4", "Avenida Marginal", "13500213", 2L, mococa, "AVENIDA");
+		save(session, joseCristovam, avenidaBrasil, antonioCristovao, avenidaMarginal);
 	}
 	
 }

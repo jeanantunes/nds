@@ -69,4 +69,13 @@ public interface ChamadaEncalheCotaRepository extends Repository<ChamadaEncalheC
 			boolean conferido);
 	
 	
+	/**
+	 * Retorna uma chamada de encalhe cota en função da chamada de encahe e a cota informados nos parâmetros 
+	 * @param idChamadaEncalhe - identificador da chamda de encalhe
+	 * @param idCota - identificador da cota
+	 * @return ChamadaEncalheCota
+	 */
+	ChamadaEncalheCota buscarPorChamadaEncalheECota(Long idChamadaEncalhe,Long idCota);
+	
+	
 }

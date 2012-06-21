@@ -61,13 +61,13 @@ public class IPI extends ImpostoProduto implements Serializable {
 	/**
 	 * qUnid
 	 */
-	@Column(name="QUANTIDADE_UNIDADES", scale=16, precision=4, nullable=true)
+	@Column(name="QUANTIDADE_UNIDADES", scale=4, precision=16, nullable=true)
 	private Double quantidadeUnidades;
 	
 	/**
 	 * vUnid
 	 */
-	@Column(name="VALOR_UNIDADE_TRIBUTAVEL_IPI", scale=15, precision=4, nullable=true)
+	@Column(name="VALOR_UNIDADE_TRIBUTAVEL_IPI", scale=4, precision=15, nullable=true)
 	private Double valorUnidade;
 
 	/**

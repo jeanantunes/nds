@@ -1,6 +1,5 @@
 package br.com.abril.nds.repository.impl;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -40,7 +39,35 @@ public class VendaProdutoEncalheRepositoryImpl extends AbstractRepository<VendaP
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<VendaEncalheDTO> buscarVendasEncalhe(FiltroVendaEncalheDTO filtro){
+	public List<VendaProduto> buscarVendasEncalhe(FiltroVendaEncalheDTO filtro){
+		
+		StringBuilder hql = new StringBuilder();
+
+		hql.append(" select venda  ")
+		    .append(" from VendaProduto venda ")
+			.append(" where venda.cota.numeroCota=:numeroCota ")
+			.append(" and venda.dataVenda between :periodoInicial and :periodoFinal ");
+		
+		if(filtro.getTipoVendaEncalhe()!= null){
+			hql.append(" and venda.tipoVenda=:tipoVenda ");
+		}
+		
+		hql.append(getOrderVendaEncalhe(filtro));
+		
+		Query query = getSession().createQuery(hql.toString());
+		
+		HashMap<String, Object> param = getParametrosVendaProdutoEncalhe(filtro);
+		
+		for(String key : param.keySet()){
+			query.setParameter(key, param.get(key));
+		}
+		
+		return query.list();
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<VendaEncalheDTO> buscarVendasEncalheDTO(FiltroVendaEncalheDTO filtro){
 		
 		StringBuilder hql = new StringBuilder();
 		
@@ -203,22 +230,5 @@ public class VendaProdutoEncalheRepositoryImpl extends AbstractRepository<VendaP
 		
 		return (VendaEncalheDTO) query.uniqueResult();
 			
-	}
-	
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<VendaProduto> buscarVendaProdutoEncalhe(Long numeroCota, Date dataVenda,Long... idProdutoEdicao){
-		
-		StringBuilder hql = new StringBuilder();
-		
-		hql.append("select venda from VendaProduto venda join venda.cota cota join venda.produtoEdicao produto " )
-			.append("where cota.numeroCota=:numeroCota and produto.id in(:idProdutoEdicao) and venda.dataVenda =:dataVenda ");
-		
-		Query query = getSession().createQuery(hql.toString());
-		query.setParameter("numeroCota", numeroCota.intValue());
-		query.setParameter("dataVenda", dataVenda);
-		query.setParameterList("idProdutoEdicao", idProdutoEdicao);
-		
-		return query.list();
 	}
 }

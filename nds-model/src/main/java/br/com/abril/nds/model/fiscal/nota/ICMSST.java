@@ -29,7 +29,7 @@ public class ICMSST extends ICMSBase implements Serializable {
 	/**
 	 * pMVAST
 	 */
-	@Column(name="PERCENTUAL_ADCIONADO_ST", scale=5, precision=2, nullable=true)
+	@Column(name="PERCENTUAL_ADCIONADO_ST", precision=5,scale=2, nullable=true)
 	private Double percentualAdicionado;
 	
 	/**
