@@ -172,7 +172,7 @@ public class MatrizLancamentoServiceImplTest {
 				distribuidor.getId(), OperacaoDistribuidor.DISTRIBUICAO)).thenReturn(listaDistribuicaoDistribuidor);
 		
 		BalanceamentoLancamentoDTO balanceamentoLancamento =
-			service.obterMatrizLancamento(this.montarFiltro());
+			service.obterMatrizLancamento(this.montarFiltro(), false);
 		
 		Assert.assertNotNull(balanceamentoLancamento);
 	}

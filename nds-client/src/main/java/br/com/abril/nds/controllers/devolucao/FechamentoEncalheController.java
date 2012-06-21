@@ -108,15 +108,8 @@ public class FechamentoEncalheController {
 	@Path("/salvar")
 	public void salvar(List<FechamentoFisicoLogicoDTO> listaFechamento, String dataEncalhe, Long fornecedorId, Long boxId) {
 		
-		FiltroFechamentoEncalheDTO filtro = new FiltroFechamentoEncalheDTO();
-		filtro.setDataEncalhe(DateUtil.parseDataPTBR(dataEncalhe));
-		filtro.setFornecedorId(fornecedorId);
-		filtro.setBoxId(boxId);
-		if (boxId == null){ 
-			fechamentoEncalheService.salvarFechamentoEncalhe(filtro,listaFechamento);
-		} else {
-			fechamentoEncalheService.salvarFechamentoEncalheBox(filtro, listaFechamento);
-		}
+		gravaFechamentoEncalhe(listaFechamento, dataEncalhe, fornecedorId,
+				boxId);
 		
 		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Informação gravada com sucesso!"), "result").recursive().serialize();
 	}
@@ -293,7 +286,6 @@ public class FechamentoEncalheController {
 	
 	@Path("/verificarEncerrarOperacaoEncalhe")
 	public void verificarEncerrarOperacaoEncalhe(Date dataEncalhe, String operacao) {
-
 		if (dataEncalhe == null || Calendar.getInstance().getTime().before(dataEncalhe)) {
 			this.result.use(Results.json()).from(
 				new ValidacaoVO(TipoMensagem.WARNING, "Data de encalhe inválida!"), "result").recursive().serialize();
@@ -398,6 +390,30 @@ public class FechamentoEncalheController {
 		} else {
 			this.result.use(Results.json()).from("pesquisa","result").serialize() ;   
 		 }
+	}
+	
+	@Path("/salvarNoEncerrementoOperacao")
+	public void salvarNoEncerrementoOperacao(List<FechamentoFisicoLogicoDTO> listaFechamento, String dataEncalhe, Long fornecedorId, Long boxId) {
+		if (listaFechamento !=null && !listaFechamento.isEmpty()){
+			gravaFechamentoEncalhe(listaFechamento, dataEncalhe, fornecedorId,
+					boxId);
+		}
+		
+		this.result.use(Results.json()).from("", "result").recursive().serialize();
+	}
+
+	private void gravaFechamentoEncalhe(
+			List<FechamentoFisicoLogicoDTO> listaFechamento,
+			String dataEncalhe, Long fornecedorId, Long boxId) {
+		FiltroFechamentoEncalheDTO filtro = new FiltroFechamentoEncalheDTO();
+		filtro.setDataEncalhe(DateUtil.parseDataPTBR(dataEncalhe));
+		filtro.setFornecedorId(fornecedorId);
+		filtro.setBoxId(boxId);
+		if (boxId == null){ 
+			fechamentoEncalheService.salvarFechamentoEncalhe(filtro,listaFechamento);
+		} else {
+			fechamentoEncalheService.salvarFechamentoEncalheBox(filtro, listaFechamento);
+		}
 	}
 	
 }

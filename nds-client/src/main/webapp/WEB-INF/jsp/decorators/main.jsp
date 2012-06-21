@@ -237,6 +237,9 @@ fieldset label {
 							<li><a href="Financeiro/workflow_aprovacao.htm">Work
 									Flow de Aprovação</a>
 							</li>
+							<li><a href="Financeiro/workflow_aprovacao.htm">Work
+									Flow de Aprovação</a>
+							</li>
 							<li><a href="Financeiro/help_financeiro.htm">Help</a>
 							</li>
 						</ul></li>

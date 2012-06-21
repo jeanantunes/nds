@@ -66,6 +66,8 @@ public class BalanceamentoLancamentoTest extends AbstractRepositoryImplTest {
 	
 	private List<Long> fornecedores;
 	
+	private BigDecimal repartePrevisto;
+	
 	@Before
 	public void setUp() {
 		
@@ -210,12 +212,14 @@ public class BalanceamentoLancamentoTest extends AbstractRepositoryImplTest {
 		
 		Date dataLancamento = new Date();
 		
+		repartePrevisto = BigDecimal.TEN;
+		
 		lancamentoVeja = Fixture.lancamento(TipoLancamento.LANCAMENTO, veja1,
 				dataLancamento,
 				new Date(),
 				new Date(),
 				new Date(),
-				new BigDecimal(100),
+				repartePrevisto,
 				StatusLancamento.PLANEJADO, itemRecebimentoFisico1Veja, 1);
 		lancamentoVeja.getRecebimentos().add(itemRecebimentoFisico2Veja);
 		
@@ -226,7 +230,7 @@ public class BalanceamentoLancamentoTest extends AbstractRepositoryImplTest {
 				new Date(),
 				new Date(),
 				new Date(),
-				new BigDecimal(25),
+				repartePrevisto,
 				StatusLancamento.PLANEJADO, itemRecebimentoFisico4Rodas, 2);
 		
 		dataLancamento = DateUtil.adicionarDias(dataLancamento, 1);
@@ -236,7 +240,7 @@ public class BalanceamentoLancamentoTest extends AbstractRepositoryImplTest {
 				new Date(), 
 				new Date(),
 				new Date(),
-				new BigDecimal(40),
+				repartePrevisto,
 				StatusLancamento.PLANEJADO, null, 3);
 		
 		dataLancamento = DateUtil.adicionarDias(dataLancamento, 1);
@@ -246,7 +250,7 @@ public class BalanceamentoLancamentoTest extends AbstractRepositoryImplTest {
 				new Date(),
 				new Date(),
 				new Date(),
-				BigDecimal.TEN,
+				repartePrevisto,
 				StatusLancamento.PLANEJADO, null, 4);
 		
 		dataLancamento = DateUtil.adicionarDias(dataLancamento, 1);
@@ -256,7 +260,7 @@ public class BalanceamentoLancamentoTest extends AbstractRepositoryImplTest {
 				new Date(),
 				new Date(),
 				new Date(),
-				new BigDecimal(10000),
+				repartePrevisto,
 				StatusLancamento.PLANEJADO, null, 5);
 		
 		save(lancamentoVeja, lancamentoQuatroRodas, lancamentoInfoExame,
@@ -462,7 +466,7 @@ public class BalanceamentoLancamentoTest extends AbstractRepositoryImplTest {
 		
 		for (Map.Entry<Date, BigDecimal> entry : expectativaReparte.entrySet()) {
 
-			boolean condition = entry.getValue().compareTo(BigDecimal.ZERO) != 0;
+			boolean condition = entry.getValue().compareTo(repartePrevisto) == 0;
 			
 			Assert.assertTrue(condition);
 		}

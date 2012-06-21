@@ -147,12 +147,18 @@
 		$(".cotasGrid").flexReload();
 	};
 
+
+
+
+
+	
 	function verificarEncerrarOperacaoEncalhe() {
 
 		$.postJSON(
 			"<c:url value='/devolucao/fechamentoEncalhe/verificarEncerrarOperacaoEncalhe' />",
 			{ 'dataEncalhe' : $('#datepickerDe').val() , 
-			  'operacao' : 'VERIFICACAO' },
+			  'operacao' : 'VERIFICACAO' 
+		},
 			function (result) {
 
 				var tipoMensagem = result.tipoMensagem;
@@ -561,9 +567,27 @@
 	 function limpaGridPesquisa(){
 		 $(".fechamentoGrid").clear();
 		 $('#divFechamentoGrid').css("display", "none");
-		// $(".fechamentoGrid").hide();
 		 
 	}
+
+	 function salvarNoEncerrementoOperacao() {
+			$.postJSON(
+				"<c:url value='/devolucao/fechamentoEncalhe/salvarNoEncerrementoOperacao' />",
+				populaParamentrosFechamentoEncalheInformados(),
+				function (result) {
+					var tipoMensagem = result.tipoMensagem;
+					var listaMensagens = result.listaMensagens;
+					if (tipoMensagem && listaMensagens) {
+						exibirMensagem(tipoMensagem, listaMensagens);
+					} else {
+						verificarEncerrarOperacaoEncalhe();
+					}
+				},
+			  	null,
+			   	false
+			);
+			
+		}
 
 	
 	</script>
@@ -672,7 +696,7 @@
 			<div id="divBotoesPrincipais" style="display:none;">
 	            <span class="bt_novos" title="Salvar"><a href="javascript:;" onclick="salvar()"><img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0" />Salvar </a></span>
 				<span class="bt_novos" title="Cotas Ausentes"><a href="javascript:;" onclick="popup_encerrarEncalhe();"><img src="${pageContext.request.contextPath}/images/ico_check.gif" hspace="5" border="0" />Cotas Ausentes</a></span>
-				<span class="bt_novos" title="Encerrar Opera&ccedil;&atilde;o Encalhe"><a href="javascript:;" onclick="verificarEncerrarOperacaoEncalhe();"><img src="${pageContext.request.contextPath}/images/ico_check.gif" hspace="5" border="0" />Encerrar Opera&ccedil;&atilde;o Encalhe</a></span>
+				<span class="bt_novos" title="Encerrar Opera&ccedil;&atilde;o Encalhe"><a href="javascript:;" onclick="salvarNoEncerrementoOperacao();"><img src="${pageContext.request.contextPath}/images/ico_check.gif" hspace="5" border="0" />Encerrar Opera&ccedil;&atilde;o Encalhe</a></span>
 				<span class="bt_sellAll" style="float:right;"><a href="javascript:;" id="sel" onclick="replicarTodos();"><img src="${pageContext.request.contextPath}/images/ico_atualizar.gif" border="0" /></a><label for="sel">Replicar Todos</label></span>
 			</div>
 			
@@ -720,7 +744,7 @@
 				sortable : true,
 				align : 'left'
 			}, {
-				display : 'A&ccedil;ao¯',
+				display : 'A&ccedil;ao?',
 				name : 'acao',
 				width : 110,
 				sortable : true,
