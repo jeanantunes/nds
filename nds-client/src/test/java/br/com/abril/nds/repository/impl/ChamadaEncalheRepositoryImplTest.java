@@ -49,6 +49,8 @@ public class ChamadaEncalheRepositoryImplTest extends AbstractRepositoryImplTest
 	
 	private ChamadaEncalhe chamadaEncalheVeja;
 	private ChamadaEncalhe chamadaEncalheQuatroRodas;
+
+	private ProdutoEdicao veja1;
 	
 	@Before
 	public void setUpGeral() {
@@ -68,7 +70,7 @@ public class ChamadaEncalheRepositoryImplTest extends AbstractRepositoryImplTest
 
 		save(veja, quatroRodas);
 		
-		ProdutoEdicao veja1 = Fixture.produtoEdicao("1", 1L, 10, 7,
+		veja1 = Fixture.produtoEdicao("1", 1L, 10, 7,
 				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(15), "ABCDEFGHIJKLMNOPQRSTU", 1L, veja, null, false);
 		
 		veja1.setDesconto(BigDecimal.ZERO);
@@ -224,6 +226,14 @@ public class ChamadaEncalheRepositoryImplTest extends AbstractRepositoryImplTest
 			this.chamadaEncalheRepository.obterChamadasEncalhePor(dataOperacao.getTime(), idCota);
 	
 		Assert.assertNotNull(listaChamadaEncalhes);
+	}
+	
+	@Test
+	public void testObterPorNumeroEdicaoEMaiorDataRecolhimento(){
+		
+		ChamadaEncalhe chamadaEncalhe = chamadaEncalheRepository.obterPorNumeroEdicaoEMaiorDataRecolhimento(veja1, TipoChamadaEncalhe.MATRIZ_RECOLHIMENTO);
+		
+		Assert.assertNotNull(chamadaEncalhe);
 	}
 	
 }

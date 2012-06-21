@@ -180,7 +180,9 @@ public class DataLoader {
 	
 	private static TipoMovimentoEstoque tipoMovimentoRecebimentoEncalhe; 						
 	private static TipoMovimentoEstoque tipoMovimentoRecebimentoEncalheJuramentado; 				
-	private static TipoMovimentoEstoque tipoMovimentoSuplementarEnvioEncalheAnteriroProgramacao; 
+	private static TipoMovimentoEstoque tipoMovimentoSuplementarEnvioEncalheAnteriroProgramacao;
+	private static TipoMovimentoEstoque tipoMovimentoEstoqueCompraSuplementar;
+	private static TipoMovimentoEstoque tipoMovimentoEstoqueEstornoCompraSuplementar;	
 	
 	private static TipoMovimentoEstoque tipoMovimentoEstornoCotaAusente;
 	private static TipoMovimentoEstoque tipoMovimentoSuplementarCotaAusente;
@@ -191,7 +193,9 @@ public class DataLoader {
 	private static TipoMovimentoEstoque tipoMovimentoVendaEncalhe;
 	private static TipoMovimentoFinanceiro tipoMovimentoFinanceiroCompraEncalhe;
 	private static TipoMovimentoEstoque tipoMovimentoEstornoVendaEncalhe;
-
+	private static TipoMovimentoEstoque tipoMovimentoVendaEncalheSuplementar;
+	private static TipoMovimentoEstoque tipoMovimentoEstornoVendaEncalheSuplementar;
+	
 	private static TipoMovimentoEstoque tipoMovimentoEnvioJornaleiro;
 
 	private static TipoMovimentoFinanceiro tipoMovimentoFinanceiroCredito;
@@ -627,7 +631,8 @@ public class DataLoader {
 	private static CFOP cfop2918;
 	private static CFOP cfop1918;
 	private static CFOP cfop6917;
-	private static CFOP cfop5917;	
+	private static CFOP cfop5917;
+
 
 	public static void main(String[] args) {
 		ClassPathXmlApplicationContext ctx = new ClassPathXmlApplicationContext(
@@ -3997,8 +4002,6 @@ public class DataLoader {
 
 		
 	}
-	
-	
 
 	private static void criarTiposMovimento(Session session) {
 		tipoMovimentoFaltaEm = Fixture.tipoMovimentoFaltaEm();
@@ -4011,10 +4014,16 @@ public class DataLoader {
 
 		tipoMovimentoVendaEncalhe = Fixture.tipoMovimentoVendaEncalhe();
 		tipoMovimentoEstornoVendaEncalhe = Fixture.tipoMovimentoEstornoVendaEncalhe();
+		
+		tipoMovimentoVendaEncalheSuplementar = Fixture.tipoMovimentoVendaEncalheSuplementar();
+		tipoMovimentoEstornoVendaEncalheSuplementar = Fixture.tipoMovimentoEstornoVendaEncalheSuplementar();
+		tipoMovimentoEstoqueCompraSuplementar = Fixture.tipoMovimentoCompraSuplementar();
+		tipoMovimentoEstoqueEstornoCompraSuplementar = Fixture.tipoMovimentoEstornoCompraSuplementar();
 
 		tipoMovimentoFinanceiroCompraEncalhe = Fixture.tipoMovimentoFinanceiroCompraEncalhe();
 
-		save(session, tipoMovimentoVendaEncalhe,tipoMovimentoFinanceiroCompraEncalhe,tipoMovimentoEstornoVendaEncalhe);
+		save(session, tipoMovimentoVendaEncalhe,tipoMovimentoFinanceiroCompraEncalhe,tipoMovimentoEstornoVendaEncalhe,tipoMovimentoVendaEncalheSuplementar,
+					  tipoMovimentoEstornoVendaEncalheSuplementar,tipoMovimentoEstoqueCompraSuplementar,tipoMovimentoEstoqueEstornoCompraSuplementar);
 
 
 		tipoMovimentoSuplementarCotaAusente = Fixture.tipoMovimentoSuplementarCotaAusente();

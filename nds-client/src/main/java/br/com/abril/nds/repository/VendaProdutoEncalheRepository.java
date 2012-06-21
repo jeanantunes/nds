@@ -1,6 +1,5 @@
 package br.com.abril.nds.repository;
 
-import java.util.Date;
 import java.util.List;
 
 import br.com.abril.nds.dto.VendaEncalheDTO;
@@ -21,7 +20,7 @@ public interface VendaProdutoEncalheRepository extends Repository<VendaProduto, 
 	 * @param filtro - filtro com as opções de consulta
 	 * @return List<VendaEncalheDTO>
 	 */
-	List<VendaEncalheDTO> buscarVendasEncalhe(FiltroVendaEncalheDTO filtro);
+	List<VendaEncalheDTO> buscarVendasEncalheDTO(FiltroVendaEncalheDTO filtro);
 	
 	/**
 	 * Retorna uma  vendas de encalhe em função do parâmetro informado
@@ -30,5 +29,10 @@ public interface VendaProdutoEncalheRepository extends Repository<VendaProduto, 
 	 */
 	VendaEncalheDTO buscarVendaProdutoEncalhe(Long idVendaProduto);
 	
-	List<VendaProduto> buscarVendaProdutoEncalhe(Long numeroCota, Date dataVenda,Long... idProdutoEdicao);
+	/**
+	 * Retorna as vendas de encalhe em função dos parâmetros informados no FiltroVendaEncalheDTO
+	 * @param filtro
+	 * @return  List<VendaProduto>
+	 */
+	List<VendaProduto> buscarVendasEncalhe(FiltroVendaEncalheDTO filtro);
 }
