@@ -20,7 +20,7 @@ public abstract class ICMSBase extends ImpostoProduto implements Serializable {
 	/**
 	 * pRedBC
 	 */
-	@Column(name="PERCENTUAL_REDUCAO",scale=5, precision=2, nullable=true)
+	@Column(name="PERCENTUAL_REDUCAO",precision=5, scale=2, nullable=true)
 	protected Double percentualReducao;
 	
 	
