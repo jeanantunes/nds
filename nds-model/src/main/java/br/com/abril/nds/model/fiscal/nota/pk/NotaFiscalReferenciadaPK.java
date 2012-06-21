@@ -25,7 +25,7 @@ public class NotaFiscalReferenciadaPK implements Serializable {
 	/**
 	 * refNFe
 	 */
-	@Column(name="CHAVE_ACESSO", length=44, nullable=false, columnDefinition="Chave de acesso da NF-e referenciada")
+	@Column(name="CHAVE_ACESSO", length=44, nullable=false)
 	private BigInteger chaveAcesso;
 	
 	public NotaFiscalReferenciadaPK() {

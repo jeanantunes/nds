@@ -255,9 +255,7 @@ public class ParciaisController {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Produto \"" + codigoProduto + "\" não encontrado!");
 			
 		} else {
-			
-			//String nomeProduto = produto.getNome();
-			
+						
 			result.use(Results.json()).withoutRoot().from(produto).recursive().serialize();
 		}		
 	}
@@ -358,7 +356,9 @@ public class ParciaisController {
 	public void exportar(FileType fileType) throws IOException {
 		
 		FiltroParciaisDTO filtro = (FiltroParciaisDTO) session.getAttribute(FILTRO_SESSION_ATTRIBUTE);
-				
+		
+		filtro.getPaginacao().setSortColumn("codigoProduto");
+		
 		List<ParcialDTO> listaParciais = lancamentoParcialService.buscarLancamentosParciais(filtro);
 		
 		if(listaParciais.isEmpty()) {

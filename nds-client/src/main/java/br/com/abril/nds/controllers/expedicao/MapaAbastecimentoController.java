@@ -168,6 +168,10 @@ public class MapaAbastecimentoController {
 				if(filtroAtual.getCodigoProduto()==null)
 					throw new ValidacaoException(TipoMensagem.WARNING, "'Produto' não foi preenchido.");
 				break;
+			case ROTA:
+				if(filtroAtual.getRota()==null)
+					throw new ValidacaoException(TipoMensagem.WARNING, "'Rota' não foi preenchida.");
+				break;
 			default:
 				throw new ValidacaoException(TipoMensagem.WARNING, "Tipo de consulta inexistente.");
 		}

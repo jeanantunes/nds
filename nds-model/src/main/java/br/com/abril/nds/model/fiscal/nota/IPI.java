@@ -9,15 +9,10 @@ import javax.persistence.Embeddable;
 
 @Embeddable
 @AttributeOverrides({
-    @AttributeOverride(name="cst", column=@Column(name="CST_IPI", length = 3, nullable = false)),
-    @AttributeOverride(name="valorBaseCalculo", column=@Column(name="VLR_BASE_CALC_IPI", precision = 5, scale = 2, nullable = false)),
-    @AttributeOverride(name="aliquota", column=@Column(name="ALIQUOTA_IPI", precision = 5, scale = 2, nullable = false)),
-    @AttributeOverride(name="valor", column=@Column(name="VLR_IPI", precision = 5, scale = 2, nullable = false)),
-    @AttributeOverride(name="valorIsento", column=@Column(name="VLR_ISENTO_IPI", precision = 5, scale = 2)),
-    @AttributeOverride(name="valorOutros", column=@Column(name="VLR_OUTROS_IPI", precision = 5, scale = 2)),
-    @AttributeOverride(name="valorDebito", column=@Column(name="VLR_DEB_IPI", precision = 5, scale = 2)),
-    @AttributeOverride(name="valorCredito", column=@Column(name="VLR_CRE_IPI", precision = 5, scale = 2)),
-    @AttributeOverride(name="tipoBaseCalculo", column=@Column(name="TIP_BSC_IPI", length = 1))
+    @AttributeOverride(name="cst", column=@Column(name="CST_IPI", length = 2, nullable = true)),
+    @AttributeOverride(name="valorBaseCalculo", column=@Column(name="VLR_BASE_CALC_IPI", precision = 15, scale = 2, nullable = true)),
+    @AttributeOverride(name="aliquota", column=@Column(name="ALIQUOTA_IPI", precision = 5, scale = 2, nullable = true)),
+    @AttributeOverride(name="valor", column=@Column(name="VLR_IPI", precision = 15, scale = 2, nullable = true))
 })
 public class IPI extends ImpostoProduto implements Serializable {
 
@@ -32,5 +27,144 @@ public class IPI extends ImpostoProduto implements Serializable {
 	public IPI() {
 		
 	}
+	
+	
+	/**
+	 * clEnq
+	 */
+	@Column(name="CLASSE_ENQUADRAMENTO_IPI", length=5, nullable=true)
+	private String classeEnquadramento;
+	
+	/**
+	 * CNPJProd
+	 */
+	@Column(name="CNPJ_PRODUTOR_IPI", length=14, nullable=true)
+	private String cnpjProdutor;
+	
+	/**
+	 * cSelo
+	 */
+	@Column(name="CODIGO_SELO_IPI", length=60, nullable=true)
+	private String codigoSelo;
+	/**
+	 * qSelo
+	 */	
+	@Column(name="QUANTIDADE_SELO_IPI", length=12, nullable=true)
+	private Long quantidadeSelo;
+	
+	/**
+	 * cEnq
+	 */
+	@Column(name="CODIGO_ENQUADRAMENTO_IPI", length=3, nullable=true)
+	private String codigoEnquadramento;
+	
+	/**
+	 * qUnid
+	 */
+	@Column(name="QUANTIDADE_UNIDADES", scale=4, precision=16, nullable=true)
+	private Double quantidadeUnidades;
+	
+	/**
+	 * vUnid
+	 */
+	@Column(name="VALOR_UNIDADE_TRIBUTAVEL_IPI", scale=4, precision=15, nullable=true)
+	private Double valorUnidade;
 
+	/**
+	 * @return the classeEnquadramento
+	 */
+	public String getClasseEnquadramento() {
+		return classeEnquadramento;
+	}
+
+	/**
+	 * @param classeEnquadramento the classeEnquadramento to set
+	 */
+	public void setClasseEnquadramento(String classeEnquadramento) {
+		this.classeEnquadramento = classeEnquadramento;
+	}
+
+	/**
+	 * @return the cnpjProdutor
+	 */
+	public String getCnpjProdutor() {
+		return cnpjProdutor;
+	}
+
+	/**
+	 * @param cnpjProdutor the cnpjProdutor to set
+	 */
+	public void setCnpjProdutor(String cnpjProdutor) {
+		this.cnpjProdutor = cnpjProdutor;
+	}
+
+	/**
+	 * @return the codigoSelo
+	 */
+	public String getCodigoSelo() {
+		return codigoSelo;
+	}
+
+	/**
+	 * @param codigoSelo the codigoSelo to set
+	 */
+	public void setCodigoSelo(String codigoSelo) {
+		this.codigoSelo = codigoSelo;
+	}
+
+	/**
+	 * @return the quantidadeSelo
+	 */
+	public Long getQuantidadeSelo() {
+		return quantidadeSelo;
+	}
+
+	/**
+	 * @param quantidadeSelo the quantidadeSelo to set
+	 */
+	public void setQuantidadeSelo(Long quantidadeSelo) {
+		this.quantidadeSelo = quantidadeSelo;
+	}
+
+	/**
+	 * @return the codigoEnquadramento
+	 */
+	public String getCodigoEnquadramento() {
+		return codigoEnquadramento;
+	}
+
+	/**
+	 * @param codigoEnquadramento the codigoEnquadramento to set
+	 */
+	public void setCodigoEnquadramento(String codigoEnquadramento) {
+		this.codigoEnquadramento = codigoEnquadramento;
+	}
+
+	/**
+	 * @return the quantidadeUnidades
+	 */
+	public Double getQuantidadeUnidades() {
+		return quantidadeUnidades;
+	}
+
+	/**
+	 * @param quantidadeUnidades the quantidadeUnidades to set
+	 */
+	public void setQuantidadeUnidades(Double quantidadeUnidades) {
+		this.quantidadeUnidades = quantidadeUnidades;
+	}
+
+	/**
+	 * @return the valorUnidade
+	 */
+	public Double getValorUnidade() {
+		return valorUnidade;
+	}
+
+	/**
+	 * @param valorUnidade the valorUnidade to set
+	 */
+	public void setValorUnidade(Double valorUnidade) {
+		this.valorUnidade = valorUnidade;
+	}
 }

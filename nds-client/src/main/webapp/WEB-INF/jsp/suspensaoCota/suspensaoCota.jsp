@@ -39,6 +39,20 @@
 	
 	function popupConfirmar() {
 	
+		var checks = $('[name="selecao"]');
+		var algumSelecionado = false;
+		
+		$.each(checks, function(index,value){
+			
+			if( $(value).is(':checked') == true)
+				algumSelecionado = true;
+		});
+		
+		if(!algumSelecionado) {
+			popupNenhumaSelecionada();
+			return;
+		}
+		
 		$( "#dialog-suspender" ).dialog({
 			resizable: false,
 			height:'auto',
@@ -61,6 +75,23 @@
 		});	
 		      
 	};
+	
+	function popupNenhumaSelecionada() {
+		
+		$( "#dialog-nao-selecionada" ).dialog({
+			resizable: false,
+			height:'auto',
+			width:380,
+			modal: true,
+			buttons: {
+				"Fechar": function() {
+					
+					$( this ).dialog( "close" );
+					
+				}
+			}
+		});	
+	}
 	
 	function popupRelatorio(result) {
 		
@@ -174,9 +205,9 @@
 	<p><strong>Confirma Suspensão da Cota?</strong></p>
 </div>
 
-
-
-
+<div id="dialog-nao-selecionada"  style="display: none" title="Suspensão da Cota">
+	<p><strong>Nenhuma Cota foi selecionada.</strong></p>
+</div>
 
 <div id="dialog-detalhes" title="Suspensão de Cota">     
     

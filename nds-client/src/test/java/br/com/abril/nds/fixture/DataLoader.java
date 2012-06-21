@@ -18,6 +18,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import br.com.abril.nds.integracao.model.canonic.InterfaceEnum;
 import br.com.abril.nds.model.DiaSemana;
+import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.StatusCobranca;
 import br.com.abril.nds.model.StatusConfirmacao;
 import br.com.abril.nds.model.StatusControle;
@@ -91,6 +92,11 @@ import br.com.abril.nds.model.cadastro.pdv.PDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoEstabelecimentoAssociacaoPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoGeradorFluxoPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoPontoPDV;
+import br.com.abril.nds.model.dne.Bairro;
+import br.com.abril.nds.model.dne.Localidade;
+import br.com.abril.nds.model.dne.Logradouro;
+import br.com.abril.nds.model.dne.Pais;
+import br.com.abril.nds.model.dne.UnidadeFederacao;
 import br.com.abril.nds.model.estoque.ConferenciaEncalhe;
 import br.com.abril.nds.model.estoque.Diferenca;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
@@ -160,6 +166,7 @@ import br.com.abril.nds.util.DateUtil;
 
 public class DataLoader {
 
+	private static final String PARAM_SKIP_DATA = "skipData";
 	private static PessoaJuridica juridicaAcme;
 	private static PessoaJuridica juridicaDinap;
 	private static PessoaJuridica juridicaFc;
@@ -186,7 +193,9 @@ public class DataLoader {
 	
 	private static TipoMovimentoEstoque tipoMovimentoRecebimentoEncalhe; 						
 	private static TipoMovimentoEstoque tipoMovimentoRecebimentoEncalheJuramentado; 				
-	private static TipoMovimentoEstoque tipoMovimentoSuplementarEnvioEncalheAnteriroProgramacao; 
+	private static TipoMovimentoEstoque tipoMovimentoSuplementarEnvioEncalheAnteriroProgramacao;
+	private static TipoMovimentoEstoque tipoMovimentoEstoqueCompraSuplementar;
+	private static TipoMovimentoEstoque tipoMovimentoEstoqueEstornoCompraSuplementar;	
 	
 	private static TipoMovimentoEstoque tipoMovimentoEstornoCotaAusente;
 	private static TipoMovimentoEstoque tipoMovimentoSuplementarCotaAusente;
@@ -197,7 +206,9 @@ public class DataLoader {
 	private static TipoMovimentoEstoque tipoMovimentoVendaEncalhe;
 	private static TipoMovimentoFinanceiro tipoMovimentoFinanceiroCompraEncalhe;
 	private static TipoMovimentoEstoque tipoMovimentoEstornoVendaEncalhe;
-
+	private static TipoMovimentoEstoque tipoMovimentoVendaEncalheSuplementar;
+	private static TipoMovimentoEstoque tipoMovimentoEstornoVendaEncalheSuplementar;
+	
 	private static TipoMovimentoEstoque tipoMovimentoEnvioJornaleiro;
 
 	private static TipoMovimentoFinanceiro tipoMovimentoFinanceiroCredito;
@@ -633,7 +644,8 @@ public class DataLoader {
 	private static CFOP cfop2918;
 	private static CFOP cfop1918;
 	private static CFOP cfop6917;
-	private static CFOP cfop5917;	
+	private static CFOP cfop5917;
+
 
 	private static InterfaceExecucao interfaceEMS0106;
 	private static InterfaceExecucao interfaceEMS0107;
@@ -641,7 +653,7 @@ public class DataLoader {
 	private static InterfaceExecucao interfaceEMS0109;
 	private static InterfaceExecucao interfaceEMS0110;
 	private static InterfaceExecucao interfaceEMS0111;
-	private static InterfaceExecucao interfaceEMS0112;
+//	private static InterfaceExecucao interfaceEMS0112;
 	private static InterfaceExecucao interfaceEMS0113;
 	private static InterfaceExecucao interfaceEMS0114;
 	private static InterfaceExecucao interfaceEMS0116;
@@ -660,8 +672,8 @@ public class DataLoader {
 	private static InterfaceExecucao interfaceEMS0131;
 	private static InterfaceExecucao interfaceEMS0132;
 	private static InterfaceExecucao interfaceEMS0133;
-	private static InterfaceExecucao interfaceEMS0134;
-	private static InterfaceExecucao interfaceEMS0185;
+//	private static InterfaceExecucao interfaceEMS0134;
+//	private static InterfaceExecucao interfaceEMS0185;
 	private static InterfaceExecucao interfaceEMS0197;
 
 	private static EventoExecucao eventoErroInfraestrutura;	
@@ -679,25 +691,31 @@ public class DataLoader {
 		Session session = null;
 		Transaction tx = null;
 		boolean commit = false;
-		try {
-			sf = ctx.getBean(SessionFactory.class);
-			session = sf.openSession();
-			tx = session.beginTransaction();			
-			carregarDados(session);
-			commit = true;
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			if (commit) {
-				tx.commit();
-			} else {
-				tx.rollback();
-			}
-			if (session != null) {
-				session.close();
-			}
-			if (sf != null) {
-				sf.close();
+		
+		List<String> parans =  Arrays.asList(args);
+		if(!parans.contains(PARAM_SKIP_DATA)){
+			try {
+				sf = ctx.getBean(SessionFactory.class);
+				session = sf.openSession();
+				tx = session.beginTransaction();				
+				
+				carregarDados(session);
+				
+				commit = true;
+			} catch (Exception e) {
+				e.printStackTrace();
+			} finally {
+				if (commit) {
+					tx.commit();
+				} else {
+					tx.rollback();
+				}
+				if (session != null) {
+					session.close();
+				}
+				if (sf != null) {
+					sf.close();
+				}
 			}
 		}
 	}
@@ -767,7 +785,6 @@ public class DataLoader {
 		criarRotaRoteiroCota(session);		
 		criarControleBaixaBancaria(session);
 		criarParametrosCobrancaCota(session);
-		criarNotasFiscaisEntradaFornecedor(session);
 		gerarCotasAusentes(session);
 		gerarHistoricosAculoDivida(session);
 
@@ -775,6 +792,8 @@ public class DataLoader {
 		
 		//criarDadosContaCorrenteConsigando(session);
 
+		criarMassaNotaFiscalEntradaFornecedorParaRecebimentoFisico(session);
+		
 		gerarCargaDiferencaEstoque(
 			session, 50, produtoEdicaoVeja1, tipoMovimentoFaltaEm, 
 				usuarioJoao, estoqueProdutoVeja1, TipoDiferenca.FALTA_EM);
@@ -825,6 +844,7 @@ public class DataLoader {
 
 		gerarLogExecucaoInterfaces(session);
 		
+		criarLogradouros(session);
 	}
 	
 	private static void criarAlgoritmos(Session session) {
@@ -2188,7 +2208,7 @@ public class DataLoader {
 
 		ConsolidadoFinanceiroCota consolidado15 = Fixture
 				.consolidadoFinanceiroCota(
-						Arrays.asList(movimentoFinanceiroCota10), cotaManoelCunha,
+						movimentosF, cotaManoelCunha,
 						Fixture.criarData(10, 6, 2012), getTotalConsignado(movimentosF), getTotalVendaEncalhe(movimentosF), getTotalEncalhe(movimentosF), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0));
 
 		
@@ -2196,7 +2216,7 @@ public class DataLoader {
 
 		ConsolidadoFinanceiroCota consolidado16 = Fixture
 				.consolidadoFinanceiroCota(
-						Arrays.asList(movimentoFinanceiroCota11), cotaManoelCunha,
+						movimentosF, cotaManoelCunha,
 						Fixture.criarData(11, 6, 2012), getTotalConsignado(movimentosF), getTotalVendaEncalhe(movimentosF), getTotalEncalhe(movimentosF), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0));
 
 		
@@ -2204,7 +2224,7 @@ public class DataLoader {
 
 		ConsolidadoFinanceiroCota consolidado17 = Fixture
 				.consolidadoFinanceiroCota(
-						Arrays.asList(movimentoFinanceiroCota12), cotaManoelCunha,
+						movimentosF, cotaManoelCunha,
 						Fixture.criarData(12, 6, 2012), getTotalConsignado(movimentosF), getTotalVendaEncalhe(movimentosF), getTotalEncalhe(movimentosF), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0));
 
 
@@ -2669,76 +2689,76 @@ public class DataLoader {
 		merge(session, Fixture.parametroSistema(5L, TipoParametroSistema.EMAIL_PORTA, "465"));
 		
 		save(session, Fixture.parametroSistema(TipoParametroSistema.PATH_IMAGENS_CAPA, 
-				"C:\\apache-tomcat-7.0.25\\webapps\\nds-client\\capas\\"));	// windows;
-//				"/opt/tomcat/webapps/nds-client/capas/"));					// linux;
+//				"C:\\apache-tomcat-7.0.25\\webapps\\nds-client\\capas\\"));	// windows;
+				"/opt/tomcat/webapps/nds-client/capas/"));					// linux;
 		save(session, Fixture.parametroSistema(TipoParametroSistema.PATH_IMAGENS_PDV,
-				"/images/pdv/"));		// windows;
-//				"\\images\\pdv\\"));	// linux;
+//				"\\images\\pdv\\"));	// windows;
+				"/images/pdv/"));		// linux;
 		save(session, Fixture.parametroSistema(TipoParametroSistema.NUMERO_DIAS_PERMITIDO_LANCAMENTO_FALTA_DE, "7"));
 		save(session, Fixture.parametroSistema(TipoParametroSistema.NUMERO_DIAS_PERMITIDO_LANCAMENTO_FALTA_EM, "7"));
 		save(session, Fixture.parametroSistema(TipoParametroSistema.NUMERO_DIAS_PERMITIDO_LANCAMENTO_SOBRA_EM, "7"));
 		save(session, Fixture.parametroSistema(TipoParametroSistema.NUMERO_DIAS_PERMITIDO_LANCAMENTO_SOBRA_DE, "7"));
 		save(session, Fixture.parametroSistema(TipoParametroSistema.PATH_INTERFACE_NFE_IMPORTACAO, 
-				"C:\\notas\\"));			// windows;
-//				"/opt/interface/notas/"));	// linux;
+//				"C:\\notas\\"));			// windows;
+				"/opt/interface/notas/"));	// linux;
 		save(session, Fixture.parametroSistema(TipoParametroSistema.PATH_INTERFACE_MDC_IMPORTACAO, 
-				"C:\\interface_mdc\\"));		// windows;
-//				"/opt/interface/inbound"));		// linux;
+//				"C:\\interface_mdc\\"));		// windows;
+				"/opt/interface/inbound/"));		// linux;
 		save(session, Fixture.parametroSistema(TipoParametroSistema.PATH_INTERFACE_MDC_EXPORTACAO, 
-				"C:\\interface_mdc\\"));		// windows;
-//				"/opt/interface/outbound"));	// linux;
+//				"C:\\interface_mdc\\"));		// windows;
+				"/opt/interface/outbound/"));	// linux;
 		save(session, Fixture.parametroSistema(TipoParametroSistema.PATH_INTERFACE_MDC_BACKUP, 
-				"C:\\interface_mdc\\"));		// windows;
-//				"/opt/interface/archive"));		// linux;
-		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0106_ARCHIVE, "/opt/interface/ems0106/archive"));
-		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0106_INBOUND, "/opt/interface/ems0106/inbound"));
+//				"C:\\interface_mdc\\"));		// windows;
+				"/opt/interface/archive/"));		// linux;
+		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0106_ARCHIVE, "/opt/interface/ems0106/archive/"));
+		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0106_INBOUND, "/opt/interface/ems0106/inbound/"));
 		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0106_IN_FILEMASK, "(?i:DEAPR19.NEW)"));
-		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0107_ARCHIVE, "/opt/interface/ems0107/archive"));
-		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0107_INBOUND, "/opt/interface/ems0107/inbound"));
-		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0107_OUTBOUND, "/opt/interface/ems0107/outbound"));
+		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0107_ARCHIVE, "/opt/interface/ems0107/archive/"));
+		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0107_INBOUND, "/opt/interface/ems0107/inbound/"));
+		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0107_OUTBOUND, "/opt/interface/ems0107/outbound/"));
 		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0107_IN_FILEMASK, "(?i:DEAJO19.NEW)"));
 		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0107_OUT_FILEMASK, "DEAPR19.NEW"));
-		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0108_ARCHIVE, "/opt/interface/ems0108/archive"));
-		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0108_INBOUND, "/opt/interface/ems0108/inbound"));
+		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0108_ARCHIVE, "/opt/interface/ems0108/archive/"));
+		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0108_INBOUND, "/opt/interface/ems0108/inbound/"));
 		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0108_IN_FILEMASK, "(?i:MATRIZ.NEW)"));
-		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0109_ARCHIVE, "/opt/interface/ems0109/archive"));
-		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0109_INBOUND, "/opt/interface/ems0109/inbound"));
-		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0110_ARCHIVE, "/opt/interface/ems0110/archive"));
-		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0110_INBOUND, "/opt/interface/ems0110/inbound"));
-		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0110_OUTBOUND, "/opt/interface/ems0110/outbound"));
+		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0109_ARCHIVE, "/opt/interface/ems0109/archive/"));
+		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0109_INBOUND, "/opt/interface/ems0109/inbound/"));
+		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0110_ARCHIVE, "/opt/interface/ems0110/archive/"));
+		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0110_INBOUND, "/opt/interface/ems0110/inbound/"));
+		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0110_OUTBOUND, "/opt/interface/ems0110/outbound/"));
 		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0110_IN_FILEMASK, "([0-9]{8}).prd"));
-		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0112_ARCHIVE, "/opt/interface/ems0112/archive"));
-		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0112_INBOUND, "/opt/interface/ems0112/inbound"));
+		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0112_ARCHIVE, "/opt/interface/ems0112/archive/"));
+		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0112_INBOUND, "/opt/interface/ems0112/inbound/"));
 		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0112_IN_FILEMASK, "(?i:[0-9]{8}.edi)"));
-		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0114_ARCHIVE, "/opt/interface/ems0114/archive"));
-		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0114_INBOUND, "/opt/interface/ems0114/inbound"));
-		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0114_OUTBOUND, "/opt/interface/ems0114/outbound"));
+		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0114_ARCHIVE, "/opt/interface/ems0114/archive/"));
+		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0114_INBOUND, "/opt/interface/ems0114/inbound/"));
+		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0114_OUTBOUND, "/opt/interface/ems0114/outbound/"));
 		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0114_IN_FILEMASK, "([0-9]{8}).rec"));
-		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0116_ARCHIVE, "/opt/interface/ems0116/archive"));
-		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0116_INBOUND, "/opt/interface/ems0116/inbound"));
-		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0116_OUTBOUND, "/opt/interface/ems0116/outbound"));
+		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0116_ARCHIVE, "/opt/interface/ems0116/archive/"));
+		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0116_INBOUND, "/opt/interface/ems0116/inbound/"));
+		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0116_OUTBOUND, "/opt/interface/ems0116/outbound/"));
 		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0116_IN_FILEMASK, "(?i:BANCA.NEW)"));
-		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0117_ARCHIVE, "/opt/interfaceOLD/ems0117/archive"));
-		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0117_INBOUND, "/opt/interfaceOLD/ems0117/inbound"));
-		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0117_OUTBOUND, "/opt/interfaceOLD/ems0117/outbound"));
+		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0117_ARCHIVE, "/opt/interfaceOLD/ems0117/archive/"));
+		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0117_INBOUND, "/opt/interfaceOLD/ems0117/inbound/"));
+		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0117_OUTBOUND, "/opt/interfaceOLD/ems0117/outbound/"));
 		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0117_IN_FILEMASK, "COTA.NEW"));
-		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0118_ARCHIVE, "/opt/interface/ems0118/archive"));
-		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0118_INBOUND, "/opt/interface/ems0118/inbound"));
+		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0118_ARCHIVE, "/opt/interface/ems0118/archive/"));
+		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0118_INBOUND, "/opt/interface/ems0118/inbound/"));
 		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0118_IN_FILEMASK, "(?i:PRECO.NEW)"));
-		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0119_ARCHIVE, "/opt/interface/ems0119/archive"));
-		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0119_INBOUND, "/opt/interface/ems0119/inbound"));
+		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0119_ARCHIVE, "/opt/interface/ems0119/archive/"));
+		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0119_INBOUND, "/opt/interface/ems0119/inbound/"));
 		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0119_IN_FILEMASK, "(?i:PRODUTO.NEW)"));
-		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0120_OUTBOUND, "/opt/interface/ems0120/outbound"));
-		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0121_OUTBOUND, "/opt/interface/ems0121/outbound"));
-		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0122_OUTBOUND, "/opt/interface/ems0122/outbound"));
-		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0123_OUTBOUND, "/opt/interface/ems0123/outbound"));
-		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0124_OUTBOUND, "/opt/interface/ems0124/outbound"));
-		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0129_ARCHIVE, "/opt/interface/ems0129/archive"));
-		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0129_OUTBOUND, "/opt/interface/ems0129/outbound"));
+		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0120_OUTBOUND, "/opt/interface/ems0120/outbound/"));
+		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0121_OUTBOUND, "/opt/interface/ems0121/outbound/"));
+		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0122_OUTBOUND, "/opt/interface/ems0122/outbound/"));
+		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0123_OUTBOUND, "/opt/interface/ems0123/outbound/"));
+		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0124_OUTBOUND, "/opt/interface/ems0124/outbound/"));
+		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0129_ARCHIVE, "/opt/interface/ems0129/archive/"));
+		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0129_OUTBOUND, "/opt/interface/ems0129/outbound/"));
 		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0129_OUT_FILEMASK, "PICKING1.NEW"));
-		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0131_OUTBOUND, "/opt/interface/ems0131/outbound"));
-		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0133_OUTBOUND, "/opt/interface/ems0133/outbound"));
-		save(session, Fixture.parametroSistema(TipoParametroSistema.OUTBOUND_FOLDER, "/opt/interface"));
+		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0131_OUTBOUND, "/opt/interface/ems0131/outbound/"));
+		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0133_OUTBOUND, "/opt/interface/ems0133/outbound/"));
+		save(session, Fixture.parametroSistema(TipoParametroSistema.OUTBOUND_FOLDER, "/opt/interface/"));
 	}
 
 	private static void criarMovimentosEstoque(Session session) {
@@ -3846,14 +3866,14 @@ public class DataLoader {
 		cotaMurilo= Fixture.cota(22345, murilo, SituacaoCadastro.ATIVO,box2);
 		cotaMurilo.setSugereSuspensao(true);
 		save(session, cotaMurilo);
-		ContratoCota contrato5 = Fixture.criarContratoCota(cotaMurilo,false,DateUtil.parseData("01/01/2011", "dd/mm/yyyy"), DateUtil.parseData("01/01/2013", "dd/mm/yyyy"), 12, 30);
+		ContratoCota contrato5 = Fixture.criarContratoCota(cotaMurilo,true,DateUtil.parseData("01/01/2011", "dd/mm/yyyy"), DateUtil.parseData("01/01/2013", "dd/mm/yyyy"), 12, 30);
 		save(session, contrato5);
 		
 		
 		cotaMariana = Fixture.cota(32345, mariana, SituacaoCadastro.ATIVO,box1);
 		cotaMariana.setSugereSuspensao(true);
 		save(session, cotaMariana);
-		ContratoCota contrato6 = Fixture.criarContratoCota(cotaMariana,false,DateUtil.parseData("01/01/2011", "dd/mm/yyyy"), DateUtil.parseData("01/01/2013", "dd/mm/yyyy"), 12, 30);
+		ContratoCota contrato6 = Fixture.criarContratoCota(cotaMariana,true,DateUtil.parseData("01/01/2011", "dd/mm/yyyy"), DateUtil.parseData("01/01/2013", "dd/mm/yyyy"), 12, 30);
 		save(session, contrato6);
 		
 		
@@ -4144,8 +4164,6 @@ public class DataLoader {
 
 		
 	}
-	
-	
 
 	private static void criarTiposMovimento(Session session) {
 		tipoMovimentoFaltaEm = Fixture.tipoMovimentoFaltaEm();
@@ -4158,10 +4176,16 @@ public class DataLoader {
 
 		tipoMovimentoVendaEncalhe = Fixture.tipoMovimentoVendaEncalhe();
 		tipoMovimentoEstornoVendaEncalhe = Fixture.tipoMovimentoEstornoVendaEncalhe();
+		
+		tipoMovimentoVendaEncalheSuplementar = Fixture.tipoMovimentoVendaEncalheSuplementar();
+		tipoMovimentoEstornoVendaEncalheSuplementar = Fixture.tipoMovimentoEstornoVendaEncalheSuplementar();
+		tipoMovimentoEstoqueCompraSuplementar = Fixture.tipoMovimentoCompraSuplementar();
+		tipoMovimentoEstoqueEstornoCompraSuplementar = Fixture.tipoMovimentoEstornoCompraSuplementar();
 
 		tipoMovimentoFinanceiroCompraEncalhe = Fixture.tipoMovimentoFinanceiroCompraEncalhe();
 
-		save(session, tipoMovimentoVendaEncalhe,tipoMovimentoFinanceiroCompraEncalhe,tipoMovimentoEstornoVendaEncalhe);
+		save(session, tipoMovimentoVendaEncalhe,tipoMovimentoFinanceiroCompraEncalhe,tipoMovimentoEstornoVendaEncalhe,tipoMovimentoVendaEncalheSuplementar,
+					  tipoMovimentoEstornoVendaEncalheSuplementar,tipoMovimentoEstoqueCompraSuplementar,tipoMovimentoEstoqueEstornoCompraSuplementar);
 
 
 		tipoMovimentoSuplementarCotaAusente = Fixture.tipoMovimentoSuplementarCotaAusente();
@@ -4259,12 +4283,21 @@ public class DataLoader {
 			Fixture.distribuicaoDistribuidor(distribuidor, DiaSemana.TERCA_FEIRA,
 											 OperacaoDistribuidor.DISTRIBUICAO);
 		
-		DistribuicaoDistribuidor distribuicaoDistribuidorQuinta =
-			Fixture.distribuicaoDistribuidor(distribuidor, DiaSemana.QUINTA_FEIRA,
+		DistribuicaoDistribuidor distribuicaoDistribuidorSegunda =
+			Fixture.distribuicaoDistribuidor(distribuidor, DiaSemana.SEGUNDA_FEIRA,
 											 OperacaoDistribuidor.DISTRIBUICAO);
 		
+		DistribuicaoDistribuidor distribuicaoDistribuidorQuinta =
+				Fixture.distribuicaoDistribuidor(distribuidor, DiaSemana.QUINTA_FEIRA,
+												 OperacaoDistribuidor.DISTRIBUICAO);
+		
+		DistribuicaoDistribuidor distribuicaoDistribuidorSexta =
+				Fixture.distribuicaoDistribuidor(distribuidor, DiaSemana.SEXTA_FEIRA,
+												 OperacaoDistribuidor.DISTRIBUICAO);
+		
 		save(session, recolhimentoDistribuidorTerca, recolhimentoDistribuidorQuinta,
-					  distribuicaoDistribuidorTerca, distribuicaoDistribuidorQuinta);
+					  distribuicaoDistribuidorTerca, distribuicaoDistribuidorSegunda,
+					  distribuicaoDistribuidorQuinta, distribuicaoDistribuidorSexta);
 	}
 	
 	private static void gerarCargaDiferencaEstoque(Session session,
@@ -6330,62 +6363,62 @@ public class DataLoader {
 		movimentoFinanceiroCota1 = Fixture.movimentoFinanceiroCota(
 			cotaManoel, tipoMovimentoFinanceiroRecebimentoReparte, usuarioJoao,
 			obterValorMovimentosEstoque(Arrays.asList(movimentoEstoqueCota1)), Arrays.asList(movimentoEstoqueCota1),
-			StatusAprovacao.PENDENTE, new Date(), true);
+			StatusAprovacao.APROVADO, new Date(), true);
 
 		movimentoFinanceiroCota2 = Fixture.movimentoFinanceiroCota(
 			cotaManoel, tipoMovimentoFinanceiroRecebimentoReparte, usuarioJoao,
 			obterValorMovimentosEstoque(Arrays.asList(movimentoEstoqueCota2)), Arrays.asList(movimentoEstoqueCota2),
-			StatusAprovacao.PENDENTE, new Date(), true);
+			StatusAprovacao.APROVADO, new Date(), true);
 
 		movimentoFinanceiroCota3 = Fixture.movimentoFinanceiroCota(
 			cotaManoel, tipoMovimentoFinanceiroRecebimentoReparte, usuarioJoao,
 			obterValorMovimentosEstoque(Arrays.asList(movimentoEstoqueCota3)), Arrays.asList(movimentoEstoqueCota3),
-			StatusAprovacao.PENDENTE, new Date(), true);
+			StatusAprovacao.APROVADO, new Date(), true);
 
 		movimentoFinanceiroCota4 = Fixture.movimentoFinanceiroCota(
 			cotaManoel, tipoMovimentoFinanceiroRecebimentoReparte, usuarioJoao,
 			obterValorMovimentosEstoque(Arrays.asList(movimentoEstoqueCota4)), Arrays.asList(movimentoEstoqueCota4),
-			StatusAprovacao.PENDENTE, new Date(), true);
+			StatusAprovacao.APROVADO, new Date(), true);
 
 		movimentoFinanceiroCota5 = Fixture.movimentoFinanceiroCota(
 			cotaManoel, tipoMovimentoFinanceiroRecebimentoReparte, usuarioJoao,
 			obterValorMovimentosEstoque(Arrays.asList(movimentoEstoqueCota5)), Arrays.asList(movimentoEstoqueCota5),
-			StatusAprovacao.PENDENTE, new Date(), true);
+			StatusAprovacao.APROVADO, new Date(), true);
 
 		movimentoFinanceiroCota6 = Fixture.movimentoFinanceiroCota(
 			cotaManoel, tipoMovimentoFinanceiroRecebimentoReparte, usuarioJoao,
 			obterValorMovimentosEstoque(Arrays.asList(movimentoEstoqueCota6)), Arrays.asList(movimentoEstoqueCota6),
-			StatusAprovacao.PENDENTE, new Date(), true);
+			StatusAprovacao.APROVADO, new Date(), true);
 
 		movimentoFinanceiroCota7 = Fixture.movimentoFinanceiroCota(
 			cotaManoel, tipoMovimentoFinanceiroRecebimentoReparte, usuarioJoao,
 			obterValorMovimentosEstoque(Arrays.asList(movimentoEstoqueCota7)), Arrays.asList(movimentoEstoqueCota7),
-			StatusAprovacao.PENDENTE, new Date(), true);
+			StatusAprovacao.APROVADO, new Date(), true);
 
 		movimentoFinanceiroCota8 = Fixture.movimentoFinanceiroCota(
 			cotaManoel, tipoMovimentoFinanceiroRecebimentoReparte, usuarioJoao,
 			obterValorMovimentosEstoque(Arrays.asList(movimentoEstoqueCota8)), Arrays.asList(movimentoEstoqueCota8),
-			StatusAprovacao.PENDENTE, new Date(), true);
+			StatusAprovacao.APROVADO, new Date(), true);
 
 		movimentoFinanceiroCota9 = Fixture.movimentoFinanceiroCota(
 			cotaManoel, tipoMovimentoFinanceiroRecebimentoReparte, usuarioJoao,
 			obterValorMovimentosEstoque(Arrays.asList(movimentoEstoqueCota9)), Arrays.asList(movimentoEstoqueCota9),
-			StatusAprovacao.PENDENTE, new Date(), true);
+			StatusAprovacao.APROVADO, new Date(), true);
 		
 		movimentoFinanceiroCota10 = Fixture.movimentoFinanceiroCota(
 				cotaManoelCunha, tipoMovimentoFinanceiroRecebimentoReparte, usuarioJoao,
 				obterValorMovimentosEstoque(Arrays.asList(movimentoEstoqueCota10)), Arrays.asList(movimentoEstoqueCota10),
-				StatusAprovacao.PENDENTE, new Date(), true);
+				StatusAprovacao.APROVADO, new Date(), true);
 		
 		movimentoFinanceiroCota11 = Fixture.movimentoFinanceiroCota(
 				cotaManoelCunha, tipoMovimentoFinanceiroRecebimentoReparte, usuarioJoao,
 				obterValorMovimentosEstoque(Arrays.asList(movimentoEstoqueCota11)), Arrays.asList(movimentoEstoqueCota11),
-				StatusAprovacao.PENDENTE, new Date(), true);
+				StatusAprovacao.APROVADO, new Date(), true);
 		
 		movimentoFinanceiroCota12 = Fixture.movimentoFinanceiroCota(
 				cotaManoelCunha, tipoMovimentoFinanceiroRecebimentoReparte, usuarioJoao,
 				obterValorMovimentosEstoque(Arrays.asList(movimentoEstoqueCota12)), Arrays.asList(movimentoEstoqueCota12),
-				StatusAprovacao.PENDENTE, new Date(), true);
+				StatusAprovacao.APROVADO, new Date(), true);
 		
 		
 		
@@ -6394,33 +6427,33 @@ public class DataLoader {
 		movimentoFinanceiroCota13 = Fixture.movimentoFinanceiroCota(
 				cotaManoel, tipoMovimentoFinanceiroEnvioEncalhe, usuarioJoao,
 				obterValorMovimentosEstoque(Arrays.asList(movimentoEstoqueCota13)), Arrays.asList(movimentoEstoqueCota13),
-				StatusAprovacao.PENDENTE, new Date(), true);
+				StatusAprovacao.APROVADO, new Date(), true);
 
 		movimentoFinanceiroCota14 = Fixture.movimentoFinanceiroCota(
 				cotaManoel, tipoMovimentoFinanceiroEnvioEncalhe, usuarioJoao,
 				obterValorMovimentosEstoque(Arrays.asList(movimentoEstoqueCota14)), Arrays.asList(movimentoEstoqueCota14),
-			StatusAprovacao.PENDENTE, new Date(), true);
+			StatusAprovacao.APROVADO, new Date(), true);
 
 		movimentoFinanceiroCota15 = Fixture.movimentoFinanceiroCota(
 				cotaManoel, tipoMovimentoFinanceiroEnvioEncalhe, usuarioJoao,
 				obterValorMovimentosEstoque(Arrays.asList(movimentoEstoqueCota15)), Arrays.asList(movimentoEstoqueCota15),
-			    StatusAprovacao.PENDENTE, new Date(), true);
+			    StatusAprovacao.APROVADO, new Date(), true);
 		
 		
 		movimentoFinanceiroCota16 = Fixture.movimentoFinanceiroCota(
 				cotaManoel, tipoMovimentoFinanceiroEnvioEncalhe, usuarioJoao,
 				obterValorMovimentosEstoque(Arrays.asList(movimentoEstoqueCota16)), Arrays.asList(movimentoEstoqueCota16),
-				StatusAprovacao.PENDENTE, new Date(), true);
+				StatusAprovacao.APROVADO, new Date(), true);
 		
 		movimentoFinanceiroCota17 = Fixture.movimentoFinanceiroCota(
 				cotaManoel, tipoMovimentoFinanceiroEnvioEncalhe, usuarioJoao,
 				obterValorMovimentosEstoque(Arrays.asList(movimentoEstoqueCota17)), Arrays.asList(movimentoEstoqueCota17),
-				StatusAprovacao.PENDENTE, new Date(), true);
+				StatusAprovacao.APROVADO, new Date(), true);
 		
 		movimentoFinanceiroCota18 = Fixture.movimentoFinanceiroCota(
 				cotaManoel, tipoMovimentoFinanceiroEnvioEncalhe, usuarioJoao,
 				obterValorMovimentosEstoque(Arrays.asList(movimentoEstoqueCota18)), Arrays.asList(movimentoEstoqueCota18),
-				StatusAprovacao.PENDENTE, new Date(), true);
+				StatusAprovacao.APROVADO, new Date(), true);
 		
 		
 		
@@ -6428,32 +6461,32 @@ public class DataLoader {
 		movimentoFinanceiroCota19 = Fixture.movimentoFinanceiroCota(
 				cotaManoel, tipoMovimentoFinanceiroRecebimentoReparte, usuarioJoao,
 				obterValorMovimentosEstoque(Arrays.asList(movimentoEstoqueCota19)), Arrays.asList(movimentoEstoqueCota19),
-				StatusAprovacao.PENDENTE, new Date(), true);
+				StatusAprovacao.APROVADO, new Date(), true);
 
 		movimentoFinanceiroCota20 = Fixture.movimentoFinanceiroCota(
 				cotaManoel, tipoMovimentoFinanceiroRecebimentoReparte, usuarioJoao,
 				obterValorMovimentosEstoque(Arrays.asList(movimentoEstoqueCota20)), Arrays.asList(movimentoEstoqueCota20),
-				StatusAprovacao.PENDENTE, new Date(), true);
+				StatusAprovacao.APROVADO, new Date(), true);
 
 		movimentoFinanceiroCota21 = Fixture.movimentoFinanceiroCota(
 				cotaManoel, tipoMovimentoFinanceiroRecebimentoReparte, usuarioJoao,
 				obterValorMovimentosEstoque(Arrays.asList(movimentoEstoqueCota21)), Arrays.asList(movimentoEstoqueCota21),
-				StatusAprovacao.PENDENTE, new Date(), true);
+				StatusAprovacao.APROVADO, new Date(), true);
 		
 		movimentoFinanceiroCota22 = Fixture.movimentoFinanceiroCota(
 				cotaManoel, tipoMovimentoFinanceiroRecebimentoReparte, usuarioJoao,
 				obterValorMovimentosEstoque(Arrays.asList(movimentoEstoqueCota22)), Arrays.asList(movimentoEstoqueCota22),
-				StatusAprovacao.PENDENTE, new Date(), true);
+				StatusAprovacao.APROVADO, new Date(), true);
 		
 		movimentoFinanceiroCota23 = Fixture.movimentoFinanceiroCota(
 				cotaManoel, tipoMovimentoFinanceiroRecebimentoReparte, usuarioJoao,
 				obterValorMovimentosEstoque(Arrays.asList(movimentoEstoqueCota23)), Arrays.asList(movimentoEstoqueCota23),
-				StatusAprovacao.PENDENTE, new Date(), true);
+				StatusAprovacao.APROVADO, new Date(), true);
 		
 		movimentoFinanceiroCota24 = Fixture.movimentoFinanceiroCota(
 				cotaManoel, tipoMovimentoFinanceiroRecebimentoReparte, usuarioJoao,
 				obterValorMovimentosEstoque(Arrays.asList(movimentoEstoqueCota24)), Arrays.asList(movimentoEstoqueCota24),
-				StatusAprovacao.PENDENTE, new Date(), true);
+				StatusAprovacao.APROVADO, new Date(), true);
 		
 		
 		
@@ -6461,32 +6494,32 @@ public class DataLoader {
 		movimentoFinanceiroCota25 = Fixture.movimentoFinanceiroCota(
 				cotaManoel, tipoMovimentoFinanceiroCompraEncalhe, usuarioJoao,
 				obterValorMovimentosEstoque(Arrays.asList(movimentoEstoqueCota25)), Arrays.asList(movimentoEstoqueCota25),
-				StatusAprovacao.PENDENTE, new Date(), true);
+				StatusAprovacao.APROVADO, new Date(), true);
 
 		movimentoFinanceiroCota26 = Fixture.movimentoFinanceiroCota(
 				cotaManoel, tipoMovimentoFinanceiroCompraEncalhe, usuarioJoao,
 				obterValorMovimentosEstoque(Arrays.asList(movimentoEstoqueCota26)), Arrays.asList(movimentoEstoqueCota26),
-				StatusAprovacao.PENDENTE, new Date(), true);
+				StatusAprovacao.APROVADO, new Date(), true);
 
 		movimentoFinanceiroCota27 = Fixture.movimentoFinanceiroCota(
 				cotaManoel, tipoMovimentoFinanceiroCompraEncalhe, usuarioJoao,
 				obterValorMovimentosEstoque(Arrays.asList(movimentoEstoqueCota27)), Arrays.asList(movimentoEstoqueCota27),
-				StatusAprovacao.PENDENTE, new Date(), true);
+				StatusAprovacao.APROVADO, new Date(), true);
 		
 		movimentoFinanceiroCota28 = Fixture.movimentoFinanceiroCota(
 				cotaManoel, tipoMovimentoFinanceiroCompraEncalhe, usuarioJoao,
 				obterValorMovimentosEstoque(Arrays.asList(movimentoEstoqueCota28)), Arrays.asList(movimentoEstoqueCota28),
-				StatusAprovacao.PENDENTE, new Date(), true);
+				StatusAprovacao.APROVADO, new Date(), true);
 		
 		movimentoFinanceiroCota29 = Fixture.movimentoFinanceiroCota(
 				cotaManoel, tipoMovimentoFinanceiroCompraEncalhe, usuarioJoao,
 				obterValorMovimentosEstoque(Arrays.asList(movimentoEstoqueCota29)), Arrays.asList(movimentoEstoqueCota29),
-				StatusAprovacao.PENDENTE, new Date(), true);
+				StatusAprovacao.APROVADO, new Date(), true);
 		
 		movimentoFinanceiroCota30 = Fixture.movimentoFinanceiroCota(
 				cotaManoel, tipoMovimentoFinanceiroCompraEncalhe, usuarioJoao,
 				obterValorMovimentosEstoque(Arrays.asList(movimentoEstoqueCota30)), Arrays.asList(movimentoEstoqueCota30),
-				StatusAprovacao.PENDENTE, new Date(), true);
+				StatusAprovacao.APROVADO, new Date(), true);
 		
 		
 
@@ -6728,23 +6761,148 @@ public class DataLoader {
 				  	  movimentoFinanceiroEnvioEncalhe1, movimentoFinanceiroEnvioEncalhe2);
 	}
 
-	private static void criarNotasFiscaisEntradaFornecedor(Session session) {
+	private static void criarMassaNotaFiscalEntradaFornecedorParaRecebimentoFisico(Session session) {
+		
+		NotaFiscalEntradaFornecedor nfEntradaFornec = null;
+		
+		Long 		unidadeProduto           = 0L; 
+		
+		Long numero = null;
+		String serie = null;
+		String chaveAcesso = null;
 
+		numero 		= 1000000L;
+		serie 		= "8585";
+		chaveAcesso = "939490";
+		
+		nfEntradaFornec = Fixture.notaFiscalEntradaFornecedor(
+				numero,
+				serie,
+				chaveAcesso,
+				cfop5102, 
+				fornecedorDinap.getJuridica(), 
+				fornecedorDinap, 
+				tipoNotaFiscalRecebimento,
+				usuarioJoao, 
+				new BigDecimal(2500), 
+				new BigDecimal(500), 
+				new BigDecimal(2000));
+		
+		nfEntradaFornec.setOrigem(Origem.MANUAL);
+		session.save(nfEntradaFornec);
+
+		numero 		= 1000001L;
+		serie 		= "8585";
+		chaveAcesso = "939491";
+		
+		nfEntradaFornec = Fixture.notaFiscalEntradaFornecedor(
+				numero,
+				serie,
+				chaveAcesso,
+				cfop5102, 
+				fornecedorDinap.getJuridica(), 
+				fornecedorDinap, 
+				tipoNotaFiscalRecebimento,
+				usuarioJoao, 
+				new BigDecimal(3500), 
+				new BigDecimal(400), 
+				new BigDecimal(3100));
+		
+		nfEntradaFornec.setOrigem(Origem.INTERFACE);
+		session.save(nfEntradaFornec);
+		
+		
+		ItemNotaFiscalEntrada itemNFEntrada = Fixture.itemNotaFiscalEntradaNFE(
+				produtoEdicaoCaras1, 
+				usuarioJoao, 
+				nfEntradaFornec, 
+				Fixture.criarData(05, Calendar.MAY, 2012), 
+				Fixture.criarData(20, Calendar.MAY, 2012), 
+				TipoLancamento.LANCAMENTO, 
+				new BigDecimal(50), 
+				"", 
+				"", 
+				unidadeProduto,
+				"", 
+				"", 
+				BigDecimal.ZERO, 
+				BigDecimal.ZERO, 
+				BigDecimal.ZERO, 
+				BigDecimal.ZERO, 
+				BigDecimal.ZERO);
+		
+		session.save(itemNFEntrada);
+		
+		numero 		= 1000002L;
+		serie 		= "8585";
+		chaveAcesso = "939492";
+		
+		nfEntradaFornec = Fixture.notaFiscalEntradaFornecedor(
+				numero,
+				serie,
+				chaveAcesso,
+				cfop5102, 
+				fornecedorDinap.getJuridica(), 
+				fornecedorDinap, 
+				tipoNotaFiscalRecebimento,
+				usuarioJoao, 
+				new BigDecimal(1500), 
+				new BigDecimal(500), 
+				new BigDecimal(1000));
+		
+		nfEntradaFornec.setOrigem(Origem.INTERFACE);
+		session.save(nfEntradaFornec);
+		
+		itemNFEntrada = Fixture.itemNotaFiscalEntradaNFE(
+				produtoEdicaoCaras1, 
+				usuarioJoao, 
+				nfEntradaFornec, 
+				Fixture.criarData(05, Calendar.MAY, 2012), 
+				Fixture.criarData(20, Calendar.MAY, 2012), 
+				TipoLancamento.LANCAMENTO, 
+				new BigDecimal(50), 
+				"", 
+				"", 
+				unidadeProduto,
+				"", 
+				"", 
+				BigDecimal.ZERO, 
+				BigDecimal.ZERO, 
+				BigDecimal.ZERO, 
+				BigDecimal.ZERO, 
+				BigDecimal.ZERO);
+		
+		session.save(itemNFEntrada);
+		
+		
+	}
+	
+	private static void criarNotasFiscaisEntradaFornecedor(Session session) {
+		
 		for (int i = 0; i < 50; i++) {
 
+			Long numero = 0L;
+			String serie = "";
+			String chaveAcesso = "";
+			
 			Calendar calendar = Calendar.getInstance();
 
 			TipoNotaFiscal tipoNotaFiscal = i % 2 == 0 ? tipoNotaFiscalRecebimento : tipoNotaFiscalDevolucao;
 
-			notaFiscalFornecedor = Fixture
-					.notaFiscalEntradaFornecedor(cfop5102, fornecedorDinap.getJuridica(), fornecedorDinap, tipoNotaFiscal,
-							usuarioJoao, new BigDecimal(15), new BigDecimal(5), BigDecimal.TEN);
+			notaFiscalFornecedor = Fixture.notaFiscalEntradaFornecedor(
+					cfop5102, 
+					fornecedorDinap.getJuridica(), 
+					fornecedorDinap, 
+					tipoNotaFiscal,
+					usuarioJoao, 
+					new BigDecimal(15), 
+					new BigDecimal(5), 
+					BigDecimal.TEN);
 
 			calendar.add(Calendar.DATE, i * 3);
-
 			notaFiscalFornecedor.setDataEmissao(calendar.getTime());
-
 			session.save(notaFiscalFornecedor);
+			
 		}
 	}	
 
@@ -8803,7 +8961,7 @@ public class DataLoader {
 		interfaceEMS0109 = Fixture.criarInterfaceExecucao(109L, "EMS0109");
 		interfaceEMS0110 = Fixture.criarInterfaceExecucao(110L, "EMS0110");
 		interfaceEMS0111 = Fixture.criarInterfaceExecucao(111L, "EMS0111");
-		interfaceEMS0112 = Fixture.criarInterfaceExecucao(112L, "EMS0112");
+//		interfaceEMS0112 = Fixture.criarInterfaceExecucao(112L, "EMS0112");
 		interfaceEMS0113 = Fixture.criarInterfaceExecucao(113L, "EMS0113");
 		interfaceEMS0114 = Fixture.criarInterfaceExecucao(114L, "EMS0114");
 		interfaceEMS0116 = Fixture.criarInterfaceExecucao(116L, "EMS0116");
@@ -8822,38 +8980,38 @@ public class DataLoader {
 		interfaceEMS0131 = Fixture.criarInterfaceExecucao(131L, "EMS0131");
 		interfaceEMS0132 = Fixture.criarInterfaceExecucao(132L, "EMS0132");
 		interfaceEMS0133 = Fixture.criarInterfaceExecucao(133L, "EMS0133");
-		interfaceEMS0134 = Fixture.criarInterfaceExecucao(134L, "EMS0134");
-		interfaceEMS0185 = Fixture.criarInterfaceExecucao(185L, "EMS0185");
+//		interfaceEMS0134 = Fixture.criarInterfaceExecucao(134L, "EMS0134");
+//		interfaceEMS0185 = Fixture.criarInterfaceExecucao(185L, "EMS0185");
 		interfaceEMS0197 = Fixture.criarInterfaceExecucao(197L, "EMS0197");
-		
-		save(session, interfaceEMS0106);
-		save(session, interfaceEMS0107);
-		save(session, interfaceEMS0108);
-		save(session, interfaceEMS0109);
-		save(session, interfaceEMS0110);
-		save(session, interfaceEMS0111);
-		save(session, interfaceEMS0112);
-		save(session, interfaceEMS0113);
-		save(session, interfaceEMS0114);
-		save(session, interfaceEMS0116);
-		save(session, interfaceEMS0117);
-		save(session, interfaceEMS0118);
-		save(session, interfaceEMS0119);
-		save(session, interfaceEMS0120);
-		save(session, interfaceEMS0121);
-		save(session, interfaceEMS0122);
-		save(session, interfaceEMS0123);
-		save(session, interfaceEMS0124);
-		save(session, interfaceEMS0125);
-		save(session, interfaceEMS0126);
-		save(session, interfaceEMS0129);
-		save(session, interfaceEMS0130);
-		save(session, interfaceEMS0131);
-		save(session, interfaceEMS0132);
-		save(session, interfaceEMS0133);
-		save(session, interfaceEMS0134);
-		save(session, interfaceEMS0185);
-		save(session, interfaceEMS0197);
+
+		save(session, Fixture.criarInterfaceExecucao(106L, "EMS0106"));
+		save(session, Fixture.criarInterfaceExecucao(107L, "EMS0107"));
+		save(session, Fixture.criarInterfaceExecucao(108L, "EMS0108"));
+		save(session, Fixture.criarInterfaceExecucao(InterfaceEnum.EMS0109.getCodigoInterface(), "EMS0109"));
+		save(session, Fixture.criarInterfaceExecucao(InterfaceEnum.EMS0110.getCodigoInterface(), "EMS0110"));
+		save(session, Fixture.criarInterfaceExecucao(InterfaceEnum.EMS0111.getCodigoInterface(), "EMS0111"));
+//		save(session, Fixture.criarInterfaceExecucao(InterfaceEnum.EMS0112.getCodigoInterface(), "EMS0112"));
+		save(session, Fixture.criarInterfaceExecucao(InterfaceEnum.EMS0113.getCodigoInterface(), "EMS0113"));
+		save(session, Fixture.criarInterfaceExecucao(InterfaceEnum.EMS0114.getCodigoInterface(), "EMS0114"));
+		save(session, Fixture.criarInterfaceExecucao(116L, "EMS0116"));
+		save(session, Fixture.criarInterfaceExecucao(117L, "EMS0117"));
+		save(session, Fixture.criarInterfaceExecucao(118L, "EMS0118"));
+		save(session, Fixture.criarInterfaceExecucao(InterfaceEnum.EMS0119.getCodigoInterface(), "EMS0119"));
+		save(session, Fixture.criarInterfaceExecucao(120L, "EMS0120"));
+		save(session, Fixture.criarInterfaceExecucao(121L, "EMS0121"));
+		save(session, Fixture.criarInterfaceExecucao(122L, "EMS0122"));
+		save(session, Fixture.criarInterfaceExecucao(123L, "EMS0123"));
+		save(session, Fixture.criarInterfaceExecucao(124L, "EMS0124"));
+		save(session, Fixture.criarInterfaceExecucao(InterfaceEnum.EMS0125.getCodigoInterface(), "EMS0125"));
+		save(session, Fixture.criarInterfaceExecucao(InterfaceEnum.EMS0126.getCodigoInterface(), "EMS0126"));
+		save(session, Fixture.criarInterfaceExecucao(129L, "EMS0129"));
+		save(session, Fixture.criarInterfaceExecucao(130L, "EMS0130"));
+		save(session, Fixture.criarInterfaceExecucao(131L, "EMS0131"));
+		save(session, Fixture.criarInterfaceExecucao(132L, "EMS0132"));
+		save(session, Fixture.criarInterfaceExecucao(133L, "EMS0133"));
+//		save(session, Fixture.criarInterfaceExecucao(InterfaceEnum.EMS0134.getCodigoInterface(), "EMS0134"));
+//		save(session, Fixture.criarInterfaceExecucao(InterfaceEnum.EMS0185.getCodigoInterface(), "EMS0185"));
+		save(session, Fixture.criarInterfaceExecucao(197L, "EMS0197"));
 	}
 	
 	private static void criarEventoExecucao(Session session) {
@@ -8874,6 +9032,35 @@ public class DataLoader {
 		save(session, eventoInformacaoDadoAlterado);
 		save(session, eventoRegistroExistente);
 		
+	}
+	
+	private static void criarLogradouros(Session session) {
+		
+		Pais pais = Fixture.criarPais("BR", "Brasil");
+		save(session, pais);
+		
+		UnidadeFederacao sp = Fixture.criarUnidadeFederacao(13246L, "SP", "São Paulo", pais);
+		UnidadeFederacao mg = Fixture.criarUnidadeFederacao(13247L, "MG", "Minas Gerais", pais);
+		save(session, sp, mg);
+		
+		Localidade mococa = Fixture.criarLocalidade("132", "Mococa", "582", sp);
+		Localidade arcerburgo = Fixture.criarLocalidade("134", "Arceburgo", "584", mg);
+		save(session, mococa, arcerburgo);
+		
+		Bairro vilaCarvalho = Fixture.criarBairro("1", "Vila Carvalho", mococa);
+		Bairro descanso = Fixture.criarBairro("2", "Descanso", mococa);
+		Bairro centro = Fixture.criarBairro("3", "Centro", arcerburgo);
+		save(session, vilaCarvalho, descanso, centro);
+		
+		Logradouro joseCristovam = Fixture.criarLogradouro(
+				"1", "Capitão José Cristovam de Lima", "13735430", 1L, mococa, "RUA");
+		Logradouro avenidaBrasil = Fixture.criarLogradouro(
+				"2", "Avenida Brasil", "13500213", 3L, arcerburgo, "AVENIDA");
+		Logradouro antonioCristovao = Fixture.criarLogradouro(
+				"3", "Antonio Cristovão", "13730000", 2L, mococa, "RUA");
+		Logradouro avenidaMarginal = Fixture.criarLogradouro(
+				"4", "Avenida Marginal", "13500213", 2L, mococa, "AVENIDA");
+		save(session, joseCristovam, avenidaBrasil, antonioCristovao, avenidaMarginal);
 	}
 	
 }

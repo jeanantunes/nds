@@ -13,100 +13,101 @@ public abstract class ContribuicaoSocial implements Serializable {
 	 */
 	private static final long serialVersionUID = -7720053662091868121L;
 	
-	protected String cst;
+	protected Integer cst;
 	
-	protected BigDecimal valorBaseCalculoDebito;
+	protected BigDecimal valorBaseCalculo;
 	
-	protected BigDecimal valorBaseCalculoCredito;
+	protected BigDecimal percentualAliquota;
 	
-	protected BigDecimal aliquota;
+	protected BigDecimal quantidadeVendida;
 	
-	protected BigDecimal valorDebito;
+	protected BigDecimal valorAliquota;
 	
-	protected BigDecimal valorCredito;
+	protected BigDecimal valor;
 
 	/**
 	 * @return the cst
 	 */
-	public String getCst() {
+	public Integer getCst() {
 		return cst;
 	}
 
 	/**
 	 * @param cst the cst to set
 	 */
-	public void setCst(String cst) {
+	public void setCst(Integer cst) {
 		this.cst = cst;
 	}
 
 	/**
-	 * @return the valorBaseCalculoDebito
+	 * @return the valorBaseCalculo
 	 */
-	public BigDecimal getValorBaseCalculoDebito() {
-		return valorBaseCalculoDebito;
+	public BigDecimal getValorBaseCalculo() {
+		return valorBaseCalculo;
 	}
 
 	/**
-	 * @param valorBaseCalculoDebito the valorBaseCalculoDebito to set
+	 * @param valorBaseCalculo the valorBaseCalculo to set
 	 */
-	public void setValorBaseCalculoDebito(BigDecimal valorBaseCalculoDebito) {
-		this.valorBaseCalculoDebito = valorBaseCalculoDebito;
+	public void setValorBaseCalculo(BigDecimal valorBaseCalculo) {
+		this.valorBaseCalculo = valorBaseCalculo;
 	}
 
 	/**
-	 * @return the valorBaseCalculoCredito
+	 * @return the percentualAliquota
 	 */
-	public BigDecimal getValorBaseCalculoCredito() {
-		return valorBaseCalculoCredito;
+	public BigDecimal getPercentualAliquota() {
+		return percentualAliquota;
 	}
 
 	/**
-	 * @param valorBaseCalculoCredito the valorBaseCalculoCredito to set
+	 * @param percentualAliquota the percentualAliquota to set
 	 */
-	public void setValorBaseCalculoCredito(BigDecimal valorBaseCalculoCredito) {
-		this.valorBaseCalculoCredito = valorBaseCalculoCredito;
+	public void setPercentualAliquota(BigDecimal percentualAliquota) {
+		this.percentualAliquota = percentualAliquota;
 	}
 
 	/**
-	 * @return the aliquota
+	 * @return the quantidadeVendida
 	 */
-	public BigDecimal getAliquota() {
-		return aliquota;
+	public BigDecimal getQuantidadeVendida() {
+		return quantidadeVendida;
 	}
 
 	/**
-	 * @param aliquota the aliquota to set
+	 * @param quantidadeVendida the quantidadeVendida to set
 	 */
-	public void setAliquota(BigDecimal aliquota) {
-		this.aliquota = aliquota;
+	public void setQuantidadeVendida(BigDecimal quantidadeVendida) {
+		this.quantidadeVendida = quantidadeVendida;
 	}
 
 	/**
-	 * @return the valorDebito
+	 * @return the valorAliquota
 	 */
-	public BigDecimal getValorDebito() {
-		return valorDebito;
+	public BigDecimal getValorAliquota() {
+		return valorAliquota;
 	}
 
 	/**
-	 * @param valorDebito the valorDebito to set
+	 * @param valorAliquota the valorAliquota to set
 	 */
-	public void setValorDebito(BigDecimal valorDebito) {
-		this.valorDebito = valorDebito;
+	public void setValorAliquota(BigDecimal valorAliquota) {
+		this.valorAliquota = valorAliquota;
 	}
 
 	/**
-	 * @return the valorCredito
+	 * @return the valor
 	 */
-	public BigDecimal getValorCredito() {
-		return valorCredito;
+	public BigDecimal getValor() {
+		return valor;
 	}
 
 	/**
-	 * @param valorCredito the valorCredito to set
+	 * @param valor the valor to set
 	 */
-	public void setValorCredito(BigDecimal valorCredito) {
-		this.valorCredito = valorCredito;
+	public void setValor(BigDecimal valor) {
+		this.valor = valor;
 	}
 
+	
 }

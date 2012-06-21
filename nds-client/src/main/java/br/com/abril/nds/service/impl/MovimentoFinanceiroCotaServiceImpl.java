@@ -36,11 +36,12 @@ public class MovimentoFinanceiroCotaServiceImpl implements
 
 	@Override
 	@Transactional
-	public void gerarMovimentoFinanceiroDebitoCredito(
+	public MovimentoFinanceiroCota gerarMovimentoFinanceiroDebitoCredito(
 			MovimentoFinanceiroCotaDTO movimentoFinanceiroCotaDTO) {
 
 		MovimentoFinanceiroCota movimentoFinanceiroCota = null;
-
+		MovimentoFinanceiroCota movimentoFinanceiroCotaMerged = null;
+		
 		if (movimentoFinanceiroCotaDTO.getIdMovimentoFinanceiroCota() != null) {
 
 			movimentoFinanceiroCota = this.movimentoFinanceiroCotaRepository.buscarPorId(
@@ -93,11 +94,14 @@ public class MovimentoFinanceiroCotaServiceImpl implements
 			
 			movimentoFinanceiroCota.setMovimentos(movimentoFinanceiroCotaDTO.getMovimentos());
 			
-			MovimentoFinanceiroCota movimentoFinanceiroCotaMerged = 
+			movimentoFinanceiroCotaMerged = 
 					this.movimentoFinanceiroCotaRepository.merge(movimentoFinanceiroCota);
 
 			gerarHistoricoMovimentoFinanceiroCota(movimentoFinanceiroCotaMerged, movimentoFinanceiroCotaDTO.getTipoEdicao());
+
 		}
+		
+		return movimentoFinanceiroCotaMerged;
 	}
 	
 	

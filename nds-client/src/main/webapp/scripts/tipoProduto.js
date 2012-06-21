@@ -26,10 +26,16 @@ TipoProduto.prototype.initGrid = function() {
 					{
 
 						preProcess : function(data) {
-							if (typeof data.mensagens == "object") {
-								exibirMensagemDialog(
-										data.mensagens.tipoMensagem,
-										data.mensagens.listaMensagens, "");
+							
+							var mensagens = data.mensagens ? data.mensagens : data;
+							
+							var tipoMensagem = mensagens.tipoMensagem;
+							
+							var listaMensagens = mensagens.listaMensagens;
+							
+							if (tipoMensagem && listaMensagens) {
+								exibirMensagem(tipoMensagem, listaMensagens, "");
+							
 							} else {
 								$.each(data.rows,
 												function(index, value) {
