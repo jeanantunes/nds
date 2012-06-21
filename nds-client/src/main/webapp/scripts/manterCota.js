@@ -230,7 +230,7 @@ var MANTER_COTA = {
 		$.postJSON(
 				contextPath + "/cadastro/cota/salvarTelefones",
 				"idCota="+ MANTER_COTA.idCota, 
-				null,
+				MANTER_COTA.carregarTelefones,
 				null,
 				true
 		);
