@@ -99,6 +99,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 				for (FechamentoEncalhe fechamento : listaFechamento) {
 					if (conferencia.getCodigo().equals(fechamento.getFechamentoEncalhePK().getProdutoEdicao().getProduto().getCodigo())) {
 						conferencia.setFisico(fechamento.getQuantidade());
+						conferencia.setDiferenca(conferencia.getExemplaresDevolucao().longValue() - conferencia.getFisico().longValue());
 						break;
 					}
 				}
@@ -114,6 +115,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 				for (FechamentoEncalheBox fechamento : listaFechamentoBox) {
 					if (conferencia.getCodigo().equals(fechamento.getFechamentoEncalheBoxPK().getFechamentoEncalhe().getFechamentoEncalhePK().getProdutoEdicao().getProduto().getCodigo())) {
 						conferencia.setFisico(fechamento.getQuantidade());
+						conferencia.setDiferenca(conferencia.getExemplaresDevolucao().longValue() - conferencia.getFisico().longValue());
 						break;
 					}
 				}
@@ -193,11 +195,16 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 		for (CotaAusenteEncalheDTO cotaAusenteEncalheDTO : listaCotaAusenteEncalhe) {
 			
 			if (cotaAusenteEncalheDTO.getFechado()) {
-				cotaAusenteEncalheDTO.setAcao(
-					"Cobrado, " + DateUtil.formatarData(cotaAusenteEncalheDTO.getDataEncalhe(), "dd/MM/yyyy"));
+				cotaAusenteEncalheDTO.setAcao("Cobrado");
+				
 			} else if (cotaAusenteEncalheDTO.getPostergado()) {
+
+				Date dataPostergacao = 
+					this.fechamentoEncalheRepository.obterChamdasEncalhePostergadas(
+						cotaAusenteEncalheDTO.getIdCota(), cotaAusenteEncalheDTO.getDataEncalhe());
+				
 				cotaAusenteEncalheDTO.setAcao(
-					"Postergado, " + DateUtil.formatarData(cotaAusenteEncalheDTO.getDataEncalhe(), "dd/MM/yyyy"));
+					"Postergado, " + DateUtil.formatarData(dataPostergacao, "dd/MM/yyyy"));
 			}
 		}
 		

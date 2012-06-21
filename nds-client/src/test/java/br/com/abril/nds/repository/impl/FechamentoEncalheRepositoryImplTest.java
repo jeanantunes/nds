@@ -1,6 +1,7 @@
 package br.com.abril.nds.repository.impl;
 
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import junit.framework.Assert;
@@ -103,4 +104,17 @@ public class FechamentoEncalheRepositoryImplTest extends AbstractRepositoryImplT
 		
 		assert count > 0;
 	}
+	
+	@Test
+	public void testarObterChamdasEncalhePostergadas() {
+
+		Calendar dataEncalhe = Calendar.getInstance();
+		dataEncalhe.set(2012, 1, 28);
+		
+		Date data = 
+			this.fechamentoEncalheRepository.obterChamdasEncalhePostergadas(1L, dataEncalhe.getTime());
+	
+		Assert.assertNotNull(data);
+	}
+
 }

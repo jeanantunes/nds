@@ -218,7 +218,15 @@ public class MatrizLancamentoController {
 	 */
 	private BalanceamentoLancamentoDTO obterBalanceamentoRecolhimento(FiltroLancamentoDTO filtro) {
 		
-		BalanceamentoLancamentoDTO balanceamento = this.matrizLancamentoService.obterMatrizLancamento(filtro);
+		/*
+		 * TODO: quando o método obterMatrizLancamento for chamado através do botão "Voltar configuração inicial",
+		 * deve ser passada a flag " configuracaoInicial" como true
+		 */
+		
+		boolean configuracaoInicial = false;
+		
+		BalanceamentoLancamentoDTO balanceamento =
+			this.matrizLancamentoService.obterMatrizLancamento(filtro, configuracaoInicial);
 					
 		this.session.setAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO, balanceamento);
 		

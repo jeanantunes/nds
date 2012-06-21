@@ -63,7 +63,7 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 
 	@Override
 	@Transactional(readOnly = true)
-	public BalanceamentoLancamentoDTO obterMatrizLancamento(FiltroLancamentoDTO filtro) {
+	public BalanceamentoLancamentoDTO obterMatrizLancamento(FiltroLancamentoDTO filtro, boolean configuracaoInicial) {
 	
 		this.validarFiltro(filtro);
 		
@@ -72,7 +72,7 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 		// TODO: verificar balanceamento por periodicidade e fornecedores de produtos
 		
 		DadosBalanceamentoLancamentoDTO dadosBalanceamentoLancamento =
-			this.obterDadosLancamento(filtro, true);
+			this.obterDadosLancamento(filtro, configuracaoInicial);
 		
 		return this.balancear(dadosBalanceamentoLancamento);
 	}
@@ -92,7 +92,7 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 		if (filtro == null) {
 			
 			throw new ValidacaoException(TipoMensagem.WARNING,
-				"Os dados do filtro da tela devem ser informados!");
+				"Os dados do filtro devem ser informados!");
 			
 		} else {
 		
@@ -256,22 +256,17 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 		
 		for (ProdutoLancamentoDTO produtoLancamento : produtosLancamento) {
 			
-			if (!this.isProdutoBalanceavel(produtoLancamento, qtdDiasLimiteParaReprogLancamento)) {
+			Date dataLancamentoDistribuidor = produtoLancamento.getDataLancamentoDistribuidor();
+			
+			if (!this.isProdutoBalanceavel(produtoLancamento,
+										   qtdDiasLimiteParaReprogLancamento,
+										   dadosLancamentoBalanceamento)) {
 				
-				Date dataLancamentoDistribuidor = produtoLancamento.getDataLancamentoDistribuidor();
-
-				List<ProdutoLancamentoDTO> produtosLancamentoMapa =
-					mapaProdutosLancamentoNaoBalanceaveisNaData.get(dataLancamentoDistribuidor);
-				
-				if (produtosLancamentoMapa == null) {
-				
-					produtosLancamentoMapa = new ArrayList<ProdutoLancamentoDTO>();
-				}
-				
-				produtosLancamentoMapa.add(produtoLancamento);
-				
-				mapaProdutosLancamentoNaoBalanceaveisNaData.put(dataLancamentoDistribuidor,
-																produtosLancamentoMapa);
+				this.adicionarMapaProdutosNaoBalanceaveisData(
+														mapaProdutosLancamentoNaoBalanceaveisNaData,
+														produtoLancamento,
+														dataLancamentoDistribuidor);
+			
 			}
 		}
 		
@@ -288,6 +283,28 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 		}
 	}
 	
+	/**
+	 * Adiciona o produto informado no mapa de não balanceáveis por data.
+	 */
+	private void adicionarMapaProdutosNaoBalanceaveisData(
+			Map<Date, List<ProdutoLancamentoDTO>> mapaProdutosLancamentoNaoBalanceaveisNaData,
+			ProdutoLancamentoDTO produtoLancamento,
+			Date dataLancamento) {
+		
+		List<ProdutoLancamentoDTO> produtosLancamentoMapa =
+			mapaProdutosLancamentoNaoBalanceaveisNaData.get(dataLancamento);
+		
+		if (produtosLancamentoMapa == null) {
+		
+			produtosLancamentoMapa = new ArrayList<ProdutoLancamentoDTO>();
+		}
+		
+		produtosLancamentoMapa.add(produtoLancamento);
+		
+		mapaProdutosLancamentoNaoBalanceaveisNaData.put(dataLancamento,
+														produtosLancamentoMapa);
+	}
+
 	/**
 	 * Processa os produtos para lançamento que devem ser balanceados
 	 * e adiciona os mesmos no mapa da matriz de balanceamento.
@@ -408,9 +425,11 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 		
 		for (ProdutoLancamentoDTO produtoLancamento : produtosLancamento) {
 			
-			if (this.isProdutoBalanceavel(produtoLancamento, qtdDiasLimiteParaReprogLancamento)) {
+			if (this.isProdutoBalanceavel(produtoLancamento,
+										  qtdDiasLimiteParaReprogLancamento,
+										  dadosBalanceamentoLancamento)) {
 				
-				if (produtoLancamento.getDataLancamentoPrevista().equals(dataLancamento)) {
+				if (produtoLancamento.getDataLancamentoDistribuidor().equals(dataLancamento)) {
 					
 					produtosLancamentoFiltrados.add(produtoLancamento);
 				}
@@ -637,7 +656,8 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 	 * Verifica se o produto é balanceável ou não.
 	 */
 	private boolean isProdutoBalanceavel(ProdutoLancamentoDTO produtoLancamento,
-										 Integer qtdDiasLimiteParaReprogLancamento) {
+										 Integer qtdDiasLimiteParaReprogLancamento,
+										 DadosBalanceamentoLancamentoDTO dadosLancamentoBalanceamento) {
 		
 		if (produtoLancamento.isPossuiRecebimentoFisico()
 				&& produtoLancamento.getNumeroReprogramacoes() != null
@@ -657,6 +677,12 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 		if (produtoLancamento.getDataRecolhimentoPrevista() != null 
 				&& dataLimiteReprogramacao.compareTo(
 						produtoLancamento.getDataRecolhimentoPrevista()) > 0) {
+			
+			return false;
+		}
+		
+		if (StatusLancamento.BALANCEADO.equals(produtoLancamento.getStatusLancamento())
+				&& !dadosLancamentoBalanceamento.isConfiguracaoInicial()) {
 			
 			return false;
 		}
@@ -688,7 +714,7 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 	 * Monta o DTO com as informações para realização do balanceamento.
 	 */
 	private DadosBalanceamentoLancamentoDTO obterDadosLancamento(FiltroLancamentoDTO filtro,
-			 									 				 boolean forcarBalanceamento) {
+			 									 				 boolean configuracaoInicial) {
 		
 		Distribuidor distribuidor = distribuidorRepository.obter();
 		
@@ -703,6 +729,8 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 			
 		DadosBalanceamentoLancamentoDTO dadosBalanceamentoLancamento =
 			new DadosBalanceamentoLancamentoDTO();
+		
+		dadosBalanceamentoLancamento.setConfiguracaoInicial(configuracaoInicial);
 		
 		TreeSet<Date> datasDistribuicaoFornecedorDistribuidor =
 			this.obterDatasDistribuicaoFornecedoresDistribuidor(datasDistribuicaoDistribuidor,
@@ -888,9 +916,10 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 				produtoLancamento.setPeso(new BigDecimal(10));
 				produtoLancamento.setValorTotal(new BigDecimal(2));
 				produtoLancamento.setReparteFisico(new BigDecimal(5));
+				produtoLancamento.setStatusLancamento(StatusLancamento.PLANEJADO.toString());
 				
 				if (x == 101) {
-					produtoLancamento.setStatusLancamento(StatusLancamento.CANCELADO_GD);
+					produtoLancamento.setStatusLancamento(StatusLancamento.CANCELADO_GD.toString());
 				}
 				
 				produtosLancamento.add(produtoLancamento);
@@ -914,7 +943,7 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 		for (ProdutoLancamentoDTO produtoLancamento : produtosLancamento) {
 			
 			BigDecimal expectativaReparte =
-				mapaExpectativaReparteTotalDiario.get(produtoLancamento.getDataLancamentoPrevista());
+				mapaExpectativaReparteTotalDiario.get(produtoLancamento.getDataLancamentoDistribuidor());
 			
 			if (expectativaReparte != null) {
 				
@@ -925,7 +954,7 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 				expectativaReparte = produtoLancamento.getRepartePrevisto();
 			}
 			
-			mapaExpectativaReparteTotalDiario.put(produtoLancamento.getDataLancamentoPrevista(),
+			mapaExpectativaReparteTotalDiario.put(produtoLancamento.getDataLancamentoDistribuidor(),
 					  							  expectativaReparte);
 		}
 				
