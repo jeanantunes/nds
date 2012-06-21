@@ -9,7 +9,7 @@ import javax.persistence.Embeddable;
 
 @Embeddable
 @AttributeOverrides({
-    @AttributeOverride(name="cst", column=@Column(name="CST_ISSQN", length = 3, nullable = false)),
+    @AttributeOverride(name="cst", column=@Column(name="CST_ISSQN", length = 1, nullable = false)),
     @AttributeOverride(name="valorBaseCalculo", column=@Column(name="VLR_BASE_CALC_ISSQN", precision = 5, scale = 2, nullable = false)),
     @AttributeOverride(name="aliquota", column=@Column(name="ALIQUOTA_ISSQN", precision = 5, scale = 2, nullable = false)),
     @AttributeOverride(name="valor", column=@Column(name="VLR_ISSQN", precision = 5, scale = 2, nullable = false))

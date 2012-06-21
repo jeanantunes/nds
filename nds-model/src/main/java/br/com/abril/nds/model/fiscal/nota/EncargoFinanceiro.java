@@ -2,11 +2,12 @@ package br.com.abril.nds.model.fiscal.nota;
 
 import java.io.Serializable;
 
+import javax.persistence.AttributeOverride;
+import javax.persistence.AttributeOverrides;
 import javax.persistence.Column;
-import javax.persistence.DiscriminatorColumn;
-import javax.persistence.DiscriminatorType;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -17,9 +18,8 @@ import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 
 @Entity
-@SequenceGenerator(name = "ENCARGO_FINANCEIRO_NOTA_FISCAL_SEQ", initialValue = 1, allocationSize = 1)
+@SequenceGenerator(name = "NOTA_FISCAL_ENCARGO_FINANCEIRO_SEQ", initialValue = 1, allocationSize = 1)
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
-@DiscriminatorColumn(name = "TIPO", discriminatorType = DiscriminatorType.STRING)
 public abstract class EncargoFinanceiro implements Serializable {
 
 	/**
@@ -28,7 +28,7 @@ public abstract class EncargoFinanceiro implements Serializable {
 	private static final long serialVersionUID = 3648094277369869546L;
 
 	@Id
-	@GeneratedValue(generator = "ENCARGO_FINANCEIRO_NOTA_FISCAL_SEQ", strategy = GenerationType.TABLE)
+	@GeneratedValue(generator = "NOTA_FISCAL_ENCARGO_FINANCEIRO_SEQ", strategy = GenerationType.TABLE)
 	@Column(name = "ID")
 	private Long id;
 	
@@ -37,10 +37,32 @@ public abstract class EncargoFinanceiro implements Serializable {
 	private ProdutoServico produtoServico;
 	
 	@Embedded
-	private PIS pis;
+	private PIS pis;	
+
+	@Embedded
+	@AttributeOverrides({
+	    @AttributeOverride(name="cst", column=@Column(name="CST_PIS_ST", length = 2)),
+	    @AttributeOverride(name="valorBaseCalculo", column=@Column(name="VLR_BASE_CALC_PIS_ST",  scale = 2,precision = 15)),
+	    @AttributeOverride(name="percentualAliquota", column=@Column(name="PER_ALIQ_PIS_ST", scale = 2, precision = 5)),
+	    @AttributeOverride(name="quantidadeVendida", column=@Column(name="QTD_VENDIDA_PIS_ST", scale = 4,  precision= 16)),
+	    @AttributeOverride(name="valorAliquota", column=@Column(name="VLR_ALIQ_PIS_ST", scale = 4, precision = 15)),
+	    @AttributeOverride(name="valor", column=@Column(name="VLR_PIS_ST", scale = 2, precision = 15))
+	})
+	private PIS pisSt;
 	
 	@Embedded
 	private COFINS cofins;
+	
+	@Enumerated
+	@AttributeOverrides({
+	    @AttributeOverride(name="cst", column=@Column(name="CST_COFINS_ST", length = 2)),
+	    @AttributeOverride(name="valorBaseCalculo", column=@Column(name="VLR_BASE_CALC_COFINS_ST",  scale = 2,precision = 15)),
+	    @AttributeOverride(name="percentualAliquota", column=@Column(name="PER_ALIQ_COFINS_ST", scale = 2, precision = 5)),
+	    @AttributeOverride(name="quantidadeVendida", column=@Column(name="QTD_VENDIDA_COFINS_ST", scale = 4,  precision= 16)),
+	    @AttributeOverride(name="valorAliquota", column=@Column(name="VLR_ALIQ_COFINS_ST", scale = 4, precision = 15)),
+	    @AttributeOverride(name="valor", column=@Column(name="VLR_COFINS_ST", scale = 2, precision = 15))
+	})
+	private COFINS cofinsSt;
 
 	/**
 	 * @return the id
@@ -127,6 +149,34 @@ public abstract class EncargoFinanceiro implements Serializable {
 		} else if (!id.equals(other.id))
 			return false;
 		return true;
+	}
+
+	/**
+	 * @return the pisSt
+	 */
+	public PIS getPisSt() {
+		return pisSt;
+	}
+
+	/**
+	 * @param pisSt the pisSt to set
+	 */
+	public void setPisSt(PIS pisSt) {
+		this.pisSt = pisSt;
+	}
+
+	/**
+	 * @return the cofinsSt
+	 */
+	public COFINS getCofinsSt() {
+		return cofinsSt;
+	}
+
+	/**
+	 * @param cofinsSt the cofinsSt to set
+	 */
+	public void setCofinsSt(COFINS cofinsSt) {
+		this.cofinsSt = cofinsSt;
 	}
 
 }

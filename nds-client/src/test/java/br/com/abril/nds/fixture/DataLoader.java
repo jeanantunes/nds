@@ -153,6 +153,7 @@ import br.com.abril.nds.util.DateUtil;
 
 public class DataLoader {
 
+	private static final String PARAM_SKIP_DATA = "skipData";
 	private static PessoaJuridica juridicaAcme;
 	private static PessoaJuridica juridicaDinap;
 	private static PessoaJuridica juridicaFc;
@@ -635,25 +636,31 @@ public class DataLoader {
 		Session session = null;
 		Transaction tx = null;
 		boolean commit = false;
-		try {
-			sf = ctx.getBean(SessionFactory.class);
-			session = sf.openSession();
-			tx = session.beginTransaction();			
-			carregarDados(session);
-			commit = true;
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			if (commit) {
-				tx.commit();
-			} else {
-				tx.rollback();
-			}
-			if (session != null) {
-				session.close();
-			}
-			if (sf != null) {
-				sf.close();
+		
+		List<String> parans =  Arrays.asList(args);
+		if(!parans.contains(PARAM_SKIP_DATA)){
+			try {
+				sf = ctx.getBean(SessionFactory.class);
+				session = sf.openSession();
+				tx = session.beginTransaction();				
+				
+				carregarDados(session);
+				
+				commit = true;
+			} catch (Exception e) {
+				e.printStackTrace();
+			} finally {
+				if (commit) {
+					tx.commit();
+				} else {
+					tx.rollback();
+				}
+				if (session != null) {
+					session.close();
+				}
+				if (sf != null) {
+					sf.close();
+				}
 			}
 		}
 	}
