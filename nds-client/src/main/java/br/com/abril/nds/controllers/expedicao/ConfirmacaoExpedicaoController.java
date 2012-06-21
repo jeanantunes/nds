@@ -188,17 +188,19 @@ public class ConfirmacaoExpedicaoController {
 				} 
 				
 				lancamentoService.confirmarExpedicoes(selecionados,getUsuario().getId());
+			
+				mensagens.add(CONFIRMACAO_EXPEDICAO_SUCESSO);
 				
 				grid = gerarGrid(
 						page, rp, sortname, sortorder, idFornecedor, dtLancamento, estudo);
-				
-				mensagens.add(CONFIRMACAO_EXPEDICAO_SUCESSO);
+							
 				
 			} catch(ValidacaoException e) {
 				
-				mensagens.clear();
-				
 				if(e.getUrl() == null) {
+				
+					mensagens.clear();
+					
 					mensagens.addAll(e.getValidacao().getListaMensagens());
 					status=TipoMensagem.WARNING.name();
 				}
