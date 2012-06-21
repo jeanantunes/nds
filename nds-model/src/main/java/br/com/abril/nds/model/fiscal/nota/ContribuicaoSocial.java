@@ -1,7 +1,6 @@
 package br.com.abril.nds.model.fiscal.nota;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 
 import javax.persistence.MappedSuperclass;
 
@@ -13,100 +12,208 @@ public abstract class ContribuicaoSocial implements Serializable {
 	 */
 	private static final long serialVersionUID = -7720053662091868121L;
 	
-	protected String cst;
+	protected Integer cst;
 	
-	protected BigDecimal valorBaseCalculoDebito;
+	protected Double valorBaseCalculo;
 	
-	protected BigDecimal valorBaseCalculoCredito;
+	protected Float percentualAliquota;
 	
-	protected BigDecimal aliquota;
+	protected Double quantidadeVendida;
 	
-	protected BigDecimal valorDebito;
+	protected Double valorAliquota;
 	
-	protected BigDecimal valorCredito;
+	protected Double valor;
 
 	/**
 	 * @return the cst
 	 */
-	public String getCst() {
+	public Integer getCst() {
 		return cst;
 	}
 
 	/**
 	 * @param cst the cst to set
 	 */
-	public void setCst(String cst) {
+	public void setCst(Integer cst) {
 		this.cst = cst;
 	}
 
 	/**
-	 * @return the valorBaseCalculoDebito
+	 * @return the valorBaseCalculo
 	 */
-	public BigDecimal getValorBaseCalculoDebito() {
-		return valorBaseCalculoDebito;
+	public Double getValorBaseCalculo() {
+		return valorBaseCalculo;
 	}
 
 	/**
-	 * @param valorBaseCalculoDebito the valorBaseCalculoDebito to set
+	 * @param valorBaseCalculo the valorBaseCalculo to set
 	 */
-	public void setValorBaseCalculoDebito(BigDecimal valorBaseCalculoDebito) {
-		this.valorBaseCalculoDebito = valorBaseCalculoDebito;
+	public void setValorBaseCalculo(Double valorBaseCalculo) {
+		this.valorBaseCalculo = valorBaseCalculo;
 	}
 
 	/**
-	 * @return the valorBaseCalculoCredito
+	 * @return the percentualAliquota
 	 */
-	public BigDecimal getValorBaseCalculoCredito() {
-		return valorBaseCalculoCredito;
+	public Float getPercentualAliquota() {
+		return percentualAliquota;
 	}
 
 	/**
-	 * @param valorBaseCalculoCredito the valorBaseCalculoCredito to set
+	 * @param percentualAliquota the percentualAliquota to set
 	 */
-	public void setValorBaseCalculoCredito(BigDecimal valorBaseCalculoCredito) {
-		this.valorBaseCalculoCredito = valorBaseCalculoCredito;
+	public void setPercentualAliquota(Float percentualAliquota) {
+		this.percentualAliquota = percentualAliquota;
 	}
 
 	/**
-	 * @return the aliquota
+	 * @return the quantidadeVendida
 	 */
-	public BigDecimal getAliquota() {
-		return aliquota;
+	public Double getQuantidadeVendida() {
+		return quantidadeVendida;
 	}
 
 	/**
-	 * @param aliquota the aliquota to set
+	 * @param quantidadeVendida the quantidadeVendida to set
 	 */
-	public void setAliquota(BigDecimal aliquota) {
-		this.aliquota = aliquota;
+	public void setQuantidadeVendida(Double quantidadeVendida) {
+		this.quantidadeVendida = quantidadeVendida;
 	}
 
 	/**
-	 * @return the valorDebito
+	 * @return the valorAliquota
 	 */
-	public BigDecimal getValorDebito() {
-		return valorDebito;
+	public Double getValorAliquota() {
+		return valorAliquota;
 	}
 
 	/**
-	 * @param valorDebito the valorDebito to set
+	 * @param valorAliquota the valorAliquota to set
 	 */
-	public void setValorDebito(BigDecimal valorDebito) {
-		this.valorDebito = valorDebito;
+	public void setValorAliquota(Double valorAliquota) {
+		this.valorAliquota = valorAliquota;
 	}
 
 	/**
-	 * @return the valorCredito
+	 * @return the valor
 	 */
-	public BigDecimal getValorCredito() {
-		return valorCredito;
+	public Double getValor() {
+		return valor;
 	}
 
 	/**
-	 * @param valorCredito the valorCredito to set
+	 * @param valor the valor to set
 	 */
-	public void setValorCredito(BigDecimal valorCredito) {
-		this.valorCredito = valorCredito;
+	public void setValor(Double valor) {
+		this.valor = valor;
 	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "ContribuicaoSocial ["
+				+ (cst != null ? "cst=" + cst + ", " : "")
+				+ (valorBaseCalculo != null ? "valorBaseCalculo="
+						+ valorBaseCalculo + ", " : "")
+				+ (percentualAliquota != null ? "percentualAliquota="
+						+ percentualAliquota + ", " : "")
+				+ (quantidadeVendida != null ? "quantidadeVendida="
+						+ quantidadeVendida + ", " : "")
+				+ (valorAliquota != null ? "valorAliquota=" + valorAliquota
+						+ ", " : "") + (valor != null ? "valor=" + valor : "")
+				+ "]";
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((cst == null) ? 0 : cst.hashCode());
+		result = prime
+				* result
+				+ ((percentualAliquota == null) ? 0 : percentualAliquota
+						.hashCode());
+		result = prime
+				* result
+				+ ((quantidadeVendida == null) ? 0 : quantidadeVendida
+						.hashCode());
+		result = prime * result + ((valor == null) ? 0 : valor.hashCode());
+		result = prime * result
+				+ ((valorAliquota == null) ? 0 : valorAliquota.hashCode());
+		result = prime
+				* result
+				+ ((valorBaseCalculo == null) ? 0 : valorBaseCalculo.hashCode());
+		return result;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		ContribuicaoSocial other = (ContribuicaoSocial) obj;
+		if (cst == null) {
+			if (other.cst != null) {
+				return false;
+			}
+		} else if (!cst.equals(other.cst)) {
+			return false;
+		}
+		if (percentualAliquota == null) {
+			if (other.percentualAliquota != null) {
+				return false;
+			}
+		} else if (!percentualAliquota.equals(other.percentualAliquota)) {
+			return false;
+		}
+		if (quantidadeVendida == null) {
+			if (other.quantidadeVendida != null) {
+				return false;
+			}
+		} else if (!quantidadeVendida.equals(other.quantidadeVendida)) {
+			return false;
+		}
+		if (valor == null) {
+			if (other.valor != null) {
+				return false;
+			}
+		} else if (!valor.equals(other.valor)) {
+			return false;
+		}
+		if (valorAliquota == null) {
+			if (other.valorAliquota != null) {
+				return false;
+			}
+		} else if (!valorAliquota.equals(other.valorAliquota)) {
+			return false;
+		}
+		if (valorBaseCalculo == null) {
+			if (other.valorBaseCalculo != null) {
+				return false;
+			}
+		} else if (!valorBaseCalculo.equals(other.valorBaseCalculo)) {
+			return false;
+		}
+		return true;
+	}
+	
+	
+	
+	
+	
 
 }
