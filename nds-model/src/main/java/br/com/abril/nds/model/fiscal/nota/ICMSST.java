@@ -16,7 +16,7 @@ import javax.persistence.Embeddable;
 		@AttributeOverride(name = "valor", column = @Column(name = "VLR_ICMS_ST", precision = 5, scale = 2, nullable = true)),
 		@AttributeOverride(name = "percentualReducao", column = @Column(name = "PERCENTUAL_REDUCAO_ST", precision = 5, scale = 2, nullable = true)),
 		@AttributeOverride(name = "origem", column =@Column(name = "ORIGEM_ST", length = 1, nullable = true)),
-		@AttributeOverride(name = "modelidade", column = @Column(name = "MODELIDADE_ST", length = 1, nullable = true)),
+		@AttributeOverride(name = "modelidade", column = @Column(name = "MODELIDADE_ST", length = 1, nullable = true))
 
 })
 public class ICMSST extends ICMSBase implements Serializable {
