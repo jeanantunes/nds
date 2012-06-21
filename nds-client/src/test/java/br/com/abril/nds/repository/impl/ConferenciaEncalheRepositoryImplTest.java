@@ -78,7 +78,6 @@ public class ConferenciaEncalheRepositoryImplTest extends AbstractRepositoryImpl
 	private TipoFornecedor tipoFornecedorPublicacao;
 	private Cota cotaManoel;
 	
-	
 	private ItemRecebimentoFisico itemRecebimentoFisico1Veja;
 	private ItemRecebimentoFisico itemRecebimentoFisico2Veja;
 	
@@ -372,6 +371,9 @@ public class ConferenciaEncalheRepositoryImplTest extends AbstractRepositoryImpl
 
 		distribuidor.setPoliticaSuspensao(politicaSuspensao);
 		
+		distribuidor.setInformacoesComplementaresProcuracao("Informacoes");
+		distribuidor.setNegociacaoAteParcelas(4);
+		
 		ParametroContratoCota parametroContrato = Fixture.criarParametroContratoCota("<font color='blue'><b>CONSIDERANDO QUE:</b></font><br>"+
 																					 "<br>"+"<b>(i)</b>	A Contratante contempla, dentro de seu objeto social, a atividade de distribuição de livros, jornais, revistas, impressos e publicações em geral e, portanto, necessita de serviços de transporte de revistas;"+
 																					 "<br>"+"<b>(ii)</b>	A Contratada é empresa especializada e, por isso, capaz de prestar serviços de transportes, bem como declara que possui qualificação técnica e documentação necessária para a prestação dos serviços citados acima;"+
@@ -405,6 +407,33 @@ public class ConferenciaEncalheRepositoryImplTest extends AbstractRepositoryImpl
 		
 	}
 
+	
+	@Test
+	public void testObterListaConferenciaEncalheCotaContingencia() {
+		
+		Long idDistribuidor		= 1L;
+		Integer numeroCota 		= 5637;
+		Date dataInicial 		= Fixture.criarData(1, Calendar.JANUARY, 2012);
+		Date dataFinal 			= Fixture.criarData(1, Calendar.DECEMBER, 2012);
+		boolean indFechado 		= false;
+		boolean indPostergado 	= false;
+		
+		Set<Long> listaIdProdutoEdicao = new HashSet<Long>();
+		
+		listaIdProdutoEdicao.add(185L);
+		
+		@SuppressWarnings("unused")
+		List<ConferenciaEncalheDTO> listaConferenciaEncalhe =  
+				conferenciaEncalheRepository.obterListaConferenciaEncalheDTOContingencia(
+						idDistribuidor,
+						numeroCota, 
+						dataInicial, 
+						dataFinal, 
+						indFechado, 
+						indPostergado, 
+						listaIdProdutoEdicao);
+		
+	}
 	
 	
 

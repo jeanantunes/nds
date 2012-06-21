@@ -548,15 +548,23 @@ public class RecebimentoFisicoController {
 		setItensRecebimentoFisicoToSession(itensRecebimentoFisico);
 		
 		if(Origem.INTERFACE.equals(notaFiscal.getOrigem())){
+			
 			List<String> msgs = new ArrayList<String>();
 			
 			for(RecebimentoFisicoDTO recebimentoDTO: itensRecebimentoFisico){
+				
 				if( recebimentoDTO.getQtdFisico() == null || recebimentoDTO.getQtdFisico().compareTo(BigDecimal.ZERO) == 0 ){
+					
 					msgs.add("NF interface com Itens sem quantidade física informada.");
+					
 					ValidacaoVO validacao = new ValidacaoVO(TipoMensagem.WARNING, msgs);
+					
 					result.use(Results.json()).from(validacao, "result").include("listaMensagens").serialize();	
 					
+					return;
+					
 				}
+				
 			}
 		}		
 		
