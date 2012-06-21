@@ -585,3 +585,22 @@ function mostra_status(opcao) {
 		break;   
 	}   
 }
+
+function detalharTodos(opcao) {
+	var detalhar = document.getElementById("detalhes");
+	
+	switch (opcao) {   
+		case '1':   
+			detalhar.style.display = ""; 
+		  
+		break;   
+		case '2':   
+			detalhar.style.display = "none"; 
+		  
+		break;   
+		default:   
+			detalhar.style.display = "none"; 
+		
+		break;   
+	}   
+}

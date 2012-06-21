@@ -1,0 +1,66 @@
+package br.com.abril.nds.dto.filtro;
+
+import java.io.Serializable;
+
+import br.com.abril.nds.dto.filtro.FiltroRomaneioDTO.ColunaOrdenacaoRomaneio;
+import br.com.abril.nds.vo.PaginacaoVO;
+
+public class FiltroConsultaConsignadoCotaDTO implements Serializable {
+
+	private static final long serialVersionUID = -642561468775306010L;
+	
+	private Long idCota;
+	
+	private PaginacaoVO paginacao;
+	
+	private ColunaOrdenacaoConsultaConsignadoCota ordenacaoColuna;
+	
+	public enum ColunaOrdenacaoConsultaConsignadoCota {
+
+		COTA("cota");
+		
+		private String nomeColuna;
+		
+		private ColunaOrdenacaoConsultaConsignadoCota(String nomeColuna) {
+			this.nomeColuna = nomeColuna;
+		}
+		
+		@Override
+		public String toString() {
+			return this.nomeColuna;
+		}
+		
+		public static ColunaOrdenacaoRomaneio getPorDescricao(String descricao) {
+			for(ColunaOrdenacaoRomaneio coluna: ColunaOrdenacaoRomaneio.values()) {
+				if(coluna.toString().equals(descricao))
+					return coluna;
+			}
+			return null;
+		}
+	}
+
+	public Long getIdCota() {
+		return idCota;
+	}
+
+	public void setIdCota(Long idCota) {
+		this.idCota = idCota;
+	}
+
+	public PaginacaoVO getPaginacao() {
+		return paginacao;
+	}
+
+	public void setPaginacao(PaginacaoVO paginacao) {
+		this.paginacao = paginacao;
+	}
+
+	public ColunaOrdenacaoConsultaConsignadoCota getOrdenacaoColuna() {
+		return ordenacaoColuna;
+	}
+
+	public void setOrdenacaoColuna(
+			ColunaOrdenacaoConsultaConsignadoCota ordenacaoColuna) {
+		this.ordenacaoColuna = ordenacaoColuna;
+	}
+}
