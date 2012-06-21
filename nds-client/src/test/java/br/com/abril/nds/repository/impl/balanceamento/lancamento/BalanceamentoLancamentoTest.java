@@ -20,7 +20,6 @@ import br.com.abril.nds.model.StatusConfirmacao;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Fornecedor;
-import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
@@ -97,28 +96,28 @@ public class BalanceamentoLancamentoTest extends AbstractRepositoryImplTest {
 		cromoReiLeao.addFornecedor(fornecedorDinap);
 		save(cromoReiLeao);
 
-		ProdutoEdicao veja1 = Fixture.produtoEdicao("1", 1L, 10, 7,
+		ProdutoEdicao veja1 = Fixture.produtoEdicao("1", 1L, 1, 7,
 				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(15), "ABCDEFGHIJKLMNOPQRSTU", 1L, veja, null, false);
 
 		veja1.setExpectativaVenda(BigDecimal.TEN);
 		
-		ProdutoEdicao quatroRoda2 = Fixture.produtoEdicao("1", 2L, 15, 30,
+		ProdutoEdicao quatroRoda2 = Fixture.produtoEdicao("1", 2L, 1, 30,
 				new BigDecimal(0.1), BigDecimal.TEN, BigDecimal.TEN, "ABCDEFGHIJKLMNOPQRST", 2L,
 				quatroRodas, null, false);
 
 		quatroRoda2.setExpectativaVenda(BigDecimal.TEN);
 		
-		ProdutoEdicao infoExame3 = Fixture.produtoEdicao("1", 3L, 5, 30,
+		ProdutoEdicao infoExame3 = Fixture.produtoEdicao("1", 3L, 1, 30,
 				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(12), "ABCDEFGHIJKLMNOPQRS", 3L, infoExame, null, false);
 
 		infoExame3.setExpectativaVenda(BigDecimal.TEN);
 		
-		ProdutoEdicao capricho1 = Fixture.produtoEdicao("1", 1L, 10, 15,
+		ProdutoEdicao capricho1 = Fixture.produtoEdicao("1", 1L, 1, 15,
 				new BigDecimal(0.12), BigDecimal.TEN, BigDecimal.TEN, "ABCDEFGHIJKLMNOPQR", 4L, capricho, null, false);
 		
 		capricho1.setExpectativaVenda(BigDecimal.TEN);
 		
-		ProdutoEdicao cromoReiLeao1 = Fixture.produtoEdicao("1", 1L, 100, 60,
+		ProdutoEdicao cromoReiLeao1 = Fixture.produtoEdicao("1", 1L, 1, 60,
 				new BigDecimal(0.01), BigDecimal.ONE, new BigDecimal(1.5), "ABCDEFGHIJKLMNOPQ", 5L, cromoReiLeao, null, false);
 		
 		cromoReiLeao1.setExpectativaVenda(BigDecimal.TEN);
@@ -280,10 +279,6 @@ public class BalanceamentoLancamentoTest extends AbstractRepositoryImplTest {
 		
 		save(cotaDinap);
 		
-//		EstoqueProdutoCota estoqueProdutoCotaCapricho = Fixture.estoqueProdutoCota(capricho1, cotaDinap, new BigDecimal(110), BigDecimal.TEN);
-//		
-//		save(box, cotaDinap, estoqueProdutoCotaCapricho);
-
 //		LancamentoParcial lancamentoParcialCapricho = Fixture.criarLancamentoParcial(capricho1,
 //																			 lancamentoCapricho.getDataLancamentoPrevista(), 
 //																			 lancamentoCapricho.getDataRecolhimentoPrevista(),
@@ -317,11 +312,7 @@ public class BalanceamentoLancamentoTest extends AbstractRepositoryImplTest {
 		Cota cotaFC = Fixture.cota(55, fornecedorFC.getJuridica(), SituacaoCadastro.ATIVO, box301);
 		
 		save(cotaFC);
-		
-//		EstoqueProdutoCota estoqueProdutoCotaQuatroRodas = Fixture.estoqueProdutoCota(quatroRoda2, cotaFC, new BigDecimal(110), BigDecimal.TEN);
-//		
-//		save(estoqueProdutoCotaQuatroRodas);
-		
+				
 //		LancamentoParcial lancamentoParcialQuatroRodas = Fixture.criarLancamentoParcial(quatroRoda2,
 //																					    lancamentoQuatroRodas.getDataLancamentoPrevista(), 
 //																					    lancamentoQuatroRodas.getDataRecolhimentoPrevista(),
@@ -350,10 +341,6 @@ public class BalanceamentoLancamentoTest extends AbstractRepositoryImplTest {
 		Cota cotaManoel = Fixture.cota(60, fornecedorFC.getJuridica(), SituacaoCadastro.ATIVO, box);
 
 		save(cotaManoel);
-		
-//		EstoqueProdutoCota estoqueProdutoCotaVeja= Fixture.estoqueProdutoCota(veja1, cotaManoel, new BigDecimal(110), BigDecimal.TEN);
-//		
-//		save(estoqueProdutoCotaVeja);
 
 //		LancamentoParcial lancamentoParcialVeja = Fixture.criarLancamentoParcial(veja1,
 //																				 lancamentoVeja.getDataLancamentoPrevista(), 
@@ -389,10 +376,6 @@ public class BalanceamentoLancamentoTest extends AbstractRepositoryImplTest {
 		
 		save(cotaJurandir);
 		
-//		EstoqueProdutoCota estoqueProdutoCotaInfoExame = Fixture.estoqueProdutoCota(infoExame3, cotaJurandir, new BigDecimal(110), BigDecimal.TEN);
-//		
-//		save(estoqueProdutoCotaInfoExame);
-		
 //		LancamentoParcial lancamentoParcialInfoExame = Fixture.criarLancamentoParcial(infoExame3,
 //																					  lancamentoInfoExame.getDataLancamentoPrevista(), 
 //																				      lancamentoInfoExame.getDataRecolhimentoPrevista(),
@@ -425,8 +408,7 @@ public class BalanceamentoLancamentoTest extends AbstractRepositoryImplTest {
 		montarParametrosConsulta();
 		
 		List<ProdutoLancamentoDTO> produtosLancamento =
-			lancamentoRepository.obterBalanceamentoLancamento(
-				periodoLancamento, fornecedores, GrupoProduto.CROMO);
+			lancamentoRepository.obterBalanceamentoLancamento(periodoLancamento, fornecedores);
 
 		Assert.assertEquals(lancamentos.size(), produtosLancamento.size());
 
@@ -459,8 +441,7 @@ public class BalanceamentoLancamentoTest extends AbstractRepositoryImplTest {
 		montarParametrosConsulta();
 		
 		TreeMap<Date, BigDecimal> expectativaReparte =
-			lancamentoRepository.obterExpectativasRepartePorData(
-				periodoLancamento, fornecedores, GrupoProduto.CROMO);
+			lancamentoRepository.obterExpectativasRepartePorData(periodoLancamento, fornecedores);
 		
 		Assert.assertEquals(lancamentos.size(), expectativaReparte.size());
 		
