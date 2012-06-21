@@ -3,7 +3,10 @@ package br.com.abril.nds.repository.impl;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.xmlbeans.impl.xb.xsdschema.RestrictionDocument.Restriction;
+import org.hibernate.Criteria;
 import org.hibernate.Query;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.model.planejamento.ChamadaEncalheCota;
@@ -158,5 +161,19 @@ public class ChamadaEncalheCotaRepositoryImpl extends AbstractRepository<Chamada
 		
 	}
 	
-	
+	public ChamadaEncalheCota buscarPorChamadaEncalheECota(Long idChamadaEncalhe,Long idCota){
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select o from ChamadaEncalheCota o ")
+			.append(" WHERE o.cota.id =:idCota ")
+			.append(" AND o.chamadaEncalhe.id=:idChamadaEncalhe ");
+		
+		Query query  = getSession().createQuery(hql.toString());
+		query.setParameter("idChamadaEncalhe", idChamadaEncalhe);
+		query.setParameter("idCota", idCota);
+		
+		return (ChamadaEncalheCota)query.uniqueResult();
+		
+	}
 }

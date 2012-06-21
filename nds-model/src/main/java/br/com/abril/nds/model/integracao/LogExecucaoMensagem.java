@@ -23,7 +23,7 @@ public class LogExecucaoMensagem implements Serializable {
 	@GeneratedValue(generator = "LOG_EXECUCAO_MENSAGEM_SEQ")
 	private Long id;
 	
-	@ManyToOne(optional = false)
+	@ManyToOne
 	@JoinColumn(name = "LOG_EXECUCAO_ID")
 	private LogExecucao logExecucao;
 	

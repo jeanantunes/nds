@@ -13,7 +13,7 @@ public interface FechamentoEncalheService {
 
 	List<FechamentoFisicoLogicoDTO> buscarFechamentoEncalhe(FiltroFechamentoEncalheDTO filtro, String sortorder, String sortname, Integer page, Integer rp);
 	
-	List<FechamentoFisicoLogicoDTO> salvarFechamentoEncalhe(FiltroFechamentoEncalheDTO filtro, List<FechamentoFisicoLogicoDTO> listaFechamento);
+	void salvarFechamentoEncalhe(FiltroFechamentoEncalheDTO filtro, List<FechamentoFisicoLogicoDTO> listaFechamento);
 	
 	List<CotaAusenteEncalheDTO> buscarCotasAusentes(Date dataEncalhe, String sortorder, String sortname, int page, int rp);
 
@@ -25,7 +25,7 @@ public interface FechamentoEncalheService {
 	
 	BigDecimal buscarValorTotalEncalhe(Date dataEncalhe, Long idCota);
 	
-	List<FechamentoFisicoLogicoDTO> salvarFechamentoEncalheBox(FiltroFechamentoEncalheDTO filtro, List<FechamentoFisicoLogicoDTO> listaFechamento);
+	void salvarFechamentoEncalheBox(FiltroFechamentoEncalheDTO filtro, List<FechamentoFisicoLogicoDTO> listaFechamento);
 	
 	void encerrarOperacaoEncalhe(Date dataEncalhe);
 	
@@ -36,5 +36,6 @@ public interface FechamentoEncalheService {
 	void converteFechamentoDetalhadoEmConsolidado(FiltroFechamentoEncalheDTO filtro);
 	
 	void removeFechamentoDetalhado(FiltroFechamentoEncalheDTO filtro);
-
+	
+	int buscarQuantidadeCotasAusentes(Date dataEncalhe);
 }

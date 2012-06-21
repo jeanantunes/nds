@@ -34,6 +34,8 @@ public class DadosBalanceamentoLancamentoDTO implements Serializable {
 	private TreeSet<Date> datasDistribuicaoFornecedorDistribuidor;
 	
 	private Integer qtdDiasLimiteParaReprogLancamento;
+	
+	private boolean configuracaoInicial;
 
 	/**
 	 * Construtor padrão.
@@ -143,6 +145,20 @@ public class DadosBalanceamentoLancamentoDTO implements Serializable {
 	public void setQtdDiasLimiteParaReprogLancamento(
 			Integer qtdDiasLimiteParaReprogLancamento) {
 		this.qtdDiasLimiteParaReprogLancamento = qtdDiasLimiteParaReprogLancamento;
+	}
+
+	/**
+	 * @return the configuracaoInicial
+	 */
+	public boolean isConfiguracaoInicial() {
+		return configuracaoInicial;
+	}
+
+	/**
+	 * @param configuracaoInicial the configuracaoInicial to set
+	 */
+	public void setConfiguracaoInicial(boolean configuracaoInicial) {
+		this.configuracaoInicial = configuracaoInicial;
 	}
 	
 }

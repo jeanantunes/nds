@@ -21,6 +21,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.FormaComercializacao;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
 import br.com.abril.nds.model.seguranca.Usuario;
@@ -56,6 +57,10 @@ public class VendaProduto implements Serializable {
 	@Column(name = "TIPO_VENDA_ENCALHE", nullable = false)
 	private TipoVendaEncalhe tipoVenda;
 	
+	@Enumerated(EnumType.STRING)
+	@Column(name = "TIPO_COMERCIALIZACAO_VENDA")
+	private FormaComercializacao tipoComercializacaoVenda;
+	
 	@ManyToOne
 	@JoinColumn(name = "ID_PRODUTO_EDICAO")
 	private ProdutoEdicao produtoEdicao;
@@ -76,9 +81,11 @@ public class VendaProduto implements Serializable {
 	@OneToMany(orphanRemoval=true)
 	private Set<MovimentoEstoque> movimentoEstoque;
 	
-	@JoinColumn(name="ID_MOVIMENTO_FINANCEIRO")
-	@ManyToOne
-	private MovimentoFinanceiroCota movimentoFinanceiro;
+	@JoinTable(name="VENDA_PRODUTO_MOVIMENTO_FINANCEIRO", 
+			joinColumns={@JoinColumn(name="ID_VENDA_PRODUTO")}, 
+			inverseJoinColumns={@JoinColumn(name="ID_MOVIMENTO_FINANCEIRO")})
+	@OneToMany(orphanRemoval=true)
+	private Set<MovimentoFinanceiroCota> movimentoFinanceiro;
 	
 	/**
 	 * @return the id
@@ -208,14 +215,15 @@ public class VendaProduto implements Serializable {
 	/**
 	 * @return the movimentoFinanceiro
 	 */
-	public MovimentoFinanceiroCota getMovimentoFinanceiro() {
+	public Set<MovimentoFinanceiroCota> getMovimentoFinanceiro() {
 		return movimentoFinanceiro;
 	}
 
 	/**
 	 * @param movimentoFinanceiro the movimentoFinanceiro to set
 	 */
-	public void setMovimentoFinanceiro(MovimentoFinanceiroCota movimentoFinanceiro) {
+	public void setMovimentoFinanceiro(
+			Set<MovimentoFinanceiroCota> movimentoFinanceiro) {
 		this.movimentoFinanceiro = movimentoFinanceiro;
 	}
 
@@ -246,7 +254,19 @@ public class VendaProduto implements Serializable {
 	public void setMovimentoEstoque(Set<MovimentoEstoque> movimentoEstoque) {
 		this.movimentoEstoque = movimentoEstoque;
 	}
-	
-	
-	
+
+	/**
+	 * @return the tipoComercializacaoVenda
+	 */
+	public FormaComercializacao getTipoComercializacaoVenda() {
+		return tipoComercializacaoVenda;
+	}
+
+	/**
+	 * @param tipoComercializacaoVenda the tipoComercializacaoVenda to set
+	 */
+	public void setTipoComercializacaoVenda(
+			FormaComercializacao tipoComercializacaoVenda) {
+		this.tipoComercializacaoVenda = tipoComercializacaoVenda;
+	}
 }
