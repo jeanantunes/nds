@@ -118,7 +118,7 @@ public class InadimplenciaController {
 			filtroAtual.setPaginacao(new PaginacaoVO(page,rp,sortorder,sortname));
 			filtroAtual.setColunaOrdenacao(Util.getEnumByStringValue(ColunaOrdenacao.values(), sortname));
 			filtroAtual.setNumCota(numCota);
-			filtroAtual.setNomeCota(nomeCota);
+			filtroAtual.setNomeCota(nomeCota.replace(" (PF)", "").replace(" (PJ)", ""));
 			filtroAtual.setPeriodoDe(periodoDe);
 			filtroAtual.setPeriodoAte(periodoAte);
 			filtroAtual.setSituacaoEmAberto(situacaoEmAberto);

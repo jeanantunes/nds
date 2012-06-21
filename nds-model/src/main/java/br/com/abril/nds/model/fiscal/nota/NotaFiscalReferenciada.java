@@ -39,45 +39,45 @@ public class NotaFiscalReferenciada implements Serializable {
 	/**
 	 * cUF
 	 */
-	@Column(name="CODIGO_UF", nullable=false, length=2,  columnDefinition="Código da UF do emitente do Documento Fiscal")
+	@Column(name="CODIGO_UF", nullable=false, length=2)
 	private Integer codigoUF;
 	
 	/**
 	 * AAMM
 	 */
 	@Temporal(TemporalType.DATE)
-	@Column(name="DATA_EMISSAO", nullable=false, columnDefinition="Ano e Mês de emissão da NF-e")
+	@Column(name="DATA_EMISSAO", nullable=false)
 	private Date dataEmissao;
 	
 	/**
 	 * CNPJ
 	 */
-	@Column(name="CNPJ", nullable=false, length=14, columnDefinition="CNPJ do emitente")
+	@Column(name="CNPJ", nullable=false, length=14)
 	private String cnpj;
 	
 	/**
 	 * mod
 	 */
-	@Column(name="MODELO_DOCUMENTO_FISCAL",length=2, nullable=false, columnDefinition="Modelo do Cocumento Fical")
+	@Column(name="MODELO_DOCUMENTO_FISCAL",length=2, nullable=false)
 	private Integer modelo;
 	
 	/**
 	 * serie
 	 */
-	@Column(name = "SERIE", length = 3, nullable = false, columnDefinition = "Série do Documento Fiscal")
+	@Column(name = "SERIE", length = 3, nullable = false)
 	private Integer serie;
 	
 	/**
 	 * nNF
 	 */
-	@Column(name="NUMERO_DOCUMENTO_FISCAL", length=9, nullable=false, columnDefinition="Número do documento fiscal(1 - 999999999)")
+	@Column(name="NUMERO_DOCUMENTO_FISCAL", length=9, nullable=false)
 	private Long numeroDocumentoFiscal;
 	
 	
 	/**
 	 * refCTe
 	 */
-	@Column(name="CHAVE_ACESSO_CTE", length=44, nullable=false, columnDefinition="Chave de acesso do CT-e referenciada")
+	@Column(name="CHAVE_ACESSO_CTE", length=44, nullable=false)
 	private BigInteger chaveAcessoCTe;
 	
 	

@@ -179,7 +179,7 @@ public class CotaAusenteController {
 		
 		if(filtro.getData() != null) {
 			for(CotaAusenteDTO cotaAusenteDTO : listaCotasAusentes) {
-				if(DateUtil.isHoje(DateUtil.parseDataPTBR(cotaAusenteDTO.getData())))
+				if(!DateUtil.isHoje(DateUtil.parseDataPTBR(cotaAusenteDTO.getData())))
 						cotaAusenteDTO.setIdCotaAusente(null);
 			}
 		}

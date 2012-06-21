@@ -17,10 +17,11 @@ public interface MatrizLancamentoService {
 	 * Obtém a matriz de balanceamento de lançamento e todas as informações refentes ao balanceamento.
 	 * 
 	 * @param filtro - filtro para realização do balanceamento
+	 * @param configuracaoInicial - indicada se a matriz de lançamento deve ser sugerida de acordo com configuração inicial
 	 * 
 	 * @return {@link BalanceamentoLancamentoDTO}
 	 */
-	BalanceamentoLancamentoDTO obterMatrizLancamento(FiltroLancamentoDTO filtro);
+	BalanceamentoLancamentoDTO obterMatrizLancamento(FiltroLancamentoDTO filtro, boolean configuracaoInicial);
 	
 	/**
 	 * Confirma as matriz de balanceamento de lançamento.

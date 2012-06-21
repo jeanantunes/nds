@@ -31,8 +31,10 @@ public class CotaAusenteEncalheDTO implements Serializable {
 
 	@Export(label = "Ação", alignment = Alignment.CENTER, exhibitionOrder = 6)
 	private String acao = "";
-	
+
 	private Boolean fechado;
+
+	private Boolean postergado;
 	
 	private Date dataEncalhe;
 	
@@ -183,6 +185,20 @@ public class CotaAusenteEncalheDTO implements Serializable {
 	 */
 	public void setFechado(Boolean fechado) {
 		this.fechado = fechado;
+	}
+
+	/**
+	 * @return the postergado
+	 */
+	public Boolean getPostergado() {
+		return postergado;
+	}
+
+	/**
+	 * @param postergado the postergado to set
+	 */
+	public void setPostergado(Boolean postergado) {
+		this.postergado = postergado;
 	}
 	
 }

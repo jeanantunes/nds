@@ -108,10 +108,10 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepository<Fechamen
 	
 	@Override
 	@SuppressWarnings("unchecked")
-	public List<FechamentoEncalhe> buscarFechamentoEncalhe(FiltroFechamentoEncalheDTO filtro) {
+	public List<FechamentoEncalhe> buscarFechamentoEncalhe(Date dataEncalhe) {
 		
 		Criteria criteria = this.getSession().createCriteria(FechamentoEncalhe.class);
-		criteria.add(Restrictions.eq("fechamentoEncalhePK.dataEncalhe", filtro.getDataEncalhe()));
+		criteria.add(Restrictions.eq("fechamentoEncalhePK.dataEncalhe", dataEncalhe));
 		criteria.setFetchMode("listFechamentoEncalheBox", FetchMode.JOIN);
 		
 		return criteria.list();
@@ -196,10 +196,9 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepository<Fechamen
 				.add(Projections.property("roteiros.descricaoRoteiro"), "roteiroName")
 				.add(Projections.property("rotas.descricaoRota"), "rotaName")
 				.add(Projections.property("cec.fechado"), "fechado")
+				.add(Projections.property("cec.postergado"), "postergado")
 				.add(Projections.property("ce.dataRecolhimento"), "dataEncalhe")));
 				
-		// .property("cec.fechado"), "acao")
-
 		criteria.add(Restrictions.eq("ce.dataRecolhimento", dataEncalhe));
 		criteria.add(Restrictions.eq("roteiros.tipoRoteiro", TipoRoteiro.NORMAL));
 
@@ -273,4 +272,54 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepository<Fechamen
         
 		return criteria.list();
 	}
+	
+	@Override
+	public int buscaQuantidadeConferencia(Date dataEncalhe, boolean porBox) {
+		
+		Criteria criteria = this.getSession().createCriteria(ConferenciaEncalhe.class, "ce");
+		
+		criteria.setProjection(Projections.projectionList()
+			.add(Projections.groupProperty("mec.produtoEdicao.id"))
+			.add(Projections.groupProperty("ccec.box.id"))
+		);
+		
+		criteria.createAlias("ce.movimentoEstoqueCota", "mec");
+		criteria.setFetchMode("mec", FetchMode.SELECT);
+		
+		criteria.createAlias("ce.controleConferenciaEncalheCota", "ccec");
+		criteria.setFetchMode("ccec", FetchMode.SELECT);
+		
+		criteria.add(Restrictions.eq("ccec.dataOperacao", dataEncalhe));
+
+		return criteria.list().size();
+	}
+	
+	@Override
+	public Date obterChamdasEncalhePostergadas(Long idCota, Date dataEncalhe) {
+		
+		Criteria query = this.getSession().createCriteria(ChamadaEncalhe.class, "ce");
+
+		query.createAlias("ce.chamadaEncalheCotas", "cec");
+		
+		query.setFetchMode("cec", FetchMode.JOIN);
+		
+		query.add(Restrictions.eq("cec.cota.id", idCota));		
+		query.add(Restrictions.gt("ce.dataRecolhimento", dataEncalhe));
+		query.add(Restrictions.eq("cec.postergado", false));	
+		
+		query.setProjection(Projections.alias(Projections.min("ce.dataRecolhimento"), "dataRecolhimento"));
+		
+		DetachedCriteria subquery = DetachedCriteria.forClass(ChamadaEncalhe.class, "ce");
+
+		subquery.createAlias("ce.chamadaEncalheCotas", "cec");
+		
+		subquery.add(Restrictions.eq("ce.dataRecolhimento", dataEncalhe));		
+		subquery.add(Restrictions.eq("cec.cota.id", idCota));	
+		subquery.setProjection(Projections.alias(Projections.property("ce.produtoEdicao.id"), "idProdutoEdicao"));
+		
+		query.add(Property.forName("ce.produtoEdicao.id").in(subquery));
+
+		return (Date) query.uniqueResult();
+	}
+	
 }

@@ -378,7 +378,6 @@
 	function sucessCallbackConfiguraTelaEdicao(result){
 		
 		$("#grupoMovimentoHidden").val(result);
-		$("#edicaoValor").val('');
 		
 		if (result=='DEBITO_SOBRE_FATURAMENTO'){
 			
@@ -409,6 +408,10 @@
 			
 			$('#edicaoValor').removeAttr("readonly"); 
 		}
+	}
+	
+	function limparValor(){
+		$("#edicaoValor").val('');
 	}
  	
  	function obterInformacoesParaEdicao(){
@@ -518,7 +521,7 @@
   <tr>
     <td width="126">Tipo de Movimento:</td>
     <td width="310">
-    <select name="debitoCredito.tipoMovimentoFinanceiro.id" id="edicaoTipoMovimento" style="width:300px;" onchange="configuraTelaEdicao(this.value);">
+    <select name="debitoCredito.tipoMovimentoFinanceiro.id" id="edicaoTipoMovimento" style="width:300px;" onchange="configuraTelaEdicao(this.value); limparValor();">
 		<c:forEach items="${tiposMovimentoFinanceiro}" var="tipoMovimento">
 			<option value="${tipoMovimento.id}">${tipoMovimento.id}-${tipoMovimento.descricao}</option>
 		</c:forEach>
