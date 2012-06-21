@@ -311,7 +311,6 @@ function Parciais(pathTela) {
 				data,
 				function(result){
 
-					$( "#dialog-excluir" ).dialog( "close" );
 					
 					if($('#painelPeriodos').css('display')=='none') {
 						exibirMensagemDialog('SUCCESS', ['Período excluido com sucesso.'], "dialog-detalhes");			
@@ -323,7 +322,11 @@ function Parciais(pathTela) {
 					
 				},	
 				null,
-				true);				
+				true,
+				'dialog-detalhes');	
+		
+		$( "#dialog-excluir" ).dialog( "close" );
+		
 	},
 	
 	/**
