@@ -2,7 +2,8 @@ package br.com.abril.nds.service;
 
 import java.util.List;
 
-import br.com.abril.nds.model.integracao.LogExecucao;
+import br.com.abril.nds.dto.InterfaceDTO;
+import br.com.abril.nds.model.integracao.LogExecucaoMensagem;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
 /**
@@ -20,6 +21,19 @@ public interface LogExecucaoMensagemService {
 	 * @param maxResults
 	 * @return List<LogExecucao>
 	 */
-	public List<LogExecucao> buscaPaginada(String orderBy, Ordenacao ordenacao, int initialResult, int maxResults);
+	public List<InterfaceDTO> listarInterfaces();
+	
+	/**
+	 * Retorna a lista de mensagens de processamento de interface
+	 * @return List<LogExecucaoMensagem>
+	 */
+	public List<LogExecucaoMensagem> listarProcessamentoInterface(Long codigoLogExecucao, String orderBy, Ordenacao ordenacao, int initialResult, int maxResults);
+	
+	/**
+	 * Retorna a quantidade de mensagens de processamento de interface
+	 * @param codigoLogExecucao
+	 * @return Long
+	 */
+	public Long quantidadeProcessamentoInterface(Long codigoLogExecucao);
 	
 }

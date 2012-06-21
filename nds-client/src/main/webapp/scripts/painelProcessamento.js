@@ -12,11 +12,10 @@ var painelProcessamentoController = {
 		this.initGridPainelInterfaceGrid();
 		this.initGridPainelProcessamentoGrid();
 		this.pesquisarInterfaces();
-		//this.bindButtons();
+		this.bindButtonsInterfaces();
 	},
 	initGridDetalheInterfaceGrid : function() {
 		$(".detalheInterfaceGrid").flexigrid({
-			preProcess : painelProcessamentoController.executarPreProcessamentoInterfaceGrid,
 			dataType : 'json',
 			colModel : [ {
 				display : 'Ação',
@@ -43,7 +42,7 @@ var painelProcessamentoController = {
 	},
 	initGridDetalheProcessamentoGrid : function() {
 		$(".detalheProcessamentoGrid").flexigrid({
-			preProcess : painelProcessamentoController.executarPreProcessamentoGrid,
+			preProcess : painelProcessamentoController.executarPreInterfaceProcessamento,
 			dataType : 'json',
 			colModel : [ {
 				display : 'Tipo do Erro',
@@ -53,17 +52,23 @@ var painelProcessamentoController = {
 				align : 'left'
 			}, {
 				display : 'Mensagem Usuário',
-				name : 'msgUsuario',
+				name : 'mensagemInfo',
 				width : 330,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Mensagem de Sistema',
-				name : 'msgSistema',
+				name : 'numeroLinha',
 				width : 210,
 				sortable : true,
 				align : 'left'
 			}],
+			sortname : "mensagemInfo",
+			sortorder : "asc",
+			usepager : true,
+			useRp : true,
+			rp : 15,
+			showTableToggleBtn : true,			
 			width : 700,
 			height : 200
 		});
@@ -96,7 +101,7 @@ var painelProcessamentoController = {
 				sortable : true,
 				align : 'center'
 			}],
-			sortname : "nomeLoginUsuario",
+			sortname : "processos",
 			sortorder : "asc",
 			usepager : true,
 			useRp : true,
@@ -108,28 +113,29 @@ var painelProcessamentoController = {
 	},
 	initGridPainelInterfaceGrid : function() {
 		$(".painelInterfaceGrid").flexigrid({
+			preProcess: painelProcessamentoController.executarPreProcessamentoInterfaceGrid,
 			dataType : 'json',
 			colModel : [ {
 				display : 'Interface',
-				name : 'interface',
+				name : 'nome',
 				width : 215,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Arquivo',
-				name : 'arquivo',
+				name : 'extensaoArquivo',
 				width : 180,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Status',
-				name : 'Status',
+				name : 'status',
 				width : 70,
 				sortable : true,
 				align : 'center'
 			}, {
 				display : 'Data Processamento',
-				name : 'dtProcessamento',
+				name : 'dataProcessmento',
 				width : 130,
 				sortable : true,
 				align : 'center'
@@ -146,7 +152,7 @@ var painelProcessamentoController = {
 				sortable : true,
 				align : 'center'
 			}],
-			sortname : "nomeLoginUsuario",
+			sortname : "nome",
 			sortorder : "asc",
 			usepager : true,
 			useRp : true,
@@ -196,7 +202,7 @@ var painelProcessamentoController = {
 		});
 	},
 	pesquisarInterfaces : function() {
-		alert("yeah1");
+		painelProcessamentoController.bindButtonsInterfaces();
 		$(".painelInterfaceGrid").flexOptions({
 			url : contextPath + '/administracao/painelProcessamento/pesquisarInterfaces',
 			params: [],
@@ -205,7 +211,7 @@ var painelProcessamentoController = {
 		$(".painelInterfaceGrid").flexReload();
 	},
 	pesquisarProcessos : function() {
-		alert("yeah2");
+		painelProcessamentoController.bindButtonsProcessos();
 		$(".painelProcessamentoGrid").flexOptions({
 			url : contextPath + '/administracao/painelProcessamento/pesquisarProcessos',
 			params: [],
@@ -213,10 +219,78 @@ var painelProcessamentoController = {
 		});
 		$(".painelProcessamentoGrid").flexReload();
 	},
-	executarPreProcessamentoInterfaceGrid : function() {
-		alert("1");
+	executarPreProcessamentoInterfaceGrid : function(resultado) {
+		
+		var btReprocessamento = "";
+		var brDetalhes        = "";
+		
+		$.each(resultado.rows, function(index, row) {
+		
+			row.cell.nome = "<a href='javascript:;' onclick='painelProcessamentoController.abrirPopUpDetalhesInterface(" + row.cell.idLogProcessamento + ")'>" + row.cell.nome + "</href>";
+			
+			if (row.cell.status == 'S' || row.cell.status == 'A')
+				row.cell.status = "<img src= " + contextPath + "/images/ico_operando.png />";
+			else if (row.cell.status == 'F')
+				row.cell.status = "<img src= " + contextPath + "/images/ico_offline.png />";
+			else // Não processado
+				row.cell.status = "<img src= " + contextPath + "/images/ico_encerrado.png />";
+			
+			btReprocessamento = "<a href='javascript:;' onclick='alert(1)'><img src= " + contextPath + "/images/bt_devolucao.png /></href>";
+			brDetalhes 		  = "<a href='javascript:;' onclick='painelProcessamentoController.abrirPopUpDetalhesInterfaceProcessamento(" + row.cell.idLogProcessamento + ")'><img src= " + contextPath + "/images/ico_detalhes.png /></href>";
+			row.cell.reprocessar = btReprocessamento + brDetalhes;
+		});
+		return resultado;
 	},
-	executarPreProcessamentoGrid : function() {
+	abrirPopUpDetalhesInterface : function(idLogProcessamento) {
+		$(".detalheInterfaceGrid").flexOptions({
+			url: contextPath + '/administracao/painelProcessamento/pesquisarDetalhesInterface',
+			params: [
+		         {name:'idLogProcessamento', value: idLogProcessamento}
+		    ],
+		    newp: 1,
+		});
+		
+		$(".detalheInterfaceGrid").flexReload();
+		painelProcessamentoController.popup_detalhes();			
+	},
+	executarPreInterfaceProcessamento : function(resultado) {
+
+		$.each(resultado.rows, function(index, row) {
+			row.cell.numeroLinha = "Linha: " + row.cell.numeroLinha;
+		});
+		
+		return resultado;
+	},
+	abrirPopUpDetalhesInterfaceProcessamento : function(idLogProcessamento) {
+		$(".detalheProcessamentoGrid").flexOptions({
+			url: contextPath + '/administracao/painelProcessamento/pesquisarDetalhesInterfaceProcessamento',
+			params: [
+		         {name:'idLogProcessamento', value: idLogProcessamento}
+		    ],
+		    newp: 1,
+		});
+		
+		$(".detalheProcessamentoGrid").flexReload();
+		painelProcessamentoController.popup();			
+	},
+	executarPreProcessamentoGrid : function(resultado) {
 		alert("2");
-	}
+		return resultado;
+	},
+	bindButtonsInterfaces : function() {
+		$("#btnGerarXLS").click(function() {
+			window.location = contextPath + "/administracao/painelProcessamento/exportar?fileType=XLS&tipoRelatorio=1";
+		});
+		$("#btnGerarPDF").click(function() {
+			window.location = contextPath + "/administracao/painelProcessamento/exportar?fileType=PDF&tipoRelatorio=1";
+		});	
+	},
+	bindButtonsProcessos : function() {
+		$("#btnGerarXLS").click(function() {
+			window.location = contextPath + "/administracao/painelProcessamento/exportar?fileType=XLS&tipoRelatorio=2";
+		});
+		$("#btnGerarPDF").click(function() {
+			window.location = contextPath + "/administracao/painelProcessamento/exportar?fileType=PDF&tipoRelatorio=2";
+		});
+	}	
 }

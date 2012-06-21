@@ -1,6 +1,8 @@
 package br.com.abril.nds.fixture;
 
 import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -130,7 +132,12 @@ import br.com.abril.nds.model.fiscal.TipoEmissaoNfe;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
 import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.model.fiscal.TipoUsuarioNotaFiscal;
+import br.com.abril.nds.model.integracao.EventoExecucao;
 import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
+import br.com.abril.nds.model.integracao.InterfaceExecucao;
+import br.com.abril.nds.model.integracao.LogExecucao;
+import br.com.abril.nds.model.integracao.LogExecucaoMensagem;
+import br.com.abril.nds.model.integracao.StatusExecucaoEnum;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalhe;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalheCota;
 import br.com.abril.nds.model.movimentacao.CotaAusente;
@@ -628,6 +635,43 @@ public class DataLoader {
 	private static CFOP cfop6917;
 	private static CFOP cfop5917;	
 
+	private static InterfaceExecucao interfaceEMS0106;
+	private static InterfaceExecucao interfaceEMS0107;
+	private static InterfaceExecucao interfaceEMS0108;
+	private static InterfaceExecucao interfaceEMS0109;
+	private static InterfaceExecucao interfaceEMS0110;
+	private static InterfaceExecucao interfaceEMS0111;
+	private static InterfaceExecucao interfaceEMS0112;
+	private static InterfaceExecucao interfaceEMS0113;
+	private static InterfaceExecucao interfaceEMS0114;
+	private static InterfaceExecucao interfaceEMS0116;
+	private static InterfaceExecucao interfaceEMS0117;
+	private static InterfaceExecucao interfaceEMS0118;
+	private static InterfaceExecucao interfaceEMS0119;
+	private static InterfaceExecucao interfaceEMS0120;
+	private static InterfaceExecucao interfaceEMS0121;
+	private static InterfaceExecucao interfaceEMS0122;
+	private static InterfaceExecucao interfaceEMS0123;
+	private static InterfaceExecucao interfaceEMS0124;
+	private static InterfaceExecucao interfaceEMS0125;
+	private static InterfaceExecucao interfaceEMS0126;
+	private static InterfaceExecucao interfaceEMS0129;
+	private static InterfaceExecucao interfaceEMS0130;
+	private static InterfaceExecucao interfaceEMS0131;
+	private static InterfaceExecucao interfaceEMS0132;
+	private static InterfaceExecucao interfaceEMS0133;
+	private static InterfaceExecucao interfaceEMS0134;
+	private static InterfaceExecucao interfaceEMS0185;
+	private static InterfaceExecucao interfaceEMS0197;
+
+	private static EventoExecucao eventoErroInfraestrutura;	
+	private static EventoExecucao eventoSemDominio;
+	private static EventoExecucao eventoHierarquiaCorrompida;
+	private static EventoExecucao eventoRelacionamentoNaoEncontrado;
+	private static EventoExecucao eventoGeracaoArquivo;
+	private static EventoExecucao eventoInformacaoDadoAlterado;	
+	private static EventoExecucao eventoRegistroExistente; 		
+	
 	public static void main(String[] args) {
 		ClassPathXmlApplicationContext ctx = new ClassPathXmlApplicationContext(
 				"classpath:/applicationContext-dataLoader.xml");
@@ -778,6 +822,8 @@ public class DataLoader {
 		gerarCargaDadosConferenciaEncalhe(session);
 		
 		gerarTiposNotas(session);
+
+		gerarLogExecucaoInterfaces(session);
 		
 	}
 	
@@ -885,6 +931,114 @@ public class DataLoader {
 		cfop6115.setDescricao("Venda de mercadoria adquirida ou recebida de terceiros, recebida anteriormente em consignação mercantil");
 		save(session, cfop6115);
 
+	}
+	
+	private static void gerarLogExecucaoInterfaces(Session session) {
+		
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+		
+		try {
+			
+			LogExecucao logExecucao1 = new LogExecucao();
+			logExecucao1.setDataInicio(sdf.parse("12/01/2012"));
+			logExecucao1.setDataFim(sdf.parse("12/01/2012"));
+			logExecucao1.setInterfaceExecucao(interfaceEMS0106);
+			logExecucao1.setNomeLoginUsuario("Junior");
+			logExecucao1.setStatus(StatusExecucaoEnum.SUCESSO);
+			
+			LogExecucao logExecucao2 = new LogExecucao();
+			logExecucao2.setDataInicio(sdf.parse("20/06/2012"));
+			logExecucao2.setInterfaceExecucao(interfaceEMS0106);
+			logExecucao2.setNomeLoginUsuario("Carla");
+			logExecucao2.setStatus(StatusExecucaoEnum.SUCESSO);
+
+			LogExecucao logExecucao3 = new LogExecucao();
+			logExecucao3.setDataInicio(sdf.parse("19/06/2012"));
+			logExecucao3.setInterfaceExecucao(interfaceEMS0109);
+			logExecucao3.setNomeLoginUsuario("Junior");
+			logExecucao3.setStatus(StatusExecucaoEnum.SUCESSO);
+			session.save(logExecucao3);
+
+			LogExecucao logExecucao4 = new LogExecucao();
+			logExecucao4.setDataInicio(sdf.parse("20/06/2012"));
+			logExecucao4.setInterfaceExecucao(interfaceEMS0109);
+			logExecucao4.setNomeLoginUsuario("Junior");
+			logExecucao4.setStatus(StatusExecucaoEnum.FALHA);
+			
+			LogExecucaoMensagem logExecucaoMensagem1 = new LogExecucaoMensagem();
+			logExecucaoMensagem1.setEventoExecucao(eventoRelacionamentoNaoEncontrado);
+			logExecucaoMensagem1.setMensagem("Erro teste sobre relacionamento.");
+			logExecucaoMensagem1.setMensagemInfo("Informação sobre o erro teste sobre relacionamento.");
+			logExecucaoMensagem1.setNomeArquivo("arquivoGenerico.gen");
+			logExecucaoMensagem1.setNumeroLinha(3);
+			logExecucaoMensagem1.setLogExecucao(logExecucao2);
+			
+
+			LogExecucaoMensagem logExecucaoMensagem2 = new LogExecucaoMensagem();
+			logExecucaoMensagem2.setEventoExecucao(eventoErroInfraestrutura);
+			logExecucaoMensagem2.setMensagem("Erro! Teste sobre infraestrutura.");
+			logExecucaoMensagem2.setMensagemInfo("Informações sobre o erro teste sobre infraestrutura.");
+			logExecucaoMensagem2.setNomeArquivo("arquivoGenerico2.gen");
+			logExecucaoMensagem2.setNumeroLinha(5);
+			logExecucaoMensagem2.setLogExecucao(logExecucao2);
+
+			List<LogExecucaoMensagem> listLogExecucaoMensagem = new ArrayList<LogExecucaoMensagem>();
+			listLogExecucaoMensagem.add(logExecucaoMensagem1);
+			listLogExecucaoMensagem.add(logExecucaoMensagem2);
+			
+			logExecucao2.setListLogExecucaoMensagem(listLogExecucaoMensagem);
+			
+			session.save(logExecucao2);
+			
+			session.save(logExecucaoMensagem1);
+			session.save(logExecucaoMensagem2);
+			
+			//=====
+			
+			LogExecucaoMensagem logExecucaoMensagem3 = new LogExecucaoMensagem();
+			logExecucaoMensagem3.setEventoExecucao(eventoErroInfraestrutura);
+			logExecucaoMensagem3.setMensagem("Erro! 111 Teste sobre infraestrutura.");
+			logExecucaoMensagem3.setMensagemInfo("Informações 11 sobre o erro teste sobre infraestrutura.");
+			logExecucaoMensagem3.setNomeArquivo("arquivoGenerico1.aaa");
+			logExecucaoMensagem3.setNumeroLinha(7);
+			logExecucaoMensagem3.setLogExecucao(logExecucao4);
+			
+			LogExecucaoMensagem logExecucaoMensagem4 = new LogExecucaoMensagem();
+			logExecucaoMensagem4.setEventoExecucao(eventoErroInfraestrutura);
+			logExecucaoMensagem4.setMensagem("Erro! 222 Teste sobre infraestrutura.");
+			logExecucaoMensagem4.setMensagemInfo("Informações 22 sobre o erro teste sobre infraestrutura.");
+			logExecucaoMensagem4.setNomeArquivo("arquivoGenerico2.bbb");
+			logExecucaoMensagem4.setNumeroLinha(9);
+			logExecucaoMensagem4.setLogExecucao(logExecucao4);
+			
+			LogExecucaoMensagem logExecucaoMensagem5 = new LogExecucaoMensagem();
+			logExecucaoMensagem5.setEventoExecucao(eventoHierarquiaCorrompida);
+			logExecucaoMensagem5.setMensagem("Erro! 333 Teste sobre infraestrutura.");
+			logExecucaoMensagem5.setMensagemInfo("Informações 33 sobre o erro teste sobre Hierarquia.");
+			logExecucaoMensagem5.setNomeArquivo("arquivoGenerico2.ccc");
+			logExecucaoMensagem5.setNumeroLinha(13);
+			logExecucaoMensagem5.setLogExecucao(logExecucao4);
+			
+			List<LogExecucaoMensagem> listLogExecucaoMensagem2 = new ArrayList<LogExecucaoMensagem>();
+			listLogExecucaoMensagem2.add(logExecucaoMensagem3);
+			listLogExecucaoMensagem2.add(logExecucaoMensagem4);
+			listLogExecucaoMensagem2.add(logExecucaoMensagem5);
+			
+			logExecucao4.setListLogExecucaoMensagem(listLogExecucaoMensagem2);
+			
+			session.save(logExecucao4);
+			
+			session.save(logExecucaoMensagem3);
+			session.save(logExecucaoMensagem4);
+			session.save(logExecucaoMensagem5);
+			
+		} catch (ParseException e) {
+			throw new RuntimeException(e);
+		}
+		
+		//LogExecucao
+		//LogMensagemExecucao
+		
 	}
 	
 	private static void gerarTiposNotas(Session session) {
@@ -8643,45 +8797,83 @@ public class DataLoader {
 	
 	private static void criarInterfaceExecucao(Session session) {
 		
-		save(session, Fixture.criarInterfaceExecucao(106L, "EMS0106"));
-		save(session, Fixture.criarInterfaceExecucao(107L, "EMS0107"));
-		save(session, Fixture.criarInterfaceExecucao(108L, "EMS0108"));
-		save(session, Fixture.criarInterfaceExecucao(InterfaceEnum.EMS0109.getCodigoInterface(), "EMS0109"));
-		save(session, Fixture.criarInterfaceExecucao(InterfaceEnum.EMS0110.getCodigoInterface(), "EMS0110"));
-		save(session, Fixture.criarInterfaceExecucao(InterfaceEnum.EMS0111.getCodigoInterface(), "EMS0111"));
-		save(session, Fixture.criarInterfaceExecucao(InterfaceEnum.EMS0112.getCodigoInterface(), "EMS0112"));
-		save(session, Fixture.criarInterfaceExecucao(InterfaceEnum.EMS0113.getCodigoInterface(), "EMS0113"));
-		save(session, Fixture.criarInterfaceExecucao(InterfaceEnum.EMS0114.getCodigoInterface(), "EMS0114"));
-		save(session, Fixture.criarInterfaceExecucao(116L, "EMS0116"));
-		save(session, Fixture.criarInterfaceExecucao(117L, "EMS0117"));
-		save(session, Fixture.criarInterfaceExecucao(118L, "EMS0118"));
-		save(session, Fixture.criarInterfaceExecucao(InterfaceEnum.EMS0119.getCodigoInterface(), "EMS0119"));
-		save(session, Fixture.criarInterfaceExecucao(120L, "EMS0120"));
-		save(session, Fixture.criarInterfaceExecucao(121L, "EMS0121"));
-		save(session, Fixture.criarInterfaceExecucao(122L, "EMS0122"));
-		save(session, Fixture.criarInterfaceExecucao(123L, "EMS0123"));
-		save(session, Fixture.criarInterfaceExecucao(124L, "EMS0124"));
-		save(session, Fixture.criarInterfaceExecucao(InterfaceEnum.EMS0125.getCodigoInterface(), "EMS0125"));
-		save(session, Fixture.criarInterfaceExecucao(InterfaceEnum.EMS0126.getCodigoInterface(), "EMS0126"));
-		save(session, Fixture.criarInterfaceExecucao(129L, "EMS0129"));
-		save(session, Fixture.criarInterfaceExecucao(130L, "EMS0130"));
-		save(session, Fixture.criarInterfaceExecucao(131L, "EMS0131"));
-		save(session, Fixture.criarInterfaceExecucao(132L, "EMS0132"));
-		save(session, Fixture.criarInterfaceExecucao(133L, "EMS0133"));
-		save(session, Fixture.criarInterfaceExecucao(InterfaceEnum.EMS0134.getCodigoInterface(), "EMS0134"));
-		save(session, Fixture.criarInterfaceExecucao(InterfaceEnum.EMS0185.getCodigoInterface(), "EMS0185"));
-		save(session, Fixture.criarInterfaceExecucao(197L, "EMS0197"));
+		interfaceEMS0106 = Fixture.criarInterfaceExecucao(106L, "EMS0106");
+		interfaceEMS0107 = Fixture.criarInterfaceExecucao(107L, "EMS0107");
+		interfaceEMS0108 = Fixture.criarInterfaceExecucao(108L, "EMS0108");
+		interfaceEMS0109 = Fixture.criarInterfaceExecucao(109L, "EMS0109");
+		interfaceEMS0110 = Fixture.criarInterfaceExecucao(110L, "EMS0110");
+		interfaceEMS0111 = Fixture.criarInterfaceExecucao(111L, "EMS0111");
+		interfaceEMS0112 = Fixture.criarInterfaceExecucao(112L, "EMS0112");
+		interfaceEMS0113 = Fixture.criarInterfaceExecucao(113L, "EMS0113");
+		interfaceEMS0114 = Fixture.criarInterfaceExecucao(114L, "EMS0114");
+		interfaceEMS0116 = Fixture.criarInterfaceExecucao(116L, "EMS0116");
+		interfaceEMS0117 = Fixture.criarInterfaceExecucao(117L, "EMS0117");
+		interfaceEMS0118 = Fixture.criarInterfaceExecucao(118L, "EMS0118");
+		interfaceEMS0119 = Fixture.criarInterfaceExecucao(119L, "EMS0119");
+		interfaceEMS0120 = Fixture.criarInterfaceExecucao(120L, "EMS0120");
+		interfaceEMS0121 = Fixture.criarInterfaceExecucao(121L, "EMS0121");
+		interfaceEMS0122 = Fixture.criarInterfaceExecucao(122L, "EMS0122");
+		interfaceEMS0123 = Fixture.criarInterfaceExecucao(123L, "EMS0123");
+		interfaceEMS0124 = Fixture.criarInterfaceExecucao(124L, "EMS0124");
+		interfaceEMS0125 = Fixture.criarInterfaceExecucao(125L, "EMS0125");
+		interfaceEMS0126 = Fixture.criarInterfaceExecucao(126L, "EMS0126");
+		interfaceEMS0129 = Fixture.criarInterfaceExecucao(129L, "EMS0129");
+		interfaceEMS0130 = Fixture.criarInterfaceExecucao(130L, "EMS0130");
+		interfaceEMS0131 = Fixture.criarInterfaceExecucao(131L, "EMS0131");
+		interfaceEMS0132 = Fixture.criarInterfaceExecucao(132L, "EMS0132");
+		interfaceEMS0133 = Fixture.criarInterfaceExecucao(133L, "EMS0133");
+		interfaceEMS0134 = Fixture.criarInterfaceExecucao(134L, "EMS0134");
+		interfaceEMS0185 = Fixture.criarInterfaceExecucao(185L, "EMS0185");
+		interfaceEMS0197 = Fixture.criarInterfaceExecucao(197L, "EMS0197");
+		
+		save(session, interfaceEMS0106);
+		save(session, interfaceEMS0107);
+		save(session, interfaceEMS0108);
+		save(session, interfaceEMS0109);
+		save(session, interfaceEMS0110);
+		save(session, interfaceEMS0111);
+		save(session, interfaceEMS0112);
+		save(session, interfaceEMS0113);
+		save(session, interfaceEMS0114);
+		save(session, interfaceEMS0116);
+		save(session, interfaceEMS0117);
+		save(session, interfaceEMS0118);
+		save(session, interfaceEMS0119);
+		save(session, interfaceEMS0120);
+		save(session, interfaceEMS0121);
+		save(session, interfaceEMS0122);
+		save(session, interfaceEMS0123);
+		save(session, interfaceEMS0124);
+		save(session, interfaceEMS0125);
+		save(session, interfaceEMS0126);
+		save(session, interfaceEMS0129);
+		save(session, interfaceEMS0130);
+		save(session, interfaceEMS0131);
+		save(session, interfaceEMS0132);
+		save(session, interfaceEMS0133);
+		save(session, interfaceEMS0134);
+		save(session, interfaceEMS0185);
+		save(session, interfaceEMS0197);
 	}
 	
 	private static void criarEventoExecucao(Session session) {
+
+		eventoErroInfraestrutura 		  	  = Fixture.criarEventoExecucao(EventoExecucaoEnum.ERRO_INFRA.getCodigo(), "Erro Infra", "Erro de infraestrutura");
+		eventoSemDominio 				  	  = Fixture.criarEventoExecucao(EventoExecucaoEnum.SEM_DOMINIO.getCodigo(), "Dominio", "Sem Domínio");
+		eventoHierarquiaCorrompida 		  	  = Fixture.criarEventoExecucao(EventoExecucaoEnum.HIERARQUIA.getCodigo(), "Hierarquia", "Hierarquia Corrompida");
+		eventoRelacionamentoNaoEncontrado  	  = Fixture.criarEventoExecucao(EventoExecucaoEnum.RELACIONAMENTO.getCodigo(), "Relacionamento", "Relacionamento Não Encontrado");
+		eventoGeracaoArquivo				  = Fixture.criarEventoExecucao(EventoExecucaoEnum.GERACAO_DE_ARQUIVO.getCodigo(), "Arquivo", "Geração de Arquivo");
+		eventoInformacaoDadoAlterado		  = Fixture.criarEventoExecucao(EventoExecucaoEnum.INF_DADO_ALTERADO.getCodigo(), "Alteração Dado", "Informação de dado Alterado");
+		eventoRegistroExistente 			  = Fixture.criarEventoExecucao(EventoExecucaoEnum.REGISTRO_JA_EXISTENTE.getCodigo(), "Registro já existente", "Registro já existente"); 
 		
-		save(session, Fixture.criarEventoExecucao(EventoExecucaoEnum.ERRO_INFRA.getCodigo(), "Erro Infra", "Erro de infraestrutura"));
-		save(session, Fixture.criarEventoExecucao(EventoExecucaoEnum.SEM_DOMINIO.getCodigo(), "Dominio", "Sem Domínio"));
-		save(session, Fixture.criarEventoExecucao(EventoExecucaoEnum.HIERARQUIA.getCodigo(), "Hierarquia", "Hierarquia Corrompida"));
-		save(session, Fixture.criarEventoExecucao(EventoExecucaoEnum.RELACIONAMENTO.getCodigo(), "Relacionamento", "Relacionamento Não Encontrado"));
-		save(session, Fixture.criarEventoExecucao(EventoExecucaoEnum.GERACAO_DE_ARQUIVO.getCodigo(), "Arquivo", "Geração de Arquivo"));
-		save(session, Fixture.criarEventoExecucao(EventoExecucaoEnum.INF_DADO_ALTERADO.getCodigo(), "Alteração Dado", "Informação de dado Alterado"));
-		save(session, Fixture.criarEventoExecucao(EventoExecucaoEnum.REGISTRO_JA_EXISTENTE.getCodigo(), "Registro já existente", "Registro já existente"));
+		save(session, eventoErroInfraestrutura);
+		save(session, eventoSemDominio);
+		save(session, eventoHierarquiaCorrompida);
+		save(session, eventoRelacionamentoNaoEncontrado);
+		save(session, eventoGeracaoArquivo);
+		save(session, eventoInformacaoDadoAlterado);
+		save(session, eventoRegistroExistente);
+		
 	}
 	
 }

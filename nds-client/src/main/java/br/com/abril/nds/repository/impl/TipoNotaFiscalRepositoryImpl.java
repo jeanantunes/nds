@@ -79,9 +79,9 @@ public class TipoNotaFiscalRepositoryImpl extends AbstractRepository<TipoNotaFis
 				orderBy = orderBy + CODIGO_CFOP;
 			}
 
-			if(Ordenacao.ASC ==  ordenacao){
+			if(Ordenacao.ASC ==  ordenacao) {
 				criteria.addOrder(Order.asc(orderBy));
-			}else if(Ordenacao.DESC ==  ordenacao){
+			} else if(Ordenacao.DESC ==  ordenacao) {
 				criteria.addOrder(Order.desc(orderBy));
 			}
 		}

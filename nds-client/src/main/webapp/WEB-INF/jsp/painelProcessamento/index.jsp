@@ -5,6 +5,11 @@
 	$(function() {
 		painelProcessamentoController.init("${pageContext.request.contextPath}");
 	});
+	
+	function exportar(fileType) {
+		
+	}
+	
 </script>
 <style type="text/css">
 #dialog-novo fieldset, #dialog-detalhes fieldset{ width: 700px!important;}
@@ -70,8 +75,8 @@
                 </div>                
             </div>
         </div>
-        <span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
-		<span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
+        <span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;" id="btnGerarXLS"><img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
+		<span class="bt_novos" title="Imprimir"><a href="javascript:;" id="btnGerarPDF"><img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
       </fieldset>
       <div class="linha_separa_fields">&nbsp;</div>
     </div>
