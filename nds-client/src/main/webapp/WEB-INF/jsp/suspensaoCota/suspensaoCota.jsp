@@ -43,7 +43,7 @@
 		var algumSelecionado = false;
 		
 		$.each(checks, function(index,value){
-			console.log($(value).is(':checked'));
+			
 			if( $(value).is(':checked') == true)
 				algumSelecionado = true;
 		});
