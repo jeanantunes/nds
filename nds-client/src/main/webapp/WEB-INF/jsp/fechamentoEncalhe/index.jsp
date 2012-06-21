@@ -8,7 +8,10 @@
 	var vFornecedorId = '';
 	var vBoxId = '';
 	
-	function pesquisar() {
+	function pesquisar(aplicaRegraMudancaTipo ) {
+		if (aplicaRegraMudancaTipo == null ){
+			aplicaRegraMudancaTipo = false;
+		}
 		
 		$('#divBotoesPrincipais').show();
 		
@@ -23,7 +26,14 @@
 			}, {
 				name : "boxId",
 				value : $('#selectBoxEncalhe').val()
+			},
+			{
+				name : "aplicaRegraMudancaTipo",
+				value : aplicaRegraMudancaTipo
 			}],
+
+
+			
 			newp:1
 		});
 		
@@ -45,7 +55,7 @@
 			
 			var valorFisico = row.cell.fisico == null ? '' : row.cell.fisico;
 			var fechado = row.cell.fechado == false ? '' : 'disabled="disabled"';
-			row.cell.fisico = '<input type="text" style="width: 60px" name="fisico[' + index + ']" value="' + valorFisico + '" onchange="onChangeFisico(this, ' + index + ')" ' + fechado + '/>';
+			row.cell.fisico = '<input type="text" style="width: 60px" id = "'+row.cell.produtoEdicao+'"  name="fisico" value="' + valorFisico + '" onchange="onChangeFisico(this, ' + index + ')" ' + fechado + '/>';
 			
 			row.cell.replicar = '<span title="Replicar"><a href="javascript:;" onclick="replicar(' + index + ')"><img src="${pageContext.request.contextPath}/images/ico_atualizar.gif" border="0" /></a></span>';
 			
@@ -104,32 +114,27 @@
 	}
 	
 	function salvar() {
-		
-		$(".fechamentoGrid").flexOptions({
-			"url" : contextPath + '/devolucao/fechamentoEncalhe/salvar',
-			params : [{
-				name : "dataEncalhe",
-				value : $('#datepickerDe').val()
-			}, {
-				name : "fornecedorId",
-				value : $('#selectFornecedor').val()
-			}, {
-				name : "boxId",
-				value : $('#selectBoxEncalhe').val()
-			}, {
-				name : "fisico",
-				value : gerarArrayFisico()
-			}],
-			newp:1
-		});
-		
-		$(".fechamentoGrid").flexReload();
-		$(".grids").show();
-	}
+			$.postJSON(
+				"<c:url value='/devolucao/fechamentoEncalhe/salvar' />",
+				populaParamentrosFechamentoEncalheInformados(),
+				function (result) {
+
+					var tipoMensagem = result.tipoMensagem;
+					var listaMensagens = result.listaMensagens;
+					
+					if (tipoMensagem && listaMensagens) {
+						exibirMensagem(tipoMensagem, listaMensagens);
+					}
+					pesquisar();
+					
+				},
+			  	null,
+			   	false
+			);
+			
+		}
 	
 	function popup_encerrarEncalhe() {
-		
-		
 
 		var dataEncalhe = $("#datepickerDe").val();
 		
@@ -142,11 +147,18 @@
 		$(".cotasGrid").flexReload();
 	};
 
+
+
+
+
+	
 	function verificarEncerrarOperacaoEncalhe() {
 
 		$.postJSON(
 			"<c:url value='/devolucao/fechamentoEncalhe/verificarEncerrarOperacaoEncalhe' />",
-			{ 'dataEncalhe' : $('#datepickerDe').val() },
+			{ 'dataEncalhe' : $('#datepickerDe').val() , 
+			  'operacao' : 'VERIFICACAO' 
+		},
 			function (result) {
 
 				var tipoMensagem = result.tipoMensagem;
@@ -165,10 +177,7 @@
 		  	null,
 		   	false
 		);
-
-		
 	}
-
 	
 	function popup_encerrar() {
 		
@@ -183,8 +192,9 @@
 				"Confirmar": function() {
 
 					$.postJSON(
-						"<c:url value='/devolucao/fechamentoEncalhe/encerrarOperacaoEncalhe' />",
-						{ 'dataEncalhe' : $('#datepickerDe').val() },
+						"<c:url value='/devolucao/fechamentoEncalhe/verificarEncerrarOperacaoEncalhe' />",
+						{ 'dataEncalhe' : $('#datepickerDe').val() , 
+						  'operacao' : 'CONFIRMACAO' },
 						function (result) {
 
 							$("#dialog-confirm").dialog("close");
@@ -194,6 +204,12 @@
 							
 							if (tipoMensagem && listaMensagens) {
 								exibirMensagem(tipoMensagem, listaMensagens);
+							}
+
+							if (result == 'NAO_ENCERRAR') {
+								popup_encerrarEncalhe();
+							} else if (result == 'ENCERRAR'){
+								popup_encerrar();
 							}
 						},
 					  	null,
@@ -250,11 +266,12 @@
 	function checarTodasCotasGrid(checked) {
 				
 		if (checked) {
-			var elem = document.getElementById("textoCheckAllCotas");
-			elem.innerHTML = "Desmarcar todos";
-
-			$("input[type=checkbox][name='checkboxGridCotas']").each(function(){
-				$(this).attr('checked', true);
+			$("input[type=checkbox][name='checkboxGridCotas']").each(function() {
+				if (this.disabled == false) {
+					var elem = document.getElementById("textoCheckAllCotas");
+					elem.innerHTML = "Desmarcar todos";
+					$(this).attr('checked', true);
+				}
 			});
 				
         } else {
@@ -333,7 +350,7 @@
 
 		var cotasSelecionadas = obterCotasMarcadas();
 
-		if (cotasSelecionadas.lenght > 0) {
+		if (cotasSelecionadas.length > 0) {
 			
 			$("#dialog-postergar").dialog({
 				resizable: false,
@@ -360,7 +377,8 @@
 										if (tipoMensagem && listaMensagens) {
 											exibirMensagemDialog(tipoMensagem, listaMensagens, 'dialogMensagemEncerrarEncalhe');
 										}
-										
+
+										$(".cotasGrid").flexReload();
 									},
 								  	null,
 								   	true,
@@ -379,6 +397,7 @@
 			});
 	
 			carregarDataPostergacao();
+			
 		} else {
 			var listaMensagens = new Array();
 			listaMensagens.push('Selecione pelo menos uma cota para postergar!');
@@ -466,6 +485,110 @@
 
 		return false;
 	}
+
+	function verificarMensagemConsistenciaDados() {
+		$.postJSON(
+			"<c:url value='/devolucao/fechamentoEncalhe/verificarMensagemConsistenciaDados' />",
+			{ 
+			    'dataEncalhe' : $('#datepickerDe').val(),
+			    'fornecedorId' : $('#selectFornecedor').val(),
+				'boxId' :  $('#selectBoxEncalhe').val()
+		    },
+			function (result) {
+
+				var tipoMensagem = result.tipoMensagem;
+				var listaMensagens = result.listaMensagens;
+				
+				if (tipoMensagem && listaMensagens) {
+					$('#mensagemConsistenciaDados').html(listaMensagens[0])
+					popup_mensagem_consistencia_dados();
+				} else {
+					pesquisar(false);
+				}
+
+    		},
+		  	null,
+		   	false
+		);
+	}	
+
+	function popup_mensagem_consistencia_dados() {
+		$( "#dialog-mensagem-consistencia-dados" ).dialog({
+			resizable: false,
+			height:'auto',
+			width:400,
+			modal: true,
+			buttons: {
+				"Confirmar": function() {
+					pesquisar(true);
+					$(this).dialog( "close" );
+				},
+				
+				"Cancelar": function() {
+					$(this).dialog( "close" );
+				}
+			},
+			beforeClose: function() {
+				//clearMessageDialogTimeout('dialogMensagemNovo');
+			}
+		});
+	}
+
+	 function populaParamentrosFechamentoEncalheInformados(){
+		var dados ="";
+		var index = 0;
+		$("input[type=text][name='fisico']").each(function(){
+			if (dados != ""){
+				dados+=",";
+			}
+
+		    if ( $(this).val() != null &&  $(this).val() !=  "" ){
+				  var  qtd = parseInt($(this).val());
+		     	  dados+='{name:"listaFechamento['+index+'].produtoEdicao",value:'+$(this).attr('id')+'}, {name:"listaFechamento['+index+'].fisico",value:'+qtd+'}';
+		     	  index++;
+		    }
+			
+		});
+		var fornecedorId = null;
+		if ($('#selectFornecedor').val() !=""){
+		    fornecedorId = $('#selectFornecedor').val();
+		}
+		
+		var boxId = null;
+		if ($('#selectBoxEncalhe').val() !=""){
+		    boxId = $('#selectBoxEncalhe').val();
+		}
+		
+		dados+=',{name:"dataEncalhe",value:"'+$('#datepickerDe').val()+'"},{name:"fornecedorId",value:'+fornecedorId+'},{name:"boxId",value:'+boxId+'}';
+		var params = '['+dados+ ']';
+		return eval(params);
+	}
+
+	 function limpaGridPesquisa(){
+		 $(".fechamentoGrid").clear();
+		 $('#divFechamentoGrid').css("display", "none");
+		 
+	}
+
+	 function salvarNoEncerrementoOperacao() {
+			$.postJSON(
+				"<c:url value='/devolucao/fechamentoEncalhe/salvarNoEncerrementoOperacao' />",
+				populaParamentrosFechamentoEncalheInformados(),
+				function (result) {
+					var tipoMensagem = result.tipoMensagem;
+					var listaMensagens = result.listaMensagens;
+					if (tipoMensagem && listaMensagens) {
+						exibirMensagem(tipoMensagem, listaMensagens);
+					} else {
+						verificarEncerrarOperacaoEncalhe();
+					}
+				},
+			  	null,
+			   	false
+			);
+			
+		}
+
 	
 	</script>
 
@@ -479,6 +602,10 @@
 
 	<div id="dialog-confirm" title="Encerrar Opera&ccedil;&atilde;o" style="display:none;">
 		<p>Confirma o encerramento da opera&ccedil;&atilde;o do dia <span id="dataConfirma"></span>:</p>
+	</div>
+	
+	<div id="dialog-mensagem-consistencia-dados" title="Fechamento Encalhe" style="display:none;">
+		<p id="mensagemConsistenciaDados" ></p>
 	</div>
 
 	<div id="dialog-postergar" title="Postergar Encalhe" style="display:none;">
@@ -534,10 +661,10 @@
    	    <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
 			<tr>
 				<td width="75">Data Encalhe:</td>
-				<td width="114"><input name="datepickerDe" type="text" id="datepickerDe" style="width:80px;" value="${dataOperacao}" /></td>
+				<td width="114"><input name="datepickerDe" type="text" id="datepickerDe" style="width:80px;" value="${dataOperacao}" onchange="limpaGridPesquisa()" /></td>
 				<td width="67">Fornecedor:</td>
 				<td width="216">
-					<select name="selectFornecedor" id="selectFornecedor" style="width:200px;">
+					<select name="selectFornecedor" id="selectFornecedor" style="width:200px;" onchange="limpaGridPesquisa()">
 					<option value="">Selecione...</option>
 					<c:forEach var="fornecedor" items="${listaFornecedores}">
 						<option value="${fornecedor.id}">${fornecedor.juridica.razaoSocial}</option>
@@ -546,14 +673,14 @@
 				</td>
 				<td width="97">Box de Encalhe:</td>
 				<td width="239">
-					<select name="selectBoxEncalhe" id="selectBoxEncalhe" style="width:100px;">
+					<select name="selectBoxEncalhe" id="selectBoxEncalhe" style="width:100px;" onchange="limpaGridPesquisa()">
 					<option value="">Selecione...</option>
 					<c:forEach var="box" items="${listaBoxes}">
 						<option value="${box.id}">${box.nome}</option>
 					</c:forEach>
 					</select>
 				</td>
-				<td width="106"><span class="bt_pesquisar"><a href="javascript:;" onclick="pesquisar();">Pesquisar</a></span></td>
+				<td width="106"><span class="bt_pesquisar"><a href="javascript:;" onclick="verificarMensagemConsistenciaDados();">Pesquisar</a></span></td>
 			</tr>
 		</table>
     </fieldset>
@@ -562,14 +689,14 @@
       
     <fieldset class="classFieldset">
        	<legend> Fechamento Encalhe</legend>
-        <div class="grids" style="display:none;">
+        <div class="grids" style="display:none;" id="divFechamentoGrid">
 			
 			<table class="fechamentoGrid"></table>
 			
 			<div id="divBotoesPrincipais" style="display:none;">
 	            <span class="bt_novos" title="Salvar"><a href="javascript:;" onclick="salvar()"><img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0" />Salvar </a></span>
 				<span class="bt_novos" title="Cotas Ausentes"><a href="javascript:;" onclick="popup_encerrarEncalhe();"><img src="${pageContext.request.contextPath}/images/ico_check.gif" hspace="5" border="0" />Cotas Ausentes</a></span>
-				<span class="bt_novos" title="Encerrar Opera&ccedil;&atilde;o Encalhe"><a href="javascript:;" onclick="verificarEncerrarOperacaoEncalhe();"><img src="${pageContext.request.contextPath}/images/ico_check.gif" hspace="5" border="0" />Encerrar Opera&ccedil;&atilde;o Encalhe</a></span>
+				<span class="bt_novos" title="Encerrar Opera&ccedil;&atilde;o Encalhe"><a href="javascript:;" onclick="salvarNoEncerrementoOperacao();"><img src="${pageContext.request.contextPath}/images/ico_check.gif" hspace="5" border="0" />Encerrar Opera&ccedil;&atilde;o Encalhe</a></span>
 				<span class="bt_sellAll" style="float:right;"><a href="javascript:;" id="sel" onclick="replicarTodos();"><img src="${pageContext.request.contextPath}/images/ico_atualizar.gif" border="0" /></a><label for="sel">Replicar Todos</label></span>
 			</div>
 			
@@ -617,7 +744,7 @@
 				sortable : true,
 				align : 'left'
 			}, {
-				display : 'Ação',
+				display : 'A&ccedil;ao?',
 				name : 'acao',
 				width : 110,
 				sortable : true,

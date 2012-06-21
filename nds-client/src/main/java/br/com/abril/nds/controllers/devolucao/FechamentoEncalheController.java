@@ -1,6 +1,5 @@
 package br.com.abril.nds.controllers.devolucao;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -80,13 +79,25 @@ public class FechamentoEncalheController {
 	}
 	
 	@Path("/pesquisar")
-	public void pesquisar(String dataEncalhe, Long fornecedorId, Long boxId,
+	public void pesquisar(String dataEncalhe, Long fornecedorId, Long boxId, Boolean aplicaRegraMudancaTipo,
 			String sortname, String sortorder, int rp, int page) {
 		
 		FiltroFechamentoEncalheDTO filtro = new FiltroFechamentoEncalheDTO();
 		filtro.setDataEncalhe(DateUtil.parseDataPTBR(dataEncalhe));
 		filtro.setFornecedorId(fornecedorId);
 		filtro.setBoxId(boxId);
+		
+		if (aplicaRegraMudancaTipo){
+			if (boxId == null) {
+				fechamentoEncalheService.converteFechamentoDetalhadoEmConsolidado(filtro);
+			} else {
+				FiltroFechamentoEncalheDTO filtroRevomecao = new FiltroFechamentoEncalheDTO(); 
+				filtroRevomecao.setDataEncalhe(DateUtil.parseDataPTBR(dataEncalhe));
+				fechamentoEncalheService.removeFechamentoDetalhado(filtroRevomecao);
+			}
+			
+		} 
+		
 		
 		List<FechamentoFisicoLogicoDTO> listaEncalhe = fechamentoEncalheService.buscarFechamentoEncalhe(filtro, sortorder, this.resolveSort(sortname), page, rp);
 		
@@ -95,28 +106,12 @@ public class FechamentoEncalheController {
 	
 	
 	@Path("/salvar")
-	public void salvar(String dataEncalhe, Long fornecedorId, Long boxId, String fisico,
-			String sortname, String sortorder, int rp, int page) {
+	public void salvar(List<FechamentoFisicoLogicoDTO> listaFechamento, String dataEncalhe, Long fornecedorId, Long boxId) {
 		
-		String[] valoresFisico = fisico.split(",");
-		ArrayList<Long> arrayFisico = new ArrayList<Long>();
-		for (String f : valoresFisico) {
-			arrayFisico.add(f == "" ? null : Long.valueOf(f));
-		}
-	
-		FiltroFechamentoEncalheDTO filtro = new FiltroFechamentoEncalheDTO();
-		filtro.setDataEncalhe(DateUtil.parseDataPTBR(dataEncalhe));
-		filtro.setFornecedorId(fornecedorId);
-		filtro.setBoxId(boxId);
-		filtro.setFisico(arrayFisico);
-		List<FechamentoFisicoLogicoDTO> listaEncalhe = new ArrayList<FechamentoFisicoLogicoDTO>();
-		if (boxId == null){ 
-			listaEncalhe = fechamentoEncalheService.salvarFechamentoEncalhe(filtro, sortorder, this.resolveSort(sortname), page, rp);
-		} else {
-			listaEncalhe = fechamentoEncalheService.salvarFechamentoEncalheBox(filtro, sortorder, this.resolveSort(sortname), page, rp);
-		}
+		gravaFechamentoEncalhe(listaFechamento, dataEncalhe, fornecedorId,
+				boxId);
 		
-		result.use(FlexiGridJson.class).from(listaEncalhe).total(listaEncalhe.size()).page(page).serialize();
+		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Informação gravada com sucesso!"), "result").recursive().serialize();
 	}
 	
 	@Path("/cotasAusentes")
@@ -133,12 +128,6 @@ public class FechamentoEncalheController {
 		}
 		
 		this.result.use(FlexiGridJson.class).from(listaCotasAusenteEncalhe).total(total).page(page).serialize();
-	}
-	
-	@Path("/encerrarFechamento")
-	public void encerrarFechamento(Date dataEncalhe) {
-		
-		// TODO: verificar condições para fechamento; mostrar msg erro
 	}
 	
 	@Path("carregarDataPostergacao")
@@ -170,11 +159,9 @@ public class FechamentoEncalheController {
 	
 	@Path("/postergarCotas")
 	public void postergarCotas(Date dataPostergacao, Date dataEncalhe, List<Long> idsCotas) {
-			
-		Date dataAtual = Calendar.getInstance().getTime();
 		
-		if (dataAtual.after(dataPostergacao)) {
-			// throw new ValidacaoException();
+		if (dataEncalhe != null && dataEncalhe.after(dataPostergacao)) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "Postergação não pode ser realizada antes da data atual!");
 		}
 		
 		try {
@@ -195,7 +182,9 @@ public class FechamentoEncalheController {
 	public void cobrarCotas(Date dataOperacao, List<Long> idsCotas) {
 
 		if (idsCotas == null || idsCotas.isEmpty()) {
-			// validacao
+			this.result.use(Results.json()).from(
+				new ValidacaoVO(TipoMensagem.WARNING, "Selecine pelo menos uma Cota para cobrar!"), "result").recursive().serialize();
+			throw new ValidacaoException();
 		}
 		
 		try {
@@ -296,25 +285,40 @@ public class FechamentoEncalheController {
 	}
 	
 	@Path("/verificarEncerrarOperacaoEncalhe")
-	public void verificarEncerrarOperacaoEncalhe(Date dataEncalhe) {
+	public void verificarEncerrarOperacaoEncalhe(Date dataEncalhe, String operacao) {
+		if (dataEncalhe == null || Calendar.getInstance().getTime().before(dataEncalhe)) {
+			this.result.use(Results.json()).from(
+				new ValidacaoVO(TipoMensagem.WARNING, "Data de encalhe inválida!"), "result").recursive().serialize();
+			throw new ValidacaoException();
+		}
 		
+		int totalCotasAusentes =
+			this.fechamentoEncalheService.buscarQuantidadeCotasAusentes(dataEncalhe);
+		
+		if (totalCotasAusentes > 0 && ("VERIFICACAO").equalsIgnoreCase(operacao)) {
+			this.result.use(Results.json()).from("NAO_ENCERRAR", "result").recursive().serialize();
+			throw new ValidacaoException();
+		} else if (totalCotasAusentes <= 0 && ("VERIFICACAO").equalsIgnoreCase(operacao)) {
+			this.result.use(Results.json()).from("ENCERRAR", "result").recursive().serialize();
+			throw new ValidacaoException();
+		}
+			
 		try {
 			
-			Integer totalCotasAusentes =
-				this.fechamentoEncalheService.buscarTotalCotasAusentes(dataEncalhe);
+			this.fechamentoEncalheService.encerrarOperacaoEncalhe(dataEncalhe);
 			
-			if (totalCotasAusentes > 0) {
-				this.result.use(Results.json()).from("NAO_ENCERRAR", "result").recursive().serialize();
-			} else {
-				this.result.use(Results.json()).from("ENCERRAR", "result").recursive().serialize();
-			}
-			
+		} catch (ValidacaoException e) {
+			this.result.use(Results.json()).from(e.getValidacao(), "result").recursive().serialize();
+			throw new ValidacaoException();
 		} catch (Exception e) {
 			this.result.use(
 				Results.json()).from(
 					new ValidacaoVO(TipoMensagem.ERROR, "Erro ao tentar encerrar a operação de encalhe!"), "result").recursive().serialize();
 			throw new ValidacaoException();
 		}
+
+		this.result.use(Results.json()).from(
+			new ValidacaoVO(TipoMensagem.SUCCESS, "Operação de encalhe encerrada com sucesso!"), "result").recursive().serialize();
 	}
 
 	/**
@@ -367,4 +371,49 @@ public class FechamentoEncalheController {
 			return sortname;
 		}
 	}
+	
+	
+	@Path("/verificarMensagemConsistenciaDados")
+	public void verificarMensagemConsistenciaDados(String dataEncalhe, Long fornecedorId, Long boxId) {
+		FiltroFechamentoEncalheDTO filtro = new FiltroFechamentoEncalheDTO();
+		filtro.setDataEncalhe(DateUtil.parseDataPTBR(dataEncalhe));
+		filtro.setFornecedorId(fornecedorId);
+		filtro.setBoxId(boxId);
+		if (boxId == null){
+			if (fechamentoEncalheService.existeFechamentoEncalheDetalhado(filtro)){
+				this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.WARNING, "Você está tentando fazer uma pesquisa em modo consolidado (soma de todos os boxes). Já existem dados salvos em modo de pesquisa por box. Se você continuar, os dados serão sumarizados e não será possível desfazer a operação. Tem certeza que deseja continuar ?"), "result").recursive().serialize();
+			} else {
+				this.result.use(Results.json()).from("pesquisa","result").serialize() ;   
+			}
+		} else if ( fechamentoEncalheService.existeFechamentoEncalheConsolidado(filtro)){
+			this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.WARNING, "Você está tentando fazer uma pesquisa por box. Já existem dados salvos em modo de pesquisa consolidado (soma de todos os boxes). Se você continuar, os dados serão perdidos. Tem certeza que deseja continuar ?"), "result").recursive().serialize();
+		} else {
+			this.result.use(Results.json()).from("pesquisa","result").serialize() ;   
+		 }
+	}
+	
+	@Path("/salvarNoEncerrementoOperacao")
+	public void salvarNoEncerrementoOperacao(List<FechamentoFisicoLogicoDTO> listaFechamento, String dataEncalhe, Long fornecedorId, Long boxId) {
+		if (listaFechamento !=null && !listaFechamento.isEmpty()){
+			gravaFechamentoEncalhe(listaFechamento, dataEncalhe, fornecedorId,
+					boxId);
+		}
+		
+		this.result.use(Results.json()).from("", "result").recursive().serialize();
+	}
+
+	private void gravaFechamentoEncalhe(
+			List<FechamentoFisicoLogicoDTO> listaFechamento,
+			String dataEncalhe, Long fornecedorId, Long boxId) {
+		FiltroFechamentoEncalheDTO filtro = new FiltroFechamentoEncalheDTO();
+		filtro.setDataEncalhe(DateUtil.parseDataPTBR(dataEncalhe));
+		filtro.setFornecedorId(fornecedorId);
+		filtro.setBoxId(boxId);
+		if (boxId == null){ 
+			fechamentoEncalheService.salvarFechamentoEncalhe(filtro,listaFechamento);
+		} else {
+			fechamentoEncalheService.salvarFechamentoEncalheBox(filtro, listaFechamento);
+		}
+	}
+	
 }

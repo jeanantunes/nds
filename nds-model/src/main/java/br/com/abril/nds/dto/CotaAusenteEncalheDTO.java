@@ -18,21 +18,23 @@ public class CotaAusenteEncalheDTO implements Serializable {
 	private Integer numeroCota;
 
 	@Export(label = "Nome", alignment = Alignment.CENTER, exhibitionOrder = 2)
-	private String colaboradorName;
+	private String colaboradorName = "";
 
 	@Export(label = "Box", alignment = Alignment.CENTER, exhibitionOrder = 3)
-	private String boxName;
+	private String boxName = "";
 
 	@Export(label = "Roteiro", alignment = Alignment.CENTER, exhibitionOrder = 4)
-	private String roteiroName;
+	private String roteiroName = "";
 
 	@Export(label = "Rota", alignment = Alignment.CENTER, exhibitionOrder = 5)
-	private String rotaName;
+	private String rotaName = "";
 
 	@Export(label = "Ação", alignment = Alignment.CENTER, exhibitionOrder = 6)
 	private String acao = "";
-	
+
 	private Boolean fechado;
+
+	private Boolean postergado;
 	
 	private Date dataEncalhe;
 	
@@ -70,7 +72,7 @@ public class CotaAusenteEncalheDTO implements Serializable {
 	 * @param colaboradorName the colaboradorName to set
 	 */
 	public void setColaboradorName(String colaboradorName) {
-		this.colaboradorName = colaboradorName;
+		this.colaboradorName = colaboradorName != null ? colaboradorName : "";
 	}
 
 	/**
@@ -84,7 +86,7 @@ public class CotaAusenteEncalheDTO implements Serializable {
 	 * @param boxName the boxName to set
 	 */
 	public void setBoxName(String boxName) {
-		this.boxName = boxName;
+		this.boxName = boxName != null ? boxName : "";
 	}
 
 	/**
@@ -98,7 +100,7 @@ public class CotaAusenteEncalheDTO implements Serializable {
 	 * @param roteiroName the roteiroName to set
 	 */
 	public void setRoteiroName(String roteiroName) {
-		this.roteiroName = roteiroName;
+		this.roteiroName = roteiroName!= null ? roteiroName : "";
 	}
 
 	/**
@@ -112,7 +114,7 @@ public class CotaAusenteEncalheDTO implements Serializable {
 	 * @param rotaName the rotaName to set
 	 */
 	public void setRotaName(String rotaName) {
-		this.rotaName = rotaName;
+		this.rotaName = rotaName!= null ? rotaName : "";
 	}
 
 	/**
@@ -183,6 +185,20 @@ public class CotaAusenteEncalheDTO implements Serializable {
 	 */
 	public void setFechado(Boolean fechado) {
 		this.fechado = fechado;
+	}
+
+	/**
+	 * @return the postergado
+	 */
+	public Boolean getPostergado() {
+		return postergado;
+	}
+
+	/**
+	 * @param postergado the postergado to set
+	 */
+	public void setPostergado(Boolean postergado) {
+		this.postergado = postergado;
 	}
 	
 }

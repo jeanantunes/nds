@@ -57,7 +57,7 @@ public class LogExecucao implements Serializable {
 	@Column(name = "NOME_LOGIN_USUARIO", nullable = false, length = 20)
 	private String nomeLoginUsuario;
 	
-	@OneToMany(fetch = FetchType.LAZY)
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "logExecucao")
 	private List<LogExecucaoMensagem> listLogExecucaoMensagem;
 	
 

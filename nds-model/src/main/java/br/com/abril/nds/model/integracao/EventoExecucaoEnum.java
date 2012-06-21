@@ -16,7 +16,8 @@ public enum EventoExecucaoEnum {
 	HIERARQUIA(2),
 	RELACIONAMENTO(3),
 	GERACAO_DE_ARQUIVO(4),
-	INF_DADO_ALTERADO(5);
+	INF_DADO_ALTERADO(5),
+	REGISTRO_JA_EXISTENTE(6);
 		
 	private EventoExecucaoEnum(int codigo) {
 		this.codigo = new Long(codigo);

@@ -33,7 +33,7 @@ public class Identificacao implements Serializable {
 	/**
 	 * cNF
 	 */
-	@Column(name = "CODIGO_CHAVE_ACESSO", length = 8, nullable = false, columnDefinition = "Código Numérico que compõe a Chave de Acesso")
+	@Column(name = "CODIGO_CHAVE_ACESSO", length = 8, nullable = false)
 	@NFEExport(secao="B", posicao=1, tamanho=9)
 	private Integer codigoChaveAcesso;
 
@@ -55,7 +55,8 @@ public class Identificacao implements Serializable {
 	/**
 	 * natOp
 	 */
-	@Column(name="DESCRICAO_NATUREZA_OPERACAO", length=60,nullable=false ,columnDefinition="Descrição da Natureza da Operação")
+	@Column(name="DESCRICAO_NATUREZA_OPERACAO", length=60,nullable=false)
+	@NFEExport(secao="B", posicao=2, tamanho=60)
 	private String descricaoNaturezaOperacao;
 	
 	
@@ -63,44 +64,48 @@ public class Identificacao implements Serializable {
 	 * indPag
 	 */
 	@Enumerated(EnumType.ORDINAL)
-	@Column(name="INDICADOR_FORMA_PAGAMENTO", length=1, nullable=false, columnDefinition="Indicador da forma de pagamento")
+	@Column(name="INDICADOR_FORMA_PAGAMENTO", length=1, nullable=false)
+	@NFEExport(secao="B", posicao=3, tamanho=1)
 	private FormaPagamento formaPagamento;
 	
 		
 	/**
 	 * serie
 	 */
-	@Column(name = "SERIE", length = 3, nullable = false, columnDefinition = "Série do Documento Fiscal")
+	@Column(name = "SERIE", length = 3, nullable = false)
+	@NFEExport(secao="B", posicao=5, tamanho=3)
 	private Integer serie;
 	
 	
 	/**
 	 * nNF
 	 */
-	@Column(name = "NUMERO_DOCUMENTO_FISCAL", length = 9, nullable = false, columnDefinition = "Número do Documento Fiscal")
+	@Column(name = "NUMERO_DOCUMENTO_FISCAL", length = 9, nullable = false)
+	@NFEExport(secao="B", posicao=6 , tamanho=9)
 	private Long numeroDocumentoFiscal;
 	
 	/**
 	 * dEmi
 	 */
 	@Temporal(TemporalType.DATE)
-	@Column(name = "dataEmissao", nullable = false, columnDefinition = "Data de emissão do Documento Fiscal")
+	@Column(name = "DATA_EMISSAO", nullable = false)
+	@NFEExport(secao="B", posicao=7)
 	private Date dataEmissao;
 	
 	
 	/**
 	 * dSaiEnt
-
 	 */
 	@Temporal(TemporalType.DATE)
-	@Column(name = "dataSaidaEntrada", nullable = true, columnDefinition = "Data de Saída ou da Entrada da Mercadoria/Produto")
+	@Column(name = "DATA_SAIDA_ENTRADA", nullable = true)
+	@NFEExport(secao="B", posicao=8)
 	private Date dataSaidaEntrada;
 	
 	/**
 	 * dEmi
 	 */
 	@Temporal(TemporalType.TIME)
-	@Column(name = "horaSaidaEntrada", nullable = true, columnDefinition = "Hora de Saída ou da Entrada da Mercadoria/Produto")
+	@Column(name = "HORA_SAIDA_ENTRADA", nullable = true)
 	private Date horaSaidaEntrada;
 	
 	
@@ -112,13 +117,13 @@ public class Identificacao implements Serializable {
 	 * dhCont
 	 */
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name="DATA_ENTRADA_CONTIGENCIA", nullable=true, columnDefinition="Data hora da entrada em Contigencia")
+	@Column(name="DATA_ENTRADA_CONTIGENCIA", nullable=true)
 	private Date dataEntradaContigencia;
 	
 	/**
 	 * xJust
 	 */
-	@Column(name="JUSTIFICATIVA_ENTRADA_CONTIGENCIA", nullable=true, length=256, columnDefinition="Justificativa da entrada em contigência")
+	@Column(name="JUSTIFICATIVA_ENTRADA_CONTIGENCIA", nullable=true, length=256)
 	private String justificativaEntradaContigencia;
 	
 	
