@@ -3692,14 +3692,14 @@ public class DataLoader {
 		cotaMurilo= Fixture.cota(22345, murilo, SituacaoCadastro.ATIVO,box2);
 		cotaMurilo.setSugereSuspensao(true);
 		save(session, cotaMurilo);
-		ContratoCota contrato5 = Fixture.criarContratoCota(cotaMurilo,false,DateUtil.parseData("01/01/2011", "dd/mm/yyyy"), DateUtil.parseData("01/01/2013", "dd/mm/yyyy"), 12, 30);
+		ContratoCota contrato5 = Fixture.criarContratoCota(cotaMurilo,true,DateUtil.parseData("01/01/2011", "dd/mm/yyyy"), DateUtil.parseData("01/01/2013", "dd/mm/yyyy"), 12, 30);
 		save(session, contrato5);
 		
 		
 		cotaMariana = Fixture.cota(32345, mariana, SituacaoCadastro.ATIVO,box1);
 		cotaMariana.setSugereSuspensao(true);
 		save(session, cotaMariana);
-		ContratoCota contrato6 = Fixture.criarContratoCota(cotaMariana,false,DateUtil.parseData("01/01/2011", "dd/mm/yyyy"), DateUtil.parseData("01/01/2013", "dd/mm/yyyy"), 12, 30);
+		ContratoCota contrato6 = Fixture.criarContratoCota(cotaMariana,true,DateUtil.parseData("01/01/2011", "dd/mm/yyyy"), DateUtil.parseData("01/01/2013", "dd/mm/yyyy"), 12, 30);
 		save(session, contrato6);
 		
 		

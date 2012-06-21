@@ -90,9 +90,9 @@ public class PeriodoParcialDTO implements Serializable {
 		return vendaAcumulada;
 	}
 	public void setVendaAcumulada(BigDecimal vendaAcumulada) {
-		if(vendaAcumulada==null)
+		if(vendaAcumulada==null || vendas==null || vendas.isEmpty())
 			this.vendaAcumulada = "";
-		else
+		else 
 			this.vendaAcumulada = vendaAcumulada.toBigInteger().toString();
 	}
 	public String getPercVenda() {
