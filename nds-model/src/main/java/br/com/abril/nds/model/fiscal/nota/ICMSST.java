@@ -1,6 +1,7 @@
 package br.com.abril.nds.model.fiscal.nota;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
@@ -30,7 +31,7 @@ public class ICMSST extends ICMSBase implements Serializable {
 	 * pMVAST
 	 */
 	@Column(name="PERCENTUAL_ADCIONADO_ST", precision=5,scale=2, nullable=true)
-	private Double percentualAdicionado;
+	private BigDecimal percentualAdicionado;
 	
 	/**
 	 * Construtor padrão.
@@ -42,14 +43,14 @@ public class ICMSST extends ICMSBase implements Serializable {
 	/**
 	 * @return the percentualAdicionado
 	 */
-	public Double getPercentualAdicionado() {
+	public BigDecimal getPercentualAdicionado() {
 		return percentualAdicionado;
 	}
 
 	/**
 	 * @param percentualAdicionado the percentualAdicionado to set
 	 */
-	public void setPercentualAdicionado(Double percentualAdicionado) {
+	public void setPercentualAdicionado(BigDecimal percentualAdicionado) {
 		this.percentualAdicionado = percentualAdicionado;
 	}
 
