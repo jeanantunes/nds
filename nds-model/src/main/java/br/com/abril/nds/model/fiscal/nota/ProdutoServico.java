@@ -18,8 +18,8 @@ import br.com.abril.nds.util.export.fiscal.nota.NFEExport;
 import br.com.abril.nds.util.export.fiscal.nota.NFEExports;
 
 @Entity
-@Table(name = "PRODUTO_SERVICO_NOTA_FISCAL")
-@SequenceGenerator(name = "PRODUTO_SERVICO_NOTA_FISCAL_SEQ", initialValue = 1, allocationSize = 1)
+@Table(name = "NOTA_FISCAL_PRODUTO_SERVICO")
+@SequenceGenerator(name = "NOTA_FISCAL_PRODUTO_SERVICO_SEQ", initialValue = 1, allocationSize = 1)
 public class ProdutoServico implements Serializable {
 
 	/**
@@ -29,7 +29,7 @@ public class ProdutoServico implements Serializable {
 
 	@Id
 	@Column(name = "ID")
-	@GeneratedValue(generator = "PRODUTO_SERVICO_NOTA_FISCAL_SEQ")
+	@GeneratedValue(generator = "NOTA_FISCAL_PRODUTO_SERVICO_SEQ")
 	private Long id;
 	
 	/**

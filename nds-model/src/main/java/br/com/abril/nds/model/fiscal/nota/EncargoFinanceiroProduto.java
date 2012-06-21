@@ -1,13 +1,11 @@
 package br.com.abril.nds.model.fiscal.nota;
 
-import javax.persistence.DiscriminatorValue;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "ENCARGO_FINANCEIRO_PRODUTO_NOTA_FISCAL")
-@DiscriminatorValue(value = "P")
+@Table(name = "NOTA_FISCAL_ENCARGO_FINANCEIRO_PRODUTO")
 public class EncargoFinanceiroProduto extends EncargoFinanceiro {
 	
 	/**
