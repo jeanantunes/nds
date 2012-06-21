@@ -52,7 +52,7 @@ var VENDA_PRODUTO = {
 			
 			}
 		
-           row.cell.acao = linkEdicao + linkExclusao; 
+           row.cell.acao = linkEdicao + linkExclusao ; 
 		});
 		
 		$("#totalGeral").html(resultado.totalGeral);
@@ -170,12 +170,27 @@ var VENDA_PRODUTO = {
 			 $("#gridVenda").show();
 			 $("#labelTotalGeral").show();
 			 $("#totalGeral").show();
+			 
+			 if($("#selectTipoVenda").val() == "ENCALHE"){
+				$("#divImprimirEncalhe").show();
+				$("#divImprimirSuplementar").hide();
+			 }
+			 else if ($("#selectTipoVenda").val() == "SUPLEMENTAR"){
+				 $("#divImprimirEncalhe").hide();
+				 $("#divImprimirSuplementar").show(); 
+			 }
+			 else{
+				 $("#divImprimirEncalhe").hide();
+				 $("#divImprimirSuplementar").hide();
+			 }
 		}
 		else{
 			$("#infosRodape").hide();
 			$("#gridVenda").hide();	
 			$("#labelTotalGeral").hide();
-			 $("#totalGeral").hide();
+			$("#totalGeral").hide();
+			$("#divImprimirEncalhe").hide();
+			$("#divImprimirSuplementar").hide();
 		}	
 	},
 	
@@ -284,9 +299,11 @@ var VENDA_PRODUTO = {
 			$("#span_data_venda").html(row.cell.dataVenda);
 			$("#span_nome_cota_venda").html(row.cell.nomeCota);
 			$("#numCotaVenda").val(row.cell.numeroCota);
-			$("#numCotaVenda").attr("disabled","disabled");
-			$("#qntSolicitada0").focus();
+		
 		});
+		
+		$("#numCotaVenda").attr("disabled","disabled");
+		$("#qntSolicitada0").focus();
 		
 		return result;
 	},
@@ -322,7 +339,7 @@ var VENDA_PRODUTO = {
 			
 			var inputQntDisponivel='<input type="text" id="qntDisponivel'+index+'" name="qntDisponivel" style="width:65px;text-align: center;" maxlenght="20" value="" disabled="disabled" />';
 			
-			var inputQntSolicitada='<input type="text" id="qntSolicitada'+index+'" name="qntSolicitada" style="width:65px;text-align: center;" maxlenght="6" value="" onblur="VENDA_PRODUTO.totalizarValorProdutoSelecionado('+index+');" />';
+			var inputQntSolicitada='<input type="text" id="qntSolicitada'+index+'" name="qntSolicitada" style="width:65px;text-align: center;" maxlenght="6" value="" onchange="VENDA_PRODUTO.totalizarValorProdutoSelecionado('+index+');" />';
 			
 			var inputTotal ='<input type="text" id="total'+index+'" name="total" value="" style="width:65px;text-align: center;" disabled="disabled" />';
 			
@@ -349,9 +366,10 @@ var VENDA_PRODUTO = {
 			row.cell.qntSolicitada = inputQntSolicitada;
 			row.cell.total =inputTotal;
 			row.cell.formaVenda = inputFormaVenda;
-			
-			$("#numCotaVenda").attr("disabled",null);
+		
 		});
+		
+		$("#numCotaVenda").attr("disabled",null);
 		
 		return result;
 	},
@@ -418,7 +436,8 @@ var VENDA_PRODUTO = {
 	obterDadosProduto:function(codigoProduto, edicaoProduto,index) {
 	
 		var data = "codigoProduto=" + codigoProduto
-		 		 + "&numeroEdicao=" + edicaoProduto;
+		 		 + "&numeroEdicao=" + edicaoProduto
+		 		 + "&tipoVenda=" + VENDA_PRODUTO.tipoVenda;
 
 		 $.postJSON(
 			contextPath + "/devolucao/vendaEncalhe/obterDadosDoProduto", 
@@ -631,8 +650,8 @@ var VENDA_PRODUTO = {
 		
 		var data = VENDA_PRODUTO.getListaProduto()  
 				   + "&numeroCota=" + $("#numCotaVenda").val()
-				   + "&dataDebito=" + $("#dataVencimento").val();  
-		 
+				   + "&dataDebito=" + $("#dataVencimento").val();
+				     
 		 $.postJSON(
 			contextPath + "/devolucao/vendaEncalhe/"+metodo, 
 			data,
@@ -645,16 +664,21 @@ var VENDA_PRODUTO = {
 				
 				$("#dialog-venda-encalhe").dialog( "close" );
 				
-				VENDA_PRODUTO.imprimeSlipVendaEncalhe($("#numCotaVenda").val());
+				VENDA_PRODUTO.imprimeSlipVendaEncalhe(VENDA_PRODUTO.tipoVenda);
 			},
 			null, 
 			true
 		);
 	},
 	
-	imprimeSlipVendaEncalhe:function(numeroCota,vendas){
+	imprimeSlipVendaEncalhe:function(tipoVenda){
 		
-		document.location.assign("${pageContext.request.contextPath}/devolucao/vendaEncalhe/imprimeSlipVendaEncalhe?numeroCota="+numeroCota);
+		document.location.assign("${pageContext.request.contextPath}/devolucao/vendaEncalhe/imprimeSlipVendaEncalhe?tipoVenda="+tipoVenda);
+	},
+	
+	imprimirSlipVenda:function(){
+		
+		document.location.assign("${pageContext.request.contextPath}/devolucao/vendaEncalhe/imprimirSlipVenda");
 	},
 	
 	limparDadosModalVenda:function(){
@@ -765,7 +789,7 @@ $(function() {
 		}, {
 			display : 'Ação',
 			name : 'acao',
-			width : 60,
+			width : 65,
 			sortable : true,
 			align : 'center'
 		}],
@@ -775,7 +799,7 @@ $(function() {
 		useRp : true,
 		rp : 15,
 		showTableToggleBtn : true,
-		width : 960,
+		width : 965,
 		height : 220
 	});
 });
@@ -865,7 +889,7 @@ $(function() {
 	             <tbody><tr>
 	               <td width="56%">
 	               		<span title="Novo" class="bt_novos">
-	               			<a onclick="popup_suplementar();" href="javascript:;">
+	               			<a onclick="VENDA_PRODUTO.novaVenda('SUPLEMENTAR');" href="javascript:;">
 	               				<img hspace="5" border="0" src="${pageContext.request.contextPath}/images/ico_salvar.gif">
 	               					Venda Suplementar
 	               			</a>
@@ -894,13 +918,23 @@ $(function() {
 							</a>
 						</span>
 		               
-		               <span style="" id="btSuplementar" title="Imprimir" class="bt_novos">
-		               		<a target="_blank" href="imprimir_comprovante_suplementar.htm">
-		               			<img hspace="5" border="0" src="${pageContext.request.contextPath}/images/ico_impressora.gif">
-		               			Imprimir Slip de Suplementar
-		               		</a>
-		               </span>
-	               
+		               <div id="divImprimirSuplementar" style="display: none">		            
+			               <span style="" id="btSuplementar" title="Imprimir" class="bt_novos">
+			               		<a  href="javascript:;" onclick="VENDA_PRODUTO.imprimirSlipVenda()">
+			               			<img hspace="5" border="0" src="${pageContext.request.contextPath}/images/ico_impressora.gif">
+			               			Imprimir Slip de Suplementar
+			               		</a>
+			               </span>
+		               </div>
+		               
+		               <div id="divImprimirEncalhe" style="display: none">
+			               <span style="" id="btEncalhe" title="Imprimir" class="bt_novos">
+			               		<a  href="javascript:;" onclick="VENDA_PRODUTO.imprimirSlipVenda()">
+			               			<img hspace="5" border="0" src="${pageContext.request.contextPath}/images/ico_impressora.gif">
+			               			Imprimir Slip de Encalhe
+			               		</a>
+			               </span>
+		            </div>
 	               </div>
 	             </td>
 	               <td width="6%">&nbsp;</td>

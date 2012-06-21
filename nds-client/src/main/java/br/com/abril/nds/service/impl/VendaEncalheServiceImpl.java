@@ -17,10 +17,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.dto.MovimentoFinanceiroCotaDTO;
 import br.com.abril.nds.dto.SlipVendaEncalheDTO;
 import br.com.abril.nds.dto.VendaEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroVendaEncalheDTO;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.TipoEdicao;
+import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.cadastro.FormaComercializacao;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
@@ -28,14 +33,25 @@ import br.com.abril.nds.model.estoque.MovimentoEstoque;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.TipoVendaEncalhe;
 import br.com.abril.nds.model.estoque.VendaProduto;
+import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
+import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
+import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
+import br.com.abril.nds.model.planejamento.ChamadaEncalhe;
+import br.com.abril.nds.model.planejamento.ChamadaEncalheCota;
+import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
 import br.com.abril.nds.model.seguranca.Usuario;
+import br.com.abril.nds.repository.ChamadaEncalheCotaRepository;
+import br.com.abril.nds.repository.ChamadaEncalheRepository;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.EstoqueProdutoRespository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.repository.TipoMovimentoEstoqueRepository;
+import br.com.abril.nds.repository.TipoMovimentoFinanceiroRepository;
 import br.com.abril.nds.repository.UsuarioRepository;
 import br.com.abril.nds.repository.VendaProdutoEncalheRepository;
+import br.com.abril.nds.service.DistribuidorService;
 import br.com.abril.nds.service.MovimentoEstoqueService;
+import br.com.abril.nds.service.MovimentoFinanceiroCotaService;
 import br.com.abril.nds.service.VendaEncalheService;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
@@ -73,52 +89,48 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 	@Autowired
 	private UsuarioRepository usuarioRepository;
 	
-	/**
-	 * Obtém dados da venda encalhe por id
-	 * @param idCota
-	 * @param dataInicio
-	 * @param dataFim
-	 * @return List<SlipVendaEncalheDTO>
-	 */
-	private List<SlipVendaEncalheDTO> obtemDadosSlip(List<VendaEncalheDTO> listaVendas,Long numeroCota){
-
+	@Autowired
+	private DistribuidorService distribuidorService;
+	
+	@Autowired
+	private TipoMovimentoFinanceiroRepository tipoMovimentoFinanceiroRepository;
+	
+	@Autowired
+	private MovimentoFinanceiroCotaService movimentoFinanceiroCotaService;
+	
+	@Autowired
+	private ChamadaEncalheRepository chamadaEncalheRepository;
+	
+	@Autowired
+	private ChamadaEncalheCotaRepository chamadaEncalheCotaRepository;
+	
+	private List<SlipVendaEncalheDTO> obterDadosSlipVenda(VendaProduto... vendas){
+		
 		SlipVendaEncalheDTO slipVendaEncalhe = null;
 		List<SlipVendaEncalheDTO> listaSlipVendaEncalhe = new ArrayList<SlipVendaEncalheDTO>();
-
-		List<VendaProduto> listaVe = getVendasProduto(listaVendas, numeroCota);
-
-		if (listaVe!=null && listaVe.size()>0) {
+		
+		if (vendas!=null) {
 			
 			Integer quantidadeTotalVista = 0;
 			BigDecimal valorTotalVista = BigDecimal.ZERO;
 			Integer quantidadeTotalPrazo = 0;
 			BigDecimal valorTotalPrazo = BigDecimal.ZERO;
 			
-			for (VendaProduto itemVE:listaVe){
+			for (VendaProduto itemVE:vendas){
 			
-				slipVendaEncalhe = new SlipVendaEncalheDTO();
+				slipVendaEncalhe = getSlipVendaEncalheDTO(itemVE);
 				
-				slipVendaEncalhe.setNomeCota(itemVE.getCota().getPessoa().getNome());
-				slipVendaEncalhe.setNumeroCota(itemVE.getCota().getNumeroCota().toString());
-				slipVendaEncalhe.setNumeroBox(itemVE.getCota().getBox().getCodigo());
-				slipVendaEncalhe.setDescricaoBox(itemVE.getCota().getBox().getTipoBox().name());
-				slipVendaEncalhe.setData( DateUtil.formatarDataPTBR(itemVE.getDataVenda()));
-				slipVendaEncalhe.setHora(DateUtil.formatarData(itemVE.getHorarioVenda(),"HH:mm"));
-				slipVendaEncalhe.setUsuario(itemVE.getUsuario().getNome());
-				
-				slipVendaEncalhe.setCodigo(itemVE.getProdutoEdicao().getProduto().getCodigo());
-				slipVendaEncalhe.setProduto(itemVE.getProdutoEdicao().getProduto().getNome());
-				slipVendaEncalhe.setEdicao(itemVE.getProdutoEdicao().getNumeroEdicao().toString());
-				slipVendaEncalhe.setQuantidade(itemVE.getQntProduto().toString());
-				slipVendaEncalhe.setPreco( CurrencyUtil.formatarValor(itemVE.getProdutoEdicao().getPrecoVenda().subtract(itemVE.getProdutoEdicao().getDesconto())));
-				slipVendaEncalhe.setTotal(CurrencyUtil.formatarValor(itemVE.getValorTotalVenda()));
-				
-				quantidadeTotalVista += itemVE.getQntProduto().intValue();
-				valorTotalVista = valorTotalVista.add(itemVE.getValorTotalVenda());
-				
-				/*quantidadeTotalPrazo += 15;
-				valorTotalPrazo += 300;*/
-		
+				if(FormaComercializacao.CONSIGNADO.equals(itemVE.getTipoComercializacaoVenda())){
+					
+					quantidadeTotalPrazo +=itemVE.getQntProduto().intValue();
+					valorTotalPrazo = valorTotalPrazo.add(itemVE.getValorTotalVenda());
+					
+				}else{
+					
+					quantidadeTotalVista += itemVE.getQntProduto().intValue();
+					valorTotalVista = valorTotalVista.add(itemVE.getValorTotalVenda());
+				}
+
 				slipVendaEncalhe.setQuantidadeTotalVista(quantidadeTotalVista.toString());
 				slipVendaEncalhe.setValorTotalVista(valorTotalVista.toString());
 				
@@ -134,18 +146,27 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 		
 		return listaSlipVendaEncalhe;
 	}
-
-	private List<VendaProduto> getVendasProduto(List<VendaEncalheDTO> vendas, Long numeroCota){
+	
+	private SlipVendaEncalheDTO getSlipVendaEncalheDTO(VendaProduto itemVE){
 		
-		List<Long> idNumeroEdicao= new ArrayList<Long>();
-		ProdutoEdicao produtoEdicao  = null;
+		SlipVendaEncalheDTO slipVendaEncalhe = new SlipVendaEncalheDTO();
 		
-		for(VendaEncalheDTO vnd : vendas){
-			produtoEdicao = produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao(vnd.getCodigoProduto(), vnd.getNumeroEdicao());
-			idNumeroEdicao.add(produtoEdicao.getId());
-		}
+		slipVendaEncalhe.setNomeCota(itemVE.getCota().getPessoa().getNome());
+		slipVendaEncalhe.setNumeroCota(itemVE.getCota().getNumeroCota().toString());
+		slipVendaEncalhe.setNumeroBox(itemVE.getCota().getBox().getCodigo());
+		slipVendaEncalhe.setDescricaoBox(itemVE.getCota().getBox().getTipoBox().name());
+		slipVendaEncalhe.setData( DateUtil.formatarDataPTBR(itemVE.getDataVenda()));
+		slipVendaEncalhe.setHora(DateUtil.formatarData(itemVE.getHorarioVenda(),"HH:mm"));
+		slipVendaEncalhe.setUsuario(itemVE.getUsuario().getNome());
 		
-		return vendaProdutoRepository.buscarVendaProdutoEncalhe(numeroCota,new Date(), idNumeroEdicao.toArray(new Long[]{}));
+		slipVendaEncalhe.setCodigo(itemVE.getProdutoEdicao().getProduto().getCodigo());
+		slipVendaEncalhe.setProduto(itemVE.getProdutoEdicao().getProduto().getNome());
+		slipVendaEncalhe.setEdicao(itemVE.getProdutoEdicao().getNumeroEdicao().toString());
+		slipVendaEncalhe.setQuantidade(itemVE.getQntProduto().toString());
+		slipVendaEncalhe.setPreco( CurrencyUtil.formatarValor(itemVE.getProdutoEdicao().getPrecoVenda().subtract(itemVE.getProdutoEdicao().getDesconto())));
+		slipVendaEncalhe.setTotal(CurrencyUtil.formatarValor(itemVE.getValorTotalVenda()));
+		
+		return slipVendaEncalhe;
 	}
 
 	/**
@@ -167,30 +188,6 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 		return  JasperRunManager.runReportToPdf(path, null, jrDataSource);
 	}
 
-	/**
-	 * Gera Array de Bytes do Slip de Venda de Encalhe
-	 * @param idCota
-	 * @param dataInicio
-	 * @param dataFim
-	 * @return byte[]
-	 */
-	
-	@Transactional(readOnly = true)
-	public byte[] geraImpressaoVendaEncalhe(List<VendaEncalheDTO> listaVendas,Long numeroCota){
-		
-		byte[] relatorio=null;
-
-		List<SlipVendaEncalheDTO> listaSlipVendaEncalheDTO = this.obtemDadosSlip(listaVendas,numeroCota); 
-
-		try{
-		    relatorio = this.gerarDocumentoIreport(listaSlipVendaEncalheDTO, "/reports/slipVendaEncalhe.jasper");
-		}
-		catch(Exception e){
-			throw new ValidacaoException(TipoMensagem.WARNING, "Erro ao gerar Slip de Venda de Encalhe.");
-		}
-		return relatorio;
-	}
- 
 	@Override
 	@Transactional(readOnly=true)
 	public VendaEncalheDTO buscarVendaEncalhe(Long idVendaEncalhe) {
@@ -212,34 +209,337 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 		
 		return vendaEncalheDTO;
 	}
+	
+	private byte[] gerarArquivoSlipVenda(TipoVendaEncalhe tipoVenda, List<SlipVendaEncalheDTO> vendas){
+		
+		byte[] relatorio=null;
+		
+		try{
+		    
+			if(TipoVendaEncalhe.ENCALHE.equals(tipoVenda)){
+				
+				relatorio = this.gerarDocumentoIreport(vendas,  "/reports/slipComprovanteVendaEncalhe.jasper");
+				
+			}else{
+				
+				relatorio = this.gerarDocumentoIreport(vendas,  "/reports/slipComprovanteVendaSuplementar.jasper");
+			}
+		}
+		catch(Exception e){
+			throw new ValidacaoException(TipoMensagem.WARNING, "Erro ao gerar Slip de Venda de Encalhe.");
+		}
+		
+		return relatorio;
+	}
 
 	@Override
 	@Transactional
-	public void efetivarVendaEncalhe(List<VendaEncalheDTO> vendaEncalheDTO, Long numeroCota, Date dataVencimentoDebito, Usuario usuario) {
-				
+	public byte[] efetivarVendaEncalhe(List<VendaEncalheDTO> vendaEncalheDTO, Long numeroCota, Date dataVencimentoDebito, Usuario usuario) {
+		
+		List<VendaProduto> vendasEfetivadas = new ArrayList<VendaProduto>();
+		
 		for(VendaEncalheDTO vnd : vendaEncalheDTO){
-			criarVendaEncalhe(vnd, numeroCota, dataVencimentoDebito, usuario);
+			
+			vendasEfetivadas.add( processarVendaEncalhe(vnd, numeroCota, dataVencimentoDebito, usuario));
+		}
+		
+		byte[] relatorio= gerarArquivoSlipVenda(vendaEncalheDTO.get(0).getTipoVendaEncalhe(), 
+												obterDadosSlipVenda(vendasEfetivadas.toArray(new VendaProduto[]{})));
+		
+		if(relatorio == null){
+			throw new ValidacaoException(TipoMensagem.ERROR, "Erro no processamento da Venda de Encalhe.");
+		}
+		
+		return relatorio;
+	}
+	
+	/**
+	 * Processa venda de encalhe em função do seu tipo (Encalhe/Suplementar)
+	 * 
+	 * @param vnd
+	 * @param numeroCota
+	 * @param dataVencimentoDebito
+	 * @param usuario
+	 */
+	private VendaProduto processarVendaEncalhe(VendaEncalheDTO vnd,Long numeroCota, Date dataVencimentoDebito, Usuario usuario){
+		
+		if(TipoVendaEncalhe.ENCALHE.equals(vnd.getTipoVendaEncalhe())){
+			
+			return criarVendaEncalhe(vnd, numeroCota, dataVencimentoDebito, usuario);
+		}
+		else{
+			
+			return criarVendaSuplementar(vnd,numeroCota,dataVencimentoDebito,usuario);
 		}
 	}
 	
-	private void criarVendaEncalhe(VendaEncalheDTO vnd,Long numeroCota, Date dataVencimentoDebito, Usuario usuario){
+	/**
+	 * Cria venda de encalhe
+	 * 
+	 * @param vnd
+	 * @param numeroCota
+	 * @param dataVencimentoDebito
+	 * @param usuario
+	 */
+	private VendaProduto criarVendaEncalhe(VendaEncalheDTO vnd,Long numeroCota, Date dataVencimentoDebito, Usuario usuario){
 		
-		//FIXME venda de encalhe, falta gerar os movimentos financeiros
+		ProdutoEdicao produtoEdicao = produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao(vnd.getCodigoProduto(), vnd.getNumeroEdicao());
+		
+		VendaProduto vendaProduto = getVendaProduto(vnd,numeroCota, usuario,dataVencimentoDebito,produtoEdicao);
 		
 		TipoMovimentoEstoque tipoMovimento = 
 				tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.VENDA_ENCALHE);
 		
-		ProdutoEdicao produtoEdicao = produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao(vnd.getCodigoProduto(), vnd.getNumeroEdicao());
-			
-		MovimentoEstoque movimentoEstoque = movimentoEstoqueService.gerarMovimentoEstoque(produtoEdicao.getId(), usuario.getId(), 
-																			 new BigDecimal(vnd.getQntProduto()),tipoMovimento);
-			
-		VendaProduto vendaProduto = getVendaProduto(vnd,numeroCota, usuario,dataVencimentoDebito,produtoEdicao);
+		if(tipoMovimento == null){
+			throw new ValidacaoException(TipoMensagem.ERROR,"Não foi encontrado tipo de movimento de estoque para venda de encalhe!");
+		}
+		
+		MovimentoEstoque movimentoEstoque = movimentoEstoqueService.gerarMovimentoEstoque(produtoEdicao.getId(), 
+																						  usuario.getId(), 
+																			 			  new BigDecimal(vnd.getQntProduto()),
+																			 			  tipoMovimento);
+		
+		MovimentoFinanceiroCota movimentoFinanceiro = gerarMovimentoFinanceiroCotaDebito(dataVencimentoDebito,vendaProduto);
+		
 		vendaProduto.setMovimentoEstoque(new HashSet<MovimentoEstoque>());
 		vendaProduto.getMovimentoEstoque().add(movimentoEstoque);
+		vendaProduto.setMovimentoFinanceiro(new HashSet<MovimentoFinanceiroCota>());
+		vendaProduto.getMovimentoFinanceiro().add(movimentoFinanceiro);
+		vendaProduto.setTipoComercializacaoVenda(FormaComercializacao.CONTA_FIRME);
 			
-		vendaProdutoRepository.adicionar(vendaProduto);
+		return vendaProdutoRepository.merge(vendaProduto);
 
+	}
+
+	/**
+	 * Cria venda de encalhe suplementar 
+	 * 
+	 * @param vnd
+	 * @param numeroCota
+	 * @param dataVencimentoDebito
+	 * @param usuario
+	 */
+	private VendaProduto criarVendaSuplementar(VendaEncalheDTO vnd,Long numeroCota, Date dataVencimentoDebito, Usuario usuario){
+		
+		ProdutoEdicao produtoEdicao = produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao(vnd.getCodigoProduto(), vnd.getNumeroEdicao());
+		
+		if(isVendaConsignadoCota(produtoEdicao)){
+			
+			return criarVendaSuplementarConsignado(vnd, numeroCota, dataVencimentoDebito, usuario, produtoEdicao);
+		}
+		else{
+			
+			return criarVendaSuplementarAvista(vnd, numeroCota, dataVencimentoDebito, usuario, produtoEdicao);
+		}
+	}
+	
+	/**
+	 * Cria uam venda de encalhe suplementar com pagamento a vista
+	 * 
+	 * @param vnd
+	 * @param numeroCota
+	 * @param dataVencimentoDebito
+	 * @param usuario
+	 * @param produtoEdicao
+	 */
+	private VendaProduto criarVendaSuplementarAvista(VendaEncalheDTO vnd,Long numeroCota, Date dataVencimentoDebito, Usuario usuario,ProdutoEdicao produtoEdicao) {
+		
+		VendaProduto vendaProduto = getVendaProduto(vnd,numeroCota, usuario,dataVencimentoDebito,produtoEdicao);
+		
+		TipoMovimentoEstoque tipoMovimento = 
+				tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.VENDA_ENCALHE_SUPLEMENTAR);
+		
+		if(tipoMovimento == null){
+			throw new ValidacaoException(TipoMensagem.ERROR,"Não foi encontrado tipo de movimento de estoque para venda de encalhe suplementar!");
+		}
+		
+		MovimentoEstoque movimentoEstoque = movimentoEstoqueService.gerarMovimentoEstoque(produtoEdicao.getId(), 
+																						  usuario.getId(), 
+																			 			  new BigDecimal(vnd.getQntProduto()),
+																			 			  tipoMovimento);
+		
+		MovimentoFinanceiroCota movimentoFinanceiro = gerarMovimentoFinanceiroCotaDebito(dataVencimentoDebito,vendaProduto);
+		
+		vendaProduto.setMovimentoEstoque(new HashSet<MovimentoEstoque>());
+		vendaProduto.getMovimentoEstoque().add(movimentoEstoque);
+		vendaProduto.setMovimentoFinanceiro(new HashSet<MovimentoFinanceiroCota>());
+		vendaProduto.getMovimentoFinanceiro().add(movimentoFinanceiro);
+		vendaProduto.setTipoComercializacaoVenda(FormaComercializacao.CONTA_FIRME);
+			
+		return vendaProdutoRepository.merge(vendaProduto);
+	}
+
+	/**
+	 * Cria uma venda de encalhe suplementar consignado
+	 * 
+	 * @param vnd
+	 * @param numeroCota
+	 * @param dataVencimentoDebito
+	 * @param usuario
+	 * @param produtoEdicao
+	 */
+	private VendaProduto criarVendaSuplementarConsignado(VendaEncalheDTO vnd,Long numeroCota, Date dataVencimentoDebito, Usuario usuario,ProdutoEdicao produtoEdicao) {
+		
+		VendaProduto vendaProduto = getVendaProduto(vnd,numeroCota, usuario,dataVencimentoDebito,produtoEdicao);
+		
+		BigDecimal qntProduto = new BigDecimal(vendaProduto.getQntProduto());
+		
+		gerarMovimentoCompraSuplementar(produtoEdicao.getId(), vendaProduto.getCota().getId(), usuario.getId(),qntProduto);
+		
+		MovimentoEstoque movimentoEstoque = gerarMovimentoEstoqueVendaEncalheSuplementar(produtoEdicao.getId(), vendaProduto.getCota().getId(), usuario.getId(),qntProduto);
+				
+		MovimentoFinanceiroCota movimentoFinanceiro = gerarMovimentoFinanceiroCotaDebito(dataVencimentoDebito,vendaProduto);
+		
+		gerarMovimentoChamadaEncalhe(produtoEdicao, vendaProduto.getCota(), qntProduto);
+		
+		vendaProduto.setMovimentoEstoque(new HashSet<MovimentoEstoque>());
+		vendaProduto.getMovimentoEstoque().add(movimentoEstoque);
+		vendaProduto.setMovimentoFinanceiro(new HashSet<MovimentoFinanceiroCota>());
+		vendaProduto.getMovimentoFinanceiro().add(movimentoFinanceiro);
+		vendaProduto.setTipoComercializacaoVenda(FormaComercializacao.CONSIGNADO);
+		
+		return vendaProdutoRepository.merge(vendaProduto);
+	}
+	
+	/**
+	 * Cria movimento financeiro da cota da venda de produto informada.
+	 * 
+	 * @param dataVencimentoDebito
+	 * @param vendaProduto
+	 */
+	private MovimentoFinanceiroCota gerarMovimentoFinanceiroCotaDebito(Date dataVencimentoDebito,VendaProduto vendaProduto){
+		
+		TipoMovimentoFinanceiro tipoMovimentoFinanceiro = 
+				tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(GrupoMovimentoFinaceiro.DEBITO);
+		
+		if(tipoMovimentoFinanceiro == null){
+			throw new ValidacaoException(TipoMensagem.ERROR,"Não foi encontrado tipo de movimento financeiro de DEBITO cadastrado no sistema!");
+		}
+		
+		MovimentoFinanceiroCota movimentoFinanceiro = criarMovimentoFinanceiroDebito(tipoMovimentoFinanceiro,
+																					 dataVencimentoDebito,
+																					 vendaProduto.getValorTotalVenda(),
+																					 vendaProduto.getCota(), 
+																					 vendaProduto.getUsuario());
+		return movimentoFinanceiro;
+	}
+	
+	/**
+	 * 
+	 * Cria movimento de estoque do distribuidor, com o tipo de movimento VENDA_ENCALHE_SUPLEMENTAR
+	 * 
+	 * @param idProdutoEdicao
+	 * @param idCota
+	 * @param idUsuario
+	 * @param qntProduto
+	 */
+	private MovimentoEstoque gerarMovimentoEstoqueVendaEncalheSuplementar(Long idProdutoEdicao, Long idCota,Long idUsuario,BigDecimal qntProduto){
+		
+		TipoMovimentoEstoque tipoMovimento = 
+				tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.VENDA_ENCALHE_SUPLEMENTAR);
+		
+		if(tipoMovimento == null){
+			throw new ValidacaoException(TipoMensagem.ERROR,"Não foi encontrado tipo de movimento de estoque para venda de encalhe suplementar!");
+		}
+		
+		MovimentoEstoque movimentoEstoque = movimentoEstoqueService.gerarMovimentoEstoque(idProdutoEdicao,idUsuario,qntProduto,tipoMovimento);
+		
+		return movimentoEstoque;
+
+	}
+	
+	/**
+	 * Cria movimento de estoque da cota, com o tipo de movimento COMPRA_SUPLEMENTAR
+	 * 
+	 * @param idProdutoEdicao
+	 * @param idCota
+	 * @param idUsuario
+	 * @param qntProduto
+	 */
+	private void gerarMovimentoCompraSuplementar(Long idProdutoEdicao, Long idCota,Long idUsuario,BigDecimal qntProduto){
+				
+		TipoMovimentoEstoque tipoMovimentoEstoqueCota = 
+				tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.COMPRA_SUPLEMENTAR);
+		
+		if(tipoMovimentoEstoqueCota == null){
+			throw new ValidacaoException(TipoMensagem.ERROR,"Não foi encontrado tipo de movimento de estoque para compra de encalhe suplementar!");
+		}
+		
+		movimentoEstoqueService.gerarMovimentoCota(null, idProdutoEdicao,idCota,idUsuario,qntProduto,tipoMovimentoEstoqueCota);
+	}
+	
+	
+	/**
+	 * Cria movimento de estoque da cota, com o tipo de movimento COMPRA_SUPLEMENTAR
+	 * 
+	 * @param idProdutoEdicao
+	 * @param idCota
+	 * @param idUsuario
+	 * @param qntProduto
+	 */
+	private void gerarMovimentoEstornoCompraSuplementar(Long idProdutoEdicao, Long idCota,Long idUsuario,BigDecimal qntProduto){
+		
+		TipoMovimentoEstoque tipoMovimentoEstoqueCota = 
+				tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.ESTORNO_COMPRA_SUPLEMENTAR);
+		
+		if(tipoMovimentoEstoqueCota == null){
+			throw new ValidacaoException(TipoMensagem.ERROR,"Não foi encontrado tipo de movimento de estoque para estorno de compra de encalhe suplementar!");
+		}
+		
+		movimentoEstoqueService.gerarMovimentoCota(null, idProdutoEdicao,idCota,idUsuario,qntProduto,tipoMovimentoEstoqueCota);
+	}
+	
+	
+	/**
+	 * Cria movimento na chamada de encalhe da cota atualizando a quantidade de produto a ser conferida
+	 * 
+	 * @param produtoEdicao
+	 * @param cota
+	 * @param qntProduto
+	 */
+	private void gerarMovimentoChamadaEncalhe(ProdutoEdicao produtoEdicao, Cota cota, BigDecimal qntProduto){
+		
+		ChamadaEncalhe chamadaEncalhe = 
+				chamadaEncalheRepository.obterPorNumeroEdicaoEMaiorDataRecolhimento(produtoEdicao, TipoChamadaEncalhe.MATRIZ_RECOLHIMENTO);
+		
+		ChamadaEncalheCota chamadaEncalheCota = chamadaEncalheCotaRepository.buscarPorChamadaEncalheECota(chamadaEncalhe.getId(), cota.getId());
+		
+		if(chamadaEncalheCota == null){
+			chamadaEncalheCota = new ChamadaEncalheCota();
+			chamadaEncalheCota.setCota(cota);
+			chamadaEncalheCota.setPostergado(false);
+			chamadaEncalheCota.setFechado(false);
+			chamadaEncalheCota.setQtdePrevista(BigDecimal.ZERO);
+			chamadaEncalheCota.setChamadaEncalhe(chamadaEncalhe);
+		}
+		
+		BigDecimal qntPrevista = chamadaEncalheCota.getQtdePrevista();   
+		chamadaEncalheCota.setQtdePrevista( qntPrevista.add(qntProduto) );
+		
+		chamadaEncalheCotaRepository.merge(chamadaEncalheCota);
+	}
+
+	/**
+	 * Verifica se ja foi realizado conferencia de encalhe para o produto edição na data de operação
+	 * 
+	 * @param produtoEdicao - produto edição
+	 
+	 * @return boolean
+	 */
+	private boolean isVendaConsignadoCota(ProdutoEdicao produtoEdicao){
+		
+		ChamadaEncalhe chamadaEncalhe = 
+				chamadaEncalheRepository.obterPorNumeroEdicaoEMaiorDataRecolhimento(produtoEdicao, TipoChamadaEncalhe.MATRIZ_RECOLHIMENTO);
+		
+		if(chamadaEncalhe == null){
+			return false;
+		}
+		
+		Distribuidor distribuidor = distribuidorService.obter();
+		
+		Date dataPermitidaParaConsignado = DateUtil.adicionarDias(chamadaEncalhe.getDataRecolhimento(),distribuidor.getQtdDiasEncalheAtrasadoAceitavel());  
+		
+		return ( distribuidor.getDataOperacao().compareTo(dataPermitidaParaConsignado) < 0 );
 	}
 	
 	private VendaProduto getVendaProduto(VendaEncalheDTO vendaDTO, Long numeroCota, Usuario usuario, Date dataVencimentoDebito,ProdutoEdicao produtoEdicao){
@@ -259,56 +559,225 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 		
 		return venda;
 	}
-
+	
 	@Override
 	@Transactional
 	public void excluirVendaEncalhe(Long idVendaEncalhe) {
 		
-		//FIXME venda de encalhe - falta fazer as validações nos movimentos financeiros 
-		
 		VendaProduto vendaProduto  =  vendaProdutoRepository.buscarPorId(idVendaEncalhe);
+		MovimentoEstoque movimento = null;
 		
-		MovimentoEstoque movimento = processarAtualizcaoMovimentoEstoque(new BigDecimal(vendaProduto.getQntProduto()),
-																		BigDecimal.ZERO, vendaProduto.getProdutoEdicao().getId(),
-																		vendaProduto.getUsuario().getId());
+		if(TipoVendaEncalhe.ENCALHE.equals(vendaProduto.getTipoVenda())){
+			
+			movimento = processarAtualizcaoMovimentoEstoque(new BigDecimal(vendaProduto.getQntProduto()),
+															BigDecimal.ZERO, vendaProduto.getProdutoEdicao().getId(),
+															vendaProduto.getUsuario().getId());
+		}
+		//Venda de encalhe SUPLEMENTAR
+		else {
+		
+			//Atualiza o estoque do distribuidor
+			movimento = processarAtualizcaoMovimentoEstoqueSuplementar(new BigDecimal(vendaProduto.getQntProduto()),
+														   			   BigDecimal.ZERO, vendaProduto.getProdutoEdicao().getId(),
+														   			   vendaProduto.getUsuario().getId());
+			
+			if(isVendaConsignadoCota(vendaProduto.getProdutoEdicao())){
+				
+				//Atualiza estoque da cota
+				gerarMovimentoEstornoCompraSuplementar(vendaProduto.getProdutoEdicao().getId(),
+														vendaProduto.getCota().getId(),
+														vendaProduto.getUsuario().getId(),
+														new BigDecimal(vendaProduto.getQntProduto()));
+				
+				//Atualiza a chamada de encalhe do produto edição referente a cota
+				processaAtualizacaoChamadaEncalheCotaVendaCancelada(vendaProduto);
+			}	
+		}
+		
 		vendaProduto.getMovimentoEstoque().add(movimento);
-		
+
 		vendaProdutoRepository.remover(vendaProduto);
+	}
+	
+	/**
+	 * Atualiza a chamada de encalhe do produto edição da cota refrente uma venda cancelada
+	 * @param vendaProduto
+	 */
+	private void processaAtualizacaoChamadaEncalheCotaVendaCancelada(VendaProduto vendaProduto){
+		
+		ChamadaEncalhe chamadaEncalhe = 
+				chamadaEncalheRepository.obterPorNumeroEdicaoEMaiorDataRecolhimento(vendaProduto.getProdutoEdicao(), TipoChamadaEncalhe.MATRIZ_RECOLHIMENTO);
+		
+		ChamadaEncalheCota chamadaEncalheCota = chamadaEncalheCotaRepository.buscarPorChamadaEncalheECota(chamadaEncalhe.getId(), vendaProduto.getCota().getId());
+		
+		if(chamadaEncalheCota!= null){
+			
+			BigDecimal qnProduto = chamadaEncalheCota.getQtdePrevista().subtract(new BigDecimal(vendaProduto.getQntProduto()));
+			
+			if(BigDecimal.ZERO.compareTo(qnProduto) == 0){
+				
+				chamadaEncalheCotaRepository.remover(chamadaEncalheCota);
+			}
+			else{
+				
+				BigDecimal qntPrevistaChamadaEncalhe = chamadaEncalheCota.getQtdePrevista();
+				
+				qntPrevistaChamadaEncalhe = qntPrevistaChamadaEncalhe.subtract(new BigDecimal(vendaProduto.getQntProduto()));
+				chamadaEncalheCota.setQtdePrevista(qntPrevistaChamadaEncalhe);
+				
+				chamadaEncalheCotaRepository.merge(chamadaEncalheCota);
+			}
+		}
+	}
+	
+	/**
+	 * Atualiza a chamada de encalhe do produto edição da cota refrente a edição de uma venda
+	 * @param vendaProduto
+	 * @param qntProdutoNovo
+	 */
+	private void processarAtualizacaoChamadaEncalheCota(VendaProduto vendaProduto,BigDecimal qntProdutoNovo){
+		
+		ChamadaEncalhe chamadaEncalhe = 
+				chamadaEncalheRepository.obterPorNumeroEdicaoEMaiorDataRecolhimento(vendaProduto.getProdutoEdicao(), TipoChamadaEncalhe.MATRIZ_RECOLHIMENTO);
+		
+		ChamadaEncalheCota chamadaEncalheCota = chamadaEncalheCotaRepository.buscarPorChamadaEncalheECota(chamadaEncalhe.getId(), vendaProduto.getCota().getId());
+		
+		if(chamadaEncalheCota!= null){
+			
+			BigDecimal qnProduto = chamadaEncalheCota.getQtdePrevista().subtract(new BigDecimal(vendaProduto.getQntProduto()));
+			qnProduto = qnProduto.add(qntProdutoNovo);
+			
+			chamadaEncalheCota.setQtdePrevista(qnProduto);
+			chamadaEncalheCotaRepository.merge(chamadaEncalheCota);
+		}
 	}
 
 	@Override
 	@Transactional
-	public void alterarVendaEncalhe(VendaEncalheDTO vendaEncalheDTO, Date dataVencimentoDebito, Usuario usuario ) {
-		//FIXME venda de encalhe - falta fazer as validaçoes financeiras, e suas alterações
+	public byte[] alterarVendaEncalhe(VendaEncalheDTO vendaEncalheDTO, Date dataVencimentoDebito, Usuario usuario ) {
 		
 		VendaProduto vendaProduto  =  vendaProdutoRepository.buscarPorId(vendaEncalheDTO.getIdVenda());
 		
+		ProdutoEdicao produtoEdicao = vendaProduto.getProdutoEdicao();
+	
 		BigDecimal qntAtualProduto = new BigDecimal(vendaProduto.getQntProduto());
 		BigDecimal qntNovaProduto = new BigDecimal(vendaEncalheDTO.getQntProduto());
 		
+		BigDecimal valorVendaAtual = vendaProduto.getValorTotalVenda();
+		BigDecimal valorVendaNovo = produtoEdicao.getPrecoVenda().subtract(produtoEdicao.getDesconto()).multiply(qntNovaProduto);
+		
 		if(qntAtualProduto.compareTo(qntNovaProduto) != 0){
 			
-			MovimentoEstoque movimento =  processarAtualizcaoMovimentoEstoque(qntAtualProduto,qntNovaProduto,vendaProduto.getProdutoEdicao().getId(),usuario.getId());
+			MovimentoEstoque movimento = null;
+			
+			if( TipoVendaEncalhe.ENCALHE.equals(vendaProduto.getTipoVenda())){
+				
+				movimento =  processarAtualizcaoMovimentoEstoque(qntAtualProduto,qntNovaProduto,
+						  										vendaProduto.getProdutoEdicao().getId(),
+						  										usuario.getId());
+			}
+			else{
+				
+				movimento = processarAtualizcaoMovimentoEstoqueSuplementar(qntAtualProduto,qntNovaProduto,
+																			vendaProduto.getProdutoEdicao().getId(),
+																			usuario.getId());
+				
+				if(isVendaConsignadoCota(vendaProduto.getProdutoEdicao())){
+					
+					processarAtualizacaoMovimentoEstoqueCota(qntAtualProduto, 
+															 qntNovaProduto, 
+															 vendaProduto.getProdutoEdicao().getId(), 
+															 usuario.getId(), 
+															 vendaProduto.getCota().getId());
+					
+					processarAtualizacaoChamadaEncalheCota(vendaProduto, qntNovaProduto);
+				}
+				
+			}
 		    vendaProduto.getMovimentoEstoque().add(movimento);
+		    
+		    MovimentoFinanceiroCota movimentoFinanceiro = processarMovimentoFinanceiro(valorVendaAtual, valorVendaNovo,vendaProduto,usuario);
+		    vendaProduto.getMovimentoFinanceiro().add(movimentoFinanceiro);
 		}
-
-		ProdutoEdicao produtoEdicao = vendaProduto.getProdutoEdicao();
 		
 		vendaProduto.setQntProduto(vendaEncalheDTO.getQntProduto());
-		vendaProduto.setValorTotalVenda( produtoEdicao.getPrecoVenda().subtract(produtoEdicao.getDesconto()).multiply(new BigDecimal(vendaEncalheDTO.getQntProduto())));
+		vendaProduto.setValorTotalVenda(valorVendaNovo);
 		vendaProduto.setDataVencimentoDebito(dataVencimentoDebito);
 		vendaProduto.setDataVenda(new Date());
 		vendaProduto.setHorarioVenda(new Date());
 		vendaProduto.setUsuario(getUsuarioSincronizado(usuario.getId()));
 		
-		vendaProdutoRepository.merge(vendaProduto);
+		vendaProduto = vendaProdutoRepository.merge(vendaProduto);
+		
+		byte[] relatorio= gerarArquivoSlipVenda(vendaProduto.getTipoVenda(), obterDadosSlipVenda(vendaProduto));
+		
+		if(relatorio == null){
+			throw new ValidacaoException(TipoMensagem.ERROR, "Erro no processamento da Venda de Encalhe.");
+		}
+		
+		return relatorio;
 	}
 	
+	private MovimentoFinanceiroCota processarMovimentoFinanceiro(BigDecimal valorVendaAtual, BigDecimal valorVendaNovo,VendaProduto vendaProduto, Usuario usuario) {
+		
+		TipoMovimentoFinanceiro tipoMovimentoFinanceiro = null;
+		BigDecimal valorVendaDebitoCredito = BigDecimal.ZERO;
+		
+		//Se o valor atual da venda for menor que o valor novo gerar debito
+		if(valorVendaNovo.compareTo(valorVendaAtual) > 0){
+			
+			valorVendaDebitoCredito = valorVendaNovo.subtract(valorVendaAtual);
+			
+			tipoMovimentoFinanceiro = tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(GrupoMovimentoFinaceiro.DEBITO);
+		}
+		//Se o valor atual da venda for menor que o valor novo gerar credito
+		else if (valorVendaNovo.compareTo(valorVendaAtual)<0){
+			
+			valorVendaDebitoCredito = valorVendaAtual.subtract(valorVendaNovo);
+			
+			tipoMovimentoFinanceiro = tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(GrupoMovimentoFinaceiro.CREDITO);
+		}
+		
+		if(tipoMovimentoFinanceiro == null){
+			throw new ValidacaoException(TipoMensagem.ERROR,"Não foi encontrado tipo de movimento financeiro de DEBITO/CREDITO cadastrado no sistema!");
+		}
+		
+		MovimentoFinanceiroCota movimento=  criarMovimentoFinanceiroDebito(tipoMovimentoFinanceiro,
+																		   vendaProduto.getDataVencimentoDebito(), 
+				   					   									   valorVendaDebitoCredito,
+				   					   									   vendaProduto.getCota(),
+				   					   									   usuario);
+		return movimento;
+	}
+
 	private Usuario getUsuarioSincronizado(Long idUsuario){
 		
 		return usuarioRepository.buscarPorId(idUsuario);
 	}
 	
+	private MovimentoFinanceiroCota criarMovimentoFinanceiroDebito(TipoMovimentoFinanceiro tipoMovimentoFinanceiro,Date dataVencimentoDebito ,BigDecimal valorTotalVenda,Cota cota,Usuario usuario){
+		
+		Distribuidor distribuidor = distribuidorService.obter();
+		
+		MovimentoFinanceiroCotaDTO movimentoFinanceiroCotaDTO = new MovimentoFinanceiroCotaDTO();
+		
+		movimentoFinanceiroCotaDTO.setCota(cota);
+		movimentoFinanceiroCotaDTO.setTipoMovimentoFinanceiro(tipoMovimentoFinanceiro);
+		movimentoFinanceiroCotaDTO.setUsuario(usuario);
+		movimentoFinanceiroCotaDTO.setValor(valorTotalVenda);
+		movimentoFinanceiroCotaDTO.setDataOperacao(distribuidor.getDataOperacao());
+		movimentoFinanceiroCotaDTO.setBaixaCobranca(null);
+		movimentoFinanceiroCotaDTO.setDataVencimento(dataVencimentoDebito);
+		movimentoFinanceiroCotaDTO.setDataAprovacao(distribuidor.getDataOperacao());
+		movimentoFinanceiroCotaDTO.setDataCriacao(distribuidor.getDataOperacao());
+		movimentoFinanceiroCotaDTO.setObservacao(null);
+		movimentoFinanceiroCotaDTO.setTipoEdicao(TipoEdicao.INCLUSAO);
+		movimentoFinanceiroCotaDTO.setAprovacaoAutomatica(true);
+		movimentoFinanceiroCotaDTO.setLancamentoManual(true);
+		
+		return movimentoFinanceiroCotaService.gerarMovimentoFinanceiroDebitoCredito(movimentoFinanceiroCotaDTO);
+	}
+		
 	private MovimentoEstoque processarAtualizcaoMovimentoEstoque(BigDecimal qntProdutoAtual,BigDecimal qntProdutoNovo,Long idProdutoEdicao, Long idUsuario){
 		
 		BigDecimal quantidadeProdutoAlterada = BigDecimal.ZERO;
@@ -330,41 +799,73 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 			tipoMovimento = tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.ESTORNO_VENDA_ENCALHE);
 		}
 		
+		if(tipoMovimento == null){
+			throw new ValidacaoException(TipoMensagem.ERROR,"Não foi encontrado tipo de movimento de estoque para venda e estorno de encalhe!");
+		}
+		
 		MovimentoEstoque movimentoEstoque = movimentoEstoqueService.gerarMovimentoEstoque(idProdutoEdicao,idUsuario,quantidadeProdutoAlterada,tipoMovimento); 
 		
 		return movimentoEstoque;
 	}
-
-	@Override
-	public byte[] gerarSlipVendaEncalhe(Long idVendaEncalhe) {
-		//FIXME venda de encalhe
-		return null;
-	}
 	
-	/**
-	 * Gera Array de Bytes do Slip de Venda de Suplementar
-	 * @param idCota
-	 * @param dataInicio
-	 * @param dataFim
-	 * @return byte[]
-	 */
-	@Override
-	@Transactional(readOnly = true)
-	public byte[] geraImpressaoVendaSuplementar(List<VendaEncalheDTO> listaVendas,Long numeroCota){
+	private MovimentoEstoque processarAtualizcaoMovimentoEstoqueSuplementar(BigDecimal qntProdutoAtual,BigDecimal qntProdutoNovo,Long idProdutoEdicao, Long idUsuario){
 		
-		byte[] relatorio=null;
-
-		List<SlipVendaEncalheDTO> listaSlipVendaEncalheDTO = this.obtemDadosSlip(listaVendas,numeroCota); 
-
-		try{
-		    relatorio = this.gerarDocumentoIreport(listaSlipVendaEncalheDTO, "/reports/slipVendaSuplementar.jasper");
+		BigDecimal quantidadeProdutoAlterada = BigDecimal.ZERO;
+		TipoMovimentoEstoque tipoMovimento = null;
+		//Se a quantidade de produto nova informada for maior que a quantidade atual, gera movimento de venda de encalhe
+		
+		if(qntProdutoNovo.compareTo(qntProdutoAtual)>0){
+			
+			quantidadeProdutoAlterada = qntProdutoNovo.subtract(qntProdutoAtual);
+			
+			tipoMovimento = tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.VENDA_ENCALHE_SUPLEMENTAR);
 		}
-		catch(Exception e){
-			throw new ValidacaoException(TipoMensagem.WARNING, "Erro ao gerar Slip de Venda de Suplementar.");
+		
+		//Se a quantidade de produto nova informada for menor que a quantidade atual, gera movimento de estorno de venda de encalhe
+		else if (qntProdutoNovo.compareTo(qntProdutoAtual)<0){
+			
+			quantidadeProdutoAlterada = qntProdutoAtual.subtract(qntProdutoNovo);
+			
+			tipoMovimento = tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.ESTORNO_VENDA_ENCALHE_SUPLEMENTAR);
 		}
-		return relatorio;
+		
+		if(tipoMovimento == null){
+			throw new ValidacaoException(TipoMensagem.ERROR,"Não foi encontrado tipo de movimento de estoque para venda e estorno de encalhe suplementar!");
+		}
+		
+		MovimentoEstoque movimentoEstoque = movimentoEstoqueService.gerarMovimentoEstoque(idProdutoEdicao,idUsuario,quantidadeProdutoAlterada,tipoMovimento); 
+		
+		return movimentoEstoque;
 	}
 	
+	private void processarAtualizacaoMovimentoEstoqueCota(BigDecimal qntProdutoAtual,BigDecimal qntProdutoNovo,Long idProdutoEdicao, Long idUsuario, Long idCota){
+		
+		BigDecimal quantidadeProdutoAlterada = BigDecimal.ZERO;
+		TipoMovimentoEstoque tipoMovimento = null;
+		//Se a quantidade de produto nova informada for maior que a quantidade atual, gera movimento de venda de encalhe
+		
+		if(qntProdutoNovo.compareTo(qntProdutoAtual)>0){
+			
+			quantidadeProdutoAlterada = qntProdutoNovo.subtract(qntProdutoAtual);
+			
+			tipoMovimento = tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.COMPRA_SUPLEMENTAR);
+		}
+		
+		//Se a quantidade de produto nova informada for menor que a quantidade atual, gera movimento de estorno de venda de encalhe
+		else if (qntProdutoNovo.compareTo(qntProdutoAtual)<0){
+			
+			quantidadeProdutoAlterada = qntProdutoAtual.subtract(qntProdutoNovo);
+			
+			tipoMovimento = tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.ESTORNO_COMPRA_SUPLEMENTAR);
+		}
+		
+		if(tipoMovimento == null){
+			throw new ValidacaoException(TipoMensagem.ERROR,"Não foi encontrado tipo de movimento de estoque para compra e estorno de encalhe suplementar!");
+		}
+		
+		movimentoEstoqueService.gerarMovimentoCota(null, idProdutoEdicao, idCota, idUsuario, quantidadeProdutoAlterada, tipoMovimento);
+	}
+
 	@Override
 	@Transactional(readOnly=true)
 	public VendaEncalheDTO buscarProdutoComEstoque(String codigoProduto,Long numeroEdicao, TipoVendaEncalhe tipoVendaEncalhe){
@@ -425,9 +926,44 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 	
 	@Override
 	@Transactional(readOnly=true)
+	public byte[] geraImpressaoVenda(FiltroVendaEncalheDTO filtro) {
+		
+		List<VendaProduto> vendas = vendaProdutoRepository.buscarVendasEncalhe(filtro);
+		
+		byte[] retorno  = null;
+		
+		if(vendas!= null && !vendas.isEmpty()){
+			
+			List<SlipVendaEncalheDTO> listaSlipVendaEncalheDTO = this.obterDadosSlipVenda(vendas.toArray(new VendaProduto[]{}));
+			
+			if(TipoVendaEncalhe.ENCALHE.equals(filtro.getTipoVendaEncalhe())){
+
+				try{
+				    retorno= this.gerarDocumentoIreport(listaSlipVendaEncalheDTO, "/reports/slipVendaEncalhe.jasper");
+				}
+				catch(Exception e){
+					throw new ValidacaoException(TipoMensagem.WARNING, "Erro ao gerar Slip de Venda de Encalhe.");
+				}
+			}
+			else{
+
+				try{
+				    retorno= this.gerarDocumentoIreport(listaSlipVendaEncalheDTO, "/reports/slipVendaSuplementar.jasper");
+				}
+				catch(Exception e){
+					throw new ValidacaoException(TipoMensagem.WARNING, "Erro ao gerar Slip de Venda de Suplementar.");
+				}
+			}
+		}
+		
+		return retorno;
+	}
+	
+	@Override
+	@Transactional(readOnly=true)
 	public List<VendaEncalheDTO> buscarVendasProduto(FiltroVendaEncalheDTO filtro) {
 		
-		return vendaProdutoRepository.buscarVendasEncalhe(filtro);
+		return vendaProdutoRepository.buscarVendasEncalheDTO(filtro);
 	}
 
 	@Override
