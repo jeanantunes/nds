@@ -89,6 +89,11 @@ import br.com.abril.nds.model.cadastro.pdv.PDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoEstabelecimentoAssociacaoPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoGeradorFluxoPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoPontoPDV;
+import br.com.abril.nds.model.dne.Bairro;
+import br.com.abril.nds.model.dne.Localidade;
+import br.com.abril.nds.model.dne.Logradouro;
+import br.com.abril.nds.model.dne.Pais;
+import br.com.abril.nds.model.dne.UnidadeFederacao;
 import br.com.abril.nds.model.estoque.ConferenciaEncalhe;
 import br.com.abril.nds.model.estoque.Diferenca;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
@@ -791,6 +796,7 @@ public class DataLoader {
 		
 		gerarTiposNotas(session);
 		
+		criarLogradouros(session);
 	}
 	
 	private static void criarAlgoritmos(Session session) {
@@ -8707,6 +8713,35 @@ public class DataLoader {
 		save(session, Fixture.criarEventoExecucao(EventoExecucaoEnum.GERACAO_DE_ARQUIVO.getCodigo(), "Arquivo", "Geração de Arquivo"));
 		save(session, Fixture.criarEventoExecucao(EventoExecucaoEnum.INF_DADO_ALTERADO.getCodigo(), "Alteração Dado", "Informação de dado Alterado"));
 		save(session, Fixture.criarEventoExecucao(EventoExecucaoEnum.REGISTRO_JA_EXISTENTE.getCodigo(), "Registro já existente", "Registro já existente"));
+	}
+	
+	private static void criarLogradouros(Session session) {
+		
+		Pais pais = Fixture.criarPais("BR", "Brasil");
+		save(session, pais);
+		
+		UnidadeFederacao sp = Fixture.criarUnidadeFederacao(13246L, "SP", "São Paulo", pais);
+		UnidadeFederacao mg = Fixture.criarUnidadeFederacao(13247L, "MG", "Minas Gerais", pais);
+		save(session, sp, mg);
+		
+		Localidade mococa = Fixture.criarLocalidade("132", "Mococa", "582", sp);
+		Localidade arcerburgo = Fixture.criarLocalidade("134", "Arceburgo", "584", mg);
+		save(session, mococa, arcerburgo);
+		
+		Bairro vilaCarvalho = Fixture.criarBairro("1", "Vila Carvalho", mococa);
+		Bairro descanso = Fixture.criarBairro("2", "Descanso", mococa);
+		Bairro centro = Fixture.criarBairro("3", "Centro", arcerburgo);
+		save(session, vilaCarvalho, descanso, centro);
+		
+		Logradouro joseCristovam = Fixture.criarLogradouro(
+				"1", "Capitão José Cristovam de Lima", "13735430", 1L, mococa, "RUA");
+		Logradouro avenidaBrasil = Fixture.criarLogradouro(
+				"2", "Avenida Brasil", "13500213", 3L, arcerburgo, "AVENIDA");
+		Logradouro antonioCristovao = Fixture.criarLogradouro(
+				"3", "Antonio Cristovão", "13730000", 2L, mococa, "RUA");
+		Logradouro avenidaMarginal = Fixture.criarLogradouro(
+				"4", "Avenida Marginal", "13500213", 2L, mococa, "AVENIDA");
+		save(session, joseCristovam, avenidaBrasil, antonioCristovao, avenidaMarginal);
 	}
 	
 }

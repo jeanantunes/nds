@@ -141,7 +141,7 @@ public class EnderecoRepositoryImpl extends AbstractRepository<Endereco, Long> i
 		StringBuilder hql = new StringBuilder();
 		
 		hql.append(" select ")
-		   .append(" logradouro.uf as uf, ")
+		   .append(" logradouro.localidade.unidadeFederacao.sigla as uf, ")
 		   .append(" logradouro.localidade.codigoMunicipioIBGE as codigoCidadeIBGE, ")
 		   .append(" logradouro.localidade.nome as localidade, ")
 		   .append(" logradouro.tipoLogradouro as tipoLogradouro, ")
