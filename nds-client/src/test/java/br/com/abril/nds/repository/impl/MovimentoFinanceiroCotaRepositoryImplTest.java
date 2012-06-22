@@ -33,24 +33,17 @@ import br.com.abril.nds.model.cadastro.PoliticaCobranca;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.cadastro.TipoRegistroCobranca;
-import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
-import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.financeiro.ConsolidadoFinanceiroCota;
-import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
 import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.MovimentoFinanceiroCotaRepository;
-import br.com.abril.nds.repository.TipoMovimentoFinanceiroRepository;
 import br.com.abril.nds.vo.PaginacaoVO;
 
 public class MovimentoFinanceiroCotaRepositoryImplTest extends AbstractRepositoryImplTest  {
 	
 	@Autowired
 	private MovimentoFinanceiroCotaRepository movimentoFinanceiroCotaRepository;
-	
-	@Autowired
-	private TipoMovimentoFinanceiroRepository tipoMovimentoFinanceiroRepository;
 	
 	private Cota cotaManoel;	
 	
@@ -130,30 +123,15 @@ public class MovimentoFinanceiroCotaRepositoryImplTest extends AbstractRepositor
 	@Test
 	public void obterMovimentoFinanceiroCotaDataOperacao() {
 		
-		Calendar calendar = Calendar.getInstance();
-		calendar.setTimeInMillis(1L);
-		
 		List<MovimentoFinanceiroCota> listaMovimentoFinanceiro =
-			movimentoFinanceiroCotaRepository.obterMovimentoFinanceiroCotaDataOperacao(null, calendar.getTime());
+			movimentoFinanceiroCotaRepository.obterMovimentoFinanceiroCota(null);
 		
 		Assert.assertTrue(!listaMovimentoFinanceiro.isEmpty());
 		
 		listaMovimentoFinanceiro =
-				movimentoFinanceiroCotaRepository.obterMovimentoFinanceiroCotaDataOperacao(cotaManoel.getId(), calendar.getTime());
+				movimentoFinanceiroCotaRepository.obterMovimentoFinanceiroCota(cotaManoel.getId());
 		
 		Assert.assertTrue(!listaMovimentoFinanceiro.isEmpty());
-		
-		calendar.setTime(new Date());
-		
-		listaMovimentoFinanceiro =
-				movimentoFinanceiroCotaRepository.obterMovimentoFinanceiroCotaDataOperacao(null, calendar.getTime());
-			
-		Assert.assertTrue(listaMovimentoFinanceiro.isEmpty());
-		
-		listaMovimentoFinanceiro =
-				movimentoFinanceiroCotaRepository.obterMovimentoFinanceiroCotaDataOperacao(cotaManoel.getId(), calendar.getTime());
-		
-		Assert.assertTrue(listaMovimentoFinanceiro.isEmpty());
 	}
 	
 	@Test
