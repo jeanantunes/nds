@@ -38,16 +38,12 @@ import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.MovimentoFinanceiroCotaRepository;
-import br.com.abril.nds.repository.TipoMovimentoFinanceiroRepository;
 import br.com.abril.nds.vo.PaginacaoVO;
 
 public class MovimentoFinanceiroCotaRepositoryImplTest extends AbstractRepositoryImplTest  {
 	
 	@Autowired
 	private MovimentoFinanceiroCotaRepository movimentoFinanceiroCotaRepository;
-	
-	@Autowired
-	private TipoMovimentoFinanceiroRepository tipoMovimentoFinanceiroRepository;
 	
 	private Cota cotaManoel;	
 	
