@@ -862,9 +862,12 @@ validarEdicaoCallBack : function() {
 			
 		});
 		
-		if(data.rows)
+		if(data.rows) {
+
+			$(".grids").show();
+			
+		}
 					
-		$(".grids").show();
 		
 		if(!indRecebimentoFisicoConfirmado){
 			document.getElementById('botoesNormais').style.display="";			
@@ -917,12 +920,15 @@ validarEdicaoCallBack : function() {
 		
 		if(!indRecebimentoFisicoConfirmado){
 			document.getElementById('botoesNormais').style.display="";
-			document.getElementById('botaoNovoProdutoOpaco').style.display="";
-			document.getElementById('botaoNovoProduto').style.display="none";
+			
+			document.getElementById('botaoNovoProdutoOpaco').style.display="none";
+			document.getElementById('botaoNovoProduto').style.display="";
+			
 			document.getElementById('botoesOpacos').style.display="none";
 		}else{
 			document.getElementById('botoesOpacos').style.display="";
 			document.getElementById('botoesNormais').style.display="none";
+			
 			document.getElementById('botaoNovoProdutoOpaco').style.display="";
 			document.getElementById('botaoNovoProduto').style.display="none";
 			

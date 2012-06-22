@@ -16,6 +16,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import br.com.abril.nds.integracao.model.canonic.InterfaceEnum;
 import br.com.abril.nds.model.DiaSemana;
+import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.StatusCobranca;
 import br.com.abril.nds.model.StatusConfirmacao;
 import br.com.abril.nds.model.StatusControle;
@@ -740,7 +741,6 @@ public class DataLoader {
 		criarRotaRoteiroCota(session);		
 		criarControleBaixaBancaria(session);
 		criarParametrosCobrancaCota(session);
-		criarNotasFiscaisEntradaFornecedor(session);
 		gerarCotasAusentes(session);
 		gerarHistoricosAculoDivida(session);
 
@@ -748,6 +748,8 @@ public class DataLoader {
 		
 		//criarDadosContaCorrenteConsigando(session);
 
+		criarMassaNotaFiscalEntradaFornecedorParaRecebimentoFisico(session);
+		
 		gerarCargaDiferencaEstoque(
 			session, 50, produtoEdicaoVeja1, tipoMovimentoFaltaEm, 
 				usuarioJoao, estoqueProdutoVeja1, TipoDiferenca.FALTA_EM);
@@ -2427,27 +2429,27 @@ public class DataLoader {
 		//MOVIMENTOS VENDA_ENCALHE
 		movimentoEstoqueCota25 = Fixture.movimentoEstoqueCota(produtoEdicaoVeja1,
 				tipoMovimentoVendaEncalhe, usuarioJoao, estoqueProdutoCotaManoelVeja1,
-				BigDecimal.TEN, cotaManoel, StatusAprovacao.PENDENTE, null);
+				BigDecimal.TEN, cotaManoel, StatusAprovacao.APROVADO, null);
 
 		movimentoEstoqueCota26 = Fixture.movimentoEstoqueCota(produtoEdicaoVeja1,
 				tipoMovimentoVendaEncalhe, usuarioJoao, estoqueProdutoCotaManoelVeja3,
-				BigDecimal.TEN, cotaManoel, StatusAprovacao.PENDENTE, null);
+				BigDecimal.TEN, cotaManoel, StatusAprovacao.APROVADO, null);
 
 		movimentoEstoqueCota27 = Fixture.movimentoEstoqueCota(produtoEdicaoVeja1,
 				tipoMovimentoVendaEncalhe, usuarioJoao, estoqueProdutoCotaManoelVeja4,
-				BigDecimal.TEN, cotaManoel, StatusAprovacao.PENDENTE, null);
+				BigDecimal.TEN, cotaManoel, StatusAprovacao.APROVADO, null);
 		
 		movimentoEstoqueCota28 = Fixture.movimentoEstoqueCota(produtoEdicaoVeja1,
 				tipoMovimentoVendaEncalhe, usuarioJoao, estoqueProdutoCotaManoelVeja2,
-				BigDecimal.TEN, cotaManoel, StatusAprovacao.PENDENTE, null);
+				BigDecimal.TEN, cotaManoel, StatusAprovacao.APROVADO, null);
 		
 		movimentoEstoqueCota29 = Fixture.movimentoEstoqueCota(produtoEdicaoVeja1,
 				tipoMovimentoVendaEncalhe, usuarioJoao, estoqueProdutoCotaManoelQuatroRodas1,
-				BigDecimal.TEN, cotaManoel, StatusAprovacao.PENDENTE, null);
+				BigDecimal.TEN, cotaManoel, StatusAprovacao.APROVADO, null);
 		
 		movimentoEstoqueCota30 = Fixture.movimentoEstoqueCota(produtoEdicaoVeja1,
 				tipoMovimentoVendaEncalhe, usuarioJoao, estoqueProdutoCotaManoelSuper1,
-				BigDecimal.TEN, cotaManoel, StatusAprovacao.PENDENTE, null);
+				BigDecimal.TEN, cotaManoel, StatusAprovacao.APROVADO, null);
 		
 
 		
@@ -6605,23 +6607,148 @@ public class DataLoader {
 				  	  movimentoFinanceiroEnvioEncalhe1, movimentoFinanceiroEnvioEncalhe2);
 	}
 
-	private static void criarNotasFiscaisEntradaFornecedor(Session session) {
+	private static void criarMassaNotaFiscalEntradaFornecedorParaRecebimentoFisico(Session session) {
+		
+		NotaFiscalEntradaFornecedor nfEntradaFornec = null;
+		
+		Long 		unidadeProduto           = 0L; 
+		
+		Long numero = null;
+		String serie = null;
+		String chaveAcesso = null;
 
+		numero 		= 1000000L;
+		serie 		= "8585";
+		chaveAcesso = "939490";
+		
+		nfEntradaFornec = Fixture.notaFiscalEntradaFornecedor(
+				numero,
+				serie,
+				chaveAcesso,
+				cfop5102, 
+				fornecedorDinap.getJuridica(), 
+				fornecedorDinap, 
+				tipoNotaFiscalRecebimento,
+				usuarioJoao, 
+				new BigDecimal(2500), 
+				new BigDecimal(500), 
+				new BigDecimal(2000));
+		
+		nfEntradaFornec.setOrigem(Origem.MANUAL);
+		session.save(nfEntradaFornec);
+
+		numero 		= 1000001L;
+		serie 		= "8585";
+		chaveAcesso = "939491";
+		
+		nfEntradaFornec = Fixture.notaFiscalEntradaFornecedor(
+				numero,
+				serie,
+				chaveAcesso,
+				cfop5102, 
+				fornecedorDinap.getJuridica(), 
+				fornecedorDinap, 
+				tipoNotaFiscalRecebimento,
+				usuarioJoao, 
+				new BigDecimal(3500), 
+				new BigDecimal(400), 
+				new BigDecimal(3100));
+		
+		nfEntradaFornec.setOrigem(Origem.INTERFACE);
+		session.save(nfEntradaFornec);
+		
+		
+		ItemNotaFiscalEntrada itemNFEntrada = Fixture.itemNotaFiscalEntradaNFE(
+				produtoEdicaoCaras1, 
+				usuarioJoao, 
+				nfEntradaFornec, 
+				Fixture.criarData(05, Calendar.MAY, 2012), 
+				Fixture.criarData(20, Calendar.MAY, 2012), 
+				TipoLancamento.LANCAMENTO, 
+				new BigDecimal(50), 
+				"", 
+				"", 
+				unidadeProduto,
+				"", 
+				"", 
+				BigDecimal.ZERO, 
+				BigDecimal.ZERO, 
+				BigDecimal.ZERO, 
+				BigDecimal.ZERO, 
+				BigDecimal.ZERO);
+		
+		session.save(itemNFEntrada);
+		
+		numero 		= 1000002L;
+		serie 		= "8585";
+		chaveAcesso = "939492";
+		
+		nfEntradaFornec = Fixture.notaFiscalEntradaFornecedor(
+				numero,
+				serie,
+				chaveAcesso,
+				cfop5102, 
+				fornecedorDinap.getJuridica(), 
+				fornecedorDinap, 
+				tipoNotaFiscalRecebimento,
+				usuarioJoao, 
+				new BigDecimal(1500), 
+				new BigDecimal(500), 
+				new BigDecimal(1000));
+		
+		nfEntradaFornec.setOrigem(Origem.INTERFACE);
+		session.save(nfEntradaFornec);
+		
+		itemNFEntrada = Fixture.itemNotaFiscalEntradaNFE(
+				produtoEdicaoCaras1, 
+				usuarioJoao, 
+				nfEntradaFornec, 
+				Fixture.criarData(05, Calendar.MAY, 2012), 
+				Fixture.criarData(20, Calendar.MAY, 2012), 
+				TipoLancamento.LANCAMENTO, 
+				new BigDecimal(50), 
+				"", 
+				"", 
+				unidadeProduto,
+				"", 
+				"", 
+				BigDecimal.ZERO, 
+				BigDecimal.ZERO, 
+				BigDecimal.ZERO, 
+				BigDecimal.ZERO, 
+				BigDecimal.ZERO);
+		
+		session.save(itemNFEntrada);
+		
+		
+	}
+	
+	private static void criarNotasFiscaisEntradaFornecedor(Session session) {
+		
 		for (int i = 0; i < 50; i++) {
 
+			Long numero = 0L;
+			String serie = "";
+			String chaveAcesso = "";
+			
 			Calendar calendar = Calendar.getInstance();
 
 			TipoNotaFiscal tipoNotaFiscal = i % 2 == 0 ? tipoNotaFiscalRecebimento : tipoNotaFiscalDevolucao;
 
-			notaFiscalFornecedor = Fixture
-					.notaFiscalEntradaFornecedor(cfop5102, fornecedorDinap.getJuridica(), fornecedorDinap, tipoNotaFiscal,
-							usuarioJoao, new BigDecimal(15), new BigDecimal(5), BigDecimal.TEN);
+			notaFiscalFornecedor = Fixture.notaFiscalEntradaFornecedor(
+					cfop5102, 
+					fornecedorDinap.getJuridica(), 
+					fornecedorDinap, 
+					tipoNotaFiscal,
+					usuarioJoao, 
+					new BigDecimal(15), 
+					new BigDecimal(5), 
+					BigDecimal.TEN);
 
 			calendar.add(Calendar.DATE, i * 3);
-
 			notaFiscalFornecedor.setDataEmissao(calendar.getTime());
-
 			session.save(notaFiscalFornecedor);
+			
 		}
 	}	
 
@@ -7111,7 +7238,7 @@ public class DataLoader {
 		
 		int numeroSemana = DateUtil.obterNumeroSemanaNoAno(new Date(), distribuidor.getInicioSemana().getCodigoDiaSemana());
 		
-		Date dataLancamentoSemanaAtual = DateUtil.obterDataDaSemanaNoAno(numeroSemana, Calendar.WEDNESDAY);
+		Date dataLancamentoSemanaAtual = DateUtil.obterDataDaSemanaNoAno(numeroSemana, distribuidor.getInicioSemana().getCodigoDiaSemana());
 		
 		Date dataRecolhimentoProximaSemana = DateUtil.adicionarDias(dataLancamentoSemanaAtual, 7);
 		
@@ -8680,7 +8807,7 @@ public class DataLoader {
 		save(session, Fixture.criarInterfaceExecucao(InterfaceEnum.EMS0109.getCodigoInterface(), "EMS0109"));
 		save(session, Fixture.criarInterfaceExecucao(InterfaceEnum.EMS0110.getCodigoInterface(), "EMS0110"));
 		save(session, Fixture.criarInterfaceExecucao(InterfaceEnum.EMS0111.getCodigoInterface(), "EMS0111"));
-		save(session, Fixture.criarInterfaceExecucao(InterfaceEnum.EMS0112.getCodigoInterface(), "EMS0112"));
+//		save(session, Fixture.criarInterfaceExecucao(InterfaceEnum.EMS0112.getCodigoInterface(), "EMS0112"));
 		save(session, Fixture.criarInterfaceExecucao(InterfaceEnum.EMS0113.getCodigoInterface(), "EMS0113"));
 		save(session, Fixture.criarInterfaceExecucao(InterfaceEnum.EMS0114.getCodigoInterface(), "EMS0114"));
 		save(session, Fixture.criarInterfaceExecucao(116L, "EMS0116"));
@@ -8699,8 +8826,8 @@ public class DataLoader {
 		save(session, Fixture.criarInterfaceExecucao(131L, "EMS0131"));
 		save(session, Fixture.criarInterfaceExecucao(132L, "EMS0132"));
 		save(session, Fixture.criarInterfaceExecucao(133L, "EMS0133"));
-		save(session, Fixture.criarInterfaceExecucao(InterfaceEnum.EMS0134.getCodigoInterface(), "EMS0134"));
-		save(session, Fixture.criarInterfaceExecucao(InterfaceEnum.EMS0185.getCodigoInterface(), "EMS0185"));
+//		save(session, Fixture.criarInterfaceExecucao(InterfaceEnum.EMS0134.getCodigoInterface(), "EMS0134"));
+//		save(session, Fixture.criarInterfaceExecucao(InterfaceEnum.EMS0185.getCodigoInterface(), "EMS0185"));
 		save(session, Fixture.criarInterfaceExecucao(197L, "EMS0197"));
 	}
 	
