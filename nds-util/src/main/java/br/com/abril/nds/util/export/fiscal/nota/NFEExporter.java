@@ -16,8 +16,10 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import br.com.abril.nds.util.CampoSecao;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.StringUtil;
+import br.com.abril.nds.util.TipoSessao;
 
 /**
  * Classe responsável pela exportação de Nota Fiscal Eletrônica de arquivos TXT.
@@ -63,6 +65,11 @@ public class NFEExporter {
 	private List<NFEExporter> listaNFEExporters;
 	
 	/**
+	 * Lista das sessoes do arquivo de exportação
+	 */
+	private Map<TipoSessao, List<CampoSecao>> mapSecoes;
+	
+	/**
 	 * Construtor padrão
 	 */
 	public NFEExporter(){
@@ -87,7 +94,6 @@ public class NFEExporter {
 	 * @throws IllegalArgumentException
 	 * @throws InvocationTargetException
 	 */
-	@SuppressWarnings("rawtypes")
 	public <NF> void execute(NF notaFiscal) throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
 		
 		Method[] metodos = notaFiscal.getClass().getDeclaredMethods();
@@ -140,10 +146,10 @@ public class NFEExporter {
 				for (NFEExport nfeExp : listaNFEExport) {
 				
 					if (nfeExp != null) {
-						String secao = this.listaSecoes.get(nfeExp.secao());
-						secao = executarAnotacao(secao, nfeExp, valor);
-						this.listaSecoes.put(nfeExp.secao(), secao);
-					
+//						String secao = this.listaSecoes.get(nfeExp.secao());
+//						secao = executarAnotacao(secao, nfeExp, valor);
+//						this.listaSecoes.put(nfeExp.secao(), secao);
+						addCampoSecao(nfeExp, valor);
 					}
 
 				}
@@ -161,6 +167,7 @@ public class NFEExporter {
 		}
 	}
 	
+	@SuppressWarnings("rawtypes")
 	private <NF> void proccessFieldAnnotations(Field campo, NF notaFiscal) throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
 			
 		campo.setAccessible(true);
@@ -201,11 +208,12 @@ public class NFEExporter {
 				for (NFEExport nfeExp : listaNFEExport) {
 						
 					if (nfeExp != null) {
-						String secao = this.listaSecoes.get(nfeExp.secao());
-
-						secao = executarAnotacao(secao, nfeExp, valor);
-
-						this.listaSecoes.put(nfeExp.secao(), secao);
+//						String secao = this.listaSecoes.get(nfeExp.secao());
+//
+//						secao = executarAnotacao(secao, nfeExp, valor);
+//
+//						this.listaSecoes.put(nfeExp.secao(), secao);
+						addCampoSecao(nfeExp, valor);
 						
 					}
 				}
@@ -222,6 +230,30 @@ public class NFEExporter {
 		} else if (valor != null) {
 			execute(valor);
 		}
+	}
+	
+	/**
+	 * @param nfeExport annotation do campo
+	 * @param valor valor do campo
+	 */
+	private void addCampoSecao(NFEExport nfeExport, Object valor) {
+		
+		CampoSecao campo = new CampoSecao();
+		campo.setPosicao(nfeExport.posicao());
+		campo.setMascara(nfeExport.mascara());
+		campo.setSessao(nfeExport.secao());
+		campo.setTamanho(nfeExport.tamanho());
+		campo.setValor(valor);
+		
+		List<CampoSecao> camposSecao = mapSecoes.get(campo.getSessao());
+		
+		if (camposSecao == null || camposSecao.isEmpty()) {
+			camposSecao = new ArrayList<CampoSecao>();
+		}
+		
+		camposSecao.add(campo);
+		
+		this.mapSecoes.put(campo.getSessao(), camposSecao);
 	}
 	
 	/**
@@ -285,21 +317,21 @@ public class NFEExporter {
 	 * @param valor - Valor a ser incluido na seção.
 	 * @return - Linha com todos os campos da seção.
 	 */
-	private String executarAnotacao(String secao, NFEExport nfeExport, Object valor){
-		String secaoNome = nfeExport.secao();
-		int tamanho = nfeExport.tamanho();
-		int posicao = nfeExport.posicao();
-		String mascara = nfeExport.mascara();
-
-		if (StringUtil.isEmpty(secao)) {
-			secao = secaoNome + SEPARADOR_SECAO;
-		}
-		
-		secao = addCampoToSecao(secao,
-				converteCampoParaString(valor, mascara, tamanho), posicao);
-
-		return secao;
-	}
+//	private String executarAnotacao(String secao, NFEExport nfeExport, Object valor){
+//		String secaoNome = nfeExport.secao();
+//		int tamanho = nfeExport.tamanho();
+//		int posicao = nfeExport.posicao();
+//		String mascara = nfeExport.mascara();
+//
+//		if (StringUtil.isEmpty(secao)) {
+//			secao = secaoNome + SEPARADOR_SECAO;
+//		}
+//		
+//		secao = addCampoToSecao(secao,
+//				converteCampoParaString(valor, mascara, tamanho), posicao);
+//
+//		return secao;
+//	}
 	
 
 	/**
