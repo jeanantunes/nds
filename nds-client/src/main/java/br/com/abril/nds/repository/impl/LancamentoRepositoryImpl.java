@@ -1059,6 +1059,7 @@ public class LancamentoRepositoryImpl extends
 		sql.append(" produtoEdicao.PRECO_VENDA as precoVenda, ");
 		sql.append(" produto.codigo as codigoProduto, ");
 		sql.append(" produto.nome as nomeProduto, ");
+		sql.append(" produto.periodicidade as periodicidadeProduto, ");
 		
 		sql.append(" case when estudo.ID is not null then ");
 		sql.append(" true ");
@@ -1171,6 +1172,7 @@ public class LancamentoRepositoryImpl extends
 			.addScalar("precoVenda")
 			.addScalar("codigoProduto")
 			.addScalar("nomeProduto")
+			.addScalar("periodicidadeProduto")
 			.addScalar("possuiEstudo", StandardBasicTypes.BOOLEAN)
 			.addScalar("possuiRecebimentoFisico", StandardBasicTypes.BOOLEAN);
 		
