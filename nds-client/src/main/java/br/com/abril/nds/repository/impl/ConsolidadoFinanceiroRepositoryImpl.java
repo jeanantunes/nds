@@ -72,11 +72,11 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 		return query.list();
 	}
 
-	public boolean verificarConsodidadoCotaPorData(Long idCota) {
+	public boolean verificarConsodidadoCotaPorDataOperacao(Long idCota) {
 		StringBuilder hql = new StringBuilder(
 				"select count (c.id) from ConsolidadoFinanceiroCota c, Distribuidor d ");
-		hql.append(" where c.cota.id = :idCota ").append(
-				" and c.dataConsolidado = d.dataOperacao ");
+		hql.append(" where c.cota.id = :idCota ")
+		   .append(" and c.dataConsolidado = d.dataOperacao ");
 
 		Query query = this.getSession().createQuery(hql.toString());
 		query.setParameter("idCota", idCota);

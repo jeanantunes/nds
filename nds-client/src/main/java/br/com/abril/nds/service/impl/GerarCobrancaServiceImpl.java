@@ -136,7 +136,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		//Caso esteja gerando cobrança para uma única cota
 		if (idCota != null){
 			boolean existeCobranca = 
-					this.consolidadoFinanceiroRepository.verificarConsodidadoCotaPorData(idCota);
+					this.consolidadoFinanceiroRepository.verificarConsodidadoCotaPorDataOperacao(idCota);
 			
 			if (existeCobranca){
 				throw new ValidacaoException(TipoMensagem.WARNING, "Já foi gerada cobrança para esta cota na data de hoje.");
