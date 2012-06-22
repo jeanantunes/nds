@@ -562,4 +562,15 @@ public class DividaRepositoryImpl extends AbstractRepository<Divida, Long> imple
 		
 		return (Divida) criteria.uniqueResult();
 	}
+
+	@Override
+	public BigDecimal obterTotalDividasAbertoCota(Long idCota) {
+        
+		String hql  = "select sum(COALESCE(divida.valor,0)) from Divida divida where divida.cota.id = :idCota and status = :status ";
+		Query query  = super.getSession().createQuery(hql);
+		query.setParameter("idCota", idCota);
+		query.setParameter("status", StatusDivida.EM_ABERTO);
+		
+		return (BigDecimal) query.uniqueResult();
+	}
 }
