@@ -45,4 +45,10 @@ public @interface NFEExport {
 	 */
 	public String mascara() default "";
 	
+	/**
+	 * Atributo para informar o tipo de documento (CPF/CNPJ)
+	 * @return
+	 */
+	public String documento() default "";
+	
 }
