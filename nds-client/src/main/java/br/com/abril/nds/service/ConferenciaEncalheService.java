@@ -47,17 +47,18 @@ public interface ConferenciaEncalheService {
 	 */
 	public void verificarChamadaEncalheCota(Integer numeroCota) throws ConferenciaEncalheExistenteException, ChamadaEncalheCotaInexistenteException;
 	
-
+	
 	/**
 	 * Obtém os dados sumarizados de encalhe da cota, e se esta estiver
 	 * com sua conferencia sendo reaberta retorna tambem a lista do que ja foi
 	 * conferido.
 	 * 
 	 * @param numeroCota
+	 * @param indConferenciaContingencia
 	 * 
 	 * @return InfoConferenciaEncalheCota
 	 */
-	public InfoConferenciaEncalheCota obterInfoConferenciaEncalheCota(Integer numeroCota);
+	public InfoConferenciaEncalheCota obterInfoConferenciaEncalheCota(Integer numeroCota, boolean indConferenciaContingencia);
 	
 	/**
 	 * Gera documentação referente a conferência de encalhe.

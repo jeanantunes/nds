@@ -86,7 +86,7 @@ public class MatrizLancamentoServiceImplTest {
 		
 		distribuidor = Fixture.distribuidor(1, juridicaDistrib, new Date(), politicasCobranca);
 		
-		distribuidor.setQtdDiasLimiteParaReprogLancamento(3);
+		distribuidor.setQtdDiasLimiteParaReprogLancamento(5);
 		
 		PessoaJuridica juridicaDinap = Fixture.pessoaJuridica("Dinap",
 				"11.111.111/0001-11", "111.111.111.111", "dinap@mail.com", "99.999-9");

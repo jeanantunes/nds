@@ -16,6 +16,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import br.com.abril.nds.integracao.model.canonic.InterfaceEnum;
 import br.com.abril.nds.model.DiaSemana;
+import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.StatusCobranca;
 import br.com.abril.nds.model.StatusConfirmacao;
 import br.com.abril.nds.model.StatusControle;
@@ -89,6 +90,11 @@ import br.com.abril.nds.model.cadastro.pdv.PDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoEstabelecimentoAssociacaoPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoGeradorFluxoPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoPontoPDV;
+import br.com.abril.nds.model.dne.Bairro;
+import br.com.abril.nds.model.dne.Localidade;
+import br.com.abril.nds.model.dne.Logradouro;
+import br.com.abril.nds.model.dne.Pais;
+import br.com.abril.nds.model.dne.UnidadeFederacao;
 import br.com.abril.nds.model.estoque.ConferenciaEncalhe;
 import br.com.abril.nds.model.estoque.Diferenca;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
@@ -180,7 +186,9 @@ public class DataLoader {
 	
 	private static TipoMovimentoEstoque tipoMovimentoRecebimentoEncalhe; 						
 	private static TipoMovimentoEstoque tipoMovimentoRecebimentoEncalheJuramentado; 				
-	private static TipoMovimentoEstoque tipoMovimentoSuplementarEnvioEncalheAnteriroProgramacao; 
+	private static TipoMovimentoEstoque tipoMovimentoSuplementarEnvioEncalheAnteriroProgramacao;
+	private static TipoMovimentoEstoque tipoMovimentoEstoqueCompraSuplementar;
+	private static TipoMovimentoEstoque tipoMovimentoEstoqueEstornoCompraSuplementar;	
 	
 	private static TipoMovimentoEstoque tipoMovimentoEstornoCotaAusente;
 	private static TipoMovimentoEstoque tipoMovimentoSuplementarCotaAusente;
@@ -191,7 +199,9 @@ public class DataLoader {
 	private static TipoMovimentoEstoque tipoMovimentoVendaEncalhe;
 	private static TipoMovimentoFinanceiro tipoMovimentoFinanceiroCompraEncalhe;
 	private static TipoMovimentoEstoque tipoMovimentoEstornoVendaEncalhe;
-
+	private static TipoMovimentoEstoque tipoMovimentoVendaEncalheSuplementar;
+	private static TipoMovimentoEstoque tipoMovimentoEstornoVendaEncalheSuplementar;
+	
 	private static TipoMovimentoEstoque tipoMovimentoEnvioJornaleiro;
 
 	private static TipoMovimentoFinanceiro tipoMovimentoFinanceiroCredito;
@@ -627,7 +637,8 @@ public class DataLoader {
 	private static CFOP cfop2918;
 	private static CFOP cfop1918;
 	private static CFOP cfop6917;
-	private static CFOP cfop5917;	
+	private static CFOP cfop5917;
+
 
 	public static void main(String[] args) {
 		ClassPathXmlApplicationContext ctx = new ClassPathXmlApplicationContext(
@@ -730,7 +741,6 @@ public class DataLoader {
 		criarRotaRoteiroCota(session);		
 		criarControleBaixaBancaria(session);
 		criarParametrosCobrancaCota(session);
-		criarNotasFiscaisEntradaFornecedor(session);
 		gerarCotasAusentes(session);
 		gerarHistoricosAculoDivida(session);
 
@@ -738,6 +748,8 @@ public class DataLoader {
 		
 		//criarDadosContaCorrenteConsigando(session);
 
+		criarMassaNotaFiscalEntradaFornecedorParaRecebimentoFisico(session);
+		
 		gerarCargaDiferencaEstoque(
 			session, 50, produtoEdicaoVeja1, tipoMovimentoFaltaEm, 
 				usuarioJoao, estoqueProdutoVeja1, TipoDiferenca.FALTA_EM);
@@ -786,6 +798,7 @@ public class DataLoader {
 		
 		gerarTiposNotas(session);
 		
+		criarLogradouros(session);
 	}
 	
 	private static void criarAlgoritmos(Session session) {
@@ -3997,8 +4010,6 @@ public class DataLoader {
 
 		
 	}
-	
-	
 
 	private static void criarTiposMovimento(Session session) {
 		tipoMovimentoFaltaEm = Fixture.tipoMovimentoFaltaEm();
@@ -4011,10 +4022,16 @@ public class DataLoader {
 
 		tipoMovimentoVendaEncalhe = Fixture.tipoMovimentoVendaEncalhe();
 		tipoMovimentoEstornoVendaEncalhe = Fixture.tipoMovimentoEstornoVendaEncalhe();
+		
+		tipoMovimentoVendaEncalheSuplementar = Fixture.tipoMovimentoVendaEncalheSuplementar();
+		tipoMovimentoEstornoVendaEncalheSuplementar = Fixture.tipoMovimentoEstornoVendaEncalheSuplementar();
+		tipoMovimentoEstoqueCompraSuplementar = Fixture.tipoMovimentoCompraSuplementar();
+		tipoMovimentoEstoqueEstornoCompraSuplementar = Fixture.tipoMovimentoEstornoCompraSuplementar();
 
 		tipoMovimentoFinanceiroCompraEncalhe = Fixture.tipoMovimentoFinanceiroCompraEncalhe();
 
-		save(session, tipoMovimentoVendaEncalhe,tipoMovimentoFinanceiroCompraEncalhe,tipoMovimentoEstornoVendaEncalhe);
+		save(session, tipoMovimentoVendaEncalhe,tipoMovimentoFinanceiroCompraEncalhe,tipoMovimentoEstornoVendaEncalhe,tipoMovimentoVendaEncalheSuplementar,
+					  tipoMovimentoEstornoVendaEncalheSuplementar,tipoMovimentoEstoqueCompraSuplementar,tipoMovimentoEstoqueEstornoCompraSuplementar);
 
 
 		tipoMovimentoSuplementarCotaAusente = Fixture.tipoMovimentoSuplementarCotaAusente();
@@ -6590,23 +6607,148 @@ public class DataLoader {
 				  	  movimentoFinanceiroEnvioEncalhe1, movimentoFinanceiroEnvioEncalhe2);
 	}
 
-	private static void criarNotasFiscaisEntradaFornecedor(Session session) {
+	private static void criarMassaNotaFiscalEntradaFornecedorParaRecebimentoFisico(Session session) {
+		
+		NotaFiscalEntradaFornecedor nfEntradaFornec = null;
+		
+		Long 		unidadeProduto           = 0L; 
+		
+		Long numero = null;
+		String serie = null;
+		String chaveAcesso = null;
 
+		numero 		= 1000000L;
+		serie 		= "8585";
+		chaveAcesso = "939490";
+		
+		nfEntradaFornec = Fixture.notaFiscalEntradaFornecedor(
+				numero,
+				serie,
+				chaveAcesso,
+				cfop5102, 
+				fornecedorDinap.getJuridica(), 
+				fornecedorDinap, 
+				tipoNotaFiscalRecebimento,
+				usuarioJoao, 
+				new BigDecimal(2500), 
+				new BigDecimal(500), 
+				new BigDecimal(2000));
+		
+		nfEntradaFornec.setOrigem(Origem.MANUAL);
+		session.save(nfEntradaFornec);
+
+		numero 		= 1000001L;
+		serie 		= "8585";
+		chaveAcesso = "939491";
+		
+		nfEntradaFornec = Fixture.notaFiscalEntradaFornecedor(
+				numero,
+				serie,
+				chaveAcesso,
+				cfop5102, 
+				fornecedorDinap.getJuridica(), 
+				fornecedorDinap, 
+				tipoNotaFiscalRecebimento,
+				usuarioJoao, 
+				new BigDecimal(3500), 
+				new BigDecimal(400), 
+				new BigDecimal(3100));
+		
+		nfEntradaFornec.setOrigem(Origem.INTERFACE);
+		session.save(nfEntradaFornec);
+		
+		
+		ItemNotaFiscalEntrada itemNFEntrada = Fixture.itemNotaFiscalEntradaNFE(
+				produtoEdicaoCaras1, 
+				usuarioJoao, 
+				nfEntradaFornec, 
+				Fixture.criarData(05, Calendar.MAY, 2012), 
+				Fixture.criarData(20, Calendar.MAY, 2012), 
+				TipoLancamento.LANCAMENTO, 
+				new BigDecimal(50), 
+				"", 
+				"", 
+				unidadeProduto,
+				"", 
+				"", 
+				BigDecimal.ZERO, 
+				BigDecimal.ZERO, 
+				BigDecimal.ZERO, 
+				BigDecimal.ZERO, 
+				BigDecimal.ZERO);
+		
+		session.save(itemNFEntrada);
+		
+		numero 		= 1000002L;
+		serie 		= "8585";
+		chaveAcesso = "939492";
+		
+		nfEntradaFornec = Fixture.notaFiscalEntradaFornecedor(
+				numero,
+				serie,
+				chaveAcesso,
+				cfop5102, 
+				fornecedorDinap.getJuridica(), 
+				fornecedorDinap, 
+				tipoNotaFiscalRecebimento,
+				usuarioJoao, 
+				new BigDecimal(1500), 
+				new BigDecimal(500), 
+				new BigDecimal(1000));
+		
+		nfEntradaFornec.setOrigem(Origem.INTERFACE);
+		session.save(nfEntradaFornec);
+		
+		itemNFEntrada = Fixture.itemNotaFiscalEntradaNFE(
+				produtoEdicaoCaras1, 
+				usuarioJoao, 
+				nfEntradaFornec, 
+				Fixture.criarData(05, Calendar.MAY, 2012), 
+				Fixture.criarData(20, Calendar.MAY, 2012), 
+				TipoLancamento.LANCAMENTO, 
+				new BigDecimal(50), 
+				"", 
+				"", 
+				unidadeProduto,
+				"", 
+				"", 
+				BigDecimal.ZERO, 
+				BigDecimal.ZERO, 
+				BigDecimal.ZERO, 
+				BigDecimal.ZERO, 
+				BigDecimal.ZERO);
+		
+		session.save(itemNFEntrada);
+		
+		
+	}
+	
+	private static void criarNotasFiscaisEntradaFornecedor(Session session) {
+		
 		for (int i = 0; i < 50; i++) {
 
+			Long numero = 0L;
+			String serie = "";
+			String chaveAcesso = "";
+			
 			Calendar calendar = Calendar.getInstance();
 
 			TipoNotaFiscal tipoNotaFiscal = i % 2 == 0 ? tipoNotaFiscalRecebimento : tipoNotaFiscalDevolucao;
 
-			notaFiscalFornecedor = Fixture
-					.notaFiscalEntradaFornecedor(cfop5102, fornecedorDinap.getJuridica(), fornecedorDinap, tipoNotaFiscal,
-							usuarioJoao, new BigDecimal(15), new BigDecimal(5), BigDecimal.TEN);
+			notaFiscalFornecedor = Fixture.notaFiscalEntradaFornecedor(
+					cfop5102, 
+					fornecedorDinap.getJuridica(), 
+					fornecedorDinap, 
+					tipoNotaFiscal,
+					usuarioJoao, 
+					new BigDecimal(15), 
+					new BigDecimal(5), 
+					BigDecimal.TEN);
 
 			calendar.add(Calendar.DATE, i * 3);
-
 			notaFiscalFornecedor.setDataEmissao(calendar.getTime());
-
 			session.save(notaFiscalFornecedor);
+			
 		}
 	}	
 
@@ -8665,7 +8807,7 @@ public class DataLoader {
 		save(session, Fixture.criarInterfaceExecucao(InterfaceEnum.EMS0109.getCodigoInterface(), "EMS0109"));
 		save(session, Fixture.criarInterfaceExecucao(InterfaceEnum.EMS0110.getCodigoInterface(), "EMS0110"));
 		save(session, Fixture.criarInterfaceExecucao(InterfaceEnum.EMS0111.getCodigoInterface(), "EMS0111"));
-		save(session, Fixture.criarInterfaceExecucao(InterfaceEnum.EMS0112.getCodigoInterface(), "EMS0112"));
+//		save(session, Fixture.criarInterfaceExecucao(InterfaceEnum.EMS0112.getCodigoInterface(), "EMS0112"));
 		save(session, Fixture.criarInterfaceExecucao(InterfaceEnum.EMS0113.getCodigoInterface(), "EMS0113"));
 		save(session, Fixture.criarInterfaceExecucao(InterfaceEnum.EMS0114.getCodigoInterface(), "EMS0114"));
 		save(session, Fixture.criarInterfaceExecucao(116L, "EMS0116"));
@@ -8684,8 +8826,8 @@ public class DataLoader {
 		save(session, Fixture.criarInterfaceExecucao(131L, "EMS0131"));
 		save(session, Fixture.criarInterfaceExecucao(132L, "EMS0132"));
 		save(session, Fixture.criarInterfaceExecucao(133L, "EMS0133"));
-		save(session, Fixture.criarInterfaceExecucao(InterfaceEnum.EMS0134.getCodigoInterface(), "EMS0134"));
-		save(session, Fixture.criarInterfaceExecucao(InterfaceEnum.EMS0185.getCodigoInterface(), "EMS0185"));
+//		save(session, Fixture.criarInterfaceExecucao(InterfaceEnum.EMS0134.getCodigoInterface(), "EMS0134"));
+//		save(session, Fixture.criarInterfaceExecucao(InterfaceEnum.EMS0185.getCodigoInterface(), "EMS0185"));
 		save(session, Fixture.criarInterfaceExecucao(197L, "EMS0197"));
 	}
 	
@@ -8698,6 +8840,35 @@ public class DataLoader {
 		save(session, Fixture.criarEventoExecucao(EventoExecucaoEnum.GERACAO_DE_ARQUIVO.getCodigo(), "Arquivo", "Geração de Arquivo"));
 		save(session, Fixture.criarEventoExecucao(EventoExecucaoEnum.INF_DADO_ALTERADO.getCodigo(), "Alteração Dado", "Informação de dado Alterado"));
 		save(session, Fixture.criarEventoExecucao(EventoExecucaoEnum.REGISTRO_JA_EXISTENTE.getCodigo(), "Registro já existente", "Registro já existente"));
+	}
+	
+	private static void criarLogradouros(Session session) {
+		
+		Pais pais = Fixture.criarPais("BR", "Brasil");
+		save(session, pais);
+		
+		UnidadeFederacao sp = Fixture.criarUnidadeFederacao(13246L, "SP", "São Paulo", pais);
+		UnidadeFederacao mg = Fixture.criarUnidadeFederacao(13247L, "MG", "Minas Gerais", pais);
+		save(session, sp, mg);
+		
+		Localidade mococa = Fixture.criarLocalidade("132", "Mococa", "582", sp);
+		Localidade arcerburgo = Fixture.criarLocalidade("134", "Arceburgo", "584", mg);
+		save(session, mococa, arcerburgo);
+		
+		Bairro vilaCarvalho = Fixture.criarBairro("1", "Vila Carvalho", mococa);
+		Bairro descanso = Fixture.criarBairro("2", "Descanso", mococa);
+		Bairro centro = Fixture.criarBairro("3", "Centro", arcerburgo);
+		save(session, vilaCarvalho, descanso, centro);
+		
+		Logradouro joseCristovam = Fixture.criarLogradouro(
+				"1", "Capitão José Cristovam de Lima", "13735430", 1L, mococa, "RUA");
+		Logradouro avenidaBrasil = Fixture.criarLogradouro(
+				"2", "Avenida Brasil", "13500213", 3L, arcerburgo, "AVENIDA");
+		Logradouro antonioCristovao = Fixture.criarLogradouro(
+				"3", "Antonio Cristovão", "13730000", 2L, mococa, "RUA");
+		Logradouro avenidaMarginal = Fixture.criarLogradouro(
+				"4", "Avenida Marginal", "13500213", 2L, mococa, "AVENIDA");
+		save(session, joseCristovam, avenidaBrasil, antonioCristovao, avenidaMarginal);
 	}
 	
 }

@@ -93,6 +93,11 @@ import br.com.abril.nds.model.cadastro.pdv.TipoEstabelecimentoAssociacaoPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoGeradorFluxoPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoPeriodoFuncionamentoPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoPontoPDV;
+import br.com.abril.nds.model.dne.Bairro;
+import br.com.abril.nds.model.dne.Localidade;
+import br.com.abril.nds.model.dne.Logradouro;
+import br.com.abril.nds.model.dne.Pais;
+import br.com.abril.nds.model.dne.UnidadeFederacao;
 import br.com.abril.nds.model.estoque.ConferenciaEncalhe;
 import br.com.abril.nds.model.estoque.ConferenciaEncalheParcial;
 import br.com.abril.nds.model.estoque.Diferenca;
@@ -890,12 +895,52 @@ public class Fixture {
 		return tipoMovimento;
 	}
 	
+	public static TipoMovimentoEstoque tipoMovimentoVendaEncalheSuplementar() {
+		TipoMovimentoEstoque tipoMovimento = new TipoMovimentoEstoque();
+		tipoMovimento.setAprovacaoAutomatica(true);
+		tipoMovimento.setDescricao("Venda Encalhe Suplementar");
+		tipoMovimento.setIncideDivida(true);
+		tipoMovimento.setGrupoMovimentoEstoque(GrupoMovimentoEstoque.VENDA_ENCALHE_SUPLEMENTAR);
+	
+		return tipoMovimento;
+	}
+	
 	public static TipoMovimentoEstoque tipoMovimentoEstornoVendaEncalhe() {
 		TipoMovimentoEstoque tipoMovimento = new TipoMovimentoEstoque();
 		tipoMovimento.setAprovacaoAutomatica(true);
 		tipoMovimento.setDescricao("Estorno Venda Encalhe");
 		tipoMovimento.setIncideDivida(true);
 		tipoMovimento.setGrupoMovimentoEstoque(GrupoMovimentoEstoque.ESTORNO_VENDA_ENCALHE);
+	
+		return tipoMovimento;
+	}
+	
+	public static TipoMovimentoEstoque tipoMovimentoEstornoVendaEncalheSuplementar() {
+		TipoMovimentoEstoque tipoMovimento = new TipoMovimentoEstoque();
+		tipoMovimento.setAprovacaoAutomatica(true);
+		tipoMovimento.setDescricao("Estorno Venda Encalhe Suplementar");
+		tipoMovimento.setIncideDivida(true);
+		tipoMovimento.setGrupoMovimentoEstoque(GrupoMovimentoEstoque.ESTORNO_VENDA_ENCALHE_SUPLEMENTAR);
+	
+		return tipoMovimento;
+	}
+	
+	public static TipoMovimentoEstoque tipoMovimentoCompraSuplementar() {
+		TipoMovimentoEstoque tipoMovimento = new TipoMovimentoEstoque();
+		tipoMovimento.setAprovacaoAutomatica(true);
+		tipoMovimento.setDescricao("Compra Suplementar");
+		tipoMovimento.setIncideDivida(true);
+		tipoMovimento.setGrupoMovimentoEstoque(GrupoMovimentoEstoque.COMPRA_SUPLEMENTAR);
+	
+		return tipoMovimento;
+	}
+	
+	public static TipoMovimentoEstoque tipoMovimentoEstornoCompraSuplementar() {
+		TipoMovimentoEstoque tipoMovimento = new TipoMovimentoEstoque();
+		tipoMovimento.setAprovacaoAutomatica(true);
+		tipoMovimento.setDescricao("Estorno Compra Suplementar");
+		tipoMovimento.setIncideDivida(true);
+		tipoMovimento.setGrupoMovimentoEstoque(GrupoMovimentoEstoque.ESTORNO_COMPRA_SUPLEMENTAR);
 	
 		return tipoMovimento;
 	}
@@ -1608,6 +1653,7 @@ public class Fixture {
 		estoqueProduto.setProdutoEdicao(produtoEdicao);
 		estoqueProduto.setQtde(qtde);
 		estoqueProduto.setQtdeSuplementar(qtde);
+		estoqueProduto.setQtdeDevolucaoEncalhe(qtde);
 		return estoqueProduto;
 	}
 	
@@ -2804,4 +2850,66 @@ public class Fixture {
 		return ee;
 	}
 	
+	public static Pais criarPais(String sigla, String nomePaisPortugues) {
+		
+		Pais pais = new Pais();
+		
+		pais.setSigla(sigla);
+		pais.setNomePaisPortugues(nomePaisPortugues);
+		
+		return pais;
+	}
+	
+	public static UnidadeFederacao criarUnidadeFederacao(Long chaveUf, String sigla, String nome, Pais pais) {
+		
+		UnidadeFederacao uf = new UnidadeFederacao();
+		
+		uf.setChaveUf(chaveUf);
+		uf.setSigla(sigla);
+		uf.setNome(nome);
+		uf.setPais(pais);
+		
+		return uf;
+	}
+	
+	public static Localidade criarLocalidade(String id, String nome, 
+											 String codigoMunicipioIBGE, 
+											 UnidadeFederacao unidadeFederacao) {
+		
+		Localidade localidade = new Localidade();
+		
+		localidade.setId(id);
+		localidade.setNome(nome);
+		localidade.setUnidadeFederacao(unidadeFederacao);
+		localidade.setCodigoMunicipioIBGE(codigoMunicipioIBGE);
+		
+		return localidade;
+	}
+	
+	public static Bairro criarBairro(String id, String nome, Localidade localidade) {
+		
+		Bairro bairro = new Bairro();
+		
+		bairro.setId(id);
+		bairro.setNome(nome);
+		bairro.setLocalidade(localidade);
+		
+		return bairro;
+	}
+	
+	public static Logradouro criarLogradouro(String id, String nome, 
+											 String cep, Long chaveBairroInicial,
+											 Localidade localidade, String tipoLogradouro) {
+		
+		Logradouro logradouro = new Logradouro();
+		
+		logradouro.setCep(cep);
+		logradouro.setChaveBairroInicial(chaveBairroInicial);
+		logradouro.setId(id);
+		logradouro.setLocalidade(localidade);
+		logradouro.setNome(nome);
+		logradouro.setTipoLogradouro(tipoLogradouro);
+		
+		return logradouro;
+	}
 }
