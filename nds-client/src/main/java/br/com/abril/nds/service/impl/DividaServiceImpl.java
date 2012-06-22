@@ -253,4 +253,10 @@ public class DividaServiceImpl implements DividaService {
 		return encargos;
 	}
 
+	@Override
+	@Transactional(readOnly=true)
+	public BigDecimal obterTotalDividasAbertoCota(Long idCota) {
+		return this.dividaRepository.obterTotalDividasAbertoCota(idCota);
+	}
+
 }

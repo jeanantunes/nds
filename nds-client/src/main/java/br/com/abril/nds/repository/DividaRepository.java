@@ -1,5 +1,6 @@
 package br.com.abril.nds.repository;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -75,4 +76,11 @@ public interface DividaRepository extends Repository<Divida, Long>{
 	Double obterSomaDividas(FiltroCotaInadimplenteDTO filtro);
 	
 	Divida obterDividaPorIdConsolidado(Long idConsolidado);
+	
+	/**
+     * Obtem somatório das dividas em aberto de uma Cota
+     * @param idCota
+     * @return BigDecimal
+     */
+	BigDecimal obterTotalDividasAbertoCota(Long idCota);
 }
