@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamentoParcial;
 import br.com.abril.nds.util.Util;
@@ -68,6 +69,10 @@ public class ProdutoLancamentoDTO implements Serializable {
 	private boolean possuiEstudo;
 	
 	private boolean possuiRecebimentoFisico;
+	
+	private PeriodicidadeProduto periodicidadeProduto;
+	
+	private Integer ordemPeriodicidadeProduto;
 
 	/**
 	 * Construtor padrão.
@@ -384,6 +389,37 @@ public class ProdutoLancamentoDTO implements Serializable {
 	 */
 	public void setPossuiRecebimentoFisico(boolean possuiRecebimentoFisico) {
 		this.possuiRecebimentoFisico = possuiRecebimentoFisico;
+	}
+
+	/**
+	 * @return the periodicidadeProduto
+	 */
+	public PeriodicidadeProduto getPeriodicidadeProduto() {
+		return periodicidadeProduto;
+	}
+
+	/**
+	 * @param periodicidadeProduto em formato de String para ser convertido.
+	 */
+	public void setPeriodicidadeProduto(String periodicidadeProduto) {
+		this.periodicidadeProduto =
+			Util.getEnumByStringValue(PeriodicidadeProduto.values(), periodicidadeProduto);
+		
+		this.ordemPeriodicidadeProduto = this.periodicidadeProduto.getOrdem();
+	}
+
+	/**
+	 * @return the ordemPeriodicidadeProduto
+	 */
+	public Integer getOrdemPeriodicidadeProduto() {
+		return ordemPeriodicidadeProduto;
+	}
+
+	/**
+	 * @param ordemPeriodicidadeProduto the ordemPeriodicidadeProduto to set
+	 */
+	public void setOrdemPeriodicidadeProduto(Integer ordemPeriodicidadeProduto) {
+		this.ordemPeriodicidadeProduto = ordemPeriodicidadeProduto;
 	}
 	
 }
