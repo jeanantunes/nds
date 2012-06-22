@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.util.PaginacaoUtil;
 import br.com.abril.nds.dto.InterfaceDTO;
+import br.com.abril.nds.dto.ProcessoDTO;
 import br.com.abril.nds.dto.filtro.FiltroInterfacesDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Distribuidor;
@@ -18,7 +19,7 @@ import br.com.abril.nds.model.integracao.LogExecucaoMensagem;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.DistribuidorService;
-import br.com.abril.nds.service.LogExecucaoMensagemService;
+import br.com.abril.nds.service.PainelProcessamentoService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
@@ -51,7 +52,7 @@ public class PainelProcessamentoController {
 	private static final String FILTRO_PESQUISA_INTERFACES_SESSION_ATTRIBUTE = "filtroPesquisaInterfaces";
 
 	@Autowired
-	private LogExecucaoMensagemService logExecucaoMensagemService;
+	private PainelProcessamentoService painelProcessamentoService;
 	
 	@Autowired
 	private DistribuidorService distribuidorService;
@@ -103,7 +104,7 @@ public class PainelProcessamentoController {
 			}
 		}
 		
-		List<InterfaceDTO> lista = logExecucaoMensagemService.listarInterfaces();
+		List<InterfaceDTO> lista = painelProcessamentoService.listarInterfaces();
 		
 		String nomeArquivo = "relatorio-interface";
 		
@@ -128,11 +129,11 @@ public class PainelProcessamentoController {
 	@Path("/pesquisarInterfaces")
 	public void pesquisarInterfaces(String sortname, String sortorder, int rp, int page) throws Exception {
 
-		FiltroInterfacesDTO filtro = carregarFiltro(sortorder, sortname, page, rp);
+		FiltroInterfacesDTO filtro = carregarFiltroInterfaces(sortorder, sortname, page, rp);
 		
 		List<InterfaceDTO> resultado = null;
 		try {
-			resultado = logExecucaoMensagemService.listarInterfaces();
+			resultado = painelProcessamentoService.listarInterfaces();
 		} catch (Exception e) {
 			if (e instanceof ValidacaoException) {
 				throw e;
@@ -171,8 +172,8 @@ public class PainelProcessamentoController {
 		List<LogExecucaoMensagem> lista;
 		Long quantidade = 0L;
 		try {
-			lista = logExecucaoMensagemService.listarProcessamentoInterface(Long.parseLong(idLogProcessamento), sortname, Ordenacao.valueOf(sortorder.toUpperCase()), page*rp - rp , rp);
-			quantidade = logExecucaoMensagemService.quantidadeProcessamentoInterface(Long.parseLong(idLogProcessamento));
+			lista = painelProcessamentoService.listarProcessamentoInterface(Long.parseLong(idLogProcessamento), sortname, Ordenacao.valueOf(sortorder.toUpperCase()), page*rp - rp , rp);
+			quantidade = painelProcessamentoService.quantidadeProcessamentoInterface(Long.parseLong(idLogProcessamento));
 		} catch (Exception e) {
 			if (e instanceof ValidacaoException) {
 				throw e;
@@ -187,11 +188,13 @@ public class PainelProcessamentoController {
 	}
 	
 	@Path("/pesquisarProcessos")
-	public void pesquisarProcessos(String sortname, String sortorder, int rp, int page) {
-		/*List<RegistroProcessosPainelProcessamentoVO> resultado = null;
-		BigDecimal saldoTotal = new BigDecimal("0");
+	public void pesquisarProcessos(String sortname, String sortorder, int rp, int page) throws Exception {
+
+		//FiltroProcessosDTO filtro = carregarFiltro(sortorder, sortname, page, rp);
+		
+		List<ProcessoDTO> resultado = null;
 		try {
-			resultado = edicoesFechadasService.obterResultadoEdicoesFechadas();
+			resultado = painelProcessamentoService.listarProcessos();
 		} catch (Exception e) {
 
 			if (e instanceof ValidacaoException) {
@@ -200,7 +203,17 @@ public class PainelProcessamentoController {
 				throw new ValidacaoException(TipoMensagem.ERROR,
 						"Erro ao pesquisar registros: " + e.getMessage());
 			}
-		}*/
+		}
+		
+		//List<ProcessoDTO> resultadoPaginado = PaginacaoUtil.paginarEOrdenarEmMemoria(resultado, filtro.getPaginacao(), filtro.getOrdenacaoColuna().toString());
+
+		TableModel<CellModelKeyValue<ProcessoDTO>> tableModel = new TableModel<CellModelKeyValue<ProcessoDTO>>();
+		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(resultado));
+		tableModel.setPage(1);		
+		//tableModel.setPage(filtro.getPaginacao().getPaginaAtual());		
+		
+		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
+		
 	}
 
 	/*private FiltroPainelProcessamentoDTO carregarFiltro(String sortorder, String sortname, int page, int rp) {
@@ -251,11 +264,11 @@ public class PainelProcessamentoController {
 	 * @param dataDe 
 	 * @return
 	 */
-	private FiltroInterfacesDTO carregarFiltro(String sortorder, String sortname, int page, int rp) {
+	private FiltroInterfacesDTO carregarFiltroInterfaces(String sortorder, String sortname, int page, int rp) {
 
 		FiltroInterfacesDTO filtro = new FiltroInterfacesDTO();
 		
-		this.configurarPaginacao(filtro, sortorder, sortname, page, rp);
+		this.configurarPaginacaoInterfaces(filtro, sortorder, sortname, page, rp);
 
 		FiltroInterfacesDTO filtroSessao = (FiltroInterfacesDTO) this.session.getAttribute(FILTRO_PESQUISA_INTERFACES_SESSION_ATTRIBUTE);
 
@@ -276,7 +289,7 @@ public class PainelProcessamentoController {
 	 * @param page
 	 * @param rp
 	 */
-	private void configurarPaginacao(FiltroInterfacesDTO filtro, String sortorder,	String sortname, int page,int rp) {
+	private void configurarPaginacaoInterfaces(FiltroInterfacesDTO filtro, String sortorder,	String sortname, int page,int rp) {
 
 		if (filtro != null) {
 		

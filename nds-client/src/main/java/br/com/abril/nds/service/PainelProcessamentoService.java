@@ -1,12 +1,47 @@
 package br.com.abril.nds.service;
 
+import java.util.List;
+
+import br.com.abril.nds.dto.InterfaceDTO;
+import br.com.abril.nds.dto.ProcessoDTO;
+import br.com.abril.nds.model.integracao.LogExecucaoMensagem;
+import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
+
 /**
- * Classe de implementação de serviços referentes a entidade
+ * Interface que define as regras de acesso a serviços referentes a entidade
+ * {@link br.com.abril.nds.model.integracao.LogExecucao }  
  * @author infoA2
  */
 public interface PainelProcessamentoService {
 
-	public void obterInterfaces();
-	public void obterProcessos();
+	/**
+	 * Busca as interfaces
+	 * @return List<LogExecucao>
+	 */
+	public List<InterfaceDTO> listarInterfaces();
+
+	/**
+	 * Busca os processos
+	 * @return List<ProcessoDTO>
+	 */
+	public List<ProcessoDTO> listarProcessos();
+
+	/**
+	 * Retorna a lista de mensagens de processamento de interface
+	 * @param codigoLogExecucao
+	 * @param orderBy
+	 * @param ordenacao
+	 * @param initialResult
+	 * @param maxResults
+	 * @return List<LogExecucaoMensagem>
+	 */
+	public List<LogExecucaoMensagem> listarProcessamentoInterface(Long codigoLogExecucao, String orderBy, Ordenacao ordenacao, int initialResult, int maxResults);
 	
+	/**
+	 * Retorna a quantidade de mensagens de processamento de interface
+	 * @param codigoLogExecucao
+	 * @return Long
+	 */
+	public Long quantidadeProcessamentoInterface(Long codigoLogExecucao);
+
 }

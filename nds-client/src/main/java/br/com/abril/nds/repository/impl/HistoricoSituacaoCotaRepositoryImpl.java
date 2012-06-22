@@ -1,13 +1,18 @@
 package br.com.abril.nds.repository.impl;
 
+import java.util.Date;
 import java.util.List;
 
+import org.hibernate.Criteria;
 import org.hibernate.Query;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.filtro.FiltroStatusCotaDTO;
 import br.com.abril.nds.model.cadastro.HistoricoSituacaoCota;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
+import br.com.abril.nds.model.estoque.Expedicao;
 import br.com.abril.nds.repository.HistoricoSituacaoCotaRepository;
 
 /**
@@ -275,6 +280,28 @@ public class HistoricoSituacaoCotaRepositoryImpl extends AbstractRepository<Hist
 		
 		return (HistoricoSituacaoCota) query.uniqueResult();
 		
+	}
+
+	/* (non-Javadoc)
+	 * @see br.com.abril.nds.repository.HistoricoSituacaoCotaRepository#buscarUltimaSuspensaoCotasDia(java.util.Date)
+	 */
+	@Override
+	public Date buscarUltimaSuspensaoCotasDia(Date dataOperacao) {
+		Criteria criteria = getSession().createCriteria(HistoricoSituacaoCota.class);
+		criteria.setProjection(Projections.max("dataEdicao"));
+		criteria.add(Restrictions.eq("novaSituacao", SituacaoCadastro.SUSPENSO));
+		criteria.add(Restrictions.eq("dataEdicao", dataOperacao));
+		return (Date) criteria.uniqueResult();
+	}
+
+	/* (non-Javadoc)
+	 * @see br.com.abril.nds.repository.HistoricoSituacaoCotaRepository#buscarDataUltimaSuspensaoCotas()
+	 */
+	@Override
+	public Date buscarDataUltimaSuspensaoCotas() {
+		Criteria criteria = getSession().createCriteria(Expedicao.class);
+		criteria.setProjection(Projections.max("dataEdicao"));
+		return (Date) criteria.uniqueResult();
 	}
 
 }

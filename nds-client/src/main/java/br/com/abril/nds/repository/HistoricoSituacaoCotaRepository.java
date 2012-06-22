@@ -1,5 +1,6 @@
 package br.com.abril.nds.repository;
 
+import java.util.Date;
 import java.util.List;
 
 import br.com.abril.nds.dto.filtro.FiltroStatusCotaDTO;
@@ -41,4 +42,17 @@ public interface HistoricoSituacaoCotaRepository extends Repository<HistoricoSit
 	 */
 	HistoricoSituacaoCota obterUltimoHistoricoInativo(Integer numeroCota);
 
+	/**
+	 * Busca última suspensão de cota realizada em determinado dia
+	 * @param dataOperacao
+	 * @return HistoricoSituacaoCota
+	 */
+	public Date buscarUltimaSuspensaoCotasDia(Date dataOperacao);
+
+	/**
+	 * Busca data da última suspensão de cotas realizada
+	 * @return Date
+	 */
+	public Date buscarDataUltimaSuspensaoCotas();
+	
 }

@@ -78,19 +78,19 @@ var painelProcessamentoController = {
 			dataType : 'json',
 			colModel : [ {
 				display : 'Processos',
-				name : 'processos',
+				name : 'nome',
 				width : 519,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Status',
-				name : 'Status',
+				name : 'status',
 				width : 70,
 				sortable : true,
 				align : 'center'
 			}, {
 				display : 'Data Processamento',
-				name : 'dtProcessamento',
+				name : 'dataProcessmento',
 				width : 130,
 				sortable : true,
 				align : 'center'

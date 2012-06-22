@@ -7,6 +7,7 @@ import java.util.List;
 import br.com.abril.nds.dto.CotaAusenteEncalheDTO;
 import br.com.abril.nds.dto.FechamentoFisicoLogicoDTO;
 import br.com.abril.nds.dto.filtro.FiltroFechamentoEncalheDTO;
+import br.com.abril.nds.model.estoque.ControleFechamentoEncalhe;
 import br.com.abril.nds.model.seguranca.Usuario;
 
 public interface FechamentoEncalheService {
@@ -38,4 +39,9 @@ public interface FechamentoEncalheService {
 	void removeFechamentoDetalhado(FiltroFechamentoEncalheDTO filtro);
 	
 	int buscarQuantidadeCotasAusentes(Date dataEncalhe);
+	
+	ControleFechamentoEncalhe buscaControleFechamentoEncalhePorData(Date dataFechamentoEncalhe);
+
+	Date buscaDataUltimoControleFechamentoEncalhe();
+
 }
