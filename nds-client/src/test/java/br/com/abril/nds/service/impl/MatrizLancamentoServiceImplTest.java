@@ -7,7 +7,10 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
+import java.util.TreeSet;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -15,6 +18,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import br.com.abril.nds.dto.BalanceamentoLancamentoDTO;
+import br.com.abril.nds.dto.ProdutoLancamentoDTO;
 import br.com.abril.nds.dto.ResumoPeriodoBalanceamentoDTO;
 import br.com.abril.nds.dto.filtro.FiltroLancamentoDTO;
 import br.com.abril.nds.fixture.Fixture;
@@ -34,8 +38,11 @@ import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.PoliticaCobranca;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TipoRegistroCobranca;
+import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.LancamentoRepository;
+import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.util.Intervalo;
 
 public class MatrizLancamentoServiceImplTest {
 	
@@ -55,9 +62,12 @@ public class MatrizLancamentoServiceImplTest {
 	private Fornecedor fornecedorDinap;
 	private Fornecedor fornecedorFc;
 	
+	int totalProdutosLancamento;
+	
 	@Before
 	public void setUp() {
 		service = new MatrizLancamentoServiceImpl();
+		
 		lancamentoRepository = Mockito.mock(LancamentoRepository.class);
 		distribuidorRepository = Mockito.mock(DistribuidorRepository.class);
 		
@@ -161,20 +171,43 @@ public class MatrizLancamentoServiceImplTest {
 		List<DistribuicaoDistribuidor> listaDistribuicaoDistribuidor =
 			this.listaDistribuicaoDistribuidor();
 		
-		Mockito.when(this.distribuidorRepository.obter()).thenReturn(distribuidor);
+		Mockito.when(distribuidorRepository.obter()).thenReturn(distribuidor);
 		
 		Mockito.when(
-			this.distribuidorRepository.buscarDiasDistribuicaoFornecedor(
+			distribuidorRepository.buscarDiasDistribuicaoFornecedor(
 				filtro.getIdsFornecedores(), OperacaoDistribuidor.DISTRIBUICAO)).thenReturn(listaDistribuicaoFornecedor);
 		
 		Mockito.when(
-			this.distribuidorRepository.buscarDiasDistribuicaoDistribuidor(
+			distribuidorRepository.buscarDiasDistribuicaoDistribuidor(
 				distribuidor.getId(), OperacaoDistribuidor.DISTRIBUICAO)).thenReturn(listaDistribuicaoDistribuidor);
+		
+		List<ProdutoLancamentoDTO> produtosLancamentoMock = obterProdutosLancamentoMock();
+		
+		Intervalo<Date> periodoDistribuicao = getPeriodoDistribuicao();
+		
+		Mockito.when(
+			lancamentoRepository.obterBalanceamentoLancamento(
+				periodoDistribuicao, filtro.getIdsFornecedores())).thenReturn(produtosLancamentoMock);
+		
+		Mockito.when(
+			lancamentoRepository.obterExpectativasRepartePorData(
+				getPeriodoDistribuicao(), filtro.getIdsFornecedores())).thenReturn(
+					obterMapaExpectativaReparteTotalDiarioMock(produtosLancamentoMock));
 		
 		BalanceamentoLancamentoDTO balanceamentoLancamento =
 			service.obterMatrizLancamento(this.montarFiltro(), false);
 		
 		Assert.assertNotNull(balanceamentoLancamento);
+		
+		List<ProdutoLancamentoDTO> produtosLancamento = new ArrayList<ProdutoLancamentoDTO>();
+		
+		for (Map.Entry<Date, List<ProdutoLancamentoDTO>> entry 
+				: balanceamentoLancamento.getMatrizLancamento().entrySet()) {
+			
+			produtosLancamento.addAll(entry.getValue());	
+		}
+		
+		Assert.assertEquals(totalProdutosLancamento, produtosLancamento.size());
 	}
 	
 	private FiltroLancamentoDTO montarFiltro() {
@@ -188,6 +221,24 @@ public class MatrizLancamentoServiceImplTest {
 			new FiltroLancamentoDTO(new Date(), idsFornecedores, null, "codigoProduto");
 		
 		return filtro;
+	}
+	
+	private Intervalo<Date> getPeriodoDistribuicao() {
+		
+		int numeroSemana =
+			DateUtil.obterNumeroSemanaNoAno(new Date(),
+											distribuidor.getInicioSemana().getCodigoDiaSemana());
+		
+		Date dataInicialSemana =
+			DateUtil.obterDataDaSemanaNoAno(numeroSemana,
+											distribuidor.getInicioSemana().getCodigoDiaSemana());
+		
+		Date dataFinalSemana =
+			DateUtil.adicionarDias(dataInicialSemana, 6);
+		
+		Intervalo<Date> periodoDistribuicao = new Intervalo<Date>(dataInicialSemana, dataFinalSemana);
+		
+		return periodoDistribuicao;
 	}
 	
 	private List<DistribuicaoFornecedor> listaDistribuicaoFornecedor() {
@@ -241,6 +292,86 @@ public class MatrizLancamentoServiceImplTest {
 		listaDistribuicaoDistribuidor.add(distribuicaoDistribuidorSexta);
 		
 		return listaDistribuicaoDistribuidor;
+	}
+	
+	private List<ProdutoLancamentoDTO> obterProdutosLancamentoMock() {
+		
+		List<ProdutoLancamentoDTO> produtosLancamento = new ArrayList<ProdutoLancamentoDTO>();
+		
+		Date data1 = DateUtil.removerTimestamp(new Date());
+		Date data2 = DateUtil.removerTimestamp(DateUtil.adicionarDias(data1, 1));
+		Date data3 = DateUtil.removerTimestamp(DateUtil.adicionarDias(data2, 1));
+		Date data4 = DateUtil.removerTimestamp(DateUtil.adicionarDias(data3, 1));
+		Date data5 = DateUtil.removerTimestamp(DateUtil.adicionarDias(data4, 1));
+		
+		Set<Date> datas = new TreeSet<Date>();
+		
+		datas.add(data1);
+		datas.add(data2);
+		datas.add(data3);
+		datas.add(data4);
+		datas.add(data5);
+		
+		Date dataRecolhimentoPrevista =
+			DateUtil.removerTimestamp(DateUtil.adicionarDias(new Date(), 10));
+		
+		for (Date data : datas) {
+			
+			for (int i = 0; i < 100; i++) {
+			
+				ProdutoLancamentoDTO produtoLancamento = new ProdutoLancamentoDTO();
+				
+				BigDecimal repartePrevisto = new BigDecimal("100.0");
+				repartePrevisto = repartePrevisto.add(new BigDecimal(totalProdutosLancamento));
+				
+				produtoLancamento.setIdLancamento((long) totalProdutosLancamento);
+				produtoLancamento.setDataLancamentoPrevista(data);
+				produtoLancamento.setDataLancamentoDistribuidor(data);
+				produtoLancamento.setRepartePrevisto(repartePrevisto);
+				produtoLancamento.setDataRecolhimentoPrevista(dataRecolhimentoPrevista);
+				produtoLancamento.setPeso(new BigDecimal(10));
+				produtoLancamento.setValorTotal(new BigDecimal(2));
+				produtoLancamento.setReparteFisico(new BigDecimal(5));
+				produtoLancamento.setStatusLancamento(StatusLancamento.PLANEJADO.toString());
+				
+				if (totalProdutosLancamento == 101) {
+					produtoLancamento.setStatusLancamento(StatusLancamento.CANCELADO_GD.toString());
+				}
+				
+				produtosLancamento.add(produtoLancamento);
+				
+				
+				totalProdutosLancamento++;
+			}
+		}
+		
+		return produtosLancamento;
+	}
+	
+	private TreeMap<Date, BigDecimal> obterMapaExpectativaReparteTotalDiarioMock(List<ProdutoLancamentoDTO> produtosLancamento) {
+		
+		TreeMap<Date, BigDecimal> mapaExpectativaReparteTotalDiario =
+			new TreeMap<Date, BigDecimal>();
+		
+		for (ProdutoLancamentoDTO produtoLancamento : produtosLancamento) {
+			
+			BigDecimal expectativaReparte =
+				mapaExpectativaReparteTotalDiario.get(produtoLancamento.getDataLancamentoDistribuidor());
+			
+			if (expectativaReparte != null) {
+				
+				expectativaReparte = expectativaReparte.add(produtoLancamento.getRepartePrevisto());
+			
+			} else {
+				
+				expectativaReparte = produtoLancamento.getRepartePrevisto();
+			}
+			
+			mapaExpectativaReparteTotalDiario.put(produtoLancamento.getDataLancamentoDistribuidor(),
+					  							  expectativaReparte);
+		}
+				
+		return mapaExpectativaReparteTotalDiario;
 	}
 
 }

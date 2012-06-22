@@ -747,12 +747,23 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 		dadosBalanceamentoLancamento.setCapacidadeDistribuicao(
 			distribuidor.getCapacidadeDistribuicao());
 		
+		// TODO: chamar o repository onde os dados estão mockados
+		
 		List<ProdutoLancamentoDTO> produtosLancamento = this.obterProdutosLancamentoMock();
+		
+//		List<ProdutoLancamentoDTO> produtosLancamento =
+//			this.lancamentoRepository.obterBalanceamentoLancamento(periodoDistribuicao,
+//																   filtro.getIdsFornecedores());
 		
 		dadosBalanceamentoLancamento.setProdutosLancamento(produtosLancamento);
 		
 		dadosBalanceamentoLancamento.setMapaExpectativaReparteTotalDiario(
 			this.obterMapaExpectativaReparteTotalDiarioMock(produtosLancamento));
+
+//		dadosBalanceamentoLancamento.setMapaExpectativaReparteTotalDiario(
+//			this.lancamentoRepository.obterExpectativasRepartePorData(periodoDistribuicao,
+//																	  filtro.getIdsFornecedores()));
+
 		
 		dadosBalanceamentoLancamento.setQtdDiasLimiteParaReprogLancamento(
 			distribuidor.getQtdDiasLimiteParaReprogLancamento());
@@ -899,7 +910,7 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 		Date dataRecolhimentoPrevista =
 			DateUtil.removerTimestamp(DateUtil.adicionarDias(new Date(), 10));
 		
-		long x = 0;
+		int totalProdutosLancamento = 0;
 		
 		for (Date data : datas) {
 			
@@ -908,9 +919,9 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 				ProdutoLancamentoDTO produtoLancamento = new ProdutoLancamentoDTO();
 				
 				BigDecimal repartePrevisto = new BigDecimal("100.0");
-				repartePrevisto = repartePrevisto.add(new BigDecimal(x));
+				repartePrevisto = repartePrevisto.add(new BigDecimal(totalProdutosLancamento));
 				
-				produtoLancamento.setIdLancamento(x);
+				produtoLancamento.setIdLancamento((long) totalProdutosLancamento);
 				produtoLancamento.setDataLancamentoPrevista(data);
 				produtoLancamento.setDataLancamentoDistribuidor(data);
 				produtoLancamento.setRepartePrevisto(repartePrevisto);
@@ -920,14 +931,14 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 				produtoLancamento.setReparteFisico(new BigDecimal(5));
 				produtoLancamento.setStatusLancamento(StatusLancamento.PLANEJADO.toString());
 				
-				if (x == 101) {
+				if (totalProdutosLancamento == 101) {
 					produtoLancamento.setStatusLancamento(StatusLancamento.CANCELADO_GD.toString());
 				}
 				
 				produtosLancamento.add(produtoLancamento);
 				
 				
-				x++;
+				totalProdutosLancamento++;
 			}
 		}
 		
