@@ -45,11 +45,11 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepository<Mo
 	}
 	
 	@SuppressWarnings("unchecked")
-	public List<MovimentoFinanceiroCota> obterMovimentoFinanceiroCota(Long idCota, Date dataAtual){
+	public List<MovimentoFinanceiroCota> obterMovimentoFinanceiroCota(Long idCota){
 		
 		StringBuilder hql = new StringBuilder("select mfc ");
 		hql.append(" from MovimentoFinanceiroCota mfc, Distribuidor d ")
-		   .append(" where mfc.data = d.dataOperacao ")
+		   .append(" where mfc.data <= d.dataOperacao ")
 		   .append(" and mfc.status = :statusAprovado ");
 		
 		if (idCota != null){
@@ -57,13 +57,12 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepository<Mo
 		}
 		
 		hql.append(" and mfc.id not in ")
-		   .append(" (select mov.id from ConsolidadoFinanceiroCota c join c.movimentos mov where c.dataConsolidado <= :dataAtual) ");
+		   .append(" (select mov.id from ConsolidadoFinanceiroCota c join c.movimentos mov where c.dataConsolidado <= d.dataOperacao) ");
 		
 		hql.append(" order by mfc.cota.id ");
 		
 		Query query = this.getSession().createQuery(hql.toString());
 		query.setParameter("statusAprovado", StatusAprovacao.APROVADO);
-		query.setParameter("dataAtual", dataAtual);
 		
 		if (idCota != null){
 			query.setParameter("idCota", idCota);

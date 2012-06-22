@@ -26,7 +26,7 @@ public interface MovimentoFinanceiroCotaRepository extends Repository<MovimentoF
 	MovimentoFinanceiroCota obterMovimentoFinanceiroCotaParaMovimentoEstoqueCota(Long idMovimentoEstoqueCota);
 	
 	
-	List<MovimentoFinanceiroCota> obterMovimentoFinanceiroCota(Long idCota, Date dataAtual);	
+	List<MovimentoFinanceiroCota> obterMovimentoFinanceiroCota(Long idCota);	
 
 	List<MovimentoFinanceiroCota> obterMovimentosFinanceiroCota(
 			FiltroDebitoCreditoDTO filtroDebitoCreditoDTO);	
