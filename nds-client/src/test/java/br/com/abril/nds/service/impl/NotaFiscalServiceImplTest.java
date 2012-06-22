@@ -129,7 +129,6 @@ public class NotaFiscalServiceImplTest extends AbstractRepositoryImplTest {
 		informacaoEletronica.setRetornoComunicacaoEletronica(retornoComunicacaoEletronica);
 		
 		Identificacao identificacao = new Identificacao();
-		identificacao.setCodigoChaveAcesso(01232);
 		identificacao.setDigitoVerificadorChaveAcesso(13214);
 		identificacao.setTipoOperacao(Identificacao.TipoOperacao.ENTRADA);
 		identificacao.setDataEmissao(new Date());
@@ -137,7 +136,6 @@ public class NotaFiscalServiceImplTest extends AbstractRepositoryImplTest {
 		identificacao.setSerie(43124);
 		identificacao.setFormaPagamento(FormaPagamento.A_VISTA);
 		identificacao.setDescricaoNaturezaOperacao("Natureza Operacao");
-		identificacao.setCodigoChaveAcesso(31234);
 		
 		NotaFiscal notaFiscal = new NotaFiscal();
 		notaFiscal.setIdentificacaoEmitente(identificacaoEmitente);

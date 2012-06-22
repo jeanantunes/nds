@@ -487,6 +487,8 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepository<Mo
 	     
 	    hql.append(" from MovimentoEstoqueCota mec where mec.cota = c  ");
 	    
+	    hql.append(" and mec.status = :status  ");
+	    
 	    hql.append(" and ( mec.data >= :dataInicial and mec.data <= :dataFinal )  ");
 	    
 	    hql.append(" ) as faturamentoBruto, ");
@@ -497,6 +499,8 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepository<Mo
 	    hql.append(" COALESCE(sum( (COALESCE(mec.estoqueProdutoCota.qtdeRecebida,0) - COALESCE(mec.estoqueProdutoCota.qtdeDevolvida,0))*(COALESCE(mec.estoqueProdutoCota.produtoEdicao.precoVenda,0) - COALESCE(mec.estoqueProdutoCota.produtoEdicao.desconto,0)) ),0) ");
 	    
 	    hql.append(" from MovimentoEstoqueCota mec where mec.cota = c  ");
+	    
+	    hql.append(" and mec.status = :status  ");
 	    
 	    hql.append(" and ( mec.data >= :dataInicial and mec.data <= :dataFinal )  ");
 	    
@@ -510,6 +514,8 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepository<Mo
 		Query query = this.getSession().createQuery(hql.toString()).setResultTransformer(new AliasToBeanResultTransformer(CotaFaturamentoDTO.class));
 		
 		query.setParameterList("cotas", cotas);
+		
+		query.setParameter("status", StatusAprovacao.APROVADO);
 		
 		query.setParameter("dataInicial", dataInicial);
 		

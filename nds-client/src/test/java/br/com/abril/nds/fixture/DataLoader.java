@@ -2429,27 +2429,27 @@ public class DataLoader {
 		//MOVIMENTOS VENDA_ENCALHE
 		movimentoEstoqueCota25 = Fixture.movimentoEstoqueCota(produtoEdicaoVeja1,
 				tipoMovimentoVendaEncalhe, usuarioJoao, estoqueProdutoCotaManoelVeja1,
-				BigDecimal.TEN, cotaManoel, StatusAprovacao.PENDENTE, null);
+				BigDecimal.TEN, cotaManoel, StatusAprovacao.APROVADO, null);
 
 		movimentoEstoqueCota26 = Fixture.movimentoEstoqueCota(produtoEdicaoVeja1,
 				tipoMovimentoVendaEncalhe, usuarioJoao, estoqueProdutoCotaManoelVeja3,
-				BigDecimal.TEN, cotaManoel, StatusAprovacao.PENDENTE, null);
+				BigDecimal.TEN, cotaManoel, StatusAprovacao.APROVADO, null);
 
 		movimentoEstoqueCota27 = Fixture.movimentoEstoqueCota(produtoEdicaoVeja1,
 				tipoMovimentoVendaEncalhe, usuarioJoao, estoqueProdutoCotaManoelVeja4,
-				BigDecimal.TEN, cotaManoel, StatusAprovacao.PENDENTE, null);
+				BigDecimal.TEN, cotaManoel, StatusAprovacao.APROVADO, null);
 		
 		movimentoEstoqueCota28 = Fixture.movimentoEstoqueCota(produtoEdicaoVeja1,
 				tipoMovimentoVendaEncalhe, usuarioJoao, estoqueProdutoCotaManoelVeja2,
-				BigDecimal.TEN, cotaManoel, StatusAprovacao.PENDENTE, null);
+				BigDecimal.TEN, cotaManoel, StatusAprovacao.APROVADO, null);
 		
 		movimentoEstoqueCota29 = Fixture.movimentoEstoqueCota(produtoEdicaoVeja1,
 				tipoMovimentoVendaEncalhe, usuarioJoao, estoqueProdutoCotaManoelQuatroRodas1,
-				BigDecimal.TEN, cotaManoel, StatusAprovacao.PENDENTE, null);
+				BigDecimal.TEN, cotaManoel, StatusAprovacao.APROVADO, null);
 		
 		movimentoEstoqueCota30 = Fixture.movimentoEstoqueCota(produtoEdicaoVeja1,
 				tipoMovimentoVendaEncalhe, usuarioJoao, estoqueProdutoCotaManoelSuper1,
-				BigDecimal.TEN, cotaManoel, StatusAprovacao.PENDENTE, null);
+				BigDecimal.TEN, cotaManoel, StatusAprovacao.APROVADO, null);
 		
 
 		
@@ -7238,7 +7238,7 @@ public class DataLoader {
 		
 		int numeroSemana = DateUtil.obterNumeroSemanaNoAno(new Date(), distribuidor.getInicioSemana().getCodigoDiaSemana());
 		
-		Date dataLancamentoSemanaAtual = DateUtil.obterDataDaSemanaNoAno(numeroSemana, Calendar.WEDNESDAY);
+		Date dataLancamentoSemanaAtual = DateUtil.obterDataDaSemanaNoAno(numeroSemana, distribuidor.getInicioSemana().getCodigoDiaSemana());
 		
 		Date dataRecolhimentoProximaSemana = DateUtil.adicionarDias(dataLancamentoSemanaAtual, 7);
 		
