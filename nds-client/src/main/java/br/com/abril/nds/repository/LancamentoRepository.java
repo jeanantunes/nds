@@ -213,28 +213,24 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 	 * Método que retorna os produtos do balanceamento do lançamento
 	 * referentes a um periodo e determinados fornecedores.
 	 * 
-	 * @param periodoLancamento - período de lançamento
+	 * @param periodoDistribuicao - período de distribuição
 	 * @param fornecedores - fornecedores
-	 * @param grupoCromo - grupo cromo
 	 * 
 	 * @return lista de produtos do balanceamento do lançamento
 	 */
-	List<ProdutoLancamentoDTO> obterBalanceamentoLancamento(Intervalo<Date> periodoLancamento,
-			   												List<Long> fornecedores,
-			   												GrupoProduto grupoCromo);
+	List<ProdutoLancamentoDTO> obterBalanceamentoLancamento(Intervalo<Date> periodoDistribuicao,
+			   												List<Long> fornecedores);
 	
 	/**
 	 * Método que retorna expectativas de reparte do balanceamento do lançamento
 	 * referentes a um periodo e determinados fornecedores.
 	 * 
-	 * @param periodoLancamento - período de lançamento
+	 * @param periodoDistribuicao - período de distribuição
 	 * @param fornecedores - fornecedores
-	 * @param grupoCromo - grupo cromo
 	 * 
 	 * @return mapa contendo as expectativas de reparte por data
 	 */
-	TreeMap<Date, BigDecimal> obterExpectativasRepartePorData(Intervalo<Date> periodoLancamento,
-															  List<Long> fornecedores,
-															  GrupoProduto grupoCromo);
+	TreeMap<Date, BigDecimal> obterExpectativasRepartePorData(Intervalo<Date> periodoDistribuicao,
+															  List<Long> fornecedores);
 
 }

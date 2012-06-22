@@ -144,36 +144,9 @@ public class ConferenciaEncalheController {
 		
 		this.result.use(Results.json()).from("").serialize();
 	}
-/*
+	
 	@Post
-	public void pesquisarCota(Integer numeroCota) {
-		
-		if (numeroCota != null){
-			
-			Cota cota = this.cotaService.obterPorNumeroDaCota(numeroCota);
-			
-			if (cota != null){
-				
-				List<String> dados = new ArrayList<String>();
-				dados.add(
-					cota.getPessoa() instanceof PessoaFisica ? ((PessoaFisica)cota.getPessoa()).getNome() : ((PessoaJuridica)cota.getPessoa()).getRazaoSocial());
-				
-				dados.add(cota.getSituacaoCadastro().toString());
-				
-				this.result.use(Results.json()).from(dados, "result").serialize();
-				this.session.setAttribute(NUMERO_COTA_CONFERENCIA, numeroCota);
-				
-				return;
-			}
-		}
-		
-		this.session.removeAttribute(NUMERO_COTA_CONFERENCIA);
-		
-		throw new ValidacaoException(TipoMensagem.WARNING, "Cota não encontrada.");
-	}
-	*/
-	@Post
-	public void carregarListaConferencia(Integer numeroCota, boolean indObtemDadosFromBD){
+	public void carregarListaConferencia(Integer numeroCota, boolean indObtemDadosFromBD,  boolean indConferenciaContingencia){
 		
 		if (numeroCota == null){
 			
@@ -195,7 +168,7 @@ public class ConferenciaEncalheController {
 		if (infoConfereciaEncalheCota == null || indObtemDadosFromBD){
 			
 			infoConfereciaEncalheCota = 
-					conferenciaEncalheService.obterInfoConferenciaEncalheCota(numeroCota);
+					conferenciaEncalheService.obterInfoConferenciaEncalheCota(numeroCota, indConferenciaContingencia);
 			
 			this.session.setAttribute(INFO_CONFERENCIA, infoConfereciaEncalheCota);
 			
@@ -402,7 +375,7 @@ public class ConferenciaEncalheController {
 		
 		this.atualizarQuantidadeConferida(idProdutoEdicao, quantidade, produtoEdicao);
 		
-		this.carregarListaConferencia(null, false);
+		this.carregarListaConferencia(null, false, false);
 	}
 	
 	@Post
@@ -561,16 +534,19 @@ public class ConferenciaEncalheController {
 			
 		} catch (EncalheSemPermissaoSalvarException e) {
 			
-			throw new ValidacaoException(TipoMensagem.WARNING, e.getMessage());
+			throw new ValidacaoException(TipoMensagem.WARNING, "Somente conferência de produtos de chamadão podem ser salvos, finalize a operação para não perder os dados. ");
 			
 		} catch (ConferenciaEncalheFinalizadaException e) {
 			
-			throw new ValidacaoException(TipoMensagem.WARNING, e.getMessage());
+			throw new ValidacaoException(TipoMensagem.WARNING, "Conferência não pode ser salvar, finalize a operação para não perder os dados.");
 			
 		} catch (EncalheExcedeReparteException e) {
 			
-			throw new ValidacaoException(TipoMensagem.WARNING, e.getMessage());
-		} finally {
+			throw new ValidacaoException(TipoMensagem.WARNING, "Conferência de encalhe está excedendo quantidade de reparte.");
+			
+		} 
+		
+		finally {
 			
 			this.atribuirIds(lista);
 		}
@@ -707,7 +683,9 @@ public class ConferenciaEncalheController {
 
 				this.result.use(Results.json()).from(
 						new ValidacaoVO(TipoMensagem.WARNING, "Conferência de encalhe está excedendo quantidade de reparte."), "result").recursive().serialize();
-			} finally{
+			} 
+			
+			finally{
 				
 				this.atribuirIds(lista);
 			}
@@ -827,7 +805,7 @@ public class ConferenciaEncalheController {
 			}
 		}
 		
-		this.carregarListaConferencia(null, false);
+		this.carregarListaConferencia(null, false, false);
 	}
 	
 
@@ -1081,7 +1059,7 @@ public class ConferenciaEncalheController {
 		
 		return conferenciaEncalheDTOSessao;
 	}
-
+	
 	private ConferenciaEncalheDTO criarConferenciaEncalhe(ProdutoEdicaoDTO produtoEdicao, Long quantidade, boolean adicionarGrid) {
 		
 		ConferenciaEncalheDTO conferenciaEncalheDTO = new ConferenciaEncalheDTO();

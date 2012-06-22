@@ -3,8 +3,10 @@ package br.com.abril.nds.util.export.fiscal.nota;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 import junit.framework.Assert;
 
@@ -34,10 +36,13 @@ public class NFEExporterTest {
 		
 		StringBuilder conteudoTXTEsperado = new StringBuilder();
 		
-		conteudoTXTEsperado.append("A|1,003.432|1002|2012-12|||2|\n").
-							append("B|2012-12-15|S|1001.4321||1005|10|\n").
-							append("B1|2011-06-01|TESTE DE GERACA|01004|2|\n");
-		
+		conteudoTXTEsperado.append("A|1,003.432|1002|2012-12|||2|\n")
+				.append("A1|TESTE DE LISTA 1|2012-05-03|\n")
+				.append("A1|TESTE DE LISTA 3|1992-01-25|\n")
+				.append("A1|TESTE DE LISTA 3|1992-01-25|\n")
+				.append("B|2012-12-15|S|1001.4321||1005|10|\n")
+				.append("B1|2011-06-01|TESTE DE GERACA|01004|2|\n");
+
 		Assert.assertEquals(conteudoTXTEsperado.toString(), conteudoTXT);
 		
 	}
@@ -68,6 +73,31 @@ public class NFEExporterTest {
 		
 		classeTest.setSubClasseTest(subClasseTest);
 		
+		ClasseListaTest classeListaTest = new ClasseListaTest();
+		
+		classeListaTest.setVarString("TESTE DE LISTA 1");
+		classeListaTest.setVarDate(DateUtil.parseData("03/05/2012", "dd/MM/yyyy"));
+		
+		List<ClasseListaTest> listaClasseListaTests = new ArrayList<NFEExporterTest.ClasseListaTest>();
+		
+		listaClasseListaTests.add(classeListaTest);
+		
+		classeListaTest = new ClasseListaTest();
+		
+		classeListaTest.setVarString("TESTE DE LISTA 2");
+		classeListaTest.setVarDate(DateUtil.parseData("03/06/1990", "dd/MM/yyyy"));
+		
+		listaClasseListaTests.add(classeListaTest);
+		
+		classeTest.setListaClasseListaTests(listaClasseListaTests);
+
+		classeListaTest.setVarString("TESTE DE LISTA 3");
+		classeListaTest.setVarDate(DateUtil.parseData("25/01/1992", "dd/MM/yyyy"));
+		
+		listaClasseListaTests.add(classeListaTest);
+		
+		classeTest.setListaClasseListaTests(listaClasseListaTests);
+
 		return classeTest;
 	}
 
@@ -94,7 +124,9 @@ public class NFEExporterTest {
 		@NFEExport(secao = "B1", posicao = 2, mascara = "00000")
 		private Integer varInteger;
 
-		SubClasseTest subClasseTest;
+		private SubClasseTest subClasseTest;
+		
+		private List<ClasseListaTest> listaClasseListaTests; 
 
 		/** Getters and Setters **/
 
@@ -190,6 +222,19 @@ public class NFEExporterTest {
 			this.subClasseTest = subClasseTest;
 		}
 
+		/**
+		 * @return the listaClasseListaTests
+		 */
+		public List<ClasseListaTest> getListaClasseListaTests() {
+			return listaClasseListaTests;
+		}
+
+		/**
+		 * @param listaClasseListaTests the listaClasseListaTests to set
+		 */
+		public void setListaClasseListaTests(List<ClasseListaTest> listaClasseListaTests) {
+			this.listaClasseListaTests = listaClasseListaTests;
+		}
 
 	}
 
@@ -205,8 +250,12 @@ public class NFEExporterTest {
 		@NFEExport(secao = "B1", posicao = 0)
 		private Date varDate;
 
-		@NFEExports(value = { @NFEExport(secao = "B", posicao = 0),
-				@NFEExport(secao = "A", posicao = 2, mascara = "yyyy-MM"), })
+		@NFEExports(
+				value = { 
+						@NFEExport(secao = "B", posicao = 0),
+						@NFEExport(secao = "A", posicao = 2, mascara = "yyyy-MM") 
+						}
+				)
 		private Calendar varCalendar;
 
 		@NFEExport(secao = "B1", posicao = 1, tamanho = 15)
@@ -215,8 +264,12 @@ public class NFEExporterTest {
 		@NFEExport(secao = "B", posicao = 1)
 		private Character varCharacter;
 
-		@NFEExports(value = { @NFEExport(secao = "B1", posicao = 5),
-				@NFEExport(secao = "A", posicao = 3), })
+		@NFEExports(
+				value = { 
+						@NFEExport(secao = "B1", posicao = 5),
+						@NFEExport(secao = "A", posicao = 3) 
+						}
+				)
 		private Byte varByte; 
 		
 		@NFEExport(secao = "B", posicao = 5)
@@ -333,6 +386,44 @@ public class NFEExporterTest {
 			this.varFloat = varFloat;
 		}
 
+	}
+	
+	public class ClasseListaTest{
+		
+		@NFEExport(secao = "A1", posicao = 0)
+		private String varString;
+		
+		@NFEExport(secao = "A1", posicao = 1)
+		private Date varDate;
+
+		/**
+		 * @return the varString
+		 */
+		public String getVarString() {
+			return varString;
+		}
+
+		/**
+		 * @param varString the varString to set
+		 */
+		public void setVarString(String varString) {
+			this.varString = varString;
+		}
+
+		/**
+		 * @return the varDate
+		 */
+		public Date getVarDate() {
+			return varDate;
+		}
+
+		/**
+		 * @param varDate the varDate to set
+		 */
+		public void setVarDate(Date varDate) {
+			this.varDate = varDate;
+		}
+		
 	}
 
 }

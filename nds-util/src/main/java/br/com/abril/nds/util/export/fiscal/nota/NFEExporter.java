@@ -7,9 +7,12 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -55,6 +58,11 @@ public class NFEExporter {
 	private Map<String, String> listaSecoes;
 	
 	/**
+	 * Para utilizar em atributos Collections
+	 */
+	private List<NFEExporter> listaNFEExporters;
+	
+	/**
 	 * Construtor padrão
 	 */
 	public NFEExporter(){
@@ -66,19 +74,20 @@ public class NFEExporter {
 	 */
 	public void clear(){
 		this.listaSecoes = new HashMap<String, String>();
+		this.listaNFEExporters = new ArrayList<NFEExporter>(); 
 	}
 	
 	/**
 	 * Faz a varredura de um objeto buscando as anotações NFEExport ou
 	 * NFEExports e adicona os dados nas lista de seções.
 	 * 
-	 * @param notaFiscal
-	 *            - Objeto da Nota Fiscal.
+	 * @param notaFiscal - Objeto da Nota Fiscal.
 	 * @return - String com toda as seções.
 	 * @throws IllegalAccessException
 	 * @throws IllegalArgumentException
 	 * @throws InvocationTargetException
 	 */
+	@SuppressWarnings("rawtypes")
 	public <NF> void execute(NF notaFiscal) throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
 		for (Method metodo : notaFiscal.getClass().getDeclaredMethods()) {
 			NFEExports nfeExports = metodo.getAnnotation(NFEExports.class);
@@ -107,6 +116,13 @@ public class NFEExporter {
 
 							this.listaSecoes.put(nfeExp.secao(), secao);
 						}
+					}
+				} else if (valor instanceof Collection) {
+					for (Object valorCollection: (Collection)valor) {
+						NFEExporter nfeExporter = new NFEExporter();
+						nfeExporter.clear();
+						nfeExporter.execute(valorCollection);
+						this.listaNFEExporters.add(nfeExporter);
 					}
 				} else if (valor != null) {
 					execute(valor);
@@ -146,6 +162,13 @@ public class NFEExporter {
 						}
 				}
 				
+			} else if (valor instanceof Collection) {
+				for (Object valorCollection: (Collection)valor) {
+					NFEExporter nfeExporter = new NFEExporter();
+					nfeExporter.clear();
+					nfeExporter.execute(valorCollection);
+					this.listaNFEExporters.add(nfeExporter);
+				}
 			} else if (valor != null) {
 				execute(valor);
 			}
@@ -159,13 +182,50 @@ public class NFEExporter {
 	 * @see java.lang.Object#toString()
 	 */
 	public String toString(){
+		
 		String conteudo = STRING_VAZIA;
 		
-		for (String secao: this.listaSecoes.values()) {
-			conteudo += secao + QUEBRA_LINHA;
+		ordenaListaNFEEporters();
+		String primeiraSecao = null;
+		int indexListaNFEExporters = 0;
+		if (!this.listaNFEExporters.isEmpty()) { 
+			primeiraSecao = this.listaNFEExporters.get(indexListaNFEExporters).getPrimeiraSecao();
+		}
+		
+		for (String key : this.listaSecoes.keySet()) {
+			if (primeiraSecao != null && key.compareTo(primeiraSecao) >= 0) {
+				boolean repetir;
+				do {
+					if (this.listaNFEExporters.size() > indexListaNFEExporters) {
+						conteudo += this.listaNFEExporters.get(indexListaNFEExporters).toString();
+						primeiraSecao = this.listaNFEExporters.get(indexListaNFEExporters++).getPrimeiraSecao();
+						repetir = primeiraSecao != null && primeiraSecao.compareToIgnoreCase(this.listaNFEExporters.get(indexListaNFEExporters - 1).getPrimeiraSecao()) == 0;
+					} else {
+						primeiraSecao = null;
+						repetir = false;
+					}
+				} while (repetir);
+
+			}
+
+			conteudo += this.listaSecoes.get(key) + QUEBRA_LINHA;
 		}
 		
 		return conteudo;
+	}
+	
+	private void ordenaListaNFEEporters(){
+		NFEExporter nfeExporterAux;
+
+		for (int i = 0; i < this.listaNFEExporters.size() - 1; i++) {
+			for (int j = i + 1; j < this.listaNFEExporters.size(); j++) {
+				if (this.listaNFEExporters.get(i).getPrimeiraSecao().compareToIgnoreCase(this.listaNFEExporters.get(j).getPrimeiraSecao()) > 0 ){
+					nfeExporterAux = this.listaNFEExporters.get(i);
+					this.listaNFEExporters.set(i, this.listaNFEExporters.get(j));
+					this.listaNFEExporters.set(j, nfeExporterAux);
+				}
+			}
+		}
 	}
 	
 	/**
@@ -376,5 +436,13 @@ public class NFEExporter {
 	private boolean isDate(Object valor) {
 		return ((valor instanceof Date) || (valor instanceof Calendar))
 				&& (valor != null);
+	}
+	
+	public String getPrimeiraSecao(){
+		if (!this.listaSecoes.isEmpty()) {
+			return divideStringBySeparator(((String)this.listaSecoes.values().toArray()[0]), SEPARADOR_SECAO)[0];
+		}else {
+			return null;
+		}
 	}
 }
