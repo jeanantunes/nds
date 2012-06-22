@@ -67,12 +67,7 @@ public class NotaFiscal implements Serializable {
 	@Embedded
 	private InformacaoTransporte informacaoTransporte;
 	
-	/**
-	 * COBR
-	 */
-	@Embedded
-	private InformacaoCobranca informacaoCobranca;
-	
+		
 	/**
 	 * INFADIC
 	 */
@@ -199,19 +194,7 @@ public class NotaFiscal implements Serializable {
 		this.informacaoTransporte = informacaoTransporte;
 	}
 
-	/**
-	 * @return the informacaoCobranca
-	 */
-	public InformacaoCobranca getInformacaoCobranca() {
-		return informacaoCobranca;
-	}
-
-	/**
-	 * @param informacaoCobranca the informacaoCobranca to set
-	 */
-	public void setInformacaoCobranca(InformacaoCobranca informacaoCobranca) {
-		this.informacaoCobranca = informacaoCobranca;
-	}
+	
 
 	/**
 	 * @return the informacaoAdicional
