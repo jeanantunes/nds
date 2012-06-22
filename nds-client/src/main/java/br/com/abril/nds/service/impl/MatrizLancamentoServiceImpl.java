@@ -23,7 +23,6 @@ import org.springframework.transaction.annotation.Transactional;
 import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.dto.BalanceamentoLancamentoDTO;
 import br.com.abril.nds.dto.DadosBalanceamentoLancamentoDTO;
-import br.com.abril.nds.dto.LancamentoDTO;
 import br.com.abril.nds.dto.ProdutoLancamentoDTO;
 import br.com.abril.nds.dto.ResumoPeriodoBalanceamentoDTO;
 import br.com.abril.nds.dto.SumarioLancamentosDTO;
@@ -47,6 +46,7 @@ import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.util.TipoMensagem;
+import br.com.abril.nds.vo.LancamentoVO;
 
 @Service
 public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
@@ -917,6 +917,12 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 				produtoLancamento.setValorTotal(new BigDecimal(2));
 				produtoLancamento.setReparteFisico(new BigDecimal(5));
 				produtoLancamento.setStatusLancamento(StatusLancamento.PLANEJADO.toString());
+				produtoLancamento.setCodigoProduto("" + i);
+				produtoLancamento.setNomeProduto("Produto " + i);
+				produtoLancamento.setPrecoVenda(new BigDecimal(50 + i));
+				produtoLancamento.setNumeroEdicao(new Long(i));
+				produtoLancamento.setPossuiEstudo(i%2==0);
+				
 				
 				if (x == 101) {
 					produtoLancamento.setStatusLancamento(StatusLancamento.CANCELADO_GD.toString());
@@ -966,14 +972,14 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 	
 	@Override
 	@Transactional
-	public List<LancamentoDTO> buscarLancamentosBalanceamento(FiltroLancamentoDTO filtro) {
+	public List<LancamentoVO> buscarLancamentosBalanceamento(FiltroLancamentoDTO filtro) {
 		
 		List<Lancamento> lancamentos = lancamentoRepository
 				.obterBalanceamentoMatrizLancamentos(filtro);
-		List<LancamentoDTO> dtos = new ArrayList<LancamentoDTO>(
+		List<LancamentoVO> dtos = new ArrayList<LancamentoVO>(
 				lancamentos.size());
 		for (Lancamento lancamento : lancamentos) {
-			LancamentoDTO dto = montarDTO(filtro.getData(),lancamento);
+			LancamentoVO dto = montarDTO(filtro.getData(),lancamento);
 			dtos.add(dto);
 		}
 		return dtos;
@@ -1040,10 +1046,10 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 		return datas;
 	}
 
-	private LancamentoDTO montarDTO(Date data, Lancamento lancamento) {
+	private LancamentoVO montarDTO(Date data, Lancamento lancamento) {
 		ProdutoEdicao produtoEdicao = lancamento.getProdutoEdicao();
 		Produto produto = produtoEdicao.getProduto();
-		LancamentoDTO dto = new LancamentoDTO();
+		LancamentoVO dto = new LancamentoVO();
 		dto.setCodigoProduto(produto.getCodigo());
 		dto.setDataMatrizDistrib(DateUtil.formatarData(
 				lancamento.getDataLancamentoDistribuidor(),
