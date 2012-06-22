@@ -337,7 +337,7 @@ public class MatrizLancamentoServiceImplTest {
 				produtoLancamento.setPeriodicidadeProduto(PeriodicidadeProduto.ANUAL.toString());
 				
 				if (totalProdutosLancamento == 101) {
-//					produtoLancamento.setStatusLancamento(StatusLancamento.CANCELADO_GD.toString());
+					produtoLancamento.setStatusLancamento(StatusLancamento.CANCELADO_GD.toString());
 					produtoLancamento.setPeriodicidadeProduto(PeriodicidadeProduto.SEMANAL.toString());
 				}
 				

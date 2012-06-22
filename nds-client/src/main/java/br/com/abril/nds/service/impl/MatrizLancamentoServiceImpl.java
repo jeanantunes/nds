@@ -35,6 +35,7 @@ import br.com.abril.nds.model.cadastro.DistribuicaoFornecedor;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.cadastro.OperacaoDistribuidor;
+import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.planejamento.Estudo;
@@ -937,9 +938,11 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 				produtoLancamento.setValorTotal(new BigDecimal(2));
 				produtoLancamento.setReparteFisico(new BigDecimal(5));
 				produtoLancamento.setStatusLancamento(StatusLancamento.PLANEJADO.toString());
+				produtoLancamento.setPeriodicidadeProduto(PeriodicidadeProduto.ANUAL.toString());
 				
 				if (totalProdutosLancamento == 101) {
 					produtoLancamento.setStatusLancamento(StatusLancamento.CANCELADO_GD.toString());
+					produtoLancamento.setPeriodicidadeProduto(PeriodicidadeProduto.SEMANAL.toString());
 				}
 				
 				produtosLancamento.add(produtoLancamento);
