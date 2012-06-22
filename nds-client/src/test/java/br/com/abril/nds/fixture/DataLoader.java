@@ -8867,7 +8867,7 @@ public class DataLoader {
 		Logradouro antonioCristovao = Fixture.criarLogradouro(
 				"3", "Antonio Cristovão", "13730000", 2L, mococa, "RUA");
 		Logradouro avenidaMarginal = Fixture.criarLogradouro(
-				"4", "Avenida Marginal", "13500213", 2L, mococa, "AVENIDA");
+				"4", "Avenida Marginal", "13500000", 2L, mococa, "AVENIDA");
 		save(session, joseCristovam, avenidaBrasil, antonioCristovao, avenidaMarginal);
 	}
 	
