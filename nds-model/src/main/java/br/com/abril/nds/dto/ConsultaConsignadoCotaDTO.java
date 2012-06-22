@@ -22,6 +22,7 @@ public class ConsultaConsignadoCotaDTO implements Serializable {
 	private BigDecimal total;
 	private BigDecimal totalDesconto;
 	
+	
 	public ConsultaConsignadoCotaDTO() {}
 
 	public ConsultaConsignadoCotaDTO(String codigoProduto, String nomeProduto,
@@ -120,8 +121,6 @@ public class ConsultaConsignadoCotaDTO implements Serializable {
 	public void setTotalDesconto(BigDecimal totalDesconto) {
 		this.totalDesconto = totalDesconto;
 	}
-	
-	
-	
 
+	
 }

@@ -10,6 +10,7 @@ public class FiltroConsultaConsignadoCotaDTO implements Serializable {
 	private static final long serialVersionUID = -642561468775306010L;
 	
 	private Long idCota;
+	private Long idFornecedor;
 	
 	private PaginacaoVO paginacao;
 	
@@ -45,6 +46,14 @@ public class FiltroConsultaConsignadoCotaDTO implements Serializable {
 
 	public void setIdCota(Long idCota) {
 		this.idCota = idCota;
+	}
+
+	public Long getIdFornecedor() {
+		return idFornecedor;
+	}
+
+	public void setIdFornecedor(Long idFornecedor) {
+		this.idFornecedor = idFornecedor;
 	}
 
 	public PaginacaoVO getPaginacao() {

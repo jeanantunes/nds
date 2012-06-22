@@ -7,12 +7,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.ConsultaConsignadoCotaDTO;
+import br.com.abril.nds.dto.ConsultaConsignadoCotaPeloFornecedorDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaConsignadoCotaDTO;
 import br.com.abril.nds.repository.ConsultaConsignadoCotaRepository;
-import br.com.abril.nds.service.ConsultaConsignadoCota;
+import br.com.abril.nds.service.ConsultaConsignadoCotaService;
 
 @Service
-public class ConsultaConsignadoCotaImpl implements ConsultaConsignadoCota {
+public class ConsultaConsignadoCotaServiceImpl implements ConsultaConsignadoCotaService {
 	
 	@Autowired
 	private ConsultaConsignadoCotaRepository consignadoCotaRepository;
@@ -22,6 +23,20 @@ public class ConsultaConsignadoCotaImpl implements ConsultaConsignadoCota {
 	public List<ConsultaConsignadoCotaDTO> buscarConsignadoCota(
 			FiltroConsultaConsignadoCotaDTO filtro, String limitar) {		 
 		return this.consignadoCotaRepository.buscarConsignadoCota(filtro, limitar);
+	}
+
+	@Override
+	@Transactional
+	public Integer buscarTodasMovimentacoesPorCota(
+			FiltroConsultaConsignadoCotaDTO filtro, String limitar) {		 
+		return this.consignadoCotaRepository.buscarTodasMovimentacoesPorCota(filtro, limitar);
+	}
+
+	@Override
+	@Transactional
+	public List<ConsultaConsignadoCotaPeloFornecedorDTO> buscarMovimentosCotaPeloFornecedor(
+			FiltroConsultaConsignadoCotaDTO filtro, String limitar) {		 
+		return this.consignadoCotaRepository.buscarMovimentosCotaPeloFornecedor(filtro, limitar);
 	}
 
 }

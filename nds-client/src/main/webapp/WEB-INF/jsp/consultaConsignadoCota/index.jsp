@@ -33,9 +33,41 @@
 		$('.dados').hide();
 	}
 	
+	function pesquisar(){
+		
+		var cota = $('#codigoCota').val();
+		
+		if(cota == null){
+			
+			$(".consignadosCotaGrid").flexOptions({
+				url: "<c:url value='/financeiro/consultaConsignadoCota/pesquisarConsignadoCota'/>",
+				dataType : 'json',
+				params: [
+							{name:'filtro.idCota', value:$('#codigoCota').val()},
+							{name:'filtro.idFornecedor', value:$('#idFornecedor').val()}
+							]
+			});
+			
+			$(".consignadosCotaGrid").flexReload();
+			gridCota();			
+		}else{
+			
+			$(".consignadosGrid").flexOptions({
+				url: "<c:url value='/financeiro/consultaConsignadoCota/pesquisarMovimentoCotaPeloFornecedor'/>",
+				dataType : 'json',
+				params: [
+							{name:'filtro.idCota', value:$('#codigoCota').val()},
+							{name:'filtro.idFornecedor', value:$('#idFornecedor').val()}
+							]
+			});
+			
+			$(".consignadosGrid").flexReload();
+			gridTotal();	
+			
+		}
+	}
 	
 	function mostra_detalhes() {
-		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
 	
 		$( "#dialog-detalhes" ).dialog({
 			resizable: false,
@@ -54,6 +86,54 @@
 			}
 		});
 	};
+	
+	function executarPreProcessamento(resultado) {
+		
+		if (resultado.mensagens) {
+
+			exibirMensagem(
+				resultado.mensagens.tipoMensagem, 
+				resultado.mensagens.listaMensagens
+			);
+			
+			$(".grids").hide();
+
+			return resultado;
+		}
+		
+		//$(".grids").show();
+		
+		return resultado;
+	}
+	
+	function pesquisarCota() {
+ 		
+		numeroCota = $("#codigoCota").val();
+ 		
+ 		$.postJSON(
+			'<c:url value="/financeiro/consultaConsignadoCota/buscarCotaPorNumero" />',
+			{ "numeroCota": numeroCota },
+			function(result) {
+				$("#nomeCota").html(result);				
+			},
+			null,
+			true
+		);
+ 	}
+	
+	function detalharTodos(opcao) {
+		var detalhar = document.getElementById("detalhes");
+		
+		switch (opcao) {   
+			case '-1':   
+				detalhar.style.display = ""; 
+			  
+			break;		
+			default:   
+				detalhar.style.display = "none";			
+			break;   
+		}   
+	}
 	
 </script>
 <style type="text/css">
@@ -84,23 +164,25 @@
         </legend><table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
   <tr>
     <td width="30">Cota:</td>
-    <td width="96"><input type="text" style="width:60px; float:left; margin-right:5px;" />
+    <td width="96"><input type="text" name="codigoCota" id="codigoCota" style="width:60px; float:left; margin-right:5px;" onblur="pesquisarCota();" />
       <span class="classPesquisar"><a href="javascript:;" onclick="gridCota();">&nbsp;</a></span></td>
-    <td width="39">Nome:</td>
-    <td width="245"><span class="dados">Alberto José da Silva</span></td>
+    <td width="39">Nome:</td>    
+    <td width="245"><span name="nomeCota" id="nomeCota"></span></td>
     <td width="67">Fornecedor:</td>
-    <td width="159"><select name="select" id="select" style="width:150px;" onchange="detalharTodos(this.value);">
-      <option>Selecione...</option>
-      <option value="1">Todos</option>
-      <option>FC</option>
-      <option>Dinap</option>
-      <option>Treelog</option>
-    </select></td>
+    <td width="159">    	
+    	<select id="idFornecedor" name="idFornecedor" style="width:200px;" onchange="detalharTodos(this.value);">
+		    <option value="0" selected="selected">Selecione</option>
+		    <option value="-1">Todos</option>
+		    <c:forEach items="${listaFornecedores}" var="fornecedor">
+		      		<option value="${fornecedor.key}">${fornecedor.value}</option>	
+		    </c:forEach>
+		</select>
+    </td>
     <td width="169">
-    <div id="detalhes" style="display:none;">
-    <label><input name="" type="checkbox" value="" /> 
-    Detalhar</label></div></td>
-    <td width="104"><span class="bt_pesquisar"><a href="javascript:;"  onclick="gridTotal();">Pesquisar</a></span></td>
+	    <div id="detalhes" style="display:none;">
+	    <label><input name="" type="checkbox" value="" />Detalhar</label></div>
+	</td>
+    <td width="104"><span class="bt_pesquisar"><a href="javascript:;"  onclick="pesquisar();">Pesquisar</a></span></td>
   </tr>
   </table>
       </fieldset>
@@ -110,9 +192,8 @@
        	  <legend>Consignados da Cota: 4444 - Alberto José da Silva</legend>
         <div class="grids">
        	  <table class="consignadosCotaGrid"></table>
-          <span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;"><img src="../images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
-
-<span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="../images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
+			<span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;"><img src="../images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
+			<span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="../images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
           <table width="190" border="0" cellspacing="1" cellpadding="1" align="right">
               <tr>
                 <td width="71"><strong>Total:</strong></td>
@@ -254,35 +335,35 @@
 		});
 	
 	$(".consignadosCotaGrid").flexigrid({
-			url : '../xml/consignado-cota-xml.xml',
-			dataType : 'xml',
+		preProcess: executarPreProcessamento,
+		dataType : 'json',
 			colModel : [  {
 				display : 'Código',
-				name : 'codigo',
+				name : 'codigoProduto',
 				width : 50,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Produto',
-				name : 'produto',
+				name : 'nomeProduto',
 				width : 135,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Edição',
-				name : 'edicao',
+				name : 'numeroEdicao',
 				width : 50,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Fornecedor',
-				name : 'fornecedor',
+				name : 'nomeFornecedor',
 				width : 130,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Dt. Lancto',
-				name : 'dtLancto',
+				name : 'dataLancamento',
 				width : 80,
 				sortable : true,
 				align : 'center'
@@ -294,7 +375,7 @@
 				align : 'right'
 			}, {
 				display : 'Preço Desc R$',
-				name : 'precoDesc',
+				name : 'precoDesconto',
 				width : 80,
 				sortable : true,
 				align : 'right'
@@ -312,7 +393,7 @@
 				align : 'right'
 			}, {
 				display : 'Total Desc. $',
-				name : 'totalDesc',
+				name : 'totalDesconto',
 				width : 70,
 				sortable : true,
 				align : 'right'
@@ -328,41 +409,41 @@
 		});
 
 $(".consignadosGrid").flexigrid({
-			url : '../xml/consignado-xml.xml',
-			dataType : 'xml',
+		preProcess: executarPreProcessamento,
+		dataType : 'json',
 			colModel : [  {
 				display : 'Cota',
-				name : 'cota',
+				name : 'numeroCota',
 				width : 50,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Nome',
-				name : 'nome',
+				name : 'nomeCota',
 				width : 200,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Reparte Total',
-				name : 'reparteTotal',
+				name : 'reparte',
 				width : 140,
 				sortable : true,
 				align : 'center'
 			}, {
 				display : 'Total R$',
-				name : 'vlrTotal',
+				name : 'total',
 				width : 120,
 				sortable : true,
 				align : 'right'
 			}, {
 				display : 'Total Desc. R$',
-				name : 'totalDesc',
+				name : 'totalDesconto',
 				width : 100,
 				sortable : true,
 				align : 'right'
 			}, {
 				display : 'Fornecedor',
-				name : 'fornecedor',
+				name : 'nomeFornecedor',
 				width : 200,
 				sortable : true,
 				align : 'left'

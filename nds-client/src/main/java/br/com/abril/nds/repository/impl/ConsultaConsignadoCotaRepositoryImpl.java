@@ -8,6 +8,7 @@ import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.ConsultaConsignadoCotaDTO;
+import br.com.abril.nds.dto.ConsultaConsignadoCotaPeloFornecedorDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaConsignadoCotaDTO;
 import br.com.abril.nds.model.cadastro.TipoCota;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
@@ -34,7 +35,11 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepository<Mov
 		hql.append("pe.numeroEdicao as numeroEdicao, ");
 		hql.append("pessoa.razaoSocial as nomeFornecedor, ");
 		hql.append("movimento.data as dataLancamento, ");
-		hql.append("pe.precoVenda as precoCapa ");
+		hql.append("pe.precoVenda as precoCapa, ");
+		hql.append("(pe.precoVenda - pe.desconto) as precoDesconto, ");
+		hql.append(" movimento.qtde as reparte, ");		
+		hql.append(" (pe.precoVenda * movimento.qtde) as total, ");
+		hql.append(" ( (pe.precoVenda - pe.desconto) * movimento.qtde)  as totalDesconto ");
 		
 		hql.append(getHQLFromEWhereConsignadoCota(filtro));
 		
@@ -60,6 +65,45 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepository<Mov
 		return  query.list();
 	}
 	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<ConsultaConsignadoCotaPeloFornecedorDTO> buscarMovimentosCotaPeloFornecedor(
+			FiltroConsultaConsignadoCotaDTO filtro, String limitar) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append("SELECT cota.numeroCota as numeroCota, ");
+		hql.append("pessoaCota.nome as nomeCota, ");
+		hql.append(" movimento.qtde as reparte, ");
+		hql.append(" (pe.precoVenda * movimento.qtde) as total, ");
+		hql.append(" ( (pe.precoVenda - pe.desconto) * movimento.qtde)  as totalDesconto, ");
+		hql.append("pessoa.razaoSocial as nomeFornecedor ");
+		
+		hql.append(getHQLFromEWhereConsignadoCota(filtro));
+		
+		hql.append(getOrderBy(filtro));
+		
+		Query query =  getSession().createQuery(hql.toString());
+		
+		HashMap<String, Object> param = buscarParametrosConsignadoCota(filtro);
+		
+		for(String key : param.keySet()){
+			query.setParameter(key, param.get(key));
+		}
+		
+		query.setResultTransformer(new AliasToBeanResultTransformer(
+				ConsultaConsignadoCotaPeloFornecedorDTO.class));
+		
+		if(filtro.getPaginacao().getQtdResultadosPorPagina() != null) 
+			query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
+		
+		if(filtro.getPaginacao().getQtdResultadosPorPagina() != null && limitar.equals("limitar")) 
+			query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
+				
+		return  query.list();
+		 
+	}
+	
 	private String getHQLFromEWhereConsignadoCota(FiltroConsultaConsignadoCotaDTO filtro) {
 		
 		StringBuilder hql = new StringBuilder();
@@ -73,6 +117,9 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepository<Mov
 		hql.append(" LEFT JOIN cota.parametroCobranca parametroCobranca ");
 		hql.append(" LEFT JOIN cota.fornecedores as fornecedor ");
 		hql.append(" LEFT JOIN fornecedor.juridica as pessoa ");
+		if(filtro.getIdCota() == null){
+			hql.append(" LEFT JOIN cota.pessoa as pessoaCota ");
+		}
 		
 		hql.append(" WHERE  tipoMovimento.grupoMovimentoEstoque = :tipoMovimento  " );
 		hql.append(" AND  parametroCobranca.tipoCota = :tipoCota  " );
@@ -80,6 +127,10 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepository<Mov
 		if(filtro.getIdCota() != null ) { 
 			hql.append(" AND cota.id =:numeroCota");
 		}
+		if(filtro.getIdFornecedor() != null ) { 
+			hql.append(" AND fornecedor.id =:idFornecedor");
+		}
+		
 
 		return hql.toString();
 	}
@@ -92,7 +143,11 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepository<Mov
 		StringBuilder hql = new StringBuilder();
 		
 		if(filtro.getIdCota() != null){
-			hql.append(" order by cota.id asc ");
+			hql.append(" order by cota.numeroCota asc ");
+		}
+		
+		if(filtro.getIdFornecedor() != null){
+			hql.append(" order by cota.numeroCota ");
 		}
 		
 		
@@ -112,9 +167,38 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepository<Mov
 		
 		if(filtro.getIdCota() != null ) { 
 			param.put("numeroCota", filtro.getIdCota());
-		}		
+		}
+		if(filtro.getIdFornecedor() != null ) { 
+			param.put("idFornecedor", filtro.getIdFornecedor());
+		}
 		
 		return param;
+	}
+	
+	@Override
+	public Integer buscarTodasMovimentacoesPorCota(
+			FiltroConsultaConsignadoCotaDTO filtro, String limitar) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append("SELECT count(movimento)");
+		
+		
+		hql.append(getHQLFromEWhereConsignadoCota(filtro));
+		
+		Query query =  getSession().createQuery(hql.toString());
+		
+		HashMap<String, Object> param = buscarParametrosConsignadoCota(filtro);
+		
+		for(String key : param.keySet()){
+			query.setParameter(key, param.get(key));
+		}
+		
+		Long totalRegistros = (Long) query.uniqueResult();
+		
+		return (totalRegistros == null) ? 0 : totalRegistros.intValue();
+		
+		
 	}
 
 }
