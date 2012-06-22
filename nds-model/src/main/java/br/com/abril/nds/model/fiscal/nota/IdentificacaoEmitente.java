@@ -13,6 +13,7 @@ import javax.persistence.OneToOne;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.Telefone;
+import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.export.fiscal.nota.NFEExport;
 import br.com.abril.nds.util.export.fiscal.nota.NFEExports;
 
@@ -49,7 +50,9 @@ public class IdentificacaoEmitente implements Serializable {
 	 * CNPJ CPF
 	 */
 	@Column(name="DOCUMENTO_EMITENTE", nullable=false, length=14)
-	@NFEExports({@NFEExport(secao="C02", posicao=0 , tamanho=14), @NFEExport(secao="C02a", posicao=0 , tamanho=11)})
+	@NFEExports({
+		@NFEExport(secao="C02", posicao=0 , tamanho=14, documento=Constantes.CNPJ),
+		@NFEExport(secao="C02a", posicao=0 , tamanho=11, documento=Constantes.CPF)})
 	private String documento;
 	
 	/**
