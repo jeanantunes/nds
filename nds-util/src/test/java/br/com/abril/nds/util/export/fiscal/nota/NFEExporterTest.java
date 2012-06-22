@@ -205,8 +205,12 @@ public class NFEExporterTest {
 		@NFEExport(secao = "B1", posicao = 0)
 		private Date varDate;
 
-		@NFEExports(value = { @NFEExport(secao = "B", posicao = 0),
-				@NFEExport(secao = "A", posicao = 2, mascara = "yyyy-MM"), })
+		@NFEExports(
+				value = { 
+						@NFEExport(secao = "B", posicao = 0),
+						@NFEExport(secao = "A", posicao = 2, mascara = "yyyy-MM") 
+						}
+				)
 		private Calendar varCalendar;
 
 		@NFEExport(secao = "B1", posicao = 1, tamanho = 15)
@@ -215,8 +219,12 @@ public class NFEExporterTest {
 		@NFEExport(secao = "B", posicao = 1)
 		private Character varCharacter;
 
-		@NFEExports(value = { @NFEExport(secao = "B1", posicao = 5),
-				@NFEExport(secao = "A", posicao = 3), })
+		@NFEExports(
+				value = { 
+						@NFEExport(secao = "B1", posicao = 5),
+						@NFEExport(secao = "A", posicao = 3) 
+						}
+				)
 		private Byte varByte; 
 		
 		@NFEExport(secao = "B", posicao = 5)
