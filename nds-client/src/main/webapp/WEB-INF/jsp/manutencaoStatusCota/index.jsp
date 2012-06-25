@@ -168,6 +168,28 @@
 			});
 		}
 
+		function popupAviso(mensagens) {
+
+			montarTextoMensagem($("#mensagemAviso"), mensagens);
+			$("#mensagemConfirmacao").html("Deseja continuar mesmo assim ?");
+
+			$("#dialog-aviso").dialog({
+				resizable: false,
+				height:200,
+				width:590,
+				modal: true,
+				buttons: {
+					"Sim": function() {
+						$(this).dialog("close");
+					},
+					"Não": function() {
+						$(this).dialog("close");
+						$("#dialog-novo").dialog("close");
+					}
+				}
+			});
+		}
+		
 		function carregarCodigoBox() {
 			
 			cota.obterPorNumeroCota($("#numeroCota").val(), false, function(result) {
@@ -266,13 +288,50 @@
 			configurarCamposNumericos();
 		}
 
+		function ifInativo(status){
+			if (status=="INATIVO"){
+				$("#novaDataFinalStatusCota").val('');
+				$("#novaDataFinalStatusCota").attr('disabled','disabled');
+				$("#novaDataFinalStatusCota").datepicker('disable');
+				
+			}
+			else{
+				$('#novaDataFinalStatusCota').removeAttr("disabled"); 
+				$("#novaDataFinalStatusCota").datepicker('enable');
+			}
+		}
+		
+		function dividasAbertoCota(status) {
+			
+			if (status=="ATIVO"){
+				
+				var numeroCota = $("#numeroCotaNovo").html();
+				var data = [{name:'numeroCota', value:numeroCota}];
+				$.postJSON("<c:url value='/financeiro/manutencaoStatusCota/dividasAbertoCota' />",
+						    data,
+						    function(result){
+							    if (result!=""){
+								    var mensagens = result.listaMensagens;
+								    if (mensagens) {
+								        popupAviso(mensagens);
+							        }
+							    }    
+				            },
+							null,
+				            false);
+			}	
+		}
+
 		$(function() {
 
 			inicializar();
 		});
+		
+		
 	</script>
 </head>
 <body>
+
 	<!-- Filtro da Pesquisa -->
 	<fieldset class="classFieldset">
 	

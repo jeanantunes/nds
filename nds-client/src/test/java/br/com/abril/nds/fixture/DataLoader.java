@@ -21,6 +21,7 @@ import br.com.abril.nds.model.StatusCobranca;
 import br.com.abril.nds.model.StatusConfirmacao;
 import br.com.abril.nds.model.StatusControle;
 import br.com.abril.nds.model.TipoEdicao;
+import br.com.abril.nds.model.TipoSlip;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Algoritmo;
 import br.com.abril.nds.model.cadastro.Banco;
@@ -139,6 +140,7 @@ import br.com.abril.nds.model.fiscal.TipoUsuarioNotaFiscal;
 import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalhe;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalheCota;
+import br.com.abril.nds.model.movimentacao.ControleNumeracaoSlip;
 import br.com.abril.nds.model.movimentacao.CotaAusente;
 import br.com.abril.nds.model.movimentacao.StatusOperacao;
 import br.com.abril.nds.model.movimentacao.TipoMovimento;
@@ -639,6 +641,9 @@ public class DataLoader {
 	private static CFOP cfop6917;
 	private static CFOP cfop5917;
 
+	private static ControleNumeracaoSlip controleNumeracaoSlipConferenciaEncalhe;
+	private static ControleNumeracaoSlip controleNumeracaoSlipVendaEncalhe;
+	
 
 	public static void main(String[] args) {
 		ClassPathXmlApplicationContext ctx = new ClassPathXmlApplicationContext(
@@ -729,7 +734,7 @@ public class DataLoader {
 		criarEnderecoCotaPF(session);
 		criarMovimentosFinanceiroCota(session);
 		criarDivida(session);
-
+		criarControleNumeracaoSlip(session);
 		criarCobrancas(session);
 
 		criarBoletos(session);
@@ -800,6 +805,21 @@ public class DataLoader {
 		
 		criarLogradouros(session);
 	}
+	
+	private static void criarControleNumeracaoSlip(Session session) {
+		
+		controleNumeracaoSlipConferenciaEncalhe = new ControleNumeracaoSlip();
+		controleNumeracaoSlipConferenciaEncalhe.setTipoSlip(TipoSlip.SLIP_CONFERENCIA_ENCALHE);
+		controleNumeracaoSlipConferenciaEncalhe.setProximoNumeroSlip(1L);
+		session.save(controleNumeracaoSlipConferenciaEncalhe);
+		
+		controleNumeracaoSlipVendaEncalhe = new ControleNumeracaoSlip();
+		controleNumeracaoSlipVendaEncalhe.setProximoNumeroSlip(1L);
+		controleNumeracaoSlipVendaEncalhe.setTipoSlip(TipoSlip.SLIP_VENDA_ENCALHE);
+		session.save(controleNumeracaoSlipVendaEncalhe);
+		
+	}
+
 	
 	private static void criarAlgoritmos(Session session) {
 
@@ -2429,27 +2449,27 @@ public class DataLoader {
 		//MOVIMENTOS VENDA_ENCALHE
 		movimentoEstoqueCota25 = Fixture.movimentoEstoqueCota(produtoEdicaoVeja1,
 				tipoMovimentoVendaEncalhe, usuarioJoao, estoqueProdutoCotaManoelVeja1,
-				BigDecimal.TEN, cotaManoel, StatusAprovacao.PENDENTE, null);
+				BigDecimal.TEN, cotaManoel, StatusAprovacao.APROVADO, null);
 
 		movimentoEstoqueCota26 = Fixture.movimentoEstoqueCota(produtoEdicaoVeja1,
 				tipoMovimentoVendaEncalhe, usuarioJoao, estoqueProdutoCotaManoelVeja3,
-				BigDecimal.TEN, cotaManoel, StatusAprovacao.PENDENTE, null);
+				BigDecimal.TEN, cotaManoel, StatusAprovacao.APROVADO, null);
 
 		movimentoEstoqueCota27 = Fixture.movimentoEstoqueCota(produtoEdicaoVeja1,
 				tipoMovimentoVendaEncalhe, usuarioJoao, estoqueProdutoCotaManoelVeja4,
-				BigDecimal.TEN, cotaManoel, StatusAprovacao.PENDENTE, null);
+				BigDecimal.TEN, cotaManoel, StatusAprovacao.APROVADO, null);
 		
 		movimentoEstoqueCota28 = Fixture.movimentoEstoqueCota(produtoEdicaoVeja1,
 				tipoMovimentoVendaEncalhe, usuarioJoao, estoqueProdutoCotaManoelVeja2,
-				BigDecimal.TEN, cotaManoel, StatusAprovacao.PENDENTE, null);
+				BigDecimal.TEN, cotaManoel, StatusAprovacao.APROVADO, null);
 		
 		movimentoEstoqueCota29 = Fixture.movimentoEstoqueCota(produtoEdicaoVeja1,
 				tipoMovimentoVendaEncalhe, usuarioJoao, estoqueProdutoCotaManoelQuatroRodas1,
-				BigDecimal.TEN, cotaManoel, StatusAprovacao.PENDENTE, null);
+				BigDecimal.TEN, cotaManoel, StatusAprovacao.APROVADO, null);
 		
 		movimentoEstoqueCota30 = Fixture.movimentoEstoqueCota(produtoEdicaoVeja1,
 				tipoMovimentoVendaEncalhe, usuarioJoao, estoqueProdutoCotaManoelSuper1,
-				BigDecimal.TEN, cotaManoel, StatusAprovacao.PENDENTE, null);
+				BigDecimal.TEN, cotaManoel, StatusAprovacao.APROVADO, null);
 		
 
 		
@@ -8867,7 +8887,7 @@ public class DataLoader {
 		Logradouro antonioCristovao = Fixture.criarLogradouro(
 				"3", "Antonio Cristovão", "13730000", 2L, mococa, "RUA");
 		Logradouro avenidaMarginal = Fixture.criarLogradouro(
-				"4", "Avenida Marginal", "13500213", 2L, mococa, "AVENIDA");
+				"4", "Avenida Marginal", "13500000", 2L, mococa, "AVENIDA");
 		save(session, joseCristovam, avenidaBrasil, antonioCristovao, avenidaMarginal);
 	}
 	

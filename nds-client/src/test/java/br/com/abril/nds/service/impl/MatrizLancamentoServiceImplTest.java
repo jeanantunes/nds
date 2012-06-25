@@ -34,6 +34,7 @@ import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.cadastro.OperacaoDistribuidor;
 import br.com.abril.nds.model.cadastro.ParametroCobrancaCota;
+import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.PoliticaCobranca;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
@@ -333,9 +334,11 @@ public class MatrizLancamentoServiceImplTest {
 				produtoLancamento.setValorTotal(new BigDecimal(2));
 				produtoLancamento.setReparteFisico(new BigDecimal(5));
 				produtoLancamento.setStatusLancamento(StatusLancamento.PLANEJADO.toString());
+				produtoLancamento.setPeriodicidadeProduto(PeriodicidadeProduto.ANUAL.toString());
 				
 				if (totalProdutosLancamento == 101) {
 					produtoLancamento.setStatusLancamento(StatusLancamento.CANCELADO_GD.toString());
+					produtoLancamento.setPeriodicidadeProduto(PeriodicidadeProduto.SEMANAL.toString());
 				}
 				
 				produtosLancamento.add(produtoLancamento);
