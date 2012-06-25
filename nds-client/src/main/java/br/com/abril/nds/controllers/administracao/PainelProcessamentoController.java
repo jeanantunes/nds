@@ -20,6 +20,7 @@ import br.com.abril.nds.model.integracao.LogExecucaoMensagem;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.DistribuidorService;
+import br.com.abril.nds.service.InterfaceExecucaoService;
 import br.com.abril.nds.service.PainelProcessamentoService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.TableModel;
@@ -59,10 +60,13 @@ public class PainelProcessamentoController {
 	
 	@Autowired
 	private DistribuidorService distribuidorService;
-	
+
+	@Autowired
+	private InterfaceExecucaoService interfaceExecucaoService;
+
 	@Autowired
 	private HttpServletResponse httpServletResponse;
-	
+
 	private static final int INTERFACE = 1;
 	private static final int PROCESSO  = 2;
 	
@@ -364,6 +368,14 @@ public class PainelProcessamentoController {
 		ndsFileHeader.setNomeUsuario(this.getUsuario().getNome());
 		
 		return ndsFileHeader;
+	}
+
+	/**
+	 * Executa uma interface
+	 * @param classeInterface
+	 */
+	public void executarInterface(String classeInterface) {
+		interfaceExecucaoService.executarInterface(classeInterface, getUsuario());
 	}
 	
 	/**
