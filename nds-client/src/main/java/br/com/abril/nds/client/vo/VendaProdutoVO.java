@@ -1,6 +1,9 @@
 package br.com.abril.nds.client.vo;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
+
+import br.com.abril.nds.model.estoque.TipoVendaEncalhe;
 
 public class VendaProdutoVO implements Serializable{
 	
@@ -40,7 +43,38 @@ public class VendaProdutoVO implements Serializable{
 	private String nomeCota;
 	
 	private String numeroCota;
+	
+	private TipoVendaEncalhe tipoVenda;
+	
+	private BigDecimal valorTotal;
 
+	/**
+	 * @return the valorTotal
+	 */
+	public BigDecimal getValorTotal() {
+		return valorTotal;
+	}
+
+	/**
+	 * @param valorTotal the valorTotal to set
+	 */
+	public void setValorTotal(BigDecimal valorTotal) {
+		this.valorTotal = valorTotal;
+	}
+
+	/**
+	 * @return the tipoVenda
+	 */
+	public TipoVendaEncalhe getTipoVenda() {
+		return tipoVenda;
+	}
+
+	/**
+	 * @param tipoVenda the tipoVenda to set
+	 */
+	public void setTipoVenda(TipoVendaEncalhe tipoVenda) {
+		this.tipoVenda = tipoVenda;
+	}
 
 	/**
 	 * @return the idVendaEncalhe
