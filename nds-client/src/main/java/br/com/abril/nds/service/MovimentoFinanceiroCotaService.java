@@ -15,6 +15,8 @@ public interface MovimentoFinanceiroCotaService {
 
 	MovimentoFinanceiroCota gerarMovimentoFinanceiroDebitoCredito(MovimentoFinanceiroCotaDTO movimentoFinanceiroCotaDTO);
 	
+	List<MovimentoFinanceiroCota> gerarMovimentosFinanceirosDebitoCredito(MovimentoFinanceiroCotaDTO movimentoFinanceiroCotaDTO);
+	
 	List<MovimentoFinanceiroCota> obterMovimentosFinanceiroCota(
 			FiltroDebitoCreditoDTO filtroDebitoCreditoDTO);
 	
