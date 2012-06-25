@@ -96,7 +96,6 @@ import br.com.abril.nds.model.cadastro.pdv.TipoPontoPDV;
 import br.com.abril.nds.model.dne.Bairro;
 import br.com.abril.nds.model.dne.Localidade;
 import br.com.abril.nds.model.dne.Logradouro;
-import br.com.abril.nds.model.dne.Pais;
 import br.com.abril.nds.model.dne.UnidadeFederacao;
 import br.com.abril.nds.model.estoque.ConferenciaEncalhe;
 import br.com.abril.nds.model.estoque.ConferenciaEncalheParcial;
@@ -2850,30 +2849,17 @@ public class Fixture {
 		return ee;
 	}
 	
-	public static Pais criarPais(String sigla, String nomePaisPortugues) {
-		
-		Pais pais = new Pais();
-		
-		pais.setSigla(sigla);
-		pais.setNomePaisPortugues(nomePaisPortugues);
-		
-		return pais;
-	}
-	
-	public static UnidadeFederacao criarUnidadeFederacao(Long chaveUf, String sigla, String nome, Pais pais) {
+	public static UnidadeFederacao criarUnidadeFederacao(String sigla) {
 		
 		UnidadeFederacao uf = new UnidadeFederacao();
 		
-		uf.setChaveUf(chaveUf);
 		uf.setSigla(sigla);
-		uf.setNome(nome);
-		uf.setPais(pais);
 		
 		return uf;
 	}
 	
-	public static Localidade criarLocalidade(String id, String nome, 
-											 String codigoMunicipioIBGE, 
+	public static Localidade criarLocalidade(Long id, String nome, 
+											 Long codigoMunicipioIBGE, 
 											 UnidadeFederacao unidadeFederacao) {
 		
 		Localidade localidade = new Localidade();
@@ -2886,7 +2872,7 @@ public class Fixture {
 		return localidade;
 	}
 	
-	public static Bairro criarBairro(String id, String nome, Localidade localidade) {
+	public static Bairro criarBairro(Long id, String nome, Localidade localidade) {
 		
 		Bairro bairro = new Bairro();
 		
@@ -2897,7 +2883,7 @@ public class Fixture {
 		return bairro;
 	}
 	
-	public static Logradouro criarLogradouro(String id, String nome, 
+	public static Logradouro criarLogradouro(Long id, String nome, 
 											 String cep, Long chaveBairroInicial,
 											 Localidade localidade, String tipoLogradouro) {
 		

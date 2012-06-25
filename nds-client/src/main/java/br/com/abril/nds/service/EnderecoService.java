@@ -11,7 +11,6 @@ import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.dne.Bairro;
 import br.com.abril.nds.model.dne.Localidade;
 import br.com.abril.nds.model.dne.Logradouro;
-import br.com.abril.nds.model.dne.TipoLogradouro;
 
 public interface EnderecoService {
 
@@ -35,9 +34,7 @@ public interface EnderecoService {
 	
 	List<Localidade> obterLocalidadesPorUFNome(String nome, String siglaUF);
 	
-	List<Bairro> obterBairrosPorCodigoIBGENome(String nome, String codigoIBGE);
-	
-	List<TipoLogradouro> obterTiposLogradouroNome(String tipoLogradouro);
+	List<Bairro> obterBairrosPorCodigoIBGENome(String nome, Long codigoIBGE);
 	
 	List<Logradouro> obterLogradourosPorCodigoBairroNome(Long codigoBairro, String nomeLogradouro);
 	

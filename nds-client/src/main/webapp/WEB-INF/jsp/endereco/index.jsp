@@ -85,8 +85,6 @@
 				<td>Tipo Logradouro:</td>
 				<td>
 					<input type="text" style="width:250px" 
-						   onkeyup="${param.telaEndereco}.autoCompletarTipoLogradouro();"
-						   onblur="${param.telaEndereco}.autoCompletarTipoLogradouro(true);"
 						   name="enderecoAssociacao.endereco.tipoLogradouro" id="${param.telaEndereco}tipoLogradouro" />
 				</td>
 				

@@ -1,14 +1,12 @@
 package br.com.abril.nds.model.dne;
 
 import java.io.Serializable;
-import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 /**
@@ -16,7 +14,7 @@ import javax.persistence.Table;
  *
  */
 @Entity
-@Table(name="DNE_GU_BAIRROS")
+@Table(name="LOG_BAIRRO")
 public class Bairro implements Serializable {
 
 	/**
@@ -25,26 +23,21 @@ public class Bairro implements Serializable {
 	private static final long serialVersionUID = 2098584768905693662L;
 
 	@Id
-	@Column(name="CHAVE_BAI_DNE", unique=true, nullable=false)
-	private String id;
+	@Column(name="BAI_NU", unique=true, nullable=false)
+	private Long id;
 
-	@Column(name="ABRE_BAI_REC_ECT", length=36)
+	@Column(name="BAI_NO_ABREV", length=72)
 	private String abreviatura;
 
-	@Column(name="NOME_OFI_BAI", length=72)
+	@Column(name="BAI_NO", length=144)
 	private String nome;
 
-	@Column(name="SIGLA_UF_BAI", length=2)
+	@Column(name="UFE_SG", length=4)
 	private String uf;
-
 	
     @ManyToOne
-	@JoinColumn(name="CHAVE_LOC_DNE", nullable=false)
+	@JoinColumn(name="LOC_NU", nullable=false)
 	private Localidade localidade;
-
-	
-	@OneToMany(mappedBy="bairro")
-	private List<FaixaCepBairro> faixasCepBairros;
 
     public Bairro() {
     }
@@ -52,14 +45,14 @@ public class Bairro implements Serializable {
 	/**
 	 * @return the id
 	 */
-	public String getId() {
+	public Long getId() {
 		return id;
 	}
 
 	/**
 	 * @param id the id to set
 	 */
-	public void setId(String id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 
@@ -118,19 +111,4 @@ public class Bairro implements Serializable {
 	public void setLocalidade(Localidade localidade) {
 		this.localidade = localidade;
 	}
-
-	/**
-	 * @return the faixasCepBairros
-	 */
-	public List<FaixaCepBairro> getFaixasCepBairros() {
-		return faixasCepBairros;
-	}
-
-	/**
-	 * @param faixasCepBairros the faixasCepBairros to set
-	 */
-	public void setFaixasCepBairros(List<FaixaCepBairro> faixasCepBairros) {
-		this.faixasCepBairros = faixasCepBairros;
-	}
-	
 }
