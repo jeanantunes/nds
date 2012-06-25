@@ -48,9 +48,7 @@ public class ProdutoLancamentoDTO implements Serializable {
 	
 	//TODO: private Integer sequencia;
 
-	private Long idFornecedor;
-
-	private String nomeFornecedor;
+	private String fornecedor;
 
 	private TipoLancamentoParcial parcial;
 	
@@ -74,15 +72,15 @@ public class ProdutoLancamentoDTO implements Serializable {
 	
 	private Integer ordemPeriodicidadeProduto;
 
-	private Long idEditor;
+	private Long codigoEditor;
 
 	private String nomeEditor;
 	
 	private String chamadaCapa;
 
-    private String brinde;
+    private boolean possuiBrinde;
 
-  	private String pacotePadrao;
+  	private Integer pacotePadrao;
 	
 	/**
 	 * Construtor padrão.
@@ -273,6 +271,20 @@ public class ProdutoLancamentoDTO implements Serializable {
 	public void setIdLancamento(Long idLancamento) {
 		this.idLancamento = idLancamento;
 	}
+	
+	/**
+	 * @return the fornecedor
+	 */
+	public String getFornecedor() {
+		return fornecedor;
+	}
+
+	/**
+	 * @param fornecedor the fornecedor to set
+	 */
+	public void setFornecedor(String fornecedor) {
+		this.fornecedor = fornecedor;
+	}
 
 	/**
 	 * @return the parcial
@@ -433,45 +445,17 @@ public class ProdutoLancamentoDTO implements Serializable {
 	}
 
 	/**
-	 * @return the idFornecedor
+	 * @return the codigoEditor
 	 */
-	public Long getIdFornecedor() {
-		return idFornecedor;
+	public Long getCodigoEditor() {
+		return codigoEditor;
 	}
 
 	/**
-	 * @param idFornecedor the idFornecedor to set
+	 * @param codigoEditor the codigoEditor to set
 	 */
-	public void setIdFornecedor(Long idFornecedor) {
-		this.idFornecedor = idFornecedor;
-	}
-
-	/**
-	 * @return the nomeFornecedor
-	 */
-	public String getNomeFornecedor() {
-		return nomeFornecedor;
-	}
-
-	/**
-	 * @param nomeFornecedor the nomeFornecedor to set
-	 */
-	public void setNomeFornecedor(String nomeFornecedor) {
-		this.nomeFornecedor = nomeFornecedor;
-	}
-
-	/**
-	 * @return the idEditor
-	 */
-	public Long getIdEditor() {
-		return idEditor;
-	}
-
-	/**
-	 * @param idEditor the idEditor to set
-	 */
-	public void setIdEditor(Long idEditor) {
-		this.idEditor = idEditor;
+	public void setCodigoEditor(Long codigoEditor) {
+		this.codigoEditor = codigoEditor;
 	}
 
 	/**
@@ -501,32 +485,32 @@ public class ProdutoLancamentoDTO implements Serializable {
 	public void setChamadaCapa(String chamadaCapa) {
 		this.chamadaCapa = chamadaCapa;
 	}
-
+	
 	/**
-	 * @return the brinde
+	 * @return the possuiBrinde
 	 */
-	public String getBrinde() {
-		return brinde;
+	public boolean isPossuiBrinde() {
+		return possuiBrinde;
 	}
 
 	/**
-	 * @param brinde the brinde to set
+	 * @param possuiBrinde the possuiBrinde to set
 	 */
-	public void setBrinde(String brinde) {
-		this.brinde = brinde;
+	public void setPossuiBrinde(boolean possuiBrinde) {
+		this.possuiBrinde = possuiBrinde;
 	}
 
 	/**
 	 * @return the pacotePadrao
 	 */
-	public String getPacotePadrao() {
+	public Integer getPacotePadrao() {
 		return pacotePadrao;
 	}
 
 	/**
 	 * @param pacotePadrao the pacotePadrao to set
 	 */
-	public void setPacotePadrao(String pacotePadrao) {
+	public void setPacotePadrao(Integer pacotePadrao) {
 		this.pacotePadrao = pacotePadrao;
 	}
 	

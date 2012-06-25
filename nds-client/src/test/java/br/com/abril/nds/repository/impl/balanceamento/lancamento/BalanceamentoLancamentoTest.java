@@ -19,6 +19,7 @@ import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.StatusConfirmacao;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.Editor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
@@ -78,25 +79,35 @@ public class BalanceamentoLancamentoTest extends AbstractRepositoryImplTest {
 		fornecedorDinap = Fixture.fornecedorDinap(tipoFornecedorPublicacao);
 		save(fornecedorFC, fornecedorDinap);
 		
+		Editor globo = Fixture.criarEditor("Globo", 680L, fornecedorFC.getJuridica(), true);
+		save(globo);
+		
 		TipoProduto tipoRevista = Fixture.tipoRevista();
 		TipoProduto tipoCromo = Fixture.tipoCromo();
 		save(tipoRevista, tipoCromo);
 		
 		Produto veja = Fixture.produtoVeja(tipoRevista);
 		veja.addFornecedor(fornecedorDinap);
+		veja.setEditor(globo);
 
 		Produto quatroRodas = Fixture.produtoQuatroRodas(tipoRevista);
 		quatroRodas.addFornecedor(fornecedorDinap);
-
+		quatroRodas.setEditor(globo);
+		
 		Produto infoExame = Fixture.produtoInfoExame(tipoRevista);
 		infoExame.addFornecedor(fornecedorDinap);
-
+		infoExame.setEditor(globo);
+		
 		Produto capricho = Fixture.produtoCapricho(tipoRevista);
 		capricho.addFornecedor(fornecedorDinap);
+		capricho.setEditor(globo);
+		
 		save(veja, quatroRodas, infoExame, capricho);
 		
 		Produto cromoReiLeao = Fixture.produtoCromoReiLeao(tipoCromo);
 		cromoReiLeao.addFornecedor(fornecedorDinap);
+		cromoReiLeao.setEditor(globo);
+		
 		save(cromoReiLeao);
 
 		ProdutoEdicao veja1 = Fixture.produtoEdicao("1", 1L, 1, 7,
