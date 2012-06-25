@@ -13,12 +13,12 @@
 		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
 		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
 
-		<!-- property name="url" value="jdbc:mysql://abrildgbdb01.cdgtwjqgurfb.sa-east-1.rds.amazonaws.com:3306/nds-client-test" />
+		<property name="url" value="jdbc:mysql://abrildgbdb01.cdgtwjqgurfb.sa-east-1.rds.amazonaws.com:3306/nds-client-test" />
 		<property name="username" value="admin" />
-		<property name="password" value="abrildgb01" /-->
-		<property name="url" value="jdbc:mysql://localhost:3306/nds-client-test" />
+		<property name="password" value="abrildgb01" />
+		<!-- property name="url" value="jdbc:mysql://localhost:3306/nds-client-test" />
 		<property name="username" value="root" />
-		<property name="password" value="root" />
+		<property name="password" value="root" /-->
     </bean>
 
 	<bean id="sessionFactory"
