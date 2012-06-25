@@ -10,7 +10,7 @@
 		</conditionalStyle>
 	</style>
 	<parameter name="NUM_SLIP" class="java.lang.String"/>
-	<parameter name="NUM_BOX" class="java.lang.String"/>
+	<parameter name="CODIGO_BOX" class="java.lang.String"/>
 	<parameter name="DATA_CONFERENCIA" class="java.util.Date"/>
 	<parameter name="CE_JORNALEIRO" class="java.lang.String"/>
 	<parameter name="TOTAL_PROD_DIA" class="java.math.BigDecimal"/>
@@ -110,7 +110,7 @@ DISTRIBUIÇÃO]]></text>
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
 					<font size="13" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Box: " + $P{NUM_BOX}]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Box: " + $P{CODIGO_BOX}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="271" y="0" width="134" height="33"/>
@@ -277,7 +277,7 @@ DISTRIBUIÇÃO]]></text>
 				<textElement textAlignment="Center"/>
 				<textFieldExpression><![CDATA[$F{numeroEdicao}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField pattern="###0.00" isBlankWhenNull="true">
 				<reportElement style="zebrado" x="195" y="0" width="76" height="20"/>
 				<box>
 					<leftPen lineWidth="1.0"/>
@@ -286,7 +286,7 @@ DISTRIBUIÇÃO]]></text>
 				<textElement textAlignment="Center"/>
 				<textFieldExpression><![CDATA[$F{reparte}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField pattern="###0.00" isBlankWhenNull="true">
 				<reportElement style="zebrado" x="271" y="0" width="75" height="20"/>
 				<box>
 					<leftPen lineWidth="1.0"/>
@@ -295,7 +295,7 @@ DISTRIBUIÇÃO]]></text>
 				<textElement textAlignment="Center"/>
 				<textFieldExpression><![CDATA[$F{encalhe}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField pattern="###0.00" isBlankWhenNull="true">
 				<reportElement style="zebrado" x="346" y="0" width="75" height="20"/>
 				<box rightPadding="3">
 					<leftPen lineWidth="1.0"/>
@@ -304,7 +304,7 @@ DISTRIBUIÇÃO]]></text>
 				<textElement textAlignment="Right"/>
 				<textFieldExpression><![CDATA[$F{precoVenda}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField pattern="###0.00" isBlankWhenNull="true">
 				<reportElement style="zebrado" x="421" y="0" width="75" height="20"/>
 				<box rightPadding="3">
 					<leftPen lineWidth="1.0"/>
@@ -356,7 +356,7 @@ DISTRIBUIÇÃO]]></text>
 				<textElement verticalAlignment="Middle"/>
 				<text><![CDATA[Valor do encalhe do dia:]]></text>
 			</staticText>
-			<textField isBlankWhenNull="true">
+			<textField pattern="###0.00" isBlankWhenNull="true">
 				<reportElement mode="Opaque" x="120" y="4" width="376" height="20" backcolor="#E3E3E3"/>
 				<box rightPadding="3">
 					<topPen lineWidth="1.0"/>
@@ -374,7 +374,7 @@ DISTRIBUIÇÃO]]></text>
 				<textElement textAlignment="Right"/>
 				<textFieldExpression><![CDATA[$P{VALOR_ENCA_DIA}]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="true">
+			<textField pattern="###0.00" isBlankWhenNull="true">
 				<reportElement mode="Opaque" x="243" y="48" width="253" height="20" backcolor="#E3E3E3"/>
 				<box rightPadding="3">
 					<topPen lineWidth="1.0"/>

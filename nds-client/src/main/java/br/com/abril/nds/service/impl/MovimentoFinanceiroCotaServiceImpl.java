@@ -1,6 +1,7 @@
 package br.com.abril.nds.service.impl;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -17,6 +18,8 @@ import br.com.abril.nds.model.TipoEdicao;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.BaseCalculo;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.Fornecedor;
+import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.financeiro.HistoricoMovimentoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
@@ -37,71 +40,91 @@ public class MovimentoFinanceiroCotaServiceImpl implements
 	@Override
 	@Transactional
 	public MovimentoFinanceiroCota gerarMovimentoFinanceiroDebitoCredito(
+										MovimentoFinanceiroCotaDTO movimentoFinanceiroCotaDTO) {
+		
+		//TODO: REMOVER APOS REFACTOR
+		
+		return null;
+	}
+	
+	@Override
+	@Transactional
+	public List<MovimentoFinanceiroCota> gerarMovimentosFinanceirosDebitoCredito(
 			MovimentoFinanceiroCotaDTO movimentoFinanceiroCotaDTO) {
 
-		MovimentoFinanceiroCota movimentoFinanceiroCota = null;
-		MovimentoFinanceiroCota movimentoFinanceiroCotaMerged = null;
+		Map<Long, List<MovimentoEstoqueCota>> mapaMovimentoEstoqueCotaPorFornecedor = 
+			this.gerarMapaMovimentoEstoqueCotaPorFornecedor(movimentoFinanceiroCotaDTO.getMovimentos());
 		
-		if (movimentoFinanceiroCotaDTO.getIdMovimentoFinanceiroCota() != null) {
-
-			movimentoFinanceiroCota = this.movimentoFinanceiroCotaRepository.buscarPorId(
-					movimentoFinanceiroCotaDTO.getIdMovimentoFinanceiroCota());
+		List<MovimentoFinanceiroCota> movimentosFinanceirosCota = new ArrayList<MovimentoFinanceiroCota>();
 		
-		} else {
+		for (Map.Entry<Long, List<MovimentoEstoqueCota>> entry : mapaMovimentoEstoqueCotaPorFornecedor.entrySet()) {
+			
+			MovimentoFinanceiroCota movimentoFinanceiroCota = null;
+			MovimentoFinanceiroCota movimentoFinanceiroCotaMerged = null;
+			
+			if (movimentoFinanceiroCotaDTO.getIdMovimentoFinanceiroCota() != null) {
 
-			movimentoFinanceiroCota = new MovimentoFinanceiroCota();
-		}
-
-		TipoMovimentoFinanceiro tipoMovimentoFinanceiro =
-					movimentoFinanceiroCotaDTO.getTipoMovimentoFinanceiro();
-
-		if (tipoMovimentoFinanceiro != null) {
-
-			if (tipoMovimentoFinanceiro.isAprovacaoAutomatica()) {
-
-				movimentoFinanceiroCota.setAprovadoAutomaticamente(
-						movimentoFinanceiroCotaDTO.isAprovacaoAutomatica());
-				movimentoFinanceiroCota.setAprovador(
-						movimentoFinanceiroCotaDTO.getUsuario());
-				movimentoFinanceiroCota.setDataAprovacao(
-						movimentoFinanceiroCotaDTO.getDataAprovacao());
-				movimentoFinanceiroCota.setStatus(
-						StatusAprovacao.APROVADO);
-
+				movimentoFinanceiroCota = this.movimentoFinanceiroCotaRepository.buscarPorId(
+						movimentoFinanceiroCotaDTO.getIdMovimentoFinanceiroCota());
+			
 			} else {
 
-				movimentoFinanceiroCota.setStatus(StatusAprovacao.PENDENTE);
+				movimentoFinanceiroCota = new MovimentoFinanceiroCota();
 			}
 
-			movimentoFinanceiroCota.setCota(
-					movimentoFinanceiroCotaDTO.getCota());
-			movimentoFinanceiroCota.setTipoMovimento(
-					tipoMovimentoFinanceiro);
-			movimentoFinanceiroCota.setData(
-					movimentoFinanceiroCotaDTO.getDataVencimento());
-			movimentoFinanceiroCota.setDataCriacao(
-					movimentoFinanceiroCotaDTO.getDataCriacao());
-			movimentoFinanceiroCota.setUsuario(
-					movimentoFinanceiroCotaDTO.getUsuario());
-			movimentoFinanceiroCota.setValor(
-					movimentoFinanceiroCotaDTO.getValor());
-			movimentoFinanceiroCota.setLancamentoManual(
-					movimentoFinanceiroCotaDTO.isLancamentoManual());
-			movimentoFinanceiroCota.setBaixaCobranca(
-					movimentoFinanceiroCotaDTO.getBaixaCobranca());
-			movimentoFinanceiroCota.setObservacao(
-					movimentoFinanceiroCotaDTO.getObservacao());
-			
-			movimentoFinanceiroCota.setMovimentos(movimentoFinanceiroCotaDTO.getMovimentos());
-			
-			movimentoFinanceiroCotaMerged = 
-					this.movimentoFinanceiroCotaRepository.merge(movimentoFinanceiroCota);
+			TipoMovimentoFinanceiro tipoMovimentoFinanceiro =
+						movimentoFinanceiroCotaDTO.getTipoMovimentoFinanceiro();
 
-			gerarHistoricoMovimentoFinanceiroCota(movimentoFinanceiroCotaMerged, movimentoFinanceiroCotaDTO.getTipoEdicao());
+			if (tipoMovimentoFinanceiro != null) {
 
+				if (tipoMovimentoFinanceiro.isAprovacaoAutomatica()) {
+
+					movimentoFinanceiroCota.setAprovadoAutomaticamente(
+							movimentoFinanceiroCotaDTO.isAprovacaoAutomatica());
+					movimentoFinanceiroCota.setAprovador(
+							movimentoFinanceiroCotaDTO.getUsuario());
+					movimentoFinanceiroCota.setDataAprovacao(
+							movimentoFinanceiroCotaDTO.getDataAprovacao());
+					movimentoFinanceiroCota.setStatus(
+							StatusAprovacao.APROVADO);
+
+				} else {
+
+					movimentoFinanceiroCota.setStatus(StatusAprovacao.PENDENTE);
+				}
+
+				movimentoFinanceiroCota.setCota(
+						movimentoFinanceiroCotaDTO.getCota());
+				movimentoFinanceiroCota.setTipoMovimento(
+						tipoMovimentoFinanceiro);
+				movimentoFinanceiroCota.setData(
+						movimentoFinanceiroCotaDTO.getDataVencimento());
+				movimentoFinanceiroCota.setDataCriacao(
+						movimentoFinanceiroCotaDTO.getDataCriacao());
+				movimentoFinanceiroCota.setUsuario(
+						movimentoFinanceiroCotaDTO.getUsuario());
+				movimentoFinanceiroCota.setValor(
+						movimentoFinanceiroCotaDTO.getValor());
+				movimentoFinanceiroCota.setLancamentoManual(
+						movimentoFinanceiroCotaDTO.isLancamentoManual());
+				movimentoFinanceiroCota.setBaixaCobranca(
+						movimentoFinanceiroCotaDTO.getBaixaCobranca());
+				movimentoFinanceiroCota.setObservacao(
+						movimentoFinanceiroCotaDTO.getObservacao());
+				
+				movimentoFinanceiroCota.setMovimentos(entry.getValue());
+				
+				movimentoFinanceiroCotaMerged = 
+						this.movimentoFinanceiroCotaRepository.merge(movimentoFinanceiroCota);
+
+				gerarHistoricoMovimentoFinanceiroCota(movimentoFinanceiroCotaMerged, movimentoFinanceiroCotaDTO.getTipoEdicao());
+
+			}
+			
+			movimentosFinanceirosCota.add(movimentoFinanceiroCotaMerged);
 		}
 		
-		return movimentoFinanceiroCotaMerged;
+		return movimentosFinanceirosCota;
 	}
 	
 	
@@ -214,4 +237,44 @@ public class MovimentoFinanceiroCotaServiceImpl implements
 				
 		return res;
 	}
+	
+	/*
+	 * Gera um mapa de movimentos de estoque da cota por fornecedor. 
+	 */
+	private Map<Long, List<MovimentoEstoqueCota>> gerarMapaMovimentoEstoqueCotaPorFornecedor(
+																List<MovimentoEstoqueCota> movimentosEstoqueCota) {
+		
+		Map<Long, List<MovimentoEstoqueCota>> mapaMovimentoEstoqueCotaPorFornecedor = 
+			new HashMap<Long, List<MovimentoEstoqueCota>>();
+		
+		if (movimentosEstoqueCota == null
+				|| movimentosEstoqueCota.isEmpty()) {
+			
+			return mapaMovimentoEstoqueCotaPorFornecedor;
+		}
+		
+		for (MovimentoEstoqueCota movimentoEstoqueCota : movimentosEstoqueCota) {
+			
+			Fornecedor fornecedor =
+				movimentoEstoqueCota.getProdutoEdicao().getProduto().getFornecedor();
+			
+			if (fornecedor != null) {
+				
+				List<MovimentoEstoqueCota> movimentosEstoqueCotaFornecedor = 
+					mapaMovimentoEstoqueCotaPorFornecedor.get(fornecedor.getId());
+				
+				if (movimentosEstoqueCotaFornecedor == null) {
+				
+					movimentosEstoqueCotaFornecedor = new ArrayList<MovimentoEstoqueCota>();
+				}
+				
+				movimentosEstoqueCotaFornecedor.add(movimentoEstoqueCota);
+				
+				mapaMovimentoEstoqueCotaPorFornecedor.put(fornecedor.getId(), movimentosEstoqueCotaFornecedor);
+			}
+		}
+		
+		return mapaMovimentoEstoqueCotaPorFornecedor;
+	}
+	
 }

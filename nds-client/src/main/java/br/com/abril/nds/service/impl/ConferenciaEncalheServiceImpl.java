@@ -32,6 +32,7 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.StatusConfirmacao;
 import br.com.abril.nds.model.TipoEdicao;
+import br.com.abril.nds.model.TipoSlip;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
@@ -97,6 +98,7 @@ import br.com.abril.nds.repository.TipoMovimentoEstoqueRepository;
 import br.com.abril.nds.repository.TipoMovimentoFinanceiroRepository;
 import br.com.abril.nds.repository.TipoNotaFiscalRepository;
 import br.com.abril.nds.service.ConferenciaEncalheService;
+import br.com.abril.nds.service.ControleNumeracaoSlipService;
 import br.com.abril.nds.service.DistribuidorService;
 import br.com.abril.nds.service.DocumentoCobrancaService;
 import br.com.abril.nds.service.GerarCobrancaService;
@@ -200,6 +202,9 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	
 	@Autowired
 	private ItemRecebimentoFisicoRepository itemRecebimentoFisicoRepository;
+	
+	@Autowired
+	private ControleNumeracaoSlipService controleNumeracaoSlipService;
 	
 	/*
 	 * (non-Javadoc)
@@ -831,9 +836,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		PoliticaCobranca politicaCobranca = politicaCobrancaService.obterPoliticaCobrancaPrincipal();
 		FormaEmissao formaEmissao = politicaCobranca.getFormaEmissao();
 		
-		//documentoConferenciaEncalhe.setIndGeraDocumentacaoConferenciaEncalhe(FormaEmissao.INDIVIDUAL_BOX.equals(formaEmissao));
-		//TODO: voltar codigo acima apos testes...
-		documentoConferenciaEncalhe.setIndGeraDocumentacaoConferenciaEncalhe(true);
+		documentoConferenciaEncalhe.setIndGeraDocumentacaoConferenciaEncalhe(FormaEmissao.INDIVIDUAL_BOX.equals(formaEmissao));
 		return documentoConferenciaEncalhe;
 		
 	}
@@ -907,10 +910,10 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		MovimentoFinanceiroCota movimentoFinanceiroCota = 
 				movimentoFinanceiroCotaRepository.obterMovimentoFinanceiroCotaParaMovimentoEstoqueCota(movimentoEstoqueCota.getId());
 		
-		gerarCobrancaService.cancelarDividaCobranca(movimentoFinanceiroCota.getId());
-		
-		movimentoFinanceiroCotaRepository.remover(movimentoFinanceiroCota);
-		
+		if(movimentoFinanceiroCota!=null) {
+			gerarCobrancaService.cancelarDividaCobranca(movimentoFinanceiroCota.getId());
+			movimentoFinanceiroCotaRepository.remover(movimentoFinanceiroCota);
+		}
 		
 	}
 	
@@ -2212,6 +2215,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		String nomeCota 		= controleConferenciaEncalheCota.getCota().getPessoa().getNome();
 		Date dataConferencia 	= controleConferenciaEncalheCota.getDataOperacao();
 		String codigoBox 		= controleConferenciaEncalheCota.getBox().getCodigo();
+		Long numeroSlip 		= controleNumeracaoSlipService.obterProximoNumeroSlip(TipoSlip.SLIP_CONFERENCIA_ENCALHE);
 		
 		
 		BigDecimal qtdeTotalProdutos 	= null;
@@ -2261,8 +2265,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		parameters.put("NUMERO_COTA", slip.getNumeroCota());
 		parameters.put("NOME_COTA", slip.getNomeCota());
 		
-		//TODO: Obter valor de num slip
-		parameters.put("NUM_SLIP", "1");
+		parameters.put("NUM_SLIP", numeroSlip.toString());
 		parameters.put("CODIGO_BOX", slip.getCodigoBox());
 		parameters.put("DATA_CONFERENCIA", slip.getDataConferencia());
 		parameters.put("CE_JORNALEIRO", slip.getCeJornaleiro());

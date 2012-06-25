@@ -43,6 +43,15 @@ public interface CalendarioService {
 	Date subtrairDiasUteis(Date data, int numDias);
 	
 	/**
+	 * Verifica se a data informada é dia útil.
+	 * 
+	 * @param data - data para verificação
+	 * 
+	 * @return indicação se a data é dia útil
+ 	 */
+	boolean isDiaUtil(Date data);
+	
+	/**
 	 * Adiciona dias úteis a uma data.
 	 * 
 	 * @param data - data a ser adicionada

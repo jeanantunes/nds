@@ -6,6 +6,7 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.Embedded;
 
+import br.com.abril.nds.util.TipoSecao;
 import br.com.abril.nds.util.export.fiscal.nota.NFEExport;
 
 @Embeddable
@@ -19,7 +20,7 @@ public class InformacaoEletronica implements Serializable {
 	/**
 	 * Chave de acesso gerada pelo sistema
 	 */
-	@NFEExport(secao="A", posicao=1, tamanho=44)
+	@NFEExport(secao=TipoSecao.A, posicao=1, tamanho=44)
 	@Column(name = "CHAVE_ACESSO", length = 44)
 	private String chaveAcesso;
 	

@@ -1,9 +1,10 @@
-function Balanceamento(pathTela) {
+function Balanceamento(pathTela, descInstancia) {
 	
 	var T = this;
 	
 	this.tiposMovimento = []; 
 	this.tipoMovimento = null;
+	this.instancia = descInstancia;
 	
 	this.pesquisar = function() {
 		
@@ -42,7 +43,7 @@ function Balanceamento(pathTela) {
 		$('#selTodos').uncheck();	
 				
 		$(".lancamentosProgramadosGrid").flexOptions({			
-			url : pathTela + "/matrizLancamento/pesquisarMatrizLancamento",
+			url : pathTela + "/matrizLancamento/obterGridMatrizLancamento",
 			dataType : 'json',		
 			autoload: false,
 			singleSelect: true,
@@ -95,8 +96,12 @@ function Balanceamento(pathTela) {
 	
 	
 	this.processarLinha = function(i,row) {
-				
+		
 		var emEstudoExpedido = row.cell.estudoFechado || row.cell.expedido;
+		
+		var linkDescProduto = T.getLinkProduto(row.cell.codigoProduto,row.cell.nomeProduto);
+		row.cell.nomeProduto = linkDescProduto;
+			
 		if (!emEstudoExpedido) {
 			var dataDistrib = '<input type="text" name="datepickerDe10" id="datepickerDe10" style="width:70px; float:left;" value="'+row.cell.dataMatrizDistrib+'"/>';
 			dataDistrib+='<span class="bt_atualizarIco" title="Atualizar Datas">';
@@ -120,6 +125,79 @@ function Balanceamento(pathTela) {
 		
 	},
 	
+	
+	/**
+	 * Obtém link para detalhes do produto
+	 * OBS: Específico para matrizLancamento\index.jsp
+	 * @param codigoProduto
+	 * @param nomeProduto
+	 * @return String: link para função de busca de detalhes
+	 */
+	this.getLinkProduto = function(codigoProduto,nomeProduto) {
+		return '<a href="javascript:;" onclick="' + T.instancia +'.obterDetalheProduto('+codigoProduto+');">'+nomeProduto+'</a>';
+	},
+
+	
+    /**
+     * Obtém detalhes do produto
+     * OBS: Específico para matrizLancamento\index.jsp
+     * @param codigoProduto
+     */
+	this.obterDetalheProduto = function (codigoProduto){
+		var data = [];
+		data.push({name:'codigoProduto', value: codigoProduto});
+		
+		$.postJSON(
+			pathTela + "/matrizLancamento/obterDetalheProduto", 
+			data,
+			function(result) {
+				T.popularDetalheProduto(result);
+				T.popup_detalhes_prod( "#dialog-detalhe-produto" );
+			},
+			function() {
+				$("#dialog-detalhe-produto").hide();
+			}
+		);
+	},
+	
+	
+	/**
+	 * Popula Popup de detalhes do produto.
+	 * OBS: Específico para matrizLancamento\index.jsp
+	 * @param result
+	 */
+	this.popularDetalheProduto = function(result){
+		$("#detalheNome").html(result.nomeProduto);
+		$("#detalhePreco").html(result.precoVenda);
+		$("#detalheCCapa").html(result.chamadaCapa);
+		$("#detalhePrecoDesc").html(result.precoComDesconto);
+		$("#detalheFornecedor").html(result.nomeFornecedor);
+		$("#detalheBrinde").html(result.brinde);
+		$("#detalheEditor").html(result.idEditor+"-"+result.nomeEditor);
+		$("#detalhePacote").html(result.pacotePadrao);
+	},
+	
+	
+	/**
+	 * Exibe popup de detalhes do produto
+	 * @returns
+	 */
+	this.popup_detalhes_prod = function(dialog){
+		$( dialog ).dialog({
+			resizable: false,
+			height:300,
+			width:760,
+			modal: true,
+			buttons: {
+				"Fechar": function() {
+					$( this ).dialog( "close" );
+					
+				},
+				
+			}
+		});
+	}
+
 	
 	/**
 	 * Atribui valor a um campo da tela

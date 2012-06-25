@@ -204,7 +204,7 @@ public class VendaEncalheController {
 		
 		BigDecimal total = CurrencyUtil.converterValor(precoProduto).multiply((new BigDecimal(qntSolicitada)));
 		
-		result.use(CustomMapJson.class).put("total", CurrencyUtil.formatarValor(total)).serialize();
+		result.use(CustomMapJson.class).put("totalFormatado", CurrencyUtil.formatarValor(total)).put("total",total).serialize();
 	}
 	
 	@Post
@@ -305,6 +305,8 @@ public class VendaEncalheController {
 		produtoVO.setNumeroCota(tratarValor(venda.getNumeroCota()));
 		produtoVO.setNomeCota(venda.getNomeCota());
 		produtoVO.setIdVendaEncalhe(venda.getIdVenda());
+		produtoVO.setTipoVenda(venda.getTipoVendaEncalhe());
+		produtoVO.setValorTotal(venda.getValoTotalProduto());
 		
 		BigDecimal qntDisponivel = new BigDecimal((venda.getQntDisponivelProduto()==null)?0:venda.getQntDisponivelProduto());
 		qntDisponivel = qntDisponivel.add(new BigDecimal(venda.getQntProduto()));

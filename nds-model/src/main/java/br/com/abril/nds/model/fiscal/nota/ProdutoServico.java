@@ -14,6 +14,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.util.TipoSecao;
 import br.com.abril.nds.util.export.fiscal.nota.NFEExport;
 import br.com.abril.nds.util.export.fiscal.nota.NFEExports;
 
@@ -51,63 +52,63 @@ public class ProdutoServico implements Serializable {
 	 * cProd
 	 */
 	@Column(name="CODIGO_PRODUTO", length=60, nullable=false)
-	@NFEExport(secao="I", posicao=0, tamanho=60)
+	@NFEExport(secao=TipoSecao.I, posicao=0, tamanho=60)
 	private String codigoProduto;
 	
 	/**
 	 * cEAN
 	 */
 	@Column(name="CODIGO_BARRAS", length=14, nullable=false)
-	@NFEExports({@NFEExport(secao="I", posicao=1, tamanho=14), @NFEExport(secao="I", posicao=11, tamanho=14)})
+	@NFEExports({@NFEExport(secao=TipoSecao.I, posicao=1, tamanho=14), @NFEExport(secao=TipoSecao.I, posicao=11, tamanho=14)})
 	private Long codigoBarras;
 	
 	/**
 	 * xProd
 	 */
 	@Column(name="DESCRICAO_PRODUTO", length=120, nullable=false)
-	@NFEExport(secao="I", posicao=2, tamanho=120)
+	@NFEExport(secao=TipoSecao.I, posicao=2, tamanho=120)
 	private String descricaoProduto;
 	
 	/**
 	 * NCM
 	 */
 	@Column(name="NCM", length=8, nullable=false)
-	@NFEExport(secao="I", posicao=3, tamanho=8)
+	@NFEExport(secao=TipoSecao.I, posicao=3, tamanho=8)
 	private Long ncm;
 	
 	/**
 	 * EXTIPI
 	 */
 	@Column(name="EXTIPI", length=2, nullable=true)
-	@NFEExport(secao="I", posicao=4, tamanho=3)
+	@NFEExport(secao=TipoSecao.I, posicao=4, tamanho=3)
 	private Long extipi;
 	
 	/**
 	 * CFOP
 	 */
 	@Column(name="CFOP", length=4, nullable=false)
-	@NFEExport(secao="I", posicao=6, tamanho=4)
+	@NFEExport(secao=TipoSecao.I, posicao=6, tamanho=4)
 	private Integer cfop;
 	
 	/**
 	 * uCom
 	 */
 	@Column(name="UNIDADE_COMERCIAL", length=6, nullable=false)
-	@NFEExports({@NFEExport(secao="I", posicao=7, tamanho=6),@NFEExport(secao="I", posicao=12, tamanho=6)})
+	@NFEExports({@NFEExport(secao=TipoSecao.I, posicao=7, tamanho=6),@NFEExport(secao=TipoSecao.I, posicao=12, tamanho=6)})
 	private String unidade;
 	
 	/**
 	 * qCom
 	 */
 	@Column(name="QUANTIDADE_COMERCIAL", length=15, nullable=false)
-	@NFEExports({@NFEExport(secao="I", posicao=8, tamanho=12),@NFEExport(secao="I", posicao=13, tamanho=12)})
+	@NFEExports({@NFEExport(secao=TipoSecao.I, posicao=8, tamanho=12),@NFEExport(secao=TipoSecao.I, posicao=13, tamanho=12)})
 	private Long quantidade;
 	
 	/**
 	 * vUnCom
 	 */
 	@Column(name="VALOR_UNITARIO_COMERCIAL", length=21, nullable=false)
-	@NFEExports({@NFEExport(secao="I", posicao=9, tamanho=16),@NFEExport(secao="I", posicao=14, tamanho=16)})
+	@NFEExports({@NFEExport(secao=TipoSecao.I, posicao=9, tamanho=16),@NFEExport(secao=TipoSecao.I, posicao=14, tamanho=16)})
 	private Double valorUnitario;
 	
 	/**
@@ -120,21 +121,21 @@ public class ProdutoServico implements Serializable {
 	 * vFrete
 	 */
 	@Column(name="VALOR_FRETE", length=15, nullable=true)
-	@NFEExport(secao="I", posicao=15, tamanho=15)
+	@NFEExport(secao=TipoSecao.I, posicao=15, tamanho=15)
 	private Double valorFrete;
 	
 	/**
 	 * vSeg
 	 */
 	@Column(name="VALOR_SERGURO", length=15, nullable=true)
-	@NFEExport(secao="I", posicao=16, tamanho=15)
+	@NFEExport(secao=TipoSecao.I, posicao=16, tamanho=15)
 	private Double valorSeguro;
 	
 	/**
 	 * vDesc
 	 */
 	@Column(name="VALOR_DESCONTO", length=15, nullable=true)
-	@NFEExport(secao="I", posicao=17, tamanho=15)
+	@NFEExport(secao=TipoSecao.I, posicao=17, tamanho=15)
 	private Double valorDesconto;
 	
 	/**
