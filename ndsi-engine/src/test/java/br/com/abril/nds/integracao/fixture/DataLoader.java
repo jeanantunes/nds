@@ -2525,17 +2525,17 @@ public class DataLoader {
 		save(session, Fixture.parametroSistema(TipoParametroSistema.NUMERO_DIAS_PERMITIDO_LANCAMENTO_SOBRA_EM, "7"));
 		save(session, Fixture.parametroSistema(TipoParametroSistema.NUMERO_DIAS_PERMITIDO_LANCAMENTO_SOBRA_DE, "7"));
 		save(session, Fixture.parametroSistema(TipoParametroSistema.PATH_INTERFACE_NFE_IMPORTACAO, 
-//				"C:\\notas\\"));			// windows;
-				"/opt/interface/notas/"));	// linux;
+				"C:\\notas\\"));			// windows;
+//				"/opt/interface/notas/"));	// linux;
 		save(session, Fixture.parametroSistema(TipoParametroSistema.PATH_INTERFACE_MDC_IMPORTACAO, 
-//				"C:\\interface_mdc\\"));		// windows;
-				"/opt/interface/inbound/"));		// linux;
+				"C:\\interface_mdc\\"));		// windows;
+//				"/opt/interface/inbound/"));		// linux;
 		save(session, Fixture.parametroSistema(TipoParametroSistema.PATH_INTERFACE_MDC_EXPORTACAO, 
-//				"C:\\interface_mdc\\"));		// windows;
-				"/opt/interface/outbound/"));	// linux;
+				"C:\\interface_mdc\\"));		// windows;
+//				"/opt/interface/outbound/"));	// linux;
 		save(session, Fixture.parametroSistema(TipoParametroSistema.PATH_INTERFACE_MDC_BACKUP, 
-//				"C:\\interface_mdc\\"));		// windows;
-				"/opt/interface/archive/"));		// linux;
+				"C:\\interface_mdc\\"));		// windows;
+//				"/opt/interface/archive/"));		// linux;
 		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0106_ARCHIVE, "/opt/interface/ems0106/archive/"));
 		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0106_INBOUND, "/opt/interface/ems0106/inbound/"));
 		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0106_IN_FILEMASK, "(?i:DEAPR19.NEW)"));
