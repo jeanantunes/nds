@@ -316,8 +316,6 @@ public class DiferencaEstoqueController {
 	@SuppressWarnings("unchecked")
 	public void carregarNovasDiferencas(String dataMovimentoFormatada, TipoDiferenca tipoDiferenca) {
 		
-		this.validarEntradaDadosNovoLancamento(dataMovimentoFormatada, tipoDiferenca);
-		
 		List<DiferencaVO> listaNovasDiferencas = new ArrayList<DiferencaVO>();
 		
 		List<DiferencaVO> listaDiferencasCadastradas =
@@ -1422,13 +1420,15 @@ public class DiferencaEstoqueController {
 		
 	}
 	
-	/*
+	/**
 	 * Valida a entrada de dados para pesquisa de lançamentos de diferença de estoque.
 	 * 
 	 * @param dataMovimentoFormatada - data de movimento formatado
 	 * @param tipoDiferenca - tipo de diferença
 	 */
-	private void validarEntradaDadosNovoLancamento(String dataMovimentoFormatada, TipoDiferenca tipoDiferenca) {
+	@Post
+	@Path("/lancamento/novo/validar")
+	public void validarEntradaDadosNovoLancamento(String dataMovimentoFormatada, TipoDiferenca tipoDiferenca) {
 		
 		if (dataMovimentoFormatada == null 
 				|| dataMovimentoFormatada.trim().isEmpty()) {
@@ -1442,6 +1442,8 @@ public class DiferencaEstoqueController {
 			throw new ValidacaoException(
 				TipoMensagem.WARNING, "O preenchimento do campo [Tipo de Diferença] é obrigatório!");
 		}
+		
+		this.result.use(Results.json()).from("").serialize();
 	}
 	
 	/*

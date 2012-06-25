@@ -13,7 +13,7 @@ import br.com.abril.nds.model.cadastro.Distribuidor;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @TransactionConfiguration
-@ContextConfiguration(locations={"classpath:spring/applicationContext.xml"})
+@ContextConfiguration(locations={"classpath:spring/applicationContext-ndsi-test.xml"})
 public class DistribuidorServiceTest {
 
 	@Autowired

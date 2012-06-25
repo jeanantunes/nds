@@ -5,7 +5,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import br.com.abril.nds.util.TipoSessao;
+import br.com.abril.nds.util.TipoSecao;
 
 /**
  * Anotação que identifica um atributo da Nota Fiscal Eletrônica que pode ser
@@ -23,7 +23,7 @@ public @interface NFEExport {
 	 * 
 	 * @return
 	 */
-	public TipoSessao secao();
+	public TipoSecao secao();
 	
 	/**
 	 * Tamanho máximo de caracteres.

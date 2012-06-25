@@ -8,7 +8,7 @@ package br.com.abril.nds.util;
  */
 public class CampoSecao {
 	
-	private TipoSessao sessao;
+	private TipoSecao sessao;
 	
 	private Integer tamanho;
 	
@@ -22,7 +22,7 @@ public class CampoSecao {
 		
 	}
 	
-	public CampoSecao(TipoSessao sessao, Integer tamanho, Integer posicao,
+	public CampoSecao(TipoSecao sessao, Integer tamanho, Integer posicao,
 			Object valor, String mascara) {
 		
 		this.sessao = sessao;
@@ -32,17 +32,24 @@ public class CampoSecao {
 		this.mascara = mascara;
 	}
 
+	public CampoSecao(TipoSecao sessao, Integer posicao, Object valor) {
+		
+		this.sessao = sessao;
+		this.posicao = posicao;
+		this.valor = valor;
+	}
+	
 	/**
 	 * @return the sessao
 	 */
-	public TipoSessao getSessao() {
+	public TipoSecao getSessao() {
 		return sessao;
 	}
 
 	/**
 	 * @param sessao the sessao to set
 	 */
-	public void setSessao(TipoSessao sessao) {
+	public void setSessao(TipoSecao sessao) {
 		this.sessao = sessao;
 	}
 

@@ -16,4 +16,11 @@ public interface TelefoneCotaRepository extends Repository<TelefoneCota, Long> {
 	void removerTelefonesCota(Collection<Long> listaTelefones);
 	
 	List<Telefone> buscarTelefonesPessoaPorCota(Long idCota);
+
+	/**
+	 * Obtem o Telefone principal da cota
+	 * @param idCota Identificador da cota
+	 * @return
+	 */
+	public abstract TelefoneCota obterTelefonePrincipal(long idCota);
 }

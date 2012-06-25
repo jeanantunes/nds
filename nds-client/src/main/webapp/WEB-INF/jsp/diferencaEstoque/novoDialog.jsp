@@ -80,31 +80,38 @@
    				}
    			];
 
-			$("#gridNovasDiferencas").flexOptions({
-				url : '<c:url value="/estoque/diferenca/lancamento/novo" />', 
-				params: formData
-			});
-			
-			$("#gridNovasDiferencas").flexReload();
-			
-			$("#dialogNovasDiferencas").dialog({
-				resizable: false,
-				height:390,
-				width:640,
-				modal: true,
-				buttons: {
-					"Confirmar": function() {
-						cadastrarNovasDiferencas();
-					},
-					"Cancelar": function() {
-						$("#gridNovasDiferencas").flexAddData({rows:[]});
-						$(this).dialog("close");
-					}
-				},
-				beforeClose: function() {
-					clearMessageDialogTimeout();
+			$.postJSON(
+				"<c:url value='/estoque/diferenca/lancamento/novo/validar' />", 
+				formData,
+				function(result) {
+
+					$("#gridNovasDiferencas").flexOptions({
+						url : '<c:url value="/estoque/diferenca/lancamento/novo" />', 
+						params: formData
+					});
+					
+					$("#gridNovasDiferencas").flexReload();
+					
+					$("#dialogNovasDiferencas").dialog({
+						resizable: false,
+						height:390,
+						width:640,
+						modal: true,
+						buttons: {
+							"Confirmar": function() {
+								cadastrarNovasDiferencas();
+							},
+							"Cancelar": function() {
+								$("#gridNovasDiferencas").flexAddData({rows:[]});
+								$(this).dialog("close");
+							}
+						},
+						beforeClose: function() {
+							clearMessageDialogTimeout();
+						}
+					});	
 				}
-			});
+			); 
 		}
 
 		function executarPreProcessamentoNovo(resultado) {
