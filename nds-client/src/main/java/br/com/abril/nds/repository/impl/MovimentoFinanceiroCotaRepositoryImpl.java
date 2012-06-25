@@ -45,11 +45,11 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepository<Mo
 	}
 	
 	@SuppressWarnings("unchecked")
-	public List<MovimentoFinanceiroCota> obterMovimentoFinanceiroCotaDataOperacao(Long idCota, Date dataAtual){
+	public List<MovimentoFinanceiroCota> obterMovimentoFinanceiroCota(Long idCota){
 		
 		StringBuilder hql = new StringBuilder("select mfc ");
 		hql.append(" from MovimentoFinanceiroCota mfc, Distribuidor d ")
-		   .append(" where mfc.data = d.dataOperacao ")
+		   .append(" where mfc.data <= d.dataOperacao ")
 		   .append(" and mfc.status = :statusAprovado ");
 		
 		if (idCota != null){
@@ -57,13 +57,12 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepository<Mo
 		}
 		
 		hql.append(" and mfc.id not in ")
-		   .append(" (select mov.id from ConsolidadoFinanceiroCota c join c.movimentos mov where c.dataConsolidado <= :dataAtual) ");
+		   .append(" (select mov.id from ConsolidadoFinanceiroCota c join c.movimentos mov where c.dataConsolidado <= d.dataOperacao) ");
 		
 		hql.append(" order by mfc.cota.id ");
 		
 		Query query = this.getSession().createQuery(hql.toString());
 		query.setParameter("statusAprovado", StatusAprovacao.APROVADO);
-		query.setParameter("dataAtual", dataAtual);
 		
 		if (idCota != null){
 			query.setParameter("idCota", idCota);
@@ -488,6 +487,8 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepository<Mo
 	     
 	    hql.append(" from MovimentoEstoqueCota mec where mec.cota = c  ");
 	    
+	    hql.append(" and mec.status = :status  ");
+	    
 	    hql.append(" and ( mec.data >= :dataInicial and mec.data <= :dataFinal )  ");
 	    
 	    hql.append(" ) as faturamentoBruto, ");
@@ -498,6 +499,8 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepository<Mo
 	    hql.append(" COALESCE(sum( (COALESCE(mec.estoqueProdutoCota.qtdeRecebida,0) - COALESCE(mec.estoqueProdutoCota.qtdeDevolvida,0))*(COALESCE(mec.estoqueProdutoCota.produtoEdicao.precoVenda,0) - COALESCE(mec.estoqueProdutoCota.produtoEdicao.desconto,0)) ),0) ");
 	    
 	    hql.append(" from MovimentoEstoqueCota mec where mec.cota = c  ");
+	    
+	    hql.append(" and mec.status = :status  ");
 	    
 	    hql.append(" and ( mec.data >= :dataInicial and mec.data <= :dataFinal )  ");
 	    
@@ -511,6 +514,8 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepository<Mo
 		Query query = this.getSession().createQuery(hql.toString()).setResultTransformer(new AliasToBeanResultTransformer(CotaFaturamentoDTO.class));
 		
 		query.setParameterList("cotas", cotas);
+		
+		query.setParameter("status", StatusAprovacao.APROVADO);
 		
 		query.setParameter("dataInicial", dataInicial);
 		

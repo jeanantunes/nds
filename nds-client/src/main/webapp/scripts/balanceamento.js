@@ -42,7 +42,7 @@ function Balanceamento(pathTela) {
 		$('#selTodos').uncheck();	
 				
 		$(".lancamentosProgramadosGrid").flexOptions({			
-			url : pathTela + "/matrizLancamento/pesquisarMatrizLancamento",
+			url : pathTela + "/matrizLancamento/obterGridMatrizLancamento",
 			dataType : 'json',		
 			autoload: false,
 			singleSelect: true,
@@ -95,7 +95,7 @@ function Balanceamento(pathTela) {
 	
 	
 	this.processarLinha = function(i,row) {
-				
+		
 		var emEstudoExpedido = row.cell.estudoFechado || row.cell.expedido;
 		if (!emEstudoExpedido) {
 			var dataDistrib = '<input type="text" name="datepickerDe10" id="datepickerDe10" style="width:70px; float:left;" value="'+row.cell.dataMatrizDistrib+'"/>';
