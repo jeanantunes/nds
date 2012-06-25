@@ -32,6 +32,13 @@ public class CampoSecao {
 		this.mascara = mascara;
 	}
 
+	public CampoSecao(TipoSessao sessao, Integer posicao, Object valor) {
+		
+		this.sessao = sessao;
+		this.posicao = posicao;
+		this.valor = valor;
+	}
+	
 	/**
 	 * @return the sessao
 	 */
