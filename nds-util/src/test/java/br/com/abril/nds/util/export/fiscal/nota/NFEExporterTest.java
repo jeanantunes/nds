@@ -14,7 +14,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import br.com.abril.nds.util.DateUtil;
-import br.com.abril.nds.util.TipoSessao;
+import br.com.abril.nds.util.TipoSecao;
 
 public class NFEExporterTest {
 
@@ -26,7 +26,6 @@ public class NFEExporterTest {
 	 * @throws InvocationTargetException
 	 */
 	@Test
-	@Ignore
 	public void notaFiscalToString() throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
 
 		ClasseTest classeTest = preencheObjeto();
@@ -36,7 +35,7 @@ public class NFEExporterTest {
 		nfeExporter.clear();
 		nfeExporter.execute(classeTest);
 		String conteudoTXT = nfeExporter.toString();  
-		
+		System.out.println(conteudoTXT);
 		StringBuilder conteudoTXTEsperado = new StringBuilder();
 		
 		conteudoTXTEsperado.append("A|1,003.432|1002|2012-12|||2|\n")
@@ -112,31 +111,33 @@ public class NFEExporterTest {
 	 */
 	public class ClasseTest {
 
-		@NFEExport(secao = TipoSessao.B, posicao = 4)
+		private List<ClasseListaTest> listaClasseListaTests; 
+		
+		@NFEExport(secao = TipoSecao.B, posicao = 4)
 		private Long varLong;
 
-		@NFEExport(secao = TipoSessao.A, posicao = 0, mascara = "#,##0.000")
+		@NFEExport(secao = TipoSecao.A, posicao = 0, mascara = "#,##0.000")
 		private Double varDouble;
 
-		@NFEExport(secao = TipoSessao.B, posicao = 2)
+		@NFEExport(secao = TipoSecao.B, posicao = 2)
 		private BigDecimal varBigDecimal;
 
-		@NFEExport(secao = TipoSessao.A, posicao = 1)
+		@NFEExport(secao = TipoSecao.A, posicao = 1)
 		private BigInteger varBigInteger;
 
-		@NFEExport(secao = TipoSessao.B13, posicao = 2, mascara = "00000")
+		@NFEExport(secao = TipoSecao.B13, posicao = 2, mascara = "00000")
 		private Integer varInteger;
 
 		private SubClasseTest subClasseTest;
 		
-		private List<ClasseListaTest> listaClasseListaTests; 
+		
 
 		/** Getters and Setters **/
 
 		/**
 		 * @return a verção atual do layout
 		 */
-		@NFEExport(secao = TipoSessao.B13, posicao = 3)
+		@NFEExport(secao = TipoSecao.B13, posicao = 3)
 		public Integer getVercao() {
 			return 2;
 		}
@@ -250,35 +251,35 @@ public class NFEExporterTest {
 	 */
 	public class SubClasseTest {
 
-		@NFEExport(secao = TipoSessao.B13, posicao = 0)
+		@NFEExport(secao = TipoSecao.B13, posicao = 0)
 		private Date varDate;
 
 		@NFEExports(
 				value = { 
-						@NFEExport(secao = TipoSessao.B, posicao = 0),
-						@NFEExport(secao = TipoSessao.A, posicao = 2, mascara = "yyyy-MM") 
+						@NFEExport(secao = TipoSecao.B, posicao = 0),
+						@NFEExport(secao = TipoSecao.A, posicao = 2, mascara = "yyyy-MM") 
 						}
 				)
 		private Calendar varCalendar;
 
-		@NFEExport(secao = TipoSessao.B13, posicao = 1, tamanho = 15)
+		@NFEExport(secao = TipoSecao.B13, posicao = 1, tamanho = 15)
 		private String varString;
 
-		@NFEExport(secao =TipoSessao.B, posicao = 1)
+		@NFEExport(secao =TipoSecao.B, posicao = 1)
 		private Character varCharacter;
 
 		@NFEExports(
 				value = { 
-						@NFEExport(secao =TipoSessao.B13, posicao = 5),
-						@NFEExport(secao = TipoSessao.A, posicao = 3) 
+						@NFEExport(secao =TipoSecao.B13, posicao = 5),
+						@NFEExport(secao = TipoSecao.A, posicao = 3) 
 						}
 				)
 		private Byte varByte; 
 		
-		@NFEExport(secao = TipoSessao.B, posicao = 5)
+		@NFEExport(secao = TipoSecao.B, posicao = 5)
 		private Short varShort;
 		
-		@NFEExport(secao = TipoSessao.A, posicao = 4)
+		@NFEExport(secao = TipoSecao.A, posicao = 4)
 		private Float varFloat;
 
 		/** Getters and Setters **/
@@ -286,7 +287,7 @@ public class NFEExporterTest {
 		/**
 		 * @return Tipo do Ambiente
 		 */
-		@NFEExport(secao = TipoSessao.A, posicao = 5)
+		@NFEExport(secao = TipoSecao.A, posicao = 5)
 		public Character getTipoAmbiente() {
 			return '2';
 		}
@@ -393,10 +394,10 @@ public class NFEExporterTest {
 	
 	public class ClasseListaTest{
 		
-		@NFEExport(secao =TipoSessao.C, posicao = 0)
+		@NFEExport(secao =TipoSecao.C, posicao = 0)
 		private String varString;
 		
-		@NFEExport(secao = TipoSessao.C, posicao = 1)
+		@NFEExport(secao = TipoSecao.C, posicao = 1)
 		private Date varDate;
 
 		/**
