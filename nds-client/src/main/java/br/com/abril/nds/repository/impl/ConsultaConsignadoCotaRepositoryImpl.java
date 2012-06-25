@@ -77,7 +77,8 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepository<Mov
 		hql.append(" movimento.qtde as reparte, ");
 		hql.append(" (pe.precoVenda * movimento.qtde) as total, ");
 		hql.append(" ( (pe.precoVenda - pe.desconto) * movimento.qtde)  as totalDesconto, ");
-		hql.append("pessoa.razaoSocial as nomeFornecedor ");
+		hql.append("pessoa.razaoSocial as nomeFornecedor,  ");
+		hql.append("fornecedor.id as idFornecedor  ");
 		
 		hql.append(getHQLFromEWhereConsignadoCota(filtro));
 		
@@ -116,18 +117,18 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepository<Mov
 		hql.append(" LEFT JOIN pe.produto as produto ");
 		hql.append(" LEFT JOIN cota.parametroCobranca parametroCobranca ");
 		hql.append(" LEFT JOIN cota.fornecedores as fornecedor ");
-		hql.append(" LEFT JOIN fornecedor.juridica as pessoa ");
-		if(filtro.getIdCota() == null){
+		hql.append(" LEFT JOIN fornecedor.juridica as pessoa ");		
+		if(filtro.getIdCota() == null || filtro.getIdFornecedor() != null){
 			hql.append(" LEFT JOIN cota.pessoa as pessoaCota ");
 		}
 		
 		hql.append(" WHERE  tipoMovimento.grupoMovimentoEstoque = :tipoMovimento  " );
 		hql.append(" AND  parametroCobranca.tipoCota = :tipoCota  " );
-
+		
 		if(filtro.getIdCota() != null ) { 
-			hql.append(" AND cota.id =:numeroCota");
+			hql.append(" AND cota.id =:numeroCota");			
 		}
-		if(filtro.getIdFornecedor() != null ) { 
+		if(filtro.getIdFornecedor() != null) { 
 			hql.append(" AND fornecedor.id =:idFornecedor");
 		}
 		
@@ -142,16 +143,20 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepository<Mov
 		}
 		StringBuilder hql = new StringBuilder();
 		
-		if(filtro.getIdCota() != null){
-			hql.append(" order by cota.numeroCota asc ");
-		}
+		boolean ordenar = false; 
 		
-		if(filtro.getIdFornecedor() != null){
+		if(filtro.getIdCota() != null && !ordenar){
 			hql.append(" order by cota.numeroCota ");
+			ordenar = true;
+		}
+		
+		if(filtro.getIdFornecedor() != null && !ordenar){
+			hql.append(" order by cota.numeroCota ");
+			ordenar = true;
 		}
 		
 		
-		if (filtro.getPaginacao().getOrdenacao() != null) {
+		if (filtro.getPaginacao().getOrdenacao() != null && ordenar) {
 			hql.append( filtro.getPaginacao().getOrdenacao().toString());
 		}
 		

@@ -4,6 +4,11 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import br.com.abril.nds.util.Constantes;
+import br.com.abril.nds.util.CurrencyUtil;
+import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.util.export.Export;
+import br.com.abril.nds.util.export.Export.Alignment;
 import br.com.abril.nds.util.export.Exportable;
 
 @Exportable
@@ -11,22 +16,38 @@ public class ConsultaConsignadoCotaDTO implements Serializable {
 	
 	private static final long serialVersionUID = 3076443242075398273L;
 	
+	@Export(label = "Código" , alignment= Alignment.LEFT, exhibitionOrder = 1)
 	private String codigoProduto;
+	
+	@Export(label = "Produto" , alignment= Alignment.LEFT, exhibitionOrder = 2)
 	private String nomeProduto;
+	
+	@Export(label = "Edição" , alignment= Alignment.LEFT, exhibitionOrder = 3)
 	private Long numeroEdicao;
+	
+	@Export(label = "Fornecedor" , alignment= Alignment.LEFT, exhibitionOrder = 4)
 	private String nomeFornecedor;
-	private Date dataLancamento;
+	
+	@Export(label = "Dt. Lancto" , alignment= Alignment.CENTER, exhibitionOrder = 5)
+	private String dataLancamento;
+	
 	private BigDecimal precoCapa;
 	private BigDecimal precoDesconto;
+	
+	@Export(label = "Reparte" , alignment= Alignment.CENTER, exhibitionOrder = 8)
 	private BigDecimal reparte;
 	private BigDecimal total;
 	private BigDecimal totalDesconto;
 	
+	private String precoCapaFormatado;
+	private String precoDescontoFormatado;
+	private String totalFormatado;
+	private String totalDescontoFormatado;
 	
 	public ConsultaConsignadoCotaDTO() {}
 
 	public ConsultaConsignadoCotaDTO(String codigoProduto, String nomeProduto,
-			Long numeroEdicao, String nomeFornecedor, Date dataLancamento,
+			Long numeroEdicao, String nomeFornecedor, String dataLancamento,
 			BigDecimal precoCapa, BigDecimal precoDesconto, BigDecimal reparte,
 			BigDecimal total, BigDecimal totalDesconto) {
 		super();
@@ -74,12 +95,12 @@ public class ConsultaConsignadoCotaDTO implements Serializable {
 		this.nomeFornecedor = nomeFornecedor;
 	}
 
-	public Date getDataLancamento() {
+	public String getDataLancamento() {
 		return dataLancamento;
 	}
 
 	public void setDataLancamento(Date dataLancamento) {
-		this.dataLancamento = dataLancamento;
+		this.dataLancamento = DateUtil.formatarData(dataLancamento, Constantes.DATE_PATTERN_PT_BR);		
 	}
 
 	public BigDecimal getPrecoCapa() {
@@ -88,6 +109,14 @@ public class ConsultaConsignadoCotaDTO implements Serializable {
 
 	public void setPrecoCapa(BigDecimal precoCapa) {
 		this.precoCapa = precoCapa;
+		if (precoCapa != null) {
+			precoCapaFormatado = CurrencyUtil.formatarValor(precoCapa);
+		}
+	}
+	
+	@Export(label = "Preço Capa R$", alignment= Alignment.RIGHT, exhibitionOrder = 6)
+	public String getPrecoCapaFormatado(){
+		return precoCapaFormatado;
 	}
 
 	public BigDecimal getPrecoDesconto() {
@@ -96,6 +125,14 @@ public class ConsultaConsignadoCotaDTO implements Serializable {
 
 	public void setPrecoDesconto(BigDecimal precoDesconto) {
 		this.precoDesconto = precoDesconto;
+		if(precoDesconto != null){
+			precoDescontoFormatado = CurrencyUtil.formatarValor(precoDesconto);
+		}
+	}
+	
+	@Export(label = "Preço Desc R$", alignment= Alignment.RIGHT, exhibitionOrder = 7)
+	public String getPrecoDescontoFormatado(){
+		return precoDescontoFormatado;
 	}
 
 	public BigDecimal getReparte() {
@@ -112,6 +149,14 @@ public class ConsultaConsignadoCotaDTO implements Serializable {
 
 	public void setTotal(BigDecimal total) {
 		this.total = total;
+		if(total != null){
+			totalFormatado = CurrencyUtil.formatarValor(total);
+		}
+	}
+	
+	@Export(label = "Total $", alignment= Alignment.RIGHT, exhibitionOrder = 9)
+	public String getTotalFormatado(){
+		return totalFormatado;
 	}
 
 	public BigDecimal getTotalDesconto() {
@@ -120,6 +165,14 @@ public class ConsultaConsignadoCotaDTO implements Serializable {
 
 	public void setTotalDesconto(BigDecimal totalDesconto) {
 		this.totalDesconto = totalDesconto;
+		if(totalDesconto != null){
+			totalDescontoFormatado = CurrencyUtil.formatarValor(totalDesconto);
+		}
+	}
+	
+	@Export(label = "Total Desc $", alignment= Alignment.RIGHT, exhibitionOrder = 10)
+	public String getTotalDescontoFormatado(){
+		return totalDescontoFormatado;
 	}
 
 	

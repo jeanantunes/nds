@@ -36,8 +36,15 @@
 	function pesquisar(){
 		
 		var cota = $('#codigoCota').val();
+		var idFornecedor = $('#idFornecedor').val();
 		
-		if(cota == null){
+		if(idFornecedor == "-1"){
+			idFornecedor = ""
+		}else if(idFornecedor == "0"){
+			idFornecedor = "";
+		}
+		
+		if(cota != "" && idFornecedor == "" ){
 			
 			$(".consignadosCotaGrid").flexOptions({
 				url: "<c:url value='/financeiro/consultaConsignadoCota/pesquisarConsignadoCota'/>",
@@ -49,9 +56,8 @@
 			});
 			
 			$(".consignadosCotaGrid").flexReload();
-			gridCota();			
+			$('#valorGrid').val('GridCota');	
 		}else{
-			
 			$(".consignadosGrid").flexOptions({
 				url: "<c:url value='/financeiro/consultaConsignadoCota/pesquisarMovimentoCotaPeloFornecedor'/>",
 				dataType : 'json',
@@ -62,12 +68,26 @@
 			});
 			
 			$(".consignadosGrid").flexReload();
-			gridTotal();	
-			
+			$('#valorGrid').val('GridTotal');			
 		}
 	}
 	
-	function mostra_detalhes() {
+	function mostrarGrid(){
+		var valorGrid = $('#valorGrid').val();
+		
+		if(valorGrid == 'GridTotal'){
+			gridTotal();
+		}else if(valorGrid == 'GridPopUp'){
+			alert('grid lazaro');
+		}else{
+			gridCota();
+		}
+		
+	}
+	
+	function mostra_detalhes(idCota, idFornecedor) {
+		
+		popularPopUp(idCota, idFornecedor);
 	
 		$( "#dialog-detalhes" ).dialog({
 			resizable: false,
@@ -87,6 +107,30 @@
 		});
 	};
 	
+	function popularPopUp(idCota, idFornecedor){
+		alert(idFornecedor);
+		$(".consignadosCotaDetalhesGrid").flexOptions({
+			url: "<c:url value='/financeiro/consultaConsignadoCota/pesquisarConsignadoCota'/>",
+			dataType : 'json',
+			params: [
+						{name:'filtro.idCota', value:idCota},
+						{name:'filtro.idFornecedor', value:idFornecedor}
+						]
+		});		
+		$(".consignadosCotaDetalhesGrid").flexReload();
+		
+		$.postJSON(
+				'<c:url value="/financeiro/consultaConsignadoCota/buscarCotaPorNumero" />',
+				{ "numeroCota": idCota },
+				function(result) {								  
+					$("#numeroNomeCotaPopUp").html("Dados da Cota: " + idCota + " - " + result);
+				},
+				null,
+				true
+			);
+		$('#valorGrid').val('GridPopUp');
+	}
+	
 	function executarPreProcessamento(resultado) {
 		
 		if (resultado.mensagens) {
@@ -101,7 +145,16 @@
 			return resultado;
 		}
 		
-		//$(".grids").show();
+		$.each(resultado.rows, function(index, row) {				
+			
+		   	var linkAcao = '<a href="javascript:;" onclick="mostra_detalhes('+row.cell.numeroCota+','+row.cell.idFornecedor+');" style="cursor:pointer">' +
+						   	 '<img title="Lançamentos da Edição" src="${pageContext.request.contextPath}/images/ico_detalhes.png" hspace="5" border="0px" />' +
+	                         '</a>';           
+			
+			row.cell.acao = linkAcao;			
+		});
+		
+		mostrarGrid();
 		
 		return resultado;
 	}
@@ -114,7 +167,8 @@
 			'<c:url value="/financeiro/consultaConsignadoCota/buscarCotaPorNumero" />',
 			{ "numeroCota": numeroCota },
 			function(result) {
-				$("#nomeCota").html(result);				
+				$("#nomeCota").html(result);				  
+				$("#numeroNomeCota").html("Consignados da Cota: " + numeroCota + " - " + result);
 			},
 			null,
 			true
@@ -148,7 +202,7 @@
 
 <div id="dialog-detalhes" title="Detalhes" style="display:none;">
 	<fieldset>
-    	<legend>Dados da Cota: 4444 - Alberto José da Silva</legend>
+    	<legend><span name="numeroNomeCotaPopUp" id="numeroNomeCotaPopUp"></span></legend>
         
 		<table class="consignadosCotaDetalhesGrid"></table>
 	</fieldset>
@@ -165,6 +219,7 @@
   <tr>
     <td width="30">Cota:</td>
     <td width="96"><input type="text" name="codigoCota" id="codigoCota" style="width:60px; float:left; margin-right:5px;" onblur="pesquisarCota();" />
+    	<input type="hidden" id="valorGrid" name="valorGrid" value="total" />
       <span class="classPesquisar"><a href="javascript:;" onclick="gridCota();">&nbsp;</a></span></td>
     <td width="39">Nome:</td>    
     <td width="245"><span name="nomeCota" id="nomeCota"></span></td>
@@ -189,11 +244,19 @@
           <div class="linha_separa_fields">&nbsp;</div>
       <fieldset class="classFieldset">
       	<div class="pesqCota" style="display:none;">
-       	  <legend>Consignados da Cota: 4444 - Alberto José da Silva</legend>
+       	  <legend><span name="numeroNomeCota" id="numeroNomeCota"></span></legend>
         <div class="grids">
        	  <table class="consignadosCotaGrid"></table>
-			<span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;"><img src="../images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
-			<span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="../images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
+			<span class="bt_novos" title="Gerar Arquivo">
+				<a href="${pageContext.request.contextPath}/financeiro/consultaConsignadoCota/exportar?fileType=XLS">
+					<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />Arquivo
+				</a>
+			</span>
+			<span class="bt_novos" title="Imprimir">
+				<a href="${pageContext.request.contextPath}/financeiro/consultaConsignadoCota/exportar?fileType=PDF">
+					<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir
+				</a>
+			</span>
           <table width="190" border="0" cellspacing="1" cellpadding="1" align="right">
               <tr>
                 <td width="71"><strong>Total:</strong></td>
@@ -225,9 +288,16 @@
          </div>
           <br />
          
-          <span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;"><img src="../images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
-
-<span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="../images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
+         <span class="bt_novos" title="Gerar Arquivo">
+				<a href="${pageContext.request.contextPath}/financeiro/consultaConsignadoCota/exportar?fileType=XLS">
+					<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />Arquivo
+				</a>
+			</span>
+			<span class="bt_novos" title="Imprimir">
+				<a href="${pageContext.request.contextPath}/financeiro/consultaConsignadoCota/exportar?fileType=PDF">
+					<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir
+				</a>
+			</span>
           <table width="190" border="0" cellspacing="1" cellpadding="1" align="right">
               <tr>
                 <td width="71"><strong>Total:</strong></td>
@@ -261,35 +331,35 @@
 </div> 
 <script>
 	$(".consignadosCotaDetalhesGrid").flexigrid({
-			url : '../xml/consignado-cota-detalhes-xml.xml',
-			dataType : 'xml',
+		preProcess: executarPreProcessamento,
+		dataType : 'json',
 			colModel : [  {
 				display : 'Código',
-				name : 'codigo',
+				name : 'codigoProduto',
 				width : 50,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Produto',
-				name : 'produto',
+				name : 'nomeProduto',
 				width : 100,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Edição',
-				name : 'edicao',
+				name : 'numeroEdicao',
 				width : 50,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Fornecedor',
-				name : 'fornecedor',
+				name : 'nomeFornecedor',
 				width : 110,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Dt. Lancto',
-				name : 'dtLancto',
+				name : 'dataLancamento',
 				width : 70,
 				sortable : true,
 				align : 'center'
@@ -301,7 +371,7 @@
 				align : 'right'
 			}, {
 				display : 'Preço Desc R$',
-				name : 'precoDesc',
+				name : 'precoDesconto',
 				width : 70,
 				sortable : true,
 				align : 'right'
@@ -319,7 +389,7 @@
 				align : 'right'
 			}, {
 				display : 'Total Desc. $',
-				name : 'totalDesc',
+				name : 'totalDesconto',
 				width : 60,
 				sortable : true,
 				align : 'right'

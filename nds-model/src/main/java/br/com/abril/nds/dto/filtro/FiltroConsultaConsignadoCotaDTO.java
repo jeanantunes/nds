@@ -3,8 +3,10 @@ package br.com.abril.nds.dto.filtro;
 import java.io.Serializable;
 
 import br.com.abril.nds.dto.filtro.FiltroRomaneioDTO.ColunaOrdenacaoRomaneio;
+import br.com.abril.nds.util.export.Exportable;
 import br.com.abril.nds.vo.PaginacaoVO;
 
+@Exportable
 public class FiltroConsultaConsignadoCotaDTO implements Serializable {
 
 	private static final long serialVersionUID = -642561468775306010L;
