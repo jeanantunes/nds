@@ -34,6 +34,7 @@ import br.com.abril.nds.model.cadastro.DistribuicaoFornecedor;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.cadastro.OperacaoDistribuidor;
+import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.planejamento.Estudo;
@@ -886,7 +887,109 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 		return datasDistribuicao;
 	}
 	
+	/*
+	 * Mock para obter os produtos de lançamento
+	 */
+	private List<ProdutoLancamentoDTO> obterProdutosLancamentoMock() {
+		
+		List<ProdutoLancamentoDTO> produtosLancamento = new ArrayList<ProdutoLancamentoDTO>();
+		
+		Date data1 = DateUtil.removerTimestamp(new Date());
+		Date data2 = DateUtil.removerTimestamp(DateUtil.adicionarDias(data1, 1));
+		Date data3 = DateUtil.removerTimestamp(DateUtil.adicionarDias(data2, 1));
+		Date data4 = DateUtil.removerTimestamp(DateUtil.adicionarDias(data3, 1));
+		Date data5 = DateUtil.removerTimestamp(DateUtil.adicionarDias(data4, 1));
+		
+		Set<Date> datas = new TreeSet<Date>();
+		
+		datas.add(data1);
+		datas.add(data2);
+		datas.add(data3);
+		datas.add(data4);
+		datas.add(data5);
+		
+		Date dataRecolhimentoPrevista =
+			DateUtil.removerTimestamp(DateUtil.adicionarDias(new Date(), 10));
+		
+		int totalProdutosLancamento = 0;
+		
+		for (Date data : datas) {
+			
+			for (int i = 0; i < 100; i++) {
+			
+				ProdutoLancamentoDTO produtoLancamento = new ProdutoLancamentoDTO();
+				
+				BigDecimal repartePrevisto = new BigDecimal("100.0");
+				repartePrevisto = repartePrevisto.add(new BigDecimal(totalProdutosLancamento));
+				
+				produtoLancamento.setIdLancamento((long) totalProdutosLancamento);
+				produtoLancamento.setDataLancamentoPrevista(data);
+				produtoLancamento.setDataLancamentoDistribuidor(data);
+				produtoLancamento.setRepartePrevisto(repartePrevisto);
+				produtoLancamento.setDataRecolhimentoPrevista(dataRecolhimentoPrevista);
+				produtoLancamento.setPeso(new BigDecimal(10));
+				produtoLancamento.setValorTotal(new BigDecimal(2));
+				produtoLancamento.setReparteFisico(new BigDecimal(5));
+				produtoLancamento.setStatusLancamento(StatusLancamento.PLANEJADO.toString());
+				produtoLancamento.setPeriodicidadeProduto(PeriodicidadeProduto.ANUAL.toString());
+				produtoLancamento.setCodigoProduto("" + i);
+				produtoLancamento.setNomeProduto("Produto " + i);
+				produtoLancamento.setPrecoVenda(new BigDecimal(50 + i));
+				produtoLancamento.setNumeroEdicao(new Long(i));
+				produtoLancamento.setPossuiEstudo(i%2==0);
+				
+				produtoLancamento.setIdFornecedor(1l);
+				produtoLancamento.setNomeFornecedor("Dinap");
+				produtoLancamento.setIdEditor(1l);
+				produtoLancamento.setNomeEditor("Nome Editor");
+				produtoLancamento.setChamadaCapa("Chamada Capa");
+				produtoLancamento.setBrinde("Não");
+				produtoLancamento.setPacotePadrao("Pacote Padrão");
+				produtoLancamento.setPrecoComDesconto(new BigDecimal(50 + i));
+			  	
+				if (totalProdutosLancamento == 101) {
+					produtoLancamento.setStatusLancamento(StatusLancamento.CANCELADO_GD.toString());
+					produtoLancamento.setPeriodicidadeProduto(PeriodicidadeProduto.SEMANAL.toString());
+				}
+				
+				produtosLancamento.add(produtoLancamento);
+				
+				
+				totalProdutosLancamento++;
+			}
+		}
+		
+		return produtosLancamento;
+	}
 	
+	/*
+	 * Mock para obter o mapa de expectativa de reparte total diario
+	 */
+	private TreeMap<Date, BigDecimal> obterMapaExpectativaReparteTotalDiarioMock(List<ProdutoLancamentoDTO> produtosLancamento) {
+		
+		TreeMap<Date, BigDecimal> mapaExpectativaReparteTotalDiario =
+			new TreeMap<Date, BigDecimal>();
+		
+		for (ProdutoLancamentoDTO produtoLancamento : produtosLancamento) {
+			
+			BigDecimal expectativaReparte =
+				mapaExpectativaReparteTotalDiario.get(produtoLancamento.getDataLancamentoDistribuidor());
+			
+			if (expectativaReparte != null) {
+				
+				expectativaReparte = expectativaReparte.add(produtoLancamento.getRepartePrevisto());
+			
+			} else {
+				
+				expectativaReparte = produtoLancamento.getRepartePrevisto();
+			}
+			
+			mapaExpectativaReparteTotalDiario.put(produtoLancamento.getDataLancamentoDistribuidor(),
+					  							  expectativaReparte);
+		}
+				
+		return mapaExpectativaReparteTotalDiario;
+	}
 	
 	@Override
 	@Transactional

@@ -48,9 +48,9 @@ public class ProdutoLancamentoDTO implements Serializable {
 	
 	//TODO: private Integer sequencia;
 
-	//TODO: private Long idFornecedor;
-	
-	//TODO: private String nomeFornecedor;
+	private Long idFornecedor;
+
+	private String nomeFornecedor;
 
 	private TipoLancamentoParcial parcial;
 	
@@ -74,6 +74,16 @@ public class ProdutoLancamentoDTO implements Serializable {
 	
 	private Integer ordemPeriodicidadeProduto;
 
+	private Long idEditor;
+
+	private String nomeEditor;
+	
+	private String chamadaCapa;
+
+    private String brinde;
+
+  	private String pacotePadrao;
+	
 	/**
 	 * Construtor padrão.
 	 */
@@ -420,6 +430,104 @@ public class ProdutoLancamentoDTO implements Serializable {
 	 */
 	public void setOrdemPeriodicidadeProduto(Integer ordemPeriodicidadeProduto) {
 		this.ordemPeriodicidadeProduto = ordemPeriodicidadeProduto;
+	}
+
+	/**
+	 * @return the idFornecedor
+	 */
+	public Long getIdFornecedor() {
+		return idFornecedor;
+	}
+
+	/**
+	 * @param idFornecedor the idFornecedor to set
+	 */
+	public void setIdFornecedor(Long idFornecedor) {
+		this.idFornecedor = idFornecedor;
+	}
+
+	/**
+	 * @return the nomeFornecedor
+	 */
+	public String getNomeFornecedor() {
+		return nomeFornecedor;
+	}
+
+	/**
+	 * @param nomeFornecedor the nomeFornecedor to set
+	 */
+	public void setNomeFornecedor(String nomeFornecedor) {
+		this.nomeFornecedor = nomeFornecedor;
+	}
+
+	/**
+	 * @return the idEditor
+	 */
+	public Long getIdEditor() {
+		return idEditor;
+	}
+
+	/**
+	 * @param idEditor the idEditor to set
+	 */
+	public void setIdEditor(Long idEditor) {
+		this.idEditor = idEditor;
+	}
+
+	/**
+	 * @return the nomeEditor
+	 */
+	public String getNomeEditor() {
+		return nomeEditor;
+	}
+
+	/**
+	 * @param nomeEditor the nomeEditor to set
+	 */
+	public void setNomeEditor(String nomeEditor) {
+		this.nomeEditor = nomeEditor;
+	}
+
+	/**
+	 * @return the chamadaCapa
+	 */
+	public String getChamadaCapa() {
+		return chamadaCapa;
+	}
+
+	/**
+	 * @param chamadaCapa the chamadaCapa to set
+	 */
+	public void setChamadaCapa(String chamadaCapa) {
+		this.chamadaCapa = chamadaCapa;
+	}
+
+	/**
+	 * @return the brinde
+	 */
+	public String getBrinde() {
+		return brinde;
+	}
+
+	/**
+	 * @param brinde the brinde to set
+	 */
+	public void setBrinde(String brinde) {
+		this.brinde = brinde;
+	}
+
+	/**
+	 * @return the pacotePadrao
+	 */
+	public String getPacotePadrao() {
+		return pacotePadrao;
+	}
+
+	/**
+	 * @param pacotePadrao the pacotePadrao to set
+	 */
+	public void setPacotePadrao(String pacotePadrao) {
+		this.pacotePadrao = pacotePadrao;
 	}
 	
 }

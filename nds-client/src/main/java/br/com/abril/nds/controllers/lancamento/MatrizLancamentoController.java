@@ -555,4 +555,40 @@ public class MatrizLancamentoController {
 		}
 	}
 
+	
+	
+	
+	/**
+	 * Obtem detalhes de produto edição
+	 * @param filtro
+	 * @param idProdutoEdicao
+	 */
+	@Post
+	public void obterDetalheProduto(Long codigoProduto){
+		
+		ProdutoLancamentoDTO produtoLancamento = null;
+		
+		BalanceamentoLancamentoDTO balanceamentoLancamento = (BalanceamentoLancamentoDTO) this.session.getAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO);
+	
+		for (Map.Entry<Date, List<ProdutoLancamentoDTO>> entry : balanceamentoLancamento.getMatrizLancamento().entrySet()) {
+			
+            List<ProdutoLancamentoDTO> listaProdutosRecolhimento = entry.getValue();
+			
+			if (listaProdutosRecolhimento != null && !listaProdutosRecolhimento.isEmpty()) {
+				
+				for (ProdutoLancamentoDTO produtoBalanceamento : listaProdutosRecolhimento) {
+				    
+					if(produtoBalanceamento.getCodigoProduto().equals(codigoProduto.toString())){
+					    produtoLancamento = produtoBalanceamento;
+				    }
+	
+				} 
+			}	
+		}
+		this.result.use(Results.json()).from(produtoLancamento, "result").recursive().serialize();
+	}
+	
+	
+	
 }
+
