@@ -149,6 +149,7 @@ import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalhe;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalheCota;
 import br.com.abril.nds.model.movimentacao.ControleContagemDevolucao;
 import br.com.abril.nds.model.movimentacao.CotaAusente;
+import br.com.abril.nds.model.movimentacao.FuroProduto;
 import br.com.abril.nds.model.movimentacao.StatusOperacao;
 import br.com.abril.nds.model.planejamento.ChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.ChamadaEncalheCota;
@@ -2912,4 +2913,18 @@ public class Fixture {
 		
 		return logradouro;
 	}
+	
+	public static FuroProduto furoProduto(Date data, Lancamento lancamento,
+										  ProdutoEdicao produtoEdicao, Usuario usuario) {
+		
+		FuroProduto furoProduto = new FuroProduto();
+		
+		furoProduto.setData(data);
+		furoProduto.setLancamento(lancamento);
+		furoProduto.setProdutoEdicao(produtoEdicao);
+		furoProduto.setUsuario(usuario);
+		
+		return furoProduto;
+	}
+	
 }
