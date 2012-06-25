@@ -354,8 +354,8 @@ public class ConsultaEncalheController {
 	 */
 	private void carregarResultadoConsultaEncalhe(ResultadoConsultaEncalheVO resultadoPesquisa, InfoConsultaEncalheDTO infoConsultaEncalhe) {
 		
-		String qtdExemplarDemaisRec 	= getValorQtdeBigDecimalFormatado(infoConsultaEncalhe.getQtdExemplarDemaisRecolhimentos());
-		String qtdExemplarPrimeiroRec 	= getValorQtdeBigDecimalFormatado(infoConsultaEncalhe.getQtdExemplarPrimeiroRecolhimento());
+		String qtdExemplarDemaisRec 	= getValorQtdeIntegerFormatado(infoConsultaEncalhe.getQtdExemplarDemaisRecolhimentos().intValue());
+		String qtdExemplarPrimeiroRec 	= getValorQtdeIntegerFormatado(infoConsultaEncalhe.getQtdExemplarPrimeiroRecolhimento().intValue());
 		String qtdProdutoDemaisRec 		= getValorQtdeIntegerFormatado(infoConsultaEncalhe.getQtdProdutoDemaisRecolhimentos());
 		String qtdProdutoPrimeiroRec 	= getValorQtdeIntegerFormatado(infoConsultaEncalhe.getQtdProdutoPrimeiroRecolhimento());
 		
@@ -431,8 +431,8 @@ public class ConsultaEncalheController {
 			numeroEdicao 		= (consultaEncalheDTO.getNumeroEdicao() != null) ? consultaEncalheDTO.getNumeroEdicao().toString() : "";
 			precoVenda 			= getValorMonetarioFormatado(consultaEncalheDTO.getPrecoVenda());
 			precoComDesconto 	= getValorMonetarioFormatado(consultaEncalheDTO.getPrecoComDesconto());
-			reparte 			= getValorQtdeBigDecimalFormatado(consultaEncalheDTO.getReparte());
-			encalhe 			= getValorQtdeBigDecimalFormatado(consultaEncalheDTO.getEncalhe());
+			reparte 			= getValorQtdeIntegerFormatado(consultaEncalheDTO.getReparte().intValue());
+			encalhe 			= getValorQtdeIntegerFormatado(consultaEncalheDTO.getEncalhe().intValue());
 			fornecedor			= (consultaEncalheDTO.getFornecedor()!=null) ? consultaEncalheDTO.getFornecedor() : "";
 			total 				= getValorMonetarioFormatado(consultaEncalheDTO.getTotal());
 			

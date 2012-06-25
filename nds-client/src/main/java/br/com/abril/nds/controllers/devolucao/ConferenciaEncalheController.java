@@ -175,6 +175,8 @@ public class ConferenciaEncalheController {
 			this.setListaConferenciaEncalheToSession(infoConfereciaEncalheCota.getListaConferenciaEncalhe());
 		}
 		
+		carregarValorInformadoInicial(infoConfereciaEncalheCota.getListaConferenciaEncalhe());
+		
 		Map<String, Object> dados = new HashMap<String, Object>();
 		
 		dados.put("listaConferenciaEncalhe", infoConfereciaEncalheCota.getListaConferenciaEncalhe());
@@ -222,6 +224,26 @@ public class ConferenciaEncalheController {
 		this.calcularTotais(dados);
 		
 		result.use(CustomMapJson.class).put("result", dados).serialize();
+	}
+	
+	/**
+	 * Carrega os valores de qtdInformada e precoCapaInformada 
+	 * (referentes ao itens de nota) com os mesmos valores de 
+	 * qtdExemplar e precoCapaInformado. 
+	 */
+	private void carregarValorInformadoInicial(List<ConferenciaEncalheDTO> listaConferenciaEncalhe) {
+		
+		if(listaConferenciaEncalhe == null || listaConferenciaEncalhe.isEmpty()) {
+			return;
+		}
+		
+		for(ConferenciaEncalheDTO conferencia : listaConferenciaEncalhe) {
+		
+			conferencia.setQtdInformada(conferencia.getQtdExemplar());
+			conferencia.setPrecoCapaInformado(conferencia.getPrecoCapa());
+			
+		}
+		
 	}
 	
 	private void calcularTotais(Map<String, Object> dados) {
@@ -876,7 +898,7 @@ public class ConferenciaEncalheController {
 		
 		this.calcularValoresMonetarios(dados);
 		
-		BigDecimal valorEncalhe = ((BigDecimal)dados.get("valorEncalhe")).round(new MathContext(2));
+		BigDecimal valorEncalhe = ((BigDecimal)dados.get("valorEncalhe"));
 		
 		if (	dadosNotaFiscal != null && 
 				dadosNotaFiscal.get("valorProdutos") != null && 

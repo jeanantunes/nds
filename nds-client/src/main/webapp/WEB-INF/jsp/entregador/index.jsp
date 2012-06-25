@@ -336,6 +336,10 @@
 						$("#procuracaoPJ").uncheck();
 					}
 				}
+
+				ENDERECO_ENTREGADOR.popularGridEnderecos();
+				
+				ENTREGADOR.carregarTelefones();
 			},
 			function(result) {
 				

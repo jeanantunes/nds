@@ -7,14 +7,20 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
+import br.com.abril.nds.util.CampoSecao;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.StringUtil;
+import br.com.abril.nds.util.TipoSessao;
 
 /**
  * Classe responsável pela exportação de Nota Fiscal Eletrônica de arquivos TXT.
@@ -55,6 +61,16 @@ public class NFEExporter {
 	private Map<String, String> listaSecoes;
 	
 	/**
+	 * Para utilizar em atributos Collections
+	 */
+	private List<NFEExporter> listaNFEExporters;
+	
+	/**
+	 * Lista das sessoes do arquivo de exportação
+	 */
+	private Map<TipoSessao, List<CampoSecao>> mapSecoes = new HashMap<TipoSessao, List<CampoSecao>>();
+	
+	/**
 	 * Construtor padrão
 	 */
 	public NFEExporter(){
@@ -66,106 +82,269 @@ public class NFEExporter {
 	 */
 	public void clear(){
 		this.listaSecoes = new HashMap<String, String>();
+		this.listaNFEExporters = new ArrayList<NFEExporter>();
+		this.mapSecoes = new HashMap<TipoSessao, List<CampoSecao>>();
 	}
 	
 	/**
 	 * Faz a varredura de um objeto buscando as anotações NFEExport ou
 	 * NFEExports e adicona os dados nas lista de seções.
 	 * 
-	 * @param notaFiscal
-	 *            - Objeto da Nota Fiscal.
+	 * @param notaFiscal - Objeto da Nota Fiscal.
 	 * @return - String com toda as seções.
 	 * @throws IllegalAccessException
 	 * @throws IllegalArgumentException
 	 * @throws InvocationTargetException
 	 */
 	public <NF> void execute(NF notaFiscal) throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
-		for (Method metodo : notaFiscal.getClass().getDeclaredMethods()) {
-			NFEExports nfeExports = metodo.getAnnotation(NFEExports.class);
-			NFEExport nfeExport = metodo.getAnnotation(NFEExport.class);
+		
+		Method[] metodos = notaFiscal.getClass().getDeclaredMethods();
+		
+		for (Method metodo : metodos) {
+			this.proccessMethodAnnotations(metodo, notaFiscal);
+		}
+		
+		Field[] campos = notaFiscal.getClass().getDeclaredFields();
+		
+		for (Field campo : campos) {
+			this.proccessFieldAnnotations(campo, notaFiscal);
+		}		
+	}
+	
+	/**
+	 * @param metodo
+	 * @param notaFiscal
+	 * @throws IllegalAccessException
+	 * @throws IllegalArgumentException
+	 * @throws InvocationTargetException
+	 */
+	@SuppressWarnings("rawtypes")
+	private <NF> void proccessMethodAnnotations(Method metodo, NF notaFiscal) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+				
+		NFEExports nfeExports = metodo.getAnnotation(NFEExports.class);
 			
-			NFEExport listaNFEExport[] = new NFEExport[(nfeExports != null? nfeExports.value().length : 0) + (nfeExport != null? 1 : 0)];
-			int index = 0;
-			if (nfeExports != null){
-				for (NFEExport nfeExp: nfeExports.value()) {
-					listaNFEExport[index++] = nfeExp;
-				}
+		NFEExport nfeExport = metodo.getAnnotation(NFEExport.class);
+			
+		List<NFEExport> listaNFEExport = new ArrayList<NFEExport>();	
+			
+		if (nfeExports != null){
+			for (NFEExport nfeExp: nfeExports.value()) {
+				listaNFEExport.add(nfeExp);
 			}
-			if (nfeExport != null) {
-				listaNFEExport[index++] = nfeExport; 
-			}
-
-			if (listaNFEExport != null && listaNFEExport.length > 0) {
-				Object valor = metodo.invoke(notaFiscal, new Object[] {});
-
-				if (isNumeric(valor) || isDate(valor) || isLiteral(valor)) {
-					for (NFEExport nfeExp : listaNFEExport) {
-						if (nfeExp != null) {
-							String secao = this.listaSecoes.get(nfeExp.secao());
-
-							secao = executarAnotacao(secao, nfeExp, valor);
-
-							this.listaSecoes.put(nfeExp.secao(), secao);
-						}
-					}
-				} else if (valor != null) {
-					execute(valor);
-				}
-			}
-
+		}
+			
+		if (nfeExport != null) {
+			listaNFEExport.add(nfeExport); 
 		}
 
-		for (Field campo : notaFiscal.getClass().getDeclaredFields()) {
-			campo.setAccessible(true);
-			Object valor = campo.get(notaFiscal);
-
+		if (listaNFEExport != null && !listaNFEExport.isEmpty()) {
+	
+			Object valor = metodo.invoke(notaFiscal, new Object[] {});
+			
 			if (isNumeric(valor) || isDate(valor) || isLiteral(valor)) {
-				NFEExports nfeExports = campo.getAnnotation(NFEExports.class);
-				NFEExport nfeExport = campo.getAnnotation(NFEExport.class);
+			
+				for (NFEExport nfeExp : listaNFEExport) {
 				
-				NFEExport listaNFEExport[] = new NFEExport[(nfeExports != null? nfeExports.value().length : 0) + (nfeExport != null? 1 : 0)];
-				int index = 0;
-				if (nfeExports != null){
-					for (NFEExport nfeExp: nfeExports.value()) {
-						listaNFEExport[index++] = nfeExp;
+					if (nfeExp != null) {
+						
+						CampoSecao campoSessao = new CampoSecao();
+						campoSessao.setPosicao(nfeExport.posicao());
+						campoSessao.setMascara(nfeExport.mascara());
+						campoSessao.setSessao(nfeExport.secao());
+						campoSessao.setTamanho(nfeExport.tamanho());
+						campoSessao.setValor(valor);
+						
+						addCampoSecao(campoSessao);
 					}
 				}
-				if (nfeExport != null) {
-					listaNFEExport[index++] = nfeExport; 
+			
+			} else if (valor instanceof Collection) {
+				for (Object valorCollection: (Collection)valor) {
+					NFEExporter nfeExporter = new NFEExporter();
+					nfeExporter.clear();
+					nfeExporter.execute(valorCollection);
+					this.listaNFEExporters.add(nfeExporter);
 				}
-
-				if (listaNFEExport != null && listaNFEExport.length > 0) {
-						for (NFEExport nfeExp : listaNFEExport) {
-							if (nfeExp != null) {
-								String secao = this.listaSecoes.get(nfeExp.secao());
-
-								secao = executarAnotacao(secao, nfeExp, valor);
-
-								this.listaSecoes.put(nfeExp.secao(), secao);
-							}
-						}
-				}
-				
 			} else if (valor != null) {
 				execute(valor);
 			}
-
 		}
 	}
 	
+	/**
+	 * @param campo
+	 * @param notaFiscal
+	 * @throws IllegalArgumentException
+	 * @throws IllegalAccessException
+	 * @throws InvocationTargetException
+	 */
+	@SuppressWarnings("rawtypes")
+	private <NF> void proccessFieldAnnotations(Field campo, NF notaFiscal) throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
+		
+		NFEExports nfeExports = campo.getAnnotation(NFEExports.class);
+		NFEExport nfeExport = campo.getAnnotation(NFEExport.class);
+			
+		List<NFEExport> listaNFEExport = new ArrayList<NFEExport>();
+		
+		campo.setAccessible(true);
+			
+		Object valor = campo.get(notaFiscal);
+
+		if (isNumeric(valor) || isDate(valor) || isLiteral(valor)) {
+								
+			if (nfeExports != null) {
+					
+				for (NFEExport nfeExp: nfeExports.value()) {
+						
+					if (!StringUtil.isEmpty(nfeExp.documento())) {
+						
+						String documento = valor.toString();
+							
+						if (documento.length() == nfeExp.tamanho()) {
+							listaNFEExport.add(nfeExp);
+						}
+						
+					} else {
+						listaNFEExport.add(nfeExp);
+					}
+				}
+			}
+			
+			if (nfeExport != null) {
+				listaNFEExport.add(nfeExport); 
+			}
+
+			if (listaNFEExport != null && !listaNFEExport.isEmpty()) {
+					
+				for (NFEExport nfeExp : listaNFEExport) {
+						
+					if (nfeExp != null) {
+						
+						CampoSecao campoSessao = new CampoSecao();
+						campoSessao.setPosicao(nfeExport.posicao());
+						campoSessao.setMascara(nfeExport.mascara());
+						campoSessao.setSessao(nfeExport.secao());
+						campoSessao.setTamanho(nfeExport.tamanho());
+						campoSessao.setValor(valor);
+						
+						addCampoSecao(campoSessao);
+						
+					}
+				}
+			}	
+		} else if (valor instanceof Collection) {
+			
+			for (Object valorCollection: (Collection)valor) {
+				NFEExporter nfeExporter = new NFEExporter();
+				nfeExporter.clear();
+				nfeExporter.execute(valorCollection);
+				this.listaNFEExporters.add(nfeExporter);
+			}
+		
+		} else if (valor != null) {
+			execute(valor);
+		}
+	}
+	
+	/**
+	 * @param nfeExport annotation do campo
+	 * @param valor valor do campo
+	 */
+	private void addCampoSecao(CampoSecao novoCampo) {
+		
+		List<CampoSecao> camposSecao = mapSecoes.get(novoCampo.getSessao());
+		
+		if (camposSecao == null || camposSecao.isEmpty()) {
+			camposSecao = new ArrayList<CampoSecao>();
+		}
+		
+		camposSecao.add(novoCampo);
+		
+		this.mapSecoes.put(novoCampo.getSessao(), camposSecao);
+	}
+
+	/**
+	 * @param cst
+	 */
+	public void gerarArquivo(String cst) {
+				
+		this.addCamposDefault();
+		//TODO: gerar arquivo		
+	}
+	
+	/**
+	 * Adiciona valores padrões no documento.
+	 */
+	private void addCamposDefault() {
+				
+		CampoSecao versao = new CampoSecao(TipoSessao.A,  0, "2.0");
+		addCampoSecao(versao);
+		//TODO: campos padroes;
+	}
+		
 	/**
 	 * Extrai a lista de seções para um String.
 	 * 
 	 * @see java.lang.Object#toString()
 	 */
 	public String toString(){
+		
+		Set<TipoSessao> sessoes = this.mapSecoes.keySet();
+		
+		StringBuffer sBuffer;
+		
+		for (TipoSessao sessao : sessoes) {
+			
+			List<CampoSecao> campos = this.mapSecoes.get(sessao);
+			
+			for (CampoSecao campo : campos) {
+				//TODO: gerar string secao;
+			}
+		}
+		
 		String conteudo = STRING_VAZIA;
 		
-		for (String secao: this.listaSecoes.values()) {
-			conteudo += secao + QUEBRA_LINHA;
+		ordenaListaNFEEporters();
+		String primeiraSecao = null;
+		int indexListaNFEExporters = 0;
+		if (!this.listaNFEExporters.isEmpty()) { 
+			primeiraSecao = this.listaNFEExporters.get(indexListaNFEExporters).getPrimeiraSecao();
+		}
+		
+		for (String key : this.listaSecoes.keySet()) {
+			if (primeiraSecao != null && key.compareTo(primeiraSecao) >= 0) {
+				boolean repetir;
+				do {
+					if (this.listaNFEExporters.size() > indexListaNFEExporters) {
+						conteudo += this.listaNFEExporters.get(indexListaNFEExporters).toString();
+						primeiraSecao = this.listaNFEExporters.get(indexListaNFEExporters++).getPrimeiraSecao();
+						repetir = primeiraSecao != null && primeiraSecao.compareToIgnoreCase(this.listaNFEExporters.get(indexListaNFEExporters - 1).getPrimeiraSecao()) == 0;
+					} else {
+						primeiraSecao = null;
+						repetir = false;
+					}
+				} while (repetir);
+
+			}
+
+			conteudo += this.listaSecoes.get(key) + QUEBRA_LINHA;
 		}
 		
 		return conteudo;
+	}
+	
+	private void ordenaListaNFEEporters(){
+		NFEExporter nfeExporterAux;
+
+		for (int i = 0; i < this.listaNFEExporters.size() - 1; i++) {
+			for (int j = i + 1; j < this.listaNFEExporters.size(); j++) {
+				if (this.listaNFEExporters.get(i).getPrimeiraSecao().compareToIgnoreCase(this.listaNFEExporters.get(j).getPrimeiraSecao()) > 0 ){
+					nfeExporterAux = this.listaNFEExporters.get(i);
+					this.listaNFEExporters.set(i, this.listaNFEExporters.get(j));
+					this.listaNFEExporters.set(j, nfeExporterAux);
+				}
+			}
+		}
 	}
 	
 	/**
@@ -177,22 +356,23 @@ public class NFEExporter {
 	 * @param valor - Valor a ser incluido na seção.
 	 * @return - Linha com todos os campos da seção.
 	 */
-	private String executarAnotacao(String secao, NFEExport nfeExport, Object valor){
-		String secaoNome = nfeExport.secao();
-		int tamanho = nfeExport.tamanho();
-		int posicao = nfeExport.posicao();
-		String mascara = nfeExport.mascara();
-
-		if (StringUtil.isEmpty(secao)) {
-			secao = secaoNome + SEPARADOR_SECAO;
-		}
-
-		secao = addCampoToSecao(secao,
-				converteCampoParaString(valor, mascara, tamanho), posicao);
-
-		return secao;
-	}
+//	private String executarAnotacao(String secao, NFEExport nfeExport, Object valor){
+//		String secaoNome = nfeExport.secao();
+//		int tamanho = nfeExport.tamanho();
+//		int posicao = nfeExport.posicao();
+//		String mascara = nfeExport.mascara();
+//
+//		if (StringUtil.isEmpty(secao)) {
+//			secao = secaoNome + SEPARADOR_SECAO;
+//		}
+//		
+//		secao = addCampoToSecao(secao,
+//				converteCampoParaString(valor, mascara, tamanho), posicao);
+//
+//		return secao;
+//	}
 	
+
 	/**
 	 * Converte o campo para String com a mascara especificada, se não tiver a
 	 * mascara utiliza a mascara padrão, e trunca o campo de acordo com o
@@ -209,29 +389,41 @@ public class NFEExporter {
 		String mascaraUsada;
 		
 		if (valor != null) {
+			
 			if (isDate(valor)) {
+			
 				Date data;
+				
 				mascaraUsada = (StringUtil.isEmpty(mascara)) ? MASCARA_DATA	: mascara;
+				
 				if (valor instanceof Date) {
 					data = (Date) valor;
+				
 				} else {
 					data = ((Calendar) valor).getTime();
 				}
+				
 				valorString = DateUtil.formatarData(data, mascaraUsada);
+			
 			} else if (isNumeric(valor)) {
 
 				mascaraUsada = (StringUtil.isEmpty(mascara)) ? MASCARA_NUMBER : mascara;
 
 				valorString = new DecimalFormat(mascaraUsada, new DecimalFormatSymbols(new Locale("en_US"))) .format(valor);
+				
 				if (StringUtil.isEmpty(mascara)) {
 					valorString = valorString.replace(",", "");
 				}
+			
 			} else {
+				
 				valorString = valor.toString();
+				
 				if (tamanho > 0) {
 					valorString = valorString.replace(SEPARADOR_SECAO, STRING_VAZIA).substring(0, tamanho);
 				}
 			}
+			
 		} else {
 			valorString = STRING_VAZIA;
 		}
@@ -376,5 +568,13 @@ public class NFEExporter {
 	private boolean isDate(Object valor) {
 		return ((valor instanceof Date) || (valor instanceof Calendar))
 				&& (valor != null);
+	}
+	
+	public String getPrimeiraSecao(){
+		if (!this.listaSecoes.isEmpty()) {
+			return divideStringBySeparator(((String)this.listaSecoes.values().toArray()[0]), SEPARADOR_SECAO)[0];
+		}else {
+			return null;
+		}
 	}
 }
