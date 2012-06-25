@@ -590,8 +590,15 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 	}
 
 	@Override
+	@Transactional
 	public Date buscaDataUltimoControleFechamentoEncalhe() {
 		return fechamentoEncalheRepository.buscaDataUltimoControleFechamentoEncalhe();
+	}
+
+	@Override
+	@Transactional
+	public Date buscarUltimoFechamentoEncalheDia(Date dataFechamentoEncalhe) {
+		return fechamentoEncalheRepository.buscarUltimoFechamentoEncalheDia(dataFechamentoEncalhe);
 	}
 
 }

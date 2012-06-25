@@ -75,6 +75,7 @@ var painelProcessamentoController = {
 	},
 	initGridPainelProcessamentoGrid : function() {
 		$(".painelProcessamentoGrid").flexigrid({
+			preProcess : painelProcessamentoController.executarPreProcessamentoGrid,
 			dataType : 'json',
 			colModel : [ {
 				display : 'Processos',
@@ -101,7 +102,7 @@ var painelProcessamentoController = {
 				sortable : true,
 				align : 'center'
 			}],
-			sortname : "processos",
+			sortname : "nome",
 			sortorder : "asc",
 			usepager : true,
 			useRp : true,
@@ -221,6 +222,14 @@ var painelProcessamentoController = {
 	},
 	executarPreProcessamentoInterfaceGrid : function(resultado) {
 		
+		if (resultado.mensagens) {
+			exibirMensagem(
+				resultado.mensagens.tipoMensagem, 
+				resultado.mensagens.listaMensagens
+			);
+			return resultado;
+		}
+		
 		var btReprocessamento = "";
 		var brDetalhes        = "";
 		
@@ -255,6 +264,14 @@ var painelProcessamentoController = {
 	},
 	executarPreInterfaceProcessamento : function(resultado) {
 
+		if (resultado.mensagens) {
+			exibirMensagem(
+				resultado.mensagens.tipoMensagem, 
+				resultado.mensagens.listaMensagens
+			);
+			return resultado;
+		}
+		
 		$.each(resultado.rows, function(index, row) {
 			row.cell.numeroLinha = "Linha: " + row.cell.numeroLinha;
 		});
@@ -274,8 +291,38 @@ var painelProcessamentoController = {
 		painelProcessamentoController.popup();			
 	},
 	executarPreProcessamentoGrid : function(resultado) {
-		alert("2");
+		
+		if (resultado.mensagens) {
+			exibirMensagem(
+				resultado.mensagens.tipoMensagem, 
+				resultado.mensagens.listaMensagens
+			);
+			return resultado;
+		}
+		
+		$.each(resultado.rows, function(index, row) {
+			if (row.cell.isSistemaOperacional) {
+				row.cell.nome = "<a href='javascript:;' onclick='painelProcessamentoController.abrirPopUpOperacional()'>" + row.cell.nome + "</a>";
+			}
+
+			if (row.cell.status == 'S')
+				row.cell.status = "<img src= " + contextPath + "/images/ico_operando.png />";
+			else // Não processado
+				row.cell.status = "<img src= " + contextPath + "/images/ico_encerrado.png />";		
+		});
+		
 		return resultado;
+	},
+	abrirPopUpOperacional : function() {
+		$.postJSON(contextPath + "/administracao/painelProcessamento/buscarEstadoOperacional",
+				null,
+				function(result) {
+					$("#statusSistemaOperacional").text(result);
+				},
+				null,
+				true);
+
+		painelProcessamentoController.popup_sistema();
 	},
 	bindButtonsInterfaces : function() {
 		$("#btnGerarXLS").click(function() {

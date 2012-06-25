@@ -36,5 +36,7 @@ public interface FechamentoEncalheRepository extends Repository<FechamentoEncalh
 	ControleFechamentoEncalhe buscaControleFechamentoEncalhePorData(Date dataFechamentoEncalhe);
 
 	Date buscaDataUltimoControleFechamentoEncalhe();
+
+	Date buscarUltimoFechamentoEncalheDia(Date dataFechamentoEncalhe);
 	
 }

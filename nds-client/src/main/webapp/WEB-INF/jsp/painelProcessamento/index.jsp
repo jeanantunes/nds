@@ -5,11 +5,6 @@
 	$(function() {
 		painelProcessamentoController.init("${pageContext.request.contextPath}");
 	});
-	
-	function exportar(fileType) {
-		
-	}
-	
 </script>
 <style type="text/css">
 #dialog-novo fieldset, #dialog-detalhes fieldset{ width: 700px!important;}
@@ -19,7 +14,7 @@
 <div id="dialog-operacional" title="Sistema Operacional" style="display:none;">
     <fieldset style="width:350px!important;">
     <legend>Status do Sistema Operacional:</legend>
-    <p>Sistema Operacional esta: <strong>OPERANDO</strong></p><br />
+    <p>Sistema Operacional esta: <strong><span id="statusSistemaOperacional"></span></strong></p><br />
     </fieldset>
 </div>
 <div id="dialog-novo" title="Detalhes do Processamento">

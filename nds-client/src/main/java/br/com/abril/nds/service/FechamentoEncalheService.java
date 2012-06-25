@@ -43,5 +43,7 @@ public interface FechamentoEncalheService {
 	ControleFechamentoEncalhe buscaControleFechamentoEncalhePorData(Date dataFechamentoEncalhe);
 
 	Date buscaDataUltimoControleFechamentoEncalhe();
+	
+	Date buscarUltimoFechamentoEncalheDia(Date dataFechamentoEncalhe);
 
 }

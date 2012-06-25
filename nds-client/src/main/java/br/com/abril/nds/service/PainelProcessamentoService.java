@@ -44,4 +44,14 @@ public interface PainelProcessamentoService {
 	 */
 	public Long quantidadeProcessamentoInterface(Long codigoLogExecucao);
 
+	/**
+	 * Retorna o estado operacional do sistema, sendo:
+	 * Encerrado
+	 * Fechamento
+	 * Offline
+	 * Operando
+	 * @return String
+	 */
+	public String obterEstadoOperacional();
+	
 }

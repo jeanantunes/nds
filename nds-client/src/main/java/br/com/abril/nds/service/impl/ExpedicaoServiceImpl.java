@@ -48,11 +48,13 @@ public class ExpedicaoServiceImpl implements ExpedicaoService {
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Date obterDataUltimaExpedicaoDia(Date dataOperacao) {
 		return expedicaoRepository.obterUltimaExpedicaoDia(dataOperacao);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Date obterDataUltimaExpedicao() {
 		return expedicaoRepository.obterDataUltimaExpedicao();
 	}

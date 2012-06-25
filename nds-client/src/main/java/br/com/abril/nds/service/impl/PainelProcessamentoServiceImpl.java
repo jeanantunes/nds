@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.InterfaceDTO;
 import br.com.abril.nds.dto.ProcessoDTO;
+import br.com.abril.nds.model.StatusOperacional;
 import br.com.abril.nds.model.estoque.ControleFechamentoEncalhe;
 import br.com.abril.nds.model.integracao.LogExecucao;
 import br.com.abril.nds.model.integracao.LogExecucaoMensagem;
@@ -200,10 +201,16 @@ public class PainelProcessamentoServiceImpl implements PainelProcessamentoServic
 			// Caso não tenha um fechamento do dia, busca o último fechamento realizado
 			Date dataUltimoFechamentoEncalhe = fechamentoEncalheService.buscaDataUltimoControleFechamentoEncalhe();
 			processoStatusOperacional.setStatus(StatusExecucaoEnum.FALHA.toString());
-			processoStatusOperacional.setDataProcessmento(sdfData.format(dataUltimoFechamentoEncalhe));
-			processoStatusOperacional.setHoraProcessamento(sdfHora.format(dataUltimoFechamentoEncalhe));
+			if (dataUltimoFechamentoEncalhe != null) {
+				processoStatusOperacional.setDataProcessmento(sdfData.format(dataUltimoFechamentoEncalhe));
+				processoStatusOperacional.setHoraProcessamento(sdfHora.format(dataUltimoFechamentoEncalhe));
+			} else {
+				processoStatusOperacional.setDataProcessmento("");
+				processoStatusOperacional.setHoraProcessamento("");
+			}
 		}
 		
+		processoStatusOperacional.setSistemaOperacional(true);
 		return processoStatusOperacional;
 	}
 
@@ -228,8 +235,13 @@ public class PainelProcessamentoServiceImpl implements PainelProcessamentoServic
 			// Caso não tenha um fechamento do dia, busca o último fechamento realizado
 			Date dataUltimoFechamentoEncalhe = fechamentoEncalheService.buscaDataUltimoControleFechamentoEncalhe();
 			processoEstadoFechamentoEncalhe.setStatus(StatusExecucaoEnum.FALHA.toString());
-			processoEstadoFechamentoEncalhe.setDataProcessmento(sdfData.format(dataUltimoFechamentoEncalhe));
-			processoEstadoFechamentoEncalhe.setHoraProcessamento(sdfHora.format(dataUltimoFechamentoEncalhe));
+			if (dataUltimoFechamentoEncalhe != null) {
+				processoEstadoFechamentoEncalhe.setDataProcessmento(sdfData.format(dataUltimoFechamentoEncalhe));
+				processoEstadoFechamentoEncalhe.setHoraProcessamento(sdfHora.format(dataUltimoFechamentoEncalhe));
+			} else {
+				processoEstadoFechamentoEncalhe.setDataProcessmento("");
+				processoEstadoFechamentoEncalhe.setHoraProcessamento("");
+			}
 		}
 		
 		return processoEstadoFechamentoEncalhe;
@@ -256,8 +268,13 @@ public class PainelProcessamentoServiceImpl implements PainelProcessamentoServic
 			// Caso não tenha um fechamento do dia, busca o último fechamento realizado
 			dataUltimaExpedicao = expedicaoService.obterDataUltimaExpedicao();
 			processoExpedicaoConfirmacao.setStatus(StatusExecucaoEnum.FALHA.toString());
-			processoExpedicaoConfirmacao.setDataProcessmento(sdfData.format(dataUltimaExpedicao));
-			processoExpedicaoConfirmacao.setHoraProcessamento(sdfHora.format(dataUltimaExpedicao));
+			if (dataUltimaExpedicao != null) {
+				processoExpedicaoConfirmacao.setDataProcessmento(sdfData.format(dataUltimaExpedicao));
+				processoExpedicaoConfirmacao.setHoraProcessamento(sdfHora.format(dataUltimaExpedicao));
+			} else {
+				processoExpedicaoConfirmacao.setDataProcessmento("");
+				processoExpedicaoConfirmacao.setHoraProcessamento("");
+			}
 		}
 		
 		return processoExpedicaoConfirmacao;
@@ -283,8 +300,13 @@ public class PainelProcessamentoServiceImpl implements PainelProcessamentoServic
 			// Caso não tenha uma suspensão no dia, busca a última suspensão realizada
 			dataUltimaSuspensaoCota = historicoSituacaoCotaService.buscarDataUltimaSuspensaoCotas();
 			processoSuspensaoJornaleiro.setStatus(StatusExecucaoEnum.FALHA.toString());
-			processoSuspensaoJornaleiro.setDataProcessmento(sdfData.format(dataUltimaSuspensaoCota));
-			processoSuspensaoJornaleiro.setDataProcessmento(sdfData.format(dataUltimaSuspensaoCota));
+			if (dataUltimaSuspensaoCota != null) {
+				processoSuspensaoJornaleiro.setDataProcessmento(sdfData.format(dataUltimaSuspensaoCota));
+				processoSuspensaoJornaleiro.setHoraProcessamento(sdfHora.format(dataUltimaSuspensaoCota));
+			} else {
+				processoSuspensaoJornaleiro.setDataProcessmento("");
+				processoSuspensaoJornaleiro.setHoraProcessamento("");
+			}
 		}
 		
 		return processoSuspensaoJornaleiro;
@@ -304,12 +326,17 @@ public class PainelProcessamentoServiceImpl implements PainelProcessamentoServic
 		if (dataUltimaBaixaAutomatica != null) {
 			processoBaixaAutomatica.setStatus(StatusExecucaoEnum.SUCESSO.toString());
 			processoBaixaAutomatica.setDataProcessmento(sdfData.format(dataUltimaBaixaAutomatica));
-			processoBaixaAutomatica.setDataProcessmento(sdfData.format(dataUltimaBaixaAutomatica));
+			processoBaixaAutomatica.setHoraProcessamento(sdfHora.format(dataUltimaBaixaAutomatica));
 		} else {
 			dataUltimaBaixaAutomatica = baixaCobrancaService.buscarDiaUltimaBaixaAutomatica();
 			processoBaixaAutomatica.setStatus(StatusExecucaoEnum.FALHA.toString());
-			processoBaixaAutomatica.setDataProcessmento(sdfData.format(dataUltimaBaixaAutomatica));
-			processoBaixaAutomatica.setDataProcessmento(sdfData.format(dataUltimaBaixaAutomatica));
+			if (dataUltimaBaixaAutomatica != null) {
+				processoBaixaAutomatica.setDataProcessmento(sdfData.format(dataUltimaBaixaAutomatica));
+				processoBaixaAutomatica.setHoraProcessamento(sdfHora.format(dataUltimaBaixaAutomatica));
+			} else {
+				processoBaixaAutomatica.setDataProcessmento("");
+				processoBaixaAutomatica.setHoraProcessamento("");
+			}
 		}
 		
 		return processoBaixaAutomatica;
@@ -329,12 +356,17 @@ public class PainelProcessamentoServiceImpl implements PainelProcessamentoServic
 		if (dataUltimaCobrancaGerada != null) {
 			processoCobrancaGerada.setStatus(StatusExecucaoEnum.SUCESSO.toString());
 			processoCobrancaGerada.setDataProcessmento(sdfData.format(dataUltimaCobrancaGerada));
-			processoCobrancaGerada.setDataProcessmento(sdfData.format(dataUltimaCobrancaGerada));
+			processoCobrancaGerada.setHoraProcessamento(sdfHora.format(dataUltimaCobrancaGerada));
 		} else {
 			dataUltimaCobrancaGerada = consolidadoFinanceiroService.buscarDiaUltimaDividaGerada();
 			processoCobrancaGerada.setStatus(StatusExecucaoEnum.FALHA.toString());
-			processoCobrancaGerada.setDataProcessmento(sdfData.format(dataUltimaCobrancaGerada));
-			processoCobrancaGerada.setDataProcessmento(sdfData.format(dataUltimaCobrancaGerada));
+			if (dataUltimaCobrancaGerada != null) {
+				processoCobrancaGerada.setDataProcessmento(sdfData.format(dataUltimaCobrancaGerada));
+				processoCobrancaGerada.setHoraProcessamento(sdfHora.format(dataUltimaCobrancaGerada));
+			} else {
+				processoCobrancaGerada.setDataProcessmento("");
+				processoCobrancaGerada.setHoraProcessamento("");
+			}
 		}
 		
 		return processoCobrancaGerada;
@@ -355,12 +387,17 @@ public class PainelProcessamentoServiceImpl implements PainelProcessamentoServic
 		if (dataUltimaMatrizLancamento != null) {
 			processoUltimaMatrizLancamento.setStatus(StatusExecucaoEnum.SUCESSO.toString());
 			processoUltimaMatrizLancamento.setDataProcessmento(sdfData.format(dataUltimaMatrizLancamento));
-			processoUltimaMatrizLancamento.setDataProcessmento(sdfData.format(dataUltimaMatrizLancamento));
+			processoUltimaMatrizLancamento.setHoraProcessamento(sdfHora.format(dataUltimaMatrizLancamento));
 		} else {
 			dataUltimaMatrizLancamento = lancamentoService.buscarDiaUltimoBalanceamentoLancamentoRealizado();
 			processoUltimaMatrizLancamento.setStatus(StatusExecucaoEnum.FALHA.toString());
-			processoUltimaMatrizLancamento.setDataProcessmento(sdfData.format(dataUltimaMatrizLancamento));
-			processoUltimaMatrizLancamento.setDataProcessmento(sdfData.format(dataUltimaMatrizLancamento));
+			if (dataUltimaMatrizLancamento != null) {
+				processoUltimaMatrizLancamento.setDataProcessmento(sdfData.format(dataUltimaMatrizLancamento));
+				processoUltimaMatrizLancamento.setHoraProcessamento(sdfHora.format(dataUltimaMatrizLancamento));
+			} else {
+				processoUltimaMatrizLancamento.setDataProcessmento("");
+				processoUltimaMatrizLancamento.setHoraProcessamento("");
+			}
 		}
 		
 		return processoUltimaMatrizLancamento;
@@ -381,16 +418,43 @@ public class PainelProcessamentoServiceImpl implements PainelProcessamentoServic
 		if (dataUltimaMatrizRecolhimento != null) {
 			processoUltimaMatrizRecolhimento.setStatus(StatusExecucaoEnum.SUCESSO.toString());
 			processoUltimaMatrizRecolhimento.setDataProcessmento(sdfData.format(dataUltimaMatrizRecolhimento));
-			processoUltimaMatrizRecolhimento.setDataProcessmento(sdfData.format(dataUltimaMatrizRecolhimento));
+			processoUltimaMatrizRecolhimento.setHoraProcessamento(sdfHora.format(dataUltimaMatrizRecolhimento));
 		} else {
 			dataUltimaMatrizRecolhimento = lancamentoService.buscarDiaUltimoBalanceamentoRecolhimentoRealizado();
 			processoUltimaMatrizRecolhimento.setStatus(StatusExecucaoEnum.FALHA.toString());
-			processoUltimaMatrizRecolhimento.setDataProcessmento(sdfData.format(dataUltimaMatrizRecolhimento));
-			processoUltimaMatrizRecolhimento.setDataProcessmento(sdfData.format(dataUltimaMatrizRecolhimento));
+			if (dataUltimaMatrizRecolhimento != null) {
+				processoUltimaMatrizRecolhimento.setDataProcessmento(sdfData.format(dataUltimaMatrizRecolhimento));
+				processoUltimaMatrizRecolhimento.setHoraProcessamento(sdfHora.format(dataUltimaMatrizRecolhimento));
+			} else {
+				processoUltimaMatrizRecolhimento.setDataProcessmento("");
+				processoUltimaMatrizRecolhimento.setHoraProcessamento("");
+			}
 		}
 		
 		return processoUltimaMatrizRecolhimento;
 		
+	}
+
+	/* (non-Javadoc)
+	 * @see br.com.abril.nds.service.PainelProcessamentoService#obterEstadoOperacional()
+	 */
+	@Override
+	public String obterEstadoOperacional() {
+		Date dataOperacao = distribuidorService.obter().getDataOperacao();
+
+		ControleFechamentoEncalhe controleFechamentoEncalhe = fechamentoEncalheService.buscaControleFechamentoEncalhePorData(dataOperacao);
+		// Se existe um controle de fechamento, significa que o dia já foi encerrado
+		if (controleFechamentoEncalhe != null) {
+			return StatusOperacional.ENCERRADO.getDescricao();
+		}
+		
+		// Um registro foi encontrado, logo, está em processo de fechamento
+		if ( fechamentoEncalheService.buscarUltimoFechamentoEncalheDia(dataOperacao) != null ) {
+			return StatusOperacional.FECHAMENTO.getDescricao();
+		}
+
+		// Nenhum registro foi encontrado, logo, o sistema ainda está em operação
+		return StatusOperacional.OPERANDO.getDescricao();
 	}
 
 }

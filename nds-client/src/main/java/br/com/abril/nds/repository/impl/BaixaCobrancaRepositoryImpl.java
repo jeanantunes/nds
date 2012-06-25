@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.model.cadastro.HistoricoSituacaoCota;
 import br.com.abril.nds.model.estoque.Expedicao;
+import br.com.abril.nds.model.financeiro.BaixaAutomatica;
 import br.com.abril.nds.model.financeiro.BaixaCobranca;
 import br.com.abril.nds.repository.BaixaCobrancaRepository;
 
@@ -36,7 +37,7 @@ public class BaixaCobrancaRepositoryImpl extends AbstractRepository<BaixaCobranc
 	 */
 	@Override
 	public Date buscarUltimaBaixaAutomaticaDia(Date dataOperacao) {
-		Criteria criteria = getSession().createCriteria(HistoricoSituacaoCota.class);
+		Criteria criteria = getSession().createCriteria(BaixaAutomatica.class);
 		criteria.add(Restrictions.eq("dataBaixa", dataOperacao));
 		criteria.add(Restrictions.isNotNull("nomeArquivo"));
 		criteria.setProjection(Projections.max("dataBaixa"));
@@ -49,7 +50,7 @@ public class BaixaCobrancaRepositoryImpl extends AbstractRepository<BaixaCobranc
 	 */
 	@Override
 	public Date buscarDiaUltimaBaixaAutomatica() {
-		Criteria criteria = getSession().createCriteria(Expedicao.class);
+		Criteria criteria = getSession().createCriteria(BaixaAutomatica.class);
 		criteria.setProjection(Projections.max("dataBaixa"));
 		criteria.add(Restrictions.isNotNull("nomeArquivo"));
 		return (Date) criteria.uniqueResult();

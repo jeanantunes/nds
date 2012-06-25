@@ -13,6 +13,7 @@ import br.com.abril.nds.client.util.PaginacaoUtil;
 import br.com.abril.nds.dto.InterfaceDTO;
 import br.com.abril.nds.dto.ProcessoDTO;
 import br.com.abril.nds.dto.filtro.FiltroInterfacesDTO;
+import br.com.abril.nds.dto.filtro.FiltroProcessosDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.integracao.LogExecucaoMensagem;
@@ -31,6 +32,7 @@ import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
+import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
@@ -50,6 +52,7 @@ public class PainelProcessamentoController {
 	private HttpSession session;
 
 	private static final String FILTRO_PESQUISA_INTERFACES_SESSION_ATTRIBUTE = "filtroPesquisaInterfaces";
+	private static final String FILTRO_PESQUISA_PROCESSOS_SESSION_ATTRIBUTE = "filtroPesquisaProcessos";
 
 	@Autowired
 	private PainelProcessamentoService painelProcessamentoService;
@@ -106,7 +109,7 @@ public class PainelProcessamentoController {
 		
 		List<InterfaceDTO> lista = painelProcessamentoService.listarInterfaces();
 		
-		String nomeArquivo = "relatorio-interface";
+		String nomeArquivo = "relatorio-interfaces";
 		
 		FileExporter.to(nomeArquivo, fileType).inHTTPResponse(this.getNDSFileHeader(), filtroSessao, null, lista, InterfaceDTO.class, this.httpServletResponse);
 	}
@@ -114,8 +117,22 @@ public class PainelProcessamentoController {
 	/**
 	 * Exporta arquivos de processos
 	 * @param fileType
+	 * @throws IOException 
 	 */
-	private void exportarProcesso(FileType fileType) {
+	private void exportarProcesso(FileType fileType) throws IOException {
+		FiltroProcessosDTO filtroSessao = (FiltroProcessosDTO) this.session.getAttribute(FILTRO_PESQUISA_PROCESSOS_SESSION_ATTRIBUTE);
+		if (filtroSessao != null) {
+			if (filtroSessao.getPaginacao() != null) {				
+				filtroSessao.getPaginacao().setPaginaAtual(null);
+				filtroSessao.getPaginacao().setQtdResultadosPorPagina(null);
+			}
+		}
+		
+		List<ProcessoDTO> lista = painelProcessamentoService.listarProcessos();
+		
+		String nomeArquivo = "relatorio-processos";
+		
+		FileExporter.to(nomeArquivo, fileType).inHTTPResponse(this.getNDSFileHeader(), filtroSessao, null, lista, ProcessoDTO.class, this.httpServletResponse);
 	}
 
 	/**
@@ -187,10 +204,18 @@ public class PainelProcessamentoController {
 		
 	}
 	
+	/**
+	 * Retorna a lista de mensagens de processos do sistema
+	 * @param sortname
+	 * @param sortorder
+	 * @param rp
+	 * @param page
+	 * @throws Exception
+	 */
 	@Path("/pesquisarProcessos")
 	public void pesquisarProcessos(String sortname, String sortorder, int rp, int page) throws Exception {
 
-		//FiltroProcessosDTO filtro = carregarFiltro(sortorder, sortname, page, rp);
+		FiltroProcessosDTO filtro = carregarFiltroProcessos(sortorder, sortname, page, rp);
 		
 		List<ProcessoDTO> resultado = null;
 		try {
@@ -205,33 +230,41 @@ public class PainelProcessamentoController {
 			}
 		}
 		
-		//List<ProcessoDTO> resultadoPaginado = PaginacaoUtil.paginarEOrdenarEmMemoria(resultado, filtro.getPaginacao(), filtro.getOrdenacaoColuna().toString());
+		List<ProcessoDTO> resultadoPaginado = PaginacaoUtil.paginarEOrdenarEmMemoria(resultado, filtro.getPaginacao(), filtro.getOrdenacaoColuna().toString());
 
 		TableModel<CellModelKeyValue<ProcessoDTO>> tableModel = new TableModel<CellModelKeyValue<ProcessoDTO>>();
-		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(resultado));
-		tableModel.setPage(1);		
-		//tableModel.setPage(filtro.getPaginacao().getPaginaAtual());		
+		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(resultadoPaginado));
+		tableModel.setPage(filtro.getPaginacao().getPaginaAtual());		
+		tableModel.setTotal(resultado.size());		
 		
 		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
 		
 	}
 
-	/*private FiltroPainelProcessamentoDTO carregarFiltro(String sortorder, String sortname, int page, int rp) {
+	/**
+	 * Retorna o filtro de processos do sistema
+	 * @param sortorder
+	 * @param sortname
+	 * @param page
+	 * @param rp
+	 * @return
+	 */
+	private FiltroProcessosDTO carregarFiltroProcessos(String sortorder, String sortname, int page, int rp) {
 
-		FiltroPainelProcessamentoDTO filtro = new FiltroPainelProcessamentoDTO();
+		FiltroProcessosDTO filtro = new FiltroProcessosDTO();
 
-		this.configurarPaginacao(filtro, sortorder, sortname, page, rp);
+		this.configurarPaginacaoProcessos(filtro, sortorder, sortname, page, rp);
 
-		FiltroPainelProcessamentoDTO filtroSessao = (FiltroPainelProcessamentoDTO) this.session.getAttribute(FILTRO_PESQUISA_INTERFACES_SESSION_ATTRIBUTE);
+		FiltroProcessosDTO filtroSessao = (FiltroProcessosDTO) this.session.getAttribute(FILTRO_PESQUISA_PROCESSOS_SESSION_ATTRIBUTE);
 
 		if (filtroSessao != null && !filtroSessao.equals(filtro)) {
 			filtro.getPaginacao().setPaginaAtual(1);
 		}
 		
-		session.setAttribute(FILTRO_PESQUISA_INTERFACES_SESSION_ATTRIBUTE, filtro);
+		session.setAttribute(FILTRO_PESQUISA_PROCESSOS_SESSION_ATTRIBUTE, filtro);
 		
 		return filtro;
-	}*/
+	}
 	
 	/**
 	 * Configura a paginação dos filtros
@@ -241,7 +274,7 @@ public class PainelProcessamentoController {
 	 * @param page
 	 * @param rp
 	 */
-	/*private void configurarPaginacao(FiltroPainelProcessamentoDTO filtro, String sortorder,	String sortname, int page,int rp) {
+	private void configurarPaginacaoProcessos(FiltroProcessosDTO filtro, String sortorder, String sortname, int page,int rp) {
 
 		if (filtro != null) {
 		
@@ -249,10 +282,19 @@ public class PainelProcessamentoController {
 			
 			filtro.setPaginacao(paginacao);
 		
-			filtro.setOrdenacaoColuna(Util.getEnumByStringValue(FiltroPainelProcessamentoDTO.OrdenacaoColunaConsulta.values(), sortname));
+			filtro.setOrdenacaoColuna(Util.getEnumByStringValue(FiltroProcessosDTO.OrdenacaoColunaConsulta.values(), sortname));
 		}
-	}*/	
+	}	
 
+	/**
+	 * Retorna o estado operacional do sistema (Encerrado, Fechamento, Offline, Operando)
+	 */
+	@Post
+	public void buscarEstadoOperacional() {
+		String statusSistemaOperacional = painelProcessamentoService.obterEstadoOperacional();
+		this.result.use(Results.json()).from(statusSistemaOperacional, "result").recursive().serialize();
+	}
+	
 	/**
 	 * Carrega os filtros de pesquisa
 	 * @param sortorder
@@ -322,26 +364,6 @@ public class PainelProcessamentoController {
 		ndsFileHeader.setNomeUsuario(this.getUsuario().getNome());
 		
 		return ndsFileHeader;
-	}
-	
-	/**
-	 * Obtém o filtro de pesquisa para exportação.
-	 * @return
-	 */
-	private FiltroInterfacesDTO obterFiltroParaExportacao() {
-		
-		FiltroInterfacesDTO filtroSessao =
-			(FiltroInterfacesDTO) 
-				this.session.getAttribute(FILTRO_PESQUISA_INTERFACES_SESSION_ATTRIBUTE);
-		
-		if (filtroSessao != null) {
-			
-			if (filtroSessao.getPaginacao() != null) {				
-				filtroSessao.getPaginacao().setPaginaAtual(null);
-				filtroSessao.getPaginacao().setQtdResultadosPorPagina(null);
-			}
-		}
-		return filtroSessao;
 	}
 	
 	/**

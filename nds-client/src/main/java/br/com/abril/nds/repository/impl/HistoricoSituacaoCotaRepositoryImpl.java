@@ -299,7 +299,7 @@ public class HistoricoSituacaoCotaRepositoryImpl extends AbstractRepository<Hist
 	 */
 	@Override
 	public Date buscarDataUltimaSuspensaoCotas() {
-		Criteria criteria = getSession().createCriteria(Expedicao.class);
+		Criteria criteria = getSession().createCriteria(HistoricoSituacaoCota.class);
 		criteria.setProjection(Projections.max("dataEdicao"));
 		return (Date) criteria.uniqueResult();
 	}

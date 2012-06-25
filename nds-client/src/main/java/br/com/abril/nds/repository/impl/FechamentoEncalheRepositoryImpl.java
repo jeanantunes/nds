@@ -7,7 +7,6 @@ import org.hibernate.Criteria;
 import org.hibernate.FetchMode;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Order;
-import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
@@ -333,6 +332,14 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepository<Fechamen
 	@Override
 	public Date buscaDataUltimoControleFechamentoEncalhe() {
 		Criteria criteria = getSession().createCriteria(ControleFechamentoEncalhe.class);
+		criteria.setProjection(Projections.max("dataEncalhe"));
+		return (Date) criteria.uniqueResult();
+	}
+
+	@Override
+	public Date buscarUltimoFechamentoEncalheDia(Date dataFechamentoEncalhe) {
+		Criteria criteria = getSession().createCriteria(FechamentoEncalhePK.class);
+		criteria.add(Restrictions.eq("dataEncalhe", dataFechamentoEncalhe));
 		criteria.setProjection(Projections.max("dataEncalhe"));
 		return (Date) criteria.uniqueResult();
 	}
