@@ -450,6 +450,7 @@ public class DataLoader {
 
 	private static EstudoCota estudoCotaSuper1Manoel;
 	private static EstudoCota estudoCotaManoel;
+	private static EstudoCota estudoCotaManoelVeja2;
 	private static EstudoCota estudoCotaVeja2Joao;
 	private static EstudoCota estudoCotaCaprichoZe;
 	private static EstudoCota estudoCotaVeja1Joao;
@@ -2945,6 +2946,9 @@ public class DataLoader {
 
 		estudoCotaManoel = Fixture.estudoCota(BigDecimal.TEN, BigDecimal.TEN, estudoVeja1, cotaManoel);
 		save(session,estudoCotaManoel);
+		
+		estudoCotaManoelVeja2 = Fixture.estudoCota(BigDecimal.TEN, BigDecimal.TEN, estudoVeja2, cotaManoel);
+		save(session,estudoCotaManoelVeja2);
 
 		estudoCotaVeja1JoaoEncaljeAnt = Fixture.estudoCota(new BigDecimal(10), new BigDecimal(10), estudoVeja1EncalheAnt, cotaJose);
 		save(session,estudoCotaVeja1JoaoEncaljeAnt);
