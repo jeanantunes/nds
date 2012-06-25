@@ -836,9 +836,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		PoliticaCobranca politicaCobranca = politicaCobrancaService.obterPoliticaCobrancaPrincipal();
 		FormaEmissao formaEmissao = politicaCobranca.getFormaEmissao();
 		
-		//documentoConferenciaEncalhe.setIndGeraDocumentacaoConferenciaEncalhe(FormaEmissao.INDIVIDUAL_BOX.equals(formaEmissao));
-		//TODO: voltar codigo acima apos testes...
-		documentoConferenciaEncalhe.setIndGeraDocumentacaoConferenciaEncalhe(true);
+		documentoConferenciaEncalhe.setIndGeraDocumentacaoConferenciaEncalhe(FormaEmissao.INDIVIDUAL_BOX.equals(formaEmissao));
 		return documentoConferenciaEncalhe;
 		
 	}
