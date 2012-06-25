@@ -12,7 +12,7 @@ import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.Telefone;
 import br.com.abril.nds.util.Constantes;
-import br.com.abril.nds.util.TipoSessao;
+import br.com.abril.nds.util.TipoSecao;
 import br.com.abril.nds.util.export.fiscal.nota.NFEConditions;
 import br.com.abril.nds.util.export.fiscal.nota.NFEExport;
 import br.com.abril.nds.util.export.fiscal.nota.NFEExports;
@@ -37,15 +37,15 @@ public class IdentificacaoDestinatario implements Serializable {
 	 */
 	@Column(name="DOCUMENTO_DESTINATARIO", nullable=false, length=14)
 	@NFEExports({
-		@NFEExport(secao=TipoSessao.E02, posicao=0, tamanho=14, documento=Constantes.CNPJ), 
-		@NFEExport(secao=TipoSessao.E03, posicao=0, tamanho=11, documento=Constantes.CPF)})
+		@NFEExport(secao=TipoSecao.E02, posicao=0, tamanho=14, documento=Constantes.CNPJ), 
+		@NFEExport(secao=TipoSecao.E03, posicao=0, tamanho=11, documento=Constantes.CPF)})
 	private String documento;
 	
 	/**
 	 * xNome
 	 */	
 	@Column(name="NOME_DESTINATARIO", nullable=false, length=60)
-	@NFEExport(secao=TipoSessao.E, posicao=0, tamanho=60)
+	@NFEExport(secao=TipoSecao.E, posicao=0, tamanho=60)
 	private String nome;
 	
 	/**
@@ -58,14 +58,14 @@ public class IdentificacaoDestinatario implements Serializable {
 	 * IE
 	 */
 	@Column(name="IE_DESTINATARIO", nullable=true, length=14)
-	@NFEExport(secao=TipoSessao.E, posicao=1, tamanho=14)
+	@NFEExport(secao=TipoSecao.E, posicao=1, tamanho=14)
 	private String inscricaoEstual;
 	
 	/**
 	 * ISUF
 	 */
 	@Column(name="ISUF_DESTINATARIO", nullable=true, length=9)
-	@NFEExport(secao=TipoSessao.E, posicao=2, tamanho=9)
+	@NFEExport(secao=TipoSecao.E, posicao=2, tamanho=9)
 	private String inscricaoSuframa;
 	
 	/**

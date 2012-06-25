@@ -1,6 +1,6 @@
 package br.com.abril.nds.util;
 
-public enum TipoSessao {
+public enum TipoSecao {
 	
 	A(2, "A"), 
 	B(18, "B"), 
@@ -29,7 +29,8 @@ public enum TipoSessao {
 	private Integer tamanhoMaximo;
 	private String sigla;
 	
-	private TipoSessao (Integer tamanhoMaximo, String sigla) {
+	private TipoSecao (Integer tamanhoMaximo, String sigla) {
+		this.sigla = sigla;
 		this.tamanhoMaximo = tamanhoMaximo;
 	}
 	
@@ -45,6 +46,6 @@ public enum TipoSessao {
 	 * @return the sigla
 	 */
 	public String getSigla() {
-		return sigla;
+		return this.sigla;
 	}
 }

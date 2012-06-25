@@ -12,7 +12,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import br.com.abril.nds.util.TipoSessao;
+import br.com.abril.nds.util.TipoSecao;
 import br.com.abril.nds.util.export.fiscal.nota.NFEExport;
 
 @Embeddable
@@ -35,7 +35,7 @@ public class Identificacao implements Serializable {
 	 * cDV
 	 */
 	@Column(name = "DV_CHAVE_ACESSO", length = 1, nullable = false)
-	@NFEExport(secao=TipoSessao.B, posicao=13, tamanho=1)
+	@NFEExport(secao=TipoSecao.B, posicao=13, tamanho=1)
 	private Integer digitoVerificadorChaveAcesso;
 
 	/**
@@ -43,14 +43,14 @@ public class Identificacao implements Serializable {
 	 */
 	@Enumerated(EnumType.ORDINAL)
 	@Column(name = "TIPO_OPERACAO", length = 1, nullable = false)
-	@NFEExport(secao=TipoSessao.B, posicao=9, tamanho=1)
+	@NFEExport(secao=TipoSecao.B, posicao=9, tamanho=1)
 	private TipoOperacao tipoOperacao;
 
 	/**
 	 * natOp
 	 */
 	@Column(name="DESCRICAO_NATUREZA_OPERACAO", length=60,nullable=false)
-	@NFEExport(secao=TipoSessao.B, posicao=2, tamanho=60)
+	@NFEExport(secao=TipoSecao.B, posicao=2, tamanho=60)
 	private String descricaoNaturezaOperacao;
 	
 	
@@ -59,7 +59,7 @@ public class Identificacao implements Serializable {
 	 */
 	@Enumerated(EnumType.ORDINAL)
 	@Column(name="INDICADOR_FORMA_PAGAMENTO", length=1, nullable=false)
-	@NFEExport(secao=TipoSessao.B, posicao=3, tamanho=1)
+	@NFEExport(secao=TipoSecao.B, posicao=3, tamanho=1)
 	private FormaPagamento formaPagamento;
 	
 		
@@ -67,7 +67,7 @@ public class Identificacao implements Serializable {
 	 * serie
 	 */
 	@Column(name = "SERIE", length = 3, nullable = false)
-	@NFEExport(secao=TipoSessao.B, posicao=5, tamanho=3)
+	@NFEExport(secao=TipoSecao.B, posicao=5, tamanho=3)
 	private Integer serie;
 	
 	
@@ -75,7 +75,7 @@ public class Identificacao implements Serializable {
 	 * nNF
 	 */
 	@Column(name = "NUMERO_DOCUMENTO_FISCAL", length = 9, nullable = false)
-	@NFEExport(secao=TipoSessao.B, posicao=6 , tamanho=9)
+	@NFEExport(secao=TipoSecao.B, posicao=6 , tamanho=9)
 	private Long numeroDocumentoFiscal;
 	
 	/**
@@ -83,7 +83,7 @@ public class Identificacao implements Serializable {
 	 */
 	@Temporal(TemporalType.DATE)
 	@Column(name = "DATA_EMISSAO", nullable = false)
-	@NFEExport(secao=TipoSessao.B, posicao=7)
+	@NFEExport(secao=TipoSecao.B, posicao=7)
 	private Date dataEmissao;
 	
 	
@@ -92,7 +92,7 @@ public class Identificacao implements Serializable {
 	 */
 	@Temporal(TemporalType.DATE)
 	@Column(name = "DATA_SAIDA_ENTRADA", nullable = true)
-	@NFEExport(secao=TipoSessao.B, posicao=8)
+	@NFEExport(secao=TipoSecao.B, posicao=8)
 	private Date dataSaidaEntrada;
 	
 	/**
