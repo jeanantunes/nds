@@ -13,8 +13,11 @@ import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.Telefone;
 import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.TipoSessao;
+import br.com.abril.nds.util.export.fiscal.nota.NFEConditions;
 import br.com.abril.nds.util.export.fiscal.nota.NFEExport;
 import br.com.abril.nds.util.export.fiscal.nota.NFEExports;
+import br.com.abril.nds.util.export.fiscal.nota.NFEWhen;
+import br.com.abril.nds.util.export.fiscal.nota.NFEWhens;
 
 @Embeddable
 public class IdentificacaoDestinatario implements Serializable {
@@ -54,7 +57,7 @@ public class IdentificacaoDestinatario implements Serializable {
 	/**
 	 * IE
 	 */
-	@Column(name="IE_DESTINATARIO", nullable=false, length=14)
+	@Column(name="IE_DESTINATARIO", nullable=true, length=14)
 	@NFEExport(secao=TipoSessao.E, posicao=1, tamanho=14)
 	private String inscricaoEstual;
 	
@@ -85,7 +88,6 @@ public class IdentificacaoDestinatario implements Serializable {
 	 * Construtor padrão.
 	 */
 	public IdentificacaoDestinatario() {
-		
 	}
 
 	
