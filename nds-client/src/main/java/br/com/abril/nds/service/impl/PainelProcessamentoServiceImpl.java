@@ -18,10 +18,12 @@ import br.com.abril.nds.model.integracao.LogExecucaoMensagem;
 import br.com.abril.nds.model.integracao.StatusExecucaoEnum;
 import br.com.abril.nds.repository.BaixaCobrancaService;
 import br.com.abril.nds.repository.LogExecucaoRepository;
+import br.com.abril.nds.service.ConsolidadoFinanceiroService;
 import br.com.abril.nds.service.DistribuidorService;
 import br.com.abril.nds.service.ExpedicaoService;
 import br.com.abril.nds.service.FechamentoEncalheService;
 import br.com.abril.nds.service.HistoricoSituacaoCotaService;
+import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.PainelProcessamentoService;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
@@ -66,6 +68,12 @@ public class PainelProcessamentoServiceImpl implements PainelProcessamentoServic
 
 	@Autowired
 	private BaixaCobrancaService baixaCobrancaService;
+
+	@Autowired
+	private ConsolidadoFinanceiroService consolidadoFinanceiroService;
+
+	@Autowired
+	private LancamentoService lancamentoService;
 
 	/**
 	 * Busca os LogExecucao respeitando as restricoes parametrizadas.
@@ -147,7 +155,7 @@ public class PainelProcessamentoServiceImpl implements PainelProcessamentoServic
 		List<ProcessoDTO> processos = new ArrayList<ProcessoDTO>();
 		
 		// Adiciona estado Status Operacional
-		processos.add(this.getProcessoStatusOperacional());
+		processos.add(this.getProcessoStatusOperacional(dataOperacao));
 		
 		// Adiciona estado fechamento encalhe
 		processos.add(this.getProcessoEstadoFechamentoEncalhe(dataOperacao));
@@ -161,6 +169,15 @@ public class PainelProcessamentoServiceImpl implements PainelProcessamentoServic
 		// Adiciona a última baixa automática realizada
 		processos.add(this.getProcessoBaixaAutomatica(dataOperacao));
 
+		// Adiciona dados da última cobrança gerada
+		processos.add(this.getProcessoCobrancaGerada(dataOperacao));
+
+		// Adiciona a última matriz de lançamento balanceada
+		processos.add(this.getUltimaMatrizLancamento(dataOperacao));
+
+		// Adiciona a última matriz de recolhimento balanceada
+		processos.add(this.getUltimaMatrizRecolhimento(dataOperacao));
+
 		return processos;
 	}
 
@@ -168,11 +185,25 @@ public class PainelProcessamentoServiceImpl implements PainelProcessamentoServic
 	 * Retorna o estado operacional do sistema
 	 * @return ProcessoDTO
 	 */
-	private ProcessoDTO getProcessoStatusOperacional() {
+	private ProcessoDTO getProcessoStatusOperacional(Date dataOperacao) {
 		ProcessoDTO processoStatusOperacional = new ProcessoDTO();
 		processoStatusOperacional.setNome(STATUS_OPERACIONAL);
-		processoStatusOperacional.setSistemaOperacional(true);
-		// Colocar o estado, data e hora do estado operacional
+
+		ControleFechamentoEncalhe controleFechamentoEncalhe = fechamentoEncalheService.buscaControleFechamentoEncalhePorData(dataOperacao);
+		
+		if (controleFechamentoEncalhe != null) {
+			// Mostra os dados do fechamento diário
+			processoStatusOperacional.setStatus(StatusExecucaoEnum.SUCESSO.toString());
+			processoStatusOperacional.setDataProcessmento(sdfData.format(controleFechamentoEncalhe.getDataEncalhe()));
+			processoStatusOperacional.setHoraProcessamento(sdfHora.format(controleFechamentoEncalhe.getDataEncalhe()));
+		} else {
+			// Caso não tenha um fechamento do dia, busca o último fechamento realizado
+			Date dataUltimoFechamentoEncalhe = fechamentoEncalheService.buscaDataUltimoControleFechamentoEncalhe();
+			processoStatusOperacional.setStatus(StatusExecucaoEnum.FALHA.toString());
+			processoStatusOperacional.setDataProcessmento(sdfData.format(dataUltimoFechamentoEncalhe));
+			processoStatusOperacional.setHoraProcessamento(sdfHora.format(dataUltimoFechamentoEncalhe));
+		}
+		
 		return processoStatusOperacional;
 	}
 
@@ -290,14 +321,76 @@ public class PainelProcessamentoServiceImpl implements PainelProcessamentoServic
 	 * @return ProcessoDTO
 	 */
 	private ProcessoDTO getProcessoCobrancaGerada(Date dataOperacao) {
-		ProcessoDTO processoBaixaAutomatica = new ProcessoDTO();
-		processoBaixaAutomatica.setNome(COBRANCA_GERADA);
+		ProcessoDTO processoCobrancaGerada = new ProcessoDTO();
+		processoCobrancaGerada.setNome(COBRANCA_GERADA);
+
+		Date dataUltimaCobrancaGerada = consolidadoFinanceiroService.buscarUltimaDividaGeradaDia(dataOperacao);
+
+		if (dataUltimaCobrancaGerada != null) {
+			processoCobrancaGerada.setStatus(StatusExecucaoEnum.SUCESSO.toString());
+			processoCobrancaGerada.setDataProcessmento(sdfData.format(dataUltimaCobrancaGerada));
+			processoCobrancaGerada.setDataProcessmento(sdfData.format(dataUltimaCobrancaGerada));
+		} else {
+			dataUltimaCobrancaGerada = consolidadoFinanceiroService.buscarDiaUltimaDividaGerada();
+			processoCobrancaGerada.setStatus(StatusExecucaoEnum.FALHA.toString());
+			processoCobrancaGerada.setDataProcessmento(sdfData.format(dataUltimaCobrancaGerada));
+			processoCobrancaGerada.setDataProcessmento(sdfData.format(dataUltimaCobrancaGerada));
+		}
 		
-		/*if (!= null) {
-			
-		}*/
+		return processoCobrancaGerada;
 		
-		return processoBaixaAutomatica;
+	}
+
+	/**
+	 * Retorna o último processo de matriz de lançamento balanceado
+	 * @param dataOperacao
+	 * @return ProcessoDTO
+	 */
+	private ProcessoDTO getUltimaMatrizLancamento(Date dataOperacao) {
+		ProcessoDTO processoUltimaMatrizLancamento = new ProcessoDTO();
+		processoUltimaMatrizLancamento.setNome(ULTIMA_MATRIZ_LANC_BALANCEADA);
+
+		Date dataUltimaMatrizLancamento = lancamentoService.buscarUltimoBalanceamentoLancamentoRealizadoDia(dataOperacao);
+
+		if (dataUltimaMatrizLancamento != null) {
+			processoUltimaMatrizLancamento.setStatus(StatusExecucaoEnum.SUCESSO.toString());
+			processoUltimaMatrizLancamento.setDataProcessmento(sdfData.format(dataUltimaMatrizLancamento));
+			processoUltimaMatrizLancamento.setDataProcessmento(sdfData.format(dataUltimaMatrizLancamento));
+		} else {
+			dataUltimaMatrizLancamento = lancamentoService.buscarDiaUltimoBalanceamentoLancamentoRealizado();
+			processoUltimaMatrizLancamento.setStatus(StatusExecucaoEnum.FALHA.toString());
+			processoUltimaMatrizLancamento.setDataProcessmento(sdfData.format(dataUltimaMatrizLancamento));
+			processoUltimaMatrizLancamento.setDataProcessmento(sdfData.format(dataUltimaMatrizLancamento));
+		}
+		
+		return processoUltimaMatrizLancamento;
+		
+	}
+
+	/**
+	 * Retorna o último processo de matriz de recolhimento balanceado 
+	 * @param dataOperacao
+	 * @return ProcessoDTO
+	 */
+	private ProcessoDTO getUltimaMatrizRecolhimento(Date dataOperacao) {
+		ProcessoDTO processoUltimaMatrizRecolhimento = new ProcessoDTO();
+		processoUltimaMatrizRecolhimento.setNome(ULTIMA_MATRIZ_REC_BALANCEADA);
+
+		Date dataUltimaMatrizRecolhimento = lancamentoService.buscarUltimoBalanceamentoRecolhimentoRealizadoDia(dataOperacao);
+
+		if (dataUltimaMatrizRecolhimento != null) {
+			processoUltimaMatrizRecolhimento.setStatus(StatusExecucaoEnum.SUCESSO.toString());
+			processoUltimaMatrizRecolhimento.setDataProcessmento(sdfData.format(dataUltimaMatrizRecolhimento));
+			processoUltimaMatrizRecolhimento.setDataProcessmento(sdfData.format(dataUltimaMatrizRecolhimento));
+		} else {
+			dataUltimaMatrizRecolhimento = lancamentoService.buscarDiaUltimoBalanceamentoRecolhimentoRealizado();
+			processoUltimaMatrizRecolhimento.setStatus(StatusExecucaoEnum.FALHA.toString());
+			processoUltimaMatrizRecolhimento.setDataProcessmento(sdfData.format(dataUltimaMatrizRecolhimento));
+			processoUltimaMatrizRecolhimento.setDataProcessmento(sdfData.format(dataUltimaMatrizRecolhimento));
+		}
+		
+		return processoUltimaMatrizRecolhimento;
+		
 	}
 
 }

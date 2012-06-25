@@ -1,9 +1,13 @@
 package br.com.abril.nds.repository.impl;
 
+import java.util.Date;
 import java.util.List;
 
+import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.hibernate.transform.ResultTransformer;
 import org.springframework.stereotype.Repository;
@@ -15,6 +19,8 @@ import br.com.abril.nds.dto.FiltroConsolidadoConsignadoCotaDTO;
 import br.com.abril.nds.dto.ViewContaCorrenteCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsolidadoEncalheCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsolidadoVendaCotaDTO;
+import br.com.abril.nds.model.cadastro.HistoricoSituacaoCota;
+import br.com.abril.nds.model.estoque.Expedicao;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.financeiro.ConsolidadoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
@@ -406,5 +412,26 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 		query.setParameter("idMovimentoFinanceiro", idMovimentoFinanceiro);
 		
 		return (ConsolidadoFinanceiroCota) query.uniqueResult();
+	}
+
+	/* (non-Javadoc)
+	 * @see br.com.abril.nds.repository.ConsolidadoFinanceiroRepository#buscarUltimaBaixaAutomaticaDia(java.util.Date)
+	 */
+	@Override
+	public Date buscarUltimaDividaGeradaDia(Date dataOperacao) {
+		Criteria criteria = getSession().createCriteria(ConsolidadoFinanceiroCota.class);
+		criteria.add(Restrictions.eq("dataConsolidado", dataOperacao));
+		criteria.setProjection(Projections.max("dataConsolidado"));
+		return (Date) criteria.uniqueResult();
+	}
+
+	/* (non-Javadoc)
+	 * @see br.com.abril.nds.repository.ConsolidadoFinanceiroRepository#buscarDiaUltimaBaixaAutomatica()
+	 */
+	@Override
+	public Date buscarDiaUltimaDividaGerada() {
+		Criteria criteria = getSession().createCriteria(ConsolidadoFinanceiroCota.class);
+		criteria.setProjection(Projections.max("dataConsolidado"));
+		return (Date) criteria.uniqueResult();
 	}
 }

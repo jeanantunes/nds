@@ -32,6 +32,7 @@ import br.com.abril.nds.dto.filtro.FiltroLancamentoDTO;
 import br.com.abril.nds.dto.filtro.FiltroLancamentoDTO.ColunaOrdenacao;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
+import br.com.abril.nds.model.financeiro.ConsolidadoFinanceiroCota;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
@@ -1216,6 +1217,40 @@ public class LancamentoRepositoryImpl extends
 		query.setParameterList("statusLancamentoDataMenorInicial", statusLancamentoDataMenorInicial);
 		query.setParameterList("tiposProduto", tiposProduto);
 		query.setParameter("grupoCromo", GrupoProduto.CROMO.toString());
+	}
+
+	@Override
+	public Date buscarUltimoBalanceamentoLancamentoRealizadoDia(Date dataOperacao) {
+		Criteria criteria = getSession().createCriteria(Lancamento.class);
+		criteria.add(Restrictions.eq("status", StatusLancamento.BALANCEADO));
+		criteria.add(Restrictions.eq("dataLancamentoDistribuidor", dataOperacao));
+		criteria.setProjection(Projections.max("dataLancamentoDistribuidor"));
+		return (Date) criteria.uniqueResult();
+	}
+
+	@Override
+	public Date buscarDiaUltimoBalanceamentoLancamentoRealizado() {
+		Criteria criteria = getSession().createCriteria(Lancamento.class);
+		criteria.add(Restrictions.eq("status", StatusLancamento.BALANCEADO));
+		criteria.setProjection(Projections.max("dataLancamentoDistribuidor"));
+		return (Date) criteria.uniqueResult();
+	}
+
+	@Override
+	public Date buscarUltimoBalanceamentoRecolhimentoRealizadoDia(Date dataOperacao) {
+		Criteria criteria = getSession().createCriteria(Lancamento.class);
+		criteria.add(Restrictions.eq("dataRecolhimentoDistribuidor", dataOperacao));
+		criteria.add(Restrictions.eq("status", StatusLancamento.BALANCEADO_RECOLHIMENTO));
+		criteria.setProjection(Projections.max("dataRecolhimentoDistribuidor"));
+		return (Date) criteria.uniqueResult();
+	}
+
+	@Override
+	public Date buscarDiaUltimoBalanceamentoRecolhimentoRealizado() {
+		Criteria criteria = getSession().createCriteria(Lancamento.class);
+		criteria.add(Restrictions.eq("status", StatusLancamento.BALANCEADO_RECOLHIMENTO));
+		criteria.setProjection(Projections.max("dataRecolhimentoDistribuidor"));
+		return (Date) criteria.uniqueResult();
 	}
 	
 }
