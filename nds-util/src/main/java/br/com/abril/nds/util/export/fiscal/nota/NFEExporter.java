@@ -398,99 +398,23 @@ public class NFEExporter {
 	 * @param secao - Linha da seção atual.
 	 * @param valor - Valor a ser incluído.
 	 * @param posicao - Posição que será incluído na linha.
-	 * @return - Linha da seção com o campo adicionado.
+	 * @return Linha da seção com o campo adicionado.
 	 */
 	private String addStringCampoToStringSecao(String secao, String valor, int posicao) {
-				
-		String secaoAtualizada = STRING_VAZIA;
-		int qtCampos = countSeparator(secao, SEPARADOR_SECAO);
-		int positionInLayout = posicao + 1;
 		
-		if (qtCampos > positionInLayout ) { 
-			
-			String[]camposSecao = divideStringBySeparator(secao, SEPARADOR_SECAO);
-
-			int campoAtual = 0;
-			for (String campo: camposSecao) {
-				if (campoAtual == positionInLayout) {
-					secaoAtualizada += valor.concat(SEPARADOR_SECAO);
-				} else {
-					secaoAtualizada += campo.concat(SEPARADOR_SECAO);
-				}
-				campoAtual++;
-			}
-		} else {
-			secaoAtualizada = repetirStringNoFinal(secao, SEPARADOR_SECAO, positionInLayout - qtCampos) + valor + SEPARADOR_SECAO;
-		}
+		String[] quebra = secao.split("\\"+SEPARADOR_SECAO);
 		
-		return secaoAtualizada;
-	}
-	
-	/**
-	 * Adiciona o separado em uma quantidade de vezes especificada no parâmetro vezes.
-	 * 
-	 * @param valor - Valor da String.
-	 * @param separador - Caracteer a ser repetido.
-	 * @param vezes - Quantidade de vezes.
-	 * @return - String com os valores repetidos.
-	 */
-	private String repetirStringNoFinal(String valor, String separador, int vezes){
-		String repeticao = STRING_VAZIA;
-		for (int i = 0; i < vezes; i++) {
-			repeticao += SEPARADOR_SECAO;
+		quebra[posicao+1] = valor;
+		
+		StringBuilder atualizada = new StringBuilder();
+		
+		for (int i = 0; i < quebra.length-1; i++) {
+			atualizada.append(quebra[i]+SEPARADOR_SECAO);
 		}
-		return valor + repeticao;
+		atualizada.append(quebra[quebra.length-1]);
+		return atualizada.toString();
 	}
-	
-	/**
-	 * Conta a quantidade de separadores que contém o valor.
-	 * 
-	 * @param valor - Valor a ser verificado. 
-	 * @param separador - Valor que será contado.
-	 * @return - Quantidade de separadores achados.
-	 */
-	private int countSeparator(String valor, String separador){
-		int count = 0; 
-		int passaSeparador = 0;
-		for (int i = 0; i <= valor.length() - separador.length(); i++) {
-			if (valor.substring(i, i + separador.length()).equals(separador) && passaSeparador == 0) {
-				count++;
-				passaSeparador = separador.length() - 1;
-			} else if (passaSeparador > 0) {
-				passaSeparador--;
-			}
-		}
-		return count;
-	}
-	
-	/**
-	 * Divide uma String em um Array de String divididos pelo separador.
-	 * 
-	 * @param valor - Valor que será dividido.
-	 * @param separador - String de separação.
-	 * @return Array de String.
-	 */
-	private String[] divideStringBySeparator(String valor, String separador){
 
-		int count = countSeparator(valor, separador); 
-		int index = 0;
-		int passaSeparador = 0;
-		String valorCapturado = STRING_VAZIA;
-		String arrayValor[] = new String[count];
-		for (int i = 0; i <= valor.length() - separador.length(); i++) {
-			if (valor.substring(i, i + separador.length()).equals(separador) && passaSeparador == 0) {
-				arrayValor[index++] = valorCapturado;
-				passaSeparador = separador.length() - 1;
-				valorCapturado = STRING_VAZIA;
-			} else if (index < count) {
-				if (passaSeparador > 0) {
-					passaSeparador--;
-				}
-				valorCapturado += valor.substring(i, i + 1);
-			} 
-		}
-		return arrayValor;
-	}
 	
 	/**
 	 * Verifica se é Numérico (BigDecimal, Double, Integer, Long ou BigInteger).
