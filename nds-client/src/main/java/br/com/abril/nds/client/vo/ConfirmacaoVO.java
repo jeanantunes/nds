@@ -26,6 +26,16 @@ public class ConfirmacaoVO implements Serializable {
 
 		this.confirmado = confirmado;
 	}
+	
+	/**
+	 * Construtor
+	 * @param mensagem
+	 * @param confirmado
+	 */
+	public ConfirmacaoVO(String mensagem, boolean confirmado) {
+        this.mensagem = mensagem;  
+		this.confirmado = confirmado;
+	}
 
 	/**
 	 * @return the mensagem
