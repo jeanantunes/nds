@@ -338,12 +338,12 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 																			 			  new BigDecimal(vnd.getQntProduto()),
 																			 			  tipoMovimento);
 		
-		MovimentoFinanceiroCota movimentoFinanceiro = gerarMovimentoFinanceiroCotaDebito(dataVencimentoDebito,vendaProduto);
+		List<MovimentoFinanceiroCota> movimentoFinanceiro = gerarMovimentoFinanceiroCotaDebito(dataVencimentoDebito,vendaProduto);
 		
 		vendaProduto.setMovimentoEstoque(new HashSet<MovimentoEstoque>());
 		vendaProduto.getMovimentoEstoque().add(movimentoEstoque);
 		vendaProduto.setMovimentoFinanceiro(new HashSet<MovimentoFinanceiroCota>());
-		vendaProduto.getMovimentoFinanceiro().add(movimentoFinanceiro);
+		vendaProduto.getMovimentoFinanceiro().addAll(movimentoFinanceiro);
 		vendaProduto.setTipoComercializacaoVenda(FormaComercializacao.CONTA_FIRME);
 			
 		return vendaProdutoRepository.merge(vendaProduto);
@@ -397,12 +397,12 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 																			 			  new BigDecimal(vnd.getQntProduto()),
 																			 			  tipoMovimento);
 		
-		MovimentoFinanceiroCota movimentoFinanceiro = gerarMovimentoFinanceiroCotaDebito(dataVencimentoDebito,vendaProduto);
+		List<MovimentoFinanceiroCota> movimentoFinanceiro = gerarMovimentoFinanceiroCotaDebito(dataVencimentoDebito,vendaProduto);
 		
 		vendaProduto.setMovimentoEstoque(new HashSet<MovimentoEstoque>());
 		vendaProduto.getMovimentoEstoque().add(movimentoEstoque);
 		vendaProduto.setMovimentoFinanceiro(new HashSet<MovimentoFinanceiroCota>());
-		vendaProduto.getMovimentoFinanceiro().add(movimentoFinanceiro);
+		vendaProduto.getMovimentoFinanceiro().addAll(movimentoFinanceiro);
 		vendaProduto.setTipoComercializacaoVenda(FormaComercializacao.CONTA_FIRME);
 			
 		return vendaProdutoRepository.merge(vendaProduto);
@@ -427,14 +427,14 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 		
 		MovimentoEstoque movimentoEstoque = gerarMovimentoEstoqueVendaEncalheSuplementar(produtoEdicao.getId(), vendaProduto.getCota().getId(), usuario.getId(),qntProduto);
 				
-		MovimentoFinanceiroCota movimentoFinanceiro = gerarMovimentoFinanceiroCotaDebito(dataVencimentoDebito,vendaProduto);
+		List<MovimentoFinanceiroCota> movimentoFinanceiro = gerarMovimentoFinanceiroCotaDebito(dataVencimentoDebito,vendaProduto);
 		
 		gerarMovimentoChamadaEncalhe(produtoEdicao, vendaProduto.getCota(), qntProduto);
 		
 		vendaProduto.setMovimentoEstoque(new HashSet<MovimentoEstoque>());
 		vendaProduto.getMovimentoEstoque().add(movimentoEstoque);
 		vendaProduto.setMovimentoFinanceiro(new HashSet<MovimentoFinanceiroCota>());
-		vendaProduto.getMovimentoFinanceiro().add(movimentoFinanceiro);
+		vendaProduto.getMovimentoFinanceiro().addAll(movimentoFinanceiro);
 		vendaProduto.setTipoComercializacaoVenda(FormaComercializacao.CONSIGNADO);
 		
 		return vendaProdutoRepository.merge(vendaProduto);
@@ -446,7 +446,7 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 	 * @param dataVencimentoDebito
 	 * @param vendaProduto
 	 */
-	private MovimentoFinanceiroCota gerarMovimentoFinanceiroCotaDebito(Date dataVencimentoDebito,VendaProduto vendaProduto){
+	private List<MovimentoFinanceiroCota> gerarMovimentoFinanceiroCotaDebito(Date dataVencimentoDebito,VendaProduto vendaProduto){
 		
 		TipoMovimentoFinanceiro tipoMovimentoFinanceiro = 
 				tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(GrupoMovimentoFinaceiro.DEBITO);
@@ -455,7 +455,7 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 			throw new ValidacaoException(TipoMensagem.ERROR,"Não foi encontrado tipo de movimento financeiro de DEBITO cadastrado no sistema!");
 		}
 		
-		MovimentoFinanceiroCota movimentoFinanceiro = criarMovimentoFinanceiroDebito(tipoMovimentoFinanceiro,
+		List<MovimentoFinanceiroCota> movimentoFinanceiro = criarMovimentoFinanceiroDebito(tipoMovimentoFinanceiro,
 																					 dataVencimentoDebito,
 																					 vendaProduto.getValorTotalVenda(),
 																					 vendaProduto.getCota(), 
@@ -735,8 +735,8 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 			}
 		    vendaProduto.getMovimentoEstoque().add(movimento);
 		    
-		    MovimentoFinanceiroCota movimentoFinanceiro = processarMovimentoFinanceiro(valorVendaAtual, valorVendaNovo,vendaProduto,usuario);
-		    vendaProduto.getMovimentoFinanceiro().add(movimentoFinanceiro);
+		    List<MovimentoFinanceiroCota> movimentoFinanceiro = processarMovimentoFinanceiro(valorVendaAtual, valorVendaNovo,vendaProduto,usuario);
+		    vendaProduto.getMovimentoFinanceiro().addAll(movimentoFinanceiro);
 		}
 		
 		vendaProduto.setQntProduto(vendaEncalheDTO.getQntProduto());
@@ -757,7 +757,7 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 		return relatorio;
 	}
 	
-	private MovimentoFinanceiroCota processarMovimentoFinanceiro(BigDecimal valorVendaAtual, BigDecimal valorVendaNovo,VendaProduto vendaProduto, Usuario usuario) {
+	private List<MovimentoFinanceiroCota> processarMovimentoFinanceiro(BigDecimal valorVendaAtual, BigDecimal valorVendaNovo,VendaProduto vendaProduto, Usuario usuario) {
 		
 		TipoMovimentoFinanceiro tipoMovimentoFinanceiro = null;
 		BigDecimal valorVendaDebitoCredito = BigDecimal.ZERO;
@@ -781,7 +781,7 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 			throw new ValidacaoException(TipoMensagem.ERROR,"Não foi encontrado tipo de movimento financeiro de DEBITO/CREDITO cadastrado no sistema!");
 		}
 		
-		MovimentoFinanceiroCota movimento=  criarMovimentoFinanceiroDebito(tipoMovimentoFinanceiro,
+		List<MovimentoFinanceiroCota> movimento=  criarMovimentoFinanceiroDebito(tipoMovimentoFinanceiro,
 																		   vendaProduto.getDataVencimentoDebito(), 
 				   					   									   valorVendaDebitoCredito,
 				   					   									   vendaProduto.getCota(),
@@ -794,7 +794,7 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 		return usuarioRepository.buscarPorId(idUsuario);
 	}
 	
-	private MovimentoFinanceiroCota criarMovimentoFinanceiroDebito(TipoMovimentoFinanceiro tipoMovimentoFinanceiro,Date dataVencimentoDebito ,BigDecimal valorTotalVenda,Cota cota,Usuario usuario){
+	private List<MovimentoFinanceiroCota> criarMovimentoFinanceiroDebito(TipoMovimentoFinanceiro tipoMovimentoFinanceiro,Date dataVencimentoDebito ,BigDecimal valorTotalVenda,Cota cota,Usuario usuario){
 		
 		Distribuidor distribuidor = distribuidorService.obter();
 		
@@ -809,12 +809,11 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 		movimentoFinanceiroCotaDTO.setDataVencimento(dataVencimentoDebito);
 		movimentoFinanceiroCotaDTO.setDataAprovacao(distribuidor.getDataOperacao());
 		movimentoFinanceiroCotaDTO.setDataCriacao(distribuidor.getDataOperacao());
-		movimentoFinanceiroCotaDTO.setObservacao(null);
+		movimentoFinanceiroCotaDTO.setObservacao("Venda de Encalhe");
 		movimentoFinanceiroCotaDTO.setTipoEdicao(TipoEdicao.INCLUSAO);
-		movimentoFinanceiroCotaDTO.setAprovacaoAutomatica(true);
 		movimentoFinanceiroCotaDTO.setLancamentoManual(true);
 		
-		return movimentoFinanceiroCotaService.gerarMovimentoFinanceiroDebitoCredito(movimentoFinanceiroCotaDTO);
+		return movimentoFinanceiroCotaService.gerarMovimentosFinanceirosDebitoCredito(movimentoFinanceiroCotaDTO);
 	}
 		
 	private MovimentoEstoque processarAtualizcaoMovimentoEstoque(BigDecimal qntProdutoAtual,BigDecimal qntProdutoNovo,Long idProdutoEdicao, Long idUsuario){

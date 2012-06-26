@@ -303,7 +303,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 				movimentoFinanceiroCotaDTO.setAprovacaoAutomatica(true);
 				movimentoFinanceiroCotaDTO.setLancamentoManual(false);
 				
-				this.movimentoFinanceiroCotaService.gerarMovimentoFinanceiroDebitoCredito(movimentoFinanceiroCotaDTO);
+				this.movimentoFinanceiroCotaService.gerarMovimentosFinanceirosDebitoCredito(movimentoFinanceiroCotaDTO);
 	
 				this.gerarCobrancaService.gerarCobranca(cota.getId(), usuario.getId(), true);
 				

@@ -12,7 +12,6 @@ import br.com.abril.nds.dto.ProdutoLancamentoDTO;
 import br.com.abril.nds.dto.ProdutoRecolhimentoDTO;
 import br.com.abril.nds.dto.ResumoPeriodoBalanceamentoDTO;
 import br.com.abril.nds.dto.SumarioLancamentosDTO;
-import br.com.abril.nds.dto.filtro.FiltroLancamentoDTO;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.planejamento.Lancamento;
@@ -23,10 +22,7 @@ import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 import br.com.abril.nds.vo.PeriodoVO;
 
 public interface LancamentoRepository extends Repository<Lancamento, Long> {
-
-	List<Lancamento> obterBalanceamentoMatrizLancamentos(
-			FiltroLancamentoDTO filtro);
-
+	
 	SumarioLancamentosDTO sumarioBalanceamentoMatrizLancamentos(Date data,
 			List<Long> idsFornecedores);
 

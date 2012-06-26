@@ -45,8 +45,6 @@ public class ProdutoLancamentoDTO implements Serializable {
 	private BigDecimal reparteFisico;
 	
 	private Long idLancamento;
-	
-	//TODO: private Integer sequencia;
 
 	private String fornecedor;
 

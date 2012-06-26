@@ -300,11 +300,11 @@ public class Fixture {
 	}
 
 	public static TipoProduto tipoRevista() {
-		return tipoProduto("Revistas", GrupoProduto.REVISTA, "99000642", null, 001L);
+		return tipoProduto("Revistas", GrupoProduto.REVISTA, 99000642l, null, 001L);
 	}
 	
 	public static TipoProduto tipoCromo() {
-		return tipoProduto("Cromos", GrupoProduto.CROMO, "1230004560", null, 002L);
+		return tipoProduto("Cromos", GrupoProduto.CROMO, 1230004560l, null, 002L);
 	}
 	
 	public static TipoFornecedor tipoFornecedorPublicacao() {
@@ -396,7 +396,7 @@ public class Fixture {
 	}
 
 	public static TipoProduto tipoProduto(String descricao, GrupoProduto grupo,
-			String codigoNCM, String codigoNBM, Long codigo) {
+			Long codigoNCM, String codigoNBM, Long codigo) {
 		TipoProduto tipoProduto = new TipoProduto();
 		tipoProduto.setDescricao(descricao);
 		tipoProduto.setGrupoProduto(grupo);
@@ -1124,12 +1124,11 @@ public class Fixture {
 
 	
 	public static TipoNotaFiscal tipoNotaFiscalRecebimento() {
+		
 		TipoNotaFiscal tipoNotaFiscal = new TipoNotaFiscal();
+		
 		tipoNotaFiscal.setDescricao("RECEBIMENTO");
 		tipoNotaFiscal.setGrupoNotaFiscal(GrupoNotaFiscal.RECEBIMENTO_MERCADORIAS);
-		
-		/*tipoNotaFiscal.setCfopEstado(Fixture.cfop1209());
-		tipoNotaFiscal.setCfopOutrosEstados(Fixture.cfop1209());*/
 		tipoNotaFiscal.setNopDescricao("NF-e de Devolução de Remessa para Distruibuição");
 		tipoNotaFiscal.setEmitente(TipoUsuarioNotaFiscal.DISTRIBUIDOR);
 		tipoNotaFiscal.setDestinatario(TipoUsuarioNotaFiscal.DISTRIBUIDOR);
@@ -1137,6 +1136,7 @@ public class Fixture {
 		tipoNotaFiscal.setNopCodigo(0L);
 		tipoNotaFiscal.setTipoOperacao(TipoOperacao.ENTRADA);		
 		tipoNotaFiscal.setTipoAtividade(TipoAtividade.PRESTADOR_SERVICO);
+		tipoNotaFiscal.setSerieNotaFiscal(2);
 		
 		return tipoNotaFiscal;
 	}
@@ -1172,12 +1172,11 @@ public class Fixture {
 	}
 
 	public static TipoNotaFiscal tipoNotaFiscalDevolucao() {
+		
 		TipoNotaFiscal tipoNotaFiscal = new TipoNotaFiscal();
+		
 		tipoNotaFiscal.setDescricao("DEVOLUCAO");
 		tipoNotaFiscal.setGrupoNotaFiscal(GrupoNotaFiscal.DEVOLUCAO_MERCADORIA_FORNECEDOR);
-
-		/*tipoNotaFiscal.setCfopEstado(Fixture.cfop5102());
-		tipoNotaFiscal.setCfopOutrosEstados(Fixture.cfop5102());*/
 		tipoNotaFiscal.setNopDescricao("NF-e de Remessa em Consignação (NECE / DANFE)");
 		tipoNotaFiscal.setEmitente(TipoUsuarioNotaFiscal.DISTRIBUIDOR);
 		tipoNotaFiscal.setDestinatario(TipoUsuarioNotaFiscal.COTA);
@@ -1185,17 +1184,17 @@ public class Fixture {
 		tipoNotaFiscal.setNopCodigo(0L);
 		tipoNotaFiscal.setTipoOperacao(TipoOperacao.SAIDA);
 		tipoNotaFiscal.setTipoAtividade(TipoAtividade.MERCANTIL);
+		tipoNotaFiscal.setSerieNotaFiscal(3);
 		
 		return tipoNotaFiscal;
 	}
 
 	public static TipoNotaFiscal tipoNotaFiscalRecebimentoMercadoriasEncalhe() {
+		
 		TipoNotaFiscal tipoNotaFiscal = new TipoNotaFiscal();
+		
 		tipoNotaFiscal.setDescricao("RECEBIMENTO DE MERCADORIAS ENCALHE");
 		tipoNotaFiscal.setGrupoNotaFiscal(GrupoNotaFiscal.RECEBIMENTO_MERCADORIAS_ENCALHE);
-
-		/*tipoNotaFiscal.setCfopEstado(Fixture.cfop1210());
-		tipoNotaFiscal.setCfopOutrosEstados(Fixture.cfop1210());*/
 		tipoNotaFiscal.setNopDescricao("NF-e de Devolução de Remessa para Distruibuição");
 		tipoNotaFiscal.setEmitente(TipoUsuarioNotaFiscal.DISTRIBUIDOR);
 		tipoNotaFiscal.setDestinatario(TipoUsuarioNotaFiscal.DISTRIBUIDOR);
@@ -1203,6 +1202,7 @@ public class Fixture {
 		tipoNotaFiscal.setNopCodigo(0L);
 		tipoNotaFiscal.setTipoOperacao(TipoOperacao.ENTRADA);
 		tipoNotaFiscal.setTipoAtividade(TipoAtividade.PRESTADOR_SERVICO);
+		tipoNotaFiscal.setSerieNotaFiscal(4);
 		
 		return tipoNotaFiscal;
 	}
