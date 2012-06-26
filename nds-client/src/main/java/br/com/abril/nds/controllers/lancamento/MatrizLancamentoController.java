@@ -283,7 +283,8 @@ public class MatrizLancamentoController {
 		
 		produtoBalanceamentoVO.setTotal(CurrencyUtil.formatarValor(produtoLancamentoDTO.getValorTotal()));
 		
-		produtoBalanceamentoVO.setFisico(produtoLancamentoDTO.getReparteFisico().toString());
+		if(produtoLancamentoDTO.getReparteFisico()!=null)
+			produtoBalanceamentoVO.setFisico(produtoLancamentoDTO.getReparteFisico().toString());
 		
 		//produtoBalanceamentoVO.setQtdeEstudo(produtoLancamentoDTO.get())/
 		
