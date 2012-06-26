@@ -1,17 +1,17 @@
 package br.com.abril.nds.controllers.lancamento;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.SerializationUtils;
 
 import br.com.abril.nds.client.util.PaginacaoUtil;
 import br.com.abril.nds.client.vo.DetalheProdutoLancamentoVO;
@@ -24,8 +24,11 @@ import br.com.abril.nds.dto.ResumoPeriodoBalanceamentoDTO;
 import br.com.abril.nds.dto.SumarioLancamentosDTO;
 import br.com.abril.nds.dto.filtro.FiltroLancamentoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
+import br.com.abril.nds.model.seguranca.Usuario;
+import br.com.abril.nds.service.DistribuidorService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.MatrizLancamentoService;
 import br.com.abril.nds.util.CellModelKeyValue;
@@ -34,6 +37,11 @@ import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.MathUtil;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
+import br.com.abril.nds.util.export.Export;
+import br.com.abril.nds.util.export.Exportable;
+import br.com.abril.nds.util.export.FileExporter;
+import br.com.abril.nds.util.export.FileExporter.FileType;
+import br.com.abril.nds.util.export.NDSFileHeader;
 import br.com.abril.nds.vo.LancamentoVO;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.caelum.vraptor.Get;
@@ -61,6 +69,12 @@ public class MatrizLancamentoController {
 	
 	@Autowired
 	private HttpSession session;
+	
+	@Autowired
+	private DistribuidorService distribuidorService;
+	
+	@Autowired
+	private HttpServletResponse httpResponse;
 	
 	private static final String FORMATO_DATA = "dd/MM/yyyy";
 	
@@ -104,6 +118,48 @@ public class MatrizLancamentoController {
 	@Post
 	public void obterGridMatrizLancamento(String sortorder, String sortname, int page, int rp) {
 		
+		List<ProdutoLancamentoDTO> listaProdutoBalanceamento = getProdutoLancamentoDTOFromMatrizSessao();
+		
+		FiltroLancamentoDTO filtro = obterFiltroSessao();
+		
+		filtro.setPaginacao(new PaginacaoVO(page, rp, sortorder,sortname));
+		
+		filtro.setTotalRegistrosEncontrados(listaProdutoBalanceamento.size());
+		
+		session.setAttribute(FILTRO_SESSION_ATTRIBUTE, filtro);
+		
+		if (listaProdutoBalanceamento != null && !listaProdutoBalanceamento.isEmpty()) {	
+			
+			List<LancamentoVO> listaProdutoBalanceamentoVO = processarBalanceamento(listaProdutoBalanceamento,filtro.getPaginacao());
+			
+			Double valorTotal = 0.0;
+			
+			for (ProdutoLancamentoDTO produtoLancamentoDTO : listaProdutoBalanceamento) {
+				
+				valorTotal += produtoLancamentoDTO.getValorTotal().doubleValue();
+				
+			}
+			
+			TableModel<CellModelKeyValue<LancamentoVO>> tm = new TableModel<CellModelKeyValue<LancamentoVO>>();
+			List<CellModelKeyValue<LancamentoVO>> cells = CellModelKeyValue
+					.toCellModelKeyValue(listaProdutoBalanceamentoVO);
+			
+			tm.setRows(cells);
+			tm.setPage(page);
+			tm.setTotal(filtro.getTotalRegistrosEncontrados());
+			
+			Object[] resultado = {tm, CurrencyUtil.formatarValor(valorTotal)};
+			result.use(Results.json()).withoutRoot().from(resultado).serialize();
+			
+		} else {
+			
+			this.result.use(Results.json()).from(Results.nothing()).serialize();
+		}
+		
+	}
+	
+	public List<ProdutoLancamentoDTO> getProdutoLancamentoDTOFromMatrizSessao() {
+		
 		BalanceamentoLancamentoDTO balanceamentoLancamento = 
 				(BalanceamentoLancamentoDTO) session.getAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO);
 		
@@ -126,17 +182,7 @@ public class MatrizLancamentoController {
 			listaProdutoBalanceamento.addAll(entry.getValue());
 		}
 		
-		
-		if (listaProdutoBalanceamento != null && !listaProdutoBalanceamento.isEmpty()) {
-		
-			PaginacaoVO paginacao = new PaginacaoVO(page, rp, sortorder,sortname);
-			
-			processarBalanceamento(listaProdutoBalanceamento,paginacao);
-		} else {
-			
-			this.result.use(Results.json()).from(Results.nothing()).serialize();
-		}
-		
+		return listaProdutoBalanceamento;
 	}
 	
 	@Post
@@ -186,47 +232,138 @@ public class MatrizLancamentoController {
 		return null;
 	}
 	
-	private void processarBalanceamento(List<ProdutoLancamentoDTO> listaProdutoLancamento,
+	private List<LancamentoVO> processarBalanceamento(List<ProdutoLancamentoDTO> listaProdutoLancamento,
 										PaginacaoVO paginacao) {
 		
 		List<LancamentoVO> listaProdutoBalanceamentoVO =
 				new LinkedList<LancamentoVO>();
+			
+		for (ProdutoLancamentoDTO produtoLancamentoDTO : listaProdutoLancamento) {
+
+			listaProdutoBalanceamentoVO.add(getVoProdutoBalanceamento(produtoLancamentoDTO));
+		}
 		
-			
-		LancamentoVO produtoBalanceamentoVO = null;
+		listaProdutoBalanceamentoVO =
+			PaginacaoUtil.paginarEOrdenarEmMemoria(listaProdutoBalanceamentoVO, paginacao, paginacao.getSortColumn());
+					
+		return listaProdutoBalanceamentoVO;
+	}
+	
+	
+	private LancamentoVO getVoProdutoBalanceamento(
+			ProdutoLancamentoDTO produtoLancamentoDTO) {
+
 		
-		Double valorTotal = 0.0;
+		LancamentoVO produtoBalanceamentoVO = new LancamentoVO();
+		
+		produtoBalanceamentoVO.setCodigoProduto(produtoLancamentoDTO.getCodigoProduto());
+		
+		produtoBalanceamentoVO.setDataMatrizDistrib(
+				DateUtil.formatarDataPTBR(produtoLancamentoDTO.getDataLancamentoDistribuidor()));
+		
+		produtoBalanceamentoVO.setDataPrevisto(
+				DateUtil.formatarDataPTBR(produtoLancamentoDTO.getDataLancamentoPrevista()));
+		
+		produtoBalanceamentoVO.setDataRecolhimento(
+				DateUtil.formatarDataPTBR(produtoLancamentoDTO.getDataRecolhimentoPrevista()));
+		
+		produtoBalanceamentoVO.setId(produtoLancamentoDTO.getIdLancamento());
+		
+		//produtoBalanceamentoVO.setIdFornecedor(produtoLancamentoDTO.getIdFornecedor());
+		//produtoBalanceamentoVO.setNomeFornecedor(produtoLancamentoDTO.getNomeFornecedor());
+		//produtoBalanceamentoVO.setLancamento(produtoLancamentoDTO.getTipoLancamento());
+		
+		produtoBalanceamentoVO.setNomeProduto(produtoLancamentoDTO.getNomeProduto());
+		produtoBalanceamentoVO.setNumEdicao(produtoLancamentoDTO.getNumeroEdicao());
+		
+		//produtoBalanceamentoVO.setPacotePadrao(produtoLancamentoDTO.getPacotePadrao());
+		
+		produtoBalanceamentoVO.setPreco(CurrencyUtil.formatarValor(produtoLancamentoDTO.getPrecoVenda()));
+		
+		produtoBalanceamentoVO.setReparte(produtoLancamentoDTO.getRepartePrevisto().toString());
+		
+		produtoBalanceamentoVO.setTotal(CurrencyUtil.formatarValor(produtoLancamentoDTO.getValorTotal()));
+		
+		if(produtoLancamentoDTO.getReparteFisico()!=null)
+			produtoBalanceamentoVO.setFisico(produtoLancamentoDTO.getReparteFisico().toString());
+		
+		//produtoBalanceamentoVO.setQtdeEstudo(produtoLancamentoDTO.get())/
+		
+		//produtoBalanceamentoVO.setFuro(produtoLancamentoDTO.getIsfuro());
+		
+		//produtoBalanceamentoVO.setCancelamentoGD(produtoLancamentoDTO.get());
+		
+		//produtoBalanceamentoVO.setExpedido(produtoLancamentoDTO.get());
+		
+		produtoBalanceamentoVO.setEstudoFechado(produtoLancamentoDTO.isPossuiEstudo());
+		
+		//produtoBalanceamentoVO.setSemFisico(produtoLancamentoDTO.get());
+		
+		return produtoBalanceamentoVO;
+	}
+
+	//----------------------------------------------------------------------------
+	
+
+	/**
+	 * Obtém os dados do cabeçalho de exportação.
+	 * 
+	 * @return NDSFileHeader
+	 */
+	private NDSFileHeader getNDSFileHeader() {
+		
+		NDSFileHeader ndsFileHeader = new NDSFileHeader();
+		
+		Distribuidor distribuidor = this.distribuidorService.obter();
+		
+		if (distribuidor != null) {
 			
+			ndsFileHeader.setNomeDistribuidor(distribuidor.getJuridica().getRazaoSocial());
+			ndsFileHeader.setCnpjDistribuidor(distribuidor.getJuridica().getCnpj());
+		}
+		
+		ndsFileHeader.setData(new Date());
+		
+		ndsFileHeader.setNomeUsuario(this.getUsuario().getNome());
+		
+		return ndsFileHeader;
+	}
+	
+	@Exportable
+	public class RodapeDTO {
+		@Export(label="Valor Total R$:")
+		private String total;
+		
+		public RodapeDTO(String total) {
+			this.total = total;
+		}
+		
+		public String getTotal() {
+			return total;
+		}
+	}
+	
+	/**
+	 * Exporta os dados da pesquisa.
+	 * 
+	 * @param fileType - tipo de arquivo
+	 * 
+	 * @throws IOException Exceção de E/S
+	 */
+	@Get
+	public void exportar(FileType fileType) throws IOException {
+		
+		FiltroLancamentoDTO filtro = obterFiltroSessao();
+		
+		List<ProdutoLancamentoDTO> listaProdutoBalanceamento = getProdutoLancamentoDTOFromMatrizSessao();
+		
+		if (listaProdutoBalanceamento != null && !listaProdutoBalanceamento.isEmpty()) {	
 			
-			for (ProdutoLancamentoDTO produtoLancamentoDTO : listaProdutoLancamento) {
-				
-				produtoBalanceamentoVO = new LancamentoVO();
-				
-				produtoBalanceamentoVO.setCodigoProduto(produtoLancamentoDTO.getCodigoProduto());
-				
-				produtoBalanceamentoVO.setDataMatrizDistrib(
-						DateUtil.formatarDataPTBR(produtoLancamentoDTO.getDataLancamentoDistribuidor()));
-				
-				produtoBalanceamentoVO.setDataPrevisto(
-						DateUtil.formatarDataPTBR(produtoLancamentoDTO.getDataLancamentoPrevista()));
-				
-				produtoBalanceamentoVO.setDataRecolhimento(
-						DateUtil.formatarDataPTBR(produtoLancamentoDTO.getDataRecolhimentoPrevista()));
-				
-				produtoBalanceamentoVO.setId(produtoLancamentoDTO.getIdLancamento());
-				
-				//produtoBalanceamentoVO.setIdFornecedor(produtoLancamentoDTO.getIdFornecedor());
-				//produtoBalanceamentoVO.setNomeFornecedor(produtoLancamentoDTO.getNomeFornecedor());
-				//produtoBalanceamentoVO.setLancamento(produtoLancamentoDTO.getTipoLancamento());
-				
-				produtoBalanceamentoVO.setNomeProduto(produtoLancamentoDTO.getNomeProduto());
-				produtoBalanceamentoVO.setNumEdicao(produtoLancamentoDTO.getNumeroEdicao());
-				
-				//produtoBalanceamentoVO.setPacotePadrao(produtoLancamentoDTO.getPacotePadrao());
-				
-				produtoBalanceamentoVO.setPreco(CurrencyUtil.formatarValor(produtoLancamentoDTO.getPrecoVenda()));
-				
-				produtoBalanceamentoVO.setReparte(produtoLancamentoDTO.getRepartePrevisto().toString());
+			List<LancamentoVO> listaProdutoBalanceamentoVO = processarBalanceamento(listaProdutoBalanceamento,filtro.getPaginacao());
+			
+			Double valorTotal = 0.0;
+			
+			for (ProdutoLancamentoDTO produtoLancamentoDTO : listaProdutoBalanceamento) {
 				
 				valorTotal += produtoLancamentoDTO.getValorTotal().doubleValue();
 				
@@ -253,49 +390,27 @@ public class MatrizLancamentoController {
 				
 				listaProdutoBalanceamentoVO.add(produtoBalanceamentoVO);
 			}
-			
-			int totalRegistros = listaProdutoBalanceamentoVO.size();
-			
-			listaProdutoBalanceamentoVO =
-				PaginacaoUtil.paginarEOrdenarEmMemoria(listaProdutoBalanceamentoVO, paginacao, paginacao.getSortColumn());
 						
-			TableModel<CellModelKeyValue<LancamentoVO>> tm = new TableModel<CellModelKeyValue<LancamentoVO>>();
-			List<CellModelKeyValue<LancamentoVO>> cells = CellModelKeyValue
-					.toCellModelKeyValue(listaProdutoBalanceamentoVO);
+			RodapeDTO rodape = new RodapeDTO(CurrencyUtil.formatarValor(valorTotal));
 			
-			tm.setRows(cells);
-			tm.setPage(paginacao.getPaginaAtual());
-			tm.setTotal(totalRegistros);
-			
-			Object[] resultado = {tm, CurrencyUtil.formatarValor(valorTotal)};
-			result.use(Results.json()).withoutRoot().from(resultado).serialize();
+			FileExporter.to("matriz_balanceamento", fileType).inHTTPResponse(this.getNDSFileHeader(), filtro, rodape, 
+					listaProdutoBalanceamentoVO, LancamentoVO.class, this.httpResponse);
+		}
+	
+		
+		result.nothing();
 	}
 	
-	
-	//----------------------------------------------------------------------------
-	
-	
-	
 	/**
-	 * Cria uma cópia do mapa da matriz de lançamento.
-	 * Isso é necessário pois se houver alterações na cópia,
-	 * não altera os valores do mapa original por referência.
+	 * Método que obtém o usuário logado
 	 * 
-	 * @param matrizRecolhimentoSessao - matriz de recolhimento da sesão
-	 * 
-	 * @return cópia do mapa da matriz de recolhimento
+	 * @return usuário logado
 	 */
-	@SuppressWarnings("unchecked")
-	private TreeMap<Date, List<ProdutoLancamentoDTO>> clonarMapaBalanceamento(
-								Map<Date, List<ProdutoLancamentoDTO>> matrizBalanceamentoSessao) {
-		
-		byte[] mapSerialized =
-			SerializationUtils.serialize(matrizBalanceamentoSessao);
-
-		TreeMap<Date, List<ProdutoLancamentoDTO>> matrizBalanceamento =
-			(TreeMap<Date, List<ProdutoLancamentoDTO>>) SerializationUtils.deserialize(mapSerialized);
-		
-		return matrizBalanceamento;
+	public Usuario getUsuario() {
+		//TODO getUsuario
+		Usuario usuario = new Usuario();
+		usuario.setId(1L);
+		return usuario;
 	}
 
 	/**
@@ -348,13 +463,6 @@ public class MatrizLancamentoController {
 		return filtro;
 	}
 	
-	/**
-	 * Remove um indicador, que informa se houve reprogramação de produtos, da sessão.
-	 */
-	private void removerAtributoAlteracaoSessao() {
-		
-		this.session.setAttribute(FILTRO_SESSION_ATTRIBUTE, null);
-	}	
 	
 	/**
 	 * Valida os dados da pesquisa.

@@ -164,8 +164,22 @@ function voltarConfiguracaoOriginal() {
            <br clear="all" />
        	   <table id="lancamentosProgramadosGrid" class="lancamentosProgramadosGrid"></table>
           
-            <span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;"><img src="<c:url value='images/ico_excel.png'/>" hspace="5" border="0" />Arquivo</a></span>
-              <span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="<c:url value='images/ico_impressora.gif'/>" alt="Imprimir" hspace="5" border="0" />Imprimir</a></span>
+            
+               <span class="bt_novos" title="Gerar Arquivo">
+<!-- ARQUIVO -->
+<a href="${pageContext.request.contextPath}/matrizLancamento/exportar?fileType=XLS">
+					<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
+					Arquivo
+				</a></span>
+            
+            
+			
+				<span class="bt_novos" title="Imprimir">
+<!-- IMPRIMIR -->	
+<a href="${pageContext.request.contextPath}/matrizLancamento/exportar?fileType=PDF">
+					<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
+					Imprimir
+				</a></span>
              
               <span class="bt_novos" title="Reprogramar"><a href="javascript:;" onclick="abrirReprogramar();"><img src="<c:url value='images/ico_reprogramar.gif'/>"  hspace="5" border="0" />Reprogramar</a></span>
          	  <div style="margin-top:15px; margin-left:30px; float:left;"><strong>Valor Total R$: <span id="valorTotal"></span></strong></div>

@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import br.com.abril.nds.util.export.Export;
+import br.com.abril.nds.util.export.Exportable;
 import br.com.abril.nds.vo.PaginacaoVO;
 
 /**
@@ -12,6 +14,7 @@ import br.com.abril.nds.vo.PaginacaoVO;
  * @author francisco.garcia
  *
  */
+@Exportable
 public class FiltroLancamentoDTO implements Serializable {
 
 	/**
@@ -19,10 +22,12 @@ public class FiltroLancamentoDTO implements Serializable {
 	 */
 	private static final long serialVersionUID = -2638836889195236797L;
 
+	@Export(label="Data de Lanlamento Matriz/Distribuidor:")
 	private Date data;
 	private List<Long> idsFornecedores = new ArrayList<Long>() ;
 	private PaginacaoVO paginacao;
 	private	ColunaOrdenacao colunaOrdenacao;
+	private Integer totalRegistrosEncontrados;
 	
 	public FiltroLancamentoDTO(Date data, List<Long> idsFornecedores,
 			PaginacaoVO paginacao, String sortName) {
@@ -73,6 +78,14 @@ public class FiltroLancamentoDTO implements Serializable {
 		return idsFornecedores != null && !idsFornecedores.isEmpty();
 	}
 	
+	public Integer getTotalRegistrosEncontrados() {
+		return totalRegistrosEncontrados;
+	}
+
+	public void setTotalRegistrosEncontrados(Integer totalRegistrosEncontrados) {
+		this.totalRegistrosEncontrados = totalRegistrosEncontrados;
+	}
+
 	public enum ColunaOrdenacao {
 		CODIGO_PRODUTO("codigoProduto"),
 		NOME_PRODUTO("nomeProduto"),
