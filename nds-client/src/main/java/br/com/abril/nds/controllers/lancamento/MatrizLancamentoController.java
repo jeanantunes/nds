@@ -311,7 +311,7 @@ public class MatrizLancamentoController {
 		produtoBalanceamentoVO.setDistribuicao("");
 		
 		//TODO 
-		produtoBalanceamentoVO.setBloquearData(produtoLancamentoDTO.isPossuiRecebimentoFisico());
+		//produtoBalanceamentoVO.setBloquearData();
 		
 		return produtoBalanceamentoVO;
 	}
