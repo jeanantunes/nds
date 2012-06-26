@@ -1,5 +1,6 @@
 package br.com.abril.nds.util.export.fiscal.nota;
 
+import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -57,15 +58,7 @@ public class NFEExporter {
 	 */
 	public static final String QUEBRA_LINHA = "\n"; 
 	
-//	/**
-//	 * Lista de seções atuais.
-//	 */
-//	private Map<String, String> listaSecoes;
-	
-	/**
-	 * Para utilizar em atributos Collections
-	 */
-	private List<NFEExporter> listaNFEExporters;
+	public List<NFEExporter> listaNFEExporters;
 	
 	/**
 	 * Lista das sessoes do arquivo de exportação
@@ -79,14 +72,14 @@ public class NFEExporter {
 		this.clear();
 	}
 	
+	
 	/**
 	 * Limpa todas as seções atuais.
 	 */
 	public void clear(){
-//		this.listaSecoes = new HashMap<String, String>();
-		this.listaNFEExporters = new ArrayList<NFEExporter>();
 		this.mapSecoes = new HashMap<TipoSecao, List<CampoSecao>>();
 	}
+	
 	
 	/**
 	 * Faz a varredura de um objeto buscando as anotações NFEExport ou
@@ -100,108 +93,78 @@ public class NFEExporter {
 	 */
 	public <NF> void execute(NF notaFiscal) throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
 		
-		Method[] metodos = notaFiscal.getClass().getDeclaredMethods();
-		
-		for (Method metodo : metodos) {
-			this.proccessMethodAnnotations(metodo, notaFiscal);
-		}
-		
 		Field[] campos = notaFiscal.getClass().getDeclaredFields();
 		
 		for (Field campo : campos) {
-			this.proccessFieldAnnotations(campo, notaFiscal);
+			campo.setAccessible(true);
+			Object valor = campo.get(notaFiscal);
+			this.processarAnnotations(campo, notaFiscal, valor);
 		}		
-	}
-	
-	/**
-	 * @param metodo
-	 * @param notaFiscal
-	 * @throws IllegalAccessException
-	 * @throws IllegalArgumentException
-	 * @throws InvocationTargetException
-	 */
-	@SuppressWarnings("rawtypes")
-	private <NF> void proccessMethodAnnotations(Method metodo, NF notaFiscal) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		
-		NFEWhens nfeWhens = metodo.getAnnotation(NFEWhens.class);
-		NFEExport nfeExport = metodo.getAnnotation(NFEExport.class);
-		NFEExports nfeExports = metodo.getAnnotation(NFEExports.class);
+		Method[] metodos = notaFiscal.getClass().getDeclaredMethods();
 		
-		if (nfeWhens != null || nfeExport != null || nfeExports != null) {
-			Object valor = metodo.invoke(notaFiscal, new Object[] {});
-
-			if (isNumeric(valor) || isDate(valor) || isLiteral(valor)) {
-
-				processAnnotations(nfeWhens, nfeExports, nfeExport, valor);
-
-			} else if (valor instanceof Collection) {
-				for (Object valorCollection : (Collection) valor) {
-					execute(valorCollection);
-				}
-
-			} else if (valor != null) {
-				execute(valor);
+		for (Method metodo : metodos) {
+			if (metodo.getParameterTypes().length == 0) {
+				Object valor = metodo.invoke(notaFiscal, new Object[] {});
+				this.processarAnnotations(metodo, notaFiscal, valor);
 			}
 		}
 	}
 	
+	
 	/**
-	 * @param campo
+	 * @param objeto
 	 * @param notaFiscal
-	 * @throws IllegalArgumentException
 	 * @throws IllegalAccessException
+	 * @throws IllegalArgumentException
 	 * @throws InvocationTargetException
 	 */
 	@SuppressWarnings("rawtypes")
-	private <NF> void proccessFieldAnnotations(Field campo, NF notaFiscal) throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
+	private <NF> void processarAnnotations(AccessibleObject objeto, NF notaFiscal, Object valor) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		
-		NFEWhens nfeWhens = campo.getAnnotation(NFEWhens.class);		
-		NFEExports nfeExports = campo.getAnnotation(NFEExports.class);
-		NFEExport nfeExport = campo.getAnnotation(NFEExport.class);
+		NFEWhens nfeWhens = objeto.getAnnotation(NFEWhens.class);
+		NFEExport nfeExport = objeto.getAnnotation(NFEExport.class);
+		NFEExports nfeExports = objeto.getAnnotation(NFEExports.class);
 		
-		campo.setAccessible(true);
-			
-		Object valor = campo.get(notaFiscal);
-
 		if (isNumeric(valor) || isDate(valor) || isLiteral(valor)) {
-			processAnnotations(nfeWhens, nfeExports, nfeExport, valor);
-			
-		} else if (valor instanceof Collection) {
-			for (Object valorCollection: (Collection)valor) {
-				execute(valorCollection);
+
+			if(nfeWhens != null){
+				for(NFEWhen when: nfeWhens.value()){
+					if(when.condition().valid(valor)){						
+						addCampoSecao(when.export(), valor);
+					}
+				}
 			}
-		
+								
+			if (nfeExports != null) {					
+				for (NFEExport nfeExp: nfeExports.value()) {
+					addCampoSecao(nfeExp, valor);
+				}
+			}
+			
+			if (nfeExport != null) {
+				addCampoSecao(nfeExport, valor);
+			}
+
+		} else if (valor instanceof Collection) {
+			
+			for (Object valorCollection : (Collection) valor) {
+				NFEExporter nfeExporter = new NFEExporter();
+				nfeExporter.clear();
+				nfeExporter.execute(valorCollection);
+			//	listaNFEExporters.add(nfeExporter);
+			}
+
 		} else if (valor != null) {
 			execute(valor);
 		}
 	}
-	
-	private void processAnnotations(NFEWhens nfeWhens, NFEExports nfeExports, NFEExport nfeExport, Object valor) {
 		
-		if(nfeWhens != null){
-			for(NFEWhen when: nfeWhens.value()){
-				if(when.condition().valid(valor)){						
-					addCampoSecao(when.export(), valor);
-				}
-			}
-		}
-							
-		if (nfeExports != null) {					
-			for (NFEExport nfeExp: nfeExports.value()) {
-				addCampoSecao(nfeExp, valor);
-			}
-		}
-		
-		if (nfeExport != null) {
-			addCampoSecao(nfeExport, valor);
-		}
-	}
-	
+
 	/**
-	 * Adiciona um campo em uma seção
+	 * Adiciona um campo em uma seção.
 	 * 
-	 * @param nfeExport annotation do campo
-	 * @param valor valor do campo
+	 * @param novoCampo campo
 	 */
 	private void addCampoSecao(CampoSecao novoCampo) {
 		
@@ -215,7 +178,16 @@ public class NFEExporter {
 		
 		this.mapSecoes.put(novoCampo.getSessao(), camposSecao);
 	}
+	
+	
+	/**
+	 * Cria um campo a partir da annotation e adiciona o campo a seção. 
+	 * 
+	 * @param nfeExport annotation
+	 * @param valor valor do campo
+	 */
 	public void addCampoSecao(NFEExport nfeExport,Object valor){
+		
 		CampoSecao campoSessao = new CampoSecao();
 		campoSessao.setPosicao(nfeExport.posicao());
 		campoSessao.setMascara(nfeExport.mascara());
@@ -252,12 +224,12 @@ public class NFEExporter {
 			
 			List<CampoSecao> campos = this.mapSecoes.get(secao);
 			
-			for (CampoSecao campo : campos) {
-				
-				String sCampo = this.converteCampoParaString(campo);
-				
-				sSecao = this.addStringCampoToStringSecao(sSecao, sCampo, campo.getPosicao());
-			}
+//			for (CampoSecao campo : campos) {
+//				
+//				String sCampo = this.converteCampoParaString(campo);
+//				
+//				sSecao = this.addStringCampoToStringSecao(sSecao, sCampo, campo.getPosicao());
+//			}
 			
 			sBuffer.append(sSecao);
 		}
@@ -314,11 +286,10 @@ public class NFEExporter {
 	 * @return
 	 */
 	private String gerarStringSecao(TipoSecao secao) {
-		
 		StringBuilder sSecao = new StringBuilder();
 			sSecao.append(secao.getSigla());
-			sSecao.append(StringUtils.repeat("|", secao.getTamanhoMaximo()+1));
-			sSecao.append("\n");
+			sSecao.append(StringUtils.repeat(SEPARADOR_SECAO, secao.getTamanhoMaximo()+1));
+			sSecao.append(QUEBRA_LINHA);
 		return sSecao.toString();
 	}
 	
@@ -392,17 +363,14 @@ public class NFEExporter {
 	 * @param posicao - Posição que será incluído na linha.
 	 * @return - Linha da seção com o campo adicionado.
 	 */
-	private String addStringCampoToStringSecao(String secao, String valor, int posicao){
-		
-		if (!secao.endsWith(SEPARADOR_SECAO)) {
-			secao += SEPARADOR_SECAO;
-		}
-
+	private String addStringCampoToStringSecao(String secao, String valor, int posicao) {
+				
 		String secaoAtualizada = STRING_VAZIA;
 		int qtCampos = countSeparator(secao, SEPARADOR_SECAO);
 		int positionInLayout = posicao + 1;
 		
 		if (qtCampos > positionInLayout ) { 
+			
 			String[]camposSecao = divideStringBySeparator(secao, SEPARADOR_SECAO);
 
 			int campoAtual = 0;
