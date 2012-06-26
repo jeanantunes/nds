@@ -611,7 +611,7 @@ public class DebitoCreditoCotaController {
 			
 			movimentoFinanceiroCotaDTO.setTipoEdicao(TipoEdicao.INCLUSAO);
 			
-			this.movimentoFinanceiroCotaService.gerarMovimentoFinanceiroDebitoCredito(movimentoFinanceiroCotaDTO);
+			this.movimentoFinanceiroCotaService.gerarMovimentosFinanceirosDebitoCredito(movimentoFinanceiroCotaDTO);
 		}
 		
 		List<String> listaMensagens = new ArrayList<String>();
@@ -636,7 +636,7 @@ public class DebitoCreditoCotaController {
 
 		movimentoFinanceiroCotaDTO.setTipoEdicao(TipoEdicao.ALTERACAO);
 		
-		this.movimentoFinanceiroCotaService.gerarMovimentoFinanceiroDebitoCredito(movimentoFinanceiroCotaDTO);
+		this.movimentoFinanceiroCotaService.gerarMovimentosFinanceirosDebitoCredito(movimentoFinanceiroCotaDTO);
 
 		List<String> listaMensagens = new ArrayList<String>();
 		
