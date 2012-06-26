@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import br.com.abril.nds.dto.filtro.FiltroMonitorNfeDTO;
@@ -40,6 +41,7 @@ import br.com.abril.nds.model.fiscal.nota.ValoresTotaisISSQN;
 import br.com.abril.nds.model.fiscal.nota.Veiculo;
 import br.com.abril.nds.vo.PaginacaoVO;
 
+@Ignore
 public class NotaFiscalRepositoryImplTest  extends AbstractRepositoryImplTest {
 
 	private static Box box1;
@@ -271,11 +273,7 @@ public class NotaFiscalRepositoryImplTest  extends AbstractRepositoryImplTest {
 	@Test
 	public void teste() {
 		
-		FiltroMonitorNfeDTO filtro = obterFiltroMonitorNfeDTO();
-		filtro.setBox(box1.getCodigo());
-		
-		//List<NfeDTO> lista = viewNotaFiscalRepository.pesquisarNotaFiscal(filtro);
-		
+		//TODO
 		
 	}
 	
