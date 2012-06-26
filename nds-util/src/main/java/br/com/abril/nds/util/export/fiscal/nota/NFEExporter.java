@@ -98,6 +98,7 @@ public class NFEExporter {
 		
 		for (Field campo : campos) {
 			campo.setAccessible(true);
+			
 			Object valor = campo.get(notaFiscal);
 			this.processarAnnotations(campo, notaFiscal, valor);
 		}		
@@ -129,7 +130,7 @@ public class NFEExporter {
 		NFEExports nfeExports = objeto.getAnnotation(NFEExports.class);
 		
 		if (isNumeric(valor) || isDate(valor) || isLiteral(valor)) {
-
+			
 			if(nfeWhens != null){
 				for(NFEWhen when: nfeWhens.value()){
 					if(when.condition().valid(valor)){						
@@ -169,7 +170,7 @@ public class NFEExporter {
 	 * @param novoCampo campo
 	 */
 	private void addCampoSecao(CampoSecao novoCampo) {
-		
+			
 		List<CampoSecao> camposSecao = mapSecoes.get(novoCampo.getSessao());
 		
 		if (camposSecao == null || camposSecao.isEmpty()) {
