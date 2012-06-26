@@ -1052,6 +1052,8 @@ public class LancamentoRepositoryImpl extends
 		sql.append(" lancamento.REPARTE * (produtoEdicao.PRECO_VENDA - produtoEdicao.DESCONTO) ");
 		sql.append(" end as valorTotal, ");
 		
+		sql.append(" produtoEdicao.PRECO_VENDA - produtoEdicao.DESCONTO as precoComDesconto, ");
+		
 		sql.append(" produtoEdicao.ID as idProdutoEdicao, ");
 		sql.append(" produtoEdicao.DESCONTO as desconto, ");
 		sql.append(" produtoEdicao.NUMERO_EDICAO as numeroEdicao, ");
@@ -1076,7 +1078,7 @@ public class LancamentoRepositoryImpl extends
 		sql.append(" 	(select count(produtoFornecedor.FORNECEDORES_ID)  ");
 		sql.append(" 		from PRODUTO_FORNECEDOR produtoFornecedor ");
 		sql.append(" 		where produtoFornecedor.PRODUTO_ID = produto.ID = 1) then ");
-		sql.append(" 			(select concat( fornecedor.ID, ' - ', pessoa.RAZAO_SOCIAL) ");
+		sql.append(" 			(select pessoa.RAZAO_SOCIAL ");
 		sql.append("				from PRODUTO_FORNECEDOR produtoFornecedor, FORNECEDOR fornecedor, PESSOA pessoa ");
 		sql.append("				where fornecedor.ID = produtoFornecedor.FORNECEDORES_ID ");
 		sql.append("				and fornecedor.JURIDICA_ID = pessoa.ID ");
@@ -1205,7 +1207,8 @@ public class LancamentoRepositoryImpl extends
 			.addScalar("chamadaCapa")
 			.addScalar("codigoEditor", StandardBasicTypes.LONG)
 			.addScalar("nomeEditor")
-			.addScalar("fornecedor");
+			.addScalar("fornecedor")
+			.addScalar("precoComDesconto");
 		
 		aplicarParametros(query, periodoDistribuicao, fornecedores);
 		
