@@ -52,7 +52,7 @@ function Balanceamento(pathTela, descInstancia) {
 		
 		$(".lancamentosProgramadosGrid").flexReload();
 	},
-	
+
 	this.processaRetornoPesquisa = function(data) {
 		
 		if(data.mensagens) {
@@ -160,6 +160,31 @@ function Balanceamento(pathTela, descInstancia) {
 		);
 	},
 	
+
+	/**
+	 * Carrega imagem de Produto Edição
+	 * @param idProdutoEdicao
+	 */
+	this.carregarImagemCapa = function(idProdutoEdicao) {
+		var img = $("<img />")
+		.load(
+		    function() {						
+			    $("#td_imagem_capa").append(img);
+		    }
+		)
+		.error(
+		    function() {
+			    $("#td_imagem_capa").empty();
+		    }
+		)
+		.attr('src', contextPath + "/capa/" + idProdutoEdicao)
+		.attr('width', '129')
+		.attr('height', '170')
+		.attr('alt', 'Capa');
+		$("#td_imagem_capa").empty();
+		$("#td_imagem_capa").append(img);
+	},
+	
 	
 	/**
 	 * Popula Popup de detalhes do produto.
@@ -175,6 +200,8 @@ function Balanceamento(pathTela, descInstancia) {
 		$("#detalheBrinde").html(result.brinde);
 		$("#detalheEditor").html(result.idEditor+"-"+result.nomeEditor);
 		$("#detalhePacote").html(result.pacotePadrao);
+
+		T.carregarImagemCapa(result.idProdutoEdicao);
 	},
 	
 	
@@ -196,7 +223,7 @@ function Balanceamento(pathTela, descInstancia) {
 				
 			}
 		});
-	}
+	},
 
 	
 	/**
