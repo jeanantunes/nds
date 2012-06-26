@@ -18,6 +18,7 @@ import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.TipoEndereco;
+import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.model.fiscal.nota.Identificacao;
 import br.com.abril.nds.model.fiscal.nota.Identificacao.FormaPagamento;
 import br.com.abril.nds.model.fiscal.nota.IdentificacaoDestinatario;
@@ -129,8 +130,7 @@ public class NotaFiscalServiceImplTest extends AbstractRepositoryImplTest {
 		informacaoEletronica.setRetornoComunicacaoEletronica(retornoComunicacaoEletronica);
 		
 		Identificacao identificacao = new Identificacao();
-		identificacao.setDigitoVerificadorChaveAcesso(13214);
-		identificacao.setTipoOperacao(Identificacao.TipoOperacao.ENTRADA);
+		identificacao.setTipoOperacao(TipoOperacao.ENTRADA);
 		identificacao.setDataEmissao(new Date());
 		identificacao.setNumeroDocumentoFiscal(473129471L);
 		identificacao.setSerie(43124);

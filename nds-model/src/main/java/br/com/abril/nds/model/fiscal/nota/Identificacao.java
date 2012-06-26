@@ -12,6 +12,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.util.TipoSecao;
 import br.com.abril.nds.util.export.fiscal.nota.NFEExport;
 
@@ -20,23 +21,15 @@ public class Identificacao implements Serializable {
 	
 	public enum FormaPagamento {
 		A_VISTA, A_PRAZO, OUTROS;
-	}
+	}	
 	
-	public enum TipoOperacao{
-		ENTRADA, SAIDA
-	}
 
 	/**
 	 * Serial Version UID
 	 */
 	private static final long serialVersionUID = 3614623505646574143L;
 
-	/**
-	 * cDV
-	 */
-	@Column(name = "DV_CHAVE_ACESSO", length = 1, nullable = false)
-	@NFEExport(secao=TipoSecao.B, posicao=13, tamanho=1)
-	private Integer digitoVerificadorChaveAcesso;
+	
 
 	/**
 	 * tpNF
@@ -126,25 +119,7 @@ public class Identificacao implements Serializable {
 	 */
 	public Identificacao() {
 
-	}
-
-	
-
-	/**
-	 * @return the digitoVerificadorChaveAcesso
-	 */
-	public Integer getDigitoVerificadorChaveAcesso() {
-		return digitoVerificadorChaveAcesso;
-	}
-
-	/**
-	 * @param digitoVerificadorChaveAcesso
-	 *            the digitoVerificadorChaveAcesso to set
-	 */
-	public void setDigitoVerificadorChaveAcesso(
-			Integer digitoVerificadorChaveAcesso) {
-		this.digitoVerificadorChaveAcesso = digitoVerificadorChaveAcesso;
-	}
+	}	
 
 	/**
 	 * @return the tipoOperacao
