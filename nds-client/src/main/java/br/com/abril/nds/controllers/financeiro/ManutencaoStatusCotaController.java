@@ -32,6 +32,7 @@ import br.com.abril.nds.dto.filtro.FiltroStatusCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroStatusCotaDTO.OrdenacaoColunasStatusCota;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.TipoEdicao;
+import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.HistoricoSituacaoCota;
@@ -134,8 +135,8 @@ public class ManutencaoStatusCotaController {
 		 
 		 CotaVO cotaVO = 
 			new CotaVO(cota.getNumeroCota(), PessoaUtil.obterNomeExibicaoPeloTipo(cota.getPessoa()));
-		 
-		 cotaVO.setCodigoBox(cota.getBox().getCodigo());
+		
+		 cotaVO.setCodigoBox(cota.getBox()!=null?cota.getBox().getCodigo():"Não cadastrado");
 		 
 		 result.use(Results.json()).from(cotaVO, "result").serialize();
 	}

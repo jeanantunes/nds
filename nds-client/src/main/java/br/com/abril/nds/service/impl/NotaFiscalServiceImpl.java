@@ -7,6 +7,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -18,15 +19,32 @@ import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.dto.ConsultaLoteNotaFiscalDTO;
 import br.com.abril.nds.dto.RetornoNFEDTO;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.cadastro.Endereco;
+import br.com.abril.nds.model.cadastro.EnderecoCota;
+import br.com.abril.nds.model.cadastro.EnderecoDistribuidor;
 import br.com.abril.nds.model.cadastro.ParametroSistema;
+import br.com.abril.nds.model.cadastro.PessoaJuridica;
+import br.com.abril.nds.model.cadastro.Telefone;
+import br.com.abril.nds.model.cadastro.TelefoneCota;
+import br.com.abril.nds.model.cadastro.TelefoneDistribuidor;
 import br.com.abril.nds.model.cadastro.TipoParametroSistema;
+import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
+import br.com.abril.nds.model.fiscal.nota.Identificacao;
+import br.com.abril.nds.model.fiscal.nota.IdentificacaoDestinatario;
 import br.com.abril.nds.model.fiscal.nota.IdentificacaoEmitente;
+import br.com.abril.nds.model.fiscal.nota.IdentificacaoEmitente.RegimeTributario;
 import br.com.abril.nds.model.fiscal.nota.InformacaoEletronica;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.RetornoComunicacaoEletronica;
 import br.com.abril.nds.model.fiscal.nota.Status;
 import br.com.abril.nds.model.fiscal.nota.StatusProcessamentoInterno;
+import br.com.abril.nds.repository.CotaRepository;
+import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.NotaFiscalRepository;
+import br.com.abril.nds.repository.TelefoneCotaRepository;
+import br.com.abril.nds.repository.TipoNotaFiscalRepository;
 import br.com.abril.nds.service.NotaFiscalService;
 import br.com.abril.nds.service.ParametroSistemaService;
 import br.com.abril.nds.util.TipoMensagem;
@@ -48,6 +66,18 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 	
 	@Autowired
 	private ParametroSistemaService parametroSistemaService;
+	
+	@Autowired
+	private CotaRepository cotaRepository;
+	
+	@Autowired
+	private TelefoneCotaRepository telefoneCotaRepository;
+	
+	@Autowired
+	private DistribuidorRepository distribuidorRepository;
+	
+	@Autowired
+	private TipoNotaFiscalRepository tipoNotaFiscalRepository;
 	
 	@Override
 	public Map<Long, Integer> obterTotalItensNotaFiscalPorCotaEmLote(
@@ -225,4 +255,100 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		
 		return sBuffer.toString();
 	}
+	
+	private Identificacao carregaIdentificacao(long idTipoNotaFiscal,Date dataEmissao){
+		
+		
+		TipoNotaFiscal tipoNotaFiscal =  tipoNotaFiscalRepository.buscarPorId(idTipoNotaFiscal);
+		
+		Identificacao identificacao = new Identificacao();
+		identificacao.setDataEmissao(dataEmissao);
+		identificacao.setTipoOperacao(tipoNotaFiscal.getTipoOperacao());
+		
+		return identificacao;
+	}
+	
+	private IdentificacaoEmitente carregaEmitente(){		
+		IdentificacaoEmitente identificacaoEmitente = new IdentificacaoEmitente();
+		
+		Distribuidor distribuidor = distribuidorRepository.obter();
+		if(distribuidor == null){
+			throw new ValidacaoException(TipoMensagem.ERROR, "Endereço principal do distribuidor não encontrada!");
+		}
+		identificacaoEmitente.setDocumento(distribuidor.getJuridica().getCnpj());
+		identificacaoEmitente.setInscricaoEstual(distribuidor.getJuridica().getInscricaoEstadual());
+		identificacaoEmitente.setInscricaoMunicipal(distribuidor.getJuridica().getInscricaoMunicipal());
+		identificacaoEmitente.setNome(distribuidor.getJuridica().getNome());
+		identificacaoEmitente.setNomeFantasia(distribuidor.getJuridica().getNomeFantasia());
+		
+		EnderecoDistribuidor enderecoDistribuidor =   distribuidorRepository.obterEnderecoPrincipal();
+
+		if(enderecoDistribuidor == null){
+			throw new ValidacaoException(TipoMensagem.ERROR, "Endereço principal do distribuidor não encontrada!");
+		}
+		
+		Endereco endereco = enderecoDistribuidor.getEndereco();
+		endereco.setId(null);
+		endereco.setPessoa(null);
+		identificacaoEmitente.setEndereco(endereco);		
+		
+		TelefoneDistribuidor telefoneDistribuidor = distribuidorRepository.obterTelefonePrincipal();
+		
+		if(telefoneDistribuidor == null){
+			throw new ValidacaoException(TipoMensagem.ERROR, "Telefone principal do distribuidor não encontrada!");
+		}
+		Telefone telefone = telefoneDistribuidor.getTelefone();
+		telefone.setId(null);
+		telefone.setPessoa(null);
+		identificacaoEmitente.setTelefone(telefone);
+		//TODO: Como definir o Regime Tributario
+		identificacaoEmitente.setRegimeTributario(RegimeTributario.SIMPLES_NACIONAL);
+		
+		return identificacaoEmitente;		
+	}
+	
+	
+	private IdentificacaoDestinatario carregaDestinatario(Long idCota){
+		IdentificacaoDestinatario destinatario = new IdentificacaoDestinatario();
+		Cota cota = cotaRepository.buscarPorId(idCota);		
+		if(cota == null){
+			throw new ValidacaoException(TipoMensagem.ERROR, "Cota " + idCota + " não encontrada!");
+		}
+		
+		destinatario.setDocumento(cota.getPessoa().getDocumento());
+		destinatario.setEmail(cota.getPessoa().getEmail());
+		
+		EnderecoCota  enderecoCota = cotaRepository.obterEnderecoPrincipal(idCota);
+		
+		if(enderecoCota == null){
+			throw new ValidacaoException(TipoMensagem.ERROR, "Endereço principal da cota " + idCota + " não encontrada!");
+		}
+		Endereco endereco = enderecoCota.getEndereco();
+		endereco.setId(null);
+		endereco.setPessoa(null);
+		
+		destinatario.setEndereco(endereco);
+		
+		
+		if(cota.getPessoa() instanceof PessoaJuridica){
+			PessoaJuridica pessoaJuridica = (PessoaJuridica) cota.getPessoa();
+			destinatario.setInscricaoEstual(pessoaJuridica.getInscricaoEstadual());
+			destinatario.setNomeFantasia(pessoaJuridica.getNomeFantasia());
+		}
+		destinatario.setNome(cota.getPessoa().getNome());
+		destinatario.setPessoaDestinatarioReferencia(cota.getPessoa());
+		
+		
+		TelefoneCota telefoneCota = telefoneCotaRepository.obterTelefonePrincipal(idCota);
+		if(telefoneCota == null){
+			throw new ValidacaoException(TipoMensagem.ERROR, "Telefone principal da cota " + idCota + " não encontrada!");
+		}
+		Telefone telefone = telefoneCota.getTelefone();
+		telefone.setId(null);
+		telefone.setPessoa(null);
+		destinatario.setTelefone(telefone);		
+		
+		return destinatario;
+	}
+	
 }

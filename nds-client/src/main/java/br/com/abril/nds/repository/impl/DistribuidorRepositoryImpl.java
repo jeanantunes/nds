@@ -19,6 +19,7 @@ import br.com.abril.nds.model.cadastro.DistribuicaoFornecedor;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.EnderecoDistribuidor;
 import br.com.abril.nds.model.cadastro.OperacaoDistribuidor;
+import br.com.abril.nds.model.cadastro.TelefoneDistribuidor;
 import br.com.abril.nds.model.cadastro.TipoGarantia;
 import br.com.abril.nds.model.cadastro.TipoGarantiaAceita;
 import br.com.abril.nds.repository.DistribuidorRepository;
@@ -91,6 +92,19 @@ public class DistribuidorRepositoryImpl extends
 		criteria.setMaxResults(1);
 
 		return (EnderecoDistribuidor) criteria.uniqueResult();
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see br.com.abril.nds.repository.DistribuidorRepository#obterTelefonePrincipal()
+	 */
+	@Override
+	public TelefoneDistribuidor obterTelefonePrincipal(){
+		Criteria criteria=  getSession().createCriteria(TelefoneDistribuidor.class);
+		criteria.add(Restrictions.eq("principal", true) );
+		criteria.setMaxResults(1);
+
+		return (TelefoneDistribuidor) criteria.uniqueResult();
 	}
 
 	/*

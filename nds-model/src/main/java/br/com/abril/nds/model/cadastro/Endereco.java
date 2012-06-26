@@ -13,7 +13,7 @@ import javax.persistence.Table;
 
 import org.codehaus.jackson.annotate.JsonBackReference;
 
-import br.com.abril.nds.util.TipoSessao;
+import br.com.abril.nds.util.TipoSecao;
 import br.com.abril.nds.util.export.fiscal.nota.NFEExport;
 import br.com.abril.nds.util.export.fiscal.nota.NFEExports;
 
@@ -41,38 +41,38 @@ public class Endereco implements Serializable {
 	private Integer codigoBairro;
 	
 	@Column(name = "BAIRRO", length=60)
-	@NFEExports({@NFEExport(secao=TipoSessao.C05, posicao=3, tamanho=60), @NFEExport(secao=TipoSessao.E05, posicao=3 , tamanho=60)})
+	@NFEExports({@NFEExport(secao=TipoSecao.C05, posicao=3, tamanho=60), @NFEExport(secao=TipoSecao.E05, posicao=3 , tamanho=60)})
 	private String bairro;
 	
 	@Column(name = "CEP", length=9)
-	@NFEExports({@NFEExport(secao=TipoSessao.C05, posicao=7, tamanho=8), @NFEExport(secao=TipoSessao.E05, posicao=7 , tamanho=8)})
+	@NFEExports({@NFEExport(secao=TipoSecao.C05, posicao=7, tamanho=8), @NFEExport(secao=TipoSecao.E05, posicao=7 , tamanho=8)})
 	private String cep;
 	
 	@Column(name = "CODIGO_CIDADE_IBGE", nullable = true, length=7)
-	@NFEExports({@NFEExport(secao=TipoSessao.C05, posicao=4, tamanho=7), @NFEExport(secao=TipoSessao.E05, posicao=4 , tamanho=7)})
+	@NFEExports({@NFEExport(secao=TipoSecao.C05, posicao=4, tamanho=7), @NFEExport(secao=TipoSecao.E05, posicao=4 , tamanho=7)})
 	private Integer codigoCidadeIBGE;
 	
 	@Column(name = "CIDADE", length=60)
-	@NFEExports({@NFEExport(secao=TipoSessao.C05, posicao=5, tamanho=60), @NFEExport(secao=TipoSessao.E05, posicao=5 , tamanho=60)})
+	@NFEExports({@NFEExport(secao=TipoSecao.C05, posicao=5, tamanho=60), @NFEExport(secao=TipoSecao.E05, posicao=5 , tamanho=60)})
 	private String cidade;
 	
 	@Column(name = "COMPLEMENTO", length=60)
-	@NFEExports({@NFEExport(secao=TipoSessao.C05, posicao=2, tamanho=60), @NFEExport(secao=TipoSessao.E05, posicao=2 , tamanho=60)})
+	@NFEExports({@NFEExport(secao=TipoSecao.C05, posicao=2, tamanho=60), @NFEExport(secao=TipoSecao.E05, posicao=2 , tamanho=60)})
 	private String complemento;
 	
 	@Column(name = "TIPO_LOGRADOURO")
 	private String tipoLogradouro;
 	
 	@Column(name = "LOGRADOURO", length=60)
-	@NFEExports({@NFEExport(secao=TipoSessao.C05, posicao=0, tamanho=60), @NFEExport(secao=TipoSessao.E05, posicao=0, tamanho=60)})
+	@NFEExports({@NFEExport(secao=TipoSecao.C05, posicao=0, tamanho=60), @NFEExport(secao=TipoSecao.E05, posicao=0, tamanho=60)})
 	private String logradouro;
 	
 	@Column(name = "NUMERO", nullable = true, length=60)
-	@NFEExports({@NFEExport(secao=TipoSessao.C05, posicao=1, tamanho=60), @NFEExport(secao=TipoSessao.E05, posicao=1 , tamanho=60)})
+	@NFEExports({@NFEExport(secao=TipoSecao.C05, posicao=1, tamanho=60), @NFEExport(secao=TipoSecao.E05, posicao=1 , tamanho=60)})
 	private Integer numero;
 	
 	@Column(name = "UF", length=2)
-	@NFEExports({@NFEExport(secao=TipoSessao.C05, posicao=6, tamanho=2), @NFEExport(secao=TipoSessao.E05, posicao=6 , tamanho=2)})
+	@NFEExports({@NFEExport(secao=TipoSecao.C05, posicao=6, tamanho=2), @NFEExport(secao=TipoSecao.E05, posicao=6 , tamanho=2)})
 	private String uf;
 	
 	@JsonBackReference

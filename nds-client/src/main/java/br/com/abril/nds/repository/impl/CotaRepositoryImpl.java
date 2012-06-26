@@ -558,6 +558,8 @@ public class CotaRepositoryImpl extends AbstractRepository<Cota, Long>
 
 		return (EnderecoCota) criteria.uniqueResult();
 	}
+	
+	
 
 	@SuppressWarnings("unchecked")
 	@Override

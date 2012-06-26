@@ -83,7 +83,7 @@ $(function() {
                maxlength="11"
                style="width:70px; 
                float:left; margin-right:5px;"
-               onchange="cota.pesquisarPorNumeroCota('#numCotaVenda', '#descricaoCotaVenda',false,
+               onchange="cota.pesquisarPorNumeroCota('#numCotaVenda', '#descricaoCotaVenda',true,
               	  									 VENDA_PRODUTO.pesquisarCotaVendaSuccessCallBack, 
               	  									 VENDA_PRODUTO.pesquisarCotaVendaErrorCallBack);"/>
 				              	  									 	
@@ -106,7 +106,10 @@ $(function() {
 <table width="837" border="0" cellspacing="2" cellpadding="2">
   <tr>
   	<td width="160" align="left"><strong>Data Vencimento:</strong></td>
-  	<td width="150" align="left"><input type="text" style="width:80px;" name="dataVencimento" id="dataVencimento" /></td>
+  	<td width="150" align="left">
+  		<div style="display: none;" id="div_data_inclusao"><input type="text" style="width:80px;" name="dataVencimento" id="dataVencimento" /></div>
+  		<div style="display: none;" id="div_data_edicao"><input disabled="disabled" type="text" style="width:80px;" name="dataVencimentoEdicao" id="dataVencimentoEdicao" /></div>
+  	</td>
     <td width="500" align="right"><strong>Total R$</strong></td>
     <td width="110" align="center"><span style="display: inline; width:80px"id="span_total_disponivel_venda">0</span></td>
     <td width="124" align="center"><span style="display: inline; width:80px" id="span_total_solicitado_venda">0</span></td>

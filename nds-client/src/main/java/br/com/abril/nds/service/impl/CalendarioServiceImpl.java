@@ -104,6 +104,11 @@ public class CalendarioServiceImpl implements CalendarioService {
 	
 	public boolean isDiaUtil(Date data) {
 		
+		if (data == null) {
+			
+			return false;
+		}
+		
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(data);
 		

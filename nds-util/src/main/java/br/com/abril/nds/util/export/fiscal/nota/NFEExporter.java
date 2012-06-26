@@ -1,5 +1,6 @@
 package br.com.abril.nds.util.export.fiscal.nota;
 
+import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -17,10 +18,12 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
+
 import br.com.abril.nds.util.CampoSecao;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.StringUtil;
-import br.com.abril.nds.util.TipoSessao;
+import br.com.abril.nds.util.TipoSecao;
 
 /**
  * Classe responsável pela exportação de Nota Fiscal Eletrônica de arquivos TXT.
@@ -55,20 +58,12 @@ public class NFEExporter {
 	 */
 	public static final String QUEBRA_LINHA = "\n"; 
 	
-	/**
-	 * Lista de seções atuais.
-	 */
-	private Map<String, String> listaSecoes;
-	
-	/**
-	 * Para utilizar em atributos Collections
-	 */
-	private List<NFEExporter> listaNFEExporters;
+	public List<NFEExporter> listaNFEExporters;
 	
 	/**
 	 * Lista das sessoes do arquivo de exportação
 	 */
-	private Map<TipoSessao, List<CampoSecao>> mapSecoes = new HashMap<TipoSessao, List<CampoSecao>>();
+	private Map<TipoSecao, List<CampoSecao>> mapSecoes = new HashMap<TipoSecao, List<CampoSecao>>();
 	
 	/**
 	 * Construtor padrão
@@ -77,14 +72,14 @@ public class NFEExporter {
 		this.clear();
 	}
 	
+	
 	/**
 	 * Limpa todas as seções atuais.
 	 */
 	public void clear(){
-		this.listaSecoes = new HashMap<String, String>();
-		this.listaNFEExporters = new ArrayList<NFEExporter>();
-		this.mapSecoes = new HashMap<TipoSessao, List<CampoSecao>>();
+		this.mapSecoes = new HashMap<TipoSecao, List<CampoSecao>>();
 	}
+	
 	
 	/**
 	 * Faz a varredura de um objeto buscando as anotações NFEExport ou
@@ -98,157 +93,78 @@ public class NFEExporter {
 	 */
 	public <NF> void execute(NF notaFiscal) throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
 		
-		Method[] metodos = notaFiscal.getClass().getDeclaredMethods();
-		
-		for (Method metodo : metodos) {
-			this.proccessMethodAnnotations(metodo, notaFiscal);
-		}
-		
 		Field[] campos = notaFiscal.getClass().getDeclaredFields();
 		
 		for (Field campo : campos) {
-			this.proccessFieldAnnotations(campo, notaFiscal);
+			campo.setAccessible(true);
+			Object valor = campo.get(notaFiscal);
+			this.processarAnnotations(campo, notaFiscal, valor);
 		}		
+		
+		Method[] metodos = notaFiscal.getClass().getDeclaredMethods();
+		
+		for (Method metodo : metodos) {
+			if (metodo.getParameterTypes().length == 0) {
+				Object valor = metodo.invoke(notaFiscal, new Object[] {});
+				this.processarAnnotations(metodo, notaFiscal, valor);
+			}
+		}
 	}
 	
+	
 	/**
-	 * @param metodo
+	 * @param objeto
 	 * @param notaFiscal
 	 * @throws IllegalAccessException
 	 * @throws IllegalArgumentException
 	 * @throws InvocationTargetException
 	 */
 	@SuppressWarnings("rawtypes")
-	private <NF> void proccessMethodAnnotations(Method metodo, NF notaFiscal) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-				
-		NFEExports nfeExports = metodo.getAnnotation(NFEExports.class);
-			
-		NFEExport nfeExport = metodo.getAnnotation(NFEExport.class);
-			
-		List<NFEExport> listaNFEExport = new ArrayList<NFEExport>();	
-			
-		if (nfeExports != null){
-			for (NFEExport nfeExp: nfeExports.value()) {
-				listaNFEExport.add(nfeExp);
-			}
-		}
-			
-		if (nfeExport != null) {
-			listaNFEExport.add(nfeExport); 
-		}
-
-		if (listaNFEExport != null && !listaNFEExport.isEmpty()) {
-	
-			Object valor = metodo.invoke(notaFiscal, new Object[] {});
-			
-			if (isNumeric(valor) || isDate(valor) || isLiteral(valor)) {
-			
-				for (NFEExport nfeExp : listaNFEExport) {
-				
-					if (nfeExp != null) {
-						
-						CampoSecao campoSessao = new CampoSecao();
-						campoSessao.setPosicao(nfeExport.posicao());
-						campoSessao.setMascara(nfeExport.mascara());
-						campoSessao.setSessao(nfeExport.secao());
-						campoSessao.setTamanho(nfeExport.tamanho());
-						campoSessao.setValor(valor);
-						
-						addCampoSecao(campoSessao);
-					}
-				}
-			
-			} else if (valor instanceof Collection) {
-				for (Object valorCollection: (Collection)valor) {
-					NFEExporter nfeExporter = new NFEExporter();
-					nfeExporter.clear();
-					nfeExporter.execute(valorCollection);
-					this.listaNFEExporters.add(nfeExporter);
-				}
-			} else if (valor != null) {
-				execute(valor);
-			}
-		}
-	}
-	
-	/**
-	 * @param campo
-	 * @param notaFiscal
-	 * @throws IllegalArgumentException
-	 * @throws IllegalAccessException
-	 * @throws InvocationTargetException
-	 */
-	@SuppressWarnings("rawtypes")
-	private <NF> void proccessFieldAnnotations(Field campo, NF notaFiscal) throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
+	private <NF> void processarAnnotations(AccessibleObject objeto, NF notaFiscal, Object valor) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		
-		NFEExports nfeExports = campo.getAnnotation(NFEExports.class);
-		NFEExport nfeExport = campo.getAnnotation(NFEExport.class);
-			
-		List<NFEExport> listaNFEExport = new ArrayList<NFEExport>();
+		NFEWhens nfeWhens = objeto.getAnnotation(NFEWhens.class);
+		NFEExport nfeExport = objeto.getAnnotation(NFEExport.class);
+		NFEExports nfeExports = objeto.getAnnotation(NFEExports.class);
 		
-		campo.setAccessible(true);
-			
-		Object valor = campo.get(notaFiscal);
-
 		if (isNumeric(valor) || isDate(valor) || isLiteral(valor)) {
-								
-			if (nfeExports != null) {
-					
-				for (NFEExport nfeExp: nfeExports.value()) {
-						
-					if (!StringUtil.isEmpty(nfeExp.documento())) {
-						
-						String documento = valor.toString();
-							
-						if (documento.length() == nfeExp.tamanho()) {
-							listaNFEExport.add(nfeExp);
-						}
-						
-					} else {
-						listaNFEExport.add(nfeExp);
+
+			if(nfeWhens != null){
+				for(NFEWhen when: nfeWhens.value()){
+					if(when.condition().valid(valor)){						
+						addCampoSecao(when.export(), valor);
 					}
+				}
+			}
+								
+			if (nfeExports != null) {					
+				for (NFEExport nfeExp: nfeExports.value()) {
+					addCampoSecao(nfeExp, valor);
 				}
 			}
 			
 			if (nfeExport != null) {
-				listaNFEExport.add(nfeExport); 
+				addCampoSecao(nfeExport, valor);
 			}
 
-			if (listaNFEExport != null && !listaNFEExport.isEmpty()) {
-					
-				for (NFEExport nfeExp : listaNFEExport) {
-						
-					if (nfeExp != null) {
-						
-						CampoSecao campoSessao = new CampoSecao();
-						campoSessao.setPosicao(nfeExport.posicao());
-						campoSessao.setMascara(nfeExport.mascara());
-						campoSessao.setSessao(nfeExport.secao());
-						campoSessao.setTamanho(nfeExport.tamanho());
-						campoSessao.setValor(valor);
-						
-						addCampoSecao(campoSessao);
-						
-					}
-				}
-			}	
 		} else if (valor instanceof Collection) {
 			
-			for (Object valorCollection: (Collection)valor) {
+			for (Object valorCollection : (Collection) valor) {
 				NFEExporter nfeExporter = new NFEExporter();
 				nfeExporter.clear();
 				nfeExporter.execute(valorCollection);
-				this.listaNFEExporters.add(nfeExporter);
+			//	listaNFEExporters.add(nfeExporter);
 			}
-		
+
 		} else if (valor != null) {
 			execute(valor);
 		}
 	}
-	
+		
+
 	/**
-	 * @param nfeExport annotation do campo
-	 * @param valor valor do campo
+	 * Adiciona um campo em uma seção.
+	 * 
+	 * @param novoCampo campo
 	 */
 	private void addCampoSecao(CampoSecao novoCampo) {
 		
@@ -262,89 +178,76 @@ public class NFEExporter {
 		
 		this.mapSecoes.put(novoCampo.getSessao(), camposSecao);
 	}
-
-	/**
-	 * @param cst
-	 */
-	public void gerarArquivo(String cst) {
-				
-		this.addCamposDefault();
-		//TODO: gerar arquivo		
-	}
 	
+	
+	/**
+	 * Cria um campo a partir da annotation e adiciona o campo a seção. 
+	 * 
+	 * @param nfeExport annotation
+	 * @param valor valor do campo
+	 */
+	public void addCampoSecao(NFEExport nfeExport,Object valor){
+		
+		CampoSecao campoSessao = new CampoSecao();
+		campoSessao.setPosicao(nfeExport.posicao());
+		campoSessao.setMascara(nfeExport.mascara());
+		campoSessao.setSessao(nfeExport.secao());
+		campoSessao.setTamanho(nfeExport.tamanho());
+		campoSessao.setValor(valor);
+		
+		addCampoSecao(campoSessao);
+	}
+
 	/**
 	 * Adiciona valores padrões no documento.
 	 */
-	private void addCamposDefault() {
-				
-		CampoSecao versao = new CampoSecao(TipoSessao.A,  0, "2.0");
+	private void addCamposDefault() {				
+		CampoSecao versao = new CampoSecao(TipoSecao.A,  0, "2.0");
 		addCampoSecao(versao);
 		//TODO: campos padroes;
 	}
 		
 	/**
-	 * Extrai a lista de seções para um String.
+	 * Converte as seções em Strings.
 	 * 
 	 * @see java.lang.Object#toString()
 	 */
-	public String toString(){
+	public String toString() {
 		
-		Set<TipoSessao> sessoes = this.mapSecoes.keySet();
+		StringBuffer sBuffer = new StringBuffer();
 		
-		StringBuffer sBuffer;
+		Set<TipoSecao> secoes = this.mapSecoes.keySet();
 		
-		for (TipoSessao sessao : sessoes) {
+		for (TipoSecao secao : secoes) {
 			
-			List<CampoSecao> campos = this.mapSecoes.get(sessao);
+			String sSecao = this.gerarStringSecao(secao);
 			
-			for (CampoSecao campo : campos) {
-				//TODO: gerar string secao;
-			}
+			List<CampoSecao> campos = this.mapSecoes.get(secao);
+			
+//			for (CampoSecao campo : campos) {
+//				
+//				String sCampo = this.converteCampoParaString(campo);
+//				
+//				sSecao = this.addStringCampoToStringSecao(sSecao, sCampo, campo.getPosicao());
+//			}
+			
+			sBuffer.append(sSecao);
 		}
-		
-		String conteudo = STRING_VAZIA;
-		
-		ordenaListaNFEEporters();
-		String primeiraSecao = null;
-		int indexListaNFEExporters = 0;
-		if (!this.listaNFEExporters.isEmpty()) { 
-			primeiraSecao = this.listaNFEExporters.get(indexListaNFEExporters).getPrimeiraSecao();
-		}
-		
-		for (String key : this.listaSecoes.keySet()) {
-			if (primeiraSecao != null && key.compareTo(primeiraSecao) >= 0) {
-				boolean repetir;
-				do {
-					if (this.listaNFEExporters.size() > indexListaNFEExporters) {
-						conteudo += this.listaNFEExporters.get(indexListaNFEExporters).toString();
-						primeiraSecao = this.listaNFEExporters.get(indexListaNFEExporters++).getPrimeiraSecao();
-						repetir = primeiraSecao != null && primeiraSecao.compareToIgnoreCase(this.listaNFEExporters.get(indexListaNFEExporters - 1).getPrimeiraSecao()) == 0;
-					} else {
-						primeiraSecao = null;
-						repetir = false;
-					}
-				} while (repetir);
-
-			}
-
-			conteudo += this.listaSecoes.get(key) + QUEBRA_LINHA;
-		}
-		
-		return conteudo;
+		return sBuffer.toString();
 	}
 	
 	private void ordenaListaNFEEporters(){
 		NFEExporter nfeExporterAux;
 
-		for (int i = 0; i < this.listaNFEExporters.size() - 1; i++) {
-			for (int j = i + 1; j < this.listaNFEExporters.size(); j++) {
-				if (this.listaNFEExporters.get(i).getPrimeiraSecao().compareToIgnoreCase(this.listaNFEExporters.get(j).getPrimeiraSecao()) > 0 ){
-					nfeExporterAux = this.listaNFEExporters.get(i);
-					this.listaNFEExporters.set(i, this.listaNFEExporters.get(j));
-					this.listaNFEExporters.set(j, nfeExporterAux);
-				}
-			}
-		}
+//		for (int i = 0; i < this.listaNFEExporters.size() - 1; i++) {
+//			for (int j = i + 1; j < this.listaNFEExporters.size(); j++) {
+//				if (this.listaNFEExporters.get(i).getPrimeiraSecao().compareToIgnoreCase(this.listaNFEExporters.get(j).getPrimeiraSecao()) > 0 ){
+//					nfeExporterAux = this.listaNFEExporters.get(i);
+//					this.listaNFEExporters.set(i, this.listaNFEExporters.get(j));
+//					this.listaNFEExporters.set(j, nfeExporterAux);
+//				}
+//			}
+//		}
 	}
 	
 	/**
@@ -372,7 +275,24 @@ public class NFEExporter {
 //		return secao;
 //	}
 	
-
+	
+	/**
+	 * Converte um Tipo Secao para string utilizando pipes para preencher todas as posições que a secao pode ter
+	 * 
+	 * EX: seção A possui 8 posições
+	 * 	   A|||||||||
+	 * 
+	 * @param secao tipo seção;
+	 * @return
+	 */
+	private String gerarStringSecao(TipoSecao secao) {
+		StringBuilder sSecao = new StringBuilder();
+			sSecao.append(secao.getSigla());
+			sSecao.append(StringUtils.repeat(SEPARADOR_SECAO, secao.getTamanhoMaximo()+1));
+			sSecao.append(QUEBRA_LINHA);
+		return sSecao.toString();
+	}
+	
 	/**
 	 * Converte o campo para String com a mascara especificada, se não tiver a
 	 * mascara utiliza a mascara padrão, e trunca o campo de acordo com o
@@ -383,7 +303,11 @@ public class NFEExporter {
 	 * @param tamanho - Tamanho a ser truncado.
 	 * @return - Valor convertido, mascarado e truncado.
 	 */
-	private String converteCampoParaString(Object valor, String mascara, int tamanho){
+	private String converteCampoParaString(CampoSecao campo){
+		
+		Object valor = campo.getValor();
+		String mascara = campo.getMascara();
+		int tamanho = campo.getTamanho();
 		
 		String valorString = STRING_VAZIA;
 		String mascaraUsada;
@@ -432,24 +356,21 @@ public class NFEExporter {
 	}
 	
 	/**
-	 * Adiciona campo à linha da seção.
+	 * Adiciona uma string de campo à uma string da seção.
 	 * 
 	 * @param secao - Linha da seção atual.
 	 * @param valor - Valor a ser incluído.
 	 * @param posicao - Posição que será incluído na linha.
 	 * @return - Linha da seção com o campo adicionado.
 	 */
-	private String addCampoToSecao(String secao, String valor, int posicao){
-		
-		if (!secao.endsWith(SEPARADOR_SECAO)) {
-			secao += SEPARADOR_SECAO;
-		}
-
+	private String addStringCampoToStringSecao(String secao, String valor, int posicao) {
+				
 		String secaoAtualizada = STRING_VAZIA;
 		int qtCampos = countSeparator(secao, SEPARADOR_SECAO);
 		int positionInLayout = posicao + 1;
 		
 		if (qtCampos > positionInLayout ) { 
+			
 			String[]camposSecao = divideStringBySeparator(secao, SEPARADOR_SECAO);
 
 			int campoAtual = 0;
@@ -570,11 +491,11 @@ public class NFEExporter {
 				&& (valor != null);
 	}
 	
-	public String getPrimeiraSecao(){
-		if (!this.listaSecoes.isEmpty()) {
-			return divideStringBySeparator(((String)this.listaSecoes.values().toArray()[0]), SEPARADOR_SECAO)[0];
-		}else {
-			return null;
-		}
-	}
+//	public String getPrimeiraSecao(){
+//		if (!this.listaSecoes.isEmpty()) {
+//			return divideStringBySeparator(((String)this.listaSecoes.values().toArray()[0]), SEPARADOR_SECAO)[0];
+//		}else {
+//			return null;
+//		}
+//	}
 }
