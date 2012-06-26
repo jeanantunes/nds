@@ -14,6 +14,7 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.util.PaginacaoUtil;
+import br.com.abril.nds.client.vo.DetalheProdutoLancamentoVO;
 import br.com.abril.nds.client.vo.ResultadoResumoBalanceamentoVO;
 import br.com.abril.nds.client.vo.ResumoPeriodoBalanceamentoVO;
 import br.com.abril.nds.client.vo.ValidacaoVO;
@@ -366,6 +367,28 @@ public class MatrizLancamentoController {
 				
 				valorTotal += produtoLancamentoDTO.getValorTotal().doubleValue();
 				
+				produtoBalanceamentoVO.setTotal(CurrencyUtil.formatarValor(produtoLancamentoDTO.getValorTotal()));
+				
+				
+				
+				//produtoBalanceamentoVO.setFisico(produtoLancamentoDTO.getReparteFisico().toString());
+				
+				
+				
+				//produtoBalanceamentoVO.setQtdeEstudo(produtoLancamentoDTO.get())/
+				
+				//produtoBalanceamentoVO.setFuro(produtoLancamentoDTO.getIsfuro());
+				
+				//produtoBalanceamentoVO.setCancelamentoGD(produtoLancamentoDTO.get());
+				
+				//produtoBalanceamentoVO.setExpedido(produtoLancamentoDTO.get());
+				
+				produtoBalanceamentoVO.setEstudoFechado(produtoLancamentoDTO.isPossuiEstudo());
+				
+				//produtoBalanceamentoVO.setSemFisico(produtoLancamentoDTO.get());
+				
+				
+				listaProdutoBalanceamentoVO.add(produtoBalanceamentoVO);
 			}
 						
 			RodapeDTO rodape = new RodapeDTO(CurrencyUtil.formatarValor(valorTotal));
@@ -639,17 +662,14 @@ public class MatrizLancamentoController {
 	}
 
 	
-	
-	
 	/**
 	 * Obtem detalhes de produto edição
-	 * @param filtro
-	 * @param idProdutoEdicao
+	 * @param codigoProduto
 	 */
 	@Post
 	public void obterDetalheProduto(Long codigoProduto){
 		
-		ProdutoLancamentoDTO produtoLancamento = null;
+		DetalheProdutoLancamentoVO produtoLancamentoVO = null;
 		
 		BalanceamentoLancamentoDTO balanceamentoLancamento = (BalanceamentoLancamentoDTO) this.session.getAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO);
 	
@@ -662,16 +682,33 @@ public class MatrizLancamentoController {
 				for (ProdutoLancamentoDTO produtoBalanceamento : listaProdutosRecolhimento) {
 				    
 					if(produtoBalanceamento.getCodigoProduto().equals(codigoProduto.toString())){
-					    produtoLancamento = produtoBalanceamento;
+					    
+						produtoLancamentoVO = new DetalheProdutoLancamentoVO(produtoBalanceamento.getIdProdutoEdicao(),
+										                                     produtoBalanceamento.getNomeProduto(),
+										                                     produtoBalanceamento.getCodigoProduto(),
+										                                     produtoBalanceamento.getPrecoVenda(),
+										                                     produtoBalanceamento.getPrecoComDesconto(),
+										                                     produtoBalanceamento.getFornecedor(),
+										                                     produtoBalanceamento.getCodigoEditor(),
+										                                     produtoBalanceamento.getNomeEditor(),
+										                                     produtoBalanceamento.getChamadaCapa(),
+										                                     (produtoBalanceamento.isPossuiBrinde()?"Sim":"Não"),
+										                                     produtoBalanceamento.getPacotePadrao()
+										                                     );
+
+					    break;
 				    }
 	
 				} 
 			}	
 		}
-		this.result.use(Results.json()).from(produtoLancamento, "result").recursive().serialize();
+		if (produtoLancamentoVO!=null){
+		    this.result.use(Results.json()).from(produtoLancamentoVO, "result").recursive().serialize();
+		}
+		else{
+			result.nothing();
+		}
 	}
-	
-	
-	
+
 }
 

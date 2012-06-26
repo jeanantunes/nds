@@ -7,6 +7,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -29,6 +30,8 @@ import br.com.abril.nds.model.cadastro.Telefone;
 import br.com.abril.nds.model.cadastro.TelefoneCota;
 import br.com.abril.nds.model.cadastro.TelefoneDistribuidor;
 import br.com.abril.nds.model.cadastro.TipoParametroSistema;
+import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
+import br.com.abril.nds.model.fiscal.nota.Identificacao;
 import br.com.abril.nds.model.fiscal.nota.IdentificacaoDestinatario;
 import br.com.abril.nds.model.fiscal.nota.IdentificacaoEmitente;
 import br.com.abril.nds.model.fiscal.nota.IdentificacaoEmitente.RegimeTributario;
@@ -41,6 +44,7 @@ import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.NotaFiscalRepository;
 import br.com.abril.nds.repository.TelefoneCotaRepository;
+import br.com.abril.nds.repository.TipoNotaFiscalRepository;
 import br.com.abril.nds.service.NotaFiscalService;
 import br.com.abril.nds.service.ParametroSistemaService;
 import br.com.abril.nds.util.TipoMensagem;
@@ -71,6 +75,9 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 	
 	@Autowired
 	private DistribuidorRepository distribuidorRepository;
+	
+	@Autowired
+	private TipoNotaFiscalRepository tipoNotaFiscalRepository;
 	
 	@Override
 	public Map<Long, Integer> obterTotalItensNotaFiscalPorCotaEmLote(
@@ -249,6 +256,18 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		return sBuffer.toString();
 	}
 	
+	private Identificacao carregaIdentificacao(long idTipoNotaFiscal,Date dataEmissao){
+		
+		
+		TipoNotaFiscal tipoNotaFiscal =  tipoNotaFiscalRepository.buscarPorId(idTipoNotaFiscal);
+		
+		Identificacao identificacao = new Identificacao();
+		identificacao.setDataEmissao(dataEmissao);
+		identificacao.setTipoOperacao(tipoNotaFiscal.getTipoOperacao());
+		
+		return identificacao;
+	}
+	
 	private IdentificacaoEmitente carregaEmitente(){		
 		IdentificacaoEmitente identificacaoEmitente = new IdentificacaoEmitente();
 		
@@ -282,6 +301,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		telefone.setId(null);
 		telefone.setPessoa(null);
 		identificacaoEmitente.setTelefone(telefone);
+		//TODO: Como definir o Regime Tributario
 		identificacaoEmitente.setRegimeTributario(RegimeTributario.SIMPLES_NACIONAL);
 		
 		return identificacaoEmitente;		

@@ -9,7 +9,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 
@@ -18,9 +17,8 @@ import javax.persistence.Table;
  *
  */
 @Entity
-@Table(name="DNE_GU_LOCALIDADES")
+@Table(name="LOG_LOCALIDADE")
 public class Localidade implements Serializable {
-
 
 	/**
 	 * 
@@ -28,61 +26,39 @@ public class Localidade implements Serializable {
 	private static final long serialVersionUID = 4438288966441513488L;
 
 	@Id
-	@Column(name="CHAVE_LOC_DNE", unique=true, nullable=false)
-	private String id;
+	@Column(name="LOC_NU", unique=true, nullable=false)
+	private Long id;
 
-	@Column(name="ABREV_LOC_REC_ECT", length=36)
+	@Column(name="LOC_NO_ABREV", length=72)
 	private String abreviatura;
 
-	@Column(name="CEP_LOCALIDADE", length=8)
+	@Column(name="CEP", length=16)
 	private String cep;
 
-	@Column(name="CHAVE_SUB_LOC_DNE")
+	@Column(name="LOC_NU_SUB")
 	private Long chaveSubordinacao;
 
-	@Column(name="CODIGO_MUN_IBGE", length=7)
-	private String codigoMunicipioIBGE;
+	@Column(name="MUN_NU")
+	private Long codigoMunicipioIBGE;
 
-	@Column(name="NOME_OFI_LOCALIDADE", length=72)
+	@Column(name="LOC_NO", length=144)
 	private String nome;
 
-	@Column(name="SIGLA_DR_ECT_LOC", length=3)
-	private String siglaDR;
-
-	@Column(name="SITUACAO_LOCALIDADE", length=1)
-	private String situacao;
-
-	@Column(name="TIPO_LOCALIDADE", length=1)
+	@Column(name="LOC_IN_TIPO_LOC", length=2)
 	private String tipoLocalidade;
+
+	@Column(name="LOC_IN_SIT", length=2)
+	private String sit;
+
+    @ManyToOne
+	@JoinColumn(name="UFE_SG")
+	private UnidadeFederacao unidadeFederacao;
 
 	@OneToMany(mappedBy="localidade")
 	private List<Bairro> bairros;
 
 	@OneToMany(mappedBy="localidade")
-	private List<CaixaPostalComunitaria> caixasPostaisComunitarias;
-
-	@OneToMany(mappedBy="localidade")
-	private List<FaixaCepLocalidade> faixasCepLocalidades;
-
-	@OneToMany(mappedBy="localidade")
-	private List<GrandeUsuario> grandesUsuarios;
-
-	@OneToOne
-	@JoinColumn(name="CHAVE_LOC_DNE", nullable=false, insertable=false, updatable=false)
-	private Localidade localidade1;
-
-	@OneToOne(mappedBy="localidade1")
-	private Localidade localidade2;
-
-    @ManyToOne
-	@JoinColumn(name="SIGLA_UF")
-	private UnidadeFederacao unidadeFederacao;
-
-	@OneToMany(mappedBy="localidade")
 	private List<Logradouro> logradouros;
-
-	@OneToMany(mappedBy="localidade")
-	private List<UnidadeOperacional> unidadesOperacionais;
 
     public Localidade() {
     }
@@ -90,14 +66,14 @@ public class Localidade implements Serializable {
 	/**
 	 * @return the id
 	 */
-	public String getId() {
+	public Long getId() {
 		return id;
 	}
 
 	/**
 	 * @param id the id to set
 	 */
-	public void setId(String id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 
@@ -146,14 +122,14 @@ public class Localidade implements Serializable {
 	/**
 	 * @return the codigoMunicipioIBGE
 	 */
-	public String getCodigoMunicipioIBGE() {
+	public Long getCodigoMunicipioIBGE() {
 		return codigoMunicipioIBGE;
 	}
 
 	/**
 	 * @param codigoMunicipioIBGE the codigoMunicipioIBGE to set
 	 */
-	public void setCodigoMunicipioIBGE(String codigoMunicipioIBGE) {
+	public void setCodigoMunicipioIBGE(Long codigoMunicipioIBGE) {
 		this.codigoMunicipioIBGE = codigoMunicipioIBGE;
 	}
 
@@ -172,34 +148,6 @@ public class Localidade implements Serializable {
 	}
 
 	/**
-	 * @return the siglaDR
-	 */
-	public String getSiglaDR() {
-		return siglaDR;
-	}
-
-	/**
-	 * @param siglaDR the siglaDR to set
-	 */
-	public void setSiglaDR(String siglaDR) {
-		this.siglaDR = siglaDR;
-	}
-
-	/**
-	 * @return the situacao
-	 */
-	public String getSituacao() {
-		return situacao;
-	}
-
-	/**
-	 * @param situacao the situacao to set
-	 */
-	public void setSituacao(String situacao) {
-		this.situacao = situacao;
-	}
-
-	/**
 	 * @return the tipoLocalidade
 	 */
 	public String getTipoLocalidade() {
@@ -214,89 +162,17 @@ public class Localidade implements Serializable {
 	}
 
 	/**
-	 * @return the bairros
+	 * @return the sit
 	 */
-	public List<Bairro> getBairros() {
-		return bairros;
+	public String getSit() {
+		return sit;
 	}
 
 	/**
-	 * @param bairros the bairros to set
+	 * @param sit the sit to set
 	 */
-	public void setBairros(List<Bairro> bairros) {
-		this.bairros = bairros;
-	}
-
-	/**
-	 * @return the caixasPostaisComunitarias
-	 */
-	public List<CaixaPostalComunitaria> getCaixasPostaisComunitarias() {
-		return caixasPostaisComunitarias;
-	}
-
-	/**
-	 * @param caixasPostaisComunitarias the caixasPostaisComunitarias to set
-	 */
-	public void setCaixasPostaisComunitarias(
-			List<CaixaPostalComunitaria> caixasPostaisComunitarias) {
-		this.caixasPostaisComunitarias = caixasPostaisComunitarias;
-	}
-
-	/**
-	 * @return the faixasCepLocalidades
-	 */
-	public List<FaixaCepLocalidade> getFaixasCepLocalidades() {
-		return faixasCepLocalidades;
-	}
-
-	/**
-	 * @param faixasCepLocalidades the faixasCepLocalidades to set
-	 */
-	public void setFaixasCepLocalidades(
-			List<FaixaCepLocalidade> faixasCepLocalidades) {
-		this.faixasCepLocalidades = faixasCepLocalidades;
-	}
-
-	/**
-	 * @return the grandesUsuarios
-	 */
-	public List<GrandeUsuario> getGrandesUsuarios() {
-		return grandesUsuarios;
-	}
-
-	/**
-	 * @param grandesUsuarios the grandesUsuarios to set
-	 */
-	public void setGrandesUsuarios(List<GrandeUsuario> grandesUsuarios) {
-		this.grandesUsuarios = grandesUsuarios;
-	}
-
-	/**
-	 * @return the localidade1
-	 */
-	public Localidade getLocalidade1() {
-		return localidade1;
-	}
-
-	/**
-	 * @param localidade1 the localidade1 to set
-	 */
-	public void setLocalidade1(Localidade localidade1) {
-		this.localidade1 = localidade1;
-	}
-
-	/**
-	 * @return the localidade2
-	 */
-	public Localidade getLocalidade2() {
-		return localidade2;
-	}
-
-	/**
-	 * @param localidade2 the localidade2 to set
-	 */
-	public void setLocalidade2(Localidade localidade2) {
-		this.localidade2 = localidade2;
+	public void setSit(String sit) {
+		this.sit = sit;
 	}
 
 	/**
@@ -314,6 +190,20 @@ public class Localidade implements Serializable {
 	}
 
 	/**
+	 * @return the bairros
+	 */
+	public List<Bairro> getBairros() {
+		return bairros;
+	}
+
+	/**
+	 * @param bairros the bairros to set
+	 */
+	public void setBairros(List<Bairro> bairros) {
+		this.bairros = bairros;
+	}
+
+	/**
 	 * @return the logradouros
 	 */
 	public List<Logradouro> getLogradouros() {
@@ -325,21 +215,6 @@ public class Localidade implements Serializable {
 	 */
 	public void setLogradouros(List<Logradouro> logradouros) {
 		this.logradouros = logradouros;
-	}
-
-	/**
-	 * @return the unidadesOperacionais
-	 */
-	public List<UnidadeOperacional> getUnidadesOperacionais() {
-		return unidadesOperacionais;
-	}
-
-	/**
-	 * @param unidadesOperacionais the unidadesOperacionais to set
-	 */
-	public void setUnidadesOperacionais(
-			List<UnidadeOperacional> unidadesOperacionais) {
-		this.unidadesOperacionais = unidadesOperacionais;
 	}
 
 }
