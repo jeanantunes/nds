@@ -17,6 +17,7 @@ import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.Telefone;
+import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.model.fiscal.nota.EncargoFinanceiro;
 import br.com.abril.nds.model.fiscal.nota.Identificacao;
 import br.com.abril.nds.model.fiscal.nota.Identificacao.FormaPagamento;
@@ -57,7 +58,7 @@ public class NotaFiscalRepositoryImplTest  extends AbstractRepositoryImplTest {
 		List<NotaFiscalReferenciada> listReferenciadas = null;
 		Long numeroDocumentoFiscal = 1234L;
 		Integer serie = 123;
-		Identificacao.TipoOperacao tipoOperacao = Identificacao.TipoOperacao.ENTRADA;
+		TipoOperacao tipoOperacao = TipoOperacao.ENTRADA;
 		
 		Identificacao identificacao = Fixture.identificacao(
 				dataEmissao, 
@@ -237,12 +238,12 @@ public class NotaFiscalRepositoryImplTest  extends AbstractRepositoryImplTest {
 		ProdutoEdicao produtoEdicao = null;
 		Long quantidade = 1L;
 		String unidade = "";
-		Double valorDesconto = 1.0D;
-		Double valorFrete = 1.0D;
-		Double valorOutros = 1.0D;
-		Double valorSeguro = 1.0D;
-		Double valorTotalBruto = 1.0D;
-		Double valorUnitario = 1.0D;
+		BigDecimal valorDesconto 	= BigDecimal.ZERO;
+		BigDecimal valorFrete 		= BigDecimal.ZERO;
+		BigDecimal valorOutros 		= BigDecimal.ZERO;
+		BigDecimal valorSeguro 		= BigDecimal.ZERO;
+		BigDecimal valorTotalBruto 	= BigDecimal.ZERO;
+		BigDecimal valorUnitario 	= BigDecimal.ZERO;
 		
 		ProdutoServico produtoServico = Fixture.produtoServico(
 				cfop, 

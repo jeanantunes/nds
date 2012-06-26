@@ -2946,12 +2946,12 @@ public class Fixture {
 			ProdutoEdicao produtoEdicao,
 			Long quantidade,
 			String unidade,
-			Double valorDesconto,
-			Double valorFrete,
-			Double valorOutros,
-			Double valorSeguro,
-			Double valorTotalBruto,
-			Double valorUnitario) {
+			BigDecimal valorDesconto,
+			BigDecimal valorFrete,
+			BigDecimal valorOutros,
+			BigDecimal valorSeguro,
+			BigDecimal valorTotalBruto,
+			BigDecimal valorUnitario) {
 		
 		ProdutoServico produtoServico = new ProdutoServico();
 		
@@ -3159,7 +3159,7 @@ public class Fixture {
 			List<NotaFiscalReferenciada> listReferenciadas,
 			Long numeroDocumentoFiscal,
 			Integer serie,
-			Identificacao.TipoOperacao tipoOperacao) {
+			TipoOperacao tipoOperacao) {
 		
 		Identificacao identificacao = new Identificacao();
 		
@@ -3167,7 +3167,6 @@ public class Fixture {
 		identificacao.setDataEntradaContigencia(dataEntradaContigencia);
 		identificacao.setDataSaidaEntrada(dataSaidaEntrada);
 		identificacao.setDescricaoNaturezaOperacao(descricaoNaturezaOperacao);
-		identificacao.setDigitoVerificadorChaveAcesso(digitoVerificadorChaveAcesso);
 		identificacao.setFormaPagamento(formaPagamento);
 		identificacao.setHoraSaidaEntrada(horaSaidaEntrada);
 		identificacao.setJustificativaEntradaContigencia(justificativaEntradaContigencia);
