@@ -35,15 +35,17 @@ public class NFEExporterTest {
 		nfeExporter.clear();
 		nfeExporter.execute(classeTest);
 		String conteudoTXT = nfeExporter.gerarArquivo();  
-		System.out.println(conteudoTXT);
 		StringBuilder conteudoTXTEsperado = new StringBuilder();
 		
-		conteudoTXTEsperado.append("A|1,003.432|1002|2012-12|||2|\n")
-				.append("C02|TESTE DE LISTA 1|2012-05-03|\n")
-				.append("C02|TESTE DE LISTA 3|1992-01-25|\n")
-				.append("C02|TESTE DE LISTA 3|1992-01-25|\n")
-				.append("B|2012-12-15|S|1001.4321||1005|10|\n")
-				.append("B13|2011-06-01|\n");
+		conteudoTXTEsperado.append("A|1,003.432|1002|").append(NFEExporter.QUEBRA_LINHA)
+						   .append("B|2012-12-15|S|1001.4321||1005|10|||||||||||||").append(NFEExporter.QUEBRA_LINHA)
+						   .append("B13|01004|").append(NFEExporter.QUEBRA_LINHA)
+						   .append("C|TESTE DE LISTA 1|2012-05-03|||||").append(NFEExporter.QUEBRA_LINHA)
+						   .append("C|TESTE DE LISTA 2|1990-06-03|||||").append(NFEExporter.QUEBRA_LINHA)
+						   .append("C|TESTE DE LISTA 3|1992-01-25|||||").append(NFEExporter.QUEBRA_LINHA)
+						   .append("C02|2011-06-01|").append(NFEExporter.QUEBRA_LINHA)
+						   .append("D|||2012-12|||||||||").append(NFEExporter.QUEBRA_LINHA)
+						   .append("E05||TESTE DE GERACA||||||||||").append(NFEExporter.QUEBRA_LINHA);
 
 		Assert.assertEquals(conteudoTXTEsperado.toString(), conteudoTXT);
 		

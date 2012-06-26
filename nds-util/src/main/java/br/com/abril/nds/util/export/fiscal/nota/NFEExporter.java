@@ -108,12 +108,14 @@ public class NFEExporter {
 		Method[] metodos = notaFiscal.getClass().getDeclaredMethods();
 		
 		for (Method metodo : metodos) {
-			if (metodo.getParameterTypes().length == 0 && !metodo.getReturnType().equals(Void.TYPE)) {
-				Object valor;
-				try {
-					valor = metodo.invoke(notaFiscal, new Object[] {});
+			NFEWhens nfeWhens = metodo.getAnnotation(NFEWhens.class);
+			NFEExport nfeExport = metodo.getAnnotation(NFEExport.class);
+			NFEExports nfeExports = metodo.getAnnotation(NFEExports.class);
+			
+			if (nfeWhens != null && nfeExport!= null && nfeExports != null ) {
+				if (metodo.getParameterTypes().length == 0 && !metodo.getReturnType().equals(Void.TYPE)) {
+					Object valor = metodo.invoke(notaFiscal, new Object[] {});
 					this.processarAnnotations(metodo, notaFiscal, valor);
-				} catch (Exception e) {
 				}
 			}
 		}
