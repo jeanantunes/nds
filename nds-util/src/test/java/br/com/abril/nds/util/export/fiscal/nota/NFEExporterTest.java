@@ -26,7 +26,6 @@ public class NFEExporterTest {
 	 * @throws InvocationTargetException
 	 */
 	@Test
-	@Ignore
 	public void notaFiscalToString() throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
 
 		ClasseTest classeTest = preencheObjeto();
