@@ -26,7 +26,6 @@ public class NFEExporterTest {
 	 * @throws InvocationTargetException
 	 */
 	@Test
-	@Ignore
 	public void notaFiscalToString() throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
 
 		ClasseTest classeTest = preencheObjeto();
@@ -36,15 +35,17 @@ public class NFEExporterTest {
 		nfeExporter.clear();
 		nfeExporter.execute(classeTest);
 		String conteudoTXT = nfeExporter.gerarArquivo();  
-		System.out.println(conteudoTXT);
 		StringBuilder conteudoTXTEsperado = new StringBuilder();
 		
-		conteudoTXTEsperado.append("A|1,003.432|1002|2012-12|||2|\n")
-				.append("C02|TESTE DE LISTA 1|2012-05-03|\n")
-				.append("C02|TESTE DE LISTA 3|1992-01-25|\n")
-				.append("C02|TESTE DE LISTA 3|1992-01-25|\n")
-				.append("B|2012-12-15|S|1001.4321||1005|10|\n")
-				.append("B13|2011-06-01|TESTE DE GERACA|01004|2|\n");
+		conteudoTXTEsperado.append("A|1,003.432|1002|").append(NFEExporter.QUEBRA_LINHA)
+						   .append("B|2012-12-15|S|1001.4321||1005|10|||||||||||||").append(NFEExporter.QUEBRA_LINHA)
+						   .append("B13|01004|").append(NFEExporter.QUEBRA_LINHA)
+						   .append("C|TESTE DE LISTA 1|2012-05-03|||||").append(NFEExporter.QUEBRA_LINHA)
+						   .append("C|TESTE DE LISTA 2|1990-06-03|||||").append(NFEExporter.QUEBRA_LINHA)
+						   .append("C|TESTE DE LISTA 3|1992-01-25|||||").append(NFEExporter.QUEBRA_LINHA)
+						   .append("C02|2011-06-01|").append(NFEExporter.QUEBRA_LINHA)
+						   .append("D|||2012-12|||||||||").append(NFEExporter.QUEBRA_LINHA)
+						   .append("E05||TESTE DE GERACA||||||||||").append(NFEExporter.QUEBRA_LINHA);
 
 		Assert.assertEquals(conteudoTXTEsperado.toString(), conteudoTXT);
 		
@@ -114,7 +115,7 @@ public class NFEExporterTest {
 	 */
 	public class ClasseTest {
 
-		private List<ClasseListaTest> listaClasseListaTests; 
+		 
 		
 		@NFEExport(secao = TipoSecao.B, posicao = 4)
 		private Long varLong;
@@ -133,14 +134,14 @@ public class NFEExporterTest {
 
 		private SubClasseTest subClasseTest;
 		
-		
+		private List<ClasseListaTest> listaClasseListaTests;
 
 		/** Getters and Setters **/
 
 		/**
 		 * @return a verção atual do layout
 		 */
-		@NFEExport(secao = TipoSecao.B13, posicao = 3)
+		@NFEExport(secao = TipoSecao.E05, posicao = 3)
 		public Integer getVercao() {
 			return 2;
 		}
@@ -254,18 +255,18 @@ public class NFEExporterTest {
 	 */
 	public class SubClasseTest {
 
-		@NFEExport(secao = TipoSecao.B13, posicao = 0)
+		@NFEExport(secao = TipoSecao.C02, posicao = 0)
 		private Date varDate;
 
 		@NFEExports(
 				value = { 
 						@NFEExport(secao = TipoSecao.B, posicao = 0),
-						@NFEExport(secao = TipoSecao.A, posicao = 2, mascara = "yyyy-MM") 
+						@NFEExport(secao = TipoSecao.D, posicao = 2, mascara = "yyyy-MM") 
 						}
 				)
 		private Calendar varCalendar;
 
-		@NFEExport(secao = TipoSecao.B13, posicao = 1, tamanho = 15)
+		@NFEExport(secao = TipoSecao.E05, posicao = 1, tamanho = 15)
 		private String varString;
 
 		@NFEExport(secao =TipoSecao.B, posicao = 1)
@@ -273,8 +274,8 @@ public class NFEExporterTest {
 
 		@NFEExports(
 				value = { 
-						@NFEExport(secao =TipoSecao.B13, posicao = 5),
-						@NFEExport(secao = TipoSecao.A, posicao = 3) 
+						@NFEExport(secao =TipoSecao.E05, posicao = 5),
+						@NFEExport(secao = TipoSecao.D, posicao = 3) 
 						}
 				)
 		private Byte varByte; 
@@ -282,7 +283,7 @@ public class NFEExporterTest {
 		@NFEExport(secao = TipoSecao.B, posicao = 5)
 		private Short varShort;
 		
-		@NFEExport(secao = TipoSecao.A, posicao = 4)
+		@NFEExport(secao = TipoSecao.D, posicao = 4)
 		private Float varFloat;
 
 		/** Getters and Setters **/
@@ -290,7 +291,7 @@ public class NFEExporterTest {
 		/**
 		 * @return Tipo do Ambiente
 		 */
-		@NFEExport(secao = TipoSecao.A, posicao = 5)
+		@NFEExport(secao = TipoSecao.D, posicao = 5)
 		public Character getTipoAmbiente() {
 			return '2';
 		}

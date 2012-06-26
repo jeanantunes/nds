@@ -1,6 +1,7 @@
 package br.com.abril.nds.model.fiscal.nota;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -100,49 +101,49 @@ public class ProdutoServico implements Serializable {
 	/**
 	 * qCom
 	 */
-	@Column(name="QUANTIDADE_COMERCIAL", length=15, nullable=false)
+	@Column(name="QUANTIDADE_COMERCIAL", scale=15, precision=2 , nullable=false)
 	@NFEExports({@NFEExport(secao=TipoSecao.I, posicao=8, tamanho=12),@NFEExport(secao=TipoSecao.I, posicao=13, tamanho=12)})
 	private Long quantidade;
 	
 	/**
 	 * vUnCom
 	 */
-	@Column(name="VALOR_UNITARIO_COMERCIAL", length=21, nullable=false)
+	@Column(name="VALOR_UNITARIO_COMERCIAL",scale=21, precision=2 , nullable=false)
 	@NFEExports({@NFEExport(secao=TipoSecao.I, posicao=9, tamanho=16),@NFEExport(secao=TipoSecao.I, posicao=14, tamanho=16)})
-	private Double valorUnitario;
+	private BigDecimal valorUnitario;
 	
 	/**
 	 * vProd
 	 */
-	@Column(name="VALOR_TOTAL_BRUTO", length=15, nullable=false)
-	private Double valorTotalBruto;
+	@Column(name="VALOR_TOTAL_BRUTO", scale=15, precision=2, nullable=false)
+	private BigDecimal valorTotalBruto;
 	
 	/**
 	 * vFrete
 	 */
-	@Column(name="VALOR_FRETE", length=15, nullable=true)
+	@Column(name="VALOR_FRETE", scale=15, precision=2, nullable=true)
 	@NFEExport(secao=TipoSecao.I, posicao=15, tamanho=15)
-	private Double valorFrete;
+	private BigDecimal valorFrete;
 	
 	/**
 	 * vSeg
 	 */
-	@Column(name="VALOR_SERGURO", length=15, nullable=true)
+	@Column(name="VALOR_SERGURO", scale=15, precision=2, nullable=true)
 	@NFEExport(secao=TipoSecao.I, posicao=16, tamanho=15)
-	private Double valorSeguro;
+	private BigDecimal valorSeguro;
 	
 	/**
 	 * vDesc
 	 */
-	@Column(name="VALOR_DESCONTO", length=15, nullable=true)
+	@Column(name="VALOR_DESCONTO", scale=15, precision=2, nullable=true)
 	@NFEExport(secao=TipoSecao.I, posicao=17, tamanho=15)
-	private Double valorDesconto;
+	private BigDecimal valorDesconto;
 	
 	/**
 	 * vOutro
 	 */
-	@Column(name="VALOR_OUTROS", length=15, nullable=true)
-	private Double valorOutros;
+	@Column(name="VALOR_OUTROS", scale=15, precision=2, nullable=true)
+	private BigDecimal valorOutros;
 	
 	
 	
@@ -349,84 +350,84 @@ public class ProdutoServico implements Serializable {
 	/**
 	 * @return the valorUnitario
 	 */
-	public Double getValorUnitario() {
+	public BigDecimal getValorUnitario() {
 		return valorUnitario;
 	}
 
 	/**
 	 * @param valorUnitario the valorUnitario to set
 	 */
-	public void setValorUnitario(Double valorUnitario) {
+	public void setValorUnitario(BigDecimal valorUnitario) {
 		this.valorUnitario = valorUnitario;
 	}
 
 	/**
 	 * @return the valorTotalBruto
 	 */
-	public Double getValorTotalBruto() {
+	public BigDecimal getValorTotalBruto() {
 		return valorTotalBruto;
 	}
 
 	/**
 	 * @param valorTotalBruto the valorTotalBruto to set
 	 */
-	public void setValorTotalBruto(Double valorTotalBruto) {
+	public void setValorTotalBruto(BigDecimal valorTotalBruto) {
 		this.valorTotalBruto = valorTotalBruto;
 	}
 
 	/**
 	 * @return the valorFrete
 	 */
-	public Double getValorFrete() {
+	public BigDecimal getValorFrete() {
 		return valorFrete;
 	}
 
 	/**
 	 * @param valorFrete the valorFrete to set
 	 */
-	public void setValorFrete(Double valorFrete) {
+	public void setValorFrete(BigDecimal valorFrete) {
 		this.valorFrete = valorFrete;
 	}
 
 	/**
 	 * @return the valorSeguro
 	 */
-	public Double getValorSeguro() {
+	public BigDecimal getValorSeguro() {
 		return valorSeguro;
 	}
 
 	/**
 	 * @param valorSeguro the valorSeguro to set
 	 */
-	public void setValorSeguro(Double valorSeguro) {
+	public void setValorSeguro(BigDecimal valorSeguro) {
 		this.valorSeguro = valorSeguro;
 	}
 
 	/**
 	 * @return the valorDesconto
 	 */
-	public Double getValorDesconto() {
+	public BigDecimal getValorDesconto() {
 		return valorDesconto;
 	}
 
 	/**
 	 * @param valorDesconto the valorDesconto to set
 	 */
-	public void setValorDesconto(Double valorDesconto) {
+	public void setValorDesconto(BigDecimal valorDesconto) {
 		this.valorDesconto = valorDesconto;
 	}
 
 	/**
 	 * @return the valorOutros
 	 */
-	public Double getValorOutros() {
+	public BigDecimal getValorOutros() {
 		return valorOutros;
 	}
 
 	/**
 	 * @param valorOutros the valorOutros to set
 	 */
-	public void setValorOutros(Double valorOutros) {
+	public void setValorOutros(BigDecimal valorOutros) {
 		this.valorOutros = valorOutros;
 	}
 	

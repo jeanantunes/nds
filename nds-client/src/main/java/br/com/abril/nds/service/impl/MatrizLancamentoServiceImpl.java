@@ -34,20 +34,15 @@ import br.com.abril.nds.model.cadastro.DistribuicaoFornecedor;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.cadastro.OperacaoDistribuidor;
-import br.com.abril.nds.model.cadastro.Produto;
-import br.com.abril.nds.model.cadastro.ProdutoEdicao;
-import br.com.abril.nds.model.planejamento.Estudo;
-import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.MatrizLancamentoService;
-import br.com.abril.nds.util.CurrencyUtil;
+import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.util.TipoMensagem;
-import br.com.abril.nds.vo.LancamentoVO;
 
 @Service
 public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
@@ -63,7 +58,7 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 	@Autowired
 	protected DistribuidorRepository distribuidorRepository;
 	
-	private static final Integer NUMERO_REPROGRAMACOES_LIMITE = 2;
+	
 
 	@Override
 	@Transactional(readOnly = true)
@@ -677,7 +672,7 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 		
 		if (produtoLancamento.isPossuiRecebimentoFisico()
 				&& produtoLancamento.getNumeroReprogramacoes() != null
-				&& produtoLancamento.getNumeroReprogramacoes() >= NUMERO_REPROGRAMACOES_LIMITE) {
+				&& produtoLancamento.getNumeroReprogramacoes() >= Constantes.NUMERO_REPROGRAMACOES_LIMITE) {
 			
 			return false;
 		}
@@ -886,25 +881,6 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 		return datasDistribuicao;
 	}
 	
-	
-	
-	
-	
-	@Override
-	@Transactional
-	public List<LancamentoVO> buscarLancamentosBalanceamento(FiltroLancamentoDTO filtro) {
-		
-		List<Lancamento> lancamentos = lancamentoRepository
-				.obterBalanceamentoMatrizLancamentos(filtro);
-		List<LancamentoVO> dtos = new ArrayList<LancamentoVO>(
-				lancamentos.size());
-		for (Lancamento lancamento : lancamentos) {
-			LancamentoVO dto = montarDTO(filtro.getData(),lancamento);
-			dtos.add(dto);
-		}
-		return dtos;
-	}
-
 	@Override
 	@Transactional(readOnly = true)
 	public SumarioLancamentosDTO sumarioBalanceamentoMatrizLancamentos(Date data,
@@ -965,49 +941,5 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 		}
 		return datas;
 	}
-
-	private LancamentoVO montarDTO(Date data, Lancamento lancamento) {
-		ProdutoEdicao produtoEdicao = lancamento.getProdutoEdicao();
-		Produto produto = produtoEdicao.getProduto();
-		LancamentoVO dto = new LancamentoVO();
-		dto.setCodigoProduto(produto.getCodigo());
-		dto.setDataMatrizDistrib(DateUtil.formatarData(
-				lancamento.getDataLancamentoDistribuidor(),
-				FORMATO_DATA_LANCAMENTO));
-		dto.setDataPrevisto(DateUtil.formatarData(
-				lancamento.getDataLancamentoPrevista(),
-				FORMATO_DATA_LANCAMENTO));
-		dto.setDataRecolhimento(DateUtil.formatarData(
-				lancamento.getDataRecolhimentoPrevista(),
-				FORMATO_DATA_LANCAMENTO));
-		dto.setId(lancamento.getId());
-		dto.setIdFornecedor(1L);
-		dto.setNomeFornecedor(produto.getFornecedor().getJuridica().getNomeFantasia());
-		dto.setLancamento(lancamento.getTipoLancamento().getDescricao());
-		dto.setNomeProduto(produto.getNome());
-		dto.setNumEdicao(produtoEdicao.getNumeroEdicao());
-		dto.setPacotePadrao(produtoEdicao.getPacotePadrao());
-		dto.setPreco(CurrencyUtil.formatarValor(produtoEdicao.getPrecoVenda()));
-		dto.setReparte(lancamento.getReparte().toString());
-		BigDecimal total = produtoEdicao.getPrecoVenda().multiply(lancamento.getReparte());
-		dto.setTotal(CurrencyUtil.formatarValor(total));
-		dto.setFisico(lancamento.getTotalRecebimentoFisico().toString());
-		Estudo estudo = lancamento.getEstudo();
-		if (estudo != null) {
-			dto.setQtdeEstudo(estudo.getQtdeReparte().toString());
-		} else {
-			dto.setQtdeEstudo("0");
-		}
-		dto.setFuro(lancamento.isFuro());
-		dto.setCancelamentoGD(lancamento.isCancelamentoGD());
-		dto.setExpedido(lancamento.isExpedido());
-		dto.setEstudoFechado(lancamento.isEstudoFechado());
-		if (DateUtil.isHoje(data) && lancamento.isSemRecebimentoFisico()) {
-			dto.setSemFisico(true);
-		}
-		return dto;
-	}
-	
-	
 
 }

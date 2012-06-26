@@ -401,8 +401,11 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		produtoServico.setCodigoProduto(produtoEdicao.getProduto().getCodigo());
 		produtoServico.setDescricaoProduto(produtoEdicao.getProduto().getDescricao());
 		produtoServico.setNcm(produtoEdicao.getProduto().getTipoProduto().getCodigoNCM());
-		
-		
+		produtoServico.setProdutoEdicao(produtoEdicao);
+		produtoServico.setQuantidade(quantidade);
+		//TODO UNIDADE COMERCIAL
+		produtoServico.setUnidade("UNIDADE");
+		produtoServico.setValorDesconto(produtoEdicao.getDesconto());
 		
 		
 		
