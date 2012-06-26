@@ -65,6 +65,8 @@ public class NFEExporter {
 	 */
 	private TreeMap<TipoSecao, List<CampoSecao>> mapSecoes = new TreeMap<TipoSecao, List<CampoSecao>>(new NFESecaoComparator());
 	
+	private Integer indexListaNFEExporters;
+	
 	/**
 	 * Construtor padrão
 	 */
@@ -105,12 +107,16 @@ public class NFEExporter {
 		
 		Method[] metodos = notaFiscal.getClass().getDeclaredMethods();
 		
-//		for (Method metodo : metodos) {
-//			if (metodo.getParameterTypes().length == 0) {
-//				Object valor = metodo.invoke(notaFiscal, new Object[] {});
-//				this.processarAnnotations(metodo, notaFiscal, valor);
-//			}
-//		}
+		for (Method metodo : metodos) {
+			if (metodo.getParameterTypes().length == 0 && !metodo.getReturnType().equals(Void.TYPE)) {
+				Object valor;
+				try {
+					valor = metodo.invoke(notaFiscal, new Object[] {});
+					this.processarAnnotations(metodo, notaFiscal, valor);
+				} catch (Exception e) {
+				}
+			}
+		}
 		
 	}
 	
@@ -215,7 +221,6 @@ public class NFEExporter {
 //		addCampoSecao(versao);
 		//TODO: campos padroes;
 	}
-		
 	
 	/**
 	 * Converte as seções em Strings.
@@ -232,15 +237,15 @@ public class NFEExporter {
 		
 		String primeiraSecao = null;
 		
-		Integer indexListaNFEExporters = 0;
+		this.indexListaNFEExporters = 0;
 		
 		if (!this.listaNFEExporters.isEmpty()) { 
-			primeiraSecao = this.listaNFEExporters.get(indexListaNFEExporters).getPrimeiraSecao();
+			primeiraSecao = this.listaNFEExporters.get(this.indexListaNFEExporters).getPrimeiraSecao();
 		}
 		
 		for (TipoSecao secao : secoes) {
 			
-			sBuffer.append(listaNFEExportersToString(primeiraSecao, indexListaNFEExporters, secao));
+			sBuffer.append(listaNFEExportersToString(primeiraSecao, secao));
 			
 			String sSecao = this.gerarStringSecao(secao);
 			
@@ -256,7 +261,7 @@ public class NFEExporter {
 			sBuffer.append(sSecao);
 		}
 		
-		sBuffer.append(listaNFEExportersToString(primeiraSecao, indexListaNFEExporters, null));
+		sBuffer.append(listaNFEExportersToString(primeiraSecao, null));
 		
 		return sBuffer.toString();
 	}
@@ -268,7 +273,7 @@ public class NFEExporter {
 	 * @param secao
 	 * @return
 	 */
-	private String listaNFEExportersToString(String primeiraSecao, Integer indexListaNFEExporters, TipoSecao secao){
+	private String listaNFEExportersToString(String primeiraSecao, TipoSecao secao){
 		
 		StringBuffer sBuffer = new StringBuffer();
 		
@@ -278,10 +283,10 @@ public class NFEExporter {
 			
 			do {
 			
-				if (this.listaNFEExporters.size() > indexListaNFEExporters) {
-					sBuffer.append(this.listaNFEExporters.get(indexListaNFEExporters).toString());
-					primeiraSecao = this.listaNFEExporters.get(indexListaNFEExporters++).getPrimeiraSecao();
-					repetir = primeiraSecao != null && primeiraSecao.compareToIgnoreCase(this.listaNFEExporters.get(indexListaNFEExporters - 1).getPrimeiraSecao()) == 0;
+				if (this.listaNFEExporters.size() > this.indexListaNFEExporters) {
+					sBuffer.append(this.listaNFEExporters.get(this.indexListaNFEExporters).toString());
+					primeiraSecao = this.listaNFEExporters.get(this.indexListaNFEExporters++).getPrimeiraSecao();
+					repetir = primeiraSecao != null && primeiraSecao.compareToIgnoreCase(this.listaNFEExporters.get(this.indexListaNFEExporters - 1).getPrimeiraSecao()) == 0;
 				} else {
 					primeiraSecao = null;
 					repetir = false;
