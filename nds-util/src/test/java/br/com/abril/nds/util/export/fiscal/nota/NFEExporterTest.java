@@ -10,7 +10,6 @@ import java.util.List;
 
 import junit.framework.Assert;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 import br.com.abril.nds.util.DateUtil;
@@ -34,7 +33,7 @@ public class NFEExporterTest {
 		
 		nfeExporter.clear();
 		nfeExporter.execute(classeTest);
-		String conteudoTXT = nfeExporter.toString();  
+		String conteudoTXT = nfeExporter.gerarArquivo();  
 		System.out.println(conteudoTXT);
 		StringBuilder conteudoTXTEsperado = new StringBuilder();
 		
@@ -92,7 +91,9 @@ public class NFEExporterTest {
 		listaClasseListaTests.add(classeListaTest);
 		
 		classeTest.setListaClasseListaTests(listaClasseListaTests);
-
+		
+		classeListaTest = new ClasseListaTest();
+	
 		classeListaTest.setVarString("TESTE DE LISTA 3");
 		classeListaTest.setVarDate(DateUtil.parseData("25/01/1992", "dd/MM/yyyy"));
 		
