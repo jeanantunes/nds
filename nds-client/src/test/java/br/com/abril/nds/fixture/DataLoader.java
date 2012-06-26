@@ -483,6 +483,7 @@ public class DataLoader {
 	
 	private static EstudoCota estudoCotaSuper1Manoel;
 	private static EstudoCota estudoCotaManoel;
+	private static EstudoCota estudoCotaManoelVejaAtual;
 	private static EstudoCota estudoCotaManoelVeja2;
 	private static EstudoCota estudoCotaVeja2Joao;
 	private static EstudoCota estudoCotaCaprichoZe;
@@ -3012,7 +3013,6 @@ public class DataLoader {
 				.estudo(BigDecimal.TEN, lancamentoCapricho1.getDataLancamentoDistribuidor(), produtoEdicaoCapricho1);
 		session.save(estudoCapricho1);
 
-		//TOD
 		estudoVeja1Atual = Fixture
 				.estudo(BigDecimal.TEN, new Date(), produtoEdicaoVeja1);
 		session.save(estudoVeja1Atual);
@@ -3107,6 +3107,9 @@ public class DataLoader {
 
 		estudoCotaManoel = Fixture.estudoCota(BigDecimal.TEN, BigDecimal.TEN, estudoVeja1, cotaManoel);
 		save(session,estudoCotaManoel);
+		
+		estudoCotaManoelVejaAtual = Fixture.estudoCota(BigDecimal.TEN, BigDecimal.TEN, estudoVeja1Atual, cotaManoel);
+		save(session,estudoCotaManoelVejaAtual);
 		
 		estudoCotaManoelVeja2 = Fixture.estudoCota(BigDecimal.TEN, BigDecimal.TEN, estudoVeja2, cotaManoel);
 		save(session,estudoCotaManoelVeja2);
@@ -3219,7 +3222,7 @@ public class DataLoader {
 
 						new Date(), BigDecimal.TEN, StatusLancamento.EXPEDIDO,
 
-						null,expedicao, 1);
+						itemRecebimentoFisico,expedicao, 1);
 		session.save(lancamentoVeja2);
 
 		lancamentoSuper1 = Fixture
