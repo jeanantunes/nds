@@ -40,8 +40,8 @@ public class TipoProduto implements Serializable {
 	@Column(name = "CODIGO", nullable = false, unique = true)
 	private Long codigo;
 	
-	@Column(name = "CODIGO_NCM")
-	private String codigoNCM;
+	@Column(name = "CODIGO_NCM" , length=8)
+	private Long codigoNCM;
 	
 	@Column(name = "CODIGO_NBM")
 	private String codigoNBM;
@@ -86,11 +86,11 @@ public class TipoProduto implements Serializable {
 		this.codigo = codigo;
 	}
 
-	public String getCodigoNCM() {
+	public Long getCodigoNCM() {
 		return codigoNCM;
 	}
 
-	public void setCodigoNCM(String codigoNCM) {
+	public void setCodigoNCM(Long codigoNCM) {
 		this.codigoNCM = codigoNCM;
 	}
 

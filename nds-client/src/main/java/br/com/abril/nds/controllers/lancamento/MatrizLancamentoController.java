@@ -622,6 +622,29 @@ public class MatrizLancamentoController {
 		}
 	}
 
+	/**
+	 * Popula e retorna Value Object com detalhes de produto edição
+	 * @param produtoLancamento
+	 * @return DetalheProdutoLancamentoVO
+	 */
+	private DetalheProdutoLancamentoVO getDetalheProduto(ProdutoLancamentoDTO produtoBalanceamento){
+		DetalheProdutoLancamentoVO produtoLancamentoVO = null;
+		if (produtoBalanceamento!=null){
+			produtoLancamentoVO = new DetalheProdutoLancamentoVO(produtoBalanceamento.getIdProdutoEdicao(),
+												                 produtoBalanceamento.getNomeProduto(),
+												                 produtoBalanceamento.getCodigoProduto(),
+												                 (produtoBalanceamento.getPrecoVenda()!=null?CurrencyUtil.formatarValor(produtoBalanceamento.getPrecoVenda()):""),
+												                 (produtoBalanceamento.getPrecoComDesconto()!=null?CurrencyUtil.formatarValor(produtoBalanceamento.getPrecoComDesconto()):""),
+												                 produtoBalanceamento.getFornecedor(),
+												                 (produtoBalanceamento.getCodigoEditor()!=null?produtoBalanceamento.getCodigoEditor().toString():""),
+												                 produtoBalanceamento.getNomeEditor(),
+												                 produtoBalanceamento.getChamadaCapa(),
+												                 (produtoBalanceamento.isPossuiBrinde()?"Sim":"Não"),
+												                 (produtoBalanceamento.getPacotePadrao()!=null?produtoBalanceamento.getPacotePadrao().toString():"")
+												                 );
+		}
+		return produtoLancamentoVO;
+	}
 	
 	/**
 	 * Obtem detalhes de produto edição
@@ -644,18 +667,7 @@ public class MatrizLancamentoController {
 				    
 					if(produtoBalanceamento.getCodigoProduto().equals(codigoProduto.toString())){
 					    
-						produtoLancamentoVO = new DetalheProdutoLancamentoVO(produtoBalanceamento.getIdProdutoEdicao(),
-										                                     produtoBalanceamento.getNomeProduto(),
-										                                     produtoBalanceamento.getCodigoProduto(),
-										                                     produtoBalanceamento.getPrecoVenda(),
-										                                     produtoBalanceamento.getPrecoComDesconto(),
-										                                     produtoBalanceamento.getFornecedor(),
-										                                     produtoBalanceamento.getCodigoEditor(),
-										                                     produtoBalanceamento.getNomeEditor(),
-										                                     produtoBalanceamento.getChamadaCapa(),
-										                                     (produtoBalanceamento.isPossuiBrinde()?"Sim":"Não"),
-										                                     produtoBalanceamento.getPacotePadrao()
-										                                     );
+						produtoLancamentoVO = this.getDetalheProduto(produtoBalanceamento);
 
 					    break;
 				    }

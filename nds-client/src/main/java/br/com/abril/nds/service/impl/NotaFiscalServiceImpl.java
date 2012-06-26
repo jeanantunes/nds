@@ -26,6 +26,7 @@ import br.com.abril.nds.model.cadastro.EnderecoCota;
 import br.com.abril.nds.model.cadastro.EnderecoDistribuidor;
 import br.com.abril.nds.model.cadastro.ParametroSistema;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
+import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.Telefone;
 import br.com.abril.nds.model.cadastro.TelefoneCota;
 import br.com.abril.nds.model.cadastro.TelefoneDistribuidor;
@@ -34,15 +35,18 @@ import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.Identificacao;
 import br.com.abril.nds.model.fiscal.nota.IdentificacaoDestinatario;
 import br.com.abril.nds.model.fiscal.nota.IdentificacaoEmitente;
+import br.com.abril.nds.model.fiscal.nota.Identificacao.FormaPagamento;
 import br.com.abril.nds.model.fiscal.nota.IdentificacaoEmitente.RegimeTributario;
 import br.com.abril.nds.model.fiscal.nota.InformacaoEletronica;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
+import br.com.abril.nds.model.fiscal.nota.ProdutoServico;
 import br.com.abril.nds.model.fiscal.nota.RetornoComunicacaoEletronica;
 import br.com.abril.nds.model.fiscal.nota.Status;
 import br.com.abril.nds.model.fiscal.nota.StatusProcessamentoInterno;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.NotaFiscalRepository;
+import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.repository.TelefoneCotaRepository;
 import br.com.abril.nds.repository.TipoNotaFiscalRepository;
 import br.com.abril.nds.service.NotaFiscalService;
@@ -78,6 +82,9 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 	
 	@Autowired
 	private TipoNotaFiscalRepository tipoNotaFiscalRepository;
+	
+	@Autowired
+	private ProdutoEdicaoRepository produtoEdicaoRepository;
 	
 	@Override
 	public Map<Long, Integer> obterTotalItensNotaFiscalPorCotaEmLote(
@@ -256,18 +263,40 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		return sBuffer.toString();
 	}
 	
+	/**
+	 * Carrega Grupo das informações de identificação da NF-e
+	 * @param idTipoNotaFiscal
+	 * @param dataEmissao
+	 * @return
+	 */
 	private Identificacao carregaIdentificacao(long idTipoNotaFiscal,Date dataEmissao){
 		
 		
 		TipoNotaFiscal tipoNotaFiscal =  tipoNotaFiscalRepository.buscarPorId(idTipoNotaFiscal);
+	
+		if(tipoNotaFiscal == null){
+			throw new ValidacaoException(TipoMensagem.ERROR, "Tipo da Nota Fiscal "+ idTipoNotaFiscal + " não encontrada!");
+		}
 		
 		Identificacao identificacao = new Identificacao();
 		identificacao.setDataEmissao(dataEmissao);
 		identificacao.setTipoOperacao(tipoNotaFiscal.getTipoOperacao());
+		identificacao.setDescricaoNaturezaOperacao(tipoNotaFiscal.getNopDescricao());
+		//TODO: SERIE - NumeroDocumentoFiscal
+		identificacao.setSerie(1);
+		identificacao.setNumeroDocumentoFiscal(1L);		
+		//TODO indPag
+		identificacao.setFormaPagamento(FormaPagamento.A_VISTA);
+		
+		//TODO NotasReferenciadas
+		
 		
 		return identificacao;
 	}
-	
+	/**
+	 * Carrega Grupo de identificação do emitente da NF-e
+	 * @return
+	 */
 	private IdentificacaoEmitente carregaEmitente(){		
 		IdentificacaoEmitente identificacaoEmitente = new IdentificacaoEmitente();
 		
@@ -307,7 +336,11 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		return identificacaoEmitente;		
 	}
 	
-	
+	/**
+	 * Grupo de identificação do Destinatário da NF-e
+	 * @param idCota
+	 * @return
+	 */
 	private IdentificacaoDestinatario carregaDestinatario(Long idCota){
 		IdentificacaoDestinatario destinatario = new IdentificacaoDestinatario();
 		Cota cota = cotaRepository.buscarPorId(idCota);		
@@ -349,6 +382,34 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		destinatario.setTelefone(telefone);		
 		
 		return destinatario;
+	}
+	
+
+	/**
+	 * Grupo do detalhamento de Produtos e Serviços da NF-e
+	 * @return
+	 */
+	private ProdutoServico carregaProdutoServico(long idProdutoEdicao,long quantidade ){
+		ProdutoEdicao produtoEdicao = produtoEdicaoRepository.buscarPorId(idProdutoEdicao);
+		if(produtoEdicao == null){
+			throw new ValidacaoException(TipoMensagem.ERROR, "Produto Edição " + idProdutoEdicao + " não encontrado!");
+		}
+		
+		ProdutoServico produtoServico = new ProdutoServico();
+		
+		produtoServico.setCodigoBarras(Long.valueOf(produtoEdicao.getCodigoDeBarras()));
+		produtoServico.setCodigoProduto(produtoEdicao.getProduto().getCodigo());
+		produtoServico.setDescricaoProduto(produtoEdicao.getProduto().getDescricao());
+		produtoServico.setNcm(produtoEdicao.getProduto().getTipoProduto().getCodigoNCM());
+		produtoServico.setProdutoEdicao(produtoEdicao);
+		produtoServico.setQuantidade(quantidade);
+		//TODO UNIDADE COMERCIAL
+		produtoServico.setUnidade("UNIDADE");
+		produtoServico.setValorDesconto(produtoEdicao.getDesconto());
+		
+		
+		
+		return produtoServico;
 	}
 	
 }

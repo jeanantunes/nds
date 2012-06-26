@@ -12,11 +12,10 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -24,6 +23,7 @@ import br.com.abril.nds.util.CampoSecao;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.StringUtil;
 import br.com.abril.nds.util.TipoSecao;
+import br.com.abril.nds.util.export.fiscal.nota.comparator.NFESecaoComparator;
 
 /**
  * Classe responsável pela exportação de Nota Fiscal Eletrônica de arquivos TXT.
@@ -63,7 +63,7 @@ public class NFEExporter {
 	/**
 	 * Lista das sessoes do arquivo de exportação
 	 */
-	private Map<TipoSecao, List<CampoSecao>> mapSecoes = new HashMap<TipoSecao, List<CampoSecao>>();
+	private TreeMap<TipoSecao, List<CampoSecao>> mapSecoes = new TreeMap<TipoSecao, List<CampoSecao>>(new NFESecaoComparator());
 	
 	/**
 	 * Construtor padrão
@@ -77,7 +77,7 @@ public class NFEExporter {
 	 * Limpa todas as seções atuais.
 	 */
 	public void clear(){
-		this.mapSecoes = new HashMap<TipoSecao, List<CampoSecao>>();
+		this.mapSecoes = new TreeMap<TipoSecao, List<CampoSecao>>(new NFESecaoComparator());
 		this.listaNFEExporters = new ArrayList<NFEExporter>();
 	}
 	
@@ -98,6 +98,7 @@ public class NFEExporter {
 		
 		for (Field campo : campos) {
 			campo.setAccessible(true);
+			
 			Object valor = campo.get(notaFiscal);
 			this.processarAnnotations(campo, notaFiscal, valor);
 		}		
@@ -129,7 +130,7 @@ public class NFEExporter {
 		NFEExports nfeExports = objeto.getAnnotation(NFEExports.class);
 		
 		if (isNumeric(valor) || isDate(valor) || isLiteral(valor)) {
-
+			
 			if(nfeWhens != null){
 				for(NFEWhen when: nfeWhens.value()){
 					if(when.condition().valid(valor)){						
@@ -169,7 +170,7 @@ public class NFEExporter {
 	 * @param novoCampo campo
 	 */
 	private void addCampoSecao(CampoSecao novoCampo) {
-		
+			
 		List<CampoSecao> camposSecao = mapSecoes.get(novoCampo.getSessao());
 		
 		if (camposSecao == null || camposSecao.isEmpty()) {
@@ -231,7 +232,7 @@ public class NFEExporter {
 		
 		String primeiraSecao = null;
 		
-		int indexListaNFEExporters = 0;
+		Integer indexListaNFEExporters = 0;
 		
 		if (!this.listaNFEExporters.isEmpty()) { 
 			primeiraSecao = this.listaNFEExporters.get(indexListaNFEExporters).getPrimeiraSecao();
@@ -267,7 +268,7 @@ public class NFEExporter {
 	 * @param secao
 	 * @return
 	 */
-	private String listaNFEExportersToString(String primeiraSecao, int indexListaNFEExporters, TipoSecao secao){
+	private String listaNFEExportersToString(String primeiraSecao, Integer indexListaNFEExporters, TipoSecao secao){
 		
 		StringBuffer sBuffer = new StringBuffer();
 		
@@ -398,99 +399,23 @@ public class NFEExporter {
 	 * @param secao - Linha da seção atual.
 	 * @param valor - Valor a ser incluído.
 	 * @param posicao - Posição que será incluído na linha.
-	 * @return - Linha da seção com o campo adicionado.
+	 * @return Linha da seção com o campo adicionado.
 	 */
 	private String addStringCampoToStringSecao(String secao, String valor, int posicao) {
-				
-		String secaoAtualizada = STRING_VAZIA;
-		int qtCampos = countSeparator(secao, SEPARADOR_SECAO);
-		int positionInLayout = posicao + 1;
 		
-		if (qtCampos > positionInLayout ) { 
-			
-			String[]camposSecao = divideStringBySeparator(secao, SEPARADOR_SECAO);
-
-			int campoAtual = 0;
-			for (String campo: camposSecao) {
-				if (campoAtual == positionInLayout) {
-					secaoAtualizada += valor.concat(SEPARADOR_SECAO);
-				} else {
-					secaoAtualizada += campo.concat(SEPARADOR_SECAO);
-				}
-				campoAtual++;
-			}
-		} else {
-			secaoAtualizada = repetirStringNoFinal(secao, SEPARADOR_SECAO, positionInLayout - qtCampos) + valor + SEPARADOR_SECAO;
-		}
+		String[] quebra = secao.split("\\"+SEPARADOR_SECAO);
 		
-		return secaoAtualizada;
-	}
-	
-	/**
-	 * Adiciona o separado em uma quantidade de vezes especificada no parâmetro vezes.
-	 * 
-	 * @param valor - Valor da String.
-	 * @param separador - Caracteer a ser repetido.
-	 * @param vezes - Quantidade de vezes.
-	 * @return - String com os valores repetidos.
-	 */
-	private String repetirStringNoFinal(String valor, String separador, int vezes){
-		String repeticao = STRING_VAZIA;
-		for (int i = 0; i < vezes; i++) {
-			repeticao += SEPARADOR_SECAO;
+		quebra[posicao+1] = valor;
+		
+		StringBuilder atualizada = new StringBuilder();
+		
+		for (int i = 0; i < quebra.length-1; i++) {
+			atualizada.append(quebra[i]+SEPARADOR_SECAO);
 		}
-		return valor + repeticao;
+		atualizada.append(quebra[quebra.length-1]);
+		return atualizada.toString();
 	}
-	
-	/**
-	 * Conta a quantidade de separadores que contém o valor.
-	 * 
-	 * @param valor - Valor a ser verificado. 
-	 * @param separador - Valor que será contado.
-	 * @return - Quantidade de separadores achados.
-	 */
-	private int countSeparator(String valor, String separador){
-		int count = 0; 
-		int passaSeparador = 0;
-		for (int i = 0; i <= valor.length() - separador.length(); i++) {
-			if (valor.substring(i, i + separador.length()).equals(separador) && passaSeparador == 0) {
-				count++;
-				passaSeparador = separador.length() - 1;
-			} else if (passaSeparador > 0) {
-				passaSeparador--;
-			}
-		}
-		return count;
-	}
-	
-	/**
-	 * Divide uma String em um Array de String divididos pelo separador.
-	 * 
-	 * @param valor - Valor que será dividido.
-	 * @param separador - String de separação.
-	 * @return Array de String.
-	 */
-	private String[] divideStringBySeparator(String valor, String separador){
 
-		int count = countSeparator(valor, separador); 
-		int index = 0;
-		int passaSeparador = 0;
-		String valorCapturado = STRING_VAZIA;
-		String arrayValor[] = new String[count];
-		for (int i = 0; i <= valor.length() - separador.length(); i++) {
-			if (valor.substring(i, i + separador.length()).equals(separador) && passaSeparador == 0) {
-				arrayValor[index++] = valorCapturado;
-				passaSeparador = separador.length() - 1;
-				valorCapturado = STRING_VAZIA;
-			} else if (index < count) {
-				if (passaSeparador > 0) {
-					passaSeparador--;
-				}
-				valorCapturado += valor.substring(i, i + 1);
-			} 
-		}
-		return arrayValor;
-	}
 	
 	/**
 	 * Verifica se é Numérico (BigDecimal, Double, Integer, Long ou BigInteger).

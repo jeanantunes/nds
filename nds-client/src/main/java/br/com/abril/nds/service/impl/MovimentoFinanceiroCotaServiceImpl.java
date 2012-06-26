@@ -36,16 +36,6 @@ public class MovimentoFinanceiroCotaServiceImpl implements
 
 	@Autowired
 	private HistoricoMovimentoFinanceiroCotaRepository historicoMovimentoFinanceiroCotaRepository;
-
-	@Override
-	@Transactional
-	public MovimentoFinanceiroCota gerarMovimentoFinanceiroDebitoCredito(
-										MovimentoFinanceiroCotaDTO movimentoFinanceiroCotaDTO) {
-		
-		//TODO: REMOVER APOS REFACTOR
-		
-		return null;
-	}
 	
 	@Override
 	@Transactional

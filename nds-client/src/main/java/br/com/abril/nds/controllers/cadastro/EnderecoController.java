@@ -524,6 +524,11 @@ public class EnderecoController {
 		
 		List<String> listaMensagens = new ArrayList<String>();
 		
+		if (enderecoAssociacao.getTipoEndereco() == null) {
+			
+			listaMensagens.add("O preenchimento do campo [Tipo Endereco] é obrigatório.");
+		}
+
 		if (endereco.getCep() == null || endereco.getCep().isEmpty()) {
 			
 			listaMensagens.add("O preenchimento do campo [CEP] é obrigatório.");

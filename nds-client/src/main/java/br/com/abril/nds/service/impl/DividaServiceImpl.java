@@ -182,7 +182,7 @@ public class DividaServiceImpl implements DividaService {
 				movimentoFinanceiroCotaDTO.setTipoMovimentoFinanceiro(movimentoFinanceiro);
 				movimentoFinanceiroCotaDTO.setLancamentoManual(true);
 				
-				this.movimentoFinanceiroCotaService.gerarMovimentoFinanceiroDebitoCredito(movimentoFinanceiroCotaDTO);
+				this.movimentoFinanceiroCotaService.gerarMovimentosFinanceirosDebitoCredito(movimentoFinanceiroCotaDTO);
 					
 				if (!isIsento) {
 				
@@ -200,7 +200,7 @@ public class DividaServiceImpl implements DividaService {
 					
 					movimentoFinanceiroCotaDTO.setTipoMovimentoFinanceiro(movimentoFinanceiro);
 					
-					this.movimentoFinanceiroCotaService.gerarMovimentoFinanceiroDebitoCredito(movimentoFinanceiroCotaDTO);
+					this.movimentoFinanceiroCotaService.gerarMovimentosFinanceirosDebitoCredito(movimentoFinanceiroCotaDTO);
 					
 					BigDecimal multa = this.cobrancaService.calcularMulta(
 						cobrancaAtualizada.getBanco(), cobrancaAtualizada.getCota(), distribuidor, 
@@ -214,7 +214,7 @@ public class DividaServiceImpl implements DividaService {
 					
 					movimentoFinanceiroCotaDTO.setTipoMovimentoFinanceiro(movimentoFinanceiro);
 					
-					this.movimentoFinanceiroCotaService.gerarMovimentoFinanceiroDebitoCredito(movimentoFinanceiroCotaDTO);
+					this.movimentoFinanceiroCotaService.gerarMovimentosFinanceirosDebitoCredito(movimentoFinanceiroCotaDTO);
 					
 				}
 			}

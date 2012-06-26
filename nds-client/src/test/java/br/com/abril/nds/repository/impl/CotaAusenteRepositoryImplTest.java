@@ -60,7 +60,7 @@ public class CotaAusenteRepositoryImplTest extends AbstractRepositoryImplTest {
 		CotaAusente c =  Fixture.cotaAusente(data, true, cotaManoel);
 		save(c);
 		
-		TipoProduto t = Fixture.tipoProduto("teste", GrupoProduto.JORNAL, "sdsd", null, 9L);
+		TipoProduto t = Fixture.tipoProduto("teste", GrupoProduto.JORNAL, 1L, null, 9L);
 		save(t);
 		
 		Editor abril = Fixture.editoraAbril();

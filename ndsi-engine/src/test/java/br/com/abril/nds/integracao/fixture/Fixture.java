@@ -295,11 +295,11 @@ public class Fixture {
 	}
 
 	public static TipoProduto tipoRevista() {
-		return tipoProduto("Revistas", GrupoProduto.REVISTA, "99000642", null, 001L);
+		return tipoProduto("Revistas", GrupoProduto.REVISTA, 9900064l, null, 001L);
 	}
 	
 	public static TipoProduto tipoCromo() {
-		return tipoProduto("Cromos", GrupoProduto.CROMO, "1230004560", null, 002L);
+		return tipoProduto("Cromos", GrupoProduto.CROMO, 1230004560L, null, 002L);
 	}
 	
 	public static TipoFornecedor tipoFornecedorPublicacao() {
@@ -391,7 +391,7 @@ public class Fixture {
 	}
 
 	public static TipoProduto tipoProduto(String descricao, GrupoProduto grupo,
-			String codigoNCM, String codigoNBM, Long codigo) {
+			Long codigoNCM, String codigoNBM, Long codigo) {
 		TipoProduto tipoProduto = new TipoProduto();
 		tipoProduto.setDescricao(descricao);
 		tipoProduto.setGrupoProduto(grupo);
