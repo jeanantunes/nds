@@ -28,6 +28,8 @@ public abstract class Constantes {
 	
 	public static final String CNPJ = "cnpj";
 	
+	public static final Integer NUMERO_REPROGRAMACOES_LIMITE = 2;
+	
 }
 
 
