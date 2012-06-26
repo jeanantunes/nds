@@ -670,6 +670,25 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 	private boolean isProdutoBalanceavel(ProdutoLancamentoDTO produtoLancamento,
 										 DadosBalanceamentoLancamentoDTO dadosLancamentoBalanceamento) {
 		
+		if (!permiteReprogramacao(produtoLancamento)) {
+			
+			return false;
+		}
+		
+		if (StatusLancamento.BALANCEADO.equals(produtoLancamento.getStatusLancamento())
+				&& !dadosLancamentoBalanceamento.isConfiguracaoInicial()) {
+			
+			return false;
+		}
+		
+		return true;
+	}
+
+	/**
+	 * Verifica se o produto permite reprogramação ou não
+	 */
+	private boolean permiteReprogramacao(ProdutoLancamentoDTO produtoLancamento) {
+		
 		if (produtoLancamento.isPossuiRecebimentoFisico()
 				&& produtoLancamento.getNumeroReprogramacoes() != null
 				&& produtoLancamento.getNumeroReprogramacoes() >= Constantes.NUMERO_REPROGRAMACOES_LIMITE) {
@@ -678,12 +697,6 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 		}
 		
 		if (StatusLancamento.CANCELADO_GD.equals(produtoLancamento.getStatusLancamento())) {
-			
-			return false;
-		}
-		
-		if (StatusLancamento.BALANCEADO.equals(produtoLancamento.getStatusLancamento())
-				&& !dadosLancamentoBalanceamento.isConfiguracaoInicial()) {
 			
 			return false;
 		}
@@ -707,9 +720,13 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 				
 				produtoLancamento.setDataLancamentoDistribuidor(dataLancamento);
 				produtoLancamento.setNovaDataLancamento(dataLancamento);
+				
+				produtoLancamento.setPermiteReprogramacao(permiteReprogramacao(produtoLancamento));
 			}
 		}
 	}
+	
+	
 	
 	/**
 	 * Monta o DTO com as informações para realização do balanceamento.

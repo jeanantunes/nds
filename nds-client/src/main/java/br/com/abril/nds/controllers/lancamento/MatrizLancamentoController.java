@@ -7,11 +7,13 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.SerializationUtils;
 
 import br.com.abril.nds.client.util.PaginacaoUtil;
 import br.com.abril.nds.client.vo.DetalheProdutoLancamentoVO;
@@ -201,8 +203,25 @@ public class MatrizLancamentoController {
 	}
 	
 	@Post
-	public void reprogramarLancamentosSelecionados(List<ProdutoLancamentoDTO> listaProdutoLancamento,
+	public void reprogramarLancamentosSelecionados(List<LancamentoVO> produtosLancamento,
 												   String novaDataFormatada, String dataAntigaFormatada) {
+		
+		FiltroLancamentoDTO filtro = obterFiltroSessao();
+		
+		this.validarDadosReprogramar(novaDataFormatada);
+		
+		Date novaData = DateUtil.parseDataPTBR(novaDataFormatada);
+		
+		// TODO:
+//		this.validarPeriodoReprogramacao(novaData);
+		
+		this.validarListaParaReprogramacao(produtosLancamento);
+		
+		Date dataAntiga = DateUtil.parseDataPTBR(dataAntigaFormatada);
+		
+		this.atualizarMapaLancamento(produtosLancamento, novaData, dataAntiga);
+		
+		this.result.use(Results.json()).from(Results.nothing()).serialize();
 		
 		// TODO: reprogramar os lançamentos selecionados
 		
@@ -212,15 +231,258 @@ public class MatrizLancamentoController {
 	}
 	
 	@Post
-	public void reprogramarLancamentoUnico(ProdutoLancamentoDTO produtoLancamento,
+	public void reprogramarLancamentoUnico(LancamentoVO produtoLancamento,
 										   String dataAntigaFormatada) {
+		
+		String novaDataFormatada = produtoLancamento.getNovaData();
+		
+		Date novaData = DateUtil.parseDataPTBR(novaDataFormatada);
+		
+		FiltroLancamentoDTO filtro = obterFiltroSessao();
+		
+		this.validarDadosReprogramar(novaDataFormatada);
+
+		// TODO:
+//		this.validarPeriodoReprogramacao(novaData);
+		
+		List<LancamentoVO> produtosLancamento = new ArrayList<LancamentoVO>();
+		
+		if (produtoLancamento != null){
+			
+			produtosLancamento.add(produtoLancamento);
+		}
+		
+		this.validarListaParaReprogramacao(produtosLancamento);
+		
+		Date dataAntiga = DateUtil.parseDataPTBR(dataAntigaFormatada);
+		
+		this.atualizarMapaLancamento(produtosLancamento, novaData, dataAntiga);
+		
+		this.result.use(Results.json()).from(Results.nothing()).serialize();
 		
 		// TODO: reprogramar o lançamento informado
 		
 		// TODO: atualizar a matriz q estava na sessão
 		
 		// TODO: setar a matriz na sessão
-	}	
+	}
+	
+	/**
+	 * Valida os dados para reprogramação.
+	 * 
+	 * @param data - data para reprogramação
+	 */
+	private void validarDadosReprogramar(String data) {
+		
+		if (data == null || data.trim().isEmpty()) {
+			
+			throw new ValidacaoException(
+				new ValidacaoVO(TipoMensagem.WARNING, "O preenchimento da data é obrigatório!"));
+		}
+		
+		if (!DateUtil.isValidDatePTBR(data)) {
+			
+			throw new ValidacaoException(
+				new ValidacaoVO(TipoMensagem.WARNING, "Data inválida!"));
+		}
+	}
+	
+	/**
+	 * Valida a lista de produtos informados na tela para reprogramação.
+	 * 
+	 * @param produtosLancamento - lista de produtos de lançamento
+	 */
+	private void validarListaParaReprogramacao(List<LancamentoVO> produtosLancamento) {
+		
+		if (produtosLancamento == null || produtosLancamento.isEmpty()) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING,
+				"É necessário selecionar ao menos um produto para realizar a reprogramação!");
+		}
+	}
+	
+	/**
+	 * Método que atualiza o mapa de lançamento de acordo com as escolhas do usuário
+	 * 
+	 * @param produtosLancamento - lista de produtos a serem alterados
+	 * @param novaData - nova data de lançamento
+	 * @param dataAntiga - data antiga de lançamento
+	 */
+	private void atualizarMapaLancamento(List<LancamentoVO> produtosLancamento,
+										 Date novaData, Date dataAntiga) {
+		
+		BalanceamentoLancamentoDTO balanceamentoLancamentoSessao =
+			(BalanceamentoLancamentoDTO)
+				this.session.getAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO);
+		
+		TreeMap<Date, List<ProdutoLancamentoDTO>> matrizLancamentoSessao =
+				balanceamentoLancamentoSessao.getMatrizLancamento();
+		
+		TreeMap<Date, List<ProdutoLancamentoDTO>> matrizLancamento =
+			clonarMapaLancamento(matrizLancamentoSessao);
+		
+		List<ProdutoLancamentoDTO> listaProdutoLancamentoRemover =
+			new ArrayList<ProdutoLancamentoDTO>();
+		
+		List<ProdutoLancamentoDTO> listaProdutoLancamentoAdicionar =
+			new ArrayList<ProdutoLancamentoDTO>();
+		
+		this.montarListasParaAlteracaoMapa(produtosLancamento,
+									  	   matrizLancamento,
+									  	   listaProdutoLancamentoAdicionar,
+									  	   listaProdutoLancamentoRemover,
+									  	   dataAntiga);
+		
+		this.removerEAdicionarMapa(matrizLancamento,
+							  	   listaProdutoLancamentoAdicionar,
+							  	   listaProdutoLancamentoRemover,
+							  	   novaData);
+		
+		balanceamentoLancamentoSessao.setMatrizLancamento(matrizLancamento);
+		
+		this.session.setAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO,
+								  balanceamentoLancamentoSessao);
+	}
+	
+	/**
+	 * Cria uma cópia do mapa da matriz de lançamento.
+	 * Isso é necessário pois se houver alterações na cópia,
+	 * não altera os valores do mapa original por referência.
+	 * 
+	 * @param matrizLancamentoSessao - matriz de lançamento da sesão
+	 * 
+	 * @return cópia do mapa da matriz de lançamento
+	 */
+	@SuppressWarnings("unchecked")
+	private TreeMap<Date, List<ProdutoLancamentoDTO>> clonarMapaLancamento(
+								Map<Date, List<ProdutoLancamentoDTO>> matrizLancamentoSessao) {
+		
+		byte[] mapSerialized =
+			SerializationUtils.serialize(matrizLancamentoSessao);
+
+		TreeMap<Date, List<ProdutoLancamentoDTO>> matrizLancamento =
+			(TreeMap<Date, List<ProdutoLancamentoDTO>>) SerializationUtils.deserialize(mapSerialized);
+		
+		return matrizLancamento;
+	}
+	
+	/**
+	 * Monta as listas para alteração do mapa da matriz de lançamento
+	 * 
+	 * @param produtosLancamento - lista de produtos de lançamento
+	 * @param matrizLancamento - matriz de lançamento
+	 * @param listaProdutoLancamentoAdicionar - lista de produtos que serão adicionados
+	 * @param listaProdutoLancamentoRemover - lista de produtos que serão removidos
+	 * @param dataAntiga - data antiga de lançamento
+	 */
+	private void montarListasParaAlteracaoMapa(List<LancamentoVO> produtosLancamento,
+											   Map<Date, List<ProdutoLancamentoDTO>> matrizLancamento,   									 
+											   List<ProdutoLancamentoDTO> listaProdutoLancamentoAdicionar,
+											   List<ProdutoLancamentoDTO> listaProdutoLancamentoRemover,
+											   Date dataAntiga) {
+		
+		List<ProdutoLancamentoDTO> listaProdutoLancamentoSessao = null;
+		
+		if (dataAntiga != null) {
+			
+			listaProdutoLancamentoSessao = matrizLancamento.get(dataAntiga);
+			
+		} else {
+		
+			listaProdutoLancamentoSessao = new ArrayList<ProdutoLancamentoDTO>();
+			
+			for (Map.Entry<Date, List<ProdutoLancamentoDTO>> entry : matrizLancamento.entrySet()) {
+				
+				listaProdutoLancamentoSessao.addAll(entry.getValue());
+			}
+		}
+		
+		for (LancamentoVO produtoLancamento : produtosLancamento) {
+			
+			for (ProdutoLancamentoDTO produtoLancamentoDTO : listaProdutoLancamentoSessao) {
+				
+				if (produtoLancamentoDTO.getIdLancamento().equals(
+						Long.valueOf(produtoLancamento.getId()))) {
+					
+					listaProdutoLancamentoRemover.add(produtoLancamentoDTO);
+					
+					listaProdutoLancamentoAdicionar.add(produtoLancamentoDTO);
+					
+					break;
+				}
+			}
+		}
+	}
+	
+	/**
+	 * Remove e adiona os produtos no mapa da matriz de lançamento.
+	 * 
+	 * @param matrizLancamento - mapa da matriz de lançamento
+	 * @param listaProdutoLancamentoAdicionar - lista de produtos que serão adicionados
+	 * @param listaProdutoLancamentoRemover - lista de produtos que serão removidos
+	 * @param novaData - nova data de lançamento
+	 */
+	private void removerEAdicionarMapa(Map<Date, List<ProdutoLancamentoDTO>> matrizLancamento,   									 
+		     						   List<ProdutoLancamentoDTO> listaProdutoLancamentoAdicionar,
+		     						   List<ProdutoLancamentoDTO> listaProdutoLancamentoRemover,
+		     						   Date novaData) {
+		
+		//Remover do mapa
+		for (ProdutoLancamentoDTO produtoLancamentoDTO : listaProdutoLancamentoRemover) {
+		
+			List<ProdutoLancamentoDTO> produtosLancamentoDTO =
+				matrizLancamento.get(produtoLancamentoDTO.getNovaDataLancamento());
+			
+			produtosLancamentoDTO.remove(produtoLancamentoDTO);
+			
+			if (produtosLancamentoDTO.isEmpty()) {
+				
+				matrizLancamento.remove(produtoLancamentoDTO.getNovaDataLancamento());
+				
+			} else {
+				
+				matrizLancamento.put(produtoLancamentoDTO.getNovaDataLancamento(),
+									 produtosLancamentoDTO);
+			}
+		}
+		
+		//Adicionar no mapa
+		for (ProdutoLancamentoDTO produtoLancamentoDTO : listaProdutoLancamentoAdicionar) {
+			
+			if (produtoLancamentoDTO.isPermiteReprogramacao()) {
+			
+				List<ProdutoLancamentoDTO> listaProdutoLancamentoDTO =
+					matrizLancamento.get(novaData);
+				
+				if (listaProdutoLancamentoDTO == null) {
+					
+					listaProdutoLancamentoDTO = new ArrayList<ProdutoLancamentoDTO>();
+				}
+				
+				listaProdutoLancamentoDTO.add(produtoLancamentoDTO);
+				
+				produtoLancamentoDTO.setNovaDataLancamento(novaData);
+				
+				matrizLancamento.put(novaData, listaProdutoLancamentoDTO);
+				
+			} else {
+				
+				Date dataAntiga = produtoLancamentoDTO.getNovaDataLancamento();
+				
+				List<ProdutoLancamentoDTO> listaProdutoLancamentoDTO =
+					matrizLancamento.get(dataAntiga);
+				
+				if (listaProdutoLancamentoDTO == null) {
+					
+					listaProdutoLancamentoDTO = new ArrayList<ProdutoLancamentoDTO>();
+				}
+				
+				listaProdutoLancamentoDTO.add(produtoLancamentoDTO);
+				
+				matrizLancamento.put(dataAntiga, listaProdutoLancamentoDTO);
+			}
+		}
+	}
 	
 	/**
 	 * Obtém o resumo do período de balanceamento de lançamento.
@@ -310,8 +572,7 @@ public class MatrizLancamentoController {
 		//TODO - Pendente
 		produtoBalanceamentoVO.setDistribuicao("");
 		
-		//TODO 
-		//produtoBalanceamentoVO.setBloquearData();
+		produtoBalanceamentoVO.setBloquearData(!produtoLancamentoDTO.isPermiteReprogramacao());
 		
 		return produtoBalanceamentoVO;
 	}
