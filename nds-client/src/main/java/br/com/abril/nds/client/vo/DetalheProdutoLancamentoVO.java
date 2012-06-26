@@ -1,7 +1,6 @@
 package br.com.abril.nds.client.vo;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 
 /**
  * @author Discover Technology
@@ -20,13 +19,13 @@ public class DetalheProdutoLancamentoVO implements Serializable {
     
 	private String codigoProduto;
 
-	private BigDecimal precoCapa;
+	private String precoCapa;
 	
-	private BigDecimal precoComDesconto;
+	private String precoComDesconto;
 
 	private String fornecedor;
 
-	private Long codigoEditor;
+	private String codigoEditor;
 
 	private String nomeEditor;
 	
@@ -34,7 +33,7 @@ public class DetalheProdutoLancamentoVO implements Serializable {
 
     private String possuiBrinde;
 
-  	private Integer pacotePadrao;
+  	private String pacotePadrao;
 	
 	/**
 	 * Construtor padrão.
@@ -56,10 +55,10 @@ public class DetalheProdutoLancamentoVO implements Serializable {
 	 * @param pacotePadrao
 	 */
 	 public DetalheProdutoLancamentoVO(Long idProdutoEdicao, String nomeProduto,
-			String codigoProduto, BigDecimal precoCapa,
-			BigDecimal precoComDesconto, String fornecedor, Long codigoEditor,
+			String codigoProduto, String precoCapa,
+			String precoComDesconto, String fornecedor, String codigoEditor,
 			String nomeEditor, String chamadaCapa, String possuiBrinde,
-			Integer pacotePadrao) {
+			String pacotePadrao) {
 		super();
 		this.idProdutoEdicao = idProdutoEdicao;
 		this.nomeProduto = nomeProduto;
@@ -91,28 +90,28 @@ public class DetalheProdutoLancamentoVO implements Serializable {
 	/**
 	 * @return the precoCapa
 	 */
-	public BigDecimal getPrecoCapa() {
+	public String getPrecoCapa() {
 		return precoCapa;
 	}
 
 	/**
 	 * @param precoCapa the precoCapa to set
 	 */
-	public void setPrecoCapa(BigDecimal precoCapa) {
+	public void setPrecoCapa(String precoCapa) {
 		this.precoCapa = precoCapa;
 	}
 
 	/**
 	 * @return the precoComDesconto
 	 */
-	public BigDecimal getPrecoComDesconto() {
+	public String getPrecoComDesconto() {
 		return precoComDesconto;
 	}
 
 	/**
 	 * @param precoComDesconto the precoComDesconto to set
 	 */
-	public void setPrecoComDesconto(BigDecimal precoComDesconto) {
+	public void setPrecoComDesconto(String precoComDesconto) {
 		this.precoComDesconto = precoComDesconto;
 	}
 
@@ -147,14 +146,14 @@ public class DetalheProdutoLancamentoVO implements Serializable {
 	/**
 	 * @return the codigoEditor
 	 */
-	public Long getCodigoEditor() {
+	public String getCodigoEditor() {
 		return codigoEditor;
 	}
 
 	/**
 	 * @param codigoEditor the codigoEditor to set
 	 */
-	public void setCodigoEditor(Long codigoEditor) {
+	public void setCodigoEditor(String codigoEditor) {
 		this.codigoEditor = codigoEditor;
 	}
 
@@ -203,14 +202,14 @@ public class DetalheProdutoLancamentoVO implements Serializable {
 	/**
 	 * @return the pacotePadrao
 	 */
-	public Integer getPacotePadrao() {
+	public String getPacotePadrao() {
 		return pacotePadrao;
 	}
 
 	/**
 	 * @param pacotePadrao the pacotePadrao to set
 	 */
-	public void setPacotePadrao(Integer pacotePadrao) {
+	public void setPacotePadrao(String pacotePadrao) {
 		this.pacotePadrao = pacotePadrao;
 	}
 

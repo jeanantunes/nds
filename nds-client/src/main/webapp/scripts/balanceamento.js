@@ -160,29 +160,45 @@ function Balanceamento(pathTela, descInstancia) {
 		);
 	},
 	
+	
+	/**
+	 * Carrega imagem default para produtos sem imagem
+	 */
+	this.carregarImagemCapaDefault = function(w,h,a) {
+		
+		var imgDefault = $("<img />")
+		.attr('src', contextPath + "/capas/capa_sem_imagem.jpg")
+		.attr('width', w)
+		.attr('height', h)
+		.attr('alt', a);
+		
+		return imgDefault;
+	},
+	
 
 	/**
 	 * Carrega imagem de Produto Edição
 	 * @param idProdutoEdicao
 	 */
-	this.carregarImagemCapa = function(idProdutoEdicao) {
+	this.carregarImagemCapa = function(idProdutoEdicao,w,h,a,recipiente) {
+
+		$("#"+recipiente).empty();
+		
 		var img = $("<img />")
 		.load(
 		    function() {						
-			    $("#td_imagem_capa").append(img);
+		    	$("#"+recipiente).append(img);
 		    }
 		)
 		.error(
 		    function() {
-			    $("#td_imagem_capa").empty();
+		    	$("#"+recipiente).append(T.carregarImagemCapaDefault(w,h,a));
 		    }
 		)
 		.attr('src', contextPath + "/capa/" + idProdutoEdicao)
-		.attr('width', '129')
-		.attr('height', '170')
-		.attr('alt', 'Capa');
-		$("#td_imagem_capa").empty();
-		$("#td_imagem_capa").append(img);
+		.attr('width', w)
+		.attr('height', h)
+		.attr('alt', a);
 	},
 	
 	
@@ -193,15 +209,15 @@ function Balanceamento(pathTela, descInstancia) {
 	 */
 	this.popularDetalheProduto = function(result){
 		$("#detalheNome").html(result.nomeProduto);
-		$("#detalhePreco").html(result.precoVenda);
+		$("#detalhePreco").html(result.precoCapa);
 		$("#detalheCCapa").html(result.chamadaCapa);
 		$("#detalhePrecoDesc").html(result.precoComDesconto);
-		$("#detalheFornecedor").html(result.nomeFornecedor);
-		$("#detalheBrinde").html(result.brinde);
-		$("#detalheEditor").html(result.idEditor+"-"+result.nomeEditor);
+		$("#detalheFornecedor").html(result.fornecedor);
+		$("#detalheBrinde").html(result.possuiBrinde);
+		$("#detalheEditor").html(result.codigoEditor+"-"+result.nomeEditor);
 		$("#detalhePacote").html(result.pacotePadrao);
 
-		T.carregarImagemCapa(result.idProdutoEdicao);
+		T.carregarImagemCapa(result.idProdutoEdicao,'129','170','Capa',"td_imagem_capa");
 	},
 	
 	
