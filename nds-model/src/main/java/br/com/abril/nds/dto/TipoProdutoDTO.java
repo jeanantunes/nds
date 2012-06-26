@@ -17,7 +17,7 @@ public class TipoProdutoDTO implements Serializable {
 	private Long codigo;
 	
 	@Export(label="Código NCM")
-	private String codigoNCM;
+	private Long codigoNCM;
 
 	@Export(label="Código NBM")
 	private String codigoNBM;
@@ -29,7 +29,7 @@ public class TipoProdutoDTO implements Serializable {
 		
 	}
 
-	public TipoProdutoDTO(Long codigo, String codigoNCM, String codigoNBM,
+	public TipoProdutoDTO(Long codigo, Long codigoNCM, String codigoNBM,
 			String descricao) {
 		super();
 		this.codigo = codigo;
@@ -55,14 +55,14 @@ public class TipoProdutoDTO implements Serializable {
 	/**
 	 * @return the codigoNCM
 	 */
-	public String getCodigoNCM() {
+	public Long getCodigoNCM() {
 		return codigoNCM;
 	}
 
 	/**
 	 * @param codigoNCM the codigoNCM to set
 	 */
-	public void setCodigoNCM(String codigoNCM) {
+	public void setCodigoNCM(Long codigoNCM) {
 		this.codigoNCM = codigoNCM;
 	}
 

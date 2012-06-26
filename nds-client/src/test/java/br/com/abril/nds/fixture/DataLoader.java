@@ -483,6 +483,7 @@ public class DataLoader {
 	
 	private static EstudoCota estudoCotaSuper1Manoel;
 	private static EstudoCota estudoCotaManoel;
+	private static EstudoCota estudoCotaManoelVejaAtual;
 	private static EstudoCota estudoCotaManoelVeja2;
 	private static EstudoCota estudoCotaVeja2Joao;
 	private static EstudoCota estudoCotaCaprichoZe;
@@ -1440,7 +1441,7 @@ public class DataLoader {
 		Usuario usuario = Fixture.usuarioJoao();
 		save(session,usuario);
 
-		TipoProduto tipoProduto = Fixture.tipoProduto("Revista C.C.Consignado", GrupoProduto.REVISTA, "3721894", "473794321", 003L);
+		TipoProduto tipoProduto = Fixture.tipoProduto("Revista C.C.Consignado", GrupoProduto.REVISTA, 3721894l, "473794321", 003L);
 		save(session,tipoProduto);
 
 		TipoFornecedor tipoFornecedor = Fixture.tipoFornecedorPublicacao();
@@ -1552,7 +1553,7 @@ public class DataLoader {
 		Usuario usuario = Fixture.usuarioJoao();
 		save(session, usuario);
 	
-		TipoProduto tipoProduto = Fixture.tipoProduto("Revista C.C.Movimento", GrupoProduto.REVISTA, "431251324", "513543", 004L);
+		TipoProduto tipoProduto = Fixture.tipoProduto("Revista C.C.Movimento", GrupoProduto.REVISTA, 431251324l, "513543", 004L);
 		save(session, tipoProduto);
 	
 		TipoFornecedor tipoFornecedor = Fixture.tipoFornecedor("Tipo A",GrupoFornecedor.PUBLICACAO);
@@ -3014,7 +3015,6 @@ public class DataLoader {
 				.estudo(BigDecimal.TEN, lancamentoCapricho1.getDataLancamentoDistribuidor(), produtoEdicaoCapricho1);
 		session.save(estudoCapricho1);
 
-		//TOD
 		estudoVeja1Atual = Fixture
 				.estudo(BigDecimal.TEN, new Date(), produtoEdicaoVeja1);
 		session.save(estudoVeja1Atual);
@@ -3109,6 +3109,9 @@ public class DataLoader {
 
 		estudoCotaManoel = Fixture.estudoCota(BigDecimal.TEN, BigDecimal.TEN, estudoVeja1, cotaManoel);
 		save(session,estudoCotaManoel);
+		
+		estudoCotaManoelVejaAtual = Fixture.estudoCota(BigDecimal.TEN, BigDecimal.TEN, estudoVeja1Atual, cotaManoel);
+		save(session,estudoCotaManoelVejaAtual);
 		
 		estudoCotaManoelVeja2 = Fixture.estudoCota(BigDecimal.TEN, BigDecimal.TEN, estudoVeja2, cotaManoel);
 		save(session,estudoCotaManoelVeja2);
@@ -3221,7 +3224,7 @@ public class DataLoader {
 
 						new Date(), BigDecimal.TEN, StatusLancamento.EXPEDIDO,
 
-						null,expedicao, 1);
+						itemRecebimentoFisico,expedicao, 1);
 		session.save(lancamentoVeja2);
 
 		lancamentoSuper1 = Fixture
@@ -3742,10 +3745,10 @@ public class DataLoader {
 		tipoProdutoRevista = Fixture.tipoRevista();
 		session.save(tipoProdutoRevista);
 
-		tipoRefrigerante = Fixture.tipoProduto("Refrigerante",GrupoProduto.OUTROS, "5644566", null, 006L);
+		tipoRefrigerante = Fixture.tipoProduto("Refrigerante",GrupoProduto.OUTROS, 5644566l, null, 006L);
 		session.save(tipoRefrigerante);
 		
-		tipoCromo = Fixture.tipoProduto("Cromo",GrupoProduto.CROMO, "5644564", null, 005L);
+		tipoCromo = Fixture.tipoProduto("Cromo",GrupoProduto.CROMO, 5644564l, null, 005L);
 		session.save(tipoCromo);
 		
 		
@@ -8508,7 +8511,7 @@ public class DataLoader {
 				StatusLancamento.EXPEDIDO, null, 1);
 		
 		Lancamento lancamentoRoadieCrewEdicao101 = Fixture.lancamento(
-				TipoLancamento.PARCIAL, roadieCrewEdicao101,
+				TipoLancamento.LANCAMENTO, roadieCrewEdicao101,
 				dataLancamento,
 				dataRecolhimentoProximaSemana,
 				new Date(),
@@ -8710,7 +8713,7 @@ public class DataLoader {
 				StatusLancamento.EXPEDIDO, null, 1);
 		
 		Lancamento lancamentoGalileuEdicao102 = Fixture.lancamento(
-				TipoLancamento.PARCIAL, galileuEdicao102,
+				TipoLancamento.LANCAMENTO, galileuEdicao102,
 				dataLancamento,
 				dataRecolhimentoProximaSemana,
 				new Date(),
@@ -8730,7 +8733,7 @@ public class DataLoader {
 		dataRecolhimentoProximaSemana = DateUtil.adicionarDias(dataRecolhimentoProximaSemana, 1);
 		
 		Lancamento lancamentoGuitarPlayerEdicao102 = Fixture.lancamento(
-				TipoLancamento.PARCIAL, guitarPlayerEdicao102,
+				TipoLancamento.LANCAMENTO, guitarPlayerEdicao102,
 				dataLancamento,
 				dataRecolhimentoProximaSemana,
 				new Date(),
@@ -9246,24 +9249,6 @@ public class DataLoader {
 						DateUtil.adicionarDias(lancamentoGalileuEdicao101.getDataRecolhimentoPrevista(), 10),
 					    StatusLancamentoParcial.PROJETADO);
 		
-		LancamentoParcial lancamentoParcialGalileuEdicao102 = 
-				Fixture.criarLancamentoParcial(galileuEdicao102,
-						lancamentoGalileuEdicao102.getDataLancamentoPrevista(), 
-						DateUtil.adicionarDias(lancamentoGalileuEdicao102.getDataRecolhimentoPrevista(), 10),
-					    StatusLancamentoParcial.PROJETADO);
-		
-		LancamentoParcial lancamentoParcialGuitarPlayerEdicao102 = 
-				Fixture.criarLancamentoParcial(guitarPlayerEdicao102,
-						lancamentoGuitarPlayerEdicao102.getDataLancamentoPrevista(), 
-						DateUtil.adicionarDias(lancamentoGuitarPlayerEdicao102.getDataRecolhimentoPrevista(), 10),
-					    StatusLancamentoParcial.PROJETADO);
-		
-		LancamentoParcial lancamentoParcialRoadieCrewEdicao101 = 
-				Fixture.criarLancamentoParcial(roadieCrewEdicao101,
-						lancamentoRoadieCrewEdicao101.getDataLancamentoPrevista(), 
-						DateUtil.adicionarDias(lancamentoRoadieCrewEdicao101.getDataRecolhimentoPrevista(), 10),
-					    StatusLancamentoParcial.PROJETADO);
-		
 		LancamentoParcial lancamentoParcialRockBrigadeEdicao102 = 
 				Fixture.criarLancamentoParcial(rockBrigadeEdicao102,
 						lancamentoRockBrigadeEdicao102.getDataLancamentoPrevista(), 
@@ -9289,10 +9274,9 @@ public class DataLoader {
 					    StatusLancamentoParcial.PROJETADO);
 		
 		save(session, lancamentoParcialJavaMagazineEdicao101, lancamentoParcialJavaMagazineEdicao102, 
-				  lancamentoParcialGalileuEdicao101, lancamentoParcialGalileuEdicao102,
-				  lancamentoParcialGuitarPlayerEdicao102, lancamentoParcialRoadieCrewEdicao101,
-				  lancamentoParcialRockBrigadeEdicao102, lancamentoParcialValhallaEdicao101,
-				  lancamentoParcialValhallaEdicao102, lancamentoParcialGestaoEscolarEdicao102);
+				  lancamentoParcialGalileuEdicao101, lancamentoParcialRockBrigadeEdicao102,
+				  lancamentoParcialValhallaEdicao101, lancamentoParcialValhallaEdicao102,
+				  lancamentoParcialGestaoEscolarEdicao102);
 
 		//PERIODO LANCAMENTO PARCIAL
 		PeriodoLancamentoParcial periodoLancamentoParcialJavaMagazineEdicao101 = 
@@ -9307,12 +9291,6 @@ public class DataLoader {
 						lancamentoParcialGalileuEdicao101, 
 						StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.FINAL);
 		
-		PeriodoLancamentoParcial periodoLancamentoParcialRoadieCrewEdicao101 = 
-				Fixture.criarPeriodoLancamentoParcial(
-						lancamentoRoadieCrewEdicao101, 
-						lancamentoParcialRoadieCrewEdicao101, 
-						StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.PARCIAL);
-		
 		PeriodoLancamentoParcial periodoLancamentoParcialValhallaEdicao101 = 
 				Fixture.criarPeriodoLancamentoParcial(
 						lancamentoValhallaEdicao101, 
@@ -9324,18 +9302,6 @@ public class DataLoader {
 						lancamentoJavaMagazineEdicao102, 
 						lancamentoParcialJavaMagazineEdicao102, 
 						StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.PARCIAL);
-
-		PeriodoLancamentoParcial periodoLancamentoParcialGalileuEdicao102 = 
-				Fixture.criarPeriodoLancamentoParcial(
-						lancamentoGalileuEdicao102, 
-						lancamentoParcialGalileuEdicao102, 
-						StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.PARCIAL);
-		
-		PeriodoLancamentoParcial periodoLancamentoParcialGuitarPlayerEdicao102 = 
-				Fixture.criarPeriodoLancamentoParcial(
-						lancamentoGuitarPlayerEdicao102, 
-						lancamentoParcialGuitarPlayerEdicao102, 
-						StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.FINAL);
 
 		PeriodoLancamentoParcial periodoLancamentoParcialRockBrigadeEdicao102 = 
 				Fixture.criarPeriodoLancamentoParcial(
@@ -9356,10 +9322,9 @@ public class DataLoader {
 						StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.PARCIAL);
 		
 		save(session, periodoLancamentoParcialJavaMagazineEdicao101, periodoLancamentoParcialGalileuEdicao101,
-					  periodoLancamentoParcialRoadieCrewEdicao101, periodoLancamentoParcialValhallaEdicao101,
-					  periodoLancamentoParcialJavaMagazineEdicao102, periodoLancamentoParcialGalileuEdicao102,
-					  periodoLancamentoParcialGuitarPlayerEdicao102, periodoLancamentoParcialRockBrigadeEdicao102,
-					  periodoLancamentoParcialValhallaEdicao102, periodoLancamentoParcialGestaoEscolarEdicao102);
+					  periodoLancamentoParcialValhallaEdicao101, periodoLancamentoParcialJavaMagazineEdicao102,
+					  periodoLancamentoParcialRockBrigadeEdicao102, periodoLancamentoParcialValhallaEdicao102,
+					  periodoLancamentoParcialGestaoEscolarEdicao102);
 		
 		//ESTUDOS
 		Estudo estudoJavaMagazineEdicao101 = 

@@ -563,7 +563,7 @@ public class CobrancaServiceImpl implements CobrancaService {
 			movimento.setDataVencimento(cobrancaParcial.getDataVencimento());
 			movimento.setObservacao(pagamento.getObservacoes());
 			
-			this.movimentoFinanceiroCotaService.gerarMovimentoFinanceiroDebitoCredito(movimento);
+			this.movimentoFinanceiroCotaService.gerarMovimentosFinanceirosDebitoCredito(movimento);
 		}
 	}
 
