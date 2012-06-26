@@ -880,7 +880,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		movimentoFinanceiroCotaDTO.setLancamentoManual(false);
 		movimentoFinanceiroCotaDTO.setMovimentos(movimentosEstoqueCotaOperacaoConferenciaEncalhe);
 		
-		movimentoFinanceiroCotaService.gerarMovimentoFinanceiroDebitoCredito(movimentoFinanceiroCotaDTO);
+		movimentoFinanceiroCotaService.gerarMovimentosFinanceirosDebitoCredito(movimentoFinanceiroCotaDTO);
 
 		Set<String> nossoNumeroCollection = gerarCobrancaService.gerarCobranca(
 				controleConferenciaEncalheCota.getCota().getId(), 
