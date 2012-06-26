@@ -19,7 +19,6 @@ import br.com.abril.nds.model.cadastro.TipoEndereco;
 import br.com.abril.nds.model.dne.Bairro;
 import br.com.abril.nds.model.dne.Localidade;
 import br.com.abril.nds.model.dne.Logradouro;
-import br.com.abril.nds.model.dne.TipoLogradouro;
 import br.com.abril.nds.repository.EnderecoRepository;
 import br.com.abril.nds.service.EnderecoService;
 import br.com.abril.nds.service.exception.EnderecoUniqueConstraintViolationException;
@@ -238,19 +237,9 @@ public class EnderecoServiceImpl implements EnderecoService {
 	 */
 	@Override
 	@Transactional
-	public List<Bairro> obterBairrosPorCodigoIBGENome(String nome, String codigoIBGE) {
+	public List<Bairro> obterBairrosPorCodigoIBGENome(String nome, Long codigoIBGE) {
 
 		return this.enderecoRepository.obterBairrosPorCodigoIBGENome(nome, codigoIBGE);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	@Transactional
-	public List<TipoLogradouro> obterTiposLogradouroNome(String tipoLogradouro) {
-
-		return this.enderecoRepository.obterTiposLogradouroNome(tipoLogradouro);
 	}
 
 	/**
