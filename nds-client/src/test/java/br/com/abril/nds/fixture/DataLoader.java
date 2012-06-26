@@ -333,7 +333,11 @@ public class DataLoader {
 	private static ProdutoEdicao produtoEdicaoVeja2EncalheAnt;
 	private static ProdutoEdicao produtoEdicaoSuper1EncalheAnt;
 	private static ProdutoEdicao produtoEdicaoSuper2EncalheAnt;
-
+	private static ProdutoEdicao produtoVeja10;
+	private static ProdutoEdicao produtoSuperInteressante10;
+	private static ProdutoEdicao produtoCaras10;
+	private static ProdutoEdicao produtoPlacar10;
+	
 	private static Lancamento lancamentoVeja1;
 	private static Lancamento lancamentoVeja2;
 	private static Lancamento lancamentoSuper1;
@@ -356,12 +360,19 @@ public class DataLoader {
 	private static Lancamento lancamentoVeja2EcncalheAnt;
 	private static Lancamento lancamentoSuper1EcncalheAnt;
 	private static Lancamento lancamentoSuper2EcncalheAnt;
-
+	
+	private static Lancamento lancamentoVeja10ComEstudo;
+	private static Lancamento lancamentoSuperInteressante10ComEstudo;
+	private static Lancamento lancamentoCaras10ComEstudo;
+	private static Lancamento lancamentoPlacar10SemEstudo;
+		
 	private static NotaFiscalEntradaFornecedor notaFiscalFornecedor;
 	private static ItemNotaFiscalEntrada itemNotaFiscalFornecedor;
 	private static RecebimentoFisico recebimentoFisico;
 	private static ItemRecebimentoFisico itemRecebimentoFisico;
-
+	
+	private static NotaFiscalEntradaFornecedor notaFiscal10;
+		
 	private static EstoqueProduto estoqueProdutoVeja1;
 	private static EstoqueProduto estoqueProdutoVeja2;
 	private static EstoqueProduto estoqueProdutoVeja3;
@@ -413,6 +424,21 @@ public class DataLoader {
 	private static ItemNotaFiscalEntrada itemNotaPlacar1;
 	private static ItemRecebimentoFisico itemPlacar1;
 
+	private static RecebimentoFisico recebimentoFisico10;
+	
+	private static ItemNotaFiscalEntrada itemNotaVeja10;
+	private static ItemRecebimentoFisico itemVeja10;
+
+	private static ItemNotaFiscalEntrada itemNotaSuperInteressante10;
+	private static ItemRecebimentoFisico itemSuperInteressante10;
+
+	private static ItemNotaFiscalEntrada itemNotaCaras10;
+	private static ItemRecebimentoFisico itemCaras10;
+
+	private static ItemNotaFiscalEntrada itemNotaPlacar10;
+	private static ItemRecebimentoFisico itemPlacar10;
+
+	
 	private static Cota cotaJose;
 	private static Cota cotaManoel;
 	private static Cota cotaManoelCunha;
@@ -449,7 +475,12 @@ public class DataLoader {
 	private static Estudo estudoManequim1;
 	private static Estudo estudoNatGeo1;
 	private static Estudo estudoPlacar1;
-
+	
+	private static Estudo estudoVeja10;
+	private static Estudo estudoSuperInteressante10;
+	private static Estudo estudoCaras10;
+	private static Estudo estudoPlacar10;
+	
 	private static EstudoCota estudoCotaSuper1Manoel;
 	private static EstudoCota estudoCotaManoel;
 	private static EstudoCota estudoCotaManoelVeja2;
@@ -479,6 +510,11 @@ public class DataLoader {
 	private static EstudoCota estudoJoseManequim1;
 	private static EstudoCota estudoJoseNatGeo1;
 	private static EstudoCota estudoJoseEdicaoPlacar1;
+	
+	private static EstudoCota estudoCotaVeja10Guilherme;
+	private static EstudoCota estudoCotaSuperInteressante10Murilo;
+	private static EstudoCota estudoCotaCaras10Mariana;
+	private static EstudoCota estudoCotaPlacarOrlando;
 
 	private static Box box300Reparte;
 	private static Box box1;
@@ -2426,7 +2462,6 @@ public class DataLoader {
 				tipoMovimentoRecReparte, usuarioJoao, estoqueProdutoCotaInfoExame1,
 				BigDecimal.TEN, cotaManoel, StatusAprovacao.PENDENTE, null);
 
-		//TODO
 		movimentoEstoqueCota2.setEstudoCota(estudoCotaManoel);
 		movimentoEstoqueCota3.setEstudoCota(estudoCotaManoel);
 		movimentoEstoqueCota4.setEstudoCota(estudoCotaManoel);
@@ -2813,7 +2848,11 @@ public class DataLoader {
 		recebimentoFisico = Fixture.recebimentoFisico(
 			notaFiscalFornecedor, usuarioJoao, new Date(), new Date(), StatusConfirmacao.CONFIRMADO);
 		session.save(recebimentoFisico);
-
+		
+		recebimentoFisico10 = Fixture.recebimentoFisico(
+				notaFiscal10, usuarioJoao, new Date(), new Date(), StatusConfirmacao.CONFIRMADO);
+			session.save(recebimentoFisico);
+			
 		itemRecebimentoFisico = Fixture.itemRecebimentoFisico(itemNotaFiscalFornecedor, recebimentoFisico, BigDecimal.TEN);
 		session.save(itemRecebimentoFisico);
 
@@ -2853,9 +2892,29 @@ public class DataLoader {
 
 		itemPlacar1 = Fixture.itemRecebimentoFisico(itemNotaPlacar1, recebimentoFisico, BigDecimal.TEN);
 		session.save(itemPlacar1);
+		
+		
+		itemVeja10 = Fixture.itemRecebimentoFisico(itemNotaVeja10, recebimentoFisico, new BigDecimal(120));
+		session.save(itemVeja10);
+		
+		itemSuperInteressante10 = Fixture.itemRecebimentoFisico(itemNotaSuperInteressante10, recebimentoFisico, new BigDecimal(130));
+		session.save(itemSuperInteressante10);
+		
+		itemCaras10 = Fixture.itemRecebimentoFisico(itemNotaCaras10, recebimentoFisico, new BigDecimal(140));
+		session.save(itemCaras10);
+		
+		itemPlacar10 = Fixture.itemRecebimentoFisico(itemNotaPlacar10, recebimentoFisico, new BigDecimal(150));
+		session.save(itemPlacar10);
+		
 	}
 
 	private static void criarNotasFiscais(Session session) {
+		
+		notaFiscal10 = Fixture
+				.notaFiscalEntradaFornecedor(cfop5102, fornecedorDinap.getJuridica(), fornecedorDinap, tipoNotaFiscalRecebimento,
+						usuarioJoao, new BigDecimal(50), new BigDecimal(10), BigDecimal.TEN);
+		session.save(notaFiscal10);
+		
 		notaFiscalFornecedor = Fixture
 				.notaFiscalEntradaFornecedor(cfop5102, fornecedorDinap.getJuridica(), fornecedorDinap, tipoNotaFiscalRecebimento,
 						usuarioJoao, new BigDecimal(15), new BigDecimal(5), BigDecimal.TEN);
@@ -2913,7 +2972,25 @@ public class DataLoader {
 		itemNotaPlacar1 = Fixture.itemNotaFiscal(produtoEdicaoPlacar1,
 				usuarioJoao, notaFiscalFornecedor, new Date(), new Date(), TipoLancamento.LANCAMENTO, BigDecimal.TEN);
 		session.save(itemNotaPlacar1); 
-
+		
+		
+		
+		itemNotaVeja10 = Fixture.itemNotaFiscal(produtoVeja10,
+				usuarioJoao, notaFiscal10, new Date(), new Date(), TipoLancamento.LANCAMENTO, new BigDecimal(120));
+		session.save(itemNotaVeja10);
+		
+		itemNotaSuperInteressante10 = Fixture.itemNotaFiscal(produtoSuperInteressante10,
+				usuarioJoao, notaFiscal10, new Date(), new Date(), TipoLancamento.LANCAMENTO, new BigDecimal(130));
+		session.save(itemNotaSuperInteressante10);
+		
+		itemNotaCaras10 = Fixture.itemNotaFiscal(produtoVeja10,
+				usuarioJoao, notaFiscal10, new Date(), new Date(), TipoLancamento.LANCAMENTO, new BigDecimal(140));
+		session.save(itemNotaCaras10);
+		
+		itemNotaPlacar10 = Fixture.itemNotaFiscal(produtoPlacar10,
+				usuarioJoao, notaFiscal10, new Date(), new Date(), TipoLancamento.LANCAMENTO, new BigDecimal(150));
+		session.save(itemNotaPlacar10);
+		
 	}
 
 	private static void criarEstudos(Session session) {
@@ -3000,6 +3077,18 @@ public class DataLoader {
 				.estudo(BigDecimal.TEN, lancamentoPlacar1.getDataLancamentoDistribuidor(), produtoEdicaoPlacar1);
 		session.save(estudoPlacar1);
 
+		estudoVeja10 = Fixture
+				.estudo(new BigDecimal(120), lancamentoVeja10ComEstudo.getDataLancamentoDistribuidor(), produtoVeja10);
+		session.save(estudoVeja10);
+				
+		estudoSuperInteressante10= Fixture
+				.estudo(new BigDecimal(130), lancamentoSuperInteressante10ComEstudo.getDataLancamentoDistribuidor(), produtoSuperInteressante10);
+		session.save(estudoSuperInteressante10);
+		
+		estudoCaras10 = Fixture
+				.estudo(new BigDecimal(140), lancamentoCaras10ComEstudo.getDataLancamentoDistribuidor(), produtoCaras10);
+		session.save(estudoCaras10);
+				
 	}
 
     private static void criarEstudosCota(Session session) {
@@ -3092,6 +3181,16 @@ public class DataLoader {
 		estudoJoseEdicaoPlacar1 = Fixture.estudoCota(new BigDecimal(10), new BigDecimal(10), estudoPlacar1, cotaJose);
 		save(session,estudoJoseEdicaoPlacar1);
 
+		
+		estudoCotaVeja10Guilherme = Fixture.estudoCota(new BigDecimal(10), new BigDecimal(10), estudoVeja10, cotaGuilherme);
+		save(session,estudoCotaVeja10Guilherme);
+
+		estudoCotaSuperInteressante10Murilo = Fixture.estudoCota(new BigDecimal(10), new BigDecimal(10), estudoSuperInteressante10, cotaMurilo);
+		save(session,estudoCotaSuperInteressante10Murilo);
+
+		estudoCotaCaras10Mariana = Fixture.estudoCota(new BigDecimal(10), new BigDecimal(10), estudoCaras10, cotaMariana);
+		save(session,estudoCotaCaras10Mariana);
+		
 	}
 
 	private static void criarLancamentosExpedidos(Session session){
@@ -3371,7 +3470,54 @@ public class DataLoader {
 
 						null, 1);
 		session.save(lancamentoSuper2EcncalheAnt);
+		
+		lancamentoVeja10ComEstudo = Fixture
+				.lancamento(
+						TipoLancamento.LANCAMENTO,
+						produtoVeja10,
+						DateUtil.adicionarDias(new Date(), 2),
+						DateUtil.adicionarDias(new Date(), 30), new Date(),
 
+						new Date(), BigDecimal.TEN, StatusLancamento.ESTUDO_FECHADO,
+
+						itemVeja10, 1);
+		session.save(lancamentoVeja10ComEstudo);
+		
+		lancamentoSuperInteressante10ComEstudo = Fixture
+				.lancamento(
+						TipoLancamento.LANCAMENTO,
+						produtoSuperInteressante10,
+						DateUtil.adicionarDias(new Date(), 2),
+						DateUtil.adicionarDias(new Date(), 20), new Date(),
+
+						new Date(), BigDecimal.TEN, StatusLancamento.ESTUDO_FECHADO,
+
+						itemSuperInteressante10, 2);
+		session.save(lancamentoSuperInteressante10ComEstudo);
+		
+		lancamentoCaras10ComEstudo = Fixture
+				.lancamento(
+						TipoLancamento.LANCAMENTO,
+						produtoCaras10,
+						DateUtil.adicionarDias(new Date(), 2),
+						DateUtil.adicionarDias(new Date(), 20), new Date(),
+
+						new Date(), BigDecimal.TEN, StatusLancamento.ESTUDO_FECHADO,
+
+						itemCaras10, 3);
+		session.save(lancamentoCaras10ComEstudo);
+		
+		lancamentoPlacar10SemEstudo = Fixture
+				.lancamento(
+						TipoLancamento.LANCAMENTO,
+						produtoPlacar10,
+						DateUtil.adicionarDias(new Date(), 2),
+						DateUtil.adicionarDias(new Date(), 30), new Date(),
+
+						new Date(), BigDecimal.TEN, StatusLancamento.CONFIRMADO,
+
+						itemPlacar10, 4);
+		session.save(lancamentoPlacar10SemEstudo);
 	}
 
 	private static void criarProdutosEdicao(Session session) {
@@ -3485,6 +3631,26 @@ public class DataLoader {
 				"WZ5", 23L, produtoSuper, null, false);
 		session.save(produtoEdicaoSuper2EncalheAnt);
 
+		produtoVeja10 = Fixture.produtoEdicao("COD_100", 10L, 50, 14,
+				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(20),
+				"WZ5", 23L, produtoVeja, null, false);
+		session.save(produtoVeja10);
+		
+		produtoSuperInteressante10 = Fixture.produtoEdicao("COD_101", 10L, 50, 14,
+				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(25),
+				"WZ5", 23L, produtoSuper, null, false);
+		session.save(produtoSuperInteressante10);
+		
+		produtoCaras10 = Fixture.produtoEdicao("COD_102", 10L, 30, 14,
+				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(18),
+				"WZ5", 23L, produtoCaras, null, false);
+		session.save(produtoCaras10);
+		
+		produtoPlacar10 = Fixture.produtoEdicao("COD_103", 10L, 15, 14,
+				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(12),
+				"WZ5", 23L, produtoPlacar, null, false);
+		session.save(produtoPlacar10);
+
 	}
 
 	private static void criarProdutos(Session session) {
@@ -3554,13 +3720,15 @@ public class DataLoader {
 		session.save(produtoNatGeo);
 
 		produtoPlacar = Fixture.produtoPlacar(tipoProdutoRevista);
-		produtoPlacar.addFornecedor(fornecedorDinap);
+		produtoPlacar.addFornecedor(fornecedorFc);
 		produtoPlacar.setEditor(editoraAbril);
 		session.save(produtoPlacar);
 
 		cocaCola = Fixture.produto("564", "Coca-Cola", "Coca-Cola", PeriodicidadeProduto.MENSAL, tipoRefrigerante, 5, 5, BigDecimal.TEN);
 		cocaCola.addFornecedor(fornecedorAcme);
 		save(session, cocaCola);
+	
+	
 	}
 
 	private static void criarEditores(Session session) {
@@ -3781,7 +3949,7 @@ public class DataLoader {
 		cotaGuilherme = Fixture.cota(333, guilherme, SituacaoCadastro.ATIVO,box2);
 		cotaGuilherme.setSugereSuspensao(true);
 		save(session, cotaGuilherme);
-		ContratoCota contrato4 = Fixture.criarContratoCota(cotaGuilherme,false,DateUtil.parseData("01/01/2011", "dd/mm/yyyy"), DateUtil.parseData("01/01/2013", "dd/mm/yyyy"), 12, 30);
+		ContratoCota contrato4 = Fixture.criarContratoCota(cotaGuilherme,true,DateUtil.parseData("01/01/2011", "dd/mm/yyyy"), DateUtil.parseData("01/01/2013", "dd/mm/yyyy"), 12, 30);
 		save(session, contrato4);
 		
 		

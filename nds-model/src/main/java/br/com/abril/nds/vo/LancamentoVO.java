@@ -2,31 +2,50 @@ package br.com.abril.nds.vo;
 
 import java.io.Serializable;
 
+import br.com.abril.nds.util.export.Export;
+import br.com.abril.nds.util.export.Exportable;
+
+@Exportable
 public class LancamentoVO  implements Serializable {
 
 	private static final long serialVersionUID = 2186060384671120600L;
 
+	
 	private Long id;
+	@Export(label="Codigo")
 	private String codigoProduto;
+	@Export(label="Produto")
 	private String nomeProduto;
+	@Export(label="Edição")
 	private Long numEdicao;
+	@Export(label="Preço Capa R$")
 	private String preco;
+	@Export(label="Pcte Padrão")
 	private int pacotePadrao;
+	@Export(label="Reparte")
 	private String reparte;
+	@Export(label="Lançamento")
 	private String lancamento;
+	@Export(label="Recolhimento")
 	private String dataRecolhimento;
 	private Long idFornecedor;
+	@Export(label="Fornecedor")
 	private String nomeFornecedor;
+	@Export(label="Previsto")
 	private String dataPrevisto;
+	@Export(label="Matriz/Distrib")
 	private String dataMatrizDistrib;
+	@Export(label="TotalR$")
 	private String total;
 	private String fisico;
 	private String qtdeEstudo;
+	private String qtdeReprogramacoes;
 	private boolean semFisico;
 	private boolean cancelamentoGD;
 	private boolean furo;
 	private boolean estudoFechado;
 	private boolean expedido;
+	
 	
 	public Long getId() {
 		return id;
@@ -219,6 +238,14 @@ public class LancamentoVO  implements Serializable {
 		} else if (!id.equals(other.id))
 			return false;
 		return true;
+	}
+
+	public String getQtdeReprogramacoes() {
+		return qtdeReprogramacoes;
+	}
+
+	public void setQtdeReprogramacoes(String qtdeReprogramacoes) {
+		this.qtdeReprogramacoes = qtdeReprogramacoes;
 	}
 
 }
