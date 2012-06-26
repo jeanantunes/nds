@@ -38,7 +38,7 @@ public class MovimentoFinanceiroServicoEntregaJob implements Job {
 		
 		if (dto != null){
 			
-			this.movimentoFinanceiroCotaService.gerarMovimentoFinanceiroDebitoCredito(dto);
+			this.movimentoFinanceiroCotaService.gerarMovimentosFinanceirosDebitoCredito(dto);
 		}
 	}
 

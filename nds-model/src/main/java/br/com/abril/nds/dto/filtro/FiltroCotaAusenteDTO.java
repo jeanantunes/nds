@@ -1,7 +1,6 @@
 package br.com.abril.nds.dto.filtro;
 
 import java.io.Serializable;
-import java.util.Calendar;
 import java.util.Date;
 
 import br.com.abril.nds.util.DateUtil;
@@ -15,7 +14,6 @@ public class FiltroCotaAusenteDTO implements Serializable {
 	private static final long serialVersionUID = -2816898317696471483L;
 
 	@Export(label = "Data")
-	
 	private Date data;
 	@Export(label = "Box")
 	

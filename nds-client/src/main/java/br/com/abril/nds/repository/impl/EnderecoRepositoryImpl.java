@@ -16,7 +16,6 @@ import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.dne.Bairro;
 import br.com.abril.nds.model.dne.Localidade;
 import br.com.abril.nds.model.dne.Logradouro;
-import br.com.abril.nds.model.dne.TipoLogradouro;
 import br.com.abril.nds.repository.EnderecoRepository;
 
 /**
@@ -104,12 +103,9 @@ public class EnderecoRepositoryImpl extends AbstractRepository<Endereco, Long> i
 		
 		hql.append(" select uf.sigla ")
 		   .append(" from UnidadeFederacao uf ")
-		   .append(" where uf.pais.sigla = :siglaBrasil ")
 		   .append(" order by uf.sigla "); 
 
 		Query query = this.getSession().createQuery(hql.toString());
-		
-		query.setParameter("siglaBrasil", "BR");
 		
 		return query.list();
 	}
@@ -166,7 +162,7 @@ public class EnderecoRepositoryImpl extends AbstractRepository<Endereco, Long> i
 	 */
 	@Override
 	@SuppressWarnings("unchecked")
-	public List<Bairro> obterBairrosPorCodigoIBGENome(String nome, String codigoIBGE) {
+	public List<Bairro> obterBairrosPorCodigoIBGENome(String nome, Long codigoIBGE) {
 
 		Criteria criteria = super.getSession().createCriteria(Bairro.class);
 
@@ -175,20 +171,6 @@ public class EnderecoRepositoryImpl extends AbstractRepository<Endereco, Long> i
 		criteria.add(Restrictions.and(Restrictions.eq("localidade.codigoMunicipioIBGE", codigoIBGE),
 									  Restrictions.ilike("nome",
 											  nome, MatchMode.START)));
-
-		return criteria.list();
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	@SuppressWarnings("unchecked")
-	public List<TipoLogradouro> obterTiposLogradouroNome(String tipoLogradouro) {
-		
-		Criteria criteria = super.getSession().createCriteria(TipoLogradouro.class);
-
-		criteria.add(Restrictions.ilike("nome", tipoLogradouro, MatchMode.START));
 
 		return criteria.list();
 	}

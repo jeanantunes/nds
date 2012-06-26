@@ -7,11 +7,10 @@
 
 var pathTela = "${pageContext.request.contextPath}";
 
-var B = new Balanceamento(pathTela);
+var B = new Balanceamento(pathTela, "B");
 
 var linhasDestacadas = [];
 var lancamentosSelecionados = [];
-
 
 function popup_reprogramar() {
 	$( "#dialog-reprogramar" ).dialog({
@@ -79,6 +78,7 @@ function voltarConfiguracaoOriginal() {
 
 .ui-datepicker { z-index: 1000 !important; }
 .ui-datepicker-today a { display:block !important; }
+.dialog-detalhe-produto { display:none; }
 
 .gridLinhaDestacada {
   background:#F00; 
@@ -164,8 +164,22 @@ function voltarConfiguracaoOriginal() {
            <br clear="all" />
        	   <table id="lancamentosProgramadosGrid" class="lancamentosProgramadosGrid"></table>
           
-            <span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;"><img src="<c:url value='images/ico_excel.png'/>" hspace="5" border="0" />Arquivo</a></span>
-              <span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="<c:url value='images/ico_impressora.gif'/>" alt="Imprimir" hspace="5" border="0" />Imprimir</a></span>
+            
+               <span class="bt_novos" title="Gerar Arquivo">
+<!-- ARQUIVO -->
+<a href="${pageContext.request.contextPath}/matrizLancamento/exportar?fileType=XLS">
+					<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
+					Arquivo
+				</a></span>
+            
+            
+			
+				<span class="bt_novos" title="Imprimir">
+<!-- IMPRIMIR -->	
+<a href="${pageContext.request.contextPath}/matrizLancamento/exportar?fileType=PDF">
+					<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
+					Imprimir
+				</a></span>
              
               <span class="bt_novos" title="Reprogramar"><a href="javascript:;" onclick="abrirReprogramar();"><img src="<c:url value='images/ico_reprogramar.gif'/>"  hspace="5" border="0" />Reprogramar</a></span>
          	  <div style="margin-top:15px; margin-left:30px; float:left;"><strong>Valor Total R$: <span id="valorTotal"></span></strong></div>
@@ -181,113 +195,149 @@ function voltarConfiguracaoOriginal() {
       </fieldset>
     </div>
 </div>
+
+
+<div id="dialog-detalhe-produto" title="Detalhes do Produto" style="display:none;">
+<fieldset style="width:700px!important;">
+<legend>Detalhes do Produto</legend>
+<table width="694" border="0" cellspacing="0" cellpadding="0">
+  <tr>
+  
+    <td id="td_imagem_capa" width="129">
+        <img alt="Capa" src="" width="129" height="170" />
+    </td>
+    
+    <td width="565" valign="top">
+	    <table width="560" border="0" align="right" cellpadding="1" cellspacing="1">
+	      <tr>
+	        <td width="104" style="border-bottom:1px solid #ccc;"><strong>Nome:</strong></td>
+	        <td width="175" style="border-bottom:1px solid #ccc;" id="detalheNome" name="detalheNome"></td>
+	        <td width="137" style="border-bottom:1px solid #ccc;"><strong>Preço Capa R$:</strong></td>
+	        <td width="131" style="border-bottom:1px solid #ccc;" id="detalhePreco" name="detalhePreco"></td>
+	      </tr>
+	      <tr>
+	        <td style="border-bottom:1px solid #ccc;"><strong>Chamada Capa:</strong></td>
+	        <td style="border-bottom:1px solid #ccc;" id="detalheCCapa" name="detalheCCapa"></td>
+	        <td style="border-bottom:1px solid #ccc;"><strong>Preço Desconto R$:</strong></td>
+	        <td style="border-bottom:1px solid #ccc;"  id="detalhePrecoDesc" name="detalhePrecoDesc"></td>
+	      </tr>
+	      <tr>
+	        <td style="border-bottom:1px solid #ccc;"><strong>Fornecedor:</strong></td>
+	        <td style="border-bottom:1px solid #ccc;" id="detalheFornecedor" name="detalheFornecedor"></td>
+	        <td style="border-bottom:1px solid #ccc;"><strong>Brinde</strong></td>
+	        <td style="border-bottom:1px solid #ccc;" id="detalheBrinde" name="detalheBrinde"></td>
+	      </tr>
+	      <tr>
+	        <td style="border-bottom:1px solid #ccc;"><strong>Editor:</strong></td>
+	        <td style="border-bottom:1px solid #ccc;" id="detalheEditor" name="detalheEditor"></td>
+	        <td style="border-bottom:1px solid #ccc;"><strong>Pacote Padrão:</strong></td>
+	        <td style="border-bottom:1px solid #ccc;" id="detalhePacote" name="detalhePacote"></td>
+	      </tr>
+	    </table>
+    </td>
+  </tr>
+</table>
+        
+</fieldset>
+</div>
+
+
 </form>
 
 <script>
-	
+
 $(function() {
 	$("#lancamentosProgramadosGrid").flexigrid({
-			colModel : [  {
-				display : 'Código',
-				name : 'codigoProduto',
-				width : 40,
-				sortable : true,
-				align : 'center'
-			}, {
-				display : 'Produto',
-				name : 'nomeProduto',
-				width : 90,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Edição',
-				name : 'numEdicao',
-				width : 40,
-				sortable : true,
-				align : 'center'
-			}, {
-				display : 'Preço Capa R$',
-				name : 'preco',
-				width : 75,
-				sortable : true,
-				align : 'right'
-			}, {
-				display : 'Pcte Padrão',
-				name : 'pacotePadrao',
-				width : 60,
-				sortable : true,
-				align : 'center'
-			}, {
-				display : 'Reparte',
-				name : 'reparte',
-				width : 50,
-				sortable : true,
-				align : 'center'
-			}, {
-				display : 'Físico',
-				name : 'fisico',
-				width : 50,
-				sortable : true,
-				align : 'center'
-			}, {
-				display : 'Estudo Gerado',
-				name : 'qtdeEstudo',
-				width : 75,
-				sortable : true,
-				align : 'center'
-			},{
-				display : 'Lançamento',
-				name : 'lancamento',
-				width : 65,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Recolhimento',
-				name : 'dataRecolhimento',
-				width : 75,
-				sortable : true,
-				align : 'center'
-			}, {
-				display : 'Fornecedor',
-				name : 'nomeFornecedor',
-				width : 70,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Previsto',
-				name : 'dataPrevisto',
-				width : 60,
-				sortable : true,
-				align : 'center'
-			}, {
-				display : 'Matriz/Distrib.',
-				name : 'dataMatrizDistrib',
-				width : 100,
-				sortable : true,
-				align : 'center'
-			},{
-				display : 'Total R$',
-				name : 'total',
-				width : 60,
-				sortable : true,
-				align : 'right'
-			},{
-				display : 'Reprogramar',
-				name : 'reprogramar',
-				width : 65,
-				sortable : false,
-				align : 'center'
-			}],
-			sortname : "dataMatrizDistrib",
-			sortorder : "asc",
-			usepager : true,
-			useRp : true,
-			rp : 15,
-			showTableToggleBtn : true,
-			width : 960,
-			height : 180,
-			disableSelect : true
+		colModel : [  {
+			display : 'Código',
+			name : 'codigoProduto',
+			width : 60,
+			sortable : true,
+			align : 'center'
+		}, {
+			display : 'Produto',
+			name : 'nomeProduto',
+			width : 100,
+			sortable : true,
+			align : 'left'
+		}, {
+			display : 'Edição',
+			name : 'numEdicao',
+			width : 35,
+			sortable : true,
+			align : 'center'
+		}, {
+			display : 'Preço Capa R$',
+			name : 'preco',
+			width : 50,
+			sortable : true,
+			align : 'right'
+		}, {
+			display : 'Reparte',
+			name : 'reparte',
+			width : 40,
+			sortable : true,
+			align : 'center'
+		}, {
+			display : 'Lançamento',
+			name : 'lancamento',
+			width : 60,
+			sortable : true,
+			align : 'left'
+		}, {
+			display : 'Recolhimento',
+			name : 'dataRecolhimento',
+			width : 70,
+			sortable : true,
+			align : 'center'
+		},{
+			display : 'Total R$',
+			name : 'total',
+			width : 40,
+			sortable : true,
+			align : 'right'
+		}, {
+			display : 'Físico',
+			name : 'fisico',
+			width : 40,
+			sortable : true,
+			align : 'center'
+		}, {
+			display : 'Distribuição',
+			name : 'distribuicao',
+			width : 60,
+			sortable : true,
+			align : 'center'
+		}, {
+			display : 'Previsto',
+			name : 'dataPrevisto',
+			width : 60,
+			sortable : true,
+			align : 'center'
+		}, {
+			display : 'Matriz/Distrib.',
+			name : 'novaData',
+			width : 105,
+			sortable : true,
+			align : 'center'
+		},{
+			display : 'Reprogramar',
+			name : 'reprogramar',
+			width : 65,
+			sortable : true,
+			align : 'center'
+		}],
+		sortname : "novaData",
+		sortorder : "asc",
+		usepager : true,
+		useRp : true,
+		rp : 15,
+		showTableToggleBtn : true,
+		width : 960,
+		height : 180,
+		disableSelect : true
 		});
+	
 });
 		
 		

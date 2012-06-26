@@ -1,32 +1,57 @@
 package br.com.abril.nds.dto;
 
+import java.util.List;
+
 public class SlipVendaEncalheDTO {
 
 	//CABEÇALHO SLIP
-	String numeroCota;
-	String nomeCota;
-	String numeroBox;
-	String descricaoBox;
-	String data;
-	String hora;
-	String usuario;
-	
-	//ITEM SLIP
-	String codigo;
-	String produto;
-	String edicao;
-	String preco;
-	String quantidade;
-	String total;
+	private String numeroCota;
+	private String nomeCota;
+	private String numeroBox;
+	private String descricaoBox;
+	private String data;
+	private String hora;
+	private String usuario;
+	private String numeroSlip;
 	
 	//TOTALIZAÇÕES
-	String quantidadeTotalVista;
-	String valorTotalVista;
-	String quantidadeTotalPrazo;
-	String valorTotalPrazo;
-	String quantidadeTotalGeral;
-	String valorTotalGeral;
+	private String quantidadeTotalVista;
+	private String valorTotalVista;
+	private String quantidadeTotalPrazo;
+	private String valorTotalPrazo;
+	private String quantidadeTotalGeral;
+	private String valorTotalGeral;
 	
+	private List<ItemSlipVendaEncalheDTO> listaItensSlip;
+	
+	/**
+	 * @return the listaItensSlip
+	 */
+	public List<ItemSlipVendaEncalheDTO> getListaItensSlip() {
+		return listaItensSlip;
+	}
+
+	/**
+	 * @param listaItensSlip the listaItensSlip to set
+	 */
+	public void setListaItensSlip(List<ItemSlipVendaEncalheDTO> listaItensSlip) {
+		this.listaItensSlip = listaItensSlip;
+	}
+
+	/**
+	 * @return the numeroSlip
+	 */
+	public String getNumeroSlip() {
+		return numeroSlip;
+	}
+
+	/**
+	 * @param numeroSlip the numeroSlip to set
+	 */
+	public void setNumeroSlip(String numeroSlip) {
+		this.numeroSlip = numeroSlip;
+	}
+
 	public String getNumeroCota() {
 		return numeroCota;
 	}
@@ -83,54 +108,6 @@ public class SlipVendaEncalheDTO {
 		this.usuario = usuario;
 	}
 	
-	public String getCodigo() {
-		return codigo;
-	}
-	
-	public void setCodigo(String codigo) {
-		this.codigo = codigo;
-	}
-	
-	public String getProduto() {
-		return produto;
-	}
-	
-	public void setProduto(String produto) {
-		this.produto = produto;
-	}
-	
-	public String getEdicao() {
-		return edicao;
-	}
-	
-	public void setEdicao(String edicao) {
-		this.edicao = edicao;
-	}
-	
-	public String getPreco() {
-		return preco;
-	}
-	
-	public void setPreco(String preco) {
-		this.preco = preco;
-	}
-	
-	public String getQuantidade() {
-		return quantidade;
-	}
-	
-	public void setQuantidade(String quantidade) {
-		this.quantidade = quantidade;
-	}
-	
-	public String getTotal() {
-		return total;
-	}
-	
-	public void setTotal(String total) {
-		this.total = total;
-	}
-
 	public String getQuantidadeTotalVista() {
 		return quantidadeTotalVista;
 	}

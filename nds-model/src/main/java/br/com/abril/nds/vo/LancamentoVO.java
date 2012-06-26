@@ -2,31 +2,53 @@ package br.com.abril.nds.vo;
 
 import java.io.Serializable;
 
+import br.com.abril.nds.util.export.Export;
+import br.com.abril.nds.util.export.Exportable;
+
+@Exportable
 public class LancamentoVO  implements Serializable {
 
 	private static final long serialVersionUID = 2186060384671120600L;
 
+	
 	private Long id;
+	@Export(label="Codigo")
 	private String codigoProduto;
+	@Export(label="Produto")
 	private String nomeProduto;
+	@Export(label="Edição")
 	private Long numEdicao;
+	@Export(label="Preço Capa R$")
 	private String preco;
+	@Export(label="Pcte Padrão")
 	private int pacotePadrao;
+	@Export(label="Reparte")
 	private String reparte;
+	@Export(label="Lançamento")
 	private String lancamento;
+	@Export(label="Recolhimento")
 	private String dataRecolhimento;
 	private Long idFornecedor;
+	@Export(label="Fornecedor")
 	private String nomeFornecedor;
+	@Export(label="Previsto")
 	private String dataPrevisto;
-	private String dataMatrizDistrib;
+	@Export(label="Matriz/Distrib")
+	private String novaData;
+	@Export(label="TotalR$")
 	private String total;
-	private String fisico;
+	private Integer fisico;
 	private String qtdeEstudo;
+	private String qtdeReprogramacoes;
+	private String distribuicao;
 	private boolean semFisico;
 	private boolean cancelamentoGD;
 	private boolean furo;
 	private boolean estudoFechado;
 	private boolean expedido;
+	private boolean reprogramacoesExcedidas;
+	
+	
 	
 	public Long getId() {
 		return id;
@@ -124,12 +146,12 @@ public class LancamentoVO  implements Serializable {
 		this.dataPrevisto = dataPrevisto;
 	}
 	
-	public String getDataMatrizDistrib() {
-		return dataMatrizDistrib;
+	public String getNovaData() {
+		return novaData;
 	}
 	
-	public void setDataMatrizDistrib(String dataMatrizDistrib) {
-		this.dataMatrizDistrib = dataMatrizDistrib;
+	public void setNovaData(String novaData) {
+		this.novaData = novaData;
 	}
 	
 	public String getTotal() {
@@ -140,11 +162,11 @@ public class LancamentoVO  implements Serializable {
 		this.total = total;
 	}
 	
-	public String getFisico() {
+	public Integer getFisico() {
 		return fisico;
 	}
 	
-	public void setFisico(String fisico) {
+	public void setFisico(Integer fisico) {
 		this.fisico = fisico;
 	}
 	
@@ -219,6 +241,30 @@ public class LancamentoVO  implements Serializable {
 		} else if (!id.equals(other.id))
 			return false;
 		return true;
+	}
+
+	public String getQtdeReprogramacoes() {
+		return qtdeReprogramacoes;
+	}
+
+	public void setQtdeReprogramacoes(String qtdeReprogramacoes) {
+		this.qtdeReprogramacoes = qtdeReprogramacoes;
+	}
+
+	public boolean isReprogramacoesExcedidas() {
+		return reprogramacoesExcedidas;
+	}
+
+	public void setReprogramacoesExcedidas(boolean reprogramacoesExcedidas) {
+		this.reprogramacoesExcedidas = reprogramacoesExcedidas;
+	}
+
+	public String getDistribuicao() {
+		return distribuicao;
+	}
+
+	public void setDistribuicao(String distribuicao) {
+		this.distribuicao = distribuicao;
 	}
 
 }

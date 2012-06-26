@@ -12,8 +12,8 @@ import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
 
 public interface MovimentoFinanceiroCotaService {
-
-	MovimentoFinanceiroCota gerarMovimentoFinanceiroDebitoCredito(MovimentoFinanceiroCotaDTO movimentoFinanceiroCotaDTO);
+	
+	List<MovimentoFinanceiroCota> gerarMovimentosFinanceirosDebitoCredito(MovimentoFinanceiroCotaDTO movimentoFinanceiroCotaDTO);
 	
 	List<MovimentoFinanceiroCota> obterMovimentosFinanceiroCota(
 			FiltroDebitoCreditoDTO filtroDebitoCreditoDTO);

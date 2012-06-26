@@ -96,7 +96,6 @@ import br.com.abril.nds.model.cadastro.pdv.TipoPontoPDV;
 import br.com.abril.nds.model.dne.Bairro;
 import br.com.abril.nds.model.dne.Localidade;
 import br.com.abril.nds.model.dne.Logradouro;
-import br.com.abril.nds.model.dne.Pais;
 import br.com.abril.nds.model.dne.UnidadeFederacao;
 import br.com.abril.nds.model.estoque.ConferenciaEncalhe;
 import br.com.abril.nds.model.estoque.ConferenciaEncalheParcial;
@@ -168,6 +167,7 @@ import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalhe;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalheCota;
 import br.com.abril.nds.model.movimentacao.ControleContagemDevolucao;
 import br.com.abril.nds.model.movimentacao.CotaAusente;
+import br.com.abril.nds.model.movimentacao.FuroProduto;
 import br.com.abril.nds.model.movimentacao.StatusOperacao;
 import br.com.abril.nds.model.planejamento.ChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.ChamadaEncalheCota;
@@ -320,11 +320,11 @@ public class Fixture {
 	}
 
 	public static TipoProduto tipoRevista() {
-		return tipoProduto("Revistas", GrupoProduto.REVISTA, "99000642", null, 001L);
+		return tipoProduto("Revistas", GrupoProduto.REVISTA, 99000642l, null, 001L);
 	}
 	
 	public static TipoProduto tipoCromo() {
-		return tipoProduto("Cromos", GrupoProduto.CROMO, "1230004560", null, 002L);
+		return tipoProduto("Cromos", GrupoProduto.CROMO, 1230004560l, null, 002L);
 	}
 	
 	public static TipoFornecedor tipoFornecedorPublicacao() {
@@ -416,7 +416,7 @@ public class Fixture {
 	}
 
 	public static TipoProduto tipoProduto(String descricao, GrupoProduto grupo,
-			String codigoNCM, String codigoNBM, Long codigo) {
+			Long codigoNCM, String codigoNBM, Long codigo) {
 		TipoProduto tipoProduto = new TipoProduto();
 		tipoProduto.setDescricao(descricao);
 		tipoProduto.setGrupoProduto(grupo);
@@ -1144,12 +1144,11 @@ public class Fixture {
 
 	
 	public static TipoNotaFiscal tipoNotaFiscalRecebimento() {
+		
 		TipoNotaFiscal tipoNotaFiscal = new TipoNotaFiscal();
+		
 		tipoNotaFiscal.setDescricao("RECEBIMENTO");
 		tipoNotaFiscal.setGrupoNotaFiscal(GrupoNotaFiscal.RECEBIMENTO_MERCADORIAS);
-		
-		/*tipoNotaFiscal.setCfopEstado(Fixture.cfop1209());
-		tipoNotaFiscal.setCfopOutrosEstados(Fixture.cfop1209());*/
 		tipoNotaFiscal.setNopDescricao("NF-e de Devolução de Remessa para Distruibuição");
 		tipoNotaFiscal.setEmitente(TipoUsuarioNotaFiscal.DISTRIBUIDOR);
 		tipoNotaFiscal.setDestinatario(TipoUsuarioNotaFiscal.DISTRIBUIDOR);
@@ -1157,6 +1156,7 @@ public class Fixture {
 		tipoNotaFiscal.setNopCodigo(0L);
 		tipoNotaFiscal.setTipoOperacao(TipoOperacao.ENTRADA);		
 		tipoNotaFiscal.setTipoAtividade(TipoAtividade.PRESTADOR_SERVICO);
+		tipoNotaFiscal.setSerieNotaFiscal(2);
 		
 		return tipoNotaFiscal;
 	}
@@ -1192,12 +1192,11 @@ public class Fixture {
 	}
 
 	public static TipoNotaFiscal tipoNotaFiscalDevolucao() {
+		
 		TipoNotaFiscal tipoNotaFiscal = new TipoNotaFiscal();
+		
 		tipoNotaFiscal.setDescricao("DEVOLUCAO");
 		tipoNotaFiscal.setGrupoNotaFiscal(GrupoNotaFiscal.DEVOLUCAO_MERCADORIA_FORNECEDOR);
-
-		/*tipoNotaFiscal.setCfopEstado(Fixture.cfop5102());
-		tipoNotaFiscal.setCfopOutrosEstados(Fixture.cfop5102());*/
 		tipoNotaFiscal.setNopDescricao("NF-e de Remessa em Consignação (NECE / DANFE)");
 		tipoNotaFiscal.setEmitente(TipoUsuarioNotaFiscal.DISTRIBUIDOR);
 		tipoNotaFiscal.setDestinatario(TipoUsuarioNotaFiscal.COTA);
@@ -1205,17 +1204,17 @@ public class Fixture {
 		tipoNotaFiscal.setNopCodigo(0L);
 		tipoNotaFiscal.setTipoOperacao(TipoOperacao.SAIDA);
 		tipoNotaFiscal.setTipoAtividade(TipoAtividade.MERCANTIL);
+		tipoNotaFiscal.setSerieNotaFiscal(3);
 		
 		return tipoNotaFiscal;
 	}
 
 	public static TipoNotaFiscal tipoNotaFiscalRecebimentoMercadoriasEncalhe() {
+		
 		TipoNotaFiscal tipoNotaFiscal = new TipoNotaFiscal();
+		
 		tipoNotaFiscal.setDescricao("RECEBIMENTO DE MERCADORIAS ENCALHE");
 		tipoNotaFiscal.setGrupoNotaFiscal(GrupoNotaFiscal.RECEBIMENTO_MERCADORIAS_ENCALHE);
-
-		/*tipoNotaFiscal.setCfopEstado(Fixture.cfop1210());
-		tipoNotaFiscal.setCfopOutrosEstados(Fixture.cfop1210());*/
 		tipoNotaFiscal.setNopDescricao("NF-e de Devolução de Remessa para Distruibuição");
 		tipoNotaFiscal.setEmitente(TipoUsuarioNotaFiscal.DISTRIBUIDOR);
 		tipoNotaFiscal.setDestinatario(TipoUsuarioNotaFiscal.DISTRIBUIDOR);
@@ -1223,6 +1222,7 @@ public class Fixture {
 		tipoNotaFiscal.setNopCodigo(0L);
 		tipoNotaFiscal.setTipoOperacao(TipoOperacao.ENTRADA);
 		tipoNotaFiscal.setTipoAtividade(TipoAtividade.PRESTADOR_SERVICO);
+		tipoNotaFiscal.setSerieNotaFiscal(4);
 		
 		return tipoNotaFiscal;
 	}
@@ -2870,30 +2870,17 @@ public class Fixture {
 		return ee;
 	}
 	
-	public static Pais criarPais(String sigla, String nomePaisPortugues) {
-		
-		Pais pais = new Pais();
-		
-		pais.setSigla(sigla);
-		pais.setNomePaisPortugues(nomePaisPortugues);
-		
-		return pais;
-	}
-	
-	public static UnidadeFederacao criarUnidadeFederacao(Long chaveUf, String sigla, String nome, Pais pais) {
+	public static UnidadeFederacao criarUnidadeFederacao(String sigla) {
 		
 		UnidadeFederacao uf = new UnidadeFederacao();
 		
-		uf.setChaveUf(chaveUf);
 		uf.setSigla(sigla);
-		uf.setNome(nome);
-		uf.setPais(pais);
 		
 		return uf;
 	}
 	
-	public static Localidade criarLocalidade(String id, String nome, 
-											 String codigoMunicipioIBGE, 
+	public static Localidade criarLocalidade(Long id, String nome, 
+											 Long codigoMunicipioIBGE, 
 											 UnidadeFederacao unidadeFederacao) {
 		
 		Localidade localidade = new Localidade();
@@ -2906,7 +2893,7 @@ public class Fixture {
 		return localidade;
 	}
 	
-	public static Bairro criarBairro(String id, String nome, Localidade localidade) {
+	public static Bairro criarBairro(Long id, String nome, Localidade localidade) {
 		
 		Bairro bairro = new Bairro();
 		
@@ -2917,7 +2904,7 @@ public class Fixture {
 		return bairro;
 	}
 	
-	public static Logradouro criarLogradouro(String id, String nome, 
+	public static Logradouro criarLogradouro(Long id, String nome, 
 											 String cep, Long chaveBairroInicial,
 											 Localidade localidade, String tipoLogradouro) {
 		
@@ -2932,6 +2919,20 @@ public class Fixture {
 		
 		return logradouro;
 	}
+	
+	public static FuroProduto furoProduto(Date data, Lancamento lancamento,
+										  ProdutoEdicao produtoEdicao, Usuario usuario) {
+		
+		FuroProduto furoProduto = new FuroProduto();
+		
+		furoProduto.setData(data);
+		furoProduto.setLancamento(lancamento);
+		furoProduto.setProdutoEdicao(produtoEdicao);
+		furoProduto.setUsuario(usuario);
+		
+		return furoProduto;
+	}
+	
 	
 	public static ProdutoServico produtoServico(
 			Integer cfop,

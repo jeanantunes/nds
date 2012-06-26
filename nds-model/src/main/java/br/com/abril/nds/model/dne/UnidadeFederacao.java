@@ -1,14 +1,10 @@
 package br.com.abril.nds.model.dne;
 
 import java.io.Serializable;
-import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 
@@ -17,7 +13,7 @@ import javax.persistence.Table;
  *
  */
 @Entity
-@Table(name="DNE_GU_UNIDADES_FEDERACAO")
+@Table(name="LOG_FAIXA_UF")
 public class UnidadeFederacao implements Serializable {
 
 	/**
@@ -26,27 +22,14 @@ public class UnidadeFederacao implements Serializable {
 	private static final long serialVersionUID = 1528902275097474122L;
 
 	@Id
-	@Column(name="SIGLA_UF", unique=true, nullable=false, length=2)
+	@Column(name="UFE_SG", unique=true, nullable=false, length=4)
 	private String sigla;
 
-	@Column(name="ABREV_UF_REC_ECT", length=36)
-	private String abreviatura;
+	@Column(name="UFE_CEP_INI", length=16)
+	private String faixaCepInicial;
 
-	@Column(name="CHAVE_UF_DNE", nullable=false)
-	private Long chaveUf;
-
-	@Column(name="NOME_OFICIAL_UF", length=72)
-	private String nome;
-
-	@OneToMany(mappedBy="unidadeFederacao")
-	private List<FaixaCepUf> faixasCepUfs;
-
-	@OneToMany(mappedBy="unidadeFederacao")
-	private List<Localidade> localidades;
-
-    @ManyToOne
-	@JoinColumn(name="SIGLA_PAIS_1", nullable=false)
-	private Pais pais;
+	@Column(name="UFE_CEP_FIM", length=16)
+	private String faixaCepFinal;
 
     public UnidadeFederacao() {
     }
@@ -66,87 +49,30 @@ public class UnidadeFederacao implements Serializable {
 	}
 
 	/**
-	 * @return the abreviatura
+	 * @return the faixaCepInicial
 	 */
-	public String getAbreviatura() {
-		return abreviatura;
+	public String getFaixaCepInicial() {
+		return faixaCepInicial;
 	}
 
 	/**
-	 * @param abreviatura the abreviatura to set
+	 * @param faixaCepInicial the faixaCepInicial to set
 	 */
-	public void setAbreviatura(String abreviatura) {
-		this.abreviatura = abreviatura;
+	public void setFaixaCepInicial(String faixaCepInicial) {
+		this.faixaCepInicial = faixaCepInicial;
 	}
 
 	/**
-	 * @return the chaveUf
+	 * @return the faixaCepFinal
 	 */
-	public Long getChaveUf() {
-		return chaveUf;
+	public String getFaixaCepFinal() {
+		return faixaCepFinal;
 	}
 
 	/**
-	 * @param chaveUf the chaveUf to set
+	 * @param faixaCepFinal the faixaCepFinal to set
 	 */
-	public void setChaveUf(Long chaveUf) {
-		this.chaveUf = chaveUf;
-	}
-
-	/**
-	 * @return the nome
-	 */
-	public String getNome() {
-		return nome;
-	}
-
-	/**
-	 * @param nome the nome to set
-	 */
-	public void setNome(String nome) {
-		this.nome = nome;
-	}
-
-	/**
-	 * @return the faixasCepUfs
-	 */
-	public List<FaixaCepUf> getFaixasCepUfs() {
-		return faixasCepUfs;
-	}
-
-	/**
-	 * @param faixasCepUfs the faixasCepUfs to set
-	 */
-	public void setFaixasCepUfs(List<FaixaCepUf> faixasCepUfs) {
-		this.faixasCepUfs = faixasCepUfs;
-	}
-
-	/**
-	 * @return the localidades
-	 */
-	public List<Localidade> getLocalidades() {
-		return localidades;
-	}
-
-	/**
-	 * @param localidades the localidades to set
-	 */
-	public void setLocalidades(List<Localidade> localidades) {
-		this.localidades = localidades;
-	}
-
-	/**
-	 * @return the pais
-	 */
-	public Pais getPais() {
-		return pais;
-	}
-
-	/**
-	 * @param pais the pais to set
-	 */
-	public void setPais(Pais pais) {
-		this.pais = pais;
-	}
-    
+	public void setFaixaCepFinal(String faixaCepFinal) {
+		this.faixaCepFinal = faixaCepFinal;
+	}   
 }

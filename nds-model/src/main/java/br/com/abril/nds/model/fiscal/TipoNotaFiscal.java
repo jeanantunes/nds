@@ -70,6 +70,9 @@ public class TipoNotaFiscal {
 	@Column(name = "CONTRIBUINTE", nullable = false)
 	private boolean contribuinte;
 	
+	@Column(name = "SERIE_NF", nullable = false)
+	private Integer serieNotaFiscal;
+	
 	public Long getId() {
 		return id;
 	}
@@ -165,6 +168,20 @@ public class TipoNotaFiscal {
 
 	public void setNopDescricao(String nopDescricao) {
 		this.nopDescricao = nopDescricao;
+	}
+
+	/**
+	 * @return the serieNotaFiscal
+	 */
+	public Integer getSerieNotaFiscal() {
+		return serieNotaFiscal;
+	}
+
+	/**
+	 * @param serieNotaFiscal the serieNotaFiscal to set
+	 */
+	public void setSerieNotaFiscal(Integer serieNotaFiscal) {
+		this.serieNotaFiscal = serieNotaFiscal;
 	}
 	
 }
