@@ -12,11 +12,10 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -24,6 +23,7 @@ import br.com.abril.nds.util.CampoSecao;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.StringUtil;
 import br.com.abril.nds.util.TipoSecao;
+import br.com.abril.nds.util.export.fiscal.nota.comparator.NFESecaoComparator;
 
 /**
  * Classe responsável pela exportação de Nota Fiscal Eletrônica de arquivos TXT.
@@ -63,7 +63,7 @@ public class NFEExporter {
 	/**
 	 * Lista das sessoes do arquivo de exportação
 	 */
-	private Map<TipoSecao, List<CampoSecao>> mapSecoes = new HashMap<TipoSecao, List<CampoSecao>>();
+	private TreeMap<TipoSecao, List<CampoSecao>> mapSecoes = new TreeMap<TipoSecao, List<CampoSecao>>(new NFESecaoComparator());
 	
 	/**
 	 * Construtor padrão
@@ -77,7 +77,7 @@ public class NFEExporter {
 	 * Limpa todas as seções atuais.
 	 */
 	public void clear(){
-		this.mapSecoes = new HashMap<TipoSecao, List<CampoSecao>>();
+		this.mapSecoes = new TreeMap<TipoSecao, List<CampoSecao>>(new NFESecaoComparator());
 		this.listaNFEExporters = new ArrayList<NFEExporter>();
 	}
 	
@@ -232,7 +232,7 @@ public class NFEExporter {
 		
 		String primeiraSecao = null;
 		
-		int indexListaNFEExporters = 0;
+		Integer indexListaNFEExporters = 0;
 		
 		if (!this.listaNFEExporters.isEmpty()) { 
 			primeiraSecao = this.listaNFEExporters.get(indexListaNFEExporters).getPrimeiraSecao();
@@ -268,7 +268,7 @@ public class NFEExporter {
 	 * @param secao
 	 * @return
 	 */
-	private String listaNFEExportersToString(String primeiraSecao, int indexListaNFEExporters, TipoSecao secao){
+	private String listaNFEExportersToString(String primeiraSecao, Integer indexListaNFEExporters, TipoSecao secao){
 		
 		StringBuffer sBuffer = new StringBuffer();
 		
