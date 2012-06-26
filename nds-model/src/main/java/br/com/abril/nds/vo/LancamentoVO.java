@@ -34,17 +34,20 @@ public class LancamentoVO  implements Serializable {
 	@Export(label="Previsto")
 	private String dataPrevisto;
 	@Export(label="Matriz/Distrib")
-	private String dataMatrizDistrib;
+	private String novaData;
 	@Export(label="TotalR$")
 	private String total;
-	private String fisico;
+	private Integer fisico;
 	private String qtdeEstudo;
 	private String qtdeReprogramacoes;
+	private String distribuicao;
 	private boolean semFisico;
 	private boolean cancelamentoGD;
 	private boolean furo;
 	private boolean estudoFechado;
 	private boolean expedido;
+	private boolean reprogramacoesExcedidas;
+	
 	
 	
 	public Long getId() {
@@ -143,12 +146,12 @@ public class LancamentoVO  implements Serializable {
 		this.dataPrevisto = dataPrevisto;
 	}
 	
-	public String getDataMatrizDistrib() {
-		return dataMatrizDistrib;
+	public String getNovaData() {
+		return novaData;
 	}
 	
-	public void setDataMatrizDistrib(String dataMatrizDistrib) {
-		this.dataMatrizDistrib = dataMatrizDistrib;
+	public void setNovaData(String novaData) {
+		this.novaData = novaData;
 	}
 	
 	public String getTotal() {
@@ -159,11 +162,11 @@ public class LancamentoVO  implements Serializable {
 		this.total = total;
 	}
 	
-	public String getFisico() {
+	public Integer getFisico() {
 		return fisico;
 	}
 	
-	public void setFisico(String fisico) {
+	public void setFisico(Integer fisico) {
 		this.fisico = fisico;
 	}
 	
@@ -246,6 +249,22 @@ public class LancamentoVO  implements Serializable {
 
 	public void setQtdeReprogramacoes(String qtdeReprogramacoes) {
 		this.qtdeReprogramacoes = qtdeReprogramacoes;
+	}
+
+	public boolean isReprogramacoesExcedidas() {
+		return reprogramacoesExcedidas;
+	}
+
+	public void setReprogramacoesExcedidas(boolean reprogramacoesExcedidas) {
+		this.reprogramacoesExcedidas = reprogramacoesExcedidas;
+	}
+
+	public String getDistribuicao() {
+		return distribuicao;
+	}
+
+	public void setDistribuicao(String distribuicao) {
+		this.distribuicao = distribuicao;
 	}
 
 }

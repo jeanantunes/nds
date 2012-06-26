@@ -97,6 +97,8 @@ function Balanceamento(pathTela, descInstancia) {
 	
 	this.processarLinha = function(i,row) {
 		
+		debugger;
+		
 		var emEstudoExpedido = row.cell.estudoFechado || row.cell.expedido;
 		
 		var linkDescProduto = T.getLinkProduto(row.cell.codigoProduto,row.cell.nomeProduto);
@@ -166,7 +168,9 @@ function Balanceamento(pathTela, descInstancia) {
 	 * @param idProdutoEdicao
 	 */
 	this.carregarImagemCapa = function(idProdutoEdicao) {
-		var img = $("<img />")
+		
+		var img = null;
+		img = $("<img />")
 		.load(
 		    function() {						
 			    $("#td_imagem_capa").append(img);
