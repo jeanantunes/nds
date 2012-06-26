@@ -26,6 +26,9 @@ public class InterfaceExecucaoServiceImpl implements InterfaceExecucaoService {
 	public void executarInterface(String classeExecucao, Usuario usuario) throws BeansException, ClassNotFoundException {
 		RouteTemplate route = (RouteTemplate) applicationContext.getBean(Class.forName(classeExecucao));
 		route.execute(usuario.getLogin());
+		
+		Class.forName("br.com.abril.nds.integracao.ems0106.route.EMS0106Route");
+		Class.forName("java.lang.Thread");
 	}
 
 }
