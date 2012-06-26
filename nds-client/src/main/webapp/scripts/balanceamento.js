@@ -5,6 +5,8 @@ function Balanceamento(pathTela, descInstancia) {
 	this.tiposMovimento = []; 
 	this.tipoMovimento = null;
 	this.instancia = descInstancia;
+	this.linhasDestacadas = [];
+	this.isCliquePesquisar;
 	
 	this.pesquisar = function() {
 		
@@ -17,6 +19,8 @@ function Balanceamento(pathTela, descInstancia) {
 		$("input[name='checkgroup_menu']:checked").each(function(i) {
 			data.push({name:'idsFornecedores', value: $(this).val()});
 		});
+		
+		isCliquePesquisar = true;
 		
 		$.postJSON(
 			pathTela + "/matrizLancamento/obterMatrizLancamento", 
@@ -33,12 +37,12 @@ function Balanceamento(pathTela, descInstancia) {
 			}
 		);
 	},
-	
+		
 	this.carregarGrid = function() {		
 				
 		$(".grids").show();		
 		
-		linhasDestacadas = [];		
+		T.linhasDestacadas = [];		
 		lancamentosSelecionados = [];		
 		$('#selTodos').uncheck();	
 				
@@ -47,12 +51,27 @@ function Balanceamento(pathTela, descInstancia) {
 			dataType : 'json',		
 			autoload: false,
 			singleSelect: true,
-			preProcess: T.processaRetornoPesquisa
+			preProcess: T.processaRetornoPesquisa,
+			onSuccess: T.destacarLinhas,
+			onSubmit: T.confirmarPaginacao
 		});
 		
 		$(".lancamentosProgramadosGrid").flexReload();
 	},
 
+
+	this.confirmarPaginacao = function() {
+		
+		var noSelect = $('[name=checkgroup]:checked').size() == 0;
+		
+		if(isCliquePesquisar || noSelect ) {
+			isCliquePesquisar = false;
+			return true;
+		}
+		
+		return confirm('As seleções de lançamentos não serão salvas,deseja continuar?');
+	},
+	
 	this.processaRetornoPesquisa = function(data) {
 		
 		if(data.mensagens) {
@@ -63,7 +82,7 @@ function Balanceamento(pathTela, descInstancia) {
 		//$("#tableResumoPeriodo").clear();
 		$("#valorTotal").clear();
 		
-		linhasDestacadas = [];
+		T.linhasDestacadas = [];
 		$("#valorTotal").html(data[1]);
 		$.each(data[0].rows, function(index,row){ T.processarLinha(index, row);});
 		return data[0];
@@ -97,34 +116,44 @@ function Balanceamento(pathTela, descInstancia) {
 	
 	this.processarLinha = function(i,row) {
 		
-		var emEstudoExpedido = row.cell.estudoFechado || row.cell.expedido;
-		
 		var linkDescProduto = T.getLinkProduto(row.cell.codigoProduto,row.cell.nomeProduto);
 		row.cell.nomeProduto = linkDescProduto;
-			
-		if (!emEstudoExpedido) {
-			var dataDistrib = '<input type="text" name="datepickerDe10" id="datepickerDe10" style="width:70px; float:left;" value="'+row.cell.dataMatrizDistrib+'"/>';
-			dataDistrib+='<span class="bt_atualizarIco" title="Atualizar Datas">';
-			dataDistrib+='<a href="javascript:;">&nbsp;</a></span>';
-			row.cell.dataMatrizDistrib = dataDistrib;
-			var id = row.cell.id.toString(); 					
-			var reprogramar = '<input type="checkbox" value="'+id+'" name="checkgroup" ';
-			if ($.inArray(id, lancamentosSelecionados) != -1) {
-				reprogramar+='checked="checked" ';					
-			}
-			reprogramar+='onclick="verifyCheck($(\'#selRep\'));" />';	
-			row.cell.reprogramar=reprogramar;
-		} else {
-			var dataDistrib = '<input type="text" disabled="disabled" style="width:70px; float:left;" value="'+row.cell.dataMatrizDistrib+'"/>';
-			row.cell.dataMatrizDistrib = dataDistrib;
-			row.cell.reprogramar='<input type="checkbox" name="checkgroup" value="'+row.cell.id+'" disabled="disabled" onclick="verifyCheck($(\'#selRep\'));" />';
-		}
-		if (row.cell.semFisico || row.cell.cancelamentoGD || row.cell.furo ) {
-			linhasDestacadas.push(i+1);
+		
+		var isBloqueado = row.cell.bloquearData;
+		
+		row.cell.novaData = T.gerarInputDataDistrib(row.cell.novaData, isBloqueado);
+		row.cell.reprogramar = T.gerarCheckReprogramar(row.cell.id.toString(), isBloqueado);
+				
+		if (!row.cell.possuiRecebimentoFisico || row.cell.cancelamentoGD || (row.cell.dataPrevisto!=row.cell.dataLancamentoDistribuidor) ) {
+			T.linhasDestacadas.push(i+1);
 		}
 		
 	},
 	
+	this.gerarInputDataDistrib = function(dataMatrizDistrib, isBloqueado) {
+		return '<input type="text" name="datepickerDe10" style="width:80px; float:left;" value="' + dataMatrizDistrib + '" ' + 
+			   (isBloqueado? ' disabled="disabled" ' : '') +  
+			   '/>' +
+		       '<span class="bt_atualizarIco" title="Atualizar Datas" ' +
+		       (isBloqueado? ' style="opacity:0.5;" ' : '') + 
+		       '>' +
+		       '<a href="javascript:;">&nbsp;</a></span>';
+	},
+	
+	this.gerarCheckReprogramar = function(id,isBloqueado) { 
+		return '<input type="checkbox" value="'+id+'" name="checkgroup" ' +
+			   (isBloqueado? ' disabled="disabled" ' : ' onclick="verifyCheck($(\'#selRep\'));" ') + 
+			   ' />';	
+	},
+	
+	this.destacarLinhas = function() {
+		
+		 $(T.linhasDestacadas).each(function(i, item){
+			 id = '#row' + item;			    	
+			 $(id).removeClass("erow").addClass("gridLinhaDestacada");
+			 $(id).children("td").removeClass("sorted");
+		   });
+	},
 	
 	/**
 	 * Obtém link para detalhes do produto

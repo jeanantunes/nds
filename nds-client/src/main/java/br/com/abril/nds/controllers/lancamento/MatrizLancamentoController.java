@@ -265,6 +265,9 @@ public class MatrizLancamentoController {
 		produtoBalanceamentoVO.setDataPrevisto(
 				DateUtil.formatarDataPTBR(produtoLancamentoDTO.getDataLancamentoPrevista()));
 		
+		produtoBalanceamentoVO.setDataLancamentoDistribuidor(
+				DateUtil.formatarDataPTBR(produtoLancamentoDTO.getDataLancamentoDistribuidor()));
+		
 		produtoBalanceamentoVO.setDataRecolhimento(
 				DateUtil.formatarDataPTBR(produtoLancamentoDTO.getDataRecolhimentoPrevista()));
 		
@@ -302,10 +305,13 @@ public class MatrizLancamentoController {
 				
 		produtoBalanceamentoVO.setEstudoFechado(produtoLancamentoDTO.isPossuiEstudo());
 		
-		produtoBalanceamentoVO.setSemFisico(!produtoLancamentoDTO.isPossuiRecebimentoFisico());
+		produtoBalanceamentoVO.setPossuiRecebimentoFisico(produtoLancamentoDTO.isPossuiRecebimentoFisico());
 		
 		//TODO - Pendente
 		produtoBalanceamentoVO.setDistribuicao("");
+		
+		//TODO 
+		//produtoBalanceamentoVO.setBloquearData();
 		
 		return produtoBalanceamentoVO;
 	}

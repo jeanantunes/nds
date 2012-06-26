@@ -9,7 +9,6 @@ var pathTela = "${pageContext.request.contextPath}";
 
 var B = new Balanceamento(pathTela, "B");
 
-var linhasDestacadas = [];
 var lancamentosSelecionados = [];
 
 function popup_reprogramar() {
