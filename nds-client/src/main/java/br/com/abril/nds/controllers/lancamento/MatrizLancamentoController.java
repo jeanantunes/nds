@@ -14,24 +14,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.SerializationUtils;
 
 import br.com.abril.nds.client.util.PaginacaoUtil;
-import br.com.abril.nds.client.vo.ProdutoRecolhimentoFormatadoVO;
-import br.com.abril.nds.client.vo.ProdutoRecolhimentoVO;
+import br.com.abril.nds.client.vo.DetalheProdutoLancamentoVO;
 import br.com.abril.nds.client.vo.ResultadoResumoBalanceamentoVO;
 import br.com.abril.nds.client.vo.ResumoPeriodoBalanceamentoVO;
 import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.dto.BalanceamentoLancamentoDTO;
-import br.com.abril.nds.dto.BalanceamentoRecolhimentoDTO;
 import br.com.abril.nds.dto.ProdutoLancamentoDTO;
-import br.com.abril.nds.dto.ProdutoRecolhimentoDTO;
 import br.com.abril.nds.dto.ResumoPeriodoBalanceamentoDTO;
 import br.com.abril.nds.dto.SumarioLancamentosDTO;
 import br.com.abril.nds.dto.filtro.FiltroLancamentoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Fornecedor;
-import br.com.abril.nds.model.cadastro.Produto;
-import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
-import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.MatrizLancamentoService;
 import br.com.abril.nds.util.CellModelKeyValue;
@@ -238,7 +232,11 @@ public class MatrizLancamentoController {
 				
 				produtoBalanceamentoVO.setTotal(CurrencyUtil.formatarValor(produtoLancamentoDTO.getValorTotal()));
 				
-				produtoBalanceamentoVO.setFisico(produtoLancamentoDTO.getReparteFisico().toString());
+				
+				
+				//produtoBalanceamentoVO.setFisico(produtoLancamentoDTO.getReparteFisico().toString());
+				
+				
 				
 				//produtoBalanceamentoVO.setQtdeEstudo(produtoLancamentoDTO.get())/
 				
@@ -555,4 +553,54 @@ public class MatrizLancamentoController {
 		}
 	}
 
+	
+	/**
+	 * Obtem detalhes de produto edição
+	 * @param codigoProduto
+	 */
+	@Post
+	public void obterDetalheProduto(Long codigoProduto){
+		
+		DetalheProdutoLancamentoVO produtoLancamentoVO = null;
+		
+		BalanceamentoLancamentoDTO balanceamentoLancamento = (BalanceamentoLancamentoDTO) this.session.getAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO);
+	
+		for (Map.Entry<Date, List<ProdutoLancamentoDTO>> entry : balanceamentoLancamento.getMatrizLancamento().entrySet()) {
+			
+            List<ProdutoLancamentoDTO> listaProdutosRecolhimento = entry.getValue();
+			
+			if (listaProdutosRecolhimento != null && !listaProdutosRecolhimento.isEmpty()) {
+				
+				for (ProdutoLancamentoDTO produtoBalanceamento : listaProdutosRecolhimento) {
+				    
+					if(produtoBalanceamento.getCodigoProduto().equals(codigoProduto.toString())){
+					    
+						produtoLancamentoVO = new DetalheProdutoLancamentoVO(produtoBalanceamento.getIdProdutoEdicao(),
+										                                     produtoBalanceamento.getNomeProduto(),
+										                                     produtoBalanceamento.getCodigoProduto(),
+										                                     produtoBalanceamento.getPrecoVenda(),
+										                                     produtoBalanceamento.getPrecoComDesconto(),
+										                                     produtoBalanceamento.getFornecedor(),
+										                                     produtoBalanceamento.getCodigoEditor(),
+										                                     produtoBalanceamento.getNomeEditor(),
+										                                     produtoBalanceamento.getChamadaCapa(),
+										                                     (produtoBalanceamento.isPossuiBrinde()?"Sim":"Não"),
+										                                     produtoBalanceamento.getPacotePadrao()
+										                                     );
+
+					    break;
+				    }
+	
+				} 
+			}	
+		}
+		if (produtoLancamentoVO!=null){
+		    this.result.use(Results.json()).from(produtoLancamentoVO, "result").recursive().serialize();
+		}
+		else{
+			result.nothing();
+		}
+	}
+
 }
+

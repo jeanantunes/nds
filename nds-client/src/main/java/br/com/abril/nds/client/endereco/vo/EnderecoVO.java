@@ -11,9 +11,9 @@ public class EnderecoVO implements Serializable {
 	
 	private String cep;
 	
-	private String codigoCidadeIBGE;
+	private Long codigoCidadeIBGE;
 	
-	private String idLocalidade;
+	private Long idLocalidade;
 	
 	private String localidade;
 	
@@ -21,7 +21,7 @@ public class EnderecoVO implements Serializable {
 	
 	private String tipoLogradouro;
 	
-	private String codigoBairro;
+	private Long codigoBairro;
 	
 	private String bairro;
 
@@ -56,28 +56,28 @@ public class EnderecoVO implements Serializable {
 	/**
 	 * @return the codigoCidadeIBGE
 	 */
-	public String getCodigoCidadeIBGE() {
+	public Long getCodigoCidadeIBGE() {
 		return codigoCidadeIBGE;
 	}
 
 	/**
 	 * @param codigoCidadeIBGE the codigoCidadeIBGE to set
 	 */
-	public void setCodigoCidadeIBGE(String codigoCidadeIBGE) {
+	public void setCodigoCidadeIBGE(Long codigoCidadeIBGE) {
 		this.codigoCidadeIBGE = codigoCidadeIBGE;
 	}
-	
+
 	/**
 	 * @return the idLocalidade
 	 */
-	public String getIdLocalidade() {
+	public Long getIdLocalidade() {
 		return idLocalidade;
 	}
 
 	/**
 	 * @param idLocalidade the idLocalidade to set
 	 */
-	public void setIdLocalidade(String idLocalidade) {
+	public void setIdLocalidade(Long idLocalidade) {
 		this.idLocalidade = idLocalidade;
 	}
 
@@ -126,14 +126,14 @@ public class EnderecoVO implements Serializable {
 	/**
 	 * @return the codigoBairro
 	 */
-	public String getCodigoBairro() {
+	public Long getCodigoBairro() {
 		return codigoBairro;
 	}
 
 	/**
 	 * @param codigoBairro the codigoBairro to set
 	 */
-	public void setCodigoBairro(String codigoBairro) {
+	public void setCodigoBairro(Long codigoBairro) {
 		this.codigoBairro = codigoBairro;
 	}
 

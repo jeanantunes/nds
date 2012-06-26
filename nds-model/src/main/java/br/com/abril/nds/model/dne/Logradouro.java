@@ -1,14 +1,12 @@
 package br.com.abril.nds.model.dne;
 
 import java.io.Serializable;
-import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 
@@ -17,7 +15,7 @@ import javax.persistence.Table;
  *
  */
 @Entity
-@Table(name="DNE_GU_LOGRADOUROS")
+@Table(name="LOG_LOGRADOURO")
 public class Logradouro implements Serializable {
 
 	/**
@@ -26,51 +24,39 @@ public class Logradouro implements Serializable {
 	private static final long serialVersionUID = 3210879486950002174L;
 
 	@Id
-	@Column(name="CHAVE_LOGRADOURO_DNE", unique=true, nullable=false)
-	private String id;
+	@Column(name="LOG_NU", unique=true, nullable=false)
+	private Long id;
 
-	@Column(name="ABREV_LOG_REC_ECT", length=36)
+	@Column(name="LOG_NO_ABREV", length=72)
 	private String abreviatura;
 
-	@Column(name="CEP_LOGRADOURO", length=8)
+	@Column(name="CEP", length=16)
 	private String cep;
 
-	@Column(name="CHAVE_BAI_FIM_DNE")
+	@Column(name="BAI_NU_FIM")
 	private Long chaveBairroFinal;
 
-	@Column(name="CHAVE_BAI_INI_DNE")
+	@Column(name="BAI_NU_INI")
 	private Long chaveBairroInicial;
 
-	@Column(name="IND_EXIS_GU_LOG", length=1)
-	private String flagExistencia;
-
-	@Column(name="INFO_ADICIONAL", length=36)
-	private String informacaoAdicional;
-
-	@Column(name="NOME_OFI_LOGRADOURO", length=72)
+	@Column(name="LOG_STA_TLO", length=2)
+	private String status;
+	
+	@Column(name="LOG_NO", length=144)
 	private String nome;
 
-	@Column(length=3)
-	private String preposicao;
+	@Column(name="LOG_COMPLEMENTO", length=200)
+	private String complemento;
 
-	@Column(name="SIGLA_UF", length=2)
+	@Column(name="UFE_SG", length=4)
 	private String uf;
 
-	@Column(name="TIPO_OFI_LOGRADOURO", length=26)
+	@Column(name="TLO_TX", length=72)
 	private String tipoLogradouro;
 
-	@Column(name="TIT_PAT_OFI_LOGRADOURO", length=72)
-	private String tituloOuPatenteLogradouro;
-
     @ManyToOne
-	@JoinColumn(name="CHAVE_LOC_DNE", nullable=false)
+	@JoinColumn(name="LOC_NU", nullable=false)
 	private Localidade localidade;
-
-	@OneToMany(mappedBy="logradouro")
-	private List<Lote> lotes;
-
-	@OneToMany(mappedBy="logradouro")
-	private List<Seccionamento> seccionamentos;
 
     public Logradouro() {
     }
@@ -78,14 +64,14 @@ public class Logradouro implements Serializable {
 	/**
 	 * @return the id
 	 */
-	public String getId() {
+	public Long getId() {
 		return id;
 	}
 
 	/**
 	 * @param id the id to set
 	 */
-	public void setId(String id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 
@@ -146,31 +132,17 @@ public class Logradouro implements Serializable {
 	}
 
 	/**
-	 * @return the flagExistencia
+	 * @return the status
 	 */
-	public String getFlagExistencia() {
-		return flagExistencia;
+	public String getStatus() {
+		return status;
 	}
 
 	/**
-	 * @param flagExistencia the flagExistencia to set
+	 * @param status the status to set
 	 */
-	public void setFlagExistencia(String flagExistencia) {
-		this.flagExistencia = flagExistencia;
-	}
-
-	/**
-	 * @return the informacaoAdicional
-	 */
-	public String getInformacaoAdicional() {
-		return informacaoAdicional;
-	}
-
-	/**
-	 * @param informacaoAdicional the informacaoAdicional to set
-	 */
-	public void setInformacaoAdicional(String informacaoAdicional) {
-		this.informacaoAdicional = informacaoAdicional;
+	public void setStatus(String status) {
+		this.status = status;
 	}
 
 	/**
@@ -188,17 +160,17 @@ public class Logradouro implements Serializable {
 	}
 
 	/**
-	 * @return the preposicao
+	 * @return the complemento
 	 */
-	public String getPreposicao() {
-		return preposicao;
+	public String getComplemento() {
+		return complemento;
 	}
 
 	/**
-	 * @param preposicao the preposicao to set
+	 * @param complemento the complemento to set
 	 */
-	public void setPreposicao(String preposicao) {
-		this.preposicao = preposicao;
+	public void setComplemento(String complemento) {
+		this.complemento = complemento;
 	}
 
 	/**
@@ -230,20 +202,6 @@ public class Logradouro implements Serializable {
 	}
 
 	/**
-	 * @return the tituloOuPatenteLogradouro
-	 */
-	public String getTituloOuPatenteLogradouro() {
-		return tituloOuPatenteLogradouro;
-	}
-
-	/**
-	 * @param tituloOuPatenteLogradouro the tituloOuPatenteLogradouro to set
-	 */
-	public void setTituloOuPatenteLogradouro(String tituloOuPatenteLogradouro) {
-		this.tituloOuPatenteLogradouro = tituloOuPatenteLogradouro;
-	}
-
-	/**
 	 * @return the localidade
 	 */
 	public Localidade getLocalidade() {
@@ -255,34 +213,6 @@ public class Logradouro implements Serializable {
 	 */
 	public void setLocalidade(Localidade localidade) {
 		this.localidade = localidade;
-	}
-
-	/**
-	 * @return the lotes
-	 */
-	public List<Lote> getLotes() {
-		return lotes;
-	}
-
-	/**
-	 * @param lotes the lotes to set
-	 */
-	public void setLotes(List<Lote> lotes) {
-		this.lotes = lotes;
-	}
-
-	/**
-	 * @return the seccionamentos
-	 */
-	public List<Seccionamento> getSeccionamentos() {
-		return seccionamentos;
-	}
-
-	/**
-	 * @param seccionamentos the seccionamentos to set
-	 */
-	public void setSeccionamentos(List<Seccionamento> seccionamentos) {
-		this.seccionamentos = seccionamentos;
 	}
 
 }

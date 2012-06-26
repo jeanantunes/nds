@@ -11,6 +11,7 @@ import br.com.abril.nds.model.cadastro.DistribuicaoFornecedor;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.EnderecoDistribuidor;
 import br.com.abril.nds.model.cadastro.OperacaoDistribuidor;
+import br.com.abril.nds.model.cadastro.TelefoneDistribuidor;
 import br.com.abril.nds.model.cadastro.TipoGarantia;
 
 public interface DistribuidorRepository extends Repository<Distribuidor, Long> {
@@ -40,5 +41,11 @@ public interface DistribuidorRepository extends Repository<Distribuidor, Long> {
 	public List<RegistroCurvaABCDistribuidorVO> obterCurvaABCDistribuidor(FiltroCurvaABCDistribuidorDTO filtroCurvaABCDistribuidorDTO);
 
 	public ResultadoCurvaABCDistribuidor obterCurvaABCDistribuidorTotal(FiltroCurvaABCDistribuidorDTO filtroCurvaABCDistribuidorDTO);
+
+	/**
+	 * Recupera o telefone principal do distribuidor.
+	 * @return telefone principal do distribuidor.
+	 */
+	public abstract TelefoneDistribuidor obterTelefonePrincipal();
 
 }

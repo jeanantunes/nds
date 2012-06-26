@@ -48,9 +48,7 @@ public class ProdutoLancamentoDTO implements Serializable {
 	
 	//TODO: private Integer sequencia;
 
-	//TODO: private Long idFornecedor;
-	
-	//TODO: private String nomeFornecedor;
+	private String fornecedor;
 
 	private TipoLancamentoParcial parcial;
 	
@@ -74,6 +72,16 @@ public class ProdutoLancamentoDTO implements Serializable {
 	
 	private Integer ordemPeriodicidadeProduto;
 
+	private Long codigoEditor;
+
+	private String nomeEditor;
+	
+	private String chamadaCapa;
+
+    private boolean possuiBrinde;
+
+  	private Integer pacotePadrao;
+	
 	/**
 	 * Construtor padrão.
 	 */
@@ -263,6 +271,20 @@ public class ProdutoLancamentoDTO implements Serializable {
 	public void setIdLancamento(Long idLancamento) {
 		this.idLancamento = idLancamento;
 	}
+	
+	/**
+	 * @return the fornecedor
+	 */
+	public String getFornecedor() {
+		return fornecedor;
+	}
+
+	/**
+	 * @param fornecedor the fornecedor to set
+	 */
+	public void setFornecedor(String fornecedor) {
+		this.fornecedor = fornecedor;
+	}
 
 	/**
 	 * @return the parcial
@@ -420,6 +442,76 @@ public class ProdutoLancamentoDTO implements Serializable {
 	 */
 	public void setOrdemPeriodicidadeProduto(Integer ordemPeriodicidadeProduto) {
 		this.ordemPeriodicidadeProduto = ordemPeriodicidadeProduto;
+	}
+
+	/**
+	 * @return the codigoEditor
+	 */
+	public Long getCodigoEditor() {
+		return codigoEditor;
+	}
+
+	/**
+	 * @param codigoEditor the codigoEditor to set
+	 */
+	public void setCodigoEditor(Long codigoEditor) {
+		this.codigoEditor = codigoEditor;
+	}
+
+	/**
+	 * @return the nomeEditor
+	 */
+	public String getNomeEditor() {
+		return nomeEditor;
+	}
+
+	/**
+	 * @param nomeEditor the nomeEditor to set
+	 */
+	public void setNomeEditor(String nomeEditor) {
+		this.nomeEditor = nomeEditor;
+	}
+
+	/**
+	 * @return the chamadaCapa
+	 */
+	public String getChamadaCapa() {
+		return chamadaCapa;
+	}
+
+	/**
+	 * @param chamadaCapa the chamadaCapa to set
+	 */
+	public void setChamadaCapa(String chamadaCapa) {
+		this.chamadaCapa = chamadaCapa;
+	}
+	
+	/**
+	 * @return the possuiBrinde
+	 */
+	public boolean isPossuiBrinde() {
+		return possuiBrinde;
+	}
+
+	/**
+	 * @param possuiBrinde the possuiBrinde to set
+	 */
+	public void setPossuiBrinde(boolean possuiBrinde) {
+		this.possuiBrinde = possuiBrinde;
+	}
+
+	/**
+	 * @return the pacotePadrao
+	 */
+	public Integer getPacotePadrao() {
+		return pacotePadrao;
+	}
+
+	/**
+	 * @param pacotePadrao the pacotePadrao to set
+	 */
+	public void setPacotePadrao(Integer pacotePadrao) {
+		this.pacotePadrao = pacotePadrao;
 	}
 	
 }

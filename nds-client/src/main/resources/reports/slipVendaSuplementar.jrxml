@@ -9,30 +9,29 @@
 			<style mode="Opaque" backcolor="#E3E3E3"/>
 		</conditionalStyle>
 	</style>
+	<parameter name="NUMERO_COTA" class="java.lang.String"/>
+	<parameter name="NOME_COTA" class="java.lang.String"/>
+	<parameter name="CODIGO_BOX" class="java.lang.String"/>
+	<parameter name="DESC_BOX" class="java.lang.String"/>
+	<parameter name="DATA_VENDA" class="java.lang.String"/>
+	<parameter name="HORA_VENDA" class="java.lang.String"/>
+	<parameter name="USUARIO" class="java.lang.String"/>
+	<parameter name="QNT_TOTAL_A_VISTA" class="java.lang.String"/>
+	<parameter name="VALOR_TOTAL_A_VISTA" class="java.lang.String"/>
+	<parameter name="QNT_TOTAL_A_PRAZO" class="java.lang.String"/>
+	<parameter name="VALOR_TOTAL_A_PRAZO" class="java.lang.String"/>
+	<parameter name="QNT_TOTAL_GERAL" class="java.lang.String"/>
+	<parameter name="VALOR_TOTAL_GERAL" class="java.lang.String"/>
+	<parameter name="NUM_SLIP" class="java.lang.String"/>
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
-	<field name="hora" class="java.lang.String"/>
-	<field name="quantidadeTotalPrazo" class="java.lang.String"/>
-	<field name="numeroCota" class="java.lang.String"/>
 	<field name="codigo" class="java.lang.String"/>
-	<field name="valorTotalVista" class="java.lang.String"/>
 	<field name="preco" class="java.lang.String"/>
-	<field name="quantidadeTotalVista" class="java.lang.String"/>
 	<field name="quantidade" class="java.lang.String"/>
-	<field name="data" class="java.lang.String"/>
-	<field name="usuario" class="java.lang.String"/>
-	<field name="descricaoBox" class="java.lang.String"/>
-	<field name="valorTotalPrazo" class="java.lang.String"/>
 	<field name="produto" class="java.lang.String"/>
 	<field name="total" class="java.lang.String"/>
-	<field name="nomeCota" class="java.lang.String"/>
-	<field name="numeroBox" class="java.lang.String"/>
 	<field name="edicao" class="java.lang.String"/>
-	<field name="quantidadeTotalGeral" class="java.lang.String"/>
-	<field name="valorTotalGeral" class="java.lang.String">
-		<fieldDescription><![CDATA[valorTotalGeral]]></fieldDescription>
-	</field>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
@@ -73,7 +72,7 @@ DISTRIBUIÇÃO]]></text>
 				<textElement verticalAlignment="Middle" markup="none">
 					<font size="13" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Data: "+$F{data}+"\nHora: "+$F{hora}+"\n"+new String(new String("Usuário: ").getBytes("ISO-8859-1"),"UTF-8")+$F{usuario}]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Data: "+$P{DATA_VENDA}+"\nHora: "+$P{HORA_VENDA}+"\n"+new String(new String("Usuário: ").getBytes("ISO-8859-1"),"UTF-8")+$P{USUARIO}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="271" y="0" width="134" height="33"/>
@@ -87,7 +86,7 @@ DISTRIBUIÇÃO]]></text>
 				<textElement textAlignment="Left" verticalAlignment="Middle" markup="none">
 					<font size="13" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[new String(new String("Número: ").getBytes("ISO-8859-1"),"UTF-8")]]></textFieldExpression>
+				<textFieldExpression><![CDATA[new String(new String("Número: ").getBytes("ISO-8859-1"),"UTF-8")+$P{NUM_SLIP}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="405" y="0" width="91" height="33"/>
@@ -130,7 +129,7 @@ DISTRIBUIÇÃO]]></text>
 				<textElement verticalAlignment="Middle">
 					<font size="11" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Box: "+$F{numeroBox}+" - "+$F{descricaoBox}]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Box: "+$P{CODIGO_BOX}+" - "+$P{DESC_BOX}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="0" y="35" width="281" height="25"/>
@@ -142,7 +141,7 @@ DISTRIBUIÇÃO]]></text>
 				<textElement verticalAlignment="Middle">
 					<font size="11" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Cota: "+$F{numeroCota}+" - "+$F{nomeCota}]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Cota: "+$P{NUMERO_COTA}+" - "+$P{NOME_COTA}]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageHeader>
@@ -311,7 +310,7 @@ DISTRIBUIÇÃO]]></text>
 					<rightPen lineWidth="1.0"/>
 				</box>
 				<textElement textAlignment="Right"/>
-				<textFieldExpression><![CDATA[$F{valorTotalGeral}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{VALOR_TOTAL_GERAL}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement mode="Opaque" x="420" y="3" width="76" height="20" backcolor="#E3E3E3"/>
@@ -320,7 +319,7 @@ DISTRIBUIÇÃO]]></text>
 					<rightPen lineWidth="1.0" lineStyle="Solid"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA[$F{valorTotalVista}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{VALOR_TOTAL_A_VISTA}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement mode="Opaque" x="0" y="3" width="349" height="20" backcolor="#E3E3E3"/>
@@ -348,7 +347,7 @@ DISTRIBUIÇÃO]]></text>
 					<rightPen lineWidth="1.0"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA[$F{valorTotalPrazo}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{VALOR_TOTAL_A_PRAZO}]]></textFieldExpression>
 			</textField>
 			<line>
 				<reportElement x="0" y="0" width="496" height="1"/>
@@ -360,7 +359,7 @@ DISTRIBUIÇÃO]]></text>
 					<rightPen lineWidth="0.0"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA[$F{quantidadeTotalVista}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{QNT_TOTAL_A_VISTA}]]></textFieldExpression>
 			</textField>
 			<textField pattern="###0.00" isBlankWhenNull="true">
 				<reportElement mode="Opaque" x="349" y="23" width="71" height="21" backcolor="#F0F0F0"/>
@@ -369,7 +368,7 @@ DISTRIBUIÇÃO]]></text>
 					<rightPen lineWidth="0.0"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA[$F{quantidadeTotalPrazo}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{QNT_TOTAL_A_PRAZO}]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageFooter>

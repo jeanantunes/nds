@@ -5,8 +5,10 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JRException;
@@ -17,12 +19,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.dto.ItemSlipVendaEncalheDTO;
 import br.com.abril.nds.dto.MovimentoFinanceiroCotaDTO;
 import br.com.abril.nds.dto.SlipVendaEncalheDTO;
 import br.com.abril.nds.dto.VendaEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroVendaEncalheDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.TipoEdicao;
+import br.com.abril.nds.model.TipoSlip;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.FormaComercializacao;
@@ -49,6 +53,7 @@ import br.com.abril.nds.repository.TipoMovimentoEstoqueRepository;
 import br.com.abril.nds.repository.TipoMovimentoFinanceiroRepository;
 import br.com.abril.nds.repository.UsuarioRepository;
 import br.com.abril.nds.repository.VendaProdutoEncalheRepository;
+import br.com.abril.nds.service.ControleNumeracaoSlipService;
 import br.com.abril.nds.service.DistribuidorService;
 import br.com.abril.nds.service.MovimentoEstoqueService;
 import br.com.abril.nds.service.MovimentoFinanceiroCotaService;
@@ -104,12 +109,16 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 	@Autowired
 	private ChamadaEncalheCotaRepository chamadaEncalheCotaRepository;
 	
-	private List<SlipVendaEncalheDTO> obterDadosSlipVenda(VendaProduto... vendas){
+	@Autowired
+	private ControleNumeracaoSlipService controleNumeracaoSlipServiceImpl;
+	
+	private SlipVendaEncalheDTO obterDadosSlipVenda(VendaProduto... vendas){
 		
-		SlipVendaEncalheDTO slipVendaEncalhe = null;
-		List<SlipVendaEncalheDTO> listaSlipVendaEncalhe = new ArrayList<SlipVendaEncalheDTO>();
+		SlipVendaEncalheDTO slipVendaEncalhe = new SlipVendaEncalheDTO();
 		
 		if (vendas!=null) {
+			
+			List<ItemSlipVendaEncalheDTO> itensVendaEncalhe = new ArrayList<ItemSlipVendaEncalheDTO>();
 			
 			Integer quantidadeTotalVista = 0;
 			BigDecimal valorTotalVista = BigDecimal.ZERO;
@@ -118,8 +127,6 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 			
 			for (VendaProduto itemVE:vendas){
 			
-				slipVendaEncalhe = getSlipVendaEncalheDTO(itemVE);
-				
 				if(FormaComercializacao.CONSIGNADO.equals(itemVE.getTipoComercializacaoVenda())){
 					
 					quantidadeTotalPrazo +=itemVE.getQntProduto().intValue();
@@ -131,20 +138,24 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 					valorTotalVista = valorTotalVista.add(itemVE.getValorTotalVenda());
 				}
 
-				slipVendaEncalhe.setQuantidadeTotalVista(quantidadeTotalVista.toString());
-				slipVendaEncalhe.setValorTotalVista(valorTotalVista.toString());
-				
-				slipVendaEncalhe.setQuantidadeTotalPrazo(quantidadeTotalPrazo.toString());
-				slipVendaEncalhe.setValorTotalPrazo(valorTotalPrazo.toString());
-				
-				slipVendaEncalhe.setQuantidadeTotalGeral((quantidadeTotalVista + quantidadeTotalPrazo)+"");
-				slipVendaEncalhe.setValorTotalGeral(CurrencyUtil.formatarValor(valorTotalVista.add(valorTotalPrazo)));
-	
-				listaSlipVendaEncalhe.add(slipVendaEncalhe);	
+				itensVendaEncalhe.add(getItemSlipVendaEncalheDTO(itemVE));	
 			}
+			
+			slipVendaEncalhe = getSlipVendaEncalheDTO(vendas[0]);
+			
+			slipVendaEncalhe.setQuantidadeTotalVista(quantidadeTotalVista.toString());
+			slipVendaEncalhe.setValorTotalVista(CurrencyUtil.formatarValor(valorTotalVista));
+			
+			slipVendaEncalhe.setQuantidadeTotalPrazo(quantidadeTotalPrazo.toString());
+			slipVendaEncalhe.setValorTotalPrazo(CurrencyUtil.formatarValor(valorTotalPrazo));
+			
+			slipVendaEncalhe.setQuantidadeTotalGeral((quantidadeTotalVista + quantidadeTotalPrazo)+"");
+			slipVendaEncalhe.setValorTotalGeral(CurrencyUtil.formatarValor(valorTotalVista.add(valorTotalPrazo)));
+			
+			slipVendaEncalhe.setListaItensSlip(itensVendaEncalhe);
 		}
 		
-		return listaSlipVendaEncalhe;
+		return slipVendaEncalhe;
 	}
 	
 	private SlipVendaEncalheDTO getSlipVendaEncalheDTO(VendaProduto itemVE){
@@ -159,14 +170,21 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 		slipVendaEncalhe.setHora(DateUtil.formatarData(itemVE.getHorarioVenda(),"HH:mm"));
 		slipVendaEncalhe.setUsuario(itemVE.getUsuario().getNome());
 		
-		slipVendaEncalhe.setCodigo(itemVE.getProdutoEdicao().getProduto().getCodigo());
-		slipVendaEncalhe.setProduto(itemVE.getProdutoEdicao().getProduto().getNome());
-		slipVendaEncalhe.setEdicao(itemVE.getProdutoEdicao().getNumeroEdicao().toString());
-		slipVendaEncalhe.setQuantidade(itemVE.getQntProduto().toString());
-		slipVendaEncalhe.setPreco( CurrencyUtil.formatarValor(itemVE.getProdutoEdicao().getPrecoVenda().subtract(itemVE.getProdutoEdicao().getDesconto())));
-		slipVendaEncalhe.setTotal(CurrencyUtil.formatarValor(itemVE.getValorTotalVenda()));
-		
 		return slipVendaEncalhe;
+	}
+	
+	private ItemSlipVendaEncalheDTO getItemSlipVendaEncalheDTO(VendaProduto itemVE){
+		
+		ItemSlipVendaEncalheDTO item = new ItemSlipVendaEncalheDTO();
+		
+		item.setCodigo(itemVE.getProdutoEdicao().getProduto().getCodigo());
+		item.setProduto(itemVE.getProdutoEdicao().getProduto().getNome());
+		item.setEdicao(itemVE.getProdutoEdicao().getNumeroEdicao().toString());
+		item.setQuantidade(itemVE.getQntProduto().toString());
+		item.setPreco( CurrencyUtil.formatarValor(itemVE.getProdutoEdicao().getPrecoVenda().subtract(itemVE.getProdutoEdicao().getDesconto())));
+		item.setTotal(CurrencyUtil.formatarValor(itemVE.getValorTotalVenda()));
+		
+		return item;
 	}
 
 	/**
@@ -177,15 +195,36 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 	 * @throws JRException
 	 * @throws URISyntaxException
 	 */
-	private byte[] gerarDocumentoIreport(List<SlipVendaEncalheDTO> list, String pathJasper) throws JRException, URISyntaxException{
+	private byte[] gerarDocumentoIreport(SlipVendaEncalheDTO slipVendaEncalhe, String pathJasper) throws JRException, URISyntaxException{
+		
+		Map<String, Object> parameters = new HashMap<String, Object>();
+		
+		parameters.put("NUMERO_COTA", slipVendaEncalhe.getNumeroCota());
+		parameters.put("NOME_COTA", slipVendaEncalhe.getNomeCota());
+		parameters.put("CODIGO_BOX",slipVendaEncalhe.getNumeroBox());
+		parameters.put("DESC_BOX", slipVendaEncalhe.getDescricaoBox());
+		parameters.put("DATA_VENDA", slipVendaEncalhe.getData());
+		parameters.put("HORA_VENDA", slipVendaEncalhe.getHora());
+		parameters.put("USUARIO", slipVendaEncalhe.getUsuario());
+		parameters.put("QNT_TOTAL_A_VISTA", slipVendaEncalhe.getQuantidadeTotalVista());
+		parameters.put("VALOR_TOTAL_A_VISTA", slipVendaEncalhe.getValorTotalVista());
+		parameters.put("QNT_TOTAL_A_PRAZO", slipVendaEncalhe.getQuantidadeTotalPrazo());
+		parameters.put("VALOR_TOTAL_A_PRAZO", slipVendaEncalhe.getValorTotalPrazo());
+		parameters.put("QNT_TOTAL_GERAL", slipVendaEncalhe.getQuantidadeTotalGeral());
+		parameters.put("VALOR_TOTAL_GERAL", slipVendaEncalhe.getValorTotalGeral());
+		
+		if(slipVendaEncalhe.getNumeroSlip()!=null){
 
-		JRDataSource jrDataSource = new JRBeanCollectionDataSource(list);
+			parameters.put("NUM_SLIP", slipVendaEncalhe.getNumeroSlip() );
+		}
+		
+		JRDataSource jrDataSource = new JRBeanCollectionDataSource(slipVendaEncalhe.getListaItensSlip());
 		
 		URL url = Thread.currentThread().getContextClassLoader().getResource(pathJasper);
 		
 		String path = url.toURI().getPath();
 		
-		return  JasperRunManager.runReportToPdf(path, null, jrDataSource);
+		return  JasperRunManager.runReportToPdf(path, parameters, jrDataSource);
 	}
 
 	@Override
@@ -210,7 +249,7 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 		return vendaEncalheDTO;
 	}
 	
-	private byte[] gerarArquivoSlipVenda(TipoVendaEncalhe tipoVenda, List<SlipVendaEncalheDTO> vendas){
+	private byte[] gerarArquivoSlipVenda(TipoVendaEncalhe tipoVenda, SlipVendaEncalheDTO vendas){
 		
 		byte[] relatorio=null;
 		
@@ -934,12 +973,14 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 		
 		if(vendas!= null && !vendas.isEmpty()){
 			
-			List<SlipVendaEncalheDTO> listaSlipVendaEncalheDTO = this.obterDadosSlipVenda(vendas.toArray(new VendaProduto[]{}));
+			SlipVendaEncalheDTO slipVendaEncalheDTO = this.obterDadosSlipVenda(vendas.toArray(new VendaProduto[]{}));
+			Long numeroSlip = controleNumeracaoSlipServiceImpl.obterProximoNumeroSlip(TipoSlip.SLIP_VENDA_ENCALHE);
+			slipVendaEncalheDTO.setNumeroSlip( (numeroSlip!= null)? numeroSlip.toString():"");
 			
 			if(TipoVendaEncalhe.ENCALHE.equals(filtro.getTipoVendaEncalhe())){
 
 				try{
-				    retorno= this.gerarDocumentoIreport(listaSlipVendaEncalheDTO, "/reports/slipVendaEncalhe.jasper");
+				    retorno= this.gerarDocumentoIreport(slipVendaEncalheDTO, "/reports/slipVendaEncalhe.jasper");
 				}
 				catch(Exception e){
 					throw new ValidacaoException(TipoMensagem.WARNING, "Erro ao gerar Slip de Venda de Encalhe.");
@@ -948,7 +989,7 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 			else{
 
 				try{
-				    retorno= this.gerarDocumentoIreport(listaSlipVendaEncalheDTO, "/reports/slipVendaSuplementar.jasper");
+				    retorno= this.gerarDocumentoIreport(slipVendaEncalheDTO, "/reports/slipVendaSuplementar.jasper");
 				}
 				catch(Exception e){
 					throw new ValidacaoException(TipoMensagem.WARNING, "Erro ao gerar Slip de Venda de Suplementar.");
