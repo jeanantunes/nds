@@ -366,29 +366,6 @@ public class MatrizLancamentoController {
 			for (ProdutoLancamentoDTO produtoLancamentoDTO : listaProdutoBalanceamento) {
 				
 				valorTotal += produtoLancamentoDTO.getValorTotal().doubleValue();
-				
-				produtoBalanceamentoVO.setTotal(CurrencyUtil.formatarValor(produtoLancamentoDTO.getValorTotal()));
-				
-				
-				
-				//produtoBalanceamentoVO.setFisico(produtoLancamentoDTO.getReparteFisico().toString());
-				
-				
-				
-				//produtoBalanceamentoVO.setQtdeEstudo(produtoLancamentoDTO.get())/
-				
-				//produtoBalanceamentoVO.setFuro(produtoLancamentoDTO.getIsfuro());
-				
-				//produtoBalanceamentoVO.setCancelamentoGD(produtoLancamentoDTO.get());
-				
-				//produtoBalanceamentoVO.setExpedido(produtoLancamentoDTO.get());
-				
-				produtoBalanceamentoVO.setEstudoFechado(produtoLancamentoDTO.isPossuiEstudo());
-				
-				//produtoBalanceamentoVO.setSemFisico(produtoLancamentoDTO.get());
-				
-				
-				listaProdutoBalanceamentoVO.add(produtoBalanceamentoVO);
 			}
 						
 			RodapeDTO rodape = new RodapeDTO(CurrencyUtil.formatarValor(valorTotal));
