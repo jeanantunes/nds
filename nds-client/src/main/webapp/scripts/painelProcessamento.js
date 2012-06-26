@@ -234,7 +234,11 @@ var painelProcessamentoController = {
 		var brDetalhes        = "";
 		
 		$.each(resultado.rows, function(index, row) {
-		
+
+			btReprocessamento = "<a href='javascript:;' onclick='painelProcessamentoController.reprocessarInterface(\"" + row.cell.nome + "\")'><img src= " + contextPath + "/images/bt_devolucao.png /></href>";
+			brDetalhes 		  = "<a href='javascript:;' onclick='painelProcessamentoController.abrirPopUpDetalhesInterfaceProcessamento(" + row.cell.idLogProcessamento + ")'><img src= " + contextPath + "/images/ico_detalhes.png /></href>";
+			row.cell.reprocessar = btReprocessamento + brDetalhes;
+
 			row.cell.nome = "<a href='javascript:;' onclick='painelProcessamentoController.abrirPopUpDetalhesInterface(" + row.cell.idLogProcessamento + ")'>" + row.cell.nome + "</href>";
 			
 			if (row.cell.status == 'S' || row.cell.status == 'A')
@@ -244,9 +248,6 @@ var painelProcessamentoController = {
 			else // Não processado
 				row.cell.status = "<img src= " + contextPath + "/images/ico_encerrado.png />";
 			
-			btReprocessamento = "<a href='javascript:;' onclick='alert(1)'><img src= " + contextPath + "/images/bt_devolucao.png /></href>";
-			brDetalhes 		  = "<a href='javascript:;' onclick='painelProcessamentoController.abrirPopUpDetalhesInterfaceProcessamento(" + row.cell.idLogProcessamento + ")'><img src= " + contextPath + "/images/ico_detalhes.png /></href>";
-			row.cell.reprocessar = btReprocessamento + brDetalhes;
 		});
 		return resultado;
 	},
@@ -339,5 +340,15 @@ var painelProcessamentoController = {
 		$("#btnGerarPDF").click(function() {
 			window.location = contextPath + "/administracao/painelProcessamento/exportar?fileType=PDF&tipoRelatorio=2";
 		});
-	}	
+	},
+	reprocessarInterface : function(classeInterface) {
+		var data = [{name: 'classeInterface', value: classeInterface}];
+		$.postJSON(contextPath + "/administracao/painelProcessamento/executarInterface",
+				   data,
+				   function (resultado) {
+					   exibirMensagem(resultado.tipoMensagem, 
+					   				  resultado.listaMensagens);
+				   });
+	}
+
 }

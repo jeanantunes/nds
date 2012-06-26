@@ -116,7 +116,7 @@ public class PainelProcessamentoServiceImpl implements PainelProcessamentoServic
 				interfaceDTO.setExtensaoArquivo(extensaoArquivo);
 			}
 			
-			interfaceDTO.setNome(logExecucao.getNomeLoginUsuario());
+			interfaceDTO.setNome(logExecucao.getInterfaceExecucao().getNome());
 			interfaceDTO.setStatus(logExecucao.getStatus().toString());
 			
 			listaInterface.add(interfaceDTO);

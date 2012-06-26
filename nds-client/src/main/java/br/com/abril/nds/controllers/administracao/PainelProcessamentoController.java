@@ -7,9 +7,11 @@ import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.util.PaginacaoUtil;
+import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.dto.InterfaceDTO;
 import br.com.abril.nds.dto.ProcessoDTO;
 import br.com.abril.nds.dto.filtro.FiltroInterfacesDTO;
@@ -374,8 +376,9 @@ public class PainelProcessamentoController {
 	 * Executa uma interface
 	 * @param classeInterface
 	 */
-	public void executarInterface(String classeInterface) {
+	public void executarInterface(String classeInterface) throws Exception {
 		interfaceExecucaoService.executarInterface(classeInterface, getUsuario());
+		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Execução da interface foi realizada com sucesso"),"result").recursive().serialize();
 	}
 	
 	/**

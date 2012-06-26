@@ -147,6 +147,11 @@
 			<groupId>br.com.jcomputacao</groupId>
 			<artifactId>nfexml</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>br.com.abril</groupId>
+			<artifactId>nsdi-engine</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
 	</dependencies>
 
 	<build>
