@@ -894,6 +894,8 @@ public class DataLoader {
 		gerarCargaDadosConferenciaEncalhe(session);
 		
 		gerarTiposNotas(session);
+		
+		gerarLogradouros(session);
 	}
 	
 	private static void criarControleNumeracaoSlip(Session session) {
@@ -10009,6 +10011,25 @@ public class DataLoader {
 		save(session, Fixture.criarEventoExecucao(EventoExecucaoEnum.GERACAO_DE_ARQUIVO.getCodigo(), "Arquivo", "Geração de Arquivo"));
 		save(session, Fixture.criarEventoExecucao(EventoExecucaoEnum.INF_DADO_ALTERADO.getCodigo(), "Alteração Dado", "Informação de dado Alterado"));
 		save(session, Fixture.criarEventoExecucao(EventoExecucaoEnum.REGISTRO_JA_EXISTENTE.getCodigo(), "Registro já existente", "Registro já existente"));
+	}
+	
+	private static void gerarLogradouros(Session session) {
+		
+		UnidadeFederacao saoPaulo = Fixture.criarUnidadeFederacao("SP");
+		UnidadeFederacao minasGerais = Fixture.criarUnidadeFederacao("MG");
+		save(session, saoPaulo, minasGerais);
+		
+		Localidade mococa = Fixture.criarLocalidade(14L, "Mococa", 555L, saoPaulo);
+		Localidade arceburgo = Fixture.criarLocalidade(15L, "Arceburgo", 556L, minasGerais);
+		save(session, mococa, arceburgo);
+		
+		Bairro vilaCarvalho = Fixture.criarBairro(1L, "Vila Carvalho", mococa);
+		Bairro centro = Fixture.criarBairro(2L, "Centro", arceburgo);
+		save(session, vilaCarvalho, centro);
+		
+		Logradouro joseCristovam = Fixture.criarLogradouro(1L, "Capitão José Cristovam de Lima", "13735430", 1L, mococa, "Rua");
+		Logradouro avenidaBrasil = Fixture.criarLogradouro(2L, "Brasil", "37820000", 2L, arceburgo, "Avenida");
+		save(session, joseCristovam, avenidaBrasil);
 	}
 
 	
