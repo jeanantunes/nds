@@ -431,19 +431,22 @@ fieldset label {
 			
 			<div id="notify" style="display: none;"></div>
 			
-			<div id="effectSuccess" class="ui-state-default ui-corner-all" style="display: none;">
+			<div id="effectSuccess" class="ui-state-default ui-corner-all" 
+					style="display: none; position: absolute; width: 980px;">
 				<p>
 					<span style="float: left; margin-right: .3em;" class="ui-icon ui-icon-info"></span>
 					<b id="idTextSuccess"></b>
 				</p>
 			</div>
-			<div id="effectWarning" class="ui-state-highlight ui-corner-all" style="display: none;">
+			<div id="effectWarning" class="ui-state-highlight ui-corner-all" 
+					style="display: none; position: absolute; width: 980px;">
 				<p>
 					<span style="float: left; margin-right: .3em;" class="ui-icon ui-icon-info"></span>
 					<b id="idTextWarning"></b>
 				</p>
 			</div>
-			<div id="effectError" class="ui-state-error ui-corner-all" style="display: none;">
+			<div id="effectError" class="ui-state-error ui-corner-all" 
+					style="display: none; position: absolute; width: 980px;">
 				<p>
 					<span style="float: left; margin-right: .3em;" class="ui-icon ui-icon-info"></span>
 					<b id="idTextError"></b>
