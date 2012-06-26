@@ -748,7 +748,8 @@ public class DataLoader {
 				session = sf.openSession();
 				tx = session.beginTransaction();				
 				
-				carregarDados(session);
+				//carregarDados(session);
+				carregarDadosClean(session);
 				
 				commit = true;
 			} catch (Exception e) {
@@ -896,6 +897,27 @@ public class DataLoader {
 		gerarTiposNotas(session);
 		
 		gerarLogradouros(session);
+	}
+	
+	
+	private static void carregarDadosClean(Session session) {
+		
+		gerarCfops(session);
+		
+		criarParametrosSistema(session);
+		criarInterfaceExecucao(session);
+		criarEventoExecucao(session);
+		criarAlgoritmos(session);
+		
+		criarDistribuidor(session);
+		criarEnderecoDistribuidor(session);
+		criarTelefoneDistribuidor(session);
+		
+		criarCFOP(session);		
+		criarParametroEmissaoNotaFiscal(session);
+		criarTiposNotaFiscal(session);
+		
+		criarFeriado(session);		
 	}
 	
 	private static void criarControleNumeracaoSlip(Session session) {
@@ -4612,8 +4634,8 @@ public class DataLoader {
 		criarBox(session);
 		criarCotas(session);
 		criarTiposProduto(session);
-		criarProdutos(session);
-		criarProdutosEdicao(session);
+//		criarProdutos(session);
+//		criarProdutosEdicao(session);
 		criarCFOP(session);
 		criarParametroEmissaoNotaFiscal(session);
 		criarTiposMovimento(session);
