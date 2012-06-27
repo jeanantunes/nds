@@ -199,7 +199,7 @@ public class NFEExporter {
 			}
 
 		} else if (valor != null && nfeExportType != null) {
-			execute(valor);
+			execute(valor, listaParents);
 		}
 	}
 		
