@@ -97,14 +97,15 @@ public class NFEExporter {
 	public <NF> void execute(NF notaFiscal) throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
 		
 		Field[] campos = notaFiscal.getClass().getDeclaredFields();
-		
+
 		for (Field campo : campos) {
+
 			campo.setAccessible(true);
-			
+
 			Object valor = campo.get(notaFiscal);
 			this.processarAnnotations(campo, notaFiscal, valor);
 		}		
-		
+	
 		Method[] metodos = notaFiscal.getClass().getDeclaredMethods();
 		
 		for (Method metodo : metodos) {
@@ -132,6 +133,11 @@ public class NFEExporter {
 	 */
 	@SuppressWarnings("rawtypes")
 	private <NF> void processarAnnotations(AccessibleObject objeto, NF notaFiscal, Object valor) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+		NFEExportIgnore nfeExportIgnore =  objeto.getAnnotation(NFEExportIgnore.class);
+		
+		if(nfeExportIgnore != null) {
+			return;
+		}
 		
 		NFEWhens nfeWhens = objeto.getAnnotation(NFEWhens.class);
 		NFEExport nfeExport = objeto.getAnnotation(NFEExport.class);
@@ -184,7 +190,7 @@ public class NFEExporter {
 		if (camposSecao == null || camposSecao.isEmpty()) {
 			camposSecao = new ArrayList<CampoSecao>();
 		}
-		
+		System.out.println(novoCampo.getSessao().getSigla());
 		camposSecao.add(novoCampo);
 		
 		this.mapSecoes.put(novoCampo.getSessao(), camposSecao);

@@ -6,6 +6,9 @@ import java.math.BigDecimal;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.MapsId;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 /**
  * SSQNtot<br>
@@ -53,6 +56,24 @@ public class ValoresTotaisISSQN implements Serializable {
 	 */
 	@Column(name="VL_TOTAL_COFINS", nullable=true, precision=15, scale=2)
 	private BigDecimal valorCOFINS;
+	
+
+	@OneToOne(optional=false) @MapsId("ID") @JoinColumn(name="ID")
+	private NotaFiscal notaFiscal;
+
+	/**
+	 * @return the notaFiscal
+	 */
+	public NotaFiscal getNotaFiscal() {
+		return notaFiscal;
+	}
+
+	/**
+	 * @param notaFiscal the notaFiscal to set
+	 */
+	public void setNotaFiscal(NotaFiscal notaFiscal) {
+		this.notaFiscal = notaFiscal;
+	}
 
 	/**
 	 * @return the id
