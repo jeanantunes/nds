@@ -47,8 +47,6 @@ import br.com.abril.nds.util.TipoMensagem;
 @Service
 public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 	
-	private static final String FORMATO_DATA_LANCAMENTO = "dd/MM/yyyy";
-	
 	@Autowired
 	protected LancamentoRepository lancamentoRepository;
 	
@@ -57,8 +55,6 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 	
 	@Autowired
 	protected DistribuidorRepository distribuidorRepository;
-	
-	
 
 	@Override
 	@Transactional(readOnly = true)
@@ -725,8 +721,6 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 			}
 		}
 	}
-	
-	
 	
 	/**
 	 * Monta o DTO com as informações para realização do balanceamento.
