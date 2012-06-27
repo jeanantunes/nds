@@ -26,16 +26,13 @@ public class DadosBalanceamentoLancamentoDTO implements Serializable {
 	
 	private BigDecimal capacidadeDistribuicao;
 	
-	// TODO: verificar a necessidade das datas de distribuição
-	private TreeSet<Date> datasDistribuicaoFornecedor;
-	
-	private TreeSet<Date> datasDistribuicaoDistribuidor;
-	
 	private TreeSet<Date> datasDistribuicaoFornecedorDistribuidor;
 	
 	private Integer qtdDiasLimiteParaReprogLancamento;
 	
 	private boolean configuracaoInicial;
+	
+	private int numeroSemana;
 
 	/**
 	 * Construtor padrão.
@@ -88,36 +85,6 @@ public class DadosBalanceamentoLancamentoDTO implements Serializable {
 	}
 
 	/**
-	 * @return the datasDistribuicaoFornecedor
-	 */
-	public TreeSet<Date> getDatasDistribuicaoFornecedor() {
-		return datasDistribuicaoFornecedor;
-	}
-
-	/**
-	 * @param datasDistribuicaoFornecedor the datasDistribuicaoFornecedor to set
-	 */
-	public void setDatasDistribuicaoFornecedor(
-			TreeSet<Date> datasDistribuicaoFornecedor) {
-		this.datasDistribuicaoFornecedor = datasDistribuicaoFornecedor;
-	}
-
-	/**
-	 * @return the datasDistribuicaoDistribuidor
-	 */
-	public TreeSet<Date> getDatasDistribuicaoDistribuidor() {
-		return datasDistribuicaoDistribuidor;
-	}
-
-	/**
-	 * @param datasDistribuicaoDistribuidor the datasDistribuicaoDistribuidor to set
-	 */
-	public void setDatasDistribuicaoDistribuidor(
-			TreeSet<Date> datasDistribuicaoDistribuidor) {
-		this.datasDistribuicaoDistribuidor = datasDistribuicaoDistribuidor;
-	}
-
-	/**
 	 * @return the datasDistribuicaoFornecedorDistribuidor
 	 */
 	public TreeSet<Date> getDatasDistribuicaoFornecedorDistribuidor() {
@@ -159,6 +126,20 @@ public class DadosBalanceamentoLancamentoDTO implements Serializable {
 	 */
 	public void setConfiguracaoInicial(boolean configuracaoInicial) {
 		this.configuracaoInicial = configuracaoInicial;
+	}
+
+	/**
+	 * @return the numeroSemana
+	 */
+	public int getNumeroSemana() {
+		return numeroSemana;
+	}
+
+	/**
+	 * @param numeroSemana the numeroSemana to set
+	 */
+	public void setNumeroSemana(int numeroSemana) {
+		this.numeroSemana = numeroSemana;
 	}
 	
 }

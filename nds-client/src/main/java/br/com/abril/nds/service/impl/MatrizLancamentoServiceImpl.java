@@ -131,6 +131,8 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 		balanceamentoLancamento.setCapacidadeDistribuicao(
 			dadosBalanceamentoLancamento.getCapacidadeDistribuicao());
 		
+		balanceamentoLancamento.setNumeroSemana(dadosBalanceamentoLancamento.getNumeroSemana());
+		
 		return balanceamentoLancamento;
 	}
 	
@@ -730,8 +732,14 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 		
 		Distribuidor distribuidor = distribuidorRepository.obter();
 		
+		Date dataLancamento = filtro.getData();
+		
+		int numeroSemana =
+			DateUtil.obterNumeroSemanaNoAno(dataLancamento,
+											distribuidor.getInicioSemana().getCodigoDiaSemana());
+		
 		Intervalo<Date> periodoDistribuicao = 
-			this.getPeriodoDistribuicao(distribuidor, filtro.getData());
+			this.getPeriodoDistribuicao(distribuidor, dataLancamento, numeroSemana);
 		
 		TreeSet<Date> datasDistribuicaoFornecedor = 
 			this.obterDatasDistribuicaoFornecedor(periodoDistribuicao, filtro.getIdsFornecedores());
@@ -746,8 +754,7 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 		DadosBalanceamentoLancamentoDTO dadosBalanceamentoLancamento =
 			new DadosBalanceamentoLancamentoDTO();
 		
-		dadosBalanceamentoLancamento.setDatasDistribuicaoFornecedor(datasDistribuicaoFornecedor);
-		dadosBalanceamentoLancamento.setDatasDistribuicaoDistribuidor(datasDistribuicaoDistribuidor);
+		dadosBalanceamentoLancamento.setNumeroSemana(numeroSemana);
 		
 		dadosBalanceamentoLancamento.setDatasDistribuicaoFornecedorDistribuidor(
 			datasDistribuicaoFornecedorDistribuidor);
@@ -777,11 +784,9 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 	/**
 	 * Monta o perídodo da semana de distribuição referente à data informada.
 	 */
-	private Intervalo<Date> getPeriodoDistribuicao(Distribuidor distribuidor, Date dataLancamento) {
-		
-		int numeroSemana =
-			DateUtil.obterNumeroSemanaNoAno(dataLancamento,
-											distribuidor.getInicioSemana().getCodigoDiaSemana());
+	private Intervalo<Date> getPeriodoDistribuicao(Distribuidor distribuidor,
+												   Date dataLancamento,
+												   int numeroSemana) {
 		
 		Date dataInicialSemana =
 			DateUtil.obterDataDaSemanaNoAno(numeroSemana,
