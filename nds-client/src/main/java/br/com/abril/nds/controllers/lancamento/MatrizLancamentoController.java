@@ -4,9 +4,12 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 import java.util.TreeMap;
 
 import javax.servlet.http.HttpServletResponse;
@@ -16,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.SerializationUtils;
 
 import br.com.abril.nds.client.util.PaginacaoUtil;
+import br.com.abril.nds.client.vo.ConfirmacaoVO;
 import br.com.abril.nds.client.vo.DetalheProdutoLancamentoVO;
 import br.com.abril.nds.client.vo.ResultadoResumoBalanceamentoVO;
 import br.com.abril.nds.client.vo.ResumoPeriodoBalanceamentoVO;
@@ -948,6 +952,56 @@ public class MatrizLancamentoController {
 		else{
 			result.nothing();
 		}
+	}
+	
+	
+	/**
+	 * Obtem agrupamento diário para confirmação de Balanceamento
+	 */
+	@Post
+	public void obterAgrupamentoDiarioBalanceamento(){
+		boolean confirmado = false;
+		
+		Map<Date,Boolean> agrupamento = new HashMap<Date,Boolean>(); 
+		
+		List<ConfirmacaoVO> confirmacoesVO = new ArrayList<ConfirmacaoVO>();
+		
+		BalanceamentoLancamentoDTO balanceamentoLancamento = (BalanceamentoLancamentoDTO) this.session.getAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO);
+	
+		for (Map.Entry<Date, List<ProdutoLancamentoDTO>> entry : balanceamentoLancamento.getMatrizLancamento().entrySet()) {
+			
+            List<ProdutoLancamentoDTO> listaProdutosRecolhimento = entry.getValue();
+			
+			if (listaProdutosRecolhimento != null && !listaProdutosRecolhimento.isEmpty()) {
+				
+				for (ProdutoLancamentoDTO produtoBalanceamento : listaProdutosRecolhimento) {
+
+					confirmado = (produtoBalanceamento.getStatusLancamento() == StatusLancamento.BALANCEADO)&&
+							     (produtoBalanceamento.getDataLancamentoDistribuidor()==produtoBalanceamento.getNovaDataLancamento());
+					
+					if ((confirmado) && 
+					    (agrupamento.get(produtoBalanceamento.getNovaDataLancamento())!=null) &&
+					    (!agrupamento.get(produtoBalanceamento.getNovaDataLancamento()))){
+						
+						agrupamento.remove(produtoBalanceamento.getNovaDataLancamento());
+					}
+					agrupamento.put(produtoBalanceamento.getNovaDataLancamento(), confirmado);
+				} 
+			}	
+		}
+		
+		Set<Entry<Date, Boolean>> setE = agrupamento.entrySet();
+		for (Entry<Date, Boolean> item : setE){
+			confirmacoesVO.add(new ConfirmacaoVO( DateUtil.formatarData(item.getKey(),"dd/MM/yyyy"),item.getValue()));
+		}
+		
+		TableModel<CellModelKeyValue<ConfirmacaoVO>> tableModel = new TableModel<CellModelKeyValue<ConfirmacaoVO>>();
+		
+		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(confirmacoesVO));
+		tableModel.setPage(1);
+		tableModel.setTotal(confirmacoesVO.size());
+
+		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
 	}
 
 }
