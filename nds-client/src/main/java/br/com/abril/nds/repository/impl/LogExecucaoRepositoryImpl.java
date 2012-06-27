@@ -9,11 +9,11 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.integracao.LogExecucao;
 import br.com.abril.nds.model.integracao.LogExecucaoMensagem;
 import br.com.abril.nds.repository.LogExecucaoRepository;
-import br.com.abril.nds.service.DistribuidorService;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
 @Repository

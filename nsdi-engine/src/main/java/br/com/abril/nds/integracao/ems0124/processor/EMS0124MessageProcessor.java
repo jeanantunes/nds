@@ -65,7 +65,7 @@ public class EMS0124MessageProcessor implements MessageProcessor{
 		
 	
 		Query query = entityManager.createQuery(sql.toString());
-		query.setParameter("dataOperacao", distribuidorService.findDistribuidor().getDataOperacao());
+		query.setParameter("dataOperacao", distribuidorService.obter().getDataOperacao());
 		query.setParameter("nivelamentoEntrada", GrupoMovimentoEstoque.NIVELAMENTO_ENTRADA);
 		query.setParameter("nivelamentoSaida", GrupoMovimentoEstoque.NIVELAMENTO_SAIDA);
 		

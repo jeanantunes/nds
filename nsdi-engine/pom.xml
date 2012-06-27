@@ -4,7 +4,6 @@
 
 	<groupId>br.com.abril</groupId>
 	<artifactId>nsdi-engine</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 	<name>nsdi-engine</name>
@@ -194,4 +193,9 @@
 			</plugin>
 		</plugins>
 	</build>
+	<parent>
+		<groupId>br.com.abril</groupId>
+		<artifactId>nds</artifactId>
+		<version>1.0</version>
+	</parent>
 </project>

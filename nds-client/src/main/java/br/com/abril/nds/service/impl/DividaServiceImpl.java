@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import br.com.abril.nds.dto.MovimentoFinanceiroCotaDTO;
 import br.com.abril.nds.dto.StatusDividaDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaInadimplenteDTO;
+import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.TipoEdicao;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.financeiro.BaixaCobranca;
@@ -32,7 +33,6 @@ import br.com.abril.nds.repository.MovimentoFinanceiroCotaRepository;
 import br.com.abril.nds.repository.TipoMovimentoFinanceiroRepository;
 import br.com.abril.nds.repository.UsuarioRepository;
 import br.com.abril.nds.service.CobrancaService;
-import br.com.abril.nds.service.DistribuidorService;
 import br.com.abril.nds.service.DividaService;
 import br.com.abril.nds.service.MovimentoFinanceiroCotaService;
 

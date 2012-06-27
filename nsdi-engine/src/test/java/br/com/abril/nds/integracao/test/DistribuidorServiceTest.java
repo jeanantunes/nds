@@ -23,7 +23,7 @@ public class DistribuidorServiceTest {
 	public void testarFindDistribuidor() {
 		
 		Distribuidor distribuidor = 
-			this.distribuidorService.findDistribuidor();
+			this.distribuidorService.obter();
 		
 		Assert.assertNotNull(distribuidor);
 	}

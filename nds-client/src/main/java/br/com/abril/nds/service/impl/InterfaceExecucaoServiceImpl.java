@@ -19,12 +19,20 @@ public class InterfaceExecucaoServiceImpl implements InterfaceExecucaoService {
 	@Autowired
 	private ApplicationContext applicationContext;
 	
+	private static final String PACOTE_PRIMEIRA_PARTE = "br.com.abril.nds.integracao.";
+	private static final String PACOTE_SEGUNDA_PARTE = ".route.";
+	private static final String ROUTE = "Route";
+	
 	/* (non-Javadoc)
 	 * @see br.com.abril.nds.service.InterfaceExecucaoService#executarInterface(java.lang.String, java.lang.String)
 	 */
 	@Override
 	public void executarInterface(String classeExecucao, Usuario usuario) throws BeansException, ClassNotFoundException {
-		RouteTemplate route = (RouteTemplate) applicationContext.getBean(Class.forName(classeExecucao));
+		
+		// Inclui o pacote na classe
+		String classe = PACOTE_PRIMEIRA_PARTE + classeExecucao.substring(0, classeExecucao.indexOf(ROUTE)).toLowerCase() + PACOTE_SEGUNDA_PARTE + classeExecucao;
+		
+		RouteTemplate route = (RouteTemplate) applicationContext.getBean(Class.forName(classe));
 		route.execute(usuario.getLogin());
 		
 		Class.forName("br.com.abril.nds.integracao.ems0106.route.EMS0106Route");

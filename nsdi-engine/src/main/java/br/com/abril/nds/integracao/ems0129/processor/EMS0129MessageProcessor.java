@@ -61,7 +61,7 @@ public class EMS0129MessageProcessor implements MessageProcessor {
 	@Override
 	public void processMessage(Message message) {
 		
-		Distribuidor distribuidor = distribuidorService.findDistribuidor();
+		Distribuidor distribuidor = distribuidorService.obter();
 
 		if (distribuidor.getLeiautePicking().equals(LeiautePicking.UM)) {
 

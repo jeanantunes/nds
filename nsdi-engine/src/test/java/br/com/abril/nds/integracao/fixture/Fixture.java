@@ -397,7 +397,7 @@ public class Fixture {
 		tipoProduto.setGrupoProduto(grupo);
 		tipoProduto.setCodigo(codigo);
 		tipoProduto.setCodigoNBM(codigoNBM);
-		tipoProduto.setCodigoNCM(codigoNCM);
+		tipoProduto.setCodigoNCM(Long.parseLong(codigoNCM));
 		return tipoProduto;
 	}
 	

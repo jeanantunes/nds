@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.InterfaceDTO;
 import br.com.abril.nds.dto.ProcessoDTO;
+import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.StatusOperacional;
 import br.com.abril.nds.model.estoque.ControleFechamentoEncalhe;
 import br.com.abril.nds.model.integracao.LogExecucao;
@@ -20,7 +21,6 @@ import br.com.abril.nds.model.integracao.StatusExecucaoEnum;
 import br.com.abril.nds.repository.BaixaCobrancaService;
 import br.com.abril.nds.repository.LogExecucaoRepository;
 import br.com.abril.nds.service.ConsolidadoFinanceiroService;
-import br.com.abril.nds.service.DistribuidorService;
 import br.com.abril.nds.service.ExpedicaoService;
 import br.com.abril.nds.service.FechamentoEncalheService;
 import br.com.abril.nds.service.HistoricoSituacaoCotaService;

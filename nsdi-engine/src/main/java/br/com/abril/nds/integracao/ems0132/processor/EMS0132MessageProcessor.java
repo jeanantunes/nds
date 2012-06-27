@@ -203,7 +203,7 @@ public class EMS0132MessageProcessor implements MessageProcessor {
 	 */
 	private Distribuidor obterDistribuidor() {
 		
-		return this.distribuidorService.findDistribuidor();
+		return this.distribuidorService.obter();
 	}
 	
 }

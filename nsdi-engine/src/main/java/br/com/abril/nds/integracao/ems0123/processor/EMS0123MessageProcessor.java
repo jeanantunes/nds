@@ -64,7 +64,7 @@ public class EMS0123MessageProcessor implements MessageProcessor{
 		
 	
 		Query query = entityManager.createQuery(sql.toString());
-		query.setParameter("dataOperacao", distribuidorService.findDistribuidor().getDataOperacao());
+		query.setParameter("dataOperacao", distribuidorService.obter().getDataOperacao());
 		query.setParameter("encalheAntecipado", GrupoMovimentoEstoque.ENCALHE_ANTECIPADO);
 		
 		@SuppressWarnings("unchecked")

@@ -9,7 +9,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.ExpedicaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroResumoExpedicaoDTO;
-import br.com.abril.nds.model.estoque.Expedicao;
 import br.com.abril.nds.repository.ExpedicaoRepository;
 import br.com.abril.nds.service.ExpedicaoService;
 

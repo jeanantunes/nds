@@ -403,12 +403,13 @@
 	<modules>
 		<module>nds-model</module>
 		<module>nds-util</module>
-		<module>nds-client</module>
 
 		<module>ndsi-canonical</module>
 		<module>ndsi-couchdbinterface</module>
 		<module>ndsi-engine</module>
 		<module>ndsi-webtest</module>
+
+		<module>nds-client</module>
 
 		<!-- DESABILITADO até início de atividades neste módulo <module>nds-server</module> -->
 

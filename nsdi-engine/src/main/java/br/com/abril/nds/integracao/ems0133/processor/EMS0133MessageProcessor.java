@@ -52,7 +52,7 @@ public class EMS0133MessageProcessor implements MessageProcessor {
 	@Override
 	public void processMessage(Message message) {	
 		
-		Distribuidor distribuidor = distribuidorService.findDistribuidor();
+		Distribuidor distribuidor = distribuidorService.obter();
 		
 		Date data = new Date();
 		
