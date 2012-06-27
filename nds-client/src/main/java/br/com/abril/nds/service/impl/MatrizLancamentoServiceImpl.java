@@ -29,13 +29,18 @@ import br.com.abril.nds.dto.SumarioLancamentosDTO;
 import br.com.abril.nds.dto.filtro.FiltroLancamentoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.DiaSemana;
+import br.com.abril.nds.model.TipoEdicao;
 import br.com.abril.nds.model.cadastro.DistribuicaoDistribuidor;
 import br.com.abril.nds.model.cadastro.DistribuicaoFornecedor;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.cadastro.OperacaoDistribuidor;
+import br.com.abril.nds.model.planejamento.HistoricoLancamento;
+import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
+import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.DistribuidorRepository;
+import br.com.abril.nds.repository.HistoricoLancamentoRepository;
 import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.MatrizLancamentoService;
@@ -58,6 +63,8 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 	@Autowired
 	protected DistribuidorRepository distribuidorRepository;
 	
+	@Autowired
+	private HistoricoLancamentoRepository historicoLancamentoRepository;
 	
 
 	@Override
@@ -77,8 +84,126 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 	@Override
 	@Transactional
 	public void confirmarMatrizLancamento(TreeMap<Date, List<ProdutoLancamentoDTO>> matrizLancamento) {
-		
+
 		// TODO: confirmar matriz de lançamento
+
+		if (matrizLancamento == null || matrizLancamento.isEmpty()) {
+
+			throw new ValidacaoException(TipoMensagem.WARNING, "Matriz de recolhimento não informada!");
+		}
+
+		Map<Long, ProdutoLancamentoDTO> mapaLancamento =
+				new TreeMap<Long, ProdutoLancamentoDTO>();
+
+		Set<Long> idsLancamento = new TreeSet<Long>();
+
+		Set<Long> idsProdutoEdicaoParcial = new TreeSet<Long>();
+
+		for (Map.Entry<Date, List<ProdutoLancamentoDTO>> entry : matrizLancamento.entrySet()) {
+			
+			List<ProdutoLancamentoDTO> listaProdutoLancamentoDTO = entry.getValue();
+			
+			if (listaProdutoLancamentoDTO == null || listaProdutoLancamentoDTO.isEmpty()) {
+
+				continue;
+			}
+
+			for (ProdutoLancamentoDTO produtoRecolhimento : listaProdutoLancamentoDTO) {
+				
+				Date novaDataLancamento = produtoRecolhimento.getNovaDataLancamento();
+				
+				Long idLancamento = produtoRecolhimento.getIdLancamento();
+
+				// Monta Map e Set para controlar a atualização dos lançamentos 
+				
+				mapaLancamento.put(idLancamento, produtoRecolhimento);
+				
+				idsLancamento.add(idLancamento);
+				
+				// Monta Map para controlar a geração de chamada de encalhe
+				
+//				Set<Long> idsLancamentoPorData = mapaDataRecolhimentoLancamentos.get(novaDataRecolhimento);
+//				
+//				if (idsLancamentoPorData == null) {
+//					
+//					idsLancamentoPorData = new TreeSet<Long>();
+//				}
+//				
+//				idsLancamentoPorData.add(idLancamento);
+//				
+//				mapaDataRecolhimentoLancamentos.put(novaDataRecolhimento, idsLancamentoPorData);
+				
+				// Monta Set para controlar a geração de períodos parciais
+				
+				if (produtoRecolhimento.getParcial() != null) {
+					
+					idsProdutoEdicaoParcial.add(produtoRecolhimento.getIdProdutoEdicao());
+				}
+			}
+		}
+		
+		this.atualizarLancamentos(idsLancamento, null, mapaLancamento);
+	}
+	
+	/**
+	 * Método que atualiza as informações dos lançamentos.
+	 * 
+	 * @param idsLancamento - identificadores de lançamentos
+	 * @param usuario - usuário
+	 * @param mapaLancamento - mapa de lancamentos e produtos de recolhimento
+	 */
+	private void atualizarLancamentos(Set<Long> idsLancamento, Usuario usuario,
+									  Map<Long, ProdutoLancamentoDTO> mapaLancamento) {
+		
+		if (!idsLancamento.isEmpty()) {
+		
+			List<Lancamento> listaLancamentos = this.lancamentoRepository.obterLancamentosPorId(idsLancamento);
+			
+			if (listaLancamentos == null || listaLancamentos.isEmpty()) {
+				
+				throw new ValidacaoException(TipoMensagem.WARNING,
+					"Lançamento não encontrado!");
+			}
+			
+			if (idsLancamento.size() != listaLancamentos.size()) {
+				
+				throw new ValidacaoException(TipoMensagem.WARNING,
+					"Lançamento não encontrado!");
+			}
+			
+			ProdutoLancamentoDTO produtoLancamento = null;
+			
+			boolean gerarHistoricoLancamento = false;
+			
+			HistoricoLancamento historicoLancamento = null;
+			
+			for (Lancamento lancamento : listaLancamentos) {
+				
+				gerarHistoricoLancamento =
+					!(lancamento.getStatus().equals(StatusLancamento.BALANCEADO));
+				
+				produtoLancamento = mapaLancamento.get(lancamento.getId());
+				
+				lancamento.setDataRecolhimentoDistribuidor(produtoLancamento.getNovaDataLancamento());
+				lancamento.setStatus(StatusLancamento.BALANCEADO);
+				lancamento.setDataStatus(new Date());
+				
+				this.lancamentoRepository.merge(lancamento);
+				
+				if (gerarHistoricoLancamento) {
+				
+					historicoLancamento = new HistoricoLancamento();
+					
+					historicoLancamento.setLancamento(lancamento);
+					historicoLancamento.setTipoEdicao(TipoEdicao.ALTERACAO);
+					historicoLancamento.setStatus(lancamento.getStatus());
+					historicoLancamento.setDataEdicao(new Date());
+					historicoLancamento.setResponsavel(usuario);
+					
+					this.historicoLancamentoRepository.merge(historicoLancamento);
+				}
+			}
+		}
 	}
 	
 	/**
