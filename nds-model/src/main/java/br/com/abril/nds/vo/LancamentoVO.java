@@ -47,6 +47,7 @@ public class LancamentoVO  implements Serializable {
 	private boolean estudoFechado;
 	private boolean reprogramacoesExcedidas;
 	private boolean bloquearData;
+	private Long idProdutoEdicao;
 	
 	
 	
@@ -265,6 +266,14 @@ public class LancamentoVO  implements Serializable {
 
 	public void setBloquearData(boolean bloquearData) {
 		this.bloquearData = bloquearData;
+	}
+
+	public Long getIdProdutoEdicao() {
+		return idProdutoEdicao;
+	}
+
+	public void setIdProdutoEdicao(Long idProdutoEdicao) {
+		this.idProdutoEdicao = idProdutoEdicao;
 	}
 
 }
