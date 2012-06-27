@@ -64,11 +64,14 @@ public class NFEExporter {
 	public List<NFEExporter> listaNFEExporters;
 	
 	/**
+	 * Contador de iteração da listaNFEExporters
+	 */
+	private Integer indexListaNFEExporters;
+	
+	/**
 	 * Lista das sessoes do arquivo de exportação
 	 */
 	private TreeMap<TipoSecao, List<CampoSecao>> mapSecoes = new TreeMap<TipoSecao, List<CampoSecao>>(new NFESecaoComparator());
-	
-	private Integer indexListaNFEExporters;
 	
 	/**
 	 * Construtor padrão
@@ -98,6 +101,25 @@ public class NFEExporter {
 	 * @throws InvocationTargetException
 	 */
 	public <NF> void execute(NF notaFiscal) throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
+		this.execute(notaFiscal, new ArrayList<Object>());
+	}
+	
+	/**
+	 * Faz a varredura de um objeto buscando as anotações NFEExport ou
+	 * NFEExports e adicona os dados nas lista de seções. E mantem o históricos
+	 * dos objetos Pais.
+	 * 
+	 * @param notaFiscal
+	 * @param listaParents
+	 * @throws IllegalArgumentException
+	 * @throws IllegalAccessException
+	 * @throws InvocationTargetException
+	 */
+	private <NF> void execute(NF notaFiscal, List<Object> listaParents) throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
+		
+		if (listaParents != null) {
+			listaParents.add(notaFiscal);
+		}
 		
 		Field[] campos = notaFiscal.getClass().getDeclaredFields();
 
@@ -106,7 +128,7 @@ public class NFEExporter {
 			campo.setAccessible(true);
 
 			Object valor = campo.get(notaFiscal);
-			this.processarAnnotations(campo, notaFiscal, valor);
+			this.processarAnnotations(campo, listaParents, notaFiscal, valor);
 		}		
 	
 		Method[] metodos = notaFiscal.getClass().getDeclaredMethods();
@@ -119,33 +141,39 @@ public class NFEExporter {
 			if (nfeWhens != null && nfeExport!= null && nfeExports != null ) {
 				if (metodo.getParameterTypes().length == 0 && !metodo.getReturnType().equals(Void.TYPE)) {
 					Object valor = metodo.invoke(notaFiscal, new Object[] {});
-					this.processarAnnotations(metodo, notaFiscal, valor);
+					this.processarAnnotations(metodo, listaParents, notaFiscal, valor);
 				}
 			}
 		}
 		
+		if (listaParents != null) {
+			listaParents.remove(notaFiscal);
+		}
 	}
 	
 	
 	/**
+	 * 
 	 * @param objeto
+	 * @param listaParents
 	 * @param notaFiscal
+	 * @param valor
 	 * @throws IllegalAccessException
 	 * @throws IllegalArgumentException
 	 * @throws InvocationTargetException
 	 */
 	@SuppressWarnings("rawtypes")
-	private <NF> void processarAnnotations(AccessibleObject objeto, NF notaFiscal, Object valor) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+	private <NF> void processarAnnotations(AccessibleObject objeto, List<Object> listaParents, NF notaFiscal, Object valor) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		NFEExportType nfeExportType =  objeto.getAnnotation(NFEExportType.class);
 		NFEWhens nfeWhens = objeto.getAnnotation(NFEWhens.class);
 		NFEExport nfeExport = objeto.getAnnotation(NFEExport.class);
 		NFEExports nfeExports = objeto.getAnnotation(NFEExports.class);
 		
-		if (isNumeric(valor) || isDate(valor) || isLiteral(valor)) {
+		if (isNumeric(valor) || isDate(valor) || isLiteral(valor) || isEnum(valor)) {
 			
 			if(nfeWhens != null){
 				for(NFEWhen when: nfeWhens.value()){
-					if(when.condition().valid(valor) && when.condition().valid(notaFiscal)){						
+					if(when.condition().valid(valor) && when.condition().validParent(notaFiscal) && when.condition().validParents(listaParents)){						
 						addCampoSecao(when.export(), valor);
 					}
 				}
@@ -166,7 +194,7 @@ public class NFEExporter {
 			for (Object valorCollection : (Collection) valor) {
 				NFEExporter nfeExporter = new NFEExporter();
 				nfeExporter.clear();
-				nfeExporter.execute(valorCollection);
+				nfeExporter.execute(valorCollection, listaParents);
 				listaNFEExporters.add(nfeExporter);
 			}
 
@@ -188,7 +216,6 @@ public class NFEExporter {
 		if (camposSecao == null || camposSecao.isEmpty()) {
 			camposSecao = new ArrayList<CampoSecao>();
 		}
-
 		camposSecao.add(novoCampo);
 		
 		this.mapSecoes.put(novoCampo.getSessao(), camposSecao);
@@ -405,7 +432,7 @@ public class NFEExporter {
 			
 			} else {
 				
-				valorString = valor.toString();
+				valorString = String.valueOf(valor);
 				
 				if(!StringUtil.isEmpty(valorString)) {
 					if ((tamanho != null && tamanho > 0) && (valorString.length() > tamanho)) {
@@ -452,11 +479,12 @@ public class NFEExporter {
 	 * @return - True se for e False se não for. 
 	 */
 	private boolean isNumeric(Object valor) {
-		return ((valor instanceof BigDecimal) || (valor instanceof Double)
-				|| (valor instanceof Integer) || (valor instanceof Long)
-				|| (valor instanceof BigInteger) || (valor instanceof Byte)
-				|| (valor instanceof Short) || (valor instanceof Float))
-				&& (valor != null);
+		return (valor != null)
+				&& ((valor instanceof BigDecimal) || (valor instanceof Double)
+						|| (valor instanceof Integer)
+						|| (valor instanceof Long)
+						|| (valor instanceof BigInteger)
+						|| (valor instanceof Byte) || (valor instanceof Short) || (valor instanceof Float));
 	}
 
 	/**
@@ -466,8 +494,8 @@ public class NFEExporter {
 	 * @return - True se for e False se não for. 
 	 */
 	private boolean isLiteral(Object valor) {
-		return ((valor instanceof String) || (valor instanceof Character))
-				&& (valor != null);
+		return (valor != null)
+				&& ((valor instanceof String) || (valor instanceof Character));
 	}
 
 	/**
@@ -477,8 +505,18 @@ public class NFEExporter {
 	 * @return - True se for e False se não for. 
 	 */
 	private boolean isDate(Object valor) {
-		return ((valor instanceof Date) || (valor instanceof Calendar))
-				&& (valor != null);
+		return (valor != null)
+				&& ((valor instanceof Date) || (valor instanceof Calendar));
+	}
+	
+	/**
+	 * Verifica se é Enum
+	 * 
+	 * @param valor
+	 * @return
+	 */
+	private boolean isEnum(Object valor) {
+		return (valor != null) && valor.getClass().getEnumConstants() != null;
 	}
 	
 	@SuppressWarnings("unchecked")

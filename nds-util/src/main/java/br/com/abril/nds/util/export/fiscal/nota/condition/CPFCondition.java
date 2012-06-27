@@ -3,7 +3,7 @@ package br.com.abril.nds.util.export.fiscal.nota.condition;
 import br.com.caelum.stella.validation.CPFValidator;
 
 
-public class CPFCondition implements Condition {
+public class CPFCondition extends ConditionDefault {
 
 	@Override
 	public boolean valid(Object object) {
@@ -14,11 +14,6 @@ public class CPFCondition implements Condition {
 			e.printStackTrace();
 			return false;
 		}
-	}
-
-	@Override
-	public boolean validParent(Object object) {		
-		return true;
 	}
 
 }
