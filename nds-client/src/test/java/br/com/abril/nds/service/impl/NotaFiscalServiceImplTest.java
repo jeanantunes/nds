@@ -62,7 +62,9 @@ public class NotaFiscalServiceImplTest extends AbstractRepositoryImplTest {
 			NotaFiscal notaTesteArquivo = 
 					this.gerarNFE("33111102737654003496550550000483081131621856", 
 					"37712543534", StatusProcessamentoInterno.GERADA, Status.SERVICO_EM_OPERACAO);
+			notaTesteArquivo.setProdutosServicos(this.gerarListaProdutoServico(notaTesteArquivo));
 			save(notaTesteArquivo);
+			
 			this.notasParaTesteArquivo.add(notaTesteArquivo);
 		}
 	}
@@ -74,6 +76,7 @@ public class NotaFiscalServiceImplTest extends AbstractRepositoryImplTest {
 		try {
 			this.notaFiscalService.exportarNotasFiscais();
 		} catch (Exception e) {
+			e.printStackTrace();
 			Assert.fail();
 		}
 	}

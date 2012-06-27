@@ -51,6 +51,7 @@ import br.com.abril.nds.repository.TelefoneCotaRepository;
 import br.com.abril.nds.repository.TipoNotaFiscalRepository;
 import br.com.abril.nds.service.NotaFiscalService;
 import br.com.abril.nds.service.ParametroSistemaService;
+import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.export.fiscal.nota.NFEExporter;
 
@@ -219,6 +220,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 			dados = gerarArquivoNota(notasFiscaisParaExportacao);
 		
 		} catch (Exception e) {
+			e.printStackTrace();
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Falha ao gerar arquivo de exportação"));
 		}		
 		
@@ -231,9 +233,9 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		if (!diretorioExportacaoNFE.isDirectory()) {
 			throw new FileNotFoundException("O diretório de exportação parametrizado não é válido!");
 		}
-		
+		Long time = new Date().getTime();
 		File notaExportacao = 
-				new File(diretorioExportacaoNFE + File.separator + new File("NFeExportacao.txt"));
+				new File(diretorioExportacaoNFE + File.separator + new File("NFeExportacao"+time+".txt"));
 		
 		FileWriter fileWriter;
 			
