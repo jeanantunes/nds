@@ -255,49 +255,6 @@ function Balanceamento(pathTela, descInstancia) {
 
 		T.carregarImagemCapa(result.idProdutoEdicao,'129','170','Capa',"td_imagem_capa");
 	},
-	
-	
-	/**
-	 * Exibe popup de detalhes do produto
-	 * @param dialog: Nome do dialog
-	 */
-	this.popup_detalhes_prod = function(dialog){
-		$( dialog ).dialog({
-			resizable: false,
-			height:300,
-			width:760,
-			modal: true,
-			buttons: {
-				"Fechar": function() {
-					$( this ).dialog( "close" );
-					
-				},
-			}
-		});
-	},
-	
-	
-	/**
-	 * Exibe popup de confirmação de balanceamento
-	 * @param dialog: Nome do dialog
-	 */
-	this.popup_confirmar_balanceamento = function(dialog){
-		$( dialog ).dialog({
-			resizable: false,
-			height:'auto',
-			width:300,
-			modal: true,
-			buttons: {
-				"Confirmar": function() {
-					$( this ).dialog( "close" );
-					$("#effect").show("highlight", {}, 1000, callback);
-				},
-				"Cancelar": function() {
-					$( this ).dialog( "close" );
-				},
-			}
-		});
-	},
 
 	
 	/**
@@ -355,6 +312,106 @@ function Balanceamento(pathTela, descInstancia) {
 		});
 		
 		$("#tableConfirmaBalanceamento").append(conteudo);
+	},
+	
+	
+	/**
+	 * Obtém datas marcadas da confirmação do balanceamento
+	 * @returns dividasMarcadas
+	 */
+	this.obterDatasMarcadasConfirmacao = function(){
+
+		var datasConfirmadas='';
+		var table = document.getElementById("tableConfirmaBalanceamento");
+		
+		for(i = 0; i < table.rows.length; i++){   
+			
+			if(document.getElementById("checkConfirmar_"+i)!=null){
+				
+				if (document.getElementById("checkConfirmar_"+i).checked){
+				    table.rows[i].cells[0].textContent; 
+				    datasConfirmadas+='datasConfirmadas='+ table.rows[i].cells[0].textContent + '&';
+			    }
+				
+		    }
+
+		} 
+		
+		return datasConfirmadas;
+	},
+	
+	
+	/**
+     * Confirma a matriz de lançamento
+     * OBS: Específico para matrizLancamento\index.jsp
+     */
+	this.confirmarMatrizLancamento = function (){
+
+		$.postJSON(
+			pathTela + "/matrizLancamento/confirmarMatrizLancamento", 
+			T.obterDatasMarcadasConfirmacao(),
+			function(mensagens) {
+				
+	           $("#dialog-confirm-balanceamento").dialog("close");
+
+			   if (mensagens){
+				   var tipoMensagem = mensagens.tipoMensagem;
+				   var listaMensagens = mensagens.listaMensagens;
+				   if (tipoMensagem && listaMensagens) {
+				       exibirMensagem(tipoMensagem, listaMensagens);
+			       }
+        	   }
+			   
+            },
+			null,
+			true,
+			"dialog-confirmar"
+		);
+	},
+	
+	
+	/**
+	 * Exibe popup de detalhes do produto
+	 * @param dialog: Nome do dialog
+	 */
+	this.popup_detalhes_prod = function(dialog){
+		$( dialog ).dialog({
+			resizable: false,
+			height:300,
+			width:760,
+			modal: true,
+			buttons: {
+				"Fechar": function() {
+					$( this ).dialog( "close" );
+					
+				},
+			}
+		});
+	},
+	
+	
+	/**
+	 * Exibe popup de confirmação de balanceamento
+	 * @param dialog: Nome do dialog
+	 */
+	this.popup_confirmar_balanceamento = function(dialog){
+		$( dialog ).dialog({
+			resizable: false,
+			height:'auto',
+			width:300,
+			modal: true,
+			buttons: {
+				"Confirmar": function() {
+					T.confirmarMatrizLancamento();
+				},
+				"Cancelar": function() {
+					$( this ).dialog( "close" );
+				},
+			},
+			beforeClose: function() {
+				clearMessageDialogTimeout(dialog);
+		    }
+		});
 	},
 
 	
