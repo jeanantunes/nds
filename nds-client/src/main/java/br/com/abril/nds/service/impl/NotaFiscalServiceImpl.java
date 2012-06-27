@@ -256,8 +256,12 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 	
 		for(NotaFiscal notaFiscal : notasFiscaisParaExportacao) {
 			nfeExporter.clear();
-			nfeExporter.execute(notaFiscal);
-			sBuffer.append(nfeExporter.toString());
+			try {
+				nfeExporter.execute(notaFiscal);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			sBuffer.append(nfeExporter.gerarArquivo());
 		}
 		
 		return sBuffer.toString();

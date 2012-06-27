@@ -43,7 +43,6 @@ public class Identificacao implements Serializable {
 	 */
 	@Enumerated(EnumType.ORDINAL)
 	@Column(name = "TIPO_OPERACAO", length = 1, nullable = false)
-	@NFEExport(secao=TipoSecao.B, posicao=9, tamanho=1)
 	private TipoOperacao tipoOperacao;
 
 	/**
@@ -59,7 +58,6 @@ public class Identificacao implements Serializable {
 	 */
 	@Enumerated(EnumType.ORDINAL)
 	@Column(name="INDICADOR_FORMA_PAGAMENTO", length=1, nullable=false)
-	@NFEExport(secao=TipoSecao.B, posicao=3, tamanho=1)
 	private FormaPagamento formaPagamento;
 	
 		
