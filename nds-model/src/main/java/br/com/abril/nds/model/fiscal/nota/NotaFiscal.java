@@ -14,6 +14,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import br.com.abril.nds.util.export.fiscal.nota.NFEExportIgnore;
+
 @Entity
 @Table(name = "NOTA_FISCAL_NOVO")
 @SequenceGenerator(name = "NOTA_FISCAL_SEQ", initialValue = 1, allocationSize = 1)
@@ -41,30 +43,35 @@ public class NotaFiscal implements Serializable {
 	 * EMIT
 	 */
 	@Embedded
+	@NFEExportIgnore
 	private IdentificacaoEmitente identificacaoEmitente;
 	
 	/**
 	 * DEST
 	 */
 	@Embedded
+	@NFEExportIgnore
 	private IdentificacaoDestinatario identificacaoDestinatario;
 	
 	/**
 	 * DET -> PROD
 	 */
 	@OneToMany(mappedBy = "notaFiscal")
+	@NFEExportIgnore
 	private List<ProdutoServico> produtosServicos;
 	
 	/**
 	 * TOTAL
 	 */
 	@Embedded
+	@NFEExportIgnore
 	private InformacaoValoresTotais informacaoValoresTotais;
 	
 	/**
 	 * TRANSP
 	 */
 	@Embedded
+	@NFEExportIgnore
 	private InformacaoTransporte informacaoTransporte;
 	
 		
@@ -72,12 +79,14 @@ public class NotaFiscal implements Serializable {
 	 * INFADIC
 	 */
 	@Embedded
+	@NFEExportIgnore
 	private InformacaoAdicional informacaoAdicional;
 	
 	/**
 	 * Informações da comunicação eletrônica.
 	 */
 	@Embedded
+	@NFEExportIgnore
 	private InformacaoEletronica informacaoEletronica;
 	
 	/**
@@ -85,6 +94,7 @@ public class NotaFiscal implements Serializable {
 	 */
 	@Enumerated(EnumType.STRING)
 	@Column(name = "STATUS_PROCESSAMENTO_INTERNO")
+	@NFEExportIgnore
 	private StatusProcessamentoInterno statusProcessamentoInterno;
 	
 	/**
