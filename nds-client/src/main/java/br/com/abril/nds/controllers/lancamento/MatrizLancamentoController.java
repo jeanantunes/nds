@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -32,6 +31,7 @@ import br.com.abril.nds.dto.filtro.FiltroLancamentoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
+import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
@@ -39,6 +39,7 @@ import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.DistribuidorService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.MatrizLancamentoService;
+import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.CurrencyUtil;
@@ -84,6 +85,9 @@ public class MatrizLancamentoController {
 	
 	@Autowired
 	private CalendarioService calendarioService;
+	
+	@Autowired
+	private ProdutoEdicaoService produtoEdicaoService;
 	
 	@Autowired
 	private HttpServletResponse httpResponse;
@@ -939,20 +943,24 @@ public class MatrizLancamentoController {
 	 * @param produtoLancamento
 	 * @return DetalheProdutoLancamentoVO
 	 */
-	private DetalheProdutoLancamentoVO getDetalheProduto(ProdutoLancamentoDTO produtoBalanceamento){
+	private DetalheProdutoLancamentoVO getDetalheProduto(Long idProdutoEdicao){
+		
 		DetalheProdutoLancamentoVO produtoLancamentoVO = null;
-		if (produtoBalanceamento!=null){
-			produtoLancamentoVO = new DetalheProdutoLancamentoVO(produtoBalanceamento.getIdProdutoEdicao(),
-												                 produtoBalanceamento.getNomeProduto(),
-												                 produtoBalanceamento.getCodigoProduto(),
-												                 (produtoBalanceamento.getPrecoVenda()!=null?CurrencyUtil.formatarValor(produtoBalanceamento.getPrecoVenda()):""),
-												                 (produtoBalanceamento.getPrecoComDesconto()!=null?CurrencyUtil.formatarValor(produtoBalanceamento.getPrecoComDesconto()):""),
-												                 produtoBalanceamento.getFornecedor(),
-												                 (produtoBalanceamento.getCodigoEditor()!=null?produtoBalanceamento.getCodigoEditor().toString():""),
-												                 produtoBalanceamento.getNomeEditor(),
-												                 produtoBalanceamento.getChamadaCapa(),
-												                 (produtoBalanceamento.isPossuiBrinde()?"Sim":"Não"),
-												                 (produtoBalanceamento.getPacotePadrao()!=null?produtoBalanceamento.getPacotePadrao().toString():"")
+		
+		ProdutoEdicao produtoEdicao = produtoEdicaoService.obterProdutoEdicao(idProdutoEdicao);
+		
+		if (produtoEdicao!=null){
+			produtoLancamentoVO = new DetalheProdutoLancamentoVO(produtoEdicao.getId(),
+																 produtoEdicao.getNomeComercial(),
+																 produtoEdicao.getCodigo(),
+												                 (produtoEdicao.getPrecoVenda()!=null?CurrencyUtil.formatarValor(produtoEdicao.getPrecoVenda()):""),
+												                 (produtoEdicao.getDesconto()!=null?CurrencyUtil.formatarValor(produtoEdicao.getDesconto()):""),
+												                 (produtoEdicao.getProduto()!=null?(produtoEdicao.getProduto().getFornecedor()!=null?produtoEdicao.getProduto().getFornecedor().getJuridica().getNome():""):""),
+												                 (produtoEdicao.getProduto()!=null?(produtoEdicao.getProduto().getEditor()!=null?produtoEdicao.getProduto().getEditor().getCodigo().toString():""):""),
+												                 (produtoEdicao.getProduto()!=null?(produtoEdicao.getProduto().getEditor()!=null?produtoEdicao.getProduto().getEditor().getNome():""):""),
+												                 produtoEdicao.getChamadaCapa(),
+												                 (produtoEdicao.isPossuiBrinde()?"Sim":"Não"),
+												                 Integer.toString(produtoEdicao.getPacotePadrao())
 												                 );
 		}
 		return produtoLancamentoVO;
@@ -963,30 +971,12 @@ public class MatrizLancamentoController {
 	 * @param codigoProduto
 	 */
 	@Post
-	public void obterDetalheProduto(Long codigoProduto){
+	public void obterDetalheProduto(Long idProdutoEdicao){
 		
 		DetalheProdutoLancamentoVO produtoLancamentoVO = null;
 		
-		BalanceamentoLancamentoDTO balanceamentoLancamento = (BalanceamentoLancamentoDTO) this.session.getAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_LANCAMENTO);
-	
-		for (Map.Entry<Date, List<ProdutoLancamentoDTO>> entry : balanceamentoLancamento.getMatrizLancamento().entrySet()) {
-			
-            List<ProdutoLancamentoDTO> listaProdutosRecolhimento = entry.getValue();
-			
-			if (listaProdutosRecolhimento != null && !listaProdutosRecolhimento.isEmpty()) {
-				
-				for (ProdutoLancamentoDTO produtoBalanceamento : listaProdutosRecolhimento) {
-				    
-					if(produtoBalanceamento.getCodigoProduto().equals(codigoProduto.toString())){
-					    
-						produtoLancamentoVO = this.getDetalheProduto(produtoBalanceamento);
+	    produtoLancamentoVO = this.getDetalheProduto(idProdutoEdicao);
 
-					    break;
-				    }
-	
-				} 
-			}	
-		}
 		if (produtoLancamentoVO!=null){
 		    this.result.use(Results.json()).from(produtoLancamentoVO, "result").recursive().serialize();
 		}
@@ -1006,7 +996,7 @@ public class MatrizLancamentoController {
 		
 		BalanceamentoLancamentoDTO balanceamentoLancamento = (BalanceamentoLancamentoDTO) this.session.getAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_LANCAMENTO);
 	
-		confirmacoesVO = this.obterDatasMatrizLancamento(balanceamentoLancamento);
+		confirmacoesVO = this.agruparBalanceamento(balanceamentoLancamento);
 
 		TableModel<CellModelKeyValue<ConfirmacaoVO>> tableModel = new TableModel<CellModelKeyValue<ConfirmacaoVO>>();
 		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(confirmacoesVO));
@@ -1016,11 +1006,11 @@ public class MatrizLancamentoController {
 	
 
 	/**
-	 * Obtem a concentração ordenada das datas para a Matriz de Lançamento
+	 * Obtem a concentração ordenada e agrupada por data para a Matriz de Lançamento
 	 * @param BalanceamentoLancamentoDTO: balanceamentoDTO
 	 * @return List<ConfirmacaoVO>: confirmacoesVO
 	 */
-    private List<ConfirmacaoVO> obterDatasMatrizLancamento(BalanceamentoLancamentoDTO balanceamentoDTO){
+    private List<ConfirmacaoVO> agruparBalanceamento(BalanceamentoLancamentoDTO balanceamentoDTO){
 		
 		List<ConfirmacaoVO> confirmacoesVO = new ArrayList<ConfirmacaoVO>();
 		

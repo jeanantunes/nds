@@ -116,7 +116,7 @@ function Balanceamento(pathTela, descInstancia) {
 	
 	this.processarLinha = function(i,row) {
 		
-		var linkDescProduto = T.getLinkProduto(row.cell.codigoProduto,row.cell.nomeProduto);
+		var linkDescProduto = T.getLinkProduto(row.cell.idProdutoEdicao,row.cell.nomeProduto);
 		row.cell.nomeProduto = linkDescProduto;
 		
 		var isBloqueado = row.cell.bloquearData;
@@ -158,23 +158,23 @@ function Balanceamento(pathTela, descInstancia) {
 	/**
 	 * Obtém link para detalhes do produto
 	 * OBS: Específico para matrizLancamento\index.jsp
-	 * @param codigoProduto
-	 * @param nomeProduto
+	 * @param idProdutoEdicao
+	 * @param idProdutoEdicao
 	 * @return String: link para função de busca de detalhes
 	 */
-	this.getLinkProduto = function(codigoProduto,nomeProduto) {
-		return '<a href="javascript:;" onclick="' + T.instancia +'.obterDetalheProduto('+codigoProduto+');">'+nomeProduto+'</a>';
+	this.getLinkProduto = function(idProdutoEdicao,nomeProduto) {
+		return '<a href="javascript:;" onclick="' + T.instancia +'.obterDetalheProduto('+idProdutoEdicao+');">'+nomeProduto+'</a>';
 	},
 
 	
     /**
      * Obtém detalhes do produto
      * OBS: Específico para matrizLancamento\index.jsp
-     * @param codigoProduto
+     * @param idProdutoEdicao
      */
-	this.obterDetalheProduto = function (codigoProduto){
+	this.obterDetalheProduto = function (idProdutoEdicao){
 		var data = [];
-		data.push({name:'codigoProduto', value: codigoProduto});
+		data.push({name:'idProdutoEdicao', value: idProdutoEdicao});
 		
 		$.postJSON(
 			pathTela + "/matrizLancamento/obterDetalheProduto", 
