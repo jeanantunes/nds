@@ -15,7 +15,7 @@ import javax.persistence.TemporalType;
 import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.util.TipoSecao;
 import br.com.abril.nds.util.export.fiscal.nota.NFEExport;
-import br.com.abril.nds.util.export.fiscal.nota.NFEExportIgnore;
+import br.com.abril.nds.util.export.fiscal.nota.NFEExportType;
 
 @Embeddable
 public class Identificacao implements Serializable {
@@ -44,7 +44,6 @@ public class Identificacao implements Serializable {
 	 */
 	@Enumerated(EnumType.ORDINAL)
 	@Column(name = "TIPO_OPERACAO", length = 1, nullable = false)
-	@NFEExportIgnore
 	private TipoOperacao tipoOperacao;
 
 	/**
@@ -60,7 +59,6 @@ public class Identificacao implements Serializable {
 	 */
 	@Enumerated(EnumType.ORDINAL)
 	@Column(name="INDICADOR_FORMA_PAGAMENTO", length=1, nullable=false)
-	@NFEExportIgnore
 	private FormaPagamento formaPagamento;
 	
 		
@@ -105,7 +103,7 @@ public class Identificacao implements Serializable {
 	
 	
 	@OneToMany(mappedBy="pk.notaFiscal")
-	@NFEExportIgnore
+	@NFEExportType
 	private List<NotaFiscalReferenciada> listReferenciadas;
 	
 	/**
@@ -113,7 +111,7 @@ public class Identificacao implements Serializable {
 	 */
 	@Enumerated(EnumType.ORDINAL)
 	@Column(name = "TIPO_EMISSAO", nullable = true)
-	@NFEExportIgnore
+	@NFEExportType
 	private TipoEmissao tipoEmissao;
 	
 	/**
@@ -121,7 +119,7 @@ public class Identificacao implements Serializable {
 	 */
 	@Enumerated(EnumType.ORDINAL)
 	@Column(name = "FINALIDADE_EMISSAO", nullable = true)
-	@NFEExportIgnore
+	@NFEExportType
 	private FinalidadeEmissao finalidadeEmissao;
 	
 	/**

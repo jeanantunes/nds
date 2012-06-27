@@ -17,7 +17,6 @@ import javax.persistence.Table;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.util.TipoSecao;
 import br.com.abril.nds.util.export.fiscal.nota.NFEExport;
-import br.com.abril.nds.util.export.fiscal.nota.NFEExportIgnore;
 import br.com.abril.nds.util.export.fiscal.nota.NFEExports;
 
 @Entity
@@ -40,17 +39,14 @@ public class ProdutoServico implements Serializable {
 	 */
 	@OneToOne(optional = false, mappedBy = "produtoServico")
 	@PrimaryKeyJoinColumn
-	@NFEExportIgnore
 	private EncargoFinanceiro encargoFinanceiro;
 	
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "NOTA_FISCAL_ID")
-	@NFEExportIgnore
 	private NotaFiscal notaFiscal;
 	
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "PRODUTO_EDICAO_ID")
-	@NFEExportIgnore
 	private ProdutoEdicao produtoEdicao;
 	
 	/**

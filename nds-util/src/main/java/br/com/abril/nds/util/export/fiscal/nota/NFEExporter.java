@@ -58,6 +58,9 @@ public class NFEExporter {
 	 */
 	public static final String QUEBRA_LINHA = "\n"; 
 	
+	/**
+	 * Lista de objetos usados para recursividade
+	 */
 	public List<NFEExporter> listaNFEExporters;
 	
 	/**
@@ -133,12 +136,7 @@ public class NFEExporter {
 	 */
 	@SuppressWarnings("rawtypes")
 	private <NF> void processarAnnotations(AccessibleObject objeto, NF notaFiscal, Object valor) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-		NFEExportIgnore nfeExportIgnore =  objeto.getAnnotation(NFEExportIgnore.class);
-		
-		if(nfeExportIgnore != null) {
-			return;
-		}
-		
+		NFEExportType nfeExportType =  objeto.getAnnotation(NFEExportType.class);
 		NFEWhens nfeWhens = objeto.getAnnotation(NFEWhens.class);
 		NFEExport nfeExport = objeto.getAnnotation(NFEExport.class);
 		NFEExports nfeExports = objeto.getAnnotation(NFEExports.class);
@@ -172,7 +170,7 @@ public class NFEExporter {
 				listaNFEExporters.add(nfeExporter);
 			}
 
-		} else if (valor != null) {
+		} else if (valor != null && nfeExportType != null) {
 			execute(valor);
 		}
 	}
@@ -410,7 +408,7 @@ public class NFEExporter {
 				valorString = valor.toString();
 				
 				if(!StringUtil.isEmpty(valorString)) {
-					if (tamanho != null && tamanho > 0) {
+					if ((tamanho != null && tamanho > 0) && (valorString.length() > tamanho)) {
 						valorString = valorString.replace(SEPARADOR_SECAO, STRING_VAZIA).substring(0, tamanho);
 					}
 				}
