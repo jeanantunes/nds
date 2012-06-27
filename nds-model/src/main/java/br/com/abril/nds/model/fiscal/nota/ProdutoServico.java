@@ -101,50 +101,49 @@ public class ProdutoServico implements Serializable {
 	/**
 	 * qCom
 	 */
-	@Column(name="QUANTIDADE_COMERCIAL", scale=15, precision=2 , nullable=false)
+	@Column(name="QUANTIDADE_COMERCIAL", precision=15, scale=2 , nullable=false)
 	@NFEExports({@NFEExport(secao=TipoSecao.I, posicao=8, tamanho=12),@NFEExport(secao=TipoSecao.I, posicao=13, tamanho=12)})
 	private Long quantidade;
 	
 	/**
 	 * vUnCom
 	 */
-	@Column(name="VALOR_UNITARIO_COMERCIAL",scale=21, precision=2 , nullable=false)
+	@Column(name="VALOR_UNITARIO_COMERCIAL",precision=21, scale=2 , nullable=false)
 	@NFEExports({@NFEExport(secao=TipoSecao.I, posicao=9, tamanho=16),@NFEExport(secao=TipoSecao.I, posicao=14, tamanho=16)})
 	private BigDecimal valorUnitario;
 	
 	/**
 	 * vProd
 	 */
-	@Column(name="VALOR_TOTAL_BRUTO", scale=15, precision=2, nullable=false)
+	@Column(name="VALOR_TOTAL_BRUTO", precision=15, scale=2, nullable=false)
 	private BigDecimal valorTotalBruto;
 	
 	/**
 	 * vFrete
 	 */
-	@Column(name="VALOR_FRETE", scale=15, precision=2, nullable=true)
+	@Column(name="VALOR_FRETE", precision=15, scale=2, nullable=true)
 	@NFEExport(secao=TipoSecao.I, posicao=15, tamanho=15)
 	private BigDecimal valorFrete;
 	
 	/**
 	 * vSeg
 	 */
-	@Column(name="VALOR_SERGURO", scale=15, precision=2, nullable=true)
+	@Column(name="VALOR_SERGURO", precision=15, scale=2, nullable=true)
 	@NFEExport(secao=TipoSecao.I, posicao=16, tamanho=15)
 	private BigDecimal valorSeguro;
 	
 	/**
 	 * vDesc
 	 */
-	@Column(name="VALOR_DESCONTO", scale=15, precision=2, nullable=true)
+	@Column(name="VALOR_DESCONTO", precision=15, scale=2, nullable=true)
 	@NFEExport(secao=TipoSecao.I, posicao=17, tamanho=15)
 	private BigDecimal valorDesconto;
 	
 	/**
 	 * vOutro
 	 */
-	@Column(name="VALOR_OUTROS", scale=15, precision=2, nullable=true)
+	@Column(name="VALOR_OUTROS", precision=15, scale=2, nullable=true)
 	private BigDecimal valorOutros;
-	
 	
 	
 	
