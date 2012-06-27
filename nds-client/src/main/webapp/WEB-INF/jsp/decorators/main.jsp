@@ -88,8 +88,19 @@
 	var contextPath = "${pageContext.request.contextPath}";
 	
 	$(document).ready(function() {
+
+		$("#ajaxLoading").ajaxStart(function() {
+			
+			$(this).fadeIn(200);
+		});
+		 
+		$("#ajaxLoading").ajaxStop(function() {
+			
+			$(this).fadeOut(200);
+		});
 		
 		verificarMensagens();
+		
 	});
 
 	function verificarMensagens() {
@@ -117,14 +128,31 @@
 
 <style type="text/css">
 
-fieldset label {
-	width: auto !important;
-	margin-left: 10px;
-}
+	fieldset label {
+		width: auto !important;
+		margin-left: 10px;
+	}
+	
+	.ui-datepicker-today a {	display:block !important; }
+	
+	#ui-datepicker-div { z-index: 99999 !important; }
 
-.ui-datepicker-today a {	display:block !important; }
-
-#ui-datepicker-div { z-index: 99999 !important; }
+	#ajaxLoading {
+		position: absolute;	z-index: 99999;
+		left: 0px; top: 0px; width: 100%; height: 100%; margin: 0;
+	}
+	#ajaxLoading #shadow {
+		background: #D0D0D0;
+		position: fixed; z-index: 1;
+		filter: alpha(opacity=50); opacity: 0.5;
+		left: 0px; top: 0px; width: 100%; height: 100%; margin: 0;
+	}
+	#ajaxLoading #panel {
+		position: fixed; z-index: 2;
+		top: 50%; left: 50%; width: 100px; height: 100px;
+		margin-top: -50px; margin-left: -50px;
+		text-align: center; vertical-align: 50%;
+	}
 </style>
 
 <!-- DECORATOR HEAD -->
@@ -161,6 +189,9 @@ fieldset label {
 			</div>
 
 		</div>
+		
+		<jsp:include page="/WEB-INF/jsp/commons/loading.jsp" />
+		
 		<div class="menu_superior">
 			<div class="itensMenu">
 				<ul class="nav" id="nav-one">
