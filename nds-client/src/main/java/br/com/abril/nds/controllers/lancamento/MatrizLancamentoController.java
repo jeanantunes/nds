@@ -213,7 +213,7 @@ public class MatrizLancamentoController {
 	
 	@Post
 	public void reprogramarLancamentosSelecionados(List<LancamentoVO> produtosLancamento,
-												   String novaDataFormatada, String dataAntigaFormatada) {
+												   String novaDataFormatada) {
 		
 		this.validarDadosReprogramar(novaDataFormatada);
 		
@@ -223,23 +223,20 @@ public class MatrizLancamentoController {
 		
 		this.validarDataReprogramacao(produtosLancamento, novaData);
 		
-		Date dataAntiga = DateUtil.parseDataPTBR(dataAntigaFormatada);
-		
-		this.atualizarMapaLancamento(produtosLancamento, novaData, dataAntiga);
+		this.atualizarMapaLancamento(produtosLancamento, novaData);
 		
 		this.result.use(Results.json()).from(Results.nothing()).serialize();
 	}
 	
 	@Post
-	public void reprogramarLancamentoUnico(LancamentoVO produtoLancamento,
-										   String dataAntigaFormatada) {
+	public void reprogramarLancamentoUnico(LancamentoVO produtoLancamento) {
 		
 		String novaDataFormatada = produtoLancamento.getNovaData();
 		
-		Date novaData = DateUtil.parseDataPTBR(novaDataFormatada);
-		
 		this.validarDadosReprogramar(novaDataFormatada);
 
+		Date novaData = DateUtil.parseDataPTBR(novaDataFormatada);
+		
 		List<LancamentoVO> produtosLancamento = new ArrayList<LancamentoVO>();
 		
 		if (produtoLancamento != null){
@@ -251,9 +248,7 @@ public class MatrizLancamentoController {
 		
 		this.validarDataReprogramacao(produtosLancamento, novaData);
 		
-		Date dataAntiga = DateUtil.parseDataPTBR(dataAntigaFormatada);
-		
-		this.atualizarMapaLancamento(produtosLancamento, novaData, dataAntiga);
+		this.atualizarMapaLancamento(produtosLancamento, novaData);
 		
 		this.result.use(Results.json()).from(Results.nothing()).serialize();
 	}
@@ -371,10 +366,9 @@ public class MatrizLancamentoController {
 	 * 
 	 * @param produtosLancamento - lista de produtos a serem alterados
 	 * @param novaData - nova data de lançamento
-	 * @param dataAntiga - data antiga de lançamento
 	 */
 	private void atualizarMapaLancamento(List<LancamentoVO> produtosLancamento,
-										 Date novaData, Date dataAntiga) {
+										 Date novaData) {
 		
 		BalanceamentoLancamentoDTO balanceamentoLancamentoSessao =
 			(BalanceamentoLancamentoDTO)
@@ -395,8 +389,7 @@ public class MatrizLancamentoController {
 		this.montarListasParaAlteracaoMapa(produtosLancamento,
 									  	   matrizLancamento,
 									  	   listaProdutoLancamentoAdicionar,
-									  	   listaProdutoLancamentoRemover,
-									  	   dataAntiga);
+									  	   listaProdutoLancamentoRemover);
 		
 		this.removerEAdicionarMapa(matrizLancamento,
 							  	   listaProdutoLancamentoAdicionar,
@@ -438,28 +431,18 @@ public class MatrizLancamentoController {
 	 * @param matrizLancamento - matriz de lançamento
 	 * @param listaProdutoLancamentoAdicionar - lista de produtos que serão adicionados
 	 * @param listaProdutoLancamentoRemover - lista de produtos que serão removidos
-	 * @param dataAntiga - data antiga de lançamento
 	 */
 	private void montarListasParaAlteracaoMapa(List<LancamentoVO> produtosLancamento,
 											   Map<Date, List<ProdutoLancamentoDTO>> matrizLancamento,   									 
 											   List<ProdutoLancamentoDTO> listaProdutoLancamentoAdicionar,
-											   List<ProdutoLancamentoDTO> listaProdutoLancamentoRemover,
-											   Date dataAntiga) {
+											   List<ProdutoLancamentoDTO> listaProdutoLancamentoRemover) {
 		
-		List<ProdutoLancamentoDTO> listaProdutoLancamentoSessao = null;
+		List<ProdutoLancamentoDTO> listaProdutoLancamentoSessao =
+			new ArrayList<ProdutoLancamentoDTO>();
 		
-		if (dataAntiga != null) {
+		for (Map.Entry<Date, List<ProdutoLancamentoDTO>> entry : matrizLancamento.entrySet()) {
 			
-			listaProdutoLancamentoSessao = matrizLancamento.get(dataAntiga);
-			
-		} else {
-		
-			listaProdutoLancamentoSessao = new ArrayList<ProdutoLancamentoDTO>();
-			
-			for (Map.Entry<Date, List<ProdutoLancamentoDTO>> entry : matrizLancamento.entrySet()) {
-				
-				listaProdutoLancamentoSessao.addAll(entry.getValue());
-			}
+			listaProdutoLancamentoSessao.addAll(entry.getValue());
 		}
 		
 		for (LancamentoVO produtoLancamento : produtosLancamento) {
