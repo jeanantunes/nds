@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import antlr.collections.impl.LList;
 import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.StatusCobranca;
@@ -39,12 +38,10 @@ import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.StatusDivida;
 import br.com.abril.nds.model.financeiro.StatusInadimplencia;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
-import br.com.abril.nds.model.movimentacao.StatusOperacao;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.CobrancaRepository;
 import br.com.abril.nds.repository.ConsolidadoFinanceiroRepository;
 import br.com.abril.nds.repository.ControleBaixaBancariaRepository;
-import br.com.abril.nds.repository.ControleConferenciaEncalheRepository;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.DividaRepository;
@@ -70,8 +67,8 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 	@Autowired
 	private MovimentoFinanceiroCotaRepository movimentoFinanceiroCotaRepository;
 	
-	@Autowired
-	private ControleConferenciaEncalheRepository controleConferenciaEncalheRepository;
+//	@Autowired
+//	private ControleConferenciaEncalheRepository controleConferenciaEncalheRepository;
 	
 	@Autowired
 	private ConsolidadoFinanceiroRepository consolidadoFinanceiroRepository;
@@ -211,7 +208,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 							politicaPrincipal.getFormaCobranca().getValorMinimoEmissao(), politicaPrincipal.isAcumulaDivida(), idUsuario, 
 							tipoCobranca != null ? tipoCobranca : politicaPrincipal.getFormaCobranca().getTipoCobranca(),
 							politicaPrincipal.getNumeroDiasNovaCobranca(),
-							distribuidor, msgs);
+							distribuidor, msgs, ultimoFornecedor);
 					
 					if (nossoNumero != null){
 						
@@ -245,7 +242,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			nossoNumero = this.inserirConsolidadoFinanceiro(ultimaCota, movimentos, politicaPrincipal.getFormaCobranca().getValorMinimoEmissao(),
 					politicaPrincipal.isAcumulaDivida(), idUsuario, 
 					tipoCobranca != null ? tipoCobranca : politicaPrincipal.getFormaCobranca().getTipoCobranca(),
-					politicaPrincipal.getNumeroDiasNovaCobranca(), distribuidor, msgs);
+					politicaPrincipal.getNumeroDiasNovaCobranca(), distribuidor, msgs, ultimoFornecedor);
 			
 			if (nossoNumero != null){
 				
@@ -287,11 +284,12 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 	}
 	
 	private String inserirConsolidadoFinanceiro(Cota cota, List<MovimentoFinanceiroCota> movimentos, BigDecimal valorMininoDistribuidor,
-			boolean acumulaDivida, Long idUsuario, TipoCobranca tipoCobranca, int qtdDiasNovaCobranca, Distribuidor distribuidor, List<String> msgs){
+			boolean acumulaDivida, Long idUsuario, TipoCobranca tipoCobranca, int qtdDiasNovaCobranca, Distribuidor distribuidor, List<String> msgs,
+			Fornecedor fornecedor){
 		
 		ConsolidadoFinanceiroCota consolidadoFinanceiroCota = new ConsolidadoFinanceiroCota();
 		consolidadoFinanceiroCota.setCota(cota);
-		consolidadoFinanceiroCota.setDataConsolidado(new Date());
+		consolidadoFinanceiroCota.setDataConsolidado(distribuidor.getDataOperacao());
 		consolidadoFinanceiroCota.setMovimentos(movimentos);
 		
 		BigDecimal vlMovFinanTotal = BigDecimal.ZERO;
@@ -592,11 +590,14 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			cobranca.setDivida(novaDivida);
 			cobranca.setStatusCobranca(StatusCobranca.NAO_PAGO);
 			cobranca.setDataVencimento(dataVencimento);
+			
 			cobranca.setNossoNumero(
 					Util.gerarNossoNumero(
 							cota.getNumeroCota(), 
 							cobranca.getDataEmissao(), 
-							formaCobrancaPrincipal.getBanco().getNumeroBanco()
+							formaCobrancaPrincipal.getBanco().getNumeroBanco(),
+							fornecedor != null ? fornecedor.getId() : null,
+							movimentos.get(0).getId()
 							));
 			
 			cobranca.setValor(novaDivida.getValor());
