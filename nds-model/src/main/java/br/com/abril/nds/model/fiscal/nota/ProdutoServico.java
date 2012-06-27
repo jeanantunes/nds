@@ -40,6 +40,7 @@ public class ProdutoServico implements Serializable {
 	 */
 	@OneToOne(optional = false, mappedBy = "produtoServico")
 	@PrimaryKeyJoinColumn
+	@NFEExportIgnore
 	private EncargoFinanceiro encargoFinanceiro;
 	
 	@ManyToOne(optional = false)
@@ -49,6 +50,7 @@ public class ProdutoServico implements Serializable {
 	
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "PRODUTO_EDICAO_ID")
+	@NFEExportIgnore
 	private ProdutoEdicao produtoEdicao;
 	
 	/**

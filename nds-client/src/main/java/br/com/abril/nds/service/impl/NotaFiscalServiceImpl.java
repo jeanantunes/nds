@@ -250,7 +250,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 	
 	private String gerarArquivoNota(List<NotaFiscal> notasFiscaisParaExportacao) throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
 	
-		StringBuffer sBuffer = new StringBuffer();
+		StringBuilder sBuilder = new StringBuilder();
 	
 		NFEExporter nfeExporter = new NFEExporter();
 	
@@ -261,10 +261,11 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-			sBuffer.append(nfeExporter.gerarArquivo());
+			String s = nfeExporter.gerarArquivo();
+			sBuilder.append(s);
 		}
 		
-		return sBuffer.toString();
+		return sBuilder.toString();
 	}
 	
 	/**
