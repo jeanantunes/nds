@@ -1,4 +1,4 @@
-package br.com.abril.nds.util.export.fiscal.nota;
+package br.com.abril.nds.client.util;
 
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
@@ -10,11 +10,14 @@ import java.util.List;
 
 import junit.framework.Assert;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TipoSecao;
+import br.com.abril.nds.util.export.fiscal.nota.NFEExport;
+import br.com.abril.nds.util.export.fiscal.nota.NFEExportType;
+import br.com.abril.nds.util.export.fiscal.nota.NFEExporter;
+import br.com.abril.nds.util.export.fiscal.nota.NFEExports;
 
 public class NFEExporterTest {
 
@@ -26,7 +29,6 @@ public class NFEExporterTest {
 	 * @throws InvocationTargetException
 	 */
 	@Test
-	@Ignore
 	public void notaFiscalToString() throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
 
 		ClasseTest classeTest = preencheObjeto();
@@ -49,9 +51,6 @@ public class NFEExporterTest {
 						   .append("D|||2012-12|||||||||").append(NFEExporter.QUEBRA_LINHA)
 						   .append("E05||TESTE DE GERACA|||||||1058|BRASIL||").append(NFEExporter.QUEBRA_LINHA);
 		
-		System.out.print(conteudoTXT);
-		System.out.print(NFEExporter.QUEBRA_LINHA);
-		System.out.print(conteudoTXTEsperado.toString());
 		Assert.assertEquals(conteudoTXTEsperado.toString(), conteudoTXT);
 		
 	}
@@ -137,6 +136,7 @@ public class NFEExporterTest {
 		@NFEExport(secao = TipoSecao.B13, posicao = 0, mascara = "00000")
 		private Integer varInteger;
 
+		@NFEExportType
 		private SubClasseTest subClasseTest;
 		
 		private List<ClasseListaTest> listaClasseListaTests;
