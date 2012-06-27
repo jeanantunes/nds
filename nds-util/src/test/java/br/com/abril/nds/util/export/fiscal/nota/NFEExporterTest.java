@@ -10,7 +10,6 @@ import java.util.List;
 
 import junit.framework.Assert;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 import br.com.abril.nds.util.DateUtil;
@@ -37,16 +36,17 @@ public class NFEExporterTest {
 		String conteudoTXT = nfeExporter.gerarArquivo();  
 		StringBuilder conteudoTXTEsperado = new StringBuilder();
 		
-		conteudoTXTEsperado.append("A|1,003.432|1002|").append(NFEExporter.QUEBRA_LINHA)
-						   .append("B|2012-12-15|S|1001.4321||1005|10|||||||||||||").append(NFEExporter.QUEBRA_LINHA)
+		conteudoTXTEsperado.append("A|2.0|1,003.432|").append(NFEExporter.QUEBRA_LINHA)
+						   .append("B|2012-12-15|S|1001.4321|1002|55|10|1005|||||1|||1||0||").append(NFEExporter.QUEBRA_LINHA)
 						   .append("B13|01004|").append(NFEExporter.QUEBRA_LINHA)
 						   .append("C|TESTE DE LISTA 1|2012-05-03|||||").append(NFEExporter.QUEBRA_LINHA)
 						   .append("C|TESTE DE LISTA 2|1990-06-03|||||").append(NFEExporter.QUEBRA_LINHA)
 						   .append("C|TESTE DE LISTA 3|1992-01-25|||||").append(NFEExporter.QUEBRA_LINHA)
 						   .append("C02|2011-06-01|").append(NFEExporter.QUEBRA_LINHA)
+						   .append("C05|||||||||1058|BRASIL||").append(NFEExporter.QUEBRA_LINHA)
 						   .append("D|||2012-12|||||||||").append(NFEExporter.QUEBRA_LINHA)
-						   .append("E05||TESTE DE GERACA||||||||||").append(NFEExporter.QUEBRA_LINHA);
-
+						   .append("E05||TESTE DE GERACA|||||||1058|BRASIL||").append(NFEExporter.QUEBRA_LINHA);
+		
 		Assert.assertEquals(conteudoTXTEsperado.toString(), conteudoTXT);
 		
 	}
@@ -117,16 +117,16 @@ public class NFEExporterTest {
 
 		 
 		
-		@NFEExport(secao = TipoSecao.B, posicao = 4)
+		@NFEExport(secao = TipoSecao.B, posicao = 6)
 		private Long varLong;
 
-		@NFEExport(secao = TipoSecao.A, posicao = 0, mascara = "#,##0.000")
+		@NFEExport(secao = TipoSecao.A, posicao = 1, mascara = "#,##0.000")
 		private Double varDouble;
 
 		@NFEExport(secao = TipoSecao.B, posicao = 2)
 		private BigDecimal varBigDecimal;
 
-		@NFEExport(secao = TipoSecao.A, posicao = 1)
+		@NFEExport(secao = TipoSecao.B, posicao = 3)
 		private BigInteger varBigInteger;
 
 		@NFEExport(secao = TipoSecao.B13, posicao = 0, mascara = "00000")

@@ -141,7 +141,7 @@ public class NFEExporter {
 			
 			if(nfeWhens != null){
 				for(NFEWhen when: nfeWhens.value()){
-					if(when.condition().valid(valor)){						
+					if(when.condition().valid(valor) && when.condition().valid(notaFiscal)){						
 						addCampoSecao(when.export(), valor);
 					}
 				}
@@ -219,9 +219,24 @@ public class NFEExporter {
 	 * Adiciona valores padrões no documento.
 	 */
 	private void addCamposDefault() {				
-//		CampoSecao versao = new CampoSecao(TipoSecao.A,  0, "2.0");
-//		addCampoSecao(versao);
-		//TODO: campos padroes;
+		CampoSecao versao = new CampoSecao(TipoSecao.A,  0, "2.0");
+		addCampoSecao(versao);
+		CampoSecao modeloDocuemtno = new CampoSecao(TipoSecao.B,  4, "55");
+		addCampoSecao(modeloDocuemtno);
+		CampoSecao tipoImpressao = new CampoSecao(TipoSecao.B,  11, "1");
+		addCampoSecao(tipoImpressao);
+		CampoSecao tipoAmbiente = new CampoSecao(TipoSecao.B,  14, "1");
+		addCampoSecao(tipoAmbiente);
+		CampoSecao processoEmissao = new CampoSecao(TipoSecao.B,  16, "0");
+		addCampoSecao(processoEmissao);
+		CampoSecao codigoPaisEmitente = new CampoSecao(TipoSecao.C05,  8, "1058");
+		addCampoSecao(codigoPaisEmitente);
+		CampoSecao nomePaisEmitente = new CampoSecao(TipoSecao.C05,  9, "BRASIL");
+		addCampoSecao(nomePaisEmitente);
+		CampoSecao codigoPaisDestinatario = new CampoSecao(TipoSecao.E05,  8, "1058");
+		addCampoSecao(codigoPaisDestinatario);
+		CampoSecao nomePaisDestinatario = new CampoSecao(TipoSecao.E05,  9, "BRASIL");
+		addCampoSecao(nomePaisDestinatario);
 	}
 	
 	/**
@@ -352,7 +367,7 @@ public class NFEExporter {
 		
 		Object valor = campo.getValor();
 		String mascara = campo.getMascara();
-		int tamanho = campo.getTamanho();
+		Integer tamanho = campo.getTamanho();
 		
 		String valorString = STRING_VAZIA;
 		String mascaraUsada;
@@ -388,7 +403,7 @@ public class NFEExporter {
 				
 				valorString = valor.toString();
 				
-				if (tamanho > 0) {
+				if (tamanho != null && tamanho > 0) {
 					valorString = valorString.replace(SEPARADOR_SECAO, STRING_VAZIA).substring(0, tamanho);
 				}
 			}
