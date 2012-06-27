@@ -33,9 +33,9 @@ import br.com.abril.nds.model.cadastro.TelefoneDistribuidor;
 import br.com.abril.nds.model.cadastro.TipoParametroSistema;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.Identificacao;
+import br.com.abril.nds.model.fiscal.nota.Identificacao.FormaPagamento;
 import br.com.abril.nds.model.fiscal.nota.IdentificacaoDestinatario;
 import br.com.abril.nds.model.fiscal.nota.IdentificacaoEmitente;
-import br.com.abril.nds.model.fiscal.nota.Identificacao.FormaPagamento;
 import br.com.abril.nds.model.fiscal.nota.IdentificacaoEmitente.RegimeTributario;
 import br.com.abril.nds.model.fiscal.nota.InformacaoEletronica;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
@@ -200,6 +200,8 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		this.notaFiscalDAO.merge(notaFiscal);
 	}
 	
+	
+	
 	/* (non-Javadoc)
 	 * @see br.com.abril.nds.service.NotaFiscalService#exportarNotasFiscais()
 	 */
@@ -226,13 +228,12 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		
 		File diretorioExportacaoNFE = new File(pathNFEExportacao.getValor());
 		
-		
 		if (!diretorioExportacaoNFE.isDirectory()) {
 			throw new FileNotFoundException("O diretório de exportação parametrizado não é válido!");
 		}
 		
 		File notaExportacao = 
-				new File(diretorioExportacaoNFE + File.pathSeparator + new File("NFeExportacao"));
+				new File(diretorioExportacaoNFE + File.separator + new File("NFeExportacao.txt"));
 		
 		FileWriter fileWriter;
 			
@@ -241,6 +242,8 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		BufferedWriter buffer = new BufferedWriter(fileWriter);
 			
 		buffer.write(dados);
+		
+		buffer.close();
 		
 		for (NotaFiscal notaFiscal : notasFiscaisParaExportacao) {
 			this.enviarNotaFiscal(notaFiscal.getId());
@@ -255,12 +258,11 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		NFEExporter nfeExporter = new NFEExporter();
 	
 		for(NotaFiscal notaFiscal : notasFiscaisParaExportacao) {
+			
 			nfeExporter.clear();
-			try {
-				nfeExporter.execute(notaFiscal);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+			
+			nfeExporter.execute(notaFiscal);
+			
 			String s = nfeExporter.gerarArquivo();
 			sBuilder.append(s);
 		}

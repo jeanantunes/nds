@@ -22,6 +22,7 @@ import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.Telefone;
 import br.com.abril.nds.model.cadastro.TipoEndereco;
+import br.com.abril.nds.model.cadastro.TipoParametroSistema;
 import br.com.abril.nds.model.cadastro.TipoProduto;
 import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.model.fiscal.nota.EncargoFinanceiroProduto;
@@ -42,7 +43,7 @@ import br.com.abril.nds.model.fiscal.nota.Veiculo;
 import br.com.abril.nds.repository.impl.AbstractRepositoryImplTest;
 import br.com.abril.nds.service.NotaFiscalService;
 
-@Ignore
+
 public class NotaFiscalServiceImplTest extends AbstractRepositoryImplTest {
 	
 	@Autowired
@@ -54,14 +55,16 @@ public class NotaFiscalServiceImplTest extends AbstractRepositoryImplTest {
 	
 	@Before
 	public void setup() {
+		save(Fixture.parametroSistema(TipoParametroSistema.PATH_INTERFACE_NFE_EXPORTACAO, "C:\\notas\\"));
 		
 		//Dados para teste de arquivo
-//		for ( int i = 0; i < 5 ; i++ ) {
-			NotaFiscal notaTesteArquivo = this.gerarNFE("33111102737654003496550550000483081131621856", 
+		for ( int i = 0; i < 5 ; i++ ) {
+			NotaFiscal notaTesteArquivo = 
+					this.gerarNFE("33111102737654003496550550000483081131621856", 
 					"37712543534", StatusProcessamentoInterno.GERADA, Status.SERVICO_EM_OPERACAO);
 			save(notaTesteArquivo);
-		//	this.notasParaTesteArquivo.add(notaTesteArquivo);
-//		}
+			this.notasParaTesteArquivo.add(notaTesteArquivo);
+		}
 	}
 	
 	
@@ -71,7 +74,7 @@ public class NotaFiscalServiceImplTest extends AbstractRepositoryImplTest {
 		try {
 			this.notaFiscalService.exportarNotasFiscais();
 		} catch (Exception e) {
-			
+			Assert.fail();
 		}
 	}
 	
@@ -148,15 +151,6 @@ public class NotaFiscalServiceImplTest extends AbstractRepositoryImplTest {
 		ValoresRetencoesTributos valoreRetencoesTributos = new ValoresRetencoesTributos();
 		
 		valoreRetencoesTributos.setValorBaseCalculoIRRF(new BigDecimal(13212));
-		
-		//valoreRetencoesTributos.setNotaFiscal(nota);
-		
-		//save(valoreRetencoesTributos);
-		
-//		ValoresTotaisISSQN valoreTotaisISSQN= new ValoresTotaisISSQN();
-//		
-//		
-//		save(valoreTotaisISSQN);
 		
 		InformacaoValoresTotais informacaoValoresTotais = Fixture.informacaoValoresTotais(
 				null, null , new BigDecimal(999999), new BigDecimal(999999), new BigDecimal(999999), 

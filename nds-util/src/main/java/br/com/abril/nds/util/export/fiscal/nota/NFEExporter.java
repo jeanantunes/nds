@@ -190,7 +190,7 @@ public class NFEExporter {
 		if (camposSecao == null || camposSecao.isEmpty()) {
 			camposSecao = new ArrayList<CampoSecao>();
 		}
-		System.out.println(novoCampo.getSessao().getSigla());
+
 		camposSecao.add(novoCampo);
 		
 		this.mapSecoes.put(novoCampo.getSessao(), camposSecao);
@@ -252,7 +252,7 @@ public class NFEExporter {
 	 */
 	public String toString() {
 		
-		StringBuffer sBuffer = new StringBuffer();
+		StringBuilder sBuilder = new StringBuilder();
 		
 		Set<TipoSecao> secoes = this.mapSecoes.keySet();
 		
@@ -268,7 +268,7 @@ public class NFEExporter {
 		
 		for (TipoSecao secao : secoes) {
 			
-			sBuffer.append(listaNFEExportersToString(primeiraSecao, secao));
+			sBuilder.append(listaNFEExportersToString(primeiraSecao, secao));
 			
 			String sSecao = this.gerarStringSecao(secao);
 			
@@ -281,12 +281,12 @@ public class NFEExporter {
 				sSecao = this.addStringCampoToStringSecao(sSecao, sCampo, campo.getPosicao());
 			}
 			
-			sBuffer.append(sSecao);
+			sBuilder.append(sSecao);
 		}
 		
-		sBuffer.append(listaNFEExportersToString(primeiraSecao, null));
+		sBuilder.append(listaNFEExportersToString(primeiraSecao, null));
 		
-		return sBuffer.toString();
+		return sBuilder.toString();
 	}
 	
 	
@@ -298,7 +298,7 @@ public class NFEExporter {
 	 */
 	private String listaNFEExportersToString(String primeiraSecao, TipoSecao secao){
 		
-		StringBuffer sBuffer = new StringBuffer();
+		StringBuilder sBuilder = new StringBuilder();
 		
 		if (primeiraSecao != null && (secao == null || secao.getSigla().compareToIgnoreCase(primeiraSecao) >= 0)) {
 		
@@ -307,7 +307,7 @@ public class NFEExporter {
 			do {
 			
 				if (this.listaNFEExporters.size() > this.indexListaNFEExporters) {
-					sBuffer.append(this.listaNFEExporters.get(this.indexListaNFEExporters).toString());
+					sBuilder.append(this.listaNFEExporters.get(this.indexListaNFEExporters).toString());
 					primeiraSecao = this.listaNFEExporters.get(this.indexListaNFEExporters++).getPrimeiraSecao();
 					repetir = primeiraSecao != null && primeiraSecao.compareToIgnoreCase(this.listaNFEExporters.get(this.indexListaNFEExporters - 1).getPrimeiraSecao()) == 0;
 				} else {
@@ -319,7 +319,7 @@ public class NFEExporter {
 
 		}
 		
-		return sBuffer.toString();
+		return sBuilder.toString();
 	}
 	
 	
@@ -409,8 +409,10 @@ public class NFEExporter {
 				
 				valorString = valor.toString();
 				
-				if (tamanho != null && tamanho > 0) {
-					valorString = valorString.replace(SEPARADOR_SECAO, STRING_VAZIA).substring(0, tamanho);
+				if(!StringUtil.isEmpty(valorString)) {
+					if (tamanho != null && tamanho > 0) {
+						valorString = valorString.replace(SEPARADOR_SECAO, STRING_VAZIA).substring(0, tamanho);
+					}
 				}
 			}
 			
