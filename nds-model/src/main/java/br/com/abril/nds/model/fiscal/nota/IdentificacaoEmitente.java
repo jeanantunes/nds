@@ -13,10 +13,8 @@ import javax.persistence.OneToOne;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.Telefone;
-import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.TipoSecao;
 import br.com.abril.nds.util.export.fiscal.nota.NFEExport;
-import br.com.abril.nds.util.export.fiscal.nota.NFEExports;
 
 @Embeddable
 public class IdentificacaoEmitente implements Serializable {

@@ -9,7 +9,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
-import br.com.abril.nds.util.export.fiscal.nota.NFEExportIgnore;
+import br.com.abril.nds.util.export.fiscal.nota.NFEExportType;
 @Embeddable
 public class NotaFiscalReferenciadaPK implements Serializable {
 
@@ -21,7 +21,6 @@ public class NotaFiscalReferenciadaPK implements Serializable {
 	
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "NOTA_FISCAL_ID", insertable=false, updatable=false)
-	@NFEExportIgnore
 	private NotaFiscal notaFiscal;
 	
 	/**
