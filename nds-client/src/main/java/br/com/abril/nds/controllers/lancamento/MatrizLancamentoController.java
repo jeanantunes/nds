@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -994,38 +995,57 @@ public class MatrizLancamentoController {
 		}
 	}
 	
-	
+
 	/**
 	 * Obtem agrupamento diário para confirmação de Balanceamento
 	 */
 	@Post
 	public void obterAgrupamentoDiarioBalanceamento(){
-		boolean confirmado = false;
-		
-		Map<Date,Boolean> agrupamento = new HashMap<Date,Boolean>(); 
 		
 		List<ConfirmacaoVO> confirmacoesVO = new ArrayList<ConfirmacaoVO>();
 		
 		BalanceamentoLancamentoDTO balanceamentoLancamento = (BalanceamentoLancamentoDTO) this.session.getAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_LANCAMENTO);
 	
-		for (Map.Entry<Date, List<ProdutoLancamentoDTO>> entry : balanceamentoLancamento.getMatrizLancamento().entrySet()) {
-			
+		confirmacoesVO = this.obterDatasMatrizLancamento(balanceamentoLancamento);
+
+		TableModel<CellModelKeyValue<ConfirmacaoVO>> tableModel = new TableModel<CellModelKeyValue<ConfirmacaoVO>>();
+		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(confirmacoesVO));
+
+		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
+	}
+	
+
+	/**
+	 * Obtem a concentração ordenada das datas para a Matriz de Lançamento
+	 * @param BalanceamentoLancamentoDTO: balanceamentoDTO
+	 * @return List<ConfirmacaoVO>: confirmacoesVO
+	 */
+    private List<ConfirmacaoVO> obterDatasMatrizLancamento(BalanceamentoLancamentoDTO balanceamentoDTO){
+		
+		List<ConfirmacaoVO> confirmacoesVO = new ArrayList<ConfirmacaoVO>();
+		
+		Map<Date,Boolean> agrupamento = new LinkedHashMap<Date,Boolean>();
+		
+		boolean confirmado = false;
+		
+		for (Map.Entry<Date, List<ProdutoLancamentoDTO>> entry : balanceamentoDTO.getMatrizLancamento().entrySet()) {
+		
             List<ProdutoLancamentoDTO> listaProdutosRecolhimento = entry.getValue();
 			
 			if (listaProdutosRecolhimento != null && !listaProdutosRecolhimento.isEmpty()) {
-				
+			
 				for (ProdutoLancamentoDTO produtoBalanceamento : listaProdutosRecolhimento) {
-
+		
 					confirmado = (produtoBalanceamento.getStatusLancamento().equals(StatusLancamento.BALANCEADO)&&
 							     (produtoBalanceamento.getDataLancamentoDistribuidor().compareTo(produtoBalanceamento.getNovaDataLancamento())==0));
 					
 					if ( (agrupamento.get(produtoBalanceamento.getNovaDataLancamento())==null)||
-						 (confirmado && !agrupamento.get(produtoBalanceamento.getNovaDataLancamento())) ){
+						 (!confirmado && agrupamento.get(produtoBalanceamento.getNovaDataLancamento())) ){
 						
 						agrupamento.put(produtoBalanceamento.getNovaDataLancamento(), confirmado);
 					}
-				} 
-			}	
+				}
+			}
 		}
 		
 		Set<Entry<Date, Boolean>> setE = agrupamento.entrySet();
@@ -1033,11 +1053,8 @@ public class MatrizLancamentoController {
 			confirmacoesVO.add(new ConfirmacaoVO( DateUtil.formatarData(item.getKey(),"dd/MM/yyyy"),item.getValue()));
 		}
 		
-		TableModel<CellModelKeyValue<ConfirmacaoVO>> tableModel = new TableModel<CellModelKeyValue<ConfirmacaoVO>>();
-		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(confirmacoesVO));
-
-		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
+		return confirmacoesVO;
 	}
-
+    
 }
 
