@@ -7,4 +7,9 @@ public class CNPJCondition implements Condition {
 		return false;
 	}
 
+	@Override
+	public boolean validParent(Object object) {		
+		return true;
+	}
+	
 }
