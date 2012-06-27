@@ -36,9 +36,6 @@ public class IdentificacaoDestinatario implements Serializable {
 	 * CNPJ CPF
 	 */
 	@Column(name="DOCUMENTO_DESTINATARIO", nullable=false, length=14)
-	@NFEExports({
-		@NFEExport(secao=TipoSecao.E02, posicao=0, tamanho=14, documento=Constantes.CNPJ), 
-		@NFEExport(secao=TipoSecao.E03, posicao=0, tamanho=11, documento=Constantes.CPF)})
 	private String documento;
 	
 	/**

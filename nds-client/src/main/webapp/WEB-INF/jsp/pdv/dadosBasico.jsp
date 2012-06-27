@@ -241,8 +241,6 @@ function tratarRetornoUploadImagem(data) {
     	<select name="selectTipoLicenca" id="selectTipoLicenca" style="width:232px;">
       		
       		<option selected="selected">Selecione</option>
-      		
-      		<option selected="selected" value="-1">Selecione</option>
             
              <c:forEach items="${listaTipoLicencaMunicipal}" var="item">
 	         	<option value="${item.key}">${item.value}</option>	          

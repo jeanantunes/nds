@@ -177,6 +177,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			Fornecedor ultimoFornecedor = null;
 			
 			if (listaMovimentoFinanceiroCota.get(0).getMovimentos() != null && 
+					!listaMovimentoFinanceiroCota.get(0).getMovimentos().isEmpty() &&
 					listaMovimentoFinanceiroCota.get(0).getMovimentos().get(0) != null){
 				
 				ultimoFornecedor = listaMovimentoFinanceiroCota.get(0).getMovimentos().get(0).getProdutoEdicao().getProduto().getFornecedor();
@@ -191,7 +192,9 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			for (MovimentoFinanceiroCota movimentoFinanceiroCota : listaMovimentoFinanceiroCota){
 				
 				if (movimentoFinanceiroCota.getCota().equals(ultimaCota) &&
-						movimentoFinanceiroCota.getMovimentos() != null && movimentoFinanceiroCota.getMovimentos().get(0) != null &&
+						movimentoFinanceiroCota.getMovimentos() != null && 
+						!movimentoFinanceiroCota.getMovimentos().isEmpty() && 
+						movimentoFinanceiroCota.getMovimentos().get(0) != null &&
 						movimentoFinanceiroCota.getMovimentos().get(0).getProdutoEdicao().getProduto().getFornecedor().equals(ultimoFornecedor)){
 					
 					movimentos.add(movimentoFinanceiroCota);
@@ -217,6 +220,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 					ultimaCota = movimentoFinanceiroCota.getCota();
 					
 					if (movimentoFinanceiroCota.getMovimentos() != null && 
+							!movimentoFinanceiroCota.getMovimentos().isEmpty() &&
 							movimentoFinanceiroCota.getMovimentos().get(0) != null){
 						
 						ultimoFornecedor = movimentoFinanceiroCota.getMovimentos().get(0).getProdutoEdicao().getProduto().getFornecedor();

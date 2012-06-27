@@ -5,6 +5,8 @@ function Balanceamento(pathTela, descInstancia) {
 	this.tiposMovimento = []; 
 	this.tipoMovimento = null;
 	this.instancia = descInstancia;
+	this.linhasDestacadas = [];
+	this.isCliquePesquisar;
 	
 	this.pesquisar = function() {
 		
@@ -17,6 +19,8 @@ function Balanceamento(pathTela, descInstancia) {
 		$("input[name='checkgroup_menu']:checked").each(function(i) {
 			data.push({name:'idsFornecedores', value: $(this).val()});
 		});
+		
+		isCliquePesquisar = true;
 		
 		$.postJSON(
 			pathTela + "/matrizLancamento/obterMatrizLancamento", 
@@ -33,12 +37,12 @@ function Balanceamento(pathTela, descInstancia) {
 			}
 		);
 	},
-	
+		
 	this.carregarGrid = function() {		
 				
 		$(".grids").show();		
 		
-		linhasDestacadas = [];		
+		T.linhasDestacadas = [];		
 		lancamentosSelecionados = [];		
 		$('#selTodos').uncheck();	
 				
@@ -47,12 +51,27 @@ function Balanceamento(pathTela, descInstancia) {
 			dataType : 'json',		
 			autoload: false,
 			singleSelect: true,
-			preProcess: T.processaRetornoPesquisa
+			preProcess: T.processaRetornoPesquisa,
+			onSuccess: T.destacarLinhas,
+			onSubmit: T.confirmarPaginacao
 		});
 		
 		$(".lancamentosProgramadosGrid").flexReload();
 	},
 
+
+	this.confirmarPaginacao = function() {
+		
+		var noSelect = $('[name=checkgroup]:checked').size() == 0;
+		
+		if(isCliquePesquisar || noSelect ) {
+			isCliquePesquisar = false;
+			return true;
+		}
+		
+		return confirm('As seleções de lançamentos não serão salvas,deseja continuar?');
+	},
+	
 	this.processaRetornoPesquisa = function(data) {
 		
 		if(data.mensagens) {
@@ -63,7 +82,7 @@ function Balanceamento(pathTela, descInstancia) {
 		//$("#tableResumoPeriodo").clear();
 		$("#valorTotal").clear();
 		
-		linhasDestacadas = [];
+		T.linhasDestacadas = [];
 		$("#valorTotal").html(data[1]);
 		$.each(data[0].rows, function(index,row){ T.processarLinha(index, row);});
 		return data[0];
@@ -97,34 +116,44 @@ function Balanceamento(pathTela, descInstancia) {
 	
 	this.processarLinha = function(i,row) {
 		
-		var emEstudoExpedido = row.cell.estudoFechado || row.cell.expedido;
-		
 		var linkDescProduto = T.getLinkProduto(row.cell.codigoProduto,row.cell.nomeProduto);
 		row.cell.nomeProduto = linkDescProduto;
-			
-		if (!emEstudoExpedido) {
-			var dataDistrib = '<input type="text" name="datepickerDe10" id="datepickerDe10" style="width:70px; float:left;" value="'+row.cell.dataMatrizDistrib+'"/>';
-			dataDistrib+='<span class="bt_atualizarIco" title="Atualizar Datas">';
-			dataDistrib+='<a href="javascript:;">&nbsp;</a></span>';
-			row.cell.dataMatrizDistrib = dataDistrib;
-			var id = row.cell.id.toString(); 					
-			var reprogramar = '<input type="checkbox" value="'+id+'" name="checkgroup" ';
-			if ($.inArray(id, lancamentosSelecionados) != -1) {
-				reprogramar+='checked="checked" ';					
-			}
-			reprogramar+='onclick="verifyCheck($(\'#selRep\'));" />';	
-			row.cell.reprogramar=reprogramar;
-		} else {
-			var dataDistrib = '<input type="text" disabled="disabled" style="width:70px; float:left;" value="'+row.cell.dataMatrizDistrib+'"/>';
-			row.cell.dataMatrizDistrib = dataDistrib;
-			row.cell.reprogramar='<input type="checkbox" name="checkgroup" value="'+row.cell.id+'" disabled="disabled" onclick="verifyCheck($(\'#selRep\'));" />';
-		}
-		if (row.cell.semFisico || row.cell.cancelamentoGD || row.cell.furo ) {
-			linhasDestacadas.push(i+1);
+		
+		var isBloqueado = row.cell.bloquearData;
+		
+		row.cell.novaData = T.gerarInputDataDistrib(row.cell.novaData, isBloqueado);
+		row.cell.reprogramar = T.gerarCheckReprogramar(row.cell.id.toString(), isBloqueado);
+				
+		if (!row.cell.possuiRecebimentoFisico || row.cell.cancelamentoGD || (row.cell.dataPrevisto!=row.cell.dataLancamentoDistribuidor) ) {
+			T.linhasDestacadas.push(i+1);
 		}
 		
 	},
 	
+	this.gerarInputDataDistrib = function(dataMatrizDistrib, isBloqueado) {
+		return '<input type="text" name="datepickerDe10" style="width:80px; float:left;" value="' + dataMatrizDistrib + '" ' + 
+			   (isBloqueado? ' disabled="disabled" ' : '') +  
+			   '/>' +
+		       '<span class="bt_atualizarIco" title="Atualizar Datas" ' +
+		       (isBloqueado? ' style="opacity:0.5;" ' : '') + 
+		       '>' +
+		       '<a href="javascript:;">&nbsp;</a></span>';
+	},
+	
+	this.gerarCheckReprogramar = function(id,isBloqueado) { 
+		return '<input type="checkbox" value="'+id+'" name="checkgroup" ' +
+			   (isBloqueado? ' disabled="disabled" ' : ' onclick="verifyCheck($(\'#selRep\'));" ') + 
+			   ' />';	
+	},
+	
+	this.destacarLinhas = function() {
+		
+		 $(T.linhasDestacadas).each(function(i, item){
+			 id = '#row' + item;			    	
+			 $(id).removeClass("erow").addClass("gridLinhaDestacada");
+			 $(id).children("td").removeClass("sorted");
+		   });
+	},
 	
 	/**
 	 * Obtém link para detalhes do produto
@@ -162,7 +191,10 @@ function Balanceamento(pathTela, descInstancia) {
 	
 	
 	/**
-	 * Carrega imagem default para produtos sem imagem
+	 * Retorna componente 'img' com imagem default para produtos sem imagem
+	 * @param w: propriedade width
+	 * @param h: propriedade height
+	 * @param a: propriedade alt
 	 */
 	this.carregarImagemCapaDefault = function(w,h,a) {
 		
@@ -179,6 +211,10 @@ function Balanceamento(pathTela, descInstancia) {
 	/**
 	 * Carrega imagem de Produto Edição
 	 * @param idProdutoEdicao
+	 * @param w: propriedade width
+	 * @param h: propriedade height
+	 * @param a: propriedade alt
+	 * @param recipiente: Componente html onde aparecerá a imagem
 	 */
 	this.carregarImagemCapa = function(idProdutoEdicao,w,h,a,recipiente) {
 
@@ -219,11 +255,124 @@ function Balanceamento(pathTela, descInstancia) {
 
 		T.carregarImagemCapa(result.idProdutoEdicao,'129','170','Capa',"td_imagem_capa");
 	},
+
+	
+	/**
+     * Obtém tela de confirmação de Balanceamento
+     * OBS: Específico para matrizLancamento\index.jsp
+     * @param codigoProduto
+     */
+	this.obterConfirmacaoBalanceamento = function (){
+		$.postJSON(
+			pathTela + "/matrizLancamento/obterAgrupamentoDiarioBalanceamento", 
+			null,
+			function(result) {
+				T.popularConfirmacaoBalanceamento(result);
+				T.popup_confirmar_balanceamento( "#dialog-confirm-balanceamento" );
+			},
+			function() {
+				$("#dialog-confirm-balanceamento").hide();
+			}
+		);
+	},
+	
+	
+	/**
+	 * Popula Popup de confirmação de Balanceamento.
+	 * OBS: Específico para matrizLancamento\index.jsp
+	 * @param result
+	 */
+	this.popularConfirmacaoBalanceamento = function(result){
+		
+		$("#tableConfirmaBalanceamento").clear();
+		
+		var conteudo = '';
+		
+		$.each(result.rows, function(index,row){
+
+			if (row.cell.confirmado){
+			    
+				conteudo += '<tr class="class_linha_1"><td>';
+				conteudo += row.cell.mensagem;
+				conteudo += '</td>';
+				conteudo += '<td align="center">Confirmada</td>';
+				conteudo += '<td align="center"><img src="images/bt_check.gif" width="22" height="22" alt="Confirmado" /></td>';
+				conteudo += '</tr>';
+			}    
+			else{
+	
+				conteudo += '<tr class="class_linha_1"><td id=dataConfirmar_'+index+' name=dataConfirmar_'+index+' >';
+				conteudo += row.cell.mensagem;
+				conteudo += '</td>';
+				conteudo += '<td align="center"><input id=checkConfirmar_'+index+' name=checkConfirmar_'+index+' type="checkbox" value="" /></td>';
+				conteudo += '<td align="center">&nbsp;</td>';
+				conteudo += '</tr>';
+			}
+			
+		});
+		
+		$("#tableConfirmaBalanceamento").append(conteudo);
+	},
+	
+	
+	/**
+	 * Obtém datas marcadas da confirmação do balanceamento
+	 * @returns dividasMarcadas
+	 */
+	this.obterDatasMarcadasConfirmacao = function(){
+
+		var datasConfirmadas='';
+		var table = document.getElementById("tableConfirmaBalanceamento");
+		
+		for(i = 0; i < table.rows.length; i++){   
+			
+			if(document.getElementById("checkConfirmar_"+i)!=null){
+				
+				if (document.getElementById("checkConfirmar_"+i).checked){
+				    table.rows[i].cells[0].textContent; 
+				    datasConfirmadas+='datasConfirmadas='+ table.rows[i].cells[0].textContent + '&';
+			    }
+				
+		    }
+
+		} 
+		
+		return datasConfirmadas;
+	},
+	
+	
+	/**
+     * Confirma a matriz de lançamento
+     * OBS: Específico para matrizLancamento\index.jsp
+     */
+	this.confirmarMatrizLancamento = function (){
+
+		$.postJSON(
+			pathTela + "/matrizLancamento/confirmarMatrizLancamento", 
+			T.obterDatasMarcadasConfirmacao(),
+			function(mensagens) {
+				
+	           $("#dialog-confirm-balanceamento").dialog("close");
+
+			   if (mensagens){
+				   var tipoMensagem = mensagens.tipoMensagem;
+				   var listaMensagens = mensagens.listaMensagens;
+				   if (tipoMensagem && listaMensagens) {
+				       exibirMensagem(tipoMensagem, listaMensagens);
+			       }
+        	   }
+			   
+            },
+			null,
+			true,
+			"dialog-confirmar"
+		);
+	},
 	
 	
 	/**
 	 * Exibe popup de detalhes do produto
-	 * @returns
+	 * @param dialog: Nome do dialog
 	 */
 	this.popup_detalhes_prod = function(dialog){
 		$( dialog ).dialog({
@@ -236,8 +385,32 @@ function Balanceamento(pathTela, descInstancia) {
 					$( this ).dialog( "close" );
 					
 				},
-				
 			}
+		});
+	},
+	
+	
+	/**
+	 * Exibe popup de confirmação de balanceamento
+	 * @param dialog: Nome do dialog
+	 */
+	this.popup_confirmar_balanceamento = function(dialog){
+		$( dialog ).dialog({
+			resizable: false,
+			height:'auto',
+			width:300,
+			modal: true,
+			buttons: {
+				"Confirmar": function() {
+					T.confirmarMatrizLancamento();
+				},
+				"Cancelar": function() {
+					$( this ).dialog( "close" );
+				},
+			},
+			beforeClose: function() {
+				clearMessageDialogTimeout(dialog);
+		    }
 		});
 	},
 

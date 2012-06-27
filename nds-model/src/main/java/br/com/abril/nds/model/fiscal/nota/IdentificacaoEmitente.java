@@ -51,9 +51,6 @@ public class IdentificacaoEmitente implements Serializable {
 	 * CNPJ CPF
 	 */
 	@Column(name="DOCUMENTO_EMITENTE", nullable=false, length=14)
-	@NFEExports({
-		@NFEExport(secao=TipoSecao.C02, posicao=0 , tamanho=14, documento=Constantes.CNPJ),
-		@NFEExport(secao=TipoSecao.C02a, posicao=0 , tamanho=11, documento=Constantes.CPF)})
 	private String documento;
 	
 	/**

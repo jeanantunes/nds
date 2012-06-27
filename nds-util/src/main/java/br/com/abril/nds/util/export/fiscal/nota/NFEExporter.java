@@ -65,6 +65,8 @@ public class NFEExporter {
 	 */
 	private TreeMap<TipoSecao, List<CampoSecao>> mapSecoes = new TreeMap<TipoSecao, List<CampoSecao>>(new NFESecaoComparator());
 	
+	private Integer indexListaNFEExporters;
+	
 	/**
 	 * Construtor padrão
 	 */
@@ -95,22 +97,29 @@ public class NFEExporter {
 	public <NF> void execute(NF notaFiscal) throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
 		
 		Field[] campos = notaFiscal.getClass().getDeclaredFields();
-		
+
 		for (Field campo : campos) {
+
 			campo.setAccessible(true);
-			
+
 			Object valor = campo.get(notaFiscal);
 			this.processarAnnotations(campo, notaFiscal, valor);
 		}		
-		
+	
 		Method[] metodos = notaFiscal.getClass().getDeclaredMethods();
 		
-//		for (Method metodo : metodos) {
-//			if (metodo.getParameterTypes().length == 0) {
-//				Object valor = metodo.invoke(notaFiscal, new Object[] {});
-//				this.processarAnnotations(metodo, notaFiscal, valor);
-//			}
-//		}
+		for (Method metodo : metodos) {
+			NFEWhens nfeWhens = metodo.getAnnotation(NFEWhens.class);
+			NFEExport nfeExport = metodo.getAnnotation(NFEExport.class);
+			NFEExports nfeExports = metodo.getAnnotation(NFEExports.class);
+			
+			if (nfeWhens != null && nfeExport!= null && nfeExports != null ) {
+				if (metodo.getParameterTypes().length == 0 && !metodo.getReturnType().equals(Void.TYPE)) {
+					Object valor = metodo.invoke(notaFiscal, new Object[] {});
+					this.processarAnnotations(metodo, notaFiscal, valor);
+				}
+			}
+		}
 		
 	}
 	
@@ -124,6 +133,11 @@ public class NFEExporter {
 	 */
 	@SuppressWarnings("rawtypes")
 	private <NF> void processarAnnotations(AccessibleObject objeto, NF notaFiscal, Object valor) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+		NFEExportIgnore nfeExportIgnore =  objeto.getAnnotation(NFEExportIgnore.class);
+		
+		if(nfeExportIgnore != null) {
+			return;
+		}
 		
 		NFEWhens nfeWhens = objeto.getAnnotation(NFEWhens.class);
 		NFEExport nfeExport = objeto.getAnnotation(NFEExport.class);
@@ -133,7 +147,7 @@ public class NFEExporter {
 			
 			if(nfeWhens != null){
 				for(NFEWhen when: nfeWhens.value()){
-					if(when.condition().valid(valor)){						
+					if(when.condition().valid(valor) && when.condition().valid(notaFiscal)){						
 						addCampoSecao(when.export(), valor);
 					}
 				}
@@ -176,7 +190,7 @@ public class NFEExporter {
 		if (camposSecao == null || camposSecao.isEmpty()) {
 			camposSecao = new ArrayList<CampoSecao>();
 		}
-		
+		System.out.println(novoCampo.getSessao().getSigla());
 		camposSecao.add(novoCampo);
 		
 		this.mapSecoes.put(novoCampo.getSessao(), camposSecao);
@@ -211,11 +225,25 @@ public class NFEExporter {
 	 * Adiciona valores padrões no documento.
 	 */
 	private void addCamposDefault() {				
-//		CampoSecao versao = new CampoSecao(TipoSecao.A,  0, "2.0");
-//		addCampoSecao(versao);
-		//TODO: campos padroes;
+		CampoSecao versao = new CampoSecao(TipoSecao.A,  0, "2.0");
+		addCampoSecao(versao);
+		CampoSecao modeloDocuemtno = new CampoSecao(TipoSecao.B,  4, "55");
+		addCampoSecao(modeloDocuemtno);
+		CampoSecao tipoImpressao = new CampoSecao(TipoSecao.B,  11, "1");
+		addCampoSecao(tipoImpressao);
+		CampoSecao tipoAmbiente = new CampoSecao(TipoSecao.B,  14, "1");
+		addCampoSecao(tipoAmbiente);
+		CampoSecao processoEmissao = new CampoSecao(TipoSecao.B,  16, "0");
+		addCampoSecao(processoEmissao);
+		CampoSecao codigoPaisEmitente = new CampoSecao(TipoSecao.C05,  8, "1058");
+		addCampoSecao(codigoPaisEmitente);
+		CampoSecao nomePaisEmitente = new CampoSecao(TipoSecao.C05,  9, "BRASIL");
+		addCampoSecao(nomePaisEmitente);
+		CampoSecao codigoPaisDestinatario = new CampoSecao(TipoSecao.E05,  8, "1058");
+		addCampoSecao(codigoPaisDestinatario);
+		CampoSecao nomePaisDestinatario = new CampoSecao(TipoSecao.E05,  9, "BRASIL");
+		addCampoSecao(nomePaisDestinatario);
 	}
-		
 	
 	/**
 	 * Converte as seções em Strings.
@@ -232,15 +260,15 @@ public class NFEExporter {
 		
 		String primeiraSecao = null;
 		
-		Integer indexListaNFEExporters = 0;
+		this.indexListaNFEExporters = 0;
 		
 		if (!this.listaNFEExporters.isEmpty()) { 
-			primeiraSecao = this.listaNFEExporters.get(indexListaNFEExporters).getPrimeiraSecao();
+			primeiraSecao = this.listaNFEExporters.get(this.indexListaNFEExporters).getPrimeiraSecao();
 		}
 		
 		for (TipoSecao secao : secoes) {
 			
-			sBuffer.append(listaNFEExportersToString(primeiraSecao, indexListaNFEExporters, secao));
+			sBuffer.append(listaNFEExportersToString(primeiraSecao, secao));
 			
 			String sSecao = this.gerarStringSecao(secao);
 			
@@ -256,7 +284,7 @@ public class NFEExporter {
 			sBuffer.append(sSecao);
 		}
 		
-		sBuffer.append(listaNFEExportersToString(primeiraSecao, indexListaNFEExporters, null));
+		sBuffer.append(listaNFEExportersToString(primeiraSecao, null));
 		
 		return sBuffer.toString();
 	}
@@ -268,7 +296,7 @@ public class NFEExporter {
 	 * @param secao
 	 * @return
 	 */
-	private String listaNFEExportersToString(String primeiraSecao, Integer indexListaNFEExporters, TipoSecao secao){
+	private String listaNFEExportersToString(String primeiraSecao, TipoSecao secao){
 		
 		StringBuffer sBuffer = new StringBuffer();
 		
@@ -278,10 +306,10 @@ public class NFEExporter {
 			
 			do {
 			
-				if (this.listaNFEExporters.size() > indexListaNFEExporters) {
-					sBuffer.append(this.listaNFEExporters.get(indexListaNFEExporters).toString());
-					primeiraSecao = this.listaNFEExporters.get(indexListaNFEExporters++).getPrimeiraSecao();
-					repetir = primeiraSecao != null && primeiraSecao.compareToIgnoreCase(this.listaNFEExporters.get(indexListaNFEExporters - 1).getPrimeiraSecao()) == 0;
+				if (this.listaNFEExporters.size() > this.indexListaNFEExporters) {
+					sBuffer.append(this.listaNFEExporters.get(this.indexListaNFEExporters).toString());
+					primeiraSecao = this.listaNFEExporters.get(this.indexListaNFEExporters++).getPrimeiraSecao();
+					repetir = primeiraSecao != null && primeiraSecao.compareToIgnoreCase(this.listaNFEExporters.get(this.indexListaNFEExporters - 1).getPrimeiraSecao()) == 0;
 				} else {
 					primeiraSecao = null;
 					repetir = false;
@@ -345,7 +373,7 @@ public class NFEExporter {
 		
 		Object valor = campo.getValor();
 		String mascara = campo.getMascara();
-		int tamanho = campo.getTamanho();
+		Integer tamanho = campo.getTamanho();
 		
 		String valorString = STRING_VAZIA;
 		String mascaraUsada;
@@ -381,7 +409,7 @@ public class NFEExporter {
 				
 				valorString = valor.toString();
 				
-				if (tamanho > 0) {
+				if (tamanho != null && tamanho > 0) {
 					valorString = valorString.replace(SEPARADOR_SECAO, STRING_VAZIA).substring(0, tamanho);
 				}
 			}

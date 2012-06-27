@@ -160,7 +160,7 @@
                <td><input type="text" name="procuracaoEntregador.cota.numeroCota" 
                			  id="numeroCotaProcuracaoPJ" 
                			  style="width:80px; float:left; margin-right:5px;" maxlength="11"/>
-               <span class="classPesquisar"><a href="javascript:;" onclick="obterCota($('#numeroCotaProcuracaoPJ').val()">&nbsp;</a></span></td>
+               <span class="classPesquisar"><a href="javascript:;" onclick="obterCota($('#numeroCotaProcuracaoPJ').val())">&nbsp;</a></span></td>
                <td>&nbsp;</td>
                <td>&nbsp;</td>
              </tr>
