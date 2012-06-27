@@ -21,15 +21,56 @@ import br.com.abril.nds.util.export.fiscal.nota.NFEExportType;
 public class Identificacao implements Serializable {
 	
 	public enum FormaPagamento {
-		A_VISTA, A_PRAZO, OUTROS;
+		A_VISTA, 
+		A_PRAZO, 
+		OUTROS;
+		
+		/**
+		 * @see java.lang.Enum#toString()
+		 */
+		@Override
+		public String toString() {
+			return String.valueOf(this.ordinal());
+		}
 	}	
 	
 	public enum TipoEmissao {
-		NORMAL, CONTINGENCIA
+		NORMAL(1), 
+		CONTINGENCIA(2);
+
+		private Integer indcador;
+		
+		TipoEmissao(Integer indcador){
+			this.indcador = indcador;
+		}
+		
+		/**
+		 * @see java.lang.Enum#toString()
+		 */
+		@Override
+		public String toString() {
+			return indcador.toString();
+		}
 	}	
 	
 	public enum FinalidadeEmissao {
-		NORMAL, COMPLEMENTAR, AJUSTE
+		NORMAL(1), 
+		COMPLEMENTAR(2), 
+		AJUSTE(3);
+
+		private Integer indcador;
+		
+		FinalidadeEmissao(Integer indcador){
+			this.indcador = indcador;
+		}
+		
+		/**
+		 * @see java.lang.Enum#toString()
+		 */
+		@Override
+		public String toString() {
+			return indcador.toString();
+		}
 	}	
 	
 	/**

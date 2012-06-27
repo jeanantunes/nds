@@ -2,7 +2,7 @@ package br.com.abril.nds.util.export.fiscal.nota.condition;
 
 import br.com.caelum.stella.validation.CPFValidator;
 
-public class CNPJCondition implements Condition {
+public class CNPJCondition extends ConditionDefault {
 
 	@Override
 	public boolean valid(Object object) {	
@@ -15,9 +15,4 @@ public class CNPJCondition implements Condition {
 		}
 	}
 
-	@Override
-	public boolean validParent(Object object) {		
-		return true;
-	}
-	
 }
