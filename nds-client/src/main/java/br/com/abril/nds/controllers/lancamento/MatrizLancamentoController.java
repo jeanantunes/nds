@@ -198,11 +198,19 @@ public class MatrizLancamentoController {
 	}
 	
 	@Post
-	public void confirmarMatrizLancamento(List<Date> datasConfimacao) {
+	public void confirmarMatrizLancamento(List<Date> datasConfirmadas) {
 		
 		// TODO: obter a matriz da sessão
 		
 		// TODO: chamar a service de confirmação
+
+		if (datasConfirmadas==null || datasConfirmadas.size()<=0){
+			throw new ValidacaoException(TipoMensagem.WARNING, "Selecione ao menos uma data!");
+		}	
+	
+		// TODO: validar matriz de lançamento conforme parâmetro: datasConfirmadas
+			
+		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Confirmado com sucesso !"), "result").recursive().serialize();
 	}
 	
 	@Post
@@ -1008,16 +1016,14 @@ public class MatrizLancamentoController {
 				
 				for (ProdutoLancamentoDTO produtoBalanceamento : listaProdutosRecolhimento) {
 
-					confirmado = (produtoBalanceamento.getStatusLancamento() == StatusLancamento.BALANCEADO)&&
-							     (produtoBalanceamento.getDataLancamentoDistribuidor()==produtoBalanceamento.getNovaDataLancamento());
+					confirmado = (produtoBalanceamento.getStatusLancamento().equals(StatusLancamento.BALANCEADO)&&
+							     (produtoBalanceamento.getDataLancamentoDistribuidor().compareTo(produtoBalanceamento.getNovaDataLancamento())==0));
 					
-					if ((confirmado) && 
-					    (agrupamento.get(produtoBalanceamento.getNovaDataLancamento())!=null) &&
-					    (!agrupamento.get(produtoBalanceamento.getNovaDataLancamento()))){
+					if ( (agrupamento.get(produtoBalanceamento.getNovaDataLancamento())==null)||
+						 (confirmado && !agrupamento.get(produtoBalanceamento.getNovaDataLancamento())) ){
 						
-						agrupamento.remove(produtoBalanceamento.getNovaDataLancamento());
+						agrupamento.put(produtoBalanceamento.getNovaDataLancamento(), confirmado);
 					}
-					agrupamento.put(produtoBalanceamento.getNovaDataLancamento(), confirmado);
 				} 
 			}	
 		}
@@ -1028,10 +1034,7 @@ public class MatrizLancamentoController {
 		}
 		
 		TableModel<CellModelKeyValue<ConfirmacaoVO>> tableModel = new TableModel<CellModelKeyValue<ConfirmacaoVO>>();
-		
 		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(confirmacoesVO));
-		tableModel.setPage(1);
-		tableModel.setTotal(confirmacoesVO.size());
 
 		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
 	}

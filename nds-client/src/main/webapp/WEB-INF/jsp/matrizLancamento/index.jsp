@@ -358,6 +358,11 @@ function voltarConfiguracaoOriginal() {
 		
 		
 		<div id="dialog-confirm-balanceamento" title="Balanceamento" style="display:none;">
+		    
+		    <jsp:include page="../messagesDialog.jsp">
+				<jsp:param value="dialog-confirmar" name="messageDialog"/>
+			</jsp:include>
+			
 		    <fieldset style="width:250px!important;">
 		    	<legend>Confirmar Balanceamento</legend>
 
