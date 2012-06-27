@@ -22,7 +22,7 @@ import br.com.abril.nds.repository.HistoricoSituacaoCotaRepository;
  *
  */
 @Repository
-public class HistoricoSituacaoCotaRepositoryImpl extends AbstractRepository<HistoricoSituacaoCota, Long> implements HistoricoSituacaoCotaRepository {
+public class HistoricoSituacaoCotaRepositoryImpl extends AbstractRepositoryModel<HistoricoSituacaoCota, Long> implements HistoricoSituacaoCotaRepository {
 
 	/**
 	 * Construtor.

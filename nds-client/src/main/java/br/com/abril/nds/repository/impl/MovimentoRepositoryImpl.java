@@ -18,7 +18,7 @@ import br.com.abril.nds.repository.MovimentoRepository;
  * @author Discover Technology
  */
 @Repository
-public class MovimentoRepositoryImpl extends AbstractRepository<Movimento, Long> 
+public class MovimentoRepositoryImpl extends AbstractRepositoryModel<Movimento, Long> 
 												   implements MovimentoRepository {
 
 	public MovimentoRepositoryImpl() {

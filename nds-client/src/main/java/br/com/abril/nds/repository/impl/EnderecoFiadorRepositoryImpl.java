@@ -14,7 +14,7 @@ import br.com.abril.nds.repository.EnderecoFiadorRepository;
 
 @Repository
 public class EnderecoFiadorRepositoryImpl extends
-		AbstractRepository<EnderecoFiador, Long> implements
+		AbstractRepositoryModel<EnderecoFiador, Long> implements
 		EnderecoFiadorRepository {
 
 	public EnderecoFiadorRepositoryImpl() {

@@ -19,7 +19,7 @@ import br.com.abril.nds.repository.RotaRepository;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
 @Repository
-public class RotaRepositoryImpl extends AbstractRepository<Rota, Long>
+public class RotaRepositoryImpl extends AbstractRepositoryModel<Rota, Long>
 		implements RotaRepository {
 
 	public RotaRepositoryImpl() {

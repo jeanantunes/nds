@@ -12,7 +12,7 @@ import br.com.abril.nds.model.estoque.OperacaoEstoque;
 import br.com.abril.nds.repository.MovimentoEstoqueRepository;
 
 @Repository
-public class MovimentoEstoqueRepositoryImpl extends AbstractRepository<MovimentoEstoque, Long> 
+public class MovimentoEstoqueRepositoryImpl extends AbstractRepositoryModel<MovimentoEstoque, Long> 
 implements MovimentoEstoqueRepository {
 	
 	/**

@@ -12,7 +12,7 @@ import br.com.abril.nds.model.cadastro.EnderecoFornecedor;
 import br.com.abril.nds.repository.EnderecoFornecedorRepository;
 
 @Repository
-public class EnderecoFornecedorRepositoryImpl extends AbstractRepository<EnderecoFornecedor, Long> 
+public class EnderecoFornecedorRepositoryImpl extends AbstractRepositoryModel<EnderecoFornecedor, Long> 
 											  implements EnderecoFornecedorRepository {
 
 	public EnderecoFornecedorRepositoryImpl() {

@@ -1,13 +1,13 @@
 package br.com.abril.nds.integracao.ems0119.processor;
 
 
-import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
 
+import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.integracao.engine.MessageProcessor;
 import br.com.abril.nds.integracao.engine.data.Message;
@@ -16,13 +16,12 @@ import br.com.abril.nds.integracao.model.canonic.EMS0119Input;
 import br.com.abril.nds.integracao.service.PeriodicidadeProdutoService;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
+import br.com.abril.nds.repository.impl.AbstractRepository;
 
 
 @Component
-public class EMS0119MessageProcessor implements MessageProcessor{
 
-	@PersistenceContext
-	private EntityManager entityManager;
+public class EMS0119MessageProcessor extends AbstractRepository implements MessageProcessor {
 	
 	@Autowired
 	private NdsiLoggerFactory ndsiLoggerFactory;
@@ -35,6 +34,7 @@ public class EMS0119MessageProcessor implements MessageProcessor{
 	}
 	
 	@Override
+	
 	public void processMessage(Message message) {
 		
 		EMS0119Input input = (EMS0119Input) message.getBody();
@@ -47,13 +47,13 @@ public class EMS0119MessageProcessor implements MessageProcessor{
 		sql.append("AND pe.numeroEdicao = :numEdicao");
 
 		
-		Query query = entityManager.createQuery(sql.toString());
+		Query query = getSession().createQuery(sql.toString());
 		query.setParameter("codigoProduto", input.getCodigoDaPublicacao());
 		query.setParameter("numEdicao", input.getEdicao());
 		
 		try {
 			
-			ProdutoEdicao produtoEdicao = (ProdutoEdicao) query.getSingleResult();
+			ProdutoEdicao produtoEdicao = (ProdutoEdicao) query.uniqueResult();
 			
 			if(produtoEdicao.getDesconto() != input.getDesconto()){ 
 				produtoEdicao.setDesconto(input.getDesconto());

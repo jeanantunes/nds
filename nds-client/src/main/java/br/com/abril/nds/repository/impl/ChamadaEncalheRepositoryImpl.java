@@ -14,7 +14,7 @@ import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
 import br.com.abril.nds.repository.ChamadaEncalheRepository;
 
 @Repository
-public class ChamadaEncalheRepositoryImpl extends AbstractRepository<ChamadaEncalhe,Long> implements ChamadaEncalheRepository{
+public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<ChamadaEncalhe,Long> implements ChamadaEncalheRepository{
 
 	public ChamadaEncalheRepositoryImpl() {
 		super(ChamadaEncalhe.class);

@@ -26,7 +26,7 @@ import br.com.abril.nds.repository.ExpedicaoRepository;
  *
  */
 @Repository
-public class ExpedicaoRepositoryImpl extends AbstractRepository<Expedicao,Long> implements ExpedicaoRepository {
+public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,Long> implements ExpedicaoRepository {
 
 	public ExpedicaoRepositoryImpl() {
 		super(Expedicao.class);

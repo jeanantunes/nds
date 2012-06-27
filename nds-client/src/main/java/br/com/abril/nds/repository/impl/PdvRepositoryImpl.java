@@ -25,7 +25,7 @@ import br.com.abril.nds.repository.PdvRepository;
  */
 
 @Repository
-public class PdvRepositoryImpl extends AbstractRepository<PDV, Long> implements PdvRepository {
+public class PdvRepositoryImpl extends AbstractRepositoryModel<PDV, Long> implements PdvRepository {
 
 	public PdvRepositoryImpl() {
 		super(PDV.class);

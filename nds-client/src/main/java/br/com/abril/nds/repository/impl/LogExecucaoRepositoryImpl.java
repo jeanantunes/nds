@@ -17,7 +17,7 @@ import br.com.abril.nds.repository.LogExecucaoRepository;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
 @Repository
-public class LogExecucaoRepositoryImpl extends AbstractRepository<LogExecucao, Long>  implements LogExecucaoRepository {
+public class LogExecucaoRepositoryImpl extends AbstractRepositoryModel<LogExecucao, Long>  implements LogExecucaoRepository {
 
 	@Autowired
 	DistribuidorService distribuidorService;

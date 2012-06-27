@@ -21,7 +21,7 @@ import br.com.abril.nds.repository.DistribuidorRepository;
 
 @Repository
 public class DistribuidorRepositoryImpl extends
-		AbstractRepository<Distribuidor, Long> implements
+		AbstractRepositoryModel<Distribuidor, Long> implements
 		DistribuidorRepository {
 
 	public DistribuidorRepositoryImpl() {

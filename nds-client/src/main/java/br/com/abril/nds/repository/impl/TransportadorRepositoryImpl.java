@@ -12,7 +12,7 @@ import br.com.abril.nds.repository.TransportadorRepository;
 
 @Repository
 public class TransportadorRepositoryImpl extends
-		AbstractRepository<Transportador, Long> implements TransportadorRepository {
+		AbstractRepositoryModel<Transportador, Long> implements TransportadorRepository {
 
 	public TransportadorRepositoryImpl() {
 		super(Transportador.class);

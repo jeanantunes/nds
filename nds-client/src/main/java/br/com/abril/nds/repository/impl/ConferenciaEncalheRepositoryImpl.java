@@ -20,7 +20,7 @@ import br.com.abril.nds.repository.ConferenciaEncalheRepository;
 
 @Repository
 public class ConferenciaEncalheRepositoryImpl extends
-		AbstractRepository<ConferenciaEncalhe, Long> implements
+		AbstractRepositoryModel<ConferenciaEncalhe, Long> implements
 		ConferenciaEncalheRepository {
 
 	public ConferenciaEncalheRepositoryImpl() {

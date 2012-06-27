@@ -22,7 +22,7 @@ import br.com.abril.nds.repository.RoteiroRepository;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
 @Repository
-public class RoteiroRepositoryImpl extends AbstractRepository<Roteiro, Long>
+public class RoteiroRepositoryImpl extends AbstractRepositoryModel<Roteiro, Long>
 		implements RoteiroRepository {
 
 	public RoteiroRepositoryImpl() {

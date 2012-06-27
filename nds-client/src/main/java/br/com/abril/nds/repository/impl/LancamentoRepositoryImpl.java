@@ -44,7 +44,7 @@ import br.com.abril.nds.vo.PeriodoVO;
 
 @Repository
 public class LancamentoRepositoryImpl extends
-		AbstractRepository<Lancamento, Long> implements LancamentoRepository {
+		AbstractRepositoryModel<Lancamento, Long> implements LancamentoRepository {
 
 	public LancamentoRepositoryImpl() {
 		super(Lancamento.class);

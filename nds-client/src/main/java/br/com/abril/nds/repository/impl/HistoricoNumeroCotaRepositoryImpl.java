@@ -7,7 +7,7 @@ import br.com.abril.nds.model.cadastro.HistoricoNumeroCotaPK;
 import br.com.abril.nds.repository.HistoricoNumeroCotaRepository;
 
 @Repository
-public class HistoricoNumeroCotaRepositoryImpl extends AbstractRepository<HistoricoNumeroCota, HistoricoNumeroCotaPK> implements HistoricoNumeroCotaRepository{
+public class HistoricoNumeroCotaRepositoryImpl extends AbstractRepositoryModel<HistoricoNumeroCota, HistoricoNumeroCotaPK> implements HistoricoNumeroCotaRepository{
 
 	public HistoricoNumeroCotaRepositoryImpl() {
 		super(HistoricoNumeroCota.class);

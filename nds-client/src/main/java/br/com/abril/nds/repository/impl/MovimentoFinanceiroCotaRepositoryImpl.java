@@ -21,7 +21,7 @@ import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 import br.com.abril.nds.repository.MovimentoFinanceiroCotaRepository;
 
 @Repository
-public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepository<MovimentoFinanceiroCota, Long> 
+public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryModel<MovimentoFinanceiroCota, Long> 
 												   implements MovimentoFinanceiroCotaRepository {
 
 	public MovimentoFinanceiroCotaRepositoryImpl() {

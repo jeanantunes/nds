@@ -309,7 +309,7 @@ public class MatrizLancamentoController {
 				
 		produtoBalanceamentoVO.setEstudoFechado(produtoLancamentoDTO.isPossuiEstudo());
 		
-		produtoBalanceamentoVO.setSemFisico(!produtoLancamentoDTO.isPossuiRecebimentoFisico());
+		//produtoBalanceamentoVO.setSemFisico(!produtoLancamentoDTO.isPossuiRecebimentoFisico());
 		
 		//TODO - Pendente
 		produtoBalanceamentoVO.setDistribuicao("");

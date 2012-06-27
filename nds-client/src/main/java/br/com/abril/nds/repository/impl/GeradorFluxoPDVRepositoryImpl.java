@@ -8,7 +8,7 @@ import br.com.abril.nds.model.cadastro.pdv.GeradorFluxoPDV;
 import br.com.abril.nds.repository.GeradorFluxoPDVRepository;
 
 @Repository
-public class GeradorFluxoPDVRepositoryImpl extends AbstractRepository<GeradorFluxoPDV, Long> implements GeradorFluxoPDVRepository {
+public class GeradorFluxoPDVRepositoryImpl extends AbstractRepositoryModel<GeradorFluxoPDV, Long> implements GeradorFluxoPDVRepository {
 	
 	public GeradorFluxoPDVRepositoryImpl() {
 		super(GeradorFluxoPDV.class);

@@ -12,7 +12,7 @@ import br.com.abril.nds.dto.filtro.FiltroCurvaABCDistribuidorDTO;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.repository.RelatorioVendasRepository;
 
-public class RelatorioVendasRepositoryImpl extends AbstractRepository<Distribuidor, Long> implements RelatorioVendasRepository {
+public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distribuidor, Long> implements RelatorioVendasRepository {
 
 	public RelatorioVendasRepositoryImpl() {
 		super(Distribuidor.class);

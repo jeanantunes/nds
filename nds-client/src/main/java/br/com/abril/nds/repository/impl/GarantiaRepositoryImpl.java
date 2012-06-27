@@ -12,7 +12,7 @@ import br.com.abril.nds.model.cadastro.Garantia;
 import br.com.abril.nds.repository.GarantiaRepository;
 
 @Repository
-public class GarantiaRepositoryImpl extends AbstractRepository<Garantia, Long> implements GarantiaRepository {
+public class GarantiaRepositoryImpl extends AbstractRepositoryModel<Garantia, Long> implements GarantiaRepository {
 
 	public GarantiaRepositoryImpl() {
 		super(Garantia.class);

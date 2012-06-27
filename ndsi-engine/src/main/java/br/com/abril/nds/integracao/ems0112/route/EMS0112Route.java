@@ -7,13 +7,15 @@ import org.springframework.stereotype.Component;
 import br.com.abril.nds.integracao.ems0112.processor.EMS0112MessageProcessor;
 import br.com.abril.nds.integracao.engine.MessageProcessor;
 import br.com.abril.nds.integracao.engine.RouteInterface;
+import br.com.abril.nds.integracao.engine.data.CouchDBImportRouteTemplate;
 import br.com.abril.nds.integracao.engine.data.FixedLengthRouteTemplate;
 import br.com.abril.nds.integracao.model.canonic.EMS0112Input;
+import br.com.abril.nds.integracao.model.canonic.InterfaceEnum;
 
 
 @Component
 @Scope("prototype")
-public class EMS0112Route extends FixedLengthRouteTemplate{
+public class EMS0112Route extends CouchDBImportRouteTemplate{
 	
 	@Autowired
 	private EMS0112MessageProcessor messageProcessor;
@@ -34,14 +36,8 @@ public class EMS0112Route extends FixedLengthRouteTemplate{
 	}
 
 	@Override
-	public String getFileFilterExpression() {
-		return (String) getParameters().get("NDSI_EMS0112_IN_FILEMASK");
-	}
-
-	@Override
-	public void setupTypeMapping() {
-		setTypeMapping(EMS0112Input.class);
-		
+	public InterfaceEnum getInterfaceEnum() {
+		return InterfaceEnum.EMS0112;
 	}
 	
 	

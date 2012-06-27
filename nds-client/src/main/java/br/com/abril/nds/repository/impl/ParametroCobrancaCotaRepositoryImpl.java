@@ -4,7 +4,7 @@ import br.com.abril.nds.model.cadastro.ParametroCobrancaCota;
 import br.com.abril.nds.repository.ParametroCobrancaCotaRepository;
 
 @Repository
-public class ParametroCobrancaCotaRepositoryImpl extends AbstractRepository<ParametroCobrancaCota,Long> implements ParametroCobrancaCotaRepository  {
+public class ParametroCobrancaCotaRepositoryImpl extends AbstractRepositoryModel<ParametroCobrancaCota,Long> implements ParametroCobrancaCotaRepository  {
 
 	
 	/**

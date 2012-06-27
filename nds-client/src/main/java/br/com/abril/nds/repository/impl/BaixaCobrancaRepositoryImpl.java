@@ -21,7 +21,7 @@ import br.com.abril.nds.repository.BaixaCobrancaRepository;
  *
  */
 @Repository
-public class BaixaCobrancaRepositoryImpl extends AbstractRepository<BaixaCobranca,Long> implements BaixaCobrancaRepository {
+public class BaixaCobrancaRepositoryImpl extends AbstractRepositoryModel<BaixaCobranca,Long> implements BaixaCobrancaRepository {
 	
 	/**
 	 * Construtor padrão

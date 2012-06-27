@@ -3,13 +3,13 @@ package br.com.abril.nds.integracao.ems0117.processor;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
 
+import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.integracao.ems0117.inbound.EMS0117Input;
 import br.com.abril.nds.integracao.engine.MessageProcessor;
@@ -28,12 +28,12 @@ import br.com.abril.nds.model.cadastro.TelefoneCota;
 import br.com.abril.nds.model.cadastro.TipoEndereco;
 import br.com.abril.nds.model.cadastro.TipoTelefone;
 import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
+import br.com.abril.nds.repository.impl.AbstractRepository;
 
 
 @Component
-public class EMS0117MessageProcessor implements MessageProcessor {
-	@PersistenceContext
-	private EntityManager entityManager;
+
+public class EMS0117MessageProcessor extends AbstractRepository implements MessageProcessor  {
 	
 	@Autowired
 	private NdsiLoggerFactory ndsiLoggerFactory;
@@ -43,6 +43,7 @@ public class EMS0117MessageProcessor implements MessageProcessor {
 	
 	@SuppressWarnings("unchecked")
 	@Override
+	
 	public void processMessage(Message message) {
 		EMS0117Input input = (EMS0117Input) message.getBody();
 		
@@ -53,12 +54,12 @@ public class EMS0117MessageProcessor implements MessageProcessor {
 		sql.append("FROM Box b ");
 		sql.append("WHERE ");
 		sql.append("     b.codigo = :codigo ");
-		Query query = entityManager.createQuery(sql.toString());
+		Query query = getSession().createQuery(sql.toString());
 		query.setParameter("codigo", input.getCodBox().toString());		
 		Box box = null;
 		
 		try {
-			box = (Box) query.getSingleResult();
+			box = (Box) query.uniqueResult();
 		} catch(NoResultException e) {
 			// Não encontrou a Box. Realizar Log
 			// Passar para a próxima linha
@@ -87,7 +88,7 @@ public class EMS0117MessageProcessor implements MessageProcessor {
 			sql.append("	pe.cnpj = :cnpj ");
 		}
 		
-		query = entityManager.createQuery(sql.toString());
+		query = getSession().createQuery(sql.toString());
 
 		if (INDICE_PESSOA_FISICA.equals(input.getTipoPessoa())){
 			
@@ -101,7 +102,7 @@ public class EMS0117MessageProcessor implements MessageProcessor {
 		//Definir Pessoa
 		if (INDICE_PESSOA_FISICA.equals(input.getTipoPessoa())){
 			
-			List<PessoaFisica> pessoas = (List<PessoaFisica>) query.getResultList();
+			List<PessoaFisica> pessoas = (List<PessoaFisica>) query.list();
 			PessoaFisica pessoaFis = null;
 				
 				if (pessoas.isEmpty()) {
@@ -109,7 +110,7 @@ public class EMS0117MessageProcessor implements MessageProcessor {
 					pessoaFis = new PessoaFisica();
 					pessoaFis.setNome(input.getNomeJornaleiro());
 					pessoaFis.setCpf(input.getCpfCNPJ());
-					entityManager.persist(pessoaFis);
+					getSession().persist(pessoaFis);
 					
 					pessoa = pessoaFis;
 					
@@ -130,7 +131,7 @@ public class EMS0117MessageProcessor implements MessageProcessor {
 
 		} else if (INDICE_PESSOA_JURIDICA.equals(input.getTipoPessoa())){
 			
-			List<PessoaJuridica> pessoas = (List<PessoaJuridica>) query.getResultList();
+			List<PessoaJuridica> pessoas = (List<PessoaJuridica>) query.list();
 			PessoaJuridica pessoaJur = null;
 			
 				if (pessoas.isEmpty()) {
@@ -140,7 +141,7 @@ public class EMS0117MessageProcessor implements MessageProcessor {
 					pessoaJur.setCnpj(input.getCpfCNPJ());
 					pessoaJur.setInscricaoEstadual(input.getInscrEstadual());
 					pessoaJur.setInscricaoMunicipal(input.getInscrMunicipal());
-					entityManager.persist(pessoaJur);
+					getSession().persist(pessoaJur);
 					
 					pessoa = pessoaJur;
 					
@@ -170,10 +171,10 @@ public class EMS0117MessageProcessor implements MessageProcessor {
 		sql.append("WHERE ");
 		sql.append("     co.numeroCota = :numeroCota ");
 		
-		query = entityManager.createQuery(sql.toString());
+		query = getSession().createQuery(sql.toString());
 		query.setParameter("numeroCota", input.getCodCota());
 		
-		List<Cota> cotas = (List<Cota>) query.getResultList();
+		List<Cota> cotas = (List<Cota>) query.list();
 	
 			if (cotas.isEmpty()) {
 				
@@ -199,7 +200,7 @@ public class EMS0117MessageProcessor implements MessageProcessor {
 				cota.setSugereSuspensao(true);
 				cota.setBox(box);
 				cota.setPessoa(pessoa);
-				entityManager.persist(cota);
+				getSession().persist(cota);
 					
 					if (!input.getEndereco().isEmpty() && !".".equals(input.getEndereco())){
 						
@@ -211,14 +212,14 @@ public class EMS0117MessageProcessor implements MessageProcessor {
 						endereco.setNumero(input.getNumLogradouro());
 						endereco.setUf(input.getSiglaUF());	
 						endereco.setCodigoCidadeIBGE(input.getCodCidadeIbge());
-						entityManager.persist(endereco);
+						getSession().persist(endereco);
 						
 						EnderecoCota enderecoCota = new EnderecoCota();
 						enderecoCota.setPrincipal(true);
 						enderecoCota.setTipoEndereco(TipoEndereco.COMERCIAL);
 						enderecoCota.setEndereco(endereco);
 						enderecoCota.setCota(cota);
-						entityManager.persist(enderecoCota);
+						getSession().persist(enderecoCota);
 						
 					} else {
 						
@@ -230,14 +231,14 @@ public class EMS0117MessageProcessor implements MessageProcessor {
 						Telefone telefone = new Telefone();
 						telefone.setDdd(input.getDdd());
 						telefone.setNumero(input.getTelefone());
-						entityManager.persist(telefone);
+						getSession().persist(telefone);
 						
 						TelefoneCota telefoneCota = new TelefoneCota();
 						telefoneCota.setPrincipal(true);
 						telefoneCota.setTipoTelefone(TipoTelefone.COMERCIAL);
 						telefoneCota.setTelefone(telefone);
 						telefoneCota.setCota(cota);
-						entityManager.persist(telefoneCota);
+						getSession().persist(telefoneCota);
 						
 					} else {
 						
@@ -292,11 +293,11 @@ public class EMS0117MessageProcessor implements MessageProcessor {
 					sql.append("WHERE ");
 					sql.append("     ec.cota = :numeroCota ");
 					sql.append(" AND    ed.logradouro = :logradouro ");
-					query = entityManager.createQuery(sql.toString());
+					query = getSession().createQuery(sql.toString());
 					query.setParameter("numeroCota", cota);
 					query.setParameter("logradouro", input.getEndereco());
 					
-					List<EnderecoCota> enderecosCota = (List<EnderecoCota>) query.getResultList();
+					List<EnderecoCota> enderecosCota = (List<EnderecoCota>) query.list();
 					
 						if (enderecosCota.isEmpty()) {
 							
@@ -308,14 +309,14 @@ public class EMS0117MessageProcessor implements MessageProcessor {
 							endereco.setNumero(input.getNumLogradouro());
 							endereco.setUf(input.getSiglaUF());	
 							endereco.setCodigoCidadeIBGE(input.getCodCidadeIbge());
-							entityManager.persist(endereco);
+							getSession().persist(endereco);
 							
 							enderecoCota = new EnderecoCota();
 							enderecoCota.setPrincipal(true);
 							enderecoCota.setTipoEndereco(TipoEndereco.COMERCIAL);
 							enderecoCota.setEndereco(endereco);
 							enderecoCota.setCota(cota);
-							entityManager.persist(enderecoCota);
+							getSession().persist(enderecoCota);
 							
 						} else {
 							
@@ -331,10 +332,10 @@ public class EMS0117MessageProcessor implements MessageProcessor {
 									sql.append("FROM Endereco e ");
 									sql.append("WHERE ");
 									sql.append("     e.logradouro = :logradouro ");
-									query = entityManager.createQuery(sql.toString());
+									query = getSession().createQuery(sql.toString());
 									query.setParameter("logradouro", input.getEndereco());	
 									
-									List<Endereco> enderecos = (List<Endereco>) query.getResultList();
+									List<Endereco> enderecos = (List<Endereco>) query.list();
 										
 										if (enderecos.isEmpty()) {
 											
@@ -346,7 +347,7 @@ public class EMS0117MessageProcessor implements MessageProcessor {
 											endereco.setNumero(input.getNumLogradouro());
 											endereco.setUf(input.getSiglaUF());	
 											endereco.setCodigoCidadeIBGE(input.getCodCidadeIbge());
-											entityManager.persist(endereco);
+											getSession().persist(endereco);
 											
 										} else {
 											
@@ -384,25 +385,25 @@ public class EMS0117MessageProcessor implements MessageProcessor {
 					sql.append("WHERE ");
 					sql.append("     tc.cota = :numeroCota ");
 					sql.append(" AND    t.numero = :numeroTelefone ");
-					query = entityManager.createQuery(sql.toString());
+					query = getSession().createQuery(sql.toString());
 					query.setParameter("numeroCota", cota);
 					query.setParameter("numeroTelefone", input.getTelefone());
 					
-					List<TelefoneCota> telefonesCota = (List<TelefoneCota>) query.getResultList();
+					List<TelefoneCota> telefonesCota = (List<TelefoneCota>) query.list();
 					
 						if (telefonesCota.isEmpty()) {
 							
 							telefone = new Telefone();
 							telefone.setDdd(input.getDdd());
 							telefone.setNumero(input.getTelefone());
-							entityManager.persist(telefone);
+							getSession().persist(telefone);
 							
 							telefoneCota = new TelefoneCota();
 							telefoneCota.setPrincipal(true);
 							telefoneCota.setTipoTelefone(TipoTelefone.COMERCIAL);
 							telefoneCota.setTelefone(telefone);
 							telefoneCota.setCota(cota);
-							entityManager.persist(telefoneCota);
+							getSession().persist(telefoneCota);
 							
 						} else {
 							
@@ -418,17 +419,17 @@ public class EMS0117MessageProcessor implements MessageProcessor {
 									sql.append("FROM Telefone tel ");
 									sql.append("WHERE ");
 									sql.append("     tel.numero = :numero ");
-									query = entityManager.createQuery(sql.toString());
+									query = getSession().createQuery(sql.toString());
 									query.setParameter("numero", input.getTelefone());	
 									
-									List<Telefone> telefones = (List<Telefone>) query.getResultList();
+									List<Telefone> telefones = (List<Telefone>) query.list();
 									
 										if (telefones.isEmpty()) {
 											
 											telefone = new Telefone();						
 											telefone.setDdd(input.getDdd());
 											telefone.setNumero(input.getTelefone());
-											entityManager.persist(telefone);
+											getSession().persist(telefone);
 											
 										} else {
 													

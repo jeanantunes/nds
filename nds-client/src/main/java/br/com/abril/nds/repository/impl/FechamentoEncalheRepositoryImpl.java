@@ -27,7 +27,7 @@ import br.com.abril.nds.model.planejamento.ChamadaEncalheCota;
 import br.com.abril.nds.repository.FechamentoEncalheRepository;
 
 @Repository
-public class FechamentoEncalheRepositoryImpl extends AbstractRepository<FechamentoEncalhe, FechamentoEncalhePK> implements FechamentoEncalheRepository {
+public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<FechamentoEncalhe, FechamentoEncalhePK> implements FechamentoEncalheRepository {
 
 	public FechamentoEncalheRepositoryImpl() {
 		super(FechamentoEncalhe.class);

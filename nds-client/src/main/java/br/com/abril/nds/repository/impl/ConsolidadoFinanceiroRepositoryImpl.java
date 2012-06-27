@@ -29,7 +29,7 @@ import br.com.abril.nds.vo.PaginacaoVO;
 
 @Repository
 public class ConsolidadoFinanceiroRepositoryImpl extends
-		AbstractRepository<ConsolidadoFinanceiroCota, Long> implements
+		AbstractRepositoryModel<ConsolidadoFinanceiroCota, Long> implements
 		ConsolidadoFinanceiroRepository {
 
 	public ConsolidadoFinanceiroRepositoryImpl() {

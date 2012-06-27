@@ -18,7 +18,7 @@ import br.com.abril.nds.util.StringUtil;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
 @Repository
-public class TipoNotaFiscalRepositoryImpl extends AbstractRepository<TipoNotaFiscal, Long> 
+public class TipoNotaFiscalRepositoryImpl extends AbstractRepositoryModel<TipoNotaFiscal, Long> 
 										  implements TipoNotaFiscalRepository {
 
 	private final static String CFOP = "cfop";

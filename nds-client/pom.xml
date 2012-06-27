@@ -136,7 +136,7 @@
 		</dependency>
 		<dependency>
 			<groupId>br.com.abril</groupId>
-			<artifactId>nsdi-engine</artifactId>
+			<artifactId>ndsi-engine</artifactId>
 			<version>1.0</version>
 		</dependency>
 	</dependencies>
