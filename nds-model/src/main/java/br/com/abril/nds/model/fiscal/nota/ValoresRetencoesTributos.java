@@ -6,6 +6,9 @@ import java.math.BigDecimal;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.MapsId;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 /**
@@ -65,6 +68,10 @@ public class ValoresRetencoesTributos implements Serializable {
 	 */
 	@Column(name="VL_RET_PREV", nullable=true, precision=15, scale=2)
 	private BigDecimal valorRetidoPrevidencia;
+	
+	@OneToOne(optional=false)
+	@MapsId("ID") @JoinColumn(name="ID")
+	private NotaFiscal notaFiscal;
 
 	/**
 	 * @return the id
@@ -177,6 +184,20 @@ public class ValoresRetencoesTributos implements Serializable {
 	 */
 	public void setValorRetidoPrevidencia(BigDecimal valorRetidoPrevidencia) {
 		this.valorRetidoPrevidencia = valorRetidoPrevidencia;
+	}
+
+	/**
+	 * @return the notaFiscal
+	 */
+	public NotaFiscal getNotaFiscal() {
+		return notaFiscal;
+	}
+
+	/**
+	 * @param notaFiscal the notaFiscal to set
+	 */
+	public void setNotaFiscal(NotaFiscal notaFiscal) {
+		this.notaFiscal = notaFiscal;
 	}
 	
 	
