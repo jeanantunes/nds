@@ -1,6 +1,7 @@
 package br.com.abril.nds.controllers.financeiro;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -13,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import br.com.abril.nds.dto.ConsultaConsignadoCotaDTO;
 import br.com.abril.nds.dto.ConsultaConsignadoCotaPeloFornecedorDTO;
 import br.com.abril.nds.dto.ItemDTO;
+import br.com.abril.nds.dto.TotalConsultaConsignadoCotaDetalhado;
 import br.com.abril.nds.dto.filtro.FiltroConsultaConsignadoCotaDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
@@ -27,6 +29,7 @@ import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.DistribuidorService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.util.CellModelKeyValue;
+import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.export.FileExporter;
@@ -78,6 +81,80 @@ public class ConsultaConsignadoCotaController {
 		cota = this.cotaService.obterPorNumeroDaCota(numeroCota);
 		return cota;
 	}
+	
+	@Post
+	@Path("/buscarTotalGeralCota")
+	public void buscarTotalGeralCota(FiltroConsultaConsignadoCotaDTO filtro){
+		
+		if(filtro.getIdCota() != null){
+			cota = obterCota(filtro.getIdCota().intValue());
+			if(cota == null){
+				throw new ValidacaoException(TipoMensagem.WARNING, "Cota inesxistente.");
+			}
+			filtro.setIdCota(cota.getId());			
+		}
+		
+		if(filtro.getIdFornecedor() == -1 || filtro.getIdFornecedor() == 0){
+			filtro.setIdFornecedor(null);
+		}
+		
+		BigDecimal totalGeral = this.consultaConsignadoCota.buscarTotalGeralDaCota(filtro);
+		String totalFormatado = CurrencyUtil.formatarValor(totalGeral);
+		
+		this.result.use(Results.json()).from(totalFormatado, "result").recursive().serialize();
+		
+	}
+	
+	@Post
+	@Path("/buscarTotalGeralDetalhado")
+	public void buscarTotalGeralDetalhado(FiltroConsultaConsignadoCotaDTO filtro){
+		
+		this.validarEntrada(filtro);
+		
+		if(filtro.getIdCota() != null){
+			cota = obterCota(filtro.getIdCota().intValue());
+			if(cota == null){
+				throw new ValidacaoException(TipoMensagem.WARNING, "Cota inesxistente.");
+			}
+			filtro.setIdCota(cota.getId());
+		}
+		
+		if(filtro.getIdFornecedor() == -1 || filtro.getIdFornecedor() == 0){
+			filtro.setIdFornecedor(null);
+		}
+		
+		
+		StringBuilder html = new StringBuilder();
+		html.append("<table width='190' border='0' cellspacing='1' cellpadding='1' align='right'>");
+		List<TotalConsultaConsignadoCotaDetalhado> listaGeralDetalhado = this.consultaConsignadoCota.buscarTotalDetalhado(filtro);
+		int cont = 0;
+		for(TotalConsultaConsignadoCotaDetalhado total: listaGeralDetalhado){
+			html.append("<tr>");
+			if(cont==0){
+				html.append("<td width='71'><strong>Total:</strong></td>");				
+			}else{
+				html.append("<td>&nbsp;</td>");
+			}
+			html.append("<td width='49'><strong>"+total.getNomeFornecedor()+"</strong></td>");
+			html.append("<td width='60' align='right'><strong>"+CurrencyUtil.formatarValor(total.getTotal())+"</strong></td>");
+			html.append("</tr>");
+			cont++;			
+		}
+		BigDecimal totalGeral = this.consultaConsignadoCota.buscarTotalGeralDaCota(filtro);
+		String totalFormatado = CurrencyUtil.formatarValor(totalGeral);
+		
+		html.append("<tr> ");
+		html.append("<td style='border-top:1px solid #000;'><strong>Total Geral:</strong></td>");
+		html.append("<td style='border-top:1px solid #000;'>&nbsp;</td>");
+		html.append("<td style='border-top:1px solid #000;' align='right'><strong>"+totalFormatado+"</strong></td>");
+		html.append("</tr>");
+		
+		html.append("</table>");
+		
+		this.result.use(Results.json()).from(html.toString(), "result").recursive().serialize();
+		
+	}
+	
 	
 	@Post
 	@Path("pesquisarConsignadoCota")
@@ -243,8 +320,7 @@ public class ConsultaConsignadoCotaController {
 		Cota cota = this.cotaService.obterPorNumeroDaCota(numeroCota);
 		
 		if (cota == null) {
-
-			throw new ValidacaoException(TipoMensagem.WARNING, "Cota inexistente.");
+			throw new ValidacaoException(TipoMensagem.WARNING, "Cota inexistente.");			
 		}
 
 		Pessoa pessoa = cota.getPessoa();
@@ -262,6 +338,8 @@ public class ConsultaConsignadoCotaController {
 
 		this.result.use(Results.json()).from(nomeCota, "result").recursive().serialize();
 	}
+	
+
 	
 	private void validarEntrada(FiltroConsultaConsignadoCotaDTO filtro) {		
 		

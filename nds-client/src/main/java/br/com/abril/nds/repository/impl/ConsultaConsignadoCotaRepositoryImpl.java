@@ -1,5 +1,6 @@
 package br.com.abril.nds.repository.impl;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.ConsultaConsignadoCotaDTO;
 import br.com.abril.nds.dto.ConsultaConsignadoCotaPeloFornecedorDTO;
+import br.com.abril.nds.dto.TotalConsultaConsignadoCotaDetalhado;
 import br.com.abril.nds.dto.filtro.FiltroConsultaConsignadoCotaDTO;
 import br.com.abril.nds.model.cadastro.TipoCota;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
@@ -105,6 +107,84 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepository<Mov
 		 
 	}
 	
+	@Override
+	public Integer buscarTodasMovimentacoesPorCota(
+			FiltroConsultaConsignadoCotaDTO filtro, String limitar) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append("SELECT count(movimento)");
+		
+		
+		hql.append(getHQLFromEWhereConsignadoCota(filtro));
+		
+		Query query =  getSession().createQuery(hql.toString());
+		
+		HashMap<String, Object> param = buscarParametrosConsignadoCota(filtro);
+		
+		for(String key : param.keySet()){
+			query.setParameter(key, param.get(key));
+		}
+		
+		Long totalRegistros = (Long) query.uniqueResult();
+		
+		return (totalRegistros == null) ? 0 : totalRegistros.intValue();
+		
+		
+	}
+
+	@Override
+	public BigDecimal buscarTotalGeralDaCota(
+			FiltroConsultaConsignadoCotaDTO filtro) {
+		
+
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append("SELECT sum(( (pe.precoVenda - pe.desconto) * movimento.qtde))");
+		
+		hql.append(getHQLFromEWhereConsignadoCota(filtro));
+		
+		Query query =  getSession().createQuery(hql.toString());
+		
+		HashMap<String, Object> param = buscarParametrosConsignadoCota(filtro);
+		
+		for(String key : param.keySet()){
+			query.setParameter(key, param.get(key));
+		}
+		
+		BigDecimal totalRegistros = (BigDecimal) query.uniqueResult();
+		
+		return (BigDecimal) ((totalRegistros == null) ? 0 : totalRegistros);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<TotalConsultaConsignadoCotaDetalhado> buscarTotalDetalhado(
+			FiltroConsultaConsignadoCotaDTO filtro) {
+		 
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append("SELECT sum(( (pe.precoVenda - pe.desconto) * movimento.qtde)) as total, ");
+		hql.append("pessoa.razaoSocial as nomeFornecedor");
+		
+		hql.append(getHQLFromEWhereConsignadoCota(filtro));
+		
+		hql.append("group by pessoa.razaoSocial");
+		
+		Query query =  getSession().createQuery(hql.toString());
+		
+		HashMap<String, Object> param = buscarParametrosConsignadoCota(filtro);
+		
+		for(String key : param.keySet()){
+			query.setParameter(key, param.get(key));
+		}
+		
+		query.setResultTransformer(new AliasToBeanResultTransformer(
+				TotalConsultaConsignadoCotaDetalhado.class));
+		
+		return query.list();
+	}
+	
 	private String getHQLFromEWhereConsignadoCota(FiltroConsultaConsignadoCotaDTO filtro) {
 		
 		StringBuilder hql = new StringBuilder();
@@ -179,31 +259,9 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepository<Mov
 		
 		return param;
 	}
+
 	
-	@Override
-	public Integer buscarTodasMovimentacoesPorCota(
-			FiltroConsultaConsignadoCotaDTO filtro, String limitar) {
-		
-		StringBuilder hql = new StringBuilder();
-		
-		hql.append("SELECT count(movimento)");
-		
-		
-		hql.append(getHQLFromEWhereConsignadoCota(filtro));
-		
-		Query query =  getSession().createQuery(hql.toString());
-		
-		HashMap<String, Object> param = buscarParametrosConsignadoCota(filtro);
-		
-		for(String key : param.keySet()){
-			query.setParameter(key, param.get(key));
-		}
-		
-		Long totalRegistros = (Long) query.uniqueResult();
-		
-		return (totalRegistros == null) ? 0 : totalRegistros.intValue();
-		
-		
-	}
+	
+	
 
 }

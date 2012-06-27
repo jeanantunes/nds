@@ -35,6 +35,7 @@
 	
 	function pesquisar(){
 		
+		
 		var cota = $('#codigoCota').val();
 		var idFornecedor = $('#idFornecedor').val();
 		
@@ -42,6 +43,11 @@
 			idFornecedor = ""
 		}else if(idFornecedor == "0"){
 			idFornecedor = "";
+		}
+		
+		
+		if(!idFornecedor == "" && $("#opcaoDetalhe").is(":checked")){
+			$("#opcaoDetalhe").attr("checked", false);			
 		}
 		
 		if(cota != "" && idFornecedor == "" ){
@@ -56,7 +62,8 @@
 			});
 			
 			$(".consignadosCotaGrid").flexReload();
-			$('#valorGrid').val('GridCota');	
+			$('#valorGrid').val('GridCota');
+			popularTotal();			
 		}else{
 			$(".consignadosGrid").flexOptions({
 				url: "<c:url value='/financeiro/consultaConsignadoCota/pesquisarMovimentoCotaPeloFornecedor'/>",
@@ -68,8 +75,61 @@
 			});
 			
 			$(".consignadosGrid").flexReload();
-			$('#valorGrid').val('GridTotal');			
+			$('#valorGrid').val('GridTotal');
+			
+			if($("#opcaoDetalhe").is(":checked")){
+				popularTotalDetalhado();
+			}else{
+				popularTotal();
+			}
+			
 		}
+	}
+	
+	function popularTotal(){
+		
+ 		$.postJSON(
+			'<c:url value="/financeiro/consultaConsignadoCota/buscarTotalGeralCota" />',
+			[{name:'filtro.idCota', value:$('#codigoCota').val()},
+			{name:'filtro.idFornecedor', value:$('#idFornecedor').val()}],
+			function(result) {
+				var idFornecedor = $('#idFornecedor').val();				
+				if( idFornecedor != "0"){
+					$('.tabelaGeralDetalhado').hide();
+					$('.tabelaGeralPorFornecedor').show();
+					$("#totalGeralPorFornecedor").html(" <table width='190' border='0' cellspacing='1' cellpadding='1' align='right'>" +
+							"<tr> <td style='border-top:1px solid #000;''><strong>Total Geral:</strong></td>" +
+        						" <td style='border-top:1px solid #000;'>&nbsp;</td> "+
+        						" <td style='border-top:1px solid #000;' align='right'><strong>"+result+"</strong></td></tr>");
+				}else{					
+					$("#totalGeralCota").html(" <table width='190' border='0' cellspacing='1' cellpadding='1' align='right'>" +
+												"<tr> <td style='border-top:1px solid #000;''><strong>Total Geral:</strong></td>" +
+			                						" <td style='border-top:1px solid #000;'>&nbsp;</td> "+
+			                						" <td style='border-top:1px solid #000;' align='right'><strong>"+result+"</strong></td></tr>");					
+				} 
+				
+			},
+			null,
+			true
+		);
+		
+	}
+	
+	function popularTotalDetalhado(){
+		
+ 		$.postJSON(
+			'<c:url value="/financeiro/consultaConsignadoCota/buscarTotalGeralDetalhado" />',
+			[{name:'filtro.idCota', value:$('#codigoCota').val()},
+			{name:'filtro.idFornecedor', value:$('#idFornecedor').val()}],
+			function(result) {
+				$('.tabelaGeralDetalhado').show();
+				$('.tabelaGeralPorFornecedor').hide();
+				$("#totalGeralDetalhado").html(result);
+			},
+			null,
+			true
+		);
+		
 	}
 	
 	function mostrarGrid(){
@@ -78,7 +138,7 @@
 		if(valorGrid == 'GridTotal'){
 			gridTotal();
 		}else if(valorGrid == 'GridPopUp'){
-			alert('grid lazaro');
+			
 		}else{
 			gridCota();
 		}
@@ -108,7 +168,7 @@
 	};
 	
 	function popularPopUp(idCota, idFornecedor){
-		alert(idFornecedor);
+		
 		$(".consignadosCotaDetalhesGrid").flexOptions({
 			url: "<c:url value='/financeiro/consultaConsignadoCota/pesquisarConsignadoCota'/>",
 			dataType : 'json',
@@ -220,7 +280,7 @@
     <td width="30">Cota:</td>
     <td width="96"><input type="text" name="codigoCota" id="codigoCota" style="width:60px; float:left; margin-right:5px;" onblur="pesquisarCota();" />
     	<input type="hidden" id="valorGrid" name="valorGrid" value="total" />
-      <span class="classPesquisar"><a href="javascript:;" onclick="gridCota();">&nbsp;</a></span></td>
+    </td>
     <td width="39">Nome:</td>    
     <td width="245"><span name="nomeCota" id="nomeCota"></span></td>
     <td width="67">Fornecedor:</td>
@@ -235,7 +295,7 @@
     </td>
     <td width="169">
 	    <div id="detalhes" style="display:none;">
-	    <label><input name="" type="checkbox" value="" />Detalhar</label></div>
+	    <label><input name="opcaoDetalhe" id="opcaoDetalhe" type="checkbox" />Detalhar</label></div>
 	</td>
     <td width="104"><span class="bt_pesquisar"><a href="javascript:;"  onclick="pesquisar();">Pesquisar</a></span></td>
   </tr>
@@ -257,28 +317,7 @@
 					<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir
 				</a>
 			</span>
-          <table width="190" border="0" cellspacing="1" cellpadding="1" align="right">
-              <tr>
-                <td width="71"><strong>Total:</strong></td>
-                <td width="49"><strong>FC</strong></td>
-                <td width="60" align="right"><strong>936,00</strong></td>
-              </tr>
-              <tr>
-                <td>&nbsp;</td>
-                <td><strong>DGB</strong></td>
-                <td align="right"><strong>785,20</strong></td>
-              </tr>
-              <tr>
-                <td>&nbsp;</td>
-                <td><strong>GB</strong></td>
-                <td align="right"><strong>1.100,00</strong></td>
-              </tr>
-              <tr>
-                <td style="border-top:1px solid #000;"><strong>Total Geral:</strong></td>
-                <td style="border-top:1px solid #000;">&nbsp;</td>
-                <td style="border-top:1px solid #000;" align="right"><strong>2.821,20</strong></td>
-              </tr>
-            </table>
+			<span name="totalGeralCota" id="totalGeralCota" ></span>        
          </div>
          </div>
          <div class="pesqTodos" style="display:none;">
@@ -298,30 +337,13 @@
 					<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir
 				</a>
 			</span>
-          <table width="190" border="0" cellspacing="1" cellpadding="1" align="right">
-              <tr>
-                <td width="71"><strong>Total:</strong></td>
-                <td width="49"><strong>FC</strong></td>
-                <td width="60" align="right"><strong>936,00</strong></td>
-              </tr>
-              <tr>
-                <td>&nbsp;</td>
-                <td><strong>DGB</strong></td>
-                <td align="right"><strong>785,20</strong></td>
-              </tr>
-              <tr>
-                <td>&nbsp;</td>
-                <td><strong>GB</strong></td>
-                <td align="right"><strong>1.100,00</strong></td>
-              </tr>
-              <tr>
-                <td style="border-top:1px solid #000;"><strong>Total Geral:</strong></td>
-                <td style="border-top:1px solid #000;">&nbsp;</td>
-                <td style="border-top:1px solid #000;" align="right"><strong>2.821,20</strong></td>
-              </tr>
-            </table>
-
- </div>
+			<div class="tabelaGeralDetalhado" style="display:none;">
+				<span name="totalGeralDetalhado" id="totalGeralDetalhado" ></span>
+			</div>
+			<div class="tabelaGeralPorFornecedor" style="display:none;">
+				<span name="totalGeralPorFornecedor" id="totalGeralPorFornecedor" ></span>
+			</div>
+ 		</div>
 
 
       </fieldset>
@@ -365,13 +387,13 @@
 				align : 'center'
 			},{
 				display : 'Preço Capa R$',
-				name : 'precoCapa',
+				name : 'precoCapaFormatado',
 				width : 70,
 				sortable : true,
 				align : 'right'
 			}, {
 				display : 'Preço Desc R$',
-				name : 'precoDesconto',
+				name : 'precoDescontoFormatado',
 				width : 70,
 				sortable : true,
 				align : 'right'
@@ -383,13 +405,13 @@
 				align : 'center'
 			}, {
 				display : 'Total $',
-				name : 'total',
+				name : 'totalFormatado',
 				width : 40,
 				sortable : true,
 				align : 'right'
 			}, {
 				display : 'Total Desc. $',
-				name : 'totalDesconto',
+				name : 'totalDescontoFormatado',
 				width : 60,
 				sortable : true,
 				align : 'right'
@@ -439,13 +461,13 @@
 				align : 'center'
 			},{
 				display : 'Preço Capa R$',
-				name : 'precoCapa',
+				name : 'precoCapaFormatado',
 				width : 80,
 				sortable : true,
 				align : 'right'
 			}, {
 				display : 'Preço Desc R$',
-				name : 'precoDesconto',
+				name : 'precoDescontoFormatado',
 				width : 80,
 				sortable : true,
 				align : 'right'
@@ -457,13 +479,13 @@
 				align : 'center'
 			}, {
 				display : 'Total $',
-				name : 'total',
+				name : 'totalFormatado',
 				width : 70,
 				sortable : true,
 				align : 'right'
 			}, {
 				display : 'Total Desc. $',
-				name : 'totalDesconto',
+				name : 'totalDescontoFormatado',
 				width : 70,
 				sortable : true,
 				align : 'right'
@@ -501,13 +523,13 @@ $(".consignadosGrid").flexigrid({
 				align : 'center'
 			}, {
 				display : 'Total R$',
-				name : 'total',
+				name : 'totalFormatado',
 				width : 120,
 				sortable : true,
 				align : 'right'
 			}, {
 				display : 'Total Desc. R$',
-				name : 'totalDesconto',
+				name : 'totalDescontoFormatado',
 				width : 100,
 				sortable : true,
 				align : 'right'
