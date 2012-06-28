@@ -85,6 +85,7 @@ public class Identificacao implements Serializable {
 	 */
 	@Enumerated(EnumType.ORDINAL)
 	@Column(name = "TIPO_OPERACAO", length = 1, nullable = false)
+	@NFEExport(secao = TipoSecao.B, posicao = 9, tamanho = 1)
 	private TipoOperacao tipoOperacao;
 
 	/**
@@ -100,6 +101,7 @@ public class Identificacao implements Serializable {
 	 */
 	@Enumerated(EnumType.ORDINAL)
 	@Column(name="INDICADOR_FORMA_PAGAMENTO", length=1, nullable=false)
+	@NFEExport(secao = TipoSecao.B, posicao = 3, tamanho = 1)
 	private FormaPagamento formaPagamento;
 	
 		
@@ -107,7 +109,7 @@ public class Identificacao implements Serializable {
 	 * serie
 	 */
 	@Column(name = "SERIE", length = 3, nullable = false)
-	@NFEExport(secao=TipoSecao.B, posicao=5, tamanho=3)
+	@NFEExport(secao=TipoSecao.B, posicao=5)
 	private Integer serie;
 	
 	
@@ -152,7 +154,7 @@ public class Identificacao implements Serializable {
 	 */
 	@Enumerated(EnumType.ORDINAL)
 	@Column(name = "TIPO_EMISSAO", nullable = true)
-	@NFEExportType
+	@NFEExport(secao = TipoSecao.B, posicao = 12, tamanho = 1)
 	private TipoEmissao tipoEmissao;
 	
 	/**
@@ -160,7 +162,7 @@ public class Identificacao implements Serializable {
 	 */
 	@Enumerated(EnumType.ORDINAL)
 	@Column(name = "FINALIDADE_EMISSAO", nullable = true)
-	@NFEExportType
+	@NFEExport(secao = TipoSecao.B, posicao = 15, tamanho = 1)
 	private FinalidadeEmissao finalidadeEmissao;
 	
 	/**
