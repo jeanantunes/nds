@@ -20,10 +20,11 @@ import org.springframework.util.SerializationUtils;
 
 import br.com.abril.nds.client.util.PaginacaoUtil;
 import br.com.abril.nds.client.vo.ConfirmacaoVO;
-import br.com.abril.nds.client.vo.DetalheProdutoLancamentoVO;
+import br.com.abril.nds.client.vo.DetalheProdutoVO;
 import br.com.abril.nds.client.vo.ResultadoResumoBalanceamentoVO;
 import br.com.abril.nds.client.vo.ResumoPeriodoBalanceamentoVO;
 import br.com.abril.nds.client.vo.ValidacaoVO;
+import br.com.abril.nds.controllers.cadastro.ProdutoEdicaoController;
 import br.com.abril.nds.dto.BalanceamentoLancamentoDTO;
 import br.com.abril.nds.dto.ProdutoLancamentoDTO;
 import br.com.abril.nds.dto.ResumoPeriodoBalanceamentoDTO;
@@ -32,14 +33,12 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
-import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.MatrizLancamentoService;
-import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.CurrencyUtil;
@@ -87,7 +86,7 @@ public class MatrizLancamentoController {
 	private CalendarioService calendarioService;
 	
 	@Autowired
-	private ProdutoEdicaoService produtoEdicaoService;
+	private ProdutoEdicaoController produtoEdicaoController;
 	
 	@Autowired
 	private HttpServletResponse httpResponse;
@@ -958,53 +957,6 @@ public class MatrizLancamentoController {
 		if (!mensagens.isEmpty()) {
 			ValidacaoVO validacao = new ValidacaoVO(TipoMensagem.ERROR, mensagens);
 			throw new ValidacaoException(validacao);
-		}
-	}
-
-	/**
-	 * Popula e retorna Value Object com detalhes de produto edição
-	 * @param produtoLancamento
-	 * @return DetalheProdutoLancamentoVO
-	 */
-	private DetalheProdutoLancamentoVO getDetalheProduto(Long idProdutoEdicao){
-		
-		DetalheProdutoLancamentoVO produtoLancamentoVO = null;
-		
-		ProdutoEdicao produtoEdicao = produtoEdicaoService.obterProdutoEdicao(idProdutoEdicao);
-		
-		if (produtoEdicao!=null){
-			produtoLancamentoVO = new DetalheProdutoLancamentoVO(produtoEdicao.getId(),
-																 produtoEdicao.getProduto().getNome(),
-																 produtoEdicao.getCodigo(),
-												                 (produtoEdicao.getPrecoVenda()!=null?CurrencyUtil.formatarValor(produtoEdicao.getPrecoVenda()):""),
-												                 (produtoEdicao.getDesconto()!=null?CurrencyUtil.formatarValor(produtoEdicao.getDesconto()):""),
-												                 (produtoEdicao.getProduto()!=null?(produtoEdicao.getProduto().getFornecedor()!=null?produtoEdicao.getProduto().getFornecedor().getJuridica().getNome():""):""),
-												                 (produtoEdicao.getProduto()!=null?(produtoEdicao.getProduto().getEditor()!=null?produtoEdicao.getProduto().getEditor().getCodigo().toString():""):""),
-												                 (produtoEdicao.getProduto()!=null?(produtoEdicao.getProduto().getEditor()!=null?produtoEdicao.getProduto().getEditor().getNome():""):""),
-												                 produtoEdicao.getChamadaCapa(),
-												                 (produtoEdicao.isPossuiBrinde()?"Sim":"Não"),
-												                 Integer.toString(produtoEdicao.getPacotePadrao())
-												                 );
-		}
-		return produtoLancamentoVO;
-	}
-	
-	/**
-	 * Obtem detalhes de produto edição
-	 * @param codigoProduto
-	 */
-	@Post
-	public void obterDetalheProduto(Long idProdutoEdicao){
-		
-		DetalheProdutoLancamentoVO produtoLancamentoVO = null;
-		
-	    produtoLancamentoVO = this.getDetalheProduto(idProdutoEdicao);
-
-		if (produtoLancamentoVO!=null){
-		    this.result.use(Results.json()).from(produtoLancamentoVO, "result").recursive().serialize();
-		}
-		else{
-			result.nothing();
 		}
 	}
 
