@@ -96,9 +96,12 @@ public class MatrizLancamentoController {
 	
 	private static final String ATRIBUTO_SESSAO_BALANCEAMENTO_LANCAMENTO = "balanceamentoLancamento";
 	
+	private static final String ATRIBUTO_SESSAO_BALANCEAMENTO_ALTERADO = "balanceamentoAlterado";
 	
 	@Path("/matrizLancamento")
 	public void index() {
+		
+		removerAtributoAlteracaoSessao();
 		
 		session.setAttribute(FILTRO_SESSION_ATTRIBUTE, null);
 		
@@ -129,6 +132,8 @@ public class MatrizLancamentoController {
 	
 	@Post
 	public void obterGridMatrizLancamento(String sortorder, String sortname, int page, int rp) {
+		
+		removerAtributoAlteracaoSessao();
 		
 		List<ProdutoLancamentoDTO> listaProdutoBalanceamento = getProdutoLancamentoDTOFromMatrizSessao();
 		
@@ -225,6 +230,8 @@ public class MatrizLancamentoController {
 		
 		this.validarDadosReprogramar(novaDataFormatada);
 		
+		adicionarAtributoAlteracaoSessao();
+		
 		Date novaData = DateUtil.parseDataPTBR(novaDataFormatada);
 
 		this.validarListaParaReprogramacao(produtosLancamento);
@@ -243,6 +250,8 @@ public class MatrizLancamentoController {
 		
 		this.validarDadosReprogramar(novaDataFormatada);
 
+		adicionarAtributoAlteracaoSessao();
+		
 		Date novaData = DateUtil.parseDataPTBR(novaDataFormatada);
 		
 		List<LancamentoVO> produtosLancamento = new ArrayList<LancamentoVO>();
@@ -1038,6 +1047,37 @@ public class MatrizLancamentoController {
 
 		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
 	}
+	
+	@Post
+	public void verificarBalanceamentosAlterados() {
+		
+		Boolean balanceamentoAlterado =
+			(Boolean) this.session.getAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_ALTERADO);
+		
+		if (balanceamentoAlterado == null) {
+			
+			balanceamentoAlterado = false;
+		}
+		
+		this.result.use(Results.json()).from(balanceamentoAlterado.toString(), "result").serialize();
+	}
+	
+	/**
+	 * Adiciona um indicador, que informa se houve reprogramação de produtos, na sessão.
+	 */
+	private void adicionarAtributoAlteracaoSessao() {
+		
+		this.session.setAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_ALTERADO, true);
+	}
+	
+	/**
+	 * Remove um indicador, que informa se houve reprogramação de produtos, da sessão.
+	 */
+	private void removerAtributoAlteracaoSessao() {
+		
+		this.session.setAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_ALTERADO, null);
+	}
+	
 
 }
 

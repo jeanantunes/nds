@@ -102,6 +102,7 @@ public class CalendarioServiceImpl implements CalendarioService {
 		return cal.getTime();
 	}
 	
+	@Transactional
 	public boolean isDiaUtil(Date data) {
 		
 		if (data == null) {

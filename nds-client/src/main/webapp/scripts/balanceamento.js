@@ -7,6 +7,7 @@ function Balanceamento(pathTela, descInstancia) {
 	this.instancia = descInstancia;
 	this.linhasDestacadas = [];
 	this.isCliquePesquisar;
+	this.lancamentos = [];
 	
 	this.pesquisar = function() {
 		
@@ -37,7 +38,24 @@ function Balanceamento(pathTela, descInstancia) {
 			}
 		);
 	},
-		
+	
+
+
+	this.verificarBalanceamentosAlterados = function(funcao) {
+
+		$.postJSON(
+			pathTela + "/matrizLancamento/verificarBalanceamentosAlterados",
+			null,
+			function(result){
+				
+				if (result == "true") 
+					T.retornoVerificarBalanceamentosAlterados(funcao);
+				else
+					funcao();
+			}
+		);
+	},
+			
 	this.carregarGrid = function() {		
 				
 		$(".grids").show();		
@@ -52,7 +70,7 @@ function Balanceamento(pathTela, descInstancia) {
 			autoload: false,
 			singleSelect: true,
 			preProcess: T.processaRetornoPesquisa,
-			onSuccess: T.destacarLinhas,
+			onSuccess: T.onSuccessPesquisa,
 			onSubmit: T.confirmarPaginacao
 		});
 		
@@ -83,6 +101,8 @@ function Balanceamento(pathTela, descInstancia) {
 		$("#valorTotal").clear();
 		
 		T.linhasDestacadas = [];
+		T.lancamentos = [];
+		
 		$("#valorTotal").html(data[1]);
 		$.each(data[0].rows, function(index,row){ T.processarLinha(index, row);});
 		return data[0];
@@ -116,13 +136,17 @@ function Balanceamento(pathTela, descInstancia) {
 	
 	this.processarLinha = function(i,row) {
 		
+		T.lancamentos.push({
+			id:				row.cell.id, 
+			numEdicao:		row.cell.numEdicao,
+			nomeProduto:	row.cell.nomeProduto
+		});
+		
 		var linkDescProduto = T.getLinkProduto(row.cell.codigoProduto,row.cell.nomeProduto);
 		row.cell.nomeProduto = linkDescProduto;
 		
-		var isBloqueado = row.cell.bloquearData;
-		
-		row.cell.novaData = T.gerarInputDataDistrib(row.cell.novaData, isBloqueado);
-		row.cell.reprogramar = T.gerarCheckReprogramar(row.cell.id.toString(), isBloqueado);
+		row.cell.novaData = T.gerarInputDataDistrib(row.cell.novaData, row.cell.bloquearData, i);
+		row.cell.reprogramar = T.gerarCheckReprogramar(row.cell.id.toString(), row.cell.bloquearData,i);
 				
 		if (!row.cell.possuiRecebimentoFisico || row.cell.cancelamentoGD || (row.cell.dataPrevisto!=row.cell.dataLancamentoDistribuidor) ) {
 			T.linhasDestacadas.push(i+1);
@@ -130,29 +154,65 @@ function Balanceamento(pathTela, descInstancia) {
 		
 	},
 	
-	this.gerarInputDataDistrib = function(dataMatrizDistrib, isBloqueado) {
-		return '<input type="text" name="datepickerDe10" style="width:80px; float:left;" value="' + dataMatrizDistrib + '" ' + 
+	this.gerarInputDataDistrib = function(dataMatrizDistrib, isBloqueado, index) {
+		
+		return '<input onblur="B.alterarData(this,\'' + index + '\');" type="text" name="dataNova" style="width:80px; float:left;" value="' + dataMatrizDistrib + '" ' + 
 			   (isBloqueado? ' disabled="disabled" ' : '') +  
 			   '/>' +
 		       '<span class="bt_atualizarIco" title="Atualizar Datas" ' +
 		       (isBloqueado? ' style="opacity:0.5;" ' : '') + 
 		       '>' +
-		       '<a href="javascript:;">&nbsp;</a></span>';
+		       '<a href="javascript:;" ' + 
+		       (isBloqueado? '' : ' onclick="B.reprogramarLancamentoUnico(' + index + ');') +
+		       '">&nbsp;</a></span>';
+		
 	},
 	
-	this.gerarCheckReprogramar = function(id,isBloqueado) { 
+	this.reprogramarLancamentoUnico = function(index) {
+		
+		var data = [];
+		
+		data.push({name: 'produtoLancamento.id', 		value: T.lancamentos[index].id});
+		data.push({name: 'produtoLancamento.novaData', 	value: T.lancamentos[index].novaData});
+		
+		$.postJSON(
+				pathTela + "/matrizLancamento/reprogramarLancamentoUnico",
+				data,
+				null
+			);
+	},
+	
+	this.alterarData = function(input, index) {
+		T.lancamentos[index].novaData = input.value;
+	},
+	
+	this.gerarCheckReprogramar = function(id,isBloqueado,index) { 
 		return '<input type="checkbox" value="'+id+'" name="checkgroup" ' +
-			   (isBloqueado? ' disabled="disabled" ' : ' onclick="verifyCheck($(\'#selRep\'));" ') + 
+			   (isBloqueado? ' disabled="disabled" ' : ' onclick="B.selecionarCheck(this,\'' + index + '\');" ') + 
 			   ' />';	
 	},
 	
-	this.destacarLinhas = function() {
+	this.selecionarCheck = function(check, index) {
 		
-		 $(T.linhasDestacadas).each(function(i, item){
+		T.lancamentos[index].selecionado = check.checked;
+		
+		$("#selTodos").uncheck();
+	},
+	
+	this.onSuccessPesquisa = function() {
+		
+		$(T.linhasDestacadas).each(function(i, item){
 			 id = '#row' + item;			    	
 			 $(id).removeClass("erow").addClass("gridLinhaDestacada");
 			 $(id).children("td").removeClass("sorted");
-		   });
+		});
+		 
+
+		$("input[name='dataNova']").datepicker({
+			dateFormat: 'dd/mm/yy'
+		});
+		
+		$("input[name='dataNova']").mask("99/99/9999");
 	},
 	
 	/**
@@ -324,7 +384,7 @@ function Balanceamento(pathTela, descInstancia) {
 		var datasConfirmadas='';
 		var table = document.getElementById("tableConfirmaBalanceamento");
 		
-		for(i = 0; i < table.rows.length; i++){   
+		for(var i = 0; i < table.rows.length; i++){   
 			
 			if(document.getElementById("checkConfirmar_"+i)!=null){
 				
@@ -368,7 +428,6 @@ function Balanceamento(pathTela, descInstancia) {
 			"dialog-confirmar"
 		);
 	},
-	
 	
 	/**
 	 * Exibe popup de detalhes do produto
@@ -414,44 +473,36 @@ function Balanceamento(pathTela, descInstancia) {
 		});
 	},
 
-	
-	/**
-	 * Atribui valor a um campo da tela
-	 * Obs: Checkboxs devem ser atribuidos com o valor de true ou false
-	 * 
-	 * @param campo - Campo a ser alterado
-	 * @param value - valor
-	 */
-	this.set = function(campo,value) {
-				
-		var elemento = $("#" + campo);
-		
-		if(elemento.attr('type') == 'checkbox') {
-			
-			if(value) {
-				elemento.attr('checked','checked');
-			} else {
-				elemento.removeAttr('checked');
-			}
-						
+	this.voltarConfiguracaoOriginal = function() {
+		var selecionado = verifyAtLeastOneChecked('checkgroup');
+		if (selecionado) {
+			popup_reprogramar();
 		} else {
-			elemento.val(value);
+			mensagens = new Array();
+			mensagens.push('Nenhum registro selecionado.');
+			exibirMensagem('ERROR', mensagens);
 		}
 	},
 	
-	/**
-	 * Obtém valor de elemento da tela
-	 * @param campo - de onde o valor será obtido
-	 */
-	this.get = function(campo) {
-		
-		var elemento = $("#" + campo);
-		
-		if(elemento.attr('type') == 'checkbox') {
-			return (elemento.attr('checked') == 'checked') ;
-		} else {
-			return elemento.val();
-		}
-		
+	this.retornoVerificarBalanceamentosAlterados = function(funcao) {
+			
+		$("#dialog-confirm").dialog({
+			resizable: false,
+			height:'auto',
+			width:600,
+			modal: true,
+			buttons: {
+				"Confirmar": function() {
+					
+					funcao();
+					
+					$(this).dialog("close");
+				},
+				"Cancelar": function() {
+					
+					$(this).dialog("close");
+				}
+			}
+		});	
 	};
 }
