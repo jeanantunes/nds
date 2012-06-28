@@ -30,6 +30,8 @@ public abstract class Constantes {
 	
 	public static final Integer NUMERO_REPROGRAMACOES_LIMITE = 2;
 	
+	public static final String DATA_FMT_PESQUISA_MYSQL = "YYYY-MM-DD";
+	
 }
 
 
