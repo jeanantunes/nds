@@ -118,9 +118,24 @@ function Balanceamento(pathTela, descInstancia) {
 			  rows+='<div class="box_resumo">';
 			  rows+='<label>'+ resumo.dataFormatada +'</label>';
 			  rows+='<span class="span_1">Qtde. Títulos:</span>';	 
-			  rows+='<span class="span_2">'+ resumo.qtdeTitulos +'</span>';	
-			  rows+='<span class="span_1">Qtde. Exempl.:</span>';	
-			  rows+='<span class="span_2">'+ resumo.qtdeExemplaresFormatada +'</span>';	
+			  rows+='<span class="span_2">'+ resumo.qtdeTitulos +'</span>';
+			  
+			  if (resumo.excedeCapacidadeDistribuidor) {
+				  
+				  rows+='<span class="span_1">Qtde. Exempl.:</span>';
+				  rows+='<span name="qtdeExemplares" class="span_2 redLabel"';
+				  rows+='title="A quantidade de exemplares excede a capacidade de manuseio ';
+				  rows+=data.capacidadeRecolhimentoDistribuidor + ' do distribuidor">';
+				  rows+=resumo.qtdeExemplaresFormatada + '</span>';
+			  
+			  } else {
+				  
+				  rows+='<span class="span_1">Qtde. Exempl.:</span>';	
+				  rows+='<span class="span_2">' + resumo.qtdeExemplaresFormatada + '</span>';
+			  }
+			  
+			  rows+='<span class="span_1">Qtde. Parciais:</span>';
+			  rows+='<span class="span_2">' + resumo.qtdeTitulosParciais + '</span>';
 			  rows+='<span class="span_1">Peso Total:</span>';
 			  rows+='<span class="span_2">'+ resumo.pesoTotalFormatado +'</span>';
 			  rows+='<span class="span_1">Valor Total:</span>';
@@ -128,9 +143,12 @@ function Balanceamento(pathTela, descInstancia) {
 			  rows+='</div>';
 			  rows+='</td>';					  
 	    });	
-	    rows+="</tr>";
-	    $("#tableResumoPeriodo").append(rows);	   
-	
+	    
+		rows+="</tr>";
+	    
+	    $("#tableResumoPeriodo").append(rows);
+	    
+	    $("span[name='qtdeExemplares']").tooltip();
 	},
 	
 	

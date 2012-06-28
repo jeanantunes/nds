@@ -616,7 +616,7 @@ public class Fixture {
 		distribuidor.setDataOperacao(dataOperacao);
 		distribuidor.setJuridica(juridica);
 		distribuidor.setPoliticasCobranca(politicasCobranca);
-		distribuidor.setCapacidadeDistribuicao(new BigDecimal("10000"));
+		distribuidor.setCapacidadeDistribuicao(new BigDecimal("3000"));
 		distribuidor.setCapacidadeRecolhimento(new BigDecimal("1000"));
 		distribuidor.setPreenchimentoAutomaticoPDV(true);
 		distribuidor.setExecutaRecolhimentoParcial(true);

@@ -100,7 +100,6 @@ public class InformacaoValoresTotais implements Serializable {
 	/**
 	 * ISSQNtot
 	 */
-	
 	@OneToOne(mappedBy="notaFiscal")
 	private ValoresTotaisISSQN totaisISSQN;
 	
