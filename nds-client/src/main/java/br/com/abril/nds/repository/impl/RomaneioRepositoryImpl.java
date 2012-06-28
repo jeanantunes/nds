@@ -14,7 +14,7 @@ import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.repository.RomaneioRepository;
 
 @Repository
-public class RomaneioRepositoryImpl extends AbstractRepository<Box, Long> implements RomaneioRepository {
+public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> implements RomaneioRepository {
 
 	public RomaneioRepositoryImpl() {
 		super(Box.class);

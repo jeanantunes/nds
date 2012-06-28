@@ -11,7 +11,7 @@ import br.com.abril.nds.model.cadastro.EnderecoTransportador;
 import br.com.abril.nds.repository.EnderecoTransportadorRepository;
 
 @Repository
-public class EnderecoTransportadorRepositoryImpl extends AbstractRepository<EnderecoTransportador, Long> implements
+public class EnderecoTransportadorRepositoryImpl extends AbstractRepositoryModel<EnderecoTransportador, Long> implements
 		EnderecoTransportadorRepository {
 
 	public EnderecoTransportadorRepositoryImpl() {

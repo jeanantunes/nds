@@ -1,15 +1,15 @@
 package br.com.abril.nds.integracao.ems0116.processor;
 
-import java.math.BigDecimal;
+import java.math.BigDecimal; 
 import java.util.List;
 
-import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
 
+import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.integracao.ems0116.inbound.EMS0116Input;
 import br.com.abril.nds.integracao.engine.MessageProcessor;
@@ -28,18 +28,19 @@ import br.com.abril.nds.model.cadastro.pdv.StatusPDV;
 import br.com.abril.nds.model.cadastro.pdv.TelefonePDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoPontoPDV;
 import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
+import br.com.abril.nds.repository.impl.AbstractRepository;
 
 
 @Component
-public class EMS0116MessageProcessor implements MessageProcessor {
-	@PersistenceContext
-	private EntityManager entityManager;
+
+public class EMS0116MessageProcessor extends AbstractRepository implements MessageProcessor  {
 	
 	@Autowired
 	private NdsiLoggerFactory ndsiLoggerFactory;
 		
 	@SuppressWarnings("unchecked")
 	@Override
+	
 	public void processMessage(Message message){
 		EMS0116Input input = (EMS0116Input) message.getBody();
 		
@@ -52,13 +53,13 @@ public class EMS0116MessageProcessor implements MessageProcessor {
 		sql.append("WHERE ");
 		sql.append("     co.numeroCota = :numeroCota ");
 		
-		Query query = entityManager.createQuery(sql.toString());
+		Query query = getSession().createQuery(sql.toString());
 		query.setParameter("numeroCota", input.getCodCota());
 		Cota cota = null;
 		
 		try {
 			
-			cota = (Cota) query.getSingleResult();
+			cota = (Cota) query.uniqueResult();
 		} catch(NoResultException e) {
 			// Não encontrou a Cota. Realizar Log
 			// Passar para a próxima linha
@@ -76,10 +77,10 @@ public class EMS0116MessageProcessor implements MessageProcessor {
 		sql.append("WHERE ");
 		sql.append("     p.cota = :cota ");
 		
-		query = entityManager.createQuery(sql.toString());
+		query = getSession().createQuery(sql.toString());
 		query.setParameter("cota", cota);	
 		
-		List<PDV> pdvs = (List<PDV>) query.getResultList();
+		List<PDV> pdvs = (List<PDV>) query.list();
 		
 		if (pdvs.isEmpty()){
 
@@ -106,10 +107,10 @@ public class EMS0116MessageProcessor implements MessageProcessor {
 			sql.append("WHERE ");
 			sql.append("     tp.codigo = :codigo ");
 			
-			query = entityManager.createQuery(sql.toString());
+			query = getSession().createQuery(sql.toString());
 			query.setParameter("codigo", input.getTipoPontoVenda());	
 			
-			List<TipoPontoPDV> tpdvs = (List<TipoPontoPDV>) query.getResultList();
+			List<TipoPontoPDV> tpdvs = (List<TipoPontoPDV>) query.list();
 			
 				if (tpdvs.isEmpty()){
 									
@@ -127,7 +128,7 @@ public class EMS0116MessageProcessor implements MessageProcessor {
 					
 				}
 			
-			entityManager.persist(pdv);
+			getSession().persist(pdv);
 							
 			if (!input.getEndereco().isEmpty() && !".".equals(input.getEndereco())){
 				
@@ -138,14 +139,14 @@ public class EMS0116MessageProcessor implements MessageProcessor {
 				endereco.setLogradouro(input.getEndereco());
 				endereco.setNumero(null);
 				endereco.setUf(input.getSiglaUF());	
-				entityManager.persist(endereco);
+				getSession().persist(endereco);
 				
 				EnderecoPDV enderecoPDV = new EnderecoPDV();
 				enderecoPDV.setEndereco(endereco);
 				enderecoPDV.setPdv(pdv);
 				enderecoPDV.setPrincipal(true);
 				enderecoPDV.setTipoEndereco(TipoEndereco.COMERCIAL);
-				entityManager.persist(enderecoPDV);
+				getSession().persist(enderecoPDV);
 			} else {
 				
 				ndsiLoggerFactory.getLogger().logWarning(message, EventoExecucaoEnum.RELACIONAMENTO,"O arquivo nao contem dados de endereco para a cota " + cota.getNumeroCota());
@@ -156,14 +157,14 @@ public class EMS0116MessageProcessor implements MessageProcessor {
 				Telefone telefone = new Telefone();
 				telefone.setDdd(input.getDdd());
 				telefone.setNumero(input.getTelefone());
-				entityManager.persist(telefone);
+				getSession().persist(telefone);
 				
 				TelefonePDV telefonePDV = new TelefonePDV();
 				telefonePDV.setTelefone(telefone);
 				telefonePDV.setPdv(pdv);
 				telefonePDV.setPrincipal(true);
 				telefonePDV.setTipoTelefone(TipoTelefone.COMERCIAL);
-				entityManager.persist(telefonePDV);
+				getSession().persist(telefonePDV);
 			} else {
 				
 				ndsiLoggerFactory.getLogger().logWarning(message, EventoExecucaoEnum.RELACIONAMENTO,"O arquivo nao contem dados de telefone para a cota " + cota.getNumeroCota());
@@ -195,10 +196,10 @@ public class EMS0116MessageProcessor implements MessageProcessor {
 			sql.append("WHERE ");
 			sql.append("     tp.codigo = :codigo ");
 			
-			query = entityManager.createQuery(sql.toString());
+			query = getSession().createQuery(sql.toString());
 			query.setParameter("codigo", input.getTipoPontoVenda());	
 			
-			List<TipoPontoPDV> tpdvs = (List<TipoPontoPDV>) query.getResultList();
+			List<TipoPontoPDV> tpdvs = (List<TipoPontoPDV>) query.list();
 				
 				if (tpdvs.isEmpty()){
 									
@@ -228,11 +229,11 @@ public class EMS0116MessageProcessor implements MessageProcessor {
 					sql.append("     ep.pdv = :pdv ");
 					sql.append(" AND    ed.logradouro = :logradouro ");
 					
-					query = entityManager.createQuery(sql.toString());
+					query = getSession().createQuery(sql.toString());
 					query.setParameter("pdv", pdv);
 					query.setParameter("logradouro", input.getEndereco());
 					
-					List<EnderecoPDV> enderecosPDV = (List<EnderecoPDV>) query.getResultList();
+					List<EnderecoPDV> enderecosPDV = (List<EnderecoPDV>) query.list();
 					
 						if (enderecosPDV.isEmpty()) {
 							
@@ -243,14 +244,14 @@ public class EMS0116MessageProcessor implements MessageProcessor {
 							endereco.setLogradouro(input.getEndereco());
 							endereco.setNumero(null);
 							endereco.setUf(input.getSiglaUF());	
-							entityManager.persist(endereco);
+							getSession().persist(endereco);
 							
 							enderecoPDV = new EnderecoPDV();
 							enderecoPDV.setEndereco(endereco);
 							enderecoPDV.setPdv(pdv);
 							enderecoPDV.setPrincipal(true);
 							enderecoPDV.setTipoEndereco(TipoEndereco.COMERCIAL);
-							entityManager.persist(enderecoPDV);
+							getSession().persist(enderecoPDV);
 							
 						} else {
 							
@@ -267,10 +268,10 @@ public class EMS0116MessageProcessor implements MessageProcessor {
 									sql.append("WHERE ");
 									sql.append("     e.logradouro = :logradouro ");
 									
-									query = entityManager.createQuery(sql.toString());
+									query = getSession().createQuery(sql.toString());
 									query.setParameter("logradouro", input.getEndereco());	
 									
-									List<Endereco> enderecos = (List<Endereco>) query.getResultList();
+									List<Endereco> enderecos = (List<Endereco>) query.list();
 										
 										if (enderecos.isEmpty()) {
 											
@@ -281,7 +282,7 @@ public class EMS0116MessageProcessor implements MessageProcessor {
 											endereco.setLogradouro(input.getEndereco());
 											endereco.setNumero(null);
 											endereco.setUf(input.getSiglaUF());	
-											entityManager.persist(endereco);
+											getSession().persist(endereco);
 											
 										} else {
 											
@@ -318,25 +319,25 @@ public class EMS0116MessageProcessor implements MessageProcessor {
 					sql.append("     tc.pdv = :pdv ");
 					sql.append(" AND    t.numero = :numeroTelefone ");
 					
-					query = entityManager.createQuery(sql.toString());
+					query = getSession().createQuery(sql.toString());
 					query.setParameter("pdv", pdv);
 					query.setParameter("numeroTelefone", input.getTelefone());
 					
-					List<TelefonePDV> telefonesPDV = (List<TelefonePDV>) query.getResultList();
+					List<TelefonePDV> telefonesPDV = (List<TelefonePDV>) query.list();
 					
 						if (telefonesPDV.isEmpty()) {
 							
 							telefone = new Telefone();
 							telefone.setDdd(input.getDdd());
 							telefone.setNumero(input.getTelefone());
-							entityManager.persist(telefone);
+							getSession().persist(telefone);
 							
 							telefonePDV = new TelefonePDV();
 							telefonePDV.setTelefone(telefone);
 							telefonePDV.setPdv(pdvs.get(0));
 							telefonePDV.setPrincipal(true);
 							telefonePDV.setTipoTelefone(TipoTelefone.COMERCIAL);
-							entityManager.persist(telefonePDV);
+							getSession().persist(telefonePDV);
 							
 						} else {
 							
@@ -353,17 +354,17 @@ public class EMS0116MessageProcessor implements MessageProcessor {
 									sql.append("WHERE ");
 									sql.append("     tel.numero = :numero ");
 									
-									query = entityManager.createQuery(sql.toString());
+									query = getSession().createQuery(sql.toString());
 									query.setParameter("numero", input.getTelefone());	
 									
-									List<Telefone> telefones = (List<Telefone>) query.getResultList();
+									List<Telefone> telefones = (List<Telefone>) query.list();
 									
 										if (telefones.isEmpty()) {
 											
 											telefone = new Telefone();						
 											telefone.setDdd(input.getDdd());
 											telefone.setNumero(input.getTelefone());
-											entityManager.persist(telefone);
+											getSession().persist(telefone);
 											
 										} else {
 													

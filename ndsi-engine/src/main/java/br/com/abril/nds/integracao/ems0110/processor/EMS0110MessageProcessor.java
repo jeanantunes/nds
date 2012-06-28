@@ -2,13 +2,13 @@ package br.com.abril.nds.integracao.ems0110.processor;
 
 import java.util.List;
 
-import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
 
+import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.integracao.engine.MessageHeaderProperties;
 import br.com.abril.nds.integracao.engine.MessageProcessor;
@@ -21,11 +21,12 @@ import br.com.abril.nds.model.cadastro.Dimensao;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
+import br.com.abril.nds.repository.impl.AbstractRepository;
 
 @Component
-public class EMS0110MessageProcessor implements MessageProcessor {
-	@PersistenceContext
-	private EntityManager entityManager;
+
+public class EMS0110MessageProcessor extends AbstractRepository implements MessageProcessor  {
+
 	
 	@Autowired
 	private NdsiLoggerFactory ndsiLoggerFactory;
@@ -70,6 +71,7 @@ public class EMS0110MessageProcessor implements MessageProcessor {
 		return false;
 	}
 	
+	
 	private ProdutoEdicao findProdutoEdicao(Message message) {
 		EMS0110Input input = (EMS0110Input) message.getBody();
 		
@@ -79,13 +81,13 @@ public class EMS0110MessageProcessor implements MessageProcessor {
 		sql.append("WHERE pe.numeroEdicao = :numeroEdicao ");
 		sql.append(" AND  p.codigo = :codigo ");
 				
-		Query query = this.entityManager.createQuery(sql.toString());
+		Query query = this.getSession().createQuery(sql.toString());
 		
 		query.setParameter("numeroEdicao", input.getEdicaoProd());
 		query.setParameter("codigo", input.getCodProd());
 		
 		@SuppressWarnings("unchecked")
-		List<ProdutoEdicao> produtoEdicoes = (List<ProdutoEdicao>) query.getResultList();
+		List<ProdutoEdicao> produtoEdicoes = (List<ProdutoEdicao>) query.list();
 				
 		if (!produtoEdicoes.isEmpty()) {
 			
@@ -107,6 +109,7 @@ public class EMS0110MessageProcessor implements MessageProcessor {
 		}
 	}
 	
+	
 	private Produto findProduto(Message message) {
 		EMS0110Input input = (EMS0110Input) message.getBody();
 		
@@ -117,11 +120,11 @@ public class EMS0110MessageProcessor implements MessageProcessor {
 		
 		try{
 			
-			Query query = this.entityManager.createQuery(sql.toString());
+			Query query = this.getSession().createQuery(sql.toString());
 			
 			query.setParameter("codigo", input.getCodProd());
 			
-			return (Produto) query.getSingleResult();
+			return (Produto) query.uniqueResult();
 			
 		} catch(NoResultException e) {
 			
@@ -131,6 +134,7 @@ public class EMS0110MessageProcessor implements MessageProcessor {
 		}		
 	}
 
+	
 	private void criarProdutoEdicaoConformeInput(Produto produto, Message message) {
 		EMS0110Input input = (EMS0110Input) message.getBody();
 		
@@ -171,7 +175,7 @@ public class EMS0110MessageProcessor implements MessageProcessor {
 		edicao.setPossuiBrinde(input.isContemBrinde());
 		edicao.setDataDesativacao(input.getDataDesativacao());
 		edicao.setChamadaCapa(input.getChamadaCapa());
-		this.entityManager.persist(edicao);
+		this.getSession().persist(edicao);
 	}
 	
 	private void atualizaProdutoEdicaoConformeInput(ProdutoEdicao edicao, Message message) {

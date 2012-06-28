@@ -1,12 +1,12 @@
 package br.com.abril.nds.integracao.ems0112.processor;
 
-import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
 
+import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.integracao.engine.MessageProcessor;
 import br.com.abril.nds.integracao.engine.data.Message;
@@ -22,12 +22,13 @@ import br.com.abril.nds.model.cadastro.TelefoneEditor;
 import br.com.abril.nds.model.cadastro.TipoEndereco;
 import br.com.abril.nds.model.cadastro.TipoTelefone;
 import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
+import br.com.abril.nds.repository.impl.AbstractRepository;
 
 @Component
-public class EMS0112MessageProcessor implements MessageProcessor {
 
-	@PersistenceContext
-	private EntityManager entityManager;
+public class EMS0112MessageProcessor extends AbstractRepository implements MessageProcessor  {
+
+
 
 	@Autowired
 	private NdsiLoggerFactory ndsiLoggerFactory;
@@ -36,6 +37,7 @@ public class EMS0112MessageProcessor implements MessageProcessor {
 	private DistribuidorService distribuidorService;
 	
 	@Override
+	
 	public void processMessage(Message message) {
 
 		EMS0112Input input = (EMS0112Input) message.getBody();
@@ -48,7 +50,7 @@ public class EMS0112MessageProcessor implements MessageProcessor {
 		sql.append("JOIN FETCH e.pessoaJuridica p ");
 		sql.append("WHERE e.codigo = :codigoEditor ");
 		
-		Query query = entityManager.createQuery(sql.toString());
+		Query query = getSession().createQuery(sql.toString());
 		query.setParameter("codigoEditor", input.getCodigoEditor());
 		
 		
@@ -56,7 +58,7 @@ public class EMS0112MessageProcessor implements MessageProcessor {
 		try {
 			
 			
-			Editor editor = (Editor) query.getSingleResult();
+			Editor editor = (Editor) query.uniqueResult();
 			
 			if(distribuidorService.isDistribuidor(input.getCodigoDistribuidor()) &&
 					input.getTipoOperacao().equals("A")){
@@ -115,7 +117,7 @@ public class EMS0112MessageProcessor implements MessageProcessor {
 			pessoa.setCnpj(input.getCnpj());
 			pessoa.setInscricaoEstadual(input.getInscricaoEstadual());
 			pessoa.setInscricaoMunicipal(input.getInscricaoMunicipal());		
-			entityManager.persist(pessoa);
+			getSession().persist(pessoa);
 			
 			//EDITOR
 			Editor ed = new Editor();
@@ -124,7 +126,7 @@ public class EMS0112MessageProcessor implements MessageProcessor {
 			ed.setAtivo(input.getStatus());
 			ed.setNomeContato(input.getNomeContato());
 			ed.setPessoaJuridica(pessoa);
-			entityManager.persist(ed);
+			getSession().persist(ed);
 			
 			
 			//ENDERECO EDITOR [COMERCIAL]
@@ -137,13 +139,13 @@ public class EMS0112MessageProcessor implements MessageProcessor {
 			endComercial.setUf(input.getUfEditor());
 			endComercial.setCep(input.getCepEditor());
 			endComercial.setCodigoBairro(input.getBairroEditor());
-			entityManager.persist(endComercial);
+			getSession().persist(endComercial);
 			
 			EnderecoEditor enderecoEditorCom = new EnderecoEditor();
 			enderecoEditorCom.setTipoEndereco(TipoEndereco.COMERCIAL);
 			enderecoEditorCom.setEditor(ed);
 			enderecoEditorCom.setEndereco(endComercial);
-			entityManager.persist(enderecoEditorCom);			
+			getSession().persist(enderecoEditorCom);			
 			
 			
 			//ENDERECO EDITOR [ENTREGA]
@@ -156,58 +158,59 @@ public class EMS0112MessageProcessor implements MessageProcessor {
 			endEntrega.setUf(input.getUfEntrega());
 			endEntrega.setCep(input.getCepEntrega());
 			endEntrega.setCodigoBairro(input.getBairroEntrega());
-			entityManager.persist(endEntrega);
+			getSession().persist(endEntrega);
 			
 			EnderecoEditor enderecoEditorEnt = new EnderecoEditor();		
 			enderecoEditorEnt.setTipoEndereco(TipoEndereco.LOCAL_ENTREGA);
 			enderecoEditorEnt.setEditor(ed);
 			enderecoEditorEnt.setEndereco(endEntrega);
-			entityManager.persist(enderecoEditorEnt);
+			getSession().persist(enderecoEditorEnt);
 			
 			//TELEFONE [CONTATO]
 			Telefone telContato = new Telefone();
 			telContato.setDdd(input.getDddContato());
 			telContato.setNumero(input.getTelefoneContato());
 			telContato.setPessoa(ed.getPessoaJuridica()); 
-			entityManager.persist(telContato);
+			getSession().persist(telContato);
 			
 			TelefoneEditor telefoneContato = new TelefoneEditor();
 			telefoneContato.setTelefone(telContato);
 			telefoneContato.setEditor(ed);
 			telefoneContato.setTipoTelefone(TipoTelefone.CONTATO);
-			entityManager.persist(telefoneContato);
+			getSession().persist(telefoneContato);
 			
 			//TELEFONE [FAX]
 			Telefone telFax = new Telefone();
 			telFax.setDdd(input.getDddFax());
 			telFax.setNumero(input.getTelefoneFax());
 			telFax.setPessoa(ed.getPessoaJuridica());
-			entityManager.persist(telFax);
+			getSession().persist(telFax);
 			
 			TelefoneEditor telefoneFax = new TelefoneEditor();
 			telefoneFax.setTelefone(telFax);
 			telefoneFax.setEditor(ed);
 			telefoneFax.setTipoTelefone(TipoTelefone.FAX);
-			entityManager.persist(telefoneFax);
+			getSession().persist(telefoneFax);
 			
 			//TELEFONE [PRINCIPAL]
 			Telefone telPrincipal = new Telefone();
 			telPrincipal.setDdd(input.getDddEditor());
 			telPrincipal.setNumero(input.getTelefoneEditor());
 			telPrincipal.setPessoa(ed.getPessoaJuridica());
-			entityManager.persist(telPrincipal);
+			getSession().persist(telPrincipal);
 
 			TelefoneEditor telefonePrincipal = new TelefoneEditor();
 			telefonePrincipal.setTelefone(telPrincipal);
 			telefonePrincipal.setEditor(ed);
 			telefonePrincipal.setTipoTelefone(TipoTelefone.COMERCIAL);
 			telefonePrincipal.setPrincipal(true);
-			entityManager.persist(telefonePrincipal);
+			getSession().persist(telefonePrincipal);
 			
 			
 		}
 		
 	}
+	
 	
 	private void atualizaEndereco(EMS0112Input input, Message message, Editor editor, TipoEndereco tipo){
 		
@@ -217,13 +220,13 @@ public class EMS0112MessageProcessor implements MessageProcessor {
 		sql.append("WHERE e.editor.codigo = :codigoEditor ");
 		sql.append("AND e.tipoEndereco = :tipo ");
 		
-		Query query = entityManager.createQuery(sql.toString());
+		Query query = getSession().createQuery(sql.toString());
 		query.setParameter("codigoEditor", editor.getCodigo());
 		query.setParameter("tipo", tipo);
 		
 		try {
 			
-			EnderecoEditor ed = (EnderecoEditor) query.getSingleResult();
+			EnderecoEditor ed = (EnderecoEditor) query.uniqueResult();
 			
 			if(ed.getTipoEndereco() == TipoEndereco.COMERCIAL){
 				
@@ -328,13 +331,13 @@ public class EMS0112MessageProcessor implements MessageProcessor {
 				endComercial.setUf(input.getUfEditor());
 				endComercial.setCep(input.getCepEditor());
 				endComercial.setCodigoBairro(input.getBairroEditor());
-				entityManager.persist(endComercial);
+				getSession().persist(endComercial);
 				
 				EnderecoEditor enderecoEditorCom = new EnderecoEditor();
 				enderecoEditorCom.setTipoEndereco(TipoEndereco.COMERCIAL);
 				enderecoEditorCom.setEditor(editor);
 				enderecoEditorCom.setEndereco(endComercial);
-				entityManager.persist(enderecoEditorCom);
+				getSession().persist(enderecoEditorCom);
 				
 			
 			}else if(tipo == TipoEndereco.LOCAL_ENTREGA){
@@ -348,13 +351,13 @@ public class EMS0112MessageProcessor implements MessageProcessor {
 				endEntrega.setUf(input.getUfEntrega());
 				endEntrega.setCep(input.getCepEntrega());
 				endEntrega.setCodigoBairro(input.getBairroEntrega());
-				entityManager.persist(endEntrega);
+				getSession().persist(endEntrega);
 				
 				EnderecoEditor enderecoEditorEnt = new EnderecoEditor();		
 				enderecoEditorEnt.setTipoEndereco(TipoEndereco.LOCAL_ENTREGA);
 				enderecoEditorEnt.setEditor(editor);
 				enderecoEditorEnt.setEndereco(endEntrega);
-				entityManager.persist(enderecoEditorEnt);
+				getSession().persist(enderecoEditorEnt);
 				
 			}
 			
@@ -362,6 +365,7 @@ public class EMS0112MessageProcessor implements MessageProcessor {
 		}
 	}
 		
+	
 	private void atualizaTelefone (EMS0112Input input, Message message, Editor editor, TipoTelefone tipo){
 		
 		StringBuilder sql = new StringBuilder();
@@ -370,13 +374,13 @@ public class EMS0112MessageProcessor implements MessageProcessor {
 		sql.append("WHERE e.editor.codigo = :codigoEditor ");
 		sql.append("AND e.tipoTelefone= :tipo ");
 		
-		Query query = entityManager.createQuery(sql.toString());
+		Query query = getSession().createQuery(sql.toString());
 		query.setParameter("codigoEditor", editor.getCodigo());
 		query.setParameter("tipo", tipo);
 		
 		try {
 			
-			TelefoneEditor telefone = (TelefoneEditor) query.getSingleResult();
+			TelefoneEditor telefone = (TelefoneEditor) query.uniqueResult();
 			
 			if(telefone.getTipoTelefone() == TipoTelefone.FAX){
 				
@@ -426,13 +430,13 @@ public class EMS0112MessageProcessor implements MessageProcessor {
 				telContato.setDdd(input.getDddContato());
 				telContato.setNumero(input.getTelefoneContato());
 				telContato.setPessoa(editor.getPessoaJuridica()); 
-				entityManager.persist(telContato);
+				getSession().persist(telContato);
 				
 				TelefoneEditor telefoneContato = new TelefoneEditor();
 				telefoneContato.setTelefone(telContato);
 				telefoneContato.setEditor(editor);
 				telefoneContato.setTipoTelefone(TipoTelefone.CONTATO);
-				entityManager.persist(telefoneContato);
+				getSession().persist(telefoneContato);
 				
 				
 			}else if(tipo == TipoTelefone.FAX){
@@ -441,13 +445,13 @@ public class EMS0112MessageProcessor implements MessageProcessor {
 				telFax.setDdd(input.getDddFax());
 				telFax.setNumero(input.getTelefoneFax());
 				telFax.setPessoa(editor.getPessoaJuridica());
-				entityManager.persist(telFax);
+				getSession().persist(telFax);
 				
 				TelefoneEditor telefoneFax = new TelefoneEditor();
 				telefoneFax.setTelefone(telFax);
 				telefoneFax.setEditor(editor);
 				telefoneFax.setTipoTelefone(TipoTelefone.FAX);
-				entityManager.persist(telefoneFax);
+				getSession().persist(telefoneFax);
 				
 			}else if(tipo == TipoTelefone.COMERCIAL){	
 				//TELEFONE [PRINCIPAL]
@@ -455,14 +459,14 @@ public class EMS0112MessageProcessor implements MessageProcessor {
 				telPrincipal.setDdd(input.getDddEditor());
 				telPrincipal.setNumero(input.getTelefoneEditor());
 				telPrincipal.setPessoa(editor.getPessoaJuridica());
-				entityManager.persist(telPrincipal);
+				getSession().persist(telPrincipal);
 	
 				TelefoneEditor telefonePrincipal = new TelefoneEditor();
 				telefonePrincipal.setTelefone(telPrincipal);
 				telefonePrincipal.setEditor(editor);
 				telefonePrincipal.setTipoTelefone(TipoTelefone.COMERCIAL);
 				telefonePrincipal.setPrincipal(true);
-				entityManager.persist(telefonePrincipal);
+				getSession().persist(telefonePrincipal);
 				
 			}
 			

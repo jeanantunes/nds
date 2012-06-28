@@ -14,7 +14,7 @@ import br.com.abril.nds.model.cadastro.Carteira;
 import br.com.abril.nds.repository.BancoRepository;
 
 @Repository
-public class BancoRepositoryImpl extends AbstractRepository<Banco,Long> implements BancoRepository  {
+public class BancoRepositoryImpl extends AbstractRepositoryModel<Banco,Long> implements BancoRepository  {
 
 	/**
 	 * Construtor padrão

@@ -11,7 +11,7 @@ import br.com.abril.nds.model.cadastro.Telefone;
 import br.com.abril.nds.repository.TelefoneRepository;
 
 @Repository
-public class TelefoneRepositoryImpl extends AbstractRepository<Telefone, Long> implements TelefoneRepository {
+public class TelefoneRepositoryImpl extends AbstractRepositoryModel<Telefone, Long> implements TelefoneRepository {
 
 	public TelefoneRepositoryImpl() {
 		super(Telefone.class);

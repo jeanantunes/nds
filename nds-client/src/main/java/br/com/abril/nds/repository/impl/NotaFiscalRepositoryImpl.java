@@ -17,7 +17,7 @@ import br.com.abril.nds.repository.NotaFiscalRepository;
 import br.com.abril.nds.vo.PaginacaoVO;
 
 @Repository
-public class NotaFiscalRepositoryImpl extends AbstractRepository<NotaFiscal, Long> implements NotaFiscalRepository {
+public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal, Long> implements NotaFiscalRepository {
 	
 	public NotaFiscalRepositoryImpl() {
 		super(NotaFiscal.class);

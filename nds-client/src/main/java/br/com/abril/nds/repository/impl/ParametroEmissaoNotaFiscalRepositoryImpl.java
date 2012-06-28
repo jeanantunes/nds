@@ -9,7 +9,7 @@ import br.com.abril.nds.repository.ParametroEmissaoNotaFiscalRepository;
 
 @Repository
 public class ParametroEmissaoNotaFiscalRepositoryImpl extends
-		AbstractRepository<ParametroEmissaoNotaFiscal, Long> implements ParametroEmissaoNotaFiscalRepository {
+		AbstractRepositoryModel<ParametroEmissaoNotaFiscal, Long> implements ParametroEmissaoNotaFiscalRepository {
 
 	/**
 	 * Construtor padrão.

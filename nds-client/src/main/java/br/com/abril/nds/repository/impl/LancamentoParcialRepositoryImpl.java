@@ -17,7 +17,7 @@ import br.com.abril.nds.model.planejamento.LancamentoParcial;
 import br.com.abril.nds.repository.LancamentoParcialRepository;
 
 @Repository
-public class LancamentoParcialRepositoryImpl extends AbstractRepository<LancamentoParcial, Long> 
+public class LancamentoParcialRepositoryImpl extends AbstractRepositoryModel<LancamentoParcial, Long> 
 			implements LancamentoParcialRepository  {
 
 	public LancamentoParcialRepositoryImpl() {

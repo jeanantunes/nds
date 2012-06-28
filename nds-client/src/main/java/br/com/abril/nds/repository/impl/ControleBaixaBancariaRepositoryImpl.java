@@ -17,7 +17,7 @@ import br.com.abril.nds.repository.ControleBaixaBancariaRepository;
  *
  */
 @Repository
-public class ControleBaixaBancariaRepositoryImpl extends AbstractRepository<ControleBaixaBancaria,Long> implements ControleBaixaBancariaRepository {
+public class ControleBaixaBancariaRepositoryImpl extends AbstractRepositoryModel<ControleBaixaBancaria,Long> implements ControleBaixaBancariaRepository {
 
 	
 	/**

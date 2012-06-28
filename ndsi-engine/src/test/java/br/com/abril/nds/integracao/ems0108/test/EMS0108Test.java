@@ -13,9 +13,6 @@ public class EMS0108Test extends RouteTestTemplate {
 	@Autowired
 	private EMS0108Route rota;
 	
-	@PersistenceContext
-	private EntityManager entityManager;
-	
 	@Override
 	public RouteTemplate getRoute() {
 		// List<NdsiParametroSistema> list = entityManager.createQuery("select o from NdsiParametroSistema o where o.id = ?").setParameter(1, 1L).getResultList();

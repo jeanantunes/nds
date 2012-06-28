@@ -13,7 +13,7 @@ import br.com.abril.nds.model.cadastro.pdv.EnderecoPDV;
 import br.com.abril.nds.repository.EnderecoPDVRepository;
 
 @Repository
-public class EnderecoPDVRepositoryImpl extends AbstractRepository<EnderecoPDV, Long> implements EnderecoPDVRepository {
+public class EnderecoPDVRepositoryImpl extends AbstractRepositoryModel<EnderecoPDV, Long> implements EnderecoPDVRepository {
 
 	public EnderecoPDVRepositoryImpl() {
 		super(EnderecoPDV.class);

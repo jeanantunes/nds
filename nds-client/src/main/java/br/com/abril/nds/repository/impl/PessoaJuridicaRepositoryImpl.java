@@ -14,7 +14,7 @@ import br.com.abril.nds.repository.PessoaJuridicaRepository;
  */
 @Repository
 public class PessoaJuridicaRepositoryImpl extends
-		AbstractRepository<PessoaJuridica, Long> implements
+		AbstractRepositoryModel<PessoaJuridica, Long> implements
 		PessoaJuridicaRepository {
 
 	public PessoaJuridicaRepositoryImpl() {

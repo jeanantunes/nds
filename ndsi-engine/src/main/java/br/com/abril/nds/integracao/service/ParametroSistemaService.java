@@ -1,4 +1,4 @@
-package br.com.abril.nds.service;
+package br.com.abril.nds.integracao.service;
 
 import java.io.InputStream;
 import java.util.Collection;

@@ -1,12 +1,12 @@
 package br.com.abril.nds.integracao.ems0126.processor;
 
-import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
 
+import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.integracao.engine.MessageProcessor;
 import br.com.abril.nds.integracao.engine.data.Message;
@@ -14,21 +14,22 @@ import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;
 import br.com.abril.nds.integracao.model.canonic.EMS0126Input;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
+import br.com.abril.nds.repository.impl.AbstractRepository;
 /**
  * @author Jones.Costa
  * @version 1.0
  */
 @Component
-public class EMS0126MessageProcessor implements MessageProcessor{
 
-	@PersistenceContext
-	private EntityManager entityManager;
+public class EMS0126MessageProcessor extends AbstractRepository implements MessageProcessor {
+
 	
 	@Autowired
 	private NdsiLoggerFactory ndsiLoggerFactory;
 	
 	
 	@Override
+	
 	public void processMessage(Message message) {
 	
 		EMS0126Input input = (EMS0126Input) message.getBody();
@@ -42,12 +43,12 @@ public class EMS0126MessageProcessor implements MessageProcessor{
 		sql.append("	prodCod.codigo = :codigoProduto ");
 		sql.append(" AND	prodEdicao.numeroEdicao = :numeroEdicao ");
 		
-		Query query = entityManager.createQuery(sql.toString());		
+		Query query = getSession().createQuery(sql.toString());		
 		query.setParameter("codigoProduto", input.getCodigoProduto());
 		query.setParameter("numeroEdicao", input.getEdicao());
 		
 		try{
-		ProdutoEdicao produtoEdicao = (ProdutoEdicao) query.getSingleResult();
+		ProdutoEdicao produtoEdicao = (ProdutoEdicao) query.uniqueResult();
 		
 		//Inserir codigo de barras
 		produtoEdicao.setCodigoDeBarras(input.getCodigoBarras());

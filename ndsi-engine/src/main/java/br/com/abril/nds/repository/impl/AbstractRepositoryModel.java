@@ -4,9 +4,6 @@ import java.io.Serializable;
 import java.util.List;
 
 import org.hibernate.Query;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.repository.Repository;
 
@@ -19,19 +16,14 @@ import br.com.abril.nds.repository.Repository;
  * @param <T> tipo em manipulação pelo repositório 
  * @param <K> tipo do identificador do repositório
  */
-public abstract class AbstractRepository<T, K extends Serializable> implements Repository<T, K> {
+public abstract class AbstractRepositoryModel<T, K extends Serializable> extends AbstractRepository implements Repository<T, K> {
 	
-	@Autowired
-	private SessionFactory sessionFactory;
+
 	
 	private Class<T> clazz;
 	
-	public AbstractRepository(Class<T> clazz) {
+	public AbstractRepositoryModel(Class<T> clazz) {
 		this.clazz = clazz;
-	}
-	
-	protected Session getSession() {
-		return sessionFactory.getCurrentSession();
 	}
 	
 	public void adicionar(T entity) {

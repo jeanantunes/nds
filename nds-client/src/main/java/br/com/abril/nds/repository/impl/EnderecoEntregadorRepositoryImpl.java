@@ -13,7 +13,7 @@ import br.com.abril.nds.repository.EnderecoEntregadorRepository;
  *
  */
 @Repository
-public class EnderecoEntregadorRepositoryImpl extends AbstractRepository<EnderecoEntregador, Long> 
+public class EnderecoEntregadorRepositoryImpl extends AbstractRepositoryModel<EnderecoEntregador, Long> 
 											  implements EnderecoEntregadorRepository {
 
 	/**

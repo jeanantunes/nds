@@ -17,7 +17,7 @@ import br.com.abril.nds.repository.EstudoCotaRepository;
  *
  */
 @Repository
-public class EstudoCotaRepositoryImpl extends AbstractRepository<EstudoCota, Long> implements EstudoCotaRepository {
+public class EstudoCotaRepositoryImpl extends AbstractRepositoryModel<EstudoCota, Long> implements EstudoCotaRepository {
 	
 	/**
 	 * Construtor.

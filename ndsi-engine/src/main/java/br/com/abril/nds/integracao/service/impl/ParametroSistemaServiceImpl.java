@@ -1,4 +1,4 @@
-package br.com.abril.nds.service.impl;
+package br.com.abril.nds.integracao.service.impl;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -15,10 +15,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.ParametroSistemaGeralDTO;
 import br.com.abril.nds.integracao.couchdb.CouchDbProperties;
+import br.com.abril.nds.integracao.service.ParametroSistemaService;
 import br.com.abril.nds.model.cadastro.ParametroSistema;
 import br.com.abril.nds.model.cadastro.TipoParametroSistema;
 import br.com.abril.nds.repository.ParametroSistemaRepository;
-import br.com.abril.nds.service.ParametroSistemaService;
 
 @Service
 public class ParametroSistemaServiceImpl implements ParametroSistemaService {

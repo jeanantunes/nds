@@ -14,11 +14,11 @@ import br.com.abril.nds.model.cadastro.TelefoneTransportador;
 import br.com.abril.nds.repository.TelefoneTransportadorRepositoty;
 
 @Repository
-public class TelefoneTransportadorRepositotyImpl extends
-		AbstractRepository<TelefoneTransportador, Long> implements
+public class TelefoneTransportadorRepositoryImpl extends
+		AbstractRepositoryModel<TelefoneTransportador, Long> implements
 		TelefoneTransportadorRepositoty {
 
-	public TelefoneTransportadorRepositotyImpl() {
+	public TelefoneTransportadorRepositoryImpl() {
 		super(TelefoneTransportador.class);
 	}
 

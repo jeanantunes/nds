@@ -27,6 +27,7 @@ import br.com.abril.nds.dto.ItemDanfe;
 import br.com.abril.nds.dto.NfeDTO;
 import br.com.abril.nds.dto.filtro.FiltroMonitorNfeDTO;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.EnderecoDistribuidor;
@@ -44,7 +45,6 @@ import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.repository.ItemNotaFiscalEntradaRepository;
 import br.com.abril.nds.repository.ItemNotaFiscalSaidaRepository;
 import br.com.abril.nds.repository.NotaFiscalRepository;
-import br.com.abril.nds.service.DistribuidorService;
 import br.com.abril.nds.service.MonitorNFEService;
 import br.com.abril.nds.util.TipoMensagem;
 

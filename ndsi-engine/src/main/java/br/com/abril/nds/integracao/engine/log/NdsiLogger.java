@@ -9,9 +9,11 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.DefaultTransactionAttribute;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -25,19 +27,18 @@ import br.com.abril.nds.model.integracao.InterfaceExecucao;
 import br.com.abril.nds.model.integracao.LogExecucao;
 import br.com.abril.nds.model.integracao.LogExecucaoMensagem;
 import br.com.abril.nds.model.integracao.StatusExecucaoEnum;
+import br.com.abril.nds.repository.impl.AbstractRepository;
 
 /**
  * Insere registros de log de execução da interface no banco de dados.
  */
 @Component
 @Scope("prototype")
-public class NdsiLogger {
+
+public class NdsiLogger extends AbstractRepository {
 
 	@Autowired
 	private PlatformTransactionManager transactionManager;
-	
-	@PersistenceContext
-	private EntityManager entityManager;
 	
 	private Logger LOGGER = Logger.getLogger(NdsiLogger.class);
 	private boolean hasError = false;
@@ -49,6 +50,7 @@ public class NdsiLogger {
 	 * Insere o log de início do processamento da interface
 	 * @param route rota sendo processada
 	 */
+	
 	public void logBeginning(RouteTemplate route) {
 		
 		if (logExecucao != null) {
@@ -69,7 +71,7 @@ public class NdsiLogger {
 			template.execute(new TransactionCallback<Void>() {
 				@Override
 				public Void doInTransaction(TransactionStatus status) {
-					entityManager.persist(logExecucao);
+					getSession().persist(logExecucao);
 					return null;
 				}
 			});
@@ -84,6 +86,7 @@ public class NdsiLogger {
 	 * Insere o log de fim do processamento da interface
 	 * @param route rota sendo processada
 	 */
+	
 	public void logEnd(RouteTemplate route) {
 		
 		if (hasError) {
@@ -100,7 +103,7 @@ public class NdsiLogger {
 			template.execute(new TransactionCallback<Void>() {
 				@Override
 				public Void doInTransaction(TransactionStatus status) {
-					entityManager.merge(logExecucao);
+					getSession().merge(logExecucao);
 					return null;
 				}
 			});
@@ -144,6 +147,7 @@ public class NdsiLogger {
 	 * @param eventoExecucaoEnum
 	 * @param descricaoErro
 	 */
+	
 	private void logMessage(Message message, EventoExecucaoEnum eventoExecucaoEnum, String descricaoErro, String mensagemInfo) {
 		
 		// TODO: criar enum
@@ -163,7 +167,7 @@ public class NdsiLogger {
 			template.execute(new TransactionCallback<Void>() {
 				@Override
 				public Void doInTransaction(TransactionStatus status) {
-					entityManager.persist(logExecucaoMensagem);
+					getSession().persist(logExecucaoMensagem);
 					return null;
 				}
 			});
@@ -173,7 +177,7 @@ public class NdsiLogger {
 		}
 	}
 	
-	public void setEntityManager(EntityManager entityManager) {
+	/*public void setEntityManager(EntityManager entityManager) {
 		this.entityManager = entityManager;
-	}
+	}*/
 }

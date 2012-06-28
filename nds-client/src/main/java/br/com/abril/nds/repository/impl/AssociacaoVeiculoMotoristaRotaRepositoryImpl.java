@@ -14,7 +14,7 @@ import br.com.abril.nds.repository.AssociacaoVeiculoMotoristaRotaRepository;
 
 @Repository
 public class AssociacaoVeiculoMotoristaRotaRepositoryImpl extends
-		AbstractRepository<AssociacaoVeiculoMotoristaRota, Long> implements
+		AbstractRepositoryModel<AssociacaoVeiculoMotoristaRota, Long> implements
 		AssociacaoVeiculoMotoristaRotaRepository {
 
 	public AssociacaoVeiculoMotoristaRotaRepositoryImpl() {

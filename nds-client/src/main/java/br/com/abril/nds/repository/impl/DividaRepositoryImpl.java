@@ -26,7 +26,7 @@ import br.com.abril.nds.model.financeiro.StatusDivida;
 import br.com.abril.nds.repository.DividaRepository;
 
 @Repository
-public class DividaRepositoryImpl extends AbstractRepository<Divida, Long> implements
+public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> implements
 		DividaRepository {
 
 	@Value("#{queries.inadimplenciasCota}")

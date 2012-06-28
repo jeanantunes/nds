@@ -13,7 +13,7 @@ import br.com.abril.nds.model.cadastro.Veiculo;
 import br.com.abril.nds.repository.VeiculoRepository;
 
 @Repository
-public class VeiculoRepositoryImpl extends AbstractRepository<Veiculo, Long>
+public class VeiculoRepositoryImpl extends AbstractRepositoryModel<Veiculo, Long>
 		implements VeiculoRepository {
 
 	public VeiculoRepositoryImpl() {

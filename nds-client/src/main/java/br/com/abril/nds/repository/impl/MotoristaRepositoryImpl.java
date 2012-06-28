@@ -14,7 +14,7 @@ import br.com.abril.nds.repository.MotoristaRepository;
 
 @Repository
 public class MotoristaRepositoryImpl extends
-		AbstractRepository<Motorista, Long> implements MotoristaRepository {
+		AbstractRepositoryModel<Motorista, Long> implements MotoristaRepository {
 
 	public MotoristaRepositoryImpl() {
 		super(Motorista.class);
