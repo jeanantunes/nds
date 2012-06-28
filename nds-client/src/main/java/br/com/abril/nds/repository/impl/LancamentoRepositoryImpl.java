@@ -977,38 +977,13 @@ public class LancamentoRepositoryImpl extends
 		sql.append(" lancamento.REPARTE * (produtoEdicao.PRECO_VENDA - produtoEdicao.DESCONTO) ");
 		sql.append(" end as valorTotal, ");
 		
-		sql.append(" produtoEdicao.PRECO_VENDA - produtoEdicao.DESCONTO as precoComDesconto, ");
-		
 		sql.append(" produtoEdicao.ID as idProdutoEdicao, ");
-		sql.append(" produtoEdicao.DESCONTO as desconto, ");
 		sql.append(" produtoEdicao.NUMERO_EDICAO as numeroEdicao, ");
 		sql.append(" produtoEdicao.PESO as peso, ");
 		sql.append(" produtoEdicao.PRECO_VENDA as precoVenda, ");
 		sql.append(" produto.CODIGO as codigoProduto, ");
 		sql.append(" produto.NOME as nomeProduto, ");
 		sql.append(" produto.PERIODICIDADE as periodicidadeProduto, ");
-		
-		sql.append(" produto.PACOTE_PADRAO as pacotePadrao, ");
-		sql.append(" produtoEdicao.POSSUI_BRINDE as possuiBrinde, ");
-		sql.append(" produtoEdicao.CHAMADA_CAPA as chamadaCapa, ");
-		sql.append(" editor.CODIGO as codigoEditor, ");
-		sql.append(" editor.NOME as nomeEditor, ");
-		
-		sql.append(" case when ");
-		sql.append(" 	(select count(produtoFornecedor.FORNECEDORES_ID)  ");
-		sql.append(" 		from PRODUTO_FORNECEDOR produtoFornecedor ");
-		sql.append(" 		where produtoFornecedor.PRODUTO_ID = produto.ID > 1) then ");
-		sql.append(" 			'Diversos' ");
-		sql.append(" when ");
-		sql.append(" 	(select count(produtoFornecedor.FORNECEDORES_ID)  ");
-		sql.append(" 		from PRODUTO_FORNECEDOR produtoFornecedor ");
-		sql.append(" 		where produtoFornecedor.PRODUTO_ID = produto.ID = 1) then ");
-		sql.append(" 			(select pessoa.RAZAO_SOCIAL ");
-		sql.append("				from PRODUTO_FORNECEDOR produtoFornecedor, FORNECEDOR fornecedor, PESSOA pessoa ");
-		sql.append("				where fornecedor.ID = produtoFornecedor.FORNECEDORES_ID ");
-		sql.append("				and fornecedor.JURIDICA_ID = pessoa.ID ");
-		sql.append("				and produtoFornecedor.PRODUTO_ID = produto.ID)");
-		sql.append(" else null end as fornecedor, ");
 		
 		sql.append(" case when estudo.ID is not null then ");
 		sql.append(" true ");
@@ -1069,9 +1044,6 @@ public class LancamentoRepositoryImpl extends
 		sql.append(" PRODUTO produto ");
 		sql.append(" on produtoEdicao.PRODUTO_ID = produto.ID ");
 		sql.append(" inner join ");
-		sql.append(" EDITOR editor ");
-		sql.append(" on editor.ID = produto.EDITOR_ID ");
-		sql.append(" inner join ");
 		sql.append(" TIPO_PRODUTO tipoProduto ");
 		sql.append(" on tipoProduto.ID = produto.TIPO_PRODUTO_ID ");
 		
@@ -1118,7 +1090,6 @@ public class LancamentoRepositoryImpl extends
 			.addScalar("reparteFisico")
 			.addScalar("valorTotal")
 			.addScalar("idProdutoEdicao", StandardBasicTypes.LONG)
-			.addScalar("desconto")
 			.addScalar("numeroEdicao", StandardBasicTypes.LONG)
 			.addScalar("peso")
 			.addScalar("precoVenda")
@@ -1126,14 +1097,7 @@ public class LancamentoRepositoryImpl extends
 			.addScalar("nomeProduto")
 			.addScalar("periodicidadeProduto")
 			.addScalar("possuiEstudo", StandardBasicTypes.BOOLEAN)
-			.addScalar("possuiRecebimentoFisico", StandardBasicTypes.BOOLEAN)
-			.addScalar("pacotePadrao", StandardBasicTypes.INTEGER)
-			.addScalar("possuiBrinde", StandardBasicTypes.BOOLEAN)
-			.addScalar("chamadaCapa")
-			.addScalar("codigoEditor", StandardBasicTypes.LONG)
-			.addScalar("nomeEditor")
-			.addScalar("fornecedor")
-			.addScalar("precoComDesconto");
+			.addScalar("possuiRecebimentoFisico", StandardBasicTypes.BOOLEAN);
 		
 		aplicarParametros(query, periodoDistribuicao, fornecedores);
 		
