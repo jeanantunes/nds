@@ -149,7 +149,7 @@ public class NotaFiscalServiceImplTest extends AbstractRepositoryImplTest {
 		InformacaoAdicional informacaoAdicional = Fixture.informacaoAdicional("informacoesComplementares");
 		
 		InformacaoTransporte informacaoTransporte = Fixture.informacaoTransporte(
-				"18130646000159", "", "enderecoCompleto", "IEstd", 132, "municipio", "nome", null, "SP", veiculo);
+				"18130646000159", "", null, "IEstd", 132, "municipio", "nome", null, "SP", veiculo);
 	
 		ValoresRetencoesTributos valoreRetencoesTributos = new ValoresRetencoesTributos();
 		

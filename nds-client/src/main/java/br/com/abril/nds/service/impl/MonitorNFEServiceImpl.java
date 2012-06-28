@@ -48,7 +48,6 @@ import br.com.abril.nds.model.fiscal.nota.Veiculo;
 import br.com.abril.nds.repository.ItemNotaFiscalEntradaRepository;
 import br.com.abril.nds.repository.ItemNotaFiscalSaidaRepository;
 import br.com.abril.nds.repository.NotaFiscalRepository;
-import br.com.abril.nds.service.DistribuidorService;
 import br.com.abril.nds.service.MonitorNFEService;
 import br.com.abril.nds.util.TipoMensagem;
 
@@ -63,10 +62,6 @@ public class MonitorNFEServiceImpl implements MonitorNFEService {
 	
 	@Autowired
 	protected ItemNotaFiscalSaidaRepository itemNotaFiscalSaidaRepository;
-	
-	
-	@Autowired
-	private DistribuidorService distribuidorService;
 	
 	@Transactional
 	public InfoNfeDTO pesquisarNFe(FiltroMonitorNfeDTO filtro) {
@@ -118,11 +113,6 @@ public class MonitorNFEServiceImpl implements MonitorNFEService {
 	
 	private String obterHoras(Date dataHoras) {
 		DateFormat df = SimpleDateFormat.getTimeInstance();
-		return df.format(dataHoras);
-	}
-	
-	private String obterData(Date dataHoras) {
-		DateFormat df = SimpleDateFormat.getDateInstance();
 		return df.format(dataHoras);
 	}
 	
