@@ -1,6 +1,6 @@
 package br.com.abril.nds.integracao.ems0129.processor;
 
-import java.io.FileWriter;
+import java.io.FileWriter; 
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
@@ -8,14 +8,13 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-
+import org.hibernate.Query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.integracao.ems0129.data.SomaRegistro;
 import br.com.abril.nds.integracao.ems0129.outbound.EMS0129Picking1Detalhe;
@@ -39,15 +38,14 @@ import br.com.abril.nds.model.cadastro.pdv.PDV;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
 import br.com.abril.nds.model.planejamento.Lancamento;
+import br.com.abril.nds.repository.impl.AbstractRepository;
 
 import com.ancientprogramming.fixedformat4j.format.FixedFormatManager;
 
 @Component
-public class EMS0129MessageProcessor implements MessageProcessor {
-	private static final Logger LOGGER = LoggerFactory.getLogger(EMS0129Route.class);
 
-	@PersistenceContext
-	private EntityManager entityManager;
+public class EMS0129MessageProcessor extends AbstractRepository implements MessageProcessor  {
+	private static final Logger LOGGER = LoggerFactory.getLogger(EMS0129Route.class);
 
 	@Autowired
 	private FixedFormatManager fixedFormatManager;
@@ -61,7 +59,7 @@ public class EMS0129MessageProcessor implements MessageProcessor {
 	@Override
 	public void processMessage(Message message) {
 		
-		Distribuidor distribuidor = distribuidorService.findDistribuidor();
+		Distribuidor distribuidor = distribuidorService.obter();
 
 		if (distribuidor.getLeiautePicking().equals(LeiautePicking.UM)) {
 
@@ -171,6 +169,7 @@ public class EMS0129MessageProcessor implements MessageProcessor {
 		return data;
 	}
 	
+	
 	private List<PDV> findListPDV(Message message) {
 		
 		Date data = getDataLancDistrib(message);
@@ -187,11 +186,11 @@ public class EMS0129MessageProcessor implements MessageProcessor {
 		sql.append(" where pdv.caracteristicas.pontoPrincipal = true ");
 		sql.append(" and lan.dataLancamentoDistribuidor = :dataLancDistrib ");
 
-		Query query = this.entityManager.createQuery(sql.toString());
+		Query query = this.getSession().createQuery(sql.toString());
 		query.setParameter("dataLancDistrib", data);
 
 		@SuppressWarnings("unchecked")
-		List<PDV> pdvs = (List<PDV>) query.getResultList();
+		List<PDV> pdvs = (List<PDV>) query.list();
 
 		if (pdvs.isEmpty()) {
 

@@ -7,7 +7,7 @@ import br.com.abril.nds.repository.ProcuracaoEntregadorRepository;
 
 
 @Repository
-public class ProcuracaoEntregadorRepositoryImpl extends AbstractRepository<ProcuracaoEntregador, Long> 
+public class ProcuracaoEntregadorRepositoryImpl extends AbstractRepositoryModel<ProcuracaoEntregador, Long> 
 												implements ProcuracaoEntregadorRepository {
 	
 	public ProcuracaoEntregadorRepositoryImpl() {

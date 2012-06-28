@@ -7,7 +7,7 @@ import br.com.abril.nds.model.estoque.RateioDiferenca;
 import br.com.abril.nds.repository.RateioDiferencaRepository;
 
 @Repository
-public class RateioDiferencaRepositoryImpl extends AbstractRepository<RateioDiferenca, Long>
+public class RateioDiferencaRepositoryImpl extends AbstractRepositoryModel<RateioDiferenca, Long>
 		implements RateioDiferencaRepository {
 
 	public RateioDiferencaRepositoryImpl() {

@@ -1,5 +1,6 @@
 package br.com.abril.nds.service.impl;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,8 +8,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.ConsignadoCotaDTO;
-import br.com.abril.nds.dto.EncalheCotaDTO;
 import br.com.abril.nds.dto.ConsultaVendaEncalheDTO;
+import br.com.abril.nds.dto.EncalheCotaDTO;
 import br.com.abril.nds.dto.FiltroConsolidadoConsignadoCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsolidadoEncalheCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsolidadoVendaCotaDTO;
@@ -47,5 +48,17 @@ public class ConsolidadoFinanceiroServiceImpl implements ConsolidadoFinanceiroSe
 	@Transactional(readOnly=true)
 	public List<ConsignadoCotaDTO> obterMovimentoEstoqueCotaConsignado(FiltroConsolidadoConsignadoCotaDTO filtro){
 		return consolidadoFinanceiroRepository.obterMovimentoEstoqueCotaConsignado(filtro);
+	}
+
+	@Override
+	@Transactional(readOnly=true)
+	public Date buscarUltimaDividaGeradaDia(Date dataOperacao) {
+		return consolidadoFinanceiroRepository.buscarUltimaDividaGeradaDia(dataOperacao);
+	}
+	
+	@Override
+	@Transactional(readOnly=true)
+	public Date buscarDiaUltimaDividaGerada() {
+		return consolidadoFinanceiroRepository.buscarDiaUltimaDividaGerada();
 	}
 }

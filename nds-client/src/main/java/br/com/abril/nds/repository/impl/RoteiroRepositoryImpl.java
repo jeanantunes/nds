@@ -2,27 +2,20 @@ package br.com.abril.nds.repository.impl;
 
 import java.util.List;
 
-import org.exolab.castor.xml.validators.IdValidator;
 import org.hibernate.Criteria;
-import org.hibernate.Query;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 
-import br.com.abril.nds.model.LogBairro;
-import br.com.abril.nds.model.LogLocalidade;
-import br.com.abril.nds.model.cadastro.Cota;
-import br.com.abril.nds.model.cadastro.Rota;
-import br.com.abril.nds.model.cadastro.Roteirizacao;
 import br.com.abril.nds.model.cadastro.Roteiro;
 import br.com.abril.nds.model.cadastro.TipoRoteiro;
 import br.com.abril.nds.repository.RoteiroRepository;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
 @Repository
-public class RoteiroRepositoryImpl extends AbstractRepository<Roteiro, Long>
+public class RoteiroRepositoryImpl extends AbstractRepositoryModel<Roteiro, Long>
 		implements RoteiroRepository {
 
 	public RoteiroRepositoryImpl() {

@@ -42,5 +42,18 @@ public interface ExpedicaoRepository extends Repository<Expedicao, Long> {
 	 * @return List<ExpedicaoDTO>
 	 */
 	Long obterQuantidadeResumoExpedicaoPorBox(Long idBox,Date dataLancamento);
-}
 
+	/**
+	 * Retorna a ultima expedição do dia especificado
+	 * @param dataOperacao
+	 * @return Expedicao
+	 */
+	Date obterUltimaExpedicaoDia(Date dataOperacao);
+	
+	/**
+	 * Retorna a ultima espedição realizada
+	 * @return Date
+	 */
+	Date obterDataUltimaExpedicao();
+
+}

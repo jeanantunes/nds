@@ -5,17 +5,16 @@ import java.io.FileReader;
 import java.util.Date;
 import java.util.Scanner;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
@@ -30,6 +29,7 @@ import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
 import com.ancientprogramming.fixedformat4j.format.FixedFormatManager;
 
 @Component
+
 public class FixedLenghtContentBasedDataRouter extends FileContentBasedRouter {
 	private final Logger logger = LoggerFactory.getLogger(FixedLenghtContentBasedDataRouter.class);
 	
@@ -38,14 +38,12 @@ public class FixedLenghtContentBasedDataRouter extends FileContentBasedRouter {
 	
 	@Autowired
 	private PlatformTransactionManager transactionManager;
-
-	@PersistenceContext
-	private EntityManager entityManager;
 	
 	@Autowired
 	NdsiLoggerFactory ndsiLoggerFactory;
 
 	@Override
+	
 	public void routeFile(final FileRouteTemplate fileRouteTemplate, final File file) {
 		try {
 			if (fileRouteTemplate.isCommitAtEnd()) {
@@ -58,8 +56,8 @@ public class FixedLenghtContentBasedDataRouter extends FileContentBasedRouter {
 						public Void doInTransaction(TransactionStatus status) {
 							processFile(fileRouteTemplate, file);
 							
-							entityManager.flush();
-							entityManager.clear();
+							getSession().flush();
+							getSession().clear();
 							
 							return null;
 						}
@@ -75,8 +73,8 @@ public class FixedLenghtContentBasedDataRouter extends FileContentBasedRouter {
 						public Void doInTransaction(TransactionStatus status) {
 							processFile(fileRouteTemplate, file);
 							
-							entityManager.flush();
-							entityManager.clear();
+							getSession().flush();
+							getSession().clear();
 							
 							return null;
 						}
@@ -90,6 +88,7 @@ public class FixedLenghtContentBasedDataRouter extends FileContentBasedRouter {
 			logger.error(e.getMessage(), e);
 		}
 	}
+	
 	
 	public void processFile(FileRouteTemplate fileRouteTemplate, File file) {
 		try {
@@ -150,8 +149,8 @@ public class FixedLenghtContentBasedDataRouter extends FileContentBasedRouter {
 									public Void doInTransaction(TransactionStatus status) {
 										messageProcessor.processMessage(message);
 										
-										entityManager.flush();
-										entityManager.clear();
+										getSession().flush();
+										getSession().clear();
 
 										return null;
 									}
@@ -169,8 +168,8 @@ public class FixedLenghtContentBasedDataRouter extends FileContentBasedRouter {
 							
 							// BATCH DE 100 LINHAS
 							if ((lineNumber % 100) == 0) {
-								entityManager.flush();
-								entityManager.clear();
+								getSession().flush();
+								getSession().clear();
 							}
 						}
 					}

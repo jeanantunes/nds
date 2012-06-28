@@ -3,17 +3,14 @@ package br.com.abril.nds.repository.impl;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.xmlbeans.impl.xb.xsdschema.RestrictionDocument.Restriction;
-import org.hibernate.Criteria;
 import org.hibernate.Query;
-import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.model.planejamento.ChamadaEncalheCota;
 import br.com.abril.nds.repository.ChamadaEncalheCotaRepository;
 
 @Repository
-public class ChamadaEncalheCotaRepositoryImpl extends AbstractRepository<ChamadaEncalheCota, Long> implements ChamadaEncalheCotaRepository {
+public class ChamadaEncalheCotaRepositoryImpl extends AbstractRepositoryModel<ChamadaEncalheCota, Long> implements ChamadaEncalheCotaRepository {
 
 	public ChamadaEncalheCotaRepositoryImpl() {
 		super(ChamadaEncalheCota.class);

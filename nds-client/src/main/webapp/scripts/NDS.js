@@ -559,3 +559,29 @@ function sub_help(){
 	$('#sub_financeiro').hide();
 	$('#sub_administracao').hide();
 }
+
+function mostra_status(opcao) {
+	if(opcao == 'RECEBIDA'){
+		opcao = '1';
+	}else{
+		opcao = '2';
+	}
+	
+	var grid_1 = document.getElementById("notaRecebida"); 
+	var grid_2 = document.getElementById("pendenteRecEmissao");  
+	   
+	switch (opcao) {   
+		case '1':   
+			grid_1.style.display = "";   
+			grid_2.style.display = "none";     
+		break;   
+		case '2':   
+			grid_1.style.display = "none";   
+			grid_2.style.display = "";      
+		break; 
+		default:   
+			grid_1.style.display = "none";   
+			grid_2.style.display = "none";   
+		break;   
+	}   
+}

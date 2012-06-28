@@ -14,7 +14,7 @@ import br.com.abril.nds.repository.ChequeImageRepository;
  *
  */
 @Repository
-public class ChequeImageRepositoryImpl extends AbstractRepository<ChequeImage, Long>
+public class ChequeImageRepositoryImpl extends AbstractRepositoryModel<ChequeImage, Long>
 		implements ChequeImageRepository {
 
 	public ChequeImageRepositoryImpl() {

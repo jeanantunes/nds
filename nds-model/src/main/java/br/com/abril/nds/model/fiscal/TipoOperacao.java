@@ -33,5 +33,12 @@ public enum TipoOperacao {
 		this.descricao = descricao;
 	}
 	
-	
+	/**
+	 * @see java.lang.Enum#toString()
+	 */
+	@Override
+	public String toString() {
+		return String.valueOf(this.ordinal());
+	}
+
 }

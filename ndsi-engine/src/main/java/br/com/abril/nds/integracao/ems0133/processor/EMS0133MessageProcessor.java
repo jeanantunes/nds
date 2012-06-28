@@ -1,19 +1,19 @@
 package br.com.abril.nds.integracao.ems0133.processor;
 
-import java.io.FileWriter;
+import java.io.FileWriter; 
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
 
+import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.integracao.ems0133.outbound.EMS0133Output;
 import br.com.abril.nds.integracao.engine.MessageHeaderProperties;
@@ -25,14 +25,14 @@ import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
 import br.com.abril.nds.model.planejamento.Lancamento;
+import br.com.abril.nds.repository.impl.AbstractRepository;
 
 import com.ancientprogramming.fixedformat4j.format.FixedFormatManager;
 
 @Component
-public class EMS0133MessageProcessor implements MessageProcessor {
 
-	@PersistenceContext
-	private EntityManager entityManager;
+public class EMS0133MessageProcessor extends AbstractRepository implements MessageProcessor  {
+
 
 	@Autowired
 	private NdsiLoggerFactory ndsiLoggerFactory;
@@ -50,9 +50,10 @@ public class EMS0133MessageProcessor implements MessageProcessor {
 	}
 
 	@Override
+	
 	public void processMessage(Message message) {	
 		
-		Distribuidor distribuidor = distribuidorService.findDistribuidor();
+		Distribuidor distribuidor = distribuidorService.obter();
 		
 		Date data = new Date();
 		
@@ -66,7 +67,7 @@ public class EMS0133MessageProcessor implements MessageProcessor {
 		sql.append("JOIN p.fornecedores f ");
 		sql.append("WHERE l.dataRecolhimentoDistribuidor = :dataOperacao)");
 		
-		Query query = entityManager.createQuery(sql.toString());
+		Query query = getSession().createQuery(sql.toString());
 
 		query.setParameter("dataOperacao", distribuidor.getDataOperacao());
 		
@@ -75,7 +76,7 @@ public class EMS0133MessageProcessor implements MessageProcessor {
 		try {
 
 			@SuppressWarnings("unchecked")
-			List<Lancamento> lancamentos = query.getResultList();
+			List<Lancamento> lancamentos = query.list();
 			
 			PrintWriter print = new PrintWriter(new FileWriter(message.getHeader().get(MessageHeaderProperties.OUTBOUND_FOLDER.getValue())+"/"+sdf.format(data)+".drr"));	
 			

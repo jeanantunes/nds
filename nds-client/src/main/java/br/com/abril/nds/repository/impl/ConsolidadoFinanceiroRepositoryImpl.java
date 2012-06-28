@@ -1,9 +1,13 @@
 package br.com.abril.nds.repository.impl;
 
+import java.util.Date;
 import java.util.List;
 
+import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.hibernate.transform.ResultTransformer;
 import org.springframework.stereotype.Repository;
@@ -23,7 +27,7 @@ import br.com.abril.nds.vo.PaginacaoVO;
 
 @Repository
 public class ConsolidadoFinanceiroRepositoryImpl extends
-		AbstractRepository<ConsolidadoFinanceiroCota, Long> implements
+		AbstractRepositoryModel<ConsolidadoFinanceiroCota, Long> implements
 		ConsolidadoFinanceiroRepository {
 
 	public ConsolidadoFinanceiroRepositoryImpl() {
@@ -406,5 +410,26 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 		query.setParameter("idMovimentoFinanceiro", idMovimentoFinanceiro);
 		
 		return (ConsolidadoFinanceiroCota) query.uniqueResult();
+	}
+
+	/* (non-Javadoc)
+	 * @see br.com.abril.nds.repository.ConsolidadoFinanceiroRepository#buscarUltimaBaixaAutomaticaDia(java.util.Date)
+	 */
+	@Override
+	public Date buscarUltimaDividaGeradaDia(Date dataOperacao) {
+		Criteria criteria = getSession().createCriteria(ConsolidadoFinanceiroCota.class);
+		criteria.add(Restrictions.eq("dataConsolidado", dataOperacao));
+		criteria.setProjection(Projections.max("dataConsolidado"));
+		return (Date) criteria.uniqueResult();
+	}
+
+	/* (non-Javadoc)
+	 * @see br.com.abril.nds.repository.ConsolidadoFinanceiroRepository#buscarDiaUltimaBaixaAutomatica()
+	 */
+	@Override
+	public Date buscarDiaUltimaDividaGerada() {
+		Criteria criteria = getSession().createCriteria(ConsolidadoFinanceiroCota.class);
+		criteria.setProjection(Projections.max("dataConsolidado"));
+		return (Date) criteria.uniqueResult();
 	}
 }

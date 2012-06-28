@@ -1,5 +1,6 @@
 package br.com.abril.nds.service.impl;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +44,18 @@ public class ExpedicaoServiceImpl implements ExpedicaoService {
 	public Long obterQuantidadeResumoExpedicaoPorProduto(FiltroResumoExpedicaoDTO filtro) {
 		
 		return expedicaoRepository.obterQuantidadeResumoExpedicaoPorProduto(filtro);
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public Date obterDataUltimaExpedicaoDia(Date dataOperacao) {
+		return expedicaoRepository.obterUltimaExpedicaoDia(dataOperacao);
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public Date obterDataUltimaExpedicao() {
+		return expedicaoRepository.obterDataUltimaExpedicao();
 	}
 
 }

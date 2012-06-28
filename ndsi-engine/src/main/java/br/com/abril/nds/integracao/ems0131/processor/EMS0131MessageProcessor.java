@@ -1,17 +1,17 @@
 package br.com.abril.nds.integracao.ems0131.processor;
 
-import java.io.FileWriter;
+import java.io.FileWriter; 
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
 
-import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
 
+import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.integracao.ems0131.outbound.EMS0131Output;
 import br.com.abril.nds.integracao.engine.MessageHeaderProperties;
@@ -23,14 +23,13 @@ import br.com.abril.nds.model.cadastro.EnderecoCota;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.TelefoneCota;
 import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
+import br.com.abril.nds.repository.impl.AbstractRepository;
 
 import com.ancientprogramming.fixedformat4j.format.FixedFormatManager;
 
 @Component
-public class EMS0131MessageProcessor implements MessageProcessor {
-	
-	@PersistenceContext
-	private EntityManager entityManager;
+
+public class EMS0131MessageProcessor extends AbstractRepository implements MessageProcessor  {
 	
 	@Autowired
 	private FixedFormatManager fixedFormatManager;
@@ -39,6 +38,7 @@ public class EMS0131MessageProcessor implements MessageProcessor {
 	private NdsiLoggerFactory ndsiLoggerFactory;
 	
 	@Override
+	
 	public void processMessage(Message message) {
 		
 		StringBuilder sql = new StringBuilder();
@@ -51,13 +51,13 @@ public class EMS0131MessageProcessor implements MessageProcessor {
 		sql.append("JOIN FETCH t.telefone tel ");
 		
 		
-		Query query = entityManager.createQuery(sql.toString());
+		Query query = getSession().createQuery(sql.toString());
 		
 		
 		
 		try {
 			@SuppressWarnings("unchecked")
-			List<Cota> cotas =  query.getResultList();
+			List<Cota> cotas =  query.list();
 			
 			PrintWriter print = new PrintWriter(new FileWriter(message.getHeader().get(MessageHeaderProperties.OUTBOUND_FOLDER.getValue())+"/COTA.txt"));
 			

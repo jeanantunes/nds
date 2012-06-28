@@ -23,7 +23,7 @@ import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
  *
  */
 @Repository
-public class TipoProdutoRepositoryImpl extends AbstractRepository<TipoProduto,Long> implements TipoProdutoRepository {
+public class TipoProdutoRepositoryImpl extends AbstractRepositoryModel<TipoProduto,Long> implements TipoProdutoRepository {
 
 	public TipoProdutoRepositoryImpl() {
 		super(TipoProduto.class);

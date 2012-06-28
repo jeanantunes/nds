@@ -6,7 +6,7 @@ import br.com.abril.nds.model.cadastro.ParametrosDistribuidorEmissaoDocumento;
 import br.com.abril.nds.repository.ParametrosDistribuidorEmissaoDocumentoRepository;
 
 @Repository
-public class ParametrosDistribuidorEmissaoDocumentoRepositoryImpl extends AbstractRepository<ParametrosDistribuidorEmissaoDocumento, Long> implements ParametrosDistribuidorEmissaoDocumentoRepository {
+public class ParametrosDistribuidorEmissaoDocumentoRepositoryImpl extends AbstractRepositoryModel<ParametrosDistribuidorEmissaoDocumento, Long> implements ParametrosDistribuidorEmissaoDocumentoRepository {
 
 	public ParametrosDistribuidorEmissaoDocumentoRepositoryImpl() {
 		super(ParametrosDistribuidorEmissaoDocumento.class);

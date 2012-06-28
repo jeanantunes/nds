@@ -25,7 +25,7 @@ import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
  *
  */
 @Repository
-public class EntregadorRepositoryImpl extends AbstractRepository<Entregador, Long> 
+public class EntregadorRepositoryImpl extends AbstractRepositoryModel<Entregador, Long> 
 									  implements EntregadorRepository {
 
 	/**

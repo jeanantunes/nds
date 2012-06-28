@@ -234,7 +234,7 @@ public class Distribuidor {
 	@Column(name = "PRAZO_AVISO_PREVIO_VALIDADE_GARANTIA", nullable = true)
 	private Integer prazoAvisoPrevioValidadeGarantia;
 
-	@Column(name="QTD_DIAS_LIMITE_PARA_REPROG_LANCAMENTO", nullable = true)
+	@Column(name="QTD_DIAS_LIMITE_PARA_REPROG_LANCAMENTO", nullable = false)
 	private Integer qtdDiasLimiteParaReprogLancamento;
 	
 	public Long getId() {
