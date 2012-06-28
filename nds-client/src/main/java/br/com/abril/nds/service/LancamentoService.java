@@ -81,6 +81,32 @@ public interface LancamentoService {
 	public abstract List<InformeEncalheDTO> obterLancamentoInformeRecolhimento(
 			Long idFornecedor, Calendar dataInicioRecolhimento,
 			Calendar dataFimRecolhimento);
+
+	/**
+	 * Burca último balançeamento de lançamento realizado no dia
+	 * @param dataOperacao
+	 * @return Date
+	 */
+	public Date buscarUltimoBalanceamentoLancamentoRealizadoDia(Date dataOperacao);
+
+	/**
+	 * Busca último balanceamento de lançamento realizado no sistema
+	 * @return Date
+	 */
+	public Date buscarDiaUltimoBalanceamentoLancamentoRealizado();
+
+	/**
+	 * Busca último balanceamento de recolhimento realizado no dia
+	 * @param dataOperacao
+	 * @return Date
+	 */
+	public Date buscarUltimoBalanceamentoRecolhimentoRealizadoDia(Date dataOperacao);
+
+	/**
+	 * Busca último balanceamento de recolhimento realizado no sistema
+	 * @return Date
+	 */
+	public Date buscarDiaUltimoBalanceamentoRecolhimentoRealizado();
 	
 }
  

@@ -4,9 +4,10 @@ import br.com.abril.nds.model.cadastro.Distribuidor;
 
 public interface DistribuidorService {
 	
-	public Distribuidor findDistribuidor ();
+	public Distribuidor obter ();
 	
 	public boolean isDistribuidor(Integer codigo);
 	
+	public void alterar(Distribuidor distribuidor);
 
 }

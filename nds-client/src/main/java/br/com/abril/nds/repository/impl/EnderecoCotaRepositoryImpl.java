@@ -12,7 +12,7 @@ import br.com.abril.nds.model.cadastro.EnderecoCota;
 import br.com.abril.nds.repository.EnderecoCotaRepository;
 
 @Repository
-public class EnderecoCotaRepositoryImpl extends AbstractRepository<EnderecoCota, Long>
+public class EnderecoCotaRepositoryImpl extends AbstractRepositoryModel<EnderecoCota, Long>
 		implements EnderecoCotaRepository {
 
 	public EnderecoCotaRepositoryImpl() {

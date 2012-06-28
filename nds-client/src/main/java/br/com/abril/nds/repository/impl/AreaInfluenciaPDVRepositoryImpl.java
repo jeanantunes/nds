@@ -10,7 +10,7 @@ import br.com.abril.nds.model.cadastro.pdv.AreaInfluenciaPDV;
 import br.com.abril.nds.repository.AreaInfluenciaPDVRepository;
 
 @Repository
-public class AreaInfluenciaPDVRepositoryImpl extends AbstractRepository<AreaInfluenciaPDV, Long> implements AreaInfluenciaPDVRepository {
+public class AreaInfluenciaPDVRepositoryImpl extends AbstractRepositoryModel<AreaInfluenciaPDV, Long> implements AreaInfluenciaPDVRepository {
 
 	public AreaInfluenciaPDVRepositoryImpl() {
 		super(AreaInfluenciaPDV.class);

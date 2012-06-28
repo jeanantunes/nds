@@ -1,36 +1,37 @@
 package br.com.abril.nds.integracao.ems0113.processor;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.integracao.engine.MessageProcessor;
 import br.com.abril.nds.integracao.engine.data.Message;
 import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;
 import br.com.abril.nds.integracao.model.canonic.EMS0113Input;
-import br.com.abril.nds.integracao.service.impl.DistribuidorServiceImpl;
+import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.cadastro.DescontoLogistica;
 import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
+import br.com.abril.nds.repository.impl.AbstractRepository;
 
 /**
  * @author Jones.Costa
  * @version 1.0
  */
 @Component
-public class EMS0113MessageProcessor implements MessageProcessor {
 
-	@PersistenceContext
-	private EntityManager entityManager;
+public class EMS0113MessageProcessor extends AbstractRepository implements MessageProcessor  {
+
+
 
 	@Autowired
 	private NdsiLoggerFactory ndsiLoggerFactory;
 	
 	@Autowired
-	private DistribuidorServiceImpl distribuidorServiceImpl;
+	private DistribuidorService distribuidorServiceImpl;
 	
 	@Override
+	
 	public void processMessage(Message message) {
 
 		EMS0113Input input = (EMS0113Input) message.getBody();
@@ -45,7 +46,7 @@ public class EMS0113MessageProcessor implements MessageProcessor {
 			descontoLogistica.setPercentualPrestacaoServico(input.getPercentPrestServico());
 			descontoLogistica.setDataInicioVigencia(input.getDataInicioDesconto());
 			
-			entityManager.persist(descontoLogistica);
+			getSession().persist(descontoLogistica);
 			
 		}
 

@@ -12,7 +12,7 @@ import br.com.abril.nds.model.cadastro.TipoParametroSistema;
 import br.com.abril.nds.repository.ParametroSistemaRepository;
 
 @Repository
-public class ParametroSistemaRepositoryImpl extends AbstractRepository<ParametroSistema, Long>
+public class ParametroSistemaRepositoryImpl extends AbstractRepositoryModel<ParametroSistema, Long>
 		implements ParametroSistemaRepository {
 
 	public ParametroSistemaRepositoryImpl() {

@@ -25,14 +25,15 @@ import br.com.abril.nds.dto.filtro.FiltroCurvaABCDistribuidorDTO;
 import br.com.abril.nds.dto.filtro.FiltroCurvaABCEditorDTO;
 import br.com.abril.nds.dto.filtro.FiltroPesquisarHistoricoEditorDTO;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.service.CotaService;
-import br.com.abril.nds.service.DistribuidorService;
 import br.com.abril.nds.service.EditorService;
 import br.com.abril.nds.service.EnderecoService;
 import br.com.abril.nds.service.FornecedorService;
+import br.com.abril.nds.service.RelatorioVendasService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.DateUtil;
@@ -73,6 +74,9 @@ public class RelatorioVendasController {
 	@Autowired
 	private FornecedorService fornecedorService;
 	
+	@Autowired
+	private RelatorioVendasService relatorioVendasService;
+
 	@Autowired
 	private DistribuidorService distribuidorService;
 
@@ -159,8 +163,8 @@ public class RelatorioVendasController {
 			}
 		}
 		
-		List<RegistroCurvaABCDistribuidorVO> lista = distribuidorService.obterCurvaABCDistribuidor(filtroSessao);
-		ResultadoCurvaABCDistribuidor resultadoTotal = distribuidorService.obterCurvaABCDistribuidorTotal(filtroSessao);
+		List<RegistroCurvaABCDistribuidorVO> lista = relatorioVendasService.obterCurvaABCDistribuidor(filtroSessao);
+		ResultadoCurvaABCDistribuidor resultadoTotal = relatorioVendasService.obterCurvaABCDistribuidorTotal(filtroSessao);
 		
 		String nomeArquivo = "";
 		
@@ -428,7 +432,7 @@ public class RelatorioVendasController {
 
 		List<RegistroCurvaABCDistribuidorVO> resultadoCurvaABCDistribuidor = null;
 		try {
-			resultadoCurvaABCDistribuidor = distribuidorService.obterCurvaABCDistribuidor(filtro);
+			resultadoCurvaABCDistribuidor = relatorioVendasService.obterCurvaABCDistribuidor(filtro);
 		} catch (Exception e) {
 
 			if (e instanceof ValidacaoException) {
@@ -455,7 +459,7 @@ public class RelatorioVendasController {
 			tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
 			tableModel.setTotal(qtdeTotalRegistros);
 
-			ResultadoCurvaABCDistribuidor resultado = distribuidorService.obterCurvaABCDistribuidorTotal(filtro);
+			ResultadoCurvaABCDistribuidor resultado = relatorioVendasService.obterCurvaABCDistribuidorTotal(filtro);
 			resultado.setTableModel(tableModel);
 			
 			result.use(Results.json()).withoutRoot().from(resultado).recursive().serialize();

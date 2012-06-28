@@ -27,7 +27,7 @@ import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
  *
  */
 @Repository
-public class BoxRepositoryImpl extends AbstractRepository<Box,Long> implements BoxRepository {
+public class BoxRepositoryImpl extends AbstractRepositoryModel<Box,Long> implements BoxRepository {
 
 	/**
 	 * Construtor padrão

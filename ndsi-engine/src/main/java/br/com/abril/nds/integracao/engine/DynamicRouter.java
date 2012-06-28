@@ -2,6 +2,7 @@ package br.com.abril.nds.integracao.engine;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import br.com.abril.nds.integracao.engine.data.CouchDBImportRouteTemplate;
 import br.com.abril.nds.integracao.engine.data.FixedLengthRouteTemplate;

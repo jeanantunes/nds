@@ -32,7 +32,7 @@ import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
 import br.com.abril.nds.vo.PaginacaoVO;
 
 @Repository
-public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepository<MovimentoEstoqueCota, Long> implements MovimentoEstoqueCotaRepository {
+public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<MovimentoEstoqueCota, Long> implements MovimentoEstoqueCotaRepository {
 
 	public MovimentoEstoqueCotaRepositoryImpl() {
 		super(MovimentoEstoqueCota.class);

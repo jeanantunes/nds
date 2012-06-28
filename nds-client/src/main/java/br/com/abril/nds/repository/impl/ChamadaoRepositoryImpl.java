@@ -22,7 +22,7 @@ import br.com.abril.nds.repository.ChamadaoRepository;
  * @author Discover Technology
  */
 @Repository
-public class ChamadaoRepositoryImpl extends AbstractRepository<Cota,Long> implements ChamadaoRepository {
+public class ChamadaoRepositoryImpl extends AbstractRepositoryModel<Cota,Long> implements ChamadaoRepository {
 
 	
 	/**

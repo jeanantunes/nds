@@ -4,11 +4,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import br.com.abril.nds.integracao.model.canonic.InterfaceEnum;
 import br.com.abril.nds.integracao.ems0110.processor.EMS0110MessageProcessor;
 import br.com.abril.nds.integracao.engine.MessageProcessor;
 import br.com.abril.nds.integracao.engine.RouteInterface;
 import br.com.abril.nds.integracao.engine.data.CouchDBImportRouteTemplate;
+import br.com.abril.nds.integracao.model.canonic.InterfaceEnum;
 
 @Component
 @Scope("prototype")

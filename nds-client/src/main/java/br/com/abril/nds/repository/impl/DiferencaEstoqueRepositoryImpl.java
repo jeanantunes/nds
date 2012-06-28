@@ -23,7 +23,7 @@ import br.com.abril.nds.repository.DiferencaEstoqueRepository;
  *
  */
 @Repository
-public class DiferencaEstoqueRepositoryImpl extends AbstractRepository<Diferenca, Long> implements DiferencaEstoqueRepository {
+public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Diferenca, Long> implements DiferencaEstoqueRepository {
 
 	/**
 	 * Construtor.

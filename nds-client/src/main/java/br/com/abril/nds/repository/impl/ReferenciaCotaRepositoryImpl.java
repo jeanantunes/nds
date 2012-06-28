@@ -7,7 +7,7 @@ import br.com.abril.nds.model.cadastro.ReferenciaCota;
 import br.com.abril.nds.repository.ReferenciaCotaRepository;
 
 @Repository
-public class ReferenciaCotaRepositoryImpl extends AbstractRepository<ReferenciaCota, Long> implements ReferenciaCotaRepository {
+public class ReferenciaCotaRepositoryImpl extends AbstractRepositoryModel<ReferenciaCota, Long> implements ReferenciaCotaRepository {
 
 	public ReferenciaCotaRepositoryImpl() {
 		super(ReferenciaCota.class);

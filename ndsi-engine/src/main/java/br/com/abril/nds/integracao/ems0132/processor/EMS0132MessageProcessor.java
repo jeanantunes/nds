@@ -1,6 +1,6 @@
 package br.com.abril.nds.integracao.ems0132.processor;
 
-import java.io.File;
+import java.io.File; 
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -8,12 +8,11 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-
+import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.integracao.ems0132.outbound.EMS0132Output;
 import br.com.abril.nds.integracao.engine.MessageHeaderProperties;
@@ -26,6 +25,7 @@ import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
 import br.com.abril.nds.model.planejamento.Estudo;
+import br.com.abril.nds.repository.impl.AbstractRepository;
 import br.com.abril.nds.util.DateUtil;
 
 import com.ancientprogramming.fixedformat4j.format.FixedFormatManager;
@@ -36,11 +36,9 @@ import com.ancientprogramming.fixedformat4j.format.FixedFormatManager;
  * @author Discover Technology
  */
 @Component
-public class EMS0132MessageProcessor implements MessageProcessor {
 
+public class EMS0132MessageProcessor extends AbstractRepository implements MessageProcessor  {
 
-	@PersistenceContext
-	private EntityManager entityManager;
 	
 	@Autowired
 	private FixedFormatManager fixedFormatManager; 
@@ -86,6 +84,7 @@ public class EMS0132MessageProcessor implements MessageProcessor {
 	 * @return List<Estudo>
 	 */
 	@SuppressWarnings("unchecked")
+	
 	private List<Estudo> buscarLancamentosPorDataOperacao(Message message, Date dataOperacao) {
 		
 		String hql = " select estudo from Estudo estudo  ";
@@ -96,11 +95,11 @@ public class EMS0132MessageProcessor implements MessageProcessor {
 		
 		try {
 		
-			Query query = this.entityManager.createQuery(hql);
+			Query query = this.getSession().createQuery(hql);
 					
 			query.setParameter("dataOperacao", dataOperacao);
 			
-			return query.getResultList();
+			return query.list();
 			
 		} catch (Exception e) {
 			throw new RuntimeException(e);
@@ -203,7 +202,7 @@ public class EMS0132MessageProcessor implements MessageProcessor {
 	 */
 	private Distribuidor obterDistribuidor() {
 		
-		return this.distribuidorService.findDistribuidor();
+		return this.distribuidorService.obter();
 	}
 	
 }

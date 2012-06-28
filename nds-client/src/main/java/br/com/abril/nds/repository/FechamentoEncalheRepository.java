@@ -9,7 +9,6 @@ import br.com.abril.nds.dto.filtro.FiltroFechamentoEncalheDTO;
 import br.com.abril.nds.model.estoque.ControleFechamentoEncalhe;
 import br.com.abril.nds.model.estoque.FechamentoEncalhe;
 import br.com.abril.nds.model.estoque.pk.FechamentoEncalhePK;
-import br.com.abril.nds.model.planejamento.ChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.ChamadaEncalheCota;
 
 public interface FechamentoEncalheRepository extends Repository<FechamentoEncalhe, FechamentoEncalhePK> {
@@ -33,4 +32,11 @@ public interface FechamentoEncalheRepository extends Repository<FechamentoEncalh
 	int buscaQuantidadeConferencia(Date dataEncalhe, boolean porBox);
 	
 	Date obterChamdasEncalhePostergadas(Long idCota, Date dataEncalhe);
+
+	ControleFechamentoEncalhe buscaControleFechamentoEncalhePorData(Date dataFechamentoEncalhe);
+
+	Date buscaDataUltimoControleFechamentoEncalhe();
+
+	Date buscarUltimoFechamentoEncalheDia(Date dataFechamentoEncalhe);
+	
 }
