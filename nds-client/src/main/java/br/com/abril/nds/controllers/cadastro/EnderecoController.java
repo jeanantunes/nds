@@ -16,7 +16,6 @@ import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.dne.Bairro;
 import br.com.abril.nds.model.dne.Localidade;
 import br.com.abril.nds.model.dne.Logradouro;
-import br.com.abril.nds.model.dne.TipoLogradouro;
 import br.com.abril.nds.service.EnderecoService;
 import br.com.abril.nds.util.CellModel;
 import br.com.abril.nds.util.ItemAutoComplete;
@@ -60,7 +59,7 @@ public class EnderecoController {
 
 	@Autowired
 	private HttpSession session;
-		
+
 	@Autowired
 	private EnderecoService enderecoService;
 	
@@ -195,9 +194,6 @@ public class EnderecoController {
 			enderecoAssociacao.getEndereco().setCep(retirarFormatacaoCep(enderecoAssociacao.getEndereco().getCep()));
 		}
 		
-		if(tela.equals(Tela.ENDERECO_PDV))
-			validarDuplicidadeEnderecoPDV();
-		
 		List<EnderecoAssociacaoDTO> listaEnderecoAssociacao = this.obterEnderecosSessaoSalvar();
 		
 		if (enderecoAssociacao.getId() != null){
@@ -228,7 +224,12 @@ public class EnderecoController {
 				}
 			}
 		} else {
+
+			if (tela.equals(Tela.ENDERECO_PDV)) {
 			
+				validarDuplicidadeEnderecoPDV();
+			}
+
 			listaEnderecoAssociacao.add(enderecoAssociacao);
 		}
 
@@ -309,7 +310,7 @@ public class EnderecoController {
 				
 				String nomeExibicao = localidade.getNome();
 				
-				String chave = localidade.getCodigoMunicipioIBGE();
+				Long chave = localidade.getCodigoMunicipioIBGE();
 				
 				listaAutoComplete.add(new ItemAutoComplete(nomeExibicao, null, chave));
 			}
@@ -318,9 +319,9 @@ public class EnderecoController {
 		this.result.use(Results.json()).from(listaAutoComplete, "result").include("value", "chave").serialize();
 	}
 	
-	public void autoCompletarBairroPorNome(String codigoIBGE, String nomeBairro) {
+	public void autoCompletarBairroPorNome(Long codigoIBGE, String nomeBairro) {
 
-		if (codigoIBGE == null || codigoIBGE.isEmpty()) {
+		if (codigoIBGE == null) {
 			
 			this.result.use(Results.json()).from("", "result").serialize();
 			
@@ -337,7 +338,7 @@ public class EnderecoController {
 				
 				String nomeExibicao = bairro.getNome();
 				
-				String chave = bairro.getId();
+				Long chave = bairro.getId();
 				
 				listaAutoComplete.add(new ItemAutoComplete(nomeExibicao, null, chave));
 			}
@@ -365,33 +366,12 @@ public class EnderecoController {
 				
 				String nomeExibicao = logradouro.getNome();
 				
-				String chave = logradouro.getId();
+				Long chave = logradouro.getId();
 				
 				listaAutoComplete.add(new ItemAutoComplete(nomeExibicao, null, chave));
 			}
 		}
 
-		this.result.use(Results.json()).from(listaAutoComplete, "result").include("value", "chave").serialize();
-	}
-
-	public void autoCompletarTipoLogradouroPorNome(String nomeTipoLogradouro) {
-		
-		List<TipoLogradouro> tiposLogradouro = this.enderecoService.obterTiposLogradouroNome(nomeTipoLogradouro);
-		
-		List<ItemAutoComplete> listaAutoComplete = new ArrayList<ItemAutoComplete>();
-		
-		if (tiposLogradouro != null && !tiposLogradouro.isEmpty()) {
-			
-			for (TipoLogradouro tipoLogradouro : tiposLogradouro) {
-				
-				String nomeExibicao = tipoLogradouro.getNome();
-				
-				String chave = tipoLogradouro.getId();
-				
-				listaAutoComplete.add(new ItemAutoComplete(nomeExibicao, null, chave));
-			}
-		}
-		
 		this.result.use(Results.json()).from(listaAutoComplete, "result").include("value", "chave").serialize();
 	}
 
@@ -546,6 +526,11 @@ public class EnderecoController {
 		
 		List<String> listaMensagens = new ArrayList<String>();
 		
+		if (enderecoAssociacao.getTipoEndereco() == null) {
+			
+			listaMensagens.add("O preenchimento do campo [Tipo Endereco] é obrigatório.");
+		}
+
 		if (endereco.getCep() == null || endereco.getCep().isEmpty()) {
 			
 			listaMensagens.add("O preenchimento do campo [CEP] é obrigatório.");

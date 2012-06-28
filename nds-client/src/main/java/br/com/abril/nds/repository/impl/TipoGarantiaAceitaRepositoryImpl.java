@@ -6,7 +6,7 @@ import br.com.abril.nds.model.cadastro.TipoGarantiaAceita;
 import br.com.abril.nds.repository.TipoGarantiaAceitaRepository;
 
 @Repository
-public class TipoGarantiaAceitaRepositoryImpl extends AbstractRepository<TipoGarantiaAceita, Long> implements TipoGarantiaAceitaRepository {
+public class TipoGarantiaAceitaRepositoryImpl extends AbstractRepositoryModel<TipoGarantiaAceita, Long> implements TipoGarantiaAceitaRepository {
 
 	public TipoGarantiaAceitaRepositoryImpl() {
 		super(TipoGarantiaAceita.class);

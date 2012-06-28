@@ -19,7 +19,7 @@ import br.com.abril.nds.repository.ItemNotaFiscalEntradaRepository;
  */
 @Repository
 public class ItemNotaFiscalEntradaRepositoryImpl extends
-		AbstractRepository<ItemNotaFiscalEntrada, Long> implements ItemNotaFiscalEntradaRepository {
+		AbstractRepositoryModel<ItemNotaFiscalEntrada, Long> implements ItemNotaFiscalEntradaRepository {
 
 	/**
 	 * Construtor padrão.

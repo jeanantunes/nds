@@ -15,7 +15,7 @@ import javax.persistence.Enumerated;
 		@AttributeOverride(name = "cst", column = @Column(name = "CST_ICMS", length = 2, nullable = false)),
 		@AttributeOverride(name = "valorBaseCalculo", column = @Column(name = "VLR_BASE_CALC_ICMS", precision = 5, scale = 2, nullable = true)),
 		@AttributeOverride(name = "aliquota", column = @Column(name = "ALIQUOTA_ICMS", precision = 5, scale = 2, nullable = true)),
-		@AttributeOverride(name = "valor", column = @Column(name = "VLR_ICMS", precision = 5, scale = 2, nullable = true)),
+		@AttributeOverride(name = "valor", column = @Column(name = "VLR_ICMS", precision = 5, scale = 2, nullable = true))
 
 })
 public class ICMS extends ICMSBase implements Serializable {

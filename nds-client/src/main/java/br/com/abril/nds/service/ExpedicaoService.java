@@ -1,9 +1,11 @@
 package br.com.abril.nds.service;
 
+import java.util.Date;
 import java.util.List;
 
 import br.com.abril.nds.dto.ExpedicaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroResumoExpedicaoDTO;
+import br.com.abril.nds.model.estoque.Expedicao;
 
 /**
  * Interface responsável por definir as regras de implementação referente a expedição de lançamentos de produtos.
@@ -32,5 +34,18 @@ public interface ExpedicaoService {
 	 * @return List<ExpedicaoDTO>
 	 */
 	Long obterQuantidadeResumoExpedicaoPorProduto(FiltroResumoExpedicaoDTO filtro);
-	
+
+	/**
+	 * Obtém a última expedição do dia
+	 * @param dataOperacao
+	 * @return Date
+	 */
+	Date obterDataUltimaExpedicaoDia(Date dataOperacao);
+
+	/**
+	 * Obtém a última expedição realizada
+	 * @return Date
+	 */
+	Date obterDataUltimaExpedicao();
+
 }

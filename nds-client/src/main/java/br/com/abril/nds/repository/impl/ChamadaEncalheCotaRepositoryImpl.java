@@ -10,7 +10,7 @@ import br.com.abril.nds.model.planejamento.ChamadaEncalheCota;
 import br.com.abril.nds.repository.ChamadaEncalheCotaRepository;
 
 @Repository
-public class ChamadaEncalheCotaRepositoryImpl extends AbstractRepository<ChamadaEncalheCota, Long> implements ChamadaEncalheCotaRepository {
+public class ChamadaEncalheCotaRepositoryImpl extends AbstractRepositoryModel<ChamadaEncalheCota, Long> implements ChamadaEncalheCotaRepository {
 
 	public ChamadaEncalheCotaRepositoryImpl() {
 		super(ChamadaEncalheCota.class);
@@ -158,5 +158,19 @@ public class ChamadaEncalheCotaRepositoryImpl extends AbstractRepository<Chamada
 		
 	}
 	
-	
+	public ChamadaEncalheCota buscarPorChamadaEncalheECota(Long idChamadaEncalhe,Long idCota){
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select o from ChamadaEncalheCota o ")
+			.append(" WHERE o.cota.id =:idCota ")
+			.append(" AND o.chamadaEncalhe.id=:idChamadaEncalhe ");
+		
+		Query query  = getSession().createQuery(hql.toString());
+		query.setParameter("idChamadaEncalhe", idChamadaEncalhe);
+		query.setParameter("idCota", idCota);
+		
+		return (ChamadaEncalheCota)query.uniqueResult();
+		
+	}
 }

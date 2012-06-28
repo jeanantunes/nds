@@ -32,6 +32,7 @@ import br.com.abril.nds.dto.filtro.FiltroConsultaDiferencaEstoqueDTO.OrdenacaoCo
 import br.com.abril.nds.dto.filtro.FiltroLancamentoDiferencaEstoqueDTO;
 import br.com.abril.nds.dto.filtro.FiltroLancamentoDiferencaEstoqueDTO.OrdenacaoColunaLancamento;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.StatusConfirmacao;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Cota;
@@ -48,7 +49,6 @@ import br.com.abril.nds.model.planejamento.EstudoCota;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.DiferencaEstoqueService;
-import br.com.abril.nds.service.DistribuidorService;
 import br.com.abril.nds.service.EstudoCotaService;
 import br.com.abril.nds.service.EstudoService;
 import br.com.abril.nds.service.FornecedorService;
@@ -315,8 +315,6 @@ public class DiferencaEstoqueController {
 	@Path("/lancamento/novo")
 	@SuppressWarnings("unchecked")
 	public void carregarNovasDiferencas(String dataMovimentoFormatada, TipoDiferenca tipoDiferenca) {
-		
-		this.validarEntradaDadosNovoLancamento(dataMovimentoFormatada, tipoDiferenca);
 		
 		List<DiferencaVO> listaNovasDiferencas = new ArrayList<DiferencaVO>();
 		
@@ -1422,13 +1420,15 @@ public class DiferencaEstoqueController {
 		
 	}
 	
-	/*
+	/**
 	 * Valida a entrada de dados para pesquisa de lançamentos de diferença de estoque.
 	 * 
 	 * @param dataMovimentoFormatada - data de movimento formatado
 	 * @param tipoDiferenca - tipo de diferença
 	 */
-	private void validarEntradaDadosNovoLancamento(String dataMovimentoFormatada, TipoDiferenca tipoDiferenca) {
+	@Post
+	@Path("/lancamento/novo/validar")
+	public void validarEntradaDadosNovoLancamento(String dataMovimentoFormatada, TipoDiferenca tipoDiferenca) {
 		
 		if (dataMovimentoFormatada == null 
 				|| dataMovimentoFormatada.trim().isEmpty()) {
@@ -1442,6 +1442,8 @@ public class DiferencaEstoqueController {
 			throw new ValidacaoException(
 				TipoMensagem.WARNING, "O preenchimento do campo [Tipo de Diferença] é obrigatório!");
 		}
+		
+		this.result.use(Results.json()).from("").serialize();
 	}
 	
 	/*

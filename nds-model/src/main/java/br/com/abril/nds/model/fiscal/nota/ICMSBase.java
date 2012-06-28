@@ -1,6 +1,7 @@
 package br.com.abril.nds.model.fiscal.nota;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 import javax.persistence.Column;
 import javax.persistence.EnumType;
@@ -20,8 +21,8 @@ public abstract class ICMSBase extends ImpostoProduto implements Serializable {
 	/**
 	 * pRedBC
 	 */
-	@Column(name="PERCENTUAL_REDUCAO",scale=5, precision=2, nullable=true)
-	protected Double percentualReducao;
+	@Column(name="PERCENTUAL_REDUCAO",precision=5, scale=2, nullable=true)
+	protected BigDecimal percentualReducao;
 	
 	
 	/**
@@ -41,14 +42,14 @@ public abstract class ICMSBase extends ImpostoProduto implements Serializable {
 	/**
 	 * @return the percentualReducao
 	 */
-	public Double getPercentualReducao() {
+	public BigDecimal getPercentualReducao() {
 		return percentualReducao;
 	}
 
 	/**
 	 * @param percentualReducao the percentualReducao to set
 	 */
-	public void setPercentualReducao(Double percentualReducao) {
+	public void setPercentualReducao(BigDecimal percentualReducao) {
 		this.percentualReducao = percentualReducao;
 	}
 

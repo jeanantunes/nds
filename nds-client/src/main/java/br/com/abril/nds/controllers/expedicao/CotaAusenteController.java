@@ -19,11 +19,11 @@ import br.com.abril.nds.dto.MovimentoEstoqueCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaAusenteDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaAusenteDTO.ColunaOrdenacao;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.service.CotaAusenteService;
-import br.com.abril.nds.service.DistribuidorService;
 import br.com.abril.nds.service.MovimentoEstoqueCotaService;
 import br.com.abril.nds.service.exception.TipoMovimentoEstoqueInexistenteException;
 import br.com.abril.nds.util.CellModelKeyValue;
@@ -179,7 +179,7 @@ public class CotaAusenteController {
 		
 		if(filtro.getData() != null) {
 			for(CotaAusenteDTO cotaAusenteDTO : listaCotasAusentes) {
-				if(DateUtil.isHoje(DateUtil.parseDataPTBR(cotaAusenteDTO.getData())))
+				if(!DateUtil.isHoje(DateUtil.parseDataPTBR(cotaAusenteDTO.getData())))
 						cotaAusenteDTO.setIdCotaAusente(null);
 			}
 		}

@@ -8,7 +8,11 @@ var ConferenciaEncalhe = {
 	
 	pesquisarCota : function() {
 		
-		var data = [{name : 'numeroCota', value : $("#numeroCota").val()}, { name: 'indObtemDadosFromBD', value : false}];
+		var data = [
+		            {name: 'numeroCota', value : $("#numeroCota").val()}, 
+		            {name: 'indObtemDadosFromBD', value : true},
+		            {name: 'indConferenciaContingencia', value: false}
+		           ];
 		
 		$.postJSON(contextPath + "/devolucao/conferenciaEncalhe/verificarReabertura", data,
 			function(result){
@@ -59,7 +63,12 @@ var ConferenciaEncalhe = {
 							
 						}
 						
-						var data = [{name : 'numeroCota', value : $("#numeroCota").val()}, { name: 'indObtemDadosFromBD', value : true}];
+						var data = [
+						     
+						     {name: 'numeroCota', value : $("#numeroCota").val()}, 
+						     {name: 'indObtemDadosFromBD', value : true},
+						     {name: 'indConferenciaContingencia', value: false}
+						];
 						
 						ConferenciaEncalhe.carregarListaConferencia(data);
 						
@@ -306,7 +315,11 @@ var ConferenciaEncalhe = {
 									
 								}
 								
-								var data = [{name : 'numeroCota', value : $("#numeroCota").val()}, { name: 'indObtemDadosFromBD', value : true}];
+								var data = [
+								  {name: 'numeroCota', 			value : $("#numeroCota").val()}, 
+								  {name: 'indObtemDadosFromBD', value : true},
+								  {name: 'indConferenciaContingencia', value: false}
+								 ];
 								
 								ConferenciaEncalhe.carregarListaConferencia(data);
 								
@@ -744,11 +757,6 @@ var ConferenciaEncalhe = {
 
 	},
 
-	popup_dadosNotaFiscal : function(result) {
-		
-		ConferenciaEncalhe.finaliazarConferenciaPreProcess(result);
-	},
-
 	popup_pesquisar : function() {
 		
 		ConferenciaEncalhe.modalAberta = true;
@@ -856,7 +864,11 @@ var ConferenciaEncalhe = {
 						
 							if(result.tipoMensagem == 'SUCCESS') {
 								
-								var data = [{name : 'numeroCota', value : $("#numeroCota").val()}, { name: 'indObtemDadosFromBD', value : true}];
+								var data = [
+								      {name : 'numeroCota', value : $("#numeroCota").val()}, 
+								      {name: 'indObtemDadosFromBD', value : true},
+								      {name: 'indConferenciaContingencia', value: false}
+								];
 								
 								ConferenciaEncalhe.carregarListaConferencia(data);
 								

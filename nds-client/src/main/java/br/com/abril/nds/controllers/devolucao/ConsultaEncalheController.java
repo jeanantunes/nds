@@ -19,6 +19,7 @@ import br.com.abril.nds.dto.InfoConsultaEncalheDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDTO;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
@@ -26,7 +27,6 @@ import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.service.ConsultaEncalheService;
 import br.com.abril.nds.service.CotaService;
-import br.com.abril.nds.service.DistribuidorService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.DateUtil;
@@ -354,8 +354,8 @@ public class ConsultaEncalheController {
 	 */
 	private void carregarResultadoConsultaEncalhe(ResultadoConsultaEncalheVO resultadoPesquisa, InfoConsultaEncalheDTO infoConsultaEncalhe) {
 		
-		String qtdExemplarDemaisRec 	= getValorQtdeBigDecimalFormatado(infoConsultaEncalhe.getQtdExemplarDemaisRecolhimentos());
-		String qtdExemplarPrimeiroRec 	= getValorQtdeBigDecimalFormatado(infoConsultaEncalhe.getQtdExemplarPrimeiroRecolhimento());
+		String qtdExemplarDemaisRec 	= getValorQtdeIntegerFormatado(infoConsultaEncalhe.getQtdExemplarDemaisRecolhimentos().intValue());
+		String qtdExemplarPrimeiroRec 	= getValorQtdeIntegerFormatado(infoConsultaEncalhe.getQtdExemplarPrimeiroRecolhimento().intValue());
 		String qtdProdutoDemaisRec 		= getValorQtdeIntegerFormatado(infoConsultaEncalhe.getQtdProdutoDemaisRecolhimentos());
 		String qtdProdutoPrimeiroRec 	= getValorQtdeIntegerFormatado(infoConsultaEncalhe.getQtdProdutoPrimeiroRecolhimento());
 		
@@ -431,8 +431,8 @@ public class ConsultaEncalheController {
 			numeroEdicao 		= (consultaEncalheDTO.getNumeroEdicao() != null) ? consultaEncalheDTO.getNumeroEdicao().toString() : "";
 			precoVenda 			= getValorMonetarioFormatado(consultaEncalheDTO.getPrecoVenda());
 			precoComDesconto 	= getValorMonetarioFormatado(consultaEncalheDTO.getPrecoComDesconto());
-			reparte 			= getValorQtdeBigDecimalFormatado(consultaEncalheDTO.getReparte());
-			encalhe 			= getValorQtdeBigDecimalFormatado(consultaEncalheDTO.getEncalhe());
+			reparte 			= getValorQtdeIntegerFormatado(consultaEncalheDTO.getReparte().intValue());
+			encalhe 			= getValorQtdeIntegerFormatado(consultaEncalheDTO.getEncalhe().intValue());
 			fornecedor			= (consultaEncalheDTO.getFornecedor()!=null) ? consultaEncalheDTO.getFornecedor() : "";
 			total 				= getValorMonetarioFormatado(consultaEncalheDTO.getTotal());
 			

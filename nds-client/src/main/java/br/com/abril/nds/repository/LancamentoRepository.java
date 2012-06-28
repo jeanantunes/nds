@@ -12,7 +12,6 @@ import br.com.abril.nds.dto.ProdutoLancamentoDTO;
 import br.com.abril.nds.dto.ProdutoRecolhimentoDTO;
 import br.com.abril.nds.dto.ResumoPeriodoBalanceamentoDTO;
 import br.com.abril.nds.dto.SumarioLancamentosDTO;
-import br.com.abril.nds.dto.filtro.FiltroLancamentoDTO;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.planejamento.Lancamento;
@@ -23,10 +22,7 @@ import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 import br.com.abril.nds.vo.PeriodoVO;
 
 public interface LancamentoRepository extends Repository<Lancamento, Long> {
-
-	List<Lancamento> obterBalanceamentoMatrizLancamentos(
-			FiltroLancamentoDTO filtro);
-
+	
 	SumarioLancamentosDTO sumarioBalanceamentoMatrizLancamentos(Date data,
 			List<Long> idsFornecedores);
 
@@ -213,28 +209,50 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 	 * Método que retorna os produtos do balanceamento do lançamento
 	 * referentes a um periodo e determinados fornecedores.
 	 * 
-	 * @param periodoLancamento - período de lançamento
+	 * @param periodoDistribuicao - período de distribuição
 	 * @param fornecedores - fornecedores
-	 * @param grupoCromo - grupo cromo
 	 * 
 	 * @return lista de produtos do balanceamento do lançamento
 	 */
-	List<ProdutoLancamentoDTO> obterBalanceamentoLancamento(Intervalo<Date> periodoLancamento,
-			   												List<Long> fornecedores,
-			   												GrupoProduto grupoCromo);
+	List<ProdutoLancamentoDTO> obterBalanceamentoLancamento(Intervalo<Date> periodoDistribuicao,
+			   												List<Long> fornecedores);
 	
 	/**
 	 * Método que retorna expectativas de reparte do balanceamento do lançamento
 	 * referentes a um periodo e determinados fornecedores.
 	 * 
-	 * @param periodoLancamento - período de lançamento
+	 * @param periodoDistribuicao - período de distribuição
 	 * @param fornecedores - fornecedores
-	 * @param grupoCromo - grupo cromo
 	 * 
 	 * @return mapa contendo as expectativas de reparte por data
 	 */
-	TreeMap<Date, BigDecimal> obterExpectativasRepartePorData(Intervalo<Date> periodoLancamento,
-															  List<Long> fornecedores,
-															  GrupoProduto grupoCromo);
+	TreeMap<Date, BigDecimal> obterExpectativasRepartePorData(Intervalo<Date> periodoDistribuicao,
+															  List<Long> fornecedores);
+
+	/**
+	 * Burca último balançeamento de lançamento realizado no dia
+	 * @param dataOperacao
+	 * @return Date
+	 */
+	public Date buscarUltimoBalanceamentoLancamentoRealizadoDia(Date dataOperacao);
+
+	/**
+	 * Busca último balanceamento de lançamento realizado no sistema
+	 * @return Date
+	 */
+	public Date buscarDiaUltimoBalanceamentoLancamentoRealizado();
+
+	/**
+	 * Busca último balanceamento de recolhimento realizado no dia
+	 * @param dataOperacao
+	 * @return Date
+	 */
+	public Date buscarUltimoBalanceamentoRecolhimentoRealizadoDia(Date dataOperacao);
+
+	/**
+	 * Busca último balanceamento de recolhimento realizado no sistema
+	 * @return Date
+	 */
+	public Date buscarDiaUltimoBalanceamentoRecolhimentoRealizado();
 
 }

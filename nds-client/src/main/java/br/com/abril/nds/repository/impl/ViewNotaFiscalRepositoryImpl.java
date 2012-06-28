@@ -15,7 +15,7 @@ import br.com.abril.nds.repository.ViewNotaFiscalRepository;
 import br.com.abril.nds.vo.PaginacaoVO;
 
 @Repository
-public class ViewNotaFiscalRepositoryImpl extends AbstractRepository<ViewNotaFiscal, Integer> implements ViewNotaFiscalRepository {
+public class ViewNotaFiscalRepositoryImpl extends AbstractRepositoryModel<ViewNotaFiscal, Integer> implements ViewNotaFiscalRepository {
 
 	public ViewNotaFiscalRepositoryImpl() {		
 		super(ViewNotaFiscal.class);		
@@ -146,7 +146,6 @@ public class ViewNotaFiscalRepositoryImpl extends AbstractRepository<ViewNotaFis
 		return ((qtde == null) ? 0 : qtde.intValue());
 		
 	}
-
 	
 	@SuppressWarnings("unchecked")
 	public List<NfeDTO> pesquisarNotaFiscal(FiltroMonitorNfeDTO filtro) {
@@ -155,24 +154,24 @@ public class ViewNotaFiscalRepositoryImpl extends AbstractRepository<ViewNotaFis
 		
 		sql.append(" SELECT ");	
 
-		sql.append(" VIEW_NOTA_FISCAL.NOTA_FISCAL_ID as idNotaFiscal, 	");
-		sql.append(" VIEW_NOTA_FISCAL.NUMERO as numero, 				");
-		sql.append(" VIEW_NOTA_FISCAL.SERIE as serie, 					"); 
-		sql.append(" VIEW_NOTA_FISCAL.DATA_EMISSAO as emissao, 			");
-		sql.append(" VIEW_NOTA_FISCAL.TIPO_EMISSAO_NFE as tipoEmissao, 	");
+		sql.append(" NOTA_FISCAL_NOVO.ID as idNotaFiscal, 					"); 
+		sql.append(" NOTA_FISCAL_NOVO.NUMERO_DOCUMENTO_FISCAL as numero, 	"); 
+		sql.append(" NOTA_FISCAL_NOVO.SERIE as serie, 						"); 
+		sql.append(" NOTA_FISCAL_NOVO.DATA_EMISSAO as emissao, 				"); 
+		sql.append(" NOTA_FISCAL_NOVO.TIPO_EMISSAO_NFE as tipoEmissao, 		"); //TODO: verificar "de para" deste campo. (TipoEmissaoNFE ???) (Dpec, normal, manual????)
 		
-		sql.append(" CASE WHEN (VIEW_NOTA_FISCAL.NOTAS_DE = 'SAIDA' 	AND PESSOA.TIPO = 'J' ) THEN PESSOA.CNPJ ELSE NULL END AS  cnpjDestinatario, 									");
-		sql.append(" CASE WHEN (VIEW_NOTA_FISCAL.NOTAS_DE = 'ENTRADA'   AND PESSOA.TIPO = 'J' ) THEN PESSOA.CNPJ ELSE NULL END AS  cnpjRemetente, 									");
-		sql.append(" CASE WHEN (VIEW_NOTA_FISCAL.NOTAS_DE = 'ENTRADA'   AND PESSOA.TIPO = 'F' ) THEN PESSOA.CPF  ELSE NULL END AS  cpfRemetente, 									");
+		sql.append(" CASE WHEN (PESSOA_DESTINARIO.TIPO 	= 'J' ) THEN NOTA_FISCAL_NOVO.DOCUMENTO_DESTINATARIO 	ELSE NULL END AS  cnpjDestinatario,	");
+		sql.append(" CASE WHEN (PESSOA_REMETENTE.TIPO 	= 'J' ) THEN NOTA_FISCAL_NOVO.DOCUMENTO_EMITENTE 	 	ELSE NULL END AS  cnpjRemetente,	");
+		sql.append(" CASE WHEN (PESSOA_REMETENTE.TIPO 	= 'F' ) THEN NOTA_FISCAL_NOVO.DOCUMENTO_EMITENTE 		ELSE NULL END AS  cpfRemetente,		");
 		
-		sql.append(" VIEW_NOTA_FISCAL.STATUS_EMISSAO_NFE as statusNfe,  ");
-		sql.append(" VIEW_NOTA_FISCAL.NOTAS_DE as tipoNfe, 				");
-		sql.append(" VIEW_NOTA_FISCAL.MOVIMENTO_INTEGRACAO as movimentoIntegracao ");
+		sql.append(" NOTA_FISCAL_NOVO.STATUS_EMISSAO_NFE as statusNfe,  "); //FIXME: usar campo informacaoEletronica.RetornoComunicacaoEletronica.status
+		sql.append(" NOTA_FISCAL_NOVO.NOTAS_DE as tipoNfe, 				");
+		sql.append(" NOTA_FISCAL_NOVO.MOVIMENTO_INTEGRACAO as movimentoIntegracao "); //FIXME: usar campo informacaoEletronica.RetornoComunicacaoEletronica.motivo
 		
-		sql.append(" from VIEW_NOTA_FISCAL ");
+		sql.append(" from NOTA_FISCAL_NOVO ");
 		
 		sql.append(" INNER JOIN PESSOA ON  ");
-		sql.append(" ( VIEW_NOTA_FISCAL.PESSOA_ID = PESSOA.ID )  ");
+		sql.append(" ( NOTA_FISCAL_NOVO.PESSOA_ID = PESSOA.ID )  ");
 		
 		if(filtro.getBox()!=null && !filtro.getBox().isEmpty()) {
 

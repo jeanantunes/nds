@@ -72,18 +72,6 @@
 						   name="enderecoAssociacao.endereco.cidade" />
 				</td>
 			</tr>
-			<tr>			
-				<td>Número:</td>
-				<td>
-					<input type="text" style="width:50px" 
-						   name="enderecoAssociacao.endereco.numero" id="${param.telaEndereco}numero" maxlength="9" />
-				</td>
-				<td>Complemento:</td>
-				<td>
-					<input type="text" style="width:250px" 
-						   name="enderecoAssociacao.endereco.complemento" id="${param.telaEndereco}complemento" />
-				</td>
-			</tr>
 			<tr>
 			
 				<td>Bairro:</td>
@@ -97,8 +85,6 @@
 				<td>Tipo Logradouro:</td>
 				<td>
 					<input type="text" style="width:250px" 
-						   onkeyup="${param.telaEndereco}.autoCompletarTipoLogradouro();"
-						   onblur="${param.telaEndereco}.autoCompletarTipoLogradouro(true);"
 						   name="enderecoAssociacao.endereco.tipoLogradouro" id="${param.telaEndereco}tipoLogradouro" />
 				</td>
 				
@@ -112,15 +98,28 @@
 						   onblur="${param.telaEndereco}.autoCompletarLogradouros(true);" 
 						   name="enderecoAssociacao.endereco.logradouro" id="${param.telaEndereco}logradouro" />
 				</td>
-				
-			    <td>Principal:</td>
+				<td>Complemento:</td>
+				<td>
+					<input type="text" style="width:250px" 
+						   name="enderecoAssociacao.endereco.complemento" id="${param.telaEndereco}complemento" />
+				</td>
+			    
+		  </tr>
+		  
+			<tr>			
+				<td>Número:</td>
+				<td>
+					<input type="text" style="width:50px" 
+						   name="enderecoAssociacao.endereco.numero" id="${param.telaEndereco}numero" maxlength="9" />
+				</td>
+				<td>Principal:</td>
 			   	<td>
 				  	<input type="checkbox" id="${param.telaEndereco}principal" 
 				  		   name="enderecoAssociacao.enderecoPrincipal"/>
 			  	</td>
 			    <td>&nbsp;</td>
 			    <td>&nbsp;</td>
-		  </tr>
+			</tr>
 			<tr>
 			  <td>&nbsp;</td>
 			  <td>

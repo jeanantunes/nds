@@ -409,33 +409,6 @@ function Endereco(paramTela,paramMessage) {
 		}
 	}
 	
-	this.autoCompletarTipoLogradouro = function(isOnBlur) {
-
-		var nomeTipoLogradouro = $("#"+paramTela+"tipoLogradouro").val();
-		
-		$.postJSON(
-			contextPath + '/cadastro/endereco/autoCompletarTipoLogradouroPorNome',
-			{ 'nomeTipoLogradouro' : nomeTipoLogradouro },
-			function(result) {
-
-				if (isOnBlur) {
-
-					var nome = result[0] ? result[0].value : "";
-
-					$("#"+paramTela+"tipoLogradouro").val(nome);
-
-				} else {
-
-					$("#"+paramTela+"tipoLogradouro").autocomplete({
-						source: result
-					});	
-				}					
-			},
-			null,
-			true
-		);
-	}
-	
 	this.popularGrid = function(){
 		
 		var nomeGrid = paramTela +"enderecosGrid";

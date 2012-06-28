@@ -1,34 +1,57 @@
 package br.com.abril.nds.controllers.lancamento;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.TreeMap;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.SerializationUtils;
 
+import br.com.abril.nds.client.util.PaginacaoUtil;
+import br.com.abril.nds.client.vo.ConfirmacaoVO;
+import br.com.abril.nds.client.vo.DetalheProdutoVO;
 import br.com.abril.nds.client.vo.ResultadoResumoBalanceamentoVO;
 import br.com.abril.nds.client.vo.ResumoPeriodoBalanceamentoVO;
 import br.com.abril.nds.client.vo.ValidacaoVO;
+import br.com.abril.nds.controllers.cadastro.ProdutoEdicaoController;
 import br.com.abril.nds.dto.BalanceamentoLancamentoDTO;
-import br.com.abril.nds.dto.LancamentoDTO;
 import br.com.abril.nds.dto.ProdutoLancamentoDTO;
 import br.com.abril.nds.dto.ResumoPeriodoBalanceamentoDTO;
-import br.com.abril.nds.dto.SumarioLancamentosDTO;
 import br.com.abril.nds.dto.filtro.FiltroLancamentoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.integracao.service.DistribuidorService;
+import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
+import br.com.abril.nds.model.planejamento.StatusLancamento;
+import br.com.abril.nds.model.seguranca.Usuario;
+import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.MatrizLancamentoService;
 import br.com.abril.nds.util.CellModelKeyValue;
+import br.com.abril.nds.util.Constantes;
+import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.MathUtil;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
+import br.com.abril.nds.util.export.Export;
+import br.com.abril.nds.util.export.Exportable;
+import br.com.abril.nds.util.export.FileExporter;
+import br.com.abril.nds.util.export.FileExporter.FileType;
+import br.com.abril.nds.util.export.NDSFileHeader;
+import br.com.abril.nds.vo.LancamentoVO;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
@@ -56,6 +79,18 @@ public class MatrizLancamentoController {
 	@Autowired
 	private HttpSession session;
 	
+	@Autowired
+	private DistribuidorService distribuidorService;
+	
+	@Autowired
+	private CalendarioService calendarioService;
+	
+	@Autowired
+	private ProdutoEdicaoController produtoEdicaoController;
+	
+	@Autowired
+	private HttpServletResponse httpResponse;
+	
 	private static final String FORMATO_DATA = "dd/MM/yyyy";
 	
 	private static final String CAMPO_REQUERIDO_KEY = "required_field";
@@ -63,10 +98,14 @@ public class MatrizLancamentoController {
 
 	private static final String FILTRO_SESSION_ATTRIBUTE = "filtroMatrizBalanceamento";
 	
-	private static final String ATRIBUTO_SESSAO_BALANCEAMENTO = "balanceamento";
+	private static final String ATRIBUTO_SESSAO_BALANCEAMENTO_LANCAMENTO = "balanceamentoLancamento";
+	
+	private static final String ATRIBUTO_SESSAO_BALANCEAMENTO_ALTERADO = "balanceamentoAlterado";
 	
 	@Path("/matrizLancamento")
 	public void index() {
+		
+		removerAtributoAlteracaoSessao();
 		
 		session.setAttribute(FILTRO_SESSION_ATTRIBUTE, null);
 		
@@ -85,10 +124,10 @@ public class MatrizLancamentoController {
 		FiltroLancamentoDTO filtro = configurarFiltropesquisa(dataLancamento, idsFornecedores);
 		
 		BalanceamentoLancamentoDTO balanceamentoLancamento = 
-				this.obterBalanceamentoRecolhimento(filtro);
+			this.obterBalanceamentoLancamento(filtro, false);
 				
 		ResultadoResumoBalanceamentoVO resultadoResumoBalanceamento = 
-			this.obterResultadoResumoBalanceamento(balanceamentoLancamento);
+			this.obterResultadoResumoLancamento(balanceamentoLancamento);
 						
 		this.result.use(Results.json()).from(resultadoResumoBalanceamento, "result").recursive().serialize();
 	}
@@ -98,9 +137,52 @@ public class MatrizLancamentoController {
 	@Post
 	public void obterGridMatrizLancamento(String sortorder, String sortname, int page, int rp) {
 		
-		BalanceamentoLancamentoDTO balanceamentoLancamento = null;
+		removerAtributoAlteracaoSessao();
 		
-		// TODO: obter a matriz da sessão
+		List<ProdutoLancamentoDTO> listaProdutoBalanceamento = getProdutoLancamentoDTOFromMatrizSessao();
+		
+		FiltroLancamentoDTO filtro = obterFiltroSessao();
+		
+		filtro.setPaginacao(new PaginacaoVO(page, rp, sortorder,sortname));
+		
+		filtro.setTotalRegistrosEncontrados(listaProdutoBalanceamento.size());
+		
+		session.setAttribute(FILTRO_SESSION_ATTRIBUTE, filtro);
+		
+		if (listaProdutoBalanceamento != null && !listaProdutoBalanceamento.isEmpty()) {	
+			
+			List<LancamentoVO> listaProdutoBalanceamentoVO = processarBalanceamento(listaProdutoBalanceamento,filtro.getPaginacao());
+			
+			Double valorTotal = 0.0;
+			
+			for (ProdutoLancamentoDTO produtoLancamentoDTO : listaProdutoBalanceamento) {
+				
+				valorTotal += produtoLancamentoDTO.getValorTotal().doubleValue();
+				
+			}
+			
+			TableModel<CellModelKeyValue<LancamentoVO>> tm = new TableModel<CellModelKeyValue<LancamentoVO>>();
+			List<CellModelKeyValue<LancamentoVO>> cells = CellModelKeyValue
+					.toCellModelKeyValue(listaProdutoBalanceamentoVO);
+			
+			tm.setRows(cells);
+			tm.setPage(page);
+			tm.setTotal(filtro.getTotalRegistrosEncontrados());
+			
+			Object[] resultado = {tm, CurrencyUtil.formatarValor(valorTotal)};
+			result.use(Results.json()).withoutRoot().from(resultado).serialize();
+			
+		} else {
+			
+			this.result.use(Results.json()).from(Results.nothing()).serialize();
+		}
+		
+	}
+	
+	public List<ProdutoLancamentoDTO> getProdutoLancamentoDTOFromMatrizSessao() {
+		
+		BalanceamentoLancamentoDTO balanceamentoLancamento = 
+				(BalanceamentoLancamentoDTO) session.getAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_LANCAMENTO);
 		
 		if (balanceamentoLancamento == null
 				|| balanceamentoLancamento.getMatrizLancamento() == null
@@ -108,127 +190,573 @@ public class MatrizLancamentoController {
 			
 			throw new ValidacaoException(
 				TipoMensagem.WARNING, "Não houve carga de informações para o período escolhido!");
+		}		
+
+		List<ProdutoLancamentoDTO> listaProdutoBalanceamento =
+			new ArrayList<ProdutoLancamentoDTO>();
+		
+		
+		
+		for (Map.Entry<Date,List<ProdutoLancamentoDTO>> entry :
+			balanceamentoLancamento.getMatrizLancamento().entrySet()) {
+		
+			listaProdutoBalanceamento.addAll(entry.getValue());
 		}
 		
-		List<ProdutoLancamentoDTO> listaProdutoLancamento = null;
-		
-		// TODO: montar a lista de produtoLancamentoDTO através do map
-		
-		if (listaProdutoLancamento != null && !listaProdutoLancamento.isEmpty()) {
-			
-			PaginacaoVO paginacao = new PaginacaoVO(page, rp, sortorder);
-			
-			processarBalanceamento(listaProdutoLancamento, paginacao);
-			
-		} else {
-			
-			this.result.use(Results.json()).from(Results.nothing()).serialize();
-		}
+		return listaProdutoBalanceamento;
 	}
 	
 	@Post
-	public void confirmarMatrizLancamento() {
+	public void confirmarMatrizLancamento(List<Date> datasConfirmadas) {
 		
 		// TODO: obter a matriz da sessão
 		
 		// TODO: chamar a service de confirmação
+
+		if (datasConfirmadas==null || datasConfirmadas.size()<=0){
+			throw new ValidacaoException(TipoMensagem.WARNING, "Selecione ao menos uma data!");
+		}	
+	
+		// TODO: validar matriz de lançamento conforme parâmetro: datasConfirmadas
+			
+		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Confirmado com sucesso !"), "result").recursive().serialize();
 	}
 	
 	@Post
 	public void voltarConfiguracaoOriginal() {
 		
-		// TODO: montar a matriz inicial e setar na sessão
+		FiltroLancamentoDTO filtro = obterFiltroSessao();
+		
+		BalanceamentoLancamentoDTO balanceamentoLancamento =
+			this.obterBalanceamentoLancamento(filtro, true);
+		
+		ResultadoResumoBalanceamentoVO resultadoResumoBalanceamento = 
+			this.obterResultadoResumoLancamento(balanceamentoLancamento);
+							
+		this.result.use(Results.json()).from(resultadoResumoBalanceamento, "result").recursive().serialize();
 	}
 	
 	@Post
-	public void reprogramarLancamentosSelecionados(List<ProdutoLancamentoDTO> listaProdutoLancamento,
-												   String novaDataFormatada, String dataAntigaFormatada) {
+	public void reprogramarLancamentosSelecionados(List<LancamentoVO> produtosLancamento,
+												   String novaDataFormatada) {
 		
-		// TODO: reprogramar os lançamentos selecionados
+		this.validarDadosReprogramar(novaDataFormatada);
 		
-		// TODO: atualizar a matriz q estava na sessão
+		adicionarAtributoAlteracaoSessao();
 		
-		// TODO: setar a matriz na sessão
+		Date novaData = DateUtil.parseDataPTBR(novaDataFormatada);
+
+		this.validarListaParaReprogramacao(produtosLancamento);
+		
+		this.validarDataReprogramacao(produtosLancamento, novaData);
+		
+		this.atualizarMapaLancamento(produtosLancamento, novaData);
+		
+		this.result.use(Results.json()).from(Results.nothing()).serialize();
 	}
 	
 	@Post
-	public void reprogramarLancamentoUnico(ProdutoLancamentoDTO produtoLancamento,
-										   String dataAntigaFormatada) {
+	public void reprogramarLancamentoUnico(LancamentoVO produtoLancamento) {
 		
-		// TODO: reprogramar o lançamento informado
+		String novaDataFormatada = produtoLancamento.getNovaData();
 		
-		// TODO: atualizar a matriz q estava na sessão
+		this.validarDadosReprogramar(novaDataFormatada);
+
+		adicionarAtributoAlteracaoSessao();
 		
-		// TODO: setar a matriz na sessão
-	}	
-	
-	/**
-	 * Obtém o resumo do período de balanceamento de lançamento.
-	 */
-	private ResultadoResumoBalanceamentoVO obterResumoBalanceamentoLancamento(
-											BalanceamentoLancamentoDTO balanceamentoLancamento) {
+		Date novaData = DateUtil.parseDataPTBR(novaDataFormatada);
 		
-		// TODO: montar o resumo de balanceamento de lançamento
+		List<LancamentoVO> produtosLancamento = new ArrayList<LancamentoVO>();
 		
-		return null;
-	}
-	
-	private void processarBalanceamento(List<ProdutoLancamentoDTO> listaProdutoLancamento,
-										PaginacaoVO paginacao) {
-		
-		TableModel<CellModelKeyValue<ProdutoLancamentoDTO>> tableModel =
-			new TableModel<CellModelKeyValue<ProdutoLancamentoDTO>>();
-		
-		tableModel.setPage(paginacao.getPaginaAtual());
-		//tableModel.setTotal(totalRegistros);
-		
-		List<CellModelKeyValue<ProdutoLancamentoDTO>> listaCellModel =
-			new ArrayList<CellModelKeyValue<ProdutoLancamentoDTO>>();
-		
-		CellModelKeyValue<ProdutoLancamentoDTO> cellModel = null;
-		
-		for (ProdutoLancamentoDTO dto : listaProdutoLancamento) {
+		if (produtoLancamento != null){
 			
-			cellModel =
-				new CellModelKeyValue<ProdutoLancamentoDTO>(dto.getIdLancamento().intValue(),
-															dto);
-			
-			listaCellModel.add(cellModel);
+			produtosLancamento.add(produtoLancamento);
 		}
 		
-		tableModel.setRows(listaCellModel);
+		this.validarListaParaReprogramacao(produtosLancamento);
 		
-		// TODO: montar o DTO ou VO (se necessário) para exibir no grid
+		this.validarDataReprogramacao(produtosLancamento, novaData);
 		
-		// TODO: paginação e ordenação em memória
+		this.atualizarMapaLancamento(produtosLancamento, novaData);
 		
-		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
+		this.result.use(Results.json()).from(Results.nothing()).serialize();
+	}
+	
+	/**
+	 * Valida os dados para reprogramação.
+	 * 
+	 * @param data - data para reprogramação
+	 */
+	private void validarDadosReprogramar(String data) {
+		
+		if (data == null || data.trim().isEmpty()) {
+			
+			throw new ValidacaoException(
+				new ValidacaoVO(TipoMensagem.WARNING, "O preenchimento da data é obrigatório!"));
+		}
+		
+		if (!DateUtil.isValidDatePTBR(data)) {
+			
+			throw new ValidacaoException(
+				new ValidacaoVO(TipoMensagem.WARNING, "Data inválida!"));
+		}
+	}
+	
+	/**
+	 * Valida a data de reprogramação de lançamento.
+	 * 
+	 * @param produtosLancamento - lista de produtos de lançamento
+	 * @param novaData - nova data de recolhimento
+	 */
+	private void validarDataReprogramacao(List<LancamentoVO> produtosLancamento, Date novaData) {
+		
+		BalanceamentoLancamentoDTO balanceamentoLancamento =
+			(BalanceamentoLancamentoDTO) this.session.getAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_LANCAMENTO);
+		
+		if (balanceamentoLancamento == null) {
+			
+			return;
+		}
+		
+		int numeroSemana = balanceamentoLancamento.getNumeroSemana();
+		
+		Distribuidor distribuidor = this.distribuidorService.obter();
+		
+		if (distribuidor == null) {
+			
+			throw new RuntimeException("Dados do distribuidor inexistentes!");
+		}
+		
+		Date dataInicioSemana = DateUtil.obterDataDaSemanaNoAno(
+			numeroSemana, distribuidor.getInicioSemana().getCodigoDiaSemana());
+		
+		boolean dataValida =
+			DateUtil.isDataInicialMaiorDataFinal(novaData, dataInicioSemana);
+		
+		if (!dataValida) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING,
+				"A nova data de lançamento deve ser maior que a data de início da semana ["
+				+ DateUtil.formatarDataPTBR(dataInicioSemana) + "]");
+		}
+		
+		boolean diaUtil = calendarioService.isDiaUtil(novaData);
+		
+		if (!diaUtil) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING,
+				"A nova data de lançamento deve ser um dia útil!");
+		}
+		
+		List<String> listaMensagens = new ArrayList<String>();
+		
+		for (LancamentoVO produtoLancamento : produtosLancamento) {
+		
+			String dataRecolhimentoPrevistaFormatada = produtoLancamento.getDataRecolhimento();
+			
+			if (dataRecolhimentoPrevistaFormatada == null
+					|| dataRecolhimentoPrevistaFormatada.trim().isEmpty()) {
+				
+				continue;
+			}
+			
+			Date dataRecolhimentoPrevista =
+				DateUtil.parseDataPTBR(produtoLancamento.getDataRecolhimento());
+			
+			Date dataLimiteReprogramacao =
+				DateUtil.subtrairDias(dataRecolhimentoPrevista,
+									  distribuidor.getQtdDiasLimiteParaReprogLancamento());
+			
+			if (novaData.compareTo(dataLimiteReprogramacao) == 1) {
+				
+				listaMensagens.add("A nova data de lançamento não deve ultrapassar a data de "
+					+ "recolhimento prevista [" + dataRecolhimentoPrevistaFormatada 
+					+ "] para o produto" + produtoLancamento.getNomeProduto() + " - Edição " 
+					+ produtoLancamento.getNumEdicao() + "!");
+			}
+		}
+		
+		if (!listaMensagens.isEmpty()) {
+		
+			ValidacaoVO validacao = new ValidacaoVO(TipoMensagem.WARNING, listaMensagens);
+			
+			throw new ValidacaoException(validacao);
+		}
+	}
+	
+	/**
+	 * Valida a lista de produtos informados na tela para reprogramação.
+	 * 
+	 * @param produtosLancamento - lista de produtos de lançamento
+	 */
+	private void validarListaParaReprogramacao(List<LancamentoVO> produtosLancamento) {
+		
+		if (produtosLancamento == null || produtosLancamento.isEmpty()) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING,
+				"É necessário selecionar ao menos um produto para realizar a reprogramação!");
+		}
+	}
+	
+	/**
+	 * Método que atualiza o mapa de lançamento de acordo com as escolhas do usuário
+	 * 
+	 * @param produtosLancamento - lista de produtos a serem alterados
+	 * @param novaData - nova data de lançamento
+	 */
+	private void atualizarMapaLancamento(List<LancamentoVO> produtosLancamento,
+										 Date novaData) {
+		
+		BalanceamentoLancamentoDTO balanceamentoLancamentoSessao =
+			(BalanceamentoLancamentoDTO)
+				this.session.getAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_LANCAMENTO);
+		
+		TreeMap<Date, List<ProdutoLancamentoDTO>> matrizLancamentoSessao =
+				balanceamentoLancamentoSessao.getMatrizLancamento();
+		
+		TreeMap<Date, List<ProdutoLancamentoDTO>> matrizLancamento =
+			clonarMapaLancamento(matrizLancamentoSessao);
+		
+		List<ProdutoLancamentoDTO> listaProdutoLancamentoRemover =
+			new ArrayList<ProdutoLancamentoDTO>();
+		
+		List<ProdutoLancamentoDTO> listaProdutoLancamentoAdicionar =
+			new ArrayList<ProdutoLancamentoDTO>();
+		
+		this.montarListasParaAlteracaoMapa(produtosLancamento,
+									  	   matrizLancamento,
+									  	   listaProdutoLancamentoAdicionar,
+									  	   listaProdutoLancamentoRemover);
+		
+		this.removerEAdicionarMapa(matrizLancamento,
+							  	   listaProdutoLancamentoAdicionar,
+							  	   listaProdutoLancamentoRemover,
+							  	   novaData);
+		
+		balanceamentoLancamentoSessao.setMatrizLancamento(matrizLancamento);
+		
+		this.session.setAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_LANCAMENTO,
+								  balanceamentoLancamentoSessao);
+	}
+	
+	/**
+	 * Cria uma cópia do mapa da matriz de lançamento.
+	 * Isso é necessário pois se houver alterações na cópia,
+	 * não altera os valores do mapa original por referência.
+	 * 
+	 * @param matrizLancamentoSessao - matriz de lançamento da sesão
+	 * 
+	 * @return cópia do mapa da matriz de lançamento
+	 */
+	@SuppressWarnings("unchecked")
+	private TreeMap<Date, List<ProdutoLancamentoDTO>> clonarMapaLancamento(
+								Map<Date, List<ProdutoLancamentoDTO>> matrizLancamentoSessao) {
+		
+		byte[] mapSerialized =
+			SerializationUtils.serialize(matrizLancamentoSessao);
+
+		TreeMap<Date, List<ProdutoLancamentoDTO>> matrizLancamento =
+			(TreeMap<Date, List<ProdutoLancamentoDTO>>) SerializationUtils.deserialize(mapSerialized);
+		
+		return matrizLancamento;
+	}
+	
+	/**
+	 * Monta as listas para alteração do mapa da matriz de lançamento
+	 * 
+	 * @param produtosLancamento - lista de produtos de lançamento
+	 * @param matrizLancamento - matriz de lançamento
+	 * @param listaProdutoLancamentoAdicionar - lista de produtos que serão adicionados
+	 * @param listaProdutoLancamentoRemover - lista de produtos que serão removidos
+	 */
+	private void montarListasParaAlteracaoMapa(List<LancamentoVO> produtosLancamento,
+											   Map<Date, List<ProdutoLancamentoDTO>> matrizLancamento,   									 
+											   List<ProdutoLancamentoDTO> listaProdutoLancamentoAdicionar,
+											   List<ProdutoLancamentoDTO> listaProdutoLancamentoRemover) {
+		
+		List<ProdutoLancamentoDTO> listaProdutoLancamentoSessao =
+			new ArrayList<ProdutoLancamentoDTO>();
+		
+		for (Map.Entry<Date, List<ProdutoLancamentoDTO>> entry : matrizLancamento.entrySet()) {
+			
+			listaProdutoLancamentoSessao.addAll(entry.getValue());
+		}
+		
+		for (LancamentoVO produtoLancamento : produtosLancamento) {
+			
+			for (ProdutoLancamentoDTO produtoLancamentoDTO : listaProdutoLancamentoSessao) {
+				
+				if (produtoLancamentoDTO.getIdLancamento().equals(
+						Long.valueOf(produtoLancamento.getId()))) {
+					
+					listaProdutoLancamentoRemover.add(produtoLancamentoDTO);
+					
+					listaProdutoLancamentoAdicionar.add(produtoLancamentoDTO);
+					
+					break;
+				}
+			}
+		}
+	}
+	
+	/**
+	 * Remove e adiona os produtos no mapa da matriz de lançamento.
+	 * 
+	 * @param matrizLancamento - mapa da matriz de lançamento
+	 * @param listaProdutoLancamentoAdicionar - lista de produtos que serão adicionados
+	 * @param listaProdutoLancamentoRemover - lista de produtos que serão removidos
+	 * @param novaData - nova data de lançamento
+	 */
+	private void removerEAdicionarMapa(Map<Date, List<ProdutoLancamentoDTO>> matrizLancamento,   									 
+		     						   List<ProdutoLancamentoDTO> listaProdutoLancamentoAdicionar,
+		     						   List<ProdutoLancamentoDTO> listaProdutoLancamentoRemover,
+		     						   Date novaData) {
+		
+		//Remover do mapa
+		for (ProdutoLancamentoDTO produtoLancamentoDTO : listaProdutoLancamentoRemover) {
+		
+			List<ProdutoLancamentoDTO> produtosLancamentoDTO =
+				matrizLancamento.get(produtoLancamentoDTO.getNovaDataLancamento());
+			
+			produtosLancamentoDTO.remove(produtoLancamentoDTO);
+			
+			if (produtosLancamentoDTO.isEmpty()) {
+				
+				matrizLancamento.remove(produtoLancamentoDTO.getNovaDataLancamento());
+				
+			} else {
+				
+				matrizLancamento.put(produtoLancamentoDTO.getNovaDataLancamento(),
+									 produtosLancamentoDTO);
+			}
+		}
+		
+		//Adicionar no mapa
+		for (ProdutoLancamentoDTO produtoLancamentoDTO : listaProdutoLancamentoAdicionar) {
+			
+			if (produtoLancamentoDTO.isPermiteReprogramacao()) {
+			
+				List<ProdutoLancamentoDTO> listaProdutoLancamentoDTO =
+					matrizLancamento.get(novaData);
+				
+				if (listaProdutoLancamentoDTO == null) {
+					
+					listaProdutoLancamentoDTO = new ArrayList<ProdutoLancamentoDTO>();
+				}
+				
+				listaProdutoLancamentoDTO.add(produtoLancamentoDTO);
+				
+				produtoLancamentoDTO.setNovaDataLancamento(novaData);
+				
+				matrizLancamento.put(novaData, listaProdutoLancamentoDTO);
+				
+			} else {
+				
+				Date dataAntiga = produtoLancamentoDTO.getNovaDataLancamento();
+				
+				List<ProdutoLancamentoDTO> listaProdutoLancamentoDTO =
+					matrizLancamento.get(dataAntiga);
+				
+				if (listaProdutoLancamentoDTO == null) {
+					
+					listaProdutoLancamentoDTO = new ArrayList<ProdutoLancamentoDTO>();
+				}
+				
+				listaProdutoLancamentoDTO.add(produtoLancamentoDTO);
+				
+				matrizLancamento.put(dataAntiga, listaProdutoLancamentoDTO);
+			}
+		}
+	}
+	
+	private List<LancamentoVO> processarBalanceamento(List<ProdutoLancamentoDTO> listaProdutoLancamento,
+										PaginacaoVO paginacao) {
+		
+		List<LancamentoVO> listaProdutoBalanceamentoVO =
+				new LinkedList<LancamentoVO>();
+			
+		for (ProdutoLancamentoDTO produtoLancamentoDTO : listaProdutoLancamento) {
+
+			listaProdutoBalanceamentoVO.add(getVoProdutoBalanceamento(produtoLancamentoDTO));
+		}
+		
+		listaProdutoBalanceamentoVO =
+			PaginacaoUtil.paginarEOrdenarEmMemoria(listaProdutoBalanceamentoVO, paginacao, paginacao.getSortColumn());
+					
+		return listaProdutoBalanceamentoVO;
 	}
 	
 	
+	private LancamentoVO getVoProdutoBalanceamento(
+			ProdutoLancamentoDTO produtoLancamentoDTO) {
+
+		
+		LancamentoVO produtoBalanceamentoVO = new LancamentoVO();
+		
+		produtoBalanceamentoVO.setCodigoProduto(produtoLancamentoDTO.getCodigoProduto());
+		
+		produtoBalanceamentoVO.setNovaData(
+				DateUtil.formatarDataPTBR(produtoLancamentoDTO.getNovaDataLancamento()));
+		
+		produtoBalanceamentoVO.setDataPrevisto(
+				DateUtil.formatarDataPTBR(produtoLancamentoDTO.getDataLancamentoPrevista()));
+		
+		produtoBalanceamentoVO.setDataLancamentoDistribuidor(
+				DateUtil.formatarDataPTBR(produtoLancamentoDTO.getDataLancamentoDistribuidor()));
+		
+		produtoBalanceamentoVO.setDataRecolhimento(
+				DateUtil.formatarDataPTBR(produtoLancamentoDTO.getDataRecolhimentoPrevista()));
+		
+		produtoBalanceamentoVO.setId(produtoLancamentoDTO.getIdLancamento());
+		
+		produtoBalanceamentoVO.setNomeFornecedor(produtoLancamentoDTO.getFornecedor());
+		
+		if(produtoLancamentoDTO.getParcial() == null)
+			produtoBalanceamentoVO.setLancamento("Lancamento");
+		else
+			produtoBalanceamentoVO.setLancamento(produtoLancamentoDTO.getParcial().getDescricao());
+		
+		produtoBalanceamentoVO.setNomeProduto(produtoLancamentoDTO.getNomeProduto());
+		produtoBalanceamentoVO.setNumEdicao(produtoLancamentoDTO.getNumeroEdicao());
+		
+		produtoBalanceamentoVO.setPacotePadrao(produtoLancamentoDTO.getPacotePadrao());
+		
+		produtoBalanceamentoVO.setPreco(CurrencyUtil.formatarValor(produtoLancamentoDTO.getPrecoVenda()));
+		
+		produtoBalanceamentoVO.setReparte(produtoLancamentoDTO.getRepartePrevisto().toString());
+		
+		produtoBalanceamentoVO.setTotal(CurrencyUtil.formatarValor(produtoLancamentoDTO.getValorTotal()));
+		
+		if(produtoLancamentoDTO.getReparteFisico()==null)
+			produtoBalanceamentoVO.setFisico(0);
+		else
+			produtoBalanceamentoVO.setFisico(produtoLancamentoDTO.getReparteFisico().intValue());
+		
+		produtoBalanceamentoVO.setCancelamentoGD(produtoLancamentoDTO.getStatusLancamento().equals(StatusLancamento.CANCELADO_GD));
+		
+		if(produtoLancamentoDTO.getNumeroReprogramacoes() == null)
+			produtoBalanceamentoVO.setReprogramacoesExcedidas(false);
+		else
+			produtoBalanceamentoVO.setReprogramacoesExcedidas(produtoLancamentoDTO.getNumeroReprogramacoes() >= Constantes.NUMERO_REPROGRAMACOES_LIMITE);
+				
+		produtoBalanceamentoVO.setEstudoFechado(produtoLancamentoDTO.isPossuiEstudo());
+		
+		produtoBalanceamentoVO.setPossuiRecebimentoFisico(produtoLancamentoDTO.isPossuiRecebimentoFisico());
+		
+		//TODO - Pendente
+		produtoBalanceamentoVO.setDistribuicao("");
+		
+		produtoBalanceamentoVO.setBloquearData(!produtoLancamentoDTO.isPermiteReprogramacao());
+		
+		produtoBalanceamentoVO.setIdProdutoEdicao(produtoLancamentoDTO.getIdProdutoEdicao());
+		
+		return produtoBalanceamentoVO;
+	}
+
 	//----------------------------------------------------------------------------
 	
+
+	/**
+	 * Obtém os dados do cabeçalho de exportação.
+	 * 
+	 * @return NDSFileHeader
+	 */
+	private NDSFileHeader getNDSFileHeader() {
+		
+		NDSFileHeader ndsFileHeader = new NDSFileHeader();
+		
+		Distribuidor distribuidor = this.distribuidorService.obter();
+		
+		if (distribuidor != null) {
+			
+			ndsFileHeader.setNomeDistribuidor(distribuidor.getJuridica().getRazaoSocial());
+			ndsFileHeader.setCnpjDistribuidor(distribuidor.getJuridica().getCnpj());
+		}
+		
+		ndsFileHeader.setData(new Date());
+		
+		ndsFileHeader.setNomeUsuario(this.getUsuario().getNome());
+		
+		return ndsFileHeader;
+	}
+	
+	@Exportable
+	public class RodapeDTO {
+		@Export(label="Valor Total R$:")
+		private String total;
+		
+		public RodapeDTO(String total) {
+			this.total = total;
+		}
+		
+		public String getTotal() {
+			return total;
+		}
+	}
+	
+	/**
+	 * Exporta os dados da pesquisa.
+	 * 
+	 * @param fileType - tipo de arquivo
+	 * 
+	 * @throws IOException Exceção de E/S
+	 */
+	@Get
+	public void exportar(FileType fileType) throws IOException {
+		
+		FiltroLancamentoDTO filtro = obterFiltroSessao();
+		
+		List<ProdutoLancamentoDTO> listaProdutoBalanceamento = getProdutoLancamentoDTOFromMatrizSessao();
+		
+		if (listaProdutoBalanceamento != null && !listaProdutoBalanceamento.isEmpty()) {	
+			
+			List<LancamentoVO> listaProdutoBalanceamentoVO = processarBalanceamento(listaProdutoBalanceamento,filtro.getPaginacao());
+			
+			Double valorTotal = 0.0;
+			
+			for (ProdutoLancamentoDTO produtoLancamentoDTO : listaProdutoBalanceamento) {
+				
+				valorTotal += produtoLancamentoDTO.getValorTotal().doubleValue();
+			}
+						
+			RodapeDTO rodape = new RodapeDTO(CurrencyUtil.formatarValor(valorTotal));
+			
+			FileExporter.to("matriz_balanceamento", fileType).inHTTPResponse(this.getNDSFileHeader(), filtro, rodape, 
+					listaProdutoBalanceamentoVO, LancamentoVO.class, this.httpResponse);
+		}
+	
+		
+		result.nothing();
+	}
+	
+	/**
+	 * Método que obtém o usuário logado
+	 * 
+	 * @return usuário logado
+	 */
+	public Usuario getUsuario() {
+		//TODO getUsuario
+		Usuario usuario = new Usuario();
+		usuario.setId(1L);
+		return usuario;
+	}
 
 	/**
 	 * Obtém a matriz de balanceamento de balanceamento.
 	 * 
 	 * @param dataBalanceamento - data de balanceamento
 	 * @param listaIdsFornecedores - lista de identificadores dos fornecedores
+	 * @param configuracaoInicial - indicada se a matriz de lançamento deve ser sugerida de acordo com configuração inicial
+	 * 
 	 * @return - objeto contendo as informações do balanceamento
 	 */
-	private BalanceamentoLancamentoDTO obterBalanceamentoRecolhimento(FiltroLancamentoDTO filtro) {
-		
-		/*
-		 * TODO: quando o método obterMatrizLancamento for chamado através do botão "Voltar configuração inicial",
-		 * deve ser passada a flag " configuracaoInicial" como true
-		 */
-		
-		boolean configuracaoInicial = false;
+	private BalanceamentoLancamentoDTO obterBalanceamentoLancamento(FiltroLancamentoDTO filtro,
+																	boolean configuracaoInicial) {
 		
 		BalanceamentoLancamentoDTO balanceamento =
 			this.matrizLancamentoService.obterMatrizLancamento(filtro, configuracaoInicial);
 					
-		this.session.setAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO, balanceamento);
+		this.session.setAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_LANCAMENTO, balanceamento);
 		
 		
 		if (balanceamento == null
@@ -259,13 +787,6 @@ public class MatrizLancamentoController {
 		return filtro;
 	}
 	
-	/**
-	 * Remove um indicador, que informa se houve reprogramação de produtos, da sessão.
-	 */
-	private void removerAtributoAlteracaoSessao() {
-		
-		this.session.setAttribute(FILTRO_SESSION_ATTRIBUTE, null);
-	}	
 	
 	/**
 	 * Valida os dados da pesquisa.
@@ -295,12 +816,11 @@ public class MatrizLancamentoController {
 		}
 	}
 	
-	
 	/**
 	 * Obtém o resumo do período de balanceamento de acordo com a data da pesquisa
 	 * e a lista de id's dos fornecedores.
 	 */
-	private ResultadoResumoBalanceamentoVO obterResultadoResumoBalanceamento(
+	private ResultadoResumoBalanceamentoVO obterResultadoResumoLancamento(
 											BalanceamentoLancamentoDTO balanceamentoBalanceamento) {
 		
 		if (balanceamentoBalanceamento == null
@@ -410,30 +930,6 @@ public class MatrizLancamentoController {
 		return filtro;
 	}
 	
-	@Post
-	public void pesquisarMatrizLancamento(String sortorder, String sortname, int page, int rp) {
-				
-		PaginacaoVO paginacaoVO = new PaginacaoVO(page, rp, sortorder);
-		
-		FiltroLancamentoDTO filtro = obterFiltroSessao();
-		filtro.setPaginacao(paginacaoVO);
-		
-		List<LancamentoDTO> dtos = matrizLancamentoService
-				.buscarLancamentosBalanceamento(filtro);
-		SumarioLancamentosDTO sumario = matrizLancamentoService
-				.sumarioBalanceamentoMatrizLancamentos(filtro.getData(), filtro.getIdsFornecedores());
-
-		TableModel<CellModelKeyValue<LancamentoDTO>> tm = new TableModel<CellModelKeyValue<LancamentoDTO>>();
-		List<CellModelKeyValue<LancamentoDTO>> cells = CellModelKeyValue
-				.toCellModelKeyValue(dtos);
-
-		tm.setRows(cells);
-		tm.setPage(page);
-		tm.setTotal(sumario.getTotalLancamentos().intValue());
-		Object[] resultado = {tm, sumario.getValorTotalFormatado()};
-		result.use(Results.json()).withoutRoot().from(resultado).serialize();
-	}
-
 	@Get
 	public void resumoPeriodo(Date dataInicial, List<Long> idsFornecedores) {
 		
@@ -463,5 +959,115 @@ public class MatrizLancamentoController {
 			throw new ValidacaoException(validacao);
 		}
 	}
+
+	/**
+	 * Obtem agrupamento diário para confirmação de Balanceamento
+	 */
+	@Post
+	public void obterAgrupamentoDiarioBalanceamento() {
+
+		List<ConfirmacaoVO> confirmacoesVO = new ArrayList<ConfirmacaoVO>();
+
+		BalanceamentoLancamentoDTO balanceamentoLancamento =
+			(BalanceamentoLancamentoDTO) this.session.getAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_LANCAMENTO);
+
+		if (balanceamentoLancamento == null
+				|| balanceamentoLancamento.getMatrizLancamento() == null
+				|| balanceamentoLancamento.getMatrizLancamento().isEmpty()) {
+			
+			result.nothing();
+			
+			return;
+		}
+	
+		confirmacoesVO = this.agruparBalanceamento(balanceamentoLancamento);
+
+		TableModel<CellModelKeyValue<ConfirmacaoVO>> tableModel =
+			new TableModel<CellModelKeyValue<ConfirmacaoVO>>();
+		
+		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(confirmacoesVO));
+
+		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
+	}
+
+	/**
+	 * Obtem a concentração ordenada e agrupada por data para a Matriz de Lançamento
+	 * @param BalanceamentoLancamentoDTO: balanceamentoDTO
+	 * @return List<ConfirmacaoVO>: confirmacoesVO
+	 */
+    private List<ConfirmacaoVO> agruparBalanceamento(BalanceamentoLancamentoDTO balanceamentoDTO){
+		
+		List<ConfirmacaoVO> confirmacoesVO = new ArrayList<ConfirmacaoVO>();
+
+		Map<Date, Boolean> mapaDatasConfirmacaoOrdenada = new LinkedHashMap<Date, Boolean>();
+
+		boolean confirmado = false;
+
+		for (Map.Entry<Date, List<ProdutoLancamentoDTO>> entry
+				: balanceamentoDTO.getMatrizLancamento().entrySet()) {
+			
+            List<ProdutoLancamentoDTO> listaProdutosRecolhimento = entry.getValue();
+			
+			if (listaProdutosRecolhimento != null && !listaProdutosRecolhimento.isEmpty()) {
+				
+				for (ProdutoLancamentoDTO produtoBalanceamento : listaProdutosRecolhimento) {
+
+					confirmado =
+						(produtoBalanceamento.getStatusLancamento().equals(StatusLancamento.BALANCEADO)
+							&& (produtoBalanceamento.getDataLancamentoDistribuidor().compareTo(
+									produtoBalanceamento.getNovaDataLancamento()) == 0));
+					
+					if (mapaDatasConfirmacaoOrdenada.get(produtoBalanceamento.getNovaDataLancamento()) == null
+							|| (!confirmado && mapaDatasConfirmacaoOrdenada.get(
+									produtoBalanceamento.getNovaDataLancamento()))) {
+						
+						mapaDatasConfirmacaoOrdenada.put(produtoBalanceamento.getNovaDataLancamento(),
+														 confirmado);
+					}
+				}
+			}
+		}
+		
+		Set<Entry<Date, Boolean>> entrySet = mapaDatasConfirmacaoOrdenada.entrySet();
+		
+		for (Entry<Date, Boolean> item : entrySet) {
+			
+			confirmacoesVO.add(
+				new ConfirmacaoVO(DateUtil.formatarDataPTBR(item.getKey()), item.getValue()));
+		}
+
+		return confirmacoesVO;
+	}
+	
+	@Post
+	public void verificarBalanceamentosAlterados() {
+		
+		Boolean balanceamentoAlterado =
+			(Boolean) this.session.getAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_ALTERADO);
+		
+		if (balanceamentoAlterado == null) {
+			
+			balanceamentoAlterado = false;
+		}
+		
+		this.result.use(Results.json()).from(balanceamentoAlterado.toString(), "result").serialize();
+	}
+	
+	/**
+	 * Adiciona um indicador, que informa se houve reprogramação de produtos, na sessão.
+	 */
+	private void adicionarAtributoAlteracaoSessao() {
+		
+		this.session.setAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_ALTERADO, true);
+	}
+	
+	/**
+	 * Remove um indicador, que informa se houve reprogramação de produtos, da sessão.
+	 */
+	private void removerAtributoAlteracaoSessao() {
+		
+		this.session.setAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_ALTERADO, null);
+	}
+	
 
 }

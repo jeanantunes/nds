@@ -4,8 +4,11 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.ScrollableResults;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.ExpedicaoDTO;
@@ -22,7 +25,7 @@ import br.com.abril.nds.repository.ExpedicaoRepository;
  *
  */
 @Repository
-public class ExpedicaoRepositoryImpl extends AbstractRepository<Expedicao,Long> implements ExpedicaoRepository {
+public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,Long> implements ExpedicaoRepository {
 
 	public ExpedicaoRepositoryImpl() {
 		super(Expedicao.class);
@@ -282,6 +285,21 @@ public class ExpedicaoRepositoryImpl extends AbstractRepository<Expedicao,Long> 
 		
 		
 		return (Long) query.uniqueResult();
+	}
+
+	@Override
+	public Date obterUltimaExpedicaoDia(Date dataOperacao) {
+		Criteria criteria = getSession().createCriteria(Expedicao.class);
+		criteria.setProjection(Projections.max("dataExpedicao"));
+		criteria.add(Restrictions.eq("dataExpedicao", dataOperacao));
+		return (Date) criteria.uniqueResult();
+	}
+
+	@Override
+	public Date obterDataUltimaExpedicao() {
+		Criteria criteria = getSession().createCriteria(Expedicao.class);
+		criteria.setProjection(Projections.max("dataExpedicao"));
+		return (Date) criteria.uniqueResult();
 	}
 
 }

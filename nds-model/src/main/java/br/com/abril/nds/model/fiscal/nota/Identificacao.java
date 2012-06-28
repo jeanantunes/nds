@@ -12,51 +12,86 @@ import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import br.com.abril.nds.model.fiscal.TipoOperacao;
+import br.com.abril.nds.util.TipoSecao;
 import br.com.abril.nds.util.export.fiscal.nota.NFEExport;
+import br.com.abril.nds.util.export.fiscal.nota.NFEExportType;
 
 @Embeddable
 public class Identificacao implements Serializable {
 	
 	public enum FormaPagamento {
-		A_VISTA, A_PRAZO, OUTROS;
-	}
+		A_VISTA, 
+		A_PRAZO, 
+		OUTROS;
+		
+		/**
+		 * @see java.lang.Enum#toString()
+		 */
+		@Override
+		public String toString() {
+			return String.valueOf(this.ordinal());
+		}
+	}	
 	
-	public enum TipoOperacao{
-		ENTRADA, SAIDA
-	}
+	public enum TipoEmissao {
+		NORMAL(1), 
+		CONTINGENCIA(2);
 
+		private Integer indcador;
+		
+		TipoEmissao(Integer indcador){
+			this.indcador = indcador;
+		}
+		
+		/**
+		 * @see java.lang.Enum#toString()
+		 */
+		@Override
+		public String toString() {
+			return indcador.toString();
+		}
+	}	
+	
+	public enum FinalidadeEmissao {
+		NORMAL(1), 
+		COMPLEMENTAR(2), 
+		AJUSTE(3);
+
+		private Integer indcador;
+		
+		FinalidadeEmissao(Integer indcador){
+			this.indcador = indcador;
+		}
+		
+		/**
+		 * @see java.lang.Enum#toString()
+		 */
+		@Override
+		public String toString() {
+			return indcador.toString();
+		}
+	}	
+	
 	/**
 	 * Serial Version UID
 	 */
 	private static final long serialVersionUID = 3614623505646574143L;
 
-	/**
-	 * cNF
-	 */
-	@Column(name = "CODIGO_CHAVE_ACESSO", length = 8, nullable = false)
-	@NFEExport(secao="B", posicao=1, tamanho=9)
-	private Integer codigoChaveAcesso;
-
-	/**
-	 * cDV
-	 */
-	@Column(name = "DV_CHAVE_ACESSO", length = 1, nullable = false)
-	@NFEExport(secao="B", posicao=13, tamanho=1)
-	private Integer digitoVerificadorChaveAcesso;
+	
 
 	/**
 	 * tpNF
 	 */
 	@Enumerated(EnumType.ORDINAL)
 	@Column(name = "TIPO_OPERACAO", length = 1, nullable = false)
-	@NFEExport(secao="B", posicao=9, tamanho=1)
 	private TipoOperacao tipoOperacao;
 
 	/**
 	 * natOp
 	 */
 	@Column(name="DESCRICAO_NATUREZA_OPERACAO", length=60,nullable=false)
-	@NFEExport(secao="B", posicao=2, tamanho=60)
+	@NFEExport(secao=TipoSecao.B, posicao=2, tamanho=60)
 	private String descricaoNaturezaOperacao;
 	
 	
@@ -65,7 +100,6 @@ public class Identificacao implements Serializable {
 	 */
 	@Enumerated(EnumType.ORDINAL)
 	@Column(name="INDICADOR_FORMA_PAGAMENTO", length=1, nullable=false)
-	@NFEExport(secao="B", posicao=3, tamanho=1)
 	private FormaPagamento formaPagamento;
 	
 		
@@ -73,7 +107,7 @@ public class Identificacao implements Serializable {
 	 * serie
 	 */
 	@Column(name = "SERIE", length = 3, nullable = false)
-	@NFEExport(secao="B", posicao=5, tamanho=3)
+	@NFEExport(secao=TipoSecao.B, posicao=5, tamanho=3)
 	private Integer serie;
 	
 	
@@ -81,7 +115,7 @@ public class Identificacao implements Serializable {
 	 * nNF
 	 */
 	@Column(name = "NUMERO_DOCUMENTO_FISCAL", length = 9, nullable = false)
-	@NFEExport(secao="B", posicao=6 , tamanho=9)
+	@NFEExport(secao=TipoSecao.B, posicao=6 , tamanho=9)
 	private Long numeroDocumentoFiscal;
 	
 	/**
@@ -89,7 +123,7 @@ public class Identificacao implements Serializable {
 	 */
 	@Temporal(TemporalType.DATE)
 	@Column(name = "DATA_EMISSAO", nullable = false)
-	@NFEExport(secao="B", posicao=7)
+	@NFEExport(secao=TipoSecao.B, posicao=7)
 	private Date dataEmissao;
 	
 	
@@ -98,7 +132,7 @@ public class Identificacao implements Serializable {
 	 */
 	@Temporal(TemporalType.DATE)
 	@Column(name = "DATA_SAIDA_ENTRADA", nullable = true)
-	@NFEExport(secao="B", posicao=8)
+	@NFEExport(secao=TipoSecao.B, posicao=8)
 	private Date dataSaidaEntrada;
 	
 	/**
@@ -110,8 +144,24 @@ public class Identificacao implements Serializable {
 	
 	
 	@OneToMany(mappedBy="pk.notaFiscal")
+	@NFEExportType
 	private List<NotaFiscalReferenciada> listReferenciadas;
 	
+	/**
+	 * tpEmis
+	 */
+	@Enumerated(EnumType.ORDINAL)
+	@Column(name = "TIPO_EMISSAO", nullable = true)
+	@NFEExportType
+	private TipoEmissao tipoEmissao;
+	
+	/**
+	 * finNFe
+	 */
+	@Enumerated(EnumType.ORDINAL)
+	@Column(name = "FINALIDADE_EMISSAO", nullable = true)
+	@NFEExportType
+	private FinalidadeEmissao finalidadeEmissao;
 	
 	/**
 	 * dhCont
@@ -132,38 +182,7 @@ public class Identificacao implements Serializable {
 	 */
 	public Identificacao() {
 
-	}
-
-	/**
-	 * @return the codigoChaveAcesso
-	 */
-	public Integer getCodigoChaveAcesso() {
-		return codigoChaveAcesso;
-	}
-
-	/**
-	 * @param codigoChaveAcesso
-	 *            the codigoChaveAcesso to set
-	 */
-	public void setCodigoChaveAcesso(Integer codigoChaveAcesso) {
-		this.codigoChaveAcesso = codigoChaveAcesso;
-	}
-
-	/**
-	 * @return the digitoVerificadorChaveAcesso
-	 */
-	public Integer getDigitoVerificadorChaveAcesso() {
-		return digitoVerificadorChaveAcesso;
-	}
-
-	/**
-	 * @param digitoVerificadorChaveAcesso
-	 *            the digitoVerificadorChaveAcesso to set
-	 */
-	public void setDigitoVerificadorChaveAcesso(
-			Integer digitoVerificadorChaveAcesso) {
-		this.digitoVerificadorChaveAcesso = digitoVerificadorChaveAcesso;
-	}
+	}	
 
 	/**
 	 * @return the tipoOperacao
@@ -320,197 +339,31 @@ public class Identificacao implements Serializable {
 		this.justificativaEntradaContigencia = justificativaEntradaContigencia;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
+	/**
+	 * @return the tipoEmissao
 	 */
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime
-				* result
-				+ ((codigoChaveAcesso == null) ? 0 : codigoChaveAcesso
-						.hashCode());
-		result = prime * result
-				+ ((dataEmissao == null) ? 0 : dataEmissao.hashCode());
-		result = prime
-				* result
-				+ ((dataEntradaContigencia == null) ? 0
-						: dataEntradaContigencia.hashCode());
-		result = prime
-				* result
-				+ ((dataSaidaEntrada == null) ? 0 : dataSaidaEntrada.hashCode());
-		result = prime
-				* result
-				+ ((descricaoNaturezaOperacao == null) ? 0
-						: descricaoNaturezaOperacao.hashCode());
-		result = prime
-				* result
-				+ ((digitoVerificadorChaveAcesso == null) ? 0
-						: digitoVerificadorChaveAcesso.hashCode());
-		result = prime * result
-				+ ((formaPagamento == null) ? 0 : formaPagamento.hashCode());
-		result = prime
-				* result
-				+ ((horaSaidaEntrada == null) ? 0 : horaSaidaEntrada.hashCode());
-		result = prime
-				* result
-				+ ((justificativaEntradaContigencia == null) ? 0
-						: justificativaEntradaContigencia.hashCode());
-		result = prime
-				* result
-				+ ((listReferenciadas == null) ? 0 : listReferenciadas
-						.hashCode());
-		result = prime
-				* result
-				+ ((numeroDocumentoFiscal == null) ? 0 : numeroDocumentoFiscal
-						.hashCode());
-		result = prime * result + ((serie == null) ? 0 : serie.hashCode());
-		result = prime * result
-				+ ((tipoOperacao == null) ? 0 : tipoOperacao.hashCode());
-		return result;
+	public TipoEmissao getTipoEmissao() {
+		return tipoEmissao;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
+	/**
+	 * @param tipoEmissao the tipoEmissao to set
 	 */
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
-		}
-		if (obj == null) {
-			return false;
-		}
-		if (getClass() != obj.getClass()) {
-			return false;
-		}
-		Identificacao other = (Identificacao) obj;
-		if (codigoChaveAcesso == null) {
-			if (other.codigoChaveAcesso != null) {
-				return false;
-			}
-		} else if (!codigoChaveAcesso.equals(other.codigoChaveAcesso)) {
-			return false;
-		}
-		if (dataEmissao == null) {
-			if (other.dataEmissao != null) {
-				return false;
-			}
-		} else if (!dataEmissao.equals(other.dataEmissao)) {
-			return false;
-		}
-		if (dataEntradaContigencia == null) {
-			if (other.dataEntradaContigencia != null) {
-				return false;
-			}
-		} else if (!dataEntradaContigencia.equals(other.dataEntradaContigencia)) {
-			return false;
-		}
-		if (dataSaidaEntrada == null) {
-			if (other.dataSaidaEntrada != null) {
-				return false;
-			}
-		} else if (!dataSaidaEntrada.equals(other.dataSaidaEntrada)) {
-			return false;
-		}
-		if (descricaoNaturezaOperacao == null) {
-			if (other.descricaoNaturezaOperacao != null) {
-				return false;
-			}
-		} else if (!descricaoNaturezaOperacao
-				.equals(other.descricaoNaturezaOperacao)) {
-			return false;
-		}
-		if (digitoVerificadorChaveAcesso == null) {
-			if (other.digitoVerificadorChaveAcesso != null) {
-				return false;
-			}
-		} else if (!digitoVerificadorChaveAcesso
-				.equals(other.digitoVerificadorChaveAcesso)) {
-			return false;
-		}
-		if (formaPagamento != other.formaPagamento) {
-			return false;
-		}
-		if (horaSaidaEntrada == null) {
-			if (other.horaSaidaEntrada != null) {
-				return false;
-			}
-		} else if (!horaSaidaEntrada.equals(other.horaSaidaEntrada)) {
-			return false;
-		}
-		if (justificativaEntradaContigencia == null) {
-			if (other.justificativaEntradaContigencia != null) {
-				return false;
-			}
-		} else if (!justificativaEntradaContigencia
-				.equals(other.justificativaEntradaContigencia)) {
-			return false;
-		}
-		if (listReferenciadas == null) {
-			if (other.listReferenciadas != null) {
-				return false;
-			}
-		} else if (!listReferenciadas.equals(other.listReferenciadas)) {
-			return false;
-		}
-		if (numeroDocumentoFiscal == null) {
-			if (other.numeroDocumentoFiscal != null) {
-				return false;
-			}
-		} else if (!numeroDocumentoFiscal.equals(other.numeroDocumentoFiscal)) {
-			return false;
-		}
-		if (serie == null) {
-			if (other.serie != null) {
-				return false;
-			}
-		} else if (!serie.equals(other.serie)) {
-			return false;
-		}
-		if (tipoOperacao != other.tipoOperacao) {
-			return false;
-		}
-		return true;
+	public void setTipoEmissao(TipoEmissao tipoEmissao) {
+		this.tipoEmissao = tipoEmissao;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
+	/**
+	 * @return the finalidadeEmissao
 	 */
-	@Override
-	public String toString() {
-		return "Identificacao ["
-				+ (codigoChaveAcesso != null ? "codigoChaveAcesso="
-						+ codigoChaveAcesso + ", " : "")
-				+ (digitoVerificadorChaveAcesso != null ? "digitoVerificadorChaveAcesso="
-						+ digitoVerificadorChaveAcesso + ", "
-						: "")
-				+ (tipoOperacao != null ? "tipoOperacao=" + tipoOperacao + ", "
-						: "")
-				+ (descricaoNaturezaOperacao != null ? "descricaoNaturezaOperacao="
-						+ descricaoNaturezaOperacao + ", "
-						: "")
-				+ (formaPagamento != null ? "formaPagamento=" + formaPagamento
-						+ ", " : "")
-				+ (serie != null ? "serie=" + serie + ", " : "")
-				+ (numeroDocumentoFiscal != null ? "numeroDocumentoFiscal="
-						+ numeroDocumentoFiscal + ", " : "")
-				+ (dataEmissao != null ? "dataEmissao=" + dataEmissao + ", "
-						: "")
-				+ (dataSaidaEntrada != null ? "dataSaidaEntrada="
-						+ dataSaidaEntrada + ", " : "")
-				+ (horaSaidaEntrada != null ? "horaSaidaEntrada="
-						+ horaSaidaEntrada + ", " : "")
-				+ (listReferenciadas != null ? "listReferenciadas="
-						+ listReferenciadas + ", " : "")
-				+ (dataEntradaContigencia != null ? "dataEntradaContigencia="
-						+ dataEntradaContigencia + ", " : "")
-				+ (justificativaEntradaContigencia != null ? "justificativaEntradaContigencia="
-						+ justificativaEntradaContigencia
-						: "") + "]";
+	public FinalidadeEmissao getFinalidadeEmissao() {
+		return finalidadeEmissao;
 	}
 
-	
-
+	/**
+	 * @param finalidadeEmissao the finalidadeEmissao to set
+	 */
+	public void setFinalidadeEmissao(FinalidadeEmissao finalidadeEmissao) {
+		this.finalidadeEmissao = finalidadeEmissao;
+	}
 }

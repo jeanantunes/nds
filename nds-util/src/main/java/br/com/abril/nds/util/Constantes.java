@@ -24,6 +24,12 @@ public abstract class Constantes {
 	
 	public static final String UPLOAD_AJAX_REQUEST_ATTRIBUTE = "formUploadAjax";
 	
+	public static final String CPF = "cpf";
+	
+	public static final String CNPJ = "cnpj";
+	
+	public static final Integer NUMERO_REPROGRAMACOES_LIMITE = 2;
+	
 }
 
 

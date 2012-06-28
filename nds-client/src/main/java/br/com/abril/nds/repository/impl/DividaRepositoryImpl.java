@@ -26,7 +26,7 @@ import br.com.abril.nds.model.financeiro.StatusDivida;
 import br.com.abril.nds.repository.DividaRepository;
 
 @Repository
-public class DividaRepositoryImpl extends AbstractRepository<Divida, Long> implements
+public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> implements
 		DividaRepository {
 
 	@Value("#{queries.inadimplenciasCota}")
@@ -561,5 +561,16 @@ public class DividaRepositoryImpl extends AbstractRepository<Divida, Long> imple
 		criteria.add(Restrictions.eq("consolidado.id", idConsolidado));
 		
 		return (Divida) criteria.uniqueResult();
+	}
+
+	@Override
+	public BigDecimal obterTotalDividasAbertoCota(Long idCota) {
+        
+		String hql  = "select sum(COALESCE(divida.valor,0)) from Divida divida where divida.cota.id = :idCota and status = :status ";
+		Query query  = super.getSession().createQuery(hql);
+		query.setParameter("idCota", idCota);
+		query.setParameter("status", StatusDivida.EM_ABERTO);
+		
+		return (BigDecimal) query.uniqueResult();
 	}
 }

@@ -4,6 +4,7 @@ import static org.quartz.JobBuilder.newJob;
 import static org.quartz.SimpleScheduleBuilder.simpleSchedule;
 import static org.quartz.TriggerBuilder.newTrigger;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -23,19 +24,29 @@ import br.com.abril.nds.client.util.PessoaUtil;
 import br.com.abril.nds.client.vo.CotaVO;
 import br.com.abril.nds.client.vo.HistoricoSituacaoCotaVO;
 import br.com.abril.nds.client.vo.ValidacaoVO;
+import br.com.abril.nds.dto.CotaGarantiaDTO;
+import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.dto.ItemDTO;
+import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroStatusCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroStatusCotaDTO.OrdenacaoColunasStatusCota;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.TipoEdicao;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.HistoricoSituacaoCota;
 import br.com.abril.nds.model.cadastro.MotivoAlteracaoSituacao;
+import br.com.abril.nds.model.cadastro.Rota;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.seguranca.Usuario;
+import br.com.abril.nds.service.CotaGarantiaService;
 import br.com.abril.nds.service.CotaService;
+import br.com.abril.nds.service.DividaService;
+import br.com.abril.nds.service.RoteirizacaoService;
 import br.com.abril.nds.service.SituacaoCotaService;
 import br.com.abril.nds.util.CellModelKeyValue;
+import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
@@ -70,6 +81,18 @@ public class ManutencaoStatusCotaController {
 	
 	@Autowired
 	private CotaService cotaService;
+	
+	@Autowired
+	private CotaGarantiaService cotaGarantiaService;
+	
+	@Autowired
+	private RoteirizacaoService roteirizacaoService;
+	
+	@Autowired
+	private DividaService dividaService;
+	
+	@Autowired
+	private DistribuidorService distribuidorService;
 	
 	private static final String FILTRO_PESQUISA_SESSION_ATTRIBUTE = "filtroPesquisaManutencaoStatusCota";
 	
@@ -111,8 +134,8 @@ public class ManutencaoStatusCotaController {
 		 
 		 CotaVO cotaVO = 
 			new CotaVO(cota.getNumeroCota(), PessoaUtil.obterNomeExibicaoPeloTipo(cota.getPessoa()));
-		 
-		 cotaVO.setCodigoBox(cota.getBox().getCodigo());
+		
+		 cotaVO.setCodigoBox(cota.getBox()!=null?cota.getBox().getCodigo():"Não cadastrado");
 		 
 		 result.use(Results.json()).from(cotaVO, "result").serialize();
 	}
@@ -445,6 +468,32 @@ public class ManutencaoStatusCotaController {
 				throw new ValidacaoException(TipoMensagem.WARNING, "Cota inexistente!");
 			}
 			
+			if (novoHistoricoSituacaoCota.getNovaSituacao()==SituacaoCadastro.ATIVO){
+				
+				List<EnderecoAssociacaoDTO> enderecosCota = this.cotaService.obterEnderecosPorIdCota(cota.getId());
+			    if (enderecosCota==null || enderecosCota.size()<=0){
+			    	throw new ValidacaoException(TipoMensagem.WARNING, "Para alterar o status da cota para [Ativo] é necessário que a mesma possua ao menos um [Endereço] cadatrado!");
+			    }
+			    
+			    List<TelefoneAssociacaoDTO> telefonesCota = this.cotaService.buscarTelefonesCota(cota.getId(), null);
+			    if (telefonesCota==null || telefonesCota.size()<=0){
+			    	throw new ValidacaoException(TipoMensagem.WARNING, "Para alterar o status da cota para [Ativo] é necessário que a mesma possua ao menos um [Telefone] cadatrado!");
+			    }
+			    
+			    Distribuidor distribuidor = this.distribuidorService.obter();
+				if (distribuidor.isUtilizaGarantiaPdv()){
+					CotaGarantiaDTO cotaGarantiaDTO = this.cotaGarantiaService.getByCota(cota.getId());
+					if (cotaGarantiaDTO.getCotaGarantia()==null){
+						throw new ValidacaoException(TipoMensagem.WARNING, "Para alterar o status da cota para [Ativo] é necessário que a mesma possua [Garantia] cadatrada!");
+					}
+				}
+				
+				List<Rota> rotasCota = this.roteirizacaoService.obterRotasPorCota(cota.getNumeroCota());
+				if (rotasCota==null || rotasCota.size()<=0){
+					throw new ValidacaoException(TipoMensagem.WARNING, "Para alterar o status da cota para [Ativo] é necessário que a mesma possua [Roteirização] cadatrada!");
+				}
+			}
+	
 			novoHistoricoSituacaoCota.setCota(cota);
 		}
 		
@@ -494,6 +543,27 @@ public class ManutencaoStatusCotaController {
 			throw new ValidacaoException(validacao);
 		}
 	}
+	
+	/**
+	 * Verifica se a cota possui dividas em aberto
+	 * @param numeroCota
+	 */
+	@Post
+	@Path("/dividasAbertoCota")
+	public void dividasAbertoCota(Integer numeroCota){
+		
+		Cota cota = this.cotaService.obterPorNumeroDaCota(numeroCota);
+		BigDecimal totalDividas = this.dividaService.obterTotalDividasAbertoCota(cota.getId());
+		ValidacaoVO validacao = null;
+	
+		if (totalDividas!=null){
+			if (totalDividas.floatValue() > 0f){
+				validacao = new ValidacaoVO(TipoMensagem.SUCCESS, "AVISO: A cota ["+cota.getPessoa().getNome()+"] possui um total de "+ CurrencyUtil.formatarValorComSimbolo(totalDividas.floatValue()) +" de dívidas em aberto !");
+			}
+		}	
+
+		result.use(Results.json()).from(validacao!=null?validacao:"", "result").recursive().serialize();
+	}	
 	
 	//TODO: não há como reconhecer usuario, ainda
 	private Usuario getUsuario() {

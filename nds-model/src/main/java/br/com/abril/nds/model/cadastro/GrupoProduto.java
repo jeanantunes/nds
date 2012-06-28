@@ -12,6 +12,8 @@ public enum GrupoProduto {
 	LIVRO,
 	JORNAL,
 	VALE_DESCONTO,
+	CARTELA,
+	COLECIONAVEL,
 	OUTROS;
 	
 }

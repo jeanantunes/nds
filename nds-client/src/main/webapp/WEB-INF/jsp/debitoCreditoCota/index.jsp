@@ -3,6 +3,7 @@
 	<title>NDS - Novo Distrib</title>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/cota.js"></script>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
+	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/cota.js"></script>
 	
 <script>
 
@@ -206,7 +207,6 @@
 	}
 	
 	function popup_alterar() {
-		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
 	
 		$( "#dialog-editar" ).dialog({
 			resizable: false,
@@ -220,12 +220,14 @@
 				"Cancelar": function() {
 					$( this ).dialog( "close" );
 				}
-			}
+			},
+			beforeClose: function() {
+				clearMessageDialogTimeout();
+		    }
 		});	
 	};
 	
 	function popup_detalhe() {
-		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
 	
 		$( "#dialog-detalhe" ).dialog({
 			resizable: false,
@@ -314,8 +316,7 @@
 	}
 	
 	function confirmarExclusaoMovimento(idMovimento) {
-		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
-	
+		
 		$( "#dialog-excluir" ).dialog({
 			resizable: false,
 			height:170,
@@ -528,6 +529,7 @@
     </select>
     </td>
   </tr>
+
   <tr>
     <td width="126">Cota:</td>
     <td width="310">
@@ -540,12 +542,14 @@
     <td width="310">
     <input maxlength="80" type="text" style="width:300px;" name="debitoCredito.nomeCota" id="edicaoNomeCota" /></td>
   </tr>
+  
   <tr>
     <td width="126">Data Lançamento:</td>
     <td width="310">
     	<input type="text" name="debitoCredito.dataLancamento" id="edicaoDataLancamento" readonly="readonly" style="width:80px;" />
     </td>
   </tr>
+  
   <tr>
     <td>Data Vencimento:</td>
     <td>
@@ -665,15 +669,28 @@
    	    <legend>Pesquisar Débitos / Créditos Cota
         </legend><table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
   <tr>
-    <td width="105">Cota:</td>
-    
-    <td width="92">
-	   <input type="text" style="width:60px; float:left; margin-right:5px;" 
-   			  name="filtroDebitoCredito.numeroCota" id="numeroCota" onblur="pesquisarCota();"/>
-    </td>
-    <td width="38">Nome:</td>
-    
-    <td width="203"><span name="filtroDebitoCredito.nomeCota" id="nomeCota"></span></td>
+
+    <td width="29">Cota:</td>
+         <td width="105">
+         <input name="filtroDebitoCredito.numeroCota" 
+       		    id="numeroCota" 
+       		    type="text"
+       		    maxlength="11"
+       		    style="width:80px; 
+       		    float:left; margin-right:5px;"
+       		    onchange="cota.pesquisarPorNumeroCota('#numeroCota', '#nomeCota');" />
+	</td>
+		
+	<td>
+	     <input name="filtroDebitoCredito.nomeCota" 
+	      	    id="nomeCota" 
+	      		type="text" 
+	      		class="nomeCota" 
+	      		maxlength="255"
+	      		style="width:250px;"
+	      		onkeyup="cota.autoCompletarPorNome('#nomeCota');" 
+	      		onblur="cota.pesquisarPorNomeCota('#numeroCota', '#nomeCota');" />
+	</td>
     
     <td width="121">Tipo de Lançamento:</td>
     

@@ -13,7 +13,7 @@ import br.com.abril.nds.model.cadastro.TelefoneFornecedor;
 import br.com.abril.nds.repository.TelefoneFornecedorRepository;
 
 @Repository
-public class TelefoneFornecedorRepositoryImpl extends AbstractRepository<TelefoneFornecedor, Long>
+public class TelefoneFornecedorRepositoryImpl extends AbstractRepositoryModel<TelefoneFornecedor, Long>
 											  implements TelefoneFornecedorRepository {
 
 	public TelefoneFornecedorRepositoryImpl() {

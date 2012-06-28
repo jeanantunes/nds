@@ -16,7 +16,7 @@ import br.com.abril.nds.model.financeiro.Cobranca;
 import br.com.abril.nds.repository.CobrancaRepository;
 
 @Repository
-public class CobrancaRepositoryImpl extends AbstractRepository<Cobranca, Long> implements CobrancaRepository {
+public class CobrancaRepositoryImpl extends AbstractRepositoryModel<Cobranca, Long> implements CobrancaRepository {
 
 	public CobrancaRepositoryImpl() {
 		super(Cobranca.class);		

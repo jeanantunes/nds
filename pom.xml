@@ -31,13 +31,6 @@
 				<scope>test</scope>
 			</dependency>
 			<dependency>
-				<groupId>org.springframework</groupId>
-				<artifactId>spring-test</artifactId>
-				<version>3.0.6.RELEASE</version>
-				<type>jar</type>
-				<scope>test</scope>
-			</dependency>
-			<dependency>
 				<groupId>junit</groupId>
 				<artifactId>junit</artifactId>
 				<version>4.7</version>
@@ -98,6 +91,13 @@
 				<type>jar</type>
 			</dependency>
 			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-test</artifactId>
+				<version>${org.springframework.version}</version>
+				<type>jar</type>
+				<scope>test</scope>
+			</dependency>
+			<dependency>
 				<groupId>org.hibernate</groupId>
 				<artifactId>hibernate-core</artifactId>
 				<version>3.6.0.Final</version>
@@ -111,12 +111,12 @@
 			<dependency>
 				<groupId>org.slf4j</groupId>
 				<artifactId>slf4j-api</artifactId>
-				<version>1.5.8</version>
+				<version>1.6.1</version>
 			</dependency>
 			<dependency>
 				<groupId>org.slf4j</groupId>
 				<artifactId>slf4j-log4j12</artifactId>
-				<version>1.5.8</version>
+				<version>1.6.1</version>
 			</dependency>
 			<dependency>
 				<groupId>javax.persistence</groupId>
@@ -403,12 +403,13 @@
 	<modules>
 		<module>nds-model</module>
 		<module>nds-util</module>
-		<module>nds-client</module>
 
 		<module>ndsi-canonical</module>
 		<module>ndsi-couchdbinterface</module>
 		<module>ndsi-engine</module>
 		<module>ndsi-webtest</module>
+
+		<module>nds-client</module>
 
 		<!-- DESABILITADO até início de atividades neste módulo <module>nds-server</module> -->
 

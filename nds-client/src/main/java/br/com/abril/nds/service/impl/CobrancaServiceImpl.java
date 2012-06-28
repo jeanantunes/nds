@@ -17,6 +17,7 @@ import br.com.abril.nds.client.vo.DetalhesDividaVO;
 import br.com.abril.nds.dto.MovimentoFinanceiroCotaDTO;
 import br.com.abril.nds.dto.PagamentoDividasDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaDividasCotaDTO;
+import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.StatusCobranca;
 import br.com.abril.nds.model.TipoEdicao;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
@@ -43,7 +44,6 @@ import br.com.abril.nds.repository.MovimentoFinanceiroCotaRepository;
 import br.com.abril.nds.repository.TipoMovimentoFinanceiroRepository;
 import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.CobrancaService;
-import br.com.abril.nds.service.DistribuidorService;
 import br.com.abril.nds.service.MovimentoFinanceiroCotaService;
 import br.com.abril.nds.service.ParametroCobrancaCotaService;
 import br.com.abril.nds.service.PoliticaCobrancaService;
@@ -563,7 +563,7 @@ public class CobrancaServiceImpl implements CobrancaService {
 			movimento.setDataVencimento(cobrancaParcial.getDataVencimento());
 			movimento.setObservacao(pagamento.getObservacoes());
 			
-			this.movimentoFinanceiroCotaService.gerarMovimentoFinanceiroDebitoCredito(movimento);
+			this.movimentoFinanceiroCotaService.gerarMovimentosFinanceirosDebitoCredito(movimento);
 		}
 	}
 

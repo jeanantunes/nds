@@ -27,24 +27,17 @@ import br.com.abril.nds.dto.ItemDanfe;
 import br.com.abril.nds.dto.NfeDTO;
 import br.com.abril.nds.dto.filtro.FiltroMonitorNfeDTO;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.EnderecoDistribuidor;
-import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.Telefone;
 import br.com.abril.nds.model.cadastro.TelefoneDistribuidor;
-import br.com.abril.nds.model.fiscal.NotaFiscal;
-import br.com.abril.nds.model.fiscal.NotaFiscalEntrada;
-import br.com.abril.nds.model.fiscal.NotaFiscalSaida;
-import br.com.abril.nds.model.fiscal.NotaFiscalSaidaFornecedor;
-import br.com.abril.nds.model.fiscal.TipoOperacao;
+import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 import br.com.abril.nds.repository.ItemNotaFiscalEntradaRepository;
 import br.com.abril.nds.repository.ItemNotaFiscalSaidaRepository;
-import br.com.abril.nds.repository.NotaFiscalEntradaRepository;
-import br.com.abril.nds.repository.NotaFiscalSaidaRepository;
-import br.com.abril.nds.repository.ViewNotaFiscalRepository;
-import br.com.abril.nds.service.DistribuidorService;
+import br.com.abril.nds.repository.NotaFiscalRepository;
 import br.com.abril.nds.service.MonitorNFEService;
 import br.com.abril.nds.util.TipoMensagem;
 
@@ -52,13 +45,7 @@ import br.com.abril.nds.util.TipoMensagem;
 public class MonitorNFEServiceImpl implements MonitorNFEService {
 	
 	@Autowired
-	private ViewNotaFiscalRepository viewNotaFiscalRepository;
-	
-	@Autowired
-	private NotaFiscalEntradaRepository notaFiscalEntradaRepository;
-	
-	@Autowired
-	private NotaFiscalSaidaRepository notaFiscalSaidaRepository;
+	private NotaFiscalRepository notaFiscalRepository;
 	
 	@Autowired
 	private ItemNotaFiscalEntradaRepository itemNotaFiscalEntradaRepository;
@@ -75,9 +62,9 @@ public class MonitorNFEServiceImpl implements MonitorNFEService {
 		
 		InfoNfeDTO info = new InfoNfeDTO();
 		
-		List<NfeDTO> listaNotaFisal = viewNotaFiscalRepository.pesquisarNotaFiscal(filtro);
+		List<NfeDTO> listaNotaFisal = notaFiscalRepository.pesquisarNotaFiscal(filtro);
 		
-		Integer qtdeRegistros = viewNotaFiscalRepository.obterQtdeRegistroNotaFiscal(filtro);
+		Integer qtdeRegistros = notaFiscalRepository.obterQtdeRegistroNotaFiscal(filtro);
 
 		info.setListaNfeDTO(listaNotaFisal);
 
@@ -165,58 +152,59 @@ public class MonitorNFEServiceImpl implements MonitorNFEService {
 	 */
 	private void carregarDanfeDadosPrincipais(DanfeDTO danfe, NfeVO nfe, NotaFiscal notaFiscal) {
 		
-		String serie 				= notaFiscal.getSerie();
-		Long numeroNF 	    		= notaFiscal.getNumero();
-		String chave 				= notaFiscal.getChaveAcesso();
-		Date dataEmissao 			= notaFiscal.getDataEmissao();
-		Date dataSaida 				= notaFiscal.getDataExpedicao();
-		BigDecimal valorLiquido  	= notaFiscal.getValorLiquido();
-		BigDecimal valorDesconto	= notaFiscal.getValorDesconto();
+		String serie 				= notaFiscal.getIdentificacao().getSerie().toString();
+		Long numeroNF 	    		= notaFiscal.getIdentificacao().getNumeroDocumentoFiscal();
+		String chave 				= notaFiscal.getInformacaoEletronica().getChaveAcesso();
+		Date dataEmissao 			= notaFiscal.getIdentificacao().getDataEmissao();
+		Date dataSaida 				= notaFiscal.getIdentificacao().getDataSaidaEntrada();
 		
-	    String naturezaOperacao = notaFiscal.getNaturezaOperacao(); 	
-	    String formaPagamento 	= notaFiscal.getFormaPagamento();
-		String horaSaida 		= notaFiscal.getHoraSaida();
+		BigDecimal valorLiquido  	= notaFiscal.getInformacaoValoresTotais().getValorProdutos();
+		BigDecimal valorDesconto	= notaFiscal.getInformacaoValoresTotais().getValorDesconto();
 		
-		int tipoNF = 0;
-		
-		if(TipoOperacao.ENTRADA.equals(nfe.getTipoOperacao())) {
-			tipoNF = 0;
-		} else {
-			tipoNF = 1;
-		}
-		
-		String ambiente 	= notaFiscal.getAmbiente();
-		String protocolo 	= notaFiscal.getProtocolo();
-		String versao		= notaFiscal.getVersao();
-
-		
-		BigDecimal ISSQNTotal 				= notaFiscal.getISSQNTotal();
-		BigDecimal ISSQNBase 				= notaFiscal.getISSQNBase();
-		BigDecimal ISSQNValor 				= notaFiscal.getISSQNValor();
-		String informacoesComplementares 	= notaFiscal.getInformacoesComplementares();
-		String numeroFatura 				= notaFiscal.getNumeroFatura();
-		BigDecimal valorFatura 				= notaFiscal.getValorFatura();		
-		
-		danfe.setISSQNTotal(ISSQNTotal);
-		danfe.setISSQNBase(ISSQNBase);
-		danfe.setISSQNValor(ISSQNValor);
-		danfe.setInformacoesComplementares(informacoesComplementares);
-		danfe.setNumeroFatura(numeroFatura);
-		danfe.setValorFatura(valorFatura);
-		danfe.setNaturezaOperacao(naturezaOperacao);
-		danfe.setFormaPagamento(formaPagamento);
-		danfe.setSerie(serie);
-		danfe.setNumeroNF(numeroNF);
-		danfe.setDataEmissao(dataEmissao);
-		danfe.setDataSaida(dataSaida);
-		danfe.setHoraSaida(horaSaida);
-		danfe.setTipoNF(tipoNF);
-		danfe.setAmbiente(ambiente);
-		danfe.setChave(chave);
-		danfe.setProtocolo(protocolo);
-		danfe.setVersao(versao);
-		danfe.setValorLiquido(valorLiquido);
-		danfe.setValorDesconto(valorDesconto);
+//	    String naturezaOperacao = notaFiscal.getNaturezaOperacao(); 	
+//	    String formaPagamento 	= notaFiscal.getFormaPagamento();
+//		String horaSaida 		= notaFiscal.getHoraSaida();
+//		
+//		int tipoNF = 0;
+//		
+//		if(TipoOperacao.ENTRADA.equals(nfe.getTipoOperacao())) {
+//			tipoNF = 0;
+//		} else {
+//			tipoNF = 1;
+//		}
+//		
+//		String ambiente 	= notaFiscal.getAmbiente();
+//		String protocolo 	= notaFiscal.getProtocolo();
+//		String versao		= notaFiscal.getVersao();
+//
+//		
+//		BigDecimal ISSQNTotal 				= notaFiscal.getISSQNTotal();
+//		BigDecimal ISSQNBase 				= notaFiscal.getISSQNBase();
+//		BigDecimal ISSQNValor 				= notaFiscal.getISSQNValor();
+//		String informacoesComplementares 	= notaFiscal.getInformacoesComplementares();
+//		String numeroFatura 				= notaFiscal.getNumeroFatura();
+//		BigDecimal valorFatura 				= notaFiscal.getValorFatura();		
+//		
+//		danfe.setISSQNTotal(ISSQNTotal);
+//		danfe.setISSQNBase(ISSQNBase);
+//		danfe.setISSQNValor(ISSQNValor);
+//		danfe.setInformacoesComplementares(informacoesComplementares);
+//		danfe.setNumeroFatura(numeroFatura);
+//		danfe.setValorFatura(valorFatura);
+//		danfe.setNaturezaOperacao(naturezaOperacao);
+//		danfe.setFormaPagamento(formaPagamento);
+//		danfe.setSerie(serie);
+//		danfe.setNumeroNF(numeroNF);
+//		danfe.setDataEmissao(dataEmissao);
+//		danfe.setDataSaida(dataSaida);
+//		danfe.setHoraSaida(horaSaida);
+//		danfe.setTipoNF(tipoNF);
+//		danfe.setAmbiente(ambiente);
+//		danfe.setChave(chave);
+//		danfe.setProtocolo(protocolo);
+//		danfe.setVersao(versao);
+//		danfe.setValorLiquido(valorLiquido);
+//		danfe.setValorDesconto(valorDesconto);
 		
 		
 	}
@@ -234,8 +222,8 @@ public class MonitorNFEServiceImpl implements MonitorNFEService {
 		String emissorNome 							= pessoaJuridicaDistribuidor.getRazaoSocial();
 		String emissorFantasia 						= pessoaJuridicaDistribuidor.getNomeFantasia();
 		String emissorInscricaoEstadual 			= pessoaJuridicaDistribuidor.getInscricaoEstadual();
-		String emissorInscricaoEstadualSubstituto 	= notaFiscal.getEmissorInscricaoEstadualSubstituto();
-		String emissorInscricaoMunicipal 			= notaFiscal.getEmissorInscricaoMunicipal();
+//		String emissorInscricaoEstadualSubstituto 	= notaFiscal.getEmissorInscricaoEstadualSubstituto();
+//		String emissorInscricaoMunicipal 			= notaFiscal.getEmissorInscricaoMunicipal();
 		
 		String emissorLogradouro 	= "";
 		String emissorNumero 		= "";
@@ -268,8 +256,8 @@ public class MonitorNFEServiceImpl implements MonitorNFEService {
 		danfe.setEmissorNome(emissorNome);
 		danfe.setEmissorFantasia(emissorFantasia);
 		danfe.setEmissorInscricaoEstadual(emissorInscricaoEstadual);
-		danfe.setEmissorInscricaoEstadualSubstituto(emissorInscricaoEstadualSubstituto);
-		danfe.setEmissorInscricaoMunicipal(emissorInscricaoMunicipal);
+//		danfe.setEmissorInscricaoEstadualSubstituto(emissorInscricaoEstadualSubstituto);
+//		danfe.setEmissorInscricaoMunicipal(emissorInscricaoMunicipal);
 		danfe.setEmissorLogradouro(emissorLogradouro);
 		danfe.setEmissorNumero(emissorNumero);
 		danfe.setEmissorBairro(emissorBairro);
@@ -350,57 +338,57 @@ public class MonitorNFEServiceImpl implements MonitorNFEService {
 		String destinatarioTelefone 			= "";
 		
 		
-		if(TipoOperacao.SAIDA.equals(nfe.getTipoOperacao())) {
-			
-			if(notaFiscal instanceof NotaFiscalSaidaFornecedor) {
-				Fornecedor fornecedorDestinatario = ((NotaFiscalSaidaFornecedor)notaFiscal).getFornecedor();
-				
-				if(fornecedorDestinatario!=null) {
-					PessoaJuridica pessoaDestinatario = fornecedorDestinatario.getJuridica();
-					
-					if(pessoaDestinatario!=null) {
-						
-						destinatarioCNPJ = pessoaDestinatario.getCnpj();
-						destinatarioNome = pessoaDestinatario.getRazaoSocial();
-						destinatarioInscricaoEstadual = pessoaDestinatario.getInscricaoEstadual();
-						
-						List<Endereco> listaEnderecoDestinatario = pessoaDestinatario.getEnderecos();
-						
-						if(listaEnderecoDestinatario!=null && !listaEnderecoDestinatario.isEmpty()) {
-							
-							Endereco enderecoDestinatario = listaEnderecoDestinatario.get(0);
-							
-							destinatarioLogradouro 		= enderecoDestinatario.getLogradouro();
-							destinatarioNumero 			= String.valueOf(enderecoDestinatario.getNumero());
-							destinatarioComplemento 	= enderecoDestinatario.getComplemento();
-							destinatarioBairro 			= enderecoDestinatario.getBairro();
-							destinatarioMunicipio 		= enderecoDestinatario.getCidade();
-							destinatarioUF 				= enderecoDestinatario.getUf();
-							destinatarioCEP 			= enderecoDestinatario.getCep();
-													
-							
-						}
-
-						List<Telefone> listaTelefone = pessoaDestinatario.getTelefones();
-						
-						if(listaTelefone!=null && !listaTelefone.isEmpty()) {
-							
-							Telefone telefone = listaTelefone.get(0);
-							
-							if(telefone!=null) {
-								destinatarioTelefone = (( telefone.getDdd()==null 	? "" : telefone.getDdd() ) + 
-												  ( telefone.getNumero()==null 	? "" : telefone.getNumero() ));
-							}
-							
-							
-						}
-						
-						
-						
-					}
-				}
-			}
-		} 
+//		if(TipoOperacao.SAIDA.equals(nfe.getTipoOperacao())) {
+//			
+//			if(notaFiscal instanceof NotaFiscalSaidaFornecedor) {
+//				Fornecedor fornecedorDestinatario = ((NotaFiscalSaidaFornecedor)notaFiscal).getFornecedor();
+//				
+//				if(fornecedorDestinatario!=null) {
+//					PessoaJuridica pessoaDestinatario = fornecedorDestinatario.getJuridica();
+//					
+//					if(pessoaDestinatario!=null) {
+//						
+//						destinatarioCNPJ = pessoaDestinatario.getCnpj();
+//						destinatarioNome = pessoaDestinatario.getRazaoSocial();
+//						destinatarioInscricaoEstadual = pessoaDestinatario.getInscricaoEstadual();
+//						
+//						List<Endereco> listaEnderecoDestinatario = pessoaDestinatario.getEnderecos();
+//						
+//						if(listaEnderecoDestinatario!=null && !listaEnderecoDestinatario.isEmpty()) {
+//							
+//							Endereco enderecoDestinatario = listaEnderecoDestinatario.get(0);
+//							
+//							destinatarioLogradouro 		= enderecoDestinatario.getLogradouro();
+//							destinatarioNumero 			= String.valueOf(enderecoDestinatario.getNumero());
+//							destinatarioComplemento 	= enderecoDestinatario.getComplemento();
+//							destinatarioBairro 			= enderecoDestinatario.getBairro();
+//							destinatarioMunicipio 		= enderecoDestinatario.getCidade();
+//							destinatarioUF 				= enderecoDestinatario.getUf();
+//							destinatarioCEP 			= enderecoDestinatario.getCep();
+//													
+//							
+//						}
+//
+//						List<Telefone> listaTelefone = pessoaDestinatario.getTelefones();
+//						
+//						if(listaTelefone!=null && !listaTelefone.isEmpty()) {
+//							
+//							Telefone telefone = listaTelefone.get(0);
+//							
+//							if(telefone!=null) {
+//								destinatarioTelefone = (( telefone.getDdd()==null 	? "" : telefone.getDdd() ) + 
+//												  ( telefone.getNumero()==null 	? "" : telefone.getNumero() ));
+//							}
+//							
+//							
+//						}
+//						
+//						
+//						
+//					}
+//				}
+//			}
+//		} 
 		
 		
 		destinatarioCEP = tratarCep(destinatarioCEP);
@@ -427,27 +415,27 @@ public class MonitorNFEServiceImpl implements MonitorNFEService {
 	 */
 	private void carregarDanfeDadosTributarios(DanfeDTO danfe, NotaFiscal notaFiscal) {
 		
-		BigDecimal valorBaseICMS 			= notaFiscal.getValorBaseICMS();
-		BigDecimal valorICMS 				= notaFiscal.getValorICMS();
-		BigDecimal valorBaseICMSSubstituto 	= notaFiscal.getValorBaseICMSSubstituto();
-		BigDecimal valorICMSSubstituto 		= notaFiscal.getValorICMSSubstituto();
-		BigDecimal valorProdutos 			= notaFiscal.getValorProdutos();
-		BigDecimal valorFrete 				= notaFiscal.getValorFrete();
-		BigDecimal valorSeguro 				= notaFiscal.getValorSeguro();
-		BigDecimal valorOutro 				= notaFiscal.getValorOutro();
-		BigDecimal valorIPI 				= notaFiscal.getValorIPI();
-		BigDecimal valorNF 					= notaFiscal.getValorNF();
-		
-		danfe.setValorBaseICMS(valorBaseICMS);
-		danfe.setValorICMS(valorICMS);
-		danfe.setValorBaseICMSSubstituto(valorBaseICMSSubstituto);
-		danfe.setValorICMSSubstituto(valorICMSSubstituto);
-		danfe.setValorProdutos(valorProdutos);
-		danfe.setValorFrete(valorFrete);
-		danfe.setValorSeguro(valorSeguro);
-		danfe.setValorOutro(valorOutro);
-		danfe.setValorIPI(valorIPI);
-		danfe.setValorNF(valorNF);
+//		BigDecimal valorBaseICMS 			= notaFiscal.getValorBaseICMS();
+//		BigDecimal valorICMS 				= notaFiscal.getValorICMS();
+//		BigDecimal valorBaseICMSSubstituto 	= notaFiscal.getValorBaseICMSSubstituto();
+//		BigDecimal valorICMSSubstituto 		= notaFiscal.getValorICMSSubstituto();
+//		BigDecimal valorProdutos 			= notaFiscal.getValorProdutos();
+//		BigDecimal valorFrete 				= notaFiscal.getValorFrete();
+//		BigDecimal valorSeguro 				= notaFiscal.getValorSeguro();
+//		BigDecimal valorOutro 				= notaFiscal.getValorOutro();
+//		BigDecimal valorIPI 				= notaFiscal.getValorIPI();
+//		BigDecimal valorNF 					= notaFiscal.getValorNF();
+//		
+//		danfe.setValorBaseICMS(valorBaseICMS);
+//		danfe.setValorICMS(valorICMS);
+//		danfe.setValorBaseICMSSubstituto(valorBaseICMSSubstituto);
+//		danfe.setValorICMSSubstituto(valorICMSSubstituto);
+//		danfe.setValorProdutos(valorProdutos);
+//		danfe.setValorFrete(valorFrete);
+//		danfe.setValorSeguro(valorSeguro);
+//		danfe.setValorOutro(valorOutro);
+//		danfe.setValorIPI(valorIPI);
+//		danfe.setValorNF(valorNF);
 
 		
 	}
@@ -459,41 +447,41 @@ public class MonitorNFEServiceImpl implements MonitorNFEService {
 	 */
 	private void carregarDanfeDadosTransportadora(DanfeDTO danfe, NotaFiscal notaFiscal) {
 		
-		Integer frete = notaFiscal.getFrete();
-		String transportadoraCNPJ = notaFiscal.getTransportadoraCNPJ();
-		String transportadoraNome = notaFiscal.getTransportadoraNome();
-		String transportadoraInscricaoEstadual = notaFiscal.getTransportadoraInscricaoEstadual();
-		String transportadoraEndereco = notaFiscal.getTransportadoraEndereco();
-		String transportadoraMunicipio = notaFiscal.getTransportadoraMunicipio();
-		String transportadoraUF = notaFiscal.getTransportadoraUF();
-		String transportadoraQuantidade = notaFiscal.getTransportadoraQuantidade();
-		String transportadoraEspecie = notaFiscal.getTransportadoraEspecie();
-		String transportadoraMarca = notaFiscal.getTransportadoraMarca();
-		String transportadoraNumeracao = notaFiscal.getTransportadoraNumeracao();
-		
-		BigDecimal transportadoraPesoBruto = notaFiscal.getTransportadoraPesoBruto();
-		BigDecimal transportadoraPesoLiquido = notaFiscal.getTransportadoraPesoLiquido();
-		
-		String transportadoraANTT = notaFiscal.getTransportadoraANTT();
-		String transportadoraPlacaVeiculo = notaFiscal.getTransportadoraPlacaVeiculo();
-		String transportadoraPlacaVeiculoUF = notaFiscal.getTransportadoraPlacaVeiculoUF();
-
-		danfe.setFrete(frete);
-		danfe.setTransportadoraCNPJ(transportadoraCNPJ);
-		danfe.setTransportadoraNome(transportadoraNome);
-		danfe.setTransportadoraInscricaoEstadual(transportadoraInscricaoEstadual);
-		danfe.setTransportadoraEndereco(transportadoraEndereco);
-		danfe.setTransportadoraMunicipio(transportadoraMunicipio);
-		danfe.setTransportadoraUF(transportadoraUF);
-		danfe.setTransportadoraQuantidade(transportadoraQuantidade);
-		danfe.setTransportadoraEspecie(transportadoraEspecie);
-		danfe.setTransportadoraMarca(transportadoraMarca);
-		danfe.setTransportadoraNumeracao(transportadoraNumeracao);
-		danfe.setTransportadoraPesoBruto(transportadoraPesoBruto);
-		danfe.setTransportadoraPesoLiquido(transportadoraPesoLiquido);
-		danfe.setTransportadoraANTT(transportadoraANTT);
-		danfe.setTransportadoraPlacaVeiculo(transportadoraPlacaVeiculo);
-		danfe.setTransportadoraPlacaVeiculoUF(transportadoraPlacaVeiculoUF);
+//		Integer frete = notaFiscal.getFrete();
+//		String transportadoraCNPJ = notaFiscal.getTransportadoraCNPJ();
+//		String transportadoraNome = notaFiscal.getTransportadoraNome();
+//		String transportadoraInscricaoEstadual = notaFiscal.getTransportadoraInscricaoEstadual();
+//		String transportadoraEndereco = notaFiscal.getTransportadoraEndereco();
+//		String transportadoraMunicipio = notaFiscal.getTransportadoraMunicipio();
+//		String transportadoraUF = notaFiscal.getTransportadoraUF();
+//		String transportadoraQuantidade = notaFiscal.getTransportadoraQuantidade();
+//		String transportadoraEspecie = notaFiscal.getTransportadoraEspecie();
+//		String transportadoraMarca = notaFiscal.getTransportadoraMarca();
+//		String transportadoraNumeracao = notaFiscal.getTransportadoraNumeracao();
+//		
+//		BigDecimal transportadoraPesoBruto = notaFiscal.getTransportadoraPesoBruto();
+//		BigDecimal transportadoraPesoLiquido = notaFiscal.getTransportadoraPesoLiquido();
+//		
+//		String transportadoraANTT = notaFiscal.getTransportadoraANTT();
+//		String transportadoraPlacaVeiculo = notaFiscal.getTransportadoraPlacaVeiculo();
+//		String transportadoraPlacaVeiculoUF = notaFiscal.getTransportadoraPlacaVeiculoUF();
+//
+//		danfe.setFrete(frete);
+//		danfe.setTransportadoraCNPJ(transportadoraCNPJ);
+//		danfe.setTransportadoraNome(transportadoraNome);
+//		danfe.setTransportadoraInscricaoEstadual(transportadoraInscricaoEstadual);
+//		danfe.setTransportadoraEndereco(transportadoraEndereco);
+//		danfe.setTransportadoraMunicipio(transportadoraMunicipio);
+//		danfe.setTransportadoraUF(transportadoraUF);
+//		danfe.setTransportadoraQuantidade(transportadoraQuantidade);
+//		danfe.setTransportadoraEspecie(transportadoraEspecie);
+//		danfe.setTransportadoraMarca(transportadoraMarca);
+//		danfe.setTransportadoraNumeracao(transportadoraNumeracao);
+//		danfe.setTransportadoraPesoBruto(transportadoraPesoBruto);
+//		danfe.setTransportadoraPesoLiquido(transportadoraPesoLiquido);
+//		danfe.setTransportadoraANTT(transportadoraANTT);
+//		danfe.setTransportadoraPlacaVeiculo(transportadoraPlacaVeiculo);
+//		danfe.setTransportadoraPlacaVeiculoUF(transportadoraPlacaVeiculoUF);
 		
 		
 	}
@@ -518,13 +506,9 @@ public class MonitorNFEServiceImpl implements MonitorNFEService {
 			return null;
 		}
 		
-		NotaFiscal notaFiscal = null;
-		
-		if(TipoOperacao.ENTRADA.equals(nfe.getTipoOperacao())) {
-			notaFiscal = notaFiscalEntradaRepository.buscarPorId(nfe.getIdNotaFiscal());
-		} else {
-			notaFiscal = notaFiscalSaidaRepository.buscarPorId(nfe.getIdNotaFiscal());
-		}
+		NotaFiscal notaFiscal = notaFiscalRepository.buscarPorId(nfe.getIdNotaFiscal()); 
+				
+				//notaFiscalRepository.buscarPorId(nfe.getIdNotaFiscal());
 		
 		if(notaFiscal == null) {
 			return null;
@@ -563,15 +547,15 @@ public class MonitorNFEServiceImpl implements MonitorNFEService {
 		
 		List<ItemDanfe> listaItemDanfe = new ArrayList<ItemDanfe>();
 		
-		if(TipoOperacao.ENTRADA.equals(nfe.getTipoOperacao())) {
-			
-			listaItemDanfe = itemNotaFiscalEntradaRepository.obterListaItemNotaFiscalEntradaDadosDanfe(((NotaFiscalEntrada) notaFiscal).getId());
-			
-		} else {
-			
-			listaItemDanfe = itemNotaFiscalSaidaRepository.obterListaItemNotaFiscalSaidaDadosDanfe(((NotaFiscalSaida) notaFiscal).getId());
-			
-		}
+//		if(TipoOperacao.ENTRADA.equals(nfe.getTipoOperacao())) {
+//			
+//			listaItemDanfe = itemNotaFiscalEntradaRepository.obterListaItemNotaFiscalEntradaDadosDanfe(((NotaFiscalEntrada) notaFiscal).getId());
+//			
+//		} else {
+//			
+//			listaItemDanfe = itemNotaFiscalSaidaRepository.obterListaItemNotaFiscalSaidaDadosDanfe(((NotaFiscalSaida) notaFiscal).getId());
+//			
+//		}
 		
 		danfe.setItensDanfe(listaItemDanfe);
 		

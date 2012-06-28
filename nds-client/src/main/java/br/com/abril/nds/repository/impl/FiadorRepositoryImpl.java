@@ -18,7 +18,7 @@ import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.repository.FiadorRepository;
 
 @Repository
-public class FiadorRepositoryImpl extends AbstractRepository<Fiador, Long> implements FiadorRepository {
+public class FiadorRepositoryImpl extends AbstractRepositoryModel<Fiador, Long> implements FiadorRepository {
 
 	public FiadorRepositoryImpl() {
 		super(Fiador.class);

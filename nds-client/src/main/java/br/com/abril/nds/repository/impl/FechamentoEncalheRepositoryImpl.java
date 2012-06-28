@@ -27,7 +27,7 @@ import br.com.abril.nds.model.planejamento.ChamadaEncalheCota;
 import br.com.abril.nds.repository.FechamentoEncalheRepository;
 
 @Repository
-public class FechamentoEncalheRepositoryImpl extends AbstractRepository<FechamentoEncalhe, FechamentoEncalhePK> implements FechamentoEncalheRepository {
+public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<FechamentoEncalhe, FechamentoEncalhePK> implements FechamentoEncalheRepository {
 
 	public FechamentoEncalheRepositoryImpl() {
 		super(FechamentoEncalhe.class);
@@ -320,6 +320,28 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepository<Fechamen
 		query.add(Property.forName("ce.produtoEdicao.id").in(subquery));
 
 		return (Date) query.uniqueResult();
+	}
+
+	@Override
+	public ControleFechamentoEncalhe buscaControleFechamentoEncalhePorData(Date dataFechamentoEncalhe) {
+		Criteria criteria = getSession().createCriteria(ControleFechamentoEncalhe.class);
+		criteria.add(Restrictions.eq("dataEncalhe", dataFechamentoEncalhe));
+		return (ControleFechamentoEncalhe) criteria.uniqueResult();
+	}
+
+	@Override
+	public Date buscaDataUltimoControleFechamentoEncalhe() {
+		Criteria criteria = getSession().createCriteria(ControleFechamentoEncalhe.class);
+		criteria.setProjection(Projections.max("dataEncalhe"));
+		return (Date) criteria.uniqueResult();
+	}
+
+	@Override
+	public Date buscarUltimoFechamentoEncalheDia(Date dataFechamentoEncalhe) {
+		Criteria criteria = getSession().createCriteria(FechamentoEncalhePK.class);
+		criteria.add(Restrictions.eq("dataEncalhe", dataFechamentoEncalhe));
+		criteria.setProjection(Projections.max("dataEncalhe"));
+		return (Date) criteria.uniqueResult();
 	}
 	
 }

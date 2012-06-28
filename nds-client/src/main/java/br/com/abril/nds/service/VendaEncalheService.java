@@ -17,27 +17,6 @@ import br.com.abril.nds.model.seguranca.Usuario;
  *
  */
 public interface VendaEncalheService {
-	 
-	 /**
-	 * Gera Array de Bytes do Slip de Venda de Encalhe
-	 * @param idCota
-	 * @param dataInicio
-	 * @param dataFim
-	  * @return byte[]
-	 */
-	 byte[] geraImpressaoVendaEncalhe(List<VendaEncalheDTO> listaVendas,Long numeroCota);
-
-	 
-	 
-	 /**
-	 * Gera Array de Bytes do Slip de Venda de Suplementar
-	 * @param idCota
-	 * @param dataInicio
-	 * @param dataFim
-	  * @return byte[]
-	 */
-	 byte[] geraImpressaoVendaSuplementar(List<VendaEncalheDTO> listaVendas,Long numeroCota);
-
 
 	 /**
 	 * Retorna os dados de uma determinada venda de encalhe
@@ -49,14 +28,14 @@ public interface VendaEncalheService {
 	VendaEncalheDTO buscarVendaEncalhe(Long idVendaEncalhe);
 	
 	/**
-	 * Efetiva uma venda de encalhe
+	 * Efetiva uma venda de encalhe, e retorna o comprovante da venda.
 	 * 
 	 * @param vendaEncalheDTO - dados referente a vernda de encalhe 
 	 * @param numeroCota - número da cota
 	 * @param dataVencimentoDebito - data de vencimento do débito
 	 * @param usuario - usúario que efetivou a venda
 	 */
-	void efetivarVendaEncalhe(List<VendaEncalheDTO> vendaEncalheDTO, Long numeroCota,Date dataVencimentoDebito,Usuario usuario);
+	  byte[] efetivarVendaEncalhe(List<VendaEncalheDTO> vendaEncalheDTO, Long numeroCota,Date dataVencimentoDebito,Usuario usuario);
 	
 	/**
 	 * Exclui uma venda de encalhe efetivada
@@ -66,22 +45,12 @@ public interface VendaEncalheService {
 	void excluirVendaEncalhe(Long idVendaEncalhe);
 	
 	/**
-	 * Altera uma venda de encalhe efetivada.
+	 * Altera uma venda de encalhe efetivada, e retorna o comprovante da venda..
 	 * 
 	 * @param vendaEncalheDTO - dados referente a vernda de encalhe 
 	 */
-	void alterarVendaEncalhe(VendaEncalheDTO vendaEncalheDTO,Date dataVencimentoDebito, Usuario usuario);
-	
-	/**
-	 * Retorna o slip no formato PDF referente a venda de encalhe.
-	 *  
-	 * @param idVendaEncalhe - identificador da venda de encalhe
-	 * 
-	 * @return  byte[]
-	 * 
-	 */
-	byte[] gerarSlipVendaEncalhe(Long idVendaEncalhe);
-	
+	 byte[] alterarVendaEncalhe(VendaEncalheDTO vendaEncalheDTO,Date dataVencimentoDebito, Usuario usuario);
+
 	/**
 	 * 
 	 * Retorna as informações de um produto edição, candidato a venda de encalhe.
@@ -96,5 +65,7 @@ public interface VendaEncalheService {
 	List<VendaEncalheDTO> buscarVendasProduto(FiltroVendaEncalheDTO filtro);
 	
 	Long buscarQntVendasProduto(FiltroVendaEncalheDTO filtro);
+	
+	byte[] geraImpressaoVenda(FiltroVendaEncalheDTO filtro);
 	
 }

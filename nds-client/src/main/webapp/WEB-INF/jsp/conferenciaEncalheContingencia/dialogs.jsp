@@ -10,6 +10,8 @@
 	</fieldset>
 </div>
 
+<iframe src="" id="download-iframe" style="display:none;"></iframe>
+
 <div id="dialog-notaFiscal" title="Dados da Nota Fiscal" style="display: none;">
 	<p>
 		<strong>Insira os dados da Nota Fiscal</strong>

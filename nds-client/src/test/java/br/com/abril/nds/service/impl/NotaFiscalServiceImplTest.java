@@ -1,5 +1,6 @@
 package br.com.abril.nds.service.impl;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -15,22 +16,34 @@ import org.springframework.beans.factory.annotation.Autowired;
 import br.com.abril.nds.dto.RetornoNFEDTO;
 import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.cadastro.Endereco;
-import br.com.abril.nds.model.cadastro.Pessoa;
-import br.com.abril.nds.model.cadastro.PessoaFisica;
+import br.com.abril.nds.model.cadastro.GrupoProduto;
+import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
+import br.com.abril.nds.model.cadastro.Produto;
+import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.cadastro.Telefone;
 import br.com.abril.nds.model.cadastro.TipoEndereco;
+import br.com.abril.nds.model.cadastro.TipoParametroSistema;
+import br.com.abril.nds.model.cadastro.TipoProduto;
+import br.com.abril.nds.model.fiscal.TipoOperacao;
+import br.com.abril.nds.model.fiscal.nota.EncargoFinanceiroProduto;
 import br.com.abril.nds.model.fiscal.nota.Identificacao;
-import br.com.abril.nds.model.fiscal.nota.Identificacao.FormaPagamento;
 import br.com.abril.nds.model.fiscal.nota.IdentificacaoDestinatario;
 import br.com.abril.nds.model.fiscal.nota.IdentificacaoEmitente;
+import br.com.abril.nds.model.fiscal.nota.InformacaoAdicional;
 import br.com.abril.nds.model.fiscal.nota.InformacaoEletronica;
+import br.com.abril.nds.model.fiscal.nota.InformacaoTransporte;
+import br.com.abril.nds.model.fiscal.nota.InformacaoValoresTotais;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
+import br.com.abril.nds.model.fiscal.nota.ProdutoServico;
 import br.com.abril.nds.model.fiscal.nota.RetornoComunicacaoEletronica;
 import br.com.abril.nds.model.fiscal.nota.Status;
 import br.com.abril.nds.model.fiscal.nota.StatusProcessamentoInterno;
+import br.com.abril.nds.model.fiscal.nota.ValoresRetencoesTributos;
+import br.com.abril.nds.model.fiscal.nota.Veiculo;
 import br.com.abril.nds.repository.impl.AbstractRepositoryImplTest;
 import br.com.abril.nds.service.NotaFiscalService;
 
-@Ignore
+
 public class NotaFiscalServiceImplTest extends AbstractRepositoryImplTest {
 	
 	@Autowired
@@ -38,39 +51,39 @@ public class NotaFiscalServiceImplTest extends AbstractRepositoryImplTest {
 	
 	private HashMap<StatusProcessamentoInterno, NotaFiscal> listaNotasFiscais = new HashMap<StatusProcessamentoInterno, NotaFiscal>();
 	
+	private List<NotaFiscal> notasParaTesteArquivo = new ArrayList<NotaFiscal>();
+	
 	@Before
 	public void setup() {
-	
-		Endereco endereco = Fixture.criarEndereco(TipoEndereco.COMERCIAL, "13720000", "Logradouro", 123, "Bairro", "Cidade", "SP");
-		save(endereco);
+		save(Fixture.parametroSistema(TipoParametroSistema.PATH_INTERFACE_NFE_EXPORTACAO, "C:\\notas\\"));
 		
-		PessoaFisica pessoaFisicaEmitente = Fixture.pessoaFisica("37712543534", "email@email.com", "Joao");
-		save(pessoaFisicaEmitente);				
-						
-		PessoaFisica pessoaFisicaDestinatario =  Fixture.pessoaFisica("10522837131", "email@email.com", "Jose");
-		save(pessoaFisicaDestinatario);			
-		
-		NotaFiscal notaFiscalRetornadaAutorizada = 
-				gerarNotaFiscal(Status.AUTORIZADO, "33111102737654003496550550000483081131621856", 
-						StatusProcessamentoInterno.RETORNADA, pessoaFisicaDestinatario, pessoaFisicaEmitente, endereco);
-		
-		notaFiscalRetornadaAutorizada = merge(notaFiscalRetornadaAutorizada);
-		
-		
-		listaNotasFiscais.put(notaFiscalRetornadaAutorizada.getStatusProcessamentoInterno(), 
-																notaFiscalRetornadaAutorizada);
-		
-		NotaFiscal notaFiscalEnviadaAutorizada = 
-				gerarNotaFiscal(Status.SERVICO_EM_OPERACAO, "33111102737654003496550550000483081131621856", 
-						StatusProcessamentoInterno.ENVIADA, pessoaFisicaDestinatario, pessoaFisicaEmitente, endereco);
-		
-		notaFiscalEnviadaAutorizada = merge(notaFiscalEnviadaAutorizada);
-		
-		listaNotasFiscais.put(notaFiscalEnviadaAutorizada.getStatusProcessamentoInterno(), 
-				notaFiscalEnviadaAutorizada);
+		//Dados para teste de arquivo
+		for ( int i = 0; i < 5 ; i++ ) {
+			NotaFiscal notaTesteArquivo = 
+					this.gerarNFE("33111102737654003496550550000483081131621856", 
+					"37712543534", StatusProcessamentoInterno.GERADA, Status.SERVICO_EM_OPERACAO);
+			notaTesteArquivo.setProdutosServicos(this.gerarListaProdutoServico(notaTesteArquivo));
+			save(notaTesteArquivo);
+			
+			this.notasParaTesteArquivo.add(notaTesteArquivo);
+		}
 	}
 	
+	
 	@Test
+	public void testExportarNotasFiscais() {
+		
+		try {
+			this.notaFiscalService.exportarNotasFiscais();
+		} catch (Exception e) {
+			e.printStackTrace();
+			Assert.fail();
+		}
+	}
+	
+	
+	@Test
+	@Ignore
 	public void testSumarizarNotasFiscais() {
 		
 		List<RetornoNFEDTO> listaDadosRetornoNFE = new ArrayList<RetornoNFEDTO>();
@@ -105,48 +118,91 @@ public class NotaFiscalServiceImplTest extends AbstractRepositoryImplTest {
 		Assert.assertTrue(listaDadosRetornoNFE.size() > 0);
 	}
 	
-	private NotaFiscal gerarNotaFiscal(Status status, String chaveAcesso, 
-			StatusProcessamentoInterno statusProcessamentoInterno, Pessoa destinatario, Pessoa emitente, Endereco endereco) {
-		
-		IdentificacaoEmitente identificacaoEmitente = new IdentificacaoEmitente();
-		identificacaoEmitente.setPessoaEmitenteReferencia(emitente);
-		identificacaoEmitente.setDocumento("37712543534");
-		identificacaoEmitente.setEndereco(endereco);
-		identificacaoEmitente.setInscricaoEstual("InscricaoEstadua");
-		identificacaoEmitente.setNome("NomeEmitente");
-		
-		IdentificacaoDestinatario identificacaoDestinatario = new IdentificacaoDestinatario();
-		identificacaoDestinatario.setPessoaDestinatarioReferencia(destinatario);
-		
-		RetornoComunicacaoEletronica retornoComunicacaoEletronica = new RetornoComunicacaoEletronica();
-		retornoComunicacaoEletronica.setDataRecebimento(new Date());
-		retornoComunicacaoEletronica.setMotivo("");
-		retornoComunicacaoEletronica.setProtocolo(123L);
-		retornoComunicacaoEletronica.setStatus(status);
-		
-		InformacaoEletronica informacaoEletronica = new InformacaoEletronica();
-		informacaoEletronica.setChaveAcesso(chaveAcesso);
-		informacaoEletronica.setRetornoComunicacaoEletronica(retornoComunicacaoEletronica);
-		
-		Identificacao identificacao = new Identificacao();
-		identificacao.setCodigoChaveAcesso(01232);
-		identificacao.setDigitoVerificadorChaveAcesso(13214);
-		identificacao.setTipoOperacao(Identificacao.TipoOperacao.ENTRADA);
-		identificacao.setDataEmissao(new Date());
-		identificacao.setNumeroDocumentoFiscal(473129471L);
-		identificacao.setSerie(43124);
-		identificacao.setFormaPagamento(FormaPagamento.A_VISTA);
-		identificacao.setDescricaoNaturezaOperacao("Natureza Operacao");
-		identificacao.setCodigoChaveAcesso(31234);
-		
-		NotaFiscal notaFiscal = new NotaFiscal();
-		notaFiscal.setIdentificacaoEmitente(identificacaoEmitente);
-		notaFiscal.setInformacaoEletronica(informacaoEletronica);
-		notaFiscal.setStatusProcessamentoInterno(statusProcessamentoInterno);
-		notaFiscal.setIdentificacao(identificacao);
-		notaFiscal.setIdentificacaoDestinatario(identificacaoDestinatario);
-		
-		return notaFiscal;
-	}
 	
+	private NotaFiscal gerarNFE(String chaveAcesso, String documento, StatusProcessamentoInterno statusInterno, Status status) {
+		
+		Endereco endereco = Fixture.criarEndereco(TipoEndereco.COMERCIAL, 
+				"13720000", "logradouro", 123, "bairro", "cidade", "uf");
+		save(endereco);
+		
+		Telefone telefone = Fixture.telefone("ddd", "numero", "ramal");
+		save(telefone);
+		
+		Veiculo veiculo = new Veiculo();
+		veiculo.setPlaca("1234");
+		veiculo.setRegistroTransCarga("RT");
+		veiculo.setUf("SP");
+		
+		Identificacao identificacao = Fixture.identificacao(
+				new Date(), new Date(), new Date(), "", 001, Identificacao.FormaPagamento.A_PRAZO, 
+				new Date(), "", null, 321L, 123, TipoOperacao.SAIDA);
+		
+		IdentificacaoDestinatario identificacaoDestinatario = Fixture.identificacaoDestinatario(
+				documento, "teste@email.com", endereco, "inscricao", "Suframa", "nome", 
+				"nomeFantasia", null, telefone);
+		
+		IdentificacaoEmitente identificacaoEmitente = Fixture.identificacaoEmitente(
+				"c", documento, endereco, "IEstd", "inscricao", 
+				"IMunc", "nome", "nomeFantasia", null, null, 
+				telefone);
+		
+		InformacaoAdicional informacaoAdicional = Fixture.informacaoAdicional("informacoesComplementares");
+		
+		InformacaoTransporte informacaoTransporte = Fixture.informacaoTransporte(
+				"18130646000159", "", "enderecoCompleto", "IEstd", 132, "municipio", "nome", null, "SP", veiculo);
+	
+		ValoresRetencoesTributos valoreRetencoesTributos = new ValoresRetencoesTributos();
+		
+		valoreRetencoesTributos.setValorBaseCalculoIRRF(new BigDecimal(13212));
+		
+		InformacaoValoresTotais informacaoValoresTotais = Fixture.informacaoValoresTotais(
+				null, null , new BigDecimal(999999), new BigDecimal(999999), new BigDecimal(999999), 
+				new BigDecimal(999999), new BigDecimal(999999), new BigDecimal(999999), new BigDecimal(999999), 
+				new BigDecimal(999999), new BigDecimal(999999), new BigDecimal(999999), new BigDecimal(999999), 
+				new BigDecimal(999999), new BigDecimal(999999));
+		
+		RetornoComunicacaoEletronica retornoComunicacaoEletronica = Fixture.retornoComunicacaoEletronica(
+				new Date(), "", 4312L, status);
+		
+		InformacaoEletronica informacaoEletronica = Fixture.informacaoEletronica(chaveAcesso, retornoComunicacaoEletronica);
+		
+		NotaFiscal nota = new NotaFiscal();
+		nota.setIdentificacaoDestinatario(identificacaoDestinatario);
+		nota.setIdentificacaoEmitente(identificacaoEmitente);
+		nota.setInformacaoAdicional(informacaoAdicional);
+		nota.setInformacaoEletronica(informacaoEletronica);
+		nota.setInformacaoTransporte(informacaoTransporte);
+		nota.setInformacaoValoresTotais(informacaoValoresTotais);
+		nota.setStatusProcessamentoInterno(statusInterno);		
+		nota.setIdentificacao(identificacao);
+						
+		return nota;
+	}
+
+	private List<ProdutoServico> gerarListaProdutoServico(NotaFiscal nota) {
+		
+		List<ProdutoServico> listaProdutoServico = new ArrayList<ProdutoServico>();
+		
+		TipoProduto tipo = Fixture.tipoProduto("descricao", GrupoProduto.REVISTA, 8888L, "codigoNBM", 1234L);
+		
+		Produto produto = Fixture.produto("codigo", "descricao", "nome", PeriodicidadeProduto.ANUAL, tipo, 
+				123, 123, new BigDecimal(123));
+		
+		ProdutoEdicao produtoEdicao = Fixture.produtoEdicao(
+				"codigoProdutoEdicao", 999L, 1111, 
+				222, new BigDecimal(99999),  new BigDecimal(99999),  new BigDecimal(99999), "codigoDeBarras", 
+				4321L, produto, new BigDecimal(99999), false);
+		
+		
+		for (int i = 0 ; i < 5 ; i++) {
+			
+			listaProdutoServico.add(Fixture.produtoServico(111, 1111L,
+					"codigoProduto", "descricaoProduto", new EncargoFinanceiroProduto(), 111L,
+					111L, nota, produtoEdicao, 9L, "variavel",
+					new BigDecimal(4312), new BigDecimal(4312), new BigDecimal(4312), new BigDecimal(4312),
+					new BigDecimal(4312), new BigDecimal(12344)));
+		}
+		
+		return listaProdutoServico;
+	}
 }

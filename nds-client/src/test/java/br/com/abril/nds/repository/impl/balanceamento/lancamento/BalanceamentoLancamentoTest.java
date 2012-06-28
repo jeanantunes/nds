@@ -19,8 +19,8 @@ import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.StatusConfirmacao;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.Editor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
-import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
@@ -36,8 +36,12 @@ import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
 import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.model.planejamento.EstudoCota;
 import br.com.abril.nds.model.planejamento.Lancamento;
+import br.com.abril.nds.model.planejamento.LancamentoParcial;
+import br.com.abril.nds.model.planejamento.PeriodoLancamentoParcial;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
+import br.com.abril.nds.model.planejamento.StatusLancamentoParcial;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
+import br.com.abril.nds.model.planejamento.TipoLancamentoParcial;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.repository.impl.AbstractRepositoryImplTest;
@@ -50,6 +54,7 @@ public class BalanceamentoLancamentoTest extends AbstractRepositoryImplTest {
 	private LancamentoRepository lancamentoRepository;
 	
 	private Lancamento lancamentoVeja;
+	private Lancamento lancamentoVejaSuplementar;
 	private Lancamento lancamentoQuatroRodas;
 	private Lancamento lancamentoInfoExame;
 	private Lancamento lancamentoCapricho;
@@ -57,8 +62,6 @@ public class BalanceamentoLancamentoTest extends AbstractRepositoryImplTest {
 	
     private Fornecedor fornecedorFC;
 	private Fornecedor fornecedorDinap;
-	private TipoProduto tipoCromo;
-	private TipoFornecedor tipoFornecedorPublicacao;
 	
 	private List<Lancamento> lancamentos = new ArrayList<Lancamento>();
 	
@@ -71,54 +74,64 @@ public class BalanceamentoLancamentoTest extends AbstractRepositoryImplTest {
 	@Before
 	public void setUp() {
 		
-		tipoFornecedorPublicacao = Fixture.tipoFornecedorPublicacao();
+		TipoFornecedor tipoFornecedorPublicacao = Fixture.tipoFornecedorPublicacao();
 		fornecedorFC = Fixture.fornecedorFC(tipoFornecedorPublicacao);
 		fornecedorDinap = Fixture.fornecedorDinap(tipoFornecedorPublicacao);
 		save(fornecedorFC, fornecedorDinap);
 		
+		Editor globo = Fixture.criarEditor("Globo", 680L, fornecedorFC.getJuridica(), true);
+		save(globo);
+		
 		TipoProduto tipoRevista = Fixture.tipoRevista();
-		tipoCromo = Fixture.tipoCromo();
+		TipoProduto tipoCromo = Fixture.tipoCromo();
 		save(tipoRevista, tipoCromo);
 		
 		Produto veja = Fixture.produtoVeja(tipoRevista);
 		veja.addFornecedor(fornecedorDinap);
+		veja.setEditor(globo);
 
 		Produto quatroRodas = Fixture.produtoQuatroRodas(tipoRevista);
 		quatroRodas.addFornecedor(fornecedorDinap);
-
+		quatroRodas.setEditor(globo);
+		
 		Produto infoExame = Fixture.produtoInfoExame(tipoRevista);
 		infoExame.addFornecedor(fornecedorDinap);
-
+		infoExame.setEditor(globo);
+		
 		Produto capricho = Fixture.produtoCapricho(tipoRevista);
 		capricho.addFornecedor(fornecedorDinap);
+		capricho.setEditor(globo);
+		
 		save(veja, quatroRodas, infoExame, capricho);
 		
 		Produto cromoReiLeao = Fixture.produtoCromoReiLeao(tipoCromo);
 		cromoReiLeao.addFornecedor(fornecedorDinap);
+		cromoReiLeao.setEditor(globo);
+		
 		save(cromoReiLeao);
 
-		ProdutoEdicao veja1 = Fixture.produtoEdicao("1", 1L, 10, 7,
+		ProdutoEdicao veja1 = Fixture.produtoEdicao("1", 1L, 1, 7,
 				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(15), "ABCDEFGHIJKLMNOPQRSTU", 1L, veja, null, false);
 
 		veja1.setExpectativaVenda(BigDecimal.TEN);
 		
-		ProdutoEdicao quatroRoda2 = Fixture.produtoEdicao("1", 2L, 15, 30,
+		ProdutoEdicao quatroRoda2 = Fixture.produtoEdicao("1", 2L, 1, 30,
 				new BigDecimal(0.1), BigDecimal.TEN, BigDecimal.TEN, "ABCDEFGHIJKLMNOPQRST", 2L,
 				quatroRodas, null, false);
 
 		quatroRoda2.setExpectativaVenda(BigDecimal.TEN);
 		
-		ProdutoEdicao infoExame3 = Fixture.produtoEdicao("1", 3L, 5, 30,
+		ProdutoEdicao infoExame3 = Fixture.produtoEdicao("1", 3L, 1, 30,
 				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(12), "ABCDEFGHIJKLMNOPQRS", 3L, infoExame, null, false);
 
 		infoExame3.setExpectativaVenda(BigDecimal.TEN);
 		
-		ProdutoEdicao capricho1 = Fixture.produtoEdicao("1", 1L, 10, 15,
+		ProdutoEdicao capricho1 = Fixture.produtoEdicao("1", 1L, 1, 15,
 				new BigDecimal(0.12), BigDecimal.TEN, BigDecimal.TEN, "ABCDEFGHIJKLMNOPQR", 4L, capricho, null, false);
 		
 		capricho1.setExpectativaVenda(BigDecimal.TEN);
 		
-		ProdutoEdicao cromoReiLeao1 = Fixture.produtoEdicao("1", 1L, 100, 60,
+		ProdutoEdicao cromoReiLeao1 = Fixture.produtoEdicao("1", 1L, 1, 60,
 				new BigDecimal(0.01), BigDecimal.ONE, new BigDecimal(1.5), "ABCDEFGHIJKLMNOPQ", 5L, cromoReiLeao, null, false);
 		
 		cromoReiLeao1.setExpectativaVenda(BigDecimal.TEN);
@@ -225,6 +238,21 @@ public class BalanceamentoLancamentoTest extends AbstractRepositoryImplTest {
 		
 		dataLancamento = DateUtil.adicionarDias(dataLancamento, 1);
 		
+		
+		
+		lancamentoVejaSuplementar = Fixture.lancamento(TipoLancamento.SUPLEMENTAR, veja1,
+				dataLancamento,
+				new Date(),
+				new Date(),
+				new Date(),
+				repartePrevisto,
+				StatusLancamento.PLANEJADO, null, 1);
+		
+		dataLancamento = DateUtil.adicionarDias(dataLancamento, 1);
+		
+		
+		
+		
 		lancamentoQuatroRodas = Fixture.lancamento(TipoLancamento.LANCAMENTO, quatroRoda2,
 				dataLancamento,
 				new Date(),
@@ -263,10 +291,11 @@ public class BalanceamentoLancamentoTest extends AbstractRepositoryImplTest {
 				repartePrevisto,
 				StatusLancamento.PLANEJADO, null, 5);
 		
-		save(lancamentoVeja, lancamentoQuatroRodas, lancamentoInfoExame,
-			 lancamentoCapricho, lancamentoCromoReiLeao);
+		save(lancamentoVeja, lancamentoVejaSuplementar, lancamentoQuatroRodas,
+			 lancamentoInfoExame, lancamentoCapricho, lancamentoCromoReiLeao);
 		
 		lancamentos.add(lancamentoVeja);
+		lancamentos.add(lancamentoVejaSuplementar);
 		lancamentos.add(lancamentoQuatroRodas);
 		lancamentos.add(lancamentoInfoExame);
 		lancamentos.add(lancamentoCapricho);
@@ -280,25 +309,21 @@ public class BalanceamentoLancamentoTest extends AbstractRepositoryImplTest {
 		
 		save(cotaDinap);
 		
-//		EstoqueProdutoCota estoqueProdutoCotaCapricho = Fixture.estoqueProdutoCota(capricho1, cotaDinap, new BigDecimal(110), BigDecimal.TEN);
-//		
-//		save(box, cotaDinap, estoqueProdutoCotaCapricho);
+		LancamentoParcial lancamentoParcialCapricho =
+			Fixture.criarLancamentoParcial(capricho1,
+										   lancamentoCapricho.getDataLancamentoPrevista(), 
+										   lancamentoCapricho.getDataRecolhimentoPrevista(),
+										   StatusLancamentoParcial.PROJETADO);
+		
+		save(lancamentoParcialCapricho);
+		
+		PeriodoLancamentoParcial periodoLancamentoCapricho =
+			Fixture.criarPeriodoLancamentoParcial(lancamentoCapricho,
+												  lancamentoParcialCapricho,
+												  StatusLancamentoParcial.PROJETADO,
+												  TipoLancamentoParcial.FINAL);
 
-//		LancamentoParcial lancamentoParcialCapricho = Fixture.criarLancamentoParcial(capricho1,
-//																			 lancamentoCapricho.getDataLancamentoPrevista(), 
-//																			 lancamentoCapricho.getDataRecolhimentoPrevista(),
-//																			 StatusLancamentoParcial.PROJETADO);
-//
-//		lancamentoParcialCapricho.setStatus(StatusLancamentoParcial.PROJETADO);
-//		
-//		save(lancamentoParcialCapricho);
-//		
-//		PeriodoLancamentoParcial parcialCapricho = Fixture.criarPeriodoLancamentoParcial(
-//				lancamentoCapricho, 
-//				lancamentoParcialCapricho, 
-//				StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.FINAL);
-//
-//		save(parcialCapricho);
+		save(periodoLancamentoCapricho);
 		
 		Estudo estudoCapricho = Fixture.estudo(new BigDecimal(180),
 				lancamentoCapricho.getDataLancamentoDistribuidor(), capricho1);
@@ -317,27 +342,7 @@ public class BalanceamentoLancamentoTest extends AbstractRepositoryImplTest {
 		Cota cotaFC = Fixture.cota(55, fornecedorFC.getJuridica(), SituacaoCadastro.ATIVO, box301);
 		
 		save(cotaFC);
-		
-//		EstoqueProdutoCota estoqueProdutoCotaQuatroRodas = Fixture.estoqueProdutoCota(quatroRoda2, cotaFC, new BigDecimal(110), BigDecimal.TEN);
-//		
-//		save(estoqueProdutoCotaQuatroRodas);
-		
-//		LancamentoParcial lancamentoParcialQuatroRodas = Fixture.criarLancamentoParcial(quatroRoda2,
-//																					    lancamentoQuatroRodas.getDataLancamentoPrevista(), 
-//																					    lancamentoQuatroRodas.getDataRecolhimentoPrevista(),
-//																					    StatusLancamentoParcial.PROJETADO);
-//		
-//		lancamentoParcialQuatroRodas.setStatus(StatusLancamentoParcial.PROJETADO);
-//		
-//		save(lancamentoParcialQuatroRodas);
-//		
-//		PeriodoLancamentoParcial parcialQuatroRodas = Fixture.criarPeriodoLancamentoParcial(
-//				lancamentoQuatroRodas, 
-//				lancamentoParcialQuatroRodas, 
-//				StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.FINAL);
-//		
-//		save(parcialQuatroRodas);
-		
+				
 		Estudo estudoQuatroRodas = Fixture.estudo(new BigDecimal(180),
 				lancamentoQuatroRodas.getDataLancamentoDistribuidor(), quatroRoda2);
 		
@@ -350,26 +355,6 @@ public class BalanceamentoLancamentoTest extends AbstractRepositoryImplTest {
 		Cota cotaManoel = Fixture.cota(60, fornecedorFC.getJuridica(), SituacaoCadastro.ATIVO, box);
 
 		save(cotaManoel);
-		
-//		EstoqueProdutoCota estoqueProdutoCotaVeja= Fixture.estoqueProdutoCota(veja1, cotaManoel, new BigDecimal(110), BigDecimal.TEN);
-//		
-//		save(estoqueProdutoCotaVeja);
-
-//		LancamentoParcial lancamentoParcialVeja = Fixture.criarLancamentoParcial(veja1,
-//																				 lancamentoVeja.getDataLancamentoPrevista(), 
-//																				 lancamentoVeja.getDataRecolhimentoPrevista(),
-//																				 StatusLancamentoParcial.PROJETADO);
-//
-//		lancamentoParcialVeja.setStatus(StatusLancamentoParcial.PROJETADO);
-//		
-//		save(lancamentoParcialVeja);
-//		
-//		PeriodoLancamentoParcial parcialVeja = Fixture.criarPeriodoLancamentoParcial(
-//				lancamentoVeja, 
-//				lancamentoParcialVeja, 
-//				StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.FINAL);
-//
-//		save(parcialVeja);
 		
 		Estudo estudoVeja = Fixture.estudo(new BigDecimal(180),
 				lancamentoVeja.getDataLancamentoDistribuidor(), veja1);
@@ -388,27 +373,7 @@ public class BalanceamentoLancamentoTest extends AbstractRepositoryImplTest {
 		Cota cotaJurandir = Fixture.cota(59, fornecedorFC.getJuridica(), SituacaoCadastro.ATIVO, box303);
 		
 		save(cotaJurandir);
-		
-//		EstoqueProdutoCota estoqueProdutoCotaInfoExame = Fixture.estoqueProdutoCota(infoExame3, cotaJurandir, new BigDecimal(110), BigDecimal.TEN);
-//		
-//		save(estoqueProdutoCotaInfoExame);
-		
-//		LancamentoParcial lancamentoParcialInfoExame = Fixture.criarLancamentoParcial(infoExame3,
-//																					  lancamentoInfoExame.getDataLancamentoPrevista(), 
-//																				      lancamentoInfoExame.getDataRecolhimentoPrevista(),
-//																				      StatusLancamentoParcial.PROJETADO);
-//		
-//		lancamentoParcialInfoExame.setStatus(StatusLancamentoParcial.PROJETADO);
-//		
-//		save(lancamentoParcialInfoExame);
-//		
-//		PeriodoLancamentoParcial parcialInfoExame = Fixture.criarPeriodoLancamentoParcial(
-//				lancamentoInfoExame, 
-//				lancamentoParcialInfoExame, 
-//				StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.FINAL);
-//		
-//		save(parcialInfoExame);
-		
+				
 		Estudo estudoInfoExame = Fixture.estudo(new BigDecimal(180),
 				lancamentoInfoExame.getDataLancamentoDistribuidor(), infoExame3);
 		
@@ -425,16 +390,16 @@ public class BalanceamentoLancamentoTest extends AbstractRepositoryImplTest {
 		montarParametrosConsulta();
 		
 		List<ProdutoLancamentoDTO> produtosLancamento =
-			lancamentoRepository.obterBalanceamentoLancamento(
-				periodoLancamento, fornecedores, GrupoProduto.CROMO);
+			lancamentoRepository.obterBalanceamentoLancamento(periodoLancamento, fornecedores);
 
 		Assert.assertEquals(lancamentos.size(), produtosLancamento.size());
 
-		ProdutoLancamentoDTO produtoRecolhimentoVeja = produtosLancamento.get(0);
+		ProdutoLancamentoDTO produtoRecolhimentoVeja =
+			getProdutoLancamento(produtosLancamento, lancamentoVeja.getId());
 		
-		ProdutoLancamentoDTO produtoRecolhimentoQuatroRodas = produtosLancamento.get(1);
+		ProdutoLancamentoDTO produtoRecolhimentoQuatroRodas = produtosLancamento.get(2);
 		
-		ProdutoLancamentoDTO produtoRecolhimentoCromoReiLeao = produtosLancamento.get(4);
+		ProdutoLancamentoDTO produtoRecolhimentoCromoReiLeao = produtosLancamento.get(5);
 		
 		Assert.assertTrue(produtoRecolhimentoVeja.isPossuiEstudo());
 		
@@ -459,8 +424,7 @@ public class BalanceamentoLancamentoTest extends AbstractRepositoryImplTest {
 		montarParametrosConsulta();
 		
 		TreeMap<Date, BigDecimal> expectativaReparte =
-			lancamentoRepository.obterExpectativasRepartePorData(
-				periodoLancamento, fornecedores, GrupoProduto.CROMO);
+			lancamentoRepository.obterExpectativasRepartePorData(periodoLancamento, fornecedores);
 		
 		Assert.assertEquals(lancamentos.size(), expectativaReparte.size());
 		
@@ -482,6 +446,20 @@ public class BalanceamentoLancamentoTest extends AbstractRepositoryImplTest {
 												DateUtil.removerTimestamp(dataLancamentoFinal));
 		
 		fornecedores = Collections.singletonList(fornecedorDinap.getId());
+	}
+	
+	private ProdutoLancamentoDTO getProdutoLancamento(List<ProdutoLancamentoDTO> produtosLancamento,
+			  										  Long idLancamento) {
+
+		for (ProdutoLancamentoDTO produtoLancamento : produtosLancamento) {
+		
+			if (produtoLancamento.getIdLancamento().equals(idLancamento)) {
+			
+				return produtoLancamento;
+			}
+		}
+		
+		return null;
 	}
 	
 }

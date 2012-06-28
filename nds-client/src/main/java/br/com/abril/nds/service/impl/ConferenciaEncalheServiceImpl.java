@@ -6,6 +6,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -28,9 +29,11 @@ import br.com.abril.nds.dto.ProdutoEdicaoDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoSlipDTO;
 import br.com.abril.nds.dto.SlipDTO;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.StatusConfirmacao;
 import br.com.abril.nds.model.TipoEdicao;
+import br.com.abril.nds.model.TipoSlip;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
@@ -96,7 +99,7 @@ import br.com.abril.nds.repository.TipoMovimentoEstoqueRepository;
 import br.com.abril.nds.repository.TipoMovimentoFinanceiroRepository;
 import br.com.abril.nds.repository.TipoNotaFiscalRepository;
 import br.com.abril.nds.service.ConferenciaEncalheService;
-import br.com.abril.nds.service.DistribuidorService;
+import br.com.abril.nds.service.ControleNumeracaoSlipService;
 import br.com.abril.nds.service.DocumentoCobrancaService;
 import br.com.abril.nds.service.GerarCobrancaService;
 import br.com.abril.nds.service.MovimentoEstoqueService;
@@ -199,6 +202,9 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	
 	@Autowired
 	private ItemRecebimentoFisicoRepository itemRecebimentoFisicoRepository;
+	
+	@Autowired
+	private ControleNumeracaoSlipService controleNumeracaoSlipService;
 	
 	/*
 	 * (non-Javadoc)
@@ -348,13 +354,65 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 	}
 	
-	
-	/*
-	 * (non-Javadoc)
-	 * @see br.com.abril.nds.service.ConferenciaEncalheService#obterInfoConferenciaEncalheCota(java.lang.Integer)
+	/**
+	 * Obtém lista de conferenciaEncalhe com os produtosEdicao que fazem parte da chamaEncalhe atual para 
+	 * a cota em questão ou que estejam dentro da semana de recolhimento. Caso uma operação de conferencia de 
+	 * encalhe esteja sendo realizada, serão adicionados apenas produtosEdicao ainda não tenham sido adicionados
+	 * a lista de conferencia de encalhe existente.
+	 * 
+	 * @param idControleConferenciaEncalheCota
+	 * @param listaConferenciaEncalhe
 	 */
+	private List<ConferenciaEncalheDTO> obterListaConferenciaEncalheContingencia(
+			Long idDistribuidor, 
+			Integer numeroCota,
+			Date dataOperacao,
+			List<ConferenciaEncalheDTO> listaConferenciaEncalhe) {
+		
+		Set<Long> listaIdProdutoEdicao = new HashSet<Long>();
+		
+		if(listaConferenciaEncalhe!=null && !listaConferenciaEncalhe.isEmpty()) {
+			
+			for(ConferenciaEncalheDTO conferencia : listaConferenciaEncalhe) {
+				
+				listaIdProdutoEdicao.add(conferencia.getIdProdutoEdicao());
+				
+			}
+			
+		}
+		
+		Date dataInicial = obterDataRecolhimentoReferencia();
+		Date dataFinal = dataOperacao;
+		boolean indFechado = false;
+		boolean indPostergado = false;
+		
+		int idInicial = (int) System.currentTimeMillis();
+		idInicial = (idInicial - (1000000));
+		
+		
+		List<ConferenciaEncalheDTO> listaConferenciaEncalheContingencia = 
+			conferenciaEncalheRepository.obterListaConferenciaEncalheDTOContingencia(
+				idDistribuidor,
+				numeroCota, 
+				dataInicial, 
+				dataFinal, 
+				indFechado, 
+				indPostergado, 
+				listaIdProdutoEdicao);
+		
+		for(ConferenciaEncalheDTO conferencia : listaConferenciaEncalheContingencia) {
+			int id = (-1 * (idInicial++));
+			conferencia.setIdConferenciaEncalhe(new Long(id));
+		}
+		
+		return listaConferenciaEncalheContingencia;
+		
+		
+	}
+	
+	
 	@Transactional(readOnly = true)
-	public InfoConferenciaEncalheCota obterInfoConferenciaEncalheCota(Integer numeroCota) {
+	public InfoConferenciaEncalheCota obterInfoConferenciaEncalheCota(Integer numeroCota, boolean indConferenciaContingencia) {
 		
 		Distribuidor distribuidor = distribuidorService.obter();
 		
@@ -367,10 +425,11 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		InfoConferenciaEncalheCota infoConfereciaEncalheCota = new InfoConferenciaEncalheCota();
 		
+		List<ConferenciaEncalheDTO> listaConferenciaEncalheDTO = null;
+		
 		if(controleConferenciaEncalheCota!=null) {
 			
-			List<ConferenciaEncalheDTO> listaConferenciaEncalheDTO = 
-					conferenciaEncalheRepository.obterListaConferenciaEncalheDTO(
+			listaConferenciaEncalheDTO = conferenciaEncalheRepository.obterListaConferenciaEncalheDTO(
 							controleConferenciaEncalheCota.getId(), 
 							distribuidor.getId());
 			
@@ -387,6 +446,31 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			infoConfereciaEncalheCota.setEncalhe(BigDecimal.ZERO);
 			
 		}
+		
+		if(indConferenciaContingencia) {
+			
+			List<ConferenciaEncalheDTO> listaConferenciaEncalheContingencia = 
+					obterListaConferenciaEncalheContingencia(
+							distribuidor.getId(), 
+							numeroCota, 
+							dataOperacao,
+							infoConfereciaEncalheCota.getListaConferenciaEncalhe());
+			
+			if(listaConferenciaEncalheDTO!=null && !listaConferenciaEncalheDTO.isEmpty()) {
+				
+				listaConferenciaEncalheDTO.addAll(listaConferenciaEncalheContingencia);
+				
+				infoConfereciaEncalheCota.setListaConferenciaEncalhe(listaConferenciaEncalheDTO);
+				
+			} else {
+				
+				infoConfereciaEncalheCota.setListaConferenciaEncalhe(listaConferenciaEncalheContingencia);
+				
+			}
+			
+			
+		}
+		
 		
 		List<Long> listaIdProdutoEdicao = 
 				chamadaEncalheCotaRepository.obterListaIdProdutoEdicaoChamaEncalheCota(numeroCota, dataOperacao, true, false);
@@ -752,9 +836,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		PoliticaCobranca politicaCobranca = politicaCobrancaService.obterPoliticaCobrancaPrincipal();
 		FormaEmissao formaEmissao = politicaCobranca.getFormaEmissao();
 		
-		//documentoConferenciaEncalhe.setIndGeraDocumentacaoConferenciaEncalhe(FormaEmissao.INDIVIDUAL_BOX.equals(formaEmissao));
-		//TODO: voltar codigo acima apos testes...
-		documentoConferenciaEncalhe.setIndGeraDocumentacaoConferenciaEncalhe(true);
+		documentoConferenciaEncalhe.setIndGeraDocumentacaoConferenciaEncalhe(FormaEmissao.INDIVIDUAL_BOX.equals(formaEmissao));
 		return documentoConferenciaEncalhe;
 		
 	}
@@ -798,7 +880,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		movimentoFinanceiroCotaDTO.setLancamentoManual(false);
 		movimentoFinanceiroCotaDTO.setMovimentos(movimentosEstoqueCotaOperacaoConferenciaEncalhe);
 		
-		movimentoFinanceiroCotaService.gerarMovimentoFinanceiroDebitoCredito(movimentoFinanceiroCotaDTO);
+		movimentoFinanceiroCotaService.gerarMovimentosFinanceirosDebitoCredito(movimentoFinanceiroCotaDTO);
 
 		Set<String> nossoNumeroCollection = gerarCobrancaService.gerarCobranca(
 				controleConferenciaEncalheCota.getCota().getId(), 
@@ -828,10 +910,10 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		MovimentoFinanceiroCota movimentoFinanceiroCota = 
 				movimentoFinanceiroCotaRepository.obterMovimentoFinanceiroCotaParaMovimentoEstoqueCota(movimentoEstoqueCota.getId());
 		
-		gerarCobrancaService.cancelarDividaCobranca(movimentoFinanceiroCota.getId());
-		
-		movimentoFinanceiroCotaRepository.remover(movimentoFinanceiroCota);
-		
+		if(movimentoFinanceiroCota!=null) {
+			gerarCobrancaService.cancelarDividaCobranca(movimentoFinanceiroCota.getId());
+			movimentoFinanceiroCotaRepository.remover(movimentoFinanceiroCota);
+		}
 		
 	}
 	
@@ -2133,6 +2215,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		String nomeCota 		= controleConferenciaEncalheCota.getCota().getPessoa().getNome();
 		Date dataConferencia 	= controleConferenciaEncalheCota.getDataOperacao();
 		String codigoBox 		= controleConferenciaEncalheCota.getBox().getCodigo();
+		Long numeroSlip 		= controleNumeracaoSlipService.obterProximoNumeroSlip(TipoSlip.SLIP_CONFERENCIA_ENCALHE);
 		
 		
 		BigDecimal qtdeTotalProdutos 	= null;
@@ -2182,8 +2265,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		parameters.put("NUMERO_COTA", slip.getNumeroCota());
 		parameters.put("NOME_COTA", slip.getNomeCota());
 		
-		//TODO: Obter valor de num slip
-		parameters.put("NUM_SLIP", "1");
+		parameters.put("NUM_SLIP", numeroSlip.toString());
 		parameters.put("CODIGO_BOX", slip.getCodigoBox());
 		parameters.put("DATA_CONFERENCIA", slip.getDataConferencia());
 		parameters.put("CE_JORNALEIRO", slip.getCeJornaleiro());

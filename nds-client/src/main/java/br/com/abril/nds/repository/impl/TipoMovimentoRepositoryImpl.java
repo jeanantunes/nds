@@ -22,7 +22,7 @@ import br.com.abril.nds.repository.TipoMovimentoRepository;
  * @author Discover Technology
  */
 @Repository
-public class TipoMovimentoRepositoryImpl extends AbstractRepository<TipoMovimento, Long> 
+public class TipoMovimentoRepositoryImpl extends AbstractRepositoryModel<TipoMovimento, Long> 
 										 implements TipoMovimentoRepository {
 
 	@SuppressWarnings("unchecked")

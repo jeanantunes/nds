@@ -15,13 +15,13 @@ import br.com.abril.nds.dto.ParcialDTO;
 import br.com.abril.nds.dto.PeriodoParcialDTO;
 import br.com.abril.nds.dto.filtro.FiltroParciaisDTO;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.planejamento.StatusLancamentoParcial;
 import br.com.abril.nds.model.seguranca.Usuario;
-import br.com.abril.nds.service.DistribuidorService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.LancamentoParcialService;
 import br.com.abril.nds.service.ParciaisService;
@@ -255,9 +255,7 @@ public class ParciaisController {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Produto \"" + codigoProduto + "\" não encontrado!");
 			
 		} else {
-			
-			//String nomeProduto = produto.getNome();
-			
+						
 			result.use(Results.json()).withoutRoot().from(produto).recursive().serialize();
 		}		
 	}
@@ -358,7 +356,9 @@ public class ParciaisController {
 	public void exportar(FileType fileType) throws IOException {
 		
 		FiltroParciaisDTO filtro = (FiltroParciaisDTO) session.getAttribute(FILTRO_SESSION_ATTRIBUTE);
-				
+		
+		filtro.getPaginacao().setSortColumn("codigoProduto");
+		
 		List<ParcialDTO> listaParciais = lancamentoParcialService.buscarLancamentosParciais(filtro);
 		
 		if(listaParciais.isEmpty()) {

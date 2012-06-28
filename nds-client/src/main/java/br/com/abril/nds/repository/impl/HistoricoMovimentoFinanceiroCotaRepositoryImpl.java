@@ -7,7 +7,7 @@ import br.com.abril.nds.repository.HistoricoMovimentoFinanceiroCotaRepository;
 
 @Repository
 public class HistoricoMovimentoFinanceiroCotaRepositoryImpl 
-										extends AbstractRepository<HistoricoMovimentoFinanceiroCota, Long> 
+										extends AbstractRepositoryModel<HistoricoMovimentoFinanceiroCota, Long> 
 										implements HistoricoMovimentoFinanceiroCotaRepository {
 	
 	public HistoricoMovimentoFinanceiroCotaRepositoryImpl() {

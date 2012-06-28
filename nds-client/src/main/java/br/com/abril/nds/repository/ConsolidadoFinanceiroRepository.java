@@ -4,8 +4,8 @@ import java.util.Date;
 import java.util.List;
 
 import br.com.abril.nds.dto.ConsignadoCotaDTO;
-import br.com.abril.nds.dto.EncalheCotaDTO;
 import br.com.abril.nds.dto.ConsultaVendaEncalheDTO;
+import br.com.abril.nds.dto.EncalheCotaDTO;
 import br.com.abril.nds.dto.FiltroConsolidadoConsignadoCotaDTO;
 import br.com.abril.nds.dto.ViewContaCorrenteCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsolidadoEncalheCotaDTO;
@@ -16,7 +16,7 @@ public interface ConsolidadoFinanceiroRepository extends Repository<ConsolidadoF
 	
 	List<ViewContaCorrenteCotaDTO> buscarListaDeConsolidado(Integer idCota);
 	
-	boolean verificarConsodidadoCotaPorData(Long idCota, Date data);
+	boolean verificarConsodidadoCotaPorDataOperacao(Long idCota);
 	
 	List<EncalheCotaDTO> obterMovimentoEstoqueCotaEncalhe(FiltroConsolidadoEncalheCotaDTO filtro);
 	
@@ -25,4 +25,9 @@ public interface ConsolidadoFinanceiroRepository extends Repository<ConsolidadoF
 	List<ConsignadoCotaDTO> obterMovimentoEstoqueCotaConsignado(FiltroConsolidadoConsignadoCotaDTO filtro);
 	
 	ConsolidadoFinanceiroCota obterConsolidadoPorIdMovimentoFinanceiro(Long idMovimentoFinanceiro);
+	
+	Date buscarUltimaDividaGeradaDia(Date dataOperacao);
+	
+	Date buscarDiaUltimaDividaGerada();
+	
 }

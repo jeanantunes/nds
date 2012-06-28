@@ -29,7 +29,7 @@ import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
  */
 @Repository
 public class FornecedorRepositoryImpl extends
-		AbstractRepository<Fornecedor, Long> implements FornecedorRepository {
+		AbstractRepositoryModel<Fornecedor, Long> implements FornecedorRepository {
 
 	/**
 	 * Construtor padrão.

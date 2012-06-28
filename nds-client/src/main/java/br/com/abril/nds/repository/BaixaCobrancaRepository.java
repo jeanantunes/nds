@@ -1,5 +1,7 @@
 package br.com.abril.nds.repository;
 
+import java.util.Date;
+
 import br.com.abril.nds.model.financeiro.BaixaCobranca;
 
 /**
@@ -10,6 +12,17 @@ import br.com.abril.nds.model.financeiro.BaixaCobranca;
  */
 public interface BaixaCobrancaRepository extends Repository<BaixaCobranca,Long> {
 
-	
+	/**
+	 * Busca a última baixa automática realizada no dia
+	 * @param dataOperacao
+	 * @return BaixaAutomatica
+	 */
+	public Date buscarUltimaBaixaAutomaticaDia(Date dataOperacao);
+
+	/**
+	 * Busca o dia da última baixa automática realizada
+	 * @return Date
+	 */
+	public Date buscarDiaUltimaBaixaAutomatica();
 	
 }

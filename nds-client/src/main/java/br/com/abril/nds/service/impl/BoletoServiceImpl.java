@@ -19,6 +19,7 @@ import br.com.abril.nds.dto.PagamentoDTO;
 import br.com.abril.nds.dto.ResumoBaixaBoletosDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaBoletosCotaDTO;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.StatusCobranca;
 import br.com.abril.nds.model.StatusControle;
 import br.com.abril.nds.model.TipoEdicao;
@@ -52,7 +53,6 @@ import br.com.abril.nds.service.BoletoService;
 import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.CobrancaService;
 import br.com.abril.nds.service.ControleBaixaBancariaService;
-import br.com.abril.nds.service.DistribuidorService;
 import br.com.abril.nds.service.EmailService;
 import br.com.abril.nds.service.MovimentoFinanceiroCotaService;
 import br.com.abril.nds.service.PoliticaCobrancaService;
@@ -396,7 +396,7 @@ public class BoletoServiceImpl implements BoletoService {
 		incrementarBoletosRejeitados(resumoBaixaBoletos);
 
 		movimentoFinanceiroCotaService
-			.gerarMovimentoFinanceiroDebitoCredito(
+			.gerarMovimentosFinanceirosDebitoCredito(
 					getMovimentoFinanceiroCotaDTO(boleto.getCota(),
 												  GrupoMovimentoFinaceiro.CREDITO,
 												  usuario, pagamento.getValorPagamento(),
@@ -426,7 +426,7 @@ public class BoletoServiceImpl implements BoletoService {
 			incrementarBoletosRejeitados(resumoBaixaBoletos);
 			
 			movimentoFinanceiroCotaService
-				.gerarMovimentoFinanceiroDebitoCredito(
+				.gerarMovimentosFinanceirosDebitoCredito(
 					getMovimentoFinanceiroCotaDTO(boleto.getCota(),
 												  GrupoMovimentoFinaceiro.CREDITO,
 												  usuario, pagamento.getValorPagamento(),
@@ -458,7 +458,7 @@ public class BoletoServiceImpl implements BoletoService {
 		if (valorJurosCalculado.compareTo(BigDecimal.ZERO) == 1) {
 			
 			movimentoFinanceiroCotaService
-				.gerarMovimentoFinanceiroDebitoCredito(
+				.gerarMovimentosFinanceirosDebitoCredito(
 					getMovimentoFinanceiroCotaDTO(boleto.getCota(),
 												  GrupoMovimentoFinaceiro.JUROS,
 												  usuario, valorJurosCalculado,
@@ -473,7 +473,7 @@ public class BoletoServiceImpl implements BoletoService {
 		if (valorMultaCalculado.compareTo(BigDecimal.ZERO) == 1) {
 			
 			movimentoFinanceiroCotaService
-				.gerarMovimentoFinanceiroDebitoCredito(
+				.gerarMovimentosFinanceirosDebitoCredito(
 					getMovimentoFinanceiroCotaDTO(boleto.getCota(),
 												  GrupoMovimentoFinaceiro.MULTA,
 												  usuario, valorMultaCalculado,
@@ -488,7 +488,7 @@ public class BoletoServiceImpl implements BoletoService {
 			diferencaValor = pagamento.getValorPagamento().subtract(boleto.getValor());
 			
 			movimentoFinanceiroCotaService
-				.gerarMovimentoFinanceiroDebitoCredito(
+				.gerarMovimentosFinanceirosDebitoCredito(
 					getMovimentoFinanceiroCotaDTO(boleto.getCota(),
 												  GrupoMovimentoFinaceiro.CREDITO,
 												  usuario, diferencaValor,
@@ -500,7 +500,7 @@ public class BoletoServiceImpl implements BoletoService {
 			diferencaValor = boleto.getValor().subtract(pagamento.getValorPagamento());
 			
 			movimentoFinanceiroCotaService
-				.gerarMovimentoFinanceiroDebitoCredito(
+				.gerarMovimentosFinanceirosDebitoCredito(
 					getMovimentoFinanceiroCotaDTO(boleto.getCota(),
 											   	  GrupoMovimentoFinaceiro.DEBITO,
 											   	  usuario, diferencaValor,
@@ -563,7 +563,7 @@ public class BoletoServiceImpl implements BoletoService {
 				incrementarBoletosRejeitados(resumoBaixaBoletos);
 	
 				movimentoFinanceiroCotaService
-					.gerarMovimentoFinanceiroDebitoCredito(
+					.gerarMovimentosFinanceirosDebitoCredito(
 						getMovimentoFinanceiroCotaDTO(boleto.getCota(),
 							   						  GrupoMovimentoFinaceiro.CREDITO,
 							   						  usuario, pagamento.getValorPagamento(),
@@ -590,7 +590,7 @@ public class BoletoServiceImpl implements BoletoService {
 		BigDecimal valorCredito = pagamento.getValorPagamento().subtract(boleto.getValor());
 		
 		movimentoFinanceiroCotaService
-			.gerarMovimentoFinanceiroDebitoCredito(
+			.gerarMovimentosFinanceirosDebitoCredito(
 				getMovimentoFinanceiroCotaDTO(boleto.getCota(),
 											  GrupoMovimentoFinaceiro.CREDITO,
 											  usuario, valorCredito,
@@ -619,7 +619,7 @@ public class BoletoServiceImpl implements BoletoService {
 			incrementarBoletosRejeitados(resumoBaixaBoletos);
 
 			movimentoFinanceiroCotaService
-				.gerarMovimentoFinanceiroDebitoCredito(
+				.gerarMovimentosFinanceirosDebitoCredito(
 					getMovimentoFinanceiroCotaDTO(boleto.getCota(),
 							   					  GrupoMovimentoFinaceiro.CREDITO,
 							   					  usuario, pagamento.getValorPagamento(),
@@ -645,7 +645,7 @@ public class BoletoServiceImpl implements BoletoService {
 		BigDecimal valorDebito = boleto.getValor().subtract(pagamento.getValorPagamento());
 		
 		movimentoFinanceiroCotaService
-			.gerarMovimentoFinanceiroDebitoCredito(
+			.gerarMovimentosFinanceirosDebitoCredito(
 				getMovimentoFinanceiroCotaDTO(boleto.getCota(),
 											  GrupoMovimentoFinaceiro.DEBITO,
 											  usuario, valorDebito,

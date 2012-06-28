@@ -39,7 +39,7 @@ public class LancamentoParcial {
 	private Long id;
 	
 	@ManyToOne(optional = false)
-	@JoinColumn(name = "PRODUTO_EDICAO_ID", nullable = false)
+	@JoinColumn(name = "PRODUTO_EDICAO_ID", nullable = false, unique = true)
 	private ProdutoEdicao produtoEdicao;
 	
 	@Temporal(value=TemporalType.DATE)

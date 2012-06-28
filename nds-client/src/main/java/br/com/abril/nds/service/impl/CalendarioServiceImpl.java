@@ -102,6 +102,20 @@ public class CalendarioServiceImpl implements CalendarioService {
 		return cal.getTime();
 	}
 	
+	@Transactional
+	public boolean isDiaUtil(Date data) {
+		
+		if (data == null) {
+			
+			return false;
+		}
+		
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(data);
+		
+		return !(DateUtil.isSabadoDomingo(cal) || isFeriado(cal));
+	}
+	
 	@Override
 	public Date adicionarDiasUteis(Date data, int numDias, List<Integer> diasSemanaConcentracaoCobranca, Integer diaMesConcentracaoCobranca) {
 		

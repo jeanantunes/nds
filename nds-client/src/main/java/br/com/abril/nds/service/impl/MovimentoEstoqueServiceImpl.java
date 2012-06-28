@@ -223,7 +223,8 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 			if (OperacaoEstoque.ENTRADA.equals(tipoMovimentoEstoque.getOperacaoEstoque())) {
 				
 				 if( GrupoMovimentoEstoque.SUPLEMENTAR_COTA_AUSENTE.equals(tipoMovimentoEstoque.getGrupoMovimentoEstoque()) ||
-					 GrupoMovimentoEstoque.SUPLEMENTAR_ENVIO_ENCALHE_ANTERIOR_PROGRAMACAO.equals(tipoMovimentoEstoque.getGrupoMovimentoEstoque())) {
+					 GrupoMovimentoEstoque.SUPLEMENTAR_ENVIO_ENCALHE_ANTERIOR_PROGRAMACAO.equals(tipoMovimentoEstoque.getGrupoMovimentoEstoque())||
+					 GrupoMovimentoEstoque.ESTORNO_VENDA_ENCALHE_SUPLEMENTAR.equals(tipoMovimentoEstoque.getGrupoMovimentoEstoque())) {
 					 
 					 BigDecimal qtdeSuplementar = estoqueProduto.getQtdeSuplementar() == null ? BigDecimal.ZERO : estoqueProduto.getQtdeSuplementar();
 					 
@@ -231,7 +232,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 					 
 					 estoqueProduto.setQtdeSuplementar(novaQuantidade);
 					 
-				 } if(GrupoMovimentoEstoque.ESTORNO_VENDA_ENCALHE.equals(tipoMovimentoEstoque.getGrupoMovimentoEstoque())){
+				 } else if(GrupoMovimentoEstoque.ESTORNO_VENDA_ENCALHE.equals(tipoMovimentoEstoque.getGrupoMovimentoEstoque())){
 					
 					 BigDecimal qtdeEncalhe = estoqueProduto.getQtdeDevolucaoEncalhe() == null ? BigDecimal.ZERO : estoqueProduto.getQtdeDevolucaoEncalhe();
 						
@@ -248,8 +249,8 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 				
 			} else {
 				
-				if(GrupoMovimentoEstoque.ESTORNO_REPARTE_COTA_AUSENTE
-						.equals(tipoMovimentoEstoque.getGrupoMovimentoEstoque())) {
+				if(GrupoMovimentoEstoque.ESTORNO_REPARTE_COTA_AUSENTE.equals(tipoMovimentoEstoque.getGrupoMovimentoEstoque())
+						|| GrupoMovimentoEstoque.VENDA_ENCALHE_SUPLEMENTAR.equals(tipoMovimentoEstoque.getGrupoMovimentoEstoque())) {
 					
 					BigDecimal qtdeSuplementar = estoqueProduto.getQtdeSuplementar() == null ? BigDecimal.ZERO : estoqueProduto.getQtdeSuplementar();
 					
@@ -320,8 +321,6 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 			controleAprovacaoService.realizarAprovacaoMovimento(movimentoEstoqueCota,
 																usuario);
 		}
-		
-		atualizarEstoqueProdutoCota(tipoMovimentoEstoque, movimentoEstoqueCota);
 		
 		return movimentoEstoqueCota;
 	}

@@ -41,8 +41,6 @@ import br.com.abril.nds.service.RecebimentoFisicoService;
 import br.com.abril.nds.util.CellModel;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
-import br.com.caelum.stella.validation.CNPJValidator;
-import br.com.caelum.stella.validation.InvalidStateException;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
@@ -548,15 +546,23 @@ public class RecebimentoFisicoController {
 		setItensRecebimentoFisicoToSession(itensRecebimentoFisico);
 		
 		if(Origem.INTERFACE.equals(notaFiscal.getOrigem())){
+			
 			List<String> msgs = new ArrayList<String>();
 			
 			for(RecebimentoFisicoDTO recebimentoDTO: itensRecebimentoFisico){
+				
 				if( recebimentoDTO.getQtdFisico() == null || recebimentoDTO.getQtdFisico().compareTo(BigDecimal.ZERO) == 0 ){
+					
 					msgs.add("NF interface com Itens sem quantidade física informada.");
+					
 					ValidacaoVO validacao = new ValidacaoVO(TipoMensagem.WARNING, msgs);
+					
 					result.use(Results.json()).from(validacao, "result").include("listaMensagens").serialize();	
 					
+					return;
+					
 				}
+				
 			}
 		}		
 		

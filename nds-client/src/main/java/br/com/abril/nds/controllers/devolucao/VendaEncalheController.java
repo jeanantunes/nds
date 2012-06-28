@@ -19,6 +19,7 @@ import br.com.abril.nds.client.vo.VendaProdutoVO;
 import br.com.abril.nds.dto.VendaEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroVendaEncalheDTO;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Pessoa;
@@ -29,7 +30,6 @@ import br.com.abril.nds.model.estoque.TipoVendaEncalhe;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.serialization.custom.CustomMapJson;
 import br.com.abril.nds.service.CotaService;
-import br.com.abril.nds.service.DistribuidorService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.VendaEncalheService;
 import br.com.abril.nds.util.CellModelKeyValue;
@@ -103,44 +103,52 @@ public class VendaEncalheController {
 	 */
 	@Get
 	@Path("/imprimeSlipVendaEncalhe")
-	public void imprimeSlipVendaEncalhe(Long numeroCota) throws Exception{
+	public void imprimeSlipVendaEncalhe(TipoVendaEncalhe tipoVenda) throws Exception{
 		
-		@SuppressWarnings("unchecked")
-		List<VendaEncalheDTO> vendas = (List<VendaEncalheDTO>) session.getAttribute("LISTA_VENDAS");
+		String nomeArquivo = null;
 		
-		byte[] b = this.vendaEncalheService.geraImpressaoVendaEncalhe(vendas,numeroCota);
+		if(TipoVendaEncalhe.ENCALHE.equals(tipoVenda)){
+			nomeArquivo = "SlipVendaEncalhe.pdf";
+		}
+		else{
+			nomeArquivo = "SlipVendaEncalheSuplementar.pdf";
+		}
+		
+		byte[]b = (byte[]) session.getAttribute("COMPROVANTE_VENDA");
 
 		this.httpServletResponse.setContentType("application/pdf");
-		this.httpServletResponse.setHeader("Content-Disposition", "attachment; filename=SlipVendaEncalhe.pdf");
+		this.httpServletResponse.setHeader("Content-Disposition", "attachment; filename="+nomeArquivo);
 
 		OutputStream output = this.httpServletResponse.getOutputStream();
 		output.write(b);
 
 		httpServletResponse.flushBuffer();
 		
-		 session.removeAttribute("LISTA_VENDAS");
+		session.removeAttribute("COMPROVANTE_VENDA");
 	}
 	
-	
-	/**
-	 * Exibe o Slip de Venda Suplementar em formato PDF.
-	 * @param idCota
-	 * @param dataInicio
-	 * @param dataFim
-	 * @throws Exception
-	 */
 	@Get
-	@Path("/imprimeSlipVendaSuplementar")
-	public void imprimeSlipVendaSuplementar(Long idCota, Date dataInicio, Date dataFim) throws Exception{
-
-		//byte[] b = this.vendaEncalheService.geraImpressaoVendaSuplementar(idCota,dataInicio,dataFim);
+	@Path("/imprimirSlipVenda")
+	public void imprimirSlipVenda() throws Exception{
+		
+		FiltroVendaEncalheDTO filtro = this.obterFiltroExportacao();
+		
+		String nomeArquivo = null;
+		
+		if(TipoVendaEncalhe.ENCALHE.equals(filtro.getTipoVendaEncalhe())){
+			nomeArquivo = "SlipVendaEncalhe.pdf";
+		}
+		else{
+			nomeArquivo = "SlipVendaEncalheSuplementar.pdf";
+		}
+		
+		byte[] b = this.vendaEncalheService.geraImpressaoVenda(filtro);
 
 		this.httpServletResponse.setContentType("application/pdf");
-		this.httpServletResponse.setHeader("Content-Disposition", "attachment; filename=SlipVE.pdf");
+		this.httpServletResponse.setHeader("Content-Disposition", "attachment; filename="+nomeArquivo);
 
 		OutputStream output = this.httpServletResponse.getOutputStream();
-
-	//	output.write(b);
+		output.write(b);
 
 		httpServletResponse.flushBuffer();
 	}
@@ -161,15 +169,17 @@ public class VendaEncalheController {
 		
 		validarParametrosVenda(listaVendas,numeroCota, dataDebito);
 		
+		byte[] comprovanteVenda = null;
+		
 		if(novaVenda){
 
-			vendaEncalheService.efetivarVendaEncalhe(listaVendas,numeroCota,dataDebito,getUsuario());
+			comprovanteVenda = vendaEncalheService.efetivarVendaEncalhe(listaVendas,numeroCota,dataDebito,getUsuario());
 		}
 		else{
-			vendaEncalheService.alterarVendaEncalhe(listaVendas.get(0),dataDebito,getUsuario());
+			comprovanteVenda = vendaEncalheService.alterarVendaEncalhe(listaVendas.get(0),dataDebito,getUsuario());
 		}
 		
-		session.setAttribute("LISTA_VENDAS",listaVendas);
+		session.setAttribute("COMPROVANTE_VENDA",comprovanteVenda);
 		
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
 				"result").recursive().serialize();
@@ -194,7 +204,7 @@ public class VendaEncalheController {
 		
 		BigDecimal total = CurrencyUtil.converterValor(precoProduto).multiply((new BigDecimal(qntSolicitada)));
 		
-		result.use(CustomMapJson.class).put("total", CurrencyUtil.formatarValor(total)).serialize();
+		result.use(CustomMapJson.class).put("totalFormatado", CurrencyUtil.formatarValor(total)).put("total",total).serialize();
 	}
 	
 	@Post
@@ -220,9 +230,9 @@ public class VendaEncalheController {
 	}
 	
 	@Post
-	public void obterDadosDoProduto(String codigoProduto, Long numeroEdicao){
+	public void obterDadosDoProduto(String codigoProduto, Long numeroEdicao, TipoVendaEncalhe tipoVenda){
 		
-		VendaEncalheDTO encalheDTO = vendaEncalheService.buscarProdutoComEstoque(codigoProduto, numeroEdicao,TipoVendaEncalhe.ENCALHE);
+		VendaEncalheDTO encalheDTO = vendaEncalheService.buscarProdutoComEstoque(codigoProduto, numeroEdicao,tipoVenda);
 		
 		if(encalheDTO == null){
 			throw new ValidacaoException(TipoMensagem.WARNING, "Produto não possui itens em estoque para venda!");
@@ -295,6 +305,8 @@ public class VendaEncalheController {
 		produtoVO.setNumeroCota(tratarValor(venda.getNumeroCota()));
 		produtoVO.setNomeCota(venda.getNomeCota());
 		produtoVO.setIdVendaEncalhe(venda.getIdVenda());
+		produtoVO.setTipoVenda(venda.getTipoVendaEncalhe());
+		produtoVO.setValorTotal(venda.getValoTotalProduto());
 		
 		BigDecimal qntDisponivel = new BigDecimal((venda.getQntDisponivelProduto()==null)?0:venda.getQntDisponivelProduto());
 		qntDisponivel = qntDisponivel.add(new BigDecimal(venda.getQntProduto()));

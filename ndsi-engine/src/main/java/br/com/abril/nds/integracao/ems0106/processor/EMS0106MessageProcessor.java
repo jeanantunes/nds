@@ -2,13 +2,13 @@ package br.com.abril.nds.integracao.ems0106.processor;
 
 import java.util.List;
 
-import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
 
+import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.integracao.ems0106.inbound.EMS0106Input;
 import br.com.abril.nds.integracao.ems0107.inbound.EMS0107Input;
@@ -19,17 +19,18 @@ import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
 import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.model.planejamento.EstudoCota;
 import br.com.abril.nds.model.planejamento.Lancamento;
+import br.com.abril.nds.repository.impl.AbstractRepository;
 
 @Component
-public class EMS0106MessageProcessor implements MessageProcessor {
-	@PersistenceContext
-	private EntityManager entityManager;
+
+public class EMS0106MessageProcessor extends AbstractRepository implements MessageProcessor   {
 	
 	@Autowired
 	private NdsiLoggerFactory ndsiLoggerFactory;
 		
 	@SuppressWarnings("unchecked")
 	@Override
+	
 	public void processMessage(Message message) {
 		EMS0106Input input = (EMS0106Input) message.getBody();
 		
@@ -42,12 +43,12 @@ public class EMS0106MessageProcessor implements MessageProcessor {
 			sql.append("     e.codigoPublicacao = :codigoProduto ");
 			sql.append("     AND e.edicao = :numeroEdicao ");
 			
-			Query query = entityManager.createQuery(sql.toString());
+			Query query = getSession().createQuery(sql.toString());
 			
 			query.setParameter("codigoProduto", input.getCodigoPublicacao());
 			query.setParameter("numeroEdicao", input.getEdicao());
 			
-			List<EMS0107Input> ems0107Inputs = query.getResultList();
+			List<EMS0107Input> ems0107Inputs = query.list();
 			
 			// SE NAO TIVER COTA, NAO GERA ESTUDO
 			if (! ems0107Inputs.isEmpty()) {
@@ -61,7 +62,7 @@ public class EMS0106MessageProcessor implements MessageProcessor {
 				sql.append("	AND lcto.dataLancamentoPrevista >= current_date() ");
 				sql.append("ORDER BY lcto.dataLancamentoPrevista DESC");
 				
-				query = entityManager.createQuery(sql.toString());
+				query = getSession().createQuery(sql.toString());
 						
 				// LIMITA PARA PEGAR APENAS UMA LINHA
 				query.setMaxResults(1);
@@ -70,7 +71,7 @@ public class EMS0106MessageProcessor implements MessageProcessor {
 				query.setParameter("codigoProduto", input.getCodigoPublicacao());
 				
 				// INSERE Estudo (HEADER)
-				Lancamento lancamento = (Lancamento) query.getSingleResult();
+				Lancamento lancamento = (Lancamento) query.uniqueResult();
 
 				sql = new StringBuilder();
 				sql.append("SELECT e ");
@@ -80,12 +81,12 @@ public class EMS0106MessageProcessor implements MessageProcessor {
 				sql.append("	pe.id = :produtoEdicaoId ");
 				sql.append("	AND e.dataLancamento = :dataLancamento ");
 				
-				query = entityManager.createQuery(sql.toString());
+				query = getSession().createQuery(sql.toString());
 				
 				query.setParameter("produtoEdicaoId", lancamento.getProdutoEdicao().getId());
 				query.setParameter("dataLancamento", lancamento.getDataLancamentoPrevista());
 				
-				List<Estudo> estudosSalvos = query.getResultList();
+				List<Estudo> estudosSalvos = query.list();
 				
 				if (estudosSalvos.isEmpty()) {
 					Estudo estudo = new Estudo();
@@ -94,7 +95,7 @@ public class EMS0106MessageProcessor implements MessageProcessor {
 					estudo.setDataLancamento(lancamento.getDataLancamentoPrevista());
 					estudo.setQtdeReparte(input.getReparteDistribuir());
 					
-					entityManager.persist(estudo);
+					getSession().persist(estudo);
 								
 					// INSERE EstudoCota (DETAIL)
 					for (EMS0107Input ems0107 : ems0107Inputs) {
@@ -105,7 +106,7 @@ public class EMS0106MessageProcessor implements MessageProcessor {
 						estudoCota.setQtdeEfetiva(ems0107.getQuantidadeReparte());
 						estudoCota.setQtdePrevista(ems0107.getQuantidadeReparte());
 						
-						entityManager.persist(estudoCota);
+						getSession().persist(estudoCota);
 					}
 				}
 			}

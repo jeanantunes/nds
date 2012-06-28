@@ -79,4 +79,11 @@ public interface DividaService {
 	 * @return
 	 */
 	BigDecimal calcularEncargosPostergacao(List<Long> listaIdsCobranca, Date dataPostergacao);
+
+    /**
+     * Obtem somatório das dividas em aberto de uma Cota
+     * @param idCota
+     * @return BigDecimal
+     */
+	BigDecimal obterTotalDividasAbertoCota(Long idCota);
 }

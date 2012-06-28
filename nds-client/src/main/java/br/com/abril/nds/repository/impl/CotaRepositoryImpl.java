@@ -48,7 +48,7 @@ import br.com.abril.nds.repository.CotaRepository;
  * 
  */
 @Repository
-public class CotaRepositoryImpl extends AbstractRepository<Cota, Long>
+public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 		implements CotaRepository {
 
 	@Value("#{queries.suspensaoCota}")
@@ -558,6 +558,8 @@ public class CotaRepositoryImpl extends AbstractRepository<Cota, Long>
 
 		return (EnderecoCota) criteria.uniqueResult();
 	}
+	
+	
 
 	@SuppressWarnings("unchecked")
 	@Override

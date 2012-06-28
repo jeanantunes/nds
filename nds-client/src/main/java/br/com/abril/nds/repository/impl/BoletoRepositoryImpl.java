@@ -19,7 +19,7 @@ import br.com.abril.nds.repository.BoletoRepository;
  *
  */
 @Repository
-public class BoletoRepositoryImpl extends AbstractRepository<Boleto,Long> implements BoletoRepository {
+public class BoletoRepositoryImpl extends AbstractRepositoryModel<Boleto,Long> implements BoletoRepository {
 
 	
 	/**

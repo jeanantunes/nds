@@ -2,20 +2,24 @@ package br.com.abril.nds.service.impl;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
+import java.util.TreeSet;
 
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.dto.BalanceamentoLancamentoDTO;
-import br.com.abril.nds.dto.ResumoPeriodoBalanceamentoDTO;
+import br.com.abril.nds.dto.ProdutoLancamentoDTO;
 import br.com.abril.nds.dto.filtro.FiltroLancamentoDTO;
 import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.DiaSemana;
@@ -27,42 +31,42 @@ import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
 import br.com.abril.nds.model.cadastro.FormaEmissao;
 import br.com.abril.nds.model.cadastro.Fornecedor;
-import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.cadastro.OperacaoDistribuidor;
 import br.com.abril.nds.model.cadastro.ParametroCobrancaCota;
+import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.PoliticaCobranca;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TipoRegistroCobranca;
+import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.LancamentoRepository;
+import br.com.abril.nds.repository.impl.AbstractRepositoryImplTest;
+import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.util.Intervalo;
 
-public class MatrizLancamentoServiceImplTest {
+public class MatrizLancamentoServiceImplTest extends AbstractRepositoryImplTest {
 	
+	@Autowired
 	private MatrizLancamentoServiceImpl service;
 	
+	@Mock
 	private LancamentoRepository lancamentoRepository;
+	
+	@Mock
 	private DistribuidorRepository distribuidorRepository;
-
-	private DistribuicaoFornecedor dinapSegunda;
-	private DistribuicaoFornecedor dinapQuarta;
-	private DistribuicaoFornecedor dinapSexta;
-	private DistribuicaoFornecedor fcSegunda;
-	private DistribuicaoFornecedor fcSexta;
 	
 	private Distribuidor distribuidor;
 	
 	private Fornecedor fornecedorDinap;
 	private Fornecedor fornecedorFc;
 	
+	int totalProdutosLancamento;
+	
 	@Before
 	public void setUp() {
-		service = new MatrizLancamentoServiceImpl();
-		lancamentoRepository = Mockito.mock(LancamentoRepository.class);
-		distribuidorRepository = Mockito.mock(DistribuidorRepository.class);
-		
-		service.lancamentoRepository = lancamentoRepository;
-		service.distribuidorRepository = distribuidorRepository;
+
+		MockitoAnnotations.initMocks(this);
 		
 		Carteira carteira = Fixture.carteira(1, TipoRegistroCobranca.SEM_REGISTRO);
 		Banco banco = Fixture.hsbc(carteira); 
@@ -86,7 +90,7 @@ public class MatrizLancamentoServiceImplTest {
 		
 		distribuidor = Fixture.distribuidor(1, juridicaDistrib, new Date(), politicasCobranca);
 		
-		distribuidor.setQtdDiasLimiteParaReprogLancamento(3);
+		distribuidor.setQtdDiasLimiteParaReprogLancamento(5);
 		
 		PessoaJuridica juridicaDinap = Fixture.pessoaJuridica("Dinap",
 				"11.111.111/0001-11", "111.111.111.111", "dinap@mail.com", "99.999-9");
@@ -101,53 +105,7 @@ public class MatrizLancamentoServiceImplTest {
 		fornecedorFc = Fixture.fornecedor(juridicaFc,
 				SituacaoCadastro.ATIVO, true, Fixture.tipoFornecedorPublicacao(), null);
 		
-		fornecedorFc.setId(2L);
-		
-		dinapSegunda = Fixture.distribuicaoFornecedor(
-				fornecedorDinap, DiaSemana.SEGUNDA_FEIRA,
-				OperacaoDistribuidor.DISTRIBUICAO, distribuidor);
-		dinapQuarta = Fixture.distribuicaoFornecedor(
-				fornecedorDinap, DiaSemana.QUARTA_FEIRA,
-				OperacaoDistribuidor.DISTRIBUICAO, distribuidor);
-		dinapSexta = Fixture.distribuicaoFornecedor(
-				fornecedorDinap, DiaSemana.SEXTA_FEIRA,
-				OperacaoDistribuidor.DISTRIBUICAO, distribuidor);
-
-		fcSegunda = Fixture.distribuicaoFornecedor(
-				fornecedorFc, DiaSemana.SEGUNDA_FEIRA,
-				OperacaoDistribuidor.DISTRIBUICAO, distribuidor);
-		fcSexta = Fixture.distribuicaoFornecedor(
-				fornecedorFc, DiaSemana.SEXTA_FEIRA,
-				OperacaoDistribuidor.DISTRIBUICAO, distribuidor);
-		
-	}
-	
-	@Test
-	public void obterResumoPeriodo() {
-		List<Long> fornecedores = Arrays.asList(1L, 2L);
-		List<DistribuicaoFornecedor> distribuicoes = Arrays.asList(
-				dinapSegunda, dinapQuarta, dinapSexta, fcSegunda, fcSexta);
-		Mockito.when(
-				distribuidorRepository.buscarDiasDistribuicaoFornecedor(fornecedores, OperacaoDistribuidor.DISTRIBUICAO))
-				.thenReturn(distribuicoes);
-		List<Date> periodo = Arrays.asList(
-				Fixture.criarData(2, Calendar.MARCH, 2012),
-				Fixture.criarData(5, Calendar.MARCH, 2012),
-				Fixture.criarData(7, Calendar.MARCH, 2012));
-
-		List<ResumoPeriodoBalanceamentoDTO> resumos = new ArrayList<ResumoPeriodoBalanceamentoDTO>();
-
-		Mockito.when(
-				lancamentoRepository
-						.buscarResumosPeriodo(periodo, fornecedores, GrupoProduto.CROMO))
-				.thenReturn(resumos);
-		Date dataInicial = Fixture.criarData(1, Calendar.MARCH, 2012);
-		service.obterResumoPeriodo(dataInicial, fornecedores);
-
-		Mockito.verify(distribuidorRepository).buscarDiasDistribuicaoFornecedor(
-				fornecedores, OperacaoDistribuidor.DISTRIBUICAO);
-		Mockito.verify(lancamentoRepository).buscarResumosPeriodo(periodo,
-				fornecedores, GrupoProduto.CROMO);
+		fornecedorFc.setId(2L);		
 	}
 	
 	@Test
@@ -161,20 +119,46 @@ public class MatrizLancamentoServiceImplTest {
 		List<DistribuicaoDistribuidor> listaDistribuicaoDistribuidor =
 			this.listaDistribuicaoDistribuidor();
 		
-		Mockito.when(this.distribuidorRepository.obter()).thenReturn(distribuidor);
+		Mockito.when(distribuidorRepository.obter()).thenReturn(distribuidor);
 		
 		Mockito.when(
-			this.distribuidorRepository.buscarDiasDistribuicaoFornecedor(
+			distribuidorRepository.buscarDiasDistribuicaoFornecedor(
 				filtro.getIdsFornecedores(), OperacaoDistribuidor.DISTRIBUICAO)).thenReturn(listaDistribuicaoFornecedor);
 		
 		Mockito.when(
-			this.distribuidorRepository.buscarDiasDistribuicaoDistribuidor(
+			distribuidorRepository.buscarDiasDistribuicaoDistribuidor(
 				distribuidor.getId(), OperacaoDistribuidor.DISTRIBUICAO)).thenReturn(listaDistribuicaoDistribuidor);
+		
+		List<ProdutoLancamentoDTO> produtosLancamentoMock = obterProdutosLancamentoMock();
+		
+		Intervalo<Date> periodoDistribuicao = getPeriodoDistribuicao();
+		
+		Mockito.when(
+			lancamentoRepository.obterBalanceamentoLancamento(
+				periodoDistribuicao, filtro.getIdsFornecedores())).thenReturn(produtosLancamentoMock);
+		
+		Mockito.when(
+			lancamentoRepository.obterExpectativasRepartePorData(
+				getPeriodoDistribuicao(), filtro.getIdsFornecedores())).thenReturn(
+					obterMapaExpectativaReparteTotalDiarioMock(produtosLancamentoMock));
+		
+		service.lancamentoRepository = lancamentoRepository;
+		service.distribuidorRepository = distribuidorRepository;
 		
 		BalanceamentoLancamentoDTO balanceamentoLancamento =
 			service.obterMatrizLancamento(this.montarFiltro(), false);
 		
 		Assert.assertNotNull(balanceamentoLancamento);
+		
+		List<ProdutoLancamentoDTO> produtosLancamento = new ArrayList<ProdutoLancamentoDTO>();
+		
+		for (Map.Entry<Date, List<ProdutoLancamentoDTO>> entry 
+				: balanceamentoLancamento.getMatrizLancamento().entrySet()) {
+			
+			produtosLancamento.addAll(entry.getValue());	
+		}
+		
+		Assert.assertEquals(totalProdutosLancamento, produtosLancamento.size());
 	}
 	
 	private FiltroLancamentoDTO montarFiltro() {
@@ -188,6 +172,24 @@ public class MatrizLancamentoServiceImplTest {
 			new FiltroLancamentoDTO(new Date(), idsFornecedores, null, "codigoProduto");
 		
 		return filtro;
+	}
+	
+	private Intervalo<Date> getPeriodoDistribuicao() {
+		
+		int numeroSemana =
+			DateUtil.obterNumeroSemanaNoAno(new Date(),
+											distribuidor.getInicioSemana().getCodigoDiaSemana());
+		
+		Date dataInicialSemana =
+			DateUtil.obterDataDaSemanaNoAno(numeroSemana,
+											distribuidor.getInicioSemana().getCodigoDiaSemana());
+		
+		Date dataFinalSemana =
+			DateUtil.adicionarDias(dataInicialSemana, 6);
+		
+		Intervalo<Date> periodoDistribuicao = new Intervalo<Date>(dataInicialSemana, dataFinalSemana);
+		
+		return periodoDistribuicao;
 	}
 	
 	private List<DistribuicaoFornecedor> listaDistribuicaoFornecedor() {
@@ -241,6 +243,88 @@ public class MatrizLancamentoServiceImplTest {
 		listaDistribuicaoDistribuidor.add(distribuicaoDistribuidorSexta);
 		
 		return listaDistribuicaoDistribuidor;
+	}
+	
+	private List<ProdutoLancamentoDTO> obterProdutosLancamentoMock() {
+		
+		List<ProdutoLancamentoDTO> produtosLancamento = new ArrayList<ProdutoLancamentoDTO>();
+		
+		Date data1 = DateUtil.removerTimestamp(new Date());
+		Date data2 = DateUtil.removerTimestamp(DateUtil.adicionarDias(data1, 1));
+		Date data3 = DateUtil.removerTimestamp(DateUtil.adicionarDias(data2, 1));
+		Date data4 = DateUtil.removerTimestamp(DateUtil.adicionarDias(data3, 1));
+		Date data5 = DateUtil.removerTimestamp(DateUtil.adicionarDias(data4, 1));
+		
+		Set<Date> datas = new TreeSet<Date>();
+		
+		datas.add(data1);
+		datas.add(data2);
+		datas.add(data3);
+		datas.add(data4);
+		datas.add(data5);
+		
+		Date dataRecolhimentoPrevista =
+			DateUtil.removerTimestamp(DateUtil.adicionarDias(new Date(), 10));
+		
+		for (Date data : datas) {
+			
+			for (int i = 0; i < 100; i++) {
+			
+				ProdutoLancamentoDTO produtoLancamento = new ProdutoLancamentoDTO();
+				
+				BigDecimal repartePrevisto = new BigDecimal("100.0");
+				repartePrevisto = repartePrevisto.add(new BigDecimal(totalProdutosLancamento));
+				
+				produtoLancamento.setIdLancamento((long) totalProdutosLancamento);
+				produtoLancamento.setDataLancamentoPrevista(data);
+				produtoLancamento.setDataLancamentoDistribuidor(data);
+				produtoLancamento.setRepartePrevisto(repartePrevisto);
+				produtoLancamento.setDataRecolhimentoPrevista(dataRecolhimentoPrevista);
+				produtoLancamento.setPeso(new BigDecimal(10));
+				produtoLancamento.setValorTotal(new BigDecimal(2));
+				produtoLancamento.setReparteFisico(new BigDecimal(5));
+				produtoLancamento.setStatusLancamento(StatusLancamento.PLANEJADO.toString());
+				produtoLancamento.setPeriodicidadeProduto(PeriodicidadeProduto.ANUAL.toString());
+				
+				if (totalProdutosLancamento == 101) {
+					produtoLancamento.setStatusLancamento(StatusLancamento.CANCELADO_GD.toString());
+					produtoLancamento.setPeriodicidadeProduto(PeriodicidadeProduto.SEMANAL.toString());
+				}
+				
+				produtosLancamento.add(produtoLancamento);
+				
+				
+				totalProdutosLancamento++;
+			}
+		}
+		
+		return produtosLancamento;
+	}
+	
+	private TreeMap<Date, BigDecimal> obterMapaExpectativaReparteTotalDiarioMock(List<ProdutoLancamentoDTO> produtosLancamento) {
+		
+		TreeMap<Date, BigDecimal> mapaExpectativaReparteTotalDiario =
+			new TreeMap<Date, BigDecimal>();
+		
+		for (ProdutoLancamentoDTO produtoLancamento : produtosLancamento) {
+			
+			BigDecimal expectativaReparte =
+				mapaExpectativaReparteTotalDiario.get(produtoLancamento.getDataLancamentoDistribuidor());
+			
+			if (expectativaReparte != null) {
+				
+				expectativaReparte = expectativaReparte.add(produtoLancamento.getRepartePrevisto());
+			
+			} else {
+				
+				expectativaReparte = produtoLancamento.getRepartePrevisto();
+			}
+			
+			mapaExpectativaReparteTotalDiario.put(produtoLancamento.getDataLancamentoDistribuidor(),
+					  							  expectativaReparte);
+		}
+				
+		return mapaExpectativaReparteTotalDiario;
 	}
 
 }
