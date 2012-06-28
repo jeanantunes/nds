@@ -7,7 +7,7 @@ import br.com.abril.nds.repository.HistoricoAcumuloDividaRepository;
 
 @Repository
 public class HistoricoAcumuloDividaRepositoryImpl extends
-		AbstractRepository<HistoricoAcumuloDivida, Long> implements HistoricoAcumuloDividaRepository {
+		AbstractRepositoryModel<HistoricoAcumuloDivida, Long> implements HistoricoAcumuloDividaRepository {
 
 	public HistoricoAcumuloDividaRepositoryImpl() {
 		super(HistoricoAcumuloDivida.class);

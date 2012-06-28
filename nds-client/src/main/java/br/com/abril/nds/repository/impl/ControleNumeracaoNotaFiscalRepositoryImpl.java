@@ -8,7 +8,7 @@ import br.com.abril.nds.model.fiscal.ControleNumeracaoNotaFiscal;
 import br.com.abril.nds.repository.ControleNumeracaoNotaFiscalRepository;
 
 @Repository
-public class ControleNumeracaoNotaFiscalRepositoryImpl extends AbstractRepository<ControleNumeracaoNotaFiscal, Long> implements ControleNumeracaoNotaFiscalRepository {
+public class ControleNumeracaoNotaFiscalRepositoryImpl extends AbstractRepositoryModel<ControleNumeracaoNotaFiscal, Long> implements ControleNumeracaoNotaFiscalRepository {
 
 	public ControleNumeracaoNotaFiscalRepositoryImpl() {
 		super(ControleNumeracaoNotaFiscal.class);

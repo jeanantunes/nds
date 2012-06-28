@@ -19,7 +19,7 @@ import br.com.abril.nds.repository.PoliticaCobrancaRepository;
  * @author Discover Technology
  */
 @Repository
-public class PoliticaCobrancaRepositoryImpl extends AbstractRepository<PoliticaCobranca,Long> implements PoliticaCobrancaRepository {
+public class PoliticaCobrancaRepositoryImpl extends AbstractRepositoryModel<PoliticaCobranca,Long> implements PoliticaCobrancaRepository {
 
 	
 	/**

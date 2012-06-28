@@ -12,7 +12,7 @@ import br.com.abril.nds.model.cadastro.SocioCota;
 import br.com.abril.nds.repository.SocioCotaRepository;
 
 @Repository
-public class SocioCotaRepositoryImpl extends AbstractRepository<SocioCota,Long> implements SocioCotaRepository {
+public class SocioCotaRepositoryImpl extends AbstractRepositoryModel<SocioCota,Long> implements SocioCotaRepository {
 
 	public SocioCotaRepositoryImpl() {
 		super(SocioCota.class);

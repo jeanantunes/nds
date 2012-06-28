@@ -6,7 +6,7 @@ import br.com.abril.nds.model.cadastro.ParametrosDistribuidorFaltasSobras;
 import br.com.abril.nds.repository.ParametrosDistribuidorFaltasSobrasRepository;
 
 @Repository
-public class ParametrosDistribuidorFaltasSobrasRepositoryImpl extends AbstractRepository<ParametrosDistribuidorFaltasSobras, Long> implements ParametrosDistribuidorFaltasSobrasRepository {
+public class ParametrosDistribuidorFaltasSobrasRepositoryImpl extends AbstractRepositoryModel<ParametrosDistribuidorFaltasSobras, Long> implements ParametrosDistribuidorFaltasSobrasRepository {
 
 	public ParametrosDistribuidorFaltasSobrasRepositoryImpl() {
 		super(ParametrosDistribuidorFaltasSobras.class);

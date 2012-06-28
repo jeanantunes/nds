@@ -1,7 +1,5 @@
 package br.com.abril.nds.repository.impl;
 
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import javax.persistence.NoResultException;
@@ -24,7 +22,7 @@ import br.com.abril.nds.repository.DistribuicaoFornecedorRepository;
  * @author InfoA2
  */
 @Repository
-public class DistribuicaoFornecedorRepositoryImpl extends AbstractRepository<DistribuicaoFornecedor, Long> implements
+public class DistribuicaoFornecedorRepositoryImpl extends AbstractRepositoryModel<DistribuicaoFornecedor, Long> implements
 		DistribuicaoFornecedorRepository {
 
 	public DistribuicaoFornecedorRepositoryImpl() {

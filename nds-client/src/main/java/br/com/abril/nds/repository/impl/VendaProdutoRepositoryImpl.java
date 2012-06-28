@@ -15,7 +15,7 @@ import br.com.abril.nds.model.estoque.MovimentoEstoque;
 import br.com.abril.nds.repository.VendaProdutoRepository;
 
 @Repository
-public class VendaProdutoRepositoryImpl extends AbstractRepository<MovimentoEstoque, Long> implements VendaProdutoRepository {
+public class VendaProdutoRepositoryImpl extends AbstractRepositoryModel<MovimentoEstoque, Long> implements VendaProdutoRepository {
 
 	public VendaProdutoRepositoryImpl() {
 		super(MovimentoEstoque.class);

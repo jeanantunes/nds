@@ -200,5 +200,29 @@ public class LancamentoServiceImpl implements LancamentoService {
 		return lancamentoRepository.obterLancamentoInformeRecolhimento(
 				idFornecedor, dataInicioRecolhimento, dataFimRecolhimento);
 	}
+
+	@Override
+	@Transactional(readOnly=true)
+	public Date buscarUltimoBalanceamentoLancamentoRealizadoDia(Date dataOperacao) {
+		return lancamentoRepository.buscarUltimoBalanceamentoLancamentoRealizadoDia(dataOperacao);
+	}
+
+	@Override
+	@Transactional(readOnly=true)
+	public Date buscarDiaUltimoBalanceamentoLancamentoRealizado() {
+		return lancamentoRepository.buscarDiaUltimoBalanceamentoLancamentoRealizado();
+	}
+
+	@Override
+	@Transactional(readOnly=true)
+	public Date buscarUltimoBalanceamentoRecolhimentoRealizadoDia(Date dataOperacao) {
+		return lancamentoRepository.buscarUltimoBalanceamentoRecolhimentoRealizadoDia(dataOperacao);
+	}
+
+	@Override
+	@Transactional(readOnly=true)
+	public Date buscarDiaUltimoBalanceamentoRecolhimentoRealizado() {
+		return lancamentoRepository.buscarDiaUltimoBalanceamentoRecolhimentoRealizado();
+	}
 	
 }

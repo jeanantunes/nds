@@ -15,7 +15,7 @@ import br.com.abril.nds.model.cadastro.pdv.TelefonePDV;
 import br.com.abril.nds.repository.TelefonePdvRepository;
 
 @Repository
-public class TelefonePdvRepositoryImpl extends AbstractRepository<TelefonePDV, Long> 
+public class TelefonePdvRepositoryImpl extends AbstractRepositoryModel<TelefonePDV, Long> 
 										  implements TelefonePdvRepository {
 
 	public TelefonePdvRepositoryImpl() {

@@ -18,7 +18,7 @@ import br.com.abril.nds.util.StringUtil;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
 @Repository
-public class TipoNotaFiscalRepositoryImpl extends AbstractRepository<TipoNotaFiscal, Long> 
+public class TipoNotaFiscalRepositoryImpl extends AbstractRepositoryModel<TipoNotaFiscal, Long> 
 										  implements TipoNotaFiscalRepository {
 
 	private final static String CFOP = "cfop";
@@ -79,9 +79,9 @@ public class TipoNotaFiscalRepositoryImpl extends AbstractRepository<TipoNotaFis
 				orderBy = orderBy + CODIGO_CFOP;
 			}
 
-			if(Ordenacao.ASC ==  ordenacao){
+			if(Ordenacao.ASC ==  ordenacao) {
 				criteria.addOrder(Order.asc(orderBy));
-			}else if(Ordenacao.DESC ==  ordenacao){
+			} else if(Ordenacao.DESC ==  ordenacao) {
 				criteria.addOrder(Order.desc(orderBy));
 			}
 		}

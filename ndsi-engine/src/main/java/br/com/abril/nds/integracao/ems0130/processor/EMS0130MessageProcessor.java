@@ -5,12 +5,11 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-
+import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.integracao.ems0130.outbound.EMS0130Output;
 import br.com.abril.nds.integracao.engine.MessageHeaderProperties;
@@ -20,15 +19,14 @@ import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.Telefone;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
+import br.com.abril.nds.repository.impl.AbstractRepository;
 
 import com.ancientprogramming.fixedformat4j.format.FixedFormatManager;
 
 
 @Component
-public class EMS0130MessageProcessor implements MessageProcessor{
 
-	@PersistenceContext
-	private EntityManager entityManager;
+public class EMS0130MessageProcessor extends AbstractRepository implements MessageProcessor {
 	
 	@Autowired
 	private FixedFormatManager fixedFormatManager; 
@@ -38,6 +36,7 @@ public class EMS0130MessageProcessor implements MessageProcessor{
 	}
 	
 	@Override
+	
 	public void processMessage(Message message) {
 	
 		StringBuilder sql = new  StringBuilder();
@@ -53,11 +52,11 @@ public class EMS0130MessageProcessor implements MessageProcessor{
 		sql.append("AND t.principal = true ");
 		sql.append("AND e.principal = true ");
 	
-		Query query = entityManager.createQuery(sql.toString());
+		Query query = getSession().createQuery(sql.toString());
 		query.setParameter("ativo", SituacaoCadastro.ATIVO);
 		
 		@SuppressWarnings("unchecked")
-		List<PDV> pdvs = (List<PDV>) query.getResultList();
+		List<PDV> pdvs = (List<PDV>) query.list();
 		
 		
 		try {

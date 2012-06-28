@@ -15,21 +15,62 @@ import javax.persistence.TemporalType;
 import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.util.TipoSecao;
 import br.com.abril.nds.util.export.fiscal.nota.NFEExport;
-import br.com.abril.nds.util.export.fiscal.nota.NFEExportIgnore;
+import br.com.abril.nds.util.export.fiscal.nota.NFEExportType;
 
 @Embeddable
 public class Identificacao implements Serializable {
 	
 	public enum FormaPagamento {
-		A_VISTA, A_PRAZO, OUTROS;
+		A_VISTA, 
+		A_PRAZO, 
+		OUTROS;
+		
+		/**
+		 * @see java.lang.Enum#toString()
+		 */
+		@Override
+		public String toString() {
+			return String.valueOf(this.ordinal());
+		}
 	}	
 	
 	public enum TipoEmissao {
-		NORMAL, CONTINGENCIA
+		NORMAL(1), 
+		CONTINGENCIA(2);
+
+		private Integer indcador;
+		
+		TipoEmissao(Integer indcador){
+			this.indcador = indcador;
+		}
+		
+		/**
+		 * @see java.lang.Enum#toString()
+		 */
+		@Override
+		public String toString() {
+			return indcador.toString();
+		}
 	}	
 	
 	public enum FinalidadeEmissao {
-		NORMAL, COMPLEMENTAR, AJUSTE
+		NORMAL(1), 
+		COMPLEMENTAR(2), 
+		AJUSTE(3);
+
+		private Integer indcador;
+		
+		FinalidadeEmissao(Integer indcador){
+			this.indcador = indcador;
+		}
+		
+		/**
+		 * @see java.lang.Enum#toString()
+		 */
+		@Override
+		public String toString() {
+			return indcador.toString();
+		}
 	}	
 	
 	/**
@@ -44,7 +85,6 @@ public class Identificacao implements Serializable {
 	 */
 	@Enumerated(EnumType.ORDINAL)
 	@Column(name = "TIPO_OPERACAO", length = 1, nullable = false)
-	@NFEExportIgnore
 	private TipoOperacao tipoOperacao;
 
 	/**
@@ -60,7 +100,6 @@ public class Identificacao implements Serializable {
 	 */
 	@Enumerated(EnumType.ORDINAL)
 	@Column(name="INDICADOR_FORMA_PAGAMENTO", length=1, nullable=false)
-	@NFEExportIgnore
 	private FormaPagamento formaPagamento;
 	
 		
@@ -105,7 +144,7 @@ public class Identificacao implements Serializable {
 	
 	
 	@OneToMany(mappedBy="pk.notaFiscal")
-	@NFEExportIgnore
+	@NFEExportType
 	private List<NotaFiscalReferenciada> listReferenciadas;
 	
 	/**
@@ -113,7 +152,7 @@ public class Identificacao implements Serializable {
 	 */
 	@Enumerated(EnumType.ORDINAL)
 	@Column(name = "TIPO_EMISSAO", nullable = true)
-	@NFEExportIgnore
+	@NFEExportType
 	private TipoEmissao tipoEmissao;
 	
 	/**
@@ -121,7 +160,7 @@ public class Identificacao implements Serializable {
 	 */
 	@Enumerated(EnumType.ORDINAL)
 	@Column(name = "FINALIDADE_EMISSAO", nullable = true)
-	@NFEExportIgnore
+	@NFEExportType
 	private FinalidadeEmissao finalidadeEmissao;
 	
 	/**

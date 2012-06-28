@@ -1,17 +1,16 @@
 package br.com.abril.nds.integracao.ems0120.processor;
 
-import java.io.FileWriter;
+import java.io.FileWriter; 
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-
+import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.integracao.ems0120.outbound.EMS0120Detalhe;
 import br.com.abril.nds.integracao.ems0120.outbound.EMS0120Header;
@@ -24,15 +23,15 @@ import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
+import br.com.abril.nds.repository.impl.AbstractRepository;
 
 import com.ancientprogramming.fixedformat4j.format.FixedFormatManager;
 
 
 @Component
-public class EMS0120MessageProcessor implements MessageProcessor{
 
-	@PersistenceContext
-	private EntityManager entityManager;
+public class EMS0120MessageProcessor extends AbstractRepository implements MessageProcessor {
+
 	
 	@Autowired
 	private FixedFormatManager fixedFormatManager; 
@@ -48,6 +47,7 @@ public class EMS0120MessageProcessor implements MessageProcessor{
 	}
 	
 	@Override
+	
 	public void processMessage(Message message) {
 	
 		StringBuilder sql = new  StringBuilder();
@@ -63,12 +63,12 @@ public class EMS0120MessageProcessor implements MessageProcessor{
 		
 		
 	
-		Query query = entityManager.createQuery(sql.toString());
-		query.setParameter("dataOperacao", distribuidorService.findDistribuidor().getDataOperacao());
+		Query query = getSession().createQuery(sql.toString());
+		query.setParameter("dataOperacao", distribuidorService.obter().getDataOperacao());
 		query.setParameter("recebimentoReparte", GrupoMovimentoEstoque.RECEBIMENTO_REPARTE);
 		
 		@SuppressWarnings("unchecked")
-		List<MovimentoEstoqueCota> mecs = (List<MovimentoEstoqueCota>) query.getResultList();
+		List<MovimentoEstoqueCota> mecs = (List<MovimentoEstoqueCota>) query.list();
 
 		Date data = new Date();
 		

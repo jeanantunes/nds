@@ -10,7 +10,7 @@ import br.com.abril.nds.model.cadastro.MaterialPromocional;
 import br.com.abril.nds.repository.MaterialPromocionalRepository;
 
 @Repository
-public class MaterialPromocionalRepositoryImpl extends AbstractRepository<MaterialPromocional, Long> implements MaterialPromocionalRepository {
+public class MaterialPromocionalRepositoryImpl extends AbstractRepositoryModel<MaterialPromocional, Long> implements MaterialPromocionalRepository {
 
 	public MaterialPromocionalRepositoryImpl() {
 		super(MaterialPromocional.class);

@@ -17,7 +17,7 @@ import br.com.abril.nds.model.planejamento.PeriodoLancamentoParcial;
 import br.com.abril.nds.repository.PeriodoLancamentoParcialRepository;
 
 @Repository
-public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepository<PeriodoLancamentoParcial, Long> 
+public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepositoryModel<PeriodoLancamentoParcial, Long> 
 			implements PeriodoLancamentoParcialRepository {
 
 	public PeriodoLancamentoParcialRepositoryImpl() {

@@ -10,7 +10,7 @@ import br.com.abril.nds.model.movimentacao.StatusOperacao;
 import br.com.abril.nds.repository.ControleConferenciaEncalheRepository;
 
 @Repository
-public class ControleConferenciaEncalheRepositoryImpl extends AbstractRepository<ControleConferenciaEncalhe,Long> implements ControleConferenciaEncalheRepository {
+public class ControleConferenciaEncalheRepositoryImpl extends AbstractRepositoryModel<ControleConferenciaEncalhe,Long> implements ControleConferenciaEncalheRepository {
 
 	public ControleConferenciaEncalheRepositoryImpl() {
 		super(ControleConferenciaEncalhe.class);

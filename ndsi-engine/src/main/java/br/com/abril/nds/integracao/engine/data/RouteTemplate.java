@@ -11,10 +11,11 @@ import br.com.abril.nds.integracao.engine.DynamicRouter;
 import br.com.abril.nds.integracao.engine.MessageProcessor;
 import br.com.abril.nds.integracao.engine.RouteInterface;
 import br.com.abril.nds.integracao.engine.RouteParameterProvider;
+import br.com.abril.nds.repository.impl.AbstractRepository;
 
 @Component
 @Scope("prototype")
-public abstract class RouteTemplate {
+public abstract class RouteTemplate extends AbstractRepository {
 	@Autowired
 	private RouteParameterProvider parameterProvider;
 

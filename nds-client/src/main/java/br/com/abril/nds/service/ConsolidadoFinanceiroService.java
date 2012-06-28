@@ -1,5 +1,6 @@
 package br.com.abril.nds.service;
 
+import java.util.Date;
 import java.util.List;
 
 import br.com.abril.nds.dto.ConsignadoCotaDTO;
@@ -19,5 +20,9 @@ public interface ConsolidadoFinanceiroService {
 	public abstract List<ConsultaVendaEncalheDTO> obterMovimentoVendaEncalhe(FiltroConsolidadoVendaCotaDTO filtro);
 
 	public abstract ConsolidadoFinanceiroCota buscarPorId(Long id);
+
+	Date buscarUltimaDividaGeradaDia(Date dataOperacao);
+	
+	Date buscarDiaUltimaDividaGerada();
 
 }

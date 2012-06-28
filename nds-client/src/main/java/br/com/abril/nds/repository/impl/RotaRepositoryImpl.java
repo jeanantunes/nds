@@ -14,12 +14,11 @@ import org.springframework.stereotype.Repository;
 import br.com.abril.nds.dto.RotaRoteiroDTO;
 import br.com.abril.nds.model.cadastro.Rota;
 import br.com.abril.nds.model.cadastro.Roteirizacao;
-import br.com.abril.nds.model.cadastro.Roteiro;
 import br.com.abril.nds.repository.RotaRepository;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
 @Repository
-public class RotaRepositoryImpl extends AbstractRepository<Rota, Long>
+public class RotaRepositoryImpl extends AbstractRepositoryModel<Rota, Long>
 		implements RotaRepository {
 
 	public RotaRepositoryImpl() {

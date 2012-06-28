@@ -14,7 +14,9 @@ import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
-import br.com.abril.nds.util.export.fiscal.nota.NFEExportIgnore;
+import br.com.abril.nds.util.TipoSecao;
+import br.com.abril.nds.util.export.fiscal.nota.NFEExport;
+import br.com.abril.nds.util.export.fiscal.nota.NFEExportType;
 
 @Entity
 @Table(name = "NOTA_FISCAL_NOVO")
@@ -31,47 +33,47 @@ public class NotaFiscal implements Serializable {
 	 */
 	@Id
 	@GeneratedValue(generator = "NOTA_FISCAL_SEQ")
+	@NFEExport(secao = TipoSecao.B, posicao = 2, mascara = "000000000")
 	private Long id;
 	
 	/**
 	 * IDE
 	 */
 	@Embedded
+	@NFEExportType
 	private Identificacao identificacao;
 	
 	/**
 	 * EMIT
 	 */
 	@Embedded
-	@NFEExportIgnore
+	@NFEExportType
 	private IdentificacaoEmitente identificacaoEmitente;
 	
 	/**
 	 * DEST
 	 */
 	@Embedded
-	@NFEExportIgnore
+	@NFEExportType
 	private IdentificacaoDestinatario identificacaoDestinatario;
 	
 	/**
 	 * DET -> PROD
 	 */
 	@OneToMany(mappedBy = "notaFiscal")
-	@NFEExportIgnore
+	@NFEExportType
 	private List<ProdutoServico> produtosServicos;
 	
 	/**
 	 * TOTAL
 	 */
 	@Embedded
-	@NFEExportIgnore
 	private InformacaoValoresTotais informacaoValoresTotais;
 	
 	/**
 	 * TRANSP
 	 */
 	@Embedded
-	@NFEExportIgnore
 	private InformacaoTransporte informacaoTransporte;
 	
 		
@@ -79,14 +81,12 @@ public class NotaFiscal implements Serializable {
 	 * INFADIC
 	 */
 	@Embedded
-	@NFEExportIgnore
 	private InformacaoAdicional informacaoAdicional;
 	
 	/**
 	 * Informações da comunicação eletrônica.
 	 */
 	@Embedded
-	@NFEExportIgnore
 	private InformacaoEletronica informacaoEletronica;
 	
 	/**
@@ -94,7 +94,6 @@ public class NotaFiscal implements Serializable {
 	 */
 	@Enumerated(EnumType.STRING)
 	@Column(name = "STATUS_PROCESSAMENTO_INTERNO")
-	@NFEExportIgnore
 	private StatusProcessamentoInterno statusProcessamentoInterno;
 	
 	/**

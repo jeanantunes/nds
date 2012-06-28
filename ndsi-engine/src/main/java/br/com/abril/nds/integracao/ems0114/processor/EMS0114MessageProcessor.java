@@ -4,13 +4,13 @@ import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.List;
 
-import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
 
+import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.integracao.engine.MessageHeaderProperties;
 import br.com.abril.nds.integracao.engine.MessageProcessor;
@@ -22,11 +22,12 @@ import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
+import br.com.abril.nds.repository.impl.AbstractRepository;
 
 @Component
-public class EMS0114MessageProcessor implements MessageProcessor {
-	@PersistenceContext
-	private EntityManager entityManager;
+
+public class EMS0114MessageProcessor extends AbstractRepository implements MessageProcessor  {
+
 	
 	@Autowired
 	private NdsiLoggerFactory ndsiLoggerFactory;
@@ -49,6 +50,7 @@ public class EMS0114MessageProcessor implements MessageProcessor {
 			throw new RuntimeException("Distribuidor nao encontrado.");
 		}	
 	}
+	
 	
 	private void criarLancamentoConformeInput(Lancamento lancamento, ProdutoEdicao produtoEdicao, Message message) {
 		EMS0114Input input = (EMS0114Input) message.getBody();
@@ -97,7 +99,7 @@ public class EMS0114MessageProcessor implements MessageProcessor {
 			lancamento.setProdutoEdicao(produtoEdicao);
 			lancamento.setDataRecolhimentoPrevista(input.getDataRecolhimento());
 			
-			entityManager.persist(lancamento);
+			getSession().persist(lancamento);
 		}
 	}
 			
@@ -114,6 +116,7 @@ public class EMS0114MessageProcessor implements MessageProcessor {
 		return false;
 	}
 	
+	
 	private ProdutoEdicao findProdutoEdicao(Message message) {
 		EMS0114Input input = (EMS0114Input) message.getBody();
 		
@@ -125,12 +128,12 @@ public class EMS0114MessageProcessor implements MessageProcessor {
 				
 		try {
 		
-			Query query = this.entityManager.createQuery(sql.toString());
+			Query query = this.getSession().createQuery(sql.toString());
 			
 			query.setParameter("numeroEdicao", input.getEdicao());
 			query.setParameter("codigo", input.getCodProd());
 			
-			return (ProdutoEdicao) query.getSingleResult();
+			return (ProdutoEdicao) query.uniqueResult();
 			
 		} catch (NoResultException e) {
 			
@@ -140,6 +143,7 @@ public class EMS0114MessageProcessor implements MessageProcessor {
 		}
 	}
 	
+	
 	private Lancamento findLancamento(Message message) {
 		EMS0114Input input = (EMS0114Input) message.getBody();
 		
@@ -148,11 +152,11 @@ public class EMS0114MessageProcessor implements MessageProcessor {
 		sql.append("SELECT l FROM Lancamento l ");
 		sql.append("WHERE l.dataRecolhimentoPrevista = :dataRecolhimentoPrevista ");
 
-		Query query = this.entityManager.createQuery(sql.toString());
+		Query query = this.getSession().createQuery(sql.toString());
 		query.setParameter("dataRecolhimentoPrevista", input.getDataRecolhimento());
 		
 		@SuppressWarnings("unchecked")
-		List<Lancamento> lancamentos = (List<Lancamento>) query.getResultList();
+		List<Lancamento> lancamentos = (List<Lancamento>) query.list();
 		
 		Lancamento lancamento = null;
 		

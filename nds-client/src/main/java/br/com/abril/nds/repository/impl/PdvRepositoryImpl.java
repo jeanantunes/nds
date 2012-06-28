@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.hibernate.Criteria;
 import org.hibernate.Query;
-import org.hibernate.criterion.Projection;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.AliasToBeanResultTransformer;
@@ -25,7 +24,7 @@ import br.com.abril.nds.repository.PdvRepository;
  */
 
 @Repository
-public class PdvRepositoryImpl extends AbstractRepository<PDV, Long> implements PdvRepository {
+public class PdvRepositoryImpl extends AbstractRepositoryModel<PDV, Long> implements PdvRepository {
 
 	public PdvRepositoryImpl() {
 		super(PDV.class);
