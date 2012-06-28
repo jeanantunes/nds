@@ -793,7 +793,7 @@ public class DataLoader {
 				tx = session.beginTransaction();				
 				
 				carregarDados(session);
-				carregarDadosClean(session);
+//				carregarDadosClean(session);
 
 				commit = true;
 			} catch (Exception e) {
