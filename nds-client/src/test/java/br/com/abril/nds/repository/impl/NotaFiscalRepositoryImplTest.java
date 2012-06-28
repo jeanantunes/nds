@@ -268,11 +268,11 @@ public class NotaFiscalRepositoryImplTest  extends AbstractRepositoryImplTest {
 	
 	@Test
 	public void teste() {
-		
-		FiltroMonitorNfeDTO filtro = obterFiltroMonitorNfeDTO();
-		filtro.setBox(box1.getCodigo());
-		
-		//List<NfeDTO> lista = viewNotaFiscalRepository.pesquisarNotaFiscal(filtro);
+//		
+//		FiltroMonitorNfeDTO filtro = obterFiltroMonitorNfeDTO();
+//		filtro.setBox(box1.getCodigo());
+//		
+//		//List<NfeDTO> lista = viewNotaFiscalRepository.pesquisarNotaFiscal(filtro);
 		
 		
 	}
