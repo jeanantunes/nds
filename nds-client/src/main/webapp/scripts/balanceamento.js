@@ -191,7 +191,10 @@ function Balanceamento(pathTela, descInstancia) {
 	
 	
 	/**
-	 * Carrega imagem default para produtos sem imagem
+	 * Retorna componente 'img' com imagem default para produtos sem imagem
+	 * @param w: propriedade width
+	 * @param h: propriedade height
+	 * @param a: propriedade alt
 	 */
 	this.carregarImagemCapaDefault = function(w,h,a) {
 		
@@ -208,6 +211,10 @@ function Balanceamento(pathTela, descInstancia) {
 	/**
 	 * Carrega imagem de Produto Edição
 	 * @param idProdutoEdicao
+	 * @param w: propriedade width
+	 * @param h: propriedade height
+	 * @param a: propriedade alt
+	 * @param recipiente: Componente html onde aparecerá a imagem
 	 */
 	this.carregarImagemCapa = function(idProdutoEdicao,w,h,a,recipiente) {
 
@@ -248,11 +255,124 @@ function Balanceamento(pathTela, descInstancia) {
 
 		T.carregarImagemCapa(result.idProdutoEdicao,'129','170','Capa',"td_imagem_capa");
 	},
+
+	
+	/**
+     * Obtém tela de confirmação de Balanceamento
+     * OBS: Específico para matrizLancamento\index.jsp
+     * @param codigoProduto
+     */
+	this.obterConfirmacaoBalanceamento = function (){
+		$.postJSON(
+			pathTela + "/matrizLancamento/obterAgrupamentoDiarioBalanceamento", 
+			null,
+			function(result) {
+				T.popularConfirmacaoBalanceamento(result);
+				T.popup_confirmar_balanceamento( "#dialog-confirm-balanceamento" );
+			},
+			function() {
+				$("#dialog-confirm-balanceamento").hide();
+			}
+		);
+	},
+	
+	
+	/**
+	 * Popula Popup de confirmação de Balanceamento.
+	 * OBS: Específico para matrizLancamento\index.jsp
+	 * @param result
+	 */
+	this.popularConfirmacaoBalanceamento = function(result){
+		
+		$("#tableConfirmaBalanceamento").clear();
+		
+		var conteudo = '';
+		
+		$.each(result.rows, function(index,row){
+
+			if (row.cell.confirmado){
+			    
+				conteudo += '<tr class="class_linha_1"><td>';
+				conteudo += row.cell.mensagem;
+				conteudo += '</td>';
+				conteudo += '<td align="center">Confirmada</td>';
+				conteudo += '<td align="center"><img src="images/bt_check.gif" width="22" height="22" alt="Confirmado" /></td>';
+				conteudo += '</tr>';
+			}    
+			else{
+	
+				conteudo += '<tr class="class_linha_1"><td id=dataConfirmar_'+index+' name=dataConfirmar_'+index+' >';
+				conteudo += row.cell.mensagem;
+				conteudo += '</td>';
+				conteudo += '<td align="center"><input id=checkConfirmar_'+index+' name=checkConfirmar_'+index+' type="checkbox" value="" /></td>';
+				conteudo += '<td align="center">&nbsp;</td>';
+				conteudo += '</tr>';
+			}
+			
+		});
+		
+		$("#tableConfirmaBalanceamento").append(conteudo);
+	},
+	
+	
+	/**
+	 * Obtém datas marcadas da confirmação do balanceamento
+	 * @returns dividasMarcadas
+	 */
+	this.obterDatasMarcadasConfirmacao = function(){
+
+		var datasConfirmadas='';
+		var table = document.getElementById("tableConfirmaBalanceamento");
+		
+		for(i = 0; i < table.rows.length; i++){   
+			
+			if(document.getElementById("checkConfirmar_"+i)!=null){
+				
+				if (document.getElementById("checkConfirmar_"+i).checked){
+				    table.rows[i].cells[0].textContent; 
+				    datasConfirmadas+='datasConfirmadas='+ table.rows[i].cells[0].textContent + '&';
+			    }
+				
+		    }
+
+		} 
+		
+		return datasConfirmadas;
+	},
+	
+	
+	/**
+     * Confirma a matriz de lançamento
+     * OBS: Específico para matrizLancamento\index.jsp
+     */
+	this.confirmarMatrizLancamento = function (){
+
+		$.postJSON(
+			pathTela + "/matrizLancamento/confirmarMatrizLancamento", 
+			T.obterDatasMarcadasConfirmacao(),
+			function(mensagens) {
+				
+	           $("#dialog-confirm-balanceamento").dialog("close");
+
+			   if (mensagens){
+				   var tipoMensagem = mensagens.tipoMensagem;
+				   var listaMensagens = mensagens.listaMensagens;
+				   if (tipoMensagem && listaMensagens) {
+				       exibirMensagem(tipoMensagem, listaMensagens);
+			       }
+        	   }
+			   
+            },
+			null,
+			true,
+			"dialog-confirmar"
+		);
+	},
 	
 	
 	/**
 	 * Exibe popup de detalhes do produto
-	 * @returns
+	 * @param dialog: Nome do dialog
 	 */
 	this.popup_detalhes_prod = function(dialog){
 		$( dialog ).dialog({
@@ -265,8 +385,32 @@ function Balanceamento(pathTela, descInstancia) {
 					$( this ).dialog( "close" );
 					
 				},
-				
 			}
+		});
+	},
+	
+	
+	/**
+	 * Exibe popup de confirmação de balanceamento
+	 * @param dialog: Nome do dialog
+	 */
+	this.popup_confirmar_balanceamento = function(dialog){
+		$( dialog ).dialog({
+			resizable: false,
+			height:'auto',
+			width:300,
+			modal: true,
+			buttons: {
+				"Confirmar": function() {
+					T.confirmarMatrizLancamento();
+				},
+				"Cancelar": function() {
+					$( this ).dialog( "close" );
+				},
+			},
+			beforeClose: function() {
+				clearMessageDialogTimeout(dialog);
+		    }
 		});
 	},
 

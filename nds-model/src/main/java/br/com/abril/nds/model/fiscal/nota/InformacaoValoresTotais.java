@@ -101,12 +101,10 @@ public class InformacaoValoresTotais implements Serializable {
 	 * ISSQNtot
 	 */
 	
-	@OneToOne(optional=true)
-	@MapsId @JoinColumn(name="TOTAIS_ISS_QN_ID")
+	@OneToOne(mappedBy="notaFiscal")
 	private ValoresTotaisISSQN totaisISSQN;
 	
-	@OneToOne(optional=true)
-	@MapsId @JoinColumn(name="RETENCOES_TRIBUTOS_ID")
+	@OneToOne(mappedBy="notaFiscal")
 	private ValoresRetencoesTributos retencoesTributos;
 
 	/**

@@ -23,6 +23,8 @@ public class BalanceamentoLancamentoDTO implements Serializable {
 	
 	private BigDecimal capacidadeDistribuicao;
 	
+	private int numeroSemana;
+	
 	/**
 	 * Construtor padrão.
 	 */
@@ -57,6 +59,20 @@ public class BalanceamentoLancamentoDTO implements Serializable {
 	 */
 	public void setCapacidadeDistribuicao(BigDecimal capacidadeDistribuicao) {
 		this.capacidadeDistribuicao = capacidadeDistribuicao;
+	}
+
+	/**
+	 * @return the numeroSemana
+	 */
+	public int getNumeroSemana() {
+		return numeroSemana;
+	}
+
+	/**
+	 * @param numeroSemana the numeroSemana to set
+	 */
+	public void setNumeroSemana(int numeroSemana) {
+		this.numeroSemana = numeroSemana;
 	}
 	
 }

@@ -77,7 +77,7 @@ function montarExibicaoMensagem(isFromDialog, tipoMensagem, mensagens,
 		
 		montarTextoMensagem(campoTexto, mensagens);
 		
-		$(divSuccess).show(1000, esconde(isFromDialog, divSuccess));
+		$(divSuccess).show(0, esconde(isFromDialog, divSuccess));
 		
 	} else if (tipoMensagem == "WARNING") {
 		
@@ -85,7 +85,7 @@ function montarExibicaoMensagem(isFromDialog, tipoMensagem, mensagens,
 		
 		montarTextoMensagem(campoTexto, mensagens);
 		
-		$(divWarning).show(1000, esconde(isFromDialog, divWarning));
+		$(divWarning).show(0, esconde(isFromDialog, divWarning));
 		
 	} else if (tipoMensagem == "ERROR") {
 		
@@ -93,7 +93,7 @@ function montarExibicaoMensagem(isFromDialog, tipoMensagem, mensagens,
 		
 		montarTextoMensagem(campoTexto, mensagens);
 		
-		$(divError).show(1000, esconde(isFromDialog, divError));
+		$(divError).show(0, esconde(isFromDialog, divError));
 	}
 }
 
@@ -116,14 +116,14 @@ function esconde(isFromDialog, div) {
 		
 		messageDialogTimeout =
 			setTimeout(function() {
-				$(div).removeAttr("style").fadeOut();
+				$(div).fadeOut("slow");
 			}, 5000);
 		
 	} else {
 		
 		messageTimeout = 
 			setTimeout(function() {
-				$(div).removeAttr("style").fadeOut();
+				$(div).fadeOut("slow");
 			}, 5000);	
 	}
 }

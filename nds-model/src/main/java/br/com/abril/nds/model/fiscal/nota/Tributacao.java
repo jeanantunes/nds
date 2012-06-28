@@ -14,8 +14,8 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 @Entity
-@Table(name = "TRIBUTACAO_NOTA_FISCAL")
-@SequenceGenerator(name = "TRIBUTACAO_NOTA_FISCAL_SEQ", initialValue = 1, allocationSize = 1)
+@Table(name = "NOTA_FISCAL_TRIBUTACAO")
+@SequenceGenerator(name = "NOTA_FISCAL_TRIBUTACAO_SEQ", initialValue = 1, allocationSize = 1)
 public class Tributacao implements Serializable {
 	
 	/**
@@ -24,7 +24,7 @@ public class Tributacao implements Serializable {
 	private static final long serialVersionUID = -1770966775042385935L;
 
 	@Id
-	@GeneratedValue(generator = "TRIBUTACAO_NOTA_FISCAL_SEQ")
+	@GeneratedValue(generator = "NOTA_FISCAL_TRIBUTACAO_SEQ")
 	private Long id;
 	
 	@Column(name = "COD_EMPRESA", length = 9)
