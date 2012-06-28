@@ -154,7 +154,7 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		
 		BigDecimal totalRegistros = (BigDecimal) query.uniqueResult();
 		
-		return (BigDecimal) ((totalRegistros == null) ? 0 : totalRegistros);
+		return (totalRegistros == null) ? BigDecimal.ZERO : totalRegistros;
 	}
 	
 	@SuppressWarnings("unchecked")

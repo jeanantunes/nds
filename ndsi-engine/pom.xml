@@ -133,6 +133,11 @@
 		</dependency>
 		<dependency>
 			<groupId>br.com.abril</groupId>
+			<artifactId>nds-util</artifactId>
+			<version>1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>br.com.abril</groupId>
 			<artifactId>ndsi-canonical</artifactId>
 			<version>1.0</version>
 		</dependency>
