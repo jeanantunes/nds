@@ -254,7 +254,7 @@ function Balanceamento(pathTela, descInstancia) {
 		data.push({name:'idProdutoEdicao', value: idProdutoEdicao});
 		
 		$.postJSON(
-			pathTela + "/matrizLancamento/obterDetalheProduto", 
+			pathTela + "/cadastro/edicao/obterDetalheProduto.json", 
 			data,
 			function(result) {
 				T.popularDetalheProduto(result);

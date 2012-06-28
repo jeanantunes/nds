@@ -8,6 +8,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.client.vo.DetalheProdutoVO;
 import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.dto.ProdutoEdicaoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
@@ -21,6 +22,7 @@ import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.ProdutoService;
+import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
 import br.com.caelum.vraptor.Get;
@@ -46,6 +48,9 @@ public class ProdutoEdicaoController {
 	
 	@Autowired
 	private LancamentoService lService;
+	
+	@Autowired
+	private ProdutoEdicaoService produtoEdicaoService;
 	
 	/** Traz a página inicial. */
 	@Get
@@ -352,6 +357,59 @@ public class ProdutoEdicaoController {
 			
 			this.result.use(Results.json()).from(vo, "result").recursive().serialize();
 		}
+	}
+	
+	/**
+	 * Obtem detalhes de produto edição
+	 * @param idProdutoEdicao
+	 */
+	@Post
+	@Path("/obterDetalheProduto.json")
+	public void obterDetalheProduto(Long idProdutoEdicao){
+		
+		DetalheProdutoVO produtoLancamentoVO = null;
+		
+	    produtoLancamentoVO = this.getDetalheProduto(idProdutoEdicao);
+
+		if (produtoLancamentoVO!=null){
+		    this.result.use(Results.json()).from(produtoLancamentoVO, "result").recursive().serialize();
+		}
+		else{
+			result.nothing();
+		}
+	}
+	
+	/**
+	 * Popula e retorna Value Object com detalhes de produto edição
+	 * @param idProdutoEdicao
+	 * @return DetalheProdutoVO
+	 */
+	private DetalheProdutoVO getDetalheProduto(Long idProdutoEdicao){
+		
+		DetalheProdutoVO produtoLancamentoVO = null;
+		
+		ProdutoEdicao produtoEdicao = produtoEdicaoService.obterProdutoEdicao(idProdutoEdicao);
+		
+		if (produtoEdicao!=null){
+			
+			BigDecimal precoComDesconto = BigDecimal.ZERO;
+			
+			precoComDesconto = precoComDesconto.add(produtoEdicao.getPrecoVenda()).subtract(produtoEdicao.getDesconto());
+			
+		    produtoLancamentoVO = new DetalheProdutoVO(produtoEdicao.getId(),
+													   produtoEdicao.getProduto().getNome(),
+													   produtoEdicao.getCodigo(),
+										               (produtoEdicao.getPrecoVenda()!=null?CurrencyUtil.formatarValor(produtoEdicao.getPrecoVenda()):""),
+										               (precoComDesconto!=null?CurrencyUtil.formatarValor(precoComDesconto):""),
+										               (produtoEdicao.getProduto()!=null?(produtoEdicao.getProduto().getFornecedor()!=null?produtoEdicao.getProduto().getFornecedor().getJuridica().getNome():""):""),
+										               (produtoEdicao.getProduto()!=null?(produtoEdicao.getProduto().getEditor()!=null?produtoEdicao.getProduto().getEditor().getCodigo().toString():""):""),
+										               (produtoEdicao.getProduto()!=null?(produtoEdicao.getProduto().getEditor()!=null?produtoEdicao.getProduto().getEditor().getNome():""):""),
+										               produtoEdicao.getChamadaCapa(),
+										               (produtoEdicao.isPossuiBrinde()?"Sim":"Não"),
+										               Integer.toString(produtoEdicao.getPacotePadrao())
+										               );
+		}
+		return produtoLancamentoVO;
 	}
 
 }
