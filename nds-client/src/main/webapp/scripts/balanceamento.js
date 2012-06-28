@@ -171,8 +171,11 @@ function Balanceamento(pathTela, descInstancia) {
 		
 		var data = [];
 		
-		data.push({name: 'produtoLancamento.id', 		value: T.lancamentos[index].id});
-		data.push({name: 'produtoLancamento.novaData', 	value: T.lancamentos[index].novaData});
+		data.push({name: 'produtoLancamento.id', 			value: T.lancamentos[index].id});
+		data.push({name: 'produtoLancamento.novaData', 		value: T.lancamentos[index].novaData});
+		data.push({name: 'produtoLancamento.nomeProduto', 	value: T.lancamentos[index].nomeProduto});
+		data.push({name: 'produtoLancamento.numEdicao', 	value: T.lancamentos[index].numEdicao});
+		
 		
 		$.postJSON(
 				pathTela + "/matrizLancamento/reprogramarLancamentoUnico",
