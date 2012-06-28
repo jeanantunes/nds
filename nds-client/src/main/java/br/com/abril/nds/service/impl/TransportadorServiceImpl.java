@@ -336,7 +336,7 @@ public class TransportadorServiceImpl implements TransportadorService {
 			for (AssociacaoVeiculoMotoristaRotaDTO dto : listaAssociacaoAdicionar){
 				
 				AssociacaoVeiculoMotoristaRota assoc = new AssociacaoVeiculoMotoristaRota();
-				assoc.setId(dto.getId());
+				assoc.setId(dto.getId() != null ? dto.getId() < 0 ? null : dto.getId() : null);
 				assoc.setMotorista(dto.getMotorista());
 				assoc.setVeiculo(dto.getVeiculo());
 				assoc.setRota(this.rotaRepository.buscarPorId(dto.getRota().getIdRota()));

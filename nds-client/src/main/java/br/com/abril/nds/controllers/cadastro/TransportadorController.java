@@ -239,34 +239,68 @@ public class TransportadorController {
 				v.setId(null);
 			}
 		}
-		
-		for (AssociacaoVeiculoMotoristaRotaDTO assoc : listaAssocAdd){
-			
-			if (assoc.getId() != null && assoc.getId() < 0){
 				
-				assoc.setId(null);
-			}
-		}
-		
 		transportador.setId((Long) this.httpSession.getAttribute(ID_TRANSPORTADORA_EDICAO));
 
-		this.transportadorService.cadastrarTransportador(transportador, 
-				listaEnderecosSalvar, 
-				listaEnderecosRemover, 
-				listaTelefonesSalvar,
-				listaTelefonesRemover, 
-				listaVeiculosSalvar,
-				this.obterVeiculosSessaoRemover(),
-				listaMotoristasSalvar,
-				this.obterMotoristasSessaoRemover(),
-				listaAssocAdd,
-				this.obterAssociacoesRemoverSessao());
-		
-		this.limparDadosSessao();
+		try {
+			
+			this.transportadorService.cadastrarTransportador(transportador, 
+					listaEnderecosSalvar, 
+					listaEnderecosRemover, 
+					listaTelefonesSalvar,
+					listaTelefonesRemover, 
+					listaVeiculosSalvar,
+					this.obterVeiculosSessaoRemover(),
+					listaMotoristasSalvar,
+					this.obterMotoristasSessaoRemover(),
+					listaAssocAdd,
+					this.obterAssociacoesRemoverSessao());
+			
+			this.limparDadosSessao();
+			
+		} finally {
+			
+			this.reatribuirIds();
+		}
 		
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."), "result").recursive().serialize();
 	}
 	
+	private void reatribuirIds() {
+		
+		List<Motorista> motoristas = this.obterMotoristasSessao();
+		
+		for (Motorista motorista : motoristas){
+			
+			if (motorista.getId() == null){
+				
+				int id = (int) (Math.random() * -10000);
+				
+				if (id > 0){
+					id *= -1;
+				}
+				
+				motorista.setId(new Long(id));
+			}
+		}
+		
+		List<Veiculo> veiculos = this.obterVeiculosSessao();
+		
+		for (Veiculo veiculo : veiculos){
+			
+			if (veiculo.getId() == null){
+				
+				int id = (int) (Math.random() * -10000);
+				
+				if (id > 0){
+					id *= -1;
+				}
+				
+				veiculo.setId(new Long(id));
+			}
+		}
+	}
+
 	private void validarDadosEntrada(Transportador transportador) {
 		
 		if (transportador == null){
@@ -491,32 +525,6 @@ public class TransportadorController {
 		}
 	}
 
-	/*
-	@Post
-	public void cadastrarVeiculos(Veiculo veiculo){
-		
-		if (veiculo == null){
-			
-			this.transportadorService.cadastrarVeiculos(this.obterVeiculosSessao());
-			
-			this.httpSession.removeAttribute(LISTA_VEICULOS_SALVAR_SESSAO);
-		} else {
-			
-			this.transportadorService.cadastrarVeiculo(veiculo);
-		}
-		
-		this.carregarVeiculos();
-	}
-	*/
-	/*
-	@Post
-	public void cancelarCadastroVeiculos(){
-		
-		this.httpSession.removeAttribute(LISTA_VEICULOS_SALVAR_SESSAO);
-		
-		this.carregarVeiculos(null, null);
-	}
-	*/
 	@Post
 	public void editarVeiculo(Long referencia){
 		
@@ -737,32 +745,6 @@ public class TransportadorController {
 		return listaVeiculos == null ? new ArrayList<Motorista>() : listaVeiculos;
 	}
 
-	/*
-	@Post
-	public void cadastrarMotoristas(Motorista motorista){
-		
-		if (motorista == null){
-			
-			this.transportadorService.cadastrarMotoristas(this.obterMotoristasSessao());
-			
-			this.httpSession.removeAttribute(LISTA_MOTORISTAS_SALVAR_SESSAO);
-		} else {
-			
-			this.transportadorService.cadastarMotorista(motorista);
-		}
-		
-		this.carregarMotoristas();
-	}
-	*/
-	/*
-	@Post
-	public void cancelarCadastroMotoristas(){
-		
-		this.httpSession.removeAttribute(LISTA_MOTORISTAS_SALVAR_SESSAO);
-		
-		this.carregarMotoristas(null, null);
-	}
-	*/
 	@Post
 	public void editarMotorista(Long referencia){
 		
