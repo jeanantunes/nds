@@ -1,7 +1,9 @@
 package br.com.abril.nds.service.impl;
 
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -11,11 +13,12 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.xmlbeans.impl.xb.xsdschema.AnyDocument.Any;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.vo.NfeVO;
 import br.com.abril.nds.fixture.Fixture;
@@ -26,8 +29,10 @@ import br.com.abril.nds.model.cadastro.Telefone;
 import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.model.fiscal.nota.EncargoFinanceiro;
 import br.com.abril.nds.model.fiscal.nota.Identificacao;
+import br.com.abril.nds.model.fiscal.nota.Identificacao.FormaPagamento;
 import br.com.abril.nds.model.fiscal.nota.IdentificacaoDestinatario;
 import br.com.abril.nds.model.fiscal.nota.IdentificacaoEmitente;
+import br.com.abril.nds.model.fiscal.nota.IdentificacaoEmitente.RegimeTributario;
 import br.com.abril.nds.model.fiscal.nota.InformacaoAdicional;
 import br.com.abril.nds.model.fiscal.nota.InformacaoEletronica;
 import br.com.abril.nds.model.fiscal.nota.InformacaoTransporte;
@@ -42,17 +47,10 @@ import br.com.abril.nds.model.fiscal.nota.StatusProcessamentoInterno;
 import br.com.abril.nds.model.fiscal.nota.ValoresRetencoesTributos;
 import br.com.abril.nds.model.fiscal.nota.ValoresTotaisISSQN;
 import br.com.abril.nds.model.fiscal.nota.Veiculo;
-import br.com.abril.nds.model.fiscal.nota.Identificacao.FormaPagamento;
-import br.com.abril.nds.model.fiscal.nota.IdentificacaoEmitente.RegimeTributario;
 import br.com.abril.nds.repository.NotaFiscalRepository;
-import br.com.abril.nds.repository.impl.AbstractRepositoryImplTest;
 
-import static org.mockito.Mockito.*;
-
-public class MonitorNFEServiceImplTest extends AbstractRepositoryImplTest {
+public class MonitorNFEServiceImplTest {
 	
-	@Autowired
-	private MonitorNFEServiceImpl monitorNFEServiceImpl;
 	
 	@Mock
 	private NotaFiscalRepository notaFiscalRepository;
@@ -311,18 +309,26 @@ public class MonitorNFEServiceImplTest extends AbstractRepositoryImplTest {
 	@Test
 	public void testarObterDanfes() throws IOException {
 		
+		MonitorNFEServiceImpl monitorNFEServiceImpl = mock(MonitorNFEServiceImpl.class);
+		
 		monitorNFEServiceImpl.notaFiscalRepository = notaFiscalRepository;
 		
 		when(notaFiscalRepository.buscarPorId(1L)).thenReturn(notaFiscalMockada);
+		
+		URL urlDanfe = Thread.currentThread().getContextClassLoader().getResource("reports/");
+		
+		when(monitorNFEServiceImpl.obterDiretorioReports()).thenReturn(urlDanfe);
 		
 		List<NfeVO> listaNotas = new ArrayList<NfeVO>();
 		NfeVO nf = new NfeVO();
 		nf.setIdNotaFiscal(1L);
 		listaNotas.add(nf);
+
+		when(monitorNFEServiceImpl.obterDanfes(Mockito.anyList())).thenCallRealMethod();
 		
 		byte[] bytesArquivoDanfe = monitorNFEServiceImpl.obterDanfes(listaNotas);
 		
-		URL url = Thread.currentThread().getContextClassLoader().getResource("reports");
+		URL url = Thread.currentThread().getContextClassLoader().getResource("reports/");
 		
 		File arquivoDanfe = new File(url.getPath() + "/arquivoDanfe.pdf");
 		

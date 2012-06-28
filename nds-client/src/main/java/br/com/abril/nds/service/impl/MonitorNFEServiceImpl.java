@@ -624,17 +624,24 @@ public class MonitorNFEServiceImpl implements MonitorNFEService {
 		
 	}
 	
+	protected URL obterDiretorioReports() {
+		
+		URL urlDanfe = Thread.currentThread().getContextClassLoader().getResource("/reports/");
+		
+		return urlDanfe;
+	}
+	
 	private byte[] gerarDocumentoIreport(List<DanfeWrapper> list) throws JRException, URISyntaxException {
 
 		JRDataSource jrDataSource = new JRBeanCollectionDataSource(list);
 		
-		URL url = Thread.currentThread().getContextClassLoader().getResource("reports/danfeWrapper.jasper");
+		URL diretorioReports = obterDiretorioReports();
 		
-		String path = url.toURI().getPath();
+		String path = diretorioReports.toURI().getPath() + "/danfeWrapper.jasper";
 		
 		Map<String, Object> parameters = new HashMap<String, Object>();
 		
-		parameters.put("SUBREPORT_DIR", Thread.currentThread().getContextClassLoader().getResource("reports/").toURI().getPath());
+		parameters.put("SUBREPORT_DIR", diretorioReports.toURI().getPath());
 		
 		return  JasperRunManager.runReportToPdf(path, parameters, jrDataSource);
 	}
