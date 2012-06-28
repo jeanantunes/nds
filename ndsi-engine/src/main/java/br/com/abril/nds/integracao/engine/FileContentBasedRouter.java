@@ -9,9 +9,10 @@ import org.apache.commons.io.filefilter.RegexFileFilter;
 import br.com.abril.nds.integracao.engine.data.FileRouteTemplate;
 import br.com.abril.nds.integracao.engine.data.RouteTemplate;
 import br.com.abril.nds.integracao.util.OSUtil;
+import br.com.abril.nds.repository.impl.AbstractRepository;
 
 
-public abstract class FileContentBasedRouter implements ContentBasedRouter {
+public abstract class FileContentBasedRouter extends AbstractRepository implements ContentBasedRouter {
 	private static final Pattern WINDOWS_PATH_NORMALIZER = Pattern.compile("(?i:[a-z][:])");
 	
 	public abstract void routeFile(FileRouteTemplate fileRouteTemplate, File file);

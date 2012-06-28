@@ -25,7 +25,7 @@ import br.com.abril.nds.repository.RoteirizacaoRepository;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
 @Repository
-public class RoteirizacaoRepositoryImpl extends AbstractRepository<Roteirizacao, Long> implements RoteirizacaoRepository {
+public class RoteirizacaoRepositoryImpl extends AbstractRepositoryModel<Roteirizacao, Long> implements RoteirizacaoRepository {
 	
 	public RoteirizacaoRepositoryImpl() {
 		super(Roteirizacao.class);

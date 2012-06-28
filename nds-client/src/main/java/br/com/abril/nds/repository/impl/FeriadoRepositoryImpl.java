@@ -16,7 +16,7 @@ import br.com.abril.nds.repository.FeriadoRepository;
  * @author Discover Technology
  */
 @Repository
-public class FeriadoRepositoryImpl extends AbstractRepository<Feriado, Long> 
+public class FeriadoRepositoryImpl extends AbstractRepositoryModel<Feriado, Long> 
 										 implements FeriadoRepository {
 
 	/**

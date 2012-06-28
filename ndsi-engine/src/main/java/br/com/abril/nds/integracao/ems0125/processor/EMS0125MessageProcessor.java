@@ -1,12 +1,12 @@
 package br.com.abril.nds.integracao.ems0125.processor;
 
-import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
 
+import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.integracao.engine.MessageProcessor;
 import br.com.abril.nds.integracao.engine.data.Message;
@@ -14,17 +14,18 @@ import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;
 import br.com.abril.nds.integracao.model.canonic.EMS0125Input;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
+import br.com.abril.nds.repository.impl.AbstractRepository;
 
 
 @Component
-public class EMS0125MessageProcessor implements MessageProcessor {
-	@PersistenceContext
-	private EntityManager entityManager;
+
+public class EMS0125MessageProcessor extends AbstractRepository implements MessageProcessor  {
 	
 	@Autowired
 	private NdsiLoggerFactory ndsiLoggerFactory;
 		
 	@Override
+	
 	public void processMessage(Message message){
 		EMS0125Input input = (EMS0125Input) message.getBody();
 		
@@ -36,7 +37,7 @@ public class EMS0125MessageProcessor implements MessageProcessor {
 		sql.append("     pe.numeroEdicao = :numeroEdicao ");
 		sql.append("  AND   p.codigo = :codigo ");
 		
-		Query query = entityManager.createQuery(sql.toString());
+		Query query = getSession().createQuery(sql.toString());
 		query.setParameter("numeroEdicao", input.getEdicao());
 		query.setParameter("codigo", input.getCodProd());
 		
@@ -44,7 +45,7 @@ public class EMS0125MessageProcessor implements MessageProcessor {
 			
 		try {
 			
-			produtoEdicao = (ProdutoEdicao) query.getSingleResult();
+			produtoEdicao = (ProdutoEdicao) query.uniqueResult();
 			
 		} catch(NoResultException e) {
 			

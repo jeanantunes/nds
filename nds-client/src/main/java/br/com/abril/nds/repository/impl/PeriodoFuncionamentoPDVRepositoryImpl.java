@@ -10,7 +10,7 @@ import br.com.abril.nds.model.cadastro.pdv.PeriodoFuncionamentoPDV;
 import br.com.abril.nds.repository.PeriodoFuncionamentoPDVRepository;
 
 @Repository
-public class PeriodoFuncionamentoPDVRepositoryImpl extends AbstractRepository<PeriodoFuncionamentoPDV,Long> implements PeriodoFuncionamentoPDVRepository {
+public class PeriodoFuncionamentoPDVRepositoryImpl extends AbstractRepositoryModel<PeriodoFuncionamentoPDV,Long> implements PeriodoFuncionamentoPDVRepository {
 	
 	public PeriodoFuncionamentoPDVRepositoryImpl() {
 		super(PeriodoFuncionamentoPDV.class);

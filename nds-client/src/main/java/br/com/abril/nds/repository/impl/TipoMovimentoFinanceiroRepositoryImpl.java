@@ -9,7 +9,7 @@ import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 import br.com.abril.nds.repository.TipoMovimentoFinanceiroRepository;
 
 @Repository
-public class TipoMovimentoFinanceiroRepositoryImpl extends AbstractRepository<TipoMovimentoFinanceiro, Long> implements TipoMovimentoFinanceiroRepository {
+public class TipoMovimentoFinanceiroRepositoryImpl extends AbstractRepositoryModel<TipoMovimentoFinanceiro, Long> implements TipoMovimentoFinanceiroRepository {
 
 	public TipoMovimentoFinanceiroRepositoryImpl() {
 		super(TipoMovimentoFinanceiro.class);

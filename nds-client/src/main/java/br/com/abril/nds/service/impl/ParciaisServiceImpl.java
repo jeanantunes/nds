@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.TipoEdicao;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
@@ -25,9 +26,7 @@ import br.com.abril.nds.repository.LancamentoParcialRepository;
 import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.repository.PeriodoLancamentoParcialRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
-import br.com.abril.nds.repository.UsuarioRepository;
 import br.com.abril.nds.service.CalendarioService;
-import br.com.abril.nds.service.DistribuidorService;
 import br.com.abril.nds.service.ParciaisService;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TipoMensagem;

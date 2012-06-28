@@ -2,14 +2,13 @@ package br.com.abril.nds.dto;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.Date;
 
 import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.export.Export;
-import br.com.abril.nds.util.export.Exportable;
 import br.com.abril.nds.util.export.Export.Alignment;
+import br.com.abril.nds.util.export.Exportable;
 
 @Exportable
 public class PeriodoParcialDTO implements Serializable {

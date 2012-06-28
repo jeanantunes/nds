@@ -12,7 +12,7 @@ import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.repository.FormaCobrancaRepository;
 
 @Repository
-public class FormaCobrancaRepositoryImpl extends AbstractRepository<FormaCobranca,Long> implements FormaCobrancaRepository  {
+public class FormaCobrancaRepositoryImpl extends AbstractRepositoryModel<FormaCobranca,Long> implements FormaCobrancaRepository  {
 
 	
 	/**

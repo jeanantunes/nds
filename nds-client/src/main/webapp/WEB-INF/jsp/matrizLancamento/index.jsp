@@ -156,16 +156,6 @@ function abrirReprogramar() {
 	}
 }
 
-function voltarConfiguracaoOriginal() {
-	var selecionado = verifyAtLeastOneChecked('checkgroup');
-	if (selecionado) {
-		popup_reprogramar();
-	} else {
-		mensagens = new Array();
-		mensagens.push('Nenhum registro selecionado.');
-		exibirMensagem('ERROR', mensagens);
-	}
-}
 
 </script>
 
@@ -199,6 +189,15 @@ function voltarConfiguracaoOriginal() {
 </head>
 
 <body>
+
+
+<div id="dialog-confirm" title="Balanceamento da Matriz de Recolhimento">
+			
+			<jsp:include page="../messagesDialog.jsp" />
+			
+			<p>Ao prosseguir com essa ação você perderá seus dados não salvos ou confirmados. Deseja prosseguir?</p>
+			   
+</div>
 
 	<form action="" method="get" id="form1" name="form1">
 	
@@ -249,7 +248,13 @@ function voltarConfiguracaoOriginal() {
 		   	        <td width="109"><input type="text" name="datepickerDe" id="datepickerDe" style="width:80px;" value="${data}" /></td>
 		   	        <td width="47" align="center">&nbsp;</td>
 		   	        <td width="112">&nbsp;</td>
-		   	        <td width="104"><span class="bt_pesquisar"><a href="javascript:;" onclick="B.pesquisar();">Pesquisar</a></span></td>
+		   	        <td width="104"><span class="bt_pesquisar">
+		   	        
+<!-- Pesquisar -->
+<a href="javascript:;" onclick="B.verificarBalanceamentosAlterados(B.pesquisar);">Pesquisar</a></span></td>
+
+
+
 		          </tr>
 		        </table>
 		      </fieldset>
@@ -257,8 +262,13 @@ function voltarConfiguracaoOriginal() {
 		      <fieldset class="classFieldset">
 		       	  <legend>Balanceamento da Matriz de Lançamento Cadastrados</legend>
 		        <div class="grids" style="display:none;">
-		        <span class="bt_configura_inicial"><a href="javascript:;" onclick="voltarConfiguracaoOriginal();"><img src="<c:url value='images/bt_devolucao.png'/>" title="Voltar Configuração Inicial" border="0" hspace="5" />Voltar Configuração Inicial</a></span>
-		
+		        <span class="bt_configura_inicial">
+		        
+		        
+		              
+<!-- Voltar Configuração Inicial -->
+<a href="javascript:;" onclick="B.verificarBalanceamentosAlterados(B.voltarConfiguracaoInicial);"><img src="<c:url value='images/bt_devolucao.png'/>" title="Voltar Configuração Inicial" border="0" hspace="5" />Voltar Configuração Inicial</a></span>
+
 		
 		           <br clear="all" />
 		       	   <table id="lancamentosProgramadosGrid" class="lancamentosProgramadosGrid"></table>
@@ -282,11 +292,13 @@ function voltarConfiguracaoOriginal() {
 						</span>
 		             
 		                <span class="bt_novos" title="Reprogramar">
-		                    <!-- REPROGRAMAR -->	
-		                    <a href="javascript:;" onclick="abrirReprogramar();">
-		                        <img src="<c:url value='images/ico_reprogramar.gif'/>"  hspace="5" border="0" />
-		                        Reprogramar
-		                    </a>
+		                    
+		                    
+<!-- Reprogramar -->              
+<a href="javascript:;" onclick="reprogramarSelecionados();"><img src="<c:url value='images/ico_reprogramar.gif'/>"  hspace="5" border="0" />Reprogramar</a>
+
+		                    
+		                    
 		                </span>
 		                
 		                <span class="bt_novos" style="border-width: 2px; border-color: #00CD00;" title="Confirmar">

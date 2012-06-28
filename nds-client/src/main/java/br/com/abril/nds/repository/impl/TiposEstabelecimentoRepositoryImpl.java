@@ -8,7 +8,7 @@ import br.com.abril.nds.model.cadastro.pdv.TipoEstabelecimentoAssociacaoPDV;
 import br.com.abril.nds.repository.TiposEstabelecimentoRepository;
 
 @Repository
-public class TiposEstabelecimentoRepositoryImpl extends AbstractRepository<TipoEstabelecimentoAssociacaoPDV,Long> implements TiposEstabelecimentoRepository{
+public class TiposEstabelecimentoRepositoryImpl extends AbstractRepositoryModel<TipoEstabelecimentoAssociacaoPDV,Long> implements TiposEstabelecimentoRepository{
 	
 	public TiposEstabelecimentoRepositoryImpl() {
 		

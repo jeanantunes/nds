@@ -13,7 +13,7 @@ import br.com.abril.nds.repository.VendaEncalheRepository;
  *
  */
 @Repository
-public class VendaEncalheRepositoryImpl extends AbstractRepository<VendaProduto, Long> implements VendaEncalheRepository {
+public class VendaEncalheRepositoryImpl extends AbstractRepositoryModel<VendaProduto, Long> implements VendaEncalheRepository {
 	
 	public VendaEncalheRepositoryImpl() {
 		super(VendaProduto.class);

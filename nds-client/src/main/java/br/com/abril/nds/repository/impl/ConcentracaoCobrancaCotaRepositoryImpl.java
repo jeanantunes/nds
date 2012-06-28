@@ -6,7 +6,7 @@ import br.com.abril.nds.model.cadastro.ConcentracaoCobrancaCota;
 import br.com.abril.nds.repository.ConcentracaoCobrancaCotaRepository;
 
 @Repository
-public class ConcentracaoCobrancaCotaRepositoryImpl extends AbstractRepository<ConcentracaoCobrancaCota,Long> implements ConcentracaoCobrancaCotaRepository  {
+public class ConcentracaoCobrancaCotaRepositoryImpl extends AbstractRepositoryModel<ConcentracaoCobrancaCota,Long> implements ConcentracaoCobrancaCotaRepository  {
 
 	/**
 	 * Construtor padrão

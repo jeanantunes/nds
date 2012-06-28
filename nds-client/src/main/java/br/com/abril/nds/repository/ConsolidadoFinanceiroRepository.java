@@ -1,5 +1,6 @@
 package br.com.abril.nds.repository;
 
+import java.util.Date;
 import java.util.List;
 
 import br.com.abril.nds.dto.ConsignadoCotaDTO;
@@ -24,4 +25,9 @@ public interface ConsolidadoFinanceiroRepository extends Repository<ConsolidadoF
 	List<ConsignadoCotaDTO> obterMovimentoEstoqueCotaConsignado(FiltroConsolidadoConsignadoCotaDTO filtro);
 	
 	ConsolidadoFinanceiroCota obterConsolidadoPorIdMovimentoFinanceiro(Long idMovimentoFinanceiro);
+	
+	Date buscarUltimaDividaGeradaDia(Date dataOperacao);
+	
+	Date buscarDiaUltimaDividaGerada();
+	
 }

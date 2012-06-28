@@ -7,18 +7,14 @@ import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 
 import org.hibernate.criterion.MatchMode;
-import org.hibernate.criterion.Order;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import br.com.abril.nds.client.vo.TipoDescontoCotaVO;
 import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.dto.ConsultaRoteirizacaoDTO;
-import br.com.abril.nds.dto.CotaAusenteEncalheDTO;
 import br.com.abril.nds.dto.CotaDisponivelRoteirizacaoDTO;
-import br.com.abril.nds.dto.FechamentoFisicoLogicoDTO;
 import br.com.abril.nds.dto.ItemDTO;
-import br.com.abril.nds.dto.filtro.FiltroFechamentoEncalheDTO;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.LogBairro;
 import br.com.abril.nds.model.LogLocalidade;
 import br.com.abril.nds.model.cadastro.Box;
@@ -34,10 +30,12 @@ import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.BoxService;
 import br.com.abril.nds.service.CotaService;
-import br.com.abril.nds.service.DistribuidorService;
 import br.com.abril.nds.service.RoteirizacaoService;
 import br.com.abril.nds.util.ItemAutoComplete;
 import br.com.abril.nds.util.TipoMensagem;
+import br.com.abril.nds.util.export.FileExporter;
+import br.com.abril.nds.util.export.FileExporter.FileType;
+import br.com.abril.nds.util.export.NDSFileHeader;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
@@ -45,10 +43,6 @@ import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
-
-import br.com.abril.nds.util.export.FileExporter;
-import br.com.abril.nds.util.export.FileExporter.FileType;
-import br.com.abril.nds.util.export.NDSFileHeader;
 @Resource
 @Path("cadastro/roteirizacao")
 public class RoteirizacaoController {

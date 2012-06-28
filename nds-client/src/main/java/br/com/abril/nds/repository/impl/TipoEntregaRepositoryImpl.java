@@ -18,7 +18,7 @@ import br.com.abril.nds.repository.TipoEntregaRepository;
  * @author Discover Technology.
  */
 @Repository
-public class TipoEntregaRepositoryImpl extends AbstractRepository<TipoEntrega, Long> implements TipoEntregaRepository {
+public class TipoEntregaRepositoryImpl extends AbstractRepositoryModel<TipoEntrega, Long> implements TipoEntregaRepository {
 
 	public TipoEntregaRepositoryImpl() {
 		super(TipoEntrega.class);

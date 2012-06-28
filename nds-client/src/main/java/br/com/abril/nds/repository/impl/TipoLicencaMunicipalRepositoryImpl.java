@@ -8,7 +8,7 @@ import br.com.abril.nds.model.cadastro.TipoLicencaMunicipal;
 import br.com.abril.nds.repository.TipoLicencaMunicipalRepository;
 
 @Repository
-public class TipoLicencaMunicipalRepositoryImpl extends AbstractRepository<TipoLicencaMunicipal,Long> implements TipoLicencaMunicipalRepository {
+public class TipoLicencaMunicipalRepositoryImpl extends AbstractRepositoryModel<TipoLicencaMunicipal,Long> implements TipoLicencaMunicipalRepository {
 	
 	public TipoLicencaMunicipalRepositoryImpl() {
 		super(TipoLicencaMunicipal.class);

@@ -4,26 +4,26 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-
+import org.hibernate.Query;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.integracao.engine.RouteParameterProvider;
+import br.com.abril.nds.repository.impl.AbstractRepository;
 
 
 @Component
-public class NdsiRouteParameterProvider implements RouteParameterProvider {
-	@PersistenceContext
-	private EntityManager entityManager;
+
+public class NdsiRouteParameterProvider extends AbstractRepository implements RouteParameterProvider {
 
 	@SuppressWarnings("unchecked")
 	@Override
+	@Transactional
 	public Map<String, Object> getParameters() {
-		Query query = entityManager.createNativeQuery("select * from parametro_sistema");
+		Query query = getSession().createSQLQuery("select * from parametro_sistema");
 		
-		List<Object[]> result = query.getResultList();
+		List<Object[]> result = query.list();
 		
 		Map<String, Object> parameters = new HashMap<String, Object>(result.size());
 		

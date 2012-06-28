@@ -2,12 +2,13 @@ package br.com.abril.nds.integracao.ems0109.processor;
 
 import java.util.List;
 
-import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
+
+import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.integracao.engine.MessageHeaderProperties;
 import br.com.abril.nds.integracao.engine.MessageProcessor;
@@ -23,12 +24,12 @@ import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.TipoProduto;
 import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
+import br.com.abril.nds.repository.impl.AbstractRepository;
 
 @Component
-public class EMS0109MessageProcessor implements MessageProcessor {
 
-	@PersistenceContext
-	private EntityManager entityManager;
+public class EMS0109MessageProcessor extends AbstractRepository implements MessageProcessor  {
+
 
 	@Autowired
 	private NdsiLoggerFactory ndsiLoggerFactory;
@@ -80,6 +81,7 @@ public class EMS0109MessageProcessor implements MessageProcessor {
 		return false;
 	}
 	
+	
 	private Produto findProduto(Message message) {
 		EMS0109Input input = (EMS0109Input) message.getBody();
 		
@@ -90,11 +92,11 @@ public class EMS0109MessageProcessor implements MessageProcessor {
 		
 		try {
 		
-			Query query = this.entityManager.createQuery(sql.toString());
+			Query query = this.getSession().createQuery(sql.toString());
 			
 			query.setParameter("codigoPublicacao", input.getCodigoPublicacao());
 			
-			return (Produto) query.getSingleResult();
+			return (Produto) query.uniqueResult();
 			
 		} catch (NoResultException e) {
 			
@@ -107,6 +109,7 @@ public class EMS0109MessageProcessor implements MessageProcessor {
 		return this.periodicidadeProdutoService.getPeriodicidadeProdutoAsArchive(periodicidade);
 	}
 	
+	
 	private Editor findEditorByID(Message message) {
 		EMS0109Input input = (EMS0109Input) message.getBody();
 		
@@ -117,11 +120,11 @@ public class EMS0109MessageProcessor implements MessageProcessor {
 		
 		try {
 			
-			Query query = this.entityManager.createQuery(sql.toString());
+			Query query = this.getSession().createQuery(sql.toString());
 			
 			query.setParameter("codigoEditor", input.getCodigoEditor());
 			
-			return (Editor) query.getSingleResult();
+			return (Editor) query.uniqueResult();
 			
 		} catch (NoResultException e) {	
 			
@@ -132,6 +135,7 @@ public class EMS0109MessageProcessor implements MessageProcessor {
 		} 
 	}
 	
+	
 	private DescontoLogistica findDescontoLogisticaByTipoDesconto(String codigoTipoDesconto) {
 		StringBuilder sql = new StringBuilder();
 		
@@ -140,11 +144,11 @@ public class EMS0109MessageProcessor implements MessageProcessor {
 		
 		try {
 			
-			Query query = this.entityManager.createQuery(sql.toString());
+			Query query = this.getSession().createQuery(sql.toString());
 			
 			query.setParameter("codigoTipoDesconto", codigoTipoDesconto);
 			
-			return (DescontoLogistica) query.getSingleResult();
+			return (DescontoLogistica) query.uniqueResult();
 			
 		} catch (NoResultException e) {	
 			
@@ -152,17 +156,18 @@ public class EMS0109MessageProcessor implements MessageProcessor {
 		} 
 	}
 	
+	
 	private TipoProduto findTipoProduto(GrupoProduto grupoProduto, Message message) {
 		StringBuilder sql = new StringBuilder();
 		
 		sql.append("SELECT tp FROM TipoProduto tp ");
 		sql.append("WHERE  tp.grupoProduto = :grupoProduto ");
 			
-		Query query = this.entityManager.createQuery(sql.toString());;
+		Query query = this.getSession().createQuery(sql.toString());;
 		query.setParameter("grupoProduto", grupoProduto);
 		
 		@SuppressWarnings("unchecked")
-		List<TipoProduto> tiposProduto = (List<TipoProduto>) query.getResultList();
+		List<TipoProduto> tiposProduto = (List<TipoProduto>) query.list();
 		
 		TipoProduto tipoProduto = null;
 		
@@ -181,6 +186,7 @@ public class EMS0109MessageProcessor implements MessageProcessor {
 		}
 	}	
 	
+	
 	private Fornecedor findFornecedor(Integer codigoInterface) {
 		StringBuilder sql = new StringBuilder();
 		
@@ -189,17 +195,18 @@ public class EMS0109MessageProcessor implements MessageProcessor {
 		
 		try {
 			
-			Query query = this.entityManager.createQuery(sql.toString());
+			Query query = this.getSession().createQuery(sql.toString());
 			
 			query.setParameter("codigoInterface", codigoInterface);
 			
-			return (Fornecedor) query.getSingleResult();
+			return (Fornecedor) query.uniqueResult();
 			
 		} catch (NoResultException e) {	
 			
 			return null;
 		} 
 	}
+	
 	
 	private void criarProdutoConformeInput(Message message, Editor editor, TipoProduto tipoProduto) {
 		EMS0109Input input = (EMS0109Input) message.getBody();
@@ -235,7 +242,7 @@ public class EMS0109MessageProcessor implements MessageProcessor {
 			
 		}
 		
-		this.entityManager.persist(produto); 
+		this.getSession().persist(produto); 
 		
 	}
 	

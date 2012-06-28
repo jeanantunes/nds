@@ -14,6 +14,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import br.com.abril.nds.util.TipoSecao;
+import br.com.abril.nds.util.export.fiscal.nota.NFEExport;
 import br.com.abril.nds.util.export.fiscal.nota.NFEExportType;
 
 @Entity
@@ -31,6 +33,7 @@ public class NotaFiscal implements Serializable {
 	 */
 	@Id
 	@GeneratedValue(generator = "NOTA_FISCAL_SEQ")
+	@NFEExport(secao = TipoSecao.B, posicao = 2, mascara = "000000000")
 	private Long id;
 	
 	/**

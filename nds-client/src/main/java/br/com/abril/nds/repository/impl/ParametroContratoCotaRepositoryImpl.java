@@ -10,7 +10,7 @@ import br.com.abril.nds.repository.ParametroContratoCotaRepository;
  * @author infoA2
  */
 @Repository
-public class ParametroContratoCotaRepositoryImpl extends AbstractRepository<ParametroContratoCota, Long> implements ParametroContratoCotaRepository {
+public class ParametroContratoCotaRepositoryImpl extends AbstractRepositoryModel<ParametroContratoCota, Long> implements ParametroContratoCotaRepository {
 
 	public ParametroContratoCotaRepositoryImpl() {
 		super(ParametroContratoCota.class);

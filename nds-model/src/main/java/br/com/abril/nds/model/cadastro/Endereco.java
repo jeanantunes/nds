@@ -16,6 +16,7 @@ import org.codehaus.jackson.annotate.JsonBackReference;
 import br.com.abril.nds.util.TipoSecao;
 import br.com.abril.nds.util.export.fiscal.nota.NFEExport;
 import br.com.abril.nds.util.export.fiscal.nota.NFEExports;
+import br.com.abril.nds.util.export.fiscal.nota.NFEWhen;
 
 /**
  * @author francisco.garcia
@@ -72,7 +73,9 @@ public class Endereco implements Serializable {
 	private Integer numero;
 	
 	@Column(name = "UF", length=2)
-	@NFEExports({@NFEExport(secao=TipoSecao.C05, posicao=6, tamanho=2), @NFEExport(secao=TipoSecao.E05, posicao=6 , tamanho=2)})
+//	@NFEExport(secao = TipoSecao.B, posicao = 0, tamanho = 2) //Se for do IdentificacaoEmitente
+//	@NFEExport(secao = TipoSecao.C05, posicao = 6, tamanho = 2) //Se for do IdentificacaoEmitente
+//	@NFEExport(secao = TipoSecao.E05, posicao = 6, tamanho = 2) //Se for do IdentificacaoDestinatario
 	private String uf;
 	
 	@JsonBackReference

@@ -3,6 +3,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import br.com.abril.nds.client.vo.TipoDescontoCotaVO;
+import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.EspecificacaoDesconto;
 import br.com.abril.nds.model.cadastro.TipoDescontoCota;
 
@@ -25,6 +26,8 @@ public interface TipoDescontoCotaService {
 	void excluirDesconto(TipoDescontoCota tipoDescontoCota);
 	
 	TipoDescontoCota obterTipoDescontoCotaPorId(long idDesconto);
+	
+	List<Distribuidor> obterDistribuidores();
 	
 }
 	

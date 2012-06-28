@@ -268,6 +268,8 @@
 							<li><a href="Financeiro/workflow_aprovacao.htm">Work
 									Flow de Aprovação</a>
 							</li>
+							<li><a href='<c:url value="/financeiro/consultaConsignadoCota"/>'>Consignado Cota</a>
+							</li>
 							<li><a href="Financeiro/help_financeiro.htm">Help</a>
 							</li>
 						</ul></li>
@@ -411,6 +413,9 @@
 								<a href="nfe/retornoNFe/">Retorno NF-e</a>
 							</li>
 							<li>
+								<a href="nfe/consultaNFEEncalheTratamento/">Consulta NFE Encalhe Tratamento</a>
+							</li>
+							<li>
 								<a href="nfe/painelMonitorNFe/">Painel Monitor NF-e</a>
 							</li>
 							
@@ -425,6 +430,7 @@
 									Controle Aprovação
 								</a>
 							</li>
+							<li><a href='<c:url value="/administracao/painelProcessamento"/>'>Painel de Processamento</a></li>
 							<li><a href='<c:url value="/administracao/cadastroCalendario"/>'>Calendário</a></li>
 							<li><a href='<c:url value="/administracao/tipoDescontoCota"/>'>Tipo de Desconto Cota</a></li>
 							

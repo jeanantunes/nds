@@ -1,15 +1,15 @@
 package br.com.abril.nds.integracao.ems0118.processor;
 
-import java.math.BigDecimal;
+import java.math.BigDecimal; 
 import java.math.RoundingMode;
 
-import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
 
+import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.integracao.ems0118.inbound.EMS0118Input;
 import br.com.abril.nds.integracao.engine.MessageProcessor;
@@ -18,19 +18,20 @@ import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
+import br.com.abril.nds.repository.impl.AbstractRepository;
 /**
  * @author Jones.Costa
  * @version 1.0
  */
 @Component
-public class EMS0118MessageProcessor implements MessageProcessor{
-	@PersistenceContext
-	private EntityManager entityManager;
+
+public class EMS0118MessageProcessor extends AbstractRepository implements MessageProcessor {
 	
 	@Autowired
 	private NdsiLoggerFactory ndsiLoggerFactory;
 	
 	@Override
+	
 	public void processMessage(Message message) {
 		
 	
@@ -40,8 +41,8 @@ public class EMS0118MessageProcessor implements MessageProcessor{
 		StringBuilder sql = new StringBuilder();
 		sql.append("SELECT dist FROM  Distribuidor dist ");
 				
-		Query query = entityManager.createQuery(sql.toString());		
-		Distribuidor distribuidor = (Distribuidor) query.getSingleResult();
+		Query query = getSession().createQuery(sql.toString());		
+		Distribuidor distribuidor = (Distribuidor) query.uniqueResult();
 				
 		//Obter Produto/Edição	
 		StringBuilder cmd = new StringBuilder();
@@ -51,13 +52,13 @@ public class EMS0118MessageProcessor implements MessageProcessor{
 		cmd.append("	prodCod.codigo = :codigoProduto ");
 		cmd.append(" AND	prodEdicao.numeroEdicao = :numeroEdicao ");
 		
-		Query consulta = entityManager.createQuery(cmd.toString());		
+		Query consulta = getSession().createQuery(cmd.toString());		
 		consulta.setParameter("codigoProduto", input.getCodigoPublicacao());
 		consulta.setParameter("numeroEdicao", input.getEdicao());
 		
 		try {
 			
-			ProdutoEdicao produtoEdicao = (ProdutoEdicao) consulta.getSingleResult();
+			ProdutoEdicao produtoEdicao = (ProdutoEdicao) consulta.uniqueResult();
 			
 			//Atualiza valor de venda (PREÇO CAPA)
 			produtoEdicao.setPrecoVenda(input.getPreco());

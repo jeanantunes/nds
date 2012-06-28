@@ -2,12 +2,8 @@ package br.com.abril.nds.util.export.fiscal.nota.condition;
 
 import br.com.abril.nds.model.fiscal.nota.ISSQN;
 
-public class ISSQNCondition implements Condition {
+public class ISSQNCondition extends ConditionDefault {
 
-	@Override
-	public boolean valid(Object object) {
-		return true;
-	}
 
 	@Override
 	public boolean validParent(Object object) {

@@ -25,7 +25,7 @@ import br.com.abril.nds.repository.ProdutoEdicaoRepository;
  * @author Discover Technology
  */
 @Repository
-public class ProdutoEdicaoRepositoryImpl extends AbstractRepository<ProdutoEdicao, Long> 
+public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<ProdutoEdicao, Long> 
 										 implements ProdutoEdicaoRepository {
 
 	/**

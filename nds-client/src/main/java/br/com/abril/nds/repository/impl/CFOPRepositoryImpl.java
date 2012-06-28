@@ -6,7 +6,7 @@ import br.com.abril.nds.model.fiscal.CFOP;
 import br.com.abril.nds.repository.CFOPRepository;
 
 @Repository
-public class CFOPRepositoryImpl  extends AbstractRepository<CFOP, Long> implements CFOPRepository {
+public class CFOPRepositoryImpl  extends AbstractRepositoryModel<CFOP, Long> implements CFOPRepository {
 
 	/**
 	 * Construtor.

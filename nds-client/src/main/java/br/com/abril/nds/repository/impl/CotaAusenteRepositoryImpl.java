@@ -15,7 +15,7 @@ import br.com.abril.nds.model.movimentacao.CotaAusente;
 import br.com.abril.nds.repository.CotaAusenteRepository;
 
 @Repository
-public class CotaAusenteRepositoryImpl extends AbstractRepository<CotaAusente, Long> implements CotaAusenteRepository { 
+public class CotaAusenteRepositoryImpl extends AbstractRepositoryModel<CotaAusente, Long> implements CotaAusenteRepository { 
 	
 	/**
 	 * Construtor.

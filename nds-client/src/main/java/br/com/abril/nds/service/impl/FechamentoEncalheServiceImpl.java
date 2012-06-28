@@ -15,6 +15,7 @@ import br.com.abril.nds.dto.FechamentoFisicoLogicoDTO;
 import br.com.abril.nds.dto.MovimentoFinanceiroCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroFechamentoEncalheDTO;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.TipoEdicao;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
@@ -36,7 +37,6 @@ import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.FechamentoEncalheBoxRepository;
 import br.com.abril.nds.repository.FechamentoEncalheRepository;
 import br.com.abril.nds.repository.TipoMovimentoFinanceiroRepository;
-import br.com.abril.nds.service.DistribuidorService;
 import br.com.abril.nds.service.FechamentoEncalheService;
 import br.com.abril.nds.service.GerarCobrancaService;
 import br.com.abril.nds.service.MovimentoFinanceiroCotaService;
@@ -581,6 +581,24 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 			
 		}
 		
+	}
+
+	@Override
+	@Transactional
+	public ControleFechamentoEncalhe buscaControleFechamentoEncalhePorData(Date dataFechamentoEncalhe) {
+		return fechamentoEncalheRepository.buscaControleFechamentoEncalhePorData(dataFechamentoEncalhe);
+	}
+
+	@Override
+	@Transactional
+	public Date buscaDataUltimoControleFechamentoEncalhe() {
+		return fechamentoEncalheRepository.buscaDataUltimoControleFechamentoEncalhe();
+	}
+
+	@Override
+	@Transactional
+	public Date buscarUltimoFechamentoEncalheDia(Date dataFechamentoEncalhe) {
+		return fechamentoEncalheRepository.buscarUltimoFechamentoEncalheDia(dataFechamentoEncalhe);
 	}
 
 }
