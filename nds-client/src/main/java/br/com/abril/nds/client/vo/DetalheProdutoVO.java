@@ -6,7 +6,7 @@ import java.io.Serializable;
  * @author Discover Technology
  *
  */
-public class DetalheProdutoLancamentoVO implements Serializable {
+public class DetalheProdutoVO implements Serializable {
 	
 	/**
 	 * Serial Version UID
@@ -38,7 +38,7 @@ public class DetalheProdutoLancamentoVO implements Serializable {
 	/**
 	 * Construtor padrão.
 	 */
-	public DetalheProdutoLancamentoVO() {
+	public DetalheProdutoVO() {
 		
 	}
 
@@ -54,7 +54,7 @@ public class DetalheProdutoLancamentoVO implements Serializable {
 	 * @param possuiBrinde
 	 * @param pacotePadrao
 	 */
-	 public DetalheProdutoLancamentoVO(Long idProdutoEdicao, String nomeProduto,
+	 public DetalheProdutoVO(Long idProdutoEdicao, String nomeProduto,
 			String codigoProduto, String precoCapa,
 			String precoComDesconto, String fornecedor, String codigoEditor,
 			String nomeEditor, String chamadaCapa, String possuiBrinde,

@@ -68,12 +68,14 @@ public class NotaFiscal implements Serializable {
 	 * TOTAL
 	 */
 	@Embedded
+	@NFEExportType
 	private InformacaoValoresTotais informacaoValoresTotais;
 	
 	/**
 	 * TRANSP
 	 */
 	@Embedded
+	@NFEExportType
 	private InformacaoTransporte informacaoTransporte;
 	
 		
@@ -81,12 +83,14 @@ public class NotaFiscal implements Serializable {
 	 * INFADIC
 	 */
 	@Embedded
+	@NFEExportType
 	private InformacaoAdicional informacaoAdicional;
 	
 	/**
 	 * Informações da comunicação eletrônica.
 	 */
 	@Embedded
+	@NFEExportType
 	private InformacaoEletronica informacaoEletronica;
 	
 	/**
