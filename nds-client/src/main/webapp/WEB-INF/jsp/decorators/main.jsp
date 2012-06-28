@@ -88,8 +88,19 @@
 	var contextPath = "${pageContext.request.contextPath}";
 	
 	$(document).ready(function() {
+
+		$("#ajaxLoading").ajaxStart(function() {
+			
+			$(this).fadeIn(200);
+		});
+		 
+		$("#ajaxLoading").ajaxStop(function() {
+			
+			$(this).fadeOut(200);
+		});
 		
 		verificarMensagens();
+		
 	});
 
 	function verificarMensagens() {
@@ -117,14 +128,31 @@
 
 <style type="text/css">
 
-fieldset label {
-	width: auto !important;
-	margin-left: 10px;
-}
+	fieldset label {
+		width: auto !important;
+		margin-left: 10px;
+	}
+	
+	.ui-datepicker-today a {	display:block !important; }
+	
+	#ui-datepicker-div { z-index: 99999 !important; }
 
-.ui-datepicker-today a {	display:block !important; }
-
-#ui-datepicker-div { z-index: 99999 !important; }
+	#ajaxLoading {
+		position: absolute;	z-index: 99999;
+		left: 0px; top: 0px; width: 100%; height: 100%; margin: 0;
+	}
+	#ajaxLoading #shadow {
+		background: #D0D0D0;
+		position: fixed; z-index: 1;
+		filter: alpha(opacity=50); opacity: 0.5;
+		left: 0px; top: 0px; width: 100%; height: 100%; margin: 0;
+	}
+	#ajaxLoading #panel {
+		position: fixed; z-index: 2;
+		top: 50%; left: 50%; width: 100px; height: 100px;
+		margin-top: -50px; margin-left: -50px;
+		text-align: center; vertical-align: 50%;
+	}
 </style>
 
 <!-- DECORATOR HEAD -->
@@ -161,6 +189,9 @@ fieldset label {
 			</div>
 
 		</div>
+		
+		<jsp:include page="/WEB-INF/jsp/commons/loading.jsp" />
+		
 		<div class="menu_superior">
 			<div class="itensMenu">
 				<ul class="nav" id="nav-one">
@@ -236,6 +267,8 @@ fieldset label {
 							</li>
 							<li><a href="Financeiro/workflow_aprovacao.htm">Work
 									Flow de Aprovação</a>
+							</li>
+							<li><a href='<c:url value="/financeiro/consultaConsignadoCota"/>'>Consignado Cota</a>
 							</li>
 							<li><a href="Financeiro/help_financeiro.htm">Help</a>
 							</li>
@@ -380,6 +413,9 @@ fieldset label {
 								<a href="nfe/retornoNFe/">Retorno NF-e</a>
 							</li>
 							<li>
+								<a href="nfe/consultaNFEEncalheTratamento/">Consulta NFE Encalhe Tratamento</a>
+							</li>
+							<li>
 								<a href="nfe/painelMonitorNFe/">Painel Monitor NF-e</a>
 							</li>
 							
@@ -394,6 +430,7 @@ fieldset label {
 									Controle Aprovação
 								</a>
 							</li>
+							<li><a href='<c:url value="/administracao/painelProcessamento"/>'>Painel de Processamento</a></li>
 							<li><a href='<c:url value="/administracao/cadastroCalendario"/>'>Calendário</a></li>
 							<li><a href='<c:url value="/administracao/tipoDescontoCota"/>'>Tipo de Desconto Cota</a></li>
 							
@@ -431,19 +468,22 @@ fieldset label {
 			
 			<div id="notify" style="display: none;"></div>
 			
-			<div id="effectSuccess" class="ui-state-default ui-corner-all" style="display: none;">
+			<div id="effectSuccess" class="ui-state-default ui-corner-all" 
+					style="display: none; position: absolute; width: 980px;">
 				<p>
 					<span style="float: left; margin-right: .3em;" class="ui-icon ui-icon-info"></span>
 					<b id="idTextSuccess"></b>
 				</p>
 			</div>
-			<div id="effectWarning" class="ui-state-highlight ui-corner-all" style="display: none;">
+			<div id="effectWarning" class="ui-state-highlight ui-corner-all" 
+					style="display: none; position: absolute; width: 980px;">
 				<p>
 					<span style="float: left; margin-right: .3em;" class="ui-icon ui-icon-info"></span>
 					<b id="idTextWarning"></b>
 				</p>
 			</div>
-			<div id="effectError" class="ui-state-error ui-corner-all" style="display: none;">
+			<div id="effectError" class="ui-state-error ui-corner-all" 
+					style="display: none; position: absolute; width: 980px;">
 				<p>
 					<span style="float: left; margin-right: .3em;" class="ui-icon ui-icon-info"></span>
 					<b id="idTextError"></b>

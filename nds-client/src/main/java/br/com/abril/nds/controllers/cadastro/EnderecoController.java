@@ -194,9 +194,6 @@ public class EnderecoController {
 			enderecoAssociacao.getEndereco().setCep(retirarFormatacaoCep(enderecoAssociacao.getEndereco().getCep()));
 		}
 		
-		if(tela.equals(Tela.ENDERECO_PDV))
-			validarDuplicidadeEnderecoPDV();
-		
 		List<EnderecoAssociacaoDTO> listaEnderecoAssociacao = this.obterEnderecosSessaoSalvar();
 		
 		if (enderecoAssociacao.getId() != null){
@@ -227,7 +224,12 @@ public class EnderecoController {
 				}
 			}
 		} else {
+
+			if (tela.equals(Tela.ENDERECO_PDV)) {
 			
+				validarDuplicidadeEnderecoPDV();
+			}
+
 			listaEnderecoAssociacao.add(enderecoAssociacao);
 		}
 

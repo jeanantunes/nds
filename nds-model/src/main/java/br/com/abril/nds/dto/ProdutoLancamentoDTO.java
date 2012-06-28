@@ -79,6 +79,8 @@ public class ProdutoLancamentoDTO implements Serializable {
     private boolean possuiBrinde;
 
   	private Integer pacotePadrao;
+  	
+  	private boolean permiteReprogramacao;
 	
 	/**
 	 * Construtor padrão.
@@ -510,6 +512,20 @@ public class ProdutoLancamentoDTO implements Serializable {
 	 */
 	public void setPacotePadrao(Integer pacotePadrao) {
 		this.pacotePadrao = pacotePadrao;
+	}
+
+	/**
+	 * @return the permiteReprogramacao
+	 */
+	public boolean isPermiteReprogramacao() {
+		return permiteReprogramacao;
+	}
+
+	/**
+	 * @param permiteReprogramacao the permiteReprogramacao to set
+	 */
+	public void setPermiteReprogramacao(boolean permiteReprogramacao) {
+		this.permiteReprogramacao = permiteReprogramacao;
 	}
 	
 }

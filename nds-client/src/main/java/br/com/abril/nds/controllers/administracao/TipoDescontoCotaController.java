@@ -23,18 +23,22 @@ import br.com.abril.nds.dto.filtro.FiltroCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaDTO.OrdemColuna;
 import br.com.abril.nds.dto.filtro.FiltroTipoDescontoCotaDTO;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.EspecificacaoDesconto;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.TipoDescontoCota;
+import br.com.abril.nds.model.cadastro.TipoDescontoDistribuidor;
+import br.com.abril.nds.model.cadastro.TipoDescontoProduto;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.service.CotaService;
-import br.com.abril.nds.service.DistribuidorService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.ProdutoService;
 import br.com.abril.nds.service.TipoDescontoCotaService;
+import br.com.abril.nds.service.TipoDescontoDistribuidorService;
+import br.com.abril.nds.service.TipoDescontoProdutoService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.DateUtil;
@@ -59,7 +63,13 @@ public class TipoDescontoCotaController {
 	private Result result;
 	
 	@Autowired
+	private TipoDescontoDistribuidorService tipoDescontoDistribuidorService;
+	
+	@Autowired
 	private TipoDescontoCotaService tipoDescontoCotaService;
+	
+	@Autowired
+	private TipoDescontoProdutoService tipoDescontoProdutoService;
 	
 	@Autowired
 	private CotaService cotaService;
@@ -96,16 +106,16 @@ public class TipoDescontoCotaController {
 	public void novoDescontoGeral(String desconto, String dataAlteracao, String usuario){
 		try {
 			BigDecimal descontoFormatado = new BigDecimal(Double.parseDouble(desconto));
-			TipoDescontoCota descontoGeral = popularDescontoParaCadastrar(desconto,dataAlteracao, usuario, EspecificacaoDesconto.GERAL);			
+			TipoDescontoDistribuidor descontoDistribuidor = popularDescontoDistribuidor(desconto,dataAlteracao, usuario, EspecificacaoDesconto.GERAL);			
 			atualizarDistribuidor(descontoFormatado);
-//			descontoGeral.setIdCota((long) 0);
-//			descontoGeral.setIdProduto(0l);
-//			descontoGeral.setNumeroEdicao(0l);
-			salvarDesconto(descontoGeral);
+			List<Distribuidor> listaDeDistribuidor = this.tipoDescontoCotaService.obterDistribuidores();
+			for(Distribuidor dist: listaDeDistribuidor){
+				descontoDistribuidor.setDistribuidor(dist);
+				salvarDescontoDistribuidor(descontoDistribuidor);
+			}
 		} catch (ParseException e) {
 			e.printStackTrace();
-		}
-		
+		}		
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Desconto cadastrado com sucesso"),"result").recursive().serialize();
 	}
 
@@ -117,11 +127,8 @@ public class TipoDescontoCotaController {
 		try {
 			Cota cotaParaAtualizar = this.cotaService.obterCotaPDVPorNumeroDaCota(Integer.parseInt(cotaEspecifica));		
 			atualizarCota(new BigDecimal(descontoEspecifico), cotaParaAtualizar);
-			TipoDescontoCota especifico = popularDescontoParaCadastrar(descontoEspecifico, dataAlteracaoEspecifico, usuarioEspecifico, EspecificacaoDesconto.ESPECIFICO);
-//			especifico.setIdCota(cotaParaAtualizar.getNumeroCota().longValue());
-//			especifico.setIdProduto(0l);
-//			especifico.setNumeroEdicao(0l);
-			salvarDesconto(especifico);
+			TipoDescontoCota especifico = popularDescontoCota(descontoEspecifico, dataAlteracaoEspecifico, usuarioEspecifico, cotaParaAtualizar);			
+			salvarDescontoCota(especifico);
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
@@ -135,11 +142,8 @@ public class TipoDescontoCotaController {
 			ProdutoEdicao produtoEdicao = this.produtoEdicaoService.obterProdutoEdicaoPorCodProdutoNumEdicao(codigo, edicaoProduto);
 			produtoEdicao.setDesconto(new BigDecimal(descontoProduto));
 			this.produtoEdicaoService.alterarProdutoEdicao(produtoEdicao);
-			TipoDescontoCota tipoDescontoProduto = popularDescontoParaCadastrar(descontoProduto, dataAlteracaoProduto, usuarioProduto, EspecificacaoDesconto.PRODUTO);
-//			tipoDescontoProduto.setIdCota(0l);
-//			tipoDescontoProduto.setIdProduto(Long.parseLong(produtoEdicao.getProduto().getCodigo()));
-//			tipoDescontoProduto.setNumeroEdicao(Long.parseLong(edicaoProduto));
-			salvarDesconto(tipoDescontoProduto);
+			TipoDescontoProduto tipoDescontoProduto = popularDescontoProduto(descontoProduto, dataAlteracaoProduto, usuarioProduto, produtoEdicao);
+			salvarDescontoProduto(tipoDescontoProduto);
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
@@ -440,30 +444,58 @@ public class TipoDescontoCotaController {
 		result.include("dataAtual", DateUtil.formatarData(new Date(), "dd/MM/yyyy"));
 	}
 	
-	private TipoDescontoCota popularDescontoParaCadastrar(String desconto,	String dataAlteracao, String usuario, EspecificacaoDesconto especificacaoDesconto) throws ParseException {
-		TipoDescontoCota tipoDescontoCota = new TipoDescontoCota();
-//		tipoDescontoCota.setDesconto(new BigDecimal(Double.parseDouble(desconto)));
-//		SimpleDateFormat sdf = new SimpleDateFormat(Constantes.DATE_PATTERN_PT_BR);
-//		Date dataFormatada;
-//		dataFormatada = sdf.parse(dataAlteracao);
-//		tipoDescontoCota.setDataAlteracao(dataFormatada);
-//		tipoDescontoCota.setUsuario(usuario);
-//		tipoDescontoCota.setEspecificacaoDesconto(especificacaoDesconto);
-		return tipoDescontoCota;
+	private TipoDescontoDistribuidor popularDescontoDistribuidor(String desconto,	String dataAlteracao, String usuario, EspecificacaoDesconto especificacaoDesconto) throws ParseException {
+		TipoDescontoDistribuidor descontoDistribuidor = new TipoDescontoDistribuidor();
+		descontoDistribuidor.setDesconto(Float.parseFloat(desconto));
+		SimpleDateFormat sdf = new SimpleDateFormat(Constantes.DATE_PATTERN_PT_BR);
+		Date dataFormatada;
+		dataFormatada = sdf.parse(dataAlteracao);
+		descontoDistribuidor.setDataAlteracao(dataFormatada);
+		descontoDistribuidor.setUsuario(getUsuario());		
+		return descontoDistribuidor;
 	}
 	
-	private void salvarDesconto(TipoDescontoCota tipoDescontoCota) {
-//		if(tipoDescontoCota.getEspecificacaoDesconto().equals(EspecificacaoDesconto.GERAL)){
-//			int sequencial = this.tipoDescontoCotaService.obterUltimoSequencial();
-//			tipoDescontoCota.setSequencial(sequencial + 1);
-//		}else{
-//			tipoDescontoCota.setSequencial(0);
-//		}
+	private TipoDescontoCota popularDescontoCota(String desconto,String dataAlteracao, String usuario, Cota cotaParaAtualizar) throws ParseException {
+		TipoDescontoCota descontoCota = new TipoDescontoCota();
+		descontoCota.setDesconto(Float.parseFloat(desconto));
+		SimpleDateFormat sdf = new SimpleDateFormat(Constantes.DATE_PATTERN_PT_BR);
+		Date dataFormatada;
+		dataFormatada = sdf.parse(dataAlteracao);
+		descontoCota.setDataAlteracao(dataFormatada);
+		descontoCota.setUsuario(getUsuario());	
+		descontoCota.setCota(cotaParaAtualizar);
+		return descontoCota;
+	}
+	
+	private TipoDescontoProduto popularDescontoProduto(String desconto,String dataAlteracao, String usuario, ProdutoEdicao produtoEdicao) throws ParseException {
+		TipoDescontoProduto descontoProduto = new TipoDescontoProduto();
+		descontoProduto.setDesconto(Float.parseFloat(desconto));
+		SimpleDateFormat sdf = new SimpleDateFormat(Constantes.DATE_PATTERN_PT_BR);
+		Date dataFormatada;
+		dataFormatada = sdf.parse(dataAlteracao);
+		descontoProduto.setDataAlteracao(dataFormatada);
+		descontoProduto.setUsuario(getUsuario());
+		descontoProduto.setProdutoEdicao(produtoEdicao);
+		return descontoProduto;
+	}
+	
+	private void salvarDescontoDistribuidor(TipoDescontoDistribuidor tipoDescontoDistribuidor){
+		int sequencial = this.tipoDescontoDistribuidorService.obterUltimoSequencial();
+		tipoDescontoDistribuidor.setSequencial(sequencial);
+		this.tipoDescontoDistribuidorService.incluirDescontoDistribuidor(tipoDescontoDistribuidor);
+	}
+	
+	private void salvarDescontoCota(TipoDescontoCota tipoDescontoCota) {
 		this.tipoDescontoCotaService.incluirDesconto(tipoDescontoCota);
 	}
+	
+	private void salvarDescontoProduto(TipoDescontoProduto tipoDescontoProduto) {
+		this.tipoDescontoProdutoService.incluirDesconto(tipoDescontoProduto);
+	}
 
-	private void atualizarDistribuidor(BigDecimal desconto) {
-		this.tipoDescontoCotaService.atualizarDistribuidores(desconto);
+
+	private void atualizarDistribuidor(BigDecimal desconto) {		
+		this.tipoDescontoDistribuidorService.atualizarDistribuidores(desconto);
 	}
 	
 	private void atualizarCota(BigDecimal descontoEspecifico, Cota cotaParaAtualizar) {

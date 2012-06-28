@@ -21,7 +21,7 @@ import br.com.abril.nds.repository.ConferenciaEncalheParcialRepository;
  *
  */
 @Repository
-public class ConferenciaEncalheParcialRepositoryImpl extends AbstractRepository<ConferenciaEncalheParcial, Long> implements ConferenciaEncalheParcialRepository {
+public class ConferenciaEncalheParcialRepositoryImpl extends AbstractRepositoryModel<ConferenciaEncalheParcial, Long> implements ConferenciaEncalheParcialRepository {
 
 	public ConferenciaEncalheParcialRepositoryImpl() {
 		super(ConferenciaEncalheParcial.class);

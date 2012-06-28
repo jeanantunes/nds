@@ -37,16 +37,17 @@ public class LancamentoVO  implements Serializable {
 	private String novaData;
 	@Export(label="TotalR$")
 	private String total;
+	private String dataLancamentoDistribuidor;
 	private Integer fisico;
 	private String qtdeEstudo;
 	private String qtdeReprogramacoes;
 	private String distribuicao;
-	private boolean semFisico;
+	private boolean possuiRecebimentoFisico;
 	private boolean cancelamentoGD;
-	private boolean furo;
 	private boolean estudoFechado;
-	private boolean expedido;
 	private boolean reprogramacoesExcedidas;
+	private boolean bloquearData;
+	private Long idProdutoEdicao;
 	
 	
 	
@@ -177,15 +178,7 @@ public class LancamentoVO  implements Serializable {
 	public void setQtdeEstudo(String qtdeEstudo) {
 		this.qtdeEstudo = qtdeEstudo;
 	}
-	
-	public boolean isSemFisico() {
-		return semFisico;
-	}
-	
-	public void setSemFisico(boolean semFisico) {
-		this.semFisico = semFisico;
-	}
-	
+		
 	public boolean isCancelamentoGD() {
 		return cancelamentoGD;
 	}
@@ -193,15 +186,7 @@ public class LancamentoVO  implements Serializable {
 	public void setCancelamentoGD(boolean cancelamentoGD) {
 		this.cancelamentoGD = cancelamentoGD;
 	}
-	
-	public boolean isFuro() {
-		return furo;
-	}
-	
-	public void setFuro(boolean furo) {
-		this.furo = furo;
-	}
-	
+		
 	public boolean isEstudoFechado() {
 		return estudoFechado;
 	}
@@ -210,14 +195,6 @@ public class LancamentoVO  implements Serializable {
 		this.estudoFechado = estudoFechado;
 	}
 	
-	public boolean isExpedido() {
-		return expedido;
-	}
-	
-	public void setExpedido(boolean expedido) {
-		this.expedido = expedido;
-	}
-
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -265,6 +242,38 @@ public class LancamentoVO  implements Serializable {
 
 	public void setDistribuicao(String distribuicao) {
 		this.distribuicao = distribuicao;
+	}
+
+	public boolean isPossuiRecebimentoFisico() {
+		return possuiRecebimentoFisico;
+	}
+
+	public void setPossuiRecebimentoFisico(boolean possuiRecebimentoFisico) {
+		this.possuiRecebimentoFisico = possuiRecebimentoFisico;
+	}
+
+	public String getDataLancamentoDistribuidor() {
+		return dataLancamentoDistribuidor;
+	}
+
+	public void setDataLancamentoDistribuidor(String dataLancamentoDistribuidor) {
+		this.dataLancamentoDistribuidor = dataLancamentoDistribuidor;
+	}
+
+	public boolean isBloquearData() {
+		return bloquearData;
+	}
+
+	public void setBloquearData(boolean bloquearData) {
+		this.bloquearData = bloquearData;
+	}
+
+	public Long getIdProdutoEdicao() {
+		return idProdutoEdicao;
+	}
+
+	public void setIdProdutoEdicao(Long idProdutoEdicao) {
+		this.idProdutoEdicao = idProdutoEdicao;
 	}
 
 }

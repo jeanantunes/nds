@@ -21,7 +21,7 @@ import br.com.abril.nds.repository.TelefoneEntregadorRepository;
  */
 @Repository
 public class TelefoneEntregadorRepositoryImpl extends
-		AbstractRepository<TelefoneEntregador, Long> implements
+		AbstractRepositoryModel<TelefoneEntregador, Long> implements
 		TelefoneEntregadorRepository {
 
 	/**

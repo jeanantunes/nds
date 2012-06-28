@@ -18,7 +18,7 @@ public class InformacaoAdicional implements Serializable {
 	 * infCpl
 	 * Informações Complementares de interesse do Contribuinte
 	 */
-	@Column(name="INF_CPL", nullable=true, length=5000)
+	@Column(name="INF_CPL", nullable=true, length=5000)	
 	private String informacoesComplementares;
 
 

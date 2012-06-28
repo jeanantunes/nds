@@ -21,7 +21,7 @@ import br.com.abril.nds.repository.EditorRepository;
  * @author infoA2
  */
 @Repository
-public class EditorRepositoryImpl extends AbstractRepository<Editor, Long> implements EditorRepository {
+public class EditorRepositoryImpl extends AbstractRepositoryModel<Editor, Long> implements EditorRepository {
 
 	public EditorRepositoryImpl() {
 		super(Editor.class);

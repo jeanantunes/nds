@@ -15,7 +15,7 @@ import br.com.abril.nds.repository.CotaGarantiaRepository;
  *
  */
 @Repository
-public class CotaGarantiaRepositoryImpl extends AbstractRepository<CotaGarantia, Long> implements CotaGarantiaRepository {
+public class CotaGarantiaRepositoryImpl extends AbstractRepositoryModel<CotaGarantia, Long> implements CotaGarantiaRepository {
 
 	public CotaGarantiaRepositoryImpl() {
 		super(CotaGarantia.class);

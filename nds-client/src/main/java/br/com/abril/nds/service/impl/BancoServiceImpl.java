@@ -2,16 +2,17 @@ package br.com.abril.nds.service.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import br.com.abril.nds.client.vo.BancoVO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaBancosDTO;
 import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.Carteira;
 import br.com.abril.nds.model.cadastro.Moeda;
-import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.repository.BancoRepository;
 import br.com.abril.nds.service.BancoService;
 

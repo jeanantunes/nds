@@ -5,7 +5,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
-import org.hibernate.Hibernate;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.transform.AliasToBeanResultTransformer;
@@ -15,12 +14,11 @@ import org.springframework.stereotype.Repository;
 import br.com.abril.nds.dto.ConferenciaEncalheDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoSlipDTO;
 import br.com.abril.nds.model.estoque.ConferenciaEncalhe;
-import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
 import br.com.abril.nds.repository.ConferenciaEncalheRepository;
 
 @Repository
 public class ConferenciaEncalheRepositoryImpl extends
-		AbstractRepository<ConferenciaEncalhe, Long> implements
+		AbstractRepositoryModel<ConferenciaEncalhe, Long> implements
 		ConferenciaEncalheRepository {
 
 	public ConferenciaEncalheRepositoryImpl() {

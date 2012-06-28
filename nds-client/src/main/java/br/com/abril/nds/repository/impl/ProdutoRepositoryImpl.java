@@ -20,7 +20,7 @@ import br.com.abril.nds.repository.ProdutoRepository;
  * @author Discover Technology
  */
 @Repository
-public class ProdutoRepositoryImpl extends AbstractRepository<Produto, Long> implements ProdutoRepository {
+public class ProdutoRepositoryImpl extends AbstractRepositoryModel<Produto, Long> implements ProdutoRepository {
 
 	/**
 	 * Construtor padrão.

@@ -1,11 +1,10 @@
 package br.com.abril.nds.integracao.ems0107.route;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.integracao.ems0107.inbound.EMS0107Input;
 import br.com.abril.nds.integracao.ems0107.processor.EMS0107MessageProcessor;
@@ -16,11 +15,10 @@ import br.com.abril.nds.integracao.engine.data.FixedLengthRouteTemplate;
 
 @Component
 @Scope("prototype")
+
 public class EMS0107Route extends FixedLengthRouteTemplate implements AbstractRoute {
 	@Autowired
 	private EMS0107MessageProcessor messageProcessor;	
-	@PersistenceContext
-	private EntityManager entityManager;
 	
 	@Override
 	public void onStart() {
@@ -33,10 +31,11 @@ public class EMS0107Route extends FixedLengthRouteTemplate implements AbstractRo
 		executeNativeSqlIgnoreError("TRUNCATE TABLE ndsi_ems0107_tmp");
 	}
 	
+	
 	private void executeNativeSqlIgnoreError(String sql) {
 		try {
-			entityManager.createNativeQuery(sql).executeUpdate();
-			entityManager.flush();
+			getSession().createSQLQuery(sql).executeUpdate();
+			getSession().flush();
 		} catch (Exception e) {
 			// FK NAO EXISTE, IGNORA O Statement
 		}

@@ -11,7 +11,7 @@ import br.com.abril.nds.model.cadastro.TipoFornecedor;
 import br.com.abril.nds.repository.TipoFornecedorRepository;
 
 @Repository
-public class TipoFornecedorRepositoryImpl extends AbstractRepository<TipoFornecedor, Long> 
+public class TipoFornecedorRepositoryImpl extends AbstractRepositoryModel<TipoFornecedor, Long> 
 										  implements TipoFornecedorRepository {
 
 	public TipoFornecedorRepositoryImpl() {

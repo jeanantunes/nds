@@ -11,13 +11,8 @@ import javax.persistence.OneToOne;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.Telefone;
-import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.TipoSecao;
-import br.com.abril.nds.util.export.fiscal.nota.NFEConditions;
 import br.com.abril.nds.util.export.fiscal.nota.NFEExport;
-import br.com.abril.nds.util.export.fiscal.nota.NFEExports;
-import br.com.abril.nds.util.export.fiscal.nota.NFEWhen;
-import br.com.abril.nds.util.export.fiscal.nota.NFEWhens;
 
 @Embeddable
 public class IdentificacaoDestinatario implements Serializable {
@@ -36,9 +31,6 @@ public class IdentificacaoDestinatario implements Serializable {
 	 * CNPJ CPF
 	 */
 	@Column(name="DOCUMENTO_DESTINATARIO", nullable=false, length=14)
-	@NFEExports({
-		@NFEExport(secao=TipoSecao.E02, posicao=0, tamanho=14, documento=Constantes.CNPJ), 
-		@NFEExport(secao=TipoSecao.E03, posicao=0, tamanho=11, documento=Constantes.CPF)})
 	private String documento;
 	
 	/**

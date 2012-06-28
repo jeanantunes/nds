@@ -3,13 +3,13 @@ package br.com.abril.nds.integracao.ems0111.processor;
 import java.util.Calendar;
 import java.util.Date;
 
-import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
 
+import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.integracao.engine.MessageProcessor;
 import br.com.abril.nds.integracao.engine.data.Message;
@@ -20,6 +20,7 @@ import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
+import br.com.abril.nds.repository.impl.AbstractRepository;
 
 /**
  * @author Jones.Costa
@@ -29,7 +30,8 @@ import br.com.abril.nds.model.planejamento.TipoLancamento;
 
 
 @Component
-public class EMS0111MessageProcessor implements MessageProcessor {
+
+public class EMS0111MessageProcessor extends AbstractRepository implements MessageProcessor  {
 
 	//METODO PARA AJUSTAR A INTERFACE AO ENUM
 	public TipoLancamento parseTipo(String tipo){
@@ -43,14 +45,13 @@ public class EMS0111MessageProcessor implements MessageProcessor {
 			return TipoLancamento.PARCIAL;
 		return null;
 	}
-	
-	@PersistenceContext
-	private EntityManager entityManager;
+
 
 	@Autowired
 	private NdsiLoggerFactory ndsiLoggerFactory;
 	
 	@Override
+	
 	public void processMessage(Message message) {
 
 		EMS0111Input input = (EMS0111Input) message.getBody();
@@ -63,13 +64,13 @@ public class EMS0111MessageProcessor implements MessageProcessor {
 		cmd.append("	prodCod.codigo = :codigoProduto ");
 		cmd.append(" AND	prodEdicao.numeroEdicao = :numeroEdicao ");
 
-		Query consulta = entityManager.createQuery(cmd.toString());
+		Query consulta = getSession().createQuery(cmd.toString());
 		consulta.setParameter("codigoProduto", input.getCodigoProduto());
 		consulta.setParameter("numeroEdicao", input.getEdicaoProduto());
 
 		try {
 			ProdutoEdicao produtoEdicao = (ProdutoEdicao) consulta
-					.getSingleResult();
+					.uniqueResult();
 						
 			//SE EXISTIR PRODUTO/EDICAO NA TABELA
 			//VERIFICAR SE EXISTE LANCAMENTO CADASTRADO PARA O PRODUTO/EDICAO
@@ -81,7 +82,7 @@ public class EMS0111MessageProcessor implements MessageProcessor {
 			sql.append(" AND   ");
 			sql.append(" 		lcto.dataLancamentoPrevista = :dataLancamento   ");
 			
-			Query query = entityManager.createQuery(sql.toString());
+			Query query = getSession().createQuery(sql.toString());
 			query.setParameter("produtoEdicaoId", produtoEdicao.getId());
 			query.setParameter("dataLancamento", input.getDataLancamento());
 			
@@ -89,7 +90,7 @@ public class EMS0111MessageProcessor implements MessageProcessor {
 			try {
 				
 				
-				Lancamento lancamento = (Lancamento) query.getSingleResult();
+				Lancamento lancamento = (Lancamento) query.uniqueResult();
 		
 				//VERIFICAR SE OS CAMPOS ESTAO DESATUALIZADOS
 				//CASO NECESSARIO, ATUALIZAR OS CAMPOS
@@ -153,7 +154,7 @@ public class EMS0111MessageProcessor implements MessageProcessor {
 				lancamento.setSequenciaMatriz(null);//confirmado
 				
 				//EFETIVAR INSERCAO NA BASE
-				entityManager.persist(lancamento);
+				getSession().persist(lancamento);
 							
 			}			
 			

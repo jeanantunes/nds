@@ -20,7 +20,7 @@ import br.com.abril.nds.repository.ItemRecebimentoFisicoRepository;
  */
 @Repository
 public class ItemRecebimentoFisicoRepositoryImpl extends
-		AbstractRepository<ItemRecebimentoFisico, Long> implements ItemRecebimentoFisicoRepository {
+		AbstractRepositoryModel<ItemRecebimentoFisico, Long> implements ItemRecebimentoFisicoRepository {
 
 	/**
 	 * Construtor padrão.

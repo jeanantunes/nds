@@ -1,15 +1,15 @@
 package br.com.abril.nds.integracao.ems0108.processor;
 
-import java.math.BigDecimal;
+import java.math.BigDecimal; 
 import java.util.Calendar;
 import java.util.Date;
 
-import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
 
+import org.hibernate.Query;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.integracao.ems0108.inbound.EMS0108Input;
 import br.com.abril.nds.integracao.engine.MessageProcessor;
@@ -17,12 +17,11 @@ import br.com.abril.nds.integracao.engine.data.Message;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.planejamento.Lancamento;
+import br.com.abril.nds.repository.impl.AbstractRepository;
 
 @Component
-public class EMS0108MessageProcessor implements MessageProcessor {
 
-	@PersistenceContext
-	private EntityManager entityManager;
+public class EMS0108MessageProcessor extends AbstractRepository implements MessageProcessor {
 
 	private EMS0108MessageProcessor() {
 
@@ -32,6 +31,7 @@ public class EMS0108MessageProcessor implements MessageProcessor {
 	 * Processa as linhas do arquivo da interface EMS0108
 	 */
 	@Override
+	
 	public void processMessage(Message message) {
 		EMS0108Input input = (EMS0108Input) message.getBody();
 		// Obter o produto
@@ -43,7 +43,7 @@ public class EMS0108MessageProcessor implements MessageProcessor {
 		sql.append("	   pe.numeroEdicao = :numeroEdicao ");
 		sql.append("	   AND p.codigo    = :codigoProduto ");
 		
-		Query query = entityManager.createQuery(sql.toString());
+		Query query = getSession().createQuery(sql.toString());
 		
 		query.setParameter("numeroEdicao", input.getEdicao());
 		query.setParameter("codigoProduto", input.getCodigoPublicacao()
@@ -55,7 +55,7 @@ public class EMS0108MessageProcessor implements MessageProcessor {
 		int numeroDias;
 		
 		try {
-			produtoEdicao = ((ProdutoEdicao) query.getSingleResult());
+			produtoEdicao = ((ProdutoEdicao) query.uniqueResult());
 			produto = produtoEdicao.getProduto();
 			numeroDias = produtoEdicao.getPeb();
 		} catch (NoResultException e) {
@@ -95,7 +95,7 @@ public class EMS0108MessageProcessor implements MessageProcessor {
 			
 			// lancamento.setStatus(status);
 			// lancamento.setTipoLancamento(tipoLancamento);
-			entityManager.persist(lancamento);
+			getSession().persist(lancamento);
 		}
 		
 		if (input.getEdicaoRecolhimento() != null
@@ -118,14 +118,14 @@ public class EMS0108MessageProcessor implements MessageProcessor {
 				sql.append("	   p.dataRecolhimentoPrevista = :dataComparar ");
 			}
 			
-			query = entityManager.createQuery(sql.toString());
+			query = getSession().createQuery(sql.toString());
 			query.setMaxResults(1);
 			query.setParameter("codigoProduto", produto.getCodigo());
 			query.setParameter("dataComparar", dataLcto);
 
 			lancamento = null;
 			try {
-				lancamento = (Lancamento) query.getSingleResult();
+				lancamento = (Lancamento) query.uniqueResult();
 			} catch (NoResultException e) {
 				// FIXME Não encontrou lancamento. Realizar Log
 				// Passar para a próxima linha

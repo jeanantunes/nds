@@ -10,7 +10,7 @@ import br.com.abril.nds.repository.ControleConferenciaEncalheCotaRepository;
 
 @Repository
 public class ControleConferenciaEncalheCotaRepositoryImpl extends
-		AbstractRepository<ControleConferenciaEncalheCota, Long> implements ControleConferenciaEncalheCotaRepository {
+		AbstractRepositoryModel<ControleConferenciaEncalheCota, Long> implements ControleConferenciaEncalheCotaRepository {
 
 	/**
 	 * Construtor padrão.

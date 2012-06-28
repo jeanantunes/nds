@@ -15,15 +15,64 @@ import javax.persistence.TemporalType;
 import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.util.TipoSecao;
 import br.com.abril.nds.util.export.fiscal.nota.NFEExport;
+import br.com.abril.nds.util.export.fiscal.nota.NFEExportType;
 
 @Embeddable
 public class Identificacao implements Serializable {
 	
 	public enum FormaPagamento {
-		A_VISTA, A_PRAZO, OUTROS;
+		A_VISTA, 
+		A_PRAZO, 
+		OUTROS;
+		
+		/**
+		 * @see java.lang.Enum#toString()
+		 */
+		@Override
+		public String toString() {
+			return String.valueOf(this.ordinal());
+		}
 	}	
 	
+	public enum TipoEmissao {
+		NORMAL(1), 
+		CONTINGENCIA(2);
 
+		private Integer indcador;
+		
+		TipoEmissao(Integer indcador){
+			this.indcador = indcador;
+		}
+		
+		/**
+		 * @see java.lang.Enum#toString()
+		 */
+		@Override
+		public String toString() {
+			return indcador.toString();
+		}
+	}	
+	
+	public enum FinalidadeEmissao {
+		NORMAL(1), 
+		COMPLEMENTAR(2), 
+		AJUSTE(3);
+
+		private Integer indcador;
+		
+		FinalidadeEmissao(Integer indcador){
+			this.indcador = indcador;
+		}
+		
+		/**
+		 * @see java.lang.Enum#toString()
+		 */
+		@Override
+		public String toString() {
+			return indcador.toString();
+		}
+	}	
+	
 	/**
 	 * Serial Version UID
 	 */
@@ -36,7 +85,6 @@ public class Identificacao implements Serializable {
 	 */
 	@Enumerated(EnumType.ORDINAL)
 	@Column(name = "TIPO_OPERACAO", length = 1, nullable = false)
-	@NFEExport(secao=TipoSecao.B, posicao=9, tamanho=1)
 	private TipoOperacao tipoOperacao;
 
 	/**
@@ -52,7 +100,6 @@ public class Identificacao implements Serializable {
 	 */
 	@Enumerated(EnumType.ORDINAL)
 	@Column(name="INDICADOR_FORMA_PAGAMENTO", length=1, nullable=false)
-	@NFEExport(secao=TipoSecao.B, posicao=3, tamanho=1)
 	private FormaPagamento formaPagamento;
 	
 		
@@ -97,8 +144,24 @@ public class Identificacao implements Serializable {
 	
 	
 	@OneToMany(mappedBy="pk.notaFiscal")
+	@NFEExportType
 	private List<NotaFiscalReferenciada> listReferenciadas;
 	
+	/**
+	 * tpEmis
+	 */
+	@Enumerated(EnumType.ORDINAL)
+	@Column(name = "TIPO_EMISSAO", nullable = true)
+	@NFEExportType
+	private TipoEmissao tipoEmissao;
+	
+	/**
+	 * finNFe
+	 */
+	@Enumerated(EnumType.ORDINAL)
+	@Column(name = "FINALIDADE_EMISSAO", nullable = true)
+	@NFEExportType
+	private FinalidadeEmissao finalidadeEmissao;
 	
 	/**
 	 * dhCont
@@ -274,5 +337,33 @@ public class Identificacao implements Serializable {
 	public void setJustificativaEntradaContigencia(
 			String justificativaEntradaContigencia) {
 		this.justificativaEntradaContigencia = justificativaEntradaContigencia;
+	}
+
+	/**
+	 * @return the tipoEmissao
+	 */
+	public TipoEmissao getTipoEmissao() {
+		return tipoEmissao;
+	}
+
+	/**
+	 * @param tipoEmissao the tipoEmissao to set
+	 */
+	public void setTipoEmissao(TipoEmissao tipoEmissao) {
+		this.tipoEmissao = tipoEmissao;
+	}
+
+	/**
+	 * @return the finalidadeEmissao
+	 */
+	public FinalidadeEmissao getFinalidadeEmissao() {
+		return finalidadeEmissao;
+	}
+
+	/**
+	 * @param finalidadeEmissao the finalidadeEmissao to set
+	 */
+	public void setFinalidadeEmissao(FinalidadeEmissao finalidadeEmissao) {
+		this.finalidadeEmissao = finalidadeEmissao;
 	}
 }

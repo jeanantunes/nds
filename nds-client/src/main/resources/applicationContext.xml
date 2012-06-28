@@ -16,6 +16,8 @@
 	
 	<util:properties id="queries" location="classpath:/query.properties" />
 	
+	<bean class="com.ancientprogramming.fixedformat4j.format.impl.FixedFormatManagerImpl"/>
+	
 	<bean
 		class="org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor" />
 

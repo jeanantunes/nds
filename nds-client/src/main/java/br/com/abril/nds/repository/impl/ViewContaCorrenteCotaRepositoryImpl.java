@@ -13,7 +13,7 @@ import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
 @Repository
-public class ViewContaCorrenteCotaRepositoryImpl extends AbstractRepository<ViewContaCorrenteCota, Integer> implements ViewContaCorrenteCotaRepository {
+public class ViewContaCorrenteCotaRepositoryImpl extends AbstractRepositoryModel<ViewContaCorrenteCota, Integer> implements ViewContaCorrenteCotaRepository {
 
 	public ViewContaCorrenteCotaRepositoryImpl() {		
 		

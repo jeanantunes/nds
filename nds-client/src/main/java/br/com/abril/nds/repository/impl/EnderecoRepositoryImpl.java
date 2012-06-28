@@ -26,7 +26,7 @@ import br.com.abril.nds.repository.EnderecoRepository;
  *
  */
 @Repository
-public class EnderecoRepositoryImpl extends AbstractRepository<Endereco, Long> implements
+public class EnderecoRepositoryImpl extends AbstractRepositoryModel<Endereco, Long> implements
 		EnderecoRepository {
 
 	/**

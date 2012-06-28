@@ -6,7 +6,7 @@ import br.com.abril.nds.model.planejamento.HistoricoLancamento;
 import br.com.abril.nds.repository.HistoricoLancamentoRepository;
 
 @Repository
-public class HistoricoLancamentoRepositoryImpl extends AbstractRepository<HistoricoLancamento, Long>
+public class HistoricoLancamentoRepositoryImpl extends AbstractRepositoryModel<HistoricoLancamento, Long>
 		implements HistoricoLancamentoRepository {
 
 	public HistoricoLancamentoRepositoryImpl() {

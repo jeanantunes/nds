@@ -9,7 +9,7 @@ import br.com.abril.nds.repository.ControleNumeracaoSlipRepository;
 
 @Repository
 public class ControleNumeracaoSlipRepositoryImpl extends
-		AbstractRepository<ControleNumeracaoSlip, Long> implements ControleNumeracaoSlipRepository {
+		AbstractRepositoryModel<ControleNumeracaoSlip, Long> implements ControleNumeracaoSlipRepository {
 
 
 	/**

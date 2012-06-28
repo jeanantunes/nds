@@ -1,18 +1,18 @@
 package br.com.abril.nds.integracao.engine;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
 
 import org.apache.commons.lang.StringUtils;
+import org.hibernate.Query;
 import org.lightcouch.CouchDbClient;
 import org.lightcouch.View;
 import org.lightcouch.ViewResult;
 import org.lightcouch.ViewResult.Rows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
@@ -23,13 +23,13 @@ import br.com.abril.nds.integracao.engine.data.RouteTemplate;
 import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;
 import br.com.abril.nds.integracao.model.canonic.IntegracaoDocument;
 import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
+import br.com.abril.nds.repository.impl.AbstractRepository;
 
 @Component
-public class CouchDBImportDataRouter implements ContentBasedRouter {
+
+public class CouchDBImportDataRouter extends AbstractRepository implements ContentBasedRouter {
 	
-	@PersistenceContext
-	private EntityManager entityManager;
-	
+
 	@Autowired
 	private PlatformTransactionManager transactionManager;
 	
@@ -48,6 +48,7 @@ public class CouchDBImportDataRouter implements ContentBasedRouter {
 	
 	
 	@Override
+	
 	public <T extends RouteTemplate> void routeData(T inputModel) {
 
 		final MessageProcessor messageProcessor = inputModel.getMessageProcessor();
@@ -84,8 +85,8 @@ public class CouchDBImportDataRouter implements ContentBasedRouter {
 					
 						messageProcessor.processMessage(message);
 						
-						entityManager.flush();
-						entityManager.clear();
+						getSession().flush();
+						getSession().clear();
 
 						return null;
 					}
@@ -129,6 +130,7 @@ public class CouchDBImportDataRouter implements ContentBasedRouter {
 	/**
 	 * Busca o código deste distribuidor e seta no atributo da classe.
 	 */
+	
 	private void consultaCodigoDistribuidor() {
 		
 		TransactionTemplate template = new TransactionTemplate(transactionManager);
@@ -137,9 +139,9 @@ public class CouchDBImportDataRouter implements ContentBasedRouter {
 			public Void doInTransaction(TransactionStatus status) {
 				
 				String sql = "SELECT a.codigo FROM Distribuidor a";
-				Query query = entityManager.createQuery(sql);
+				Query query = getSession().createQuery(sql);
 				
-				setCodDistribuidor((Integer) query.getSingleResult());
+				setCodDistribuidor((Integer) query.uniqueResult());
 				
 				return null;
 			}

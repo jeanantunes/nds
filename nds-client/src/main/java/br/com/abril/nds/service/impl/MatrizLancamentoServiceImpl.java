@@ -47,8 +47,6 @@ import br.com.abril.nds.util.TipoMensagem;
 @Service
 public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 	
-	private static final String FORMATO_DATA_LANCAMENTO = "dd/MM/yyyy";
-	
 	@Autowired
 	protected LancamentoRepository lancamentoRepository;
 	
@@ -57,8 +55,6 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 	
 	@Autowired
 	protected DistribuidorRepository distribuidorRepository;
-	
-	
 
 	@Override
 	@Transactional(readOnly = true)
@@ -134,6 +130,8 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 		
 		balanceamentoLancamento.setCapacidadeDistribuicao(
 			dadosBalanceamentoLancamento.getCapacidadeDistribuicao());
+		
+		balanceamentoLancamento.setNumeroSemana(dadosBalanceamentoLancamento.getNumeroSemana());
 		
 		return balanceamentoLancamento;
 	}
@@ -670,6 +668,25 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 	private boolean isProdutoBalanceavel(ProdutoLancamentoDTO produtoLancamento,
 										 DadosBalanceamentoLancamentoDTO dadosLancamentoBalanceamento) {
 		
+		if (!permiteReprogramacao(produtoLancamento)) {
+			
+			return false;
+		}
+		
+		if (StatusLancamento.BALANCEADO.equals(produtoLancamento.getStatusLancamento())
+				&& !dadosLancamentoBalanceamento.isConfiguracaoInicial()) {
+			
+			return false;
+		}
+		
+		return true;
+	}
+
+	/**
+	 * Verifica se o produto permite reprogramação ou não
+	 */
+	private boolean permiteReprogramacao(ProdutoLancamentoDTO produtoLancamento) {
+		
 		if (produtoLancamento.isPossuiRecebimentoFisico()
 				&& produtoLancamento.getNumeroReprogramacoes() != null
 				&& produtoLancamento.getNumeroReprogramacoes() >= Constantes.NUMERO_REPROGRAMACOES_LIMITE) {
@@ -678,12 +695,6 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 		}
 		
 		if (StatusLancamento.CANCELADO_GD.equals(produtoLancamento.getStatusLancamento())) {
-			
-			return false;
-		}
-		
-		if (StatusLancamento.BALANCEADO.equals(produtoLancamento.getStatusLancamento())
-				&& !dadosLancamentoBalanceamento.isConfiguracaoInicial()) {
 			
 			return false;
 		}
@@ -707,6 +718,8 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 				
 				produtoLancamento.setDataLancamentoDistribuidor(dataLancamento);
 				produtoLancamento.setNovaDataLancamento(dataLancamento);
+				
+				produtoLancamento.setPermiteReprogramacao(permiteReprogramacao(produtoLancamento));
 			}
 		}
 	}
@@ -719,8 +732,14 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 		
 		Distribuidor distribuidor = distribuidorRepository.obter();
 		
+		Date dataLancamento = filtro.getData();
+		
+		int numeroSemana =
+			DateUtil.obterNumeroSemanaNoAno(dataLancamento,
+											distribuidor.getInicioSemana().getCodigoDiaSemana());
+		
 		Intervalo<Date> periodoDistribuicao = 
-			this.getPeriodoDistribuicao(distribuidor, filtro.getData());
+			this.getPeriodoDistribuicao(distribuidor, dataLancamento, numeroSemana);
 		
 		TreeSet<Date> datasDistribuicaoFornecedor = 
 			this.obterDatasDistribuicaoFornecedor(periodoDistribuicao, filtro.getIdsFornecedores());
@@ -735,8 +754,7 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 		DadosBalanceamentoLancamentoDTO dadosBalanceamentoLancamento =
 			new DadosBalanceamentoLancamentoDTO();
 		
-		dadosBalanceamentoLancamento.setDatasDistribuicaoFornecedor(datasDistribuicaoFornecedor);
-		dadosBalanceamentoLancamento.setDatasDistribuicaoDistribuidor(datasDistribuicaoDistribuidor);
+		dadosBalanceamentoLancamento.setNumeroSemana(numeroSemana);
 		
 		dadosBalanceamentoLancamento.setDatasDistribuicaoFornecedorDistribuidor(
 			datasDistribuicaoFornecedorDistribuidor);
@@ -766,11 +784,9 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 	/**
 	 * Monta o perídodo da semana de distribuição referente à data informada.
 	 */
-	private Intervalo<Date> getPeriodoDistribuicao(Distribuidor distribuidor, Date dataLancamento) {
-		
-		int numeroSemana =
-			DateUtil.obterNumeroSemanaNoAno(dataLancamento,
-											distribuidor.getInicioSemana().getCodigoDiaSemana());
+	private Intervalo<Date> getPeriodoDistribuicao(Distribuidor distribuidor,
+												   Date dataLancamento,
+												   int numeroSemana) {
 		
 		Date dataInicialSemana =
 			DateUtil.obterDataDaSemanaNoAno(numeroSemana,
