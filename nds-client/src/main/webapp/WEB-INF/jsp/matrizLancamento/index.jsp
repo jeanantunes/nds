@@ -143,17 +143,43 @@ $(function() {
 	$("#datepickerDe").mask("99/99/9999");
 	$("#datepickerDe_1").mask("99/99/9999");
 	
+	
+	$( "#novaDataRecolhimento" ).datepicker({
+		showOn: "button",
+		dateFormat: 'dd/mm/yy',
+		buttonImage: "<c:url value='scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif'/>",
+		buttonImageOnly: true
+	});
+	
+	$("#novaDataRecolhimento").mask("99/99/9999");
+	
+	
 });
 
-function abrirReprogramar() {
-	var selecionado = verifyAtLeastOneChecked('checkgroup');
-	if (selecionado) {
-		popup_reprogramar();
-	} else {
-		mensagens = new Array();
-		mensagens.push('Nenhum registro selecionado.');
-		exibirMensagem('ERROR', mensagens);
-	}
+function reprogramarSelecionados() {
+	
+	$("#dialogReprogramarBalanceamento").dialog({
+		resizable: false,
+		height:'auto',
+		width:"300px",
+		modal: true,
+		buttons: {
+			"Confirmar": function() {
+				
+				B.reprogramarLancamentosSelecionados();
+			},
+			"Cancelar": function() {
+				
+				$(this).dialog("close");
+			}
+		},
+		beforeClose: function() {
+			
+			$("#novaDataRecolhimento").val("");
+			
+			clearMessageDialogTimeout();
+		}
+	});
 }
 
 
@@ -198,6 +224,19 @@ function abrirReprogramar() {
 			<p>Ao prosseguir com essa ação você perderá seus dados não salvos ou confirmados. Deseja prosseguir?</p>
 			   
 </div>
+
+	
+		<div id="dialogReprogramarBalanceamento" title="Reprogramar Recolhimentos">
+		    
+		    <jsp:include page="../messagesDialog.jsp" />
+
+		    <p>
+			    <strong>Nova Data:</strong>
+			    <input name="novaDataRecolhimento" type="text"
+			    	   style="width:80px;" id="novaDataRecolhimento" />
+		    </p>
+		</div>
+
 
 	<form action="" method="get" id="form1" name="form1">
 	

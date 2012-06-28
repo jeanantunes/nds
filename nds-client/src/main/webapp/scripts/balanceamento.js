@@ -173,7 +173,7 @@ function Balanceamento(pathTela, descInstancia) {
 	
 	this.gerarInputDataDistrib = function(dataMatrizDistrib, isBloqueado, index) {
 		
-		return '<input onblur="B.alterarData(this,\'' + index + '\');" type="text" name="dataNova" style="width:80px; float:left;" value="' + dataMatrizDistrib + '" ' + 
+		return '<input onchange="B.alterarData(this,\'' + index + '\');" type="text" name="dataNova" style="width:80px; float:left;" value="' + dataMatrizDistrib + '" ' + 
 			   (isBloqueado? ' disabled="disabled" ' : '') +  
 			   '/>' +
 		       '<span class="bt_atualizarIco" title="Atualizar Datas" ' +
@@ -186,7 +186,7 @@ function Balanceamento(pathTela, descInstancia) {
 	},
 	
 	this.reprogramarLancamentoUnico = function(index) {
-		
+				
 		var data = [];
 		
 		data.push({name: 'produtoLancamento.id', 			value: T.lancamentos[index].id});
@@ -200,6 +200,36 @@ function Balanceamento(pathTela, descInstancia) {
 				data,
 				null
 			);
+	},
+	
+	this.reprogramarLancamentosSelecionados = function() {
+		
+		var selecionados = [];
+		
+		$.each(T.lancamentos, function(index, lancamento){
+			if(lancamento.selecionado == true) {
+				selecionados.push(lancamento);
+			}
+		});
+				
+		var data = [];
+		
+		data.push({name: 'novaDataFormatada', value: $("#novaDataRecolhimento").val()});
+		
+		$.each(T.lancamentos, function(index, lancamento){
+			if(lancamento.selecionado == true) {
+				data.push({name: 'produtosLancamento[' + index + '].id', 			value: lancamento.id});
+				data.push({name: 'produtosLancamento[' + index + '].nomeProduto', 	value: lancamento.nomeProduto});
+				data.push({name: 'produtosLancamento[' + index + '].numEdicao', 	value: lancamento.numEdicao});
+			}
+		});
+		
+		$.postJSON(
+				pathTela + "/matrizLancamento/reprogramarLancamentosSelecionados",
+				data
+			);
+				
+		$("#dialogReprogramarBalanceamento").dialog("close");
 	},
 	
 	this.alterarData = function(input, index) {
@@ -233,6 +263,7 @@ function Balanceamento(pathTela, descInstancia) {
 		});
 		
 		$("input[name='dataNova']").mask("99/99/9999");
+		
 	},
 	
 	/**
