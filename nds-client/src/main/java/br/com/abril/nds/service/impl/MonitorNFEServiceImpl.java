@@ -31,17 +31,10 @@ import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.EnderecoDistribuidor;
-import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.Telefone;
 import br.com.abril.nds.model.cadastro.TelefoneDistribuidor;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
-
-//import br.com.abril.nds.model.fiscal.NotaFiscalEntrada;
-//import br.com.abril.nds.model.fiscal.NotaFiscalSaida;
-//import br.com.abril.nds.model.fiscal.NotaFiscalSaidaFornecedor;
-
-import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.repository.ItemNotaFiscalEntradaRepository;
 import br.com.abril.nds.repository.ItemNotaFiscalSaidaRepository;
 import br.com.abril.nds.repository.NotaFiscalRepository;

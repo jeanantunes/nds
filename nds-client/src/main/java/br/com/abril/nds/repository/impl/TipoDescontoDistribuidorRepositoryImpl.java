@@ -7,7 +7,7 @@ import br.com.abril.nds.model.cadastro.TipoDescontoDistribuidor;
 import br.com.abril.nds.repository.TipoDescontoDistribuidorRepository;
 
 @Repository
-public class TipoDescontoDistribuidorRepositoryImpl extends AbstractRepository<TipoDescontoDistribuidor,Long> implements	TipoDescontoDistribuidorRepository {
+public class TipoDescontoDistribuidorRepositoryImpl extends AbstractRepositoryModel<TipoDescontoDistribuidor,Long> implements	TipoDescontoDistribuidorRepository {
 
 	public TipoDescontoDistribuidorRepositoryImpl() {
 		super(TipoDescontoDistribuidor.class);

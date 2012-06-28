@@ -12,7 +12,6 @@ import org.springframework.stereotype.Repository;
 import br.com.abril.nds.dto.filtro.FiltroStatusCotaDTO;
 import br.com.abril.nds.model.cadastro.HistoricoSituacaoCota;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
-import br.com.abril.nds.model.estoque.Expedicao;
 import br.com.abril.nds.repository.HistoricoSituacaoCotaRepository;
 
 /**

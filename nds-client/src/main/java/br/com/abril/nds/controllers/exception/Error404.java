@@ -1,14 +1,14 @@
 package br.com.abril.nds.controllers.exception;
 
-import br.com.caelum.vraptor.Result; 
-import br.com.caelum.vraptor.core.RequestInfo; 
-import br.com.caelum.vraptor.http.route.ResourceNotFoundException; 
-import br.com.caelum.vraptor.http.route.Router; 
-import br.com.caelum.vraptor.ioc.Component; 
-import br.com.caelum.vraptor.ioc.RequestScoped; 
-import br.com.caelum.vraptor.resource.DefaultResourceNotFoundHandler; 
-import br.com.caelum.vraptor.resource.HttpMethod; 
-import br.com.caelum.vraptor.view.Results; 
+import br.com.caelum.vraptor.Result;
+import br.com.caelum.vraptor.core.RequestInfo;
+import br.com.caelum.vraptor.http.route.ResourceNotFoundException;
+import br.com.caelum.vraptor.http.route.Router;
+import br.com.caelum.vraptor.ioc.Component;
+import br.com.caelum.vraptor.ioc.RequestScoped;
+import br.com.caelum.vraptor.resource.DefaultResourceNotFoundHandler;
+import br.com.caelum.vraptor.resource.HttpMethod;
+import br.com.caelum.vraptor.view.Results;
  
 @Component 
 @RequestScoped 

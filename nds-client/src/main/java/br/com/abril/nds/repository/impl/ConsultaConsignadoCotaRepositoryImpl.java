@@ -18,7 +18,7 @@ import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.repository.ConsultaConsignadoCotaRepository;
 
 @Repository
-public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepository<MovimentoEstoqueCota, Long> implements
+public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryModel<MovimentoEstoqueCota, Long> implements
 		ConsultaConsignadoCotaRepository {
 
 	public ConsultaConsignadoCotaRepositoryImpl() {

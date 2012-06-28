@@ -12,13 +12,13 @@ import br.com.abril.nds.dto.ConsultaNFENotasPendentesDTO;
 import br.com.abril.nds.dto.ConsultaNFENotasRecebidasDTO;
 import br.com.abril.nds.dto.ItemNotaFiscalPendenteDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaNFEEncalheTratamento;
+import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntrada;
 import br.com.abril.nds.repository.ConsultaNFEEncalheTratamentoNotasRecebidasRepository;
-import br.com.abril.nds.service.DistribuidorService;
 
 @Repository
-public class ConsultaNFEEncalheTratamentoNotasRecebidasRepositoryImpl extends AbstractRepository<NotaFiscalEntrada, Long> implements
+public class ConsultaNFEEncalheTratamentoNotasRecebidasRepositoryImpl extends AbstractRepositoryModel<NotaFiscalEntrada, Long> implements
 		ConsultaNFEEncalheTratamentoNotasRecebidasRepository {
 
 	public ConsultaNFEEncalheTratamentoNotasRecebidasRepositoryImpl() {
