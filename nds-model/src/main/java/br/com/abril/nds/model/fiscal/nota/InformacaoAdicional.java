@@ -5,6 +5,9 @@ import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
+import br.com.abril.nds.util.TipoSecao;
+import br.com.abril.nds.util.export.fiscal.nota.NFEExport;
+
 @Embeddable
 public class InformacaoAdicional implements Serializable {
 
@@ -19,6 +22,7 @@ public class InformacaoAdicional implements Serializable {
 	 * Informações Complementares de interesse do Contribuinte
 	 */
 	@Column(name="INF_CPL", nullable=true, length=5000)	
+	@NFEExport(secao = TipoSecao.Z, posicao = 1, tamanho = 5000)
 	private String informacoesComplementares;
 
 

@@ -13,6 +13,12 @@ import javax.persistence.Table;
 
 import org.codehaus.jackson.annotate.JsonBackReference;
 
+import br.com.abril.nds.util.TipoSecao;
+import br.com.abril.nds.util.export.fiscal.nota.NFEConditions;
+import br.com.abril.nds.util.export.fiscal.nota.NFEExport;
+import br.com.abril.nds.util.export.fiscal.nota.NFEWhen;
+import br.com.abril.nds.util.export.fiscal.nota.NFEWhens;
+
 /**
  * @author francisco.garcia
  * @version 1.0
@@ -86,6 +92,14 @@ public class Telefone implements Serializable {
 		this.pessoa = pessoa;
 	}
 	
+	@NFEWhens(value = {
+			@NFEWhen(condition = NFEConditions.IDENTIFICACAO_EMITENTE, export = @NFEExport(secao=TipoSecao.C05, posicao=10, tamanho=10)),
+			@NFEWhen(condition = NFEConditions.IDENTIFICACAO_DESTINATARIO, export = @NFEExport(secao=TipoSecao.E05, posicao=10 , tamanho=10))
+	})
+	public String getDddNumero() {
+		return ddd+numero;
+	}
+
 	public String toString(){
 		
 		return ddd + " - " + numero;

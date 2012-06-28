@@ -10,6 +10,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import br.com.abril.nds.util.TipoSecao;
+import br.com.abril.nds.util.export.fiscal.nota.NFEExport;
+
 /**
  * Grupo de Retenção do ICMS do transporte
  * 
@@ -36,30 +39,35 @@ import javax.persistence.Table;
 	 * vServ
 	 */
 	@Column(name="VL_SERVICO", nullable=false, precision=15, scale=2)
+	@NFEExport(secao = TipoSecao.X11, posicao = 0)
 	private BigDecimal valorServico;
 	
 	/**
 	 * vBCRet
 	 */
 	@Column(name="VL_BC_RET_ICMS", nullable=false, precision=15, scale=2)
+	@NFEExport(secao = TipoSecao.X11, posicao = 1)
 	private BigDecimal valorBaseCalculo;
 	
 	/**
 	 * pICMSRet
 	 */
 	@Column(name="PER_ALIQUOTA", nullable=false, precision=5, scale=2)
+	@NFEExport(secao = TipoSecao.X11, posicao = 2)
 	private BigDecimal percentualAliquota;
 	
 	/**
 	 * vICMSRet
 	 */
 	@Column(name="VL_ICMS", nullable=false, precision=15, scale=2)
+	@NFEExport(secao = TipoSecao.X11, posicao = 3)
 	private BigDecimal valorICMS;
 	
 	/**
 	 * CFOP
 	 */
 	@Column(name="CFOP", nullable=false,length=4)
+	@NFEExport(secao = TipoSecao.X11, posicao = 4, mascara = "0000")
 	private Integer cfop;
 	
 	
@@ -67,6 +75,7 @@ import javax.persistence.Table;
 	 * cMunFG
 	 */
 	@Column(name="CODIGO_MUNICIPIO", nullable=false, length=7)
+	@NFEExport(secao = TipoSecao.X11, posicao = 5)
 	private Long codigoMunicipio;
 
 
