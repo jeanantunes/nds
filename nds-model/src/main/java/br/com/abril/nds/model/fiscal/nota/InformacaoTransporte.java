@@ -5,7 +5,10 @@ import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.Embedded;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
+
+import br.com.abril.nds.model.cadastro.Endereco;
 
 @Embeddable
 public class InformacaoTransporte implements Serializable {
@@ -45,11 +48,10 @@ public class InformacaoTransporte implements Serializable {
 	@Column(name="IE_TRANS", nullable=true, length=14)
 	private String inscricaoEstadual;
 	
-	/**
-	 * xEnder
-	 */
-	@Column(name="ENDERECO_TRANS", nullable=true, length=60)
-	private String enderecoCompleto;
+	
+	@OneToOne(optional=false)
+	@JoinColumn(name="ENDERECO_ID_TRANS")
+	private Endereco endereco;
 	
 	/**
 	 * xMun
@@ -140,20 +142,6 @@ public class InformacaoTransporte implements Serializable {
 	}
 
 	/**
-	 * @return the enderecoCompleto
-	 */
-	public String getEnderecoCompleto() {
-		return enderecoCompleto;
-	}
-
-	/**
-	 * @param enderecoCompleto the enderecoCompleto to set
-	 */
-	public void setEnderecoCompleto(String enderecoCompleto) {
-		this.enderecoCompleto = enderecoCompleto;
-	}
-
-	/**
 	 * @return the municipio
 	 */
 	public String getMunicipio() {
@@ -208,7 +196,23 @@ public class InformacaoTransporte implements Serializable {
 	public void setVeiculo(Veiculo veiculo) {
 		this.veiculo = veiculo;
 	}
-	
+
+	/**
+	 * Obtém endereco
+	 *
+	 * @return Endereco
+	 */
+	public Endereco getEndereco() {
+		return endereco;
+	}
+
+	/**
+	 * Atribuí endereco
+	 * @param endereco 
+	 */
+	public void setEndereco(Endereco endereco) {
+		this.endereco = endereco;
+	}
 	
 
 }
