@@ -156,9 +156,10 @@ function Balanceamento(pathTela, descInstancia) {
 		
 		var linkDescProduto = T.getLinkProduto(row.cell.idProdutoEdicao,row.cell.nomeProduto);
 		T.lancamentos.push({
-			id:				row.cell.id, 
-			numEdicao:		row.cell.numEdicao,
-			nomeProduto:	row.cell.nomeProduto
+			id:					row.cell.id, 
+			numEdicao:			row.cell.numEdicao,
+			nomeProduto:	    row.cell.nomeProduto,
+			dataRecolhimento:	row.cell.dataRecolhimento
 		});
 		row.cell.nomeProduto = linkDescProduto;
 		
@@ -186,14 +187,14 @@ function Balanceamento(pathTela, descInstancia) {
 	},
 	
 	this.reprogramarLancamentoUnico = function(index) {
-				
+		
 		var data = [];
 		
 		data.push({name: 'produtoLancamento.id', 			value: T.lancamentos[index].id});
 		data.push({name: 'produtoLancamento.novaData', 		value: T.lancamentos[index].novaData});
 		data.push({name: 'produtoLancamento.nomeProduto', 	value: T.lancamentos[index].nomeProduto});
 		data.push({name: 'produtoLancamento.numEdicao', 	value: T.lancamentos[index].numEdicao});
-		
+		data.push({name: 'produtoLancamento.dataRecolhimento', value: T.lancamentos[index].dataRecolhimento});
 		
 		$.postJSON(
 				pathTela + "/matrizLancamento/reprogramarLancamentoUnico",
@@ -218,9 +219,10 @@ function Balanceamento(pathTela, descInstancia) {
 		
 		$.each(T.lancamentos, function(index, lancamento){
 			if(lancamento.selecionado == true) {
-				data.push({name: 'produtosLancamento[' + index + '].id', 			value: lancamento.id});
-				data.push({name: 'produtosLancamento[' + index + '].nomeProduto', 	value: lancamento.nomeProduto});
-				data.push({name: 'produtosLancamento[' + index + '].numEdicao', 	value: lancamento.numEdicao});
+				data.push({name: 'produtosLancamento[' + index + '].id', 			   value: lancamento.id});
+				data.push({name: 'produtosLancamento[' + index + '].nomeProduto', 	   value: lancamento.nomeProduto});
+				data.push({name: 'produtosLancamento[' + index + '].numEdicao', 	   value: lancamento.numEdicao});
+				data.push({name: 'produtosLancamento[' + index + '].dataRecolhimento', value: lancamento.dataRecolhimento});
 			}
 		});
 		

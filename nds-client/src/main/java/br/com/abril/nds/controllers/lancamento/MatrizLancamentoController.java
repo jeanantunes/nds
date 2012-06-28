@@ -330,13 +330,13 @@ public class MatrizLancamentoController {
 		Date dataInicioSemana = DateUtil.obterDataDaSemanaNoAno(
 			numeroSemana, distribuidor.getInicioSemana().getCodigoDiaSemana());
 		
-		boolean dataValida =
-			DateUtil.isDataInicialMaiorDataFinal(novaData, dataInicioSemana);
+		boolean dataInicioSemanaMaior =
+			DateUtil.isDataInicialMaiorDataFinal(dataInicioSemana, novaData);
 		
-		if (!dataValida) {
+		if (dataInicioSemanaMaior) {
 			
 			throw new ValidacaoException(TipoMensagem.WARNING,
-				"A nova data de lançamento deve ser maior que a data de início da semana ["
+				"A nova data de lançamento deve ser maior ou igual à data de início da semana ["
 				+ DateUtil.formatarDataPTBR(dataInicioSemana) + "]");
 		}
 		
@@ -371,7 +371,7 @@ public class MatrizLancamentoController {
 				
 				listaMensagens.add("A nova data de lançamento não deve ultrapassar a data de "
 					+ "recolhimento prevista [" + dataRecolhimentoPrevistaFormatada 
-					+ "] para o produto" + produtoLancamento.getNomeProduto() + " - Edição " 
+					+ "] para o produto " + produtoLancamento.getNomeProduto() + " - Edição " 
 					+ produtoLancamento.getNumEdicao() + "!");
 			}
 		}
@@ -609,8 +609,6 @@ public class MatrizLancamentoController {
 		
 		produtoBalanceamentoVO.setId(produtoLancamentoDTO.getIdLancamento());
 		
-		produtoBalanceamentoVO.setNomeFornecedor(produtoLancamentoDTO.getFornecedor());
-		
 		if(produtoLancamentoDTO.getParcial() == null)
 			produtoBalanceamentoVO.setLancamento("Lancamento");
 		else
@@ -618,8 +616,6 @@ public class MatrizLancamentoController {
 		
 		produtoBalanceamentoVO.setNomeProduto(produtoLancamentoDTO.getNomeProduto());
 		produtoBalanceamentoVO.setNumEdicao(produtoLancamentoDTO.getNumeroEdicao());
-		
-		produtoBalanceamentoVO.setPacotePadrao(produtoLancamentoDTO.getPacotePadrao());
 		
 		produtoBalanceamentoVO.setPreco(CurrencyUtil.formatarValor(produtoLancamentoDTO.getPrecoVenda()));
 		
