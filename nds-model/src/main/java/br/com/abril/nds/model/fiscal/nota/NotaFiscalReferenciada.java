@@ -12,6 +12,9 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import br.com.abril.nds.model.fiscal.nota.pk.NotaFiscalReferenciadaPK;
+import br.com.abril.nds.util.TipoSecao;
+import br.com.abril.nds.util.export.fiscal.nota.NFEExport;
+import br.com.abril.nds.util.export.fiscal.nota.NFEExportType;
 
 /**
  * NFref Grupo de informação das NF/NFe referenciadas.<br/> Grupo com as informações
@@ -34,12 +37,14 @@ public class NotaFiscalReferenciada implements Serializable {
 	private static final long serialVersionUID = 2312305291449744935L;
 	
 	@EmbeddedId
+	@NFEExportType
 	private NotaFiscalReferenciadaPK pk;
 	
 	/**
 	 * cUF
 	 */
 	@Column(name="CODIGO_UF", nullable=false, length=2)
+	@NFEExport(secao = TipoSecao.B14, posicao = 0)
 	private Integer codigoUF;
 	
 	/**
@@ -47,30 +52,35 @@ public class NotaFiscalReferenciada implements Serializable {
 	 */
 	@Temporal(TemporalType.DATE)
 	@Column(name="DATA_EMISSAO", nullable=false)
+	@NFEExport(secao = TipoSecao.B14, posicao = 1, mascara="yyMM")
 	private Date dataEmissao;
 	
 	/**
 	 * CNPJ
 	 */
 	@Column(name="CNPJ", nullable=false, length=14)
+	@NFEExport(secao = TipoSecao.B14, posicao = 2, tamanho = 14)
 	private String cnpj;
 	
 	/**
 	 * mod
 	 */
 	@Column(name="MODELO_DOCUMENTO_FISCAL",length=2, nullable=false)
+	@NFEExport(secao = TipoSecao.B14, posicao = 3)
 	private Integer modelo;
 	
 	/**
 	 * serie
 	 */
 	@Column(name = "SERIE", length = 3, nullable = false)
+	@NFEExport(secao = TipoSecao.B14, posicao = 4)
 	private Integer serie;
 	
 	/**
 	 * nNF
 	 */
 	@Column(name="NUMERO_DOCUMENTO_FISCAL", length=9, nullable=false)
+	@NFEExport(secao = TipoSecao.B14, posicao = 5)
 	private Long numeroDocumentoFiscal;
 	
 	

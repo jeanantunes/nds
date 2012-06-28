@@ -10,9 +10,14 @@ public class CPFCondition extends ConditionDefault {
 		try {
 			new CPFValidator().assertValid(object.toString());
 			return true;
-		} catch (Exception e) {
-			e.printStackTrace();
-			return false;
+		} catch (Exception exception) {
+			try {
+				new CPFValidator(false).assertValid(object.toString());
+				return true;
+			} catch (Exception subException) {
+				subException.printStackTrace();
+				return false;
+			}
 		}
 	}
 

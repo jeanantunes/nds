@@ -2,7 +2,9 @@ package br.com.abril.nds.util.export.fiscal.nota.condition;
 
 import java.util.List;
 
-public class IdentificacaoDestinatario extends ConditionDefault {
+import br.com.abril.nds.model.fiscal.nota.IdentificacaoDestinatario;
+
+public class IdentificacaoDestinatarioCondition extends ConditionDefault {
 
 	@Override
 	public boolean validParents(List<Object> object){

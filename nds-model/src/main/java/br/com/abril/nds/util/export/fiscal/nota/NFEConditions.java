@@ -5,10 +5,15 @@ import java.util.List;
 import br.com.abril.nds.util.export.fiscal.nota.condition.CNPJCondition;
 import br.com.abril.nds.util.export.fiscal.nota.condition.CPFCondition;
 import br.com.abril.nds.util.export.fiscal.nota.condition.Condition;
+import br.com.abril.nds.util.export.fiscal.nota.condition.IdentificacaoDestinatarioCondition;
+import br.com.abril.nds.util.export.fiscal.nota.condition.IdentificacaoEmitenteCondition;
 
 public enum NFEConditions {	
 	
-	CPF(new CPFCondition()), CNPJ(new CNPJCondition());
+	CPF(new CPFCondition()), 
+	CNPJ(new CNPJCondition()),
+	IDENTIFICACAO_EMITENTE(new IdentificacaoEmitenteCondition()),
+	IDENTIFICACAO_DESTINATARIO(new IdentificacaoDestinatarioCondition());
 	
 	private Condition condition;
 
