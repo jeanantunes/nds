@@ -7,7 +7,6 @@ import javax.persistence.AttributeOverrides;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
-import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -53,7 +52,7 @@ public abstract class EncargoFinanceiro implements Serializable {
 	@Embedded
 	private COFINS cofins;
 	
-	@Enumerated
+	@Embedded
 	@AttributeOverrides({
 	    @AttributeOverride(name="cst", column=@Column(name="CST_COFINS_ST", length = 2)),
 	    @AttributeOverride(name="valorBaseCalculo", column=@Column(name="VLR_BASE_CALC_COFINS_ST",  scale = 2,precision = 15)),
