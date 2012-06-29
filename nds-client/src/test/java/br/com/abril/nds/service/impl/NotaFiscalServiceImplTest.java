@@ -45,7 +45,7 @@ import br.com.abril.nds.model.fiscal.nota.Veiculo;
 import br.com.abril.nds.repository.impl.AbstractRepositoryImplTest;
 import br.com.abril.nds.service.NotaFiscalService;
 
-@Ignore
+
 public class NotaFiscalServiceImplTest extends AbstractRepositoryImplTest {
 	
 	@Autowired
@@ -57,33 +57,31 @@ public class NotaFiscalServiceImplTest extends AbstractRepositoryImplTest {
 	
 	@Before
 	public void setup() {
-		save(Fixture.parametroSistema(TipoParametroSistema.PATH_INTERFACE_NFE_EXPORTACAO, "C:\\notas\\"));
 		
-		NotaFiscal notaTesteArquivo = this.gerarNFE(
-				"33111102737654003496550550000483081131621856", "87416762464",
-				StatusProcessamentoInterno.GERADA, Status.SERVICO_EM_OPERACAO);
+		save(Fixture.parametroSistema(TipoParametroSistema.PATH_INTERFACE_NFE_EXPORTACAO, "C:\\notas\\"));
+		for (int i = 0; i < 5 ; i++) {
+			NotaFiscal notaTesteArquivo = this.gerarNFE(
+					"33111102737654003496550550000483081131621856",
+					"87416762464", StatusProcessamentoInterno.GERADA,
+					Status.SERVICO_EM_OPERACAO);
+			notaTesteArquivo.setId((long)i);
+			notaTesteArquivo.setProdutosServicos(this
+					.gerarListaProdutoServico((long)i));
 
-		notaTesteArquivo = merge(notaTesteArquivo);
-
-		this.notasParaTesteArquivo.add(notaTesteArquivo);
-
-		this.gerarListaProdutoServico(notaTesteArquivo.getId());
-		notaTesteArquivo.getProdutosServicos();
+			this.notasParaTesteArquivo.add(notaTesteArquivo);
+		}
 	}
-	
 	
 	@Test
 	public void testExportarNotasFiscais() {
-		
 		try {
 			
-			this.notaFiscalService.exportarNotasFiscais();
+			this.notaFiscalService.exportarNotasFiscais(this.notasParaTesteArquivo);
 		} catch (Exception e) {
 			e.printStackTrace();
 			Assert.fail();
 		}
 	}
-	
 	
 	@Test
 	@Ignore
@@ -126,10 +124,10 @@ public class NotaFiscalServiceImplTest extends AbstractRepositoryImplTest {
 		
 		Endereco endereco = Fixture.criarEndereco(TipoEndereco.COMERCIAL, 
 				"13720000", "logradouro", 123, "bairro", "cidade", "uf");
-		endereco = merge(endereco);
+		
 		
 		Telefone telefone = Fixture.telefone("ddd", "numero", "ramal");
-		telefone = merge(telefone);
+		
 		
 		Veiculo veiculo = new Veiculo();
 		veiculo.setPlaca("AAA1234");
@@ -195,19 +193,19 @@ public class NotaFiscalServiceImplTest extends AbstractRepositoryImplTest {
 			
 			TipoProduto tipo = Fixture.tipoProduto("0"+numero+"descricao",
 					GrupoProduto.REVISTA, 8888L, "codigoNBM", 4+123*numero);
-			tipo = merge(tipo);
+			
 
 			Produto produto = Fixture.produto("0"+numero+"codigo", "descricao", "0"+numero+"nome",
 					PeriodicidadeProduto.ANUAL, tipo, 123, 123, new BigDecimal(
 							123));
-			produto = merge(produto);
+			
 
 			ProdutoEdicao produtoEdicao = Fixture.produtoEdicao(
 					"codigoProdutoEdicao", 999L, 1111, 222, new BigDecimal(
 							99999), new BigDecimal(99999),
 					new BigDecimal(99999), "codigoDeBarras", 4321L, produto,
 					new BigDecimal(99999), false);
-			produtoEdicao = merge(produtoEdicao);
+			
 			
 			ICMS icms = new ICMS();
 			
@@ -217,9 +215,6 @@ public class NotaFiscalServiceImplTest extends AbstractRepositoryImplTest {
 			
 			encargo.setIcms(icms);
 			
-			encargo = merge(encargo);
-			
-			
 			ProdutoServico produtoServico =
 			Fixture.produtoServico(111, 1111L,
 					"codigoProduto", "descricaoProduto", encargo, 111L,
@@ -228,7 +223,6 @@ public class NotaFiscalServiceImplTest extends AbstractRepositoryImplTest {
 					new BigDecimal(4312), new BigDecimal(12344));
 			
 			listaProdutoServico.add(produtoServico);
-			
 			
 		}
 		
