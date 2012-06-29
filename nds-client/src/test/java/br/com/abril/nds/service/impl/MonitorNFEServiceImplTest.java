@@ -1,31 +1,32 @@
-package br.com.abril.nds.repository.impl;
+package br.com.abril.nds.service.impl;
 
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.math.BigDecimal;
+import java.net.URL;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import junit.framework.Assert;
-
+import org.apache.xmlbeans.impl.xb.xsdschema.AnyDocument.Any;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 
-import br.com.abril.nds.dto.NfeDTO;
-import br.com.abril.nds.dto.filtro.FiltroMonitorNfeDTO;
-import br.com.abril.nds.dto.filtro.FiltroMonitorNfeDTO.OrdenacaoColuna;
+import br.com.abril.nds.client.vo.NfeVO;
 import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.cadastro.Endereco;
-import br.com.abril.nds.model.cadastro.Fornecedor;
-import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
 import br.com.abril.nds.model.cadastro.Pessoa;
-import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.Telefone;
 import br.com.abril.nds.model.cadastro.TipoEndereco;
-import br.com.abril.nds.model.cadastro.TipoFornecedor;
-import br.com.abril.nds.model.cadastro.TipoProduto;
-import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
 import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.model.fiscal.nota.EncargoFinanceiro;
 import br.com.abril.nds.model.fiscal.nota.Identificacao;
@@ -47,35 +48,20 @@ import br.com.abril.nds.model.fiscal.nota.StatusProcessamentoInterno;
 import br.com.abril.nds.model.fiscal.nota.ValoresRetencoesTributos;
 import br.com.abril.nds.model.fiscal.nota.ValoresTotaisISSQN;
 import br.com.abril.nds.model.fiscal.nota.Veiculo;
-import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.repository.NotaFiscalRepository;
-import br.com.abril.nds.vo.PaginacaoVO;
 
-
-public class NotaFiscalRepositoryImplTest  extends AbstractRepositoryImplTest {
+public class MonitorNFEServiceImplTest {
 	
-    private Fornecedor fornecedorFC;
-	private Fornecedor fornecedorDinap;
-	private TipoProduto tipoCromo;
-	private TipoFornecedor tipoFornecedorPublicacao;
 	
-	private TipoProduto tipoRevista;
-	
-	@Autowired
+	@Mock
 	private NotaFiscalRepository notaFiscalRepository;
+	
+	private NotaFiscal notaFiscalMockada;
 	
 	@Before
 	public void setUp() {
-
-		tipoFornecedorPublicacao = Fixture.tipoFornecedorPublicacao();
-		fornecedorFC = Fixture.fornecedorFC(tipoFornecedorPublicacao);
-		fornecedorDinap = Fixture.fornecedorDinap(tipoFornecedorPublicacao);
-		save(fornecedorFC, fornecedorDinap);
-
-		tipoRevista = Fixture.tipoRevista();
-		tipoCromo = Fixture.tipoCromo();
-		save(tipoRevista, tipoCromo);
-
+		
+		MockitoAnnotations.initMocks(this);
 		
 		Date dataEmissao = Fixture.criarData(01, Calendar.JANUARY, 2012); 
 		Date dataEntradaContigencia = Fixture.criarData(01, Calendar.JANUARY, 2012); 
@@ -106,12 +92,7 @@ public class NotaFiscalRepositoryImplTest  extends AbstractRepositoryImplTest {
 		
 		String documento 	= "";
 		String email 		= "";
-		
-		Endereco enderecoDestinatario 	= 
-				Fixture.criarEndereco(TipoEndereco.COMERCIAL, "13852123", "Rua das paineiras", 4585, "Jrd Limeira", "Pedra de Guaratiba", "RJ");
-		
-		save(enderecoDestinatario);
-		
+		Endereco endereco 	= null;
 		String inscricaoEstadual 	= "";
 		String inscricaoSuframa 	= "";
 		String nome 		= "";
@@ -123,7 +104,7 @@ public class NotaFiscalRepositoryImplTest  extends AbstractRepositoryImplTest {
 				Fixture.identificacaoDestinatario(
 						documento, 
 						email, 
-						enderecoDestinatario, 
+						endereco, 
 						inscricaoEstadual, 
 						inscricaoSuframa, 
 						nome, 
@@ -133,13 +114,7 @@ public class NotaFiscalRepositoryImplTest  extends AbstractRepositoryImplTest {
 		
 		String cnae = "";
 		String documentoEmitente = "";
-		
-		Endereco enderecoEmitente= 
-				Fixture.criarEndereco(TipoEndereco.COMERCIAL, "13852345", "Rua Laranjeiras", 4585, "Jrd Brasil", "Santana do Livramento", "RJ");
-		
-		save(enderecoEmitente);
-		
-		
+		Endereco enderecoEmitente = null;
 		String inscricaoEstualEmitente = "";
 		String inscricaoEstualSubstituto = "";
 		String inscricaoMunicipalEmitente = "";
@@ -184,14 +159,8 @@ public class NotaFiscalRepositoryImplTest  extends AbstractRepositoryImplTest {
 				chaveAcesso, 
 				retornoComunicacaoEletronica);
 		
-		String documentoTranposrte = "564645664";
-	
-		
-		Endereco enderecoTransporte = 
-				Fixture.criarEndereco(TipoEndereco.COMERCIAL, "13852345", "Rua Maracuja", 4585, "Jrd Brasil", "Piuí", "MG");
-		
-		save(enderecoTransporte);
-		
+		String documentoTransporte = "646546454654";
+		Endereco enderecoTransporte = Fixture.criarEndereco(TipoEndereco.COMERCIAL, "10500250", "Rua Nova", 1000, "Bairro Novo", "Olimpia", "SP");
 		Integer modalidadeFrente = 1;
 		String municipio = "";
 		String nomeFantasiaTransporte = "";
@@ -202,7 +171,7 @@ public class NotaFiscalRepositoryImplTest  extends AbstractRepositoryImplTest {
 		
 		InformacaoTransporte informacaoTransporte = 
 				Fixture.informacaoTransporte(
-						documentoTranposrte, 
+						documentoTransporte,
 						enderecoTransporte, 
 						inscricaoEstadual, 
 						modalidadeFrente, 
@@ -212,18 +181,11 @@ public class NotaFiscalRepositoryImplTest  extends AbstractRepositoryImplTest {
 						ufTransporte, 
 						veiculo);
 
-		ValoresRetencoesTributos valoresRetencoesTributos = 
-				Fixture.valoresRetencoesTributos(
-						1L,
-						BigDecimal.ZERO, 
-						BigDecimal.ZERO, 
-						BigDecimal.ZERO, 
-						BigDecimal.ZERO, 
-						BigDecimal.ZERO, 
-						BigDecimal.ZERO, 
-						BigDecimal.ZERO);
+		ValoresRetencoesTributos valoresRetencoesTributos = null;
 		
-		//save(valoresRetencoesTributos);
+		
+		
+		
 		
 		BigDecimal valorBaseCalculoICMS = BigDecimal.ZERO;
 		BigDecimal valorBaseCalculoICMSST = BigDecimal.ZERO;
@@ -242,15 +204,13 @@ public class NotaFiscalRepositoryImplTest  extends AbstractRepositoryImplTest {
 		BigDecimal valorISS = BigDecimal.ZERO;
 		BigDecimal valorServicos = BigDecimal.ZERO;
 		
-		ValoresTotaisISSQN valoresTotaisISSQN = null;// Fixture.valoresTotaisISSQN(
-//				1L,
-//				valorBaseCalculo, 
-//				valorCOFINS, 
-//				valorISS, 
-//				valorPIS, 
-//				valorServicos);
-//		
-//		save(valoresTotaisISSQN);
+		ValoresTotaisISSQN valoresTotaisISSQN = Fixture.valoresTotaisISSQN(
+				1L,
+				valorBaseCalculo, 
+				valorCOFINS, 
+				valorISS, 
+				valorPIS, 
+				valorServicos);
 		
 		InformacaoValoresTotais informacaoValoresTotais = 
 				Fixture.informacaoValoresTotais(
@@ -283,70 +243,23 @@ public class NotaFiscalRepositoryImplTest  extends AbstractRepositoryImplTest {
 		notaFiscal.setInformacaoValoresTotais(informacaoValoresTotais);
 		notaFiscal.setStatusProcessamentoInterno(statusProcessamentoInterno);
 		
-		save(notaFiscal);
+		notaFiscal.setProdutosServicos(criarProdutosServicos());
 		
-		criarProdutosServicos(notaFiscal);
-		
-	}
-	
-	private ProdutoEdicao criarProdutoEdicao(
-			String codigoProduto,
-			String nomeProduto,
-			String descProduto,
-			PeriodicidadeProduto periodicidade,
-			int produtoPeb,
-			int produtoPacotePadrao,
-			BigDecimal produtoPeso,
-
-			String codigoProdutoEdicao,
-			Long numeroEdicao,
-			int pacotePadrao,
-			int peb,
-			BigDecimal peso,
-			BigDecimal precoCusto,
-			BigDecimal precoVenda,
-			String codigoDeBarras,
-			BigDecimal expectativaVenda,
-			boolean parcial
-			
-			) {
-		
-		ItemRecebimentoFisico itemRecebimentoFisicoProdutoCE = null;
-
-		/**
-		 * PRODUTO EDICAO
-		 */
-
-		Lancamento lancamentoRevistaCE = null;
-
-		ProdutoEdicao produtoEdicaoCE = null;
-
-		Produto produtoCE = Fixture.produto(codigoProduto, descProduto, nomeProduto, periodicidade, tipoRevista, produtoPeb, produtoPacotePadrao, produtoPeso);
-
-		produtoCE.addFornecedor(fornecedorDinap);
-
-		save(produtoCE);
-
-		produtoEdicaoCE = Fixture.produtoEdicao(codigoProdutoEdicao, numeroEdicao, pacotePadrao, peb,
-				peso, precoCusto, precoVenda, codigoDeBarras, null, produtoCE, expectativaVenda, parcial);
-		produtoEdicaoCE.setDesconto(BigDecimal.ZERO);
-
-		save(produtoEdicaoCE);
-		
-		return produtoEdicaoCE;
+		this.notaFiscalMockada = notaFiscal;
 		
 	}
 	
 	
-	private void criarProdutosServicos(NotaFiscal notaFiscal) {
+	private List<ProdutoServico> criarProdutosServicos() {
 		
 		Integer cfop = 1;
 		Long codigoBarras = 1L;
-		//String codigoProduto = "1";
+		String codigoProduto = "1";
 		String descricaoProduto = "";
 		EncargoFinanceiro encargoFinanceiro = null;
 		Long extipi = 1L;
 		Long ncm = 1L;
+		NotaFiscal notaFiscal = null;
 		ProdutoEdicao produtoEdicao = null;
 		Long quantidade = 1L;
 		String unidade = "";
@@ -356,48 +269,12 @@ public class NotaFiscalRepositoryImplTest  extends AbstractRepositoryImplTest {
 		BigDecimal valorSeguro 		= BigDecimal.ZERO;
 		BigDecimal valorTotalBruto 	= BigDecimal.ZERO;
 		BigDecimal valorUnitario 	= BigDecimal.ZERO;
-	
+		
+		List<ProdutoServico> listaProdutoServico = new ArrayList<ProdutoServico>();
+		
 		int contador = 0;
 		
 		while(contador++<10) {
-			
-			String codigoProduto = ""+contador;
-			String nomeProduto = "produto_"+contador;
-			String descProduto = "";
-			PeriodicidadeProduto periodicidade = PeriodicidadeProduto.ANUAL;
-			int produtoPeb = 1;
-			int produtoPacotePadrao = 1;
-			BigDecimal produtoPeso = new BigDecimal(10);
-
-			String codigoProdutoEdicao = contador+"";
-			Long numeroEdicao = new Long(contador);
-			int pacotePadrao = 1;
-			int peb = 1;
-			BigDecimal peso = BigDecimal.ZERO;
-			BigDecimal precoCusto = BigDecimal.ZERO;
-			BigDecimal precoVenda = BigDecimal.ZERO;
-			String codigoDeBarras = contador+"";
-			BigDecimal expectativaVenda = BigDecimal.ZERO;
-			boolean parcial = false;
-			
-			produtoEdicao = criarProdutoEdicao(
-					codigoProduto, 
-					nomeProduto, 
-					descProduto, 
-					periodicidade, 
-					produtoPeb, 
-					produtoPacotePadrao, 
-					produtoPeso, 
-					codigoProdutoEdicao, 
-					numeroEdicao, 
-					pacotePadrao, 
-					peb, 
-					peso, 
-					precoCusto, 
-					precoVenda, 
-					codigoDeBarras, 
-					expectativaVenda, 
-					parcial);
 			
 			codigoProduto = String.valueOf(contador);
 			
@@ -420,40 +297,43 @@ public class NotaFiscalRepositoryImplTest  extends AbstractRepositoryImplTest {
 					valorTotalBruto, 
 					valorUnitario);
 			
-			save(produtoServico);
+			listaProdutoServico.add(produtoServico);
 			
 		}
 		
+		return listaProdutoServico;
 		
 	}
 	
-	@SuppressWarnings("unused")
 	@Test
-	public void teste_pesquisar_nota_fiscal() {
+	public void testarObterDanfes() throws IOException {
 		
-		FiltroMonitorNfeDTO filtro = obterFiltroMonitorNfeDTO();
+		MonitorNFEServiceImpl monitorNFEServiceImpl = mock(MonitorNFEServiceImpl.class);
 		
-		List<NfeDTO> listaNotaFiscal = notaFiscalRepository.pesquisarNotaFiscal(filtro);
+		monitorNFEServiceImpl.notaFiscalRepository = notaFiscalRepository;
 		
-		Assert.assertNotNull(listaNotaFiscal);
+		when(notaFiscalRepository.buscarPorId(1L)).thenReturn(notaFiscalMockada);
 		
-	}
-	
-	private FiltroMonitorNfeDTO obterFiltroMonitorNfeDTO() {
+		URL urlDanfe = Thread.currentThread().getContextClassLoader().getResource("reports/");
 		
-		FiltroMonitorNfeDTO filtro = new FiltroMonitorNfeDTO();
+		when(monitorNFEServiceImpl.obterDiretorioReports()).thenReturn(urlDanfe);
 		
-		PaginacaoVO paginacao = new PaginacaoVO();
+		List<NfeVO> listaNotas = new ArrayList<NfeVO>();
+		NfeVO nf = new NfeVO();
+		nf.setIdNotaFiscal(1L);
+		listaNotas.add(nf);
 
-		paginacao.setOrdenacao(PaginacaoVO.Ordenacao.ASC);
-		paginacao.setPaginaAtual(1);
-		paginacao.setQtdResultadosPorPagina(500);
-
-		filtro.setPaginacao(paginacao);
-	
-		filtro.setOrdenacaoColuna(OrdenacaoColuna.EMISSAO);
+		when(monitorNFEServiceImpl.obterDanfes(Mockito.anyList())).thenCallRealMethod();
 		
-		return filtro;
+		byte[] bytesArquivoDanfe = monitorNFEServiceImpl.obterDanfes(listaNotas);
+		
+		URL url = Thread.currentThread().getContextClassLoader().getResource("reports/");
+		
+		File arquivoDanfe = new File(url.getPath() + "/arquivoDanfe.pdf");
+		
+		FileOutputStream fos = new FileOutputStream(arquivoDanfe);
+		
+		fos.write(bytesArquivoDanfe);
 		
 	}
 	

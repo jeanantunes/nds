@@ -5,8 +5,10 @@ import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.Embedded;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 
+import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.util.TipoSecao;
 import br.com.abril.nds.util.export.fiscal.nota.NFEConditions;
 import br.com.abril.nds.util.export.fiscal.nota.NFEExport;
@@ -53,13 +55,11 @@ public class InformacaoTransporte implements Serializable {
 	@Column(name="IE_TRANS", nullable=true, length=14)
 	@NFEExport(secao = TipoSecao.X03, posicao = 1, tamanho = 14)
 	private String inscricaoEstadual;
-	
-	/**
-	 * xEnder
-	 */
-	@Column(name="ENDERECO_TRANS", nullable=true, length=60)
-	@NFEExport(secao = TipoSecao.X03, posicao = 2, tamanho = 60)
-	private String enderecoCompleto;
+
+	@OneToOne(optional=false)
+	@JoinColumn(name="ENDERECO_ID_TRANS")
+	@NFEExportType
+	private Endereco endereco;
 	
 	/**
 	 * xMun
@@ -126,17 +126,20 @@ public class InformacaoTransporte implements Serializable {
 	}
 
 	/**
-	 * @return the enderecoCompleto
+	 * Obtém endereco
+	 *
+	 * @return Endereco
 	 */
-	public String getEnderecoCompleto() {
-		return enderecoCompleto;
+	public Endereco getEndereco() {
+		return endereco;
 	}
 
 	/**
-	 * @param enderecoCompleto the enderecoCompleto to set
+	 * Atribuí endereco
+	 * @param endereco 
 	 */
-	public void setEnderecoCompleto(String enderecoCompleto) {
-		this.enderecoCompleto = enderecoCompleto;
+	public void setEndereco(Endereco endereco) {
+		this.endereco = endereco;
 	}
 
 	/**
