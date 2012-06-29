@@ -479,39 +479,45 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 		StringBuilder hql = new StringBuilder(" select ");
 
 		hql.append(" c.id as idCota, ");
-		
-	    hql.append("( select ");
-        hql.append(" COALESCE(sum( ");
-	    hql.append("              (COALESCE(epc.qtdeRecebida,0) - COALESCE(epc.qtdeDevolvida,0)) * ");
-	    hql.append("              (COALESCE(epc.produtoEdicao.precoVenda,0)) ");
-	    hql.append("         ),0 ");
-	    hql.append(") ");
-	    hql.append(" from EstoqueProdutoCota epc  ");
-	    hql.append(" where epc = mec.estoqueProdutoCota  ");
-	    hql.append(" ) as faturamentoBruto, ");
-	    
-	    hql.append("( select ");
+        
 	    hql.append(" COALESCE(sum( ");
-	    hql.append("              (COALESCE(epc.qtdeRecebida,0) - COALESCE(epc.qtdeDevolvida,0)) * ");
-	    hql.append("              (COALESCE(epc.produtoEdicao.precoVenda,0) - ");
-	    hql.append("               COALESCE(epc.produtoEdicao.desconto,0)) ");
-	    hql.append("         ),0 ");
-	    hql.append(") ");
-	    hql.append(" from EstoqueProdutoCota epc  ");
-	    hql.append(" where epc = mec.estoqueProdutoCota  ");
-	    hql.append(" ) as faturamentoLiquido ");
 	    
-		hql.append(" from Cota c, MovimentoEstoqueCota mec");
-		hql.append(" where c in (:cotas) ");
-		hql.append(" and mec.cota = c ");
-		hql.append(" and mec.status = :status  ");
-	    hql.append(" and ( mec.data >= :dataInicial and mec.data <= :dataFinal )  ");
+	    hql.append("              (COALESCE(epc.qtdeRecebida,0) - COALESCE(epc.qtdeDevolvida,0)) * ");
+	    
+	    hql.append("              (COALESCE(epc.produtoEdicao.precoVenda,0)) ");
+	    
+	    hql.append("         ),0 ) as faturamentoBruto,");
+	    
+	    hql.append(" COALESCE(sum( ");
+	    
+	    hql.append("              (COALESCE(epc.qtdeRecebida,0) - COALESCE(epc.qtdeDevolvida,0)) * ");
+	    
+	    hql.append("              (COALESCE(epc.produtoEdicao.precoVenda,0) - ");
+	    
+	    hql.append("               COALESCE(epc.produtoEdicao.desconto,0)) ");
+	    
+	    hql.append("         ),0 ) as faturamentoLiquido ");
+	    
+		hql.append(" from Cota c, MovimentoEstoqueCota mec, EstoqueProdutoCota epc");
 		
+		hql.append(" where epc = mec.estoqueProdutoCota  ");
+		
+		hql.append(" and mec.cota = c ");
+		
+		hql.append(" and mec.status = :status  ");
+	    
+		hql.append(" and ( mec.data >= :dataInicial and mec.data <= :dataFinal )  ");
+	    
+		hql.append(" and c in (:cotas) ");
+	    
 		Query query = this.getSession().createQuery(hql.toString()).setResultTransformer(new AliasToBeanResultTransformer(CotaFaturamentoDTO.class));
 		
 		query.setParameterList("cotas", cotas);
+		
 		query.setParameter("status", StatusAprovacao.APROVADO);
+		
 		query.setParameter("dataInicial", dataInicial);
+		
 		query.setParameter("dataFinal", dataFinal);
 		
 		return query.list();
