@@ -20,11 +20,9 @@ import org.springframework.util.SerializationUtils;
 
 import br.com.abril.nds.client.util.PaginacaoUtil;
 import br.com.abril.nds.client.vo.ConfirmacaoVO;
-import br.com.abril.nds.client.vo.DetalheProdutoVO;
 import br.com.abril.nds.client.vo.ResultadoResumoBalanceamentoVO;
 import br.com.abril.nds.client.vo.ResumoPeriodoBalanceamentoVO;
 import br.com.abril.nds.client.vo.ValidacaoVO;
-import br.com.abril.nds.controllers.cadastro.ProdutoEdicaoController;
 import br.com.abril.nds.dto.BalanceamentoLancamentoDTO;
 import br.com.abril.nds.dto.ProdutoLancamentoDTO;
 import br.com.abril.nds.dto.ResumoPeriodoBalanceamentoDTO;
@@ -84,9 +82,6 @@ public class MatrizLancamentoController {
 	
 	@Autowired
 	private CalendarioService calendarioService;
-	
-	@Autowired
-	private ProdutoEdicaoController produtoEdicaoController;
 	
 	@Autowired
 	private HttpServletResponse httpResponse;
@@ -350,6 +345,8 @@ public class MatrizLancamentoController {
 		
 		List<String> listaMensagens = new ArrayList<String>();
 		
+		String produtos = "";
+		
 		for (LancamentoVO produtoLancamento : produtosLancamento) {
 		
 			String dataRecolhimentoPrevistaFormatada = produtoLancamento.getDataRecolhimento();
@@ -369,15 +366,28 @@ public class MatrizLancamentoController {
 			
 			if (novaData.compareTo(dataLimiteReprogramacao) == 1) {
 				
-				listaMensagens.add("A nova data de lançamento não deve ultrapassar a data de "
-					+ "recolhimento prevista [" + dataRecolhimentoPrevistaFormatada 
-					+ "] para o produto " + produtoLancamento.getNomeProduto() + " - Edição " 
-					+ produtoLancamento.getNumEdicao() + "!");
+				if (produtos.isEmpty()) {
+					produtos += "<table>";
+				}
+				
+				produtos +=
+					"<tr>"
+					+ "<td><u>Produto:</u> " + produtoLancamento.getNomeProduto() + "</td>"
+					+ "<td><u>Edição:</u> " + produtoLancamento.getNumEdicao() + "</td>"
+					+ "<td><u>Data recolhimento:</u> " + dataRecolhimentoPrevistaFormatada + "</td>"
+					+ "</tr>";
 			}
 		}
 		
-		if (!listaMensagens.isEmpty()) {
+		if (!produtos.isEmpty()) {
 		
+			listaMensagens.add(
+				"A nova data de lançamento não deve ultrapassar "
+				+ "a data de recolhimento prevista para o(s) produto(s):"
+			);
+			
+			listaMensagens.add(produtos + "</table>");
+			
 			ValidacaoVO validacao = new ValidacaoVO(TipoMensagem.WARNING, listaMensagens);
 			
 			throw new ValidacaoException(validacao);
