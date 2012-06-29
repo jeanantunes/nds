@@ -1,7 +1,6 @@
 package br.com.abril.nds.repository.impl;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -10,7 +9,6 @@ import junit.framework.Assert;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.dto.NfeDTO;
@@ -18,10 +16,16 @@ import br.com.abril.nds.dto.filtro.FiltroMonitorNfeDTO;
 import br.com.abril.nds.dto.filtro.FiltroMonitorNfeDTO.OrdenacaoColuna;
 import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.cadastro.Endereco;
+import br.com.abril.nds.model.cadastro.Fornecedor;
+import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
 import br.com.abril.nds.model.cadastro.Pessoa;
+import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.Telefone;
 import br.com.abril.nds.model.cadastro.TipoEndereco;
+import br.com.abril.nds.model.cadastro.TipoFornecedor;
+import br.com.abril.nds.model.cadastro.TipoProduto;
+import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
 import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.model.fiscal.nota.EncargoFinanceiro;
 import br.com.abril.nds.model.fiscal.nota.Identificacao;
@@ -43,19 +47,35 @@ import br.com.abril.nds.model.fiscal.nota.StatusProcessamentoInterno;
 import br.com.abril.nds.model.fiscal.nota.ValoresRetencoesTributos;
 import br.com.abril.nds.model.fiscal.nota.ValoresTotaisISSQN;
 import br.com.abril.nds.model.fiscal.nota.Veiculo;
+import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.repository.NotaFiscalRepository;
 import br.com.abril.nds.vo.PaginacaoVO;
 
 
 public class NotaFiscalRepositoryImplTest  extends AbstractRepositoryImplTest {
 	
+    private Fornecedor fornecedorFC;
+	private Fornecedor fornecedorDinap;
+	private TipoProduto tipoCromo;
+	private TipoFornecedor tipoFornecedorPublicacao;
+	
+	private TipoProduto tipoRevista;
+	
 	@Autowired
 	private NotaFiscalRepository notaFiscalRepository;
 	
 	@Before
 	public void setUp() {
-		
-		MockitoAnnotations.initMocks(this);
+
+		tipoFornecedorPublicacao = Fixture.tipoFornecedorPublicacao();
+		fornecedorFC = Fixture.fornecedorFC(tipoFornecedorPublicacao);
+		fornecedorDinap = Fixture.fornecedorDinap(tipoFornecedorPublicacao);
+		save(fornecedorFC, fornecedorDinap);
+
+		tipoRevista = Fixture.tipoRevista();
+		tipoCromo = Fixture.tipoCromo();
+		save(tipoRevista, tipoCromo);
+
 		
 		Date dataEmissao = Fixture.criarData(01, Calendar.JANUARY, 2012); 
 		Date dataEntradaContigencia = Fixture.criarData(01, Calendar.JANUARY, 2012); 
@@ -224,15 +244,15 @@ public class NotaFiscalRepositoryImplTest  extends AbstractRepositoryImplTest {
 		BigDecimal valorISS = BigDecimal.ZERO;
 		BigDecimal valorServicos = BigDecimal.ZERO;
 		
-		ValoresTotaisISSQN valoresTotaisISSQN = Fixture.valoresTotaisISSQN(
-				1L,
-				valorBaseCalculo, 
-				valorCOFINS, 
-				valorISS, 
-				valorPIS, 
-				valorServicos);
-		
-		save(valoresTotaisISSQN);
+		ValoresTotaisISSQN valoresTotaisISSQN = null;// Fixture.valoresTotaisISSQN(
+//				1L,
+//				valorBaseCalculo, 
+//				valorCOFINS, 
+//				valorISS, 
+//				valorPIS, 
+//				valorServicos);
+//		
+//		save(valoresTotaisISSQN);
 		
 		InformacaoValoresTotais informacaoValoresTotais = 
 				Fixture.informacaoValoresTotais(
@@ -271,12 +291,60 @@ public class NotaFiscalRepositoryImplTest  extends AbstractRepositoryImplTest {
 		
 	}
 	
+	private ProdutoEdicao criarProdutoEdicao(
+			String codigoProduto,
+			String nomeProduto,
+			String descProduto,
+			PeriodicidadeProduto periodicidade,
+			int produtoPeb,
+			int produtoPacotePadrao,
+			BigDecimal produtoPeso,
+
+			String codigoProdutoEdicao,
+			Long numeroEdicao,
+			int pacotePadrao,
+			int peb,
+			BigDecimal peso,
+			BigDecimal precoCusto,
+			BigDecimal precoVenda,
+			String codigoDeBarras,
+			BigDecimal expectativaVenda,
+			boolean parcial
+			
+			) {
+		
+		ItemRecebimentoFisico itemRecebimentoFisicoProdutoCE = null;
+
+		/**
+		 * PRODUTO EDICAO
+		 */
+
+		Lancamento lancamentoRevistaCE = null;
+
+		ProdutoEdicao produtoEdicaoCE = null;
+
+		Produto produtoCE = Fixture.produto(codigoProduto, descProduto, nomeProduto, periodicidade, tipoRevista, produtoPeb, produtoPacotePadrao, produtoPeso);
+
+		produtoCE.addFornecedor(fornecedorDinap);
+
+		save(produtoCE);
+
+		produtoEdicaoCE = Fixture.produtoEdicao(codigoProdutoEdicao, numeroEdicao, pacotePadrao, peb,
+				peso, precoCusto, precoVenda, codigoDeBarras, null, produtoCE, expectativaVenda, parcial);
+		produtoEdicaoCE.setDesconto(BigDecimal.ZERO);
+
+		save(produtoEdicaoCE);
+		
+		return produtoEdicaoCE;
+		
+	}
+	
 	
 	private void criarProdutosServicos(NotaFiscal notaFiscal) {
 		
 		Integer cfop = 1;
 		Long codigoBarras = 1L;
-		String codigoProduto = "1";
+		//String codigoProduto = "1";
 		String descricaoProduto = "";
 		EncargoFinanceiro encargoFinanceiro = null;
 		Long extipi = 1L;
@@ -290,12 +358,48 @@ public class NotaFiscalRepositoryImplTest  extends AbstractRepositoryImplTest {
 		BigDecimal valorSeguro 		= BigDecimal.ZERO;
 		BigDecimal valorTotalBruto 	= BigDecimal.ZERO;
 		BigDecimal valorUnitario 	= BigDecimal.ZERO;
-		
-		List<ProdutoServico> listaProdutoServico = new ArrayList<ProdutoServico>();
-		
+	
 		int contador = 0;
 		
 		while(contador++<10) {
+			
+			String codigoProduto = ""+contador;
+			String nomeProduto = "produto_"+contador;
+			String descProduto = "";
+			PeriodicidadeProduto periodicidade = PeriodicidadeProduto.ANUAL;
+			int produtoPeb = 1;
+			int produtoPacotePadrao = 1;
+			BigDecimal produtoPeso = new BigDecimal(10);
+
+			String codigoProdutoEdicao = contador+"";
+			Long numeroEdicao = new Long(contador);
+			int pacotePadrao = 1;
+			int peb = 1;
+			BigDecimal peso = BigDecimal.ZERO;
+			BigDecimal precoCusto = BigDecimal.ZERO;
+			BigDecimal precoVenda = BigDecimal.ZERO;
+			String codigoDeBarras = contador+"";
+			BigDecimal expectativaVenda = BigDecimal.ZERO;
+			boolean parcial = false;
+			
+			produtoEdicao = criarProdutoEdicao(
+					codigoProduto, 
+					nomeProduto, 
+					descProduto, 
+					periodicidade, 
+					produtoPeb, 
+					produtoPacotePadrao, 
+					produtoPeso, 
+					codigoProdutoEdicao, 
+					numeroEdicao, 
+					pacotePadrao, 
+					peb, 
+					peso, 
+					precoCusto, 
+					precoVenda, 
+					codigoDeBarras, 
+					expectativaVenda, 
+					parcial);
 			
 			codigoProduto = String.valueOf(contador);
 			
@@ -327,7 +431,7 @@ public class NotaFiscalRepositoryImplTest  extends AbstractRepositoryImplTest {
 	
 	@SuppressWarnings("unused")
 	@Test
-	public void teste() {
+	public void teste_pesquisar_nota_fiscal() {
 		
 		FiltroMonitorNfeDTO filtro = obterFiltroMonitorNfeDTO();
 		

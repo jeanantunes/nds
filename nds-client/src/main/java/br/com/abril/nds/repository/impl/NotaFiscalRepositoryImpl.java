@@ -280,10 +280,10 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		
 		sql.append(" from NOTA_FISCAL_NOVO ");
 		
-		sql.append(" INNER JOIN PESSOA AS PESSOA_DESTINATARIO ON ");
+		sql.append(" LEFT JOIN PESSOA AS PESSOA_DESTINATARIO ON ");
 		sql.append(" ( NOTA_FISCAL_NOVO.PESSOA_DESTINATARIO_ID_REFERENCIA = PESSOA_DESTINATARIO.ID )  ");
 
-		sql.append(" INNER JOIN PESSOA AS PESSOA_REMETENTE ON ");
+		sql.append(" LEFT JOIN PESSOA AS PESSOA_REMETENTE ON ");
 		sql.append(" ( NOTA_FISCAL_NOVO.PESSOA_EMITENTE_ID_REFERENCIADA = PESSOA_REMETENTE.ID )  ");
 		
 		boolean indAnd = false;
@@ -473,7 +473,7 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		
 		sqlQuery.addScalar("idNotaFiscal", Hibernate.LONG);
 		sqlQuery.addScalar("numero", Hibernate.LONG);
-		sqlQuery.addScalar("serie");
+		sqlQuery.addScalar("serie", Hibernate.STRING);;
 		sqlQuery.addScalar("emissao");
 		sqlQuery.addScalar("tipoEmissao");
 		sqlQuery.addScalar("cnpjDestinatario");
