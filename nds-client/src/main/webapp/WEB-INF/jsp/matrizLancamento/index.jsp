@@ -18,7 +18,7 @@ $(function() {
 		colModel : [  {
 			display : 'Código',
 			name : 'codigoProduto',
-			width : 60,
+			width : 58,
 			sortable : true,
 			align : 'center'
 		}, {
@@ -84,14 +84,14 @@ $(function() {
 		}, {
 			display : 'Matriz/Distrib.',
 			name : 'novaData',
-			width : 105,
-			sortable : true,
+			width : 107,
+			sortable : false,
 			align : 'center'
 		},{
 			display : 'Reprogramar',
 			name : 'reprogramar',
 			width : 65,
-			sortable : true,
+			sortable : false,
 			align : 'center'
 		}],
 		sortname : "novaData",
@@ -143,17 +143,43 @@ $(function() {
 	$("#datepickerDe").mask("99/99/9999");
 	$("#datepickerDe_1").mask("99/99/9999");
 	
+	
+	$( "#novaDataRecolhimento" ).datepicker({
+		showOn: "button",
+		dateFormat: 'dd/mm/yy',
+		buttonImage: "<c:url value='scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif'/>",
+		buttonImageOnly: true
+	});
+	
+	$("#novaDataRecolhimento").mask("99/99/9999");
+	
+	
 });
 
-function abrirReprogramar() {
-	var selecionado = verifyAtLeastOneChecked('checkgroup');
-	if (selecionado) {
-		popup_reprogramar();
-	} else {
-		mensagens = new Array();
-		mensagens.push('Nenhum registro selecionado.');
-		exibirMensagem('ERROR', mensagens);
-	}
+function reprogramarSelecionados() {
+	
+	$("#dialogReprogramarBalanceamento").dialog({
+		resizable: false,
+		height:'auto',
+		width:"300px",
+		modal: true,
+		buttons: {
+			"Confirmar": function() {
+				
+				B.reprogramarLancamentosSelecionados();
+			},
+			"Cancelar": function() {
+				
+				$(this).dialog("close");
+			}
+		},
+		beforeClose: function() {
+			
+			$("#novaDataRecolhimento").val("");
+			
+			clearMessageDialogTimeout();
+		}
+	});
 }
 
 
@@ -199,6 +225,19 @@ function abrirReprogramar() {
 			   
 </div>
 
+	
+		<div id="dialogReprogramarBalanceamento" title="Reprogramar Recolhimentos">
+		    
+		    <jsp:include page="../messagesDialog.jsp" />
+
+		    <p>
+			    <strong>Nova Data:</strong>
+			    <input name="novaDataRecolhimento" type="text"
+			    	   style="width:80px;" id="novaDataRecolhimento" />
+		    </p>
+		</div>
+
+
 	<form action="" method="get" id="form1" name="form1">
 	
 		<div id="dialog-reprogramar" title="Reprogramar Lançamento">
@@ -233,7 +272,9 @@ function abrirReprogramar() {
 		            <a href="#" id="selFornecedor" onclick="return false;">Clique e Selecione o Fornecedor</a>
 		              <div class="menu_fornecedor" style="display:none;">
 		                	<span class="bt_sellAll">
-								<input type="checkbox" id="selTodos1" name="selTodos1" onclick="checkAll(this, 'checkgroup_menu');" style="float:left;"/>
+
+<input type="checkbox" id="selTodos1" name="selTodos1" onclick="checkAll(this, 'checkgroup_menu');" style="float:left;"/>
+
 							<label for="selTodos1">Selecionar Todos</label></span>
 		                    <br clear="all" />
 		                    <c:forEach items="${fornecedores}" var="fornecedor">
@@ -311,7 +352,7 @@ function abrirReprogramar() {
 		         	  
 		         	  <div style="margin-top:15px; margin-left:30px; float:left;"><strong>Valor Total R$: <span id="valorTotal"></span></strong></div>
 		          
-		              <span class="bt_sellAll" style="float:right; margin-right:60px;"><label for="selTodos">Selecionar Todos</label><input type="checkbox" id="selTodos" name="Todos" onclick="checkAll(this, 'checkgroup');"/></span>
+		              <span class="bt_sellAll" style="float:right; margin-right:60px;"><label for="selTodos">Selecionar Todos</label><input type="checkbox" id="selTodos" name="Todos" onclick="B.checkUncheckLancamentos()"/></span>
 		        </div>
 		      </fieldset>
 		      <div class="linha_separa_fields">&nbsp;</div>      
@@ -323,52 +364,10 @@ function abrirReprogramar() {
 		    </div>
 		</div>
 		
-		
-		<div id="dialog-detalhe-produto" title="Detalhes do Produto" style="display:none;">
-		<fieldset style="width:700px!important;">
-		<legend>Detalhes do Produto</legend>
-		<table width="714" border="0" cellspacing="0" cellpadding="0">
-		  <tr>
-		  
-		    <td id="td_imagem_capa" width="129">
-		        <img alt="Capa" src="" width="129" height="170" />
-		    </td>
-		    
-		    <td width="585" valign="top">
-			    <table width="580" border="0" align="right" cellpadding="1" cellspacing="1">
-			      <tr>
-			        <td width="104" style="border-bottom:1px solid #ccc;"><strong>Nome:</strong></td>
-			        <td width="175" style="border-bottom:1px solid #ccc;" id="detalheNome" name="detalheNome"></td>
-			        <td width="137" style="border-bottom:1px solid #ccc;"><strong>Preço Capa R$:</strong></td>
-			        <td width="131" style="border-bottom:1px solid #ccc;" id="detalhePreco" name="detalhePreco"></td>
-			      </tr>
-			      <tr>
-			        <td style="border-bottom:1px solid #ccc;"><strong>Chamada Capa:</strong></td>
-			        <td style="border-bottom:1px solid #ccc;" id="detalheCCapa" name="detalheCCapa"></td>
-			        <td style="border-bottom:1px solid #ccc;"><strong>Preço Desconto R$:</strong></td>
-			        <td style="border-bottom:1px solid #ccc;"  id="detalhePrecoDesc" name="detalhePrecoDesc"></td>
-			      </tr>
-			      <tr>
-			        <td style="border-bottom:1px solid #ccc;"><strong>Fornecedor:</strong></td>
-			        <td style="border-bottom:1px solid #ccc;" id="detalheFornecedor" name="detalheFornecedor"></td>
-			        <td style="border-bottom:1px solid #ccc;"><strong>Brinde</strong></td>
-			        <td style="border-bottom:1px solid #ccc;" id="detalheBrinde" name="detalheBrinde"></td>
-			      </tr>
-			      <tr>
-			        <td style="border-bottom:1px solid #ccc;"><strong>Editor:</strong></td>
-			        <td style="border-bottom:1px solid #ccc;" id="detalheEditor" name="detalheEditor"></td>
-			        <td style="border-bottom:1px solid #ccc;"><strong>Pacote Padrão:</strong></td>
-			        <td style="border-bottom:1px solid #ccc;" id="detalhePacote" name="detalhePacote"></td>
-			      </tr>
-			    </table>
-		    </td>
-		  </tr>
-		</table>
-		        
-		</fieldset>
-		</div>
-		
-		
+        <div id="dialog-detalhe-produto" title="Detalhes do Produto" style="display:none;">
+		    <jsp:include page="../produtoEdicao/detalheProduto.jsp" />
+        </div>
+
 		<div id="dialog-confirm-balanceamento" title="Balanceamento" style="display:none;">
 		    
 		    <jsp:include page="../messagesDialog.jsp">

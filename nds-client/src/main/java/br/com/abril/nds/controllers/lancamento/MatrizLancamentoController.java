@@ -20,11 +20,11 @@ import org.springframework.util.SerializationUtils;
 
 import br.com.abril.nds.client.util.PaginacaoUtil;
 import br.com.abril.nds.client.vo.ConfirmacaoVO;
-import br.com.abril.nds.client.vo.DetalheProdutoLancamentoVO;
 import br.com.abril.nds.client.vo.ResultadoResumoBalanceamentoVO;
 import br.com.abril.nds.client.vo.ResumoPeriodoBalanceamentoVO;
 import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.dto.BalanceamentoLancamentoDTO;
+import br.com.abril.nds.dto.BalanceamentoRecolhimentoDTO;
 import br.com.abril.nds.dto.ProdutoLancamentoDTO;
 import br.com.abril.nds.dto.ResumoPeriodoBalanceamentoDTO;
 import br.com.abril.nds.dto.filtro.FiltroLancamentoDTO;
@@ -32,14 +32,12 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
-import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.MatrizLancamentoService;
-import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.CurrencyUtil;
@@ -87,9 +85,6 @@ public class MatrizLancamentoController {
 	private CalendarioService calendarioService;
 	
 	@Autowired
-	private ProdutoEdicaoService produtoEdicaoService;
-	
-	@Autowired
 	private HttpServletResponse httpResponse;
 	
 	private static final String FORMATO_DATA = "dd/MM/yyyy";
@@ -119,8 +114,10 @@ public class MatrizLancamentoController {
 	
 	@Post
 	public void obterMatrizLancamento(Date dataLancamento, List<Long> idsFornecedores) {
-		
+				
 		validarDadosPesquisa(dataLancamento, idsFornecedores);
+		
+		removerAtributoAlteracaoSessao();
 		
 		FiltroLancamentoDTO filtro = configurarFiltropesquisa(dataLancamento, idsFornecedores);
 		
@@ -137,8 +134,6 @@ public class MatrizLancamentoController {
 	
 	@Post
 	public void obterGridMatrizLancamento(String sortorder, String sortname, int page, int rp) {
-		
-		removerAtributoAlteracaoSessao();
 		
 		List<ProdutoLancamentoDTO> listaProdutoBalanceamento = getProdutoLancamentoDTOFromMatrizSessao();
 		
@@ -331,13 +326,13 @@ public class MatrizLancamentoController {
 		Date dataInicioSemana = DateUtil.obterDataDaSemanaNoAno(
 			numeroSemana, distribuidor.getInicioSemana().getCodigoDiaSemana());
 		
-		boolean dataValida =
-			DateUtil.isDataInicialMaiorDataFinal(novaData, dataInicioSemana);
+		boolean dataInicioSemanaMaior =
+			DateUtil.isDataInicialMaiorDataFinal(dataInicioSemana, novaData);
 		
-		if (!dataValida) {
+		if (dataInicioSemanaMaior) {
 			
 			throw new ValidacaoException(TipoMensagem.WARNING,
-				"A nova data de lançamento deve ser maior que a data de início da semana ["
+				"A nova data de lançamento deve ser maior ou igual à data de início da semana ["
 				+ DateUtil.formatarDataPTBR(dataInicioSemana) + "]");
 		}
 		
@@ -350,6 +345,8 @@ public class MatrizLancamentoController {
 		}
 		
 		List<String> listaMensagens = new ArrayList<String>();
+		
+		String produtos = "";
 		
 		for (LancamentoVO produtoLancamento : produtosLancamento) {
 		
@@ -370,15 +367,28 @@ public class MatrizLancamentoController {
 			
 			if (novaData.compareTo(dataLimiteReprogramacao) == 1) {
 				
-				listaMensagens.add("A nova data de lançamento não deve ultrapassar a data de "
-					+ "recolhimento prevista [" + dataRecolhimentoPrevistaFormatada 
-					+ "] para o produto" + produtoLancamento.getNomeProduto() + " - Edição " 
-					+ produtoLancamento.getNumEdicao() + "!");
+				if (produtos.isEmpty()) {
+					produtos += "<table>";
+				}
+				
+				produtos +=
+					"<tr>"
+					+ "<td><u>Produto:</u> " + produtoLancamento.getNomeProduto() + "</td>"
+					+ "<td><u>Edição:</u> " + produtoLancamento.getNumEdicao() + "</td>"
+					+ "<td><u>Data recolhimento:</u> " + dataRecolhimentoPrevistaFormatada + "</td>"
+					+ "</tr>";
 			}
 		}
 		
-		if (!listaMensagens.isEmpty()) {
+		if (!produtos.isEmpty()) {
 		
+			listaMensagens.add(
+				"A nova data de lançamento não deve ultrapassar "
+				+ "a data de recolhimento prevista para o(s) produto(s):"
+			);
+			
+			listaMensagens.add(produtos + "</table>");
+			
 			ValidacaoVO validacao = new ValidacaoVO(TipoMensagem.WARNING, listaMensagens);
 			
 			throw new ValidacaoException(validacao);
@@ -610,8 +620,6 @@ public class MatrizLancamentoController {
 		
 		produtoBalanceamentoVO.setId(produtoLancamentoDTO.getIdLancamento());
 		
-		produtoBalanceamentoVO.setNomeFornecedor(produtoLancamentoDTO.getFornecedor());
-		
 		if(produtoLancamentoDTO.getParcial() == null)
 			produtoBalanceamentoVO.setLancamento("Lancamento");
 		else
@@ -619,8 +627,6 @@ public class MatrizLancamentoController {
 		
 		produtoBalanceamentoVO.setNomeProduto(produtoLancamentoDTO.getNomeProduto());
 		produtoBalanceamentoVO.setNumEdicao(produtoLancamentoDTO.getNumeroEdicao());
-		
-		produtoBalanceamentoVO.setPacotePadrao(produtoLancamentoDTO.getPacotePadrao());
 		
 		produtoBalanceamentoVO.setPreco(CurrencyUtil.formatarValor(produtoLancamentoDTO.getPrecoVenda()));
 		
@@ -962,53 +968,6 @@ public class MatrizLancamentoController {
 	}
 
 	/**
-	 * Popula e retorna Value Object com detalhes de produto edição
-	 * @param produtoLancamento
-	 * @return DetalheProdutoLancamentoVO
-	 */
-	private DetalheProdutoLancamentoVO getDetalheProduto(Long idProdutoEdicao){
-		
-		DetalheProdutoLancamentoVO produtoLancamentoVO = null;
-		
-		ProdutoEdicao produtoEdicao = produtoEdicaoService.obterProdutoEdicao(idProdutoEdicao);
-		
-		if (produtoEdicao!=null){
-			produtoLancamentoVO = new DetalheProdutoLancamentoVO(produtoEdicao.getId(),
-																 produtoEdicao.getProduto().getNome(),
-																 produtoEdicao.getCodigo(),
-												                 (produtoEdicao.getPrecoVenda()!=null?CurrencyUtil.formatarValor(produtoEdicao.getPrecoVenda()):""),
-												                 (produtoEdicao.getDesconto()!=null?CurrencyUtil.formatarValor(produtoEdicao.getDesconto()):""),
-												                 (produtoEdicao.getProduto()!=null?(produtoEdicao.getProduto().getFornecedor()!=null?produtoEdicao.getProduto().getFornecedor().getJuridica().getNome():""):""),
-												                 (produtoEdicao.getProduto()!=null?(produtoEdicao.getProduto().getEditor()!=null?produtoEdicao.getProduto().getEditor().getCodigo().toString():""):""),
-												                 (produtoEdicao.getProduto()!=null?(produtoEdicao.getProduto().getEditor()!=null?produtoEdicao.getProduto().getEditor().getNome():""):""),
-												                 produtoEdicao.getChamadaCapa(),
-												                 (produtoEdicao.isPossuiBrinde()?"Sim":"Não"),
-												                 Integer.toString(produtoEdicao.getPacotePadrao())
-												                 );
-		}
-		return produtoLancamentoVO;
-	}
-	
-	/**
-	 * Obtem detalhes de produto edição
-	 * @param codigoProduto
-	 */
-	@Post
-	public void obterDetalheProduto(Long idProdutoEdicao){
-		
-		DetalheProdutoLancamentoVO produtoLancamentoVO = null;
-		
-	    produtoLancamentoVO = this.getDetalheProduto(idProdutoEdicao);
-
-		if (produtoLancamentoVO!=null){
-		    this.result.use(Results.json()).from(produtoLancamentoVO, "result").recursive().serialize();
-		}
-		else{
-			result.nothing();
-		}
-	}
-
-	/**
 	 * Obtem agrupamento diário para confirmação de Balanceamento
 	 */
 	@Post
@@ -1118,4 +1077,64 @@ public class MatrizLancamentoController {
 	}
 	
 
+	@Post
+	public void atualizarResumoBalanceamento() {
+				
+		BalanceamentoLancamentoDTO balanceamentoLancamento = 
+			(BalanceamentoLancamentoDTO)
+				this.session.getAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_LANCAMENTO);
+		
+		if (balanceamentoLancamento == null
+				|| balanceamentoLancamento.getMatrizLancamento() == null
+				|| balanceamentoLancamento.getMatrizLancamento().isEmpty()) {
+			
+			throw new ValidacaoException(
+				TipoMensagem.WARNING, "Não houve carga de informações para o período escolhido!");
+		}
+		
+		ResultadoResumoBalanceamentoVO resultadoResumoBalanceamento = 
+			this.obterResultadoResumoLancamento(balanceamentoLancamento);
+		
+		
+		this.result.use(Results.json()).from(resultadoResumoBalanceamento, "result").recursive().serialize();
+	}
+	
+	@Post
+	public void atualizarGridMatrizLancamento() {
+				
+		List<ProdutoLancamentoDTO> listaProdutoBalanceamento = getProdutoLancamentoDTOFromMatrizSessao();
+		
+		FiltroLancamentoDTO filtro = obterFiltroSessao();
+		
+		filtro.setTotalRegistrosEncontrados(listaProdutoBalanceamento.size());
+		
+		if (listaProdutoBalanceamento != null && !listaProdutoBalanceamento.isEmpty()) {	
+			
+			List<LancamentoVO> listaProdutoBalanceamentoVO = processarBalanceamento(listaProdutoBalanceamento,filtro.getPaginacao());
+			
+			Double valorTotal = 0.0;
+			
+			for (ProdutoLancamentoDTO produtoLancamentoDTO : listaProdutoBalanceamento) {
+				
+				valorTotal += produtoLancamentoDTO.getValorTotal().doubleValue();
+				
+			}
+			
+			TableModel<CellModelKeyValue<LancamentoVO>> tm = new TableModel<CellModelKeyValue<LancamentoVO>>();
+			List<CellModelKeyValue<LancamentoVO>> cells = CellModelKeyValue
+					.toCellModelKeyValue(listaProdutoBalanceamentoVO);
+			
+			tm.setRows(cells);
+			tm.setPage(filtro.getPaginacao().getPaginaAtual());
+			tm.setTotal(filtro.getTotalRegistrosEncontrados());
+			
+			Object[] resultado = {tm, CurrencyUtil.formatarValor(valorTotal)};
+			result.use(Results.json()).withoutRoot().from(resultado).serialize();
+			
+		} else {
+			
+			this.result.use(Results.json()).from(Results.nothing()).serialize();
+		}
+		
+	}
 }

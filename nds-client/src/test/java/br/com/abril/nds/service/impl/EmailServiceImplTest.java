@@ -14,6 +14,8 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.fixture.Fixture;
+import br.com.abril.nds.model.cadastro.ParametroSistema;
+import br.com.abril.nds.model.cadastro.TipoParametroSistema;
 import br.com.abril.nds.repository.impl.AbstractRepositoryImplTest;
 import br.com.abril.nds.service.EmailService;
 import br.com.abril.nds.service.exception.AutenticacaoEmailException;
@@ -29,7 +31,15 @@ public class EmailServiceImplTest extends AbstractRepositoryImplTest  {
 	@Before
 	public void setup() {
 		
-		update(Fixture.criarParametrosEmail());
+		ParametroSistema[] parametrosEmail = new ParametroSistema[5];
+		
+		parametrosEmail[0] = Fixture.parametroSistema(null, TipoParametroSistema.EMAIL_HOST,"smtp.gmail.com");
+		parametrosEmail[1] = Fixture.parametroSistema(null, TipoParametroSistema.EMAIL_PROTOCOLO,"smtps");
+		parametrosEmail[2] = Fixture.parametroSistema(null, TipoParametroSistema.EMAIL_USUARIO, "sys.discover@gmail.com");
+		parametrosEmail[3] = Fixture.parametroSistema(null, TipoParametroSistema.EMAIL_SENHA, "discover10");
+		parametrosEmail[4] = Fixture.parametroSistema(null, TipoParametroSistema.EMAIL_PORTA, "465");
+		
+		save(parametrosEmail);
 	}
 	//@Ignore(value = "Teste falha com ResourceNotFoundException")
 	@Test

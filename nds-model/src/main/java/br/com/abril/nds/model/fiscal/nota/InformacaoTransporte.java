@@ -5,7 +5,16 @@ import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.Embedded;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
+
+import br.com.abril.nds.model.cadastro.Endereco;
+import br.com.abril.nds.util.TipoSecao;
+import br.com.abril.nds.util.export.fiscal.nota.NFEConditions;
+import br.com.abril.nds.util.export.fiscal.nota.NFEExport;
+import br.com.abril.nds.util.export.fiscal.nota.NFEExportType;
+import br.com.abril.nds.util.export.fiscal.nota.NFEWhen;
+import br.com.abril.nds.util.export.fiscal.nota.NFEWhens;
 
 @Embeddable
 public class InformacaoTransporte implements Serializable {
@@ -20,53 +29,58 @@ public class InformacaoTransporte implements Serializable {
 	 * modFrete
 	 */
 	@Column(name="MODALIDADE_FRENTE", length=1, nullable=false)
+	@NFEExport(secao = TipoSecao.X, posicao = 0)
 	private Integer modalidadeFrente;
 	
 	/**
-	 * CNPJ
+	 * CNPJ ou CPF
 	 */
-	@Column(name="CNPJ_TRANS", nullable=true, length=14)
-	private String cnpj;	
-	/**
-	 * cpf
-	 */
-	@Column(name="CPF_TRANS", nullable=true, length=11)
-	private String cpf;	
+	@Column(name="DOCUMENTO_TRANS", nullable=true, length=14)
+	@NFEWhens(value = {
+			@NFEWhen(condition = NFEConditions.CNPJ, export = @NFEExport(secao = TipoSecao.X04, posicao = 0, tamanho = 14)),
+			@NFEWhen(condition = NFEConditions.CPF, export = @NFEExport(secao = TipoSecao.X05, posicao = 0, tamanho = 11))
+	})
+	private String documento;	
 	
 	/**
 	 * xNome
 	 */
 	@Column(name="NOME_TRANS", nullable=true, length=60)
+	@NFEExport(secao = TipoSecao.X03, posicao = 0, tamanho = 60)
 	private String nome;
 	
 	/**
 	 * IE
 	 */
 	@Column(name="IE_TRANS", nullable=true, length=14)
+	@NFEExport(secao = TipoSecao.X03, posicao = 1, tamanho = 14)
 	private String inscricaoEstadual;
-	
-	/**
-	 * xEnder
-	 */
-	@Column(name="ENDERECO_TRANS", nullable=true, length=60)
-	private String enderecoCompleto;
+
+	@OneToOne(optional=false)
+	@JoinColumn(name="ENDERECO_ID_TRANS")
+	@NFEExportType
+	private Endereco endereco;
 	
 	/**
 	 * xMun
 	 */
 	@Column(name="MUN_TRANS", nullable=true, length=60)
+	@NFEExport(secao = TipoSecao.X03, posicao = 4, tamanho = 60)
 	private String municipio;
 	
 	/**
 	 * UF
 	 */
 	@Column(name="UF_TRANS", nullable=true, length=2)
+	@NFEExport(secao = TipoSecao.X03, posicao = 3, tamanho = 2)
 	private String uf;
 	
 	@OneToOne(mappedBy="notaFiscal")
+	@NFEExportType
 	private RetencaoICMSTransporte retencaoICMS;
 	
 	@Embedded
+	@NFEExportType
 	private Veiculo veiculo;
 
 	/**
@@ -81,34 +95,6 @@ public class InformacaoTransporte implements Serializable {
 	 */
 	public void setModalidadeFrente(Integer modalidadeFrente) {
 		this.modalidadeFrente = modalidadeFrente;
-	}
-
-	/**
-	 * @return the cnpj
-	 */
-	public String getCnpj() {
-		return cnpj;
-	}
-
-	/**
-	 * @param cnpj the cnpj to set
-	 */
-	public void setCnpj(String cnpj) {
-		this.cnpj = cnpj;
-	}
-
-	/**
-	 * @return the cpf
-	 */
-	public String getCpf() {
-		return cpf;
-	}
-
-	/**
-	 * @param cpf the cpf to set
-	 */
-	public void setCpf(String cpf) {
-		this.cpf = cpf;
 	}
 
 	/**
@@ -140,17 +126,20 @@ public class InformacaoTransporte implements Serializable {
 	}
 
 	/**
-	 * @return the enderecoCompleto
+	 * Obtém endereco
+	 *
+	 * @return Endereco
 	 */
-	public String getEnderecoCompleto() {
-		return enderecoCompleto;
+	public Endereco getEndereco() {
+		return endereco;
 	}
 
 	/**
-	 * @param enderecoCompleto the enderecoCompleto to set
+	 * Atribuí endereco
+	 * @param endereco 
 	 */
-	public void setEnderecoCompleto(String enderecoCompleto) {
-		this.enderecoCompleto = enderecoCompleto;
+	public void setEndereco(Endereco endereco) {
+		this.endereco = endereco;
 	}
 
 	/**
@@ -207,6 +196,20 @@ public class InformacaoTransporte implements Serializable {
 	 */
 	public void setVeiculo(Veiculo veiculo) {
 		this.veiculo = veiculo;
+	}
+
+	/**
+	 * @return the documento
+	 */
+	public String getDocumento() {
+		return documento;
+	}
+
+	/**
+	 * @param documento the documento to set
+	 */
+	public void setDocumento(String documento) {
+		this.documento = documento;
 	}
 	
 	

@@ -2934,6 +2934,26 @@ public class Fixture {
 	}
 	
 	
+	public static ValoresTotaisISSQN valoresTotaisISSQN(
+			Long id,
+			BigDecimal valorBaseCalculo,
+			BigDecimal valorCOFINS,
+			BigDecimal valorISS,
+			BigDecimal valorPIS,
+			BigDecimal valorServicos) {
+		
+		ValoresTotaisISSQN valoresTotaisISSQN = new ValoresTotaisISSQN();
+		
+		valoresTotaisISSQN.setId(id);
+		valoresTotaisISSQN.setValorBaseCalculo(valorBaseCalculo);
+		valoresTotaisISSQN.setValorCOFINS(valorCOFINS);
+		valoresTotaisISSQN.setValorISS(valorISS);
+		valoresTotaisISSQN.setValorPIS(valorPIS);
+		valoresTotaisISSQN.setValorServicos(valorServicos);
+		
+		return valoresTotaisISSQN;
+	}
+	
 	public static ProdutoServico produtoServico(
 			Integer cfop,
 			Long codigoBarras,
@@ -2974,6 +2994,32 @@ public class Fixture {
 		produtoServico.setValorUnitario(valorUnitario);
 		
 		return produtoServico;
+		
+	}
+	
+	public static ValoresRetencoesTributos valoresRetencoesTributos(
+			Long id,
+			BigDecimal valorBaseCalculoIRRF,
+			BigDecimal valorBaseCalculoPrevidencia,
+			BigDecimal valorRetidoCOFINS,
+			BigDecimal valorRetidoCSLL,
+			BigDecimal valorRetidoIRRF,
+			BigDecimal valorRetidoPIS,
+			BigDecimal valorRetidoPrevidencia) {
+		
+		ValoresRetencoesTributos valoresRetencoesTributos = new ValoresRetencoesTributos();
+		
+		valoresRetencoesTributos.setId(id);
+		valoresRetencoesTributos.setValorBaseCalculoIRRF(valorBaseCalculoIRRF);
+		valoresRetencoesTributos.setValorBaseCalculoPrevidencia(valorBaseCalculoPrevidencia);
+		valoresRetencoesTributos.setValorRetidoCOFINS(valorRetidoCOFINS);
+		valoresRetencoesTributos.setValorRetidoCSLL(valorRetidoCSLL);
+		valoresRetencoesTributos.setValorRetidoIRRF(valorRetidoIRRF);
+		valoresRetencoesTributos.setValorRetidoPIS(valorRetidoPIS);
+		valoresRetencoesTributos.setValorRetidoPrevidencia(valorRetidoPrevidencia);
+		
+		return valoresRetencoesTributos;
+		
 		
 	}
 	
@@ -3019,9 +3065,8 @@ public class Fixture {
 	
 
 	public static InformacaoTransporte informacaoTransporte(
-			String cnpj, 
-			String cpf, 
-			String enderecoCompleto,
+			String documento,
+			Endereco endereco,
 			String inscricaoEstadual,
 			Integer modalidadeFrente,
 			String municipio,
@@ -3032,9 +3077,7 @@ public class Fixture {
 		
 		InformacaoTransporte informacaoTransporte = new InformacaoTransporte();
 		
-		informacaoTransporte.setCnpj(cnpj);
-		informacaoTransporte.setCpf(cpf);
-		informacaoTransporte.setEnderecoCompleto(enderecoCompleto);
+		informacaoTransporte.setDocumento(documento);
 		informacaoTransporte.setInscricaoEstadual(inscricaoEstadual);
 		informacaoTransporte.setModalidadeFrente(modalidadeFrente);
 		informacaoTransporte.setMunicipio(municipio);
@@ -3042,6 +3085,7 @@ public class Fixture {
 		informacaoTransporte.setRetencaoICMS(retencaoICMS);
 		informacaoTransporte.setUf(uf);
 		informacaoTransporte.setVeiculo(veiculo);
+		informacaoTransporte.setEndereco(endereco);
 		
 		return informacaoTransporte;
 		
