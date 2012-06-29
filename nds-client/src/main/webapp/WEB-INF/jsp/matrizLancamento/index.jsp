@@ -231,6 +231,12 @@ function reprogramarSelecionados() {
 			   
 </div>
 
+<div id="dialog-pagincao-confirmada" title="Atenção" style="display:none">
+			
+			<p>As seleções de lançamentos não serão salvas,deseja continuar?</p>
+			   
+</div>
+
 	
 		<div id="dialogReprogramarBalanceamento" title="Reprogramar Recolhimentos">
 		    
