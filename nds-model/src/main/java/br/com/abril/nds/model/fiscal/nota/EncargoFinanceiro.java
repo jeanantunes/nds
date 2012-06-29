@@ -2,8 +2,6 @@ package br.com.abril.nds.model.fiscal.nota;
 
 import java.io.Serializable;
 
-import javax.persistence.AttributeOverride;
-import javax.persistence.AttributeOverrides;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -39,29 +37,13 @@ public abstract class EncargoFinanceiro implements Serializable {
 	private PIS pis;	
 
 	@Embedded
-	@AttributeOverrides({
-	    @AttributeOverride(name="cst", column=@Column(name="CST_PIS_ST", length = 2)),
-	    @AttributeOverride(name="valorBaseCalculo", column=@Column(name="VLR_BASE_CALC_PIS_ST",  scale = 2,precision = 15)),
-	    @AttributeOverride(name="percentualAliquota", column=@Column(name="PER_ALIQ_PIS_ST", scale = 2, precision = 5)),
-	    @AttributeOverride(name="quantidadeVendida", column=@Column(name="QTD_VENDIDA_PIS_ST", scale = 4,  precision= 16)),
-	    @AttributeOverride(name="valorAliquota", column=@Column(name="VLR_ALIQ_PIS_ST", scale = 4, precision = 15)),
-	    @AttributeOverride(name="valor", column=@Column(name="VLR_PIS_ST", scale = 2, precision = 15))
-	})
-	private PIS pisSt;
+	private PISST pisSt;
 	
 	@Embedded
 	private COFINS cofins;
 	
 	@Embedded
-	@AttributeOverrides({
-	    @AttributeOverride(name="cst", column=@Column(name="CST_COFINS_ST", length = 2)),
-	    @AttributeOverride(name="valorBaseCalculo", column=@Column(name="VLR_BASE_CALC_COFINS_ST",  scale = 2,precision = 15)),
-	    @AttributeOverride(name="percentualAliquota", column=@Column(name="PER_ALIQ_COFINS_ST", scale = 2, precision = 5)),
-	    @AttributeOverride(name="quantidadeVendida", column=@Column(name="QTD_VENDIDA_COFINS_ST", scale = 4,  precision= 16)),
-	    @AttributeOverride(name="valorAliquota", column=@Column(name="VLR_ALIQ_COFINS_ST", scale = 4, precision = 15)),
-	    @AttributeOverride(name="valor", column=@Column(name="VLR_COFINS_ST", scale = 2, precision = 15))
-	})
-	private COFINS cofinsSt;
+	private COFINSST cofinsSt;
 
 	/**
 	 * @return the id
@@ -153,28 +135,28 @@ public abstract class EncargoFinanceiro implements Serializable {
 	/**
 	 * @return the pisSt
 	 */
-	public PIS getPisSt() {
+	public PISST getPisSt() {
 		return pisSt;
 	}
 
 	/**
 	 * @param pisSt the pisSt to set
 	 */
-	public void setPisSt(PIS pisSt) {
+	public void setPisSt(PISST pisSt) {
 		this.pisSt = pisSt;
 	}
 
 	/**
 	 * @return the cofinsSt
 	 */
-	public COFINS getCofinsSt() {
+	public COFINSST getCofinsSt() {
 		return cofinsSt;
 	}
 
 	/**
 	 * @param cofinsSt the cofinsSt to set
 	 */
-	public void setCofinsSt(COFINS cofinsSt) {
+	public void setCofinsSt(COFINSST cofinsSt) {
 		this.cofinsSt = cofinsSt;
 	}
 
