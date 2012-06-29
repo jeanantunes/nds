@@ -104,7 +104,7 @@ public class Endereco implements Serializable {
 	
 	@Column(name = "CODIGO_UF", length=2)
 	@NFEWhens(value = {
-			@NFEWhen(condition = NFEConditions.IDENTIFICACAO_EMITENTE, export = @NFEExport(secao = TipoSecao.B, posicao = 0)),
+			@NFEWhen(condition = NFEConditions.IDENTIFICACAO_EMITENTE, export = @NFEExport(secao = TipoSecao.B, posicao = 0))
 	})
 	private Integer codigoUf;
 	

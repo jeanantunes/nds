@@ -442,7 +442,7 @@ public class MonitorNFEServiceImpl implements MonitorNFEService {
 		
 		Integer frete = informacaoTransporte.getModalidadeFrente();
 		
-		String transportadoraCNPJ = informacaoTransporte.getCnpj();
+		String transportadoraDocumento = informacaoTransporte.getDocumento();
 		String transportadoraNome = informacaoTransporte.getNome();
 		
 		String transportadoraInscricaoEstadual = informacaoTransporte.getInscricaoEstadual();
@@ -478,7 +478,7 @@ public class MonitorNFEServiceImpl implements MonitorNFEService {
 		}
 		
 		danfe.setFrete(frete);
-		danfe.setTransportadoraCNPJ(transportadoraCNPJ);
+		danfe.setTransportadoraCNPJ(transportadoraDocumento);
 		danfe.setTransportadoraNome(transportadoraNome);
 		danfe.setTransportadoraInscricaoEstadual(transportadoraInscricaoEstadual);
 		danfe.setTransportadoraEndereco(transportadoraEndereco);

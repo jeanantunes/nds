@@ -184,9 +184,8 @@ public class NotaFiscalRepositoryImplTest  extends AbstractRepositoryImplTest {
 				chaveAcesso, 
 				retornoComunicacaoEletronica);
 		
-		String cnpjTransporte = "";
-		String cpfTransporte	= "";
-		
+		String documentoTranposrte = "564645664";
+	
 		
 		Endereco enderecoTransporte = 
 				Fixture.criarEndereco(TipoEndereco.COMERCIAL, "13852345", "Rua Maracuja", 4585, "Jrd Brasil", "Piuí", "MG");
@@ -203,8 +202,7 @@ public class NotaFiscalRepositoryImplTest  extends AbstractRepositoryImplTest {
 		
 		InformacaoTransporte informacaoTransporte = 
 				Fixture.informacaoTransporte(
-						cnpjTransporte, 
-						cpfTransporte, 
+						documentoTranposrte, 
 						enderecoTransporte, 
 						inscricaoEstadual, 
 						modalidadeFrente, 

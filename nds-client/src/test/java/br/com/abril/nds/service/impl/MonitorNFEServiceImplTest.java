@@ -26,6 +26,7 @@ import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.Telefone;
+import br.com.abril.nds.model.cadastro.TipoEndereco;
 import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.model.fiscal.nota.EncargoFinanceiro;
 import br.com.abril.nds.model.fiscal.nota.Identificacao;
@@ -158,9 +159,8 @@ public class MonitorNFEServiceImplTest {
 				chaveAcesso, 
 				retornoComunicacaoEletronica);
 		
-		String cnpjTransporte = "";
-		String cpfTransporte	= "";
-		Endereco enderecoTransporte = null;
+		String documentoTransporte = "646546454654";
+		Endereco enderecoTransporte = Fixture.criarEndereco(TipoEndereco.COMERCIAL, "10500250", "Rua Nova", 1000, "Bairro Novo", "Olimpia", "SP");
 		Integer modalidadeFrente = 1;
 		String municipio = "";
 		String nomeFantasiaTransporte = "";
@@ -171,8 +171,7 @@ public class MonitorNFEServiceImplTest {
 		
 		InformacaoTransporte informacaoTransporte = 
 				Fixture.informacaoTransporte(
-						cnpjTransporte, 
-						cpfTransporte, 
+						documentoTransporte,
 						enderecoTransporte, 
 						inscricaoEstadual, 
 						modalidadeFrente, 

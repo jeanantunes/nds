@@ -148,8 +148,10 @@ public class NotaFiscalServiceImplTest extends AbstractRepositoryImplTest {
 		
 		InformacaoAdicional informacaoAdicional = Fixture.informacaoAdicional("informacoesComplementares");
 		
+		Endereco enderecoTransporte = Fixture.criarEndereco(TipoEndereco.COMERCIAL, "10500250", "Rua Nova", 1000, "Bairro Novo", "Olimpia", "SP");
+		
 		InformacaoTransporte informacaoTransporte = Fixture.informacaoTransporte(
-				"88416646000103", "enderecoCompleto", "IEstd", 132, "municipio", "nome", null, "SP", veiculo);
+				"88416646000103", enderecoTransporte , "IEstd", 132, "municipio", "nome", null, "SP", veiculo);
 	
 		ValoresRetencoesTributos valoreRetencoesTributos = new ValoresRetencoesTributos();
 		
