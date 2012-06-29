@@ -10,6 +10,8 @@ import javax.persistence.Embedded;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 
+import br.com.abril.nds.util.export.fiscal.nota.NFEExportType;
+
 @Embeddable
 @AttributeOverrides({
 		@AttributeOverride(name = "cst", column = @Column(name = "CST_ICMS", length = 2, nullable = false)),
@@ -35,6 +37,7 @@ public class ICMS extends ICMSBase implements Serializable {
 	
 	
 	@Embedded
+	@NFEExportType
 	private ICMSST icmsst;
 	
 	

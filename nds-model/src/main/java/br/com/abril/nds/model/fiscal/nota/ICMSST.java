@@ -8,6 +8,12 @@ import javax.persistence.AttributeOverrides;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
+import br.com.abril.nds.util.TipoSecao;
+import br.com.abril.nds.util.export.fiscal.nota.NFEConditions;
+import br.com.abril.nds.util.export.fiscal.nota.NFEExport;
+import br.com.abril.nds.util.export.fiscal.nota.NFEWhen;
+import br.com.abril.nds.util.export.fiscal.nota.NFEWhens;
+
 @Embeddable
 @AttributeOverrides({
 		@AttributeOverride(name = "cst", column = @Column(name = "CST_ICMS_ST", length = 2, nullable = true)),
@@ -31,6 +37,12 @@ public class ICMSST extends ICMSBase implements Serializable {
 	 * pMVAST
 	 */
 	@Column(name="PERCENTUAL_ADCIONADO_ST", precision=5,scale=2, nullable=true)
+	@NFEWhens(value = {
+			@NFEWhen(condition = NFEConditions.ICMSST10, export = @NFEExport(secao = TipoSecao.N03, posicao = 7)),
+			@NFEWhen(condition = NFEConditions.ICMSST30, export = @NFEExport(secao = TipoSecao.N05, posicao = 3)),
+			@NFEWhen(condition = NFEConditions.ICMSST70, export = @NFEExport(secao = TipoSecao.N09, posicao = 8)),
+			@NFEWhen(condition = NFEConditions.ICMSST90, export = @NFEExport(secao = TipoSecao.N10, posicao = 8))
+	})
 	private BigDecimal percentualAdicionado;
 	
 	/**
