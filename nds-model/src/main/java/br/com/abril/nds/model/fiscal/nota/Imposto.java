@@ -28,7 +28,9 @@ public abstract class Imposto implements Serializable {
 			@NFEWhen(condition = NFEConditions.ICMS51, export = @NFEExport(secao = TipoSecao.N07, posicao = 1, tamanho = 2)),
 			@NFEWhen(condition = NFEConditions.ICMS60, export = @NFEExport(secao = TipoSecao.N08, posicao = 1, tamanho = 2)),
 			@NFEWhen(condition = NFEConditions.ICMS70, export = @NFEExport(secao = TipoSecao.N09, posicao = 1, tamanho = 2)),
-			@NFEWhen(condition = NFEConditions.ICMS90, export = @NFEExport(secao = TipoSecao.N10, posicao = 1, tamanho = 2))
+			@NFEWhen(condition = NFEConditions.ICMS90, export = @NFEExport(secao = TipoSecao.N10, posicao = 1, tamanho = 2)),
+			@NFEWhen(condition = NFEConditions.IPIT, export = @NFEExport(secao = TipoSecao.O07, posicao = 0, tamanho = 2)),
+			@NFEWhen(condition = NFEConditions.IPINT, export = @NFEExport(secao = TipoSecao.O08, posicao = 0, tamanho = 2))
 	})
 	protected String cst;
 	
@@ -43,7 +45,9 @@ public abstract class Imposto implements Serializable {
 			@NFEWhen(condition = NFEConditions.ICMSST30, export = @NFEExport(secao = TipoSecao.N05, posicao = 7)),
 			@NFEWhen(condition = NFEConditions.ICMSST60, export = @NFEExport(secao = TipoSecao.N08, posicao = 3)),
 			@NFEWhen(condition = NFEConditions.ICMSST70, export = @NFEExport(secao = TipoSecao.N09, posicao = 12)),
-			@NFEWhen(condition = NFEConditions.ICMSST90, export = @NFEExport(secao = TipoSecao.N10, posicao = 12))
+			@NFEWhen(condition = NFEConditions.ICMSST90, export = @NFEExport(secao = TipoSecao.N10, posicao = 12)),
+			@NFEWhen(condition = NFEConditions.IPIT, export = @NFEExport(secao = TipoSecao.O07, posicao = 1)),
+			@NFEWhen(condition = NFEConditions.ISSQN, export = @NFEExport(secao = TipoSecao.U, posicao = 2))
 	})
 	protected BigDecimal valor;
 	
@@ -58,7 +62,9 @@ public abstract class Imposto implements Serializable {
 			@NFEWhen(condition = NFEConditions.ICMSST30, export = @NFEExport(secao = TipoSecao.N05, posicao = 5)),
 			@NFEWhen(condition = NFEConditions.ICMSST60, export = @NFEExport(secao = TipoSecao.N08, posicao = 2)),
 			@NFEWhen(condition = NFEConditions.ICMSST70, export = @NFEExport(secao = TipoSecao.N09, posicao = 10)),
-			@NFEWhen(condition = NFEConditions.ICMSST90, export = @NFEExport(secao = TipoSecao.N10, posicao = 10))
+			@NFEWhen(condition = NFEConditions.ICMSST90, export = @NFEExport(secao = TipoSecao.N10, posicao = 10)),
+			@NFEWhen(condition = NFEConditions.IPIT_ALIQ, export = @NFEExport(secao = TipoSecao.O10, posicao = 0)),
+			@NFEWhen(condition = NFEConditions.ISSQN, export = @NFEExport(secao = TipoSecao.U, posicao = 0))
 	})
 	protected BigDecimal valorBaseCalculo;
 	
@@ -72,7 +78,9 @@ public abstract class Imposto implements Serializable {
 			@NFEWhen(condition = NFEConditions.ICMSST10, export = @NFEExport(secao = TipoSecao.N03, posicao = 10)),
 			@NFEWhen(condition = NFEConditions.ICMSST30, export = @NFEExport(secao = TipoSecao.N05, posicao = 6)),
 			@NFEWhen(condition = NFEConditions.ICMSST70, export = @NFEExport(secao = TipoSecao.N09, posicao = 11)),
-			@NFEWhen(condition = NFEConditions.ICMSST90, export = @NFEExport(secao = TipoSecao.N10, posicao = 11))
+			@NFEWhen(condition = NFEConditions.ICMSST90, export = @NFEExport(secao = TipoSecao.N10, posicao = 11)),
+			@NFEWhen(condition = NFEConditions.IPIT_ALIQ, export = @NFEExport(secao = TipoSecao.O10, posicao = 1)),
+			@NFEWhen(condition = NFEConditions.ISSQN, export = @NFEExport(secao = TipoSecao.U, posicao = 1))
 	})
 	protected BigDecimal aliquota;
 
