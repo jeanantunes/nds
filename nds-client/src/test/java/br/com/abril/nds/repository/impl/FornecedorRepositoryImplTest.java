@@ -1,5 +1,6 @@
 package br.com.abril.nds.repository.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import junit.framework.Assert;
@@ -252,6 +253,23 @@ public class FornecedorRepositoryImplTest extends AbstractRepositoryImplTest {
 		
 		Assert.assertNotNull(fornecedores);
 		
+	}
+	
+	@Test
+	public void obterFornecedoresPorId() {
+		
+		List<Long> idsForncedores = new ArrayList<Long>();
+		
+		idsForncedores.add(fornecedor1.getId());
+		idsForncedores.add(fornecedor2.getId());
+		idsForncedores.add(fornecedor3.getId());
+		
+		List<Fornecedor> fornecedores =
+			this.fornecedorRepository.obterFornecedoresPorId(idsForncedores);
+		
+		Assert.assertNotNull(fornecedores);
+		
+		Assert.assertEquals(idsForncedores.size(), fornecedores.size());
 	}
 	
 }

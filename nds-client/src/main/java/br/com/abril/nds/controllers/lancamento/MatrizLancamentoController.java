@@ -330,7 +330,7 @@ public class MatrizLancamentoController {
 		
 		for (ProdutoLancamentoVO produtoLancamento : produtosLancamento) {
 		
-			String dataRecolhimentoPrevistaFormatada = produtoLancamento.getDataRecolhimento();
+			String dataRecolhimentoPrevistaFormatada = produtoLancamento.getDataRecolhimentoPrevista();
 			
 			if (dataRecolhimentoPrevistaFormatada == null
 					|| dataRecolhimentoPrevistaFormatada.trim().isEmpty()) {
@@ -339,7 +339,7 @@ public class MatrizLancamentoController {
 			}
 			
 			Date dataRecolhimentoPrevista =
-				DateUtil.parseDataPTBR(produtoLancamento.getDataRecolhimento());
+				DateUtil.parseDataPTBR(produtoLancamento.getDataRecolhimentoPrevista());
 			
 			Date dataLimiteReprogramacao =
 				DateUtil.subtrairDias(dataRecolhimentoPrevista,
@@ -354,7 +354,7 @@ public class MatrizLancamentoController {
 				produtos +=
 					"<tr>"
 					+ "<td><u>Produto:</u> " + produtoLancamento.getNomeProduto() + "</td>"
-					+ "<td><u>Edição:</u> " + produtoLancamento.getNumEdicao() + "</td>"
+					+ "<td><u>Edição:</u> " + produtoLancamento.getNumeroEdicao() + "</td>"
 					+ "<td><u>Data recolhimento:</u> " + dataRecolhimentoPrevistaFormatada + "</td>"
 					+ "</tr>";
 			}
@@ -623,35 +623,32 @@ public class MatrizLancamentoController {
 		produtoBalanceamentoVO.setNovaData(
 				DateUtil.formatarDataPTBR(produtoLancamentoDTO.getNovaDataLancamento()));
 		
-		produtoBalanceamentoVO.setDataPrevisto(
+		produtoBalanceamentoVO.setDataLancamentoPrevista(
 				DateUtil.formatarDataPTBR(produtoLancamentoDTO.getDataLancamentoPrevista()));
 		
 		produtoBalanceamentoVO.setDataLancamentoDistribuidor(
 				DateUtil.formatarDataPTBR(produtoLancamentoDTO.getDataLancamentoDistribuidor()));
 		
-		produtoBalanceamentoVO.setDataRecolhimento(
+		produtoBalanceamentoVO.setDataRecolhimentoPrevista(
 				DateUtil.formatarDataPTBR(produtoLancamentoDTO.getDataRecolhimentoPrevista()));
 		
 		produtoBalanceamentoVO.setId(produtoLancamentoDTO.getIdLancamento());
 		
-		if(produtoLancamentoDTO.getParcial() == null)
-			produtoBalanceamentoVO.setLancamento("Lancamento");
-		else
-			produtoBalanceamentoVO.setLancamento(produtoLancamentoDTO.getParcial().getDescricao());
+		produtoBalanceamentoVO.setDescricaoLancamento(produtoLancamentoDTO.getDescricaoLancamento());
 		
 		produtoBalanceamentoVO.setNomeProduto(produtoLancamentoDTO.getNomeProduto());
-		produtoBalanceamentoVO.setNumEdicao(produtoLancamentoDTO.getNumeroEdicao());
+		produtoBalanceamentoVO.setNumeroEdicao(produtoLancamentoDTO.getNumeroEdicao());
 		
-		produtoBalanceamentoVO.setPreco(CurrencyUtil.formatarValor(produtoLancamentoDTO.getPrecoVenda()));
+		produtoBalanceamentoVO.setPrecoVenda(CurrencyUtil.formatarValor(produtoLancamentoDTO.getPrecoVenda()));
 		
-		produtoBalanceamentoVO.setReparte(produtoLancamentoDTO.getRepartePrevisto().toString());
+		produtoBalanceamentoVO.setRepartePrevisto(produtoLancamentoDTO.getRepartePrevisto().toString());
 		
-		produtoBalanceamentoVO.setTotal(CurrencyUtil.formatarValor(produtoLancamentoDTO.getValorTotal()));
+		produtoBalanceamentoVO.setValorTotal(CurrencyUtil.formatarValor(produtoLancamentoDTO.getValorTotal()));
 		
 		if(produtoLancamentoDTO.getReparteFisico()==null)
-			produtoBalanceamentoVO.setFisico(0);
+			produtoBalanceamentoVO.setReparteFisico(0);
 		else
-			produtoBalanceamentoVO.setFisico(produtoLancamentoDTO.getReparteFisico().intValue());
+			produtoBalanceamentoVO.setReparteFisico(produtoLancamentoDTO.getReparteFisico().intValue());
 		
 		produtoBalanceamentoVO.setCancelamentoGD(produtoLancamentoDTO.getStatusLancamento().equals(StatusLancamento.CANCELADO_GD));
 		
@@ -665,7 +662,11 @@ public class MatrizLancamentoController {
 		produtoBalanceamentoVO.setPossuiRecebimentoFisico(produtoLancamentoDTO.isPossuiRecebimentoFisico());
 		
 		//TODO - Pendente
-		produtoBalanceamentoVO.setDistribuicao("");
+		if(produtoLancamentoDTO.getDistribuicao() == null) {
+			produtoBalanceamentoVO.setDistribuicao("");
+		} else {
+			produtoBalanceamentoVO.setDistribuicao(produtoLancamentoDTO.getDistribuicao());
+		}
 		
 		produtoBalanceamentoVO.setBloquearData(!produtoLancamentoDTO.isPermiteReprogramacao());
 		
@@ -746,6 +747,28 @@ public class MatrizLancamentoController {
 		result.nothing();
 	}
 	
+	private String montarNomeFornecedores(List<Long> idsFornecedores) {
+		
+		String nomeFornecedores = "";
+		
+		List<Fornecedor> listaFornecedor = fornecedorService.obterFornecedoresPorId(idsFornecedores);
+		
+		if (listaFornecedor != null && !listaFornecedor.isEmpty()) {
+			
+			for (Fornecedor fornecedor : listaFornecedor) {
+				
+				if (!nomeFornecedores.isEmpty()) {
+					
+					nomeFornecedores += " / ";
+				}
+				
+				nomeFornecedores += fornecedor.getJuridica().getRazaoSocial();
+			}
+		}
+		
+		return nomeFornecedores;
+	}
+	
 	/**
 	 * Método que obtém o usuário logado
 	 * 
@@ -798,6 +821,8 @@ public class MatrizLancamentoController {
 		
 		FiltroLancamentoDTO filtro =
 			new FiltroLancamentoDTO(dataPesquisa, listaIdsFornecedores);
+		
+		filtro.setNomesFornecedor(this.montarNomeFornecedores(listaIdsFornecedores));
 		
 		this.session.setAttribute(FILTRO_SESSION_ATTRIBUTE,filtro);
 		

@@ -9,34 +9,46 @@ import br.com.abril.nds.util.export.Exportable;
 public class ProdutoLancamentoVO  implements Serializable {
 
 	private static final long serialVersionUID = 2186060384671120600L;
-
 	
 	private Long id;
-	@Export(label="Codigo")
+	
+	@Export(label="Codigo", exhibitionOrder = 0)
 	private String codigoProduto;
-	@Export(label="Produto")
+	
+	@Export(label="Produto", exhibitionOrder = 1)
 	private String nomeProduto;
-	@Export(label="Edição")
-	private Long numEdicao;
-	@Export(label="Preço Capa R$")
-	private String preco;
-	@Export(label="Reparte")
-	private String reparte;
-	@Export(label="Lançamento")
-	private String lancamento;
-	@Export(label="Recolhimento")
-	private String dataRecolhimento;
-	private Long idFornecedor;
-	@Export(label="Previsto")
-	private String dataPrevisto;
+	
+	@Export(label="Edição", exhibitionOrder = 2)
+	private Long numeroEdicao;
+	
+	@Export(label="Preço Capa R$", exhibitionOrder = 3)
+	private String precoVenda;
+	
+	@Export(label="Reparte", exhibitionOrder = 4)
+	private String repartePrevisto;
+	
+	@Export(label="Lançamento", exhibitionOrder = 5)
+	private String descricaoLancamento;
+	
+	@Export(label="Recolhimento", exhibitionOrder = 6)
+	private String dataRecolhimentoPrevista;
+	
+	@Export(label="Total R$", exhibitionOrder = 7)
+	private String valorTotal;
+	
+	@Export(label="Físico", exhibitionOrder = 8)
+	private Integer reparteFisico;
+	
+	@Export(label="Distribuição", exhibitionOrder = 9)
+	private String distribuicao;
+	
+	@Export(label="Previsto", exhibitionOrder = 10)
+	private String dataLancamentoPrevista;
+	
 	private String novaData;
-	@Export(label="TotalR$")
-	private String total;
 	private String dataLancamentoDistribuidor;
-	private Integer fisico;
 	private String qtdeEstudo;
 	private String qtdeReprogramacoes;
-	private String distribuicao;
 	private boolean possuiRecebimentoFisico;
 	private boolean cancelamentoGD;
 	private boolean estudoFechado;
@@ -44,136 +56,216 @@ public class ProdutoLancamentoVO  implements Serializable {
 	private boolean bloquearData;
 	private Long idProdutoEdicao;
 	
-	
-	
+	/**
+	 * @return the id
+	 */
 	public Long getId() {
 		return id;
 	}
-	
+
+	/**
+	 * @param id the id to set
+	 */
 	public void setId(Long id) {
 		this.id = id;
 	}
-	
+
+	/**
+	 * @return the codigoProduto
+	 */
 	public String getCodigoProduto() {
 		return codigoProduto;
 	}
-	
+
+	/**
+	 * @param codigoProduto the codigoProduto to set
+	 */
 	public void setCodigoProduto(String codigoProduto) {
 		this.codigoProduto = codigoProduto;
 	}
-	
+
+	/**
+	 * @return the nomeProduto
+	 */
 	public String getNomeProduto() {
 		return nomeProduto;
 	}
-	
+
+	/**
+	 * @param nomeProduto the nomeProduto to set
+	 */
 	public void setNomeProduto(String nomeProduto) {
 		this.nomeProduto = nomeProduto;
 	}
-	
-	public Long getNumEdicao() {
-		return numEdicao;
+
+	/**
+	 * @return the numeroEdicao
+	 */
+	public Long getNumeroEdicao() {
+		return numeroEdicao;
 	}
-	
-	public void setNumEdicao(Long numEdicao) {
-		this.numEdicao = numEdicao;
+
+	/**
+	 * @param numeroEdicao the numeroEdicao to set
+	 */
+	public void setNumeroEdicao(Long numeroEdicao) {
+		this.numeroEdicao = numeroEdicao;
 	}
-	
-	public String getPreco() {
-		return preco;
+
+	/**
+	 * @return the precoVenda
+	 */
+	public String getPrecoVenda() {
+		return precoVenda;
 	}
-	
-	public void setPreco(String preco) {
-		this.preco = preco;
+
+	/**
+	 * @param precoVenda the precoVenda to set
+	 */
+	public void setPrecoVenda(String precoVenda) {
+		this.precoVenda = precoVenda;
 	}
-	
-	public String getReparte() {
-		return reparte;
+
+	/**
+	 * @return the repartePrevisto
+	 */
+	public String getRepartePrevisto() {
+		return repartePrevisto;
 	}
-	
-	public void setReparte(String reparte) {
-		this.reparte = reparte;
+
+	/**
+	 * @param repartePrevisto the repartePrevisto to set
+	 */
+	public void setRepartePrevisto(String repartePrevisto) {
+		this.repartePrevisto = repartePrevisto;
 	}
-	
-	public String getLancamento() {
-		return lancamento;
+
+	/**
+	 * @return the descricaoLancamento
+	 */
+	public String getDescricaoLancamento() {
+		return descricaoLancamento;
 	}
-	
-	public void setLancamento(String lancamento) {
-		this.lancamento = lancamento;
+
+	/**
+	 * @param descricaoLancamento the descricaoLancamento to set
+	 */
+	public void setDescricaoLancamento(String descricaoLancamento) {
+		this.descricaoLancamento = descricaoLancamento;
 	}
-	
-	public String getDataRecolhimento() {
-		return dataRecolhimento;
+
+	/**
+	 * @return the dataRecolhimentoPrevista
+	 */
+	public String getDataRecolhimentoPrevista() {
+		return dataRecolhimentoPrevista;
 	}
-	
-	public void setDataRecolhimento(String dataRecolhimento) {
-		this.dataRecolhimento = dataRecolhimento;
+
+	/**
+	 * @param dataRecolhimentoPrevista the dataRecolhimentoPrevista to set
+	 */
+	public void setDataRecolhimentoPrevista(String dataRecolhimentoPrevista) {
+		this.dataRecolhimentoPrevista = dataRecolhimentoPrevista;
 	}
-	
-	public Long getIdFornecedor() {
-		return idFornecedor;
+
+	/**
+	 * @return the valorTotal
+	 */
+	public String getValorTotal() {
+		return valorTotal;
 	}
-	
-	public void setIdFornecedor(Long idFornecedor) {
-		this.idFornecedor = idFornecedor;
+
+	/**
+	 * @param valorTotal the valorTotal to set
+	 */
+	public void setValorTotal(String valorTotal) {
+		this.valorTotal = valorTotal;
 	}
-	
-	public String getDataPrevisto() {
-		return dataPrevisto;
+
+	/**
+	 * @return the reparteFisico
+	 */
+	public Integer getReparteFisico() {
+		return reparteFisico;
 	}
-	
-	public void setDataPrevisto(String dataPrevisto) {
-		this.dataPrevisto = dataPrevisto;
+
+	/**
+	 * @param reparteFisico the reparteFisico to set
+	 */
+	public void setReparteFisico(Integer reparteFisico) {
+		this.reparteFisico = reparteFisico;
 	}
-	
+
+	/**
+	 * @return the dataLancamentoPrevista
+	 */
+	public String getDataLancamentoPrevista() {
+		return dataLancamentoPrevista;
+	}
+
+	/**
+	 * @param dataLancamentoPrevista the dataLancamentoPrevista to set
+	 */
+	public void setDataLancamentoPrevista(String dataLancamentoPrevista) {
+		this.dataLancamentoPrevista = dataLancamentoPrevista;
+	}
+
+	/**
+	 * @return the novaData
+	 */
 	public String getNovaData() {
 		return novaData;
 	}
-	
+
+	/**
+	 * @param novaData the novaData to set
+	 */
 	public void setNovaData(String novaData) {
 		this.novaData = novaData;
 	}
-	
-	public String getTotal() {
-		return total;
-	}
-	
-	public void setTotal(String total) {
-		this.total = total;
-	}
-	
-	public Integer getFisico() {
-		return fisico;
-	}
-	
-	public void setFisico(Integer fisico) {
-		this.fisico = fisico;
-	}
-	
+
+	/**
+	 * @return the qtdeEstudo
+	 */
 	public String getQtdeEstudo() {
 		return qtdeEstudo;
 	}
-	
+
+	/**
+	 * @param qtdeEstudo the qtdeEstudo to set
+	 */
 	public void setQtdeEstudo(String qtdeEstudo) {
 		this.qtdeEstudo = qtdeEstudo;
 	}
-		
+
+	/**
+	 * @return the cancelamentoGD
+	 */
 	public boolean isCancelamentoGD() {
 		return cancelamentoGD;
 	}
-	
+
+	/**
+	 * @param cancelamentoGD the cancelamentoGD to set
+	 */
 	public void setCancelamentoGD(boolean cancelamentoGD) {
 		this.cancelamentoGD = cancelamentoGD;
 	}
-		
+
+	/**
+	 * @return the estudoFechado
+	 */
 	public boolean isEstudoFechado() {
 		return estudoFechado;
 	}
-	
+
+	/**
+	 * @param estudoFechado the estudoFechado to set
+	 */
 	public void setEstudoFechado(boolean estudoFechado) {
 		this.estudoFechado = estudoFechado;
 	}
-	
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
