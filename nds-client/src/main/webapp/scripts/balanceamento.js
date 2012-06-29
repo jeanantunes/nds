@@ -6,8 +6,8 @@ function Balanceamento(pathTela, descInstancia) {
 	this.tipoMovimento = null;
 	this.instancia = descInstancia;
 	this.linhasDestacadas = [];
-	this.isCliquePesquisar;
 	this.lancamentos = [];
+	this.isCliquePesquisar;
 	
 	this.pesquisar = function() {
 		
@@ -20,9 +20,7 @@ function Balanceamento(pathTela, descInstancia) {
 		$("input[name='checkgroup_menu']:checked").each(function(i) {
 			data.push({name:'idsFornecedores', value: $(this).val()});
 		});
-		
-		isCliquePesquisar = true;
-		
+				
 		$.postJSON(
 			pathTela + "/matrizLancamento/obterMatrizLancamento", 
 			data,
@@ -48,6 +46,7 @@ function Balanceamento(pathTela, descInstancia) {
 			null,
 			function(result){
 				
+				debugger;
 				if (result == "true") 
 					T.retornoVerificarBalanceamentosAlterados(funcao);
 				else
@@ -63,7 +62,9 @@ function Balanceamento(pathTela, descInstancia) {
 		T.linhasDestacadas = [];		
 		lancamentosSelecionados = [];		
 		$('#selTodos').uncheck();	
-				
+		
+		T.isCliquePesquisar = true;
+		
 		$(".lancamentosProgramadosGrid").flexOptions({			
 			url : pathTela + "/matrizLancamento/obterGridMatrizLancamento",
 			dataType : 'json',		
@@ -82,8 +83,8 @@ function Balanceamento(pathTela, descInstancia) {
 		
 		var noSelect = $('[name=checkgroup]:checked').size() == 0;
 		
-		if(isCliquePesquisar || noSelect ) {
-			isCliquePesquisar = false;
+		if(T.isCliquePesquisar || noSelect ) {
+			T.isCliquePesquisar = false;
 			return true;
 		}
 		
@@ -199,7 +200,7 @@ function Balanceamento(pathTela, descInstancia) {
 		$.postJSON(
 				pathTela + "/matrizLancamento/reprogramarLancamentoUnico",
 				data,
-				null
+				function(){T.atualizarResumoBalanceamento();}
 			);
 	},
 	
@@ -228,7 +229,11 @@ function Balanceamento(pathTela, descInstancia) {
 		
 		$.postJSON(
 				pathTela + "/matrizLancamento/reprogramarLancamentosSelecionados",
-				data
+				data,
+				function(){
+					T.atualizarResumoBalanceamento(true);
+					T.checkUncheckLancamentos(false);
+				}
 			);
 				
 		$("#dialogReprogramarBalanceamento").dialog("close");
@@ -333,8 +338,8 @@ function Balanceamento(pathTela, descInstancia) {
 
 		$("#"+recipiente).empty();
 		
-		var img = $("<img />")
-		.load(
+		var img = $("<img />");
+		img.load(
 		    function() {						
 		    	$("#"+recipiente).append(img);
 		    }
@@ -557,5 +562,73 @@ function Balanceamento(pathTela, descInstancia) {
 				}
 			}
 		});	
+	},
+	
+	this.atualizarResumoBalanceamento = function (atualizarGrid) {
+		
+		$.postJSON( pathTela + "/matrizLancamento/atualizarResumoBalanceamento",
+				   null,
+				   function(result) {
+						T.popularResumoPeriodo(result);
+						
+						if(atualizarGrid)
+							T.atualizarGrid();
+				   }
+		);
+	},
+	
+	this.atualizarGrid = function() {		
+		
+		$(".grids").show();		
+		
+		T.linhasDestacadas = [];		
+		lancamentosSelecionados = [];		
+		$('#selTodos').uncheck();	
+		
+		T.isCliquePesquisar = true;
+		
+		$(".lancamentosProgramadosGrid").flexOptions({			
+			url : pathTela + "/matrizLancamento/atualizarGridMatrizLancamento",
+			dataType : 'json',		
+			autoload: false,
+			singleSelect: true,
+			preProcess: T.processaRetornoPesquisa,
+			onSuccess: T.onSuccessPesquisa,
+			onSubmit: T.confirmarPaginacao
+		});
+		
+		$(".lancamentosProgramadosGrid").flexReload();
+	},
+		
+	this.checkUncheckLancamentos = function(checked) {
+				
+		var todos = $('#selTodos');
+		
+		if(checked) 
+			todos.check(checked);
+		
+		$.each(T.lancamentos, function(index, row){
+			row.selecionado = (todos.attr("checked") == 'checked');
+		}),
+		
+		checkAll(document.getElementById('selTodos'),"checkgroup");
 	};
+	
+	this.voltarConfiguracaoInicial = function() {
+		
+		T.checkUncheckLancamentos(false);
+		
+		$.postJSON(
+				pathTela + "/matrizLancamento/voltarConfiguracaoOriginal",
+			null,
+			function(result) {
+					T.popularResumoPeriodo(result);
+			},
+			function() {
+				
+				$("#resumoPeriodo").hide();
+			}
+		);
+	};
+	
 }

@@ -40,7 +40,6 @@ public class CapaController {
 			return new InputStreamDownload(inputStream, null,null);
 		} catch (Exception e) {			
 			
-			result.notFound();
 			return null;
 		}
 		
