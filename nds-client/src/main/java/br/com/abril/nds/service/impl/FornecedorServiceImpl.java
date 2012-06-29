@@ -652,5 +652,10 @@ public class FornecedorServiceImpl implements FornecedorService {
 		
 		return this.fornecedorRepository.obterFornecedorLikeNomeFantasia(nomeFornecedor);
 	}
+	
+	@Transactional
+	public List<Fornecedor> obterFornecedoresPorId(List<Long> idsFornecedores) {
+		return fornecedorRepository.obterFornecedoresPorId(idsFornecedores);
+	}
 }
 

@@ -35,43 +35,43 @@ $(function() {
 			align : 'left'
 		}, {
 			display : 'Edição',
-			name : 'numEdicao',
+			name : 'numeroEdicao',
 			width : 35,
 			sortable : true,
 			align : 'center'
 		}, {
 			display : 'Preço Capa R$',
-			name : 'preco',
+			name : 'precoVenda',
 			width : 50,
 			sortable : true,
 			align : 'right'
 		}, {
 			display : 'Reparte',
-			name : 'reparte',
+			name : 'repartePrevisto',
 			width : 40,
 			sortable : true,
 			align : 'center'
 		}, {
 			display : 'Lançamento',
-			name : 'lancamento',
+			name : 'descricaoLancamento',
 			width : 60,
 			sortable : true,
 			align : 'left'
 		}, {
 			display : 'Recolhimento',
-			name : 'dataRecolhimento',
+			name : 'dataRecolhimentoPrevista',
 			width : 70,
 			sortable : true,
 			align : 'center'
 		},{
 			display : 'Total R$',
-			name : 'total',
+			name : 'valorTotal',
 			width : 40,
 			sortable : true,
 			align : 'right'
 		}, {
 			display : 'Físico',
-			name : 'fisico',
+			name : 'reparteFisico',
 			width : 40,
 			sortable : true,
 			align : 'center'
@@ -83,7 +83,7 @@ $(function() {
 			align : 'center'
 		}, {
 			display : 'Previsto',
-			name : 'dataPrevisto',
+			name : 'dataLancamentoPrevista',
 			width : 60,
 			sortable : true,
 			align : 'center'
@@ -150,14 +150,14 @@ $(function() {
 	$("#datepickerDe_1").mask("99/99/9999");
 	
 	
-	$( "#novaDataRecolhimento" ).datepicker({
+	$( "#novaDataLancamento" ).datepicker({
 		showOn: "button",
 		dateFormat: 'dd/mm/yy',
 		buttonImage: "<c:url value='scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif'/>",
 		buttonImageOnly: true
 	});
 	
-	$("#novaDataRecolhimento").mask("99/99/9999");
+	$("#novaDataLancamento").mask("99/99/9999");
 	
 	
 });
@@ -181,7 +181,7 @@ function reprogramarSelecionados() {
 		},
 		beforeClose: function() {
 			
-			$("#novaDataRecolhimento").val("");
+			$("#novaDataLancamento").val("");
 			
 			clearMessageDialogTimeout();
 		}
@@ -244,8 +244,8 @@ function reprogramarSelecionados() {
 
 		    <p>
 			    <strong>Nova Data:</strong>
-			    <input name="novaDataRecolhimento" type="text"
-			    	   style="width:80px;" id="novaDataRecolhimento" />
+			    <input name="novaDataLancamento" type="text"
+			    	   style="width:80px;" id="novaDataLancamento" />
 		    </p>
 		</div>
 
