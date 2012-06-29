@@ -11,6 +11,9 @@ import javax.persistence.MapsId;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import br.com.abril.nds.util.TipoSecao;
+import br.com.abril.nds.util.export.fiscal.nota.NFEExport;
+
 /**
  * Grupo de Retenções de Tributos
  * @author Diego Fernandes
@@ -31,18 +34,21 @@ public class ValoresRetencoesTributos implements Serializable {
 	 * vRetPIS
 	 */
 	@Column(name="VL_RET_PIS", nullable=true, precision=15, scale=2)
+	@NFEExport(secao=TipoSecao.W23, posicao=0, tamanho=15)
 	private BigDecimal valorRetidoPIS;
 	
 	/**
 	 * vRetCOFINS
 	 */
 	@Column(name="VL_RET_COFINS", nullable=true, precision=15, scale=2)
+	@NFEExport(secao=TipoSecao.W23, posicao=1, tamanho=15)
 	private BigDecimal valorRetidoCOFINS;
 	
 	/**
 	 * vRetCSLL
 	 */
 	@Column(name="VL_RET_CSLL", nullable=true, precision=15, scale=2)
+	@NFEExport(secao=TipoSecao.W23, posicao=2, tamanho=15)
 	private BigDecimal valorRetidoCSLL;
 	
 	
@@ -50,23 +56,28 @@ public class ValoresRetencoesTributos implements Serializable {
 	 * vBCIRRF
 	 */
 	@Column(name="VL_BC_IRRF", nullable=true, precision=15, scale=2)
+	@NFEExport(secao=TipoSecao.W23, posicao=3, tamanho=15)
 	private BigDecimal valorBaseCalculoIRRF;
+	
 	/**
 	 * vIRRF
 	 */
 	@Column(name="VL_RET_IRRF", nullable=true, precision=15, scale=2)
+	@NFEExport(secao=TipoSecao.W23, posicao=4, tamanho=15)
 	private BigDecimal valorRetidoIRRF;
 	
 	/**
 	 * vBCRetPrev
 	 */
 	@Column(name="VL_BC_PREV", nullable=true, precision=15, scale=2)
+	@NFEExport(secao=TipoSecao.W23, posicao=5, tamanho=15)
 	private BigDecimal valorBaseCalculoPrevidencia;	
 	
 	/**
 	 * vRetPrev
 	 */
 	@Column(name="VL_RET_PREV", nullable=true, precision=15, scale=2)
+	@NFEExport(secao=TipoSecao.W23, posicao=6, tamanho=15)
 	private BigDecimal valorRetidoPrevidencia;
 	
 	@OneToOne(optional=false)

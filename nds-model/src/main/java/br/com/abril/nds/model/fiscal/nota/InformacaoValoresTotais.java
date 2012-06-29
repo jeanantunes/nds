@@ -9,6 +9,10 @@ import javax.persistence.JoinColumn;
 import javax.persistence.MapsId;
 import javax.persistence.OneToOne;
 
+import br.com.abril.nds.util.TipoSecao;
+import br.com.abril.nds.util.export.fiscal.nota.NFEExport;
+import br.com.abril.nds.util.export.fiscal.nota.NFEExports;
+
 @Embeddable
 public class InformacaoValoresTotais implements Serializable {
 
@@ -21,80 +25,91 @@ public class InformacaoValoresTotais implements Serializable {
 	 * vBC
 	 */
 	@Column(name="VL_BC_ICMS", nullable=false, precision=15, scale=2)
+	@NFEExport(secao=TipoSecao.W02, posicao=0, tamanho=15)
 	private BigDecimal valorBaseCalculoICMS;
 	
 	/**
 	 * vICMS
-
 	 */
 	@Column(name="VL_TOTAL_ICMS", nullable=false, precision=15, scale=2)
+	@NFEExport(secao=TipoSecao.W02, posicao=1, tamanho=15)
 	private BigDecimal valorICMS;
 	
 	/**
 	 * vBCST
-
 	 */
 	@Column(name="VL_BC_ICMS_ST", nullable=false, precision=15, scale=2)
+	@NFEExport(secao=TipoSecao.W02, posicao=2, tamanho=15)
 	private BigDecimal valorBaseCalculoICMSST;
 	
 	/**
 	 * vST
-
 	 */
 	@Column(name="VL_TOTAL_ICMS_ST", nullable=false, precision=15, scale=2)
+	@NFEExport(secao=TipoSecao.W02, posicao=3, tamanho =15)
 	private BigDecimal valorICMSST;
+
 	/**
 	 * vProd
-
 	 */
 	@Column(name="VL_TOTAL_PRODUTOS", nullable=false, precision=15, scale=2)
+	@NFEExport(secao=TipoSecao.W02, posicao=4, tamanho =15)
 	private BigDecimal valorProdutos;
 	
 	/**
 	 * vFrete
 	 */
 	@Column(name="VL_TOTAL_FRETE", nullable=false, precision=15, scale=2)
+	@NFEExport(secao=TipoSecao.W02, posicao=5, tamanho =15)
 	private BigDecimal valorFrete;
+	
 	/**
 	 * vSeg
 	 */
 	@Column(name="VL_TOTAL_SEGURO", nullable=false, precision=15, scale=2)
+	@NFEExport(secao=TipoSecao.W02, posicao=6, tamanho =15)
 	private BigDecimal valorSeguro;
 	
 	/**
 	 * vDesc
 	 */
 	@Column(name="VL_TOTAL_DESCONTO", nullable=false, precision=15, scale=2)
+	@NFEExport(secao=TipoSecao.W02, posicao=7, tamanho =15)
 	private BigDecimal valorDesconto;
 	
 	/**
 	 * vIPI
 	 */
 	@Column(name="VL_TOTAL_IPI", nullable=false, precision=15, scale=2)
+	@NFEExport(secao=TipoSecao.W02, posicao=9, tamanho =15)
 	private BigDecimal valorIPI;
 	
 	/**
 	 * vPIS
 	 */
 	@Column(name="VL_TOTAL_PIS", nullable=false, precision=15, scale=2)
+	@NFEExport(secao=TipoSecao.W02, posicao=10, tamanho =15)
 	private BigDecimal valorPIS;
 	
 	/**
 	 * vCOFINS
 	 */
 	@Column(name="VL_TOTAL_COFINS", nullable=false, precision=15, scale=2)
+	@NFEExport(secao=TipoSecao.W02, posicao=11, tamanho =15)
 	private BigDecimal valorCOFINS;
 	
 	/**
 	 * vOutro
 	 */
 	@Column(name="VL_TOTAL_OUTRO", nullable=false, precision=15, scale=2)
+	@NFEExport(secao=TipoSecao.W02, posicao=12, tamanho =15)
 	private BigDecimal valorOutro;
 	
 	/**
 	 * vNF
 	 */
 	@Column(name="VL_TOTAL_NF", nullable=false, precision=15, scale=2)
+	@NFEExport(secao=TipoSecao.W02, posicao=13, tamanho =15)
 	private BigDecimal valorNotaFiscal;
 	
 	/**

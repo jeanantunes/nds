@@ -10,6 +10,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.MapsId;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+
+import br.com.abril.nds.util.TipoSecao;
+import br.com.abril.nds.util.export.fiscal.nota.NFEExport;
 /**
  * SSQNtot<br>
  * Grupo de valores totais referentes ao Imposto sobre serviços de qualquer natureza.
@@ -32,29 +35,35 @@ public class ValoresTotaisISSQN implements Serializable {
 	 * vServ
 	 */
 	@Column(name="VL_TOTAL_SERVICOS", nullable=true, precision=15, scale=2)
+	@NFEExport(secao=TipoSecao.W17, posicao=0, tamanho=15)
 	private BigDecimal valorServicos;
 	
 	/**
 	 * vBC
 	 */
 	@Column(name="VL_TOTAL_BC_ISS", nullable=true, precision=15, scale=2)
+	@NFEExport(secao=TipoSecao.W17, posicao=1, tamanho=15)
 	private BigDecimal valorBaseCalculo;
 	
 	/**
 	 * vISS
 	 */
 	@Column(name="VL_TOTAL_ISS", nullable=true, precision=15, scale=2)
+	@NFEExport(secao=TipoSecao.W17, posicao=2, tamanho=15)
 	private BigDecimal valorISS;
+	
 	/**
 	 * vPIS
 	 */
 	@Column(name="VL_TOTAL_PIS", nullable=true, precision=15, scale=2)
+	@NFEExport(secao=TipoSecao.W17, posicao=3, tamanho=15)
 	private BigDecimal valorPIS;
 	
 	/**
 	 * vCOFINS
 	 */
 	@Column(name="VL_TOTAL_COFINS", nullable=true, precision=15, scale=2)
+	@NFEExport(secao=TipoSecao.W17, posicao=4, tamanho=15)
 	private BigDecimal valorCOFINS;
 	
 

@@ -11,6 +11,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -212,6 +213,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		List<NotaFiscal> notasFiscaisParaExportacao =
 				this.notaFiscalDAO.obterListaNotasFiscaisPor(StatusProcessamentoInterno.GERADA);
 		
+				
 		String dados = "";
 		
 		try {
@@ -261,7 +263,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		for(NotaFiscal notaFiscal : notasFiscaisParaExportacao) {
 			
 			nfeExporter.clear();
-			
+			Hibernate.initialize(notaFiscal);
 			nfeExporter.execute(notaFiscal);
 			
 			String s = nfeExporter.gerarArquivo();

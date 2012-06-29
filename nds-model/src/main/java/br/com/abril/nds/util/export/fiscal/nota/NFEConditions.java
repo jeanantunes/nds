@@ -51,7 +51,19 @@ public enum NFEConditions {
 	IPINT(new IPINTCondition()),
 	IPIT_ALIQ(new IPITAliqCondition()),
 	IPIT_UNID(new IPITUnidCondition()),
-	ISSQN(new ISSQNCondition());
+	ISSQN(new ISSQNCondition()),
+	COFINS_TRIB_ALIQ(null),
+	COFINS_TRIB_QTDE(null),
+	COFINS_NAO_TRIB(null),
+	COFINS_OUTROS(null),
+	COFINS_OUTROS_QUANTIDADE(null),
+	COFINS_OUTROS_ALIQ(null),
+	PIS_TRIB_ALIQ(null),
+	PIS_TRIB_QTDE(null),
+	PIS_NAO_TRIB(null),
+	PIS_OUTROS(null),
+	PIS_OUTROS_QUANTIDADE(null),
+	PIS_OUTROS_ALIQ(null);
 	
 	private Condition condition;
 
