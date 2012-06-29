@@ -71,14 +71,13 @@ function Balanceamento(pathTela, descInstancia) {
 			singleSelect: true,
 			preProcess: T.processaRetornoPesquisa,
 			onSuccess: T.onSuccessPesquisa,
-			onSubmit: T.confirmarPaginacao
+			onSubmit: function(elemento){return T.confirmarPaginacao(this);}
 		});
 		
 		$(".lancamentosProgramadosGrid").flexReload();
 	},
 
-
-	this.confirmarPaginacao = function() {
+	this.confirmarPaginacao = function(elemento) {
 		
 		var noSelect = $('[name=checkgroup]:checked').size() == 0;
 		
@@ -87,9 +86,31 @@ function Balanceamento(pathTela, descInstancia) {
 			return true;
 		}
 		
-		return confirm('As seleções de lançamentos não serão salvas,deseja continuar?');
+		$("#dialog-pagincao-confirmada").dialog({
+			resizable: false,
+			height:'auto',
+			width:600,
+			modal: true,
+			buttons: {
+				"Confirmar": function() {
+					
+					$(".lancamentosProgramadosGrid").flexOptions({ onSubmit: null });
+					
+					$(".lancamentosProgramadosGrid").flexReload();
+					
+					$(".lancamentosProgramadosGrid").flexOptions({ onSubmit: function(elemento){return T.confirmarPaginacao(this);} });
+					
+					$(this).dialog("close");
+				},
+				"Cancelar": function() {								
+					$(this).dialog("close");
+				}
+			}
+		});	
+		
+		return false;
 	},
-	
+		
 	this.processaRetornoPesquisa = function(data) {
 		
 		if(data.mensagens) {
