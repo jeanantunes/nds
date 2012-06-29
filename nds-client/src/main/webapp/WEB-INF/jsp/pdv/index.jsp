@@ -85,7 +85,53 @@ $("#btnSalvarPDV").keypress(function() {
     }
 
 	if (keynum == 13) {
-		PDV.salvarPDV();
+		
+		if ($("#ptoPrincipal").attr("checked")){
+			
+			data = "idCota=" + PDV.idCota + 
+			       "&" + "idPdv=" + $("#idPDV").val();
+			
+			$.postJSON(contextPath + "/cadastro/pdv/verificarPontoPrincipal", 
+					data, 
+					function(result){
+						
+						if (result){
+							
+							$("#dialog-confirmaPontoPrincipal").dialog({
+								resizable : false,
+								height : 200,
+								width : 360,
+								modal : true,
+								buttons : {
+									"Confirmar" : function() {
+										
+										$("#dialog-confirmaPontoPrincipal").dialog("close");
+										PDV.fecharModalCadastroPDV = true;
+										PDV.salvarPDV();
+									},
+									"Cancelar" : function() {
+										
+										$("#dialog-confirmaPontoPrincipal").dialog("close");
+										PDV.fecharModalCadastroPDV = true;
+									}
+
+								}
+							});
+						} else {
+							$("#dialog-confirmaPontoPrincipal").dialog("close");
+							PDV.fecharModalCadastroPDV = true;
+							PDV.salvarPDV();
+						}
+					},
+					null,
+					true,
+					"idModalPDV"
+			);
+		} else {
+			
+			PDV.fecharModalCadastroPDV = true;
+			PDV.salvarPDV();
+		}
 	}
 });
 
@@ -146,4 +192,6 @@ $("#btnSalvarPDV").keypress(function() {
 	
 </div>
 
-
+<div id="dialog-confirmaPontoPrincipal" title="Ponto Principal" style="display: none;">
+	<p>Já existe um ponto principal, deseja substitui-lo por este?</p>
+</div>

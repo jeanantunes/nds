@@ -861,4 +861,12 @@ public class PdvController {
 		usuario.setNome("Fake Usuario");
 		return usuario;
 	}
+	
+	@Post
+	public void verificarPontoPrincipal(Long idCota, Long idPdv){
+		
+		boolean existe = this.pdvService.existePDVPrincipal(idCota, idPdv);
+		
+		this.result.use(Results.json()).withoutRoot().from(existe).serialize();
+	}
 }

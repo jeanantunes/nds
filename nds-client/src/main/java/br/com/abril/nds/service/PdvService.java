@@ -77,5 +77,6 @@ public interface PdvService {
 	void validarPeriodos(List<PeriodoFuncionamentoDTO> periodos) ;
 
 	List<TelefoneAssociacaoDTO> buscarTelefonesPdv(Long idPdv, Long idCota);
-		
+	
+	boolean existePDVPrincipal(Long idCota, Long idPdv);		
 }
