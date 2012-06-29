@@ -18,7 +18,7 @@ $(function() {
 		colModel : [  {
 			display : 'Código',
 			name : 'codigoProduto',
-			width : 60,
+			width : 58,
 			sortable : true,
 			align : 'center'
 		}, {
@@ -84,14 +84,14 @@ $(function() {
 		}, {
 			display : 'Matriz/Distrib.',
 			name : 'novaData',
-			width : 105,
-			sortable : true,
+			width : 107,
+			sortable : false,
 			align : 'center'
 		},{
 			display : 'Reprogramar',
 			name : 'reprogramar',
 			width : 65,
-			sortable : true,
+			sortable : false,
 			align : 'center'
 		}],
 		sortname : "novaData",

@@ -102,7 +102,12 @@ function montarTextoMensagem(campoTexto, mensagens) {
 	campoTexto.html('');
 
 	$.each(mensagens, function(index, value) {
-		campoTexto.append(value + '</br>');
+		
+		if (campoTexto.html() != '') {
+			campoTexto.append('</br>');
+		}
+		
+		campoTexto.append(value);
 	});
 }
 
