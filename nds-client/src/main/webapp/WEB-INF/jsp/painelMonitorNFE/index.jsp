@@ -21,6 +21,7 @@ var PainelMonitorNFE = {
 			var numeroFinal = $("#numeroFinal").val();
 			var chaveAcesso = $("#chaveAcesso").val();
 			var situacaoNfe = $("#situacaoNfe").val();
+			var serieNfe	= $("#serieNfe").val();	
 			
 			var formData = [
 			        {name:'box', value: box },
@@ -32,7 +33,8 @@ var PainelMonitorNFE = {
 			        {name:'numeroInicial', value: numeroInicial },
 			        {name:'numeroFinal', value: numeroFinal },
 			        {name:'chaveAcesso', value: chaveAcesso },
-			        {name:'situacaoNfe', value: situacaoNfe }
+			        {name:'situacaoNfe', value: situacaoNfe },
+			        {name:'serieNfe',    value: serieNfe}
 			];
 			
 			
@@ -283,6 +285,12 @@ $(function() {
 	
 	var colunas = PainelMonitorNFE.obterColModel();
 	
+	$("#serieNfe").numeric();
+	
+	$("#numeroInicial").numeric();
+	
+	$("#numeroFinal").numeric();
+	
 	$("#nfeGrid").flexigrid({
 		colModel : colunas,
 		preProcess: PainelMonitorNFE.executarPreProcessamento,
@@ -360,7 +368,7 @@ $(function() {
 						id="dataFinal" style="width: 80px;" />
 					</td>
 
-					<td colspan="3">Dest./Remet.:</td>
+					<td colspan="3">Destinatário:</td>
 
 					<td width="135">
 						<table width="100%" border="0" cellspacing="0" cellpadding="0">
@@ -423,8 +431,8 @@ $(function() {
 						    </c:forEach>
 					    </select>
 					</td>
-					<td>&nbsp;</td>
-					<td>&nbsp;</td>
+					<td>Série</td>
+					<td><input type="text" id="serieNfe" style="width: 80px;" /></td>
 					<td colspan="3">&nbsp;</td>
 					<td>&nbsp;</td>
 					<td>

@@ -151,10 +151,16 @@ public class MonitorNFEServiceImpl implements MonitorNFEService {
 		String protocolo 	= retornoComunicacaoEletronica.getProtocolo().toString();
 		String versao		= ""; //TODO obter campo
 
+		    BigDecimal ISSQNTotal 				= BigDecimal.ZERO;
+		    BigDecimal ISSQNBase 				= BigDecimal.ZERO;
+		    BigDecimal ISSQNValor 				= BigDecimal.ZERO;
 		
-		BigDecimal ISSQNTotal 				= valoresTotaisISSQN.getValorServicos();
-		BigDecimal ISSQNBase 				= valoresTotaisISSQN.getValorBaseCalculo();
-		BigDecimal ISSQNValor 				= valoresTotaisISSQN.getValorISS();
+		if(valoresTotaisISSQN!=null) {
+			ISSQNTotal 				= valoresTotaisISSQN.getValorServicos();
+			ISSQNBase 				= valoresTotaisISSQN.getValorBaseCalculo();
+			ISSQNValor 				= valoresTotaisISSQN.getValorISS();
+		}
+		
 		String informacoesComplementares 	= informacaoAdicional.getInformacoesComplementares();
 		
 		String numeroFatura 				=  "";//TODO obter campo

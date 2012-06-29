@@ -24,6 +24,7 @@ import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.fiscal.StatusEmissaoNfe;
 import br.com.abril.nds.model.fiscal.TipoEmissaoNfe;
 import br.com.abril.nds.model.fiscal.TipoOperacao;
+import br.com.abril.nds.model.fiscal.nota.Status;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.service.MonitorNFEService;
 import br.com.abril.nds.util.CellModelKeyValue;
@@ -388,18 +389,22 @@ public class PainelMonitorNFEController {
 
 	
 	/**
-	 * Obtém a descrição a partir da chave do enum StatusEmissaoNfe
+	 * Obtém a descrição a partir da chave do enum Status
 	 * 
 	 * @param chave
 	 * 
 	 * @return String - descricao
 	 */
 	private String obterDescricaoStatusEmissaoNfe(String chave) {
+		
 		if(chave  == null) {
 			return "";
 		}
-		StatusEmissaoNfe statusEmissaoNfe = StatusEmissaoNfe.valueOf(chave);
-		return ((statusEmissaoNfe == null) ? "" : statusEmissaoNfe.getDescricao());
+		
+		Status status = Status.valueOf(chave);
+		
+		return ((status == null) ? "" : status.getDescricao());
+		
 	}
 
 	
@@ -515,6 +520,7 @@ public class PainelMonitorNFEController {
 			Long numeroFinal,
 			String chaveAcesso,
 			String situacaoNfe,
+			Integer serieNfe,
 			String sortorder, 
 			String sortname, 
 			int page, 
@@ -538,6 +544,9 @@ public class PainelMonitorNFEController {
 		filtroMonitorNfeDTO.setNumeroNotaFinal(numeroFinal);
 		
 		filtroMonitorNfeDTO.setSituacaoNfe(situacaoNfe);
+		
+		filtroMonitorNfeDTO.setSerie(serieNfe);
+		
 		filtroMonitorNfeDTO.setTipoNfe(tipoNfe);
 		filtroMonitorNfeDTO.setIndDocumentoCPF(TIPO_DOCUMENTO_CPF.equals(tipoDocumento));
 		
