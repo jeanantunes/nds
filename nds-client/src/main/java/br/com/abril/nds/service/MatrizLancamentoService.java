@@ -27,7 +27,7 @@ public interface MatrizLancamentoService {
 	 * 
 	 * @param matrizLancamento - matriz de balanceamento de lançamento
 	 */
-	void confirmarMatrizLancamento(TreeMap<Date, List<ProdutoLancamentoDTO>> matrizLancamento);
+	void confirmarMatrizLancamento(TreeMap<Date, List<ProdutoLancamentoDTO>> matrizLancamento, List<Date> datasConfirmadas);
 	
 	
 	SumarioLancamentosDTO sumarioBalanceamentoMatrizLancamentos(Date data, List<Long> idsFornecedores);
