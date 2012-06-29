@@ -143,8 +143,7 @@ public class NotaFiscalRepositoryImplTest  extends AbstractRepositoryImplTest {
 				chaveAcesso, 
 				retornoComunicacaoEletronica);
 		
-		String cnpjTransporte = "";
-		String cpfTransporte	= "";
+		String documentoTransporte = "";
 		String enderecoCompleto = null;
 		Integer modalidadeFrente = 1;
 		String municipio = "";
@@ -156,8 +155,7 @@ public class NotaFiscalRepositoryImplTest  extends AbstractRepositoryImplTest {
 		
 		InformacaoTransporte informacaoTransporte = 
 				Fixture.informacaoTransporte(
-						cnpjTransporte, 
-						cpfTransporte, 
+						documentoTransporte,  
 						enderecoCompleto, 
 						inscricaoEstadual, 
 						modalidadeFrente, 
@@ -270,11 +268,11 @@ public class NotaFiscalRepositoryImplTest  extends AbstractRepositoryImplTest {
 	
 	@Test
 	public void teste() {
-		
-		FiltroMonitorNfeDTO filtro = obterFiltroMonitorNfeDTO();
-		filtro.setBox(box1.getCodigo());
-		
-		//List<NfeDTO> lista = viewNotaFiscalRepository.pesquisarNotaFiscal(filtro);
+//		
+//		FiltroMonitorNfeDTO filtro = obterFiltroMonitorNfeDTO();
+//		filtro.setBox(box1.getCodigo());
+//		
+//		//List<NfeDTO> lista = viewNotaFiscalRepository.pesquisarNotaFiscal(filtro);
 		
 		
 	}

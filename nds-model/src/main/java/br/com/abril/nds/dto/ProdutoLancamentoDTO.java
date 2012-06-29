@@ -28,13 +28,9 @@ public class ProdutoLancamentoDTO implements Serializable {
 
 	private BigDecimal precoVenda;
 	
-	private BigDecimal precoComDesconto;
-	
 	private StatusLancamento statusLancamento;
 
 	private BigDecimal peso;
-
-	private BigDecimal desconto = BigDecimal.ZERO;
 
 	private String codigoProduto;
 
@@ -45,8 +41,6 @@ public class ProdutoLancamentoDTO implements Serializable {
 	private BigDecimal reparteFisico;
 	
 	private Long idLancamento;
-
-	private String fornecedor;
 
 	private TipoLancamentoParcial parcial;
 	
@@ -69,16 +63,6 @@ public class ProdutoLancamentoDTO implements Serializable {
 	private PeriodicidadeProduto periodicidadeProduto;
 	
 	private Integer ordemPeriodicidadeProduto;
-
-	private Long codigoEditor;
-
-	private String nomeEditor;
-	
-	private String chamadaCapa;
-
-    private boolean possuiBrinde;
-
-  	private Integer pacotePadrao;
   	
   	private boolean permiteReprogramacao;
 	
@@ -146,20 +130,6 @@ public class ProdutoLancamentoDTO implements Serializable {
 	}
 
 	/**
-	 * @return the precoComDesconto
-	 */
-	public BigDecimal getPrecoComDesconto() {
-		return precoComDesconto;
-	}
-
-	/**
-	 * @param precoComDesconto the precoComDesconto to set
-	 */
-	public void setPrecoComDesconto(BigDecimal precoComDesconto) {
-		this.precoComDesconto = precoComDesconto;
-	}
-
-	/**
 	 * @return the statusLancamento
 	 */
 	public StatusLancamento getStatusLancamento() {
@@ -186,20 +156,6 @@ public class ProdutoLancamentoDTO implements Serializable {
 	 */
 	public void setPeso(BigDecimal peso) {
 		this.peso = peso;
-	}
-
-	/**
-	 * @return the desconto
-	 */
-	public BigDecimal getDesconto() {
-		return desconto;
-	}
-
-	/**
-	 * @param desconto the desconto to set
-	 */
-	public void setDesconto(BigDecimal desconto) {
-		this.desconto = desconto;
 	}
 
 	/**
@@ -272,20 +228,6 @@ public class ProdutoLancamentoDTO implements Serializable {
 		this.idLancamento = idLancamento;
 	}
 	
-	/**
-	 * @return the fornecedor
-	 */
-	public String getFornecedor() {
-		return fornecedor;
-	}
-
-	/**
-	 * @param fornecedor the fornecedor to set
-	 */
-	public void setFornecedor(String fornecedor) {
-		this.fornecedor = fornecedor;
-	}
-
 	/**
 	 * @return the parcial
 	 */
@@ -442,76 +384,6 @@ public class ProdutoLancamentoDTO implements Serializable {
 	 */
 	public void setOrdemPeriodicidadeProduto(Integer ordemPeriodicidadeProduto) {
 		this.ordemPeriodicidadeProduto = ordemPeriodicidadeProduto;
-	}
-
-	/**
-	 * @return the codigoEditor
-	 */
-	public Long getCodigoEditor() {
-		return codigoEditor;
-	}
-
-	/**
-	 * @param codigoEditor the codigoEditor to set
-	 */
-	public void setCodigoEditor(Long codigoEditor) {
-		this.codigoEditor = codigoEditor;
-	}
-
-	/**
-	 * @return the nomeEditor
-	 */
-	public String getNomeEditor() {
-		return nomeEditor;
-	}
-
-	/**
-	 * @param nomeEditor the nomeEditor to set
-	 */
-	public void setNomeEditor(String nomeEditor) {
-		this.nomeEditor = nomeEditor;
-	}
-
-	/**
-	 * @return the chamadaCapa
-	 */
-	public String getChamadaCapa() {
-		return chamadaCapa;
-	}
-
-	/**
-	 * @param chamadaCapa the chamadaCapa to set
-	 */
-	public void setChamadaCapa(String chamadaCapa) {
-		this.chamadaCapa = chamadaCapa;
-	}
-	
-	/**
-	 * @return the possuiBrinde
-	 */
-	public boolean isPossuiBrinde() {
-		return possuiBrinde;
-	}
-
-	/**
-	 * @param possuiBrinde the possuiBrinde to set
-	 */
-	public void setPossuiBrinde(boolean possuiBrinde) {
-		this.possuiBrinde = possuiBrinde;
-	}
-
-	/**
-	 * @return the pacotePadrao
-	 */
-	public Integer getPacotePadrao() {
-		return pacotePadrao;
-	}
-
-	/**
-	 * @param pacotePadrao the pacotePadrao to set
-	 */
-	public void setPacotePadrao(Integer pacotePadrao) {
-		this.pacotePadrao = pacotePadrao;
 	}
 
 	/**
