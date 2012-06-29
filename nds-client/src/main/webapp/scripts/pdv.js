@@ -291,7 +291,7 @@ var PDV = {
 		
 				
 		getDadosCaracteristica: function (){
-			debugger;
+			
 			var dados =	              
 	              "pdvDTO.caracteristicaDTO.balcaoCentral="  + this.isChecked("#balcaoCentral")+"&"+
 	              "pdvDTO.caracteristicaDTO.temComputador="  + this.isChecked("#temComputador")+"&"+
@@ -599,8 +599,53 @@ var PDV = {
 				modal: true,
 				buttons: {
 					"Confirmar": function() {
-						PDV.fecharModalCadastroPDV = true;
-						PDV.salvarPDV();
+						
+						if ($("#ptoPrincipal").attr("checked")){
+							
+							data = "idCota=" + PDV.idCota + 
+							       "&" + "idPdv=" + $("#idPDV").val();
+							
+							$.postJSON(contextPath + "/cadastro/pdv/verificarPontoPrincipal", 
+									data, 
+									function(result){
+										
+										if (result){
+											
+											$("#dialog-confirmaPontoPrincipal").dialog({
+												resizable : false,
+												height : 200,
+												width : 360,
+												modal : true,
+												buttons : {
+													"Confirmar" : function() {
+														
+														$("#dialog-confirmaPontoPrincipal").dialog("close");
+														PDV.fecharModalCadastroPDV = true;
+														PDV.salvarPDV();
+													},
+													"Cancelar" : function() {
+														
+														$("#dialog-confirmaPontoPrincipal").dialog("close");
+														PDV.fecharModalCadastroPDV = true;
+													}
+
+												}
+											});
+										} else {
+											$("#dialog-confirmaPontoPrincipal").dialog("close");
+											PDV.fecharModalCadastroPDV = true;
+											PDV.salvarPDV();
+										}
+									},
+									null,
+									true,
+									"idModalPDV"
+							);
+						} else {
+							
+							PDV.fecharModalCadastroPDV = true;
+							PDV.salvarPDV();
+						}
 					},
 					"Cancelar": function() {
 						PDV.fecharModalCadastroPDV = false;
@@ -853,5 +898,4 @@ var PDV = {
 				$("#fimHorario").attr('disabled', null);
 			}
 		}
-		
 };
