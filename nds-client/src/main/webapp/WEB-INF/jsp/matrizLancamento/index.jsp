@@ -1,6 +1,12 @@
 
 <head>
 
+<style>
+.linkDisabled {
+	cursor: default;
+	opacity: 0.4;
+}
+</style>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/balanceamento.js"></script>
 
 <script type="text/javascript">
@@ -358,8 +364,10 @@ function reprogramarSelecionados() {
 		      <div class="linha_separa_fields">&nbsp;</div>      
 		      <fieldset class="classFieldset" id="resumoPeriodo"; style="display:none;" >
 		      	<legend>Resumo do Período</legend>
+		        <div style="width: 950px; overflow-x: auto;">
 		        <table width="100%" border="0" cellspacing="2" cellpadding="2" id="tableResumoPeriodo">
 		        </table>
+		        </div>
 		      </fieldset>
 		    </div>
 		</div>

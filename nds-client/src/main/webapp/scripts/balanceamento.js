@@ -46,7 +46,6 @@ function Balanceamento(pathTela, descInstancia) {
 			null,
 			function(result){
 				
-				debugger;
 				if (result == "true") 
 					T.retornoVerificarBalanceamentosAlterados(funcao);
 				else
@@ -181,7 +180,7 @@ function Balanceamento(pathTela, descInstancia) {
 		       '<span class="bt_atualizarIco" title="Atualizar Datas" ' +
 		       (isBloqueado? ' style="opacity:0.5;" ' : '') + 
 		       '>' +
-		       '<a href="javascript:;" ' + 
+		       '<a href="javascript:;" name="reprogramar" ' + 
 		       (isBloqueado? '' : ' onclick="B.reprogramarLancamentoUnico(' + index + ');') +
 		       '">&nbsp;</a></span>';
 		
@@ -244,7 +243,7 @@ function Balanceamento(pathTela, descInstancia) {
 	},
 	
 	this.gerarCheckReprogramar = function(id,isBloqueado,index) { 
-		return '<input type="checkbox" value="'+id+'" name="checkgroup" ' +
+		return '<input type="checkbox" value="'+id+'" name="checkgroup" bloqueado="'+isBloqueado+'" ' +
 			   (isBloqueado? ' disabled="disabled" ' : ' onclick="B.selecionarCheck(this,\'' + index + '\');" ') + 
 			   ' />';	
 	},
@@ -252,6 +251,24 @@ function Balanceamento(pathTela, descInstancia) {
 	this.selecionarCheck = function(check, index) {
 		
 		T.lancamentos[index].selecionado = check.checked;
+				
+		$.each($("input[name='checkgroup'][bloqueado!='true']"),function(index,row) {
+			
+			var checado = row.checked;
+			
+			var input = $(row.parentElement.parentElement.parentElement).find("input[type='text']");
+			var a = $(row.parentElement.parentElement.parentElement).find("a[name='reprogramar']");
+			
+			if(checado) {				
+				input.disable();
+				a.attr('onclick',  'return;' + a.attr('onclick') );
+				a.parent().addClass("linkDisabled");
+			} else {
+				input.enable();
+				a.attr('onclick', a.attr('onclick').replace('return;' , '' ) );
+				a.parent().removeClass("linkDisabled");
+			}
+		});
 		
 		$("#selTodos").uncheck();
 	},
