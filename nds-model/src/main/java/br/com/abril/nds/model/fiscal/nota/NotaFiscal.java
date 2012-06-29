@@ -33,7 +33,7 @@ public class NotaFiscal implements Serializable {
 	 */
 	@Id
 	@GeneratedValue(generator = "NOTA_FISCAL_SEQ")
-	@NFEExport(secao = TipoSecao.B, posicao = 2, mascara = "000000000")
+	@NFEExport(secao = TipoSecao.B, posicao = 2)
 	private Long id;
 	
 	/**

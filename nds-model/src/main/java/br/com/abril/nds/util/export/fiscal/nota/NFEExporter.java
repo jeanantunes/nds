@@ -138,7 +138,7 @@ public class NFEExporter {
 			NFEExport nfeExport = metodo.getAnnotation(NFEExport.class);
 			NFEExports nfeExports = metodo.getAnnotation(NFEExports.class);
 			
-			if (nfeWhens != null && nfeExport!= null && nfeExports != null ) {
+			if (nfeWhens != null || nfeExport!= null || nfeExports != null ) {
 				if (metodo.getParameterTypes().length == 0 && !metodo.getReturnType().equals(Void.TYPE)) {
 					Object valor = metodo.invoke(notaFiscal, new Object[] {});
 					this.processarAnnotations(metodo, listaParents, notaFiscal, valor);

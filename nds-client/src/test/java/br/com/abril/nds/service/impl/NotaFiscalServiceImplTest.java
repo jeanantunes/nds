@@ -61,7 +61,7 @@ public class NotaFiscalServiceImplTest extends AbstractRepositoryImplTest {
 		for ( int i = 0; i < 5 ; i++ ) {
 			NotaFiscal notaTesteArquivo = 
 					this.gerarNFE("33111102737654003496550550000483081131621856", 
-					"37712543534", StatusProcessamentoInterno.GERADA, Status.SERVICO_EM_OPERACAO);
+					"87416762464", StatusProcessamentoInterno.GERADA, Status.SERVICO_EM_OPERACAO);
 			notaTesteArquivo.setProdutosServicos(this.gerarListaProdutoServico(notaTesteArquivo));
 			save(notaTesteArquivo);
 			
@@ -129,8 +129,8 @@ public class NotaFiscalServiceImplTest extends AbstractRepositoryImplTest {
 		save(telefone);
 		
 		Veiculo veiculo = new Veiculo();
-		veiculo.setPlaca("1234");
-		veiculo.setRegistroTransCarga("RT");
+		veiculo.setPlaca("AAA1234");
+		veiculo.setRegistroTransCarga("RNTC");
 		veiculo.setUf("SP");
 		
 		Identificacao identificacao = Fixture.identificacao(
@@ -149,7 +149,7 @@ public class NotaFiscalServiceImplTest extends AbstractRepositoryImplTest {
 		InformacaoAdicional informacaoAdicional = Fixture.informacaoAdicional("informacoesComplementares");
 		
 		InformacaoTransporte informacaoTransporte = Fixture.informacaoTransporte(
-				"18130646000159", "", null, "IEstd", 132, "municipio", "nome", null, "SP", veiculo);
+				"88416646000103", "enderecoCompleto", "IEstd", 132, "municipio", "nome", null, "SP", veiculo);
 	
 		ValoresRetencoesTributos valoreRetencoesTributos = new ValoresRetencoesTributos();
 		

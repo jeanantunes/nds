@@ -3065,8 +3065,7 @@ public class Fixture {
 	
 
 	public static InformacaoTransporte informacaoTransporte(
-			String cnpj, 
-			String cpf, 
+			String documento,
 			Endereco endereco,
 			String inscricaoEstadual,
 			Integer modalidadeFrente,
@@ -3078,8 +3077,7 @@ public class Fixture {
 		
 		InformacaoTransporte informacaoTransporte = new InformacaoTransporte();
 		
-		informacaoTransporte.setCnpj(cnpj);
-		informacaoTransporte.setCpf(cpf);
+		informacaoTransporte.setDocumento(documento);
 		informacaoTransporte.setInscricaoEstadual(inscricaoEstadual);
 		informacaoTransporte.setModalidadeFrente(modalidadeFrente);
 		informacaoTransporte.setMunicipio(municipio);
