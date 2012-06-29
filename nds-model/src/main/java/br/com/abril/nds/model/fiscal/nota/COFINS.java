@@ -16,7 +16,7 @@ import javax.persistence.Embeddable;
     @AttributeOverride(name="valorAliquota", column=@Column(name="VLR_ALIQ_COFINS", scale = 4, precision = 15)),
     @AttributeOverride(name="valor", column=@Column(name="VLR_COFINS", scale = 2, precision = 15))
 })
-public class COFINS extends ContribuicaoSocial implements Serializable {
+public class COFINS extends COFINSBase implements Serializable {
 
 	/**
 	 * Serial Version UID
