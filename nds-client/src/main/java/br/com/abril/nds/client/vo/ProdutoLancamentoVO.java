@@ -1,4 +1,4 @@
-package br.com.abril.nds.vo;
+package br.com.abril.nds.client.vo;
 
 import java.io.Serializable;
 
@@ -6,7 +6,7 @@ import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Exportable;
 
 @Exportable
-public class LancamentoVO  implements Serializable {
+public class ProdutoLancamentoVO  implements Serializable {
 
 	private static final long serialVersionUID = 2186060384671120600L;
 
@@ -20,8 +20,6 @@ public class LancamentoVO  implements Serializable {
 	private Long numEdicao;
 	@Export(label="Preço Capa R$")
 	private String preco;
-	@Export(label="Pcte Padrão")
-	private int pacotePadrao;
 	@Export(label="Reparte")
 	private String reparte;
 	@Export(label="Lançamento")
@@ -29,11 +27,8 @@ public class LancamentoVO  implements Serializable {
 	@Export(label="Recolhimento")
 	private String dataRecolhimento;
 	private Long idFornecedor;
-	@Export(label="Fornecedor")
-	private String nomeFornecedor;
 	@Export(label="Previsto")
 	private String dataPrevisto;
-	@Export(label="Matriz/Distrib")
 	private String novaData;
 	@Export(label="TotalR$")
 	private String total;
@@ -91,14 +86,6 @@ public class LancamentoVO  implements Serializable {
 		this.preco = preco;
 	}
 	
-	public int getPacotePadrao() {
-		return pacotePadrao;
-	}
-	
-	public void setPacotePadrao(int pacotePadrao) {
-		this.pacotePadrao = pacotePadrao;
-	}
-	
 	public String getReparte() {
 		return reparte;
 	}
@@ -129,14 +116,6 @@ public class LancamentoVO  implements Serializable {
 	
 	public void setIdFornecedor(Long idFornecedor) {
 		this.idFornecedor = idFornecedor;
-	}
-	
-	public String getNomeFornecedor() {
-		return nomeFornecedor;
-	}
-	
-	public void setNomeFornecedor(String nomeFornecedor) {
-		this.nomeFornecedor = nomeFornecedor;
 	}
 	
 	public String getDataPrevisto() {
@@ -211,7 +190,7 @@ public class LancamentoVO  implements Serializable {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		LancamentoVO other = (LancamentoVO) obj;
+		ProdutoLancamentoVO other = (ProdutoLancamentoVO) obj;
 		if (id == null) {
 			if (other.id != null)
 				return false;

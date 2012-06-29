@@ -20,6 +20,7 @@ import org.springframework.util.SerializationUtils;
 
 import br.com.abril.nds.client.util.PaginacaoUtil;
 import br.com.abril.nds.client.vo.ConfirmacaoVO;
+import br.com.abril.nds.client.vo.ProdutoLancamentoVO;
 import br.com.abril.nds.client.vo.ResultadoResumoBalanceamentoVO;
 import br.com.abril.nds.client.vo.ResumoPeriodoBalanceamentoVO;
 import br.com.abril.nds.client.vo.ValidacaoVO;
@@ -49,7 +50,6 @@ import br.com.abril.nds.util.export.Exportable;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
 import br.com.abril.nds.util.export.NDSFileHeader;
-import br.com.abril.nds.vo.LancamentoVO;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
@@ -213,7 +213,7 @@ public class MatrizLancamentoController {
 	}
 	
 	@Post
-	public void reprogramarLancamentosSelecionados(List<LancamentoVO> produtosLancamento,
+	public void reprogramarLancamentosSelecionados(List<ProdutoLancamentoVO> produtosLancamento,
 												   String novaDataFormatada) {
 		
 		this.validarDadosReprogramar(novaDataFormatada);
@@ -232,7 +232,7 @@ public class MatrizLancamentoController {
 	}
 	
 	@Post
-	public void reprogramarLancamentoUnico(LancamentoVO produtoLancamento) {
+	public void reprogramarLancamentoUnico(ProdutoLancamentoVO produtoLancamento) {
 		
 		String novaDataFormatada = produtoLancamento.getNovaData();
 		
@@ -242,7 +242,7 @@ public class MatrizLancamentoController {
 		
 		Date novaData = DateUtil.parseDataPTBR(novaDataFormatada);
 		
-		List<LancamentoVO> produtosLancamento = new ArrayList<LancamentoVO>();
+		List<ProdutoLancamentoVO> produtosLancamento = new ArrayList<ProdutoLancamentoVO>();
 		
 		if (produtoLancamento != null){
 			
@@ -284,7 +284,7 @@ public class MatrizLancamentoController {
 	 * @param produtosLancamento - lista de produtos de lançamento
 	 * @param novaData - nova data de recolhimento
 	 */
-	private void validarDataReprogramacao(List<LancamentoVO> produtosLancamento, Date novaData) {
+	private void validarDataReprogramacao(List<ProdutoLancamentoVO> produtosLancamento, Date novaData) {
 		
 		BalanceamentoLancamentoDTO balanceamentoLancamento =
 			(BalanceamentoLancamentoDTO) this.session.getAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_LANCAMENTO);
@@ -328,7 +328,7 @@ public class MatrizLancamentoController {
 		
 		String produtos = "";
 		
-		for (LancamentoVO produtoLancamento : produtosLancamento) {
+		for (ProdutoLancamentoVO produtoLancamento : produtosLancamento) {
 		
 			String dataRecolhimentoPrevistaFormatada = produtoLancamento.getDataRecolhimento();
 			
@@ -380,7 +380,7 @@ public class MatrizLancamentoController {
 	 * 
 	 * @param produtosLancamento - lista de produtos de lançamento
 	 */
-	private void validarListaParaReprogramacao(List<LancamentoVO> produtosLancamento) {
+	private void validarListaParaReprogramacao(List<ProdutoLancamentoVO> produtosLancamento) {
 		
 		if (produtosLancamento == null || produtosLancamento.isEmpty()) {
 			
@@ -395,7 +395,7 @@ public class MatrizLancamentoController {
 	 * @param produtosLancamento - lista de produtos a serem alterados
 	 * @param novaData - nova data de lançamento
 	 */
-	private void atualizarMapaLancamento(List<LancamentoVO> produtosLancamento,
+	private void atualizarMapaLancamento(List<ProdutoLancamentoVO> produtosLancamento,
 										 Date novaData) {
 		
 		BalanceamentoLancamentoDTO balanceamentoLancamentoSessao =
@@ -460,7 +460,7 @@ public class MatrizLancamentoController {
 	 * @param listaProdutoLancamentoAdicionar - lista de produtos que serão adicionados
 	 * @param listaProdutoLancamentoRemover - lista de produtos que serão removidos
 	 */
-	private void montarListasParaAlteracaoMapa(List<LancamentoVO> produtosLancamento,
+	private void montarListasParaAlteracaoMapa(List<ProdutoLancamentoVO> produtosLancamento,
 											   Map<Date, List<ProdutoLancamentoDTO>> matrizLancamento,   									 
 											   List<ProdutoLancamentoDTO> listaProdutoLancamentoAdicionar,
 											   List<ProdutoLancamentoDTO> listaProdutoLancamentoRemover) {
@@ -473,7 +473,7 @@ public class MatrizLancamentoController {
 			listaProdutoLancamentoSessao.addAll(entry.getValue());
 		}
 		
-		for (LancamentoVO produtoLancamento : produtosLancamento) {
+		for (ProdutoLancamentoVO produtoLancamento : produtosLancamento) {
 			
 			for (ProdutoLancamentoDTO produtoLancamentoDTO : listaProdutoLancamentoSessao) {
 				
@@ -560,23 +560,23 @@ public class MatrizLancamentoController {
 		}
 	}
 	
-	private List<LancamentoVO> processarBalanceamento(List<ProdutoLancamentoDTO> listaProdutoLancamento,
-													  FiltroLancamentoDTO filtro) {
+	private void processarBalanceamento(List<ProdutoLancamentoDTO> listaProdutoLancamento,
+										FiltroLancamentoDTO filtro) {
 
 		PaginacaoVO paginacao = filtro.getPaginacao();
 		
 		listaProdutoLancamento =
 			PaginacaoUtil.paginarEOrdenarEmMemoria(listaProdutoLancamento, paginacao, paginacao.getSortColumn());
 		
-		List<LancamentoVO> listaProdutoBalanceamentoVO =
-				new LinkedList<LancamentoVO>();
+		List<ProdutoLancamentoVO> listaProdutoBalanceamentoVO =
+				new LinkedList<ProdutoLancamentoVO>();
 		
 		Double valorTotal = getValorTotal(listaProdutoLancamento);
 		
 		listaProdutoBalanceamentoVO = getProdutosLancamentoVO(listaProdutoLancamento);
 						
-		TableModel<CellModelKeyValue<LancamentoVO>> tm = new TableModel<CellModelKeyValue<LancamentoVO>>();
-		List<CellModelKeyValue<LancamentoVO>> cells = CellModelKeyValue
+		TableModel<CellModelKeyValue<ProdutoLancamentoVO>> tm = new TableModel<CellModelKeyValue<ProdutoLancamentoVO>>();
+		List<CellModelKeyValue<ProdutoLancamentoVO>> cells = CellModelKeyValue
 				.toCellModelKeyValue(listaProdutoBalanceamentoVO);
 		
 		tm.setRows(cells);
@@ -584,9 +584,8 @@ public class MatrizLancamentoController {
 		tm.setTotal(filtro.getTotalRegistrosEncontrados());
 		
 		Object[] resultado = {tm, CurrencyUtil.formatarValor(valorTotal)};
-		result.use(Results.json()).withoutRoot().from(resultado).serialize();
 		
-		return listaProdutoBalanceamentoVO;
+		result.use(Results.json()).withoutRoot().from(resultado).serialize();
 	}
 	
 	private Double getValorTotal(List<ProdutoLancamentoDTO> listaProdutoLancamento) {
@@ -601,9 +600,9 @@ public class MatrizLancamentoController {
 		return valorTotal;
 	}
 
-	private List<LancamentoVO> getProdutosLancamentoVO(List<ProdutoLancamentoDTO> listaProdutoLancamento) {
+	private List<ProdutoLancamentoVO> getProdutosLancamentoVO(List<ProdutoLancamentoDTO> listaProdutoLancamento) {
 
-		List<LancamentoVO> listaProdutoBalanceamentoVO = new LinkedList<LancamentoVO>();
+		List<ProdutoLancamentoVO> listaProdutoBalanceamentoVO = new LinkedList<ProdutoLancamentoVO>();
 		
 		for (ProdutoLancamentoDTO produtoLancamentoDTO : listaProdutoLancamento) {
 
@@ -613,11 +612,11 @@ public class MatrizLancamentoController {
 		return listaProdutoBalanceamentoVO;
 	}
 
-	private LancamentoVO getVoProdutoBalanceamento(
+	private ProdutoLancamentoVO getVoProdutoBalanceamento(
 			ProdutoLancamentoDTO produtoLancamentoDTO) {
 
 		
-		LancamentoVO produtoBalanceamentoVO = new LancamentoVO();
+		ProdutoLancamentoVO produtoBalanceamentoVO = new ProdutoLancamentoVO();
 		
 		produtoBalanceamentoVO.setCodigoProduto(produtoLancamentoDTO.getCodigoProduto());
 		
@@ -735,13 +734,13 @@ public class MatrizLancamentoController {
 			
 			Double valorTotal = getValorTotal(listaProdutoBalanceamento);
 			
-			List<LancamentoVO> listaProdutoBalanceamentoVO =
+			List<ProdutoLancamentoVO> listaProdutoBalanceamentoVO =
 				getProdutosLancamentoVO(listaProdutoBalanceamento);
 			
 			RodapeDTO rodape = new RodapeDTO(CurrencyUtil.formatarValor(valorTotal));
 			
 			FileExporter.to("matriz_balanceamento", fileType).inHTTPResponse(this.getNDSFileHeader(), filtro, rodape, 
-					listaProdutoBalanceamentoVO, LancamentoVO.class, this.httpResponse);
+					listaProdutoBalanceamentoVO, ProdutoLancamentoVO.class, this.httpResponse);
 		}
 		
 		result.nothing();
