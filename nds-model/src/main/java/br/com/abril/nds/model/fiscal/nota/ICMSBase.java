@@ -8,6 +8,12 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.MappedSuperclass;
 
+import br.com.abril.nds.util.TipoSecao;
+import br.com.abril.nds.util.export.fiscal.nota.NFEConditions;
+import br.com.abril.nds.util.export.fiscal.nota.NFEExport;
+import br.com.abril.nds.util.export.fiscal.nota.NFEWhen;
+import br.com.abril.nds.util.export.fiscal.nota.NFEWhens;
+
 
 @MappedSuperclass
 public abstract class ICMSBase extends ImpostoProduto implements Serializable {
@@ -22,6 +28,16 @@ public abstract class ICMSBase extends ImpostoProduto implements Serializable {
 	 * pRedBC
 	 */
 	@Column(name="PERCENTUAL_REDUCAO",precision=5, scale=2, nullable=true)
+	@NFEWhens(value = {
+			@NFEWhen(condition = NFEConditions.ICMS20, export = @NFEExport(secao = TipoSecao.N04, posicao = 3)),
+			@NFEWhen(condition = NFEConditions.ICMS51, export = @NFEExport(secao = TipoSecao.N07, posicao = 3)),
+			@NFEWhen(condition = NFEConditions.ICMS70, export = @NFEExport(secao = TipoSecao.N09, posicao = 3)),
+			@NFEWhen(condition = NFEConditions.ICMS90, export = @NFEExport(secao = TipoSecao.N10, posicao = 3)),
+			@NFEWhen(condition = NFEConditions.ICMSST10, export = @NFEExport(secao = TipoSecao.N03, posicao = 8)),
+			@NFEWhen(condition = NFEConditions.ICMSST30, export = @NFEExport(secao = TipoSecao.N05, posicao = 4)),
+			@NFEWhen(condition = NFEConditions.ICMSST70, export = @NFEExport(secao = TipoSecao.N09, posicao = 9)),
+			@NFEWhen(condition = NFEConditions.ICMSST90, export = @NFEExport(secao = TipoSecao.N10, posicao = 9))
+	})
 	protected BigDecimal percentualReducao;
 	
 	
@@ -30,6 +46,17 @@ public abstract class ICMSBase extends ImpostoProduto implements Serializable {
 	 */
 	@Enumerated(EnumType.ORDINAL)
 	@Column(name = "ORIGEM", length = 1, nullable = false)
+	@NFEWhens(value = {
+			@NFEWhen(condition = NFEConditions.ICMS00, export = @NFEExport(secao = TipoSecao.N02, posicao = 0, tamanho = 1)),
+			@NFEWhen(condition = NFEConditions.ICMS10, export = @NFEExport(secao = TipoSecao.N03, posicao = 0, tamanho = 1)),
+			@NFEWhen(condition = NFEConditions.ICMS20, export = @NFEExport(secao = TipoSecao.N04, posicao = 0, tamanho = 1)),
+			@NFEWhen(condition = NFEConditions.ICMS30, export = @NFEExport(secao = TipoSecao.N05, posicao = 0, tamanho = 1)),
+			@NFEWhen(condition = NFEConditions.ICMS40, export = @NFEExport(secao = TipoSecao.N06, posicao = 0, tamanho = 1)),
+			@NFEWhen(condition = NFEConditions.ICMS51, export = @NFEExport(secao = TipoSecao.N07, posicao = 0, tamanho = 1)),
+			@NFEWhen(condition = NFEConditions.ICMS60, export = @NFEExport(secao = TipoSecao.N08, posicao = 0, tamanho = 1)),
+			@NFEWhen(condition = NFEConditions.ICMS70, export = @NFEExport(secao = TipoSecao.N09, posicao = 0, tamanho = 1)),
+			@NFEWhen(condition = NFEConditions.ICMS90, export = @NFEExport(secao = TipoSecao.N10, posicao = 0, tamanho = 1))
+	})
 	protected Origem origem;
 	
 	/**
@@ -37,6 +64,18 @@ public abstract class ICMSBase extends ImpostoProduto implements Serializable {
 	 */
 	@Enumerated(EnumType.ORDINAL)
 	@Column(name = "MODELIDADE", length = 1, nullable = true)
+	@NFEWhens(value = {
+			@NFEWhen(condition = NFEConditions.ICMS00, export = @NFEExport(secao = TipoSecao.N02, posicao = 2, tamanho = 1)),
+			@NFEWhen(condition = NFEConditions.ICMS10, export = @NFEExport(secao = TipoSecao.N03, posicao = 2, tamanho = 1)),
+			@NFEWhen(condition = NFEConditions.ICMS20, export = @NFEExport(secao = TipoSecao.N04, posicao = 2, tamanho = 1)),
+			@NFEWhen(condition = NFEConditions.ICMS51, export = @NFEExport(secao = TipoSecao.N07, posicao = 2, tamanho = 1)),
+			@NFEWhen(condition = NFEConditions.ICMS70, export = @NFEExport(secao = TipoSecao.N09, posicao = 2, tamanho = 1)),
+			@NFEWhen(condition = NFEConditions.ICMS90, export = @NFEExport(secao = TipoSecao.N10, posicao = 2, tamanho = 1)),
+			@NFEWhen(condition = NFEConditions.ICMSST10, export = @NFEExport(secao = TipoSecao.N03, posicao = 6, tamanho = 1)),
+			@NFEWhen(condition = NFEConditions.ICMSST30, export = @NFEExport(secao = TipoSecao.N05, posicao = 2, tamanho = 1)),
+			@NFEWhen(condition = NFEConditions.ICMSST70, export = @NFEExport(secao = TipoSecao.N09, posicao = 7, tamanho = 1)),
+			@NFEWhen(condition = NFEConditions.ICMSST90, export = @NFEExport(secao = TipoSecao.N10, posicao = 7, tamanho = 1))
+	})
 	protected Modelidade modelidade;
 
 	/**

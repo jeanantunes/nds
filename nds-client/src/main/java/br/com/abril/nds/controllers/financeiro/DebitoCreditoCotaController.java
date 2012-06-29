@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedList;
@@ -48,6 +48,7 @@ import br.com.abril.nds.service.RoteirizacaoService;
 import br.com.abril.nds.service.TipoMovimentoFinanceiroService;
 import br.com.abril.nds.util.CellModel;
 import br.com.abril.nds.util.CellModelKeyValue;
+import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
@@ -625,6 +626,8 @@ public class DebitoCreditoCotaController {
 		
 		validarPreenchimentoCamposEdicao(debitoCredito);
 		
+		existeMovimentoFinanceiroCota(Arrays.asList(debitoCredito), debitoCredito.getTipoMovimentoFinanceiro().getId());
+		
 		//TODO: remover mock de usuário.
 		debitoCredito.setIdUsuario(1L);
 		
@@ -694,7 +697,7 @@ public class DebitoCreditoCotaController {
 		debitoCredito.setDataVencimento(formatField(movimentoFinanceiroCota.getData()));
 		debitoCredito.setNumeroCota(movimentoFinanceiroCota.getCota().getNumeroCota());
 		debitoCredito.setObservacao(movimentoFinanceiroCota.getObservacao());
-		debitoCredito.setValor(formatField(movimentoFinanceiroCota.getValor()));
+		debitoCredito.setValor(CurrencyUtil.formatarValor(movimentoFinanceiroCota.getValor()));
 		debitoCredito.setId(movimentoFinanceiroCota.getId());
 		debitoCredito.setNomeCota(nomeCota);
 
@@ -980,13 +983,7 @@ public class DebitoCreditoCotaController {
 			
 			FiltroDebitoCreditoDTO filtroDebitoCredito = new FiltroDebitoCreditoDTO();
 			
-			Calendar calendar = Calendar.getInstance();
-			
-			calendar.setTime(DateUtil.parseDataPTBR(debitoCredito.getDataVencimento()));
-			calendar.add(Calendar.DATE, -1);
-			Date dataVencimentoInicio = DateUtil.removerTimestamp(calendar.getTime());
-			
-			filtroDebitoCredito.setDataVencimentoInicio(dataVencimentoInicio);
+			filtroDebitoCredito.setDataVencimentoInicio(DateUtil.parseDataPTBR(debitoCredito.getDataVencimento()));
 			filtroDebitoCredito.setDataVencimentoFim(DateUtil.parseDataPTBR(debitoCredito.getDataVencimento()));
 			filtroDebitoCredito.setNumeroCota(debitoCredito.getNumeroCota());
 			filtroDebitoCredito.setIdTipoMovimento(idTipoMovimento);

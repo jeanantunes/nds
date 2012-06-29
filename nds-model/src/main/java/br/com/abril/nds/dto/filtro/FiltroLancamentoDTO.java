@@ -22,7 +22,7 @@ public class FiltroLancamentoDTO implements Serializable {
 	 */
 	private static final long serialVersionUID = -2638836889195236797L;
 
-	@Export(label="Data de Lanlamento Matriz/Distribuidor:")
+	@Export(label="Data de Lançamento Matriz/Distribuidor")
 	private Date data;
 	private List<Long> idsFornecedores = new ArrayList<Long>() ;
 	private PaginacaoVO paginacao;

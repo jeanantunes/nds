@@ -1,6 +1,12 @@
 
 <head>
 
+<style>
+.linkDisabled {
+	cursor: default;
+	opacity: 0.4;
+}
+</style>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/balanceamento.js"></script>
 
 <script type="text/javascript">
@@ -18,7 +24,7 @@ $(function() {
 		colModel : [  {
 			display : 'Código',
 			name : 'codigoProduto',
-			width : 60,
+			width : 58,
 			sortable : true,
 			align : 'center'
 		}, {
@@ -84,17 +90,17 @@ $(function() {
 		}, {
 			display : 'Matriz/Distrib.',
 			name : 'novaData',
-			width : 105,
-			sortable : true,
+			width : 107,
+			sortable : false,
 			align : 'center'
 		},{
 			display : 'Reprogramar',
 			name : 'reprogramar',
 			width : 65,
-			sortable : true,
+			sortable : false,
 			align : 'center'
 		}],
-		sortname : "novaData",
+		sortname : "codigoProduto",
 		sortorder : "asc",
 		usepager : true,
 		useRp : true,
@@ -272,7 +278,9 @@ function reprogramarSelecionados() {
 		            <a href="#" id="selFornecedor" onclick="return false;">Clique e Selecione o Fornecedor</a>
 		              <div class="menu_fornecedor" style="display:none;">
 		                	<span class="bt_sellAll">
-								<input type="checkbox" id="selTodos1" name="selTodos1" onclick="checkAll(this, 'checkgroup_menu');" style="float:left;"/>
+
+<input type="checkbox" id="selTodos1" name="selTodos1" onclick="checkAll(this, 'checkgroup_menu');" style="float:left;"/>
+
 							<label for="selTodos1">Selecionar Todos</label></span>
 		                    <br clear="all" />
 		                    <c:forEach items="${fornecedores}" var="fornecedor">
@@ -350,14 +358,16 @@ function reprogramarSelecionados() {
 		         	  
 		         	  <div style="margin-top:15px; margin-left:30px; float:left;"><strong>Valor Total R$: <span id="valorTotal"></span></strong></div>
 		          
-		              <span class="bt_sellAll" style="float:right; margin-right:60px;"><label for="selTodos">Selecionar Todos</label><input type="checkbox" id="selTodos" name="Todos" onclick="checkAll(this, 'checkgroup');"/></span>
+		              <span class="bt_sellAll" style="float:right; margin-right:60px;"><label for="selTodos">Selecionar Todos</label><input type="checkbox" id="selTodos" name="Todos" onclick="B.checkUncheckLancamentos()"/></span>
 		        </div>
 		      </fieldset>
 		      <div class="linha_separa_fields">&nbsp;</div>      
 		      <fieldset class="classFieldset" id="resumoPeriodo"; style="display:none;" >
 		      	<legend>Resumo do Período</legend>
+		        <div style="width: 950px; overflow-x: auto;">
 		        <table width="100%" border="0" cellspacing="2" cellpadding="2" id="tableResumoPeriodo">
 		        </table>
+		        </div>
 		      </fieldset>
 		    </div>
 		</div>

@@ -19,4 +19,11 @@ public enum Origem {
 	 * 2 – Estrangeira – Adquirida no mercado interno
 	 */
 	ESTRANGEIRA_MERCADO;
+	/**
+	 * @see java.lang.Enum#toString()
+	 */
+	@Override
+	public String toString() {
+		return String.valueOf(this.ordinal());
+	}
 }
