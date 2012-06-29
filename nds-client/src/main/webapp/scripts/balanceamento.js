@@ -46,7 +46,6 @@ function Balanceamento(pathTela, descInstancia) {
 			null,
 			function(result){
 				
-				debugger;
 				if (result == "true") 
 					T.retornoVerificarBalanceamentosAlterados(funcao);
 				else
