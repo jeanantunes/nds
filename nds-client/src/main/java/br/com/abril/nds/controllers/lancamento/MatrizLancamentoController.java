@@ -24,7 +24,6 @@ import br.com.abril.nds.client.vo.ResultadoResumoBalanceamentoVO;
 import br.com.abril.nds.client.vo.ResumoPeriodoBalanceamentoVO;
 import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.dto.BalanceamentoLancamentoDTO;
-import br.com.abril.nds.dto.BalanceamentoRecolhimentoDTO;
 import br.com.abril.nds.dto.ProdutoLancamentoDTO;
 import br.com.abril.nds.dto.ResumoPeriodoBalanceamentoDTO;
 import br.com.abril.nds.dto.filtro.FiltroLancamentoDTO;
@@ -79,13 +78,13 @@ public class MatrizLancamentoController {
 	private HttpSession session;
 	
 	@Autowired
+	private HttpServletResponse httpResponse;
+	
+	@Autowired
 	private DistribuidorService distribuidorService;
 	
 	@Autowired
 	private CalendarioService calendarioService;
-	
-	@Autowired
-	private HttpServletResponse httpResponse;
 	
 	private static final String FORMATO_DATA = "dd/MM/yyyy";
 	
@@ -147,26 +146,7 @@ public class MatrizLancamentoController {
 		
 		if (listaProdutoBalanceamento != null && !listaProdutoBalanceamento.isEmpty()) {	
 			
-			List<LancamentoVO> listaProdutoBalanceamentoVO = processarBalanceamento(listaProdutoBalanceamento,filtro.getPaginacao());
-			
-			Double valorTotal = 0.0;
-			
-			for (ProdutoLancamentoDTO produtoLancamentoDTO : listaProdutoBalanceamento) {
-				
-				valorTotal += produtoLancamentoDTO.getValorTotal().doubleValue();
-				
-			}
-			
-			TableModel<CellModelKeyValue<LancamentoVO>> tm = new TableModel<CellModelKeyValue<LancamentoVO>>();
-			List<CellModelKeyValue<LancamentoVO>> cells = CellModelKeyValue
-					.toCellModelKeyValue(listaProdutoBalanceamentoVO);
-			
-			tm.setRows(cells);
-			tm.setPage(page);
-			tm.setTotal(filtro.getTotalRegistrosEncontrados());
-			
-			Object[] resultado = {tm, CurrencyUtil.formatarValor(valorTotal)};
-			result.use(Results.json()).withoutRoot().from(resultado).serialize();
+			processarBalanceamento(listaProdutoBalanceamento, filtro);
 			
 		} else {
 			
@@ -581,23 +561,58 @@ public class MatrizLancamentoController {
 	}
 	
 	private List<LancamentoVO> processarBalanceamento(List<ProdutoLancamentoDTO> listaProdutoLancamento,
-										PaginacaoVO paginacao) {
+													  FiltroLancamentoDTO filtro) {
+
+		PaginacaoVO paginacao = filtro.getPaginacao();
+		
+		listaProdutoLancamento =
+			PaginacaoUtil.paginarEOrdenarEmMemoria(listaProdutoLancamento, paginacao, paginacao.getSortColumn());
 		
 		List<LancamentoVO> listaProdutoBalanceamentoVO =
 				new LinkedList<LancamentoVO>();
-			
+		
+		Double valorTotal = getValorTotal(listaProdutoLancamento);
+		
+		listaProdutoBalanceamentoVO = getProdutosLancamentoVO(listaProdutoLancamento);
+						
+		TableModel<CellModelKeyValue<LancamentoVO>> tm = new TableModel<CellModelKeyValue<LancamentoVO>>();
+		List<CellModelKeyValue<LancamentoVO>> cells = CellModelKeyValue
+				.toCellModelKeyValue(listaProdutoBalanceamentoVO);
+		
+		tm.setRows(cells);
+		tm.setPage(paginacao.getPaginaAtual());
+		tm.setTotal(filtro.getTotalRegistrosEncontrados());
+		
+		Object[] resultado = {tm, CurrencyUtil.formatarValor(valorTotal)};
+		result.use(Results.json()).withoutRoot().from(resultado).serialize();
+		
+		return listaProdutoBalanceamentoVO;
+	}
+	
+	private Double getValorTotal(List<ProdutoLancamentoDTO> listaProdutoLancamento) {
+
+		Double valorTotal = 0.0;
+		
+		for (ProdutoLancamentoDTO produtoLancamentoDTO : listaProdutoLancamento) {
+
+			valorTotal += produtoLancamentoDTO.getValorTotal().doubleValue();
+		}
+		
+		return valorTotal;
+	}
+
+	private List<LancamentoVO> getProdutosLancamentoVO(List<ProdutoLancamentoDTO> listaProdutoLancamento) {
+
+		List<LancamentoVO> listaProdutoBalanceamentoVO = new LinkedList<LancamentoVO>();
+		
 		for (ProdutoLancamentoDTO produtoLancamentoDTO : listaProdutoLancamento) {
 
 			listaProdutoBalanceamentoVO.add(getVoProdutoBalanceamento(produtoLancamentoDTO));
 		}
-		
-		listaProdutoBalanceamentoVO =
-			PaginacaoUtil.paginarEOrdenarEmMemoria(listaProdutoBalanceamentoVO, paginacao, paginacao.getSortColumn());
-					
+
 		return listaProdutoBalanceamentoVO;
 	}
-	
-	
+
 	private LancamentoVO getVoProdutoBalanceamento(
 			ProdutoLancamentoDTO produtoLancamentoDTO) {
 
@@ -711,27 +726,23 @@ public class MatrizLancamentoController {
 	@Get
 	public void exportar(FileType fileType) throws IOException {
 		
-		FiltroLancamentoDTO filtro = obterFiltroSessao();
+		List<ProdutoLancamentoDTO> listaProdutoBalanceamento =
+			getProdutoLancamentoDTOFromMatrizSessao();
 		
-		List<ProdutoLancamentoDTO> listaProdutoBalanceamento = getProdutoLancamentoDTOFromMatrizSessao();
+		FiltroLancamentoDTO filtro = obterFiltroSessao();
 		
 		if (listaProdutoBalanceamento != null && !listaProdutoBalanceamento.isEmpty()) {	
 			
-			List<LancamentoVO> listaProdutoBalanceamentoVO = processarBalanceamento(listaProdutoBalanceamento,filtro.getPaginacao());
+			Double valorTotal = getValorTotal(listaProdutoBalanceamento);
 			
-			Double valorTotal = 0.0;
+			List<LancamentoVO> listaProdutoBalanceamentoVO =
+				getProdutosLancamentoVO(listaProdutoBalanceamento);
 			
-			for (ProdutoLancamentoDTO produtoLancamentoDTO : listaProdutoBalanceamento) {
-				
-				valorTotal += produtoLancamentoDTO.getValorTotal().doubleValue();
-			}
-						
 			RodapeDTO rodape = new RodapeDTO(CurrencyUtil.formatarValor(valorTotal));
 			
 			FileExporter.to("matriz_balanceamento", fileType).inHTTPResponse(this.getNDSFileHeader(), filtro, rodape, 
 					listaProdutoBalanceamentoVO, LancamentoVO.class, this.httpResponse);
 		}
-	
 		
 		result.nothing();
 	}
@@ -1109,27 +1120,8 @@ public class MatrizLancamentoController {
 		filtro.setTotalRegistrosEncontrados(listaProdutoBalanceamento.size());
 		
 		if (listaProdutoBalanceamento != null && !listaProdutoBalanceamento.isEmpty()) {	
-			
-			List<LancamentoVO> listaProdutoBalanceamentoVO = processarBalanceamento(listaProdutoBalanceamento,filtro.getPaginacao());
-			
-			Double valorTotal = 0.0;
-			
-			for (ProdutoLancamentoDTO produtoLancamentoDTO : listaProdutoBalanceamento) {
-				
-				valorTotal += produtoLancamentoDTO.getValorTotal().doubleValue();
-				
-			}
-			
-			TableModel<CellModelKeyValue<LancamentoVO>> tm = new TableModel<CellModelKeyValue<LancamentoVO>>();
-			List<CellModelKeyValue<LancamentoVO>> cells = CellModelKeyValue
-					.toCellModelKeyValue(listaProdutoBalanceamentoVO);
-			
-			tm.setRows(cells);
-			tm.setPage(filtro.getPaginacao().getPaginaAtual());
-			tm.setTotal(filtro.getTotalRegistrosEncontrados());
-			
-			Object[] resultado = {tm, CurrencyUtil.formatarValor(valorTotal)};
-			result.use(Results.json()).withoutRoot().from(resultado).serialize();
+
+			processarBalanceamento(listaProdutoBalanceamento, filtro);
 			
 		} else {
 			

@@ -94,7 +94,7 @@ $(function() {
 			sortable : false,
 			align : 'center'
 		}],
-		sortname : "novaData",
+		sortname : "codigoProduto",
 		sortorder : "asc",
 		usepager : true,
 		useRp : true,
