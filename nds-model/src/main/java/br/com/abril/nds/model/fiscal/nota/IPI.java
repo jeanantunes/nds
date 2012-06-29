@@ -72,14 +72,14 @@ public class IPI extends ImpostoProduto implements Serializable {
 	 * qUnid
 	 */
 	@Column(name="QUANTIDADE_UNIDADES", scale=4, precision=16, nullable=true)
-	@NFEWhen(condition = NFEConditions.IPIT_UNID, export = @NFEExport(secao = TipoSecao.O11, posicao = 1))
+	@NFEWhen(condition = NFEConditions.IPI_TRIB_UNID, export = @NFEExport(secao = TipoSecao.O11, posicao = 1))
 	private Double quantidadeUnidades;
 	
 	/**
 	 * vUnid
 	 */
 	@Column(name="VALOR_UNIDADE_TRIBUTAVEL_IPI", scale=4, precision=15, nullable=true)
-	@NFEWhen(condition = NFEConditions.IPIT_UNID, export = @NFEExport(secao = TipoSecao.O11, posicao = 0))
+	@NFEWhen(condition = NFEConditions.IPI_TRIB_UNID, export = @NFEExport(secao = TipoSecao.O11, posicao = 0))
 	private Double valorUnidade;
 
 	/**
