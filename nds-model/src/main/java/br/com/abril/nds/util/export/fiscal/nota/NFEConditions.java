@@ -19,6 +19,11 @@ import br.com.abril.nds.util.export.fiscal.nota.condition.ICMSST30Condition;
 import br.com.abril.nds.util.export.fiscal.nota.condition.ICMSST60Condition;
 import br.com.abril.nds.util.export.fiscal.nota.condition.ICMSST70Condition;
 import br.com.abril.nds.util.export.fiscal.nota.condition.ICMSST90Condition;
+import br.com.abril.nds.util.export.fiscal.nota.condition.IPINTCondition;
+import br.com.abril.nds.util.export.fiscal.nota.condition.IPITAliqCondition;
+import br.com.abril.nds.util.export.fiscal.nota.condition.IPITCondition;
+import br.com.abril.nds.util.export.fiscal.nota.condition.IPITUnidCondition;
+import br.com.abril.nds.util.export.fiscal.nota.condition.ISSQNCondition;
 import br.com.abril.nds.util.export.fiscal.nota.condition.IdentificacaoDestinatarioCondition;
 import br.com.abril.nds.util.export.fiscal.nota.condition.IdentificacaoEmitenteCondition;
 
@@ -41,7 +46,12 @@ public enum NFEConditions {
 	ICMSST30(new ICMSST30Condition()),
 	ICMSST60(new ICMSST60Condition()),
 	ICMSST70(new ICMSST70Condition()),
-	ICMSST90(new ICMSST90Condition());
+	ICMSST90(new ICMSST90Condition()),
+	IPIT(new IPITCondition()),
+	IPINT(new IPINTCondition()),
+	IPIT_ALIQ(new IPITAliqCondition()),
+	IPIT_UNID(new IPITUnidCondition()),
+	ISSQN(new ISSQNCondition());
 	
 	private Condition condition;
 
