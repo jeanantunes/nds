@@ -26,6 +26,7 @@ import br.com.abril.nds.client.vo.ResumoPeriodoBalanceamentoVO;
 import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.controllers.cadastro.ProdutoEdicaoController;
 import br.com.abril.nds.dto.BalanceamentoLancamentoDTO;
+import br.com.abril.nds.dto.BalanceamentoRecolhimentoDTO;
 import br.com.abril.nds.dto.ProdutoLancamentoDTO;
 import br.com.abril.nds.dto.ResumoPeriodoBalanceamentoDTO;
 import br.com.abril.nds.dto.filtro.FiltroLancamentoDTO;
@@ -118,8 +119,10 @@ public class MatrizLancamentoController {
 	
 	@Post
 	public void obterMatrizLancamento(Date dataLancamento, List<Long> idsFornecedores) {
-		
+				
 		validarDadosPesquisa(dataLancamento, idsFornecedores);
+		
+		removerAtributoAlteracaoSessao();
 		
 		FiltroLancamentoDTO filtro = configurarFiltropesquisa(dataLancamento, idsFornecedores);
 		
@@ -136,8 +139,6 @@ public class MatrizLancamentoController {
 	
 	@Post
 	public void obterGridMatrizLancamento(String sortorder, String sortname, int page, int rp) {
-		
-		removerAtributoAlteracaoSessao();
 		
 		List<ProdutoLancamentoDTO> listaProdutoBalanceamento = getProdutoLancamentoDTOFromMatrizSessao();
 		
@@ -1070,4 +1071,64 @@ public class MatrizLancamentoController {
 	}
 	
 
+	@Post
+	public void atualizarResumoBalanceamento() {
+				
+		BalanceamentoLancamentoDTO balanceamentoLancamento = 
+			(BalanceamentoLancamentoDTO)
+				this.session.getAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_LANCAMENTO);
+		
+		if (balanceamentoLancamento == null
+				|| balanceamentoLancamento.getMatrizLancamento() == null
+				|| balanceamentoLancamento.getMatrizLancamento().isEmpty()) {
+			
+			throw new ValidacaoException(
+				TipoMensagem.WARNING, "Não houve carga de informações para o período escolhido!");
+		}
+		
+		ResultadoResumoBalanceamentoVO resultadoResumoBalanceamento = 
+			this.obterResultadoResumoLancamento(balanceamentoLancamento);
+		
+		
+		this.result.use(Results.json()).from(resultadoResumoBalanceamento, "result").recursive().serialize();
+	}
+	
+	@Post
+	public void atualizarGridMatrizLancamento() {
+				
+		List<ProdutoLancamentoDTO> listaProdutoBalanceamento = getProdutoLancamentoDTOFromMatrizSessao();
+		
+		FiltroLancamentoDTO filtro = obterFiltroSessao();
+		
+		filtro.setTotalRegistrosEncontrados(listaProdutoBalanceamento.size());
+		
+		if (listaProdutoBalanceamento != null && !listaProdutoBalanceamento.isEmpty()) {	
+			
+			List<LancamentoVO> listaProdutoBalanceamentoVO = processarBalanceamento(listaProdutoBalanceamento,filtro.getPaginacao());
+			
+			Double valorTotal = 0.0;
+			
+			for (ProdutoLancamentoDTO produtoLancamentoDTO : listaProdutoBalanceamento) {
+				
+				valorTotal += produtoLancamentoDTO.getValorTotal().doubleValue();
+				
+			}
+			
+			TableModel<CellModelKeyValue<LancamentoVO>> tm = new TableModel<CellModelKeyValue<LancamentoVO>>();
+			List<CellModelKeyValue<LancamentoVO>> cells = CellModelKeyValue
+					.toCellModelKeyValue(listaProdutoBalanceamentoVO);
+			
+			tm.setRows(cells);
+			tm.setPage(filtro.getPaginacao().getPaginaAtual());
+			tm.setTotal(filtro.getTotalRegistrosEncontrados());
+			
+			Object[] resultado = {tm, CurrencyUtil.formatarValor(valorTotal)};
+			result.use(Results.json()).withoutRoot().from(resultado).serialize();
+			
+		} else {
+			
+			this.result.use(Results.json()).from(Results.nothing()).serialize();
+		}
+		
+	}
 }
