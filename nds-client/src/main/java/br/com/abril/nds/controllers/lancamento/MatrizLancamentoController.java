@@ -142,7 +142,6 @@ public class MatrizLancamentoController {
 			
 			this.result.use(Results.json()).from(Results.nothing()).serialize();
 		}
-		
 	}
 	
 	public List<ProdutoLancamentoDTO> getProdutoLancamentoDTOFromMatrizSessao() {
