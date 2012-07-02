@@ -24,7 +24,8 @@ public enum TipoSecao {
 	U(5, "U"),
 	W(0, "W"), W02(14, "W02"), W17(5, "W17"), W23(7, "W23"),
 	X(1, "X"), X03(5, "X03"), X04(1, "X04"), X05(1, "X05"), X11(6, "X11"), X18(3, "X18"), X26(6, "X26"),
-	Z(2, "Z"), Z04(2, "Z04");
+	Z(2, "Z"), Z04(2, "Z04"),
+	EMPTY(0, "");
 	
 	private Integer tamanhoMaximo;
 	private String sigla;
