@@ -7,6 +7,11 @@ import javax.persistence.AttributeOverrides;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
+import br.com.abril.nds.util.TipoSecao;
+import br.com.abril.nds.util.export.fiscal.nota.NFEConditions;
+import br.com.abril.nds.util.export.fiscal.nota.NFEExport;
+import br.com.abril.nds.util.export.fiscal.nota.NFEWhen;
+
 @Embeddable
 @AttributeOverrides({
     @AttributeOverride(name="cst", column=@Column(name="CST_IPI", length = 2, nullable = true)),
@@ -33,41 +38,48 @@ public class IPI extends ImpostoProduto implements Serializable {
 	 * clEnq
 	 */
 	@Column(name="CLASSE_ENQUADRAMENTO_IPI", length=5, nullable=true)
+	@NFEExport(secao = TipoSecao.O, posicao = 0, tamanho = 5)
 	private String classeEnquadramento;
 	
 	/**
 	 * CNPJProd
 	 */
 	@Column(name="CNPJ_PRODUTOR_IPI", length=14, nullable=true)
+	@NFEExport(secao = TipoSecao.O, posicao = 1, tamanho = 14)
 	private String cnpjProdutor;
 	
 	/**
 	 * cSelo
 	 */
 	@Column(name="CODIGO_SELO_IPI", length=60, nullable=true)
+	@NFEExport(secao = TipoSecao.O, posicao = 2)
 	private String codigoSelo;
 	/**
 	 * qSelo
 	 */	
 	@Column(name="QUANTIDADE_SELO_IPI", length=12, nullable=true)
+	@NFEExport(secao = TipoSecao.O, posicao = 3)
 	private Long quantidadeSelo;
 	
 	/**
 	 * cEnq
 	 */
 	@Column(name="CODIGO_ENQUADRAMENTO_IPI", length=3, nullable=true)
+	@NFEExport(secao = TipoSecao.O, posicao = 4, tamanho = 3)
 	private String codigoEnquadramento;
 	
 	/**
 	 * qUnid
 	 */
 	@Column(name="QUANTIDADE_UNIDADES", scale=4, precision=16, nullable=true)
+	@NFEWhen(condition = NFEConditions.IPI_TRIB_UNID, export = @NFEExport(secao = TipoSecao.O11, posicao = 1))
 	private Double quantidadeUnidades;
 	
 	/**
 	 * vUnid
 	 */
 	@Column(name="VALOR_UNIDADE_TRIBUTAVEL_IPI", scale=4, precision=15, nullable=true)
+	@NFEWhen(condition = NFEConditions.IPI_TRIB_UNID, export = @NFEExport(secao = TipoSecao.O11, posicao = 0))
 	private Double valorUnidade;
 
 	/**

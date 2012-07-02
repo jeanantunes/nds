@@ -77,6 +77,6 @@ public interface NotaFiscalService {
 	 * @throws FileNotFoundException caso o diretório parametrizado de exportação das seja inválido. 
 	 * @throws IOException caso ocarra erros durante a gravação do arquivo no diretório
 	 */
-	void exportarNotasFiscais() throws FileNotFoundException, IOException; 
+	void exportarNotasFiscais(List<NotaFiscal> notasFiscaisParaExportacao) throws FileNotFoundException, IOException; 
 	
 }

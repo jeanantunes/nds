@@ -22,9 +22,14 @@ public class FiltroLancamentoDTO implements Serializable {
 	 */
 	private static final long serialVersionUID = -2638836889195236797L;
 
-	@Export(label="Data de Lanlamento Matriz/Distribuidor:")
+	@Export(label="Fornecedor", exhibitionOrder=0)
+	private String nomesFornecedor;
+	
+	@Export(label="Data de Lançamento Matriz/Distribuidor", exhibitionOrder=1)
 	private Date data;
+	
 	private List<Long> idsFornecedores = new ArrayList<Long>() ;
+	
 	private PaginacaoVO paginacao;
 	private	ColunaOrdenacao colunaOrdenacao;
 	private Integer totalRegistrosEncontrados;
@@ -42,6 +47,14 @@ public class FiltroLancamentoDTO implements Serializable {
 		this.idsFornecedores = idsFornecedores;
 	}
 	
+	public String getNomesFornecedor() {
+		return nomesFornecedor;
+	}
+
+	public void setNomesFornecedor(String nomesFornecedor) {
+		this.nomesFornecedor = nomesFornecedor;
+	}
+
 	public Date getData() {
 		return data;
 	}

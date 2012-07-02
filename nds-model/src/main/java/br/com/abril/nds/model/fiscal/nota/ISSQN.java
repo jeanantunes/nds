@@ -7,6 +7,9 @@ import javax.persistence.AttributeOverrides;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
+import br.com.abril.nds.util.TipoSecao;
+import br.com.abril.nds.util.export.fiscal.nota.NFEExport;
+
 @Embeddable
 @AttributeOverrides({
     @AttributeOverride(name="cst", column=@Column(name="CST_ISSQN", length = 1, nullable = false)),
@@ -22,9 +25,11 @@ public class ISSQN extends ImpostoServico implements Serializable {
 	private static final long serialVersionUID = 1762681520302597480L;	
 	
 	@Column(name = "COD_MUNICIPIO", length = 7, nullable = false)
+	@NFEExport(secao = TipoSecao.U, posicao = 3)
 	private Integer codigoMunicipio;	
 	
 	@Column(name = "ITEM_LISTA_SERVICO", length = 4, nullable = false)
+	@NFEExport(secao = TipoSecao.U, posicao = 4)
 	private Integer itemListaServico;
 	
 	/**
