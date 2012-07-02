@@ -2,11 +2,8 @@ package br.com.abril.nds.service.impl;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
-import java.util.EnumSet;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,16 +21,12 @@ import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.dto.BalanceamentoLancamentoDTO;
 import br.com.abril.nds.dto.DadosBalanceamentoLancamentoDTO;
 import br.com.abril.nds.dto.ProdutoLancamentoDTO;
-import br.com.abril.nds.dto.ResumoPeriodoBalanceamentoDTO;
-import br.com.abril.nds.dto.SumarioLancamentosDTO;
 import br.com.abril.nds.dto.filtro.FiltroLancamentoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
-import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.TipoEdicao;
 import br.com.abril.nds.model.cadastro.DistribuicaoDistribuidor;
 import br.com.abril.nds.model.cadastro.DistribuicaoFornecedor;
 import br.com.abril.nds.model.cadastro.Distribuidor;
-import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.cadastro.OperacaoDistribuidor;
 import br.com.abril.nds.model.planejamento.HistoricoLancamento;
 import br.com.abril.nds.model.planejamento.Lancamento;
@@ -1024,67 +1017,6 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 														 codigosDiaSemana);
 		
 		return datasDistribuicao;
-	}
-	
-	@Override
-	@Transactional(readOnly = true)
-	public SumarioLancamentosDTO sumarioBalanceamentoMatrizLancamentos(Date data,
-			List<Long> idsFornecedores) {
-		return lancamentoRepository.sumarioBalanceamentoMatrizLancamentos(data,
-				idsFornecedores);
-	}
-	
-	@Override
-	@Transactional(readOnly = true)
-	public List<ResumoPeriodoBalanceamentoDTO> obterResumoPeriodo(
-			Date dataInicial, List<Long> fornecedores) {
-		Date dataFinal = DateUtil.adicionarDias(dataInicial, 6);
-		List<DistribuicaoFornecedor> distribuicoes = distribuidorRepository
-				.buscarDiasDistribuicaoFornecedor(fornecedores, OperacaoDistribuidor.DISTRIBUICAO);
-		Set<DiaSemana> diasDistribuicao = EnumSet.noneOf(DiaSemana.class);
-		for (DistribuicaoFornecedor distribuicao : distribuicoes) {
-			diasDistribuicao.add(distribuicao.getDiaSemana());
-		}
-
-		List<Date> periodoDistribuicao = filtrarPeriodoDistribuicao(
-				dataInicial, dataFinal, diasDistribuicao);
-		List<ResumoPeriodoBalanceamentoDTO> resumos = lancamentoRepository
-				.buscarResumosPeriodo(periodoDistribuicao, fornecedores,
-						GrupoProduto.CROMO);
-		
-		return montarResumoPeriodo(periodoDistribuicao, resumos);
-	}
-
-	private List<ResumoPeriodoBalanceamentoDTO> montarResumoPeriodo(
-			List<Date> periodoDistribuicao,
-			List<ResumoPeriodoBalanceamentoDTO> resumos) {
-		Map<Date, ResumoPeriodoBalanceamentoDTO> mapa = new HashMap<Date, ResumoPeriodoBalanceamentoDTO>();
-		for (ResumoPeriodoBalanceamentoDTO resumo : resumos) {
-			mapa.put(resumo.getData(), resumo);
-		}
-		List<ResumoPeriodoBalanceamentoDTO> retorno = new ArrayList<ResumoPeriodoBalanceamentoDTO>(
-				periodoDistribuicao.size());
-		for (Date data : periodoDistribuicao) {
-			ResumoPeriodoBalanceamentoDTO resumo = mapa.get(data);
-			if (resumo == null) {
-				resumo = ResumoPeriodoBalanceamentoDTO.empty(data);
-			}
-			retorno.add(resumo);
-		}
-		return retorno;
-	}
-
-	private List<Date> filtrarPeriodoDistribuicao (Date dataInicial,
-			Date dataFinal, Collection<DiaSemana> diasDistribuicao) {
-		List<Date> datas = new ArrayList<Date>();
-		while (dataInicial.before(dataFinal) || dataInicial.equals(dataFinal)) {
-			DiaSemana ds = DiaSemana.getByDate(dataInicial);
-			if (diasDistribuicao.contains(ds)) {
-				datas.add(dataInicial);
-			}
-			dataInicial = DateUtil.adicionarDias(dataInicial, 1);
-		}
-		return datas;
 	}
 
 }
