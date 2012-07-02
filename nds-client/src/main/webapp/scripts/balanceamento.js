@@ -187,7 +187,7 @@ function Balanceamento(pathTela, descInstancia) {
 		row.cell.novaData = T.gerarInputDataDistrib(row.cell.novaData, row.cell.bloquearData, i);
 		row.cell.reprogramar = T.gerarCheckReprogramar(row.cell.id.toString(), row.cell.bloquearData,i);
 				
-		if (!row.cell.possuiRecebimentoFisico || row.cell.cancelamentoGD || (row.cell.dataLancamentoPrevista!=row.cell.dataLancamentoDistribuidor) ) {
+		if (row.cell.destacarLinha) {
 			T.linhasDestacadas.push(i+1);
 		}
 		

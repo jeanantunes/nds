@@ -63,8 +63,6 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 	
 		this.validarFiltro(filtro);
 		
-		// TODO: verificar necessidade de alterar o mapa de expectativa de reparte
-		
 		DadosBalanceamentoLancamentoDTO dadosBalanceamentoLancamento =
 			this.obterDadosLancamento(filtro, configuracaoInicial);
 		
@@ -840,7 +838,7 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 			
 			for (ProdutoLancamentoDTO produtoLancamento : produtosLancamento) {
 				
-				produtoLancamento.setDataLancamentoDistribuidor(dataLancamento);
+				//produtoLancamento.setDataLancamentoDistribuidor(dataLancamento);
 				produtoLancamento.setNovaDataLancamento(dataLancamento);
 			}
 		}

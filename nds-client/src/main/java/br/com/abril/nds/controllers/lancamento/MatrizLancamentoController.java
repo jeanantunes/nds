@@ -38,7 +38,6 @@ import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.MatrizLancamentoService;
 import br.com.abril.nds.util.CellModelKeyValue;
-import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.MathUtil;
@@ -707,9 +706,6 @@ public class MatrizLancamentoController {
 		produtoBalanceamentoVO.setDataLancamentoPrevista(
 				DateUtil.formatarDataPTBR(produtoLancamentoDTO.getDataLancamentoPrevista()));
 		
-		produtoBalanceamentoVO.setDataLancamentoDistribuidor(
-				DateUtil.formatarDataPTBR(produtoLancamentoDTO.getDataLancamentoDistribuidor()));
-		
 		produtoBalanceamentoVO.setDataRecolhimentoPrevista(
 				DateUtil.formatarDataPTBR(produtoLancamentoDTO.getDataRecolhimentoPrevista()));
 		
@@ -731,17 +727,6 @@ public class MatrizLancamentoController {
 		else
 			produtoBalanceamentoVO.setReparteFisico(produtoLancamentoDTO.getReparteFisico().intValue());
 		
-		produtoBalanceamentoVO.setCancelamentoGD(produtoLancamentoDTO.getStatusLancamento().equals(StatusLancamento.CANCELADO_GD));
-		
-		if(produtoLancamentoDTO.getNumeroReprogramacoes() == null)
-			produtoBalanceamentoVO.setReprogramacoesExcedidas(false);
-		else
-			produtoBalanceamentoVO.setReprogramacoesExcedidas(produtoLancamentoDTO.getNumeroReprogramacoes() >= Constantes.NUMERO_REPROGRAMACOES_LIMITE);
-				
-		produtoBalanceamentoVO.setEstudoFechado(produtoLancamentoDTO.isPossuiEstudo());
-		
-		produtoBalanceamentoVO.setPossuiRecebimentoFisico(produtoLancamentoDTO.isPossuiRecebimentoFisico());
-		
 		//TODO - Pendente
 		if(produtoLancamentoDTO.getDistribuicao() == null) {
 			produtoBalanceamentoVO.setDistribuicao("");
@@ -752,7 +737,13 @@ public class MatrizLancamentoController {
 		produtoBalanceamentoVO.setBloquearData(!produtoLancamentoDTO.permiteReprogramacao());
 		
 		produtoBalanceamentoVO.setIdProdutoEdicao(produtoLancamentoDTO.getIdProdutoEdicao());
-		
+	
+		produtoBalanceamentoVO.setDestacarLinha(
+			!produtoLancamentoDTO.isPossuiRecebimentoFisico()
+				|| produtoLancamentoDTO.getStatusLancamento().equals(StatusLancamento.CANCELADO_GD)
+				|| produtoLancamentoDTO.getDataLancamentoPrevista()
+					.compareTo(produtoLancamentoDTO.getNovaDataLancamento()) != 0);
+				
 		return produtoBalanceamentoVO;
 	}
 
