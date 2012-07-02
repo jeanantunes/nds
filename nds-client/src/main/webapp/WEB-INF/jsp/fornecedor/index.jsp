@@ -152,7 +152,7 @@
 				data.rows[i].cell.email = "";
 			}
 			
-			var isHabilitado = data.rows[i].cell.origem == 'INTERFACE';
+			var isHabilitado = data.rows[i].cell.origem != 'INTERFACE';
 			
 			data.rows[i].cell.acao = getActionFornecedor(data.rows[i].id, isHabilitado);
 		}
