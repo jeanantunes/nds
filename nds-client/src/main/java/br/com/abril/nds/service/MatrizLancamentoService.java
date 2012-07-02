@@ -9,6 +9,7 @@ import br.com.abril.nds.dto.ProdutoLancamentoDTO;
 import br.com.abril.nds.dto.ResumoPeriodoBalanceamentoDTO;
 import br.com.abril.nds.dto.SumarioLancamentosDTO;
 import br.com.abril.nds.dto.filtro.FiltroLancamentoDTO;
+import br.com.abril.nds.model.seguranca.Usuario;
 
 public interface MatrizLancamentoService {
 
@@ -26,8 +27,13 @@ public interface MatrizLancamentoService {
 	 * Confirma as matriz de balanceamento de lançamento.
 	 * 
 	 * @param matrizLancamento - matriz de balanceamento de lançamento
+	 * @param datasConfirmadas - datas para confirmação
+	 * @param usuario - usuário
+	 * 
+	 * @return {@link List<ProdutoLancamentoDTO>}
 	 */
-	void confirmarMatrizLancamento(TreeMap<Date, List<ProdutoLancamentoDTO>> matrizLancamento, List<Date> datasConfirmadas);
+	List<ProdutoLancamentoDTO> confirmarMatrizLancamento(TreeMap<Date, List<ProdutoLancamentoDTO>> matrizLancamento,
+								   						 List<Date> datasConfirmadas, Usuario usuario);
 	
 	
 	SumarioLancamentosDTO sumarioBalanceamentoMatrizLancamentos(Date data, List<Long> idsFornecedores);
