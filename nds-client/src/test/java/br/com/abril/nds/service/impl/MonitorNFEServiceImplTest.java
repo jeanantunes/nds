@@ -261,7 +261,7 @@ public class MonitorNFEServiceImplTest {
 		Long ncm = 1L;
 		NotaFiscal notaFiscal = null;
 		ProdutoEdicao produtoEdicao = null;
-		Long quantidade = 1L;
+		BigDecimal quantidade = BigDecimal.ONE;
 		String unidade = "";
 		BigDecimal valorDesconto 	= BigDecimal.ZERO;
 		BigDecimal valorFrete 		= BigDecimal.ZERO;

@@ -105,7 +105,7 @@ public class ProdutoServico implements Serializable {
 	 */
 	@Column(name="QUANTIDADE_COMERCIAL", precision=15, scale=2 , nullable=false)
 	@NFEExports({@NFEExport(secao=TipoSecao.I, posicao=8, tamanho=12),@NFEExport(secao=TipoSecao.I, posicao=13, tamanho=12)})
-	private Long quantidade;
+	private BigDecimal quantidade;
 	
 	/**
 	 * vUnCom
@@ -337,14 +337,14 @@ public class ProdutoServico implements Serializable {
 	/**
 	 * @return the quantidade
 	 */
-	public Long getQuantidade() {
+	public BigDecimal getQuantidade() {
 		return quantidade;
 	}
 
 	/**
 	 * @param quantidade the quantidade to set
 	 */
-	public void setQuantidade(Long quantidade) {
+	public void setQuantidade(BigDecimal quantidade) {
 		this.quantidade = quantidade;
 	}
 

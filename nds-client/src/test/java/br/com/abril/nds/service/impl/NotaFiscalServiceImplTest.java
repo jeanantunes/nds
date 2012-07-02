@@ -76,7 +76,7 @@ public class NotaFiscalServiceImplTest extends AbstractRepositoryImplTest {
 	public void testExportarNotasFiscais() {
 		try {
 			
-			this.notaFiscalService.exportarNotasFiscais(this.notasParaTesteArquivo);
+			this.notaFiscalService.exportarNotasFiscais();
 		} catch (Exception e) {
 			e.printStackTrace();
 			Assert.fail();
@@ -218,7 +218,7 @@ public class NotaFiscalServiceImplTest extends AbstractRepositoryImplTest {
 			ProdutoServico produtoServico =
 			Fixture.produtoServico(111, 1111L,
 					"codigoProduto", "descricaoProduto", encargo, 111L,
-					111L, nota, produtoEdicao, 9L, "uni",
+					111L, nota, produtoEdicao, BigDecimal.ONE, "uni",
 					new BigDecimal(4312), new BigDecimal(4312), new BigDecimal(4312), new BigDecimal(4312),
 					new BigDecimal(4312), new BigDecimal(12344));
 			
