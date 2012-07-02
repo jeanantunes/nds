@@ -233,6 +233,18 @@ public class PainelMonitorNFEController {
 				NfeVO.class, this.httpResponse);
 		
 	}
+
+	public void cancelarNfe() {
+
+		result.use(Results.json()).from("").serialize();
+		
+	}
+	
+	public void emitirDpec() {
+		
+		result.use(Results.json()).from("").serialize();
+		
+	}
 	
 	/*
 	 * Obtém o filtro para exportação.

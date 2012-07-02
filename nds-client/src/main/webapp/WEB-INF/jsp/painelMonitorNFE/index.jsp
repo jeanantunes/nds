@@ -182,6 +182,19 @@ var PainelMonitorNFE = {
 			
 		},
 		
+		emitirDpec : function() {
+			
+			$.postJSON("<c:url value='/nfe/painelMonitorNFe/emitirDpec'/>");
+			
+		},
+
+		cancelarNfe : function() {
+			
+			$.postJSON("<c:url value='/nfe/painelMonitorNFe/cancelarNfe'/>");
+			
+		},
+
+		
 		imprimirDanfeUnica : function(lineId) {
 			
 			var params = 'lineIdImpressaoDanfe='+lineId;
@@ -466,6 +479,25 @@ $(function() {
 						Imprimir 
 					</a>
 				</span>				
+
+				<span class="bt_novos" title="Cancelar NF-e">
+					<a onclick="PainelMonitorNFE.cancelarNfe()" href="javascript:;">
+						<img 	src="${pageContext.request.contextPath}/images/ico_bloquear.gif" 
+							alt="Cancelar NF-e" width="16" 
+							height="16" 
+							hspace="5" border="0">
+						Cancelar NF-e
+					</a>
+				</span>
+				
+				<span  class="bt_novos" title="Emitir em DEPEC">
+					<a onclick="PainelMonitorNFE.emitirDpec()" href="javascript:;">
+						<img 	src="${pageContext.request.contextPath}/images/bt_expedicao.png" 	
+						     	alt="Emitir em DEPEC" 
+							hspace="5" border="0">
+						Emitir em DEPEC
+					</a>
+				</span>
 				
 				<span class="bt_novos" title="Imprimir Seleção">
 					<a 	onclick="PainelMonitorNFE.imprimirDanfes()"	href="javascript:;">
