@@ -209,8 +209,8 @@ public class NotaFiscalServiceImplTest extends AbstractRepositoryImplTest {
 			
 			ICMS icms = new ICMS();
 			
-			icms.setCst("CS");
-			icms.setOrigem(Origem.ESTRANGEIRA_MERCADO);
+			icms.setCst("00");
+			icms.setOrigem(Origem.NACIONAL);
 			EncargoFinanceiroProduto encargo = new EncargoFinanceiroProduto();
 			
 			encargo.setIcms(icms);
