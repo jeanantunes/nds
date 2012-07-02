@@ -11,7 +11,6 @@ import javax.persistence.ManyToOne;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 import br.com.abril.nds.util.TipoSecao;
 import br.com.abril.nds.util.export.fiscal.nota.NFEExport;
-import br.com.abril.nds.util.export.fiscal.nota.NFEExportType;
 @Embeddable
 public class NotaFiscalReferenciadaPK implements Serializable {
 

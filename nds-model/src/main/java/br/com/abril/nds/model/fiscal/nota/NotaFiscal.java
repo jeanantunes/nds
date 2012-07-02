@@ -60,15 +60,15 @@ public class NotaFiscal implements Serializable {
 	/**
 	 * DET -> PROD
 	 */
-	@OneToMany(mappedBy = "notaFiscal")
-	@NFEExportType(secao = TipoSecao.H)
+	@OneToMany(mappedBy = "produtoServicoPK.notaFiscal")
+	@NFEExportType
 	private List<ProdutoServico> produtosServicos;
 	
 	/**
 	 * TOTAL
 	 */
 	@Embedded
-	@NFEExportType(secao = TipoSecao.W)
+	@NFEExportType(secaoPadrao = TipoSecao.W)
 	private InformacaoValoresTotais informacaoValoresTotais;
 	
 	/**

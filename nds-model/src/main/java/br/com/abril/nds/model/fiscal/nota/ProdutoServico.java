@@ -4,17 +4,16 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 
 import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.fiscal.nota.pk.ProdutoServicoPK;
 import br.com.abril.nds.util.TipoSecao;
 import br.com.abril.nds.util.export.fiscal.nota.NFEExport;
 import br.com.abril.nds.util.export.fiscal.nota.NFEExportType;
@@ -22,7 +21,6 @@ import br.com.abril.nds.util.export.fiscal.nota.NFEExports;
 
 @Entity
 @Table(name = "NOTA_FISCAL_PRODUTO_SERVICO")
-@SequenceGenerator(name = "NOTA_FISCAL_PRODUTO_SERVICO_SEQ", initialValue = 1, allocationSize = 1)
 public class ProdutoServico implements Serializable {
 
 	/**
@@ -30,10 +28,9 @@ public class ProdutoServico implements Serializable {
 	 */
 	private static final long serialVersionUID = 6402390731085431454L;
 
-	@Id
-	@Column(name = "ID")
-	@GeneratedValue(generator = "NOTA_FISCAL_PRODUTO_SERVICO_SEQ")
-	private Long id;
+	@EmbeddedId
+	@NFEExportType
+	private ProdutoServicoPK produtoServicoPK;
 	
 	/**
 	 * Encargos financeiros
@@ -42,10 +39,6 @@ public class ProdutoServico implements Serializable {
 	@PrimaryKeyJoinColumn
 	@NFEExportType
 	private EncargoFinanceiro encargoFinanceiro;
-	
-	@ManyToOne(optional = false)
-	@JoinColumn(name = "NOTA_FISCAL_ID")
-	private NotaFiscal notaFiscal;
 	
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "PRODUTO_EDICAO_ID")
@@ -147,22 +140,6 @@ public class ProdutoServico implements Serializable {
 	@Column(name="VALOR_OUTROS", precision=15, scale=2, nullable=true)
 	private BigDecimal valorOutros;
 	
-	
-	
-	/**
-	 * @return the id
-	 */
-	public Long getId() {
-		return id;
-	}
-
-	/**
-	 * @param id the id to set
-	 */
-	public void setId(Long id) {
-		this.id = id;
-	}
-
 	/**
 	 * @return the encargoFinanceiro
 	 */
@@ -175,20 +152,6 @@ public class ProdutoServico implements Serializable {
 	 */
 	public void setEncargoFinanceiro(EncargoFinanceiro encargoFinanceiro) {
 		this.encargoFinanceiro = encargoFinanceiro;
-	}
-	
-	/**
-	 * @return the notaFiscal
-	 */
-	public NotaFiscal getNotaFiscal() {
-		return notaFiscal;
-	}
-
-	/**
-	 * @param notaFiscal the notaFiscal to set
-	 */
-	public void setNotaFiscal(NotaFiscal notaFiscal) {
-		this.notaFiscal = notaFiscal;
 	}
 	
 	/**
@@ -205,18 +168,20 @@ public class ProdutoServico implements Serializable {
 		this.produtoEdicao = produtoEdicao;
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		result = prime
+				* result
+				+ ((produtoServicoPK == null) ? 0 : produtoServicoPK.hashCode());
 		return result;
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
@@ -228,12 +193,26 @@ public class ProdutoServico implements Serializable {
 		if (getClass() != obj.getClass())
 			return false;
 		ProdutoServico other = (ProdutoServico) obj;
-		if (id == null) {
-			if (other.id != null)
+		if (produtoServicoPK == null) {
+			if (other.produtoServicoPK != null)
 				return false;
-		} else if (!id.equals(other.id))
+		} else if (!produtoServicoPK.equals(other.produtoServicoPK))
 			return false;
 		return true;
+	}
+
+	/**
+	 * @return the produtoServicoPK
+	 */
+	public ProdutoServicoPK getProdutoServicoPK() {
+		return produtoServicoPK;
+	}
+
+	/**
+	 * @param produtoServicoPK the produtoServicoPK to set
+	 */
+	public void setProdutoServicoPK(ProdutoServicoPK produtoServicoPK) {
+		this.produtoServicoPK = produtoServicoPK;
 	}
 
 	/**
@@ -431,5 +410,5 @@ public class ProdutoServico implements Serializable {
 	public void setValorOutros(BigDecimal valorOutros) {
 		this.valorOutros = valorOutros;
 	}
-	
+
 }
