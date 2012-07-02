@@ -6,8 +6,6 @@ import java.util.TreeMap;
 
 import br.com.abril.nds.dto.BalanceamentoLancamentoDTO;
 import br.com.abril.nds.dto.ProdutoLancamentoDTO;
-import br.com.abril.nds.dto.ResumoPeriodoBalanceamentoDTO;
-import br.com.abril.nds.dto.SumarioLancamentosDTO;
 import br.com.abril.nds.dto.filtro.FiltroLancamentoDTO;
 import br.com.abril.nds.model.seguranca.Usuario;
 
@@ -34,11 +32,5 @@ public interface MatrizLancamentoService {
 	 */
 	List<ProdutoLancamentoDTO> confirmarMatrizLancamento(TreeMap<Date, List<ProdutoLancamentoDTO>> matrizLancamento,
 								   						 List<Date> datasConfirmadas, Usuario usuario);
-	
-	
-	SumarioLancamentosDTO sumarioBalanceamentoMatrizLancamentos(Date data, List<Long> idsFornecedores);
-
-	List<ResumoPeriodoBalanceamentoDTO> obterResumoPeriodo(Date dataInicial,
-			List<Long> fornecedores);
 	
 }
