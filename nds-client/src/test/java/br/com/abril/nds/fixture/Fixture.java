@@ -2965,7 +2965,7 @@ public class Fixture {
 			Long ncm,
 			NotaFiscal notaFiscal,
 			ProdutoEdicao produtoEdicao,
-			Long quantidade,
+			BigDecimal quantidade,
 			String unidade,
 			BigDecimal valorDesconto,
 			BigDecimal valorFrete,

@@ -176,10 +176,11 @@ function Balanceamento(pathTela, descInstancia) {
 		
 		var linkDescProduto = T.getLinkProduto(row.cell.idProdutoEdicao,row.cell.nomeProduto);
 		T.lancamentos.push({
-			id:					row.cell.id, 
-			numeroEdicao:			row.cell.numeroEdicao,
-			nomeProduto:	    row.cell.nomeProduto,
-			dataRecolhimentoPrevista:	row.cell.dataRecolhimentoPrevista
+			id:							row.cell.id, 
+			numeroEdicao:				row.cell.numeroEdicao,
+			nomeProduto:	    		row.cell.nomeProduto,
+			dataRecolhimentoPrevista:	row.cell.dataRecolhimentoPrevista,
+			novaData:					row.cell.novaData
 		});
 		row.cell.nomeProduto = linkDescProduto;
 		
@@ -517,6 +518,8 @@ function Balanceamento(pathTela, descInstancia) {
 			       }
         	   }
 			   
+			   T.atualizarResumoBalanceamento(true);
+			   T.checkUncheckLancamentos(false);
             },
 			null,
 			true,
