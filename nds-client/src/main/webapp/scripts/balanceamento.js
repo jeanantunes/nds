@@ -118,7 +118,6 @@ function Balanceamento(pathTela, descInstancia) {
 			return data.rows;
 		}
 		
-		//$("#tableResumoPeriodo").clear();
 		$("#valorTotal").clear();
 		
 		T.linhasDestacadas = [];
@@ -177,17 +176,18 @@ function Balanceamento(pathTela, descInstancia) {
 		
 		var linkDescProduto = T.getLinkProduto(row.cell.idProdutoEdicao,row.cell.nomeProduto);
 		T.lancamentos.push({
-			id:					row.cell.id, 
-			numEdicao:			row.cell.numEdicao,
-			nomeProduto:	    row.cell.nomeProduto,
-			dataRecolhimento:	row.cell.dataRecolhimento
+			id:							row.cell.id, 
+			numeroEdicao:				row.cell.numeroEdicao,
+			nomeProduto:	    		row.cell.nomeProduto,
+			dataRecolhimentoPrevista:	row.cell.dataRecolhimentoPrevista,
+			novaData:					row.cell.novaData
 		});
 		row.cell.nomeProduto = linkDescProduto;
 		
 		row.cell.novaData = T.gerarInputDataDistrib(row.cell.novaData, row.cell.bloquearData, i);
 		row.cell.reprogramar = T.gerarCheckReprogramar(row.cell.id.toString(), row.cell.bloquearData,i);
 				
-		if (!row.cell.possuiRecebimentoFisico || row.cell.cancelamentoGD || (row.cell.dataPrevisto!=row.cell.dataLancamentoDistribuidor) ) {
+		if (!row.cell.possuiRecebimentoFisico || row.cell.cancelamentoGD || (row.cell.dataLancamentoPrevista!=row.cell.dataLancamentoDistribuidor) ) {
 			T.linhasDestacadas.push(i+1);
 		}
 		
@@ -211,11 +211,11 @@ function Balanceamento(pathTela, descInstancia) {
 		
 		var data = [];
 		
-		data.push({name: 'produtoLancamento.id', 			value: T.lancamentos[index].id});
-		data.push({name: 'produtoLancamento.novaData', 		value: T.lancamentos[index].novaData});
-		data.push({name: 'produtoLancamento.nomeProduto', 	value: T.lancamentos[index].nomeProduto});
-		data.push({name: 'produtoLancamento.numEdicao', 	value: T.lancamentos[index].numEdicao});
-		data.push({name: 'produtoLancamento.dataRecolhimento', value: T.lancamentos[index].dataRecolhimento});
+		data.push({name: 'produtoLancamento.id', 					   value: T.lancamentos[index].id});
+		data.push({name: 'produtoLancamento.novaData', 				   value: T.lancamentos[index].novaData});
+		data.push({name: 'produtoLancamento.nomeProduto', 			   value: T.lancamentos[index].nomeProduto});
+		data.push({name: 'produtoLancamento.numeroEdicao', 	           value: T.lancamentos[index].numeroEdicao});
+		data.push({name: 'produtoLancamento.dataRecolhimentoPrevista', value: T.lancamentos[index].dataRecolhimentoPrevista});
 		
 		$.postJSON(
 				pathTela + "/matrizLancamento/reprogramarLancamentoUnico",
@@ -236,14 +236,14 @@ function Balanceamento(pathTela, descInstancia) {
 				
 		var data = [];
 		
-		data.push({name: 'novaDataFormatada', value: $("#novaDataRecolhimento").val()});
+		data.push({name: 'novaDataFormatada', value: $("#novaDataLancamento").val()});
 		
 		$.each(T.lancamentos, function(index, lancamento){
 			if(lancamento.selecionado == true) {
-				data.push({name: 'produtosLancamento[' + index + '].id', 			   value: lancamento.id});
-				data.push({name: 'produtosLancamento[' + index + '].nomeProduto', 	   value: lancamento.nomeProduto});
-				data.push({name: 'produtosLancamento[' + index + '].numEdicao', 	   value: lancamento.numEdicao});
-				data.push({name: 'produtosLancamento[' + index + '].dataRecolhimento', value: lancamento.dataRecolhimento});
+				data.push({name: 'produtosLancamento[' + index + '].id', 			   		   value: lancamento.id});
+				data.push({name: 'produtosLancamento[' + index + '].nomeProduto', 	   		   value: lancamento.nomeProduto});
+				data.push({name: 'produtosLancamento[' + index + '].numeroEdicao', 	   		   value: lancamento.numeroEdicao});
+				data.push({name: 'produtosLancamento[' + index + '].dataRecolhimentoPrevista', value: lancamento.dataRecolhimentoPrevista});
 			}
 		});
 		
@@ -518,6 +518,8 @@ function Balanceamento(pathTela, descInstancia) {
 			       }
         	   }
 			   
+			   T.atualizarResumoBalanceamento(true);
+			   T.checkUncheckLancamentos(false);
             },
 			null,
 			true,

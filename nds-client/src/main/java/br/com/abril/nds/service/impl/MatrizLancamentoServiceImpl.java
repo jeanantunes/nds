@@ -44,7 +44,6 @@ import br.com.abril.nds.repository.HistoricoLancamentoRepository;
 import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.MatrizLancamentoService;
-import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.util.TipoMensagem;
@@ -81,22 +80,18 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 		
 	@Override
 	@Transactional
-	public void confirmarMatrizLancamento(TreeMap<Date, List<ProdutoLancamentoDTO>> matrizLancamento, 
-										  List<Date> datasConfirmadas) {
-
-		// TODO: confirmar matriz de lançamento
+	public List<ProdutoLancamentoDTO> confirmarMatrizLancamento(TreeMap<Date, List<ProdutoLancamentoDTO>> matrizLancamento, 
+										  						List<Date> datasConfirmadas, Usuario usuario) {
 
 		if (matrizLancamento == null || matrizLancamento.isEmpty()) {
 
-			throw new ValidacaoException(TipoMensagem.WARNING, "Matriz de recolhimento não informada!");
+			throw new ValidacaoException(TipoMensagem.WARNING, "Matriz de lançamento não informada!");
 		}
 
 		Map<Long, ProdutoLancamentoDTO> mapaLancamento =
 				new TreeMap<Long, ProdutoLancamentoDTO>();
 
 		Set<Long> idsLancamento = new TreeSet<Long>();
-
-		Set<Long> idsProdutoEdicaoParcial = new TreeSet<Long>();
 
 		for (Map.Entry<Date, List<ProdutoLancamentoDTO>> entry : matrizLancamento.entrySet()) {
 			
@@ -115,36 +110,19 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 
 				// Monta Map e Set para controlar a atualização dos lançamentos 
 				
-				mapaLancamento.put(idLancamento, produtoRecolhimento);
-				
 				if (datasConfirmadas.contains(novaDataLancamento)) {
 
 					idsLancamento.add(idLancamento);
-				}
-				
-				// Monta Map para controlar a geração de chamada de encalhe
-				
-//				Set<Long> idsLancamentoPorData = mapaDataRecolhimentoLancamentos.get(novaDataRecolhimento);
-//				
-//				if (idsLancamentoPorData == null) {
-//					
-//					idsLancamentoPorData = new TreeSet<Long>();
-//				}
-//				
-//				idsLancamentoPorData.add(idLancamento);
-//				
-//				mapaDataRecolhimentoLancamentos.put(novaDataRecolhimento, idsLancamentoPorData);
-				
-				// Monta Set para controlar a geração de períodos parciais
-				
-				if (produtoRecolhimento.getParcial() != null) {
 					
-					idsProdutoEdicaoParcial.add(produtoRecolhimento.getIdProdutoEdicao());
+					mapaLancamento.put(idLancamento, produtoRecolhimento);
 				}
 			}
 		}
 		
-		this.atualizarLancamentos(idsLancamento, null, mapaLancamento);
+		List<ProdutoLancamentoDTO> produtosLancamento =
+			this.atualizarLancamentos(idsLancamento, usuario, mapaLancamento);
+		
+		return produtosLancamento;
 	}
 	
 	/**
@@ -153,9 +131,13 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 	 * @param idsLancamento - identificadores de lançamentos
 	 * @param usuario - usuário
 	 * @param mapaLancamento - mapa de lancamentos e produtos de recolhimento
+	 * 
+	 * @return {@link List<ProdutoLancamentoDTO>}
 	 */
-	private void atualizarLancamentos(Set<Long> idsLancamento, Usuario usuario,
-									  Map<Long, ProdutoLancamentoDTO> mapaLancamento) {
+	private List<ProdutoLancamentoDTO> atualizarLancamentos(Set<Long> idsLancamento, Usuario usuario,
+									  						Map<Long, ProdutoLancamentoDTO> mapaLancamento) {
+		
+		List<ProdutoLancamentoDTO> produtosLancamento = new ArrayList<ProdutoLancamentoDTO>();
 		
 		if (!idsLancamento.isEmpty()) {
 		
@@ -186,11 +168,21 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 				
 				produtoLancamento = mapaLancamento.get(lancamento.getId());
 				
-				lancamento.setDataRecolhimentoDistribuidor(produtoLancamento.getNovaDataLancamento());
+				Date novaData = produtoLancamento.getNovaDataLancamento();
+				
+				if (produtoLancamento.getDataLancamentoDistribuidor().compareTo(novaData) != 0) {
+					
+					lancamento.setNumeroReprogramacoes(atualizarNumeroReprogramacoes(lancamento));
+				}
+				
+				lancamento.setDataLancamentoDistribuidor(novaData);
 				lancamento.setStatus(StatusLancamento.BALANCEADO);
 				lancamento.setDataStatus(new Date());
 				
 				this.lancamentoRepository.merge(lancamento);
+				
+				this.atualizarProdutosLancamentosConfirmados(produtosLancamento, produtoLancamento,
+															 lancamento, novaData);
 				
 				if (gerarHistoricoLancamento) {
 				
@@ -206,6 +198,34 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 				}
 			}
 		}
+		
+		return produtosLancamento;
+	}
+	
+	private void atualizarProdutosLancamentosConfirmados(List<ProdutoLancamentoDTO> produtosLancamento,
+														 ProdutoLancamentoDTO produtoLancamento,
+														 Lancamento lancamento,
+														 Date novaData) {
+		
+		produtoLancamento.setDataLancamentoDistribuidor(novaData);
+		produtoLancamento.setStatusLancamento(StatusLancamento.BALANCEADO.toString());
+		produtoLancamento.setNumeroReprogramacoes(lancamento.getNumeroReprogramacoes());
+		
+		produtosLancamento.add(produtoLancamento);
+	}
+	
+	private Integer atualizarNumeroReprogramacoes(Lancamento lancamento) {
+		
+		Integer numeroReprogramacoes = lancamento.getNumeroReprogramacoes();
+		
+		if (numeroReprogramacoes == null) {
+			
+			numeroReprogramacoes = 0;
+		}
+		
+		numeroReprogramacoes++;
+		
+		return numeroReprogramacoes;
 	}
 	
 	/**
@@ -799,33 +819,13 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 	private boolean isProdutoBalanceavel(ProdutoLancamentoDTO produtoLancamento,
 										 DadosBalanceamentoLancamentoDTO dadosLancamentoBalanceamento) {
 		
-		if (!permiteReprogramacao(produtoLancamento)) {
+		if (!produtoLancamento.permiteReprogramacao()) {
 			
 			return false;
 		}
 		
 		if (StatusLancamento.BALANCEADO.equals(produtoLancamento.getStatusLancamento())
 				&& !dadosLancamentoBalanceamento.isConfiguracaoInicial()) {
-			
-			return false;
-		}
-		
-		return true;
-	}
-
-	/**
-	 * Verifica se o produto permite reprogramação ou não
-	 */
-	private boolean permiteReprogramacao(ProdutoLancamentoDTO produtoLancamento) {
-		
-		if (produtoLancamento.isPossuiRecebimentoFisico()
-				&& produtoLancamento.getNumeroReprogramacoes() != null
-				&& produtoLancamento.getNumeroReprogramacoes() >= Constantes.NUMERO_REPROGRAMACOES_LIMITE) {
-			
-			return false;
-		}
-		
-		if (StatusLancamento.CANCELADO_GD.equals(produtoLancamento.getStatusLancamento())) {
 			
 			return false;
 		}
@@ -849,8 +849,6 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 				
 				produtoLancamento.setDataLancamentoDistribuidor(dataLancamento);
 				produtoLancamento.setNovaDataLancamento(dataLancamento);
-				
-				produtoLancamento.setPermiteReprogramacao(permiteReprogramacao(produtoLancamento));
 			}
 		}
 	}

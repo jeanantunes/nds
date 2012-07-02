@@ -89,4 +89,7 @@ public interface FornecedorRepository extends Repository<Fornecedor, Long> {
 	Integer obterQuantidadeFornecedoresPorIdPessoa(Long idPessoa, Long idFornecedor);
 	
 	List<Fornecedor> obterFornecedorLikeNomeFantasia(String nomeFantasia);
+	
+	List<Fornecedor> obterFornecedoresPorId(List<Long> idsFornecedores);
+	
 }

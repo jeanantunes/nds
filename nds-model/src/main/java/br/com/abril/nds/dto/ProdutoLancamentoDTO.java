@@ -7,6 +7,7 @@ import java.util.Date;
 import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamentoParcial;
+import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.Util;
 
 /**
@@ -44,6 +45,8 @@ public class ProdutoLancamentoDTO implements Serializable {
 
 	private TipoLancamentoParcial parcial;
 	
+	private String descricaoLancamento;
+	
 	private Date dataLancamentoPrevista;
 
 	private Date dataLancamentoDistribuidor;
@@ -64,7 +67,7 @@ public class ProdutoLancamentoDTO implements Serializable {
 	
 	private Integer ordemPeriodicidadeProduto;
   	
-  	private boolean permiteReprogramacao;
+  	private String distribuicao;
 	
 	/**
 	 * Construtor padrão.
@@ -73,6 +76,26 @@ public class ProdutoLancamentoDTO implements Serializable {
 		
 	}
 
+	/**
+	 * Verifica se o produto permite reprogramação ou não
+	 */
+	public boolean permiteReprogramacao() {
+		
+		if (this.possuiRecebimentoFisico
+				&& this.numeroReprogramacoes != null
+				&& this.numeroReprogramacoes >= Constantes.NUMERO_REPROGRAMACOES_LIMITE) {
+			
+			return false;
+		}
+		
+		if (StatusLancamento.CANCELADO_GD.equals(this.statusLancamento)) {
+			
+			return false;
+		}
+		
+		return true;
+	}
+	
 	/**
 	 * @return the idProdutoEdicao
 	 */
@@ -241,6 +264,26 @@ public class ProdutoLancamentoDTO implements Serializable {
 	public void setParcial(String parcial) {
 		
 		this.parcial = Util.getEnumByStringValue(TipoLancamentoParcial.values(), parcial);
+		
+		if (this.parcial == null) {
+			this.descricaoLancamento = "Lancamento";
+		} else {
+			this.descricaoLancamento = this.parcial.getDescricao();
+		}
+	}
+	
+	/**
+	 * @return the descricaoLancamento
+	 */
+	public String getDescricaoLancamento() {
+		return descricaoLancamento;
+	}
+
+	/**
+	 * @param descricaoLancamento the descricaoLancamento to set
+	 */
+	public void setDescricaoLancamento(String descricaoLancamento) {
+		this.descricaoLancamento = descricaoLancamento;
 	}
 
 	/**
@@ -387,17 +430,17 @@ public class ProdutoLancamentoDTO implements Serializable {
 	}
 
 	/**
-	 * @return the permiteReprogramacao
+	 * @return the distribuicao
 	 */
-	public boolean isPermiteReprogramacao() {
-		return permiteReprogramacao;
+	public String getDistribuicao() {
+		return distribuicao;
 	}
 
 	/**
-	 * @param permiteReprogramacao the permiteReprogramacao to set
+	 * @param distribuicao the distribuicao to set
 	 */
-	public void setPermiteReprogramacao(boolean permiteReprogramacao) {
-		this.permiteReprogramacao = permiteReprogramacao;
+	public void setDistribuicao(String distribuicao) {
+		this.distribuicao = distribuicao;
 	}
 	
 }
