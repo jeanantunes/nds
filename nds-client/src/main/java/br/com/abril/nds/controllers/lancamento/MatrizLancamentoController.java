@@ -123,7 +123,7 @@ public class MatrizLancamentoController {
 	@Post
 	public void obterGridMatrizLancamento(String sortorder, String sortname, int page, int rp) {
 		
-		List<ProdutoLancamentoDTO> listaProdutoBalanceamento = getProdutoLancamentoDTOFromMatrizSessao();
+		List<ProdutoLancamentoDTO> listaProdutoBalanceamento = this.getProdutoLancamentoDTOFromMatrizSessao();
 		
 		FiltroLancamentoDTO filtro = obterFiltroSessao();
 		
@@ -143,7 +143,7 @@ public class MatrizLancamentoController {
 		}
 	}
 	
-	public List<ProdutoLancamentoDTO> getProdutoLancamentoDTOFromMatrizSessao() {
+	private List<ProdutoLancamentoDTO> getProdutoLancamentoDTOFromMatrizSessao() {
 		
 		BalanceamentoLancamentoDTO balanceamentoLancamento = 
 				(BalanceamentoLancamentoDTO) session.getAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_LANCAMENTO);
