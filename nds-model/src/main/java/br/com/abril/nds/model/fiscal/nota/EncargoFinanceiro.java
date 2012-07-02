@@ -11,6 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinColumns;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 
@@ -33,11 +34,14 @@ public abstract class EncargoFinanceiro implements Serializable {
 	private Long id;
 	
 	@OneToOne
-	@JoinColumn(name = "PRODUTO_SERVICO_ID")
+	@JoinColumns({
+        @JoinColumn(name="NOTA_FISCAL_ID", referencedColumnName="NOTA_FISCAL_ID"),
+        @JoinColumn(name="PRODUTO_SERVICO_SEQUENCIA", referencedColumnName="SEQUENCIA")
+    })
 	private ProdutoServico produtoServico;
 	
 	@Embedded
-	@NFEExportType(secao = TipoSecao.Q)
+	@NFEExportType(secaoPadrao = TipoSecao.Q)
 	private PIS pis;	
 
 	@Embedded
@@ -45,7 +49,7 @@ public abstract class EncargoFinanceiro implements Serializable {
 	private PISST pisSt;
 	
 	@Embedded
-	@NFEExportType(secao = TipoSecao.S)
+	@NFEExportType(secaoPadrao = TipoSecao.S)
 	private COFINS cofins;
 	
 	@Embedded

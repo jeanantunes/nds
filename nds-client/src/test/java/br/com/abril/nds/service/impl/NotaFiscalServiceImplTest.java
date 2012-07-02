@@ -216,7 +216,7 @@ public class NotaFiscalServiceImplTest extends AbstractRepositoryImplTest {
 			encargo.setIcms(icms);
 			
 			ProdutoServico produtoServico =
-			Fixture.produtoServico(111, 1111L,
+			Fixture.produtoServico(i+1, 111, 1111L,
 					"codigoProduto", "descricaoProduto", encargo, 111L,
 					111L, nota, produtoEdicao, BigDecimal.ONE, "uni",
 					new BigDecimal(4312), new BigDecimal(4312), new BigDecimal(4312), new BigDecimal(4312),

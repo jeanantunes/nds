@@ -161,6 +161,7 @@ import br.com.abril.nds.model.fiscal.nota.Status;
 import br.com.abril.nds.model.fiscal.nota.ValoresRetencoesTributos;
 import br.com.abril.nds.model.fiscal.nota.ValoresTotaisISSQN;
 import br.com.abril.nds.model.fiscal.nota.Veiculo;
+import br.com.abril.nds.model.fiscal.nota.pk.ProdutoServicoPK;
 import br.com.abril.nds.model.integracao.EventoExecucao;
 import br.com.abril.nds.model.integracao.InterfaceExecucao;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalhe;
@@ -2956,6 +2957,7 @@ public class Fixture {
 	}
 	
 	public static ProdutoServico produtoServico(
+			Integer sequencia,
 			Integer cfop,
 			Long codigoBarras,
 			String codigoProduto,
@@ -2974,8 +2976,13 @@ public class Fixture {
 			BigDecimal valorTotalBruto,
 			BigDecimal valorUnitario) {
 		
+		ProdutoServicoPK produtoServicoPK = new ProdutoServicoPK();
+		produtoServicoPK.setNotaFiscal(notaFiscal);
+		produtoServicoPK.setSequencia(sequencia);
+
 		ProdutoServico produtoServico = new ProdutoServico();
 		
+		produtoServico.setProdutoServicoPK(produtoServicoPK);
 		produtoServico.setCfop(cfop);
 		produtoServico.setCodigoBarras(codigoBarras);
 		produtoServico.setCodigoProduto(codigoProduto);
@@ -2983,7 +2990,6 @@ public class Fixture {
 		produtoServico.setEncargoFinanceiro(encargoFinanceiro);
 		produtoServico.setExtipi(extipi);
 		produtoServico.setNcm(ncm);
-		produtoServico.setNotaFiscal(notaFiscal);
 		produtoServico.setProdutoEdicao(produtoEdicao);
 		produtoServico.setQuantidade(quantidade);
 		produtoServico.setUnidade(unidade);

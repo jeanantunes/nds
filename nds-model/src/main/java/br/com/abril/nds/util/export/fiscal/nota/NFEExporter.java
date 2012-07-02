@@ -205,7 +205,7 @@ public class NFEExporter {
 		} else if (valor instanceof Collection && nfeExportType != null) {
 			
 			for (Object valorCollection : (Collection) valor) {
-				TipoSecao secaoVazia = nfeExportType.secao();
+				TipoSecao secaoVazia = nfeExportType.secaoPadrao();
 				if (TipoSecao.EMPTY.equals(secaoVazia)) {
 					secaoVazia = null;
 				}
@@ -216,7 +216,7 @@ public class NFEExporter {
 			}
 
 		} else if (valor != null && nfeExportType != null) {
-			TipoSecao secaoVazia = nfeExportType.secao();
+			TipoSecao secaoVazia = nfeExportType.secaoPadrao();
 			if (TipoSecao.EMPTY.equals(secaoVazia)) {
 				secaoVazia = null;
 			}
