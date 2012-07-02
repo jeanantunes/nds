@@ -223,15 +223,21 @@ function reprogramarSelecionados() {
 <body>
 
 
-<div id="dialog-confirm" title="Balanceamento da Matriz de Recolhimento">
+<div id="dialog-confirm" title="Balanceamento da Matriz de Lançamento">
 			
 			<jsp:include page="../messagesDialog.jsp" />
 			
-			<p>Ao prosseguir com essa ação você perderá seus dados não salvos ou confirmados. Deseja prosseguir?</p>
+			<p>Existem lançamentos não confirmados. Ao prosseguir com essa ação você perderá os dados. Deseja prosseguir?</p>
 			   
 </div>
 
-<div id="dialog-pagincao-confirmada" title="Atenção" style="display:none">
+<div id="dialogVoltarConfiguracaoOriginal" title="Balanceamento da Matriz de Lançamento" style="display:none">
+			
+			<p>Ao voltar a configuração original, você perdará os dados confirmados. Deseja prosseguir?</p>
+			   
+</div>
+
+<div id="dialog-pagincao-confirmada" title="Balanceamento da Matriz de Lançamento" style="display:none">
 			
 			<p>As seleções de lançamentos não serão salvas, deseja continuar?</p>
 			   
@@ -320,7 +326,7 @@ function reprogramarSelecionados() {
 		        
 		              
 <!-- Voltar Configuração Inicial -->
-<a href="javascript:;" onclick="B.verificarBalanceamentosAlterados(B.voltarConfiguracaoInicial);"><img src="<c:url value='images/bt_devolucao.png'/>" title="Voltar Configuração Inicial" border="0" hspace="5" />Voltar Configuração Inicial</a></span>
+<a href="javascript:;" onclick="B.abrirAlertaVoltarConfiguracaoInicial();"><img src="<c:url value='images/bt_devolucao.png'/>" title="Voltar Configuração Inicial" border="0" hspace="5" />Voltar Configuração Inicial</a></span>
 
 		
 		           <br clear="all" />
