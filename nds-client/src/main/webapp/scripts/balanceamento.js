@@ -654,6 +654,28 @@ function Balanceamento(pathTela, descInstancia) {
 		checkAll(document.getElementById('selTodos'),"checkgroup");
 	};
 	
+	this.abrirAlertaVoltarConfiguracaoInicial = function() {
+		
+		$("#dialogVoltarConfiguracaoOriginal").dialog({
+			resizable: false,
+			height:'auto',
+			width:600,
+			modal: true,
+			buttons: {
+				"Confirmar": function() {
+					
+					T.voltarConfiguracaoInicial();
+					
+					$(this).dialog("close");
+				},
+				"Cancelar": function() {
+					
+					$(this).dialog("close");
+				}
+			}
+		});
+	};
+	
 	this.voltarConfiguracaoInicial = function() {
 		
 		T.checkUncheckLancamentos(false);

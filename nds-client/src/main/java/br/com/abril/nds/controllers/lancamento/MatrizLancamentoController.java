@@ -26,7 +26,6 @@ import br.com.abril.nds.client.vo.ResumoPeriodoBalanceamentoVO;
 import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.dto.BalanceamentoLancamentoDTO;
 import br.com.abril.nds.dto.ProdutoLancamentoDTO;
-import br.com.abril.nds.dto.ResumoPeriodoBalanceamentoDTO;
 import br.com.abril.nds.dto.filtro.FiltroLancamentoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.service.DistribuidorService;
@@ -56,7 +55,6 @@ import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
-import br.com.caelum.vraptor.core.Localization;
 import br.com.caelum.vraptor.view.Results;
 
 @Resource
@@ -70,9 +68,6 @@ public class MatrizLancamentoController {
 	
 	@Autowired
 	private MatrizLancamentoService matrizLancamentoService;
-		
-	@Autowired 
-	private Localization localization;
 	
 	@Autowired
 	private HttpSession session;
@@ -85,10 +80,6 @@ public class MatrizLancamentoController {
 	
 	@Autowired
 	private CalendarioService calendarioService;
-	
-	
-	private static final String CAMPO_REQUERIDO_KEY = "required_field";
-	private static final String CAMPO_MAIOR_IGUAL_KEY = "validator.must.be.greaterEquals";
 
 	private static final String FILTRO_SESSION_ATTRIBUTE = "filtroMatrizBalanceamento";
 	
@@ -213,8 +204,7 @@ public class MatrizLancamentoController {
 		
 		this.session.setAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_LANCAMENTO, balanceamentoLancamento);
 		
-		// TODO: testar a remoção da alteração sessão
-		removerAtributoAlteracaoSessao();
+		this.verificarLancamentosConfirmados(balanceamentoLancamento);
 		
 		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS,
 			"Balanceamento da matriz de lançamento confirmado com sucesso!"), "result").serialize();
@@ -317,6 +307,34 @@ public class MatrizLancamentoController {
 		}
 		
 		return matrizLancamento;
+	}
+	
+	/**
+	 * Método que verifica se todos os lançamentos estão confirmados
+	 * para remover a flag de alteração de dados da sessão.
+	 * 
+	 * @param balanceamentoLancamento - objeto balanceamento de lançamento
+	 */
+	private void verificarLancamentosConfirmados(BalanceamentoLancamentoDTO balanceamentoLancamento) {
+		
+		List<ConfirmacaoVO> listaConfirmacao = agruparBalanceamento(balanceamentoLancamento);
+		
+		boolean lancamentosConfirmados = true;
+		
+		for (ConfirmacaoVO confirmacao : listaConfirmacao) {
+			
+			if (!confirmacao.isConfirmado()) {
+				
+				lancamentosConfirmados = false;
+				
+				break;
+			}
+		}
+		
+		if (lancamentosConfirmados) {
+			
+			removerAtributoAlteracaoSessao();
+		}
 	}
 	
 	/**
@@ -1035,36 +1053,6 @@ public class MatrizLancamentoController {
 		}
 		
 		return filtro;
-	}
-	
-	@Get
-	public void resumoPeriodo(Date dataInicial, List<Long> idsFornecedores) {
-		
-		verificarCamposObrigatorios(dataInicial, idsFornecedores);
-		List<ResumoPeriodoBalanceamentoDTO> dtos = matrizLancamentoService
-				.obterResumoPeriodo(dataInicial, idsFornecedores);
-		result.use(Results.json()).withoutRoot().from(dtos).serialize();
-	}
-
-	private void verificarCamposObrigatorios(Date data,
-			List<Long> idsFornecedores) {
-		Date atual = DateUtil.removerTimestamp(new Date());
-		List<String> mensagens = new ArrayList<String>();
-		if (idsFornecedores == null || idsFornecedores.isEmpty()) {
-			mensagens.add(localization.getMessage(CAMPO_REQUERIDO_KEY,
-					"Fornecedor"));
-		}
-		if (data == null) {
-			mensagens.add(localization.getMessage(CAMPO_REQUERIDO_KEY,
-					"Data de Lançamento Matriz/Distribuidor"));
-		} else if (data.before(atual)) {
-			mensagens.add(localization.getMessage(CAMPO_MAIOR_IGUAL_KEY,
-					"Data de Lançamento Matriz/Distribuidor", DateUtil.formatarDataPTBR(atual)));
-		}
-		if (!mensagens.isEmpty()) {
-			ValidacaoVO validacao = new ValidacaoVO(TipoMensagem.ERROR, mensagens);
-			throw new ValidacaoException(validacao);
-		}
 	}
 
 	/**
