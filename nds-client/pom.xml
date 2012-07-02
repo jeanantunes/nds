@@ -347,7 +347,7 @@
 						<artifactId>tomcat-maven-plugin</artifactId>
 						<configuration>
 							<server>tomcat-server-qa</server>
-							<url>http://10.10.50.197:8080/manager/text</url>
+							<url>http://10.10.50.198:8080/manager/text</url>
 						</configuration>
 					</plugin>
 				</plugins>
