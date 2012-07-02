@@ -86,7 +86,6 @@ public class MatrizLancamentoController {
 	@Autowired
 	private CalendarioService calendarioService;
 	
-	private static final String FORMATO_DATA = "dd/MM/yyyy";
 	
 	private static final String CAMPO_REQUERIDO_KEY = "required_field";
 	private static final String CAMPO_MAIOR_IGUAL_KEY = "validator.must.be.greaterEquals";
@@ -106,7 +105,7 @@ public class MatrizLancamentoController {
 		
 		List<Fornecedor> fornecedores = fornecedorService.obterFornecedores(
 				true, SituacaoCadastro.ATIVO);
-		String data = DateUtil.formatarData(new Date(), FORMATO_DATA);
+		String data = DateUtil.formatarDataPTBR(new Date());
 		result.include("data", data);
 		result.include("fornecedores", fornecedores);
 	}
@@ -185,19 +184,42 @@ public class MatrizLancamentoController {
 	@Post
 	public void confirmarMatrizLancamento(List<Date> datasConfirmadas) {
 		
-		// TODO: obter a matriz da sessão
+		BalanceamentoLancamentoDTO balanceamentoLancamento = 
+			(BalanceamentoLancamentoDTO) session.getAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_LANCAMENTO);
 		
-		// TODO: chamar a service de confirmação
-
-		if (datasConfirmadas==null || datasConfirmadas.size()<=0){
-			throw new ValidacaoException(TipoMensagem.WARNING, "Selecione ao menos uma data!");
-		}	
-	
-		// TODO: validar matriz de lançamento conforme parâmetro: datasConfirmadas
+		if (balanceamentoLancamento == null
+				|| balanceamentoLancamento.getMatrizLancamento() == null
+				|| balanceamentoLancamento.getMatrizLancamento().isEmpty()) {
 			
-		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Confirmado com sucesso !"), "result").recursive().serialize();
-	}
+			return;
+		}
+
+		if (datasConfirmadas == null || datasConfirmadas.size() <= 0){
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Selecione ao menos uma data!");
+		}
 	
+		TreeMap<Date, List<ProdutoLancamentoDTO>> matrizLancamento =
+			balanceamentoLancamento.getMatrizLancamento();
+		
+		List<ProdutoLancamentoDTO> produtosLancamentoConfirmados =
+			matrizLancamentoService.confirmarMatrizLancamento(matrizLancamento,
+															  datasConfirmadas, getUsuario());
+		
+		matrizLancamento =
+			this.atualizarMatizComProdutosConfirmados(matrizLancamento, produtosLancamentoConfirmados);
+		
+		balanceamentoLancamento.setMatrizLancamento(matrizLancamento);
+		
+		this.session.setAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_LANCAMENTO, balanceamentoLancamento);
+		
+		// TODO: testar a remoção da alteração sessão
+		removerAtributoAlteracaoSessao();
+		
+		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS,
+			"Balanceamento da matriz de lançamento confirmado com sucesso!"), "result").serialize();
+	}
+
 	@Post
 	public void voltarConfiguracaoOriginal() {
 		
@@ -208,7 +230,9 @@ public class MatrizLancamentoController {
 		
 		ResultadoResumoBalanceamentoVO resultadoResumoBalanceamento = 
 			this.obterResultadoResumoLancamento(balanceamentoLancamento);
-							
+		
+		removerAtributoAlteracaoSessao();
+		
 		this.result.use(Results.json()).from(resultadoResumoBalanceamento, "result").recursive().serialize();
 	}
 	
@@ -256,6 +280,43 @@ public class MatrizLancamentoController {
 		this.atualizarMapaLancamento(produtosLancamento, novaData);
 		
 		this.result.use(Results.json()).from(Results.nothing()).serialize();
+	}
+	
+	/**
+	 * Método que atualiza a matriz de lançamento de acordo com os produtos confirmados
+	 * 
+	 * @param matrizLancamento - matriz de lançamento
+	 * @param produtosLancamentoConfirmados - lista de produtos confirmados 
+	 * 
+	 * @return matriz atualizada
+	 */
+	private TreeMap<Date, List<ProdutoLancamentoDTO>> atualizarMatizComProdutosConfirmados(
+											TreeMap<Date, List<ProdutoLancamentoDTO>> matrizLancamento,
+											List<ProdutoLancamentoDTO> produtosLancamentoConfirmados) {
+		
+		for (ProdutoLancamentoDTO produtoLancamentoConfirmado : produtosLancamentoConfirmados) {
+			
+			List<ProdutoLancamentoDTO> produtosLancamento =
+				matrizLancamento.get(produtoLancamentoConfirmado.getNovaDataLancamento());
+			
+			for (ProdutoLancamentoDTO produtoLancamento : produtosLancamento) {
+				
+				if (produtoLancamentoConfirmado.getIdLancamento().equals(
+						produtoLancamento.getIdLancamento())) {
+					
+					produtoLancamento.setDataLancamentoDistribuidor(
+						produtoLancamentoConfirmado.getDataLancamentoDistribuidor());
+					
+					produtoLancamento.setStatusLancamento(
+						produtoLancamentoConfirmado.getStatusLancamento().toString());
+					
+					produtoLancamento.setNumeroReprogramacoes(
+						produtoLancamentoConfirmado.getNumeroReprogramacoes());
+				}
+			}
+		}
+		
+		return matrizLancamento;
 	}
 	
 	/**
@@ -328,6 +389,9 @@ public class MatrizLancamentoController {
 		
 		String produtos = "";
 		
+		Integer qtdDiasLimiteParaReprogLancamento =
+				distribuidor.getQtdDiasLimiteParaReprogLancamento();
+		
 		for (ProdutoLancamentoVO produtoLancamento : produtosLancamento) {
 		
 			String dataRecolhimentoPrevistaFormatada = produtoLancamento.getDataRecolhimentoPrevista();
@@ -364,7 +428,8 @@ public class MatrizLancamentoController {
 		
 			listaMensagens.add(
 				"A nova data de lançamento não deve ultrapassar "
-				+ "a data de recolhimento prevista para o(s) produto(s):"
+				+ "a data de recolhimento prevista - a quantidade de dias limite [" 
+				+ qtdDiasLimiteParaReprogLancamento + "] para o(s) produto(s):"
 			);
 			
 			listaMensagens.add(produtos + "</table>");
@@ -525,7 +590,7 @@ public class MatrizLancamentoController {
 		//Adicionar no mapa
 		for (ProdutoLancamentoDTO produtoLancamentoDTO : listaProdutoLancamentoAdicionar) {
 			
-			if (produtoLancamentoDTO.isPermiteReprogramacao()) {
+			if (produtoLancamentoDTO.permiteReprogramacao()) {
 			
 				List<ProdutoLancamentoDTO> listaProdutoLancamentoDTO =
 					matrizLancamento.get(novaData);
@@ -668,7 +733,7 @@ public class MatrizLancamentoController {
 			produtoBalanceamentoVO.setDistribuicao(produtoLancamentoDTO.getDistribuicao());
 		}
 		
-		produtoBalanceamentoVO.setBloquearData(!produtoLancamentoDTO.isPermiteReprogramacao());
+		produtoBalanceamentoVO.setBloquearData(!produtoLancamentoDTO.permiteReprogramacao());
 		
 		produtoBalanceamentoVO.setIdProdutoEdicao(produtoLancamentoDTO.getIdProdutoEdicao());
 		

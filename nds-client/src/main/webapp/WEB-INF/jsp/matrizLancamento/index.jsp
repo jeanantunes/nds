@@ -233,7 +233,7 @@ function reprogramarSelecionados() {
 
 <div id="dialog-pagincao-confirmada" title="Atenção" style="display:none">
 			
-			<p>As seleções de lançamentos não serão salvas,deseja continuar?</p>
+			<p>As seleções de lançamentos não serão salvas, deseja continuar?</p>
 			   
 </div>
 

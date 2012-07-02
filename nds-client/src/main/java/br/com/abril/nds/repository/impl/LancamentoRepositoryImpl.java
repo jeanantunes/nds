@@ -1121,10 +1121,10 @@ public class LancamentoRepositoryImpl extends
 				  										  StatusLancamento.CONFIRMADO.toString()};
 		
 		String[] arrayTipoProduto = {GrupoProduto.REVISTA.toString(),
-									  GrupoProduto.CROMO.toString(),
-									  GrupoProduto.CARTELA.toString(),
-									  GrupoProduto.LIVRO.toString(),
-									  GrupoProduto.COLECIONAVEL.toString()};
+									 GrupoProduto.CROMO.toString(),
+									 GrupoProduto.CARTELA.toString(),
+									 GrupoProduto.LIVRO.toString(),
+									 GrupoProduto.COLECIONAVEL.toString()};
 		
 		List<String> statusLancamentoNoPeriodo = Arrays.asList(arrayStatusLancamentoNoPeriodo);
 		
