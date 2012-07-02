@@ -348,7 +348,7 @@ public class NotaFiscalRepositoryImplTest  extends AbstractRepositoryImplTest {
 		Long extipi = 1L;
 		Long ncm = 1L;
 		ProdutoEdicao produtoEdicao = null;
-		Long quantidade = 1L;
+		BigDecimal quantidade = BigDecimal.ONE;
 		String unidade = "";
 		BigDecimal valorDesconto 	= BigDecimal.ZERO;
 		BigDecimal valorFrete 		= BigDecimal.ZERO;
