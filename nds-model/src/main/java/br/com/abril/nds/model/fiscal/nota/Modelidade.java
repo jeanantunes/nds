@@ -17,4 +17,12 @@ public enum Modelidade {
 	 * 3 - valor da operação
 	 */
 	VALOR_OPERACAO;
+
+	/**
+	 * @see java.lang.Enum#toString()
+	 */
+	@Override
+	public String toString() {
+		return String.valueOf(this.ordinal());
+	}
 }

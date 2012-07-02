@@ -4,6 +4,8 @@ import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
+import br.com.abril.nds.util.export.fiscal.nota.NFEExportType;
+
 @Entity
 @Table(name = "NOTA_FISCAL_ENCARGO_FINANCEIRO_PRODUTO")
 public class EncargoFinanceiroProduto extends EncargoFinanceiro {
@@ -14,9 +16,11 @@ public class EncargoFinanceiroProduto extends EncargoFinanceiro {
 	private static final long serialVersionUID = -6496916286204117106L;
 
 	@Embedded
+	@NFEExportType
 	private ICMS icms;
 	
 	@Embedded
+	@NFEExportType
 	private IPI ipi;
 	
 	/**

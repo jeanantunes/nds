@@ -305,31 +305,30 @@ public class PdvServiceImpl implements PdvService {
 		if(pdv == null){
 			pdv = new PDV();
 			pdv.setDataInclusao(new Date());
+		}
 			
-			if( pdvDTO.getCaracteristicaDTO()!= null && pdvDTO.getCaracteristicaDTO().isPontoPrincipal()){
-				
-				if(pdvRepository.existePDVPrincipal()){
-					throw new ValidacaoException(TipoMensagem.WARNING,"PDV não pode ser incluído! Já existe PDV incluído como principal.");
-				}
-			} else if (pdvDTO.getCaracteristicaDTO()!= null && !pdvDTO.getCaracteristicaDTO().isPontoPrincipal()) {
-				if(!pdvRepository.existePDVPrincipal()){
-					throw new ValidacaoException(TipoMensagem.WARNING,"É obrigatório ter um PDV principal.");
-				}
-			}
+		if( pdvDTO.getCaracteristicaDTO()!= null && pdvDTO.getCaracteristicaDTO().isPontoPrincipal()){
 			
-			if(pdvRepository.obterQntPDV() == 0 
-					&& pdvDTO.getCaracteristicaDTO()!= null 
-					&&  !pdvDTO.getCaracteristicaDTO().isPontoPrincipal()){
-				
-				pdvDTO.getCaracteristicaDTO().setPontoPrincipal(Boolean.TRUE);
+			this.pdvRepository.setarPDVPrincipal(false, cota.getId());
+			
+		} else if (pdvDTO.getCaracteristicaDTO()!= null && !pdvDTO.getCaracteristicaDTO().isPontoPrincipal()) {
+			if(!pdvRepository.existePDVPrincipal(cota.getId(), pdv.getId())){
+				throw new ValidacaoException(TipoMensagem.WARNING,"É obrigatório ter um PDV principal.");
 			}
+		}
+		
+		if(pdvRepository.obterQntPDV(cota.getId(), pdv.getId()) == 0 
+				&& pdvDTO.getCaracteristicaDTO()!= null 
+				&&  !pdvDTO.getCaracteristicaDTO().isPontoPrincipal()){
+			
+			pdvDTO.getCaracteristicaDTO().setPontoPrincipal(Boolean.TRUE);
 		}
 		
 		if( pdvDTO.getCaracteristicaDTO().isPontoPrincipal()){
 		
 			if(pdv.getCaracteristicas()!= null && !pdv.getCaracteristicas().isPontoPrincipal()){
 				
-				if(pdvRepository.existePDVPrincipal()){
+				if(pdvRepository.existePDVPrincipal(cota.getId(), pdv.getId())){
 					throw new ValidacaoException(TipoMensagem.WARNING,"PDV não pode der incluído! Já existe PDV incluído como principal.");
 				}
 			}
@@ -1123,5 +1122,10 @@ public class PdvServiceImpl implements PdvService {
 		
 		return Boolean.FALSE;
 	}
-
+	
+	@Transactional(readOnly=true)
+	public boolean existePDVPrincipal(Long idCota, Long idPdv){
+		
+		return pdvRepository.existePDVPrincipal(idCota, idPdv);
+	}
 }

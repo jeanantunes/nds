@@ -16,7 +16,7 @@ import javax.persistence.Embeddable;
     @AttributeOverride(name="valorAliquota", column=@Column(name="VLR_ALIQ_PIS", scale = 4, precision = 15)),
     @AttributeOverride(name="valor", column=@Column(name="VLR_PIS", scale = 2, precision = 15))
 })
-public class PIS extends ContribuicaoSocial implements Serializable {
+public class PIS extends PISBase implements Serializable {
 
 	/**
 	 * Serial Version UID

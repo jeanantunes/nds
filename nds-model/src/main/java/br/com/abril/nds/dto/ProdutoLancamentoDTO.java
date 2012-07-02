@@ -44,6 +44,8 @@ public class ProdutoLancamentoDTO implements Serializable {
 
 	private TipoLancamentoParcial parcial;
 	
+	private String descricaoLancamento;
+	
 	private Date dataLancamentoPrevista;
 
 	private Date dataLancamentoDistribuidor;
@@ -65,6 +67,8 @@ public class ProdutoLancamentoDTO implements Serializable {
 	private Integer ordemPeriodicidadeProduto;
   	
   	private boolean permiteReprogramacao;
+  	
+  	private String distribuicao;
 	
 	/**
 	 * Construtor padrão.
@@ -241,6 +245,26 @@ public class ProdutoLancamentoDTO implements Serializable {
 	public void setParcial(String parcial) {
 		
 		this.parcial = Util.getEnumByStringValue(TipoLancamentoParcial.values(), parcial);
+		
+		if (this.parcial == null) {
+			this.descricaoLancamento = "Lancamento";
+		} else {
+			this.descricaoLancamento = this.parcial.getDescricao();
+		}
+	}
+	
+	/**
+	 * @return the descricaoLancamento
+	 */
+	public String getDescricaoLancamento() {
+		return descricaoLancamento;
+	}
+
+	/**
+	 * @param descricaoLancamento the descricaoLancamento to set
+	 */
+	public void setDescricaoLancamento(String descricaoLancamento) {
+		this.descricaoLancamento = descricaoLancamento;
 	}
 
 	/**
@@ -398,6 +422,20 @@ public class ProdutoLancamentoDTO implements Serializable {
 	 */
 	public void setPermiteReprogramacao(boolean permiteReprogramacao) {
 		this.permiteReprogramacao = permiteReprogramacao;
+	}
+
+	/**
+	 * @return the distribuicao
+	 */
+	public String getDistribuicao() {
+		return distribuicao;
+	}
+
+	/**
+	 * @param distribuicao the distribuicao to set
+	 */
+	public void setDistribuicao(String distribuicao) {
+		this.distribuicao = distribuicao;
 	}
 	
 }

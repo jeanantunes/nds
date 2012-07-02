@@ -11,6 +11,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -195,9 +196,10 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		
 		NotaFiscal notaFiscal = this.notaFiscalDAO.buscarPorId(id);
 		
-		notaFiscal.setStatusProcessamentoInterno(StatusProcessamentoInterno.ENVIADA);
-		
-		this.notaFiscalDAO.merge(notaFiscal);
+		if (notaFiscal != null) {
+			notaFiscal.setStatusProcessamentoInterno(StatusProcessamentoInterno.ENVIADA);
+			this.notaFiscalDAO.merge(notaFiscal);
+		}
 	}
 	
 	
@@ -207,11 +209,8 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 	 */
 	@Override
 	@Transactional
-	public synchronized void exportarNotasFiscais() throws FileNotFoundException, IOException {
-		
-		List<NotaFiscal> notasFiscaisParaExportacao =
-				this.notaFiscalDAO.obterListaNotasFiscaisPor(StatusProcessamentoInterno.GERADA);
-		
+	public synchronized void exportarNotasFiscais(List<NotaFiscal> notasFiscaisParaExportacao) throws FileNotFoundException, IOException {
+					
 		String dados = "";
 		
 		try {
@@ -261,7 +260,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		for(NotaFiscal notaFiscal : notasFiscaisParaExportacao) {
 			
 			nfeExporter.clear();
-			
+			Hibernate.initialize(notaFiscal);
 			nfeExporter.execute(notaFiscal);
 			
 			String s = nfeExporter.gerarArquivo();

@@ -103,7 +103,9 @@ public class DebitoCreditoCotaServiceImpl implements DebitoCreditoCotaService {
 		
 		List<Cota> cotas = this.boxRepository.obterCotasPorBoxRoteiroRota(idBox, idRoteiro, idRota);
 		
-		Double percFat;
+		BigDecimal percFat;
+		
+		BigDecimal percTotal = new BigDecimal(100);
 		
 		Map<Long,BigDecimal> cotasFaturamentos = null;
 		
@@ -118,16 +120,16 @@ public class DebitoCreditoCotaServiceImpl implements DebitoCreditoCotaService {
 				
 				cotasFaturamentos = this.movimentoFinanceiroCotaService.obterFaturamentoCotasPeriodo(cotas, baseCalculo, dataPeriodoInicial, dataPeriodoFinal);
 				
-				if (cotasFaturamentos!=null){
+				if (cotasFaturamentos!=null && cotasFaturamentos.get(itemCota.getId())!=null){
 					
-					if( cotasFaturamentos.get(itemCota.getId()).doubleValue() > 0 ){
-				        percFat = ((cotasFaturamentos.get(itemCota.getId()).doubleValue() / 100)*percentual.doubleValue());
+					if(cotasFaturamentos.get(itemCota.getId()).doubleValue() > 0 ){
+				        percFat = ((cotasFaturamentos.get(itemCota.getId()).divide(percTotal)).multiply(percentual));
 					}
 					
 				}
 			}
 			
-			listaDC.add(new DebitoCreditoDTO(indice,null,null,itemCota.getNumeroCota(),itemCota.getPessoa().getNome(),null,null,(percFat!=null?CurrencyUtil.formatarValor(percFat):null),null));
+			listaDC.add(new DebitoCreditoDTO(indice,null,null,itemCota.getNumeroCota(),itemCota.getPessoa().getNome(),null,null,(percFat!=null?CurrencyUtil.formatarValor(percFat.doubleValue()):null),null));	
 		}
 		return listaDC;
 	}
@@ -173,7 +175,9 @@ public class DebitoCreditoCotaServiceImpl implements DebitoCreditoCotaService {
 			
 			if (cota!=null){
 			
-				Double percFat = null;
+				BigDecimal percFat = null;
+				
+				BigDecimal percTotal = new BigDecimal(100);
 				
 				Map<Long,BigDecimal> cotasFaturamentos = null;
 		
@@ -181,16 +185,16 @@ public class DebitoCreditoCotaServiceImpl implements DebitoCreditoCotaService {
 					
 					cotasFaturamentos = this.movimentoFinanceiroCotaService.obterFaturamentoCotasPeriodo(Arrays.asList(cota), baseCalculo, dataPeriodoInicial, dataPeriodoFinal);
 					
-					if (cotasFaturamentos!=null){
+					if (cotasFaturamentos!=null && cotasFaturamentos.get(cota.getId())!=null){
 						
-						if( cotasFaturamentos.get(cota.getId()).doubleValue() > 0 ){
-					        percFat = ((cotasFaturamentos.get(cota.getId()).doubleValue() / 100)*percentual.doubleValue());
+						if(cotasFaturamentos.get(cota.getId()).doubleValue() > 0 ){
+					        percFat = ((cotasFaturamentos.get(cota.getId()).divide(percTotal)).multiply(percentual));
 						}
 						
 					}
 				}
 				
-				dc = new DebitoCreditoDTO(indice,null,null,cota.getNumeroCota(),cota.getPessoa().getNome(),null,null,(percFat!=null?CurrencyUtil.formatarValor(percFat):null),null);
+				dc = new DebitoCreditoDTO(indice,null,null,cota.getNumeroCota(),cota.getPessoa().getNome(),null,null,(percFat!=null?CurrencyUtil.formatarValor(percFat.doubleValue()):null),null);
 			}
 		}
 

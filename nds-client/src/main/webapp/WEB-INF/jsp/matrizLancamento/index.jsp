@@ -1,6 +1,12 @@
 
 <head>
 
+<style>
+.linkDisabled {
+	cursor: default;
+	opacity: 0.4;
+}
+</style>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/balanceamento.js"></script>
 
 <script type="text/javascript">
@@ -18,7 +24,7 @@ $(function() {
 		colModel : [  {
 			display : 'Código',
 			name : 'codigoProduto',
-			width : 60,
+			width : 58,
 			sortable : true,
 			align : 'center'
 		}, {
@@ -29,43 +35,43 @@ $(function() {
 			align : 'left'
 		}, {
 			display : 'Edição',
-			name : 'numEdicao',
+			name : 'numeroEdicao',
 			width : 35,
 			sortable : true,
 			align : 'center'
 		}, {
 			display : 'Preço Capa R$',
-			name : 'preco',
+			name : 'precoVenda',
 			width : 50,
 			sortable : true,
 			align : 'right'
 		}, {
 			display : 'Reparte',
-			name : 'reparte',
+			name : 'repartePrevisto',
 			width : 40,
 			sortable : true,
 			align : 'center'
 		}, {
 			display : 'Lançamento',
-			name : 'lancamento',
+			name : 'descricaoLancamento',
 			width : 60,
 			sortable : true,
 			align : 'left'
 		}, {
 			display : 'Recolhimento',
-			name : 'dataRecolhimento',
+			name : 'dataRecolhimentoPrevista',
 			width : 70,
 			sortable : true,
 			align : 'center'
 		},{
 			display : 'Total R$',
-			name : 'total',
+			name : 'valorTotal',
 			width : 40,
 			sortable : true,
 			align : 'right'
 		}, {
 			display : 'Físico',
-			name : 'fisico',
+			name : 'reparteFisico',
 			width : 40,
 			sortable : true,
 			align : 'center'
@@ -77,24 +83,24 @@ $(function() {
 			align : 'center'
 		}, {
 			display : 'Previsto',
-			name : 'dataPrevisto',
+			name : 'dataLancamentoPrevista',
 			width : 60,
 			sortable : true,
 			align : 'center'
 		}, {
 			display : 'Matriz/Distrib.',
 			name : 'novaData',
-			width : 105,
-			sortable : true,
+			width : 107,
+			sortable : false,
 			align : 'center'
 		},{
 			display : 'Reprogramar',
 			name : 'reprogramar',
 			width : 65,
-			sortable : true,
+			sortable : false,
 			align : 'center'
 		}],
-		sortname : "novaData",
+		sortname : "codigoProduto",
 		sortorder : "asc",
 		usepager : true,
 		useRp : true,
@@ -144,14 +150,14 @@ $(function() {
 	$("#datepickerDe_1").mask("99/99/9999");
 	
 	
-	$( "#novaDataRecolhimento" ).datepicker({
+	$( "#novaDataLancamento" ).datepicker({
 		showOn: "button",
 		dateFormat: 'dd/mm/yy',
 		buttonImage: "<c:url value='scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif'/>",
 		buttonImageOnly: true
 	});
 	
-	$("#novaDataRecolhimento").mask("99/99/9999");
+	$("#novaDataLancamento").mask("99/99/9999");
 	
 	
 });
@@ -175,7 +181,7 @@ function reprogramarSelecionados() {
 		},
 		beforeClose: function() {
 			
-			$("#novaDataRecolhimento").val("");
+			$("#novaDataLancamento").val("");
 			
 			clearMessageDialogTimeout();
 		}
@@ -225,6 +231,12 @@ function reprogramarSelecionados() {
 			   
 </div>
 
+<div id="dialog-pagincao-confirmada" title="Atenção" style="display:none">
+			
+			<p>As seleções de lançamentos não serão salvas,deseja continuar?</p>
+			   
+</div>
+
 	
 		<div id="dialogReprogramarBalanceamento" title="Reprogramar Recolhimentos">
 		    
@@ -232,8 +244,8 @@ function reprogramarSelecionados() {
 
 		    <p>
 			    <strong>Nova Data:</strong>
-			    <input name="novaDataRecolhimento" type="text"
-			    	   style="width:80px;" id="novaDataRecolhimento" />
+			    <input name="novaDataLancamento" type="text"
+			    	   style="width:80px;" id="novaDataLancamento" />
 		    </p>
 		</div>
 
@@ -272,7 +284,9 @@ function reprogramarSelecionados() {
 		            <a href="#" id="selFornecedor" onclick="return false;">Clique e Selecione o Fornecedor</a>
 		              <div class="menu_fornecedor" style="display:none;">
 		                	<span class="bt_sellAll">
-								<input type="checkbox" id="selTodos1" name="selTodos1" onclick="checkAll(this, 'checkgroup_menu');" style="float:left;"/>
+
+<input type="checkbox" id="selTodos1" name="selTodos1" onclick="checkAll(this, 'checkgroup_menu');" style="float:left;"/>
+
 							<label for="selTodos1">Selecionar Todos</label></span>
 		                    <br clear="all" />
 		                    <c:forEach items="${fornecedores}" var="fornecedor">
@@ -350,14 +364,16 @@ function reprogramarSelecionados() {
 		         	  
 		         	  <div style="margin-top:15px; margin-left:30px; float:left;"><strong>Valor Total R$: <span id="valorTotal"></span></strong></div>
 		          
-		              <span class="bt_sellAll" style="float:right; margin-right:60px;"><label for="selTodos">Selecionar Todos</label><input type="checkbox" id="selTodos" name="Todos" onclick="checkAll(this, 'checkgroup');"/></span>
+		              <span class="bt_sellAll" style="float:right; margin-right:60px;"><label for="selTodos">Selecionar Todos</label><input type="checkbox" id="selTodos" name="Todos" onclick="B.checkUncheckLancamentos()"/></span>
 		        </div>
 		      </fieldset>
 		      <div class="linha_separa_fields">&nbsp;</div>      
 		      <fieldset class="classFieldset" id="resumoPeriodo"; style="display:none;" >
 		      	<legend>Resumo do Período</legend>
+		        <div style="width: 950px; overflow-x: auto;">
 		        <table width="100%" border="0" cellspacing="2" cellpadding="2" id="tableResumoPeriodo">
 		        </table>
+		        </div>
 		      </fieldset>
 		    </div>
 		</div>

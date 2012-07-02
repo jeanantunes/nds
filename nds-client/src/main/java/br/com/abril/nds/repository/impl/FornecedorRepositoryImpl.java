@@ -91,7 +91,7 @@ public class FornecedorRepositoryImpl extends
 
 		return query.list();
 	}
-
+	
 	@Override
 	@SuppressWarnings("unchecked")
 	public List<Fornecedor> obterFornecedores() {
@@ -347,6 +347,22 @@ public class FornecedorRepositoryImpl extends
 			
 		} catch (Exception e) {
 			throw new RuntimeException(e);
-		}
-	}	
+		}	
+	}
+	
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<Fornecedor> obterFornecedoresPorId(List<Long> idsFornecedores) {
+		
+		String hql = "from Fornecedor fornecedor "
+				+ " join fetch fornecedor.juridica "
+				+ " where fornecedor.id in (:idsFornecedores) ";
+		
+		Query query = super.getSession().createQuery(hql);
+		
+		query.setParameterList("idsFornecedores", idsFornecedores);
+		
+		return query.list();
+	}
+	
 }
