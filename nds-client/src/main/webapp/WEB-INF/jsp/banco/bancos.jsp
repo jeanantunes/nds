@@ -157,17 +157,28 @@
 			height:170,
 			width:380,
 			modal: true,
-			buttons: {
-				"Confirmar": function() {
-					desativarBanco(idBanco);
-				},
-				"Cancelar": function() {
-					$( this ).dialog( "close" );
-				}
-			},
+
+			buttons:[ 
+			          {
+				           id:"bt_confirmar",
+				           text:"Confirmar", 
+				           click: function() {
+					           desativarBanco(idBanco);
+				           }
+			           },
+			           {
+				           id:"bt_cancelar",
+				           text:"Cancelar", 
+				           click: function() {
+				        	   $( this ).dialog( "close" );
+				           }
+			           }
+	        ],
+	        
 			beforeClose: function() {
 				clearMessageDialogTimeout();
-		    }
+		    }	
+			
 		});
 	};
 	

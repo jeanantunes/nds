@@ -46,7 +46,6 @@ function Balanceamento(pathTela, descInstancia) {
 			null,
 			function(result){
 				
-				debugger;
 				if (result == "true") 
 					T.retornoVerificarBalanceamentosAlterados(funcao);
 				else
@@ -72,14 +71,13 @@ function Balanceamento(pathTela, descInstancia) {
 			singleSelect: true,
 			preProcess: T.processaRetornoPesquisa,
 			onSuccess: T.onSuccessPesquisa,
-			onSubmit: T.confirmarPaginacao
+			onSubmit: function(elemento){return T.confirmarPaginacao(this);}
 		});
 		
 		$(".lancamentosProgramadosGrid").flexReload();
 	},
 
-
-	this.confirmarPaginacao = function() {
+	this.confirmarPaginacao = function(elemento) {
 		
 		var noSelect = $('[name=checkgroup]:checked').size() == 0;
 		
@@ -88,9 +86,31 @@ function Balanceamento(pathTela, descInstancia) {
 			return true;
 		}
 		
-		return confirm('As seleções de lançamentos não serão salvas,deseja continuar?');
+		$("#dialog-pagincao-confirmada").dialog({
+			resizable: false,
+			height:'auto',
+			width:600,
+			modal: true,
+			buttons: {
+				"Confirmar": function() {
+					
+					$(".lancamentosProgramadosGrid").flexOptions({ onSubmit: null });
+					
+					$(".lancamentosProgramadosGrid").flexReload();
+					
+					$(".lancamentosProgramadosGrid").flexOptions({ onSubmit: function(elemento){return T.confirmarPaginacao(this);} });
+					
+					$(this).dialog("close");
+				},
+				"Cancelar": function() {								
+					$(this).dialog("close");
+				}
+			}
+		});	
+		
+		return false;
 	},
-	
+		
 	this.processaRetornoPesquisa = function(data) {
 		
 		if(data.mensagens) {
@@ -98,7 +118,6 @@ function Balanceamento(pathTela, descInstancia) {
 			return data.rows;
 		}
 		
-		//$("#tableResumoPeriodo").clear();
 		$("#valorTotal").clear();
 		
 		T.linhasDestacadas = [];
@@ -158,16 +177,16 @@ function Balanceamento(pathTela, descInstancia) {
 		var linkDescProduto = T.getLinkProduto(row.cell.idProdutoEdicao,row.cell.nomeProduto);
 		T.lancamentos.push({
 			id:					row.cell.id, 
-			numEdicao:			row.cell.numEdicao,
+			numeroEdicao:			row.cell.numeroEdicao,
 			nomeProduto:	    row.cell.nomeProduto,
-			dataRecolhimento:	row.cell.dataRecolhimento
+			dataRecolhimentoPrevista:	row.cell.dataRecolhimentoPrevista
 		});
 		row.cell.nomeProduto = linkDescProduto;
 		
 		row.cell.novaData = T.gerarInputDataDistrib(row.cell.novaData, row.cell.bloquearData, i);
 		row.cell.reprogramar = T.gerarCheckReprogramar(row.cell.id.toString(), row.cell.bloquearData,i);
 				
-		if (!row.cell.possuiRecebimentoFisico || row.cell.cancelamentoGD || (row.cell.dataPrevisto!=row.cell.dataLancamentoDistribuidor) ) {
+		if (!row.cell.possuiRecebimentoFisico || row.cell.cancelamentoGD || (row.cell.dataLancamentoPrevista!=row.cell.dataLancamentoDistribuidor) ) {
 			T.linhasDestacadas.push(i+1);
 		}
 		
@@ -181,7 +200,7 @@ function Balanceamento(pathTela, descInstancia) {
 		       '<span class="bt_atualizarIco" title="Atualizar Datas" ' +
 		       (isBloqueado? ' style="opacity:0.5;" ' : '') + 
 		       '>' +
-		       '<a href="javascript:;" ' + 
+		       '<a href="javascript:;" name="reprogramar" ' + 
 		       (isBloqueado? '' : ' onclick="B.reprogramarLancamentoUnico(' + index + ');') +
 		       '">&nbsp;</a></span>';
 		
@@ -191,11 +210,11 @@ function Balanceamento(pathTela, descInstancia) {
 		
 		var data = [];
 		
-		data.push({name: 'produtoLancamento.id', 			value: T.lancamentos[index].id});
-		data.push({name: 'produtoLancamento.novaData', 		value: T.lancamentos[index].novaData});
-		data.push({name: 'produtoLancamento.nomeProduto', 	value: T.lancamentos[index].nomeProduto});
-		data.push({name: 'produtoLancamento.numEdicao', 	value: T.lancamentos[index].numEdicao});
-		data.push({name: 'produtoLancamento.dataRecolhimento', value: T.lancamentos[index].dataRecolhimento});
+		data.push({name: 'produtoLancamento.id', 					   value: T.lancamentos[index].id});
+		data.push({name: 'produtoLancamento.novaData', 				   value: T.lancamentos[index].novaData});
+		data.push({name: 'produtoLancamento.nomeProduto', 			   value: T.lancamentos[index].nomeProduto});
+		data.push({name: 'produtoLancamento.numeroEdicao', 	           value: T.lancamentos[index].numeroEdicao});
+		data.push({name: 'produtoLancamento.dataRecolhimentoPrevista', value: T.lancamentos[index].dataRecolhimentoPrevista});
 		
 		$.postJSON(
 				pathTela + "/matrizLancamento/reprogramarLancamentoUnico",
@@ -216,14 +235,14 @@ function Balanceamento(pathTela, descInstancia) {
 				
 		var data = [];
 		
-		data.push({name: 'novaDataFormatada', value: $("#novaDataRecolhimento").val()});
+		data.push({name: 'novaDataFormatada', value: $("#novaDataLancamento").val()});
 		
 		$.each(T.lancamentos, function(index, lancamento){
 			if(lancamento.selecionado == true) {
-				data.push({name: 'produtosLancamento[' + index + '].id', 			   value: lancamento.id});
-				data.push({name: 'produtosLancamento[' + index + '].nomeProduto', 	   value: lancamento.nomeProduto});
-				data.push({name: 'produtosLancamento[' + index + '].numEdicao', 	   value: lancamento.numEdicao});
-				data.push({name: 'produtosLancamento[' + index + '].dataRecolhimento', value: lancamento.dataRecolhimento});
+				data.push({name: 'produtosLancamento[' + index + '].id', 			   		   value: lancamento.id});
+				data.push({name: 'produtosLancamento[' + index + '].nomeProduto', 	   		   value: lancamento.nomeProduto});
+				data.push({name: 'produtosLancamento[' + index + '].numeroEdicao', 	   		   value: lancamento.numeroEdicao});
+				data.push({name: 'produtosLancamento[' + index + '].dataRecolhimentoPrevista', value: lancamento.dataRecolhimentoPrevista});
 			}
 		});
 		
@@ -244,7 +263,7 @@ function Balanceamento(pathTela, descInstancia) {
 	},
 	
 	this.gerarCheckReprogramar = function(id,isBloqueado,index) { 
-		return '<input type="checkbox" value="'+id+'" name="checkgroup" ' +
+		return '<input type="checkbox" value="'+id+'" name="checkgroup" bloqueado="'+isBloqueado+'" ' +
 			   (isBloqueado? ' disabled="disabled" ' : ' onclick="B.selecionarCheck(this,\'' + index + '\');" ') + 
 			   ' />';	
 	},
@@ -252,6 +271,24 @@ function Balanceamento(pathTela, descInstancia) {
 	this.selecionarCheck = function(check, index) {
 		
 		T.lancamentos[index].selecionado = check.checked;
+				
+		$.each($("input[name='checkgroup'][bloqueado!='true']"),function(index,row) {
+			
+			var checado = row.checked;
+			
+			var input = $(row.parentElement.parentElement.parentElement).find("input[type='text']");
+			var a = $(row.parentElement.parentElement.parentElement).find("a[name='reprogramar']");
+			
+			if(checado) {				
+				input.disable();
+				a.attr('onclick',  'return;' + a.attr('onclick') );
+				a.parent().addClass("linkDisabled");
+			} else {
+				input.enable();
+				a.attr('onclick', a.attr('onclick').replace('return;' , '' ) );
+				a.parent().removeClass("linkDisabled");
+			}
+		});
 		
 		$("#selTodos").uncheck();
 	},

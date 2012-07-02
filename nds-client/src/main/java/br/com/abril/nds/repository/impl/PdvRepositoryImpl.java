@@ -31,20 +31,32 @@ public class PdvRepositoryImpl extends AbstractRepositoryModel<PDV, Long> implem
 	}
 	
 	@Override
-	public Long obterQntPDV(){
+	public Long obterQntPDV(Long idCota, Long idPdvIgnorar){
 		
 		Criteria criteria  = getSession().createCriteria(PDV.class);
 		
 		criteria.setProjection(Projections.rowCount());
+		criteria.add(Restrictions.eq("cota.id", idCota));
+		
+		if (idPdvIgnorar != null){
+			
+			criteria.add(Restrictions.not(Restrictions.eq("id", idPdvIgnorar)));
+		}
 		
 		return (Long) criteria.uniqueResult();
 	}
 	
-	public Boolean existePDVPrincipal(){
+	public Boolean existePDVPrincipal(Long idCota, Long idPdvIgnorar){
 		
 		Criteria criteria  = getSession().createCriteria(PDV.class);
 		
 		criteria.add(Restrictions.eq("caracteristicas.pontoPrincipal", Boolean.TRUE));
+		criteria.add(Restrictions.eq("cota.id", idCota));
+		
+		if (idPdvIgnorar != null){
+			
+			criteria.add(Restrictions.not(Restrictions.eq("id", idPdvIgnorar)));
+		}
 		
 		criteria.setProjection(Projections.rowCount());
 		
@@ -162,5 +174,14 @@ public class PdvRepositoryImpl extends AbstractRepositoryModel<PDV, Long> implem
 		return (PDV) criteria.uniqueResult();
 	}
 	
-	
+	public void setarPDVPrincipal(boolean principal, Long idCota){
+		
+		Query query = 
+				this.getSession().createQuery("update PDV p set p.caracteristicas.pontoPrincipal = :principal where p.cota.id = :idCota");
+		
+		query.setParameter("principal", principal);
+		query.setParameter("idCota", idCota);
+		
+		query.executeUpdate();
+	}
 }

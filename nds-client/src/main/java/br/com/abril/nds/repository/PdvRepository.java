@@ -28,7 +28,9 @@ public interface PdvRepository extends Repository<PDV, Long> {
 	
 	PDV obterPDV(Long idCota,Long idPDV);
 	
-	Long obterQntPDV();
+	Long obterQntPDV(Long idCota, Long idPdvIgnorar);
 	
-	Boolean existePDVPrincipal();
+	Boolean existePDVPrincipal(Long idCota, Long idPdvIgnorar);
+	
+	void setarPDVPrincipal(boolean principal, Long idCota);
 }

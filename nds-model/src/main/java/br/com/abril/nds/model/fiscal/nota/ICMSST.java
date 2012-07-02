@@ -38,10 +38,10 @@ public class ICMSST extends ICMSBase implements Serializable {
 	 */
 	@Column(name="PERCENTUAL_ADCIONADO_ST", precision=5,scale=2, nullable=true)
 	@NFEWhens(value = {
-			@NFEWhen(condition = NFEConditions.ICMSST10, export = @NFEExport(secao = TipoSecao.N03, posicao = 7)),
-			@NFEWhen(condition = NFEConditions.ICMSST30, export = @NFEExport(secao = TipoSecao.N05, posicao = 3)),
-			@NFEWhen(condition = NFEConditions.ICMSST70, export = @NFEExport(secao = TipoSecao.N09, posicao = 8)),
-			@NFEWhen(condition = NFEConditions.ICMSST90, export = @NFEExport(secao = TipoSecao.N10, posicao = 8))
+			@NFEWhen(condition = NFEConditions.ICMS_ST_10, export = @NFEExport(secao = TipoSecao.N03, posicao = 7)),
+			@NFEWhen(condition = NFEConditions.ICMS_ST_30, export = @NFEExport(secao = TipoSecao.N05, posicao = 3)),
+			@NFEWhen(condition = NFEConditions.ICMS_ST_70, export = @NFEExport(secao = TipoSecao.N09, posicao = 8)),
+			@NFEWhen(condition = NFEConditions.ICMS_ST_90, export = @NFEExport(secao = TipoSecao.N10, posicao = 8))
 	})
 	private BigDecimal percentualAdicionado;
 	
