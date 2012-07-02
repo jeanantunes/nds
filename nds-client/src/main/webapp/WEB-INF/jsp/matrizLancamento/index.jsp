@@ -223,7 +223,7 @@ function reprogramarSelecionados() {
 <body>
 
 
-<div id="dialog-confirm" title="Balanceamento da Matriz de Recolhimento">
+<div id="dialog-confirm" title="Balanceamento da Matriz de Lançamento">
 			
 			<jsp:include page="../messagesDialog.jsp" />
 			
@@ -231,13 +231,13 @@ function reprogramarSelecionados() {
 			   
 </div>
 
-<div id="dialogVoltarConfiguracaoOriginal" title="Atenção" style="display:none">
+<div id="dialogVoltarConfiguracaoOriginal" title="Balanceamento da Matriz de Lançamento" style="display:none">
 			
 			<p>Ao voltar a configuração original, você perdará os dados confirmados. Deseja prosseguir?</p>
 			   
 </div>
 
-<div id="dialog-pagincao-confirmada" title="Atenção" style="display:none">
+<div id="dialog-pagincao-confirmada" title="Balanceamento da Matriz de Lançamento" style="display:none">
 			
 			<p>As seleções de lançamentos não serão salvas, deseja continuar?</p>
 			   

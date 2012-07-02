@@ -120,7 +120,6 @@ public class MatrizLancamentoController {
 	}
 	
 	
-	
 	@Post
 	public void obterGridMatrizLancamento(String sortorder, String sortname, int page, int rp) {
 		
