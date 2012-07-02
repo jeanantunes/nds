@@ -412,6 +412,7 @@ public class Fixture {
 		fornecedor.setTipoFornecedor(tipo);
 		fornecedor.setInicioAtividade(new Date());
 		fornecedor.setCodigoInterface(codigoInterface);
+		fornecedor.setOrigem(Origem.MANUAL);
 		return fornecedor;
 	}
 

@@ -22,6 +22,8 @@ import javax.persistence.TemporalType;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
 
+import br.com.abril.nds.model.Origem;
+
 /**
  * @author francisco.garcia
  * @version 1.0
@@ -82,8 +84,11 @@ public class Fornecedor implements Serializable {
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "TIPO_FORNECEDOR_ID")
 	private TipoFornecedor tipoFornecedor;
-	
-	
+
+	@Enumerated(EnumType.STRING)
+	@Column(name = "ORIGEM", nullable = false)
+	private Origem origem;
+
 	public Long getId() {
 		return id;
 	}
@@ -186,6 +191,20 @@ public class Fornecedor implements Serializable {
 
 	public void setCodigoInterface(Integer codigoInterface) {
 		this.codigoInterface = codigoInterface;
+	}
+	
+	/**
+	 * @return the origem
+	 */
+	public Origem getOrigem() {
+		return origem;
+	}
+
+	/**
+	 * @param origem the origem to set
+	 */
+	public void setOrigem(Origem origem) {
+		this.origem = origem;
 	}
 
 	@Override

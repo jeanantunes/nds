@@ -45,12 +45,14 @@ public class EnderecoRepositoryImpl extends AbstractRepositoryModel<Endereco, Lo
 		StringBuilder hql = new StringBuilder("delete from Endereco e ");
 		
 		hql.append(" where e.id in (:ids) ")
-		   .append(" and e.id not in (select ec.id from EnderecoCota ec where id in (:ids)) ")
-		   .append(" and e.id not in (select ee.id from EnderecoEntregador ee where id in (:ids)) ")
-		   .append(" and e.id not in (select efi.id from EnderecoFiador efi where id in (:ids)) ")
-		   .append(" and e.id not in (select ef.id from EnderecoFornecedor ef where id in (:ids)) ")
-		   .append(" and e.id not in (select et.id from EnderecoTransportador et where id in (:ids)) ")
-		   .append(" and e.id not in (select ep.id from EnderecoPDV ep where id in (:ids)) ");
+		   .append(" and e.id not in (select ec.id from EnderecoCota ec where ec.endereco.id in (:ids)) ")
+		   .append(" and e.id not in (select ee.id from EnderecoEntregador ee where ee.endereco.id in (:ids)) ")
+		   .append(" and e.id not in (select efi.id from EnderecoFiador efi where efi.endereco.id in (:ids)) ")
+		   .append(" and e.id not in (select ef.id from EnderecoFornecedor ef where ef.endereco.id in (:ids)) ")
+		   .append(" and e.id not in (select et.id from EnderecoTransportador et where et.endereco.id in (:ids)) ")
+		   .append(" and e.id not in (select ed.id from EnderecoDistribuidor ed where ed.endereco.id in (:ids)) ")
+		   .append(" and e.id not in (select ee.id from EnderecoEditor ee where id ee.endereco.in (:ids)) ")
+		   .append(" and e.id not in (select ep.id from EnderecoPDV ep where ep.endereco.id in (:ids)) ");
 		
 		Query query = this.getSession().createQuery(hql.toString());
 		query.setParameterList("ids", idsEndereco);

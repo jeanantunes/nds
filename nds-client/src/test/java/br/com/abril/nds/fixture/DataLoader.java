@@ -4292,12 +4292,15 @@ public class DataLoader {
 		fornecedorAcme = Fixture.fornecedorAcme(tipoFornecedorOutros);
 		fornecedorAcme.setCodigoInterface(123);
 		fornecedorAcme.setResponsavel("João");
+		fornecedorAcme.setOrigem(Origem.INTERFACE);
 		fornecedorDinap = Fixture.fornecedorDinap(tipoFornecedorPublicacao);
 		fornecedorDinap.setCodigoInterface(234);
 		fornecedorDinap.setResponsavel("Maria");
+		fornecedorDinap.setOrigem(Origem.MANUAL);
 		fornecedorFc = Fixture.fornecedorFC(tipoFornecedorPublicacao);
 		fornecedorFc.setCodigoInterface(345);
 		fornecedorFc.setResponsavel("Sebastião");
+		fornecedorFc.setOrigem(Origem.MANUAL);
 
 		save(session, fornecedorAcme, fornecedorDinap, fornecedorFc);
 
