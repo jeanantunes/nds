@@ -58,4 +58,14 @@ public class TipoNotaFiscalServiceImpl implements TipoNotaFiscalService {
 		return tipoNotaFiscalRepository.obterQuantidadeTiposNotasFiscais(cfop, tipoNota, tipoAtividade);
 	}
 
+	/**
+	 * 
+	 */
+	@Override
+	@Transactional
+	public synchronized Long proximoNumeroDocumentoFiscal(int serie) {
+		// TODO Auto-generated method stub
+		return 1l;
+	}
+
 }

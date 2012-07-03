@@ -606,7 +606,5 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		notaFiscal.setInformacaoAdicional(informacaoAdicional);
 	}
 	
-	
-	
 
 }

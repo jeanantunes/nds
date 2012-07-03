@@ -17,5 +17,11 @@ public interface TipoNotaFiscalService {
 	public List<TipoNotaFiscal> obterTiposNotasFiscais(String cfop, String tipoNota, TipoAtividade tipoAtividade);
 
 	public Long obterQuantidadeTiposNotasFiscais(String cfop, String tipoNota, TipoAtividade tipoAtividade);
-
+	
+	/**
+	 * Obtem o proximo numero do Documento fiscal com base na serie
+	 * @param serie
+	 * @return
+	 */
+	public Long proximoNumeroDocumentoFiscal(int serie);
 }

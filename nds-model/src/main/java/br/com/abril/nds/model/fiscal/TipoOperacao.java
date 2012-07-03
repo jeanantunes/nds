@@ -48,13 +48,5 @@ public enum TipoOperacao {
 	public void setSimpleValue(String simpleValue) {
 		this.simpleValue = simpleValue;
 	}
-	
-	/**
-	 * @see java.lang.Enum#toString()
-	 */
-	@Override
-	public String toString() {
-		return String.valueOf(this.ordinal());
-	}
 
 }
