@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
-import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -266,8 +266,6 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 		
 		matrizLancamento = this.gerarMatrizBalanceamentoLancamento(dadosBalanceamentoLancamento);
 		
-		this.configurarMatriz(matrizLancamento);
-		
 		balanceamentoLancamento.setMatrizLancamento(matrizLancamento);
 		
 		balanceamentoLancamento.setCapacidadeDistribuicao(
@@ -286,7 +284,7 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 		if (dadosBalanceamentoLancamento == null
 				|| dadosBalanceamentoLancamento.getCapacidadeDistribuicao() == null
 				|| dadosBalanceamentoLancamento.getDatasDistribuicaoFornecedorDistribuidor() == null
-				|| dadosBalanceamentoLancamento.getMapaExpectativaReparteTotalDiario() == null
+				|| dadosBalanceamentoLancamento.getDatasExpectativaReparte() == null
 				|| dadosBalanceamentoLancamento.getProdutosLancamento() == null
 				|| dadosBalanceamentoLancamento.getQtdDiasLimiteParaReprogLancamento() == null) {
 			
@@ -309,20 +307,17 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 		TreeSet<Date> datasDistribuicao =
 			dadosBalanceamentoLancamento.getDatasDistribuicaoFornecedorDistribuidor();
 		
-		Map<Date, BigDecimal> mapaExpectativaTotalReparteDiario =
-			dadosBalanceamentoLancamento.getMapaExpectativaReparteTotalDiario();
+		Set<Date> datasExpectativaReparte =
+			dadosBalanceamentoLancamento.getDatasExpectativaReparte();
 		
-		Map<Date, BigDecimal> mapaExpectativaTotalReparteDiarioOrdenado =
-			ordenarMapaExpectativaRepartePorDatasDistribuicao(mapaExpectativaTotalReparteDiario,
+		Set<Date> datasExpectativaReparteOrdenado =
+			ordenarMapaExpectativaRepartePorDatasDistribuicao(datasExpectativaReparte,
 															  datasDistribuicao);
 		
 		this.processarProdutosLancamentoNaoBalanceaveis(matrizLancamento,
 														dadosBalanceamentoLancamento);
 		
-		for (Map.Entry<Date, BigDecimal> entry :
-				mapaExpectativaTotalReparteDiarioOrdenado.entrySet()) {
-			
-			Date dataLancamentoPrevista = entry.getKey();
+		for (Date dataLancamentoPrevista : datasExpectativaReparteOrdenado) {
 			
 			List<ProdutoLancamentoDTO> produtosLancamentoNaoBalanceados =
 				this.processarProdutosLancamentoBalanceaveis(matrizLancamento,
@@ -349,30 +344,30 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 	}
 	
 	/**
-	 * Efetua a ordenação do mapa de expectativa de reparte de acordo com as datas
+	 * Efetua a ordenação do set de expectativa de reparte de acordo com as datas
 	 * de distribuição passadas como parâmetro.
 	 */
-	private Map<Date, BigDecimal> ordenarMapaExpectativaRepartePorDatasDistribuicao(
-													Map<Date, BigDecimal> mapaExpectativaReparte, 
+	private Set<Date> ordenarMapaExpectativaRepartePorDatasDistribuicao(
+													Set<Date> datasExpectativaReparte, 
 													TreeSet<Date> datasDistribuicao) {
 		
-		Map<Date, BigDecimal> mapaExpectativaReparteOrdenado =
-			new LinkedHashMap<Date, BigDecimal>();
+		Set<Date> datasExpectativaReparteOrdenado =
+			new LinkedHashSet<Date>();
 		
 		for (Date dataDistribuicao : datasDistribuicao) {
 
-			BigDecimal expectativaReparte = mapaExpectativaReparte.get(dataDistribuicao);
-			
-			if (expectativaReparte != null) {
+			if (datasExpectativaReparte.contains(dataDistribuicao)) {
 				
-				mapaExpectativaReparteOrdenado.put(
-					dataDistribuicao, mapaExpectativaReparte.remove(dataDistribuicao));
+				datasExpectativaReparteOrdenado.add(
+					dataDistribuicao);
+				
+				datasExpectativaReparte.remove(dataDistribuicao);
 			}
 		}
 		
-		mapaExpectativaReparteOrdenado.putAll(mapaExpectativaReparte);
+		datasExpectativaReparteOrdenado.addAll(datasExpectativaReparte);
 		
-		return mapaExpectativaReparteOrdenado;
+		return datasExpectativaReparteOrdenado;
 	}
 	
 	/**
@@ -799,6 +794,11 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 			produtosLancamentoMatriz = new ArrayList<ProdutoLancamentoDTO>();
 		}
 		
+		for (ProdutoLancamentoDTO produtoLancamento : produtosLancamento) {
+			
+			produtoLancamento.setNovaDataLancamento(dataLancamento);
+		}
+		
 		produtosLancamentoMatriz.addAll(produtosLancamento);
 		
 		matrizLancamento.put(dataLancamento, produtosLancamentoMatriz);
@@ -822,26 +822,6 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 		}
 		
 		return true;
-	}
-	
-	/**
-	 * Configura a matriz após a mesma estar balanceada.
-	 */
-	private void configurarMatriz(TreeMap<Date, List<ProdutoLancamentoDTO>> matrizLancamento) {
-		
-		for (Map.Entry<Date, List<ProdutoLancamentoDTO>> entryMatrizLancamento 
-				: matrizLancamento.entrySet()) {
-			
-			Date dataLancamento = entryMatrizLancamento.getKey();
-			
-			List<ProdutoLancamentoDTO> produtosLancamento = entryMatrizLancamento.getValue();
-			
-			for (ProdutoLancamentoDTO produtoLancamento : produtosLancamento) {
-				
-				//produtoLancamento.setDataLancamentoDistribuidor(dataLancamento);
-				produtoLancamento.setNovaDataLancamento(dataLancamento);
-			}
-		}
 	}
 	
 	/**
@@ -890,10 +870,14 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 		
 		dadosBalanceamentoLancamento.setProdutosLancamento(produtosLancamento);
 
-		dadosBalanceamentoLancamento.setMapaExpectativaReparteTotalDiario(
-			this.lancamentoRepository.obterExpectativasRepartePorData(periodoDistribuicao,
-																	  filtro.getIdsFornecedores()));
-
+		Set<Date> datasExpectativaReparte = new LinkedHashSet<Date>();
+		
+		for (ProdutoLancamentoDTO produtoLancamento : produtosLancamento) {
+			
+			datasExpectativaReparte.add(produtoLancamento.getDataLancamentoDistribuidor());
+		}
+		
+		dadosBalanceamentoLancamento.setDatasExpectativaReparte(datasExpectativaReparte);
 		
 		dadosBalanceamentoLancamento.setQtdDiasLimiteParaReprogLancamento(
 			distribuidor.getQtdDiasLimiteParaReprogLancamento());

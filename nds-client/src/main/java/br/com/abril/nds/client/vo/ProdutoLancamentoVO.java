@@ -53,6 +53,8 @@ public class ProdutoLancamentoVO  implements Serializable {
 	
 	private boolean destacarLinha;
 	
+	private boolean possuiFuro;
+	
 	/**
 	 * @return the id
 	 */
@@ -282,6 +284,20 @@ public class ProdutoLancamentoVO  implements Serializable {
 	 */
 	public void setDestacarLinha(boolean destacarLinha) {
 		this.destacarLinha = destacarLinha;
+	}
+
+	/**
+	 * @return the possuiFuro
+	 */
+	public boolean isPossuiFuro() {
+		return possuiFuro;
+	}
+
+	/**
+	 * @param possuiFuro the possuiFuro to set
+	 */
+	public void setPossuiFuro(boolean possuiFuro) {
+		this.possuiFuro = possuiFuro;
 	}
 
 }

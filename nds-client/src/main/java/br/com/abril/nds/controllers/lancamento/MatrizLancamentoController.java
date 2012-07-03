@@ -727,7 +727,7 @@ public class MatrizLancamentoController {
 		else
 			produtoBalanceamentoVO.setReparteFisico(produtoLancamentoDTO.getReparteFisico().intValue());
 		
-		//TODO - Pendente
+		// TODO: Este campos será informado em um nova EMS de Ajuste
 		if(produtoLancamentoDTO.getDistribuicao() == null) {
 			produtoBalanceamentoVO.setDistribuicao("");
 		} else {
@@ -737,7 +737,9 @@ public class MatrizLancamentoController {
 		produtoBalanceamentoVO.setBloquearData(!produtoLancamentoDTO.permiteReprogramacao());
 		
 		produtoBalanceamentoVO.setIdProdutoEdicao(produtoLancamentoDTO.getIdProdutoEdicao());
-	
+		
+		produtoBalanceamentoVO.setPossuiFuro(produtoLancamentoDTO.isPossuiFuro());
+		
 		produtoBalanceamentoVO.setDestacarLinha(
 			!produtoLancamentoDTO.isPossuiRecebimentoFisico()
 				|| produtoLancamentoDTO.getStatusLancamento().equals(StatusLancamento.CANCELADO_GD)

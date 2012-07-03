@@ -899,58 +899,6 @@ public class LancamentoRepositoryImpl extends
 		return query.list();
 	}
 	
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	@SuppressWarnings("unchecked")
-	public TreeMap<Date, BigDecimal> obterExpectativasRepartePorData(Intervalo<Date> periodoDistribuicao,
-			   														 List<Long> fornecedores) {
-
-		String sql = this.montarConsultaExpectativaRepartePorData();
-		
-		Query query = getSession().createSQLQuery(sql);
-		
-		aplicarParametros(query, periodoDistribuicao, fornecedores);
-		
-		List<Object[]> expectativasReparteDia = query.list();
-
-		TreeMap<Date, BigDecimal> mapaExpectativaReparteDia = new TreeMap<Date, BigDecimal>();
-
-		for (Object[] expectativa : expectativasReparteDia) {
-
-			Date data = (Date) expectativa[0];
-
-			BigDecimal expectativaReparte = (BigDecimal) expectativa[1];
-
-			mapaExpectativaReparteDia.put(data, expectativaReparte);
-		}
-
-		return mapaExpectativaReparteDia;
-	}
-	
-	private String montarConsultaExpectativaRepartePorData() {
-		
-		String sql = " select analitica.dataLancamentoDistribuidor, "
-				   + " sum(analitica.repartePrevisto) "
-				   + " from "
-				   + " ( "
-				   + " select "
-				   + " lancamento.DATA_LCTO_DISTRIBUIDOR as dataLancamentoDistribuidor, "
-				   + " case "
-				   + " when tipoProduto.GRUPO_PRODUTO = :grupoCromo then "
-				   + " lancamento.REPARTE / produtoEdicao.PACOTE_PADRAO "	  
-				   + " else "
-				   + " lancamento.REPARTE "
-				   + " end as repartePrevisto ";
-		
-		sql += montarClausulaFromConsultaBalanceamentoLancamento();
-		sql += " ) as analitica ";
-		sql += " group by analitica.dataLancamentoDistribuidor ";
-		
-		return sql;
-	}
-	
 	private String montarConsultaBalanceamentoLancamentoAnalitico() {
 		
 		StringBuilder sql = new StringBuilder();
@@ -1018,7 +966,18 @@ public class LancamentoRepositoryImpl extends
 		sql.append(" 	true ");
 		sql.append(" else ");
 		sql.append(" 	false ");
-		sql.append(" end as possuiRecebimentoFisico ");
+		sql.append(" end as possuiRecebimentoFisico, ");
+		
+		sql.append(" case when ( ");
+		sql.append(" 	select furoProduto.ID ");
+		sql.append(" 		from FURO_PRODUTO furoProduto ");
+		sql.append(" 		where furoProduto.LANCAMENTO_ID = lancamento.ID ");
+		sql.append(" 		limit 1 ");
+		sql.append(" 	) is not null then ");
+		sql.append(" 	true ");
+		sql.append(" else ");
+		sql.append(" 	false ");
+		sql.append(" end as possuiFuro ");
 		
 		sql.append(montarClausulaFromConsultaBalanceamentoLancamento());
 		
@@ -1097,7 +1056,8 @@ public class LancamentoRepositoryImpl extends
 			.addScalar("nomeProduto")
 			.addScalar("periodicidadeProduto")
 			.addScalar("possuiEstudo", StandardBasicTypes.BOOLEAN)
-			.addScalar("possuiRecebimentoFisico", StandardBasicTypes.BOOLEAN);
+			.addScalar("possuiRecebimentoFisico", StandardBasicTypes.BOOLEAN)
+			.addScalar("possuiFuro", StandardBasicTypes.BOOLEAN);		
 		
 		aplicarParametros(query, periodoDistribuicao, fornecedores);
 		
