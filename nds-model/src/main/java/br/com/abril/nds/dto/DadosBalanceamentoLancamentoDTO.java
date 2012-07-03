@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
-import java.util.TreeMap;
+import java.util.Set;
 import java.util.TreeSet;
 
 /**
@@ -22,7 +22,7 @@ public class DadosBalanceamentoLancamentoDTO implements Serializable {
 
 	private List<ProdutoLancamentoDTO> produtosLancamento;
 	
-	private TreeMap<Date, BigDecimal> mapaExpectativaReparteTotalDiario;
+	private Set<Date> datasExpectativaReparte;
 	
 	private BigDecimal capacidadeDistribuicao;
 	
@@ -56,18 +56,17 @@ public class DadosBalanceamentoLancamentoDTO implements Serializable {
 	}
 
 	/**
-	 * @return the mapaExpectativaReparteTotalDiario
+	 * @return the datasExpectativaReparte
 	 */
-	public TreeMap<Date, BigDecimal> getMapaExpectativaReparteTotalDiario() {
-		return mapaExpectativaReparteTotalDiario;
+	public Set<Date> getDatasExpectativaReparte() {
+		return datasExpectativaReparte;
 	}
 
 	/**
-	 * @param mapaExpectativaReparteTotalDiario the mapaExpectativaReparteTotalDiario to set
+	 * @param datasExpectativaReparte the datasExpectativaReparte to set
 	 */
-	public void setMapaExpectativaReparteTotalDiario(
-			TreeMap<Date, BigDecimal> mapaExpectativaReparteTotalDiario) {
-		this.mapaExpectativaReparteTotalDiario = mapaExpectativaReparteTotalDiario;
+	public void setDatasExpectativaReparte(Set<Date> datasExpectativaReparte) {
+		this.datasExpectativaReparte = datasExpectativaReparte;
 	}
 
 	/**

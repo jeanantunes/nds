@@ -174,7 +174,6 @@ function Balanceamento(pathTela, descInstancia) {
 	
 	this.processarLinha = function(i,row) {
 		
-		var linkDescProduto = T.getLinkProduto(row.cell.idProdutoEdicao,row.cell.nomeProduto);
 		T.lancamentos.push({
 			id:							row.cell.id, 
 			numeroEdicao:				row.cell.numeroEdicao,
@@ -182,11 +181,16 @@ function Balanceamento(pathTela, descInstancia) {
 			dataRecolhimentoPrevista:	row.cell.dataRecolhimentoPrevista,
 			novaData:					row.cell.novaData
 		});
-		row.cell.nomeProduto = linkDescProduto;
+		
+		var colunaProduto = T.getColunaProduto(row.cell.idProdutoEdicao,
+				   							   row.cell.nomeProduto,
+				   							   row.cell.possuiFuro);
+		
+		row.cell.nomeProduto = colunaProduto;
 		
 		row.cell.novaData = T.gerarInputDataDistrib(row.cell.novaData, row.cell.bloquearData, i);
 		row.cell.reprogramar = T.gerarCheckReprogramar(row.cell.id.toString(), row.cell.bloquearData,i);
-				
+		
 		if (row.cell.destacarLinha) {
 			T.linhasDestacadas.push(i+1);
 		}
@@ -312,14 +316,26 @@ function Balanceamento(pathTela, descInstancia) {
 	},
 	
 	/**
-	 * Obtém link para detalhes do produto
-	 * OBS: Específico para matrizLancamento\index.jsp
+	 * Monta a coluna de nome do produto
+	 * 
 	 * @param idProdutoEdicao
 	 * @param idProdutoEdicao
-	 * @return String: link para função de busca de detalhes
+	 * @param possuiFuro
+	 * 
+	 * @return Coluna de nome de produto
 	 */
-	this.getLinkProduto = function(idProdutoEdicao,nomeProduto) {
-		return '<a href="javascript:;" onclick="' + T.instancia +'.obterDetalheProduto('+idProdutoEdicao+');">'+nomeProduto+'</a>';
+	this.getColunaProduto = function(idProdutoEdicao, nomeProduto, possuiFuro) {
+		
+		var colunaProduto = "";
+		
+		if (possuiFuro) {
+		
+			colunaProduto += '<img src="' + contextPath + '/images/ico_detalhes.png" title="Produto com furo" hspace="5" style="cursor:pointer;" />';
+		}
+		
+		colunaProduto += '<a href="javascript:;" onclick="' + T.instancia +'.obterDetalheProduto('+idProdutoEdicao+');">'+nomeProduto+'</a>'; 
+		
+		return colunaProduto;
 	},
 
 	
