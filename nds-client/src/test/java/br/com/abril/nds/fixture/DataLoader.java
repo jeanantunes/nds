@@ -964,7 +964,7 @@ public class DataLoader {
 
 		gerarLogradouros(session);
 		
-		criarNovaNotaFiscal(session);
+		//criarNovaNotaFiscal(session);
 		
 	}
 

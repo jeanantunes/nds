@@ -241,11 +241,11 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 	public void enviarNotaFiscal(Long id) {
 
 		NotaFiscal notaFiscal = this.notaFiscalDAO.buscarPorId(id);
-
-		notaFiscal
-				.setStatusProcessamentoInterno(StatusProcessamentoInterno.ENVIADA);
-
-		this.notaFiscalDAO.merge(notaFiscal);
+		
+		if (notaFiscal != null) {
+			notaFiscal.setStatusProcessamentoInterno(StatusProcessamentoInterno.ENVIADA);
+			this.notaFiscalDAO.merge(notaFiscal);
+		}
 	}
 
 	/*
@@ -255,11 +255,8 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 	 */
 	@Override
 	@Transactional
-	public synchronized void exportarNotasFiscais()
+	public synchronized void exportarNotasFiscais(List<NotaFiscal> notasFiscaisParaExportacao)
 			throws FileNotFoundException, IOException {
-
-		List<NotaFiscal> notasFiscaisParaExportacao = this.notaFiscalDAO
-				.obterListaNotasFiscaisPor(StatusProcessamentoInterno.GERADA);
 
 		String dados = "";
 

@@ -9,6 +9,7 @@ import java.math.BigInteger;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
@@ -125,12 +126,15 @@ public class NFEExporter {
 			addSecaoVazia(secaoVazia);
 		}
 		
-		Field[] campos = notaFiscal.getClass().getDeclaredFields();
-
+		List<Field> campos = Arrays.asList(notaFiscal.getClass().getDeclaredFields());
+		
+		if (notaFiscal.getClass().getSuperclass() != null) {
+			List<Field> camposSuperClass = this.getInheritedFields(notaFiscal.getClass().getSuperclass());
+			campos.addAll(camposSuperClass);
+		}
+		
 		for (Field campo : campos) {
-
 			campo.setAccessible(true);
-
 			Object valor = campo.get(notaFiscal);
 			this.processarAnnotations(campo, listaParents, notaFiscal, valor);
 		}		
@@ -221,10 +225,24 @@ public class NFEExporter {
 				secaoVazia = null;
 			}
 			execute(valor, listaParents, secaoVazia);
-		}
+		} 
 	}
 		
-
+	
+	 /**
+	 * Obtem fildes da super classe;
+	 * 
+	 * @param type
+	 * @return
+	 */
+	public List<Field> getInheritedFields(Class<?> type) {
+		List<Field> fields = new ArrayList<Field>();
+		for (Class<?> c = type; c != null; c = c.getSuperclass()) {
+			fields.addAll(Arrays.asList(c.getDeclaredFields()));
+		}
+		return fields;
+	 }
+	
 	/**
 	 * Adiciona um campo em uma seção.
 	 * 
