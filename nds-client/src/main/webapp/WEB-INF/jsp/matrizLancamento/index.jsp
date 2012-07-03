@@ -24,7 +24,7 @@ $(function() {
 		colModel : [  {
 			display : 'Código',
 			name : 'codigoProduto',
-			width : 58,
+			width : 45,
 			sortable : true,
 			align : 'center'
 		}, {
@@ -42,31 +42,31 @@ $(function() {
 		}, {
 			display : 'Preço Capa R$',
 			name : 'precoVenda',
-			width : 50,
+			width : 78,
 			sortable : true,
 			align : 'right'
 		}, {
 			display : 'Reparte',
 			name : 'repartePrevisto',
-			width : 40,
+			width : 43,
 			sortable : true,
 			align : 'center'
 		}, {
 			display : 'Lançamento',
 			name : 'descricaoLancamento',
-			width : 60,
+			width : 68,
 			sortable : true,
 			align : 'left'
 		}, {
 			display : 'Recolhimento',
 			name : 'dataRecolhimentoPrevista',
-			width : 70,
+			width : 76,
 			sortable : true,
 			align : 'center'
 		},{
 			display : 'Total R$',
 			name : 'valorTotal',
-			width : 40,
+			width : 42,
 			sortable : true,
 			align : 'right'
 		}, {
@@ -78,7 +78,7 @@ $(function() {
 		}, {
 			display : 'Distribuição',
 			name : 'distribuicao',
-			width : 60,
+			width : 65,
 			sortable : true,
 			align : 'center'
 		}, {
