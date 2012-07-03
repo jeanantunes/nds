@@ -169,16 +169,24 @@ function reprogramarSelecionados() {
 		height:'auto',
 		width:"300px",
 		modal: true,
-		buttons: {
-			"Confirmar": function() {
+		buttons: [
+		    {
+		    	id: "dialogReprogramarBtnConfirmar",
+		    	text: "Confirmar",
+		    	click: function() {
 				
-				B.reprogramarLancamentosSelecionados();
-			},
-			"Cancelar": function() {
-				
-				$(this).dialog("close");
+		    		B.reprogramarLancamentosSelecionados();
+		    	}
+		    },
+		    {
+		    	id: "dialogReprogramarBtnCancelar",
+		    	text: "Cancelar",
+		    	click: function() {
+		    
+		    		$(this).dialog("close");
+		    	}
 			}
-		},
+		],
 		beforeClose: function() {
 			
 			$("#novaDataLancamento").val("");
@@ -244,7 +252,7 @@ function reprogramarSelecionados() {
 </div>
 
 	
-		<div id="dialogReprogramarBalanceamento" title="Reprogramar Recolhimentos">
+		<div id="dialogReprogramarBalanceamento" title="Reprogramar Lançamentos">
 		    
 		    <jsp:include page="../messagesDialog.jsp" />
 
@@ -307,10 +315,10 @@ function reprogramarSelecionados() {
 		   	        <td width="109"><input type="text" name="datepickerDe" id="datepickerDe" style="width:80px;" value="${data}" /></td>
 		   	        <td width="47" align="center">&nbsp;</td>
 		   	        <td width="112">&nbsp;</td>
-		   	        <td width="104"><span class="bt_pesquisar">
+		   	        <td width="104"><span class="bt_pesquisar" title="Pesquisar">
 		   	        
 <!-- Pesquisar -->
-<a href="javascript:;" onclick="B.verificarBalanceamentosAlterados(B.pesquisar);">Pesquisar</a></span></td>
+<a id="linkPesquisar" href="javascript:;" onclick="B.verificarBalanceamentosAlterados(B.pesquisar);">Pesquisar</a></span></td>
 
 
 
@@ -321,12 +329,12 @@ function reprogramarSelecionados() {
 		      <fieldset class="classFieldset">
 		       	  <legend>Balanceamento da Matriz de Lançamento Cadastrados</legend>
 		        <div class="grids" style="display:none;">
-		        <span class="bt_configura_inicial">
+		        <span class="bt_configura_inicial" title="Voltar Configuração Inicial">
 		        
 		        
 		              
 <!-- Voltar Configuração Inicial -->
-<a href="javascript:;" onclick="B.abrirAlertaVoltarConfiguracaoInicial();"><img src="<c:url value='images/bt_devolucao.png'/>" title="Voltar Configuração Inicial" border="0" hspace="5" />Voltar Configuração Inicial</a></span>
+<a id="linkVoltarConfiguracaoInicial" href="javascript:;" onclick="B.abrirAlertaVoltarConfiguracaoInicial();"><img src="<c:url value='images/bt_devolucao.png'/>" title="Voltar Configuração Inicial" border="0" hspace="5" />Voltar Configuração Inicial</a></span>
 
 		
 		           <br clear="all" />
@@ -335,7 +343,7 @@ function reprogramarSelecionados() {
 		            
 		                <span class="bt_novos" title="Gerar Arquivo">
 							<!-- ARQUIVO -->
-							<a href="${pageContext.request.contextPath}/matrizLancamento/exportar?fileType=XLS">
+							<a id="linkArquivo" href="${pageContext.request.contextPath}/matrizLancamento/exportar?fileType=XLS">
 							    <img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
 							    Arquivo
 						    </a>
@@ -344,7 +352,7 @@ function reprogramarSelecionados() {
 					
 						<span class="bt_novos" title="Imprimir">
 							<!-- IMPRIMIR -->	
-							<a href="${pageContext.request.contextPath}/matrizLancamento/exportar?fileType=PDF">
+							<a id="linkImprimir" href="${pageContext.request.contextPath}/matrizLancamento/exportar?fileType=PDF">
 							    <img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
 							    Imprimir
 						    </a>
@@ -354,7 +362,7 @@ function reprogramarSelecionados() {
 		                    
 		                    
 <!-- Reprogramar -->              
-<a href="javascript:;" onclick="reprogramarSelecionados();"><img src="<c:url value='images/ico_reprogramar.gif'/>"  hspace="5" border="0" />Reprogramar</a>
+<a id="linkReprogramar" href="javascript:;" onclick="reprogramarSelecionados();"><img src="<c:url value='images/ico_reprogramar.gif'/>"  hspace="5" border="0" />Reprogramar</a>
 
 		                    
 		                    
@@ -362,7 +370,7 @@ function reprogramarSelecionados() {
 		                
 		                <span class="bt_novos" style="border-width: 2px; border-color: #00CD00;" title="Confirmar">
 		                    <!-- CONFIRMAR -->	
-		                    <a href="javascript:;" onclick="B.obterConfirmacaoBalanceamento();">
+		                    <a id="linkConfirmar" href="javascript:;" onclick="B.obterConfirmacaoBalanceamento();">
 		                        <img src="<c:url value='images/ico_check.gif'/>"  hspace="5" border="0" />
 		                        Confirmar
 		                    </a>

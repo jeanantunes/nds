@@ -91,21 +91,30 @@ function Balanceamento(pathTela, descInstancia) {
 			height:'auto',
 			width:600,
 			modal: true,
-			buttons: {
-				"Confirmar": function() {
+			buttons: [
+			    {
+			    	id: "selecaoLancamentosBtnConfirmar",
+			    	text: "Confirmar",
+			    	click: function() {
 					
-					$(".lancamentosProgramadosGrid").flexOptions({ onSubmit: null });
-					
-					$(".lancamentosProgramadosGrid").flexReload();
-					
-					$(".lancamentosProgramadosGrid").flexOptions({ onSubmit: function(elemento){return T.confirmarPaginacao(this);} });
-					
-					$(this).dialog("close");
-				},
-				"Cancelar": function() {								
-					$(this).dialog("close");
+						$(".lancamentosProgramadosGrid").flexOptions({ onSubmit: null });
+						
+						$(".lancamentosProgramadosGrid").flexReload();
+						
+						$(".lancamentosProgramadosGrid").flexOptions({ onSubmit: function(elemento){return T.confirmarPaginacao(this);} });
+						
+						$(this).dialog("close");
+			    	}
+			    },
+			    {
+			    	id: "selecaoLancamentosBtnCancelar",
+			    	text: "Cancelar",
+			    	click: function() {
+			    
+			    		$(this).dialog("close");
+			    	}
 				}
-			}
+			]
 		});	
 		
 		return false;
@@ -189,7 +198,7 @@ function Balanceamento(pathTela, descInstancia) {
 		row.cell.nomeProduto = colunaProduto;
 		
 		row.cell.novaData = T.gerarInputDataDistrib(row.cell.novaData, row.cell.bloquearData, i);
-		row.cell.reprogramar = T.gerarCheckReprogramar(row.cell.id.toString(), row.cell.bloquearData,i);
+		row.cell.reprogramar = T.gerarCheckReprogramar(row.cell.id.toString(), row.cell.bloquearData, i);
 		
 		if (row.cell.destacarLinha) {
 			T.linhasDestacadas.push(i+1);
@@ -199,13 +208,13 @@ function Balanceamento(pathTela, descInstancia) {
 	
 	this.gerarInputDataDistrib = function(dataMatrizDistrib, isBloqueado, index) {
 		
-		return '<input onchange="B.alterarData(this,\'' + index + '\');" type="text" name="dataNova" style="width:80px; float:left;" value="' + dataMatrizDistrib + '" ' + 
+		return '<input id="inputNovaData' + index + '" onchange="B.alterarData(this,\'' + index + '\');" type="text" name="dataNova" style="width:80px; float:left;" value="' + dataMatrizDistrib + '" ' + 
 			   (isBloqueado? ' disabled="disabled" ' : '') +  
 			   '/>' +
-		       '<span class="bt_atualizarIco" title="Atualizar Datas" ' +
+		       '<span class="bt_atualizarIco" title="Reprogramar" ' +
 		       (isBloqueado? ' style="opacity:0.5;" ' : '') + 
 		       '>' +
-		       '<a href="javascript:;" name="reprogramar" ' + 
+		       '<a id="linkReprogramarUnico' + index + '" href="javascript:;" name="reprogramar" ' + 
 		       (isBloqueado? '' : ' onclick="B.reprogramarLancamentoUnico(' + index + ');') +
 		       '">&nbsp;</a></span>';
 		
@@ -267,8 +276,8 @@ function Balanceamento(pathTela, descInstancia) {
 		T.lancamentos[index].novaData = input.value;
 	},
 	
-	this.gerarCheckReprogramar = function(id,isBloqueado,index) { 
-		return '<input type="checkbox" value="'+id+'" name="checkgroup" bloqueado="'+isBloqueado+'" ' +
+	this.gerarCheckReprogramar = function(id,isBloqueado, index) { 
+		return '<input id="checkReprogramar' + index + '" type="checkbox" value="'+id+'" name="checkgroup" bloqueado="'+isBloqueado+'" ' +
 			   (isBloqueado? ' disabled="disabled" ' : ' onclick="B.selecionarCheck(this,\'' + index + '\');" ') + 
 			   ' />';	
 	},
@@ -553,12 +562,16 @@ function Balanceamento(pathTela, descInstancia) {
 			height:300,
 			width:760,
 			modal: true,
-			buttons: {
-				"Fechar": function() {
-					$( this ).dialog( "close" );
-					
-				},
-			}
+			buttons: [
+			    {
+			    	id: "dialogDetalheProdutosBtnFechar",
+			    	text: "Fechar",
+			    	click: function() {
+			    
+			    		$(this).dialog("close");
+			    	}
+				}
+		    ]
 		});
 	},
 	
@@ -573,14 +586,24 @@ function Balanceamento(pathTela, descInstancia) {
 			height:'auto',
 			width:300,
 			modal: true,
-			buttons: {
-				"Confirmar": function() {
-					T.confirmarMatrizLancamento();
-				},
-				"Cancelar": function() {
-					$( this ).dialog( "close" );
-				},
-			},
+			buttons: [
+			    {
+			    	id: "dialogConfirmarBtnConfirmar",
+			    	text: "Confirmar",
+			    	click: function() {
+					
+			    		T.confirmarMatrizLancamento();
+			    	}
+			    },
+			    {
+			    	id: "dialogConfirmarBtnCancelar",
+			    	text: "Cancelar",
+			    	click: function() {
+			    
+			    		$(this).dialog("close");
+			    	}
+				}
+			],
 			beforeClose: function() {
 				clearMessageDialogTimeout(dialog);
 		    }
@@ -605,18 +628,26 @@ function Balanceamento(pathTela, descInstancia) {
 			height:'auto',
 			width:600,
 			modal: true,
-			buttons: {
-				"Confirmar": function() {
+			buttons: [
+			    {
+			    	id: "lancamentosNaoConfirmadosBtnConfirmar",
+			    	text: "Confirmar",
+			    	click: function() {
 					
-					funcao();
-					
-					$(this).dialog("close");
-				},
-				"Cancelar": function() {
-					
-					$(this).dialog("close");
+			    		funcao();
+						
+						$(this).dialog("close");
+			    	}
+			    },
+			    {
+			    	id: "lancamentosNaoConfirmadosBtnCancelar",
+			    	text: "Cancelar",
+			    	click: function() {
+			    
+			    		$(this).dialog("close");
+			    	}
 				}
-			}
+			]
 		});	
 	},
 	
@@ -677,18 +708,26 @@ function Balanceamento(pathTela, descInstancia) {
 			height:'auto',
 			width:600,
 			modal: true,
-			buttons: {
-				"Confirmar": function() {
+			buttons: [
+			    {
+			    	id: "voltarConfigOriginalBtnConfirmar",
+			    	text: "Confirmar",
+			    	click: function() {
 					
-					T.voltarConfiguracaoInicial();
-					
-					$(this).dialog("close");
-				},
-				"Cancelar": function() {
-					
-					$(this).dialog("close");
+			    		T.voltarConfiguracaoInicial();
+						
+						$(this).dialog("close");
+			    	}
+			    },
+			    {
+			    	id: "voltarConfigOriginalBtnCancelar",
+			    	text: "Cancelar",
+			    	click: function() {
+			    
+			    		$(this).dialog("close");
+			    	}
 				}
-			}
+			]
 		});
 	};
 	
