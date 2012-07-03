@@ -20,6 +20,7 @@ import java.util.TreeMap;
 
 import org.apache.commons.lang.StringUtils;
 
+import br.com.abril.nds.model.fiscal.nota.NotaFiscalEnum;
 import br.com.abril.nds.util.CampoSecao;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.StringUtil;
@@ -441,8 +442,15 @@ public class NFEExporter {
 		
 		String valorString = STRING_VAZIA;
 		String mascaraUsada;
+		boolean isNotaFiscalEnum = false;
 		
 		if (valor != null) {
+			
+			if (isEnum(valor)) {
+				for (Class<?> interfaceClazz: valor.getClass().getInterfaces()) {
+					isNotaFiscalEnum = isNotaFiscalEnum || NotaFiscalEnum.class.equals(interfaceClazz); 
+				}
+			}
 			
 			if (isDate(valor)) {
 			
@@ -469,6 +477,8 @@ public class NFEExporter {
 					valorString = valorString.replace(",", "");
 				}
 			
+			} else if (isNotaFiscalEnum) {
+				valorString = ((NotaFiscalEnum)valor).getIntValue().toString();
 			} else {
 				
 				valorString = String.valueOf(valor);
