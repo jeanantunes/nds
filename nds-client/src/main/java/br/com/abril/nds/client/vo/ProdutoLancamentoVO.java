@@ -37,7 +37,7 @@ public class ProdutoLancamentoVO  implements Serializable {
 	private String valorTotal;
 	
 	@Export(label="Físico", exhibitionOrder = 8)
-	private Integer reparteFisico;
+	private String reparteFisico;
 	
 	@Export(label="Distribuição", exhibitionOrder = 9)
 	private String distribuicao;
@@ -184,14 +184,14 @@ public class ProdutoLancamentoVO  implements Serializable {
 	/**
 	 * @return the reparteFisico
 	 */
-	public Integer getReparteFisico() {
+	public String getReparteFisico() {
 		return reparteFisico;
 	}
 
 	/**
 	 * @param reparteFisico the reparteFisico to set
 	 */
-	public void setReparteFisico(Integer reparteFisico) {
+	public void setReparteFisico(String reparteFisico) {
 		this.reparteFisico = reparteFisico;
 	}
 
