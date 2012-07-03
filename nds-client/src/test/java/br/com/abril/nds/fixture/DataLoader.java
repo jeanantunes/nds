@@ -10504,7 +10504,7 @@ public class DataLoader {
 		EncargoFinanceiro encargoFinanceiro = null;
 		Long extipi = 1L;
 		Long ncm = 1L;
-		Long quantidade = 1L;
+		BigDecimal quantidade = BigDecimal.ZERO;
 		String unidade = "";
 		BigDecimal valorDesconto 	= BigDecimal.ZERO;
 		BigDecimal valorFrete 		= BigDecimal.ZERO;
@@ -10550,6 +10550,7 @@ public class DataLoader {
 			codigoProduto = String.valueOf(contador);
 			
 			ProdutoServico produtoServico = Fixture.produtoServico(
+					contador,
 					cfop, 
 					codigoBarras, 
 					codigoProduto, 
