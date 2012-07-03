@@ -146,7 +146,7 @@
 				
 				data.rows[i].cell.telefone = "";
 			}
-						
+
 			if (!data.rows[i].cell.email) {
 				
 				data.rows[i].cell.email = "";
@@ -205,6 +205,10 @@
 				}
 
 				novoFornecedor(true);
+				
+				ENDERECO_FORNECEDOR.popularGridEnderecos();
+				
+				FORNECEDOR.carregarTelefones();
 			},
 			function(result) {
 				exibirMensagem(

@@ -73,11 +73,11 @@ public class Fornecedor implements Serializable {
 	private SituacaoCadastro situacaoCadastro;
 	
 	@OneToMany(mappedBy = "fornecedor")
-	@Cascade(value={CascadeType.DELETE})
+	@Cascade(value={CascadeType.ALL})
 	private Set<EnderecoFornecedor> enderecos = new HashSet<EnderecoFornecedor>();
 	
 	@OneToMany(mappedBy = "fornecedor")
-	@Cascade(value={CascadeType.DELETE})
+	@Cascade(value={CascadeType.ALL})
 	private Set<TelefoneFornecedor> telefones = new HashSet<TelefoneFornecedor>();
 	
 	@Cascade(value = org.hibernate.annotations.CascadeType.SAVE_UPDATE)
