@@ -10,6 +10,8 @@ public interface MonitorNFEService {
 
 	public InfoNfeDTO pesquisarNFe(FiltroMonitorNfeDTO filtro);
 	
+	public byte[] obterDanfes(List<NfeVO> listaNfeImpressaoDanfe, boolean indEmissaoDepec);
 	
-	public byte[] obterDanfes(List<NfeVO> listaNfeImpressaoDanfe);
+	public void validarEmissaoDanfe(Long idNotaFiscal, boolean indEmissaoDepec);
+
 }

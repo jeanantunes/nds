@@ -6,11 +6,15 @@
 	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA["C:\\Users\\michel.jader\\Desktop\\relatorios\\"]]></defaultValueExpression>
 	</parameter>
+	<parameter name="IND_EMISSAO_DEPEC" class="java.lang.Boolean"/>
 	<field name="danfes" class="java.util.List"/>
 	<detail>
 		<band height="842" splitType="Stretch">
 			<subreport>
 				<reportElement x="0" y="0" width="595" height="842"/>
+				<subreportParameter name="IND_EMISSAO_DEPEC">
+					<subreportParameterExpression><![CDATA[$P{IND_EMISSAO_DEPEC}]]></subreportParameterExpression>
+				</subreportParameter>
 				<subreportParameter name="FAT_VALOR1"/>
 				<subreportParameter name="FAT_VALOR2"/>
 				<subreportParameter name="Logo"/>
@@ -22,8 +26,8 @@
 				<subreportParameter name="FAT_VALOR8"/>
 				<subreportParameter name="FAT_VALOR9"/>
 				<subreportParameter name="FAT_VENCIMENTO10"/>
-				<subreportParameter name="FAT_VENCIMENTO1"/>
 				<subreportParameter name="FAT_VALOR10"/>
+				<subreportParameter name="FAT_VENCIMENTO1"/>
 				<subreportParameter name="FAT_NUMERO3"/>
 				<subreportParameter name="FAT_VENCIMENTO6"/>
 				<subreportParameter name="FAT_NUMERO2"/>

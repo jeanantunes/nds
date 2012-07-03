@@ -45,6 +45,11 @@ public class FiltroMonitorNfeDTO implements Serializable {
 	@Export(label="Situação Nf-e")
 	private String situacaoNfe;
 	
+	@Export(label="Série")
+	private Integer serie;
+
+	
+	
 	private PaginacaoVO paginacao;
 	
 	private OrdenacaoColuna ordenacaoColuna;
@@ -261,6 +266,21 @@ public class FiltroMonitorNfeDTO implements Serializable {
 	 */
 	public void setOrdenacaoColuna(OrdenacaoColuna ordenacaoColuna) {
 		this.ordenacaoColuna = ordenacaoColuna;
+	}
+	/**
+	 * Obtém serie
+	 *
+	 * @return Integer
+	 */
+	public Integer getSerie() {
+		return serie;
+	}
+	/**
+	 * Atribuí serie
+	 * @param serie 
+	 */
+	public void setSerie(Integer serie) {
+		this.serie = serie;
 	}
 	
 }

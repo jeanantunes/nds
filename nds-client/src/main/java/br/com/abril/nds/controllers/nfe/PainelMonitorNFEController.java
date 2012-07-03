@@ -20,10 +20,14 @@ import br.com.abril.nds.dto.NfeDTO;
 import br.com.abril.nds.dto.filtro.FiltroMonitorNfeDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.service.DistribuidorService;
+import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.fiscal.StatusEmissaoNfe;
+import br.com.abril.nds.model.fiscal.StatusEmissaoNotaFiscal;
 import br.com.abril.nds.model.fiscal.TipoEmissaoNfe;
 import br.com.abril.nds.model.fiscal.TipoOperacao;
+import br.com.abril.nds.model.fiscal.nota.Status;
+import br.com.abril.nds.model.fiscal.nota.StatusProcessamentoInterno;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.service.MonitorNFEService;
 import br.com.abril.nds.util.CellModelKeyValue;
@@ -145,6 +149,8 @@ public class PainelMonitorNFEController {
 			
 			if(lineIdImpressaoDanfe.intValue() == cell.getId()) {
 				
+				monitorNFEService.validarEmissaoDanfe(cell.getCell().getIdNotaFiscal(), false);
+				
 				nfeParaImpressao = cell.getCell();
 				
 				break;	
@@ -166,17 +172,14 @@ public class PainelMonitorNFEController {
 		
 	}
 	
-	public void prepararDanfesImpressao(List<Integer> listaLineIdsImpressaoDanfes) {
+	public void prepararDanfesImpressao(List<Integer> listaLineIdsImpressaoDanfes, boolean indEmissaoDepec) {
 		
 		if(listaLineIdsImpressaoDanfes==null ||
 				listaLineIdsImpressaoDanfes.isEmpty()) {
-			
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum item selecionado");
-			
 		}
 		
 		List<CellModelKeyValue<NfeVO>> listaNfeVO = getListaNfeFromSession();
-		
 		
 		if(listaNfeVO == null || listaNfeVO.isEmpty()) {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum item selecionado");
@@ -189,6 +192,8 @@ public class PainelMonitorNFEController {
 			for(CellModelKeyValue<NfeVO> cell : listaNfeVO) {
 				
 				if(lineId.intValue() == cell.getId()) {
+					
+					monitorNFEService.validarEmissaoDanfe(cell.getCell().getIdNotaFiscal(), indEmissaoDepec);
 					
 					listaNfeParaImpressao.add(cell.getCell());
 					
@@ -230,6 +235,12 @@ public class PainelMonitorNFEController {
 				null, 
 				listaNfeVO,
 				NfeVO.class, this.httpResponse);
+		
+	}
+
+	public void cancelarNfe() {
+
+		result.use(Results.json()).from("").serialize();
 		
 	}
 	
@@ -290,13 +301,13 @@ public class PainelMonitorNFEController {
 		return usuario;
 	}
 	
-	public void imprimirDanfes() {
+	public void imprimirDanfes(boolean indEmissaoDepec) {
 		
 		List<NfeVO> listaNfesParaImpressaoDanfe = (List<NfeVO>) session.getAttribute(NFES_PARA_IMPRESSAO_DANFES);
 		
 		session.setAttribute(NFES_PARA_IMPRESSAO_DANFES, null);
 		
-		byte[] danfeBytes = monitorNFEService.obterDanfes(listaNfesParaImpressaoDanfe);
+		byte[] danfeBytes = monitorNFEService.obterDanfes(listaNfesParaImpressaoDanfe, indEmissaoDepec);
 		
 		try {
 			
@@ -307,7 +318,6 @@ public class PainelMonitorNFEController {
 			throw new ValidacaoException(TipoMensagem.ERROR, "Falha na geração do arquivo.");
 			
 		}
-		
 		
 	}
 
@@ -388,18 +398,22 @@ public class PainelMonitorNFEController {
 
 	
 	/**
-	 * Obtém a descrição a partir da chave do enum StatusEmissaoNfe
+	 * Obtém a descrição a partir da chave do enum Status
 	 * 
 	 * @param chave
 	 * 
 	 * @return String - descricao
 	 */
 	private String obterDescricaoStatusEmissaoNfe(String chave) {
+		
 		if(chave  == null) {
 			return "";
 		}
-		StatusEmissaoNfe statusEmissaoNfe = StatusEmissaoNfe.valueOf(chave);
-		return ((statusEmissaoNfe == null) ? "" : statusEmissaoNfe.getDescricao());
+		
+		Status status = Status.valueOf(chave);
+		
+		return ((status == null) ? "" : status.getDescricao());
+		
 	}
 
 	
@@ -515,6 +529,7 @@ public class PainelMonitorNFEController {
 			Long numeroFinal,
 			String chaveAcesso,
 			String situacaoNfe,
+			Integer serieNfe,
 			String sortorder, 
 			String sortname, 
 			int page, 
@@ -538,6 +553,9 @@ public class PainelMonitorNFEController {
 		filtroMonitorNfeDTO.setNumeroNotaFinal(numeroFinal);
 		
 		filtroMonitorNfeDTO.setSituacaoNfe(situacaoNfe);
+		
+		filtroMonitorNfeDTO.setSerie(serieNfe);
+		
 		filtroMonitorNfeDTO.setTipoNfe(tipoNfe);
 		filtroMonitorNfeDTO.setIndDocumentoCPF(TIPO_DOCUMENTO_CPF.equals(tipoDocumento));
 		
