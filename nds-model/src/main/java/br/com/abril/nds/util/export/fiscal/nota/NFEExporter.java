@@ -126,21 +126,21 @@ public class NFEExporter {
 			addSecaoVazia(secaoVazia);
 		}
 		
-		List<Field> campos = Arrays.asList(notaFiscal.getClass().getDeclaredFields());
-		
-		if (notaFiscal.getClass().getSuperclass() != null) {
-			List<Field> camposSuperClass = this.getInheritedFields(notaFiscal.getClass().getSuperclass());
-			campos.addAll(camposSuperClass);
+		List<Field> campos = new ArrayList<Field>();
+		List<Method> metodos = new ArrayList<Method>();
+		Class<?> clazz = notaFiscal.getClass();
+		while (clazz != null) {
+			campos.addAll(Arrays.asList(clazz.getDeclaredFields()));
+			metodos.addAll(Arrays.asList(clazz.getDeclaredMethods()));
+			clazz = clazz.getSuperclass();
 		}
-		
+
 		for (Field campo : campos) {
 			campo.setAccessible(true);
 			Object valor = campo.get(notaFiscal);
 			this.processarAnnotations(campo, listaParents, notaFiscal, valor);
 		}		
 	
-		Method[] metodos = notaFiscal.getClass().getDeclaredMethods();
-		
 		for (Method metodo : metodos) {
 			NFEExportType nfeExportType =  metodo.getAnnotation(NFEExportType.class);
 			NFEWhens nfeWhens = metodo.getAnnotation(NFEWhens.class);
@@ -160,7 +160,6 @@ public class NFEExporter {
 			listaParents.remove(notaFiscal);
 		}
 	}
-	
 	
 	/**
 	 * 
@@ -230,20 +229,6 @@ public class NFEExporter {
 		
 	
 	 /**
-	 * Obtem fildes da super classe;
-	 * 
-	 * @param type
-	 * @return
-	 */
-	public List<Field> getInheritedFields(Class<?> type) {
-		List<Field> fields = new ArrayList<Field>();
-		for (Class<?> c = type; c != null; c = c.getSuperclass()) {
-			fields.addAll(Arrays.asList(c.getDeclaredFields()));
-		}
-		return fields;
-	 }
-	
-	/**
 	 * Adiciona um campo em uma seção.
 	 * 
 	 * @param novoCampo campo

@@ -701,13 +701,13 @@ public class MatrizLancamentoController {
 		produtoBalanceamentoVO.setCodigoProduto(produtoLancamentoDTO.getCodigoProduto());
 		
 		produtoBalanceamentoVO.setNovaData(
-				DateUtil.formatarDataPTBR(produtoLancamentoDTO.getNovaDataLancamento()));
+			DateUtil.formatarDataPTBR(produtoLancamentoDTO.getNovaDataLancamento()));
 		
 		produtoBalanceamentoVO.setDataLancamentoPrevista(
-				DateUtil.formatarDataPTBR(produtoLancamentoDTO.getDataLancamentoPrevista()));
+			DateUtil.formatarDataPTBR(produtoLancamentoDTO.getDataLancamentoPrevista()));
 		
 		produtoBalanceamentoVO.setDataRecolhimentoPrevista(
-				DateUtil.formatarDataPTBR(produtoLancamentoDTO.getDataRecolhimentoPrevista()));
+			DateUtil.formatarDataPTBR(produtoLancamentoDTO.getDataRecolhimentoPrevista()));
 		
 		produtoBalanceamentoVO.setId(produtoLancamentoDTO.getIdLancamento());
 		
@@ -718,14 +718,16 @@ public class MatrizLancamentoController {
 		
 		produtoBalanceamentoVO.setPrecoVenda(CurrencyUtil.formatarValor(produtoLancamentoDTO.getPrecoVenda()));
 		
-		produtoBalanceamentoVO.setRepartePrevisto(produtoLancamentoDTO.getRepartePrevisto().toString());
+		produtoBalanceamentoVO.setRepartePrevisto(
+			MathUtil.round(produtoLancamentoDTO.getRepartePrevisto(), 2).toString());
 		
 		produtoBalanceamentoVO.setValorTotal(CurrencyUtil.formatarValor(produtoLancamentoDTO.getValorTotal()));
 		
 		if(produtoLancamentoDTO.getReparteFisico()==null)
-			produtoBalanceamentoVO.setReparteFisico(0);
+			produtoBalanceamentoVO.setReparteFisico("0");
 		else
-			produtoBalanceamentoVO.setReparteFisico(produtoLancamentoDTO.getReparteFisico().intValue());
+			produtoBalanceamentoVO.setReparteFisico(
+				MathUtil.round(produtoLancamentoDTO.getReparteFisico(), 2).toString());
 		
 		// TODO: Este campos será informado em um nova EMS de Ajuste
 		if(produtoLancamentoDTO.getDistribuicao() == null) {
