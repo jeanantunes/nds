@@ -38,7 +38,6 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		
 		return criteria.list();
 	}
-
 	
 	public Integer obterQtdeRegistroNotaFiscal(FiltroMonitorNfeDTO filtro) {
 		

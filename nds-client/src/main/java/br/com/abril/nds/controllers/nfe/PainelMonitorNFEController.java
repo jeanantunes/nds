@@ -20,11 +20,14 @@ import br.com.abril.nds.dto.NfeDTO;
 import br.com.abril.nds.dto.filtro.FiltroMonitorNfeDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.service.DistribuidorService;
+import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.fiscal.StatusEmissaoNfe;
+import br.com.abril.nds.model.fiscal.StatusEmissaoNotaFiscal;
 import br.com.abril.nds.model.fiscal.TipoEmissaoNfe;
 import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.model.fiscal.nota.Status;
+import br.com.abril.nds.model.fiscal.nota.StatusProcessamentoInterno;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.service.MonitorNFEService;
 import br.com.abril.nds.util.CellModelKeyValue;
@@ -146,6 +149,8 @@ public class PainelMonitorNFEController {
 			
 			if(lineIdImpressaoDanfe.intValue() == cell.getId()) {
 				
+				monitorNFEService.validarEmissaoDanfe(cell.getCell().getIdNotaFiscal(), false);
+				
 				nfeParaImpressao = cell.getCell();
 				
 				break;	
@@ -167,17 +172,14 @@ public class PainelMonitorNFEController {
 		
 	}
 	
-	public void prepararDanfesImpressao(List<Integer> listaLineIdsImpressaoDanfes) {
+	public void prepararDanfesImpressao(List<Integer> listaLineIdsImpressaoDanfes, boolean indEmissaoDepec) {
 		
 		if(listaLineIdsImpressaoDanfes==null ||
 				listaLineIdsImpressaoDanfes.isEmpty()) {
-			
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum item selecionado");
-			
 		}
 		
 		List<CellModelKeyValue<NfeVO>> listaNfeVO = getListaNfeFromSession();
-		
 		
 		if(listaNfeVO == null || listaNfeVO.isEmpty()) {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum item selecionado");
@@ -190,6 +192,8 @@ public class PainelMonitorNFEController {
 			for(CellModelKeyValue<NfeVO> cell : listaNfeVO) {
 				
 				if(lineId.intValue() == cell.getId()) {
+					
+					monitorNFEService.validarEmissaoDanfe(cell.getCell().getIdNotaFiscal(), indEmissaoDepec);
 					
 					listaNfeParaImpressao.add(cell.getCell());
 					
@@ -236,12 +240,6 @@ public class PainelMonitorNFEController {
 
 	public void cancelarNfe() {
 
-		result.use(Results.json()).from("").serialize();
-		
-	}
-	
-	public void emitirDpec() {
-		
 		result.use(Results.json()).from("").serialize();
 		
 	}
@@ -303,13 +301,13 @@ public class PainelMonitorNFEController {
 		return usuario;
 	}
 	
-	public void imprimirDanfes() {
+	public void imprimirDanfes(boolean indEmissaoDepec) {
 		
 		List<NfeVO> listaNfesParaImpressaoDanfe = (List<NfeVO>) session.getAttribute(NFES_PARA_IMPRESSAO_DANFES);
 		
 		session.setAttribute(NFES_PARA_IMPRESSAO_DANFES, null);
 		
-		byte[] danfeBytes = monitorNFEService.obterDanfes(listaNfesParaImpressaoDanfe);
+		byte[] danfeBytes = monitorNFEService.obterDanfes(listaNfesParaImpressaoDanfe, indEmissaoDepec);
 		
 		try {
 			
@@ -320,7 +318,6 @@ public class PainelMonitorNFEController {
 			throw new ValidacaoException(TipoMensagem.ERROR, "Falha na geração do arquivo.");
 			
 		}
-		
 		
 	}
 

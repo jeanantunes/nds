@@ -323,9 +323,9 @@ public class MonitorNFEServiceImplTest {
 		nf.setIdNotaFiscal(1L);
 		listaNotas.add(nf);
 
-		when(monitorNFEServiceImpl.obterDanfes(Mockito.anyList())).thenCallRealMethod();
+		when(monitorNFEServiceImpl.obterDanfes(Mockito.anyList(), Mockito.anyBoolean())).thenCallRealMethod();
 		
-		byte[] bytesArquivoDanfe = monitorNFEServiceImpl.obterDanfes(listaNotas);
+		byte[] bytesArquivoDanfe = monitorNFEServiceImpl.obterDanfes(listaNotas, true);
 		
 		URL url = Thread.currentThread().getContextClassLoader().getResource("reports/");
 		

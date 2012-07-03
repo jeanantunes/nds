@@ -140,7 +140,7 @@ var PainelMonitorNFE = {
 			
 		},
 		
-		imprimirDanfes : function() {
+		imprimirDanfes : function(indEmissaoDepec) {
 			
 			var nomeLista = 'listaLineIdsImpressaoDanfes';
 			
@@ -149,6 +149,8 @@ var PainelMonitorNFE = {
 			var linhasDaGrid = $("#nfeGrid tr");
 			
 			var contador = 0;
+			
+			var params = [];
 			
 			$.each(linhasDaGrid, function(index, value) {
 				
@@ -175,19 +177,15 @@ var PainelMonitorNFE = {
 				
 			});
 			
-			$.postJSON("<c:url value='/nfe/painelMonitorNFe/prepararDanfesImpressao'/>", selecionados, 
+			params = selecionados + '&' + 'indEmissaoDepec='+indEmissaoDepec;
+			
+			$.postJSON("<c:url value='/nfe/painelMonitorNFe/prepararDanfesImpressao'/>", params, 
 				function(){
-				window.location ="<c:url value='/nfe/painelMonitorNFe/imprimirDanfes'/>" ;
+				window.location = "<c:url value='/nfe/painelMonitorNFe/imprimirDanfes'/>" + '?indEmissaoDepec='+indEmissaoDepec;
 			});
 			
 		},
 		
-		emitirDpec : function() {
-			
-			$.postJSON("<c:url value='/nfe/painelMonitorNFe/emitirDpec'/>");
-			
-		},
-
 		cancelarNfe : function() {
 			
 			$.postJSON("<c:url value='/nfe/painelMonitorNFe/cancelarNfe'/>");
@@ -491,7 +489,7 @@ $(function() {
 				</span>
 				
 				<span  class="bt_novos" title="Emitir em DEPEC">
-					<a onclick="PainelMonitorNFE.emitirDpec()" href="javascript:;">
+					<a onclick="PainelMonitorNFE.imprimirDanfes(true)" href="javascript:;">
 						<img 	src="${pageContext.request.contextPath}/images/bt_expedicao.png" 	
 						     	alt="Emitir em DEPEC" 
 							hspace="5" border="0">
@@ -500,7 +498,7 @@ $(function() {
 				</span>
 				
 				<span class="bt_novos" title="Imprimir Seleção">
-					<a 	onclick="PainelMonitorNFE.imprimirDanfes()"	href="javascript:;">
+					<a 	onclick="PainelMonitorNFE.imprimirDanfes(false)" href="javascript:;">
 						<img 	src="${pageContext.request.contextPath}/images/ico_impressora.gif"
 								alt="Imprimir Seleção" 
 								hspace="5" 
