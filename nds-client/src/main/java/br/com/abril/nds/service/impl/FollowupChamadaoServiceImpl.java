@@ -27,10 +27,7 @@ public class FollowupChamadaoServiceImpl implements FollowupChamadaoService {
 		if(filtro == null) 
 			throw new ValidacaoException(TipoMensagem.WARNING, "Chamadao: Follow Up: Filtro não deve ser nulo.");
 		
-		List<ConsultaFollowupChamadaoDTO> listachamadao =
-		this.followupChamadaoRepository.obterConsignadosParaChamadao(filtro);
-	
-		return listachamadao;
+		return this.followupChamadaoRepository.obterConsignadosParaChamadao(filtro);
 	}
 
 }

@@ -4,11 +4,9 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
-import org.hibernate.type.StandardBasicTypes;
-
 import br.com.abril.nds.util.export.Export;
-import br.com.abril.nds.util.export.Exportable;
 import br.com.abril.nds.util.export.Export.Alignment;
+import br.com.abril.nds.util.export.Exportable;
 
 @Exportable
 public class ConsultaFollowupChamadaoDTO implements Serializable {
@@ -28,7 +26,7 @@ public class ConsultaFollowupChamadaoDTO implements Serializable {
    	private BigDecimal valorTotalConsignado;   	
 	
 	@Export(label = "Suspenso (dias)", alignment=Alignment.RIGHT, exhibitionOrder = 4)
-    private Long qtdDiasCotaSuspensa;
+    private Date dataHistoricoEdicao;
 
 	@Export(label = "Data Programado", alignment=Alignment.CENTER, exhibitionOrder = 5)
    	private Date dataProgramadoChamadao;   	
@@ -36,17 +34,18 @@ public class ConsultaFollowupChamadaoDTO implements Serializable {
     public ConsultaFollowupChamadaoDTO(){    	
     }
     
-    public ConsultaFollowupChamadaoDTO(Long numeroCota, String nomeJornaleiro, BigDecimal valorTotalConsignado ,   	
-   	        Date dataProgramadoChamadao, Long qtdDiasCotaSuspensa) {
+    public ConsultaFollowupChamadaoDTO(Long numeroCota, String nomeJornaleiro,
+			BigDecimal valorTotalConsignado, Date dataHistoricoEdicao,
+			Date dataProgramadoChamadao) {
 		super();
 		this.numeroCota = numeroCota;
 		this.nomeJornaleiro = nomeJornaleiro;
 		this.valorTotalConsignado = valorTotalConsignado;
+		this.dataHistoricoEdicao = dataHistoricoEdicao;
 		this.dataProgramadoChamadao = dataProgramadoChamadao;
-		this.qtdDiasCotaSuspensa = qtdDiasCotaSuspensa;		
-    }
-    
-    public Long getNumeroCota() {
+	}
+
+	public Long getNumeroCota() {
 		return numeroCota;
 	}
 	public void setNumeroCota(Long numeroCota) {
@@ -70,10 +69,14 @@ public class ConsultaFollowupChamadaoDTO implements Serializable {
 	public void setDataProgramadoChamadao(Date dataProgramadoChamadao) {
 		this.dataProgramadoChamadao = dataProgramadoChamadao;
 	}
-	public Long getQtdDiasCotaSuspensa() {
-		return qtdDiasCotaSuspensa;
+
+	public Date getDataHistoricoEdicao() {
+		return dataHistoricoEdicao;
 	}
-	public void setQtdDiasCotaSuspensa(Long qtdDiasCotaSuspensa) {
-		this.qtdDiasCotaSuspensa = qtdDiasCotaSuspensa;
+
+	public void setDataHistoricoEdicao(Date dataHistoricoEdicao) {
+		this.dataHistoricoEdicao = dataHistoricoEdicao;
 	}
+	
+	
 }

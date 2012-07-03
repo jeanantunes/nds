@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.ConsultaFollowupChamadaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroFollowupChamadaoDTO;
+import br.com.abril.nds.dto.filtro.FiltroRomaneioDTO;
 import br.com.abril.nds.repository.FollowupChamadaoRepository;
 
 @Repository
@@ -27,6 +28,17 @@ public class FollowupChamadaoRepositoryImpl  extends AbstractRepositoryModel<Con
 
 		StringBuilder myqrystr = new StringBuilder();
 		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append("SELECT cota.numeroCota as numeroCota, ");
+		hql.append("pessoa.nome as nomeJornaleiro, ");
+		hql.append("sum((produtoEdicao.preco_venda - produtoEdicao.desconto) * (estoqueProdCota.qtde_recebida - estoqueProdCota.qtde_devolvida)) as valorTotalConsignado ");
+		hql.append("lancamento.dataRecolhimentoPrevista as dataProgramadoChamadao, ");
+		hql.append("historico.dataEdicao as dataHistoricoEdicao");
+		
+		hql.append(getSqlFromEWhereChamadao(filtro));
+		
+		
 		myqrystr.append("select ifnull(c.id,0) as numeroCota, ");
 		myqrystr.append(" ifnull(p.nome,'<NULL NAME>') as nomeJornaleiro,");
 		myqrystr.append(" ifnull(sum((produtoEdicao.preco_venda - produtoEdicao.desconto) * "); 
@@ -34,6 +46,8 @@ public class FollowupChamadaoRepositoryImpl  extends AbstractRepositoryModel<Con
 		myqrystr.append("  as valorTotalConsignado, ");
 		myqrystr.append(" ifnull(l.data_rec_prevista,str_to_date('01,01,1900','%d,%m,%Y')) as dataProgramadoChamadao, ");
 		myqrystr.append(" ifnull(datediff(sysdate(),hsc.data_edicao),0) as qtdDiasCotaSuspensa ");
+		
+		
 		myqrystr.append(" from cota c, ");
 		myqrystr.append(" pessoa p, ");
 		myqrystr.append(" produto_edicao produtoEdicao, estoque_produto_cota estoqueProdCota, ");
@@ -95,11 +109,48 @@ public class FollowupChamadaoRepositoryImpl  extends AbstractRepositoryModel<Con
 		      "]  nomeJornaleiro["  + cfdto.getNomeJornaleiro() +
 		      "]  valorTotalConsignado[" + cfdto.getValorTotalConsignado() + 
 		      "]  dataProgramadoChamadao[" + cfdto.getDataProgramadoChamadao()+
-		      "]  qtdDiasCotaSuspensa["  + cfdto.getQtdDiasCotaSuspensa()  );
+		      "]  qtdDiasCotaSuspensa["  + cfdto.getDataProgramadoChamadao()  );
 		}
 		System.out.println("\n======================================================================================================================================\n");
 		
 		return qry2db.list();
+	}
+	
+	private String getSqlFromEWhereChamadao(FiltroFollowupChamadaoDTO filtro) {
+		
+		StringBuilder hql = new StringBuilder();
+	
+
+		hql.append(" from EstoqueProdutoCota estoqueProdCota ");
+		hql.append(" LEFT JOIN estoqueProdCota.cota as cota ");
+		hql.append(" LEFT JOIN cota.pessoa as pessoa ");
+		hql.append(" LEFT JOIN estoqueProdCota.produtoEdicao as produtoEdicao");
+		hql.append(" LEFT JOIN HistoricoSituacaoCota as historico WITH historico.cota.id = cota.id");
+		hql.append(" LEFT JOIN Lancamento as lancamento WITH lancamento.produtoEdicao.id = produtoEdicao.id");
+		hql.append(" LEFT JOIN ChamadaEncalheCota as cec WITH cec.cota.id = cota.id");
+		hql.append(" LEFT JOIN cec.chamadaEncalhe as ce ");
+		
+		hql.append(" WHERE cota.situacaoCadastro = 'PENDENTE' ");
+		hql.append(" WHERE ce.tipoChamadaEncalhe = 'CHAMADAO' ");
+		
+
+//		boolean usarAnd = false;
+//		
+//		if(filtro.getIdBox() != null ) { 
+//			hql.append( (usarAnd ? " and ":" where ") +" box.id = :idBox ");
+//			usarAnd = true;
+//		}
+//		if(filtro.getIdRoteiro() != null){
+//			hql.append( (usarAnd ? " and ":" where ") + " roteiro.id = :idRoteiro ");
+//			usarAnd = true;
+//		}
+//		if(filtro.getIdRota() != null){
+//			hql.append( (usarAnd ? " and ":" where ") + " rota.id = :idRota ");
+//			usarAnd = true;
+//		}
+
+
+		return hql.toString();
 	}
 
 

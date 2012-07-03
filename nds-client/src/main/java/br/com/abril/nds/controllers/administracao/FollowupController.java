@@ -29,6 +29,7 @@ import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.caelum.vraptor.Path;
+import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
@@ -74,13 +75,12 @@ public class FollowupController {
 	public void index() {
 		session.setAttribute(FILTRO_FOLLOWUP_CONSIGNADOS_SESSION_ATTRIBUTE, null);
 	}
-
+	
+	@Post
 	@Path("/pesquisaDadosChamadao")
 	public void pesquisaDadosChamadao( String sortorder, String sortname, int page, int rp ) {
     	FiltroFollowupChamadaoDTO filtroChamadao = 
-    		new FiltroFollowupChamadaoDTO(Calendar.getInstance().getTime()
-    		                             ,0
-    		                             ,getValorConsignadoSuspensaoCotas());
+    		new FiltroFollowupChamadaoDTO(Calendar.getInstance().getTime(), 0, getValorConsignadoSuspensaoCotas());
 		this.recuperarParametros(filtroChamadao);		
 		filtroChamadao.setPaginacao(new PaginacaoVO(page, rp, sortorder, sortname));
 		this.tratarFiltro(filtroChamadao);		
@@ -88,6 +88,7 @@ public class FollowupController {
 		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
 	}
 
+	@Post
 	@Path("/pesquisaDadosNegociacao")
 	public void pesquisaDadosNegociacao( String sortorder, String sortname, int page, int rp ) {
 		/**
