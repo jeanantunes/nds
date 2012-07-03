@@ -176,17 +176,18 @@ function Balanceamento(pathTela, descInstancia) {
 		
 		var linkDescProduto = T.getLinkProduto(row.cell.idProdutoEdicao,row.cell.nomeProduto);
 		T.lancamentos.push({
-			id:					row.cell.id, 
-			numeroEdicao:			row.cell.numeroEdicao,
-			nomeProduto:	    row.cell.nomeProduto,
-			dataRecolhimentoPrevista:	row.cell.dataRecolhimentoPrevista
+			id:							row.cell.id, 
+			numeroEdicao:				row.cell.numeroEdicao,
+			nomeProduto:	    		row.cell.nomeProduto,
+			dataRecolhimentoPrevista:	row.cell.dataRecolhimentoPrevista,
+			novaData:					row.cell.novaData
 		});
 		row.cell.nomeProduto = linkDescProduto;
 		
 		row.cell.novaData = T.gerarInputDataDistrib(row.cell.novaData, row.cell.bloquearData, i);
 		row.cell.reprogramar = T.gerarCheckReprogramar(row.cell.id.toString(), row.cell.bloquearData,i);
 				
-		if (!row.cell.possuiRecebimentoFisico || row.cell.cancelamentoGD || (row.cell.dataLancamentoPrevista!=row.cell.dataLancamentoDistribuidor) ) {
+		if (row.cell.destacarLinha) {
 			T.linhasDestacadas.push(i+1);
 		}
 		
@@ -517,6 +518,8 @@ function Balanceamento(pathTela, descInstancia) {
 			       }
         	   }
 			   
+			   T.atualizarResumoBalanceamento(true);
+			   T.checkUncheckLancamentos(false);
             },
 			null,
 			true,
@@ -649,6 +652,28 @@ function Balanceamento(pathTela, descInstancia) {
 		}),
 		
 		checkAll(document.getElementById('selTodos'),"checkgroup");
+	};
+	
+	this.abrirAlertaVoltarConfiguracaoInicial = function() {
+		
+		$("#dialogVoltarConfiguracaoOriginal").dialog({
+			resizable: false,
+			height:'auto',
+			width:600,
+			modal: true,
+			buttons: {
+				"Confirmar": function() {
+					
+					T.voltarConfiguracaoInicial();
+					
+					$(this).dialog("close");
+				},
+				"Cancelar": function() {
+					
+					$(this).dialog("close");
+				}
+			}
+		});
 	};
 	
 	this.voltarConfiguracaoInicial = function() {

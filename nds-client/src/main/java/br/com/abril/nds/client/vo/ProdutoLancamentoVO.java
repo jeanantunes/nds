@@ -46,15 +46,12 @@ public class ProdutoLancamentoVO  implements Serializable {
 	private String dataLancamentoPrevista;
 	
 	private String novaData;
-	private String dataLancamentoDistribuidor;
-	private String qtdeEstudo;
-	private String qtdeReprogramacoes;
-	private boolean possuiRecebimentoFisico;
-	private boolean cancelamentoGD;
-	private boolean estudoFechado;
-	private boolean reprogramacoesExcedidas;
+	
 	private boolean bloquearData;
+	
 	private Long idProdutoEdicao;
+	
+	private boolean destacarLinha;
 	
 	/**
 	 * @return the id
@@ -224,48 +221,6 @@ public class ProdutoLancamentoVO  implements Serializable {
 		this.novaData = novaData;
 	}
 
-	/**
-	 * @return the qtdeEstudo
-	 */
-	public String getQtdeEstudo() {
-		return qtdeEstudo;
-	}
-
-	/**
-	 * @param qtdeEstudo the qtdeEstudo to set
-	 */
-	public void setQtdeEstudo(String qtdeEstudo) {
-		this.qtdeEstudo = qtdeEstudo;
-	}
-
-	/**
-	 * @return the cancelamentoGD
-	 */
-	public boolean isCancelamentoGD() {
-		return cancelamentoGD;
-	}
-
-	/**
-	 * @param cancelamentoGD the cancelamentoGD to set
-	 */
-	public void setCancelamentoGD(boolean cancelamentoGD) {
-		this.cancelamentoGD = cancelamentoGD;
-	}
-
-	/**
-	 * @return the estudoFechado
-	 */
-	public boolean isEstudoFechado() {
-		return estudoFechado;
-	}
-
-	/**
-	 * @param estudoFechado the estudoFechado to set
-	 */
-	public void setEstudoFechado(boolean estudoFechado) {
-		this.estudoFechado = estudoFechado;
-	}
-
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -291,44 +246,12 @@ public class ProdutoLancamentoVO  implements Serializable {
 		return true;
 	}
 
-	public String getQtdeReprogramacoes() {
-		return qtdeReprogramacoes;
-	}
-
-	public void setQtdeReprogramacoes(String qtdeReprogramacoes) {
-		this.qtdeReprogramacoes = qtdeReprogramacoes;
-	}
-
-	public boolean isReprogramacoesExcedidas() {
-		return reprogramacoesExcedidas;
-	}
-
-	public void setReprogramacoesExcedidas(boolean reprogramacoesExcedidas) {
-		this.reprogramacoesExcedidas = reprogramacoesExcedidas;
-	}
-
 	public String getDistribuicao() {
 		return distribuicao;
 	}
 
 	public void setDistribuicao(String distribuicao) {
 		this.distribuicao = distribuicao;
-	}
-
-	public boolean isPossuiRecebimentoFisico() {
-		return possuiRecebimentoFisico;
-	}
-
-	public void setPossuiRecebimentoFisico(boolean possuiRecebimentoFisico) {
-		this.possuiRecebimentoFisico = possuiRecebimentoFisico;
-	}
-
-	public String getDataLancamentoDistribuidor() {
-		return dataLancamentoDistribuidor;
-	}
-
-	public void setDataLancamentoDistribuidor(String dataLancamentoDistribuidor) {
-		this.dataLancamentoDistribuidor = dataLancamentoDistribuidor;
 	}
 
 	public boolean isBloquearData() {
@@ -345,6 +268,20 @@ public class ProdutoLancamentoVO  implements Serializable {
 
 	public void setIdProdutoEdicao(Long idProdutoEdicao) {
 		this.idProdutoEdicao = idProdutoEdicao;
+	}
+
+	/**
+	 * @return the destacarLinha
+	 */
+	public boolean isDestacarLinha() {
+		return destacarLinha;
+	}
+
+	/**
+	 * @param destacarLinha the destacarLinha to set
+	 */
+	public void setDestacarLinha(boolean destacarLinha) {
+		this.destacarLinha = destacarLinha;
 	}
 
 }

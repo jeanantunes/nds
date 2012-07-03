@@ -11,8 +11,12 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinColumns;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
+
+import br.com.abril.nds.util.TipoSecao;
+import br.com.abril.nds.util.export.fiscal.nota.NFEExportType;
 
 @Entity
 @SequenceGenerator(name = "NOTA_FISCAL_ENCARGO_FINANCEIRO_SEQ", initialValue = 1, allocationSize = 1)
@@ -30,19 +34,26 @@ public abstract class EncargoFinanceiro implements Serializable {
 	private Long id;
 	
 	@OneToOne
-	@JoinColumn(name = "PRODUTO_SERVICO_ID")
+	@JoinColumns({
+        @JoinColumn(name="NOTA_FISCAL_ID", referencedColumnName="NOTA_FISCAL_ID"),
+        @JoinColumn(name="PRODUTO_SERVICO_SEQUENCIA", referencedColumnName="SEQUENCIA")
+    })
 	private ProdutoServico produtoServico;
 	
 	@Embedded
+	@NFEExportType(secaoPadrao = TipoSecao.Q)
 	private PIS pis;	
 
 	@Embedded
+	@NFEExportType
 	private PISST pisSt;
 	
 	@Embedded
+	@NFEExportType(secaoPadrao = TipoSecao.S)
 	private COFINS cofins;
 	
 	@Embedded
+	@NFEExportType
 	private COFINSST cofinsSt;
 
 	/**

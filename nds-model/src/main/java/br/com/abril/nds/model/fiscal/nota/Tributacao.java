@@ -18,6 +18,8 @@ import javax.persistence.TemporalType;
 @SequenceGenerator(name = "NOTA_FISCAL_TRIBUTACAO_SEQ", initialValue = 1, allocationSize = 1)
 public class Tributacao implements Serializable {
 	
+	
+	
 	/**
 	 * Serial Version UID
 	 */

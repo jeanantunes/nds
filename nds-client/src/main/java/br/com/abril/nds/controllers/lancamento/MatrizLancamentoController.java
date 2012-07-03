@@ -26,7 +26,6 @@ import br.com.abril.nds.client.vo.ResumoPeriodoBalanceamentoVO;
 import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.dto.BalanceamentoLancamentoDTO;
 import br.com.abril.nds.dto.ProdutoLancamentoDTO;
-import br.com.abril.nds.dto.ResumoPeriodoBalanceamentoDTO;
 import br.com.abril.nds.dto.filtro.FiltroLancamentoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.service.DistribuidorService;
@@ -39,7 +38,6 @@ import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.MatrizLancamentoService;
 import br.com.abril.nds.util.CellModelKeyValue;
-import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.MathUtil;
@@ -56,7 +54,6 @@ import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
-import br.com.caelum.vraptor.core.Localization;
 import br.com.caelum.vraptor.view.Results;
 
 @Resource
@@ -70,9 +67,6 @@ public class MatrizLancamentoController {
 	
 	@Autowired
 	private MatrizLancamentoService matrizLancamentoService;
-		
-	@Autowired 
-	private Localization localization;
 	
 	@Autowired
 	private HttpSession session;
@@ -85,11 +79,6 @@ public class MatrizLancamentoController {
 	
 	@Autowired
 	private CalendarioService calendarioService;
-	
-	private static final String FORMATO_DATA = "dd/MM/yyyy";
-	
-	private static final String CAMPO_REQUERIDO_KEY = "required_field";
-	private static final String CAMPO_MAIOR_IGUAL_KEY = "validator.must.be.greaterEquals";
 
 	private static final String FILTRO_SESSION_ATTRIBUTE = "filtroMatrizBalanceamento";
 	
@@ -106,7 +95,7 @@ public class MatrizLancamentoController {
 		
 		List<Fornecedor> fornecedores = fornecedorService.obterFornecedores(
 				true, SituacaoCadastro.ATIVO);
-		String data = DateUtil.formatarData(new Date(), FORMATO_DATA);
+		String data = DateUtil.formatarDataPTBR(new Date());
 		result.include("data", data);
 		result.include("fornecedores", fornecedores);
 	}
@@ -130,11 +119,10 @@ public class MatrizLancamentoController {
 	}
 	
 	
-	
 	@Post
 	public void obterGridMatrizLancamento(String sortorder, String sortname, int page, int rp) {
 		
-		List<ProdutoLancamentoDTO> listaProdutoBalanceamento = getProdutoLancamentoDTOFromMatrizSessao();
+		List<ProdutoLancamentoDTO> listaProdutoBalanceamento = this.getProdutoLancamentoDTOFromMatrizSessao();
 		
 		FiltroLancamentoDTO filtro = obterFiltroSessao();
 		
@@ -152,10 +140,9 @@ public class MatrizLancamentoController {
 			
 			this.result.use(Results.json()).from(Results.nothing()).serialize();
 		}
-		
 	}
 	
-	public List<ProdutoLancamentoDTO> getProdutoLancamentoDTOFromMatrizSessao() {
+	private List<ProdutoLancamentoDTO> getProdutoLancamentoDTOFromMatrizSessao() {
 		
 		BalanceamentoLancamentoDTO balanceamentoLancamento = 
 				(BalanceamentoLancamentoDTO) session.getAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_LANCAMENTO);
@@ -185,19 +172,41 @@ public class MatrizLancamentoController {
 	@Post
 	public void confirmarMatrizLancamento(List<Date> datasConfirmadas) {
 		
-		// TODO: obter a matriz da sessão
+		BalanceamentoLancamentoDTO balanceamentoLancamento = 
+			(BalanceamentoLancamentoDTO) session.getAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_LANCAMENTO);
 		
-		// TODO: chamar a service de confirmação
-
-		if (datasConfirmadas==null || datasConfirmadas.size()<=0){
-			throw new ValidacaoException(TipoMensagem.WARNING, "Selecione ao menos uma data!");
-		}	
-	
-		// TODO: validar matriz de lançamento conforme parâmetro: datasConfirmadas
+		if (balanceamentoLancamento == null
+				|| balanceamentoLancamento.getMatrizLancamento() == null
+				|| balanceamentoLancamento.getMatrizLancamento().isEmpty()) {
 			
-		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Confirmado com sucesso !"), "result").recursive().serialize();
-	}
+			return;
+		}
+
+		if (datasConfirmadas == null || datasConfirmadas.size() <= 0){
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Selecione ao menos uma data!");
+		}
 	
+		TreeMap<Date, List<ProdutoLancamentoDTO>> matrizLancamento =
+			balanceamentoLancamento.getMatrizLancamento();
+		
+		List<ProdutoLancamentoDTO> produtosLancamentoConfirmados =
+			matrizLancamentoService.confirmarMatrizLancamento(matrizLancamento,
+															  datasConfirmadas, getUsuario());
+		
+		matrizLancamento =
+			this.atualizarMatizComProdutosConfirmados(matrizLancamento, produtosLancamentoConfirmados);
+		
+		balanceamentoLancamento.setMatrizLancamento(matrizLancamento);
+		
+		this.session.setAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_LANCAMENTO, balanceamentoLancamento);
+		
+		this.verificarLancamentosConfirmados(balanceamentoLancamento);
+		
+		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS,
+			"Balanceamento da matriz de lançamento confirmado com sucesso!"), "result").serialize();
+	}
+
 	@Post
 	public void voltarConfiguracaoOriginal() {
 		
@@ -208,7 +217,9 @@ public class MatrizLancamentoController {
 		
 		ResultadoResumoBalanceamentoVO resultadoResumoBalanceamento = 
 			this.obterResultadoResumoLancamento(balanceamentoLancamento);
-							
+		
+		removerAtributoAlteracaoSessao();
+		
 		this.result.use(Results.json()).from(resultadoResumoBalanceamento, "result").recursive().serialize();
 	}
 	
@@ -256,6 +267,71 @@ public class MatrizLancamentoController {
 		this.atualizarMapaLancamento(produtosLancamento, novaData);
 		
 		this.result.use(Results.json()).from(Results.nothing()).serialize();
+	}
+	
+	/**
+	 * Método que atualiza a matriz de lançamento de acordo com os produtos confirmados
+	 * 
+	 * @param matrizLancamento - matriz de lançamento
+	 * @param produtosLancamentoConfirmados - lista de produtos confirmados 
+	 * 
+	 * @return matriz atualizada
+	 */
+	private TreeMap<Date, List<ProdutoLancamentoDTO>> atualizarMatizComProdutosConfirmados(
+											TreeMap<Date, List<ProdutoLancamentoDTO>> matrizLancamento,
+											List<ProdutoLancamentoDTO> produtosLancamentoConfirmados) {
+		
+		for (ProdutoLancamentoDTO produtoLancamentoConfirmado : produtosLancamentoConfirmados) {
+			
+			List<ProdutoLancamentoDTO> produtosLancamento =
+				matrizLancamento.get(produtoLancamentoConfirmado.getNovaDataLancamento());
+			
+			for (ProdutoLancamentoDTO produtoLancamento : produtosLancamento) {
+				
+				if (produtoLancamentoConfirmado.getIdLancamento().equals(
+						produtoLancamento.getIdLancamento())) {
+					
+					produtoLancamento.setDataLancamentoDistribuidor(
+						produtoLancamentoConfirmado.getDataLancamentoDistribuidor());
+					
+					produtoLancamento.setStatusLancamento(
+						produtoLancamentoConfirmado.getStatusLancamento().toString());
+					
+					produtoLancamento.setNumeroReprogramacoes(
+						produtoLancamentoConfirmado.getNumeroReprogramacoes());
+				}
+			}
+		}
+		
+		return matrizLancamento;
+	}
+	
+	/**
+	 * Método que verifica se todos os lançamentos estão confirmados
+	 * para remover a flag de alteração de dados da sessão.
+	 * 
+	 * @param balanceamentoLancamento - objeto balanceamento de lançamento
+	 */
+	private void verificarLancamentosConfirmados(BalanceamentoLancamentoDTO balanceamentoLancamento) {
+		
+		List<ConfirmacaoVO> listaConfirmacao = agruparBalanceamento(balanceamentoLancamento);
+		
+		boolean lancamentosConfirmados = true;
+		
+		for (ConfirmacaoVO confirmacao : listaConfirmacao) {
+			
+			if (!confirmacao.isConfirmado()) {
+				
+				lancamentosConfirmados = false;
+				
+				break;
+			}
+		}
+		
+		if (lancamentosConfirmados) {
+			
+			removerAtributoAlteracaoSessao();
+		}
 	}
 	
 	/**
@@ -328,6 +404,9 @@ public class MatrizLancamentoController {
 		
 		String produtos = "";
 		
+		Integer qtdDiasLimiteParaReprogLancamento =
+				distribuidor.getQtdDiasLimiteParaReprogLancamento();
+		
 		for (ProdutoLancamentoVO produtoLancamento : produtosLancamento) {
 		
 			String dataRecolhimentoPrevistaFormatada = produtoLancamento.getDataRecolhimentoPrevista();
@@ -364,7 +443,8 @@ public class MatrizLancamentoController {
 		
 			listaMensagens.add(
 				"A nova data de lançamento não deve ultrapassar "
-				+ "a data de recolhimento prevista para o(s) produto(s):"
+				+ "a data de recolhimento prevista - a quantidade de dias limite [" 
+				+ qtdDiasLimiteParaReprogLancamento + "] para o(s) produto(s):"
 			);
 			
 			listaMensagens.add(produtos + "</table>");
@@ -525,7 +605,7 @@ public class MatrizLancamentoController {
 		//Adicionar no mapa
 		for (ProdutoLancamentoDTO produtoLancamentoDTO : listaProdutoLancamentoAdicionar) {
 			
-			if (produtoLancamentoDTO.isPermiteReprogramacao()) {
+			if (produtoLancamentoDTO.permiteReprogramacao()) {
 			
 				List<ProdutoLancamentoDTO> listaProdutoLancamentoDTO =
 					matrizLancamento.get(novaData);
@@ -626,9 +706,6 @@ public class MatrizLancamentoController {
 		produtoBalanceamentoVO.setDataLancamentoPrevista(
 				DateUtil.formatarDataPTBR(produtoLancamentoDTO.getDataLancamentoPrevista()));
 		
-		produtoBalanceamentoVO.setDataLancamentoDistribuidor(
-				DateUtil.formatarDataPTBR(produtoLancamentoDTO.getDataLancamentoDistribuidor()));
-		
 		produtoBalanceamentoVO.setDataRecolhimentoPrevista(
 				DateUtil.formatarDataPTBR(produtoLancamentoDTO.getDataRecolhimentoPrevista()));
 		
@@ -650,17 +727,6 @@ public class MatrizLancamentoController {
 		else
 			produtoBalanceamentoVO.setReparteFisico(produtoLancamentoDTO.getReparteFisico().intValue());
 		
-		produtoBalanceamentoVO.setCancelamentoGD(produtoLancamentoDTO.getStatusLancamento().equals(StatusLancamento.CANCELADO_GD));
-		
-		if(produtoLancamentoDTO.getNumeroReprogramacoes() == null)
-			produtoBalanceamentoVO.setReprogramacoesExcedidas(false);
-		else
-			produtoBalanceamentoVO.setReprogramacoesExcedidas(produtoLancamentoDTO.getNumeroReprogramacoes() >= Constantes.NUMERO_REPROGRAMACOES_LIMITE);
-				
-		produtoBalanceamentoVO.setEstudoFechado(produtoLancamentoDTO.isPossuiEstudo());
-		
-		produtoBalanceamentoVO.setPossuiRecebimentoFisico(produtoLancamentoDTO.isPossuiRecebimentoFisico());
-		
 		//TODO - Pendente
 		if(produtoLancamentoDTO.getDistribuicao() == null) {
 			produtoBalanceamentoVO.setDistribuicao("");
@@ -668,10 +734,16 @@ public class MatrizLancamentoController {
 			produtoBalanceamentoVO.setDistribuicao(produtoLancamentoDTO.getDistribuicao());
 		}
 		
-		produtoBalanceamentoVO.setBloquearData(!produtoLancamentoDTO.isPermiteReprogramacao());
+		produtoBalanceamentoVO.setBloquearData(!produtoLancamentoDTO.permiteReprogramacao());
 		
 		produtoBalanceamentoVO.setIdProdutoEdicao(produtoLancamentoDTO.getIdProdutoEdicao());
-		
+	
+		produtoBalanceamentoVO.setDestacarLinha(
+			!produtoLancamentoDTO.isPossuiRecebimentoFisico()
+				|| produtoLancamentoDTO.getStatusLancamento().equals(StatusLancamento.CANCELADO_GD)
+				|| produtoLancamentoDTO.getDataLancamentoPrevista()
+					.compareTo(produtoLancamentoDTO.getNovaDataLancamento()) != 0);
+				
 		return produtoBalanceamentoVO;
 	}
 
@@ -970,36 +1042,6 @@ public class MatrizLancamentoController {
 		}
 		
 		return filtro;
-	}
-	
-	@Get
-	public void resumoPeriodo(Date dataInicial, List<Long> idsFornecedores) {
-		
-		verificarCamposObrigatorios(dataInicial, idsFornecedores);
-		List<ResumoPeriodoBalanceamentoDTO> dtos = matrizLancamentoService
-				.obterResumoPeriodo(dataInicial, idsFornecedores);
-		result.use(Results.json()).withoutRoot().from(dtos).serialize();
-	}
-
-	private void verificarCamposObrigatorios(Date data,
-			List<Long> idsFornecedores) {
-		Date atual = DateUtil.removerTimestamp(new Date());
-		List<String> mensagens = new ArrayList<String>();
-		if (idsFornecedores == null || idsFornecedores.isEmpty()) {
-			mensagens.add(localization.getMessage(CAMPO_REQUERIDO_KEY,
-					"Fornecedor"));
-		}
-		if (data == null) {
-			mensagens.add(localization.getMessage(CAMPO_REQUERIDO_KEY,
-					"Data de Lançamento Matriz/Distribuidor"));
-		} else if (data.before(atual)) {
-			mensagens.add(localization.getMessage(CAMPO_MAIOR_IGUAL_KEY,
-					"Data de Lançamento Matriz/Distribuidor", DateUtil.formatarDataPTBR(atual)));
-		}
-		if (!mensagens.isEmpty()) {
-			ValidacaoVO validacao = new ValidacaoVO(TipoMensagem.ERROR, mensagens);
-			throw new ValidacaoException(validacao);
-		}
 	}
 
 	/**

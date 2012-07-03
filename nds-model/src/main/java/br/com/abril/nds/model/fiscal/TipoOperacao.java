@@ -6,15 +6,17 @@ package br.com.abril.nds.model.fiscal;
  * @created 14-fev-2012 11:35:33
  */
 public enum TipoOperacao {
-	ENTRADA("Entrada"),
-	SAIDA("Saída");
+	ENTRADA("Entrada","E"),
+	SAIDA("Saída","S");
 	
 	
-	TipoOperacao(String descricao) {
+	TipoOperacao(String descricao, String simpleValue) {
 		this.descricao = descricao;
+		this.simpleValue =simpleValue;
 	}
 	
 	private String descricao;
+	private String simpleValue;
 
 	/**
 	 * Obtém descricao
@@ -31,6 +33,20 @@ public enum TipoOperacao {
 	 */
 	public void setDescricao(String descricao) {
 		this.descricao = descricao;
+	}
+
+	/**
+	 * @return the simpleValue
+	 */
+	public String getSimpleValue() {
+		return simpleValue;
+	}
+
+	/**
+	 * @param simpleValue the simpleValue to set
+	 */
+	public void setSimpleValue(String simpleValue) {
+		this.simpleValue = simpleValue;
 	}
 	
 	/**

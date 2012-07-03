@@ -2,12 +2,15 @@ package br.com.abril.nds.service;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
 import br.com.abril.nds.dto.ConsultaLoteNotaFiscalDTO;
 import br.com.abril.nds.dto.RetornoNFEDTO;
+import br.com.abril.nds.model.fiscal.nota.InformacaoAdicional;
+import br.com.abril.nds.model.fiscal.nota.InformacaoTransporte;
+import br.com.abril.nds.model.fiscal.nota.ItemNotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 
 /**
@@ -77,6 +80,9 @@ public interface NotaFiscalService {
 	 * @throws FileNotFoundException caso o diretório parametrizado de exportação das seja inválido. 
 	 * @throws IOException caso ocarra erros durante a gravação do arquivo no diretório
 	 */
-	void exportarNotasFiscais(List<NotaFiscal> notasFiscaisParaExportacao) throws FileNotFoundException, IOException; 
+	void exportarNotasFiscais() throws FileNotFoundException, IOException; 
+
+	public abstract void emitiNotaFiscal(long idTipoNotaFiscal, Date dataEmissao,
+			Long idCota, List<ItemNotaFiscal> listItemNotaFiscal, InformacaoTransporte transporte, InformacaoAdicional informacaoAdicional); 
 	
 }

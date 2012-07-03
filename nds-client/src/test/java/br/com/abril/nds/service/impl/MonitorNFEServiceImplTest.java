@@ -13,7 +13,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.xmlbeans.impl.xb.xsdschema.AnyDocument.Any;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -252,6 +251,7 @@ public class MonitorNFEServiceImplTest {
 	
 	private List<ProdutoServico> criarProdutosServicos() {
 		
+		Integer sequencia = 1;
 		Integer cfop = 1;
 		Long codigoBarras = 1L;
 		String codigoProduto = "1";
@@ -261,7 +261,7 @@ public class MonitorNFEServiceImplTest {
 		Long ncm = 1L;
 		NotaFiscal notaFiscal = null;
 		ProdutoEdicao produtoEdicao = null;
-		Long quantidade = 1L;
+		BigDecimal quantidade = BigDecimal.ONE;
 		String unidade = "";
 		BigDecimal valorDesconto 	= BigDecimal.ZERO;
 		BigDecimal valorFrete 		= BigDecimal.ZERO;
@@ -279,6 +279,7 @@ public class MonitorNFEServiceImplTest {
 			codigoProduto = String.valueOf(contador);
 			
 			ProdutoServico produtoServico = Fixture.produtoServico(
+					sequencia++,
 					cfop, 
 					codigoBarras, 
 					codigoProduto, 

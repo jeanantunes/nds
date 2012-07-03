@@ -25,7 +25,10 @@ public class TelefoneRepositoryImpl extends AbstractRepositoryModel<Telefone, Lo
 		   .append(" and t.id not in (select tf.telefone.id from TelefoneFornecedor tf where tf.telefone.id in (:ids)) ")
 		   .append(" and t.id not in (select te.telefone.id from TelefoneEntregador te where te.telefone.id in (:ids)) ")
 		   .append(" and t.id not in (select tp.telefone.id from TelefonePDV tp where tp.telefone.id in (:ids)) ")
-		   .append(" and t.id not in (select tfi.telefone.id from TelefoneFiador tfi where tfi.telefone.id in (:ids)) ");
+		   .append(" and t.id not in (select tt.telefone.id from TelefoneTransportador tt where tt.telefone.id in (:ids)) ")
+		   .append(" and t.id not in (select td.telefone.id from TelefoneDistribuidor td where td.telefone.id in (:ids)) ")
+		   .append(" and t.id not in (select tfi.telefone.id from TelefoneFiador tfi where tfi.telefone.id in (:ids)) ")
+		   .append(" and t.id not in (select te.telefone.id from TelefoneEditor te where te.telefone.id in (:ids)) ");
 		
 		Query query = this.getSession().createQuery(hql.toString());
 		query.setParameterList("ids", idsTelefones);

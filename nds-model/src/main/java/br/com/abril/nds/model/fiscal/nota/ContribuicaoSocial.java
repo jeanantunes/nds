@@ -36,7 +36,7 @@ public abstract class ContribuicaoSocial implements Serializable {
 			@NFEWhen(condition=NFEConditions.PIS_NAO_TRIB, 
 			 		 export=@NFEExport(secao=TipoSecao.Q04, posicao=0, tamanho=2)),
 			@NFEWhen(condition=NFEConditions.PIS_OUTROS, 
-			 		 export=@NFEExport(secao=TipoSecao.Q05, posicao=0, tamanho=2)),
+			 		 export=@NFEExport(secao=TipoSecao.Q05, posicao=0, tamanho=2))
 	})
 	protected Integer cst;
 	
@@ -44,12 +44,21 @@ public abstract class ContribuicaoSocial implements Serializable {
 	@NFEWhens({
 		 @NFEWhen(condition=NFEConditions.COFINS_TRIB_QTDE, 
 				  export=@NFEExport(secao=TipoSecao.S02, posicao=1, tamanho=15)),
+				  
 		 @NFEWhen(condition=NFEConditions.COFINS_OUTROS_ALIQ, 
 				  export=@NFEExport(secao=TipoSecao.S07, posicao=0, tamanho=15)),
+		
+		 @NFEWhen(condition=NFEConditions.COFINS_SUBSTITUICAO_TRIB,
+				 export=@NFEExport(secao=TipoSecao.T02, posicao = 0, tamanho=15)),
+		
 		 @NFEWhen(condition=NFEConditions.PIS_TRIB_ALIQ, 
 				  export=@NFEExport(secao=TipoSecao.Q02, posicao=1, tamanho=15)),
+				  
 		 @NFEWhen(condition=NFEConditions.PIS_OUTROS_ALIQ, 
 				  export=@NFEExport(secao=TipoSecao.Q07, posicao=0, tamanho=15)),
+				  
+		 @NFEWhen(condition=NFEConditions.PIS_SUBSTITUICAO_TRIB,
+				  export=@NFEExport(secao=TipoSecao.R02, posicao=0, tamanho=15))
 	})
 	protected BigDecimal valorBaseCalculo;
 	
@@ -58,10 +67,14 @@ public abstract class ContribuicaoSocial implements Serializable {
 				 export=@NFEExport(secao=TipoSecao.S02, posicao=2, tamanho=5)),
 		@NFEWhen(condition=NFEConditions.COFINS_OUTROS_ALIQ, 
 				 export=@NFEExport(secao=TipoSecao.S07, posicao=1, tamanho=5)),
+		@NFEWhen(condition=NFEConditions.COFINS_SUBSTITUICAO_TRIB,
+				 export=@NFEExport(secao=TipoSecao.T02, posicao=1, tamanho=5)),
 		@NFEWhen(condition=NFEConditions.PIS_TRIB_ALIQ, 
 				 export=@NFEExport(secao=TipoSecao.Q02, posicao=2, tamanho=5)),
 		@NFEWhen(condition=NFEConditions.PIS_OUTROS_ALIQ, 
-				 export=@NFEExport(secao=TipoSecao.Q07, posicao=1, tamanho=5))
+				 export=@NFEExport(secao=TipoSecao.Q07, posicao=1, tamanho=5)),
+	    @NFEWhen(condition=NFEConditions.PIS_SUBSTITUICAO_TRIB, 
+	    		 export=@NFEExport(secao=TipoSecao.R02, posicao=1, tamanho=5))
 	})
 	protected BigDecimal percentualAliquota;
 	
@@ -73,11 +86,17 @@ public abstract class ContribuicaoSocial implements Serializable {
 		@NFEWhen(condition=NFEConditions.COFINS_OUTROS_QTDE,
 				 export=@NFEExport(secao=TipoSecao.S09, posicao=0, tamanho=16)),
 		
+	    @NFEWhen(condition=NFEConditions.COFINS_SUBSTITUICAO_TRIB, 
+	    		 export=@NFEExport(secao=TipoSecao.T04, posicao=0, tamanho=16)),
+		
 		@NFEWhen(condition=NFEConditions.PIS_TRIB_QTDE,
 				 export=@NFEExport(secao=TipoSecao.S03, posicao=1, tamanho=16)),
 		
 		@NFEWhen(condition=NFEConditions.PIS_OUTROS_QTDE,
 				 export=@NFEExport(secao=TipoSecao.Q10, posicao=0, tamanho=16)),
+				 
+	    @NFEWhen(condition=NFEConditions.PIS_SUBSTITUICAO_TRIB,
+	    		 export=@NFEExport(secao=TipoSecao.R04, posicao=0, tamanho=16))
 	})
 	protected BigDecimal quantidadeVendida;
 		
@@ -93,7 +112,7 @@ public abstract class ContribuicaoSocial implements Serializable {
 				 export=@NFEExport(secao=TipoSecao.S03, posicao=2, tamanho=15)),
 		
 		@NFEWhen(condition=NFEConditions.PIS_OUTROS_QTDE,
-				 export=@NFEExport(secao=TipoSecao.Q10, posicao=1, tamanho=15)),
+				 export=@NFEExport(secao=TipoSecao.Q10, posicao=1, tamanho=15))
 	})
 	protected BigDecimal valorAliquota;
 	
@@ -106,6 +125,9 @@ public abstract class ContribuicaoSocial implements Serializable {
 		
 		@NFEWhen(condition=NFEConditions.COFINS_OUTROS,
 				 export=@NFEExport(secao=TipoSecao.Q05, posicao=1, tamanho=15)),
+				 
+		@NFEWhen(condition=NFEConditions.COFINS_SUBSTITUICAO_TRIB,
+				 export=@NFEExport(secao=TipoSecao.T, posicao=0, tamanho=15)),
 		
 		@NFEWhen(condition=NFEConditions.PIS_TRIB_ALIQ,
 				 export=@NFEExport(secao=TipoSecao.S02, posicao=3, tamanho=15)),
@@ -114,7 +136,10 @@ public abstract class ContribuicaoSocial implements Serializable {
 				 export=@NFEExport(secao=TipoSecao.S03, posicao=3, tamanho=15)),
 		
 		@NFEWhen(condition=NFEConditions.PIS_OUTROS,
-				 export=@NFEExport(secao=TipoSecao.S05, posicao=1, tamanho=15))
+				 export=@NFEExport(secao=TipoSecao.S05, posicao=1, tamanho=15)),
+				 
+		@NFEWhen(condition=NFEConditions.PIS_SUBSTITUICAO_TRIB,
+				 export=@NFEExport(secao=TipoSecao.R, posicao=0, tamanho=15))
 	})
 	protected BigDecimal valor;
 

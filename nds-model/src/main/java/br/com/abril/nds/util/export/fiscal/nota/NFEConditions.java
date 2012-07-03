@@ -2,11 +2,14 @@ package br.com.abril.nds.util.export.fiscal.nota;
 
 import java.util.List;
 
+import br.com.abril.nds.model.fiscal.nota.COFINSST;
+import br.com.abril.nds.model.fiscal.nota.PISST;
 import br.com.abril.nds.util.export.fiscal.nota.condition.CNPJCondition;
 import br.com.abril.nds.util.export.fiscal.nota.condition.COFINSNTCondition;
 import br.com.abril.nds.util.export.fiscal.nota.condition.COFINSOutrasAliqCondition;
 import br.com.abril.nds.util.export.fiscal.nota.condition.COFINSOutrasCondition;
 import br.com.abril.nds.util.export.fiscal.nota.condition.COFINSOutrasQtdeCondition;
+import br.com.abril.nds.util.export.fiscal.nota.condition.COFINSSTCondition;
 import br.com.abril.nds.util.export.fiscal.nota.condition.COFINSTAliqCondition;
 import br.com.abril.nds.util.export.fiscal.nota.condition.COFINSTQtdeCondition;
 import br.com.abril.nds.util.export.fiscal.nota.condition.CPFCondition;
@@ -36,6 +39,7 @@ import br.com.abril.nds.util.export.fiscal.nota.condition.PISNTCondition;
 import br.com.abril.nds.util.export.fiscal.nota.condition.PISOutrasAliqCondition;
 import br.com.abril.nds.util.export.fiscal.nota.condition.PISOutrasCondition;
 import br.com.abril.nds.util.export.fiscal.nota.condition.PISOutrasQtdeCondition;
+import br.com.abril.nds.util.export.fiscal.nota.condition.PISSTCondition;
 import br.com.abril.nds.util.export.fiscal.nota.condition.PISTAliqCondition;
 import br.com.abril.nds.util.export.fiscal.nota.condition.PISTQtdeCondition;
 
@@ -70,12 +74,14 @@ public enum NFEConditions {
 	COFINS_OUTROS(new COFINSOutrasCondition()),
 	COFINS_OUTROS_QTDE(new COFINSOutrasQtdeCondition()),
 	COFINS_OUTROS_ALIQ(new COFINSOutrasAliqCondition()),
+	COFINS_SUBSTITUICAO_TRIB(new COFINSSTCondition()),
 	PIS_TRIB_ALIQ(new PISTAliqCondition()),
 	PIS_TRIB_QTDE(new PISTQtdeCondition()),
 	PIS_NAO_TRIB(new PISNTCondition()),
 	PIS_OUTROS(new PISOutrasCondition()),
 	PIS_OUTROS_QTDE(new PISOutrasQtdeCondition()),
-	PIS_OUTROS_ALIQ(new PISOutrasAliqCondition());
+	PIS_OUTROS_ALIQ(new PISOutrasAliqCondition()),
+	PIS_SUBSTITUICAO_TRIB(new PISSTCondition());
 	
 	private Condition condition;
 

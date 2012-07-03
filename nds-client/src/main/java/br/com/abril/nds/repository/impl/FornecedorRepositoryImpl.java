@@ -226,12 +226,13 @@ public class FornecedorRepositoryImpl extends
 		hql.append(" select ")
 		   .append(" fornecedor.id as idFornecedor, ")
 		   .append(" fornecedor.codigoInterface as codigoInterface, ")
+		   .append(" fornecedor.origem as origem, ")
 		   .append(" fornecedor.juridica.razaoSocial as razaoSocial, ")
 		   .append(" fornecedor.juridica.cnpj as cnpj, ")
 		   .append(" fornecedor.responsavel as responsavel, ")
 		   .append(" telefone.numero as telefone, ")
 		   .append(" fornecedor.juridica.email as email ")
-		   
+
 		   .append(" from Fornecedor fornecedor ")
 		   .append(" left join fornecedor.telefones telefoneFornecedor ")
 		   .append(" left join telefoneFornecedor.telefone telefone ")
