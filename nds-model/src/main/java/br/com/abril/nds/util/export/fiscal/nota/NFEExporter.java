@@ -9,6 +9,7 @@ import java.math.BigInteger;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
@@ -19,6 +20,7 @@ import java.util.TreeMap;
 
 import org.apache.commons.lang.StringUtils;
 
+import br.com.abril.nds.model.fiscal.nota.NotaFiscalEnum;
 import br.com.abril.nds.util.CampoSecao;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.StringUtil;
@@ -101,7 +103,7 @@ public class NFEExporter {
 	 * @throws InvocationTargetException
 	 */
 	public <NF> void execute(NF notaFiscal) throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
-		this.execute(notaFiscal, new ArrayList<Object>());
+		this.execute(notaFiscal, new ArrayList<Object>(), null);
 	}
 	
 	/**
@@ -115,30 +117,39 @@ public class NFEExporter {
 	 * @throws IllegalAccessException
 	 * @throws InvocationTargetException
 	 */
-	private <NF> void execute(NF notaFiscal, List<Object> listaParents) throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
+	private <NF> void execute(NF notaFiscal, List<Object> listaParents, TipoSecao secaoVazia) throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
 		
 		if (listaParents != null) {
 			listaParents.add(notaFiscal);
 		}
 		
-		Field[] campos = notaFiscal.getClass().getDeclaredFields();
+		if (secaoVazia != null && !TipoSecao.EMPTY.equals(secaoVazia)){
+			addSecaoVazia(secaoVazia);
+		}
+		
+		List<Field> campos = new ArrayList<Field>();
+		List<Method> metodos = new ArrayList<Method>();
+		Class<?> clazz = notaFiscal.getClass();
+		while (clazz != null) {
+			campos.addAll(Arrays.asList(clazz.getDeclaredFields()));
+			metodos.addAll(Arrays.asList(clazz.getDeclaredMethods()));
+			clazz = clazz.getSuperclass();
+		}
 
 		for (Field campo : campos) {
-
 			campo.setAccessible(true);
-
 			Object valor = campo.get(notaFiscal);
 			this.processarAnnotations(campo, listaParents, notaFiscal, valor);
 		}		
 	
-		Method[] metodos = notaFiscal.getClass().getDeclaredMethods();
-		
 		for (Method metodo : metodos) {
+			NFEExportType nfeExportType =  metodo.getAnnotation(NFEExportType.class);
 			NFEWhens nfeWhens = metodo.getAnnotation(NFEWhens.class);
+			NFEWhen nfeWhen = metodo.getAnnotation(NFEWhen.class);
 			NFEExport nfeExport = metodo.getAnnotation(NFEExport.class);
 			NFEExports nfeExports = metodo.getAnnotation(NFEExports.class);
 			
-			if (nfeWhens != null || nfeExport!= null || nfeExports != null ) {
+			if (nfeWhens != null || nfeWhen != null || nfeExport!= null || nfeExports != null || nfeExportType != null) {
 				if (metodo.getParameterTypes().length == 0 && !metodo.getReturnType().equals(Void.TYPE)) {
 					Object valor = metodo.invoke(notaFiscal, new Object[] {});
 					this.processarAnnotations(metodo, listaParents, notaFiscal, valor);
@@ -150,7 +161,6 @@ public class NFEExporter {
 			listaParents.remove(notaFiscal);
 		}
 	}
-	
 	
 	/**
 	 * 
@@ -166,6 +176,7 @@ public class NFEExporter {
 	private <NF> void processarAnnotations(AccessibleObject objeto, List<Object> listaParents, NF notaFiscal, Object valor) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		NFEExportType nfeExportType =  objeto.getAnnotation(NFEExportType.class);
 		NFEWhens nfeWhens = objeto.getAnnotation(NFEWhens.class);
+		NFEWhen nfeWhen = objeto.getAnnotation(NFEWhen.class);
 		NFEExport nfeExport = objeto.getAnnotation(NFEExport.class);
 		NFEExports nfeExports = objeto.getAnnotation(NFEExports.class);
 		
@@ -179,6 +190,12 @@ public class NFEExporter {
 				}
 			}
 								
+			if(nfeWhen != null){
+				if(nfeWhen.condition().valid(valor) && nfeWhen.condition().validParent(notaFiscal) && nfeWhen.condition().validParents(listaParents)){						
+					addCampoSecao(nfeWhen.export(), valor);
+				}
+			}
+								
 			if (nfeExports != null) {					
 				for (NFEExport nfeExp: nfeExports.value()) {
 					addCampoSecao(nfeExp, valor);
@@ -189,22 +206,30 @@ public class NFEExporter {
 				addCampoSecao(nfeExport, valor);
 			}
 
-		} else if (valor instanceof Collection) {
+		} else if (valor instanceof Collection && nfeExportType != null) {
 			
 			for (Object valorCollection : (Collection) valor) {
+				TipoSecao secaoVazia = nfeExportType.secaoPadrao();
+				if (TipoSecao.EMPTY.equals(secaoVazia)) {
+					secaoVazia = null;
+				}
 				NFEExporter nfeExporter = new NFEExporter();
 				nfeExporter.clear();
-				nfeExporter.execute(valorCollection, listaParents);
+				nfeExporter.execute(valorCollection, listaParents, secaoVazia);
 				listaNFEExporters.add(nfeExporter);
 			}
 
 		} else if (valor != null && nfeExportType != null) {
-			execute(valor, listaParents);
-		}
+			TipoSecao secaoVazia = nfeExportType.secaoPadrao();
+			if (TipoSecao.EMPTY.equals(secaoVazia)) {
+				secaoVazia = null;
+			}
+			execute(valor, listaParents, secaoVazia);
+		} 
 	}
 		
-
-	/**
+	
+	 /**
 	 * Adiciona um campo em uma seção.
 	 * 
 	 * @param novoCampo campo
@@ -221,6 +246,21 @@ public class NFEExporter {
 		this.mapSecoes.put(novoCampo.getSessao(), camposSecao);
 	}
 	
+	
+	/**
+	 * Adiciona secao vazia
+	 * 
+	 * @param secao
+	 */
+	private void addSecaoVazia(TipoSecao secao){
+		List<CampoSecao> camposSecao = mapSecoes.get(secao);
+		
+		if (camposSecao == null || camposSecao.isEmpty()) {
+			camposSecao = new ArrayList<CampoSecao>();
+		}
+		
+		this.mapSecoes.put(secao, camposSecao);
+	}
 	
 	/**
 	 * Cria um campo a partir da annotation e adiciona o campo a seção. 
@@ -402,8 +442,15 @@ public class NFEExporter {
 		
 		String valorString = STRING_VAZIA;
 		String mascaraUsada;
+		boolean isNotaFiscalEnum = false;
 		
 		if (valor != null) {
+			
+			if (isEnum(valor)) {
+				for (Class<?> interfaceClazz: valor.getClass().getInterfaces()) {
+					isNotaFiscalEnum = isNotaFiscalEnum || NotaFiscalEnum.class.equals(interfaceClazz); 
+				}
+			}
 			
 			if (isDate(valor)) {
 			
@@ -430,6 +477,8 @@ public class NFEExporter {
 					valorString = valorString.replace(",", "");
 				}
 			
+			} else if (isNotaFiscalEnum) {
+				valorString = ((NotaFiscalEnum)valor).getIntValue().toString();
 			} else {
 				
 				valorString = String.valueOf(valor);
@@ -519,10 +568,9 @@ public class NFEExporter {
 		return (valor != null) && valor.getClass().getEnumConstants() != null;
 	}
 	
-	@SuppressWarnings("unchecked")
 	public String getPrimeiraSecao(){
 		if (!this.mapSecoes.isEmpty()) {
-			return ((List<CampoSecao>)this.mapSecoes.values().toArray()[0]).get(0).getSessao().getSigla();
+			return ((TipoSecao)this.mapSecoes.keySet().toArray()[0]).getSigla();
 		}else {
 			return null;
 		}

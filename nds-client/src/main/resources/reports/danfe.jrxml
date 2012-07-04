@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="danfe" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="565" leftMargin="14" rightMargin="16" topMargin="14" bottomMargin="14" whenResourceMissingType="Empty">
-	<property name="ireport.zoom" value="2.0"/>
-	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/>
+	<property name="ireport.zoom" value="3.0"/>
+	<property name="ireport.x" value="585"/>
+	<property name="ireport.y" value="1858"/>
 	<style name="campoPequeno" hAlign="Left" vAlign="Top" markup="styled" pattern="" fontName="Arial" fontSize="5" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Arial" isPdfEmbedded="true"/>
 	<style name="borda" mode="Transparent" forecolor="#000000" fill="Solid" scaleImage="Clip" hAlign="Left" vAlign="Top" markup="none" pattern="" fontName="Arial" fontSize="5" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="true" pdfFontName="Arial" isPdfEmbedded="true">
 		<pen lineWidth="0.25"/>
@@ -57,6 +57,7 @@
 	<parameter name="SUBREPORT_DIR" class="java.lang.String">
 		<defaultValueExpression><![CDATA["C:\\Users\\michel.jader\\Desktop\\relatorios\\"]]></defaultValueExpression>
 	</parameter>
+	<parameter name="IND_EMISSAO_DEPEC" class="java.lang.Boolean"/>
 	<queryString language="xPath">
 		<![CDATA[]]>
 	</queryString>
@@ -1425,10 +1426,10 @@ $F{transportadoraCNPJ}.substring(8,12) + "-" + $F{transportadoraCNPJ}.substring(
 					<reportElement style="borda" x="423" y="10" width="142" height="24"/>
 				</rectangle>
 				<rectangle>
-					<reportElement style="borda" x="0" y="45" width="364" height="91"/>
+					<reportElement style="borda" x="0" y="45" width="364" height="70"/>
 				</rectangle>
 				<rectangle>
-					<reportElement style="borda" x="364" y="45" width="201" height="91"/>
+					<reportElement style="borda" x="364" y="45" width="201" height="70"/>
 				</rectangle>
 				<staticText>
 					<reportElement style="campoPequeno" x="2" y="2" width="563" height="7"/>
@@ -1495,11 +1496,25 @@ $F{transportadoraCNPJ}.substring(8,12) + "-" + $F{transportadoraCNPJ}.substring(
 					<textFieldExpression><![CDATA[$F{emissorInscricaoMunicipal}]]></textFieldExpression>
 				</textField>
 				<textField isBlankWhenNull="true">
-					<reportElement style="dados" x="4" y="53" width="358" height="83"/>
+					<reportElement style="dados" x="4" y="53" width="358" height="62"/>
 					<textElement verticalAlignment="Top">
 						<font isItalic="false"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{informacoesComplementares}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="1" y="115" width="340" height="20">
+						<printWhenExpression><![CDATA[$P{IND_EMISSAO_DEPEC}]]></printWhenExpression>
+					</reportElement>
+					<textElement/>
+					<text><![CDATA[DANFE em Contingência - impresso em decorrência de problemas técnicos]]></text>
+				</staticText>
+				<textField pattern="dd/MM/yyyy HH:mm:ss">
+					<reportElement x="340" y="115" width="100" height="20">
+						<printWhenExpression><![CDATA[$P{IND_EMISSAO_DEPEC}]]></printWhenExpression>
+					</reportElement>
+					<textElement/>
+					<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
 				</textField>
 			</frame>
 		</band>

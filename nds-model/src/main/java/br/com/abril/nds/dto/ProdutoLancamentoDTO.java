@@ -7,6 +7,7 @@ import java.util.Date;
 import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamentoParcial;
+import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.Util;
 
 /**
@@ -66,9 +67,9 @@ public class ProdutoLancamentoDTO implements Serializable {
 	
 	private Integer ordemPeriodicidadeProduto;
   	
-  	private boolean permiteReprogramacao;
-  	
   	private String distribuicao;
+  	
+  	private boolean possuiFuro;
 	
 	/**
 	 * Construtor padrão.
@@ -77,6 +78,26 @@ public class ProdutoLancamentoDTO implements Serializable {
 		
 	}
 
+	/**
+	 * Verifica se o produto permite reprogramação ou não
+	 */
+	public boolean permiteReprogramacao() {
+		
+		if (this.possuiRecebimentoFisico
+				&& this.numeroReprogramacoes != null
+				&& this.numeroReprogramacoes >= Constantes.NUMERO_REPROGRAMACOES_LIMITE) {
+			
+			return false;
+		}
+		
+		if (StatusLancamento.CANCELADO_GD.equals(this.statusLancamento)) {
+			
+			return false;
+		}
+		
+		return true;
+	}
+	
 	/**
 	 * @return the idProdutoEdicao
 	 */
@@ -411,20 +432,6 @@ public class ProdutoLancamentoDTO implements Serializable {
 	}
 
 	/**
-	 * @return the permiteReprogramacao
-	 */
-	public boolean isPermiteReprogramacao() {
-		return permiteReprogramacao;
-	}
-
-	/**
-	 * @param permiteReprogramacao the permiteReprogramacao to set
-	 */
-	public void setPermiteReprogramacao(boolean permiteReprogramacao) {
-		this.permiteReprogramacao = permiteReprogramacao;
-	}
-
-	/**
 	 * @return the distribuicao
 	 */
 	public String getDistribuicao() {
@@ -436,6 +443,20 @@ public class ProdutoLancamentoDTO implements Serializable {
 	 */
 	public void setDistribuicao(String distribuicao) {
 		this.distribuicao = distribuicao;
+	}
+
+	/**
+	 * @return the possuiFuro
+	 */
+	public boolean isPossuiFuro() {
+		return possuiFuro;
+	}
+
+	/**
+	 * @param possuiFuro the possuiFuro to set
+	 */
+	public void setPossuiFuro(boolean possuiFuro) {
+		this.possuiFuro = possuiFuro;
 	}
 	
 }

@@ -146,13 +146,15 @@
 				
 				data.rows[i].cell.telefone = "";
 			}
-						
+
 			if (!data.rows[i].cell.email) {
 				
 				data.rows[i].cell.email = "";
 			}
 			
-			data.rows[i].cell.acao = getActionFornecedor(data.rows[i].id);
+			var isHabilitado = data.rows[i].cell.origem != 'INTERFACE';
+			
+			data.rows[i].cell.acao = getActionFornecedor(data.rows[i].id, isHabilitado);
 		}
 
 		if (data.rows.length < 0) {
@@ -203,6 +205,10 @@
 				}
 
 				novoFornecedor(true);
+				
+				ENDERECO_FORNECEDOR.popularGridEnderecos();
+				
+				FORNECEDOR.carregarTelefones();
 			},
 			function(result) {
 				exibirMensagem(
@@ -213,20 +219,31 @@
 		);
 	}
 	
-	function getActionFornecedor(idFornecedor) {
+	function getActionFornecedor(idFornecedor, isHabilitado) {
 
-		return '<a href="javascript:;" onclick="editarFornecedor('
-				+ idFornecedor
-				+ ')" '
-				+ ' style="cursor:pointer;border:0px;margin:5px" title="Editar fornecedor">'
-				+ '<img src="${pageContext.request.contextPath}/images/ico_editar.gif" border="0px"/>'
-				+ '</a>'
-				+ '<a href="javascript:;" onclick="confirmarExclusaoFornecedor('
-				+ idFornecedor
-				+ ')" '
-				+ ' style="cursor:pointer;border:0px;margin:5px" title="Excluir fornecedor">'
-				+ '<img src="${pageContext.request.contextPath}/images/ico_excluir.gif" border="0px"/>'
-				+ '</a>';
+		if (isHabilitado) {
+		
+			return '<a href="javascript:;" onclick="editarFornecedor('
+					+ idFornecedor
+					+ ')" '
+					+ ' style="cursor:pointer;border:0px;margin:5px" title="Editar fornecedor">'
+					+ '<img src="${pageContext.request.contextPath}/images/ico_editar.gif" border="0px"/>'
+					+ '</a>'
+					+ '<a href="javascript:;" onclick="confirmarExclusaoFornecedor('
+					+ idFornecedor
+					+ ')" '
+					+ ' style="cursor:pointer;border:0px;margin:5px" title="Excluir fornecedor">'
+					+ '<img src="${pageContext.request.contextPath}/images/ico_excluir.gif" border="0px"/>'
+					+ '</a>';
+		
+		} else {
+			
+			return '<img src="${pageContext.request.contextPath}/images/ico_editar.gif" border="0px"'
+					+ ' style="opacity:0.4;padding-right:10px"/>'
+				 	+ '<img src="${pageContext.request.contextPath}/images/ico_excluir.gif" border="0px"'
+				 	+ ' style="opacity:0.4"/>';
+
+		}
 	}
 
 	function confirmarExclusaoFornecedor(idFornecedor) {

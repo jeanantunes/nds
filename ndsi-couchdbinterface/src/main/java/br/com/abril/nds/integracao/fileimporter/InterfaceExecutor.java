@@ -276,8 +276,9 @@ public class InterfaceExecutor {
 
 			String linha = scanner.nextLine();
 			linhaArquivo++;
-
-			if (StringUtils.isEmpty(linha)) {
+			
+			// Ignora linha vazia e aquele caracter estranho em formato de seta para direita
+			if (StringUtils.isEmpty(linha) ||  ((int) linha.charAt(0)  == 26) ) {
 				continue;
 			} 
 

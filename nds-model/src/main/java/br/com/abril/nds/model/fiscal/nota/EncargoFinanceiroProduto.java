@@ -4,6 +4,7 @@ import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
+import br.com.abril.nds.util.TipoSecao;
 import br.com.abril.nds.util.export.fiscal.nota.NFEExportType;
 
 @Entity
@@ -16,7 +17,7 @@ public class EncargoFinanceiroProduto extends EncargoFinanceiro {
 	private static final long serialVersionUID = -6496916286204117106L;
 
 	@Embedded
-	@NFEExportType
+	@NFEExportType(secaoPadrao = TipoSecao.N)
 	private ICMS icms;
 	
 	@Embedded
@@ -50,5 +51,4 @@ public class EncargoFinanceiroProduto extends EncargoFinanceiro {
 	public void setIpi(IPI ipi) {
 		this.ipi = ipi;
 	}
-
 }

@@ -5,8 +5,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
 
 import junit.framework.Assert;
 
@@ -416,24 +414,6 @@ public class BalanceamentoLancamentoTest extends AbstractRepositoryImplTest {
 												  produtoRecolhimentoQuatroRodas.getDataLancamentoDistribuidor());
 		
 		Assert.assertTrue(ordenacaoPorDataCorreta);
-	}
-	
-	@Test
-	public void obterExpectativasRepartePorData() {
-		
-		montarParametrosConsulta();
-		
-		TreeMap<Date, BigDecimal> expectativaReparte =
-			lancamentoRepository.obterExpectativasRepartePorData(periodoLancamento, fornecedores);
-		
-		Assert.assertEquals(lancamentos.size(), expectativaReparte.size());
-		
-		for (Map.Entry<Date, BigDecimal> entry : expectativaReparte.entrySet()) {
-
-			boolean condition = entry.getValue().compareTo(repartePrevisto) == 0;
-			
-			Assert.assertTrue(condition);
-		}
 	}
 	
 	private void montarParametrosConsulta() {
