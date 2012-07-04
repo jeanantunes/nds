@@ -14,7 +14,7 @@ public class FollowupStatusCotaServiceImpl implements FollowupStatusCotaService 
 	@Override
 	public List<ConsultaFollowupStatusCotaDTO> obterStatusCota(
 			FiltroFollowupStatusCotaDTO filtro) {
-		// TODO Auto-generated method stub
+		 
 		return null;
 	}
 

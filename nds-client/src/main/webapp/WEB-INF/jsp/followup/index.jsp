@@ -31,13 +31,13 @@ $(function() {
 				align : 'left'
 			}, {
 				display : 'Consignado R$',
-				name : 'valorTotalConsignado',
+				name : 'valorTotalConsignadoFormatado',
 				width : 120,
 				sortable : true,
 				align : 'right'
 			}, {
 				display : 'Suspenso (dias)',
-				name : 'qtdDiasCotaSuspensa',
+				name : 'qtdDiasSuspensao',
 				width : 100,
 				sortable : true,
 				align : 'center'
