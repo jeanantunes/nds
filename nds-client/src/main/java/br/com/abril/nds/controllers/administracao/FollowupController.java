@@ -80,7 +80,9 @@ public class FollowupController {
 	@Path("/pesquisaDadosChamadao")
 	public void pesquisaDadosChamadao( String sortorder, String sortname, int page, int rp ) {
     	FiltroFollowupChamadaoDTO filtroChamadao = 
-    		new FiltroFollowupChamadaoDTO(Calendar.getInstance().getTime(), 0, getValorConsignadoSuspensaoCotas());
+    		new FiltroFollowupChamadaoDTO(Calendar.getInstance().getTime()
+    		                             ,0
+    		                             ,getValorConsignadoSuspensaoCotas());
 		this.recuperarParametros(filtroChamadao);		
 		filtroChamadao.setPaginacao(new PaginacaoVO(page, rp, sortorder, sortname));
 		this.tratarFiltro(filtroChamadao);		

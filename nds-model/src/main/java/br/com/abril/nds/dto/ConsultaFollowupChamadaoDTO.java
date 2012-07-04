@@ -45,6 +45,7 @@ public class ConsultaFollowupChamadaoDTO implements Serializable {
 		this.dataProgramadoChamadao = dataProgramadoChamadao;
 	}
 
+
 	public Long getNumeroCota() {
 		return numeroCota;
 	}
@@ -69,7 +70,6 @@ public class ConsultaFollowupChamadaoDTO implements Serializable {
 	public void setDataProgramadoChamadao(Date dataProgramadoChamadao) {
 		this.dataProgramadoChamadao = dataProgramadoChamadao;
 	}
-
 	public Date getDataHistoricoEdicao() {
 		return dataHistoricoEdicao;
 	}

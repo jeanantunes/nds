@@ -46,8 +46,7 @@ public class FollowupChamadaoRepositoryImpl  extends AbstractRepositoryModel<Con
 		myqrystr.append("  as valorTotalConsignado, ");
 		myqrystr.append(" ifnull(l.data_rec_prevista,str_to_date('01,01,1900','%d,%m,%Y')) as dataProgramadoChamadao, ");
 		myqrystr.append(" ifnull(datediff(sysdate(),hsc.data_edicao),0) as qtdDiasCotaSuspensa ");
-		
-		
+
 		myqrystr.append(" from cota c, ");
 		myqrystr.append(" pessoa p, ");
 		myqrystr.append(" produto_edicao produtoEdicao, estoque_produto_cota estoqueProdCota, ");
@@ -110,10 +109,10 @@ public class FollowupChamadaoRepositoryImpl  extends AbstractRepositoryModel<Con
 		      "]  valorTotalConsignado[" + cfdto.getValorTotalConsignado() + 
 		      "]  dataProgramadoChamadao[" + cfdto.getDataProgramadoChamadao()+
 		      "]  qtdDiasCotaSuspensa["  + cfdto.getDataProgramadoChamadao()  );
-		}
 		System.out.println("\n======================================================================================================================================\n");
-		
+		}
 		return qry2db.list();
+		
 	}
 	
 	private String getSqlFromEWhereChamadao(FiltroFollowupChamadaoDTO filtro) {
