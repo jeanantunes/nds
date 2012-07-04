@@ -1,8 +1,11 @@
 package br.com.abril.nds.repository.impl;
 
+import org.springframework.stereotype.Repository;
+
 import br.com.abril.nds.model.fiscal.nota.Serie;
 import br.com.abril.nds.repository.SerieRepository;
 
+@Repository
 public class SerieRepositoryImpl extends AbstractRepositoryModel<Serie, Integer>
 		implements SerieRepository {
 
