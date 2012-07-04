@@ -189,6 +189,7 @@ import br.com.abril.nds.util.DateUtil;
 public class DataLoader {
 
 	private static final String PARAM_SKIP_DATA = "skipData";
+	private static final String PARAM_CLEAN_DATA = "cleanData";
 	private static PessoaJuridica juridicaAcme;
 	private static PessoaJuridica juridicaDinap;
 	private static PessoaJuridica juridicaFc;
@@ -812,8 +813,11 @@ public class DataLoader {
 				session = sf.openSession();
 				tx = session.beginTransaction();				
 				
-				carregarDados(session);
-//				carregarDadosClean(session);
+				if (parans.contains(PARAM_CLEAN_DATA)) {
+					carregarDadosClean(session);
+				} else {
+					carregarDados(session);
+				}
 
 				commit = true;
 			} catch (Exception e) {
@@ -844,19 +848,11 @@ public class DataLoader {
 	}
 
 	private static void carregarDados(Session session) {
+		carregarDadosClean(session);
 
-		gerarCfops(session);
-
-		criarParametrosSistema(session);
-		criarInterfaceExecucao(session);
-		criarEventoExecucao(session);
-		criarAlgoritmos(session);
 		criarCarteira(session);
 		criarBanco(session);
 		criarPessoas(session);
-		criarDistribuidor(session);
-		criarEnderecoDistribuidor(session);
-		criarTelefoneDistribuidor(session);
 		criarUsuarios(session);
 		criarTiposFornecedores(session);
 		criarBox(session);
@@ -870,10 +866,7 @@ public class DataLoader {
 		criarTiposProduto(session);
 		criarProdutos(session);
 		criarProdutosEdicao(session);
-		criarCFOP(session);
 		criarTiposMovimento(session);
-		criarParametroEmissaoNotaFiscal(session);
-		criarTiposNotaFiscal(session);
 		criarNotasFiscais(session);
 		criarRecebimentosFisicos(session);
 		criarEstoquesProdutos(session);
@@ -883,7 +876,6 @@ public class DataLoader {
 		criarEstudos(session);
 		criarEstudosCota(session);
 		criarMovimentosEstoqueCota(session);
-		criarFeriado(session);
 		criarEnderecoCotaPF(session);
 		criarMovimentosFinanceiroCota(session);
 		criarDivida(session);
@@ -969,6 +961,9 @@ public class DataLoader {
 	}
 
 	
+	/*
+	 * Carga Inicial do sistema Zerado
+	 * */
 	
 	private static void carregarDadosClean(Session session) {
 		
