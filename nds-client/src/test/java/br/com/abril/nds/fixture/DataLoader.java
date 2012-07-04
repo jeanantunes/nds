@@ -767,7 +767,7 @@ public class DataLoader {
 	private static InterfaceExecucao interfaceEMS0109;
 	private static InterfaceExecucao interfaceEMS0110;
 	private static InterfaceExecucao interfaceEMS0111;
-//	private static InterfaceExecucao interfaceEMS0112;
+	private static InterfaceExecucao interfaceEMS0112;
 	private static InterfaceExecucao interfaceEMS0113;
 	private static InterfaceExecucao interfaceEMS0114;
 	private static InterfaceExecucao interfaceEMS0116;
@@ -787,8 +787,9 @@ public class DataLoader {
 	private static InterfaceExecucao interfaceEMS0132;
 	private static InterfaceExecucao interfaceEMS0133;
 //	private static InterfaceExecucao interfaceEMS0134;
-//	private static InterfaceExecucao interfaceEMS0185;
+	private static InterfaceExecucao interfaceEMS0185;
 	private static InterfaceExecucao interfaceEMS0197;
+	private static InterfaceExecucao interfaceEMS0198;
 
 	private static EventoExecucao eventoErroInfraestrutura;
 	private static EventoExecucao eventoSemDominio;
@@ -10192,7 +10193,7 @@ public class DataLoader {
 		interfaceEMS0109 = Fixture.criarInterfaceExecucao(109L, "EMS0109");
 		interfaceEMS0110 = Fixture.criarInterfaceExecucao(110L, "EMS0110");
 		interfaceEMS0111 = Fixture.criarInterfaceExecucao(111L, "EMS0111");
-//		interfaceEMS0112 = Fixture.criarInterfaceExecucao(112L, "EMS0112");
+		interfaceEMS0112 = Fixture.criarInterfaceExecucao(112L, "EMS0112");
 		interfaceEMS0113 = Fixture.criarInterfaceExecucao(113L, "EMS0113");
 		interfaceEMS0114 = Fixture.criarInterfaceExecucao(114L, "EMS0114");
 		interfaceEMS0116 = Fixture.criarInterfaceExecucao(116L, "EMS0116");
@@ -10212,16 +10213,19 @@ public class DataLoader {
 		interfaceEMS0132 = Fixture.criarInterfaceExecucao(132L, "EMS0132");
 		interfaceEMS0133 = Fixture.criarInterfaceExecucao(133L, "EMS0133");
 //		interfaceEMS0134 = Fixture.criarInterfaceExecucao(134L, "EMS0134");
-//		interfaceEMS0185 = Fixture.criarInterfaceExecucao(185L, "EMS0185");
+		interfaceEMS0185 = Fixture.criarInterfaceExecucao(185L, "EMS0185");
 		interfaceEMS0197 = Fixture.criarInterfaceExecucao(197L, "EMS0197");
+		interfaceEMS0198 = Fixture.criarInterfaceExecucao(198L, "EMS0198");
 
+
+		
 		save(session, Fixture.criarInterfaceExecucao(106L, "EMS0106"));
 		save(session, Fixture.criarInterfaceExecucao(107L, "EMS0107"));
 		save(session, Fixture.criarInterfaceExecucao(108L, "EMS0108"));
 		save(session, Fixture.criarInterfaceExecucao(InterfaceEnum.EMS0109.getCodigoInterface(), "EMS0109"));
 		save(session, Fixture.criarInterfaceExecucao(InterfaceEnum.EMS0110.getCodigoInterface(), "EMS0110"));
 		save(session, Fixture.criarInterfaceExecucao(InterfaceEnum.EMS0111.getCodigoInterface(), "EMS0111"));
-//		save(session, Fixture.criarInterfaceExecucao(InterfaceEnum.EMS0112.getCodigoInterface(), "EMS0112"));
+		save(session, Fixture.criarInterfaceExecucao(InterfaceEnum.EMS0112.getCodigoInterface(), "EMS0112"));
 		save(session, Fixture.criarInterfaceExecucao(InterfaceEnum.EMS0113.getCodigoInterface(), "EMS0113"));
 		save(session, Fixture.criarInterfaceExecucao(InterfaceEnum.EMS0114.getCodigoInterface(), "EMS0114"));
 		save(session, Fixture.criarInterfaceExecucao(116L, "EMS0116"));
@@ -10241,8 +10245,9 @@ public class DataLoader {
 		save(session, Fixture.criarInterfaceExecucao(132L, "EMS0132"));
 		save(session, Fixture.criarInterfaceExecucao(133L, "EMS0133"));
 //		save(session, Fixture.criarInterfaceExecucao(InterfaceEnum.EMS0134.getCodigoInterface(), "EMS0134"));
-//		save(session, Fixture.criarInterfaceExecucao(InterfaceEnum.EMS0185.getCodigoInterface(), "EMS0185"));
+		save(session, Fixture.criarInterfaceExecucao(InterfaceEnum.EMS0185.getCodigoInterface(), "EMS0185"));
 		save(session, Fixture.criarInterfaceExecucao(197L, "EMS0197"));
+		save(session, Fixture.criarInterfaceExecucao(198L, "EMS0198"));
 	}
 
 	private static void criarEventoExecucao(Session session) {
