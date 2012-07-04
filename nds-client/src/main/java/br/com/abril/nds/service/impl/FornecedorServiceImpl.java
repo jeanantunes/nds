@@ -486,15 +486,15 @@ public class FornecedorServiceImpl implements FornecedorService {
 								   Collection<Long> listaTelefonesRemover) {
 
 		if (idFornecedor == null){
-		
-			throw new ValidacaoException(TipoMensagem.ERROR, "Cota é obrigatório.");
+
+			throw new ValidacaoException(TipoMensagem.ERROR, "Fornecedor é obrigatório.");
 		}
 		
 		Fornecedor fornecedor = this.fornecedorRepository.buscarPorId(idFornecedor);
 		
 		if (fornecedor == null){
 		
-			throw new ValidacaoException(TipoMensagem.ERROR, "Cota não encontrada.");
+			throw new ValidacaoException(TipoMensagem.ERROR, "Fornecedor não encontrado.");
 		}
 		
 		for (TelefoneFornecedor telefoneFornecedor : listaTelefonesAdicionar){
@@ -543,16 +543,29 @@ public class FornecedorServiceImpl implements FornecedorService {
 					
 				} else {
 					
-					this.telefoneRepository.alterar(telefoneFornecedor.getTelefone());
+					Telefone telefoneMerge = 
+							this.telefoneRepository.buscarPorId(telefoneFornecedor.getId());
+					
+					telefoneMerge.setDdd(telefoneFornecedor.getTelefone().getDdd());
+					telefoneMerge.setNumero(telefoneFornecedor.getTelefone().getNumero());
+					telefoneMerge.setRamal(telefoneFornecedor.getTelefone().getRamal());
+					
+					this.telefoneRepository.alterar(telefoneMerge);
 				}
-				
+
 				if (telefoneFornecedor.getId() == null) {
 					
-					this.telefoneFornecedorRepository.adicionar(telefoneFornecedor);
+					this.telefoneFornecedorRepository.merge(telefoneFornecedor);
 					
 				} else {
 					
-					this.telefoneFornecedorRepository.alterar(telefoneFornecedor);
+					TelefoneFornecedor telefoneFornecedorMerge = 
+							this.telefoneFornecedorRepository.buscarPorId(telefoneFornecedor.getId());
+					
+					telefoneFornecedorMerge.setPrincipal(telefoneFornecedor.isPrincipal());
+					telefoneFornecedorMerge.setTipoTelefone(telefoneFornecedor.getTipoTelefone());
+					
+					this.telefoneFornecedorRepository.merge(telefoneFornecedorMerge);
 				}
 			}
 		}

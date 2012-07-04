@@ -1,11 +1,14 @@
 package br.com.abril.nds.model.fiscal;
 
+import br.com.abril.nds.model.fiscal.nota.NotaFiscalEnum;
+
+
 /**
  * @author francisco.garcia
  * @version 1.0
  * @created 14-fev-2012 11:35:33
  */
-public enum TipoOperacao {
+public enum TipoOperacao implements NotaFiscalEnum {
 	ENTRADA("Entrada","E"),
 	SAIDA("Saída","S");
 	
@@ -48,5 +51,9 @@ public enum TipoOperacao {
 	public void setSimpleValue(String simpleValue) {
 		this.simpleValue = simpleValue;
 	}
-
+	
+	@Override
+	public Integer getIntValue() {
+		return this.ordinal();
+	}
 }
