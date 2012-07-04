@@ -5854,7 +5854,8 @@ public class DataLoader {
 		BigDecimal valorLiquido = new BigDecimal(16);
 
 		Date dataLancamento = Fixture.criarData(1, Calendar.JUNE, 2012);
-		Date dataRecolhimento = Fixture.criarData(20, Calendar.JUNE, 2012);
+		Date dataRecolhimento = DateUtil.adicionarDias(new Date(), 10);
+
 		TipoLancamento tipoLancamento = TipoLancamento.LANCAMENTO;
 
 		BigDecimal qtdeItemNota = new BigDecimal(80);
@@ -5871,7 +5872,7 @@ public class DataLoader {
 		BigDecimal estoqueProdCotaQtdeRecebida = new BigDecimal(80);
 		BigDecimal estoqueProdCotaQtdeDevolvida = BigDecimal.ZERO;
 
-		Date dataRecolhimentoChamadaEncalhe = Fixture.criarData(20, Calendar.JUNE, 2012);
+		Date dataRecolhimentoChamadaEncalhe = DateUtil.adicionarDias(new Date(), 10);
 
 		TipoChamadaEncalhe tipoChamadaEncalhe = TipoChamadaEncalhe.CHAMADAO;
 
