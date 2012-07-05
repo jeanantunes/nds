@@ -1,7 +1,13 @@
 <head>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/tipoMovimento.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
+
 <script language="javascript" type="text/javascript">
+
+$(function() {
+	definirAcaoPesquisaTeclaEnter();
+});
+
 
 var TM = new TipoMovimento('${pageContext.request.contextPath}', 'TM');
 
@@ -170,18 +176,18 @@ function popup() {
               <td width="95">
               
 <!-- CÓDIGO -->
-<input id="codigo" type="text" name="textfield3"  style="width:80px;"/></td>
+<input id="codigo" class="campoDePesquisa" type="text" name="textfield3"  style="width:80px;"/></td>
 
               <td width="122">Tipo de Movimento:</td>
               <td width="551">
               
 <!-- DESCRICAO -->
-<input id="descricao" type="text" name="textfield" style="width:200px;"/></td>
+<input id="descricao" class="campoDePesquisa" type="text" name="textfield" style="width:200px;"/></td>
 
               <td width="104"><span class="bt_pesquisar">
 
 <!-- PESQUISAR -->
-<a id="btnPesquisar" href="javascript:;" onclick="TM.cliquePesquisar();">Pesquisar</a></span></td>
+<a class="botaoPesquisar" href="javascript:;" onclick="TM.cliquePesquisar();">Pesquisar</a></span></td>
 
 
             </tr>

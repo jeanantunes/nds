@@ -73,7 +73,6 @@ public class EmissaoCEController {
 		
 		session.setAttribute(FILTRO_SESSION_ATTRIBUTE, null);
 		
-		
 		String data = new SimpleDateFormat("dd/MM/yyyy").format(new Date());
 		result.include("data",data);		
 		result.include("listaBoxes",carregarBoxes(boxService.buscarTodos(TipoBox.LANCAMENTO)));

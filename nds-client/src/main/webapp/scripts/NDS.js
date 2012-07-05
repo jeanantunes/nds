@@ -590,3 +590,26 @@ function mostra_status(opcao) {
 		break;   
 	}   
 }
+
+/**
+ * Define botão de pesquisa como comando padrão ao clicar na tecla 'Enter' 
+ * durante preenchimento do filtro de pesquisa.
+ *
+ * 
+ * Necessário para o funcionamento:
+ * Definir a classe css 'botaoPesquisar' no botão de Pesquisa 
+ * Definir a classe css 'campoDePesquisa' nos campos de filtro utilizados.
+ */
+function definirAcaoPesquisaTeclaEnter() {
+	
+	$(".campoDePesquisa").bind("keydown", function() {
+		  var keycode = (event.keyCode ? event.keyCode : (event.which ? event.which : event.charCode));
+	      if (keycode == 13) { 	    	  
+	    	  $('.botaoPesquisar').click();
+	    	  return false;
+	      } else  {
+	    	  return true;
+	      }
+		
+	});
+}
