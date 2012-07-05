@@ -29,6 +29,7 @@ import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.OperacaoEstoque;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
+import br.com.abril.nds.model.fiscal.nota.ItemNotaFiscal;
 import br.com.abril.nds.model.movimentacao.StatusOperacao;
 import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
 import br.com.abril.nds.util.Intervalo;
@@ -1243,7 +1244,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		return query.list();
 	}  
 	
-	public List<ProdutoEdicao> getItensToNotaFiscal(Cota cota, List<GrupoMovimentoEstoque> listaGrupoMovimentoEstoques, Intervalo<Date> periodo){
+	public List<ItemNotaFiscal> getItensToNotaFiscal(Cota cota, List<GrupoMovimentoEstoque> listaGrupoMovimentoEstoques, Intervalo<Date> periodo){
 		
 		/*StringBuffer sql = new StringBuffer("");
 		

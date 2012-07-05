@@ -12,11 +12,11 @@ import br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroDigitacaoContagemDevolucaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroMapaAbastecimentoDTO;
 import br.com.abril.nds.model.cadastro.Cota;
-import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.OperacaoEstoque;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
+import br.com.abril.nds.model.fiscal.nota.ItemNotaFiscal;
 import br.com.abril.nds.util.Intervalo;
 
 
@@ -227,6 +227,6 @@ public interface MovimentoEstoqueCotaRepository extends Repository<MovimentoEsto
 	 * @param periodo
 	 * @return
 	 */
-	public List<ProdutoEdicao> getItensToNotaFiscal(Cota cota, List<GrupoMovimentoEstoque> listaGrupoMovimentoEstoques, Intervalo<Date> periodo);
+	public List<ItemNotaFiscal> getItensToNotaFiscal(Cota cota, List<GrupoMovimentoEstoque> listaGrupoMovimentoEstoques, Intervalo<Date> periodo);
 	
 }
