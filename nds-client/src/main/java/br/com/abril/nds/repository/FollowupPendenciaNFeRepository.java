@@ -4,8 +4,8 @@ import java.util.List;
 
 import br.com.abril.nds.dto.ConsultaFollowupPendenciaNFeDTO;
 import br.com.abril.nds.dto.filtro.FiltroFollowupPendenciaNFeDTO;
-import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.fiscal.NotaFiscalEntrada;
 
-public interface FollowupPendenciaNFeRepository extends Repository<Cota,Long> {
+public interface FollowupPendenciaNFeRepository extends Repository<NotaFiscalEntrada,Long> {
     List<ConsultaFollowupPendenciaNFeDTO> obterConsignadosParaChamadao(FiltroFollowupPendenciaNFeDTO filtro);
 }

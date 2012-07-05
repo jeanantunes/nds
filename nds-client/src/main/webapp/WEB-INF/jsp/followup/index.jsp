@@ -62,7 +62,58 @@ $(function() {
 			showTableToggleBtn : true,
 			width : 880,
 			height : 255
-        })); 	
+        }));
+
+		$(".pendenciasGrid").flexigrid($.extend({},{
+			url : '<c:url value="/followup/pesquisaDadosPendenciaNFEEncalhe"/>',
+			dataType : 'json',
+			preProcess: exPreProcFollowupPendenciasnfe,
+			colModel : [ {
+				display : 'Cota',
+				name : 'numeroCota',
+				width : 60,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Nome',
+				name : 'nomeJornaleiro',
+				width : 302,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Tipo de Pend&ecirc;ncia',
+				name : 'tipoPendencia',
+				width : 100,
+				sortable : true,
+				align : 'left'
+			},{
+				display : 'Dt. Entrada',
+				name : 'dataEntrada',
+				width : 100,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Vlr. Diferença R$',
+				name : 'valorDiferencaFormatado',
+				width : 100,
+				sortable : true,
+				align : 'right'
+			}, {
+				display : 'Telefone',
+				name : 'numeroTelefone',
+				width : 125,
+				sortable : true,
+				align : 'left'
+			}],
+			sortname : "cota",
+			sortorder : "asc",
+			usepager : true,
+			useRp : true,
+			rp : 15,
+			showTableToggleBtn : true,
+			width : 880,
+			height : 255
+		}));
 		
 	});
 	
@@ -178,55 +229,7 @@ $(function() {
 
 <script>
 
-$(".pendenciasGrid").flexigrid({
-	    preProcess:  exPreProcFollowupChamadao, 
-		dataType : 'json',
-		colModel : [ {
-			display : 'Cota',
-			name : 'cota',
-			width : 60,
-			sortable : true,
-			align : 'left'
-		}, {
-			display : 'Nome',
-			name : 'nome',
-			width : 302,
-			sortable : true,
-			align : 'left'
-		}, {
-			display : 'Tipo de Pend&ecirc;ncia',
-			name : 'tipoPendencia',
-			width : 100,
-			sortable : true,
-			align : 'left'
-		},{
-			display : 'Dt. Entrada',
-			name : 'dtEntrada',
-			width : 100,
-			sortable : true,
-			align : 'left'
-		}, {
-			display : 'Vlr. Diferença R$',
-			name : 'vlrDiferenca',
-			width : 100,
-			sortable : true,
-			align : 'right'
-		}, {
-			display : 'Telefone',
-			name : 'telefone',
-			width : 125,
-			sortable : true,
-			align : 'left'
-		}],
-		sortname : "cota",
-		sortorder : "asc",
-		usepager : true,
-		useRp : true,
-		rp : 15,
-		showTableToggleBtn : true,
-		width : 880,
-		height : 255
-	});
+
 
 $(".atualizacaoCadastralGrid").flexigrid({
         preProcess:  exPreProcFollowupChamadao, 
@@ -387,8 +390,7 @@ $(".negociacaoGrid").flexigrid({
 		alert("exefollowPreProcessamentoNegociacao");
 		return resultado;
 	};
-	function exPreProcFollowupChamadao(resultado) {
-		alert("exefollowPreProcessamentoChamadao");
+	function exPreProcFollowupChamadao(resultado) {		
 		return resultado;
 	};
 	function exPreProcFollowupStatusCota(resultado) {
@@ -399,8 +401,7 @@ $(".negociacaoGrid").flexigrid({
 		alert("exefollowPreProcessamentoCadastro");
 		return resultado;
 	};	
-	function exPreProcFollowupPendenciasnfe(resultado) {
-        alert("exefollowPreProcessamentoPendencias");		
+	function exPreProcFollowupPendenciasnfe(resultado) {        		
    		return resultado;
 	};
 	

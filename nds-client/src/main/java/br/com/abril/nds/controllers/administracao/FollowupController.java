@@ -66,7 +66,7 @@ public class FollowupController {
 	private FollowupPendenciaNFeService followuppendencianfeService;
 	
 	private static final String FILTRO_FOLLOWUP_CONSIGNADOS_SESSION_ATTRIBUTE = "filtroFollowupConsignados";
-	private static final String QTD_REGISTROS_FOLLOWUP_CONSIGNADOS_SESSION_ATTRIBUTE = "qtdRegistrosFollowupConsignados";
+	//private static final String QTD_REGISTROS_FOLLOWUP_CONSIGNADOS_SESSION_ATTRIBUTE = "qtdRegistrosFollowupConsignados";
 
 	private BigDecimal valorConsignadoSuspensaoCotas;
 	private int quantidadeDiasSuspensaoCotas;
@@ -79,10 +79,7 @@ public class FollowupController {
 	@Post
 	@Path("/pesquisaDadosChamadao")
 	public void pesquisaDadosChamadao( String sortorder, String sortname, int page, int rp ) {
-    	FiltroFollowupChamadaoDTO filtroChamadao = 
-    		new FiltroFollowupChamadaoDTO(Calendar.getInstance().getTime()
-    		                             ,0
-    		                             ,getValorConsignadoSuspensaoCotas());
+    	FiltroFollowupChamadaoDTO filtroChamadao = new FiltroFollowupChamadaoDTO(Calendar.getInstance().getTime(), 0, getValorConsignadoSuspensaoCotas());
 		this.recuperarParametros(filtroChamadao);		
 		filtroChamadao.setPaginacao(new PaginacaoVO(page, rp, sortorder, sortname));
 		this.tratarFiltro(filtroChamadao);		
@@ -106,11 +103,12 @@ public class FollowupController {
 	}
 
 	@Path("/pesquisaDadosStatusCota")
-	public void pesquisaDadosStatusCota( String sortorder, String sortname, int page, int rp ) {		
+	public void pesquisaDadosStatusCota( String sortorder, String sortname, int page, int rp ) {
 		FiltroFollowupStatusCotaDTO filtroStatusCota = 
     		new FiltroFollowupStatusCotaDTO(Calendar.getInstance().getTime());
 		
 		TableModel<CellModelKeyValue<ConsultaFollowupStatusCotaDTO>> tableModel = efetuarConsultaDadosStatusCota(filtroStatusCota);
+		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
 	}
 
 	@Path("/pesquisaDadosCadastrais")
@@ -118,11 +116,15 @@ public class FollowupController {
 	}
 
 	@Path("/pesquisaDadosPendenciaNFEEncalhe")
-	public void pesquisaDadosPendenciaNFEEncalhe( String sortorder, String sortname, int page, int rp ) {		
-		FiltroFollowupPendenciaNFeDTO filtroPendenciaNFEEncalhe = 
-    		new FiltroFollowupPendenciaNFeDTO(Calendar.getInstance().getTime());
+	public void pesquisaDadosPendenciaNFEEncalhe( String sortorder, String sortname, int page, int rp ) {
+		
+		FiltroFollowupPendenciaNFeDTO filtroPendenciaNFEEncalhe = new FiltroFollowupPendenciaNFeDTO(Calendar.getInstance().getTime());
+		
+		filtroPendenciaNFEEncalhe.setPaginacao(new PaginacaoVO(page, rp, sortorder, sortname));
+		
 		TableModel<CellModelKeyValue<ConsultaFollowupPendenciaNFeDTO>> tableModel = efetuarConsultaDadosPendenciaNFEEncalhe(filtroPendenciaNFEEncalhe);
-				
+		
+		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();		
 	}
 
 	public BigDecimal getValorConsignadoSuspensaoCotas() {
@@ -224,7 +226,7 @@ public class FollowupController {
 		
 		tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
 		
-		tableModel.setTotal(totalRegistros);
+		tableModel.setTotal(15);
 		
 		return tableModel;
 	}
