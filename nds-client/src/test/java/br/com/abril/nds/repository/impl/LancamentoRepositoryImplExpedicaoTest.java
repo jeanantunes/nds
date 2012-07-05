@@ -31,6 +31,7 @@ import br.com.abril.nds.model.estoque.RecebimentoFisico;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.fiscal.CFOP;
 import br.com.abril.nds.model.fiscal.ItemNotaFiscalEntrada;
+import br.com.abril.nds.model.fiscal.NCM;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaFornecedor;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
 import br.com.abril.nds.model.planejamento.Estudo;
@@ -54,8 +55,10 @@ public class LancamentoRepositoryImplExpedicaoTest extends AbstractRepositoryImp
 		Box box300Reparte = Fixture.boxReparte300();
 		save(box300Reparte);
 
+		NCM ncmRevistas = Fixture.ncm(49029000l,"REVISTAS","KG");
+		save(ncmRevistas);
 		
-		TipoProduto tipoRevista = Fixture.tipoRevista();
+		TipoProduto tipoRevista = Fixture.tipoRevista(ncmRevistas);
 		save(tipoRevista);
 		
 		CFOP cfop = Fixture.cfop5102();

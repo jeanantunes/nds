@@ -40,6 +40,8 @@ public class DefaultFlexiGridJson implements FlexiGridJson {
                     };
                 }
             });
+            
+            xstream.setMode(XStream.NO_REFERENCES);
             xstream.aliasField("rows", TableModel.class, "rows");
             serializer = new XStreamSerializer(xstream, response.getWriter(), extractor, initializer);
         }
