@@ -25,6 +25,7 @@ import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.cadastro.TipoProduto;
+import br.com.abril.nds.model.fiscal.NCM;
 import br.com.abril.nds.model.movimentacao.CotaAusente;
 import br.com.abril.nds.vo.PaginacaoVO;
 
@@ -60,7 +61,10 @@ public class CotaAusenteRepositoryImplTest extends AbstractRepositoryImplTest {
 		CotaAusente c =  Fixture.cotaAusente(data, true, cotaManoel);
 		save(c);
 		
-		TipoProduto t = Fixture.tipoProduto("teste", GrupoProduto.JORNAL, 1L, null, 9L);
+		NCM ncmRevistas = Fixture.ncm(1l,"REVISTAS","KG");
+		save(ncmRevistas);
+		
+		TipoProduto t = Fixture.tipoProduto("teste", GrupoProduto.JORNAL, ncmRevistas, null, 9L);
 		save(t);
 		
 		Editor abril = Fixture.editoraAbril();

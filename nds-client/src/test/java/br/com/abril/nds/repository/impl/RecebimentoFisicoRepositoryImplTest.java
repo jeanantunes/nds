@@ -26,6 +26,7 @@ import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
 import br.com.abril.nds.model.estoque.RecebimentoFisico;
 import br.com.abril.nds.model.fiscal.CFOP;
 import br.com.abril.nds.model.fiscal.ItemNotaFiscalEntrada;
+import br.com.abril.nds.model.fiscal.NCM;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaFornecedor;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
@@ -84,7 +85,10 @@ public class RecebimentoFisicoRepositoryImplTest extends AbstractRepositoryImplT
 		notaFiscal.setOrigem(Origem.MANUAL);
 		save(notaFiscal);		
 				
-		tipoProduto = Fixture.tipoProduto("Revista", GrupoProduto.REVISTA, 99000642L, null, 13L);
+		NCM ncmRevistas = Fixture.ncm(99000642l,"REVISTAS","KG");
+		save(ncmRevistas);
+		
+		tipoProduto = Fixture.tipoProduto("Revista", GrupoProduto.REVISTA, ncmRevistas, null, 13L);
 		save(tipoProduto);
 		
 		Editor abril = Fixture.editoraAbril();
