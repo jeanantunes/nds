@@ -109,10 +109,37 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 	@Override
 	public Map<Long, Integer> obterTotalItensNotaFiscalPorCotaEmLote(
 			ConsultaLoteNotaFiscalDTO dadosConsultaLoteNotaFiscal) {
-		// TODO Auto-generated method stub
+		
+		//TODO: obter itens de acordo com o tipo de nota parametrizado. 
+		
 		return null;
 	}
 
+	private void obterItensNFeRemessaEmConsignacao() {
+		/*	
+		 * 	TODO: preparar parametros e realizar busca
+		 *  
+		 *  Tipo de movimentos envolvidos: (Cota)
+		 *  	+Recebimento reparte
+		 *  	+Restauracao reparte
+		 *  	+CompraSuplementar
+		 *  	-EstornoReparteCotaAusente
+		 *  	-EstornoCompraSuplementar
+		 **/
+	}
+	
+	private void obterItensNFeEntradaDevolucaoRemessaConsignacao() {
+		//TODO: preparar parametros e realizar busca
+	}
+	
+	private void obterItensNFeDevolucaoSimbolica() {
+		//TODO: preparar parametros e realizar busca
+	}
+	
+	private void obterItensNFeVenda() {
+		//TODO: apuração itens da (NFeRemessaEmConsignacao - NFeRemessaEmConsignacao)
+	}
+	
 	@Override
 	public List<NotaFiscal> gerarDadosNotaFicalEmLote(
 			ConsultaLoteNotaFiscalDTO dadosConsultaLoteNotaFiscal) {
