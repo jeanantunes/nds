@@ -59,6 +59,7 @@ import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.NotaFiscalRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
+import br.com.abril.nds.repository.SerieRepository;
 import br.com.abril.nds.repository.TelefoneCotaRepository;
 import br.com.abril.nds.repository.TipoNotaFiscalRepository;
 import br.com.abril.nds.service.NotaFiscalService;
@@ -101,6 +102,9 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 
 	@Autowired
 	private TributacaoService tributacaoService;
+	
+	@Autowired
+	private SerieRepository serieRepository;
 
 	@Override
 	public Map<Long, Integer> obterTotalItensNotaFiscalPorCotaEmLote(
@@ -334,9 +338,8 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		identificacao.setTipoOperacao(tipoNotaFiscal.getTipoOperacao());
 		identificacao.setDescricaoNaturezaOperacao(tipoNotaFiscal
 				.getNopDescricao());
-		// TODO: SERIE - NumeroDocumentoFiscal
-		identificacao.setSerie(1);
-		identificacao.setNumeroDocumentoFiscal(1L);
+		identificacao.setSerie(tipoNotaFiscal.getSerieNotaFiscal());
+		identificacao.setNumeroDocumentoFiscal(serieRepository.next(tipoNotaFiscal.getSerieNotaFiscal()));
 		// TODO indPag
 		identificacao.setFormaPagamento(FormaPagamento.A_VISTA);
 
