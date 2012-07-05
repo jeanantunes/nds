@@ -22,6 +22,8 @@ import javax.persistence.TemporalType;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
 
+import br.com.abril.nds.model.Origem;
+
 /**
  * @author francisco.garcia
  * @version 1.0
@@ -71,19 +73,22 @@ public class Fornecedor implements Serializable {
 	private SituacaoCadastro situacaoCadastro;
 	
 	@OneToMany(mappedBy = "fornecedor")
-	@Cascade(value={CascadeType.DELETE})
+	@Cascade(value={CascadeType.ALL})
 	private Set<EnderecoFornecedor> enderecos = new HashSet<EnderecoFornecedor>();
 	
 	@OneToMany(mappedBy = "fornecedor")
-	@Cascade(value={CascadeType.DELETE})
+	@Cascade(value={CascadeType.ALL})
 	private Set<TelefoneFornecedor> telefones = new HashSet<TelefoneFornecedor>();
 	
 	@Cascade(value = org.hibernate.annotations.CascadeType.SAVE_UPDATE)
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "TIPO_FORNECEDOR_ID")
 	private TipoFornecedor tipoFornecedor;
-	
-	
+
+	@Enumerated(EnumType.STRING)
+	@Column(name = "ORIGEM", nullable = false)
+	private Origem origem;
+
 	public Long getId() {
 		return id;
 	}
@@ -186,6 +191,20 @@ public class Fornecedor implements Serializable {
 
 	public void setCodigoInterface(Integer codigoInterface) {
 		this.codigoInterface = codigoInterface;
+	}
+	
+	/**
+	 * @return the origem
+	 */
+	public Origem getOrigem() {
+		return origem;
+	}
+
+	/**
+	 * @param origem the origem to set
+	 */
+	public void setOrigem(Origem origem) {
+		this.origem = origem;
 	}
 
 	@Override

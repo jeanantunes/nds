@@ -258,7 +258,7 @@ public class FornecedorController {
 			
 			if (fornecedorDTO.getValidadeContrato() == null || fornecedorDTO.getValidadeContrato().isEmpty()) {
 			
-			mensagens.add("O preenchimento do campo [Validade] é obrigatório.");
+				mensagens.add("O preenchimento do campo [Validade] é obrigatório.");
 
 			} else {
 			
@@ -280,12 +280,15 @@ public class FornecedorController {
 		PessoaJuridica juridica = 
 				this.pessoaJuridicaService.buscarPorCnpj(cnpj);
 		
-		boolean juridicaCadastrada = 
-				this.fornecedorService.isPessoaJaCadastrada(juridica.getId(), fornecedorDTO.getIdFornecedor());
-		
-		if (juridicaCadastrada) {
+		if (juridica != null) {
 			
-			mensagens.add("Pessoa Jurídica já cadastrada para outro fornecedor.");
+			boolean juridicaCadastrada = 
+					this.fornecedorService.isPessoaJaCadastrada(juridica.getId(), fornecedorDTO.getIdFornecedor());
+			
+			if (juridicaCadastrada) {
+				
+				mensagens.add("Pessoa Jurídica já cadastrada para outro fornecedor.");
+			}	
 		}
 		
 		@SuppressWarnings("unchecked")

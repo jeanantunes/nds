@@ -216,18 +216,6 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 	 */
 	List<ProdutoLancamentoDTO> obterBalanceamentoLancamento(Intervalo<Date> periodoDistribuicao,
 			   												List<Long> fornecedores);
-	
-	/**
-	 * Método que retorna expectativas de reparte do balanceamento do lançamento
-	 * referentes a um periodo e determinados fornecedores.
-	 * 
-	 * @param periodoDistribuicao - período de distribuição
-	 * @param fornecedores - fornecedores
-	 * 
-	 * @return mapa contendo as expectativas de reparte por data
-	 */
-	TreeMap<Date, BigDecimal> obterExpectativasRepartePorData(Intervalo<Date> periodoDistribuicao,
-															  List<Long> fornecedores);
 
 	/**
 	 * Burca último balançeamento de lançamento realizado no dia

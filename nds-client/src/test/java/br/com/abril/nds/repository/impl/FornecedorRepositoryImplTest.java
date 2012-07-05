@@ -18,6 +18,7 @@ import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TipoFornecedor;
 import br.com.abril.nds.model.cadastro.TipoProduto;
+import br.com.abril.nds.model.fiscal.NCM;
 import br.com.abril.nds.repository.FornecedorRepository;
 import br.com.abril.nds.vo.PaginacaoVO;
 
@@ -49,7 +50,10 @@ public class FornecedorRepositoryImplTest extends AbstractRepositoryImplTest {
 		fornecedor3.setCodigoInterface(30);
 		save(fornecedor1, fornecedor2, fornecedor3);
 		
-		TipoProduto tipoProduto = Fixture.tipoRevista();
+		NCM ncmRevistas = Fixture.ncm(49029000l,"REVISTAS","KG");
+		save(ncmRevistas);
+		
+		TipoProduto tipoProduto = Fixture.tipoRevista(ncmRevistas);
 		save(tipoProduto);
 		
 		produto = Fixture.produtoCapricho(tipoProduto);

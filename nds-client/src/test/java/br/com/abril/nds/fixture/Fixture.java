@@ -130,6 +130,7 @@ import br.com.abril.nds.model.fiscal.ControleNumeracaoNotaFiscal;
 import br.com.abril.nds.model.fiscal.GrupoNotaFiscal;
 import br.com.abril.nds.model.fiscal.ItemNotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.ItemNotaFiscalSaida;
+import br.com.abril.nds.model.fiscal.NCM;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaCota;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaFornecedor;
@@ -161,6 +162,7 @@ import br.com.abril.nds.model.fiscal.nota.Status;
 import br.com.abril.nds.model.fiscal.nota.ValoresRetencoesTributos;
 import br.com.abril.nds.model.fiscal.nota.ValoresTotaisISSQN;
 import br.com.abril.nds.model.fiscal.nota.Veiculo;
+import br.com.abril.nds.model.fiscal.nota.pk.ProdutoServicoPK;
 import br.com.abril.nds.model.integracao.EventoExecucao;
 import br.com.abril.nds.model.integracao.InterfaceExecucao;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalhe;
@@ -318,13 +320,13 @@ public class Fixture {
 		return produto("15", "Cromo Rei Leao", "Cromo Rei Leao",
 				PeriodicidadeProduto.SEMANAL, tipoProduto, 5, 5, BigDecimal.TEN);
 	}
-
-	public static TipoProduto tipoRevista() {
-		return tipoProduto("Revistas", GrupoProduto.REVISTA, 99000642l, null, 001L);
+	
+	public static TipoProduto tipoRevista(NCM ncm) {
+		return tipoProduto("Revistas", GrupoProduto.REVISTA, ncm, null, 001L);
 	}
 	
-	public static TipoProduto tipoCromo() {
-		return tipoProduto("Cromos", GrupoProduto.CROMO, 1230004560l, null, 002L);
+	public static TipoProduto tipoCromo(NCM ncm) {
+		return tipoProduto("Cromos", GrupoProduto.CROMO, ncm, null, 002L);
 	}
 	
 	public static TipoFornecedor tipoFornecedorPublicacao() {
@@ -412,17 +414,26 @@ public class Fixture {
 		fornecedor.setTipoFornecedor(tipo);
 		fornecedor.setInicioAtividade(new Date());
 		fornecedor.setCodigoInterface(codigoInterface);
+		fornecedor.setOrigem(Origem.MANUAL);
 		return fornecedor;
+	}
+	
+	public static NCM ncm(Long codigo, String descricao, String unidadeMedida) {
+		NCM ncm = new NCM();
+		ncm.setCodigo(codigo);
+		ncm.setDescricao(descricao);
+		ncm.setUnidadeMedida(unidadeMedida);
+		return ncm;
 	}
 
 	public static TipoProduto tipoProduto(String descricao, GrupoProduto grupo,
-			Long codigoNCM, String codigoNBM, Long codigo) {
+			NCM ncm, String codigoNBM, Long codigo) {
 		TipoProduto tipoProduto = new TipoProduto();
 		tipoProduto.setDescricao(descricao);
 		tipoProduto.setGrupoProduto(grupo);
 		tipoProduto.setCodigo(codigo);
 		tipoProduto.setCodigoNBM(codigoNBM);
-		tipoProduto.setCodigoNCM(codigoNCM);
+		tipoProduto.setNcm(ncm);
 		return tipoProduto;
 	}
 	
@@ -2955,6 +2966,7 @@ public class Fixture {
 	}
 	
 	public static ProdutoServico produtoServico(
+			Integer sequencia,
 			Integer cfop,
 			Long codigoBarras,
 			String codigoProduto,
@@ -2973,8 +2985,13 @@ public class Fixture {
 			BigDecimal valorTotalBruto,
 			BigDecimal valorUnitario) {
 		
+		ProdutoServicoPK produtoServicoPK = new ProdutoServicoPK();
+		produtoServicoPK.setNotaFiscal(notaFiscal);
+		produtoServicoPK.setSequencia(sequencia);
+
 		ProdutoServico produtoServico = new ProdutoServico();
 		
+		produtoServico.setProdutoServicoPK(produtoServicoPK);
 		produtoServico.setCfop(cfop);
 		produtoServico.setCodigoBarras(codigoBarras);
 		produtoServico.setCodigoProduto(codigoProduto);
@@ -2982,7 +2999,6 @@ public class Fixture {
 		produtoServico.setEncargoFinanceiro(encargoFinanceiro);
 		produtoServico.setExtipi(extipi);
 		produtoServico.setNcm(ncm);
-		produtoServico.setNotaFiscal(notaFiscal);
 		produtoServico.setProdutoEdicao(produtoEdicao);
 		produtoServico.setQuantidade(quantidade);
 		produtoServico.setUnidade(unidade);

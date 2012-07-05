@@ -126,6 +126,7 @@ import br.com.abril.nds.model.fiscal.ControleNumeracaoNotaFiscal;
 import br.com.abril.nds.model.fiscal.GrupoNotaFiscal;
 import br.com.abril.nds.model.fiscal.ItemNotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.ItemNotaFiscalSaida;
+import br.com.abril.nds.model.fiscal.NCM;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaCota;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaFornecedor;
@@ -294,12 +295,12 @@ public class Fixture {
 				PeriodicidadeProduto.SEMANAL, tipoProduto, 5, 5, BigDecimal.TEN);
 	}
 
-	public static TipoProduto tipoRevista() {
-		return tipoProduto("Revistas", GrupoProduto.REVISTA, 9900064l, null, 001L);
+	public static TipoProduto tipoRevista(NCM ncm) {
+		return tipoProduto("Revistas", GrupoProduto.REVISTA, ncm, null, 001L);
 	}
 	
-	public static TipoProduto tipoCromo() {
-		return tipoProduto("Cromos", GrupoProduto.CROMO, 1230004560L, null, 002L);
+	public static TipoProduto tipoCromo(NCM ncm) {
+		return tipoProduto("Cromos", GrupoProduto.CROMO, ncm, null, 002L);
 	}
 	
 	public static TipoFornecedor tipoFornecedorPublicacao() {
@@ -389,15 +390,23 @@ public class Fixture {
 		fornecedor.setCodigoInterface(codigoInterface);
 		return fornecedor;
 	}
+	
+	public static NCM ncm(Long codigo, String descricao, String unidadeMedida) {
+		NCM ncm = new NCM();
+		ncm.setCodigo(codigo);
+		ncm.setDescricao(descricao);
+		ncm.setUnidadeMedida(unidadeMedida);
+		return ncm;
+	}
 
 	public static TipoProduto tipoProduto(String descricao, GrupoProduto grupo,
-			Long codigoNCM, String codigoNBM, Long codigo) {
+			NCM ncm, String codigoNBM, Long codigo) {
 		TipoProduto tipoProduto = new TipoProduto();
 		tipoProduto.setDescricao(descricao);
 		tipoProduto.setGrupoProduto(grupo);
 		tipoProduto.setCodigo(codigo);
 		tipoProduto.setCodigoNBM(codigoNBM);
-		tipoProduto.setCodigoNCM(codigoNCM);
+		tipoProduto.setNcm(ncm);
 		return tipoProduto;
 	}
 	

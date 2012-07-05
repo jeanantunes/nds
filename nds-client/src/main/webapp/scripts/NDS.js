@@ -141,11 +141,16 @@ function removeSpecialCharacteres(value, extraCharacteres) {
 	return value; 
 }
 
-function serializeObjectToPost(objectName, object) {
-	var obj = {};
+function serializeObjectToPost(objectName, object, obj) {
+	obj = (obj)?obj:new Object();
 	for ( var propriedade in object) {
-		if(object[propriedade]){
-			obj[objectName + '.' + propriedade] = object[propriedade];
+		if(object[propriedade] || object[propriedade] == 0){
+			if(jQuery.isPlainObject(object[propriedade])){
+				serializeObjectToPost(objectName + '.' + propriedade, object[propriedade], obj);
+			}else{
+				obj[objectName + '.' + propriedade] = object[propriedade];
+			}
+			
 		}
 	}
 	return obj;

@@ -17,7 +17,7 @@ public class EncargoFinanceiroProduto extends EncargoFinanceiro {
 	private static final long serialVersionUID = -6496916286204117106L;
 
 	@Embedded
-	@NFEExportType(secao = TipoSecao.N)
+	@NFEExportType(secaoPadrao = TipoSecao.N)
 	private ICMS icms;
 	
 	@Embedded
@@ -51,5 +51,4 @@ public class EncargoFinanceiroProduto extends EncargoFinanceiro {
 	public void setIpi(IPI ipi) {
 		this.ipi = ipi;
 	}
-
 }

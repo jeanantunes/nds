@@ -2,6 +2,8 @@ package br.com.abril.nds.dto;
 
 import java.io.Serializable;
 
+import br.com.abril.nds.model.Origem;
+
 /**
  * DTO utilizado para transporte de dados referentes a entidade Fornecedor. 
  * 
@@ -31,13 +33,15 @@ public class FornecedorDTO implements Serializable {
 	private String inscricaoEstadual;
 	
 	private Long tipoFornecedor;
-		
+
 	private String inicioAtividade;
 	
 	private boolean possuiContrato;
 	
 	private String validadeContrato;
 
+	private Origem origem;
+	
 	/**
 	 * @return the idFornecedor
 	 */
@@ -220,4 +224,17 @@ public class FornecedorDTO implements Serializable {
 		this.validadeContrato = validadeContrato;
 	}
 
+	/**
+	 * @return the origem
+	 */
+	public Origem getOrigem() {
+		return origem;
+	}
+
+	/**
+	 * @param origem the origem to set
+	 */
+	public void setOrigem(Origem origem) {
+		this.origem = origem;
+	}
 }

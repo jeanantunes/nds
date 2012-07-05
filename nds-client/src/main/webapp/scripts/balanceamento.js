@@ -91,21 +91,30 @@ function Balanceamento(pathTela, descInstancia) {
 			height:'auto',
 			width:600,
 			modal: true,
-			buttons: {
-				"Confirmar": function() {
+			buttons: [
+			    {
+			    	id: "selecaoLancamentosBtnConfirmar",
+			    	text: "Confirmar",
+			    	click: function() {
 					
-					$(".lancamentosProgramadosGrid").flexOptions({ onSubmit: null });
-					
-					$(".lancamentosProgramadosGrid").flexReload();
-					
-					$(".lancamentosProgramadosGrid").flexOptions({ onSubmit: function(elemento){return T.confirmarPaginacao(this);} });
-					
-					$(this).dialog("close");
-				},
-				"Cancelar": function() {								
-					$(this).dialog("close");
+						$(".lancamentosProgramadosGrid").flexOptions({ onSubmit: null });
+						
+						$(".lancamentosProgramadosGrid").flexReload();
+						
+						$(".lancamentosProgramadosGrid").flexOptions({ onSubmit: function(elemento){return T.confirmarPaginacao(this);} });
+						
+						$(this).dialog("close");
+			    	}
+			    },
+			    {
+			    	id: "selecaoLancamentosBtnCancelar",
+			    	text: "Cancelar",
+			    	click: function() {
+			    
+			    		$(this).dialog("close");
+			    	}
 				}
-			}
+			]
 		});	
 		
 		return false;
@@ -174,7 +183,6 @@ function Balanceamento(pathTela, descInstancia) {
 	
 	this.processarLinha = function(i,row) {
 		
-		var linkDescProduto = T.getLinkProduto(row.cell.idProdutoEdicao,row.cell.nomeProduto);
 		T.lancamentos.push({
 			id:							row.cell.id, 
 			numeroEdicao:				row.cell.numeroEdicao,
@@ -182,12 +190,17 @@ function Balanceamento(pathTela, descInstancia) {
 			dataRecolhimentoPrevista:	row.cell.dataRecolhimentoPrevista,
 			novaData:					row.cell.novaData
 		});
-		row.cell.nomeProduto = linkDescProduto;
+		
+		var colunaProduto = T.getColunaProduto(row.cell.idProdutoEdicao,
+				   							   row.cell.nomeProduto,
+				   							   row.cell.possuiFuro);
+		
+		row.cell.nomeProduto = colunaProduto;
 		
 		row.cell.novaData = T.gerarInputDataDistrib(row.cell.novaData, row.cell.bloquearData, i);
-		row.cell.reprogramar = T.gerarCheckReprogramar(row.cell.id.toString(), row.cell.bloquearData,i);
-				
-		if (!row.cell.possuiRecebimentoFisico || row.cell.cancelamentoGD || (row.cell.dataLancamentoPrevista!=row.cell.dataLancamentoDistribuidor) ) {
+		row.cell.reprogramar = T.gerarCheckReprogramar(row.cell.id.toString(), row.cell.bloquearData, i);
+		
+		if (row.cell.destacarLinha) {
 			T.linhasDestacadas.push(i+1);
 		}
 		
@@ -195,13 +208,13 @@ function Balanceamento(pathTela, descInstancia) {
 	
 	this.gerarInputDataDistrib = function(dataMatrizDistrib, isBloqueado, index) {
 		
-		return '<input onchange="B.alterarData(this,\'' + index + '\');" type="text" name="dataNova" style="width:80px; float:left;" value="' + dataMatrizDistrib + '" ' + 
+		return '<input id="inputNovaData' + index + '" onchange="B.alterarData(this,\'' + index + '\');" type="text" name="dataNova" style="width:80px; float:left;" value="' + dataMatrizDistrib + '" ' + 
 			   (isBloqueado? ' disabled="disabled" ' : '') +  
 			   '/>' +
-		       '<span class="bt_atualizarIco" title="Atualizar Datas" ' +
+		       '<span class="bt_atualizarIco" title="Reprogramar" ' +
 		       (isBloqueado? ' style="opacity:0.5;" ' : '') + 
 		       '>' +
-		       '<a href="javascript:;" name="reprogramar" ' + 
+		       '<a id="linkReprogramarUnico' + index + '" href="javascript:;" name="reprogramar" ' + 
 		       (isBloqueado? '' : ' onclick="B.reprogramarLancamentoUnico(' + index + ');') +
 		       '">&nbsp;</a></span>';
 		
@@ -263,8 +276,8 @@ function Balanceamento(pathTela, descInstancia) {
 		T.lancamentos[index].novaData = input.value;
 	},
 	
-	this.gerarCheckReprogramar = function(id,isBloqueado,index) { 
-		return '<input type="checkbox" value="'+id+'" name="checkgroup" bloqueado="'+isBloqueado+'" ' +
+	this.gerarCheckReprogramar = function(id,isBloqueado, index) { 
+		return '<input id="checkReprogramar' + index + '" type="checkbox" value="'+id+'" name="checkgroup" bloqueado="'+isBloqueado+'" ' +
 			   (isBloqueado? ' disabled="disabled" ' : ' onclick="B.selecionarCheck(this,\'' + index + '\');" ') + 
 			   ' />';	
 	},
@@ -312,14 +325,26 @@ function Balanceamento(pathTela, descInstancia) {
 	},
 	
 	/**
-	 * Obtém link para detalhes do produto
-	 * OBS: Específico para matrizLancamento\index.jsp
+	 * Monta a coluna de nome do produto
+	 * 
 	 * @param idProdutoEdicao
 	 * @param idProdutoEdicao
-	 * @return String: link para função de busca de detalhes
+	 * @param possuiFuro
+	 * 
+	 * @return Coluna de nome de produto
 	 */
-	this.getLinkProduto = function(idProdutoEdicao,nomeProduto) {
-		return '<a href="javascript:;" onclick="' + T.instancia +'.obterDetalheProduto('+idProdutoEdicao+');">'+nomeProduto+'</a>';
+	this.getColunaProduto = function(idProdutoEdicao, nomeProduto, possuiFuro) {
+		
+		var colunaProduto = "";
+		
+		if (possuiFuro) {
+		
+			colunaProduto += '<img src="' + contextPath + '/images/ico_detalhes.png" title="Produto com furo" hspace="5" style="cursor:pointer;" />';
+		}
+		
+		colunaProduto += '<a href="javascript:;" onclick="' + T.instancia +'.obterDetalheProduto('+idProdutoEdicao+');">'+nomeProduto+'</a>'; 
+		
+		return colunaProduto;
 	},
 
 	
@@ -537,12 +562,16 @@ function Balanceamento(pathTela, descInstancia) {
 			height:300,
 			width:760,
 			modal: true,
-			buttons: {
-				"Fechar": function() {
-					$( this ).dialog( "close" );
-					
-				},
-			}
+			buttons: [
+			    {
+			    	id: "dialogDetalheProdutosBtnFechar",
+			    	text: "Fechar",
+			    	click: function() {
+			    
+			    		$(this).dialog("close");
+			    	}
+				}
+		    ]
 		});
 	},
 	
@@ -557,14 +586,24 @@ function Balanceamento(pathTela, descInstancia) {
 			height:'auto',
 			width:300,
 			modal: true,
-			buttons: {
-				"Confirmar": function() {
-					T.confirmarMatrizLancamento();
-				},
-				"Cancelar": function() {
-					$( this ).dialog( "close" );
-				},
-			},
+			buttons: [
+			    {
+			    	id: "dialogConfirmarBtnConfirmar",
+			    	text: "Confirmar",
+			    	click: function() {
+					
+			    		T.confirmarMatrizLancamento();
+			    	}
+			    },
+			    {
+			    	id: "dialogConfirmarBtnCancelar",
+			    	text: "Cancelar",
+			    	click: function() {
+			    
+			    		$(this).dialog("close");
+			    	}
+				}
+			],
 			beforeClose: function() {
 				clearMessageDialogTimeout(dialog);
 		    }
@@ -589,18 +628,26 @@ function Balanceamento(pathTela, descInstancia) {
 			height:'auto',
 			width:600,
 			modal: true,
-			buttons: {
-				"Confirmar": function() {
+			buttons: [
+			    {
+			    	id: "lancamentosNaoConfirmadosBtnConfirmar",
+			    	text: "Confirmar",
+			    	click: function() {
 					
-					funcao();
-					
-					$(this).dialog("close");
-				},
-				"Cancelar": function() {
-					
-					$(this).dialog("close");
+			    		funcao();
+						
+						$(this).dialog("close");
+			    	}
+			    },
+			    {
+			    	id: "lancamentosNaoConfirmadosBtnCancelar",
+			    	text: "Cancelar",
+			    	click: function() {
+			    
+			    		$(this).dialog("close");
+			    	}
 				}
-			}
+			]
 		});	
 	},
 	
@@ -652,6 +699,36 @@ function Balanceamento(pathTela, descInstancia) {
 		}),
 		
 		checkAll(document.getElementById('selTodos'),"checkgroup");
+	};
+	
+	this.abrirAlertaVoltarConfiguracaoInicial = function() {
+		
+		$("#dialogVoltarConfiguracaoOriginal").dialog({
+			resizable: false,
+			height:'auto',
+			width:600,
+			modal: true,
+			buttons: [
+			    {
+			    	id: "voltarConfigOriginalBtnConfirmar",
+			    	text: "Confirmar",
+			    	click: function() {
+					
+			    		T.voltarConfiguracaoInicial();
+						
+						$(this).dialog("close");
+			    	}
+			    },
+			    {
+			    	id: "voltarConfigOriginalBtnCancelar",
+			    	text: "Cancelar",
+			    	click: function() {
+			    
+			    		$(this).dialog("close");
+			    	}
+				}
+			]
+		});
 	};
 	
 	this.voltarConfiguracaoInicial = function() {

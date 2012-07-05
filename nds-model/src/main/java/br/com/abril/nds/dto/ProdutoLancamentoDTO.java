@@ -68,6 +68,8 @@ public class ProdutoLancamentoDTO implements Serializable {
 	private Integer ordemPeriodicidadeProduto;
   	
   	private String distribuicao;
+  	
+  	private boolean possuiFuro;
 	
 	/**
 	 * Construtor padrão.
@@ -441,6 +443,20 @@ public class ProdutoLancamentoDTO implements Serializable {
 	 */
 	public void setDistribuicao(String distribuicao) {
 		this.distribuicao = distribuicao;
+	}
+
+	/**
+	 * @return the possuiFuro
+	 */
+	public boolean isPossuiFuro() {
+		return possuiFuro;
+	}
+
+	/**
+	 * @param possuiFuro the possuiFuro to set
+	 */
+	public void setPossuiFuro(boolean possuiFuro) {
+		this.possuiFuro = possuiFuro;
 	}
 	
 }

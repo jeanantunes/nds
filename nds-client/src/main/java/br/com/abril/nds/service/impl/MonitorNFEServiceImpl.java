@@ -34,6 +34,7 @@ import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.Telefone;
 import br.com.abril.nds.model.fiscal.nota.Identificacao;
+import br.com.abril.nds.model.fiscal.nota.Identificacao.TipoEmissao;
 import br.com.abril.nds.model.fiscal.nota.IdentificacaoDestinatario;
 import br.com.abril.nds.model.fiscal.nota.IdentificacaoEmitente;
 import br.com.abril.nds.model.fiscal.nota.InformacaoAdicional;
@@ -43,6 +44,7 @@ import br.com.abril.nds.model.fiscal.nota.InformacaoValoresTotais;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.ProdutoServico;
 import br.com.abril.nds.model.fiscal.nota.RetornoComunicacaoEletronica;
+import br.com.abril.nds.model.fiscal.nota.StatusProcessamentoInterno;
 import br.com.abril.nds.model.fiscal.nota.ValoresTotaisISSQN;
 import br.com.abril.nds.model.fiscal.nota.Veiculo;
 import br.com.abril.nds.repository.ItemNotaFiscalEntradaRepository;
@@ -83,11 +85,12 @@ public class MonitorNFEServiceImpl implements MonitorNFEService {
 	 * Obtém os arquivos das DANFE relativas as NFes passadas como parâmetro. 
 	 * 
 	 * @param listaNfeImpressaoDanfe
+	 * @param indEmissaoDepec
 	 * 
 	 * @return byte[] - Bytes das DANFES
 	 */
 	@Transactional
-	public byte[] obterDanfes(List<NfeVO> listaNfeImpressaoDanfe) {
+	public byte[] obterDanfes(List<NfeVO> listaNfeImpressaoDanfe, boolean indEmissaoDepec) {
 		
 		List<DanfeWrapper> listaDanfeWrapper = new ArrayList<DanfeWrapper>();
 		
@@ -103,11 +106,41 @@ public class MonitorNFEServiceImpl implements MonitorNFEService {
 		
 		try {
 			
-			return gerarDocumentoIreport(listaDanfeWrapper);
+			return gerarDocumentoIreport(listaDanfeWrapper, indEmissaoDepec);
 		
 		} catch(Exception e) {
 			throw new ValidacaoException(TipoMensagem.ERROR, "Falha na geração dos arquivos DANFE");
 		}
+		
+	}
+	
+	@Transactional
+	public void validarEmissaoDanfe(Long idNota, boolean indEmissaoDepec) {
+		
+		NotaFiscal notaFiscal = notaFiscalRepository.buscarPorId(idNota);
+		
+		if(notaFiscal == null) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Nota Fiscal não encontrada!");
+			
+		}
+		
+		if(indEmissaoDepec) {
+			
+			if(	StatusProcessamentoInterno.GERADA.equals(notaFiscal.getStatusProcessamentoInterno()) ||
+				StatusProcessamentoInterno.ENVIADA.equals(notaFiscal.getStatusProcessamentoInterno()) ) {
+				
+				notaFiscal.getIdentificacao().setTipoEmissao(TipoEmissao.CONTINGENCIA);
+				notaFiscalRepository.alterar(notaFiscal);
+				
+				return;
+			}
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Nota Fiscal não possui status correto para geração Depec");
+			
+		}
+		
+		
 		
 	}
 	
@@ -151,10 +184,16 @@ public class MonitorNFEServiceImpl implements MonitorNFEService {
 		String protocolo 	= retornoComunicacaoEletronica.getProtocolo().toString();
 		String versao		= ""; //TODO obter campo
 
+		    BigDecimal ISSQNTotal 				= BigDecimal.ZERO;
+		    BigDecimal ISSQNBase 				= BigDecimal.ZERO;
+		    BigDecimal ISSQNValor 				= BigDecimal.ZERO;
 		
-		BigDecimal ISSQNTotal 				= valoresTotaisISSQN.getValorServicos();
-		BigDecimal ISSQNBase 				= valoresTotaisISSQN.getValorBaseCalculo();
-		BigDecimal ISSQNValor 				= valoresTotaisISSQN.getValorISS();
+		if(valoresTotaisISSQN!=null) {
+			ISSQNTotal 				= valoresTotaisISSQN.getValorServicos();
+			ISSQNBase 				= valoresTotaisISSQN.getValorBaseCalculo();
+			ISSQNValor 				= valoresTotaisISSQN.getValorISS();
+		}
+		
 		String informacoesComplementares 	= informacaoAdicional.getInformacoesComplementares();
 		
 		String numeroFatura 				=  "";//TODO obter campo
@@ -631,7 +670,7 @@ public class MonitorNFEServiceImpl implements MonitorNFEService {
 		return urlDanfe;
 	}
 	
-	private byte[] gerarDocumentoIreport(List<DanfeWrapper> list) throws JRException, URISyntaxException {
+	private byte[] gerarDocumentoIreport(List<DanfeWrapper> list, boolean indEmissaoDepec) throws JRException, URISyntaxException {
 
 		JRDataSource jrDataSource = new JRBeanCollectionDataSource(list);
 		
@@ -642,6 +681,7 @@ public class MonitorNFEServiceImpl implements MonitorNFEService {
 		Map<String, Object> parameters = new HashMap<String, Object>();
 		
 		parameters.put("SUBREPORT_DIR", diretorioReports.toURI().getPath());
+		parameters.put("IND_EMISSAO_DEPEC", indEmissaoDepec);
 		
 		return  JasperRunManager.runReportToPdf(path, parameters, jrDataSource);
 	}

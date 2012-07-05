@@ -1,10 +1,10 @@
 package br.com.abril.nds.repository.impl;
 
-import static org.hibernate.criterion.Restrictions.eq;
-import static org.hibernate.criterion.Restrictions.le;
+import static org.hibernate.criterion.Restrictions.*;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Order;
@@ -38,13 +38,41 @@ public class TributacaoRepositoryImpl extends
 		Criteria criteria = getSession().createCriteria(Tributacao.class);
 
 		criteria.add(eq("codigoEmpresa", codigoEmpresa))
-				.add(eq("tipoOperacao", tipoOperacao.getSimpleValue()))
-				.add(eq("ufOrigem", ufOrigem)).add(eq("ufDestino", ufDestino))
+				.add(eq("tipoOperacao", tipoOperacao.getSimpleValue()))				
 				.add(eq("naturezaOperacao", naturezaOperacao))
 				.add(eq("codigoNaturezaOperacao", codigoNaturezaOperacao))
 				.add(eq("codigoNBM", codigoNBM))
 				.add(le("dataVigencia", dataVigencia))
-				.add(eq("cstICMS", cstICMS));
+				.add(eq("cstICMS", cstICMS))
+				.add(eq("ufDestino", ufDestino))
+				.add(eq("ufOrigem", ufOrigem));
+
+		criteria.setMaxResults(1);
+
+		criteria.addOrder(Order.desc("dataVigencia"));
+		return (Tributacao) criteria.uniqueResult();
+
+	}
+	
+	
+	
+	@Override
+	public Tributacao buscar(String codigoEmpresa, TipoOperacao tipoOperacao,
+			List<String> ufs, int naturezaOperacao,
+			String codigoNaturezaOperacao, String codigoNBM, Date dataVigencia,
+			String cstICMS) {
+
+		Criteria criteria = getSession().createCriteria(Tributacao.class);
+
+		criteria.add(eq("codigoEmpresa", codigoEmpresa))
+				.add(eq("tipoOperacao", tipoOperacao.getSimpleValue()))				
+				.add(eq("naturezaOperacao", naturezaOperacao))
+				.add(eq("codigoNaturezaOperacao", codigoNaturezaOperacao))
+				.add(eq("codigoNBM", codigoNBM))
+				.add(le("dataVigencia", dataVigencia))
+				.add(eq("cstICMS", cstICMS))
+				.add(or(in("ufDestino", ufs),in("ufOrigem", ufs)));
+		
 
 		criteria.setMaxResults(1);
 

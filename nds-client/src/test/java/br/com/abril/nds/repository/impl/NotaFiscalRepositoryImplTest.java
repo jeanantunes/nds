@@ -26,6 +26,7 @@ import br.com.abril.nds.model.cadastro.TipoEndereco;
 import br.com.abril.nds.model.cadastro.TipoFornecedor;
 import br.com.abril.nds.model.cadastro.TipoProduto;
 import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
+import br.com.abril.nds.model.fiscal.NCM;
 import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.model.fiscal.nota.EncargoFinanceiro;
 import br.com.abril.nds.model.fiscal.nota.Identificacao;
@@ -72,8 +73,13 @@ public class NotaFiscalRepositoryImplTest  extends AbstractRepositoryImplTest {
 		fornecedorDinap = Fixture.fornecedorDinap(tipoFornecedorPublicacao);
 		save(fornecedorFC, fornecedorDinap);
 
-		tipoRevista = Fixture.tipoRevista();
-		tipoCromo = Fixture.tipoCromo();
+		NCM ncmRevistas = Fixture.ncm(49029000l,"REVISTAS","KG");
+		save(ncmRevistas);
+		NCM ncmCromo = Fixture.ncm(48205000l,"CROMO","KG");
+		save(ncmCromo);
+		
+		tipoRevista = Fixture.tipoRevista(ncmRevistas);
+		tipoCromo = Fixture.tipoCromo(ncmCromo);
 		save(tipoRevista, tipoCromo);
 
 		
@@ -340,6 +346,7 @@ public class NotaFiscalRepositoryImplTest  extends AbstractRepositoryImplTest {
 	
 	private void criarProdutosServicos(NotaFiscal notaFiscal) {
 		
+		Integer sequencia = 1;
 		Integer cfop = 1;
 		Long codigoBarras = 1L;
 		//String codigoProduto = "1";
@@ -402,6 +409,7 @@ public class NotaFiscalRepositoryImplTest  extends AbstractRepositoryImplTest {
 			codigoProduto = String.valueOf(contador);
 			
 			ProdutoServico produtoServico = Fixture.produtoServico(
+					sequencia++,
 					cfop, 
 					codigoBarras, 
 					codigoProduto, 

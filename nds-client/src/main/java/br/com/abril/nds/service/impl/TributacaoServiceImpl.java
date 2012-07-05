@@ -3,7 +3,9 @@ package br.com.abril.nds.service.impl;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -42,10 +44,33 @@ public class TributacaoServiceImpl implements TributacaoService {
 			String ufDestino, int naturezaOperacao,
 			String codigoNaturezaOperacao, String codigoNBM, Date dataVigencia,
 			String cstICMS, BigDecimal valorItem) {
+		
 		Tributacao tributacao = tributacaoRepository.buscar(codigoEmpresa,
 				tipoOperacao, ufOrigem, ufDestino, naturezaOperacao,
 				codigoNaturezaOperacao, codigoNBM, dataVigencia, cstICMS);
 
+		if (tributacao == null) {
+			tributacao = tributacaoRepository.buscar(codigoEmpresa,
+					tipoOperacao, ufOrigem, "TE", naturezaOperacao,
+					codigoNaturezaOperacao, codigoNBM, dataVigencia, cstICMS);
+		}
+
+		if (tributacao == null) {
+			tributacao = tributacaoRepository.buscar(codigoEmpresa,
+					tipoOperacao, "TE", "TE", naturezaOperacao,
+					codigoNaturezaOperacao, codigoNBM, dataVigencia, cstICMS);
+		}
+		if (tributacao == null) {
+			List<String> ufs = new ArrayList<String>();
+			ufs.add(ufDestino);
+			ufs.add(ufOrigem);
+			ufs.add("TE");
+			ufs.add("TETE");
+
+			tributacao = tributacaoRepository.buscar(codigoEmpresa,
+					tipoOperacao, ufs, naturezaOperacao,
+					codigoNaturezaOperacao, codigoNBM, dataVigencia, cstICMS);
+		}
 		if (tributacao == null) {
 			tributacao = tributacaoRepository.tributacaoDefault(codigoEmpresa,
 					tipoOperacao, ufOrigem, ufDestino, naturezaOperacao,
@@ -57,8 +82,9 @@ public class TributacaoServiceImpl implements TributacaoService {
 		encargoFinanceiroProduto.setIcms(calculaICMS(tributacao, valorItem));
 		encargoFinanceiroProduto.setIpi(calculaIPI(tributacao, valorItem));
 		encargoFinanceiroProduto.setPis(calculaPIS(tributacao, valorItem));
-		encargoFinanceiroProduto.setCofins(calculaCOFINS(tributacao, valorItem));
-	
+		encargoFinanceiroProduto
+				.setCofins(calculaCOFINS(tributacao, valorItem));
+
 		return encargoFinanceiroProduto;
 	}
 
@@ -105,15 +131,15 @@ public class TributacaoServiceImpl implements TributacaoService {
 		pis.setPercentualAliquota(tributacao.getAliquotaPIS());
 		return pis;
 	}
-	
+
 	private COFINS calculaCOFINS(Tributacao tributacao, BigDecimal valorItem) {
 		COFINS cofins = new COFINS();
 
 		cofins.setCst(Integer.valueOf(tributacao.getCstCOFINS()));
 
 		cofins.setValorBaseCalculo(valorItem);
-		cofins.setValor(valorItem.multiply(tributacao.getAliquotaCOFINS()).divide(
-				CEM, NFE_DECIMAL_MC));
+		cofins.setValor(valorItem.multiply(tributacao.getAliquotaCOFINS())
+				.divide(CEM, NFE_DECIMAL_MC));
 
 		cofins.setPercentualAliquota(tributacao.getAliquotaCOFINS());
 		return cofins;

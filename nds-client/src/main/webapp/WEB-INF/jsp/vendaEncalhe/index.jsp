@@ -493,6 +493,8 @@ var VENDA_PRODUTO = {
 				VENDA_PRODUTO.atribuirDadosProduto(resultado, index);
 				
 				if(VENDA_PRODUTO.validaritemRepetido(index)== true){
+					VENDA_PRODUTO.limparDadoVendaProduto(index);
+					$("#codBarras"+index).focus();
 					return;
 				}
 			
@@ -550,8 +552,6 @@ var VENDA_PRODUTO = {
 				function(result){
 					
  					VENDA_PRODUTO.obterDadosProduto(result.codigoProduto,result.nuemroEdicao,index);						
-					
- 					$("#qntSolicitada"+index).focus();
  					
  				}, function(result){
 					
@@ -625,7 +625,7 @@ var VENDA_PRODUTO = {
 	validaritemRepetido:function(indiceLinha){
 		
 		var linhasDaGrid = $("#vendaEncalhesGrid tr");
-	
+		var retorno  = false;
 		$.each(linhasDaGrid, function(index, value) {
 			
 			if(indiceLinha!= index){
@@ -643,11 +643,12 @@ var VENDA_PRODUTO = {
 					);
 					
 					VENDA_PRODUTO.limparDadoVendaProduto(indiceLinha);
-					return true;
+					retorno = true;
+					return false;
 				}
 			}
 		});
-		return false;
+		return retorno;
 	},
 	
 	getListaProduto:function(){
