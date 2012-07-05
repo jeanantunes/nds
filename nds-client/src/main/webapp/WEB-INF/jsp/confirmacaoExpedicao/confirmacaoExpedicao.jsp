@@ -11,7 +11,10 @@
 <script type="text/javascript">
 	
 	$(function() {
+		//Define Botão Pesquisar como padrão ao pressionar Enter.
 		AcaoEnter.definir("idBotaoPesquisar");
+		//Define foco inicial no campo Data Lançamento.
+		$('#idDataLancamento').focus();
 	});
 	
 	function gerarCheckbox(id,name,idLancamento,selecionado) {
