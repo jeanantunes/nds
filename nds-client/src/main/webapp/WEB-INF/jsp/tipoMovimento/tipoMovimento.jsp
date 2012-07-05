@@ -181,7 +181,7 @@ function popup() {
               <td width="104"><span class="bt_pesquisar">
 
 <!-- PESQUISAR -->
-<a href="javascript:;" onclick="TM.cliquePesquisar();">Pesquisar</a></span></td>
+<a id="btnPesquisar" href="javascript:;" onclick="TM.cliquePesquisar();">Pesquisar</a></span></td>
 
 
             </tr>

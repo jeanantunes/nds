@@ -15,17 +15,24 @@ function popup() {
 			height:200,
 			width:300,
 			modal: true,
-			buttons: {
-				"Confirmar": function() {
-					
-					PARCIAIS.inserirPeriodos();
-					
-					$( this ).dialog( "close" );					
-				},
-				"Cancelar": function() {
-					$( this ).dialog( "close" );
-				}
-			}
+			
+			buttons:[ 
+			          {
+				           id:"bt_confirmar",
+				           text:"Confirmar", 
+				           click: function() {
+				        	   	PARCIAIS.inserirPeriodos();								
+								$( this ).dialog( "close" );
+				           }
+			           },
+			           {
+				           id:"bt_cancelar",
+				           text:"Cancelar", 
+				           click: function() {
+				        	   $( this ).dialog( "close" );
+				           }
+			           }
+	        ]
 		});
 	};
 	
