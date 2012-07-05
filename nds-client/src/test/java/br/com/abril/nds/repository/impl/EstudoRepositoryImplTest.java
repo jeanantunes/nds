@@ -17,6 +17,7 @@ import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.TipoFornecedor;
 import br.com.abril.nds.model.cadastro.TipoProduto;
+import br.com.abril.nds.model.fiscal.NCM;
 import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
@@ -55,7 +56,10 @@ public class EstudoRepositoryImplTest extends AbstractRepositoryImplTest {
 		Fornecedor dinap = Fixture.fornecedorDinap(tipoFornecedorPublicacao);
 		save(dinap);
 		
-		TipoProduto tipoProduto = Fixture.tipoProduto("grupo teste", GrupoProduto.REVISTA, 123L, null, 10L);
+		NCM ncmRevistas = Fixture.ncm(123l,"REVISTAS","KG");
+		save(ncmRevistas);
+		
+		TipoProduto tipoProduto = Fixture.tipoProduto("grupo teste", GrupoProduto.REVISTA, ncmRevistas, null, 10L);
 		
 		save(tipoProduto);
 		

@@ -14,6 +14,7 @@ import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.TipoProduto;
+import br.com.abril.nds.model.fiscal.NCM;
 import br.com.abril.nds.repository.TipoProdutoRepository;
 
 public class TipoProdutoRepositoryImplTest extends AbstractRepositoryImplTest {
@@ -37,8 +38,11 @@ public class TipoProdutoRepositoryImplTest extends AbstractRepositoryImplTest {
 				grupoProduto = GrupoProduto.LIVRO;
 			} 
 			
+			NCM ncmRevistas = Fixture.ncm(i+99000642l,"REVISTAS","KG");
+			save(ncmRevistas);
+			
 			this.tipoProduto =
-					Fixture.tipoProduto("TipoProduto0"+i, grupoProduto, i+99000642L, "nbm", 14L + i);
+					Fixture.tipoProduto("TipoProduto0"+i, grupoProduto, ncmRevistas, "nbm", 14L + i);
 			
 			save(tipoProduto);
 			

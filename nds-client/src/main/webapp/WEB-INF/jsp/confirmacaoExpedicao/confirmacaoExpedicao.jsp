@@ -9,7 +9,11 @@
 <title>NDS - Novo Distrib</title>
 
 <script type="text/javascript">
-
+	
+	$(function() {
+		AcaoEnter.definir("idBotaoPesquisar");
+	});
+	
 	function gerarCheckbox(id,name,idLancamento,selecionado) {
 		var html = "";
 		html+= ' <input ';
@@ -306,7 +310,7 @@
 						<td width="111">
 							<span class="bt_pesquisar">
 <!-- PESQUISAR -->								
-								<a href="javascript:;" onclick="cliquePesquisar();">Pesquisar</a>
+								<a id="idBotaoPesquisar" href="javascript:;" onclick="cliquePesquisar();">Pesquisar</a>
 							
 							 </span>
 						</td>

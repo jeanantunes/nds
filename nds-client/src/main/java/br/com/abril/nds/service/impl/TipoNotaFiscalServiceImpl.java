@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.model.cadastro.TipoAtividade;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
+import br.com.abril.nds.repository.SerieRepository;
 import br.com.abril.nds.repository.TipoNotaFiscalRepository;
 import br.com.abril.nds.service.TipoNotaFiscalService;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
@@ -17,6 +18,9 @@ public class TipoNotaFiscalServiceImpl implements TipoNotaFiscalService {
 
 	@Autowired
 	private TipoNotaFiscalRepository tipoNotaFiscalRepository;
+	
+	@Autowired 
+	private SerieRepository serieRepository;
 	
 	@Override
 	@Transactional
@@ -63,9 +67,8 @@ public class TipoNotaFiscalServiceImpl implements TipoNotaFiscalService {
 	 */
 	@Override
 	@Transactional
-	public synchronized Long proximoNumeroDocumentoFiscal(int serie) {
-		// TODO Auto-generated method stub
-		return 1l;
+	public Long proximoNumeroDocumentoFiscal(int serie) {		
+		return serieRepository.next(serie);
 	}
 
 }

@@ -24,6 +24,7 @@ import br.com.abril.nds.model.cadastro.Telefone;
 import br.com.abril.nds.model.cadastro.TipoEndereco;
 import br.com.abril.nds.model.cadastro.TipoParametroSistema;
 import br.com.abril.nds.model.cadastro.TipoProduto;
+import br.com.abril.nds.model.fiscal.NCM;
 import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.model.fiscal.nota.EncargoFinanceiroProduto;
 import br.com.abril.nds.model.fiscal.nota.ICMS;
@@ -190,8 +191,11 @@ public class NotaFiscalServiceImplTest extends AbstractRepositoryImplTest {
 			
 			Long numero = (i+2)*idNota+2;
 			
+			NCM ncmRevistas = Fixture.ncm(8888l,"REVISTAS","KG");
+			save(ncmRevistas);
+			
 			TipoProduto tipo = Fixture.tipoProduto("0"+numero+"descricao",
-					GrupoProduto.REVISTA, 8888L, "codigoNBM", 4+123*numero);
+					GrupoProduto.REVISTA, ncmRevistas, "codigoNBM", 4+123*numero);
 			
 
 			Produto produto = Fixture.produto("0"+numero+"codigo", "descricao", "0"+numero+"nome",

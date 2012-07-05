@@ -42,6 +42,10 @@
 	src="${pageContext.request.contextPath}/scripts/NDS.js"></script>
 <script language="javascript" type="text/javascript"
 	src="${pageContext.request.contextPath}/scripts/utils.js"></script>
+	
+<script language="javascript" type="text/javascript"
+	src="${pageContext.request.contextPath}/scripts/acaoEnter.js"></script>
+
 <!-- TODO: Posteriormente incluir os métodos 'personalizados': 
 <script language="javascript" type="text/javascript"
 	src="${pageContext.request.contextPath}/scripts/flexigrid-1.1/js/flexigrid.pack.js"></script>
@@ -395,6 +399,9 @@
 					<li><span class="classDevolucao">&nbsp;</span><a
 						href="javascript:;">Devolução</a>
 						<ul>
+						
+							<li><a href="<c:url value="/emissaoCE/index"/>">Emissão CE</a></li>
+							
 							<li><a href='<c:url value="/devolucao/digitacao/contagem/"/>'>Digitação
 									de Contagem para Devolução</a>
 							</li>

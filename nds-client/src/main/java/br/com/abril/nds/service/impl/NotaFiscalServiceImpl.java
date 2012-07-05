@@ -59,6 +59,7 @@ import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.NotaFiscalRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
+import br.com.abril.nds.repository.SerieRepository;
 import br.com.abril.nds.repository.TelefoneCotaRepository;
 import br.com.abril.nds.repository.TipoNotaFiscalRepository;
 import br.com.abril.nds.service.NotaFiscalService;
@@ -101,14 +102,44 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 
 	@Autowired
 	private TributacaoService tributacaoService;
+	
+	@Autowired
+	private SerieRepository serieRepository;
 
 	@Override
 	public Map<Long, Integer> obterTotalItensNotaFiscalPorCotaEmLote(
 			ConsultaLoteNotaFiscalDTO dadosConsultaLoteNotaFiscal) {
-		// TODO Auto-generated method stub
+		
+		//TODO: obter itens de acordo com o tipo de nota parametrizado. 
+		
 		return null;
 	}
 
+	private void obterItensNFeRemessaEmConsignacao() {
+		/*	
+		 * 	TODO: preparar parametros e realizar busca
+		 *  
+		 *  Tipo de movimentos envolvidos: (Cota)
+		 *  	+Recebimento reparte
+		 *  	+Restauracao reparte
+		 *  	+CompraSuplementar
+		 *  	-EstornoReparteCotaAusente
+		 *  	-EstornoCompraSuplementar
+		 **/
+	}
+	
+	private void obterItensNFeEntradaDevolucaoRemessaConsignacao() {
+		//TODO: preparar parametros e realizar busca
+	}
+	
+	private void obterItensNFeDevolucaoSimbolica() {
+		//TODO: preparar parametros e realizar busca
+	}
+	
+	private void obterItensNFeVenda() {
+		//TODO: apuração itens da (NFeRemessaEmConsignacao - NFeRemessaEmConsignacao)
+	}
+	
 	@Override
 	public List<NotaFiscal> gerarDadosNotaFicalEmLote(
 			ConsultaLoteNotaFiscalDTO dadosConsultaLoteNotaFiscal) {
@@ -334,9 +365,8 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		identificacao.setTipoOperacao(tipoNotaFiscal.getTipoOperacao());
 		identificacao.setDescricaoNaturezaOperacao(tipoNotaFiscal
 				.getNopDescricao());
-		// TODO: SERIE - NumeroDocumentoFiscal
-		identificacao.setSerie(1);
-		identificacao.setNumeroDocumentoFiscal(1L);
+		identificacao.setSerie(tipoNotaFiscal.getSerieNotaFiscal());
+		identificacao.setNumeroDocumentoFiscal(serieRepository.next(tipoNotaFiscal.getSerieNotaFiscal()));
 		// TODO indPag
 		identificacao.setFormaPagamento(FormaPagamento.A_VISTA);
 
@@ -480,10 +510,8 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		produtoServico.setCodigoBarras(Long.valueOf(produtoEdicao
 				.getCodigoDeBarras()));
 		produtoServico.setCodigoProduto(produtoEdicao.getProduto().getCodigo());
-		produtoServico.setDescricaoProduto(produtoEdicao.getProduto()
-				.getDescricao());
-		produtoServico.setNcm(produtoEdicao.getProduto().getTipoProduto()
-				.getCodigoNCM());
+		produtoServico.setDescricaoProduto(produtoEdicao.getProduto().getDescricao());
+		produtoServico.setNcm(produtoEdicao.getProduto().getTipoProduto().getNcm().getCodigo());
 		produtoServico.setProdutoEdicao(produtoEdicao);
 		produtoServico.setQuantidade(quantidade);
 		// TODO UNIDADE COMERCIAL
