@@ -24,6 +24,7 @@ import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.TipoProduto;
 import br.com.abril.nds.model.cadastro.TipoRegistroCobranca;
+import br.com.abril.nds.model.fiscal.NCM;
 import br.com.abril.nds.model.planejamento.HistoricoLancamento;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.LancamentoParcial;
@@ -101,7 +102,10 @@ public class ParciaisServiceImplTest extends AbstractRepositoryImplTest  {
 		distribuidor.setFatorRelancamentoParcial(fatorRelancamento);
 		save(distribuidor);
 		
-		TipoProduto tipoProdutoRevista = Fixture.tipoRevista();
+		NCM ncmRevistas = Fixture.ncm(49029000l,"REVISTAS","KG");
+		save(ncmRevistas);
+		
+		TipoProduto tipoProdutoRevista = Fixture.tipoRevista(ncmRevistas);
 		save(tipoProdutoRevista);
 		
 		Produto produtoVeja = Fixture.produtoVeja(tipoProdutoRevista);

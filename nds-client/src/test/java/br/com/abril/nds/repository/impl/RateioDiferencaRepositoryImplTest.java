@@ -33,6 +33,7 @@ import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.fiscal.CFOP;
 import br.com.abril.nds.model.fiscal.ItemNotaFiscalEntrada;
+import br.com.abril.nds.model.fiscal.NCM;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaFornecedor;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
@@ -56,7 +57,10 @@ public class RateioDiferencaRepositoryImplTest extends AbstractRepositoryImplTes
 		Usuario usuario = Fixture.usuarioJoao();
 		save(usuario);
 		
-		TipoProduto tipoProduto = Fixture.tipoRevista();
+		NCM ncmRevistas = Fixture.ncm(49029000l,"REVISTAS","KG");
+		save(ncmRevistas);
+		
+		TipoProduto tipoProduto = Fixture.tipoRevista(ncmRevistas);
 		save(tipoProduto);
 		
 		Editor abril = Fixture.editoraAbril();

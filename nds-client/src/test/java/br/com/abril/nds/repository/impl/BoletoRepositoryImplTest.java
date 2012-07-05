@@ -34,6 +34,7 @@ import br.com.abril.nds.model.financeiro.Divida;
 import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.StatusDivida;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
+import br.com.abril.nds.model.fiscal.NCM;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.BoletoRepository;
 import br.com.abril.nds.util.DateUtil;
@@ -87,7 +88,12 @@ public class BoletoRepositoryImplTest extends AbstractRepositoryImplTest  {
 		TipoMovimentoEstoque tipoMovimentoRecReparte = Fixture.tipoMovimentoRecebimentoReparte();
 		save(tipoMovimentoRecReparte);
 		
-		TipoProduto tipoProdutoRevista = Fixture.tipoRevista();
+		NCM ncmRevistas = Fixture.ncm(49029000l,"REVISTAS","KG");
+		save(ncmRevistas);
+		NCM ncmCromo = Fixture.ncm(48205000l,"CROMO","KG");
+		save(ncmCromo);
+		
+		TipoProduto tipoProdutoRevista = Fixture.tipoRevista(ncmRevistas);
 		save(tipoProdutoRevista);
 		
 		Editor abril = Fixture.editoraAbril();

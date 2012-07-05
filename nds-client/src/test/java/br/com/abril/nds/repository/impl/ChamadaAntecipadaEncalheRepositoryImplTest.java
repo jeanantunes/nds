@@ -36,6 +36,7 @@ import br.com.abril.nds.model.estoque.RecebimentoFisico;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.fiscal.CFOP;
 import br.com.abril.nds.model.fiscal.ItemNotaFiscalEntrada;
+import br.com.abril.nds.model.fiscal.NCM;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaFornecedor;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
 import br.com.abril.nds.model.planejamento.Estudo;
@@ -104,7 +105,10 @@ public class ChamadaAntecipadaEncalheRepositoryImplTest extends AbstractReposito
 		Cota cotaMaria = Fixture.cota(12345, maria, SituacaoCadastro.ATIVO,box2);
 		save(cotaMaria);
 		
-		TipoProduto tipoProdutoRevista = Fixture.tipoRevista();
+		NCM ncmRevistas = Fixture.ncm(49029000l,"REVISTAS","KG");
+		save(ncmRevistas);
+		
+		TipoProduto tipoProdutoRevista = Fixture.tipoRevista(ncmRevistas);
 		save(tipoProdutoRevista);
 		
 		Editor editoraAbril = Fixture.editoraAbril();
