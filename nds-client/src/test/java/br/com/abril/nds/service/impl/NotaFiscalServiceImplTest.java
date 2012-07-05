@@ -76,8 +76,7 @@ public class NotaFiscalServiceImplTest extends AbstractRepositoryImplTest {
 	@Test
 	public void testExportarNotasFiscais() {
 		try {
-			
-			this.notaFiscalService.exportarNotasFiscais(new ArrayList<NotaFiscal>());
+			this.notaFiscalService.exportarNotasFiscais(this.notasParaTesteArquivo);
 		} catch (Exception e) {
 			e.printStackTrace();
 			Assert.fail();
