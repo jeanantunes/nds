@@ -1,6 +1,7 @@
 package br.com.abril.nds.repository.impl;
 
 import java.util.Date;
+import java.util.List;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -9,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.cadastro.Feriado;
+import br.com.abril.nds.model.cadastro.TipoFeriado;
 import br.com.abril.nds.repository.FeriadoRepository;
 import br.com.abril.nds.util.DateUtil;
 
@@ -22,17 +24,17 @@ public class FeriadoRepositoryImplTest extends AbstractRepositoryImplTest {
 	@Before
 	public void setUp() {
 
-		Feriado feriado =
-			Fixture.feriado(FERIADO_SETE_SETEMBRO, "Dia da Independência do Brasil");
+		Feriado feriado =   Fixture.feriado(FERIADO_SETE_SETEMBRO, TipoFeriado.FEDERAL, null, null , "Independência do Brasil");
+			
 		save(feriado);
 	}
 	
 	@Test
 	public void obterFeriadoPorData() {
 		
-		Feriado feriado = feriadoRepository.obterPorData(FERIADO_SETE_SETEMBRO);
+		List<Feriado> feriados = feriadoRepository.obterFeriados(FERIADO_SETE_SETEMBRO, TipoFeriado.FEDERAL, null, null);
 		
-		Assert.assertTrue(feriado != null);
+		Assert.assertNotNull(feriados);
 	}
 		
 }

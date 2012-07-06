@@ -8,10 +8,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.dto.CalendarioFeriadoDTO;
+import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Feriado;
+import br.com.abril.nds.model.cadastro.TipoFeriado;
+import br.com.abril.nds.model.dne.Localidade;
+import br.com.abril.nds.model.dne.UnidadeFederacao;
 import br.com.abril.nds.repository.FeriadoRepository;
+import br.com.abril.nds.repository.LocalidadeRepository;
+import br.com.abril.nds.repository.UnidadeFederacaoRepository;
 import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.util.TipoMensagem;
 
 /**
  * Classe de implementação de serviços referentes
@@ -24,6 +32,13 @@ public class CalendarioServiceImpl implements CalendarioService {
 
 	@Autowired
 	private FeriadoRepository feriadoRepository;
+	
+	@Autowired
+	private LocalidadeRepository localidadeRepository;
+	
+	@Autowired
+	private UnidadeFederacaoRepository unidadeFederacaoRepository;
+	
 	
 	@Override
 	@Transactional(readOnly=true)
@@ -169,10 +184,113 @@ public class CalendarioServiceImpl implements CalendarioService {
 		
 		if (cal != null) {
 			
-			feriado = feriadoRepository.obterPorData(cal.getTime());
+			List<Feriado> feriados = feriadoRepository.obterFeriados(cal.getTime(), TipoFeriado.FEDERAL , null, null);
+			
+			if(feriados == null || feriados.isEmpty()) {
+				return false;
+			}
+			
+			feriado = feriados.get(0);
 		}
 		
 		return (feriado != null) ? true : false;
 	}
+	
+	private void validarCadastroFeriado(CalendarioFeriadoDTO calendarioFeriado) {
+		
+		Date data = calendarioFeriado.getDataFeriado();
+		String descricao = calendarioFeriado.getDescricaoFeriado();
+		
+		if(data == null) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "Data do feriado não foi informada");
+		}
+		
+		if(descricao == null || descricao.isEmpty()) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "Descrição do feriado não foi informada");
+		}
+		
+		TipoFeriado tipoFeriado = calendarioFeriado.getTipoFeriado();
+		
+		if(TipoFeriado.FEDERAL.equals(tipoFeriado)){
+			calendarioFeriado.setUfSigla(null);
+			calendarioFeriado.setIdLocalidade(null);
+		}
+		
+		if(TipoFeriado.ESTADUAL.equals(tipoFeriado)){
+			calendarioFeriado.setIdLocalidade(null);
+		}
+
+		if(TipoFeriado.MUNICIPAL.equals(tipoFeriado)){
+			calendarioFeriado.setUfSigla(null);
+		}
+
+		
+	}
+	
+	@Transactional
+	public void cadastrarFeriado(CalendarioFeriadoDTO calendarioFeriado) {
+	
+		validarCadastroFeriado(calendarioFeriado);
+		
+		Date data = calendarioFeriado.getDataFeriado();
+		String descricao = calendarioFeriado.getDescricaoFeriado();
+		TipoFeriado tipoFeriado = calendarioFeriado.getTipoFeriado();
+		String uf = calendarioFeriado.getUfSigla();
+		
+		boolean indOpera = calendarioFeriado.isIndOpera();
+		boolean indRepeteAnualmente = calendarioFeriado.isIndRepeteAnualmente();
+		boolean indEfetuaCobranca = calendarioFeriado.isIndEfetuaCobranca();
+		
+		Long idLocalidade = calendarioFeriado.getIdLocalidade();
+		
+		Feriado feriado = feriadoRepository.obterFeriado(data, tipoFeriado, uf, idLocalidade);
+		
+		if(feriado!=null) {
+			
+			feriado.setDescricao(descricao);
+			feriado.setIndEfetuaCobranca(indEfetuaCobranca);
+			feriado.setIndOpera(indOpera);
+			feriado.setIndRepeteAnualmente(indRepeteAnualmente);
+			
+			feriadoRepository.alterar(feriado);
+			
+		}
+		
+		Localidade localidade = localidadeRepository.buscarPorId(idLocalidade);
+		
+		if(localidade == null) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "Localidade não foi encontrada");
+		}
+		
+		UnidadeFederacao unidadeFederacao = unidadeFederacaoRepository.buscarPorId(uf);
+		
+		if(unidadeFederacao == null) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "Uf não foi encontrada");
+		}
+		
+		feriado = new Feriado();
+		
+		feriado.setData(data);
+		feriado.setDescricao(descricao);
+		
+		feriado.setIndEfetuaCobranca(indEfetuaCobranca);
+		feriado.setIndOpera(indOpera);
+		feriado.setIndRepeteAnualmente(indRepeteAnualmente);
+		
+		feriado.setLocalidade(localidade);
+		feriado.setTipoFeriado(tipoFeriado);
+		feriado.setUnidadeFederacao(unidadeFederacao);
+		
+		feriadoRepository.adicionar(feriado);
+		
+	}
+	
+	public List<CalendarioFeriadoDTO> obterFeriados() {
+		
+		return null;
+		
+	}
+	
+	
 	
 }
