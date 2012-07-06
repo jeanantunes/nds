@@ -142,7 +142,7 @@ var ConferenciaEncalheCont = {
 							null, 
 							function(result){
 								
-								ConferenciaEncalheCont.finaliazarConferenciaPreProcess(result);
+								ConferenciaEncalheCont.abrirDialogNotaFiscalDivergente(result);
 							}
 					);
 				}, true, "idModalDadosNotaFiscal"
@@ -377,7 +377,7 @@ var ConferenciaEncalheCont = {
 		$("#valorTotalNovoEncalhe").val(parseFloat(($("#precoCapaNovoEncalhe").val() - $("#descontoNovoEncalhe").val()) * $("#exemplaresNovoEncalhe").val()).toFixed(2));
 	},
 	
-	finaliazarConferenciaPreProcess: function(result){
+	abrirDialogNotaFiscalDivergente: function(result){
 		
 		if (result.mensagens){
 			

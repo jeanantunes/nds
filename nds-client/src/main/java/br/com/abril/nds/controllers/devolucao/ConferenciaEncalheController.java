@@ -715,7 +715,7 @@ public class ConferenciaEncalheController {
 			Map<String, Object> dados = new HashMap<String, Object>();
 			
 			dados.put("tipoMensagem", TipoMensagem.SUCCESS);
-			dados.put("listaMensagem", 	new String[]{"Operação efetuada com sucesso."});
+			dados.put("listaMensagens", 	new String[]{"Operação efetuada com sucesso."});
 
 			if(dadosDocumentacaoConfEncalheCota!=null && dadosDocumentacaoConfEncalheCota.isIndGeraDocumentacaoConferenciaEncalhe()) {
 
