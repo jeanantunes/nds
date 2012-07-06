@@ -599,10 +599,12 @@ function mostra_status(opcao) {
  * Necessário para o funcionamento:
  * Definir a classe css 'botaoPesquisar' no botão de Pesquisa 
  * Definir a classe css 'campoDePesquisa' nos campos de filtro utilizados.
+ * 
+ * Ex: tipoMovimento/tipoMovimento.jsp
  */
 function definirAcaoPesquisaTeclaEnter() {
 	
-	$(".campoDePesquisa").bind("keydown", function() {
+	$(".campoDePesquisa").bind("keydown", function(event) {
 		  var keycode = (event.keyCode ? event.keyCode : (event.which ? event.which : event.charCode));
 	      if (keycode == 13) { 	    	  
 	    	  $('.botaoPesquisar').click();
