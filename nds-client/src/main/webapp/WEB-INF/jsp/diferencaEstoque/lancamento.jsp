@@ -67,13 +67,13 @@
 			
 			$.each(resultado.tableModel.rows, function(index, row) {
 
-				var linkRateioDiferenca = '<a href="javascript:;" onclick="verificarExistenciaEstudo(' + row.cell.id + ');" style="cursor:pointer">' +
+				var linkRateioDiferenca = '<a id="retearDiferenca' + row.cell.id + '" href="javascript:;" onclick="verificarExistenciaEstudo(' + row.cell.id + ');" style="cursor:pointer">' +
 										     '<img src="${pageContext.request.contextPath}/images/bt_cadastros.png" hspace="5" border="0px" />' +
 										  '</a>';
 
 				if (row.cell.automatica) {
 					
-					var linkExclusaoDiferenca = '<a href="javascript:;" style="cursor:default; opacity:0.4; filter:alpha(opacity=40);">' +
+					var linkExclusaoDiferenca = '<a id="excluirDiferenca' + row.cell.id + '" href="javascript:;" style="cursor:default; opacity:0.4; filter:alpha(opacity=40);">' +
 													'<img src="${pageContext.request.contextPath}/images/ico_excluir.gif" hspace="5" border="0px" />' +
 												'</a>';
 					
