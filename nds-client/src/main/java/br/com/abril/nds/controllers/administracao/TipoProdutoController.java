@@ -90,7 +90,7 @@ public class TipoProdutoController {
 					"Nenhum tipo de produto foi encontrado"));
 		}
 		
-		this.result.use(FlexiGridJson.class).from(listaTipoProdutos)
+		this.result.use(FlexiGridJson.class).noReference().from(listaTipoProdutos)
 			.total(quantidade.intValue()).page(page).exclude("listaProdutos").serialize();
 	}
 	
@@ -98,7 +98,6 @@ public class TipoProdutoController {
 	public void buscaPorId(Long id) {
 
 		TipoProduto tipoProduto = this.tipoProdutoService.buscaPorId(id);
-		
 		
 		TipoProdutoVO tipoProdutoVO = new TipoProdutoVO(tipoProduto.getId().toString(),
 				                                        (tipoProduto.getNcm()!=null?tipoProduto.getNcm().getId().toString():""),

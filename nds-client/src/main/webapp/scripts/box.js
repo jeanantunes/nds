@@ -1,3 +1,4 @@
+
 var boxController = {
 	tipoBoxEnun : {
 		SUPLEMENTAR : 'Suplementar',
@@ -131,15 +132,19 @@ var boxController = {
 			width : 400,
 			modal : true,
 			title : title,
-			buttons : {
-				"Confirmar" : function() {
+			buttons : [{
+				id:"btnDialogNovoConfirmar",
+				text:"Confirmar",
+				click: function() {
 					boxController.salvar(this);
 
-				},
-				"Cancelar" : function() {
+				}},{
+					id:"btnDialogNovoCancelar",
+					text:"Cancelar",
+					click : function() {
 					$(this).dialog("close");
 				}
-			},
+			}],
 			beforeClose : clearMessageDialogTimeout
 		});
 	},
@@ -199,16 +204,18 @@ var boxController = {
 			height : 170,
 			width : 380,
 			modal : true,
-			buttons : {
-				"Confirmar" : function() {
+			buttons : [{
+				id:"btnDialogExcluirConfirmar",
+				text:"Confirmar", click : function() {
 					$(this).dialog("close");
 					$("#effect").show("highlight", {}, 1000, callback);
 					boxController.remove(id);
-				},
-				"Cancelar" : function() {
+				}},{
+					id:"btnDialogExcluirCancelar",
+					text:"Cancelar",click : function() {
 					$(this).dialog("close");
 				}
-			}
+			}]
 		});
 	},
 	remove : function(id) {
@@ -275,11 +282,13 @@ var boxController = {
 			height:410,
 			width:630,
 			modal: true,
-			buttons: {
-				"Fechar": function() {
+			buttons: [{
+				id:"btnDialogBoxFechar",
+				text:"Fechar",
+				click: function() {
 					$( this ).dialog( "close" );
 				}
-			}
+			}]
 		});
 	},
 	detalhe:function(id){		
