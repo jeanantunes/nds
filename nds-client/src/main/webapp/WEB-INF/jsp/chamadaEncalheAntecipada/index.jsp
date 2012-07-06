@@ -321,7 +321,6 @@
 								}
 								$("#dataAntecipacao").val("");
 			        	  	}
-				         
 				         },
 			        	{id:"btn_cancelar_antecipacao_ce",text:"Cancelar",
 				         click:function(){
@@ -905,7 +904,6 @@
 						+ paramDataProgramada
 						+ "&gravarTodos=" + checkTodos , 
 						function (result){
-							
 							EncalheAntecipado.pesquisarCotasPorProduto();
 							EncalheAntecipado.zerarTotais();
 							
@@ -959,8 +957,6 @@
 		},
 		
 	};
-
-
 	
 $(function() {
 	
@@ -1138,6 +1134,7 @@ $(function() {
 			<td width="43">Roteiro:</td>
 		    <td width="198">
 		    	<select class="campoDePesquisa" name="roteiro" id="roteiro" style="width:160px; float:left; margin-right:5px;" onchange="EncalheAntecipado.recarregarComboRotas(this.value)" >
+
 			      <option selected="selected" value="">Todos</option>
 			      <c:forEach var="roteiro" items="${listaRoteiros}">
 							<option value="${roteiro.key}">${roteiro.value}</option>
@@ -1147,6 +1144,7 @@ $(function() {
 		    <td width="54">Rota:</td>
 		    <td width="242">
 		    	<select class="campoDePesquisa" name="rota" id="rota" style="width:160px; float:left; margin-right:5px;"  >
+
 			      <option selected="selected" value="">Todos</option>
 			      <c:forEach var="rota" items="${listaRotas}">
 							<option value="${rota.key}">${rota.value}</option>
@@ -1156,6 +1154,7 @@ $(function() {
 		    <td>Fornecedor:</td>
 		    <td>
 		    	<select class="campoDePesquisa" name="fornecedor" id="fornecedor" style="width:130px;">
+
 		      		<option selected="selected">Todos</option>
 		      		<c:forEach var="fornecedor" items="${listaFornecedores}">
 							<option value="${fornecedor.key}">${fornecedor.value}</option>
@@ -1167,6 +1166,7 @@ $(function() {
 		  <tr>
 		  	
 		  	<td align="right" colspan="8"><input class="campoDePesquisa" type="checkbox" id="checkCE" name="checkCE"></td>
+
 		  	<td>Com CE</td>
 		 
 		    <td>

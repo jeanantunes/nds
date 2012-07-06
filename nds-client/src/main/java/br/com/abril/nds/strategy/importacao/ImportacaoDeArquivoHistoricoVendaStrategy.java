@@ -1,0 +1,22 @@
+package br.com.abril.nds.strategy.importacao;
+
+import java.io.File;
+
+import br.com.abril.nds.service.vo.RetornoImportacaoArquivoVO;
+
+/**
+ * Estratégia de importação de arquivos referente a Histórico de Vendas
+ * 
+ * @author Discover Technology
+ *
+ */
+public class ImportacaoDeArquivoHistoricoVendaStrategy implements ImportacaoArquivoStrategy {
+
+	@Override
+	public RetornoImportacaoArquivoVO processarImportacaoArquivo(File arquivo) {
+		 
+		//FIXME implementar a logica de importação referente a Historico de Vendas
+		return null;
+	}
+
+}
