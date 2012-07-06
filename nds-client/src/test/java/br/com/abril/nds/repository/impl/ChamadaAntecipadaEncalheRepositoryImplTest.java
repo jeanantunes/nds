@@ -144,6 +144,7 @@ public class ChamadaAntecipadaEncalheRepositoryImplTest extends AbstractReposito
 		save(ncmRevistas);
 		
 		TipoProduto tipoProdutoRevista = Fixture.tipoRevista(ncmRevistas);
+
 		save(tipoProdutoRevista);
 		
 		pdv = Fixture.criarPDVPrincipal("Maria", cotaMaria);
