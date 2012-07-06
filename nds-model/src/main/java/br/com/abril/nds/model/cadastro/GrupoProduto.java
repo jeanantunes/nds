@@ -7,13 +7,34 @@ package br.com.abril.nds.model.cadastro;
  */
 public enum GrupoProduto {
 	
-	CROMO,
-	REVISTA,
-	LIVRO,
-	JORNAL,
-	VALE_DESCONTO,
-	CARTELA,
-	COLECIONAVEL,
-	OUTROS;
+	CROMO("Cromo"),
+	REVISTA("Revista"),
+	LIVRO("Livro"),
+	JORNAL("Jornal"),
+	VALE_DESCONTO("Vale Desconto"),
+	CARTELA("Cartela"),
+	COLECIONAVEL("Colecionável"),
+	OUTROS("Outros");
 	
+	private String nome;
+	
+	GrupoProduto(String nome){
+		this.setNome(nome);
+	}
+
+	/**
+	 * @param nome the nome to set
+	 */
+	public void setNome(String nome) {
+		this.nome = nome;
+	}
+	
+	/**
+	 * @return the nome
+	 */
+	@Override
+	public String toString() {
+		return this.nome;
+	}
+
 }

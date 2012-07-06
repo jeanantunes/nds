@@ -4,6 +4,7 @@ import java.util.List;
 
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.TipoProduto;
+import br.com.abril.nds.model.fiscal.NCM;
 import br.com.abril.nds.service.exception.UniqueConstraintViolationException;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
@@ -82,4 +83,22 @@ public interface TipoProdutoService {
 	 * @return codigo
 	 */
 	public abstract String getCodigoSugerido();
+	
+	/**
+	 * Obtem lista de NCM
+	 * @return List<NCM>
+	 */
+	public abstract List<NCM> obterListaNCM();
+	
+	/**
+	 * Obtem NCM por id
+	 * @return NCM
+	 */
+	public abstract NCM obterNCMporId(Long idNcm);
+	
+	/**
+	 * Obtem NCM por codigo
+	 * @return NCM
+	 */
+	public abstract NCM obterNCMporCodigo(Long codigoNcm);
 }

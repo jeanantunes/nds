@@ -37,7 +37,7 @@ public class ProdutoLancamentoVO  implements Serializable {
 	private String valorTotal;
 	
 	@Export(label="Físico", exhibitionOrder = 8)
-	private Integer reparteFisico;
+	private String reparteFisico;
 	
 	@Export(label="Distribuição", exhibitionOrder = 9)
 	private String distribuicao;
@@ -52,6 +52,8 @@ public class ProdutoLancamentoVO  implements Serializable {
 	private Long idProdutoEdicao;
 	
 	private boolean destacarLinha;
+	
+	private boolean possuiFuro;
 	
 	/**
 	 * @return the id
@@ -182,14 +184,14 @@ public class ProdutoLancamentoVO  implements Serializable {
 	/**
 	 * @return the reparteFisico
 	 */
-	public Integer getReparteFisico() {
+	public String getReparteFisico() {
 		return reparteFisico;
 	}
 
 	/**
 	 * @param reparteFisico the reparteFisico to set
 	 */
-	public void setReparteFisico(Integer reparteFisico) {
+	public void setReparteFisico(String reparteFisico) {
 		this.reparteFisico = reparteFisico;
 	}
 
@@ -282,6 +284,20 @@ public class ProdutoLancamentoVO  implements Serializable {
 	 */
 	public void setDestacarLinha(boolean destacarLinha) {
 		this.destacarLinha = destacarLinha;
+	}
+
+	/**
+	 * @return the possuiFuro
+	 */
+	public boolean isPossuiFuro() {
+		return possuiFuro;
+	}
+
+	/**
+	 * @param possuiFuro the possuiFuro to set
+	 */
+	public void setPossuiFuro(boolean possuiFuro) {
+		this.possuiFuro = possuiFuro;
 	}
 
 }

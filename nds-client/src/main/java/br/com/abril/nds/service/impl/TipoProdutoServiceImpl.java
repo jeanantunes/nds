@@ -12,6 +12,8 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.TipoProduto;
+import br.com.abril.nds.model.fiscal.NCM;
+import br.com.abril.nds.repository.NCMRepository;
 import br.com.abril.nds.repository.TipoProdutoRepository;
 import br.com.abril.nds.service.ProdutoService;
 import br.com.abril.nds.service.TipoProdutoService;
@@ -34,6 +36,9 @@ public class TipoProdutoServiceImpl implements TipoProdutoService {
 	
 	@Autowired
 	private ProdutoService produtoService;
+	
+	@Autowired
+	private NCMRepository ncmRepository;
 	
 	/* (non-Javadoc)
 	 * @see br.com.abril.nds.service.TipoProdutoService#obterPorId(java.lang.Long)
@@ -212,6 +217,39 @@ public class TipoProdutoServiceImpl implements TipoProdutoService {
 		codigo += 1L;
 		
 		return codigo.toString();
+	}
+
+	/**
+	 * Obtem lista de NCM
+	 * @return List<NCM>
+	 */
+	@Override
+	@Transactional(readOnly=true)
+	public List<NCM> obterListaNCM() {
+		List<NCM> listaNcm = ncmRepository.buscarTodos();
+		return listaNcm;
+	}
+
+	/**
+	 * Obtem NCM por id
+	 * @return NCM
+	 */
+	@Override
+	@Transactional(readOnly=true)
+	public NCM obterNCMporId(Long idNcm) {
+        NCM ncm = this.ncmRepository.buscarPorId(idNcm);
+		return ncm;
+	}
+
+	/**
+	 * Obtem NCM por codigo
+	 * @return NCM
+	 */
+	@Override
+	@Transactional(readOnly=true)
+	public NCM obterNCMporCodigo(Long codigoNcm) {
+		 NCM ncm = this.ncmRepository.obterPorCodigo(codigoNcm);
+		return ncm;
 	}
 
 }

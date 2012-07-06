@@ -51,5 +51,4 @@ public class EncargoFinanceiroProduto extends EncargoFinanceiro {
 	public void setIpi(IPI ipi) {
 		this.ipi = ipi;
 	}
-
 }

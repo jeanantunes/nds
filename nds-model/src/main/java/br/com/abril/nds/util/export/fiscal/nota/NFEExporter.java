@@ -9,6 +9,7 @@ import java.math.BigInteger;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
@@ -19,6 +20,7 @@ import java.util.TreeMap;
 
 import org.apache.commons.lang.StringUtils;
 
+import br.com.abril.nds.model.fiscal.nota.NotaFiscalEnum;
 import br.com.abril.nds.util.CampoSecao;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.StringUtil;
@@ -125,18 +127,21 @@ public class NFEExporter {
 			addSecaoVazia(secaoVazia);
 		}
 		
-		Field[] campos = notaFiscal.getClass().getDeclaredFields();
+		List<Field> campos = new ArrayList<Field>();
+		List<Method> metodos = new ArrayList<Method>();
+		Class<?> clazz = notaFiscal.getClass();
+		while (clazz != null) {
+			campos.addAll(Arrays.asList(clazz.getDeclaredFields()));
+			metodos.addAll(Arrays.asList(clazz.getDeclaredMethods()));
+			clazz = clazz.getSuperclass();
+		}
 
 		for (Field campo : campos) {
-
 			campo.setAccessible(true);
-
 			Object valor = campo.get(notaFiscal);
 			this.processarAnnotations(campo, listaParents, notaFiscal, valor);
 		}		
 	
-		Method[] metodos = notaFiscal.getClass().getDeclaredMethods();
-		
 		for (Method metodo : metodos) {
 			NFEExportType nfeExportType =  metodo.getAnnotation(NFEExportType.class);
 			NFEWhens nfeWhens = metodo.getAnnotation(NFEWhens.class);
@@ -156,7 +161,6 @@ public class NFEExporter {
 			listaParents.remove(notaFiscal);
 		}
 	}
-	
 	
 	/**
 	 * 
@@ -221,11 +225,11 @@ public class NFEExporter {
 				secaoVazia = null;
 			}
 			execute(valor, listaParents, secaoVazia);
-		}
+		} 
 	}
 		
-
-	/**
+	
+	 /**
 	 * Adiciona um campo em uma seção.
 	 * 
 	 * @param novoCampo campo
@@ -438,8 +442,15 @@ public class NFEExporter {
 		
 		String valorString = STRING_VAZIA;
 		String mascaraUsada;
+		boolean isNotaFiscalEnum = false;
 		
 		if (valor != null) {
+			
+			if (isEnum(valor)) {
+				for (Class<?> interfaceClazz: valor.getClass().getInterfaces()) {
+					isNotaFiscalEnum = isNotaFiscalEnum || NotaFiscalEnum.class.equals(interfaceClazz); 
+				}
+			}
 			
 			if (isDate(valor)) {
 			
@@ -466,6 +477,8 @@ public class NFEExporter {
 					valorString = valorString.replace(",", "");
 				}
 			
+			} else if (isNotaFiscalEnum) {
+				valorString = ((NotaFiscalEnum)valor).getIntValue().toString();
 			} else {
 				
 				valorString = String.valueOf(valor);

@@ -5,8 +5,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
 
 import junit.framework.Assert;
 
@@ -31,6 +29,7 @@ import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
 import br.com.abril.nds.model.estoque.RecebimentoFisico;
 import br.com.abril.nds.model.fiscal.CFOP;
 import br.com.abril.nds.model.fiscal.ItemNotaFiscalEntrada;
+import br.com.abril.nds.model.fiscal.NCM;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaFornecedor;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
 import br.com.abril.nds.model.planejamento.Estudo;
@@ -82,8 +81,13 @@ public class BalanceamentoLancamentoTest extends AbstractRepositoryImplTest {
 		Editor globo = Fixture.criarEditor("Globo", 680L, fornecedorFC.getJuridica(), true);
 		save(globo);
 		
-		TipoProduto tipoRevista = Fixture.tipoRevista();
-		TipoProduto tipoCromo = Fixture.tipoCromo();
+		NCM ncmRevistas = Fixture.ncm(49029000l,"REVISTAS","KG");
+		save(ncmRevistas);
+		NCM ncmCromo = Fixture.ncm(48205000l,"CROMO","KG");
+		save(ncmCromo);
+		
+		TipoProduto tipoRevista = Fixture.tipoRevista(ncmRevistas);
+		TipoProduto tipoCromo = Fixture.tipoCromo(ncmCromo);
 		save(tipoRevista, tipoCromo);
 		
 		Produto veja = Fixture.produtoVeja(tipoRevista);
@@ -416,24 +420,6 @@ public class BalanceamentoLancamentoTest extends AbstractRepositoryImplTest {
 												  produtoRecolhimentoQuatroRodas.getDataLancamentoDistribuidor());
 		
 		Assert.assertTrue(ordenacaoPorDataCorreta);
-	}
-	
-	@Test
-	public void obterExpectativasRepartePorData() {
-		
-		montarParametrosConsulta();
-		
-		TreeMap<Date, BigDecimal> expectativaReparte =
-			lancamentoRepository.obterExpectativasRepartePorData(periodoLancamento, fornecedores);
-		
-		Assert.assertEquals(lancamentos.size(), expectativaReparte.size());
-		
-		for (Map.Entry<Date, BigDecimal> entry : expectativaReparte.entrySet()) {
-
-			boolean condition = entry.getValue().compareTo(repartePrevisto) == 0;
-			
-			Assert.assertTrue(condition);
-		}
 	}
 	
 	private void montarParametrosConsulta() {

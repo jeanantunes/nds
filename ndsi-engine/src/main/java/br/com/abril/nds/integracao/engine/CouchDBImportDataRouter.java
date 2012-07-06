@@ -22,6 +22,7 @@ import br.com.abril.nds.integracao.engine.data.Message;
 import br.com.abril.nds.integracao.engine.data.RouteTemplate;
 import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;
 import br.com.abril.nds.integracao.model.canonic.IntegracaoDocument;
+import br.com.abril.nds.model.cadastro.TipoParametroSistema;
 import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
 import br.com.abril.nds.repository.impl.AbstractRepository;
 
@@ -39,10 +40,10 @@ public class CouchDBImportDataRouter extends AbstractRepository implements Conte
 	@Autowired
 	private CouchDbProperties couchDbProperties;
 
-	private Integer codDistribuidor = null;
+	private Long codDistribuidor = null;
 	
 	
-	private void setCodDistribuidor(Integer codDistribuidor) {
+	private void setCodDistribuidor(Long codDistribuidor) {
 		this.codDistribuidor = codDistribuidor;
 	}
 	
@@ -117,7 +118,7 @@ public class CouchDBImportDataRouter extends AbstractRepository implements Conte
 	private CouchDbClient getCouchDBClient() {
 		
 		return new CouchDbClient(
-				"db_" + StringUtils.leftPad(this.codDistribuidor.toString(), 7, "0"),
+				"db_" + StringUtils.leftPad(this.codDistribuidor.toString(), 8, "0"),
 				true,
 				couchDbProperties.getProtocol(),
 				couchDbProperties.getHost(),
@@ -138,10 +139,13 @@ public class CouchDBImportDataRouter extends AbstractRepository implements Conte
 			@Override
 			public Void doInTransaction(TransactionStatus status) {
 				
-				String sql = "SELECT a.codigo FROM Distribuidor a";
-				Query query = getSession().createQuery(sql);
+				String hql = "SELECT p.valor from ParametroSistema p where p.tipoParametroSistema = :tipoParametroSistema";
 				
-				setCodDistribuidor((Integer) query.uniqueResult());
+				Query query = getSession().createQuery(hql);
+				query.setParameter("tipoParametroSistema", TipoParametroSistema.CODIGO_DISTRIBUIDOR_DINAP);
+				query.setMaxResults(1);
+			
+				setCodDistribuidor(Long.parseLong( query.uniqueResult().toString() ));
 				
 				return null;
 			}
