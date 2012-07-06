@@ -68,6 +68,7 @@ import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.cadastro.TipoDesconto;
 import br.com.abril.nds.model.cadastro.TipoEndereco;
 import br.com.abril.nds.model.cadastro.TipoEntrega;
+import br.com.abril.nds.model.cadastro.TipoFeriado;
 import br.com.abril.nds.model.cadastro.TipoFormaCobranca;
 import br.com.abril.nds.model.cadastro.TipoFornecedor;
 import br.com.abril.nds.model.cadastro.TipoGarantia;
@@ -1983,14 +1984,23 @@ public class Fixture {
 		return politicaCobranca;
 	}
 	
-	public static Feriado feriado(Date data, String descricao) {
+	public static Feriado feriado(
+			Date data, 
+			TipoFeriado tipoFeriado,
+			UnidadeFederacao unidadeFederacao,
+			Localidade localidade, 
+			String descricao) {
 		
 		Feriado feriado = new Feriado();
 		
 		feriado.setData(data);
 		feriado.setDescricao(descricao);
+		feriado.setTipoFeriado(tipoFeriado);
+		feriado.setUnidadeFederacao(unidadeFederacao);
+		feriado.setLocalidade(localidade);
 		
 		return feriado;
+		
 	}
 
 	public static Endereco criarEndereco(TipoEndereco tipoEndereco, String cep,
