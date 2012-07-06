@@ -1,6 +1,7 @@
 package br.com.abril.nds.repository.impl;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -48,6 +49,7 @@ import br.com.abril.nds.model.fiscal.ItemNotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.NCM;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaFornecedor;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
+import br.com.abril.nds.model.fiscal.nota.ItemNotaFiscal;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalhe;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalheCota;
 import br.com.abril.nds.model.movimentacao.ControleContagemDevolucao;
@@ -60,6 +62,8 @@ import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
+import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.PeriodoVO;
 
@@ -943,6 +947,23 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 				movimentoEstoqueCotaRepository.obterDetlhesDadosAbastecimento(box1.getId(), filtro);
 
 		Assert.assertTrue(listaMovimento.size() == 2);	
+	}
+	
+	@Test
+	public void obterItensToNotaFiscal() {
+		
+		/*setUpForContagemDevolucao();
+		
+		List<GrupoMovimentoEstoque> listaGrupoMovimentoEstoques = new ArrayList<GrupoMovimentoEstoque>();
+		listaGrupoMovimentoEstoques.add(GrupoMovimentoEstoque.VENDA_ENCALHE);
+		listaGrupoMovimentoEstoques.add(GrupoMovimentoEstoque.ENVIO_ENCALHE);
+		
+		Intervalo<Date> periodo = new Intervalo<Date>();
+		periodo.setDe(DateUtil.parseData("01/01/2012", "dd/MM/yyyy"));
+		periodo.setAte(DateUtil.parseData("01/01/2013", "dd/MM/yyyy"));
+		
+		List<ItemNotaFiscal> listaItemNotaFiscal = this.movimentoEstoqueCotaRepository.obterItensToNotaFiscal(cotaManoel, listaGrupoMovimentoEstoques, periodo);*/
+		
 	}
 	
 }
