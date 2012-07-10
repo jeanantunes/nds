@@ -28,6 +28,7 @@ import br.com.abril.nds.dto.MovimentoFinanceiroCotaDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoSlipDTO;
 import br.com.abril.nds.dto.SlipDTO;
+import br.com.abril.nds.exception.GerarCobrancaValidacaoException;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.Origem;
@@ -882,12 +883,17 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		movimentoFinanceiroCotaService.gerarMovimentosFinanceirosDebitoCredito(movimentoFinanceiroCotaDTO);
 
-		Set<String> nossoNumeroCollection = gerarCobrancaService.gerarCobranca(
-				controleConferenciaEncalheCota.getCota().getId(), 
-				controleConferenciaEncalheCota.getUsuario().getId(), false);
+		Set<String> nossoNumeroCollection = new HashSet<String>();
+		try {
+			gerarCobrancaService.gerarCobranca(
+					controleConferenciaEncalheCota.getCota().getId(), 
+					controleConferenciaEncalheCota.getUsuario().getId(), false, nossoNumeroCollection);
+		} catch (GerarCobrancaValidacaoException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		return nossoNumeroCollection;
-		
 	}
 
 	
