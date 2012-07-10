@@ -8,7 +8,6 @@ import java.util.List;
 
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -950,7 +949,6 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 	}
 	
 	@Test
-	@Ignore
 	public void obterItensToNotaFiscal() {
 		
 		setUpForContagemDevolucao();
@@ -972,6 +970,10 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		periodo.setAte(DateUtil.parseData("01/01/2013", "dd/MM/yyyy"));
 		
 		List<MovimentoEstoqueCota> listaMovimentoEstoqueCota = this.movimentoEstoqueCotaRepository.obterMovimentoEstoqueCotaPor(cotaManoel.getId(), listaGrupoMovimentoEstoques, periodo, listaFornecedores, listaProdutos);
+		
+		int tamanhoEsperado = 5;
+		
+		Assert.assertEquals(tamanhoEsperado, listaMovimentoEstoqueCota.size());
 		
 	}
 	
