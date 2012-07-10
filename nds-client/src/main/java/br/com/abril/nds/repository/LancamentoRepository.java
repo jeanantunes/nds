@@ -242,5 +242,15 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 	 * @return Date
 	 */
 	public Date buscarDiaUltimoBalanceamentoRecolhimentoRealizado();
+	
+	/**
+	 * Retorna um lançamento de produto onde as datas de lançamento e recolhimento previstas forem iguais aos parâmetros informados.
+	 * 
+	 * @param codigoProduto - código do produto
+	 * @param dataLancamentoPrevista - data a ser comparada com a data de lançamento prevista
+	 * @param dataRecolhimentoPrevista - data a ser comparada com a data de recolhimento prevista
+	 * @return Lancamento
+	 */
+	public Lancamento obterLancamentoProdutoPorDataLancamentoOuDataRecolhimento(String codigoProduto, Date dataLancamentoPrevista, Date dataRecolhimentoPrevista);
 
 }
