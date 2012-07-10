@@ -18,7 +18,6 @@ import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.OperacaoEstoque;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
-import br.com.abril.nds.model.fiscal.nota.ItemNotaFiscal;
 import br.com.abril.nds.util.Intervalo;
 
 
@@ -229,6 +228,6 @@ public interface MovimentoEstoqueCotaRepository extends Repository<MovimentoEsto
 	 * @param periodo
 	 * @return
 	 */
-	public List<ItemNotaFiscal> obterItensParaNotaFiscal(Cota cota, List<GrupoMovimentoEstoque> listaGrupoMovimentoEstoques, Intervalo<Date> periodo, List<Fornecedor> listaFornecedores, List<Produto> listaProduto);
+	public List<MovimentoEstoqueCota> obterItensParaNotaFiscal(Cota cota, List<GrupoMovimentoEstoque> listaGrupoMovimentoEstoques, Intervalo<Date> periodo, List<Fornecedor> listaFornecedores, List<Produto> listaProduto);
 	
 }

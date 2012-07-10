@@ -958,11 +958,14 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		listaGrupoMovimentoEstoques.add(GrupoMovimentoEstoque.VENDA_ENCALHE);
 		listaGrupoMovimentoEstoques.add(GrupoMovimentoEstoque.ENVIO_ENCALHE);
 		
+		List<Produto> listaProdutos =  new ArrayList<Produto>();
+		List<Fornecedor> listaFornecedores =  new ArrayList<Fornecedor>();
+		
 		Intervalo<Date> periodo = new Intervalo<Date>();
 		periodo.setDe(DateUtil.parseData("01/01/2012", "dd/MM/yyyy"));
 		periodo.setAte(DateUtil.parseData("01/01/2013", "dd/MM/yyyy"));
 		
-		List<ItemNotaFiscal> listaItemNotaFiscal = this.movimentoEstoqueCotaRepository.obterItensToNotaFiscal(cotaManoel, listaGrupoMovimentoEstoques, periodo);*/
+		List<MovimentoEstoqueCota> listaMovimentoEstoqueCota = this.movimentoEstoqueCotaRepository.obterItensParaNotaFiscal(cotaManoel, listaGrupoMovimentoEstoques, periodo, listaFornecedores, listaProdutos);*/
 		
 	}
 	
