@@ -62,11 +62,13 @@ import br.com.abril.nds.model.fiscal.nota.Status;
 import br.com.abril.nds.model.fiscal.nota.StatusProcessamentoInterno;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.DistribuidorRepository;
+import br.com.abril.nds.repository.EnderecoRepository;
 import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
 import br.com.abril.nds.repository.NotaFiscalRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.repository.SerieRepository;
 import br.com.abril.nds.repository.TelefoneCotaRepository;
+import br.com.abril.nds.repository.TelefoneRepository;
 import br.com.abril.nds.repository.TipoNotaFiscalRepository;
 import br.com.abril.nds.service.NotaFiscalService;
 import br.com.abril.nds.service.TributacaoService;
@@ -115,6 +117,10 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 
 	@Autowired
 	private MovimentoEstoqueCotaRepository movimentoEstoqueCotaRepository;
+	@Autowired
+	private EnderecoRepository enderecoRepository;
+	@Autowired
+	private TelefoneRepository telefoneRepository;
 	
 	@Override
 	public Map<Long, Integer> obterTotalItensNotaFiscalPorCotaEmLote(ConsultaLoteNotaFiscalDTO dadosConsultaLoteNotaFiscal) {
@@ -423,6 +429,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		}
 
 		Endereco endereco = enderecoDistribuidor.getEndereco();
+		enderecoRepository.detach(endereco);
 		endereco.setId(null);
 		endereco.setPessoa(null);
 		identificacaoEmitente.setEndereco(endereco);
@@ -435,6 +442,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 					"Telefone principal do distribuidor não encontrada!");
 		}
 		Telefone telefone = telefoneDistribuidor.getTelefone();
+		telefoneRepository.detach(telefone);
 		telefone.setId(null);
 		telefone.setPessoa(null);
 		identificacaoEmitente.setTelefone(telefone);
@@ -464,12 +472,14 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 
 		EnderecoCota enderecoCota = cotaRepository
 				.obterEnderecoPrincipal(idCota);
-
+		
 		if (enderecoCota == null) {
 			throw new ValidacaoException(TipoMensagem.ERROR,
 					"Endereço principal da cota " + idCota + " não encontrada!");
 		}
+		
 		Endereco endereco = enderecoCota.getEndereco();
+		enderecoRepository.detach(endereco);
 		endereco.setId(null);
 		endereco.setPessoa(null);
 
@@ -491,6 +501,8 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 					"Telefone principal da cota " + idCota + " não encontrada!");
 		}
 		Telefone telefone = telefoneCota.getTelefone();
+		
+		telefoneRepository.detach(telefone);
 		telefone.setId(null);
 		telefone.setPessoa(null);
 		destinatario.setTelefone(telefone);
@@ -645,6 +657,9 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		notaFiscal.setInformacaoTransporte(transporte);
 		
 		notaFiscal.setInformacaoAdicional(informacaoAdicional);
+		
+		
+		notaFiscalDAO.merge(notaFiscal);
 	}
 	
 	/**
