@@ -10,7 +10,6 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
-import br.com.abril.nds.model.cadastro.EnderecoCota;
 import br.com.abril.nds.model.cadastro.Telefone;
 import br.com.abril.nds.model.cadastro.TelefoneCota;
 import br.com.abril.nds.repository.TelefoneCotaRepository;
@@ -75,7 +74,7 @@ public class TelefoneCotaRepositoryImpl extends AbstractRepositoryModel<Telefone
 	
 	@Override
 	public TelefoneCota obterTelefonePrincipal(long idCota){
-		Criteria criteria = getSession().createCriteria(EnderecoCota.class);
+		Criteria criteria = getSession().createCriteria(TelefoneCota.class );
 		criteria.add(Restrictions.eq("cota.id", idCota));
 
 		criteria.add(Restrictions.eq("principal", true));
