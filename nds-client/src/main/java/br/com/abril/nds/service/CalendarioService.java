@@ -3,6 +3,8 @@ package br.com.abril.nds.service;
 import java.util.Date;
 import java.util.List;
 
+import br.com.abril.nds.dto.CalendarioFeriadoDTO;
+
 /**
  * Interface que define serviços referentes a 
  * funcionalidades de calendário.
@@ -63,4 +65,30 @@ public interface CalendarioService {
  	 */
 	Date adicionarDiasUteis(Date data, int numDias, List<Integer> diasSemanaConcentracaoCobranca, Integer diaMesConcentracaoCobranca);
 
+	/**
+	 * Cadastro novo feriado.
+	 * 
+	 * @param calendarioFeriado
+	 */
+	void cadastrarFeriado(CalendarioFeriadoDTO calendarioFeriado);
+
+	/**
+	 * Obtém lista dos feriados cadastrado para determinada data.
+	 * 
+	 * @param dataFeriado
+	 * 
+	 * @return {@link List<CalendarioFeriadoDTO>}
+	 */
+	List<CalendarioFeriadoDTO> obterListaCalendarioFeriado(Date dataFeriado);
+
+	/**
+	 * Obtém lista de datas com feriados cadastrados.
+	 * 
+	 * @param dataInicial
+	 * @param dataFinal
+	 * 
+	 * @return {@link List<Date>}
+	 */
+	List<Date> obterListaDataFeriado(Date dataInicial, Date dataFinal);
+	
 }
