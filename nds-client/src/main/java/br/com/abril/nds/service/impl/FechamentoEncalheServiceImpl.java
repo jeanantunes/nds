@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -305,7 +306,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 				
 				this.movimentoFinanceiroCotaService.gerarMovimentosFinanceirosDebitoCredito(movimentoFinanceiroCotaDTO);
 	
-				this.gerarCobrancaService.gerarCobranca(cota.getId(), usuario.getId(), true);
+				this.gerarCobrancaService.gerarCobranca(cota.getId(), usuario.getId(), true, new HashSet<String>());
 				
 				List<ChamadaEncalhe> listaChamadaEncalhe = 
 					this.chamadaEncalheRepository.obterChamadasEncalhePor(dataOperacao, cota.getId());
