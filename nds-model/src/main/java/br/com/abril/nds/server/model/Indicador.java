@@ -28,7 +28,7 @@ public class Indicador implements Serializable {
 	private Long id;
 	
 	@Column(name = "VALOR")
-	private Object valor;
+	private String valor;
 	
 	@Column(name = "DATA")
 	private Date data;
@@ -56,11 +56,11 @@ public class Indicador implements Serializable {
 		this.id = id;
 	}
 
-	public Object getValor() {
+	public String getValor() {
 		return valor;
 	}
 
-	public void setValor(Object valor) {
+	public void setValor(String valor) {
 		this.valor = valor;
 	}
 
