@@ -29,10 +29,10 @@ public class PessoaJuridica extends Pessoa implements Serializable {
 	@Column(name = "CNPJ", unique = true)
 	private String cnpj;
 	
-	@Column(name = "INSC_ESTADUAL")
+	@Column(name = "INSC_ESTADUAL",length=14)
 	private String inscricaoEstadual;
 	
-	@Column(name = "INSC_MUNICIPAL")
+	@Column(name = "INSC_MUNICIPAL",length=15)
 	private String inscricaoMunicipal;
 
 	public String getRazaoSocial() {

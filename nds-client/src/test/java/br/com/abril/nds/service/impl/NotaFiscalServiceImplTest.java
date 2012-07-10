@@ -45,6 +45,7 @@ import br.com.abril.nds.model.cadastro.TipoParametroSistema;
 import br.com.abril.nds.model.cadastro.TipoProduto;
 import br.com.abril.nds.model.cadastro.TipoRegistroCobranca;
 import br.com.abril.nds.model.cadastro.TipoTelefone;
+import br.com.abril.nds.model.fiscal.CFOP;
 import br.com.abril.nds.model.fiscal.NCM;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
 import br.com.abril.nds.model.fiscal.TipoOperacao;
@@ -117,7 +118,11 @@ public class NotaFiscalServiceImplTest extends AbstractRepositoryImplTest {
 //			this.notasParaTesteArquivo.add(notaTesteArquivo);
 //		}
 		tipoNotaFiscalDevolucao = Fixture.tipoNotaFiscalDevolucao();
-		save(tipoNotaFiscalDevolucao);
+		CFOP cfop1209 =Fixture.cfop1209();
+		CFOP cfop1210 =Fixture.cfop1210();
+		tipoNotaFiscalDevolucao.setCfopEstado(cfop1209);
+		tipoNotaFiscalDevolucao.setCfopOutrosEstados(cfop1210);
+		save(cfop1209,cfop1210,tipoNotaFiscalDevolucao);
 		produtoEdicaoSetup();
 	}
 
@@ -139,8 +144,8 @@ public class NotaFiscalServiceImplTest extends AbstractRepositoryImplTest {
 		save(bancoHSBC);
 
 		PessoaJuridica juridicaDistrib = Fixture.pessoaJuridica(
-				"Distribuidor Acme", "590033123647", "333.333.333.333",
-				"distrib_acme@mail.com", "99.999-9");
+				"Distribuidor Acme", "590033123647", "333333333333",
+				"distrib_acme@mail.com", "999999");
 		save(juridicaDistrib);
 
 		formaBoleto = Fixture.formaCobrancaBoleto(true, new BigDecimal(200),
@@ -257,7 +262,7 @@ public class NotaFiscalServiceImplTest extends AbstractRepositoryImplTest {
 
 		produtoEdicaoVeja = Fixture.produtoEdicao("1", 1L, 10, 14,
 				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(20),
-				"ABCDEFGHIJKLMNOPQRSTU", 1L, produto, null, false);
+				"798765431", 1L, produto, null, false);
 		produtoEdicaoVeja.setDesconto(null);
 		save(produtoEdicaoVeja);
 		// ////
@@ -271,7 +276,7 @@ public class NotaFiscalServiceImplTest extends AbstractRepositoryImplTest {
 
 		produtoEdicaoComDesconto = Fixture.produtoEdicao("1", 2L, 10, 14,
 				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(20),
-				"ABCDEFGHIJKLMNOPQRST", 2L, produtoComDesconto, null, false);
+				"798765431", 2L, produtoComDesconto, null, false);
 		produtoEdicaoComDesconto.setDesconto(new BigDecimal(19));
 		save(produtoEdicaoComDesconto);
 		// ////
@@ -462,6 +467,18 @@ public class NotaFiscalServiceImplTest extends AbstractRepositoryImplTest {
 	@Test
 	public void emitiNotaFiscal(){
 		List<ItemNotaFiscal> listItemNotaFiscal = new ArrayList<ItemNotaFiscal>();
-		notaFiscalService.emitiNotaFiscal(tipoNotaFiscalDevolucao.getId(), new Date(), cotaManoel.getId(), listItemNotaFiscal, null, null);
+		
+		
+		listItemNotaFiscal.add(new ItemNotaFiscal(produtoEdicaoComDesconto.getId(), BigDecimal.TEN, BigDecimal.TEN, "091"));
+		
+		Endereco enderecoTransporte = Fixture.criarEndereco(
+				TipoEndereco.COMERCIAL, "10500250", "Rua Nova", 1000,
+				"Bairro Novo", "Olimpia", "SP");
+		save(enderecoTransporte);
+		InformacaoTransporte informacaoTransporte = Fixture
+				.informacaoTransporte("88416646000103", enderecoTransporte,
+						"IEstd", 132, "municipio", "nome", null, "SP", null);
+		InformacaoAdicional informacaoAdicional = new InformacaoAdicional();
+		notaFiscalService.emitiNotaFiscal(tipoNotaFiscalDevolucao.getId(), new Date(), cotaManoel.getId(), listItemNotaFiscal, informacaoTransporte, informacaoAdicional);
 	}
 }
