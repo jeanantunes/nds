@@ -24,12 +24,12 @@ import br.com.abril.nds.dto.filtro.FiltroMapaAbastecimentoDTO.ColunaOrdenacao;
 import br.com.abril.nds.dto.filtro.FiltroMapaAbastecimentoDTO.ColunaOrdenacaoDetalhes;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Cota;
-import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.cadastro.Fornecedor;
+import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.OperacaoEstoque;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
-import br.com.abril.nds.model.fiscal.nota.ItemNotaFiscal;
 import br.com.abril.nds.model.movimentacao.StatusOperacao;
 import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
 import br.com.abril.nds.util.Intervalo;
@@ -1244,17 +1244,42 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		return query.list();
 	}  
 	
-	public List<ItemNotaFiscal> getItensToNotaFiscal(Cota cota, List<GrupoMovimentoEstoque> listaGrupoMovimentoEstoques, Intervalo<Date> periodo){
+	@SuppressWarnings("unchecked")
+	public List<MovimentoEstoqueCota> obterItensParaNotaFiscal(Cota cota, List<GrupoMovimentoEstoque> listaGrupoMovimentoEstoques, Intervalo<Date> periodo, List<Fornecedor> listaFornecedores, List<Produto> listaProdutos) {
 		
 		/*StringBuffer sql = new StringBuffer("");
 		
-		SQLQuery sqlQuery = getSession().createSQLQuery(sql.toString());
+		sql.append(" SELECT movimentoEstoqueCota ")
+		   .append(" FROM MovimentoEstoqueCota movimentoEstoqueCota ");
+		sql.append(" WHERE movimentoEstoqueCota.status = :status ")
+//		   .append("   AND movimentoEstoqueCota.tipoMovimento.grupoMovimentoEstoque IN :listaGrupoMoviementoEstoque ")
+		   .append("   AND movimentoEstoqueCota.cota = :cota ")
+		   .append("   AND movimentoEstoqueCota.data BETWEEN :dataInicio AND :dataFim ");
 		
-		sqlQuery.setParameter("cota", cota);
-		sqlQuery.setParameter("lista", listaGrupoMovimentoEstoques);
-		sqlQuery.setParameter("dataInicial", periodo.getDe());
-		sqlQuery.setParameter("dataFinal", periodo.getAte());*/
+		if (listaProdutos != null && !listaProdutos.isEmpty()) {
+			sql.append("   AND movimentoEstoqueCota.produtoEdicao.produto IN :listaProdutos ");
+		}
 		
-		return null;//sqlQuery.list();
+		if (listaFornecedores != null && !listaFornecedores.isEmpty()) {
+			sql.append("   AND movimentoEstoqueCota.produtoEdicao.fornecedores IN :listaFornecedores ");
+		}
+
+		Query query = getSession().createQuery(sql.toString());
+		
+		query.setParameter("status", StatusAprovacao.APROVADO);
+//		query.setParameter("listaGrupoMoviementoEstoque", listaGrupoMovimentoEstoques);
+		query.setParameter("cota", cota);
+		query.setParameter("dataInicio", periodo.getDe());
+		query.setParameter("dataFim", periodo.getAte());
+		
+		if (listaProdutos != null && !listaProdutos.isEmpty()) {
+			query.setParameter("listaProdutos", listaProdutos);
+		}
+		
+		if (listaFornecedores != null && !listaFornecedores.isEmpty()) {
+			query.setParameter("listaFornecedores", listaFornecedores);
+		}*/
+		
+		return null;//query.list();
 	}
 }

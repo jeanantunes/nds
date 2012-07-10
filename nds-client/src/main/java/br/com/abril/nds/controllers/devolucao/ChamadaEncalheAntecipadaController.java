@@ -28,11 +28,15 @@ import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.GrupoFornecedor;
+import br.com.abril.nds.model.cadastro.Rota;
+import br.com.abril.nds.model.cadastro.Roteiro;
 import br.com.abril.nds.model.seguranca.Usuario;
+import br.com.abril.nds.serialization.custom.CustomMapJson;
 import br.com.abril.nds.service.BoxService;
 import br.com.abril.nds.service.ChamadaAntecipadaEncalheService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.ProdutoService;
+import br.com.abril.nds.service.RoteirizacaoService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TableModel;
@@ -87,11 +91,16 @@ public class ChamadaEncalheAntecipadaController {
 	@Autowired
 	private ProdutoService produtoService;
 	
+	@Autowired
+	private RoteirizacaoService roteirizacaoService;
+	
 	@Path("/")
 	public void index(){
 		
 		result.include("listaFornecedores",obterFornecedores(null) );
 		result.include("listaBoxes",obterBoxs(null));
+		carregarRota();
+		carregarRoteiro();
 	}
 	
 	/**
@@ -150,12 +159,13 @@ public class ChamadaEncalheAntecipadaController {
 	 */
 	@Post
 	@Path("/pesquisar")
-	public void pesquisarCotasPorProduto(String codigoProduto,Long numeroEdicao,Long box,Long fornecedor,
+	public void pesquisarCotasPorProduto(String codigoProduto,Long numeroEdicao,Long box,Long fornecedor, 
+										 Long rota,Long roteiro,boolean programacaoRealizada,
 										 String sortorder, String sortname, int page, int rp){
 		
 		validarParametrosPesquisa(codigoProduto, numeroEdicao);
 		
-		FiltroChamadaAntecipadaEncalheDTO filtro = new FiltroChamadaAntecipadaEncalheDTO(codigoProduto,numeroEdicao,box,fornecedor);
+		FiltroChamadaAntecipadaEncalheDTO filtro = new FiltroChamadaAntecipadaEncalheDTO(codigoProduto,numeroEdicao,box,fornecedor,rota,roteiro,programacaoRealizada);
 		
 		configurarPaginacaoPesquisa(filtro, sortorder, sortname, page, rp);
 		
@@ -222,17 +232,26 @@ public class ChamadaEncalheAntecipadaController {
 	 */
 	@Post
 	@Path("/obterQuantidadeExemplares")
-	public void obterQuantidadeExemplaresPorCota(Integer numeroCota, String codigoProduto, Long numeroEdicao,Long fornecedor){
+	public void obterQuantidadeExemplaresPorCota(Integer numeroCota, String codigoProduto, Long numeroEdicao,Long fornecedor,boolean programacaoRealizada){
 		
 		FiltroChamadaAntecipadaEncalheDTO filtro = new FiltroChamadaAntecipadaEncalheDTO(codigoProduto,numeroEdicao,null,fornecedor,numeroCota);
 		
-		BigDecimal quantidade = chamadaAntecipadaEncalheService.obterQntExemplaresCotasSujeitasAntecipacoEncalhe(filtro);
+		BigDecimal quantidade = BigDecimal.ZERO;
 		
-		if(quantidade == null || (quantidade.compareTo(BigDecimal.ZERO) <= 0)){
-			throw new ValidacaoException(TipoMensagem.WARNING,"Cota não possui exemplares em estoque para chamada antecipada de encalhe!");
+		if(!programacaoRealizada){
+			
+			quantidade = chamadaAntecipadaEncalheService.obterQntExemplaresCotasSujeitasAntecipacoEncalhe(filtro);
+			
+			result.use(CustomMapJson.class).put("quantidade", quantidade.intValue()).serialize();
 		}
-		
-		result.use(Results.json()).from(String.valueOf(quantidade.intValue()), "result").recursive().serialize();
+		else{
+			
+			ChamadaAntecipadaEncalheDTO chamada = chamadaAntecipadaEncalheService.obterChamadaEncalheAntecipada(filtro);
+			quantidade = chamada.getQntExemplares();	
+			
+			result.use(CustomMapJson.class).put("quantidade", quantidade.intValue())
+										   .put("idChamadaEncalhe", chamada.getCodigoChamadaEncalhe()).serialize();
+		}
 	}
 	
 	/**
@@ -253,6 +272,8 @@ public class ChamadaEncalheAntecipadaController {
 		
 		gravarChamadaEncalheAnteicipada(listaChamadaEncalheAntecipada,dataRecolhimento,codigoProduto,numeroEdicao,dataProgramada);
 	}
+	
+	
 	
 	/**
 	 * 
@@ -288,6 +309,100 @@ public class ChamadaEncalheAntecipadaController {
 		}	
 	}
 	
+	
+	/**
+	 * 
+	 * Reprogramar a antecipação de recolhimento de encalhe das cotas do grid de pesquisa.
+	 * 
+	 * @param listaChamadaEncalheAntecipada
+	 * @param dataRecolhimento
+	 * @param gravarTodos
+	 */
+	@Post
+	@Path("/reprogramarCotas")
+	public void reprogramarCotas(List<ChamadaEncalheAntecipadaVO> listaChamadaEncalheAntecipada,
+								String dataRecolhimento, String codigoProduto, 
+								Long numeroEdicao,String dataProgramada,String gravarTodos){
+		
+		validarDataRecolhimento(dataRecolhimento);
+		
+		if(!gravarTodos.isEmpty()){
+			
+			FiltroChamadaAntecipadaEncalheDTO filtro = getFiltroSessionSemPaginacao();
+			filtro.setDataAntecipacao(DateUtil.parseDataPTBR(dataRecolhimento));
+			filtro.setDataProgramada(dataProgramada);
+			
+			chamadaAntecipadaEncalheService.reprogramarChamadaAntecipacaoEncalheProduto(filtro);
+			
+			result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
+											"result").recursive().serialize();
+		}
+		else{
+		
+			reprogramarChamadaEncalheAnteicipada(listaChamadaEncalheAntecipada,dataRecolhimento,codigoProduto,numeroEdicao,dataProgramada);
+			
+		}	
+	}
+	
+	@Post
+	@Path("/cancelarChamdaEncalheCotas")
+	public void cancelarChamdaEncalheCotas(List<ChamadaEncalheAntecipadaVO> listaChamadaEncalheAntecipada,
+											String codigoProduto,Long numeroEdicao,String cancelarTodos){
+		
+		if(!cancelarTodos.isEmpty()){
+			
+			FiltroChamadaAntecipadaEncalheDTO filtro = getFiltroSessionSemPaginacao();
+			
+			chamadaAntecipadaEncalheService.cancelarChamadaAntecipadaCota(filtro);
+		
+		}
+		else{
+			
+			InfoChamdaAntecipadaEncalheDTO infoChamdaAntecipadaEncalheDTO = getInfoChamadaEncalhe(listaChamadaEncalheAntecipada,
+																								  null,codigoProduto,
+																								  numeroEdicao,null);
+			
+			chamadaAntecipadaEncalheService.cancelarChamadaAntecipadaCota(infoChamdaAntecipadaEncalheDTO);
+		}
+		
+		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
+				"result").recursive().serialize();
+	}
+	
+	@Post
+	@Path("/cancelarChamdaEncalheCotasPesquisa")
+	public void cancelarChamdaEncalheCotasPesquisa(List<ChamadaEncalheAntecipadaVO> listaChamadaEncalheAntecipada,
+												   String codigoProduto,Long numeroEdicao){
+		
+		InfoChamdaAntecipadaEncalheDTO infoChamdaAntecipadaEncalheDTO = getInfoChamadaEncalhe(listaChamadaEncalheAntecipada,
+																								  null,codigoProduto,
+																								  numeroEdicao,null);
+			
+		chamadaAntecipadaEncalheService.cancelarChamadaAntecipadaCota(infoChamdaAntecipadaEncalheDTO);
+		
+		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
+				"result").recursive().serialize();
+	}
+	
+	/**
+	 * Reprogramar a antecipação de recolhimento de encalhe das cotas do grid de pesquisa de cotas.
+	 * 
+	 * @param listaChamadaEncalheAntecipada
+	 * @param dataRecolhimento
+	 */
+	@Post
+	@Path("/reprogramarCotasPesquisa")
+	public void reprogramarCotasPesquisa(List<ChamadaEncalheAntecipadaVO> listaChamadaEncalheAntecipada,
+										String dataRecolhimento,String codigoProduto,
+										Long numeroEdicao,String dataProgramada){
+		
+		validarDataRecolhimento(dataRecolhimento);
+		
+		validarCotasDuplicadas(listaChamadaEncalheAntecipada,"Existem cotas duplicadas para reprogramação de chamda antecipada de encalhe!");
+		
+		reprogramarChamadaEncalheAnteicipada(listaChamadaEncalheAntecipada,dataRecolhimento,codigoProduto,numeroEdicao,dataProgramada);
+	}
+	
 	/**
 	 * Grava informações referentes a chamada antecipada de encalhe de um produto.
 	 * 
@@ -315,6 +430,34 @@ public class ChamadaEncalheAntecipadaController {
 				"result").recursive().serialize();
 	}
 	
+	
+	/**
+	 * Grava informações referentes a chamada antecipada de encalhe de um produto.
+	 * 
+	 * @param listaChamadaEncalheAntecipada
+	 * @param dataRecolhimento
+	 * @param numeroEdicao 
+	 * @param codigoProduto 
+	 */
+	private void reprogramarChamadaEncalheAnteicipada(List<ChamadaEncalheAntecipadaVO> listaChamadaEncalheAntecipada,
+												String dataRecolhimento, String codigoProduto, 
+												Long numeroEdicao,String dataProgramada){
+		
+		if(listaChamadaEncalheAntecipada == null || listaChamadaEncalheAntecipada.isEmpty()){
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum item foi selecionado para reprogramação!");
+		}
+		
+		InfoChamdaAntecipadaEncalheDTO infoChamdaAntecipadaEncalheDTO = getInfoChamadaEncalhe(listaChamadaEncalheAntecipada,
+																		dataRecolhimento,codigoProduto,numeroEdicao,dataProgramada);
+		
+		chamadaAntecipadaEncalheService.reprogramarChamadaAntecipacaoEncalheProduto(infoChamdaAntecipadaEncalheDTO);
+		
+		result.use(Results.json()).from(
+				new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
+				"result").recursive().serialize();
+	}
+	
 	/**
 	 * Monta os dados para gravação de chamada de encalhe antecipada.
 	 * 
@@ -330,9 +473,9 @@ public class ChamadaEncalheAntecipadaController {
 		
 		InfoChamdaAntecipadaEncalheDTO infoEncalheDTO = new InfoChamdaAntecipadaEncalheDTO();
 		infoEncalheDTO.setCodigoProduto(codigoProduto);
-		infoEncalheDTO.setDataAntecipacao(DateUtil.parseDataPTBR(dataRecolhimento));
+		infoEncalheDTO.setDataAntecipacao( (dataRecolhimento==null)?null: DateUtil.parseDataPTBR(dataRecolhimento));
 		infoEncalheDTO.setNumeroEdicao(numeroEdicao);
-		infoEncalheDTO.setDataProgramada(DateUtil.parseDataPTBR(dataProgramada));
+		infoEncalheDTO.setDataProgramada( (dataProgramada== null)?null:DateUtil.parseDataPTBR(dataProgramada));
 		
 		List<ChamadaAntecipadaEncalheDTO> listaChamadaAntecipadaEncalheDTOs = 
 				new ArrayList<ChamadaAntecipadaEncalheDTO>();
@@ -340,7 +483,9 @@ public class ChamadaEncalheAntecipadaController {
 		for(ChamadaEncalheAntecipadaVO vo : listaChamadaEncalheAntecipada){
 			listaChamadaAntecipadaEncalheDTOs.add(
 					new ChamadaAntecipadaEncalheDTO(
-							Integer.parseInt(vo.getNumeroCota()),new BigDecimal(vo.getQntExemplares())));
+							Integer.parseInt(vo.getNumeroCota()),
+							new BigDecimal(vo.getQntExemplares()),
+							vo.getCodigoChamdaEncalhe()));
 		}
 		
 		infoEncalheDTO.setChamadasAntecipadaEncalhe(listaChamadaAntecipadaEncalheDTOs);
@@ -525,6 +670,7 @@ public class ChamadaEncalheAntecipadaController {
 			chamadaEncalheAntecipadaVO.setNomeCota(dto.getNomeCota());
 			chamadaEncalheAntecipadaVO.setNumeroCota( String.valueOf(dto.getNumeroCota()));
 			chamadaEncalheAntecipadaVO.setQntExemplares(String.valueOf(dto.getQntExemplares().intValue()));
+			chamadaEncalheAntecipadaVO.setCodigoChamdaEncalhe(dto.getCodigoChamadaEncalhe());
 			
 			listaChamadaEncalheAntecipadaVO.add(chamadaEncalheAntecipadaVO);
 		}
@@ -765,6 +911,35 @@ public class ChamadaEncalheAntecipadaController {
 			Fornecedor fornecedor = fornecedorService.obterFornecedorPorId(filtro.getFornecedor());
 			filtro.setNomeFornecedor(fornecedor.getJuridica().getRazaoSocial());
 		}
+		
+		if(filtro.getBox()!= null){
+			Box box = boxService.buscarPorId(filtro.getBox());
+			
+			if(box!= null){
+				filtro.setDescBox(box.getCodigo());
+			}
+		}
+		
+		if(filtro.getRota()!= null){
+			Rota rota = roteirizacaoService.buscarRotaPorId(filtro.getRota());
+			if(rota!= null){
+				filtro.setDescRota(rota.getCodigoRota());
+			}
+		}
+		
+		if(filtro.getRoteiro()!= null){
+			Roteiro roteiro = roteirizacaoService.buscarRoteiroPorId(filtro.getRoteiro());
+			if(roteiro!= null){
+				filtro.setDescRoteiro(roteiro.getDescricaoRoteiro());
+			}
+		}
+		
+		if(filtro.isProgramacaoCE()){
+			filtro.setDescComCE("Sim");
+		}
+		else{
+			filtro.setDescComCE("Não");
+		}
 	}
 	
 	/*
@@ -802,4 +977,96 @@ public class ChamadaEncalheAntecipadaController {
 		
 		return usuario;
 	}
+	
+	@Post
+	public void recarregarListaRotas(Long roteiro){
+		
+		List<Rota> rotas = null;
+		
+		if(roteiro!= null){
+
+			rotas = roteirizacaoService.buscarRotaPorRoteiro(roteiro);
+		}
+		else{
+			
+			rotas = roteirizacaoService.buscarRotas();
+		}
+	
+		result.use(Results.json()).from(getRotas(rotas), "result").recursive().serialize();
+	}
+	
+	@Post
+	public void recarregarRoteiroRota(Long idBox){
+		
+		List<Roteiro> roteirosBox = null;
+		
+		List<Rota> rotas = null;
+		
+		if(idBox!= null){
+			
+			roteirosBox = roteirizacaoService.buscarRoteiroDeBox(idBox);
+			rotas = roteirizacaoService.buscarRotaDeBox(idBox);
+		}
+		else{
+			
+			roteirosBox = roteirizacaoService.buscarRoteiros();
+			rotas = roteirizacaoService.buscarRotas();
+		}
+		
+		result.use(CustomMapJson.class).put("rotas", getRotas(rotas)).put("roteiros", getRoteiros(roteirosBox)).serialize();
+	}
+	
+	/**
+	 * Carrega a lista de Rotas
+	 */
+	private void carregarRota(){
+		
+		List<Rota> rotas = roteirizacaoService.buscarRotas();
+			
+		result.include("listaRotas",getRotas(rotas));
+	} 
+	
+	/**
+	 * Retorna uma lista de Rota no formato ItemDTO
+	 * @param rotas
+	 * @return List<ItemDTO<Long, String>>
+	 */
+	private List<ItemDTO<Long, String>> getRotas(List<Rota> rotas){
+		
+		List<ItemDTO<Long, String>> listaRotas = new ArrayList<ItemDTO<Long,String>>();
+		
+		for(Rota rota : rotas){
+			
+			listaRotas.add(new ItemDTO<Long, String>(rota.getId(),rota.getCodigoRota()));
+		}
+		
+		return listaRotas;
+	}
+	
+	/**
+	 * Carrega as listas de Roteiros
+	 */
+	private void carregarRoteiro(){
+		
+		List<Roteiro> roteiros = roteirizacaoService.buscarRoteiros();
+			
+		result.include("listaRoteiros",getRoteiros(roteiros));
+	}
+	
+	/**
+	 * Retorna uma lista de roteiros no formato ItemDTO
+	 * @param roteiros - lista de roteiros
+	 * @return List<ItemDTO<Long, String>> 
+	 */
+	private List<ItemDTO<Long, String>> getRoteiros(List<Roteiro> roteiros){
+		
+		List<ItemDTO<Long, String>> listaRoteiros = new ArrayList<ItemDTO<Long,String>>();
+		
+		for(Roteiro roteiro : roteiros){
+			
+			listaRoteiros.add(new ItemDTO<Long, String>(roteiro.getId(),roteiro.getDescricaoRoteiro()));
+		}
+		return listaRoteiros;
+	}
+	
 }

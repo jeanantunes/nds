@@ -1,6 +1,7 @@
 package br.com.abril.nds.repository.impl;
 
 import java.math.BigDecimal;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -24,10 +25,15 @@ import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.cadastro.Rota;
+import br.com.abril.nds.model.cadastro.Roteirizacao;
+import br.com.abril.nds.model.cadastro.Roteiro;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.cadastro.TipoFornecedor;
 import br.com.abril.nds.model.cadastro.TipoProduto;
+import br.com.abril.nds.model.cadastro.TipoRoteiro;
+import br.com.abril.nds.model.cadastro.pdv.PDV;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
 import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
@@ -39,10 +45,13 @@ import br.com.abril.nds.model.fiscal.ItemNotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.NCM;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaFornecedor;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
+import br.com.abril.nds.model.planejamento.ChamadaEncalhe;
+import br.com.abril.nds.model.planejamento.ChamadaEncalheCota;
 import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.model.planejamento.EstudoCota;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
+import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.CotaRepository;
@@ -99,8 +108,34 @@ public class ChamadaAntecipadaEncalheRepositoryImplTest extends AbstractReposito
 		Cota cotaManoel = Fixture.cota(123, manoel, SituacaoCadastro.ATIVO,box1);
 		save(cotaManoel);
 		
+		PDV pdv = Fixture.criarPDVPrincipal("Manoel", cotaManoel);
+		save(pdv);
+		
+		Roteiro roteiro = Fixture.criarRoteiro("Pinheiros",box1,TipoRoteiro.NORMAL);
+		save(roteiro);
+
+		Rota rota = Fixture.rota("005", "Rota 005");
+		rota.setRoteiro(roteiro);
+		save(rota);
+		
+		Roteirizacao roteirizacao = Fixture.criarRoteirizacao(pdv, rota,1);
+		save(roteirizacao);
+		
 		Cota cotaJose = Fixture.cota(1234, jose, SituacaoCadastro.ATIVO,box1);
 		save(cotaJose);
+		
+		pdv = Fixture.criarPDVPrincipal("Jose", cotaJose);
+		save(pdv);
+		
+		roteiro = Fixture.criarRoteiro("Pinheiros",box1,TipoRoteiro.NORMAL);
+		save(roteiro);
+
+		rota = Fixture.rota("005", "Rota 005");
+		rota.setRoteiro(roteiro);
+		save(rota);
+		
+		roteirizacao = Fixture.criarRoteirizacao(pdv, rota,1);
+		save(roteirizacao);
 		
 		Cota cotaMaria = Fixture.cota(12345, maria, SituacaoCadastro.ATIVO,box2);
 		save(cotaMaria);
@@ -109,8 +144,13 @@ public class ChamadaAntecipadaEncalheRepositoryImplTest extends AbstractReposito
 		save(ncmRevistas);
 		
 		TipoProduto tipoProdutoRevista = Fixture.tipoRevista(ncmRevistas);
+
 		save(tipoProdutoRevista);
 		
+		pdv = Fixture.criarPDVPrincipal("Maria", cotaMaria);
+		save(pdv);
+		
+	
 		Editor editoraAbril = Fixture.editoraAbril();
 		save(editoraAbril);
 		
@@ -238,6 +278,13 @@ public class ChamadaAntecipadaEncalheRepositoryImplTest extends AbstractReposito
 		
 		EstudoCota estudoCotaVeja2Joao = Fixture.estudoCota(new BigDecimal(10), new BigDecimal(10), estudoVeja2, cotaManoel);
 		save(estudoCotaVeja2Joao);
+		
+		ChamadaEncalhe chamadaEncalhe = Fixture.chamadaEncalhe(Fixture.criarData(28, Calendar.FEBRUARY, 2012),produtoEdicaoVeja1,TipoChamadaEncalhe.ANTECIPADA);
+		
+		save(chamadaEncalhe);
+		
+		ChamadaEncalheCota chamadaEncalheCota = Fixture.chamadaEncalheCota(chamadaEncalhe,false,cotaManoel,BigDecimal.TEN);
+		save(chamadaEncalheCota);
 	}
 	
 	@Test

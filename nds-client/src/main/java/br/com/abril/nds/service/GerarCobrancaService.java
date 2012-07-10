@@ -2,9 +2,12 @@ package br.com.abril.nds.service;
 
 import java.util.Set;
 
+import br.com.abril.nds.exception.GerarCobrancaValidacaoException;
+
 public interface GerarCobrancaService {
 
-	Set<String> gerarCobranca(Long idCota, Long idUsuario, boolean indValidaConclusaoOperacaoConferencia);
+	void gerarCobranca(Long idCota, Long idUsuario, boolean indValidaConclusaoOperacaoConferencia, Set<String> setNossoNumero)
+		throws GerarCobrancaValidacaoException;
 	
 	Boolean validarDividaGeradaDataOperacao();
 	
