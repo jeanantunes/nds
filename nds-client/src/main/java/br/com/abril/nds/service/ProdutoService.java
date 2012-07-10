@@ -78,4 +78,12 @@ public interface ProdutoService {
 	 * @return
 	 */
 	Produto obterProdutoPorID(Long id);
+	
+	/**
+	 * Obtém uma lista de produtos dos ids paramestrizados
+	 * 
+	 * @param idsProdutos lista de ids dos produtos
+	 * @return lista de produtos
+	 */
+	List<Produto> obterProdutosPelosIds(List<Long> idsProdutos);
 }
