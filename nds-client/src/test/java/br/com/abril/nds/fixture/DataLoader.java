@@ -975,6 +975,8 @@ public class DataLoader {
 		
 		gerarCfops(session);
 		
+		tabelaNCM(session);
+		
 		criarParametrosSistema(session);
 		criarInterfaceExecucao(session);
 		criarEventoExecucao(session);
