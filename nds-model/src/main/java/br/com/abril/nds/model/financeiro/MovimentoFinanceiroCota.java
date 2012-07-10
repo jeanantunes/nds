@@ -1,4 +1,4 @@
- package br.com.abril.nds.model.financeiro;
+package br.com.abril.nds.model.financeiro;
 
 import java.util.ArrayList;
 import java.util.List;

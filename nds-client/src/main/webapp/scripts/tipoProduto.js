@@ -2,11 +2,17 @@ function TipoProduto() {
 
 	this.initGrid();
 	this.bindEvents();
+	
+	this.ncm = {
+		id : null,
+		codigo : null
+	};
+	
 	this.tipoProduto = {
 		id : null,
 		codigo : null,
 		codigoNBM : null,
-		codigoNCM : null,
+		ncm : null,
 		descricao : null,
 		grupoProduto : null
 	};
@@ -56,11 +62,9 @@ TipoProduto.prototype.initGrid = function() {
 													if (!value.cell.codigo) {
 														value.cell.codigo = "";
 													}
-													
-													if (!value.cell.codigoNCM) {
-														value.cell.codigoNCM = "";
-													}
-														
+																
+													value.cell.ncm = value.cell.ncm.codigo;
+								
 													if (!value.cell.codigoNBM) {
 														value.cell.codigoNBM = "";
 													}	
@@ -85,7 +89,7 @@ TipoProduto.prototype.initGrid = function() {
 							align : 'left'
 						}, {
 							display : 'Código NCM',
-							name : 'codigoNCM',
+							name : 'ncm',
 							width : 150,
 							sortable : true,
 							align : 'left'
@@ -151,8 +155,11 @@ TipoProduto.prototype.edita = function(id) {
 			
 			_this.novo("Edita Tipo Produto", true);
 			_this.tipoProduto = data.tipoProduto;
+			_this.ncm.codigo = data.tipoProduto.codigoNCM;
+			_this.ncm.id = data.tipoProduto.idNcm;
+			_this.tipoProduto.ncm = _this.ncm;
 			_this.dataBind();
-
+			
 		}
 
 	}, null, true);
@@ -165,7 +172,10 @@ TipoProduto.prototype.edita = function(id) {
  */
 TipoProduto.prototype.dataBind = function() {
 	$("#tipoProdutoNovoNBM").val(this.tipoProduto.codigoNBM);
-	$("#tipoProdutoNovoNCM").val(this.tipoProduto.codigoNCM);
+	$("#tipoProdutoNovoNCM").val("");
+	if(this.tipoProduto.ncm !=null){
+	    $("#tipoProdutoNovoNCM").val(this.tipoProduto.ncm.codigo);
+	}
 	$("#tipoProdutoNovoCodigo").val(this.tipoProduto.codigo);
 	$("#tipoProdutoNovoDescricao").val(this.tipoProduto.descricao);
 };
@@ -175,7 +185,8 @@ TipoProduto.prototype.dataBind = function() {
  */
 TipoProduto.prototype.dataUnBind = function() {
 	this.tipoProduto.codigoNBM = $("#tipoProdutoNovoNBM").val();
-	this.tipoProduto.codigoNCM = $("#tipoProdutoNovoNCM").val();
+	this.ncm.codigo = $("#tipoProdutoNovoNCM").val();
+	this.tipoProduto.ncm = this.ncm;
 	this.tipoProduto.codigo = $("#tipoProdutoNovoCodigo").val();
 	this.tipoProduto.descricao = $("#tipoProdutoNovoDescricao").val();
 };
@@ -277,9 +288,11 @@ TipoProduto.prototype.limparForm = function() {
 	this.tipoProduto.id = null;
 	this.tipoProduto.codigo = null;
 	this.tipoProduto.codigoNBM = null;
-	this.tipoProduto.codigoNCM = null;
 	this.tipoProduto.descricao = null;
 	this.tipoProduto.grupoProduto = null;
+	this.ncm.id = null;
+	this.ncm.codigo = null;
+	this.tipoProduto.ncm = this.ncm;
 	this.dataBind();
 };
 
@@ -306,7 +319,9 @@ TipoProduto.prototype.remove = function(id) {
 				$(this).dialog("close");
 			}
 		},
-		beforeClose : clearMessageDialogTimeout
+		beforeClose: function() {
+			clearMessageDialogTimeout();
+		}
 	});
 
 	return false;
@@ -387,6 +402,8 @@ TipoProduto.prototype.novo = function(title, edita) {
 				$(this).dialog("close");
 			}
 		},
-		beforeClose : clearMessageDialogTimeout
+		beforeClose: function() {
+			clearMessageDialogTimeout();
+		}
 	});
 };

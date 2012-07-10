@@ -4,19 +4,19 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-
 import org.springframework.beans.factory.annotation.Autowired;
-
+import br.com.abril.nds.client.vo.TipoProdutoVO;
 import br.com.abril.nds.client.vo.ValidacaoVO;
+import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.TipoProdutoDTO;
 import br.com.abril.nds.dto.filtro.FiltroTipoProdutoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.TipoProduto;
+import br.com.abril.nds.model.fiscal.NCM;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.TipoProdutoService;
@@ -52,10 +52,23 @@ public class TipoProdutoController {
 	@Autowired
 	private HttpSession session;
 	
+	private static List<ItemDTO<Long,String>> listaNcm =  new ArrayList<ItemDTO<Long,String>>();   
+	 
 	private final static String FILTRO = "filtro";
+	
+	private void montarComboNcm(){
+		List<NCM> ncmAll = this.tipoProdutoService.obterListaNCM();
+		for (NCM item:ncmAll){
+			listaNcm.add(new ItemDTO<Long,String>(item.getCodigo(),item.getCodigo()+"-"+item.getDescricao()));
+		}
+	}
 	
 	@Path("/")
 	public void index() {
+		
+		listaNcm.clear();
+		this.montarComboNcm();
+		result.include("listaNcm",listaNcm);
 		
 	}
 	
@@ -77,20 +90,40 @@ public class TipoProdutoController {
 					"Nenhum tipo de produto foi encontrado"));
 		}
 		
-		this.result.use(FlexiGridJson.class).from(listaTipoProdutos)
-			.total(quantidade.intValue()).page(page).serialize();
+		this.result.use(FlexiGridJson.class).noReference().from(listaTipoProdutos)
+			.total(quantidade.intValue()).page(page).exclude("listaProdutos").serialize();
 	}
 	
 	@Post("/getById.json")
 	public void buscaPorId(Long id) {
-		
+
 		TipoProduto tipoProduto = this.tipoProdutoService.buscaPorId(id);
 		
-		this.result.use(Results.json()).from(tipoProduto, "tipoProduto").serialize();
+		TipoProdutoVO tipoProdutoVO = new TipoProdutoVO(tipoProduto.getId().toString(),
+				                                        (tipoProduto.getNcm()!=null?tipoProduto.getNcm().getId().toString():""),
+				                                        tipoProduto.getCodigo().toString(),
+				                                        tipoProduto.getDescricao(),
+				                                        (tipoProduto.getNcm()!=null?tipoProduto.getNcm().getCodigo().toString():""),
+				                                        tipoProduto.getCodigoNBM(),
+				                                        tipoProduto.getGrupoProduto());
+		
+		this.result.use(Results.json()).from(tipoProdutoVO, "tipoProduto").serialize();
 	}
 	
 	@Post("/salva.json")
 	public void salvar(TipoProduto tipoProduto) {
+		
+		Long codigoNcm = tipoProduto.getNcm().getCodigo();
+		NCM ncm = null;
+		if (codigoNcm!=null && codigoNcm>0){
+			ncm = this.tipoProdutoService.obterNCMporCodigo(codigoNcm);
+		}
+		
+		if(ncm==null){
+			throw new ValidacaoException(TipoMensagem.WARNING, "O campo [Código NCM] é obrigatório.");
+		}
+		
+		tipoProduto.setNcm(ncm);
 		
 		this.valida(tipoProduto);
 			
@@ -210,7 +243,7 @@ public class TipoProdutoController {
 			
 				tipoProdutoDTO.setCodigo(tipoProduto.getCodigo());
 				tipoProdutoDTO.setCodigoNBM(tipoProduto.getCodigoNBM());
-				tipoProdutoDTO.setCodigoNCM(tipoProduto.getCodigoNCM());
+				tipoProdutoDTO.setCodigoNCM(Long.valueOf(tipoProduto.getNcm().getCodigo()));
 				tipoProdutoDTO.setDescricao(tipoProduto.getDescricao());
 			
 				lista.add(tipoProdutoDTO);

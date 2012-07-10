@@ -9,7 +9,14 @@
 <title>NDS - Novo Distrib</title>
 
 <script type="text/javascript">
-
+	
+	$(function() {
+		//Define Botão Pesquisar como padrão ao pressionar Enter.
+		AcaoEnter.definir("idBotaoPesquisar");
+		//Define foco inicial no campo Data Lançamento.
+		$('#idDataLancamento').focus();
+	});
+	
 	function gerarCheckbox(id,name,idLancamento,selecionado) {
 		var html = "";
 		html+= ' <input ';
@@ -306,7 +313,7 @@
 						<td width="111">
 							<span class="bt_pesquisar">
 <!-- PESQUISAR -->								
-								<a href="javascript:;" onclick="cliquePesquisar();">Pesquisar</a>
+								<a id="idBotaoPesquisar" href="javascript:;" onclick="cliquePesquisar();">Pesquisar</a>
 							
 							 </span>
 						</td>

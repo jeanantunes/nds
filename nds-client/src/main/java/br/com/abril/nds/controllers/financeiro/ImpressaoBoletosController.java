@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -17,6 +18,7 @@ import br.com.abril.nds.client.vo.RotaRoteiroVO;
 import br.com.abril.nds.dto.GeraDividaDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.filtro.FiltroDividaGeradaDTO;
+import br.com.abril.nds.exception.GerarCobrancaValidacaoException;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.cadastro.Box;
@@ -242,7 +244,12 @@ public class ImpressaoBoletosController {
 	@Post
 	public void gerarDivida(){
 
-		this.gerarCobrancaService.gerarCobranca(null, this.getUsuario().getId(), true);
+		try {
+			this.gerarCobrancaService.gerarCobranca(null, this.getUsuario().getId(), true, new HashSet<String>());
+		} catch (GerarCobrancaValidacaoException e) {
+			
+			throw e.getValidacaoException();
+		}
 		
 		throw new ValidacaoException(TipoMensagem.SUCCESS, "As dividas foram geradas com sucesso.");
 	}

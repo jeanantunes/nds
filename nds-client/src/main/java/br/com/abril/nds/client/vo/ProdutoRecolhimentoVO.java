@@ -14,6 +14,8 @@ public class ProdutoRecolhimentoVO {
 	
 	private Integer sequencia;
 	
+	private Long idProdutoEdicao;
+	
 	private String codigoProduto;
 	
 	private String nomeProduto;
@@ -328,6 +330,20 @@ public class ProdutoRecolhimentoVO {
 	 */
 	public void setBloqueioMatrizFechada(boolean bloqueioMatrizFechada) {
 		this.bloqueioMatrizFechada = bloqueioMatrizFechada;
+	}
+
+	/**
+	 * @return the idProdutoEdicao
+	 */
+	public Long getIdProdutoEdicao() {
+		return idProdutoEdicao;
+	}
+
+	/**
+	 * @param idProdutoEdicao the idProdutoEdicao to set
+	 */
+	public void setIdProdutoEdicao(Long idProdutoEdicao) {
+		this.idProdutoEdicao = idProdutoEdicao;
 	}
 
 }

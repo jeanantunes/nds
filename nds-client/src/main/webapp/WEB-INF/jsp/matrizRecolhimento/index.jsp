@@ -1,8 +1,14 @@
 	<head>
 		
 		<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
+		
+		<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/balanceamento.js"></script>
 	
 		<script type="text/javascript">
+
+			var pathTela = "${pageContext.request.contextPath}";
+
+			var balanceamento = new Balanceamento(pathTela, "balanceamento");
 	
 			function verificarBalanceamentosAlterados(funcao) {
 				
@@ -228,7 +234,11 @@
 				}
 				
 				$.each(resultado.rows, function(index, row) {
+
+					var idProdutoEdicao = row.cell.idProdutoEdicao;
+					var nomeProduto = row.cell.nomeProduto;
 					
+					row.cell.nomeProduto = balanceamento.getLinkProduto(idProdutoEdicao, nomeProduto);
 					row.cell.sequencia = gerarInputSequencia(row);
 					row.cell.novaData = gerarHTMLNovaData(row);
 					row.cell.reprogramar = gerarCheckReprogramar(row);
@@ -240,7 +250,7 @@
 				
 				return resultado;
 			}
-			
+
 			function gerarInputSequencia(row) {
 				
 				var retornoHTML;
@@ -703,6 +713,7 @@
 				
 				$(".balanceamentoGrid").flexOptions({
 					url: "${pageContext.request.contextPath}/devolucao/balanceamentoMatriz/exibirMatrizFornecedor",
+					preProcess: executarPreProcessamento,
 					onSuccess: executarAposProcessamento,
 					params: null,
 				    newp: 1,
@@ -892,6 +903,25 @@
 				
 				$("#checkAllReprogramar").attr("checked", false);
 			}
+
+			function mostarDetalhesProduto(idProdutoEdicao) {
+
+				var data = [];
+				
+				data.push({name:'idProdutoEdicao', value: idProdutoEdicao});
+				
+				$.postJSON(
+					"${pageContext.request.contextPath}/cadastro/edicao/obterDetalheProduto.json", 
+					data,
+					function(result) {
+						balanceamento.popularDetalheProduto(result);
+						balanceamento.popup_detalhes_prod("#dialog-detalhe-produto" );
+					},
+					function() {
+						$("#dialog-detalhe-produto").hide();
+					}
+				);
+			}
 			
 			$(function() {
 	
@@ -1079,6 +1109,10 @@
 				</table>
 			</div>
 		</fieldset>
+		
+		<div id="dialog-detalhe-produto" title="Detalhes do Produto" style="display:none;">
+    		<jsp:include page="../produtoEdicao/detalheProduto.jsp" />
+		</div>
 		
 		<div class="linha_separa_fields">&nbsp;</div>
 		

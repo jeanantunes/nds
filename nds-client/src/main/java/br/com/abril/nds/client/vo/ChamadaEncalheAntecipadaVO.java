@@ -17,6 +17,7 @@ public class ChamadaEncalheAntecipadaVO implements Serializable {
 	private Long id;
 	private Long numeroEdicao;
 	private String codigoProduto;
+	private Long codigoChamdaEncalhe;
 	
 	@Export(label = "Box", exhibitionOrder = 1)
 	private String box;
@@ -30,7 +31,18 @@ public class ChamadaEncalheAntecipadaVO implements Serializable {
 	@Export(label = "Qtde.Exemplares",alignment = Alignment.CENTER, exhibitionOrder = 4)
 	private String qntExemplares;
 	
-
+	/**
+	 * @return the codigoChamdaEncalhe
+	 */
+	public Long getCodigoChamdaEncalhe() {
+		return codigoChamdaEncalhe;
+	}
+	/**
+	 * @param codigoChamdaEncalhe the codigoChamdaEncalhe to set
+	 */
+	public void setCodigoChamdaEncalhe(Long codigoChamdaEncalhe) {
+		this.codigoChamdaEncalhe = codigoChamdaEncalhe;
+	}
 	/**
 	 * @return the numeroEdicao
 	 */

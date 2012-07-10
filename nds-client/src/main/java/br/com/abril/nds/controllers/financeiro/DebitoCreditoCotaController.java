@@ -3,6 +3,7 @@ package br.com.abril.nds.controllers.financeiro;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -1008,8 +1009,15 @@ public class DebitoCreditoCotaController {
 	
 	private String getValorSemMascara(String valor) {
 
-		valor = valor.replaceAll("\\.", "");
-		valor = valor.replaceAll(",", "\\.");
+		String chr = String.valueOf(valor.charAt(valor.length()-3));
+		if (",".equals(chr)){
+		    valor = valor.replaceAll("\\.", "");
+		    valor = valor.replaceAll(",", "\\.");
+		}
+		
+		if (".".equals(chr)){
+		    valor = valor.replaceAll(",", "");
+		}
 
 		return valor;
 	}

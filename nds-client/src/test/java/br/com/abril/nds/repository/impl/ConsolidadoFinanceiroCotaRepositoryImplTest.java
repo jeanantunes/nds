@@ -43,6 +43,7 @@ import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 import br.com.abril.nds.model.fiscal.CFOP;
 import br.com.abril.nds.model.fiscal.ItemNotaFiscalEntrada;
+import br.com.abril.nds.model.fiscal.NCM;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaFornecedor;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
 import br.com.abril.nds.model.planejamento.Estudo;
@@ -93,7 +94,10 @@ public class ConsolidadoFinanceiroCotaRepositoryImplTest extends AbstractReposit
 		Usuario usuario = Fixture.usuarioJoao();
 		save(usuario);
 		
-		TipoProduto tipoProduto = Fixture.tipoRevista();
+		NCM ncmRevistas = Fixture.ncm(49029000l,"REVISTAS","KG");
+		save(ncmRevistas);
+		
+		TipoProduto tipoProduto = Fixture.tipoRevista(ncmRevistas);
 		save(tipoProduto);
 		
 		TipoFornecedor tipoFornecedor = Fixture.tipoFornecedorPublicacao();
@@ -220,7 +224,10 @@ public class ConsolidadoFinanceiroCotaRepositoryImplTest extends AbstractReposit
 		Usuario usuario = Fixture.usuarioJoao();
 		save(usuario);
 		
-		TipoProduto tipoProduto = Fixture.tipoRevista();
+		NCM ncmRevistas = Fixture.ncm(49029000l,"REVISTAS","KG");
+		save(ncmRevistas);
+		
+		TipoProduto tipoProduto = Fixture.tipoRevista(ncmRevistas);
 		save(tipoProduto);
 		
 		TipoFornecedor tipoFornecedor = Fixture.tipoFornecedorPublicacao();

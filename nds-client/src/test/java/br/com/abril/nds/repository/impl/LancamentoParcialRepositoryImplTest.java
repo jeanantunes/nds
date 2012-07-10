@@ -17,6 +17,7 @@ import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.TipoFornecedor;
 import br.com.abril.nds.model.cadastro.TipoProduto;
+import br.com.abril.nds.model.fiscal.NCM;
 import br.com.abril.nds.model.planejamento.LancamentoParcial;
 import br.com.abril.nds.model.planejamento.StatusLancamentoParcial;
 import br.com.abril.nds.repository.LancamentoParcialRepository;
@@ -42,7 +43,10 @@ public class LancamentoParcialRepositoryImplTest extends AbstractRepositoryImplT
 		fornecedorFC = Fixture.fornecedorFC(tipoFornecedorPublicacao);
 		save(fornecedorFC);
 		
-		TipoProduto tipoProdutoRevista = Fixture.tipoRevista();
+		NCM ncmRevistas = Fixture.ncm(49029000l,"REVISTAS","KG");
+		save(ncmRevistas);
+		
+		TipoProduto tipoProdutoRevista = Fixture.tipoRevista(ncmRevistas);
 		save(tipoProdutoRevista);
 		
 		produtoVeja = Fixture.produtoVeja(tipoProdutoRevista);

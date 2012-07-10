@@ -29,11 +29,16 @@
 		<jsp:include page="../messagesDialog.jsp" />  
 		<table width="442" border="0" cellspacing="2" cellpadding="2">
 			<tbody>
-				<tr>
+				<tr>	
 					<td width="111"><strong>C&oacute;digo NCM:</strong></td>
 					<td width="317">
-						<input name="tipoProdutoNovoNCM" id="tipoProdutoNovoNCM" type="text" style="width: 100px;">
-					</td>
+						<select name="tipoProdutoNovoNCM" id="tipoProdutoNovoNCM"  style="width:100px;">
+						    <option value=""></option>
+		                    <c:forEach varStatus="counter" var="ncm" items="${listaNcm}">
+						       <option value="${ncm.key}">${ncm.value}</option>
+						    </c:forEach>
+		                </select>
+					</td>	
 				</tr>
 				<tr>
 					<td width="111"><strong>C&oacute;digo NBM:</strong></td>
@@ -80,8 +85,8 @@
               		<td width="80">C&oacute;digo NCM:</td>
               		<td width="133"><input type="text" name="tipoProdutoPesquisaCodigoNCM" id="tipoProdutoPesquisaCodigoNCM" style="width:100px;"></td>
              
-             		 <td width="50">C&oacute;digo NBM:</td>
-              		 <td width="133"><input type="text" name="tipoProdutoPesquisaCodigoNBM" id="tipoProdutoPesquisaCodigoNBM" style="width:100px;"></td>
+             		<td width="50">C&oacute;digo NBM:</td>
+              		<td width="133"><input type="text" name="tipoProdutoPesquisaCodigoNBM" id="tipoProdutoPesquisaCodigoNBM" style="width:100px;"></td>
               </tr>
             </tr>
           </tbody>
