@@ -3991,7 +3991,7 @@ public class DataLoader {
 	private static void criarDistribuidor(Session session) {
 
 		PessoaJuridica juridicaDistrib = Fixture.pessoaJuridica("Distribuidor Acme",
-				"56003315000147", "333.333.333.333", "distrib_acme@mail.com", "99.999-9");
+				"56003315000147", "333333333333", "distrib_acme@mail.com", "99.999-9");
 		save(session, juridicaDistrib);
 
 		//FORMAS DE COBRANÇA DA COTA
@@ -4721,7 +4721,7 @@ public class DataLoader {
 		for(Integer i=0;i<10; i++) {
 
 			PessoaJuridica juridica = Fixture.pessoaJuridica("PessoaJ"+i,
-					"00.000.000/0001-00", "000.000.000.000", "acme@mail.com", "99.999-9");
+					"00.000.000/0001-00", "000000000000", "acme@mail.com", "99.999-9");
 			session.save(juridica);
 
 			TipoFornecedor tipoFornecedorPublicacao = Fixture.tipoFornecedorPublicacao();
@@ -4952,13 +4952,13 @@ public class DataLoader {
 
 	private static void criarPessoas(Session session){
 		juridicaAcme = Fixture.pessoaJuridica("Acme",
-				"10000000000100", "000.000.000.000", "sys.discover@gmail.com", "99.999-9");
+				"10000000000100", "000000000000", "sys.discover@gmail.com", "99.999-9");
 		juridicaDinap = Fixture.pessoaJuridica("Dinap",
-				"11111111000111", "111.111.111.111", "sys.discover@gmail.com", "99.999-9");
+				"11111111000111", "111111111111", "sys.discover@gmail.com", "99.999-9");
 		juridicaFc = Fixture.pessoaJuridica("FC",
-				"22222222000122", "222.222.222.222", "sys.discover@gmail.com", "99.999-9");
+				"22222222000122", "222222222222", "sys.discover@gmail.com", "99.999-9");
 		juridicaValida = Fixture.pessoaJuridica("Juridica Valida",
-				"93081738000101", "333.333.333.333", "sys.discover@gmail.com", "99.999-9");
+				"93081738000101", "333333333333", "sys.discover@gmail.com", "99.999-9");
 
 		manoel = Fixture.pessoaFisica("10732815665",
 				"sys.discover@gmail.com", "Manoel da Silva");
@@ -5225,7 +5225,7 @@ public class DataLoader {
 		for(Integer i=1000;i<1050; i++) {
 
 			PessoaJuridica juridica = Fixture.pessoaJuridica("PessoaJ"+i,
-					"30.000.000/0001-00", "000.000.000.000", "acme@mail.com", "99.999-9");
+					"30.000.000/0001-00", "000000000000", "acme@mail.com", "99.999-9");
 			save(session,juridica);
 
 			Fornecedor fornecedor = Fixture.fornecedor(juridica, SituacaoCadastro.ATIVO, true, tipoFornecedorPublicacao, null);
