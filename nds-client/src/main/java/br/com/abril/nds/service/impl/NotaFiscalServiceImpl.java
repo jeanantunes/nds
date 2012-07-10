@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.client.util.BigDecimalUtil;
 import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.dto.ConsultaLoteNotaFiscalDTO;
 import br.com.abril.nds.dto.RetornoNFEDTO;
@@ -74,6 +75,8 @@ import br.com.abril.nds.service.TributacaoService;
 import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.export.fiscal.nota.NFEExporter;
+
+import static br.com.abril.nds.client.util.BigDecimalUtil.soma;
 
 /**
  * Classe de implementação de serviços referentes a entidade
@@ -435,6 +438,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		enderecoRepository.detach(endereco);
 		endereco.setId(null);
 		endereco.setPessoa(null);
+		enderecoRepository.adicionar(endereco);
 		identificacaoEmitente.setEndereco(endereco);
 
 		TelefoneDistribuidor telefoneDistribuidor = distribuidorRepository
@@ -448,6 +452,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		telefoneRepository.detach(telefone);
 		telefone.setId(null);
 		telefone.setPessoa(null);
+		telefoneRepository.adicionar(telefone);
 		identificacaoEmitente.setTelefone(telefone);
 		// TODO: Como definir o Regime Tributario
 		identificacaoEmitente
@@ -485,8 +490,9 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		enderecoRepository.detach(endereco);
 		endereco.setId(null);
 		endereco.setPessoa(null);
-
+		enderecoRepository.adicionar(endereco);
 		destinatario.setEndereco(endereco);
+		
 
 		if (cota.getPessoa() instanceof PessoaJuridica) {
 			PessoaJuridica pessoaJuridica = (PessoaJuridica) cota.getPessoa();
@@ -508,6 +514,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		telefoneRepository.detach(telefone);
 		telefone.setId(null);
 		telefone.setPessoa(null);
+		telefoneRepository.adicionar(telefone);
 		destinatario.setTelefone(telefone);
 
 		return destinatario;
@@ -548,6 +555,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		produtoServico.setUnidade(produtoEdicao.getProduto().getTipoProduto().getNcm().getUnidadeMedida());
 		produtoServico.setValorDesconto(produtoEdicao.getDesconto());
 		produtoServico.setCfop(cfop);
+		produtoServico.setValorTotalBruto(valorItem.multiply(quantidade));
 
 		EncargoFinanceiroProduto encargoFinanceiroProduto = tributacaoService
 				.calcularTributoProduto(raizCNPJ, tipoOperacao, ufOrigem,
@@ -590,11 +598,24 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 
 		notaFiscal.setProdutosServicos(new ArrayList<ProdutoServico>(
 				listItemNotaFiscal.size()));
-		int cfop ;
+		int cfop;
 		
 		if(ufOrigem.equals(ufDestino)){
+			if (tipoNotaFiscal.getCfopEstado() == null) {
+				throw new ValidacaoException(TipoMensagem.ERROR,
+						"CFOP do estado para tipo nota fiscal " + idTipoNotaFiscal
+								+ " não encontrada!");
+			}
+			
+			
 			cfop = Integer.valueOf(tipoNotaFiscal.getCfopEstado().getCodigo());
 		}else{
+			
+			if (tipoNotaFiscal.getCfopOutrosEstados() == null) {
+				throw new ValidacaoException(TipoMensagem.ERROR,
+						"CFOP para outros estados para tipo nota fiscal " + idTipoNotaFiscal
+								+ " não encontrada!");
+			}
 			cfop = Integer.valueOf(tipoNotaFiscal.getCfopOutrosEstados().getCodigo());
 		}
 		
@@ -616,43 +637,26 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 			
 			EncargoFinanceiro encargoFinanceiro =  produtoServico.getEncargoFinanceiro();
 			
-			
-			if(informacaoValoresTotais.getValorProdutos() == null){
-				informacaoValoresTotais.setValorProdutos(produtoServico.getValorTotalBruto());
-			}else{
-				informacaoValoresTotais.setValorProdutos(informacaoValoresTotais.getValorProdutos().add(produtoServico.getValorTotalBruto()));
-			}		
+			informacaoValoresTotais.setValorProdutos(soma(informacaoValoresTotais.getValorProdutos(),produtoServico.getValorTotalBruto()));					
 			
 			if(encargoFinanceiro instanceof EncargoFinanceiroProduto){
 				EncargoFinanceiroProduto encargoFinanceiroProduto = (EncargoFinanceiroProduto) encargoFinanceiro;
 				ICMS icms =  encargoFinanceiroProduto.getIcms();				
 				
-				if(informacaoValoresTotais.getValorBaseCalculoICMS() == null){
-					informacaoValoresTotais.setValorBaseCalculoICMS(icms.getValor());
-				}else{
-					informacaoValoresTotais.setValorBaseCalculoICMS(informacaoValoresTotais.getValorBaseCalculoICMS().add(icms.getValorBaseCalculo()));
-				}
+					informacaoValoresTotais.setValorBaseCalculoICMS(soma(informacaoValoresTotais.getValorBaseCalculoICMS(),icms.getValorBaseCalculo()));				
 				
-				if(informacaoValoresTotais.getValorICMS() == null){
-					informacaoValoresTotais.setValorICMS(icms.getValor());
-				}else{
-					informacaoValoresTotais.setValorICMS(informacaoValoresTotais.getValorICMS().add(icms.getValor()));
-				}
+					informacaoValoresTotais.setValorICMS(soma(informacaoValoresTotais.getValorICMS(),icms.getValor()));
+			
 				
 				IPI ipi =  encargoFinanceiroProduto.getIpi();			
+			
+					informacaoValoresTotais.setValorIPI(soma(informacaoValoresTotais.getValorIPI(),ipi.getValor()));
 				
-				if(informacaoValoresTotais.getValorIPI() == null){
-					informacaoValoresTotais.setValorIPI(ipi.getValor());
-				}else{
-					informacaoValoresTotais.setValorIPI(informacaoValoresTotais.getValorIPI().add(ipi.getValor()));
-				}
 				COFINS cofins =  encargoFinanceiroProduto.getCofins();			
 				
-				if(informacaoValoresTotais.getValorCOFINS() == null){
-					informacaoValoresTotais.setValorCOFINS(cofins.getValor());
-				}else{
-					informacaoValoresTotais.setValorCOFINS(informacaoValoresTotais.getValorCOFINS().add(cofins.getValor()));
-				}
+				
+				informacaoValoresTotais.setValorCOFINS(soma(informacaoValoresTotais.getValorCOFINS(),cofins.getValor()));
+				
 				
 			}
 		}
@@ -662,7 +666,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		notaFiscal.setInformacaoAdicional(informacaoAdicional);
 		
 		
-		notaFiscalDAO.merge(notaFiscal);
+		notaFiscalDAO.adicionar(notaFiscal);
 	}
 	
 	/**
