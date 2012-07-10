@@ -184,6 +184,7 @@ import br.com.abril.nds.model.planejamento.StatusLancamentoParcial;
 import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamentoParcial;
+import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.util.DateUtil;
 
@@ -970,7 +971,9 @@ public class DataLoader {
 		gerarLogExecucaoInterfaces(session);
 
 		gerarLogradouros(session);
-		
+
+		gerarPermissoes(session);
+
 		//criarNovaNotaFiscal(session);
 		
 	}
@@ -997,6 +1000,444 @@ public class DataLoader {
 		criarFeriado(session);		
 	}
 	
+	public static void gerarPermissoes(Session session) {
+
+		List<Permissao> permissoes = new ArrayList<Permissao>();
+		
+		Permissao permissaoRoleCadastroProduto = new Permissao();
+		permissaoRoleCadastroProduto.setNome("ROLE_CADASTRO_PRODUTO");
+		permissaoRoleCadastroProduto.setDescricao("Permissão para acessar a funcionalidade Cadastro de Produto");
+		permissoes.add(permissaoRoleCadastroProduto);
+
+		Permissao permissaoRoleCadastroEdicao = new Permissao();
+		permissaoRoleCadastroEdicao.setNome("ROLE_CADASTRO_EDICAO");
+		permissaoRoleCadastroEdicao.setDescricao("Permissão para acessar a funcionalidade Cadastro de Edição");
+		permissoes.add(permissaoRoleCadastroEdicao);
+
+		Permissao permissaoRoleCadastroCota = new Permissao();
+		permissaoRoleCadastroCota.setNome("ROLE_CADASTRO_COTA");
+		permissaoRoleCadastroCota.setDescricao("Permissão para acessar a funcionalidade Cadastro de Cota");
+		permissoes.add(permissaoRoleCadastroCota);
+
+		Permissao permissaoRoleCadastroAlteracaoCota = new Permissao();
+		permissaoRoleCadastroAlteracaoCota.setNome("ROLE_CADASTRO_ALTERACAO_COTA");
+		permissaoRoleCadastroAlteracaoCota.setDescricao("Permissão para acessar a funcionalidade Alteração / Cota");
+		permissoes.add(permissaoRoleCadastroAlteracaoCota);
+
+		Permissao permissaoRoleCadastroFiador = new Permissao();
+		permissaoRoleCadastroFiador.setNome("ROLE_CADASTRO_FIADOR");
+		permissaoRoleCadastroFiador.setDescricao("Permissão para acessar a funcionalidade Cadastro de Fiador");
+		permissoes.add(permissaoRoleCadastroFiador);
+
+		Permissao permissaoRoleCadastroEntregador = new Permissao();
+		permissaoRoleCadastroEntregador.setNome("ROLE_CADASTRO_ENTREGADOR");
+		permissaoRoleCadastroEntregador.setDescricao("Permissão para acessar a funcionalidade Cadastro de Entregador");
+		permissoes.add(permissaoRoleCadastroEntregador);
+
+		Permissao permissaoRoleCadastroTransportador = new Permissao();
+		permissaoRoleCadastroTransportador.setNome("ROLE_CADASTRO_TRANSPORTADOR");
+		permissaoRoleCadastroTransportador.setDescricao("Permissão para acessar a funcionalidade Cadastro de Transportador");
+		permissoes.add(permissaoRoleCadastroTransportador);
+
+		Permissao permissaoRoleCadastroFornecedor = new Permissao();
+		permissaoRoleCadastroFornecedor.setNome("ROLE_CADASTRO_FORNECEDOR");
+		permissaoRoleCadastroFornecedor.setDescricao("Permissão para acessar a funcionalidade Cadastro de Fornecedor");
+		permissoes.add(permissaoRoleCadastroFornecedor);
+
+		Permissao permissaoRoleCadastroRoteirizacao = new Permissao();
+		permissaoRoleCadastroRoteirizacao.setNome("ROLE_CADASTRO_ROTEIRIZACAO");
+		permissaoRoleCadastroRoteirizacao.setDescricao("Permissão para acessar a funcionalidade Cadastro de Roteirização");
+		permissoes.add(permissaoRoleCadastroRoteirizacao);
+
+		Permissao permissaoRoleCadastroBox = new Permissao();
+		permissaoRoleCadastroBox.setNome("ROLE_CADASTRO_BOX");
+		permissaoRoleCadastroBox.setDescricao("Permissão para acessar a funcionalidade Cadastro de Box");
+		permissoes.add(permissaoRoleCadastroBox);
+
+		Permissao permissaoRoleCadastroBanco = new Permissao();
+		permissaoRoleCadastroBanco.setNome("ROLE_CADASTRO_BANCO");
+		permissaoRoleCadastroBanco.setDescricao("Permissão para acessar a funcionalidade Cadastro de Banco");
+		permissoes.add(permissaoRoleCadastroBanco);
+
+		Permissao permissaoRoleCadastroRelatorioGarantias = new Permissao(); 
+		permissaoRoleCadastroRelatorioGarantias.setNome("ROLE_CADASTRO_RELATORIO_GARANTIAS"); 
+		permissaoRoleCadastroRelatorioGarantias.setDescricao("Permissão para acessar a funcionalidade Cadastro de Relatório de Garantias"); 
+		permissoes.add(permissaoRoleCadastroRelatorioGarantias);
+		
+		Permissao permissaoRoleCadastroHelp = new Permissao(); 
+		permissaoRoleCadastroHelp.setNome("ROLE_CADASTRO_HELP"); 
+		permissaoRoleCadastroHelp.setDescricao("Permissão para acessar a funcionalidade Cadastro de Banco"); 
+		permissoes.add(permissaoRoleCadastroHelp);
+
+		Permissao permissaoRoleFinanceiroBaixaBancaria = new Permissao(); 
+		permissaoRoleFinanceiroBaixaBancaria.setNome("ROLE_FINANCEIRO_BAIXA_BANCARIA"); 
+		permissaoRoleFinanceiroBaixaBancaria.setDescricao("Permissão para acessar a funcionalidade Financeiro Baixa Bancária"); 
+		permissoes.add(permissaoRoleFinanceiroBaixaBancaria);
+		
+		Permissao permissaoRoleFinanceiroBaixaBancariaManual = new Permissao(); 
+		permissaoRoleFinanceiroBaixaBancariaManual.setNome("ROLE_FINANCEIRO_BAIXA_BANCARIA_MANUAL"); 
+		permissaoRoleFinanceiroBaixaBancariaManual.setDescricao("Permissão para acessar a funcionalidade Financeiro Baixa Bancária Manual"); 
+		permissoes.add(permissaoRoleFinanceiroBaixaBancariaManual);
+		
+		Permissao permissaoRoleFinanceiroBaixaManualDividas = new Permissao(); 
+		permissaoRoleFinanceiroBaixaManualDividas.setNome("ROLE_FINANCEIRO_BAIXA_MANUAL_DIVIDAS"); 
+		permissaoRoleFinanceiroBaixaManualDividas.setDescricao("Permissão para acessar a funcionalidade Financeiro Baixa Manual de Dívidas"); 
+		permissoes.add(permissaoRoleFinanceiroBaixaManualDividas);
+		
+		Permissao permissaoRoleFinanceiroConsultaBoletosCota = new Permissao(); 
+		permissaoRoleFinanceiroConsultaBoletosCota.setNome("ROLE_FINANCEIRO_CONSULTA_BOLETOS_COTA"); 
+		permissaoRoleFinanceiroConsultaBoletosCota.setDescricao("Permissão para acessar a funcionalidade Financeiro de Consulta Boletos por Cota"); 
+		permissoes.add(permissaoRoleFinanceiroConsultaBoletosCota);
+		
+		Permissao permissaoRoleFinanceiroContaCorrente = new Permissao(); 
+		permissaoRoleFinanceiroContaCorrente.setNome("ROLE_FINANCEIRO_CONTA_CORRENTE"); 
+		permissaoRoleFinanceiroContaCorrente.setDescricao("Permissão para acessar a funcionalidade Financeiro Conta Corrente"); 
+		permissoes.add(permissaoRoleFinanceiroContaCorrente);
+		
+		Permissao permissaoRoleFinanceiroDebitosCreditosCota = new Permissao(); 
+		permissaoRoleFinanceiroDebitosCreditosCota.setNome("ROLE_FINANCEIRO_DEBITOS_CREDITOS_COTA"); 
+		permissaoRoleFinanceiroDebitosCreditosCota.setDescricao("Permissão para acessar a funcionalidade Financeiro Débitos / Créditos Cota"); 
+		permissoes.add(permissaoRoleFinanceiroDebitosCreditosCota);
+		
+		Permissao permissaoRoleFinanceiroGeracaoCobranca = new Permissao(); 
+		permissaoRoleFinanceiroGeracaoCobranca.setNome("ROLE_FINANCEIRO_GERACAO_COBRANCA"); 
+		permissaoRoleFinanceiroGeracaoCobranca.setDescricao("Permissão para acessar a funcionalidade Financeiro Geração Cobrança"); 
+		permissoes.add(permissaoRoleFinanceiroGeracaoCobranca);
+		
+		Permissao permissaoRoleFinanceiroHistoricoInadimplencia = new Permissao(); 
+		permissaoRoleFinanceiroHistoricoInadimplencia.setNome("ROLE_FINANCEIRO_HISTORICO_INADIMPLENCIA"); 
+		permissaoRoleFinanceiroHistoricoInadimplencia.setDescricao("Permissão para acessar a funcionalidade Financeiro Histórico de Inadimplência"); 
+		permissoes.add(permissaoRoleFinanceiroHistoricoInadimplencia);
+		
+		Permissao permissaoRoleFinanceiroImpressaoBoletos = new Permissao();
+		permissaoRoleFinanceiroImpressaoBoletos.setNome("ROLE_FINANCEIRO_IMPRESSAO_BOLETOS"); 
+		permissaoRoleFinanceiroImpressaoBoletos.setDescricao("Permissão para acessar a funcionalidade Financeiro Impressão de Boletos"); 
+		permissoes.add(permissaoRoleFinanceiroImpressaoBoletos);
+		
+		Permissao permissaoRoleFinanceiroManutencaoStatusCota = new Permissao(); 
+		permissaoRoleFinanceiroManutencaoStatusCota.setNome("ROLE_FINANCEIRO_MANUTENCAO_STATUS_COTA"); 
+		permissaoRoleFinanceiroManutencaoStatusCota.setDescricao("Permissão para acessar a funcionalidade Financeiro Manutenção de Status Cota"); 
+		permissoes.add(permissaoRoleFinanceiroManutencaoStatusCota);
+		
+		Permissao permissaoRoleFinanceiroParametrosCobranca = new Permissao(); 
+		permissaoRoleFinanceiroParametrosCobranca.setNome("ROLE_FINANCEIRO_PARAMETROS_COBRANCA"); 
+		permissaoRoleFinanceiroParametrosCobranca.setDescricao("Permissão para acessar a funcionalidade Financeiro Parâmetros de Cobrança"); 
+		permissoes.add(permissaoRoleFinanceiroParametrosCobranca);
+		
+		Permissao permissaoRoleFinanceiroSuspensaoCota = new Permissao();
+		permissaoRoleFinanceiroSuspensaoCota.setNome("ROLE_FINANCEIRO_SUSPENSAO_COTA"); 
+		permissaoRoleFinanceiroSuspensaoCota.setDescricao("Permissão para acessar a funcionalidade Financeiro Suspensão Cota"); 
+		permissoes.add(permissaoRoleFinanceiroSuspensaoCota);
+		
+		Permissao permissaoRoleFinanceiroWorkflowAprovacao = new Permissao();
+		permissaoRoleFinanceiroWorkflowAprovacao.setNome("ROLE_FINANCEIRO_WORKFLOW_APROVACAO"); 
+		permissaoRoleFinanceiroWorkflowAprovacao.setDescricao("Permissão para acessar a funcionalidade Financeiro Work flow de Aprovação"); 
+		permissoes.add(permissaoRoleFinanceiroWorkflowAprovacao);
+		
+		Permissao permissaoRoleFinanceiroConsignadoCota = new Permissao();
+		permissaoRoleFinanceiroConsignadoCota.setNome("ROLE_FINANCEIRO_CONSIGNADO_COTA"); 
+		permissaoRoleFinanceiroConsignadoCota.setDescricao("Permissão para acessar a funcionalidade Financeiro Consignado Cota"); 
+		permissoes.add(permissaoRoleFinanceiroConsignadoCota);
+		
+		Permissao permissaoRoleFinanceiroHelp = new Permissao(); 
+		permissaoRoleFinanceiroHelp.setNome("ROLE_FINANCEIRO_HELP"); 
+		permissaoRoleFinanceiroHelp.setDescricao("Permissão para acessar a funcionalidade Financeiro Help"); 
+		permissoes.add(permissaoRoleFinanceiroHelp);
+
+		Permissao permissaoRoleEstoqueConsultaNotas = new Permissao(); 
+		permissaoRoleEstoqueConsultaNotas.setNome("ROLE_ESTOQUE_CONSULTA_NOTAS"); 
+		permissaoRoleEstoqueConsultaNotas.setDescricao("Permissão para acessar a funcionalidade Estoque Consulta de Notas"); 
+		permissoes.add(permissaoRoleEstoqueConsultaNotas);
+		
+		Permissao permissaoRoleConsultaFaltasSobras = new Permissao(); 
+		permissaoRoleConsultaFaltasSobras.setNome("ROLE_ESTOQUE_CONSULTA_FALTAS_SOBRAS"); 
+		permissaoRoleConsultaFaltasSobras.setDescricao("Permissão para acessar a funcionalidade Estoque Consulta Faltas e Sobras"); 
+		permissoes.add(permissaoRoleConsultaFaltasSobras);
+		
+		Permissao permissaoRoleEstoqueExtratoEdicao = new Permissao(); 
+		permissaoRoleEstoqueExtratoEdicao.setNome("ROLE_ESTOQUE_EXTRATO_EDICAO"); 
+		permissaoRoleEstoqueExtratoEdicao.setDescricao("Permissão para acessar a funcionalidade Estoque Extrato de Edição"); 
+		permissoes.add(permissaoRoleEstoqueExtratoEdicao);
+		
+		Permissao permissaoRoleEstoqueLancamentoFaltasSobras = new Permissao(); 
+		permissaoRoleEstoqueLancamentoFaltasSobras.setNome("ROLE_ESTOQUE_LANCAMENTO_FALTAS_SOBRAS"); 
+		permissaoRoleEstoqueLancamentoFaltasSobras.setDescricao("Permissão para acessar a funcionalidade Estoque Lançamento Faltas e Sobras"); 
+		permissoes.add(permissaoRoleEstoqueLancamentoFaltasSobras);
+		
+		Permissao permissaoRoleEstoqueRecebimentoFisico = new Permissao(); 
+		permissaoRoleEstoqueRecebimentoFisico.setNome("ROLE_ESTOQUE_RECEBIMENTO_FISICO"); 
+		permissaoRoleEstoqueRecebimentoFisico.setDescricao("Permissão para acessar a funcionalidade Estoque Recebimento Físico"); 
+		permissoes.add(permissaoRoleEstoqueRecebimentoFisico);
+		
+		Permissao permissaoRoleEstoqueEdicoesFechadasSaldo = new Permissao(); 
+		permissaoRoleEstoqueEdicoesFechadasSaldo.setNome("ROLE_ESTOQUE_EDICOES_FECHADAS_SALDO"); 
+		permissaoRoleEstoqueEdicoesFechadasSaldo.setDescricao("Permissão para acessar a funcionalidade Estoque Edições Fechadas com Saldo"); 
+		permissoes.add(permissaoRoleEstoqueEdicoesFechadasSaldo);
+		
+		Permissao permissaoRoleEstoqueHelp = new Permissao(); 
+		permissaoRoleEstoqueHelp.setNome("ROLE_ESTOQUE_HELP"); 
+		permissaoRoleEstoqueHelp.setDescricao("Permissão para acessar a funcionalidade Estoque Help"); 
+		permissoes.add(permissaoRoleEstoqueHelp);
+
+		Permissao permissaoRoleLancamentoBalanceamentoMatriz = new Permissao(); 
+		permissaoRoleLancamentoBalanceamentoMatriz.setNome("ROLE_LANCAMENTO_BALANCEAMENTO_MATRIZ"); 
+		permissaoRoleLancamentoBalanceamentoMatriz.setDescricao("Permissão para acessar a funcionalidade Lançamento Balanceamento da Matriz"); 
+		permissoes.add(permissaoRoleLancamentoBalanceamentoMatriz);
+		
+		Permissao permissaoRoleLancamentoConsultaReparteCota = new Permissao(); 
+		permissaoRoleLancamentoConsultaReparteCota.setNome("ROLE_LANCAMENTO_CONSULTA_REPARTE_COTA"); 
+		permissaoRoleLancamentoConsultaReparteCota.setDescricao("Permissão para acessar a funcionalidade Lançamento Consulta Reparte Cota"); 
+		permissoes.add(permissaoRoleLancamentoConsultaReparteCota);
+		
+		Permissao permissaoRoleLancamentoFuroProduto = new Permissao(); 
+		permissaoRoleLancamentoFuroProduto.setNome("ROLE_LANCAMENTO_FURO_PRODUTO"); 
+		permissaoRoleLancamentoFuroProduto.setDescricao("Permissão para acessar a funcionalidade Lançamento Furo de Produto"); 
+		permissoes.add(permissaoRoleLancamentoFuroProduto);
+		
+		Permissao permissaoRoleLancamentoRelatorioVendas = new Permissao(); 
+		permissaoRoleLancamentoRelatorioVendas.setNome("ROLE_LANCAMENTO_RELATORIO_VENDAS"); 
+		permissaoRoleLancamentoRelatorioVendas.setDescricao("Permissão para acessar a funcionalidade Lançamento Relatório de Vendas"); 
+		permissoes.add(permissaoRoleLancamentoRelatorioVendas);
+		
+		Permissao permissaoRoleLancamentoVendaProduto = new Permissao(); 
+		permissaoRoleLancamentoVendaProduto.setNome("ROLE_LANCAMENTO_VENDA_PRODUTO"); 
+		permissaoRoleLancamentoVendaProduto.setDescricao("Permissão para acessar a funcionalidade Lancaçemtno Venda por Produto"); 
+		permissoes.add(permissaoRoleLancamentoVendaProduto);
+		
+		Permissao permissaoRoleLancamentoHelp = new Permissao(); 
+		permissaoRoleLancamentoHelp.setNome("ROLE_LANCAMENTO_HELP"); 
+		permissaoRoleLancamentoHelp.setDescricao("Permissão para acessar a funcionalidade Lançamento Help"); 
+		permissoes.add(permissaoRoleLancamentoHelp);
+
+		Permissao permissaoRoleExpedicaoMapaAbastecimento = new Permissao();
+		permissaoRoleExpedicaoMapaAbastecimento.setNome("ROLE_EXPEDICAO_MAPA_ABASTECIMENTO"); 
+		permissaoRoleExpedicaoMapaAbastecimento.setDescricao("Permissão para acessar a funcionalidade Expedição Mapa de Abastecimento"); 
+		permissoes.add(permissaoRoleExpedicaoMapaAbastecimento);
+		
+		Permissao permissaoRoleExpedicaoConfirmaExpedicao = new Permissao(); 
+		permissaoRoleExpedicaoConfirmaExpedicao.setNome("ROLE_EXPEDICAO_CONFIRMA_EXPEDICAO"); 
+		permissaoRoleExpedicaoConfirmaExpedicao.setDescricao("Permissão para acessar a funcionalidade Expedição Confirma Expedição"); 
+		permissoes.add(permissaoRoleExpedicaoConfirmaExpedicao);
+		
+		Permissao permissaoRoleExpedicaoConsultaResumosNFeGeradasRetornadas = new Permissao(); 
+		permissaoRoleExpedicaoConsultaResumosNFeGeradasRetornadas.setNome("ROLE_EXPEDICAO_CONSULTA_RESUMOS_NFE_GERADAS_RETORNADAS"); 
+		permissaoRoleExpedicaoConsultaResumosNFeGeradasRetornadas.setDescricao("Permissão para acessar a funcionalidade Consulta Resumos NF-e Geradas e Retornadas"); 
+		permissoes.add(permissaoRoleExpedicaoConsultaResumosNFeGeradasRetornadas);
+		
+		Permissao permissaoRoleExpedicaoGeracaoArquivosNFe = new Permissao(); 
+		permissaoRoleExpedicaoGeracaoArquivosNFe.setNome("ROLE_EXPEDICAO_GERACAO_ARQUIVOS_NFE");
+		permissaoRoleExpedicaoGeracaoArquivosNFe.setDescricao("Permissão para acessar a funcionalidade Expedição Geração de Arquivos NF-e");
+ 		permissoes.add(permissaoRoleExpedicaoGeracaoArquivosNFe);
+ 
+		Permissao permissaoRoleExpedicaoGeracaoNFe = new Permissao();
+		permissaoRoleExpedicaoGeracaoNFe.setNome("ROLE_EXPEDICAO_GERACAO_NFE");
+		permissaoRoleExpedicaoGeracaoNFe.setDescricao("Permissão para acessar a funcionalidade Expedição Geração de NF-e");
+		permissoes.add(permissaoRoleExpedicaoGeracaoNFe);
+
+		Permissao permissaoRoleExpedicaoCotaAusente = new Permissao();
+		permissaoRoleExpedicaoCotaAusente.setNome("ROLE_EXPEDICAO_COTA_AUSENTE");
+		permissaoRoleExpedicaoCotaAusente.setDescricao("Permissão para acessar a funcionalidade Expedição Cota Ausente");
+		permissoes.add(permissaoRoleExpedicaoCotaAusente);
+
+		Permissao permissaoRoleExpedicaoPainelMonitorNFe = new Permissao();
+		permissaoRoleExpedicaoPainelMonitorNFe.setNome("ROLE_EXPEDICAO_PAINEL_MONITOR_NFE");
+		permissaoRoleExpedicaoPainelMonitorNFe.setDescricao("Permissão para acessar a funcionalidade Expedição Painel Monitor NF-e");
+		permissoes.add(permissaoRoleExpedicaoPainelMonitorNFe);
+
+		Permissao permissaoRoleCadastroBanco = new Permissao();
+		permissaoRoleCadastroBanco.setNome("ROLE_EXPEDICAO_RESUMO_EXPEDICAO");
+		permissaoRoleCadastroBanco.setDescricao("Permissão para acessar a funcionalidade Cadastro de Banco");
+		permissoes.add(permissaoRoleCadastroBanco);
+
+		Permissao permissaoRoleCadastroBanco = new Permissao();
+		permissaoRoleCadastroBanco.setNome("ROLE_EXPEDICAO_ROMANEIOS");
+		permissaoRoleCadastroBanco.setDescricao("Permissão para acessar a funcionalidade Cadastro de Banco");
+		permissoes.add(permissaoRoleCadastroBanco);
+
+		Permissao permissaoRoleCadastroBanco = new Permissao();
+		permissaoRoleCadastroBanco.setNome("ROLE_EXPEDICAO_INTEGRACAO_ARQUIVO_RETORNO_NFE");
+		permissaoRoleCadastroBanco.setDescricao("Permissão para acessar a funcionalidade Cadastro de Banco");
+		permissoes.add(permissaoRoleCadastroBanco);
+
+		Permissao permissaoRoleCadastroBanco = new Permissao();
+		permissaoRoleCadastroBanco.setNome("ROLE_EXPEDICAO_HELP");
+		permissaoRoleCadastroBanco.setDescricao("Permissão para acessar a funcionalidade Cadastro de Banco");
+		permissoes.add(permissaoRoleCadastroBanco);
+
+		Permissao permissaoRoleCadastroBanco = new Permissao();
+		permissaoRoleCadastroBanco.setNome("ROLE_RECOLHIMENTO_BALANCEAMENTO_MATRIZ");
+		permissaoRoleCadastroBanco.setDescricao("Permissão para acessar a funcionalidade Cadastro de Banco");
+		permissoes.add(permissaoRoleCadastroBanco);
+
+		Permissao permissaoRoleCadastroBanco = new Permissao();
+		permissaoRoleCadastroBanco.setNome("ROLE_RECOLHIMENTO_CE_ANTECIPADA_PRODUTO");
+		permissaoRoleCadastroBanco.setDescricao("Permissão para acessar a funcionalidade Cadastro de Banco");
+		permissoes.add(permissaoRoleCadastroBanco);
+
+		Permissao permissaoRoleCadastroBanco = new Permissao();
+		permissaoRoleCadastroBanco.setNome("ROLE_RECOLHIMENTO_CHAMADAO");
+		permissaoRoleCadastroBanco.setDescricao("Permissão para acessar a funcionalidade Cadastro de Banco");
+		permissoes.add(permissaoRoleCadastroBanco);
+
+		Permissao permissaoRoleCadastroBanco = new Permissao();
+		permissaoRoleCadastroBanco.setNome("ROLE_RECOLHIMENTO_CONFERENCIA_ENCALHE_COTA");
+		permissaoRoleCadastroBanco.setDescricao("Permissão para acessar a funcionalidade Cadastro de Banco");
+		permissoes.add(permissaoRoleCadastroBanco);
+
+		Permissao permissaoRoleCadastroBanco = new Permissao();
+		permissaoRoleCadastroBanco.setNome("ROLE_RECOLHIMENTO_CONFERENCIA_ENCALHE_COTA_CONTINGENCIA");
+		permissaoRoleCadastroBanco.setDescricao("Permissão para acessar a funcionalidade Cadastro de Banco");
+		permissoes.add(permissaoRoleCadastroBanco);
+
+		Permissao permissaoRoleCadastroBanco = new Permissao();
+		permissaoRoleCadastroBanco.setNome("ROLE_RECOLHIMENTO_CONSULTA_ENCALHE_COTA");
+		permissaoRoleCadastroBanco.setDescricao("Permissão para acessar a funcionalidade Cadastro de Banco");
+		permissoes.add(permissaoRoleCadastroBanco);
+
+		Permissao permissaoRoleCadastroBanco = new Permissao();
+		permissaoRoleCadastroBanco.setNome("ROLE_RECOLHIMENTO_CONSULTA_INFORME_ENCALHE");
+		permissaoRoleCadastroBanco.setDescricao("Permissão para acessar a funcionalidade Cadastro de Banco");
+		permissoes.add(permissaoRoleCadastroBanco);
+
+		Permissao permissaoRoleCadastroBanco = new Permissao();
+		permissaoRoleCadastroBanco.setNome("ROLE_RECOLHIMENTO_CONSULTA_CE");
+		permissaoRoleCadastroBanco.setDescricao("Permissão para acessar a funcionalidade Cadastro de Banco");
+		permissoes.add(permissaoRoleCadastroBanco);
+
+		Permissao permissaoRoleCadastroBanco = new Permissao();
+		permissaoRoleCadastroBanco.setNome("ROLE_RECOLHIMENTO_LIBERACAO_ENCALHE_CONFERIDO");
+		permissaoRoleCadastroBanco.setDescricao("Permissão para acessar a funcionalidade Cadastro de Banco");
+		permissoes.add(permissaoRoleCadastroBanco);
+
+		Permissao permissaoRoleCadastroBanco = new Permissao();
+		permissaoRoleCadastroBanco.setNome("ROLE_RECOLHIMENTO_VENDA_ENCALHE");
+		permissaoRoleCadastroBanco.setDescricao("Permissão para acessar a funcionalidade Cadastro de Banco");
+		permissoes.add(permissaoRoleCadastroBanco);
+
+		Permissao permissaoRoleCadastroBanco = new Permissao();
+		permissaoRoleCadastroBanco.setNome("ROLE_RECOLHIMENTO_HELP");
+		permissaoRoleCadastroBanco.setDescricao("Permissão para acessar a funcionalidade Cadastro de Banco");
+		permissoes.add(permissaoRoleCadastroBanco);
+
+
+		Permissao permissaoRoleCadastroBanco = new Permissao();
+		permissaoRoleCadastroBanco.setNome("ROLE_DEVOLUCAO_EMISSAO_CE");
+		permissaoRoleCadastroBanco.setDescricao("Permissão para acessar a funcionalidade Cadastro de Banco");
+		permissoes.add(permissaoRoleCadastroBanco);
+
+		Permissao permissaoRoleCadastroBanco = new Permissao();
+		permissaoRoleCadastroBanco.setNome("ROLE_DEVOLUCAO_DIGICACAO_CONTAGEM_DEVOLUCAO");
+		permissaoRoleCadastroBanco.setDescricao("Permissão para acessar a funcionalidade Cadastro de Banco");
+		permissoes.add(permissaoRoleCadastroBanco);
+		
+		Permissao permissaoRoleCadastroBanco = new Permissao();
+		permissaoRoleCadastroBanco.setNome("ROLE_DEVOLUCAO_FECHAMENTO_ENCALHE");
+		permissaoRoleCadastroBanco.setDescricao("Permissão para acessar a funcionalidade Cadastro de Banco");
+		permissoes.add(permissaoRoleCadastroBanco);
+		
+		Permissao permissaoRoleCadastroBanco = new Permissao();
+		permissaoRoleCadastroBanco.setNome("ROLE_DEVOLUCAO_HELP");
+		permissaoRoleCadastroBanco.setDescricao("Permissão para acessar a funcionalidade Cadastro de Banco");
+		permissoes.add(permissaoRoleCadastroBanco);
+		
+		Permissao permissaoRoleCadastroBanco = new Permissao();
+		permissaoRoleCadastroBanco.setNome("ROLE_NFE_RETORNO_NFE");
+		permissaoRoleCadastroBanco.setDescricao("Permissão para acessar a funcionalidade Cadastro de Banco");
+		permissoes.add(permissaoRoleCadastroBanco);
+		
+		Permissao permissaoRoleCadastroBanco = new Permissao();
+		permissaoRoleCadastroBanco.setNome("ROLE_NFE_CONSULTA_NFE_ENCALHE_TRATAMENTO");
+		permissaoRoleCadastroBanco.setDescricao("Permissão para acessar a funcionalidade Cadastro de Banco");
+		permissoes.add(permissaoRoleCadastroBanco);
+		
+		Permissao permissaoRoleCadastroBanco = new Permissao();
+		permissaoRoleCadastroBanco.setNome("ROLE_NFE_PAINEL_MONITOR_NFE");
+		permissaoRoleCadastroBanco.setDescricao("Permissão para acessar a funcionalidade Cadastro de Banco");
+		permissoes.add(permissaoRoleCadastroBanco);
+		
+		
+		Permissao permissaoRoleCadastroBanco = new Permissao();
+		permissaoRoleCadastroBanco.setNome("ROLE_ADMINISTRACAO_CONTROLE_APROVACAO");
+		permissaoRoleCadastroBanco.setDescricao("Permissão para acessar a funcionalidade Cadastro de Banco");
+		permissoes.add(permissaoRoleCadastroBanco);
+		
+		Permissao permissaoRoleCadastroBanco = new Permissao();
+		permissaoRoleCadastroBanco.setNome("ROLE_ADMINISTRACAO_PAINEL_PROCESSAMENTO");
+		permissaoRoleCadastroBanco.setDescricao("Permissão para acessar a funcionalidade Cadastro de Banco");
+		permissoes.add(permissaoRoleCadastroBanco);
+		
+		Permissao permissaoRoleCadastroBanco = new Permissao();
+		permissaoRoleCadastroBanco.setNome("ROLE_ADMINISTRACAO_GRUPOS_ACESSO");
+		permissaoRoleCadastroBanco.setDescricao("Permissão para acessar a funcionalidade Cadastro de Banco");
+		permissoes.add(permissaoRoleCadastroBanco);
+		
+		Permissao permissaoRoleCadastroBanco = new Permissao();
+		permissaoRoleCadastroBanco.setNome("ROLE_ADMINISTRACAO_CALENDARIO");
+		permissaoRoleCadastroBanco.setDescricao("Permissão para acessar a funcionalidade Cadastro de Banco");
+		permissoes.add(permissaoRoleCadastroBanco);
+		
+		Permissao permissaoRoleCadastroBanco = new Permissao();
+		permissaoRoleCadastroBanco.setNome("ROLE_ADMINISTRACAO_TIPO_DESCONTO_COTA");
+		permissaoRoleCadastroBanco.setDescricao("Permissão para acessar a funcionalidade Cadastro de Banco");
+		permissoes.add(permissaoRoleCadastroBanco);
+		
+		Permissao permissaoRoleCadastroBanco = new Permissao();
+		permissaoRoleCadastroBanco.setNome("ROLE_ADMINISTRACAO_TIPO_MOVIMENTO");
+		permissaoRoleCadastroBanco.setDescricao("Permissão para acessar a funcionalidade Cadastro de Banco");
+		permissoes.add(permissaoRoleCadastroBanco);
+		
+		Permissao permissaoRoleCadastroBanco = new Permissao();
+		permissaoRoleCadastroBanco.setNome("ROLE_ADMINISTRACAO_TIPO_NOTA");
+		permissaoRoleCadastroBanco.setDescricao("Permissão para acessar a funcionalidade Cadastro de Banco");
+		permissoes.add(permissaoRoleCadastroBanco);
+		
+		Permissao permissaoRoleCadastroBanco = new Permissao();
+		permissaoRoleCadastroBanco.setNome("ROLE_ADMINISTRACAO_INICIAR_DIA");
+		permissaoRoleCadastroBanco.setDescricao("Permissão para acessar a funcionalidade Cadastro de Banco");
+		permissoes.add(permissaoRoleCadastroBanco);
+		
+		Permissao permissaoRoleCadastroBanco = new Permissao();
+		permissaoRoleCadastroBanco.setNome("ROLE_ADMINISTRACAO_FECHAR_DIA");
+		permissaoRoleCadastroBanco.setDescricao("Permissão para acessar a funcionalidade Cadastro de Banco");
+		permissoes.add(permissaoRoleCadastroBanco);
+		
+		Permissao permissaoRoleCadastroBanco = new Permissao();
+		permissaoRoleCadastroBanco.setNome("ROLE_ADMINISTRACAO_SERVICO_ENTREGA");
+		permissaoRoleCadastroBanco.setDescricao("Permissão para acessar a funcionalidade Cadastro de Banco");
+		permissoes.add(permissaoRoleCadastroBanco);
+		
+		Permissao permissaoRoleCadastroBanco = new Permissao();
+		permissaoRoleCadastroBanco.setNome("ROLE_ADMINISTRACAO_TIPO_PRODUTO");
+		permissaoRoleCadastroBanco.setDescricao("Permissão para acessar a funcionalidade Cadastro de Banco");
+		permissoes.add(permissaoRoleCadastroBanco);
+		
+		Permissao permissaoRoleCadastroBanco = new Permissao();
+		permissaoRoleCadastroBanco.setNome("ROLE_ADMINISTRACAO_HELP");
+		permissaoRoleCadastroBanco.setDescricao("Permissão para acessar a funcionalidade Cadastro de Banco");
+		permissoes.add(permissaoRoleCadastroBanco);
+		
+		Permissao permissaoRoleCadastroBanco = new Permissao();
+		permissaoRoleCadastroBanco.setNome("ROLE_ADMINISTRACAO_PARAMETROS_COBRANCA");
+		permissaoRoleCadastroBanco.setDescricao("Permissão para acessar a funcionalidade Cadastro de Banco");
+		permissoes.add(permissaoRoleCadastroBanco);
+		
+		Permissao permissaoRoleCadastroBanco = new Permissao();
+		permissaoRoleCadastroBanco.setNome("ROLE_ADMINISTRACAO_PARAMETROS_SISTEMA");
+		permissaoRoleCadastroBanco.setDescricao("Permissão para acessar a funcionalidade Cadastro de Banco");
+		permissoes.add(permissaoRoleCadastroBanco);
+		
+		Permissao permissaoRoleCadastroBanco = new Permissao();
+		permissaoRoleCadastroBanco.setNome("ROLE_ADMINISTRACAO_PARAMETROS_DISTRIBUIDOR");
+		permissaoRoleCadastroBanco.setDescricao("Permissão para acessar a funcionalidade Cadastro de Banco");
+		permissoes.add(permissaoRoleCadastroBanco);
+
+		Permissao permissao = null;
+
+		for (Permissao p : permissoes) {
+			session.save(p);
+		}
+		
+	}
 
 	private static void criarControleNumeracaoSlip(Session session) {
 

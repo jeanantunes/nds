@@ -657,8 +657,8 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		listaGrupoMovimentoEstoque.add(GrupoMovimentoEstoque.COMPRA_SUPLEMENTAR);
 		listaGrupoMovimentoEstoque.add(GrupoMovimentoEstoque.ESTORNO_COMPRA_SUPLEMENTAR);
 	
-		List<ItemNotaFiscal> listaItensNotaFiscal =
-				this.movimentoEstoqueCotaRepository.getItensToNotaFiscal(cota, listaGrupoMovimentoEstoque, periodo);
+		List<ItemNotaFiscal> listaItensNotaFiscal = null;
+				//this.movimentoEstoqueCotaRepository.getItensToNotaFiscal(cota, listaGrupoMovimentoEstoque, periodo);
 		
 		//TODO: lógica de negocio para tipo de nota
 		
@@ -678,8 +678,8 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		listaGrupoMovimentoEstoque.add(GrupoMovimentoEstoque.ENCALHE_ANTECIPADO);
 		listaGrupoMovimentoEstoque.add(GrupoMovimentoEstoque.ENVIO_ENCALHE);
 		
-		List<ItemNotaFiscal> listaItensNotaFiscal =
-				this.movimentoEstoqueCotaRepository.getItensToNotaFiscal(cota, listaGrupoMovimentoEstoque, periodo);
+		List<ItemNotaFiscal> listaItensNotaFiscal = null;
+				//this.movimentoEstoqueCotaRepository.getItensToNotaFiscal(cota, listaGrupoMovimentoEstoque, periodo);
 		
 		//TODO: lógica de negocio para tipo de nota
 		

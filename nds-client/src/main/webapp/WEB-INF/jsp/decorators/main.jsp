@@ -449,7 +449,7 @@
 					</li>
 					
 					<%-- SPRING SECURITY - AUTORIZACAO --%>
-					<sec:authorize access="hasRole('ADMIN')">
+					<%--sec:authorize access="hasRole('ADMIN')"--%>
 
 					<li><span class="classAdministracao">&nbsp;</span><a
 						href="javascript:;">Administração</a>
@@ -460,6 +460,7 @@
 								</a>
 							</li>
 							<li><a href='<c:url value="/administracao/painelProcessamento"/>'>Painel de Processamento</a></li>
+							<li><a href='<c:url value="/administracao/gruposAcesso"/>'>Grupos de Acesso</a></li>
 							<li><a href='<c:url value="/administracao/cadastroCalendario"/>'>Calendário</a></li>
 							<li><a href='<c:url value="/administracao/tipoDescontoCota"/>'>Tipo de Desconto Cota</a></li>
 							
@@ -485,7 +486,7 @@
 						</ul>
 					</li>
 
-					</sec:authorize>
+					<%--/sec:authorize--%>
 					<li><span class="classHelp">&nbsp;</span><a href="help.htm">Help</a>
 					</li>
 				</ul>

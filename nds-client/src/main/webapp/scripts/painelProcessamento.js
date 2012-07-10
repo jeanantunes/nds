@@ -351,4 +351,4 @@ var painelProcessamentoController = {
 				   });
 	}
 
-}
+};

@@ -35,12 +35,48 @@ public class Usuario implements Serializable {
 	@GeneratedValue(generator = "USUARIO_SEQ")
 	@Column(name = "ID")
 	private Long id;
+	
 	@Column(name = "NOME", nullable = false)
 	private String nome;
+	
+	@Column(name = "SOBRENOME", nullable = true)
+	private String sobrenome;
+	
 	@Column(name = "LOGIN", nullable = false)
 	private String login;
+	
 	@Column(name = "SENHA", nullable = false)
 	private String senha;
+	
+	@Column(name = "LEMBRETE_SENHA", nullable = true)
+	private String lembreteSenha;
+
+	@Column(name = "DDD", nullable = true)
+	private String ddd;
+
+	@Column(name = "TELEFONE", nullable = true)
+	private String telefone;
+	
+	@Column(name = "SENHA_ATIVA")
+	private boolean senhaAtiva;
+
+	@Column(name = "CONTA_EXPIRA")
+	private boolean contaExpira;
+
+	@Column(name = "SENHA_EXPIRA")
+	private boolean senhaExpira;
+
+	@Column(name = "ENDERECO")
+	private String endereco;
+
+	@Column(name = "CIDADE")
+	private String cidade;
+
+	@Column(name = "PAIS")
+	private String pais;
+
+	@Column(name = "CEP")
+	private String cep;
 
 	@ManyToMany(fetch=FetchType.LAZY)
 	private Set<GrupoPermissoes> gruposPermissoes = new HashSet<GrupoPermissoes>();
@@ -94,6 +130,94 @@ public class Usuario implements Serializable {
 
 	public void setGruposPermissoes(Set<GrupoPermissoes> gruposPermissoes) {
 		this.gruposPermissoes = gruposPermissoes;
+	}
+
+	public String getSobrenome() {
+		return sobrenome;
+	}
+
+	public void setSobrenome(String sobrenome) {
+		this.sobrenome = sobrenome;
+	}
+
+	public String getLembreteSenha() {
+		return lembreteSenha;
+	}
+
+	public void setLembreteSenha(String lembreteSenha) {
+		this.lembreteSenha = lembreteSenha;
+	}
+
+	public String getDdd() {
+		return ddd;
+	}
+
+	public void setDdd(String ddd) {
+		this.ddd = ddd;
+	}
+
+	public String getTelefone() {
+		return telefone;
+	}
+
+	public void setTelefone(String telefone) {
+		this.telefone = telefone;
+	}
+
+	public boolean isSenhaAtiva() {
+		return senhaAtiva;
+	}
+
+	public void setSenhaAtiva(boolean senhaAtiva) {
+		this.senhaAtiva = senhaAtiva;
+	}
+
+	public boolean isContaExpira() {
+		return contaExpira;
+	}
+
+	public void setContaExpira(boolean contaExpira) {
+		this.contaExpira = contaExpira;
+	}
+
+	public boolean isSenhaExpira() {
+		return senhaExpira;
+	}
+
+	public void setSenhaExpira(boolean senhaExpira) {
+		this.senhaExpira = senhaExpira;
+	}
+
+	public String getEndereco() {
+		return endereco;
+	}
+
+	public void setEndereco(String endereco) {
+		this.endereco = endereco;
+	}
+
+	public String getCidade() {
+		return cidade;
+	}
+
+	public void setCidade(String cidade) {
+		this.cidade = cidade;
+	}
+
+	public String getPais() {
+		return pais;
+	}
+
+	public void setPais(String pais) {
+		this.pais = pais;
+	}
+
+	public String getCep() {
+		return cep;
+	}
+
+	public void setCep(String cep) {
+		this.cep = cep;
 	}
 	
 }
