@@ -1135,4 +1135,35 @@ public class LancamentoRepositoryImpl extends
 		return (Date) criteria.uniqueResult();
 	}
 	
+	@Override
+	public Lancamento obterLancamentoProdutoPorDataLancamentoOuDataRecolhimento(String codigoProduto, Date dataLancamentoPrevista, Date dataRecolhimentoPrevista){
+		
+		StringBuilder sql = new StringBuilder();
+		sql.append("SELECT la FROM Lancamento la ");
+		sql.append("	   JOIN FETCH pe.produto p ");
+		sql.append("WHERE  p.codigo = :codigoProduto ");
+		
+		if (dataLancamentoPrevista != null) {
+			sql.append(" la.dataLancamentoPrevista = :dataLancamentoPrevista ");
+		}
+		
+		if (dataRecolhimentoPrevista != null) {
+			sql.append(" p.dataRecolhimentoPrevista = :dataRecolhimentoPrevista ");
+		}
+		
+		Query query = getSession().createQuery(sql.toString());
+		query.setMaxResults(1);
+		query.setParameter("codigoProduto", codigoProduto);
+		
+		if (dataLancamentoPrevista != null) {
+			query.setParameter("dataLancamentoPrevista", dataLancamentoPrevista);
+		}
+		
+		if (dataRecolhimentoPrevista != null) {
+			query.setParameter("dataRecolhimentoPrevista", dataRecolhimentoPrevista);
+		}
+		
+		return (Lancamento) query.uniqueResult();
+	}
+	
 }
