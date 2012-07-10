@@ -1246,37 +1246,40 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		
 		StringBuffer sql = new StringBuffer("");
 		
-		sql.append(" SELECT movimentoEstoqueCota ")
-		   .append(" FROM MovimentoEstoqueCota movimentoEstoqueCota ");
+		sql.append(" SELECT DISTINCT movimentoEstoqueCota ")
+		   .append(" FROM MovimentoEstoqueCota movimentoEstoqueCota ")
+		   .append(" INNER JOIN movimentoEstoqueCota.produtoEdicao.produto.fornecedores fornecedores");
+		
+		
 		sql.append(" WHERE movimentoEstoqueCota.status = :status ")
 		   .append("   AND movimentoEstoqueCota.tipoMovimento.grupoMovimentoEstoque IN (:listaGrupoMoviementoEstoque) ")
-		   .append("   AND movimentoEstoqueCota.cota = :cota ")
+		   .append("   AND movimentoEstoqueCota.cota.id = :idCota ")
 		   .append("   AND movimentoEstoqueCota.data BETWEEN :dataInicio AND :dataFim ");
 		
 		if (listaProdutos != null && !listaProdutos.isEmpty()) {
-			sql.append("   AND movimentoEstoqueCota.produtoEdicao.produto IN (:listaProdutos) ");
+			sql.append("   AND movimentoEstoqueCota.produtoEdicao.produto.id IN (:listaProdutos) ");
 		}
 		
 		if (listaFornecedores != null && !listaFornecedores.isEmpty()) {
-			sql.append("   AND movimentoEstoqueCota.produtoEdicao.fornecedores IN (:listaFornecedores) ");
+			sql.append("   AND fornecedores.id IN (:listaFornecedores) ");
 		}
 
 		Query query = getSession().createQuery(sql.toString());
 		
 		query.setParameter("status", StatusAprovacao.APROVADO);
 		query.setParameterList("listaGrupoMoviementoEstoque", listaGrupoMovimentoEstoques);
-		query.setParameter("cota", idCota);
+		query.setParameter("idCota", idCota);
 		query.setParameter("dataInicio", periodo.getDe());
 		query.setParameter("dataFim", periodo.getAte());
-		
-		if (listaFornecedores != null && !listaFornecedores.isEmpty()) {
-			query.setParameterList("listaFornecedores", listaFornecedores);
-		}
 		
 		if (listaProdutos != null && !listaProdutos.isEmpty()) {
 			query.setParameterList("listaProdutos", listaProdutos);
 		}
 	
+		if (listaFornecedores != null && !listaFornecedores.isEmpty()) {
+			query.setParameterList("listaFornecedores", listaFornecedores);
+		}
+		
 		return query.list();
 	}
 }
