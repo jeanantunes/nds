@@ -2,6 +2,8 @@ package br.com.abril.nds.strategy.importacao;
 
 import java.io.File;
 
+import org.springframework.stereotype.Component;
+
 import br.com.abril.nds.service.vo.RetornoImportacaoArquivoVO;
 
 /**
@@ -10,6 +12,7 @@ import br.com.abril.nds.service.vo.RetornoImportacaoArquivoVO;
  * @author Discover Technology
  *
  */
+@Component("importacaoDeArquivoHistoricoVendaStrategy")
 public class ImportacaoDeArquivoHistoricoVendaStrategy implements ImportacaoArquivoStrategy {
 
 	@Override
