@@ -8,6 +8,7 @@ import java.util.List;
 
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -49,7 +50,6 @@ import br.com.abril.nds.model.fiscal.ItemNotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.NCM;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaFornecedor;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
-import br.com.abril.nds.model.fiscal.nota.ItemNotaFiscal;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalhe;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalheCota;
 import br.com.abril.nds.model.movimentacao.ControleContagemDevolucao;
@@ -950,22 +950,28 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 	}
 	
 	@Test
+	@Ignore
 	public void obterItensToNotaFiscal() {
 		
-		/*setUpForContagemDevolucao();
+		setUpForContagemDevolucao();
 		
 		List<GrupoMovimentoEstoque> listaGrupoMovimentoEstoques = new ArrayList<GrupoMovimentoEstoque>();
 		listaGrupoMovimentoEstoques.add(GrupoMovimentoEstoque.VENDA_ENCALHE);
 		listaGrupoMovimentoEstoques.add(GrupoMovimentoEstoque.ENVIO_ENCALHE);
 		
-		List<Produto> listaProdutos =  new ArrayList<Produto>();
-		List<Fornecedor> listaFornecedores =  new ArrayList<Fornecedor>();
+		List<Long> listaProdutos =  new ArrayList<Long>();
+		listaProdutos.add(veja1.getProduto().getId());
+		
+		List<Long> listaFornecedores =  new ArrayList<Long>();
+		for (Fornecedor fornecedor: veja1.getProduto().getFornecedores()) {
+			listaFornecedores.add(fornecedor.getId());
+		}
 		
 		Intervalo<Date> periodo = new Intervalo<Date>();
 		periodo.setDe(DateUtil.parseData("01/01/2012", "dd/MM/yyyy"));
 		periodo.setAte(DateUtil.parseData("01/01/2013", "dd/MM/yyyy"));
 		
-		List<MovimentoEstoqueCota> listaMovimentoEstoqueCota = this.movimentoEstoqueCotaRepository.obterItensParaNotaFiscal(cotaManoel, listaGrupoMovimentoEstoques, periodo, listaFornecedores, listaProdutos);*/
+		List<MovimentoEstoqueCota> listaMovimentoEstoqueCota = this.movimentoEstoqueCotaRepository.obterMovimentoEstoqueCotaPor(cotaManoel.getId(), listaGrupoMovimentoEstoques, periodo, listaFornecedores, listaProdutos);
 		
 	}
 	

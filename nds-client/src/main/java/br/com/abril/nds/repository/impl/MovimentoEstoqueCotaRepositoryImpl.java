@@ -1244,39 +1244,39 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 	@SuppressWarnings("unchecked")
 	public List<MovimentoEstoqueCota> obterMovimentoEstoqueCotaPor(Long idCota, List<GrupoMovimentoEstoque> listaGrupoMovimentoEstoques, Intervalo<Date> periodo, List<Long> listaFornecedores, List<Long> listaProdutos) {
 		
-		/*StringBuffer sql = new StringBuffer("");
+		StringBuffer sql = new StringBuffer("");
 		
 		sql.append(" SELECT movimentoEstoqueCota ")
 		   .append(" FROM MovimentoEstoqueCota movimentoEstoqueCota ");
 		sql.append(" WHERE movimentoEstoqueCota.status = :status ")
-//		   .append("   AND movimentoEstoqueCota.tipoMovimento.grupoMovimentoEstoque IN :listaGrupoMoviementoEstoque ")
+		   .append("   AND movimentoEstoqueCota.tipoMovimento.grupoMovimentoEstoque IN (:listaGrupoMoviementoEstoque) ")
 		   .append("   AND movimentoEstoqueCota.cota = :cota ")
 		   .append("   AND movimentoEstoqueCota.data BETWEEN :dataInicio AND :dataFim ");
 		
 		if (listaProdutos != null && !listaProdutos.isEmpty()) {
-			sql.append("   AND movimentoEstoqueCota.produtoEdicao.produto IN :listaProdutos ");
+			sql.append("   AND movimentoEstoqueCota.produtoEdicao.produto IN (:listaProdutos) ");
 		}
 		
 		if (listaFornecedores != null && !listaFornecedores.isEmpty()) {
-			sql.append("   AND movimentoEstoqueCota.produtoEdicao.fornecedores IN :listaFornecedores ");
+			sql.append("   AND movimentoEstoqueCota.produtoEdicao.fornecedores IN (:listaFornecedores) ");
 		}
 
 		Query query = getSession().createQuery(sql.toString());
 		
 		query.setParameter("status", StatusAprovacao.APROVADO);
-//		query.setParameter("listaGrupoMoviementoEstoque", listaGrupoMovimentoEstoques);
-		query.setParameter("cota", cota);
+		query.setParameterList("listaGrupoMoviementoEstoque", listaGrupoMovimentoEstoques);
+		query.setParameter("cota", idCota);
 		query.setParameter("dataInicio", periodo.getDe());
 		query.setParameter("dataFim", periodo.getAte());
 		
-		if (listaProdutos != null && !listaProdutos.isEmpty()) {
-			query.setParameter("listaProdutos", listaProdutos);
+		if (listaFornecedores != null && !listaFornecedores.isEmpty()) {
+			query.setParameterList("listaFornecedores", listaFornecedores);
 		}
 		
-		if (listaFornecedores != null && !listaFornecedores.isEmpty()) {
-			query.setParameter("listaFornecedores", listaFornecedores);
-		}*/
-		
-		return null;//query.list();
+		if (listaProdutos != null && !listaProdutos.isEmpty()) {
+			query.setParameterList("listaProdutos", listaProdutos);
+		}
+	
+		return query.list();
 	}
 }
