@@ -17,10 +17,12 @@ public class ChamadaAntecipadaEncalheDTO implements Serializable {
 	private String nomeCota;
 	
 	private BigDecimal qntExemplares;
+	
+	private Long codigoChamadaEncalhe;
 
 	public ChamadaAntecipadaEncalheDTO() {}
 
-	public ChamadaAntecipadaEncalheDTO(String codBox, Integer numeroCota,BigDecimal qntExemplares,String nomeCota ) {
+	public ChamadaAntecipadaEncalheDTO(String codBox, Integer numeroCota,BigDecimal qntExemplares,String nomeCota) {
 		
 		this.codBox = codBox;
 		this.numeroCota = numeroCota;
@@ -28,12 +30,36 @@ public class ChamadaAntecipadaEncalheDTO implements Serializable {
 		this.qntExemplares = qntExemplares;
 	}
 	
-	public ChamadaAntecipadaEncalheDTO(Integer numeroCota,BigDecimal qntExemplares) {
+	public ChamadaAntecipadaEncalheDTO(String codBox, Integer numeroCota,BigDecimal qntExemplares,String nomeCota, Long codigoChamadaEncalhe) {
+		
+		this.codBox = codBox;
+		this.numeroCota = numeroCota;
+		this.nomeCota = nomeCota;
+		this.qntExemplares = qntExemplares;
+		this.codigoChamadaEncalhe = codigoChamadaEncalhe;
+	}
+	
+	public ChamadaAntecipadaEncalheDTO(Integer numeroCota,BigDecimal qntExemplares,Long codigoChamadaEncalhe) {
 		
 		this.numeroCota = numeroCota;
 		this.qntExemplares = qntExemplares;
+		this.codigoChamadaEncalhe = codigoChamadaEncalhe;
 	}
 	
+	/**
+	 * @return the codigoChamadaEncalhe
+	 */
+	public Long getCodigoChamadaEncalhe() {
+		return codigoChamadaEncalhe;
+	}
+
+	/**
+	 * @param codigoChamadaEncalhe the codigoChamadaEncalhe to set
+	 */
+	public void setCodigoChamadaEncalhe(Long codigoChamadaEncalhe) {
+		this.codigoChamadaEncalhe = codigoChamadaEncalhe;
+	}
+
 	/**
 	 * @return the codBox
 	 */

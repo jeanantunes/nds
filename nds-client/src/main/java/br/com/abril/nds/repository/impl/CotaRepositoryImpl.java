@@ -423,6 +423,14 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 		if (filtro.getBox() != null) {
 			param.put("box", filtro.getBox());
 		}
+		
+		if(filtro.getRota()!= null){
+			param.put("rota",filtro.getRota());
+		}
+		
+		if(filtro.getRoteiro()!= null){
+			param.put("roteiro",filtro.getRoteiro());
+		}
 
 		return param;
 	}
@@ -440,7 +448,11 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 				.append(" JOIN estudoCota.estudo estudo ")
 				.append(" JOIN estudo.produtoEdicao produtoEdicao  ")
 				.append(" JOIN produtoEdicao.produto produto ")
-				.append(" JOIN produtoEdicao.lancamentos lancamento ");
+				.append(" JOIN produtoEdicao.lancamentos lancamento ")
+				.append(" JOIN cota.pdvs pdv ")
+				.append(" LEFT JOIN pdv.roteirizacao roteirizacao ")
+				.append(" LEFT JOIN roteirizacao.rota rota  ")
+				.append(" LEFT JOIN rota.roteiro roteiro ");
 
 		if (filtro.getFornecedor() != null) {
 			hql.append(" JOIN produto.fornecedores fornecedor ");
@@ -459,7 +471,8 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 				.append(" AND produto.codigo =:codigoProduto ")
 				.append(" AND produtoEdicao.numeroEdicao =:numeroEdicao ")
 				.append(" AND lancamento.dataRecolhimentoPrevista >:dataAtual ")
-				.append(" AND (estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) > 0 ");
+				.append(" AND (estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) > 0 ")
+				.append(" AND pdv.caracteristicas.pontoPrincipal = true ");
 
 		if (filtro.getNumeroCota() != null) {
 
@@ -474,6 +487,14 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 		if (filtro.getBox() != null) {
 
 			hql.append(" AND box.id =:box ");
+		}
+		
+		if(filtro.getRota()!= null){
+			hql.append(" AND rota.id =:rota ");
+		}
+		
+		if(filtro.getRoteiro()!= null ){
+			hql.append(" AND roteiro.id =:roteiro ");
 		}
 
 		return hql.toString();

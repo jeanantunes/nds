@@ -335,10 +335,10 @@
 		<profile>
 			<id>qa2</id>
 			<properties>
-				<dataSourceURL>jdbc:mysql://10.10.50.198:3306/nds-client</dataSourceURL>
+				<dataSourceURL>jdbc:mysql://10.10.50.201:3306/nds-client</dataSourceURL>
 				<dataSourceUsername>root</dataSourceUsername>
 				<dataSourcePassword>root</dataSourcePassword>
-				<testDataSourceURL>jdbc:mysql://10.10.50.198:3306/nds-client-test</testDataSourceURL>
+				<testDataSourceURL>jdbc:mysql://10.10.50.201:3306/nds-client-test</testDataSourceURL>
 				<testDataSourceUsername>root</testDataSourceUsername>
 				<testDataSourcePassword>root</testDataSourcePassword>
 			</properties>
@@ -349,7 +349,7 @@
 						<artifactId>tomcat-maven-plugin</artifactId>
 						<configuration>
 							<server>tomcat-server-qa</server>
-							<url>http://10.10.50.198:8080/manager/text</url>
+							<url>http://10.10.50.201:8080/manager/text</url>
 						</configuration>
 					</plugin>
 				</plugins>

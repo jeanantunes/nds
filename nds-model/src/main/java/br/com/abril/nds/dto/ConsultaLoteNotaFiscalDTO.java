@@ -2,8 +2,11 @@ package br.com.abril.nds.dto;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
+import br.com.abril.nds.model.cadastro.Fornecedor;
+import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
 import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.vo.PaginacaoVO;
@@ -28,6 +31,10 @@ public class ConsultaLoteNotaFiscalDTO implements Serializable {
 	private Intervalo<Date> periodoMovimento;
 	
 	private TipoNotaFiscal tipoNotaFiscal;
+	
+	private List<Produto> listaProdutos;
+	
+	private List<Fornecedor> listaFornecedores;
 	
 	private PaginacaoVO paginacao;
 	
@@ -106,6 +113,34 @@ public class ConsultaLoteNotaFiscalDTO implements Serializable {
 	 */
 	public void setDateEmissao(Date dateEmissao) {
 		this.dateEmissao = dateEmissao;
+	}
+
+	/**
+	 * @return the listaProdutos
+	 */
+	public List<Produto> getListaProdutos() {
+		return listaProdutos;
+	}
+
+	/**
+	 * @param listaProdutos the listaProdutos to set
+	 */
+	public void setListaProdutos(List<Produto> listaProdutos) {
+		this.listaProdutos = listaProdutos;
+	}
+
+	/**
+	 * @return the listaFornecedores
+	 */
+	public List<Fornecedor> getListaFornecedores() {
+		return listaFornecedores;
+	}
+
+	/**
+	 * @param listaFornecedores the listaFornecedores to set
+	 */
+	public void setListaFornecedores(List<Fornecedor> listaFornecedores) {
+		this.listaFornecedores = listaFornecedores;
 	}
 
 }

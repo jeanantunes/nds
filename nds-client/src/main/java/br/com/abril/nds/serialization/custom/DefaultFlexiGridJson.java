@@ -24,7 +24,6 @@ public class DefaultFlexiGridJson implements FlexiGridJson {
 	private XStreamSerializer serializer;
     private XStream xstream;
     private TableModel wrapper;
-    private Boolean noReference;
     
     private HttpServletResponse response;
     private TypeNameExtractor extractor;

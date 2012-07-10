@@ -669,6 +669,8 @@ public class MatrizRecolhimentoController {
 			produtoRecolhimentoVO.setIdLancamento(produtoRecolhimentoDTO.getIdLancamento().toString());
 			
 			produtoRecolhimentoVO.setSequencia(produtoRecolhimentoDTO.getSequencia());
+			
+			produtoRecolhimentoVO.setIdProdutoEdicao(produtoRecolhimentoDTO.getIdProdutoEdicao());
 				
 			produtoRecolhimentoVO.setCodigoProduto(produtoRecolhimentoDTO.getCodigoProduto());
 			
@@ -779,6 +781,9 @@ public class MatrizRecolhimentoController {
 		produtoRecolhimentoFormatado.setSequencia(
 			(produtoRecolhimento.getSequencia() != null) ? produtoRecolhimento.getSequencia().toString() : null);
 			
+		produtoRecolhimentoFormatado.setIdProdutoEdicao(
+			(produtoRecolhimento.getIdProdutoEdicao() != null) ? produtoRecolhimento.getIdProdutoEdicao().toString() : null);
+		
 		produtoRecolhimentoFormatado.setCodigoProduto(produtoRecolhimento.getCodigoProduto());
 		
 		produtoRecolhimentoFormatado.setNomeProduto(produtoRecolhimento.getNomeProduto());

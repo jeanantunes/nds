@@ -2,6 +2,7 @@ package br.com.abril.nds.service.impl;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,7 @@ import br.com.abril.nds.repository.ChamadaEncalheCotaRepository;
 import br.com.abril.nds.repository.ChamadaEncalheRepository;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.DistribuicaoFornecedorRepository;
+import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.service.ChamadaAntecipadaEncalheService;
@@ -54,6 +56,106 @@ public class ChamadaAntecipadaEncalheServiceImpl implements ChamadaAntecipadaEnc
 	
 	@Autowired
 	private ChamadaEncalheRepository chamadaEncalheRepository;
+	
+	@Autowired
+	private DistribuidorRepository distribuidorRepository;
+	
+	@Transactional
+	@Override
+	public void cancelarChamadaAntecipadaCota(InfoChamdaAntecipadaEncalheDTO infoChamdaAntecipadaEncalheDTO){
+		
+		List<ChamadaAntecipadaEncalheDTO> chamadasEncalhe = infoChamdaAntecipadaEncalheDTO.getChamadasAntecipadaEncalhe();
+		
+		efetuarCancelamentoChamadaAntecipada(chamadasEncalhe);
+	}
+	
+	@Override
+	@Transactional
+	public void cancelarChamadaAntecipadaCota(FiltroChamadaAntecipadaEncalheDTO filtro) {
+		
+		filtro.setDataOperacao(distribuidorRepository.obter().getDataOperacao());
+		
+		List<ChamadaAntecipadaEncalheDTO> chamadasEncalheCota = chamadaEncalheCotaRepository.obterCotasProgramadaParaAntecipacoEncalhe(filtro);
+		
+		efetuarCancelamentoChamadaAntecipada(chamadasEncalheCota);
+	}
+	
+	private void efetuarCancelamentoChamadaAntecipada(List<ChamadaAntecipadaEncalheDTO> chamdadasAntecipada){
+		
+		if(!chamdadasAntecipada.isEmpty()){
+			
+			HashMap<Long,Long> chamadasEncalheASerRemovidas = new HashMap<Long, Long>();
+			
+			ChamadaEncalheCota chamadaEncalheCota = null;
+			
+			for(ChamadaAntecipadaEncalheDTO chEncalhe : chamdadasAntecipada){
+				
+				chamadaEncalheCota  = chamadaEncalheCotaRepository.buscarPorId(chEncalhe.getCodigoChamadaEncalhe());
+				
+				chamadaEncalheCotaRepository.remover(chamadaEncalheCota);
+				
+				chamadasEncalheASerRemovidas.put(chamadaEncalheCota.getChamadaEncalhe().getId(), 
+												 chamadaEncalheCota.getChamadaEncalhe().getId());
+			}
+			
+			if(!chamadasEncalheASerRemovidas.values().isEmpty()){
+				
+				removerChamadasAntecipadas(chamadasEncalheASerRemovidas.values().toArray(new Long[]{}));
+			}
+		}
+	}
+	
+	/**
+	 * Remove uma chamada encalhe caso a mesma não tenha mais nenhuma associação com chamdas encalhe cota.
+	 * 
+	 * @param idChamadaAntecipada - identificadores da chamada de encalhe
+	 */
+	private void removerChamadasAntecipadas(Long... idChamadaAntecipada){
+		
+		for(Long id :idChamadaAntecipada){
+			
+			try{
+				
+				chamadaEncalheRepository.removerPorId(id);
+				chamadaEncalheRepository.flush();
+				
+			}catch (org.springframework.dao.DataIntegrityViolationException e) {
+				//Silencia a exceção caso alguma chamada de encalhe tenha vinculo com alguma chamada encalhe cota. 
+				//Utilizado para não ter que ficar fazendo implementação de integridade  desnecessária  para exclusão de chamada de encalhe, 
+				//quando as chamadas encalhe cota forem canceladas.
+			}
+		}
+	}
+
+	@Transactional
+	@Override
+	public void reprogramarChamadaAntecipacaoEncalheProduto(FiltroChamadaAntecipadaEncalheDTO filtro){
+		
+		List<ChamadaAntecipadaEncalheDTO> lisAntecipadaEncalheDTOs = 
+				chamadaEncalheCotaRepository.obterCotasProgramadaParaAntecipacoEncalhe(filtro); 
+
+		cancelarChamadaAntecipadaCota(filtro);
+		
+		InfoChamdaAntecipadaEncalheDTO infoEncalheDTO = new InfoChamdaAntecipadaEncalheDTO();
+		
+		infoEncalheDTO.setChamadasAntecipadaEncalhe(lisAntecipadaEncalheDTOs);
+		infoEncalheDTO.setCodigoProduto(filtro.getCodigoProduto());
+		infoEncalheDTO.setDataAntecipacao(filtro.getDataAntecipacao());
+		infoEncalheDTO.setNumeroEdicao(filtro.getNumeroEdicao());
+		infoEncalheDTO.setDataProgramada(DateUtil.parseDataPTBR(filtro.getDataProgramada()));
+		
+		gravar(infoEncalheDTO);
+		
+	}
+	
+	@Transactional
+	@Override
+	public void reprogramarChamadaAntecipacaoEncalheProduto(InfoChamdaAntecipadaEncalheDTO infoEncalheDTO) {
+		
+		gravarChamadaAntecipacaoEncalheProduto(infoEncalheDTO);
+		
+		cancelarChamadaAntecipadaCota(infoEncalheDTO);
+	}
 	
 	@Transactional
 	@Override
@@ -110,15 +212,6 @@ public class ChamadaAntecipadaEncalheServiceImpl implements ChamadaAntecipadaEnc
 		ProdutoEdicao produtoEdicao = produtoEdicaoRepository
 				.obterProdutoEdicaoPorCodProdutoNumEdicao(infoEncalheDTO.getCodigoProduto(), 
 														  infoEncalheDTO.getNumeroEdicao());
-		
-		if(!isDataRecolhimentoDistribuidor(infoEncalheDTO.getDataAntecipacao(),
-										   infoEncalheDTO.getCodigoProduto(),
-										   produtoEdicao.getId())){
-			
-			throw new ValidacaoException(TipoMensagem.WARNING,"O dia da Data Antecipada é diferente do dia de recolhimento do distribuidor!");
-		}
-		
-		
 		ChamadaEncalhe chamadaEncalhe = 
 				chamadaEncalheRepository.obterPorNumeroEdicaoEDataRecolhimento(
 					produtoEdicao,
@@ -160,6 +253,7 @@ public class ChamadaAntecipadaEncalheServiceImpl implements ChamadaAntecipadaEnc
 	 * 
 	 * @return boolean 
 	 */
+	@SuppressWarnings("unused")
 	private boolean isDataRecolhimentoDistribuidor(Date dataAntecipacao, String codigoProduto, Long idProdutoEdicao) {
 		
 		DiaSemana diaSemana = DiaSemana.getByDate(dataAntecipacao);
@@ -173,12 +267,21 @@ public class ChamadaAntecipadaEncalheServiceImpl implements ChamadaAntecipadaEnc
 		
 		InfoChamdaAntecipadaEncalheDTO antecipadaEncalheDTO = new InfoChamdaAntecipadaEncalheDTO();
 		
-		List<ChamadaAntecipadaEncalheDTO> list = cotaRepository.obterCotasSujeitasAntecipacoEncalhe(filtro);
+		List<ChamadaAntecipadaEncalheDTO> list = null; 
+		
+		if(filtro.isProgramacaoCE()){
+			
+			filtro.setDataOperacao(distribuidorRepository.obter().getDataOperacao());
+			list = chamadaEncalheCotaRepository.obterCotasProgramadaParaAntecipacoEncalhe(filtro);
+			antecipadaEncalheDTO.setTotalRegistros(chamadaEncalheCotaRepository.obterQntCotasProgramadaParaAntecipacoEncalhe(filtro));
+		}
+		else{
+			
+			list = cotaRepository.obterCotasSujeitasAntecipacoEncalhe(filtro);
+			antecipadaEncalheDTO.setTotalRegistros(cotaRepository.obterQntCotasSujeitasAntecipacoEncalhe(filtro));
+		}
 		
 		antecipadaEncalheDTO.setChamadasAntecipadaEncalhe(list);
-		
-		antecipadaEncalheDTO.setTotalRegistros(cotaRepository.obterQntCotasSujeitasAntecipacoEncalhe(filtro));
-		
 		antecipadaEncalheDTO.setTotalExemplares(sumarizarExemplares(list));
 		antecipadaEncalheDTO.setTotalCotas(new BigDecimal(list.size()));
 		
@@ -198,7 +301,17 @@ public class ChamadaAntecipadaEncalheServiceImpl implements ChamadaAntecipadaEnc
 		
 		InfoChamdaAntecipadaEncalheDTO antecipadaEncalheDTO = new InfoChamdaAntecipadaEncalheDTO();
 		
-		List<ChamadaAntecipadaEncalheDTO> list = cotaRepository.obterCotasSujeitasAntecipacoEncalhe(filtro);
+		List<ChamadaAntecipadaEncalheDTO> list = null;
+		
+		if(filtro.isProgramacaoCE()){
+			
+			filtro.setDataOperacao(distribuidorRepository.obter().getDataOperacao());
+			list = chamadaEncalheCotaRepository.obterCotasProgramadaParaAntecipacoEncalhe(filtro);
+		}
+		else{
+			
+			list = cotaRepository.obterCotasSujeitasAntecipacoEncalhe(filtro);
+		}
 		
 		antecipadaEncalheDTO.setTotalExemplares(sumarizarExemplares(list));
 		antecipadaEncalheDTO.setTotalCotas(new BigDecimal(list.size()));
@@ -210,7 +323,47 @@ public class ChamadaAntecipadaEncalheServiceImpl implements ChamadaAntecipadaEnc
 	@Override
 	public BigDecimal obterQntExemplaresCotasSujeitasAntecipacoEncalhe(FiltroChamadaAntecipadaEncalheDTO filtro) {
 		
-		return cotaRepository.obterQntExemplaresCotasSujeitasAntecipacoEncalhe(filtro);
+		BigDecimal qntPrevistaEncalhe = BigDecimal.ZERO;
+		
+		qntPrevistaEncalhe = cotaRepository.obterQntExemplaresCotasSujeitasAntecipacoEncalhe(filtro);
+		
+		if(qntPrevistaEncalhe == null || (qntPrevistaEncalhe.compareTo(BigDecimal.ZERO) <= 0)){
+			throw new ValidacaoException(TipoMensagem.WARNING,"Cota não possui exemplares em estoque para chamada antecipada de encalhe!");
+		}
+		
+		return qntPrevistaEncalhe;
+	}
+	
+	
+	@Transactional(readOnly=true)
+	@Override
+	public BigDecimal obterQntExemplaresComProgramacaoAntecipadaEncalheCota(FiltroChamadaAntecipadaEncalheDTO filtro) {
+		
+		BigDecimal qntPrevistaEncalhe = BigDecimal.ZERO;
+		
+		filtro.setDataOperacao(distribuidorRepository.obter().getDataOperacao());
+		qntPrevistaEncalhe = chamadaEncalheCotaRepository.obterQntExemplaresComProgramacaoAntecipadaEncalheCota(filtro);
+		
+		if(qntPrevistaEncalhe == null || (qntPrevistaEncalhe.compareTo(BigDecimal.ZERO) <= 0)){
+			throw new ValidacaoException(TipoMensagem.WARNING,"Cota não possui programação de chamada antecipada de encalhe!");
+		}
+		
+		return qntPrevistaEncalhe;
+	}
+	
+	@Transactional(readOnly=true)
+	@Override
+	public ChamadaAntecipadaEncalheDTO obterChamadaEncalheAntecipada(FiltroChamadaAntecipadaEncalheDTO filtro) {
+		
+		filtro.setDataOperacao(distribuidorRepository.obter().getDataOperacao());
+		
+		List<ChamadaAntecipadaEncalheDTO> chamada = chamadaEncalheCotaRepository.obterCotasProgramadaParaAntecipacoEncalhe(filtro);
+		
+		if(chamada == null || chamada.isEmpty()){
+			throw new ValidacaoException(TipoMensagem.WARNING,"Cota não possui programação de chamada antecipada de encalhe!");
+		}
+		
+		return chamada.get(0);
 	}
 	
 	/**
