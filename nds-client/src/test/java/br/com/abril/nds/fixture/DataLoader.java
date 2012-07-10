@@ -3981,10 +3981,10 @@ public class DataLoader {
 		tipoProdutoRevista = Fixture.tipoRevista(ncmRevistas);
 		session.save(tipoProdutoRevista);
 
-		tipoRefrigerante = Fixture.tipoProduto("Refrigerante",GrupoProduto.OUTROS, ncmBebidas, null, 006L);
+		tipoRefrigerante = Fixture.tipoProduto("Refrigerante",GrupoProduto.OUTROS, ncmBebidas, "", 006L);
 		session.save(tipoRefrigerante);
 
-		tipoCromo = Fixture.tipoProduto("Cromo",GrupoProduto.CROMO, ncmCromo, null, 005L);
+		tipoCromo = Fixture.tipoCromo(ncmCromo);
 		session.save(tipoCromo);
 	}
 
