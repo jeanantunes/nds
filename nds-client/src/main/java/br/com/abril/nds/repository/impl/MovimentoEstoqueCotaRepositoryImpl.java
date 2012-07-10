@@ -23,9 +23,6 @@ import br.com.abril.nds.dto.filtro.FiltroMapaAbastecimentoDTO;
 import br.com.abril.nds.dto.filtro.FiltroMapaAbastecimentoDTO.ColunaOrdenacao;
 import br.com.abril.nds.dto.filtro.FiltroMapaAbastecimentoDTO.ColunaOrdenacaoDetalhes;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
-import br.com.abril.nds.model.cadastro.Cota;
-import br.com.abril.nds.model.cadastro.Fornecedor;
-import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.OperacaoEstoque;
@@ -1245,7 +1242,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 	}  
 	
 	@SuppressWarnings("unchecked")
-	public List<MovimentoEstoqueCota> obterItensParaNotaFiscal(Cota cota, List<GrupoMovimentoEstoque> listaGrupoMovimentoEstoques, Intervalo<Date> periodo, List<Fornecedor> listaFornecedores, List<Produto> listaProdutos) {
+	public List<MovimentoEstoqueCota> obterMovimentoEstoqueCotaPor(Long idCota, List<GrupoMovimentoEstoque> listaGrupoMovimentoEstoques, Intervalo<Date> periodo, List<Long> listaFornecedores, List<Long> listaProdutos) {
 		
 		/*StringBuffer sql = new StringBuffer("");
 		

@@ -220,14 +220,17 @@ public interface MovimentoEstoqueCotaRepository extends Repository<MovimentoEsto
 	public List<ProdutoAbastecimentoDTO> obterMapaDeImpressaoPorProdutoQuebrandoPorCota(
 			FiltroMapaAbastecimentoDTO filtro);
 
+	
 	/**
-	 * Obtem dos os itens do MovimentoEstoqueCota para a geração de nota
+	 * Obtém Movimento Estoque Cota por parametros.
 	 * 
-	 * @param cota
-	 * @param listaGrupoMovimentoEstoques
+	 * @param idCota id da cota
+	 * @param listaGrupoMovimentoEstoques 
 	 * @param periodo
-	 * @return
+	 * @param listaFornecedores
+	 * @param listaProduto
+	 * @return lista movimento estoque cota
 	 */
-	public List<MovimentoEstoqueCota> obterItensParaNotaFiscal(Cota cota, List<GrupoMovimentoEstoque> listaGrupoMovimentoEstoques, Intervalo<Date> periodo, List<Fornecedor> listaFornecedores, List<Produto> listaProduto);
+	public List<MovimentoEstoqueCota> obterMovimentoEstoqueCotaPor(Long idCota, List<GrupoMovimentoEstoque> listaGrupoMovimentoEstoques, Intervalo<Date> periodo, List<Long> listaFornecedores, List<Long> listaProduto);
 	
 }

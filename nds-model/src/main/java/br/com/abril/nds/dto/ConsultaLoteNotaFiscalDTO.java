@@ -32,9 +32,9 @@ public class ConsultaLoteNotaFiscalDTO implements Serializable {
 	
 	private TipoNotaFiscal tipoNotaFiscal;
 	
-	private List<Produto> listaProdutos;
+	private List<Long> listaIdProdutos;
 	
-	private List<Fornecedor> listaFornecedores;
+	private List<Long> listaIdFornecedores;
 	
 	private PaginacaoVO paginacao;
 	
@@ -116,31 +116,31 @@ public class ConsultaLoteNotaFiscalDTO implements Serializable {
 	}
 
 	/**
-	 * @return the listaProdutos
+	 * @return the listaIdProdutos
 	 */
-	public List<Produto> getListaProdutos() {
-		return listaProdutos;
+	public List<Long> getListaIdProdutos() {
+		return listaIdProdutos;
 	}
 
 	/**
-	 * @param listaProdutos the listaProdutos to set
+	 * @param listaIdProdutos the listaIdProdutos to set
 	 */
-	public void setListaProdutos(List<Produto> listaProdutos) {
-		this.listaProdutos = listaProdutos;
+	public void setListaIdProdutos(List<Long> listaIdProdutos) {
+		this.listaIdProdutos = listaIdProdutos;
 	}
 
 	/**
-	 * @return the listaFornecedores
+	 * @return the listaIdFornecedores
 	 */
-	public List<Fornecedor> getListaFornecedores() {
-		return listaFornecedores;
+	public List<Long> getListaIdFornecedores() {
+		return listaIdFornecedores;
 	}
 
 	/**
-	 * @param listaFornecedores the listaFornecedores to set
+	 * @param listaIdFornecedores the listaIdFornecedores to set
 	 */
-	public void setListaFornecedores(List<Fornecedor> listaFornecedores) {
-		this.listaFornecedores = listaFornecedores;
+	public void setListaIdFornecedores(List<Long> listaIdFornecedores) {
+		this.listaIdFornecedores = listaIdFornecedores;
 	}
 
 }
