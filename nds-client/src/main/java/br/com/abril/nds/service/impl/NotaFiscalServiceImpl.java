@@ -9,6 +9,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -26,8 +27,10 @@ import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.EnderecoCota;
 import br.com.abril.nds.model.cadastro.EnderecoDistribuidor;
+import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.ParametroSistema;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
+import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.Telefone;
 import br.com.abril.nds.model.cadastro.TelefoneCota;
@@ -114,12 +117,17 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 	private MovimentoEstoqueCotaRepository movimentoEstoqueCotaRepository;
 	
 	@Override
-	public Map<Long, Integer> obterTotalItensNotaFiscalPorCotaEmLote(
-			ConsultaLoteNotaFiscalDTO dadosConsultaLoteNotaFiscal) {
+	public Map<Long, Integer> obterTotalItensNotaFiscalPorCotaEmLote(ConsultaLoteNotaFiscalDTO dadosConsultaLoteNotaFiscal) {
 		
 		Intervalo<Date> periodo = dadosConsultaLoteNotaFiscal.getPeriodoMovimento();
 		
 		GrupoNotaFiscal grupoNotaFiscal = dadosConsultaLoteNotaFiscal.getTipoNotaFiscal().getGrupoNotaFiscal();
+		
+		List<Fornecedor> listaFornecedores = dadosConsultaLoteNotaFiscal.getListaFornecedores();
+		 
+		List<Produto> listaProdutos = dadosConsultaLoteNotaFiscal.getListaProdutos();
+		
+		Map<Long, Integer> idCotaTotalItensNota = new HashMap<Long, Integer>();
 		
 		for (Long idCota : dadosConsultaLoteNotaFiscal.getIdsCotasDestinatarias()) {
 			
@@ -128,23 +136,24 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 			switch (grupoNotaFiscal) {
 
 			case NF_REMESSA_CONSIGNACAO:
-				this.obterItensNFeRemessaEmConsignacao(cota, periodo);
+				this.obterItensNFeRemessaEmConsignacao(cota, periodo, listaFornecedores, listaProdutos);
 				break;
 
 			case NF_DEVOLUCAO_REMESSA_CONSIGNACAO:
-				this.obterItensNFeEntradaDevolucaoRemessaConsignacao(cota, periodo);
+				this.obterItensNFeEntradaDevolucaoRemessaConsignacao(cota, periodo, listaFornecedores, listaProdutos);
 				break;
 
 			case NF_DEVOLUCAO_SIMBOLICA:
-				this.obterItensNFeVenda(cota, periodo);
+				this.obterItensNFeVenda(cota, periodo, listaFornecedores, listaProdutos);
 				break;
 
 			case NF_VENDA:
-				this.obterItensNFeVenda(cota, periodo);
+				this.obterItensNFeVenda(cota, periodo, listaFornecedores, listaProdutos);
 				break;
 			}
 		}
-		return null;
+		
+		return idCotaTotalItensNota;
 	}
 
 	@Override
@@ -632,8 +641,6 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 				}
 				
 			}
-			
-			
 		}
 		
 		notaFiscal.setInformacaoTransporte(transporte);
@@ -647,7 +654,8 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 	 * @param cota 
 	 * @param periodo intervalo do periodo de lançamento
 	 */
-	private List<ItemNotaFiscal> obterItensNFeRemessaEmConsignacao(Cota cota, Intervalo<Date> periodo) {
+	private List<ItemNotaFiscal> obterItensNFeRemessaEmConsignacao(
+			Cota cota, Intervalo<Date> periodo, List<Fornecedor> listaFornecedores, List<Produto> listaProduto) {
 		
 		List<GrupoMovimentoEstoque> listaGrupoMovimentoEstoque = new ArrayList<GrupoMovimentoEstoque>();
 		
@@ -658,9 +666,11 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		listaGrupoMovimentoEstoque.add(GrupoMovimentoEstoque.ESTORNO_COMPRA_SUPLEMENTAR);
 	
 		List<ItemNotaFiscal> listaItensNotaFiscal =
-				this.movimentoEstoqueCotaRepository.getItensToNotaFiscal(cota, listaGrupoMovimentoEstoque, periodo);
+				this.movimentoEstoqueCotaRepository.obterItensParaNotaFiscal(
+						cota, listaGrupoMovimentoEstoque, periodo, listaFornecedores, listaProduto);
 		
 		//TODO: lógica de negocio para tipo de nota
+		//TODO: desconto
 		
 		return listaItensNotaFiscal;
 	}
@@ -671,7 +681,8 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 	 * @param cota 
 	 * @param periodo intervalo do periodo de lançamento
 	 */
-	private List<ItemNotaFiscal> obterItensNFeEntradaDevolucaoRemessaConsignacao(Cota cota, Intervalo<Date> periodo) {
+	private List<ItemNotaFiscal> obterItensNFeEntradaDevolucaoRemessaConsignacao(
+			Cota cota, Intervalo<Date> periodo, List<Fornecedor> listaFornecedores, List<Produto> listaProduto) {
 			
 		List<GrupoMovimentoEstoque> listaGrupoMovimentoEstoque = new ArrayList<GrupoMovimentoEstoque>();
 		
@@ -679,32 +690,51 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		listaGrupoMovimentoEstoque.add(GrupoMovimentoEstoque.ENVIO_ENCALHE);
 		
 		List<ItemNotaFiscal> listaItensNotaFiscal =
-				this.movimentoEstoqueCotaRepository.getItensToNotaFiscal(cota, listaGrupoMovimentoEstoque, periodo);
+				this.movimentoEstoqueCotaRepository.obterItensParaNotaFiscal(
+						cota, listaGrupoMovimentoEstoque, periodo, listaFornecedores, listaProduto);
 		
 		//TODO: lógica de negocio para tipo de nota
+		//TODO: desconto
 		
 		return listaItensNotaFiscal;
 	}
 	
 	/**
 	 * Obtém Itens para NFes de Venda.
+	 * Itens de Envio menos Itens de Devolução;
 	 * 
 	 * @param cota
 	 * @param periodo intervalo do periodo de lançamento
 	 */
-	private List<ItemNotaFiscal> obterItensNFeVenda(Cota cota, Intervalo<Date> periodo) {
+	private List<ItemNotaFiscal> obterItensNFeVenda(
+			Cota cota, Intervalo<Date> periodo, List<Fornecedor> listaFornecedores, List<Produto> listaProdutos) {
 		
 		List<ItemNotaFiscal> itensNFeEnvioConsignado = 
-				this.obterItensNFeRemessaEmConsignacao(cota, periodo);
+				this.obterItensNFeRemessaEmConsignacao(cota, periodo, listaFornecedores, listaProdutos);
 		
 		List<ItemNotaFiscal> itensNFeDevolucaoConsignado = 
-				this.obterItensNFeEntradaDevolucaoRemessaConsignacao(cota, periodo);
+				this.obterItensNFeEntradaDevolucaoRemessaConsignacao(cota, periodo, listaFornecedores, listaProdutos);
 		
-		List<ItemNotaFiscal> itensNFeVenda = null;
+		List<ItemNotaFiscal> itensNFeVenda = new ArrayList<ItemNotaFiscal>();
 		
-		
-		for (ItemNotaFiscal itemNFe : itensNFeEnvioConsignado) {
-			//TODO: sumarizar itens para nota de venda;
+		for (ItemNotaFiscal itemNFeEnvio : itensNFeEnvioConsignado) {
+			
+			ItemNotaFiscal itemNFeVenda = itemNFeEnvio;
+			
+			if (itensNFeDevolucaoConsignado.contains(itemNFeEnvio)) {
+				
+				ItemNotaFiscal itemNFeDevolucao = itensNFeDevolucaoConsignado.get(itensNFeDevolucaoConsignado.indexOf(itemNFeEnvio));
+										
+				BigDecimal quantidade = itemNFeEnvio.getQuantidade().subtract(itemNFeDevolucao.getQuantidade());
+				
+				if (quantidade.compareTo(BigDecimal.ZERO) == 0) {
+					continue;
+				}
+				
+				itemNFeVenda.setQuantidade(quantidade);		
+			}
+				
+			itensNFeVenda.add(itemNFeEnvio);
 		}
 		
 		return  itensNFeVenda;
