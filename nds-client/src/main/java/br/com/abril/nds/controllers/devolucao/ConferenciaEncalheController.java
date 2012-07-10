@@ -28,6 +28,7 @@ import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.financeiro.OperacaoFinaceira;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaCota;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalheCota;
 import br.com.abril.nds.model.seguranca.Usuario;
@@ -1027,16 +1028,34 @@ public class ConferenciaEncalheController {
 			
 			valorVendaDia = valorVendaDia.add(info.getReparte().subtract(valorEncalhe));
 			
-			if (info.getListaDebitoCreditoCota() != null){
+			if (info.getListaDebitoCreditoCota() != null) {
 			
 				for (DebitoCreditoCotaDTO debitoCreditoCotaDTO : info.getListaDebitoCreditoCota()){
 					
-					valorDebitoCredito = valorDebitoCredito.add(debitoCreditoCotaDTO.getValor());
+					if(debitoCreditoCotaDTO.getValor() == null) {
+						continue;
+					}
+					
+					if(OperacaoFinaceira.DEBITO.name().equals(debitoCreditoCotaDTO.getTipoLancamento())) {
+						valorDebitoCredito = valorDebitoCredito.subtract(debitoCreditoCotaDTO.getValor());
+					}
+					
+					if(OperacaoFinaceira.CREDITO.name().equals(debitoCreditoCotaDTO.getTipoLancamento())) {
+						valorDebitoCredito = valorDebitoCredito.add(debitoCreditoCotaDTO.getValor());
+					}
+					
+					
 				}
 			}
 		}
 		
-		BigDecimal valorPagar = valorVendaDia.add(valorDebitoCredito);
+		BigDecimal valorPagar = BigDecimal.ZERO;	
+		
+		if(BigDecimal.ZERO.compareTo(valorDebitoCredito)>0) {
+			valorPagar = valorVendaDia.add(valorDebitoCredito.abs());
+		} else {
+			valorPagar = valorVendaDia.subtract(valorDebitoCredito.abs());
+		}
 		
 		if (dados != null){
 			
