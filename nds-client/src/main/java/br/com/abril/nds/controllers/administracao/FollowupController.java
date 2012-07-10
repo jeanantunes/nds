@@ -141,6 +141,11 @@ public class FollowupController {
 		
 		List<ConsultaFollowupStatusCotaDTO> listacadastral = this.followupstatuscotaService.obterStatusCota(filtroStatusCota);
 		
+		for(ConsultaFollowupStatusCotaDTO dto: listacadastral){
+			String periodo = dto.getDataInicioPeriodo() + " até " + dto.getDataFimPeriodo();
+			dto.setPeriodoStatus(periodo);
+		}
+		
 		TableModel<CellModelKeyValue<ConsultaFollowupStatusCotaDTO>> tableModel = new TableModel<CellModelKeyValue<ConsultaFollowupStatusCotaDTO>>();
 		
 		Integer totalRegistros = listacadastral.size();

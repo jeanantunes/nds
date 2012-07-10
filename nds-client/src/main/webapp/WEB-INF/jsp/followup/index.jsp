@@ -183,11 +183,11 @@ $(function() {
 <body>
     <br clear="all"/>
     <br />
-    	
+    	<div id="divGeral" >
       <fieldset class="classFieldset">
    	    <legend> Follow Up do Sistema </legend>
-        
         <div id="tab-followup">
+        
             <ul>
                 <li><a href="#tabNegocia">Negociação</a></li>
                 <li><a href="#tabChamadao">Chamadão</a></li>
@@ -286,7 +286,7 @@ $(function() {
 		</div>
         <br clear="all" />	
       </fieldset>
-      
+      </div>
       <div class="linha_separa_fields">&nbsp;</div>
        
 
@@ -399,11 +399,24 @@ $(".negociacaoGrid").flexigrid({
 		alert("exefollowPreProcessamentoNegociacao");
 		return resultado;
 	};
-	function exPreProcFollowupChamadao(resultado) {		
+	function exPreProcFollowupChamadao(resultado) {
+			$.each(resultado.rows, function(index, row) {						
+			
+			var linkExcluir = '<a href="javascript:;" onclick="irParaChamadao(' + row.cell.dataProgramadoChamadao + ');" style="cursor:pointer">' +
+							   	 '<img title="Excluir Desconto" src="${pageContext.request.contextPath}/images/ico_reprogramar.gif" hspace="5" border="0px" />Programar' +
+							   '</a>';
+			
+			row.cell.acao = linkExcluir;
+		});
+		
+		$(".grids").show();
 		return resultado;
 	};
-	function exPreProcFollowupStatusCota(resultado) {
-		alert("exefollowPreProcessamentoStatus");
+
+	function irParaChamadao(idCota){
+			alert("Entrou na function de ir para o chamadao" + idCota);
+		}
+	function exPreProcFollowupStatusCota(resultado) {		
 		return resultado;
 	};
 	function exPreProcFollowupCadastro(resultado) {

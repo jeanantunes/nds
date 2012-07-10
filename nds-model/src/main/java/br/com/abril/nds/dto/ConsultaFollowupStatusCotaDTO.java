@@ -31,16 +31,16 @@ public class ConsultaFollowupStatusCotaDTO implements Serializable {
 	@Export(label = "Data Vencto", alignment=Alignment.CENTER, exhibitionOrder = 6)
    	private Date dataVencimento;
 	
-	private Date dataInicioPeriodo; 
-	private Date dataFimPeriodo;
+	private String dataInicioPeriodo; 
+	private String dataFimPeriodo;
 
    	public ConsultaFollowupStatusCotaDTO() {   		
    	}
    	
    	public ConsultaFollowupStatusCotaDTO(Integer numeroCota,
 			String nomeJornaleiro, SituacaoCadastro statusAtual,
-			SituacaoCadastro statusNovo, Date dataInicioPeriodo,
-			Date dataFimPeriodo) {
+			SituacaoCadastro statusNovo, String dataInicioPeriodo,
+			String dataFimPeriodo) {
 		super();
 		this.numeroCota = numeroCota;
 		this.nomeJornaleiro = nomeJornaleiro;
@@ -70,10 +70,9 @@ public class ConsultaFollowupStatusCotaDTO implements Serializable {
 	public String getPeriodoStatus() {
 		return periodoStatus;
 	}
-	public void setPeriodoStatus(String periodoStatus) {
-		System.out.println("LAZAROOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO");
-		this.periodoStatus = DateUtil.formatarData(getDataInicioPeriodo(), Constantes.DATE_PATTERN_PT_BR) + " até " + DateUtil.formatarData(getDataFimPeriodo(), Constantes.DATE_PATTERN_PT_BR);
-		System.out.println(periodoStatus);
+	public void setPeriodoStatus(String periodoStatus) {		
+		this.periodoStatus =  periodoStatus;
+		
 	}
 	public SituacaoCadastro getStatusAtual() {
 		return statusAtual;
@@ -94,20 +93,20 @@ public class ConsultaFollowupStatusCotaDTO implements Serializable {
 		this.dataVencimento = dataVencimento;
 	}
 
-	public Date getDataInicioPeriodo() {
+	public String getDataInicioPeriodo() {
 		return dataInicioPeriodo;
 	}
 
 	public void setDataInicioPeriodo(Date dataInicioPeriodo) {
-		this.dataInicioPeriodo = dataInicioPeriodo;
+		this.dataInicioPeriodo = DateUtil.formatarData(dataInicioPeriodo, Constantes.DATE_PATTERN_PT_BR);
 	}
 
-	public Date getDataFimPeriodo() {
+	public String getDataFimPeriodo() {
 		return dataFimPeriodo;
 	}
 
 	public void setDataFimPeriodo(Date dataFimPeriodo) {
-		this.dataFimPeriodo = dataFimPeriodo;
+		this.dataFimPeriodo =  DateUtil.formatarData(dataFimPeriodo, Constantes.DATE_PATTERN_PT_BR);
 	}
 	
 
