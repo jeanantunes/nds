@@ -312,6 +312,7 @@ public class LancamentoRepositoryImpl extends
 		
 		query.setParameter("numeroEdicao", numeroEdicao);
 		query.setParameter("codigoProduto", codigoProduto);
+		query.setMaxResults(1);
 		
 		return (Date) query.uniqueResult();
 	}
