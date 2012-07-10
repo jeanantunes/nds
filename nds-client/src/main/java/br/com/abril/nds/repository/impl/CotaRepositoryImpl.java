@@ -1013,5 +1013,26 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 			throw new RuntimeException(e);
 		}
 	}
+	
+	@Override
+	public Long obterQuantidadeCotas(SituacaoCadastro situacaoCadastro){
+		
+		StringBuilder hql = new StringBuilder("select count (cota.id) ");
+		hql.append(" from Cota cota ");
+		
+		if (situacaoCadastro != null){
+			
+			hql.append(" where cota.situacaoCadastro = :situacao ");
+		}
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		
+		if (situacaoCadastro != null){
+			
+			query.setParameter("situacao", situacaoCadastro);
+		}
+		
+		return (Long) query.uniqueResult();
+	}
 
 }

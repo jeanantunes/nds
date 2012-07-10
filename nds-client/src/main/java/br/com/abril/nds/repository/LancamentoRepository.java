@@ -15,6 +15,7 @@ import br.com.abril.nds.dto.SumarioLancamentosDTO;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.planejamento.Lancamento;
+import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.vo.PaginacaoVO;
@@ -243,4 +244,7 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 	 */
 	public Date buscarDiaUltimoBalanceamentoRecolhimentoRealizado();
 
+	Long obterQuantidadeLancamentos(StatusLancamento statusLancamento);
+
+	BigDecimal obterConsignadoDia(StatusLancamento statusLancamento);
 }

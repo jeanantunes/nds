@@ -16,6 +16,7 @@ import br.com.abril.nds.dto.filtro.FiltroCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroCurvaABCCotaDTO;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.EnderecoCota;
+import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TelefoneCota;
 
 /**
@@ -179,5 +180,7 @@ public interface CotaRepository extends Repository<Cota, Long> {
 	List<RegistroCurvaABCCotaVO> obterCurvaABCCota(FiltroCurvaABCCotaDTO filtro);
 	
 	List<Cota> obterCotasPorIDS(List<Long> idsCotas);
+
+	Long obterQuantidadeCotas(SituacaoCadastro situacaoCadastro);
 
 }

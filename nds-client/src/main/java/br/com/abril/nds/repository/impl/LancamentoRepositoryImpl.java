@@ -1135,4 +1135,35 @@ public class LancamentoRepositoryImpl extends
 		return (Date) criteria.uniqueResult();
 	}
 	
+	@Override
+	public Long obterQuantidadeLancamentos(StatusLancamento statusLancamento){
+		
+		StringBuilder hql = new StringBuilder("select count(lanc.id) ");
+		hql.append(" from Lancamento lanc ")
+		   .append(" where lanc.dataLancamentoPrevista = :hoje ")
+		   .append(" and lanc.statusLancamento = :statusLancamento ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setParameter("hoje", new Date());
+		query.setParameter("statusLancamento", statusLancamento);
+		
+		return (Long) query.uniqueResult();
+	}
+	
+	@Override
+	public BigDecimal obterConsignadoDia(StatusLancamento statusLancamento){
+		
+		StringBuilder hql = new StringBuilder("select ");
+		hql.append(" sum(lanc.produtoEdicao.precoVenda) * (lanc.produtoEdicao.reparteDistribuido) ")
+		   .append(" from Lancamento lanc ")
+		   .append(" where lanc.dataLancamentoPrevista = :hoje ")
+		   .append(" and lanc.statusLancamento = :statusLancamento ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		
+		query.setParameter("hoje", new Date());
+		query.setParameter("statusLancamento", statusLancamento);
+		
+		return (BigDecimal) query.uniqueResult();
+	}
 }
