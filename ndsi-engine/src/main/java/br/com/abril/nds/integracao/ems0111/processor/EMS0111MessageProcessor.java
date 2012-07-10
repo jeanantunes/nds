@@ -3,8 +3,6 @@ package br.com.abril.nds.integracao.ems0111.processor;
 import java.util.Calendar;
 import java.util.Date;
 
-import javax.persistence.NoResultException;
-
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -27,31 +25,27 @@ import br.com.abril.nds.repository.impl.AbstractRepository;
  * @version 1.0
  */
 
-
-
 @Component
+public class EMS0111MessageProcessor extends AbstractRepository implements
+		MessageProcessor {
 
-public class EMS0111MessageProcessor extends AbstractRepository implements MessageProcessor  {
-
-	//METODO PARA AJUSTAR A INTERFACE AO ENUM
-	public TipoLancamento parseTipo(String tipo){
-		if(tipo.equalsIgnoreCase("LAN"))
+	// METODO PARA AJUSTAR A INTERFACE AO ENUM
+	public TipoLancamento parseTipo(String tipo) {
+		if (tipo.equalsIgnoreCase("LAN"))
 			return TipoLancamento.LANCAMENTO;
-		if(tipo.equalsIgnoreCase("SUP"))
+		if (tipo.equalsIgnoreCase("SUP"))
 			return TipoLancamento.SUPLEMENTAR;
-		if(tipo.equalsIgnoreCase("REL"))
+		if (tipo.equalsIgnoreCase("REL"))
 			return TipoLancamento.RELANCAMENTO;
-		if(tipo.equalsIgnoreCase("PAR"))
+		if (tipo.equalsIgnoreCase("PAR"))
 			return TipoLancamento.PARCIAL;
 		return null;
 	}
 
-
 	@Autowired
 	private NdsiLoggerFactory ndsiLoggerFactory;
-	
+
 	@Override
-	
 	public void processMessage(Message message) {
 
 		EMS0111Input input = (EMS0111Input) message.getBody();
@@ -68,12 +62,10 @@ public class EMS0111MessageProcessor extends AbstractRepository implements Messa
 		consulta.setParameter("codigoProduto", input.getCodigoProduto());
 		consulta.setParameter("numeroEdicao", input.getEdicaoProduto());
 
-		try {
-			ProdutoEdicao produtoEdicao = (ProdutoEdicao) consulta
-					.uniqueResult();
-						
-			//SE EXISTIR PRODUTO/EDICAO NA TABELA
-			//VERIFICAR SE EXISTE LANCAMENTO CADASTRADO PARA O PRODUTO/EDICAO
+		ProdutoEdicao produtoEdicao = (ProdutoEdicao) consulta.uniqueResult();
+		if (null != produtoEdicao) {
+			// SE EXISTIR PRODUTO/EDICAO NA TABELA
+			// VERIFICAR SE EXISTE LANCAMENTO CADASTRADO PARA O PRODUTO/EDICAO
 			StringBuilder sql = new StringBuilder();
 
 			sql.append("SELECT lcto FROM Lancamento lcto ");
@@ -81,99 +73,119 @@ public class EMS0111MessageProcessor extends AbstractRepository implements Messa
 			sql.append("		lcto.produtoEdicao = :produtoEdicao");
 			sql.append(" AND   ");
 			sql.append(" 		lcto.dataLancamentoPrevista = :dataLancamento   ");
-			
+
 			Query query = getSession().createQuery(sql.toString());
 			query.setParameter("produtoEdicaoId", produtoEdicao.getId());
 			query.setParameter("dataLancamento", input.getDataLancamento());
-			
 
-			try {
-				
-				
-				Lancamento lancamento = (Lancamento) query.uniqueResult();
-		
-				//VERIFICAR SE OS CAMPOS ESTAO DESATUALIZADOS
-				//CASO NECESSARIO, ATUALIZAR OS CAMPOS
-				
-					if(!lancamento.getDataLancamentoPrevista().equals(input.getDataLancamento())){
-						lancamento.setDataLancamentoPrevista(input.getDataLancamento());
-						ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, "Atualizacao da data de lancamento: "+input.getDataLancamento());
-					}
-					
-					
-					if(!lancamento.getTipoLancamento().equals(parseTipo(input.getTipoLancamento())));{
-												
-						
-						lancamento.setTipoLancamento(parseTipo(input.getTipoLancamento()));
-						ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, "Atualizacao do tipo de lancamento: "+input.getTipoLancamento());
+			Lancamento lancamento = (Lancamento) query.uniqueResult();
+			if (null != lancamento) {
 
-					}
-						
-					
-					if(lancamento.getReparte()!=input.getRepartePrevisto());{
-						lancamento.setReparte(input.getRepartePrevisto());
-						ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, "Atualizacao do Reparte Previsto: "+input.getRepartePrevisto());
+				// VERIFICAR SE OS CAMPOS ESTAO DESATUALIZADOS
+				// CASO NECESSARIO, ATUALIZAR OS CAMPOS
 
-					}
-					
-					if(lancamento.getRepartePromocional()!=input.getRepartePromocional());{
-						lancamento.setRepartePromocional(input.getRepartePromocional());
-						
-						ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, "Atualizacao do Reparte Promocional: "+input.getRepartePromocional());
+				if (!lancamento.getDataLancamentoPrevista().equals(
+						input.getDataLancamento())) {
+					lancamento.setDataLancamentoPrevista(input
+							.getDataLancamento());
+					ndsiLoggerFactory.getLogger().logInfo(
+							message,
+							EventoExecucaoEnum.INF_DADO_ALTERADO,
+							"Atualizacao da data de lancamento: "
+									+ input.getDataLancamento());
+				}
 
-					}
-				
+				if (!lancamento.getTipoLancamento().equals(
+						parseTipo(input.getTipoLancamento())))
+					;
+				{
 
+					lancamento.setTipoLancamento(parseTipo(input
+							.getTipoLancamento()));
+					ndsiLoggerFactory.getLogger().logInfo(
+							message,
+							EventoExecucaoEnum.INF_DADO_ALTERADO,
+							"Atualizacao do tipo de lancamento: "
+									+ input.getTipoLancamento());
 
+				}
 
-			} catch (NoResultException e) {
-				//NAO EXISTE LANCAMENTO PARA O PRODUTO/EDICAO  INFORMADO
-				//INSERIR LANCAMENTO
-				
-				Lancamento lancamento = new Lancamento();
+				if (lancamento.getReparte() != input.getRepartePrevisto())
+					;
+				{
+					lancamento.setReparte(input.getRepartePrevisto());
+					ndsiLoggerFactory.getLogger().logInfo(
+							message,
+							EventoExecucaoEnum.INF_DADO_ALTERADO,
+							"Atualizacao do Reparte Previsto: "
+									+ input.getRepartePrevisto());
+
+				}
+
+				if (lancamento.getRepartePromocional() != input
+						.getRepartePromocional())
+					;
+				{
+					lancamento.setRepartePromocional(input
+							.getRepartePromocional());
+
+					ndsiLoggerFactory.getLogger().logInfo(
+							message,
+							EventoExecucaoEnum.INF_DADO_ALTERADO,
+							"Atualizacao do Reparte Promocional: "
+									+ input.getRepartePromocional());
+
+				}
+
+			} else {
+				// NAO EXISTE LANCAMENTO PARA O PRODUTO/EDICAO INFORMADO
+				// INSERIR LANCAMENTO
+
+				lancamento = new Lancamento();
 				Calendar data = Calendar.getInstance();
-				
+
 				data.add(Calendar.DAY_OF_MONTH, produtoEdicao.getPeb());
-								
+
 				lancamento.setId(null);
 				lancamento.setProdutoEdicao(produtoEdicao);
 				lancamento.setDataLancamentoPrevista(input.getDataLancamento());
-				lancamento.setTipoLancamento(parseTipo(input.getTipoLancamento()));
+				lancamento.setTipoLancamento(parseTipo(input
+						.getTipoLancamento()));
 				lancamento.setReparte(input.getRepartePrevisto());
-				lancamento.setStatus(StatusLancamento.PLANEJADO);//confirmado
-				lancamento.setRepartePromocional(input.getRepartePromocional());//confirmado
-				lancamento.setDataCriacao(new Date());//confirmado
-				lancamento.setDataLancamentoDistribuidor(input.getDataLancamento());//confirmado
-				lancamento.setDataRecolhimentoDistribuidor(data.getTime());//confirmado
-				lancamento.setDataRecolhimentoPrevista(data.getTime());//confirmado
-				lancamento.setDataStatus(new Date());//confirmado
-				lancamento.setExpedicao(null);//default
-				lancamento.setHistoricos(null);//default
-				lancamento.setRecebimentos(null);//default
-				lancamento.setNumeroReprogramacoes(null);//confirmado
-				lancamento.setSequenciaMatriz(null);//confirmado
-				
-				//EFETIVAR INSERCAO NA BASE
+				lancamento.setStatus(StatusLancamento.PLANEJADO);// confirmado
+				lancamento.setRepartePromocional(input.getRepartePromocional());// confirmado
+				lancamento.setDataCriacao(new Date());// confirmado
+				lancamento.setDataLancamentoDistribuidor(input
+						.getDataLancamento());// confirmado
+				lancamento.setDataRecolhimentoDistribuidor(data.getTime());// confirmado
+				lancamento.setDataRecolhimentoPrevista(data.getTime());// confirmado
+				lancamento.setDataStatus(new Date());// confirmado
+				lancamento.setExpedicao(null);// default
+				lancamento.setHistoricos(null);// default
+				lancamento.setRecebimentos(null);// default
+				lancamento.setNumeroReprogramacoes(null);// confirmado
+				lancamento.setSequenciaMatriz(null);// confirmado
+
+				// EFETIVAR INSERCAO NA BASE
 				getSession().persist(lancamento);
-							
-			}			
-			
 
-		} catch (NoResultException e) {
+			}
+
+		} else {
 			// NAO ENCONTROU Produto/Edicao, DEVE LOGAR
-			// NAO E POSSIVEL REALIZAR INSERT/UPDATE 
-			ndsiLoggerFactory.getLogger().logError(
-					message,
-					EventoExecucaoEnum.RELACIONAMENTO,
-					"Impossivel realizar Insert/update - Nenhum resultado encontrado para Produto: "
-							+ input.getCodigoProduto() + " e Edicao: "
-							+ input.getEdicaoProduto() + " na tabela produto_edicao");
-
-			e.printStackTrace();
+			// NAO E POSSIVEL REALIZAR INSERT/UPDATE
+			ndsiLoggerFactory
+					.getLogger()
+					.logError(
+							message,
+							EventoExecucaoEnum.RELACIONAMENTO,
+							"Impossivel realizar Insert/update - Nenhum resultado encontrado para Produto: "
+									+ input.getCodigoProduto()
+									+ " e Edicao: "
+									+ input.getEdicaoProduto()
+									+ " na tabela produto_edicao");
 
 		}
-
-		
 
 	}
 

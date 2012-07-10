@@ -1,10 +1,8 @@
 package br.com.abril.nds.integracao.ems0108.processor;
 
-import java.math.BigDecimal; 
+import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.Date;
-
-import javax.persistence.NoResultException;
 
 import org.hibernate.Query;
 import org.springframework.stereotype.Component;
@@ -20,8 +18,8 @@ import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.repository.impl.AbstractRepository;
 
 @Component
-
-public class EMS0108MessageProcessor extends AbstractRepository implements MessageProcessor {
+public class EMS0108MessageProcessor extends AbstractRepository implements
+		MessageProcessor {
 
 	private EMS0108MessageProcessor() {
 
@@ -31,7 +29,6 @@ public class EMS0108MessageProcessor extends AbstractRepository implements Messa
 	 * Processa as linhas do arquivo da interface EMS0108
 	 */
 	@Override
-	
 	public void processMessage(Message message) {
 		EMS0108Input input = (EMS0108Input) message.getBody();
 		// Obter o produto
@@ -42,23 +39,23 @@ public class EMS0108MessageProcessor extends AbstractRepository implements Messa
 		sql.append("WHERE ");
 		sql.append("	   pe.numeroEdicao = :numeroEdicao ");
 		sql.append("	   AND p.codigo    = :codigoProduto ");
-		
+
 		Query query = getSession().createQuery(sql.toString());
-		
+
 		query.setParameter("numeroEdicao", input.getEdicao());
 		query.setParameter("codigoProduto", input.getCodigoPublicacao()
 				.toString());
-		
+
 		ProdutoEdicao produtoEdicao = null;
 		Produto produto = null;
-		
+
 		int numeroDias;
-		
-		try {
-			produtoEdicao = ((ProdutoEdicao) query.uniqueResult());
+
+		produtoEdicao = ((ProdutoEdicao) query.uniqueResult());
+		if (null != produtoEdicao) {
 			produto = produtoEdicao.getProduto();
 			numeroDias = produtoEdicao.getPeb();
-		} catch (NoResultException e) {
+		} else {
 			// FIXME Não encontrou o produto. Realizar Log
 			// Passar para a próxima linha
 			return;
@@ -69,19 +66,21 @@ public class EMS0108MessageProcessor extends AbstractRepository implements Messa
 		Date dataRec = null;
 		Date dataCriacaoArquivo = (Date) message.getHeader().get(
 				"FILE_CREATION_DATE");
-		
+
 		Lancamento lancamento = new Lancamento();
-		
-		if (input.getEdicao() != null && input.getDataLancamentoRecolhimentoProduto().compareTo(dataCriacaoArquivo) >= 0) {
-			
+
+		if (input.getEdicao() != null
+				&& input.getDataLancamentoRecolhimentoProduto().compareTo(
+						dataCriacaoArquivo) >= 0) {
+
 			dataLcto = input.getDataLancamentoRecolhimentoProduto();
-			
+
 			// Soma o número de dias a recolher
 			Calendar cal = Calendar.getInstance();
 			cal.setTime(dataLcto);
 			cal.add(Calendar.DATE, numeroDias);
 			dataRec = cal.getTime();
-			
+
 			// Insert
 			lancamento.setDataCriacao(new Date());
 			lancamento.setDataLancamentoDistribuidor(dataLcto);
@@ -92,12 +91,12 @@ public class EMS0108MessageProcessor extends AbstractRepository implements Messa
 			lancamento.setNumeroReprogramacoes(0);
 			lancamento.setProdutoEdicao(produtoEdicao);
 			lancamento.setReparte(new BigDecimal(0));
-			
+
 			// lancamento.setStatus(status);
 			// lancamento.setTipoLancamento(tipoLancamento);
 			getSession().persist(lancamento);
 		}
-		
+
 		if (input.getEdicaoRecolhimento() != null
 				&& input.getDataLancamentoRecolhimentoProduto().before(
 						dataCriacaoArquivo)) {
@@ -108,7 +107,7 @@ public class EMS0108MessageProcessor extends AbstractRepository implements Messa
 			sql.append("SELECT la FROM Lancamento la ");
 			sql.append("	   JOIN FETCH pe.produto p ");
 			sql.append("WHERE  p.codigo = :codigoProduto ");
-			
+
 			// edição de lançamento
 			if (input.getEdicao() != null) {
 				sql.append("	   la.dataLancamentoPrevista = :dataComparar ");
@@ -117,21 +116,21 @@ public class EMS0108MessageProcessor extends AbstractRepository implements Messa
 			if (input.getEdicaoRecolhimento() != null) {
 				sql.append("	   p.dataRecolhimentoPrevista = :dataComparar ");
 			}
-			
+
 			query = getSession().createQuery(sql.toString());
 			query.setMaxResults(1);
 			query.setParameter("codigoProduto", produto.getCodigo());
 			query.setParameter("dataComparar", dataLcto);
 
 			lancamento = null;
-			try {
-				lancamento = (Lancamento) query.uniqueResult();
-			} catch (NoResultException e) {
+
+			lancamento = (Lancamento) query.uniqueResult();
+			if (null != lancamento) {
 				// FIXME Não encontrou lancamento. Realizar Log
 				// Passar para a próxima linha
 				return;
 			}
-			
+
 			// update
 			lancamento.setDataLancamentoDistribuidor(dataLcto);
 			lancamento.setDataLancamentoPrevista(dataLcto);

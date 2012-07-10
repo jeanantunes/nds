@@ -863,8 +863,7 @@ public class DataLoader {
 		criarCotas(session);
 		criarPDVsCota(session);
 		criarDistribuicaoCota(session);
-		criarEditores(session);
-		criarTiposProduto(session);
+		criarEditores(session);		
 		criarProdutos(session);
 		criarProdutosEdicao(session);
 		criarTiposMovimento(session);
@@ -974,6 +973,8 @@ public class DataLoader {
 		criarInterfaceExecucao(session);
 		criarEventoExecucao(session);
 		criarAlgoritmos(session);
+		
+		criarTiposProduto(session);
 		
 		criarDistribuidor(session);
 		criarEnderecoDistribuidor(session);
@@ -2867,17 +2868,25 @@ public class DataLoader {
 		save(session, Fixture.parametroSistema(TipoParametroSistema.NUMERO_DIAS_PERMITIDO_LANCAMENTO_SOBRA_EM, "7"));
 		save(session, Fixture.parametroSistema(TipoParametroSistema.NUMERO_DIAS_PERMITIDO_LANCAMENTO_SOBRA_DE, "7"));
 		save(session, Fixture.parametroSistema(TipoParametroSistema.PATH_INTERFACE_NFE_IMPORTACAO,
-//				"C:\\notas\\"));			// windows;
-				"/opt/interface/notas/"));	// linux;
+				"C:\\notas\\"));			// windows;
+//				"/opt/interface/notas/"));	// linux;
 		save(session, Fixture.parametroSistema(TipoParametroSistema.PATH_INTERFACE_MDC_IMPORTACAO, 
-//				"C:\\interface_mdc\\"));		// windows;
-				"/opt/interface/inbound/"));		// linux;
+				"C:\\interface_mdc\\"));		// windows;
+//				"/opt/interface/inbound/"));		// linux;
 		save(session, Fixture.parametroSistema(TipoParametroSistema.PATH_INTERFACE_MDC_EXPORTACAO,
-//				"C:\\interface_mdc\\"));		// windows;
-				"/opt/interface/outbound/"));	// linux;
+				"C:\\interface_mdc\\"));		// windows;
+//				"/opt/interface/outbound/"));	// linux;
 		save(session, Fixture.parametroSistema(TipoParametroSistema.PATH_INTERFACE_MDC_BACKUP,
-//				"C:\\interface_mdc\\"));		// windows;
-				"/opt/interface/archive/"));		// linux;
+				"C:\\interface_mdc\\"));		// windows;
+//				"/opt/interface/archive/"));		// linux;
+		
+		
+		save(session, Fixture.parametroSistema(TipoParametroSistema.CODIGO_DISTRIBUIDOR_DINAP, "6338107"));
+		save(session, Fixture.parametroSistema(TipoParametroSistema.UF, "SP" ));
+		save(session, Fixture.parametroSistema(TipoParametroSistema.RAZAO_SOCIAL, "Distribuidora Paulista de Jornais, Livros e Revistas LTDA" ));
+		save(session, Fixture.parametroSistema(TipoParametroSistema.CNPJ, "50.958.925/0001-18" ));	
+		
+		
 		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0106_ARCHIVE, "/opt/interface/ems0106/archive/"));
 		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0106_INBOUND, "/opt/interface/ems0106/inbound/"));
 		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0106_IN_FILEMASK, "(?i:DEAPR19.NEW)"));

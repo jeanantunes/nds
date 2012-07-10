@@ -7,7 +7,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.NoResultException;
+
 
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,6 +77,9 @@ public class EMS0133MessageProcessor extends AbstractRepository implements Messa
 
 			@SuppressWarnings("unchecked")
 			List<Lancamento> lancamentos = query.list();
+			if (lancamentos.isEmpty()) {
+				ndsiLoggerFactory.getLogger().logError(message, EventoExecucaoEnum.RELACIONAMENTO, "Nenhum resultado encontrado para Data de Operação: "+ distribuidor.getDataOperacao());
+			}
 			
 			PrintWriter print = new PrintWriter(new FileWriter(message.getHeader().get(MessageHeaderProperties.OUTBOUND_FOLDER.getValue())+"/"+sdf.format(data)+".drr"));	
 			
@@ -108,10 +111,7 @@ public class EMS0133MessageProcessor extends AbstractRepository implements Messa
 			
 			ndsiLoggerFactory.getLogger().logError(message, EventoExecucaoEnum.GERACAO_DE_ARQUIVO, "Não foi possível gerar o arquivo");
 			
-		} catch (NoResultException e) {
-			ndsiLoggerFactory.getLogger().logError(message, EventoExecucaoEnum.RELACIONAMENTO, "Nenhum resultado encontrado para Data de Operação: "+ distribuidor.getDataOperacao());
-		}
-		
+		} 
 		
 		
 	}
