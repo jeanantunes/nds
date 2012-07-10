@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
 
-import javax.persistence.NoResultException;
+
 
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,9 +58,13 @@ public class EMS0131MessageProcessor extends AbstractRepository implements Messa
 		try {
 			@SuppressWarnings("unchecked")
 			List<Cota> cotas =  query.list();
-			
+			if (cotas.isEmpty()) {
+				ndsiLoggerFactory.getLogger().logError(message, EventoExecucaoEnum.RELACIONAMENTO, "Nenhum resultado encontrado.");
+				return;
+			}
+
 			PrintWriter print = new PrintWriter(new FileWriter(message.getHeader().get(MessageHeaderProperties.OUTBOUND_FOLDER.getValue())+"/COTA.txt"));
-			
+						
 			for(Cota cota : cotas){
 				
 				EMS0131Output output = new EMS0131Output();
@@ -103,9 +107,6 @@ public class EMS0131MessageProcessor extends AbstractRepository implements Messa
 			
 			print.flush();
 			print.close();
-			
-		} catch (NoResultException e) {
-			ndsiLoggerFactory.getLogger().logError(message, EventoExecucaoEnum.RELACIONAMENTO, "Nenhum resultado encontrado.");
 			
 		} catch (IOException e) {
 			ndsiLoggerFactory.getLogger().logError(message, EventoExecucaoEnum.GERACAO_DE_ARQUIVO, "Não foi possível gerar o arquivo");
