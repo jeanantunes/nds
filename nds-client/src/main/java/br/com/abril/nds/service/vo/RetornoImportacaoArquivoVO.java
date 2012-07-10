@@ -1,6 +1,7 @@
 package br.com.abril.nds.service.vo;
 
 import java.io.Serializable;
+import java.util.Arrays;
 
 public class RetornoImportacaoArquivoVO implements Serializable {
 
@@ -16,6 +17,29 @@ public class RetornoImportacaoArquivoVO implements Serializable {
 	private String conteudoLinha;
 	
 	private boolean sucessoNaImportacao;
+	
+	/**
+	 * Construtor padrão
+	 */
+	public RetornoImportacaoArquivoVO(){
+		
+	}
+	
+	/**
+	 * Construtor
+	 * @param motivoDoErro
+	 * @param numeroDaLinha
+	 * @param conteudoLinha
+	 * @param sucessoNaImportacao
+	 */
+	public RetornoImportacaoArquivoVO(String[] motivoDoErro, int numeroDaLinha,
+			String conteudoLinha, boolean sucessoNaImportacao) {
+		super();
+		this.motivoDoErro = motivoDoErro;
+		this.numeroDaLinha = numeroDaLinha;
+		this.conteudoLinha = conteudoLinha;
+		this.sucessoNaImportacao = sucessoNaImportacao;
+	}
 
 	/**
 	 * @return the motivoDoErro
@@ -72,6 +96,16 @@ public class RetornoImportacaoArquivoVO implements Serializable {
 	public void setSucessoNaImportacao(boolean sucessoNaImportacao) {
 		this.sucessoNaImportacao = sucessoNaImportacao;
 	}
-	
-	
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "RetornoImportacaoArquivoVO [motivoDoErro="
+				+ Arrays.toString(motivoDoErro) + ", numeroDaLinha="
+				+ numeroDaLinha + ", conteudoLinha=" + conteudoLinha
+				+ ", sucessoNaImportacao=" + sucessoNaImportacao + "]";
+	}
+
 }

@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.util.Date;
 import java.util.Scanner;
 
 import org.apache.commons.lang.StringUtils;
@@ -11,7 +13,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import br.com.abril.nds.integracao.ems0108.inbound.EMS0108Input;
+import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.planejamento.Lancamento;
+import br.com.abril.nds.repository.LancamentoRepository;
+import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.service.vo.RetornoImportacaoArquivoVO;
+import br.com.abril.nds.util.DateUtil;
 
 import com.ancientprogramming.fixedformat4j.format.FixedFormatManager;
 
@@ -26,6 +33,12 @@ public class ImportacaoDeArquivoMatrizStrategy implements ImportacaoArquivoStrat
 	
 	@Autowired
 	private FixedFormatManager ffm;
+	
+	@Autowired
+	private ProdutoEdicaoRepository produtoEdicaoRepository;
+	
+	@Autowired
+	private LancamentoRepository lancamentoRepository;
 	
 	@Override
 	public RetornoImportacaoArquivoVO processarImportacaoArquivo(File arquivo) {
@@ -77,5 +90,61 @@ public class ImportacaoDeArquivoMatrizStrategy implements ImportacaoArquivoStrat
 		
 		return arquivoVO ;
 	}
-
+	
+	private void persistirDados(EMS0108Input input, RetornoImportacaoArquivoVO retornoImportacaoArquivoVO){
+		
+		ProdutoEdicao produtoEdicao = 
+				produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao(input.getCodigoPublicacao().toString(), 
+																				 input.getEdicao());
+		if(produtoEdicao == null){
+			//TODO erro de produto edição não encontrado
+		}
+		
+		int numeroDias = produtoEdicao.getPeb();
+		
+		Date dataLcto = input.getDataLancamentoRecolhimentoProduto();
+	
+		// Soma o número de dias a recolher
+		Date dataRec = DateUtil.adicionarDias(dataLcto, numeroDias);			
+		
+		if(input.getDataLancamentoRecolhimentoProduto().compareTo(new Date()) >= 0){
+			
+			Lancamento lancamento = new Lancamento();		
+			// Insert
+			lancamento.setDataCriacao(new Date());
+			lancamento.setDataLancamentoDistribuidor(dataLcto);
+			lancamento.setDataLancamentoPrevista(dataLcto);
+			lancamento.setDataRecolhimentoDistribuidor(dataRec);
+			lancamento.setDataRecolhimentoPrevista(dataRec);
+			lancamento.setDataStatus(new Date());
+			lancamento.setNumeroReprogramacoes(0);
+			lancamento.setProdutoEdicao(produtoEdicao);
+			lancamento.setReparte(new BigDecimal(0));
+			
+			lancamentoRepository.adicionar(lancamento);
+		}
+		
+		if (input.getEdicaoRecolhimento() != null
+				&& input.getDataLancamentoRecolhimentoProduto().before(new Date())) {
+			
+			Lancamento lancamento = 
+					lancamentoRepository.obterLancamentoProdutoPorDataLancamentoOuDataRecolhimento(produtoEdicao.getProduto().getCodigo(), 
+																								   dataRec, 
+																								   dataRec);
+			if(lancamento == null){
+				//TODO erro de lançamento não encontrado
+			}
+			
+			// update
+			lancamento.setDataLancamentoDistribuidor(dataLcto);
+			lancamento.setDataLancamentoPrevista(dataLcto);
+			lancamento.setDataRecolhimentoDistribuidor(dataRec);
+			lancamento.setDataRecolhimentoPrevista(dataRec);
+			lancamento.setDataStatus(new Date());
+			lancamento.setNumeroReprogramacoes(0);
+			lancamento.setProdutoEdicao(produtoEdicao);
+			
+			lancamentoRepository.merge(lancamento);
+		}
+	}
 }

@@ -18,7 +18,6 @@ import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.OperacaoEstoque;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
-import br.com.abril.nds.model.fiscal.nota.ItemNotaFiscal;
 import br.com.abril.nds.util.Intervalo;
 
 
@@ -221,14 +220,17 @@ public interface MovimentoEstoqueCotaRepository extends Repository<MovimentoEsto
 	public List<ProdutoAbastecimentoDTO> obterMapaDeImpressaoPorProdutoQuebrandoPorCota(
 			FiltroMapaAbastecimentoDTO filtro);
 
+	
 	/**
-	 * Obtem dos os itens do MovimentoEstoqueCota para a geração de nota
+	 * Obtém Movimento Estoque Cota por parametros.
 	 * 
-	 * @param cota
-	 * @param listaGrupoMovimentoEstoques
+	 * @param idCota id da cota
+	 * @param listaGrupoMovimentoEstoques 
 	 * @param periodo
-	 * @return
+	 * @param listaFornecedores
+	 * @param listaProduto
+	 * @return lista movimento estoque cota
 	 */
-	public List<ItemNotaFiscal> obterItensParaNotaFiscal(Cota cota, List<GrupoMovimentoEstoque> listaGrupoMovimentoEstoques, Intervalo<Date> periodo, List<Fornecedor> listaFornecedores, List<Produto> listaProduto);
+	public List<MovimentoEstoqueCota> obterMovimentoEstoqueCotaPor(Long idCota, List<GrupoMovimentoEstoque> listaGrupoMovimentoEstoques, Intervalo<Date> periodo, List<Long> listaFornecedores, List<Long> listaProduto);
 	
 }

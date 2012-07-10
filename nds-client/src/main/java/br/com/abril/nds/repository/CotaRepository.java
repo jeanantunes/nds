@@ -3,6 +3,7 @@ package br.com.abril.nds.repository;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import br.com.abril.nds.client.vo.RegistroCurvaABCCotaVO;
 import br.com.abril.nds.client.vo.ResultadoCurvaABCCota;
@@ -18,6 +19,7 @@ import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.EnderecoCota;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TelefoneCota;
+import br.com.abril.nds.util.Intervalo;
 
 /**
  * Interface que define as regras de acesso a dados referentes a entidade
@@ -180,6 +182,15 @@ public interface CotaRepository extends Repository<Cota, Long> {
 	List<RegistroCurvaABCCotaVO> obterCurvaABCCota(FiltroCurvaABCCotaDTO filtro);
 	
 	List<Cota> obterCotasPorIDS(List<Long> idsCotas);
+	
+	/**
+	 * Retorna todos os ids das cotas que estão entre o itervalo de cotas parametrizado;
+	 * 
+	 * @param intervaloIdCota intevalo de id das cotas
+	 * 
+	 * @return ids das cotas
+	 */
+	Set<Long> obterIdCotasEntre(Intervalo<Long> intervaloIdCota);
 
 	Long obterQuantidadeCotas(SituacaoCadastro situacaoCadastro);
 

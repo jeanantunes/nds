@@ -23,14 +23,10 @@ import br.com.abril.nds.dto.filtro.FiltroMapaAbastecimentoDTO;
 import br.com.abril.nds.dto.filtro.FiltroMapaAbastecimentoDTO.ColunaOrdenacao;
 import br.com.abril.nds.dto.filtro.FiltroMapaAbastecimentoDTO.ColunaOrdenacaoDetalhes;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
-import br.com.abril.nds.model.cadastro.Cota;
-import br.com.abril.nds.model.cadastro.Fornecedor;
-import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.OperacaoEstoque;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
-import br.com.abril.nds.model.fiscal.nota.ItemNotaFiscal;
 import br.com.abril.nds.model.movimentacao.StatusOperacao;
 import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
 import br.com.abril.nds.util.Intervalo;
@@ -1246,37 +1242,44 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 	}  
 	
 	@SuppressWarnings("unchecked")
-	public List<ItemNotaFiscal> obterItensParaNotaFiscal(Cota cota, List<GrupoMovimentoEstoque> listaGrupoMovimentoEstoques, Intervalo<Date> periodo, List<Fornecedor> listaFornecedores, List<Produto> listaProduto) {
+	public List<MovimentoEstoqueCota> obterMovimentoEstoqueCotaPor(Long idCota, List<GrupoMovimentoEstoque> listaGrupoMovimentoEstoques, Intervalo<Date> periodo, List<Long> listaFornecedores, List<Long> listaProdutos) {
 		
-		/*StringBuffer sql = new StringBuffer("");
+		StringBuffer sql = new StringBuffer("");
 		
-		sql.append(" SELECT NEW ").
-		   .append("        sum(mec.qtde), ")
-		   .append("        pe.preco_venda, ")
-		   .append("        '' ");
-		sql.append(" FROM movimento_estoque_cota mec ")
-		   .append("   INNER JOIN tipo_movimento tp ON (tp.id = mec.tipo_movimento_id) ")
-		   .append("   INNER JOIN produto_edicao pe ON (pe.id = mec.produto_edicao_id) ");
+		sql.append(" SELECT DISTINCT movimentoEstoqueCota ")
+		   .append(" FROM MovimentoEstoqueCota movimentoEstoqueCota ")
+		   .append(" INNER JOIN movimentoEstoqueCota.produtoEdicao.produto.fornecedores fornecedores");
+		
+		
+		sql.append(" WHERE movimentoEstoqueCota.status = :status ")
+		   .append("   AND movimentoEstoqueCota.tipoMovimento.grupoMovimentoEstoque IN (:listaGrupoMoviementoEstoque) ")
+		   .append("   AND movimentoEstoqueCota.cota.id = :idCota ")
+		   .append("   AND movimentoEstoqueCota.data BETWEEN :dataInicio AND :dataFim ");
+		
+		if (listaProdutos != null && !listaProdutos.isEmpty()) {
+			sql.append("   AND movimentoEstoqueCota.produtoEdicao.produto.id IN (:listaProdutos) ");
+		}
+		
+		if (listaFornecedores != null && !listaFornecedores.isEmpty()) {
+			sql.append("   AND fornecedores.id IN (:listaFornecedores) ");
+		}
 
-		sql.append(" WHERE mec.status = :status ")
-		   .append("   AND tp.tipo = :tipo ")
-		   .append("   AND mec.cota_id = :id_cota ")
-		   .append("   AND mec.data BETWEEN :data_inicio AND :data_fim ")
-		   .append("   AND tp.grupo_movimento_estoque IN ;listaGrupoMoviementoEstoque ");
-
-		sql.append(" GROUP BY mec.produto_edicao_id, pe.preco_venda; ");
-
-//		MovimentoEstoqueCota movimentoEstoqueCota = new MovimentoEstoqueCota();
-//		((TipoMovimentoEstoque)movimentoEstoqueCota.getTipoMovimento()).getGrupoMovimentoEstoque()
+		Query query = getSession().createQuery(sql.toString());
 		
-		SQLQuery sqlQuery = getSession().createSQLQuery(sql.toString());
+		query.setParameter("status", StatusAprovacao.APROVADO);
+		query.setParameterList("listaGrupoMoviementoEstoque", listaGrupoMovimentoEstoques);
+		query.setParameter("idCota", idCota);
+		query.setParameter("dataInicio", periodo.getDe());
+		query.setParameter("dataFim", periodo.getAte());
 		
-		sqlQuery.setParameter("status", StatusAprovacao.APROVADO);
-		sqlQuery.setParameter("cota", cota);
-		sqlQuery.setParameter("data_inicio", periodo.getDe());
-		sqlQuery.setParameter("data_fim", periodo.getAte());
-		sqlQuery.setParameter("listaGrupoMoviementoEstoque", listaGrupoMovimentoEstoques);*/
+		if (listaProdutos != null && !listaProdutos.isEmpty()) {
+			query.setParameterList("listaProdutos", listaProdutos);
+		}
+	
+		if (listaFornecedores != null && !listaFornecedores.isEmpty()) {
+			query.setParameterList("listaFornecedores", listaFornecedores);
+		}
 		
-		return null;//sqlQuery.list();
+		return query.list();
 	}
 }

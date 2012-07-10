@@ -4,7 +4,9 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.hibernate.Criteria;
 import org.hibernate.Query;
@@ -39,6 +41,7 @@ import br.com.abril.nds.model.estoque.OperacaoEstoque;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
 import br.com.abril.nds.repository.CotaRepository;
+import br.com.abril.nds.util.Intervalo;
 
 /**
  * Classe de implementação referente ao acesso a dados da entidade
@@ -1033,6 +1036,24 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 		}
 		
 		return (Long) query.uniqueResult();
+	}
+
+	/* (non-Javadoc)
+	 * @see br.com.abril.nds.repository.CotaRepository#obterIdCotasEntre(br.com.abril.nds.util.Intervalo)
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public Set<Long> obterIdCotasEntre(Intervalo<Long> intervaloIdCota) {
+		
+		Set<Long> listaIdCotas = new HashSet<Long>();
+		
+		Criteria criteria = super.getSession().createCriteria(Cota.class);
+		criteria.setProjection(Projections.property("id"));
+		criteria.add(Restrictions.between("id", intervaloIdCota.getDe(), intervaloIdCota.getAte()));
+		
+		listaIdCotas.addAll(criteria.list());
+		
+		return listaIdCotas;
 	}
 
 }
