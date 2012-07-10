@@ -1,34 +1,58 @@
 package br.com.abril.nds.dto.filtro;
 
 import java.io.Serializable;
-import java.util.Date;
 
-import br.com.abril.nds.util.Constantes;
-import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.dto.filtro.FiltroFollowupChamadaoDTO.FollowupOrdenacaoChamadao;
+import br.com.abril.nds.vo.PaginacaoVO;
 
 public class FiltroFollowupStatusCotaDTO  extends FiltroDTO implements Serializable  {
 
-	/**
-	 * 
-	 */
+	
 	private static final long serialVersionUID = -215785775108353228L;
+	
+	private PaginacaoVO paginacao;
+	
+	private FollowupOrdenacaoChamadao followupordenacaoColuna;
+	
+	public enum FollowupOrdenacaoStatusCota {
 
-	public FiltroFollowupStatusCotaDTO() {		
+		COTA("cota");
+		
+		private String nomeColuna;
+		
+		private FollowupOrdenacaoStatusCota(String nomeColuna) {
+			this.nomeColuna = nomeColuna;
+		}
+		
+		@Override
+		public String toString() {
+			return this.nomeColuna;
+		}
+		
+		public static FollowupOrdenacaoChamadao getPorDescricao(String descricao) {
+			for(FollowupOrdenacaoChamadao coluna: FollowupOrdenacaoChamadao.values()) {
+				if(coluna.toString().equals(descricao))
+					return coluna;
+			}
+			return null;
+		}
 	}
 
-	public FiltroFollowupStatusCotaDTO(Date dt) {		
-		setDataOperacao(DateUtil.formatarData(dt, Constantes.DATA_FMT_PESQUISA_MYSQL));
+	public PaginacaoVO getPaginacao() {
+		return paginacao;
 	}
 
-	private String dataOperacao;
-
-	public String getDataOperacao() {
-		return dataOperacao;
+	public void setPaginacao(PaginacaoVO paginacao) {
+		this.paginacao = paginacao;
 	}
 
-	public void setDataOperacao(String dataOperacao) {
-		this.dataOperacao = dataOperacao;
+	public FollowupOrdenacaoChamadao getFollowupordenacaoColuna() {
+		return followupordenacaoColuna;
 	}
 
-
+	public void setFollowupordenacaoColuna(
+			FollowupOrdenacaoChamadao followupordenacaoColuna) {
+		this.followupordenacaoColuna = followupordenacaoColuna;
+	}
+	
 }

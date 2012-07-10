@@ -6,8 +6,10 @@ import java.util.Date;
 import br.com.abril.nds.dto.filtro.FiltroFollowupChamadaoDTO.FollowupOrdenacaoChamadao;
 import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.util.export.Exportable;
 import br.com.abril.nds.vo.PaginacaoVO;
 
+@Exportable
 public class FiltroFollowupPendenciaNFeDTO extends FiltroDTO implements Serializable {
 
 	private static final long serialVersionUID = -1309474395088652759L;	

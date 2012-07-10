@@ -14,15 +14,6 @@ public class FiltroFollowupChamadaoDTO extends FiltroDTO implements Serializable
 
 	private static final long serialVersionUID = -1446823473193145083L;
 
-	public FiltroFollowupChamadaoDTO() {		
-	}
-	
-	public FiltroFollowupChamadaoDTO(Date dt, int qtd,BigDecimal valor) {
-		setDataOperacao(DateUtil.formatarData(dt, Constantes.DATA_FMT_PESQUISA_MYSQL));
-		setQuantidadeDiasSuspenso(qtd);
-		setValorConsignadoLimite(valor);
-	}
-
 	private String numeroCota;
 	private String nomeJornaleiro;
 	private BigDecimal valorConsignadoLimite;
@@ -33,6 +24,14 @@ public class FiltroFollowupChamadaoDTO extends FiltroDTO implements Serializable
 	private PaginacaoVO paginacao;
 	
 	private FollowupOrdenacaoChamadao followupordenacaoColuna;
+	
+	public FiltroFollowupChamadaoDTO() {}
+	
+	public FiltroFollowupChamadaoDTO(Date dt, int qtd,BigDecimal valor) {
+		setDataOperacao(DateUtil.formatarData(dt, Constantes.DATA_FMT_PESQUISA_MYSQL));
+		setQuantidadeDiasSuspenso(qtd);
+		setValorConsignadoLimite(valor);
+	}
 	
 	public enum FollowupOrdenacaoChamadao {
 

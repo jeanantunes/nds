@@ -1,9 +1,12 @@
 package br.com.abril.nds.controllers.administracao;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,12 +16,18 @@ import br.com.abril.nds.dto.ConsultaFollowupChamadaoDTO;
 import br.com.abril.nds.dto.ConsultaFollowupNegociacaoDTO;
 import br.com.abril.nds.dto.ConsultaFollowupPendenciaNFeDTO;
 import br.com.abril.nds.dto.ConsultaFollowupStatusCotaDTO;
+import br.com.abril.nds.dto.LancamentoPorEdicaoDTO;
+import br.com.abril.nds.dto.VendaProdutoDTO;
 import br.com.abril.nds.dto.filtro.FiltroFollowupCadastroDTO;
 import br.com.abril.nds.dto.filtro.FiltroFollowupChamadaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroFollowupNegociacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroFollowupPendenciaNFeDTO;
 import br.com.abril.nds.dto.filtro.FiltroFollowupStatusCotaDTO;
+import br.com.abril.nds.dto.filtro.FiltroVendaProdutoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.integracao.service.DistribuidorService;
+import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.service.FollowupCadastroService;
 import br.com.abril.nds.service.FollowupChamadaoService;
 import br.com.abril.nds.service.FollowupNegociacaoService;
@@ -27,7 +36,11 @@ import br.com.abril.nds.service.FollowupStatusCotaService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
+import br.com.abril.nds.util.export.FileExporter;
+import br.com.abril.nds.util.export.NDSFileHeader;
+import br.com.abril.nds.util.export.FileExporter.FileType;
 import br.com.abril.nds.vo.PaginacaoVO;
+import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
@@ -65,7 +78,14 @@ public class FollowupController {
 	@Autowired
 	private FollowupPendenciaNFeService followuppendencianfeService;
 	
+	@Autowired
+	private DistribuidorService distribuidorService;
+	
+	@Autowired
+	private HttpServletResponse httpResponse;
+	
 	private static final String FILTRO_FOLLOWUP_CONSIGNADOS_SESSION_ATTRIBUTE = "filtroFollowupConsignados";
+	private static final String FILTRO_FOLLOWUP_PENDENCIA_NFE_SESSION_ATTRIBUTE = "filtroFollowupPendenciaNFE";
 	//private static final String QTD_REGISTROS_FOLLOWUP_CONSIGNADOS_SESSION_ATTRIBUTE = "qtdRegistrosFollowupConsignados";
 
 	private BigDecimal valorConsignadoSuspensaoCotas;
@@ -80,9 +100,12 @@ public class FollowupController {
 	@Path("/pesquisaDadosChamadao")
 	public void pesquisaDadosChamadao( String sortorder, String sortname, int page, int rp ) {
     	FiltroFollowupChamadaoDTO filtroChamadao = new FiltroFollowupChamadaoDTO(Calendar.getInstance().getTime(), 0, getValorConsignadoSuspensaoCotas());
-		this.recuperarParametros(filtroChamadao);		
-		filtroChamadao.setPaginacao(new PaginacaoVO(page, rp, sortorder, sortname));
-		this.tratarFiltro(filtroChamadao);		
+		
+    	this.recuperarParametros(filtroChamadao);		
+		
+    	filtroChamadao.setPaginacao(new PaginacaoVO(page, rp, sortorder, sortname));
+		
+		this.tratarFiltroChamadao(filtroChamadao);
 		TableModel<CellModelKeyValue<ConsultaFollowupChamadaoDTO>> tableModel = efetuarConsultaChamadao(filtroChamadao);
 		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
 	}
@@ -104,11 +127,35 @@ public class FollowupController {
 
 	@Path("/pesquisaDadosStatusCota")
 	public void pesquisaDadosStatusCota( String sortorder, String sortname, int page, int rp ) {
-		FiltroFollowupStatusCotaDTO filtroStatusCota = 
-    		new FiltroFollowupStatusCotaDTO(Calendar.getInstance().getTime());
+		FiltroFollowupStatusCotaDTO filtroStatusCota = new FiltroFollowupStatusCotaDTO();
+		
+		filtroStatusCota.setPaginacao(new PaginacaoVO(page, rp, sortorder, sortname));
 		
 		TableModel<CellModelKeyValue<ConsultaFollowupStatusCotaDTO>> tableModel = efetuarConsultaDadosStatusCota(filtroStatusCota);
+		
 		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
+	}
+	
+	private TableModel<CellModelKeyValue<ConsultaFollowupStatusCotaDTO>> efetuarConsultaDadosStatusCota(
+			FiltroFollowupStatusCotaDTO filtroStatusCota) {
+		
+		List<ConsultaFollowupStatusCotaDTO> listacadastral = this.followupstatuscotaService.obterStatusCota(filtroStatusCota);
+		
+		TableModel<CellModelKeyValue<ConsultaFollowupStatusCotaDTO>> tableModel = new TableModel<CellModelKeyValue<ConsultaFollowupStatusCotaDTO>>();
+		
+		Integer totalRegistros = listacadastral.size();
+		
+		if(totalRegistros == 0){
+			throw new ValidacaoException(TipoMensagem.WARNING, "Cadastro: Não foram encontrados resultados para Follow Up.");
+		}
+
+		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listacadastral));
+		
+		tableModel.setPage(filtroStatusCota.getPaginacao().getPaginaAtual());
+		
+		tableModel.setTotal(totalRegistros);
+		
+		return tableModel;
 	}
 
 	@Path("/pesquisaDadosCadastrais")
@@ -121,6 +168,8 @@ public class FollowupController {
 		FiltroFollowupPendenciaNFeDTO filtroPendenciaNFEEncalhe = new FiltroFollowupPendenciaNFeDTO(Calendar.getInstance().getTime());
 		
 		filtroPendenciaNFEEncalhe.setPaginacao(new PaginacaoVO(page, rp, sortorder, sortname));
+		
+		this.tratarFiltroPendenciaNFE(filtroPendenciaNFEEncalhe);
 		
 		TableModel<CellModelKeyValue<ConsultaFollowupPendenciaNFeDTO>> tableModel = efetuarConsultaDadosPendenciaNFEEncalhe(filtroPendenciaNFEEncalhe);
 		
@@ -145,23 +194,35 @@ public class FollowupController {
 	}
 
 	private void recuperarParametros(FiltroFollowupChamadaoDTO filtro) {
-		// TODO: colocar a recuperacao da tabela parametros distribuidor.		
+		// TODO: colocar a recuperacao da tabela parametros distribuidor.
 		this.setValorConsignadoSuspensaoCotas(new BigDecimal(0));
 		this.setQuantidadeDiasSuspensaoCotas(0);
 		filtro.setValorConsignadoLimite(this.getValorConsignadoSuspensaoCotas());
 		filtro.setQuantidadeDiasSuspenso(this.getQuantidadeDiasSuspensaoCotas());
 	}
 
-	private void tratarFiltro(FiltroFollowupChamadaoDTO filtroParam) {
-		FiltroFollowupChamadaoDTO filtroSession = (FiltroFollowupChamadaoDTO) session
-				.getAttribute(FILTRO_FOLLOWUP_CONSIGNADOS_SESSION_ATTRIBUTE);
+	private void tratarFiltroChamadao(FiltroFollowupChamadaoDTO filtroParam) {
 
+		FiltroFollowupChamadaoDTO filtroSession = (FiltroFollowupChamadaoDTO) session.getAttribute(FILTRO_FOLLOWUP_CONSIGNADOS_SESSION_ATTRIBUTE);
+			
 		if (filtroSession != null && filtroSession.equals(filtroParam)) {
-
+			
 			filtroParam.getPaginacao().setPaginaAtual(1);
 		}
-
 		session.setAttribute(FILTRO_FOLLOWUP_CONSIGNADOS_SESSION_ATTRIBUTE, filtroParam);
+		
+	}
+	
+	private void tratarFiltroPendenciaNFE(FiltroFollowupPendenciaNFeDTO filtroParam) {
+
+		FiltroFollowupPendenciaNFeDTO filtroSession = (FiltroFollowupPendenciaNFeDTO) session.getAttribute(FILTRO_FOLLOWUP_PENDENCIA_NFE_SESSION_ATTRIBUTE);
+			
+		if (filtroSession != null && filtroSession.equals(filtroParam)) {
+			
+			filtroParam.getPaginacao().setPaginaAtual(1);
+		}
+		session.setAttribute(FILTRO_FOLLOWUP_PENDENCIA_NFE_SESSION_ATTRIBUTE, filtroParam);
+		
 	}
 		
 	private TableModel<CellModelKeyValue<ConsultaFollowupChamadaoDTO>> efetuarConsultaChamadao(
@@ -254,26 +315,72 @@ public class FollowupController {
 		return tableModel;
 	}
 	
-	private TableModel<CellModelKeyValue<ConsultaFollowupStatusCotaDTO>> efetuarConsultaDadosStatusCota(
-			FiltroFollowupStatusCotaDTO filtroStatusCota) {
+	@Get
+	public void exportar(FileType fileType, String tipoExportacao) throws IOException {
 		
-		List<ConsultaFollowupStatusCotaDTO> listacadastral = this.followupstatuscotaService.obterStatusCota(filtroStatusCota);
 		
-		TableModel<CellModelKeyValue<ConsultaFollowupStatusCotaDTO>> tableModel = new TableModel<CellModelKeyValue<ConsultaFollowupStatusCotaDTO>>();
 		
-		Integer totalRegistros = listacadastral.size();
-		
-		if(totalRegistros == 0){
-			throw new ValidacaoException(TipoMensagem.WARNING, "Cadastro: Não foram encontrados resultados para Follow Up.");
+		if(tipoExportacao.equals("negociacao")){
+//			List<VendaProdutoDTO> listaDTOParaExportacao = vendaProdutoService.buscaVendaPorProduto(filtro);
+//			
+//			if(listaDTOParaExportacao.isEmpty()) {
+//				throw new ValidacaoException(TipoMensagem.WARNING,"A última pesquisa realizada não obteve resultado.");
+//			}
+//			
+//			FileExporter.to("venda_produto", fileType).inHTTPResponse(this.getNDSFileHeader(), filtro, null, 
+//					listaDTOParaExportacao, VendaProdutoDTO.class, this.httpResponse);
+			
+		}else if(tipoExportacao.equals("chamadao")){
+			FiltroFollowupChamadaoDTO filtro = (FiltroFollowupChamadaoDTO) session.getAttribute(FILTRO_FOLLOWUP_CONSIGNADOS_SESSION_ATTRIBUTE);
+			List<ConsultaFollowupChamadaoDTO> listadechamadao = this.followupchamadaoService.obterConsignados(filtro);
+			
+			if(listadechamadao.isEmpty()) {
+				throw new ValidacaoException(TipoMensagem.WARNING,"A última pesquisa realizada não obteve resultado.");
+			}
+			
+			FileExporter.to("lancamento_edicao", fileType).inHTTPResponse(this.getNDSFileHeader(), filtro, null, 
+					listadechamadao, ConsultaFollowupChamadaoDTO.class, this.httpResponse);
+		}else if(tipoExportacao.equals("pendenciaNFE")){
+			
+			FiltroFollowupPendenciaNFeDTO filtro = (FiltroFollowupPendenciaNFeDTO) session.getAttribute(FILTRO_FOLLOWUP_CONSIGNADOS_SESSION_ATTRIBUTE);
+			
+			List<ConsultaFollowupPendenciaNFeDTO> listasdependencias = this.followuppendencianfeService.obterPendencias(filtro);
+			
+			if(listasdependencias.isEmpty()) {
+				throw new ValidacaoException(TipoMensagem.WARNING,"A última pesquisa realizada não obteve resultado.");
+			}
+			
+			FileExporter.to("FollowUp_pendencias_bfe", fileType).inHTTPResponse(this.getNDSFileHeader(), filtro, null, 
+					listasdependencias, ConsultaFollowupPendenciaNFeDTO.class, this.httpResponse);
 		}
-
-		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listacadastral));
 		
-		tableModel.setPage(filtroStatusCota.getPaginacao().getPaginaAtual());
+		result.nothing();
+	}
+	
+	private NDSFileHeader getNDSFileHeader() {
 		
-		tableModel.setTotal(totalRegistros);
+		NDSFileHeader ndsFileHeader = new NDSFileHeader();
 		
-		return tableModel;
+		Distribuidor distribuidor = this.distribuidorService.obter();
+		
+		if (distribuidor != null) {
+			
+			ndsFileHeader.setNomeDistribuidor(distribuidor.getJuridica().getRazaoSocial());
+			ndsFileHeader.setCnpjDistribuidor(distribuidor.getJuridica().getCnpj());
+		}
+		
+		ndsFileHeader.setData(new Date());
+		
+		ndsFileHeader.setNomeUsuario(this.getUsuario().getNome());
+		
+		return ndsFileHeader;
+	}
+	
+	public Usuario getUsuario() {
+		Usuario usuario = new Usuario();
+		usuario.setId(1L);
+		usuario.setNome("Lazaro Jornaleiro");
+		return usuario;
 	}
 }
 

@@ -12,6 +12,8 @@
 <script language="javascript" type="text/javascript">
 $(function() {
 		$( "#tab-followup" ).tabs();
+
+		
 		
 		$(".chamadaoGrid").flexigrid($.extend({},{
 			url : '<c:url value="/followup/pesquisaDadosChamadao"/>',
@@ -114,6 +116,63 @@ $(function() {
 			width : 880,
 			height : 255
 		}));
+
+		$(".alteracaoStatusGrid").flexigrid($.extend({},{
+			url : '<c:url value="/followup/pesquisaDadosStatusCota"/>',
+	        preProcess:  exPreProcFollowupStatusCota, 
+			dataType : 'json',
+			colModel : [ {
+				display : 'Cota',
+				name : 'numeroCota',
+				width : 60,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Nome',
+				name : 'nomeJornaleiro',
+				width : 190,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Per&iacuteodo',
+				name : 'periodoStatus',
+				width : 120,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Status',
+				name : 'statusAtual',
+				width : 80,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Novo Status',
+				name : 'statusNovo',
+				width : 83,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Data Vencto',
+				name : 'dtVencto',
+				width : 85,
+				sortable : true,
+				align : 'center'
+			}, {
+				display : 'Ação',
+				name : 'acao',
+				width : 155,
+				sortable : true,
+				align : 'center'
+			}],
+			sortname : "cota",
+			sortorder : "asc",
+			usepager : true,
+			useRp : true,
+			rp : 15,
+			showTableToggleBtn : true,
+			width : 880,
+			height : 255
+		}));
 		
 	});
 	
@@ -156,15 +215,17 @@ $(function() {
                 <fieldset style="width:880px!important;">
                	<legend>Chamadão</legend>
                 <table class="chamadaoGrid"></table>
-                  <span class="bt_novos" title="Gerar Arquivo">
-                      <a href="javascript:;">
-                           <img src="../images/ico_excel.png" hspace="5" border="0" />Arquivo
-                      </a>
+                  <span class="bt_novos" title="Gerar Arquivo">                      
+						<a href="${pageContext.request.contextPath}/followup/exportar?fileType=XLS&tipoExportacao=chamadao">
+         					<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
+         				Arquivo
+						</a>
                   </span>
-                  <span class="bt_novos" title="Imprimir">
-                      <a href="javascript:;">
-                           <img src="../images/ico_impressora.gif" hspace="5" border="0" />Imprimir
-                      </a>
+                  <span class="bt_novos" title="Imprimir">                      
+                      <a href="${pageContext.request.contextPath}/followup/exportar?fileType=PDF&tipoExportacao=chamadao">
+         					<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
+         				Imprimir
+						</a>
                   </span>                
                </fieldset>
             </div>
@@ -204,16 +265,18 @@ $(function() {
                <fieldset style="width:880px!important;">
                	<legend>Pend&ecirc;ncias NF-e Encalhe</legend>
                 <table class="pendenciasGrid"></table>
-                   <span class="bt_novos" title="Gerar Arquivo">
-                       <a href="javascript:;">
-                           <img src="../images/ico_excel.png" hspace="5" border="0" />Arquivo
-                       </a>
-                   </span>
-                   <span class="bt_novos" title="Imprimir">
-                       <a href="javascript:;">
-                           <img src="../images/ico_impressora.gif" hspace="5" border="0" />Imprimir
-                       </a>
-                   </span>
+                  <span class="bt_novos" title="Gerar Arquivo">                      
+						<a href="${pageContext.request.contextPath}/followup/exportar?fileType=XLS&tipoExportacao=pendenciaNFE">
+         					<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
+         				Arquivo
+						</a>
+                  </span>
+                  <span class="bt_novos" title="Imprimir">                      
+                      <a href="${pageContext.request.contextPath}/followup/exportar?fileType=PDF&tipoExportacao=pendenciaNFE">
+         					<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
+         				Imprimir
+						</a>
+                  </span>    
                </fieldset>
             </div>
             
@@ -277,61 +340,7 @@ $(".atualizacaoCadastralGrid").flexigrid({
 
 
 
-$(".alteracaoStatusGrid").flexigrid({
-        preProcess:  exPreProcFollowupChamadao, 
-		dataType : 'json',
-		colModel : [ {
-			display : 'Cota',
-			name : 'cota',
-			width : 60,
-			sortable : true,
-			align : 'left'
-		}, {
-			display : 'Nome',
-			name : 'nome',
-			width : 190,
-			sortable : true,
-			align : 'left'
-		}, {
-			display : 'Per&iacuteodo',
-			name : 'periodo',
-			width : 120,
-			sortable : true,
-			align : 'left'
-		}, {
-			display : 'Status',
-			name : 'status',
-			width : 80,
-			sortable : true,
-			align : 'left'
-		}, {
-			display : 'Novo Status',
-			name : 'novoStatus',
-			width : 83,
-			sortable : true,
-			align : 'left'
-		}, {
-			display : 'Data Vencto',
-			name : 'dtVencto',
-			width : 85,
-			sortable : true,
-			align : 'center'
-		}, {
-			display : 'Ação',
-			name : 'acao',
-			width : 155,
-			sortable : true,
-			align : 'center'
-		}],
-		sortname : "cota",
-		sortorder : "asc",
-		usepager : true,
-		useRp : true,
-		rp : 15,
-		showTableToggleBtn : true,
-		width : 880,
-		height : 255
-	});
+
 
 
 
