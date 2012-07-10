@@ -39,6 +39,8 @@ public class TipoProdutoRepositoryImpl extends AbstractRepositoryModel<TipoProdu
 		
 		Criteria criteria = addRestrictions(nomeTipoProduto, codigo, codigoNCM, codigoNBM);
 		
+		orderBy = (orderBy.equals("ncm")?"n.codigo":orderBy);
+		
 		if (Ordenacao.ASC == ordenacao) {
 			criteria.addOrder(Order.asc(orderBy));
 		} else if (Ordenacao.DESC == ordenacao) {
@@ -46,8 +48,8 @@ public class TipoProdutoRepositoryImpl extends AbstractRepositoryModel<TipoProdu
 		}
 		
 		if (maxResults >= 0 && initialResult >= 0 ) {
-		criteria.setMaxResults(maxResults);
-		criteria.setFirstResult(initialResult);
+			criteria.setMaxResults(maxResults);
+			criteria.setFirstResult(initialResult);
 		}
 		return criteria.list();
 	}
@@ -73,7 +75,8 @@ public class TipoProdutoRepositoryImpl extends AbstractRepositoryModel<TipoProdu
 	 */
 	private Criteria addRestrictions(String nomeTipoProduto, Long codigo, String codigoNCM, String codigoNBM) {
 		
-		Criteria criteria = getSession().createCriteria(TipoProduto.class);
+		Criteria criteria = getSession().createCriteria(TipoProduto.class,"tipoProduto");
+		criteria.createAlias("tipoProduto.ncm", "n");
 		
 		if (!StringUtil.isEmpty(nomeTipoProduto)){
 			criteria.add(Restrictions.ilike("descricao", nomeTipoProduto, MatchMode.ANYWHERE));
@@ -84,7 +87,7 @@ public class TipoProdutoRepositoryImpl extends AbstractRepositoryModel<TipoProdu
 		}
 		
 		if (!StringUtil.isEmpty(codigoNCM)) {
-			criteria.add(Restrictions.eq("codigoNCM", codigoNCM));
+			criteria.add(Restrictions.eq("n.codigo", Long.parseLong(codigoNCM)));
 		}
 		
 		if (!StringUtil.isEmpty(codigoNBM)) {

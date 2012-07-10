@@ -23,12 +23,17 @@ import br.com.abril.nds.dto.filtro.FiltroMapaAbastecimentoDTO;
 import br.com.abril.nds.dto.filtro.FiltroMapaAbastecimentoDTO.ColunaOrdenacao;
 import br.com.abril.nds.dto.filtro.FiltroMapaAbastecimentoDTO.ColunaOrdenacaoDetalhes;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
+import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.Fornecedor;
+import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.OperacaoEstoque;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
+import br.com.abril.nds.model.fiscal.nota.ItemNotaFiscal;
 import br.com.abril.nds.model.movimentacao.StatusOperacao;
 import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
+import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.vo.PaginacaoVO;
 
 @Repository
@@ -1240,4 +1245,38 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		return query.list();
 	}  
 	
+	@SuppressWarnings("unchecked")
+	public List<ItemNotaFiscal> obterItensParaNotaFiscal(Cota cota, List<GrupoMovimentoEstoque> listaGrupoMovimentoEstoques, Intervalo<Date> periodo, List<Fornecedor> listaFornecedores, List<Produto> listaProduto) {
+		
+		/*StringBuffer sql = new StringBuffer("");
+		
+		sql.append(" SELECT NEW ").
+		   .append("        sum(mec.qtde), ")
+		   .append("        pe.preco_venda, ")
+		   .append("        '' ");
+		sql.append(" FROM movimento_estoque_cota mec ")
+		   .append("   INNER JOIN tipo_movimento tp ON (tp.id = mec.tipo_movimento_id) ")
+		   .append("   INNER JOIN produto_edicao pe ON (pe.id = mec.produto_edicao_id) ");
+
+		sql.append(" WHERE mec.status = :status ")
+		   .append("   AND tp.tipo = :tipo ")
+		   .append("   AND mec.cota_id = :id_cota ")
+		   .append("   AND mec.data BETWEEN :data_inicio AND :data_fim ")
+		   .append("   AND tp.grupo_movimento_estoque IN ;listaGrupoMoviementoEstoque ");
+
+		sql.append(" GROUP BY mec.produto_edicao_id, pe.preco_venda; ");
+
+//		MovimentoEstoqueCota movimentoEstoqueCota = new MovimentoEstoqueCota();
+//		((TipoMovimentoEstoque)movimentoEstoqueCota.getTipoMovimento()).getGrupoMovimentoEstoque()
+		
+		SQLQuery sqlQuery = getSession().createSQLQuery(sql.toString());
+		
+		sqlQuery.setParameter("status", StatusAprovacao.APROVADO);
+		sqlQuery.setParameter("cota", cota);
+		sqlQuery.setParameter("data_inicio", periodo.getDe());
+		sqlQuery.setParameter("data_fim", periodo.getAte());
+		sqlQuery.setParameter("listaGrupoMoviementoEstoque", listaGrupoMovimentoEstoques);*/
+		
+		return null;//sqlQuery.list();
+	}
 }

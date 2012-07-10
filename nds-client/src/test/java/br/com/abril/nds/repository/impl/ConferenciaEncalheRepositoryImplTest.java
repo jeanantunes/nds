@@ -46,6 +46,7 @@ import br.com.abril.nds.model.estoque.RecebimentoFisico;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.fiscal.CFOP;
 import br.com.abril.nds.model.fiscal.ItemNotaFiscalEntrada;
+import br.com.abril.nds.model.fiscal.NCM;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaFornecedor;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalhe;
@@ -102,8 +103,13 @@ public class ConferenciaEncalheRepositoryImplTest extends AbstractRepositoryImpl
 		fornecedorDinap = Fixture.fornecedorDinap(tipoFornecedorPublicacao);
 		save(fornecedorFC, fornecedorDinap);
 
-		TipoProduto tipoRevista = Fixture.tipoRevista();
-		tipoCromo = Fixture.tipoCromo();
+		NCM ncmRevistas = Fixture.ncm(49029000l,"REVISTAS","KG");
+		save(ncmRevistas);
+		NCM ncmCromo = Fixture.ncm(48205000l,"CROMO","KG");
+		save(ncmCromo);
+		
+		TipoProduto tipoRevista = Fixture.tipoRevista(ncmRevistas);
+		tipoCromo = Fixture.tipoCromo(ncmCromo);
 		save(tipoRevista, tipoCromo);
 		
 		Produto veja = Fixture.produtoVeja(tipoRevista);

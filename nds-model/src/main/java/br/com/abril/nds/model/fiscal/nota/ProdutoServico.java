@@ -2,17 +2,22 @@ package br.com.abril.nds.model.fiscal.nota;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinColumns;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.fiscal.nota.pk.ProdutoServicoPK;
 import br.com.abril.nds.util.TipoSecao;
 import br.com.abril.nds.util.export.fiscal.nota.NFEExport;
@@ -140,6 +145,18 @@ public class ProdutoServico implements Serializable {
 	@Column(name="VALOR_OUTROS", precision=15, scale=2, nullable=true)
 	private BigDecimal valorOutros;
 	
+	
+	
+	@ManyToMany
+	@JoinTable( joinColumns = {			
+			@JoinColumn(name = "PRODUTO_SERVICO_SEQUENCIA", referencedColumnName="SEQUENCIA"),
+			@JoinColumn(name = "NOTA_FISCAL_ID", referencedColumnName="NOTA_FISCAL_ID")
+		},
+			inverseJoinColumns = {
+			@JoinColumn(name = "MOVIMENTO_ESTOQUE_COTA_ID", referencedColumnName="ID")
+	})
+	private List<MovimentoEstoqueCota> listaMovimentoEstoqueCota;
+	
 	/**
 	 * @return the encargoFinanceiro
 	 */
@@ -166,39 +183,6 @@ public class ProdutoServico implements Serializable {
 	 */
 	public void setProdutoEdicao(ProdutoEdicao produtoEdicao) {
 		this.produtoEdicao = produtoEdicao;
-	}
-
-	/**
-	 * @see java.lang.Object#hashCode()
-	 */
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime
-				* result
-				+ ((produtoServicoPK == null) ? 0 : produtoServicoPK.hashCode());
-		return result;
-	}
-
-	/**
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		ProdutoServico other = (ProdutoServico) obj;
-		if (produtoServicoPK == null) {
-			if (other.produtoServicoPK != null)
-				return false;
-		} else if (!produtoServicoPK.equals(other.produtoServicoPK))
-			return false;
-		return true;
 	}
 
 	/**
@@ -410,5 +394,37 @@ public class ProdutoServico implements Serializable {
 	public void setValorOutros(BigDecimal valorOutros) {
 		this.valorOutros = valorOutros;
 	}
+	
+	/**
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime
+				* result
+				+ ((produtoServicoPK == null) ? 0 : produtoServicoPK.hashCode());
+		return result;
+	}
 
+	/**
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		ProdutoServico other = (ProdutoServico) obj;
+		if (produtoServicoPK == null) {
+			if (other.produtoServicoPK != null)
+				return false;
+		} else if (!produtoServicoPK.equals(other.produtoServicoPK))
+			return false;
+		return true;
+	}
 }

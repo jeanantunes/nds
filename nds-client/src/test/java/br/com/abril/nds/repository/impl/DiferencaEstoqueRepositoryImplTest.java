@@ -31,6 +31,7 @@ import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.fiscal.CFOP;
 import br.com.abril.nds.model.fiscal.ItemNotaFiscalEntrada;
+import br.com.abril.nds.model.fiscal.NCM;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaFornecedor;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
 import br.com.abril.nds.model.planejamento.Lancamento;
@@ -273,7 +274,10 @@ public class DiferencaEstoqueRepositoryImplTest extends AbstractRepositoryImplTe
 	
 	private ProdutoEdicao criarProdutoEdicao() {
 		
-		TipoProduto tipoProduto = Fixture.tipoRevista();
+		NCM ncmRevistas = Fixture.ncm(49029000l,"REVISTAS","KG");
+		save(ncmRevistas);
+		
+		TipoProduto tipoProduto = Fixture.tipoRevista(ncmRevistas);
 		
 		save(tipoProduto);
 		

@@ -3,6 +3,7 @@ package br.com.abril.nds.service;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import br.com.abril.nds.dto.ChamadaAntecipadaEncalheDTO;
 import br.com.abril.nds.dto.InfoChamdaAntecipadaEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroChamadaAntecipadaEncalheDTO;
 
@@ -71,6 +72,55 @@ public interface ChamadaAntecipadaEncalheService {
 	 * @param infoEncalheDTO - objeto com as informaçõe de cotas e produto edição.
 	 */
 	void gravarChamadaAntecipacaoEncalheProduto(InfoChamdaAntecipadaEncalheDTO infoEncalheDTO);
+	
+	/**
+	 * Efetua o cancelamento de uma chamada de encalhe antecipada
+	 * 
+	 * @param infoEncalheDTO - objeto com as informaçõe de cotas e produto edição.
+	 */
+	void cancelarChamadaAntecipadaCota(InfoChamdaAntecipadaEncalheDTO infoEncalheDTO);
+	
+	/**
+	 * Efetua o cancelamento de uma chamada de encalhe antecipada
+	 * 
+	 * @param filtro - filtro com os parâmetros informados para consulta de um determinado produto edição
+	 */
+	void cancelarChamadaAntecipadaCota(FiltroChamadaAntecipadaEncalheDTO filtro);
+	
+	/**
+	 * 
+	 * Efetua a reprogramação da chamada de encalhe antecipada de todas as cotas referente aos 
+	 * parâmetros informados no filtro de pesquisa.
+	 * 
+	 * @param filtro - filtro com os parâmetros informados para consulta de um determinado produto edição
+	 */
+	void reprogramarChamadaAntecipacaoEncalheProduto(FiltroChamadaAntecipadaEncalheDTO filtro);
+	
+	/**
+	 * 
+	 * Efetua a reprogramação da chamada de encalhe antecipada das cotas selecionadas na tela de consulta. 
+	 * 
+	 * @param infoEncalheDTO - objeto com as informaçõe de cotas e produto edição.
+	 */
+	void reprogramarChamadaAntecipacaoEncalheProduto(InfoChamdaAntecipadaEncalheDTO infoEncalheDTO);
+	
+	/**
+	 * Retorna quantidade de exemplares prevista de uma cota com programação de chamada de encalhe antecipada
+	 * 
+	 * @param filtro - filtro com os parâmetros informados para consulta de um determinada cota
+	 * 
+	 * @return BigDecimal
+	 */
+	BigDecimal obterQntExemplaresComProgramacaoAntecipadaEncalheCota(FiltroChamadaAntecipadaEncalheDTO filtro);
+	
+	/**
+	 * Retorna um objeto com os dados de uma chamada de encalhe antecipada
+	 *  
+	 * @param filtro - filtro com os parâmetros informados para consulta de uma determinada chamada de encalhe antecipada
+	 * 
+	 * @return ChamadaAntecipadaEncalheDTO
+	 */
+	ChamadaAntecipadaEncalheDTO obterChamadaEncalheAntecipada(FiltroChamadaAntecipadaEncalheDTO filtro);
 	
 	
 }

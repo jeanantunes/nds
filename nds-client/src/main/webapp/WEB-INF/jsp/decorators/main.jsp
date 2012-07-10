@@ -45,6 +45,7 @@
 	src="${pageContext.request.contextPath}/scripts/NDS.js"></script>
 <script language="javascript" type="text/javascript"
 	src="${pageContext.request.contextPath}/scripts/utils.js"></script>
+	
 <!-- TODO: Posteriormente incluir os métodos 'personalizados': 
 <script language="javascript" type="text/javascript"
 	src="${pageContext.request.contextPath}/scripts/flexigrid-1.1/js/flexigrid.pack.js"></script>
@@ -378,7 +379,7 @@
 									da Matriz</a>
 							</li>
 							<li><a href='<c:url value="/devolucao/chamadaEncalheAntecipada"/>'>CE
-									Antecipada</a>
+									Antecipada - Produto</a>
 							</li>
 							<li>
 								<a href='<c:url value="/devolucao/chamadao"/>'>Chamadão</a>
@@ -417,6 +418,9 @@
 					<li><span class="classDevolucao">&nbsp;</span><a
 						href="javascript:;">Devolução</a>
 						<ul>
+						
+							<li><a href="<c:url value="/emissaoCE/index"/>">Emissão CE</a></li>
+							
 							<li><a href='<c:url value="/devolucao/digitacao/contagem/"/>'>Digitação
 									de Contagem para Devolução</a>
 							</li>
