@@ -183,7 +183,7 @@
 					<a href="${pageContext.request.contextPath}/j_spring_security_logout"><img src="${pageContext.request.contextPath}/images/bt_sair.jpg"
 						alt="Sair do Sistema" title="Sair do Sistema" width="63"
 						height="27" border="0" align="right" />
-					</a> <br clear="all" /> <span>Usuário: Junior Fonseca</span> <span>
+					</a> <br clear="all" /> <span>Usuário: <sec:authentication property="principal.username" /></span> <span>
 						<script type="text/javascript" language="JavaScript">
 		  	diaSemana();
 		  </script> </span>
@@ -211,6 +211,15 @@
 							<!-- SPRING SECURITY - AUTORIZACAO -->
 							<sec:authorize access="hasRole('Financeiro.Cadastro.Banco')">
 								<li><a href='<c:url value="/banco/bancos"/>'>Bancos</a>
+								</li>
+							</sec:authorize>
+							
+							<sec:authorize ifAllGranted="ADMIN">
+								<li>I´ll show you!
+								</li>
+							</sec:authorize>
+							<sec:authorize ifNotGranted="ADMIN">
+								<li>I think i´ll not show you :(
 								</li>
 							</sec:authorize>
 							
@@ -435,8 +444,8 @@
 						</ul>
 					</li>
 					
-					<!-- SPRING SECURITY - AUTORIZACAO -->
-					<sec:authorize access="hasRole('Admin')">
+					<%-- SPRING SECURITY - AUTORIZACAO --%>
+					<sec:authorize access="hasRole('ADMIN')">
 
 					<li><span class="classAdministracao">&nbsp;</span><a
 						href="javascript:;">Administração</a>

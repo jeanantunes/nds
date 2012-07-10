@@ -1,27 +1,32 @@
 package br.com.abril.nds.model.seguranca;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
-
 @Entity	
-@Table(name = "PERMISSAO")
-@SequenceGenerator(name="PERMISSAO_SEQ", initialValue = 1, allocationSize = 1)
-public class Permissao {
+@Table(name = "GRUPO_PERMISSOES")
+@SequenceGenerator(name="GRUPO_PERMISSOES_SEQ", initialValue = 1, allocationSize = 1)
+public class GrupoPermissoes {
 
 	@Id
-	@GeneratedValue(generator = "PERMISSAO_SEQ")
+	@GeneratedValue(generator = "GRUPO_PERMISSOES_SEQ")
 	@Column(name = "ID")
 	private Long id;
+
 	@Column(name = "NOME", nullable = false)
 	private String nome;
 
-	@Column(name = "DESCRICAO", nullable = true)
-	private String descricao;
+	@ManyToMany(fetch=FetchType.LAZY)
+	private Set<Permissao> permissoes = new HashSet<Permissao>();
 
 	public Long getId() {
 		return id;
@@ -39,12 +44,12 @@ public class Permissao {
 		this.nome = nome;
 	}
 
-	public String getDescricao() {
-		return descricao;
+	public Set<Permissao> getPermissoes() {
+		return permissoes;
 	}
 
-	public void setDescricao(String descricao) {
-		this.descricao = descricao;
+	public void setPermissoes(Set<Permissao> permissoes) {
+		this.permissoes = permissoes;
 	}
-
+	
 }
