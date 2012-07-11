@@ -17,6 +17,7 @@ import br.com.abril.nds.dto.filtro.FiltroCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroCurvaABCCotaDTO;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.EnderecoCota;
+import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TelefoneCota;
 import br.com.abril.nds.util.Intervalo;
 
@@ -190,5 +191,7 @@ public interface CotaRepository extends Repository<Cota, Long> {
 	 * @return ids das cotas
 	 */
 	Set<Long> obterIdCotasEntre(Intervalo<Long> intervaloIdCota);
+
+	Long obterQuantidadeCotas(SituacaoCadastro situacaoCadastro);
 
 }
