@@ -24,7 +24,7 @@ public interface GeracaoNFeService {
 	 * @return
 	 */
 	public abstract List<CotaExemplaresDTO> busca(Intervalo<String> intervaloBox,
-	Intervalo<Long> intervalorCota,
+	Intervalo<Integer> intervalorCota,
 	Intervalo<Date> intervaloDateMovimento, List<Long> listIdFornecedor, List<Long> listIdProduto, Long idTipoNotaFiscal, String sortname,
 	String sortorder, Integer rp, Integer page);
 
@@ -40,6 +40,6 @@ public interface GeracaoNFeService {
 	 * @param idTipoNotaFiscal
 	 * @param dataEmissao
 	 */
-	public abstract void gerarNotaFiscal(Intervalo<String> intervaloBox, Intervalo<Long> intervalorCota,
+	public abstract void gerarNotaFiscal(Intervalo<String> intervaloBox, Intervalo<Integer> intervalorCota,
 			Intervalo<Date> intervaloDateMovimento, List<Long> listIdFornecedor, List<Long> listIdProduto, Long idTipoNotaFiscal, Date dataEmissao);
 }

@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import br.com.abril.nds.dto.ConsultaLoteNotaFiscalDTO;
 import br.com.abril.nds.dto.CotaExemplaresDTO;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.fiscal.GrupoNotaFiscal;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.InformacaoTransporte;
@@ -40,7 +41,7 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 	@Override
 	@Transactional
 	public List<CotaExemplaresDTO> busca(Intervalo<String> intervaloBox,
-			Intervalo<Long> intervalorCota,
+			Intervalo<Integer> intervalorCota,
 			Intervalo<Date> intervaloDateMovimento,
 			List<Long> listIdFornecedor, List<Long> listIdProduto, Long idTipoNotaFiscal, String sortname,
 			String sortorder, Integer resultsPage, Integer page) {
@@ -51,7 +52,7 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 		
 		dadosConsultaLoteNotaFiscal.setTipoNotaFiscal(tipoNotaFiscal);
 		dadosConsultaLoteNotaFiscal.setPeriodoMovimento(intervaloDateMovimento);
-		dadosConsultaLoteNotaFiscal.setIdsCotasDestinatarias(this.cotaRepository.obterIdCotasEntre(intervalorCota));
+		dadosConsultaLoteNotaFiscal.setIdsCotasDestinatarias(this.cotaRepository.obterIdCotasEntre(intervalorCota, intervaloBox, SituacaoCadastro.ATIVO));
 		dadosConsultaLoteNotaFiscal.setListaIdProdutos(listIdProduto);
 		dadosConsultaLoteNotaFiscal.setListaIdFornecedores(listIdFornecedor);
 		
@@ -85,12 +86,12 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 	@Override
 	@Transactional
 	public void gerarNotaFiscal(Intervalo<String> intervaloBox,
-			Intervalo<Long> intervalorCota,
+			Intervalo<Integer> intervalorCota,
 			Intervalo<Date> intervaloDateMovimento,
 			List<Long> listIdFornecedor, List<Long> listIdProduto,
 			Long idTipoNotaFiscal, Date dataEmissao) {
 		
-		List<Long> listaIdCota = (List<Long>) this.cotaRepository.obterIdCotasEntre(intervalorCota);
+		Set<Long> listaIdCota = this.cotaRepository.obterIdCotasEntre(intervalorCota,intervaloBox,SituacaoCadastro.ATIVO);
 		
 		TipoNotaFiscal tipoNotaFiscal = this.tipoNotaFiscalRepository.buscarPorId(idTipoNotaFiscal);
 		
