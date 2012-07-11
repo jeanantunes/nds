@@ -59,8 +59,6 @@ public class ProdutoLancamentoDTO implements Serializable {
 	
 	private Integer numeroReprogramacoes;
 	
-	private boolean possuiEstudo;
-	
 	private boolean possuiRecebimentoFisico;
 	
 	private PeriodicidadeProduto periodicidadeProduto;
@@ -70,6 +68,8 @@ public class ProdutoLancamentoDTO implements Serializable {
   	private String distribuicao;
   	
   	private boolean possuiFuro;
+  	
+  	private boolean lancamentoAgrupado;
 	
 	/**
 	 * Construtor padrão.
@@ -371,21 +371,7 @@ public class ProdutoLancamentoDTO implements Serializable {
 	public void setNumeroReprogramacoes(Integer numeroReprogramacoes) {
 		this.numeroReprogramacoes = numeroReprogramacoes;
 	}
-
-	/**
-	 * @return the possuiEstudo
-	 */
-	public boolean isPossuiEstudo() {
-		return possuiEstudo;
-	}
-
-	/**
-	 * @param possuiEstudo the possuiEstudo to set
-	 */
-	public void setPossuiEstudo(boolean possuiEstudo) {
-		this.possuiEstudo = possuiEstudo;
-	}
-
+	
 	/**
 	 * @return the possuiRecebimentoFisico
 	 */
@@ -457,6 +443,20 @@ public class ProdutoLancamentoDTO implements Serializable {
 	 */
 	public void setPossuiFuro(boolean possuiFuro) {
 		this.possuiFuro = possuiFuro;
+	}
+
+	/**
+	 * @return the lancamentoAgrupado
+	 */
+	public boolean isLancamentoAgrupado() {
+		return lancamentoAgrupado;
+	}
+
+	/**
+	 * @param lancamentoAgrupado the lancamentoAgrupado to set
+	 */
+	public void setLancamentoAgrupado(boolean lancamentoAgrupado) {
+		this.lancamentoAgrupado = lancamentoAgrupado;
 	}
 	
 }

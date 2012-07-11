@@ -248,6 +248,10 @@ public class Lancamento implements Serializable {
 		return estudo;
 	}
 	
+	public void setEstudo(Estudo estudo) {
+		this.estudo = estudo;
+	}
+
 	public BigDecimal getTotalRecebimentoFisico() {
 		BigDecimal total = BigDecimal.ZERO;
 		for (ItemRecebimentoFisico recebimento : recebimentos) {

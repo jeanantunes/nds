@@ -233,7 +233,11 @@ function Balanceamento(pathTela, descInstancia) {
 		$.postJSON(
 				pathTela + "/matrizLancamento/reprogramarLancamentoUnico",
 				data,
-				function(){T.atualizarResumoBalanceamento();}
+				function(){
+					
+					T.atualizarResumoBalanceamento(true);
+					T.checkUncheckLancamentos(false);
+				}
 			);
 	},
 	
