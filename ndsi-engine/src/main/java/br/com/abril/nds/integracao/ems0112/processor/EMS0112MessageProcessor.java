@@ -1,7 +1,5 @@
 package br.com.abril.nds.integracao.ems0112.processor;
 
-import javax.persistence.NoResultException;
-
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -53,13 +51,8 @@ public class EMS0112MessageProcessor extends AbstractRepository implements Messa
 		Query query = getSession().createQuery(sql.toString());
 		query.setParameter("codigoEditor", input.getCodigoEditor());
 		
-		
-		
-		try {
-			
-			
-			Editor editor = (Editor) query.uniqueResult();
-			
+		Editor editor = (Editor) query.uniqueResult();
+		if (null != editor) {
 			if(distribuidorService.isDistribuidor(input.getCodigoDistribuidor()) &&
 					input.getTipoOperacao().equals("A")){
 				
@@ -107,7 +100,7 @@ public class EMS0112MessageProcessor extends AbstractRepository implements Messa
 				atualizaTelefone(input, message, editor, TipoTelefone.CONTATO);			
 				
 			}
-		} catch (NoResultException e) {
+		} else {
 			//CASO: NAO EXISTE EDITOR CADASTRADO
 			
 			//INSERE
@@ -223,10 +216,10 @@ public class EMS0112MessageProcessor extends AbstractRepository implements Messa
 		Query query = getSession().createQuery(sql.toString());
 		query.setParameter("codigoEditor", editor.getCodigo());
 		query.setParameter("tipo", tipo);
-		
-		try {
+				
 			
-			EnderecoEditor ed = (EnderecoEditor) query.uniqueResult();
+		EnderecoEditor ed = (EnderecoEditor) query.uniqueResult();
+		if (null != ed) {
 			
 			if(ed.getTipoEndereco() == TipoEndereco.COMERCIAL){
 				
@@ -315,7 +308,7 @@ public class EMS0112MessageProcessor extends AbstractRepository implements Messa
 			}
 		
 			
-		} catch (NoResultException e) {
+		} else {
 			//CASO: EXISTE EDITOR POREM NAO EXISTE ENDERECO CADASTRADO
 			
 			// INSERE 
@@ -377,11 +370,10 @@ public class EMS0112MessageProcessor extends AbstractRepository implements Messa
 		Query query = getSession().createQuery(sql.toString());
 		query.setParameter("codigoEditor", editor.getCodigo());
 		query.setParameter("tipo", tipo);
+			
+		TelefoneEditor telefone = (TelefoneEditor) query.uniqueResult();
 		
-		try {
-			
-			TelefoneEditor telefone = (TelefoneEditor) query.uniqueResult();
-			
+		if (null != telefone) {
 			if(telefone.getTipoTelefone() == TipoTelefone.FAX){
 				
 				if(!input.getDddFax().equals(telefone.getTelefone().getDdd())){
@@ -419,7 +411,7 @@ public class EMS0112MessageProcessor extends AbstractRepository implements Messa
 				}
 			}
 					
-		} catch (NoResultException e) {
+		} else {
 			//CASO: EXISTE EDITOR POREM NAO EXISTE TELEFONE CADASTRADO
 			
 			// INSERE 

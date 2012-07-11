@@ -190,6 +190,7 @@ import br.com.abril.nds.util.DateUtil;
 public class DataLoader {
 
 	private static final String PARAM_SKIP_DATA = "skipData";
+	private static final String PARAM_CLEAN_DATA = "cleanData";
 	private static PessoaJuridica juridicaAcme;
 	private static PessoaJuridica juridicaDinap;
 	private static PessoaJuridica juridicaFc;
@@ -767,7 +768,7 @@ public class DataLoader {
 	private static InterfaceExecucao interfaceEMS0109;
 	private static InterfaceExecucao interfaceEMS0110;
 	private static InterfaceExecucao interfaceEMS0111;
-//	private static InterfaceExecucao interfaceEMS0112;
+	private static InterfaceExecucao interfaceEMS0112;
 	private static InterfaceExecucao interfaceEMS0113;
 	private static InterfaceExecucao interfaceEMS0114;
 	private static InterfaceExecucao interfaceEMS0116;
@@ -787,8 +788,9 @@ public class DataLoader {
 	private static InterfaceExecucao interfaceEMS0132;
 	private static InterfaceExecucao interfaceEMS0133;
 //	private static InterfaceExecucao interfaceEMS0134;
-//	private static InterfaceExecucao interfaceEMS0185;
+	private static InterfaceExecucao interfaceEMS0185;
 	private static InterfaceExecucao interfaceEMS0197;
+	private static InterfaceExecucao interfaceEMS0198;
 
 	private static EventoExecucao eventoErroInfraestrutura;
 	private static EventoExecucao eventoSemDominio;
@@ -818,8 +820,11 @@ public class DataLoader {
 				session = sf.openSession();
 				tx = session.beginTransaction();				
 				
-				carregarDados(session);
-//				carregarDadosClean(session);
+				if (parans.contains(PARAM_CLEAN_DATA)) {
+					carregarDadosClean(session);
+				} else {
+					carregarDados(session);
+				}
 
 				commit = true;
 			} catch (Exception e) {
@@ -850,20 +855,11 @@ public class DataLoader {
 	}
 
 	private static void carregarDados(Session session) {
+		carregarDadosClean(session);
 
-		gerarCfops(session);
-		tabelaNCM(session);
-		
-		criarParametrosSistema(session);
-		criarInterfaceExecucao(session);
-		criarEventoExecucao(session);
-		criarAlgoritmos(session);
 		criarCarteira(session);
 		criarBanco(session);
 		criarPessoas(session);
-		criarDistribuidor(session);
-		criarEnderecoDistribuidor(session);
-		criarTelefoneDistribuidor(session);
 		criarUsuarios(session);
 		criarTiposFornecedores(session);
 		criarBox(session);
@@ -873,14 +869,10 @@ public class DataLoader {
 		criarCotas(session);
 		criarPDVsCota(session);
 		criarDistribuicaoCota(session);
-		criarEditores(session);
-		criarTiposProduto(session);
+		criarEditores(session);		
 		criarProdutos(session);
 		criarProdutosEdicao(session);
-		criarCFOP(session);
 		criarTiposMovimento(session);
-		criarParametroEmissaoNotaFiscal(session);
-		criarTiposNotaFiscal(session);
 		criarNotasFiscais(session);
 		criarRecebimentosFisicos(session);
 		criarEstoquesProdutos(session);
@@ -890,7 +882,6 @@ public class DataLoader {
 		criarEstudos(session);
 		criarEstudosCota(session);
 		criarMovimentosEstoqueCota(session);
-		criarFeriado(session);
 		criarEnderecoCotaPF(session);
 		criarMovimentosFinanceiroCota(session);
 		criarDivida(session);
@@ -976,15 +967,22 @@ public class DataLoader {
 	}
 
 	
+	/*
+	 * Carga Inicial do sistema Zerado
+	 * */
 	
 	private static void carregarDadosClean(Session session) {
 		
 		gerarCfops(session);
 		
+		tabelaNCM(session);
+		
 		criarParametrosSistema(session);
 		criarInterfaceExecucao(session);
 		criarEventoExecucao(session);
 		criarAlgoritmos(session);
+		
+		criarTiposProduto(session);
 		
 		criarDistribuidor(session);
 		criarEnderecoDistribuidor(session);
@@ -2886,17 +2884,25 @@ public class DataLoader {
 		save(session, Fixture.parametroSistema(TipoParametroSistema.NUMERO_DIAS_PERMITIDO_LANCAMENTO_SOBRA_EM, "7"));
 		save(session, Fixture.parametroSistema(TipoParametroSistema.NUMERO_DIAS_PERMITIDO_LANCAMENTO_SOBRA_DE, "7"));
 		save(session, Fixture.parametroSistema(TipoParametroSistema.PATH_INTERFACE_NFE_IMPORTACAO,
-//				"C:\\notas\\"));			// windows;
-				"/opt/interface/notas/"));	// linux;
+				"C:\\notas\\"));			// windows;
+//				"/opt/interface/notas/"));	// linux;
 		save(session, Fixture.parametroSistema(TipoParametroSistema.PATH_INTERFACE_MDC_IMPORTACAO, 
-//				"C:\\interface_mdc\\"));		// windows;
-				"/opt/interface/inbound/"));		// linux;
+				"C:\\interface_mdc\\"));		// windows;
+//				"/opt/interface/inbound/"));		// linux;
 		save(session, Fixture.parametroSistema(TipoParametroSistema.PATH_INTERFACE_MDC_EXPORTACAO,
-//				"C:\\interface_mdc\\"));		// windows;
-				"/opt/interface/outbound/"));	// linux;
+				"C:\\interface_mdc\\"));		// windows;
+//				"/opt/interface/outbound/"));	// linux;
 		save(session, Fixture.parametroSistema(TipoParametroSistema.PATH_INTERFACE_MDC_BACKUP,
-//				"C:\\interface_mdc\\"));		// windows;
-				"/opt/interface/archive/"));		// linux;
+				"C:\\interface_mdc\\"));		// windows;
+//				"/opt/interface/archive/"));		// linux;
+		
+		
+		save(session, Fixture.parametroSistema(TipoParametroSistema.CODIGO_DISTRIBUIDOR_DINAP, "6338107"));
+		save(session, Fixture.parametroSistema(TipoParametroSistema.UF, "SP" ));
+		save(session, Fixture.parametroSistema(TipoParametroSistema.RAZAO_SOCIAL, "Distribuidora Paulista de Jornais, Livros e Revistas LTDA" ));
+		save(session, Fixture.parametroSistema(TipoParametroSistema.CNPJ, "50.958.925/0001-18" ));	
+		
+		
 		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0106_ARCHIVE, "/opt/interface/ems0106/archive/"));
 		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0106_INBOUND, "/opt/interface/ems0106/inbound/"));
 		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0106_IN_FILEMASK, "(?i:DEAPR19.NEW)"));
@@ -3985,7 +3991,7 @@ public class DataLoader {
 	private static void criarDistribuidor(Session session) {
 
 		PessoaJuridica juridicaDistrib = Fixture.pessoaJuridica("Distribuidor Acme",
-				"56003315000147", "333.333.333.333", "distrib_acme@mail.com", "99.999-9");
+				"56003315000147", "333333333333", "distrib_acme@mail.com", "99.999-9");
 		save(session, juridicaDistrib);
 
 		//FORMAS DE COBRANÇA DA COTA
@@ -4715,7 +4721,7 @@ public class DataLoader {
 		for(Integer i=0;i<10; i++) {
 
 			PessoaJuridica juridica = Fixture.pessoaJuridica("PessoaJ"+i,
-					"00.000.000/0001-00", "000.000.000.000", "acme@mail.com", "99.999-9");
+					"00.000.000/0001-00", "000000000000", "acme@mail.com", "99.999-9");
 			session.save(juridica);
 
 			TipoFornecedor tipoFornecedorPublicacao = Fixture.tipoFornecedorPublicacao();
@@ -4946,13 +4952,13 @@ public class DataLoader {
 
 	private static void criarPessoas(Session session){
 		juridicaAcme = Fixture.pessoaJuridica("Acme",
-				"10000000000100", "000.000.000.000", "sys.discover@gmail.com", "99.999-9");
+				"10000000000100", "000000000000", "sys.discover@gmail.com", "99.999-9");
 		juridicaDinap = Fixture.pessoaJuridica("Dinap",
-				"11111111000111", "111.111.111.111", "sys.discover@gmail.com", "99.999-9");
+				"11111111000111", "111111111111", "sys.discover@gmail.com", "99.999-9");
 		juridicaFc = Fixture.pessoaJuridica("FC",
-				"22222222000122", "222.222.222.222", "sys.discover@gmail.com", "99.999-9");
+				"22222222000122", "222222222222", "sys.discover@gmail.com", "99.999-9");
 		juridicaValida = Fixture.pessoaJuridica("Juridica Valida",
-				"93081738000101", "333.333.333.333", "sys.discover@gmail.com", "99.999-9");
+				"93081738000101", "333333333333", "sys.discover@gmail.com", "99.999-9");
 
 		manoel = Fixture.pessoaFisica("10732815665",
 				"sys.discover@gmail.com", "Manoel da Silva");
@@ -5219,7 +5225,7 @@ public class DataLoader {
 		for(Integer i=1000;i<1050; i++) {
 
 			PessoaJuridica juridica = Fixture.pessoaJuridica("PessoaJ"+i,
-					"30.000.000/0001-00", "000.000.000.000", "acme@mail.com", "99.999-9");
+					"30.000.000/0001-00", "000000000000", "acme@mail.com", "99.999-9");
 			save(session,juridica);
 
 			Fornecedor fornecedor = Fixture.fornecedor(juridica, SituacaoCadastro.ATIVO, true, tipoFornecedorPublicacao, null);
@@ -10209,7 +10215,7 @@ public class DataLoader {
 		interfaceEMS0109 = Fixture.criarInterfaceExecucao(109L, "EMS0109");
 		interfaceEMS0110 = Fixture.criarInterfaceExecucao(110L, "EMS0110");
 		interfaceEMS0111 = Fixture.criarInterfaceExecucao(111L, "EMS0111");
-//		interfaceEMS0112 = Fixture.criarInterfaceExecucao(112L, "EMS0112");
+		interfaceEMS0112 = Fixture.criarInterfaceExecucao(112L, "EMS0112");
 		interfaceEMS0113 = Fixture.criarInterfaceExecucao(113L, "EMS0113");
 		interfaceEMS0114 = Fixture.criarInterfaceExecucao(114L, "EMS0114");
 		interfaceEMS0116 = Fixture.criarInterfaceExecucao(116L, "EMS0116");
@@ -10229,16 +10235,19 @@ public class DataLoader {
 		interfaceEMS0132 = Fixture.criarInterfaceExecucao(132L, "EMS0132");
 		interfaceEMS0133 = Fixture.criarInterfaceExecucao(133L, "EMS0133");
 //		interfaceEMS0134 = Fixture.criarInterfaceExecucao(134L, "EMS0134");
-//		interfaceEMS0185 = Fixture.criarInterfaceExecucao(185L, "EMS0185");
+		interfaceEMS0185 = Fixture.criarInterfaceExecucao(185L, "EMS0185");
 		interfaceEMS0197 = Fixture.criarInterfaceExecucao(197L, "EMS0197");
+		interfaceEMS0198 = Fixture.criarInterfaceExecucao(198L, "EMS0198");
 
+
+		
 		save(session, Fixture.criarInterfaceExecucao(106L, "EMS0106"));
 		save(session, Fixture.criarInterfaceExecucao(107L, "EMS0107"));
 		save(session, Fixture.criarInterfaceExecucao(108L, "EMS0108"));
 		save(session, Fixture.criarInterfaceExecucao(InterfaceEnum.EMS0109.getCodigoInterface(), "EMS0109"));
 		save(session, Fixture.criarInterfaceExecucao(InterfaceEnum.EMS0110.getCodigoInterface(), "EMS0110"));
 		save(session, Fixture.criarInterfaceExecucao(InterfaceEnum.EMS0111.getCodigoInterface(), "EMS0111"));
-//		save(session, Fixture.criarInterfaceExecucao(InterfaceEnum.EMS0112.getCodigoInterface(), "EMS0112"));
+		save(session, Fixture.criarInterfaceExecucao(InterfaceEnum.EMS0112.getCodigoInterface(), "EMS0112"));
 		save(session, Fixture.criarInterfaceExecucao(InterfaceEnum.EMS0113.getCodigoInterface(), "EMS0113"));
 		save(session, Fixture.criarInterfaceExecucao(InterfaceEnum.EMS0114.getCodigoInterface(), "EMS0114"));
 		save(session, Fixture.criarInterfaceExecucao(116L, "EMS0116"));
@@ -10258,8 +10267,9 @@ public class DataLoader {
 		save(session, Fixture.criarInterfaceExecucao(132L, "EMS0132"));
 		save(session, Fixture.criarInterfaceExecucao(133L, "EMS0133"));
 //		save(session, Fixture.criarInterfaceExecucao(InterfaceEnum.EMS0134.getCodigoInterface(), "EMS0134"));
-//		save(session, Fixture.criarInterfaceExecucao(InterfaceEnum.EMS0185.getCodigoInterface(), "EMS0185"));
+		save(session, Fixture.criarInterfaceExecucao(InterfaceEnum.EMS0185.getCodigoInterface(), "EMS0185"));
 		save(session, Fixture.criarInterfaceExecucao(197L, "EMS0197"));
+		save(session, Fixture.criarInterfaceExecucao(198L, "EMS0198"));
 	}
 
 	private static void criarEventoExecucao(Session session) {

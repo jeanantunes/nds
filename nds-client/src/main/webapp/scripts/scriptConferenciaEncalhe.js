@@ -732,7 +732,8 @@ var ConferenciaEncalhe = {
 							$("#dialog-notaFiscal").dialog("close");
 							
 							$("#cod_barras").focus();
-						}, null, true, "idModalConfirmarSalvarConf"
+							
+						}, null, true, "dialog-notaFiscal"
 					);
 				},
 				"Cancelar" : function() {

@@ -67,7 +67,7 @@
 			
 			$.each(resultado.tableModel.rows, function(index, row) {
 
-				var linkRateioDiferenca = '<a id="retearDiferenca' + row.cell.id + '" href="javascript:;" onclick="verificarExistenciaEstudo(' + row.cell.id + ');" style="cursor:pointer">' +
+				var linkRateioDiferenca = '<a id="ratearDiferenca' + row.cell.id + '" href="javascript:;" onclick="verificarExistenciaEstudo(' + row.cell.id + ');" style="cursor:pointer">' +
 										     '<img src="${pageContext.request.contextPath}/images/bt_cadastros.png" hspace="5" border="0px" />' +
 										  '</a>';
 
@@ -79,7 +79,7 @@
 					
 				} else {
 
-					var linkExclusaoDiferenca = '<a href="javascript:;" onclick="popupExclusaoDiferenca(' + row.cell.id + ');" style="cursor:pointer">' +
+					var linkExclusaoDiferenca = '<a id="excluirDiferenca' + row.cell.id + '" href="javascript:;" onclick="popupExclusaoDiferenca(' + row.cell.id + ');" style="cursor:pointer">' +
 													'<img src="${pageContext.request.contextPath}/images/ico_excluir.gif" hspace="5" border="0px" />' +
 												'</a>';
 				}

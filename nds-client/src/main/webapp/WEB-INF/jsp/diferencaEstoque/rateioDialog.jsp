@@ -76,19 +76,29 @@
 				height: 370,
 				width: 557,
 				modal: true,
-				buttons: {
-					"Confirmar": function() {
-						cadastrasRateioCotas();
+				buttons: [
+					{
+						id: "btConfirmarRateio",
+						text: "Confirmar",
+						click: function() {
+							cadastrasRateioCotas();
+						}
 					},
-					"Cancelar": function() {
-						$(this).dialog("close");
+					{
+						id: "btCancelarRateio",
+						text: "Cancelar",
+						click: function() {
+							$(this).dialog("close")
+						}
 					}
-				},
+				],
 				beforeClose: function() {
 					clearMessageDialogTimeout();
 				}
 			});     
 		}
+
+		
 
 		function executarPreProcessamentoRateio(resultado) {
 

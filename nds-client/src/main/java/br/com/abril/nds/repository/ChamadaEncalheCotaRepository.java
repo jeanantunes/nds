@@ -23,10 +23,11 @@ public interface ChamadaEncalheCotaRepository extends Repository<ChamadaEncalheC
 	 * @param dataOperacao
 	 * @param indPesquisaCEFutura
 	 * @param conferido
+	 * @param postergado
 	 * 
 	 * @return List - Long
 	 */
-	public List<Long> obterListaIdProdutoEdicaoChamaEncalheCota(Integer numeroCota, Date dataOperacao, boolean indPesquisaCEFutura, boolean conferido);
+	public List<Long> obterListaIdProdutoEdicaoChamaEncalheCota(Integer numeroCota, Date dataOperacao, boolean indPesquisaCEFutura, boolean conferido, boolean postergado);
 	
 	
 	/**
@@ -42,10 +43,11 @@ public interface ChamadaEncalheCotaRepository extends Repository<ChamadaEncalheC
 	 * @param idProdutoEdicao
 	 * @param indPesquisaCEFutura
 	 * @param conferido
+	 * @param postergado
 	 * 
 	 * @return Long
 	 */
-	public Long obterQtdListaChamaEncalheCota(Integer numeroCota, Date dataOperacao, Long idProdutoEdicao, boolean indPesquisaCEFutura, boolean conferido);
+	public Long obterQtdListaChamaEncalheCota(Integer numeroCota, Date dataOperacao, Long idProdutoEdicao, boolean indPesquisaCEFutura, boolean conferido, boolean postergado);
 
 	
 	/**
@@ -61,6 +63,7 @@ public interface ChamadaEncalheCotaRepository extends Repository<ChamadaEncalheC
 	 * @param idProdutoEdicao
 	 * @param indPesquisaCEFutura
 	 * @param conferido
+	 * @param postergado
 	 * 
 	 * @return List - ChamadaEncalheCota
 	 */
@@ -69,7 +72,8 @@ public interface ChamadaEncalheCotaRepository extends Repository<ChamadaEncalheC
 			Date dataOperacao, 
 			Long idProdutoEdicao, 
 			boolean indPesquisaCEFutura, 
-			boolean conferido);
+			boolean conferido,
+			boolean postergado);
 	
 	
 	/**
