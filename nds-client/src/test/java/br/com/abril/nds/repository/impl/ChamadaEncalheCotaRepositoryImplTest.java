@@ -325,13 +325,15 @@ public class ChamadaEncalheCotaRepositoryImplTest extends AbstractRepositoryImpl
 		Date dataOperacao = Fixture.criarData(28, Calendar.FEBRUARY, 2012);
 		boolean indPesquisaCEFutura = true; 
 		boolean conferido = false;
+		boolean postergado = false;
 		
 		List<Long> listaIdProdutoEdicaoChamadaEncalheCota = 
 				chamadaEncalheCotaRepository.obterListaIdProdutoEdicaoChamaEncalheCota(
 						numeroCota, 
 						dataOperacao, 
 						indPesquisaCEFutura, 
-						conferido);
+						conferido,
+						postergado);
 		
 		Assert.assertEquals(1, listaIdProdutoEdicaoChamadaEncalheCota.size());
 		
@@ -345,13 +347,15 @@ public class ChamadaEncalheCotaRepositoryImplTest extends AbstractRepositoryImpl
 		Long idProdutoEdicao = veja1.getId();
 		boolean indPesquisaCEFutura = true; 
 		boolean conferido = false;
+		boolean postergado = false;
 		
 		Long qtde = chamadaEncalheCotaRepository.obterQtdListaChamaEncalheCota(
 				numeroCota, 
 				dataOperacao, 
 				idProdutoEdicao, 
 				indPesquisaCEFutura, 
-				conferido);
+				conferido,
+				postergado);
 		
 		Assert.assertEquals(1, qtde.intValue());
 		

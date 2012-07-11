@@ -190,12 +190,12 @@ import br.com.abril.nds.model.seguranca.Usuario;
 public class Fixture {
 	
 	public static PessoaJuridica juridicaAbril() {
-		return pessoaJuridica("Abril", "00.000.000/0002-00", "010.000.000.000",
+		return pessoaJuridica("Abril", "00.000.000/0002-00", "010000000000",
 				"abril@mail.com", "99.999-1");
 	}
 	
 	public static PessoaJuridica juridicaFC() {
-		return pessoaJuridica("FC", "00.000.000/0001-00", "000.000.000.000",
+		return pessoaJuridica("FC", "00.000.000/0001-00", "000000000000",
 				"fc@mail.com", "99.999-9");
 	}
 	
@@ -225,12 +225,12 @@ public class Fixture {
 	
 	
 	public static PessoaJuridica juridicaDinap() {		
-		return pessoaJuridica("Dinap", "11.111.111/0001-00", "111.111.111.111",
+		return pessoaJuridica("Dinap", "11.111.111/0001-00", "111111111111",
 				"dinap@mail.com", "99.999-8");
 	}
 	
 	public static PessoaJuridica juridicaAcme() {
-		return pessoaJuridica("ACME", "11.222.333/0001-00", "111.222.333.444",
+		return pessoaJuridica("ACME", "11.222.333/0001-00", "111222333444",
 				"acme@mail.com", "99.999-7");
 	}
 
@@ -1216,8 +1216,7 @@ public class Fixture {
 		tipoNotaFiscal.setNopCodigo(0L);
 		tipoNotaFiscal.setTipoOperacao(TipoOperacao.SAIDA);
 		tipoNotaFiscal.setTipoAtividade(TipoAtividade.MERCANTIL);
-		tipoNotaFiscal.setSerieNotaFiscal(3);
-		
+		tipoNotaFiscal.setSerieNotaFiscal(3);		
 		return tipoNotaFiscal;
 	}
 

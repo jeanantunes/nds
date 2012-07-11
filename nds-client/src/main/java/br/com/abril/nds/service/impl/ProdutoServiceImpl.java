@@ -1,6 +1,7 @@
 package br.com.abril.nds.service.impl;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
@@ -222,6 +223,21 @@ public class ProdutoServiceImpl implements ProdutoService {
 		Produto produto = this.produtoRepository.obterProdutoPorID(id);
 				
 		return produto;
+	}
+
+	/* (non-Javadoc)
+	 * @see br.com.abril.nds.service.ProdutoService#obterProdutosPelosIds(java.util.List)
+	 */
+	@Override
+	public List<Produto> obterProdutosPelosIds(List<Long> idsProdutos) {
+		
+		List<Produto> listaProdutos = new ArrayList<Produto>();
+		
+		for(Long id : idsProdutos) {
+			listaProdutos.add(this.produtoRepository.obterProdutoPorID(id));
+		}
+		
+		return listaProdutos;
 	}
 	
 }

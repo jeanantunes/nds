@@ -11,6 +11,7 @@ public class CouchDbProperties implements Serializable {
 	private Integer port;
 	private String username;
 	private String password;
+	private Integer bachSize;
 	public String getProtocol() {
 		return protocol;
 	}
@@ -40,5 +41,11 @@ public class CouchDbProperties implements Serializable {
 	}
 	public void setPassword(String password) {
 		this.password = password;
+	}
+	public void setBachSize(Integer bachSize) {
+		this.bachSize = bachSize;
+	}
+	public Integer getBachSize() {
+		return bachSize;
 	}
 }
