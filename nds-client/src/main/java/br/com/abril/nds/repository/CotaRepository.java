@@ -186,11 +186,12 @@ public interface CotaRepository extends Repository<Cota, Long> {
 	/**
 	 * Retorna todos os ids das cotas que estão entre o itervalo de cotas parametrizado;
 	 * 
-	 * @param intervaloIdCota intevalo de id das cotas
-	 * 
+	 * @param intervaloCota intevalo de id das cotas
+	 * @param intervaloBox TODO
+	 * @param situacao TODO
 	 * @return ids das cotas
 	 */
-	Set<Long> obterIdCotasEntre(Intervalo<Long> intervaloIdCota);
+	Set<Long> obterIdCotasEntre(Intervalo<Integer> intervaloCota, Intervalo<String> intervaloBox, SituacaoCadastro situacao);
 
 	Long obterQuantidadeCotas(SituacaoCadastro situacaoCadastro);
 
