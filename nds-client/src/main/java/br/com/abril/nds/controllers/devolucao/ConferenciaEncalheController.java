@@ -703,11 +703,9 @@ public class ConferenciaEncalheController {
 				
 			} catch (EncalheExcedeReparteException e) {
 
-				this.result.use(Results.json()).from(
-						new ValidacaoVO(TipoMensagem.WARNING, "Conferência de encalhe está excedendo quantidade de reparte."), "result").recursive().serialize();
-			} 
+				throw new ValidacaoException(TipoMensagem.WARNING, "Conferência de encalhe está excedendo quantidade de reparte.");
 			
-			finally{
+			} finally {
 				
 				this.atribuirIds(lista);
 			}
