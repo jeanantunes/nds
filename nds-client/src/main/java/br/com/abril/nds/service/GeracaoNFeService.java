@@ -1,5 +1,7 @@
 package br.com.abril.nds.service;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
@@ -39,7 +41,9 @@ public interface GeracaoNFeService {
 	 * @param listIdProduto
 	 * @param idTipoNotaFiscal
 	 * @param dataEmissao
+	 *  
 	 */
 	public abstract void gerarNotaFiscal(Intervalo<String> intervaloBox, Intervalo<Integer> intervalorCota,
-			Intervalo<Date> intervaloDateMovimento, List<Long> listIdFornecedor, List<Long> listIdProduto, Long idTipoNotaFiscal, Date dataEmissao);
+			Intervalo<Date> intervaloDateMovimento, List<Long> listIdFornecedor, List<Long> listIdProduto, 
+			Long idTipoNotaFiscal, Date dataEmissao) throws FileNotFoundException, IOException;
 }
