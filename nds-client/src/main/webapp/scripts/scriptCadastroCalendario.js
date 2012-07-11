@@ -2,23 +2,36 @@ var CadastroCalendario = {
 		
 		dates : [],
 
-		popup : function(date, dates) {		
-			//$( "#dialog:ui-dialog" ).dialog( "destroy" );
+		popup : function(date, dates) {	
 			
 			$( "#dialog-novo" ).dialog({
+				
 				resizable: false,
+				
 				height:580,
+				
 				width:700,
+				
 				modal: true,
+				
 				buttons: {
+					
 					"Confirmar": function() {
+						
 						CadastroCalendario.novoFeriado();
+						
 						D = date.match(/\d+/g);
+						
 						date = new Date(+D[2], D[1]-1, +D[0]);
+						
 						dates.push(date);
+						
 						highlightDays(date);
+						
 						$( this ).dialog( "close" );
+						
 						$("#effect").show("highlight", {}, 3000, callback);
+						
 						console.log(dates);					
 					},
 					"Cancelar": function() {
@@ -142,7 +155,7 @@ $(document).ready(function() {
         monthNamesShort: ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set', 'Out','Nov','Dez'],
 
 		onSelect: function(dateText, inst) {
-			popup(dateText, dates);
+			CadastroCalendario.popup(dateText, inst);
 		}
 	});
 

@@ -1,31 +1,33 @@
 <head>
 
-<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/development-bundle/themes/redmond/jquery.ui.all.css"></link>
-<script language="javascript" type="text/javascript" src="${pageContext.request.contextPath}/scripts/scriptCadastroCalendario.js">
+<link type="text/css" rel="stylesheet" href="${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/development-bundle/themes/redmond/jquery.ui.all.css">
+
+<script language="javascript" type="text/javascript" src="${pageContext.request.contextPath}/scripts/scriptCadastroCalendario.js"></script>
 
 
-<style>
+<style type="text/css">
 
-label {
-	vertical-align: super;
-}
+	label {
+		vertical-align: super;
+	}
+	
+	.ui-datepicker-inline {
+		width: 950px !important;
+	}
+	
+	.ui-datepicker-group {
+		margin-left: 4px;
+	}
+	
+	.ui-state-default {
+		font-size: 13px !important;
+	}
+	
+	.ui-datepicker-group {
+		margin: 0px !important;
+		padding: 5px !important;
+	}
 
-.ui-datepicker-inline {
-	width: 950px !important;
-}
-
-.ui-datepicker-group {
-	margin-left: 4px;
-}
-
-.ui-state-default {
-	font-size: 13px !important;
-}
-
-.ui-datepicker-group {
-	margin: 0px !important;
-	padding: 5px !important;
-}
 </style>
 
 </head>
