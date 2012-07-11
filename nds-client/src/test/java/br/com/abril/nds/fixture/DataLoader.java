@@ -1002,7 +1002,7 @@ public class DataLoader {
 
 		List<Permissao> permissoes = new ArrayList<Permissao>();
 		
-		Permissao permissaoRoleCadastroProduto = new Permissao();
+		/*Permissao permissaoRoleCadastroProduto = new Permissao();
 		permissaoRoleCadastroProduto.setNome("ROLE_CADASTRO_PRODUTO");
 		permissaoRoleCadastroProduto.setDescricao("Permissão para acessar a funcionalidade Cadastro de Produto");
 		permissoes.add(permissaoRoleCadastroProduto);
@@ -1427,7 +1427,7 @@ public class DataLoader {
 		Permissao permissaoRoleCadastroBanco = new Permissao();
 		permissaoRoleCadastroBanco.setNome("ROLE_ADMINISTRACAO_PARAMETROS_DISTRIBUIDOR");
 		permissaoRoleCadastroBanco.setDescricao("Permissão para acessar a funcionalidade Cadastro de Banco");
-		permissoes.add(permissaoRoleCadastroBanco);
+		permissoes.add(permissaoRoleCadastroBanco);*/
 
 		Permissao permissao = null;
 

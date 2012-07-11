@@ -2,10 +2,14 @@ package br.com.abril.nds.model.seguranca;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+
+import br.com.abril.nds.model.cadastro.TipoPermissao;
 
 
 @Entity	
@@ -17,11 +21,10 @@ public class Permissao {
 	@GeneratedValue(generator = "PERMISSAO_SEQ")
 	@Column(name = "ID")
 	private Long id;
-	@Column(name = "NOME", nullable = false)
-	private String nome;
-
-	@Column(name = "DESCRICAO", nullable = true)
-	private String descricao;
+	
+	@Enumerated(EnumType.STRING)
+	@Column(name = "TIPO", nullable = false)
+	private TipoPermissao tipoPermissao;
 
 	public Long getId() {
 		return id;
@@ -31,20 +34,12 @@ public class Permissao {
 		this.id = id;
 	}
 
-	public String getNome() {
-		return nome;
+	public TipoPermissao getTipoPermissao() {
+		return tipoPermissao;
 	}
 
-	public void setNome(String nome) {
-		this.nome = nome;
-	}
-
-	public String getDescricao() {
-		return descricao;
-	}
-
-	public void setDescricao(String descricao) {
-		this.descricao = descricao;
+	public void setTipoPermissao(TipoPermissao tipoPermissao) {
+		this.tipoPermissao = tipoPermissao;
 	}
 
 }
