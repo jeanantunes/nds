@@ -1003,6 +1003,10 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			Usuario usuario,
 			StatusOperacao statusOperacao) throws EncalheExcedeReparteException {
 		
+		if(listaConferenciaEncalhe == null || listaConferenciaEncalhe.isEmpty()) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum item conferido, não é possível realizar a conferência de encalhe.");
+		}
+		
 	    Date dataRecolhimentoReferencia = obterDataRecolhimentoReferencia();
 	    Distribuidor distribuidor = distribuidorService.obter();
 		Date dataOperacao = distribuidor.getDataOperacao();
