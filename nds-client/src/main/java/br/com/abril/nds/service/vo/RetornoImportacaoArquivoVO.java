@@ -25,6 +25,10 @@ public class RetornoImportacaoArquivoVO implements Serializable {
 		
 	}
 	
+	public RetornoImportacaoArquivoVO(boolean sucessoNaImportacao){
+		this.sucessoNaImportacao = sucessoNaImportacao;
+	}
+	
 	/**
 	 * Construtor
 	 * @param motivoDoErro

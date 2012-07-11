@@ -19,7 +19,6 @@ import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.service.vo.RetornoImportacaoArquivoVO;
 
 import com.ancientprogramming.fixedformat4j.format.FixedFormatManager;
-import com.ancientprogramming.fixedformat4j.format.impl.FixedFormatManagerImpl;
 
 /**
  * Estratégia de importação de arquivos referente a Produtos.
@@ -38,6 +37,9 @@ public class ImportacaoDeArquivoProdutoStrategy implements ImportacaoArquivoStra
 	
 	@Autowired
 	private ProdutoEdicaoRepository per;
+	
+	@Override
+	public void processarImportacaoDados(Object input){}
 	
 	@Override
 	public RetornoImportacaoArquivoVO processarImportacaoArquivo(File arquivo) {
