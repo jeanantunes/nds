@@ -22,17 +22,15 @@ public class ChamadaEncalheCotaRepositoryImpl extends AbstractRepositoryModel<Ch
 	public ChamadaEncalheCotaRepositoryImpl() {
 		super(ChamadaEncalheCota.class);
 	}
+
 	
-	/*
-	 * (non-Javadoc)
-	 * @see br.com.abril.nds.repository.ChamadaEncalheCotaRepository#obterListaIdProdutoEdicaoChamaEncalheCota(java.lang.Integer, java.util.Date, boolean, boolean)
-	 */
 	@SuppressWarnings("unchecked")
 	public List<Long> obterListaIdProdutoEdicaoChamaEncalheCota (
 			Integer numeroCota, 
 			Date dataOperacao, 
 			boolean indPesquisaCEFutura, 
-			boolean conferido) {
+			boolean conferido, 
+			boolean postergado) {
 		
 		StringBuilder hql = new StringBuilder();
 		
@@ -45,6 +43,9 @@ public class ChamadaEncalheCotaRepositoryImpl extends AbstractRepositoryModel<Ch
 		hql.append(" chamadaEncalheCota.cota.numeroCota = :numeroCota ");
 		
 		hql.append(" and chamadaEncalheCota.fechado = :conferido ");
+
+		hql.append(" and chamadaEncalheCota.postergado = :postergado ");
+
 		
 		if(indPesquisaCEFutura) {
 			hql.append(" and chamadaEncalheCota.chamadaEncalhe.dataRecolhimento >= :dataOperacao ");
@@ -57,6 +58,8 @@ public class ChamadaEncalheCotaRepositoryImpl extends AbstractRepositoryModel<Ch
 		query.setParameter("numeroCota", numeroCota);
 
 		query.setParameter("conferido", conferido);
+
+		query.setParameter("postergado", postergado);
 		
 		query.setParameter("dataOperacao", dataOperacao);
 		
@@ -64,16 +67,13 @@ public class ChamadaEncalheCotaRepositoryImpl extends AbstractRepositoryModel<Ch
 		
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see br.com.abril.nds.repository.ChamadaEncalheCotaRepository#obterQtdListaChamaEncalheCota(java.lang.Integer, java.util.Date, java.lang.Long, boolean, boolean)
-	 */
 	public Long obterQtdListaChamaEncalheCota(
 			Integer numeroCota, 
 			Date dataOperacao, 
 			Long idProdutoEdicao, 
 			boolean indPesquisaCEFutura, 
-			boolean conferido) {
+			boolean conferido,
+			boolean postergado) {
 		
 		StringBuilder hql = new StringBuilder();
 		
@@ -86,6 +86,9 @@ public class ChamadaEncalheCotaRepositoryImpl extends AbstractRepositoryModel<Ch
 		hql.append(" chamadaEncalheCota.cota.numeroCota = :numeroCota ");
 		
 		hql.append(" and chamadaEncalheCota.fechado = :conferido ");
+
+		hql.append(" and chamadaEncalheCota.postergado = :postergado ");
+
 		
 		if(indPesquisaCEFutura) {
 			hql.append(" and chamadaEncalheCota.chamadaEncalhe.dataRecolhimento >= :dataOperacao ");
@@ -105,6 +108,9 @@ public class ChamadaEncalheCotaRepositoryImpl extends AbstractRepositoryModel<Ch
 		
 		query.setParameter("dataOperacao", dataOperacao);
 		
+		query.setParameter("postergado", postergado);
+		
+		
 		if(idProdutoEdicao!=null) {
 			query.setParameter("idProdutoEdicao", idProdutoEdicao);
 		}
@@ -115,17 +121,14 @@ public class ChamadaEncalheCotaRepositoryImpl extends AbstractRepositoryModel<Ch
 		
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see br.com.abril.nds.repository.ChamadaEncalheCotaRepository#obterListaChamaEncalheCota(java.lang.Integer, java.util.Date, java.lang.Long, boolean, boolean)
-	 */
 	@SuppressWarnings("unchecked")
 	public List<ChamadaEncalheCota> obterListaChamaEncalheCota(
 			Integer numeroCota, 
 			Date dataOperacao, 
 			Long idProdutoEdicao, 
 			boolean indPesquisaCEFutura, 
-			boolean conferido) {
+			boolean conferido,
+			boolean postergado) {
 		
 		StringBuilder hql = new StringBuilder();
 		
@@ -139,6 +142,8 @@ public class ChamadaEncalheCotaRepositoryImpl extends AbstractRepositoryModel<Ch
 		
 		hql.append(" and chamadaEncalheCota.fechado = :conferido ");
 		
+		hql.append(" and chamadaEncalheCota.postergado = :postergado ");
+		
 		if(indPesquisaCEFutura) {
 			hql.append(" and chamadaEncalheCota.chamadaEncalhe.dataRecolhimento >= :dataOperacao ");
 		} else {
@@ -154,6 +159,8 @@ public class ChamadaEncalheCotaRepositoryImpl extends AbstractRepositoryModel<Ch
 		query.setParameter("numeroCota", numeroCota);
 		
 		query.setParameter("conferido", conferido);
+		
+		query.setParameter("postergado", postergado);
 		
 		query.setParameter("dataOperacao", dataOperacao);
 		
@@ -359,6 +366,7 @@ public class ChamadaEncalheCotaRepositoryImpl extends AbstractRepositoryModel<Ch
 			.append(" AND produto.codigo =:codigoProduto ")
 			.append(" AND produtoEdicao.numeroEdicao =:numeroEdicao ")
 			.append(" AND chamadaEncalheCota.fechado = false ")
+			.append(" AND chamadaEncalheCota.postergado = false ")
 			.append(" AND pdv.caracteristicas.pontoPrincipal = true ")
 			.append(" AND chamadaEncalhe.dataRecolhimento > :dataOperacao ");
 		
