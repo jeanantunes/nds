@@ -12,8 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.exception.ValidacaoException;
-import br.com.abril.nds.factory.importacao.ImportacaoArquivoFactory;
 import br.com.abril.nds.serialization.custom.PlainJSONSerialization;
+import br.com.abril.nds.service.ImportacaoArquivoService;
 import br.com.abril.nds.service.vo.RetornoImportacaoArquivoVO;
 import br.com.abril.nds.strategy.importacao.ImportacaoArquivoStrategy;
 import br.com.abril.nds.util.Constantes;
@@ -38,7 +38,8 @@ public class ImportacaoController {
 	@Autowired
 	private Result result;
 	
-	private ImportacaoArquivoStrategy importacaoArquivoStrategy;
+	@Autowired
+	private ImportacaoArquivoService importacaoArquivoService;
 	
 	/**
 	 * 
@@ -62,8 +63,6 @@ public class ImportacaoController {
 
 		validarParametros(arquivoImportacao, tipoImportacaoArquivo);
 		
-		importacaoArquivoStrategy = ImportacaoArquivoFactory.getStrategy(tipoImportacaoArquivo);
-		
 		File arquivo = new File(arquivoImportacao.getFileName());
 
 		try {
@@ -79,7 +78,7 @@ public class ImportacaoController {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Problema ao ler arquivo.");
 		}
 
-		RetornoImportacaoArquivoVO retorno = importacaoArquivoStrategy.processarImportacaoArquivo(arquivo);
+		RetornoImportacaoArquivoVO retorno = importacaoArquivoService.processarImportacaoArquivo(arquivo, tipoImportacaoArquivo);
 		
 		tratarRetornoImportacao(retorno);
 	}
