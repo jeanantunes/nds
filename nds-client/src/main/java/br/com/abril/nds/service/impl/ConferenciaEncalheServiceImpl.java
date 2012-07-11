@@ -1315,6 +1315,16 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			return null;
 		}
 		
+		if ( notaFiscalEntradaCota.getNumero() 		== null || 
+			 notaFiscalEntradaCota.getSerie() 		== null || 
+			 notaFiscalEntradaCota.getSerie().isEmpty()     ||
+			 notaFiscalEntradaCota.getDataEmissao() == null	||
+			 notaFiscalEntradaCota.getValorProdutos() == null) {
+			
+			return null;
+			
+		}			
+		
 		NotaFiscalEntradaCota notaFiscalEntradaCotaFromBD = null;
 		
 		if(idControleConferenciaEncalheCota!=null) {

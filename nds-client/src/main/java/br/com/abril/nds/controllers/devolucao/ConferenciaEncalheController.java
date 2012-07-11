@@ -849,8 +849,41 @@ public class ConferenciaEncalheController {
 		this.result.use(Results.json()).from("").serialize();
 	}
 	
+	
+	private void validarCamposNotaFiscalEntrada(NotaFiscalEntradaCota notaFiscalEntradaCota) {
+		
+		if(notaFiscalEntradaCota == null) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "Dados da nota fiscal inválidos.");
+		}
+		
+		List<String> mensagens = new ArrayList<String>();
+		
+		if(notaFiscalEntradaCota.getNumero() == null) {
+			mensagens.add("Número da nota fiscal deve ser preenchido.");
+		}
+		
+		if(notaFiscalEntradaCota.getSerie() == null || notaFiscalEntradaCota.getSerie().isEmpty()) {
+			mensagens.add("Série da nota fiscal deve ser preenchida.");
+		}
+		
+		if(notaFiscalEntradaCota.getDataEmissao() == null) {
+			mensagens.add("Data Emissão deve ser preenchida.");
+		}
+		
+		if(notaFiscalEntradaCota.getValorProdutos() == null) {
+			mensagens.add("Valor Total deve ser preenchido.");
+		}
+		
+		if(!mensagens.isEmpty()){
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, mensagens));
+		}
+		
+	}
+	
 	@Post
 	public void salvarNotaFiscal(NotaFiscalEntradaCota notaFiscal){
+		
+		validarCamposNotaFiscalEntrada(notaFiscal);
 		
 		Map<String, Object> dadosNotaFiscal = new HashMap<String, Object>();
 		

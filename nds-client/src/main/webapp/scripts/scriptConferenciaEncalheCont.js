@@ -639,7 +639,7 @@ var ConferenciaEncalheCont = {
 							$("#vlrCE").val(parseFloat($("#valorNotaFiscal").val()).toFixed(2));
 							
 							$("#vlrCE").focus();
-						}
+						}, null, true, "dialog-notaFiscal"
 					);
 				},
 				"Cancelar" : function() {
