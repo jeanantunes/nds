@@ -845,6 +845,8 @@
 						
 							EncalheAntecipado.desmarcarCheckTodos();
 							EncalheAntecipado.exibirMensagemSucesso(result);
+							
+							 $("#dialog-cancelamentoCE" ).dialog("close");
 					 
 						}, null,true);
 
