@@ -982,6 +982,7 @@ public class DataLoader {
 		criarEventoExecucao(session);
 		criarAlgoritmos(session);
 		
+		tabelaNCM(session);
 		criarTiposProduto(session);
 		
 		criarDistribuidor(session);
