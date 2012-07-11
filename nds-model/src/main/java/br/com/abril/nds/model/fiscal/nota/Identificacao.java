@@ -8,10 +8,13 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
 import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.util.TipoSecao;
 import br.com.abril.nds.util.export.fiscal.nota.NFEExport;
@@ -69,7 +72,9 @@ public class Identificacao implements Serializable {
 	 */
 	private static final long serialVersionUID = 3614623505646574143L;
 
-	
+	@ManyToOne
+	@JoinColumn(name = "TIPO_NOTA_FISCAL_ID")
+	private TipoNotaFiscal tipoNotaFiscal;
 
 	/**
 	 * tpNF
@@ -358,5 +363,19 @@ public class Identificacao implements Serializable {
 	 */
 	public void setFinalidadeEmissao(FinalidadeEmissao finalidadeEmissao) {
 		this.finalidadeEmissao = finalidadeEmissao;
+	}
+
+	/**
+	 * @return the tipoNotaFiscal
+	 */
+	public TipoNotaFiscal getTipoNotaFiscal() {
+		return tipoNotaFiscal;
+	}
+
+	/**
+	 * @param tipoNotaFiscal the tipoNotaFiscal to set
+	 */
+	public void setTipoNotaFiscal(TipoNotaFiscal tipoNotaFiscal) {
+		this.tipoNotaFiscal = tipoNotaFiscal;
 	}
 }
