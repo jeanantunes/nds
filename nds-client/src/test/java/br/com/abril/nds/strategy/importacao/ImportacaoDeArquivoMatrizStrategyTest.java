@@ -1,32 +1,31 @@
 package br.com.abril.nds.strategy.importacao;
 
-import org.junit.Ignore;
+import java.io.File;
+
+import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.repository.impl.AbstractRepositoryImplTest;
 import br.com.abril.nds.service.ImportacaoArquivoService;
+import br.com.abril.nds.service.vo.RetornoImportacaoArquivoVO;
+import br.com.abril.nds.util.TipoImportacaoArquivo;
 
 public class ImportacaoDeArquivoMatrizStrategyTest extends AbstractRepositoryImplTest {
 
 	@Autowired
 	private ImportacaoArquivoService importacaoArquivoService;
 	
-	@Ignore
 	@Test
-	public void testeImportacaoMatriz(){
+	public void testeImportacaoMatrizComErro(){
 		
-		//File arquivo  = new File ("src/test/resources/importacao/MATRIZ.NEW");
+		File arquivo  = new File ("src/test/resources/importacao/MATRIZ.NEW");
 		
-		//ImportacaoArquivoStrategy importacaoArquivoStrategy = ImportacaoArquivoFactory.getStrategy(TipoImportacaoArquivo.MATRIZ,fixedFormatManager);
+		RetornoImportacaoArquivoVO retornoImportacaoArquivoVO  = importacaoArquivoService.processarImportacaoArquivo(arquivo, TipoImportacaoArquivo.MATRIZ);
 		
-		//RetornoImportacaoArquivoVO retornoImportacaoArquivoVO = importacaoArquivoStrategy.processarImportacaoArquivo(arquivo); 
+		Assert.assertNotNull(retornoImportacaoArquivoVO);
 		
-		//RetornoImportacaoArquivoVO retornoImportacaoArquivoVO  = importacaoArquivoService.processarImportacaoArquivo(arquivo, TipoImportacaoArquivo.MATRIZ);
-		
-		//Assert.assertNotNull(retornoImportacaoArquivoVO);
-		
-		//Assert.assertTrue(retornoImportacaoArquivoVO.isSucessoNaImportacao());
+		Assert.assertTrue(!retornoImportacaoArquivoVO.isSucessoNaImportacao());
 	}
 	
 }
