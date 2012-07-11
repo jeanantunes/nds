@@ -13,7 +13,7 @@ import java.util.List;
  */
 public interface Repository<T, K extends Serializable> {
 	
-	void adicionar(T entity);
+	K adicionar(T entity);
 	
 	void remover(T entity);
 	
