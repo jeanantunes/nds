@@ -1,5 +1,7 @@
 package br.com.abril.nds.service.impl;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -14,12 +16,16 @@ import br.com.abril.nds.dto.ConsultaLoteNotaFiscalDTO;
 import br.com.abril.nds.dto.CotaExemplaresDTO;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
+import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.fiscal.GrupoNotaFiscal;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.InformacaoTransporte;
 import br.com.abril.nds.model.fiscal.nota.ItemNotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
+import br.com.abril.nds.model.fiscal.nota.ProdutoServico;
 import br.com.abril.nds.repository.CotaRepository;
+import br.com.abril.nds.repository.NotaFiscalRepository;
+import br.com.abril.nds.repository.ProdutoServicoRepository;
 import br.com.abril.nds.repository.TipoNotaFiscalRepository;
 import br.com.abril.nds.service.GeracaoNFeService;
 import br.com.abril.nds.service.NotaFiscalService;
@@ -37,6 +43,12 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 	
 	@Autowired
 	private CotaRepository cotaRepository;
+	
+	@Autowired
+	private NotaFiscalRepository notaFiscalRepository;
+	
+	@Autowired
+	private ProdutoServicoRepository produtoServicoRepository;
 	
 	@Override
 	@Transactional
@@ -89,7 +101,7 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 			Intervalo<Integer> intervalorCota,
 			Intervalo<Date> intervaloDateMovimento,
 			List<Long> listIdFornecedor, List<Long> listIdProduto,
-			Long idTipoNotaFiscal, Date dataEmissao) {
+			Long idTipoNotaFiscal, Date dataEmissao) throws FileNotFoundException, IOException {
 		
 		Set<Long> listaIdCota = this.cotaRepository.obterIdCotasEntre(intervalorCota,intervaloBox,SituacaoCadastro.ATIVO);
 		
@@ -107,11 +119,17 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 			//FIXME: obter informacaoTransporte
 			InformacaoTransporte transporte = null;
 			
-			this.notaFiscalService.emitiNotaFiscal(idTipoNotaFiscal, dataEmissao, idCota, 
+			Long idNotaFiscal = this.notaFiscalService.emitiNotaFiscal(idTipoNotaFiscal, dataEmissao, idCota, 
 					listItemNotaFiscal, transporte, null);
+			
+			NotaFiscal notaFiscal = this.notaFiscalRepository.buscarPorId(idNotaFiscal);
+			
+			this.produtoServicoRepository.atualizarProdutosQuePossuemNota(notaFiscal.getProdutosServicos(), listItemNotaFiscal);
+			
+			listaNotaFiscal.add(notaFiscal);
 		}
 		
+		this.notaFiscalService.exportarNotasFiscais(listaNotaFiscal);
 	}
-	
-	
+		
 }

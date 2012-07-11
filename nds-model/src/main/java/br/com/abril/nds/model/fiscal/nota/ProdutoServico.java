@@ -8,7 +8,6 @@ import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinColumns;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
@@ -395,6 +394,21 @@ public class ProdutoServico implements Serializable {
 		this.valorOutros = valorOutros;
 	}
 	
+	/**
+	 * @return the listaMovimentoEstoqueCota
+	 */
+	public List<MovimentoEstoqueCota> getListaMovimentoEstoqueCota() {
+		return listaMovimentoEstoqueCota;
+	}
+
+	/**
+	 * @param listaMovimentoEstoqueCota the listaMovimentoEstoqueCota to set
+	 */
+	public void setListaMovimentoEstoqueCota(
+			List<MovimentoEstoqueCota> listaMovimentoEstoqueCota) {
+		this.listaMovimentoEstoqueCota = listaMovimentoEstoqueCota;
+	}
+
 	/**
 	 * @see java.lang.Object#hashCode()
 	 */
