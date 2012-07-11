@@ -125,5 +125,20 @@ public class TipoProdutoRepositoryImpl extends AbstractRepositoryModel<TipoProdu
 		
 		return (Long) criteria.list().get(0);
 	}
+
+	
+	/**
+	 * Obtem tipo de produto por código
+	 * @param codigo
+	 * @return TipoProduto
+	 */
+	@Override
+	public TipoProduto obterPorCodigo(Long codigo) {
+        Criteria criteria = getSession().createCriteria(TipoProduto.class);
+		
+		criteria.add(Restrictions.eq("codigo", codigo));
+		
+		return (TipoProduto) criteria.uniqueResult();
+	}
 	
 }

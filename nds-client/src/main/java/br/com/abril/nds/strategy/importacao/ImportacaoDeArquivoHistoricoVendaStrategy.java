@@ -21,5 +21,8 @@ public class ImportacaoDeArquivoHistoricoVendaStrategy implements ImportacaoArqu
 		//FIXME implementar a logica de importação referente a Historico de Vendas
 		return null;
 	}
+	
+	@Override
+	public void processarImportacaoDados(Object input){}
 
 }
