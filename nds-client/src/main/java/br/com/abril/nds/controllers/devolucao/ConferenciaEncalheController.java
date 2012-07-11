@@ -28,6 +28,7 @@ import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.financeiro.OperacaoFinaceira;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaCota;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalheCota;
 import br.com.abril.nds.model.seguranca.Usuario;
@@ -715,7 +716,7 @@ public class ConferenciaEncalheController {
 			Map<String, Object> dados = new HashMap<String, Object>();
 			
 			dados.put("tipoMensagem", TipoMensagem.SUCCESS);
-			dados.put("listaMensagem", 	new String[]{"Operação efetuada com sucesso."});
+			dados.put("listaMensagens", 	new String[]{"Operação efetuada com sucesso."});
 
 			if(dadosDocumentacaoConfEncalheCota!=null && dadosDocumentacaoConfEncalheCota.isIndGeraDocumentacaoConferenciaEncalhe()) {
 
@@ -848,8 +849,41 @@ public class ConferenciaEncalheController {
 		this.result.use(Results.json()).from("").serialize();
 	}
 	
+	
+	private void validarCamposNotaFiscalEntrada(NotaFiscalEntradaCota notaFiscalEntradaCota) {
+		
+		if(notaFiscalEntradaCota == null) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "Dados da nota fiscal inválidos.");
+		}
+		
+		List<String> mensagens = new ArrayList<String>();
+		
+		if(notaFiscalEntradaCota.getNumero() == null) {
+			mensagens.add("Número da nota fiscal deve ser preenchido.");
+		}
+		
+		if(notaFiscalEntradaCota.getSerie() == null || notaFiscalEntradaCota.getSerie().isEmpty()) {
+			mensagens.add("Série da nota fiscal deve ser preenchida.");
+		}
+		
+		if(notaFiscalEntradaCota.getDataEmissao() == null) {
+			mensagens.add("Data Emissão deve ser preenchida.");
+		}
+		
+		if(notaFiscalEntradaCota.getValorProdutos() == null) {
+			mensagens.add("Valor Total deve ser preenchido.");
+		}
+		
+		if(!mensagens.isEmpty()){
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, mensagens));
+		}
+		
+	}
+	
 	@Post
 	public void salvarNotaFiscal(NotaFiscalEntradaCota notaFiscal){
+		
+		validarCamposNotaFiscalEntrada(notaFiscal);
 		
 		Map<String, Object> dadosNotaFiscal = new HashMap<String, Object>();
 		
@@ -1027,16 +1061,34 @@ public class ConferenciaEncalheController {
 			
 			valorVendaDia = valorVendaDia.add(info.getReparte().subtract(valorEncalhe));
 			
-			if (info.getListaDebitoCreditoCota() != null){
+			if (info.getListaDebitoCreditoCota() != null) {
 			
 				for (DebitoCreditoCotaDTO debitoCreditoCotaDTO : info.getListaDebitoCreditoCota()){
 					
-					valorDebitoCredito = valorDebitoCredito.add(debitoCreditoCotaDTO.getValor());
+					if(debitoCreditoCotaDTO.getValor() == null) {
+						continue;
+					}
+					
+					if(OperacaoFinaceira.DEBITO.name().equals(debitoCreditoCotaDTO.getTipoLancamento())) {
+						valorDebitoCredito = valorDebitoCredito.subtract(debitoCreditoCotaDTO.getValor());
+					}
+					
+					if(OperacaoFinaceira.CREDITO.name().equals(debitoCreditoCotaDTO.getTipoLancamento())) {
+						valorDebitoCredito = valorDebitoCredito.add(debitoCreditoCotaDTO.getValor());
+					}
+					
+					
 				}
 			}
 		}
 		
-		BigDecimal valorPagar = valorVendaDia.add(valorDebitoCredito);
+		BigDecimal valorPagar = BigDecimal.ZERO;	
+		
+		if(BigDecimal.ZERO.compareTo(valorDebitoCredito)>0) {
+			valorPagar = valorVendaDia.add(valorDebitoCredito.abs());
+		} else {
+			valorPagar = valorVendaDia.subtract(valorDebitoCredito.abs());
+		}
 		
 		if (dados != null){
 			

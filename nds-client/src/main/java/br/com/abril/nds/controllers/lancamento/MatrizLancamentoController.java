@@ -38,7 +38,6 @@ import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.MatrizLancamentoService;
 import br.com.abril.nds.util.CellModelKeyValue;
-import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.MathUtil;
@@ -702,16 +701,13 @@ public class MatrizLancamentoController {
 		produtoBalanceamentoVO.setCodigoProduto(produtoLancamentoDTO.getCodigoProduto());
 		
 		produtoBalanceamentoVO.setNovaData(
-				DateUtil.formatarDataPTBR(produtoLancamentoDTO.getNovaDataLancamento()));
+			DateUtil.formatarDataPTBR(produtoLancamentoDTO.getNovaDataLancamento()));
 		
 		produtoBalanceamentoVO.setDataLancamentoPrevista(
-				DateUtil.formatarDataPTBR(produtoLancamentoDTO.getDataLancamentoPrevista()));
-		
-		produtoBalanceamentoVO.setDataLancamentoDistribuidor(
-				DateUtil.formatarDataPTBR(produtoLancamentoDTO.getDataLancamentoDistribuidor()));
+			DateUtil.formatarDataPTBR(produtoLancamentoDTO.getDataLancamentoPrevista()));
 		
 		produtoBalanceamentoVO.setDataRecolhimentoPrevista(
-				DateUtil.formatarDataPTBR(produtoLancamentoDTO.getDataRecolhimentoPrevista()));
+			DateUtil.formatarDataPTBR(produtoLancamentoDTO.getDataRecolhimentoPrevista()));
 		
 		produtoBalanceamentoVO.setId(produtoLancamentoDTO.getIdLancamento());
 		
@@ -722,27 +718,18 @@ public class MatrizLancamentoController {
 		
 		produtoBalanceamentoVO.setPrecoVenda(CurrencyUtil.formatarValor(produtoLancamentoDTO.getPrecoVenda()));
 		
-		produtoBalanceamentoVO.setRepartePrevisto(produtoLancamentoDTO.getRepartePrevisto().toString());
+		produtoBalanceamentoVO.setRepartePrevisto(
+			MathUtil.round(produtoLancamentoDTO.getRepartePrevisto(), 2).toString());
 		
 		produtoBalanceamentoVO.setValorTotal(CurrencyUtil.formatarValor(produtoLancamentoDTO.getValorTotal()));
 		
 		if(produtoLancamentoDTO.getReparteFisico()==null)
-			produtoBalanceamentoVO.setReparteFisico(0);
+			produtoBalanceamentoVO.setReparteFisico("0");
 		else
-			produtoBalanceamentoVO.setReparteFisico(produtoLancamentoDTO.getReparteFisico().intValue());
+			produtoBalanceamentoVO.setReparteFisico(
+				MathUtil.round(produtoLancamentoDTO.getReparteFisico(), 2).toString());
 		
-		produtoBalanceamentoVO.setCancelamentoGD(produtoLancamentoDTO.getStatusLancamento().equals(StatusLancamento.CANCELADO_GD));
-		
-		if(produtoLancamentoDTO.getNumeroReprogramacoes() == null)
-			produtoBalanceamentoVO.setReprogramacoesExcedidas(false);
-		else
-			produtoBalanceamentoVO.setReprogramacoesExcedidas(produtoLancamentoDTO.getNumeroReprogramacoes() >= Constantes.NUMERO_REPROGRAMACOES_LIMITE);
-				
-		produtoBalanceamentoVO.setEstudoFechado(produtoLancamentoDTO.isPossuiEstudo());
-		
-		produtoBalanceamentoVO.setPossuiRecebimentoFisico(produtoLancamentoDTO.isPossuiRecebimentoFisico());
-		
-		//TODO - Pendente
+		// TODO: Este campos será informado em um nova EMS de Ajuste
 		if(produtoLancamentoDTO.getDistribuicao() == null) {
 			produtoBalanceamentoVO.setDistribuicao("");
 		} else {
@@ -753,6 +740,14 @@ public class MatrizLancamentoController {
 		
 		produtoBalanceamentoVO.setIdProdutoEdicao(produtoLancamentoDTO.getIdProdutoEdicao());
 		
+		produtoBalanceamentoVO.setPossuiFuro(produtoLancamentoDTO.isPossuiFuro());
+		
+		produtoBalanceamentoVO.setDestacarLinha(
+			!produtoLancamentoDTO.isPossuiRecebimentoFisico()
+				|| produtoLancamentoDTO.getStatusLancamento().equals(StatusLancamento.CANCELADO_GD)
+				|| produtoLancamentoDTO.getDataLancamentoPrevista()
+					.compareTo(produtoLancamentoDTO.getNovaDataLancamento()) != 0);
+				
 		return produtoBalanceamentoVO;
 	}
 

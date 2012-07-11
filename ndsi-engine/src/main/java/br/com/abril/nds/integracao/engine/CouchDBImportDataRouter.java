@@ -22,6 +22,7 @@ import br.com.abril.nds.integracao.engine.data.Message;
 import br.com.abril.nds.integracao.engine.data.RouteTemplate;
 import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;
 import br.com.abril.nds.integracao.model.canonic.IntegracaoDocument;
+import br.com.abril.nds.model.cadastro.TipoParametroSistema;
 import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
 import br.com.abril.nds.repository.impl.AbstractRepository;
 
@@ -39,10 +40,10 @@ public class CouchDBImportDataRouter extends AbstractRepository implements Conte
 	@Autowired
 	private CouchDbProperties couchDbProperties;
 
-	private Integer codDistribuidor = null;
+	private Long codDistribuidor = null;
 	
 	
-	private void setCodDistribuidor(Integer codDistribuidor) {
+	private void setCodDistribuidor(Long codDistribuidor) {
 		this.codDistribuidor = codDistribuidor;
 	}
 	
@@ -59,52 +60,61 @@ public class CouchDBImportDataRouter extends AbstractRepository implements Conte
 		
 		View view = couchDbClient.view("importacao/porTipoDocumento");
 		view.key(inputModel.getRouteInterface().getName());
+		view.limit(couchDbProperties.getBachSize());
 		ViewResult<String, ?, Void> result = view.queryView(String.class, classLinha, Void.class);
-		
-		for (@SuppressWarnings("rawtypes") Rows row: result.getRows()) {
+		do {	
 			
-			IntegracaoDocument doc = (IntegracaoDocument) row.getValue(); 
 			
-			final Message message = new Message();
-			message.getHeader().put(MessageHeaderProperties.URI.getValue(), inputModel.getRouteInterface().getName());
-			message.getHeader().put(MessageHeaderProperties.PAYLOAD.getValue(), doc);
-			message.getHeader().put(MessageHeaderProperties.FILE_NAME.getValue(), doc.getNomeArquivo());
-			message.getHeader().put(MessageHeaderProperties.FILE_CREATION_DATE.getValue(), doc.getDataHoraExtracao());
-			message.getHeader().put(MessageHeaderProperties.LINE_NUMBER.getValue(), doc.getLinhaArquivo());
-			message.getHeader().put(MessageHeaderProperties.USER_NAME.getValue(), inputModel.getUserName());
-			message.getHeader().put(MessageHeaderProperties.CODIGO_DISTRIBUIDOR.getValue(), this.codDistribuidor);
-			
-			message.setBody(doc);
-			
-			try {
+			for (@SuppressWarnings("rawtypes") Rows row: result.getRows()) {
 				
-				TransactionTemplate template = new TransactionTemplate(transactionManager);
-				template.execute(new TransactionCallback<Void>() {
-					@Override
-					public Void doInTransaction(TransactionStatus status) {
+				IntegracaoDocument doc = (IntegracaoDocument) row.getValue(); 
+				
+				final Message message = new Message();
+				message.getHeader().put(MessageHeaderProperties.URI.getValue(), inputModel.getRouteInterface().getName());
+				message.getHeader().put(MessageHeaderProperties.PAYLOAD.getValue(), doc);
+				message.getHeader().put(MessageHeaderProperties.FILE_NAME.getValue(), doc.getNomeArquivo());
+				message.getHeader().put(MessageHeaderProperties.FILE_CREATION_DATE.getValue(), doc.getDataHoraExtracao());
+				message.getHeader().put(MessageHeaderProperties.LINE_NUMBER.getValue(), doc.getLinhaArquivo());
+				message.getHeader().put(MessageHeaderProperties.USER_NAME.getValue(), inputModel.getUserName());
+				message.getHeader().put(MessageHeaderProperties.CODIGO_DISTRIBUIDOR.getValue(), this.codDistribuidor);
+				
+				message.setBody(doc);
+				
+				try {
 					
-						messageProcessor.processMessage(message);
+					TransactionTemplate template = new TransactionTemplate(transactionManager);
+					template.execute(new TransactionCallback<Void>() {
+						@Override
+						public Void doInTransaction(TransactionStatus status) {
 						
-						getSession().flush();
-						getSession().clear();
-
-						return null;
-					}
-				});
-			} catch(Throwable e) {
-				ndsiLoggerFactory.getLogger().logError(message, EventoExecucaoEnum.ERRO_INFRA, e.getMessage());
-				e.printStackTrace();
+							messageProcessor.processMessage(message);
+							
+							getSession().flush();
+							getSession().clear();
+	
+							return null;
+						}
+					});
+				} catch(Throwable e) {
+					ndsiLoggerFactory.getLogger().logError(message, EventoExecucaoEnum.ERRO_INFRA, e.getMessage());
+					e.printStackTrace();
+				}
+				
+				String erro = (String) message.getHeader().get(MessageHeaderProperties.ERRO_PROCESSAMENTO.getValue()); 
+				
+				if (erro == null) {
+					couchDbClient.remove(doc);
+				} else {
+					doc.setErro(erro);
+					couchDbClient.update(doc);
+				}
 			}
 			
-			String erro = (String) message.getHeader().get(MessageHeaderProperties.ERRO_PROCESSAMENTO.getValue()); 
-			
-			if (erro == null) {
-				couchDbClient.remove(doc);
-			} else {
-				doc.setErro(erro);
-				couchDbClient.update(doc);
-			}
-		}
+			view = couchDbClient.view("importacao/porTipoDocumento");
+			view.key(inputModel.getRouteInterface().getName());
+			view.limit(couchDbProperties.getBachSize());
+			result = view.queryView(String.class, classLinha, Void.class);
+		} while(!result.getRows().isEmpty());
 		
 		couchDbClient.shutdown();
 	}
@@ -117,7 +127,7 @@ public class CouchDBImportDataRouter extends AbstractRepository implements Conte
 	private CouchDbClient getCouchDBClient() {
 		
 		return new CouchDbClient(
-				"db_" + StringUtils.leftPad(this.codDistribuidor.toString(), 7, "0"),
+				"db_" + StringUtils.leftPad(this.codDistribuidor.toString(), 8, "0"),
 				true,
 				couchDbProperties.getProtocol(),
 				couchDbProperties.getHost(),
@@ -138,10 +148,13 @@ public class CouchDBImportDataRouter extends AbstractRepository implements Conte
 			@Override
 			public Void doInTransaction(TransactionStatus status) {
 				
-				String sql = "SELECT a.codigo FROM Distribuidor a";
-				Query query = getSession().createQuery(sql);
+				String hql = "SELECT p.valor from ParametroSistema p where p.tipoParametroSistema = :tipoParametroSistema";
 				
-				setCodDistribuidor((Integer) query.uniqueResult());
+				Query query = getSession().createQuery(hql);
+				query.setParameter("tipoParametroSistema", TipoParametroSistema.CODIGO_DISTRIBUIDOR_DINAP);
+				query.setMaxResults(1);
+			
+				setCodDistribuidor(Long.parseLong( query.uniqueResult().toString() ));
 				
 				return null;
 			}

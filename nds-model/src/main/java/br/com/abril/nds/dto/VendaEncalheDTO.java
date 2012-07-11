@@ -311,6 +311,4 @@ public class VendaEncalheDTO implements Serializable {
 		this.qntDisponivelProduto = qntDisponivelProduto;
 	}
 	
-	
-	
 }

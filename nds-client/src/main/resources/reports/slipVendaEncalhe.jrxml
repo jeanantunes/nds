@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="slipSuplementar" pageWidth="500" pageHeight="500" whenNoDataType="AllSectionsNoDetail" columnWidth="496" leftMargin="2" rightMargin="2" topMargin="2" bottomMargin="2" whenResourceMissingType="Empty" isIgnorePagination="true">
 	<property name="ireport.zoom" value="2.0"/>
-	<property name="ireport.x" value="0"/>
+	<property name="ireport.x" value="63"/>
 	<property name="ireport.y" value="0"/>
 	<style name="zebrado" mode="Opaque" backcolor="#F0F0F0">
 		<conditionalStyle>
@@ -56,36 +56,22 @@
 LOGÍSTICA E
 DISTRIBUIÇÃO]]></text>
 			</staticText>
-			<textField>
-				<reportElement x="271" y="33" width="225" height="57"/>
-				<box leftPadding="3">
-					<pen lineWidth="1.0"/>
-					<topPen lineWidth="1.0"/>
-					<leftPen lineWidth="1.0"/>
-					<bottomPen lineWidth="1.0"/>
-					<rightPen lineWidth="1.0"/>
-				</box>
-				<textElement verticalAlignment="Middle" markup="none">
-					<font size="13" isBold="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA["Data: "+$P{DATA_VENDA}+"\nHora: "+$P{HORA_VENDA}+"\n"+new String(new String("Usuário: ").getBytes("ISO-8859-1"),"UTF-8")+$P{USUARIO}]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="271" y="0" width="134" height="33"/>
-				<box leftPadding="3">
-					<pen lineWidth="1.0"/>
-					<topPen lineWidth="1.0"/>
-					<leftPen lineWidth="1.0"/>
-					<bottomPen lineWidth="1.0"/>
-					<rightPen lineWidth="1.0"/>
-				</box>
-				<textElement textAlignment="Left" verticalAlignment="Middle" markup="none">
-					<font size="13" isBold="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA[new String(new String("Número: ").getBytes("ISO-8859-1"),"UTF-8") + $P{NUM_SLIP}]]></textFieldExpression>
-			</textField>
 			<staticText>
-				<reportElement x="405" y="0" width="91" height="33"/>
+				<reportElement x="270" y="0" width="64" height="33"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="13" isBold="true" isUnderline="false"/>
+				</textElement>
+				<text><![CDATA[ Número:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="433" y="0" width="63" height="33"/>
 				<box>
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
@@ -96,6 +82,62 @@ DISTRIBUIÇÃO]]></text>
 				<textElement/>
 				<text><![CDATA[]]></text>
 			</staticText>
+			<textField>
+				<reportElement x="324" y="0" width="109" height="33"/>
+				<box leftPadding="3">
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle" markup="none">
+					<font size="13" isBold="true" pdfEncoding="Cp1252"/>
+				</textElement>
+				<textFieldExpression><![CDATA[ " "+$P{NUM_SLIP}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="270" y="68" width="64" height="22"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="13" isBold="true" isUnderline="false"/>
+				</textElement>
+				<text><![CDATA[ Usuário: ]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="270" y="33" width="226" height="35"/>
+				<box leftPadding="3">
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement verticalAlignment="Middle" markup="none">
+					<font size="13" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Data: "+$P{DATA_VENDA}+"\nHora: "+$P{HORA_VENDA}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="324" y="68" width="172" height="22"/>
+				<box leftPadding="3">
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle" markup="none">
+					<font size="13" isBold="true" pdfEncoding="Cp1252"/>
+				</textElement>
+				<textFieldExpression><![CDATA[" "+$P{USUARIO}]]></textFieldExpression>
+			</textField>
 		</band>
 	</title>
 	<pageHeader>

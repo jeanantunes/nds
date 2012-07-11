@@ -1,8 +1,11 @@
 package br.com.abril.nds.repository;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
+import br.com.abril.nds.dto.ChamadaAntecipadaEncalheDTO;
+import br.com.abril.nds.dto.filtro.FiltroChamadaAntecipadaEncalheDTO;
 import br.com.abril.nds.model.planejamento.ChamadaEncalheCota;
 
 
@@ -20,10 +23,11 @@ public interface ChamadaEncalheCotaRepository extends Repository<ChamadaEncalheC
 	 * @param dataOperacao
 	 * @param indPesquisaCEFutura
 	 * @param conferido
+	 * @param postergado
 	 * 
 	 * @return List - Long
 	 */
-	public List<Long> obterListaIdProdutoEdicaoChamaEncalheCota(Integer numeroCota, Date dataOperacao, boolean indPesquisaCEFutura, boolean conferido);
+	public List<Long> obterListaIdProdutoEdicaoChamaEncalheCota(Integer numeroCota, Date dataOperacao, boolean indPesquisaCEFutura, boolean conferido, boolean postergado);
 	
 	
 	/**
@@ -39,10 +43,11 @@ public interface ChamadaEncalheCotaRepository extends Repository<ChamadaEncalheC
 	 * @param idProdutoEdicao
 	 * @param indPesquisaCEFutura
 	 * @param conferido
+	 * @param postergado
 	 * 
 	 * @return Long
 	 */
-	public Long obterQtdListaChamaEncalheCota(Integer numeroCota, Date dataOperacao, Long idProdutoEdicao, boolean indPesquisaCEFutura, boolean conferido);
+	public Long obterQtdListaChamaEncalheCota(Integer numeroCota, Date dataOperacao, Long idProdutoEdicao, boolean indPesquisaCEFutura, boolean conferido, boolean postergado);
 
 	
 	/**
@@ -58,6 +63,7 @@ public interface ChamadaEncalheCotaRepository extends Repository<ChamadaEncalheC
 	 * @param idProdutoEdicao
 	 * @param indPesquisaCEFutura
 	 * @param conferido
+	 * @param postergado
 	 * 
 	 * @return List - ChamadaEncalheCota
 	 */
@@ -66,7 +72,8 @@ public interface ChamadaEncalheCotaRepository extends Repository<ChamadaEncalheC
 			Date dataOperacao, 
 			Long idProdutoEdicao, 
 			boolean indPesquisaCEFutura, 
-			boolean conferido);
+			boolean conferido,
+			boolean postergado);
 	
 	
 	/**
@@ -77,5 +84,34 @@ public interface ChamadaEncalheCotaRepository extends Repository<ChamadaEncalheC
 	 */
 	ChamadaEncalheCota buscarPorChamadaEncalheECota(Long idChamadaEncalhe,Long idCota);
 	
+	/**
+	 * 
+	 * Retorna quantidade de chamadas de encalhe cota que foram programadas para antecipação de recolhimento
+	 * em função dos parâmetros informados no FiltroChamadaAntecipadaEncalheDTO
+	 * 
+	 * @param filtro - filtro com os parâmetros de consulta
+	 * 
+	 * @return Long
+	 */
+	Long obterQntCotasProgramadaParaAntecipacoEncalhe(FiltroChamadaAntecipadaEncalheDTO filtro);
 	
+	/**
+	 * Retorna uma lista de chamadas de encalhe cota que foram programadas para antecipação de recolhimento
+	 * em função dos parâmetros informados no FiltroChamadaAntecipadaEncalheDTO
+	 * 
+	 * @param filtro - filtro com os parâmetros de consulta
+	 * 
+	 * @return List<ChamadaAntecipadaEncalheDTO>
+	 */
+	List<ChamadaAntecipadaEncalheDTO> obterCotasProgramadaParaAntecipacoEncalhe(FiltroChamadaAntecipadaEncalheDTO filtro);
+	
+	/**
+	 * 
+	 * Retorna a quantidade prevista de encalhe de uma cota programada para antecipação de encalhe.
+	 * 
+	 * @param filtro -filtro com os parâmetros de consulta
+	 * 
+	 * @return BigDecimal
+	 */
+	BigDecimal obterQntExemplaresComProgramacaoAntecipadaEncalheCota(FiltroChamadaAntecipadaEncalheDTO filtro);
 }

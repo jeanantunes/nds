@@ -28,6 +28,7 @@ import br.com.abril.nds.dto.MovimentoFinanceiroCotaDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoSlipDTO;
 import br.com.abril.nds.dto.SlipDTO;
+import br.com.abril.nds.exception.GerarCobrancaValidacaoException;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.Origem;
@@ -281,10 +282,12 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		boolean encalheConferido = false;
 		
+		boolean postergado = false;
+		
 		boolean indPesquisaCEFutura = true;
 		
 		Long qtdeRegistroChamadaEncalhe = 
-				chamadaEncalheCotaRepository.obterQtdListaChamaEncalheCota(numeroCota, dataRecolhimentoReferencia, null, indPesquisaCEFutura, encalheConferido);
+				chamadaEncalheCotaRepository.obterQtdListaChamaEncalheCota(numeroCota, dataRecolhimentoReferencia, null, indPesquisaCEFutura, encalheConferido, postergado);
 		
 		if(qtdeRegistroChamadaEncalhe == 0L) {
 			throw new ChamadaEncalheCotaInexistenteException();
@@ -320,12 +323,14 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			
 			boolean indPesquisaCEFutura = false;
 			
+			boolean postergado = false;
+			
 			Distribuidor distribuidor = distribuidorService.obter();
 			
 			Date dataOperacao = distribuidor.getDataOperacao();
 			
 			List<ChamadaEncalheCota> listaChamadaEncalheCota = chamadaEncalheCotaRepository.
-					obterListaChamaEncalheCota(numeroCota, dataOperacao, produtoEdicao.getId(), indPesquisaCEFutura, encalheConferido);
+					obterListaChamaEncalheCota(numeroCota, dataOperacao, produtoEdicao.getId(), indPesquisaCEFutura, encalheConferido, postergado);
 
 			if(listaChamadaEncalheCota == null || listaChamadaEncalheCota.isEmpty()) {
 				throw new EncalheRecolhimentoParcialException();
@@ -339,10 +344,12 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			
 			boolean indPesquisaCEFutura = true;
 			
+			boolean postergado = false;
+			
 			Date dataRecolhimentoReferencia = obterDataRecolhimentoReferencia();
 			
 			List<ChamadaEncalheCota> listaChamadaEncalheCota = chamadaEncalheCotaRepository.
-					obterListaChamaEncalheCota(numeroCota, dataRecolhimentoReferencia, produtoEdicao.getId(), indPesquisaCEFutura, encalheConferido);
+					obterListaChamaEncalheCota(numeroCota, dataRecolhimentoReferencia, produtoEdicao.getId(), indPesquisaCEFutura, encalheConferido, postergado);
 			
 			if(listaChamadaEncalheCota == null || listaChamadaEncalheCota.isEmpty()) {
 				throw new ChamadaEncalheCotaInexistenteException();
@@ -410,6 +417,68 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 	}
 	
+	/**
+	 * Obtém o total de reparte para uma cota. 
+	 * 
+	 * Este valor é calculado obtendo-se os produtos com chamada de encalhe
+	 * para a cota em questão e em seguida seus respectivos valores de reparte.
+	 * 
+	 * @param idDistribuidor
+	 * @param numeroCota
+	 * @param dataOperacao
+	 * 
+	 * @return BigDecimal
+	 */
+	private BigDecimal obterValorTotalReparte(Long idDistribuidor, Integer numeroCota, Date dataOperacao) {
+		
+		List<Long> listaIdProdutoEdicao = 
+				chamadaEncalheCotaRepository.obterListaIdProdutoEdicaoChamaEncalheCota(numeroCota, dataOperacao, true, false, false);
+		
+		BigDecimal reparte = BigDecimal.ZERO;
+		
+		if(listaIdProdutoEdicao != null && !listaIdProdutoEdicao.isEmpty()) {
+			reparte = estoqueProdutoCotaRepository.obterValorTotalReparteCota(numeroCota, listaIdProdutoEdicao, idDistribuidor);
+		} 
+		
+		return reparte;
+		
+	}
+	
+	/**
+	 * Obtém o valor total de débito ou crédito da cota.
+	 * 
+	 * @param listaDebitoCredito
+	 * 
+	 * @return BigDecimal
+	 */
+	private BigDecimal obterValorDebitoCreditoCota(List<DebitoCreditoCotaDTO> listaDebitoCredito) {
+		
+		BigDecimal valorDebitoCredito = BigDecimal.ZERO;
+		
+		for (DebitoCreditoCotaDTO debitoCreditoCotaDTO : listaDebitoCredito){
+			
+			if(debitoCreditoCotaDTO.getValor() == null) {
+				continue;
+			}
+			
+			if(OperacaoFinaceira.DEBITO.name().equals(debitoCreditoCotaDTO.getTipoLancamento())) {
+
+				valorDebitoCredito = valorDebitoCredito.subtract(debitoCreditoCotaDTO.getValor());
+				
+			}
+			
+			if(OperacaoFinaceira.CREDITO.name().equals(debitoCreditoCotaDTO.getTipoLancamento())) {
+				
+				valorDebitoCredito = valorDebitoCredito.add(debitoCreditoCotaDTO.getValor());
+				
+			}
+			
+		}
+		
+		return valorDebitoCredito;
+		
+	}
+	
 	
 	@Transactional(readOnly = true)
 	public InfoConferenciaEncalheCota obterInfoConferenciaEncalheCota(Integer numeroCota, boolean indConferenciaContingencia) {
@@ -471,15 +540,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			
 		}
 		
-		
-		List<Long> listaIdProdutoEdicao = 
-				chamadaEncalheCotaRepository.obterListaIdProdutoEdicaoChamaEncalheCota(numeroCota, dataOperacao, true, false);
-		
-		BigDecimal reparte = BigDecimal.ZERO;
-		
-		if(listaIdProdutoEdicao != null && !listaIdProdutoEdicao.isEmpty()) {
-			reparte = estoqueProdutoCotaRepository.obterValorTotalReparteCota(numeroCota, listaIdProdutoEdicao, distribuidor.getId());
-		} 
+		BigDecimal reparte = obterValorTotalReparte(distribuidor.getId(), numeroCota, dataOperacao);
 		
 		BigDecimal totalDebitoCreditoCota = null;
 		BigDecimal valorPagar = null;
@@ -882,12 +943,17 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		movimentoFinanceiroCotaService.gerarMovimentosFinanceirosDebitoCredito(movimentoFinanceiroCotaDTO);
 
-		Set<String> nossoNumeroCollection = gerarCobrancaService.gerarCobranca(
-				controleConferenciaEncalheCota.getCota().getId(), 
-				controleConferenciaEncalheCota.getUsuario().getId(), false);
+		Set<String> nossoNumeroCollection = new HashSet<String>();
+		try {
+			gerarCobrancaService.gerarCobranca(
+					controleConferenciaEncalheCota.getCota().getId(), 
+					controleConferenciaEncalheCota.getUsuario().getId(), false, nossoNumeroCollection);
+		} catch (GerarCobrancaValidacaoException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		return nossoNumeroCollection;
-		
 	}
 
 	
@@ -1248,6 +1314,16 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		if(notaFiscalEntradaCota == null) {
 			return null;
 		}
+		
+		if ( notaFiscalEntradaCota.getNumero() 		== null || 
+			 notaFiscalEntradaCota.getSerie() 		== null || 
+			 notaFiscalEntradaCota.getSerie().isEmpty()     ||
+			 notaFiscalEntradaCota.getDataEmissao() == null	||
+			 notaFiscalEntradaCota.getValorProdutos() == null) {
+			
+			return null;
+			
+		}			
 		
 		NotaFiscalEntradaCota notaFiscalEntradaCotaFromBD = null;
 		
@@ -1901,9 +1977,10 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		boolean encalheConferido = false;
 		boolean indPesquisaCEFutura = true;
+		boolean postergado = false;
 		
 		List<ChamadaEncalheCota> listaChamadaEncalheCota = 
-				chamadaEncalheCotaRepository.obterListaChamaEncalheCota(numeroCota, dataRecolhimentoReferencia, idProdutoEdicao, indPesquisaCEFutura, encalheConferido);
+				chamadaEncalheCotaRepository.obterListaChamaEncalheCota(numeroCota, dataRecolhimentoReferencia, idProdutoEdicao, indPesquisaCEFutura, encalheConferido, postergado);
 
 		StringBuffer errorMsg = new StringBuffer();
 
@@ -2142,20 +2219,25 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	}
 	
 	
+	
+	
 	/**
-	 * Obtém o valor devido pela cota na dataOperacao.
-	 * 
-	 * O valor é constituído pela valor total da chamada de encalhe e
-	 * outros possíveis débitos desta cota.
+	 * Obtém o valor total de débito ou credito de uma cota na dataOperacao.	
 	 * 
 	 * @param numeroCota
 	 * @param dataOperacao
 	 * 
 	 * @return BigDecimal
 	 */
-	private BigDecimal obterValorDevidoCota(Integer numeroCota, Date dataOperacao) {
+	private BigDecimal obterValorTotalDebitoCreditoCota(Integer numeroCota, Date dataOperacao) {
 		
-		List<TipoMovimentoFinanceiro> tiposMovimentoFinanceiroIgnorados = null;
+		TipoMovimentoFinanceiro tipoMovimentoFinanceiroEnvioEncalhe = tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(GrupoMovimentoFinaceiro.ENVIO_ENCALHE);
+		TipoMovimentoFinanceiro tipoMovimentoFinanceiroRecebimentoReparte = tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(GrupoMovimentoFinaceiro.RECEBIMENTO_REPARTE);
+		
+		List<TipoMovimentoFinanceiro> tiposMovimentoFinanceiroIgnorados = new ArrayList<TipoMovimentoFinanceiro>();
+		
+		tiposMovimentoFinanceiroIgnorados.add(tipoMovimentoFinanceiroEnvioEncalhe);
+		tiposMovimentoFinanceiroIgnorados.add(tipoMovimentoFinanceiroRecebimentoReparte);
 		
 		List<DebitoCreditoCotaDTO> listaDebitoCreditoCota = 
 				movimentoFinanceiroCotaRepository.
@@ -2164,36 +2246,27 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 						dataOperacao, 
 						tiposMovimentoFinanceiroIgnorados);
 		
-		BigDecimal totalCredito = BigDecimal.ZERO;
-		
-		BigDecimal totalDebito = BigDecimal.ZERO;
+		BigDecimal totalDebitoCredito = BigDecimal.ZERO;
 		
 		for(DebitoCreditoCotaDTO debitoCreditoCota : listaDebitoCreditoCota) {
 			
+			if(debitoCreditoCota.getValor() == null) {
+				continue;
+			}
+			
 			if(OperacaoFinaceira.CREDITO.name().equals(debitoCreditoCota.getTipoLancamento())) {
 				
-				totalCredito = adicionarValorBigDecimal(totalCredito, debitoCreditoCota.getValor());
+				totalDebitoCredito = totalDebitoCredito.add(debitoCreditoCota.getValor());
 				
 			} else if(OperacaoFinaceira.DEBITO.name().equals(debitoCreditoCota.getTipoLancamento())) {
 				
-				totalDebito = adicionarValorBigDecimal(totalDebito, debitoCreditoCota.getValor());
+				totalDebitoCredito = totalDebitoCredito.subtract(debitoCreditoCota.getValor());
 				
 			}
 			
 		}
-
-		BigDecimal valorDevido = totalDebito.subtract(totalCredito);
 		
-		
-		if(valorDevido.compareTo(BigDecimal.ZERO)>0) {
-			
-			return valorDevido;
-			
-		} else {
-			
-			return BigDecimal.ZERO;
-			
-		}
+		return totalDebitoCredito;
 		
 	}
 	
@@ -2222,6 +2295,8 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		BigDecimal valorTotalEncalhe 	= null;
 		BigDecimal valorTotalPagar 		= null;
 		
+		BigDecimal valorTotalReparte = obterValorTotalReparte(distribuidor.getId(), numeroCota, dataOperacao);
+		
 		for(ProdutoEdicaoSlipDTO produtoEdicaoSlip : listaProdutoEdicaoSlip) {
 			
 			BigDecimal reparte = obterQtdeReparteParaProdutoEdicao(
@@ -2238,13 +2313,35 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			
 		}
 		
+		valorTotalReparte = (valorTotalReparte == null) ? BigDecimal.ZERO : valorTotalReparte;
+		
+		valorTotalEncalhe = (valorTotalEncalhe == null) ? BigDecimal.ZERO : valorTotalEncalhe;
+		
+		BigDecimal valorTotalDebitoCredito	= obterValorTotalDebitoCreditoCota(numeroCota, dataOperacao);
+		
+		BigDecimal valorDevido = BigDecimal.ZERO;
+		
+		valorTotalPagar = (valorTotalReparte.subtract(valorTotalEncalhe));
+		
+		if(BigDecimal.ZERO.compareTo(valorTotalDebitoCredito)>0) {
+			
+			valorDevido = valorTotalDebitoCredito.abs();
+			
+			valorTotalPagar = valorTotalPagar.add(valorTotalDebitoCredito.abs());
+			
+		} else {
+			
+			valorTotalPagar = valorTotalPagar.subtract(valorTotalDebitoCredito.abs());
+			
+		}
+
+		
 		SlipDTO slip = new SlipDTO();
 
 		//TODO: pode haver produtos na operação de encalhe pertencentes
 		// 		a mais de uma chamada de encalhe.
 		slip.setCeJornaleiro(null);
 		
-		BigDecimal valorDevido	= obterValorDevidoCota(numeroCota, dataOperacao);
 		
 		slip.setNumeroCota(numeroCota);
 		slip.setNomeCota(nomeCota);

@@ -1,9 +1,7 @@
 package br.com.abril.nds.integracao.ems0118.processor;
 
-import java.math.BigDecimal; 
+import java.math.BigDecimal;
 import java.math.RoundingMode;
-
-import javax.persistence.NoResultException;
 
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,69 +17,69 @@ import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
 import br.com.abril.nds.repository.impl.AbstractRepository;
+
 /**
  * @author Jones.Costa
  * @version 1.0
  */
 @Component
+public class EMS0118MessageProcessor extends AbstractRepository implements
+		MessageProcessor {
 
-public class EMS0118MessageProcessor extends AbstractRepository implements MessageProcessor {
-	
 	@Autowired
 	private NdsiLoggerFactory ndsiLoggerFactory;
-	
+
 	@Override
-	
 	public void processMessage(Message message) {
-		
-	
+
 		EMS0118Input input = (EMS0118Input) message.getBody();
-				
-		//Obter fator de desconto
+
+		// Obter fator de desconto
 		StringBuilder sql = new StringBuilder();
 		sql.append("SELECT dist FROM  Distribuidor dist ");
-				
-		Query query = getSession().createQuery(sql.toString());		
+
+		Query query = getSession().createQuery(sql.toString());
 		Distribuidor distribuidor = (Distribuidor) query.uniqueResult();
-				
-		//Obter Produto/Edição	
+
+		// Obter Produto/Edição
 		StringBuilder cmd = new StringBuilder();
 		cmd.append("SELECT prodEdicao FROM ProdutoEdicao prodEdicao ");
 		cmd.append("			JOIN FETCH prodEdicao.produto prodCod");
 		cmd.append(" WHERE ");
 		cmd.append("	prodCod.codigo = :codigoProduto ");
 		cmd.append(" AND	prodEdicao.numeroEdicao = :numeroEdicao ");
-		
-		Query consulta = getSession().createQuery(cmd.toString());		
+
+		Query consulta = getSession().createQuery(cmd.toString());
 		consulta.setParameter("codigoProduto", input.getCodigoPublicacao());
 		consulta.setParameter("numeroEdicao", input.getEdicao());
-		
-		try {
-			
-			ProdutoEdicao produtoEdicao = (ProdutoEdicao) consulta.uniqueResult();
-			
-			//Atualiza valor de venda (PREÇO CAPA)
+
+		ProdutoEdicao produtoEdicao = (ProdutoEdicao) consulta.uniqueResult();
+		if (null != produtoEdicao) {
+			// Atualiza valor de venda (PREÇO CAPA)
 			produtoEdicao.setPrecoVenda(input.getPreco());
-			
-			//Define valor de custo
+
+			// Define valor de custo
 			double preco = input.getPreco().doubleValue();
 			double fator = distribuidor.getFatorDesconto().doubleValue();
-			fator=1-fator/100;
-			double precoCusto = preco*fator;
-			
-			//Atualiza valor de custo	
-			produtoEdicao.setPrecoCusto(new BigDecimal(precoCusto).setScale(2, RoundingMode.HALF_DOWN) );	
-				
+			fator = 1 - fator / 100;
+			double precoCusto = preco * fator;
+
+			// Atualiza valor de custo
+			produtoEdicao.setPrecoCusto(new BigDecimal(precoCusto).setScale(2,
+					RoundingMode.HALF_DOWN));
+
 			System.out.println("breakpoint");
 
-		    } catch (NoResultException e) {
-			//NAO ENCONTROU Produto/Edicao, DEVE LOGAR
-		    ndsiLoggerFactory.getLogger().logError(message, EventoExecucaoEnum.RELACIONAMENTO,"Nenhum resultado encontrado para Produto: "+input.getCodigoPublicacao()+" e Edição: "+input.getEdicao()+" na tabela produto_edicao");
-					
-		    e.printStackTrace();
-		
+		} else {
+			// NAO ENCONTROU Produto/Edicao, DEVE LOGAR
+			ndsiLoggerFactory.getLogger().logError(
+					message,
+					EventoExecucaoEnum.RELACIONAMENTO,
+					"Nenhum resultado encontrado para Produto: "
+							+ input.getCodigoPublicacao() + " e Edição: "
+							+ input.getEdicao() + " na tabela produto_edicao");
+
 		}
-		
 
 	}
 

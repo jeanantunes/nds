@@ -24,9 +24,18 @@ public class DefaultFlexiGridJson implements FlexiGridJson {
 	private XStreamSerializer serializer;
     private XStream xstream;
     private TableModel wrapper;
+    
+    private HttpServletResponse response;
+    private TypeNameExtractor extractor;
+    private ProxyInitializer initializer;
 
     public DefaultFlexiGridJson(HttpServletResponse response, TypeNameExtractor extractor, ProxyInitializer initializer)
             throws IOException {
+    	    
+    	    this.response = response;
+    	    this.extractor = extractor;
+    	    this.initializer = initializer;
+    	    
             xstream = new XStream(new JsonHierarchicalStreamDriver() {
                 @Override
                 public HierarchicalStreamWriter createWriter(Writer writer) {
@@ -40,6 +49,7 @@ public class DefaultFlexiGridJson implements FlexiGridJson {
                     };
                 }
             });
+            
             xstream.aliasField("rows", TableModel.class, "rows");
             serializer = new XStreamSerializer(xstream, response.getWriter(), extractor, initializer);
         }
@@ -74,6 +84,22 @@ public class DefaultFlexiGridJson implements FlexiGridJson {
             wrapper.setTotal(total);
             return this;
         }
+ 
+ 
+		public FlexiGridJson noReference() {
+			
+			try{
+			    xstream.setMode(XStream.NO_REFERENCES);
+			    xstream.aliasField("rows", TableModel.class, "rows");
+			    serializer = new XStreamSerializer(xstream, this.response.getWriter(), this.extractor, this.initializer);
+			}
+			catch(IOException e){
+				e.printStackTrace();
+			}
+			    
+			return this;
+		}
+		
 
 		@Override
 		public FlexiGridJson page(Integer page) {

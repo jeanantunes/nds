@@ -21,6 +21,7 @@ var PainelMonitorNFE = {
 			var numeroFinal = $("#numeroFinal").val();
 			var chaveAcesso = $("#chaveAcesso").val();
 			var situacaoNfe = $("#situacaoNfe").val();
+			var serieNfe	= $("#serieNfe").val();	
 			
 			var formData = [
 			        {name:'box', value: box },
@@ -32,7 +33,8 @@ var PainelMonitorNFE = {
 			        {name:'numeroInicial', value: numeroInicial },
 			        {name:'numeroFinal', value: numeroFinal },
 			        {name:'chaveAcesso', value: chaveAcesso },
-			        {name:'situacaoNfe', value: situacaoNfe }
+			        {name:'situacaoNfe', value: situacaoNfe },
+			        {name:'serieNfe',    value: serieNfe}
 			];
 			
 			
@@ -138,7 +140,7 @@ var PainelMonitorNFE = {
 			
 		},
 		
-		imprimirDanfes : function() {
+		imprimirDanfes : function(indEmissaoDepec) {
 			
 			var nomeLista = 'listaLineIdsImpressaoDanfes';
 			
@@ -147,6 +149,8 @@ var PainelMonitorNFE = {
 			var linhasDaGrid = $("#nfeGrid tr");
 			
 			var contador = 0;
+			
+			var params = [];
 			
 			$.each(linhasDaGrid, function(index, value) {
 				
@@ -173,12 +177,21 @@ var PainelMonitorNFE = {
 				
 			});
 			
-			$.postJSON("<c:url value='/nfe/painelMonitorNFe/prepararDanfesImpressao'/>", selecionados, 
+			params = selecionados + '&' + 'indEmissaoDepec='+indEmissaoDepec;
+			
+			$.postJSON("<c:url value='/nfe/painelMonitorNFe/prepararDanfesImpressao'/>", params, 
 				function(){
-				window.location ="<c:url value='/nfe/painelMonitorNFe/imprimirDanfes'/>" ;
+				window.location = "<c:url value='/nfe/painelMonitorNFe/imprimirDanfes'/>" + '?indEmissaoDepec='+indEmissaoDepec;
 			});
 			
 		},
+		
+		cancelarNfe : function() {
+			
+			$.postJSON("<c:url value='/nfe/painelMonitorNFe/cancelarNfe'/>");
+			
+		},
+
 		
 		imprimirDanfeUnica : function(lineId) {
 			
@@ -283,6 +296,12 @@ $(function() {
 	
 	var colunas = PainelMonitorNFE.obterColModel();
 	
+	$("#serieNfe").numeric();
+	
+	$("#numeroInicial").numeric();
+	
+	$("#numeroFinal").numeric();
+	
 	$("#nfeGrid").flexigrid({
 		colModel : colunas,
 		preProcess: PainelMonitorNFE.executarPreProcessamento,
@@ -360,7 +379,7 @@ $(function() {
 						id="dataFinal" style="width: 80px;" />
 					</td>
 
-					<td colspan="3">Dest./Remet.:</td>
+					<td colspan="3">Destinatário:</td>
 
 					<td width="135">
 						<table width="100%" border="0" cellspacing="0" cellpadding="0">
@@ -423,8 +442,8 @@ $(function() {
 						    </c:forEach>
 					    </select>
 					</td>
-					<td>&nbsp;</td>
-					<td>&nbsp;</td>
+					<td>Série</td>
+					<td><input type="text" id="serieNfe" style="width: 80px;" /></td>
 					<td colspan="3">&nbsp;</td>
 					<td>&nbsp;</td>
 					<td>
@@ -458,9 +477,28 @@ $(function() {
 						Imprimir 
 					</a>
 				</span>				
+
+				<span class="bt_novos" title="Cancelar NF-e">
+					<a onclick="PainelMonitorNFE.cancelarNfe()" href="javascript:;">
+						<img 	src="${pageContext.request.contextPath}/images/ico_bloquear.gif" 
+							alt="Cancelar NF-e" width="16" 
+							height="16" 
+							hspace="5" border="0">
+						Cancelar NF-e
+					</a>
+				</span>
+				
+				<span  class="bt_novos" title="Emitir em DEPEC">
+					<a onclick="PainelMonitorNFE.imprimirDanfes(true)" href="javascript:;">
+						<img 	src="${pageContext.request.contextPath}/images/bt_expedicao.png" 	
+						     	alt="Emitir em DEPEC" 
+							hspace="5" border="0">
+						Emitir em DEPEC
+					</a>
+				</span>
 				
 				<span class="bt_novos" title="Imprimir Seleção">
-					<a 	onclick="PainelMonitorNFE.imprimirDanfes()"	href="javascript:;">
+					<a 	onclick="PainelMonitorNFE.imprimirDanfes(false)" href="javascript:;">
 						<img 	src="${pageContext.request.contextPath}/images/ico_impressora.gif"
 								alt="Imprimir Seleção" 
 								hspace="5" 

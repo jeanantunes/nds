@@ -925,9 +925,17 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 				vendaEncalheDTO.setPrecoCapa(produtoEdicao.getPrecoVenda().subtract(produtoEdicao.getDesconto()));				
 				vendaEncalheDTO.setCodigoBarras(produtoEdicao.getCodigoDeBarras());
 				
-				vendaEncalheDTO.setFormaVenda( (produtoEdicao.getProduto()!= null 
-												&& produtoEdicao.getProduto().getFormaComercializacao()!= null)
-						? produtoEdicao.getProduto().getFormaComercializacao():null);
+				if(TipoVendaEncalhe.SUPLEMENTAR.equals(tipoVendaEncalhe)){
+					if (isVendaConsignadoCota(produtoEdicao)){
+						vendaEncalheDTO.setFormaVenda(FormaComercializacao.CONSIGNADO);
+					}
+					else{
+						vendaEncalheDTO.setFormaVenda(FormaComercializacao.CONTA_FIRME);
+					}
+				}
+				else{
+					vendaEncalheDTO.setFormaVenda(FormaComercializacao.CONTA_FIRME);
+				}
 			}
 			else{
 				throw new ValidacaoException(TipoMensagem.WARNING,"Não existe produto disponível em estoque para venda de encalhe!");

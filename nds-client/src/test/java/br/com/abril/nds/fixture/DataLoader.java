@@ -129,6 +129,7 @@ import br.com.abril.nds.model.fiscal.ControleNumeracaoNotaFiscal;
 import br.com.abril.nds.model.fiscal.GrupoNotaFiscal;
 import br.com.abril.nds.model.fiscal.ItemNotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.ItemNotaFiscalSaida;
+import br.com.abril.nds.model.fiscal.NCM;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaCota;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaFornecedor;
 import br.com.abril.nds.model.fiscal.NotaFiscalSaidaFornecedor;
@@ -138,6 +139,26 @@ import br.com.abril.nds.model.fiscal.TipoEmissaoNfe;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
 import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.model.fiscal.TipoUsuarioNotaFiscal;
+import br.com.abril.nds.model.fiscal.nota.EncargoFinanceiro;
+import br.com.abril.nds.model.fiscal.nota.Identificacao;
+import br.com.abril.nds.model.fiscal.nota.IdentificacaoDestinatario;
+import br.com.abril.nds.model.fiscal.nota.IdentificacaoEmitente;
+import br.com.abril.nds.model.fiscal.nota.InformacaoAdicional;
+import br.com.abril.nds.model.fiscal.nota.InformacaoEletronica;
+import br.com.abril.nds.model.fiscal.nota.InformacaoTransporte;
+import br.com.abril.nds.model.fiscal.nota.InformacaoValoresTotais;
+import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
+import br.com.abril.nds.model.fiscal.nota.NotaFiscalReferenciada;
+import br.com.abril.nds.model.fiscal.nota.ProdutoServico;
+import br.com.abril.nds.model.fiscal.nota.RetencaoICMSTransporte;
+import br.com.abril.nds.model.fiscal.nota.RetornoComunicacaoEletronica;
+import br.com.abril.nds.model.fiscal.nota.Status;
+import br.com.abril.nds.model.fiscal.nota.StatusProcessamentoInterno;
+import br.com.abril.nds.model.fiscal.nota.ValoresRetencoesTributos;
+import br.com.abril.nds.model.fiscal.nota.ValoresTotaisISSQN;
+import br.com.abril.nds.model.fiscal.nota.Veiculo;
+import br.com.abril.nds.model.fiscal.nota.Identificacao.FormaPagamento;
+import br.com.abril.nds.model.fiscal.nota.IdentificacaoEmitente.RegimeTributario;
 import br.com.abril.nds.model.integracao.EventoExecucao;
 import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
 import br.com.abril.nds.model.integracao.InterfaceExecucao;
@@ -163,12 +184,14 @@ import br.com.abril.nds.model.planejamento.StatusLancamentoParcial;
 import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamentoParcial;
+import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.util.DateUtil;
 
 public class DataLoader {
 
 	private static final String PARAM_SKIP_DATA = "skipData";
+	private static final String PARAM_CLEAN_DATA = "cleanData";
 	private static PessoaJuridica juridicaAcme;
 	private static PessoaJuridica juridicaDinap;
 	private static PessoaJuridica juridicaFc;
@@ -746,7 +769,7 @@ public class DataLoader {
 	private static InterfaceExecucao interfaceEMS0109;
 	private static InterfaceExecucao interfaceEMS0110;
 	private static InterfaceExecucao interfaceEMS0111;
-//	private static InterfaceExecucao interfaceEMS0112;
+	private static InterfaceExecucao interfaceEMS0112;
 	private static InterfaceExecucao interfaceEMS0113;
 	private static InterfaceExecucao interfaceEMS0114;
 	private static InterfaceExecucao interfaceEMS0116;
@@ -766,8 +789,9 @@ public class DataLoader {
 	private static InterfaceExecucao interfaceEMS0132;
 	private static InterfaceExecucao interfaceEMS0133;
 //	private static InterfaceExecucao interfaceEMS0134;
-//	private static InterfaceExecucao interfaceEMS0185;
+	private static InterfaceExecucao interfaceEMS0185;
 	private static InterfaceExecucao interfaceEMS0197;
+	private static InterfaceExecucao interfaceEMS0198;
 
 	private static EventoExecucao eventoErroInfraestrutura;
 	private static EventoExecucao eventoSemDominio;
@@ -776,6 +800,11 @@ public class DataLoader {
 	private static EventoExecucao eventoGeracaoArquivo;
 	private static EventoExecucao eventoInformacaoDadoAlterado;
 	private static EventoExecucao eventoRegistroExistente;
+	
+	private static NCM ncmRevistas;
+	private static NCM ncmlivros;
+	private static NCM ncmCromo;
+	private static NCM ncmBebidas;
 
 	public static void main(String[] args) {
 		ClassPathXmlApplicationContext ctx = new ClassPathXmlApplicationContext(
@@ -792,8 +821,11 @@ public class DataLoader {
 				session = sf.openSession();
 				tx = session.beginTransaction();				
 				
-				carregarDados(session);
-//				carregarDadosClean(session);
+				if (parans.contains(PARAM_CLEAN_DATA)) {
+					carregarDadosClean(session);
+				} else {
+					carregarDados(session);
+				}
 
 				commit = true;
 			} catch (Exception e) {
@@ -824,19 +856,11 @@ public class DataLoader {
 	}
 
 	private static void carregarDados(Session session) {
+		carregarDadosClean(session);
 
-		gerarCfops(session);
-
-		criarParametrosSistema(session);
-		criarInterfaceExecucao(session);
-		criarEventoExecucao(session);
-		criarAlgoritmos(session);
 		criarCarteira(session);
 		criarBanco(session);
 		criarPessoas(session);
-		criarDistribuidor(session);
-		criarEnderecoDistribuidor(session);
-		criarTelefoneDistribuidor(session);
 		criarUsuarios(session);
 		criarTiposFornecedores(session);
 		criarBox(session);
@@ -846,14 +870,10 @@ public class DataLoader {
 		criarCotas(session);
 		criarPDVsCota(session);
 		criarDistribuicaoCota(session);
-		criarEditores(session);
-		criarTiposProduto(session);
+		criarEditores(session);		
 		criarProdutos(session);
 		criarProdutosEdicao(session);
-		criarCFOP(session);
 		criarTiposMovimento(session);
-		criarParametroEmissaoNotaFiscal(session);
-		criarTiposNotaFiscal(session);
 		criarNotasFiscais(session);
 		criarRecebimentosFisicos(session);
 		criarEstoquesProdutos(session);
@@ -863,7 +883,6 @@ public class DataLoader {
 		criarEstudos(session);
 		criarEstudosCota(session);
 		criarMovimentosEstoqueCota(session);
-		criarFeriado(session);
 		criarEnderecoCotaPF(session);
 		criarMovimentosFinanceiroCota(session);
 		criarDivida(session);
@@ -943,18 +962,28 @@ public class DataLoader {
 		gerarLogExecucaoInterfaces(session);
 
 		gerarLogradouros(session);
+
+		//criarNovaNotaFiscal(session);
+		
 	}
 
 	
+	/*
+	 * Carga Inicial do sistema Zerado
+	 * */
 	
 	private static void carregarDadosClean(Session session) {
 		
 		gerarCfops(session);
 		
+		tabelaNCM(session);
+		
 		criarParametrosSistema(session);
 		criarInterfaceExecucao(session);
 		criarEventoExecucao(session);
 		criarAlgoritmos(session);
+		
+		criarTiposProduto(session);
 		
 		criarDistribuidor(session);
 		criarEnderecoDistribuidor(session);
@@ -966,7 +995,6 @@ public class DataLoader {
 		
 		criarFeriado(session);		
 	}
-	
 
 	private static void criarControleNumeracaoSlip(Session session) {
 
@@ -1604,6 +1632,14 @@ public class DataLoader {
 		save(session, acumDividaGuilherme1,acumDividaGuilherme2,acumDividaMariana1,acumDividaMurilo1);
 	}
 
+	private static void tabelaNCM(Session session){
+		ncmRevistas = Fixture.ncm(49029000l,"REVISTAS","KG");
+		ncmlivros = Fixture.ncm(49019000l, "LIVROS","KG");
+		ncmCromo = Fixture.ncm(48205000l,"CROMO","KG");
+		ncmBebidas = Fixture.ncm(22029000l,"OUTRAS BEBIDAS","L");
+		save(session,ncmRevistas,ncmlivros,ncmBebidas,ncmCromo);
+	}
+	
 	private static void criarDadosContaCorrenteConsigando(Session session){
 
 		Date dataAtual = new Date();
@@ -1633,7 +1669,7 @@ public class DataLoader {
 		Usuario usuario = Fixture.usuarioJoao();
 		save(session,usuario);
 
-		TipoProduto tipoProduto = Fixture.tipoProduto("Revista C.C.Consignado", GrupoProduto.REVISTA, 3721894l, "473794321", 003L);
+		TipoProduto tipoProduto = Fixture.tipoProduto("Revista C.C.Consignado", GrupoProduto.REVISTA, ncmRevistas, "473794321", 003L);
 		save(session,tipoProduto);
 
 		TipoFornecedor tipoFornecedor = Fixture.tipoFornecedorPublicacao();
@@ -1745,7 +1781,7 @@ public class DataLoader {
 		Usuario usuario = Fixture.usuarioJoao();
 		save(session, usuario);
 
-		TipoProduto tipoProduto = Fixture.tipoProduto("Revista C.C.Movimento", GrupoProduto.REVISTA, 431251324l, "513543", 004L);
+		TipoProduto tipoProduto = Fixture.tipoProduto("Revista C.C.Movimento", GrupoProduto.REVISTA, ncmRevistas, "513543", 004L);
 		save(session, tipoProduto);
 
 		TipoFornecedor tipoFornecedor = Fixture.tipoFornecedor("Tipo A",GrupoFornecedor.PUBLICACAO);
@@ -2848,17 +2884,25 @@ public class DataLoader {
 		save(session, Fixture.parametroSistema(TipoParametroSistema.NUMERO_DIAS_PERMITIDO_LANCAMENTO_SOBRA_EM, "7"));
 		save(session, Fixture.parametroSistema(TipoParametroSistema.NUMERO_DIAS_PERMITIDO_LANCAMENTO_SOBRA_DE, "7"));
 		save(session, Fixture.parametroSistema(TipoParametroSistema.PATH_INTERFACE_NFE_IMPORTACAO,
-//				"C:\\notas\\"));			// windows;
-				"/opt/interface/notas/"));	// linux;
+				"C:\\notas\\"));			// windows;
+//				"/opt/interface/notas/"));	// linux;
 		save(session, Fixture.parametroSistema(TipoParametroSistema.PATH_INTERFACE_MDC_IMPORTACAO, 
-//				"C:\\interface_mdc\\"));		// windows;
-				"/opt/interface/inbound/"));		// linux;
+				"C:\\interface_mdc\\"));		// windows;
+//				"/opt/interface/inbound/"));		// linux;
 		save(session, Fixture.parametroSistema(TipoParametroSistema.PATH_INTERFACE_MDC_EXPORTACAO,
-//				"C:\\interface_mdc\\"));		// windows;
-				"/opt/interface/outbound/"));	// linux;
+				"C:\\interface_mdc\\"));		// windows;
+//				"/opt/interface/outbound/"));	// linux;
 		save(session, Fixture.parametroSistema(TipoParametroSistema.PATH_INTERFACE_MDC_BACKUP,
-//				"C:\\interface_mdc\\"));		// windows;
-				"/opt/interface/archive/"));		// linux;
+				"C:\\interface_mdc\\"));		// windows;
+//				"/opt/interface/archive/"));		// linux;
+		
+		
+		save(session, Fixture.parametroSistema(TipoParametroSistema.CODIGO_DISTRIBUIDOR_DINAP, "6338107"));
+		save(session, Fixture.parametroSistema(TipoParametroSistema.UF, "SP" ));
+		save(session, Fixture.parametroSistema(TipoParametroSistema.RAZAO_SOCIAL, "Distribuidora Paulista de Jornais, Livros e Revistas LTDA" ));
+		save(session, Fixture.parametroSistema(TipoParametroSistema.CNPJ, "50.958.925/0001-18" ));	
+		
+		
 		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0106_ARCHIVE, "/opt/interface/ems0106/archive/"));
 		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0106_INBOUND, "/opt/interface/ems0106/inbound/"));
 		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0106_IN_FILEMASK, "(?i:DEAPR19.NEW)"));
@@ -3934,22 +3978,20 @@ public class DataLoader {
 	}
 
 	private static void criarTiposProduto(Session session) {
-		tipoProdutoRevista = Fixture.tipoRevista();
+		tipoProdutoRevista = Fixture.tipoRevista(ncmRevistas);
 		session.save(tipoProdutoRevista);
 
-		tipoRefrigerante = Fixture.tipoProduto("Refrigerante",GrupoProduto.OUTROS, 5644566l, null, 006L);
+		tipoRefrigerante = Fixture.tipoProduto("Refrigerante",GrupoProduto.OUTROS, ncmBebidas, null, 006L);
 		session.save(tipoRefrigerante);
 
-		tipoCromo = Fixture.tipoProduto("Cromo",GrupoProduto.CROMO, 5644564l, null, 005L);
+		tipoCromo = Fixture.tipoProduto("Cromo",GrupoProduto.CROMO, ncmCromo, null, 005L);
 		session.save(tipoCromo);
-
-
 	}
 
 	private static void criarDistribuidor(Session session) {
 
 		PessoaJuridica juridicaDistrib = Fixture.pessoaJuridica("Distribuidor Acme",
-				"56003315000147", "333.333.333.333", "distrib_acme@mail.com", "99.999-9");
+				"56003315000147", "333333333333", "distrib_acme@mail.com", "99.999-9");
 		save(session, juridicaDistrib);
 
 		//FORMAS DE COBRANÇA DA COTA
@@ -4656,7 +4698,7 @@ public class DataLoader {
 	 */
 	private static void carregarDadosParaResumoExpedicao(Session session){
 
-		TipoProduto tipoRevista = Fixture.tipoRevista();
+		TipoProduto tipoRevista = Fixture.tipoRevista(ncmRevistas);
 		session.save(tipoRevista);
 
 		CFOP cfop = Fixture.cfop5102();
@@ -4679,7 +4721,7 @@ public class DataLoader {
 		for(Integer i=0;i<10; i++) {
 
 			PessoaJuridica juridica = Fixture.pessoaJuridica("PessoaJ"+i,
-					"00.000.000/0001-00", "000.000.000.000", "acme@mail.com", "99.999-9");
+					"00.000.000/0001-00", "000000000000", "acme@mail.com", "99.999-9");
 			session.save(juridica);
 
 			TipoFornecedor tipoFornecedorPublicacao = Fixture.tipoFornecedorPublicacao();
@@ -4910,13 +4952,13 @@ public class DataLoader {
 
 	private static void criarPessoas(Session session){
 		juridicaAcme = Fixture.pessoaJuridica("Acme",
-				"10000000000100", "000.000.000.000", "sys.discover@gmail.com", "99.999-9");
+				"10000000000100", "000000000000", "sys.discover@gmail.com", "99.999-9");
 		juridicaDinap = Fixture.pessoaJuridica("Dinap",
-				"11111111000111", "111.111.111.111", "sys.discover@gmail.com", "99.999-9");
+				"11111111000111", "111111111111", "sys.discover@gmail.com", "99.999-9");
 		juridicaFc = Fixture.pessoaJuridica("FC",
-				"22222222000122", "222.222.222.222", "sys.discover@gmail.com", "99.999-9");
+				"22222222000122", "222222222222", "sys.discover@gmail.com", "99.999-9");
 		juridicaValida = Fixture.pessoaJuridica("Juridica Valida",
-				"93081738000101", "333.333.333.333", "sys.discover@gmail.com", "99.999-9");
+				"93081738000101", "333333333333", "sys.discover@gmail.com", "99.999-9");
 
 		manoel = Fixture.pessoaFisica("10732815665",
 				"sys.discover@gmail.com", "Manoel da Silva");
@@ -5168,7 +5210,7 @@ public class DataLoader {
 		save(session,box300Reparte);
 
 
-		TipoProduto tipoRevista = Fixture.tipoRevista();
+		TipoProduto tipoRevista = Fixture.tipoRevista(ncmRevistas);
 		save(session,tipoRevista);
 
 		CFOP cfop = Fixture.cfop5102();
@@ -5183,7 +5225,7 @@ public class DataLoader {
 		for(Integer i=1000;i<1050; i++) {
 
 			PessoaJuridica juridica = Fixture.pessoaJuridica("PessoaJ"+i,
-					"30.000.000/0001-00", "000.000.000.000", "acme@mail.com", "99.999-9");
+					"30.000.000/0001-00", "000000000000", "acme@mail.com", "99.999-9");
 			save(session,juridica);
 
 			Fornecedor fornecedor = Fixture.fornecedor(juridica, SituacaoCadastro.ATIVO, true, tipoFornecedorPublicacao, null);
@@ -5831,7 +5873,8 @@ public class DataLoader {
 		BigDecimal valorLiquido = new BigDecimal(16);
 
 		Date dataLancamento = Fixture.criarData(1, Calendar.JUNE, 2012);
-		Date dataRecolhimento = Fixture.criarData(20, Calendar.JUNE, 2012);
+		Date dataRecolhimento = DateUtil.adicionarDias(new Date(), 10);
+
 		TipoLancamento tipoLancamento = TipoLancamento.LANCAMENTO;
 
 		BigDecimal qtdeItemNota = new BigDecimal(80);
@@ -5848,7 +5891,7 @@ public class DataLoader {
 		BigDecimal estoqueProdCotaQtdeRecebida = new BigDecimal(80);
 		BigDecimal estoqueProdCotaQtdeDevolvida = BigDecimal.ZERO;
 
-		Date dataRecolhimentoChamadaEncalhe = Fixture.criarData(20, Calendar.JUNE, 2012);
+		Date dataRecolhimentoChamadaEncalhe = DateUtil.adicionarDias(new Date(), 10);
 
 		TipoChamadaEncalhe tipoChamadaEncalhe = TipoChamadaEncalhe.CHAMADAO;
 
@@ -7287,8 +7330,7 @@ public class DataLoader {
 
 		Editor jazz = Fixture.criarEditor("Jazz", 682L, juridicaFc, true);
 
-		TipoProduto tipoCromo = Fixture.tipoCromo();
-
+		TipoProduto tipoCromo = Fixture.tipoCromo(ncmCromo);
 		save(session, globo, europa, jazz, tipoCromo);
 
 		//PRODUTOS
@@ -10173,7 +10215,7 @@ public class DataLoader {
 		interfaceEMS0109 = Fixture.criarInterfaceExecucao(109L, "EMS0109");
 		interfaceEMS0110 = Fixture.criarInterfaceExecucao(110L, "EMS0110");
 		interfaceEMS0111 = Fixture.criarInterfaceExecucao(111L, "EMS0111");
-//		interfaceEMS0112 = Fixture.criarInterfaceExecucao(112L, "EMS0112");
+		interfaceEMS0112 = Fixture.criarInterfaceExecucao(112L, "EMS0112");
 		interfaceEMS0113 = Fixture.criarInterfaceExecucao(113L, "EMS0113");
 		interfaceEMS0114 = Fixture.criarInterfaceExecucao(114L, "EMS0114");
 		interfaceEMS0116 = Fixture.criarInterfaceExecucao(116L, "EMS0116");
@@ -10193,16 +10235,19 @@ public class DataLoader {
 		interfaceEMS0132 = Fixture.criarInterfaceExecucao(132L, "EMS0132");
 		interfaceEMS0133 = Fixture.criarInterfaceExecucao(133L, "EMS0133");
 //		interfaceEMS0134 = Fixture.criarInterfaceExecucao(134L, "EMS0134");
-//		interfaceEMS0185 = Fixture.criarInterfaceExecucao(185L, "EMS0185");
+		interfaceEMS0185 = Fixture.criarInterfaceExecucao(185L, "EMS0185");
 		interfaceEMS0197 = Fixture.criarInterfaceExecucao(197L, "EMS0197");
+		interfaceEMS0198 = Fixture.criarInterfaceExecucao(198L, "EMS0198");
 
+
+		
 		save(session, Fixture.criarInterfaceExecucao(106L, "EMS0106"));
 		save(session, Fixture.criarInterfaceExecucao(107L, "EMS0107"));
 		save(session, Fixture.criarInterfaceExecucao(108L, "EMS0108"));
 		save(session, Fixture.criarInterfaceExecucao(InterfaceEnum.EMS0109.getCodigoInterface(), "EMS0109"));
 		save(session, Fixture.criarInterfaceExecucao(InterfaceEnum.EMS0110.getCodigoInterface(), "EMS0110"));
 		save(session, Fixture.criarInterfaceExecucao(InterfaceEnum.EMS0111.getCodigoInterface(), "EMS0111"));
-//		save(session, Fixture.criarInterfaceExecucao(InterfaceEnum.EMS0112.getCodigoInterface(), "EMS0112"));
+		save(session, Fixture.criarInterfaceExecucao(InterfaceEnum.EMS0112.getCodigoInterface(), "EMS0112"));
 		save(session, Fixture.criarInterfaceExecucao(InterfaceEnum.EMS0113.getCodigoInterface(), "EMS0113"));
 		save(session, Fixture.criarInterfaceExecucao(InterfaceEnum.EMS0114.getCodigoInterface(), "EMS0114"));
 		save(session, Fixture.criarInterfaceExecucao(116L, "EMS0116"));
@@ -10222,8 +10267,9 @@ public class DataLoader {
 		save(session, Fixture.criarInterfaceExecucao(132L, "EMS0132"));
 		save(session, Fixture.criarInterfaceExecucao(133L, "EMS0133"));
 //		save(session, Fixture.criarInterfaceExecucao(InterfaceEnum.EMS0134.getCodigoInterface(), "EMS0134"));
-//		save(session, Fixture.criarInterfaceExecucao(InterfaceEnum.EMS0185.getCodigoInterface(), "EMS0185"));
+		save(session, Fixture.criarInterfaceExecucao(InterfaceEnum.EMS0185.getCodigoInterface(), "EMS0185"));
 		save(session, Fixture.criarInterfaceExecucao(197L, "EMS0197"));
+		save(session, Fixture.criarInterfaceExecucao(198L, "EMS0198"));
 	}
 
 	private static void criarEventoExecucao(Session session) {
@@ -10266,4 +10312,291 @@ public class DataLoader {
 	}
 
 
+	private static void criarNovaNotaFiscal(Session session) {
+		
+		Date dataEmissao = Fixture.criarData(01, Calendar.JANUARY, 2012); 
+		Date dataEntradaContigencia = Fixture.criarData(01, Calendar.JANUARY, 2012); 
+		Date dataSaidaEntrada = Fixture.criarData(01, Calendar.JANUARY, 2012); 
+		String descricaoNaturezaOperacao = "Natureza";
+		Integer digitoVerificadorChaveAcesso = 1;
+		FormaPagamento formaPagamento = FormaPagamento.A_VISTA;
+		Date horaSaidaEntrada = new Date();
+		String justificativaEntradaContigencia = "Justificativa";
+		List<NotaFiscalReferenciada> listReferenciadas = null;
+		Long numeroDocumentoFiscal = 1234L;
+		Integer serie = 123;
+		TipoOperacao tipoOperacao = TipoOperacao.ENTRADA;
+		
+		Identificacao identificacao = Fixture.identificacao(
+				dataEmissao, 
+				dataEntradaContigencia, 
+				dataSaidaEntrada, 
+				descricaoNaturezaOperacao, 
+				digitoVerificadorChaveAcesso, 
+				formaPagamento, 
+				horaSaidaEntrada, 
+				justificativaEntradaContigencia, 
+				listReferenciadas, 
+				numeroDocumentoFiscal, 
+				serie, 
+				tipoOperacao);
+		
+		String documento 	= "";
+		String email 		= "";
+		
+		Endereco enderecoDestinatario 	= 
+				Fixture.criarEndereco(TipoEndereco.COMERCIAL, "13852123", "Rua das paineiras", 4585, "Jrd Limeira", "Pedra de Guaratiba", "RJ");
+		
+		session.save(enderecoDestinatario);
+		
+		String inscricaoEstadual 	= "";
+		String inscricaoSuframa 	= "";
+		String nome 		= "";
+		String nomeFantasia = "";
+		Pessoa pessoaDestinatarioReferencia = null;
+		Telefone telefone = null;
+		
+		IdentificacaoDestinatario identificacaoDestinatario = 
+				Fixture.identificacaoDestinatario(
+						documento, 
+						email, 
+						enderecoDestinatario, 
+						inscricaoEstadual, 
+						inscricaoSuframa, 
+						nome, 
+						nomeFantasia, 
+						pessoaDestinatarioReferencia, 
+						telefone);
+		
+		String cnae = "";
+		String documentoEmitente = "";
+		
+		Endereco enderecoEmitente= 
+				Fixture.criarEndereco(TipoEndereco.COMERCIAL, "13852345", "Rua Laranjeiras", 4585, "Jrd Brasil", "Santana do Livramento", "RJ");
+		
+		session.save(enderecoEmitente);
+		
+		
+		String inscricaoEstualEmitente = "";
+		String inscricaoEstualSubstituto = "";
+		String inscricaoMunicipalEmitente = "";
+		String nomEmitente = "";
+		String nomeFantasiaEmitente = "";
+		Pessoa pessoaEmitenteReferencia = null;
+		RegimeTributario regimeTributario = null;
+		Telefone telefoneEmitente = null;
+		
+		
+		
+		IdentificacaoEmitente identificacaoEmitente = 
+				Fixture.identificacaoEmitente(
+						cnae, 
+						documentoEmitente, 
+						enderecoEmitente, 
+						inscricaoEstualEmitente, 
+						inscricaoEstualSubstituto, 
+						inscricaoMunicipalEmitente, 
+						nomEmitente, 
+						nomeFantasiaEmitente, 
+						pessoaEmitenteReferencia, 
+						regimeTributario, 
+						telefoneEmitente);
+		
+		String informacoesComplementares = "";
+		
+		InformacaoAdicional informacaoAdicional = Fixture.informacaoAdicional(informacoesComplementares);
+		
+		String chaveAcesso = "523524352354";
+		
+		Date dataRecebimento 	= Fixture.criarData(01, Calendar.JANUARY, 2012); 
+		String motivo 			= "";
+		Long protocolo 			= 32165487L;
+		Status status			= Status.AUTORIZADO;
+		
+		
+		RetornoComunicacaoEletronica retornoComunicacaoEletronica = 
+				Fixture.retornoComunicacaoEletronica(dataRecebimento, motivo, protocolo, status);
+		
+		InformacaoEletronica informacaoEletronica = Fixture.informacaoEletronica(
+				chaveAcesso, 
+				retornoComunicacaoEletronica);
+		
+		String documentoTranposrte = "564645664";
+	
+		
+		Endereco enderecoTransporte = 
+				Fixture.criarEndereco(TipoEndereco.COMERCIAL, "13852345", "Rua Maracuja", 4585, "Jrd Brasil", "Piuí", "MG");
+		
+		session.save(enderecoTransporte);
+		
+		Integer modalidadeFrente = 1;
+		String municipio = "";
+		String nomeFantasiaTransporte = "";
+		RetencaoICMSTransporte retencaoICMS = null;
+		String ufTransporte = "";
+		Veiculo veiculo = null;
+		
+		
+		InformacaoTransporte informacaoTransporte = 
+				Fixture.informacaoTransporte(
+						documentoTranposrte, 
+						enderecoTransporte, 
+						inscricaoEstadual, 
+						modalidadeFrente, 
+						municipio, 
+						nomeFantasiaTransporte, 
+						retencaoICMS, 
+						ufTransporte, 
+						veiculo);
+
+		ValoresRetencoesTributos valoresRetencoesTributos = 
+				Fixture.valoresRetencoesTributos(
+						1L,
+						BigDecimal.ZERO, 
+						BigDecimal.ZERO, 
+						BigDecimal.ZERO, 
+						BigDecimal.ZERO, 
+						BigDecimal.ZERO, 
+						BigDecimal.ZERO, 
+						BigDecimal.ZERO);
+		
+		//save(valoresRetencoesTributos);
+		
+		BigDecimal valorBaseCalculoICMS = BigDecimal.ZERO;
+		BigDecimal valorBaseCalculoICMSST = BigDecimal.ZERO;
+		BigDecimal valorCOFINS = BigDecimal.ZERO;
+		BigDecimal valorDesconto = BigDecimal.ZERO;
+		BigDecimal valorFrete = BigDecimal.ZERO;
+		BigDecimal valorICMS = BigDecimal.ZERO;
+		BigDecimal valorICMSST = BigDecimal.ZERO;
+		BigDecimal valorIPI = BigDecimal.ZERO;
+		BigDecimal valorNotaFiscal = BigDecimal.ZERO;
+		BigDecimal valorOutro = BigDecimal.ZERO;
+		BigDecimal valorPIS = BigDecimal.ZERO;
+		BigDecimal valorProdutos = BigDecimal.ZERO;
+		BigDecimal valorSeguro = BigDecimal.ZERO;
+		BigDecimal valorBaseCalculo = BigDecimal.ZERO;
+		BigDecimal valorISS = BigDecimal.ZERO;
+		BigDecimal valorServicos = BigDecimal.ZERO;
+		
+		ValoresTotaisISSQN valoresTotaisISSQN = null;
+		
+		InformacaoValoresTotais informacaoValoresTotais = 
+				Fixture.informacaoValoresTotais(
+						valoresRetencoesTributos, 
+						valoresTotaisISSQN, 
+						valorBaseCalculoICMS, 
+						valorBaseCalculoICMSST, 
+						valorCOFINS, 
+						valorDesconto, 
+						valorFrete, 
+						valorICMS, 
+						valorICMSST, 
+						valorIPI, 
+						valorNotaFiscal, 
+						valorOutro, 
+						valorPIS, 
+						valorProdutos, 
+						valorSeguro);
+		
+		StatusProcessamentoInterno statusProcessamentoInterno = StatusProcessamentoInterno.ENVIADA;
+		
+		NotaFiscal notaFiscal = new NotaFiscal();
+		
+		notaFiscal.setIdentificacao(identificacao);
+		notaFiscal.setIdentificacaoDestinatario(identificacaoDestinatario);
+		notaFiscal.setIdentificacaoEmitente(identificacaoEmitente);
+		notaFiscal.setInformacaoAdicional(informacaoAdicional);
+		notaFiscal.setInformacaoEletronica(informacaoEletronica);
+		notaFiscal.setInformacaoTransporte(informacaoTransporte);
+		notaFiscal.setInformacaoValoresTotais(informacaoValoresTotais);
+		notaFiscal.setStatusProcessamentoInterno(statusProcessamentoInterno);
+		
+		session.save(notaFiscal);
+		
+		criarProdutosServicos(session, notaFiscal);
+		
+	}
+	
+	
+	private static void criarProdutosServicos(Session session, NotaFiscal notaFiscal) {
+		
+		Integer cfop = 1;
+		Long codigoBarras = 1L;
+		String descricaoProduto = "";
+		EncargoFinanceiro encargoFinanceiro = null;
+		Long extipi = 1L;
+		Long ncm = 1L;
+		BigDecimal quantidade = BigDecimal.ZERO;
+		String unidade = "";
+		BigDecimal valorDesconto 	= BigDecimal.ZERO;
+		BigDecimal valorFrete 		= BigDecimal.ZERO;
+		BigDecimal valorOutros 		= BigDecimal.ZERO;
+		BigDecimal valorSeguro 		= BigDecimal.ZERO;
+		BigDecimal valorTotalBruto 	= BigDecimal.ZERO;
+		BigDecimal valorUnitario 	= BigDecimal.ZERO;
+	
+		int contador = 950;
+		
+		while(contador++<960) {
+			
+			String codigoProduto = ""+contador;
+			String nomeProduto = "produto_"+contador;
+			String descProduto = "";
+			PeriodicidadeProduto periodicidade = PeriodicidadeProduto.ANUAL;
+			int produtoPeb = 1;
+			int produtoPacotePadrao = 1;
+			BigDecimal produtoPeso = new BigDecimal(10);
+
+			String codigoProdutoEdicao = contador+"";
+			Long numeroEdicao = new Long(contador);
+			int pacotePadrao = 1;
+			int peb = 1;
+			BigDecimal peso = BigDecimal.ZERO;
+			BigDecimal precoCusto = BigDecimal.ZERO;
+			BigDecimal precoVenda = BigDecimal.ZERO;
+			String codigoDeBarras = contador+"";
+			BigDecimal expectativaVenda = BigDecimal.ZERO;
+			boolean parcial = false;
+			
+			ProdutoEdicao produtoEdicaoCE = null;
+			Produto produtoCE = Fixture.produto(codigoProduto, descProduto, nomeProduto, periodicidade, tipoCromo, produtoPeb, produtoPacotePadrao, produtoPeso);
+			produtoCE.addFornecedor(fornecedorDinap);
+			session.save(produtoCE);
+			produtoEdicaoCE = Fixture.produtoEdicao(codigoProdutoEdicao, numeroEdicao, pacotePadrao, peb,
+					peso, precoCusto, precoVenda, codigoDeBarras, null, produtoCE, expectativaVenda, parcial);
+			produtoEdicaoCE.setDesconto(BigDecimal.ZERO);
+			session.save(produtoEdicaoCE);
+			
+
+			
+			codigoProduto = String.valueOf(contador);
+			
+			ProdutoServico produtoServico = Fixture.produtoServico(
+					contador,
+					cfop, 
+					codigoBarras, 
+					codigoProduto, 
+					descricaoProduto, 
+					encargoFinanceiro, 
+					extipi, 
+					ncm, 
+					notaFiscal, 
+					produtoEdicaoCE, 
+					quantidade, 
+					unidade, 
+					valorDesconto, 
+					valorFrete, 
+					valorOutros, 
+					valorSeguro, 
+					valorTotalBruto, 
+					valorUnitario);
+			
+			session.save(produtoServico);
+			
+		}
+		
+		
+	}
+	
 }

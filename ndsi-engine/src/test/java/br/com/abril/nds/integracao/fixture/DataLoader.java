@@ -121,6 +121,7 @@ import br.com.abril.nds.model.fiscal.ControleNumeracaoNotaFiscal;
 import br.com.abril.nds.model.fiscal.GrupoNotaFiscal;
 import br.com.abril.nds.model.fiscal.ItemNotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.ItemNotaFiscalSaida;
+import br.com.abril.nds.model.fiscal.NCM;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaCota;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaFornecedor;
 import br.com.abril.nds.model.fiscal.NotaFiscalSaidaFornecedor;
@@ -627,6 +628,11 @@ public class DataLoader {
 	private static CFOP cfop1918;
 	private static CFOP cfop6917;
 	private static CFOP cfop5917;	
+	
+	private static NCM ncmRevistas;
+	private static NCM ncmlivros;
+	private static NCM ncmCromo;
+	private static NCM ncmBebidas;
 
 	public static void main(String[] args) {
 		ClassPathXmlApplicationContext ctx = new ClassPathXmlApplicationContext(
@@ -670,6 +676,7 @@ public class DataLoader {
 	private static void carregarDados(Session session) {
 		
 		gerarCfops(session);
+		tabelaNCM(session);
 		
 		criarParametrosSistema(session);
 		criarInterfaceExecucao(session);
@@ -1279,6 +1286,14 @@ public class DataLoader {
 
 		save(session, acumDividaGuilherme1,acumDividaGuilherme2,acumDividaMariana1,acumDividaMurilo1);
 	}
+	
+	private static void tabelaNCM(Session session){
+		ncmRevistas = Fixture.ncm(49029000l,"REVISTAS","KG");
+		ncmlivros = Fixture.ncm(49019000l, "LIVROS","KG");
+		ncmCromo = Fixture.ncm(48205000l,"CROMO","KG");
+		ncmBebidas = Fixture.ncm(22029000l,"OUTRAS BEBIDAS","L");
+		save(session,ncmRevistas,ncmlivros,ncmBebidas,ncmCromo);
+	}
 
 	private static void criarDadosContaCorrenteConsigando(Session session){
            
@@ -1309,7 +1324,7 @@ public class DataLoader {
 		Usuario usuario = Fixture.usuarioJoao();
 		save(session,usuario);
 
-		TipoProduto tipoProduto = Fixture.tipoProduto("Revista C.C.Consignado", GrupoProduto.REVISTA, 3721894l, "473794321", 003L);
+		TipoProduto tipoProduto = Fixture.tipoProduto("Revista C.C.Consignado", GrupoProduto.REVISTA, ncmRevistas, "473794321", 003L);
 		save(session,tipoProduto);
 
 		TipoFornecedor tipoFornecedor = Fixture.tipoFornecedorPublicacao();
@@ -1421,7 +1436,7 @@ public class DataLoader {
 		Usuario usuario = Fixture.usuarioJoao();
 		save(session, usuario);
 	
-		TipoProduto tipoProduto = Fixture.tipoProduto("Revista C.C.Movimento", GrupoProduto.REVISTA, 431251324L, "513543", 004L);
+		TipoProduto tipoProduto = Fixture.tipoProduto("Revista C.C.Movimento", GrupoProduto.REVISTA, ncmRevistas, "513543", 004L);
 		save(session, tipoProduto);
 	
 		TipoFornecedor tipoFornecedor = Fixture.tipoFornecedor("Tipo A",GrupoFornecedor.PUBLICACAO);
@@ -3473,13 +3488,13 @@ public class DataLoader {
 	}
 
 	private static void criarTiposProduto(Session session) {
-		tipoProdutoRevista = Fixture.tipoRevista();
+		tipoProdutoRevista = Fixture.tipoRevista(ncmRevistas);
 		session.save(tipoProdutoRevista);
 
-		tipoRefrigerante = Fixture.tipoProduto("Refrigerante",GrupoProduto.OUTROS, 5644566l, null, 006L);
+		tipoRefrigerante = Fixture.tipoProduto("Refrigerante",GrupoProduto.OUTROS, ncmBebidas, null, 006L);
 		session.save(tipoRefrigerante);
 		
-		tipoCromo = Fixture.tipoProduto("Cromo",GrupoProduto.CROMO, 5644564l, null, 005L);
+		tipoCromo = Fixture.tipoProduto("Cromo",GrupoProduto.CROMO, ncmCromo, null, 005L);
 		session.save(tipoCromo);
 		
 		
@@ -4179,7 +4194,7 @@ public class DataLoader {
 	 */
 	private static void carregarDadosParaResumoExpedicao(Session session){
 
-		TipoProduto tipoRevista = Fixture.tipoRevista();
+		TipoProduto tipoRevista = Fixture.tipoRevista(ncmRevistas);
 		session.save(tipoRevista);
 
 		CFOP cfop = Fixture.cfop5102();
@@ -4691,7 +4706,7 @@ public class DataLoader {
 		save(session,box300Reparte);
 
 
-		TipoProduto tipoRevista = Fixture.tipoRevista();
+		TipoProduto tipoRevista = Fixture.tipoRevista(ncmRevistas);
 		save(session,tipoRevista);
 
 		CFOP cfop = Fixture.cfop5102();
@@ -6685,8 +6700,7 @@ public class DataLoader {
 
 		Editor jazz = Fixture.criarEditor("Jazz", 682L, juridicaFc, true);
 
-		TipoProduto tipoCromo = Fixture.tipoCromo();
-		
+		TipoProduto tipoCromo = Fixture.tipoCromo(ncmCromo);
 		save(session, globo, europa, jazz, tipoCromo);
 
 		//PRODUTOS

@@ -266,6 +266,13 @@
 				<artifactId>jasperreports-fonts-nds</artifactId>
 				<version>4.5.1</version>
 			</dependency>
+			<dependency>
+				<groupId>com.ancientprogramming.fixedformat4j</groupId>
+				<artifactId>fixedformat4j</artifactId>
+				<version>1.2.2</version>
+				<type>jar</type>
+				<scope>compile</scope>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 
@@ -321,6 +328,13 @@
 		<dependency>
 			<groupId>net.sf.jasperreports</groupId>
 			<artifactId>jasperreports-fonts-nds</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.ancientprogramming.fixedformat4j</groupId>
+			<artifactId>fixedformat4j</artifactId>
+			<version>1.2.2</version>
+			<type>jar</type>
+			<scope>compile</scope>
 		</dependency>
 	</dependencies>
 

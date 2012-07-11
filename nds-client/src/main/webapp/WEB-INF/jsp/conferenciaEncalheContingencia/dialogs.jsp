@@ -13,6 +13,11 @@
 <iframe src="" id="download-iframe" style="display:none;"></iframe>
 
 <div id="dialog-notaFiscal" title="Dados da Nota Fiscal" style="display: none;">
+
+	<jsp:include page="../messagesDialog.jsp">
+		<jsp:param value="dialog-notaFiscal" name="messageDialog"/>
+	</jsp:include>
+	
 	<p>
 		<strong>Insira os dados da Nota Fiscal</strong>
 	</p>

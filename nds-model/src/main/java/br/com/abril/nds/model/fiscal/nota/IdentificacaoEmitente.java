@@ -24,7 +24,7 @@ import br.com.abril.nds.util.export.fiscal.nota.NFEWhens;
 public class IdentificacaoEmitente implements Serializable {
 	
 	
-	public enum RegimeTributario{
+	public enum RegimeTributario implements NotaFiscalEnum {
 	
 		/**
 		 * 1 – Simples Nacional
@@ -38,6 +38,11 @@ public class IdentificacaoEmitente implements Serializable {
 		 * 3 – Regime Normal. (v2.0)
 		 */
 		REGINE_NORMAL;
+
+		@Override
+		public Integer getIntValue() {
+			return this.ordinal();
+		}
 	}
 
 	/**

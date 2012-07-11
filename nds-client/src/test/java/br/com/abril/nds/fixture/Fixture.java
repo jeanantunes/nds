@@ -130,6 +130,7 @@ import br.com.abril.nds.model.fiscal.ControleNumeracaoNotaFiscal;
 import br.com.abril.nds.model.fiscal.GrupoNotaFiscal;
 import br.com.abril.nds.model.fiscal.ItemNotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.ItemNotaFiscalSaida;
+import br.com.abril.nds.model.fiscal.NCM;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaCota;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaFornecedor;
@@ -188,12 +189,12 @@ import br.com.abril.nds.model.seguranca.Usuario;
 public class Fixture {
 	
 	public static PessoaJuridica juridicaAbril() {
-		return pessoaJuridica("Abril", "00.000.000/0002-00", "010.000.000.000",
+		return pessoaJuridica("Abril", "00.000.000/0002-00", "010000000000",
 				"abril@mail.com", "99.999-1");
 	}
 	
 	public static PessoaJuridica juridicaFC() {
-		return pessoaJuridica("FC", "00.000.000/0001-00", "000.000.000.000",
+		return pessoaJuridica("FC", "00.000.000/0001-00", "000000000000",
 				"fc@mail.com", "99.999-9");
 	}
 	
@@ -223,12 +224,12 @@ public class Fixture {
 	
 	
 	public static PessoaJuridica juridicaDinap() {		
-		return pessoaJuridica("Dinap", "11.111.111/0001-00", "111.111.111.111",
+		return pessoaJuridica("Dinap", "11.111.111/0001-00", "111111111111",
 				"dinap@mail.com", "99.999-8");
 	}
 	
 	public static PessoaJuridica juridicaAcme() {
-		return pessoaJuridica("ACME", "11.222.333/0001-00", "111.222.333.444",
+		return pessoaJuridica("ACME", "11.222.333/0001-00", "111222333444",
 				"acme@mail.com", "99.999-7");
 	}
 
@@ -319,13 +320,13 @@ public class Fixture {
 		return produto("15", "Cromo Rei Leao", "Cromo Rei Leao",
 				PeriodicidadeProduto.SEMANAL, tipoProduto, 5, 5, BigDecimal.TEN);
 	}
-
-	public static TipoProduto tipoRevista() {
-		return tipoProduto("Revistas", GrupoProduto.REVISTA, 99000642l, null, 001L);
+	
+	public static TipoProduto tipoRevista(NCM ncm) {
+		return tipoProduto("Revistas", GrupoProduto.REVISTA, ncm, null, 001L);
 	}
 	
-	public static TipoProduto tipoCromo() {
-		return tipoProduto("Cromos", GrupoProduto.CROMO, 1230004560l, null, 002L);
+	public static TipoProduto tipoCromo(NCM ncm) {
+		return tipoProduto("Cromos", GrupoProduto.CROMO, ncm, null, 002L);
 	}
 	
 	public static TipoFornecedor tipoFornecedorPublicacao() {
@@ -416,15 +417,23 @@ public class Fixture {
 		fornecedor.setOrigem(Origem.MANUAL);
 		return fornecedor;
 	}
+	
+	public static NCM ncm(Long codigo, String descricao, String unidadeMedida) {
+		NCM ncm = new NCM();
+		ncm.setCodigo(codigo);
+		ncm.setDescricao(descricao);
+		ncm.setUnidadeMedida(unidadeMedida);
+		return ncm;
+	}
 
 	public static TipoProduto tipoProduto(String descricao, GrupoProduto grupo,
-			Long codigoNCM, String codigoNBM, Long codigo) {
+			NCM ncm, String codigoNBM, Long codigo) {
 		TipoProduto tipoProduto = new TipoProduto();
 		tipoProduto.setDescricao(descricao);
 		tipoProduto.setGrupoProduto(grupo);
 		tipoProduto.setCodigo(codigo);
 		tipoProduto.setCodigoNBM(codigoNBM);
-		tipoProduto.setCodigoNCM(codigoNCM);
+		tipoProduto.setNcm(ncm);
 		return tipoProduto;
 	}
 	
@@ -1206,8 +1215,7 @@ public class Fixture {
 		tipoNotaFiscal.setNopCodigo(0L);
 		tipoNotaFiscal.setTipoOperacao(TipoOperacao.SAIDA);
 		tipoNotaFiscal.setTipoAtividade(TipoAtividade.MERCANTIL);
-		tipoNotaFiscal.setSerieNotaFiscal(3);
-		
+		tipoNotaFiscal.setSerieNotaFiscal(3);		
 		return tipoNotaFiscal;
 	}
 

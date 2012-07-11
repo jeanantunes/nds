@@ -32,6 +32,7 @@ import br.com.abril.nds.model.estoque.RecebimentoFisico;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.fiscal.CFOP;
 import br.com.abril.nds.model.fiscal.ItemNotaFiscalEntrada;
+import br.com.abril.nds.model.fiscal.NCM;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaFornecedor;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalhe;
@@ -76,8 +77,13 @@ public class ChamadaEncalheCotaRepositoryImplTest extends AbstractRepositoryImpl
 		fornecedorDinap = Fixture.fornecedorDinap(tipoFornecedorPublicacao);
 		save(fornecedorFC, fornecedorDinap);
 
-		TipoProduto tipoRevista = Fixture.tipoRevista();
-		tipoCromo = Fixture.tipoCromo();
+		NCM ncmRevistas = Fixture.ncm(49029000l,"REVISTAS","KG");
+		save(ncmRevistas);
+		NCM ncmCromo = Fixture.ncm(48205000l,"CROMO","KG");
+		save(ncmCromo);
+		
+		TipoProduto tipoRevista = Fixture.tipoRevista(ncmRevistas);
+		tipoCromo = Fixture.tipoCromo(ncmCromo);
 		save(tipoRevista, tipoCromo);
 		
 		Produto veja = Fixture.produtoVeja(tipoRevista);
@@ -319,13 +325,15 @@ public class ChamadaEncalheCotaRepositoryImplTest extends AbstractRepositoryImpl
 		Date dataOperacao = Fixture.criarData(28, Calendar.FEBRUARY, 2012);
 		boolean indPesquisaCEFutura = true; 
 		boolean conferido = false;
+		boolean postergado = false;
 		
 		List<Long> listaIdProdutoEdicaoChamadaEncalheCota = 
 				chamadaEncalheCotaRepository.obterListaIdProdutoEdicaoChamaEncalheCota(
 						numeroCota, 
 						dataOperacao, 
 						indPesquisaCEFutura, 
-						conferido);
+						conferido,
+						postergado);
 		
 		Assert.assertEquals(1, listaIdProdutoEdicaoChamadaEncalheCota.size());
 		
@@ -339,13 +347,15 @@ public class ChamadaEncalheCotaRepositoryImplTest extends AbstractRepositoryImpl
 		Long idProdutoEdicao = veja1.getId();
 		boolean indPesquisaCEFutura = true; 
 		boolean conferido = false;
+		boolean postergado = false;
 		
 		Long qtde = chamadaEncalheCotaRepository.obterQtdListaChamaEncalheCota(
 				numeroCota, 
 				dataOperacao, 
 				idProdutoEdicao, 
 				indPesquisaCEFutura, 
-				conferido);
+				conferido,
+				postergado);
 		
 		Assert.assertEquals(1, qtde.intValue());
 		

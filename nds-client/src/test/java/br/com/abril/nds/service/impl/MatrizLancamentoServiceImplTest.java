@@ -7,7 +7,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
 import java.util.TreeSet;
 
 import org.junit.Assert;
@@ -136,11 +135,6 @@ public class MatrizLancamentoServiceImplTest extends AbstractRepositoryImplTest 
 		Mockito.when(
 			lancamentoRepository.obterBalanceamentoLancamento(
 				periodoDistribuicao, filtro.getIdsFornecedores())).thenReturn(produtosLancamentoMock);
-		
-		Mockito.when(
-			lancamentoRepository.obterExpectativasRepartePorData(
-				getPeriodoDistribuicao(), filtro.getIdsFornecedores())).thenReturn(
-					obterMapaExpectativaReparteTotalDiarioMock(produtosLancamentoMock));
 		
 		service.lancamentoRepository = lancamentoRepository;
 		service.distribuidorRepository = distribuidorRepository;
@@ -299,32 +293,6 @@ public class MatrizLancamentoServiceImplTest extends AbstractRepositoryImplTest 
 		}
 		
 		return produtosLancamento;
-	}
-	
-	private TreeMap<Date, BigDecimal> obterMapaExpectativaReparteTotalDiarioMock(List<ProdutoLancamentoDTO> produtosLancamento) {
-		
-		TreeMap<Date, BigDecimal> mapaExpectativaReparteTotalDiario =
-			new TreeMap<Date, BigDecimal>();
-		
-		for (ProdutoLancamentoDTO produtoLancamento : produtosLancamento) {
-			
-			BigDecimal expectativaReparte =
-				mapaExpectativaReparteTotalDiario.get(produtoLancamento.getDataLancamentoDistribuidor());
-			
-			if (expectativaReparte != null) {
-				
-				expectativaReparte = expectativaReparte.add(produtoLancamento.getRepartePrevisto());
-			
-			} else {
-				
-				expectativaReparte = produtoLancamento.getRepartePrevisto();
-			}
-			
-			mapaExpectativaReparteTotalDiario.put(produtoLancamento.getDataLancamentoDistribuidor(),
-					  							  expectativaReparte);
-		}
-				
-		return mapaExpectativaReparteTotalDiario;
 	}
 
 }

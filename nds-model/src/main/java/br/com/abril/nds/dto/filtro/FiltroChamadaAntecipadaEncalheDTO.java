@@ -34,7 +34,6 @@ public class FiltroChamadaAntecipadaEncalheDTO implements Serializable {
 	@Export(label = "Data Programada")
 	private String dataProgramada;
 	
-	@Export(label = "Box")
 	private Long box;
 	
 	@Export(label = "Fornecedor")
@@ -49,16 +48,40 @@ public class FiltroChamadaAntecipadaEncalheDTO implements Serializable {
 	private PaginacaoVO paginacao;
 	
 	private OrdenacaoColuna ordenacaoColuna;
+	
+	private Long roteiro;
+	
+	private Long rota;
+	
+	private boolean programacaoCE;
+	
+	private Date dataOperacao;
+	
+	@Export(label = "Box")
+	private String descBox;
+	
+	@Export(label = "Rota")
+	private String descRota;
+	
+	@Export(label = "Roteiro")
+	private String descRoteiro;
+	
+	@Export(label = "Com CE")
+	private String descComCE;
+	
 
 	/**
 	 * Construtor padrão.
 	 */
-	public FiltroChamadaAntecipadaEncalheDTO(String codigoProduto,Long numeroEdicao,Long box, Long fornecedor) {
+	public FiltroChamadaAntecipadaEncalheDTO(String codigoProduto,Long numeroEdicao,Long box, Long fornecedor, Long roteiro, Long rota,boolean programacaoCE) {
 		
 		this.codigoProduto = codigoProduto;
 		this.numeroEdicao = numeroEdicao;
 		this.box = box;
 		this.fornecedor = fornecedor;
+		this.rota = rota;
+		this.roteiro = roteiro;
+		this.programacaoCE = programacaoCE;
 	}
 	
 	/**
@@ -102,6 +125,104 @@ public class FiltroChamadaAntecipadaEncalheDTO implements Serializable {
 			
 			return this.nomeColuna;
 		}
+	}
+	
+	/**
+	 * @return the descComCE
+	 */
+	public String getDescComCE() {
+		return descComCE;
+	}
+
+	/**
+	 * @param descComCE the descComCE to set
+	 */
+	public void setDescComCE(String descComCE) {
+		this.descComCE = descComCE;
+	}
+
+	/**
+	 * @return the descBox
+	 */
+	public String getDescBox() {
+		return descBox;
+	}
+
+	/**
+	 * @param descBox the descBox to set
+	 */
+	public void setDescBox(String descBox) {
+		this.descBox = descBox;
+	}
+
+	/**
+	 * @return the descRota
+	 */
+	public String getDescRota() {
+		return descRota;
+	}
+
+	/**
+	 * @param descRota the descRota to set
+	 */
+	public void setDescRota(String descRota) {
+		this.descRota = descRota;
+	}
+
+	/**
+	 * @return the descRoteiro
+	 */
+	public String getDescRoteiro() {
+		return descRoteiro;
+	}
+
+	/**
+	 * @param descRoteiro the descRoteiro to set
+	 */
+	public void setDescRoteiro(String descRoteiro) {
+		this.descRoteiro = descRoteiro;
+	}
+
+	/**
+	 * @return the programacaoCE
+	 */
+	public boolean isProgramacaoCE() {
+		return programacaoCE;
+	}
+
+	/**
+	 * @param programacaoCE the programacaoCE to set
+	 */
+	public void setProgramacaoCE(boolean programacaoCE) {
+		this.programacaoCE = programacaoCE;
+	}
+
+	/**
+	 * @return the roteiro
+	 */
+	public Long getRoteiro() {
+		return roteiro;
+	}
+
+	/**
+	 * @param roteiro the roteiro to set
+	 */
+	public void setRoteiro(Long roteiro) {
+		this.roteiro = roteiro;
+	}
+
+	/**
+	 * @return the rota
+	 */
+	public Long getRota() {
+		return rota;
+	}
+
+	/**
+	 * @param rota the rota to set
+	 */
+	public void setRota(Long rota) {
+		this.rota = rota;
 	}
 
 	/**
@@ -233,6 +354,20 @@ public class FiltroChamadaAntecipadaEncalheDTO implements Serializable {
 	 */
 	public void setDataAntecipacao(Date dataAntecipacao) {
 		this.dataAntecipacao = dataAntecipacao;
+	}
+	
+	/**
+	 * @return the dataOperacao
+	 */
+	public Date getDataOperacao() {
+		return dataOperacao;
+	}
+
+	/**
+	 * @param dataOperacao the dataOperacao to set
+	 */
+	public void setDataOperacao(Date dataOperacao) {
+		this.dataOperacao = dataOperacao;
 	}
 
 	/* (non-Javadoc)

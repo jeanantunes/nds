@@ -23,8 +23,16 @@
 				             {name:"numeroEdicao",value:$("#edicao").val()},
 				             {name:"box",value:$("#box").val()},
 				             {name:"fornecedor",value:$("#fornecedor").val()},
+				             {name:"rota",value:$("#rota").val()},
+				             {name:"roteiro",value:$("#roteiro").val()},
+				             {name:"programacaoRealizada",value:EncalheAntecipado.getProgramacaoRealizada}
+				             
 				            ];
 			return formData;
+		},
+		
+		getProgramacaoRealizada:function(){
+			return ($("#checkCE").attr("checked") == "checked");
 		},
 		
 		getHiddenProduto: function (){
@@ -74,7 +82,12 @@
 			
 			$("#ceAntecipadaCotaGrid").flexOptions({
 				url: "<c:url value='/devolucao/chamadaEncalheAntecipada/montarPesquisaCotas' />",
-				params: EncalheAntecipado.params(),newp: 1
+				params: EncalheAntecipado.params(),newp: 1,
+				onSuccess:function(){
+					EncalheAntecipado.formatarCampos();
+					EncalheAntecipado.sumarizarCotasSelecionadas(EncalheAntecipado.nameGrid);
+					EncalheAntecipado.processarRenderizacaoDeBotoesCE();			
+				}
 			});
 			
 			$("#ceAntecipadaCotaGrid").flexReload();
@@ -84,7 +97,11 @@
 			
 			$("#ceAntecipadaGrid").flexOptions({
 				url: "<c:url value='/devolucao/chamadaEncalheAntecipada/pesquisar' />",
-				params: EncalheAntecipado.params(),newp: 1
+				params: EncalheAntecipado.params(),newp: 1,
+				onSuccess:function(){
+					EncalheAntecipado.sumarizarCotasSelecionadas(EncalheAntecipado.nameGrid);
+					EncalheAntecipado.processarRenderizacaoDeBotoesCE();			
+				}
 			});
 			
 			$("#ceAntecipadaGrid").flexReload();
@@ -161,7 +178,7 @@
 			var tipoMensagem = result.tipoMensagem;
 			var listaMensagens = result.listaMensagens;
 			if (tipoMensagem && listaMensagens) {
-				exibirMensagemDialog(tipoMensagem, listaMensagens);
+				exibirMensagem(tipoMensagem, listaMensagens);
 			 }
 		},
 		
@@ -280,27 +297,38 @@
 			return true;
 		},
 	
-		exibirDialogData:function(){
+		exibirDialogData:function(tipoOperacao){
 			
 			if(!EncalheAntecipado.isItensSelecionados()){
 				return;
 			}
-			
+		
 			$("#dialog-novo" ).dialog({
 				resizable: false,
 				height:'auto',
 				width:360,
 				modal: true,
-				buttons: {
-					"Confirmar": function() {
-						EncalheAntecipado.gravar();
-						$("#dataAntecipacao").val("");
-					},
-					"Cancelar": function() {
-						$( this ).dialog( "close" );
-						$("#dataAntecipacao").val("");
-					}
-				}
+				buttons: [
+				         {id:"btn_confirma_programacao_ce",text:"Confirmar",
+			        	  click: function() {
+			        		  if(tipoOperacao =="Novo"){
+									
+									EncalheAntecipado.gravar();
+								}
+								else{
+									
+									EncalheAntecipado.reprogramarAntecipacaoEncalhe();	
+								}
+								$("#dataAntecipacao").val("");
+			        	  	}
+				         },
+			        	{id:"btn_cancelar_antecipacao_ce",text:"Cancelar",
+				         click:function(){
+				        	 $( this ).dialog( "close" );
+							 $("#dataAntecipacao").val("");
+			        		}	  
+			        	}  
+				],
 			});
 		},
 			
@@ -355,7 +383,9 @@
 			
 			 $.postJSON("<c:url value='/devolucao/chamadaEncalheAntecipada/pesquisarDataProgramada' />",
 					   data, function(result){
-				 $("#dataProgramada").val(result);
+				 if(result.result!= ""){
+					 $("#dataProgramada").val(result);	 
+				 }
 			 });
 		},
 		
@@ -372,7 +402,7 @@
 
 				exibirMensagem(
 					resultado.mensagens.tipoMensagem, 
-					resultado.mensagens.listaMensagens
+					resultado.mensagens.listaMensagens,""
 				);
 				
 				$("#grids").hide();
@@ -385,7 +415,7 @@
 					
 				var parametroCheckbox = '\'#qntExemplar' + index + '\', this';
 				
-				var inputCheck = '<input type="checkbox" id="ch'+index+'" name="'+EncalheAntecipado.groupNameCheck+'" onclick="EncalheAntecipado.calcularTotalGridCota( '+parametroCheckbox +')" />';	
+				var inputCheck = '<input type="checkbox"  id="ch'+index+'" name="'+EncalheAntecipado.groupNameCheck+'" onclick="EncalheAntecipado.calcularTotalGridCota( '+parametroCheckbox +')" />';
 				
 				var inputQuantidadeExemplares = 
 					'<input type="hidden" id="qntExemplar' + index + '" name="qntExemplares" value="'+ row.cell.qntExemplares +'"/>';
@@ -395,8 +425,11 @@
 						
 				var inputNumeroCota= 
 					'<input type="hidden" id="numCota' + index + '" name="numCota" value="'+ row.cell.numeroCota+'"/>';
-				
-				row.cell.numeroCota = row.cell.numeroCota + inputNumeroCota + inputNomeCota;	
+						
+				var inputHiddenCodigoChamadaEncalhe = 	
+					'<input type="hidden" id="codigoChamadaAntecipada' + index + '" name="codigoChamadaAntecipada" value="'+ row.cell.codigoChamdaEncalhe+'"/>';
+					
+				row.cell.numeroCota = row.cell.numeroCota + inputNumeroCota + inputNomeCota  + inputHiddenCodigoChamadaEncalhe;	
 				row.cell.qntExemplares = row.cell.qntExemplares + inputQuantidadeExemplares;
 				row.cell.sel = inputCheck;
 			});
@@ -447,13 +480,15 @@
 			var param = [{name:"numeroCota",value:$(idInputCota).val()},
 			             {name:"codigoProduto", value:EncalheAntecipado.getHiddenProduto()},
 			             {name:"numeroEdicao",value:EncalheAntecipado.getHiddenNumeroEdicao()},
-			             {name:"fornecedor",value:EncalheAntecipado.getHiddenFornecedor()}];
+			             {name:"fornecedor",value:EncalheAntecipado.getHiddenFornecedor()},
+			             {name:"programacaoRealizada",value:EncalheAntecipado.getProgramacaoRealizada()}];
 			
 			$.postJSON("<c:url value='/devolucao/chamadaEncalheAntecipada/obterQuantidadeExemplares' />",
 					param, 
 					function (result){
 				
-						$(idInputExemplares).val(result);
+						$(idInputExemplares).val(result.quantidade);
+						$("#codigoChamadaAntecipada" + indexLinha).val(result.idChamadaEncalhe);
 						
 						var check  = document.getElementById("sel").checked ; 
 						
@@ -514,8 +549,11 @@
 				var parametroCheckbox = '\'#qntExemplares' + index + '\', this';
 					
 				var inputCheck = '<input disabled="disabled" type="checkbox" id="'+idCheck+'" name="'+EncalheAntecipado.groupNameCheckGridCota+'" onclick="EncalheAntecipado.calcularTotalCota( '+parametroCheckbox +')" />';	
-					
-				row.cell.cota = inputCodigoCota + hiddenId;
+				
+				var inputHiddenCodigoChamadaEncalhe = 	
+					'<input type="hidden" id="codigoChamadaAntecipada' + index + '" name="codigoChamadaAntecipada" value="'+ row.cell.codigoChamdaEncalhe+'"/>';
+				
+				row.cell.cota = inputCodigoCota + hiddenId + inputHiddenCodigoChamadaEncalhe;
 				row.cell.nome = inputDescricaoCota;
 				row.cell.qtdeExemplares = inputQuantidadeExemplares;	
 				row.cell.sel = inputCheck;
@@ -617,6 +655,8 @@
 				
 				var qntExemplares =  $(colunaQntExemplares).find("div").find('input[name="qntExemplares"]').val();
 			
+				var codigoChamdaEncalhe = $(colunaCota).find("div").find('input[name="codigoChamadaAntecipada"]').val();
+				
 				var check  = $(colunaCheck).find("div").find('input[name="'+groupName+'"]');
 				
 				if (EncalheAntecipado.isAtributosVaziosOrSelecionados(codigoCota,check)){
@@ -634,6 +674,10 @@
 				cotaSelecionada += 'listaChamadaEncalheAntecipada[' + index + '].id=' + id  + '&';
 				
 				cotaSelecionada += 'listaChamadaEncalheAntecipada[' + index + '].qntExemplares =' + qntExemplares  + '&';
+				
+				cotaSelecionada += 'listaChamadaEncalheAntecipada[' + index + '].codigoChamdaEncalhe =' + codigoChamdaEncalhe  + '&';
+				
+				
 
 				listaChamadaEncalheAntecipada = (listaChamadaEncalheAntecipada + cotaSelecionada);
 				
@@ -694,13 +738,232 @@
 				window.location = 
 					contextPath + "/devolucao/chamadaEncalheAntecipada/exportar?fileType=" + fileType + paramDataProgaramada;
 			}
-		}
+		},
+		
+		recarregarComboRotas:function(idRoteiro){
+			
+			$.postJSON("<c:url value='/devolucao/chamadaEncalheAntecipada/recarregarListaRotas' />",
+					[{name:"roteiro",value:idRoteiro}], function(result){
+				
+				var comboRotas =  montarComboBox(result, true);
+				
+				$("#rota").html(comboRotas);	
+			});
+		},
+		
+		recarregarComboRoteiroRotas:function(idBox){
+			
+			$.postJSON("<c:url value='/devolucao/chamadaEncalheAntecipada/recarregarRoteiroRota' />",
+					[{name:"idBox",value:idBox}], function(result){
+				
+				var comboRotas =  montarComboBoxCustomJson(result.rotas, true);
+				var comboRoteiros = montarComboBoxCustomJson(result.roteiros, true);
+				
+				$("#rota").html(comboRotas);
+				$("#roteiro").html(comboRoteiros);
+			});
+		},
+		
+		sumarizarCotasSelecionadas:function(grid){
+			
+			var linhasDaGrid = $('#'+grid+' tr');
+			
+			var groupName = (EncalheAntecipado.nameGridPesquisaCota == grid)
+							? EncalheAntecipado.groupNameCheckGridCota
+									:EncalheAntecipado.groupNameCheck;
+			
+			$.each(linhasDaGrid, function(index, value) {
+
+				var linha = $(value);
+				
+				var colunaCheck = linha.find("td")[(EncalheAntecipado.nameGridPesquisaCota == grid)?3:4];
+				var colunaQntExemplares =  linha.find("td")[ (EncalheAntecipado.nameGridPesquisaCota == grid)?2:3];
+				
+				var qntExemplares =  $(colunaQntExemplares).find("div").find('input[name="qntExemplares"]').val();
+			
+				var inputCheck  = $(colunaCheck).find("div").find('input[name="'+groupName+'"]');
+				
+				var check  = inputCheck.attr('checked');
+				
+				if (typeof check != "undefined"){
+					EncalheAntecipado.totalCota += 1;
+					EncalheAntecipado.totalExemplares += eval(qntExemplares);
+				}
+			});
+			
+			EncalheAntecipado.atribuirValorQntCotas();
+			EncalheAntecipado.atribuirValorQntExemplares();
+		},
+		
+		cancelarProgramacaoAntecipacaoEncalhe:function(){
+			
+			var listaChamadaEncalheAntecipada ="";
+
+			var paramProduto = "&codigoProduto="+EncalheAntecipado.getHiddenProduto();
+			var paramEdicao = "&numeroEdicao=" +EncalheAntecipado.getHiddenNumeroEdicao();
+			
+
+			if(EncalheAntecipado.tipoPesquisaGridCota == EncalheAntecipado.tipoPesquisaSelecionado){
+				
+				listaChamadaEncalheAntecipada = EncalheAntecipado.obterParametrosGrid(EncalheAntecipado.nameGridPesquisaCota);
+				
+				$.postJSON("<c:url value='/devolucao/chamadaEncalheAntecipada/cancelarChamdaEncalheCotasPesquisa' />",
+						listaChamadaEncalheAntecipada 
+						+ paramProduto
+						+ paramEdicao,
+						function (result){
+					 
+							 EncalheAntecipado.montarGridPesquisaCotas();
+							 EncalheAntecipado.zerarTotais();
+							 
+							 $("#dialog-novo" ).dialog("close");
+							 
+							 EncalheAntecipado.desmarcarCheckTodos();
+							 EncalheAntecipado.exibirMensagemSucesso(result);
+						},
+						EncalheAntecipado.tratarErroPesquisaCota,true);	
+			}
+			else{
+				
+				var checkTodos  = $("#sel").attr('checked');
+				
+				if(typeof checkTodos == "undefined" || !checkTodos == 'checked'){
+					
+					listaChamadaEncalheAntecipada  = EncalheAntecipado.obterParametrosGrid(EncalheAntecipado.nameGrid);
+					checkTodos="";
+				}
+				
+				$.postJSON("<c:url value='/devolucao/chamadaEncalheAntecipada/cancelarChamdaEncalheCotas' />",
+						listaChamadaEncalheAntecipada 
+						+ paramProduto
+						+ paramEdicao
+						+ "&cancelarTodos=" + checkTodos  , 
+						function (result){
+					
+							EncalheAntecipado.pesquisarCotasPorProduto();
+							EncalheAntecipado.zerarTotais();
+						
+							EncalheAntecipado.desmarcarCheckTodos();
+							EncalheAntecipado.exibirMensagemSucesso(result);
+							
+							 $("#dialog-cancelamentoCE" ).dialog("close");
+					 
+						}, null,true);
+
+			}
+			
+		},
+		
+		reprogramarAntecipacaoEncalhe:function(){
+			
+			var listaChamadaEncalheAntecipada ="";
+			
+			var dataRecolhimento = $("#dataAntecipacao").val();
+			
+			var paramProduto = "&codigoProduto="+EncalheAntecipado.getHiddenProduto();
+			var paramEdicao = "&numeroEdicao=" +EncalheAntecipado.getHiddenNumeroEdicao();
+			var paramDataRecolhimento = "dataRecolhimento=" +dataRecolhimento;
+			var paramDataProgramada = "&dataProgramada=" + $("#dataProgramada").val();
+			
+			if(EncalheAntecipado.tipoPesquisaGridCota == EncalheAntecipado.tipoPesquisaSelecionado){
+				
+				listaChamadaEncalheAntecipada = EncalheAntecipado.obterParametrosGrid(EncalheAntecipado.nameGridPesquisaCota);
+				
+				$.postJSON("<c:url value='/devolucao/chamadaEncalheAntecipada/reprogramarCotasPesquisa' />",
+						 listaChamadaEncalheAntecipada 
+						 + paramDataRecolhimento
+						 + paramProduto
+						 + paramEdicao
+						 + paramDataProgramada, 
+						 function (result){
+					 
+							 EncalheAntecipado.montarGridPesquisaCotas();
+							 EncalheAntecipado.zerarTotais();
+							 
+							 $("#dialog-novo" ).dialog("close");
+							 
+							 EncalheAntecipado.desmarcarCheckTodos();
+							 EncalheAntecipado.exibirMensagemSucesso(result);
+						},
+						EncalheAntecipado.tratarErroPesquisaCota,true);	
+				 
+			}
+			else {
+				
+				var checkTodos  = $("#sel").attr('checked');
+				
+				if(typeof checkTodos == "undefined" || !checkTodos == 'checked'){
+					
+					listaChamadaEncalheAntecipada  = EncalheAntecipado.obterParametrosGrid(EncalheAntecipado.nameGrid);
+					checkTodos="";
+				}
+			
+				$.postJSON("<c:url value='/devolucao/chamadaEncalheAntecipada/reprogramarCotas' />",
+						listaChamadaEncalheAntecipada 
+						+ paramDataRecolhimento
+						+ paramProduto
+						+ paramEdicao
+						+ paramDataProgramada
+						+ "&gravarTodos=" + checkTodos , 
+						function (result){
+							EncalheAntecipado.pesquisarCotasPorProduto();
+							EncalheAntecipado.zerarTotais();
+							
+							 $("#dialog-novo" ).dialog("close");
+							 
+							 EncalheAntecipado.desmarcarCheckTodos();
+							 EncalheAntecipado.exibirMensagemSucesso(result);
+					 
+						}, null,true);
+			}
+		},
+		
+		processarRenderizacaoDeBotoesCE:function(){
+			
+			if (EncalheAntecipado.getProgramacaoRealizada() == true){
+				$("#bt_cancelar_programacao").show();
+				$("#bt_reprogramar_CE").show();
+				$("#bt_confirmar_novo").hide();
+			}
+			else{
+				$("#bt_cancelar_programacao").hide();
+				$("#bt_reprogramar_CE").hide();
+				$("#bt_confirmar_novo").show();
+			}
+		},
+		
+		exibirDialogCancelamentoCE:function(){
+			
+			if(!EncalheAntecipado.isItensSelecionados()){
+				return;
+			}
+			
+			$("#dialog-cancelamentoCE" ).dialog({
+				resizable: false,
+				height:'auto',
+				width:360,
+				modal: true,
+				buttons: [
+			         {id:"btn_confirma_cancelar_ce",text:"Confirmar",
+		        	  click: function() {
+		        		  EncalheAntecipado.cancelarProgramacaoAntecipacaoEncalhe();	
+		        	  	}
+			         },
+		        	{id:"btn_cancelar_ce",text:"Cancelar",
+			         click:function(){
+		        			$( this ).dialog( "close" );
+		        		}	  
+		        	}  
+				],
+			});
+		},
 		
 	};
 	
-	
 $(function() {
-		
+	
+	    definirAcaoPesquisaTeclaEnter();	
+	
 		$("#dataAntecipacao").datepicker({
 			showOn: "button",
 			buttonImage: "${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
@@ -762,7 +1025,6 @@ $(function() {
 	
 	$("#ceAntecipadaCotaGrid").flexigrid({
 		preProcess:EncalheAntecipado.executarPreProcessamentoGridCota,
-		onSuccess: EncalheAntecipado.formatarCampos,
 		dataType : 'json',
 		colModel : [ {
 			display : 'Cota',
@@ -808,6 +1070,12 @@ $(function() {
 		<p>Confirma a gravação dessas informações? </p>      
 	</div>
 	
+	<div id="dialog-cancelamentoCE" title="CE Antecipada" style="display: none;">
+		<p>Deseja cancelar a Programação da CE Antecipada deste Produto? </p>      
+	</div>
+		
+	
+	
 	<fieldset class="classFieldset">
    	   
    	   <legend> CE Produto</legend>
@@ -822,7 +1090,7 @@ $(function() {
 		    
 		    <td colspan="3">
 		    	
-		    	<input type="text" name="codigoProduto" id="codigoProduto"
+		    	<input type="text" name="codigoProduto" id="codigoProduto" class="campoDePesquisa"
 						   style="width: 80px; float: left; margin-right: 5px;" maxlength="255"
 						   onchange="produto.pesquisarPorCodigoProduto('#codigoProduto', '#produto', '#edicao', false,
 								   									   EncalheAntecipado.pesquisarProdutosSuccessCallBack,
@@ -832,7 +1100,7 @@ $(function() {
 		    
 		    <td width="76">Produto:</td>
 		    <td width="258">
-		    	<input type="text" name="produto" id="produto" style="width: 213px;" maxlength="255"
+		    	<input type="text" name="produto" id="produto" style="width: 213px;" maxlength="255" class="campoDePesquisa"
 					       onkeyup="produto.autoCompletarPorNomeProduto('#produto', false);"
 					       onblur="produto.pesquisarPorNomeProduto('#codigoProduto', '#produto', '#edicao', false,
 					    	   EncalheAntecipado.pesquisarProdutosSuccessCallBack,
@@ -842,21 +1110,21 @@ $(function() {
 		    <td width="45">Edição:</td>
 		    <td width="100">
 		    	
-		    	<input type="text" style="width:70px;" name="edicao" id="edicao" maxlength="20" disabled="disabled"
+		    	<input type="text" style="width:70px;" name="edicao" id="edicao" maxlength="20" disabled="disabled" class="campoDePesquisa"
 						   onchange="produto.validarNumEdicao('#codigoProduto', '#edicao', false,
 						   										EncalheAntecipado.validarEdicaoSuccessCallBack,
 					    	   									EncalheAntecipado.validarEdicaoErrorCallBack);"/>
 		    	
 		    </td>
-		    <td width="110">Data Programada:</td>
-		    <td width="115">
-		    	<input name="dataProgramada" type="text" id="dataProgramada" style="width:95px; text-align:center;" disabled="disabled" />
+		    <td width="200">Data Programada:</td>
+		    <td width="106">
+		    	<input name="dataProgramada" type="text" id="dataProgramada" style="width:95px; text-align:center;" disabled="disabled" class="campoDePesquisa" />
 		    </td>
 		  </tr>
 		  <tr>
 		    <td>Box:</td>
 		    <td colspan="3">
-			    <select name="box" id="box" style="width:100px;">
+			    <select name="box" id="box" style="width:100px;" onchange="EncalheAntecipado.recarregarComboRoteiroRotas(this.value)" class="campoDePesquisa">
 			      <option selected="selected" value="-1"></option>
 			      <option selected="selected">Todos</option>
 			      <c:forEach var="box" items="${listaBoxes}">
@@ -864,23 +1132,52 @@ $(function() {
 				  </c:forEach>
 			    </select>
 			</td>
+			
+			<td width="43">Roteiro:</td>
+		    <td width="198">
+		    	<select class="campoDePesquisa" name="roteiro" id="roteiro" style="width:160px; float:left; margin-right:5px;" onchange="EncalheAntecipado.recarregarComboRotas(this.value)" >
+
+			      <option selected="selected" value="">Todos</option>
+			      <c:forEach var="roteiro" items="${listaRoteiros}">
+							<option value="${roteiro.key}">${roteiro.value}</option>
+				  </c:forEach>
+			    </select>
+		    </td>
+		    <td width="54">Rota:</td>
+		    <td width="242">
+		    	<select class="campoDePesquisa" name="rota" id="rota" style="width:160px; float:left; margin-right:5px;"  >
+
+			      <option selected="selected" value="">Todos</option>
+			      <c:forEach var="rota" items="${listaRotas}">
+							<option value="${rota.key}">${rota.value}</option>
+				  </c:forEach>
+			    </select>
+		    </td>
 		    <td>Fornecedor:</td>
 		    <td>
-		    	<select name="fornecedor" id="fornecedor" style="width:220px;">
+		    	<select class="campoDePesquisa" name="fornecedor" id="fornecedor" style="width:130px;">
+
 		      		<option selected="selected">Todos</option>
 		      		<c:forEach var="fornecedor" items="${listaFornecedores}">
 							<option value="${fornecedor.key}">${fornecedor.value}</option>
 					</c:forEach>
 		    	</select>
 		    </td>
-		    <td>&nbsp;</td>
-		    <td colspan="2">&nbsp;</td>
+		  </tr>
+		  
+		  <tr>
+		  	
+		  	<td align="right" colspan="8"><input class="campoDePesquisa" type="checkbox" id="checkCE" name="checkCE"></td>
+
+		  	<td>Com CE</td>
+		 
 		    <td>
 		    	<span class="bt_pesquisar">
-		    		<a href="javascript:;" onclick="EncalheAntecipado.pesquisar();">Pesquisar</a>
+		    		<a href="javascript:;" onclick="EncalheAntecipado.pesquisar();" id="btn_pesquisa_ce" class="botaoPesquisar">Pesquisar</a>
 		    	</span>
 		    </td>
 		  </tr>
+		  
         </table>
 
 	 </fieldset>
@@ -903,10 +1200,16 @@ $(function() {
 		          <table width="950" border="0" cellspacing="1" cellpadding="1">
 					  
 				  		<tr>
-						   	<td width="448" valign="top">
-							    <span class="bt_confirmar_novo" title="Gravar">
-							    	<a onclick="EncalheAntecipado.exibirDialogData();" href="javascript:;">
+						   	<td width="468" valign="top">
+							    <span class="bt_confirmar_novo" title="Gravar" id="bt_confirmar_novo">
+							    	<a onclick="EncalheAntecipado.exibirDialogData('Novo');" href="javascript:;">
 							    		<img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_check.gif">Gravar
+							    	</a>
+							    </span>
+							    
+							    <span class="bt_confirmar_novo" title="Reprogramar" id="bt_reprogramar_CE" style="display: block;">
+							    	<a onclick="EncalheAntecipado.exibirDialogData('');" href="javascript:;">
+							    		<img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_check.gif">Reprogramar
 							    	</a>
 							    </span>
 							
@@ -921,30 +1224,41 @@ $(function() {
 										<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir
 									</a>
 								</span>
+								
+								<span title="Cancelar Programação" class="bt_novos" id="bt_cancelar_programacao" style="display: block;">
+									<a onclick="EncalheAntecipado.exibirDialogCancelamentoCE();" href="javascript:;">
+										<img hspace="5" border="0" src="${pageContext.request.contextPath}/images/ico_bloquear.gif">Cancelar Programação
+									</a>
+								</span>
+								
 						    </td>
 						      
-						    <td width="452"> 
-							     <div class="box_resumo" style="width: 300px;">
-						          <table width="200" border="0" cellspacing="2" cellpadding="2">
-						            <tr>
-						              	<td width="8"> <strong>Totais</strong></td>
-						              	<td width="178">
-						                  <table width="150" border="0" cellspacing="1" cellpadding="1">
+						    <td width="295">
+						    
+						    	<fieldset class="box_field">
+						          <legend>Totais</legend>
+						          <table width="200" cellspacing="2" cellpadding="2" border="0">
+						            <tbody><tr>
+						              <td width="8">&nbsp;</td>
+						              <td width="178">
+						                <div class="box_resumo">
+						                  <table width="150" cellspacing="1" cellpadding="1" border="0">
+						                    <tbody><tr>
+						                      <td width="83" height="23"><strong>Cotas:</strong></td>
+						                      <td width="60"><input type="text" id="idTotalCotas" style="width:60px; text-align:center;" value="0" disabled="disabled"/></td>
+						                      </tr>
 						                    <tr>
-						                      <td width="73" height="23"><strong>Cotas:</strong></td>
-						                      <td width="70">
-						                      	<input type="text" id="idTotalCotas" style="width:60px; text-align:center;" value="0" disabled="disabled"/>
-						                      </td>
-						                      <td width="70"><strong>Exemplares:</strong></td>
-						                      <td width="70">
-						                      	<input type="text" id="idTotalExemplares" style="width:60px; text-align:center;" value="0"  disabled="disabled"/>
-						                      </td>
-						                    </tr>
-						                    </table>
+						                      <td><strong>Exemplares:</strong></td>
+						                      <td><input type="text" id="idTotalExemplares" style="width:60px; text-align:center;" value="0"  disabled="disabled"/></td>
+						                      </tr>
+						                    </tbody></table>
+						                  </div>
 						                </td>
 						              </tr>
-						            </table>
-					           </div>
+						            </tbody></table>
+						          
+						          </fieldset>
+								
 			          		</td>
 			          		
 			      			<td width="177" valign="top">

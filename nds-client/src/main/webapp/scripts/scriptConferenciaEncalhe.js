@@ -83,7 +83,7 @@ var ConferenciaEncalhe = {
 							null, 
 							function(result){
 								
-								ConferenciaEncalhe.finaliazarConferenciaPreProcess(result);
+								ConferenciaEncalhe.abrirDialogNotaFiscalDivergente(result);
 							}
 					);
 				}, true, "idModalDadosNotaFiscal"
@@ -283,7 +283,7 @@ var ConferenciaEncalhe = {
 		
 	},
 	
-	finaliazarConferenciaPreProcess : function(result){
+	abrirDialogNotaFiscalDivergente : function(result){
 		
 		if (result.mensagens){
 			
@@ -308,11 +308,10 @@ var ConferenciaEncalhe = {
 							if(conteudo.tipoMensagem == 'SUCCESS') {
 								
 								$("#dialog-dadosNotaFiscal").dialog("close");
+
 								
 								if(conteudo.indGeraDocumentoConfEncalheCota == true) {
-	
 									ConferenciaEncalhe.gerarDocumentosConferenciaEncalhe(conteudo.tiposDocumento);
-									
 								}
 								
 								var data = [
@@ -573,13 +572,8 @@ var ConferenciaEncalhe = {
 		
 		if (ultimoCodeBar && ultimoCodeBar != result.codigoDeBarras){
 		
-			$.postJSON(contextPath + '/devolucao/conferenciaEncalhe/carregarListaConferencia', 
-					null, 
-					function(result){
-						
-						ConferenciaEncalhe.preProcessarConsultaConferenciaEncalhe(result);
-					}
-			);
+			ConferenciaEncalhe.carregarListaConferencia(null);
+			
 		}
 		
 		ultimoCodeBar = result.codigoDeBarras;
@@ -738,7 +732,8 @@ var ConferenciaEncalhe = {
 							$("#dialog-notaFiscal").dialog("close");
 							
 							$("#cod_barras").focus();
-						}, null, true, "idModalConfirmarSalvarConf"
+							
+						}, null, true, "dialog-notaFiscal"
 					);
 				},
 				"Cancelar" : function() {
@@ -860,6 +855,7 @@ var ConferenciaEncalhe = {
 				"Confirmar" : function() {
 					
 					$.postJSON(contextPath + '/devolucao/conferenciaEncalhe/salvarConferencia', null,
+						
 						function(result){
 						
 							if(result.tipoMensagem == 'SUCCESS') {

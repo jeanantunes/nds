@@ -141,11 +141,16 @@ function removeSpecialCharacteres(value, extraCharacteres) {
 	return value; 
 }
 
-function serializeObjectToPost(objectName, object) {
-	var obj = {};
+function serializeObjectToPost(objectName, object, obj) {
+	obj = (obj)?obj:new Object();
 	for ( var propriedade in object) {
-		if(object[propriedade]){
-			obj[objectName + '.' + propriedade] = object[propriedade];
+		if(object[propriedade] || object[propriedade] == 0){
+			if(jQuery.isPlainObject(object[propriedade])){
+				serializeObjectToPost(objectName + '.' + propriedade, object[propriedade], obj);
+			}else{
+				obj[objectName + '.' + propriedade] = object[propriedade];
+			}
+			
 		}
 	}
 	return obj;
@@ -584,4 +589,29 @@ function mostra_status(opcao) {
 			grid_2.style.display = "none";   
 		break;   
 	}   
+}
+
+/**
+ * Define botão de pesquisa como comando padrão ao clicar na tecla 'Enter' 
+ * durante preenchimento do filtro de pesquisa.
+ *
+ * 
+ * Necessário para o funcionamento:
+ * Definir a classe css 'botaoPesquisar' no botão de Pesquisa 
+ * Definir a classe css 'campoDePesquisa' nos campos de filtro utilizados.
+ * 
+ * Ex: tipoMovimento/tipoMovimento.jsp
+ */
+function definirAcaoPesquisaTeclaEnter() {
+	
+	$(".campoDePesquisa").bind("keydown", function(event) {
+		  var keycode = (event.keyCode ? event.keyCode : (event.which ? event.which : event.charCode));
+	      if (keycode == 13) { 	    	  
+	    	  $('.botaoPesquisar').click();
+	    	  return false;
+	      } else  {
+	    	  return true;
+	      }
+		
+	});
 }

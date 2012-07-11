@@ -10,9 +10,13 @@ import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+
+import br.com.abril.nds.model.fiscal.NCM;
 
 /**
  * @author francisco.garcia
@@ -40,8 +44,9 @@ public class TipoProduto implements Serializable {
 	@Column(name = "CODIGO", nullable = false, unique = true)
 	private Long codigo;
 	
-	@Column(name = "CODIGO_NCM" , length=8)
-	private Long codigoNCM;
+	@ManyToOne(optional = false)
+	@JoinColumn(name = "NCM_ID")
+	private NCM ncm;
 	
 	@Column(name = "CODIGO_NBM")
 	private String codigoNBM;
@@ -86,12 +91,12 @@ public class TipoProduto implements Serializable {
 		this.codigo = codigo;
 	}
 
-	public Long getCodigoNCM() {
-		return codigoNCM;
+	public NCM getNcm() {
+		return ncm;
 	}
 
-	public void setCodigoNCM(Long codigoNCM) {
-		this.codigoNCM = codigoNCM;
+	public void setNcm(NCM ncm) {
+		this.ncm = ncm;
 	}
 
 	public String getCodigoNBM() {

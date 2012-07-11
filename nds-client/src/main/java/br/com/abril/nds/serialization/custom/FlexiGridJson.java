@@ -3,6 +3,7 @@
  */
 package br.com.abril.nds.serialization.custom;
 
+import java.io.IOException;
 import java.util.List;
 
 import br.com.caelum.vraptor.View;
@@ -26,6 +27,8 @@ public interface FlexiGridJson extends View {
 	public FlexiGridJson total(Integer total);
 	
 	public FlexiGridJson page(Integer page);
-
+	
+	
+	public FlexiGridJson noReference();
 
 }
