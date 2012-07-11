@@ -28,4 +28,18 @@ public interface GeracaoNFeService {
 	Intervalo<Date> intervaloDateMovimento, List<Long> listIdFornecedor, List<Long> listIdProduto, Long idTipoNotaFiscal, String sortname,
 	String sortorder, Integer rp, Integer page);
 
+
+	/**
+	 * Gera nota fiscal
+	 * 
+	 * @param intervaloBox
+	 * @param intervalorCota
+	 * @param intervaloDateMovimento
+	 * @param listIdFornecedor
+	 * @param listIdProduto
+	 * @param idTipoNotaFiscal
+	 * @param dataEmissao
+	 */
+	public abstract void gerarNotaFiscal(Intervalo<String> intervaloBox, Intervalo<Long> intervalorCota,
+			Intervalo<Date> intervaloDateMovimento, List<Long> listIdFornecedor, List<Long> listIdProduto, Long idTipoNotaFiscal, Date dataEmissao);
 }
