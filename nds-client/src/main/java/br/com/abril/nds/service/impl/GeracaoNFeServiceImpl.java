@@ -8,17 +8,20 @@ import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.ConsultaLoteNotaFiscalDTO;
 import br.com.abril.nds.dto.CotaExemplaresDTO;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.fiscal.GrupoNotaFiscal;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
+import br.com.abril.nds.model.fiscal.nota.InformacaoTransporte;
+import br.com.abril.nds.model.fiscal.nota.ItemNotaFiscal;
+import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.TipoNotaFiscalRepository;
-import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.GeracaoNFeService;
 import br.com.abril.nds.service.NotaFiscalService;
-import br.com.abril.nds.service.ProdutoService;
 import br.com.abril.nds.util.Intervalo;
 
 @Service
@@ -34,13 +37,8 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 	@Autowired
 	private CotaRepository cotaRepository;
 	
-	@Autowired
-	private FornecedorService fornecedorService;
-	
-	@Autowired
-	private ProdutoService produtoService;
-	
 	@Override
+	@Transactional
 	public List<CotaExemplaresDTO> busca(Intervalo<String> intervaloBox,
 			Intervalo<Long> intervalorCota,
 			Intervalo<Date> intervaloDateMovimento,
@@ -78,6 +76,40 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 		}
 		
 		return listaCotaExemplares;
+	}
+
+	/* (non-Javadoc)
+	 * @see br.com.abril.nds.service.GeracaoNFeService#gerarNotaFiscal(br.com.abril.nds.util.Intervalo, br.com.abril.nds.util.Intervalo, br.com.abril.nds.util.Intervalo, java.util.List, java.util.List, java.lang.Long)
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	@Transactional
+	public void gerarNotaFiscal(Intervalo<String> intervaloBox,
+			Intervalo<Long> intervalorCota,
+			Intervalo<Date> intervaloDateMovimento,
+			List<Long> listIdFornecedor, List<Long> listIdProduto,
+			Long idTipoNotaFiscal, Date dataEmissao) {
+		
+		List<Long> listaIdCota = (List<Long>) this.cotaRepository.obterIdCotasEntre(intervalorCota);
+		
+		TipoNotaFiscal tipoNotaFiscal = this.tipoNotaFiscalRepository.buscarPorId(idTipoNotaFiscal);
+		
+		GrupoNotaFiscal grupoNotaFiscal = tipoNotaFiscal.getGrupoNotaFiscal();
+		
+		List<NotaFiscal> listaNotaFiscal = new ArrayList<NotaFiscal>();
+		
+		for (Long idCota : listaIdCota) {
+		
+			List<ItemNotaFiscal> listItemNotaFiscal = this.notaFiscalService.obterItensNotaFiscalPor(
+					grupoNotaFiscal, idCota, intervaloDateMovimento, listIdFornecedor, listIdProduto);
+			
+			//FIXME: obter informacaoTransporte
+			InformacaoTransporte transporte = null;
+			
+			this.notaFiscalService.emitiNotaFiscal(idTipoNotaFiscal, dataEmissao, idCota, 
+					listItemNotaFiscal, transporte, null);
+		}
+		
 	}
 	
 	

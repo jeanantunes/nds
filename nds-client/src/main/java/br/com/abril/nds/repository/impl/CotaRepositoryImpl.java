@@ -1049,7 +1049,15 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 		
 		Criteria criteria = super.getSession().createCriteria(Cota.class);
 		criteria.setProjection(Projections.property("id"));
-		criteria.add(Restrictions.between("id", intervaloIdCota.getDe(), intervaloIdCota.getAte()));
+		
+		if (intervaloIdCota != null) {
+			
+			try {
+				criteria.add(Restrictions.between("id", intervaloIdCota.getDe(), intervaloIdCota.getAte()));
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
 		
 		listaIdCotas.addAll(criteria.list());
 		
