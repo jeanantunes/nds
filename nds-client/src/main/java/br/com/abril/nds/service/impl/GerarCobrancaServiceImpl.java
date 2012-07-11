@@ -5,7 +5,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -14,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.client.vo.ValidacaoVO;
+import br.com.abril.nds.exception.GerarCobrancaValidacaoException;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.StatusCobranca;
 import br.com.abril.nds.model.StatusControle;
@@ -114,8 +114,9 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 
 	
 	@Override
-	@Transactional(noRollbackFor = ValidacaoException.class)
-	public Set<String> gerarCobranca(Long idCota, Long idUsuario, boolean indValidaConclusaoOperacaoConferencia) {
+	@Transactional(noRollbackFor = GerarCobrancaValidacaoException.class)
+	public void gerarCobranca(Long idCota, Long idUsuario, boolean indValidaConclusaoOperacaoConferencia, Set<String> setNossoNumero)
+		throws GerarCobrancaValidacaoException{
 		
 		if (indValidaConclusaoOperacaoConferencia) {
 
@@ -136,7 +137,8 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 					this.consolidadoFinanceiroRepository.verificarConsodidadoCotaPorDataOperacao(idCota);
 			
 			if (existeCobranca){
-				throw new ValidacaoException(TipoMensagem.WARNING, "Já foi gerada cobrança para esta cota na data de hoje.");
+				throw new GerarCobrancaValidacaoException(
+						new ValidacaoException(TipoMensagem.WARNING, "Já foi gerada cobrança para esta cota na data de hoje."));
 			}
 		}
 		
@@ -146,9 +148,11 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		PoliticaCobranca politicaPrincipal = this.politicaCobrancaService.obterPoliticaCobrancaPrincipal();
 		
 		if (politicaPrincipal == null){
-			throw new ValidacaoException(TipoMensagem.ERROR, "Politica de cobrança não encontrada.");
+			throw new GerarCobrancaValidacaoException(
+					new ValidacaoException(TipoMensagem.ERROR, "Politica de cobrança não encontrada."));
 		} else if (politicaPrincipal.getFormaCobranca() == null){
-			throw new ValidacaoException(TipoMensagem.ERROR, "Forma de cobrança não encontrada.");
+			throw new GerarCobrancaValidacaoException(
+					new ValidacaoException(TipoMensagem.ERROR, "Forma de cobrança não encontrada."));
 		}
 		
 		//Caso o principal modo de cobrança seja boleto a baixa automática deve ter sido executada
@@ -156,13 +160,12 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			ControleBaixaBancaria controleBaixaBancaria = this.controleBaixaBancariaRepository.obterPorData(new Date());
 			
 			if (controleBaixaBancaria == null || StatusControle.INICIADO.equals(controleBaixaBancaria.getStatus())){
-				throw new ValidacaoException(TipoMensagem.ERROR, "Baixa Automática ainda não executada.");
+				throw new GerarCobrancaValidacaoException(
+						new ValidacaoException(TipoMensagem.ERROR, "Baixa Automática ainda não executada."));
 			}
 		}
 		
 		List<String> msgs = new ArrayList<String>();
-		
-		Set<String> setNossoNumero = new HashSet<String>();
 		
 		// buscar movimentos financeiros da cota, se informada, caso contrario de todas as cotas
 		List<MovimentoFinanceiroCota> listaMovimentoFinanceiroCota = 
@@ -252,10 +255,9 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		
 		if (!msgs.isEmpty()){
 			
-			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, msgs));
+			throw new GerarCobrancaValidacaoException(
+					new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, msgs)));
 		}
-		
-		return setNossoNumero;
 	}
 	
 	private boolean verificarCotaTemBanco(Cota cota, List<String> msgs){

@@ -124,7 +124,7 @@ public class EMS0110Input extends IntegracaoDocument implements Serializable {
 		this.codForncProd = codForncProd;
 	}
 	
-	@Field(offset = 34, length = 9)
+	@Field(offset = 34, length = 8)
 	public String getCodProd() {
 		return codProd;
 	}
@@ -133,7 +133,7 @@ public class EMS0110Input extends IntegracaoDocument implements Serializable {
 		this.codProd = codProd;
 	}
 	
-	@Field(offset = 43, length = 3)
+	@Field(offset = 42, length = 4)
 	public Long getEdicaoProd() {
 		return edicaoProd;
 	}

@@ -15,6 +15,7 @@ import br.com.abril.nds.dto.SumarioLancamentosDTO;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.planejamento.Lancamento;
+import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.vo.PaginacaoVO;
@@ -242,5 +243,18 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 	 * @return Date
 	 */
 	public Date buscarDiaUltimoBalanceamentoRecolhimentoRealizado();
+	
+	/**
+	 * Retorna um lançamento de produto onde as datas de lançamento e recolhimento previstas forem iguais aos parâmetros informados.
+	 * 
+	 * @param codigoProduto - código do produto
+	 * @param dataLancamentoPrevista - data a ser comparada com a data de lançamento prevista
+	 * @param dataRecolhimentoPrevista - data a ser comparada com a data de recolhimento prevista
+	 * @return Lancamento
+	 */
+	public Lancamento obterLancamentoProdutoPorDataLancamentoOuDataRecolhimento(String codigoProduto, Date dataLancamentoPrevista, Date dataRecolhimentoPrevista);
 
+	Long obterQuantidadeLancamentos(StatusLancamento statusLancamento);
+
+	BigDecimal obterConsignadoDia(StatusLancamento statusLancamento);
 }
