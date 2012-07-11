@@ -466,7 +466,7 @@ public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
 		idsLancamento.add(lancamentoQuatroRodas.getId());
 		
 		List<Lancamento> listaLancamento =
-			lancamentoRepository.obterLancamentosPorId(idsLancamento);
+			lancamentoRepository.obterLancamentosPorIdOrdenados(idsLancamento);
 		
 		Assert.assertNotNull(listaLancamento);
 		
