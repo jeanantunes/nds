@@ -158,12 +158,16 @@ public class MatrizLancamentoController {
 		List<ProdutoLancamentoDTO> listaProdutoBalanceamento =
 			new ArrayList<ProdutoLancamentoDTO>();
 		
+		for (Map.Entry<Date,List<ProdutoLancamentoDTO>> entry
+				: balanceamentoLancamento.getMatrizLancamento().entrySet()) {
 		
-		
-		for (Map.Entry<Date,List<ProdutoLancamentoDTO>> entry :
-			balanceamentoLancamento.getMatrizLancamento().entrySet()) {
-		
-			listaProdutoBalanceamento.addAll(entry.getValue());
+			for (ProdutoLancamentoDTO produtoLancamento : entry.getValue()) {
+				
+				if (!produtoLancamento.isLancamentoAgrupado()) {
+					
+					listaProdutoBalanceamento.add(produtoLancamento);
+				}
+			}	
 		}
 		
 		return listaProdutoBalanceamento;
@@ -190,12 +194,12 @@ public class MatrizLancamentoController {
 		TreeMap<Date, List<ProdutoLancamentoDTO>> matrizLancamento =
 			balanceamentoLancamento.getMatrizLancamento();
 		
-		List<ProdutoLancamentoDTO> produtosLancamentoConfirmados =
-			matrizLancamentoService.confirmarMatrizLancamento(matrizLancamento,
+		TreeMap<Date, List<ProdutoLancamentoDTO>> matrizLancamentoConfirmada =
+			matrizLancamentoService.confirmarMatrizLancamento(balanceamentoLancamento,
 															  datasConfirmadas, getUsuario());
 		
 		matrizLancamento =
-			this.atualizarMatizComProdutosConfirmados(matrizLancamento, produtosLancamentoConfirmados);
+			this.atualizarMatizComProdutosConfirmados(matrizLancamento, matrizLancamentoConfirmada);
 		
 		balanceamentoLancamento.setMatrizLancamento(matrizLancamento);
 		
@@ -273,34 +277,23 @@ public class MatrizLancamentoController {
 	 * Método que atualiza a matriz de lançamento de acordo com os produtos confirmados
 	 * 
 	 * @param matrizLancamento - matriz de lançamento
-	 * @param produtosLancamentoConfirmados - lista de produtos confirmados 
+	 * @param matrizLancamentoConfirmada - matriz de lançamento confirmada
 	 * 
 	 * @return matriz atualizada
 	 */
 	private TreeMap<Date, List<ProdutoLancamentoDTO>> atualizarMatizComProdutosConfirmados(
-											TreeMap<Date, List<ProdutoLancamentoDTO>> matrizLancamento,
-											List<ProdutoLancamentoDTO> produtosLancamentoConfirmados) {
+								TreeMap<Date, List<ProdutoLancamentoDTO>> matrizLancamento,
+								TreeMap<Date, List<ProdutoLancamentoDTO>> matrizLancamentoConfirmada) {
 		
-		for (ProdutoLancamentoDTO produtoLancamentoConfirmado : produtosLancamentoConfirmados) {
+		for (Map.Entry<Date, List<ProdutoLancamentoDTO>> entry
+				: matrizLancamentoConfirmada.entrySet()) {
 			
-			List<ProdutoLancamentoDTO> produtosLancamento =
-				matrizLancamento.get(produtoLancamentoConfirmado.getNovaDataLancamento());
+			Date novaData = entry.getKey();
 			
-			for (ProdutoLancamentoDTO produtoLancamento : produtosLancamento) {
-				
-				if (produtoLancamentoConfirmado.getIdLancamento().equals(
-						produtoLancamento.getIdLancamento())) {
-					
-					produtoLancamento.setDataLancamentoDistribuidor(
-						produtoLancamentoConfirmado.getDataLancamentoDistribuidor());
-					
-					produtoLancamento.setStatusLancamento(
-						produtoLancamentoConfirmado.getStatusLancamento().toString());
-					
-					produtoLancamento.setNumeroReprogramacoes(
-						produtoLancamentoConfirmado.getNumeroReprogramacoes());
-				}
-			}
+			List<ProdutoLancamentoDTO> produtosLancamentoConfirmados =
+					matrizLancamentoConfirmada.get(novaData);
+			
+			matrizLancamento.put(novaData, produtosLancamentoConfirmados);
 		}
 		
 		return matrizLancamento;
@@ -602,28 +595,30 @@ public class MatrizLancamentoController {
 			}
 		}
 		
-		//Adicionar no mapa
-		for (ProdutoLancamentoDTO produtoLancamentoDTO : listaProdutoLancamentoAdicionar) {
+		//Adicionar no mapa		
+		for (ProdutoLancamentoDTO produtoLancamentoAdicionar : listaProdutoLancamentoAdicionar) {
 			
-			if (produtoLancamentoDTO.permiteReprogramacao()) {
+			if (produtoLancamentoAdicionar.permiteReprogramacao()) {
 			
-				List<ProdutoLancamentoDTO> listaProdutoLancamentoDTO =
-					matrizLancamento.get(novaData);
+				List<ProdutoLancamentoDTO> produtosLancamento = matrizLancamento.get(novaData);
 				
-				if (listaProdutoLancamentoDTO == null) {
+				if (produtosLancamento == null) {
 					
-					listaProdutoLancamentoDTO = new ArrayList<ProdutoLancamentoDTO>();
+					produtosLancamento = new ArrayList<ProdutoLancamentoDTO>();
 				}
 				
-				listaProdutoLancamentoDTO.add(produtoLancamentoDTO);
+				produtoLancamentoAdicionar.setNovaDataLancamento(novaData);
 				
-				produtoLancamentoDTO.setNovaDataLancamento(novaData);
+				matrizLancamentoService.tratarAgrupamentoPorProdutoDataLcto(
+					produtoLancamentoAdicionar, produtosLancamento);
 				
-				matrizLancamento.put(novaData, listaProdutoLancamentoDTO);
+				produtosLancamento.add(produtoLancamentoAdicionar);
+				
+				matrizLancamento.put(novaData, produtosLancamento);
 				
 			} else {
 				
-				Date dataAntiga = produtoLancamentoDTO.getNovaDataLancamento();
+				Date dataAntiga = produtoLancamentoAdicionar.getNovaDataLancamento();
 				
 				List<ProdutoLancamentoDTO> listaProdutoLancamentoDTO =
 					matrizLancamento.get(dataAntiga);
@@ -633,7 +628,7 @@ public class MatrizLancamentoController {
 					listaProdutoLancamentoDTO = new ArrayList<ProdutoLancamentoDTO>();
 				}
 				
-				listaProdutoLancamentoDTO.add(produtoLancamentoDTO);
+				listaProdutoLancamentoDTO.add(produtoLancamentoAdicionar);
 				
 				matrizLancamento.put(dataAntiga, listaProdutoLancamentoDTO);
 			}
@@ -685,7 +680,7 @@ public class MatrizLancamentoController {
 		List<ProdutoLancamentoVO> listaProdutoBalanceamentoVO = new LinkedList<ProdutoLancamentoVO>();
 		
 		for (ProdutoLancamentoDTO produtoLancamentoDTO : listaProdutoLancamento) {
-
+			
 			listaProdutoBalanceamentoVO.add(getVoProdutoBalanceamento(produtoLancamentoDTO));
 		}
 
@@ -749,10 +744,7 @@ public class MatrizLancamentoController {
 					.compareTo(produtoLancamentoDTO.getNovaDataLancamento()) != 0);
 				
 		return produtoBalanceamentoVO;
-	}
-
-	//----------------------------------------------------------------------------
-	
+	}	
 
 	/**
 	 * Obtém os dados do cabeçalho de exportação.
@@ -965,7 +957,7 @@ public class MatrizLancamentoController {
 				
 				boolean exibeDestaque = false;
 				
-				Long qtdeTitulos = Long.valueOf(listaProdutosRecolhimento.size());
+				Long qtdeTitulos = 0L;
 				Long qtdeTitulosParciais = 0L;
 				
 				BigDecimal pesoTotal = BigDecimal.ZERO;
@@ -973,6 +965,11 @@ public class MatrizLancamentoController {
 				BigDecimal valorTotal = BigDecimal.ZERO;
 				
 				for (ProdutoLancamentoDTO produtoBalanceamento : listaProdutosRecolhimento) {
+					
+					if (produtoBalanceamento.isLancamentoAgrupado()) {
+						
+						continue;
+					}
 					
 					if (produtoBalanceamento.getParcial() != null) {
 						
@@ -993,6 +990,8 @@ public class MatrizLancamentoController {
 						
 						qtdeExemplares = qtdeExemplares.add(produtoBalanceamento.getRepartePrevisto());
 					}
+					
+					qtdeTitulos++;
 				}
 				
 				boolean excedeCapacidadeDistribuidor = false;

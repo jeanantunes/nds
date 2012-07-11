@@ -234,7 +234,7 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		
 		if (!idsLancamento.isEmpty()) {
 		
-			List<Lancamento> listaLancamentos = this.lancamentoRepository.obterLancamentosPorId(idsLancamento);
+			List<Lancamento> listaLancamentos = this.lancamentoRepository.obterLancamentosPorIdOrdenados(idsLancamento);
 			
 			if (listaLancamentos == null || listaLancamentos.isEmpty()) {
 				

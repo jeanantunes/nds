@@ -1,5 +1,7 @@
 package br.com.abril.nds.service.impl;
 
+import static br.com.abril.nds.client.util.BigDecimalUtil.soma;
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -17,7 +19,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import br.com.abril.nds.client.util.BigDecimalUtil;
 import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.dto.ConsultaLoteNotaFiscalDTO;
 import br.com.abril.nds.dto.RetornoNFEDTO;
@@ -75,8 +76,6 @@ import br.com.abril.nds.service.TributacaoService;
 import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.export.fiscal.nota.NFEExporter;
-
-import static br.com.abril.nds.client.util.BigDecimalUtil.soma;
 
 /**
  * Classe de implementação de serviços referentes a entidade
@@ -688,7 +687,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 	
 		List<MovimentoEstoqueCota> listaMovimentoEstoqueCota =
 				this.movimentoEstoqueCotaRepository.obterMovimentoEstoqueCotaPor(
-						idCota, listaGrupoMovimentoEstoque, periodo, listaIdFornecedores, listaIdProduto);
+						idCota, GrupoNotaFiscal.NF_REMESSA_CONSIGNACAO, listaGrupoMovimentoEstoque, periodo, listaIdFornecedores, listaIdProduto);
 		
 		for (MovimentoEstoqueCota movimentoEstoqueCota : listaMovimentoEstoqueCota) {
 			
@@ -719,7 +718,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		
 		List<MovimentoEstoqueCota> listaMovimentoEstoqueCota =
 				this.movimentoEstoqueCotaRepository.obterMovimentoEstoqueCotaPor(
-						idCota, listaGrupoMovimentoEstoque, periodo, listaIdFornecedores, listaIdProduto);
+						idCota, GrupoNotaFiscal.NF_DEVOLUCAO_REMESSA_CONSIGNACAO,  listaGrupoMovimentoEstoque, periodo, listaIdFornecedores, listaIdProduto);
 		
 		for (MovimentoEstoqueCota movimentoEstoqueCota : listaMovimentoEstoqueCota) {
 			
