@@ -1056,7 +1056,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 		}
 		
 		if(intervaloBox != null){
-			criteria.add(Restrictions.between("box.nome", intervaloBox.getDe(),
+			criteria.add(Restrictions.between("box.codigo", intervaloBox.getDe(),
 					intervaloBox.getAte()));
 		}
 		if(situacao != null){
