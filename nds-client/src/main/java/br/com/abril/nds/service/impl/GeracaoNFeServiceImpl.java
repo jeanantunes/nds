@@ -16,13 +16,12 @@ import br.com.abril.nds.dto.ConsultaLoteNotaFiscalDTO;
 import br.com.abril.nds.dto.CotaExemplaresDTO;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
-import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.fiscal.GrupoNotaFiscal;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.InformacaoTransporte;
 import br.com.abril.nds.model.fiscal.nota.ItemNotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
-import br.com.abril.nds.model.fiscal.nota.ProdutoServico;
+import br.com.abril.nds.model.fiscal.nota.NotaFiscalReferenciada;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.NotaFiscalRepository;
 import br.com.abril.nds.repository.ProdutoServicoRepository;
@@ -86,6 +85,7 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 			cotaExemplares.setNumeroCota(cota.getNumeroCota());
 			
 			listaCotaExemplares.add(cotaExemplares);
+			
 		}
 		
 		return listaCotaExemplares;
@@ -94,7 +94,6 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 	/* (non-Javadoc)
 	 * @see br.com.abril.nds.service.GeracaoNFeService#gerarNotaFiscal(br.com.abril.nds.util.Intervalo, br.com.abril.nds.util.Intervalo, br.com.abril.nds.util.Intervalo, java.util.List, java.util.List, java.lang.Long)
 	 */
-	@SuppressWarnings("unchecked")
 	@Override
 	@Transactional
 	public void gerarNotaFiscal(Intervalo<String> intervaloBox,
@@ -112,15 +111,18 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 		List<NotaFiscal> listaNotaFiscal = new ArrayList<NotaFiscal>();
 		
 		for (Long idCota : listaIdCota) {
-		
-			List<ItemNotaFiscal> listItemNotaFiscal = this.notaFiscalService.obterItensNotaFiscalPor(
-					grupoNotaFiscal, idCota, intervaloDateMovimento, listIdFornecedor, listIdProduto);
 			
-			//FIXME: obter informacaoTransporte
-			InformacaoTransporte transporte = null;
+			Cota cota = this.cotaRepository.buscarPorId(idCota);
+			
+			List<ItemNotaFiscal> listItemNotaFiscal = this.notaFiscalService.obterItensNotaFiscalPor(
+					grupoNotaFiscal, cota, intervaloDateMovimento, listIdFornecedor, listIdProduto);
+			
+			List<NotaFiscalReferenciada> listaNotasFiscaisReferenciadas = this.notaFiscalService.obterNotasReferenciadas(listItemNotaFiscal);
+			
+			InformacaoTransporte transporte = this.notaFiscalService.obterTransporte(idCota);
 			
 			Long idNotaFiscal = this.notaFiscalService.emitiNotaFiscal(idTipoNotaFiscal, dataEmissao, idCota, 
-					listItemNotaFiscal, transporte, null);
+					listItemNotaFiscal, transporte, null, listaNotasFiscaisReferenciadas);
 			
 			NotaFiscal notaFiscal = this.notaFiscalRepository.buscarPorId(idNotaFiscal);
 			
@@ -131,5 +133,6 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 		
 		this.notaFiscalService.exportarNotasFiscais(listaNotaFiscal);
 	}
-		
+	
+	
 }

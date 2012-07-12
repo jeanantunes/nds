@@ -33,9 +33,6 @@ public class ItemNotaFiscal {
 		this.cstICMS = cstICMS;
 	}
 
-
-
-
 	/**
 	 * @return the idProdutoEdicao
 	 */
@@ -106,6 +103,7 @@ public class ItemNotaFiscal {
 			List<MovimentoEstoqueCota> listaMovimentoEstoqueCota) {
 		this.listaMovimentoEstoqueCota = listaMovimentoEstoqueCota;
 	}
+
 
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
