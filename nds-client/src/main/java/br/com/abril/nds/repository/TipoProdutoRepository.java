@@ -53,4 +53,10 @@ public interface TipoProdutoRepository extends Repository<TipoProduto, Long> {
 	 */
 	public abstract Long getMaxCodigo();
 	
+	/**
+	 * Obtem tipo de produto por código
+	 * @param codigo
+	 * @return TipoProduto
+	 */
+	public abstract TipoProduto obterPorCodigo(Long codigo);
 }

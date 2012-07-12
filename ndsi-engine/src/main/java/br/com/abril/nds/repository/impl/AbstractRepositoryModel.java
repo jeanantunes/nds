@@ -26,8 +26,8 @@ public abstract class AbstractRepositoryModel<T, K extends Serializable> extends
 		this.clazz = clazz;
 	}
 	
-	public void adicionar(T entity) {
-		getSession().save(entity);		
+	public K adicionar(T entity) {
+		return (K) getSession().save(entity);		
 	}
 	
 	public void remover(T entity) {

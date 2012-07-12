@@ -133,6 +133,16 @@ public class ImportacaoController {
 
 			listaErros.add("");
 			
+			listaErros.add("- Conteúdo da linha: "+retorno.getConteudoLinha());
+			
+			listaErros.add("");
+			
+			if(retorno.getMotivoDoErro().length > 0){
+				
+				listaErros.add(" Motivo(s) do erro: ");
+				listaErros.add("");
+			}
+			
 			for (String motivo : retorno.getMotivoDoErro()) {
 				
 				listaErros.add("- " + motivo);

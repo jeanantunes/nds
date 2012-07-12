@@ -650,6 +650,10 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 			
 	}
 	
+	public void setUpMovimentosNotaFiscal(){
+		
+	}
+	
 	@Test
 	public void testObterQtdProdutoEdicaoEncalhePrimeiroDia() {
 		
@@ -949,7 +953,7 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 	}
 	
 	@Test
-	public void obterItensToNotaFiscal() {
+	public void obterMovimentoEstoqueCotaPor() {
 		
 		setUpForContagemDevolucao();
 		
@@ -969,7 +973,7 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		periodo.setDe(DateUtil.parseData("01/01/2012", "dd/MM/yyyy"));
 		periodo.setAte(DateUtil.parseData("01/01/2013", "dd/MM/yyyy"));
 		
-		List<MovimentoEstoqueCota> listaMovimentoEstoqueCota = this.movimentoEstoqueCotaRepository.obterMovimentoEstoqueCotaPor(cotaManoel.getId(), listaGrupoMovimentoEstoques, periodo, listaFornecedores, listaProdutos);
+		List<MovimentoEstoqueCota> listaMovimentoEstoqueCota = this.movimentoEstoqueCotaRepository.obterMovimentoEstoqueCotaPor(cotaManoel.getId(), tipoNotaFiscal.getGrupoNotaFiscal(), listaGrupoMovimentoEstoques, periodo, listaFornecedores, listaProdutos);
 		
 		int tamanhoEsperado = 5;
 		

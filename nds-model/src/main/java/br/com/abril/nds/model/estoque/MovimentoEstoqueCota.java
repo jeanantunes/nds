@@ -4,14 +4,12 @@ import java.util.List;
 
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinColumns;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import br.com.abril.nds.model.cadastro.Cota;
-import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.fiscal.nota.ProdutoServico;
 import br.com.abril.nds.model.movimentacao.AbstractMovimentoEstoque;
 import br.com.abril.nds.model.planejamento.EstudoCota;
@@ -37,7 +35,7 @@ public class MovimentoEstoqueCota  extends AbstractMovimentoEstoque {
 	private EstudoCota estudoCota;
 	
 	@ManyToMany(mappedBy="listaMovimentoEstoqueCota", targetEntity=ProdutoServico.class)
-	private List<ProdutoEdicao> listaProdutoEdicao;
+	private List<ProdutoServico> listaProdutoServicos;
 	
 	public Cota getCota() {
 		return cota;
@@ -68,5 +66,19 @@ public class MovimentoEstoqueCota  extends AbstractMovimentoEstoque {
 	public void setEstudoCota(EstudoCota estudoCota) {
 		this.estudoCota = estudoCota;
 	}
-	
+
+	/**
+	 * @return the listaProdutoServicos
+	 */
+	public List<ProdutoServico> getListaProdutoServicos() {
+		return listaProdutoServicos;
+	}
+
+	/**
+	 * @param listaProdutoServicos the listaProdutoServicos to set
+	 */
+	public void setListaProdutoServicos(List<ProdutoServico> listaProdutoServicos) {
+		this.listaProdutoServicos = listaProdutoServicos;
+	}
+
 }
