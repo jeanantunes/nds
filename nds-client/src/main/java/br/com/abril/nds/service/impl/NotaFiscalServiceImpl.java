@@ -70,6 +70,7 @@ import br.com.abril.nds.model.fiscal.nota.RetornoComunicacaoEletronica;
 import br.com.abril.nds.model.fiscal.nota.Status;
 import br.com.abril.nds.model.fiscal.nota.StatusProcessamentoInterno;
 import br.com.abril.nds.model.fiscal.nota.Veiculo;
+import br.com.abril.nds.model.fiscal.nota.pk.NotaFiscalReferenciadaPK;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.EnderecoRepository;
@@ -833,11 +834,11 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 			
 			BigDecimal quantidade = movimentoEstoqueCota.getQtde();
 			
-			List<String> listaNotasReferenciadas = this.obterNotasReferenciadas(movimentoEstoqueCota);
-			
 			List<MovimentoEstoqueCota> listaMovimentoEstoqueItem = new ArrayList<MovimentoEstoqueCota>();
 			
 			listaMovimentoEstoqueItem.add(movimentoEstoqueCota);
+			
+			List<NotaFiscalReferenciada> listaNotasReferenciadas = this.obterNotasReferenciadas(movimentoEstoqueCota);
 			
 			if (grupoMovimento.getDominio().equals(Dominio.COTA) && 
 					grupoMovimento.getOperacaoEstoque().equals(OperacaoEstoque.SAIDA)) {
@@ -848,7 +849,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 				ItemNotaFiscal item = mapItemNotaFiscal.get(produtoEdicao.getId());
 				quantidade = quantidade.add(item.getQuantidade());
 				listaMovimentoEstoqueItem.addAll(item.getListaMovimentoEstoqueCota());
-				listaNotasReferenciadas.addAll(item.getListaChaveAcessoNotaReferenciada());
+				listaNotasReferenciadas.addAll(item.getListaNotasReferenciadas());
 			}
 			
 			ItemNotaFiscal itemNotaFiscal = new ItemNotaFiscal();
@@ -858,7 +859,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 			itemNotaFiscal.setQuantidade(quantidade);
 			itemNotaFiscal.setValorUnitario(valorUnitario);
 			itemNotaFiscal.setListaMovimentoEstoqueCota(listaMovimentoEstoqueItem);
-			itemNotaFiscal.setListaChaveAcessoNotaReferenciada(listaNotasReferenciadas);
+			itemNotaFiscal.setListaNotasReferenciadas(listaNotasReferenciadas);
 			
 			mapItemNotaFiscal.put(produtoEdicao.getId(), itemNotaFiscal);
 		}
@@ -928,9 +929,9 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 	 * @param movimentoEstoqueCota movimento estoque cota
 	 * @return
 	 */
-	private List<String> obterNotasReferenciadas(MovimentoEstoqueCota movimentoEstoqueCota) {
+	private List<NotaFiscalReferenciada> obterNotasReferenciadas(MovimentoEstoqueCota movimentoEstoqueCota) {
 		
-		List<String> listaChaveAcessoNotaReferenciada = new ArrayList<String>();
+		List<NotaFiscalReferenciada> notaFiscalReferenciada = new ArrayList<NotaFiscalReferenciada>();
 		
 		List<ProdutoServico> listaProdutoServicos = movimentoEstoqueCota.getListaProdutoServicos();
 		
@@ -945,12 +946,25 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 					GrupoNotaFiscal grupoNotaFiscal = notaFiscal.getIdentificacao().getTipoNotaFiscal().getGrupoNotaFiscal();
 					
 					if (GrupoNotaFiscal.NF_REMESSA_CONSIGNACAO.equals(grupoNotaFiscal)) {
-						listaChaveAcessoNotaReferenciada.add(notaFiscal.getInformacaoEletronica().getChaveAcesso());
+
+						notaFiscalReferenciada.add(this.converterNotaFiscalToNotaFiscalReferenciada(notaFiscal));
 					}
 				}
 			}
 		}
 		
-		return listaChaveAcessoNotaReferenciada;
+		return notaFiscalReferenciada;
+	}
+	
+	/* (non-Javadoc)
+	 * @see br.com.abril.nds.service.NotaFiscalService#converterNotaFiscalToNotaFiscalReferenciada(br.com.abril.nds.model.fiscal.nota.NotaFiscal)
+	 */
+	@Override
+	@Transactional
+	public NotaFiscalReferenciada converterNotaFiscalToNotaFiscalReferenciada(NotaFiscal notaFiscal) {
+		
+		NotaFiscalReferenciada notaReferenciada = new NotaFiscalReferenciada();
+		//TODO: popular nota referenciada
+		return notaReferenciada;
 	}
 }

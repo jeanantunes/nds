@@ -21,7 +21,7 @@ public class ItemNotaFiscal {
 	
 	private List<MovimentoEstoqueCota> listaMovimentoEstoqueCota; 
 	
-	private List<String> listaChaveAcessoNotaReferenciada;
+	private List<NotaFiscalReferenciada> listaNotasReferenciadas;
 	
 	public ItemNotaFiscal() {
 	}
@@ -34,9 +34,6 @@ public class ItemNotaFiscal {
 		this.valorUnitario = valorUnitario;
 		this.cstICMS = cstICMS;
 	}
-
-
-
 
 	/**
 	 * @return the idProdutoEdicao
@@ -110,18 +107,18 @@ public class ItemNotaFiscal {
 	}
 
 	/**
-	 * @return the listaChaveAcessoNotaReferenciada
+	 * @return the listaNotasReferenciadas
 	 */
-	public List<String> getListaChaveAcessoNotaReferenciada() {
-		return listaChaveAcessoNotaReferenciada;
+	public List<NotaFiscalReferenciada> getListaNotasReferenciadas() {
+		return listaNotasReferenciadas;
 	}
 
 	/**
-	 * @param listaChaveAcessoNotaReferenciada the listaChaveAcessoNotaReferenciada to set
+	 * @param listaNotasReferenciadas the listaNotasReferenciadas to set
 	 */
-	public void setListaChaveAcessoNotaReferenciada(
-			List<String> listaChaveAcessoNotaReferenciada) {
-		this.listaChaveAcessoNotaReferenciada = listaChaveAcessoNotaReferenciada;
+	public void setListaNotasReferenciadas(
+			List<NotaFiscalReferenciada> listaNotasReferenciadas) {
+		this.listaNotasReferenciadas = listaNotasReferenciadas;
 	}
 
 	/* (non-Javadoc)
