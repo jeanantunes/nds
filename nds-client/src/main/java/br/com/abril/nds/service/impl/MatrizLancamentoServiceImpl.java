@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.client.util.BigDecimalUtil;
 import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.dto.BalanceamentoLancamentoDTO;
 import br.com.abril.nds.dto.DadosBalanceamentoLancamentoDTO;
@@ -75,13 +76,10 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 	@Override
 	@Transactional
 	public TreeMap<Date, List<ProdutoLancamentoDTO>> confirmarMatrizLancamento(
-													BalanceamentoLancamentoDTO balanceamentoLancamento, 
+													TreeMap<Date, List<ProdutoLancamentoDTO>> matrizLancamento,
 													List<Date> datasConfirmadas, Usuario usuario) {
 		
-		TreeMap<Date, List<ProdutoLancamentoDTO>> matrizLancamento =
-			balanceamentoLancamento.getMatrizLancamento();
-		
-		this.validarDadosConfirmacao(balanceamentoLancamento);
+		this.validarDadosConfirmacao(matrizLancamento);
 
 		Map<Long, ProdutoLancamentoDTO> mapaLancamento =
 				new TreeMap<Long, ProdutoLancamentoDTO>();
@@ -125,11 +123,9 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 		return matrizLancamentoConfirmada;
 	}
 
-	private void validarDadosConfirmacao(BalanceamentoLancamentoDTO balanceamentoLancamento) {
+	private void validarDadosConfirmacao(TreeMap<Date, List<ProdutoLancamentoDTO>> matrizLancamento) {
 		
-		if (balanceamentoLancamento == null
-				|| balanceamentoLancamento.getMatrizLancamento() == null
-				|| balanceamentoLancamento.getMatrizLancamento().isEmpty()) {
+		if (matrizLancamento == null || matrizLancamento.isEmpty()) {
 
 			throw new ValidacaoException(TipoMensagem.WARNING, "Matriz de lançamento não informada!");
 		}
@@ -183,7 +179,7 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 			this.montarMatrizLancamentosConfirmados(matrizLancamentoConfirmada, produtoLancamento,
 													lancamento, novaData);
 			
-			this.lancamentoRepository.merge(lancamento);
+			this.lancamentoRepository.merge(lancamento);	
 		}
 		
 		return matrizLancamentoConfirmada;
@@ -213,8 +209,25 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 		
 		lancamentoAtualizar.setRecebimentos(
 			this.agruparRecebimentos(lancamentoAtualizar, lancamentoAgrupar));
+		
+		this.agruparLancamento(lancamentoAtualizar, lancamentoAgrupar);
 	}
+	
+	private void agruparLancamento(Lancamento lancamentoAtualizar,
+								   Lancamento lancamentoAgrupar) {
 
+		BigDecimal somaReparte =
+			BigDecimalUtil.soma(lancamentoAtualizar.getReparte(), lancamentoAgrupar.getReparte());
+		
+		lancamentoAtualizar.setReparte(somaReparte);
+		
+		BigDecimal somaRepartePromocional =
+			BigDecimalUtil.soma(lancamentoAtualizar.getRepartePromocional(),
+								lancamentoAgrupar.getRepartePromocional());
+			
+		lancamentoAtualizar.setRepartePromocional(somaRepartePromocional);
+	}
+	
 	private Estudo agruparEstudo(Lancamento lancamentoAtualizar,
 								 Lancamento lancamentoAgrupar) {
 		
@@ -226,15 +239,15 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 		
 			return estudoAtualizar;
 		}
-			
-		Set<EstudoCota> estudoCotasAgrupar = estudoAgrupar.getEstudoCotas();
 		
-		if (estudoCotasAgrupar == null || estudoCotasAgrupar.isEmpty()) {
+		if (estudoAtualizar != null) {
+		
+			BigDecimal somaQtdeReparte =
+				BigDecimalUtil.soma(estudoAtualizar.getQtdeReparte(), estudoAgrupar.getQtdeReparte());
 			
-			return estudoAtualizar;
-		}
-			
-		if (estudoAtualizar == null) {
+			estudoAtualizar.setQtdeReparte(somaQtdeReparte);
+		
+		} else {
 			
 			estudoAtualizar = new Estudo();
 			
@@ -243,15 +256,23 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 			estudoAtualizar.setQtdeReparte(estudoAgrupar.getQtdeReparte());
 		}
 		
+		Set<EstudoCota> estudoCotasAgrupar = estudoAgrupar.getEstudoCotas();
+		
+		if (estudoCotasAgrupar == null || estudoCotasAgrupar.isEmpty()) {
+			
+			return estudoAtualizar;
+		}
+		
 		Set<EstudoCota> estudoCotasAtualizar = estudoAtualizar.getEstudoCotas();
 		
 		estudoAtualizar.setEstudoCotas(
-			this.agruparEstudoCota(estudoCotasAtualizar, estudoCotasAgrupar));
+			this.agruparEstudoCota(estudoAtualizar, estudoCotasAtualizar, estudoCotasAgrupar));
 		
 		return estudoAtualizar;
 	}
 	
-	private Set<EstudoCota> agruparEstudoCota(Set<EstudoCota> estudoCotasAtualizar,
+	private Set<EstudoCota> agruparEstudoCota(Estudo estudoAtualizar,
+											  Set<EstudoCota> estudoCotasAtualizar,
  			  								  Set<EstudoCota> estudoCotasAgrupar) {
 		
 		for (EstudoCota estudoCotaAgrupar : estudoCotasAgrupar) {
@@ -280,7 +301,15 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 			}
 			
 			if (!existeEstudoCota) {
-				estudoCotasAtualizar.add(estudoCotaAgrupar);
+				
+				EstudoCota estudoCotaAtualizar = new EstudoCota();
+				
+				estudoCotaAtualizar.setCota(estudoCotaAgrupar.getCota());
+				estudoCotaAtualizar.setQtdeEfetiva(estudoCotaAgrupar.getQtdeEfetiva());
+				estudoCotaAtualizar.setQtdePrevista(estudoCotaAgrupar.getQtdePrevista());
+				estudoCotaAtualizar.setEstudo(estudoAtualizar);
+				
+				estudoCotasAtualizar.add(estudoCotaAtualizar);
 			}
 		}
 		
@@ -294,7 +323,7 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 		
 		Set<ItemRecebimentoFisico> recebimentosAgrupar = lancamentoAgrupar.getRecebimentos();
 		
-		if (recebimentosAgrupar == null) {//TODO
+		if (recebimentosAgrupar == null || recebimentosAgrupar.isEmpty()) {
 			
 			return recebimentosAtualizar;
 		}
@@ -310,30 +339,51 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 	}
 
 	private void tratarLancamentosAgrupadosParaConfirmacao(Lancamento lancamentoAtualizar,
-										 	Date novaData,
-										 	List<Lancamento> lancamentos,
-										 	Map<Long, ProdutoLancamentoDTO> mapaLancamento) {
+										 				   Date novaData,
+										 				   List<Lancamento> lancamentos,
+										 				   Map<Long, ProdutoLancamentoDTO> mapaLancamento) {
+		
+		ProdutoLancamentoDTO produtoLancamento = mapaLancamento.get(lancamentoAtualizar.getId());
+		
+		for (ProdutoLancamentoDTO produtoLancamentoAgrupado
+				: produtoLancamento.getProdutosLancamentoAgrupados()) {
+			
+			Lancamento lancamentoAgrupar =
+				this.obterLancamentoDaLista(produtoLancamentoAgrupado.getIdLancamento(),
+										    lancamentos);
+			
+			this.efetivarAgrupamentoLancamento(lancamentoAtualizar, lancamentoAgrupar);
+			
+			try {
+				
+				lancamentoRepository.remover(lancamentoAgrupar);
+			
+			} catch (Exception e) {
+				
+				throw new ValidacaoException(TipoMensagem.WARNING,
+					"Erro ao excluir o lançamento do Produto: "
+						+ produtoLancamento.getNomeProduto()
+						+ " - Edição: " + produtoLancamento.getNumeroEdicao());
+			}
+		}
+		
+		produtoLancamento.getProdutosLancamentoAgrupados().clear();
+	}
+	
+	private Lancamento obterLancamentoDaLista(Long idLancamento,
+											  List<Lancamento> lancamentos) {
 		
 		for (Lancamento lancamento : lancamentos) {
 			
-			ProdutoLancamentoDTO produtoLancamento = mapaLancamento.get(lancamento.getId());
-			
-			if (!lancamentoAtualizar.getId().equals(produtoLancamento.getIdLancamento())
-					&& lancamentoAtualizar.getProdutoEdicao().getId().equals(produtoLancamento.getIdProdutoEdicao())
-					&& novaData.compareTo(produtoLancamento.getNovaDataLancamento()) == 0) {
+			if (lancamento.getId().equals(idLancamento)) {
 				
-				this.efetivarAgrupamentoLancamento(lancamentoAtualizar, lancamento);
-				
-				lancamentoRepository.remover(lancamento);
-				
-				if (lancamento.getRecebimentos() != null && !lancamento.getRecebimentos().isEmpty()) {
-					
-					
-				}
+				return lancamento;
 			}
 		}
+		
+		return null;
 	}
-	
+
 	private void alterararLancamento(ProdutoLancamentoDTO produtoLancamento,
 									 Lancamento lancamento, Date novaData) {
 		
@@ -998,6 +1048,14 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 		produtoLancamento.setRepartePrevisto(repartePreviso);
 		produtoLancamento.setReparteFisico(reparteFisico.add(reparteFisicoAgrupar));
 		produtoLancamento.setValorTotal(valorTotal);
+		
+		if (!produtoLancamentoAgrupar.getProdutosLancamentoAgrupados().isEmpty()) {
+			
+			produtoLancamento.getProdutosLancamentoAgrupados().addAll(
+				produtoLancamentoAgrupar.getProdutosLancamentoAgrupados());
+		}
+		
+		produtoLancamento.getProdutosLancamentoAgrupados().add(produtoLancamentoAgrupar);
 		
 		produtoLancamentoAgrupar.setLancamentoAgrupado(true);
 	}

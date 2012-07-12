@@ -20,6 +20,9 @@ var lancamentosSelecionados = [];
 
 
 $(function() {
+	
+	B.definirAcaoPesquisaTeclaEnter();
+	
 	$("#lancamentosProgramadosGrid").flexigrid({
 		colModel : [  {
 			display : 'Código',
@@ -312,13 +315,13 @@ function reprogramarSelecionados() {
 		            
 		            </td>
 		   	        <td colspan="3">Data de Lançamento Matriz/Distribuidor:</td>
-		   	        <td width="109"><input type="text" name="datepickerDe" id="datepickerDe" style="width:80px;" value="${data}" /></td>
+		   	        <td width="109"><input class="campoDePesquisa" type="text" name="datepickerDe" id="datepickerDe" style="width:80px;" value="${data}" /></td>
 		   	        <td width="47" align="center">&nbsp;</td>
 		   	        <td width="112">&nbsp;</td>
 		   	        <td width="104"><span class="bt_pesquisar" title="Pesquisar">
 		   	        
 <!-- Pesquisar -->
-<a id="linkPesquisar" href="javascript:;" onclick="B.verificarBalanceamentosAlterados(B.pesquisar);">Pesquisar</a></span></td>
+<a class="botaoPesquisar" id="linkPesquisar" href="javascript:;" onclick="B.verificarBalanceamentosAlterados(B.pesquisar);">Pesquisar</a></span></td>
 
 
 
