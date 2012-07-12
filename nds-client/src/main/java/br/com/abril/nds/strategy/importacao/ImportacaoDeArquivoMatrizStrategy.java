@@ -9,10 +9,12 @@ import java.util.Date;
 import java.util.Scanner;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import br.com.abril.nds.exception.ImportacaoException;
+import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.ems0108.inbound.EMS0108Input;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.planejamento.Lancamento;
@@ -20,9 +22,11 @@ import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.service.vo.RetornoImportacaoArquivoVO;
 import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.util.TipoMensagem;
 
 import com.ancientprogramming.fixedformat4j.exception.FixedFormatException;
 import com.ancientprogramming.fixedformat4j.format.FixedFormatManager;
+import com.ancientprogramming.fixedformat4j.format.ParseException;
 
 /**
  * Estratégia de importação de arquivos referente a Matriz de recolhimento e lançamento.
@@ -32,6 +36,10 @@ import com.ancientprogramming.fixedformat4j.format.FixedFormatManager;
  */
 @Component("importacaoDeArquivoMatrizStrategy")
 public class ImportacaoDeArquivoMatrizStrategy implements ImportacaoArquivoStrategy {
+	
+	private static final Logger logger = Logger.getLogger(ImportacaoDeArquivoMatrizStrategy.class);
+	
+	private static final String NOME_ARQUIVO_MATRIZ = "MATRIZ.NEW";
 	
 	@Autowired
 	private FixedFormatManager ffm;
@@ -45,10 +53,15 @@ public class ImportacaoDeArquivoMatrizStrategy implements ImportacaoArquivoStrat
 	@Override
 	public RetornoImportacaoArquivoVO processarImportacaoArquivo(File arquivo) {
 		
+		if(!NOME_ARQUIVO_MATRIZ.equals(arquivo.getPath())){
+			throw new ValidacaoException(TipoMensagem.WARNING, "Aquivo informado não é valido para o tipo de importação!");
+		}
+		
 		FileReader in = null;
 		try {
 			in = new FileReader(arquivo);
 		} catch (FileNotFoundException ex) {
+			logger.fatal("Erro na leitura de arquivo", ex);
 			throw new ImportacaoException(ex.getMessage());
 		}
 		
@@ -73,13 +86,16 @@ public class ImportacaoDeArquivoMatrizStrategy implements ImportacaoArquivoStrat
 				
 			} catch (ImportacaoException e) {
 				
-				return new RetornoImportacaoArquivoVO(new String[]{e.getMessage()},linhaArquivo,linha,false);
+				RetornoImportacaoArquivoVO retorno = new RetornoImportacaoArquivoVO(new String[]{e.getMessage()},linhaArquivo,linha,false);
+				logger.error(retorno.toString());
+				return retorno; 
 			}
 		}
 		
 		try {
 			in.close();
 		} catch (IOException e) {
+			logger.fatal("Erro na leitura de arquivo", e);
 			throw new ImportacaoException(e.getMessage());
 		}
 		
@@ -107,8 +123,11 @@ public class ImportacaoDeArquivoMatrizStrategy implements ImportacaoArquivoStrat
 		try{
 			
 			return (EMS0108Input) this.ffm.load(EMS0108Input.class, linhaArquivo);
-			
-		}catch (FixedFormatException ef) {
+		}
+		catch (ParseException e) {
+			throw new ImportacaoException("Parse das informações contidas na linha do arquivo inválida!");	
+		}	
+		catch (FixedFormatException ef) {
 			
 			throw new ImportacaoException("Formato das informações contidas na linha do arquivo inválida!");
 		}
