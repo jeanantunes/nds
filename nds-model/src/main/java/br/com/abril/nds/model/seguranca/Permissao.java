@@ -6,7 +6,7 @@ package br.com.abril.nds.model.seguranca;
  */
 public enum Permissao {
 
-	ROLE_CADASTRO("Cadastro", 												 						  	 0, null),
+ 	ROLE_CADASTRO("Cadastro", 												 						  	 0, null),
 	ROLE_CADASTRO_PRODUTO("Produto", 										 						  	 0, Permissao.ROLE_CADASTRO),
 	ROLE_CADASTRO_EDICAO("Edição", 											 						  	 1, Permissao.ROLE_CADASTRO),
 	ROLE_CADASTRO_BANCO("Banco", 											 						  	 2, Permissao.ROLE_CADASTRO),
@@ -119,4 +119,28 @@ public enum Permissao {
 		return this.descricao;
 	}
 
+	public String getDescricao() {
+		return descricao;
+	}
+
+	public void setDescricao(String descricao) {
+		this.descricao = descricao;
+	}
+
+	public int getOrdem() {
+		return ordem;
+	}
+
+	public void setOrdem(int ordem) {
+		this.ordem = ordem;
+	}
+
+	public Permissao getPermissaoPai() {
+		return permissaoPai;
+	}
+
+	public void setPermissaoPai(Permissao permissaoPai) {
+		this.permissaoPai = permissaoPai;
+	}
+	
 }
