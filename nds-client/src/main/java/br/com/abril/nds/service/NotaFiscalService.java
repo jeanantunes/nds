@@ -102,4 +102,28 @@ public interface NotaFiscalService {
 	 */
 	List<ItemNotaFiscal> obterItensNotaFiscalPor(GrupoNotaFiscal grupoNotaFiscal, 
 			Cota cota, Intervalo<Date> periodo, List<Long> listaIdFornecedores, List<Long> listaIdProdutos);
+	
+	/**
+	 * Cria uma nota fiscal referenciada a partir de uma nota fiscal
+	 * 
+	 * @param notaFiscal
+	 * @return notaFiscaReferenciada
+	 */
+	NotaFiscalReferenciada converterNotaFiscalToNotaFiscalReferenciada(NotaFiscal notaFiscal);
+	
+	/**
+	 * Obtém informações de transpote pela Cota
+	 * 
+	 * @param idCota id da cota
+	 * @return InformacaoTransporte
+	 */
+	InformacaoTransporte obterTransporte(Long idCota);
+	
+	/**
+	 * Obtem Notas Referenciadas por itens da nota.
+	 * 
+	 * @param listaItensNotaFiscal 
+	 * @return lista de notas referenciadas.
+	 */
+	List<NotaFiscalReferenciada> obterNotasReferenciadas(List<ItemNotaFiscal> listaItensNotaFiscal); 
 }
