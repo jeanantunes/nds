@@ -21,6 +21,8 @@ public class ItemNotaFiscal {
 	
 	private List<MovimentoEstoqueCota> listaMovimentoEstoqueCota; 
 	
+	private List<String> listaChaveAcessoNotaReferenciada;
+	
 	public ItemNotaFiscal() {
 	}
 
@@ -105,6 +107,21 @@ public class ItemNotaFiscal {
 	public void setListaMovimentoEstoqueCota(
 			List<MovimentoEstoqueCota> listaMovimentoEstoqueCota) {
 		this.listaMovimentoEstoqueCota = listaMovimentoEstoqueCota;
+	}
+
+	/**
+	 * @return the listaChaveAcessoNotaReferenciada
+	 */
+	public List<String> getListaChaveAcessoNotaReferenciada() {
+		return listaChaveAcessoNotaReferenciada;
+	}
+
+	/**
+	 * @param listaChaveAcessoNotaReferenciada the listaChaveAcessoNotaReferenciada to set
+	 */
+	public void setListaChaveAcessoNotaReferenciada(
+			List<String> listaChaveAcessoNotaReferenciada) {
+		this.listaChaveAcessoNotaReferenciada = listaChaveAcessoNotaReferenciada;
 	}
 
 	/* (non-Javadoc)
