@@ -8,6 +8,7 @@ import java.util.Map;
 
 import br.com.abril.nds.dto.ConsultaLoteNotaFiscalDTO;
 import br.com.abril.nds.dto.RetornoNFEDTO;
+import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.fiscal.GrupoNotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.InformacaoAdicional;
 import br.com.abril.nds.model.fiscal.nota.InformacaoTransporte;
@@ -93,12 +94,12 @@ public interface NotaFiscalService {
 	 * Obtém itens para nota fiscal respeitando os parametros.
 	 * 
 	 * @param grupoNotaFiscal grupo nota fiscal
-	 * @param idCota id da cota
+	 * @param Cota cota
 	 * @param periodo periodo de lançamento de um movimento
 	 * @param listaIdFornecedores id dos fornecedores que serão pesquisados(se for null, busca todos)
 	 * @param listaIdProdutos id dos produtos que serão pesquisados(se for null, busca todoso)
 	 * @return lista de itens para nota fiscal
 	 */
 	List<ItemNotaFiscal> obterItensNotaFiscalPor(GrupoNotaFiscal grupoNotaFiscal, 
-			Long idCota, Intervalo<Date> periodo, List<Long> listaIdFornecedores, List<Long> listaIdProdutos);
+			Cota cota, Intervalo<Date> periodo, List<Long> listaIdFornecedores, List<Long> listaIdProdutos);
 }

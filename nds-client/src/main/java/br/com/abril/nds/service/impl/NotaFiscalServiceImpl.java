@@ -119,11 +119,13 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 	
 	@Autowired
 	private SerieRepository serieRepository;
-
+		
 	@Autowired
 	private MovimentoEstoqueCotaRepository movimentoEstoqueCotaRepository;
+
 	@Autowired
 	private EnderecoRepository enderecoRepository;
+	
 	@Autowired
 	private TelefoneRepository telefoneRepository;
 	
@@ -136,6 +138,8 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		
 		Intervalo<Date> periodo = dadosConsultaLoteNotaFiscal.getPeriodoMovimento();
 		
+		TipoNotaFiscal tipoNotaFiscal = dadosConsultaLoteNotaFiscal.getTipoNotaFiscal();
+		
 		GrupoNotaFiscal grupoNotaFiscal = dadosConsultaLoteNotaFiscal.getTipoNotaFiscal().getGrupoNotaFiscal();
 		
 		List<Long> listaIdFornecedores = dadosConsultaLoteNotaFiscal.getListaIdFornecedores();
@@ -144,13 +148,24 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		
 		Map<Long, Integer> idCotaTotalItensNota = new HashMap<Long, Integer>();
 		
+		Distribuidor distribuidor = this.distribuidorRepository.obter();
+		
 		for (Long idCota : dadosConsultaLoteNotaFiscal.getIdsCotasDestinatarias()) {
 			
-			List<ItemNotaFiscal> itensNotaFiscal = 
-					obterItensNotaFiscalPor(grupoNotaFiscal, idCota, periodo, listaIdFornecedores, listaIdProdutos);
-									
-			if (itensNotaFiscal != null && !itensNotaFiscal.isEmpty()) {
-				idCotaTotalItensNota.put(idCota, this.sumarizarTotalItensNota(itensNotaFiscal).intValue());
+			if (tipoNotaFiscal.getTipoAtividade().equals(distribuidor.getTipoAtividade())) {
+
+				Cota cota = this.cotaRepository.buscarPorId(idCota);
+				
+				if (!tipoNotaFiscal.isContribuinte() && !cota.getParametrosCotaNotaFiscalEletronica().getEmiteNotaFiscalEletronica()) {
+			
+					List<ItemNotaFiscal> itensNotaFiscal = obterItensNotaFiscalPor(
+							grupoNotaFiscal, cota, periodo, listaIdFornecedores,
+							listaIdProdutos);
+
+					if (itensNotaFiscal != null && !itensNotaFiscal.isEmpty()) {
+						idCotaTotalItensNota.put(idCota, this.sumarizarTotalItensNota(itensNotaFiscal).intValue());
+					}
+				}
 			}
 		}
 		
@@ -385,6 +400,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 				.getNopDescricao());
 		identificacao.setSerie(tipoNotaFiscal.getSerieNotaFiscal());
 		identificacao.setNumeroDocumentoFiscal(serieRepository.next(tipoNotaFiscal.getSerieNotaFiscal()));
+		
 		// TODO indPag
 		identificacao.setFormaPagamento(FormaPagamento.A_VISTA);
 
@@ -667,26 +683,37 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 	@Override
 	@Transactional
 	public List<ItemNotaFiscal> obterItensNotaFiscalPor(GrupoNotaFiscal grupoNotaFiscal, 
-			Long idCota, Intervalo<Date> periodo, List<Long> listaIdFornecedores, List<Long> listaIdProdutos) {
+			Cota cota, Intervalo<Date> periodo, List<Long> listaIdFornecedores, List<Long> listaIdProdutos) {
 		
 		List<ItemNotaFiscal> itensNotaFiscal = new ArrayList<ItemNotaFiscal>();
+		
+		Long idCota = cota.getId();
 		
 		switch (grupoNotaFiscal) {
 
 		case NF_REMESSA_CONSIGNACAO:
-			itensNotaFiscal = this.obterItensNFeRemessaEmConsignacao(idCota, periodo, listaIdFornecedores, listaIdProdutos);
+			itensNotaFiscal = this.obterItensNFeRemessaEmConsignacao(idCota, periodo, listaIdFornecedores, listaIdProdutos, grupoNotaFiscal);
 			break;
 
 		case NF_DEVOLUCAO_REMESSA_CONSIGNACAO:
-			itensNotaFiscal = this.obterItensNFeEntradaDevolucaoRemessaConsignacao(idCota, periodo, listaIdFornecedores, listaIdProdutos);
+			
+			if (!cota.getParametrosCotaNotaFiscalEletronica().getEmiteNotaFiscalEletronica()) {
+				itensNotaFiscal = this.obterItensNFeEntradaDevolucaoRemessaConsignacao(
+						idCota, periodo, listaIdFornecedores, listaIdProdutos, grupoNotaFiscal);
+			}
+			
 			break;
 
 		case NF_DEVOLUCAO_SIMBOLICA:
-			itensNotaFiscal = this.obterItensNFeVenda(idCota, periodo, listaIdFornecedores, listaIdProdutos);
+			
+			if (!cota.getParametrosCotaNotaFiscalEletronica().getEmiteNotaFiscalEletronica()) {
+				itensNotaFiscal = this.obterItensNFeVenda(idCota, periodo, listaIdFornecedores, listaIdProdutos, GrupoNotaFiscal.NF_VENDA);
+			}
+			
 			break;
 
 		case NF_VENDA:
-			itensNotaFiscal = this.obterItensNFeVenda(idCota, periodo, listaIdFornecedores, listaIdProdutos);
+			itensNotaFiscal = this.obterItensNFeVenda(idCota, periodo, listaIdFornecedores, listaIdProdutos, grupoNotaFiscal);
 			break;
 		}
 		
@@ -699,8 +726,8 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 	 * @param cota 
 	 * @param periodo intervalo do periodo de lançamento
 	 */
-	private List<ItemNotaFiscal> obterItensNFeRemessaEmConsignacao(
-			Long idCota, Intervalo<Date> periodo, List<Long> listaIdFornecedores, List<Long> listaIdProduto) {
+	private List<ItemNotaFiscal> obterItensNFeRemessaEmConsignacao(Long idCota, Intervalo<Date> periodo, 
+			List<Long> listaIdFornecedores, List<Long> listaIdProduto, GrupoNotaFiscal grupoNotaFiscal) {
 		
 		List<GrupoMovimentoEstoque> listaGrupoMovimentoEstoque = new ArrayList<GrupoMovimentoEstoque>();
 		listaGrupoMovimentoEstoque.add(GrupoMovimentoEstoque.RECEBIMENTO_REPARTE);
@@ -711,7 +738,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 	
 		List<MovimentoEstoqueCota> listaMovimentoEstoqueCota =
 				this.movimentoEstoqueCotaRepository.obterMovimentoEstoqueCotaPor(
-						idCota, GrupoNotaFiscal.NF_REMESSA_CONSIGNACAO, listaGrupoMovimentoEstoque, periodo, listaIdFornecedores, listaIdProduto);
+						idCota, grupoNotaFiscal, listaGrupoMovimentoEstoque, periodo, listaIdFornecedores, listaIdProduto);
 		
 		return this.gerarItensNotaFiscal(listaMovimentoEstoqueCota);
 	}
@@ -725,7 +752,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 	 * @return lista de itens nota fiscal
 	 */
 	private List<ItemNotaFiscal> obterItensNFeEntradaDevolucaoRemessaConsignacao(
-			Long idCota, Intervalo<Date> periodo, List<Long> listaIdFornecedores, List<Long> listaIdProduto) {
+			Long idCota, Intervalo<Date> periodo, List<Long> listaIdFornecedores, List<Long> listaIdProduto, GrupoNotaFiscal grupoNotaFiscal) {
 			
 		List<GrupoMovimentoEstoque> listaGrupoMovimentoEstoque = new ArrayList<GrupoMovimentoEstoque>();
 		listaGrupoMovimentoEstoque.add(GrupoMovimentoEstoque.ENCALHE_ANTECIPADO);
@@ -733,7 +760,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		
 		List<MovimentoEstoqueCota> listaMovimentoEstoqueCota =
 				this.movimentoEstoqueCotaRepository.obterMovimentoEstoqueCotaPor(
-						idCota, GrupoNotaFiscal.NF_DEVOLUCAO_REMESSA_CONSIGNACAO,  listaGrupoMovimentoEstoque, periodo, listaIdFornecedores, listaIdProduto);
+						idCota, grupoNotaFiscal,  listaGrupoMovimentoEstoque, periodo, listaIdFornecedores, listaIdProduto);
 				
 		return this.gerarItensNotaFiscal(listaMovimentoEstoqueCota);
 	}
@@ -746,13 +773,13 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 	 * @param periodo intervalo do periodo de lançamento
 	 */
 	private List<ItemNotaFiscal> obterItensNFeVenda(
-			Long idCota, Intervalo<Date> periodo, List<Long> listaIdFornecedores, List<Long> listaIdProdutos) {
+			Long idCota, Intervalo<Date> periodo, List<Long> listaIdFornecedores, List<Long> listaIdProdutos, GrupoNotaFiscal grupoNotaFiscal) {
 		
 		List<ItemNotaFiscal> itensNFeEnvioConsignado = 
-				this.obterItensNFeRemessaEmConsignacao(idCota, periodo, listaIdFornecedores, listaIdProdutos);
+				this.obterItensNFeRemessaEmConsignacao(idCota, periodo, listaIdFornecedores, listaIdProdutos, grupoNotaFiscal);
 		
 		List<ItemNotaFiscal> itensNFeDevolucaoConsignado = 
-				this.obterItensNFeEntradaDevolucaoRemessaConsignacao(idCota, periodo, listaIdFornecedores, listaIdProdutos);
+				this.obterItensNFeEntradaDevolucaoRemessaConsignacao(idCota, periodo, listaIdFornecedores, listaIdProdutos, grupoNotaFiscal);
 		
 		List<ItemNotaFiscal> itensNFeVenda = new ArrayList<ItemNotaFiscal>();
 		
@@ -797,6 +824,12 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 			
 			BigDecimal quantidade = movimentoEstoqueCota.getQtde();
 			
+			List<String> listaNotasReferenciadas = this.obterNotasReferenciadas(movimentoEstoqueCota);
+			
+			List<MovimentoEstoqueCota> listaMovimentoEstoqueItem = new ArrayList<MovimentoEstoqueCota>();
+			
+			listaMovimentoEstoqueItem.add(movimentoEstoqueCota);
+			
 			if (grupoMovimento.getDominio().equals(Dominio.COTA) && 
 					grupoMovimento.getOperacaoEstoque().equals(OperacaoEstoque.SAIDA)) {
 				quantidade = quantidade.negate();
@@ -805,6 +838,8 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 			if (mapItemNotaFiscal.containsKey(produtoEdicao.getId())) {
 				ItemNotaFiscal item = mapItemNotaFiscal.get(produtoEdicao.getId());
 				quantidade = quantidade.add(item.getQuantidade());
+				listaMovimentoEstoqueItem.addAll(item.getListaMovimentoEstoqueCota());
+				listaNotasReferenciadas.addAll(item.getListaChaveAcessoNotaReferenciada());
 			}
 			
 			ItemNotaFiscal itemNotaFiscal = new ItemNotaFiscal();
@@ -813,6 +848,8 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 			itemNotaFiscal.setCstICMS(produtoEdicao.getProduto().getTributacaoFiscal().getCST());
 			itemNotaFiscal.setQuantidade(quantidade);
 			itemNotaFiscal.setValorUnitario(valorUnitario);
+			itemNotaFiscal.setListaMovimentoEstoqueCota(listaMovimentoEstoqueItem);
+			itemNotaFiscal.setListaChaveAcessoNotaReferenciada(listaNotasReferenciadas);
 			
 			mapItemNotaFiscal.put(produtoEdicao.getId(), itemNotaFiscal);
 		}
@@ -837,4 +874,36 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		return quantidade;
 	}
 	
+	
+	/**
+	 * Obtém notas fiscais para referência
+	 * 
+	 * @param movimentoEstoqueCota movimento estoque cota
+	 * @return
+	 */
+	private List<String> obterNotasReferenciadas(MovimentoEstoqueCota movimentoEstoqueCota) {
+		
+		List<String> listaChaveAcessoNotaReferenciada = new ArrayList<String>();
+		
+		List<ProdutoServico> listaProdutoServicos = movimentoEstoqueCota.getListaProdutoServicos();
+		
+		if (listaProdutoServicos!=null && !listaProdutoServicos.isEmpty()) {
+			
+			for (ProdutoServico produtoServico : listaProdutoServicos) {
+				
+				NotaFiscal notaFiscal = produtoServico.getProdutoServicoPK().getNotaFiscal();
+				
+				if (notaFiscal != null) {
+					
+					GrupoNotaFiscal grupoNotaFiscal = notaFiscal.getIdentificacao().getTipoNotaFiscal().getGrupoNotaFiscal();
+					
+					if (GrupoNotaFiscal.NF_REMESSA_CONSIGNACAO.equals(grupoNotaFiscal)) {
+						listaChaveAcessoNotaReferenciada.add(notaFiscal.getInformacaoEletronica().getChaveAcesso());
+					}
+				}
+			}
+		}
+		
+		return listaChaveAcessoNotaReferenciada;
+	}
 }
