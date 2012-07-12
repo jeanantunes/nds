@@ -184,4 +184,13 @@ public class PdvRepositoryImpl extends AbstractRepositoryModel<PDV, Long> implem
 		
 		query.executeUpdate();
 	}
+	
+	public PDV obterPDVPrincipal(Long idCota) {
+		Criteria criteria = getSession().createCriteria(PDV.class);
+		criteria.createAlias("cota", "cota");
+		criteria.add(Restrictions.eq("cota.id", idCota));
+		criteria.add(Restrictions.eq("caracteristicas.pontoPrincipal", true));
+		criteria.setMaxResults(1);
+		return (PDV) criteria.uniqueResult();
+	}
 }

@@ -12,6 +12,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -24,6 +25,7 @@ import br.com.abril.nds.dto.ConsultaLoteNotaFiscalDTO;
 import br.com.abril.nds.dto.RetornoNFEDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.service.ParametroSistemaService;
+import br.com.abril.nds.model.cadastro.AssociacaoVeiculoMotoristaRota;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Endereco;
@@ -32,10 +34,12 @@ import br.com.abril.nds.model.cadastro.EnderecoDistribuidor;
 import br.com.abril.nds.model.cadastro.ParametroSistema;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.cadastro.Roteirizacao;
 import br.com.abril.nds.model.cadastro.Telefone;
 import br.com.abril.nds.model.cadastro.TelefoneCota;
 import br.com.abril.nds.model.cadastro.TelefoneDistribuidor;
 import br.com.abril.nds.model.cadastro.TipoParametroSistema;
+import br.com.abril.nds.model.cadastro.pdv.PDV;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque.Dominio;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
@@ -65,11 +69,13 @@ import br.com.abril.nds.model.fiscal.nota.ProdutoServico;
 import br.com.abril.nds.model.fiscal.nota.RetornoComunicacaoEletronica;
 import br.com.abril.nds.model.fiscal.nota.Status;
 import br.com.abril.nds.model.fiscal.nota.StatusProcessamentoInterno;
+import br.com.abril.nds.model.fiscal.nota.Veiculo;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.EnderecoRepository;
 import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
 import br.com.abril.nds.repository.NotaFiscalRepository;
+import br.com.abril.nds.repository.PdvRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.repository.SerieRepository;
 import br.com.abril.nds.repository.TelefoneCotaRepository;
@@ -128,6 +134,9 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 	
 	@Autowired
 	private TelefoneRepository telefoneRepository;
+
+	@Autowired
+	private PdvRepository pdvRepository;
 	
 	/* (non-Javadoc)
 	 * @see br.com.abril.nds.service.NotaFiscalService#obterTotalItensNotaFiscalPorCotaEmLote(br.com.abril.nds.dto.ConsultaLoteNotaFiscalDTO)
@@ -872,6 +881,44 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		}
 		
 		return quantidade;
+	}
+	
+	/**
+	 * Obtém informações de transpote pela Cota
+	 * 
+	 * @param idCota
+	 * @return
+	 */
+	public InformacaoTransporte obterTransporte(Long idCota){
+		InformacaoTransporte transporte = new InformacaoTransporte();
+		
+		PDV pdv = this.pdvRepository.obterPDVPrincipal(idCota);
+
+		if (pdv != null && pdv.getRoteirizacao() != null && pdv.getRoteirizacao().isEmpty()) {
+			transporte.setModalidadeFrente(0); //Por conta emitente
+			
+			//*****Comentado porque não é obrigatório*****//
+			
+			/*
+			transporte.setNome(associacaoVeiculoMotoristaRota.getTransportador().getPessoaJuridica().getRazaoSocial());
+			transporte.setDocumento(associacaoVeiculoMotoristaRota.getTransportador().getPessoaJuridica().getCnpj()); 
+			transporte.setInscricaoEstadual(associacaoVeiculoMotoristaRota.getTransportador().getPessoaJuridica().getInscricaoEstadual());
+
+			Endereco endereco = associacaoVeiculoMotoristaRota.getTransportador().getEnderecosTransportador().get(0).getEndereco();
+			transporte.setEndereco(endereco);
+			transporte.setUf(endereco.getUf());
+			
+			Veiculo veiculo = new Veiculo();
+			veiculo.setPlaca(associacaoVeiculoMotoristaRota.getVeiculo().getPlaca());
+			veiculo.setUf();
+			veiculo.setRegistroTransCarga(registroTransCarga);
+			transporte.setVeiculo(veiculo);
+			*/
+		} else {
+			transporte.setModalidadeFrente(1); //Por conta destinatário
+		}
+		
+		return transporte;
 	}
 	
 	
