@@ -19,6 +19,7 @@ public class ImportacaoDeArquivoProdutoStrategyTest extends AbstractRepositoryIm
 
 	private RetornoImportacaoArquivoVO retorno;
 	private File file;
+	private final String PATHFILE = "src/test/resources/importacao/PRODUTO.NEW";
 	
 	@Autowired
 	private ImportacaoArquivoService importacaoDeArquivoProdutoStrategy; 
@@ -26,7 +27,7 @@ public class ImportacaoDeArquivoProdutoStrategyTest extends AbstractRepositoryIm
 	@Before
 	public void setUp() throws Exception {
 		retorno = new RetornoImportacaoArquivoVO();
-		file = new File("src/test/resources/importacao/PRODUTO.NEW");	
+		file = new File(PATHFILE);	
 	}
 
 	
