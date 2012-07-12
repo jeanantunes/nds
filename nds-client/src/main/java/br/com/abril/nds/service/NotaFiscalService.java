@@ -110,4 +110,20 @@ public interface NotaFiscalService {
 	 * @return notaFiscaReferenciada
 	 */
 	NotaFiscalReferenciada converterNotaFiscalToNotaFiscalReferenciada(NotaFiscal notaFiscal);
+	
+	/**
+	 * Obtém informações de transpote pela Cota
+	 * 
+	 * @param idCota id da cota
+	 * @return InformacaoTransporte
+	 */
+	InformacaoTransporte obterTransporte(Long idCota);
+	
+	/**
+	 * Obtem Notas Referenciadas por itens da nota.
+	 * 
+	 * @param listaItensNotaFiscal 
+	 * @return lista de notas referenciadas.
+	 */
+	List<NotaFiscalReferenciada> obterNotasReferenciadas(List<ItemNotaFiscal> listaItensNotaFiscal); 
 }

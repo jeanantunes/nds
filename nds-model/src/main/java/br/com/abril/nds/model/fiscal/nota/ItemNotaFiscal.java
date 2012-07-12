@@ -21,8 +21,6 @@ public class ItemNotaFiscal {
 	
 	private List<MovimentoEstoqueCota> listaMovimentoEstoqueCota; 
 	
-	private List<NotaFiscalReferenciada> listaNotasReferenciadas;
-	
 	public ItemNotaFiscal() {
 	}
 
@@ -106,20 +104,6 @@ public class ItemNotaFiscal {
 		this.listaMovimentoEstoqueCota = listaMovimentoEstoqueCota;
 	}
 
-	/**
-	 * @return the listaNotasReferenciadas
-	 */
-	public List<NotaFiscalReferenciada> getListaNotasReferenciadas() {
-		return listaNotasReferenciadas;
-	}
-
-	/**
-	 * @param listaNotasReferenciadas the listaNotasReferenciadas to set
-	 */
-	public void setListaNotasReferenciadas(
-			List<NotaFiscalReferenciada> listaNotasReferenciadas) {
-		this.listaNotasReferenciadas = listaNotasReferenciadas;
-	}
 
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()

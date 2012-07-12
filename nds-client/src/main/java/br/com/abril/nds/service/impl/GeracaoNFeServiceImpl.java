@@ -16,13 +16,12 @@ import br.com.abril.nds.dto.ConsultaLoteNotaFiscalDTO;
 import br.com.abril.nds.dto.CotaExemplaresDTO;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
-import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.fiscal.GrupoNotaFiscal;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.InformacaoTransporte;
 import br.com.abril.nds.model.fiscal.nota.ItemNotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
-import br.com.abril.nds.model.fiscal.nota.ProdutoServico;
+import br.com.abril.nds.model.fiscal.nota.NotaFiscalReferenciada;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.NotaFiscalRepository;
 import br.com.abril.nds.repository.ProdutoServicoRepository;
@@ -118,11 +117,12 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 			List<ItemNotaFiscal> listItemNotaFiscal = this.notaFiscalService.obterItensNotaFiscalPor(
 					grupoNotaFiscal, cota, intervaloDateMovimento, listIdFornecedor, listIdProduto);
 			
-			//FIXME: obter informacaoTransporte
-			InformacaoTransporte transporte = null;
+			List<NotaFiscalReferenciada> listaNotasFiscaisReferenciadas = this.notaFiscalService.obterNotasReferenciadas(listItemNotaFiscal);
+			
+			InformacaoTransporte transporte = this.notaFiscalService.obterTransporte(idCota);
 			
 			Long idNotaFiscal = this.notaFiscalService.emitiNotaFiscal(idTipoNotaFiscal, dataEmissao, idCota, 
-					listItemNotaFiscal, transporte, null, null);
+					listItemNotaFiscal, transporte, null, listaNotasFiscaisReferenciadas);
 			
 			NotaFiscal notaFiscal = this.notaFiscalRepository.buscarPorId(idNotaFiscal);
 			
