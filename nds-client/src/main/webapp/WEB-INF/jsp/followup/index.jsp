@@ -167,6 +167,57 @@ $(function() {
 			width : 880,
 			height : 255
 		}));
+
+		$(".atualizacaoCadastralGrid").flexigrid($.extend({},{
+			url : '<c:url value="/followup/pesquisaDadosCadastrais"/>',
+	        preProcess:  exPreProcFollowupStatusCota, 
+			dataType : 'json',
+			colModel : [ {
+				display : 'Cota',
+				name : 'numeroCota',
+				width : 60,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Nome',
+				name : 'nomeJornaleiro',
+				width : 290,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Responsável',
+				name : 'responsavel',
+				width : 150,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Documento',
+				name : 'tipo',
+				width : 125,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Valor R$',
+				name : 'valor',
+				width : 125,
+				sortable : true,
+				align : 'right'
+			}, {
+				display : 'Dt. Vencto.',
+				name : 'dataVencimento',
+				width : 85,
+				sortable : true,
+				align : 'center'
+			}],
+			sortname : "cota",
+			sortorder : "asc",
+			usepager : true,
+			useRp : true,
+			rp : 15,
+			showTableToggleBtn : true,
+			width : 880,
+			height : 255
+		}));
 		
 	});
 	
@@ -288,55 +339,7 @@ $(function() {
 
 
 
-$(".atualizacaoCadastralGrid").flexigrid({
-        preProcess:  exPreProcFollowupChamadao, 
-		dataType : 'xml',
-		colModel : [ {
-			display : 'Cota',
-			name : 'cota',
-			width : 60,
-			sortable : true,
-			align : 'left'
-		}, {
-			display : 'Nome',
-			name : 'nome',
-			width : 290,
-			sortable : true,
-			align : 'left'
-		}, {
-			display : 'Responsável',
-			name : 'responsavel',
-			width : 150,
-			sortable : true,
-			align : 'left'
-		}, {
-			display : 'Documento',
-			name : 'docto',
-			width : 125,
-			sortable : true,
-			align : 'left'
-		}, {
-			display : 'Valor R$',
-			name : 'vlr',
-			width : 125,
-			sortable : true,
-			align : 'right'
-		}, {
-			display : 'Dt. Vencto.',
-			name : 'dtVencto',
-			width : 85,
-			sortable : true,
-			align : 'center'
-		}],
-		sortname : "cota",
-		sortorder : "asc",
-		usepager : true,
-		useRp : true,
-		rp : 15,
-		showTableToggleBtn : true,
-		width : 880,
-		height : 255
-	});
+
 
 
 

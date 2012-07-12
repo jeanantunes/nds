@@ -1,44 +1,52 @@
 package br.com.abril.nds.dto;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.util.Calendar;
 
 import br.com.abril.nds.util.export.Export;
-import br.com.abril.nds.util.export.Exportable;
 import br.com.abril.nds.util.export.Export.Alignment;
+import br.com.abril.nds.util.export.Exportable;
 
 @Exportable
 public class ConsultaFollowupCadastroDTO implements Serializable {
 
 	private static final long serialVersionUID = -7544892338598259055L;
 
+	@Export(label = "Cota", alignment=Alignment.CENTER, exhibitionOrder = 1)
+	private Integer numeroCota;
+	
+	@Export(label = "Nome", alignment=Alignment.CENTER, exhibitionOrder = 2)
+	private String nomeJornaleiro;
+	
+	@Export(label = "Documento", alignment=Alignment.CENTER, exhibitionOrder = 3)
+	private String tipo;
+	
+	@Export(label = "Valor R$", alignment=Alignment.RIGHT, exhibitionOrder = 4)
+	private Double valor;
+	
+	@Export(label = "Dt. Vencto.", alignment=Alignment.CENTER, exhibitionOrder = 5)
+	private String dataVencimento;
+	
 	public ConsultaFollowupCadastroDTO() {}
 	
-	public ConsultaFollowupCadastroDTO( Long numeroCota, String nomeJornaleiro, String tipoAtualizacao,	
-		    String statusAtual, Date dataVencimento) {
-		this.numeroCota = numeroCota;	
-		this.nomeJornaleiro = nomeJornaleiro;	
-		this.tipoAtualizacao = tipoAtualizacao;	
-		this.statusAtual = statusAtual;
-		this.dataVencimento = dataVencimento;   	
+	public ConsultaFollowupCadastroDTO(Integer numeroCota,
+			String nomeJornaleiro, String tipo, Double valor,
+			String dataVencimento) {
+		super();
+		this.numeroCota = numeroCota;
+		this.nomeJornaleiro = nomeJornaleiro;
+		this.tipo = tipo;
+		this.valor = valor;
+		this.dataVencimento = dataVencimento;
 	}
 
-	@Export(label = "Cota", alignment=Alignment.CENTER, exhibitionOrder = 2)
-	private Long numeroCota;	
-	@Export(label = "Nome", alignment=Alignment.CENTER, exhibitionOrder = 2)
-	private String nomeJornaleiro;	
-	@Export(label = "Tipo Atualizacao", alignment=Alignment.CENTER, exhibitionOrder = 2)
-    private String tipoAtualizacao;	
-	@Export(label = "Status", alignment=Alignment.CENTER, exhibitionOrder = 2)
-    private String statusAtual;
-	@Export(label = "Data Vencto", alignment=Alignment.CENTER, exhibitionOrder = 2)
-   	private Date dataVencimento;   	
 
-	public Long getNumeroCota() {
+
+	public Integer getNumeroCota() {
 		return numeroCota;
 	}
 
-	public void setNumeroCota(Long numeroCota) {
+	public void setNumeroCota(Integer numeroCota) {
 		this.numeroCota = numeroCota;
 	}
 
@@ -50,27 +58,29 @@ public class ConsultaFollowupCadastroDTO implements Serializable {
 		this.nomeJornaleiro = nomeJornaleiro;
 	}
 
-	public String getTipoAtualizacao() {
-		return tipoAtualizacao;
+	public String getTipo() {
+		return tipo;
 	}
 
-	public void setTipoAtualizacao(String tipoAtualizacao) {
-		this.tipoAtualizacao = tipoAtualizacao;
+	public void setTipo(String tipo) {
+		this.tipo = tipo;
 	}
 
-	public String getStatusAtual() {
-		return statusAtual;
+	public Double getValor() {
+		return valor;
 	}
 
-	public void setStatusAtual(String statusAtual) {
-		this.statusAtual = statusAtual;
+	public void setValor(Double valor) {
+		this.valor = valor;
 	}
 
-	public Date getDataVencimento() {
+	public String getDataVencimento() {
 		return dataVencimento;
 	}
 
-	public void setDataVencimento(Date dataVencimento) {
-		this.dataVencimento = dataVencimento;
+	public void setDataVencimento(Calendar dataVencimento) {
+		this.dataVencimento = dataVencimento.toString();
 	}
+
+	
 }

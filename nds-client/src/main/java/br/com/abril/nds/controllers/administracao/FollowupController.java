@@ -86,6 +86,7 @@ public class FollowupController {
 	
 	private static final String FILTRO_FOLLOWUP_CONSIGNADOS_SESSION_ATTRIBUTE = "filtroFollowupConsignados";
 	private static final String FILTRO_FOLLOWUP_PENDENCIA_NFE_SESSION_ATTRIBUTE = "filtroFollowupPendenciaNFE";
+	private static final String FILTRO_FOLLOWUP_CADASTRO_SESSION_ATTRIBUTE = "filtroFollowupCadastro";
 	//private static final String QTD_REGISTROS_FOLLOWUP_CONSIGNADOS_SESSION_ATTRIBUTE = "qtdRegistrosFollowupConsignados";
 
 	private BigDecimal valorConsignadoSuspensaoCotas;
@@ -164,7 +165,39 @@ public class FollowupController {
 	}
 
 	@Path("/pesquisaDadosCadastrais")
-	public void pesquisaDadosCadastrais( String sortorder, String sortname, int page, int rp ) {		
+	public void pesquisaDadosCadastrais( String sortorder, String sortname, int page, int rp ) {	
+		
+		FiltroFollowupCadastroDTO filtro = new FiltroFollowupCadastroDTO();
+		
+		filtro.setPaginacao(new PaginacaoVO(page, rp, sortorder, sortname));
+		
+		this.tratarFiltroCadastro(filtro);
+		
+		TableModel<CellModelKeyValue<ConsultaFollowupCadastroDTO>> tableModel = efetuarConsultaDadosCadastral(filtro);
+		
+		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
+		
+	}
+	
+	private TableModel<CellModelKeyValue<ConsultaFollowupCadastroDTO>> efetuarConsultaDadosCadastral(FiltroFollowupCadastroDTO filtro) {
+		
+		List<ConsultaFollowupCadastroDTO> listasdependencias = this.followupcadastroService.obterCadastros(filtro);
+		
+		TableModel<CellModelKeyValue<ConsultaFollowupCadastroDTO>> tableModel = new TableModel<CellModelKeyValue<ConsultaFollowupCadastroDTO>>();
+		
+		Integer totalRegistros = listasdependencias.size();
+		
+		if(totalRegistros == 0){
+			throw new ValidacaoException(TipoMensagem.WARNING, "Pendencias NF-e Encalhe: Não foram encontrados resultados para Follow Up.");
+		}
+
+		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listasdependencias));
+		
+		tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
+		
+		tableModel.setTotal(15);
+		
+		return tableModel;
 	}
 
 	@Path("/pesquisaDadosPendenciaNFEEncalhe")
@@ -179,6 +212,27 @@ public class FollowupController {
 		TableModel<CellModelKeyValue<ConsultaFollowupPendenciaNFeDTO>> tableModel = efetuarConsultaDadosPendenciaNFEEncalhe(filtroPendenciaNFEEncalhe);
 		
 		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();		
+	}
+	
+	private TableModel<CellModelKeyValue<ConsultaFollowupPendenciaNFeDTO>> efetuarConsultaDadosPendenciaNFEEncalhe(FiltroFollowupPendenciaNFeDTO filtro) {
+		
+		List<ConsultaFollowupPendenciaNFeDTO> listasdependencias = this.followuppendencianfeService.obterPendencias(filtro);
+		
+		TableModel<CellModelKeyValue<ConsultaFollowupPendenciaNFeDTO>> tableModel = new TableModel<CellModelKeyValue<ConsultaFollowupPendenciaNFeDTO>>();
+		
+		Integer totalRegistros = listasdependencias.size();
+		
+		if(totalRegistros == 0){
+			throw new ValidacaoException(TipoMensagem.WARNING, "Pendencias NF-e Encalhe: Não foram encontrados resultados para Follow Up.");
+		}
+
+		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listasdependencias));
+		
+		tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
+		
+		tableModel.setTotal(15);
+		
+		return tableModel;
 	}
 
 	public BigDecimal getValorConsignadoSuspensaoCotas() {
@@ -229,6 +283,18 @@ public class FollowupController {
 		session.setAttribute(FILTRO_FOLLOWUP_PENDENCIA_NFE_SESSION_ATTRIBUTE, filtroParam);
 		
 	}
+	
+	private void tratarFiltroCadastro(FiltroFollowupCadastroDTO filtroParam) {
+
+		FiltroFollowupCadastroDTO filtroSession = (FiltroFollowupCadastroDTO) session.getAttribute(FILTRO_FOLLOWUP_CADASTRO_SESSION_ATTRIBUTE);
+			
+		if (filtroSession != null && filtroSession.equals(filtroParam)) {
+			
+			filtroParam.getPaginacao().setPaginaAtual(1);
+		}
+		session.setAttribute(FILTRO_FOLLOWUP_CADASTRO_SESSION_ATTRIBUTE, filtroParam);
+		
+	}
 		
 	private TableModel<CellModelKeyValue<ConsultaFollowupChamadaoDTO>> efetuarConsultaChamadao(
 			FiltroFollowupChamadaoDTO filtro) {
@@ -274,29 +340,6 @@ public class FollowupController {
 		return tableModel;
 	}
 	
-	
-	private TableModel<CellModelKeyValue<ConsultaFollowupPendenciaNFeDTO>> efetuarConsultaDadosPendenciaNFEEncalhe(
-			FiltroFollowupPendenciaNFeDTO filtro) {
-		
-		List<ConsultaFollowupPendenciaNFeDTO> listasdependencias = this.followuppendencianfeService.obterPendencias(filtro);
-		
-		TableModel<CellModelKeyValue<ConsultaFollowupPendenciaNFeDTO>> tableModel = new TableModel<CellModelKeyValue<ConsultaFollowupPendenciaNFeDTO>>();
-		
-		Integer totalRegistros = listasdependencias.size();
-		
-		if(totalRegistros == 0){
-			throw new ValidacaoException(TipoMensagem.WARNING, "Pendencias NF-e Encalhe: Não foram encontrados resultados para Follow Up.");
-		}
-
-		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listasdependencias));
-		
-		tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
-		
-		tableModel.setTotal(15);
-		
-		return tableModel;
-	}
-
 	
 	private TableModel<CellModelKeyValue<ConsultaFollowupCadastroDTO>> efetuarConsultaDadosCadastrais(
 			FiltroFollowupCadastroDTO filtro) {
