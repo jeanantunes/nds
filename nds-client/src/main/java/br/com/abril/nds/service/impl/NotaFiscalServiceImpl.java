@@ -9,6 +9,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -68,6 +69,7 @@ import br.com.abril.nds.model.fiscal.nota.ProdutoServico;
 import br.com.abril.nds.model.fiscal.nota.RetornoComunicacaoEletronica;
 import br.com.abril.nds.model.fiscal.nota.Status;
 import br.com.abril.nds.model.fiscal.nota.StatusProcessamentoInterno;
+import br.com.abril.nds.model.fiscal.nota.pk.NotaFiscalReferenciadaPK;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.EnderecoRepository;
@@ -964,8 +966,13 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 	@Transactional
 	public NotaFiscalReferenciada converterNotaFiscalToNotaFiscalReferenciada(NotaFiscal notaFiscal) {
 		
+		NotaFiscalReferenciadaPK pk = new NotaFiscalReferenciadaPK();
+		pk.setChaveAcesso(new BigInteger(notaFiscal.getInformacaoEletronica().getChaveAcesso()));
+		pk.setNotaFiscal(notaFiscal);
+		
 		NotaFiscalReferenciada notaReferenciada = new NotaFiscalReferenciada();
-		//TODO: popular nota referenciada
+		notaReferenciada.setPk(pk);
+		
 		return notaReferenciada;
 	}
 }
