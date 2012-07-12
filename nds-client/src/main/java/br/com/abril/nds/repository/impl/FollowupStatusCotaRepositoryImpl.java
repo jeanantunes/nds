@@ -6,7 +6,6 @@ import org.hibernate.Query;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Repository;
 
-import br.com.abril.nds.dto.ConsultaFollowupPendenciaNFeDTO;
 import br.com.abril.nds.dto.ConsultaFollowupStatusCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroFollowupStatusCotaDTO;
 import br.com.abril.nds.model.cadastro.Cota;

@@ -152,12 +152,6 @@ $(function() {
 				sortable : true,
 				align : 'left'
 			}, {
-				display : 'Data Vencto',
-				name : 'dtVencto',
-				width : 85,
-				sortable : true,
-				align : 'center'
-			}, {
 				display : 'Ação',
 				name : 'acao',
 				width : 155,
@@ -310,23 +304,29 @@ $(".atualizacaoCadastralGrid").flexigrid({
 			sortable : true,
 			align : 'left'
 		}, {
-			display : 'Tipo Atualização',
-			name : 'tipoAtualizacao',
-			width : 237,
+			display : 'Responsável',
+			name : 'responsavel',
+			width : 150,
 			sortable : true,
 			align : 'left'
 		}, {
-			display : 'Status',
-			name : 'status',
+			display : 'Documento',
+			name : 'docto',
 			width : 125,
 			sortable : true,
 			align : 'left'
+		}, {
+			display : 'Valor R$',
+			name : 'vlr',
+			width : 125,
+			sortable : true,
+			align : 'right'
 		}, {
 			display : 'Dt. Vencto.',
 			name : 'dtVencto',
 			width : 85,
 			sortable : true,
-			align : 'left'
+			align : 'center'
 		}],
 		sortname : "cota",
 		sortorder : "asc",
