@@ -479,6 +479,6 @@ public class NotaFiscalServiceImplTest extends AbstractRepositoryImplTest {
 				.informacaoTransporte("88416646000103", enderecoTransporte,
 						"IEstd", 132, "municipio", "nome", null, "SP", null);
 		InformacaoAdicional informacaoAdicional = new InformacaoAdicional();
-		notaFiscalService.emitiNotaFiscal(tipoNotaFiscalDevolucao.getId(), new Date(), cotaManoel.getId(), listItemNotaFiscal, informacaoTransporte, informacaoAdicional);
+		notaFiscalService.emitiNotaFiscal(tipoNotaFiscalDevolucao.getId(), new Date(), cotaManoel.getId(), listItemNotaFiscal, informacaoTransporte, informacaoAdicional, null);
 	}
 }
