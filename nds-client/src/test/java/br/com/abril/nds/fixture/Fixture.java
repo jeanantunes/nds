@@ -322,11 +322,11 @@ public class Fixture {
 	}
 	
 	public static TipoProduto tipoRevista(NCM ncm) {
-		return tipoProduto("Revistas", GrupoProduto.REVISTA, ncm, null, 001L);
+		return tipoProduto("Revistas", GrupoProduto.REVISTA, ncm, "4902.90.00", 001L);
 	}
 	
 	public static TipoProduto tipoCromo(NCM ncm) {
-		return tipoProduto("Cromos", GrupoProduto.CROMO, ncm, null, 002L);
+		return tipoProduto("Cromos", GrupoProduto.CROMO, ncm, "4908.90.00", 002L);
 	}
 	
 	public static TipoFornecedor tipoFornecedorPublicacao() {

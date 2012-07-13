@@ -64,7 +64,7 @@ public class EMS0111Input extends IntegracaoDocument implements Serializable {
 	}
 	
 	
-	@Field(offset = 34, length = 9)
+	@Field(offset = 34, length = 8)
 	public String getCodigoProduto() {
 		return codigoProduto;
 	}
@@ -75,7 +75,7 @@ public class EMS0111Input extends IntegracaoDocument implements Serializable {
 	
 	
 	
-	@Field(offset = 43, length = 3)
+	@Field(offset = 42, length = 4)
 	public Long getEdicaoProduto() {
 		return edicaoProduto;
 	}
