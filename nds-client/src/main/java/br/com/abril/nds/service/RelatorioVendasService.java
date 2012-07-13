@@ -12,7 +12,7 @@ import br.com.abril.nds.dto.filtro.FiltroCurvaABCDistribuidorDTO;
  * Interface de serviços de curvas de relatórios de vendas
  * @author InfoA2
  */
-@Service
+
 public interface RelatorioVendasService {
 
 	public List<RegistroCurvaABCDistribuidorVO> obterCurvaABCDistribuidor(FiltroCurvaABCDistribuidorDTO filtroCurvaABCDistribuidorDTO);
