@@ -70,6 +70,62 @@ var ConferenciaEncalheCont = {
 		);
 	},
 	
+	criarComboBoxEncalhe : function() {
+		
+		$.postJSON(contextPath + "/devolucao/conferenciaEncalhe/carregarComboBoxEncalheContingencia", null,
+				
+			function(result){
+				
+				var opcoesBox = '';
+				
+				$.each(result.boxes, function(key, value) {
+					opcoesBox = opcoesBox + "<option value="+key+">"+value+"</option>"; 
+				});
+				
+				$('#boxLogado').html(opcoesBox);
+				
+				ConferenciaEncalheCont.popup_logado();
+				
+			}
+		);
+		
+		
+	},
+	
+	popup_logado : function() {
+		
+		ConferenciaEncalheCont.modalAberta = true;
+		
+		$("#dialog-logado").dialog({
+			resizable : false,
+			height : 180,
+			width : 460,
+			modal : true,
+			buttons : {
+				"Confirmar" : function() {
+					
+					$.postJSON(contextPath + "/devolucao/conferenciaEncalhe/salvarIdBoxSessao", "idBox=" + $("#boxLogado").val(), 
+						function(){
+							
+							$("#dialog-logado").dialog("close");
+							$('#numeroCota').focus();
+						}, null, true, "idModalBoxRecolhimento"
+					);
+				},
+				"Cancelar" : function() {
+					$(this).dialog("close");
+					$('#pesq_cota').focus();
+				}
+			}, open : function(){
+				
+				$("#boxLogado").focus();
+			}, close : function(){
+				
+				ConferenciaEncalheCont.modalAberta = false;
+			}
+		});
+	},
+	
 	gerarDocumentosConferenciaEncalhe : function(tiposDocumento) {
 		
 		var fileArray = [];
@@ -769,6 +825,9 @@ $(function() {
 		
 		ConferenciaEncalheCont.pesquisarProdutoPorCodigoNome();
 	});
+	
+	ConferenciaEncalheCont.criarComboBoxEncalhe();
+	
 });
 
 shortcut.add("F2", function() {

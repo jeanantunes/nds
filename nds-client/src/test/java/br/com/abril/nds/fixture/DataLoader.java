@@ -982,7 +982,7 @@ public class DataLoader {
 		criarEventoExecucao(session);
 		criarAlgoritmos(session);
 		
-		tabelaNCM(session);
+		//tabelaNCM(session);
 		criarTiposProduto(session);
 		
 		criarDistribuidor(session);
@@ -7331,8 +7331,8 @@ public class DataLoader {
 
 		Editor jazz = Fixture.criarEditor("Jazz", 682L, juridicaFc, true);
 
-		TipoProduto tipoCromo = Fixture.tipoCromo(ncmCromo);
-		save(session, globo, europa, jazz, tipoCromo);
+		//TipoProduto tipoCromo = Fixture.tipoCromo(ncmCromo);
+		save(session, globo, europa, jazz);
 
 		//PRODUTOS
 		Produto javaMagazine = Fixture.produto("541", "Java Magazine", "Java Magazine", PeriodicidadeProduto.MENSAL, tipoProdutoRevista, 5, 5, BigDecimal.TEN);

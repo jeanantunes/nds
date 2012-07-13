@@ -47,6 +47,7 @@ import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.ItemAutoComplete;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
+import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
@@ -92,6 +93,35 @@ public class ConferenciaEncalheController {
 	public void index() {
 		carregarComboBoxEncalhe();
 	}
+	
+	public void carregarComboBoxEncalheContingencia() {
+		
+		List<Box> boxes = 
+				this.conferenciaEncalheService.obterListaBoxEncalhe(this.getUsuarioLogado().getId());
+		
+		
+		
+		if( boxes!=null ) {
+
+			Map<String, String> mapBox = new HashMap<String, String>();
+			
+			for(Box box : boxes) {
+				
+				mapBox.put(box.getId().toString(), box.getNome());
+				
+			}
+			
+			this.result.use(CustomMapJson.class).put("boxes", mapBox).serialize();
+
+			
+		} else {
+
+			this.result.use(Results.json()).from("").serialize();
+		
+		}
+		
+	}
+	
 	
 	private void carregarComboBoxEncalhe() {
 		

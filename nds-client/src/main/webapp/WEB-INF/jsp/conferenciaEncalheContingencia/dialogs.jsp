@@ -70,6 +70,24 @@
 	</table>
 </div>
 
+<div id="dialog-logado" title="Box de Encalhe" style="display:none;">
+	
+	<jsp:include page="../messagesDialog.jsp">
+		<jsp:param value="idModalBoxRecolhimento" name="messageDialog"/>
+	</jsp:include>
+	
+	<fieldset style="width: 410px">
+		<legend>Box de Encalhe</legend>
+	    <label>Confirma Box de Encalhe: </label>
+	    <select name="boxes" style="width:150px;" id="boxLogado">
+			<c:forEach var="item" items="${boxes}">
+		       <option value="${item.id}">${item.nome}</option>
+		    </c:forEach>
+	    </select>
+	</fieldset>
+</div>
+
+
 <div id="dialog-alert" title="Nota Fiscal">
 	<fieldset style="width: 410px;">
 		<legend>Nota Fiscal</legend>
