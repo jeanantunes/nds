@@ -4,6 +4,7 @@ import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.dto.CalendarioFeriadoDTO;
 import br.com.abril.nds.model.cadastro.TipoFeriado;
 import br.com.abril.nds.service.CalendarioService;
 import br.com.caelum.vraptor.Path;
@@ -27,10 +28,42 @@ public class CadastroCalendarioController {
 	}
 	
 	@Post
-	@Path("/novoFeriado")
-	public void novoFeriado(Date dtFeriado, TipoFeriado tipoFeriado){
+	public void cadastrarNovoFeriado(
+			
+			Date dtFeriado, 
+			TipoFeriado tipoFeriado, 
+			String descricao,
+			Long idLocalidade,
+			String ufSigla,
+			boolean indOpera, 
+			boolean indEfetuaCobranca,
+			boolean indRepeteAnualmente
+			
+			){
 		
-		System.out.println(dtFeriado +" - " + tipoFeriado);
+		CalendarioFeriadoDTO calendarioFeriado = new CalendarioFeriadoDTO();
+		
+		calendarioFeriado.setDataFeriado(dtFeriado);
+		calendarioFeriado.setTipoFeriado(tipoFeriado);
+		calendarioFeriado.setDescricaoFeriado(descricao);
+		
+		
+		calendarioFeriado.setIndOpera(indOpera);
+		calendarioFeriado.setIndEfetuaCobranca(indEfetuaCobranca);
+		calendarioFeriado.setIndRepeteAnualmente(indRepeteAnualmente);
+
+		calendarioFeriado.setIdLocalidade(idLocalidade);
+		calendarioFeriado.setUfSigla(ufSigla);
+		
+		calendarioService.cadastrarFeriado(calendarioFeriado);
+		
+		
+	}
+	
+	public void obterFeriados(int anoVigencia) {
+		
+		calendarioService.obterListaDataFeriado(anoVigencia);
+		
 	}
 	
 	

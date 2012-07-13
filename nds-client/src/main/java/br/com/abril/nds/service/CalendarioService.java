@@ -84,11 +84,10 @@ public interface CalendarioService {
 	/**
 	 * Obtém lista de datas com feriados cadastrados.
 	 * 
-	 * @param dataInicial
-	 * @param dataFinal
+	 * @param anoVigencia
 	 * 
 	 * @return {@link List<Date>}
 	 */
-	List<Date> obterListaDataFeriado(Date dataInicial, Date dataFinal);
+	public List<Date> obterListaDataFeriado(int anoVigencia);
 	
 }

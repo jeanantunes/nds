@@ -305,9 +305,17 @@ public class CalendarioServiceImpl implements CalendarioService {
 	}
 	
 	@Transactional
-	public List<Date> obterListaDataFeriado(
-			Date dataInicial, 
-			Date dataFinal) {
+	public List<Date> obterListaDataFeriado(int anoVigencia) {
+		
+		Calendar calendarInicial = Calendar.getInstance();
+		calendarInicial.set(anoVigencia, Calendar.JANUARY, 1);
+		
+		Calendar calendarFinal = Calendar.getInstance();
+		calendarFinal.set(anoVigencia, Calendar.DECEMBER, 31);
+		
+		Date dataInicial = calendarInicial.getTime();
+		
+		Date dataFinal	= calendarFinal.getTime();
 		
 		List<Date> listaDataFeriado = feriadoRepository.obterListaDataFeriado(dataInicial, dataFinal);
 		

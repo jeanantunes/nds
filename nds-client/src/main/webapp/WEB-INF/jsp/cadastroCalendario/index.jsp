@@ -1,9 +1,6 @@
 <head>
 
-<link type="text/css" rel="stylesheet" href="${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/development-bundle/themes/redmond/jquery.ui.all.css">
-
 <script language="javascript" type="text/javascript" src="${pageContext.request.contextPath}/scripts/scriptCadastroCalendario.js"></script>
-
 
 <style type="text/css">
 
@@ -27,6 +24,20 @@
 		margin: 0px !important;
 		padding: 5px !important;
 	}
+
+    td.highlight { 
+    		border: none !important;
+    		padding: 1px 0 1px 1px !important;
+    		background: none !important;
+    		overflow:hidden;
+    }
+    
+	td.highlight a {
+			background: #99dd73 url(${pageContext.request.contextPath}/images/highlightDate.png) 50% 50% repeat-x !important;  
+			border: 1px #88a276 solid !important;
+	}
+
+
 
 </style>
 
@@ -113,7 +124,7 @@
 				</tr>
 				<tr>
 					<td>Tipo:</td>
-					<td><select name="tipoFeriado" id="novoTipoFeriado"
+					<td><select name="tipoFeriado" id="tipoFeriado"
 						style="width: 180px;">
 							<option selected="selected"></option>
 							<option value="FEDERAL">Federal</option>
@@ -133,26 +144,26 @@
 				</tr>
 				<tr>
 					<td>Descrição:</td>
-					<td><input type="text" name="textfield33" id="novoDescricao"
+					<td><input type="text" name="textfield33" id="descricao"
 						style="width: 230px;" />
 					</td>
 				</tr>
 				<tr>
 					<td>Opera?</td>
-					<td><input name="novoOpera" type="checkbox" value=""
-						id="novoOpera" />
+					<td><input name="indOpera" type="checkbox" value=""
+						id="indOpera" />
 					</td>
 				</tr>
 				<tr>
 					<td>Efetua Cobrança?</td>
-					<td><input name="novoEfetuaCobranca" type="checkbox" value=""
-						id="novoEfetuaCobranca" />
+					<td><input name="indEfetuaCobranca" type="checkbox" value=""
+						id="indEfetuaCobranca" />
 					</td>
 				</tr>
 				<tr>
 					<td>Repete Anualmente?</td>
-					<td><input name="novoRepeteAnualmente" type="checkbox"
-						value="" id="novoRepeteAnualmente" />
+					<td><input name="indRepeteAnualmente" type="checkbox"
+						value="" id="indRepeteAnualmente" />
 					</td>
 				</tr>
 			</table>
