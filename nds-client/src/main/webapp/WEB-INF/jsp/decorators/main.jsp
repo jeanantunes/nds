@@ -215,15 +215,6 @@
 								</li>
 							</sec:authorize>
 							
-							<sec:authorize ifAllGranted="ADMIN">
-								<li>I´ll show you!
-								</li>
-							</sec:authorize>
-							<sec:authorize ifNotGranted="ADMIN">
-								<li>I think i´ll not show you :(
-								</li>
-							</sec:authorize>
-							
 							<li><a href='<c:url value="/cadastro/box"/>'>Box</a>
 							</li>
 							<li><a href='<c:url value="/cadastro/cota"/>'>Cotas</a>

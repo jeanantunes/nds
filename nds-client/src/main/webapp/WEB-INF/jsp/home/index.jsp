@@ -21,6 +21,8 @@
 <script language="javascript" type="text/javascript"
 	src="scripts/flexigrid-1.1/js/flexigrid.pack.js"></script>
 
+<base href="<c:url value="/"/>" />
+
 <script type="text/javascript">
 	(function($) {
 		$.fn
@@ -144,195 +146,21 @@
 				</div>
 			</div>
 		</div>
-***++
-		<c:forEach items="${menus}" var="menu">
-		    <li> ${menu.url} - ${menu.permissao.descricao} ccc</li>
-		</c:forEach>
-*** :)
 		<div id="menu_principal">
 			<ul>
 				<li><a href="index.htm"><span class="classHome">&nbsp;</span>Home</a>
 				</li>
-				<li><a href="javascript:;" class="trigger"><span
-						class="classCadastros">&nbsp;</span>Cadastro</a>
-					<ul>
-						<li><a href='<c:url value="/produto"/>'>Produtos</a>
+					<c:forEach items="${menus}" var="menu">
+						<li><a href="javascript:;" class="trigger"><span
+							class="${menu.key.permissao.classeExibicao}">&nbsp;</span>${menu.key.permissao.descricao}</a>
+							<ul>
+								<c:forEach items="${menus[menu.key]}" var="submenu">
+									<li><a href="<c:url value='${submenu.key.url}' />">${submenu.key.permissao.descricao}</a>
+									</li>
+								</c:forEach>						
+							</ul>
 						</li>
-						<li><a href='<c:url value="/cadastro/edicao"/>'>Edi&ccedil;&atilde;o</a>
-						</li>
-						<li><a href='<c:url value="/banco/bancos"/>'>Bancos</a>
-						</li>
-						<li><a href='<c:url value="/cadastro/box"/>'>Box</a>
-						</li>
-						<li><a href='<c:url value="/cadastro/cota"/>'>Cotas</a>
-						</li>
-						<li><a href="<c:url value="/cadastro/entregador"/>">Entregador</a>
-						</li>
-						<li><a href='<c:url value="/cadastro/fiador/"/>'>Fiador</a>
-						</li>
-						<li><a href='<c:url value="/cadastro/fornecedor"/>'>Fornecedor</a>
-						</li>
-						<li><a href="<c:url value="/parciais/index"/>">Parciais</a>
-						</li>
-						<li><a href="<c:url value="/cadastro/roteirizacao"/>">Roteirização</a>
-						</li>
-						<li><a href='<c:url value="/cadastro/transportador/"/>'>Transportador</a>
-						</li>
-						<li><a href="Cadastro/help_cadastros.htm">Help</a>
-						</li>
-					</ul>
-				</li>
-				<li><a href="javascript:;" class="trigger"><span
-						class="classLancamento">&nbsp;</span>Lançamento</a>
-					<ul>
-						<li><a href="matrizLancamento">Balanceamento da Matriz</a></li>
-						<li><a href="Lancamento/consulta_consignado_jornaleiro.htm">Consulta
-								Reparte Cota</a></li>
-						<li><a href="<c:url value='/lancamento/furoProduto'/>">Furo
-								de Produto</a></li>
-						<li><a href="<c:url value='/lancamento/relatorioVendas'/>">Relatório
-								de Vendas</a></li>
-						<li><a href="<c:url value='/lancamento/vendaProduto'/>">Venda
-								por Produto</a>
-						</li>
-						<li><a href="Lancamento/help_lancamento.htm">Help</a></li>
-					</ul>
-				</li>
-				<li><a href="javascript:;" class="trigger"><span
-						class="classEstoque">&nbsp;</span>Estoque</a>
-					<ul>
-						<li><a href="<c:url value="/estoque/consultaNotas"/>">Consulta
-								de Notas</a></li>
-						<li><a href='<c:url value="/estoque/diferenca/consulta"/>'>Consulta
-								Faltas e Sobras</a></li>
-						<li><a href='<c:url value="/estoque/extratoEdicao/index"/>'>Extrato
-								de Edição</a></li>
-						<li><a href='<c:url value="/estoque/diferenca/lancamento"/>'>Lançamento
-								de Faltas e Sobras</a></li>
-						<li><a
-							href='<c:url value="/estoque/recebimentoFisico/index"/>'>Recebimento
-								Fisico</a></li>
-						<li><a href='<c:url value="/estoque/edicoesFechadas"/>'>Edições
-								Fechadas com Saldo</a></li>
-						<li><a href="Estoque/help_estoque.htm">Help</a></li>
-					</ul>
-				</li>
-
-				<li><a href="javascript:;" class="trigger"><span
-						class="classExpedicao">&nbsp;</span>Expedição</a>
-					<ul>
-						<li><a href="<c:url value="/mapaAbastecimento/index"/>">Mapa
-								Abastecimento</a>
-						</li>
-						<li><a href='<c:url value="/confirmacaoExpedicao/index"/>'>Confirma
-								Expedição</a></li>
-						<li><a
-							href="Expedicao/consulta_resumos_nfe_geradas_retornadas.htm">Consulta
-								Resumos das NF-e Geradas e Retornadas</a></li>
-						<li><a href="Expedicao/geracao_arquivo_nfe.htm">Geração
-								arquivos NF-e</a></li>
-						<li><a href="Expedicao/geracao_nfe.htm">Geração de NF-e</a></li>
-						<li><a href='<c:url value="/cotaAusente/index"/>'>Cota
-								Ausente</a></li>
-						<li><a href="Expedicao/painel_monitor_nfe.htm">Painel
-								Monitor NF-e</a></li>
-						<li><a href='<c:url value="/expedicao/resumo"/>'>Resumo
-								de Expedição</a></li>
-						<li><a href='<c:url value="/romaneio"/>'>Romaneios</a></li>
-						<li><a href="Expedicao/tratamento_arquivo_retorno_nfe.htm">Integração
-								do Arquivo de Retorno NF-e</a></li>
-						<li><a href="Expedicao/help_expedicao.htm">Help</a></li>
-					</ul>
-				</li>
-				<li><a href="javascript:;" class="trigger"><span
-						class="classDevolucao">&nbsp;</span>Devolução</a>
-					<ul>
-						<li><a href='<c:url value="/devolucao/digitacao/contagem/"/>'>Digitação
-								de Contagem para Devolução</a></li>
-						<li><a href='<c:url value="devolucao/fechamentoEncalhe/"/>'>Fechamento
-								Encalhe</a></li>
-						<li><a href="Devolucao/help_devolucao.htm">Help</a></li>
-					</ul></li>
-				<li><a href="javascript:;" class="trigger"><span
-						class="classNFe">&nbsp;</span>NF-e</a>
-					<ul>
-						<li><a href="nfe/retornoNFe/">Retorno NF-e</a></li>
-						<li><a href="nfe/painelMonitorNFe/">Painel Monitor NF-e</a></li>
-					</ul>
-				</li>
-
-
-				<li><a href="javascript:;" class="trigger"><span
-						class="classFinanceiro">&nbsp;</span>Financeiro</a>
-					<ul>
-						<li><a href='<c:url value="/financeiro/baixa"/>'>Baixa
-								Bancária</a></li>
-						<li><a href="Financeiro/baixa_bancaria_manual.htm">Baixa
-								Bancária Manual</a></li>
-						<li><a href="Financeiro/baixa_manual_divida.htm">Baixa
-								Manual de Dívidas</a></li>
-						<li><a href='<c:url value="/financeiro/boletos/consulta"/>'>Consulta
-								Boletos por Cota</a></li>
-						<li><a
-							href='<c:url value="/financeiro/contaCorrenteCota/index"/>'>Conta
-								Corrente</a></li>
-						<li><a href='<c:url value="/financeiro/debitoCreditoCota"/>'>Débitos
-								/ Créditos Cota</a></li>
-
-						<li><a href="Financeiro/geracao_cobranca.htm">Geração
-								Cobrança</a></li>
-						<li><a href='<c:url value="/inadimplencia/index"/>'>Histórico
-								de Inadimplência</a></li>
-						<li><a href='<c:url value="/financeiro/impressaoBoletos"/>'>Impressão
-								de Boletos</a></li>
-						<li><a
-							href='<c:url value="/financeiro/manutencaoStatusCota"/>'>Manutenção
-								de Status Cota</a></li>
-						<li><a href="Financeiro/parametros_cobranca.htm">Parâmetros
-								de Cobrança</a></li>
-						<li><a href='<c:url value="/suspensaoCota/index"/>'>Suspensão
-								Cota</a></li>
-						<li><a href="Financeiro/workflow_aprovacao.htm">Work Flow
-								de Aprovação</a></li>
-						<li><a href="Financeiro/help_financeiro.htm">Help</a></li>
-					</ul>
-				</li>
-				<li><a href="javascript:;" class="trigger"><span
-						class="classAdministracao">&nbsp;</span>Administração</a>
-					<ul>
-						<li><a
-							href='<c:url value="/administracao/controleAprovacao"/>'>
-								Controle Aprovação </a></li>
-						<li><a
-							href='<c:url value="/administracao/cadastroCalendario"/>'>Calendário</a>
-						</li>
-						<li><a
-							href='<c:url value="/administracao/tipoDescontoCota"/>'>Tipo
-								de Desconto Cota</a>
-						</li>
-
-						<li><a href="<c:url value="/tipoMovimento/index"/>">Tipo
-								de Movimento</a>
-						</li>
-
-
-						<li><a href="Administracao/iniciar_dia.htm">Iniciar o Dia</a>
-						</li>
-						<li><a href="Administracao/fechar_dia.htm">Fechar o Dia</a></li>
-						<li><a href='<c:url value="/servico/cadastroServico"/>'>Serviço
-								de Entrega</a></li>
-						<li><a href='<c:url value="/administracao/tipoProduto"/>'>Tipo
-								de Produto</a></li>
-						<li><a href="Administracao/help_administracao.htm">Help</a></li>
-						<li><a
-							href='<c:url value="/distribuidor/parametroCobranca/index"/>'>Parâmetros
-								de Cobrança</a></li>
-						<li><a
-							href='<c:url value="administracao/parametrosSistema"/>'>Par&acirc;metros
-								do Sistema</a>
-						</li>
-
-					</ul></li>
+					</c:forEach>
 				<li><a href="help.htm"><span class="classHelp">&nbsp;</span>Help</a>
 				</li>
 			</ul>

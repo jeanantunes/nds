@@ -8,6 +8,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.vo.DetalheProdutoVO;
 import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.dto.ProdutoEdicaoDTO;
@@ -18,6 +19,7 @@ import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
+import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
@@ -55,7 +57,10 @@ public class ProdutoEdicaoController {
 	/** Traz a página inicial. */
 	@Get
 	@Path("/")
+	@Rules(Permissao.ROLE_CADASTRO_EDICAO)
 	public void index() { }
+
+	
 	
 	@Post
 	@Path("/pesquisarEdicoes.json")
@@ -176,7 +181,6 @@ public class ProdutoEdicaoController {
 		if (qtdEdicoes == 0 || Long.valueOf(0).equals(qtdEdicoes)) {
 			dto.setNumeroEdicao(1L);
 		}
-		
 		
 		this.result.use(Results.json()).from(dto, "result").serialize();
 	}

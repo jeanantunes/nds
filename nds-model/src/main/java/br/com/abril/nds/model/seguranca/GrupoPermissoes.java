@@ -1,9 +1,14 @@
 package br.com.abril.nds.model.seguranca;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -20,8 +25,8 @@ public class GrupoPermissoes {
 	@Column(name = "NOME", nullable = false)
 	private String nome;
 
-	/*@ManyToMany(fetch=FetchType.LAZY)
-	private Set<Permissao> permissoes = new HashSet<Permissao>();*/
+	@ManyToMany(fetch=FetchType.LAZY)
+	private Set<Permissao> permissoes = new HashSet<Permissao>();
 
 	public Long getId() {
 		return id;

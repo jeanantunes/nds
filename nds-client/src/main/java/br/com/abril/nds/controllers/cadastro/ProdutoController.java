@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.vo.BaseComboVO;
 import br.com.abril.nds.client.vo.ProdutoCadastroVO;
 import br.com.abril.nds.client.vo.ValidacaoVO;
@@ -18,6 +19,7 @@ import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.TipoDesconto;
 import br.com.abril.nds.model.cadastro.TipoProduto;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
+import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.EditorService;
 import br.com.abril.nds.service.EstoqueProdutoService;
@@ -72,6 +74,7 @@ public class ProdutoController {
 	}
 	
 	@Path("/")
+	@Rules(Permissao.ROLE_CADASTRO_PRODUTO)
 	public void index() {
 		
 		List<TipoProduto> listaTipoProduto = this.tipoProdutoService.obterTodosTiposProduto();
