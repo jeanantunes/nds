@@ -7,6 +7,8 @@ import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.vo.TipoProdutoVO;
 import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.dto.ItemDTO;
@@ -17,6 +19,7 @@ import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.TipoProduto;
 import br.com.abril.nds.model.fiscal.NCM;
+import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.TipoProdutoService;
@@ -64,6 +67,7 @@ public class TipoProdutoController {
 	}
 	
 	@Path("/")
+	@Rules(Permissao.ROLE_ADMINISTRACAO_TIPO_PRODUTO)
 	public void index() {
 		
 		listaNcm.clear();

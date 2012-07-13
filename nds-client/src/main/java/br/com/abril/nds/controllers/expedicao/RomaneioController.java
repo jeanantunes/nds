@@ -10,6 +10,7 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.vo.ResultadoRomaneioVO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.RomaneioDTO;
@@ -21,6 +22,7 @@ import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Rota;
 import br.com.abril.nds.model.cadastro.Roteiro;
 import br.com.abril.nds.model.cadastro.TipoBox;
+import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.service.BoxService;
 import br.com.abril.nds.service.RomaneioService;
@@ -69,6 +71,7 @@ public class RomaneioController {
 	
 	
 	@Path("/")
+	@Rules(Permissao.ROLE_EXPEDICAO_ROMANEIOS)
 	public void index() {
 		session.setAttribute(FILTRO_SESSION_ATTRIBUTE_ROMANEIOS, null);
 		carregarComboBox();

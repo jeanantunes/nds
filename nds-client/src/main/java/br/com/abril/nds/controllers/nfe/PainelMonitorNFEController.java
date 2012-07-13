@@ -12,6 +12,7 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.vo.NfeVO;
 import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.dto.InfoNfeDTO;
@@ -28,6 +29,7 @@ import br.com.abril.nds.model.fiscal.TipoEmissaoNfe;
 import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.model.fiscal.nota.Status;
 import br.com.abril.nds.model.fiscal.nota.StatusProcessamentoInterno;
+import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.service.MonitorNFEService;
 import br.com.abril.nds.util.CellModelKeyValue;
@@ -83,6 +85,7 @@ public class PainelMonitorNFEController {
 	private static final String NFES_PARA_IMPRESSAO_DANFES= "nfesParaImpressaoDanfes";
 	
 	@Path("/")
+	@Rules(Permissao.ROLE_NFE_PAINEL_MONITOR_NFE)
 	public void index(){
 		
 		carregarComboSituacaoNfe();

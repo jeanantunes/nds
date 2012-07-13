@@ -8,9 +8,12 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.ManyToMany;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+
+import org.hibernate.annotations.CollectionOfElements;
 
 @Entity	
 @Table(name = "GRUPO_PERMISSOES")
@@ -25,7 +28,12 @@ public class GrupoPermissoes {
 	@Column(name = "NOME", nullable = false)
 	private String nome;
 
-	@ManyToMany(fetch=FetchType.LAZY)
+	@CollectionOfElements(fetch=FetchType.EAGER)
+    @JoinTable(
+            name="GRUPO_PERMISSAO_PERMISSAO", // ref table.
+            joinColumns = {@JoinColumn(name="PERMISSAO_ID")}
+    )
+    @Column(name="PERMISSAO_GRUPO_ID")
 	private Set<Permissao> permissoes = new HashSet<Permissao>();
 
 	public Long getId() {
@@ -44,4 +52,12 @@ public class GrupoPermissoes {
 		this.nome = nome;
 	}
 
+	public Set<Permissao> getPermissoes() {
+		return permissoes;
+	}
+
+	public void setPermissoes(Set<Permissao> permissoes) {
+		this.permissoes = permissoes;
+	}
+	
 }

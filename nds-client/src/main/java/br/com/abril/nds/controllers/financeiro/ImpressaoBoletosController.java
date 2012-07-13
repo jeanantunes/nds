@@ -13,6 +13,7 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.vo.DividaGeradaVO;
 import br.com.abril.nds.client.vo.RotaRoteiroVO;
 import br.com.abril.nds.dto.GeraDividaDTO;
@@ -33,6 +34,7 @@ import br.com.abril.nds.model.cadastro.Roteirizacao;
 import br.com.abril.nds.model.cadastro.Roteiro;
 import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
+import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.serialization.custom.CustomMapJson;
 import br.com.abril.nds.service.BoxService;
@@ -110,6 +112,7 @@ public class ImpressaoBoletosController {
 	
 	@Get
 	@Path("/")
+	@Rules(Permissao.ROLE_FINANCEIRO_IMPRESSAO_BOLETOS)
 	public void index(){
 		
 		carregarTiposCobranca();

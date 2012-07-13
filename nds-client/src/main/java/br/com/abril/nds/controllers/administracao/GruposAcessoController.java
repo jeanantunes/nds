@@ -2,6 +2,8 @@ package br.com.abril.nds.controllers.administracao;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.client.annotation.Rules;
+import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
@@ -22,6 +24,7 @@ public class GruposAcessoController {
 	}
 	
 	@Path("/")
+	@Rules(Permissao.ROLE_ADMINISTRACAO_GRUPOS_ACESSO)
 	public void index() {
 	}
 

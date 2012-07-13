@@ -11,6 +11,7 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.controllers.cadastro.CotasAssociadasController.AssociacaoCota;
 import br.com.abril.nds.controllers.cadastro.GarantiasController.GarantiaCadastrada;
@@ -28,6 +29,7 @@ import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.Telefone;
+import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.service.EnderecoService;
 import br.com.abril.nds.service.FiadorService;
 import br.com.abril.nds.service.PessoaService;
@@ -95,6 +97,7 @@ public class FiadorController {
 	}
 	
 	@Path("/")
+	@Rules(Permissao.ROLE_CADASTRO_FIADOR)
 	public void index(){
 		
 		result.include("dataAtual", DateUtil.formatarDataPTBR(new Date()));

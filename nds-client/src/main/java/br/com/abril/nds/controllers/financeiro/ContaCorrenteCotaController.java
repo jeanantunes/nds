@@ -16,6 +16,7 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.util.PessoaUtil;
 import br.com.abril.nds.client.vo.ContaCorrenteCotaVO;
 import br.com.abril.nds.client.vo.FooterTotalFornecedorVO;
@@ -39,6 +40,7 @@ import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.financeiro.ConsolidadoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.ViewContaCorrenteCota;
+import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.service.ConsolidadoFinanceiroService;
 import br.com.abril.nds.service.ContaCorrenteCotaService;
@@ -97,6 +99,7 @@ public class ContaCorrenteCotaController {
 	public ContaCorrenteCotaController() {
 	}
 
+	@Rules(Permissao.ROLE_FINANCEIRO_CONTA_CORRENTE)
 	public void index() {
 	}
 

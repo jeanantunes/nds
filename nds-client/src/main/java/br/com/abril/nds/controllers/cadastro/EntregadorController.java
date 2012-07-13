@@ -17,6 +17,7 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.vo.EntregadorPessoaFisicaVO;
 import br.com.abril.nds.client.vo.EntregadorPessoaJuridicaVO;
 import br.com.abril.nds.client.vo.ValidacaoVO;
@@ -35,6 +36,7 @@ import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.ProcuracaoEntregador;
 import br.com.abril.nds.model.cadastro.TelefoneEntregador;
+import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.EntregadorService;
 import br.com.abril.nds.service.PessoaFisicaService;
@@ -101,6 +103,7 @@ public class EntregadorController {
 	
 	
 	@Path("/")
+	@Rules(Permissao.ROLE_CADASTRO_ENTREGADOR)
 	public void index() { }
 	
 	/**

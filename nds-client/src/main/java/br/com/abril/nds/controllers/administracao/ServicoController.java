@@ -6,11 +6,13 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.vo.ResultadoServicoVO;
 import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Periodicidade;
 import br.com.abril.nds.model.cadastro.TipoEntrega;
+import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.service.TipoEntregaService;
 import br.com.abril.nds.service.exception.UniqueConstraintViolationException;
 import br.com.abril.nds.util.CellModelKeyValue;
@@ -42,6 +44,7 @@ public class ServicoController {
 	 * Método chamado assim que iniciada a tela.
 	 */
 	@Path("/")
+	@Rules(Permissao.ROLE_ADMINISTRACAO_SERVICO_ENTREGA)
 	public void index() {
 		
 	}

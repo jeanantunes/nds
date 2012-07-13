@@ -14,6 +14,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.beanutils.BeanComparator;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.vo.ResultadoResumoExpedicaoVO;
 import br.com.abril.nds.client.vo.ResumoExpedicaoBoxVO;
 import br.com.abril.nds.client.vo.ResumoExpedicaoVO;
@@ -25,6 +26,7 @@ import br.com.abril.nds.dto.filtro.FiltroResumoExpedicaoDTO.TipoPesquisaResumoEx
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.service.ExpedicaoService;
 import br.com.abril.nds.util.CellModelKeyValue;
@@ -77,6 +79,7 @@ public class ResumoExpedicaoController {
 	 * Carrega as informações default da tela de pesquisa.
 	 */
 	@Get
+	@Rules(Permissao.ROLE_EXPEDICAO_RESUMO_EXPEDICAO)
 	public void resumo(){
 		
 		carregarTiposResumo();

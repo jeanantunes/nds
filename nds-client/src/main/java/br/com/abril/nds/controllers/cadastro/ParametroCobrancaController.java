@@ -8,6 +8,7 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.vo.BancoVO;
 import br.com.abril.nds.client.vo.ParametroCobrancaVO;
 import br.com.abril.nds.client.vo.ValidacaoVO;
@@ -21,6 +22,7 @@ import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.FormaEmissao;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.cadastro.TipoFormaCobranca;
+import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.service.BancoService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.ParametroCobrancaCotaService;
@@ -100,6 +102,7 @@ public class ParametroCobrancaController {
      * Método de chamada da página
      */
     @Get
+    @Rules(Permissao.ROLE_ADMINISTRACAO_PARAMETROS_COBRANCA)
     public void index(){ 
     	
     	listaBancos.clear();

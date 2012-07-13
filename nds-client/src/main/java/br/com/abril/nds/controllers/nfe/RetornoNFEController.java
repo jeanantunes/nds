@@ -11,6 +11,7 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.util.NFEImportUtil;
 import br.com.abril.nds.client.vo.SumarizacaoNotaRetornoVO;
 import br.com.abril.nds.client.vo.ValidacaoVO;
@@ -20,6 +21,7 @@ import br.com.abril.nds.integracao.service.ParametroSistemaService;
 import br.com.abril.nds.model.cadastro.ParametroSistema;
 import br.com.abril.nds.model.cadastro.TipoParametroSistema;
 import br.com.abril.nds.model.fiscal.nota.Status;
+import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.service.NotaFiscalService;
 import br.com.abril.nds.util.FileImportUtil;
 import br.com.abril.nds.util.StringUtil;
@@ -57,6 +59,7 @@ public class RetornoNFEController {
 	private static final String LISTA_NOTAS_DE_RETORNO = "listaNotasDeRetorno";
 	
 	@Path("/")
+	@Rules(Permissao.ROLE_NFE_RETORNO_NFE)
 	public void index() {	
 	}
 

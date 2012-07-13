@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.dto.DividaDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.StatusDividaDTO;
@@ -22,6 +23,7 @@ import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.financeiro.Divida;
+import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.service.DividaService;
 import br.com.abril.nds.util.CellModelKeyValue;
@@ -82,6 +84,7 @@ public class InadimplenciaController {
 	/**
 	 * Inicializa dados da tela
 	 */
+	@Rules(Permissao.ROLE_FINANCEIRO_HISTORICO_INADIMPLENCIA)
 	public void index() {
 		gerarListaStatus();
 		result.forwardTo(InadimplenciaController.class).inadimplencia();

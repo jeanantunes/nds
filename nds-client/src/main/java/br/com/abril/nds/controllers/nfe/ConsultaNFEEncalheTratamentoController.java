@@ -10,6 +10,7 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.dto.ConsultaNFENotasPendentesDTO;
 import br.com.abril.nds.dto.ConsultaNFENotasRecebidasDTO;
 import br.com.abril.nds.dto.ItemDTO;
@@ -23,6 +24,7 @@ import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.fiscal.StatusNotaFiscalEntrada;
+import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.service.ConsultaNFEEncalheTratamentoNotasRecebidasService;
 import br.com.abril.nds.service.CotaService;
@@ -65,6 +67,7 @@ public class ConsultaNFEEncalheTratamentoController {
 	private CotaService cotaService;
 	
 	@Path("/")
+	@Rules(Permissao.ROLE_NFE_CONSULTA_NFE_ENCALHE_TRATAMENTO)
 	public void index(){
 		carregarComboStatusNota();
 	}

@@ -10,6 +10,7 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.dto.AssociacaoVeiculoMotoristaRotaDTO;
 import br.com.abril.nds.dto.ConsultaTransportadorDTO;
@@ -24,6 +25,7 @@ import br.com.abril.nds.model.cadastro.Motorista;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.Transportador;
 import br.com.abril.nds.model.cadastro.Veiculo;
+import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.PessoaService;
 import br.com.abril.nds.service.TransportadorService;
@@ -88,6 +90,7 @@ public class TransportadorController {
 	}
 	
 	@Path("/")
+	@Rules(Permissao.ROLE_CADASTRO_TRANSPORTADOR)
 	public void index(){
 		
 		this.limparDadosSessao();

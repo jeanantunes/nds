@@ -976,4 +976,3 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		return notaReferenciada;
 	}
 }
->>>>>>> master

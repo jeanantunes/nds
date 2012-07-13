@@ -4,10 +4,12 @@ import java.io.InputStream;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.dto.ParametroSistemaGeralDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.service.ParametroSistemaService;
+import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.UfEnum;
@@ -42,6 +44,7 @@ public class ParametrosSistemaController {
 	 */
 	@Get
 	@Path("/")
+	@Rules(Permissao.ROLE_ADMINISTRACAO_PARAMETROS_SISTEMA)
 	public ParametroSistemaGeralDTO index() {
 		
 		result.include("listaUf", Util.getUfs(null));

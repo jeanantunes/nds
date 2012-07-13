@@ -13,6 +13,7 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.util.PaginacaoUtil;
 import br.com.abril.nds.client.vo.TipoDescontoCotaEspecificoVO;
 import br.com.abril.nds.client.vo.TipoDescontoCotaProdutoVO;
@@ -32,6 +33,7 @@ import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.TipoDescontoCota;
 import br.com.abril.nds.model.cadastro.TipoDescontoDistribuidor;
 import br.com.abril.nds.model.cadastro.TipoDescontoProduto;
+import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
@@ -97,6 +99,7 @@ public class TipoDescontoCotaController {
 	}
 	
 	@Path("/")
+	@Rules(Permissao.ROLE_ADMINISTRACAO_TIPO_DESCONTO_COTA)
 	public void index() {		
 		inserirDataAtual();		
 	}

@@ -11,6 +11,7 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.dto.ConsultaConsignadoCotaDTO;
 import br.com.abril.nds.dto.ConsultaConsignadoCotaPeloFornecedorDTO;
 import br.com.abril.nds.dto.ItemDTO;
@@ -24,6 +25,7 @@ import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
+import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.service.ConsultaConsignadoCotaService;
 import br.com.abril.nds.service.CotaService;
@@ -73,6 +75,7 @@ public class ConsultaConsignadoCotaController {
 	private Cota cota = null;
 	
 	@Path("/")
+	@Rules(Permissao.ROLE_FINANCEIRO_CONSIGNADO_COTA)
 	public void index(){
 		this.carregarComboFornecedores();		
 	}

@@ -13,6 +13,7 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.dto.ExtratoEdicaoDTO;
 import br.com.abril.nds.dto.InfoGeralExtratoEdicaoDTO;
@@ -21,6 +22,7 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.service.ExtratoEdicaoService;
 import br.com.abril.nds.util.CellModel;
@@ -71,6 +73,7 @@ public class ExtratoEdicaoController {
 		this.session = session;
 	}
 	
+	@Rules(Permissao.ROLE_ESTOQUE_EXTRATO_EDICAO)
 	public void index(){
 		
 		this.session.removeAttribute(FILTRO_PESQUISA_SESSION_ATTRIBUTE);
