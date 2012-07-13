@@ -200,4 +200,26 @@ public class ProdutoRepositoryImpl extends AbstractRepositoryModel<Produto, Long
 		return (Produto) criteria.uniqueResult();
 	}
 	
+	/**
+	 * Obtem produto por nome ou codigo
+	 * @param nome
+	 * @param codigo
+	 * @return Produto
+	 */
+	@Override
+	public Produto obterProdutoPorNomeProdutoOuCodigo(String nome, String codigo) {
+		String hql = "from Produto produto "
+				   + " where ((upper(produto.nome) = upper(:nome)) or (produto.codigo = :codigo)) ";
+		
+		Query query = super.getSession().createQuery(hql);
+
+		query.setParameter("nome", nome);
+		
+		query.setParameter("codigo", codigo);
+		
+		query.setMaxResults(1);
+		
+		return (Produto) query.uniqueResult();
+	}
+	
 }
