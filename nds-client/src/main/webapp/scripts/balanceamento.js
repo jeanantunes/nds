@@ -9,6 +9,11 @@ function Balanceamento(pathTela, descInstancia) {
 	this.lancamentos = [];
 	this.isCliquePesquisar;
 	
+	this.definirAcaoPesquisaTeclaEnter = function() {
+		
+		definirAcaoPesquisaTeclaEnter();
+	},
+	
 	this.pesquisar = function() {
 		
 		$("#resumoPeriodo").show();				
@@ -233,7 +238,11 @@ function Balanceamento(pathTela, descInstancia) {
 		$.postJSON(
 				pathTela + "/matrizLancamento/reprogramarLancamentoUnico",
 				data,
-				function(){T.atualizarResumoBalanceamento();}
+				function(){
+					
+					T.atualizarResumoBalanceamento(true);
+					T.checkUncheckLancamentos(false);
+				}
 			);
 	},
 	
@@ -449,7 +458,7 @@ function Balanceamento(pathTela, descInstancia) {
 			null,
 			function(result) {
 				T.popularConfirmacaoBalanceamento(result);
-				T.popup_confirmar_balanceamento( "#dialog-confirm-balanceamento" );
+				T.popup_confirmar_balanceamento();
 			},
 			function() {
 				$("#dialog-confirm-balanceamento").hide();
@@ -578,10 +587,9 @@ function Balanceamento(pathTela, descInstancia) {
 	
 	/**
 	 * Exibe popup de confirmação de balanceamento
-	 * @param dialog: Nome do dialog
 	 */
-	this.popup_confirmar_balanceamento = function(dialog){
-		$( dialog ).dialog({
+	this.popup_confirmar_balanceamento = function() {
+		$( "#dialog-confirm-balanceamento" ).dialog({
 			resizable: false,
 			height:'auto',
 			width:300,
@@ -605,7 +613,7 @@ function Balanceamento(pathTela, descInstancia) {
 				}
 			],
 			beforeClose: function() {
-				clearMessageDialogTimeout(dialog);
+				clearMessageDialogTimeout("dialog-confirmar");
 		    }
 		});
 	},

@@ -11,6 +11,7 @@ import java.util.TreeSet;
 
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -108,6 +109,7 @@ public class MatrizLancamentoServiceImplTest extends AbstractRepositoryImplTest 
 	}
 	
 	@Test
+	@Ignore
 	public void balancear() {
 		
 		FiltroLancamentoDTO filtro = this.montarFiltro();

@@ -14,7 +14,7 @@ public class BigDecimalUtil {
 		BigDecimal soma = BigDecimal.ZERO;
 		for (BigDecimal valor : valores) {
 			if(valor != null && !valor.equals(BigDecimal.ZERO)){
-				soma.add(valor);
+				soma = soma.add(valor);
 			}
 		}		
 		return soma;

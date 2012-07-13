@@ -27,6 +27,9 @@ import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.OperacaoEstoque;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
+import br.com.abril.nds.model.fiscal.GrupoNotaFiscal;
+import br.com.abril.nds.model.fiscal.nota.Status;
+import br.com.abril.nds.model.fiscal.nota.StatusProcessamentoInterno;
 import br.com.abril.nds.model.movimentacao.StatusOperacao;
 import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
 import br.com.abril.nds.util.Intervalo;
@@ -1242,31 +1245,43 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 	}  
 	
 	@SuppressWarnings("unchecked")
-	public List<MovimentoEstoqueCota> obterMovimentoEstoqueCotaPor(Long idCota, List<GrupoMovimentoEstoque> listaGrupoMovimentoEstoques, Intervalo<Date> periodo, List<Long> listaFornecedores, List<Long> listaProdutos) {
+	public List<MovimentoEstoqueCota> obterMovimentoEstoqueCotaPor(Long idCota, GrupoNotaFiscal grupoNotaFiscal, List<GrupoMovimentoEstoque> listaGrupoMovimentoEstoques, Intervalo<Date> periodo, List<Long> listaFornecedores, List<Long> listaProdutos) {
 		
 		StringBuffer sql = new StringBuffer("");
 		
 		sql.append(" SELECT DISTINCT movimentoEstoqueCota ")
 		   .append(" FROM MovimentoEstoqueCota movimentoEstoqueCota ")
-		   .append(" INNER JOIN movimentoEstoqueCota.produtoEdicao.produto.fornecedores fornecedores");
-		
+		   .append("   LEFT JOIN movimentoEstoqueCota.produtoEdicao.produto.fornecedores fornecedor ")
+		   .append("   LEFT JOIN movimentoEstoqueCota.estudoCota.estudo.lancamentos lancamento ")
+		   .append("   LEFT JOIN movimentoEstoqueCota.listaProdutoServicos produtoServico ")
+		   .append("   LEFT JOIN produtoServico.produtoServicoPK.notaFiscal notaFiscal ")
+		   .append("   LEFT JOIN notaFiscal.informacaoEletronica informacaoEletronica")
+		   .append("   LEFT JOIN informacaoEletronica.retornoComunicacaoEletronica retornoComunicacaoEletronica ")
+		   .append("   LEFT JOIN notaFiscal.identificacao.tipoNotaFiscal tipoNotaFiscal ");
 		
 		sql.append(" WHERE movimentoEstoqueCota.status = :status ")
+		   .append("   AND (tipoNotaFiscal IS NULL OR tipoNotaFiscal.grupoNotaFiscal != :grupoNotaFiscal)  ")
+		   .append("   AND (notaFiscal IS NULL OR notaFiscal.statusProcessamentoInterno != :statusInterno)")
+		   .append("   AND (retornoComunicacaoEletronica IS NULL OR retornoComunicacaoEletronica.status != :statusNFe)")
 		   .append("   AND movimentoEstoqueCota.tipoMovimento.grupoMovimentoEstoque IN (:listaGrupoMoviementoEstoque) ")
 		   .append("   AND movimentoEstoqueCota.cota.id = :idCota ")
-		   .append("   AND movimentoEstoqueCota.data BETWEEN :dataInicio AND :dataFim ");
+		   .append("   AND (lancamento IS NOT NULL ")
+		   .append("   AND  lancamento.dataLancamentoDistribuidor BETWEEN :dataInicio AND :dataFim ")
+		   .append("    OR  movimentoEstoqueCota.data BETWEEN :dataInicio AND :dataFim) ");
 		
 		if (listaProdutos != null && !listaProdutos.isEmpty()) {
 			sql.append("   AND movimentoEstoqueCota.produtoEdicao.produto.id IN (:listaProdutos) ");
 		}
-		
 		if (listaFornecedores != null && !listaFornecedores.isEmpty()) {
-			sql.append("   AND fornecedores.id IN (:listaFornecedores) ");
+			sql.append("   AND (fornecedor IS NULL OR fornecedor.id IN (:listaFornecedores)) ");
 		}
-
+		
 		Query query = getSession().createQuery(sql.toString());
 		
 		query.setParameter("status", StatusAprovacao.APROVADO);
+		query.setParameter("grupoNotaFiscal", grupoNotaFiscal);
+		query.setParameter("statusInterno", StatusProcessamentoInterno.NAO_GERADA);
+		query.setParameter("statusNFe", Status.CANCELAMENTO_HOMOLOGADO);
 		query.setParameterList("listaGrupoMoviementoEstoque", listaGrupoMovimentoEstoques);
 		query.setParameter("idCota", idCota);
 		query.setParameter("dataInicio", periodo.getDe());

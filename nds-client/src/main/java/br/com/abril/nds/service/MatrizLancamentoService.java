@@ -28,9 +28,19 @@ public interface MatrizLancamentoService {
 	 * @param datasConfirmadas - datas para confirmação
 	 * @param usuario - usuário
 	 * 
-	 * @return {@link List<ProdutoLancamentoDTO>}
+	 * @return {@link TreeMap<Date, List<ProdutoLancamentoDTO>>}
 	 */
-	List<ProdutoLancamentoDTO> confirmarMatrizLancamento(TreeMap<Date, List<ProdutoLancamentoDTO>> matrizLancamento,
-								   						 List<Date> datasConfirmadas, Usuario usuario);
+	TreeMap<Date, List<ProdutoLancamentoDTO>> confirmarMatrizLancamento(
+													TreeMap<Date, List<ProdutoLancamentoDTO>> matrizLancamento,
+													List<Date> datasConfirmadas, Usuario usuario);
+	
+	/**
+	 * Trata os lançamentos quando já houver um mesmo produto com a mesma data de lançamento.
+	 * 
+	 * @param produtoLancamentoAdicionar - produto lançamento que será adicionado na matriz de balanceamento
+	 * @param produtosLancamento - lista de produtos de lançamento que já foram adicionados na matriz de balanceamento
+	 */
+	void tratarAgrupamentoPorProdutoDataLcto(ProdutoLancamentoDTO produtoLancamentoAdicionar,
+											 List<ProdutoLancamentoDTO> produtosLancamento);
 	
 }

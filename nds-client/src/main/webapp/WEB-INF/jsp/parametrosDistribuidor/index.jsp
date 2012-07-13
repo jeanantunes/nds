@@ -598,7 +598,7 @@ $(function() {
 		                  <td width="97"> Obrigação Fiscal</td>
 		                  <td width="20"><input name="parametrosDistribuidor.regimeEspecial" id="regimeEspecial" type="checkbox"  ${parametrosDistribuidor.regimeEspecial}/></td>
 		                  <td width="98">Regime Especial</td>
-		                  <td width="20"><input type="radio" name="distribuidor" id="radioPrestadorServico" value="PRESTADOR_SERVICO" </td>
+		                  <td width="20"><input type="radio" name="distribuidor" id="radioPrestadorServico" value="PRESTADOR_SERVICO" /> </td>
 		                  <td width="101">Prestador Serviço</td>
 		                  <td width="20"><input type="radio" name="distribuidor" id="radioMercantil" value="MERCANTIL" /></td>
 		                  <td width="50">Mercantil</td>

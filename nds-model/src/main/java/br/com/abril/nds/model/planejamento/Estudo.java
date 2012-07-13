@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -52,6 +53,9 @@ public class Estudo implements Serializable {
 	@OneToMany(mappedBy = "estudo")
 	private Set<Lancamento> lancamentos = new HashSet<Lancamento>();
 	
+	@OneToMany(mappedBy = "estudo", cascade = {CascadeType.REMOVE, CascadeType.MERGE})
+	private Set<EstudoCota> estudoCotas = new HashSet<EstudoCota>();
+	
 	public Long getId() {
 		return id;
 	}
@@ -86,6 +90,20 @@ public class Estudo implements Serializable {
 	
 	public Lancamento getLancamento() {
 		return lancamentos.isEmpty() ? null : lancamentos.iterator().next();
+	}
+
+	/**
+	 * @return the estudoCotas
+	 */
+	public Set<EstudoCota> getEstudoCotas() {
+		return estudoCotas;
+	}
+
+	/**
+	 * @param estudoCotas the estudoCotas to set
+	 */
+	public void setEstudoCotas(Set<EstudoCota> estudoCotas) {
+		this.estudoCotas = estudoCotas;
 	}
 
 }

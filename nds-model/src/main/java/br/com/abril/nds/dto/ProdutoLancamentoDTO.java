@@ -2,7 +2,9 @@ package br.com.abril.nds.dto;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
@@ -59,8 +61,6 @@ public class ProdutoLancamentoDTO implements Serializable {
 	
 	private Integer numeroReprogramacoes;
 	
-	private boolean possuiEstudo;
-	
 	private boolean possuiRecebimentoFisico;
 	
 	private PeriodicidadeProduto periodicidadeProduto;
@@ -70,6 +70,10 @@ public class ProdutoLancamentoDTO implements Serializable {
   	private String distribuicao;
   	
   	private boolean possuiFuro;
+  	
+  	private boolean lancamentoAgrupado;
+  	
+  	private List<ProdutoLancamentoDTO> produtosLancamentoAgrupados = new ArrayList<ProdutoLancamentoDTO>();
 	
 	/**
 	 * Construtor padrão.
@@ -371,21 +375,7 @@ public class ProdutoLancamentoDTO implements Serializable {
 	public void setNumeroReprogramacoes(Integer numeroReprogramacoes) {
 		this.numeroReprogramacoes = numeroReprogramacoes;
 	}
-
-	/**
-	 * @return the possuiEstudo
-	 */
-	public boolean isPossuiEstudo() {
-		return possuiEstudo;
-	}
-
-	/**
-	 * @param possuiEstudo the possuiEstudo to set
-	 */
-	public void setPossuiEstudo(boolean possuiEstudo) {
-		this.possuiEstudo = possuiEstudo;
-	}
-
+	
 	/**
 	 * @return the possuiRecebimentoFisico
 	 */
@@ -457,6 +447,35 @@ public class ProdutoLancamentoDTO implements Serializable {
 	 */
 	public void setPossuiFuro(boolean possuiFuro) {
 		this.possuiFuro = possuiFuro;
+	}
+
+	/**
+	 * @return the lancamentoAgrupado
+	 */
+	public boolean isLancamentoAgrupado() {
+		return lancamentoAgrupado;
+	}
+
+	/**
+	 * @param lancamentoAgrupado the lancamentoAgrupado to set
+	 */
+	public void setLancamentoAgrupado(boolean lancamentoAgrupado) {
+		this.lancamentoAgrupado = lancamentoAgrupado;
+	}
+
+	/**
+	 * @return the produtosLancamentoAgrupados
+	 */
+	public List<ProdutoLancamentoDTO> getProdutosLancamentoAgrupados() {
+		return produtosLancamentoAgrupados;
+	}
+
+	/**
+	 * @param produtosLancamentoAgrupados the produtosLancamentoAgrupados to set
+	 */
+	public void setProdutosLancamentoAgrupados(
+			List<ProdutoLancamentoDTO> produtosLancamentoAgrupados) {
+		this.produtosLancamentoAgrupados = produtosLancamentoAgrupados;
 	}
 	
 }

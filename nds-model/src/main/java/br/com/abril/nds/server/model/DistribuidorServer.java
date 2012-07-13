@@ -10,6 +10,8 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import com.google.gson.annotations.SerializedName;
+
 import br.com.abril.nds.model.cadastro.Endereco;
 
 @Entity
@@ -23,6 +25,7 @@ public class DistribuidorServer implements Serializable {
 
 	@Id
 	@Column(name = "ID_DISTRIBUIDOR_INTERFACE")
+	@SerializedName("_id")
 	private Long idDistribuidorInterface;
 	
 	@Column(name = "DATA_OPERACAO")

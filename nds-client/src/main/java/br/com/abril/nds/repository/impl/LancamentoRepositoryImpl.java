@@ -547,7 +547,7 @@ public class LancamentoRepositoryImpl extends
 		sql.append(" ESTUDO estudo ");
 		sql.append(" on (estudo.ID = estudoCota.ESTUDO_ID ");
 		sql.append(" 	 and estudo.PRODUTO_EDICAO_ID = lancamento.PRODUTO_EDICAO_ID ");
-		sql.append(" 	 and estudo.DATA_LANCAMENTO = lancamento.DATA_LCTO_DISTRIBUIDOR) ");
+		sql.append(" 	 and estudo.DATA_LANCAMENTO = lancamento.DATA_LCTO_PREVISTA) ");
 		
 		sql.append(" inner join ");
 		sql.append(" PRODUTO produto  ");
@@ -704,13 +704,14 @@ public class LancamentoRepositoryImpl extends
 	 */
 	@Override
 	@SuppressWarnings("unchecked")
-	public List<Lancamento> obterLancamentosPorId(Set<Long> idsLancamento) {
+	public List<Lancamento> obterLancamentosPorIdOrdenados(Set<Long> idsLancamento) {
 
 		StringBuilder hql = new StringBuilder();
 
 		hql.append(" select lancamento ")
 		   .append(" from Lancamento lancamento ")
-		   .append(" where lancamento.id in (:idsLancamento) ");
+		   .append(" where lancamento.id in (:idsLancamento) ")
+		   .append(" order by lancamento.id ");
 
 		Query query = getSession().createQuery(hql.toString());
 
@@ -934,12 +935,6 @@ public class LancamentoRepositoryImpl extends
 		sql.append(" produto.NOME as nomeProduto, ");
 		sql.append(" produto.PERIODICIDADE as periodicidadeProduto, ");
 		
-		sql.append(" case when estudo.ID is not null then ");
-		sql.append(" true ");
-		sql.append(" else ");
-		sql.append(" false ");
-		sql.append(" end as possuiEstudo, ");
-		
 		sql.append(" ( ");
 		sql.append(" 	select sum(itemRecebFisico.QTDE_FISICO) ");
 		sql.append(" 		from RECEBIMENTO_FISICO recebimentoFisico ");
@@ -994,12 +989,6 @@ public class LancamentoRepositoryImpl extends
 		sql.append(" inner join ");
 		sql.append(" PRODUTO_EDICAO produtoEdicao ");
 		sql.append(" on lancamento.PRODUTO_EDICAO_ID = produtoEdicao.ID ");
-		sql.append(" left join ");
-		sql.append(" ESTUDO estudo ");
-		sql.append(" on ( ");
-		sql.append(" estudo.PRODUTO_EDICAO_ID = lancamento.PRODUTO_EDICAO_ID ");
-		sql.append(" and estudo.DATA_LANCAMENTO = lancamento.DATA_LCTO_DISTRIBUIDOR ");
-		sql.append(" ) ");
 		sql.append(" inner join ");
 		sql.append(" PRODUTO produto ");
 		sql.append(" on produtoEdicao.PRODUTO_ID = produto.ID ");
@@ -1056,7 +1045,6 @@ public class LancamentoRepositoryImpl extends
 			.addScalar("codigoProduto")
 			.addScalar("nomeProduto")
 			.addScalar("periodicidadeProduto")
-			.addScalar("possuiEstudo", StandardBasicTypes.BOOLEAN)
 			.addScalar("possuiRecebimentoFisico", StandardBasicTypes.BOOLEAN)
 			.addScalar("possuiFuro", StandardBasicTypes.BOOLEAN);		
 		

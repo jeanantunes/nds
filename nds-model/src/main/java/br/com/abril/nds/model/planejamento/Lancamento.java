@@ -7,6 +7,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -96,7 +97,7 @@ public class Lancamento implements Serializable {
 	@OneToMany
 	private Set<ItemRecebimentoFisico> recebimentos = new HashSet<ItemRecebimentoFisico>();
 	
-	@OneToMany(mappedBy = "lancamento")
+	@OneToMany(mappedBy = "lancamento", cascade = CascadeType.REMOVE)
 	private List<HistoricoLancamento> historicos = new ArrayList<HistoricoLancamento>();
 	
 	@Column(name = "NUMERO_REPROGRAMACOES")
@@ -106,10 +107,10 @@ public class Lancamento implements Serializable {
 	private Integer sequenciaMatriz;
 	
 	@NotFound(action = NotFoundAction.IGNORE)
-	@ManyToOne
+	@ManyToOne(cascade = {CascadeType.REMOVE, CascadeType.MERGE})
 	@JoinColumns({
 		@JoinColumn(name = "PRODUTO_EDICAO_ID", referencedColumnName = "PRODUTO_EDICAO_ID", insertable = false, updatable = false),
-		@JoinColumn(name = "DATA_LCTO_DISTRIBUIDOR", referencedColumnName = "DATA_LANCAMENTO", insertable = false, updatable = false) })
+		@JoinColumn(name = "DATA_LCTO_PREVISTA", referencedColumnName = "DATA_LANCAMENTO", insertable = false, updatable = false) })
 	private Estudo estudo;
 	
 	@ManyToOne(optional = true)
@@ -248,6 +249,10 @@ public class Lancamento implements Serializable {
 		return estudo;
 	}
 	
+	public void setEstudo(Estudo estudo) {
+		this.estudo = estudo;
+	}
+
 	public BigDecimal getTotalRecebimentoFisico() {
 		BigDecimal total = BigDecimal.ZERO;
 		for (ItemRecebimentoFisico recebimento : recebimentos) {

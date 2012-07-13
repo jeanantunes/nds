@@ -983,6 +983,7 @@ public class DataLoader {
 		criarEventoExecucao(session);
 		criarAlgoritmos(session);
 		
+		//tabelaNCM(session);
 		criarTiposProduto(session);
 		
 		criarDistribuidor(session);
@@ -3981,10 +3982,10 @@ public class DataLoader {
 		tipoProdutoRevista = Fixture.tipoRevista(ncmRevistas);
 		session.save(tipoProdutoRevista);
 
-		tipoRefrigerante = Fixture.tipoProduto("Refrigerante",GrupoProduto.OUTROS, ncmBebidas, null, 006L);
+		tipoRefrigerante = Fixture.tipoProduto("Refrigerante",GrupoProduto.OUTROS, ncmBebidas, "", 006L);
 		session.save(tipoRefrigerante);
 
-		tipoCromo = Fixture.tipoProduto("Cromo",GrupoProduto.CROMO, ncmCromo, null, 005L);
+		tipoCromo = Fixture.tipoCromo(ncmCromo);
 		session.save(tipoCromo);
 	}
 
@@ -7330,8 +7331,8 @@ public class DataLoader {
 
 		Editor jazz = Fixture.criarEditor("Jazz", 682L, juridicaFc, true);
 
-		TipoProduto tipoCromo = Fixture.tipoCromo(ncmCromo);
-		save(session, globo, europa, jazz, tipoCromo);
+		//TipoProduto tipoCromo = Fixture.tipoCromo(ncmCromo);
+		save(session, globo, europa, jazz);
 
 		//PRODUTOS
 		Produto javaMagazine = Fixture.produto("541", "Java Magazine", "Java Magazine", PeriodicidadeProduto.MENSAL, tipoProdutoRevista, 5, 5, BigDecimal.TEN);
@@ -7812,6 +7813,16 @@ public class DataLoader {
 			Fixture.itemNotaFiscal(mundoEstranhoEdicao102, usuarioJoao, notaFiscal,
 								   dataLancamento, dataRecolhimento, TipoLancamento.LANCAMENTO,
 								   new BigDecimal(100));
+		
+		ItemNotaFiscalEntrada itemNotaFiscalJavaMagazine101Suplementar =
+			Fixture.itemNotaFiscal(javaMagazineEdicao101, usuarioJoao, notaFiscal,
+								   dataLancamento, dataRecolhimento, TipoLancamento.LANCAMENTO,
+								   new BigDecimal(100));
+		
+		ItemNotaFiscalEntrada itemNotaFiscalJavaMagazine101Suplementar2 =
+			Fixture.itemNotaFiscal(javaMagazineEdicao101, usuarioJoao, notaFiscal,
+								   dataLancamento, dataRecolhimento, TipoLancamento.LANCAMENTO,
+								   new BigDecimal(100));
 
 		save(session, itemNotaFiscalJavaMagazine101, itemNotaFiscalMundoJavaEdicao101,
 					  itemNotaFiscalSqlMagazineEdicao101, itemNotaFiscalGalileuEdicao101,
@@ -7820,7 +7831,8 @@ public class DataLoader {
 					  itemNotaFiscalJequitiEdicao101, itemNotaFiscalMundoEstranhoEdicao101,
 					  itemNotaFiscalBonsFluidosEdicao102, itemNotaFiscalBravoEdicao102,
 					  itemNotaFiscalCasaClaudiaEdicao102, itemNotaFiscalJequitiEdicao102,
-					  itemNotaFiscalMundoEstranhoEdicao102);
+					  itemNotaFiscalMundoEstranhoEdicao102, itemNotaFiscalJavaMagazine101Suplementar,
+					  itemNotaFiscalJavaMagazine101Suplementar2);
 
 		RecebimentoFisico recebimentoFisico =
 			Fixture.recebimentoFisico(notaFiscal, usuarioJoao, new Date(),
@@ -7887,6 +7899,14 @@ public class DataLoader {
 		ItemRecebimentoFisico itemRecebimentoFisicoMundoEstranhoEdicao102 =
 			Fixture.itemRecebimentoFisico(itemNotaFiscalMundoEstranhoEdicao102, recebimentoFisico,
 											  new BigDecimal("100.00"));
+		
+		ItemRecebimentoFisico itemRecebimentoFisicoJavaMagazineEdicao101Suplementar =
+				Fixture.itemRecebimentoFisico(itemNotaFiscalJavaMagazine101Suplementar, recebimentoFisico,
+											  new BigDecimal("100.00"));
+		
+		ItemRecebimentoFisico itemRecebimentoFisicoJavaMagazineEdicao101Suplementar2 =
+				Fixture.itemRecebimentoFisico(itemNotaFiscalJavaMagazine101Suplementar2, recebimentoFisico,
+											  new BigDecimal("100.00"));
 
 		save(session, itemRecebimentoFisicoJavaMagazineEdicao101, itemRecebimentoFisicoMundoJavaEdicao101,
 					  itemRecebimentoFisicoSqlMagazineEdicao101, itemRecebimentoFisicoGalileuEdicao101,
@@ -7895,7 +7915,8 @@ public class DataLoader {
 					  itemRecebimentoFisicoJequitiEdicao101, itemRecebimentoFisicoMundoEstranhoEdicao101,
 					  itemRecebimentoFisicoBonsFluidosEdicao102, itemRecebimentoFisicoBravoEdicao102,
 					  itemRecebimentoFisicoCasaClaudiaEdicao102, itemRecebimentoFisicoJequitiEdicao102,
-					  itemRecebimentoFisicoMundoEstranhoEdicao102);
+					  itemRecebimentoFisicoMundoEstranhoEdicao102, itemRecebimentoFisicoJavaMagazineEdicao101Suplementar,
+					  itemRecebimentoFisicoJavaMagazineEdicao101Suplementar2);
 
 		//LANCAMENTOS
 		Lancamento lancamentoJavaMagazineEdicao101 = Fixture.lancamento(
@@ -8172,6 +8193,15 @@ public class DataLoader {
 				new BigDecimal(100),
 				StatusLancamento.CONFIRMADO, null, 1);
 
+		Lancamento lancamentoJavaMagazineEdicao101Suplementar = Fixture.lancamento(
+				TipoLancamento.SUPLEMENTAR, javaMagazineEdicao101,
+				dataLancamento,
+				dataRecolhimento,
+				new Date(),
+				new Date(),
+				new BigDecimal(100),
+				StatusLancamento.CONFIRMADO, itemRecebimentoFisicoJavaMagazineEdicao101Suplementar, 1);
+		
 		dataLancamento = DateUtil.adicionarDias(dataLancamento, 1);
 
 		Lancamento lancamentoGuitarPlayerEdicao102 = Fixture.lancamento(
@@ -8264,6 +8294,15 @@ public class DataLoader {
 				new BigDecimal(100),
 				StatusLancamento.CONFIRMADO, itemRecebimentoFisicoMundoEstranhoEdicao102, 1);
 
+		Lancamento lancamentoJavaMagazineEdicao101Suplementar2 = Fixture.lancamento(
+				TipoLancamento.SUPLEMENTAR, javaMagazineEdicao101,
+				dataLancamento,
+				dataRecolhimento,
+				new Date(),
+				new Date(),
+				new BigDecimal(100),
+				StatusLancamento.CONFIRMADO, itemRecebimentoFisicoJavaMagazineEdicao101Suplementar2, 1);
+		
 		dataLancamento = DateUtil.adicionarDias(dataLancamento, 1);
 
 		Lancamento lancamentoNovaEscolaEdicao102 = Fixture.lancamento(
@@ -8356,7 +8395,7 @@ public class DataLoader {
 				new BigDecimal(100),
 				StatusLancamento.CONFIRMADO, null, 1);
 
-		Lancamento lancamentoJavaMagazineEdicao101Suplementar = Fixture.lancamento(
+		Lancamento lancamentoJavaMagazineEdicao101Suplementar3 = Fixture.lancamento(
 				TipoLancamento.SUPLEMENTAR, javaMagazineEdicao101,
 				dataLancamento,
 				dataRecolhimento,
@@ -8387,7 +8426,7 @@ public class DataLoader {
 					  lancamentoNovaEscolaEdicao102, lancamentoMinhaCasaEdicao102, lancamentoRecreioEdicao102, lancamentoWomenHealthEdicao102,
 					  lancamentoViagemTurismoEdicao102, lancamentoVipEdicao102, lancamentoGestaoEscolarEdicao102, lancamentoLolaEdicao102,
 					  lancamentoHeavyMetalEdicao102, lancamentoMetalUndergroundEdicao102, lancamentoJavaMagazineEdicao101Suplementar,
-					  lancamentoRoadieCrewEdicao101Suplementar);
+					  lancamentoJavaMagazineEdicao101Suplementar2, lancamentoJavaMagazineEdicao101Suplementar3, lancamentoRoadieCrewEdicao101Suplementar);
 
 		LancamentoParcial lancamentoParcialGalileuEdicao102 =
 			Fixture.criarLancamentoParcial(galileuEdicao102,
@@ -8512,6 +8551,14 @@ public class DataLoader {
 		Estudo estudoMetalUndergroundEdicao102 =
 			Fixture.estudo(new BigDecimal(180),
 					lancamentoMetalUndergroundEdicao102.getDataLancamentoDistribuidor(), metalUndergroundEdicao102);
+		
+		Estudo estudoJavaMagazineEdicao101Suplementar =
+				Fixture.estudo(new BigDecimal(180),
+						lancamentoJavaMagazineEdicao101Suplementar.getDataLancamentoDistribuidor(), javaMagazineEdicao101);
+		
+		Estudo estudoJavaMagazineEdicao101Suplementar2 =
+				Fixture.estudo(new BigDecimal(180),
+						lancamentoJavaMagazineEdicao101Suplementar2.getDataLancamentoDistribuidor(), javaMagazineEdicao101);
 
 		save(session, estudoJavaMagazineEdicao101, estudoMundoJavaEdicao101,
 					  estudoSqlMagazineEdicao101, estudoGalileuEdicao101,
@@ -8522,7 +8569,8 @@ public class DataLoader {
 					  estudoCasaClaudiaEdicao102, estudoJequitiEdicao102,
 					  estudoMundoEstranhoEdicao102, estudoVipEdicao102,
 					  estudoGestaoEscolarEdicao102, estudoLolaEdicao102,
-					  estudoHeavyMetalEdicao102, estudoMetalUndergroundEdicao102);
+					  estudoHeavyMetalEdicao102, estudoMetalUndergroundEdicao102,
+					  estudoJavaMagazineEdicao101Suplementar, estudoJavaMagazineEdicao101Suplementar2);
 
 		//ESTUDOS COTA
 		EstudoCota estudoCotaAcmeJavaMagazineEdicao101 =
@@ -8556,19 +8604,19 @@ public class DataLoader {
 			Fixture.estudoCota(BigDecimal.TEN, BigDecimal.ONE, estudoMundoEstranhoEdicao101, cotaAcme);
 
 		EstudoCota estudoCotaAcmeBonsFluidosEdicao102 =
-			Fixture.estudoCota(BigDecimal.TEN, BigDecimal.ONE, estudoBonsFluidosEdicao102, cotaManoel);
+			Fixture.estudoCota(BigDecimal.TEN, BigDecimal.ONE, estudoBonsFluidosEdicao102, cotaAcme);
 
 		EstudoCota estudoCotaAcmeBravoEdicao102 =
-			Fixture.estudoCota(BigDecimal.TEN, BigDecimal.ONE, estudoBravoEdicao102, cotaManoel);
+			Fixture.estudoCota(BigDecimal.TEN, BigDecimal.ONE, estudoBravoEdicao102, cotaAcme);
 
 		EstudoCota estudoCotaAcmeCasaClaudiaEdicao102 =
-			Fixture.estudoCota(BigDecimal.TEN, BigDecimal.ONE, estudoCasaClaudiaEdicao102, cotaManoel);
+			Fixture.estudoCota(BigDecimal.TEN, BigDecimal.ONE, estudoCasaClaudiaEdicao102, cotaAcme);
 
 		EstudoCota estudoCotaAcmeJequitiEdicao102 =
-			Fixture.estudoCota(BigDecimal.TEN, BigDecimal.ONE, estudoJequitiEdicao102, cotaManoel);
+			Fixture.estudoCota(BigDecimal.TEN, BigDecimal.ONE, estudoJequitiEdicao102, cotaAcme);
 
 		EstudoCota estudoCotaAcmeMundoEstranhoEdicao102 =
-			Fixture.estudoCota(BigDecimal.TEN, BigDecimal.ONE, estudoMundoEstranhoEdicao102, cotaManoel);
+			Fixture.estudoCota(BigDecimal.TEN, BigDecimal.ONE, estudoMundoEstranhoEdicao102, cotaAcme);
 
 		EstudoCota estudoCotaAcmeVipEdicao102 =
 			Fixture.estudoCota(BigDecimal.TEN, BigDecimal.ONE, estudoVipEdicao102, cotaAcme);
@@ -8585,6 +8633,12 @@ public class DataLoader {
 		EstudoCota estudoCotaAcmeMetalUndergroundEdicao102 =
 			Fixture.estudoCota(BigDecimal.TEN, BigDecimal.ONE, estudoMetalUndergroundEdicao102, cotaAcme);
 
+		EstudoCota estudoCotaAcmeJavaMagazineEdicao101Suplementar =
+			Fixture.estudoCota(BigDecimal.TEN, BigDecimal.ONE, estudoJavaMagazineEdicao101Suplementar, cotaAcme);
+		
+		EstudoCota estudoCotaAcmeJavaMagazineEdicao101Suplementar2 =
+			Fixture.estudoCota(BigDecimal.TEN, BigDecimal.ONE, estudoJavaMagazineEdicao101Suplementar2, cotaAcme);
+		
 		EstudoCota estudoCotaManoelJavaMagazineEdicao101 =
 			Fixture.estudoCota(BigDecimal.TEN, BigDecimal.ONE, estudoJavaMagazineEdicao101, cotaManoel);
 
@@ -8643,8 +8697,14 @@ public class DataLoader {
 			Fixture.estudoCota(BigDecimal.TEN, BigDecimal.ONE, estudoHeavyMetalEdicao102, cotaManoel);
 
 		EstudoCota estudoCotaManoelMetalUndergroundEdicao102 =
-			Fixture.estudoCota(BigDecimal.TEN, BigDecimal.ONE, estudoMetalUndergroundEdicao102, cotaJoana);
+			Fixture.estudoCota(BigDecimal.TEN, BigDecimal.ONE, estudoMetalUndergroundEdicao102, cotaManoel);
 
+		EstudoCota estudoCotaManoelJavaMagazineEdicao101Suplementar =
+			Fixture.estudoCota(BigDecimal.TEN, BigDecimal.ONE, estudoJavaMagazineEdicao101Suplementar, cotaManoel);
+		
+		EstudoCota estudoCotaManoelJavaMagazineEdicao101Suplementar2 =
+			Fixture.estudoCota(BigDecimal.TEN, BigDecimal.ONE, estudoJavaMagazineEdicao101Suplementar2, cotaManoel);
+		
 		save(session, estudoCotaAcmeJavaMagazineEdicao101, estudoCotaAcmeMundoJavaEdicao101,
 					  estudoCotaAcmeSqlMagazineEdicao101, estudoCotaAcmeGalileuEdicao101,
 					  estudoCotaAcmeDuasRodasEdicao101, estudoCotaAcmeBonsFluidosEdicao101,
@@ -8655,6 +8715,7 @@ public class DataLoader {
 					  estudoCotaAcmeMundoEstranhoEdicao102, estudoCotaAcmeVipEdicao102,
 					  estudoCotaAcmeGestaoEscolarEdicao102, estudoCotaAcmeLolaEdicao102,
 					  estudoCotaAcmeHeavyMetalEdicao102, estudoCotaAcmeMetalUndergroundEdicao102,
+					  estudoCotaAcmeJavaMagazineEdicao101Suplementar, estudoCotaAcmeJavaMagazineEdicao101Suplementar2,
 					  estudoCotaManoelJavaMagazineEdicao101, estudoCotaManoelMundoJavaEdicao101,
 					  estudoCotaManoelSqlMagazineEdicao101, estudoCotaManoelGalileuEdicao101,
 					  estudoCotaManoelDuasRodasEdicao101, estudoCotaManoelBonsFluidosEdicao101,
@@ -8664,7 +8725,8 @@ public class DataLoader {
 					  estudoCotaManoelCasaClaudiaEdicao102, estudoCotaManoelJequitiEdicao102,
 					  estudoCotaManoelMundoEstranhoEdicao102, estudoCotaManoelVipEdicao102,
 					  estudoCotaManoelGestaoEscolarEdicao102, estudoCotaManoelLolaEdicao102,
-					  estudoCotaManoelHeavyMetalEdicao102, estudoCotaManoelMetalUndergroundEdicao102);
+					  estudoCotaManoelHeavyMetalEdicao102, estudoCotaManoelMetalUndergroundEdicao102,
+					  estudoCotaManoelJavaMagazineEdicao101Suplementar, estudoCotaManoelJavaMagazineEdicao101Suplementar2);
 
 		FuroProduto furoProdutoHeavyMetalEdicao101 =
 			Fixture.furoProduto(new Date(), lancamentoHeavyMetalEdicao101,

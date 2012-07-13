@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.hibernate.Query;
+import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.client.vo.RegistroCurvaABCDistribuidorVO;
 import br.com.abril.nds.client.vo.ResultadoCurvaABCDistribuidor;
@@ -12,6 +13,7 @@ import br.com.abril.nds.dto.filtro.FiltroCurvaABCDistribuidorDTO;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.repository.RelatorioVendasRepository;
 
+@Repository
 public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distribuidor, Long> implements RelatorioVendasRepository {
 
 	public RelatorioVendasRepositoryImpl() {

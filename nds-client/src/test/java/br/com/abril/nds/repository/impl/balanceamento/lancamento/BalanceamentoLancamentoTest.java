@@ -405,10 +405,6 @@ public class BalanceamentoLancamentoTest extends AbstractRepositoryImplTest {
 		
 		ProdutoLancamentoDTO produtoRecolhimentoCromoReiLeao = produtosLancamento.get(5);
 		
-		Assert.assertTrue(produtoRecolhimentoVeja.isPossuiEstudo());
-		
-		Assert.assertFalse(produtoRecolhimentoCromoReiLeao.isPossuiEstudo());
-		
 		Assert.assertTrue(produtoRecolhimentoVeja.isPossuiRecebimentoFisico());
 		
 		Assert.assertTrue(produtoRecolhimentoQuatroRodas.isPossuiRecebimentoFisico());
