@@ -180,7 +180,6 @@ public class ImportacaoDeArquivoProdutoStrategy implements ImportacaoArquivoStra
 		
         try {
 
-		    //NCM POR CODIGO
 	  		NCM ncm = ncmRepository.obterPorCodigo(123l);
 	  		if (ncm==null){
 	  		    ncm = new NCM();
@@ -191,13 +190,8 @@ public class ImportacaoDeArquivoProdutoStrategy implements ImportacaoArquivoStra
 	  			
 	  			ncmRepository.adicionar(ncm);
 	  		}
-	  		else{
-	  			
-	  			ncmRepository.alterar(ncm);
-	  		}
 		  		
-		    //EDITOR POR CODIGO
-	  		Editor editor = editorRepository.buscarPorId(input.getCodigoDoEditor());
+	  		Editor editor = editorRepository.obterPorCodigo(input.getCodigoDoEditor());
 	  		if (editor==null){
 	  		    editor = new Editor();
 		  		
@@ -211,17 +205,12 @@ public class ImportacaoDeArquivoProdutoStrategy implements ImportacaoArquivoStra
 		  	    
 		  	    editorRepository.adicionar(editor);
 	  		}
-	  		else{
-	  			
-	  			editorRepository.alterar(editor);
-	  		}
 			
-		    //TIPO PRODUTO POR ID
 	  		TipoProduto tipoProduto = tipoProdutoRepository.obterPorCodigo(input.getTipoDePublicacao());
 	  		if (tipoProduto==null){
 	  			tipoProduto = new TipoProduto();
 	  			
-	  		    tipoProduto.setDescricao("TIPO DE PRODUTO");
+	  		    tipoProduto.setDescricao("IMPORTAÇÃO");
 	  		    tipoProduto.setGrupoProduto(GrupoProduto.OUTROS);
 	  		    tipoProduto.setNcm(ncm);
 	  		    
@@ -229,50 +218,63 @@ public class ImportacaoDeArquivoProdutoStrategy implements ImportacaoArquivoStra
 	  		    
 		  	    tipoProdutoRepository.adicionar(tipoProduto);
 	  		}
-	  		else{
-	  			
-	  			tipoProdutoRepository.alterar(tipoProduto);
-	  		}
 			
-			//PRODUTO POR NOME
-			Produto produto = produtoRepository.obterProdutoPorNomeProduto(input.getNomeComercial());
+			Produto produto = produtoRepository.obterProdutoPorNomeProdutoOuCodigo(input.getNomeComercial(),input.getCodigoDaPublicacao());
 			if (produto==null){
 				produto = new Produto();
 				
-			    produto.setPacotePadrao(0);
 			    produto.setPeb(0);
 			    produto.setPeso(BigDecimal.ZERO);
 			    produto.setTipoProduto(tipoProduto);
 		  	    produto.setEditor(editor);
 			    
-			    produto.setNome(input.getNomeDaPublicacao());
+		  	    produto.setCodigo(input.getCodigoDaPublicacao());
+		  	    produto.setPacotePadrao(input.getPacotePadrao());
+			    produto.setNome(input.getNomeComercial());
 			    produto.setPeriodicidade(periodicidadeProdutoService.getPeriodicidadeProdutoAsArchive(input.getPeriodicidade()));
 			   
 		  	    produtoRepository.adicionar(produto);
 			}
 			else{
 				
+			    produto.setTipoProduto(tipoProduto);
+		  	    produto.setEditor(editor);
+			    
+		  	    produto.setCodigo(input.getCodigoDaPublicacao());
+		  	    produto.setPacotePadrao(input.getPacotePadrao());
+			    produto.setNome(input.getNomeComercial());
+			    produto.setPeriodicidade(periodicidadeProdutoService.getPeriodicidadeProdutoAsArchive(input.getPeriodicidade()));
+			
 				produtoRepository.alterar(produto);
 			}
 			
-		    //PRODUTO EDICAO POR CODIGO DO PRODUTO E NUMERO EDICAO
-			ProdutoEdicao produtoEdicao =produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao(produto.getCodigo(), input.getEdicao());
+			ProdutoEdicao produtoEdicao =produtoEdicaoRepository.obterProdutoEdicaoPorProdutoEEdicaoOuNome(produto, input.getEdicao(),input.getNomeDaPublicacao());
 			if (produtoEdicao==null){
 				produtoEdicao = new ProdutoEdicao();
 				
-				produtoEdicao.setNumeroEdicao(input.getEdicao());
 			    produtoEdicao.setPeb(0);
 			    produtoEdicao.setPeso(BigDecimal.ZERO);
 			    produtoEdicao.setProduto(produto);
 			    
+			    produtoEdicao.setNumeroEdicao(input.getEdicao());
+			    produtoEdicao.setCodigo(input.getCodigoDaPublicacao());
 			    produtoEdicao.setDesconto(input.getDesconto());
 			    produtoEdicao.setPacotePadrao(input.getPacotePadrao());
-			    produtoEdicao.setNomeComercial(input.getNomeComercial());
+			    produtoEdicao.setNomeComercial(input.getNomeDaPublicacao());
 			    produtoEdicao.setAtivo(input.getStatusDaPublicacao());
 			    
 				produtoEdicaoRepository.adicionar(produtoEdicao);
 			}
 			else{
+				
+			    produtoEdicao.setProduto(produto); 
+			    
+			    produtoEdicao.setNumeroEdicao(input.getEdicao());
+			    produtoEdicao.setCodigo(input.getCodigoDaPublicacao());
+			    produtoEdicao.setDesconto(input.getDesconto());
+			    produtoEdicao.setPacotePadrao(input.getPacotePadrao());
+			    produtoEdicao.setNomeComercial(input.getNomeDaPublicacao());
+			    produtoEdicao.setAtivo(input.getStatusDaPublicacao());
 				
 				produtoEdicaoRepository.alterar(produtoEdicao);
 			}
