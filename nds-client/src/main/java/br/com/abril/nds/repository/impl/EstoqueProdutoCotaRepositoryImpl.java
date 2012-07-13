@@ -10,6 +10,7 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
+import br.com.abril.nds.model.financeiro.StatusInadimplencia;
 import br.com.abril.nds.repository.EstoqueProdutoCotaRepository;
 
 @Repository
@@ -175,5 +176,28 @@ public class EstoqueProdutoCotaRepositoryImpl extends AbstractRepositoryModel<Es
 		
 	}
 	
-	
+	@Override
+	public BigDecimal obterConsignado(boolean cotaInadimplente){
+		
+		StringBuilder hql = new StringBuilder("select  ");
+		hql.append(" (sum(es.qtdeRecebida) * sum(es.produtoEdicao.precoVenda)) - (sum(es.qtdeDevolvida) * sum(es.produtoEdicao.precoVenda)) ")
+		   .append(" from EstoqueProdutoCota es ");
+		
+		if (cotaInadimplente){
+			
+			hql.append(" where es.cota.id not in ( ")
+			   .append(" select distinct hist.dividad.cota.id ")
+			   .append(" from HistoricoAcumuloDivida hist ")
+			   .append(" where hist.status != :quitada ");
+		}
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		
+		if (cotaInadimplente){
+			
+			query.setParameter("quitada", StatusInadimplencia.QUITADA);
+		}
+		
+		return (BigDecimal) query.uniqueResult();
+	}
 }

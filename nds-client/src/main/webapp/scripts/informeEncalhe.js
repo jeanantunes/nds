@@ -220,7 +220,7 @@ InformeEncalhe.prototype.initDialogImprimir = function() {
 				
 				$("input[name='idFornecedor']").val($("#idFornecdorSelect").val());
 				$("input[name='semanaRecolhimento']").val($("#semanaRecolhimentoBox").val());
-				$("input[name='dataRecolhimento']").val($("dataRecolhimentoBox").val());
+				$("input[name='dataRecolhimento']").val($("#dataRecolhimentoBox").val());
 				
 				$( this ).dialog( "close" );
 				$("#form-imprimir").attr("action", contextPath + '/devolucao/informeEncalhe/relatorioInformeEncalhe');

@@ -83,4 +83,8 @@ public interface DividaRepository extends Repository<Divida, Long>{
      * @return BigDecimal
      */
 	BigDecimal obterTotalDividasAbertoCota(Long idCota);
+
+	BigDecimal obterValorDividasDataOperacao(boolean dividaVencendo, boolean dividaAcumulada);
+
+	BigDecimal obterValoresDividasGeradasDataOperacao(boolean postergada);
 }

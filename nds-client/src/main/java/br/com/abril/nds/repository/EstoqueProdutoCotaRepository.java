@@ -52,4 +52,6 @@ public interface EstoqueProdutoCotaRepository extends Repository<EstoqueProdutoC
 	 * @return {@link List<EstoqueProdutoCota>}
 	 */
 	List<EstoqueProdutoCota> buscarListaEstoqueProdutoCota(Set<Long> idsLancamento);
+
+	BigDecimal obterConsignado(boolean cotaInadimplente);
 }
