@@ -3,8 +3,10 @@ package br.com.abril.nds.dto.filtro;
 import java.io.Serializable;
 
 import br.com.abril.nds.dto.filtro.FiltroFollowupChamadaoDTO.FollowupOrdenacaoChamadao;
+import br.com.abril.nds.util.export.Exportable;
 import br.com.abril.nds.vo.PaginacaoVO;
 
+@Exportable
 public class FiltroFollowupStatusCotaDTO  extends FiltroDTO implements Serializable  {
 
 	

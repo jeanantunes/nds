@@ -66,6 +66,7 @@ import br.com.caelum.vraptor.view.Results;
  * @author Discover Technology
  *
  */
+@SuppressWarnings("deprecation")
 @Resource
 @Path("/financeiro/manutencaoStatusCota")
 public class ManutencaoStatusCotaController {
@@ -161,6 +162,13 @@ public class ManutencaoStatusCotaController {
 			new ValidacaoVO(TipoMensagem.SUCCESS, "A alteração do Status da Cota foi agendada com sucesso!");
 		
 		result.use(Results.json()).from(validacao, "result").recursive().serialize();
+	}
+	
+	@Get
+	@Path("/popularGridFollowUp")
+	public void popularGridFollowUp(Integer numeroCota) {			
+		result.include("numeroCotaFollowUp", numeroCota);		
+		result.forwardTo(ManutencaoStatusCotaController.class).index();
 	}
 	
 	/*

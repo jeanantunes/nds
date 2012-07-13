@@ -96,6 +96,15 @@ public class ChamadaoController {
 	}
 	
 	@Get
+	@Path("/popularGridFollowUp")
+	public void popularGridFollowUp(Integer numeroCota, String data) {			
+		result.include("numeroCotaFollowUp", numeroCota);
+		result.include("dataCotaFollowUp", data);
+		result.forwardTo(ChamadaoController.class).index();
+	}
+	
+	
+	@Get
 	public void exportar(FileType fileType) throws IOException {
 				
 		if (fileType == null) {

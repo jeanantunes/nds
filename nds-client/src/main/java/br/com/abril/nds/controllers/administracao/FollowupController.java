@@ -87,6 +87,7 @@ public class FollowupController {
 	private static final String FILTRO_FOLLOWUP_CONSIGNADOS_SESSION_ATTRIBUTE = "filtroFollowupConsignados";
 	private static final String FILTRO_FOLLOWUP_PENDENCIA_NFE_SESSION_ATTRIBUTE = "filtroFollowupPendenciaNFE";
 	private static final String FILTRO_FOLLOWUP_CADASTRO_SESSION_ATTRIBUTE = "filtroFollowupCadastro";
+	private static final String FILTRO_FOLLOWUP_STATUS_COTA_SESSION_ATTRIBUTE = "filtroFollowupStatusCota";
 	//private static final String QTD_REGISTROS_FOLLOWUP_CONSIGNADOS_SESSION_ATTRIBUTE = "qtdRegistrosFollowupConsignados";
 
 	private BigDecimal valorConsignadoSuspensaoCotas;
@@ -110,6 +111,28 @@ public class FollowupController {
 		TableModel<CellModelKeyValue<ConsultaFollowupChamadaoDTO>> tableModel = efetuarConsultaChamadao(filtroChamadao);
 		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
 	}
+	
+	private TableModel<CellModelKeyValue<ConsultaFollowupChamadaoDTO>> efetuarConsultaChamadao(
+			FiltroFollowupChamadaoDTO filtro) {
+		
+		List<ConsultaFollowupChamadaoDTO> listadechamadao = this.followupchamadaoService.obterConsignados(filtro);
+		
+		TableModel<CellModelKeyValue<ConsultaFollowupChamadaoDTO>> tableModel = new TableModel<CellModelKeyValue<ConsultaFollowupChamadaoDTO>>();
+		
+		Integer totalRegistros = listadechamadao.size();
+		
+		if(totalRegistros == 0){
+			throw new ValidacaoException(TipoMensagem.WARNING, "Chamadao: Não foram encontrados resultados para Follow Up.");
+		}
+
+		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listadechamadao));
+		
+		tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
+		
+		tableModel.setTotal(totalRegistros);
+		
+		return tableModel;
+	}
 
 	@Post
 	@Path("/pesquisaDadosNegociacao")
@@ -131,6 +154,8 @@ public class FollowupController {
 		FiltroFollowupStatusCotaDTO filtroStatusCota = new FiltroFollowupStatusCotaDTO();
 		
 		filtroStatusCota.setPaginacao(new PaginacaoVO(page, rp, sortorder, sortname));
+		
+		this.tratarFiltroStatusCota(filtroStatusCota);
 		
 		TableModel<CellModelKeyValue<ConsultaFollowupStatusCotaDTO>> tableModel = efetuarConsultaDadosStatusCota(filtroStatusCota);
 		
@@ -235,23 +260,6 @@ public class FollowupController {
 		return tableModel;
 	}
 
-	public BigDecimal getValorConsignadoSuspensaoCotas() {
-		return valorConsignadoSuspensaoCotas;
-	}
-
-	public void setValorConsignadoSuspensaoCotas(
-			BigDecimal valorConsignadoSuspensaoCotas) {
-		this.valorConsignadoSuspensaoCotas = valorConsignadoSuspensaoCotas;
-	}
-
-	public int getQuantidadeDiasSuspensaoCotas() {
-		return quantidadeDiasSuspensaoCotas;
-	}
-
-	public void setQuantidadeDiasSuspensaoCotas(int quantidadeDiasSuspensaoCotas) {
-		this.quantidadeDiasSuspensaoCotas = quantidadeDiasSuspensaoCotas;
-	}
-
 	private void recuperarParametros(FiltroFollowupChamadaoDTO filtro) {
 		// TODO: colocar a recuperacao da tabela parametros distribuidor.
 		this.setValorConsignadoSuspensaoCotas(new BigDecimal(0));
@@ -269,6 +277,18 @@ public class FollowupController {
 			filtroParam.getPaginacao().setPaginaAtual(1);
 		}
 		session.setAttribute(FILTRO_FOLLOWUP_CONSIGNADOS_SESSION_ATTRIBUTE, filtroParam);
+		
+	}
+	
+	private void tratarFiltroStatusCota(FiltroFollowupStatusCotaDTO filtroParam){
+
+		FiltroFollowupStatusCotaDTO filtroSession = (FiltroFollowupStatusCotaDTO) session.getAttribute(FILTRO_FOLLOWUP_STATUS_COTA_SESSION_ATTRIBUTE);
+			
+		if (filtroSession != null && filtroSession.equals(filtroParam)) {
+			
+			filtroParam.getPaginacao().setPaginaAtual(1);
+		}
+		session.setAttribute(FILTRO_FOLLOWUP_STATUS_COTA_SESSION_ATTRIBUTE, filtroParam);
 		
 	}
 	
@@ -296,87 +316,10 @@ public class FollowupController {
 		
 	}
 		
-	private TableModel<CellModelKeyValue<ConsultaFollowupChamadaoDTO>> efetuarConsultaChamadao(
-			FiltroFollowupChamadaoDTO filtro) {
-		
-		List<ConsultaFollowupChamadaoDTO> listadechamadao = this.followupchamadaoService.obterConsignados(filtro);
-		
-		TableModel<CellModelKeyValue<ConsultaFollowupChamadaoDTO>> tableModel = new TableModel<CellModelKeyValue<ConsultaFollowupChamadaoDTO>>();
-		
-		Integer totalRegistros = listadechamadao.size();
-		
-		if(totalRegistros == 0){
-			throw new ValidacaoException(TipoMensagem.WARNING, "Chamadao: Não foram encontrados resultados para Follow Up.");
-		}
-
-		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listadechamadao));
-		
-		tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
-		
-		tableModel.setTotal(totalRegistros);
-		
-		return tableModel;
-	}
-
-	private TableModel<CellModelKeyValue<ConsultaFollowupNegociacaoDTO>> efetuarConsultaDadosNegociacao(
-			FiltroFollowupNegociacaoDTO filtro) {
-		
-		List<ConsultaFollowupNegociacaoDTO> listadenegociacao = this.followupnegociacaoService.obterNegociacoes(filtro) ;
-		
-		TableModel<CellModelKeyValue<ConsultaFollowupNegociacaoDTO>> tableModel = new TableModel<CellModelKeyValue<ConsultaFollowupNegociacaoDTO>>();
-		
-		Integer totalRegistros = listadenegociacao.size();
-		
-		if(totalRegistros == 0){
-			throw new ValidacaoException(TipoMensagem.WARNING, "Negociacao: Não foram encontrados resultados para Follow Up.");
-		}
-
-		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listadenegociacao));
-		
-		tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
-		
-		tableModel.setTotal(totalRegistros);
-		
-		return tableModel;
-	}
-	
-	
-	private TableModel<CellModelKeyValue<ConsultaFollowupCadastroDTO>> efetuarConsultaDadosCadastrais(
-			FiltroFollowupCadastroDTO filtro) {
-		
-		List<ConsultaFollowupCadastroDTO> listacadastral = this.followupcadastroService.obterCadastros(filtro);
-		
-		TableModel<CellModelKeyValue<ConsultaFollowupCadastroDTO>> tableModel = new TableModel<CellModelKeyValue<ConsultaFollowupCadastroDTO>>();
-		
-		Integer totalRegistros = listacadastral.size();
-		
-		if(totalRegistros == 0){
-			throw new ValidacaoException(TipoMensagem.WARNING, "Cadastro: Não foram encontrados resultados para Follow Up.");
-		}
-
-		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listacadastral));
-		
-		tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
-		
-		tableModel.setTotal(totalRegistros);
-		
-		return tableModel;
-	}
-	
 	@Get
 	public void exportar(FileType fileType, String tipoExportacao) throws IOException {
 		
-		
-		
 		if(tipoExportacao.equals("negociacao")){
-//			List<VendaProdutoDTO> listaDTOParaExportacao = vendaProdutoService.buscaVendaPorProduto(filtro);
-//			
-//			if(listaDTOParaExportacao.isEmpty()) {
-//				throw new ValidacaoException(TipoMensagem.WARNING,"A última pesquisa realizada não obteve resultado.");
-//			}
-//			
-//			FileExporter.to("venda_produto", fileType).inHTTPResponse(this.getNDSFileHeader(), filtro, null, 
-//					listaDTOParaExportacao, VendaProdutoDTO.class, this.httpResponse);
 			
 		}else if(tipoExportacao.equals("chamadao")){
 			FiltroFollowupChamadaoDTO filtro = (FiltroFollowupChamadaoDTO) session.getAttribute(FILTRO_FOLLOWUP_CONSIGNADOS_SESSION_ATTRIBUTE);
@@ -386,7 +329,7 @@ public class FollowupController {
 				throw new ValidacaoException(TipoMensagem.WARNING,"A última pesquisa realizada não obteve resultado.");
 			}
 			
-			FileExporter.to("lancamento_edicao", fileType).inHTTPResponse(this.getNDSFileHeader(), filtro, null, 
+			FileExporter.to("FollowUp_Chamadao", fileType).inHTTPResponse(this.getNDSFileHeader(), filtro, null, 
 					listadechamadao, ConsultaFollowupChamadaoDTO.class, this.httpResponse);
 		}else if(tipoExportacao.equals("pendenciaNFE")){
 			
@@ -398,8 +341,41 @@ public class FollowupController {
 				throw new ValidacaoException(TipoMensagem.WARNING,"A última pesquisa realizada não obteve resultado.");
 			}
 			
-			FileExporter.to("FollowUp_pendencias_bfe", fileType).inHTTPResponse(this.getNDSFileHeader(), filtro, null, 
+			FileExporter.to("FollowUp_pendencias_nfe", fileType).inHTTPResponse(this.getNDSFileHeader(), filtro, null, 
 					listasdependencias, ConsultaFollowupPendenciaNFeDTO.class, this.httpResponse);
+		}else if(tipoExportacao.equals("alteracao")){
+			
+			FiltroFollowupStatusCotaDTO filtro = (FiltroFollowupStatusCotaDTO) session.getAttribute(FILTRO_FOLLOWUP_STATUS_COTA_SESSION_ATTRIBUTE);
+			
+			
+			List<ConsultaFollowupStatusCotaDTO> listacadastral = this.followupstatuscotaService.obterStatusCota(filtro);
+			
+			for(ConsultaFollowupStatusCotaDTO dto: listacadastral){
+				String periodo = dto.getDataInicioPeriodo() + " até " + dto.getDataFimPeriodo();
+				dto.setPeriodoStatus(periodo);
+			}
+			
+			
+			if(listacadastral.isEmpty()) {
+				throw new ValidacaoException(TipoMensagem.WARNING,"A última pesquisa realizada não obteve resultado.");
+			}
+			
+			FileExporter.to("FollowUp_Status_Cota", fileType).inHTTPResponse(this.getNDSFileHeader(), filtro, null, 
+					listacadastral, ConsultaFollowupStatusCotaDTO.class, this.httpResponse);
+			
+		}else if(tipoExportacao.equals("atualizacao")){
+			
+			FiltroFollowupCadastroDTO filtro = (FiltroFollowupCadastroDTO) session.getAttribute(FILTRO_FOLLOWUP_CADASTRO_SESSION_ATTRIBUTE);
+			
+			
+			List<ConsultaFollowupCadastroDTO> listasdependencias = this.followupcadastroService.obterCadastros(filtro);
+			
+			if(listasdependencias.isEmpty()) {
+				throw new ValidacaoException(TipoMensagem.WARNING,"A última pesquisa realizada não obteve resultado.");
+			}
+			
+			FileExporter.to("FollowUp_dados_cadastrais", fileType).inHTTPResponse(this.getNDSFileHeader(), filtro, null, 
+					listasdependencias, ConsultaFollowupCadastroDTO.class, this.httpResponse);
 		}
 		
 		result.nothing();
@@ -429,6 +405,23 @@ public class FollowupController {
 		usuario.setId(1L);
 		usuario.setNome("Lazaro Jornaleiro");
 		return usuario;
+	}
+	
+	public BigDecimal getValorConsignadoSuspensaoCotas() {
+		return valorConsignadoSuspensaoCotas;
+	}
+
+	public void setValorConsignadoSuspensaoCotas(
+			BigDecimal valorConsignadoSuspensaoCotas) {
+		this.valorConsignadoSuspensaoCotas = valorConsignadoSuspensaoCotas;
+	}
+
+	public int getQuantidadeDiasSuspensaoCotas() {
+		return quantidadeDiasSuspensaoCotas;
+	}
+
+	public void setQuantidadeDiasSuspensaoCotas(int quantidadeDiasSuspensaoCotas) {
+		this.quantidadeDiasSuspensaoCotas = quantidadeDiasSuspensaoCotas;
 	}
 }
 

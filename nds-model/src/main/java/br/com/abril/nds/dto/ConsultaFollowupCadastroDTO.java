@@ -3,6 +3,8 @@ package br.com.abril.nds.dto;
 import java.io.Serializable;
 import java.util.Calendar;
 
+import br.com.abril.nds.util.Constantes;
+import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Export.Alignment;
 import br.com.abril.nds.util.export.Exportable;
@@ -79,7 +81,7 @@ public class ConsultaFollowupCadastroDTO implements Serializable {
 	}
 
 	public void setDataVencimento(Calendar dataVencimento) {
-		this.dataVencimento = dataVencimento.toString();
+		this.dataVencimento =  DateUtil.formatarData(dataVencimento.getTime(), Constantes.DATE_PATTERN_PT_BR) ;	
 	}
 
 	

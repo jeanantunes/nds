@@ -278,31 +278,35 @@ $(function() {
                 <fieldset style="width:880px!important;">
                	<legend>Alteração de Status Cota</legend>
                 <table class="alteracaoStatusGrid"></table>
-                  <span class="bt_novos" title="Gerar Arquivo">
-                      <a href="javascript:;">
-                           <img src="../images/ico_excel.png" hspace="5" border="0" />Arquivo
-                      </a>
+                 <span class="bt_novos" title="Gerar Arquivo">                      
+						<a href="${pageContext.request.contextPath}/followup/exportar?fileType=XLS&tipoExportacao=alteracao">
+         					<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
+         				Arquivo
+						</a>
                   </span>
-                  <span class="bt_novos" title="Imprimir">
-                      <a href="javascript:;">
-                           <img src="../images/ico_impressora.gif" hspace="5" border="0" />Imprimir
-                      </a>
-                  </span>
+                  <span class="bt_novos" title="Imprimir">                      
+                      <a href="${pageContext.request.contextPath}/followup/exportar?fileType=PDF&tipoExportacao=alteracao">
+         					<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
+         				Imprimir
+						</a>
+                  </span> 
                </fieldset>
             </div>
             <div id="tabAtualizacao">
                <fieldset style="width:880px!important;">
                	<legend>Atualização Cadastral</legend>
                 <table class="atualizacaoCadastralGrid"></table>
-                  <span class="bt_novos" title="Gerar Arquivo">
-                      <a href="javascript:;">
-                           <img src="../images/ico_excel.png" hspace="5" border="0" />Arquivo
-                      </a>
+                  <span class="bt_novos" title="Gerar Arquivo">                      
+						<a href="${pageContext.request.contextPath}/followup/exportar?fileType=XLS&tipoExportacao=atualizacao">
+         					<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
+         				Arquivo
+						</a>
                   </span>
-                  <span class="bt_novos" title="Imprimir">
-                      <a href="javascript:;">
-                           <img src="../images/ico_impressora.gif" hspace="5" border="0" />Imprimir
-                      </a>
+                  <span class="bt_novos" title="Imprimir">                      
+                      <a href="${pageContext.request.contextPath}/followup/exportar?fileType=PDF&tipoExportacao=atualizacao">
+         					<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
+         				Imprimir
+						</a>
                   </span>
                </fieldset>
             </div>            
@@ -405,7 +409,7 @@ $(".negociacaoGrid").flexigrid({
 	function exPreProcFollowupChamadao(resultado) {
 			$.each(resultado.rows, function(index, row) {						
 			
-			var linkExcluir = '<a href="javascript:;" onclick="irParaChamadao(' + row.cell.dataProgramadoChamadao + ');" style="cursor:pointer">' +
+			var linkExcluir = '<a href="${pageContext.request.contextPath}/devolucao/chamadao/popularGridFollowUp?numeroCota='+row.cell.numeroCota+'&data='+row.cell.dataProgramadoChamadao+'"  style="cursor:pointer">' +
 							   	 '<img title="Excluir Desconto" src="${pageContext.request.contextPath}/images/ico_reprogramar.gif" hspace="5" border="0px" />Programar' +
 							   '</a>';
 			
@@ -416,10 +420,18 @@ $(".negociacaoGrid").flexigrid({
 		return resultado;
 	};
 
-	function irParaChamadao(idCota){
-			alert("Entrou na function de ir para o chamadao" + idCota);
-		}
+
 	function exPreProcFollowupStatusCota(resultado) {		
+			$.each(resultado.rows, function(index, row) {						
+			
+			var linkExcluir = '<a href="${pageContext.request.contextPath}/financeiro/manutencaoStatusCota/popularGridFollowUp?numeroCota='+row.cell.numeroCota+'"  style="cursor:pointer">' +
+							   	 '<img title="Excluir Desconto" src="${pageContext.request.contextPath}/images/ico_negociar.png" hspace="5" border="0px" />Manutenção Status' +
+							   '</a>';
+			
+			row.cell.acao = linkExcluir;
+		});
+		
+		$(".grids").show();
 		return resultado;
 	};
 	function exPreProcFollowupCadastro(resultado) {

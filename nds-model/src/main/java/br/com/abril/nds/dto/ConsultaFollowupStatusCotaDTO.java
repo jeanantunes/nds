@@ -13,21 +13,23 @@ import br.com.abril.nds.util.export.Exportable;
 @Exportable
 public class ConsultaFollowupStatusCotaDTO implements Serializable {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 9049896618190379822L;
 
 	@Export(label = "Cota", alignment=Alignment.CENTER, exhibitionOrder = 1)
 	private Integer numeroCota;   
+	
 	@Export(label = "Nome", alignment=Alignment.CENTER, exhibitionOrder = 2)
 	private String nomeJornaleiro;	
+	
 	@Export(label = "Periodo", alignment=Alignment.CENTER, exhibitionOrder = 3)
     private String periodoStatus;   
+	
 	@Export(label = "Status", alignment=Alignment.CENTER, exhibitionOrder = 4)
     private SituacaoCadastro statusAtual;    
+	
 	@Export(label = "Novo Status", alignment=Alignment.CENTER, exhibitionOrder = 5)
     private SituacaoCadastro statusNovo;    
+	
 	@Export(label = "Data Vencto", alignment=Alignment.CENTER, exhibitionOrder = 6)
    	private Date dataVencimento;
 	
