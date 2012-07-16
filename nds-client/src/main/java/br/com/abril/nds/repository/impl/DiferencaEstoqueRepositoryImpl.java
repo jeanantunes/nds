@@ -13,6 +13,7 @@ import br.com.abril.nds.dto.filtro.FiltroLancamentoDiferencaEstoqueDTO;
 import br.com.abril.nds.model.StatusConfirmacao;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.estoque.Diferenca;
+import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.abril.nds.repository.DiferencaEstoqueRepository;
 
 /**
@@ -446,5 +447,20 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
 		Boolean resultado = (Boolean) query.uniqueResult();
 		return resultado == null ? Boolean.FALSE : resultado;
 	}
-
+	
+	@Override
+	public BigDecimal obterValorFinanceiroPorTipoDiferenca(TipoDiferenca tipoDiferenca){
+		
+		StringBuilder hql = new StringBuilder("select sum(diferenca.quantidade) * sum(diferenca.produtoEdicao.precoVenda) ");
+		hql.append(" from Diferenca diferenca, Distribuidor distribuidor ")
+		   .append(" join diferenca.movimentoEstoque movimentoEstoque ")
+		   .append(" where movimentoEstoque.data = distribuidor.dataOperacao ")
+		   .append(" and diferenca.tipoDifernca = :tipoDiferenca ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		
+		query.setParameter("tipoDiferenca", tipoDiferenca);
+		
+		return (BigDecimal) query.uniqueResult();
+	}
 }

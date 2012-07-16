@@ -337,5 +337,23 @@ public class EditorRepositoryImpl extends AbstractRepositoryModel<Editor, Long> 
 		
 		return lista;	
 	}
+
+	/**
+	 * Obtém editor por código
+	 * @param codigo
+	 * @return Editor
+	 */
+	@Override
+	public Editor obterPorCodigo(Long codigo) {
+        String hql = " from Editor e where e.codigo = :codigo";
+		
+		Query query = super.getSession().createQuery(hql);
+
+		query.setParameter("codigo", codigo);
+		
+		query.setMaxResults(1);
+		
+		return (Editor) query.uniqueResult();
+	}
 	
 }
