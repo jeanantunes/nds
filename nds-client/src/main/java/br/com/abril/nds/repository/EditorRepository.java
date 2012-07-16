@@ -17,4 +17,11 @@ public interface EditorRepository extends Repository<Editor, Long> {
 	public ResultadoCurvaABCEditor obterCurvaABCEditorTotal(FiltroCurvaABCEditorDTO filtroCurvaABCEditorDTO);
 	public List<RegistroHistoricoEditorVO> obterHistoricoEditor(FiltroPesquisarHistoricoEditorDTO filtro);
 	
+	/**
+	 * Obtém editor por código
+	 * @param codigo
+	 * @return Editor
+	 */
+	public Editor obterPorCodigo(Long codigo);
+	
 }

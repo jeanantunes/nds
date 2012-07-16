@@ -213,4 +213,15 @@ public interface ProdutoEdicaoRepository extends Repository<ProdutoEdicao, Long>
 	public List<ProdutoEdicao> obterProdutoEdicaoPorCodigoDeBarra(String codigoDeBarras,
 			Long idProdutoEdicao);
 	
+	/**
+	 * Obtém produtoEdicao por (produto e numeroEdicao) ou nome
+	 * @param produto
+	 * @param numeroEdicao
+	 * @param nome
+	 * @return ProdutoEdicao
+	 */
+	ProdutoEdicao obterProdutoEdicaoPorProdutoEEdicaoOuNome(Produto produto,
+		    Long numeroEdicao,
+		    String nome);
+	
 }
