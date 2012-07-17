@@ -12,6 +12,8 @@ import javax.servlet.http.HttpSession;
 import net.vidageek.mirror.dsl.Mirror;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.dto.MenuDTO;
@@ -62,19 +64,20 @@ public class HomeController {
 
 		Map mapaMenus = geraMenus(getPermissoesUsuario());
 
-		System.out.println("");
-
-		// Organiza os menus
-		// Collections.sort(menus, new MenuComparator());
-
 		result.include("menus", mapaMenus);
 
 	}
 
+	/**
+	 * Retorna a lista de permissões do usuário
+	 * @return
+	 */
 	private List<Permissao> getPermissoesUsuario() {
-		/*session.getAttribute("authorities");
-		return Arrays.asList(Permissao.values());*/
-		return Arrays.asList(Permissao.values());
+		List<Permissao> permissoes = new ArrayList<Permissao>();
+		for (GrantedAuthority grantedAuthority : SecurityContextHolder.getContext().getAuthentication().getAuthorities()) {
+			permissoes.add(Permissao.valueOf(grantedAuthority.getAuthority()));
+		}
+		return permissoes;
 	}
 
 	/**

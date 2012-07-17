@@ -7,10 +7,15 @@ import java.util.List;
 import java.util.Set;
 
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
@@ -79,8 +84,18 @@ public class Usuario implements Serializable {
 	private String cep;
 
 	@ManyToMany(fetch=FetchType.LAZY)
-	private Set<GrupoPermissoes> gruposPermissoes = new HashSet<GrupoPermissoes>();
+	@Column(name="GRUPO_PERMISSAO_ID")
+	private Set<GrupoPermissao> gruposPermissoes = new HashSet<GrupoPermissao>();
 
+	@ElementCollection(targetClass=Permissao.class, fetch=FetchType.EAGER)
+	@Enumerated(EnumType.STRING)
+    @JoinTable(
+            name="USUARIO_PERMISSAO", // ref table.
+            joinColumns = {@JoinColumn(name="USUARIO_ID")}
+    )
+    @Column(name="PERMISSAO_ID")
+	private Set<Permissao> permissoes = new HashSet<Permissao>();
+	
 	@OneToMany
 	private List<PerfilUsuario> perfilUsuario = new ArrayList<PerfilUsuario>();
 	
@@ -124,11 +139,11 @@ public class Usuario implements Serializable {
 		this.senha = senha;
 	}
 
-	public Set<GrupoPermissoes> getGruposPermissoes() {
+	public Set<GrupoPermissao> getGruposPermissoes() {
 		return gruposPermissoes;
 	}
 
-	public void setGruposPermissoes(Set<GrupoPermissoes> gruposPermissoes) {
+	public void setGruposPermissoes(Set<GrupoPermissao> gruposPermissoes) {
 		this.gruposPermissoes = gruposPermissoes;
 	}
 
@@ -218,6 +233,14 @@ public class Usuario implements Serializable {
 
 	public void setCep(String cep) {
 		this.cep = cep;
+	}
+
+	public Set<Permissao> getPermissoes() {
+		return permissoes;
+	}
+
+	public void setPermissoes(Set<Permissao> permissoes) {
+		this.permissoes = permissoes;
 	}
 	
 }

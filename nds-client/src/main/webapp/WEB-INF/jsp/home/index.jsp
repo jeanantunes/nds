@@ -140,7 +140,7 @@
 						</script> </label>
 					</div>
 					<div class="bt_novos">
-						<a href="javascript:;" title="Sair do Sistema" class="sair">Sair</a>
+						<a href="${pageContext.request.contextPath}/j_spring_security_logout" title="Sair do Sistema" class="sair">Sair</a>
 					</div>
 
 				</div>
@@ -148,11 +148,11 @@
 		</div>
 		<div id="menu_principal">
 			<ul>
-				<li><a href="index.htm"><span class="classHome">&nbsp;</span>Home</a>
+				<li><a href="index.htm"><span class="classROLE_HOME">&nbsp;</span>Home</a>
 				</li>
 					<c:forEach items="${menus}" var="menu">
 						<li><a href="javascript:;" class="trigger"><span
-							class="${menu.key.permissao.classeExibicao}">&nbsp;</span>${menu.key.permissao.descricao}</a>
+							class="class${menu.key.permissao}">&nbsp;</span>${menu.key.permissao.descricao}</a>
 							<ul>
 								<c:forEach items="${menus[menu.key]}" var="submenu">
 									<li><a href="<c:url value='${submenu.key.url}' />">${submenu.key.permissao.descricao}</a>
@@ -161,7 +161,7 @@
 							</ul>
 						</li>
 					</c:forEach>
-				<li><a href="help.htm"><span class="classHelp">&nbsp;</span>Help</a>
+				<li><a href="help.htm"><span class="classROLE_HELP">&nbsp;</span>Help</a>
 				</li>
 			</ul>
 			<br class="clearit">

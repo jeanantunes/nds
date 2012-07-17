@@ -11,6 +11,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.collections.SetUtils;
+import org.apache.commons.lang.ArrayUtils;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
@@ -141,8 +143,10 @@ import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.model.fiscal.TipoUsuarioNotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.EncargoFinanceiro;
 import br.com.abril.nds.model.fiscal.nota.Identificacao;
+import br.com.abril.nds.model.fiscal.nota.Identificacao.FormaPagamento;
 import br.com.abril.nds.model.fiscal.nota.IdentificacaoDestinatario;
 import br.com.abril.nds.model.fiscal.nota.IdentificacaoEmitente;
+import br.com.abril.nds.model.fiscal.nota.IdentificacaoEmitente.RegimeTributario;
 import br.com.abril.nds.model.fiscal.nota.InformacaoAdicional;
 import br.com.abril.nds.model.fiscal.nota.InformacaoEletronica;
 import br.com.abril.nds.model.fiscal.nota.InformacaoTransporte;
@@ -157,8 +161,6 @@ import br.com.abril.nds.model.fiscal.nota.StatusProcessamentoInterno;
 import br.com.abril.nds.model.fiscal.nota.ValoresRetencoesTributos;
 import br.com.abril.nds.model.fiscal.nota.ValoresTotaisISSQN;
 import br.com.abril.nds.model.fiscal.nota.Veiculo;
-import br.com.abril.nds.model.fiscal.nota.Identificacao.FormaPagamento;
-import br.com.abril.nds.model.fiscal.nota.IdentificacaoEmitente.RegimeTributario;
 import br.com.abril.nds.model.integracao.EventoExecucao;
 import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
 import br.com.abril.nds.model.integracao.InterfaceExecucao;
@@ -184,6 +186,7 @@ import br.com.abril.nds.model.planejamento.StatusLancamentoParcial;
 import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamentoParcial;
+import br.com.abril.nds.model.seguranca.GrupoPermissao;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.util.DateUtil;
@@ -963,6 +966,8 @@ public class DataLoader {
 
 		gerarLogradouros(session);
 
+		gerarAdministrador(session); 
+		
 		//criarNovaNotaFiscal(session);
 		
 	}
@@ -997,6 +1002,28 @@ public class DataLoader {
 		criarFeriado(session);		
 	}
 
+	private static void gerarAdministrador(Session session) {
+
+		GrupoPermissao grupoAdmin = new GrupoPermissao();
+		grupoAdmin.setNome("ADMIN");
+		grupoAdmin.setPermissoes( new HashSet<Permissao>(Arrays.asList(Permissao.values())) );
+		
+		session.save(grupoAdmin);
+
+		Usuario admin = new Usuario();
+		admin.setLogin("admin");
+		admin.setSenha("81dc9bdb52d04dc20036dbd8313ed055"); // Senha: 1234
+		admin.setNome("Administrador");
+		
+		Set<GrupoPermissao> gruposPermissoes = new HashSet<GrupoPermissao>();
+		gruposPermissoes.add(grupoAdmin);
+		
+		admin.setGruposPermissoes(gruposPermissoes);
+		
+		session.save(admin);
+
+	}
+	
 	private static void criarControleNumeracaoSlip(Session session) {
 
 		controleNumeracaoSlipConferenciaEncalhe = new ControleNumeracaoSlip();
