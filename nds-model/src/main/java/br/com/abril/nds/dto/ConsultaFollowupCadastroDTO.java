@@ -20,26 +20,30 @@ public class ConsultaFollowupCadastroDTO implements Serializable {
 	@Export(label = "Nome", alignment=Alignment.CENTER, exhibitionOrder = 2)
 	private String nomeJornaleiro;
 	
-	@Export(label = "Documento", alignment=Alignment.CENTER, exhibitionOrder = 3)
+	@Export(label = "Responsável", alignment=Alignment.CENTER, exhibitionOrder = 3)
+	private String responsavel;
+	
+	@Export(label = "Documento", alignment=Alignment.CENTER, exhibitionOrder = 4)
 	private String tipo;
 	
-	@Export(label = "Valor R$", alignment=Alignment.RIGHT, exhibitionOrder = 4)
+	@Export(label = "Valor R$", alignment=Alignment.RIGHT, exhibitionOrder = 5)
 	private Double valor;
 	
-	@Export(label = "Dt. Vencto.", alignment=Alignment.CENTER, exhibitionOrder = 5)
+	@Export(label = "Dt. Vencto.", alignment=Alignment.CENTER, exhibitionOrder = 6)
 	private String dataVencimento;
 	
 	public ConsultaFollowupCadastroDTO() {}
 	
 	public ConsultaFollowupCadastroDTO(Integer numeroCota,
 			String nomeJornaleiro, String tipo, Double valor,
-			String dataVencimento) {
+			String dataVencimento, String responsavel) {
 		super();
 		this.numeroCota = numeroCota;
 		this.nomeJornaleiro = nomeJornaleiro;
 		this.tipo = tipo;
 		this.valor = valor;
 		this.dataVencimento = dataVencimento;
+		this.responsavel = responsavel;
 	}
 
 
@@ -84,5 +88,12 @@ public class ConsultaFollowupCadastroDTO implements Serializable {
 		this.dataVencimento =  DateUtil.formatarData(dataVencimento.getTime(), Constantes.DATE_PATTERN_PT_BR) ;	
 	}
 
+	public String getResponsavel() {
+		return responsavel;
+	}
+
+	public void setResponsavel(String responsavel) {
+		this.responsavel = responsavel;
+	}
 	
 }

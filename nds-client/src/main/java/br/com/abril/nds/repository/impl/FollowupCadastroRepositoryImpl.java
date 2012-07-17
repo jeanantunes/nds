@@ -28,13 +28,15 @@ public class FollowupCadastroRepositoryImpl extends AbstractRepositoryModel<Cota
 		hql.append("pessoa.nome as nomeJornaleiro, ");
 		hql.append("cotaGarantia.class as tipo, ");
 		hql.append("cheque.valor as valor, ");
-		hql.append("cheque.validade as dataVencimento ");
+		hql.append("cheque.validade as dataVencimento, ");
+		hql.append("pdv.contato as responsavel ");
 		
 		hql.append(" from CotaGarantia as cotaGarantia, ");
 		hql.append(" Distribuidor as distribuidor ");
 		hql.append(" LEFT JOIN cotaGarantia.cheque as cheque ");		
 		hql.append(" LEFT JOIN cotaGarantia.cota as cota ");
 		hql.append(" LEFT JOIN cota.pessoa as pessoa ");
+		hql.append(" LEFT JOIN cota.pdvs as pdv ");
 		
 		hql.append(" WHERE datediff(cheque.validade, sysdate()) < distribuidor.prazoFollowUp ");
 		hql.append(" AND cotaGarantia.cheque <> 0");
@@ -63,13 +65,15 @@ public class FollowupCadastroRepositoryImpl extends AbstractRepositoryModel<Cota
 		hql.append("pessoa.nome as nomeJornaleiro, ");
 		hql.append("cotaGarantia.class as tipo, ");
 		hql.append("np.valor as valor, ");
-		hql.append("np.vencimento as dataVencimento ");
+		hql.append("np.vencimento as dataVencimento, ");
+		hql.append("pdv.contato as responsavel ");
 		
 		hql.append(" from CotaGarantia as cotaGarantia, ");
 		hql.append(" Distribuidor as distribuidor ");
 		hql.append(" LEFT JOIN cotaGarantia.notaPromissoria as np ");		
 		hql.append(" LEFT JOIN cotaGarantia.cota as cota ");
 		hql.append(" LEFT JOIN cota.pessoa as pessoa ");
+		hql.append(" LEFT JOIN cota.pdvs as pdv ");
 		
 		hql.append(" WHERE datediff(np.vencimento, sysdate()) < distribuidor.prazoFollowUp ");
 		hql.append(" AND cotaGarantia.notaPromissoria <> 0");
