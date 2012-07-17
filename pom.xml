@@ -421,7 +421,6 @@
 		<module>ndsi-canonical</module>
 		<module>ndsi-couchdbinterface</module>
 		<module>ndsi-engine</module>
-		<module>ndsi-webtest</module>
 
 		<module>nds-client</module>
 
