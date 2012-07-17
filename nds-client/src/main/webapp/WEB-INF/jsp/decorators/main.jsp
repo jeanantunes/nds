@@ -434,6 +434,7 @@
 									Controle Aprovação
 								</a>
 							</li>
+							<li><a href='<c:url value="/followup"/>'>Follow Up do Sistema</a></li>
 							<li><a href='<c:url value="/administracao/painelProcessamento"/>'>Painel de Processamento</a></li>
 							<li><a href='<c:url value="/administracao/cadastroCalendario"/>'>Calendário</a></li>
 							<li><a href='<c:url value="/administracao/tipoDescontoCota"/>'>Tipo de Desconto Cota</a></li>
