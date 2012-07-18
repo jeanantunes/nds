@@ -7205,9 +7205,10 @@ public class DataLoader {
 				BigDecimal.ZERO,
 				BigDecimal.ZERO,
 				BigDecimal.ZERO);
-
+		
+		itemNFEntrada.setOrigem(Origem.INTERFACE);
+		
 		session.save(itemNFEntrada);
-
 
 	}
 
