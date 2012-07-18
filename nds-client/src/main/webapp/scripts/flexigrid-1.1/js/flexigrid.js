@@ -456,9 +456,9 @@
 				p.sortname = $(th).attr('abbr');
 				if (p.onChangeSort) {
 					p.onChangeSort(p.sortname, p.sortorder);
-				} else {
-					this.populate();
-				}
+				} 
+				this.populate();
+				
 			},
 			buildpager: function () { //rebuild pager based on new properties
 				$('.pcontrol input', this.pDiv).val(p.page);

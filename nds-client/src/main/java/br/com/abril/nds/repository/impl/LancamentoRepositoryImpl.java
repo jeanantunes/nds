@@ -746,13 +746,12 @@ public class LancamentoRepositoryImpl extends
 		projectionList.add(Projections.property("produtoEdicao.codigoDeBarras"),"codigoDeBarras");
 		projectionList.add(Projections.property("produtoEdicao.precoVenda"),"precoVenda");
 		projectionList.add(Projections.property("produtoEdicao.desconto"),"desconto");		
-		projectionList.add(Projections.sqlProjection("(produtoedi1_.PRECO_VENDA - produtoedi1_.DESCONTO) as precoDesconto", new String[]{"precoDesconto"}, new Type[] {StandardBasicTypes.BIG_DECIMAL}));
+		projectionList.add(Projections.alias(Projections.sqlProjection("(produtoedi1_.PRECO_VENDA - produtoedi1_.DESCONTO) as precoDesconto", new String[]{"precoDesconto"}, new Type[] {StandardBasicTypes.BIG_DECIMAL}), "precoDesconto"));
 		projectionList.add(Projections.property("dataLancamentoDistribuidor"),"dataLancamento");
 		projectionList.add(Projections.property("dataRecolhimentoDistribuidor"),"dataRecolhimento");
 		projectionList.add(Projections.groupProperty("id"));		
 		projectionList.add(Projections.property("lancamentoParcial.recolhimentoFinal"),"dataRecolhimentoFinal");
 		criteria.setProjection(projectionList);		
-		
 		
 		
 		if(Ordenacao.ASC ==  ordenacao){
