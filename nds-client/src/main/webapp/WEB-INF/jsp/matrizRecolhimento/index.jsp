@@ -169,7 +169,7 @@
 			
 			function habilitarLinks() {
 				
-				habilitarLink("linkConfirmar", confirmar);
+				habilitarLink("linkConfirmar", obterConfirmacaoBalanceamento);
 				habilitarLink("linkEditor", function() { verificarBalanceamentosAlterados(balancearPorEditor); });
 				habilitarLink("linkValor", function() { verificarBalanceamentosAlterados(balancearPorValor); });
 				habilitarLink("linkSalvar", salvar);
@@ -238,7 +238,7 @@
 					var idProdutoEdicao = row.cell.idProdutoEdicao;
 					var nomeProduto = row.cell.nomeProduto;
 					
-					row.cell.nomeProduto = balanceamento.getLinkProduto(idProdutoEdicao, nomeProduto);
+					row.cell.nomeProduto = balanceamento.getColunaProduto(idProdutoEdicao, nomeProduto);
 					row.cell.sequencia = gerarInputSequencia(row);
 					row.cell.novaData = gerarHTMLNovaData(row);
 					row.cell.reprogramar = gerarCheckReprogramar(row);
@@ -648,17 +648,33 @@
 				});
 			}
 			
-			function confirmar() {
+			function confirmarBalanceamento() {
 				
 				$.postJSON(
 					"${pageContext.request.contextPath}/devolucao/balanceamentoMatriz/confirmar",
-					null,
+					balanceamento.obterDatasMarcadasConfirmacao(),
 					function(result) {
 				
 						fecharGridBalanceamento();
 						
 						$("#resumoPeriodo").hide();
-					}
+						
+						$("#dialog-confirm-balanceamento").dialog("close");
+
+						   if (result) {
+							   
+							   var tipoMensagem = result.tipoMensagem;
+							   var listaMensagens = result.listaMensagens;
+							   
+							   if (tipoMensagem && listaMensagens) {
+								   
+							       exibirMensagem(tipoMensagem, listaMensagens);
+						       }
+			        	   }
+					},
+					null,
+					true,
+					"dialog-confirmar"
 				);
 			}
 			
@@ -904,6 +920,7 @@
 				$("#checkAllReprogramar").attr("checked", false);
 			}
 
+			// TODO: deletar esse metodo
 			function mostarDetalhesProduto(idProdutoEdicao) {
 
 				var data = [];
@@ -923,6 +940,52 @@
 				);
 			}
 			
+			function obterConfirmacaoBalanceamento() {
+				
+				$.postJSON(
+					"${pageContext.request.contextPath}/devolucao/balanceamentoMatriz/obterAgrupamentoDiarioBalanceamento", 
+					null,
+					function(result) {
+						balanceamento.popularConfirmacaoBalanceamento(result);
+						abrirPopupConfirmarBalanceamento();
+					},
+					function() {
+						$("#dialog-confirm-balanceamento").hide();
+					}
+				);
+			}
+			
+			function abrirPopupConfirmarBalanceamento() {
+				
+				$( "#dialog-confirm-balanceamento" ).dialog({
+					resizable: false,
+					height:'auto',
+					width:300,
+					modal: true,
+					buttons: [
+					    {
+					    	id: "dialogConfirmarBtnConfirmar",
+					    	text: "Confirmar",
+					    	click: function() {
+							
+					    		confirmarBalanceamento();
+					    	}
+					    },
+					    {
+					    	id: "dialogConfirmarBtnCancelar",
+					    	text: "Cancelar",
+					    	click: function() {
+					    
+					    		$(this).dialog("close");
+					    	}
+						}
+					],
+					beforeClose: function() {
+						clearMessageDialogTimeout("dialog-confirmar");
+				    }
+				});
+			}
+			
 			$(function() {
 	
 				inicializar();
@@ -940,6 +1003,20 @@
 			   
 		</div>
 		
+		<div id="dialog-confirm-balanceamento" title="Balanceamento" style="display:none;">
+		    
+		    <jsp:include page="../messagesDialog.jsp">
+				<jsp:param value="dialog-confirmar" name="messageDialog"/>
+			</jsp:include>
+			
+		    <fieldset style="width:250px!important;">
+		    	<legend>Confirmar Balanceamento</legend>
+
+		        <table width="240" border="0" cellspacing="1" cellpadding="1" id="tableConfirmaBalanceamento">
+		        </table>
+
+		    </fieldset>
+		</div>
 		
 		<div id="dialogReprogramarBalanceamento" title="Reprogramar Recolhimentos">
 		    

@@ -1082,12 +1082,7 @@ public class MatrizLancamentoController {
 	
 		confirmacoesVO = this.agruparBalanceamento(balanceamentoLancamento);
 
-		TableModel<CellModelKeyValue<ConfirmacaoVO>> tableModel =
-			new TableModel<CellModelKeyValue<ConfirmacaoVO>>();
-		
-		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(confirmacoesVO));
-
-		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
+		result.use(Results.json()).from(confirmacoesVO, "result").serialize();
 	}
 
 	/**
