@@ -1,6 +1,8 @@
 package br.com.abril.nds.controllers.administracao;
 
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -62,8 +64,8 @@ public class CadastroCalendarioController {
 	
 	public void obterFeriados(int anoVigencia) {
 		
-		calendarioService.obterListaDataFeriado(anoVigencia);
-		
+		Map<Date, String> listaFeriado = calendarioService.obterListaDataFeriado(anoVigencia);
+	
 	}
 	
 	

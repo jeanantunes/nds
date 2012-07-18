@@ -122,13 +122,13 @@ public class FeriadoRepositoryImpl extends AbstractRepositoryModel<Feriado, Long
 		
 	}
 
-	public List<Date> obterListaDataFeriado(Date dataInicial, Date dataFinal) {
+	public List<CalendarioFeriadoDTO> obterListaDataFeriado(Date dataInicial, Date dataFinal) {
 		
 		StringBuffer sql = new StringBuffer("");
 		
 		sql.append(" select ");
 		
-		sql.append(" distinct (f.data)	");
+		sql.append(" f.data, f.descricaoFeriado	");
 		
 		sql.append(" from ");
 		
@@ -140,7 +140,7 @@ public class FeriadoRepositoryImpl extends AbstractRepositoryModel<Feriado, Long
 		
 		sql.append(" or f.indRepeteAnualmente = :indRepeteAnualmente ");
 		
-		Query query = getSession().createQuery(sql.toString());
+		Query query = getSession().createQuery(sql.toString()).setResultTransformer(new AliasToBeanResultTransformer(CalendarioFeriadoDTO.class));
 		
 		query.setParameter("dataInicial", dataInicial);
 		query.setParameter("dataFinal", dataFinal);

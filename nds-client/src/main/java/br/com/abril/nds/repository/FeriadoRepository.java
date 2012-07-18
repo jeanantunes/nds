@@ -62,7 +62,7 @@ public interface FeriadoRepository extends Repository<Feriado, Long> {
 	 * 
 	 * @return {@link List<Date>}
 	 */
-	public List<Date> obterListaDataFeriado(Date dataInicial, Date dataFinal);
+	public List<CalendarioFeriadoDTO> obterListaDataFeriado(Date dataInicial, Date dataFinal);
 
 	
 }

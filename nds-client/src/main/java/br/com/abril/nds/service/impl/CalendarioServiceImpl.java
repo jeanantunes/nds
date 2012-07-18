@@ -2,8 +2,10 @@ package br.com.abril.nds.service.impl;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -305,7 +307,7 @@ public class CalendarioServiceImpl implements CalendarioService {
 	}
 	
 	@Transactional
-	public List<Date> obterListaDataFeriado(int anoVigencia) {
+	public Map<Date, String> obterListaDataFeriado(int anoVigencia) {
 		
 		Calendar calendarInicial = Calendar.getInstance();
 		calendarInicial.set(anoVigencia, Calendar.JANUARY, 1);
@@ -317,9 +319,15 @@ public class CalendarioServiceImpl implements CalendarioService {
 		
 		Date dataFinal	= calendarFinal.getTime();
 		
-		List<Date> listaDataFeriado = feriadoRepository.obterListaDataFeriado(dataInicial, dataFinal);
+		List<CalendarioFeriadoDTO> listaDataFeriado = feriadoRepository.obterListaDataFeriado(dataInicial, dataFinal);
 		
-		return listaDataFeriado;
+		Map<Date, String> mapaFeriado = new HashMap<Date, String>();
+		
+		for(CalendarioFeriadoDTO calendario : listaDataFeriado) {
+			mapaFeriado.put(calendario.getDataFeriado(), calendario.getDescricaoFeriado());
+		}
+		
+		return mapaFeriado;
 		
 	}
 	

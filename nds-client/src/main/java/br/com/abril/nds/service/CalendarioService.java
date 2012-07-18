@@ -2,6 +2,7 @@ package br.com.abril.nds.service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import br.com.abril.nds.dto.CalendarioFeriadoDTO;
 
@@ -82,12 +83,12 @@ public interface CalendarioService {
 	List<CalendarioFeriadoDTO> obterListaCalendarioFeriado(Date dataFeriado);
 
 	/**
-	 * Obtém lista de datas com feriados cadastrados.
+	 * Obtém mapa de datas com feriados cadastrados.
 	 * 
 	 * @param anoVigencia
 	 * 
-	 * @return {@link List<Date>}
+	 * @return Map<Date, String>
 	 */
-	public List<Date> obterListaDataFeriado(int anoVigencia);
-	
+	public Map<Date, String> obterListaDataFeriado(int anoVigencia);
+
 }
