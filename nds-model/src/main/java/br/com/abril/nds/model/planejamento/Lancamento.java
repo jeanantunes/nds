@@ -117,9 +117,12 @@ public class Lancamento implements Serializable {
 	@JoinColumn(name = "EXPEDICAO_ID")
 	private Expedicao expedicao;
 	
-	
 	@OneToOne(mappedBy="lancamento")
 	private PeriodoLancamentoParcial periodoLancamentoParcial;
+
+	@ManyToOne(optional = true)
+	@JoinColumn(name = "CHAMADA_ENCALHE_ID")
+	private ChamadaEncalhe chamadaEncalhe;
 
 	public Long getId() {
 		return id;
@@ -316,6 +319,20 @@ public class Lancamento implements Serializable {
 	public void setPeriodoLancamentoParcial(
 			PeriodoLancamentoParcial periodoLancamentoParcial) {
 		this.periodoLancamentoParcial = periodoLancamentoParcial;
+	}
+
+	/**
+	 * @return the chamadaEncalhe
+	 */
+	public ChamadaEncalhe getChamadaEncalhe() {
+		return chamadaEncalhe;
+	}
+
+	/**
+	 * @param chamadaEncalhe the chamadaEncalhe to set
+	 */
+	public void setChamadaEncalhe(ChamadaEncalhe chamadaEncalhe) {
+		this.chamadaEncalhe = chamadaEncalhe;
 	}
 	
 
