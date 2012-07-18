@@ -30,6 +30,7 @@ import br.com.abril.nds.dto.ResumoPeriodoBalanceamentoDTO;
 import br.com.abril.nds.dto.SumarioLancamentosDTO;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
+import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
@@ -1125,24 +1126,26 @@ public class LancamentoRepositoryImpl extends
 	}
 	
 	@Override
-	public Lancamento obterLancamentoProdutoPorDataLancamentoOuDataRecolhimento(String codigoProduto, Date dataLancamentoPrevista, Date dataRecolhimentoPrevista){
+	public Lancamento obterLancamentoProdutoPorDataLancamentoOuDataRecolhimento(ProdutoEdicao produtoEdicao, Date dataLancamentoPrevista, Date dataRecolhimentoPrevista){
 		
 		StringBuilder sql = new StringBuilder();
-		sql.append("SELECT la FROM Lancamento la ");
-		sql.append("	   JOIN FETCH pe.produto p ");
-		sql.append("WHERE  p.codigo = :codigoProduto ");
+	
+		sql.append(" select lancamento  from Lancamento lancamento ");
+		sql.append(" join lancamento.produtoEdicao produtoEdicao ");
 		
+		sql.append(" where produtoEdicao.id =:produtoEdicao ");
+	
 		if (dataLancamentoPrevista != null) {
-			sql.append(" la.dataLancamentoPrevista = :dataLancamentoPrevista ");
+			sql.append(" AND lancamento.dataLancamentoPrevista = :dataLancamentoPrevista ");
 		}
 		
 		if (dataRecolhimentoPrevista != null) {
-			sql.append(" p.dataRecolhimentoPrevista = :dataRecolhimentoPrevista ");
+			sql.append(" AND lancamento.dataRecolhimentoPrevista = :dataRecolhimentoPrevista ");
 		}
 		
 		Query query = getSession().createQuery(sql.toString());
 		query.setMaxResults(1);
-		query.setParameter("codigoProduto", codigoProduto);
+		query.setParameter("produtoEdicao", produtoEdicao.getId());
 		
 		if (dataLancamentoPrevista != null) {
 			query.setParameter("dataLancamentoPrevista", dataLancamentoPrevista);
