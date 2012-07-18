@@ -180,6 +180,7 @@ InformeEncalhe.prototype.bindEvents = function() {
 	var _this = this;
 
 	$("#semanaRecolhimento").mask("99");
+	$("#dataRecolhimentoBox").mask("99/99/9999");
 	$("#dataRecolhimentoBox")
 			.datepicker(
 					{
@@ -316,7 +317,7 @@ function CapaPopup(idProdutoEdicao) {
 }
 
 CapaPopup.prototype.changeStatus = function(newStatus) {
-	$(this.anchor).unbind();
+	$(this.img).unbind();
 	var _this = this;
 	var eventObj;
 	this.anchor.title = newStatus.title;
