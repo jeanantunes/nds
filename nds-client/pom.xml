@@ -200,6 +200,7 @@
 				<configuration>
 					<mainClass>br.com.abril.nds.fixture.DataLoader</mainClass>
 					<classpathScope>test</classpathScope>
+					<commandlineArgs>cleanData</commandlineArgs>
 				</configuration>
 			</plugin>
 		</plugins>
@@ -380,6 +381,11 @@
 		</profile>
 		<profile>
 			<id>homologacao</id>
+			<properties>
+				<dataSourceURL>jdbc:mysql://abrildgbdb01.cdgtwjqgurfb.sa-east-1.rds.amazonaws.com:3306/nds-client-homolog</dataSourceURL>
+				<dataSourceUsername>admin</dataSourceUsername>
+				<dataSourcePassword>abrildgb01</dataSourcePassword>
+			</properties>
 			<build>
 				<plugins>
 					<plugin>
