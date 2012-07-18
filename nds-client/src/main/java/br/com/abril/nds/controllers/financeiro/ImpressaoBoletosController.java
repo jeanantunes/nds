@@ -171,7 +171,7 @@ public class ImpressaoBoletosController {
 		
 		for(Rota rota : rotas){
 			
-			listaRotas.add(new ItemDTO<Long, String>(rota.getId(),rota.getCodigoRota()));
+			listaRotas.add(new ItemDTO<Long, String>(rota.getId(),rota.getCodigoRota() + " - " + rota.getDescricaoRota()));
 		}
 		
 		return listaRotas;
