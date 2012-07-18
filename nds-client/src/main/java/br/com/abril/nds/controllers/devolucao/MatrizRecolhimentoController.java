@@ -3,9 +3,11 @@ package br.com.abril.nds.controllers.devolucao;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
@@ -16,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.SerializationUtils;
 
 import br.com.abril.nds.client.util.PaginacaoUtil;
+import br.com.abril.nds.client.vo.ConfirmacaoVO;
 import br.com.abril.nds.client.vo.FiltroPesquisaMatrizRecolhimentoVO;
 import br.com.abril.nds.client.vo.ProdutoRecolhimentoFormatadoVO;
 import br.com.abril.nds.client.vo.ProdutoRecolhimentoVO;
@@ -29,6 +32,7 @@ import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
+import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.RecolhimentoService;
@@ -115,7 +119,12 @@ public class MatrizRecolhimentoController {
 	
 	@Post
 	@Path("/confirmar")
-	public void confirmar() {
+	public void confirmar(List<Date> datasConfirmadas) {
+		
+		if (datasConfirmadas == null || datasConfirmadas.size() <= 0) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Ao menos uma data deve ser selecionada!");
+		}
 		
 		BalanceamentoRecolhimentoDTO balanceamentoRecolhimento = 
 			(BalanceamentoRecolhimentoDTO)
@@ -133,7 +142,7 @@ public class MatrizRecolhimentoController {
 		removerAtributoAlteracaoSessao();
 		
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS,
-			"Balanceamento da matriz de recolhimento confirmado com sucesso!"), Constantes.PARAM_MSGS)
+			"Balanceamento da matriz de recolhimento confirmado com sucesso!"), "result")
 				.recursive().serialize();
 	}
 	
@@ -1150,6 +1159,80 @@ public class MatrizRecolhimentoController {
 		usuario.setNome("Usuário da Silva");
 		
 		return usuario;
+	}
+	
+	/**
+	 * Obtem agrupamento diário para confirmação de Balanceamento
+	 */
+	@Post
+	public void obterAgrupamentoDiarioBalanceamento() {
+
+		List<ConfirmacaoVO> confirmacoesVO = new ArrayList<ConfirmacaoVO>();
+
+		BalanceamentoRecolhimentoDTO balanceamentoRecolhimento =
+			(BalanceamentoRecolhimentoDTO) this.httpSession.getAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_RECOLHIMENTO);
+
+		if (balanceamentoRecolhimento == null
+				|| balanceamentoRecolhimento.getMatrizRecolhimento() == null
+				|| balanceamentoRecolhimento.getMatrizRecolhimento().isEmpty()) {
+			
+			result.nothing();
+			
+			return;
+		}
+	
+		confirmacoesVO = this.agruparBalanceamento(balanceamentoRecolhimento);
+
+		result.use(Results.json()).from(confirmacoesVO, "result").serialize();
+	}
+	
+	/**
+	 * Obtem a concentração ordenada e agrupada por data para a Matriz de Lançamento
+	 * @param BalanceamentoLancamentoDTO: balanceamentoDTO
+	 * @return List<ConfirmacaoVO>: confirmacoesVO
+	 */
+    private List<ConfirmacaoVO> agruparBalanceamento(BalanceamentoRecolhimentoDTO balanceamentoRecolhimento){
+		
+		List<ConfirmacaoVO> confirmacoesVO = new ArrayList<ConfirmacaoVO>();
+
+		Map<Date, Boolean> mapaDatasConfirmacaoOrdenada = new LinkedHashMap<Date, Boolean>();
+
+		boolean confirmado = false;
+
+		for (Map.Entry<Date, List<ProdutoRecolhimentoDTO>> entry
+				: balanceamentoRecolhimento.getMatrizRecolhimento().entrySet()) {
+			
+            List<ProdutoRecolhimentoDTO> listaProdutosRecolhimento = entry.getValue();
+			
+			if (listaProdutosRecolhimento != null && !listaProdutosRecolhimento.isEmpty()) {
+				
+				for (ProdutoRecolhimentoDTO produtoRecolhimento : listaProdutosRecolhimento) {
+
+					confirmado =
+						(produtoRecolhimento.getStatusLancamento().equals(StatusLancamento.BALANCEADO)
+							&& (produtoRecolhimento.getDataRecolhimentoDistribuidor().compareTo(
+									produtoRecolhimento.getNovaData()) == 0));
+					
+					if (mapaDatasConfirmacaoOrdenada.get(produtoRecolhimento.getNovaData()) == null
+							|| (!confirmado && mapaDatasConfirmacaoOrdenada.get(
+									produtoRecolhimento.getNovaData()))) {
+						
+						mapaDatasConfirmacaoOrdenada.put(produtoRecolhimento.getNovaData(),
+														 confirmado);
+					}
+				}
+			}
+		}
+		
+		Set<Entry<Date, Boolean>> entrySet = mapaDatasConfirmacaoOrdenada.entrySet();
+		
+		for (Entry<Date, Boolean> item : entrySet) {
+			
+			confirmacoesVO.add(
+				new ConfirmacaoVO(DateUtil.formatarDataPTBR(item.getKey()), item.getValue()));
+		}
+
+		return confirmacoesVO;
 	}
 	
 }
