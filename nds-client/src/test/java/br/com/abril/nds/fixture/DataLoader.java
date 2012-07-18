@@ -4339,7 +4339,7 @@ public class DataLoader {
 		fornecedorAcme.setResponsavel("João");
 		fornecedorAcme.setOrigem(Origem.INTERFACE);
 		fornecedorDinap = Fixture.fornecedorDinap(tipoFornecedorPublicacao);
-		fornecedorFc.setCodigoInterface(9999999);
+		fornecedorDinap.setCodigoInterface(9999999);
 		fornecedorDinap.setResponsavel("Maria");
 		fornecedorDinap.setOrigem(Origem.MANUAL);
 		fornecedorFc = Fixture.fornecedorFC(tipoFornecedorPublicacao);
