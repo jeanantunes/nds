@@ -859,7 +859,6 @@ public class DataLoader {
 
 		criarCarteira(session);
 		criarBanco(session);
-		criarPessoas(session);
 		criarUsuarios(session);
 		criarBox(session);
 		
@@ -980,7 +979,8 @@ public class DataLoader {
 		criarInterfaceExecucao(session);
 		criarEventoExecucao(session);
 		criarAlgoritmos(session);
-		
+				
+		criarPessoas(session);
 		criarTiposFornecedores(session);
 		criarFornecedores(session);
 		
