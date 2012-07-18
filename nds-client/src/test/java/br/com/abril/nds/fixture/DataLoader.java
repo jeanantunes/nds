@@ -861,7 +861,6 @@ public class DataLoader {
 		criarBanco(session);
 		criarPessoas(session);
 		criarUsuarios(session);
-		criarTiposFornecedores(session);
 		criarBox(session);
 		
 		criarDiasDistribuicaoFornecedores(session);
@@ -982,6 +981,7 @@ public class DataLoader {
 		criarEventoExecucao(session);
 		criarAlgoritmos(session);
 		
+		criarTiposFornecedores(session);
 		criarFornecedores(session);
 		
 		//tabelaNCM(session);
