@@ -64,6 +64,9 @@ public class ImportacaoDeArquivoProdutoStrategy implements ImportacaoArquivoStra
 	@Autowired
 	private PessoaRepository pessoaRepository;
 	
+	/**
+	 * Executa processo de importação de produtos
+	 */
 	@Override
 	@Transactional
 	public RetornoImportacaoArquivoVO processarImportacaoArquivo(File arquivo) {
@@ -108,6 +111,10 @@ public class ImportacaoDeArquivoProdutoStrategy implements ImportacaoArquivoStra
 		return new RetornoImportacaoArquivoVO(new String[]{"Sucesso"},linhaArquivo,null,true);
 	}
 
+	/**
+//	 * Cria instancia do input referente à importação de produtos e processa informações
+	 * @param Object:input
+	 */
 	@Override
 	public void processarImportacaoDados(Object input) {
 		
@@ -119,9 +126,7 @@ public class ImportacaoDeArquivoProdutoStrategy implements ImportacaoArquivoStra
 	/**
 	 * 
 	 * Retorna o objepto EMS0108Input com as informações referente a linha do arquivo informada
-	 * 
 	 * @param linhaArquivo
-	 * 
 	 * @return EMS0108Input
 	 */
 	private EMS0119Input parseDados(String linhaArquivo){
@@ -136,6 +141,10 @@ public class ImportacaoDeArquivoProdutoStrategy implements ImportacaoArquivoStra
 		}
 	}
     
+	/**
+	 * Valida informações de input
+	 * @param EMS0119Input:produtoRoute
+	 */
 	private void validaInput(EMS0119Input produtoRoute) {
         
 		try {
@@ -174,18 +183,22 @@ public class ImportacaoDeArquivoProdutoStrategy implements ImportacaoArquivoStra
 		}
 	}
 	
+	/**
+	 * Processa informações de input e insere/altera de acordo com as regras de cadastro de produto/produto edição
+	 * @param EMS0119Input:input
+	 */
 	private void processarDados(EMS0119Input input){		
 
         validaInput(input);
 		
         try {
 
-	  		NCM ncm = ncmRepository.obterPorCodigo(123l);
+	  		NCM ncm = ncmRepository.obterPorCodigo(49059900l);
 	  		if (ncm==null){
 	  		    ncm = new NCM();
 	  		    
-	  		    ncm.setCodigo(123l);
-	  			ncm.setDescricao("OUTROS");
+	  		    ncm.setCodigo(49059900l);
+	  			ncm.setDescricao("OUTRAS OBRAS CARTOGRAFICAS IMPRESSAS");
 	  			ncm.setUnidadeMedida("KG");
 	  			
 	  			ncmRepository.adicionar(ncm);
