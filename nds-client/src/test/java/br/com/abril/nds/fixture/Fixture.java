@@ -238,7 +238,7 @@ public class Fixture {
 	}
 
 	public static Fornecedor fornecedorDinap(TipoFornecedor tipoFornecedor) {
-		return fornecedor(juridicaDinap(), SituacaoCadastro.ATIVO, true, tipoFornecedor, 2);
+		return fornecedor(juridicaDinap(), SituacaoCadastro.ATIVO, true, tipoFornecedor, 9999999);
 	}
 	
 	public static Fornecedor fornecedorAcme(TipoFornecedor tipoFornecedor) {
