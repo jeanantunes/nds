@@ -22,6 +22,7 @@ import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaFornecedorDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaFornecedorDTO.ColunaOrdenacao;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
@@ -492,6 +493,10 @@ public class FornecedorController {
 		fornecedor.setPossuiContrato(fornecedorDTO.isPossuiContrato());
 		
 		fornecedor.setJuridica(pessoaJuridica);
+		
+		Origem origem = fornecedorDTO.getOrigem() == null ? Origem.MANUAL : fornecedorDTO.getOrigem(); 
+		
+		fornecedor.setOrigem(origem);
 		
 		return fornecedor;
 	}
