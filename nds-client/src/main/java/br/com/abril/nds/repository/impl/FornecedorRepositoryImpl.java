@@ -365,5 +365,21 @@ public class FornecedorRepositoryImpl extends
 		
 		return query.list();
 	}
+
+	/**
+	 * Obtem Fornecedor por codigo
+	 * @param codigo
+	 * @return Fornecedor
+	 */
+	@Override
+	public Fornecedor obterFornecedorPorCodigo(Integer codigo) {
+        Criteria criteria = getSession().createCriteria(Fornecedor.class);
+		
+		criteria.add(Restrictions.eq("codigoInterface", codigo));
+		
+		criteria.setMaxResults(1);
+
+		return (Fornecedor) criteria.uniqueResult();
+	}
 	
 }

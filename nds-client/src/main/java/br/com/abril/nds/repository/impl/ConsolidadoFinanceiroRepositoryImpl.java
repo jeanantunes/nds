@@ -432,4 +432,16 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 		criteria.setProjection(Projections.max("dataConsolidado"));
 		return (Date) criteria.uniqueResult();
 	}
+
+	@Override
+	public Long obterQuantidadeDividasGeradasData(Date data) {
+		
+		Query query = 
+				this.getSession().createQuery(
+						"select count(c.id) from ConsolidadoFinanceiroCota c where c.dataConsolidado = :data ");
+		
+		query.setParameter("data", data);
+		
+		return (Long) query.uniqueResult();
+	}
 }
