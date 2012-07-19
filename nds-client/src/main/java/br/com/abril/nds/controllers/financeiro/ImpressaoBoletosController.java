@@ -245,7 +245,7 @@ public class ImpressaoBoletosController {
 	public void gerarDivida(){
 
 		try {
-			this.gerarCobrancaService.gerarCobranca(null, this.getUsuario().getId(), true, new HashSet<String>());
+			this.gerarCobrancaService.gerarCobranca(null, this.getUsuario().getId(), new HashSet<String>());
 		} catch (GerarCobrancaValidacaoException e) {
 			
 			throw e.getValidacaoException();
