@@ -268,7 +268,7 @@ public class ServicoController {
 			}
 		} else if (Periodicidade.MENSAL.getValue().equals(periodicidadeCadastro)) {
 			
-			if (diaMes == null || diaMes == null) {
+			if (diaMes == null || diaMes == 0) {
 				listaMensagens.add("Insira um dia do mes.");
 			}
 		}
@@ -342,17 +342,17 @@ public class ServicoController {
 
 	private String validarDescricao(String descricao) {
 		
-		if (descricao == null || descricao.isEmpty()) {
+		if (descricao != null && !descricao.isEmpty()) {
 			
 			if (descricao.contains("%")) {
-				descricao.replace("%", "");
+				descricao = descricao.replace("%", "");
 			}
 			
 			if (descricao.length() > 256) {
 				throw new ValidacaoException(TipoMensagem.ERROR, "O campo [Descrição] excedeu o limite permitido!");
 			}
 		
-			descricao.trim();
+			descricao = descricao.trim();
 		}
 		
 		return descricao;
