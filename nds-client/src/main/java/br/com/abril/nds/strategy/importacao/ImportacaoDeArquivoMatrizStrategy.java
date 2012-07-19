@@ -151,7 +151,13 @@ public class ImportacaoDeArquivoMatrizStrategy implements ImportacaoArquivoStrat
 		
 		if(input.getDataLancamentoRecolhimentoProduto().compareTo(new Date()) >= 0){
 			
-			Lancamento lancamento = new Lancamento();		
+			Lancamento lancamento = 
+					lancamentoRepository.obterLancamentoProdutoPorDataLancamentoDataLancamentoDistribuidor(produtoEdicao,dataLcto, dataLcto);	
+			
+			if(lancamento == null){
+				
+				lancamento = new Lancamento();	
+			}
 			
 			lancamento.setDataCriacao(new Date());
 			lancamento.setDataLancamentoDistribuidor(dataLcto);
@@ -165,8 +171,9 @@ public class ImportacaoDeArquivoMatrizStrategy implements ImportacaoArquivoStrat
 			
 			lancamento.setStatus(StatusLancamento.PLANEJADO);
 			lancamento.setTipoLancamento(TipoLancamento.LANCAMENTO);
-			
+				
 			lancamentoRepository.adicionar(lancamento);
+
 		}
 		
 		if (input.getEdicaoRecolhimento() != null

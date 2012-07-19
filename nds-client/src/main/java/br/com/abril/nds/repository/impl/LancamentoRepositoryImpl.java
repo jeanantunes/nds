@@ -1158,6 +1158,31 @@ public class LancamentoRepositoryImpl extends
 	}
 	
 	@Override
+	public Lancamento obterLancamentoProdutoPorDataLancamentoDataLancamentoDistribuidor(ProdutoEdicao produtoEdicao, Date dataLancamentoPrevista, Date dataLancamentoDistribuidor){
+		
+		StringBuilder sql = new StringBuilder();
+	
+		sql.append(" select lancamento  from Lancamento lancamento ");
+		sql.append(" join lancamento.produtoEdicao produtoEdicao ");
+		
+		sql.append(" where produtoEdicao.id =:produtoEdicao ");
+	
+		sql.append(" AND lancamento.dataLancamentoPrevista = :dataLancamentoPrevista ");
+		
+		sql.append(" AND lancamento.dataLancamentoDistribuidor = :dataLancamentoDistribuidor ");
+		
+		Query query = getSession().createQuery(sql.toString());
+		query.setMaxResults(1);
+		query.setParameter("produtoEdicao", produtoEdicao.getId());
+		
+		query.setParameter("dataLancamentoPrevista", dataLancamentoPrevista);
+		
+		query.setParameter("dataLancamentoDistribuidor", dataLancamentoDistribuidor);
+		
+		return (Lancamento) query.uniqueResult();
+	}
+	
+	@Override
 	public Long obterQuantidadeLancamentos(StatusLancamento statusLancamento){
 		
 		StringBuilder hql = new StringBuilder("select count(lanc.id) ");

@@ -258,4 +258,12 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 	Long obterQuantidadeLancamentos(StatusLancamento statusLancamento);
 
 	BigDecimal obterConsignadoDia(StatusLancamento statusLancamento);
+	
+	Lancamento obterLancamentoProdutoPorDataLancamentoDataLancamentoDistribuidor(ProdutoEdicao produtoEdicao, 
+																				 Date dataLancamentoPrevista, 
+																				 Date dataLancamentoDistribuidor);
+	
 }
+	
+	
+	
