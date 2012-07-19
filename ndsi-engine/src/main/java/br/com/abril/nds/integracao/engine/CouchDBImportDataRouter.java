@@ -73,7 +73,7 @@ public class CouchDBImportDataRouter extends AbstractRepository implements Conte
 		view.key(inputModel.getRouteInterface().getName());
 		view.limit(couchDbProperties.getBachSize());
 		view.includeDocs(true);
-		ViewResult<String, ?, Void> result = view.queryView(String.class, classLinha, Void.class);
+		ViewResult<String, Void, ?> result = view.queryView(String.class, Void.class, classLinha);
 		do {	
 			
 			
@@ -125,7 +125,8 @@ public class CouchDBImportDataRouter extends AbstractRepository implements Conte
 			view = couchDbClient.view("importacao/porTipoDocumento");
 			view.key(inputModel.getRouteInterface().getName());
 			view.limit(couchDbProperties.getBachSize());
-			result = view.queryView(String.class, classLinha, Void.class);
+			view.includeDocs(true);
+			result = view.queryView(String.class, Void.class, classLinha);
 		} while(!result.getRows().isEmpty());
 		
 		couchDbClient.shutdown();

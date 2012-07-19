@@ -23,8 +23,8 @@ public class ImportacaoArquivoServiceImpl implements ImportacaoArquivoService{
 	@Autowired
 	private ImportacaoArquivoStrategy importacaoDeArquivoProdutoStrategy;
 	
-	@Transactional
 	@Override
+	@Transactional
 	public RetornoImportacaoArquivoVO processarImportacaoArquivo(File arquivo, TipoImportacaoArquivo tipoImportacaoArquivo) {
 		
 		ImportacaoArquivoStrategy importacaoArquivoStrategy = getStrategy(tipoImportacaoArquivo);

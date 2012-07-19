@@ -57,6 +57,7 @@ import br.com.abril.nds.model.cadastro.ParametroContratoCota;
 import br.com.abril.nds.model.cadastro.ParametroDistribuicaoCota;
 import br.com.abril.nds.model.cadastro.ParametroUsuarioBox;
 import br.com.abril.nds.model.cadastro.ParametrosAprovacaoDistribuidor;
+import br.com.abril.nds.model.cadastro.ParametrosCotaNotaFiscalEletronica;
 import br.com.abril.nds.model.cadastro.ParametrosRecolhimentoDistribuidor;
 import br.com.abril.nds.model.cadastro.Periodicidade;
 import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
@@ -141,8 +142,10 @@ import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.model.fiscal.TipoUsuarioNotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.EncargoFinanceiro;
 import br.com.abril.nds.model.fiscal.nota.Identificacao;
+import br.com.abril.nds.model.fiscal.nota.Identificacao.FormaPagamento;
 import br.com.abril.nds.model.fiscal.nota.IdentificacaoDestinatario;
 import br.com.abril.nds.model.fiscal.nota.IdentificacaoEmitente;
+import br.com.abril.nds.model.fiscal.nota.IdentificacaoEmitente.RegimeTributario;
 import br.com.abril.nds.model.fiscal.nota.InformacaoAdicional;
 import br.com.abril.nds.model.fiscal.nota.InformacaoEletronica;
 import br.com.abril.nds.model.fiscal.nota.InformacaoTransporte;
@@ -157,8 +160,6 @@ import br.com.abril.nds.model.fiscal.nota.StatusProcessamentoInterno;
 import br.com.abril.nds.model.fiscal.nota.ValoresRetencoesTributos;
 import br.com.abril.nds.model.fiscal.nota.ValoresTotaisISSQN;
 import br.com.abril.nds.model.fiscal.nota.Veiculo;
-import br.com.abril.nds.model.fiscal.nota.Identificacao.FormaPagamento;
-import br.com.abril.nds.model.fiscal.nota.IdentificacaoEmitente.RegimeTributario;
 import br.com.abril.nds.model.integracao.EventoExecucao;
 import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
 import br.com.abril.nds.model.integracao.InterfaceExecucao;
@@ -484,6 +485,16 @@ public class DataLoader {
 	private static ParametroCobrancaCota parametroCobrancaMariana;
 	private static ParametroCobrancaCota parametroCobrancaOralando;
 
+	private static ParametrosCotaNotaFiscalEletronica parametroCotaNotaFiscalEletronicaJose;
+	private static ParametrosCotaNotaFiscalEletronica parametroCotaNotaFiscalEletronicaManoel;
+	private static ParametrosCotaNotaFiscalEletronica parametroCotaNotaFiscalEletronicaMaria;
+	private static ParametrosCotaNotaFiscalEletronica parametroCotaNotaFiscalEletronicaLuis;
+	private static ParametrosCotaNotaFiscalEletronica parametroCotaNotaFiscalEletronicaJoao;
+	private static ParametrosCotaNotaFiscalEletronica parametroCotaNotaFiscalEletronicaGuilherme;
+	private static ParametrosCotaNotaFiscalEletronica parametroCotaNotaFiscalEletronicaMurilo;
+	private static ParametrosCotaNotaFiscalEletronica parametroCotaNotaFiscalEletronicaMariana;
+	private static ParametrosCotaNotaFiscalEletronica parametroCotaNotaFiscalEletronicaOrlando;
+	
 	private static Estudo estudoVeja1;
 	private static Estudo estudoVeja1Atual;
 	private static Estudo estudoVeja2;
@@ -859,11 +870,9 @@ public class DataLoader {
 
 		criarCarteira(session);
 		criarBanco(session);
-		criarPessoas(session);
 		criarUsuarios(session);
-		criarTiposFornecedores(session);
 		criarBox(session);
-		criarFornecedores(session);
+		
 		criarDiasDistribuicaoFornecedores(session);
 		criarDiasDistribuicaoDistribuidor(session);
 		criarCotas(session);
@@ -981,6 +990,10 @@ public class DataLoader {
 		criarInterfaceExecucao(session);
 		criarEventoExecucao(session);
 		criarAlgoritmos(session);
+				
+		criarPessoas(session);
+		criarTiposFornecedores(session);
+		criarFornecedores(session);
 		
 		//tabelaNCM(session);
 		criarTiposProduto(session);
@@ -1239,7 +1252,7 @@ public class DataLoader {
 		nfeRemessaConsignacaoContribuinte.setDescricao("");
 		nfeRemessaConsignacaoContribuinte.setNopCodigo(0L);
 		nfeRemessaConsignacaoContribuinte.setTipoOperacao(TipoOperacao.SAIDA);
-		nfeRemessaConsignacaoContribuinte.setGrupoNotaFiscal(GrupoNotaFiscal.DEVOLUCAO_MERCADORIA_FORNECEDOR);
+		nfeRemessaConsignacaoContribuinte.setGrupoNotaFiscal(GrupoNotaFiscal.NF_REMESSA_CONSIGNACAO);
 		nfeRemessaConsignacaoContribuinte.setTipoAtividade(TipoAtividade.MERCANTIL);
 		nfeRemessaConsignacaoContribuinte.setSerieNotaFiscal(1);
 		save(session,nfeRemessaConsignacaoContribuinte);
@@ -1254,7 +1267,7 @@ public class DataLoader {
 		nfeEntradaDevolucaoRemessaConsignacaoContribuinte.setDescricao("");
 		nfeEntradaDevolucaoRemessaConsignacaoContribuinte.setNopCodigo(0L);
 		nfeEntradaDevolucaoRemessaConsignacaoContribuinte.setTipoOperacao(TipoOperacao.ENTRADA);
-		nfeEntradaDevolucaoRemessaConsignacaoContribuinte.setGrupoNotaFiscal(GrupoNotaFiscal.DEVOLUCAO_MERCADORIA_FORNECEDOR);
+		nfeEntradaDevolucaoRemessaConsignacaoContribuinte.setGrupoNotaFiscal(GrupoNotaFiscal.NF_DEVOLUCAO_REMESSA_CONSIGNACAO);
 		nfeEntradaDevolucaoRemessaConsignacaoContribuinte.setTipoAtividade(TipoAtividade.MERCANTIL);
 		nfeEntradaDevolucaoRemessaConsignacaoContribuinte.setSerieNotaFiscal(2);
 		save(session, nfeEntradaDevolucaoRemessaConsignacaoContribuinte);
@@ -1269,7 +1282,7 @@ public class DataLoader {
 		nfeDevolucaoSimbolicaMercadoriasVendidasContribuinte.setDescricao("");
 		nfeDevolucaoSimbolicaMercadoriasVendidasContribuinte.setNopCodigo(0L);
 		nfeDevolucaoSimbolicaMercadoriasVendidasContribuinte.setTipoOperacao(TipoOperacao.ENTRADA);
-		nfeDevolucaoSimbolicaMercadoriasVendidasContribuinte.setGrupoNotaFiscal(GrupoNotaFiscal.DEVOLUCAO_MERCADORIA_FORNECEDOR);
+		nfeDevolucaoSimbolicaMercadoriasVendidasContribuinte.setGrupoNotaFiscal(GrupoNotaFiscal.NF_DEVOLUCAO_SIMBOLICA);
 		nfeDevolucaoSimbolicaMercadoriasVendidasContribuinte.setTipoAtividade(TipoAtividade.MERCANTIL);
 		nfeDevolucaoSimbolicaMercadoriasVendidasContribuinte.setSerieNotaFiscal(3);
 		save(session, nfeDevolucaoSimbolicaMercadoriasVendidasContribuinte);
@@ -1284,7 +1297,7 @@ public class DataLoader {
 		nfeVendasContribuinte.setDescricao("");
 		nfeVendasContribuinte.setNopCodigo(0L);
 		nfeVendasContribuinte.setTipoOperacao(TipoOperacao.SAIDA);
-		nfeVendasContribuinte.setGrupoNotaFiscal(GrupoNotaFiscal.DEVOLUCAO_MERCADORIA_FORNECEDOR);
+		nfeVendasContribuinte.setGrupoNotaFiscal(GrupoNotaFiscal.NF_VENDA);
 		nfeVendasContribuinte.setTipoAtividade(TipoAtividade.MERCANTIL);
 		nfeVendasContribuinte.setSerieNotaFiscal(4);
 		save(session, nfeVendasContribuinte);
@@ -1300,7 +1313,7 @@ public class DataLoader {
 		nfeRemessaConsignacao.setDescricao("");
 		nfeRemessaConsignacao.setNopCodigo(0L);
 		nfeRemessaConsignacao.setTipoOperacao(TipoOperacao.SAIDA);
-		nfeRemessaConsignacao.setGrupoNotaFiscal(GrupoNotaFiscal.DEVOLUCAO_MERCADORIA_FORNECEDOR);
+		nfeRemessaConsignacao.setGrupoNotaFiscal(GrupoNotaFiscal.NF_REMESSA_CONSIGNACAO);
 		nfeRemessaConsignacao.setTipoAtividade(TipoAtividade.MERCANTIL);
 		nfeRemessaConsignacao.setSerieNotaFiscal(5);
 		save(session,nfeRemessaConsignacao);
@@ -1315,7 +1328,7 @@ public class DataLoader {
 		nfeEntradaDevolucaoRemessaConsignacao.setDescricao("");
 		nfeEntradaDevolucaoRemessaConsignacao.setNopCodigo(0L);
 		nfeEntradaDevolucaoRemessaConsignacao.setTipoOperacao(TipoOperacao.ENTRADA);
-		nfeEntradaDevolucaoRemessaConsignacao.setGrupoNotaFiscal(GrupoNotaFiscal.DEVOLUCAO_MERCADORIA_FORNECEDOR);
+		nfeEntradaDevolucaoRemessaConsignacao.setGrupoNotaFiscal(GrupoNotaFiscal.NF_DEVOLUCAO_REMESSA_CONSIGNACAO);
 		nfeEntradaDevolucaoRemessaConsignacao.setTipoAtividade(TipoAtividade.MERCANTIL);
 		nfeEntradaDevolucaoRemessaConsignacao.setSerieNotaFiscal(6);
 		save(session, nfeEntradaDevolucaoRemessaConsignacao);
@@ -1330,7 +1343,7 @@ public class DataLoader {
 		nfeDevolucaoSimbolicaMercadoriasVendidas.setDescricao("");
 		nfeDevolucaoSimbolicaMercadoriasVendidas.setNopCodigo(0L);
 		nfeDevolucaoSimbolicaMercadoriasVendidas.setTipoOperacao(TipoOperacao.ENTRADA);
-		nfeDevolucaoSimbolicaMercadoriasVendidas.setGrupoNotaFiscal(GrupoNotaFiscal.DEVOLUCAO_MERCADORIA_FORNECEDOR);
+		nfeDevolucaoSimbolicaMercadoriasVendidas.setGrupoNotaFiscal(GrupoNotaFiscal.NF_DEVOLUCAO_SIMBOLICA);
 		nfeDevolucaoSimbolicaMercadoriasVendidas.setTipoAtividade(TipoAtividade.MERCANTIL);
 		nfeDevolucaoSimbolicaMercadoriasVendidas.setSerieNotaFiscal(7);
 		save(session, nfeDevolucaoSimbolicaMercadoriasVendidas);
@@ -1345,7 +1358,7 @@ public class DataLoader {
 		nfeVendas.setDescricao("");
 		nfeVendas.setNopCodigo(0L);
 		nfeVendas.setTipoOperacao(TipoOperacao.SAIDA);
-		nfeVendas.setGrupoNotaFiscal(GrupoNotaFiscal.DEVOLUCAO_MERCADORIA_FORNECEDOR);
+		nfeVendas.setGrupoNotaFiscal(GrupoNotaFiscal.NF_VENDA);
 		nfeVendas.setTipoAtividade(TipoAtividade.MERCANTIL);
 		nfeVendas.setSerieNotaFiscal(8);
 		save(session, nfeVendas);
@@ -1879,11 +1892,6 @@ public class DataLoader {
 		save(session, consolidadoFinanceiroCota);
 	}
 
-
-
-
-
-
 	private static void criarControleBaixaBancaria(Session session) {
 		baixaBancaria = Fixture.controleBaixaBancaria(new Date(), StatusControle.CONCLUIDO_SUCESSO, usuarioJoao);
 		save(session, baixaBancaria);
@@ -2139,8 +2147,6 @@ public class DataLoader {
 
 		save(session,formaBoleto,formaDeposito,formaDinheiro);
 
-
-
         Set<FormaCobranca> formasCobranca;
 
 		formasCobranca = new HashSet<FormaCobranca>();
@@ -2187,6 +2193,7 @@ public class DataLoader {
 		save(session,formaDeposito);
 
 	}
+
 
 	private static void criarPDVsCota(Session session){
 
@@ -4162,7 +4169,9 @@ public class DataLoader {
 
 
 		cotaManoel = Fixture.cota(123, manoel, SituacaoCadastro.ATIVO,box1);
-
+		parametroCotaNotaFiscalEletronicaManoel = Fixture.parametrosCotaNotaFiscalEletronica(false, "manoel@email.com");
+		cotaManoel.setParametrosCotaNotaFiscalEletronica(parametroCotaNotaFiscalEletronicaManoel);
+		
 		Set<Fornecedor> fornecedores = new HashSet<Fornecedor>();
 		fornecedores.add(fornecedorAcme);
 		fornecedores.add(fornecedorDinap);
@@ -4175,18 +4184,24 @@ public class DataLoader {
 
 
 		cotaJose = Fixture.cota(1234, jose, SituacaoCadastro.ATIVO,box1);
+		parametroCotaNotaFiscalEletronicaJose = Fixture.parametrosCotaNotaFiscalEletronica(true, "jose@email.com");
+		cotaJose.setParametrosCotaNotaFiscalEletronica(parametroCotaNotaFiscalEletronicaJose);
 		save(session, cotaJose);
 		ContratoCota contrato2 = Fixture.criarContratoCota(cotaJose,true,DateUtil.parseData("01/01/2011", "dd/mm/yyyy"), DateUtil.parseData("01/01/2013", "dd/mm/yyyy"), 12, 30);
 		save(session, contrato2);
 
 
 		cotaMaria = Fixture.cota(12345, maria, SituacaoCadastro.ATIVO,box2);
+		parametroCotaNotaFiscalEletronicaMaria = Fixture.parametrosCotaNotaFiscalEletronica(true, "maria@email.com");
+		cotaMaria.setParametrosCotaNotaFiscalEletronica(parametroCotaNotaFiscalEletronicaMaria);
 		save(session, cotaMaria);
 		ContratoCota contrato3 = Fixture.criarContratoCota(cotaMaria,false,DateUtil.parseData("01/01/2011", "dd/mm/yyyy"), DateUtil.parseData("01/01/2013", "dd/mm/yyyy"), 12, 30);
 		save(session, contrato3);
 
 
 		cotaGuilherme = Fixture.cota(333, guilherme, SituacaoCadastro.ATIVO,box2);
+		parametroCotaNotaFiscalEletronicaGuilherme = Fixture.parametrosCotaNotaFiscalEletronica(true, "guilherme@email.com");
+		cotaGuilherme.setParametrosCotaNotaFiscalEletronica(parametroCotaNotaFiscalEletronicaGuilherme);
 		cotaGuilherme.setSugereSuspensao(true);
 		save(session, cotaGuilherme);
 		ContratoCota contrato4 = Fixture.criarContratoCota(cotaGuilherme,true,DateUtil.parseData("01/01/2011", "dd/mm/yyyy"), DateUtil.parseData("01/01/2013", "dd/mm/yyyy"), 12, 30);
@@ -4194,6 +4209,8 @@ public class DataLoader {
 
 
 		cotaMurilo= Fixture.cota(22345, murilo, SituacaoCadastro.ATIVO,box2);
+		parametroCotaNotaFiscalEletronicaMurilo = Fixture.parametrosCotaNotaFiscalEletronica(true, "murilo@email.com");
+		cotaMurilo.setParametrosCotaNotaFiscalEletronica(parametroCotaNotaFiscalEletronicaMurilo);
 		cotaMurilo.setSugereSuspensao(true);
 		save(session, cotaMurilo);
 		ContratoCota contrato5 = Fixture.criarContratoCota(cotaMurilo,true,DateUtil.parseData("01/01/2011", "dd/mm/yyyy"), DateUtil.parseData("01/01/2013", "dd/mm/yyyy"), 12, 30);
@@ -4201,6 +4218,8 @@ public class DataLoader {
 
 
 		cotaMariana = Fixture.cota(32345, mariana, SituacaoCadastro.ATIVO,box1);
+		parametroCotaNotaFiscalEletronicaMariana = Fixture.parametrosCotaNotaFiscalEletronica(true, "mariana@email.com");
+		cotaMariana.setParametrosCotaNotaFiscalEletronica(parametroCotaNotaFiscalEletronicaMariana);
 		cotaMariana.setSugereSuspensao(true);
 		save(session, cotaMariana);
 		ContratoCota contrato6 = Fixture.criarContratoCota(cotaMariana,true,DateUtil.parseData("01/01/2011", "dd/mm/yyyy"), DateUtil.parseData("01/01/2013", "dd/mm/yyyy"), 12, 30);
@@ -4208,6 +4227,8 @@ public class DataLoader {
 
 
 		cotaOrlando = Fixture.cota(4444, orlando, SituacaoCadastro.INATIVO,box1);
+		parametroCotaNotaFiscalEletronicaOrlando = Fixture.parametrosCotaNotaFiscalEletronica(true, "orlando@email.com");
+		cotaOrlando.setParametrosCotaNotaFiscalEletronica(parametroCotaNotaFiscalEletronicaOrlando);
 		cotaOrlando.setSugereSuspensao(false);
 		save(session, cotaOrlando);
 		ContratoCota contrato7 = Fixture.criarContratoCota(cotaOrlando,false,DateUtil.parseData("01/01/2011", "dd/mm/yyyy"), DateUtil.parseData("01/01/2013", "dd/mm/yyyy"), 12, 30);
@@ -4215,12 +4236,16 @@ public class DataLoader {
 
 
 		cotaJoao = Fixture.cota(9999, joao, SituacaoCadastro.ATIVO,box2);
+		parametroCotaNotaFiscalEletronicaJoao = Fixture.parametrosCotaNotaFiscalEletronica(true, "joao@email.com");
+		cotaJoao.setParametrosCotaNotaFiscalEletronica(parametroCotaNotaFiscalEletronicaJoao);
 		save(session, cotaJoao);
 		ContratoCota contrato8 = Fixture.criarContratoCota(cotaJoao,false,DateUtil.parseData("01/01/2011", "dd/mm/yyyy"), DateUtil.parseData("01/01/2013", "dd/mm/yyyy"), 12, 30);
 		save(session, contrato8);
 
 
 		cotaLuis = Fixture.cota(888, luis, SituacaoCadastro.ATIVO,box2);
+		parametroCotaNotaFiscalEletronicaLuis = Fixture.parametrosCotaNotaFiscalEletronica(true, "luis@email.com");
+		cotaLuis.setParametrosCotaNotaFiscalEletronica(parametroCotaNotaFiscalEletronicaLuis);
 		save(session, cotaLuis);
 		ContratoCota contrato9 = Fixture.criarContratoCota(cotaLuis,false,DateUtil.parseData("01/01/2011", "dd/mm/yyyy"), DateUtil.parseData("01/01/2013", "dd/mm/yyyy"), 12, 30);
 		save(session, contrato9);
@@ -4337,11 +4362,11 @@ public class DataLoader {
 		fornecedorAcme.setResponsavel("João");
 		fornecedorAcme.setOrigem(Origem.INTERFACE);
 		fornecedorDinap = Fixture.fornecedorDinap(tipoFornecedorPublicacao);
-		fornecedorDinap.setCodigoInterface(234);
+		fornecedorDinap.setCodigoInterface(9999999);
 		fornecedorDinap.setResponsavel("Maria");
 		fornecedorDinap.setOrigem(Origem.MANUAL);
 		fornecedorFc = Fixture.fornecedorFC(tipoFornecedorPublicacao);
-		fornecedorFc.setCodigoInterface(345);
+		fornecedorFc.setCodigoInterface(9999998);
 		fornecedorFc.setResponsavel("Sebastião");
 		fornecedorFc.setOrigem(Origem.MANUAL);
 
@@ -7205,9 +7230,10 @@ public class DataLoader {
 				BigDecimal.ZERO,
 				BigDecimal.ZERO,
 				BigDecimal.ZERO);
-
+		
+		itemNFEntrada.setOrigem(Origem.INTERFACE);
+		
 		session.save(itemNFEntrada);
-
 
 	}
 

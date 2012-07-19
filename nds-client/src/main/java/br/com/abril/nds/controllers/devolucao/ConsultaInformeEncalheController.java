@@ -77,7 +77,7 @@ public class ConsultaInformeEncalheController {
 				if (semanaRecolhimento > dataInicioRecolhimento
 						.getMaximum(Calendar.WEEK_OF_YEAR)) {
 					throw new ValidacaoException(new ValidacaoVO(
-							TipoMensagem.ERROR, "Semana inválida."));
+							TipoMensagem.WARNING, "Semana inválida."));
 				}
 
 				dataInicioRecolhimento.set(Calendar.WEEK_OF_YEAR,
@@ -91,7 +91,7 @@ public class ConsultaInformeEncalheController {
 				dataFimRecolhimento = dataRecolhimento;
 			}
 		} else {
-			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR,
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING,
 					"Informe [Semana] ou [Data Recolhimento]"));
 		}
 		Long quantidade = lancamentoService
@@ -107,50 +107,6 @@ public class ConsultaInformeEncalheController {
 				.total(quantidade.intValue()).page(page).serialize();
 	}
 
-	@Post("/imprimir")
-	public Download imprimir(Long idFornecedor, Integer semanaRecolhimento,
-			Calendar dataRecolhimento,
-			TipoImpressaoInformeEncalheDTO tipoImpressao, String sortname,
-			String sortorder) throws IOException {
-		Calendar dataInicioRecolhimento = null, dataFimRecolhimento = null;
-
-		if ((semanaRecolhimento == null) ^ (dataRecolhimento == null)) {
-			if (semanaRecolhimento != null) {
-				dataInicioRecolhimento = Calendar.getInstance();
-
-				if (semanaRecolhimento > dataInicioRecolhimento
-						.getMaximum(Calendar.WEEK_OF_YEAR)) {
-					throw new ValidacaoException(new ValidacaoVO(
-							TipoMensagem.ERROR, "Semana inválida."));
-				}
-
-				dataInicioRecolhimento.set(Calendar.WEEK_OF_YEAR,
-						semanaRecolhimento);
-				dataInicioRecolhimento.add(Calendar.DAY_OF_MONTH, -1);
-				dataFimRecolhimento = (Calendar) dataInicioRecolhimento.clone();
-				dataFimRecolhimento.add(Calendar.DAY_OF_MONTH, 7);
-
-			} else if (dataRecolhimento != null) {
-				dataInicioRecolhimento = dataRecolhimento;
-				dataFimRecolhimento = dataRecolhimento;
-			}
-		} else {
-			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR,
-					"Informe [Semana] ou [Data Recolhimento]"));
-		}
-
-		List<InformeEncalheDTO> informeEncalheDTOs = lancamentoService
-				.obterLancamentoInformeRecolhimento(idFornecedor,
-						dataInicioRecolhimento, dataFimRecolhimento, sortname,
-						Ordenacao.valueOf(sortorder.toUpperCase()), null, null);
-
-		if (tipoImpressao.getCapas() != Capas.NAO) {
-			List<List<ItemDTO<Integer, byte[]>>> capas = preparaDadosImpressao(informeEncalheDTOs);
-		}
-		//TODO: Chamar relatorio;
-		return new ByteArrayDownload(new byte[0], "application/pdf", "relatorio.pdf", true);
-
-	}
 	
 	@Post
 	public void relatorioInformeEncalhe(Long idFornecedor, Integer semanaRecolhimento,
@@ -172,7 +128,7 @@ public class ConsultaInformeEncalheController {
 				if (semanaRecolhimento > dataInicioRecolhimento
 						.getMaximum(Calendar.WEEK_OF_YEAR)) {
 					throw new ValidacaoException(new ValidacaoVO(
-							TipoMensagem.ERROR, "Semana inválida."));
+							TipoMensagem.WARNING, "Semana inválida."));
 				}
 
 				dataInicioRecolhimento.set(Calendar.WEEK_OF_YEAR,
@@ -186,7 +142,7 @@ public class ConsultaInformeEncalheController {
 				dataFimRecolhimento = dataRecolhimento;
 			}
 		} else {
-			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR,
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING,
 					"Informe [Semana] ou [Data Recolhimento]"));
 		}
 

@@ -472,27 +472,27 @@ function Balanceamento(pathTela, descInstancia) {
 	 * OBS: Específico para matrizLancamento\index.jsp
 	 * @param result
 	 */
-	this.popularConfirmacaoBalanceamento = function(result){
+	this.popularConfirmacaoBalanceamento = function(result) {
 		
 		$("#tableConfirmaBalanceamento").clear();
 		
 		var conteudo = '';
 		
-		$.each(result.rows, function(index,row){
+		$.each(result, function(index, row) {
 
-			if (row.cell.confirmado){
+			if (row.confirmado) {
 			    
 				conteudo += '<tr class="class_linha_1"><td>';
-				conteudo += row.cell.mensagem;
+				conteudo += row.mensagem;
 				conteudo += '</td>';
 				conteudo += '<td align="center">Confirmada</td>';
 				conteudo += '<td align="center"><img src="images/bt_check.gif" width="22" height="22" alt="Confirmado" /></td>';
 				conteudo += '</tr>';
-			}    
-			else{
+			
+			} else {
 	
 				conteudo += '<tr class="class_linha_1"><td id=dataConfirmar_'+index+' name=dataConfirmar_'+index+' >';
-				conteudo += row.cell.mensagem;
+				conteudo += row.mensagem;
 				conteudo += '</td>';
 				conteudo += '<td align="center"><input id=checkConfirmar_'+index+' name=checkConfirmar_'+index+' type="checkbox" value="" /></td>';
 				conteudo += '<td align="center">&nbsp;</td>';
@@ -617,17 +617,6 @@ function Balanceamento(pathTela, descInstancia) {
 		    }
 		});
 	},
-
-	this.voltarConfiguracaoOriginal = function() {
-		var selecionado = verifyAtLeastOneChecked('checkgroup');
-		if (selecionado) {
-			popup_reprogramar();
-		} else {
-			mensagens = new Array();
-			mensagens.push('Nenhum registro selecionado.');
-			exibirMensagem('ERROR', mensagens);
-		}
-	},
 	
 	this.retornoVerificarBalanceamentosAlterados = function(funcao) {
 			
@@ -744,10 +733,12 @@ function Balanceamento(pathTela, descInstancia) {
 		T.checkUncheckLancamentos(false);
 		
 		$.postJSON(
-				pathTela + "/matrizLancamento/voltarConfiguracaoOriginal",
+			pathTela + "/matrizLancamento/voltarConfiguracaoOriginal",
 			null,
 			function(result) {
 					T.popularResumoPeriodo(result);
+					
+					T.carregarGrid();
 			},
 			function() {
 				

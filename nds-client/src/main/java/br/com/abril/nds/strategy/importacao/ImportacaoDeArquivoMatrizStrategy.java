@@ -14,15 +14,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import br.com.abril.nds.exception.ImportacaoException;
-import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.ems0108.inbound.EMS0108Input;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.planejamento.Lancamento;
+import br.com.abril.nds.model.planejamento.StatusLancamento;
+import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.service.vo.RetornoImportacaoArquivoVO;
 import br.com.abril.nds.util.DateUtil;
-import br.com.abril.nds.util.TipoMensagem;
 
 import com.ancientprogramming.fixedformat4j.exception.FixedFormatException;
 import com.ancientprogramming.fixedformat4j.format.FixedFormatManager;
@@ -39,8 +39,6 @@ public class ImportacaoDeArquivoMatrizStrategy implements ImportacaoArquivoStrat
 	
 	private static final Logger logger = Logger.getLogger(ImportacaoDeArquivoMatrizStrategy.class);
 	
-	private static final String NOME_ARQUIVO_MATRIZ = "MATRIZ.NEW";
-	
 	@Autowired
 	private FixedFormatManager ffm;
 	
@@ -52,10 +50,6 @@ public class ImportacaoDeArquivoMatrizStrategy implements ImportacaoArquivoStrat
 	
 	@Override
 	public RetornoImportacaoArquivoVO processarImportacaoArquivo(File arquivo) {
-		
-		if(!NOME_ARQUIVO_MATRIZ.equals(arquivo.getPath())){
-			throw new ValidacaoException(TipoMensagem.WARNING, "Aquivo informado não é valido para o tipo de importação!");
-		}
 		
 		FileReader in = null;
 		try {
@@ -157,7 +151,13 @@ public class ImportacaoDeArquivoMatrizStrategy implements ImportacaoArquivoStrat
 		
 		if(input.getDataLancamentoRecolhimentoProduto().compareTo(new Date()) >= 0){
 			
-			Lancamento lancamento = new Lancamento();		
+			Lancamento lancamento = 
+					lancamentoRepository.obterLancamentoProdutoPorDataLancamentoDataLancamentoDistribuidor(produtoEdicao,dataLcto, dataLcto);	
+			
+			if(lancamento == null){
+				
+				lancamento = new Lancamento();	
+			}
 			
 			lancamento.setDataCriacao(new Date());
 			lancamento.setDataLancamentoDistribuidor(dataLcto);
@@ -169,16 +169,31 @@ public class ImportacaoDeArquivoMatrizStrategy implements ImportacaoArquivoStrat
 			lancamento.setProdutoEdicao(produtoEdicao);
 			lancamento.setReparte(new BigDecimal(0));
 			
+			lancamento.setStatus(StatusLancamento.PLANEJADO);
+			lancamento.setTipoLancamento(TipoLancamento.LANCAMENTO);
+				
 			lancamentoRepository.adicionar(lancamento);
+
 		}
 		
 		if (input.getEdicaoRecolhimento() != null
 				&& input.getDataLancamentoRecolhimentoProduto().before(new Date())) {
 			
+			Date dataLancamentoPrevista = null;
+			Date dataRecolhimento = null;
+		
+			if(input.getEdicao()!= null){
+				dataLancamentoPrevista = input.getDataLancamentoRecolhimentoProduto();
+			}
+			
+			if(input.getDataLancamentoRecolhimentoProduto()!= null){
+				dataRecolhimento = input.getDataLancamentoRecolhimentoProduto();
+			}
+			
 			Lancamento lancamento = 
-					lancamentoRepository.obterLancamentoProdutoPorDataLancamentoOuDataRecolhimento(produtoEdicao.getProduto().getCodigo(), 
-																								   dataRec, 
-																								   dataRec);
+					lancamentoRepository.obterLancamentoProdutoPorDataLancamentoOuDataRecolhimento(produtoEdicao, 
+																									dataLancamentoPrevista, 
+																									dataRecolhimento);
 			if(lancamento == null){
 				throw new ImportacaoException("Lançamento não encontrado para importação.");
 			}
