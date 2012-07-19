@@ -2,6 +2,7 @@ package br.com.abril.nds.repository.impl;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -23,6 +24,7 @@ import br.com.abril.nds.dto.filtro.FiltroMapaAbastecimentoDTO;
 import br.com.abril.nds.dto.filtro.FiltroMapaAbastecimentoDTO.ColunaOrdenacao;
 import br.com.abril.nds.dto.filtro.FiltroMapaAbastecimentoDTO.ColunaOrdenacaoDetalhes;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
+import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.OperacaoEstoque;
@@ -1245,56 +1247,120 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 	}  
 	
 	@SuppressWarnings("unchecked")
-	public List<MovimentoEstoqueCota> obterMovimentoEstoqueCotaPor(Long idCota, GrupoNotaFiscal grupoNotaFiscal, List<GrupoMovimentoEstoque> listaGrupoMovimentoEstoques, Intervalo<Date> periodo, List<Long> listaFornecedores, List<Long> listaProdutos) {
+	public List<MovimentoEstoqueCota> obterMovimentoEstoqueCotaPor(Distribuidor distribuidor, Long idCota, GrupoNotaFiscal grupoNotaFiscal, List<GrupoMovimentoEstoque> listaGrupoMovimentoEstoques, Intervalo<Date> periodo, List<Long> listaFornecedores, List<Long> listaProdutos) {
 		
-		StringBuffer sql = new StringBuffer("");
+		List<MovimentoEstoqueCota> result = new ArrayList<MovimentoEstoqueCota>();
 		
-		sql.append(" SELECT DISTINCT movimentoEstoqueCota ")
-		   .append(" FROM MovimentoEstoqueCota movimentoEstoqueCota ")
-		   .append("   LEFT JOIN movimentoEstoqueCota.produtoEdicao.produto.fornecedores fornecedor ")
-		   .append("   LEFT JOIN movimentoEstoqueCota.estudoCota.estudo.lancamentos lancamento ")
-		   .append("   LEFT JOIN movimentoEstoqueCota.listaProdutoServicos produtoServico ")
-		   .append("   LEFT JOIN produtoServico.produtoServicoPK.notaFiscal notaFiscal ")
-		   .append("   LEFT JOIN notaFiscal.informacaoEletronica informacaoEletronica")
-		   .append("   LEFT JOIN informacaoEletronica.retornoComunicacaoEletronica retornoComunicacaoEletronica ")
-		   .append("   LEFT JOIN notaFiscal.identificacao.tipoNotaFiscal tipoNotaFiscal ");
+		boolean aposPeriodoConferencia = GrupoNotaFiscal.NF_DEVOLUCAO_REMESSA_CONSIGNACAO.equals(grupoNotaFiscal) 
+				|| GrupoNotaFiscal.NF_DEVOLUCAO_SIMBOLICA.equals(grupoNotaFiscal) 
+				|| GrupoNotaFiscal.NF_VENDA.equals(grupoNotaFiscal);
 		
-		sql.append(" WHERE movimentoEstoqueCota.status = :status ")
-		   .append("   AND (tipoNotaFiscal IS NULL OR tipoNotaFiscal.grupoNotaFiscal != :grupoNotaFiscal)  ")
-		   .append("   AND (notaFiscal IS NULL OR notaFiscal.statusProcessamentoInterno != :statusInterno)")
-		   .append("   AND (retornoComunicacaoEletronica IS NULL OR retornoComunicacaoEletronica.status != :statusNFe)")
-		   .append("   AND movimentoEstoqueCota.tipoMovimento.grupoMovimentoEstoque IN (:listaGrupoMoviementoEstoque) ")
-		   .append("   AND movimentoEstoqueCota.cota.id = :idCota ")
-		   .append("   AND (lancamento IS NOT NULL ")
-		   .append("   AND  lancamento.dataLancamentoDistribuidor BETWEEN :dataInicio AND :dataFim ")
-		   .append("    OR  movimentoEstoqueCota.data BETWEEN :dataInicio AND :dataFim) ");
-		
-		if (listaProdutos != null && !listaProdutos.isEmpty()) {
-			sql.append("   AND movimentoEstoqueCota.produtoEdicao.produto.id IN (:listaProdutos) ");
-		}
-		if (listaFornecedores != null && !listaFornecedores.isEmpty()) {
-			sql.append("   AND (fornecedor IS NULL OR fornecedor.id IN (:listaFornecedores)) ");
-		}
-		
-		Query query = getSession().createQuery(sql.toString());
-		
-		query.setParameter("status", StatusAprovacao.APROVADO);
-		query.setParameter("grupoNotaFiscal", grupoNotaFiscal);
-		query.setParameter("statusInterno", StatusProcessamentoInterno.NAO_GERADA);
-		query.setParameter("statusNFe", Status.CANCELAMENTO_HOMOLOGADO);
-		query.setParameterList("listaGrupoMoviementoEstoque", listaGrupoMovimentoEstoques);
-		query.setParameter("idCota", idCota);
-		query.setParameter("dataInicio", periodo.getDe());
-		query.setParameter("dataFim", periodo.getAte());
-		
-		if (listaProdutos != null && !listaProdutos.isEmpty()) {
-			query.setParameterList("listaProdutos", listaProdutos);
-		}
+		int qtdeIteracao = 
+				(GrupoNotaFiscal.NF_DEVOLUCAO_SIMBOLICA.equals(grupoNotaFiscal) 
+						|| GrupoNotaFiscal.NF_VENDA.equals(grupoNotaFiscal)) 
+							? 2 : 1 ;
+		int i = 0;
+		while (i < qtdeIteracao) {
+			StringBuffer sql = new StringBuffer("");
+			
+			sql.append(" SELECT DISTINCT movimentoEstoqueCota ")
+			   .append(" FROM Lancamento lancamento ");
+			
+			if (i == 1 || GrupoNotaFiscal.NF_DEVOLUCAO_REMESSA_CONSIGNACAO.equals(grupoNotaFiscal)) {
+				//MovimentoEstoqueCota dos lançamentos relacionados ao ChamadaEncalhe
+				sql.append("   INNER JOIN lancamento.chamadaEncalhe chamadaEncalhe ")
+				   .append("   INNER JOIN chamadaEncalhe.chamadaEncalheCotas chamadaEncalheCota ")
+				   .append("   INNER JOIN chamadaEncalheCota.conferenciasEncalhe conferenciaEncalhe ")
+				   .append("   INNER JOIN conferenciaEncalhe.movimentoEstoqueCota movimentoEstoqueCota ");
+			} else {
+				//MovimentoEstoqueCota dos lançamentos relacionados ao Estudo
+				sql.append("   INNER JOIN lancamento.estudo.estudoCotas estudoCotas ")
+				   .append("   INNER JOIN estudoCotas.movimentosEstoqueCota movimentoEstoqueCota ");
+			}
+			
+			sql.append("   LEFT JOIN movimentoEstoqueCota.cota.fornecedores fornecedor ")
+			   .append("   LEFT JOIN movimentoEstoqueCota.listaProdutoServicos produtoServico ")
+			   .append("   LEFT JOIN produtoServico.produtoServicoPK.notaFiscal notaFiscal ")
+			   .append("   LEFT JOIN notaFiscal.informacaoEletronica informacaoEletronica ")
+			   .append("   LEFT JOIN informacaoEletronica.retornoComunicacaoEletronica retornoComunicacaoEletronica ")
+			   .append("   LEFT JOIN notaFiscal.identificacao.tipoNotaFiscal tipoNotaFiscal ");
+			
+			sql.append(" WHERE movimentoEstoqueCota.status = :status ")
+			   .append("   AND (retornoComunicacaoEletronica IS NULL OR retornoComunicacaoEletronica.status = :statusNFe)")
+			   .append("   AND (notaFiscal IS NULL OR notaFiscal.statusProcessamentoInterno != :statusInterno)")
+			   .append("   AND movimentoEstoqueCota.cota.id = :idCota ")
+			   .append("   AND (tipoNotaFiscal IS NULL OR tipoNotaFiscal.grupoNotaFiscal != :grupoNotaFiscal) ");
 	
-		if (listaFornecedores != null && !listaFornecedores.isEmpty()) {
-			query.setParameterList("listaFornecedores", listaFornecedores);
-		}
+			if (i == 1 || GrupoNotaFiscal.NF_DEVOLUCAO_REMESSA_CONSIGNACAO.equals(grupoNotaFiscal)) {
+				sql.append("   AND (chamadaEncalhe.dataRecolhimento + :diasAMais) = :diaAtual ")
+				   .append("   AND chamadaEncalheCota.fechado = :fechado ")
+				   .append("   AND chamadaEncalheCota.postergado = :postergado ");
+			}
+			
+			if (periodo != null && periodo.getDe() != null && periodo.getAte() != null) {
+				sql.append("   AND lancamento.dataLancamentoDistribuidor BETWEEN :dataInicio AND :dataFim ");
+			}
+			
+			if (listaGrupoMovimentoEstoques != null && !listaGrupoMovimentoEstoques.isEmpty()) {
+				sql.append("   AND movimentoEstoqueCota.tipoMovimento.grupoMovimentoEstoque IN (:listaGrupoMoviementoEstoque) ");
+			}
+			
+			if (listaProdutos != null && !listaProdutos.isEmpty()) {
+				sql.append("   AND movimentoEstoqueCota.produtoEdicao.produto.id IN (:listaProdutos) ");
+			}
+			
+			if (listaFornecedores != null && !listaFornecedores.isEmpty()) {
+				sql.append("   AND (fornecedor IS NULL OR fornecedor.id IN (:listaFornecedores)) ");
+			}
+			
+			Query query = getSession().createQuery(sql.toString());
+			
+			query.setParameter("status", StatusAprovacao.APROVADO);
+			query.setParameter("statusNFe", Status.CANCELAMENTO_HOMOLOGADO);
+			query.setParameter("statusInterno", StatusProcessamentoInterno.NAO_GERADA);
+			query.setParameter("idCota", idCota);
+			query.setParameter("grupoNotaFiscal", grupoNotaFiscal);
+			
+			if (i == 1 || GrupoNotaFiscal.NF_DEVOLUCAO_REMESSA_CONSIGNACAO.equals(grupoNotaFiscal)) {
+				double diasAMais;
+				if (distribuidor.getParametrosRecolhimentoDistribuidor().isDiaRecolhimentoQuinto()) {
+					diasAMais = 4;
+				} else if (distribuidor.getParametrosRecolhimentoDistribuidor().isDiaRecolhimentoQuarto()) {
+					diasAMais = 3;
+				} else if (distribuidor.getParametrosRecolhimentoDistribuidor().isDiaRecolhimentoTerceiro()) {
+					diasAMais = 2;
+				} else if (distribuidor.getParametrosRecolhimentoDistribuidor().isDiaRecolhimentoSegundo()) {
+					diasAMais = 1;
+				} else {
+					diasAMais = 0;
+				}
+				query.setParameter("diasAMais", diasAMais);
+				query.setParameter("diaAtual", new Date());
+				query.setParameter("fechado", false);
+				query.setParameter("postergado", false);
+			}
+
+			if (listaProdutos != null && !listaProdutos.isEmpty()) {
+				query.setParameterList("listaProdutos", listaProdutos);
+			}
 		
-		return query.list();
+			if (listaFornecedores != null && !listaFornecedores.isEmpty()) {
+				query.setParameterList("listaFornecedores", listaFornecedores);
+			}
+			
+			if (periodo != null && periodo.getDe() != null && periodo.getAte() != null) {
+				query.setParameter("dataInicio", periodo.getDe());
+				query.setParameter("dataFim", periodo.getAte());
+			}
+			
+			if (listaGrupoMovimentoEstoques != null && !listaGrupoMovimentoEstoques.isEmpty()) {
+				query.setParameterList("listaGrupoMoviementoEstoque", listaGrupoMovimentoEstoques);
+			}
+			
+			result.addAll(query.list());
+			i++;
+		}
+
+		return result;
 	}
 }
