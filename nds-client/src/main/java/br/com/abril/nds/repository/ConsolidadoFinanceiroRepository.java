@@ -29,5 +29,6 @@ public interface ConsolidadoFinanceiroRepository extends Repository<ConsolidadoF
 	Date buscarUltimaDividaGeradaDia(Date dataOperacao);
 	
 	Date buscarDiaUltimaDividaGerada();
-	
+
+	Long obterQuantidadeDividasGeradasData(Date data);
 }

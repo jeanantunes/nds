@@ -92,4 +92,10 @@ public interface FornecedorRepository extends Repository<Fornecedor, Long> {
 	
 	List<Fornecedor> obterFornecedoresPorId(List<Long> idsFornecedores);
 	
+	/**
+	 * Obtem Fornecedor por codigo
+	 * @param codigo
+	 * @return Fornecedor
+	 */
+	Fornecedor obterFornecedorPorCodigo(Integer codigo);
 }

@@ -2,6 +2,7 @@ package br.com.abril.nds.model.planejamento;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.Column;
@@ -15,6 +16,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.RateioDiferenca;
 
 /**
@@ -47,6 +49,8 @@ public class EstudoCota implements Serializable {
 	private Cota cota;
 	@OneToMany(mappedBy = "estudoCota")
 	private Set<RateioDiferenca> rateiosDiferenca = new HashSet<RateioDiferenca>();
+	@OneToMany(mappedBy = "estudoCota")
+	private List<MovimentoEstoqueCota> movimentosEstoqueCota; 
 	
 	public Long getId() {
 		return id;
@@ -94,6 +98,21 @@ public class EstudoCota implements Serializable {
 	
 	public void setRateiosDiferenca(Set<RateioDiferenca> rateiosDiferenca) {
 		this.rateiosDiferenca = rateiosDiferenca;
+	}
+
+	/**
+	 * @return the movimentosEstoqueCota
+	 */
+	public List<MovimentoEstoqueCota> getMovimentosEstoqueCota() {
+		return movimentosEstoqueCota;
+	}
+
+	/**
+	 * @param movimentosEstoqueCota the movimentosEstoqueCota to set
+	 */
+	public void setMovimentosEstoqueCota(
+			List<MovimentoEstoqueCota> movimentosEstoqueCota) {
+		this.movimentosEstoqueCota = movimentosEstoqueCota;
 	}
 
 }
