@@ -44,6 +44,7 @@ import br.com.abril.nds.model.cadastro.ParametroDistribuicaoCota;
 import br.com.abril.nds.model.cadastro.ParametroSistema;
 import br.com.abril.nds.model.cadastro.ParametroUsuarioBox;
 import br.com.abril.nds.model.cadastro.ParametrosAprovacaoDistribuidor;
+import br.com.abril.nds.model.cadastro.ParametrosCotaNotaFiscalEletronica;
 import br.com.abril.nds.model.cadastro.ParametrosRecolhimentoDistribuidor;
 import br.com.abril.nds.model.cadastro.Periodicidade;
 import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
@@ -2240,6 +2241,16 @@ public class Fixture {
 		formaBoleto.setParametroCobrancaCota(parametroCobranca);
 		
 		return formaBoleto;
+	}
+	
+	public static ParametrosCotaNotaFiscalEletronica parametrosCotaNotaFiscalEletronica(boolean emiteNotaFiscalEletronica, String emailNotaFiscalEletronica) {
+		
+		ParametrosCotaNotaFiscalEletronica parametroCotaNotaFiscalEletronica = new ParametrosCotaNotaFiscalEletronica();
+		
+		parametroCotaNotaFiscalEletronica.setEmailNotaFiscalEletronica(emailNotaFiscalEletronica);
+		parametroCotaNotaFiscalEletronica.setEmiteNotaFiscalEletronica(emiteNotaFiscalEletronica);
+		
+		return parametroCotaNotaFiscalEletronica;
 	}
 
 	public static ParametroCobrancaCota parametroCobrancaCota(Set<FormaCobranca> formasCobranca,

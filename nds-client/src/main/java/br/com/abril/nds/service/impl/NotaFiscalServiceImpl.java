@@ -165,8 +165,6 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 
 				Cota cota = this.cotaRepository.buscarPorId(idCota);
 				
-				if (!tipoNotaFiscal.isContribuinte() && !cota.getParametrosCotaNotaFiscalEletronica().getEmiteNotaFiscalEletronica()) {
-			
 					List<ItemNotaFiscal> itensNotaFiscal = obterItensNotaFiscalPor(
 							grupoNotaFiscal, cota, periodo, listaIdFornecedores,
 							listaIdProdutos);
@@ -174,7 +172,6 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 					if (itensNotaFiscal != null && !itensNotaFiscal.isEmpty()) {
 						idCotaTotalItensNota.put(idCota, this.sumarizarTotalItensNota(itensNotaFiscal).intValue());
 					}
-				}
 			}
 		}
 		
@@ -706,19 +703,22 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 
 		case NF_DEVOLUCAO_REMESSA_CONSIGNACAO:
 			
-			if (!cota.getParametrosCotaNotaFiscalEletronica().getEmiteNotaFiscalEletronica()) {
-				itensNotaFiscal = this.obterItensNFeEntradaDevolucaoRemessaConsignacao(
-						idCota, periodo, listaIdFornecedores, listaIdProdutos, grupoNotaFiscal);
+			if (cota.getParametrosCotaNotaFiscalEletronica() != null) {
+				if (!cota.getParametrosCotaNotaFiscalEletronica().getEmiteNotaFiscalEletronica()) {
+					itensNotaFiscal = this.obterItensNFeEntradaDevolucaoRemessaConsignacao(
+							idCota, periodo, listaIdFornecedores, listaIdProdutos, grupoNotaFiscal);
+				}
 			}
 			
 			break;
 
 		case NF_DEVOLUCAO_SIMBOLICA:
 			
-			if (!cota.getParametrosCotaNotaFiscalEletronica().getEmiteNotaFiscalEletronica()) {
-				itensNotaFiscal = this.obterItensNFeVenda(idCota, periodo, listaIdFornecedores, listaIdProdutos, GrupoNotaFiscal.NF_VENDA);
+			if (cota.getParametrosCotaNotaFiscalEletronica() != null) {
+				if (!cota.getParametrosCotaNotaFiscalEletronica().getEmiteNotaFiscalEletronica()) {
+					itensNotaFiscal = this.obterItensNFeVenda(idCota, periodo, listaIdFornecedores, listaIdProdutos, GrupoNotaFiscal.NF_VENDA);
+				}
 			}
-			
 			break;
 
 		case NF_VENDA:
