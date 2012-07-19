@@ -11,9 +11,8 @@ import org.apache.log4j.Logger;
 import org.springframework.stereotype.Component;
 
 import br.com.abril.nds.exception.ImportacaoException;
-import br.com.abril.nds.integracao.ems0108.inbound.EMS0108Input;
 import br.com.abril.nds.service.vo.RetornoImportacaoArquivoVO;
-import br.com.abril.nds.strategy.importacao.input.HistoricoVenda;
+import br.com.abril.nds.strategy.importacao.input.HistoricoVendaInput;
 
 /**
  * Estratégia de importação de arquivos referente a Histórico de Vendas
@@ -25,6 +24,13 @@ import br.com.abril.nds.strategy.importacao.input.HistoricoVenda;
 public class ImportacaoDeArquivoHistoricoVendaStrategy implements ImportacaoArquivoStrategy {
 
 	private static final Logger logger = Logger.getLogger(ImportacaoDeArquivoHistoricoVendaStrategy.class);
+	
+	private static final String IDENTIFICADOR_LINHA = ";";
+	
+	private static final int POSICAO_CODIGO_PRODUTO = 2;
+	private static final int POSICAO_NUMERO_COTA = 3;
+	private static final int POSICAO_QNT_RECEBIDA_PRODUTO = 5;
+	private static final int POSICAO_QNT_DEVOLVIDA_PRODUTO = 8;
 	
 	@Override
 	public RetornoImportacaoArquivoVO processarImportacaoArquivo(File arquivo) {
@@ -52,7 +58,7 @@ public class ImportacaoDeArquivoHistoricoVendaStrategy implements ImportacaoArqu
 			
 			try {
 				
-				HistoricoVenda  input = parseDados(linha);
+				HistoricoVendaInput  input = parseDados(linha);
 				
 				processarDados(input);
 				
@@ -74,16 +80,26 @@ public class ImportacaoDeArquivoHistoricoVendaStrategy implements ImportacaoArqu
 		return new RetornoImportacaoArquivoVO(true) ;
 	}
 	
-	private HistoricoVenda parseDados(String linha) {
-		// TODO Auto-generated method stub
-		return null;
+	private HistoricoVendaInput parseDados(String linha) {
+
+		Object[] dados = linha.split(IDENTIFICADOR_LINHA);
+		
+		HistoricoVendaInput historicoVenda = new HistoricoVendaInput();
+
+		/*historicoVenda.setCodigoProduto(codigoProduto);
+		historicoVenda.setNumeroEdicao(numeroEdicao);
+		historicoVenda.setNumeroCota(numeroCota);
+		historicoVenda.setQuantidadeDevolvidaProduto(quantidadeDevolvidaProduto);
+		historicoVenda.setQuantidadeRecebidaProduto(quantidadeRecebidaProduto);
+		*/
+		return historicoVenda;
 	}
 
 	@Override
 	public void processarImportacaoDados(Object input){}
 	
 	
-	private void processarDados(HistoricoVenda historicoVenda){
+	private void processarDados(HistoricoVendaInput historicoVenda){
 		
 	}
 
