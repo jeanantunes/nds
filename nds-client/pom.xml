@@ -200,7 +200,7 @@
 				<configuration>
 					<mainClass>br.com.abril.nds.fixture.DataLoader</mainClass>
 					<classpathScope>test</classpathScope>
-					<commandlineArgs>cleanData</commandlineArgs>
+					<!-- <commandlineArgs>cleanData</commandlineArgs> -->
 				</configuration>
 			</plugin>
 		</plugins>
