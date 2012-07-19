@@ -122,11 +122,13 @@ InformeEncalhe.prototype.initGrid = function() {
 				showTableToggleBtn : true,
 				width : 960,
 				height : 180,
-				onChangeSort :function(sortname, sortorder){
+				onChangeSort:function(sortname, sortorder){
+					console.log("sort");
 					_this.imprimirParans.sortname = sortname;
 					_this.imprimirParans.sortorder = sortorder;
 					$("input[name='sortname']").val(sortname);
 					$("input[name='sortorder']").val(sortorder);
+					$(this).flexReload();
 				}
 			});
 
