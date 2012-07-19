@@ -128,7 +128,7 @@ public class FeriadoRepositoryImpl extends AbstractRepositoryModel<Feriado, Long
 		
 		sql.append(" select ");
 		
-		sql.append(" f.data, f.descricaoFeriado	");
+		sql.append(" f.data as dataFeriado, f.descricao as descricaoFeriado	");
 		
 		sql.append(" from ");
 		

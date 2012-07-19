@@ -310,9 +310,11 @@ public class CalendarioServiceImpl implements CalendarioService {
 	public Map<Date, String> obterListaDataFeriado(int anoVigencia) {
 		
 		Calendar calendarInicial = Calendar.getInstance();
+		calendarInicial.clear();
 		calendarInicial.set(anoVigencia, Calendar.JANUARY, 1);
 		
 		Calendar calendarFinal = Calendar.getInstance();
+		calendarFinal.clear();
 		calendarFinal.set(anoVigencia, Calendar.DECEMBER, 31);
 		
 		Date dataInicial = calendarInicial.getTime();
@@ -323,8 +325,19 @@ public class CalendarioServiceImpl implements CalendarioService {
 		
 		Map<Date, String> mapaFeriado = new HashMap<Date, String>();
 		
+		Calendar calendarNovo = Calendar.getInstance(); 
+		Calendar calendarIterado = Calendar.getInstance(); 
+		
 		for(CalendarioFeriadoDTO calendario : listaDataFeriado) {
-			mapaFeriado.put(calendario.getDataFeriado(), calendario.getDescricaoFeriado());
+			
+			calendarIterado.clear();
+			calendarIterado.setTime(calendario.getDataFeriado());
+			
+			calendarNovo.clear();
+			calendarNovo.set(anoVigencia, calendarIterado.get(Calendar.MONTH), calendarIterado.get(Calendar.DAY_OF_MONTH));
+			
+			mapaFeriado.put(calendarNovo.getTime(), calendario.getDescricaoFeriado());
+			
 		}
 		
 		return mapaFeriado;

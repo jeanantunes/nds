@@ -8,10 +8,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.dto.CalendarioFeriadoDTO;
 import br.com.abril.nds.model.cadastro.TipoFeriado;
+import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.service.CalendarioService;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
+import br.com.caelum.vraptor.Result;
 
 @Resource
 @Path("/administracao/cadastroCalendario")
@@ -19,6 +21,8 @@ public class CadastroCalendarioController {
 	
 	@Autowired
 	private CalendarioService calendarioService;
+	
+	private Result result;
 	
 	public CadastroCalendarioController() {
 		
@@ -64,7 +68,12 @@ public class CadastroCalendarioController {
 	
 	public void obterFeriados(int anoVigencia) {
 		
-		Map<Date, String> listaFeriado = calendarioService.obterListaDataFeriado(anoVigencia);
+		//TODO obter parametros
+		anoVigencia = 2012;
+		
+		Map<Date, String> mapaFeriados = calendarioService.obterListaDataFeriado(anoVigencia);
+		
+		result.use(CustomJson.class).from(mapaFeriados).serialize();
 	
 	}
 	
