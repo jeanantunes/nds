@@ -22,6 +22,7 @@ import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.PoliticaCobranca;
+import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.financeiro.Boleto;
 import br.com.abril.nds.model.financeiro.Cobranca;
@@ -39,6 +40,7 @@ import br.com.abril.nds.model.financeiro.StatusDivida;
 import br.com.abril.nds.model.financeiro.StatusInadimplencia;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 import br.com.abril.nds.model.seguranca.Usuario;
+import br.com.abril.nds.repository.ChamadaEncalheCotaRepository;
 import br.com.abril.nds.repository.CobrancaRepository;
 import br.com.abril.nds.repository.ConsolidadoFinanceiroRepository;
 import br.com.abril.nds.repository.ControleBaixaBancariaRepository;
@@ -111,6 +113,9 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 
 	@Autowired
 	private ParametroCobrancaCotaService financeiroService;
+	
+	@Autowired
+	private ChamadaEncalheCotaRepository chamadaEncalheCotaRepository;
 
 	
 	@Override
@@ -192,6 +197,19 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			String nossoNumero = null;
 			
 			for (MovimentoFinanceiroCota movimentoFinanceiroCota : listaMovimentoFinanceiroCota){
+				
+				//verifica se cota esta suspensa, se estiver verifica se existe chamada de encalhe na data de operação
+				if (SituacaoCadastro.SUSPENSO.equals(ultimaCota.getSituacaoCadastro())){
+					
+					if (!movimentoFinanceiroCota.getCota().equals(ultimaCota)){
+						
+						if (this.chamadaEncalheCotaRepository.obterQtdListaChamaEncalheCota(ultimaCota.getNumeroCota(), 
+								distribuidor.getDataOperacao(), null, false, false, false) <= 0){
+							
+							continue;
+						}
+					}
+				}
 				
 				if (movimentoFinanceiroCota.getCota().equals(ultimaCota) &&
 						movimentoFinanceiroCota.getMovimentos() != null && 
