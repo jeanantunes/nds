@@ -213,14 +213,22 @@
 			height:450,
 			width:500,
 			modal: true,
-			buttons: {
-				"Confirmar": function() {
-					salvarMovimentoFinanceiro(true);
-				},
-				"Cancelar": function() {
-					$( this ).dialog( "close" );
-				}
-			},
+			buttons:[ 
+			          {
+				           id:"bt_confirmar",
+				           text:"Confirmar", 
+				           click: function() {
+				        	   salvarMovimentoFinanceiro(true);
+				           }
+			           },
+			           {
+				           id:"bt_cancelar",
+				           text:"Cancelar", 
+				           click: function() {
+				        	   $( this ).dialog( "close" );
+				           }
+			           }
+	        ],
 			beforeClose: function() {
 				clearMessageDialogTimeout();
 		    }
@@ -234,11 +242,15 @@
 			height:350,
 			width:500,
 			modal: true,
-			buttons: {
-				"Fechar": function() {
-					$( this ).dialog( "close" );
-				}
-			}
+			buttons:[ 
+			           {
+				           id:"bt_fechar",
+				           text:"Fechar", 
+				           click: function() {
+				        	   $( this ).dialog( "close" );
+				           }
+			           }
+	        ],
 		});	
 	};
 	
@@ -322,14 +334,22 @@
 			height:170,
 			width:380,
 			modal: true,
-			buttons: {
-				"Confirmar": function() {
-					removerMovimento(idMovimento);
-				},
-				"Cancelar": function() {
-					$( this ).dialog( "close" );
-				}
-			}
+			buttons:[ 
+			          {
+				           id:"bt_confirmar",
+				           text:"Confirmar", 
+				           click: function() {
+				        	   removerMovimento(idMovimento);
+				           }
+			           },
+			           {
+				           id:"bt_cancelar",
+				           text:"Cancelar", 
+				           click: function() {
+				        	   $( this ).dialog( "close" );
+				           }
+			           }
+	        ],
 		});
 	};
 	

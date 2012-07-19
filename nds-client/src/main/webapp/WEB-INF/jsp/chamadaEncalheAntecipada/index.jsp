@@ -817,6 +817,7 @@
 							 EncalheAntecipado.zerarTotais();
 							 
 							 $("#dialog-novo" ).dialog("close");
+							 $("#dialog-cancelamentoCE" ).dialog("close");
 							 
 							 EncalheAntecipado.desmarcarCheckTodos();
 							 EncalheAntecipado.exibirMensagemSucesso(result);

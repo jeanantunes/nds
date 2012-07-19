@@ -44,6 +44,7 @@ import br.com.abril.nds.model.cadastro.ParametroDistribuicaoCota;
 import br.com.abril.nds.model.cadastro.ParametroSistema;
 import br.com.abril.nds.model.cadastro.ParametroUsuarioBox;
 import br.com.abril.nds.model.cadastro.ParametrosAprovacaoDistribuidor;
+import br.com.abril.nds.model.cadastro.ParametrosCotaNotaFiscalEletronica;
 import br.com.abril.nds.model.cadastro.ParametrosRecolhimentoDistribuidor;
 import br.com.abril.nds.model.cadastro.Periodicidade;
 import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
@@ -235,11 +236,11 @@ public class Fixture {
 	}
 
 	public static Fornecedor fornecedorFC(TipoFornecedor tipoFornecedor) {
-		return fornecedor(juridicaFC(), SituacaoCadastro.ATIVO, true, tipoFornecedor, 1);
+		return fornecedor(juridicaFC(), SituacaoCadastro.ATIVO, true, tipoFornecedor, 9999998);
 	}
 
 	public static Fornecedor fornecedorDinap(TipoFornecedor tipoFornecedor) {
-		return fornecedor(juridicaDinap(), SituacaoCadastro.ATIVO, true, tipoFornecedor, 2);
+		return fornecedor(juridicaDinap(), SituacaoCadastro.ATIVO, true, tipoFornecedor, 9999999);
 	}
 	
 	public static Fornecedor fornecedorAcme(TipoFornecedor tipoFornecedor) {
@@ -323,11 +324,11 @@ public class Fixture {
 	}
 	
 	public static TipoProduto tipoRevista(NCM ncm) {
-		return tipoProduto("Revistas", GrupoProduto.REVISTA, ncm, null, 001L);
+		return tipoProduto("Revistas", GrupoProduto.REVISTA, ncm, "4902.90.00", 001L);
 	}
 	
 	public static TipoProduto tipoCromo(NCM ncm) {
-		return tipoProduto("Cromos", GrupoProduto.CROMO, ncm, null, 002L);
+		return tipoProduto("Cromos", GrupoProduto.CROMO, ncm, "4908.90.00", 002L);
 	}
 	
 	public static TipoFornecedor tipoFornecedorPublicacao() {
@@ -2250,6 +2251,16 @@ public class Fixture {
 		formaBoleto.setParametroCobrancaCota(parametroCobranca);
 		
 		return formaBoleto;
+	}
+	
+	public static ParametrosCotaNotaFiscalEletronica parametrosCotaNotaFiscalEletronica(boolean emiteNotaFiscalEletronica, String emailNotaFiscalEletronica) {
+		
+		ParametrosCotaNotaFiscalEletronica parametroCotaNotaFiscalEletronica = new ParametrosCotaNotaFiscalEletronica();
+		
+		parametroCotaNotaFiscalEletronica.setEmailNotaFiscalEletronica(emailNotaFiscalEletronica);
+		parametroCotaNotaFiscalEletronica.setEmiteNotaFiscalEletronica(emiteNotaFiscalEletronica);
+		
+		return parametroCotaNotaFiscalEletronica;
 	}
 
 	public static ParametroCobrancaCota parametroCobrancaCota(Set<FormaCobranca> formasCobranca,

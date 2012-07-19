@@ -55,7 +55,7 @@ public class GeracaoNFeController {
 	
 	@Post("/busca.json")
 	public void busca(Intervalo<String> intervaloBox,
-			Intervalo<Long> intervalorCota,
+			Intervalo<Integer> intervalorCota,
 			Intervalo<Date> intervaloDateMovimento, List<Long> listIdFornecedor, List<Long> listIdProduto ,Long tipoNotaFiscal, String sortname,
 			String sortorder, int rp, int page) {
 		
@@ -70,7 +70,7 @@ public class GeracaoNFeController {
 	
 	@Post("/buscaCotasSuspensas.json")
 	public void buscaCotasSuspensas(Intervalo<String> intervaloBox,
-			Intervalo<Long> intervalorCota,
+			Intervalo<Integer> intervalorCota,
 			Intervalo<Date> intervaloDateMovimento, List<Long> listIdFornecedor, List<Long> listIdProduto ,Long tipoNotaFiscal, String sortname,
 			String sortorder, int rp, int page) {
 		
@@ -103,7 +103,7 @@ public class GeracaoNFeController {
 	
 	
 	public void exportar(Intervalo<String> intervaloBox,
-			Intervalo<Long> intervalorCota,
+			Intervalo<Integer> intervalorCota,
 			Intervalo<Date> intervaloDateMovimento, List<Long> listIdFornecedor, List<Long> listIdProduto, Long tipoNotaFiscal,String sortname,
 			String sortorder,FileType fileType) throws IOException {
 		

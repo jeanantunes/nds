@@ -9,6 +9,11 @@ function Balanceamento(pathTela, descInstancia) {
 	this.lancamentos = [];
 	this.isCliquePesquisar;
 	
+	this.definirAcaoPesquisaTeclaEnter = function() {
+		
+		definirAcaoPesquisaTeclaEnter();
+	},
+	
 	this.pesquisar = function() {
 		
 		$("#resumoPeriodo").show();				
@@ -453,7 +458,7 @@ function Balanceamento(pathTela, descInstancia) {
 			null,
 			function(result) {
 				T.popularConfirmacaoBalanceamento(result);
-				T.popup_confirmar_balanceamento( "#dialog-confirm-balanceamento" );
+				T.popup_confirmar_balanceamento();
 			},
 			function() {
 				$("#dialog-confirm-balanceamento").hide();
@@ -467,27 +472,27 @@ function Balanceamento(pathTela, descInstancia) {
 	 * OBS: Específico para matrizLancamento\index.jsp
 	 * @param result
 	 */
-	this.popularConfirmacaoBalanceamento = function(result){
+	this.popularConfirmacaoBalanceamento = function(result) {
 		
 		$("#tableConfirmaBalanceamento").clear();
 		
 		var conteudo = '';
 		
-		$.each(result.rows, function(index,row){
+		$.each(result, function(index, row) {
 
-			if (row.cell.confirmado){
+			if (row.confirmado) {
 			    
 				conteudo += '<tr class="class_linha_1"><td>';
-				conteudo += row.cell.mensagem;
+				conteudo += row.mensagem;
 				conteudo += '</td>';
 				conteudo += '<td align="center">Confirmada</td>';
 				conteudo += '<td align="center"><img src="images/bt_check.gif" width="22" height="22" alt="Confirmado" /></td>';
 				conteudo += '</tr>';
-			}    
-			else{
+			
+			} else {
 	
 				conteudo += '<tr class="class_linha_1"><td id=dataConfirmar_'+index+' name=dataConfirmar_'+index+' >';
-				conteudo += row.cell.mensagem;
+				conteudo += row.mensagem;
 				conteudo += '</td>';
 				conteudo += '<td align="center"><input id=checkConfirmar_'+index+' name=checkConfirmar_'+index+' type="checkbox" value="" /></td>';
 				conteudo += '<td align="center">&nbsp;</td>';
@@ -582,10 +587,9 @@ function Balanceamento(pathTela, descInstancia) {
 	
 	/**
 	 * Exibe popup de confirmação de balanceamento
-	 * @param dialog: Nome do dialog
 	 */
-	this.popup_confirmar_balanceamento = function(dialog){
-		$( dialog ).dialog({
+	this.popup_confirmar_balanceamento = function() {
+		$( "#dialog-confirm-balanceamento" ).dialog({
 			resizable: false,
 			height:'auto',
 			width:300,
@@ -609,20 +613,9 @@ function Balanceamento(pathTela, descInstancia) {
 				}
 			],
 			beforeClose: function() {
-				clearMessageDialogTimeout(dialog);
+				clearMessageDialogTimeout("dialog-confirmar");
 		    }
 		});
-	},
-
-	this.voltarConfiguracaoOriginal = function() {
-		var selecionado = verifyAtLeastOneChecked('checkgroup');
-		if (selecionado) {
-			popup_reprogramar();
-		} else {
-			mensagens = new Array();
-			mensagens.push('Nenhum registro selecionado.');
-			exibirMensagem('ERROR', mensagens);
-		}
 	},
 	
 	this.retornoVerificarBalanceamentosAlterados = function(funcao) {
@@ -740,10 +733,12 @@ function Balanceamento(pathTela, descInstancia) {
 		T.checkUncheckLancamentos(false);
 		
 		$.postJSON(
-				pathTela + "/matrizLancamento/voltarConfiguracaoOriginal",
+			pathTela + "/matrizLancamento/voltarConfiguracaoOriginal",
 			null,
 			function(result) {
 					T.popularResumoPeriodo(result);
+					
+					T.carregarGrid();
 			},
 			function() {
 				

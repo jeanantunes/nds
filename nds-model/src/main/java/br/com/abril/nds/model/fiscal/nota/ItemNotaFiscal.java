@@ -1,6 +1,9 @@
 package br.com.abril.nds.model.fiscal.nota;
 
 import java.math.BigDecimal;
+import java.util.List;
+
+import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 
 /**
  * Item da Nota
@@ -16,6 +19,8 @@ public class ItemNotaFiscal {
 	
 	private String cstICMS;
 	
+	private List<MovimentoEstoqueCota> listaMovimentoEstoqueCota; 
+	
 	public ItemNotaFiscal() {
 	}
 
@@ -27,9 +32,6 @@ public class ItemNotaFiscal {
 		this.valorUnitario = valorUnitario;
 		this.cstICMS = cstICMS;
 	}
-
-
-
 
 	/**
 	 * @return the idProdutoEdicao
@@ -86,6 +88,22 @@ public class ItemNotaFiscal {
 	public void setCstICMS(String cstICMS) {
 		this.cstICMS = cstICMS;
 	}
+
+	/**
+	 * @return the listaMovimentoEstoqueCota
+	 */
+	public List<MovimentoEstoqueCota> getListaMovimentoEstoqueCota() {
+		return listaMovimentoEstoqueCota;
+	}
+
+	/**
+	 * @param listaMovimentoEstoqueCota the listaMovimentoEstoqueCota to set
+	 */
+	public void setListaMovimentoEstoqueCota(
+			List<MovimentoEstoqueCota> listaMovimentoEstoqueCota) {
+		this.listaMovimentoEstoqueCota = listaMovimentoEstoqueCota;
+	}
+
 
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()

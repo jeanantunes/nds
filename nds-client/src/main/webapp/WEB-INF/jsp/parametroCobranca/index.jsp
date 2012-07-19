@@ -115,11 +115,11 @@
 		
 		$.each(resultado.rows, function(index, row) {
 			
-			var linkEditar = '<a href="javascript:;" onclick="popup_alterar(' + row.cell.idPolitica + ');" style="cursor:pointer">' +
+			var linkEditar = '<a href="javascript:;" id="bt_alterar" onclick="popup_alterar(' + row.cell.idPolitica + ');" style="cursor:pointer">' +
 					     	  	'<img title="Aprovar" src="${pageContext.request.contextPath}/images/ico_editar.gif" hspace="5" border="0px" />' +
 					  		  '</a>';
 			
-			var linkExcluir = '<a href="javascript:;" onclick="popup_excluir(' + row.cell.idPolitica + ');" style="cursor:pointer">' +
+			var linkExcluir = '<a href="javascript:;" id="bt_excluir" onclick="popup_excluir(' + row.cell.idPolitica + ');" style="cursor:pointer">' +
 							   	 '<img title="Rejeitar" src="${pageContext.request.contextPath}/images/ico_excluir.gif" hspace="5" border="0px" />' +
 							   '</a>';
 			
@@ -142,16 +142,22 @@
 			height:680,
 			width:890,
 			modal: true,
-			buttons: {
-				"Confirmar": function() {
-					
-					postarParametro();
-
-				},
-				"Cancelar": function() {
-					$( this ).dialog( "close" );
-				}
-			},
+			buttons:[ 
+			          {
+				           id:"bt_confirmar",
+				           text:"Confirmar", 
+				           click: function() {
+				        	   postarParametro();
+				           }
+			           },
+			           {
+				           id:"bt_cancelar",
+				           text:"Cancelar", 
+				           click: function() {
+				        	   $( this ).dialog( "close" );
+				           }
+			           }
+	        ],
 			beforeClose: function() {
 				clearMessageDialogTimeout("idModal");
 		    }
@@ -169,16 +175,22 @@
 			height:680,
 			width:890,
 			modal: true,
-			buttons: {
-				"Confirmar": function() {
-					
-					postarParametro();
-
-				},
-				"Cancelar": function() {
-					$( this ).dialog( "close" );
-				}
-			},
+			buttons:[ 
+			          {
+				           id:"bt_confirmar",
+				           text:"Confirmar", 
+				           click: function() {
+				        	   postarParametro();
+				           }
+			           },
+			           {
+				           id:"bt_cancelar",
+				           text:"Cancelar", 
+				           click: function() {
+				        	   $( this ).dialog( "close" );
+				           }
+			           }
+	        ],
 			beforeClose: function() {
 				clearMessageDialogTimeout("idModal");
 		    }
@@ -194,16 +206,22 @@
 			height:170,
 			width:380,
 			modal: true,
-			buttons: {
-				"Confirmar": function() {
-					
-					desativarParametro(idPolitica);
-					
-				},
-				"Cancelar": function() {
-					$( this ).dialog( "close" );
-				}
-			},
+			buttons:[ 
+			          {
+				           id:"bt_confirmar",
+				           text:"Confirmar", 
+				           click: function() {
+				        	   desativarParametro(idPolitica);
+				           }
+			           },
+			           {
+				           id:"bt_cancelar",
+				           text:"Cancelar", 
+				           click: function() {
+				        	   $( this ).dialog( "close" );
+				           }
+			           }
+	        ],
 			beforeClose: function() {
 				clearMessageDialogTimeout("idModal");
 		    }
@@ -1081,7 +1099,7 @@
     	  <table class="parametrosGrid"></table>
       </div>
 
-      <span class="bt_novo" title="Novo"><a href="javascript:;" onclick="popup();">Novo</a></span>
+      <span class="bt_novo" id="bt_novo" title="Novo"><a href="javascript:;" onclick="popup();">Novo</a></span>
    </fieldset>
   
    <div class="linha_separa_fields">&nbsp;</div>

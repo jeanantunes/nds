@@ -33,4 +33,12 @@ public interface PdvRepository extends Repository<PDV, Long> {
 	Boolean existePDVPrincipal(Long idCota, Long idPdvIgnorar);
 	
 	void setarPDVPrincipal(boolean principal, Long idCota);
+	
+	/**
+	 * Obtem o PDV principal de um cota.
+	 * 
+	 * @param idCota
+	 * @return
+	 */
+	public PDV obterPDVPrincipal(Long idCota);
 }

@@ -122,11 +122,13 @@ InformeEncalhe.prototype.initGrid = function() {
 				showTableToggleBtn : true,
 				width : 960,
 				height : 180,
-				onChangeSort :function(sortname, sortorder){
+				onChangeSort:function(sortname, sortorder){
+					console.log("sort");
 					_this.imprimirParans.sortname = sortname;
 					_this.imprimirParans.sortorder = sortorder;
 					$("input[name='sortname']").val(sortname);
 					$("input[name='sortorder']").val(sortorder);
+					$(this).flexReload();
 				}
 			});
 
@@ -180,6 +182,7 @@ InformeEncalhe.prototype.bindEvents = function() {
 	var _this = this;
 
 	$("#semanaRecolhimento").mask("99");
+	$("#dataRecolhimentoBox").mask("99/99/9999");
 	$("#dataRecolhimentoBox")
 			.datepicker(
 					{
@@ -220,7 +223,7 @@ InformeEncalhe.prototype.initDialogImprimir = function() {
 				
 				$("input[name='idFornecedor']").val($("#idFornecdorSelect").val());
 				$("input[name='semanaRecolhimento']").val($("#semanaRecolhimentoBox").val());
-				$("input[name='dataRecolhimento']").val($("dataRecolhimentoBox").val());
+				$("input[name='dataRecolhimento']").val($("#dataRecolhimentoBox").val());
 				
 				$( this ).dialog( "close" );
 				$("#form-imprimir").attr("action", contextPath + '/devolucao/informeEncalhe/relatorioInformeEncalhe');
@@ -316,7 +319,7 @@ function CapaPopup(idProdutoEdicao) {
 }
 
 CapaPopup.prototype.changeStatus = function(newStatus) {
-	$(this.anchor).unbind();
+	$(this.img).unbind();
 	var _this = this;
 	var eventObj;
 	this.anchor.title = newStatus.title;

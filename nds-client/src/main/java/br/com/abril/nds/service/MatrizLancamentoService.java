@@ -24,14 +24,14 @@ public interface MatrizLancamentoService {
 	/**
 	 * Confirma as matriz de balanceamento de lançamento.
 	 * 
-	 * @param balanceamentoLancamento - objeto balanceamento de lançamento
+	 * @param matrizLancamento - matriz de balanceamento de lançamento
 	 * @param datasConfirmadas - datas para confirmação
 	 * @param usuario - usuário
 	 * 
 	 * @return {@link TreeMap<Date, List<ProdutoLancamentoDTO>>}
 	 */
 	TreeMap<Date, List<ProdutoLancamentoDTO>> confirmarMatrizLancamento(
-													BalanceamentoLancamentoDTO balanceamentoLancamento,
+													TreeMap<Date, List<ProdutoLancamentoDTO>> matrizLancamento,
 													List<Date> datasConfirmadas, Usuario usuario);
 	
 	/**

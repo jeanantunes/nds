@@ -191,11 +191,14 @@ public class MatrizLancamentoController {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Selecione ao menos uma data!");
 		}
 	
-		TreeMap<Date, List<ProdutoLancamentoDTO>> matrizLancamento =
+		TreeMap<Date, List<ProdutoLancamentoDTO>> matrizLancamentoSessao =
 			balanceamentoLancamento.getMatrizLancamento();
 		
+		TreeMap<Date, List<ProdutoLancamentoDTO>> matrizLancamento =
+			this.clonarMapaLancamento(matrizLancamentoSessao);
+		
 		TreeMap<Date, List<ProdutoLancamentoDTO>> matrizLancamentoConfirmada =
-			matrizLancamentoService.confirmarMatrizLancamento(balanceamentoLancamento,
+			matrizLancamentoService.confirmarMatrizLancamento(matrizLancamento,
 															  datasConfirmadas, getUsuario());
 		
 		matrizLancamento =
@@ -476,10 +479,10 @@ public class MatrizLancamentoController {
 				this.session.getAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_LANCAMENTO);
 		
 		TreeMap<Date, List<ProdutoLancamentoDTO>> matrizLancamentoSessao =
-				balanceamentoLancamentoSessao.getMatrizLancamento();
+			balanceamentoLancamentoSessao.getMatrizLancamento();
 		
 		TreeMap<Date, List<ProdutoLancamentoDTO>> matrizLancamento =
-			clonarMapaLancamento(matrizLancamentoSessao);
+			this.clonarMapaLancamento(matrizLancamentoSessao);
 		
 		List<ProdutoLancamentoDTO> listaProdutoLancamentoRemover =
 			new ArrayList<ProdutoLancamentoDTO>();
@@ -556,6 +559,16 @@ public class MatrizLancamentoController {
 					listaProdutoLancamentoRemover.add(produtoLancamentoDTO);
 					
 					listaProdutoLancamentoAdicionar.add(produtoLancamentoDTO);
+					
+					List<ProdutoLancamentoDTO> produtosLancamentoAgrupados =
+							produtoLancamentoDTO.getProdutosLancamentoAgrupados();
+					
+					if (!produtosLancamentoAgrupados.isEmpty()) {
+						
+						listaProdutoLancamentoRemover.addAll(produtosLancamentoAgrupados);
+						
+						listaProdutoLancamentoAdicionar.addAll(produtosLancamentoAgrupados);
+					}
 					
 					break;
 				}
@@ -1069,12 +1082,7 @@ public class MatrizLancamentoController {
 	
 		confirmacoesVO = this.agruparBalanceamento(balanceamentoLancamento);
 
-		TableModel<CellModelKeyValue<ConfirmacaoVO>> tableModel =
-			new TableModel<CellModelKeyValue<ConfirmacaoVO>>();
-		
-		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(confirmacoesVO));
-
-		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
+		result.use(Results.json()).from(confirmacoesVO, "result").serialize();
 	}
 
 	/**

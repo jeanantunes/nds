@@ -4,6 +4,7 @@ import java.io.File;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.service.ImportacaoArquivoService;
 import br.com.abril.nds.service.vo.RetornoImportacaoArquivoVO;
@@ -22,8 +23,8 @@ public class ImportacaoArquivoServiceImpl implements ImportacaoArquivoService{
 	@Autowired
 	private ImportacaoArquivoStrategy importacaoDeArquivoProdutoStrategy;
 	
-	
 	@Override
+	@Transactional
 	public RetornoImportacaoArquivoVO processarImportacaoArquivo(File arquivo, TipoImportacaoArquivo tipoImportacaoArquivo) {
 		
 		ImportacaoArquivoStrategy importacaoArquivoStrategy = getStrategy(tipoImportacaoArquivo);

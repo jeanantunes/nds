@@ -15,7 +15,6 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.serialization.custom.PlainJSONSerialization;
 import br.com.abril.nds.service.ImportacaoArquivoService;
 import br.com.abril.nds.service.vo.RetornoImportacaoArquivoVO;
-import br.com.abril.nds.strategy.importacao.ImportacaoArquivoStrategy;
 import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.TipoImportacaoArquivo;
 import br.com.abril.nds.util.TipoMensagem;
@@ -132,6 +131,16 @@ public class ImportacaoController {
 			listaErros.add("Ocorreu um ou mais erros na linha: " + retorno.getNumeroDaLinha());
 
 			listaErros.add("");
+			
+			listaErros.add("- Conteúdo da linha: "+retorno.getConteudoLinha());
+			
+			listaErros.add("");
+			
+			if(retorno.getMotivoDoErro().length > 0){
+				
+				listaErros.add(" Motivo(s) do erro: ");
+				listaErros.add("");
+			}
 			
 			for (String motivo : retorno.getMotivoDoErro()) {
 				

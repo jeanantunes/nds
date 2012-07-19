@@ -200,6 +200,7 @@
 				<configuration>
 					<mainClass>br.com.abril.nds.fixture.DataLoader</mainClass>
 					<classpathScope>test</classpathScope>
+					<!-- <commandlineArgs>cleanData</commandlineArgs> -->
 				</configuration>
 			</plugin>
 		</plugins>
@@ -356,7 +357,35 @@
 			</build>
 		</profile>
 		<profile>
+			<id>qa3</id>
+			<properties>
+				<dataSourceURL>jdbc:mysql://10.10.50.198:3306/nds-client</dataSourceURL>
+				<dataSourceUsername>root</dataSourceUsername>
+				<dataSourcePassword>root</dataSourcePassword>
+				<testDataSourceURL>jdbc:mysql://10.10.50.198:3306/nds-client-test</testDataSourceURL>
+				<testDataSourceUsername>root</testDataSourceUsername>
+				<testDataSourcePassword>root</testDataSourcePassword>
+			</properties>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>tomcat-maven-plugin</artifactId>
+						<configuration>
+							<server>tomcat-server-qa</server>
+							<url>http://10.10.50.198:8080/manager/text</url>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
 			<id>homologacao</id>
+			<properties>
+				<dataSourceURL>jdbc:mysql://abrildgbdb01.cdgtwjqgurfb.sa-east-1.rds.amazonaws.com:3306/nds-client-homolog</dataSourceURL>
+				<dataSourceUsername>admin</dataSourceUsername>
+				<dataSourcePassword>abrildgb01</dataSourcePassword>
+			</properties>
 			<build>
 				<plugins>
 					<plugin>

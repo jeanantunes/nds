@@ -1,5 +1,7 @@
 package br.com.abril.nds.service;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
@@ -24,8 +26,24 @@ public interface GeracaoNFeService {
 	 * @return
 	 */
 	public abstract List<CotaExemplaresDTO> busca(Intervalo<String> intervaloBox,
-	Intervalo<Long> intervalorCota,
+	Intervalo<Integer> intervalorCota,
 	Intervalo<Date> intervaloDateMovimento, List<Long> listIdFornecedor, List<Long> listIdProduto, Long idTipoNotaFiscal, String sortname,
 	String sortorder, Integer rp, Integer page);
 
+
+	/**
+	 * Gera nota fiscal
+	 * 
+	 * @param intervaloBox
+	 * @param intervalorCota
+	 * @param intervaloDateMovimento
+	 * @param listIdFornecedor
+	 * @param listIdProduto
+	 * @param idTipoNotaFiscal
+	 * @param dataEmissao
+	 *  
+	 */
+	public abstract void gerarNotaFiscal(Intervalo<String> intervaloBox, Intervalo<Integer> intervalorCota,
+			Intervalo<Date> intervaloDateMovimento, List<Long> listIdFornecedor, List<Long> listIdProduto, 
+			Long idTipoNotaFiscal, Date dataEmissao) throws FileNotFoundException, IOException;
 }

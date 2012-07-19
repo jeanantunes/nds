@@ -50,4 +50,12 @@ public interface ProdutoRepository extends Repository<Produto, Long> {
 
 	Produto obterProdutoPorID(Long id);
 	
+	/**
+	 * Obtem produto por nome ou codigo
+	 * @param nome
+	 * @param codigo
+	 * @return Produto
+	 */
+	Produto obterProdutoPorNomeProdutoOuCodigo(String nome, String codigo);
+	
 }

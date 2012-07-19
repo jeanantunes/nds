@@ -58,6 +58,7 @@ import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.model.planejamento.EstudoCota;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.CotaRepository;
+import br.com.abril.nds.util.Intervalo;
 
 public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 	
@@ -395,5 +396,29 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 		
 		Assert.assertNotNull(listaCotas);
 	}
+
+	@Test
+	public void obterIdCotasEntre() {
+		
+		Intervalo<Integer> intervaloCota = new Intervalo<Integer>(1, 10);
+		Intervalo<String> intervaloBox = new Intervalo<String>("BX-1", "BX-2");
+		SituacaoCadastro situacao =  SituacaoCadastro.ATIVO;
+		cotaRepository.obterIdCotasEntre(intervaloCota, intervaloBox,
+				situacao);
+		
+		cotaRepository.obterIdCotasEntre(null, intervaloBox,
+				situacao);
+		
+		cotaRepository.obterIdCotasEntre(intervaloCota, null,
+				situacao);
+		
+		cotaRepository.obterIdCotasEntre(intervaloCota, intervaloBox,
+				null);
+		
+		cotaRepository.obterIdCotasEntre(null, null,
+				null);
+	}
+	
+	
 
 }

@@ -573,4 +573,60 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 		
 		return (BigDecimal) query.uniqueResult();
 	}
+	
+	@Override
+	public BigDecimal obterValorDividasDataOperacao(boolean dividaVencendo, boolean dividaAcumulada){
+		
+		StringBuilder hql = new StringBuilder("select sum(divida.valor) ");
+		hql.append(" from Divida divida, Distribuidor dist ")
+		   .append(" where ");
+		
+		if (dividaVencendo){
+			
+			hql.append(" divida.cobranca.dataVencimento = dist.dataOperacao ");
+		} else {
+			
+			hql.append(" divida.cobranca.dataVencimento < dist.dataOperacao ");
+		}
+		
+		if (dividaAcumulada){
+			
+			hql.append(" and divida.acumulada = :acumulada ");
+		}
+		
+		hql.append(" and divida.status != :quitada ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		
+		if (dividaAcumulada){
+			
+			query.setParameter("acumulada ", true);
+		}
+		
+		query.setParameter("quitada", StatusDivida.QUITADA);
+		
+		return (BigDecimal) query.uniqueResult();
+	}
+	
+	@Override
+	public BigDecimal obterValoresDividasGeradasDataOperacao(boolean postergada){
+		
+		StringBuilder hql = new StringBuilder("select sum(divida.valor) ");
+		hql.append(" from Divida divida, Distribuidor dist ")
+		   .append(" where divida.data = dist.dataOperacao ");
+		
+		if (postergada){
+			
+			hql.append(" and divida.status = :indPostergada ");
+		} else {
+			
+			hql.append(" and divida.status != :indPostergada ");
+		}
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		
+		query.setParameter("indPostergada", StatusDivida.POSTERGADA);
+		
+		return (BigDecimal) query.uniqueResult();
+	}
 }

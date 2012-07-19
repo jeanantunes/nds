@@ -30,6 +30,7 @@ import br.com.abril.nds.dto.ResumoPeriodoBalanceamentoDTO;
 import br.com.abril.nds.dto.SumarioLancamentosDTO;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
+import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
@@ -547,7 +548,7 @@ public class LancamentoRepositoryImpl extends
 		sql.append(" ESTUDO estudo ");
 		sql.append(" on (estudo.ID = estudoCota.ESTUDO_ID ");
 		sql.append(" 	 and estudo.PRODUTO_EDICAO_ID = lancamento.PRODUTO_EDICAO_ID ");
-		sql.append(" 	 and estudo.DATA_LANCAMENTO = lancamento.DATA_LCTO_DISTRIBUIDOR) ");
+		sql.append(" 	 and estudo.DATA_LANCAMENTO = lancamento.DATA_LCTO_PREVISTA) ");
 		
 		sql.append(" inner join ");
 		sql.append(" PRODUTO produto  ");
@@ -745,13 +746,12 @@ public class LancamentoRepositoryImpl extends
 		projectionList.add(Projections.property("produtoEdicao.codigoDeBarras"),"codigoDeBarras");
 		projectionList.add(Projections.property("produtoEdicao.precoVenda"),"precoVenda");
 		projectionList.add(Projections.property("produtoEdicao.desconto"),"desconto");		
-		projectionList.add(Projections.sqlProjection("(produtoedi1_.PRECO_VENDA - produtoedi1_.DESCONTO) as precoDesconto", new String[]{"precoDesconto"}, new Type[] {StandardBasicTypes.BIG_DECIMAL}));
+		projectionList.add(Projections.alias(Projections.sqlProjection("(produtoedi1_.PRECO_VENDA - produtoedi1_.DESCONTO) as precoDesconto", new String[]{"precoDesconto"}, new Type[] {StandardBasicTypes.BIG_DECIMAL}), "precoDesconto"));
 		projectionList.add(Projections.property("dataLancamentoDistribuidor"),"dataLancamento");
 		projectionList.add(Projections.property("dataRecolhimentoDistribuidor"),"dataRecolhimento");
 		projectionList.add(Projections.groupProperty("id"));		
 		projectionList.add(Projections.property("lancamentoParcial.recolhimentoFinal"),"dataRecolhimentoFinal");
 		criteria.setProjection(projectionList);		
-		
 		
 		
 		if(Ordenacao.ASC ==  ordenacao){
@@ -1125,24 +1125,26 @@ public class LancamentoRepositoryImpl extends
 	}
 	
 	@Override
-	public Lancamento obterLancamentoProdutoPorDataLancamentoOuDataRecolhimento(String codigoProduto, Date dataLancamentoPrevista, Date dataRecolhimentoPrevista){
+	public Lancamento obterLancamentoProdutoPorDataLancamentoOuDataRecolhimento(ProdutoEdicao produtoEdicao, Date dataLancamentoPrevista, Date dataRecolhimentoPrevista){
 		
 		StringBuilder sql = new StringBuilder();
-		sql.append("SELECT la FROM Lancamento la ");
-		sql.append("	   JOIN FETCH pe.produto p ");
-		sql.append("WHERE  p.codigo = :codigoProduto ");
+	
+		sql.append(" select lancamento  from Lancamento lancamento ");
+		sql.append(" join lancamento.produtoEdicao produtoEdicao ");
 		
+		sql.append(" where produtoEdicao.id =:produtoEdicao ");
+	
 		if (dataLancamentoPrevista != null) {
-			sql.append(" la.dataLancamentoPrevista = :dataLancamentoPrevista ");
+			sql.append(" AND lancamento.dataLancamentoPrevista = :dataLancamentoPrevista ");
 		}
 		
 		if (dataRecolhimentoPrevista != null) {
-			sql.append(" p.dataRecolhimentoPrevista = :dataRecolhimentoPrevista ");
+			sql.append(" AND lancamento.dataRecolhimentoPrevista = :dataRecolhimentoPrevista ");
 		}
 		
 		Query query = getSession().createQuery(sql.toString());
 		query.setMaxResults(1);
-		query.setParameter("codigoProduto", codigoProduto);
+		query.setParameter("produtoEdicao", produtoEdicao.getId());
 		
 		if (dataLancamentoPrevista != null) {
 			query.setParameter("dataLancamentoPrevista", dataLancamentoPrevista);
@@ -1151,6 +1153,31 @@ public class LancamentoRepositoryImpl extends
 		if (dataRecolhimentoPrevista != null) {
 			query.setParameter("dataRecolhimentoPrevista", dataRecolhimentoPrevista);
 		}
+		
+		return (Lancamento) query.uniqueResult();
+	}
+	
+	@Override
+	public Lancamento obterLancamentoProdutoPorDataLancamentoDataLancamentoDistribuidor(ProdutoEdicao produtoEdicao, Date dataLancamentoPrevista, Date dataLancamentoDistribuidor){
+		
+		StringBuilder sql = new StringBuilder();
+	
+		sql.append(" select lancamento  from Lancamento lancamento ");
+		sql.append(" join lancamento.produtoEdicao produtoEdicao ");
+		
+		sql.append(" where produtoEdicao.id =:produtoEdicao ");
+	
+		sql.append(" AND lancamento.dataLancamentoPrevista = :dataLancamentoPrevista ");
+		
+		sql.append(" AND lancamento.dataLancamentoDistribuidor = :dataLancamentoDistribuidor ");
+		
+		Query query = getSession().createQuery(sql.toString());
+		query.setMaxResults(1);
+		query.setParameter("produtoEdicao", produtoEdicao.getId());
+		
+		query.setParameter("dataLancamentoPrevista", dataLancamentoPrevista);
+		
+		query.setParameter("dataLancamentoDistribuidor", dataLancamentoDistribuidor);
 		
 		return (Lancamento) query.uniqueResult();
 	}

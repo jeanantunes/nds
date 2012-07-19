@@ -186,6 +186,77 @@ public class FiltroVendaEncalheDTO implements Serializable {
 	public void setNomeCota(String nomeCota) {
 		this.nomeCota = nomeCota;
 	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result
+				+ ((nomeCota == null) ? 0 : nomeCota.hashCode());
+		result = prime * result
+				+ ((numeroCota == null) ? 0 : numeroCota.hashCode());
+		result = prime * result
+				+ ((ordenacaoColuna == null) ? 0 : ordenacaoColuna.hashCode());
+		result = prime * result
+				+ ((paginacao == null) ? 0 : paginacao.hashCode());
+		result = prime * result
+				+ ((periodoFinal == null) ? 0 : periodoFinal.hashCode());
+		result = prime * result
+				+ ((periodoInicial == null) ? 0 : periodoInicial.hashCode());
+		result = prime
+				* result
+				+ ((tipoVendaEncalhe == null) ? 0 : tipoVendaEncalhe.hashCode());
+		return result;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		FiltroVendaEncalheDTO other = (FiltroVendaEncalheDTO) obj;
+		if (nomeCota == null) {
+			if (other.nomeCota != null)
+				return false;
+		} else if (!nomeCota.equals(other.nomeCota))
+			return false;
+		if (numeroCota == null) {
+			if (other.numeroCota != null)
+				return false;
+		} else if (!numeroCota.equals(other.numeroCota))
+			return false;
+		if (ordenacaoColuna != other.ordenacaoColuna)
+			return false;
+		if (paginacao == null) {
+			if (other.paginacao != null)
+				return false;
+		} else if (!paginacao.equals(other.paginacao))
+			return false;
+		if (periodoFinal == null) {
+			if (other.periodoFinal != null)
+				return false;
+		} else if (!periodoFinal.equals(other.periodoFinal))
+			return false;
+		if (periodoInicial == null) {
+			if (other.periodoInicial != null)
+				return false;
+		} else if (!periodoInicial.equals(other.periodoInicial))
+			return false;
+		if (tipoVendaEncalhe != other.tipoVendaEncalhe)
+			return false;
+		return true;
+	}
+	
+	
 	
 	
 }

@@ -9,18 +9,24 @@ import java.util.Date;
 import java.util.Scanner;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import br.com.abril.nds.exception.ImportacaoException;
 import br.com.abril.nds.integracao.ems0108.inbound.EMS0108Input;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.planejamento.Lancamento;
+import br.com.abril.nds.model.planejamento.StatusLancamento;
+import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.service.vo.RetornoImportacaoArquivoVO;
 import br.com.abril.nds.util.DateUtil;
 
+import com.ancientprogramming.fixedformat4j.exception.FixedFormatException;
 import com.ancientprogramming.fixedformat4j.format.FixedFormatManager;
+import com.ancientprogramming.fixedformat4j.format.ParseException;
 
 /**
  * Estratégia de importação de arquivos referente a Matriz de recolhimento e lançamento.
@@ -30,6 +36,8 @@ import com.ancientprogramming.fixedformat4j.format.FixedFormatManager;
  */
 @Component("importacaoDeArquivoMatrizStrategy")
 public class ImportacaoDeArquivoMatrizStrategy implements ImportacaoArquivoStrategy {
+	
+	private static final Logger logger = Logger.getLogger(ImportacaoDeArquivoMatrizStrategy.class);
 	
 	@Autowired
 	private FixedFormatManager ffm;
@@ -42,19 +50,15 @@ public class ImportacaoDeArquivoMatrizStrategy implements ImportacaoArquivoStrat
 	
 	@Override
 	public RetornoImportacaoArquivoVO processarImportacaoArquivo(File arquivo) {
-				
-		// FIXME implementar a importação de arquivo referente a Matriz
-		
-		RetornoImportacaoArquivoVO arquivoVO = new RetornoImportacaoArquivoVO();
-		arquivoVO.setSucessoNaImportacao(true);
 		
 		FileReader in = null;
 		try {
 			in = new FileReader(arquivo);
-		} catch (FileNotFoundException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+		} catch (FileNotFoundException ex) {
+			logger.fatal("Erro na leitura de arquivo", ex);
+			throw new ImportacaoException(ex.getMessage());
 		}
+		
 		Scanner scanner = new Scanner(in);
 		int linhaArquivo = 0;
 
@@ -67,50 +71,94 @@ public class ImportacaoDeArquivoMatrizStrategy implements ImportacaoArquivoStrat
 			if (StringUtils.isEmpty(linha) ||  ((int) linha.charAt(0)  == 26) ) {
 				continue;
 			} 
-
-			// TODO: verificar tamanho correto das linhas nos arquivos: difere da definição
-//			if (linha.length() != interfaceEnum.getTamanhoLinha().intValue()) {
-//				throw new ValidacaoException(TAMANHO_LINHA);
-//			}
 			
-			EMS0108Input  doc = (EMS0108Input) this.ffm.load(EMS0108Input.class, linha);
-			
-			System.out.println(doc.toString());
-			
-			//FIXME gravar dados  no banco
+			try {
+				
+				EMS0108Input  input = parseDados(linha);
+				
+				processarDados(input);
+				
+			} catch (ImportacaoException e) {
+				
+				RetornoImportacaoArquivoVO retorno = new RetornoImportacaoArquivoVO(new String[]{e.getMessage()},linhaArquivo,linha,false);
+				logger.error(retorno.toString());
+				return retorno; 
+			}
 		}
 		
 		try {
 			in.close();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.fatal("Erro na leitura de arquivo", e);
+			throw new ImportacaoException(e.getMessage());
 		}
 		
-		
-		return arquivoVO ;
+		return new RetornoImportacaoArquivoVO(true) ;
 	}
 	
-	private void persistirDados(EMS0108Input input, RetornoImportacaoArquivoVO retornoImportacaoArquivoVO){
+	@Override
+	public void processarImportacaoDados(Object input) {
+		
+		EMS0108Input  inputDados = (EMS0108Input) input;
+		
+		processarDados(inputDados);
+	}
+	
+	/**
+	 * 
+	 * Retorna o objepto EMS0108Input com as informações referente a linha do arquivo informada
+	 * 
+	 * @param linhaArquivo
+	 * 
+	 * @return EMS0108Input
+	 */
+	private EMS0108Input parseDados(String linhaArquivo){
+		
+		try{
+			
+			return (EMS0108Input) this.ffm.load(EMS0108Input.class, linhaArquivo);
+		}
+		catch (ParseException e) {
+			throw new ImportacaoException("Parse das informações contidas na linha do arquivo inválida!");	
+		}	
+		catch (FixedFormatException ef) {
+			
+			throw new ImportacaoException("Formato das informações contidas na linha do arquivo inválida!");
+		}
+	}
+	
+	/**
+	 * 
+	 * Efetua o processamento dos dados do arquivo referente a lançamento.
+	 * 
+	 * @param input - input com os dados para processamento
+	 */
+	private void processarDados(EMS0108Input input){
 		
 		ProdutoEdicao produtoEdicao = 
 				produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao(input.getCodigoPublicacao().toString(), 
 																				 input.getEdicao());
 		if(produtoEdicao == null){
-			//TODO erro de produto edição não encontrado
+			throw new ImportacaoException("Produto Edição não encontrado para importação.");
 		}
 		
 		int numeroDias = produtoEdicao.getPeb();
 		
 		Date dataLcto = input.getDataLancamentoRecolhimentoProduto();
 	
-		// Soma o número de dias a recolher
+		// Define a data de recolhimento do produto 
 		Date dataRec = DateUtil.adicionarDias(dataLcto, numeroDias);			
 		
 		if(input.getDataLancamentoRecolhimentoProduto().compareTo(new Date()) >= 0){
 			
-			Lancamento lancamento = new Lancamento();		
-			// Insert
+			Lancamento lancamento = 
+					lancamentoRepository.obterLancamentoProdutoPorDataLancamentoDataLancamentoDistribuidor(produtoEdicao,dataLcto, dataLcto);	
+			
+			if(lancamento == null){
+				
+				lancamento = new Lancamento();	
+			}
+			
 			lancamento.setDataCriacao(new Date());
 			lancamento.setDataLancamentoDistribuidor(dataLcto);
 			lancamento.setDataLancamentoPrevista(dataLcto);
@@ -121,21 +169,35 @@ public class ImportacaoDeArquivoMatrizStrategy implements ImportacaoArquivoStrat
 			lancamento.setProdutoEdicao(produtoEdicao);
 			lancamento.setReparte(new BigDecimal(0));
 			
+			lancamento.setStatus(StatusLancamento.PLANEJADO);
+			lancamento.setTipoLancamento(TipoLancamento.LANCAMENTO);
+				
 			lancamentoRepository.adicionar(lancamento);
+
 		}
 		
 		if (input.getEdicaoRecolhimento() != null
 				&& input.getDataLancamentoRecolhimentoProduto().before(new Date())) {
 			
-			Lancamento lancamento = 
-					lancamentoRepository.obterLancamentoProdutoPorDataLancamentoOuDataRecolhimento(produtoEdicao.getProduto().getCodigo(), 
-																								   dataRec, 
-																								   dataRec);
-			if(lancamento == null){
-				//TODO erro de lançamento não encontrado
+			Date dataLancamentoPrevista = null;
+			Date dataRecolhimento = null;
+		
+			if(input.getEdicao()!= null){
+				dataLancamentoPrevista = input.getDataLancamentoRecolhimentoProduto();
 			}
 			
-			// update
+			if(input.getDataLancamentoRecolhimentoProduto()!= null){
+				dataRecolhimento = input.getDataLancamentoRecolhimentoProduto();
+			}
+			
+			Lancamento lancamento = 
+					lancamentoRepository.obterLancamentoProdutoPorDataLancamentoOuDataRecolhimento(produtoEdicao, 
+																									dataLancamentoPrevista, 
+																									dataRecolhimento);
+			if(lancamento == null){
+				throw new ImportacaoException("Lançamento não encontrado para importação.");
+			}
+			
 			lancamento.setDataLancamentoDistribuidor(dataLcto);
 			lancamento.setDataLancamentoPrevista(dataLcto);
 			lancamento.setDataRecolhimentoDistribuidor(dataRec);

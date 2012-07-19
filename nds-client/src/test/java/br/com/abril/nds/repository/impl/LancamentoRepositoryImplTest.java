@@ -52,6 +52,7 @@ import br.com.abril.nds.model.planejamento.TipoLancamentoParcial;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.util.CurrencyUtil;
+import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 import br.com.abril.nds.vo.PeriodoVO;
 
 public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
@@ -483,7 +484,7 @@ public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
 	public void obterLancamentoInformeRecolhimento() {
 		List<InformeEncalheDTO>  result =  lancamentoRepository.obterLancamentoInformeRecolhimento(
 				1L, Calendar.getInstance(), Calendar.getInstance(),
-				null, null, 0, 15);
+				"precoDesconto", Ordenacao.ASC, 0, 15);
 	}
 	
 	

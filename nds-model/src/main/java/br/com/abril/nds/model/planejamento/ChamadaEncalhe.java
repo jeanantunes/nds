@@ -55,6 +55,9 @@ public class ChamadaEncalhe implements Serializable {
 	
 	@OneToMany(mappedBy = "chamadaEncalhe", cascade = CascadeType.REMOVE)
 	private Set<ChamadaEncalheCota> chamadaEncalheCotas = new HashSet<ChamadaEncalheCota>();
+	
+	@OneToMany(mappedBy = "chamadaEncalhe")
+	private Set<Lancamento> lancamentos = new HashSet<Lancamento>();
 			
 	/**
 	 * @return the id
@@ -118,6 +121,20 @@ public class ChamadaEncalhe implements Serializable {
 	 */
 	public void setChamadaEncalheCotas(Set<ChamadaEncalheCota> chamadaEncalheCotas) {
 		this.chamadaEncalheCotas = chamadaEncalheCotas;
+	}
+
+	/**
+	 * @return the lancamentos
+	 */
+	public Set<Lancamento> getLancamentos() {
+		return lancamentos;
+	}
+
+	/**
+	 * @param lancamentos the lancamentos to set
+	 */
+	public void setLancamentos(Set<Lancamento> lancamentos) {
+		this.lancamentos = lancamentos;
 	}
 
 }

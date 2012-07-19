@@ -340,16 +340,17 @@
 
 	<repositories>
 		<repository>
+			<id>nexus</id>
+			<url>http://177.71.177.215:8080/nexus/content/groups/public/</url>
+		</repository>
+	
+		<repository>
 		   <id>jrimum.org</id>
 		   <url>http://jrimum.org/maven/content/groups/public/</url>
 		   <snapshots>
 		      <enabled>true</enabled>
 		   </snapshots>
 		</repository>	
-		<repository>
-			<id>nexus</id>
-			<url>http://177.71.177.215:8080/nexus/content/groups/public/</url>
-		</repository>
 	</repositories>
 
 	<build>
@@ -421,7 +422,6 @@
 		<module>ndsi-canonical</module>
 		<module>ndsi-couchdbinterface</module>
 		<module>ndsi-engine</module>
-		<module>ndsi-webtest</module>
 
 		<module>nds-client</module>
 

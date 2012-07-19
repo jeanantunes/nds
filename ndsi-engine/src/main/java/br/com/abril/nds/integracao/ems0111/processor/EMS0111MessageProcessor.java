@@ -75,7 +75,7 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 			sql.append(" 		lcto.dataLancamentoPrevista = :dataLancamento   ");
 
 			Query query = getSession().createQuery(sql.toString());
-			query.setParameter("produtoEdicaoId", produtoEdicao.getId());
+			query.setParameter("produtoEdicao", produtoEdicao);
 			query.setParameter("dataLancamento", input.getDataLancamento());
 
 			Lancamento lancamento = (Lancamento) query.uniqueResult();
