@@ -1,21 +1,15 @@
 package br.com.abril.nds.strategy.importacao;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.HashSet;
-import java.util.Scanner;
 import java.util.Set;
 
 import javax.persistence.NoResultException;
 
-import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.exception.ImportacaoException;
 import br.com.abril.nds.integracao.model.canonic.EMS0119Input;
@@ -52,7 +46,7 @@ import com.ancientprogramming.fixedformat4j.format.FixedFormatManager;
  *
  */
 @Component("importacaoDeArquivoProdutoStrategy")
-public class ImportacaoDeArquivoProdutoStrategy implements ImportacaoArquivoStrategy {
+public class ImportacaoDeArquivoProdutoStrategy extends ImportacaoAbstractStrategy implements ImportacaoArquivoStrategy {
 
 	@Autowired
 	private FixedFormatManager ffm;
@@ -88,47 +82,9 @@ public class ImportacaoDeArquivoProdutoStrategy implements ImportacaoArquivoStra
 	 * Executa processo de importação de produtos
 	 */
 	@Override
-	@Transactional
 	public RetornoImportacaoArquivoVO processarImportacaoArquivo(File arquivo) {
 
-		FileReader in = null;
-		
-		try {
-			in = new FileReader(arquivo);
-		} catch (FileNotFoundException ex) {
-			throw new ImportacaoException(ex.getMessage());
-		}
-		
-		Scanner scanner = new Scanner(in);
-		int linhaArquivo = 0;
-
-		while (scanner.hasNextLine()) {
-
-			String linha = scanner.nextLine();
-			linhaArquivo++;
-
-			if (StringUtils.isEmpty(linha) || ((int) linha.charAt(0)  == 26) ) {
-				continue;
-			} 
-			
-			try{
-				
-				EMS0119Input input = this.parseDados(linha);
-				
-				processarDados(input);
-			}
-			catch(Exception e){
-				return new RetornoImportacaoArquivoVO(new String[]{e.getMessage()},linhaArquivo,linha,false);
-			}
-		}
-		
-		try {
-			in.close();
-		} catch (IOException ex) {
-			throw new ImportacaoException(ex.getMessage());
-		}
-		
-		return new RetornoImportacaoArquivoVO(new String[]{"Sucesso"},linhaArquivo,null,true);
+		return processarArquivo(arquivo);
 	}
 
 	/**
@@ -138,9 +94,7 @@ public class ImportacaoDeArquivoProdutoStrategy implements ImportacaoArquivoStra
 	@Override
 	public void processarImportacaoDados(Object input) {
 		
-		EMS0119Input  inputDados = (EMS0119Input) input;
-		
-		processarDados(inputDados);
+		processarDados(input);
 	}
 	
 	/**
@@ -148,7 +102,8 @@ public class ImportacaoDeArquivoProdutoStrategy implements ImportacaoArquivoStra
 	 * @param linhaArquivo
 	 * @return EMS0108Input
 	 */
-	private EMS0119Input parseDados(String linhaArquivo){
+	@Override
+	protected EMS0119Input parseDados(String linhaArquivo){
 		
 		try{
 			
@@ -206,8 +161,11 @@ public class ImportacaoDeArquivoProdutoStrategy implements ImportacaoArquivoStra
 	 * Processa informações de input e insere/altera de acordo com as regras de cadastro de produto/produto edição
 	 * @param EMS0119Input:input
 	 */
-	private void processarDados(EMS0119Input input){		
+	@Override
+	protected void processarDados(Object inputDados){		
 
+		EMS0119Input  input = (EMS0119Input) inputDados;
+		
         validaInput(input);
 		
         try {
