@@ -110,14 +110,19 @@ public class ConsultaInformeEncalheController {
 		Long quantidade = lancamentoService
 				.quantidadeLancamentoInformeRecolhimento(idFornecedor,
 						dataInicioRecolhimento, dataFimRecolhimento);
-		List<InformeEncalheDTO> informeEncalheDTOs = lancamentoService
-				.obterLancamentoInformeRecolhimento(idFornecedor,
-						dataInicioRecolhimento, dataFimRecolhimento, sortname,
-						Ordenacao.valueOf(sortorder.toUpperCase()), page * rp
-								- rp, rp);
-
-		result.use(FlexiGridJson.class).from(informeEncalheDTOs)
-				.total(quantidade.intValue()).page(page).serialize();
+		if (quantidade > 0) {
+			List<InformeEncalheDTO> informeEncalheDTOs = lancamentoService
+					.obterLancamentoInformeRecolhimento(idFornecedor,
+							dataInicioRecolhimento, dataFimRecolhimento,
+							sortname,
+							Ordenacao.valueOf(sortorder.toUpperCase()), page
+									* rp - rp, rp);
+			result.use(FlexiGridJson.class).from(informeEncalheDTOs)
+					.total(quantidade.intValue()).page(page).serialize();
+		}else{
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING,
+					"Registros não encontrados."));
+		}
 	}
 
 	
@@ -146,7 +151,8 @@ public class ConsultaInformeEncalheController {
 
 				dataInicioRecolhimento.set(Calendar.WEEK_OF_YEAR,
 						semanaRecolhimento);
-				dataInicioRecolhimento.add(Calendar.DAY_OF_MONTH, -1);
+				
+				dataInicioRecolhimento.set(Calendar.DAY_OF_WEEK, inicioDaSemana.getCodigoDiaSemana());
 				dataFimRecolhimento = (Calendar) dataInicioRecolhimento.clone();
 				dataFimRecolhimento.add(Calendar.DAY_OF_MONTH, 7);
 

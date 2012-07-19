@@ -809,6 +809,7 @@ public class LancamentoRepositoryImpl extends
 		criteria.createAlias("periodoLancamentoParcial.lancamentoParcial", "lancamentoParcial",Criteria.LEFT_JOIN );
 		
 		criteria.add(Restrictions.between("dataRecolhimentoDistribuidor", dataInicioRecolhimento.getTime(), dataFimRecolhimento.getTime()));
+		
 		if (idFornecedor != null) {
 			criteria.add(Restrictions.eq(
 					"fornecedores.id", idFornecedor));
