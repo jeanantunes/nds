@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import javax.annotation.PostConstruct;
+
 import org.apache.commons.io.IOUtils;
 import org.lightcouch.NoDocumentException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +20,8 @@ import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.TipoImpressaoInformeEncalheDTO;
 import br.com.abril.nds.dto.TipoImpressaoInformeEncalheDTO.Capas;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.integracao.service.DistribuidorService;
+import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.CapaService;
@@ -56,7 +60,15 @@ public class ConsultaInformeEncalheController {
 	private FornecedorService fornecedorService;
 	
 	@Autowired 
-	private CapaService capaService;
+	private CapaService capaService;	
+	
+	
+	private DiaSemana inicioDaSemana;
+	
+	
+	private ConsultaInformeEncalheController(DistribuidorService distribuidorService){
+		inicioDaSemana = distribuidorService.obter().getInicioSemana();
+	}
 
 	@Get("/")
 	public void index() {
@@ -82,7 +94,8 @@ public class ConsultaInformeEncalheController {
 
 				dataInicioRecolhimento.set(Calendar.WEEK_OF_YEAR,
 						semanaRecolhimento);
-				dataInicioRecolhimento.add(Calendar.DAY_OF_MONTH, -1);
+				
+				dataInicioRecolhimento.set(Calendar.DAY_OF_WEEK, inicioDaSemana.getCodigoDiaSemana());
 				dataFimRecolhimento = (Calendar) dataInicioRecolhimento.clone();
 				dataFimRecolhimento.add(Calendar.DAY_OF_MONTH, 7);
 
