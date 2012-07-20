@@ -111,24 +111,25 @@ public class EMS0112MessageProcessor extends AbstractRepository implements Messa
 			hql.append("SELECT j ");
 			hql.append("FROM PessoaJuridica j ");
 			hql.append("WHERE j.cnpj = :cnpj ");
-			hql.append("AND j.inscricaoEstadual = :inscricaoEstadual ");
-			hql.append("AND j.inscricaoMunicipal = :inscricaoMunicipal ");
 			
 			Query pj_query = getSession().createQuery(hql.toString());
 			
 			pj_query.setParameter("cnpj", input.getCnpj());
-			pj_query.setParameter("inscricaoEstadual", input.getInscricaoEstadual());
-			pj_query.setParameter("inscricaoMunicipal", input.getInscricaoMunicipal());
 					
-			PessoaJuridica pessoa = (PessoaJuridica) query.uniqueResult();		
+			PessoaJuridica pessoa = (PessoaJuridica) pj_query.uniqueResult();		
 			if (null == pessoa) {			
 				//INSERE
 						
 				//PESSOA
+				pessoa = new PessoaJuridica();
 				pessoa.setCnpj(input.getCnpj());
 				pessoa.setInscricaoEstadual(input.getInscricaoEstadual());
 				pessoa.setInscricaoMunicipal(input.getInscricaoMunicipal());		
 				getSession().persist(pessoa);
+			} else {
+				pessoa.setInscricaoEstadual(input.getInscricaoEstadual());
+				pessoa.setInscricaoMunicipal(input.getInscricaoMunicipal());		
+				getSession().update(pessoa);				
 			}
 			
 			//EDITOR
