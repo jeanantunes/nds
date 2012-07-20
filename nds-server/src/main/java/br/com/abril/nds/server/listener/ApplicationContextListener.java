@@ -1,8 +1,4 @@
-package br.com.abril.nds.client.listener;
-
-import static org.quartz.CronScheduleBuilder.cronSchedule;
-import static org.quartz.JobBuilder.newJob;
-import static org.quartz.TriggerBuilder.newTrigger;
+package br.com.abril.nds.server.listener;
 
 import java.sql.Driver;
 import java.sql.DriverManager;
@@ -19,9 +15,13 @@ import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.impl.StdSchedulerFactory;
 
-import br.com.abril.nds.client.job.IntegracaoOperacionalDistribuidorJob;
+import br.com.abril.nds.server.job.IntegracaoOperacionalDistribuidorJob;
 import br.com.abril.nds.util.PropertiesUtil;
 import br.com.abril.nds.util.QuartzUtil;
+
+import static org.quartz.TriggerBuilder.*;
+import static org.quartz.CronScheduleBuilder.*;
+import static org.quartz.JobBuilder.*;
 
 /**
  * Listener do contexto da aplicação.

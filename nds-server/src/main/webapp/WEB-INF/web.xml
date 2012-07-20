@@ -50,6 +50,10 @@
 	</filter-mapping>
 	
 	<listener>
+		<listener-class>br.com.abril.nds.server.listener.ApplicationContextListener</listener-class>
+	</listener>
+	
+	<listener>
 		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
 	</listener>
 	

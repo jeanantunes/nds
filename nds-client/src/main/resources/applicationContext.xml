@@ -16,16 +16,15 @@
 	
 	<util:properties id="queries" location="classpath:/query.properties" />
 	
-	<bean class="com.ancientprogramming.fixedformat4j.format.impl.FixedFormatManagerImpl"/>
-	
 	<bean
 		class="org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor" />
+		
+	<bean class="com.ancientprogramming.fixedformat4j.format.impl.FixedFormatManagerImpl"/>
 
 	<!-- TOMCAT -->
 	<jee:jndi-lookup id="dataSource" jndi-name="java:comp/env/jdbc/nds-client"/>
-	<!-- COUCH DB -->	
-	<jee:jndi-lookup id="couchDbProperties" jndi-name="java:comp/env/couchDbProperties"/>
 	
+	<jee:jndi-lookup  id="couchDbProperties" jndi-name="java:comp/env/couchDbProperties" />
 
 	<bean id="sessionFactory"
 		class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean">
