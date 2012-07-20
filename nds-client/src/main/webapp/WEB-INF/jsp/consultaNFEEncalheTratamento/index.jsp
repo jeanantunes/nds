@@ -21,7 +21,6 @@
 <link rel="stylesheet" type="text/css" href="../scripts/flexigrid-1.1/css/flexigrid.pack.css" />
 <script language="javascript" type="text/javascript">
 function popup() {
-		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
 	
 		$( "#dialog-novo" ).dialog({
 			resizable: false,
@@ -41,7 +40,6 @@ function popup() {
 	};
 	
 	function popup_confirm() {
-		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
 	
 		$( "#dialog-confirm" ).dialog({
 			resizable: false,
@@ -63,7 +61,6 @@ function popup() {
 	};
 	
 	function popup_rejeitar() {
-		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
 	
 		$( "#dialog-rejeitar" ).dialog({
 			resizable: false,
@@ -125,7 +122,7 @@ function popup() {
 			width:280,
 			modal: true,
 			buttons: {
-				"Confirmar": function() {
+				"Confirmar": function() {					
 					$( this ).dialog( "close" );
 					$("#effect").show("highlight", {}, 1000, callback);
 				},
@@ -136,9 +133,15 @@ function popup() {
 		});
 	};
 	
-	function popup_nfe() {
-		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
-	
+	function popup_nfe(numeroCota, nome){
+		
+		if(numeroCota != '0'){
+			$('#cotaCadastroNota').val(numeroCota);
+			$('#nomeCotaCadastroNota').val(nome);
+			$('#cotaCadastroNota').attr('disabled', 'disabled');
+			$('#nomeCotaCadastroNota').attr('disabled', 'disabled');
+			}
+			
 		$( "#dialog-nfe" ).dialog({
 			resizable: false,
 			height:300,
@@ -146,8 +149,8 @@ function popup() {
 			modal: true,
 			buttons: {
 				"Confirmar": function() {
-					$( this ).dialog( "close" );
-					$("#effect").show("highlight", {}, 1000, callback);
+					cadastrarNota();
+					$( this ).dialog( "close" );					
 				},
 				"Cancelar": function() {
 					$( this ).dialog( "close" );
@@ -155,12 +158,31 @@ function popup() {
 			}
 		});
 	};
+
+	function cadastrarNota(){		
+
+		$.postJSON(
+				'<c:url value="/nfe/consultaNFEEncalheTratamento/cadastrarNota" />',
+				[
+					{ name: "nota.numero", value: $('#numeroNotaCadastroNota').val() },
+					{ name: "nota.serie", value: $('#serieNotaCadastroNota').val() },
+					{ name: "nota.chaveAcesso", value: $('#chaveAcessoCadastroNota').val() },
+					{ name: "numeroCota", value: $('#cotaCadastroNota').val() },
+				],
+				function(result) {
+					alert(result);					
+				},
+				null,
+				true
+			);
+	
+	}
 	
 	
 	
 	
 	
-  //callback function to bring a hidden box back
+  
 		function callback() {
 			setTimeout(function() {
 				$( "#effect:visible").removeAttr( "style" ).fadeOut();
@@ -254,7 +276,7 @@ function popup() {
 				
 				$.each(resultado.rows, function(index, row) {					
 					
-					var linkLancamento = '<a href="javascript:;" onclick="popup_nfe();" style="cursor:pointer">' +
+					var linkLancamento = '<a href="javascript:;"  onclick="popup_nfe(\''+row.cell.numeroCota+'\',\''+row.cell.nome+'\');" style="cursor:pointer">' +
 									   	 '<img title="Lançamentos da Edição" src="${pageContext.request.contextPath}/images/bt_lancamento.png" hspace="5" border="0px" />' +
 									   '</a>';
 				   var linkCadastro = '<a href="javascript:;" onclick="popup_dadosNotaFiscal('+row.cell.numeroNfe+','
@@ -356,24 +378,24 @@ function popup() {
     <table width="280" border="0" cellspacing="1" cellpadding="0">
   <tr>
     <td width="84">Cota:</td>
-    <td width="193"><input type="text" style="width:80px; float:left; margin-right:5px;"/>
+    <td width="193"><input type="text" id="cotaCadastroNota" name="cotaCadastroNota" style="width:80px; float:left; margin-right:5px;"/>
       <span class="classPesquisar"><a href="javascript:;" onclick="pesqEncalhe();">&nbsp;</a></span></td>
   </tr>
   <tr>
     <td>Nome:</td>
-    <td><input type="text" name="textfield2" id="textfield2" /></td>
+    <td><input type="text" name="nomeCotaCadastroNota" id="nomeCotaCadastroNota" /></td>
   </tr>
   <tr>
     <td>NF-e:</td>
-    <td><input type="text" name="textfield3" id="textfield3" /></td>
+    <td><input type="text" name="numeroNotaCadastroNota" id="numeroNotaCadastroNota" /></td>
   </tr>
   <tr>
     <td>Série:</td>
-    <td><input type="text" name="textfield4" id="textfield4" /></td>
+    <td><input type="text" name="serieNotaCadastroNota" id="serieNotaCadastroNota" /></td>
   </tr>
   <tr>
     <td>Chave-Acesso:</td>
-    <td><input type="text" name="textfield5" id="textfield5" /></td>
+    <td><input type="text" name="chaveAcessoCadastroNota" id="chaveAcessoCadastroNota" /></td>
   </tr>
 </table>
     </fieldset>
@@ -470,7 +492,7 @@ function popup() {
 				</a>
 			</span>
              
-            <span class="bt_confirmar_novo" title="Confirmar Cancelamento"><a href="javascript:;" onclick="popup_nfe();">
+            <span class="bt_confirmar_novo" title="Confirmar Cancelamento"><a href="javascript:;" onclick="popup_nfe('0','0');">
             	<img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_check.gif">Registrar NF-e</a>
             </span>
             
