@@ -13,7 +13,6 @@ import br.com.abril.nds.model.cadastro.TipoAtividade;
 import br.com.abril.nds.model.fiscal.GrupoNotaFiscal;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
 import br.com.abril.nds.model.fiscal.TipoOperacao;
-import br.com.abril.nds.model.fiscal.nota.Serie;
 import br.com.abril.nds.repository.TipoNotaFiscalRepository;
 import br.com.abril.nds.util.StringUtil;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
@@ -106,6 +105,18 @@ public class TipoNotaFiscalRepositoryImpl extends AbstractRepositoryModel<TipoNo
 		criteria.setProjection(Projections.rowCount());
 
 		return (Long)criteria.list().get(0);
+	}
+	
+	/* (non-Javadoc)
+	 * @see br.com.abril.nds.repository.TipoNotaFiscalRepository#obterTiposNotasFiscaisCotasNaoContribuintesPor(br.com.abril.nds.model.cadastro.TipoAtividade)
+	 */
+	@Override
+	public List<TipoNotaFiscal> obterTiposNotasFiscaisCotasNaoContribuintesPor(TipoAtividade tipoAtividade) {
+		Criteria criteria =  addRestrictions(null, null, tipoAtividade);
+		
+		criteria.add(Restrictions.eq("contribuinte", false));
+		
+		return criteria.list();
 	}
 	
 	/**
