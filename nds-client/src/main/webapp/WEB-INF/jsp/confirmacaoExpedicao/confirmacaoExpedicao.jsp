@@ -10,9 +10,9 @@
 
 <script type="text/javascript">
 	
+
 	$(function() {
-		//Define Botão Pesquisar como padrão ao pressionar Enter.
-		AcaoEnter.definir("idBotaoPesquisar");
+		definirAcaoPesquisaTeclaEnter();
 		//Define foco inicial no campo Data Lançamento.
 		$('#idDataLancamento').focus();
 	});

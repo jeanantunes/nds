@@ -2,8 +2,11 @@ package br.com.abril.nds.strategy.importacao;
 
 import java.io.File;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import br.com.abril.nds.model.seguranca.Usuario;
+import br.com.abril.nds.service.MovimentoEstoqueService;
 import br.com.abril.nds.exception.ImportacaoException;
 import br.com.abril.nds.service.vo.RetornoImportacaoArquivoVO;
 import br.com.abril.nds.strategy.importacao.input.HistoricoVendaInput;
@@ -23,6 +26,10 @@ public class ImportacaoDeArquivoHistoricoVendaStrategy extends ImportacaoAbstrac
 	private static final int POSICAO_NUMERO_COTA = 2;
 	private static final int POSICAO_QNT_RECEBIDA_PRODUTO = 7;
 	private static final int POSICAO_QNT_DEVOLVIDA_PRODUTO = 11;
+	
+
+	@Autowired
+	private MovimentoEstoqueService movimentoEstoqueService;
 	
 	@Override
 	public RetornoImportacaoArquivoVO processarImportacaoArquivo(File arquivo) {
@@ -176,7 +183,19 @@ public class ImportacaoDeArquivoHistoricoVendaStrategy extends ImportacaoAbstrac
 	protected void processarDados(Object input) {
 		
 		HistoricoVendaInput vendaInput = (HistoricoVendaInput) input;
-		
-		// FIXME implementar a logica de negocio de importação	
+				
+		movimentoEstoqueService.processarRegistroHistoricoVenda(vendaInput, getUsuario().getId());
+	}
+	
+	/**
+	 * Método que obtém o usuário logado
+	 * 
+	 * @return usuário logado
+	 */
+	public Usuario getUsuario() {
+		//TODO getUsuario
+		Usuario usuario = new Usuario();
+		usuario.setId(1L);
+		return usuario;
 	}
 }
