@@ -46,8 +46,11 @@ public interface RecolhimentoService {
 	 * 
 	 * @param matrizRecolhimento - matriz de recolhimento
 	 * @param numeroSemana - número da semana
+	 * @param datasConfirmadas - datas para confirmação
 	 * @param usuario - usuário
 	 */
 	void confirmarBalanceamentoRecolhimento(Map<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimento,
-											Integer numeroSemana, Usuario usuario);
+											Integer numeroSemana,
+											List<Date> datasConfirmadas,
+											Usuario usuario);
 }

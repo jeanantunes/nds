@@ -4616,6 +4616,14 @@ public class DataLoader {
 				OperacaoDistribuidor.DISTRIBUICAO, distribuidor);
 		save(session, fcSegunda, fcSexta);
 
+		DistribuicaoFornecedor dinapSextaRecolhimento = Fixture.distribuicaoFornecedor(
+				fornecedorDinap, DiaSemana.SEXTA_FEIRA,
+				OperacaoDistribuidor.RECOLHIMENTO, distribuidor);
+
+		DistribuicaoFornecedor fcSextaRecolhimento = Fixture.distribuicaoFornecedor(
+				fornecedorFc, DiaSemana.SEXTA_FEIRA,
+				OperacaoDistribuidor.RECOLHIMENTO, distribuidor);
+		
 		DistribuicaoFornecedor dinapQuartaRecolhimento = Fixture.distribuicaoFornecedor(
 				fornecedorDinap, DiaSemana.QUARTA_FEIRA,
 				OperacaoDistribuidor.RECOLHIMENTO, distribuidor);
@@ -4624,7 +4632,8 @@ public class DataLoader {
 				fornecedorFc, DiaSemana.QUARTA_FEIRA,
 				OperacaoDistribuidor.RECOLHIMENTO, distribuidor);
 
-		save(session, dinapQuartaRecolhimento, fcQuartaRecolhimento);
+		save(session, dinapSextaRecolhimento, fcSextaRecolhimento,
+				  	  dinapQuartaRecolhimento, fcQuartaRecolhimento);
 	}
 
 	private static void criarDiasDistribuicaoDistribuidor(Session session) {
