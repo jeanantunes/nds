@@ -375,9 +375,9 @@ CapaPopup.prototype.openDialogUpload = function(event) {
 	var uploadComponente = new CapaUpload(_this.idProdutoEdicao, function(
 			result) {
 		$dialogUpload.dialog('close');
-		if (result.mensagens) {
-			exibirMensagem(result.mensagens.tipoMensagem,
-					result.mensagens.listaMensagens);
+		if (result.listaMensagens) {
+			exibirMensagem(result.tipoMensagem,
+					result.listaMensagens);
 
 		} else {
 			_this.changeStatus(_this.statusEnum.LOADING);

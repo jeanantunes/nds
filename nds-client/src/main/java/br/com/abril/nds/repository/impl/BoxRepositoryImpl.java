@@ -201,7 +201,7 @@ public class BoxRepositoryImpl extends AbstractRepositoryModel<Box,Long> impleme
 		
 		hql.append("select roteirizacao.pdv.cota.numeroCota as numeroCota,");
 		hql.append("case roteirizacao.pdv.cota.pessoa.class when 'F' then roteirizacao.pdv.cota.pessoa.nome when 'J' then roteirizacao.pdv.cota.pessoa.razaoSocial end  as nomeCota,");
-		hql.append("rota.codigoRota as rota,");
+		hql.append("rota.codigoRota ||' - '|| rota.descricaoRota as rota,");
 		hql.append("roteiro.descricaoRoteiro as roteiro");
 		
 		hql.append(" from Roteiro roteiro  join roteiro.rotas rota join rota.roteirizacao roteirizacao ");
