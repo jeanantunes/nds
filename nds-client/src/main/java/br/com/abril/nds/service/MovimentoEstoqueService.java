@@ -8,6 +8,7 @@ import br.com.abril.nds.model.estoque.MovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.service.exception.TipoMovimentoEstoqueInexistenteException;
+import br.com.abril.nds.strategy.importacao.input.HistoricoVendaInput;
 
 public interface MovimentoEstoqueService {
 
@@ -26,5 +27,8 @@ public interface MovimentoEstoqueService {
 								 	 MovimentoEstoqueCota movimentoEstoqueCota);
 	
 	MovimentoEstoque gerarMovimentoEstoque(Long idProdutoEdicao, Long idUsuario, BigDecimal quantidade,TipoMovimentoEstoque tipoMovimentoEstoque);
+
+	void processarRegistroHistoricoVenda(HistoricoVendaInput vendaInput, Long idUsuario);
+
 
 }

@@ -269,7 +269,8 @@ public class ImportacaoDeArquivoProdutoStrategy extends ImportacaoAbstractStrate
 			    
 		  	    produto.setCodigo(input.getCodigoDaPublicacao());
 		  	    produto.setPacotePadrao(input.getPacotePadrao());
-			    produto.setNome(input.getNomeComercial());
+		  	    produto.setNome(input.getNomeDaPublicacao());
+			    produto.setDescricao(input.getNomeDaPublicacao());
 			    produto.setPeriodicidade(periodicidadeProdutoService.getPeriodicidadeProdutoAsArchive(input.getPeriodicidade()));
 
 				produtoRepository.alterar(produto);
@@ -301,7 +302,7 @@ public class ImportacaoDeArquivoProdutoStrategy extends ImportacaoAbstractStrate
 			    produtoEdicao.setCodigo(input.getCodigoDaPublicacao());
 			    produtoEdicao.setDesconto(input.getDesconto());
 			    produtoEdicao.setPacotePadrao(input.getPacotePadrao());
-			    produtoEdicao.setNomeComercial(input.getNomeDaPublicacao());
+			    produtoEdicao.setNomeComercial(input.getNomeComercial());
 			    produtoEdicao.setAtivo(input.getStatusDaPublicacao());
 				
 				produtoEdicaoRepository.alterar(produtoEdicao);

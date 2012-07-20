@@ -23,6 +23,10 @@ public abstract class ImportacaoAbstractStrategy {
 
 	private static final Logger logger = Logger.getLogger(ImportacaoAbstractStrategy.class);
 	
+	protected static final String MENSAGEM_ERRO_PARSE_DADOS = "Parse das informações contidas na linha do arquivo inválida!";
+	
+	protected static final String MENSAGEM_ERRO_FORMATO_DADOS="Formato das informações contidas na linha do arquivo inválida!";
+	
 	/**
 	 * Efetua o processamento do dados referente ao arquivo
 	 * 

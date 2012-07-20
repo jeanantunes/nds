@@ -68,11 +68,11 @@ public class ImportacaoDeArquivoMatrizStrategy extends ImportacaoAbstractStrateg
 			return (EMS0108Input) this.ffm.load(EMS0108Input.class, linhaArquivo);
 		}
 		catch (ParseException e) {
-			throw new ImportacaoException("Parse das informações contidas na linha do arquivo inválida!");	
+			throw new ImportacaoException(MENSAGEM_ERRO_PARSE_DADOS);	
 		}	
 		catch (FixedFormatException ef) {
 			
-			throw new ImportacaoException("Formato das informações contidas na linha do arquivo inválida!");
+			throw new ImportacaoException(MENSAGEM_ERRO_FORMATO_DADOS);
 		}
 	}
 	

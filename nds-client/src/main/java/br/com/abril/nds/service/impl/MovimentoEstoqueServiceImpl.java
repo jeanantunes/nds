@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.exception.ImportacaoException;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Cota;
@@ -35,6 +36,7 @@ import br.com.abril.nds.repository.UsuarioRepository;
 import br.com.abril.nds.service.ControleAprovacaoService;
 import br.com.abril.nds.service.MovimentoEstoqueService;
 import br.com.abril.nds.service.exception.TipoMovimentoEstoqueInexistenteException;
+import br.com.abril.nds.strategy.importacao.input.HistoricoVendaInput;
 import br.com.abril.nds.util.TipoMensagem;
 
 @Service
@@ -359,6 +361,52 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 			
 			estoqueProdutoCotaRepository.alterar(estoqueProdutoCota);
 		}
+	}
+
+	@Override
+	public void processarRegistroHistoricoVenda(HistoricoVendaInput vendaInput,Long idUsuario) {
+		
+		Integer reparte = vendaInput.getQuantidadeRecebidaProduto();
+		Integer encalhe = vendaInput.getQuantidadeDevolvidaProduto();
+		
+		ProdutoEdicao edicao = produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao(
+				vendaInput.getCodigoProduto(), vendaInput.getNumeroEdicao().longValue());
+		
+		if(edicao == null)
+			throw new ImportacaoException("Edição inexistente.");
+			
+		Cota cota = cotaRepository.obterPorNumerDaCota(vendaInput.getNumeroCota());
+		
+		if(cota == null)
+			throw new ImportacaoException("Cota inexistente.");
+		
+		
+		TipoMovimentoEstoque tipoMovimentoEnvioReparte = 
+				tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.ENVIO_JORNALEIRO);
+		
+		TipoMovimentoEstoque tipoMovimentoRecebimentoReparte = 
+				tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.RECEBIMENTO_REPARTE);
+	
+		if(reparte != null && reparte>0) {
+			
+			gerarMovimentoEstoque(edicao.getId(), idUsuario, new BigDecimal(reparte), tipoMovimentoEnvioReparte);
+			
+			gerarMovimentoCota(null, edicao.getId(), cota.getId(), idUsuario, new BigDecimal(reparte), tipoMovimentoRecebimentoReparte);
+		}
+	
+		TipoMovimentoEstoque tipoMovimentoEnvioEncalhe =
+				tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.ENVIO_ENCALHE);
+			
+			TipoMovimentoEstoque tipoMovimentoRecebimentoEncalhe =
+					tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.RECEBIMENTO_ENCALHE);
+					
+		if(encalhe != null && encalhe>0) {
+			
+			gerarMovimentoEstoque(edicao.getId(), idUsuario, new BigDecimal(encalhe), tipoMovimentoRecebimentoEncalhe);
+			
+			gerarMovimentoCota(null, edicao.getId(), cota.getId(), idUsuario, new BigDecimal(encalhe), tipoMovimentoEnvioEncalhe);
+		}
+		
 	}
 
 }
