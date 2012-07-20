@@ -223,6 +223,7 @@ public class PainelProcessamentoController {
 		FiltroProcessosDTO filtro = carregarFiltroProcessos(sortorder, sortname, page, rp);
 		
 		List<ProcessoDTO> resultado = null;
+		
 		try {
 			resultado = painelProcessamentoService.listarProcessos();
 		} catch (Exception e) {
