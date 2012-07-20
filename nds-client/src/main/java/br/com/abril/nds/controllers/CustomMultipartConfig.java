@@ -9,6 +9,7 @@ import br.com.caelum.vraptor.ioc.Component;
 public class CustomMultipartConfig extends DefaultMultipartConfig {
 
 	public long getSizeLimit() {
-        return 50 * 1024 * 1024; // 50MB
+       //Define que é ilimitado o tamanho dos arquivos upload
+		return -1;
     }
 }
