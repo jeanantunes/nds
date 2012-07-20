@@ -28,4 +28,8 @@ public enum GrupoIndicador {
 		
 		return this.ordemExibicao;
 	}
+
+	public String getDescricao() {
+		return descricao;
+	}
 }
