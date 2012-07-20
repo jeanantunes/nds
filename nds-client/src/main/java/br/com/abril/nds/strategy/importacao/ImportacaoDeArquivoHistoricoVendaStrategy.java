@@ -2,8 +2,10 @@ package br.com.abril.nds.strategy.importacao;
 
 import java.io.File;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import br.com.abril.nds.service.MovimentoEstoqueService;
 import br.com.abril.nds.service.vo.RetornoImportacaoArquivoVO;
 import br.com.abril.nds.strategy.importacao.input.HistoricoVendaInput;
 
@@ -22,6 +24,10 @@ public class ImportacaoDeArquivoHistoricoVendaStrategy extends ImportacaoAbstrac
 	private static final int POSICAO_NUMERO_COTA = 3;
 	private static final int POSICAO_QNT_RECEBIDA_PRODUTO = 5;
 	private static final int POSICAO_QNT_DEVOLVIDA_PRODUTO = 8;
+	
+
+	@Autowired
+	private MovimentoEstoqueService movimentoEstoqueService;
 	
 	@Override
 	public RetornoImportacaoArquivoVO processarImportacaoArquivo(File arquivo) {
