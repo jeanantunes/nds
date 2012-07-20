@@ -1,5 +1,7 @@
 package br.com.abril.nds.integracao.ems0112.processor;
 
+import javax.persistence.Column;
+
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -102,15 +104,32 @@ public class EMS0112MessageProcessor extends AbstractRepository implements Messa
 			}
 		} else {
 			//CASO: NAO EXISTE EDITOR CADASTRADO
+		
+			// VERIFICA A EXISTENCIA DA PESSOA
 			
-			//INSERE
+			StringBuilder hql = new StringBuilder();
+			hql.append("SELECT j ");
+			hql.append("FROM PessoaJuridica j ");
+			hql.append("WHERE j.cnpj = :cnpj ");
+			hql.append("AND j.inscricaoEstadual = :inscricaoEstadual ");
+			hql.append("AND j.inscricaoMunicipal = :inscricaoMunicipal ");
 			
-			//PESSOA
-			PessoaJuridica pessoa = new PessoaJuridica();
-			pessoa.setCnpj(input.getCnpj());
-			pessoa.setInscricaoEstadual(input.getInscricaoEstadual());
-			pessoa.setInscricaoMunicipal(input.getInscricaoMunicipal());		
-			getSession().persist(pessoa);
+			Query pj_query = getSession().createQuery(hql.toString());
+			
+			pj_query.setParameter("cnpj", input.getCnpj());
+			pj_query.setParameter("inscricaoEstadual", input.getInscricaoEstadual());
+			pj_query.setParameter("inscricaoMunicipal", input.getInscricaoMunicipal());
+					
+			PessoaJuridica pessoa = (PessoaJuridica) query.uniqueResult();		
+			if (null == pessoa) {			
+				//INSERE
+						
+				//PESSOA
+				pessoa.setCnpj(input.getCnpj());
+				pessoa.setInscricaoEstadual(input.getInscricaoEstadual());
+				pessoa.setInscricaoMunicipal(input.getInscricaoMunicipal());		
+				getSession().persist(pessoa);
+			}
 			
 			//EDITOR
 			Editor ed = new Editor();
