@@ -140,7 +140,7 @@ public class BalanceamentoRecolhimentoAutomaticoStrategy extends AbstractBalance
 
 		List<ProdutoRecolhimentoDTO> produtosRecolhimentoBalanceaveis = 
 			super.obterProdutosRecolhimentoBalanceaveisPorData(
-				dadosRecolhimento.getProdutosRecolhimento(), dataRecolhimentoPrevista);
+				dadosRecolhimento, dataRecolhimentoPrevista);
 
 		BigDecimal expectativaEncalheTotalAtualNaData = super.obterExpectativaEncalheTotal(produtosRecolhimentoNaData);
 
@@ -212,6 +212,11 @@ public class BalanceamentoRecolhimentoAutomaticoStrategy extends AbstractBalance
 			}
 			
 			Date dataBalanceamento = entryExpectativaEncalheTotalDiariaAtual.getKey();
+			
+			if (!dadosRecolhimento.getDatasRecolhimentoFornecedor().contains(dataBalanceamento)) {
+				
+				continue;
+			}
 			
 			BigDecimal expectativaEncalheTotalAtualNaData = entryExpectativaEncalheTotalDiariaAtual.getValue();
 			

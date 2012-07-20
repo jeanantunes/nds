@@ -48,8 +48,8 @@ import br.com.abril.nds.model.planejamento.TipoLancamentoParcial;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.repository.impl.AbstractRepositoryImplTest;
+import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.util.MathUtil;
-import br.com.abril.nds.vo.PeriodoVO;
 
 public class ExpectativaEncalheDataTest extends AbstractRepositoryImplTest {
 
@@ -417,7 +417,7 @@ public class ExpectativaEncalheDataTest extends AbstractRepositoryImplTest {
 				Calendar.FEBRUARY, 2011);
 		Date data23032012 = Fixture.criarData(23,
 				Calendar.MARCH, 2012);
-		PeriodoVO periodo = new PeriodoVO(data22022012, data23032012);
+		Intervalo<Date> periodo = new Intervalo<Date>(data22022012, data23032012);
 
 		Map<Date, BigDecimal> expectativas = lancamentoRepository
 				.obterExpectativasEncalhePorData(

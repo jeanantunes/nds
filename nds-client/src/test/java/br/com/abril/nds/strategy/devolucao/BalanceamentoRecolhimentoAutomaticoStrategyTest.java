@@ -39,7 +39,7 @@ public class BalanceamentoRecolhimentoAutomaticoStrategyTest {
 		
 		Assert.assertNotNull(balanceamentoRecolhimento);
 		
-		Assert.assertFalse(balanceamentoRecolhimento.isMatrizFechada());
+		//Assert.assertFalse(balanceamentoRecolhimento.isMatrizFechada());
 		
 		Assert.assertEquals(
 			dadosRecolhimento.getCapacidadeRecolhimentoDistribuidor(), 
@@ -88,7 +88,7 @@ public class BalanceamentoRecolhimentoAutomaticoStrategyTest {
 		
 		Assert.assertNotNull(balanceamentoRecolhimento);
 		
-		Assert.assertFalse(balanceamentoRecolhimento.isMatrizFechada());
+		//Assert.assertFalse(balanceamentoRecolhimento.isMatrizFechada());
 		
 		Assert.assertEquals(
 			dadosRecolhimento.getCapacidadeRecolhimentoDistribuidor(), 
@@ -131,7 +131,7 @@ public class BalanceamentoRecolhimentoAutomaticoStrategyTest {
 		
 		RecolhimentoDTO dadosRecolhimento = new RecolhimentoDTO();
 		
-		dadosRecolhimento.setBalancearMatriz(true);
+		//dadosRecolhimento.setBalancearMatriz(true);
 		
 		dadosRecolhimento.setCapacidadeRecolhimentoDistribuidor(new BigDecimal("100"));
 		
@@ -241,7 +241,7 @@ public class BalanceamentoRecolhimentoAutomaticoStrategyTest {
 		
 		RecolhimentoDTO dadosRecolhimento = new RecolhimentoDTO();
 		
-		dadosRecolhimento.setBalancearMatriz(true);
+		//dadosRecolhimento.setBalancearMatriz(true);
 		
 		dadosRecolhimento.setCapacidadeRecolhimentoDistribuidor(new BigDecimal("100"));
 		

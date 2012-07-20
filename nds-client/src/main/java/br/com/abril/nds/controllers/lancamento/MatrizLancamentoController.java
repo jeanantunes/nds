@@ -208,7 +208,7 @@ public class MatrizLancamentoController {
 		
 		this.session.setAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_LANCAMENTO, balanceamentoLancamento);
 		
-		this.verificarLancamentosConfirmados(balanceamentoLancamento);
+		this.verificarLancamentosConfirmados();
 		
 		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS,
 			"Balanceamento da matriz de lançamento confirmado com sucesso!"), "result").serialize();
@@ -305,12 +305,10 @@ public class MatrizLancamentoController {
 	/**
 	 * Método que verifica se todos os lançamentos estão confirmados
 	 * para remover a flag de alteração de dados da sessão.
-	 * 
-	 * @param balanceamentoLancamento - objeto balanceamento de lançamento
 	 */
-	private void verificarLancamentosConfirmados(BalanceamentoLancamentoDTO balanceamentoLancamento) {
+	private void verificarLancamentosConfirmados() {
 		
-		List<ConfirmacaoVO> listaConfirmacao = agruparBalanceamento(balanceamentoLancamento);
+		List<ConfirmacaoVO> listaConfirmacao = montarListaDatasConfirmacao();
 		
 		boolean lancamentosConfirmados = true;
 		
@@ -1066,32 +1064,31 @@ public class MatrizLancamentoController {
 	@Post
 	public void obterAgrupamentoDiarioBalanceamento() {
 
-		List<ConfirmacaoVO> confirmacoesVO = new ArrayList<ConfirmacaoVO>();
+		List<ConfirmacaoVO> confirmacoesVO = this.montarListaDatasConfirmacao();
 
-		BalanceamentoLancamentoDTO balanceamentoLancamento =
+		if (confirmacoesVO != null) {
+		
+			result.use(Results.json()).from(confirmacoesVO, "result").serialize();
+		}
+	}
+
+	/**
+	 * Obtem a concentração ordenada e agrupada por data para a Matriz de Lançamento
+	 * 
+	 * @return List<ConfirmacaoVO>: confirmacoesVO
+	 */
+    private List<ConfirmacaoVO> montarListaDatasConfirmacao() {
+		
+    	BalanceamentoLancamentoDTO balanceamentoLancamento =
 			(BalanceamentoLancamentoDTO) this.session.getAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_LANCAMENTO);
 
 		if (balanceamentoLancamento == null
 				|| balanceamentoLancamento.getMatrizLancamento() == null
 				|| balanceamentoLancamento.getMatrizLancamento().isEmpty()) {
 			
-			result.nothing();
-			
-			return;
+			return null;
 		}
-	
-		confirmacoesVO = this.agruparBalanceamento(balanceamentoLancamento);
-
-		result.use(Results.json()).from(confirmacoesVO, "result").serialize();
-	}
-
-	/**
-	 * Obtem a concentração ordenada e agrupada por data para a Matriz de Lançamento
-	 * @param BalanceamentoLancamentoDTO: balanceamentoDTO
-	 * @return List<ConfirmacaoVO>: confirmacoesVO
-	 */
-    private List<ConfirmacaoVO> agruparBalanceamento(BalanceamentoLancamentoDTO balanceamentoDTO){
-		
+    	
 		List<ConfirmacaoVO> confirmacoesVO = new ArrayList<ConfirmacaoVO>();
 
 		Map<Date, Boolean> mapaDatasConfirmacaoOrdenada = new LinkedHashMap<Date, Boolean>();
@@ -1099,7 +1096,7 @@ public class MatrizLancamentoController {
 		boolean confirmado = false;
 
 		for (Map.Entry<Date, List<ProdutoLancamentoDTO>> entry
-				: balanceamentoDTO.getMatrizLancamento().entrySet()) {
+				: balanceamentoLancamento.getMatrizLancamento().entrySet()) {
 			
             List<ProdutoLancamentoDTO> listaProdutosRecolhimento = entry.getValue();
 			
