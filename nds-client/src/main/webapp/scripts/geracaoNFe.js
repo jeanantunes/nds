@@ -10,7 +10,9 @@ function GeracaoNFe() {
 GeracaoNFe.prototype.path = contextPath + '/expedicao/geracaoNFe/';
 GeracaoNFe.prototype.init = function() {
 	var _this = this;
-
+	
+	
+	
 	$("#selectFornecedores").multiselect({
 		selectedList : 6
 	});
@@ -62,7 +64,9 @@ GeracaoNFe.prototype.init = function() {
 			}
 		}
 	});
-
+	
+	var dataEmissao = formatDateToString(new Date());
+	$("#datepickerEmissao").val(dataEmissao);
 };
 GeracaoNFe.prototype.gerar = function() {
 	var params = this.getParams();
@@ -115,15 +119,15 @@ GeracaoNFe.prototype.imprimir = function(fileType) {
 
 GeracaoNFe.prototype.getParams = function() {
 	var params = {
-		"intervaloBox.de" : $("#inputIntervaloBoxDe").val(),
-		"intervaloBox.ate" : $("#inputIntervaloBoxAte").val(),
-		"intervalorCota.de" : $("#inputIntervaloCotaDe").val(),
-		"intervalorCota.ate" : $("#inputIntervaloCotaAte").val(),
-		"intervaloDateMovimento.de" : $("#datepickerIntervaloMovimentoDe")
+		"intervaloBoxDe" : $("#inputIntervaloBoxDe").val(),
+		"intervaloBoxAte" : $("#inputIntervaloBoxAte").val(),
+		"intervalorCotaDe" : $("#inputIntervaloCotaDe").val(),
+		"intervaloCotaAte" : $("#inputIntervaloCotaAte").val(),
+		"intervaloDateMovimentoDe" : $("#datepickerIntervaloMovimentoDe")
 				.val(),
-		"intervaloDateMovimento.ate" : $("#datepickerIntervaloMovimentoAte")
+		"intervaloDateMovimentoAte" : $("#datepickerIntervaloMovimentoAte")
 				.val(),
-		"tipoNotaFiscal" : 1
+		"tipoNotaFiscal" : $("#selectTipoNotaFiscal").val()
 	};
 	var listaFornecedores = $("#selectFornecedores").val();
 	if (listaFornecedores) {
@@ -167,42 +171,42 @@ GeracaoNFe.prototype.gridReaload = function(grid, uri) {
 
 	if ($("#inputIntervaloBoxDe").val().length > 0) {
 		params.push({
-			name : "intervaloBox.de",
+			name : "intervaloBoxDe",
 			value : $("#inputIntervaloBoxDe").val()
 		});
 	}
 
 	if ($("#inputIntervaloBoxAte").val().length > 0) {
 		params.push({
-			name : "intervaloBox.ate",
+			name : "intervaloBoxAte",
 			value : $("#inputIntervaloBoxAte").val()
 		});
 	}
 
 	if ($("#inputIntervaloCotaDe").val().length > 0) {
 		params.push({
-			name : "intervalorCota.de",
-			value : $("#inputIntervaloCotaDe").val()
+			name : "intervaloCotaDe",
+			value : parseInt($("#inputIntervaloCotaDe").val())
 		});
 	}
 
 	if ($("#inputIntervaloCotaAte").val().length > 0) {
 		params.push({
-			name : "intervalorCota.ate",
-			value : $("#inputIntervaloCotaAte").val()
+			name : "intervaloCotaAte",
+			value : parseInt($("#inputIntervaloCotaAte").val())
 		});
 	}
 
 	if ($("#datepickerIntervaloMovimentoDe").val().length > 0) {
 		params.push({
-			name : "intervaloDateMovimento.de",
+			name : "intervaloDateMovimentoDe",
 			value : $("#datepickerIntervaloMovimentoDe").val()
 		});
 	}
 
 	if ($("#datepickerIntervaloMovimentoAte").val().length > 0) {
 		params.push({
-			name : "intervaloDateMovimento.ate",
+			name : "intervaloDateMovimentoAte",
 			value : $("#datepickerIntervaloMovimentoAte").val()
 		});
 	}
