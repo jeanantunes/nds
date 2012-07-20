@@ -6,5 +6,6 @@ public interface PessoaJuridicaRepository extends Repository<PessoaJuridica, Lon
 	
 	PessoaJuridica buscarPorCnpj(String cnpj);
 	PessoaJuridica buscarCnpjPorFornecedor(String nomeFantasia);
+	PessoaJuridica buscarPorId(Long id);
 
 }
