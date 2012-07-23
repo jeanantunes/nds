@@ -166,7 +166,7 @@ GeracaoNFe.prototype.pequisar = function() {
 GeracaoNFe.prototype.gridReaload = function(grid, uri) {
 	var params = [ {
 		name : "tipoNotaFiscal",
-		value : 1
+		value : $("#selectTipoNotaFiscal").val()
 	} ];
 
 	if ($("#inputIntervaloBoxDe").val().length > 0) {

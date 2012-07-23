@@ -3456,6 +3456,7 @@ public class DataLoader {
 								produtoEdicaoVeja1.getPeb()), new Date(),
 						new Date(), BigDecimal.TEN,  StatusLancamento.EXPEDIDO,
 						itemRecebimentoFisico,expedicao, 1);
+		
 		session.save(lancamentoVeja1);
 
 		lancamentoVeja2 = Fixture
