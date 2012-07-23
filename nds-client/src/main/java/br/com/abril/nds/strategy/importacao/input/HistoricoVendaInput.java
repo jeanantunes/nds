@@ -6,7 +6,7 @@ public class HistoricoVendaInput implements Serializable{
 	
 	private static final long serialVersionUID = 1L;
 
-	private String codigoProduto;
+	private Integer codigoProduto;
 	
 	private Integer numeroEdicao;
 	
@@ -37,14 +37,14 @@ public class HistoricoVendaInput implements Serializable{
 	/**
 	 * @return the codigoProduto
 	 */
-	public String getCodigoProduto() {
+	public Integer getCodigoProduto() {
 		return codigoProduto;
 	}
 
 	/**
 	 * @param codigoProduto the codigoProduto to set
 	 */
-	public void setCodigoProduto(String codigoProduto) {
+	public void setCodigoProduto(Integer codigoProduto) {
 		this.codigoProduto = codigoProduto;
 	}
 

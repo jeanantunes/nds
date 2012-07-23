@@ -202,7 +202,7 @@ public class EmissaoCEController {
 	}
 
 	public void modelo1() {
-		
+		/*
 
 		FiltroEmissaoCE filtro = (FiltroEmissaoCE) session.getAttribute(FILTRO_SESSION_ATTRIBUTE);
 		
@@ -213,6 +213,7 @@ public class EmissaoCEController {
 		result.include("cotasEmissao", cotasEmissao);
 		
 		result.include("dadosDistribuidor", dadosDistribuidor);
+		*/
 				
 	}
 	
