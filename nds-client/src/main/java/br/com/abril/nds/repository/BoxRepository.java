@@ -49,24 +49,22 @@ public interface BoxRepository extends Repository<Box,Long> {
 	 * Obtem a quantidade de registros respeitando as restricoes parametrizadas.
 	 * @param codigoBox Código do Box
 	 * @param tipoBox Tipo do Box {@link TipoBox}
-	 * @param postoAvancado se restringe apenas a postos avançados
 	 * @return Quantidade de registros
 	 */
-	public abstract Long quantidade(String codigoBox, TipoBox tipoBox, boolean postoAvancado);
+	public abstract Long quantidade(Integer codigoBox, TipoBox tipoBox);
 	
 	/**
 	 * Busca os Box respeitando as restricoes parametrizadas.
  	 * @param codigoBox Código do Box
 	 * @param tipoBox Tipo do Box {@link TipoBox}
-	 * @param postoAvancado se restringe apenas a postos avançados
 	 * @param orderBy nome do campo para compor a ordenação
 	 * @param ordenacao tipo da ordenação
 	 * @param initialResult resultado inicial
 	 * @param maxResults numero maximo de resultados
 	 * @return
 	 */
-	public abstract List<Box> busca(String codigoBox, TipoBox tipoBox, boolean postoAvancado,
-			String  orderBy, Ordenacao ordenacao, int initialResult, int maxResults);
+	public abstract List<Box> busca(Integer codigoBox, TipoBox tipoBox, String  orderBy,
+			Ordenacao ordenacao, int initialResult, int maxResults);
 	
 	/**
 	 * Verifica a existência do Código do {@link Box}.
@@ -74,7 +72,7 @@ public interface BoxRepository extends Repository<Box,Long> {
 	 * @param id (Opcional) id do {@link Box} a ser ignorado na verificação.
 	 * @return <code>true</code> se o Código ja estiver em uso por um {@link Box} diferente ao do id.
 	 */
-	public abstract boolean hasCodigo(String codigoBox, Long id);
+	public abstract boolean hasCodigo(Integer codigoBox, Long id);
 	
 	/**
 	 * Recupera as {@link Cota} relacionadas suas {@link Rota} e roteiros relacionadas ao {@link Box}

@@ -119,9 +119,9 @@ public class BoxRepositoryImpl extends AbstractRepositoryModel<Box,Long> impleme
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Box> busca(String codigoBox,TipoBox tipoBox, boolean postoAvancado , String  orderBy, Ordenacao ordenacao, int initialResult, int maxResults){
+	public List<Box> busca(Integer codigoBox,TipoBox tipoBox, String  orderBy , Ordenacao ordenacao, int initialResult, int maxResults){
 		
-		Criteria criteria = addRestrictions(codigoBox, tipoBox, postoAvancado);
+		Criteria criteria = addRestrictions(codigoBox, tipoBox);
 		
 		if(Ordenacao.ASC ==  ordenacao){
 			criteria.addOrder(Order.asc(orderBy));
@@ -138,8 +138,8 @@ public class BoxRepositoryImpl extends AbstractRepositoryModel<Box,Long> impleme
 	
 	
 	@Override
-	public Long quantidade(String codigoBox,TipoBox tipoBox, boolean postoAvancado ){
-		Criteria criteria = addRestrictions(codigoBox, tipoBox, postoAvancado);
+	public Long quantidade(Integer codigoBox,TipoBox tipoBox ){
+		Criteria criteria = addRestrictions(codigoBox, tipoBox);
 		criteria.setProjection(Projections.rowCount());
 		
 		
@@ -150,24 +150,19 @@ public class BoxRepositoryImpl extends AbstractRepositoryModel<Box,Long> impleme
 	 * Adiciona as restricoes a consulta.
 	 * @param codigoBox Codigo do box
 	 * @param tipoBox Tipo do Box {@link TipoBox}
-	 * @param postoAvancado Inidica se o Box é um posto avançado.
 	 * @return
 	 */
-	private Criteria addRestrictions(String codigoBox, TipoBox tipoBox,
-			boolean postoAvancado) {
+	private Criteria addRestrictions(Integer codigoBox, TipoBox tipoBox) {
 		Criteria criteria =  getSession().createCriteria(Box.class);	
 		
-		if(!StringUtil.isEmpty(codigoBox)){
+		if( codigoBox != null ){
 			criteria.add(Restrictions.ilike("codigo", codigoBox));
 		}
 		
 		if(tipoBox != null){
 			criteria.add(Restrictions.eq("tipoBox", tipoBox));
-		}
+		}		
 		
-		if(postoAvancado){
-			criteria.add(Restrictions.eq("postoAvancado", true));
-		}
 		return criteria;
 	}
 	
@@ -176,7 +171,7 @@ public class BoxRepositoryImpl extends AbstractRepositoryModel<Box,Long> impleme
 	 * @see br.com.abril.nds.repository.BoxRepository#hasCodigo(java.lang.String, java.lang.Long)
 	 */
 	@Override
-	public boolean hasCodigo(String codigoBox, Long id){
+	public boolean hasCodigo(Integer codigoBox, Long id){
 		Criteria criteria =  getSession().createCriteria(Box.class);	
 		
 		criteria.add(Restrictions.ilike("codigo", codigoBox));

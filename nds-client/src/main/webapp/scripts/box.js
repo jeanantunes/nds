@@ -1,10 +1,9 @@
 
 var boxController = {
 	tipoBoxEnun : {
-		SUPLEMENTAR : 'Suplementar',
-		RECOLHIMENTO : 'Recolhimento',
+		ENCALHE : 'Encalhe',
 		LANCAMENTO : 'Lan&ccedil;amento',
-		NUMEROS_ATRASADOS : 'NA'
+		POSTO_AVANCADO : 'Posto Avan&ccedilado'
 	},
 	box : {},
 	path : contextPath + '/cadastro/box/',
@@ -21,12 +20,8 @@ var boxController = {
 						var acao = '<a href="javascript:;" onclick="boxController.editar(' + idBox + ');"><img src="' + contextPath + '/images/ico_editar.gif" border="0" hspace="5" />';
 						acao += '</a> <a href="javascript:;" onclick="boxController.excluir(' + idBox + ');""><img src="' + contextPath + '/images/ico_excluir.gif" hspace="5" border="0" /></a>';
 
-						value.cell.acao = acao;
-						if(value.cell.tipoBox == 'LANCAMENTO' && value.cell.postoAvancado) {
-							value.cell.tipoBox = 'Posto Avan&ccedil;ado';
-						} else {
-							value.cell.tipoBox = boxController.tipoBoxEnun[value.cell.tipoBox];
-						}
+						value.cell.acao = acao;						
+						value.cell.tipoBox = boxController.tipoBoxEnun[value.cell.tipoBox];				
 						
 						value.cell.codigo = '<a href="javascript:;" onclick="boxController.detalhe(' + idBox + ');">'+value.cell.codigo+'</a>';
 					});
@@ -78,9 +73,6 @@ var boxController = {
 			}, {
 				name : "tipoBox",
 				value : $("#pesquisaTipoBox").val()
-			}, {
-				name : "postoAvancado",
-				value : false
 			}]
 		});
 
@@ -94,9 +86,6 @@ var boxController = {
 			}, {
 				name : "tipoBox",
 				value : tipoBox
-			}, {
-				name : "postoAvancado",
-				value : false
 			}],
 			newp:1
 		});
@@ -167,13 +156,11 @@ var boxController = {
 		$("#boxCodigo").val(this.box.codigo);
 		$("#boxNome").val(this.box.nome);
 		$("#boxTipoBox").val(this.box.tipoBox);
-		$("#boxPostoAvancado").attr("checked", this.box.postoAvancado);
 	},
 	getData : function() {		
 		this.box.codigo = $("#boxCodigo").val();
 		this.box.nome = $("#boxNome").val();
 		this.box.tipoBox = $("#boxTipoBox").val();
-		this.box.postoAvancado = ($("#boxPostoAvancado").attr("checked") == "checked");
 	},
 	salvar : function(dialog) {
 		this.getData();

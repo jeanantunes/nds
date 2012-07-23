@@ -167,7 +167,7 @@ public class EmissaoCEController {
 				
 		for(Box box : listaBoxes){
 			
-			boxes.add(new ItemDTO<Long, String>(box.getId(),box.getCodigo()));
+			boxes.add(new ItemDTO<Long, String>(box.getId(),box.getCodigo() + " - " + box.getNome()));
 		}
 		
 		return boxes;			
