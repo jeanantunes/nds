@@ -2,6 +2,7 @@ package br.com.abril.nds.repository;
 
 import br.com.abril.nds.model.cadastro.Cheque;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantia;
+import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaFiador;
 
 /**
  * 
@@ -44,4 +45,6 @@ public interface CotaGarantiaRepository extends Repository<CotaGarantia,Long>{
 	 * @return 
 	 */
 	public abstract Cheque getCheque(long idCheque);
+
+	CotaGarantiaFiador obterCotaGarantiaFiadorPorIdFiador(Long idFiador);
 }

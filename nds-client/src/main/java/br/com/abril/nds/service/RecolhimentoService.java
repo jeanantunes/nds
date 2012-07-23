@@ -3,6 +3,7 @@ package br.com.abril.nds.service;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import br.com.abril.nds.dto.BalanceamentoRecolhimentoDTO;
 import br.com.abril.nds.dto.ProdutoRecolhimentoDTO;
@@ -46,8 +47,14 @@ public interface RecolhimentoService {
 	 * 
 	 * @param matrizRecolhimento - matriz de recolhimento
 	 * @param numeroSemana - número da semana
+	 * @param datasConfirmadas - datas para confirmação
 	 * @param usuario - usuário
+	 * 
+	 * @return matriz de recolhimento confirmada
 	 */
-	void confirmarBalanceamentoRecolhimento(Map<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimento,
-											Integer numeroSemana, Usuario usuario);
+	TreeMap<Date, List<ProdutoRecolhimentoDTO>> confirmarBalanceamentoRecolhimento(
+											Map<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimento,
+											Integer numeroSemana,
+											List<Date> datasConfirmadas,
+											Usuario usuario);
 }

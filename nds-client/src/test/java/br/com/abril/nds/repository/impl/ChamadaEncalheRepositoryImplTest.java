@@ -5,8 +5,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
 
 import junit.framework.Assert;
 
@@ -200,24 +198,6 @@ public class ChamadaEncalheRepositoryImplTest extends AbstractRepositoryImplTest
 				TipoChamadaEncalhe.MATRIZ_RECOLHIMENTO);
 		
 		save(chamadaEncalheQuatroRodas);
-	}
-	
-	@Test
-	public void testObterListaChamaEncalheCota(){
-		
-		Set<Long> idsLancamento = new TreeSet<Long>();
-		
-		idsLancamento.add(chamadaEncalheVeja.getId());
-		idsLancamento.add(chamadaEncalheQuatroRodas.getId());
-		
-		List<ChamadaEncalhe> listaChamadaEncalhe =
-			chamadaEncalheRepository.obterPorPeriodoTipoChamadaEncalhe(new Date(),
-																	   new Date(),
-																	   TipoChamadaEncalhe.MATRIZ_RECOLHIMENTO);
-		
-		Assert.assertNotNull(listaChamadaEncalhe);
-		
-		Assert.assertTrue(listaChamadaEncalhe.size() == idsLancamento.size());
 	}
 	
 	@Test

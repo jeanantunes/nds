@@ -50,7 +50,7 @@ import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.repository.impl.AbstractRepositoryImplTest;
 import br.com.abril.nds.util.DateUtil;
-import br.com.abril.nds.vo.PeriodoVO;
+import br.com.abril.nds.util.Intervalo;
 
 public class BalanceamentoRecolhimentoTest extends AbstractRepositoryImplTest {
 	
@@ -420,7 +420,7 @@ public class BalanceamentoRecolhimentoTest extends AbstractRepositoryImplTest {
 				Calendar.FEBRUARY, 2011);
 		Date data23032012 = Fixture.criarData(23,
 				Calendar.MARCH, 2012);
-		PeriodoVO periodo = new PeriodoVO(data22022012, data23032012);
+		Intervalo<Date> periodo = new Intervalo<Date>(data22022012, data23032012);
 
 		List<ProdutoRecolhimentoDTO> resumos = lancamentoRepository
 				.obterBalanceamentoRecolhimento(periodo,

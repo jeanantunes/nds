@@ -186,10 +186,10 @@ public class ImportacaoDeArquivoProdutoStrategy extends ImportacaoAbstractStrate
 	  		    editor = new Editor();
 		  		
 	  		    PessoaJuridica pj = new PessoaJuridica();
-	  		    pj.setNomeFantasia("Editor");
-	  		    pj.setRazaoSocial("Editor");
+	  		    pj.setNomeFantasia("Editor_"+input.getCodigoDoEditor());
+	  		    pj.setRazaoSocial("Editor_"+input.getCodigoDoEditor());
 		        pessoaRepository.adicionar(pj);
-		  	    editor.setNome("Editor");
+		  	    editor.setNome("Editor_"+input.getCodigoDoEditor());
 		  	    editor.setAtivo(true);
 		  	    editor.setOrigemInterface(false);
 		  	    editor.setPessoaJuridica(pj);
@@ -203,7 +203,7 @@ public class ImportacaoDeArquivoProdutoStrategy extends ImportacaoAbstractStrate
 	  		if (tipoProduto==null){
 	  			tipoProduto = new TipoProduto();
 	  			
-	  		    tipoProduto.setDescricao("IMPORTAÇÃO");
+	  		    tipoProduto.setDescricao("Tipo_Publicacao_"+input.getTipoDePublicacao());
 	  		    tipoProduto.setGrupoProduto(GrupoProduto.OUTROS);
 	  		    tipoProduto.setNcm(ncm);
 	  		    
@@ -223,8 +223,8 @@ public class ImportacaoDeArquivoProdutoStrategy extends ImportacaoAbstractStrate
 	  			tipoFornecedorRepository.adicionar(tipoFornecedor);
 	  			
 	  		    PessoaJuridica pj = new PessoaJuridica();
-	  		    pj.setNomeFantasia("Fornecedor");
-	  		    pj.setRazaoSocial("Fornecedor");
+	  		    pj.setNomeFantasia("Fornecedor_"+input.getCodigoFornecedorPublic());
+	  		    pj.setRazaoSocial("Fornecedor_"+input.getCodigoFornecedorPublic());
 		        pessoaRepository.adicionar(pj);
 		        
 		        fornecedor.setInicioAtividade(Calendar.getInstance().getTime());
@@ -239,7 +239,7 @@ public class ImportacaoDeArquivoProdutoStrategy extends ImportacaoAbstractStrate
 		        fornecedorRepository.adicionar(fornecedor);
 	  		}
 			
-			Produto produto = produtoRepository.obterProdutoPorNomeProdutoOuCodigo(input.getNomeComercial(),input.getCodigoDaPublicacao());
+			Produto produto = produtoRepository.obterProdutoPorNomeProdutoOuCodigo(input.getNomeDaPublicacao(),input.getCodigoDaPublicacao());
 			if (produto==null){
 				produto = new Produto();
 				
@@ -252,8 +252,8 @@ public class ImportacaoDeArquivoProdutoStrategy extends ImportacaoAbstractStrate
 		  	    Set<Fornecedor> fornecedores = new HashSet<Fornecedor>();
 		  	    fornecedores.add(fornecedor);
 		  	    produto.setFornecedores(fornecedores);
-			    input.getCodigoFornecedorPublic();
-		  	    
+			    
+			    produto.setCodigoContexto(Integer.parseInt(input.getContextoFornecedorProduto()));
 		  	    produto.setCodigo(input.getCodigoDaPublicacao());
 		  	    produto.setPacotePadrao(input.getPacotePadrao());
 			    produto.setNome(input.getNomeDaPublicacao());
@@ -267,6 +267,7 @@ public class ImportacaoDeArquivoProdutoStrategy extends ImportacaoAbstractStrate
 			    produto.setTipoProduto(tipoProduto);
 		  	    produto.setEditor(editor);
 			    
+		  	    produto.setCodigoContexto(Integer.parseInt(input.getContextoFornecedorProduto()));
 		  	    produto.setCodigo(input.getCodigoDaPublicacao());
 		  	    produto.setPacotePadrao(input.getPacotePadrao());
 		  	    produto.setNome(input.getNomeDaPublicacao());
@@ -276,7 +277,7 @@ public class ImportacaoDeArquivoProdutoStrategy extends ImportacaoAbstractStrate
 				produtoRepository.alterar(produto);
 			}
 			
-			ProdutoEdicao produtoEdicao =produtoEdicaoRepository.obterProdutoEdicaoPorProdutoEEdicaoOuNome(produto, input.getEdicao(),input.getNomeDaPublicacao());
+			ProdutoEdicao produtoEdicao =produtoEdicaoRepository.obterProdutoEdicaoPorProdutoEEdicaoOuNome(produto, input.getEdicao(),input.getNomeComercial());
 			if (produtoEdicao==null){
 				produtoEdicao = new ProdutoEdicao();
 				

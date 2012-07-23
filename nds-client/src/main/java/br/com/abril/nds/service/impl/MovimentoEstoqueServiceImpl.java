@@ -380,33 +380,102 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 		if(cota == null)
 			throw new ImportacaoException("Cota inexistente.");
 		
+		persistirRegistroVendaHistoricoReparte(idUsuario, reparte, edicao, cota);
 		
-		TipoMovimentoEstoque tipoMovimentoEnvioReparte = 
-				tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.ENVIO_JORNALEIRO);
-		
-		TipoMovimentoEstoque tipoMovimentoRecebimentoReparte = 
-				tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.RECEBIMENTO_REPARTE);
+		persistirRegistroVendaHistoricoEncalhe(idUsuario, encalhe, edicao, cota);
 	
+	}
+	
+	/**
+	 * Persistem os dados de reparte de histórico de vendas 
+	 * 
+	 * @param idUsuario
+	 * @param reparte
+	 * @param edicao
+	 * @param cota
+	 */
+	private void persistirRegistroVendaHistoricoReparte(Long idUsuario, Integer reparte, ProdutoEdicao edicao, Cota cota){
+		
 		if(reparte != null && reparte>0) {
+			
+			TipoMovimentoEstoque tipoMovimentoEnvioReparte = 
+					tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.ENVIO_JORNALEIRO);
+			
+			if(tipoMovimentoEnvioReparte == null){
+				
+				tipoMovimentoEnvioReparte = new TipoMovimentoEstoque();
+				tipoMovimentoEnvioReparte.setAprovacaoAutomatica(true);
+				tipoMovimentoEnvioReparte.setDescricao("Envio a Jornaleiro");
+				tipoMovimentoEnvioReparte.setIncideDivida(true);
+				tipoMovimentoEnvioReparte.setGrupoMovimentoEstoque(GrupoMovimentoEstoque.ENVIO_JORNALEIRO);
+				
+				tipoMovimentoEstoqueRepository.adicionar(tipoMovimentoEnvioReparte);
+			}
+			
+			TipoMovimentoEstoque tipoMovimentoRecebimentoReparte = 
+					tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.RECEBIMENTO_REPARTE);
+		
+			if(tipoMovimentoRecebimentoReparte == null){
+				
+				tipoMovimentoRecebimentoReparte  = new TipoMovimentoEstoque();
+				tipoMovimentoRecebimentoReparte.setAprovacaoAutomatica(true);
+				tipoMovimentoRecebimentoReparte.setDescricao("Recebimento Reparte");
+				tipoMovimentoRecebimentoReparte.setIncideDivida(true);
+				tipoMovimentoRecebimentoReparte.setGrupoMovimentoEstoque(GrupoMovimentoEstoque.RECEBIMENTO_REPARTE);
+				
+				tipoMovimentoEstoqueRepository.adicionar(tipoMovimentoRecebimentoReparte);
+			}
 			
 			gerarMovimentoEstoque(edicao.getId(), idUsuario, new BigDecimal(reparte), tipoMovimentoEnvioReparte);
 			
 			gerarMovimentoCota(null, edicao.getId(), cota.getId(), idUsuario, new BigDecimal(reparte), tipoMovimentoRecebimentoReparte);
 		}
+	}
 	
-		TipoMovimentoEstoque tipoMovimentoEnvioEncalhe =
-				tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.ENVIO_ENCALHE);
+	/**
+	 * Persistem os dados de encalhe de histórico de vendas 
+	 * 
+	 * @param idUsuario
+	 * @param encalhe
+	 * @param edicao
+	 * @param cota
+	 */
+	private void persistirRegistroVendaHistoricoEncalhe(Long idUsuario, Integer encalhe, ProdutoEdicao edicao, Cota cota){
+		
+		if(encalhe != null && encalhe>0) {
+			
+			TipoMovimentoEstoque tipoMovimentoEnvioEncalhe =
+					tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.ENVIO_ENCALHE);
+			
+			if(tipoMovimentoEnvioEncalhe == null){
+				
+				tipoMovimentoEnvioEncalhe = new TipoMovimentoEstoque();
+				tipoMovimentoEnvioEncalhe.setAprovacaoAutomatica(true);
+				tipoMovimentoEnvioEncalhe.setDescricao("Envio Encalhe - Estoque");
+				tipoMovimentoEnvioEncalhe.setIncideDivida(true);
+				tipoMovimentoEnvioEncalhe.setGrupoMovimentoEstoque(GrupoMovimentoEstoque.ENVIO_ENCALHE);
+				
+				tipoMovimentoEstoqueRepository.adicionar(tipoMovimentoEnvioEncalhe);
+			}
 			
 			TipoMovimentoEstoque tipoMovimentoRecebimentoEncalhe =
-					tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.RECEBIMENTO_ENCALHE);
-					
-		if(encalhe != null && encalhe>0) {
+						tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.RECEBIMENTO_ENCALHE);
+			
+			if(tipoMovimentoRecebimentoEncalhe  == null){
+				
+				tipoMovimentoRecebimentoEncalhe = new TipoMovimentoEstoque();
+				tipoMovimentoRecebimentoEncalhe.setAprovacaoAutomatica(true);
+				tipoMovimentoRecebimentoEncalhe.setDescricao("Recebimento Encalhe");
+				tipoMovimentoRecebimentoEncalhe.setIncideDivida(true);
+				tipoMovimentoRecebimentoEncalhe.setGrupoMovimentoEstoque(GrupoMovimentoEstoque.RECEBIMENTO_ENCALHE);
+				
+				tipoMovimentoEstoqueRepository.adicionar(tipoMovimentoRecebimentoEncalhe);
+			}
 			
 			gerarMovimentoEstoque(edicao.getId(), idUsuario, new BigDecimal(encalhe), tipoMovimentoRecebimentoEncalhe);
 			
 			gerarMovimentoCota(null, edicao.getId(), cota.getId(), idUsuario, new BigDecimal(encalhe), tipoMovimentoEnvioEncalhe);
 		}
-		
 	}
 
 }
