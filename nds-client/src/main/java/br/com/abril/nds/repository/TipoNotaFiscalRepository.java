@@ -20,4 +20,12 @@ public interface TipoNotaFiscalRepository extends Repository<TipoNotaFiscal, Lon
 
 	public Long obterQuantidadeTiposNotasFiscais(String cfop, String tipoNota, TipoAtividade tipoAtividade);
 	
+	/**
+	 * Obtém tipos de notas fiscais de cotas não contribuintes por tipo de atividade parametrizdo.
+	 * 
+	 * @param tipoAtividade Mercantil ou Prestador de Serviços
+	 * @return lista tipo nota fiscal
+	 */
+	public List<TipoNotaFiscal> obterTiposNotasFiscaisCotasNaoContribuintesPor(TipoAtividade tipoAtividade);
+	
 }

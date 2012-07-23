@@ -1,11 +1,13 @@
 package br.com.abril.nds.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.model.cadastro.TipoAtividade;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
 import br.com.abril.nds.repository.SerieRepository;
@@ -62,6 +64,7 @@ public class TipoNotaFiscalServiceImpl implements TipoNotaFiscalService {
 		return tipoNotaFiscalRepository.obterQuantidadeTiposNotasFiscais(cfop, tipoNota, tipoAtividade);
 	}
 
+
 	/**
 	 * 
 	 */
@@ -69,6 +72,30 @@ public class TipoNotaFiscalServiceImpl implements TipoNotaFiscalService {
 	@Transactional
 	public Long proximoNumeroDocumentoFiscal(int serie) {		
 		return serieRepository.next(serie);
+	}
+
+	/* (non-Javadoc)
+	 * @see br.com.abril.nds.service.TipoNotaFiscalService#carregarComboTiposNotasFiscaisPorFornecedores(java.util.List)
+	 */
+	@Override
+	@Transactional
+	public List<ItemDTO<Long, String>> carregarComboTiposNotasFiscais(TipoAtividade tipoAtividade) {
+			
+			List<TipoNotaFiscal> listaTipoNotaFiscal = this.tipoNotaFiscalRepository.obterTiposNotasFiscaisCotasNaoContribuintesPor(tipoAtividade);
+			
+			List<ItemDTO<Long, String>> listaItensNotasFiscais = new ArrayList<ItemDTO<Long,String>>();
+			
+			for (TipoNotaFiscal tipoNotaFiscal : listaTipoNotaFiscal) {
+				
+				ItemDTO<Long, String> itemNotaFiscal = new ItemDTO<Long, String>();
+				
+				itemNotaFiscal.setKey(tipoNotaFiscal.getId());
+				itemNotaFiscal.setValue(tipoNotaFiscal.getDescricao());
+				
+				listaItensNotasFiscais.add(itemNotaFiscal);
+			}
+			
+		return listaItensNotasFiscais;
 	}
 
 }

@@ -269,5 +269,6 @@ public class NotaFiscalEntradaRepositoryImpl extends AbstractRepositoryModel<Not
 		}
 		
 		return query.list();
-	}	
+	}
+	
 }

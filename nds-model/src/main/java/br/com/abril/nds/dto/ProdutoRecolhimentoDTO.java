@@ -427,4 +427,18 @@ public class ProdutoRecolhimentoDTO implements Serializable {
 		this.dataRecolhimentoDistribuidor = dataRecolhimentoDistribuidor;
 	}
 
+	/**
+	 * @return the balanceamentoSalvo
+	 */
+	public boolean isBalanceamentoSalvo() {
+		return StatusLancamento.EM_BALANCEAMENTO_RECOLHIMENTO.equals(statusLancamento);
+	}
+
+	/**
+	 * @return the balanceamentoConfirmado
+	 */
+	public boolean isBalanceamentoConfirmado() {
+		return StatusLancamento.BALANCEADO_RECOLHIMENTO.equals(statusLancamento);
+	}
+
 }

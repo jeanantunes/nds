@@ -42,6 +42,7 @@ import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.util.Intervalo;
+import br.com.abril.nds.util.StringUtil;
 
 /**
  * Classe de implementação referente ao acesso a dados da entidade
@@ -1050,12 +1051,17 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 		Criteria criteria = super.getSession().createCriteria(Cota.class);
 		criteria.createAlias("box", "box");
 		criteria.setProjection(Projections.id());
-		if (intervaloCota != null) {
-			criteria.add(Restrictions.between("numeroCota", intervaloCota.getDe(),
-					intervaloCota.getAte()));
+		if (intervaloCota != null && intervaloCota.getDe() != null) {
+			
+			if (intervaloCota.getAte() != null) {
+				criteria.add(Restrictions.between("numeroCota", intervaloCota.getDe(),
+						intervaloCota.getAte()));
+			} else {
+				criteria.add(Restrictions.eq("numeroCota", intervaloCota.getDe()));
+			}
 		}
 		
-		if(intervaloBox != null){
+		if(intervaloBox != null && !StringUtil.isEmpty(intervaloBox.getDe()) &&  !StringUtil.isEmpty(intervaloBox.getAte())){
 			criteria.add(Restrictions.between("box.codigo", intervaloBox.getDe(),
 					intervaloBox.getAte()));
 		}

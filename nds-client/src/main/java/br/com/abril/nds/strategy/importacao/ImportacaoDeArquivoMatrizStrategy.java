@@ -1,15 +1,9 @@
 package br.com.abril.nds.strategy.importacao;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.Date;
-import java.util.Scanner;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -35,9 +29,7 @@ import com.ancientprogramming.fixedformat4j.format.ParseException;
  *
  */
 @Component("importacaoDeArquivoMatrizStrategy")
-public class ImportacaoDeArquivoMatrizStrategy implements ImportacaoArquivoStrategy {
-	
-	private static final Logger logger = Logger.getLogger(ImportacaoDeArquivoMatrizStrategy.class);
+public class ImportacaoDeArquivoMatrizStrategy extends ImportacaoAbstractStrategy implements ImportacaoArquivoStrategy {
 	
 	@Autowired
 	private FixedFormatManager ffm;
@@ -51,57 +43,13 @@ public class ImportacaoDeArquivoMatrizStrategy implements ImportacaoArquivoStrat
 	@Override
 	public RetornoImportacaoArquivoVO processarImportacaoArquivo(File arquivo) {
 		
-		FileReader in = null;
-		try {
-			in = new FileReader(arquivo);
-		} catch (FileNotFoundException ex) {
-			logger.fatal("Erro na leitura de arquivo", ex);
-			throw new ImportacaoException(ex.getMessage());
-		}
-		
-		Scanner scanner = new Scanner(in);
-		int linhaArquivo = 0;
-
-		while (scanner.hasNextLine()) {
-
-			String linha = scanner.nextLine();
-			linhaArquivo++;
-			
-			// Ignora linha vazia e aquele caracter estranho em formato de seta para direita
-			if (StringUtils.isEmpty(linha) ||  ((int) linha.charAt(0)  == 26) ) {
-				continue;
-			} 
-			
-			try {
-				
-				EMS0108Input  input = parseDados(linha);
-				
-				processarDados(input);
-				
-			} catch (ImportacaoException e) {
-				
-				RetornoImportacaoArquivoVO retorno = new RetornoImportacaoArquivoVO(new String[]{e.getMessage()},linhaArquivo,linha,false);
-				logger.error(retorno.toString());
-				return retorno; 
-			}
-		}
-		
-		try {
-			in.close();
-		} catch (IOException e) {
-			logger.fatal("Erro na leitura de arquivo", e);
-			throw new ImportacaoException(e.getMessage());
-		}
-		
-		return new RetornoImportacaoArquivoVO(true) ;
+		return processarArquivo(arquivo);
 	}
 	
 	@Override
 	public void processarImportacaoDados(Object input) {
 		
-		EMS0108Input  inputDados = (EMS0108Input) input;
-		
-		processarDados(inputDados);
+		processarDados(input);
 	}
 	
 	/**
@@ -112,18 +60,19 @@ public class ImportacaoDeArquivoMatrizStrategy implements ImportacaoArquivoStrat
 	 * 
 	 * @return EMS0108Input
 	 */
-	private EMS0108Input parseDados(String linhaArquivo){
+	@Override
+	protected EMS0108Input parseDados(String linhaArquivo){
 		
 		try{
 			
 			return (EMS0108Input) this.ffm.load(EMS0108Input.class, linhaArquivo);
 		}
 		catch (ParseException e) {
-			throw new ImportacaoException("Parse das informações contidas na linha do arquivo inválida!");	
+			throw new ImportacaoException(MENSAGEM_ERRO_PARSE_DADOS);	
 		}	
 		catch (FixedFormatException ef) {
 			
-			throw new ImportacaoException("Formato das informações contidas na linha do arquivo inválida!");
+			throw new ImportacaoException(MENSAGEM_ERRO_FORMATO_DADOS);
 		}
 	}
 	
@@ -133,7 +82,10 @@ public class ImportacaoDeArquivoMatrizStrategy implements ImportacaoArquivoStrat
 	 * 
 	 * @param input - input com os dados para processamento
 	 */
-	private void processarDados(EMS0108Input input){
+	@Override
+	protected void processarDados(Object inputDados) {
+		
+		EMS0108Input  input = (EMS0108Input) inputDados;
 		
 		ProdutoEdicao produtoEdicao = 
 				produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao(input.getCodigoPublicacao().toString(), 

@@ -1,0 +1,596 @@
+.dados,.dadosFiltro {
+	display: none;
+}
+
+.ui-accordion .ui-accordion-content-active {
+	width: 295px !important;
+}
+
+#dialog-novo,#dialog-alterar,#dialog-excluir {
+	display: none;
+	font-size: 12px;
+}
+
+.box_field {
+	width: 200px;
+}
+
+.active {
+	display: inherit;
+}
+
+ul#map {
+	display: block;
+	margin: 0;
+	padding: 0;
+	width: 550px;
+	height: 560px;
+	background-image: url('../mapa/img/mapa.jpg');
+	float: left;
+	cursor: pointer;
+}
+
+ul#map li {
+	display: block;
+	padding: 0;
+	position: absolute;
+}
+
+li#crs {
+	margin-top: 450px;
+	margin-left: 239px;
+}
+
+li#csc {
+	margin-top: 434px;
+	margin-left: 284px;
+}
+
+li#cpr {
+	margin-top: 386px;
+	margin-left: 273px;
+}
+
+li#csp {
+	margin-top: 347px;
+	margin-left: 296px;
+	z-index: 9999;
+}
+
+li#cms {
+	margin-top: 313px;
+	margin-left: 231px;
+}
+
+li#crj {
+	margin-top: 367px;
+	margin-left: 399px;
+	z-index: 9999;
+}
+
+li#ces {
+	margin-top: 326px;
+	margin-left: 437px;
+	z-index: 9999;
+}
+
+li#cmg {
+	margin-top: 273px;
+	margin-left: 320px;
+	z-index: 9998;
+}
+
+li#cgo {
+	margin-top: 254px;
+	margin-left: 291px;
+	z-index: 9999;
+}
+
+li#cba {
+	margin-top: 199px;
+	margin-left: 383px;
+}
+
+li#cmt {
+	margin-top: 180px;
+	margin-left: 180px;
+}
+
+li#cro {
+	margin-top: 189px;
+	margin-left: 110px;
+	z-index: 9998;
+}
+
+li#cac {
+	margin-top: 188px;
+	margin-left: 9px;
+}
+
+li#cam {
+	margin-top: 53px;
+	margin-left: 17px;
+}
+
+li#crr {
+	margin-top: 9px;
+	margin-left: 134px;
+}
+
+li#cpa {
+	margin-top: 44px;
+	margin-left: 214px;
+}
+
+li#cap {
+	margin-top: 23px;
+	margin-left: 273px;
+}
+
+li#cma {
+	margin-top: 97px;
+	margin-left: 361px;
+	z-index: 9997;
+}
+
+li#cto {
+	margin-top: 148px;
+	margin-left: 326px;
+}
+
+li#cse {
+	margin-top: 215px;
+	margin-left: 495px;
+}
+
+li#cal {
+	margin-top: 207px;
+	margin-left: 497px;
+}
+
+li#cpe {
+	margin-top: 182px;
+	margin-left: 457px;
+}
+
+li#cpb {
+	margin-top: 166px;
+	margin-left: 491px;
+}
+
+li#crn {
+	margin-top: 152px;
+	margin-left: 492px;
+}
+
+li#cce {
+	margin-top: 122px;
+	margin-left: 459px;
+}
+
+li#cpi {
+	margin-top: 123px;
+	margin-left: 391px;
+	z-index: 9999;
+}
+
+ul#map li a {
+	display: block;
+	text-decoration: none;
+	position: absolute;
+}
+
+#map div img {
+	vertical-align: middle;
+	display: inline;
+}
+
+div#rs {
+	width: 95px;
+	height: 90px;
+}
+
+div#sc {
+	width: 70px;
+	height: 46px;
+}
+
+div#pr {
+	width: 86px;
+	height: 57px;
+}
+
+div#sp {
+	width: 113px;
+	height: 76px;
+}
+
+div#ms {
+	width: 92px;
+	height: 96px;
+}
+
+div#rj {
+	width: 51px;
+	height: 35px;
+}
+
+div#es {
+	width: 33px;
+	height: 48px;
+}
+
+div#mg {
+	width: 152px;
+	height: 122px;
+}
+
+div#go {
+	width: 100px;
+	height: 91px;
+}
+
+div#ba {
+	width: 123px;
+	height: 136px;
+}
+
+div#mt {
+	width: 155px;
+	height: 145px;
+}
+
+div#ro {
+	width: 94px;
+	height: 80px;
+}
+
+div#ac {
+	width: 101px;
+	height: 50px;
+}
+
+div#am {
+	width: 234px;
+	height: 166px;
+}
+
+div#rr {
+	width: 83px;
+	height: 90px;
+}
+
+div#pa {
+	width: 180px;
+	height: 170px;
+}
+
+div#ap {
+	width: 68px;
+	height: 73px;
+}
+
+div#ma {
+	width: 50px;
+	height: 123px;
+}
+
+div#to {
+	width: 67px;
+	height: 124px;
+}
+
+div#se {
+	width: 26px;
+	height: 32px;
+}
+
+div#al {
+	width: 44px;
+	height: 24px;
+}
+
+div#pe {
+	width: 88px;
+	height: 30px;
+}
+
+div#pb {
+	width: 53px;
+	height: 34px;
+}
+
+div#rn {
+	width: 56px;
+	height: 28px;
+}
+
+div#ce {
+	width: 48px;
+	height: 70px;
+}
+
+div#pi {
+	width: 77px;
+	height: 108px;
+}
+
+div#rs:hover,div#rs:active {
+	background-image: url('../mapa/img/mapa/rs.png');
+}
+
+div#sc:hover,div#sc:active {
+	background-image: url('../mapa/img/mapa/sc.png');
+}
+
+div#pr:hover,div#pr:active {
+	background-image: url('../mapa/img/mapa/pr.png');
+}
+
+div#sp:hover,div#sp:active {
+	background-image: url('../mapa/img/mapa/sp.gif');
+}
+
+div#ms:hover,div#ms:active {
+	background-image: url('../mapa/img/mapa/ms.gif');
+}
+
+div#rj:hover,div#rj:active {
+	background-image: url('../mapa/img/mapa/rj.gif');
+}
+
+div#es:hover,div#es:active {
+	background-image: url('../mapa/img/mapa/es.gif');
+}
+
+div#mg:hover,div#mg:active {
+	background-image: url('../mapa/img/mapa/mg.gif');
+}
+
+div#go:hover,div#go:active {
+	background-image: url('../mapa/img/mapa/go.gif');
+}
+
+div#ba:hover,div#ba:active {
+	background-image: url('../mapa/img/mapa/ba.gif');
+}
+
+div#mt:hover,div#mt:active {
+	background-image: url('../mapa/img/mapa/mt.gif');
+}
+
+div#ro:hover,div#ro:active {
+	background-image: url('../mapa/img/mapa/ro.gif');
+}
+
+div#ac:hover,div#ac:active {
+	background-image: url('../mapa/img/mapa/ac.gif');
+}
+
+div#am:hover,div#am:active {
+	background-image: url('../mapa/img/mapa/am.gif');
+}
+
+div#rr:hover,div#rr:active {
+	background-image: url('../mapa/img/mapa/rr.gif');
+}
+
+div#pa:hover,div#pa:active {
+	background-image: url('../mapa/img/mapa/pa.gif');
+}
+
+div#ap:hover,div#ap:active {
+	background-image: url('../mapa/img/mapa/ap.gif');
+}
+
+div#ma:hover,div#ma:active {
+	background-image: url('../mapa/img/mapa/ma.gif');
+}
+
+div#to:hover,div#to:active {
+	background-image: url('../mapa/img/mapa/to.gif');
+}
+
+div#se:hover,div#se:active {
+	background-image: url('../mapa/img/mapa/se.gif');
+}
+
+div#al:hover,div#al:active {
+	background-image: url('../mapa/img/mapa/al.gif');
+}
+
+div#pe:hover,div#pe:active {
+	background-image: url('../mapa/img/mapa/pe.gif');
+}
+
+div#pb:hover,div#pb:active {
+	background-image: url('../mapa/img/mapa/pb.gif');
+}
+
+div#rn:hover,div#rn:active {
+	background-image: url('../mapa/img/mapa/rn.gif');
+}
+
+div#ce:hover,div#ce:active {
+	background-image: url('../mapa/img/mapa/ce.gif');
+}
+
+div#pi:hover,div#pi:active {
+	background-image: url('../mapa/img/mapa/pi.gif');
+}
+
+.rsActive {
+	background-image: url('../mapa/img/mapa/rs.png');
+	width: 95px;
+	height: 90px;
+}
+
+.scActive {
+	background-image: url('../mapa/img/mapa/sc.png');
+	width: 70px;
+	height: 46px;
+}
+
+.prActive {
+	background-image: url('../mapa/img/mapa/pr.png');
+	width: 86px;
+	height: 57px;
+}
+
+.spActive {
+	background-image: url('../mapa/img/mapa/sp.gif');
+	width: 113px;
+	height: 76px;
+}
+
+.msActive {
+	background-image: url('../mapa/img/mapa/ms.gif');
+	width: 92px;
+	height: 96px;
+}
+
+.rjActive {
+	background-image: url('../mapa/img/mapa/rj.gif');
+	width: 51px;
+	height: 35px;
+}
+
+.esActive {
+	background-image: url('../mapa/img/mapa/es.gif');
+	width: 33px;
+	height: 48px;
+}
+
+.mgActive {
+	background-image: url('../mapa/img/mapa/mg.gif');
+	width: 152px;
+	height: 122px;
+}
+
+.goActive {
+	background-image: url('../mapa/img/mapa/go.gif');
+	width: 100px;
+	height: 91px;
+}
+
+.baActive {
+	background-image: url('../mapa/img/mapa/ba.gif');
+	width: 123px;
+	height: 136px;
+}
+
+.mtActive {
+	background-image: url('../mapa/img/mapa/mt.gif');
+	width: 155px;
+	height: 145px;
+}
+
+.roActive {
+	background-image: url('../mapa/img/mapa/ro.gif');
+	width: 94px;
+	height: 80px;
+}
+
+.acActive {
+	background-image: url('../mapa/img/mapa/ac.gif');
+	width: 101px;
+	height: 50px;
+}
+
+.amActive {
+	background-image: url('../mapa/img/mapa/am.gif');
+	width: 234px;
+	height: 166px;
+}
+
+.rrActive {
+	background-image: url('../mapa/img/mapa/rr.gif');
+	width: 83px;
+	height: 90px;
+}
+
+.paActive {
+	background-image: url('../mapa/img/mapa/pa.gif');
+	width: 180px;
+	height: 170px;
+}
+
+.apActive {
+	background-image: url('../mapa/img/mapa/ap.gif');
+	width: 68px;
+	height: 73px;
+}
+
+.maActive {
+	background-image: url('../mapa/img/mapa/ma.gif');
+	width: 50px;
+	height: 123px;
+}
+
+.toActive {
+	background-image: url('../mapa/img/mapa/to.gif');
+	width: 67px;
+	height: 124px;
+}
+
+.seActive {
+	background-image: url('../mapa/img/mapa/se.gif');
+	width: 26px;
+	height: 32px;
+}
+
+.alActive {
+	background-image: url('../mapa/img/mapa/al.gif');
+	width: 44px;
+	height: 24px;
+}
+
+.peActive {
+	background-image: url('../mapa/img/mapa/pe.gif');
+	width: 88px;
+	height: 30px;
+}
+
+.pbActive {
+	background-image: url('../mapa/img/mapa/pb.gif');
+	width: 53px;
+	height: 34px;
+}
+
+.rnActive {
+	background-image: url('../mapa/img/mapa/rn.gif');
+	width: 56px;
+	height: 28px;
+}
+
+.ceActive {
+	background-image: url('../mapa/img/mapa/ce.gif');
+	width: 48px;
+	height: 70px;
+}
+
+.piActive {
+	background-image: url('../mapa/img/mapa/pi.gif');
+	width: 77px;
+	height: 108px;
+}
+
+.infosPainel div ul li .detalhesPainel .ui-accordion-header {
+	width: 348px !important;
+}
+
+.ui-accordion-content span {
+	border-bottom: 1px solid #CCCCCC;
+	margin-bottom: 5px;
+	float: left;
+	line-height: 20px;
+	width: 100%;
+}
+
+.ui-accordion-content span strong {
+	float: right;
+}
+
+.infosPainel div ul li a {
+	font-size: 14px;
+}

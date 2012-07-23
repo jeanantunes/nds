@@ -22,6 +22,7 @@ import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.PoliticaCobranca;
+import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.financeiro.Boleto;
 import br.com.abril.nds.model.financeiro.Cobranca;
@@ -39,12 +40,14 @@ import br.com.abril.nds.model.financeiro.StatusDivida;
 import br.com.abril.nds.model.financeiro.StatusInadimplencia;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 import br.com.abril.nds.model.seguranca.Usuario;
+import br.com.abril.nds.repository.ChamadaEncalheCotaRepository;
 import br.com.abril.nds.repository.CobrancaRepository;
 import br.com.abril.nds.repository.ConsolidadoFinanceiroRepository;
 import br.com.abril.nds.repository.ControleBaixaBancariaRepository;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.DividaRepository;
+import br.com.abril.nds.repository.FechamentoEncalheRepository;
 import br.com.abril.nds.repository.HistoricoAcumuloDividaRepository;
 import br.com.abril.nds.repository.MovimentoFinanceiroCotaRepository;
 import br.com.abril.nds.repository.TipoMovimentoFinanceiroRepository;
@@ -66,9 +69,6 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 
 	@Autowired
 	private MovimentoFinanceiroCotaRepository movimentoFinanceiroCotaRepository;
-	
-//	@Autowired
-//	private ControleConferenciaEncalheRepository controleConferenciaEncalheRepository;
 	
 	@Autowired
 	private ConsolidadoFinanceiroRepository consolidadoFinanceiroRepository;
@@ -111,24 +111,32 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 
 	@Autowired
 	private ParametroCobrancaCotaService financeiroService;
+	
+	@Autowired
+	private ChamadaEncalheCotaRepository chamadaEncalheCotaRepository;
+	
+	@Autowired
+	private FechamentoEncalheRepository fechamentoEncalheRepository;
 
 	
 	@Override
 	@Transactional(noRollbackFor = GerarCobrancaValidacaoException.class)
-	public void gerarCobranca(Long idCota, Long idUsuario, boolean indValidaConclusaoOperacaoConferencia, Set<String> setNossoNumero)
+	public void gerarCobranca(Long idCota, Long idUsuario, Set<String> setNossoNumero)
 		throws GerarCobrancaValidacaoException{
 		
-		if (indValidaConclusaoOperacaoConferencia) {
-
+		Distribuidor distribuidor = this.distribuidorRepository.obter();
+		
+		if (this.consolidadoFinanceiroRepository.obterQuantidadeDividasGeradasData((distribuidor.getDataOperacao())) >= 0){
 			
-			//TODO: alteração na EMS 0028, agora deve verificar se o Fechamento do Encalhe(EMS 0181) tenha sido finalizado
+			throw new GerarCobrancaValidacaoException(
+					new ValidacaoException(TipoMensagem.WARNING, "Já foram geradas dívidas para esta data de operação."));
+		}
+		
+		//alteração na EMS 0028, agora deve verificar se o Fechamento do Encalhe(EMS 0181) tenha sido finalizado
+		if (!this.fechamentoEncalheRepository.buscaControleFechamentoEncalhe(distribuidor.getDataOperacao())){
 			
-			// verificar se a operação de conferencia ja foi concluida
-//			StatusOperacao statusOperacao = this.controleConferenciaEncalheRepository.obterStatusConferenciaDataOperacao();
-//			
-//			if(statusOperacao == null || !StatusOperacao.CONCLUIDO.equals(statusOperacao)){
-//				throw new ValidacaoException(TipoMensagem.ERROR, "A conferência de box de encalhe deve ser concluída antes de gerar dívidas.");
-//			}
+			throw new GerarCobrancaValidacaoException(
+					new ValidacaoException(TipoMensagem.WARNING, "O fechamento de encalhe deve ser concluído antes de gerar dívidas."));
 		}
 		
 		//Caso esteja gerando cobrança para uma única cota
@@ -141,8 +149,6 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 						new ValidacaoException(TipoMensagem.WARNING, "Já foi gerada cobrança para esta cota na data de hoje."));
 			}
 		}
-		
-		Distribuidor distribuidor = this.distribuidorRepository.obter();
 
 		//Buscar politica de cobrança e forma de cobrança do distribuidor
 		PoliticaCobranca politicaPrincipal = this.politicaCobrancaService.obterPoliticaCobrancaPrincipal();
@@ -192,6 +198,19 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			String nossoNumero = null;
 			
 			for (MovimentoFinanceiroCota movimentoFinanceiroCota : listaMovimentoFinanceiroCota){
+				
+				//verifica se cota esta suspensa, se estiver verifica se existe chamada de encalhe na data de operação
+				if (SituacaoCadastro.SUSPENSO.equals(ultimaCota.getSituacaoCadastro())){
+					
+					if (!movimentoFinanceiroCota.getCota().equals(ultimaCota)){
+						
+						if (this.chamadaEncalheCotaRepository.obterQtdListaChamaEncalheCota(ultimaCota.getNumeroCota(), 
+								distribuidor.getDataOperacao(), null, false, false, false) <= 0){
+							
+							continue;
+						}
+					}
+				}
 				
 				if (movimentoFinanceiroCota.getCota().equals(ultimaCota) &&
 						movimentoFinanceiroCota.getMovimentos() != null && 

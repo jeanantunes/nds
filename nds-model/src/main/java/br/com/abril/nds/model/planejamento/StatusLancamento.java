@@ -8,6 +8,7 @@ public enum StatusLancamento {
 	ESTUDO_FECHADO("Estudo Fechado"),
 	FURO("Furo"),
 	EXPEDIDO("Expedido"),
+	EM_BALANCEAMENTO_RECOLHIMENTO("Em Balanceamento Recolhimento"),
 	BALANCEADO_RECOLHIMENTO("Balanceado Recolhimento"),
 	RECOLHIDO("Recolhido"),
 	CANCELADO_GD("Cancelado GD"),

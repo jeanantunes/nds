@@ -6,6 +6,7 @@ import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
@@ -36,6 +37,9 @@ public class MovimentoEstoqueCota  extends AbstractMovimentoEstoque {
 	
 	@ManyToMany(mappedBy="listaMovimentoEstoqueCota", targetEntity=ProdutoServico.class)
 	private List<ProdutoServico> listaProdutoServicos;
+	
+	@OneToMany(mappedBy = "movimentoEstoqueCota")
+	private List<ConferenciaEncalhe> listaConferenciasEncalhe;
 	
 	public Cota getCota() {
 		return cota;
@@ -79,6 +83,21 @@ public class MovimentoEstoqueCota  extends AbstractMovimentoEstoque {
 	 */
 	public void setListaProdutoServicos(List<ProdutoServico> listaProdutoServicos) {
 		this.listaProdutoServicos = listaProdutoServicos;
+	}
+
+	/**
+	 * @return the listaConferenciasEncalhe
+	 */
+	public List<ConferenciaEncalhe> getListaConferenciasEncalhe() {
+		return listaConferenciasEncalhe;
+	}
+
+	/**
+	 * @param listaConferenciasEncalhe the listaConferenciasEncalhe to set
+	 */
+	public void setListaConferenciasEncalhe(
+			List<ConferenciaEncalhe> listaConferenciasEncalhe) {
+		this.listaConferenciasEncalhe = listaConferenciasEncalhe;
 	}
 
 }
