@@ -139,14 +139,19 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 			
 			for (ProdutoRecolhimentoDTO produtoRecolhimento : listaProdutoRecolhimentoDTO) {
 			
-				mapaRecolhimentos.put(produtoRecolhimento.getIdLancamento(), produtoRecolhimento);
+				if (!produtoRecolhimento.isBalanceamentoConfirmado()
+						&& !produtoRecolhimento.isPossuiChamada()) {
 				
-				idsLancamento.add(produtoRecolhimento.getIdLancamento());
+					mapaRecolhimentos.put(produtoRecolhimento.getIdLancamento(), produtoRecolhimento);
+					
+					idsLancamento.add(produtoRecolhimento.getIdLancamento());
+				}
 			}
 		}
 		
 		this.atualizarLancamentos(
-			idsLancamento, usuario, mapaRecolhimentos, StatusLancamento.EM_BALANCEAMENTO_RECOLHIMENTO);
+			idsLancamento, usuario, mapaRecolhimentos,
+			StatusLancamento.EM_BALANCEAMENTO_RECOLHIMENTO, null);
 	}
 	
 	/**
@@ -154,10 +159,11 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 	 */
 	@Override
 	@Transactional
-	public void confirmarBalanceamentoRecolhimento(Map<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimento,
-												   Integer numeroSemana,
-												   List<Date> datasConfirmadas,
-												   Usuario usuario) {
+	public TreeMap<Date, List<ProdutoRecolhimentoDTO>> confirmarBalanceamentoRecolhimento(
+											Map<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimento,
+											Integer numeroSemana,
+											List<Date> datasConfirmadas,
+											Usuario usuario) {
 		
 		if (matrizRecolhimento == null
 				|| matrizRecolhimento.isEmpty()) {
@@ -174,26 +180,26 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		
 		Map<Date, Set<Long>> mapaDataRecolhimentoLancamentos = new TreeMap<Date, Set<Long>>();
 		
-		for (Map.Entry<Date, List<ProdutoRecolhimentoDTO>> entry : matrizRecolhimento.entrySet()) {
+		TreeMap<Date, List<ProdutoRecolhimentoDTO>> matrizConfirmada =
+			new TreeMap<Date, List<ProdutoRecolhimentoDTO>>();
+		
+		for (Date dataConfirmada : datasConfirmadas) {
 			
-			List<ProdutoRecolhimentoDTO> listaProdutoRecolhimentoDTO = entry.getValue();
+			List<ProdutoRecolhimentoDTO> produtosRecolhimento = matrizRecolhimento.get(dataConfirmada);
 			
-			if (listaProdutoRecolhimentoDTO == null
-					|| listaProdutoRecolhimentoDTO.isEmpty()) {
+			if (produtosRecolhimento == null || produtosRecolhimento.isEmpty()) {
 			
 				continue;
 			}
 			
-			for (ProdutoRecolhimentoDTO produtoRecolhimento : listaProdutoRecolhimentoDTO) {
+			for (ProdutoRecolhimentoDTO produtoRecolhimento : produtosRecolhimento) {
 				
 				Date novaDataRecolhimento = produtoRecolhimento.getNovaData();
 				
-				if (!datasConfirmadas.contains(novaDataRecolhimento)) {
-					
-					break;
-				}
-				
 				if (this.isBalanceamentoConfirmado(produtoRecolhimento)) {
+					
+					this.montarMatrizRecolhimentosConfirmados(matrizConfirmada, produtoRecolhimento,
+															null, novaDataRecolhimento);
 					
 					continue;
 				}
@@ -229,11 +235,14 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		}
 		
 		this.atualizarLancamentos(
-			idsLancamento, usuario, mapaLancamentoRecolhimento, StatusLancamento.BALANCEADO_RECOLHIMENTO);
+			idsLancamento, usuario, mapaLancamentoRecolhimento,
+			StatusLancamento.BALANCEADO_RECOLHIMENTO, matrizConfirmada);
 		
 		this.gerarChamadasEncalhe(mapaDataRecolhimentoLancamentos, numeroSemana);
 		
 		this.gerarPeriodosParciais(idsProdutoEdicaoParcial, usuario);
+		
+		return matrizConfirmada;
 	}
 
 	/**
@@ -258,7 +267,8 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 	 */
 	private void atualizarLancamentos(Set<Long> idsLancamento, Usuario usuario,
 									  Map<Long, ProdutoRecolhimentoDTO> mapaLancamentoRecolhimento,
-									  StatusLancamento statusLancamento) {
+									  StatusLancamento statusLancamento,
+									  TreeMap<Date, List<ProdutoRecolhimentoDTO>> matrizConfirmada) {
 		
 		if (!idsLancamento.isEmpty()) {
 		
@@ -289,12 +299,17 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 				
 				produtoRecolhimento = mapaLancamentoRecolhimento.get(lancamento.getId());
 				
-				lancamento.setDataRecolhimentoDistribuidor(produtoRecolhimento.getNovaData());
+				Date novaData = produtoRecolhimento.getNovaData();
+				
+				lancamento.setDataRecolhimentoDistribuidor(novaData);
 				lancamento.setSequenciaMatriz(produtoRecolhimento.getSequencia().intValue());
 				lancamento.setStatus(statusLancamento);
 				lancamento.setDataStatus(new Date());
 				
 				this.lancamentoRepository.merge(lancamento);
+				
+				this.montarMatrizRecolhimentosConfirmados(matrizConfirmada, produtoRecolhimento,
+												   		lancamento, novaData);
 				
 				if (gerarHistoricoLancamento) {
 				
@@ -310,6 +325,42 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 				}
 			}
 		}
+	}
+	
+	/**
+	 * Monta a matriz de recolhimento com os recolhimentos confirmados.
+	 * 
+	 * @param matrizConfirmada - matriz de recolhimento confirmada
+	 * @param produtoRecolhimento - produto de recolhimento
+	 * @param lancamento - lançamento
+	 * @param novaData - nova data de recolhimento
+	 */
+	private void montarMatrizRecolhimentosConfirmados(TreeMap<Date, List<ProdutoRecolhimentoDTO>> matrizConfirmada,
+													  ProdutoRecolhimentoDTO produtoRecolhimento,
+													  Lancamento lancamento,
+													  Date novaData) {
+
+		if (matrizConfirmada == null) {
+			
+			return;
+		}
+		
+		if (lancamento != null) {
+			
+			produtoRecolhimento.setDataRecolhimentoDistribuidor(lancamento.getDataRecolhimentoDistribuidor());
+			produtoRecolhimento.setStatusLancamento(lancamento.getStatus().toString());
+		}
+		
+		List<ProdutoRecolhimentoDTO> produtosRecolhimento = matrizConfirmada.get(novaData);
+		
+		if (produtosRecolhimento == null) {
+		
+			produtosRecolhimento = new ArrayList<ProdutoRecolhimentoDTO>();
+		}
+		
+		produtosRecolhimento.add(produtoRecolhimento);
+		
+		matrizConfirmada.put(novaData, produtosRecolhimento);
 	}
 	
 	/**

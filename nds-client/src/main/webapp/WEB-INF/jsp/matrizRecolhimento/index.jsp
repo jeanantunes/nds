@@ -710,8 +710,6 @@
 			
 			function salvar() {
 				
-				fecharGridBalanceamento();
-				
 				$.postJSON(
 					"${pageContext.request.contextPath}/devolucao/balanceamentoMatriz/salvar"
 				);

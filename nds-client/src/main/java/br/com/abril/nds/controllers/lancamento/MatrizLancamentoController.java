@@ -1093,31 +1093,34 @@ public class MatrizLancamentoController {
 
 		Map<Date, Boolean> mapaDatasConfirmacaoOrdenada = new LinkedHashMap<Date, Boolean>();
 
-		boolean confirmado = false;
-
 		for (Map.Entry<Date, List<ProdutoLancamentoDTO>> entry
 				: balanceamentoLancamento.getMatrizLancamento().entrySet()) {
 			
-            List<ProdutoLancamentoDTO> listaProdutosRecolhimento = entry.getValue();
+			Date novaData = entry.getKey();
 			
-			if (listaProdutosRecolhimento != null && !listaProdutosRecolhimento.isEmpty()) {
+            List<ProdutoLancamentoDTO> produtosLancamento = entry.getValue();
+			
+			if (produtosLancamento == null || produtosLancamento.isEmpty()) {
 				
-				for (ProdutoLancamentoDTO produtoBalanceamento : listaProdutosRecolhimento) {
+				continue;
+			}
+		
+			boolean confirmado = false;
+			
+			for (ProdutoLancamentoDTO produtoLancamento : produtosLancamento) {
 
-					confirmado =
-						(produtoBalanceamento.getStatusLancamento().equals(StatusLancamento.BALANCEADO)
-							&& (produtoBalanceamento.getDataLancamentoDistribuidor().compareTo(
-									produtoBalanceamento.getNovaDataLancamento()) == 0));
+				confirmado =
+					(produtoLancamento.getStatusLancamento().equals(StatusLancamento.BALANCEADO)
+						&& (produtoLancamento.getDataLancamentoDistribuidor().compareTo(
+								produtoLancamento.getNovaDataLancamento()) == 0));
+				
+				if (!confirmado) {
 					
-					if (mapaDatasConfirmacaoOrdenada.get(produtoBalanceamento.getNovaDataLancamento()) == null
-							|| (!confirmado && mapaDatasConfirmacaoOrdenada.get(
-									produtoBalanceamento.getNovaDataLancamento()))) {
-						
-						mapaDatasConfirmacaoOrdenada.put(produtoBalanceamento.getNovaDataLancamento(),
-														 confirmado);
-					}
+					break;
 				}
 			}
+			
+			mapaDatasConfirmacaoOrdenada.put(novaData, confirmado);
 		}
 		
 		Set<Entry<Date, Boolean>> entrySet = mapaDatasConfirmacaoOrdenada.entrySet();
