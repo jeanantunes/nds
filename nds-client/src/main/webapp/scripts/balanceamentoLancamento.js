@@ -297,20 +297,7 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento) {
 				
 		$.each($("input[name='checkgroup'][bloqueado!='true']"),function(index,row) {
 			
-			var checado = row.checked;
-			
-			var input = $(row.parentElement.parentElement.parentElement).find("input[type='text']");
-			var a = $(row.parentElement.parentElement.parentElement).find("a[name='reprogramar']");
-			
-			if(checado) {				
-				input.disable();
-				a.attr('onclick',  'return;' + a.attr('onclick') );
-				a.parent().addClass("linkDisabled");
-			} else {
-				input.enable();
-				a.attr('onclick', a.attr('onclick').replace('return;' , '' ) );
-				a.parent().removeClass("linkDisabled");
-			}
+			T.bloquearDesbloquearData(row);
 		});
 		
 		$("#selTodos").uncheck();
@@ -493,7 +480,35 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento) {
 		}),
 		
 		checkAll(document.getElementById('selTodos'),"checkgroup");
+		
+		T.verificarBloqueioReprogramacao();
 	};
+	
+	this.verificarBloqueioReprogramacao = function() {
+		
+		$.each($("input[name='checkgroup']"), function(index, row) {
+			
+			T.bloquearDesbloquearData(row);
+		});
+	},
+	
+	this.bloquearDesbloquearData = function(row) {
+			
+		var checado = row.checked;
+		
+		var input = $(row.parentElement.parentElement.parentElement).find("input[type='text']");
+		var a = $(row.parentElement.parentElement.parentElement).find("a[name='reprogramar']");
+		
+		if(checado) {				
+			input.disable();
+			a.attr('onclick',  'return;' + a.attr('onclick') );
+			a.parent().addClass("linkDisabled");
+		} else {
+			input.enable();
+			a.attr('onclick', a.attr('onclick').replace('return;' , '' ) );
+			a.parent().removeClass("linkDisabled");
+		}
+	},
 	
 	this.abrirAlertaVoltarConfiguracaoInicial = function() {
 		
