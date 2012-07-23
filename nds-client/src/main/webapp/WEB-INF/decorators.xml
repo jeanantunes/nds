@@ -9,6 +9,7 @@
         <pattern>/upload/*</pattern>
         <pattern>**impriNotaPromissoria*</pattern>
         <pattern>**/mapaAbastecimento/imprimir*</pattern>
+        <pattern>**/emissaoCE/imprimir*</pattern>
         
     </excludes>
               

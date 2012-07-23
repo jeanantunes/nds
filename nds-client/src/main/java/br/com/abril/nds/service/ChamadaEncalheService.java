@@ -1,5 +1,8 @@
 package br.com.abril.nds.service;
 
+import java.util.List;
+
+import br.com.abril.nds.dto.CotaEmissaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroEmissaoCE;
 
 
@@ -11,6 +14,9 @@ import br.com.abril.nds.dto.filtro.FiltroEmissaoCE;
  */
 public interface ChamadaEncalheService {
 	
-	void obterDadosEmissaoChamadasEncalhe(FiltroEmissaoCE filtro);
+	List<CotaEmissaoDTO> obterDadosEmissaoChamadasEncalhe(FiltroEmissaoCE filtro);
+
+	List<CotaEmissaoDTO> obterDadosImpressaoEmissaoChamadasEncalhe(
+			FiltroEmissaoCE filtro);
 	
 }

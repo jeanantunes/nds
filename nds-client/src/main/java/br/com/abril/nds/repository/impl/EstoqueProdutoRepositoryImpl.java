@@ -19,9 +19,11 @@ public class EstoqueProdutoRepositoryImpl extends AbstractRepositoryModel<Estoqu
 	@Override
 	public EstoqueProduto buscarEstoquePorProduto(Long idProdutoEdicao) {
 
-		Criteria criteria = super.getSession().createCriteria(EstoqueProduto.class);
+		Criteria criteria = super.getSession().createCriteria(EstoqueProduto.class, "estoqueProduto");
 		
-		criteria.add(Restrictions.eq("id", idProdutoEdicao));
+		criteria.createAlias("estoqueProduto.produtoEdicao", "produtoEdicao");
+		
+		criteria.add(Restrictions.eq("produtoEdicao.id", idProdutoEdicao));
 		
 		criteria.setMaxResults(1);
 		

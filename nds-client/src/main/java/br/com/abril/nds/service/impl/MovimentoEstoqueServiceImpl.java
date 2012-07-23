@@ -364,13 +364,13 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 	}
 
 	@Override
-	public void processarRegistroHistoricoVenda(HistoricoVendaInput vendaInput,Long idUsuario) {
+	public void processarRegistroHistoricoVenda(HistoricoVendaInput vendaInput) {
 		
 		Integer reparte = vendaInput.getQuantidadeRecebidaProduto();
 		Integer encalhe = vendaInput.getQuantidadeDevolvidaProduto();
 		
 		ProdutoEdicao edicao = produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao(
-				vendaInput.getCodigoProduto(), vendaInput.getNumeroEdicao().longValue());
+				vendaInput.getCodigoProduto().toString(), vendaInput.getNumeroEdicao().longValue());
 		
 		if(edicao == null)
 			throw new ImportacaoException("Edição inexistente.");
@@ -379,6 +379,8 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 		
 		if(cota == null)
 			throw new ImportacaoException("Cota inexistente.");
+		
+		Long idUsuario = usuarioRepository.getUsuarioImportacao().getId();
 		
 		persistirRegistroVendaHistoricoReparte(idUsuario, reparte, edicao, cota);
 		
