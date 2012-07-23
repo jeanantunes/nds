@@ -686,6 +686,24 @@ public class ImpressaoBoletosController {
 		return usuario;
 	}
 	
+	@Post
+	public void habilitarAcaoGeracaoDivida(Date dataPesquisa){
+		
+		Distribuidor distribuidor = distribuidorService.obter();
+		
+		boolean isAcaoGeraDivida = true;
+		
+		if(dataPesquisa == null){
+			isAcaoGeraDivida = false;
+		}
+		
+		if (dataPesquisa.compareTo(distribuidor.getDataOperacao())==-1){
+			isAcaoGeraDivida = false;
+		}
+		
+		result.use(CustomMapJson.class).put("isAcaoGeraDivida", isAcaoGeraDivida).serialize();
+	}
+	
 }
 
 
