@@ -32,7 +32,6 @@ import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
-import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.RecolhimentoService;
@@ -134,13 +133,25 @@ public class MatrizRecolhimentoController {
 		
 		FiltroPesquisaMatrizRecolhimentoVO filtro = obterFiltroSessao();
 		
-		recolhimentoService.confirmarBalanceamentoRecolhimento(
-													balanceamentoRecolhimento.getMatrizRecolhimento(),
+		TreeMap<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimento =
+			this.clonarMapaRecolhimento(balanceamentoRecolhimento.getMatrizRecolhimento());
+		
+		TreeMap<Date, List<ProdutoRecolhimentoDTO>> matrizConfirmada =
+			recolhimentoService.confirmarBalanceamentoRecolhimento(
+													matrizRecolhimento,
 													filtro.getNumeroSemana(),
 													datasConfirmadas,
 													obterUsuario());
 		
-		removerAtributoAlteracaoSessao();
+		matrizRecolhimento =
+			this.atualizarMatizComProdutosConfirmados(matrizRecolhimento, matrizConfirmada);
+		
+		balanceamentoRecolhimento.setMatrizRecolhimento(matrizRecolhimento);
+		
+		this.httpSession.setAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_RECOLHIMENTO,
+									  balanceamentoRecolhimento);
+		
+		this.verificarBalanceamentosConfirmados();
 		
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS,
 			"Balanceamento da matriz de recolhimento confirmado com sucesso!"), "result")
@@ -389,6 +400,57 @@ public class MatrizRecolhimentoController {
 		}
 		
 		this.result.use(Results.json()).from(balanceamentoAlterado.toString(), "result").serialize();
+	}
+	
+	/**
+	 * Método que atualiza a matriz de recolhimento de acordo com os produtos confirmados
+	 * 
+	 * @param matrizRecolhimento - matriz de recolhimento
+	 * @param matrizConfirmada - matriz de recolhimento confirmada
+	 * 
+	 * @return matriz atualizada
+	 */
+	private TreeMap<Date, List<ProdutoRecolhimentoDTO>> atualizarMatizComProdutosConfirmados(
+								TreeMap<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimento,
+								TreeMap<Date, List<ProdutoRecolhimentoDTO>> matrizConfirmada) {
+		
+		for (Map.Entry<Date, List<ProdutoRecolhimentoDTO>> entry
+				: matrizConfirmada.entrySet()) {
+			
+			Date novaData = entry.getKey();
+			
+			List<ProdutoRecolhimentoDTO> produtosConfirmados = matrizConfirmada.get(novaData);
+			
+			matrizRecolhimento.put(novaData, produtosConfirmados);
+		}
+		
+		return matrizRecolhimento;
+	}
+	
+	/**
+	 * Método que verifica se todos os recolhimentos estão confirmados
+	 * para remover a flag de alteração de dados da sessão.
+	 */
+	private void verificarBalanceamentosConfirmados() {
+		
+		List<ConfirmacaoVO> listaConfirmacao = montarListaDatasConfirmacao();
+		
+		boolean balanceamentosConfirmados = true;
+		
+		for (ConfirmacaoVO confirmacao : listaConfirmacao) {
+			
+			if (!confirmacao.isConfirmado()) {
+				
+				balanceamentosConfirmados = false;
+				
+				break;
+			}
+		}
+		
+		if (balanceamentosConfirmados) {
+			
+			this.removerAtributoAlteracaoSessao();
+		}
 	}
 	
 	/**
@@ -1192,31 +1254,33 @@ public class MatrizRecolhimentoController {
 
 		Map<Date, Boolean> mapaDatasConfirmacaoOrdenada = new LinkedHashMap<Date, Boolean>();
 
-		boolean confirmado = false;
-
 		for (Map.Entry<Date, List<ProdutoRecolhimentoDTO>> entry
 				: balanceamentoRecolhimento.getMatrizRecolhimento().entrySet()) {
 			
-            List<ProdutoRecolhimentoDTO> listaProdutosRecolhimento = entry.getValue();
+			Date novaData = entry.getKey();
 			
-			if (listaProdutosRecolhimento != null && !listaProdutosRecolhimento.isEmpty()) {
+            List<ProdutoRecolhimentoDTO> produtosRecolhimento = entry.getValue();
+			
+            if (produtosRecolhimento == null || produtosRecolhimento.isEmpty()) {
 				
-				for (ProdutoRecolhimentoDTO produtoRecolhimento : listaProdutosRecolhimento) {
+				continue;
+			}
+			
+            boolean confirmado = false;
+            
+			for (ProdutoRecolhimentoDTO produtoRecolhimento : produtosRecolhimento) {
 
-					confirmado =
-						(produtoRecolhimento.getStatusLancamento().equals(StatusLancamento.BALANCEADO_RECOLHIMENTO)
-							&& (produtoRecolhimento.getDataRecolhimentoDistribuidor().compareTo(
-									produtoRecolhimento.getNovaData()) == 0));
+				confirmado =
+					produtoRecolhimento.isBalanceamentoConfirmado()
+						|| produtoRecolhimento.isPossuiChamada();
+				
+				if (!confirmado) {
 					
-					if (mapaDatasConfirmacaoOrdenada.get(produtoRecolhimento.getNovaData()) == null
-							|| (!confirmado && mapaDatasConfirmacaoOrdenada.get(
-									produtoRecolhimento.getNovaData()))) {
-						
-						mapaDatasConfirmacaoOrdenada.put(produtoRecolhimento.getNovaData(),
-														 confirmado);
-					}
+					break;
 				}
 			}
+			
+			mapaDatasConfirmacaoOrdenada.put(novaData, confirmado);
 		}
 		
 		Set<Entry<Date, Boolean>> entrySet = mapaDatasConfirmacaoOrdenada.entrySet();
