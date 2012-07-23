@@ -2,7 +2,6 @@ package br.com.abril.nds.model.planejamento;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import javax.persistence.Column;
@@ -12,6 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -49,8 +49,9 @@ public class EstudoCota implements Serializable {
 	private Cota cota;
 	@OneToMany(mappedBy = "estudoCota")
 	private Set<RateioDiferenca> rateiosDiferenca = new HashSet<RateioDiferenca>();
-	@OneToMany(mappedBy = "estudoCota")
-	private List<MovimentoEstoqueCota> movimentosEstoqueCota; 
+	
+	@OneToOne(mappedBy = "estudoCota", targetEntity=MovimentoEstoqueCota.class)
+	private MovimentoEstoqueCota movimentosEstoqueCota; 
 	
 	public Long getId() {
 		return id;
@@ -100,18 +101,11 @@ public class EstudoCota implements Serializable {
 		this.rateiosDiferenca = rateiosDiferenca;
 	}
 
-	/**
-	 * @return the movimentosEstoqueCota
-	 */
-	public List<MovimentoEstoqueCota> getMovimentosEstoqueCota() {
+	public MovimentoEstoqueCota getMovimentosEstoqueCota() {
 		return movimentosEstoqueCota;
 	}
 
-	/**
-	 * @param movimentosEstoqueCota the movimentosEstoqueCota to set
-	 */
-	public void setMovimentosEstoqueCota(
-			List<MovimentoEstoqueCota> movimentosEstoqueCota) {
+	public void setMovimentosEstoqueCota(MovimentoEstoqueCota movimentosEstoqueCota) {
 		this.movimentosEstoqueCota = movimentosEstoqueCota;
 	}
 
