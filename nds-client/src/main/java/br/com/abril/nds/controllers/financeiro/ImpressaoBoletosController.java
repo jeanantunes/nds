@@ -373,7 +373,7 @@ public class ImpressaoBoletosController {
 			if(filtro.getIdRota()!= null){
 				Rota rota = roteirizacaoService.buscarRotaPorId(filtro.getIdRota());
 				if(rota!= null){
-					filtro.setRota(rota.getCodigoRota());
+					filtro.setRota(rota.getCodigoRota() + "-" + rota.getDescricaoRota());
 				}
 			}
 			

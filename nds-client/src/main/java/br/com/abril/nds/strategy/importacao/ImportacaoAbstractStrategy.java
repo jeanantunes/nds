@@ -8,8 +8,12 @@ import java.util.Scanner;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.exception.ImportacaoException;
+import br.com.abril.nds.model.seguranca.Usuario;
+import br.com.abril.nds.repository.UsuarioRepository;
 import br.com.abril.nds.service.vo.RetornoImportacaoArquivoVO;
 
 /**
@@ -27,6 +31,10 @@ public abstract class ImportacaoAbstractStrategy {
 	
 	protected static final String MENSAGEM_ERRO_FORMATO_DADOS="Formato das informações contidas na linha do arquivo inválida!";
 	
+	@Autowired
+	private UsuarioRepository usuarioRepository;
+
+
 	/**
 	 * Efetua o processamento do dados referente ao arquivo
 	 * 

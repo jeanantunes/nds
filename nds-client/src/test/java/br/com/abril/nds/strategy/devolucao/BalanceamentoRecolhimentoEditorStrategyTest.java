@@ -39,8 +39,6 @@ public class BalanceamentoRecolhimentoEditorStrategyTest {
 		
 		Assert.assertNotNull(balanceamentoRecolhimento);
 		
-		//Assert.assertFalse(balanceamentoRecolhimento.isMatrizFechada());
-		
 		Assert.assertEquals(
 			dadosRecolhimento.getCapacidadeRecolhimentoDistribuidor(), 
 				balanceamentoRecolhimento.getCapacidadeRecolhimentoDistribuidor());
@@ -87,8 +85,6 @@ public class BalanceamentoRecolhimentoEditorStrategyTest {
 	private RecolhimentoDTO obterDadosRecolhimento() {
 		
 		RecolhimentoDTO dadosRecolhimento = new RecolhimentoDTO();
-		
-		//dadosRecolhimento.setBalancearMatriz(true);
 		
 		dadosRecolhimento.setCapacidadeRecolhimentoDistribuidor(new BigDecimal("100"));
 		
