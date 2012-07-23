@@ -183,7 +183,7 @@ public class ImportacaoDeArquivoHistoricoVendaStrategy extends ImportacaoAbstrac
 	protected void processarDados(Object input) {
 		
 		HistoricoVendaInput vendaInput = (HistoricoVendaInput) input;
-				
+		
 		movimentoEstoqueService.processarRegistroHistoricoVenda(vendaInput, getUsuario().getId());
 	}
 	

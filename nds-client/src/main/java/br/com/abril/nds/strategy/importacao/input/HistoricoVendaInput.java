@@ -15,6 +15,24 @@ public class HistoricoVendaInput implements Serializable{
 	private Integer quantidadeRecebidaProduto;
 	
 	private Integer quantidadeDevolvidaProduto;
+	
+	private Long idUsuario;
+
+	
+	
+	/**
+	 * @return the idUsuario
+	 */
+	public Long getIdUsuario() {
+		return idUsuario;
+	}
+
+	/**
+	 * @param idUsuario the idUsuario to set
+	 */
+	public void setIdUsuario(Long idUsuario) {
+		this.idUsuario = idUsuario;
+	}
 
 	/**
 	 * @return the codigoProduto
