@@ -2217,6 +2217,8 @@ public class DataLoader {
 
 		pdvGuilherme = Fixture.criarPDVPrincipal("PDV Guilherme", cotaGuilherme);
 		session.save(pdvGuilherme);
+		
+	
 
 		pdvMurilo = Fixture.criarPDVPrincipal("PDV MURILO", cotaMurilo);
 		session.save(pdvMurilo);
@@ -2265,6 +2267,8 @@ public class DataLoader {
 
 		roteirizacao = Fixture.criarRoteirizacao(pdvGuilherme, rota10,1);
 		session.save(roteirizacao);
+		
+		
 
 	}
 
@@ -6353,6 +6357,20 @@ public class DataLoader {
 		save(session, cotaJohnyConsultaEncalhe);
 
 
+		PDV pdvJonhy = Fixture.criarPDVPrincipal("PDV Johny", cotaJohnyConsultaEncalhe);
+		session.save(pdvJonhy);
+		
+		Roteiro roteiroJ = Fixture.criarRoteiro("Roteiro J",box1,TipoRoteiro.NORMAL);
+		session.save(roteiroJ);
+
+		Rota rotaJ = Fixture.rota("007", "Rota 007");
+		rotaJ.setRoteiro(roteiroJ);
+		session.save(rotaJ);
+
+		Roteirizacao roteirizacaoJ = Fixture.criarRoteirizacao(pdvManoel, rotaJ,3);
+		session.save(roteirizacaoJ);
+		
+		
 		EstoqueProdutoCota estoqueProdutoCotaJohny =
 				Fixture.estoqueProdutoCota(
 				produtoEdicaoCE, cotaJohnyConsultaEncalhe, BigDecimal.TEN, BigDecimal.ZERO);
