@@ -40,10 +40,10 @@
 			<td>
 				<table width="300" border="0" cellspacing="0" cellpadding="0">
 					<tr>
-						<td width="26"><input type="radio" name="radio" id="radio" value="radio" /></td>
-						<td width="71" valign="bottom">Sim</td>
-						<td width="20"><input type="radio" name="radio" id="radio2" value="radio" /></td>
-						<td width="183" valign="bottom">Não</td>
+				        <td width="26"><input type="radio" checked="checked" name="radioNFE" onchange="ConferenciaEncalheCont.mostrarChaveAcesso()" id="radioNFEsim" value="S"/></td>
+				        <td width="71" valign="bottom">Sim</td>
+				        <td width="20"><input type="radio"  onchange="ConferenciaEncalheCont.mostrarChaveAcesso()" name="radioNFE" id="radioNFEnao" value="N" /></td>
+				        <td width="183" valign="bottom">Não</td>
 					</tr>
 				</table>
 			</td>
@@ -51,8 +51,21 @@
 			<td>&nbsp;</td>
 		</tr>
 		<tr>
-			<td>Chave de Acesso:</td>
-			<td colspan="3"><input type="text" id="chaveAcessoNFE" style="width: 510px;" maxlength="255" /></td>
+			<td colspan="4">
+			
+				<div id="divForChaveAcessoNFE">
+					<table>
+					    <td>
+					    	Chave de Acesso:
+					    </td>
+				    	<td colspan="3">
+				    		<input type="text" id="chaveAcessoNFE" style="width:510px;" />
+				    	</td>
+					</table>
+				</div>				
+			
+			</td>
+			
 		</tr>
 		<tr>
 			<td>&nbsp;</td>
@@ -244,4 +257,11 @@
 		</table>
 	</fieldset>
 
+</div>
+
+<div id="dialog-excluir-conferencia" title="Conferência" style="display: none;">
+	<fieldset style="width: 350px;">
+		<legend>Excluir Conferência</legend>
+	    <p>Confirma a exclusão dessa conferência?</p>
+	</fieldset>
 </div>
