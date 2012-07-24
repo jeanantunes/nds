@@ -1274,8 +1274,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 				   .append("   INNER JOIN conferenciaEncalhe.movimentoEstoqueCota movimentoEstoqueCota ");
 			} else {
 				//MovimentoEstoqueCota dos lançamentos relacionados ao Estudo
-				sql.append("   INNER JOIN lancamento.estudo.estudoCotas estudoCotas ")
-				   .append("   INNER JOIN estudoCotas.movimentosEstoqueCota movimentoEstoqueCota ");
+				sql.append("   INNER JOIN lancamento.movimentoEstoqueCotas movimentoEstoqueCota ");
 			}
 			
 			sql.append("   LEFT JOIN movimentoEstoqueCota.cota.fornecedores fornecedor ")

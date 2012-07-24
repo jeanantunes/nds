@@ -11,14 +11,10 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import br.com.abril.nds.controllers.expedicao.MapaAbastecimentoController;
 import br.com.abril.nds.dto.CotaEmissaoDTO;
-import br.com.abril.nds.dto.DistribuicaoDTO;
 import br.com.abril.nds.dto.DistribuidorDTO;
 import br.com.abril.nds.dto.ItemDTO;
-import br.com.abril.nds.dto.MapaCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroEmissaoCE;
-import br.com.abril.nds.dto.filtro.FiltroMapaAbastecimentoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.cadastro.Box;
@@ -202,26 +198,31 @@ public class EmissaoCEController {
 	}
 
 	public void modelo1() {
-		/*
-
+				
 		FiltroEmissaoCE filtro = (FiltroEmissaoCE) session.getAttribute(FILTRO_SESSION_ATTRIBUTE);
 		
 		List<CotaEmissaoDTO> cotasEmissao = chamadaEncalheService.obterDadosImpressaoEmissaoChamadasEncalhe(filtro);
-		
+				
 		DistribuidorDTO dadosDistribuidor = distribuidorService.obterDadosEmissao();
 				
 		result.include("cotasEmissao", cotasEmissao);
 		
 		result.include("dadosDistribuidor", dadosDistribuidor);
-		*/
+		
 				
 	}
 	
 	public void modelo2() {
 		
-		//MapaCotaDTO mapaCota = mapaAbastecimentoService.obterMapaDeImpressaoPorCota(filtro);
+		FiltroEmissaoCE filtro = (FiltroEmissaoCE) session.getAttribute(FILTRO_SESSION_ATTRIBUTE);
 		
-		//result.include("mapa", mapaCota);
+		List<CotaEmissaoDTO> cotasEmissao = chamadaEncalheService.obterDadosImpressaoEmissaoChamadasEncalhe(filtro);
+				
+		DistribuidorDTO dadosDistribuidor = distribuidorService.obterDadosEmissao();
+				
+		result.include("cotasEmissao", cotasEmissao);
+		
+		result.include("dadosDistribuidor", dadosDistribuidor);
 		
 	}
 

@@ -237,7 +237,21 @@
 				$("#rota").html(comboRotas);
 				$("#roteiro").html(comboRoteiros);
 			});
-		}
+		},
+	
+	habilitarAcaoGeracaoDivida:function(valor){
+		
+		$.postJSON("<c:url value='/financeiro/impressaoBoletos/habilitarAcaoGeracaoDivida' />",
+				[{name:"dataPesquisa",value:valor}], function(result){
+			
+			if(result.isAcaoGeraDivida == true){
+				$("#divGerarDivida").show();	
+			}
+			else{
+				$("#divGerarDivida").hide();
+			}
+		});
+	}
 		
 	};
 	
@@ -249,6 +263,7 @@
 			buttonImageOnly: true,
 			dateFormat: "dd/mm/yy"
 		});
+		
 		
 		$("#descricaoCota").autocomplete({source: ""});
 		
@@ -357,7 +372,7 @@
 		   	    	<table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
 	  					<tr>
 						    <td width="29">Data:</td>
-						    <td width="125"><input type="text" name="dataMovimento" id="dataMovimento" style="width:70px; float:left; margin-right:5px;" /></td>
+						    <td width="125"><input type="text" name="dataMovimento" id="dataMovimento" onchange="GeraDivida.habilitarAcaoGeracaoDivida(this.value);" style="width:70px; float:left; margin-right:5px;" /></td>
 						    <td width="49">Box</td>
 						    <td width="169">
 						    	<select name="box" id="box" style="width:70px; float:left; margin-right:5px;" onchange="GeraDivida.recarregarComboRoteiroRotas(this.value)">
@@ -427,12 +442,14 @@
 						    	<span class="bt_pesquisar">
 						    		<a href="javascript:GeraDivida.validarPesquisa();">Pesquisar</a>
 						    	</span>
-	    						<span  class="bt_novos" title="Gerar Dívida" style="margin-left:20px;">
-	    							<a href="javascript:GeraDivida.gerarDivida();" id="btnGerarDivida">
-	    								<img src="${pageContext.request.contextPath}/images/ico_check.gif" hspace="5" border="0" />
-	    								Gerar Dívida
-	    							</a>
-	    						</span>
+	    						<div id="divGerarDivida" style="display: none">
+		    						<span class="bt_novos" title="Gerar Dívida" style="margin-left:20px;">
+		    							<a href="javascript:GeraDivida.gerarDivida();" id="btnGerarDivida">
+		    								<img src="${pageContext.request.contextPath}/images/ico_check.gif" hspace="5" border="0" />
+		    								Gerar Dívida
+		    							</a>
+		    						</span>
+	    					   </div>
 	   						</td>
 	    				</tr>
 		  		</table>
