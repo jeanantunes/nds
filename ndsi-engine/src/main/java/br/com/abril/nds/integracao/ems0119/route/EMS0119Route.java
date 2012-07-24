@@ -40,6 +40,6 @@ public class EMS0119Route extends FixedLengthRouteTemplate{
 	@Override
 	public void setupTypeMapping() {
 		setTypeMapping(EMS0119Input.class);
-		
 	}
+	
 }
