@@ -448,8 +448,6 @@
 							</li>
 							<li><a href="Administracao/fechar_dia.htm">Fechar o Dia</a>
 							</li>
-							<li><a href='<c:url value="/servico/cadastroServico"/>'>Serviço de Entrega</a>
-							</li>
 							<li><a href='<c:url value="/administracao/tipoProduto"/>'>Tipo de Produto</a>
 							</li>
 							<li><a href="Administracao/help_administracao.htm">Help</a>
