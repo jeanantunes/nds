@@ -216,6 +216,7 @@ public class ChamadaoRepositoryImpl extends AbstractRepositoryModel<Cota,Long> i
 	        	.append("(lancamento.STATUS = :statusLancamentoBalanceadoRec ")
 	        		.append("and lancamento.DATA_REC_PREVISTA > :dataRecolhimento) ")
 	        	.append("or (lancamento.STATUS = :statusLancamentoExpedido) ")
+	        	.append("or (lancamento.STATUS = :statusLancamentoEmBalanceamentoRec) ")
 	        .append(") ")
 	        .append("and lancamento.TIPO_LANCAMENTO = :tipoLancamento ")
 	        .append("and (estoqueProdCota.QTDE_RECEBIDA - estoqueProdCota.QTDE_DEVOLVIDA) > 0 ")
@@ -263,6 +264,9 @@ public class ChamadaoRepositoryImpl extends AbstractRepositoryModel<Cota,Long> i
 		
 		query.setParameter("statusLancamentoBalanceadoRec",
 						   StatusLancamento.BALANCEADO_RECOLHIMENTO.toString());
+		
+		query.setParameter("statusLancamentoEmBalanceamentoRec",
+				   StatusLancamento.EM_BALANCEAMENTO_RECOLHIMENTO.toString());
 		
 		query.setParameter("statusLancamentoExpedido", StatusLancamento.EXPEDIDO.toString());
 		

@@ -15,8 +15,8 @@ import javax.persistence.Transient;
 import com.google.gson.annotations.SerializedName;
 
 @Entity
-@Table(name = "DISTRIBUIDOR")
-public class Distribuidor implements Serializable {
+@Table(name = "OPERACAO_DISTRIBUIDOR")
+public class OperacaoDistribuidor implements Serializable {
 
 	/**
 	 * 

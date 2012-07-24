@@ -10,10 +10,10 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import br.com.abril.nds.server.model.Distribuidor;
 import br.com.abril.nds.server.model.FormatoIndicador;
 import br.com.abril.nds.server.model.GrupoIndicador;
 import br.com.abril.nds.server.model.Indicador;
+import br.com.abril.nds.server.model.OperacaoDistribuidor;
 import br.com.abril.nds.server.model.Status;
 import br.com.abril.nds.server.model.StatusOperacao;
 import br.com.abril.nds.server.model.TipoIndicador;
@@ -54,7 +54,7 @@ public class DataLoader {
 
 	private static void mock(Session session) {
 
-		Distribuidor distribuidorServer = new Distribuidor();
+ 		OperacaoDistribuidor distribuidorServer = new OperacaoDistribuidor();
 		distribuidorServer.setIdDistribuidorInterface(1L);
 		distribuidorServer.setNome("teste 0001");
 		StatusOperacao statusOperacao = new StatusOperacao();
@@ -108,7 +108,7 @@ public class DataLoader {
 
 		// -------------------------------------//
 
-		distribuidorServer = new Distribuidor();
+		distribuidorServer = new OperacaoDistribuidor();
 		distribuidorServer.setIdDistribuidorInterface(2L);
 		distribuidorServer.setNome("distrib 2");
 		statusOperacao = new StatusOperacao();
@@ -162,7 +162,7 @@ public class DataLoader {
 
 		// -------------------------------------//
 
-		distribuidorServer = new Distribuidor();
+		distribuidorServer = new OperacaoDistribuidor();
 		distribuidorServer.setIdDistribuidorInterface(3L);
 		distribuidorServer.setNome("distrib 33");
 		statusOperacao = new StatusOperacao();
@@ -216,7 +216,7 @@ public class DataLoader {
 
 		// -------------------------------------//
 
-		distribuidorServer = new Distribuidor();
+		distribuidorServer = new OperacaoDistribuidor();
 		distribuidorServer.setIdDistribuidorInterface(4L);
 		distribuidorServer.setNome("la longe");
 		statusOperacao = new StatusOperacao();

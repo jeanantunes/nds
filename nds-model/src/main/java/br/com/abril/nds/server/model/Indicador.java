@@ -40,7 +40,7 @@ public class Indicador implements Serializable {
 	
 	@ManyToOne
 	@JoinColumn(name = "DISTRIBUIDOR")
-	private Distribuidor distribuidor;
+	private OperacaoDistribuidor operacaoDistribuidor;
 	
 	@Enumerated(EnumType.ORDINAL)
 	@Column(name = "TIPO_INDICADOR")
@@ -78,12 +78,12 @@ public class Indicador implements Serializable {
 		this.data = data;
 	}
 
-	public Distribuidor getDistribuidor() {
-		return distribuidor;
+	public OperacaoDistribuidor getDistribuidor() {
+		return operacaoDistribuidor;
 	}
 
-	public void setDistribuidor(Distribuidor distribuidor) {
-		this.distribuidor = distribuidor;
+	public void setDistribuidor(OperacaoDistribuidor operacaoDistribuidor) {
+		this.operacaoDistribuidor = operacaoDistribuidor;
 	}
 
 	public TipoIndicador getTipoIndicador() {

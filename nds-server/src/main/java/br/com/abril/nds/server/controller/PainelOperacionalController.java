@@ -8,8 +8,7 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import br.com.abril.nds.server.model.Distribuidor;
-import br.com.abril.nds.server.model.Indicador;
+import br.com.abril.nds.server.model.OperacaoDistribuidor;
 import br.com.abril.nds.server.service.PainelOperacionalService;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Resource;
@@ -34,7 +33,7 @@ public class PainelOperacionalController {
 		
 		this.result.include("dataHora", new SimpleDateFormat("dd/MM/yyyy - hh:mm").format(new Date()));
 		
-		List<Distribuidor> distribuidores = this.painelOperacionalService.buscarIndicadoresPorDistribuidor();
+		List<OperacaoDistribuidor> distribuidores = this.painelOperacionalService.buscarIndicadoresPorDistribuidor();
 		
 		this.obterEstadosPresentes(distribuidores);
 		
@@ -43,13 +42,13 @@ public class PainelOperacionalController {
 		//this.result.include("distribuidores", mock());
 	}
 	
-	private void obterEstadosPresentes(List<Distribuidor> distribuidores){
+	private void obterEstadosPresentes(List<OperacaoDistribuidor> distribuidores){
 		
 		Map<String, Object> estados = new HashMap<String, Object>();
 		
 		if (distribuidores != null){
 			
-			for (Distribuidor distribuidor : distribuidores){
+			for (OperacaoDistribuidor distribuidor : distribuidores){
 				
 				estados.put(distribuidor.getUf(), distribuidor.getUf());
 			}
