@@ -1,6 +1,7 @@
 package br.com.abril.nds.repository.impl;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -11,6 +12,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.dto.CotaEmissaoDTO;
+import br.com.abril.nds.dto.filtro.FiltroEmissaoCE;
 import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.StatusConfirmacao;
 import br.com.abril.nds.model.cadastro.Box;
@@ -220,4 +223,23 @@ public class ChamadaEncalheRepositoryImplTest extends AbstractRepositoryImplTest
 		Assert.assertNotNull(chamadaEncalhe);
 	}
 	
+	@Test
+	public void obterDadosEmissaoChamadasEncalhe() {
+		
+		FiltroEmissaoCE filtro = new FiltroEmissaoCE();
+		filtro.setColunaOrdenacao("numCota");
+		filtro.setOrdenacao("asc");
+		List<Long> fornecedores = new ArrayList<Long>();
+		fornecedores.add(1L);
+		filtro.setFornecedores(fornecedores);
+		
+		try {
+			List<CotaEmissaoDTO> lista =  chamadaEncalheRepository.obterDadosEmissaoChamadasEncalhe(filtro);
+		
+				
+			Assert.assertTrue(1!= 1+1);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 }

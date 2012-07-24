@@ -28,14 +28,40 @@ public class FiltroEmissaoCE implements Serializable {
 	private Long idRoteiro;
 	@Export(label="Rota:")
 	private Long idRota; 
-	@Export(label="Capa:")
 	private Boolean capa;
-	@Export(label="Personalizada:")
 	private Boolean personalizada;
 	private List<Long> fornecedores;
 	private String colunaOrdenacao;
 	private String ordenacao;
+	
+	public enum ColunaOrdenacao {
+
+		COTA("numCota"),
+		NOME("nomeCota"),
+		EXEMPLARES("qtdeExemplares"),
+		VALOR("vlrTotalCe");
 		
+		private String nomeColuna;
+		
+		private ColunaOrdenacao(String nomeColuna) {
+			this.nomeColuna = nomeColuna;
+		}
+		
+		@Override
+		public String toString() {
+			return this.nomeColuna;
+		}
+		
+		public static ColunaOrdenacao getPorDescricao(String descricao) {
+			for(ColunaOrdenacao coluna: ColunaOrdenacao.values()) {
+				if(coluna.toString().equals(descricao))
+					return coluna;
+			}
+			return null;
+		}
+	}
+	
+	
 	/**
 	 * @return the dtRecolhimentoDe
 	 */
