@@ -27,9 +27,6 @@ public class StatusOperacao implements Serializable {
 	@Column(name = "ID")
 	private Long id;
 	
-	@Column(name = "DISTRIBUIDO_SERVER")
-	private DistribuidorServer distribuidorServer;
-	
 	@Column(name = "DATA")
 	private Date data;
 	
@@ -43,14 +40,6 @@ public class StatusOperacao implements Serializable {
 
 	public void setId(Long id) {
 		this.id = id;
-	}
-
-	public DistribuidorServer getDistribuidorServer() {
-		return distribuidorServer;
-	}
-
-	public void setDistribuidorServer(DistribuidorServer distribuidorServer) {
-		this.distribuidorServer = distribuidorServer;
 	}
 
 	public Date getData() {

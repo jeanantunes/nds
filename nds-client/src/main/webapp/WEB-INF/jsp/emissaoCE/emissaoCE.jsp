@@ -254,14 +254,14 @@
     <td width="79" align="right">
 
 <!-- Capa -->    
-<input id="capa" type="checkbox" name="checkbox" onclick="imprimiPernosalizado();" /></td>
+<input disabled="disabled" id="capa" type="checkbox" name="checkbox" onclick="imprimiPernosalizado();" /></td>
 
 
     <td> Capa </td>
     <td>
     
 <!-- Personalizada -->
-<input id="personalizada" type="checkbox" name="checkbox2" class="imprimirPersonalizada" /></td>
+<input disabled="disabled" id="personalizada" type="checkbox" name="checkbox2" class="imprimirPersonalizada" /></td>
 
     <td><span class="imprimirPersonalizada">Personalizada?</span></td>
     <td align="right">&nbsp;</td>
@@ -316,7 +316,12 @@
 			<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a>
 			</span>			
 
-<span class="bt_novos" title="Imprimir"><a href="ce_modelo_1.htm" target="_blank"><img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir CE</a></span>
+	<span class="bt_novos" title="Imprimir">
+
+<!-- IMPRESSAO CE -->
+<a href="${pageContext.request.contextPath}/emissaoCE/imprimirCE" target="blank">
+
+	<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir CE</a></span>
         </div>
 		
       </fieldset>
@@ -331,25 +336,31 @@
 
 $(function(){
 	$(".ceEmissaoGrid").flexigrid({
-			colModel : [ {
-				display : 'Cota',
-				name : 'numCota',
-				width : 100,
-				sortable : true,
-				align : 'center'
-			}, {
-				display : 'Nome',
-				name : 'nomeCota',
-				width : 670,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Qtde. Exemplares',
-				name : 'qtdeExemplares',
-				width : 130,
-				sortable : true,
-				align : 'center'
-			}],
+		colModel : [ {
+			display : 'Cota',
+			name : 'numCota',
+			width : 100,
+			sortable : true,
+			align : 'center'
+		}, {
+			display : 'Nome',
+			name : 'nomeCota',
+			width : 530,
+			sortable : true,
+			align : 'left'
+		}, {
+			display : 'Qtde. Exemplares',
+			name : 'qtdeExemplares',
+			width : 130,
+			sortable : true,
+			align : 'center'
+		}, {
+			display : 'Valor Total CE R$',
+			name : 'vlrTotalCe',
+			width : 130,
+			sortable : true,
+			align : 'right'
+		}],
 			width : 960,
 			height : 180,
 			sortname : "nomeCota",

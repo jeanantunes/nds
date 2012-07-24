@@ -383,17 +383,17 @@ public class DateUtil {
 			case Calendar.MONDAY:
 				return "segunda-feira";
 			case Calendar.TUESDAY:
-				return "segunda-feira";
+				return "terça-feira";
 			case Calendar.WEDNESDAY:
-				return "segunda-feira";
+				return "quarta-feira";
 			case Calendar.THURSDAY:
-				return "segunda-feira";
+				return "quinta-feira";
 			case Calendar.FRIDAY:
-				return "segunda-feira";
+				return "sexta-feira";
 			case Calendar.SATURDAY:
-				return "segunda-feira";
+				return "sábado";
 			default:
-				return "segunda-feira";
+				return "";
 		}
 	}
 }

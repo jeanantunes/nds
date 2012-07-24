@@ -151,8 +151,8 @@ public class BalanceamentoRecolhimentoAutomaticoStrategy extends AbstractBalance
 		if (super.validarLimiteCapacidadeRecolhimentoDistribuidor(excessoExpectativaEncalhe)) {
 
 			super.atualizarMatrizRecolhimento(
-				matrizRecolhimentoBalanceada,produtosRecolhimentoNaData, produtosRecolhimentoBalanceaveis, 
-					dataBalanceamento);
+				matrizRecolhimentoBalanceada, produtosRecolhimentoNaData,
+				produtosRecolhimentoBalanceaveis, dataBalanceamento);
 
 		} else {
 

@@ -410,8 +410,6 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 		this.historicoLancamentoRepository.merge(historicoLancamento);
 	}
 	
-	
-	
 	private void montarMatrizLancamentosConfirmados(TreeMap<Date, List<ProdutoLancamentoDTO>> matrizLancamentoConfirmada,
 													ProdutoLancamentoDTO produtoLancamento,
 													Lancamento lancamento,

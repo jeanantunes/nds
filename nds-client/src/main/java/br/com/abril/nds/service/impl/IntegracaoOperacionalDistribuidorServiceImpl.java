@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.integracao.couchdb.CouchDbProperties;
-import br.com.abril.nds.server.model.DistribuidorServer;
+import br.com.abril.nds.server.model.Distribuidor;
 import br.com.abril.nds.service.IntegracaoOperacionalDistribuidorService;
 
 /**
@@ -42,7 +42,7 @@ public class IntegracaoOperacionalDistribuidorServiceImpl implements IntegracaoO
 	 */
 	@Override
 	@Transactional
-	public void integrarInformacoesOperacionais(DistribuidorServer distribuidorServer) {
+	public void integrarInformacoesOperacionais(Distribuidor distribuidorServer) {
 		
 		this.couchDbClientIntegracao.save(distribuidorServer);
 	}
@@ -52,11 +52,11 @@ public class IntegracaoOperacionalDistribuidorServiceImpl implements IntegracaoO
 	 */
 	@Override
 	@Transactional(readOnly = true)
-	public DistribuidorServer obterInformacoesOperacionais() {
+	public Distribuidor obterInformacoesOperacionais() {
 		
 		//TODO: Obter indicadores
 		
-		return new DistribuidorServer();
+		return new Distribuidor();
 	}
 
 }

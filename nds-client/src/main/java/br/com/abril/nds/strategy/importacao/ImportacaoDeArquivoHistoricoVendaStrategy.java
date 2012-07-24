@@ -102,9 +102,9 @@ public class ImportacaoDeArquivoHistoricoVendaStrategy extends ImportacaoAbstrac
 	 */
 	private void atribuirValorCodigoProduto(HistoricoVendaInput historicoVenda,String codigoPublicacao){
 		
-		String codigoProduto = codigoPublicacao.trim().substring(0,8);
+		Integer codigoProduto = Integer.parseInt(codigoPublicacao.trim().substring(0,8));
 		
-		if(codigoProduto == null || codigoProduto.isEmpty()){
+		if(codigoProduto == null ){
 			throw new ImportacaoException(MENSAGEM_ERRO_FORMATO_DADOS);
 		}
 		
@@ -183,19 +183,8 @@ public class ImportacaoDeArquivoHistoricoVendaStrategy extends ImportacaoAbstrac
 	protected void processarDados(Object input) {
 		
 		HistoricoVendaInput vendaInput = (HistoricoVendaInput) input;
-				
-		movimentoEstoqueService.processarRegistroHistoricoVenda(vendaInput, getUsuario().getId());
+		
+		movimentoEstoqueService.processarRegistroHistoricoVenda(vendaInput);
 	}
 	
-	/**
-	 * Método que obtém o usuário logado
-	 * 
-	 * @return usuário logado
-	 */
-	public Usuario getUsuario() {
-		//TODO getUsuario
-		Usuario usuario = new Usuario();
-		usuario.setId(1L);
-		return usuario;
-	}
 }

@@ -9,8 +9,12 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 @Entity
 @Table(name = "INDICADOR")
@@ -30,11 +34,13 @@ public class Indicador implements Serializable {
 	@Column(name = "VALOR")
 	private String valor;
 	
+	@Temporal(TemporalType.DATE)
 	@Column(name = "DATA")
 	private Date data;
 	
-	@Column(name = "DISTRIBUIDOR_SERVER")
-	private DistribuidorServer distribuidorServer;
+	@ManyToOne
+	@JoinColumn(name = "DISTRIBUIDOR")
+	private Distribuidor distribuidor;
 	
 	@Enumerated(EnumType.STRING)
 	@Column(name = "TIPO_INDICADOR")
@@ -72,12 +78,12 @@ public class Indicador implements Serializable {
 		this.data = data;
 	}
 
-	public DistribuidorServer getDistribuidorServer() {
-		return distribuidorServer;
+	public Distribuidor getDistribuidor() {
+		return distribuidor;
 	}
 
-	public void setDistribuidorServer(DistribuidorServer distribuidorServer) {
-		this.distribuidorServer = distribuidorServer;
+	public void setDistribuidor(Distribuidor distribuidor) {
+		this.distribuidor = distribuidor;
 	}
 
 	public TipoIndicador getTipoIndicador() {

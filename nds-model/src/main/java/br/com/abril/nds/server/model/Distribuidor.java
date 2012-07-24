@@ -7,16 +7,17 @@ import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import com.google.gson.annotations.SerializedName;
 
-import br.com.abril.nds.model.cadastro.Endereco;
-
 @Entity
-@Table(name = "DISTRIBUIDOR_SERVER")
-public class DistribuidorServer implements Serializable {
+@Table(name = "DISTRIBUIDOR")
+public class Distribuidor implements Serializable {
 
 	/**
 	 * 
@@ -34,14 +35,18 @@ public class DistribuidorServer implements Serializable {
 	@Column(name = "NOME")
 	private String nome;
 	
-	@Column(name = "ENDERECO")
-	private Endereco endereco;
+	@Column(name = "UF")
+	private String uf;
 	
-	@Column(name = "STATUS_OPERACAO")
+	@OneToOne
+	@JoinColumn(name = "STATUS_OPERACAO")
 	private StatusOperacao statusOperacao;
 	
 	@OneToMany
 	private List<Indicador> indicadores;
+	
+	@Transient
+	private List<Indicador> indicadoresOrd;
 
 	public Long getIdDistribuidorInterface() {
 		return idDistribuidorInterface;
@@ -67,12 +72,12 @@ public class DistribuidorServer implements Serializable {
 		this.nome = nome;
 	}
 
-	public Endereco getEndereco() {
-		return endereco;
+	public String getUf() {
+		return uf;
 	}
 
-	public void setEndereco(Endereco endereco) {
-		this.endereco = endereco;
+	public void setUf(String uf) {
+		this.uf = uf;
 	}
 
 	public StatusOperacao getStatusOperacao() {
@@ -89,5 +94,13 @@ public class DistribuidorServer implements Serializable {
 
 	public void setIndicadores(List<Indicador> indicadores) {
 		this.indicadores = indicadores;
+	}
+
+	public List<Indicador> getIndicadoresOrd() {
+		return indicadoresOrd;
+	}
+
+	public void setIndicadoresOrd(List<Indicador> indicadoresOrd) {
+		this.indicadoresOrd = indicadoresOrd;
 	}
 }
