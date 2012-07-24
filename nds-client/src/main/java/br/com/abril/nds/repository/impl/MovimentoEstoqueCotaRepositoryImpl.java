@@ -874,7 +874,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		StringBuilder hql = new StringBuilder();
 		
 		hql.append(" select box.id as idBox, ");
-		hql.append(" 		box.codigo as box, ");
+		hql.append(" 		box.codigo || '-'|| box.nome as box, ");
 		hql.append(" 		count(distinct produtoEdicao.id) as totalProduto, ");
 		hql.append(" 		sum(movimentoCota.qtde) as totalReparte, ");
 		hql.append(" 		sum(movimentoCota.qtde * produtoEdicao.precoVenda) as totalBox ");
@@ -1274,8 +1274,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 				   .append("   INNER JOIN conferenciaEncalhe.movimentoEstoqueCota movimentoEstoqueCota ");
 			} else {
 				//MovimentoEstoqueCota dos lançamentos relacionados ao Estudo
-				sql.append("   INNER JOIN lancamento.estudo.estudoCotas estudoCotas ")
-				   .append("   INNER JOIN estudoCotas.movimentosEstoqueCota movimentoEstoqueCota ");
+				sql.append("   INNER JOIN lancamento.movimentoEstoqueCotas movimentoEstoqueCota ");
 			}
 			
 			sql.append("   LEFT JOIN movimentoEstoqueCota.cota.fornecedores fornecedor ")

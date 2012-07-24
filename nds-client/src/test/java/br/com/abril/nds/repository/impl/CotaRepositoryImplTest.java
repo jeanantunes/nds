@@ -401,7 +401,7 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 	public void obterIdCotasEntre() {
 		
 		Intervalo<Integer> intervaloCota = new Intervalo<Integer>(1, 10);
-		Intervalo<String> intervaloBox = new Intervalo<String>("BX-1", "BX-2");
+		Intervalo<Integer> intervaloBox = new Intervalo<Integer>(1, 2);
 		SituacaoCadastro situacao =  SituacaoCadastro.ATIVO;
 		cotaRepository.obterIdCotasEntre(intervaloCota, intervaloBox,
 				situacao);

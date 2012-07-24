@@ -2,7 +2,7 @@ package br.com.abril.nds.server.service;
 
 import java.util.List;
 
-import br.com.abril.nds.server.model.Distribuidor;
+import br.com.abril.nds.server.model.OperacaoDistribuidor;
 
 /**
  * Interface de serviço que define métodos de
@@ -18,7 +18,7 @@ public interface IntegracaoOperacionalDistribuidorService {
 	 * 
 	 * @return {@link List} de informações operacionais dos distribuidores
 	 */
-	List<Distribuidor> obterInformacoesOperacionaisDistribuidores();
+	List<OperacaoDistribuidor> obterInformacoesOperacionaisDistribuidores();
 	
 	/**
 	 * Atualiza a base de dados com as informações operacionais
@@ -27,6 +27,6 @@ public interface IntegracaoOperacionalDistribuidorService {
 	 * @param listaInformacoesOperacionaisDistribuidores - lista de informações operacionais dos distribuidores
 	 */
 	void atualizarInformacoesOperacionaisDistribuidores(
-		List<Distribuidor> listaInformacoesOperacionaisDistribuidores);
+		List<OperacaoDistribuidor> listaInformacoesOperacionaisDistribuidores);
 	
 }

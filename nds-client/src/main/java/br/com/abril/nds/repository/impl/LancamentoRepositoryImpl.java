@@ -1147,7 +1147,9 @@ public class LancamentoRepositoryImpl extends
 		
 		sql.append(" where produtoEdicao.id =:produtoEdicao ");
 	
-		sql.append(" AND lancamento.dataLancamentoPrevista = :dataLancamentoPrevista ");
+		if (dataLancamentoPrevista != null) {
+			sql.append(" AND lancamento.dataLancamentoPrevista = :dataLancamentoPrevista ");
+		}
 		
 		sql.append(" AND lancamento.dataLancamentoDistribuidor = :dataLancamentoDistribuidor ");
 		
@@ -1155,7 +1157,9 @@ public class LancamentoRepositoryImpl extends
 		query.setMaxResults(1);
 		query.setParameter("produtoEdicao", produtoEdicao.getId());
 		
-		query.setParameter("dataLancamentoPrevista", dataLancamentoPrevista);
+		if (dataLancamentoPrevista != null) {
+			query.setParameter("dataLancamentoPrevista", dataLancamentoPrevista);
+		}
 		
 		query.setParameter("dataLancamentoDistribuidor", dataLancamentoDistribuidor);
 		

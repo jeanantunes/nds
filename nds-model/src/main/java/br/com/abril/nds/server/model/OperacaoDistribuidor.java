@@ -8,7 +8,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -16,8 +15,8 @@ import javax.persistence.Transient;
 import com.google.gson.annotations.SerializedName;
 
 @Entity
-@Table(name = "DISTRIBUIDOR")
-public class Distribuidor implements Serializable {
+@Table(name = "OPERACAO_DISTRIBUIDOR")
+public class OperacaoDistribuidor implements Serializable {
 
 	/**
 	 * 
@@ -42,11 +41,8 @@ public class Distribuidor implements Serializable {
 	@JoinColumn(name = "STATUS_OPERACAO")
 	private StatusOperacao statusOperacao;
 	
-	@OneToMany
-	private List<Indicador> indicadores;
-	
 	@Transient
-	private List<Indicador> indicadoresOrd;
+	private List<Indicador> indicadores;
 
 	public Long getIdDistribuidorInterface() {
 		return idDistribuidorInterface;
@@ -94,13 +90,5 @@ public class Distribuidor implements Serializable {
 
 	public void setIndicadores(List<Indicador> indicadores) {
 		this.indicadores = indicadores;
-	}
-
-	public List<Indicador> getIndicadoresOrd() {
-		return indicadoresOrd;
-	}
-
-	public void setIndicadoresOrd(List<Indicador> indicadoresOrd) {
-		this.indicadoresOrd = indicadoresOrd;
 	}
 }

@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import br.com.abril.nds.dto.MovimentoFinanceiroCotaDTO;
 import br.com.abril.nds.dto.StatusDividaDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaInadimplenteDTO;
+import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.TipoEdicao;
 import br.com.abril.nds.model.cadastro.Distribuidor;
@@ -35,6 +36,7 @@ import br.com.abril.nds.repository.UsuarioRepository;
 import br.com.abril.nds.service.CobrancaService;
 import br.com.abril.nds.service.DividaService;
 import br.com.abril.nds.service.MovimentoFinanceiroCotaService;
+import br.com.abril.nds.util.TipoMensagem;
 
 @Service
 public class DividaServiceImpl implements DividaService {
@@ -107,10 +109,26 @@ public class DividaServiceImpl implements DividaService {
 	public Divida obterDividaPorId(Long idDivida) {
 		return dividaRepository.buscarPorId(idDivida);
 	}
+	
+	/**
+	 * Verifica se a data informada para postergação é maior que a data de operação corrente do sistema.
+	 * 
+	 * @param dataPostergação - data de postergação
+	 */
+	private void validarDataPostergacao(Date dataPostergacao){
+		
+		Distribuidor distribuidor = distribuidorService.obter();
+		
+		if(dataPostergacao.compareTo(distribuidor.getDataOperacao()) < 1){
+			throw new ValidacaoException(TipoMensagem.WARNING,"A nova data para postergação da dívida tem que ser no mínimo a data da operação seguinte (D+1)");
+		}
+	}
 
 	@Override
 	@Transactional
 	public void postergarCobrancaCota(List<Long> listaIdsCobranca, Date dataPostergacao, Long idUsuario, boolean isIsento) {
+		
+		validarDataPostergacao(dataPostergacao);
 		
 		try {
 			

@@ -105,7 +105,7 @@ public class BoletoServiceImplTest  extends AbstractRepositoryImplTest {
 		politicaCobranca.setDistribuidor(distribuidor);
 		save(politicaCobranca);
 		
-		Box box = Fixture.criarBox("300", "Box 300", TipoBox.LANCAMENTO, false);
+		Box box = Fixture.criarBox(300, "Box 300", TipoBox.LANCAMENTO);
 		save(box);
 		
 		Cota cota = Fixture.cota(1000, pessoaJuridica, SituacaoCadastro.ATIVO,box);

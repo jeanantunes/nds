@@ -2,27 +2,50 @@ package br.com.abril.nds.dto;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Date;
 
 import br.com.abril.nds.util.CurrencyUtil;
-import br.com.abril.nds.util.export.Export;
-import br.com.abril.nds.util.export.Exportable;
+import br.com.abril.nds.util.DateUtil;
 
 public class ProdutoEmissaoDTO implements Serializable{
 
 	private static final long serialVersionUID = -6994377052719897181L;
 
 	private Integer sequencia;
-	private Integer codigoProduto;
+	private String codigoBarras;
+	private String codigoProduto;
 	private String nomeProduto;
-	private Integer edicao;
+	private Long edicao;
 	private String desconto;
 	private String tipoRecolhimento;
 	private String dataLancamento;
 	private String precoComDesconto;
 	private Integer reparte;
 	private Integer quantidadeDevolvida;
+	private Double precoVenda;
+	private Double vlrPrecoComDesconto;
+	public Double vlrDesconto;
+	public Integer vendido;
+	public String vlrVendido;
+	
+	public String getVlrVendido() {
+		return vlrVendido;
+	}
+	
+	public void setVlrVendido(String vlrVendido) {
+		this.vlrVendido = vlrVendido;
+	}
+	
+	public Integer getVendido() {
+		return vendido;
+	}
+	
+	public void setVendido(Integer vendido) {
+		this.vendido = vendido;
+	}
+	
 	/**
-	 * @return the sequencia
+	 * @return the seqStringuencia
 	 */
 	public Integer getSequencia() {
 		return sequencia;
@@ -36,13 +59,13 @@ public class ProdutoEmissaoDTO implements Serializable{
 	/**
 	 * @return the codigoProduto
 	 */
-	public Integer getCodigoProduto() {
+	public String getCodigoProduto() {
 		return codigoProduto;
 	}
 	/**
 	 * @param codigoProduto the codigoProduto to set
 	 */
-	public void setCodigoProduto(Integer codigoProduto) {
+	public void setCodigoProduto(String codigoProduto) {
 		this.codigoProduto = codigoProduto;
 	}
 	/**
@@ -60,13 +83,13 @@ public class ProdutoEmissaoDTO implements Serializable{
 	/**
 	 * @return the edicao
 	 */
-	public Integer getEdicao() {
+	public Long getEdicao() {
 		return edicao;
 	}
 	/**
 	 * @param edicao the edicao to set
 	 */
-	public void setEdicao(Integer edicao) {
+	public void setEdicao(Long edicao) {
 		this.edicao = edicao;
 	}
 	/**
@@ -78,8 +101,9 @@ public class ProdutoEmissaoDTO implements Serializable{
 	/**
 	 * @param desconto the desconto to set
 	 */
-	public void setDesconto(String desconto) {
-		this.desconto = desconto;
+	public void setDesconto(BigDecimal desconto) {
+		vlrDesconto = desconto.doubleValue();
+		this.desconto = CurrencyUtil.formatarValor(desconto);
 	}
 	/**
 	 * @return the tipoRecolhimento
@@ -90,8 +114,8 @@ public class ProdutoEmissaoDTO implements Serializable{
 	/**
 	 * @param tipoRecolhimento the tipoRecolhimento to set
 	 */
-	public void setTipoRecolhimento(String tipoRecolhimento) {
-		this.tipoRecolhimento = tipoRecolhimento;
+	public void setTipoRecolhimento(Boolean tipoRecolhimento) {
+		this.tipoRecolhimento = tipoRecolhimento ? "P":"F";
 	}
 	/**
 	 * @return the dataLancamento
@@ -102,8 +126,8 @@ public class ProdutoEmissaoDTO implements Serializable{
 	/**
 	 * @param dataLancamento the dataLancamento to set
 	 */
-	public void setDataLancamento(String dataLancamento) {
-		this.dataLancamento = dataLancamento;
+	public void setDataLancamento(Date dataLancamento) {
+		this.dataLancamento = DateUtil.formatarDataPTBR(dataLancamento);
 	}
 	/**
 	 * @return the precoComDesconto
@@ -114,8 +138,9 @@ public class ProdutoEmissaoDTO implements Serializable{
 	/**
 	 * @param precoComDesconto the precoComDesconto to set
 	 */
-	public void setPrecoComDesconto(String precoComDesconto) {
-		this.precoComDesconto = precoComDesconto;
+	public void setPrecoComDesconto(BigDecimal precoComDesconto) {
+		this.vlrPrecoComDesconto= precoComDesconto.doubleValue(); 
+		this.precoComDesconto = CurrencyUtil.formatarValor(precoComDesconto);
 	}
 	/**
 	 * @return the reparte
@@ -126,8 +151,8 @@ public class ProdutoEmissaoDTO implements Serializable{
 	/**
 	 * @param reparte the reparte to set
 	 */
-	public void setReparte(Integer reparte) {
-		this.reparte = reparte;
+	public void setReparte(BigDecimal reparte) {
+		this.reparte = reparte.intValue();
 	}
 	/**
 	 * @return the quantidadeDevolvida
@@ -138,9 +163,51 @@ public class ProdutoEmissaoDTO implements Serializable{
 	/**
 	 * @param quantidadeDevolvida the quantidadeDevolvida to set
 	 */
-	public void setQuantidadeDevolvida(Integer quantidadeDevolvida) {
-		this.quantidadeDevolvida = quantidadeDevolvida;
+	public void setQuantidadeDevolvida(BigDecimal quantidadeDevolvida) {
+		this.quantidadeDevolvida = quantidadeDevolvida!=null?quantidadeDevolvida.intValue():0;
+	}
+	/**
+	 * @return the codigoBarras
+	 */
+	public String getCodigoBarras() {
+		return codigoBarras;
+	}
+	/**
+	 * @param codigoBarras the codigoBarras to set
+	 */
+	public void setCodigoBarras(String codigoBarras) {
+		this.codigoBarras = codigoBarras;
+	}
+	/**
+	 * @return the precoVenda
+	 */
+	public Double getPrecoVenda() {
+		return precoVenda;
+	}
+	/**
+	 * @param precoVenda the precoVenda to set
+	 */
+	public void setPrecoVenda(BigDecimal precoVenda) {
+		this.precoVenda = precoVenda.doubleValue();
+	}
+	/**
+	 * @return the vlrPrecoComDesconto
+	 */
+	public Double getVlrPrecoComDesconto() {
+		return vlrPrecoComDesconto;
+	}
+	/**
+	 * @param vlrPrecoComDesconto the vlrPrecoComDesconto to set
+	 */
+	public void setVlrPrecoComDesconto(Double vlrPrecoComDesconto) {
+		this.vlrPrecoComDesconto = vlrPrecoComDesconto;
 	}
 	
+	public Double getVlrDesconto() {
+		return vlrDesconto;
+	}
 	
+	public void setVlrDesconto(Double vlrDesconto) {
+		this.vlrDesconto = vlrDesconto;
+	}
 }
