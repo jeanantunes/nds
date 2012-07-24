@@ -295,7 +295,7 @@
 							
 							<div class="accordion">
 							
-							<c:forEach items="${distribuidor.indicadoresOrd}" var="indicador">
+							<c:forEach items="${distribuidor.indicadores}" var="indicador">
 										
 								<c:if test="${indicador.grupoIndicador != ultimoGrupo}">
 									

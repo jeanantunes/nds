@@ -1,5 +1,6 @@
 package br.com.abril.nds.server.fixture;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -68,11 +69,11 @@ public class DataLoader {
 		Indicador indicador = new Indicador();
 
 		indicador.setData(new Date());
-		indicador.setFormatoIndicador(FormatoIndicador.TEXTO);
+		indicador.setFormatoIndicador(FormatoIndicador.DATA);
 		indicador.setGrupoIndicador(GrupoIndicador.LANCAMENTO);
 		indicador.setId(1L);
 		indicador.setTipoIndicador(TipoIndicador.CONSIGNADO);
-		indicador.setValor("abc");
+		indicador.setValor(new SimpleDateFormat(FormatoIndicador.DATA.getFormato()).format(new Date()));
 		indicador.setDistribuidor(distribuidorServer);
 		indicadores.add(indicador);
 		session.save(indicador);
@@ -80,11 +81,11 @@ public class DataLoader {
 		indicador = new Indicador();
 
 		indicador.setData(new Date());
-		indicador.setFormatoIndicador(FormatoIndicador.TEXTO);
+		indicador.setFormatoIndicador(FormatoIndicador.MONETARIO);
 		indicador.setGrupoIndicador(GrupoIndicador.LANCAMENTO);
 		indicador.setId(1L);
 		indicador.setTipoIndicador(TipoIndicador.JORNALEIROS);
-		indicador.setValor("123");
+		indicador.setValor("R$ 123.987");
 		indicador.setDistribuidor(distribuidorServer);
 		indicadores.add(indicador);
 		session.save(indicador);

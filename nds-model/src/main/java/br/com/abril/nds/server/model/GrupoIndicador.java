@@ -19,11 +19,6 @@ public enum GrupoIndicador {
 		this.ordemExibicaoGrupo = ordemExibicaoGrupo;
 	}
 	
-	public String toString(){
-		
-		return this.descricao;
-	}
-	
 	public int getOrdemExibicaoGrupo(){
 		
 		return this.ordemExibicaoGrupo;
