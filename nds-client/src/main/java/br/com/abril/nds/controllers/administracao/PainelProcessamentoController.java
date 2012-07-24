@@ -10,17 +10,19 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.util.PaginacaoUtil;
+import br.com.abril.nds.client.vo.DetalheInterfaceVO;
+import br.com.abril.nds.client.vo.DetalheProcessamentoVO;
 import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.dto.InterfaceDTO;
 import br.com.abril.nds.dto.ProcessoDTO;
+import br.com.abril.nds.dto.filtro.FiltroDetalheInterfaceDTO;
+import br.com.abril.nds.dto.filtro.FiltroDetalheProcessamentoDTO;
 import br.com.abril.nds.dto.filtro.FiltroInterfacesDTO;
 import br.com.abril.nds.dto.filtro.FiltroProcessosDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.cadastro.Distribuidor;
-import br.com.abril.nds.model.integracao.LogExecucaoMensagem;
 import br.com.abril.nds.model.seguranca.Usuario;
-import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.InterfaceExecucaoService;
 import br.com.abril.nds.service.PainelProcessamentoService;
 import br.com.abril.nds.util.CellModelKeyValue;
@@ -31,7 +33,6 @@ import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
 import br.com.abril.nds.util.export.NDSFileHeader;
 import br.com.abril.nds.vo.PaginacaoVO;
-import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
@@ -55,6 +56,9 @@ public class PainelProcessamentoController {
 
 	private static final String FILTRO_PESQUISA_INTERFACES_SESSION_ATTRIBUTE = "filtroPesquisaInterfaces";
 	private static final String FILTRO_PESQUISA_PROCESSOS_SESSION_ATTRIBUTE = "filtroPesquisaProcessos";
+
+	private static final String FILTRO_PESQUISA_DETALHES_INTERFACE_SESSION_ATTRIBUTE = "filtroPesquisaDetalheInterfaceGrid";
+	private static final String FILTRO_PESQUISA_DETALHES_PROCESSAMENTO_SESSION_ATTRIBUTE = "filtroPesquisaDetalheProcessamentoGrid";
 
 	@Autowired
 	private PainelProcessamentoService painelProcessamentoService;
@@ -191,11 +195,13 @@ public class PainelProcessamentoController {
 	 */
 	public void pesquisarDetalhesInterfaceProcessamento(String idLogProcessamento, String sortname, String sortorder, int rp, int page) throws Exception {
 
-		List<LogExecucaoMensagem> lista;
-		Long quantidade = 0L;
+		FiltroDetalheProcessamentoDTO filtro = carregarFiltroDetalhesProcessamento(sortorder, sortname, page, rp);
+
+		List<DetalheProcessamentoVO> lista;
+		int quantidade = 0;
 		try {
-			lista = painelProcessamentoService.listarProcessamentoInterface(Long.parseLong(idLogProcessamento), sortname, Ordenacao.valueOf(sortorder.toUpperCase()), page*rp - rp , rp);
-			quantidade = painelProcessamentoService.quantidadeProcessamentoInterface(Long.parseLong(idLogProcessamento));
+			lista = painelProcessamentoService.listardetalhesProcessamentoInterface(Long.parseLong(idLogProcessamento));
+			quantidade = lista.size();
 		} catch (Exception e) {
 			if (e instanceof ValidacaoException) {
 				throw e;
@@ -205,10 +211,100 @@ public class PainelProcessamentoController {
 			}
 		}
 
-		result.use(FlexiGridJson.class).from(lista).total(quantidade.intValue()).page(page).serialize();
+		List<DetalheProcessamentoVO> resultadoPaginado = PaginacaoUtil.paginarEOrdenarEmMemoria(lista, filtro.getPaginacao(), filtro.getOrdenacaoColuna().toString());
+
+		TableModel<CellModelKeyValue<DetalheProcessamentoVO>> tableModel = new TableModel<CellModelKeyValue<DetalheProcessamentoVO>>();
+		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(resultadoPaginado));
+		tableModel.setPage(filtro.getPaginacao().getPaginaAtual());		
+		tableModel.setTotal(quantidade);		
 		
+		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
+
 	}
 	
+	private FiltroDetalheProcessamentoDTO carregarFiltroDetalhesProcessamento(String sortorder, String sortname, int page, int rp) {
+		FiltroDetalheProcessamentoDTO filtro = new FiltroDetalheProcessamentoDTO();
+
+		if (filtro != null) {
+		
+			PaginacaoVO paginacao = new PaginacaoVO(page, rp, sortorder);
+			
+			filtro.setPaginacao(paginacao);
+		
+			filtro.setOrdenacaoColuna(Util.getEnumByStringValue(FiltroDetalheProcessamentoDTO.OrdenacaoColunaConsulta.values(), sortname));
+		}
+
+		FiltroDetalheProcessamentoDTO filtroSessao = (FiltroDetalheProcessamentoDTO) this.session.getAttribute(FILTRO_PESQUISA_DETALHES_PROCESSAMENTO_SESSION_ATTRIBUTE);
+
+		if (filtroSessao != null && !filtroSessao.equals(filtro)) {
+			filtro.getPaginacao().setPaginaAtual(1);
+		}
+		
+		session.setAttribute(FILTRO_PESQUISA_DETALHES_PROCESSAMENTO_SESSION_ATTRIBUTE, filtro);
+		
+		return filtro;
+	}
+
+	/**
+	 * Retorna a lista de detalhes da interface
+	 * @param idLogProcessamento
+	 * @param sortname
+	 * @param sortorder
+	 * @param rp
+	 * @param page
+	 * @throws Exception
+	 */
+	public void pesquisarDetalhesInterface(String idLogProcessamento, String sortname, String sortorder, int rp, int page) throws Exception {
+
+		FiltroDetalheInterfaceDTO filtro = carregarFiltroDetalhesInterfaces(sortorder, sortname, page, rp);
+
+		List<DetalheInterfaceVO> lista;
+		int quantidade = 0;
+		try {
+			lista = painelProcessamentoService.listarDetalhesInterface(Long.parseLong(idLogProcessamento));
+			quantidade = lista.size();
+		} catch (Exception e) {
+			if (e instanceof ValidacaoException) {
+				throw e;
+			} else {
+				throw new ValidacaoException(TipoMensagem.ERROR,
+						"Erro ao pesquisar registros: " + e.getMessage());
+			}
+		}
+
+		List<DetalheInterfaceVO> resultadoPaginado = PaginacaoUtil.paginarEOrdenarEmMemoria(lista, filtro.getPaginacao(), filtro.getOrdenacaoColuna().toString());
+
+		TableModel<CellModelKeyValue<DetalheInterfaceVO>> tableModel = new TableModel<CellModelKeyValue<DetalheInterfaceVO>>();
+		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(resultadoPaginado));
+		tableModel.setPage(filtro.getPaginacao().getPaginaAtual());		
+		tableModel.setTotal(quantidade);		
+		
+		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
+	}
+	
+	private FiltroDetalheInterfaceDTO carregarFiltroDetalhesInterfaces(String sortorder, String sortname, int page, int rp) {
+		FiltroDetalheInterfaceDTO filtro = new FiltroDetalheInterfaceDTO();
+
+		if (filtro != null) {
+		
+			PaginacaoVO paginacao = new PaginacaoVO(page, rp, sortorder);
+			
+			filtro.setPaginacao(paginacao);
+		
+			filtro.setOrdenacaoColuna(Util.getEnumByStringValue(FiltroDetalheInterfaceDTO.OrdenacaoColunaConsulta.values(), sortname));
+		}
+
+		FiltroDetalheInterfaceDTO filtroSessao = (FiltroDetalheInterfaceDTO) this.session.getAttribute(FILTRO_PESQUISA_DETALHES_INTERFACE_SESSION_ATTRIBUTE);
+
+		if (filtroSessao != null && !filtroSessao.equals(filtro)) {
+			filtro.getPaginacao().setPaginaAtual(1);
+		}
+		
+		session.setAttribute(FILTRO_PESQUISA_DETALHES_INTERFACE_SESSION_ATTRIBUTE, filtro);
+		
+		return filtro;
+	}
+
 	/**
 	 * Retorna a lista de mensagens de processos do sistema
 	 * @param sortname
