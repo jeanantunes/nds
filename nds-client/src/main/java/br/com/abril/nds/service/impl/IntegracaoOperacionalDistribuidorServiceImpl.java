@@ -1,11 +1,14 @@
 package br.com.abril.nds.service.impl;
 
+import javax.annotation.PostConstruct;
+
+import org.lightcouch.CouchDbClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import br.com.abril.nds.server.model.DistribuidorServer;
-import br.com.abril.nds.service.IntegracaoService;
+import br.com.abril.nds.integracao.couchdb.CouchDbProperties;
+import br.com.abril.nds.server.model.Distribuidor;
 import br.com.abril.nds.service.IntegracaoOperacionalDistribuidorService;
 
 /**
@@ -16,18 +19,32 @@ import br.com.abril.nds.service.IntegracaoOperacionalDistribuidorService;
  */
 @Service
 public class IntegracaoOperacionalDistribuidorServiceImpl implements IntegracaoOperacionalDistribuidorService {
-
+	
+	private static final String DB_NAME = "db_integracao";
+	
 	@Autowired
-	private IntegracaoService integracaoService;
+	private CouchDbProperties couchDbProperties;
+	
+	private CouchDbClient couchDbClientIntegracao;
+	
+	@PostConstruct
+	public void initCouchDbClient() {
+		
+		this.couchDbClientIntegracao = 
+			new CouchDbClient(
+				DB_NAME,true, couchDbProperties.getProtocol(), couchDbProperties.getHost(), 
+					couchDbProperties.getPort(), couchDbProperties.getUsername(), 
+						couchDbProperties.getPassword());
+	}
 	
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
 	@Transactional
-	public void integrarInformacoesOperacionais(DistribuidorServer distribuidorServer) {
+	public void integrarInformacoesOperacionais(Distribuidor distribuidorServer) {
 		
-		this.integracaoService.getCouchDbClient().save(distribuidorServer);
+		this.couchDbClientIntegracao.save(distribuidorServer);
 	}
 	
 	/**
@@ -35,11 +52,11 @@ public class IntegracaoOperacionalDistribuidorServiceImpl implements IntegracaoO
 	 */
 	@Override
 	@Transactional(readOnly = true)
-	public DistribuidorServer obterInformacoesOperacionais() {
+	public Distribuidor obterInformacoesOperacionais() {
 		
 		//TODO: Obter indicadores
 		
-		return new DistribuidorServer();
+		return new Distribuidor();
 	}
 
 }

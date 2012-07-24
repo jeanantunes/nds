@@ -5,7 +5,7 @@ import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import br.com.abril.nds.server.model.DistribuidorServer;
+import br.com.abril.nds.server.model.Distribuidor;
 import br.com.abril.nds.service.IntegracaoOperacionalDistribuidorService;
 
 /**
@@ -37,7 +37,7 @@ public class IntegracaoOperacionalDistribuidorJob implements Job {
 	@Override
 	public void execute(JobExecutionContext context) throws JobExecutionException {
 
-		DistribuidorServer distribuidorServer = 
+		Distribuidor distribuidorServer = 
 			this.integracaoOperacionalDistribuidorService.obterInformacoesOperacionais();
 		
 		this.integracaoOperacionalDistribuidorService.integrarInformacoesOperacionais(distribuidorServer);

@@ -27,9 +27,9 @@ public class RecolhimentoDTO implements Serializable {
 	
 	private TreeSet<Date> datasRecolhimentoDistribuidor;
 	
-	private boolean balancearMatriz;
+	private boolean semanaRecolhimento;
 	
-	private boolean matrizFechada;
+	private boolean configuracaoInicial;
 
 	/**
 	 * Construtor padrão.
@@ -114,31 +114,31 @@ public class RecolhimentoDTO implements Serializable {
 	}
 
 	/**
-	 * @return the balancearMatriz
+	 * @return the semanaRecolhimento
 	 */
-	public boolean getBalancearMatriz() {
-		return balancearMatriz;
+	public boolean isSemanaRecolhimento() {
+		return semanaRecolhimento;
 	}
 
 	/**
-	 * @param balancearMatriz the balancearMatriz to set
+	 * @param semanaRecolhimento the semanaRecolhimento to set
 	 */
-	public void setBalancearMatriz(boolean balancearMatriz) {
-		this.balancearMatriz = balancearMatriz;
+	public void setSemanaRecolhimento(boolean semanaRecolhimento) {
+		this.semanaRecolhimento = semanaRecolhimento;
 	}
 
 	/**
-	 * @return the matrizFechada
+	 * @return the configuracaoInicial
 	 */
-	public boolean isMatrizFechada() {
-		return matrizFechada;
+	public boolean isConfiguracaoInicial() {
+		return configuracaoInicial;
 	}
 
 	/**
-	 * @param matrizFechada the matrizFechada to set
+	 * @param configuracaoInicial the configuracaoInicial to set
 	 */
-	public void setMatrizFechada(boolean matrizFechada) {
-		this.matrizFechada = matrizFechada;
+	public void setConfiguracaoInicial(boolean configuracaoInicial) {
+		this.configuracaoInicial = configuracaoInicial;
 	}
 	
 }

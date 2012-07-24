@@ -121,9 +121,9 @@
 	
 			    $("span[name='qtdeExemplares']").tooltip();
 			    
-			    var matrizFechada = result.matrizFechada;
+			    var bloquearBotoes = result.bloquearBotoes;
 			    
-			    if (matrizFechada) {
+			    if (bloquearBotoes) {
 			    	
 			    	bloquearLinks();
 			    	
@@ -255,7 +255,7 @@
 				
 				var retornoHTML;
 				
-				if (row.cell.bloqueioMatrizFechada) {
+				if (row.cell.bloqueioAlteracaoBalanceamento) {
 					
 					retornoHTML = '<input type="text" id="sequencia' + row.id + '"'
 							    + 	    ' value="' + row.cell.sequencia + '"'
@@ -278,12 +278,9 @@
 					
 				retornoHTML = '<div name="divNovaData" id="divNovaData' + row.id + '" style="width: 100%;">';
 				
-				retornoHTML += '<input type="hidden" name="hiddenBloqueioMatrizFechada"'
-						    + 	     ' value="' + row.cell.bloqueioMatrizFechada + '" />';
-						     
-		     	retornoHTML += '<input type="hidden" name="hiddenBloqueioDataRecolhimento"'
-						     + 	     ' value="' + row.cell.bloqueioDataRecolhimento + '" />';
-					
+				retornoHTML += '<input type="hidden" name="hiddenBloqueioAlteracaoBalanceamento"'
+						    + 	     ' value="' + row.cell.bloqueioAlteracaoBalanceamento + '" />';
+				
 				retornoHTML += '<input type="text" name="novaData"'
 							 + 	     ' value="' + row.cell.novaData + '"'
 							 + 	     ' style="width:65px; margin-right:5px; float:left;" />';
@@ -301,7 +298,7 @@
 				
 				var retornoHTML;
 				
-				if (row.cell.bloqueioMatrizFechada) {
+				if (row.cell.bloqueioAlteracaoBalanceamento) {
 					
 					retornoHTML = '<input type="checkbox" id="ch' + row.id + '"'
 			   		   			+       ' name="checkReprogramar"'
@@ -348,11 +345,10 @@
 				
 				var inputCheck = $("#checkReprogramar" + idLinha);
 				
-				var hiddenBloqueioMatrizFechada = $(divNovaData).find("input[name='hiddenBloqueioMatrizFechada']").val();
-				var hiddenBloqueioDataRecolhimento = $(divNovaData).find("input[name='hiddenBloqueioDataRecolhimento']").val();
+				var bloqueioAlteracaoBalanceamento = $(divNovaData).find("input[name='hiddenBloqueioAlteracaoBalanceamento']").val();
 				
 				if (inputCheck.attr("checked") == "checked"
-						|| eval(hiddenBloqueioMatrizFechada) || eval(hiddenBloqueioDataRecolhimento)) {
+						|| eval(bloqueioAlteracaoBalanceamento)) {
 				
 					$(inputNovaData).disable();
 					
@@ -657,20 +653,18 @@
 				
 						fecharGridBalanceamento();
 						
-						$("#resumoPeriodo").hide();
-						
 						$("#dialog-confirm-balanceamento").dialog("close");
 
-						   if (result) {
+						if (result) {
+						   
+							var tipoMensagem = result.tipoMensagem;
+						   	var listaMensagens = result.listaMensagens;
+						   
+						   	if (tipoMensagem && listaMensagens) {
 							   
-							   var tipoMensagem = result.tipoMensagem;
-							   var listaMensagens = result.listaMensagens;
-							   
-							   if (tipoMensagem && listaMensagens) {
-								   
-							       exibirMensagem(tipoMensagem, listaMensagens);
-						       }
-			        	   }
+						    	exibirMensagem(tipoMensagem, listaMensagens);
+					       	}
+		        	   	}
 					},
 					null,
 					true,
@@ -715,8 +709,6 @@
 			}
 			
 			function salvar() {
-				
-				fecharGridBalanceamento();
 				
 				$.postJSON(
 					"${pageContext.request.contextPath}/devolucao/balanceamentoMatriz/salvar"
@@ -918,26 +910,6 @@
 			function deselectCheckAll() {
 				
 				$("#checkAllReprogramar").attr("checked", false);
-			}
-
-			// TODO: deletar esse metodo
-			function mostarDetalhesProduto(idProdutoEdicao) {
-
-				var data = [];
-				
-				data.push({name:'idProdutoEdicao', value: idProdutoEdicao});
-				
-				$.postJSON(
-					"${pageContext.request.contextPath}/cadastro/edicao/obterDetalheProduto.json", 
-					data,
-					function(result) {
-						balanceamento.popularDetalheProduto(result);
-						balanceamento.popup_detalhes_prod("#dialog-detalhe-produto" );
-					},
-					function() {
-						$("#dialog-detalhe-produto").hide();
-					}
-				);
 			}
 			
 			function obterConfirmacaoBalanceamento() {

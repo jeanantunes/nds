@@ -2,8 +2,11 @@ package br.com.abril.nds.strategy.importacao;
 
 import java.io.File;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import br.com.abril.nds.model.seguranca.Usuario;
+import br.com.abril.nds.service.MovimentoEstoqueService;
 import br.com.abril.nds.exception.ImportacaoException;
 import br.com.abril.nds.service.vo.RetornoImportacaoArquivoVO;
 import br.com.abril.nds.strategy.importacao.input.HistoricoVendaInput;
@@ -23,6 +26,10 @@ public class ImportacaoDeArquivoHistoricoVendaStrategy extends ImportacaoAbstrac
 	private static final int POSICAO_NUMERO_COTA = 2;
 	private static final int POSICAO_QNT_RECEBIDA_PRODUTO = 7;
 	private static final int POSICAO_QNT_DEVOLVIDA_PRODUTO = 11;
+	
+
+	@Autowired
+	private MovimentoEstoqueService movimentoEstoqueService;
 	
 	@Override
 	public RetornoImportacaoArquivoVO processarImportacaoArquivo(File arquivo) {
@@ -95,9 +102,9 @@ public class ImportacaoDeArquivoHistoricoVendaStrategy extends ImportacaoAbstrac
 	 */
 	private void atribuirValorCodigoProduto(HistoricoVendaInput historicoVenda,String codigoPublicacao){
 		
-		String codigoProduto = codigoPublicacao.trim().substring(0,8);
+		Integer codigoProduto = Integer.parseInt(codigoPublicacao.trim().substring(0,8));
 		
-		if(codigoProduto == null || codigoProduto.isEmpty()){
+		if(codigoProduto == null ){
 			throw new ImportacaoException(MENSAGEM_ERRO_FORMATO_DADOS);
 		}
 		
@@ -177,6 +184,7 @@ public class ImportacaoDeArquivoHistoricoVendaStrategy extends ImportacaoAbstrac
 		
 		HistoricoVendaInput vendaInput = (HistoricoVendaInput) input;
 		
-		// FIXME implementar a logica de negocio de importação	
+		movimentoEstoqueService.processarRegistroHistoricoVenda(vendaInput);
 	}
+	
 }

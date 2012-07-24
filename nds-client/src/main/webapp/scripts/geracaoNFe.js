@@ -166,7 +166,7 @@ GeracaoNFe.prototype.pequisar = function() {
 GeracaoNFe.prototype.gridReaload = function(grid, uri) {
 	var params = [ {
 		name : "tipoNotaFiscal",
-		value : 1
+		value : $("#selectTipoNotaFiscal").val()
 	} ];
 
 	if ($("#inputIntervaloBoxDe").val().length > 0) {
@@ -210,6 +210,15 @@ GeracaoNFe.prototype.gridReaload = function(grid, uri) {
 			value : $("#datepickerIntervaloMovimentoAte").val()
 		});
 	}
+	
+	if (($("#inputIntervaloCotaDe").val().length > 0)
+			&& ($("#inputIntervaloCotaAte").val().length > 0) 
+			&& (($("#datepickerIntervaloMovimentoDe").val().length == 0) 
+					||  ($("#datepickerIntervaloMovimentoAte").val().length == 0))) {
+		exibirMensagem("WARNING", ["Quando haver intervalo de [Cota], deve haver também intervalo de [Data de Movimento]"], "");
+		return;
+	}
+	
 	var listaFornecedores = $("#selectFornecedores").val();
 	if (listaFornecedores) {
 		$.each(listaFornecedores, function(index, value) {

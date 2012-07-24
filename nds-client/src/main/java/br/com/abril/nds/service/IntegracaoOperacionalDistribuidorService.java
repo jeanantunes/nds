@@ -1,6 +1,6 @@
 package br.com.abril.nds.service;
 
-import br.com.abril.nds.server.model.DistribuidorServer;
+import br.com.abril.nds.server.model.Distribuidor;
 
 
 /**
@@ -15,13 +15,13 @@ public interface IntegracaoOperacionalDistribuidorService {
 	/**
 	 * Obtém as inforamções operacionais do distribuidor.
 	 * 
-	 * @return {@link DistribuidorServer}
+	 * @return {@link Distribuidor}
 	 */
-	DistribuidorServer obterInformacoesOperacionais();
+	Distribuidor obterInformacoesOperacionais();
 	
 	/**
 	 * Efetua a integração das informações operacionais do distribuidor.
 	 */
-	void integrarInformacoesOperacionais(DistribuidorServer distribuidorServer);
+	void integrarInformacoesOperacionais(Distribuidor distribuidorServer);
 	
 }
