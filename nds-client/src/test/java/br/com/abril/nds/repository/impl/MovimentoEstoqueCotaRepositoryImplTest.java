@@ -52,6 +52,7 @@ import br.com.abril.nds.model.fiscal.ItemNotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.NCM;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaFornecedor;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
+import br.com.abril.nds.model.fiscal.nota.Status;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalhe;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalheCota;
 import br.com.abril.nds.model.movimentacao.ControleContagemDevolucao;
@@ -59,6 +60,7 @@ import br.com.abril.nds.model.movimentacao.StatusOperacao;
 import br.com.abril.nds.model.planejamento.ChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.ChamadaEncalheCota;
 import br.com.abril.nds.model.planejamento.Estudo;
+import br.com.abril.nds.model.planejamento.EstudoCota;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
@@ -653,8 +655,38 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 			
 	}
 	
-	public void setUpMovimentosNotaFiscal(){
+	public void setUpMovimentosNotaFiscal() {
 		
+		lancamentoVeja = Fixture.lancamento(
+				TipoLancamento.SUPLEMENTAR, 
+				veja1,
+				Fixture.criarData(22, Calendar.FEBRUARY, 2012),
+				Fixture.criarData(28, Calendar.FEBRUARY, 2012),
+				new Date(),
+				new Date(),
+				new BigDecimal(100),
+				StatusLancamento.BALANCEADO_RECOLHIMENTO, itemRecebimentoFisico1Veja, 1);
+		
+		Estudo estudo = Fixture.estudo(new BigDecimal(100),
+				Fixture.criarData(22, Calendar.FEBRUARY, 2012), veja1);
+		
+		lancamentoVeja.setEstudo(estudo);
+
+		EstudoCota estudoCota = Fixture.estudoCota(new BigDecimal(100), 
+				new BigDecimal(100), estudo, cotaManoel);
+		
+		TipoMovimentoEstoque tipoMovimentoEstoque = Fixture.tipoMovimentoRecebimentoReparte();
+		
+		EstoqueProdutoCota estoqueProdutoCota = Fixture.estoqueProdutoCota(
+				veja1, cotaManoel, BigDecimal.TEN, BigDecimal.ZERO);
+		save(estoqueProdutoCota);
+		
+		MovimentoEstoqueCota movimentoEstoqueCota = Fixture.movimentoEstoqueCota(veja1, 
+				tipoMovimentoEstoque, usuario, estoqueProdutoCota, new BigDecimal(100), 
+				cotaManoel, StatusAprovacao.APROVADO, "Aprovado");
+		
+		save(lancamentoVeja, estudo, estudoCota, tipoMovimentoEstoque, estoqueProdutoCota, movimentoEstoqueCota);
+
 	}
 	
 	@Test
@@ -958,7 +990,8 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 	@Test
 	public void obterMovimentoEstoqueCotaPor() {
 		
-		setUpForContagemDevolucao();
+//		setUpMovimentosNotaFiscal();
+		setUpForConsultaEncalhe();
 		
 		ParametrosRecolhimentoDistribuidor parametrosRecolhimentoDistribuidor = new ParametrosRecolhimentoDistribuidor();
 		parametrosRecolhimentoDistribuidor.setDiaRecolhimentoPrimeiro(false);
