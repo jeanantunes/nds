@@ -30,6 +30,7 @@ public class TipoDescontoDistribuidorServiceImpl implements
 	}
 
 	@Override
+	@Transactional
 	public void atualizarDistribuidores(BigDecimal desconto) {
 		List<Distribuidor> listaDeDistribuidores = this.distribuidorRepository.buscarTodos();
 		for(Distribuidor dist: listaDeDistribuidores){
@@ -39,6 +40,7 @@ public class TipoDescontoDistribuidorServiceImpl implements
 	}
 
 	@Override
+	@Transactional
 	public int obterUltimoSequencial() {		 
 		return this.tipoDescontoDistribuidorRepository.obterSequencial();
 	}

@@ -10,8 +10,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.client.vo.TipoDescontoCotaVO;
 import br.com.abril.nds.model.cadastro.Distribuidor;
-import br.com.abril.nds.model.cadastro.EspecificacaoDesconto;
 import br.com.abril.nds.model.cadastro.TipoDescontoCota;
+import br.com.abril.nds.model.cadastro.TipoDescontoDistribuidor;
 import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.TipoDescontoCotaRepository;
 import br.com.abril.nds.service.TipoDescontoCotaService;
@@ -56,20 +56,16 @@ public class TipoDescontoCotaServiceImpl implements TipoDescontoCotaService {
 
 	@Override
 	@Transactional
-	public List<TipoDescontoCotaVO> obterTipoDescontoCota(EspecificacaoDesconto especificacaoDesconto) {
-		List<TipoDescontoCota> lista = this.tipoDescontoCotaRepository.obterTipoDescontosCotas(especificacaoDesconto);
+	public List<TipoDescontoCotaVO> obterTipoDescontoDistribuidor() {
+		List<TipoDescontoDistribuidor> lista = this.tipoDescontoCotaRepository.obterTipoDescontosDistribuidor();
 		List<TipoDescontoCotaVO> listaVO = new ArrayList<TipoDescontoCotaVO>();
-		for(TipoDescontoCota desconto: lista){
+		for(TipoDescontoDistribuidor desconto: lista){
 			TipoDescontoCotaVO vo = new TipoDescontoCotaVO();
 			vo.setId(desconto.getId().toString());
-			vo.setDataAlteracao(DateUtil.formatarData(desconto.getDataAlteracao(),
-					  Constantes.DATE_PATTERN_PT_BR));
+			vo.setDataAlteracao(DateUtil.formatarData(desconto.getDataAlteracao(), Constantes.DATE_PATTERN_PT_BR));
 			vo.setDesconto(desconto.getDesconto().toString());
-//			vo.setUsuario(desconto.getUsuario());
-//			vo.setSeq(desconto.getSequencial().toString());
-//			vo.setCota(desconto.getIdCota().toString());
-//			vo.setCodigo(desconto.getIdProduto().toString());
-//			vo.setEdicao(desconto.getNumeroEdicao().toString());			
+			vo.setUsuario(desconto.getUsuario().getNome());
+			vo.setSequencial(desconto.getSequencial().toString());			
 			listaVO.add(vo);
 		}		
 		return listaVO;
@@ -92,6 +88,12 @@ public class TipoDescontoCotaServiceImpl implements TipoDescontoCotaService {
 	@Transactional
 	public List<Distribuidor> obterDistribuidores() {		 
 		return this.distribuidorRepository.buscarTodos();
+	}
+
+	@Override
+	@Transactional
+	public Integer buscarTotalDescontosPorCota() {		 
+		return this.tipoDescontoCotaRepository.buscarTotalDescontoPorCota();
 	}
 
 }

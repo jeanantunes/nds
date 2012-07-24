@@ -3,6 +3,7 @@ package br.com.abril.nds.service.impl;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import br.com.abril.nds.client.vo.TipoDescontoCotaVO;
 import br.com.abril.nds.model.cadastro.EspecificacaoDesconto;
@@ -11,6 +12,7 @@ import br.com.abril.nds.model.cadastro.TipoDescontoProduto;
 import br.com.abril.nds.repository.TipoDescontoProdutoRepository;
 import br.com.abril.nds.service.TipoDescontoProdutoService;
 
+@Service
 public class TipoDescontoProdutoServiceImpl implements
 		TipoDescontoProdutoService {
 

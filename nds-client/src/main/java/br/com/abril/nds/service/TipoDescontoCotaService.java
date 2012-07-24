@@ -4,7 +4,6 @@ import java.util.List;
 
 import br.com.abril.nds.client.vo.TipoDescontoCotaVO;
 import br.com.abril.nds.model.cadastro.Distribuidor;
-import br.com.abril.nds.model.cadastro.EspecificacaoDesconto;
 import br.com.abril.nds.model.cadastro.TipoDescontoCota;
 
 
@@ -21,13 +20,15 @@ public interface TipoDescontoCotaService {
 	
 	int obterUltimoSequencial();
 	
-	List<TipoDescontoCotaVO> obterTipoDescontoCota(EspecificacaoDesconto especificacaoDesconto);
+	List<TipoDescontoCotaVO> obterTipoDescontoDistribuidor();
 	
 	void excluirDesconto(TipoDescontoCota tipoDescontoCota);
 	
 	TipoDescontoCota obterTipoDescontoCotaPorId(long idDesconto);
 	
 	List<Distribuidor> obterDistribuidores();
+
+	Integer buscarTotalDescontosPorCota();
 	
 }
 	

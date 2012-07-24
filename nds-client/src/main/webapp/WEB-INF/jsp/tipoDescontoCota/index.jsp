@@ -11,18 +11,31 @@
 		$("#descontoProduto").mask("99.99");		
 	});
 	
-	function pesquisar() {		
-		var geral = $("#radioGeral").is(":checked");
-		var especifico = $("#radioEspecifico").is(":checked");
-		var produto = $("#radioProduto").is(":checked");		
-		if(geral){
+	function pesquisar() {
+		var retorno = verificarTipoDescontoSelecionado();				
+		if(retorno == 'geral'){
 			pesquisarDescontoGeral();						
-		}else if(especifico){
+		}else if(retorno == 'especifico'){
 			pesquisarDescontoEspecifico();
-		}else if(produto){
+		}else{
 			pesquisarDescontoProduto();
 		}	
 	}
+
+	function verificarTipoDescontoSelecionado(){
+		var geral = $("#radioGeral").is(":checked");
+		var especifico = $("#radioEspecifico").is(":checked");
+		var produto = $("#radioProduto").is(":checked");
+		if(geral){			
+			return "geral";					
+		}else if(especifico){			
+			return "especifico";				
+		}else if(produto){			
+			return "produto";
+		}	
+
+
+		}
 	
 	function pesquisarDescontoGeral(){
 		var descontoGeral = $("#descontoGeral").val();
@@ -130,9 +143,10 @@
 		var usuario = $("#textfield24").val();		
 		
 		$.postJSON("<c:url value='/administracao/tipoDescontoCota/novoDescontoGeral'/>",
-				   "desconto="+descontoGeral+
-				   "&dataAlteracao="+ dataAlteracao +
-				   "&usuario="+ usuario,
+					[
+						{name: "descontoDistribuidor.desconto" , value: descontoGeral},
+						{name: "descontoDistribuidor.dataAlteracao" , value: dataAlteracao}						
+					],				   
 				   function(result) {
 			           fecharDialogs();
 					   var tipoMensagem = result.tipoMensagem;
@@ -210,7 +224,6 @@
 	}
 	
 	function popup_geral() {
-		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
 		
 		 limparTelaCadastro();
 	
@@ -230,8 +243,7 @@
 		});
 	};
 
-	function popup_especifico() {
-		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
+	function popup_especifico() {		
 		
 		limparTelaCadastro();
 	
@@ -252,7 +264,6 @@
 		      
 	};
 	function popup_produto() {
-		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
 		
 		limparTelaCadastro();
 	
@@ -296,6 +307,8 @@
 	
 	
 	function executarPreProcessamento(resultado) {
+
+				
 		
 		if (resultado.mensagens) {
 
@@ -304,15 +317,15 @@
 				resultado.mensagens.listaMensagens
 			);
 			
-			$(".grids").hide();
+			$(".grids").show();
 
 			return resultado;
 		}
-		
-		$.each(resultado.rows, function(index, row) {
-						
-			
-			var linkExcluir = '<a href="javascript:;" onclick="exibirDialogExclusao(' + row.cell.id + ');" style="cursor:pointer">' +
+
+		$.each(resultado.rows, function(index, row) {						
+
+			var tipoSelecionado = verificarTipoDescontoSelecionado();
+			var linkExcluir = '<a href="javascript:;" onclick="exibirDialogExclusao(' + row.cell.id + ', '+tipoSelecionado+');" style="cursor:pointer">' +
 							   	 '<img title="Excluir Desconto" src="${pageContext.request.contextPath}/images/ico_excluir.gif" hspace="5" border="0px" />' +
 							   '</a>';
 			
@@ -323,8 +336,8 @@
 		
 		return resultado;
 	}
-	
-	function exibirDialogExclusao(idDesconto){		
+
+	function exibirDialogExclusao(idDesconto, tipoDesconto){		
 		$("#dialog-excluirCota" ).dialog({
 			resizable: false,
 			height:'auto',
@@ -332,7 +345,7 @@
 			modal: true,
 			buttons: {
 				"Confirmar": function() {
-					excluirDesconto(idDesconto);
+					excluirDesconto(idDesconto, tipoDesconto);
 					$( this ).dialog( "close" );
 				},
 				"Cancelar": function() {
@@ -342,9 +355,9 @@
 		});
 	}
 	
-	function excluirDesconto(idDesconto){		
+	function excluirDesconto(idDesconto, tipoDesconto){		
 		$.postJSON(contextPath + "/administracao/tipoDescontoCota/excluirDesconto",
-				"idDesconto="+idDesconto, 
+				"idDesconto="+idDesconto+"&tipoDesconto="+tipoDesconto, 
 				function(){
 					pesquisar();
 				}
@@ -587,7 +600,7 @@
 			dataType : 'json',
 			colModel : [ {
 				display : '',
-				name : 'seq',
+				name : 'sequencial',
 				width : 60,
 				sortable : true,
 				align : 'center'
@@ -616,7 +629,7 @@
 				sortable : true,
 				align : 'center'
 			}],
-			sortname : "seq",
+			sortname : "sequencial",
 			sortorder : "asc",
 			usepager : true,
 			useRp : true,

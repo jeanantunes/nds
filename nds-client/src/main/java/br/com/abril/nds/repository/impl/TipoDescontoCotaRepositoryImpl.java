@@ -5,8 +5,8 @@ import java.util.List;
 import org.hibernate.Query;
 import org.springframework.stereotype.Repository;
 
-import br.com.abril.nds.model.cadastro.EspecificacaoDesconto;
 import br.com.abril.nds.model.cadastro.TipoDescontoCota;
+import br.com.abril.nds.model.cadastro.TipoDescontoDistribuidor;
 import br.com.abril.nds.repository.TipoDescontoCotaRepository;
 
 @Repository
@@ -30,18 +30,29 @@ public class TipoDescontoCotaRepositoryImpl extends AbstractRepositoryModel<Tipo
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<TipoDescontoCota> obterTipoDescontosCotas(EspecificacaoDesconto especificacaoDesconto) {
+	public List<TipoDescontoDistribuidor> obterTipoDescontosDistribuidor() {
 		
 		StringBuilder hql = new StringBuilder();
 
-		hql.append(
-				" SELECT tipo FROM TipoDescontoCota as tipo WHERE tipo.especificacaoDesconto =:especificacaoDesconto ");
+		hql.append("SELECT tipoDistribuidor FROM TipoDescontoDistribuidor as tipoDistribuidor ");
 
-		Query query = getSession().createQuery(hql.toString());
-		
-		query.setParameter("especificacaoDesconto", especificacaoDesconto);
+		Query query = getSession().createQuery(hql.toString());		
 		
 		return query.list();
+	}
+
+	@Override
+	public Integer buscarTotalDescontoPorCota() {
+		 
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select count(desconto) FROM TipoDescontoDistribuidor as desconto  ");		
+		
+		Query query =  getSession().createQuery(hql.toString());
+		
+		Long totalRegistros = (Long) query.uniqueResult();
+		
+		return (totalRegistros == null) ? 0 : totalRegistros.intValue();
 	}
 
 	

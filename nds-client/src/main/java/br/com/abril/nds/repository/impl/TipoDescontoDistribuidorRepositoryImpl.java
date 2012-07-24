@@ -21,8 +21,8 @@ public class TipoDescontoDistribuidorRepositoryImpl extends AbstractRepositoryMo
 				" SELECT MAX(tipo.sequencial) FROM TipoDescontoDistribuidor as tipo");
 
 		Query query = getSession().createQuery(hql.toString());
-
-		return (Integer) query.uniqueResult();
+		
+		return (Integer) ((query.uniqueResult() == null) ? 0 : query.uniqueResult()); 
 	}
 
 }
