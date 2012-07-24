@@ -19,7 +19,7 @@ public class FiltroMonitorNfeDTO implements Serializable {
 	private boolean indDocumentoCPF;
 	
 	@Export(label="Box")
-	private String box;
+	private Integer box;
 	
 	@Export(label="Período de")
 	private Date dataInicial;
@@ -92,14 +92,14 @@ public class FiltroMonitorNfeDTO implements Serializable {
 	 *
 	 * @return String
 	 */
-	public String getBox() {
+	public Integer getBox() {
 		return box;
 	}
 	/**
 	 * Atribuí box
 	 * @param box 
 	 */
-	public void setBox(String box) {
+	public void setBox(Integer box) {
 		this.box = box;
 	}
 	/**

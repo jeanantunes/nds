@@ -144,7 +144,7 @@ public class ImpressaoBoletosController {
 		
 		for(Box box : listaBoxes){
 			
-			boxes.add(new ItemDTO<Long, String>(box.getId(),box.getCodigo()));
+			boxes.add(new ItemDTO<Long, String>(box.getId(),box.getCodigo()+" - " + box.getNome()));
 		}
 			
 		result.include("listaBoxes",boxes);
@@ -366,7 +366,7 @@ public class ImpressaoBoletosController {
 				Box box = boxService.buscarPorId(filtro.getIdBox());
 				
 				if(box!= null){
-					filtro.setCodigoBox(box.getCodigo());
+					filtro.setCodigoBox(box.getCodigo() + " - " + box.getNome());
 				}
 			}
 			

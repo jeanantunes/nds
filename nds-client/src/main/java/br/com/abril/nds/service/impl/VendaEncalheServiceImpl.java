@@ -164,7 +164,7 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 		
 		slipVendaEncalhe.setNomeCota(itemVE.getCota().getPessoa().getNome());
 		slipVendaEncalhe.setNumeroCota(itemVE.getCota().getNumeroCota().toString());
-		slipVendaEncalhe.setNumeroBox(itemVE.getCota().getBox().getCodigo());
+		slipVendaEncalhe.setNumeroBox(itemVE.getCota().getBox().getCodigo().toString());
 		slipVendaEncalhe.setDescricaoBox(itemVE.getCota().getBox().getTipoBox().name());
 		slipVendaEncalhe.setData( DateUtil.formatarDataPTBR(itemVE.getDataVenda()));
 		slipVendaEncalhe.setHora(DateUtil.formatarData(itemVE.getHorarioVenda(),"HH:mm"));

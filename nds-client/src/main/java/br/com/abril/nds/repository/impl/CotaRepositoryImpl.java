@@ -42,7 +42,6 @@ import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.util.Intervalo;
-import br.com.abril.nds.util.StringUtil;
 
 /**
  * Classe de implementação referente ao acesso a dados da entidade
@@ -1044,7 +1043,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public Set<Long> obterIdCotasEntre(Intervalo<Integer> intervaloCota, Intervalo<String> intervaloBox, SituacaoCadastro situacao) {
+	public Set<Long> obterIdCotasEntre(Intervalo<Integer> intervaloCota, Intervalo<Integer> intervaloBox, SituacaoCadastro situacao) {
 		
 		Set<Long> listaIdCotas = new HashSet<Long>();
 		
@@ -1061,7 +1060,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 			}
 		}
 		
-		if(intervaloBox != null && !StringUtil.isEmpty(intervaloBox.getDe()) &&  !StringUtil.isEmpty(intervaloBox.getAte())){
+		if(intervaloBox != null && intervaloBox.getDe() != null &&  intervaloBox.getAte() != null){
 			criteria.add(Restrictions.between("box.codigo", intervaloBox.getDe(),
 					intervaloBox.getAte()));
 		}

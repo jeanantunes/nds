@@ -136,7 +136,7 @@ public class ManutencaoStatusCotaController {
 		 CotaVO cotaVO = 
 			new CotaVO(cota.getNumeroCota(), PessoaUtil.obterNomeExibicaoPeloTipo(cota.getPessoa()));
 		
-		 cotaVO.setCodigoBox(cota.getBox()!=null?cota.getBox().getCodigo():"Não cadastrado");
+		 cotaVO.setCodigoBox(cota.getBox()!=null?cota.getBox().getCodigo() + " - "+cota.getBox().getNome():"Não cadastrado");
 		 
 		 result.use(Results.json()).from(cotaVO, "result").serialize();
 	}

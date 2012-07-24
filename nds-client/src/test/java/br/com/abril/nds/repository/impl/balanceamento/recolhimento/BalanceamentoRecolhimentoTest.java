@@ -304,7 +304,6 @@ public class BalanceamentoRecolhimentoTest extends AbstractRepositoryImplTest {
 		save(chamadaEncalheQuatroRodas);
 		
 		Box box = Fixture.boxReparte300();
-		box.setPostoAvancado(true);
 		
 		Cota cotaDinap = Fixture.cota(50, fornecedorDinap.getJuridica(), SituacaoCadastro.ATIVO, box);
 		
@@ -331,8 +330,7 @@ public class BalanceamentoRecolhimentoTest extends AbstractRepositoryImplTest {
 
 		save(estudoCapricho, lancamentoParcialCapricho, parcialCapricho, estudoCotaCapricho);
 		
-		Box box301 = Fixture.criarBox("357", "Box 301", TipoBox.RECOLHIMENTO, false);
-		box301.setPostoAvancado(false);
+		Box box301 = Fixture.criarBox(357, "Box 301", TipoBox.ENCALHE);
 		
 		Cota cotaFC = Fixture.cota(55, fornecedorFC.getJuridica(), SituacaoCadastro.ATIVO, box301);
 		
@@ -384,8 +382,7 @@ public class BalanceamentoRecolhimentoTest extends AbstractRepositoryImplTest {
 
 		save(estudoVeja, lancamentoParcialVeja, parcialVeja, estudoCotaVeja);
 		
-		Box box303 = Fixture.criarBox("359", "Box 303", TipoBox.RECOLHIMENTO, false);
-		box303.setPostoAvancado(false);
+		Box box303 = Fixture.criarBox(359, "Box 303", TipoBox.ENCALHE);
 		
 		Cota cotaJurandir = Fixture.cota(59, fornecedorFC.getJuridica(), SituacaoCadastro.ATIVO, box303);
 		

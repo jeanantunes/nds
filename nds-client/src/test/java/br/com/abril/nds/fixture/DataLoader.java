@@ -2222,8 +2222,6 @@ public class DataLoader {
 
 		pdvGuilherme = Fixture.criarPDVPrincipal("PDV Guilherme", cotaGuilherme);
 		session.save(pdvGuilherme);
-		
-	
 
 		pdvMurilo = Fixture.criarPDVPrincipal("PDV MURILO", cotaMurilo);
 		session.save(pdvMurilo);
@@ -2272,8 +2270,6 @@ public class DataLoader {
 
 		roteirizacao = Fixture.criarRoteirizacao(pdvGuilherme, rota10,1);
 		session.save(roteirizacao);
-		
-		
 
 	}
 
@@ -4975,13 +4971,13 @@ public class DataLoader {
 
 	private static void criarBox(Session session){
 
-		box1 = Fixture.criarBox("Box-1", "BX-001", TipoBox.LANCAMENTO, false);
+		box1 = Fixture.criarBox(1, "BX-001", TipoBox.LANCAMENTO);
 		session.save(box1);
 
-		box2 = Fixture.criarBox("Box-2", "BX-002", TipoBox.LANCAMENTO, false);
+		box2 = Fixture.criarBox(2, "BX-002", TipoBox.LANCAMENTO);
 		session.save(box2);
 
-		boxPostoAvancado = Fixture.criarBox("Box-Avancado", "BX-AVANCADO", TipoBox.LANCAMENTO, true);
+		boxPostoAvancado = Fixture.criarBox(3, "BX-AVANCADO", TipoBox.POSTO_AVANCADO);
 		session.save(boxPostoAvancado);
 
 		box300Reparte = Fixture.boxReparte300();
@@ -4989,8 +4985,8 @@ public class DataLoader {
 
 
 
-		for (int i = 3; i < 100; i++) {
-			session.save(Fixture.criarBox("Box-"+i, "BX-"+i, TipoBox.LANCAMENTO, false));
+		for (int i = 4; i < 100; i++) {
+			session.save(Fixture.criarBox(i, "BX-"+i, TipoBox.LANCAMENTO));
 		}
 	}
 
@@ -5824,19 +5820,19 @@ public class DataLoader {
 		TipoNotaFiscal tipoNotaFiscal = Fixture.tipoNotaFiscalRecebimentoMercadoriasEncalhe();
 		save(session, tipoNotaFiscal);
 
-		Box boxRecolhimento = Fixture.criarBox("ENC_BOX1", "Box Encalhe", TipoBox.RECOLHIMENTO, false);
+		Box boxRecolhimento = Fixture.criarBox(601, "Box Encalhe", TipoBox.ENCALHE);
 		save(session, boxRecolhimento);
 
 		ParametroUsuarioBox parametroUsuarioBox = Fixture.parametroUsuarioBox(boxRecolhimento, usuarioJoao, true);
 		save(session, parametroUsuarioBox);
 
-		boxRecolhimento = Fixture.criarBox("ENC_BOX2", "Box Encalhe_2", TipoBox.RECOLHIMENTO, false);
+		boxRecolhimento = Fixture.criarBox(602, "Box Encalhe_2", TipoBox.ENCALHE);
 		save(session, boxRecolhimento);
 
-		boxRecolhimento = Fixture.criarBox("ENC_BOX3", "Box Encalhe_3", TipoBox.RECOLHIMENTO, false);
+		boxRecolhimento = Fixture.criarBox(603, "Box Encalhe_3", TipoBox.ENCALHE);
 		save(session, boxRecolhimento);
 
-		boxRecolhimento = Fixture.criarBox("ENC_BOX4", "Box Encalhe_4", TipoBox.RECOLHIMENTO, false);
+		boxRecolhimento = Fixture.criarBox(604, "Box Encalhe_4", TipoBox.ENCALHE);
 		save(session, boxRecolhimento);
 
 		/**
@@ -6372,20 +6368,6 @@ public class DataLoader {
 		save(session, cotaJohnyConsultaEncalhe);
 
 
-		PDV pdvJonhy = Fixture.criarPDVPrincipal("PDV Johny", cotaJohnyConsultaEncalhe);
-		session.save(pdvJonhy);
-		
-		Roteiro roteiroJ = Fixture.criarRoteiro("Roteiro J",box1,TipoRoteiro.NORMAL);
-		session.save(roteiroJ);
-
-		Rota rotaJ = Fixture.rota("007", "Rota 007");
-		rotaJ.setRoteiro(roteiroJ);
-		session.save(rotaJ);
-
-		Roteirizacao roteirizacaoJ = Fixture.criarRoteirizacao(pdvManoel, rotaJ,3);
-		session.save(roteirizacaoJ);
-		
-		
 		EstoqueProdutoCota estoqueProdutoCotaJohny =
 				Fixture.estoqueProdutoCota(
 				produtoEdicaoCE, cotaJohnyConsultaEncalhe, BigDecimal.TEN, BigDecimal.ZERO);

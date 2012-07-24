@@ -200,7 +200,7 @@ public class Fixture {
 	}
 	
 	public static CotaAusente cotaAusenteAtivo(){
-		Box box1 = Fixture.criarBox("Box-1", "BX-001", TipoBox.LANCAMENTO, false);
+		Box box1 = Fixture.criarBox(1, "BX-001", TipoBox.LANCAMENTO);
 		Pessoa manoel = Fixture.pessoaFisica("123.456.789-00",
 				"sys.discover@gmail.com", "Manoel da Silva");	
 		Cota cotaManoel = Fixture.cota(123, manoel, SituacaoCadastro.ATIVO, box1);
@@ -339,7 +339,7 @@ public class Fixture {
 	}
 	
 	public static Box boxReparte300() {
-		return criarBox("300", "Box 300", TipoBox.LANCAMENTO, false);
+		return criarBox(300, "Box 300", TipoBox.LANCAMENTO);
 	}
 	
 	public static Banco hsbc(Carteira carteira) {
@@ -1898,12 +1898,11 @@ public class Fixture {
 		return lancamento;
 	}
 	
-	public static Box criarBox(String codigo, String nome, TipoBox tipoBox, boolean postoAvancado) {
+	public static Box criarBox(Integer codigo, String nome, TipoBox tipoBox) {
 		Box box = new Box();
 		box.setCodigo(codigo);
 		box.setNome(nome);
 		box.setTipoBox(tipoBox);
-		box.setPostoAvancado(postoAvancado);
 		return box;
 	}
 	

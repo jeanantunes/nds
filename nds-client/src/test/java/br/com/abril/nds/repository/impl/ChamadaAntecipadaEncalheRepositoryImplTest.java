@@ -101,8 +101,8 @@ public class ChamadaAntecipadaEncalheRepositoryImplTest extends AbstractReposito
 		fornecedorFc = Fixture.fornecedorFC(tipoFornecedorPublicacao);
 		save(fornecedorDinap, fornecedorFc);
 		
-		box1 = Fixture.criarBox("Box-1", "BX-001", TipoBox.LANCAMENTO, false);
-		box2 = Fixture.criarBox("Box-2", "BX-002", TipoBox.LANCAMENTO, false);
+		box1 = Fixture.criarBox(1, "BX-001", TipoBox.LANCAMENTO);
+		box2 = Fixture.criarBox(2, "BX-002", TipoBox.LANCAMENTO);
 		save(box1,box2);
 		
 		Cota cotaManoel = Fixture.cota(123, manoel, SituacaoCadastro.ATIVO,box1);
