@@ -22,12 +22,14 @@ import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.OperacaoEstoque;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.planejamento.EstudoCota;
+import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.EstoqueProdutoCotaRepository;
 import br.com.abril.nds.repository.EstoqueProdutoRespository;
 import br.com.abril.nds.repository.EstudoCotaRepository;
 import br.com.abril.nds.repository.ItemRecebimentoFisicoRepository;
+import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
 import br.com.abril.nds.repository.MovimentoEstoqueRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
@@ -74,6 +76,9 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 	
 	@Autowired
 	ControleAprovacaoService controleAprovacaoService;
+
+	@Autowired
+	LancamentoRepository lancamentoRepository;
 
 	@Override
 	@Transactional
@@ -305,6 +310,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 			estoqueProdutoCotaRepository.adicionar(estoqueProdutoCota);
 		}
 				
+		
 		MovimentoEstoqueCota movimentoEstoqueCota = new MovimentoEstoqueCota();
 		
 		movimentoEstoqueCota.setTipoMovimento(tipoMovimentoEstoque);
@@ -315,6 +321,14 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 		movimentoEstoqueCota.setProdutoEdicao(estoqueProdutoCota.getProdutoEdicao());
 		movimentoEstoqueCota.setQtde(quantidade);
 		movimentoEstoqueCota.setUsuario(usuario);
+		
+		if (dataLancamento != null && idProdutoEdicao != null) {
+			Lancamento lancamento = lancamentoRepository.obterLancamentoProdutoPorDataLancamentoDataLancamentoDistribuidor(estoqueProdutoCota.getProdutoEdicao(), null, dataLancamento);
+			if (lancamento != null) {
+				movimentoEstoqueCota.setLancamento(lancamento);
+			}
+		}
+
 		
 		movimentoEstoqueCotaRepository.adicionar(movimentoEstoqueCota);
 		

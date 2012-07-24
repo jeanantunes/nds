@@ -11,22 +11,17 @@ public enum GrupoIndicador {
 	
 	private String descricao;
 	
-	private int ordemExibicao;
+	private int ordemExibicaoGrupo;
 	
-	private GrupoIndicador(String descricao, int ordemExibicao){
+	private GrupoIndicador(String descricao, int ordemExibicaoGrupo){
 		
 		this.descricao = descricao;
-		this.ordemExibicao = ordemExibicao;
+		this.ordemExibicaoGrupo = ordemExibicaoGrupo;
 	}
 	
-	public String toString(){
+	public int getOrdemExibicaoGrupo(){
 		
-		return this.descricao;
-	}
-	
-	public int getOrdemExibicao(){
-		
-		return this.ordemExibicao;
+		return this.ordemExibicaoGrupo;
 	}
 
 	public String getDescricao() {

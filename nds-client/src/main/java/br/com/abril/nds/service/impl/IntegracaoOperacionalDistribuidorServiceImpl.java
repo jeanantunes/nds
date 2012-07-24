@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.integracao.couchdb.CouchDbProperties;
-import br.com.abril.nds.server.model.DistribuidorServer;
+import br.com.abril.nds.server.model.OperacaoDistribuidor;
 import br.com.abril.nds.service.IntegracaoOperacionalDistribuidorService;
 
 /**
@@ -32,7 +32,7 @@ public class IntegracaoOperacionalDistribuidorServiceImpl implements IntegracaoO
 		
 		this.couchDbClientIntegracao = 
 			new CouchDbClient(
-				DB_NAME,true, couchDbProperties.getProtocol(), couchDbProperties.getHost(), 
+				DB_NAME, true, couchDbProperties.getProtocol(), couchDbProperties.getHost(), 
 					couchDbProperties.getPort(), couchDbProperties.getUsername(), 
 						couchDbProperties.getPassword());
 	}
@@ -42,9 +42,9 @@ public class IntegracaoOperacionalDistribuidorServiceImpl implements IntegracaoO
 	 */
 	@Override
 	@Transactional
-	public void integrarInformacoesOperacionais(DistribuidorServer distribuidorServer) {
+	public void integrarInformacoesOperacionais(OperacaoDistribuidor operacaoDistribuidor) {
 		
-		this.couchDbClientIntegracao.save(distribuidorServer);
+		this.couchDbClientIntegracao.save(operacaoDistribuidor);
 	}
 	
 	/**
@@ -52,11 +52,11 @@ public class IntegracaoOperacionalDistribuidorServiceImpl implements IntegracaoO
 	 */
 	@Override
 	@Transactional(readOnly = true)
-	public DistribuidorServer obterInformacoesOperacionais() {
+	public OperacaoDistribuidor obterInformacoesOperacionais() {
 		
 		//TODO: Obter indicadores
 		
-		return new DistribuidorServer();
+		return new OperacaoDistribuidor();
 	}
 
 }
