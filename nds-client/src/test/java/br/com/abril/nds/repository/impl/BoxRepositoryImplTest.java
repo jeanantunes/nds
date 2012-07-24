@@ -29,8 +29,7 @@ public class BoxRepositoryImplTest extends AbstractRepositoryImplTest {
 	@Autowired
 	private BoxRepository boxRepository;
 
-	private static final String[] campos = { "codigo", "tipoBox", "nome",
-			"postoAvancado" };
+	private static final String[] campos = { "codigo", "tipoBox", "nome" };
 
 	private Box box;
 	private Roteiro roteiro;

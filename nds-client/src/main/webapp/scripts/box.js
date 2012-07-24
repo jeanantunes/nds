@@ -93,7 +93,7 @@ var boxController = {
 	},
 	bindButtons : function() {
 		$("#btnPesquisar").click(function() {
-			boxController.buscar($("#pesquisaCodigoBox").val(), $("#pesquisaTipoBox").val());
+			boxController.buscar(parseInt($("#pesquisaCodigoBox").val()), $("#pesquisaTipoBox").val());
 			$(".grids").show();
 		});
 		$("#btnNovo").click(function() {
@@ -101,9 +101,11 @@ var boxController = {
 		});
 	},
 	bindInputEvent : function() {
+		
+		$('#pesquisaCodigoBox, #boxCodigo').mask("9999");
 		$('#pesquisaCodigoBox').bind('keypress', function(e) {
 			if(e.keyCode == 13) {
-				boxController.buscar($("#pesquisaCodigoBox").val(), $("#pesquisaTipoBox").val());
+				boxController.buscar(parseInt($("#pesquisaCodigoBox").val()), $("#pesquisaTipoBox").val());
 				$(".grids").show();
 			}
 		});
@@ -158,7 +160,7 @@ var boxController = {
 		$("#boxTipoBox").val(this.box.tipoBox);
 	},
 	getData : function() {		
-		this.box.codigo = $("#boxCodigo").val();
+		this.box.codigo = parseInt($("#boxCodigo").val());
 		this.box.nome = $("#boxNome").val();
 		this.box.tipoBox = $("#boxTipoBox").val();
 	},

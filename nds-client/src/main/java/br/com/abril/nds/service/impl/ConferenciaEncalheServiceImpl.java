@@ -221,7 +221,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			return listaBoxEncalhe;
 		}
 		
-		String codigoBoxPadraoUsuario = this.obterBoxPadraoUsuario(idUsuario);
+		Integer codigoBoxPadraoUsuario = this.obterBoxPadraoUsuario(idUsuario);
 		
 		if (codigoBoxPadraoUsuario == null){
 			
@@ -249,7 +249,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	 * (non-Javadoc)
 	 * @see br.com.abril.nds.service.ConferenciaEncalheService#obterBoxPadraoUsuario(java.lang.Long)
 	 */
-	private String obterBoxPadraoUsuario(Long idUsuario) {
+	private Integer obterBoxPadraoUsuario(Long idUsuario) {
 		
 		if (idUsuario == null){
 			

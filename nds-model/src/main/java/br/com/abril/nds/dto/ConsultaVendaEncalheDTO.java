@@ -36,7 +36,7 @@ public class ConsultaVendaEncalheDTO implements Serializable {
 	private BigDecimal precoComDesconto;
 
 	@Export(label = "Box", alignment = Alignment.CENTER)
-	private String box;
+	private Integer box;
 	@Export(label = "Exemplares", alignment = Alignment.CENTER)
 	private BigDecimal exemplares;
 	@Export(label = "Fornecedor")
@@ -101,11 +101,11 @@ public class ConsultaVendaEncalheDTO implements Serializable {
 		this.total = total;
 	}
 
-	public String getBox() {
+	public Integer getBox() {
 		return box;
 	}
 
-	public void setBox(String box) {
+	public void setBox(Integer box) {
 		this.box = box;
 	}
 

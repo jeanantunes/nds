@@ -256,7 +256,7 @@ public class MapaAbastecimentoController {
 	
 	public void impressaoPorRota(FiltroMapaAbastecimentoDTO filtro) {
 		
-		HashMap<String, HashMap<String, ProdutoMapaRotaDTO>> produtosMapa = mapaAbastecimentoService.obterMapaDeImpressaoPorBoxRota(filtro);
+		HashMap<Integer, HashMap<String, ProdutoMapaRotaDTO>> produtosMapa = mapaAbastecimentoService.obterMapaDeImpressaoPorBoxRota(filtro);
 		
 		result.include("mapa",produtosMapa);
 		

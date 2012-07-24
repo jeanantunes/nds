@@ -34,7 +34,7 @@ public class VendaProdutoVO implements Serializable{
 	
 	private String formaVenda;
 	
-	private String codBox;
+	private Integer codBox;
 	
 	private String dataVencimentoDebito;
 	
@@ -93,14 +93,14 @@ public class VendaProdutoVO implements Serializable{
 	/**
 	 * @return the codBox
 	 */
-	public String getCodBox() {
+	public Integer getCodBox() {
 		return codBox;
 	}
 
 	/**
 	 * @param codBox the codBox to set
 	 */
-	public void setCodBox(String codBox) {
+	public void setCodBox(Integer codBox) {
 		this.codBox = codBox;
 	}
 

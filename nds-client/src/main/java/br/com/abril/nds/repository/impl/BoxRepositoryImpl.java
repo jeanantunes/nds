@@ -40,21 +40,12 @@ public class BoxRepositoryImpl extends AbstractRepositoryModel<Box,Long> impleme
 	 * (non-Javadoc)
 	 * @see br.com.abril.nds.repository.BoxRepository#obterListaBox(br.com.abril.nds.model.cadastro.TipoBox)
 	 */
+	@SuppressWarnings("unchecked")
 	public List<Box> obterListaBox(TipoBox tipoBox) {
 		
-		StringBuilder hql = new StringBuilder();
+		Criteria criteria = addRestrictions(null,tipoBox);
 		
-		hql.append(" select box from Box box ");
-		
-		hql.append(" where ");
-		
-		hql.append(" box.tipoBox = :tipoBox ");
-		
-		Query query = this.getSession().createQuery(hql.toString());
-		
-		query.setParameter("tipoBox", tipoBox);
-		
-		return query.list();
+		return criteria.list();
 		
 		
 	}
@@ -156,7 +147,7 @@ public class BoxRepositoryImpl extends AbstractRepositoryModel<Box,Long> impleme
 		Criteria criteria =  getSession().createCriteria(Box.class);	
 		
 		if( codigoBox != null ){
-			criteria.add(Restrictions.ilike("codigo", codigoBox));
+			criteria.add(Restrictions.eq("codigo", codigoBox));
 		}
 		
 		if(tipoBox != null){
@@ -174,7 +165,7 @@ public class BoxRepositoryImpl extends AbstractRepositoryModel<Box,Long> impleme
 	public boolean hasCodigo(Integer codigoBox, Long id){
 		Criteria criteria =  getSession().createCriteria(Box.class);	
 		
-		criteria.add(Restrictions.ilike("codigo", codigoBox));
+		criteria.add(Restrictions.eq("codigo", codigoBox));
 		if(id != null){
 			criteria.add(Restrictions.ne("id", id));
 		}
@@ -216,7 +207,7 @@ public class BoxRepositoryImpl extends AbstractRepositoryModel<Box,Long> impleme
 	}
 
 	@Override
-	public String obterCodigoBoxPadraoUsuario(Long idUsuario) {
+	public Integer obterCodigoBoxPadraoUsuario(Long idUsuario) {
 		
 		StringBuilder hql = new StringBuilder("select p.box.codigo ");
 		hql.append(" from ParametroUsuarioBox p ")
@@ -225,7 +216,7 @@ public class BoxRepositoryImpl extends AbstractRepositoryModel<Box,Long> impleme
 		Query query = this.getSession().createQuery(hql.toString());
 		query.setParameter("idUsuario", idUsuario);
 		
-		return (String) query.uniqueResult();
+		return (Integer) query.uniqueResult();
 	}
 	
 	/*
