@@ -192,8 +192,8 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 		}else{
 			hql.append(" SELECT new ").append(GeraDividaDTO.class.getCanonicalName())
 			.append("(")
-				.append(" box.codigo,")
-				.append(" rota.codigoRota,")
+				.append(" box.codigo || '-'|| box.nome,")
+				.append(" rota.codigoRota || '-'|| rota.descricaoRota,")
 				.append(" roteiro.descricaoRoteiro,")
 				.append(" cota.numeroCota,")
 				.append(" pessoa.nome,")

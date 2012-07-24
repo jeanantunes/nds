@@ -338,8 +338,7 @@ public class BalanceamentoLancamentoTest extends AbstractRepositoryImplTest {
 
 		save(estudoCotaCapricho);
 		
-		Box box301 = Fixture.criarBox("357", "Box 301", TipoBox.RECOLHIMENTO, false);
-		box301.setPostoAvancado(false);
+		Box box301 = Fixture.criarBox(357, "Box 301", TipoBox.ENCALHE);
 		
 		save(box301);
 		
@@ -369,8 +368,7 @@ public class BalanceamentoLancamentoTest extends AbstractRepositoryImplTest {
 
 		save(estudoCotaVeja);
 		
-		Box box303 = Fixture.criarBox("359", "Box 303", TipoBox.RECOLHIMENTO, false);
-		box303.setPostoAvancado(false);
+		Box box303 = Fixture.criarBox(359, "Box 303", TipoBox.ENCALHE);
 		
 		save(box303);
 		

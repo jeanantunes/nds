@@ -33,11 +33,6 @@ public enum TipoIndicador {
 		this.ordemExibicao = ordemExibicao;
 	}
 	
-	public String toString(){
-		
-		return this.descricao;
-	}
-	
 	public int getOrdemExibicao(){
 		
 		return this.ordemExibicao;

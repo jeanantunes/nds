@@ -710,8 +710,6 @@
 			
 			function salvar() {
 				
-				fecharGridBalanceamento();
-				
 				$.postJSON(
 					"${pageContext.request.contextPath}/devolucao/balanceamentoMatriz/salvar"
 				);
@@ -912,26 +910,6 @@
 			function deselectCheckAll() {
 				
 				$("#checkAllReprogramar").attr("checked", false);
-			}
-
-			// TODO: deletar esse metodo
-			function mostarDetalhesProduto(idProdutoEdicao) {
-
-				var data = [];
-				
-				data.push({name:'idProdutoEdicao', value: idProdutoEdicao});
-				
-				$.postJSON(
-					"${pageContext.request.contextPath}/cadastro/edicao/obterDetalheProduto.json", 
-					data,
-					function(result) {
-						balanceamento.popularDetalheProduto(result);
-						balanceamento.popup_detalhes_prod("#dialog-detalhe-produto" );
-					},
-					function() {
-						$("#dialog-detalhe-produto").hide();
-					}
-				);
 			}
 			
 			function obterConfirmacaoBalanceamento() {

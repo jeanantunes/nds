@@ -14,35 +14,43 @@
 				height : 590,
 				width : 900,
 				modal : true,
-				buttons : {
-					"Confirmar" : function() {
-						
-						var data = [{name:"transportador.pessoaJuridica.razaoSocial", value:$("#razaoSocial").val()},
-									{name:"transportador.pessoaJuridica.nomeFantasia", value:$("#nomeFantasia").val()},
-									{name:"transportador.pessoaJuridica.email", value:$("#email").val()},
-									{name:"transportador.pessoaJuridica.cnpj", value:$("#cnpj").val()},
-									{name:"transportador.pessoaJuridica.inscricaoEstadual", value:$("#inscEstadual").val()},
-									{name:"transportador.responsavel", value:$("#responsavel").val()}];
-						
-						$.postJSON("<c:url value='/cadastro/transportador/cadastrarTransportador'/>", data, 
-							function(result){
-								
-								fecharModalCadastroTransp = true;
-								
-								$("#dialog-cancelar-cadastro-transportador").dialog("close");
-								$("#dialog-novo").dialog("close");
-								
-								exibirMensagem(result.tipoMensagem, result.listaMensagens);
-								
-								$(".transportadoraGrid").flexReload();
-							},null, true, "idModalCadastroTransportador"
-						);
-	
+				buttons : [
+					{
+						id: "btnConfirmarTransportador",
+						text: "Confirmar",
+						click: function() {
+							
+							var data = [{name:"transportador.pessoaJuridica.razaoSocial", value:$("#razaoSocial").val()},
+										{name:"transportador.pessoaJuridica.nomeFantasia", value:$("#nomeFantasia").val()},
+										{name:"transportador.pessoaJuridica.email", value:$("#email").val()},
+										{name:"transportador.pessoaJuridica.cnpj", value:$("#cnpj").val()},
+										{name:"transportador.pessoaJuridica.inscricaoEstadual", value:$("#inscEstadual").val()},
+										{name:"transportador.responsavel", value:$("#responsavel").val()}];
+							
+							$.postJSON("<c:url value='/cadastro/transportador/cadastrarTransportador'/>", data, 
+								function(result){
+									
+									fecharModalCadastroTransp = true;
+									
+									$("#dialog-cancelar-cadastro-transportador").dialog("close");
+									$("#dialog-novo").dialog("close");
+									
+									exibirMensagem(result.tipoMensagem, result.listaMensagens);
+									
+									$(".transportadoraGrid").flexReload();
+								},null, true, "idModalCadastroTransportador"
+							);
+		
+						}
 					},
-					"Cancelar" : function() {
-						$(this).dialog("close");
+					{
+						id: "btnCancTransportador",
+						text: "Cancelar",
+						click: function() {
+							$(this).dialog("close");
+						}
 					}
-				},
+				],
 				beforeClose: function(event, ui) {
 					
 					if (!fecharModalCadastroTransp){
@@ -127,37 +135,45 @@
 				height : 'auto',
 				width : 420,
 				modal : true,
-				buttons : {
-					"Confirmar" : function() {
-						/*
-						$.postJSON("<c:url value='/cadastro/transportador/cadastrarVeiculos'/>", null, 
-							function(result){
-								
-								$(".veiculosGrid").flexAddData({
-									page: result.page, total: result.total, rows: result.rows
-								});
-								
-								$("#dialog-incluir-veiculo").dialog("close");
-							}
-						);
-						*/
-						$("#dialog-incluir-veiculo").dialog("close");
+				buttons : [
+					{
+						id: "btnConfNovoVeiculo",
+						text: "Confirmar",
+						click: function() {
+							/*
+							$.postJSON("<c:url value='/cadastro/transportador/cadastrarVeiculos'/>", null, 
+								function(result){
+									
+									$(".veiculosGrid").flexAddData({
+										page: result.page, total: result.total, rows: result.rows
+									});
+									
+									$("#dialog-incluir-veiculo").dialog("close");
+								}
+							);
+							*/
+							$("#dialog-incluir-veiculo").dialog("close");
+						}
 					},
-					"Cancelar" : function() {
-						/*
-						$.postJSON("<c:url value='/cadastro/transportador/cancelarCadastroVeiculos'/>", null, 
-							function(result){
-								
-								$(".veiculosGrid").flexAddData({
-									page: result.page, total: result.total, rows: result.rows
-								});
-								
-								$("#dialog-incluir-veiculo").dialog("close");
-							}
-						);*/
-						$("#dialog-incluir-veiculo").dialog("close");
+					{
+						id: "btnCancelarNovoVeiculo",
+						text: "Cancelar",
+						click: function() {
+							/*
+							$.postJSON("<c:url value='/cadastro/transportador/cancelarCadastroVeiculos'/>", null, 
+								function(result){
+									
+									$(".veiculosGrid").flexAddData({
+										page: result.page, total: result.total, rows: result.rows
+									});
+									
+									$("#dialog-incluir-veiculo").dialog("close");
+								}
+							);*/
+							$("#dialog-incluir-veiculo").dialog("close");
+						}
 					}
-				}
+				]
 			});
 		}
 		
@@ -227,28 +243,36 @@
 						height : 'auto',
 						width : 420,
 						modal : true,
-						buttons : {
-							"Confirmar" : function() {
-								
-								var data = [{name: "veiculo.id", value: idVeiculo},
-								            {name: "veiculo.tipoVeiculo", value: $("#tipoVeiculo").val()},
-								            {name: "veiculo.placa", value: $("#placa").val()}];
-								
-								$.postJSON("<c:url value='/cadastro/transportador/adicionarVeiculo'/>", data, 
-									function(){
-										
-										$(".veiculosGrid").flexReload();
-										$(".associacaoGrid").flexReload();
-										
-										$("#dialog-incluir-veiculo").dialog("close");
-									}, null, true, "idModalCadastroVeiculo"
-								);
+						buttons : [
+							{
+								id: "btnConfEditVeiculo",
+								text: "Confirmar",
+								click: function() {
+									
+									var data = [{name: "veiculo.id", value: idVeiculo},
+									            {name: "veiculo.tipoVeiculo", value: $("#tipoVeiculo").val()},
+									            {name: "veiculo.placa", value: $("#placa").val()}];
+									
+									$.postJSON("<c:url value='/cadastro/transportador/adicionarVeiculo'/>", data, 
+										function(){
+											
+											$(".veiculosGrid").flexReload();
+											$(".associacaoGrid").flexReload();
+											
+											$("#dialog-incluir-veiculo").dialog("close");
+										}, null, true, "idModalCadastroVeiculo"
+									);
+								}
 							},
-							"Cancelar" : function() {
-								$("#dialog-incluir-veiculo").dialog("close");
-								$("#btnAddVeiculo").show();
+							{
+								id: "btnCancEditVeiculo",
+								text: "Cancelar",
+								click: function() {
+									$("#dialog-incluir-veiculo").dialog("close");
+									$("#btnAddVeiculo").show();
+								}
 							}
-						}
+						]
 					});
 				}
 			);
@@ -266,37 +290,45 @@
 				height : 'auto',
 				width : 420,
 				modal : true,
-				buttons : {
-					"Confirmar" : function() {
-						/*
-						$.postJSON("<c:url value='/cadastro/transportador/cadastrarMotoristas'/>", null, 
-							function(result){
-								
-								$(".motoristasGrid").flexAddData({
-									page: result.page, total: result.total, rows: result.rows
-								});
-								
-								
-							}
-						);
-						*/
-						$("#dialog-incluir-motorista").dialog("close");
+				buttons : [
+					{
+						id: "btnConfNovoMotorista",
+						text: "Confirmar",
+						click: function() {
+							/*
+							$.postJSON("<c:url value='/cadastro/transportador/cadastrarMotoristas'/>", null, 
+								function(result){
+									
+									$(".motoristasGrid").flexAddData({
+										page: result.page, total: result.total, rows: result.rows
+									});
+									
+									
+								}
+							);
+							*/
+							$("#dialog-incluir-motorista").dialog("close");
+						}
 					},
-					"Cancelar" : function() {
-						/*
-						$.postJSON("<c:url value='/cadastro/transportador/cancelarCadastroMotoristas'/>", null, 
-							function(result){
-								
-								$(".motoristasGrid").flexAddData({
-									page: result.page, total: result.total, rows: result.rows
-								});
-								
-								$("#dialog-incluir-motorista").dialog("close");
-							}
-						);*/
-						$("#dialog-incluir-motorista").dialog("close");
+					{
+						id: "btnCancNovoMotorista",
+						text: "Cancelar",
+						click: function() {
+							/*
+							$.postJSON("<c:url value='/cadastro/transportador/cancelarCadastroMotoristas'/>", null, 
+								function(result){
+									
+									$(".motoristasGrid").flexAddData({
+										page: result.page, total: result.total, rows: result.rows
+									});
+									
+									$("#dialog-incluir-motorista").dialog("close");
+								}
+							);*/
+							$("#dialog-incluir-motorista").dialog("close");
+						}
 					}
-				}
+				]
 			});
 		}
 		
@@ -366,28 +398,36 @@
 						height : 'auto',
 						width : 420,
 						modal : true,
-						buttons : {
-							"Confirmar" : function() {
-								
-								var data = [{name: "motorista.id", value: idMotorista},
-								            {name: "motorista.nome", value: $("#nomeMotorista").val()},
-								            {name: "motorista.cnh", value: $("#cnhMotorista").val()}];
-								
-								$.postJSON("<c:url value='/cadastro/transportador/adicionarMotorista'/>", data, 
-									function(result){
-										
-										$(".motoristasGrid").flexReload();
-										$(".associacaoGrid").flexReload();
-										
-										$("#dialog-incluir-motorista").dialog("close");
-									}, null, true, "idModalCadastroMotorista"
-								);
+						buttons : [
+							{
+								id: "btnConfEditMotorista",
+								text: "Confirmar",
+								click: function() {
+									
+									var data = [{name: "motorista.id", value: idMotorista},
+									            {name: "motorista.nome", value: $("#nomeMotorista").val()},
+									            {name: "motorista.cnh", value: $("#cnhMotorista").val()}];
+									
+									$.postJSON("<c:url value='/cadastro/transportador/adicionarMotorista'/>", data, 
+										function(result){
+											
+											$(".motoristasGrid").flexReload();
+											$(".associacaoGrid").flexReload();
+											
+											$("#dialog-incluir-motorista").dialog("close");
+										}, null, true, "idModalCadastroMotorista"
+									);
+								}
 							},
-							"Cancelar" : function() {
-								$("#dialog-incluir-motorista").dialog("close");
-								$("#btnAddMotorista").show();
+							{
+								id: "btnCancEditMotorista",
+								text: "Cancelar",
+								click: function() {
+									$("#dialog-incluir-motorista").dialog("close");
+									$("#btnAddMotorista").show();
+								}
 							}
-						}
+					]
 					});
 				}
 			);

@@ -9,19 +9,23 @@
 </style>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/balanceamento.js"></script>
 
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/balanceamentoLancamento.js"></script>
+
 <script type="text/javascript">
 
 
 var pathTela = "${pageContext.request.contextPath}";
 
-var B = new Balanceamento(pathTela, "B");
+var balanceamento = new Balanceamento(pathTela, "balanceamento");
+
+var balanceamentoLancamento = new BalanceamentoLancamento(pathTela, "balanceamentoLancamento", balanceamento);
 
 var lancamentosSelecionados = [];
 
 
 $(function() {
 	
-	B.definirAcaoPesquisaTeclaEnter();
+	balanceamentoLancamento.definirAcaoPesquisaTeclaEnter();
 	
 	$("#lancamentosProgramadosGrid").flexigrid({
 		colModel : [  {
@@ -178,7 +182,7 @@ function reprogramarSelecionados() {
 		    	text: "Confirmar",
 		    	click: function() {
 				
-		    		B.reprogramarLancamentosSelecionados();
+		    		balanceamentoLancamento.reprogramarLancamentosSelecionados();
 		    	}
 		    },
 		    {
@@ -321,7 +325,7 @@ function reprogramarSelecionados() {
 		   	        <td width="104"><span class="bt_pesquisar" title="Pesquisar">
 		   	        
 <!-- Pesquisar -->
-<a class="botaoPesquisar" id="linkPesquisar" href="javascript:;" onclick="B.verificarBalanceamentosAlterados(B.pesquisar);">Pesquisar</a></span></td>
+<a class="botaoPesquisar" id="linkPesquisar" href="javascript:;" onclick="balanceamentoLancamento.verificarBalanceamentosAlterados(balanceamentoLancamento.pesquisar);">Pesquisar</a></span></td>
 
 
 
@@ -337,7 +341,7 @@ function reprogramarSelecionados() {
 		        
 		              
 <!-- Voltar Configuração Inicial -->
-<a id="linkVoltarConfiguracaoInicial" href="javascript:;" onclick="B.abrirAlertaVoltarConfiguracaoInicial();"><img src="<c:url value='images/bt_devolucao.png'/>" title="Voltar Configuração Inicial" border="0" hspace="5" />Voltar Configuração Inicial</a></span>
+<a id="linkVoltarConfiguracaoInicial" href="javascript:;" onclick="balanceamentoLancamento.abrirAlertaVoltarConfiguracaoInicial();"><img src="<c:url value='images/bt_devolucao.png'/>" title="Voltar Configuração Inicial" border="0" hspace="5" />Voltar Configuração Inicial</a></span>
 
 		
 		           <br clear="all" />
@@ -373,7 +377,7 @@ function reprogramarSelecionados() {
 		                
 		                <span class="bt_novos" style="border-width: 2px; border-color: #00CD00;" title="Confirmar">
 		                    <!-- CONFIRMAR -->	
-		                    <a id="linkConfirmar" href="javascript:;" onclick="B.obterConfirmacaoBalanceamento();">
+		                    <a id="linkConfirmar" href="javascript:;" onclick="balanceamentoLancamento.obterConfirmacaoBalanceamento();">
 		                        <img src="<c:url value='images/ico_check.gif'/>"  hspace="5" border="0" />
 		                        Confirmar
 		                    </a>
@@ -381,7 +385,7 @@ function reprogramarSelecionados() {
 		         	  
 		         	  <div style="margin-top:15px; margin-left:30px; float:left;"><strong>Valor Total R$: <span id="valorTotal"></span></strong></div>
 		          
-		              <span class="bt_sellAll" style="float:right; margin-right:60px;"><label for="selTodos">Selecionar Todos</label><input type="checkbox" id="selTodos" name="Todos" onclick="B.checkUncheckLancamentos()"/></span>
+		              <span class="bt_sellAll" style="float:right; margin-right:60px;"><label for="selTodos">Selecionar Todos</label><input type="checkbox" id="selTodos" name="Todos" onclick="balanceamentoLancamento.checkUncheckLancamentos()"/></span>
 		        </div>
 		      </fieldset>
 		      <div class="linha_separa_fields">&nbsp;</div>      

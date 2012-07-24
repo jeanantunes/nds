@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.integracao.couchdb.CouchDbProperties;
-import br.com.abril.nds.server.model.DistribuidorServer;
+import br.com.abril.nds.server.model.OperacaoDistribuidor;
 import br.com.abril.nds.server.service.IntegracaoOperacionalDistribuidorService;
 
 /**
@@ -25,7 +25,7 @@ public class IntegracaoOperacionalDistribuidorServiceImpl implements IntegracaoO
 	 */
 	@Override
 	@Transactional(readOnly = true)
-	public List<DistribuidorServer> obterInformacoesOperacionaisDistribuidores() {
+	public List<OperacaoDistribuidor> obterInformacoesOperacionaisDistribuidores() {
 		
 		/* TODO: Obter dados pelo de todos distribuidores pelo CouchDB
 		 * 
@@ -45,7 +45,7 @@ public class IntegracaoOperacionalDistribuidorServiceImpl implements IntegracaoO
 	@Override
 	@Transactional
 	public void atualizarInformacoesOperacionaisDistribuidores(
-			List<DistribuidorServer> listaInformacoesOperacionaisDistribuidores) {
+			List<OperacaoDistribuidor> listaInformacoesOperacionaisDistribuidores) {
 		
 		//TODO: Atualizar dados recebidos na base de dados (MYSQL) do DServer
 	}
