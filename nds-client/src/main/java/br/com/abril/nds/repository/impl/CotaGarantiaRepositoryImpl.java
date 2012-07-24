@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.model.cadastro.Cheque;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantia;
+import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaFiador;
 import br.com.abril.nds.repository.CotaGarantiaRepository;
 
 /**
@@ -64,4 +65,12 @@ public class CotaGarantiaRepositoryImpl extends AbstractRepositoryModel<CotaGara
 		return (Cheque) criteria.uniqueResult();
 	}
 
+	@Override
+	public CotaGarantiaFiador obterCotaGarantiaFiadorPorIdFiador(Long idFiador){
+		
+		Criteria criteria = this.getSession().createCriteria(CotaGarantiaFiador.class);
+		criteria.add(Restrictions.eq("fiador.id", idFiador));
+		
+		return (CotaGarantiaFiador) criteria.uniqueResult();
+	}
 }

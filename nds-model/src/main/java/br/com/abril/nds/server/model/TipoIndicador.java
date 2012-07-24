@@ -42,4 +42,8 @@ public enum TipoIndicador {
 		
 		return this.ordemExibicao;
 	}
+
+	public String getDescricao() {
+		return descricao;
+	}
 }

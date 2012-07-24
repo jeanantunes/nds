@@ -1,5 +1,9 @@
 package br.com.abril.nds.client.listener;
 
+import static org.quartz.CronScheduleBuilder.cronSchedule;
+import static org.quartz.JobBuilder.newJob;
+import static org.quartz.TriggerBuilder.newTrigger;
+
 import java.sql.Driver;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -9,9 +13,15 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
 import org.apache.log4j.Logger;
+import org.quartz.CronTrigger;
+import org.quartz.JobDetail;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.impl.StdSchedulerFactory;
+
+import br.com.abril.nds.client.job.IntegracaoOperacionalDistribuidorJob;
+import br.com.abril.nds.util.PropertiesUtil;
+import br.com.abril.nds.util.QuartzUtil;
 
 /**
  * Listener do contexto da aplicação.
@@ -49,10 +59,37 @@ public class ApplicationContextListener implements ServletContextListener {
 	@Override
 	public void contextInitialized(ServletContextEvent servletContextEvent) {
 		
+		this.agendarIntegracaoOperacionalDistribuidor();
+	}
+	
+	/*
+	 * Efetua o agendamento do serviço de integração operacional do distribuidor.
+	 */
+	private void agendarIntegracaoOperacionalDistribuidor() {
+		
 		try {
 			
+			String groupName = "integracaoGroup";
+			
+			QuartzUtil.removeJobsFromGroup(groupName);
+			
+			PropertiesUtil propertiesUtil = new PropertiesUtil("integracao-distribuidor.properties");
+			
+			String intervaloExecucaoIntegracaoOperacionalDistribuidor =
+				propertiesUtil.getPropertyValue("intervalo.execucao.integracao.operacional");
+			
             Scheduler scheduler = StdSchedulerFactory.getDefaultScheduler();
+            
+            JobDetail job = 
+            	newJob(IntegracaoOperacionalDistribuidorJob.class)
+            	    .withIdentity("integracaoOperacionalJob", groupName).build();
+            
+            CronTrigger cronTrigger = 
+            	newTrigger().withIdentity("integracaoOperacionalTrigger", groupName)
+            		.withSchedule(cronSchedule(intervaloExecucaoIntegracaoOperacionalDistribuidor)).build();
 
+            scheduler.scheduleJob(job, cronTrigger);
+            
             scheduler.start();
 
         } catch (SchedulerException se) {

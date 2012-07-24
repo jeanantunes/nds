@@ -10,7 +10,7 @@
     http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-3.0.xsd
     http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd">
 
-	<context:component-scan base-package="br.com.abril.nds.server.model" />
+	<context:component-scan base-package="br.com.abril.nds.server" />
 	
 	<util:properties id="properties" location="classpath:/nds-server.properties" />
 	
@@ -21,9 +21,8 @@
 
 	<!-- TOMCAT -->
 	<jee:jndi-lookup id="dataSource" jndi-name="java:comp/env/jdbc/nds-server"/>
-	<!-- COUCH DB -->	
-	<jee:jndi-lookup id="couchDbProperties" jndi-name="java:comp/env/couchDbProperties"/>
 	
+	<jee:jndi-lookup  id="couchDbProperties" jndi-name="java:comp/env/couchDbProperties" />
 
 	<bean id="sessionFactory"
 		class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean">

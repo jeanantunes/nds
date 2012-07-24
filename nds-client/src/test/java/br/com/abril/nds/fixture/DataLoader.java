@@ -1250,7 +1250,7 @@ public class DataLoader {
 		nfeRemessaConsignacaoContribuinte.setEmitente(TipoUsuarioNotaFiscal.DISTRIBUIDOR);
 		nfeRemessaConsignacaoContribuinte.setDestinatario(TipoUsuarioNotaFiscal.COTA);
 		nfeRemessaConsignacaoContribuinte.setContribuinte(true);
-		nfeRemessaConsignacaoContribuinte.setDescricao("");
+		nfeRemessaConsignacaoContribuinte.setDescricao("NF-e de Remessa em Consignação (NECE / DANFE) - Cota Contribuinte");
 		nfeRemessaConsignacaoContribuinte.setNopCodigo(0L);
 		nfeRemessaConsignacaoContribuinte.setTipoOperacao(TipoOperacao.SAIDA);
 		nfeRemessaConsignacaoContribuinte.setGrupoNotaFiscal(GrupoNotaFiscal.NF_REMESSA_CONSIGNACAO);
@@ -1265,7 +1265,7 @@ public class DataLoader {
 		nfeEntradaDevolucaoRemessaConsignacaoContribuinte.setEmitente(TipoUsuarioNotaFiscal.DISTRIBUIDOR);
 		nfeEntradaDevolucaoRemessaConsignacaoContribuinte.setDestinatario(TipoUsuarioNotaFiscal.DISTRIBUIDOR);
 		nfeEntradaDevolucaoRemessaConsignacaoContribuinte.setContribuinte(true);
-		nfeEntradaDevolucaoRemessaConsignacaoContribuinte.setDescricao("");
+		nfeEntradaDevolucaoRemessaConsignacaoContribuinte.setDescricao("NF-e de Remessa em Devolução de Remessa em Consignação - Cota Contribuinte");
 		nfeEntradaDevolucaoRemessaConsignacaoContribuinte.setNopCodigo(0L);
 		nfeEntradaDevolucaoRemessaConsignacaoContribuinte.setTipoOperacao(TipoOperacao.ENTRADA);
 		nfeEntradaDevolucaoRemessaConsignacaoContribuinte.setGrupoNotaFiscal(GrupoNotaFiscal.NF_DEVOLUCAO_REMESSA_CONSIGNACAO);
@@ -1280,7 +1280,7 @@ public class DataLoader {
 		nfeDevolucaoSimbolicaMercadoriasVendidasContribuinte.setEmitente(TipoUsuarioNotaFiscal.DISTRIBUIDOR);
 		nfeDevolucaoSimbolicaMercadoriasVendidasContribuinte.setDestinatario(TipoUsuarioNotaFiscal.DISTRIBUIDOR);
 		nfeDevolucaoSimbolicaMercadoriasVendidasContribuinte.setContribuinte(true);
-		nfeDevolucaoSimbolicaMercadoriasVendidasContribuinte.setDescricao("");
+		nfeDevolucaoSimbolicaMercadoriasVendidasContribuinte.setDescricao("NF-e de Devolução Simbólica de Mercadorias Vendidas - Cota Contribuinte");
 		nfeDevolucaoSimbolicaMercadoriasVendidasContribuinte.setNopCodigo(0L);
 		nfeDevolucaoSimbolicaMercadoriasVendidasContribuinte.setTipoOperacao(TipoOperacao.ENTRADA);
 		nfeDevolucaoSimbolicaMercadoriasVendidasContribuinte.setGrupoNotaFiscal(GrupoNotaFiscal.NF_DEVOLUCAO_SIMBOLICA);
@@ -1295,7 +1295,7 @@ public class DataLoader {
 		nfeVendasContribuinte.setEmitente(TipoUsuarioNotaFiscal.DISTRIBUIDOR);
 		nfeVendasContribuinte.setDestinatario(TipoUsuarioNotaFiscal.COTA);
 		nfeVendasContribuinte.setContribuinte(true);
-		nfeVendasContribuinte.setDescricao("");
+		nfeVendasContribuinte.setDescricao("NF-e Venda - Cota Contribuinte");
 		nfeVendasContribuinte.setNopCodigo(0L);
 		nfeVendasContribuinte.setTipoOperacao(TipoOperacao.SAIDA);
 		nfeVendasContribuinte.setGrupoNotaFiscal(GrupoNotaFiscal.NF_VENDA);
@@ -1311,7 +1311,7 @@ public class DataLoader {
 		nfeRemessaConsignacao.setEmitente(TipoUsuarioNotaFiscal.DISTRIBUIDOR);
 		nfeRemessaConsignacao.setDestinatario(TipoUsuarioNotaFiscal.COTA);
 		nfeRemessaConsignacao.setContribuinte(false);
-		nfeRemessaConsignacao.setDescricao("");
+		nfeRemessaConsignacao.setDescricao("NF-e de Remessa em Consignação (NECE / DANFE) - Cota NÃO Contribuinte");
 		nfeRemessaConsignacao.setNopCodigo(0L);
 		nfeRemessaConsignacao.setTipoOperacao(TipoOperacao.SAIDA);
 		nfeRemessaConsignacao.setGrupoNotaFiscal(GrupoNotaFiscal.NF_REMESSA_CONSIGNACAO);
@@ -1326,7 +1326,7 @@ public class DataLoader {
 		nfeEntradaDevolucaoRemessaConsignacao.setEmitente(TipoUsuarioNotaFiscal.DISTRIBUIDOR);
 		nfeEntradaDevolucaoRemessaConsignacao.setDestinatario(TipoUsuarioNotaFiscal.DISTRIBUIDOR);
 		nfeEntradaDevolucaoRemessaConsignacao.setContribuinte(false);
-		nfeEntradaDevolucaoRemessaConsignacao.setDescricao("");
+		nfeEntradaDevolucaoRemessaConsignacao.setDescricao("NF-e de Remessa em Devolução de Remessa em Consignação - Cota NÃO Contribuinte");
 		nfeEntradaDevolucaoRemessaConsignacao.setNopCodigo(0L);
 		nfeEntradaDevolucaoRemessaConsignacao.setTipoOperacao(TipoOperacao.ENTRADA);
 		nfeEntradaDevolucaoRemessaConsignacao.setGrupoNotaFiscal(GrupoNotaFiscal.NF_DEVOLUCAO_REMESSA_CONSIGNACAO);
@@ -1341,7 +1341,7 @@ public class DataLoader {
 		nfeDevolucaoSimbolicaMercadoriasVendidas.setEmitente(TipoUsuarioNotaFiscal.DISTRIBUIDOR);
 		nfeDevolucaoSimbolicaMercadoriasVendidas.setDestinatario(TipoUsuarioNotaFiscal.DISTRIBUIDOR);
 		nfeDevolucaoSimbolicaMercadoriasVendidas.setContribuinte(false);
-		nfeDevolucaoSimbolicaMercadoriasVendidas.setDescricao("");
+		nfeDevolucaoSimbolicaMercadoriasVendidas.setDescricao("NF-e de Devolução Simbólica de Mercadorias Vendidas - Cota NÃO Contribuinte");
 		nfeDevolucaoSimbolicaMercadoriasVendidas.setNopCodigo(0L);
 		nfeDevolucaoSimbolicaMercadoriasVendidas.setTipoOperacao(TipoOperacao.ENTRADA);
 		nfeDevolucaoSimbolicaMercadoriasVendidas.setGrupoNotaFiscal(GrupoNotaFiscal.NF_DEVOLUCAO_SIMBOLICA);
@@ -1356,7 +1356,7 @@ public class DataLoader {
 		nfeVendas.setEmitente(TipoUsuarioNotaFiscal.DISTRIBUIDOR);
 		nfeVendas.setDestinatario(TipoUsuarioNotaFiscal.COTA);
 		nfeVendas.setContribuinte(false);
-		nfeVendas.setDescricao("");
+		nfeVendas.setDescricao("NF-e Venda - Cota NÃO Contribuinte");
 		nfeVendas.setNopCodigo(0L);
 		nfeVendas.setTipoOperacao(TipoOperacao.SAIDA);
 		nfeVendas.setGrupoNotaFiscal(GrupoNotaFiscal.NF_VENDA);
@@ -1372,7 +1372,7 @@ public class DataLoader {
 		nfeRemessaDistribuicao1.setEmitente(TipoUsuarioNotaFiscal.DISTRIBUIDOR);
 		nfeRemessaDistribuicao1.setDestinatario(TipoUsuarioNotaFiscal.COTA);
 		nfeRemessaDistribuicao1.setContribuinte(true);
-		nfeRemessaDistribuicao1.setDescricao("");
+		nfeRemessaDistribuicao1.setDescricao("NF-e de Remessa para Distribuição (NECA / DANFE) - Cota Contribuinte");
 		nfeRemessaDistribuicao1.setNopCodigo(0L);
 		nfeRemessaDistribuicao1.setTipoOperacao(TipoOperacao.SAIDA);
 		nfeRemessaDistribuicao1.setGrupoNotaFiscal(GrupoNotaFiscal.DEVOLUCAO_MERCADORIA_FORNECEDOR);
@@ -1387,7 +1387,7 @@ public class DataLoader {
 		nfeDevolucaoRemessaDistribuicao1.setEmitente(TipoUsuarioNotaFiscal.COTA);
 		nfeDevolucaoRemessaDistribuicao1.setDestinatario(TipoUsuarioNotaFiscal.DISTRIBUIDOR);
 		nfeDevolucaoRemessaDistribuicao1.setContribuinte(true);
-		nfeDevolucaoRemessaDistribuicao1.setDescricao("");
+		nfeDevolucaoRemessaDistribuicao1.setDescricao("NF-e de Devolução de Remessa para Distribuição - Cota Contribuinte");
 		nfeDevolucaoRemessaDistribuicao1.setNopCodigo(0L);
 		nfeDevolucaoRemessaDistribuicao1.setTipoOperacao(TipoOperacao.SAIDA);
 		nfeDevolucaoRemessaDistribuicao1.setGrupoNotaFiscal(GrupoNotaFiscal.DEVOLUCAO_MERCADORIA_FORNECEDOR);
@@ -1402,7 +1402,7 @@ public class DataLoader {
 		nfeVenda1.setEmitente(TipoUsuarioNotaFiscal.TREELOG);
 		nfeVenda1.setDestinatario(TipoUsuarioNotaFiscal.COTA);
 		nfeVenda1.setContribuinte(true);
-		nfeVenda1.setDescricao("");
+		nfeVenda1.setDescricao("NF-e Venda - Cota Contribuinte");
 		nfeVenda1.setNopCodigo(0L);
 		nfeVenda1.setTipoOperacao(TipoOperacao.SAIDA);
 		nfeVenda1.setGrupoNotaFiscal(GrupoNotaFiscal.DEVOLUCAO_MERCADORIA_FORNECEDOR);
@@ -1418,7 +1418,7 @@ public class DataLoader {
 		nfeRemessaDistribuicao2.setEmitente(TipoUsuarioNotaFiscal.DISTRIBUIDOR);
 		nfeRemessaDistribuicao2.setDestinatario(TipoUsuarioNotaFiscal.COTA);
 		nfeRemessaDistribuicao2.setContribuinte(false);
-		nfeRemessaDistribuicao2.setDescricao("");
+		nfeRemessaDistribuicao2.setDescricao("NF-e de Remessa para Distribuição (NECA / DANFE) - Cota NÃO Contribuinte");
 		nfeRemessaDistribuicao2.setNopCodigo(0L);
 		nfeRemessaDistribuicao2.setTipoOperacao(TipoOperacao.SAIDA);
 		nfeRemessaDistribuicao2.setGrupoNotaFiscal(GrupoNotaFiscal.DEVOLUCAO_MERCADORIA_FORNECEDOR);
@@ -1433,7 +1433,7 @@ public class DataLoader {
 		nfeDevolucaoRemessaDistribuicao2.setEmitente(TipoUsuarioNotaFiscal.DISTRIBUIDOR);
 		nfeDevolucaoRemessaDistribuicao2.setDestinatario(TipoUsuarioNotaFiscal.DISTRIBUIDOR);
 		nfeDevolucaoRemessaDistribuicao2.setContribuinte(false);
-		nfeDevolucaoRemessaDistribuicao2.setDescricao("");
+		nfeDevolucaoRemessaDistribuicao2.setDescricao("NF-e de Devolução de Remessa para Distruibuição - Cota NÃO Contribuinte");
 		nfeDevolucaoRemessaDistribuicao2.setNopCodigo(0L);
 		nfeDevolucaoRemessaDistribuicao2.setTipoOperacao(TipoOperacao.ENTRADA);
 		nfeDevolucaoRemessaDistribuicao2.setGrupoNotaFiscal(GrupoNotaFiscal.DEVOLUCAO_MERCADORIA_FORNECEDOR);
@@ -1448,7 +1448,7 @@ public class DataLoader {
 		nfeVenda2.setEmitente(TipoUsuarioNotaFiscal.TREELOG);
 		nfeVenda2.setDestinatario(TipoUsuarioNotaFiscal.COTA);
 		nfeVenda2.setContribuinte(false);
-		nfeVenda2.setDescricao("");
+		nfeVenda2.setDescricao("NF-e Venda - Cota NÃO Contribuinte");
 		nfeVenda2.setNopCodigo(0L);
 		nfeVenda2.setTipoOperacao(TipoOperacao.SAIDA);
 		nfeVenda2.setGrupoNotaFiscal(GrupoNotaFiscal.DEVOLUCAO_MERCADORIA_FORNECEDOR);
@@ -2218,6 +2218,8 @@ public class DataLoader {
 
 		pdvGuilherme = Fixture.criarPDVPrincipal("PDV Guilherme", cotaGuilherme);
 		session.save(pdvGuilherme);
+		
+	
 
 		pdvMurilo = Fixture.criarPDVPrincipal("PDV MURILO", cotaMurilo);
 		session.save(pdvMurilo);
@@ -2266,6 +2268,8 @@ public class DataLoader {
 
 		roteirizacao = Fixture.criarRoteirizacao(pdvGuilherme, rota10,1);
 		session.save(roteirizacao);
+		
+		
 
 	}
 
@@ -3457,6 +3461,7 @@ public class DataLoader {
 								produtoEdicaoVeja1.getPeb()), new Date(),
 						new Date(), BigDecimal.TEN,  StatusLancamento.EXPEDIDO,
 						itemRecebimentoFisico,expedicao, 1);
+		
 		session.save(lancamentoVeja1);
 
 		lancamentoVeja2 = Fixture
@@ -4617,6 +4622,14 @@ public class DataLoader {
 				OperacaoDistribuidor.DISTRIBUICAO, distribuidor);
 		save(session, fcSegunda, fcSexta);
 
+		DistribuicaoFornecedor dinapSextaRecolhimento = Fixture.distribuicaoFornecedor(
+				fornecedorDinap, DiaSemana.SEXTA_FEIRA,
+				OperacaoDistribuidor.RECOLHIMENTO, distribuidor);
+
+		DistribuicaoFornecedor fcSextaRecolhimento = Fixture.distribuicaoFornecedor(
+				fornecedorFc, DiaSemana.SEXTA_FEIRA,
+				OperacaoDistribuidor.RECOLHIMENTO, distribuidor);
+		
 		DistribuicaoFornecedor dinapQuartaRecolhimento = Fixture.distribuicaoFornecedor(
 				fornecedorDinap, DiaSemana.QUARTA_FEIRA,
 				OperacaoDistribuidor.RECOLHIMENTO, distribuidor);
@@ -4625,7 +4638,8 @@ public class DataLoader {
 				fornecedorFc, DiaSemana.QUARTA_FEIRA,
 				OperacaoDistribuidor.RECOLHIMENTO, distribuidor);
 
-		save(session, dinapQuartaRecolhimento, fcQuartaRecolhimento);
+		save(session, dinapSextaRecolhimento, fcSextaRecolhimento,
+				  	  dinapQuartaRecolhimento, fcQuartaRecolhimento);
 	}
 
 	private static void criarDiasDistribuicaoDistribuidor(Session session) {
@@ -6360,6 +6374,20 @@ public class DataLoader {
 		save(session, cotaJohnyConsultaEncalhe);
 
 
+		PDV pdvJonhy = Fixture.criarPDVPrincipal("PDV Johny", cotaJohnyConsultaEncalhe);
+		session.save(pdvJonhy);
+		
+		Roteiro roteiroJ = Fixture.criarRoteiro("Roteiro J",box1,TipoRoteiro.NORMAL);
+		session.save(roteiroJ);
+
+		Rota rotaJ = Fixture.rota("007", "Rota 007");
+		rotaJ.setRoteiro(roteiroJ);
+		session.save(rotaJ);
+
+		Roteirizacao roteirizacaoJ = Fixture.criarRoteirizacao(pdvManoel, rotaJ,3);
+		session.save(roteirizacaoJ);
+		
+		
 		EstoqueProdutoCota estoqueProdutoCotaJohny =
 				Fixture.estoqueProdutoCota(
 				produtoEdicaoCE, cotaJohnyConsultaEncalhe, BigDecimal.TEN, BigDecimal.ZERO);

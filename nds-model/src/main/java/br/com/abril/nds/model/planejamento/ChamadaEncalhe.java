@@ -56,7 +56,7 @@ public class ChamadaEncalhe implements Serializable {
 	@OneToMany(mappedBy = "chamadaEncalhe", cascade = CascadeType.REMOVE)
 	private Set<ChamadaEncalheCota> chamadaEncalheCotas = new HashSet<ChamadaEncalheCota>();
 	
-	@OneToMany(mappedBy = "chamadaEncalhe")
+	@OneToMany(mappedBy = "chamadaEncalhe", targetEntity=Lancamento.class)
 	private Set<Lancamento> lancamentos = new HashSet<Lancamento>();
 			
 	/**

@@ -14,6 +14,7 @@ import br.com.abril.nds.dto.filtro.FiltroDebitoCreditoDTO;
 import br.com.abril.nds.dto.filtro.FiltroDebitoCreditoDTO.ColunaOrdenacao;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.OperacaoFinaceira;
 import br.com.abril.nds.model.financeiro.StatusBaixa;
@@ -56,7 +57,8 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 			hql.append(" and mfc.cota.id = :idCota ");
 		}
 		
-		hql.append(" and mfc.id not in ")
+		hql.append(" and mfc.cota.situacaoCadastro != :inativo and mfc.cota.situacaoCadastro != :pendente ")
+		   .append(" and mfc.id not in ")
 		   .append(" (select mov.id from ConsolidadoFinanceiroCota c join c.movimentos mov where c.dataConsolidado <= d.dataOperacao) ");
 		
 		hql.append(" order by mfc.cota.id ");
@@ -67,6 +69,9 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 		if (idCota != null){
 			query.setParameter("idCota", idCota);
 		}
+		
+		query.setParameter("inativo", SituacaoCadastro.INATIVO);
+		query.setParameter("pendente", SituacaoCadastro.PENDENTE);
 		
 		return query.list();
 	}

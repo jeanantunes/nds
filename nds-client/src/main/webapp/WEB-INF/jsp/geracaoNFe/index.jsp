@@ -49,11 +49,9 @@ $(function(){
 		    <td width="91">Tipo de Nota:</td>		
 		    <td width="303">		
 			    <select id="selectTipoNotaFiscal" style="width:250px; font-size:11px!important">		
-				    <option>NFe de Remessa em Consigna&ccedil;&atilde;o</option>		
-				    <option>NFe de Remessa para Distribui&ccedil;&atilde;o</option>		
-				    <option>NFe de venda</option>		
-				    <option>Nota de Envio</option>		
-				    <option>NECA - Nota de Envio com Chave de Acesso</option>		
+				   <c:forEach items="${listaTipoNotaFiscal}" var="tipoNotaFiscal">
+							<option value="${tipoNotaFiscal.key }">${tipoNotaFiscal.value }</option>
+					</c:forEach>		
 				</select>		
 		    </td>		
 		    <td width="101">Intervalo Box:</td>		

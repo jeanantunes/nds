@@ -147,12 +147,9 @@ public class MatrizLancamentoController {
 		BalanceamentoLancamentoDTO balanceamentoLancamento = 
 				(BalanceamentoLancamentoDTO) session.getAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_LANCAMENTO);
 		
-		if (balanceamentoLancamento == null
-				|| balanceamentoLancamento.getMatrizLancamento() == null
-				|| balanceamentoLancamento.getMatrizLancamento().isEmpty()) {
+		if (balanceamentoLancamento == null) {
 			
-			throw new ValidacaoException(
-				TipoMensagem.WARNING, "Não houve carga de informações para o período escolhido!");
+			throw new ValidacaoException(TipoMensagem.ERROR, "Sessão expirada!");
 		}		
 
 		List<ProdutoLancamentoDTO> listaProdutoBalanceamento =
@@ -179,11 +176,9 @@ public class MatrizLancamentoController {
 		BalanceamentoLancamentoDTO balanceamentoLancamento = 
 			(BalanceamentoLancamentoDTO) session.getAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_LANCAMENTO);
 		
-		if (balanceamentoLancamento == null
-				|| balanceamentoLancamento.getMatrizLancamento() == null
-				|| balanceamentoLancamento.getMatrizLancamento().isEmpty()) {
+		if (balanceamentoLancamento == null) {
 			
-			return;
+			throw new ValidacaoException(TipoMensagem.ERROR, "Sessão expirada!");
 		}
 
 		if (datasConfirmadas == null || datasConfirmadas.size() <= 0){
@@ -208,7 +203,7 @@ public class MatrizLancamentoController {
 		
 		this.session.setAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_LANCAMENTO, balanceamentoLancamento);
 		
-		this.verificarLancamentosConfirmados(balanceamentoLancamento);
+		this.verificarLancamentosConfirmados();
 		
 		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS,
 			"Balanceamento da matriz de lançamento confirmado com sucesso!"), "result").serialize();
@@ -305,12 +300,10 @@ public class MatrizLancamentoController {
 	/**
 	 * Método que verifica se todos os lançamentos estão confirmados
 	 * para remover a flag de alteração de dados da sessão.
-	 * 
-	 * @param balanceamentoLancamento - objeto balanceamento de lançamento
 	 */
-	private void verificarLancamentosConfirmados(BalanceamentoLancamentoDTO balanceamentoLancamento) {
+	private void verificarLancamentosConfirmados() {
 		
-		List<ConfirmacaoVO> listaConfirmacao = agruparBalanceamento(balanceamentoLancamento);
+		List<ConfirmacaoVO> listaConfirmacao = montarListaDatasConfirmacao();
 		
 		boolean lancamentosConfirmados = true;
 		
@@ -363,7 +356,7 @@ public class MatrizLancamentoController {
 		
 		if (balanceamentoLancamento == null) {
 			
-			return;
+			throw new ValidacaoException(TipoMensagem.ERROR, "Sessão expirada!");
 		}
 		
 		int numeroSemana = balanceamentoLancamento.getNumeroSemana();
@@ -477,6 +470,11 @@ public class MatrizLancamentoController {
 		BalanceamentoLancamentoDTO balanceamentoLancamentoSessao =
 			(BalanceamentoLancamentoDTO)
 				this.session.getAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_LANCAMENTO);
+		
+		if (balanceamentoLancamentoSessao == null) {
+			
+			throw new ValidacaoException(TipoMensagem.ERROR, "Sessão expirada!");
+		}
 		
 		TreeMap<Date, List<ProdutoLancamentoDTO>> matrizLancamentoSessao =
 			balanceamentoLancamentoSessao.getMatrizLancamento();
@@ -879,7 +877,6 @@ public class MatrizLancamentoController {
 					
 		this.session.setAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_LANCAMENTO, balanceamento);
 		
-		
 		if (balanceamento == null
 				|| balanceamento.getMatrizLancamento() == null
 				|| balanceamento.getMatrizLancamento().isEmpty()) {
@@ -1053,8 +1050,7 @@ public class MatrizLancamentoController {
 		
 		if (filtro == null) {
 			
-			throw new ValidacaoException(
-				TipoMensagem.WARNING, "Filtro para a pesquisa não encontrado!");
+			throw new ValidacaoException(TipoMensagem.ERROR, "Sessão expirada!");
 		}
 		
 		return filtro;
@@ -1066,61 +1062,61 @@ public class MatrizLancamentoController {
 	@Post
 	public void obterAgrupamentoDiarioBalanceamento() {
 
-		List<ConfirmacaoVO> confirmacoesVO = new ArrayList<ConfirmacaoVO>();
+		List<ConfirmacaoVO> confirmacoesVO = this.montarListaDatasConfirmacao();
 
-		BalanceamentoLancamentoDTO balanceamentoLancamento =
-			(BalanceamentoLancamentoDTO) this.session.getAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_LANCAMENTO);
-
-		if (balanceamentoLancamento == null
-				|| balanceamentoLancamento.getMatrizLancamento() == null
-				|| balanceamentoLancamento.getMatrizLancamento().isEmpty()) {
-			
-			result.nothing();
-			
-			return;
+		if (confirmacoesVO != null) {
+		
+			result.use(Results.json()).from(confirmacoesVO, "result").serialize();
 		}
-	
-		confirmacoesVO = this.agruparBalanceamento(balanceamentoLancamento);
-
-		result.use(Results.json()).from(confirmacoesVO, "result").serialize();
 	}
 
 	/**
 	 * Obtem a concentração ordenada e agrupada por data para a Matriz de Lançamento
-	 * @param BalanceamentoLancamentoDTO: balanceamentoDTO
+	 * 
 	 * @return List<ConfirmacaoVO>: confirmacoesVO
 	 */
-    private List<ConfirmacaoVO> agruparBalanceamento(BalanceamentoLancamentoDTO balanceamentoDTO){
+    private List<ConfirmacaoVO> montarListaDatasConfirmacao() {
 		
+    	BalanceamentoLancamentoDTO balanceamentoLancamento =
+			(BalanceamentoLancamentoDTO) this.session.getAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_LANCAMENTO);
+
+		if (balanceamentoLancamento == null) {
+			
+			throw new ValidacaoException(TipoMensagem.ERROR, "Sessão expirada!");
+		}
+    	
 		List<ConfirmacaoVO> confirmacoesVO = new ArrayList<ConfirmacaoVO>();
 
 		Map<Date, Boolean> mapaDatasConfirmacaoOrdenada = new LinkedHashMap<Date, Boolean>();
 
-		boolean confirmado = false;
-
 		for (Map.Entry<Date, List<ProdutoLancamentoDTO>> entry
-				: balanceamentoDTO.getMatrizLancamento().entrySet()) {
+				: balanceamentoLancamento.getMatrizLancamento().entrySet()) {
 			
-            List<ProdutoLancamentoDTO> listaProdutosRecolhimento = entry.getValue();
+			Date novaData = entry.getKey();
 			
-			if (listaProdutosRecolhimento != null && !listaProdutosRecolhimento.isEmpty()) {
+            List<ProdutoLancamentoDTO> produtosLancamento = entry.getValue();
+			
+			if (produtosLancamento == null || produtosLancamento.isEmpty()) {
 				
-				for (ProdutoLancamentoDTO produtoBalanceamento : listaProdutosRecolhimento) {
+				continue;
+			}
+		
+			boolean confirmado = false;
+			
+			for (ProdutoLancamentoDTO produtoLancamento : produtosLancamento) {
 
-					confirmado =
-						(produtoBalanceamento.getStatusLancamento().equals(StatusLancamento.BALANCEADO)
-							&& (produtoBalanceamento.getDataLancamentoDistribuidor().compareTo(
-									produtoBalanceamento.getNovaDataLancamento()) == 0));
+				confirmado =
+					(produtoLancamento.getStatusLancamento().equals(StatusLancamento.BALANCEADO)
+						&& (produtoLancamento.getDataLancamentoDistribuidor().compareTo(
+								produtoLancamento.getNovaDataLancamento()) == 0));
+				
+				if (!confirmado) {
 					
-					if (mapaDatasConfirmacaoOrdenada.get(produtoBalanceamento.getNovaDataLancamento()) == null
-							|| (!confirmado && mapaDatasConfirmacaoOrdenada.get(
-									produtoBalanceamento.getNovaDataLancamento()))) {
-						
-						mapaDatasConfirmacaoOrdenada.put(produtoBalanceamento.getNovaDataLancamento(),
-														 confirmado);
-					}
+					break;
 				}
 			}
+			
+			mapaDatasConfirmacaoOrdenada.put(novaData, confirmado);
 		}
 		
 		Set<Entry<Date, Boolean>> entrySet = mapaDatasConfirmacaoOrdenada.entrySet();
@@ -1163,7 +1159,6 @@ public class MatrizLancamentoController {
 		
 		this.session.setAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_ALTERADO, null);
 	}
-	
 
 	@Post
 	public void atualizarResumoBalanceamento() {
@@ -1172,12 +1167,9 @@ public class MatrizLancamentoController {
 			(BalanceamentoLancamentoDTO)
 				this.session.getAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_LANCAMENTO);
 		
-		if (balanceamentoLancamento == null
-				|| balanceamentoLancamento.getMatrizLancamento() == null
-				|| balanceamentoLancamento.getMatrizLancamento().isEmpty()) {
+		if (balanceamentoLancamento == null) {
 			
-			throw new ValidacaoException(
-				TipoMensagem.WARNING, "Não houve carga de informações para o período escolhido!");
+			throw new ValidacaoException(TipoMensagem.ERROR, "Sessão expirada!");
 		}
 		
 		ResultadoResumoBalanceamentoVO resultadoResumoBalanceamento = 
