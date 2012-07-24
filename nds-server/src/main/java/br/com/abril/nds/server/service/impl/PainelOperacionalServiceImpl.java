@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import br.com.abril.nds.server.model.Distribuidor;
+import br.com.abril.nds.server.model.OperacaoDistribuidor;
 import br.com.abril.nds.server.model.Indicador;
 import br.com.abril.nds.server.repository.IndicadorRepository;
 import br.com.abril.nds.server.service.PainelOperacionalService;
@@ -20,12 +20,12 @@ public class PainelOperacionalServiceImpl implements PainelOperacionalService{
 	
 	@Override
 	@Transactional(readOnly = true)
-	public List<Distribuidor> buscarIndicadoresPorDistribuidor() {
+	public List<OperacaoDistribuidor> buscarIndicadoresPorDistribuidor() {
 		
 		List<Indicador> indicadores = this.indicadorRepository.buscarIndicadores();
 		
-		List<Distribuidor> distribuidores = new ArrayList<Distribuidor>();
-		Distribuidor ultimoDistribuidor = null;
+		List<OperacaoDistribuidor> distribuidores = new ArrayList<OperacaoDistribuidor>();
+		OperacaoDistribuidor ultimoDistribuidor = null;
 		
 		for (Indicador indicador : indicadores){
 			

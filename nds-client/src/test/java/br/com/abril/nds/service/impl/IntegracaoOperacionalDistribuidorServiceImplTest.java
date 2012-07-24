@@ -5,7 +5,7 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.repository.impl.AbstractRepositoryImplTest;
-import br.com.abril.nds.server.model.Distribuidor;
+import br.com.abril.nds.server.model.OperacaoDistribuidor;
 import br.com.abril.nds.service.IntegracaoOperacionalDistribuidorService;
 
 public class IntegracaoOperacionalDistribuidorServiceImplTest extends AbstractRepositoryImplTest {
@@ -16,7 +16,7 @@ public class IntegracaoOperacionalDistribuidorServiceImplTest extends AbstractRe
 	@Test
 	public void testObterInformacoesOperacionais() {
 		
-		Distribuidor distribuidorServer = 
+		OperacaoDistribuidor distribuidorServer = 
 			this.integracaoOperacionalDistribuidorService.obterInformacoesOperacionais();
 		
 		Assert.assertNotNull(distribuidorServer);
@@ -25,7 +25,7 @@ public class IntegracaoOperacionalDistribuidorServiceImplTest extends AbstractRe
 	@Test
 	public void testIntegrarInformacoesOperacionais() {
 		
-		Distribuidor distribuidorServer = new Distribuidor();
+		OperacaoDistribuidor distribuidorServer = new OperacaoDistribuidor();
 		
 		this.integracaoOperacionalDistribuidorService.integrarInformacoesOperacionais(distribuidorServer);
 	}
