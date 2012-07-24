@@ -42,11 +42,11 @@ public class Indicador implements Serializable {
 	@JoinColumn(name = "DISTRIBUIDOR")
 	private OperacaoDistribuidor operacaoDistribuidor;
 	
-	@Enumerated(EnumType.STRING)
+	@Enumerated(EnumType.ORDINAL)
 	@Column(name = "TIPO_INDICADOR")
 	private TipoIndicador tipoIndicador;
 	
-	@Enumerated(EnumType.STRING)
+	@Enumerated(EnumType.ORDINAL)
 	@Column(name = "GRUPO_INDICADOR")
 	private GrupoIndicador grupoIndicador;
 	

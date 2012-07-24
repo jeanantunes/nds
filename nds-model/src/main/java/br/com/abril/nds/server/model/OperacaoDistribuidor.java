@@ -8,7 +8,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -42,11 +41,8 @@ public class OperacaoDistribuidor implements Serializable {
 	@JoinColumn(name = "STATUS_OPERACAO")
 	private StatusOperacao statusOperacao;
 	
-	@OneToMany
-	private List<Indicador> indicadores;
-	
 	@Transient
-	private List<Indicador> indicadoresOrd;
+	private List<Indicador> indicadores;
 
 	public Long getIdDistribuidorInterface() {
 		return idDistribuidorInterface;
@@ -94,13 +90,5 @@ public class OperacaoDistribuidor implements Serializable {
 
 	public void setIndicadores(List<Indicador> indicadores) {
 		this.indicadores = indicadores;
-	}
-
-	public List<Indicador> getIndicadoresOrd() {
-		return indicadoresOrd;
-	}
-
-	public void setIndicadoresOrd(List<Indicador> indicadoresOrd) {
-		this.indicadoresOrd = indicadoresOrd;
 	}
 }

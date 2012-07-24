@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import br.com.abril.nds.server.model.OperacaoDistribuidor;
 import br.com.abril.nds.server.service.PainelOperacionalService;
 import br.com.caelum.vraptor.Path;
-import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 
@@ -43,9 +42,19 @@ public class PainelOperacionalController {
 		//this.result.include("distribuidores", mock());
 	}
 	
-	@Post
-	public void atualizarPainel(){
+	private void obterEstadosPresentes(List<OperacaoDistribuidor> distribuidores){
 		
+		Map<String, Object> estados = new HashMap<String, Object>();
+		
+		if (distribuidores != null){
+			
+			for (OperacaoDistribuidor distribuidor : distribuidores){
+				
+				estados.put(distribuidor.getUf(), distribuidor.getUf());
+			}
+		}
+		
+		this.result.include("estados", estados);
 	}
 	
 //	public List<Distribuidor> mock(){
@@ -266,19 +275,4 @@ public class PainelOperacionalController {
 //		this.obterEstadosPresentes(lista);
 //		return lista;
 //	}
-	
-	private void obterEstadosPresentes(List<OperacaoDistribuidor> distribuidores){
-		
-		Map<String, Object> estados = new HashMap<String, Object>();
-		
-		if (distribuidores != null){
-			
-			for (OperacaoDistribuidor operacaoDistribuidor : distribuidores){
-				
-				estados.put(operacaoDistribuidor.getUf(), operacaoDistribuidor.getUf());
-			}
-		}
-		
-		this.result.include("estados", estados);
-	}
 }
