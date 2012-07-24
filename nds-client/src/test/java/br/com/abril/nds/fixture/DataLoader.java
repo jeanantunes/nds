@@ -1476,7 +1476,8 @@ public class DataLoader {
 		ProdutoEdicao cromoBrasileiraoEd1 = Fixture.produtoEdicao("COD_FF", 1L, 5, 30,
 				new BigDecimal(50), new BigDecimal(100), new BigDecimal(100), "3333", 0L, cromoBrasileirao, null, false);
 		cromoBrasileiraoEd1.setParcial(true);
-
+		cromoBrasileiraoEd1.setDesconto(new BigDecimal(10));
+		
 		ProdutoEdicao guiaViagemEd1 = Fixture.produtoEdicao("COD_GG", 1L, 5, 30,
 				new BigDecimal(50), new BigDecimal(100), new BigDecimal(100), "2231", 0L, guiaViagem, null, false);
 		guiaViagemEd1.setParcial(true);
@@ -1501,10 +1502,10 @@ public class DataLoader {
 				Fixture.criarData(1, 3, 2011),
 				new Date(),
 				new Date(),
-				new BigDecimal(100),
+				new BigDecimal(50),
 				StatusLancamento.RECOLHIDO, null, 1);
 		save(session,lancamentoPeriodo);
-
+		
 		Lancamento lancamentoPeriodo2 = Fixture.lancamento(TipoLancamento.PARCIAL, cromoBrasileiraoEd1,
 				Fixture.criarData(5, 3, 2011),
 				Fixture.criarData(5, 4, 2011),
@@ -1524,7 +1525,7 @@ public class DataLoader {
 		EstoqueProdutoCota estoque = Fixture.estoqueProdutoCota(cromoBrasileiraoEd1, new BigDecimal(50), cotaGuilherme, null);
 
 		MovimentoEstoqueCota movimento = Fixture.movimentoEstoqueCota(cromoBrasileiraoEd1, tipoMovimentoEncalhe,
-				usuarioJoao, estoque, new BigDecimal(50), cotaGuilherme, StatusAprovacao.APROVADO, "motivo");
+				usuarioJoao, estoque, new BigDecimal(10), cotaGuilherme, StatusAprovacao.APROVADO, "motivo");
 
 		ChamadaEncalhe chamadaEncalhe = Fixture.chamadaEncalhe(Fixture.criarData(1, 3, 2011), cromoBrasileiraoEd1,TipoChamadaEncalhe.ANTECIPADA);
 
@@ -1545,6 +1546,10 @@ public class DataLoader {
 
 		save(session,estoque,movimento,chamadaEncalhe,chamadaEncalheCota,controle,controleCota,conferencia);
 
+		lancamentoPeriodo.setChamadaEncalhe(chamadaEncalhe);
+		
+		save(session, lancamentoPeriodo, lancamentoPeriodo2);
+		
 		PeriodoLancamentoParcial periodo = Fixture.criarPeriodoLancamentoParcial(lancamentoPeriodo, lancamentoParcial2,
 				StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.PARCIAL);
 		save(session, periodo);
@@ -5237,8 +5242,8 @@ public class DataLoader {
 
 		EnderecoCota enderecoCotaGuilherme = new EnderecoCota();
 		enderecoCotaGuilherme.setCota(cotaGuilherme);
-		enderecoCotaGuilherme.setEndereco(endereco);
-		enderecoCotaGuilherme.setPrincipal(false);
+		enderecoCotaGuilherme.setEndereco(enderecoJoao);
+		enderecoCotaGuilherme.setPrincipal(true);
 		enderecoCotaGuilherme.setTipoEndereco(TipoEndereco.COBRANCA);
 
 		save(session, endereco, enderecoCota, endereco2,enderecoCota2,enderecoLuis,enderecoCotaLuis,enderecoJoao,enderecoCotaJoao, enderecoCotaGuilherme);
@@ -8481,7 +8486,7 @@ public class DataLoader {
 					  lancamentoViagemTurismoEdicao102, lancamentoVipEdicao102, lancamentoGestaoEscolarEdicao102, lancamentoLolaEdicao102,
 					  lancamentoHeavyMetalEdicao102, lancamentoMetalUndergroundEdicao102, lancamentoJavaMagazineEdicao101Suplementar,
 					  lancamentoJavaMagazineEdicao101Suplementar2, lancamentoJavaMagazineEdicao101Suplementar3, lancamentoRoadieCrewEdicao101Suplementar);
-
+		
 		LancamentoParcial lancamentoParcialGalileuEdicao102 =
 			Fixture.criarLancamentoParcial(galileuEdicao102,
 					lancamentoGalileuEdicao102.getDataLancamentoPrevista(),
@@ -8796,6 +8801,7 @@ public class DataLoader {
 
 		save(session, furoProdutoHeavyMetalEdicao101, furoProdutoGestaoEscolarEdicao101,
 					  furoProdutoGuitarPlayerEdicao101);
+		
 	}
 
 	private static void criarDadosBalanceamentoRecolhimento(Session session) {
@@ -10320,6 +10326,13 @@ public class DataLoader {
 					  chamadaEncalheCotaAcmeJequiti101, chamadaEncalheCotaManoelJavaMagazine102,
 					  chamadaEncalheCotaManoelBravo102, chamadaEncalheCotaAcmeBravo102,
 					  chamadaEncalheCotaManoelWomenHealth102, chamadaEncalheCotaAcmeWomenHealth102);
+		
+		lancamentoJavaMagazineEdicao102.setChamadaEncalhe(chamadaEncalheJavaMagazine102);
+		lancamentoGuitarPlayerEdicao101.setChamadaEncalhe(chamadaEncalheGuitarPlayer101);
+		lancamentoBravoEdicao102.setChamadaEncalhe(chamadaEncalheBravo102);
+		lancamentoWomenHealthEdicao102.setChamadaEncalhe(chamadaEncalheWomenHealth102);
+		
+		save(session, lancamentoGuitarPlayerEdicao101, lancamentoBravoEdicao102, lancamentoWomenHealthEdicao102);
 	}
 
 
