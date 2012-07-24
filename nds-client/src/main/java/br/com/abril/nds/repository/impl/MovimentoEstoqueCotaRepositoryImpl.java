@@ -1291,9 +1291,9 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 			   .append("   AND (tipoNotaFiscal IS NULL OR tipoNotaFiscal.grupoNotaFiscal != :grupoNotaFiscal) ");
 	
 			if (i == 1 || GrupoNotaFiscal.NF_DEVOLUCAO_REMESSA_CONSIGNACAO.equals(grupoNotaFiscal)) {
-				sql.append("   AND (chamadaEncalhe.dataRecolhimento + :diasAMais) = :diaAtual ")
-				   .append("   AND chamadaEncalheCota.fechado = :fechado ")
-				   .append("   AND chamadaEncalheCota.postergado = :postergado ");
+				sql.append("   AND (chamadaEncalhe.dataRecolhimento + :diasAMais) >= :diaAtual ")
+				   .append("   AND (chamadaEncalheCota.fechado IS NULL OR chamadaEncalheCota.fechado = :fechado) ")
+				   .append("   AND (chamadaEncalheCota.postergado IS NULL OR chamadaEncalheCota.postergado = :postergado) ");
 			}
 			
 			if (periodo != null && periodo.getDe() != null && periodo.getAte() != null) {
