@@ -202,6 +202,11 @@ public class PainelProcessamentoController {
 		try {
 			lista = painelProcessamentoService.listardetalhesProcessamentoInterface(Long.parseLong(idLogProcessamento));
 			quantidade = lista.size();
+			
+			if (lista == null || lista.isEmpty()) {
+				throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
+			}
+			
 		} catch (Exception e) {
 			if (e instanceof ValidacaoException) {
 				throw e;
@@ -263,6 +268,11 @@ public class PainelProcessamentoController {
 		try {
 			lista = painelProcessamentoService.listarDetalhesInterface(Long.parseLong(idLogProcessamento));
 			quantidade = lista.size();
+			
+			if (lista == null || lista.isEmpty()) {
+				throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
+			}
+			
 		} catch (Exception e) {
 			if (e instanceof ValidacaoException) {
 				throw e;

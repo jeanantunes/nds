@@ -1,6 +1,5 @@
 package br.com.abril.nds.service.impl;
 
-
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -20,7 +19,6 @@ import br.com.abril.nds.dto.ProcessoDTO;
 import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.StatusOperacional;
 import br.com.abril.nds.model.estoque.ControleFechamentoEncalhe;
-import br.com.abril.nds.model.integracao.LogExecucao;
 import br.com.abril.nds.model.integracao.LogExecucaoMensagem;
 import br.com.abril.nds.model.integracao.StatusExecucaoEnum;
 import br.com.abril.nds.repository.BaixaCobrancaService;
@@ -172,15 +170,6 @@ public class PainelProcessamentoServiceImpl implements PainelProcessamentoServic
 			lista.add(detalheProcessamentoVO);
 		}
 		return lista;
-	}
-
-	/* (non-Javadoc)
-	 * @see br.com.abril.nds.service.LogExecucaoMensagemService#quantidadeProcessamentoInterface(java.lang.Long)
-	 */
-	@Transactional(readOnly = true)
-	@Override
-	public Long quantidadeProcessamentoInterface(Long codigoLogExecucao) {
-		return logExecucaoRepository.quantidadeMensagensLogInterface(codigoLogExecucao);
 	}
 
 	/* (non-Javadoc)

@@ -3,22 +3,26 @@ package br.com.abril.nds.dto;
 import java.io.Serializable;
 import java.util.Date;
 
+import br.com.abril.nds.model.integracao.StatusExecucaoEnum;
+
 /**
  * @author InfoA2
  */
 public class ConsultaInterfacesDTO implements Serializable {
 
-	private String status;
+	private static final long serialVersionUID = -6408390586153149553L;
+
+	private StatusExecucaoEnum status;
 	private String nome;
 	private Long id;
 	private String nomeArquivo;
 	private Date dataInicio;
 
-	public String getStatus() {
+	public StatusExecucaoEnum getStatus() {
 		return status;
 	}
 
-	public void setStatus(String status) {
+	public void setStatus(StatusExecucaoEnum status) {
 		this.status = status;
 	}
 
@@ -52,6 +56,10 @@ public class ConsultaInterfacesDTO implements Serializable {
 
 	public void setDataInicio(Date dataInicio) {
 		this.dataInicio = dataInicio;
+	}
+
+	public static long getSerialversionuid() {
+		return serialVersionUID;
 	}
 
 }

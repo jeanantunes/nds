@@ -16,6 +16,7 @@ var painelProcessamentoController = {
 	},
 	initGridDetalheInterfaceGrid : function() {
 		$(".detalheInterfaceGrid").flexigrid({
+			preProcess : painelProcessamentoController.executarPreInterface,
 			dataType : 'json',
 			colModel : [ {
 				display : 'Ação',
@@ -269,9 +270,23 @@ var painelProcessamentoController = {
 		$(".detalheInterfaceGrid").flexReload();
 		painelProcessamentoController.popup_detalhes();			
 	},
+	executarPreInterface : function (resultado) {
+
+		if (resultado.mensagens) {
+			$("#dialog-detalhes").dialog("close");
+			exibirMensagem(
+				resultado.mensagens.tipoMensagem, 
+				resultado.mensagens.listaMensagens
+			);
+			return resultado;
+		}
+
+		return resultado;
+	},
 	executarPreInterfaceProcessamento : function(resultado) {
 
 		if (resultado.mensagens) {
+			$("#dialog-novo").dialog("close");
 			exibirMensagem(
 				resultado.mensagens.tipoMensagem, 
 				resultado.mensagens.listaMensagens

@@ -16,8 +16,6 @@ public interface LogExecucaoRepository extends Repository<LogExecucao, Long> {
 
 	public List<LogExecucaoMensagem> obterMensagensLogInterface(Long codigoLogExecucao);
 
-	public Long quantidadeMensagensLogInterface(Long codigoLogExecucao);
-
 	public List<LogExecucaoMensagem> obterMensagensErroLogInterface(Long codigoLogExecucao);
 	
 }

@@ -44,13 +44,14 @@ public class LogExecucaoRepositoryImpl extends AbstractRepositoryModel<LogExecuc
 		criteria.createCriteria("logExecucao", "logExecucao", Criteria.LEFT_JOIN);
 		criteria.createCriteria("logExecucao.interfaceExecucao", "interfaceExecucao", Criteria.LEFT_JOIN);
 		
-		criteria.setProjection( Projections.projectionList()  
-			    .add(Projections.groupProperty("logExecucao.status"))  
-			    .add(Projections.groupProperty("interfaceExecucao.nome"))  
-			    .add(Projections.groupProperty("logExecucao.id"))  
-			    .add(Projections.groupProperty("logExecucao.dataInicio")))
-			    .setResultTransformer(Transformers.aliasToBean(ConsultaInterfacesDTO.class));; 
-		
+		criteria.setProjection( Projections.projectionList()
+			    .add(Projections.groupProperty("logExecucao.status"), "status")  
+			    .add(Projections.groupProperty("interfaceExecucao.nome"), "nome")  
+			    .add(Projections.groupProperty("interfaceExecucao.id"), "id")  
+			    .add(Projections.groupProperty("logExecucao.dataInicio"), "dataInicio")
+			    .add(Projections.max("logExecucaoMensagem.nomeArquivo"), "nomeArquivo"))
+			    .setResultTransformer(Transformers.aliasToBean(ConsultaInterfacesDTO.class)); 
+
 		criteria.add( Restrictions.eq("logExecucao.dataInicio", distribuidor.getDataOperacao()) );
 
 		return criteria.list();
@@ -69,18 +70,6 @@ public class LogExecucaoRepositoryImpl extends AbstractRepositoryModel<LogExecuc
 	}
 
 	/**
-	 * Retorna a quantidade de registros total de mensagens de log de interface na base de dados
-	 * @param codigoLogExecucao
-	 * @return
-	 */
-	@Override
-	public Long quantidadeMensagensLogInterface(Long codigoLogExecucao){
-		Criteria criteria = addMensagensLogInterfaceRestrictions(codigoLogExecucao);
-		criteria.setProjection(Projections.rowCount());
-		return (Long)criteria.list().get(0);
-	}
-
-	/**
 	 * Adiciona as restrições á busca de mensagens de log de interface
 	 * @param codigoLogExecucao
 	 * @return
@@ -88,7 +77,8 @@ public class LogExecucaoRepositoryImpl extends AbstractRepositoryModel<LogExecuc
 	private Criteria addMensagensLogInterfaceRestrictions(Long codigoLogExecucao) {
 		Criteria criteria = getSession().createCriteria(LogExecucaoMensagem.class);
 		criteria.createCriteria("logExecucao", "logExecucao", Criteria.LEFT_JOIN);
-		criteria.add(Restrictions.eq("logExecucao.id", codigoLogExecucao));
+		criteria.createCriteria("logExecucao.interfaceExecucao", "interfaceExecucao", Criteria.LEFT_JOIN);
+		criteria.add(Restrictions.eq("interfaceExecucao.id", codigoLogExecucao));
 		return criteria;
 	}
 
