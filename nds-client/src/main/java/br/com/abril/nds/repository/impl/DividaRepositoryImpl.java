@@ -600,7 +600,7 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 		
 		if (dividaAcumulada){
 			
-			query.setParameter("acumulada ", true);
+			query.setParameter("acumulada", true);
 		}
 		
 		query.setParameter("quitada", StatusDivida.QUITADA);

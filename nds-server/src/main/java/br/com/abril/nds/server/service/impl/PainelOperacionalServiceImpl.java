@@ -1,6 +1,7 @@
 package br.com.abril.nds.server.service.impl;
 
-import java.text.DecimalFormat;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,9 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import br.com.abril.nds.server.model.OperacaoDistribuidor;
 import br.com.abril.nds.server.model.FormatoIndicador;
 import br.com.abril.nds.server.model.Indicador;
+import br.com.abril.nds.server.model.OperacaoDistribuidor;
 import br.com.abril.nds.server.model.TipoIndicador;
 import br.com.abril.nds.server.repository.IndicadorRepository;
 import br.com.abril.nds.server.service.PainelOperacionalService;
@@ -20,6 +21,8 @@ public class PainelOperacionalServiceImpl implements PainelOperacionalService{
 
 	@Autowired
 	private IndicadorRepository indicadorRepository;
+	
+	private BigDecimal CEM = new BigDecimal(100);
 	
 	@Override
 	@Transactional(readOnly = true)
@@ -49,21 +52,26 @@ public class PainelOperacionalServiceImpl implements PainelOperacionalService{
 			
 			switch(indicador.getFormatoIndicador()){
 				case MONETARIO:
-					DecimalFormat df = new DecimalFormat(FormatoIndicador.MONETARIO.getFormato());
-					indicador.setValor(df.format(indicador.getValor()));
+					
+					indicador.setValor(new BigDecimal(indicador.getValor()).setScale(2, RoundingMode.HALF_EVEN).toString());
 				break;
 			}
 			
-			Long qtdTotalJornaleiros = null;
-			Double cobrancaDia = null;
+			BigDecimal qtdTotalJornaleiros = null;
+			BigDecimal cobrancaDia = null;
+			BigDecimal partLiq = null;
 			switch (indicador.getTipoIndicador()) {
 				case JORNALEIROS:
 					
-					qtdTotalJornaleiros = Long.parseLong(indicador.getValor());
+					qtdTotalJornaleiros = new BigDecimal(indicador.getValor());
 				break;
 				case COBRANCA:
 					
-					cobrancaDia = Double.parseDouble(indicador.getValor());
+					cobrancaDia = new BigDecimal(indicador.getValor());
+				break;
+				case LIQUIDACAO:
+					
+					partLiq = new BigDecimal(indicador.getValor());
 				break;
 			}
 			
@@ -73,9 +81,9 @@ public class PainelOperacionalServiceImpl implements PainelOperacionalService{
 					if (!indicador.getTipoIndicador().equals(TipoIndicador.JORNALEIROS) &&
 							qtdTotalJornaleiros != null){
 						
-						double pct = Long.parseLong(indicador.getValor()) * qtdTotalJornaleiros / 100;
+						BigDecimal pct = qtdTotalJornaleiros.multiply(new BigDecimal(indicador.getValor()).divide(CEM));
 						
-						indicador.setValor(indicador.getValor() + " - (" + pct + ")");
+						indicador.setValor(indicador.getValor() + " - (" + pct.setScale(0) + "%)");
 					}
 				break;
 				
@@ -83,9 +91,16 @@ public class PainelOperacionalServiceImpl implements PainelOperacionalService{
 					
 					if (TipoIndicador.COBRANCA_POSTERGADA.equals(indicador.getTipoIndicador())){
 						
-						double pctc = Long.parseLong(indicador.getValor()) * cobrancaDia / 100;
+						BigDecimal pctc = cobrancaDia.multiply(new BigDecimal(indicador.getValor()).divide(CEM));
 						
-						indicador.setValor(indicador.getValor() + " - (" + pctc + ")");
+						indicador.setValor(indicador.getValor() + " - (" + pctc.setScale(0) + "%)");
+					} else if (TipoIndicador.INADIMPLENCIA.equals(indicador.getTipoIndicador())){
+						
+						BigDecimal valorInd = new BigDecimal(indicador.getValor());
+						
+						BigDecimal pctPartLiqui = valorInd.multiply(partLiq).divide(CEM);
+						
+						indicador.setValor(indicador.getValor() + " - (" + pctPartLiqui.setScale(0) + "%)");
 					}
 				break;
 			}
@@ -95,7 +110,10 @@ public class PainelOperacionalServiceImpl implements PainelOperacionalService{
 				indicador.setValor("R$ " + indicador.getValor());
 			}
 			
-			ultimoDistribuidor.getIndicadores().add(indicador);
+			if (!TipoIndicador.LIQUIDACAO.equals(indicador.getTipoIndicador())){
+			
+				ultimoDistribuidor.getIndicadores().add(indicador);
+			}
 		}
 		
 		if (ultimoDistribuidor != null){

@@ -3,6 +3,7 @@ package br.com.abril.nds.server.service.impl;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.integracao.couchdb.CouchDbProperties;
@@ -15,6 +16,7 @@ import br.com.abril.nds.server.service.IntegracaoOperacionalDistribuidorService;
  * @author Discover Technology
  *
  */
+@Service
 public class IntegracaoOperacionalDistribuidorServiceImpl implements IntegracaoOperacionalDistribuidorService {
 
 	@Autowired
