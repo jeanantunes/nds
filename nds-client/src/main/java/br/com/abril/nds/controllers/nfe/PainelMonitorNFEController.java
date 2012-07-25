@@ -520,7 +520,7 @@ public class PainelMonitorNFEController {
 	@Path("/pesquisar")
 	public void pesquisar(
 			String tipoDocumento,
-			String box,
+			Integer box,
 			String dataInicial,
 			String dataFinal,
 			String documento,

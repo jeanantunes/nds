@@ -25,7 +25,7 @@ public interface GeracaoNFeService {
 	 * @param page
 	 * @return
 	 */
-	public abstract List<CotaExemplaresDTO> busca(Intervalo<String> intervaloBox,
+	public abstract List<CotaExemplaresDTO> busca(Intervalo<Integer> intervaloBox,
 	Intervalo<Integer> intervalorCota,
 	Intervalo<Date> intervaloDateMovimento, List<Long> listIdFornecedor, List<Long> listIdProduto, Long idTipoNotaFiscal, String sortname,
 	String sortorder, Integer rp, Integer page);
@@ -43,7 +43,7 @@ public interface GeracaoNFeService {
 	 * @param dataEmissao
 	 *  
 	 */
-	public abstract void gerarNotaFiscal(Intervalo<String> intervaloBox, Intervalo<Integer> intervalorCota,
+	public abstract void gerarNotaFiscal(Intervalo<Integer> intervaloBox, Intervalo<Integer> intervalorCota,
 			Intervalo<Date> intervaloDateMovimento, List<Long> listIdFornecedor, List<Long> listIdProduto, 
 			Long idTipoNotaFiscal, Date dataEmissao) throws FileNotFoundException, IOException;
 }

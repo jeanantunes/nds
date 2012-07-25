@@ -31,6 +31,7 @@ import org.hibernate.annotations.NotFoundAction;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.estoque.Expedicao;
 import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
+import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 
 /**
  * @author T30541
@@ -124,6 +125,9 @@ public class Lancamento implements Serializable {
 	@JoinColumn(name = "CHAMADA_ENCALHE_ID")
 	private ChamadaEncalhe chamadaEncalhe;
 
+	@OneToMany(mappedBy = "lancamento")
+	private List<MovimentoEstoqueCota> movimentoEstoqueCotas;
+	
 	public Long getId() {
 		return id;
 	}
@@ -333,6 +337,21 @@ public class Lancamento implements Serializable {
 	 */
 	public void setChamadaEncalhe(ChamadaEncalhe chamadaEncalhe) {
 		this.chamadaEncalhe = chamadaEncalhe;
+	}
+
+	/**
+	 * @return the movimentoEstoqueCotas
+	 */
+	public List<MovimentoEstoqueCota> getMovimentoEstoqueCotas() {
+		return movimentoEstoqueCotas;
+	}
+
+	/**
+	 * @param movimentoEstoqueCotas the movimentoEstoqueCotas to set
+	 */
+	public void setMovimentoEstoqueCotas(
+			List<MovimentoEstoqueCota> movimentoEstoqueCotas) {
+		this.movimentoEstoqueCotas = movimentoEstoqueCotas;
 	}
 	
 

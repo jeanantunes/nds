@@ -1,6 +1,5 @@
 package br.com.abril.nds.repository.impl;
 
-import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -12,7 +11,7 @@ import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.CotaEmissaoDTO;
-import br.com.abril.nds.dto.TipoMovimentoDTO;
+import br.com.abril.nds.dto.ProdutoEmissaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroEmissaoCE;
 import br.com.abril.nds.dto.filtro.FiltroEmissaoCE.ColunaOrdenacao;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
@@ -106,6 +105,9 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 				
 		gerarFromWhere(filtro, hql, param);
 		
+
+		hql.append(" group by cota ");
+		
 		gerarOrdenacao(filtro, hql);		
 				
 		Query query =  getSession().createQuery(hql.toString());
@@ -149,42 +151,42 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		
 		if(filtro.getDtRecolhimentoDe() != null) {
 			
-			hql.append(" and confEnc.data >=:dataDe");
+			hql.append(" and chamadaEncalhe.dataRecolhimento >=:dataDe ");
 			param.put("dataDe", filtro.getDtRecolhimentoDe());
 		}
 		
 		if(filtro.getDtRecolhimentoAte() != null) {
-			hql.append(" and confEnc.data <=:dataAte");
+			hql.append(" and chamadaEncalhe.dataRecolhimento <=:dataAte ");
 			param.put("dataAte", filtro.getDtRecolhimentoAte());
 		}
 		
 		if(filtro.getNumCotaDe() != null) {
 
-			hql.append(" and cota.numeroCota >=:cotaDe");
+			hql.append(" and cota.numeroCota >=:cotaDe ");
 			param.put("cotaDe", filtro.getNumCotaDe());
 		}
 		
 		if(filtro.getNumCotaAte() != null) {
 			
-			hql.append(" and cota.numeroCota <=:cotaAte");
+			hql.append(" and cota.numeroCota <=:cotaAte ");
 			param.put("cotaAte", filtro.getNumCotaAte());
 		}
 		
 		if(filtro.getIdRoteiro() != null) {
 			
-			hql.append(" and roteiro.id <=:idRoteiro");
+			hql.append(" and roteiro.id <=:idRoteiro ");
 			param.put("idRoteiro", filtro.getIdRoteiro());
 		}
 				
 		if(filtro.getIdRota() != null) {
 			
-			hql.append(" and rota.id <=:idRota");
+			hql.append(" and rota.id <=:idRota ");
 			param.put("idRota", filtro.getIdRota());
 		}
 		
 		if(filtro.getIdBoxDe() != null) {
 			
-			hql.append(" and box.codigo >=:codBox");
+			hql.append(" and box.codigo >=:codBox ");
 			param.put("codBox", filtro.getIdBoxDe());
 		}
 		
@@ -201,7 +203,6 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		}
 		
 
-		hql.append(" group by cota ");
 	}
 
 	private void gerarOrdenacao(FiltroEmissaoCE filtro, StringBuilder hql) {
@@ -232,7 +233,117 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		
 	}
 
-	
-	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@Override
+	public List<CotaEmissaoDTO> obterDadosEmissaoImpressaoChamadasEncalhe(
+			FiltroEmissaoCE filtro) { 		
 
+		HashMap<String, Object> param = new HashMap<String, Object>();
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select chamEncCota.id as idChamEncCota, ");
+		hql.append(" 		cota.numeroCota as numCota, ");
+		hql.append(" 		chamadaEncalhe.dataRecolhimento as dataRecolhimento, ");
+		hql.append(" 		cota.id as idCota, ");
+		hql.append(" 		pessoa.nome as nomeCota, ");
+		hql.append("		sum(chamEncCota.qtdePrevista) as qtdeExemplares, ");	
+		hql.append("		sum(chamEncCota.qtdePrevista * produtoEdicao.precoVenda) as vlrTotalCe, ");
+		hql.append(" 		box.codigo as box, ");
+		hql.append(" 		rota.codigoRota as codigoRota, ");
+		hql.append(" 		rota.descricaoRota as nomeRota ");
+		
+		gerarFromWhere(filtro, hql, param);
+		
+
+		hql.append(" group by cota ");
+		
+		gerarOrdenacao(filtro, hql);		
+				
+		Query query =  getSession().createQuery(hql.toString());
+		
+		for(String key : param.keySet()){
+			
+			if(param.get(key) instanceof List)
+				query.setParameterList(key, (List) param.get(key));
+			else					
+				query.setParameter(key, param.get(key));
+			
+		}
+		
+		query.setResultTransformer(new AliasToBeanResultTransformer(
+				CotaEmissaoDTO.class));
+		
+		return query.list();
+		
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<ProdutoEmissaoDTO> obterProdutosEmissaoCE(
+			FiltroEmissaoCE filtro, Long idCota) {
+
+		
+		HashMap<String, Object> param = new HashMap<String, Object>();
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select produtoEdicao.codigoDeBarras as codigoBarras, ");
+		hql.append(" 		lancamentos.sequenciaMatriz as sequencia, ");
+		hql.append(" 	    produto.codigo as codigoProduto, ");
+		hql.append(" 	    produto.nome as nomeProduto, ");
+		hql.append(" 	    produtoEdicao.numeroEdicao as edicao, ");
+		hql.append(" 	    produtoEdicao.desconto as desconto, ");
+		hql.append(" 	    produtoEdicao.precoVenda as precoVenda, ");
+		hql.append(" 	    produtoEdicao.parcial as tipoRecolhimento, ");
+		hql.append(" 	    lancamentos.dataLancamentoDistribuidor as dataLancamento, ");
+		hql.append(" 	    (produtoEdicao.precoVenda - produtoEdicao.desconto) as precoComDesconto, ");
+		hql.append(" 	    lancamentos.reparte as reparte, ");
+		hql.append(" 	    sum(movimentoCota.qtde) as quantidadeDevolvida ");
+		
+		gerarFromWhereProdutosCE(filtro, hql, param, idCota);
+		
+
+		hql.append(" group by chamadaEncalhe ");
+						
+		Query query =  getSession().createQuery(hql.toString());
+		
+		for(String key : param.keySet()){
+			query.setParameter(key, param.get(key));			
+		}
+		
+		query.setResultTransformer(new AliasToBeanResultTransformer(
+				ProdutoEmissaoDTO.class));
+		
+		return query.list();
+	}
+	
+	private void gerarFromWhereProdutosCE(FiltroEmissaoCE filtro, StringBuilder hql, HashMap<String, Object> param, 
+			Long idCota) {
+
+		hql.append(" from ChamadaEncalheCota chamEncCota ")
+		   .append(" join chamEncCota.chamadaEncalhe  chamadaEncalhe ")
+		   .append(" left join chamEncCota.conferenciasEncalhe confEnc ")
+		   .append(" left join confEnc.movimentoEstoqueCota  movimentoCota ")
+		   .append(" join chamEncCota.cota cota ")
+		   .append(" join cota.pessoa pessoa ")
+		   .append(" join chamadaEncalhe.produtoEdicao produtoEdicao ")
+		   .append(" join produtoEdicao.produto produto ")
+		   .append(" join produto.fornecedores fornecedores ")
+		   .append(" join chamadaEncalhe.lancamentos lancamentos ")
+		   .append(" where cota.id=:idCota ");
+		
+		param.put("idCota", idCota);
+		
+		if(filtro.getDtRecolhimentoDe() != null) {
+			
+			hql.append(" and chamadaEncalhe.dataRecolhimento >=:dataDe ");
+			param.put("dataDe", filtro.getDtRecolhimentoDe());
+		}
+		
+		if(filtro.getDtRecolhimentoAte() != null) {
+			hql.append(" and chamadaEncalhe.dataRecolhimento <=:dataAte ");
+			param.put("dataAte", filtro.getDtRecolhimentoAte());
+		}
+	}
 }

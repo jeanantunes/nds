@@ -10,7 +10,7 @@ public class ChamadaAntecipadaEncalheDTO implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	private String codBox;
+	private Integer codBox;
 	
 	private Integer numeroCota;
 	
@@ -22,7 +22,7 @@ public class ChamadaAntecipadaEncalheDTO implements Serializable {
 
 	public ChamadaAntecipadaEncalheDTO() {}
 
-	public ChamadaAntecipadaEncalheDTO(String codBox, Integer numeroCota,BigDecimal qntExemplares,String nomeCota) {
+	public ChamadaAntecipadaEncalheDTO(Integer codBox, Integer numeroCota,BigDecimal qntExemplares,String nomeCota) {
 		
 		this.codBox = codBox;
 		this.numeroCota = numeroCota;
@@ -30,7 +30,7 @@ public class ChamadaAntecipadaEncalheDTO implements Serializable {
 		this.qntExemplares = qntExemplares;
 	}
 	
-	public ChamadaAntecipadaEncalheDTO(String codBox, Integer numeroCota,BigDecimal qntExemplares,String nomeCota, Long codigoChamadaEncalhe) {
+	public ChamadaAntecipadaEncalheDTO(Integer codBox, Integer numeroCota,BigDecimal qntExemplares,String nomeCota, Long codigoChamadaEncalhe) {
 		
 		this.codBox = codBox;
 		this.numeroCota = numeroCota;
@@ -63,14 +63,14 @@ public class ChamadaAntecipadaEncalheDTO implements Serializable {
 	/**
 	 * @return the codBox
 	 */
-	public String getCodBox() {
+	public Integer getCodBox() {
 		return codBox;
 	}
 
 	/**
 	 * @param codBox the codBox to set
 	 */
-	public void setCodBox(String codBox) {
+	public void setCodBox(Integer codBox) {
 		this.codBox = codBox;
 	}
 

@@ -327,7 +327,7 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
 			impressaoDTO.setNomeFavorecido(distribuidor.getJuridica().getRazaoSocial());
 			impressaoDTO.setNumeroCota(cota.getNumeroCota());
 			
-			impressaoDTO.setBox((cota.getBox()!= null)?cota.getBox().getCodigo():"");
+			impressaoDTO.setBox((cota.getBox()!= null)?cota.getBox().getCodigo() + " - " + cota.getBox().getNome():"");
 			
 			Roteirizacao roteirizacao = roteirizacaoService.buscarRoteirizacaoDeCota(cota.getNumeroCota());
 			

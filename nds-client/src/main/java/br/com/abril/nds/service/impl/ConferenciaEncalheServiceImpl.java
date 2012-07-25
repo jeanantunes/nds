@@ -214,14 +214,14 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	@Transactional(readOnly = true)
 	public List<Box> obterListaBoxEncalhe(Long idUsuario) {
 	
-		List<Box> listaBoxEncalhe = boxRepository.obterListaBox(TipoBox.RECOLHIMENTO);
+		List<Box> listaBoxEncalhe = boxRepository.obterListaBox(TipoBox.ENCALHE);
 		
 		if (idUsuario == null){
 			
 			return listaBoxEncalhe;
 		}
 		
-		String codigoBoxPadraoUsuario = this.obterBoxPadraoUsuario(idUsuario);
+		Integer codigoBoxPadraoUsuario = this.obterBoxPadraoUsuario(idUsuario);
 		
 		if (codigoBoxPadraoUsuario == null){
 			
@@ -249,7 +249,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	 * (non-Javadoc)
 	 * @see br.com.abril.nds.service.ConferenciaEncalheService#obterBoxPadraoUsuario(java.lang.Long)
 	 */
-	private String obterBoxPadraoUsuario(Long idUsuario) {
+	private Integer obterBoxPadraoUsuario(Long idUsuario) {
 		
 		if (idUsuario == null){
 			
@@ -2291,7 +2291,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		Long idCota				= controleConferenciaEncalheCota.getCota().getId();
 		String nomeCota 		= controleConferenciaEncalheCota.getCota().getPessoa().getNome();
 		Date dataConferencia 	= controleConferenciaEncalheCota.getDataOperacao();
-		String codigoBox 		= controleConferenciaEncalheCota.getBox().getCodigo();
+		Integer codigoBox 		= controleConferenciaEncalheCota.getBox().getCodigo();
 		Long numeroSlip 		= controleNumeracaoSlipService.obterProximoNumeroSlip(TipoSlip.SLIP_CONFERENCIA_ENCALHE);
 		
 		
@@ -2350,7 +2350,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		slip.setNumeroCota(numeroCota);
 		slip.setNomeCota(nomeCota);
 		slip.setDataConferencia(dataConferencia);           
-		slip.setCodigoBox(codigoBox);                   
+		slip.setCodigoBox(codigoBox.toString());                   
 		slip.setTotalProdutoDia(qtdeTotalProdutos);  
 		slip.setTotalProdutos(qtdeTotalProdutos);    
 		slip.setValorEncalheDia(valorTotalEncalhe);    

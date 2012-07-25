@@ -2,18 +2,13 @@ package br.com.abril.nds.integracao.engine.log;
 
 import java.util.Date;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.DefaultTransactionAttribute;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -58,7 +53,7 @@ public class NdsiLogger extends AbstractRepository {
 		}
 		
 		InterfaceExecucao interfaceExecucao = new InterfaceExecucao();
-		interfaceExecucao.setId(route.getRouteInterface().getId().longValue()); 
+		interfaceExecucao.setId(route.getRouteInterface().getId().longValue());
 		
 		logExecucao = new LogExecucao();
 		logExecucao.setDataInicio(new Date());
