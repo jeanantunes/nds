@@ -101,7 +101,7 @@ public class ImportacaoDeArquivoMatrizStrategy extends ImportacaoAbstractStrateg
 		// Define a data de recolhimento do produto 
 		Date dataRec = DateUtil.adicionarDias(dataLcto, numeroDias);			
 		
-		if(input.getDataLancamentoRecolhimentoProduto().compareTo(new Date()) >= 0){
+		if(input.getDataLancamentoRecolhimentoProduto().compareTo(dataCriacaoArquivo) >= 0){
 			
 			Lancamento lancamento = 
 					lancamentoRepository.obterLancamentoProdutoPorDataLancamentoDataLancamentoDistribuidor(produtoEdicao,dataLcto, dataLcto);	
@@ -129,7 +129,7 @@ public class ImportacaoDeArquivoMatrizStrategy extends ImportacaoAbstractStrateg
 		}
 		
 		if (input.getEdicaoRecolhimento() != null
-				&& input.getDataLancamentoRecolhimentoProduto().before(new Date())) {
+				&& input.getDataLancamentoRecolhimentoProduto().before(dataCriacaoArquivo)) {
 			
 			Date dataLancamentoPrevista = null;
 			Date dataRecolhimento = null;
