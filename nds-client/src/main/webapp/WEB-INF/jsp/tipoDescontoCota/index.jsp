@@ -173,11 +173,11 @@
 		var usuarioEspecifico = $("#usuarioEspecifico").val()
 		
 		$.postJSON("<c:url value='/administracao/tipoDescontoCota/novoDescontoEspecifico'/>",
-				   "cotaEspecifica="+cotaEspecifica+
-				   "&nomeEspecifico="+ nomeEspecifico +
-				   "&descontoEspecifico="+ descontoEspecifico +
-				   "&dataAlteracaoEspecifico="+ dataAlteracaoEspecifico +
-				   "&usuarioEspecifico="+ usuarioEspecifico,
+				[
+					{name: "cotaEspecifica", value:cotaEspecifica },					
+					{name: "descontoCota.desconto", value: descontoEspecifico },
+					{name: "descontoCota.dataAlteracao", value: dataAlteracaoEspecifico }
+					],				   
 				   function(result) {
 			           fecharDialogs();
 					   var tipoMensagem = result.tipoMensagem;
@@ -306,9 +306,7 @@
 		}
 	
 	
-	function executarPreProcessamento(resultado) {
-
-				
+	function executarPreProcessamento(resultado) {				
 		
 		if (resultado.mensagens) {
 
@@ -322,10 +320,10 @@
 			return resultado;
 		}
 
-		$.each(resultado.rows, function(index, row) {						
+		//var tipoSelecionado = verificarTipoDescontoSelecionado();
+		$.each(resultado.rows, function(index, row) {					
 
-			var tipoSelecionado = verificarTipoDescontoSelecionado();
-			var linkExcluir = '<a href="javascript:;" onclick="exibirDialogExclusao(' + row.cell.id + ', '+tipoSelecionado+');" style="cursor:pointer">' +
+			var linkExcluir = '<a href="javascript:;" onclick="exibirDialogExclusao(' + row.cell.id + ');" style="cursor:pointer">' +
 							   	 '<img title="Excluir Desconto" src="${pageContext.request.contextPath}/images/ico_excluir.gif" hspace="5" border="0px" />' +
 							   '</a>';
 			
@@ -337,7 +335,7 @@
 		return resultado;
 	}
 
-	function exibirDialogExclusao(idDesconto, tipoDesconto){		
+	function exibirDialogExclusao(idDesconto, tipoSelecionado){		
 		$("#dialog-excluirCota" ).dialog({
 			resizable: false,
 			height:'auto',
@@ -645,13 +643,13 @@
 			dataType : 'json',
 			colModel : [ {
 				display : 'Cota',
-				name : 'cota',
+				name : 'numeroCota',
 				width : 60,
 				sortable : true,
 				align : 'left'
 			},{
 				display : 'Nome',
-				name : 'nome',
+				name : 'nomeCota',
 				width : 350,
 				sortable : true,
 				align : 'left'
@@ -663,10 +661,11 @@
 				align : 'center'
 			}, {
 				display : 'Data Alteração',
-				name : 'dtAlteracao',
+				name : 'dataAlteracao',
 				width : 120,
 				sortable : true,
-				align : 'center'			}, {
+				align : 'center'
+			}, {
 				display : 'Usuário',
 				name : 'usuario',
 				width : 150,

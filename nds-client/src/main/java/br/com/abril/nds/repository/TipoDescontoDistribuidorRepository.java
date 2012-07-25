@@ -1,5 +1,7 @@
 package br.com.abril.nds.repository;
 
+import java.util.List;
+
 import br.com.abril.nds.model.cadastro.TipoDescontoDistribuidor;
 
 /**
@@ -11,5 +13,7 @@ import br.com.abril.nds.model.cadastro.TipoDescontoDistribuidor;
 public interface TipoDescontoDistribuidorRepository extends Repository<TipoDescontoDistribuidor,Long>{
 
 	int obterSequencial();
+
+	List<TipoDescontoDistribuidor> obterTipoDescontosDistribuidor();
 	
 }

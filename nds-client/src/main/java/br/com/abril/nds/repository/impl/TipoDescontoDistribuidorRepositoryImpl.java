@@ -1,5 +1,7 @@
 package br.com.abril.nds.repository.impl;
 
+import java.util.List;
+
 import org.hibernate.Query;
 import org.springframework.stereotype.Repository;
 
@@ -24,5 +26,19 @@ public class TipoDescontoDistribuidorRepositoryImpl extends AbstractRepositoryMo
 		
 		return (Integer) ((query.uniqueResult() == null) ? 0 : query.uniqueResult()); 
 	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<TipoDescontoDistribuidor> obterTipoDescontosDistribuidor() {
+		
+		StringBuilder hql = new StringBuilder();
+
+		hql.append("SELECT tipoDistribuidor FROM TipoDescontoDistribuidor as tipoDistribuidor ");
+
+		Query query = getSession().createQuery(hql.toString());		
+		
+		return query.list();
+	}
+
 
 }
