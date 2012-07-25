@@ -85,7 +85,7 @@ public class DataLoader {
 		indicador.setGrupoIndicador(GrupoIndicador.LANCAMENTO);
 		indicador.setId(1L);
 		indicador.setTipoIndicador(TipoIndicador.JORNALEIROS);
-		indicador.setValor("R$ 123.987");
+		indicador.setValor("123.987");
 		indicador.setDistribuidor(distribuidorServer);
 		indicadores.add(indicador);
 		session.save(indicador);
@@ -93,7 +93,7 @@ public class DataLoader {
 		indicador = new Indicador();
 
 		indicador.setData(new Date());
-		indicador.setFormatoIndicador(FormatoIndicador.TEXTO);
+		indicador.setFormatoIndicador(FormatoIndicador.MONETARIO);
 		indicador.setGrupoIndicador(GrupoIndicador.FINANCEIRO);
 		indicador.setId(1L);
 		indicador.setTipoIndicador(TipoIndicador.JORNALEIROS);
@@ -147,7 +147,7 @@ public class DataLoader {
 		indicador = new Indicador();
 
 		indicador.setData(new Date());
-		indicador.setFormatoIndicador(FormatoIndicador.TEXTO);
+		indicador.setFormatoIndicador(FormatoIndicador.MONETARIO);
 		indicador.setGrupoIndicador(GrupoIndicador.FINANCEIRO);
 		indicador.setId(2L);
 		indicador.setTipoIndicador(TipoIndicador.JORNALEIROS);
@@ -201,7 +201,7 @@ public class DataLoader {
 		indicador = new Indicador();
 
 		indicador.setData(new Date());
-		indicador.setFormatoIndicador(FormatoIndicador.TEXTO);
+		indicador.setFormatoIndicador(FormatoIndicador.MONETARIO);
 		indicador.setGrupoIndicador(GrupoIndicador.FINANCEIRO);
 		indicador.setId(2L);
 		indicador.setTipoIndicador(TipoIndicador.JORNALEIROS);
@@ -255,7 +255,7 @@ public class DataLoader {
 		indicador = new Indicador();
 
 		indicador.setData(new Date());
-		indicador.setFormatoIndicador(FormatoIndicador.TEXTO);
+		indicador.setFormatoIndicador(FormatoIndicador.MONETARIO);
 		indicador.setGrupoIndicador(GrupoIndicador.FINANCEIRO);
 		indicador.setId(2L);
 		indicador.setTipoIndicador(TipoIndicador.JORNALEIROS);
