@@ -45,6 +45,7 @@ import br.com.abril.nds.model.cadastro.TipoParametroSistema;
 import br.com.abril.nds.model.cadastro.TipoProduto;
 import br.com.abril.nds.model.cadastro.TipoRegistroCobranca;
 import br.com.abril.nds.model.cadastro.TipoTelefone;
+import br.com.abril.nds.model.cadastro.TributacaoFiscal;
 import br.com.abril.nds.model.fiscal.CFOP;
 import br.com.abril.nds.model.fiscal.NCM;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
@@ -268,7 +269,7 @@ public class NotaFiscalServiceImplTest extends AbstractRepositoryImplTest {
 
 		// ////
 		Produto produtoComDesconto = Fixture.produto("8001", "Novo", "Novo",
-				PeriodicidadeProduto.ANUAL, tipoProduto, 5, 5, BigDecimal.TEN);
+				PeriodicidadeProduto.ANUAL, tipoProduto, 5, 5, BigDecimal.TEN, TributacaoFiscal.TRIBUTADO);
 		produtoComDesconto.addFornecedor(dinap);
 		produtoComDesconto.setEditor(abril);
 		save(produtoComDesconto);
@@ -433,7 +434,7 @@ public class NotaFiscalServiceImplTest extends AbstractRepositoryImplTest {
 			Produto produto = Fixture.produto("0" + numero + "codigo",
 					"descricao", "0" + numero + "nome",
 					PeriodicidadeProduto.ANUAL, tipo, 123, 123, new BigDecimal(
-							123));
+							123), TributacaoFiscal. TRIBUTADO);
 
 			ProdutoEdicao produtoEdicao = Fixture.produtoEdicao(
 					"codigoProdutoEdicao", 999L, 1111, 222, new BigDecimal(
