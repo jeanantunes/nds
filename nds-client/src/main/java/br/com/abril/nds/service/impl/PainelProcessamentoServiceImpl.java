@@ -1,21 +1,24 @@
 package br.com.abril.nds.service.impl;
 
-
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.client.vo.DetalheInterfaceVO;
+import br.com.abril.nds.client.vo.DetalheProcessamentoVO;
+import br.com.abril.nds.dto.ConsultaInterfacesDTO;
 import br.com.abril.nds.dto.InterfaceDTO;
 import br.com.abril.nds.dto.ProcessoDTO;
 import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.StatusOperacional;
 import br.com.abril.nds.model.estoque.ControleFechamentoEncalhe;
-import br.com.abril.nds.model.integracao.LogExecucao;
 import br.com.abril.nds.model.integracao.LogExecucaoMensagem;
 import br.com.abril.nds.model.integracao.StatusExecucaoEnum;
 import br.com.abril.nds.repository.BaixaCobrancaService;
@@ -26,7 +29,6 @@ import br.com.abril.nds.service.FechamentoEncalheService;
 import br.com.abril.nds.service.HistoricoSituacaoCotaService;
 import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.PainelProcessamentoService;
-import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
 /**
  * Classe de implementação referente ao serviço da entidade
@@ -40,6 +42,11 @@ public class PainelProcessamentoServiceImpl implements PainelProcessamentoServic
 	private final static String PONTO = ".";
 	private final static String DELIMITADOR_PONTO = "\\.";
 
+	private final static String ALERTA = "Alerta";
+	private final static String FATAL = "Fatal";
+	private final static String SUCESSO = "Sucesso";
+	private final static String INDEFINIDO = "Indefinido";
+
 	private final static String STATUS_OPERACIONAL = "Status Operacional";
 	private final static String CONFERENCIA_ENCALHE_FINALIZADA = "Conferencia Encalhe Finalizada";
 	private final static String EXPEDICAO_CONFIRMADA = "Expedição Confirmada";
@@ -51,6 +58,10 @@ public class PainelProcessamentoServiceImpl implements PainelProcessamentoServic
 
 	private SimpleDateFormat sdfData = new SimpleDateFormat("dd/MM/yyyy");
 	private SimpleDateFormat sdfHora = new SimpleDateFormat("HH:mm");
+	
+	private final static String ACAO = "ACAO";
+	private final static String DETALHE = "DETALHE";
+	private final static String LOCAL = "LOCAL";
 	
 	@Autowired
 	private LogExecucaoRepository logExecucaoRepository;
@@ -95,7 +106,7 @@ public class PainelProcessamentoServiceImpl implements PainelProcessamentoServic
 	 * @param listaLogExecucao
 	 * @return
 	 */
-	private List<InterfaceDTO> getInterfaceList(List<LogExecucao> listaLogExecucao) {
+	private List<InterfaceDTO> getInterfaceList(List<ConsultaInterfacesDTO> listaLogExecucao) {
 		
 		List<InterfaceDTO> listaInterface = new ArrayList<InterfaceDTO>();
 		
@@ -103,20 +114,21 @@ public class PainelProcessamentoServiceImpl implements PainelProcessamentoServic
 		
 		String extensaoArquivo = "";
 		
-		for (LogExecucao logExecucao : listaLogExecucao) {
+		for (ConsultaInterfacesDTO logExecucao : listaLogExecucao) {
 			interfaceDTO = new InterfaceDTO();
 			interfaceDTO.setIdLogProcessamento(logExecucao.getId().toString());
 			interfaceDTO.setDataProcessmento( sdfData.format(logExecucao.getDataInicio() ));
 			interfaceDTO.setHoraProcessamento( sdfHora.format(logExecucao.getDataInicio() ));
 			
-			if (logExecucao.getListLogExecucaoMensagem() != null && !logExecucao.getListLogExecucaoMensagem().isEmpty()) {
+			//if (logExecucao.getListLogExecucaoMensagem() != null && !logExecucao.getListLogExecucaoMensagem().isEmpty()) {
 				// Teoricamente, todos os registros terão as mesmas extensões. Neste caso, pega o primeiro registro (Caso a lista não seja vazia) e resgata a extensão.
-				extensaoArquivo = logExecucao.getListLogExecucaoMensagem().get(0).getNomeArquivo();
+				//extensaoArquivo = logExecucao.getListLogExecucaoMensagem().get(0).getNomeArquivo();
+				extensaoArquivo = logExecucao.getNomeArquivo();
 				extensaoArquivo = PONTO + extensaoArquivo.split(DELIMITADOR_PONTO)[extensaoArquivo.split(DELIMITADOR_PONTO).length-1];
 				interfaceDTO.setExtensaoArquivo(extensaoArquivo);
-			}
+			//}
 			
-			interfaceDTO.setNome(logExecucao.getInterfaceExecucao().getNome());
+			interfaceDTO.setNome(logExecucao.getNome());
 			interfaceDTO.setStatus(logExecucao.getStatus().toString());
 			
 			listaInterface.add(interfaceDTO);
@@ -132,17 +144,32 @@ public class PainelProcessamentoServiceImpl implements PainelProcessamentoServic
 	 */
 	@Transactional(readOnly = true)
 	@Override
-	public List<LogExecucaoMensagem> listarProcessamentoInterface(Long codigoLogExecucao, String orderBy, Ordenacao ordenacao, int initialResult, int maxResults) {
-		return logExecucaoRepository.obterMensagensLogInterface(codigoLogExecucao, orderBy, ordenacao, initialResult, maxResults);
-	}
-
-	/* (non-Javadoc)
-	 * @see br.com.abril.nds.service.LogExecucaoMensagemService#quantidadeProcessamentoInterface(java.lang.Long)
-	 */
-	@Transactional(readOnly = true)
-	@Override
-	public Long quantidadeProcessamentoInterface(Long codigoLogExecucao) {
-		return logExecucaoRepository.quantidadeMensagensLogInterface(codigoLogExecucao);
+	public List<DetalheProcessamentoVO> listardetalhesProcessamentoInterface(Long codigoLogExecucao) {
+		List<DetalheProcessamentoVO> lista = new ArrayList<DetalheProcessamentoVO>();
+		DetalheProcessamentoVO detalheProcessamentoVO = null;
+		for (LogExecucaoMensagem logExecucaoMensagem : logExecucaoRepository.obterMensagensErroLogInterface(codigoLogExecucao)) {
+			String tipoErro = "";
+			detalheProcessamentoVO = new DetalheProcessamentoVO();
+			detalheProcessamentoVO.setMensagem(logExecucaoMensagem.getMensagem());
+			detalheProcessamentoVO.setNumeroLinha(logExecucaoMensagem.getNumeroLinha().toString());
+			switch (logExecucaoMensagem.getLogExecucao().getStatus()) {
+				case AVISO:
+					tipoErro = ALERTA;
+					break;
+				case FALHA:
+					tipoErro = FATAL;
+					break;
+				case SUCESSO:
+					tipoErro = SUCESSO;
+					break;
+				default:
+					tipoErro = INDEFINIDO;
+					break;
+			}
+			detalheProcessamentoVO.setTipoErro(tipoErro);
+			lista.add(detalheProcessamentoVO);
+		}
+		return lista;
 	}
 
 	/* (non-Javadoc)
@@ -457,4 +484,45 @@ public class PainelProcessamentoServiceImpl implements PainelProcessamentoServic
 		return StatusOperacional.OPERANDO.getDescricao();
 	}
 
+	@Override
+	@Transactional(readOnly = true)
+	public List<DetalheInterfaceVO> listarDetalhesInterface(Long codigoLogExecucao) {
+		List<DetalheInterfaceVO> lista = new ArrayList<DetalheInterfaceVO>();
+		DetalheInterfaceVO detalheInterfaceVO = null;
+		String info = null;
+		Map<String, String> mapaInformacoes = new HashMap<String, String>(); 
+		for (LogExecucaoMensagem logExecucaoMensagem : logExecucaoRepository.obterMensagensLogInterface(codigoLogExecucao)) {
+			info = logExecucaoMensagem.getMensagemInfo();
+			if (info == null) {
+				// Se info retornar nulo, vai para o próximo registro do laço
+				continue;
+			}
+
+			mapaInformacoes = toMap(info);
+			
+			detalheInterfaceVO = new DetalheInterfaceVO();
+			detalheInterfaceVO.setAcao(mapaInformacoes.get(ACAO));
+			detalheInterfaceVO.setDetalhe(mapaInformacoes.get(DETALHE));
+			detalheInterfaceVO.setLocal(mapaInformacoes.get(LOCAL));
+			lista.add(detalheInterfaceVO);
+		}
+		return lista;
+	}
+
+	/**
+	 * Retorna um mapa baseado em uma String
+	 * @param String
+	 * @return Map<String, String>
+	 */
+	private Map<String, String> toMap(String input) {
+		// assumes that input is properly formed e.g. "k1=v1,k2=v2"
+		Map<String, String> map = new HashMap<String, String>();
+	    String[] array = input.split(";");
+	    for (String str : array) {
+	        String[] pair = str.split("=");
+	        map.put(pair[0], pair[1]);
+	    }
+	    return map;
+	}
+	
 }
