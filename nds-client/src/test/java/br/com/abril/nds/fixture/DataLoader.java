@@ -1865,7 +1865,6 @@ public class DataLoader {
 
     }
 
-
 	private static void massaDadosContaCorrenteMovimento(Session session,
 														 TipoMovimentoEstoque tipoMovimento,
 														 TipoMovimentoFinanceiro tipoMovimentoFinanceiro, Date dataAtual,
@@ -1899,6 +1898,45 @@ public class DataLoader {
 		ConsolidadoFinanceiroCota consolidadoFinanceiroCota = Fixture.consolidadoFinanceiroCota(listaMovimentoFinanceiroCota, cotaManoel, dataAtual, new BigDecimal(230), new BigDecimal(230), new BigDecimal(180), new BigDecimal(180), new BigDecimal(180), new BigDecimal(45), new BigDecimal(170), new BigDecimal(25));
 		save(session, consolidadoFinanceiroCota);
 	}
+
+	/*private static void massaConferenciaParaMovimentoEstoqueCota(Session session) {
+		
+		MovimentoEstoqueCota movimentoEstoqueCota36 = Fixture.movimentoEstoqueCota(produtoEdicaoVeja1, tipoMovimentoEnvioEncalhe, 
+				usuarioJoao, estoqueProdutoCotaVeja1, BigDecimal.TEN, cotaJose, StatusAprovacao.APROVADO, null);
+		
+		ChamadaEncalhe chamadaEncalhe = Fixture.chamadaEncalhe(
+				Fixture.criarData(28, Calendar.FEBRUARY, 2012),
+				produtoEdicaoVeja1,
+				TipoChamadaEncalhe.MATRIZ_RECOLHIMENTO);
+		
+		save(session, chamadaEncalheCota);
+				
+		ControleConferenciaEncalheCota controleConferenciaEncalheCota = Fixture.controleConferenciaEncalheCota(
+				controleConferenciaEncalhe,
+				cotaJose,
+				Fixture.criarData(28, Calendar.FEBRUARY, 2012),
+				Fixture.criarData(28, Calendar.FEBRUARY, 2012),
+				Fixture.criarData(28, Calendar.FEBRUARY, 2012),
+				StatusOperacao.CONCLUIDO,
+				usuarioJoao,
+				box1);
+
+		save(session, controleConferenciaEncalheCota);
+		
+		ChamadaEncalheCota chamadaEncalheCota = Fixture.chamadaEncalheCota(
+				chamadaEncalhe,
+				false,
+				cotaJose,
+				BigDecimal.TEN);
+		save(session, chamadaEncalheCota);				
+		
+		ConferenciaEncalhe conferenciaEncalhe = Fixture.conferenciaEncalhe(
+				mec, chamadaEncalheCota, controleConferenciaEncalheCota,
+				Fixture.criarData(28, Calendar.FEBRUARY, 2012),new BigDecimal(8),new BigDecimal(8), produtoEdicaoVeja1);
+		save(session, conferenciaEncalhe);	
+		
+	}*/
+	
 
 	private static void criarControleBaixaBancaria(Session session) {
 		baixaBancaria = Fixture.controleBaixaBancaria(new Date(), StatusControle.CONCLUIDO_SUCESSO, usuarioJoao);
@@ -2834,9 +2872,11 @@ public class DataLoader {
 		
 		MovimentoEstoqueCota movimentoEstoqueCota37 = Fixture.movimentoEstoqueCota(produtoEdicaoVeja1, tipoMovimentoRecReparte, 
 				usuarioJoao, estoqueProdutoCotaVeja1, BigDecimal.TEN, cotaJose, StatusAprovacao.APROVADO, null);
+		movimentoEstoqueCota37.setLancamento(lancamentoVeja1);
 		
 		MovimentoEstoqueCota movimentoEstoqueCota38 = Fixture.movimentoEstoqueCota(produtoEdicaoVeja1, tipoMovimentoRestautacaoReparteCotaAusente, 
 				usuarioJoao, estoqueProdutoCotaVeja1, BigDecimal.TEN, cotaJose, StatusAprovacao.APROVADO, null);
+		movimentoEstoqueCota38.setLancamento(lancamentoVeja1);
 		
 		save(session, movimentoEstoqueCota1, movimentoEstoqueCota2, movimentoEstoqueCota3,
 			 movimentoEstoqueCota4, movimentoEstoqueCota5, movimentoEstoqueCota6,
