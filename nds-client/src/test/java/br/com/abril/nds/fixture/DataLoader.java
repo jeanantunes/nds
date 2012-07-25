@@ -1166,7 +1166,7 @@ public class DataLoader {
 			LogExecucaoMensagem logExecucaoMensagem1 = new LogExecucaoMensagem();
 			logExecucaoMensagem1.setEventoExecucao(eventoRelacionamentoNaoEncontrado);
 			logExecucaoMensagem1.setMensagem("Erro teste sobre relacionamento.");
-			logExecucaoMensagem1.setMensagemInfo("Informação sobre o erro teste sobre relacionamento.");
+			logExecucaoMensagem1.setMensagemInfo("ACAO=Insert;LOCAL=No Lançamento;DETALHE=Cota Endereço");
 			logExecucaoMensagem1.setNomeArquivo("arquivoGenerico.gen");
 			logExecucaoMensagem1.setNumeroLinha(3);
 			logExecucaoMensagem1.setLogExecucao(logExecucao2);
@@ -1175,7 +1175,7 @@ public class DataLoader {
 			LogExecucaoMensagem logExecucaoMensagem2 = new LogExecucaoMensagem();
 			logExecucaoMensagem2.setEventoExecucao(eventoErroInfraestrutura);
 			logExecucaoMensagem2.setMensagem("Erro! Teste sobre infraestrutura.");
-			logExecucaoMensagem2.setMensagemInfo("Informações sobre o erro teste sobre infraestrutura.");
+			logExecucaoMensagem2.setMensagemInfo("ACAO=Insert;LOCAL=No Lançamento;DETALHE=Cota Endereço");
 			logExecucaoMensagem2.setNomeArquivo("arquivoGenerico2.gen");
 			logExecucaoMensagem2.setNumeroLinha(5);
 			logExecucaoMensagem2.setLogExecucao(logExecucao2);
@@ -1196,7 +1196,7 @@ public class DataLoader {
 			LogExecucaoMensagem logExecucaoMensagem3 = new LogExecucaoMensagem();
 			logExecucaoMensagem3.setEventoExecucao(eventoErroInfraestrutura);
 			logExecucaoMensagem3.setMensagem("Erro! 111 Teste sobre infraestrutura.");
-			logExecucaoMensagem3.setMensagemInfo("Informações 11 sobre o erro teste sobre infraestrutura.");
+			logExecucaoMensagem3.setMensagemInfo("ACAO=Insert;LOCAL=No Lançamento;DETALHE=Cota Endereço");
 			logExecucaoMensagem3.setNomeArquivo("arquivoGenerico1.aaa");
 			logExecucaoMensagem3.setNumeroLinha(7);
 			logExecucaoMensagem3.setLogExecucao(logExecucao4);
@@ -1204,7 +1204,7 @@ public class DataLoader {
 			LogExecucaoMensagem logExecucaoMensagem4 = new LogExecucaoMensagem();
 			logExecucaoMensagem4.setEventoExecucao(eventoErroInfraestrutura);
 			logExecucaoMensagem4.setMensagem("Erro! 222 Teste sobre infraestrutura.");
-			logExecucaoMensagem4.setMensagemInfo("Informações 22 sobre o erro teste sobre infraestrutura.");
+			logExecucaoMensagem4.setMensagemInfo("ACAO=Insert;LOCAL=No Lançamento;DETALHE=Cota Endereço");
 			logExecucaoMensagem4.setNomeArquivo("arquivoGenerico2.bbb");
 			logExecucaoMensagem4.setNumeroLinha(9);
 			logExecucaoMensagem4.setLogExecucao(logExecucao4);
@@ -1212,7 +1212,7 @@ public class DataLoader {
 			LogExecucaoMensagem logExecucaoMensagem5 = new LogExecucaoMensagem();
 			logExecucaoMensagem5.setEventoExecucao(eventoHierarquiaCorrompida);
 			logExecucaoMensagem5.setMensagem("Erro! 333 Teste sobre infraestrutura.");
-			logExecucaoMensagem5.setMensagemInfo("Informações 33 sobre o erro teste sobre Hierarquia.");
+			logExecucaoMensagem5.setMensagemInfo("ACAO=Insert;LOCAL=No Lançamento;DETALHE=Cota Endereço");
 			logExecucaoMensagem5.setNomeArquivo("arquivoGenerico2.ccc");
 			logExecucaoMensagem5.setNumeroLinha(13);
 			logExecucaoMensagem5.setLogExecucao(logExecucao4);
