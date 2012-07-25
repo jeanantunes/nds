@@ -56,7 +56,7 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 
 	@Override
 	@Transactional
-	public List<CotaExemplaresDTO> busca(Intervalo<String> intervaloBox,
+	public List<CotaExemplaresDTO> busca(Intervalo<Integer> intervaloBox,
 			Intervalo<Integer> intervalorCota,
 			Intervalo<Date> intervaloDateMovimento,
 			List<Long> listIdFornecedor, List<Long> listIdProduto, Long idTipoNotaFiscal, String sortname,
@@ -101,7 +101,7 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 	 */
 	@Override
 	@Transactional
-	public void gerarNotaFiscal(Intervalo<String> intervaloBox,
+	public void gerarNotaFiscal(Intervalo<Integer> intervaloBox,
 			Intervalo<Integer> intervalorCota,
 			Intervalo<Date> intervaloDateMovimento,
 			List<Long> listIdFornecedor, List<Long> listIdProduto,
@@ -123,6 +123,9 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 			
 			List<ItemNotaFiscal> listItemNotaFiscal = this.notaFiscalService.obterItensNotaFiscalPor(
 					grupoNotaFiscal, distribuidor, cota, intervaloDateMovimento, listIdFornecedor, listIdProduto);
+			
+			if (listItemNotaFiscal == null || listItemNotaFiscal.isEmpty()) 
+				continue;
 			
 			List<NotaFiscalReferenciada> listaNotasFiscaisReferenciadas = this.notaFiscalService.obterNotasReferenciadas(listItemNotaFiscal);
 			

@@ -34,6 +34,7 @@ public class VendaProdutoRepositoryImpl extends AbstractRepositoryModel<Moviment
 		hql.append(" ((estoqueProduto.qtde + estoqueProduto.qtdeSuplementar) - estoqueProduto.qtdeDevolucaoEncalhe)  as venda, ");
 		hql.append(" (((estoqueProduto.qtde + estoqueProduto.qtdeSuplementar) - estoqueProduto.qtdeDevolucaoEncalhe) / (estoqueProduto.qtde + estoqueProduto.qtdeSuplementar))  as percentagemVenda, ");
 		hql.append(" produtoEdicao.precoVenda  as precoCapa, ");
+		hql.append(" produtoEdicao.chamadaCapa as chamadaCapa, ");
 		hql.append(" (((estoqueProduto.qtde + estoqueProduto.qtdeSuplementar) - estoqueProduto.qtdeDevolucaoEncalhe) * produtoEdicao.precoVenda)  as total ");
 		
 		
@@ -103,7 +104,11 @@ public class VendaProdutoRepositoryImpl extends AbstractRepositoryModel<Moviment
 		
 		switch (coluna) {
 			case EDICAO:	
-				hql.append(" order by estoqueProduto.produtoEdicao.numeroEdicao desc ");
+				hql.append(" order by estoqueProduto.produtoEdicao.numeroEdicao ");
+				break;
+				
+			case CHAMADA_CAPA:	
+				hql.append(" order by chamadaCapa ");
 				break;
 		}
 		

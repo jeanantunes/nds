@@ -79,6 +79,7 @@ import br.com.abril.nds.model.cadastro.TipoProduto;
 import br.com.abril.nds.model.cadastro.TipoRegistroCobranca;
 import br.com.abril.nds.model.cadastro.TipoRoteiro;
 import br.com.abril.nds.model.cadastro.TipoTelefone;
+import br.com.abril.nds.model.cadastro.TributacaoFiscal;
 import br.com.abril.nds.model.cadastro.pdv.AreaInfluenciaPDV;
 import br.com.abril.nds.model.cadastro.pdv.CaracteristicasPDV;
 import br.com.abril.nds.model.cadastro.pdv.EnderecoPDV;
@@ -200,7 +201,7 @@ public class Fixture {
 	}
 	
 	public static CotaAusente cotaAusenteAtivo(){
-		Box box1 = Fixture.criarBox("Box-1", "BX-001", TipoBox.LANCAMENTO, false);
+		Box box1 = Fixture.criarBox(1, "BX-001", TipoBox.LANCAMENTO);
 		Pessoa manoel = Fixture.pessoaFisica("123.456.789-00",
 				"sys.discover@gmail.com", "Manoel da Silva");	
 		Cota cotaManoel = Fixture.cota(123, manoel, SituacaoCadastro.ATIVO, box1);
@@ -248,78 +249,78 @@ public class Fixture {
 
 	public static Produto produtoVeja(TipoProduto tipoProduto) {
 		return produto("1", "Veja", "Veja", PeriodicidadeProduto.SEMANAL,
-				tipoProduto, 5, 5, BigDecimal.TEN);
+				tipoProduto, 5, 5, BigDecimal.TEN, TributacaoFiscal. TRIBUTADO);
 	}
 
 	public static Produto produtoQuatroRodas(TipoProduto tipoProduto) {
 		return produto("2", "Quatro Rodas", "Quatro Rodas",
-				PeriodicidadeProduto.MENSAL, tipoProduto, 5, 5, BigDecimal.TEN);
+				PeriodicidadeProduto.MENSAL, tipoProduto, 5, 5, BigDecimal.TEN, TributacaoFiscal. TRIBUTADO);
 	}
 
 	public static Produto produtoInfoExame(TipoProduto tipoProduto) {
 		return produto("3", "Info Exame", "Info Exame",
-				PeriodicidadeProduto.MENSAL, tipoProduto, 5, 5, BigDecimal.TEN);
+				PeriodicidadeProduto.MENSAL, tipoProduto, 5, 5, BigDecimal.TEN, TributacaoFiscal. TRIBUTADO);
 	}
 
 	public static Produto produtoCapricho(TipoProduto tipoProduto) {
 		return produto("4", "Capricho", "Capricho",
-				PeriodicidadeProduto.QUINZENAL, tipoProduto, 5, 5, BigDecimal.TEN);
+				PeriodicidadeProduto.QUINZENAL, tipoProduto, 5, 5, BigDecimal.TEN, TributacaoFiscal. TRIBUTADO);
 	}
 	
 	public static Produto produtoSuperInteressante(TipoProduto tipoProduto) {
 		return produto("5",
 				"Superinteressante", "Superinteressante",
-				PeriodicidadeProduto.MENSAL, tipoProduto, 5, 5, BigDecimal.TEN);
+				PeriodicidadeProduto.MENSAL, tipoProduto, 5, 5, BigDecimal.TEN, TributacaoFiscal. TRIBUTADO);
 	}
 	
 	public static Produto produtoBoaForma(TipoProduto tipoProduto) {
 		return produto("6", "Boa Forma", "Boa Forma",
-				PeriodicidadeProduto.MENSAL, tipoProduto, 5, 5, BigDecimal.TEN);
+				PeriodicidadeProduto.MENSAL, tipoProduto, 5, 5, BigDecimal.TEN, TributacaoFiscal. TRIBUTADO);
 	}
 	
 	public static Produto produtoBravo(TipoProduto tipoProduto) {
 		return produto("7", "Bravo", "Bravo",
-				PeriodicidadeProduto.MENSAL, tipoProduto, 5, 5, BigDecimal.TEN);
+				PeriodicidadeProduto.MENSAL, tipoProduto, 5, 5, BigDecimal.TEN, TributacaoFiscal. TRIBUTADO);
 	}
 	
 	public static Produto produtoContigo(TipoProduto tipoProduto) {
 		return produto("8", "Contigo", "Contigo",
-				PeriodicidadeProduto.QUINZENAL, tipoProduto, 5, 5, BigDecimal.TEN);
+				PeriodicidadeProduto.QUINZENAL, tipoProduto, 5, 5, BigDecimal.TEN, TributacaoFiscal. TRIBUTADO);
 	}
 	
 	public static Produto produtoCaras(TipoProduto tipoProduto) {
 		return produto("9", "Caras", "Caras",
-				PeriodicidadeProduto.MENSAL, tipoProduto, 5, 5, BigDecimal.TEN);
+				PeriodicidadeProduto.MENSAL, tipoProduto, 5, 5, BigDecimal.TEN, TributacaoFiscal. TRIBUTADO);
 	}
 	
 	public static Produto produtoClaudia(TipoProduto tipoProduto) {
 		return produto("10", "Claudia", "Claudia",
-				PeriodicidadeProduto.SEMANAL, tipoProduto, 5, 5, BigDecimal.TEN);
+				PeriodicidadeProduto.SEMANAL, tipoProduto, 5, 5, BigDecimal.TEN, TributacaoFiscal. TRIBUTADO);
 	}
 	
 	public static Produto produtoCasaClaudia(TipoProduto tipoProduto) {
 		return produto("11", "Casa Claudia", "Casa Claudia",
-				PeriodicidadeProduto.MENSAL, tipoProduto, 5, 5, BigDecimal.TEN);
+				PeriodicidadeProduto.MENSAL, tipoProduto, 5, 5, BigDecimal.TEN, TributacaoFiscal. TRIBUTADO);
 	}
 	
 	public static Produto produtoManequim(TipoProduto tipoProduto) {
 		return produto("12", "Manequim", "Manequim",
-				PeriodicidadeProduto.SEMANAL, tipoProduto, 5, 5, BigDecimal.TEN);
+				PeriodicidadeProduto.SEMANAL, tipoProduto, 5, 5, BigDecimal.TEN, TributacaoFiscal. TRIBUTADO);
 	}
 	
 	public static Produto produtoNationalGeographic(TipoProduto tipoProduto) {
 		return produto("13", "National Geographic", "National Geographic",
-				PeriodicidadeProduto.MENSAL, tipoProduto, 5, 5, BigDecimal.TEN);
+				PeriodicidadeProduto.MENSAL, tipoProduto, 5, 5, BigDecimal.TEN, TributacaoFiscal. TRIBUTADO);
 	}
 	
 	public static Produto produtoPlacar(TipoProduto tipoProduto) {
 		return produto("14", "Placar", "Placar",
-				PeriodicidadeProduto.MENSAL, tipoProduto, 5, 5, BigDecimal.TEN);
+				PeriodicidadeProduto.MENSAL, tipoProduto, 5, 5, BigDecimal.TEN, TributacaoFiscal. TRIBUTADO);
 	}
 	
 	public static Produto produtoCromoReiLeao(TipoProduto tipoProduto) {
 		return produto("15", "Cromo Rei Leao", "Cromo Rei Leao",
-				PeriodicidadeProduto.SEMANAL, tipoProduto, 5, 5, BigDecimal.TEN);
+				PeriodicidadeProduto.SEMANAL, tipoProduto, 5, 5, BigDecimal.TEN, TributacaoFiscal. TRIBUTADO);
 	}
 	
 	public static TipoProduto tipoRevista(NCM ncm) {
@@ -339,7 +340,7 @@ public class Fixture {
 	}
 	
 	public static Box boxReparte300() {
-		return criarBox("300", "Box 300", TipoBox.LANCAMENTO, false);
+		return criarBox(300, "Box 300", TipoBox.LANCAMENTO);
 	}
 	
 	public static Banco hsbc(Carteira carteira) {
@@ -447,7 +448,7 @@ public class Fixture {
 
 	public static Produto produto(String codigo, String descricao, String nome,
 								  PeriodicidadeProduto periodicidade, TipoProduto tipo, 
-								  int peb, int pacotePadrao, BigDecimal peso) {
+								  int peb, int pacotePadrao, BigDecimal peso, TributacaoFiscal tributacaoFiscal) {
 		
 		Produto produto = new Produto();
 		produto.setCodigo(codigo);
@@ -458,7 +459,7 @@ public class Fixture {
 		produto.setPeb(peb);
 		produto.setPacotePadrao(pacotePadrao);
 		produto.setPeso(peso);
-		
+		produto.setTributacaoFiscal(tributacaoFiscal);
 		return produto;
 	}
 
@@ -1898,12 +1899,11 @@ public class Fixture {
 		return lancamento;
 	}
 	
-	public static Box criarBox(String codigo, String nome, TipoBox tipoBox, boolean postoAvancado) {
+	public static Box criarBox(Integer codigo, String nome, TipoBox tipoBox) {
 		Box box = new Box();
 		box.setCodigo(codigo);
 		box.setNome(nome);
 		box.setTipoBox(tipoBox);
-		box.setPostoAvancado(postoAvancado);
 		return box;
 	}
 	

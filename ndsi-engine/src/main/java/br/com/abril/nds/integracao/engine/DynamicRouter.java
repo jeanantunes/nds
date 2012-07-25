@@ -2,7 +2,6 @@ package br.com.abril.nds.integracao.engine;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
 import br.com.abril.nds.integracao.engine.data.CouchDBImportRouteTemplate;
 import br.com.abril.nds.integracao.engine.data.FixedLengthRouteTemplate;
@@ -11,6 +10,7 @@ import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;
 
 @Component
 public class DynamicRouter {
+	
 	@Autowired
 	private FixedLenghtContentBasedDataRouter FIXED_LENGHT_DATA_ROUTER;
 	

@@ -36,7 +36,7 @@ public class CotaServiceImplTest extends AbstractRepositoryImplTest {
 		PessoaJuridica pessoaJuridica2 = Fixture.pessoaJuridica("LH_TESTE2", "01.001.001/001-10", "000.000.000.00", "lh2@mail.com","200");
 		save(pessoaJuridica2);
 		
-		Box box = Fixture.criarBox("300", "Box 300", TipoBox.LANCAMENTO, false);
+		Box box = Fixture.criarBox(300, "Box 300", TipoBox.LANCAMENTO);
 		save(box);
 		
 		TipoFornecedor tipoFornecedor = Fixture.tipoFornecedor("TIPO_FORNECEDOR", GrupoFornecedor.PUBLICACAO);

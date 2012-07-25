@@ -31,6 +31,7 @@ import br.com.abril.nds.dto.SumarioLancamentosDTO;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
@@ -410,13 +411,13 @@ public class LancamentoRepositoryImpl extends
 		sql.append(" editor.NOME as nomeEditor, ");
 		
 		sql.append(" case ");
-		sql.append(" when (select box.POSTO_AVANCADO from BOX box, COTA cota, ESTOQUE_PRODUTO_COTA epc ");
+		sql.append(" when (select box.TIPO_BOX from BOX box, COTA cota, ESTOQUE_PRODUTO_COTA epc ");
 		sql.append(" where epc.PRODUTO_EDICAO_ID = produtoEdicao.ID ");
 		sql.append(" and cota.ID = epc.COTA_ID ");
 		sql.append(" and cota.BOX_ID = box.ID ");
-		sql.append(" and box.POSTO_AVANCADO = 1 ");
+		sql.append(" and box.TIPO_BOX = :tipoBoxPostoAvancado ");
 		sql.append(" limit 1 ");
-		sql.append(" ) is not null then  case ");   
+		sql.append(" ) is not null then case ");   
 		sql.append(" when tipoProduto.GRUPO_PRODUTO = :grupoCromo ");  
 		sql.append(" and periodoLancamentoParcial.TIPO<> :tipoParcial then ");  
 		sql.append(" case when produtoEdicao.EXPECTATIVA_VENDA is null or produtoEdicao.EXPECTATIVA_VENDA = 0 then ");
@@ -434,13 +435,13 @@ public class LancamentoRepositoryImpl extends
 		sql.append(" end as expectativaEncalheAtendida, ");		
 		
 		sql.append(" case ");
-		sql.append(" when (select box.POSTO_AVANCADO from BOX box, COTA cota, ESTOQUE_PRODUTO_COTA epc ");
+		sql.append(" when (select box.TIPO_BOX from BOX box, COTA cota, ESTOQUE_PRODUTO_COTA epc ");
 		sql.append(" where epc.PRODUTO_EDICAO_ID = produtoEdicao.ID ");
 		sql.append(" and cota.ID = epc.COTA_ID ");
 		sql.append(" and cota.BOX_ID = box.ID ");
-		sql.append(" and box.POSTO_AVANCADO = 1 ");
+		sql.append(" and box.TIPO_BOX = :tipoBoxPostoAvancado ");
 		sql.append(" limit 1 ");
-		sql.append(" ) is null then  case ");
+		sql.append(" ) is null then case ");
 		sql.append(" when tipoProduto.GRUPO_PRODUTO = :grupoCromo ");
 		sql.append(" and periodoLancamentoParcial.TIPO<> :tipoParcial  then ");
 		sql.append(" case when produtoEdicao.EXPECTATIVA_VENDA is null or produtoEdicao.EXPECTATIVA_VENDA = 0 then ");
@@ -645,11 +646,12 @@ public class LancamentoRepositoryImpl extends
 		query.setParameter("periodoInicial", periodoRecolhimento.getDe());
 		query.setParameter("periodoFinal", periodoRecolhimento.getAte());
 		query.setParameter("grupoCromo", grupoCromo);
-		query.setParameter("tipoParcial", TipoLancamentoParcial.PARCIAL);
+		query.setParameter("tipoParcial", TipoLancamentoParcial.PARCIAL.toString());
 		query.setParameter("statusLancamentoExpedido", StatusLancamento.EXPEDIDO.toString());
 		query.setParameter("statusLancamentoBalanceamentoRecolhimento", StatusLancamento.BALANCEADO_RECOLHIMENTO.toString());
 		query.setParameter("statusLancamentoEmBalanceamentoRecolhimento", StatusLancamento.EM_BALANCEAMENTO_RECOLHIMENTO.toString());
-		query.setParameter("tipoChamadaEncalhe", TipoChamadaEncalhe.MATRIZ_RECOLHIMENTO);
+		query.setParameter("tipoChamadaEncalhe", TipoChamadaEncalhe.MATRIZ_RECOLHIMENTO.toString());
+		query.setParameter("tipoBoxPostoAvancado", TipoBox.POSTO_AVANCADO.toString());
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(ProdutoRecolhimentoDTO.class));
 		
@@ -1147,7 +1149,9 @@ public class LancamentoRepositoryImpl extends
 		
 		sql.append(" where produtoEdicao.id =:produtoEdicao ");
 	
-		sql.append(" AND lancamento.dataLancamentoPrevista = :dataLancamentoPrevista ");
+		if (dataLancamentoPrevista != null) {
+			sql.append(" AND lancamento.dataLancamentoPrevista = :dataLancamentoPrevista ");
+		}
 		
 		sql.append(" AND lancamento.dataLancamentoDistribuidor = :dataLancamentoDistribuidor ");
 		
@@ -1155,7 +1159,9 @@ public class LancamentoRepositoryImpl extends
 		query.setMaxResults(1);
 		query.setParameter("produtoEdicao", produtoEdicao.getId());
 		
-		query.setParameter("dataLancamentoPrevista", dataLancamentoPrevista);
+		if (dataLancamentoPrevista != null) {
+			query.setParameter("dataLancamentoPrevista", dataLancamentoPrevista);
+		}
 		
 		query.setParameter("dataLancamentoDistribuidor", dataLancamentoDistribuidor);
 		
