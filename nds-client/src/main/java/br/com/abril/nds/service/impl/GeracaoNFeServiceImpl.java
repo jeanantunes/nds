@@ -124,6 +124,9 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 			List<ItemNotaFiscal> listItemNotaFiscal = this.notaFiscalService.obterItensNotaFiscalPor(
 					grupoNotaFiscal, distribuidor, cota, intervaloDateMovimento, listIdFornecedor, listIdProduto);
 			
+			if (listItemNotaFiscal == null || listItemNotaFiscal.isEmpty()) 
+				continue;
+			
 			List<NotaFiscalReferenciada> listaNotasFiscaisReferenciadas = this.notaFiscalService.obterNotasReferenciadas(listItemNotaFiscal);
 			
 			InformacaoTransporte transporte = this.notaFiscalService.obterTransporte(idCota);
