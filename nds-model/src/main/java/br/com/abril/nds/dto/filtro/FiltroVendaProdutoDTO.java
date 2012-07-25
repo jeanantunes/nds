@@ -21,7 +21,8 @@ public class FiltroVendaProdutoDTO implements Serializable {
 	
 	public enum ColunaOrdenacao {
 
-		EDICAO("edicao");
+		EDICAO("edicao"),
+		CHAMADA_CAPA("chamadaCapa");
 		
 		private String nomeColuna;
 		
