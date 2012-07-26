@@ -180,7 +180,7 @@ function Balanceamento(pathTela, descInstancia) {
 				conteudo += row.mensagem;
 				conteudo += '</td>';
 				conteudo += '<td align="center">Confirmada</td>';
-				conteudo += '<td align="center"><img src="images/bt_check.gif" width="22" height="22" alt="Confirmado" /></td>';
+				conteudo += '<td align="center"><img src="' + contextPath + '/images/bt_check.gif" width="22" height="22" alt="Confirmado" /></td>';
 				conteudo += '</tr>';
 			
 			} else {
