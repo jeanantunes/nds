@@ -1865,7 +1865,6 @@ public class DataLoader {
 
     }
 
-
 	private static void massaDadosContaCorrenteMovimento(Session session,
 														 TipoMovimentoEstoque tipoMovimento,
 														 TipoMovimentoFinanceiro tipoMovimentoFinanceiro, Date dataAtual,
@@ -1899,6 +1898,45 @@ public class DataLoader {
 		ConsolidadoFinanceiroCota consolidadoFinanceiroCota = Fixture.consolidadoFinanceiroCota(listaMovimentoFinanceiroCota, cotaManoel, dataAtual, new BigDecimal(230), new BigDecimal(230), new BigDecimal(180), new BigDecimal(180), new BigDecimal(180), new BigDecimal(45), new BigDecimal(170), new BigDecimal(25));
 		save(session, consolidadoFinanceiroCota);
 	}
+
+	/*private static void massaConferenciaParaMovimentoEstoqueCota(Session session) {
+		
+		MovimentoEstoqueCota movimentoEstoqueCota36 = Fixture.movimentoEstoqueCota(produtoEdicaoVeja1, tipoMovimentoEnvioEncalhe, 
+				usuarioJoao, estoqueProdutoCotaVeja1, BigDecimal.TEN, cotaJose, StatusAprovacao.APROVADO, null);
+		
+		ChamadaEncalhe chamadaEncalhe = Fixture.chamadaEncalhe(
+				Fixture.criarData(28, Calendar.FEBRUARY, 2012),
+				produtoEdicaoVeja1,
+				TipoChamadaEncalhe.MATRIZ_RECOLHIMENTO);
+		
+		save(session, chamadaEncalheCota);
+				
+		ControleConferenciaEncalheCota controleConferenciaEncalheCota = Fixture.controleConferenciaEncalheCota(
+				controleConferenciaEncalhe,
+				cotaJose,
+				Fixture.criarData(28, Calendar.FEBRUARY, 2012),
+				Fixture.criarData(28, Calendar.FEBRUARY, 2012),
+				Fixture.criarData(28, Calendar.FEBRUARY, 2012),
+				StatusOperacao.CONCLUIDO,
+				usuarioJoao,
+				box1);
+
+		save(session, controleConferenciaEncalheCota);
+		
+		ChamadaEncalheCota chamadaEncalheCota = Fixture.chamadaEncalheCota(
+				chamadaEncalhe,
+				false,
+				cotaJose,
+				BigDecimal.TEN);
+		save(session, chamadaEncalheCota);				
+		
+		ConferenciaEncalhe conferenciaEncalhe = Fixture.conferenciaEncalhe(
+				mec, chamadaEncalheCota, controleConferenciaEncalheCota,
+				Fixture.criarData(28, Calendar.FEBRUARY, 2012),new BigDecimal(8),new BigDecimal(8), produtoEdicaoVeja1);
+		save(session, conferenciaEncalhe);	
+		
+	}*/
+	
 
 	private static void criarControleBaixaBancaria(Session session) {
 		baixaBancaria = Fixture.controleBaixaBancaria(new Date(), StatusControle.CONCLUIDO_SUCESSO, usuarioJoao);
@@ -2834,9 +2872,11 @@ public class DataLoader {
 		
 		MovimentoEstoqueCota movimentoEstoqueCota37 = Fixture.movimentoEstoqueCota(produtoEdicaoVeja1, tipoMovimentoRecReparte, 
 				usuarioJoao, estoqueProdutoCotaVeja1, BigDecimal.TEN, cotaJose, StatusAprovacao.APROVADO, null);
+		movimentoEstoqueCota37.setLancamento(lancamentoVeja1);
 		
 		MovimentoEstoqueCota movimentoEstoqueCota38 = Fixture.movimentoEstoqueCota(produtoEdicaoVeja1, tipoMovimentoRestautacaoReparteCotaAusente, 
 				usuarioJoao, estoqueProdutoCotaVeja1, BigDecimal.TEN, cotaJose, StatusAprovacao.APROVADO, null);
+		movimentoEstoqueCota38.setLancamento(lancamentoVeja1);
 		
 		save(session, movimentoEstoqueCota1, movimentoEstoqueCota2, movimentoEstoqueCota3,
 			 movimentoEstoqueCota4, movimentoEstoqueCota5, movimentoEstoqueCota6,
@@ -5395,16 +5435,16 @@ public class DataLoader {
 	private static void criarBanco(Session session) {
 
 		bancoHSBC = Fixture.banco(10L, true, carteiraSemRegistro, "1010",
-							  123456L, "1", "1", "Instrucoes HSBC.", Moeda.REAL, "HSBC", "399", BigDecimal.ONE, BigDecimal.ZERO);
+							  123456L, "1", "1", "Instrucoes HSBC.", "HSBC","BANCO HSBC S/A", "399", BigDecimal.ONE, BigDecimal.ZERO);
 
 		bancoITAU = Fixture.banco(10L, true, carteiraSemRegistro, "1010",
-				  12345L, "1", "1", "Instrucoes ITAU.", Moeda.REAL, "BANCO_ITAU", "184", BigDecimal.TEN, BigDecimal.ONE);
+				  12345L, "1", "1", "Instrucoes ITAU.", "ITAU", "BANCO ITAU S/A", "184", BigDecimal.TEN, BigDecimal.ONE);
 
 		bancoDOBRASIL = Fixture.banco(10L, true, carteiraSemRegistro, "1010",
-				  123456L, "1", "1", "Instrucoes DOBRASIL.", Moeda.REAL, "BANCO_DO_BRASIL", "001", BigDecimal.ZERO, BigDecimal.ONE);
+				  123456L, "1", "1", "Instrucoes DOBRASIL.", "BB", "BANCO DO BRASIL", "001", BigDecimal.ZERO, BigDecimal.ONE);
 
 		bancoBRADESCO = Fixture.banco(10L, true, carteiraSemRegistro, "1010",
-				  123456L, "1", "1", "Instrucoes BRADESCO.", Moeda.REAL, "BANCO_BRADESCO", "065", BigDecimal.ZERO, BigDecimal.TEN);
+				  123456L, "1", "1", "Instrucoes BRADESCO.", "BRADESCO", "BANCO BRADESCO S/A", "065", BigDecimal.ZERO, BigDecimal.TEN);
 
 		save(session, bancoHSBC,bancoITAU,bancoDOBRASIL,bancoBRADESCO);
 	}
