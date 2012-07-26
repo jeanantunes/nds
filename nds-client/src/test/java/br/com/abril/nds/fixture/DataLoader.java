@@ -5435,16 +5435,16 @@ public class DataLoader {
 	private static void criarBanco(Session session) {
 
 		bancoHSBC = Fixture.banco(10L, true, carteiraSemRegistro, "1010",
-							  123456L, "1", "1", "Instrucoes HSBC.", Moeda.REAL, "HSBC", "399", BigDecimal.ONE, BigDecimal.ZERO);
+							  123456L, "1", "1", "Instrucoes HSBC.", "HSBC","BANCO HSBC S/A", "399", BigDecimal.ONE, BigDecimal.ZERO);
 
 		bancoITAU = Fixture.banco(10L, true, carteiraSemRegistro, "1010",
-				  12345L, "1", "1", "Instrucoes ITAU.", Moeda.REAL, "BANCO_ITAU", "184", BigDecimal.TEN, BigDecimal.ONE);
+				  12345L, "1", "1", "Instrucoes ITAU.", "ITAU", "BANCO ITAU S/A", "184", BigDecimal.TEN, BigDecimal.ONE);
 
 		bancoDOBRASIL = Fixture.banco(10L, true, carteiraSemRegistro, "1010",
-				  123456L, "1", "1", "Instrucoes DOBRASIL.", Moeda.REAL, "BANCO_DO_BRASIL", "001", BigDecimal.ZERO, BigDecimal.ONE);
+				  123456L, "1", "1", "Instrucoes DOBRASIL.", "BB", "BANCO DO BRASIL", "001", BigDecimal.ZERO, BigDecimal.ONE);
 
 		bancoBRADESCO = Fixture.banco(10L, true, carteiraSemRegistro, "1010",
-				  123456L, "1", "1", "Instrucoes BRADESCO.", Moeda.REAL, "BANCO_BRADESCO", "065", BigDecimal.ZERO, BigDecimal.TEN);
+				  123456L, "1", "1", "Instrucoes BRADESCO.", "BRADESCO", "BANCO BRADESCO S/A", "065", BigDecimal.ZERO, BigDecimal.TEN);
 
 		save(session, bancoHSBC,bancoITAU,bancoDOBRASIL,bancoBRADESCO);
 	}

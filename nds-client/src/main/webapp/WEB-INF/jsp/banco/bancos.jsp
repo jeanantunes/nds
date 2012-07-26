@@ -47,12 +47,12 @@
 				sortable : true,
 				align : 'left'
 			}, {
-				display : 'Moeda',
-				name : 'moeda',
-				width : 50,
+				display : 'Apelido',
+				name : 'apelido',
+				width : 80,
 				sortable : true,
 				align : 'left'
-			}, {
+			},{
 				display : 'Carteira',
 				name : 'carteira',
 				width : 130,
@@ -260,7 +260,7 @@
 		var agencia    = $("#newAgencia").val();
 		var conta      = $("#newConta").val();
 		var digito     = $("#newDigito").val();
-		var moeda      = $("#newMoeda").val();
+		var apelido    = $("#newApelido").val();
 		var carteira   = $("#newCarteira").val();
 		var juros      = $("#newJuros").val();
 		
@@ -281,7 +281,7 @@
 				   "&agencia="+ agencia +
 				   "&conta="+ conta+
 				   "&digito="+ digito+
-				   "&moeda="+ moeda+
+				   "&apelido="+ apelido+
 				   "&codigoCarteira="+ carteira+
 				   "&juros="+ juros+
 				   "&ativo="+ ativo+
@@ -310,7 +310,7 @@
 		var agencia    = $("#alterAgencia").val();
 		var conta      = $("#alterConta").val();
 		var digito     = $("#alterDigito").val();
-		var moeda      = $("#alterMoeda").val();
+		var apelido    = $("#alterApelido").val();
 		var carteira   = $("#alterCarteira").val();
 		var juros      = $("#alterJuros").val();
 		
@@ -332,7 +332,7 @@
 				   "&agencia="+ agencia +
 				   "&conta="+ conta+
 				   "&digito="+ digito+
-				   "&moeda="+ moeda+
+				   "&apelido="+ apelido+
 				   "&codigoCarteira="+ carteira+
 				   "&juros="+ juros+
 				   "&ativo="+ ativo+
@@ -369,7 +369,7 @@
 		$("#alterAgencia").val(resultado.agencia);
 		$("#alterConta").val(resultado.conta);
 		$("#alterDigito").val(resultado.digito);
-		$("#alterMoeda").val(resultado.moeda);
+		$("#alterApelido").val(resultado.apelido);
 		$("#alterCarteira").val(resultado.codigoCarteira);
 		$("#alterJuros").val(resultado.juros);
 		
@@ -404,7 +404,7 @@
 		$("#newAgencia").val("");
 		$("#newConta").val("");
 		$("#newDigito").val("");
-		$("#newMoeda").val("");
+		$("#newApelido").val("");
 		$("#newCarteira").val("");
 		$("#newJuros").val("");
 		$("#newAtivo").val("");
@@ -474,15 +474,9 @@ label {
 						style="width: 97px;" /> - <input maxlength="1" type="text" name="newDigito"
 						id="newDigito" style="width: 30px;" />
 					</td>
-					<td>Moeda:</td>
-					<td>
-					
-					<select name="newMoeda" id="newMoeda"  style="width:80px;">
-	                    <c:forEach varStatus="counter" var="newMoeda" items="${listaMoedas}">
-					       <option value="${newMoeda.key}">${newMoeda.value}</option>
-					    </c:forEach>
-	                </select>
-					
+					<td>Apelido:</td>
+					<td width="205"><input type="text" name="newApelido" maxlength="100"
+						id="newApelido" style="width: 215px;" />
 					</td>
 				</tr>
 				<tr>
@@ -490,6 +484,7 @@ label {
 					<td>
 	
 					<select name="newCarteira" id="newCarteira" style="width:150px;">
+					    <option></option>
 	                    <c:forEach varStatus="counter" var="newCarteira" items="${listaCarteiras}">
 					       <option value="${newCarteira.key}">${newCarteira.value}</option>
 					    </c:forEach>
@@ -565,15 +560,9 @@ label {
 						style="width: 97px;" /> - <input maxlength="1" type="text" name="alterDigito"
 						id="alterDigito" style="width: 30px;" />
 					</td>
-					<td>Moeda:</td>
-					<td>
-					
-					<select name="alterMoeda" id="alterMoeda"  style="width:80px;">
-	                    <c:forEach varStatus="counter" var="moeda" items="${listaMoedas}">
-					       <option value="${moeda.key}">${moeda.value}</option>
-					    </c:forEach>
-	                </select>
-					
+					<td>Apelido:</td>
+					<td width="205"><input type="text" name="alterApelido" maxlength="100"
+						id="alterApelido" style="width: 215px;" />
 					</td>
 				</tr>
 				<tr>
@@ -581,6 +570,7 @@ label {
 					<td>
 					
 						<select name="alterCarteira" id="alterCarteira" style="width:150px;">
+		                    <option></option>
 		                    <c:forEach varStatus="counter" var="carteira" items="${listaCarteiras}">
 						       <option value="${carteira.key}">${carteira.value}</option>
 						    </c:forEach>

@@ -490,25 +490,25 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 	
 	/**
 	 * Obtém produtoEdicao por (produto e numeroEdicao) ou nome
-	 * @param produto
+	 * @param idProduto
 	 * @param numeroEdicao
 	 * @param nome
 	 * @return ProdutoEdicao
 	 */
 	@Override
-	public ProdutoEdicao obterProdutoEdicaoPorProdutoEEdicaoOuNome(Produto produto,
-																    Long numeroEdicao,
-																    String nome) {
+	public ProdutoEdicao obterProdutoEdicaoPorProdutoEEdicaoOuNome(Long idProduto,
+																   Long numeroEdicao,
+																   String nome) {
 		
 		String hql = "from ProdutoEdicao produtoEdicao " 
 				   + " join fetch produtoEdicao.produto " 
-				   + " where ((produtoEdicao.produto = :produto "
+				   + " where ((produtoEdicao.produto.id = :idProduto "
 				   + " and 	 produtoEdicao.numeroEdicao   = :numeroEdicao)"
 				   + " or 	 (produtoEdicao.nomeComercial  = :nome))";
 		
 		Query query = super.getSession().createQuery(hql);
 
-		query.setParameter("produto", produto);
+		query.setParameter("idProduto", idProduto);
 		query.setParameter("numeroEdicao", numeroEdicao);
 		query.setParameter("nome", nome);
 		
