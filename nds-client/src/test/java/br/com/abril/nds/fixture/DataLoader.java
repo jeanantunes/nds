@@ -14,7 +14,6 @@ import java.util.Set;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
-import org.hibernate.sql.Update;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import br.com.abril.nds.integracao.model.canonic.InterfaceEnum;
@@ -50,7 +49,6 @@ import br.com.abril.nds.model.cadastro.GrupoFornecedor;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.cadastro.HistoricoSituacaoCota;
 import br.com.abril.nds.model.cadastro.MaterialPromocional;
-import br.com.abril.nds.model.cadastro.Moeda;
 import br.com.abril.nds.model.cadastro.MotivoAlteracaoSituacao;
 import br.com.abril.nds.model.cadastro.OperacaoDistribuidor;
 import br.com.abril.nds.model.cadastro.ParametroCobrancaCota;
