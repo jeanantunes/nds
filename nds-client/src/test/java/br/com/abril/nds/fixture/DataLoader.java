@@ -2953,6 +2953,9 @@ public class DataLoader {
 		save(session, Fixture.parametroSistema(TipoParametroSistema.PATH_INTERFACE_NFE_IMPORTACAO,
 				"C:\\notas\\"));			// windows;
 //				"/opt/interface/notas/"));	// linux;
+		save(session, Fixture.parametroSistema(TipoParametroSistema.PATH_INTERFACE_NFE_EXPORTACAO,
+				"C:\\notas\\"));			// windows;
+//				"/opt/interface/notas/"));	// linux;
 		save(session, Fixture.parametroSistema(TipoParametroSistema.PATH_INTERFACE_MDC_IMPORTACAO, 
 				"C:\\interface_mdc\\"));		// windows;
 //				"/opt/interface/inbound/"));		// linux;

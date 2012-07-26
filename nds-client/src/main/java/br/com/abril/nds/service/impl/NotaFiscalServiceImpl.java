@@ -338,6 +338,11 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		ParametroSistema pathNFEExportacao = this.parametroSistemaService
 				.buscarParametroPorTipoParametro(TipoParametroSistema.PATH_INTERFACE_NFE_EXPORTACAO);
 
+		if (pathNFEExportacao == null) {
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING,
+					"Informe o diretório de exportação das notas na tela de paramestros do sistema"));
+		}
+		
 		File diretorioExportacaoNFE = new File(pathNFEExportacao.getValor());
 
 		if (!diretorioExportacaoNFE.isDirectory()) {
