@@ -23,6 +23,7 @@ import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroPdvDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.LicencaMunicipal;
 import br.com.abril.nds.model.cadastro.MaterialPromocional;
 import br.com.abril.nds.model.cadastro.ParametroSistema;
@@ -114,6 +115,13 @@ public class PdvServiceImpl implements PdvService {
 	public List<TipoPontoPDV> obterTiposPontoPDV(){
 		
 		return tipoPontoPDVRepository.buscarTodos();
+	}
+	
+	@Transactional(readOnly=true)
+	@Override
+	public List<TipoPontoPDV> obterTiposPontoPDVPrincipal(){
+		
+		return tipoPontoPDVRepository.buscarTodosPdvPrincipal();
 	}
 	
 	@Transactional(readOnly=true)
@@ -1127,5 +1135,12 @@ public class PdvServiceImpl implements PdvService {
 	public boolean existePDVPrincipal(Long idCota, Long idPdv){
 		
 		return pdvRepository.existePDVPrincipal(idCota, idPdv);
+	}
+	
+	@Override
+	@Transactional(readOnly=true)
+	public List<Endereco> buscarMunicipiosPdvPrincipal() {
+		
+		return enderecoPDVRepository.buscarMunicipioPdvPrincipal();
 	}
 }

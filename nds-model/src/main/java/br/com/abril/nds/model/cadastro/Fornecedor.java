@@ -89,7 +89,7 @@ public class Fornecedor implements Serializable {
 	@Column(name = "ORIGEM", nullable = false)
 	private Origem origem;
 	
-	@Column(name = "EMAIL_NFE", nullable = false)
+	@Column(name = "EMAIL_NFE")
 	private String emailNfe;
 
 	public Long getId() {
