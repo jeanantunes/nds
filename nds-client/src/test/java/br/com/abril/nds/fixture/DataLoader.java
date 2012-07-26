@@ -4275,7 +4275,7 @@ public class DataLoader {
 
 
 		cotaJose = Fixture.cota(1234, jose, SituacaoCadastro.ATIVO,box1);
-		parametroCotaNotaFiscalEletronicaJose = Fixture.parametrosCotaNotaFiscalEletronica(true, "jose@email.com");
+		parametroCotaNotaFiscalEletronicaJose = Fixture.parametrosCotaNotaFiscalEletronica(false, "jose@email.com");
 		cotaJose.setParametrosCotaNotaFiscalEletronica(parametroCotaNotaFiscalEletronicaJose);
 		save(session, cotaJose);
 		ContratoCota contrato2 = Fixture.criarContratoCota(cotaJose,true,DateUtil.parseData("01/01/2011", "dd/mm/yyyy"), DateUtil.parseData("01/01/2013", "dd/mm/yyyy"), 12, 30);
