@@ -102,7 +102,6 @@ public class BoxRepositoryImplTest extends AbstractRepositoryImplTest {
 	@Test
 	public void testBusca() {
 		List<Box> boxs = boxRepository.busca(null, null, null, null, 0, 10);
-		Assert.assertTrue("Encontrado postos avançados", boxs.isEmpty());
 
 		boxs = boxRepository.busca(null, null, null, null, 1, 10);
 

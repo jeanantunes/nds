@@ -63,11 +63,10 @@ public class CapaController {
 		InputStream inputStream = image.getFile();
 		int tamanho = inputStream.available();
 		if(TAMANHO_MAXIMO < tamanho){
-			result.use(CustomJson.class).from(new ValidacaoVO(TipoMensagem.WARNING, "Apenas Imagens de até 20 kbytes")).serialize();
+			result.use(CustomJson.class).from(new ValidacaoVO(TipoMensagem.WARNING, "Apenas Imagens de at&eacute; 20 kbytes")).serialize();
 			return;
 		}
 		capaService.saveCapa(idProdutoEdicao,contentType, inputStream);	
-		
 		
 		result.use(CustomJson.class).from("OK").serialize();
 		

@@ -97,7 +97,7 @@ public class ConsultaInformeEncalheController {
 				
 				dataInicioRecolhimento.set(Calendar.DAY_OF_WEEK, inicioDaSemana.getCodigoDiaSemana());
 				dataFimRecolhimento = (Calendar) dataInicioRecolhimento.clone();
-				dataFimRecolhimento.add(Calendar.DAY_OF_MONTH, 7);
+				dataFimRecolhimento.add(Calendar.DAY_OF_MONTH, 6);
 
 			} else if (dataRecolhimento != null) {
 				dataInicioRecolhimento = dataRecolhimento;
@@ -154,7 +154,7 @@ public class ConsultaInformeEncalheController {
 				
 				dataInicioRecolhimento.set(Calendar.DAY_OF_WEEK, inicioDaSemana.getCodigoDiaSemana());
 				dataFimRecolhimento = (Calendar) dataInicioRecolhimento.clone();
-				dataFimRecolhimento.add(Calendar.DAY_OF_MONTH, 7);
+				dataFimRecolhimento.add(Calendar.DAY_OF_MONTH, 6);
 
 			} else if (dataRecolhimento != null) {
 				dataInicioRecolhimento = dataRecolhimento;
