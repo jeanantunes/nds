@@ -20,7 +20,7 @@ public class ChamadaEncalheAntecipadaVO implements Serializable {
 	private Long codigoChamdaEncalhe;
 	
 	@Export(label = "Box", exhibitionOrder = 1)
-	private Integer box;
+	private String box;
 	
 	@Export(label = "Cota",alignment = Alignment.CENTER, exhibitionOrder = 2)
 	private String numeroCota;
@@ -83,13 +83,13 @@ public class ChamadaEncalheAntecipadaVO implements Serializable {
 	/**
 	 * @return the box
 	 */
-	public Integer getBox() {
+	public String getBox() {
 		return box;
 	}
 	/**
 	 * @param box the box to set
 	 */
-	public void setBox(Integer box) {
+	public void setBox(String box) {
 		this.box = box;
 	}
 	/**
