@@ -166,10 +166,11 @@ public class PoliticaCobrancaRepositoryImpl extends AbstractRepositoryModel<Poli
 	public void desativarPoliticaCobranca(long idPolitica) {
 		StringBuilder hql = new StringBuilder();
 		hql.append(" update PoliticaCobranca p ");		
-		hql.append(" set p.ativo = :pAtivo ");
+		hql.append(" set p.ativo = :pAtivo, p.principal = :pPrincipal ");
 		hql.append(" where p.id = :idPolitica ");
         Query query = super.getSession().createQuery(hql.toString());
         query.setParameter("pAtivo", false);
+        query.setParameter("pPrincipal", false);
         query.setParameter("idPolitica", idPolitica);
 		query.executeUpdate();
 	}

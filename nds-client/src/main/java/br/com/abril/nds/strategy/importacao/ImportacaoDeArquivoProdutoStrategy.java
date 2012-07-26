@@ -1,7 +1,9 @@
 package br.com.abril.nds.strategy.importacao;
 
 import java.io.File;
+import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
+import java.text.Normalizer;
 import java.util.Calendar;
 import java.util.HashSet;
 import java.util.Set;
@@ -98,6 +100,24 @@ public class ImportacaoDeArquivoProdutoStrategy extends ImportacaoAbstractStrate
 	}
 	
 	/**
+	 * Trata caracteres especiais
+	 * @param s
+	 * @return String
+	 */
+    public static String formatString(String s){  
+
+    	String f = null;
+    	try{
+    	    f = new String(s.getBytes(),"UTF-8");
+    	}
+    	catch(Exception e){
+    		e.printStackTrace();
+    	}
+
+        return f;  
+    }  
+	
+	/**
 	 * Retorna o objepto EMS0108Input com as informações referente a linha do arquivo informada
 	 * @param linhaArquivo
 	 * @return EMS0108Input
@@ -107,7 +127,7 @@ public class ImportacaoDeArquivoProdutoStrategy extends ImportacaoAbstractStrate
 		
 		try{
 			
-			return (EMS0119Input) this.ffm.load(EMS0119Input.class, linhaArquivo);
+			return (EMS0119Input) this.ffm.load(EMS0119Input.class, formatString(linhaArquivo));
 			
 		}catch (FixedFormatException ef) {
 			
@@ -214,7 +234,6 @@ public class ImportacaoDeArquivoProdutoStrategy extends ImportacaoAbstractStrate
 	  		
 	  		Fornecedor fornecedor = fornecedorRepository.obterFornecedorPorCodigo(Integer.parseInt(input.getCodigoFornecedorPublic()));
 	  		if (fornecedor==null){
-	  			
 	  			fornecedor = new Fornecedor();
 	  			
 	  			TipoFornecedor tipoFornecedor = new TipoFornecedor();
@@ -264,20 +283,30 @@ public class ImportacaoDeArquivoProdutoStrategy extends ImportacaoAbstractStrate
 			}
 			else{
 				
-			    produto.setTipoProduto(tipoProduto);
-		  	    produto.setEditor(editor);
-			    
-		  	    produto.setCodigoContexto(Integer.parseInt(input.getContextoFornecedorProduto()));
-		  	    produto.setCodigo(input.getCodigoDaPublicacao());
-		  	    produto.setPacotePadrao(input.getPacotePadrao());
-		  	    produto.setNome(input.getNomeDaPublicacao());
-			    produto.setDescricao(input.getNomeDaPublicacao());
-			    produto.setPeriodicidade(periodicidadeProdutoService.getPeriodicidadeProdutoAsArchive(input.getPeriodicidade()));
+				if ((produto.getTipoProduto()!=tipoProduto)||
+				    (produto.getEditor()!=editor)||
+				    (produto.getCodigoContexto()!=Integer.parseInt(input.getContextoFornecedorProduto()))||
+				    //(produto.getCodigo()!=input.getCodigoDaPublicacao())||
+				    (produto.getPacotePadrao()!=input.getPacotePadrao())||
+				    //(produto.getNome()!=input.getNomeDaPublicacao())||
+				    (produto.getDescricao()!=input.getNomeDaPublicacao())){
 
-				produtoRepository.alterar(produto);
+				    produto.setTipoProduto(tipoProduto);
+			  	    produto.setEditor(editor);
+				    
+			  	    produto.setCodigoContexto(Integer.parseInt(input.getContextoFornecedorProduto()));
+			  	    //produto.setCodigo(input.getCodigoDaPublicacao());
+			  	    produto.setPacotePadrao(input.getPacotePadrao());
+			  	    //produto.setNome(input.getNomeDaPublicacao());
+				    produto.setDescricao(input.getNomeDaPublicacao());
+				    produto.setPeriodicidade(periodicidadeProdutoService.getPeriodicidadeProdutoAsArchive(input.getPeriodicidade()));
+	
+					produtoRepository.alterar(produto);
+			    }
+				
 			}
 			
-			ProdutoEdicao produtoEdicao =produtoEdicaoRepository.obterProdutoEdicaoPorProdutoEEdicaoOuNome(produto, input.getEdicao(),input.getNomeComercial());
+			ProdutoEdicao produtoEdicao =produtoEdicaoRepository.obterProdutoEdicaoPorProdutoEEdicaoOuNome(produto.getId(), input.getEdicao(),input.getNomeComercial());
 			if (produtoEdicao==null){
 				produtoEdicao = new ProdutoEdicao();
 				
@@ -297,16 +326,26 @@ public class ImportacaoDeArquivoProdutoStrategy extends ImportacaoAbstractStrate
 			}
 			else{
 				
-			    produtoEdicao.setProduto(produto); 
-			    
-			    produtoEdicao.setNumeroEdicao(input.getEdicao());
-			    produtoEdicao.setCodigo(input.getCodigoDaPublicacao());
-			    produtoEdicao.setDesconto(input.getDesconto());
-			    produtoEdicao.setPacotePadrao(input.getPacotePadrao());
-			    produtoEdicao.setNomeComercial(input.getNomeComercial());
-			    produtoEdicao.setAtivo(input.getStatusDaPublicacao());
+				if (//(produtoEdicao.getProduto()!=produto)||
+					//(produtoEdicao.getNumeroEdicao()!=input.getEdicao())||
+					(produtoEdicao.getCodigo()!=input.getCodigoDaPublicacao())||
+					(produtoEdicao.getDesconto()!=input.getDesconto())||
+					(produtoEdicao.getPacotePadrao()!=input.getPacotePadrao())||
+					//(produtoEdicao.getNomeComercial()!=input.getNomeComercial())||
+					(produtoEdicao.isAtivo()!=input.getStatusDaPublicacao())){
 				
-				produtoEdicaoRepository.alterar(produtoEdicao);
+				    //produtoEdicao.setProduto(produto); 
+				    
+				    //produtoEdicao.setNumeroEdicao(input.getEdicao());
+				    produtoEdicao.setCodigo(input.getCodigoDaPublicacao());
+				    produtoEdicao.setDesconto(input.getDesconto());
+				    produtoEdicao.setPacotePadrao(input.getPacotePadrao());
+				    //produtoEdicao.setNomeComercial(input.getNomeComercial());
+				    produtoEdicao.setAtivo(input.getStatusDaPublicacao());
+					
+				    produtoEdicaoRepository.alterar(produtoEdicao);
+				}
+				
 			}
 			
 		} catch (Exception e) {

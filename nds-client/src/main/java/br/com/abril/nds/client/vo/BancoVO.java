@@ -2,8 +2,6 @@ package br.com.abril.nds.client.vo;
 
 import java.math.BigDecimal;
 
-import br.com.abril.nds.model.cadastro.Moeda;
-
 public class BancoVO {
 
 	long idBanco;
@@ -13,7 +11,7 @@ public class BancoVO {
     Long agencia;
     Long conta;
     String digito;
-    Moeda moeda;
+    String apelido;
     Integer codigoCarteira;
     BigDecimal juros;
     boolean ativo;
@@ -28,7 +26,7 @@ public class BancoVO {
 
 	public BancoVO(long idBanco, String numero, String nome,
 			String codigoCedente, Long agencia, Long conta, String digito,
-			Moeda moeda, Integer codigoCarteira, BigDecimal juros,
+			String apelido, Integer codigoCarteira, BigDecimal juros,
 			boolean ativo, BigDecimal multa, BigDecimal vrMulta,
 			String instrucoes) {
 		super();
@@ -39,7 +37,7 @@ public class BancoVO {
 		this.agencia = agencia;
 		this.conta = conta;
 		this.digito = digito;
-		this.moeda = moeda;
+		this.apelido = apelido;
 		this.codigoCarteira = codigoCarteira;
 		this.juros = juros;
 		this.ativo = ativo;
@@ -105,12 +103,12 @@ public class BancoVO {
 		this.digito = digito;
 	}
 
-	public Moeda getMoeda() {
-		return moeda;
+	public String getApelido() {
+		return apelido;
 	}
 
-	public void setMoeda(Moeda moeda) {
-		this.moeda = moeda;
+	public void setApelido(String apelido) {
+		this.apelido = apelido;
 	}
 
 	public Integer getCodigoCarteira() {
