@@ -599,3 +599,8 @@ div#pi:hover,div#pi:active {
 .infosPainel div ul li a {
 	font-size: 14px;
 }
+
+.infosPainel div{
+	margin-left: 0px;
+	margin-right: 0px;
+}
