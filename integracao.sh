@@ -1,4 +1,4 @@
-#DSERVER
+ERVER
 #PRODIM
 # Integra editor no couchdb DServer
 java -jar ndsi-couchdbinterface/target/ndsi-couchdbinterface-0.0.1-SNAPSHOT.jar cron 112
@@ -16,6 +16,8 @@ java -jar ndsi-couchdbinterface/target/ndsi-couchdbinterface-0.0.1-SNAPSHOT.jar 
 java -jar ndsi-couchdbinterface/target/ndsi-couchdbinterface-0.0.1-SNAPSHOT.jar cron 126
 # Integra Desconto Distribuidor  no couchdb DServer
 java -jar ndsi-couchdbinterface/target/ndsi-couchdbinterface-0.0.1-SNAPSHOT.jar cron 113
+# IMAGENS
+java -jar ndsi-couchdbinterface/target/ndsi-couchdbinterface-0.0.1-SNAPSHOT.jar cron 134
 
 #DCLIENT
 #PRODIM
@@ -41,10 +43,12 @@ java -jar ndsi-engine/target/ndsi-engine.jar br.com.abril.nds.integracao.ems0113
 java -jar ndsi-engine/target/ndsi-engine.jar br.com.abril.nds.integracao.ems0119.route.EMS0119Route
 # Recupera PREÇO no arquivo do mdc e persiste no nds
 java -jar ndsi-engine/target/ndsi-engine.jar br.com.abril.nds.integracao.ems0118.route.EMS0118Route
+# Recupera Cota no arquivo do mdc e persiste no nds
+java -jar ndsi-engine/target/ndsi-engine.jar br.com.abril.nds.integracao.ems0117.route.EMS0117Route
+# Recupera Banca no arquivo do mdc e persiste no nds
+java -jar ndsi-engine/target/ndsi-engine.jar br.com.abril.nds.integracao.ems0116.route.EMS0116Route
 # Recupera MATRIZ LANCAMENTO RECOLHIMENTO no arquivo do mdc e persiste no nds
 java -jar ndsi-engine/target/ndsi-engine.jar br.com.abril.nds.integracao.ems0108.route.EMS0108Route
-# Recupera ESTUDO COTA no arquivo do mdc e persiste no nds
-java -jar ndsi-engine/target/ndsi-engine.jar br.com.abril.nds.integracao.ems0107.route.EMS0107Route
-# Recupera ESTUDO no arquivo do mdc e persiste no nds
+# Recupera ESTUDO COTA (107) e ESTUDO no arquivo do mdc e persiste no nds
 java -jar ndsi-engine/target/ndsi-engine.jar br.com.abril.nds.integracao.ems0106.route.EMS0106Route
 
