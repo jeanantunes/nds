@@ -55,7 +55,7 @@ public class DataLoader {
 	private static void mock(Session session) {
 
  		OperacaoDistribuidor distribuidorServer = new OperacaoDistribuidor();
-		distribuidorServer.setIdDistribuidorInterface(1L);
+		distribuidorServer.setIdDistribuidorInterface("1");
 		distribuidorServer.setNome("teste 0001");
 		StatusOperacao statusOperacao = new StatusOperacao();
 		statusOperacao.setStatus(Status.FECHAMENTO);
@@ -109,7 +109,7 @@ public class DataLoader {
 		// -------------------------------------//
 
 		distribuidorServer = new OperacaoDistribuidor();
-		distribuidorServer.setIdDistribuidorInterface(2L);
+		distribuidorServer.setIdDistribuidorInterface("2");
 		distribuidorServer.setNome("distrib 2");
 		statusOperacao = new StatusOperacao();
 		statusOperacao.setStatus(Status.OPERANDO);
@@ -163,7 +163,7 @@ public class DataLoader {
 		// -------------------------------------//
 
 		distribuidorServer = new OperacaoDistribuidor();
-		distribuidorServer.setIdDistribuidorInterface(3L);
+		distribuidorServer.setIdDistribuidorInterface("3");
 		distribuidorServer.setNome("distrib 33");
 		statusOperacao = new StatusOperacao();
 		statusOperacao.setStatus(Status.ENCERRADO);
@@ -217,7 +217,7 @@ public class DataLoader {
 		// -------------------------------------//
 
 		distribuidorServer = new OperacaoDistribuidor();
-		distribuidorServer.setIdDistribuidorInterface(4L);
+		distribuidorServer.setIdDistribuidorInterface("4");
 		distribuidorServer.setNome("la longe");
 		statusOperacao = new StatusOperacao();
 		statusOperacao.setStatus(Status.ENCERRADO);

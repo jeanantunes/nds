@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.annotation.PostConstruct;
-
 import org.lightcouch.CouchDbClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -33,6 +31,7 @@ import br.com.abril.nds.server.model.Status;
 import br.com.abril.nds.server.model.StatusOperacao;
 import br.com.abril.nds.server.model.TipoIndicador;
 import br.com.abril.nds.service.IntegracaoOperacionalDistribuidorService;
+import br.com.abril.nds.util.CouchDBUtil;
 
 /**
  * Implementação do serviço de integração operacional do distribuidor.
@@ -42,13 +41,9 @@ import br.com.abril.nds.service.IntegracaoOperacionalDistribuidorService;
  */
 @Service
 public class IntegracaoOperacionalDistribuidorServiceImpl implements IntegracaoOperacionalDistribuidorService {
-	
-	private static final String DB_NAME = "db_integracao";
-	
+
 	@Autowired
 	private CouchDbProperties couchDbProperties;
-	
-	private CouchDbClient couchDbClientIntegracao;
 	
 	@Autowired
 	private DistribuidorRepository distribuidorRepository;
@@ -74,16 +69,6 @@ public class IntegracaoOperacionalDistribuidorServiceImpl implements IntegracaoO
 	@Autowired
 	private DiferencaEstoqueRepository diferencaEstoqueRepository;
 	
-	@PostConstruct
-	public void initCouchDbClient() {
-		
-		this.couchDbClientIntegracao = 
-			new CouchDbClient(
-				DB_NAME, true, couchDbProperties.getProtocol(), couchDbProperties.getHost(), 
-					couchDbProperties.getPort(), couchDbProperties.getUsername(), 
-						couchDbProperties.getPassword());
-	}
-	
 	/**
 	 * {@inheritDoc}
 	 */
@@ -91,7 +76,20 @@ public class IntegracaoOperacionalDistribuidorServiceImpl implements IntegracaoO
 	@Transactional
 	public void integrarInformacoesOperacionais(OperacaoDistribuidor operacaoDistribuidor) {
 		
-		this.couchDbClientIntegracao.save(operacaoDistribuidor);
+		if (operacaoDistribuidor == null) {
+			
+			return;
+		}
+		
+		String codigoDistribuidor = operacaoDistribuidor.getIdDistribuidorInterface();
+		
+		CouchDbClient couchDbClient = new CouchDbClient(
+			CouchDBUtil.obterNomeBancoDeDadosIntegracaoDistribuidor(codigoDistribuidor), 
+				true, this.couchDbProperties.getProtocol(), this.couchDbProperties.getHost(), 
+					this.couchDbProperties.getPort(), this.couchDbProperties.getUsername(), 
+						this.couchDbProperties.getPassword());
+		
+		couchDbClient.save(operacaoDistribuidor);
 	}
 	
 	/**
