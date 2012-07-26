@@ -755,7 +755,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		
 		List<ItemNotaFiscal> listaItemNotaFiscal = null;
 		if (listaMovimentoEstoqueCota != null && !listaMovimentoEstoqueCota.isEmpty()) {
-			listaItemNotaFiscal = this.gerarItensNotaFiscal(listaMovimentoEstoqueCota);
+			listaItemNotaFiscal = this.gerarItensNotaFiscal(listaMovimentoEstoqueCota, grupoNotaFiscal);
 		}
 		return listaItemNotaFiscal;
 	}
@@ -781,9 +781,8 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		
 		List<ItemNotaFiscal> listaItemNotaFiscal = null;
 		if (listaMovimentoEstoqueCota != null && !listaMovimentoEstoqueCota.isEmpty()) {
-			listaItemNotaFiscal = this.gerarItensNotaFiscal(listaMovimentoEstoqueCota);
+			listaItemNotaFiscal = this.gerarItensNotaFiscal(listaMovimentoEstoqueCota, grupoNotaFiscal);
 		}
-		
 		return listaItemNotaFiscal;
 	}
 	
@@ -805,20 +804,22 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		
 		List<ItemNotaFiscal> itensNFeVenda = new ArrayList<ItemNotaFiscal>();
 		
-		for (ItemNotaFiscal itemNFeEnvio : itensNFeEnvioConsignado) {
-			
-			ItemNotaFiscal itemNFeVenda = itemNFeEnvio;
-			
-			if (itensNFeDevolucaoConsignado.contains(itemNFeEnvio)) {
+		if (itensNFeEnvioConsignado != null) {
+			for (ItemNotaFiscal itemNFeEnvio : itensNFeEnvioConsignado) {
 				
-				ItemNotaFiscal itemNFeDevolucao = itensNFeDevolucaoConsignado.get(itensNFeDevolucaoConsignado.indexOf(itemNFeEnvio));
-										
-				BigDecimal quantidade = itemNFeEnvio.getQuantidade().subtract(itemNFeDevolucao.getQuantidade());
+				ItemNotaFiscal itemNFeVenda = itemNFeEnvio;
 				
-				itemNFeVenda.setQuantidade(quantidade);		
+				if (itensNFeDevolucaoConsignado != null && itensNFeDevolucaoConsignado.contains(itemNFeEnvio)) {
+					
+					ItemNotaFiscal itemNFeDevolucao = itensNFeDevolucaoConsignado.get(itensNFeDevolucaoConsignado.indexOf(itemNFeEnvio));
+											
+					BigDecimal quantidade = itemNFeEnvio.getQuantidade().add(itemNFeDevolucao.getQuantidade());
+					
+					itemNFeVenda.setQuantidade(quantidade);		
+				}
+					
+				itensNFeVenda.add(itemNFeEnvio);
 			}
-				
-			itensNFeVenda.add(itemNFeEnvio);
 		}
 		
 		return  itensNFeVenda;
@@ -830,7 +831,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 	 * @param listaMovimentoEstoqueCota
 	 * @return
 	 */
-	private List<ItemNotaFiscal> gerarItensNotaFiscal(List<MovimentoEstoqueCota> listaMovimentoEstoqueCota) {
+	private List<ItemNotaFiscal> gerarItensNotaFiscal(List<MovimentoEstoqueCota> listaMovimentoEstoqueCota, GrupoNotaFiscal grupoNotaFiscal) {
 		
 		Map<Long, ItemNotaFiscal> mapItemNotaFiscal = new HashMap<Long, ItemNotaFiscal>();
 		
@@ -851,7 +852,14 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 			listaMovimentoEstoqueItem.add(movimentoEstoqueCota);
 			
 			if (grupoMovimento.getDominio().equals(Dominio.COTA) && 
-					grupoMovimento.getOperacaoEstoque().equals(OperacaoEstoque.SAIDA)) {
+					grupoMovimento.getOperacaoEstoque().equals(OperacaoEstoque.SAIDA) &&
+					!grupoNotaFiscal.equals(GrupoNotaFiscal.NF_DEVOLUCAO_REMESSA_CONSIGNACAO)) {
+				quantidade = quantidade.negate();
+			}
+			
+			if (grupoMovimento.getDominio().equals(Dominio.COTA) && 
+					grupoMovimento.getOperacaoEstoque().equals(OperacaoEstoque.ENTRADA) &&
+					grupoNotaFiscal.equals(GrupoNotaFiscal.NF_DEVOLUCAO_REMESSA_CONSIGNACAO)) {
 				quantidade = quantidade.negate();
 			}
 			
