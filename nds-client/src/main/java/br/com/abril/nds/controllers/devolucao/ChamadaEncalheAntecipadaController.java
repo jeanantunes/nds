@@ -127,7 +127,7 @@ public class ChamadaEncalheAntecipadaController {
 	@Path("/pesquisarBox")
 	public void pesquisarBoxPoProduto(String codigoProduto,Long numeroEdicao ){
 			
-		List<ItemDTO<Long, String>> listaBoxCombo = obterBoxs(codigoProduto);
+		List<ItemDTO<Long, Integer>> listaBoxCombo = obterBoxs(codigoProduto);
 		
 		result.use(Results.json()).from(listaBoxCombo, "result").recursive().serialize();
 	}
@@ -741,14 +741,14 @@ public class ChamadaEncalheAntecipadaController {
 	 * @param codigoProduto
 	 * @return List<ItemDTO<Long, String>>
 	 */
-	private List<ItemDTO<Long, String>> obterBoxs(String codigoProduto){
+	private List<ItemDTO<Long, Integer>> obterBoxs(String codigoProduto){
 		
 		List<Box> listaBox = boxService.obterBoxPorProduto(codigoProduto);
 		
-		List<ItemDTO<Long, String>> listaBoxCombo = new ArrayList<ItemDTO<Long,String>>();
+		List<ItemDTO<Long, Integer>> listaBoxCombo = new ArrayList<ItemDTO<Long,Integer>>();
 		
 		for (Box box : listaBox) {
-			listaBoxCombo.add(new ItemDTO<Long, String>(box.getId(), box.getCodigo()));
+			listaBoxCombo.add(new ItemDTO<Long, Integer>(box.getId(), box.getCodigo()));
 		}
 		
 		return listaBoxCombo;
@@ -916,7 +916,7 @@ public class ChamadaEncalheAntecipadaController {
 			Box box = boxService.buscarPorId(filtro.getBox());
 			
 			if(box!= null){
-				filtro.setDescBox(box.getCodigo());
+				filtro.setDescBox(box.getCodigo() + " - " + box.getNome());
 			}
 		}
 		

@@ -1,13 +1,14 @@
 package br.com.abril.nds.server.job;
 
 import java.util.List;
+import java.util.Set;
 
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import br.com.abril.nds.server.model.DistribuidorServer;
+import br.com.abril.nds.server.model.OperacaoDistribuidor;
 import br.com.abril.nds.server.service.IntegracaoOperacionalDistribuidorService;
 
 /**
@@ -39,8 +40,12 @@ public class IntegracaoOperacionalDistribuidorJob implements Job {
 	@Override
 	public void execute(JobExecutionContext context) throws JobExecutionException {
 		
-		List<DistribuidorServer> listaInformacoesOperacionaisDistribuidores =
-			this.integracaoOperacionalDistribuidorService.obterInformacoesOperacionaisDistribuidores();
+		Set<String> codigosDistribuidoresIntegracao =
+			this.integracaoOperacionalDistribuidorService.obterCodigosDistribuidoresIntegracao();
+		
+		List<OperacaoDistribuidor> listaInformacoesOperacionaisDistribuidores =
+			this.integracaoOperacionalDistribuidorService.obterInformacoesOperacionaisDistribuidores(
+				codigosDistribuidoresIntegracao);
 		
 		this.integracaoOperacionalDistribuidorService.atualizarInformacoesOperacionaisDistribuidores(
 			listaInformacoesOperacionaisDistribuidores);

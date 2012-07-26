@@ -28,6 +28,7 @@ import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.Telefone;
 import br.com.abril.nds.model.cadastro.TelefoneFiador;
+import br.com.abril.nds.repository.CotaGarantiaRepository;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.EnderecoFiadorRepository;
 import br.com.abril.nds.repository.EnderecoRepository;
@@ -74,6 +75,9 @@ public class FiadorServiceImpl implements FiadorService {
 	
 	@Autowired
 	private EnderecoService enderecoService;
+	
+	@Autowired
+	private CotaGarantiaRepository cotaGarantiaRepository;
 	
 	@Override
 	@Transactional(readOnly = true)
@@ -755,8 +759,12 @@ public class FiadorServiceImpl implements FiadorService {
 	@Transactional
 	public void excluirFiador(Long idFiador){
 		
+		if (this.cotaGarantiaRepository.obterCotaGarantiaFiadorPorIdFiador(idFiador) != null){
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Fiador está associado a uma cota, não pode ser excluído.");
+		}
+		
 		Fiador fiador = this.fiadorRepository.buscarPorId(idFiador);
-
 		
 		if (fiador != null){
 			

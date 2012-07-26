@@ -240,7 +240,12 @@ validarEdicaoCallBack : function() {
 		    "itemRecebimento.repartePrevisto=" 		+ repartePrevisto	+ "&" +
 		    "itemRecebimento.tipoLancamento=" 		+ tipoLancamento;
 		
-		var listaDeValores  = obterListaValores();
+		var listaDeValores = "";
+		
+		if (indNotaFiscalInterface) {
+			
+			listaDeValores  = obterListaValores();
+		}
 		
 		$.postJSON("<c:url value='/estoque/recebimentoFisico/incluirItemNotaFiscal'/>", (dadosCadastro +"&" + listaDeValores), 
 
@@ -280,7 +285,12 @@ validarEdicaoCallBack : function() {
 		    "itemRecebimento.repartePrevisto=" 		+ repartePrevisto	+ "&" +
 		    "itemRecebimento.tipoLancamento=" 		+ tipoLancamento;
 		
-		var listaDeValores  = obterListaValores();
+		var listaDeValores = "";
+		
+		if (indNotaFiscalInterface) {
+			
+			listaDeValores  = obterListaValores();
+		}
 		
 		$.postJSON("<c:url value='/estoque/recebimentoFisico/incluirItemNotaFiscal'/>", (dadosCadastro +"&" + listaDeValores), 
 

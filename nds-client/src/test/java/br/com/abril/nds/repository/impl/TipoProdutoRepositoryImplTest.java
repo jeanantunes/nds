@@ -14,6 +14,7 @@ import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.TipoProduto;
+import br.com.abril.nds.model.cadastro.TributacaoFiscal;
 import br.com.abril.nds.model.fiscal.NCM;
 import br.com.abril.nds.repository.TipoProdutoRepository;
 
@@ -51,7 +52,7 @@ public class TipoProdutoRepositoryImplTest extends AbstractRepositoryImplTest {
 				for (int j = 0; j < 2; j++) {
 					
 					Produto produto =
-							Fixture.produto(i+j+"1", "Descricao0"+i+j, "Produto0"+i+j, PeriodicidadeProduto.SEMANAL, this.tipoProduto, j, j, new BigDecimal(j));
+							Fixture.produto(i+j+"1", "Descricao0"+i+j, "Produto0"+i+j, PeriodicidadeProduto.SEMANAL, this.tipoProduto, j, j, new BigDecimal(j), TributacaoFiscal. TRIBUTADO);
 					
 					produto.setEditor(abril);
 					save(produto);

@@ -8,8 +8,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.ItemDTO;
+import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.TipoAtividade;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
+import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.SerieRepository;
 import br.com.abril.nds.repository.TipoNotaFiscalRepository;
 import br.com.abril.nds.service.TipoNotaFiscalService;
@@ -20,6 +22,9 @@ public class TipoNotaFiscalServiceImpl implements TipoNotaFiscalService {
 
 	@Autowired
 	private TipoNotaFiscalRepository tipoNotaFiscalRepository;
+	
+	@Autowired
+	private DistribuidorRepository distribuidorRepository;
 	
 	@Autowired 
 	private SerieRepository serieRepository;
@@ -90,7 +95,7 @@ public class TipoNotaFiscalServiceImpl implements TipoNotaFiscalService {
 				ItemDTO<Long, String> itemNotaFiscal = new ItemDTO<Long, String>();
 				
 				itemNotaFiscal.setKey(tipoNotaFiscal.getId());
-				itemNotaFiscal.setValue(tipoNotaFiscal.getNopDescricao());
+				itemNotaFiscal.setValue(tipoNotaFiscal.getDescricao());
 				
 				listaItensNotasFiscais.add(itemNotaFiscal);
 			}
@@ -98,4 +103,21 @@ public class TipoNotaFiscalServiceImpl implements TipoNotaFiscalService {
 		return listaItensNotasFiscais;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@Transactional
+	public List<TipoNotaFiscal> obterTiposNotasFiscaisPorTipoAtividadeDistribuidor(Long idDistribuidor) {
+
+		Distribuidor distribuidor = this.distribuidorRepository.buscarPorId(idDistribuidor);
+		
+		if (distribuidor == null) {
+			
+			return null;
+		}
+		
+		return tipoNotaFiscalRepository.obterTiposNotasFiscaisPorTipoAtividadeDistribuidor(
+				distribuidor.getTipoAtividade());
+	}
 }

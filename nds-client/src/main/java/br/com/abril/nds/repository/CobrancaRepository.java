@@ -1,5 +1,6 @@
 package br.com.abril.nds.repository;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -65,5 +66,6 @@ public interface CobrancaRepository extends Repository<Cobranca, Long>{
 	List<Cobranca> obterCobrancasOrdenadasPorVencimento(List<Long> idCobrancas);
 	
 	List<Cobranca> obterCobrancasPorIDS(List<Long> listaCobrancas);
-}
 
+	BigDecimal obterValorCobrancasQuitadasPorData(Date data);
+}

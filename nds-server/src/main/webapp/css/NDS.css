@@ -524,7 +524,7 @@ select, input{font-size: 12px; height: 21px;}
 
 
 .infosPainel{ float:right; width:390px; }
-.infosPainel div{  padding-bottom:5px; margin-left:10px; margin-bottom:20px; background:#F8F8F8; margin-right:10px;}
+.infosPainel div{  padding-bottom:1px; margin-left:10px; background:#F8F8F8; margin-right:10px;}
 .infosPainel label{font-size:14px; font-weight:bold; background:#F2F2F2; width:100%!important; margin:0px; text-indent:5px;}
 .infosPainel div ul{margin:0px; padding:0px;}
 .infosPainel div ul li{margin:0px; padding:0px; line-height:23px; vertical-align:top;}

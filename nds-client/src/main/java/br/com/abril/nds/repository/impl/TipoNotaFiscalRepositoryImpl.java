@@ -68,6 +68,7 @@ public class TipoNotaFiscalRepositoryImpl extends AbstractRepositoryModel<TipoNo
 	 * @see br.com.abril.nds.repository.TipoNotaFiscalRepository#obterTiposNotasFiscais(java.lang.String, java.lang.String, br.com.abril.nds.model.cadastro.TipoAtividade, java.lang.String, br.com.abril.nds.vo.PaginacaoVO.Ordenacao, int, int)
 	 */
 	@Override
+	@SuppressWarnings("unchecked")
 	public List<TipoNotaFiscal> obterTiposNotasFiscais(String cfop, String tipoNota, TipoAtividade tipoAtividade, String orderBy, Ordenacao ordenacao, Integer initialResult, Integer maxResults) {
 
 		Criteria criteria = addRestrictions(cfop, tipoNota, tipoAtividade);
@@ -111,10 +112,9 @@ public class TipoNotaFiscalRepositoryImpl extends AbstractRepositoryModel<TipoNo
 	 * @see br.com.abril.nds.repository.TipoNotaFiscalRepository#obterTiposNotasFiscaisCotasNaoContribuintesPor(br.com.abril.nds.model.cadastro.TipoAtividade)
 	 */
 	@Override
+	@SuppressWarnings("unchecked")
 	public List<TipoNotaFiscal> obterTiposNotasFiscaisCotasNaoContribuintesPor(TipoAtividade tipoAtividade) {
 		Criteria criteria =  addRestrictions(null, null, tipoAtividade);
-		
-		criteria.add(Restrictions.eq("contribuinte", false));
 		
 		return criteria.list();
 	}
@@ -152,5 +152,18 @@ public class TipoNotaFiscalRepositoryImpl extends AbstractRepositoryModel<TipoNo
 		
 		return criteria;
 	}
-	
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<TipoNotaFiscal> obterTiposNotasFiscaisPorTipoAtividadeDistribuidor(TipoAtividade tipoAtividade) {
+
+		Criteria criteria =  getSession().createCriteria(TipoNotaFiscal.class);	
+
+		criteria.add(Restrictions.eq("tipoAtividade", tipoAtividade));
+		
+		return criteria.list();
+	}
 }

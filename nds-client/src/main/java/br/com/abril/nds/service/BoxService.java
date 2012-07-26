@@ -30,25 +30,23 @@ public interface BoxService {
 	 * Obtem a quantidade de registros respeitando as restricoes parametrizadas.
 	 * @param codigoBox Código do Box
 	 * @param tipoBox Tipo do Box {@link TipoBox}
-	 * @param postoAvancado se restringe apenas a postos avançados
 	 * @return Quantidade de registros
 	 */
-	public abstract Long quantidade(String codigoBox, TipoBox tipoBox, boolean postoAvancado);
+	public abstract Long quantidade(Integer codigoBox, TipoBox tipoBox);
 	
 	
 	/**
 	 * Busca os Box respeitando as restricoes parametrizadas.
  	 * @param codigoBox Código do Box
 	 * @param tipoBox Tipo do Box {@link TipoBox}
-	 * @param postoAvancado se restringe apenas a postos avançados
 	 * @param orderBy nome do campo para compor a ordenação
 	 * @param ordenacao tipo da ordenação
 	 * @param initialResult resultado inicial
 	 * @param maxResults numero maximo de resultados
 	 * @return
 	 */
-	public abstract List<Box> busca(String codigoBox, TipoBox tipoBox, boolean postoAvancado,
-			String orderBy, Ordenacao ordenacao, int initialResult, int maxResults);
+	public abstract List<Box> busca(Integer codigoBox, TipoBox tipoBox, String orderBy,
+			Ordenacao ordenacao, int initialResult, int maxResults);
 	/**
 	 * Atualiza a entidade box do repositorio de dados
 	 * @param entity

@@ -131,6 +131,29 @@
 		return resultado;
 	}
 	
+	
+	//VERIFICA A EXISTENCIA DE UMA POLITICA DE COBRANCA PRINCIPAL
+	function existPrincipal(){
+		$.postJSON("<c:url value='/distribuidor/parametroCobranca/existPrincipal' />",
+				   null,
+				   function(mensagens) {
+		        	   if (mensagens){
+						   var tipoMensagem = mensagens.tipoMensagem;
+						   var listaMensagens = mensagens.listaMensagens;
+						   if (tipoMensagem && listaMensagens) {
+						       exibirMensagem(tipoMensagem, listaMensagens);
+					       }
+						   return false;
+		        	   }
+		        	   else{
+		        		   return true;
+		        	   }
+		        	   
+		           },
+		           null,
+				   true,
+				   "idModal");
+	}
 
 	
     function popup() {
@@ -160,6 +183,12 @@
 	        ],
 			beforeClose: function() {
 				clearMessageDialogTimeout("idModal");
+				/*
+				if (!existPrincipal()){
+					return false;
+				}
+				*/
+				
 		    }
 		});
 	};
@@ -193,6 +222,12 @@
 	        ],
 			beforeClose: function() {
 				clearMessageDialogTimeout("idModal");
+                /*
+				if (!existPrincipal()){
+					return false;
+				}
+                */
+				
 		    }
 		});	
 		      
@@ -435,6 +470,7 @@
 		});
 		return fornecedorMarcado;
 	}
+	
 	
 	//INCLUSÃO DE NOVO PARAMETRO
     function postarParametro(novo) {

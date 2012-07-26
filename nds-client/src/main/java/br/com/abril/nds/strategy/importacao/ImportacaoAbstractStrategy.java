@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.sql.Date;
 import java.util.Scanner;
 
 import org.apache.commons.lang.StringUtils;
@@ -27,6 +28,8 @@ public abstract class ImportacaoAbstractStrategy {
 	
 	protected static final String MENSAGEM_ERRO_FORMATO_DADOS="Formato das informações contidas na linha do arquivo inválida!";
 	
+	protected Date dataCriacaoArquivo;
+
 	/**
 	 * Efetua o processamento do dados referente ao arquivo
 	 * 
@@ -50,6 +53,8 @@ public abstract class ImportacaoAbstractStrategy {
 	 * @return RetornoImportacaoArquivoVO
 	 */
 	protected RetornoImportacaoArquivoVO processarArquivo(File arquivo){
+		
+		dataCriacaoArquivo = new Date(arquivo.lastModified());
 		
 		FileReader in = null;
 		try {

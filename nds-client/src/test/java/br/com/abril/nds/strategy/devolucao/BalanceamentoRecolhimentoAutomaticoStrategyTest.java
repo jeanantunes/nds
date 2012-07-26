@@ -39,8 +39,6 @@ public class BalanceamentoRecolhimentoAutomaticoStrategyTest {
 		
 		Assert.assertNotNull(balanceamentoRecolhimento);
 		
-		//Assert.assertFalse(balanceamentoRecolhimento.isMatrizFechada());
-		
 		Assert.assertEquals(
 			dadosRecolhimento.getCapacidadeRecolhimentoDistribuidor(), 
 				balanceamentoRecolhimento.getCapacidadeRecolhimentoDistribuidor());
@@ -88,8 +86,6 @@ public class BalanceamentoRecolhimentoAutomaticoStrategyTest {
 		
 		Assert.assertNotNull(balanceamentoRecolhimento);
 		
-		//Assert.assertFalse(balanceamentoRecolhimento.isMatrizFechada());
-		
 		Assert.assertEquals(
 			dadosRecolhimento.getCapacidadeRecolhimentoDistribuidor(), 
 				balanceamentoRecolhimento.getCapacidadeRecolhimentoDistribuidor());
@@ -130,8 +126,6 @@ public class BalanceamentoRecolhimentoAutomaticoStrategyTest {
 	private RecolhimentoDTO obterDadosRecolhimentoLimiteCapacidadeManuseio() {
 		
 		RecolhimentoDTO dadosRecolhimento = new RecolhimentoDTO();
-		
-		//dadosRecolhimento.setBalancearMatriz(true);
 		
 		dadosRecolhimento.setCapacidadeRecolhimentoDistribuidor(new BigDecimal("100"));
 		
@@ -240,8 +234,6 @@ public class BalanceamentoRecolhimentoAutomaticoStrategyTest {
 	private RecolhimentoDTO obterDadosRecolhimentoExcedemLimiteCapacidadeManuseio() {
 		
 		RecolhimentoDTO dadosRecolhimento = new RecolhimentoDTO();
-		
-		//dadosRecolhimento.setBalancearMatriz(true);
 		
 		dadosRecolhimento.setCapacidadeRecolhimentoDistribuidor(new BigDecimal("100"));
 		

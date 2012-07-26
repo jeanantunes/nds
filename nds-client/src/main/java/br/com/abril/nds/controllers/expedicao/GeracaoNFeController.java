@@ -62,7 +62,7 @@ public class GeracaoNFeController {
 	
 	@Post("/busca.json")
 	public void busca(
-			String intervaloBoxDe, 	  String intervaloBoxAte,
+			Integer intervaloBoxDe, Integer intervaloBoxAte,
 			Integer intervaloCotaDe, Integer intervaloCotaAte,
 			Date intervaloDateMovimentoDe, Date intervaloDateMovimentoAte,
 			List<Long> listIdFornecedor, List<Long> listIdProduto, Long tipoNotaFiscal, String sortname,
@@ -70,7 +70,7 @@ public class GeracaoNFeController {
 		
 		//TODO: quantidade
 		
-		Intervalo<String> intervaloBox = new Intervalo<String>(intervaloBoxDe, intervaloBoxAte);
+		Intervalo<Integer> intervaloBox = new Intervalo<Integer>(intervaloBoxDe, intervaloBoxAte);
 		
 		Intervalo<Integer> intervalorCota = new Intervalo<Integer>(intervaloCotaDe, intervaloCotaAte);
 		
@@ -83,14 +83,14 @@ public class GeracaoNFeController {
 	}
 	
 	@Post("/buscaCotasSuspensas.json")
-	public void buscaCotasSuspensas(String intervaloBoxDe, 	  String intervaloBoxAte,
+	public void buscaCotasSuspensas(Integer intervaloBoxDe, 	  Integer intervaloBoxAte,
 			Integer intervaloCotaDe, Integer intervaloCotaAte,
 			Date intervaloDateMovimentoDe, Date intervaloDateMovimentoAte, List<Long> listIdFornecedor, List<Long> listIdProduto ,Long tipoNotaFiscal, String sortname,
 			String sortorder, int rp, int page) {
 		
 		//TODO: quantidade
 		
-		Intervalo<String> intervaloBox = new Intervalo<String>(intervaloBoxDe, intervaloBoxAte);
+		Intervalo<Integer> intervaloBox = new Intervalo<Integer>(intervaloBoxDe, intervaloBoxAte);
 		
 		Intervalo<Integer> intervalorCota = new Intervalo<Integer>(intervaloCotaDe, intervaloCotaAte);
 		
@@ -103,11 +103,11 @@ public class GeracaoNFeController {
 	}
 	
 	@Post("/hasCotasSuspensas.json")
-	public void hasCotasSuspensas(String intervaloBoxDe, 	  String intervaloBoxAte,
+	public void hasCotasSuspensas(Integer intervaloBoxDe, 	  Integer intervaloBoxAte,
 			Integer intervaloCotaDe, Integer intervaloCotaAte,
 			Date intervaloDateMovimentoDe, Date intervaloDateMovimentoAte, List<Long> listIdFornecedor,Long tipoNotaFiscal){
 		
-		Intervalo<String> intervaloBox = new Intervalo<String>(intervaloBoxDe, intervaloBoxAte);
+		Intervalo<Integer> intervaloBox = new Intervalo<Integer>(intervaloBoxDe, intervaloBoxAte);
 		
 		Intervalo<Integer> intervalorCota = new Intervalo<Integer>(intervaloCotaDe, intervaloCotaAte);
 		
@@ -117,12 +117,12 @@ public class GeracaoNFeController {
 	}
 	
 	@Post("/gerar.json")
-	public void gerar(String intervaloBoxDe, 	  String intervaloBoxAte,
+	public void gerar(Integer intervaloBoxDe, 	  Integer intervaloBoxAte,
 			Integer intervaloCotaDe, Integer intervaloCotaAte,
 			Date intervaloDateMovimentoDe, Date intervaloDateMovimentoAte, List<Long> listIdFornecedor, List<Long> listIdProduto, 
 			Long tipoNotaFiscal, Date dataEmissao, List<Long> idCotasSuspensas, boolean todasCotasSuspensa){
 		
-		Intervalo<String> intervaloBox = new Intervalo<String>(intervaloBoxDe, intervaloBoxAte);
+		Intervalo<Integer> intervaloBox = new Intervalo<Integer>(intervaloBoxDe, intervaloBoxAte);
 		
 		Intervalo<Integer> intervalorCota = new Intervalo<Integer>(intervaloCotaDe, intervaloCotaAte);
 		
@@ -146,12 +146,12 @@ public class GeracaoNFeController {
 		return listaTipoNotaFiscal;
 	}
 	
-	public void exportar(String intervaloBoxDe, 	  String intervaloBoxAte,
+	public void exportar(Integer intervaloBoxDe, 	  Integer intervaloBoxAte,
 			Integer intervaloCotaDe, Integer intervaloCotaAte,
 			Date intervaloDateMovimentoDe, Date intervaloDateMovimentoAte, List<Long> listIdFornecedor, List<Long> listIdProduto, Long tipoNotaFiscal,String sortname,
 			String sortorder,FileType fileType) throws IOException {
 		
-		Intervalo<String> intervaloBox = new Intervalo<String>(intervaloBoxDe, intervaloBoxAte);
+		Intervalo<Integer> intervaloBox = new Intervalo<Integer>(intervaloBoxDe, intervaloBoxAte);
 		
 		Intervalo<Integer> intervalorCota = new Intervalo<Integer>(intervaloCotaDe, intervaloCotaAte);
 		

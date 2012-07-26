@@ -36,6 +36,7 @@ public class VendaProdutoDTO implements Serializable {
 	
 	private BigDecimal precoCapa;
 	
+	private String chamadaCapa;
 	
 	private BigDecimal total;
 	
@@ -171,6 +172,20 @@ public class VendaProdutoDTO implements Serializable {
 
 	public void setEncalhe(BigDecimal encalhe) {
 		this.encalhe = encalhe;
+	}
+
+	/**
+	 * @return the chamadaCapa
+	 */
+	public String getChamadaCapa() {
+		return chamadaCapa;
+	}
+
+	/**
+	 * @param chamadaCapa the chamadaCapa to set
+	 */
+	public void setChamadaCapa(String chamadaCapa) {
+		this.chamadaCapa = (chamadaCapa != null) ? chamadaCapa : "";
 	}
 	
 	

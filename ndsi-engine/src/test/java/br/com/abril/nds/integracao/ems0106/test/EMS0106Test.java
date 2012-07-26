@@ -7,11 +7,13 @@ import br.com.abril.nds.integracao.engine.data.RouteTemplate;
 import br.com.abril.nds.integracao.test.RouteTestTemplate;
 
 public class EMS0106Test extends RouteTestTemplate {
+	
 	@Autowired
-	private EMS0106Route ems0106Route;
+	private EMS0106Route route;
 	
 	@Override
 	public RouteTemplate getRoute() {
-		return ems0106Route;
-	}	
+		return this.route;
+	}
+	
 }

@@ -4,7 +4,7 @@ package br.com.abril.nds.server.model;
 public enum FormatoIndicador {
 
 	DECIMAL(""),
-	MONETARIO("R$ #,##"),
+	MONETARIO("0.00"),
 	DATA("dd/MM/yyyy"),
 	TEXTO("");
 	

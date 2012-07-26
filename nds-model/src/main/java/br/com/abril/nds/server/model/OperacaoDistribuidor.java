@@ -7,16 +7,16 @@ import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import com.google.gson.annotations.SerializedName;
 
-import br.com.abril.nds.model.cadastro.Endereco;
-
 @Entity
-@Table(name = "DISTRIBUIDOR_SERVER")
-public class DistribuidorServer implements Serializable {
+@Table(name = "OPERACAO_DISTRIBUIDOR")
+public class OperacaoDistribuidor implements Serializable {
 
 	/**
 	 * 
@@ -26,7 +26,7 @@ public class DistribuidorServer implements Serializable {
 	@Id
 	@Column(name = "ID_DISTRIBUIDOR_INTERFACE")
 	@SerializedName("_id")
-	private Long idDistribuidorInterface;
+	private String idDistribuidorInterface;
 	
 	@Column(name = "DATA_OPERACAO")
 	private Date dataOperacao;
@@ -34,20 +34,21 @@ public class DistribuidorServer implements Serializable {
 	@Column(name = "NOME")
 	private String nome;
 	
-	@Column(name = "ENDERECO")
-	private Endereco endereco;
+	@Column(name = "UF")
+	private String uf;
 	
-	@Column(name = "STATUS_OPERACAO")
+	@OneToOne
+	@JoinColumn(name = "STATUS_OPERACAO")
 	private StatusOperacao statusOperacao;
 	
-	@OneToMany
+	@Transient
 	private List<Indicador> indicadores;
 
-	public Long getIdDistribuidorInterface() {
+	public String getIdDistribuidorInterface() {
 		return idDistribuidorInterface;
 	}
 
-	public void setIdDistribuidorInterface(Long idDistribuidorInterface) {
+	public void setIdDistribuidorInterface(String idDistribuidorInterface) {
 		this.idDistribuidorInterface = idDistribuidorInterface;
 	}
 
@@ -67,12 +68,12 @@ public class DistribuidorServer implements Serializable {
 		this.nome = nome;
 	}
 
-	public Endereco getEndereco() {
-		return endereco;
+	public String getUf() {
+		return uf;
 	}
 
-	public void setEndereco(Endereco endereco) {
-		this.endereco = endereco;
+	public void setUf(String uf) {
+		this.uf = uf;
 	}
 
 	public StatusOperacao getStatusOperacao() {

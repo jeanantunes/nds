@@ -43,17 +43,12 @@ $(function(){
 	              <td>Tipo de Box:</td>
 	              <td><select name="box.tipoBox" id="boxTipoBox" style="width:227px;">
 	                  	<option selected="selected"> </option>
-	                    <option value="SUPLEMENTAR">Suplementar</option>
-	                    <option value="RECOLHIMENTO">Recolhimento</option>
+	                    <option value="ENCALHE">Encalhe</option>
 	                    <option value="LANCAMENTO">Lan&ccedil;amento</option>
-	                    <option value="NUMEROS_ATRASADOS">NA</option>
+	                    <option value="POSTO_AVANCADO">Posto Avan&ccedilado</option>
 	             	 </select>
 	             </td>
-	            </tr>
-	            <tr>
-	              <td><label for="box.postoAvancado">Posto Avan&ccedil;ado:</label></td>
-	              <td><input type="checkbox" name="box.postoAvancado" id="boxPostoAvancado" /></td>
-	  			</tr>
+	            </tr>	           
           </table>
     </div>
 	
@@ -66,13 +61,10 @@ $(function(){
                 <td width="76">Tipo de Box:</td>
                 <td><select name="pesquisa.tipoBox" id="pesquisaTipoBox" style="width:180px;">
                 		<option selected="selected"> </option>
-	                    <option value="SUPLEMENTAR">Suplementar</option>
-	                    <option value="RECOLHIMENTO">Recolhimento</option>
+	                    <option value="ENCALHE">Encalhe</option>
 	                    <option value="LANCAMENTO">Lan&ccedil;amento</option>
-	                    <option value="NUMEROS_ATRASADOS">NA</option>
-              </select></td>               
-<!--               <td width="120"><label for="box.postoAvancado">Posto Avan&ccedil;ado:</label></td> -->
-<!-- 	          <td align="left"><input type="checkbox" name="box.postoAvancado" id="boxPostoAvancado" /></td>	          -->
+	                    <option value="POSTO_AVANCADO">Posto Avan&ccedilado</option>
+              </select></td>
               <td><span class="bt_pesquisar"><a href="javascript:;" id="btnPesquisar">Pesquisar</a></span></td>
             </tr>
           </table>

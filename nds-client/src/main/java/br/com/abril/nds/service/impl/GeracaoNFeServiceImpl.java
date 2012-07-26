@@ -17,7 +17,6 @@ import br.com.abril.nds.dto.CotaExemplaresDTO;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
-import br.com.abril.nds.model.fiscal.GrupoNotaFiscal;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.InformacaoTransporte;
 import br.com.abril.nds.model.fiscal.nota.ItemNotaFiscal;
@@ -56,7 +55,7 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 
 	@Override
 	@Transactional
-	public List<CotaExemplaresDTO> busca(Intervalo<String> intervaloBox,
+	public List<CotaExemplaresDTO> busca(Intervalo<Integer> intervaloBox,
 			Intervalo<Integer> intervalorCota,
 			Intervalo<Date> intervaloDateMovimento,
 			List<Long> listIdFornecedor, List<Long> listIdProduto, Long idTipoNotaFiscal, String sortname,
@@ -101,7 +100,7 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 	 */
 	@Override
 	@Transactional
-	public void gerarNotaFiscal(Intervalo<String> intervaloBox,
+	public void gerarNotaFiscal(Intervalo<Integer> intervaloBox,
 			Intervalo<Integer> intervalorCota,
 			Intervalo<Date> intervaloDateMovimento,
 			List<Long> listIdFornecedor, List<Long> listIdProduto,
@@ -111,8 +110,6 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 		
 		TipoNotaFiscal tipoNotaFiscal = this.tipoNotaFiscalRepository.buscarPorId(idTipoNotaFiscal);
 		
-		GrupoNotaFiscal grupoNotaFiscal = tipoNotaFiscal.getGrupoNotaFiscal();
-		
 		List<NotaFiscal> listaNotaFiscal = new ArrayList<NotaFiscal>();
 		
 		Distribuidor distribuidor = this.distribuidorRepository.obter();
@@ -121,8 +118,11 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 			
 			Cota cota = this.cotaRepository.buscarPorId(idCota);
 			
-			List<ItemNotaFiscal> listItemNotaFiscal = this.notaFiscalService.obterItensNotaFiscalPor(
-					grupoNotaFiscal, distribuidor, cota, intervaloDateMovimento, listIdFornecedor, listIdProduto);
+			List<ItemNotaFiscal> listItemNotaFiscal = this.notaFiscalService.obterItensNotaFiscalPor(distribuidor, 
+					cota, intervaloDateMovimento, listIdFornecedor, listIdProduto, tipoNotaFiscal);
+			
+			if (listItemNotaFiscal == null || listItemNotaFiscal.isEmpty()) 
+				continue;
 			
 			List<NotaFiscalReferenciada> listaNotasFiscaisReferenciadas = this.notaFiscalService.obterNotasReferenciadas(listItemNotaFiscal);
 			

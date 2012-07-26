@@ -1,387 +1,334 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/jquery.multiselect.css" />
-<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.multiselect.min.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.multiselect.br.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/emissaoCE.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
-
-<script language="javascript" type="text/javascript">
-	
-	var ECE = new EmissaoCE('${pageContext.request.contextPath}', 'ECE');
-		
-	
-	function popup_pesq_fornecedor() {
-		
-		 	$("#selectFornecedores").val(ECE.fornecedoresSelecionados);
-		
-			$( "#dialog-pesq-fornecedor" ).dialog({
-				resizable: false,
-				height:300,
-				width:500,
-				modal: true,
-				buttons: {
-					"Confirmar": function() {
-						
-						ECE.getFornecedoresSelecionados();
-						ECE.gerarFornecedoresSelecionados();
-						
-						$( this ).dialog( "close" );
-					},
-					"Cancelar": function() {
-						$( this ).dialog( "close" );
-					}
-				}
-			});
-	};
-		
-	function popup_alterar() {
-	
-		$( "#dialog-novo" ).dialog({
-			resizable: false,
-			height:210,
-			width:650,
-			modal: true,
-			buttons: {
-				"Confirmar": function() {
-					$( this ).dialog( "close" );
-					$("#effect").hide("highlight", {}, 1000, callback);
-					
-				},
-				"Cancelar": function() {
-					$( this ).dialog( "close" );
-				}
-			}
-		});	
-		      
-	};
-	
-	function popup_excluir() {
-		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
-	
-		$( "#dialog-excluir" ).dialog({
-			resizable: false,
-			height:230,
-			width:380,
-			modal: true,
-			buttons: {
-				"Confirmar": function() {
-					$( this ).dialog( "close" );
-					$("#effect").show("highlight", {}, 1000, callback);
-				},
-				"Cancelar": function() {
-					$( this ).dialog( "close" );
-				}
-			}
-		});
-	};
-	
-  //callback function to bring a hidden box back
-		function callback() {
-			setTimeout(function() {
-				$( "#effect:visible").removeAttr( "style" ).fadeOut();
-
-			}, 1000 );
-		};	
-
-	function mostrar(){
-		$(".grids").show();
-	}	
-	
-	function confirmar(){
-		$(".dados").show();
-	}
-	
-	function pesqEncalhe(){
-		$(".dadosFiltro").show();
-	}
-	
-	function removeFornecedor(){
-		$( ".forncedoresSel" ).fadeOut('fast');
-		$( ".linhaForncedoresSel" ).hide();
-	}
-	
-</script>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>NDS - Novo Distrib</title>
+<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/NDS.css" />
+<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/menu_superior.css" />
+<script language="javascript" type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/development-bundle/jquery-1.6.2.js"></script>
 <style type="text/css">
-  .dados, .dadosFiltro{display:none;}
 
-  #dialog-novo, #dialog-alterar, #dialog-excluir{display:none; font-size:12px;}
-  .box_field{width:200px;}
-  
-  #dialog-pesq-fornecedor fieldset {width:450px!important;}
-#dialog-pesq-fornecedor{display:none;}
+body{font-size:11px!important;}
+td{padding-left:3px;padding-right:3px;}
+.titulo{ color:#333; font-size:10px;!important;}
+.dadosNota{ color:#000;}
 
-.fornecedores ul{margin:0px; padding:0px;}
-.fornecedores li{display:inline; margin:0px; padding:0px;}
-  </style>
+.quebraPaginaEmissao{
+			page-break-after: always;
+			table-layout: fixed;
+		}
+
+</style>
+<script language="javascript" type="text/javascript">
+function imprimir(){
+	$( "#btImpressao" ).hide();
+	window.print();
+}
+</script>
 </head>
 
 <body>
-<form action="" method="get" id="form1" name="form1">
 
-<div id="dialog-pesq-fornecedor" title="Selecionar Fornecedor">
-<fieldset>
-	<legend>Selecione um ou mais Fornecedores</legend>
-    <select id="selectFornecedores" name="" size="1" multiple="multiple" style="width:440px; height:150px;" >
+
+<c:forEach items="${cotasEmissao}" var="cotaEmissao">
+
+<div class="quebraPaginaEmissao">
+
+<table width="850" border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td widlth="781" valign="top">
+    <table width="760" border="0" cellpadding="0" cellspacing="0" style="margin-bottom:10px; margin-top:10px;">
+  <tr>
+    <td width="121" rowspan="6" valign="top"><span class="logo"><img src="../images/logo_sistema.png" width="110" height="70" alt="Novo Distrib"  /></span></td>
+    <td height="16" colspan="4" style="border-left:1px solid #000; border-top:1px solid #000;"><span class="titulo">Razão Social<br />
+    </span></td>
+    <td width="237" align="center" style="border-left:1px solid #000;"><span class="titulo" style="font-size:13px!important;"><strong>CHAMADA DE ENCALHE</strong></span></td>
+    </tr>
+  <tr>
+    <td height="26" colspan="4" style="border-left:1px solid #000; border-bottom:1px solid #000;"><span class="dadosNota">${dadosDistribuidor.razaoSocial}</span></td>
+    <td rowspan="2" align="center" style="border-left:1px solid #000;">
       
-	      <c:forEach items="${listaFornecedores}" var="fornecedor">
-	      	<option value="${fornecedor.key}_${fornecedor.value}">${fornecedor.value}</option>
-	      </c:forEach>
-    
-    </select>
-
-</fieldset>
-</div>
-
-
-
-
-
-
-<div id="dialog-excluir" title="Suspensão de Cotas">
-	<p>Confirma a Suspensão destas Cotas?</p>
-    
-   	  <b>Motivo</b><br clear="all" />
-
-        <textarea cols="" rows="4" style="width:340px;"></textarea>
-    </fieldset>
-</div>
-
-
-
-
-
-<div id="dialog-novo" title="CE Antecipada">
-	<p>Data Antecipada:      <input name="datepickerDe" type="text" id="datepickerDe" style="width:80px;"/></p>
-	<p>Confirma a gravação dessas informações? </p>     
-</div>
-
-
-
-
-
-
-
-
-<div class="corpo">
- 
-    <div class="container">
-    
-     <div id="effect" style="padding: 0 .7em;" class="ui-state-highlight ui-corner-all"> 
-				<p><span style="float: left; margin-right: .3em;" class="ui-icon ui-icon-info"></span>
-				<b>CE Antecipada < evento > com < status >.</b></p>
-	</div>
-    	
-      <fieldset class="classFieldset">
-   	    <legend>Pesquisar CE´s</legend>
-   	    <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
+      <H3>Documento Número: ${cotaEmissao.idChamEncCota}</H3>
+      
+</td>
+    </tr>
   <tr>
-    <td nowrap="nowrap">Dt. Recolhimento:</td>
-    <td width="113">
-    
-<!-- Dt Recolhimento de -->    
-<input id="dataDe"  value="${data}" name="dtRecolhimentoDe" type="text" style="width:80px;"/></td>
-
-    <td width="28" colspan="-1" align="center">Até</td>
-    <td width="130">
-    
-<!-- Dt Recolhimento até -->
-<input id="dataAte" name="dtRecolhimentoAte" type="text" style="width:80px;"/></td>
-
-    <td>Intervalo Box:</td>
-    <td width="91">
-
-<!-- Box de -->     
-<select id="boxDe" name="jumpMenu" style="width:80px;">
-	<option selected="selected"> </option>	    
-	<c:forEach items="${listaBoxes}" var="box">
-		<option value="${box.key}">${box.value}</option>
-	</c:forEach>
-</select>
-	
-	</td>
-    <td width="22" align="center">Até</td>
-    <td width="91">
-    
-<!-- Box até --> 	
-<select id="boxAte" name="jumpMenu2" style="width:80px;">
-  	<option selected="selected"> </option>
-	<c:forEach items="${listaBoxes}" var="box">
-		<option value="${box.key}">${box.value}</option>
-	</c:forEach>
-</select>
-    
-    </td>
-    <td width="28">Cota:</td>
-    <td width="68">
-
-<!-- Cota De -->    
-<input id="cotaDe" type="text" style="width:60px;"/></td>
-
-    <td width="30" align="center">Até</td>
-    <td width="104">
-    
-<!-- Cota Até -->
-<input id="cotaAte" type="text" style="width:60px;"/></td>
-
+    <td width="172" height="15" style="border-left:1px solid #000;"><span class="titulo">Endereço<br />
+    </span></td>
+    <th width="25">&nbsp;</th>
+    <th width="75">&nbsp;</th>
+    <td width="130" align="center"><span class="titulo">CNPJ</span></td>
   </tr>
   <tr>
-    <td width="105">Roteiro:</td>
-    <td>
-    
-
-<!-- Roteiro --> 	
-<select id="roteiro"  style="width:100px;">
-    <option selected="selected"> </option>
-	<c:forEach items="${listaRoteiros}" var="roteiro">
-		<option value="${roteiro.key}">${roteiro.value}</option>
-	</c:forEach>     
-</select>
-
-	</td>
-
-    <td>Rota:</td>
-    <td>
-
-<!-- Rota --> 	
-<select id="rota" name="select" style="width:130px;">
-    <option selected="selected"> </option>
-    <c:forEach items="${listaRotas}" var="rota">
-		<option value="${rota.key}">${rota.value}</option>
-	</c:forEach>
-</select>
-    
-    </td>
-    <td width="79" align="right">
-
-<!-- Capa -->    
-<input id="capa" type="checkbox" name="checkbox" onclick="imprimiPernosalizado();" /></td>
-
-
-    <td> Capa </td>
-    <td>
-    
-<!-- Personalizada -->
-<input id="personalizada" type="checkbox" name="checkbox2" class="imprimirPersonalizada" /></td>
-
-    <td><span class="imprimirPersonalizada">Personalizada?</span></td>
-    <td align="right">&nbsp;</td>
-    <td colspan="2">&nbsp;</td>
-    <td>&nbsp;</td>
-  </tr>
+    <td colspan="2" style="border-left:1px solid #000;border-bottom:1px solid #000;"><span class="dadosNota">${dadosDistribuidor.endereco}<br />
+    </span></td>
+    <td style="border-bottom:1px solid #000;"><span class="dadosNota">    </span></td>
+    <td align="center" style="border-bottom:1px solid #000;"><span class="dadosNota">${dadosDistribuidor.cnpj}</span></td>
+    <td style="border-left:1px solid #000;">&nbsp;</td>
+    </tr>
   <tr>
-    <td>Fornecedor:</td>
-    <td colspan="2"><div style="float:left; line-height:35px; margin-right:5px;"><a href="javascript:;" onclick="popup_pesq_fornecedor();">clique para selecionar</a></div></td>
-    <td colspan="8">
-    
-<!-- Fornecedores Selecionados -->
-<div id="fornecedoresSelecionados" class="fornecedores">
-     		
-</div>
-
-	</td>
-    <td><span class="bt_pesquisar">
-    
-    
-<!-- Pesquisar -->    
-<a href="javascript:;" onclick="ECE.cliquePesquisar();">Pesquisar</a></span></td>
-
-
+    <td style="border-left:1px solid #000;"><span class="titulo">Cidade</span></td>
+    <td align="center"><span class="titulo">UF</span></td>
+    <td align="center"><span class="titulo">CEP</span></td>
+    <td align="center"><span class="titulo">Inscrição Estadual</span></td>
+    <td style="border-left:1px solid #000;">&nbsp;</td>
+    </tr>
+  <tr>
+    <td style="border-left:1px solid #000;border-bottom:1px solid #000;"><span  class="dadosNota">${dadosDistribuidor.cidade}</span></td>
+    <td align="center" style="border-bottom:1px solid #000;"><span class="dadosNota">${dadosDistribuidor.uf}</span></td>
+    <td align="center" style="border-bottom:1px solid #000;"><span class="dadosNota">${dadosDistribuidor.cep}</span></td>
+    <td align="center" style="border-bottom:1px solid #000;"><span class="dadosNota">${dadosDistribuidor.inscricaoEstatual}</span></td>
+    <td align="center" style="border-left:1px solid #000;">&nbsp;</td>
     </tr>
   </table>
+<table width="760" border="0" cellpadding="0" cellspacing="0" >
+  <tr>
+    <td height="16" colspan="4" style="border-left:1px solid #000; border-right:1px solid #000; border-top:1px solid #000;"><span class="titulo">Cliente<br />
+    </span></td>
+    <td width="144" style="border-top:1px solid #000;border-right:1px solid #000;"><span class="titulo">CNPJ</span></td>
+  </tr>
+  <tr>
+    <td height="26" colspan="4" style="border-left:1px solid #000;border-right:1px solid #000;border-bottom:1px solid #000;"><span class="dadosNota">${cotaEmissao.numCota} - ${cotaEmissao.nomeCota.toUpperCase()}</span></td>
+    <td style=" border-bottom:1px solid #000;border-right:1px solid #000;"><span class="dadosNota">${cotaEmissao.cnpj}</span></td>
+  </tr>
+  <tr>
+    <td width="376" height="15" style="border-left:1px solid #000;"><span class="titulo">Endereço  </span></td>
+    <td width="109" style="border-right:1px solid #000;border-left:1px solid #000;"><span class="titulo">Cidade</span></td>
+    <td width="50" align="center" style="border-right:1px solid #000;"><span class="titulo">UF</span></td>
+    <td width="81" align="center" style="border-right:1px solid #000;"><span class="titulo">CEP</span></td>
+    <td style="border-right:1px solid #000;"><span class="titulo">Inscrição Estadual</span></td>
+  </tr>
+  <tr>
+    <td style="border-left:1px solid #000;border-bottom:1px solid #000;"><span class="dadosNota">${cotaEmissao.endereco}</span></td>
+    <td style="border-bottom:1px solid #000;border-right:1px solid #000;border-left:1px solid #000;"><span class="dadosNota">${cotaEmissao.cidade}</span></td>
+    <td align="center" style="border-bottom:1px solid #000;border-right:1px solid #000;"><span class="dadosNota">${cotaEmissao.uf}</span></td>
+    <td align="center" style="border-bottom:1px solid #000;border-right:1px solid #000;"><span class="dadosNota">${cotaEmissao.cep}</span></td>
+    <td style="border-bottom:1px solid #000;border-right:1px solid #000;"><span class="dadosNota">${cotaEmissao.inscricaoEstadual}</span></td>
+  </tr>
+</table>
+<table width="760" border="0" cellpadding="0" cellspacing="0" style="margin-bottom:10px;">
+  <tr>
+    <td width="179" align="center" style="border-left:1px solid #000;"><span class="titulo">Data de Recolhimento</span></td>
+    <td width="161" align="center" style="border-right:1px solid #000;border-left:1px solid #000;"><span class="titulo">Data de Emissão</span></td>
+    <td width="420" style="border-right:1px solid #000;"><span class="titulo">Box / Rota</span></td>
+  </tr>
+  <tr>
+    <td align="center" style="border-left:1px solid #000;border-bottom:1px solid #000;"><span class="dadosNota">${cotaEmissao.dataRecolhimento}</span></td>
+    <td align="center" style="border-bottom:1px solid #000;border-right:1px solid #000;border-left:1px solid #000;"><span class="dadosNota">${cotaEmissao.dataEmissao}</span></td>
+    <td style="border-bottom:1px solid #000;border-right:1px solid #000;"><span class="dadosNota">Box: ${cotaEmissao.box} - Rota: ${cotaEmissao.codigoRota} - ${cotaEmissao.nomeRota}</span></td>
+  </tr>
+</table>
+<table width="760" border="0" cellpadding="0" cellspacing="0" style="margin-top:5px;">
+            <tr class="class_linha_3">
+              <td align="center" class="relatorios" style="padding-left:5px; border-left:1px solid #000; border-top:1px solid #000; border-bottom:1px solid #000;"><strong>Seq</strong></td>
+              <td class="relatorios" style="padding-left:5px; border-left:1px solid #000; border-top:1px solid #000; border-bottom:1px solid #000;"><strong>Código</strong></td>
+              <td class="relatorios" style="padding-left:5px; border-left:1px solid #000; border-top:1px solid #000; border-bottom:1px solid #000;"><strong>Produto</strong></td>
+              <td class="relatorios" style="padding-left:5px; border-left:1px solid #000; border-top:1px solid #000; border-bottom:1px solid #000;"><strong>Edição</strong></td>
+              <td class="relatorios" style="padding-left:5px; border-left:1px solid #000; border-top:1px solid #000; border-bottom:1px solid #000;border-right:1px solid #000;"><strong>Desconto</strong></td>
+              <td align="center" class="relatorios" style="padding-left:5px; border-top:1px solid #000; border-bottom:1px solid #000;border-right:1px solid #000;"><strong>TR</strong></td>
+              <td align="center" class="relatorios" style="padding-left:5px; border-top:1px solid #000; border-bottom:1px solid #000;border-right:1px solid #000;"><strong>Data Lancto</strong></td>
+              <td align="right" class="relatorios" style="padding-left:5px; border-top:1px solid #000; border-bottom:1px solid #000;border-right:1px solid #000;"><strong>Preço Desc R$</strong></td>
+              <td align="center" class="relatorios" style="padding-left:5px; border-top:1px solid #000; border-bottom:1px solid #000;"><strong>Reparte</strong></td>
+              <td align="center" class="relatorios" style="padding-left:5px; border-left:1px solid #000; border-top:1px solid #000; border-bottom:1px solid #000;border-right:1px solid #000;"><strong>Qtde. Dev</strong></td>
+  </tr>
+            <tr class="class_linha_3">
+              <td colspan="10" class="relatorios" style="padding-left:5px; border-left:1px solid #000; border-bottom:1px solid #000; border-right:1px solid #000;"><strong>Código de Barras</strong></td>
+            </tr>
+           
+           
+			<c:forEach items="${cotaEmissao.produtos}" var="produto" varStatus="status">
+           
+            <tr class="class_linha_${status.index%2==0?1:2}">
+              <td width="44" align="center" style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">${status.index+1}</td>
+              <td width="78" style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">${produto.codigoProduto}</td>
+              <td width="175" style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">${produto.nomeProduto}</td>
+              <td width="57" style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">${produto.edicao}</td>
+              <td width="62" align="right" style="border-left:1px solid #000;border-bottom:1px solid #000;border-right:1px solid #000;padding-left:5px; ">${produto.desconto}</td>
+              <td width="45" align="center" style="border-bottom:1px solid #000;border-right:1px solid #000;padding-left:5px; ">${produto.tipoRecolhimento}</td>
+              <td width="80" align="center" style="border-bottom:1px solid #000;border-right:1px solid #000;padding-left:5px; ">${produto.dataLancamento}</td>
+              <td width="82" align="right" style="border-bottom:1px solid #000;border-right:1px solid #000;padding-left:5px; ">${produto.precoComDesconto}</td>
+              <td width="67" align="center" style="border-bottom:1px solid #000;padding-left:5px; ">${produto.reparte}</td>
+              <td width="70" align="center" style="border-left:1px solid #000;border-bottom:1px solid #000;border-right:1px solid #000;padding-left:5px; ">${produto.quantidadeDevolvida}</td>
+            </tr>
+            <tr class="class_linha_${status.index%2==0?1:2}">
+              <td colspan="2" style="border-left:1px solid #000;padding-left:5px; border-bottom:1px solid #000;">${produto.codigoBarras}</td>
+              <td style="border-left:1px solid #000;padding-left:5px; border-bottom:1px solid #000;"></td>
+              <td colspan="7" style="border-left:1px solid #000;padding-left:5px; border-bottom:1px solid #000;border-right:1px solid #000;"></td>
+            </tr>
+            
+            </c:forEach>
+            
+</table>
 
-      </fieldset>
-      <div class="linha_separa_fields">&nbsp;</div>
-      
-       <fieldset class="classFieldset">
-       	  <legend> Emissão CE</legend>
-        <div class="grids" style="display:none;">
-		  <table class="ceEmissaoGrid"></table>
-		  
-		  
-		      <span class="bt_novos" title="Gerar Arquivo">
-	            
-	<!-- ARQUIVO EXCEL -->
-	<a href="${pageContext.request.contextPath}/emissaoCE/exportar?fileType=XLS">
-			
-			<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />Arquivo</a>
-			</span>
-			
-			
-			 <span class="bt_novos" title="Imprimir Arquivo">
-			
-	<!-- ARQUIVO PDF -->
-	<a href="${pageContext.request.contextPath}/emissaoCE/exportar?fileType=PDF">
-			
-			
-			<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a>
-			</span>			
 
-<span class="bt_novos" title="Imprimir"><a href="ce_modelo_1.htm" target="_blank"><img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir CE</a></span>
-        </div>
-		
-      </fieldset>
-      <div class="linha_separa_fields">&nbsp;</div>
+<table width="760" border="0" cellpadding="1" cellspacing="1">
+  <tr>
+    <td>&nbsp;</td>
+    <td align="right">&nbsp;</td>
+    <td align="right">&nbsp;</td>
+  </tr>
+  <tr>
+    <td width="430">&nbsp;</td>
+    <td width="203" align="right"><strong>Valor Reparte R$</strong></td>
+    <td width="117" align="right" style="border-bottom:1px solid #000;">${cotaEmissao.vlrReparte}</td>
+  </tr>
+  <tr>
+    <td>&nbsp;</td>
+    <td align="right"><strong> Desconto %</strong></td>
+    <td align="right" style="border-bottom:1px solid #000;">${cotaEmissao.vlrComDesconto}</td>
+  </tr>
+  <tr>
+    <td>&nbsp;</td>
+    <td align="right"><strong>Vale Reparte Líquido R$</strong></td>
+    <td align="right" style="border-bottom:1px solid #000;">${cotaEmissao.vlrReparteLiquido}</td>
+  </tr>
+  <tr>
+    <td>&nbsp;</td>
+    <td align="right"><strong>Encalhe</strong></td>
+    <td align="right" style="border-bottom:1px solid #000;">${cotaEmissao.vlrEncalhe}</td>
+  </tr>
+  <tr>
+    <td>&nbsp;</td>
+    <td align="right"><strong>Total Líquido R$</strong></td>
+    <td align="right" style="border-bottom:1px solid #000;">${cotaEmissao.vlrTotalLiquido}</td>
+  </tr>
+</table>
 
+
+
+    </td>
+    <td style="width:10px; border-left:1px dotted #000;">&nbsp;</td>
+    <td width="30" valign="top"><table width="410" border="0" cellpadding="0" cellspacing="0" style=" margin-top:10px;">
+      <tr>
+        <td height="16" colspan="4" style="border-left:1px solid #000; border-top:1px solid #000;border-right:1px solid #000;"><span class="titulo">Razão Social<br />
+        </span></td>
+        </tr>
+      <tr>
+        <td height="26" colspan="4" style="border-left:1px solid #000;border-right:1px solid #000; border-bottom:1px solid #000;"><span class="dadosNota">${dadosDistribuidor.razaoSocial}</span></td>
+        </tr>
+      <tr>
+        <td width="199" height="15" style="border-left:1px solid #000;"><span class="titulo">Endereço<br />
+        </span></td>
+        <th width="23">&nbsp;</th>
+        <th width="67">&nbsp;</th>
+        <td width="121" align="center" style="border-right:1px solid #000;"><span class="titulo">CNPJ</span></td>
+      </tr>
+      <tr>
+        <td colspan="2" style="border-left:1px solid #000;border-bottom:1px solid #000;"><span class="dadosNota">${dadosDistribuidor.endereco}<br />
+        </span></td>
+        <td style="border-bottom:1px solid #000;"><span class="dadosNota"></span></td>
+        <td align="center" style="border-bottom:1px solid #000;border-right:1px solid #000;"><span class="dadosNota">${dadosDistribuidor.cnpj}</span></td>
+        </tr>
+      <tr>
+        <td style="border-left:1px solid #000;"><span class="titulo">Cidade</span></td>
+        <td align="center"><span class="titulo">UF</span></td>
+        <td align="center"><span class="titulo">CEP</span></td>
+        <td align="center" style="border-right:1px solid #000;"><span class="titulo">Inscrição Estadual</span></td>
+        </tr>
+      <tr>
+        <td style="border-left:1px solid #000;border-bottom:1px solid #000;"><span  class="dadosNota">${dadosDistribuidor.cidade}</span></td>
+        <td align="center" style="border-bottom:1px solid #000;"><span class="dadosNota">${dadosDistribuidor.uf}</span></td>
+        <td align="center" style="border-bottom:1px solid #000;"><span class="dadosNota">${dadosDistribuidor.cep}</span></td>
+        <td align="center" style="border-bottom:1px solid #000;border-right:1px solid #000;"><span class="dadosNota">${dadosDistribuidor.inscricaoEstatual}</span></td>
+        </tr>
+    </table>
+      <table width="410" border="0" cellpadding="0" cellspacing="0" style="margin-bottom:10px;">
+        <tr>
+          <td width="207" height="24" align="center" style="border-left:1px solid #000;"><span class="titulo">Data de Recolhimento</span></td>
+          <td width="203" align="center" style="border-left:1px solid #000;border-right:1px solid #000;">Data Emissão</td>
+        </tr>
+        <tr>
+          <td height="22" align="center" style="border-left:1px solid #000;border-bottom:1px solid #000;"><span class="dadosNota">${cotaEmissao.dataRecolhimento}</span></td>
+          <td align="center" style="border-bottom:1px solid #000;border-left:1px solid #000;border-right:1px solid #000;"><span class="dadosNota">${cotaEmissao.dataEmissao}</span></td>
+        </tr>
+        <tr>
+          <td height="18" colspan="2" style="border-left:1px solid #000;border-right:1px solid #000;"><span class="titulo">Cliente</span></td>
+        </tr>
+        <tr>
+          <td colspan="2" style="border-left:1px solid #000;border-bottom:1px solid #000;border-right:1px solid #000;"><span class="dadosNota">${cotaEmissao.numCota} - ${cotaEmissao.nomeCota.toUpperCase()}</span></td>
+        </tr>
+        <tr>
+          <td height="17" colspan="2" style="border-left:1px solid #000;border-right:1px solid #000;"><span class="titulo">Box/Rota</span></td>
+        </tr>
+        <tr>
+          <td colspan="2" style="border-left:1px solid #000;border-bottom:1px solid #000;border-right:1px solid #000;"><span class="dadosNota">Box: ${cotaEmissao.box} - Rota: ${cotaEmissao.codigoRota} - ${cotaEmissao.nomeRota}</span></td>
+        </tr>
+    </table>
+      <table width="410" border="0" cellpadding="0" cellspacing="0" style="margin-top:5px;">
+        <tr class="class_linha_3">
+          <td class="relatorios" style="padding-left:5px; border-left:1px solid #000; border-top:1px solid #000; border-bottom:1px solid #000;"><strong>Seq</strong></td>
+          <td colspan="3" align="center" class="relatorios" style="padding-left:5px; border-left:1px solid #000; border-top:1px solid #000; border-bottom:1px solid #000;border-right:1px solid #000;"><strong>Produto</strong></td>
+          <td align="center" class="relatorios" style="padding-left:5px; border-top:1px solid #000; border-bottom:1px solid #000;"><strong>Reparte</strong></td>
+          <td align="center" class="relatorios" style="padding-left:5px; border-left:1px solid #000; border-top:1px solid #000; border-bottom:1px solid #000;border-right:1px solid #000;"><strong>Qtde. Dev</strong></td>
+        </tr>
+        <tr class="class_linha_3">
+          <td class="relatorios" style="padding-left:5px; border-left:1px solid #000; border-bottom:1px solid #000; "><strong>Código</strong></td>
+          <td width="67" align="left" class="relatorios" style="padding-left:5px; border-left:1px solid #000; border-bottom:1px solid #000;"><strong>Edição</strong></td>
+          <td width="67" align="right" class="relatorios" style="padding-left:5px; border-left:1px solid #000; border-bottom:1px solid #000;"><strong>Desc</strong></td>
+          <td width="126" align="right" class="relatorios" style="padding-left:5px; border-left:1px solid #000; border-bottom:1px solid #000; border-right:1px solid #000; "><strong>Preço Desc R$</strong></td>
+          <td class="relatorios" style="padding-left:5px; border-bottom:1px solid #000; ">&nbsp;</td>
+          <td class="relatorios" style="padding-left:5px; border-left:1px solid #000; border-bottom:1px solid #000; border-right:1px solid #000;">&nbsp;</td>
+        </tr>
         
-
-    
-    </div>
-</div> 
-<script>
-
-$(function(){
-	$(".ceEmissaoGrid").flexigrid({
-			colModel : [ {
-				display : 'Cota',
-				name : 'numCota',
-				width : 100,
-				sortable : true,
-				align : 'center'
-			}, {
-				display : 'Nome',
-				name : 'nomeCota',
-				width : 670,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Qtde. Exemplares',
-				name : 'qtdeExemplares',
-				width : 130,
-				sortable : true,
-				align : 'center'
-			}],
-			width : 960,
-			height : 180,
-			sortname : "nomeCota",
-			sortorder : "asc"
-		});
-	
-		$(".grids").show();
-		
-		$("#dataDe").mask("99/99/9999");
-		
-		$( "#dataDe" ).datepicker({
-			showOn: "button",
-			buttonImage: "${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
-			buttonImageOnly: true
-		});
-		
-		$("#dataAte").mask("99/99/9999");
-		
-		$( "#dataAte" ).datepicker({
-			showOn: "button",
-			buttonImage: "${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
-			buttonImageOnly: true
-		});		
-		
-		$("#cotaDe").numeric();
-		
-		$("#cotaAte").numeric();
-
-		
-		
-});
-</script>
-</form>
-
+        
+        <c:forEach items="${cotaEmissao.produtos}" var="produto" varStatus="status">
+        
+	        <tr class="class_linha_1">
+	          <td width="89" style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">${status.index+1}</td>
+	          <td colspan="3" style="border-left:1px solid #000;border-bottom:1px solid #000;border-right:1px solid #000;padding-left:5px; ">${produto.nomeProduto}</td>
+	          <td width="61" align="center" style="border-bottom:1px solid #000;padding-left:5px; ">${produto.reparte}</td>
+	          <td width="67" align="center" style="border-left:1px solid #000;border-bottom:1px solid #000;border-right:1px solid #000;padding-left:5px; ">${produto.quantidadeDevolvida}</td>
+	        </tr>
+	        <tr class="class_linha_1">
+	          <td style="border-left:1px solid #000;padding-left:5px; border-bottom:1px solid #000;">${produto.codigoProduto}</td>
+	          <td style="border-left:1px solid #000;padding-left:5px; border-bottom:1px solid #000;">${produto.edicao}</td>
+	          <td align="right" style="border-left:1px solid #000;padding-left:5px; border-bottom:1px solid #000;">${produto.desconto}</td>
+	          <td align="right" style="border-left:1px solid #000;padding-left:5px; border-bottom:1px solid #000;border-right:1px solid #000;">${produto.precoComDesconto}</td>
+	          <td align="center" style="padding-left:5px; border-bottom:1px solid #000;">&nbsp;</td>
+	          <td align="center" style="border-left:1px solid #000;padding-left:5px; border-bottom:1px solid #000;border-right:1px solid #000;">&nbsp;</td>
+	        </tr>
+               
+        </c:forEach>
+        
+    </table>
+      <table width="410" border="0" cellpadding="1" cellspacing="1">
+  <tr>
+    <td>&nbsp;</td>
+    <td align="right">&nbsp;</td>
+    <td align="right">&nbsp;</td>
+  </tr>
+  <tr>
+    <td width="430">&nbsp;</td>
+    <td width="203" align="right"><strong>Valor Reparte R$</strong></td>
+    <td width="117" align="right" style="border-bottom:1px solid #000;">${cotaEmissao.vlrReparte}</td>
+  </tr>
+  <tr>
+    <td>&nbsp;</td>
+    <td align="right"><strong> Desconto %</strong></td>
+    <td align="right" style="border-bottom:1px solid #000;">${cotaEmissao.vlrComDesconto}</td>
+  </tr>
+  <tr>
+    <td>&nbsp;</td>
+    <td align="right"><strong>Vale Reparte Líquido R$</strong></td>
+    <td align="right" style="border-bottom:1px solid #000;">${cotaEmissao.vlrReparteLiquido}</td>
+  </tr>
+  <tr>
+    <td>&nbsp;</td>
+    <td align="right"><strong>Encalhe</strong></td>
+    <td align="right" style="border-bottom:1px solid #000;">${cotaEmissao.vlrEncalhe}</td>
+  </tr>
+  <tr>
+    <td>&nbsp;</td>
+    <td align="right"><strong>Total Líquido R$</strong></td>
+    <td align="right" style="border-bottom:1px solid #000;">${cotaEmissao.vlrTotalLiquido}</td>
+  </tr>
+</table>
+       
+       </td>
+  </tr>
+</table>
+<br/><br/><br/><br/><br/><br/>
+</div>
+</c:forEach>
 </body>
+</html>

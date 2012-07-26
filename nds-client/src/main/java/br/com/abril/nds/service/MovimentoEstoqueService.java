@@ -28,7 +28,7 @@ public interface MovimentoEstoqueService {
 	
 	MovimentoEstoque gerarMovimentoEstoque(Long idProdutoEdicao, Long idUsuario, BigDecimal quantidade,TipoMovimentoEstoque tipoMovimentoEstoque);
 
-	void processarRegistroHistoricoVenda(HistoricoVendaInput vendaInput, Long idUsuario);
+	void processarRegistroHistoricoVenda(HistoricoVendaInput vendaInput);
 
 
 }

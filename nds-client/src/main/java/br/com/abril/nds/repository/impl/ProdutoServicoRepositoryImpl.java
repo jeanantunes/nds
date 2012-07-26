@@ -28,7 +28,7 @@ public class ProdutoServicoRepositoryImpl extends AbstractRepositoryModel<Produt
 			for (ItemNotaFiscal itemNotaFiscal : listItemNotaFiscal) {
 			
 				produtoServico.setListaMovimentoEstoqueCota(itemNotaFiscal.getListaMovimentoEstoqueCota());
-				merge(produtoServico);
+		        merge(produtoServico);
 			}
 		}
 		

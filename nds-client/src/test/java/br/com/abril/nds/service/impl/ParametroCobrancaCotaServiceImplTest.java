@@ -87,7 +87,7 @@ public class ParametroCobrancaCotaServiceImplTest extends AbstractRepositoryImpl
 		PessoaFisica pessoaFisica = Fixture.pessoaFisica("123.456.789-00","sys.discover@gmail.com", "Cota da Silva");
 		save(pessoaFisica);
 		
-		Box box = Fixture.criarBox("300", "Box 300", TipoBox.LANCAMENTO, false);
+		Box box = Fixture.criarBox(300, "Box 300", TipoBox.LANCAMENTO);
 		save(box);
 		
 		Cota cota = Fixture.cota(1000, pessoaFisica, SituacaoCadastro.ATIVO,box);

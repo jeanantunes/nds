@@ -98,12 +98,12 @@ public class BancoServiceImpl implements BancoService {
 			bancoVO.setIdBanco(banco.getId());
 			bancoVO.setNumero(banco.getNumeroBanco());
 			bancoVO.setNome(banco.getNome());
+			bancoVO.setApelido(banco.getApelido());
 			bancoVO.setCodigoCedente(banco.getCodigoCedente());
 			bancoVO.setAgencia(banco.getAgencia());
 			bancoVO.setConta(banco.getConta());
 			bancoVO.setDigito(banco.getDvConta());
-			bancoVO.setMoeda(banco.getMoeda());
-			bancoVO.setCodigoCarteira(banco.getCarteira().getCodigo());
+			bancoVO.setCodigoCarteira(banco.getCarteira()!=null?banco.getCarteira().getCodigo():0);
 			bancoVO.setJuros(banco.getJuros());
 			bancoVO.setAtivo(banco.isAtivo());
 			bancoVO.setMulta(banco.getMulta());
@@ -203,7 +203,7 @@ public class BancoServiceImpl implements BancoService {
 		List<ItemDTO<Integer,String>> comboBancos =  new ArrayList<ItemDTO<Integer,String>>();
 		List<Banco> bancos = bancoRepository.buscarTodos();
 		for (Banco itemBanco : bancos){
-			comboBancos.add(new ItemDTO<Integer,String>(itemBanco.getId().intValue(), itemBanco.getNumeroBanco()+"-"+itemBanco.getNome()+" "+itemBanco.getConta()+"-"+itemBanco.getDvConta()));
+			comboBancos.add(new ItemDTO<Integer,String>(itemBanco.getId().intValue(), itemBanco.getNumeroBanco()+"-"+itemBanco.getApelido()+" "+itemBanco.getConta()+"-"+itemBanco.getDvConta()));
 		}
 		return comboBancos;
 	}

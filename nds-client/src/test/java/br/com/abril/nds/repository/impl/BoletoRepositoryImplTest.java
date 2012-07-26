@@ -63,7 +63,7 @@ public class BoletoRepositoryImplTest extends AbstractRepositoryImplTest  {
 		save(pessoaJuridica);
 		
 		//CRIA UM OBJETO BOX NA SESSAO PARA TESTES
-		Box box = Fixture.criarBox("300", "Box 300", TipoBox.LANCAMENTO, false);
+		Box box = Fixture.criarBox(300, "Box 300", TipoBox.LANCAMENTO);
 		save(box);
 		
 		//CRIA UM OBJETO COTA NA SESSAO PARA TESTES
@@ -72,7 +72,7 @@ public class BoletoRepositoryImplTest extends AbstractRepositoryImplTest  {
 		
 		
 		Banco bancoHSBC = Fixture.banco(10L, true, null, "1010",
-				  			  		123456L, "1", "1", "Instruções.", Moeda.REAL, "HSBC", "399", BigDecimal.ZERO, BigDecimal.ZERO);
+				  			  		123456L, "1", "1", "Instruções.", "HSBC","BANCO HSBC", "399", BigDecimal.ZERO, BigDecimal.ZERO);
 		save(bancoHSBC);
 		
 		
