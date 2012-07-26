@@ -23,9 +23,9 @@ public interface TipoNotaFiscalRepository extends Repository<TipoNotaFiscal, Lon
 
 	List<TipoNotaFiscal> obterTiposNotasFiscaisPorTipoAtividadeDistribuidor(TipoAtividade tipoAtividade);
 	/**
-	 * Obtém tipos de notas fiscais de cotas não contribuintes por tipo de atividade parametrizdo.
+	 * Obtem tipos de notas fiscais de cotas nao contribuintes por tipo de atividade parametrizdo.
 	 * 
-	 * @param tipoAtividade Mercantil ou Prestador de Serviços
+	 * @param tipoAtividade Mercantil ou Prestador de Servicos
 	 * @return lista tipo nota fiscal
 	 */
 	public List<TipoNotaFiscal> obterTiposNotasFiscaisCotasNaoContribuintesPor(TipoAtividade tipoAtividade);
