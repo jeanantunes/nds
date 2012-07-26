@@ -2,6 +2,7 @@ package br.com.abril.nds.model.fiscal.nota;
 
 import java.io.Serializable;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -14,6 +15,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinColumns;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
 
 import br.com.abril.nds.util.TipoSecao;
 import br.com.abril.nds.util.export.fiscal.nota.NFEExportType;
@@ -33,7 +35,7 @@ public abstract class EncargoFinanceiro implements Serializable {
 	@Column(name = "ID")
 	private Long id;
 	
-	@OneToOne
+	@OneToOne(cascade=CascadeType.ALL)
 	@JoinColumns({
         @JoinColumn(name="NOTA_FISCAL_ID", referencedColumnName="NOTA_FISCAL_ID"),
         @JoinColumn(name="PRODUTO_SERVICO_SEQUENCIA", referencedColumnName="SEQUENCIA")
