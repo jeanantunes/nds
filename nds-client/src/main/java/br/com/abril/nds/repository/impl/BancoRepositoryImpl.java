@@ -95,8 +95,8 @@ public class BancoRepositoryImpl extends AbstractRepositoryModel<Banco,Long> imp
 				case CEDENTE_BANCO:
 					hql.append(" order by b.codigoCedente ");
 					break;
-				case MOEDA_BANCO:
-					hql.append(" order by b.moeda ");
+				case APELIDO_BANCO:
+					hql.append(" order by b.apelido ");
 					break;
 				case CARTEIRA_BANCO:
 					hql.append(" order by b.carteira.tipoRegistroCobranca ");

@@ -1251,10 +1251,6 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		
 		List<MovimentoEstoqueCota> result = new ArrayList<MovimentoEstoqueCota>();
 		
-		boolean aposPeriodoConferencia = GrupoNotaFiscal.NF_DEVOLUCAO_REMESSA_CONSIGNACAO.equals(grupoNotaFiscal) 
-				|| GrupoNotaFiscal.NF_DEVOLUCAO_SIMBOLICA.equals(grupoNotaFiscal) 
-				|| GrupoNotaFiscal.NF_VENDA.equals(grupoNotaFiscal);
-		
 		int qtdeIteracao = 
 				(GrupoNotaFiscal.NF_DEVOLUCAO_SIMBOLICA.equals(grupoNotaFiscal) 
 						|| GrupoNotaFiscal.NF_VENDA.equals(grupoNotaFiscal)) 

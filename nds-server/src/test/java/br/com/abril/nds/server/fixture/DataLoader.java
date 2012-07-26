@@ -55,7 +55,7 @@ public class DataLoader {
 	private static void mock(Session session) {
 
  		OperacaoDistribuidor distribuidorServer = new OperacaoDistribuidor();
-		distribuidorServer.setIdDistribuidorInterface(1L);
+		distribuidorServer.setIdDistribuidorInterface("1");
 		distribuidorServer.setNome("teste 0001");
 		StatusOperacao statusOperacao = new StatusOperacao();
 		statusOperacao.setStatus(Status.FECHAMENTO);
@@ -85,7 +85,7 @@ public class DataLoader {
 		indicador.setGrupoIndicador(GrupoIndicador.LANCAMENTO);
 		indicador.setId(1L);
 		indicador.setTipoIndicador(TipoIndicador.JORNALEIROS);
-		indicador.setValor("R$ 123.987");
+		indicador.setValor("123.987");
 		indicador.setDistribuidor(distribuidorServer);
 		indicadores.add(indicador);
 		session.save(indicador);
@@ -93,7 +93,7 @@ public class DataLoader {
 		indicador = new Indicador();
 
 		indicador.setData(new Date());
-		indicador.setFormatoIndicador(FormatoIndicador.TEXTO);
+		indicador.setFormatoIndicador(FormatoIndicador.MONETARIO);
 		indicador.setGrupoIndicador(GrupoIndicador.FINANCEIRO);
 		indicador.setId(1L);
 		indicador.setTipoIndicador(TipoIndicador.JORNALEIROS);
@@ -109,7 +109,7 @@ public class DataLoader {
 		// -------------------------------------//
 
 		distribuidorServer = new OperacaoDistribuidor();
-		distribuidorServer.setIdDistribuidorInterface(2L);
+		distribuidorServer.setIdDistribuidorInterface("2");
 		distribuidorServer.setNome("distrib 2");
 		statusOperacao = new StatusOperacao();
 		statusOperacao.setStatus(Status.OPERANDO);
@@ -147,7 +147,7 @@ public class DataLoader {
 		indicador = new Indicador();
 
 		indicador.setData(new Date());
-		indicador.setFormatoIndicador(FormatoIndicador.TEXTO);
+		indicador.setFormatoIndicador(FormatoIndicador.MONETARIO);
 		indicador.setGrupoIndicador(GrupoIndicador.FINANCEIRO);
 		indicador.setId(2L);
 		indicador.setTipoIndicador(TipoIndicador.JORNALEIROS);
@@ -163,7 +163,7 @@ public class DataLoader {
 		// -------------------------------------//
 
 		distribuidorServer = new OperacaoDistribuidor();
-		distribuidorServer.setIdDistribuidorInterface(3L);
+		distribuidorServer.setIdDistribuidorInterface("3");
 		distribuidorServer.setNome("distrib 33");
 		statusOperacao = new StatusOperacao();
 		statusOperacao.setStatus(Status.ENCERRADO);
@@ -201,7 +201,7 @@ public class DataLoader {
 		indicador = new Indicador();
 
 		indicador.setData(new Date());
-		indicador.setFormatoIndicador(FormatoIndicador.TEXTO);
+		indicador.setFormatoIndicador(FormatoIndicador.MONETARIO);
 		indicador.setGrupoIndicador(GrupoIndicador.FINANCEIRO);
 		indicador.setId(2L);
 		indicador.setTipoIndicador(TipoIndicador.JORNALEIROS);
@@ -217,7 +217,7 @@ public class DataLoader {
 		// -------------------------------------//
 
 		distribuidorServer = new OperacaoDistribuidor();
-		distribuidorServer.setIdDistribuidorInterface(4L);
+		distribuidorServer.setIdDistribuidorInterface("4");
 		distribuidorServer.setNome("la longe");
 		statusOperacao = new StatusOperacao();
 		statusOperacao.setStatus(Status.ENCERRADO);
@@ -255,7 +255,7 @@ public class DataLoader {
 		indicador = new Indicador();
 
 		indicador.setData(new Date());
-		indicador.setFormatoIndicador(FormatoIndicador.TEXTO);
+		indicador.setFormatoIndicador(FormatoIndicador.MONETARIO);
 		indicador.setGrupoIndicador(GrupoIndicador.FINANCEIRO);
 		indicador.setId(2L);
 		indicador.setTipoIndicador(TipoIndicador.JORNALEIROS);

@@ -11,7 +11,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -339,6 +338,11 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		ParametroSistema pathNFEExportacao = this.parametroSistemaService
 				.buscarParametroPorTipoParametro(TipoParametroSistema.PATH_INTERFACE_NFE_EXPORTACAO);
 
+		if (pathNFEExportacao == null) {
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING,
+					"Informe o diretório de exportação das notas na tela de paramestros do sistema"));
+		}
+		
 		File diretorioExportacaoNFE = new File(pathNFEExportacao.getValor());
 
 		if (!diretorioExportacaoNFE.isDirectory()) {
@@ -560,6 +564,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		produtoServico.setNcm(produtoEdicao.getProduto().getTipoProduto().getNcm().getCodigo());
 		produtoServico.setProdutoEdicao(produtoEdicao);
 		produtoServico.setQuantidade(quantidade);
+		produtoServico.setValorUnitario(valorItem);
 		produtoServico.setUnidade(produtoEdicao.getProduto().getTipoProduto().getNcm().getUnidadeMedida());
 		produtoServico.setValorDesconto(produtoEdicao.getDesconto());
 		produtoServico.setCfop(cfop);
@@ -666,7 +671,6 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 				
 				informacaoValoresTotais.setValorCOFINS(soma(informacaoValoresTotais.getValorCOFINS(),cofins.getValor()));
 				
-				
 			}
 		}
 		
@@ -674,6 +678,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		
 		notaFiscal.setInformacaoAdicional(informacaoAdicional);
 		
+		notaFiscal.setStatusProcessamentoInterno(StatusProcessamentoInterno.GERADA);
 		
 		return notaFiscalDAO.adicionar(notaFiscal);
 	
@@ -700,19 +705,24 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 
 		case NF_DEVOLUCAO_REMESSA_CONSIGNACAO:
 			
-			if (!cota.getParametrosCotaNotaFiscalEletronica().getEmiteNotaFiscalEletronica()) {
-				itensNotaFiscal = this.obterItensNFeEntradaDevolucaoRemessaConsignacao(
+			if (cota.getParametrosCotaNotaFiscalEletronica() != null) {
+			
+				if (!cota.getParametrosCotaNotaFiscalEletronica().getEmiteNotaFiscalEletronica()) {
+					itensNotaFiscal = this.obterItensNFeEntradaDevolucaoRemessaConsignacao(
 						distribuidor, idCota, periodo, listaIdFornecedores, listaIdProdutos, grupoNotaFiscal);
-
+				}
 			}
 			
 			break;
 
 		case NF_DEVOLUCAO_SIMBOLICA:
 			
-			if (!cota.getParametrosCotaNotaFiscalEletronica().getEmiteNotaFiscalEletronica()) {
-				itensNotaFiscal = this.obterItensNFeVenda(distribuidor, idCota, periodo, listaIdFornecedores, listaIdProdutos, GrupoNotaFiscal.NF_VENDA);
+			if (cota.getParametrosCotaNotaFiscalEletronica() != null) {
+				if (!cota.getParametrosCotaNotaFiscalEletronica().getEmiteNotaFiscalEletronica()) {
+					itensNotaFiscal = this.obterItensNFeVenda(distribuidor, idCota, periodo, listaIdFornecedores, listaIdProdutos, GrupoNotaFiscal.NF_VENDA);
+				}
 			}
+			
 			break;
 
 		case NF_VENDA:
@@ -745,7 +755,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		
 		List<ItemNotaFiscal> listaItemNotaFiscal = null;
 		if (listaMovimentoEstoqueCota != null && !listaMovimentoEstoqueCota.isEmpty()) {
-			listaItemNotaFiscal = (List<ItemNotaFiscal>) this.gerarItensNotaFiscal(listaMovimentoEstoqueCota);
+			listaItemNotaFiscal = this.gerarItensNotaFiscal(listaMovimentoEstoqueCota);
 		}
 		return listaItemNotaFiscal;
 	}
@@ -771,7 +781,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		
 		List<ItemNotaFiscal> listaItemNotaFiscal = null;
 		if (listaMovimentoEstoqueCota != null && !listaMovimentoEstoqueCota.isEmpty()) {
-			listaItemNotaFiscal = (List<ItemNotaFiscal>) this.gerarItensNotaFiscal(listaMovimentoEstoqueCota);
+			listaItemNotaFiscal = this.gerarItensNotaFiscal(listaMovimentoEstoqueCota);
 		}
 		
 		return listaItemNotaFiscal;
@@ -820,7 +830,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 	 * @param listaMovimentoEstoqueCota
 	 * @return
 	 */
-	private Collection<ItemNotaFiscal> gerarItensNotaFiscal(List<MovimentoEstoqueCota> listaMovimentoEstoqueCota) {
+	private List<ItemNotaFiscal> gerarItensNotaFiscal(List<MovimentoEstoqueCota> listaMovimentoEstoqueCota) {
 		
 		Map<Long, ItemNotaFiscal> mapItemNotaFiscal = new HashMap<Long, ItemNotaFiscal>();
 		
@@ -854,7 +864,11 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 			ItemNotaFiscal itemNotaFiscal = new ItemNotaFiscal();
 			
 			itemNotaFiscal.setIdProdutoEdicao(produtoEdicao.getId());
-			itemNotaFiscal.setCstICMS(produtoEdicao.getProduto().getTributacaoFiscal().getCST());
+			
+			if (produtoEdicao.getProduto().getTributacaoFiscal() != null) {
+				itemNotaFiscal.setCstICMS(produtoEdicao.getProduto().getTributacaoFiscal().getCST());
+			}
+			
 			itemNotaFiscal.setQuantidade(quantidade);
 			itemNotaFiscal.setValorUnitario(valorUnitario);
 			itemNotaFiscal.setListaMovimentoEstoqueCota(listaMovimentoEstoqueItem);
@@ -862,7 +876,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 			mapItemNotaFiscal.put(produtoEdicao.getId(), itemNotaFiscal);
 		}
 		
-		return mapItemNotaFiscal.values();
+		return new ArrayList<ItemNotaFiscal>(mapItemNotaFiscal.values());
 	}
 	
 	/**
@@ -959,7 +973,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 			}
 		}
 		
-		return (List<NotaFiscalReferenciada>) notaFiscalReferenciada;
+		return new ArrayList<NotaFiscalReferenciada>(notaFiscalReferenciada);
 	}
 	
 	/* (non-Javadoc)

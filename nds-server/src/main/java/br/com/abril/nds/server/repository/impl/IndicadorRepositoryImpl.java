@@ -27,7 +27,7 @@ public class IndicadorRepositoryImpl extends AbstractRepositoryModel<Indicador, 
 		Criteria criteria = this.getSession().createCriteria(Indicador.class);
 		criteria.add(Restrictions.eq("data", new Date()));
 		
-		criteria.createAlias("distribuidor", "distribuidor");
+		criteria.createAlias("operacaoDistribuidor", "distribuidor");
 		
 		criteria.addOrder(Order.asc("distribuidor.uf"));
 		criteria.addOrder(Order.asc("distribuidor.idDistribuidorInterface"));

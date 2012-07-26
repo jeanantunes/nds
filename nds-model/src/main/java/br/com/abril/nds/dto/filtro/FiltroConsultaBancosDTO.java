@@ -97,7 +97,7 @@ public class FiltroConsultaBancosDTO implements Serializable {
 		AGENCIA_BANCO("agencia"),
 		CONTA_CORRENTE_BANCO("contaCorrente"),
 		CEDENTE_BANCO("cedente"),
-		MOEDA_BANCO("moeda"),
+		APELIDO_BANCO("apelido"),
 		CARTEIRA_BANCO("carteira"),
 		ATIVO_BANCO("status");
 		

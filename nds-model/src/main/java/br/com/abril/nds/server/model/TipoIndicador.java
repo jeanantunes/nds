@@ -21,7 +21,8 @@ public enum TipoIndicador {
 	SOBRAS_DE("Sobras De", 0),
 	SOBRAS_EM("Sobras Em", 1),
 	FALTAS_DE("Faltas De", 2),
-	FALTAS_EM("Faltas Em", 3);
+	FALTAS_EM("Faltas Em", 3),
+	LIQUIDACAO("Liquidação", 5);
 	
 	private String descricao;
 	

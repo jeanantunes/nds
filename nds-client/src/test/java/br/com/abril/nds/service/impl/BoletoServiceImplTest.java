@@ -77,7 +77,7 @@ public class BoletoServiceImplTest  extends AbstractRepositoryImplTest {
 		save(carteiraSemRegistro);
 		
 		Banco bancoHSBC = Fixture.banco(10L, true, carteiraSemRegistro, "1010",
-			  							123456L, "1", "1", "Instruções.", Moeda.REAL, "HSBC", "399", BigDecimal.ZERO, BigDecimal.ZERO);
+			  							123456L, "1", "1", "Instruções.", "HSBC","BANCO HSBC", "399", BigDecimal.ZERO, BigDecimal.ZERO);
 		save(bancoHSBC);
 		
 		PessoaJuridica pessoaJuridica = Fixture.pessoaJuridica("LH", "01.001.001/001-00", "000.000.000.00", "lh@mail.com", "99.999-9");

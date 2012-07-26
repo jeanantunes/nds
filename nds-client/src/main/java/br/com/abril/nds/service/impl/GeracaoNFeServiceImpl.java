@@ -124,6 +124,9 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 			List<ItemNotaFiscal> listItemNotaFiscal = this.notaFiscalService.obterItensNotaFiscalPor(
 					grupoNotaFiscal, distribuidor, cota, intervaloDateMovimento, listIdFornecedor, listIdProduto);
 			
+			if (listItemNotaFiscal == null || listItemNotaFiscal.isEmpty()) 
+				continue;
+			
 			List<NotaFiscalReferenciada> listaNotasFiscaisReferenciadas = this.notaFiscalService.obterNotasReferenciadas(listItemNotaFiscal);
 			
 			InformacaoTransporte transporte = this.notaFiscalService.obterTransporte(idCota);
@@ -133,7 +136,7 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 			
 			NotaFiscal notaFiscal = this.notaFiscalRepository.buscarPorId(idNotaFiscal);
 			
-			this.produtoServicoRepository.atualizarProdutosQuePossuemNota(notaFiscal.getProdutosServicos(), listItemNotaFiscal);
+			//this.produtoServicoRepository.atualizarProdutosQuePossuemNota(notaFiscal.getProdutosServicos(), listItemNotaFiscal);
 			
 			listaNotaFiscal.add(notaFiscal);
 		}

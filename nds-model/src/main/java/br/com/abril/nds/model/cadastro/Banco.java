@@ -5,8 +5,6 @@ import java.math.BigDecimal;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -32,6 +30,8 @@ public class Banco implements Serializable {
 	private String numeroBanco;
 	@Column(name = "NOME", nullable = false)
 	private String nome;
+	@Column(name = "APELIDO", nullable = false)
+	private String apelido;
 	@Column(name = "AGENCIA", nullable = false)
 	private Long agencia;
 	@Column(name = "DV_AGENCIA")
@@ -45,9 +45,6 @@ public class Banco implements Serializable {
 	@ManyToOne
 	@JoinColumn(name = "CARTEIRA_ID")
 	private Carteira carteira;
-	@Column(name = "MOEDA", nullable = false)
-	@Enumerated(EnumType.STRING)
-	private Moeda moeda;
 	@Column(name = "ATIVO", nullable = false)
 	private boolean ativo;
 	@Column(name = "INSTRUCOES", nullable = false)
@@ -82,7 +79,15 @@ public class Banco implements Serializable {
 	public void setNome(String nome) {
 		this.nome = nome;
 	}
-	
+
+	public String getApelido() {
+		return apelido;
+	}
+
+	public void setApelido(String apelido) {
+		this.apelido = apelido;
+	}
+
 	public Long getAgencia() {
 		return agencia;
 	}
@@ -129,14 +134,6 @@ public class Banco implements Serializable {
 	
 	public void setCarteira(Carteira carteira) {
 		this.carteira = carteira;
-	}
-	
-	public Moeda getMoeda() {
-		return moeda;
-	}
-	
-	public void setMoeda(Moeda moeda) {
-		this.moeda = moeda;
 	}
 	
 	public boolean isAtivo() {
