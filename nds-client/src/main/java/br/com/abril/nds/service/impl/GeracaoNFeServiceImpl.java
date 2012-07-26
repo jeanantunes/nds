@@ -136,7 +136,7 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 			
 			NotaFiscal notaFiscal = this.notaFiscalRepository.buscarPorId(idNotaFiscal);
 			
-			this.produtoServicoRepository.atualizarProdutosQuePossuemNota(notaFiscal.getProdutosServicos(), listItemNotaFiscal);
+			//this.produtoServicoRepository.atualizarProdutosQuePossuemNota(notaFiscal.getProdutosServicos(), listItemNotaFiscal);
 			
 			listaNotaFiscal.add(notaFiscal);
 		}
