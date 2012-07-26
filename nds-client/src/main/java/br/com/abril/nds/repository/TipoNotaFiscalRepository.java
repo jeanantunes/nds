@@ -19,5 +19,6 @@ public interface TipoNotaFiscalRepository extends Repository<TipoNotaFiscal, Lon
 	public List<TipoNotaFiscal> obterTiposNotasFiscais(String cfop, String tipoNota, TipoAtividade tipoAtividade, String orderBy, Ordenacao ordenacao, Integer initialResult, Integer maxResults);
 
 	public Long obterQuantidadeTiposNotasFiscais(String cfop, String tipoNota, TipoAtividade tipoAtividade);
-	
+
+	List<TipoNotaFiscal> obterTiposNotasFiscaisPorTipoAtividadeDistribuidor(TipoAtividade tipoAtividade);
 }
