@@ -96,7 +96,33 @@ public class DataLoader {
 		indicador.setFormatoIndicador(FormatoIndicador.MONETARIO);
 		indicador.setGrupoIndicador(GrupoIndicador.FINANCEIRO);
 		indicador.setId(1L);
-		indicador.setTipoIndicador(TipoIndicador.JORNALEIROS);
+		indicador.setTipoIndicador(TipoIndicador.INADIMPLENCIA);
+		indicador.setValor("123");
+		indicador.setDistribuidor(distribuidorServer);
+		session.save(indicador);
+		indicadores.add(indicador);
+		
+		indicador = new Indicador();
+
+		indicador.setData(new Date());
+		indicador.setFormatoIndicador(FormatoIndicador.MONETARIO);
+		indicador.setGrupoIndicador(GrupoIndicador.FINANCEIRO);
+		indicador.setId(1L);
+		indicador.setTipoIndicador(TipoIndicador.LIQUIDACAO);
+		indicador.setValor("10");
+		indicador.setDistribuidor(distribuidorServer);
+		session.save(indicador);
+		indicadores.add(indicador);
+
+		distribuidorServer.setIndicadores(indicadores);
+		
+		indicador = new Indicador();
+
+		indicador.setData(new Date());
+		indicador.setFormatoIndicador(FormatoIndicador.MONETARIO);
+		indicador.setGrupoIndicador(GrupoIndicador.FINANCEIRO);
+		indicador.setId(1L);
+		indicador.setTipoIndicador(TipoIndicador.INADIMPLENCIA_ACUMULADA);
 		indicador.setValor("123");
 		indicador.setDistribuidor(distribuidorServer);
 		session.save(indicador);

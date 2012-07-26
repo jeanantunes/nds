@@ -2,6 +2,7 @@ package br.com.abril.nds.server.model;
 
 public enum TipoIndicador {
 
+	LIQUIDACAO("Liquidação", 5),
 	TITULOS_LANCADOS("Títulos Lançados no Dia", 0),
 	TITULOS_FURADOS("Títulos Furados no Dia", 1),
 	CONSIGNADO("Consignado no Dia", 2),
@@ -21,8 +22,7 @@ public enum TipoIndicador {
 	SOBRAS_DE("Sobras De", 0),
 	SOBRAS_EM("Sobras Em", 1),
 	FALTAS_DE("Faltas De", 2),
-	FALTAS_EM("Faltas Em", 3),
-	LIQUIDACAO("Liquidação", 5);
+	FALTAS_EM("Faltas Em", 3);
 	
 	private String descricao;
 	

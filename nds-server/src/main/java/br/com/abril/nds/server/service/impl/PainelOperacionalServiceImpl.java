@@ -33,6 +33,10 @@ public class PainelOperacionalServiceImpl implements PainelOperacionalService{
 		List<OperacaoDistribuidor> distribuidores = new ArrayList<OperacaoDistribuidor>();
 		OperacaoDistribuidor ultimoDistribuidor = null;
 		
+		BigDecimal qtdTotalJornaleiros = null;
+		BigDecimal cobrancaDia = null;
+		BigDecimal partLiq = null;
+		
 		for (Indicador indicador : indicadores){
 			
 			if (!indicador.getDistribuidor().equals(ultimoDistribuidor)){
@@ -57,9 +61,6 @@ public class PainelOperacionalServiceImpl implements PainelOperacionalService{
 				break;
 			}
 			
-			BigDecimal qtdTotalJornaleiros = null;
-			BigDecimal cobrancaDia = null;
-			BigDecimal partLiq = null;
 			switch (indicador.getTipoIndicador()) {
 				case JORNALEIROS:
 					
@@ -93,14 +94,14 @@ public class PainelOperacionalServiceImpl implements PainelOperacionalService{
 						
 						BigDecimal pctc = cobrancaDia.multiply(new BigDecimal(indicador.getValor()).divide(CEM));
 						
-						indicador.setValor(indicador.getValor() + " - (" + pctc.setScale(0) + "%)");
+						indicador.setValor(indicador.getValor() + " - (" + pctc.setScale(0, RoundingMode.HALF_EVEN) + "%)");
 					} else if (TipoIndicador.INADIMPLENCIA.equals(indicador.getTipoIndicador())){
 						
 						BigDecimal valorInd = new BigDecimal(indicador.getValor());
 						
 						BigDecimal pctPartLiqui = valorInd.multiply(partLiq).divide(CEM);
 						
-						indicador.setValor(indicador.getValor() + " - (" + pctPartLiqui.setScale(0) + "%)");
+						indicador.setValor(indicador.getValor() + " - (" + pctPartLiqui.setScale(0, RoundingMode.HALF_EVEN) + "%)");
 					}
 				break;
 			}
