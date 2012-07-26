@@ -207,7 +207,7 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 		hql.append("SELECT new ") .append(ExpedicaoDTO.class.getCanonicalName()) 
 			.append(" ( ") 
 						.append("box.id,")
-						.append("box.codigo,")
+						.append("box.codigo || '-'|| box.nome,")
 						.append("box.nome,")
 						.append(" SUM (produtoEdicao.precoVenda ) as totalVendas,")
 						.append(" SUM (estudoCota.qtdeEfetiva) as qntReparte,")

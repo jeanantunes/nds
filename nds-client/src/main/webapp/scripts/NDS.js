@@ -141,6 +141,26 @@ function removeSpecialCharacteres(value, extraCharacteres) {
 	return value; 
 }
 
+/**
+ * recebe uma data e retorna uma string no formato dd/MM/AAAA
+ * 
+ * @param date data
+ */
+function formatDateToString(date) {
+	
+	var day = date.getDate();
+	var mouth = date.getMonth()+1;
+	var year = date.getFullYear();
+	
+	if (day < 10) 
+		day = "0"+day;
+	
+	if (mouth < 10) 
+		mouth = "0"+mouth;
+	
+	return day+"/"+mouth+"/"+year;
+}
+
 function serializeObjectToPost(objectName, object, obj) {
 	obj = (obj)?obj:new Object();
 	for ( var propriedade in object) {

@@ -12,7 +12,7 @@ public class ProdutoMapaDTO implements Serializable{
 	private Long numeroEdicao;
 	private String precoCapa;
 	private Integer totalReparte;
-	private HashMap<String, Integer> boxQtde;
+	private HashMap<Integer, Integer> boxQtde;
 	
 	public ProdutoMapaDTO(){
 		
@@ -20,7 +20,7 @@ public class ProdutoMapaDTO implements Serializable{
 	
 	public ProdutoMapaDTO(String codigoProduto, String nomeProduto,
 			Long numeroEdicao, String precoCapa, Integer totalReparte,
-			 HashMap<String, Integer> qtdeBox) {
+			 HashMap<Integer, Integer> qtdeBox) {
 		super();
 		this.codigoProduto = codigoProduto;
 		this.nomeProduto = nomeProduto;
@@ -92,13 +92,13 @@ public class ProdutoMapaDTO implements Serializable{
 	/**
 	 * @return the boxQtde
 	 */
-	public HashMap<String, Integer> getBoxQtde() {
+	public HashMap<Integer, Integer> getBoxQtde() {
 		return boxQtde;
 	}
 	/**
 	 * @param boxQtde the boxQtde to set
 	 */
-	public void setBoxQtde(HashMap<String, Integer> boxQtde) {
+	public void setBoxQtde(HashMap<Integer, Integer> boxQtde) {
 		this.boxQtde = boxQtde;
 	}
 	

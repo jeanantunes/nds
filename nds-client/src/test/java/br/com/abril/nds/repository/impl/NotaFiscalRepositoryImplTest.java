@@ -25,6 +25,7 @@ import br.com.abril.nds.model.cadastro.Telefone;
 import br.com.abril.nds.model.cadastro.TipoEndereco;
 import br.com.abril.nds.model.cadastro.TipoFornecedor;
 import br.com.abril.nds.model.cadastro.TipoProduto;
+import br.com.abril.nds.model.cadastro.TributacaoFiscal;
 import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
 import br.com.abril.nds.model.fiscal.NCM;
 import br.com.abril.nds.model.fiscal.TipoOperacao;
@@ -327,7 +328,7 @@ public class NotaFiscalRepositoryImplTest  extends AbstractRepositoryImplTest {
 
 		ProdutoEdicao produtoEdicaoCE = null;
 
-		Produto produtoCE = Fixture.produto(codigoProduto, descProduto, nomeProduto, periodicidade, tipoRevista, produtoPeb, produtoPacotePadrao, produtoPeso);
+		Produto produtoCE = Fixture.produto(codigoProduto, descProduto, nomeProduto, periodicidade, tipoRevista, produtoPeb, produtoPacotePadrao, produtoPeso, TributacaoFiscal. TRIBUTADO);
 
 		produtoCE.addFornecedor(fornecedorDinap);
 

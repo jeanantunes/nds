@@ -15,6 +15,7 @@ import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.TipoProduto;
+import br.com.abril.nds.model.cadastro.TributacaoFiscal;
 import br.com.abril.nds.model.fiscal.NCM;
 import br.com.abril.nds.repository.ProdutoRepository;
 
@@ -36,7 +37,7 @@ public class ProdutoRepositoryImplTest extends AbstractRepositoryImplTest {
 		save(tipoProduto);
 		
 		Produto produto =
-			Fixture.produto("1", "Revista Veja", "Veja", PeriodicidadeProduto.SEMANAL, tipoProduto, 5, 5, BigDecimal.TEN);
+			Fixture.produto("1", "Revista Veja", "Veja", PeriodicidadeProduto.SEMANAL, tipoProduto, 5, 5, BigDecimal.TEN, TributacaoFiscal. TRIBUTADO);
 		produto.setEditor(abril);
 		save(produto);
 	}

@@ -88,7 +88,7 @@ public class MapaAbastecimentoController {
 				
 		for(Box box : listaBoxes){
 			
-			boxes.add(new ItemDTO<Long, String>(box.getId(),box.getCodigo()));
+			boxes.add(new ItemDTO<Long, String>(box.getId(),box.getCodigo() + " - " + box.getNome()));
 		}
 		
 		return boxes;			
@@ -106,7 +106,7 @@ public class MapaAbastecimentoController {
 		
 		for(Rota rota : rotas){
 			
-			listaRotas.add(new ItemDTO<Long, String>(rota.getId(),rota.getCodigoRota()));
+			listaRotas.add(new ItemDTO<Long, String>(rota.getId(),rota.getCodigoRota() + " " + rota.getDescricaoRota()));
 		}
 		
 		return listaRotas;
@@ -256,7 +256,7 @@ public class MapaAbastecimentoController {
 	
 	public void impressaoPorRota(FiltroMapaAbastecimentoDTO filtro) {
 		
-		HashMap<String, HashMap<String, ProdutoMapaRotaDTO>> produtosMapa = mapaAbastecimentoService.obterMapaDeImpressaoPorBoxRota(filtro);
+		HashMap<Integer, HashMap<String, ProdutoMapaRotaDTO>> produtosMapa = mapaAbastecimentoService.obterMapaDeImpressaoPorBoxRota(filtro);
 		
 		result.include("mapa",produtosMapa);
 		

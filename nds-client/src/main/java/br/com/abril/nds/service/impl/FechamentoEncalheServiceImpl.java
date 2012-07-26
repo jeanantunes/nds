@@ -306,7 +306,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 				
 				this.movimentoFinanceiroCotaService.gerarMovimentosFinanceirosDebitoCredito(movimentoFinanceiroCotaDTO);
 	
-				this.gerarCobrancaService.gerarCobranca(cota.getId(), usuario.getId(), true, new HashSet<String>());
+				this.gerarCobrancaService.gerarCobranca(cota.getId(), usuario.getId(), new HashSet<String>());
 				
 				List<ChamadaEncalhe> listaChamadaEncalhe = 
 					this.chamadaEncalheRepository.obterChamadasEncalhePor(dataOperacao, cota.getId());

@@ -78,7 +78,7 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
 		save(carteiraRegistrada);
 		
 		Banco bancoHSBC = Fixture.banco(10L, true, carteiraRegistrada, "1010",
-				  123456L, "1", "1", "Instrucoes.", Moeda.REAL, "HSBC", "399", BigDecimal.ZERO, BigDecimal.ZERO);
+				  123456L, "1", "1", "Instrucoes.", "HSBC","BANCO HSBC", "399", BigDecimal.ZERO, BigDecimal.ZERO);
 		
 		save(bancoHSBC);
 		
@@ -113,7 +113,7 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
 		Usuario usuarioJoao = Fixture.usuarioJoao();
 		save(usuarioJoao);
 		
-		Box box1 = Fixture.criarBox("Box-1", "BX-001", TipoBox.LANCAMENTO, false);
+		Box box1 = Fixture.criarBox(1, "BX-001", TipoBox.LANCAMENTO);
 		save(box1);
 		
 		Cota cotaManoel = Fixture.cota(123, manoel, SituacaoCadastro.ATIVO,box1);

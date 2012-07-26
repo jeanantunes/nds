@@ -1043,19 +1043,24 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public Set<Long> obterIdCotasEntre(Intervalo<Integer> intervaloCota, Intervalo<String> intervaloBox, SituacaoCadastro situacao) {
+	public Set<Long> obterIdCotasEntre(Intervalo<Integer> intervaloCota, Intervalo<Integer> intervaloBox, SituacaoCadastro situacao) {
 		
 		Set<Long> listaIdCotas = new HashSet<Long>();
 		
 		Criteria criteria = super.getSession().createCriteria(Cota.class);
 		criteria.createAlias("box", "box");
 		criteria.setProjection(Projections.id());
-		if (intervaloCota != null) {
-			criteria.add(Restrictions.between("numeroCota", intervaloCota.getDe(),
-					intervaloCota.getAte()));
+		if (intervaloCota != null && intervaloCota.getDe() != null) {
+			
+			if (intervaloCota.getAte() != null) {
+				criteria.add(Restrictions.between("numeroCota", intervaloCota.getDe(),
+						intervaloCota.getAte()));
+			} else {
+				criteria.add(Restrictions.eq("numeroCota", intervaloCota.getDe()));
+			}
 		}
 		
-		if(intervaloBox != null){
+		if(intervaloBox != null && intervaloBox.getDe() != null &&  intervaloBox.getAte() != null){
 			criteria.add(Restrictions.between("box.codigo", intervaloBox.getDe(),
 					intervaloBox.getAte()));
 		}

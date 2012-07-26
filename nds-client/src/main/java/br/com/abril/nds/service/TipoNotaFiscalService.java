@@ -2,6 +2,7 @@ package br.com.abril.nds.service;
 
 import java.util.List;
 
+import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.TipoAtividade;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
@@ -25,6 +26,15 @@ public interface TipoNotaFiscalService {
 	 * @return
 	 */
 	public Long proximoNumeroDocumentoFiscal(int serie);
+	
+	/**
+	 * Carrega combo tipo notas ficais de acordo com o tipo de atividade do distribuidor
+	 * 
+	 * @return lista de itens para combo
+	 */
+	public abstract List<ItemDTO<Long, String>> carregarComboTiposNotasFiscais(TipoAtividade tipoAtividade);
+
+	
 	
 	List<TipoNotaFiscal> obterTiposNotasFiscaisPorTipoAtividadeDistribuidor(Long idDistribuidor);
 }

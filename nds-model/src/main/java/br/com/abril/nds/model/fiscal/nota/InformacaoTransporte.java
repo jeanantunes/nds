@@ -56,7 +56,7 @@ public class InformacaoTransporte implements Serializable {
 	@NFEExport(secao = TipoSecao.X03, posicao = 1, tamanho = 14)
 	private String inscricaoEstadual;
 
-	@OneToOne(optional=false)
+	@OneToOne
 	@JoinColumn(name="ENDERECO_ID_TRANS")
 	@NFEExportType
 	private Endereco endereco;

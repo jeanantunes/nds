@@ -2,10 +2,10 @@ package br.com.abril.nds.service;
 
 import java.util.List;
 
+import br.com.abril.nds.client.vo.DetalheInterfaceVO;
+import br.com.abril.nds.client.vo.DetalheProcessamentoVO;
 import br.com.abril.nds.dto.InterfaceDTO;
 import br.com.abril.nds.dto.ProcessoDTO;
-import br.com.abril.nds.model.integracao.LogExecucaoMensagem;
-import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
 /**
  * Interface que define as regras de acesso a serviços referentes a entidade
@@ -35,15 +35,8 @@ public interface PainelProcessamentoService {
 	 * @param maxResults
 	 * @return List<LogExecucaoMensagem>
 	 */
-	public List<LogExecucaoMensagem> listarProcessamentoInterface(Long codigoLogExecucao, String orderBy, Ordenacao ordenacao, int initialResult, int maxResults);
+	public List<DetalheProcessamentoVO> listardetalhesProcessamentoInterface(Long codigoLogExecucao);
 	
-	/**
-	 * Retorna a quantidade de mensagens de processamento de interface
-	 * @param codigoLogExecucao
-	 * @return Long
-	 */
-	public Long quantidadeProcessamentoInterface(Long codigoLogExecucao);
-
 	/**
 	 * Retorna o estado operacional do sistema, sendo:
 	 * Encerrado
@@ -53,5 +46,10 @@ public interface PainelProcessamentoService {
 	 * @return String
 	 */
 	public String obterEstadoOperacional();
+	
+	/**
+	 * @return List<DetalheInterfaceVO>
+	 */
+	public List<DetalheInterfaceVO> listarDetalhesInterface(Long codigoLogExecucao);
 	
 }

@@ -21,7 +21,6 @@ import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
-import br.com.abril.nds.vo.PeriodoVO;
 
 public interface LancamentoRepository extends Repository<Lancamento, Long> {
 	
@@ -58,7 +57,7 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 	 * @return List<ProdutoRecolhimentoDTO>
 	 */
 	List<ProdutoRecolhimentoDTO> obterBalanceamentoRecolhimento(
-			PeriodoVO periodoRecolhimento, List<Long> fornecedores,
+			Intervalo<Date> periodoRecolhimento, List<Long> fornecedores,
 			GrupoProduto grupoCromo);
 
 	/**
@@ -74,7 +73,7 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 	 * @return List<ProdutoRecolhimentoDTO>
 	 */
 	List<ProdutoRecolhimentoDTO> obterBalanceamentoRecolhimentoPorEditorData(
-			PeriodoVO periodoRecolhimento, List<Long> fornecedores,
+			Intervalo<Date> periodoRecolhimento, List<Long> fornecedores,
 			GrupoProduto grupoCromo);
 
 	/**
@@ -90,20 +89,8 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 	 * @return Map<Date, BigDecimal>
 	 */
 	TreeMap<Date, BigDecimal> obterExpectativasEncalhePorData(
-			PeriodoVO periodoRecolhimento, List<Long> fornecedores,
+			Intervalo<Date> periodoRecolhimento, List<Long> fornecedores,
 			GrupoProduto grupoCromo);
-
-	/**
-	 * Método que verifica a existência de uma chamada de encalhe do tipo Matriz
-	 * Recolhimento para o período especificado.
-	 * 
-	 * @param periodo
-	 *            - Período a ser utilizado na pesquisa.
-	 * 
-	 * @return caso exista chamada: true, caso não exista: false.
-	 */
-	boolean verificarExistenciaChamadaEncalheMatrizRecolhimento(
-			PeriodoVO periodo);
 
 	/**
 	 * Obtém o último Lancamento de determinado ProdutoEdicao

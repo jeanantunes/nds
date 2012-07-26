@@ -48,8 +48,8 @@ import br.com.abril.nds.model.planejamento.TipoLancamentoParcial;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.repository.impl.AbstractRepositoryImplTest;
+import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.util.MathUtil;
-import br.com.abril.nds.vo.PeriodoVO;
 
 public class ExpectativaEncalheDataTest extends AbstractRepositoryImplTest {
 
@@ -301,7 +301,6 @@ public class ExpectativaEncalheDataTest extends AbstractRepositoryImplTest {
 		save(chamadaEncalheQuatroRodas);
 		
 		Box box = Fixture.boxReparte300();
-		box.setPostoAvancado(true);
 		
 		Cota cotaDinap = Fixture.cota(50, fornecedorDinap.getJuridica(), SituacaoCadastro.ATIVO, box);
 		
@@ -328,8 +327,7 @@ public class ExpectativaEncalheDataTest extends AbstractRepositoryImplTest {
 
 		save(estudoCapricho, lancamentoParcialCapricho, parcialCapricho, estudoCotaCapricho);
 		
-		Box box301 = Fixture.criarBox("357", "Box 301", TipoBox.RECOLHIMENTO, false);
-		box301.setPostoAvancado(false);
+		Box box301 = Fixture.criarBox(357, "Box 301", TipoBox.ENCALHE);
 		
 		Cota cotaFC = Fixture.cota(55, fornecedorFC.getJuridica(), SituacaoCadastro.ATIVO, box301);
 		
@@ -381,8 +379,7 @@ public class ExpectativaEncalheDataTest extends AbstractRepositoryImplTest {
 
 		save(estudoVeja, lancamentoParcialVeja, parcialVeja, estudoCotaVeja);
 		
-		Box box303 = Fixture.criarBox("359", "Box 303", TipoBox.RECOLHIMENTO, false);
-		box303.setPostoAvancado(false);
+		Box box303 = Fixture.criarBox(359, "Box 303", TipoBox.ENCALHE);
 		
 		Cota cotaJurandir = Fixture.cota(59, fornecedorFC.getJuridica(), SituacaoCadastro.ATIVO, box303);
 		
@@ -417,7 +414,7 @@ public class ExpectativaEncalheDataTest extends AbstractRepositoryImplTest {
 				Calendar.FEBRUARY, 2011);
 		Date data23032012 = Fixture.criarData(23,
 				Calendar.MARCH, 2012);
-		PeriodoVO periodo = new PeriodoVO(data22022012, data23032012);
+		Intervalo<Date> periodo = new Intervalo<Date>(data22022012, data23032012);
 
 		Map<Date, BigDecimal> expectativas = lancamentoRepository
 				.obterExpectativasEncalhePorData(

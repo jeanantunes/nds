@@ -7,7 +7,6 @@ package br.com.abril.nds.model.cadastro;
  */
 public enum TipoBox {
 	LANCAMENTO,
-	RECOLHIMENTO,
-	SUPLEMENTAR,
-	NUMEROS_ATRASADOS;
+	ENCALHE,
+	POSTO_AVANCADO;
 }

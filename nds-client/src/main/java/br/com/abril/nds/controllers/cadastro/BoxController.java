@@ -44,12 +44,11 @@ public class BoxController {
 
 	@Path("/busca.json")
 	@Post
-	public void busca(String codigoBox, TipoBox tipoBox, boolean postoAvancado,
-			String sortname, String sortorder, int rp, int page) {
-		List<Box> boxs = boxService.busca(codigoBox, tipoBox, postoAvancado,
-				sortname, Ordenacao.valueOf(sortorder.toUpperCase()), page*rp - rp , rp);
-		Long quantidade = boxService.quantidade(codigoBox, tipoBox,
-				postoAvancado);
+	public void busca(Integer codigoBox, TipoBox tipoBox, String sortname,
+			String sortorder, int rp, int page) {
+		List<Box> boxs = boxService.busca(codigoBox, tipoBox, sortname,
+				Ordenacao.valueOf(sortorder.toUpperCase()), page*rp - rp, rp);
+		Long quantidade = boxService.quantidade(codigoBox, tipoBox);
 		result.use(FlexiGridJson.class).from(boxs).total(quantidade.intValue()).page(page).serialize();
 
 	}
@@ -82,7 +81,7 @@ public class BoxController {
 	private void valida(Box box) {
 		List<String> listaMensagens = new ArrayList<String>();
 
-		if (StringUtil.isEmpty(box.getCodigo())) {
+		if (box.getCodigo() == null) {
 			listaMensagens.add("O preenchimento do campo [Código] é obrigatório.");
 		}
 		if (StringUtil.isEmpty(box.getNome())) {
@@ -90,8 +89,6 @@ public class BoxController {
 		}
 		if (box.getTipoBox() == null) {
 			listaMensagens.add("O preenchimento do campo [Tipo Box] é obrigatório.");
-		}else if(box.isPostoAvancado() && TipoBox.LANCAMENTO != box.getTipoBox()){
-			listaMensagens.add("Apenas o Tipo Box lançamento pode ser posto avançado.");
 		}
 		
 		if (!listaMensagens.isEmpty()) {			

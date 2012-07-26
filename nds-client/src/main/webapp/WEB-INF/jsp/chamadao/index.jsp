@@ -29,9 +29,8 @@
 	}
 
 	function popularGridPeloFollowUp(numeroCota, dataChamadaoFormatada){
-		//var numeroCota = $("#numeroCota").val();
-		//var dataChamadaoFormatada = $("#dataChamadao").val();		
-		alert("LAZARO FODA");
+				
+		
 		$(".chamadaoGrid").flexOptions({
 			url: "${pageContext.request.contextPath}/devolucao/chamadao/pesquisarConsignados",
 			onSuccess: function() {

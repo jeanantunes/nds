@@ -34,4 +34,10 @@ public class PessoaJuridicaServiceImpl implements PessoaJuridicaService {
 		return this.pessoaJuridicaRepository.merge(pessoaJuridica);
 	}
 
+	@Override
+	@Transactional
+	public PessoaJuridica buscarPorId(Long id) {		 
+		return this.pessoaJuridicaRepository.buscarPorId(id);
+	}
+
 }

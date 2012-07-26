@@ -60,7 +60,7 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService{
 	public HashMap<String, ProdutoMapaDTO> obterMapaDeImpressaoPorBox(
 			FiltroMapaAbastecimentoDTO filtro) {
 		
-		List<String> boxes =  new ArrayList<String>();
+		List<Integer> boxes =  new ArrayList<Integer>();
 		
 		HashMap<String, ProdutoMapaDTO> produtoMapa = new HashMap<String, ProdutoMapaDTO>();
 		
@@ -80,7 +80,7 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService{
 						produtoPorBox.getNumeroEdicao(), 
 						produtoPorBox.getPrecoCapa(), 
 						0, 
-						new HashMap<String, Integer>()));
+						new HashMap<Integer, Integer>()));
 			
 				if(!produtoMapa.get(keyProduto).getBoxQtde().containsKey(produtoPorBox.getCodigoBox()))
 					produtoMapa.get(keyProduto).getBoxQtde().put(produtoPorBox.getCodigoBox(),0);
@@ -105,8 +105,8 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService{
 	 * @param boxes
 	 * @param produtos
 	 */
-	private void preencheBoxNaoUtilizado(List<String> boxes, HashMap<String, ProdutoMapaDTO> produtos) {
-		for(String keyBox : boxes) {
+	private void preencheBoxNaoUtilizado(List<Integer> boxes, HashMap<String, ProdutoMapaDTO> produtos) {
+		for(Integer keyBox : boxes) {
 			
 			for(String keyProduto : produtos.keySet()) {
 			
@@ -117,18 +117,18 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService{
 	}
 	
 	@Transactional
-	public HashMap<String, HashMap<String, ProdutoMapaRotaDTO>> obterMapaDeImpressaoPorBoxRota(
+	public HashMap<Integer, HashMap<String, ProdutoMapaRotaDTO>> obterMapaDeImpressaoPorBoxRota(
 			FiltroMapaAbastecimentoDTO filtro) {
 		
 		List<String> rotas =  new ArrayList<String>();
 		
-		HashMap<String, HashMap<String, ProdutoMapaRotaDTO>>  boxes = new HashMap<String, HashMap<String, ProdutoMapaRotaDTO>> ();
+		HashMap<Integer, HashMap<String, ProdutoMapaRotaDTO>>  boxes = new HashMap<Integer, HashMap<String, ProdutoMapaRotaDTO>> ();
 		
 		List<ProdutoAbastecimentoDTO> boxProdutoRota = movimentoEstoqueCotaRepository.obterMapaAbastecimentoPorBoxRota(filtro);
 		
 		for(ProdutoAbastecimentoDTO item : boxProdutoRota ) {
 			
-			String keyBox = item.getCodigoBox();
+			Integer keyBox = item.getCodigoBox();
 			
 			if(!boxes.containsKey(keyBox))
 				boxes.put(keyBox, new HashMap<String, ProdutoMapaRotaDTO>());
@@ -162,7 +162,7 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService{
 		
 		}
 		
-		for(String keyBox : boxes.keySet()) {
+		for(Integer keyBox : boxes.keySet()) {
 			
 			preencheRotasNaoUtilizadas(rotas, boxes.get(keyBox));		
 		}
@@ -202,7 +202,7 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService{
 				produtosBoxRota.get(0).getNomeProduto(), 
 				produtosBoxRota.get(0).getNumeroEdicao().longValue(), 
 				produtosBoxRota.get(0).getPrecoCapa(),  
-				new HashMap<String, BoxRotasDTO>());
+				new HashMap<Integer, BoxRotasDTO>());
 		
 		for(ProdutoAbastecimentoDTO item : produtosBoxRota) {
 			
@@ -230,11 +230,11 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService{
 	}
 
 	private void preencheRotasNaoUtilizadasPE(List<String> rotas,
-			HashMap<String, BoxRotasDTO> boxes) {
+			HashMap<Integer, BoxRotasDTO> boxes) {
 
 		for(String keyRota : rotas) {
 			
-			for(String keyBox : boxes.keySet()) {				
+			for(Integer keyBox : boxes.keySet()) {				
 				
 				if(!boxes.get(keyBox).getRotasQtde().containsKey(keyRota))
 					boxes.get(keyBox).getRotasQtde().put(keyRota, 0);

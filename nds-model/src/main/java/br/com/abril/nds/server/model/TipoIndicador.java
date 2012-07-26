@@ -21,7 +21,8 @@ public enum TipoIndicador {
 	SOBRAS_DE("Sobras De", 0),
 	SOBRAS_EM("Sobras Em", 1),
 	FALTAS_DE("Faltas De", 2),
-	FALTAS_EM("Faltas Em", 3);
+	FALTAS_EM("Faltas Em", 3),
+	LIQUIDACAO("Liquidação", 5);
 	
 	private String descricao;
 	
@@ -33,13 +34,12 @@ public enum TipoIndicador {
 		this.ordemExibicao = ordemExibicao;
 	}
 	
-	public String toString(){
-		
-		return this.descricao;
-	}
-	
 	public int getOrdemExibicao(){
 		
 		return this.ordemExibicao;
+	}
+
+	public String getDescricao() {
+		return descricao;
 	}
 }

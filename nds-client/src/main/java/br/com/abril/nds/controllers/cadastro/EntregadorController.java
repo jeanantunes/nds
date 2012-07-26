@@ -910,7 +910,7 @@ public class EntregadorController {
 		PessoaFisica pessoaFisica = (PessoaFisica) cota.getPessoa();
 		
 		cotaProcuracao.setNumeroCota(cota.getNumeroCota());
-		cotaProcuracao.setBox(cota.getBox().getCodigo());
+		cotaProcuracao.setBox(cota.getBox().getCodigo() + " - " + cota.getBox().getNome());
 		
 		cotaProcuracao.setNacionalidade(pessoaFisica.getNacionalidade());
 		cotaProcuracao.setNomeJornaleiro(pessoaFisica.getNome());

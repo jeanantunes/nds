@@ -14,9 +14,15 @@ import br.com.abril.nds.dto.DetalheItemNotaFiscalDTO;
 import br.com.abril.nds.dto.DetalheNotaFiscalDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaNotaFiscalDTO;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.cadastro.PessoaJuridica;
+import br.com.abril.nds.model.fiscal.CFOP;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaFornecedor;
+import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
+import br.com.abril.nds.repository.CFOPRepository;
 import br.com.abril.nds.repository.NotaFiscalEntradaRepository;
+import br.com.abril.nds.repository.PessoaJuridicaRepository;
+import br.com.abril.nds.repository.TipoNotaFiscalRepository;
 import br.com.abril.nds.service.NotaFiscalEntradaService;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TipoMensagem;
@@ -27,6 +33,15 @@ public class NotaFiscalEntradaServiceImpl implements NotaFiscalEntradaService {
 
 	@Autowired
 	private NotaFiscalEntradaRepository notaFiscalDAO;
+	
+	@Autowired
+	private CFOPRepository cfopRepository;
+	
+	@Autowired
+	private PessoaJuridicaRepository pessoaJuridicaRepository;
+	
+	@Autowired
+	private TipoNotaFiscalRepository tipoNotaFiscalRepository;
 	
 	@Override
 	@Transactional
@@ -41,7 +56,7 @@ public class NotaFiscalEntradaServiceImpl implements NotaFiscalEntradaService {
 		
 	@Transactional
 	public void inserirNotaFiscal(NotaFiscalEntrada notaFiscal){
-		
+		this.notaFiscalRepository.inserirNotaFiscal(notaFiscal); 
 	}
 
 	@Override
@@ -143,6 +158,8 @@ public class NotaFiscalEntradaServiceImpl implements NotaFiscalEntradaService {
 		}
 		return notaFiscalRepository.obterNotaFiscalPorNumeroSerieCnpj(filtroConsultaNotaFiscal);
 	}
+
+	
 }
 
 
