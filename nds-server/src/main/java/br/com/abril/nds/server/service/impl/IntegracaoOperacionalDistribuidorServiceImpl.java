@@ -7,7 +7,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.integracao.couchdb.CouchDbProperties;
+import br.com.abril.nds.server.model.Indicador;
 import br.com.abril.nds.server.model.OperacaoDistribuidor;
+import br.com.abril.nds.server.repository.IndicadorRepository;
+import br.com.abril.nds.server.repository.OperacaoDistribuidorRepository;
 import br.com.abril.nds.server.service.IntegracaoOperacionalDistribuidorService;
 
 /**
@@ -21,6 +24,12 @@ public class IntegracaoOperacionalDistribuidorServiceImpl implements IntegracaoO
 
 	@Autowired
 	private CouchDbProperties couchDbProperties;
+	
+	@Autowired
+	private OperacaoDistribuidorRepository operacaoDistribuidorRepository;
+	
+	@Autowired
+	private IndicadorRepository indicadorRepository;
 	
 	/**
 	 * {@inheritDoc}
@@ -49,7 +58,27 @@ public class IntegracaoOperacionalDistribuidorServiceImpl implements IntegracaoO
 	public void atualizarInformacoesOperacionaisDistribuidores(
 			List<OperacaoDistribuidor> listaInformacoesOperacionaisDistribuidores) {
 		
-		//TODO: Atualizar dados recebidos na base de dados (MYSQL) do DServer
+		if (listaInformacoesOperacionaisDistribuidores != null){
+			
+			for (OperacaoDistribuidor operacaoDistribuidor : listaInformacoesOperacionaisDistribuidores){
+				
+				if (operacaoDistribuidor != null){
+					
+					this.operacaoDistribuidorRepository.alterar(operacaoDistribuidor);
+				}
+				
+				if (operacaoDistribuidor.getIndicadores() != null){
+					
+					for (Indicador indicador : operacaoDistribuidor.getIndicadores()){
+						
+						if (indicador != null){
+							
+							this.indicadorRepository.alterar(indicador);
+						}
+					}
+				}
+			}
+		}
 	}
 
 }

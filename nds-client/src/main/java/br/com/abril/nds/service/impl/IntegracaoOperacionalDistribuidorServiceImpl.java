@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.integracao.couchdb.CouchDbProperties;
 import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.cadastro.EnderecoDistribuidor;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
@@ -105,7 +106,10 @@ public class IntegracaoOperacionalDistribuidorServiceImpl implements IntegracaoO
 		OperacaoDistribuidor operacaoDistribuidor = new OperacaoDistribuidor();
 		operacaoDistribuidor.setDataOperacao(distribuidor.getDataOperacao());
 		//TODO: operacaoDistribuidor.setIdDistribuidorInterface(idDistribuidorInterface);
-		//TODO: operacaoDistribuidor.setUf(distribuidor.getEnderecos().get(0).getEndereco().getUf());
+		
+		EnderecoDistribuidor enderecoDistribuidor = this.distribuidorRepository.obterEnderecoPrincipal();
+		
+		operacaoDistribuidor.setUf(enderecoDistribuidor != null ? enderecoDistribuidor.getEndereco().getUf() : "--");
 		operacaoDistribuidor.setNome(distribuidor.getJuridica().getRazaoSocial());
 		
 		StatusOperacao statusOperacao = new StatusOperacao();
