@@ -1,7 +1,11 @@
 package br.com.abril.nds.server.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
+import org.lightcouch.CouchDbClient;
+import org.lightcouch.NoDocumentException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,6 +16,7 @@ import br.com.abril.nds.server.model.OperacaoDistribuidor;
 import br.com.abril.nds.server.repository.IndicadorRepository;
 import br.com.abril.nds.server.repository.OperacaoDistribuidorRepository;
 import br.com.abril.nds.server.service.IntegracaoOperacionalDistribuidorService;
+import br.com.abril.nds.util.CouchDBUtil;
 
 /**
  * Implementação do serviço de integração operacional dos distribuidores.
@@ -36,18 +41,48 @@ public class IntegracaoOperacionalDistribuidorServiceImpl implements IntegracaoO
 	 */
 	@Override
 	@Transactional(readOnly = true)
-	public List<OperacaoDistribuidor> obterInformacoesOperacionaisDistribuidores() {
+	public List<OperacaoDistribuidor> obterInformacoesOperacionaisDistribuidores(Set<String> codigosDistribuidoresIntegracao) {
 		
-		/* TODO: Obter dados pelo de todos distribuidores pelo CouchDB
-		 * 
-		 * Haverá um database para cada distribuidor.
-		 * 
-		 * Então será necessário instanciar um cliente do CouchDB para
-		 * cada um e obter os dados.
-		 * 
-		 */
+		List<OperacaoDistribuidor> informacoesOperacionaisDistribuidores = new ArrayList<OperacaoDistribuidor>();
 		
-		return null;
+		if (codigosDistribuidoresIntegracao == null || codigosDistribuidoresIntegracao.isEmpty()) {
+			
+			return informacoesOperacionaisDistribuidores;
+		}
+		
+		for (String codigoDistribuidorIntegracao : codigosDistribuidoresIntegracao) {
+			
+			CouchDbClient couchDbClient = this.obterCouchDBClient(codigoDistribuidorIntegracao);
+			
+			OperacaoDistribuidor operacaoDistribuidor = null;
+			
+			try {
+				
+				operacaoDistribuidor = 
+					couchDbClient.find(OperacaoDistribuidor.class, codigoDistribuidorIntegracao);
+				
+			} catch (NoDocumentException e) {
+				
+				continue;
+			}
+			
+			informacoesOperacionaisDistribuidores.add(operacaoDistribuidor);
+		}
+		
+		return informacoesOperacionaisDistribuidores;
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@Transactional(readOnly = true)
+	public Set<String> obterCodigosDistribuidoresIntegracao() {
+		
+		// TODO: Obter códigos (pendência Gabriel/Jonatas)
+		Set<String> codigosDistribuidoresIntegracao = null;
+		
+		return codigosDistribuidoresIntegracao;
 	}
 
 	/**
@@ -79,6 +114,22 @@ public class IntegracaoOperacionalDistribuidorServiceImpl implements IntegracaoO
 				}
 			}
 		}
+	}
+	
+	/*
+	 * Retorna o client para o CouchDB do banco de dados correspondente ao distribuidor.
+	 */
+	private CouchDbClient obterCouchDBClient(String codigoDistribuidorIntegracao) {
+		
+		return new CouchDbClient(
+				CouchDBUtil.obterNomeBancoDeDadosIntegracaoDistribuidor(codigoDistribuidorIntegracao),
+				true,
+				this.couchDbProperties.getProtocol(),
+				this.couchDbProperties.getHost(),
+				this.couchDbProperties.getPort(),
+				this.couchDbProperties.getUsername(),
+				this.couchDbProperties.getPassword()
+		);
 	}
 
 }

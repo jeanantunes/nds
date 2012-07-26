@@ -26,7 +26,7 @@ public class OperacaoDistribuidor implements Serializable {
 	@Id
 	@Column(name = "ID_DISTRIBUIDOR_INTERFACE")
 	@SerializedName("_id")
-	private Long idDistribuidorInterface;
+	private String idDistribuidorInterface;
 	
 	@Column(name = "DATA_OPERACAO")
 	private Date dataOperacao;
@@ -44,11 +44,11 @@ public class OperacaoDistribuidor implements Serializable {
 	@Transient
 	private List<Indicador> indicadores;
 
-	public Long getIdDistribuidorInterface() {
+	public String getIdDistribuidorInterface() {
 		return idDistribuidorInterface;
 	}
 
-	public void setIdDistribuidorInterface(Long idDistribuidorInterface) {
+	public void setIdDistribuidorInterface(String idDistribuidorInterface) {
 		this.idDistribuidorInterface = idDistribuidorInterface;
 	}
 

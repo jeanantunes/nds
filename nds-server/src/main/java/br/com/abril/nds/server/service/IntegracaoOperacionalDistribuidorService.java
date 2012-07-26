@@ -1,6 +1,7 @@
 package br.com.abril.nds.server.service;
 
 import java.util.List;
+import java.util.Set;
 
 import br.com.abril.nds.server.model.OperacaoDistribuidor;
 
@@ -16,9 +17,18 @@ public interface IntegracaoOperacionalDistribuidorService {
 	/**
 	 * Obtém as informações operacionais mais recentes dos distribuidores.
 	 * 
+	 * @param codigosDistribuidoresIntegracao - códigos dos distribuidores para integração
+	 * 
 	 * @return {@link List} de informações operacionais dos distribuidores
 	 */
-	List<OperacaoDistribuidor> obterInformacoesOperacionaisDistribuidores();
+	List<OperacaoDistribuidor> obterInformacoesOperacionaisDistribuidores(Set<String> codigosDistribuidoresIntegracao);
+	
+	/**
+	 * Obtém os códigos dos distribuidores possíveis de integração.
+	 * 
+	 * @return {@link Set} de códigos dos distribuidores para integração
+	 */
+	Set<String> obterCodigosDistribuidoresIntegracao();
 	
 	/**
 	 * Atualiza a base de dados com as informações operacionais
