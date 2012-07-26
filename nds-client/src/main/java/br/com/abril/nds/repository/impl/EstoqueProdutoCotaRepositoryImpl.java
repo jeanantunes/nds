@@ -186,9 +186,9 @@ public class EstoqueProdutoCotaRepositoryImpl extends AbstractRepositoryModel<Es
 		if (cotaInadimplente){
 			
 			hql.append(" where es.cota.id not in ( ")
-			   .append(" select distinct hist.dividad.cota.id ")
+			   .append(" select distinct hist.divida.cota.id ")
 			   .append(" from HistoricoAcumuloDivida hist ")
-			   .append(" where hist.status != :quitada ");
+			   .append(" where hist.status != :quitada) ");
 		}
 		
 		Query query = this.getSession().createQuery(hql.toString());

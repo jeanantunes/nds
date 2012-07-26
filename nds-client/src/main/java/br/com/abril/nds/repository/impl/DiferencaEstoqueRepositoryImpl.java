@@ -451,11 +451,10 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
 	@Override
 	public BigDecimal obterValorFinanceiroPorTipoDiferenca(TipoDiferenca tipoDiferenca){
 		
-		StringBuilder hql = new StringBuilder("select sum(diferenca.quantidade) * sum(diferenca.produtoEdicao.precoVenda) ");
+		StringBuilder hql = new StringBuilder("select sum(diferenca.movimentoEstoque.qtde) * sum(diferenca.produtoEdicao.precoVenda) ");
 		hql.append(" from Diferenca diferenca, Distribuidor distribuidor ")
-		   .append(" join diferenca.movimentoEstoque movimentoEstoque ")
-		   .append(" where movimentoEstoque.data = distribuidor.dataOperacao ")
-		   .append(" and diferenca.tipoDifernca = :tipoDiferenca ");
+		   .append(" where diferenca.movimentoEstoque.data = distribuidor.dataOperacao ")
+		   .append(" and diferenca.tipoDiferenca = :tipoDiferenca ");
 		
 		Query query = this.getSession().createQuery(hql.toString());
 		

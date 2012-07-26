@@ -1174,7 +1174,7 @@ public class LancamentoRepositoryImpl extends
 		StringBuilder hql = new StringBuilder("select count(lanc.id) ");
 		hql.append(" from Lancamento lanc ")
 		   .append(" where lanc.dataLancamentoPrevista = :hoje ")
-		   .append(" and lanc.statusLancamento = :statusLancamento ");
+		   .append(" and lanc.status = :statusLancamento ");
 		
 		Query query = this.getSession().createQuery(hql.toString());
 		query.setParameter("hoje", new Date());
@@ -1187,10 +1187,12 @@ public class LancamentoRepositoryImpl extends
 	public BigDecimal obterConsignadoDia(StatusLancamento statusLancamento){
 		
 		StringBuilder hql = new StringBuilder("select ");
-		hql.append(" sum(lanc.produtoEdicao.precoVenda) * (lanc.produtoEdicao.reparteDistribuido) ")
+		hql.append(" sum(lanc.produtoEdicao.precoVenda) * sum(lanc.produtoEdicao.reparteDistribuido) ")
 		   .append(" from Lancamento lanc ")
-		   .append(" where lanc.dataLancamentoPrevista = :hoje ")
-		   .append(" and lanc.statusLancamento = :statusLancamento ");
+		   .append(" where lanc.produtoEdicao.reparteDistribuido is not null ")
+		   .append(" and lanc.produtoEdicao.precoVenda is not null ")
+		   .append(" and lanc.dataLancamentoPrevista = :hoje ")
+		   .append(" and lanc.status = :statusLancamento ");
 		
 		Query query = this.getSession().createQuery(hql.toString());
 		
