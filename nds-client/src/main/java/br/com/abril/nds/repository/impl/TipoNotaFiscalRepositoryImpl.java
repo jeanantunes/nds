@@ -152,5 +152,18 @@ public class TipoNotaFiscalRepositoryImpl extends AbstractRepositoryModel<TipoNo
 		
 		return criteria;
 	}
-	
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<TipoNotaFiscal> obterTiposNotasFiscaisPorTipoAtividadeDistribuidor(TipoAtividade tipoAtividade) {
+
+		Criteria criteria =  getSession().createCriteria(TipoNotaFiscal.class);	
+
+		criteria.add(Restrictions.eq("tipoAtividade", tipoAtividade));
+		
+		return criteria.list();
+	}
 }

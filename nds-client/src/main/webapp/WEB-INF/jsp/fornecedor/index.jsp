@@ -55,6 +55,7 @@
 		$("#email").val("");
 		$("#tipoFornecedor").val("");
 		$("#validadeContrato").val("");
+		$("#emailNfe").val("");
 		$("#possuiContrato").uncheck();
 		$( '.validade' ).hide();
 	}
@@ -185,6 +186,7 @@
 				$("#inscricaoEstadual").val(result.inscricaoEstadual);
 				$("#responsavel").val(result.responsavel);
 				$("#email").val(result.email);
+				$("#emailNfe").val(result.emailNfe);
 				$("#tipoFornecedor").val(result.tipoFornecedor);
 				
 				if (result.possuiContrato) {

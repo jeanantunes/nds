@@ -45,6 +45,9 @@ import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.vo.PaginacaoVO;
+import br.com.caelum.stella.validation.CNPJValidator;
+import br.com.caelum.stella.validation.CPFValidator;
+import br.com.caelum.stella.validation.InvalidStateException;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
@@ -689,6 +692,19 @@ public class EntregadorController {
 			if (cpfEntregador == null || cpfEntregador.isEmpty()) {
 			
 				listaMensagens.add("O preenchimento do campo [CPF] é obrigatório.");
+
+			} else {
+				
+				CPFValidator cpfValidator = new CPFValidator(true);
+				
+				try {
+
+					cpfValidator.assertValid(cpfEntregador);
+					
+				} catch(InvalidStateException e) {
+				
+					listaMensagens.add("CPF inválido.");
+				}
 			}
 			
 		} else if (cpfCnpj.containsKey(CNPJ)) {
@@ -698,6 +714,19 @@ public class EntregadorController {
 			if (cnpjEntregador == null || cnpjEntregador.isEmpty()) {
 			
 				listaMensagens.add("O preenchimento do campo [CNPJ] é obrigatório.");
+			
+			} else {
+				
+				CNPJValidator cnpjValidator = new CNPJValidator(true);
+				
+				try {
+
+					cnpjValidator.assertValid(cnpjEntregador);
+					
+				} catch(InvalidStateException e) {
+				
+					listaMensagens.add("CNPJ inválido.");
+				}
 			}
 		}
 		

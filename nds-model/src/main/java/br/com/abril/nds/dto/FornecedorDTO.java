@@ -41,6 +41,8 @@ public class FornecedorDTO implements Serializable {
 	private String validadeContrato;
 
 	private Origem origem;
+
+	private String emailNfe;
 	
 	/**
 	 * @return the idFornecedor
@@ -236,5 +238,19 @@ public class FornecedorDTO implements Serializable {
 	 */
 	public void setOrigem(Origem origem) {
 		this.origem = origem;
+	}
+
+	/**
+	 * @return the emailNfe
+	 */
+	public String getEmailNfe() {
+		return emailNfe;
+	}
+
+	/**
+	 * @param emailNfe the emailNfe to set
+	 */
+	public void setEmailNfe(String emailNfe) {
+		this.emailNfe = emailNfe;
 	}
 }
