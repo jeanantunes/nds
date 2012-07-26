@@ -14,6 +14,7 @@ import java.util.Set;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.hibernate.sql.Update;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import br.com.abril.nds.integracao.model.canonic.InterfaceEnum;
@@ -398,6 +399,11 @@ public class DataLoader {
 	private static Lancamento lancamentoCaras10ComEstudo;
 	private static Lancamento lancamentoPlacar10SemEstudo;
 
+	private static ChamadaEncalhe chamadaEncalheVeja1;
+	private static ControleConferenciaEncalhe controleConferenciaEncalheVeja1;
+	private static ControleConferenciaEncalheCota controleConferenciaEncalheCotaVeja1;
+	private static ChamadaEncalheCota chamadaEncalheCotaVeja1CotaJose;
+	
 	private static NotaFiscalEntradaFornecedor notaFiscalFornecedor;
 	private static ItemNotaFiscalEntrada itemNotaFiscalFornecedor;
 	private static RecebimentoFisico recebimentoFisico;
@@ -892,6 +898,9 @@ public class DataLoader {
 		criarLancamentos(session);
 		criarEstudos(session);
 		criarEstudosCota(session);
+		
+		massaConferenciaParaMovimentoEstoqueCota(session);
+		
 		criarMovimentosEstoqueCota(session);
 		criarEnderecoCotaPF(session);
 		criarTelefoneCotaPF(session);
@@ -1899,20 +1908,25 @@ public class DataLoader {
 		save(session, consolidadoFinanceiroCota);
 	}
 
-	/*private static void massaConferenciaParaMovimentoEstoqueCota(Session session) {
+	private static void massaConferenciaParaMovimentoEstoqueCota(Session session) {
 		
-		MovimentoEstoqueCota movimentoEstoqueCota36 = Fixture.movimentoEstoqueCota(produtoEdicaoVeja1, tipoMovimentoEnvioEncalhe, 
-				usuarioJoao, estoqueProdutoCotaVeja1, BigDecimal.TEN, cotaJose, StatusAprovacao.APROVADO, null);
-		
-		ChamadaEncalhe chamadaEncalhe = Fixture.chamadaEncalhe(
+		chamadaEncalheVeja1 = Fixture.chamadaEncalhe(
 				Fixture.criarData(28, Calendar.FEBRUARY, 2012),
 				produtoEdicaoVeja1,
 				TipoChamadaEncalhe.MATRIZ_RECOLHIMENTO);
 		
-		save(session, chamadaEncalheCota);
+		save(session, chamadaEncalheVeja1);
+		
+		lancamentoVeja1.setChamadaEncalhe(chamadaEncalheVeja1);
+		
+		save(session, lancamentoVeja1);
 				
-		ControleConferenciaEncalheCota controleConferenciaEncalheCota = Fixture.controleConferenciaEncalheCota(
-				controleConferenciaEncalhe,
+		controleConferenciaEncalheVeja1 =
+				Fixture.controleConferenciaEncalhe(StatusOperacao.EM_ANDAMENTO, Fixture.criarData(28, Calendar.FEBRUARY, 2012));
+		save(session, controleConferenciaEncalheVeja1);
+		
+		controleConferenciaEncalheCotaVeja1 = Fixture.controleConferenciaEncalheCota(
+				controleConferenciaEncalheVeja1,
 				cotaJose,
 				Fixture.criarData(28, Calendar.FEBRUARY, 2012),
 				Fixture.criarData(28, Calendar.FEBRUARY, 2012),
@@ -1921,21 +1935,16 @@ public class DataLoader {
 				usuarioJoao,
 				box1);
 
-		save(session, controleConferenciaEncalheCota);
+		save(session, controleConferenciaEncalheCotaVeja1);
 		
-		ChamadaEncalheCota chamadaEncalheCota = Fixture.chamadaEncalheCota(
-				chamadaEncalhe,
+		chamadaEncalheCotaVeja1CotaJose = Fixture.chamadaEncalheCota(
+				chamadaEncalheVeja1,
 				false,
 				cotaJose,
 				BigDecimal.TEN);
-		save(session, chamadaEncalheCota);				
+		save(session, chamadaEncalheCotaVeja1CotaJose);				
 		
-		ConferenciaEncalhe conferenciaEncalhe = Fixture.conferenciaEncalhe(
-				mec, chamadaEncalheCota, controleConferenciaEncalheCota,
-				Fixture.criarData(28, Calendar.FEBRUARY, 2012),new BigDecimal(8),new BigDecimal(8), produtoEdicaoVeja1);
-		save(session, conferenciaEncalhe);	
-		
-	}*/
+	}
 	
 
 	private static void criarControleBaixaBancaria(Session session) {
@@ -2870,6 +2879,10 @@ public class DataLoader {
 		MovimentoEstoqueCota movimentoEstoqueCota36 = Fixture.movimentoEstoqueCota(produtoEdicaoVeja1, tipoMovimentoEnvioEncalhe, 
 				usuarioJoao, estoqueProdutoCotaVeja1, BigDecimal.TEN, cotaJose, StatusAprovacao.APROVADO, null);
 		
+		ConferenciaEncalhe conferenciaEncalhe = Fixture.conferenciaEncalhe(
+				movimentoEstoqueCota36, chamadaEncalheCotaVeja1CotaJose, controleConferenciaEncalheCotaVeja1,
+				Fixture.criarData(28, Calendar.FEBRUARY, 2012),new BigDecimal(8),new BigDecimal(8), produtoEdicaoVeja1);
+		
 		MovimentoEstoqueCota movimentoEstoqueCota37 = Fixture.movimentoEstoqueCota(produtoEdicaoVeja1, tipoMovimentoRecReparte, 
 				usuarioJoao, estoqueProdutoCotaVeja1, BigDecimal.TEN, cotaJose, StatusAprovacao.APROVADO, null);
 		movimentoEstoqueCota37.setLancamento(lancamentoVeja1);
@@ -2890,7 +2903,7 @@ public class DataLoader {
 			 movimentoEstoqueCota28, movimentoEstoqueCota29, movimentoEstoqueCota30,
 			 movimentoEstoqueCota31, movimentoEstoqueCota32,movimentoEstoqueCota33,
 			 movimentoEstoqueCota34,movimentoEstoqueCota35, movimentoEstoqueCota36,
-			 movimentoEstoqueCota37, movimentoEstoqueCota38);
+			 movimentoEstoqueCota37, movimentoEstoqueCota38, conferenciaEncalhe);
 	}
 
 	private static void criarMovimentosEstoqueCotaConferenciaEncalhe(Session session) {
@@ -4957,6 +4970,9 @@ public class DataLoader {
 		criarMovimentosEstoque(session);
 		criarLancamentosExpedidos(session);
 		criarEstudos(session);
+		
+		massaConferenciaParaMovimentoEstoqueCota(session);
+		
 		criarMovimentosEstoqueCota(session);
 		criarEstudosCota(session);
 
