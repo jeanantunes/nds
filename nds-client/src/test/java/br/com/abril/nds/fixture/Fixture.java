@@ -417,6 +417,7 @@ public class Fixture {
 		fornecedor.setInicioAtividade(new Date());
 		fornecedor.setCodigoInterface(codigoInterface);
 		fornecedor.setOrigem(Origem.MANUAL);
+		fornecedor.setEmailNfe("teste@gmail.com");
 		return fornecedor;
 	}
 	

@@ -4452,14 +4452,17 @@ public class DataLoader {
 		fornecedorAcme.setCodigoInterface(123);
 		fornecedorAcme.setResponsavel("João");
 		fornecedorAcme.setOrigem(Origem.INTERFACE);
+		fornecedorAcme.setEmailNfe("acme@acme.com");
 		fornecedorDinap = Fixture.fornecedorDinap(tipoFornecedorPublicacao);
 		fornecedorDinap.setCodigoInterface(9999999);
 		fornecedorDinap.setResponsavel("Maria");
 		fornecedorDinap.setOrigem(Origem.MANUAL);
+		fornecedorDinap.setEmailNfe("acme@acme.com");
 		fornecedorFc = Fixture.fornecedorFC(tipoFornecedorPublicacao);
 		fornecedorFc.setCodigoInterface(9999998);
 		fornecedorFc.setResponsavel("Sebastião");
 		fornecedorFc.setOrigem(Origem.MANUAL);
+		fornecedorFc.setEmailNfe("acme@acme.com");
 
 		save(session, fornecedorAcme, fornecedorDinap, fornecedorFc);
 
