@@ -329,7 +329,7 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 	private void criarEnderecoCota(Cota cota) {
 		
 		Endereco endereco = Fixture.criarEndereco(
-				TipoEndereco.COMERCIAL, "13730-000", "Rua Marechal Deodoro", 50, "Centro", "Mococa", "SP");
+				TipoEndereco.COMERCIAL, "13730-000", "Rua Marechal Deodoro", 50, "Centro", "Mococa", "SP",1);
 
 		EnderecoCota enderecoCota = new EnderecoCota();
 		enderecoCota.setCota(cota);
@@ -338,7 +338,7 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 		enderecoCota.setTipoEndereco(TipoEndereco.COBRANCA);
 		
 		Endereco endereco2 = Fixture.criarEndereco(
-				TipoEndereco.LOCAL_ENTREGA, "13730-000", "Rua X", 50, "Vila Carvalho", "Mococa", "SP");
+				TipoEndereco.LOCAL_ENTREGA, "13730-000", "Rua X", 50, "Vila Carvalho", "Mococa", "SP",1);
 
 		EnderecoCota enderecoCota2 = new EnderecoCota();
 		enderecoCota2.setCota(cota);
