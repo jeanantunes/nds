@@ -40,5 +40,19 @@ public class TipoDescontoDistribuidorRepositoryImpl extends AbstractRepositoryMo
 		return query.list();
 	}
 
+	@Override
+	public Integer buscarTotalDescontosDistribuidor() {
+		 
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select count(desconto) FROM TipoDescontoDistribuidor as desconto  ");		
+		
+		Query query =  getSession().createQuery(hql.toString());
+		
+		Long totalRegistros = (Long) query.uniqueResult();
+		
+		return (totalRegistros == null) ? 0 : totalRegistros.intValue();
+	}
+
 
 }

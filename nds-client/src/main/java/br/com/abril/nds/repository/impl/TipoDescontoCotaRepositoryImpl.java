@@ -7,6 +7,7 @@ import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.TipoDescontoCotaDTO;
+import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.TipoDescontoCota;
 import br.com.abril.nds.repository.TipoDescontoCotaRepository;
 
@@ -69,7 +70,7 @@ public class TipoDescontoCotaRepositoryImpl extends AbstractRepositoryModel<Tipo
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<TipoDescontoCotaDTO> obterTipoDescontosCota() {
+	public List<TipoDescontoCotaDTO> obterTipoDescontosCota(Cota cota) {
 
 		StringBuilder hql = new StringBuilder();
 
@@ -82,9 +83,17 @@ public class TipoDescontoCotaRepositoryImpl extends AbstractRepositoryModel<Tipo
 		hql.append(" from TipoDescontoCota as desconto ");
 		hql.append(" LEFT JOIN desconto.cota as cota ");
 		hql.append(" LEFT JOIN cota.pessoa as pessoa ");
-		hql.append(" LEFT JOIN desconto.usuario as usuario ");		
+		hql.append(" LEFT JOIN desconto.usuario as usuario ");
+		
+		if(cota != null){
+			hql.append(" where cota.id = :idCota ");
+		}
 
 		Query query = getSession().createQuery(hql.toString());
+		
+		if(cota != null){
+			query.setParameter("idCota", cota.getId());
+		}
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(TipoDescontoCotaDTO.class));
 		

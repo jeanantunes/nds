@@ -3,6 +3,7 @@ package br.com.abril.nds.repository;
 import java.util.List;
 
 import br.com.abril.nds.dto.TipoDescontoCotaDTO;
+import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.TipoDescontoCota;
 
 /**
@@ -23,6 +24,6 @@ public interface TipoDescontoCotaRepository extends Repository<TipoDescontoCota,
 	
 	Integer buscarTotalDescontosPorCota();
 	
-	List<TipoDescontoCotaDTO> obterTipoDescontosCota();
+	List<TipoDescontoCotaDTO> obterTipoDescontosCota(Cota cota);
 	
 }

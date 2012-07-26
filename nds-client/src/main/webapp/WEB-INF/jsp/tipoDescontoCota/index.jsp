@@ -667,7 +667,7 @@
 				align : 'center'
 			}, {
 				display : 'Usuário',
-				name : 'usuario',
+				name : 'nomeUsuario',
 				width : 150,
 				sortable : true,
 				align : 'left'

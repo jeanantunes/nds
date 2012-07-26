@@ -26,5 +26,7 @@ public interface TipoDescontoDistribuidorService {
 	
 	List<TipoDescontoCotaVO> obterTipoDescontoDistribuidor();
 	
+	Integer buscarTotalDescontosDistribuidor();
+	
 }
 	

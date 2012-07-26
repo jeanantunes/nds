@@ -15,5 +15,7 @@ public interface TipoDescontoDistribuidorRepository extends Repository<TipoDesco
 	int obterSequencial();
 
 	List<TipoDescontoDistribuidor> obterTipoDescontosDistribuidor();
+
+	Integer buscarTotalDescontosDistribuidor();
 	
 }

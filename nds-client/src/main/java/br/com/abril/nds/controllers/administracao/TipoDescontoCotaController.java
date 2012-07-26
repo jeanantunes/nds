@@ -20,6 +20,7 @@ import br.com.abril.nds.client.vo.TipoDescontoCotaVO;
 import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.dto.CotaDTO;
 import br.com.abril.nds.dto.TipoDescontoCotaDTO;
+import br.com.abril.nds.dto.TipoDescontoProdutoDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaDTO.OrdemColuna;
 import br.com.abril.nds.dto.filtro.FiltroTipoDescontoCotaDTO;
@@ -150,7 +151,7 @@ public class TipoDescontoCotaController {
 			
 		listaDescontoCotaVO = tipoDescontoDistribuidorService.obterTipoDescontoDistribuidor();
 		
-		Integer totalDeRegistros = this.tipoDescontoCotaService.buscarTotalDescontosPorCota();
+		Integer totalDeRegistros = this.tipoDescontoDistribuidorService.buscarTotalDescontosDistribuidor();
 		
 		if (totalDeRegistros == 0) {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
@@ -175,11 +176,19 @@ public class TipoDescontoCotaController {
 	
 	@Post
 	@Path("/pesquisarDescontoEspecifico")
-	public void pesquisarDescontoEspecifico(String cotaEspecifica, String nomeEspecifico, String sortorder, String sortname, int page, int rp) throws Exception {
+	public void pesquisarDescontoEspecifico(Integer cotaEspecifica, String nomeEspecifico, String sortorder, String sortname, int page, int rp) throws Exception {
 		
-		FiltroTipoDescontoCotaDTO filtro = carregarFiltroPesquisaDescontoEspecifico(cotaEspecifica, nomeEspecifico, sortorder, sortname, page, rp);
+		Cota cota = null;
+		FiltroTipoDescontoCotaDTO filtro = null;
+		if(cotaEspecifica != null){
+			cota = this.cotaService.obterCotaPDVPorNumeroDaCota(cotaEspecifica);			
+			filtro = carregarFiltroPesquisaDescontoEspecifico(cotaEspecifica.toString(), nomeEspecifico, sortorder, sortname, page, rp);
+		}else{
+			filtro = carregarFiltroPesquisaDescontoEspecifico("", nomeEspecifico, sortorder, sortname, page, rp);
+		}
 		
-		List<TipoDescontoCotaDTO> listaDescontoCotaDTO = this.tipoDescontoCotaService.obterTipoDescontosCota();		
+		
+		List<TipoDescontoCotaDTO> listaDescontoCotaDTO = this.tipoDescontoCotaService.obterTipoDescontosCota(cota);		
 			
 		Integer totalRegistros = this.tipoDescontoCotaService.buscarTotalDescontosPorCota();			
 				
@@ -199,6 +208,7 @@ public class TipoDescontoCotaController {
 	@Post
 	@Path("/pesquisarDescontoProduto")
 	public void pesquisarDescontoProduto(String codigo, String produto, String sortorder, String sortname, int page, int rp) throws Exception {
+		
 		Produto produtoPesquisado = null;
 		List<TipoDescontoCotaVO> listaDescontoCotaVO = 	null;
 		FiltroTipoDescontoCotaDTO filtro = carregarFiltroPesquisaDescontoProduto(codigo,sortorder, sortname, page, rp);
@@ -368,11 +378,16 @@ public class TipoDescontoCotaController {
 	}
 	
 	private List<TipoDescontoCotaVO> popularTipoDescontoCotaVOParaProduto(Produto produto) {
-		//ALTERAR O SERVICE DA LINHA ABAIXO
+		
 		List<TipoDescontoCotaVO> listaVO = this.tipoDescontoDistribuidorService.obterTipoDescontoDistribuidor();
+		List<TipoDescontoProdutoDTO> listaCerta = this.tipoDescontoProdutoService.obterTipoDescontoProduto(produtoEdicao);
+		
 		List<TipoDescontoCotaVO> listaAux = new ArrayList<TipoDescontoCotaVO>();
+		
 		for (TipoDescontoCotaVO tipoDescontoCotaVO : listaVO) {
+			
 			ProdutoEdicao pr = this.produtoEdicaoService.obterProdutoEdicaoPorCodProdutoNumEdicao(tipoDescontoCotaVO.getCodigo(), tipoDescontoCotaVO.getEdicao());
+			
 			if(tipoDescontoCotaVO.getCodigo().equals(produto.getCodigo())){
 				tipoDescontoCotaVO.setCodigo(pr.getProduto().getCodigo());
 				tipoDescontoCotaVO.setProduto(pr.getProduto().getNome());

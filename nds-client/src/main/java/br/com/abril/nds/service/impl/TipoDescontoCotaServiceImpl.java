@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.TipoDescontoCotaDTO;
+import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.TipoDescontoCota;
 import br.com.abril.nds.repository.TipoDescontoCotaRepository;
 import br.com.abril.nds.service.TipoDescontoCotaService;
@@ -43,8 +44,8 @@ public class TipoDescontoCotaServiceImpl implements TipoDescontoCotaService {
 
 	@Override
 	@Transactional
-	public List<TipoDescontoCotaDTO> obterTipoDescontosCota() {		 
-		return this.tipoDescontoCotaRepository.obterTipoDescontosCota();
+	public List<TipoDescontoCotaDTO> obterTipoDescontosCota(Cota cota) {		 
+		return this.tipoDescontoCotaRepository.obterTipoDescontosCota(cota);
 	}
 
 }

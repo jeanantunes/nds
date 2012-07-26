@@ -67,8 +67,9 @@ public class TipoDescontoDistribuidorServiceImpl implements
 	}
 
 	@Override
+	@Transactional
 	public void excluirDesconto(TipoDescontoDistribuidor tipoDescontoDistribuidor) {
-		// TODO Auto-generated method stub
+		this.tipoDescontoDistribuidorRepository.remover(tipoDescontoDistribuidor); 
 
 	}
 
@@ -76,6 +77,13 @@ public class TipoDescontoDistribuidorServiceImpl implements
 	@Transactional
 	public List<Distribuidor> obterDistribuidores() {		 
 		return this.distribuidorRepository.buscarTodos();
+	}
+
+	@Override
+	@Transactional
+	public Integer buscarTotalDescontosDistribuidor() {
+		 
+		return this.tipoDescontoDistribuidorRepository.buscarTotalDescontosDistribuidor();
 	}
 
 }
