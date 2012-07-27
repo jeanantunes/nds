@@ -1,5 +1,5 @@
 
-var boxController = {
+var boxController = $.extend(true, {
 	tipoBoxEnun : {
 		ENCALHE : 'Encalhe',
 		LANCAMENTO : 'Lan&ccedil;amento',
@@ -62,8 +62,8 @@ var boxController = {
 			useRp : true,
 			rp : 15,
 			showTableToggleBtn : true,
-			width : 960,
-			height : 255
+			width : 'auto',
+			height : '280'
 		});
 		$(".boxGrid").flexOptions({
 			"url" : this.path + 'busca.json',
@@ -115,14 +115,14 @@ var boxController = {
 		this.initGridDetalhe();
 		this.bindButtons();
 		this.bindInputEvent();
+		this.createDialog();
 	},
-	showPopupEditar : function(title) {
+	createDialog : function() {
 		$("#dialog-novo").dialog({
 			resizable : false,
 			height : 230,
 			width : 400,
 			modal : true,
-			title : title,
 			buttons : [{
 				id:"btnDialogNovoConfirmar",
 				text:"Confirmar",
@@ -136,8 +136,16 @@ var boxController = {
 					$(this).dialog("close");
 				}
 			}],
-			beforeClose : clearMessageDialogTimeout
+			beforeClose : clearMessageDialogTimeout,
+			form: $("#dialog-novo").parents("form")
 		});
+		$("#dialog-novo").dialog("close");
+	},
+	showPopupEditar : function(title) {
+		$("#dialog-novo")
+			.dialog( "option" ,  "title", title )
+			.dialog( "open" );
+		
 	},
 	editar : function(id) {
 		$.postJSON(this.path + 'buscaPorId.json', {
@@ -152,13 +160,6 @@ var boxController = {
 			}
 		});
 	},
-	bindData : function(data) {
-		this.box = data.box;
-		
-		$("#boxCodigo").val(this.box.codigo);
-		$("#boxNome").val(this.box.nome);
-		$("#boxTipoBox").val(this.box.tipoBox);
-	},
 	getData : function() {		
 		this.box.codigo = parseInt($("#boxCodigo").val());
 		this.box.nome = $("#boxNome").val();
@@ -166,11 +167,8 @@ var boxController = {
 	},
 	salvar : function(dialog) {
 		this.getData();
-		var obj = {};
-		for(var propriedade in this.box) {
-			obj['box.' + propriedade] = this.box[propriedade];
 
-		}
+		var obj = $(dialog).dialog("option", "form").serialize();
 
 		$.postJSON(this.path + 'salvar.json', obj, function(data) {
 			var tipoMensagem = data.tipoMensagem;
@@ -292,5 +290,5 @@ var boxController = {
 		$(".boxCotaGrid").flexReload();
 		this.detalheDialog();
 	}
-};
+}, BaseController);
 

@@ -17,17 +17,23 @@ $(function(){
 </head>
 
 <body>
+	<form action="/cadastro/box/">
 	<div id="dialog-box" title="Detalhes do Box">
 		<fieldset>
 	    	<legend>Cotas Associadas ao Box</legend>
 	        <table class="boxCotaGrid"></table>
 	    </fieldset>
 	</div>
+	</form>
 
+	<form action="/cadastro/box/">
 	<div id="dialog-excluir" title="Excluir Box">		
 		<p>Confirma a exclus&atilde;o deste Box?</p>
 	</div>
+	</form>
 	
+	<form action="/cadastro/box/">
+	<input type="hidden" name="box.id" id="boxId" style="width:80px;"/>
 	<div id="dialog-novo" title="Incluir Novo Box">  
 		<jsp:include page="../messagesDialog.jsp" />  
 	    <table width="356" border="0" cellpadding="2" cellspacing="1" class="filtro">
@@ -51,7 +57,9 @@ $(function(){
 	            </tr>	           
           </table>
     </div>
+	</form>
 	
+	<form action="/cadastro/box/">
 	 <fieldset class="classFieldset">
    	    <legend> Pesquisar Box</legend>
         <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
@@ -81,5 +89,6 @@ $(function(){
    
       </fieldset>
       <div class="linha_separa_fields">&nbsp;</div>
+    </form>
 
 </body>
