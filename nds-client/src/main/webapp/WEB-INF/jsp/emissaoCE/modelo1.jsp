@@ -346,6 +346,8 @@ $(function(){$('img.capaImg').load(function() {
 </table>
 <br/><br/><br/><br/><br/><br/>
 </div>
+<c:if test="${withCapa}">
+
 <div class="quebraPaginaEmissao" id=paginaCapas>	
 	<table width="850" border="0" cellspacing="0" cellpadding="0">
 	  <tr>
@@ -451,6 +453,7 @@ $(function(){$('img.capaImg').load(function() {
     </div>
    <br clear="all"/>
 </div>
+</c:if>
 </c:forEach>
 </body>
 </html>

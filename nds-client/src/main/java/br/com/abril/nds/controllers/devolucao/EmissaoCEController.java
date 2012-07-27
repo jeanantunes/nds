@@ -211,6 +211,8 @@ public class EmissaoCEController {
 		
 		result.include("dadosDistribuidor", dadosDistribuidor);
 		
+		result.include("withCapa", filtro.getCapa());
+		
 				
 	}
 	
@@ -226,6 +228,7 @@ public class EmissaoCEController {
 		
 		result.include("dadosDistribuidor", dadosDistribuidor);
 		
+		result.include("withCapa", filtro.getCapa());
 	}
 
 	/**
