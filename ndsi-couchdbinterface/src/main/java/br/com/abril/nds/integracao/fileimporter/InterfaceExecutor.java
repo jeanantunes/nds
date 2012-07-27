@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Scanner;
 
+import org.apache.commons.io.filefilter.FileFilterUtils;
 import org.apache.commons.io.filefilter.RegexFileFilter;
 import org.apache.commons.lang.StringUtils;
 import org.lightcouch.CouchDbClient;
@@ -169,8 +170,12 @@ public class InterfaceExecutor {
 		
 		String diretorio = parametroSistemaDAO.getParametro("IMAGE_DIR");
 		CouchDbClient couchDbClient = this.getCouchDbClientInstance("db_integracao");
-		
-		File[] imagens = new File(diretorio).listFiles();
+				
+		File[] imagens = new File(diretorio).listFiles(new FilenameFilter() {
+		    public boolean accept(File dir, String name) {
+		        return name.toLowerCase().endsWith(".jpg");
+		    }
+		});
 		
 		for (File imagem: imagens) {
 			

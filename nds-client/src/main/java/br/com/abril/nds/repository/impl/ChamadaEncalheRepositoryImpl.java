@@ -292,6 +292,7 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		hql.append(" 		lancamentos.sequenciaMatriz as sequencia, ");
 		hql.append(" 	    produto.codigo as codigoProduto, ");
 		hql.append(" 	    produto.nome as nomeProduto, ");
+		hql.append(" 	    produtoEdicao.id as idProdutoEdicao, ");
 		hql.append(" 	    produtoEdicao.numeroEdicao as edicao, ");
 		hql.append(" 	    produtoEdicao.desconto as desconto, ");
 		hql.append(" 	    produtoEdicao.precoVenda as precoVenda, ");

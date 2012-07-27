@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import br.com.abril.nds.dto.CotaEmissaoDTO;
 import br.com.abril.nds.dto.DistribuidorDTO;
 import br.com.abril.nds.dto.ItemDTO;
+import br.com.abril.nds.dto.ProdutoEmissaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroEmissaoCE;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.service.DistribuidorService;
@@ -202,12 +203,15 @@ public class EmissaoCEController {
 		FiltroEmissaoCE filtro = (FiltroEmissaoCE) session.getAttribute(FILTRO_SESSION_ATTRIBUTE);
 		
 		List<CotaEmissaoDTO> cotasEmissao = chamadaEncalheService.obterDadosImpressaoEmissaoChamadasEncalhe(filtro);
+		
 				
 		DistribuidorDTO dadosDistribuidor = distribuidorService.obterDadosEmissao();
 				
 		result.include("cotasEmissao", cotasEmissao);
 		
 		result.include("dadosDistribuidor", dadosDistribuidor);
+		
+		result.include("withCapa", filtro.getCapa());
 		
 				
 	}
@@ -216,7 +220,7 @@ public class EmissaoCEController {
 		
 		FiltroEmissaoCE filtro = (FiltroEmissaoCE) session.getAttribute(FILTRO_SESSION_ATTRIBUTE);
 		
-		List<CotaEmissaoDTO> cotasEmissao = chamadaEncalheService.obterDadosImpressaoEmissaoChamadasEncalhe(filtro);
+		List<CotaEmissaoDTO> cotasEmissao = chamadaEncalheService.obterDadosImpressaoEmissaoChamadasEncalhe(filtro);	
 				
 		DistribuidorDTO dadosDistribuidor = distribuidorService.obterDadosEmissao();
 				
@@ -224,6 +228,7 @@ public class EmissaoCEController {
 		
 		result.include("dadosDistribuidor", dadosDistribuidor);
 		
+		result.include("withCapa", filtro.getCapa());
 	}
 
 	/**

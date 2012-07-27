@@ -38,6 +38,8 @@ import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.vo.PaginacaoVO;
+import br.com.caelum.stella.validation.CNPJValidator;
+import br.com.caelum.stella.validation.InvalidStateException;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
@@ -245,9 +247,22 @@ public class FornecedorController {
 			mensagens.add("O preenchimento do campo [Razao Social] é obrigatório.");
 		}
 		
+		CNPJValidator cnpjValidator = new CNPJValidator(true);
+		
 		if (fornecedorDTO.getCnpj() == null || fornecedorDTO.getCnpj().isEmpty()) {
 			
 			mensagens.add("O preenchimento do campo [CNPJ] é obrigatório.");
+		
+		} else {
+			
+			try{
+				
+				cnpjValidator.assertValid(fornecedorDTO.getCnpj());
+			
+			} catch(InvalidStateException e){
+				
+				mensagens.add("CNPJ inválido.");
+			}
 		}
 		
 		if (fornecedorDTO.getTipoFornecedor() == null) {
@@ -483,6 +498,8 @@ public class FornecedorController {
 				this.tipoFornecedorService.obterTipoFornecedorPorId(fornecedorDTO.getTipoFornecedor());
 
 		fornecedor.setTipoFornecedor(tipoFornecedor);
+		
+		fornecedor.setEmailNfe(fornecedorDTO.getEmailNfe());
 		
 		fornecedor.setCodigoInterface(fornecedorDTO.getCodigoInterface());
 		

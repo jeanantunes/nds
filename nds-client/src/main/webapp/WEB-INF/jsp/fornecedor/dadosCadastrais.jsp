@@ -52,10 +52,16 @@
 	      </select>
       
       </td>
-      <td>Tem Contrato?</td>
+      <td>E-mail NF-e:</td>
       <td>
-      	<input type="checkbox" name="fornecedorDTO.possuiContrato" id="possuiContrato" onclick="mostraValidade();" />
+      	<input type="text" name="fornecedorDTO.emailNfe" id="emailNfe" maxlength="255" style="width:230px" />
       </td>
+	</tr>
+    <tr>
+	    <td>Tem Contrato?</td>
+	    <td>
+	    	<input type="checkbox" name="fornecedorDTO.possuiContrato" id="possuiContrato" onclick="mostraValidade();" />
+	    </td>
     </tr>
     <tr class="validade">
       <td>&nbsp;</td>

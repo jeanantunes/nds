@@ -393,10 +393,10 @@ public class ExpedicaoResumoBoxRepositoryImplTest extends AbstractRepositoryImpl
 				usuarioJoao, estoqueProdutoVeja1, TipoDiferenca.SOBRA_EM);
 		
 		
-		RateioDiferenca rateioDiferencaCotaManoel = Fixture.rateioDiferenca(new BigDecimal(10), cotaManoel, diferenca3, estudoCotaSuper1Manoel);
+		RateioDiferenca rateioDiferencaCotaManoel = Fixture.rateioDiferenca(new BigDecimal(10), cotaManoel, diferenca3, estudoCotaSuper1Manoel, new Date());
 		save(rateioDiferencaCotaManoel);
 		
-		RateioDiferenca rateioDiferencaJose = Fixture.rateioDiferenca(new BigDecimal(10),cotaJose, diferenca, estudoCotaVeja1Joao);
+		RateioDiferenca rateioDiferencaJose = Fixture.rateioDiferenca(new BigDecimal(10),cotaJose, diferenca, estudoCotaVeja1Joao, new Date());
 		save(rateioDiferencaJose);
 	}
 

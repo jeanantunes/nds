@@ -14,6 +14,9 @@
 			<li>
 				<a href="#manutencaoTelefones" onclick="ENTREGADOR.carregarTelefones()">Telefones</a>
 			</li>
+			<li>
+				<a href="#cotas" id="linkCotas">Cotas</a>
+			</li>
 		</ul>
 
 		<div id="dadosCadastrais">
@@ -33,6 +36,9 @@
 			</jsp:include>
 		</div>
 		
+		<div id="cotas">
+			<jsp:include page="cotas.jsp" />
+		</div>
 
 	</div>
 	

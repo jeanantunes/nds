@@ -78,7 +78,7 @@ public class FinanceiroServiceImplTest extends AbstractRepositoryImplTest {
 		save(politicaCobranca);
 		
 		Endereco enderecoDoDistruibuidor = Fixture.criarEndereco(
-				TipoEndereco.COBRANCA, "13222-020", "Rua João de Souza", 51, "Centro", "São Paulo", "SP");
+				TipoEndereco.COBRANCA, "13222-020", "Rua João de Souza", 51, "Centro", "São Paulo", "SP",1);
 		
 		EnderecoDistribuidor enderecoDistribuidor = Fixture.enderecoDistribuidor(distribuidor, enderecoDoDistruibuidor, true, TipoEndereco.COBRANCA);
 		
@@ -94,7 +94,7 @@ public class FinanceiroServiceImplTest extends AbstractRepositoryImplTest {
 		save(cota);
 		
 		Endereco enderecoDaCota = Fixture.criarEndereco(
-				TipoEndereco.COBRANCA, "13222-020", "Rua Antonio Cristovan", 51, "Centro", "Mococa", "SP");
+				TipoEndereco.COBRANCA, "13222-020", "Rua Antonio Cristovan", 51, "Centro", "Mococa", "SP",1);
 		
 		
 		EnderecoCota enderecoCota = Fixture.enderecoCota(cota, enderecoDaCota, true, TipoEndereco.COBRANCA);

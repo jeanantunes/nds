@@ -449,8 +449,7 @@
 							</li>
 							<li><a href="Administracao/fechar_dia.htm">Fechar o Dia</a>
 							</li>
-							<li><a href='<c:url value="/administracao/tipoProduto"/>'>Tipo de Produto</a>
-							</li>
+							
 							<li><a href="Administracao/help_administracao.htm">Help</a>
 							</li>
 							<li><a href='<c:url value="/distribuidor/parametroCobranca/index"/>'>Parâmetros de Cobrança</a>
