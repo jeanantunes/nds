@@ -9,9 +9,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import br.com.abril.nds.dto.PdvDTO;
-import br.com.abril.nds.dto.filtro.FiltroPdvDTO;
-import br.com.abril.nds.dto.filtro.FiltroPdvDTO.ColunaOrdenacao;
 import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
@@ -19,11 +16,9 @@ import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.LicencaMunicipal;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
-import br.com.abril.nds.model.cadastro.Telefone;
 import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.cadastro.TipoEndereco;
 import br.com.abril.nds.model.cadastro.TipoLicencaMunicipal;
-import br.com.abril.nds.model.cadastro.TipoTelefone;
 import br.com.abril.nds.model.cadastro.pdv.AreaInfluenciaPDV;
 import br.com.abril.nds.model.cadastro.pdv.CaracteristicasPDV;
 import br.com.abril.nds.model.cadastro.pdv.EnderecoPDV;
@@ -31,16 +26,15 @@ import br.com.abril.nds.model.cadastro.pdv.PDV;
 import br.com.abril.nds.model.cadastro.pdv.SegmentacaoPDV;
 import br.com.abril.nds.model.cadastro.pdv.StatusPDV;
 import br.com.abril.nds.model.cadastro.pdv.TamanhoPDV;
-import br.com.abril.nds.model.cadastro.pdv.TelefonePDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoCaracteristicaSegmentacaoPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoClusterPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoPontoPDV;
-import br.com.abril.nds.repository.PdvRepository;
+import br.com.abril.nds.repository.EnderecoPDVRepository;
 
-public class PdvRepositoryTest extends AbstractRepositoryImplTest {
-	
+public class EnderecoPdvRepositoryTest extends AbstractRepositoryImplTest {
+
 	@Autowired
-	private PdvRepository pdvRepository;
+	private EnderecoPDVRepository enderecoPDVRepository;
 	
 	private Box box1;
 	
@@ -86,54 +80,31 @@ public class PdvRepositoryTest extends AbstractRepositoryImplTest {
 		Endereco endereco = Fixture.criarEndereco(TipoEndereco.RESIDENCIAL, "13720-000", "logradouro", 10, "Bairro", "Mococa", "SP",1);
 		save(endereco);
 		
-		Telefone telefone = Fixture.telefone("001", "369222", "10");
-		save(telefone);
-		
 		EnderecoPDV enderecoPdv = Fixture.criarEnderecoPDV(endereco, pdv, true, TipoEndereco.RESIDENCIAL);
 		save(enderecoPdv);
-		
-		TelefonePDV telefonePDV = Fixture.criarTelefonePDV(telefone, pdv, true, TipoTelefone.COMERCIAL);
-		save(telefonePDV);
 		
 		Endereco endereco1 = Fixture.criarEndereco(TipoEndereco.COMERCIAL, "13720-000", "logradouro", 10, "Bairro", "Mococa", "SP",1);
 		save(endereco1);
 		
-		Telefone telefone1 = Fixture.telefone("001", "369222", "10");
-		save(telefone1);
-		
 		EnderecoPDV enderecoPdv1 = Fixture.criarEnderecoPDV(endereco, pdv, false, TipoEndereco.COMERCIAL);
 		save(enderecoPdv1);
 		
-		TelefonePDV telefonePDV1 = Fixture.criarTelefonePDV(telefone, pdv, false, TipoTelefone.COMERCIAL);
-		save(telefonePDV1);
+		Endereco endereco2 = Fixture.criarEndereco(TipoEndereco.COMERCIAL, "13720-000", "logradouro", 10, "Bairro", "São Paulo", "SP",1);
+		save(endereco2);
 		
+		EnderecoPDV enderecoPdv2 = Fixture.criarEnderecoPDV(endereco, pdv, false, TipoEndereco.COMERCIAL);
+		save(enderecoPdv2);
+	}
+		
+	@Test
+	public void obterMunicipiosPdvPrincipal(){
+		
+		List<Endereco> endereco = enderecoPDVRepository.buscarMunicipioPdvPrincipal();
+		
+		Assert.assertNotNull(endereco);
+		
+		Assert.assertTrue(!endereco.isEmpty());
 	}
 	
-	@Test
-	public void obterPDVsPorCota(){
-		
-		FiltroPdvDTO filtro = new FiltroPdvDTO();
-		filtro.setIdCota(cotaManoel.getId());
-		
-		filtro.setColunaOrdenacao(ColunaOrdenacao.CONTATO);
-		
-		List<PdvDTO> lista = pdvRepository.obterPDVsPorCota(filtro);
-		
-		Assert.assertNotNull(lista);
-		
-		Assert.assertTrue(!lista.isEmpty());
-
-	}
 	
-	@Test
-	public void obterPDVPrincipal(){
-		PDV pdv = this.pdvRepository.obterPDVPrincipal(cotaManoel.getId());
-
-		Assert.assertNotNull(pdv);
-		
-		Assert.assertEquals(cotaManoel, pdv.getCota());
-		
-		Assert.assertTrue(pdv.getCaracteristicas().isPontoPrincipal());
-		
-	}
 }

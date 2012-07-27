@@ -33,6 +33,10 @@ public class PainelOperacionalServiceImpl implements PainelOperacionalService{
 		List<OperacaoDistribuidor> distribuidores = new ArrayList<OperacaoDistribuidor>();
 		OperacaoDistribuidor ultimoDistribuidor = null;
 		
+		BigDecimal qtdTotalJornaleiros = null;
+		BigDecimal cobrancaDia = null;
+		BigDecimal partLiq = null;
+		
 		for (Indicador indicador : indicadores){
 			
 			if (!indicador.getDistribuidor().equals(ultimoDistribuidor)){
@@ -53,13 +57,16 @@ public class PainelOperacionalServiceImpl implements PainelOperacionalService{
 			switch(indicador.getFormatoIndicador()){
 				case MONETARIO:
 					
-					indicador.setValor(new BigDecimal(indicador.getValor()).setScale(2, RoundingMode.HALF_EVEN).toString());
+					if (indicador.getValor() != null){
+						
+						indicador.setValor(new BigDecimal(indicador.getValor()).setScale(2, RoundingMode.HALF_EVEN).toString());
+					} else {
+						
+						indicador.setValor("0");
+					}
 				break;
 			}
 			
-			BigDecimal qtdTotalJornaleiros = null;
-			BigDecimal cobrancaDia = null;
-			BigDecimal partLiq = null;
 			switch (indicador.getTipoIndicador()) {
 				case JORNALEIROS:
 					
@@ -81,9 +88,15 @@ public class PainelOperacionalServiceImpl implements PainelOperacionalService{
 					if (!indicador.getTipoIndicador().equals(TipoIndicador.JORNALEIROS) &&
 							qtdTotalJornaleiros != null){
 						
-						BigDecimal pct = qtdTotalJornaleiros.multiply(new BigDecimal(indicador.getValor()).divide(CEM));
-						
-						indicador.setValor(indicador.getValor() + " - (" + pct.setScale(0) + "%)");
+						if (indicador.getValor() != null){
+							
+							BigDecimal pct = qtdTotalJornaleiros.multiply(new BigDecimal(indicador.getValor()).divide(CEM));
+							
+							indicador.setValor(indicador.getValor() + " - (" + pct.setScale(0) + "%)");
+						} else {
+							
+							indicador.setValor("0");
+						}
 					}
 				break;
 				
@@ -91,16 +104,27 @@ public class PainelOperacionalServiceImpl implements PainelOperacionalService{
 					
 					if (TipoIndicador.COBRANCA_POSTERGADA.equals(indicador.getTipoIndicador())){
 						
-						BigDecimal pctc = cobrancaDia.multiply(new BigDecimal(indicador.getValor()).divide(CEM));
-						
-						indicador.setValor(indicador.getValor() + " - (" + pctc.setScale(0) + "%)");
+						if (indicador.getValor() != null){
+							
+							BigDecimal pctc = cobrancaDia.multiply(new BigDecimal(indicador.getValor()).divide(CEM));
+							
+							indicador.setValor(indicador.getValor() + " - (" + pctc.setScale(0, RoundingMode.HALF_EVEN) + "%)");
+						} else {
+							
+							indicador.setValor("0");
+						}
 					} else if (TipoIndicador.INADIMPLENCIA.equals(indicador.getTipoIndicador())){
 						
-						BigDecimal valorInd = new BigDecimal(indicador.getValor());
-						
-						BigDecimal pctPartLiqui = valorInd.multiply(partLiq).divide(CEM);
-						
-						indicador.setValor(indicador.getValor() + " - (" + pctPartLiqui.setScale(0) + "%)");
+						if (indicador.getValor() != null){
+							BigDecimal valorInd = new BigDecimal(indicador.getValor());
+							
+							BigDecimal pctPartLiqui = valorInd.multiply(partLiq).divide(CEM);
+							
+							indicador.setValor(indicador.getValor() + " - (" + pctPartLiqui.setScale(0, RoundingMode.HALF_EVEN) + "%)");
+						} else {
+							
+							indicador.setValor("0");
+						}
 					}
 				break;
 			}

@@ -4,16 +4,13 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.sql.Date;
 import java.util.Scanner;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.exception.ImportacaoException;
-import br.com.abril.nds.model.seguranca.Usuario;
-import br.com.abril.nds.repository.UsuarioRepository;
 import br.com.abril.nds.service.vo.RetornoImportacaoArquivoVO;
 
 /**
@@ -31,9 +28,7 @@ public abstract class ImportacaoAbstractStrategy {
 	
 	protected static final String MENSAGEM_ERRO_FORMATO_DADOS="Formato das informações contidas na linha do arquivo inválida!";
 	
-	@Autowired
-	private UsuarioRepository usuarioRepository;
-
+	protected Date dataCriacaoArquivo;
 
 	/**
 	 * Efetua o processamento do dados referente ao arquivo
@@ -58,6 +53,8 @@ public abstract class ImportacaoAbstractStrategy {
 	 * @return RetornoImportacaoArquivoVO
 	 */
 	protected RetornoImportacaoArquivoVO processarArquivo(File arquivo){
+		
+		dataCriacaoArquivo = new Date(arquivo.lastModified());
 		
 		FileReader in = null;
 		try {

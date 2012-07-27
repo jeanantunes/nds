@@ -302,7 +302,7 @@
 					<li><span class="classLancamento">&nbsp;</span><a
 						href="javascript:;">Lançamento</a>
 						<ul>
-							<li><a href="matrizLancamento">Balanceamento
+							<li><a href="<c:url value="/matrizLancamento"/>">Balanceamento
 									da Matriz</a>
 							</li>
 							<li><a href="Lancamento/consulta_consignado_jornaleiro.htm">Consulta
@@ -449,8 +449,7 @@
 							</li>
 							<li><a href="Administracao/fechar_dia.htm">Fechar o Dia</a>
 							</li>
-							<li><a href='<c:url value="/administracao/tipoProduto"/>'>Tipo de Produto</a>
-							</li>
+							
 							<li><a href="Administracao/help_administracao.htm">Help</a>
 							</li>
 							<li><a href='<c:url value="/distribuidor/parametroCobranca/index"/>'>Parâmetros de Cobrança</a>

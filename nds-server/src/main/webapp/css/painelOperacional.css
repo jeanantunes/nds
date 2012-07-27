@@ -3,7 +3,8 @@
 }
 
 .ui-accordion .ui-accordion-content-active {
-	width: 295px !important;
+	width: 282px !important;
+	margin-top: -10px;
 }
 
 #dialog-novo,#dialog-alterar,#dialog-excluir {
@@ -576,7 +577,7 @@ div#pi:hover,div#pi:active {
 }
 
 .infosPainel div ul li .detalhesPainel .ui-accordion-header {
-	width: 348px !important;
+	width: 340px !important;
 }
 
 .ui-accordion-content span {
@@ -591,6 +592,15 @@ div#pi:hover,div#pi:active {
 	float: right;
 }
 
+.ui-accordion-header a{
+	font-size: 1em;
+}
+
 .infosPainel div ul li a {
 	font-size: 14px;
+}
+
+.infosPainel div{
+	margin-left: 0px;
+	margin-right: 0px;
 }
