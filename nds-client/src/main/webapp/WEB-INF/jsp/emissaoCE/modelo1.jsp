@@ -139,7 +139,7 @@ function imprimir(){
 			<c:forEach items="${cotaEmissao.produtos}" var="produto" varStatus="status">
            
             <tr class="class_linha_${status.index%2==0?1:2}">
-              <td width="44" align="center" style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">${status.index+1}</td>
+              <td width="44" align="center" style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">${produto.sequencia}</td>
               <td width="78" style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">${produto.codigoProduto}</td>
               <td width="175" style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">${produto.nomeProduto}</td>
               <td width="57" style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">${produto.edicao}</td>
@@ -274,7 +274,7 @@ function imprimir(){
         <c:forEach items="${cotaEmissao.produtos}" var="produto" varStatus="status">
         
 	        <tr class="class_linha_1">
-	          <td width="89" style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">${status.index+1}</td>
+	          <td width="89" style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">${produto.sequencia}</td>
 	          <td colspan="3" style="border-left:1px solid #000;border-bottom:1px solid #000;border-right:1px solid #000;padding-left:5px; ">${produto.nomeProduto}</td>
 	          <td width="61" align="center" style="border-bottom:1px solid #000;padding-left:5px; ">${produto.reparte}</td>
 	          <td width="67" align="center" style="border-left:1px solid #000;border-bottom:1px solid #000;border-right:1px solid #000;padding-left:5px; ">${produto.quantidadeDevolvida}</td>

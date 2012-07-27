@@ -80,7 +80,7 @@ public class EstoqueProdutoCotaRepositoryImplTest extends AbstractRepositoryImpl
 		save(bancoHSBC);
 		
 		PessoaJuridica juridicaDistrib = Fixture.pessoaJuridica("Distribuidor Acme",
-				"590033123647", "333.333.333.333", "distrib_acme@mail.com", "99.999-9");
+				"590033123647", "333", "distrib_acme@mail.com", "99.999-9");
 		save(juridicaDistrib);
 		
 		formaBoleto = Fixture.formaCobrancaBoleto(true, new BigDecimal(200), true, bancoHSBC,
@@ -295,4 +295,13 @@ public class EstoqueProdutoCotaRepositoryImplTest extends AbstractRepositoryImpl
 		
 	}
 	
+	@Test
+	public void testObterFaturamentoCota() {
+		Double faturamento = null;
+		
+		faturamento  = estoqueProdutoCotaRepository.obterFaturamentoCota(cotaManoel1.getId());
+		
+		Assert.assertTrue(faturamento.equals(108.0));
+		
+	}
 }

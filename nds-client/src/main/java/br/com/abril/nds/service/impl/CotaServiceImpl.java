@@ -57,6 +57,7 @@ import br.com.abril.nds.repository.BaseReferenciaCotaRepository;
 import br.com.abril.nds.repository.CobrancaRepository;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.EnderecoCotaRepository;
+import br.com.abril.nds.repository.EstoqueProdutoCotaRepository;
 import br.com.abril.nds.repository.HistoricoNumeroCotaRepository;
 import br.com.abril.nds.repository.HistoricoSituacaoCotaRepository;
 import br.com.abril.nds.repository.PdvRepository;
@@ -73,6 +74,7 @@ import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.EnderecoService;
 import br.com.abril.nds.service.SituacaoCotaService;
 import br.com.abril.nds.service.TelefoneService;
+import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
@@ -149,6 +151,9 @@ public class CotaServiceImpl implements CotaService {
 	
 	@Autowired
 	TipoMovimentoEstoqueRepository tipoMovimentoEstoqueRepository;
+	
+	@Autowired
+	EstoqueProdutoCotaRepository estoqueProdutoCotaRepository;
 	
 	@Transactional(readOnly = true)
 	@Override
@@ -534,7 +539,15 @@ public class CotaServiceImpl implements CotaService {
 	@Transactional
 	public List<CotaSuspensaoDTO> obterDTOCotasSujeitasSuspensao(String sortOrder, String sortColumn, Integer inicio, Integer rp) {
 		
-		return cotaRepository.obterCotasSujeitasSuspensao(sortOrder,sortColumn, inicio, rp);		
+		List<CotaSuspensaoDTO> lista = cotaRepository.obterCotasSujeitasSuspensao(sortOrder,sortColumn, inicio, rp);
+		
+		for(CotaSuspensaoDTO dto : lista) {
+			Integer perc = (int) ((dto.getDoubleDividaAcumulada() / dto.getDoubleConsignado() ) * 100);
+			dto.setPercDivida(perc.toString() + "%");
+			dto.setFaturamento(CurrencyUtil.formatarValor(estoqueProdutoCotaRepository.obterFaturamentoCota(dto.getIdCota())));
+		}
+		
+		return lista;		
 	}
 
 	@Override
