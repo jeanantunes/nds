@@ -93,4 +93,21 @@ public class EnderecoPDVRepositoryImpl extends AbstractRepositoryModel<EnderecoP
 		
 		query.executeUpdate();
 	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Endereco> buscarMunicipioPdvPrincipal(){
+		
+		StringBuilder hql  = new StringBuilder();
+		
+		hql.append(" select endereco from ")
+			.append(" PDV pdv join pdv.enderecos enderecoPDV join enderecoPDV.endereco endereco ")
+			.append(" where pdv.caracteristicas.pontoPrincipal = true ")
+			.append(" group by endereco.cidade ")
+			.append(" order by endereco.cidade ");
+		
+		Query query = getSession().createQuery(hql.toString());
+		
+		return query.list();
+	}
 }
