@@ -1,4 +1,5 @@
 <head>
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/cota.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.price_format.1.7.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/box.js"></script>
@@ -65,9 +66,9 @@ $(function(){
         <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
             <tr>
               <td width="30">Box:</td>
-                <td><input type="text" name="pesquisa.codigoBox" id="pesquisaCodigoBox" style="width:130px;"/></td>
+                <td><input type="text" name="box.codigo" id="pesquisaCodigoBox" style="width:130px;"/></td>
                 <td width="76">Tipo de Box:</td>
-                <td><select name="pesquisa.tipoBox" id="pesquisaTipoBox" style="width:180px;">
+                <td><select name="box.tipoBox" id="pesquisaTipoBox" style="width:180px;">
                 		<option selected="selected"> </option>
 	                    <option value="ENCALHE">Encalhe</option>
 	                    <option value="LANCAMENTO">Lan&ccedil;amento</option>

@@ -77,23 +77,25 @@ var boxController = $.extend(true, {
 		});
 
 	},
-	buscar : function(codigoBox, tipoBox) {
+	//buscar : function(codigoBox, tipoBox) {
+	buscar : function(obj) { 
+		
+		var serializedObj = $(obj).closest("form").serialize();
+		
+		/*var codigoBox = ;
+		var tipoBox = ;*/
+		
 		$(".boxGrid").flexOptions({
-			"url" : this.path + 'busca.json',
-			params : [{
-				name : "codigoBox",
-				value : codigoBox
-			}, {
-				name : "tipoBox",
-				value : tipoBox
-			}],
+			"url" : this.path + 'busca.json?' + serializedObj,
+			method: 'GET',
 			newp:1
 		});
 		$(".boxGrid").flexReload();
 	},
 	bindButtons : function() {
 		$("#btnPesquisar").click(function() {
-			boxController.buscar(parseInt($("#pesquisaCodigoBox").val()), $("#pesquisaTipoBox").val());
+			//boxController.buscar(parseInt($("#pesquisaCodigoBox").val()), $("#pesquisaTipoBox").val());
+			boxController.buscar(this);
 			$(".grids").show();
 		});
 		$("#btnNovo").click(function() {
@@ -101,11 +103,12 @@ var boxController = $.extend(true, {
 		});
 	},
 	bindInputEvent : function() {
-		
-		$('#pesquisaCodigoBox, #boxCodigo').mask("9999");
+		//$('#pesquisaCodigoBox, #boxCodigo').mask("9999");
+		$('#pesquisaCodigoBox, #boxCodigo').numeric();
 		$('#pesquisaCodigoBox').bind('keypress', function(e) {
 			if(e.keyCode == 13) {
-				boxController.buscar(parseInt($("#pesquisaCodigoBox").val()), $("#pesquisaTipoBox").val());
+				//boxController.buscar(parseInt($("#pesquisaCodigoBox").val()), $("#pesquisaTipoBox").val());
+				boxController.buscar();
 				$(".grids").show();
 			}
 		});
@@ -118,7 +121,7 @@ var boxController = $.extend(true, {
 		this.createDialog();
 	},
 	createDialog : function() {
-		$("#dialog-novo").dialog({
+		$("#dialog-novo #workspace div.ui-tabs-panel:not(.ui-tabs-hide)").dialog({
 			resizable : false,
 			height : 230,
 			width : 400,
@@ -137,12 +140,12 @@ var boxController = $.extend(true, {
 				}
 			}],
 			beforeClose : clearMessageDialogTimeout,
-			form: $("#dialog-novo").parents("form")
+			form: $("#dialog-novo #workspace div.ui-tabs-panel:not(.ui-tabs-hide)").parents("form")
 		});
-		$("#dialog-novo").dialog("close");
+		$("#dialog-novo #workspace div.ui-tabs-panel:not(.ui-tabs-hide)").dialog("close");
 	},
 	showPopupEditar : function(title) {
-		$("#dialog-novo")
+		$("#dialog-novo #workspace div.ui-tabs-panel:not(.ui-tabs-hide)")
 			.dialog( "option" ,  "title", title )
 			.dialog( "open" );
 		
@@ -264,7 +267,7 @@ var boxController = $.extend(true, {
 		});
 	},
 	detalheDialog:function(){
-		$( "#dialog-box" ).dialog({
+		$( "#dialog-box #workspace div.ui-tabs-panel:not(.ui-tabs-hide)" ).dialog({
 			resizable: false,
 			height:410,
 			width:630,
@@ -279,7 +282,7 @@ var boxController = $.extend(true, {
 		});
 	},
 	detalhe:function(id){		
-		$(".boxCotaGrid").flexOptions({
+		$(".boxCotaGrid #workspace div.ui-tabs-panel:not(.ui-tabs-hide)").flexOptions({
 			"url" : this.path + 'detalhe.json',
 			params : [{
 				name : "id",
@@ -287,7 +290,7 @@ var boxController = $.extend(true, {
 			}],
 			newp:1
 		});
-		$(".boxCotaGrid").flexReload();
+		$(".boxCotaGrid #workspace div.ui-tabs-panel:not(.ui-tabs-hide)").flexReload();
 		this.detalheDialog();
 	}
 }, BaseController);
