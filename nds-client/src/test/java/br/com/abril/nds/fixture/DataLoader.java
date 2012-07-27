@@ -91,7 +91,9 @@ import br.com.abril.nds.model.cadastro.TipoRoteiro;
 import br.com.abril.nds.model.cadastro.TipoTelefone;
 import br.com.abril.nds.model.cadastro.TributacaoFiscal;
 import br.com.abril.nds.model.cadastro.pdv.AreaInfluenciaPDV;
+import br.com.abril.nds.model.cadastro.pdv.EnderecoPDV;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
+import br.com.abril.nds.model.cadastro.pdv.SegmentacaoPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoEstabelecimentoAssociacaoPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoGeradorFluxoPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoPontoPDV;
@@ -821,6 +823,15 @@ public class DataLoader {
 	private static NCM ncmlivros;
 	private static NCM ncmCromo;
 	private static NCM ncmBebidas;
+	private static Endereco enderecoMococa1;
+	private static Endereco enderecoMococa2;
+	private static Endereco enderecoLuisMococa3;
+	private static Endereco enderecoMococa3;
+	private static Endereco enderecoRioPardo1;
+	private static Endereco enderecoRioPardo2;
+	private static Endereco enderecoRioPardo3;
+	private static TipoPontoPDV tipoPontoPDVResidencial;
+	private static TipoPontoPDV tipoPontoPDV2Comercial;
 
 	public static void main(String[] args) {
 		ClassPathXmlApplicationContext ctx = new ClassPathXmlApplicationContext(
@@ -881,6 +892,7 @@ public class DataLoader {
 		criarDiasDistribuicaoFornecedores(session);
 		criarDiasDistribuicaoDistribuidor(session);
 		criarCotas(session);
+		gerarTiposPontoPDV(session);
 		criarPDVsCota(session);
 		criarDistribuicaoCota(session);
 		criarEditores(session);		
@@ -899,6 +911,8 @@ public class DataLoader {
 		massaConferenciaParaMovimentoEstoqueCota(session);
 		
 		criarMovimentosEstoqueCota(session);
+		criarEndereco(session);
+		criarEnderecoPDV(session);
 		criarEnderecoCotaPF(session);
 		criarTelefoneCotaPF(session);
 		criarMovimentosFinanceiroCota(session);
@@ -947,8 +961,6 @@ public class DataLoader {
 		gerarCargaDadosNotasFiscaisNFE(session);
 
 		gerarEntregadores(session);
-
-		gerarTiposPontoPDV(session);
 
 		gerarAreaInfluenciaPDV(session);
 
@@ -1636,10 +1648,10 @@ public class DataLoader {
 
 	private static void gerarTiposPontoPDV(Session session) {
 
-		TipoPontoPDV tipoPontoPDV  = Fixture.criarTipoPontoPDV(1L, "Residencial");
-		TipoPontoPDV tipoPontoPDV2  = Fixture.criarTipoPontoPDV(2L, "Comercial");
+		 tipoPontoPDVResidencial  = Fixture.criarTipoPontoPDV(1L, "Residencial");
+		 tipoPontoPDV2Comercial  = Fixture.criarTipoPontoPDV(2L, "Comercial");
 
-		save(session,tipoPontoPDV,tipoPontoPDV2);
+		save(session,tipoPontoPDVResidencial,tipoPontoPDV2Comercial);
 	}
 
 	private static void gerarHistoricosAculoDivida(Session session) {
@@ -2252,19 +2264,28 @@ public class DataLoader {
 
 	private static void criarPDVsCota(Session session){
 
+		SegmentacaoPDV segmentacaoPDV = Fixture.criarSegmentacaoPdv(null, null, tipoPontoPDVResidencial, null);
+		
+		SegmentacaoPDV segmentacaoPDV2 = Fixture.criarSegmentacaoPdv(null, null, tipoPontoPDV2Comercial, null);
+		
 		pdvJose = Fixture.criarPDVPrincipal("PDV JOSE", cotaJose);
+		pdvJose.setSegmentacao(segmentacaoPDV);
 		session.save(pdvJose);
 
 		pdvManoel = Fixture.criarPDVPrincipal("PDV MANOEL", cotaManoel);
+		pdvManoel.setSegmentacao(segmentacaoPDV2);
 		session.save(pdvManoel);
 
 		pdvManoelCunha = Fixture.criarPDVPrincipal("PDV CUNHA", cotaManoelCunha);
+		pdvManoelCunha.setSegmentacao(segmentacaoPDV);
 		session.save(pdvManoelCunha);
 
 		pdvMaria = Fixture.criarPDVPrincipal("PDV MARIA", cotaMaria);
+		pdvMaria.setSegmentacao(segmentacaoPDV);
 		session.save(pdvMaria);
 
 		pdvLuis = Fixture.criarPDVPrincipal("PDV LUIS", cotaLuis);
+		pdvLuis.setSegmentacao(segmentacaoPDV2);
 		session.save(pdvLuis);
 
 		pdvJoao = Fixture.criarPDVPrincipal("PDV JOAO", cotaJoao);
@@ -5284,63 +5305,112 @@ public class DataLoader {
 
 		save(session, feriadoProclamacao);
 	}
+	
+	private static void criarEnderecoPDV(Session session){
+		
+		EnderecoPDV enderecoPDV = new EnderecoPDV();
+		enderecoPDV.setEndereco(enderecoMococa1);
+		enderecoPDV.setPrincipal(true);
+		enderecoPDV.setTipoEndereco(TipoEndereco.COBRANCA);
+		enderecoPDV.setPdv(pdvManoel);
+		
+		EnderecoPDV enderecoPDV1 = new EnderecoPDV();
+		enderecoPDV1.setEndereco(enderecoMococa2);
+		enderecoPDV1.setPrincipal(true);
+		enderecoPDV1.setTipoEndereco(TipoEndereco.COBRANCA);
+		enderecoPDV1.setPdv(pdvMaria);
+		
+		EnderecoPDV enderecoPDV2 = new EnderecoPDV();
+		enderecoPDV2.setEndereco(enderecoLuisMococa3);
+		enderecoPDV2.setPrincipal(true);
+		enderecoPDV2.setTipoEndereco(TipoEndereco.COBRANCA);
+		enderecoPDV2.setPdv(pdvLuis);
+		
+		EnderecoPDV enderecoPDV3 = new EnderecoPDV();
+		enderecoPDV3.setEndereco(enderecoRioPardo1);
+		enderecoPDV3.setPrincipal(true);
+		enderecoPDV3.setTipoEndereco(TipoEndereco.COBRANCA);
+		enderecoPDV3.setPdv(pdvJoao);
+		
+		EnderecoPDV enderecoPDV4 = new EnderecoPDV();
+		enderecoPDV4.setEndereco(enderecoRioPardo2);
+		enderecoPDV4.setPrincipal(true);
+		enderecoPDV4.setTipoEndereco(TipoEndereco.COBRANCA);
+		enderecoPDV4.setPdv(pdvJose);
+		
+		EnderecoPDV enderecoPDV5 = new EnderecoPDV();
+		enderecoPDV5.setEndereco(enderecoRioPardo3);
+		enderecoPDV5.setPrincipal(true);
+		enderecoPDV5.setTipoEndereco(TipoEndereco.COBRANCA);
+		enderecoPDV5.setPdv(pdvGuilherme);
+		
+		save(session, enderecoPDV,enderecoPDV1,enderecoPDV2,enderecoPDV3,enderecoPDV4,enderecoPDV5);
+		
+	}
+	
+	private static void criarEndereco(Session session){
+		
+		enderecoMococa1 = Fixture.criarEndereco(
+				TipoEndereco.COMERCIAL, "13730-000", "Rua Marechal Deodoro", 50, "Centro", "Mococa", "SP");
+		
+		enderecoMococa2 = Fixture.criarEndereco(
+				TipoEndereco.LOCAL_ENTREGA, "13730-000", "Rua X", 51, "Vila Carvalho", "Mococa", "SP");
+		
+		enderecoLuisMococa3 = Fixture.criarEndereco(
+				TipoEndereco.LOCAL_ENTREGA, "13730-000", "Rua X Alvorada", 52, "Vila Carvalho", "Mococa", "SP");
+		
+		enderecoRioPardo1 = Fixture.criarEndereco(
+				TipoEndereco.LOCAL_ENTREGA, "13720-000", "Rua X Da silva", 50, "Vila Carvalho", "São Jose do Rio Pardo", "SP");
+		
+		enderecoRioPardo2 = Fixture.criarEndereco(
+				TipoEndereco.LOCAL_ENTREGA, "13720-000", "Rua Jose", 52, "Vila Jose", "São Jose do Rio Pardo", "SP");
+		
+		enderecoRioPardo3 = Fixture.criarEndereco(
+				TipoEndereco.LOCAL_ENTREGA, "13720-000", "Rua Jose da Silva", 51, "Vila Jose", "São Jose do Rio Pardo", "SP");
+		
+		save(session, enderecoMococa1,enderecoMococa2,enderecoLuisMococa3,enderecoRioPardo1,enderecoRioPardo2,enderecoRioPardo3);
+
+	}
 
 	private static void criarEnderecoCotaPF(Session session) {
-		Endereco endereco = Fixture.criarEndereco(
-				TipoEndereco.COMERCIAL, "13730-000", "Rua Marechal Deodoro", 50, "Centro", "Mococa", "SP");
-
+		
 		EnderecoCota enderecoCota = new EnderecoCota();
 		enderecoCota.setCota(cotaManoel);
-		enderecoCota.setEndereco(endereco);
+		enderecoCota.setEndereco(enderecoMococa1);
 		enderecoCota.setPrincipal(true);
 		enderecoCota.setTipoEndereco(TipoEndereco.COBRANCA);
 
-		Endereco endereco2 = Fixture.criarEndereco(
-				TipoEndereco.LOCAL_ENTREGA, "13730-000", "Rua X", 50, "Vila Carvalho", "Mococa", "SP");
-
 		EnderecoCota enderecoCota2 = new EnderecoCota();
 		enderecoCota2.setCota(cotaMaria);
-		enderecoCota2.setEndereco(endereco2);
+		enderecoCota2.setEndereco(enderecoMococa2);
 		enderecoCota2.setPrincipal(true);
 		enderecoCota2.setTipoEndereco(TipoEndereco.COBRANCA);
 
-		Endereco enderecoLuis = Fixture.criarEndereco(
-				TipoEndereco.LOCAL_ENTREGA, "13730-000", "Rua X", 50, "Vila Carvalho", "Mococa", "SP");
-
-
 		EnderecoCota enderecoCotaLuis = new EnderecoCota();
 		enderecoCotaLuis.setCota(cotaLuis);
-		enderecoCotaLuis.setEndereco(enderecoLuis);
+		enderecoCotaLuis.setEndereco(enderecoLuisMococa3);
 		enderecoCotaLuis.setPrincipal(false);
 		enderecoCotaLuis.setTipoEndereco(TipoEndereco.COBRANCA);
 
-		Endereco enderecoJoao = Fixture.criarEndereco(
-				TipoEndereco.LOCAL_ENTREGA, "13730-000", "Rua X", 50, "Vila Carvalho", "Mococa", "SP");
-
-
 		EnderecoCota enderecoCotaJoao = new EnderecoCota();
 		enderecoCotaJoao.setCota(cotaJoao);
-		enderecoCotaJoao.setEndereco(enderecoJoao);
+		enderecoCotaJoao.setEndereco(enderecoRioPardo1);
 		enderecoCotaJoao.setPrincipal(false);
 		enderecoCotaJoao.setTipoEndereco(TipoEndereco.COBRANCA);
-
-		Endereco enderecoJose = Fixture.criarEndereco(
-				TipoEndereco.LOCAL_ENTREGA, "13730-000", "Rua Jose", 50, "Vila Jose", "Mococa", "SP");
 		
 		EnderecoCota enderecoCotaJose = new EnderecoCota();
 		enderecoCotaJose.setCota(cotaJose);
-		enderecoCotaJose.setEndereco(enderecoJose);
+		enderecoCotaJose.setEndereco(enderecoRioPardo2);
 		enderecoCotaJose.setPrincipal(true);
 		enderecoCotaJose.setTipoEndereco(TipoEndereco.COBRANCA);
-
+				
 		EnderecoCota enderecoCotaGuilherme = new EnderecoCota();
 		enderecoCotaGuilherme.setCota(cotaGuilherme);
-		enderecoCotaGuilherme.setEndereco(enderecoJoao);
+		enderecoCotaGuilherme.setEndereco(enderecoRioPardo3);
 		enderecoCotaGuilherme.setPrincipal(true);
 		enderecoCotaGuilherme.setTipoEndereco(TipoEndereco.COBRANCA);
-
-		save(session, endereco, enderecoCota, endereco2,enderecoCota2,enderecoLuis,
-			 enderecoCotaLuis,enderecoJoao,enderecoCotaJoao, enderecoJose, enderecoCotaJose, enderecoCotaGuilherme);
+		
+		save(session, enderecoCota,enderecoCota2, enderecoCotaLuis,enderecoCotaJoao,enderecoCotaJose, enderecoCotaGuilherme);
 	}
 
 	private static void criarTelefoneCotaPF(Session session) {

@@ -26,15 +26,18 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.GrupoFornecedor;
 import br.com.abril.nds.model.cadastro.Rota;
 import br.com.abril.nds.model.cadastro.Roteiro;
+import br.com.abril.nds.model.cadastro.pdv.TipoPontoPDV;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.serialization.custom.CustomMapJson;
 import br.com.abril.nds.service.BoxService;
 import br.com.abril.nds.service.ChamadaAntecipadaEncalheService;
 import br.com.abril.nds.service.FornecedorService;
+import br.com.abril.nds.service.PdvService;
 import br.com.abril.nds.service.ProdutoService;
 import br.com.abril.nds.service.RoteirizacaoService;
 import br.com.abril.nds.util.CellModelKeyValue;
@@ -94,13 +97,44 @@ public class ChamadaEncalheAntecipadaController {
 	@Autowired
 	private RoteirizacaoService roteirizacaoService;
 	
+	@Autowired
+	private PdvService pdvService;
+	
 	@Path("/")
 	public void index(){
 		
-		result.include("listaFornecedores",obterFornecedores(null) );
+		result.include("listaFornecedores",obterFornecedores(null));
 		result.include("listaBoxes",obterBoxs(null));
 		carregarRota();
 		carregarRoteiro();
+		carregarMunicipios();
+		carregarTipoPonto();
+	}
+	
+	private void carregarTipoPonto(){
+		
+		List<TipoPontoPDV> listaTipoPontoPDV = pdvService.obterTiposPontoPDVPrincipal();
+		
+		List<ItemDTO<Long, String>> tipoPonto = new ArrayList<ItemDTO<Long,String>>();
+		
+		for (TipoPontoPDV tp : listaTipoPontoPDV) {
+			tipoPonto.add(new ItemDTO<Long, String>(tp.getCodigo(), tp.getDescricao()));
+		}
+		
+		result.include("listaTipoPonto",tipoPonto);
+	}
+	
+	private void carregarMunicipios(){
+		
+		List<Endereco> enderecoPdvPrincipal = pdvService.buscarMunicipiosPdvPrincipal();
+		
+		List<ItemDTO<Integer, String>> municipios = new ArrayList<ItemDTO<Integer,String>>();
+		
+		for (Endereco tp : enderecoPdvPrincipal) {
+			municipios.add(new ItemDTO<Integer, String>(tp.getCodigoCidadeIBGE(),tp.getCidade()));
+		}
+		
+		result.include("listaMunicipios",municipios);
 	}
 	
 	/**
@@ -127,7 +161,7 @@ public class ChamadaEncalheAntecipadaController {
 	@Path("/pesquisarBox")
 	public void pesquisarBoxPoProduto(String codigoProduto,Long numeroEdicao ){
 			
-		List<ItemDTO<Long, Integer>> listaBoxCombo = obterBoxs(codigoProduto);
+		List<ItemDTO<Long, String>> listaBoxCombo = obterBoxs(codigoProduto);
 		
 		result.use(Results.json()).from(listaBoxCombo, "result").recursive().serialize();
 	}
@@ -741,14 +775,14 @@ public class ChamadaEncalheAntecipadaController {
 	 * @param codigoProduto
 	 * @return List<ItemDTO<Long, String>>
 	 */
-	private List<ItemDTO<Long, Integer>> obterBoxs(String codigoProduto){
+	private List<ItemDTO<Long, String>> obterBoxs(String codigoProduto){
 		
 		List<Box> listaBox = boxService.obterBoxPorProduto(codigoProduto);
 		
-		List<ItemDTO<Long, Integer>> listaBoxCombo = new ArrayList<ItemDTO<Long,Integer>>();
+		List<ItemDTO<Long, String>> listaBoxCombo = new ArrayList<ItemDTO<Long,String>>();
 		
 		for (Box box : listaBox) {
-			listaBoxCombo.add(new ItemDTO<Long, Integer>(box.getId(), box.getCodigo()));
+			listaBoxCombo.add(new ItemDTO<Long, String>(box.getId(), box.getCodigo() + " - " + box.getNome()));
 		}
 		
 		return listaBoxCombo;
