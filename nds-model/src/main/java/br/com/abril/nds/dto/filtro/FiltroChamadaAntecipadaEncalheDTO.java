@@ -69,11 +69,21 @@ public class FiltroChamadaAntecipadaEncalheDTO implements Serializable {
 	@Export(label = "Com CE")
 	private String descComCE;
 	
+	private Integer codMunicipio;
+	
+	private Long codTipoPontoPDV;
+	
+	private String descMunicipio;
+	
+	private String descTipoPontoPDV;
+	
 
 	/**
 	 * Construtor padrão.
 	 */
-	public FiltroChamadaAntecipadaEncalheDTO(String codigoProduto,Long numeroEdicao,Long box, Long fornecedor, Long roteiro, Long rota,boolean programacaoCE) {
+	public FiltroChamadaAntecipadaEncalheDTO(String codigoProduto,Long numeroEdicao,
+											Long box, Long fornecedor, Long roteiro, Long rota,
+											boolean programacaoCE, Integer codMunicipio, Long codTipoPontoPDV) {
 		
 		this.codigoProduto = codigoProduto;
 		this.numeroEdicao = numeroEdicao;
@@ -82,6 +92,8 @@ public class FiltroChamadaAntecipadaEncalheDTO implements Serializable {
 		this.rota = rota;
 		this.roteiro = roteiro;
 		this.programacaoCE = programacaoCE;
+		this.codMunicipio = codMunicipio;
+		this.codTipoPontoPDV = codTipoPontoPDV;
 	}
 	
 	/**
@@ -368,6 +380,62 @@ public class FiltroChamadaAntecipadaEncalheDTO implements Serializable {
 	 */
 	public void setDataOperacao(Date dataOperacao) {
 		this.dataOperacao = dataOperacao;
+	}
+	
+	/**
+	 * @return the codMunicipio
+	 */
+	public Integer getCodMunicipio() {
+		return codMunicipio;
+	}
+
+	/**
+	 * @param codMunicipio the codMunicipio to set
+	 */
+	public void setCodMunicipio(Integer codMunicipio) {
+		this.codMunicipio = codMunicipio;
+	}
+
+	/**
+	 * @return the codTipoPontoPDV
+	 */
+	public Long getCodTipoPontoPDV() {
+		return codTipoPontoPDV;
+	}
+
+	/**
+	 * @param codTipoPontoPDV the codTipoPontoPDV to set
+	 */
+	public void setCodTipoPontoPDV(Long codTipoPontoPDV) {
+		this.codTipoPontoPDV = codTipoPontoPDV;
+	}
+
+	/**
+	 * @return the descMunicipio
+	 */
+	public String getDescMunicipio() {
+		return descMunicipio;
+	}
+
+	/**
+	 * @param descMunicipio the descMunicipio to set
+	 */
+	public void setDescMunicipio(String descMunicipio) {
+		this.descMunicipio = descMunicipio;
+	}
+
+	/**
+	 * @return the descTipoPontoPDV
+	 */
+	public String getDescTipoPontoPDV() {
+		return descTipoPontoPDV;
+	}
+
+	/**
+	 * @param descTipoPontoPDV the descTipoPontoPDV to set
+	 */
+	public void setDescTipoPontoPDV(String descTipoPontoPDV) {
+		this.descTipoPontoPDV = descTipoPontoPDV;
 	}
 
 	/* (non-Javadoc)
