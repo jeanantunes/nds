@@ -1771,7 +1771,7 @@ public class DataLoader {
 		Diferenca diferenca = Fixture.diferenca(new BigDecimal(32), usuario, produtoEdicaoBravo1, TipoDiferenca.FALTA_DE, StatusConfirmacao.CONFIRMADO, itemRecebimentoFisico, movimentoEstoque, true);
 		save(session,diferenca);
 
-		RateioDiferenca rateioDiferenca = Fixture.rateioDiferenca(BigDecimal.TEN , cotaManoel, diferenca, estudoCota);
+		RateioDiferenca rateioDiferenca = Fixture.rateioDiferenca(BigDecimal.TEN , cotaManoel, diferenca, estudoCota, new Date());
 		save(session,rateioDiferenca);
 
 		movimento = Fixture.movimentoEstoqueCota(produtoEdicaoBravo1, tipoMovimentoConsignado, usuario, estoqueProdutoCota, new BigDecimal(23), cotaManoel, StatusAprovacao.APROVADO, "motivo");
@@ -5059,10 +5059,10 @@ public class DataLoader {
 			session, 50, produtoEdicaoVeja4, tipoMovimentoSobraEm,
 				usuarioJoao, estoqueProdutoVeja1, TipoDiferenca.SOBRA_EM);
 
-		RateioDiferenca rateioDiferencaCotaManoel = Fixture.rateioDiferenca(new BigDecimal(10), cotaManoel, diferenca3, estudoCotaSuper1Manoel);
+		RateioDiferenca rateioDiferencaCotaManoel = Fixture.rateioDiferenca(new BigDecimal(10), cotaManoel, diferenca3, estudoCotaSuper1Manoel, new Date());
 		session.save(rateioDiferencaCotaManoel);
 
-		RateioDiferenca rateioDiferencaJose = Fixture.rateioDiferenca(new BigDecimal(10), cotaJose, diferenca,estudoCotaVeja2Joao);
+		RateioDiferenca rateioDiferencaJose = Fixture.rateioDiferenca(new BigDecimal(10), cotaJose, diferenca, estudoCotaVeja2Joao, new Date());
 		session.save(rateioDiferencaJose);
 
 	}
