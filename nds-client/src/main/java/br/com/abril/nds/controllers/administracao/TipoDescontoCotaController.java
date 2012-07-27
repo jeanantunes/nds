@@ -380,7 +380,7 @@ public class TipoDescontoCotaController {
 	private List<TipoDescontoCotaVO> popularTipoDescontoCotaVOParaProduto(Produto produto) {
 		
 		List<TipoDescontoCotaVO> listaVO = this.tipoDescontoDistribuidorService.obterTipoDescontoDistribuidor();
-		List<TipoDescontoProdutoDTO> listaCerta = this.tipoDescontoProdutoService.obterTipoDescontoProduto(produtoEdicao);
+		//List<TipoDescontoProdutoDTO> listaCerta = this.tipoDescontoProdutoService.obterTipoDescontoProduto(produtoEdicao);
 		
 		List<TipoDescontoCotaVO> listaAux = new ArrayList<TipoDescontoCotaVO>();
 		
