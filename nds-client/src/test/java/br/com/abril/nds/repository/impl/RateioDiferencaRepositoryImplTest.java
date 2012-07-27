@@ -146,7 +146,7 @@ public class RateioDiferencaRepositoryImplTest extends AbstractRepositoryImplTes
 		EstudoCota estudoCota = Fixture.estudoCota(BigDecimal.TEN, BigDecimal.TEN, estudo, cota);
 		save(estudoCota);
 		
-		RateioDiferenca rateioDiferenca = Fixture.rateioDiferenca(BigDecimal.TEN, cota, diferenca, estudoCota);
+		RateioDiferenca rateioDiferenca = Fixture.rateioDiferenca(BigDecimal.TEN, cota, diferenca, estudoCota, new Date());
 		save(rateioDiferenca);
 	}
 	
