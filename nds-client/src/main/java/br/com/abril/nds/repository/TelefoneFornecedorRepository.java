@@ -15,4 +15,6 @@ public interface TelefoneFornecedorRepository extends Repository<TelefoneFornece
 	void removerTelefonesFornecedor(Collection<Long> listaTelefonesFornecedor);
 	
 	List<Telefone> buscarTelefonesPessoaPorFornecedor(Long idFornecedor);
+	
+	TelefoneFornecedor obterTelefoneFornecedor(Long idTelefone, Long idFornecedor);
 }
