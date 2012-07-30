@@ -54,4 +54,6 @@ public interface EstoqueProdutoCotaRepository extends Repository<EstoqueProdutoC
 	List<EstoqueProdutoCota> buscarListaEstoqueProdutoCota(Set<Long> idsLancamento);
 
 	BigDecimal obterConsignado(boolean cotaInadimplente);
+
+	Double obterFaturamentoCota(Long idCota);
 }
