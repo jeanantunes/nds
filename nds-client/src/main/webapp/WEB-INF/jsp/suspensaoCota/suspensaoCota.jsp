@@ -526,25 +526,25 @@ function processaRetornoPesquisa(data) {
 			},{
 				display : 'Nome',
 				name : 'nome',
-				width : 210,
+				width : 110,
 				sortable : true,
 				align : 'left'
 			},{
 				display : 'Valor Consignado Total R$',
 				name : 'vlrConsignado',
-				width : 150,
+				width : 120,
 				sortable : true,
 				align : 'right'
 			}, {
 				display : 'Valor Reparte do Dia R$',
 				name : 'vlrReparte',
-				width : 150,
+				width : 125,
 				sortable : true,
 				align : 'right'
 			}, {
 				display : 'Divida Acumulada R$',
 				name : 'dividaAcumulada',
-				width : 140,
+				width : 120,
 				sortable : true,
 				align : 'right'
 			}, {
@@ -554,9 +554,22 @@ function processaRetornoPesquisa(data) {
 				sortable : true,
 				align : 'center'
 			}, {
+				display : 'Faturamento R$',
+				name : 'faturamento',
+				width : 80,
+				sortable : true,
+				align : 'center'
+			
+			}, {
+				display : '% Dívida',
+				name : 'percDivida',
+				width : 80,
+				sortable : true,
+				align : 'center'
+			}, {
 				display : 'Ação',
 				name : 'acao',
-				width : 40,
+				width : 45,
 				sortable : false,
 				align : 'center',
 			},{

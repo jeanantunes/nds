@@ -11,10 +11,10 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.dto.CapaDTO;
 import br.com.abril.nds.dto.CotaEmissaoDTO;
 import br.com.abril.nds.dto.DistribuidorDTO;
 import br.com.abril.nds.dto.ItemDTO;
-import br.com.abril.nds.dto.ProdutoEmissaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroEmissaoCE;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.service.DistribuidorService;
@@ -200,35 +200,39 @@ public class EmissaoCEController {
 
 	public void modelo1() {
 				
-		FiltroEmissaoCE filtro = (FiltroEmissaoCE) session.getAttribute(FILTRO_SESSION_ATTRIBUTE);
-		
-		List<CotaEmissaoDTO> cotasEmissao = chamadaEncalheService.obterDadosImpressaoEmissaoChamadasEncalhe(filtro);
-		
-				
-		DistribuidorDTO dadosDistribuidor = distribuidorService.obterDadosEmissao();
-				
-		result.include("cotasEmissao", cotasEmissao);
-		
-		result.include("dadosDistribuidor", dadosDistribuidor);
-		
-		result.include("withCapa", filtro.getCapa());
-		
+		setDados();		
 				
 	}
 	
-	public void modelo2() {
+	public void setDados() {
 		
 		FiltroEmissaoCE filtro = (FiltroEmissaoCE) session.getAttribute(FILTRO_SESSION_ATTRIBUTE);
 		
 		List<CotaEmissaoDTO> cotasEmissao = chamadaEncalheService.obterDadosImpressaoEmissaoChamadasEncalhe(filtro);	
 				
 		DistribuidorDTO dadosDistribuidor = distribuidorService.obterDadosEmissao();
-				
+		
+		if(filtro.getDtRecolhimentoAte()!=null && filtro.getDtRecolhimentoAte()!=null)
+			filtro.setPersonalizada(false);
+		
+		if(filtro.getPersonalizada()) {
+			List<CapaDTO> capas =  chamadaEncalheService.obterIdsCapasChamadaEncalhe(filtro.getDtRecolhimentoDe(), filtro.getDtRecolhimentoAte());
+			result.include("capas", capas);
+		}
+		
 		result.include("cotasEmissao", cotasEmissao);
 		
 		result.include("dadosDistribuidor", dadosDistribuidor);
 		
 		result.include("withCapa", filtro.getCapa());
+		
+		result.include("personalizada", filtro.getPersonalizada());
+				
+	}
+	
+	public void modelo2() {
+		
+		setDados();
 	}
 
 	/**
