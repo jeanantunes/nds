@@ -18,7 +18,7 @@ $(function(){
 </head>
 
 <body>
-	<form action="/cadastro/box/" name="form1">
+	<form action="/cadastro/box/" id="cotas_associadas_box_form">
 	<div id="dialog-box" title="Detalhes do Box">
 		<fieldset>
 	    	<legend>Cotas Associadas ao Box</legend>
@@ -27,13 +27,13 @@ $(function(){
 	</div>
 	</form>
 
-	<form action="/cadastro/box/" name="form2">
+	<form action="/cadastro/box/" id="excluir_box_form">
 	<div id="dialog-excluir" title="Excluir Box">		
 		<p>Confirma a exclus&atilde;o deste Box?</p>
 	</div>
 	</form>
 	
-	<form action="/cadastro/box/" name="form3">
+	<form action="/cadastro/box/" id="novo_box_form">
 	<input type="hidden" name="box.id" id="boxId" style="width:80px;"/>
 	<div id="dialog-novo" title="Incluir Novo Box">  
 		<jsp:include page="../messagesDialog.jsp" />  
@@ -60,7 +60,7 @@ $(function(){
     </div>
 	</form>
 	
-	<form action="/cadastro/box/" name="form4">
+	<form action="/cadastro/box/" id="pesquisar_box_form">
 	 <fieldset class="classFieldset">
    	    <legend> Pesquisar Box</legend>
         <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">

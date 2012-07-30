@@ -17,7 +17,7 @@ var boxController = $.extend(true, {
 				} else {
 					$.each(data.rows, function(index, value) {
 						var idBox = value.cell.id;
-						var acao = '<a href="javascript:;" onclick="boxController.editar(' + idBox + ', $(this).closest(\'form\'));"><img src="' + contextPath + '/images/ico_editar.gif" border="0" hspace="5" />';
+						var acao = '<a href="javascript:;" onclick="boxController.editar(' + idBox + ');"><img src="' + contextPath + '/images/ico_editar.gif" border="0" hspace="5" />';
 						acao += '</a> <a href="javascript:;" onclick="boxController.excluir(' + idBox + ');""><img src="' + contextPath + '/images/ico_excluir.gif" hspace="5" border="0" /></a>';
 
 						value.cell.acao = acao;						
@@ -80,7 +80,8 @@ var boxController = $.extend(true, {
 	//buscar : function(codigoBox, tipoBox) {
 	buscar : function(obj) { 
 		
-		var serializedObj = $(obj).closest("form").serialize();
+		// var serializedObj = $(obj).closest("form").serialize();
+		var serializedObj = $("#pesquisar_box_form").serialize();
 		
 		/*var codigoBox = ;
 		var tipoBox = ;*/
@@ -154,7 +155,7 @@ var boxController = $.extend(true, {
 			.dialog( "open" );
 		
 	},
-	editar : function(id, form) {
+	editar : function(id) {
 		$.postJSON(this.path + 'buscaPorId.json', {
 			'id' : id
 		}, function(data) {
@@ -162,7 +163,7 @@ var boxController = $.extend(true, {
 				exibirMensagem(data.mensagens.tipoMensagem, data.mensagens.listaMensagens);
 			} else {
 
-				boxController.bindData(data, form);
+				boxController.bindData(data, $("#novo_box_form"));
 				boxController.showPopupEditar('Editar Box');
 			}
 		});
@@ -173,10 +174,12 @@ var boxController = $.extend(true, {
 		this.box.tipoBox = $("#boxTipoBox").val();
 	},
 	salvar : function(dialog) {
-		this.getData();
+		//this.getData();
 
-		var obj = $(dialog).dialog("option", "form").serialize();
+		//var obj = $(dialog).dialog("option", "form").serialize();
 
+		var obj = $("#novo_box_form").serialize();
+		
 		$.postJSON(this.path + 'salvar.json', obj, function(data) {
 			var tipoMensagem = data.tipoMensagem;
 			var listaMensagens = data.listaMensagens;
@@ -228,8 +231,10 @@ var boxController = $.extend(true, {
 		var data = {
 			box : {}
 		};
+		
+		this.clearForm($("#novo_box_form"));
 
-		this.bindData(data);
+		this.bindData(data, $("#novo_box_form"));
 		this.showPopupEditar('Incluir Novo Box');
 	},	
 	initGridDetalhe: function(){
