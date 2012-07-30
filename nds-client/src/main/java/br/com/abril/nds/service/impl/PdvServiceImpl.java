@@ -126,6 +126,20 @@ public class PdvServiceImpl implements PdvService {
 	
 	@Transactional(readOnly=true)
 	@Override
+	public TipoPontoPDV obterTipoPontoPDVPrincipal(Long codigoPontoPDV) {
+		
+		return tipoPontoPDVRepository.buscarTipoPontoPdvPrincipal(codigoPontoPDV);
+	}
+	
+	@Transactional(readOnly=true)
+	@Override
+	public Endereco buscarMunicipioPdvPrincipal(Integer codigoCidadeIBGE) {
+		
+		return enderecoPDVRepository.buscarMunicipioPdvPrincipal(codigoCidadeIBGE);
+	}
+	
+	@Transactional(readOnly=true)
+	@Override
 	public List<AreaInfluenciaPDV> obterAreasInfluenciaPDV(){
 		
 		return areaInfluenciaPDVRepository.buscarTodos(); 

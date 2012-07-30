@@ -415,4 +415,16 @@ public class ChamadaEncalheCotaRepositoryImpl extends AbstractRepositoryModel<Ch
 		
 		return hql;
 	}
+	
+	@Override
+	public Long obterQntChamadaEncalheCota(Long idChamadaEncalhe) {
+		
+		String hql = " select count(chamadaEncalheCota.id) from ChamadaEncalheCota chamadaEncalheCota where chamadaEncalheCota.chamadaEncalhe.id=:idChamada ";
+		
+		Query query = getSession().createQuery(hql);
+		
+		query.setParameter("idChamada", idChamadaEncalhe);
+		
+		return (Long) query.uniqueResult();
+	}
 }
