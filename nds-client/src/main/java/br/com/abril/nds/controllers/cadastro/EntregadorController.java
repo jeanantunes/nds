@@ -23,6 +23,7 @@ import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.dto.ProcuracaoCotaDTO;
 import br.com.abril.nds.dto.ProcuracaoImpressaoDTO;
+import br.com.abril.nds.dto.ProcuracaoImpressaoWrapper;
 import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroEntregadorDTO;
 import br.com.abril.nds.dto.filtro.FiltroEntregadorDTO.OrdenacaoColunaEntregador;
@@ -560,7 +561,15 @@ public class EntregadorController {
 		
 		list.add(procuracaoImpressao);
 		
-		byte[] arquivo = this.entregadorService.getDocumentoProcuracao(list);
+		ProcuracaoImpressaoWrapper procuracaoImpressaoWrapper = new ProcuracaoImpressaoWrapper();
+		
+		procuracaoImpressaoWrapper.setListaProcuracaoImpressao(list);
+		
+		List<ProcuracaoImpressaoWrapper> listaWrapper = new ArrayList<ProcuracaoImpressaoWrapper>();
+		
+		listaWrapper.add(procuracaoImpressaoWrapper);
+		
+		byte[] arquivo = this.entregadorService.getDocumentoProcuracao(listaWrapper);
 		
 		this.httpResponse.setContentType("application/pdf");
 
