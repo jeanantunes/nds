@@ -110,18 +110,24 @@ public class MovimentoEstoqueCotaServiceImpl implements MovimentoEstoqueCotaServ
 				List<ProdutoServico> listaProdutoServico = movimentoEstoqueCota.getListaProdutoServicos();
 				
 				if (listaProdutoServico != null && !listaProdutoServico.isEmpty()) {
-				
+					
+					boolean possuiNota = false;
+					
 					for (ProdutoServico produtoServico : listaProdutoServico) {
 					
 						NotaFiscal notaFiscal = produtoServico.getProdutoServicoPK().getNotaFiscal();
 					
 						TipoNotaFiscal tipoNota = notaFiscal.getIdentificacao().getTipoNotaFiscal();
 					
-						if (!tipoNota.equals(tipoNotaFiscal)) {
-							listaMovimentosFiltrados.add(movimentoEstoqueCota);
+						if (tipoNota.equals(tipoNotaFiscal)) {
+							possuiNota = true;
 						}
 					}
-				
+					
+					if(!possuiNota) {
+						listaMovimentosFiltrados.add(movimentoEstoqueCota);
+					}
+					
 				} else {
 					listaMovimentosFiltrados.add(movimentoEstoqueCota);
 				}
