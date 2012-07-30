@@ -439,17 +439,41 @@ $(function(){$('img.capaImg').load(function() {
 				<span class="titulo" style="font-size:11px!important;">Capas</span>			
 		</div>	
 	
-	<c:forEach items="${cotaEmissao.produtos}" var="produto" varStatus="status">	
-		<div class="capaImgBox">			
-			<div style="width: inherit; text-align: center;">
-				<strong>${status.index+1}</strong>				
-			</div>			
-			<div style="width: inherit; text-align: center;">
-				<img class="capaImg" src="<c:url value='/capa/${produto.idProdutoEdicao}'></c:url>"/>
-			</div>
-		</div>	
+	<c:if test="${personalizada}">
 		
-    </c:forEach>
+		<c:forEach items="${capas}" var="capa" varStatus="status">	
+			
+			<div class="capaImgBox">			
+				<div style="width: inherit; text-align: center;">
+					<strong>${status.index+1}</strong>				
+				</div>			
+				<div style="width: inherit; text-align: center;">
+					<img class="capaImg" src="<c:url value='/capa/${capa.id}'></c:url>"/>
+				</div>
+			</div>	
+			
+	    </c:forEach>
+    
+		
+	</c:if>
+	
+	<c:if test="${!personalizada}">
+	
+		<c:forEach items="${cotaEmissao.produtos}" var="produto" varStatus="status">	
+			
+			<div class="capaImgBox">			
+				<div style="width: inherit; text-align: center;">
+					<strong>${status.index+1}</strong>				
+				</div>			
+				<div style="width: inherit; text-align: center;">
+					<img class="capaImg" src="<c:url value='/capa/${produto.idProdutoEdicao}'></c:url>"/>
+				</div>
+			</div>	
+			
+	    </c:forEach>
+    
+    </c:if>	
+    
     </div>
    <br clear="all"/>
 </div>
