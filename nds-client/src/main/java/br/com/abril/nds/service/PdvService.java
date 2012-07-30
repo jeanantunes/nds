@@ -83,5 +83,9 @@ public interface PdvService {
 	
 	List<Endereco> buscarMunicipiosPdvPrincipal();
 	
+	Endereco buscarMunicipioPdvPrincipal(Integer codigoCidadeIBGE);
+	
 	List<TipoPontoPDV> obterTiposPontoPDVPrincipal();
+	
+	TipoPontoPDV obterTipoPontoPDVPrincipal(Long codigoPontoPDV);
 }

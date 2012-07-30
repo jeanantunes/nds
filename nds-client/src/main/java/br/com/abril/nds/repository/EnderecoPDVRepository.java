@@ -21,4 +21,6 @@ public interface EnderecoPDVRepository extends Repository<EnderecoPDV, Long> {
 	void excluirEnderecosPDV(Collection<Long> idsEnderecoPDV);
 	
 	List<Endereco> buscarMunicipioPdvPrincipal();
+	
+	Endereco buscarMunicipioPdvPrincipal(Integer codigoCidadeIBGE );
 }

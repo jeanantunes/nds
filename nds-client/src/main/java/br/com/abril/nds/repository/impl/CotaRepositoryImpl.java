@@ -367,6 +367,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 		hql.append("SELECT new ")
 				.append(ChamadaAntecipadaEncalheDTO.class.getCanonicalName())
 				.append(" ( box.codigo, box.nome ,cota.numeroCota, estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida, ")
+				.append(" lancamento.id ,")
 				.append(" case when (pessoa.nome is not null) then ( pessoa.nome )")
 				.append(" when (pessoa.razaoSocial is not null) then ( pessoa.razaoSocial )")
 				.append(" else null end ").append(" ) ");
