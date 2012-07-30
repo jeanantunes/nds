@@ -18,11 +18,13 @@ import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.EnderecoCota;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.MotivoAlteracaoSituacao;
+import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.SocioCota;
 import br.com.abril.nds.model.cadastro.TipoCota;
 import br.com.abril.nds.model.cadastro.TipoDesconto;
 import br.com.abril.nds.model.financeiro.Cobranca;
 import br.com.abril.nds.model.seguranca.Usuario;
+import br.com.abril.nds.util.Intervalo;
 
 /**
  * Interface que define serviços referentes a entidade
@@ -274,5 +276,16 @@ public interface CotaService {
 	public List<RegistroCurvaABCCotaVO> obterCurvaABCCota(FiltroCurvaABCCotaDTO filtroCurvaABCCotaDTO);
 	
 	public EnderecoCota obterEnderecoPrincipal(long idCota);
+	
+	/**
+	 * Retorna todas as cotas que estão entre o itervalo de cotas parametrizado;
+	 * 
+	 * @param intervaloCota intevalo de id das cotas
+	 * @param intervaloBox
+	 * @param situacao
+	 * @return ids das cotas
+	 */
+	List<Cota> obterCotasEntre(Intervalo<Integer> intervaloCota, Intervalo<Integer> intervaloBox, SituacaoCadastro situacao);
 
+	
 }
