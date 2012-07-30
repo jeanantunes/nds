@@ -12,8 +12,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.dto.ConsultaLoteNotaFiscalDTO;
 import br.com.abril.nds.dto.CotaExemplaresDTO;
+import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
@@ -30,6 +32,7 @@ import br.com.abril.nds.repository.TipoNotaFiscalRepository;
 import br.com.abril.nds.service.GeracaoNFeService;
 import br.com.abril.nds.service.NotaFiscalService;
 import br.com.abril.nds.util.Intervalo;
+import br.com.abril.nds.util.TipoMensagem;
 
 @Service
 public class GeracaoNFeServiceImpl implements GeracaoNFeService {
@@ -59,15 +62,18 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 			Intervalo<Integer> intervalorCota,
 			Intervalo<Date> intervaloDateMovimento,
 			List<Long> listIdFornecedor, List<Long> listIdProduto, Long idTipoNotaFiscal, String sortname,
-			String sortorder, Integer resultsPage, Integer page) {
+			String sortorder, Integer resultsPage, Integer page, SituacaoCadastro situacaoCadastro) {
 		
 		TipoNotaFiscal tipoNotaFiscal = this.tipoNotaFiscalRepository.buscarPorId(idTipoNotaFiscal);
+		
+		Set<Long> idsCotasDestinatarias =
+				this.cotaRepository.obterIdCotasEntre(intervalorCota, intervaloBox, situacaoCadastro);
 		
 		ConsultaLoteNotaFiscalDTO dadosConsultaLoteNotaFiscal = new ConsultaLoteNotaFiscalDTO();
 		
 		dadosConsultaLoteNotaFiscal.setTipoNotaFiscal(tipoNotaFiscal);
 		dadosConsultaLoteNotaFiscal.setPeriodoMovimento(intervaloDateMovimento);
-		dadosConsultaLoteNotaFiscal.setIdsCotasDestinatarias(this.cotaRepository.obterIdCotasEntre(intervalorCota, intervaloBox, SituacaoCadastro.ATIVO));
+		dadosConsultaLoteNotaFiscal.setIdsCotasDestinatarias(idsCotasDestinatarias);
 		dadosConsultaLoteNotaFiscal.setListaIdProdutos(listIdProduto);
 		dadosConsultaLoteNotaFiscal.setListaIdFornecedores(listIdFornecedor);
 		
@@ -99,14 +105,14 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 	 * @see br.com.abril.nds.service.GeracaoNFeService#gerarNotaFiscal(br.com.abril.nds.util.Intervalo, br.com.abril.nds.util.Intervalo, br.com.abril.nds.util.Intervalo, java.util.List, java.util.List, java.lang.Long)
 	 */
 	@Override
-	@Transactional
+	@Transactional(rollbackFor=Exception.class)
 	public void gerarNotaFiscal(Intervalo<Integer> intervaloBox,
 			Intervalo<Integer> intervalorCota,
 			Intervalo<Date> intervaloDateMovimento,
 			List<Long> listIdFornecedor, List<Long> listIdProduto,
-			Long idTipoNotaFiscal, Date dataEmissao) throws FileNotFoundException, IOException {
+			Long idTipoNotaFiscal, Date dataEmissao, List<Long> idCotasSuspensas) throws FileNotFoundException, IOException {
 		
-		Set<Long> listaIdCota = this.cotaRepository.obterIdCotasEntre(intervalorCota,intervaloBox,SituacaoCadastro.ATIVO);
+		Set<Long> listaIdCota = this.cotaRepository.obterIdCotasEntre(intervalorCota,intervaloBox, null);
 		
 		TipoNotaFiscal tipoNotaFiscal = this.tipoNotaFiscalRepository.buscarPorId(idTipoNotaFiscal);
 		
@@ -117,6 +123,17 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 		for (Long idCota : listaIdCota) {
 			
 			Cota cota = this.cotaRepository.buscarPorId(idCota);
+			
+			if (SituacaoCadastro.SUSPENSO.equals(cota.getSituacaoCadastro())) {
+				
+				if (idCotasSuspensas != null && !idCotasSuspensas.isEmpty()) {
+					if (!idCotasSuspensas.contains(cota.getId())) {
+						continue;
+					}
+				} else {
+					continue;
+				}
+			}
 			
 			List<ItemNotaFiscal> listItemNotaFiscal = this.notaFiscalService.obterItensNotaFiscalPor(distribuidor, 
 					cota, intervaloDateMovimento, listIdFornecedor, listIdProduto, tipoNotaFiscal);
@@ -138,8 +155,10 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 			listaNotaFiscal.add(notaFiscal);
 		}
 		
+		if(listaNotaFiscal == null || listaNotaFiscal.isEmpty())
+			throw new ValidacaoException(TipoMensagem.WARNING, "Não foram encontrados itens para gerar nota.");
+		
 		this.notaFiscalService.exportarNotasFiscais(listaNotaFiscal);
 	}
-	
 	
 }

@@ -2911,6 +2911,7 @@ public class DataLoader {
 				usuarioJoao, estoqueProdutoCotaVeja1, BigDecimal.TEN, cotaJose, StatusAprovacao.APROVADO, null);
 		movimentoEstoqueCota38.setLancamento(lancamentoVeja1);
 		
+		
 		save(session, movimentoEstoqueCota1, movimentoEstoqueCota2, movimentoEstoqueCota3,
 			 movimentoEstoqueCota4, movimentoEstoqueCota5, movimentoEstoqueCota6,
 			 movimentoEstoqueCota7, movimentoEstoqueCota8, movimentoEstoqueCota9,
@@ -4472,13 +4473,16 @@ public class DataLoader {
 		fornecedorAcme.setCodigoInterface(123);
 		fornecedorAcme.setResponsavel("João");
 		fornecedorAcme.setOrigem(Origem.INTERFACE);
+		fornecedorAcme.setEmailNfe("joao@email.com");
 		fornecedorDinap = Fixture.fornecedorDinap(tipoFornecedorPublicacao);
 		fornecedorDinap.setCodigoInterface(9999999);
 		fornecedorDinap.setResponsavel("Maria");
 		fornecedorDinap.setOrigem(Origem.MANUAL);
+		fornecedorDinap.setEmailNfe("maria@email.com");
 		fornecedorFc = Fixture.fornecedorFC(tipoFornecedorPublicacao);
 		fornecedorFc.setCodigoInterface(9999998);
 		fornecedorFc.setResponsavel("Sebastião");
+		fornecedorFc.setEmailNfe("sebastiao@email.com");
 		fornecedorFc.setOrigem(Origem.MANUAL);
 
 		save(session, fornecedorAcme, fornecedorDinap, fornecedorFc);
@@ -4578,7 +4582,7 @@ public class DataLoader {
 					  telefoneFornecedorAcme, telefoneFornecedorDinap, telefoneFornecedorFc);
 
 		Fornecedor fornecedor = Fixture.fornecedor(juridicaValida, SituacaoCadastro.ATIVO, false, tipoFornecedorOutros,null);
-
+		fornecedor.setEmailNfe("email@email.com");
 		save(session, fornecedor);
 	}
 
