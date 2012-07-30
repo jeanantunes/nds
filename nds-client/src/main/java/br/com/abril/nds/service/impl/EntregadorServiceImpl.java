@@ -3,7 +3,9 @@ package br.com.abril.nds.service.impl;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JasperRunManager;
@@ -15,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.dto.ProcuracaoImpressaoDTO;
+import br.com.abril.nds.dto.ProcuracaoImpressaoWrapper;
 import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroEntregadorDTO;
 import br.com.abril.nds.exception.ValidacaoException;
@@ -339,15 +342,21 @@ public class EntregadorServiceImpl implements EntregadorService {
 	 * @see br.com.abril.nds.service.EntregadorService#getDocumentoProcuracao(List)
 	 */
 	@Transactional
-	public byte[] getDocumentoProcuracao(List<ProcuracaoImpressaoDTO> list) throws Exception {
-		
-		JRDataSource jrDataSource = new JRBeanCollectionDataSource(list);
+	public byte[] getDocumentoProcuracao(List<ProcuracaoImpressaoWrapper> list) throws Exception {
+
+		 URL subReportDir = Thread.currentThread().getContextClassLoader().getResource("/reports/");
+
+		 Map<String, Object> parameters = new HashMap<String, Object>();
+			
+		 parameters.put("SUBREPORT_DIR", subReportDir.toURI().getPath());
+
+		 JRDataSource jrDataSource = new JRBeanCollectionDataSource(list);
 		
 		 URL url = 
 			Thread.currentThread().getContextClassLoader().getResource("/reports/procuracao.jasper");
-
+		 
 		 String path = url.toURI().getPath();
 		 
-		 return JasperRunManager.runReportToPdf(path, null, jrDataSource);
+		 return JasperRunManager.runReportToPdf(path, parameters, jrDataSource);
 	}
 }
