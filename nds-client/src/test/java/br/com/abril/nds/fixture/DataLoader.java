@@ -826,7 +826,6 @@ public class DataLoader {
 	private static Endereco enderecoMococa1;
 	private static Endereco enderecoMococa2;
 	private static Endereco enderecoLuisMococa3;
-	private static Endereco enderecoMococa3;
 	private static Endereco enderecoRioPardo1;
 	private static Endereco enderecoRioPardo2;
 	private static Endereco enderecoRioPardo3;
@@ -1772,7 +1771,7 @@ public class DataLoader {
 		Diferenca diferenca = Fixture.diferenca(new BigDecimal(32), usuario, produtoEdicaoBravo1, TipoDiferenca.FALTA_DE, StatusConfirmacao.CONFIRMADO, itemRecebimentoFisico, movimentoEstoque, true);
 		save(session,diferenca);
 
-		RateioDiferenca rateioDiferenca = Fixture.rateioDiferenca(BigDecimal.TEN , cotaManoel, diferenca, estudoCota);
+		RateioDiferenca rateioDiferenca = Fixture.rateioDiferenca(BigDecimal.TEN , cotaManoel, diferenca, estudoCota, new Date());
 		save(session,rateioDiferenca);
 
 		movimento = Fixture.movimentoEstoqueCota(produtoEdicaoBravo1, tipoMovimentoConsignado, usuario, estoqueProdutoCota, new BigDecimal(23), cotaManoel, StatusAprovacao.APROVADO, "motivo");
@@ -2911,6 +2910,7 @@ public class DataLoader {
 		MovimentoEstoqueCota movimentoEstoqueCota38 = Fixture.movimentoEstoqueCota(produtoEdicaoVeja1, tipoMovimentoRestautacaoReparteCotaAusente, 
 				usuarioJoao, estoqueProdutoCotaVeja1, BigDecimal.TEN, cotaJose, StatusAprovacao.APROVADO, null);
 		movimentoEstoqueCota38.setLancamento(lancamentoVeja1);
+		
 		
 		save(session, movimentoEstoqueCota1, movimentoEstoqueCota2, movimentoEstoqueCota3,
 			 movimentoEstoqueCota4, movimentoEstoqueCota5, movimentoEstoqueCota6,
@@ -4261,7 +4261,7 @@ public class DataLoader {
 	private static void criarEnderecoDistribuidor(Session session){
 
 		Endereco endereco = Fixture.criarEndereco(
-				TipoEndereco.COBRANCA, "13222-020", "Rua João de Souza", 51, "Centro", "São Paulo", "SP");
+				TipoEndereco.COBRANCA, "13222-020", "Rua João de Souza", 51, "Centro", "São Paulo", "SP",3);
 
 		EnderecoDistribuidor enderecoDistribuidor = Fixture.enderecoDistribuidor(distribuidor, endereco, true, TipoEndereco.COBRANCA);
 
@@ -4473,22 +4473,25 @@ public class DataLoader {
 		fornecedorAcme.setCodigoInterface(123);
 		fornecedorAcme.setResponsavel("João");
 		fornecedorAcme.setOrigem(Origem.INTERFACE);
+		fornecedorAcme.setEmailNfe("joao@email.com");
 		fornecedorDinap = Fixture.fornecedorDinap(tipoFornecedorPublicacao);
 		fornecedorDinap.setCodigoInterface(9999999);
 		fornecedorDinap.setResponsavel("Maria");
 		fornecedorDinap.setOrigem(Origem.MANUAL);
+		fornecedorDinap.setEmailNfe("maria@email.com");
 		fornecedorFc = Fixture.fornecedorFC(tipoFornecedorPublicacao);
 		fornecedorFc.setCodigoInterface(9999998);
 		fornecedorFc.setResponsavel("Sebastião");
+		fornecedorFc.setEmailNfe("sebastiao@email.com");
 		fornecedorFc.setOrigem(Origem.MANUAL);
 
 		save(session, fornecedorAcme, fornecedorDinap, fornecedorFc);
 
 		Endereco enderecoPrincipal = Fixture.criarEndereco(
-				TipoEndereco.COMERCIAL, "13730-500", "Rua Marechal", 50, "Centro", "Mococa", "SP");
+				TipoEndereco.COMERCIAL, "13730-500", "Rua Marechal", 50, "Centro", "Mococa", "SP",1);
 
 		Endereco endereco = Fixture.criarEndereco(
-				TipoEndereco.RESIDENCIAL, "92130-330", "Avenida Brasil", 50, "Centro", "Mococa", "SP");
+				TipoEndereco.RESIDENCIAL, "92130-330", "Avenida Brasil", 50, "Centro", "Mococa", "SP",1);
 
 		EnderecoFornecedor enderecoFornecedorAcme = new EnderecoFornecedor();
 		enderecoFornecedorAcme.setFornecedor(fornecedorAcme);
@@ -4579,7 +4582,7 @@ public class DataLoader {
 					  telefoneFornecedorAcme, telefoneFornecedorDinap, telefoneFornecedorFc);
 
 		Fornecedor fornecedor = Fixture.fornecedor(juridicaValida, SituacaoCadastro.ATIVO, false, tipoFornecedorOutros,null);
-
+		fornecedor.setEmailNfe("email@email.com");
 		save(session, fornecedor);
 	}
 
@@ -5060,10 +5063,10 @@ public class DataLoader {
 			session, 50, produtoEdicaoVeja4, tipoMovimentoSobraEm,
 				usuarioJoao, estoqueProdutoVeja1, TipoDiferenca.SOBRA_EM);
 
-		RateioDiferenca rateioDiferencaCotaManoel = Fixture.rateioDiferenca(new BigDecimal(10), cotaManoel, diferenca3, estudoCotaSuper1Manoel);
+		RateioDiferenca rateioDiferencaCotaManoel = Fixture.rateioDiferenca(new BigDecimal(10), cotaManoel, diferenca3, estudoCotaSuper1Manoel, new Date());
 		session.save(rateioDiferencaCotaManoel);
 
-		RateioDiferenca rateioDiferencaJose = Fixture.rateioDiferenca(new BigDecimal(10), cotaJose, diferenca,estudoCotaVeja2Joao);
+		RateioDiferenca rateioDiferencaJose = Fixture.rateioDiferenca(new BigDecimal(10), cotaJose, diferenca, estudoCotaVeja2Joao, new Date());
 		session.save(rateioDiferencaJose);
 
 	}
@@ -5351,22 +5354,22 @@ public class DataLoader {
 	private static void criarEndereco(Session session){
 		
 		enderecoMococa1 = Fixture.criarEndereco(
-				TipoEndereco.COMERCIAL, "13730-000", "Rua Marechal Deodoro", 50, "Centro", "Mococa", "SP");
+				TipoEndereco.COMERCIAL, "13730-000", "Rua Marechal Deodoro", 50, "Centro", "Mococa", "SP",1);
 		
 		enderecoMococa2 = Fixture.criarEndereco(
-				TipoEndereco.LOCAL_ENTREGA, "13730-000", "Rua X", 51, "Vila Carvalho", "Mococa", "SP");
+				TipoEndereco.LOCAL_ENTREGA, "13730-000", "Rua X", 51, "Vila Carvalho", "Mococa", "SP",1);
 		
 		enderecoLuisMococa3 = Fixture.criarEndereco(
-				TipoEndereco.LOCAL_ENTREGA, "13730-000", "Rua X Alvorada", 52, "Vila Carvalho", "Mococa", "SP");
+				TipoEndereco.LOCAL_ENTREGA, "13730-000", "Rua X Alvorada", 52, "Vila Carvalho", "Mococa", "SP",1);
 		
 		enderecoRioPardo1 = Fixture.criarEndereco(
-				TipoEndereco.LOCAL_ENTREGA, "13720-000", "Rua X Da silva", 50, "Vila Carvalho", "São Jose do Rio Pardo", "SP");
+				TipoEndereco.LOCAL_ENTREGA, "13720-000", "Rua X Da silva", 50, "Vila Carvalho", "São Jose do Rio Pardo", "SP",2);
 		
 		enderecoRioPardo2 = Fixture.criarEndereco(
-				TipoEndereco.LOCAL_ENTREGA, "13720-000", "Rua Jose", 52, "Vila Jose", "São Jose do Rio Pardo", "SP");
+				TipoEndereco.LOCAL_ENTREGA, "13720-000", "Rua Jose", 52, "Vila Jose", "São Jose do Rio Pardo", "SP",2);
 		
 		enderecoRioPardo3 = Fixture.criarEndereco(
-				TipoEndereco.LOCAL_ENTREGA, "13720-000", "Rua Jose da Silva", 51, "Vila Jose", "São Jose do Rio Pardo", "SP");
+				TipoEndereco.LOCAL_ENTREGA, "13720-000", "Rua Jose da Silva", 51, "Vila Jose", "São Jose do Rio Pardo", "SP",2);
 		
 		save(session, enderecoMococa1,enderecoMococa2,enderecoLuisMococa3,enderecoRioPardo1,enderecoRioPardo2,enderecoRioPardo3);
 
@@ -7499,7 +7502,7 @@ public class DataLoader {
 				null, juridicaFc, false, null);
 		save(session, juridicaFc, entregador);
 
-		Endereco endereco = Fixture.criarEndereco(TipoEndereco.COBRANCA, "13131313", "Rua Marechal deodoro", 50, "Centro", "Mococa", "SP");
+		Endereco endereco = Fixture.criarEndereco(TipoEndereco.COBRANCA, "13131313", "Rua Marechal deodoro", 50, "Centro", "Mococa", "SP",1);
 
 		EnderecoEntregador enderecoEntregador = Fixture.enderecoEntregador(entregador, endereco, true, TipoEndereco.COMERCIAL);
 
@@ -7516,7 +7519,7 @@ public class DataLoader {
 				null, jose, false, null);
 		save(session, jose, entregador);
 
-		endereco = Fixture.criarEndereco(TipoEndereco.COBRANCA, "8766650", "Avenida Brasil", 10, "Centro", "Ribeirão Preto", "SP");
+		endereco = Fixture.criarEndereco(TipoEndereco.COBRANCA, "8766650", "Avenida Brasil", 10, "Centro", "Ribeirão Preto", "SP",5);
 
 		enderecoEntregador = Fixture.enderecoEntregador(entregador, endereco, true, TipoEndereco.COBRANCA);
 
@@ -7534,7 +7537,7 @@ public class DataLoader {
 				456L, false, new Date(),
 				null, maria, false, null);
 
-		endereco = Fixture.criarEndereco(TipoEndereco.COBRANCA, "8766650", "Itaquera", 10, "Centro", "São Paulo", "SP");
+		endereco = Fixture.criarEndereco(TipoEndereco.COBRANCA, "8766650", "Itaquera", 10, "Centro", "São Paulo", "SP",3);
 
 		enderecoEntregador = Fixture.enderecoEntregador(entregador, endereco, true, TipoEndereco.RESIDENCIAL);
 
@@ -10638,7 +10641,7 @@ public class DataLoader {
 		String email 		= "";
 		
 		Endereco enderecoDestinatario 	= 
-				Fixture.criarEndereco(TipoEndereco.COMERCIAL, "13852123", "Rua das paineiras", 4585, "Jrd Limeira", "Pedra de Guaratiba", "RJ");
+				Fixture.criarEndereco(TipoEndereco.COMERCIAL, "13852123", "Rua das paineiras", 4585, "Jrd Limeira", "Pedra de Guaratiba", "RJ",6);
 		
 		session.save(enderecoDestinatario);
 		
@@ -10665,7 +10668,7 @@ public class DataLoader {
 		String documentoEmitente = "";
 		
 		Endereco enderecoEmitente= 
-				Fixture.criarEndereco(TipoEndereco.COMERCIAL, "13852345", "Rua Laranjeiras", 4585, "Jrd Brasil", "Santana do Livramento", "RJ");
+				Fixture.criarEndereco(TipoEndereco.COMERCIAL, "13852345", "Rua Laranjeiras", 4585, "Jrd Brasil", "Santana do Livramento", "RJ",6);
 		
 		session.save(enderecoEmitente);
 		
@@ -10718,7 +10721,7 @@ public class DataLoader {
 	
 		
 		Endereco enderecoTransporte = 
-				Fixture.criarEndereco(TipoEndereco.COMERCIAL, "13852345", "Rua Maracuja", 4585, "Jrd Brasil", "Piuí", "MG");
+				Fixture.criarEndereco(TipoEndereco.COMERCIAL, "13852345", "Rua Maracuja", 4585, "Jrd Brasil", "Piuí", "MG",10);
 		
 		session.save(enderecoTransporte);
 		

@@ -1855,12 +1855,13 @@ public class Fixture {
 		
 	}
 	
-	public static RateioDiferenca rateioDiferenca(BigDecimal qtde, Cota cota, Diferenca diferenca, EstudoCota estudoCota){
+	public static RateioDiferenca rateioDiferenca(BigDecimal qtde, Cota cota, Diferenca diferenca, EstudoCota estudoCota, Date dataNotaEnvio){
 		RateioDiferenca rateioDiferenca = new RateioDiferenca();
 		rateioDiferenca.setCota(cota);
 		rateioDiferenca.setDiferenca(diferenca);
 		rateioDiferenca.setEstudoCota(estudoCota);
 		rateioDiferenca.setQtde(qtde);
+		rateioDiferenca.setDataNotaEnvio(dataNotaEnvio);
 		
 		return rateioDiferenca;
 	}
@@ -1995,7 +1996,7 @@ public class Fixture {
 
 	public static Endereco criarEndereco(TipoEndereco tipoEndereco, String cep,
 										 String logradouro, int numero, 
-										 String bairro, String cidade, String uf) {
+										 String bairro, String cidade, String uf,Integer codigoCidadeIBGE) {
 		
 		Endereco endereco = new Endereco();
 		
@@ -2005,6 +2006,7 @@ public class Fixture {
 		endereco.setLogradouro(logradouro);
 		endereco.setNumero(numero);
 		endereco.setUf(uf);
+		endereco.setCodigoCidadeIBGE(codigoCidadeIBGE);
 		
 		return endereco;
 	}

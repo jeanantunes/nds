@@ -194,12 +194,14 @@ public class ChamadaEncalheAntecipadaController {
 	@Post
 	@Path("/pesquisar")
 	public void pesquisarCotasPorProduto(String codigoProduto,Long numeroEdicao,Long box,Long fornecedor, 
-										 Long rota,Long roteiro,boolean programacaoRealizada,
+										 Long rota,Long roteiro,boolean programacaoRealizada,Integer municipio,Long tipoPontoPDV,
 										 String sortorder, String sortname, int page, int rp){
 		
 		validarParametrosPesquisa(codigoProduto, numeroEdicao);
 		
-		FiltroChamadaAntecipadaEncalheDTO filtro = new FiltroChamadaAntecipadaEncalheDTO(codigoProduto,numeroEdicao,box,fornecedor,rota,roteiro,programacaoRealizada);
+		FiltroChamadaAntecipadaEncalheDTO filtro = 
+				new FiltroChamadaAntecipadaEncalheDTO(codigoProduto,numeroEdicao,box,fornecedor,
+													  rota,roteiro,programacaoRealizada, municipio,tipoPontoPDV);
 		
 		configurarPaginacaoPesquisa(filtro, sortorder, sortname, page, rp);
 		
@@ -266,7 +268,8 @@ public class ChamadaEncalheAntecipadaController {
 	 */
 	@Post
 	@Path("/obterQuantidadeExemplares")
-	public void obterQuantidadeExemplaresPorCota(Integer numeroCota, String codigoProduto, Long numeroEdicao,Long fornecedor,boolean programacaoRealizada){
+	public void obterQuantidadeExemplaresPorCota(Integer numeroCota, String codigoProduto, Long numeroEdicao,Long fornecedor,
+												 boolean programacaoRealizada){
 		
 		FiltroChamadaAntecipadaEncalheDTO filtro = new FiltroChamadaAntecipadaEncalheDTO(codigoProduto,numeroEdicao,null,fornecedor,numeroCota);
 		
@@ -700,7 +703,7 @@ public class ChamadaEncalheAntecipadaController {
 		for (ChamadaAntecipadaEncalheDTO dto : listaChamdaAntecipadaEncalheDTO) {
 			
 			chamadaEncalheAntecipadaVO =  new ChamadaEncalheAntecipadaVO();
-			chamadaEncalheAntecipadaVO.setBox(dto.getCodBox());
+			chamadaEncalheAntecipadaVO.setBox(dto.getCodBox() + " - " + dto.getNomeBox());
 			chamadaEncalheAntecipadaVO.setNomeCota(dto.getNomeCota());
 			chamadaEncalheAntecipadaVO.setNumeroCota( String.valueOf(dto.getNumeroCota()));
 			chamadaEncalheAntecipadaVO.setQntExemplares(String.valueOf(dto.getQntExemplares().intValue()));

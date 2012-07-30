@@ -2,7 +2,8 @@ package br.com.abril.nds.repository;
 
 import java.util.List;
 
-import br.com.abril.nds.model.cadastro.EspecificacaoDesconto;
+import br.com.abril.nds.dto.TipoDescontoCotaDTO;
+import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.TipoDescontoCota;
 
 /**
@@ -13,8 +14,16 @@ import br.com.abril.nds.model.cadastro.TipoDescontoCota;
  */
 public interface TipoDescontoCotaRepository extends Repository<TipoDescontoCota,Long>{
 
-	int obterSequencial();
+	Integer buscarTotalDescontoPorCota();
 	
-	List<TipoDescontoCota> obterTipoDescontosCotas(EspecificacaoDesconto especificacaoDesconto);
+	void incluirDesconto(TipoDescontoCota tipoDescontoCota);	
+	
+	void excluirDesconto(TipoDescontoCota tipoDescontoCota);
+	
+	TipoDescontoCota obterTipoDescontoCotaPorId(long idDesconto);
+	
+	Integer buscarTotalDescontosPorCota();
+	
+	List<TipoDescontoCotaDTO> obterTipoDescontosCota(Cota cota);
 	
 }

@@ -61,7 +61,7 @@ public class EntregadorRepositoryImplTest extends AbstractRepositoryImplTest {
 				null, fc, false, null);
 		save(fc, entregadorFC);
 
-		Endereco endereco = Fixture.criarEndereco(TipoEndereco.COBRANCA, "13131313", "Rua Marechal deodoro", 50, "Centro", "Mococa", "SP");
+		Endereco endereco = Fixture.criarEndereco(TipoEndereco.COBRANCA, "13131313", "Rua Marechal deodoro", 50, "Centro", "Mococa", "SP",1);
 		
 		EnderecoEntregador enderecoEntregador = Fixture.enderecoEntregador(entregadorFC, endereco, false, TipoEndereco.COMERCIAL);
 		
@@ -80,7 +80,7 @@ public class EntregadorRepositoryImplTest extends AbstractRepositoryImplTest {
 				null, jose, false, null);
 		save(jose, entregadorJose);
 		
-		endereco = Fixture.criarEndereco(TipoEndereco.COBRANCA, "8766650", "Avenida Brasil", 10, "Centro", "Ribeirão Preto", "SP");
+		endereco = Fixture.criarEndereco(TipoEndereco.COBRANCA, "8766650", "Avenida Brasil", 10, "Centro", "Ribeirão Preto", "SP",2);
 		
 		enderecoEntregador = Fixture.enderecoEntregador(entregadorJose, endereco, false, TipoEndereco.COBRANCA);
 		
@@ -100,7 +100,7 @@ public class EntregadorRepositoryImplTest extends AbstractRepositoryImplTest {
 				456L, false, new Date(), 
 				null, maria, false, null);
 
-		endereco = Fixture.criarEndereco(TipoEndereco.COBRANCA, "8766650", "Itaquera", 10, "Centro", "São Paulo", "SP");
+		endereco = Fixture.criarEndereco(TipoEndereco.COBRANCA, "8766650", "Itaquera", 10, "Centro", "São Paulo", "SP",5);
 		
 		enderecoEntregador = Fixture.enderecoEntregador(entregadorMaria, endereco, false, TipoEndereco.RESIDENCIAL);
 

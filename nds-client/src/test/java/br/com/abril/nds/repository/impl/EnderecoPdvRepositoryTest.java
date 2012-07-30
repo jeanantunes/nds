@@ -77,19 +77,19 @@ public class EnderecoPdvRepositoryTest extends AbstractRepositoryImplTest {
 									caracteristicas, licencaMunicipal, segmentacao);
 		save(pdv);
 		
-		Endereco endereco = Fixture.criarEndereco(TipoEndereco.RESIDENCIAL, "13720-000", "logradouro", 10, "Bairro", "Mococa", "SP");
+		Endereco endereco = Fixture.criarEndereco(TipoEndereco.RESIDENCIAL, "13720-000", "logradouro", 10, "Bairro", "Mococa", "SP",1);
 		save(endereco);
 		
 		EnderecoPDV enderecoPdv = Fixture.criarEnderecoPDV(endereco, pdv, true, TipoEndereco.RESIDENCIAL);
 		save(enderecoPdv);
 		
-		Endereco endereco1 = Fixture.criarEndereco(TipoEndereco.COMERCIAL, "13720-000", "logradouro", 10, "Bairro", "Mococa", "SP");
+		Endereco endereco1 = Fixture.criarEndereco(TipoEndereco.COMERCIAL, "13720-000", "logradouro", 10, "Bairro", "Mococa", "SP",1);
 		save(endereco1);
 		
 		EnderecoPDV enderecoPdv1 = Fixture.criarEnderecoPDV(endereco, pdv, false, TipoEndereco.COMERCIAL);
 		save(enderecoPdv1);
 		
-		Endereco endereco2 = Fixture.criarEndereco(TipoEndereco.COMERCIAL, "13720-000", "logradouro", 10, "Bairro", "São Paulo", "SP");
+		Endereco endereco2 = Fixture.criarEndereco(TipoEndereco.COMERCIAL, "13720-000", "logradouro", 10, "Bairro", "São Paulo", "SP",1);
 		save(endereco2);
 		
 		EnderecoPDV enderecoPdv2 = Fixture.criarEnderecoPDV(endereco, pdv, false, TipoEndereco.COMERCIAL);
