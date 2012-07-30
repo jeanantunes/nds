@@ -249,7 +249,7 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		hql.append(" 		pessoa.nome as nomeCota, ");
 		hql.append("		sum(chamEncCota.qtdePrevista) as qtdeExemplares, ");	
 		hql.append("		sum(chamEncCota.qtdePrevista * produtoEdicao.precoVenda) as vlrTotalCe, ");
-		hql.append(" 		box.codigo || '-' || box.nome as box, ");
+		hql.append(" 		box.codigo || ' - ' || box.nome as box, ");
 		hql.append(" 		rota.codigoRota as codigoRota, ");
 		hql.append(" 		rota.descricaoRota as nomeRota ");
 		
@@ -292,6 +292,7 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		hql.append(" 		lancamentos.sequenciaMatriz as sequencia, ");
 		hql.append(" 	    produto.codigo as codigoProduto, ");
 		hql.append(" 	    produto.nome as nomeProduto, ");
+		hql.append(" 	    produtoEdicao.id as idProdutoEdicao, ");
 		hql.append(" 	    produtoEdicao.numeroEdicao as edicao, ");
 		hql.append(" 	    produtoEdicao.desconto as desconto, ");
 		hql.append(" 	    produtoEdicao.precoVenda as precoVenda, ");

@@ -25,8 +25,9 @@
 				             {name:"fornecedor",value:$("#fornecedor").val()},
 				             {name:"rota",value:$("#rota").val()},
 				             {name:"roteiro",value:$("#roteiro").val()},
-				             {name:"programacaoRealizada",value:EncalheAntecipado.getProgramacaoRealizada}
-				             
+				             {name:"programacaoRealizada",value:EncalheAntecipado.getProgramacaoRealizada},
+				             {name:"municipio",value:$("#municipio").val()},
+				             {name:"tipoPontoPDV",value:$("#tipoPontoPDV").val()}
 				            ];
 			return formData;
 		},
@@ -1193,7 +1194,7 @@ $(function() {
 			<td>Tipo de Ponto:</td>
 
 			<td>
-				<select class="campoDePesquisa" name="tipoPonto" id="tipoPonto" style="width:150px;">
+				<select class="campoDePesquisa" name="tipoPonto" id="tipoPontoPDV" style="width:150px;">
 		      		<option selected="selected">Todos</option>
 		      		<c:forEach var="tpPonto" items="${listaTipoPonto}">
 							<option value="${tpPonto.key}">${tpPonto.value}</option>

@@ -238,6 +238,7 @@ public class ChamadaEncalheCotaRepositoryImpl extends AbstractRepositoryModel<Ch
 		hql.append("SELECT new ")
 		.append(ChamadaAntecipadaEncalheDTO.class.getCanonicalName())
 				.append(" (box.codigo, ")
+				.append(" box.nome, ")
 				.append(" cota.numeroCota, ")
 				.append(" chamadaEncalheCota.qtdePrevista,")
 				.append(" case when (pessoa.nome is not null) then ( pessoa.nome )")
@@ -302,6 +303,14 @@ public class ChamadaEncalheCotaRepositoryImpl extends AbstractRepositoryModel<Ch
 		if(filtro.getRoteiro()!= null){
 			param.put("roteiro",filtro.getRoteiro());
 		}
+		
+		if(filtro.getCodMunicipio()!= null){
+			param.put("codigoCidadeIBGE",filtro.getCodMunicipio());
+		}
+		
+		if(filtro.getCodTipoPontoPDV()!= null){
+			param.put("codigoTipoPontoPDV", filtro.getCodTipoPontoPDV());
+		}
 
 		return param;
 	}
@@ -360,6 +369,11 @@ public class ChamadaEncalheCotaRepositoryImpl extends AbstractRepositoryModel<Ch
 		if (filtro.getFornecedor() != null) {
 			hql.append(" JOIN produto.fornecedores fornecedor ");
 		}
+		
+		if(filtro.getCodMunicipio()!= null){
+			hql.append(" JOIN pdv.enderecos enderecoPDV ")
+				.append(" JOIN enderecoPDV.endereco endereco ");
+		}
 			
 		hql.append(" WHERE ")
 			.append(" chamadaEncalhe.tipoChamadaEncalhe=:tipoChamadaEncalhe")
@@ -391,6 +405,14 @@ public class ChamadaEncalheCotaRepositoryImpl extends AbstractRepositoryModel<Ch
 		
 		if(filtro.getRoteiro()!= null ){
 			hql.append(" AND roteiro.id =:roteiro ");
+		}
+		
+		if(filtro.getCodMunicipio()!= null){
+			hql.append(" AND endereco.codigoCidadeIBGE =:codigoCidadeIBGE ");
+		}
+		
+		if(filtro.getCodTipoPontoPDV()!= null){
+			hql.append(" AND pdv.segmentacao.tipoPontoPDV.codigo =:codigoTipoPontoPDV ");
 		}
 		
 		return hql;

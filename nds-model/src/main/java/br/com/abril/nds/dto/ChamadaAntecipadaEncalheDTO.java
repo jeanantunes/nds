@@ -12,6 +12,8 @@ public class ChamadaAntecipadaEncalheDTO implements Serializable {
 
 	private Integer codBox;
 	
+	private String nomeBox;
+	
 	private Integer numeroCota;
 	
 	private String nomeCota;
@@ -22,21 +24,23 @@ public class ChamadaAntecipadaEncalheDTO implements Serializable {
 
 	public ChamadaAntecipadaEncalheDTO() {}
 
-	public ChamadaAntecipadaEncalheDTO(Integer codBox, Integer numeroCota,BigDecimal qntExemplares,String nomeCota) {
+	public ChamadaAntecipadaEncalheDTO(Integer codBox,String nomeBox ,Integer numeroCota,BigDecimal qntExemplares,String nomeCota) {
 		
 		this.codBox = codBox;
 		this.numeroCota = numeroCota;
 		this.nomeCota = nomeCota;
 		this.qntExemplares = qntExemplares;
+		this.nomeBox = nomeBox;
 	}
 	
-	public ChamadaAntecipadaEncalheDTO(Integer codBox, Integer numeroCota,BigDecimal qntExemplares,String nomeCota, Long codigoChamadaEncalhe) {
+	public ChamadaAntecipadaEncalheDTO(Integer codBox,String nomeBox, Integer numeroCota,BigDecimal qntExemplares,String nomeCota, Long codigoChamadaEncalhe) {
 		
 		this.codBox = codBox;
 		this.numeroCota = numeroCota;
 		this.nomeCota = nomeCota;
 		this.qntExemplares = qntExemplares;
 		this.codigoChamadaEncalhe = codigoChamadaEncalhe;
+		this.nomeBox = nomeBox;
 	}
 	
 	public ChamadaAntecipadaEncalheDTO(Integer numeroCota,BigDecimal qntExemplares,Long codigoChamadaEncalhe) {
@@ -46,6 +50,21 @@ public class ChamadaAntecipadaEncalheDTO implements Serializable {
 		this.codigoChamadaEncalhe = codigoChamadaEncalhe;
 	}
 	
+	
+	/**
+	 * @return the nomeBox
+	 */
+	public String getNomeBox() {
+		return nomeBox;
+	}
+
+	/**
+	 * @param nomeBox the nomeBox to set
+	 */
+	public void setNomeBox(String nomeBox) {
+		this.nomeBox = nomeBox;
+	}
+
 	/**
 	 * @return the codigoChamadaEncalhe
 	 */

@@ -1855,12 +1855,13 @@ public class Fixture {
 		
 	}
 	
-	public static RateioDiferenca rateioDiferenca(BigDecimal qtde, Cota cota, Diferenca diferenca, EstudoCota estudoCota){
+	public static RateioDiferenca rateioDiferenca(BigDecimal qtde, Cota cota, Diferenca diferenca, EstudoCota estudoCota, Date dataNotaEnvio){
 		RateioDiferenca rateioDiferenca = new RateioDiferenca();
 		rateioDiferenca.setCota(cota);
 		rateioDiferenca.setDiferenca(diferenca);
 		rateioDiferenca.setEstudoCota(estudoCota);
 		rateioDiferenca.setQtde(qtde);
+		rateioDiferenca.setDataNotaEnvio(dataNotaEnvio);
 		
 		return rateioDiferenca;
 	}
