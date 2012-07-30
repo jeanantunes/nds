@@ -70,20 +70,24 @@ GeracaoNFe.prototype.init = function() {
 };
 GeracaoNFe.prototype.gerar = function() {
 	var params = this.getParams();
-	var todas = $('#checkboxCheckAllCotasSuspensas').attr('checked') == 'checked';
-	if (todas) {
-		var listCotasSuspensas = $.map(this.mapCotasSuspensas, function(value,
-				index) {
-			if (value) {
-				return index;
-			}
-		});
-		params = serializeArrayToPost('idCotasSuspensas', listCotasSuspensas,
-				params);
+	var todas = $('#checkboxCheckAllCotasSuspensas').checked;
+	
+	var cotasSuspensas = $(".checkboxCheckCotasSuspensas");
+	
+	var listaCotasSuspensas = new Array;
+	
+	for (var index in cotasSuspensas) {
+		if (cotasSuspensas[index].checked) {
+			listaCotasSuspensas.push(cotasSuspensas[index].value);
+		}
 	}
+	
+	params = serializeArrayToPost('idCotasSuspensas', listaCotasSuspensas, params);
 	params['dataEmissao'] = $("#datepickerEmissao").val();
 	params['todasCotasSuspensa'] = todas;
-
+	
+	var _this = this;
+	
 	$.postJSON(this.path + 'gerar.json', params, function(data) {
 		var tipoMensagem = data.tipoMensagem;
 		var listaMensagens = data.listaMensagens;
@@ -91,22 +95,28 @@ GeracaoNFe.prototype.gerar = function() {
 		if (tipoMensagem && listaMensagens) {
 			exibirMensagemDialog(tipoMensagem, listaMensagens, "");
 		}
-
-	}, null, true);
+		
+		_this.gridReaload(_this.$gridNFe,'busca.json');
+		
+	});
 };
+
 GeracaoNFe.prototype.imprimir = function(fileType) {
 	var params = this.getParams();
-	var todas = $('#checkboxCheckAllCotasSuspensas').attr('checked') == 'checked';
-	if (todas) {
-		var listCotasSuspensas = $.map(this.mapCotasSuspensas, function(value,
-				index) {
-			if (value) {
-				return index;
-			}
-		});
-		params = serializeArrayToPost('idCotasSuspensas', listCotasSuspensas,
-				params);
+	
+	var todas = $('#checkboxCheckAllCotasSuspensas').checked;
+	
+	var cotasSuspensas = $(".checkboxCheckCotasSuspensas");
+	
+	var listaCotasSuspensas = new Array;
+	
+	for (var index in cotasSuspensas) {
+		if (cotasSuspensas[index].checked) {
+			listaCotasSuspensas.push(cotasSuspensas[index].value);
+		}
 	}
+	
+	params = serializeArrayToPost('idCotasSuspensas', listaCotasSuspensas, params);
 	params['dataEmissao'] = $("#datepickerEmissao").val();
 	params['todasCotasSuspensa'] = todas;
 	params['fileType'] = fileType;
@@ -139,6 +149,7 @@ GeracaoNFe.prototype.getParams = function() {
 
 GeracaoNFe.prototype.btnGerarOnClick = function() {
 	this.mapCotasSuspensas = new Object();
+	
 	$('#checkboxCheckAllCotasSuspensas').attr('checked', false);
 	var _this = this;
 	var params = this.getParams();
@@ -153,9 +164,11 @@ GeracaoNFe.prototype.btnGerarOnClick = function() {
 			_this.$dialogCotasSuspensas.dialog("open");
 			_this.gridReaload(_this.$gridCotasSuspensas,
 					'buscaCotasSuspensas.json');
+		} else {
+			_this.gerar();
 		}
 
-	}, null, true);
+	});
 };
 
 GeracaoNFe.prototype.pequisar = function() {

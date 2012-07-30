@@ -76,6 +76,7 @@ import br.com.abril.nds.service.SituacaoCotaService;
 import br.com.abril.nds.service.TelefoneService;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
 import br.com.caelum.stella.validation.CNPJValidator;
@@ -1598,5 +1599,28 @@ public class CotaServiceImpl implements CotaService {
 	public EnderecoCota obterEnderecoPrincipal(long idCota) {
 
 		return this.cotaRepository.obterEnderecoPrincipal(idCota);
+	}
+
+	/* (non-Javadoc)
+	 * @see br.com.abril.nds.service.CotaService#obterCotasEntre(br.com.abril.nds.util.Intervalo, br.com.abril.nds.util.Intervalo, br.com.abril.nds.model.cadastro.SituacaoCadastro)
+	 */
+	@Override
+	@Transactional
+	public List<Cota> obterCotasEntre(Intervalo<Integer> intervaloCota,
+			Intervalo<Integer> intervaloBox, SituacaoCadastro situacao) {
+		
+		List<Cota> listaCotas = new ArrayList<Cota>();
+		
+		Set<Long> idCotas = this.cotaRepository.obterIdCotasEntre(intervaloCota, intervaloBox, situacao);
+		
+		for(Long idCota : idCotas ) {
+			
+			Cota cota = this.cotaRepository.buscarPorId(idCota);
+			
+			if (cota != null) 
+				listaCotas.add(cota);
+		}
+		
+		return listaCotas;
 	}
 }

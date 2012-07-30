@@ -10,11 +10,16 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.MovimentoEstoqueCotaDTO;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
+import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
+import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
+import br.com.abril.nds.model.fiscal.nota.ProdutoServico;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
 import br.com.abril.nds.service.MovimentoEstoqueCotaService;
+import br.com.abril.nds.util.Intervalo;
 
 
 @Service
@@ -67,5 +72,69 @@ public class MovimentoEstoqueCotaServiceImpl implements MovimentoEstoqueCotaServ
 		return movimentosDTO;
 	}
 
+	/* (non-Javadoc)
+	 * @see br.com.abril.nds.service.MovimentoEstoqueCotaService#obterMovimentoEstoqueCotaPor(br.com.abril.nds.model.cadastro.Distribuidor, java.lang.Long, br.com.abril.nds.model.fiscal.TipoNotaFiscal, java.util.List, br.com.abril.nds.util.Intervalo, java.util.List, java.util.List)
+	 */
+	@Override
+	@Transactional
+	public List<MovimentoEstoqueCota> obterMovimentoEstoqueCotaPor(Distribuidor distribuidor, Long idCota, 
+			TipoNotaFiscal tipoNotaFiscal, List<GrupoMovimentoEstoque> listaGrupoMovimentoEstoques, 
+			Intervalo<Date> periodo, List<Long> listaFornecedores, List<Long> listaProdutos) {
+		
+		List<MovimentoEstoqueCota> listaMovimentoEstoqueCota =
+				this.movimentoEstoqueCotaRepository.obterMovimentoEstoqueCotaPor(
+						distribuidor, idCota, tipoNotaFiscal.getGrupoNotaFiscal(), listaGrupoMovimentoEstoques, periodo, 
+						listaFornecedores, listaProdutos);
+		
+		listaMovimentoEstoqueCota = filtrarMovimentosQueJaPossuemNotas(listaMovimentoEstoqueCota,tipoNotaFiscal);
+		
+		return listaMovimentoEstoqueCota;
+	}
+
+	/**
+	 * Filtra Movimentos que ja possuem nota fiscal do tipo de nota parametrizado.
+	 * 
+	 * @param listaMovimentoEstoqueCota
+	 * @param tipoNotaFiscal
+	 * @return movimentos que não possuem nota
+	 */
+	private List<MovimentoEstoqueCota> filtrarMovimentosQueJaPossuemNotas(
+			List<MovimentoEstoqueCota> listaMovimentoEstoqueCota, TipoNotaFiscal tipoNotaFiscal) {
+		
+		List<MovimentoEstoqueCota> listaMovimentosFiltrados = new ArrayList<MovimentoEstoqueCota>();
+		
+		if (listaMovimentoEstoqueCota != null) {
+			
+			for (MovimentoEstoqueCota movimentoEstoqueCota : listaMovimentoEstoqueCota) {
+				
+				List<ProdutoServico> listaProdutoServico = movimentoEstoqueCota.getListaProdutoServicos();
+				
+				if (listaProdutoServico != null && !listaProdutoServico.isEmpty()) {
+					
+					boolean possuiNota = false;
+					
+					for (ProdutoServico produtoServico : listaProdutoServico) {
+					
+						NotaFiscal notaFiscal = produtoServico.getProdutoServicoPK().getNotaFiscal();
+					
+						TipoNotaFiscal tipoNota = notaFiscal.getIdentificacao().getTipoNotaFiscal();
+					
+						if (tipoNota.equals(tipoNotaFiscal)) {
+							possuiNota = true;
+						}
+					}
+					
+					if(!possuiNota) {
+						listaMovimentosFiltrados.add(movimentoEstoqueCota);
+					}
+					
+				} else {
+					listaMovimentosFiltrados.add(movimentoEstoqueCota);
+				}
+			}
+		}
+		
+		return listaMovimentosFiltrados;
+	}
 	
 }

@@ -69,4 +69,20 @@ public class TelefoneFornecedorRepositoryImpl extends AbstractRepositoryModel<Te
 		
 		return query.list();
 	}
+	
+	@Override
+	public TelefoneFornecedor obterTelefoneFornecedor(Long idTelefone, Long idFornecedor) {
+		
+		StringBuilder hql = new StringBuilder("select t from TelefoneFornecedor t ");
+		hql.append(" where t.telefone.id = :idTelefone ")
+		   .append(" and   t.fornecedor.id   = :idFornecedor");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setParameter("idTelefone", idTelefone);
+		query.setParameter("idFornecedor", idFornecedor);
+		
+		query.setMaxResults(1);
+		
+		return (TelefoneFornecedor) query.uniqueResult();
+	}
 }

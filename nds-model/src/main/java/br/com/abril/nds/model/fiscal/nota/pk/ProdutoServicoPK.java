@@ -54,7 +54,7 @@ public class ProdutoServicoPK implements Serializable {
 	public void setNotaFiscal(NotaFiscal notaFiscal) {
 		this.notaFiscal = notaFiscal;
 	}
-
+	
 	/**
 	 * @see java.lang.Object#hashCode()
 	 */
