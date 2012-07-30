@@ -87,7 +87,7 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
 		save(manoel);
 		
 		PessoaJuridica juridicaDistrib = Fixture.pessoaJuridica("Distribuidor Acme",
-				"56.003.315/0001-47", "333.333.333.333", "distrib_acme@mail.com", "99.999-9");
+				"56.003.315/0001-47", "333333333333", "distrib_acme@mail.com", "99.999-9");
 		
 		save(juridicaDistrib);
 		

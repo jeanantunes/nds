@@ -87,7 +87,7 @@ public class ExpedicaoResumoProdutoRepositoryImplTest extends AbstractRepository
 		for(Integer i=1000;i<1010; i++) {
 			
 			PessoaJuridica juridica = Fixture.pessoaJuridica("PessoaJ"+i,
-					"0"+ i, "000.000.000.000", "acme@mail.com", "99.999-9");
+					"0"+ i, "000000000000", "acme@mail.com", "99.999-9");
 			save(juridica);
 			
 			Fornecedor fornecedor = Fixture.fornecedor(juridica, SituacaoCadastro.ATIVO, true, tipoFornecedorPublicacao, null);

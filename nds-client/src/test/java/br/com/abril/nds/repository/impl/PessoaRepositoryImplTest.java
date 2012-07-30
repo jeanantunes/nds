@@ -28,7 +28,7 @@ public class PessoaRepositoryImplTest extends AbstractRepositoryImplTest {
 	@Test
 	public void salvarPessoaJuridica() {
 		PessoaJuridica pj = Fixture.pessoaJuridica("ACME CORP",
-				"00.000.000/0001-00", "000.000.000.000", "acme@mail.com", "99.999-9");
+				"00.000.000/0001-00", "000000000000", "acme@mail.com", "99.999-9");
 		pessoaRepository.adicionar(pj);
 	}
 	
@@ -42,11 +42,11 @@ public class PessoaRepositoryImplTest extends AbstractRepositoryImplTest {
 
 		
 		PessoaJuridica pj1 = Fixture.pessoaJuridica("José Ltda",
-				"00.000.000/0001-00", "000.000.000.000", "joseltda@mail.com", "99.999-9");
+				"00.000.000/0001-00", "000000000000", "joseltda@mail.com", "99.999-9");
 
 		
 		PessoaJuridica pj2 = Fixture.pessoaJuridica("Acme Ltda",
-				"11.111.111/0001-11", "000.000.000.000", "acme@mail.com", "99.999-9");
+				"11.111.111/0001-11", "000000000000", "acme@mail.com", "99.999-9");
 		save(pf1);
 		save(pf2);
 		save(pj1);
