@@ -269,9 +269,15 @@ public class ChamadaEncalheAntecipadaController {
 	@Post
 	@Path("/obterQuantidadeExemplares")
 	public void obterQuantidadeExemplaresPorCota(Integer numeroCota, String codigoProduto, Long numeroEdicao,Long fornecedor,
-												 boolean programacaoRealizada){
+												 boolean programacaoRealizada,Integer municipio, Long tipoPontoPDV){
 		
-		FiltroChamadaAntecipadaEncalheDTO filtro = new FiltroChamadaAntecipadaEncalheDTO(codigoProduto,numeroEdicao,null,fornecedor,numeroCota);
+		FiltroChamadaAntecipadaEncalheDTO filtro = new FiltroChamadaAntecipadaEncalheDTO();
+		filtro.setNumeroCota(numeroCota);
+		filtro.setCodigoProduto(codigoProduto);
+		filtro.setNumeroEdicao(numeroEdicao);
+		filtro.setFornecedor(fornecedor);
+		filtro.setCodMunicipio(municipio);
+		filtro.setCodTipoPontoPDV(tipoPontoPDV);
 		
 		BigDecimal quantidade = BigDecimal.ZERO;
 		
@@ -522,7 +528,8 @@ public class ChamadaEncalheAntecipadaController {
 					new ChamadaAntecipadaEncalheDTO(
 							Integer.parseInt(vo.getNumeroCota()),
 							new BigDecimal(vo.getQntExemplares()),
-							vo.getCodigoChamdaEncalhe()));
+							vo.getCodigoChamdaEncalhe(),
+							vo.getIdLancamento()));
 		}
 		
 		infoEncalheDTO.setChamadasAntecipadaEncalhe(listaChamadaAntecipadaEncalheDTOs);
@@ -708,6 +715,7 @@ public class ChamadaEncalheAntecipadaController {
 			chamadaEncalheAntecipadaVO.setNumeroCota( String.valueOf(dto.getNumeroCota()));
 			chamadaEncalheAntecipadaVO.setQntExemplares(String.valueOf(dto.getQntExemplares().intValue()));
 			chamadaEncalheAntecipadaVO.setCodigoChamdaEncalhe(dto.getCodigoChamadaEncalhe());
+			chamadaEncalheAntecipadaVO.setIdLancamento(dto.getIdLancamento());
 			
 			listaChamadaEncalheAntecipadaVO.add(chamadaEncalheAntecipadaVO);
 		}
@@ -855,7 +863,7 @@ public class ChamadaEncalheAntecipadaController {
 	@SuppressWarnings("unchecked")
 	@Get
 	public void exportarPesquisaCotas(FileType fileType,String dataProgaramada,String codigoProduto, 
-										Long numeroEdicao, Long fornecedor ) throws IOException{
+										Long numeroEdicao, Long fornecedor,Integer municipio,Long tipoPontoPDV) throws IOException{
 		
 		List<ChamadaEncalheAntecipadaVO> listaChamadaEncalheAntecipada = 
 				(List<ChamadaEncalheAntecipadaVO>) session.getAttribute(LISTA_PESQUISA_COTA);
@@ -865,6 +873,8 @@ public class ChamadaEncalheAntecipadaController {
 		filtro.setCodigoProduto(codigoProduto);
 		filtro.setFornecedor(fornecedor);
 		filtro.setNumeroEdicao(numeroEdicao);
+		filtro.setCodMunicipio(municipio);
+		filtro.setCodTipoPontoPDV(tipoPontoPDV);
 		
 		atribuirValoresFIltro(filtro);
 		
@@ -976,6 +986,22 @@ public class ChamadaEncalheAntecipadaController {
 		}
 		else{
 			filtro.setDescComCE("Não");
+		}
+		
+		if(filtro.getCodMunicipio()!= null){
+			
+			Endereco endereco = pdvService.buscarMunicipioPdvPrincipal(filtro.getCodMunicipio());
+			if(endereco!= null){
+				filtro.setDescMunicipio(endereco.getCidade());
+			}
+		}
+		
+		if(filtro.getCodTipoPontoPDV()!= null){
+			
+			TipoPontoPDV tipoPontoPDV = pdvService.obterTipoPontoPDVPrincipal(filtro.getCodTipoPontoPDV());
+			if(tipoPontoPDV!= null){
+				filtro.setDescTipoPontoPDV(tipoPontoPDV.getDescricao());
+			}
 		}
 	}
 	

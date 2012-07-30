@@ -1551,7 +1551,9 @@ public class DataLoader {
 				usuarioJoao, estoque, new BigDecimal(10), cotaGuilherme, StatusAprovacao.APROVADO, "motivo");
 
 		ChamadaEncalhe chamadaEncalhe = Fixture.chamadaEncalhe(Fixture.criarData(1, 3, 2011), cromoBrasileiraoEd1,TipoChamadaEncalhe.ANTECIPADA);
-
+		chamadaEncalhe.setLancamentos(new HashSet<Lancamento>());
+		chamadaEncalhe.getLancamentos().add(lancamentoPeriodo);
+		
 		ChamadaEncalheCota chamadaEncalheCota = Fixture.chamadaEncalheCota(chamadaEncalhe, true, cotaGuilherme, new BigDecimal(50));
 
 		ControleConferenciaEncalhe controle = Fixture.controleConferenciaEncalhe(StatusOperacao.CONCLUIDO, new Date());
@@ -1568,8 +1570,6 @@ public class DataLoader {
 				cromoBrasileiraoEd1);
 
 		save(session,estoque,movimento,chamadaEncalhe,chamadaEncalheCota,controle,controleCota,conferencia);
-
-		lancamentoPeriodo.setChamadaEncalhe(chamadaEncalhe);
 		
 		save(session, lancamentoPeriodo, lancamentoPeriodo2);
 		
@@ -1926,9 +1926,10 @@ public class DataLoader {
 				produtoEdicaoVeja1,
 				TipoChamadaEncalhe.MATRIZ_RECOLHIMENTO);
 		
-		save(session, chamadaEncalheVeja1);
+		chamadaEncalheVeja1.setLancamentos(new HashSet<Lancamento>());
+		chamadaEncalheVeja1.getLancamentos().add(lancamentoVeja1);
 		
-		lancamentoVeja1.setChamadaEncalhe(chamadaEncalheVeja1);
+		save(session, chamadaEncalheVeja1);
 		
 		save(session, lancamentoVeja1);
 				
@@ -10440,6 +10441,8 @@ public class DataLoader {
 			Fixture.chamadaEncalhe(dataRecolhimentoProximaSemana,
 								   guitarPlayerEdicao101,
 								   TipoChamadaEncalhe.ANTECIPADA);
+		chamadaEncalheGuitarPlayer101.setLancamentos(new HashSet<Lancamento>());
+		chamadaEncalheGuitarPlayer101.getLancamentos().add(lancamentoGuitarPlayerEdicao101);
 
 		ChamadaEncalhe chamadaEncalheJequiti101 =
 			Fixture.chamadaEncalhe(dataRecolhimentoProximaSemana,
@@ -10450,16 +10453,22 @@ public class DataLoader {
 			Fixture.chamadaEncalhe(dataRecolhimentoProximaSemana,
 								   javaMagazineEdicao102,
 								   TipoChamadaEncalhe.ANTECIPADA);
+		chamadaEncalheJavaMagazine102.setLancamentos(new HashSet<Lancamento>());
+		chamadaEncalheJavaMagazine102.getLancamentos().add(lancamentoJavaMagazineEdicao102);
 
 		ChamadaEncalhe chamadaEncalheBravo102 =
 			Fixture.chamadaEncalhe(dataRecolhimentoProximaSemana,
 					 			   bravoEdicao102,
 								   TipoChamadaEncalhe.CHAMADAO);
-
+		chamadaEncalheBravo102.setLancamentos(new HashSet<Lancamento>());
+		chamadaEncalheBravo102.getLancamentos().add(lancamentoBravoEdicao102);
+		
 		ChamadaEncalhe chamadaEncalheWomenHealth102 =
 			Fixture.chamadaEncalhe(dataRecolhimentoProximaSemana,
 								   womenHealthEdicao102,
 								   TipoChamadaEncalhe.ANTECIPADA);
+		chamadaEncalheWomenHealth102.setLancamentos(new HashSet<Lancamento>());
+		chamadaEncalheWomenHealth102.getLancamentos().add(lancamentoWomenHealthEdicao102);
 
 		save(session, chamadaEncalheMundoJava101, chamadaEncalheGuitarPlayer101,
 					  chamadaEncalheJequiti101, chamadaEncalheJavaMagazine102,
@@ -10493,11 +10502,6 @@ public class DataLoader {
 					  chamadaEncalheCotaAcmeJequiti101, chamadaEncalheCotaManoelJavaMagazine102,
 					  chamadaEncalheCotaManoelBravo102, chamadaEncalheCotaAcmeBravo102,
 					  chamadaEncalheCotaManoelWomenHealth102, chamadaEncalheCotaAcmeWomenHealth102);
-		
-		lancamentoJavaMagazineEdicao102.setChamadaEncalhe(chamadaEncalheJavaMagazine102);
-		lancamentoGuitarPlayerEdicao101.setChamadaEncalhe(chamadaEncalheGuitarPlayer101);
-		lancamentoBravoEdicao102.setChamadaEncalhe(chamadaEncalheBravo102);
-		lancamentoWomenHealthEdicao102.setChamadaEncalhe(chamadaEncalheWomenHealth102);
 		
 		save(session, lancamentoGuitarPlayerEdicao101, lancamentoBravoEdicao102, lancamentoWomenHealthEdicao102);
 	}

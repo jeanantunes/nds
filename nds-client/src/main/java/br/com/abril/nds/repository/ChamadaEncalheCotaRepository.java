@@ -114,4 +114,13 @@ public interface ChamadaEncalheCotaRepository extends Repository<ChamadaEncalheC
 	 * @return BigDecimal
 	 */
 	BigDecimal obterQntExemplaresComProgramacaoAntecipadaEncalheCota(FiltroChamadaAntecipadaEncalheDTO filtro);
+	
+	/**
+	 * Retorna a quantidade de chamada encalhe cota relacionada a uma chamada de encalhe
+	 * 
+	 * @param idChamadaEncalhe  -identificador da chamada de encalhe
+	 * 
+	 * @return Long
+	 */
+	Long obterQntChamadaEncalheCota(Long idChamadaEncalhe);
 }

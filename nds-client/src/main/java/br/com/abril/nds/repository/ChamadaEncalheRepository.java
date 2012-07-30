@@ -25,4 +25,5 @@ public interface ChamadaEncalheRepository extends Repository<ChamadaEncalhe, Lon
 	List<CotaEmissaoDTO> obterDadosEmissaoImpressaoChamadasEncalhe(FiltroEmissaoCE filtro);
 
 	List<ProdutoEmissaoDTO> obterProdutosEmissaoCE(FiltroEmissaoCE filtro, Long idCota);
+
 }

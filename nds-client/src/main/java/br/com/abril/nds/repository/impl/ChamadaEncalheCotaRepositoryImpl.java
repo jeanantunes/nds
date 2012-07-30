@@ -6,11 +6,9 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.hibernate.Query;
-import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.ChamadaAntecipadaEncalheDTO;
-import br.com.abril.nds.dto.VendaEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroChamadaAntecipadaEncalheDTO;
 import br.com.abril.nds.model.planejamento.ChamadaEncalheCota;
 import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
@@ -416,5 +414,17 @@ public class ChamadaEncalheCotaRepositoryImpl extends AbstractRepositoryModel<Ch
 		}
 		
 		return hql;
+	}
+	
+	@Override
+	public Long obterQntChamadaEncalheCota(Long idChamadaEncalhe) {
+		
+		String hql = " select count(chamadaEncalheCota.id) from ChamadaEncalheCota chamadaEncalheCota where chamadaEncalheCota.chamadaEncalhe.id=:idChamada ";
+		
+		Query query = getSession().createQuery(hql);
+		
+		query.setParameter("idChamada", idChamadaEncalhe);
+		
+		return (Long) query.uniqueResult();
 	}
 }

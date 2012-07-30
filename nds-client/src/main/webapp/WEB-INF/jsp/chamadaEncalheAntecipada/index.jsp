@@ -60,6 +60,22 @@
 			$("#codFornecedorHidden").val($("#fornecedor").val());
 		},
 		
+		setHiddenMunicipio: function (){
+		   	$("#codMunicipioHidden").val($("#municipio").val());
+		},
+		
+		setHiddenTipoPontoPDV: function (){
+			$("#codTipoPontoPdvHidden").val($("#tipoPontoPDV").val());
+		},
+		
+		getHiddenMunicipio: function (){
+		   	return $("#codMunicipioHidden").val();
+		},
+		
+		getHiddenTipoPontoPDV: function (){
+			return $("#codTipoPontoPdvHidden").val();
+		},
+		
 		getCodigoProdutoPesquisa: function (){
 			return  "codigoProduto=" + $("#codigoProduto").val();
 		},
@@ -429,8 +445,11 @@
 						
 				var inputHiddenCodigoChamadaEncalhe = 	
 					'<input type="hidden" id="codigoChamadaAntecipada' + index + '" name="codigoChamadaAntecipada" value="'+ row.cell.codigoChamdaEncalhe+'"/>';
+				
+				var inputHiddenIdLancamento= 	
+						'<input type="hidden" id="idLancamento' + index + '" name="idLancamento" value="'+ row.cell.idLancamento+'"/>';	
 					
-				row.cell.numeroCota = row.cell.numeroCota + inputNumeroCota + inputNomeCota  + inputHiddenCodigoChamadaEncalhe;	
+				row.cell.numeroCota = row.cell.numeroCota + inputNumeroCota + inputNomeCota  + inputHiddenCodigoChamadaEncalhe + inputHiddenIdLancamento;	
 				row.cell.qntExemplares = row.cell.qntExemplares + inputQuantidadeExemplares;
 				row.cell.sel = inputCheck;
 			});
@@ -438,6 +457,8 @@
 			EncalheAntecipado.setHiddenFornecedor();
 			EncalheAntecipado.setHiddenNumeroEdicao();
 			EncalheAntecipado.setHiddenProduto();
+			EncalheAntecipado.setHiddenMunicipio();
+			EncalheAntecipado.setHiddenTipoPontoPDV();
 			
 			$("#grids").show();
 			$("#gridAntecipada").show();
@@ -482,7 +503,10 @@
 			             {name:"codigoProduto", value:EncalheAntecipado.getHiddenProduto()},
 			             {name:"numeroEdicao",value:EncalheAntecipado.getHiddenNumeroEdicao()},
 			             {name:"fornecedor",value:EncalheAntecipado.getHiddenFornecedor()},
-			             {name:"programacaoRealizada",value:EncalheAntecipado.getProgramacaoRealizada()}];
+			             {name:"programacaoRealizada",value:EncalheAntecipado.getProgramacaoRealizada()},
+			             {name:"municipio",value:EncalheAntecipado.getHiddenMunicipio()},
+			             {name:"tipoPontoPDV",value:EncalheAntecipado.getHiddenTipoPontoPDV()}
+			             ];
 			
 			$.postJSON("<c:url value='/devolucao/chamadaEncalheAntecipada/obterQuantidadeExemplares' />",
 					param, 
@@ -553,8 +577,12 @@
 				
 				var inputHiddenCodigoChamadaEncalhe = 	
 					'<input type="hidden" id="codigoChamadaAntecipada' + index + '" name="codigoChamadaAntecipada" value="'+ row.cell.codigoChamdaEncalhe+'"/>';
+					
+				var inputHiddenIdLancamento= 	
+						'<input type="hidden" id="idLancamento' + index + '" name="idLancamento" value="'+ row.cell.idLancamento+'"/>';
+						
 				
-				row.cell.cota = inputCodigoCota + hiddenId + inputHiddenCodigoChamadaEncalhe;
+				row.cell.cota = inputCodigoCota + hiddenId + inputHiddenCodigoChamadaEncalhe +inputHiddenIdLancamento;
 				row.cell.nome = inputDescricaoCota;
 				row.cell.qtdeExemplares = inputQuantidadeExemplares;	
 				row.cell.sel = inputCheck;
@@ -563,6 +591,8 @@
 			EncalheAntecipado.setHiddenFornecedor();
 			EncalheAntecipado.setHiddenNumeroEdicao();
 			EncalheAntecipado.setHiddenProduto();
+			EncalheAntecipado.setHiddenMunicipio();
+			EncalheAntecipado.setHiddenTipoPontoPDV();
 			
 			$("#grids").show();
 			$("#gridAntecipada").hide();
@@ -658,6 +688,8 @@
 			
 				var codigoChamdaEncalhe = $(colunaCota).find("div").find('input[name="codigoChamadaAntecipada"]').val();
 				
+				var idLancamento = $(colunaCota).find("div").find('input[name="idLancamento"]').val();
+				
 				var check  = $(colunaCheck).find("div").find('input[name="'+groupName+'"]');
 				
 				if (EncalheAntecipado.isAtributosVaziosOrSelecionados(codigoCota,check)){
@@ -678,8 +710,8 @@
 				
 				cotaSelecionada += 'listaChamadaEncalheAntecipada[' + index + '].codigoChamdaEncalhe =' + codigoChamdaEncalhe  + '&';
 				
-				
-
+				cotaSelecionada += 'listaChamadaEncalheAntecipada[' + index + '].idLancamento =' + idLancamento  + '&';
+			
 				listaChamadaEncalheAntecipada = (listaChamadaEncalheAntecipada + cotaSelecionada);
 				
 			});
@@ -726,11 +758,13 @@
 					var paramProduto = "&codigoProduto="+EncalheAntecipado.getHiddenProduto();
 					var paramEdicao = "&numeroEdicao=" +EncalheAntecipado.getHiddenNumeroEdicao();
 					var paramFornecedor = "&fornecedor="+EncalheAntecipado.getHiddenFornecedor();
+					var paramMunicipio = "&municipio="+EncalheAntecipado.getHiddenMunicipio();
+					var paramTipoPontoPDV ="&tipoPontoPDV=" + EncalheAntecipado.getHiddenTipoPontoPDV();
 					
 					window.location = 
 						contextPath + "/devolucao/chamadaEncalheAntecipada/exportarPesquisaCotas?fileType=" 
 								+ fileType + paramDataProgaramada
-								+paramProduto + paramEdicao + paramFornecedor;
+								+paramProduto + paramEdicao + paramFornecedor + paramMunicipio + paramTipoPontoPDV;
 				},
 				EncalheAntecipado.tratarErroPesquisaCota,true);
 			}
@@ -1085,6 +1119,8 @@ $(function() {
    	   <input type="hidden" id="codProdutoHidden" name="codProdutoHidden" value=""/>
    	   <input type="hidden" id="numeroEdicaoHidden" name="numeroEdicaoHidden" value=""/>
    	   <input type="hidden" id="codFornecedorHidden" name="codFornecedorHidden" value=""/>
+   	   <input type="hidden" id="codMunicipioHidden" name="codMunicipioHidden" value=""/>
+   	   <input type="hidden" id="codTipoPontoPdvHidden" name="codTipoPontoPdvHidden" value=""/>
    	   
    	   <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
 		
@@ -1182,7 +1218,7 @@ $(function() {
 			
 		  	<td colspan="3">
 				
-				<select class="campoDePesquisa" name="fornecedor" id="municipio" style="width:150px;">
+				<select class="campoDePesquisa" name="municipio" id="municipio" style="width:150px;">
 		      		<option selected="selected">Todos</option>
 		      		<c:forEach var="municipio" items="${listaMunicipios}">
 							<option value="${municipio.key}">${municipio.value}</option>
