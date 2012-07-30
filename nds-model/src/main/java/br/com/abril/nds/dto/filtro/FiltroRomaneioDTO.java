@@ -90,17 +90,41 @@ public class FiltroRomaneioDTO implements Serializable {
 	
 	@Export(label = "Roteiro" , exhibitionOrder = 1, alignment = Alignment.LEFT)
 	public String getRoteiro() {
-		return "("+ getIdRoteiro() + ")";
+		if(getIdRoteiro() != null){
+			if(getIdRoteiro() == -1){
+				return "Todos";
+		}
+			return   "("+ getIdRoteiro() + ")";
+			
+		}else{
+			return "-";
+		}
+		
 	}
 	
 	@Export(label = "Entrega / Box" , exhibitionOrder = 2, alignment = Alignment.LEFT)
 	public String getBox() {
-		return getIdBox().toString();
+		if(getIdBox() != null){
+			if(getIdBox() == -1){
+				return "Todos";
+			}			
+			return getIdBox().toString();
+		}else{
+			return "-";
+		}
 	}
 
 	@Export(label = "Rota" , exhibitionOrder = 3, alignment = Alignment.LEFT)
 	public String getRota() {
-		return "(" + getIdRota() + ") " + getNomeRota();
+		if(getIdRota() != null){
+			if(getIdRota() == -1){
+				return "Todos";
+			}			
+			return "(" + getIdRota() + ") " + getNomeRota();		
+		}else{
+			return "-";
+		}
+		
 	}
 	
 	@Export(label = "Data Geração" , exhibitionOrder = 4, alignment = Alignment.LEFT)
