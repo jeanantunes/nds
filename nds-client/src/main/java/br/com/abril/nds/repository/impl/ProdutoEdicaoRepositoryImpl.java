@@ -282,7 +282,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 			String sortorder, String sortname, int initialResult, int maxResults) {
 		
 		StringBuilder hql = new StringBuilder();
-		hql.append(" SELECT pe.id as id, pr.codigo as codigoProduto, pr.descricao as nomeProduto, ");
+		hql.append(" SELECT pe.id as id, pr.codigo as codigoProduto, pe.nomeComercial as nomeProduto, ");
 		hql.append("        pe.numeroEdicao as numeroEdicao, jr.razaoSocial as nomeFornecedor, ");
 		hql.append("        ln.tipoLancamento as statusLancamento, ln.status as statusSituacao, ");
 		hql.append("        pe.possuiBrinde as temBrinde ");
