@@ -17,7 +17,7 @@ var boxController = $.extend(true, {
 				} else {
 					$.each(data.rows, function(index, value) {
 						var idBox = value.cell.id;
-						var acao = '<a href="javascript:;" onclick="boxController.editar(' + idBox + ');"><img src="' + contextPath + '/images/ico_editar.gif" border="0" hspace="5" />';
+						var acao = '<a href="javascript:;" onclick="boxController.editar(' + idBox + ', $(this).closest(\'form\'));"><img src="' + contextPath + '/images/ico_editar.gif" border="0" hspace="5" />';
 						acao += '</a> <a href="javascript:;" onclick="boxController.excluir(' + idBox + ');""><img src="' + contextPath + '/images/ico_excluir.gif" hspace="5" border="0" /></a>';
 
 						value.cell.acao = acao;						
@@ -121,7 +121,8 @@ var boxController = $.extend(true, {
 		this.createDialog();
 	},
 	createDialog : function() {
-		$("#dialog-novo #workspace div.ui-tabs-panel:not(.ui-tabs-hide)").dialog({
+		//$("#dialog-novo #workspace div.ui-tabs-panel:not(.ui-tabs-hide)").dialog({
+		$("#dialog-novo").dialog({
 			resizable : false,
 			height : 230,
 			width : 400,
@@ -140,17 +141,20 @@ var boxController = $.extend(true, {
 				}
 			}],
 			beforeClose : clearMessageDialogTimeout,
-			form: $("#dialog-novo #workspace div.ui-tabs-panel:not(.ui-tabs-hide)").parents("form")
+			//form: $("#dialog-novo #workspace div.ui-tabs-panel:not(.ui-tabs-hide)").parents("form")
+			form: $("#dialog-novo").parents("form")
 		});
-		$("#dialog-novo #workspace div.ui-tabs-panel:not(.ui-tabs-hide)").dialog("close");
+		//$("#dialog-novo #workspace div.ui-tabs-panel:not(.ui-tabs-hide)").dialog("close");
+		$("#dialog-novo").dialog("close");
 	},
 	showPopupEditar : function(title) {
-		$("#dialog-novo #workspace div.ui-tabs-panel:not(.ui-tabs-hide)")
+		//$("#dialog-novo #workspace div.ui-tabs-panel:not(.ui-tabs-hide)")
+		$("#dialog-novo")
 			.dialog( "option" ,  "title", title )
 			.dialog( "open" );
 		
 	},
-	editar : function(id) {
+	editar : function(id, form) {
 		$.postJSON(this.path + 'buscaPorId.json', {
 			'id' : id
 		}, function(data) {
@@ -158,7 +162,7 @@ var boxController = $.extend(true, {
 				exibirMensagem(data.mensagens.tipoMensagem, data.mensagens.listaMensagens);
 			} else {
 
-				boxController.bindData(data);
+				boxController.bindData(data, form);
 				boxController.showPopupEditar('Editar Box');
 			}
 		});
@@ -189,6 +193,7 @@ var boxController = $.extend(true, {
 		}, null, true);
 	},
 	excluir : function(id) {
+		//$("#dialog-excluir #workspace div.ui-tabs-panel:not(.ui-tabs-hide)").dialog({
 		$("#dialog-excluir").dialog({
 			resizable : false,
 			height : 170,
@@ -267,7 +272,8 @@ var boxController = $.extend(true, {
 		});
 	},
 	detalheDialog:function(){
-		$( "#dialog-box #workspace div.ui-tabs-panel:not(.ui-tabs-hide)" ).dialog({
+		//$( "#dialog-box #workspace div.ui-tabs-panel:not(.ui-tabs-hide)" ).dialog({
+		$( "#dialog-box" ).dialog({
 			resizable: false,
 			height:410,
 			width:630,
@@ -282,7 +288,8 @@ var boxController = $.extend(true, {
 		});
 	},
 	detalhe:function(id){		
-		$(".boxCotaGrid #workspace div.ui-tabs-panel:not(.ui-tabs-hide)").flexOptions({
+		//$(".boxCotaGrid #workspace div.ui-tabs-panel:not(.ui-tabs-hide)").flexOptions({
+		$(".boxCotaGrid").flexOptions({
 			"url" : this.path + 'detalhe.json',
 			params : [{
 				name : "id",
@@ -290,7 +297,8 @@ var boxController = $.extend(true, {
 			}],
 			newp:1
 		});
-		$(".boxCotaGrid #workspace div.ui-tabs-panel:not(.ui-tabs-hide)").flexReload();
+		//$(".boxCotaGrid #workspace div.ui-tabs-panel:not(.ui-tabs-hide)").flexReload();
+		$(".boxCotaGrid").flexReload();
 		this.detalheDialog();
 	}
 }, BaseController);
