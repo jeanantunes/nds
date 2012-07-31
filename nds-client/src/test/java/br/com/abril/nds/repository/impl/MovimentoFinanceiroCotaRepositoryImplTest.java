@@ -65,7 +65,7 @@ public class MovimentoFinanceiroCotaRepositoryImplTest extends AbstractRepositor
 		
 		ParametroCobrancaCota parametroCobranca = 
 				Fixture.parametroCobrancaCota(null, 2, BigDecimal.TEN, null, 1, 
-											  true, BigDecimal.TEN);
+											  true, BigDecimal.TEN, null);
   		save(parametroCobranca);
 		
 		FormaCobranca formaBoleto =

@@ -65,6 +65,7 @@ import br.com.abril.nds.model.cadastro.TelefoneEntregador;
 import br.com.abril.nds.model.cadastro.TipoAtividade;
 import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
+import br.com.abril.nds.model.cadastro.TipoCota;
 import br.com.abril.nds.model.cadastro.TipoDesconto;
 import br.com.abril.nds.model.cadastro.TipoEndereco;
 import br.com.abril.nds.model.cadastro.TipoEntrega;
@@ -2280,7 +2281,7 @@ public class Fixture {
 
 	public static ParametroCobrancaCota parametroCobrancaCota(Set<FormaCobranca> formasCobranca,
 							Integer numeroAcumuloDivida, BigDecimal valor, Cota cota,
-							int fatorVencimento,boolean recebeCobrancaEmail, BigDecimal valorMininoCobranca) {
+							int fatorVencimento,boolean recebeCobrancaEmail, BigDecimal valorMininoCobranca, TipoCota tipoCota) {
 		
 		ParametroCobrancaCota parametro = new ParametroCobrancaCota();
 		
@@ -2294,6 +2295,7 @@ public class Fixture {
 		parametro.setValorMininoCobranca(valorMininoCobranca);
 		parametro.setPoliticaSuspensao(politicaSuspensao);
 		parametro.setFormasCobrancaCota(formasCobranca);
+		parametro.setTipoCota(tipoCota);
 		
 		return parametro;
 	}
