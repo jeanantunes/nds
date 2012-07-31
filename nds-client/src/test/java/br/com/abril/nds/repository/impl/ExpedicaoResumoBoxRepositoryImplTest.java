@@ -102,7 +102,7 @@ public class ExpedicaoResumoBoxRepositoryImplTest extends AbstractRepositoryImpl
 		politicasCobranca.add(politicaCobranca);
 		
 		PessoaJuridica juridicaDistrib = Fixture.pessoaJuridica("Distribuidor Acme",
-				"33.333.333/0001-33", "333.333.333.333", "distrib_acme@mail.com", "99.999-9");
+				"33.333.333/0001-33", "333333333333", "distrib_acme@mail.com", "99.999-9");
 		save(juridicaDistrib);
 
 		Distribuidor distribuidor = Fixture.distribuidor(1, juridicaDistrib, new Date(), politicasCobranca);
