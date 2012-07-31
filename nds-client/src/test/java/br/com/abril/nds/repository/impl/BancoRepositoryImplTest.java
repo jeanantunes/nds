@@ -91,7 +91,7 @@ public class BancoRepositoryImplTest extends AbstractRepositoryImplTest {
   		//CRIA UM OBJETO FORMA DE COBRANCA BOLETO NA SESSAO PARA TESTES
   		ParametroCobrancaCota parametroCobranca = 
 				Fixture.parametroCobrancaCota(null, 2, BigDecimal.TEN, null, 1, 
-											  true, BigDecimal.TEN);
+											  true, BigDecimal.TEN, null);
   		save(parametroCobranca);
   		
 		FormaCobranca formaCobranca = Fixture.formaCobrancaBoleto(false,

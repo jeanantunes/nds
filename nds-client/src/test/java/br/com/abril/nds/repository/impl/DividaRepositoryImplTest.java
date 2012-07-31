@@ -126,7 +126,7 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
 		formasCobranca.add(formaBoleto);
 		ParametroCobrancaCota parametroCobrancaConta = 
 				Fixture.parametroCobrancaCota(formasCobranca, 1, BigDecimal.TEN, cotaManoel, 1, 
-											  true, BigDecimal.TEN);
+											  true, BigDecimal.TEN, null);
 		formaBoleto.setParametroCobrancaCota(parametroCobrancaConta);
 		formaBoleto.setPrincipal(true);
 		

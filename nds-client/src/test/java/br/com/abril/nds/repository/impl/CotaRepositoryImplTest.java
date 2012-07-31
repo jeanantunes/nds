@@ -244,7 +244,7 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 		formasCobranca.add(formaBoleto);
 		ParametroCobrancaCota parametroCobrancaConta = 
 				Fixture.parametroCobrancaCota(formasCobranca, null, null, cota, 1, 
-											  true, BigDecimal.TEN);
+											  true, BigDecimal.TEN, null);
 		formaBoleto.setParametroCobrancaCota(parametroCobrancaConta);
 		formaBoleto.setPrincipal(true);
 		
