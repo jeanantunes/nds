@@ -487,14 +487,8 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 		lancamento.setReparte(repartePrevisto);
 		lancamento.setRepartePromocional(repartePromocional);
 		
-		// Cálcular as datas de Recolhimento:
-		int peb = produtoEdicao.getProduto().getPeb();
-		Calendar calPeb = Calendar.getInstance();
-		calPeb.setTime(lancamento.getDataLancamentoPrevista());
-		calPeb.add(Calendar.DAY_OF_MONTH, peb);
-		Date dtPeb = calPeb.getTime();
-		lancamento.setDataRecolhimentoDistribuidor(dtPeb);
-		lancamento.setDataRecolhimentoPrevista(dtPeb);
+		lancamento.setDataRecolhimentoDistribuidor(dto.getDataRecolhimentoDistribuidor());
+		lancamento.setDataRecolhimentoPrevista(dto.getDataRecolhimentoPrevisto());
 		lancamento.setProdutoEdicao(produtoEdicao);
 		lancamento.setStatus(StatusLancamento.PLANEJADO);
 		lancamento.setTipoLancamento(TipoLancamento.LANCAMENTO);

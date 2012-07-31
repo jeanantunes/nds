@@ -61,7 +61,11 @@ function executarPreProcessamento(resultado) {
 		row.cell.acao = linkAprovar + linkExcluir;
 
 		//
-		nProduto = row.cell.nomeProduto;
+		if(row.cell.nomeProduto){
+			nProduto = row.cell.nomeProduto;
+		}else{
+			row.cell.nomeProduto = '';
+		}
 		cProduto = row.cell.codigoProduto;
 	});
 		
@@ -169,7 +173,7 @@ function carregarDialog(id) {
 				$("#dataLancamentoPrevisto").val(result.dataLancamentoPrevisto == undefined ? '' : result.dataLancamentoPrevisto.$);
 				$("#dataLancamento").val(result.dataLancamento == undefined ? '' : result.dataLancamento.$);
 				$("#repartePrevisto").val(result.repartePrevisto)
-				$("#reparteDistribuido").val(result.reparteDistribuido);
+				$("#expectativaVenda").val(result.expectativaVenda);
 				$("#repartePromocional").val(result.repartePromocional);
 				//$("#categoria").val();
 				$("#codigoDeBarras").val(result.codigoDeBarras);
@@ -183,7 +187,10 @@ function carregarDialog(id) {
 				$('#parcial').val(result.parcial + "");
 				$('#possuiBrinde').attr('checked', result.possuiBrinde);
 				$('#boletimInformativo').val(result.boletimInformativo);
-
+				
+				$('#dataRecolhimentoPrevisto').val(result.dataRecolhimentoPrevisto == undefined ? '' : result.dataRecolhimentoPrevisto.$).attr("readonly", false);
+				$('#semanaRecolhimento').val(result.semanaRecolhimento);
+				$('#dataRecolhimentoReal').val(result.dataRecolhimentoReal == undefined ? '' : result.dataRecolhimentoReal.$);
 				if (result.origemInterface) {
 					$("#precoVenda").attr("readonly", false);				
 				} else {
@@ -319,7 +326,7 @@ function form_clear(formName) {
 		$( "#dialog-novo" ).dialog({
 			resizable: false,
 			height:615,
-			width:950,
+			width:960,
 			modal: true,
 			buttons: {
 				"Confirmar": function() {
@@ -472,7 +479,7 @@ $(function() {
 	$("#numeroEdicao").numeric();
 	$("#pacotePadrao").numeric();
 	$("#repartePrevisto").numeric();
-	$("#reparteDistribuido").numeric();
+	$("#expectativaVenda").numeric();
 	$("#repartePromocional").numeric();
 	$("#precoPrevisto").numeric();
 	$("#precoVenda").numeric();
@@ -484,6 +491,8 @@ $(function() {
 	$("#numeroLancamento").numeric();
 
 	$("#dataLancamentoPrevisto").mask("99/99/9999");
+	$("#dataRecolhimentoPrevisto").mask("99/99/9999");
+	$("#dataRecolhimentoReal").mask("99/99/9999");
 	$("#dataLancamento").mask("99/99/9999");
 });
 </script>
@@ -553,7 +562,8 @@ fieldset {
 							<tbody>
 								<tr>
 									<td width="181"><strong>C&oacute;digo:</strong></td>
-									<td width="100"><input type="text" name="codigoProdutoEdicao" id="codigoProdutoEdicao" style="width:100px;" /></td>
+									<td width="100" colspan="3"><input type="text" name="codigoProdutoEdicao" id="codigoProdutoEdicao" style="width:100px;" /></td>
+									
 									<td width="90">&nbsp;</td>
 									<td width="108">&nbsp;</td>
 									<td width="153" rowspan="8" align="center">
@@ -570,36 +580,33 @@ fieldset {
 								</tr>
 								<tr>
 									<td><strong>Nome Publica&ccedil;&atilde;o:</strong></td>
-									<td colspan="3"><input type="text" name="nomePublicacao" id="nomePublicacao" style="width:250px;" disabled="disabled" /></td>
+									<td colspan="5"><input type="text" name="nomePublicacao" id="nomePublicacao" style="width:340px;" disabled="disabled" /></td>
 								</tr>
 								<tr>
 									<td><strong>Nome Comercial Produto:</strong></td>
-									<td colspan="3"><input type="text" name="nomeComercialProduto" id="nomeComercialProduto" style="width:250px;" /></td>
+									<td colspan="5"><input type="text" name="nomeComercialProduto" id="nomeComercialProduto" style="width:340px;" /></td>
 								</tr>
 								<tr>
 									<td><strong>Fornecedor:</strong></td>
-									<td colspan="3"><input type="text" name="nomeFornecedor" id="nomeFornecedor" style="width:250px;" disabled="disabled" /></td>
+									<td colspan="5"><input type="text" name="nomeFornecedor" id="nomeFornecedor" style="width:340px;" disabled="disabled" /></td>
 								</tr>
 								<tr>
 									<td><strong>Situa&ccedil;&atilde;o:</strong></td>
-									<td colspan="3"><input type="text" name="situacao" id="situacao" style="width:250px;" disabled="disabled" /></td>
+									<td colspan="5"><input type="text" name="situacao" id="situacao" style="width:340px;" disabled="disabled" /></td>
 								</tr>
 								<tr>
 									<td><strong>Edi&ccedil;&atilde;o:</strong></td>
 									<td><input type="text" name="numeroEdicao" id="numeroEdicao" style="width:50px;" /></td>
-									<td><strong>Fase:</strong></td>
-									<td><input type="text" name="fase" id="fase" style="width:50px;" disabled="disabled" /></td>
-								</tr>
-								<tr>
-									<td><strong>N&ordm; Lancto:</strong></td>
-									<td><input type="text" name="numeroLancamento" id="numeroLancamento" style="width:50px;" maxlength="9" /></td>
+									<td><strong>PED:</strong></td>
+									<td><input type="text" name="ped" id="ped" style="width:50px;" disabled="disabled" /></td>
 									<td><strong>Pct. Padr&atilde;o:</strong></td>
 									<td><input type="text" name="pacotePadrao" id="pacotePadrao" style="width:50px;" /></td>
 								</tr>
+							
 								<tr>
 									<td><strong>Tipo de Lan&ccedil;amento:</strong></td>
 									<td colspan="3">
-										<select name="tipoLancamento" id="tipoLancamento" style="width:260px;" >
+										<select name="tipoLancamento" id="tipoLancamento" style="width:160px;" >
 											<option value="">Selecione...</option>
 											<option value="LANCAMENTO">Lan&ccedil;amento</option>
 											<option value="PARCIAL">Ed. Parcial</option>
@@ -608,10 +615,12 @@ fieldset {
 											<option value="SUPLEMENTAR">Supl. Compuls</option>
 										</select>
 									</td>
+									<td><strong>N&ordm; Lancto:</strong></td>
+									<td><input type="text" name="numeroLancamento" id="numeroLancamento" style="width:50px;" maxlength="9" /></td>
 								</tr>
 								<tr>
 									<td><strong>Capa da Edi&ccedil;&atilde;o:</strong></td>
-									<td><input type="file" name="imagemCapa" id="imagemCapa" style="width:50px;" /></td>
+									<td colspan="5"><input type="file" name="imagemCapa" id="imagemCapa" style="width:340px;" /></td>
 								</tr>
 							</tbody>
 						</table>
@@ -626,8 +635,8 @@ fieldset {
 									<td width="80"><input type="text" name="repartePrevisto" id="repartePrevisto" style="width:80px; float:left;" /></td>
 								</tr>
 								<tr>
-									<td><strong>Distribuido:</strong></td>
-									<td><input type="text" name="reparteDistribuido" id="reparteDistribuido" style="width:80px;" disabled="disabled" /></td>
+									<td><strong>Exp. Venda(%):</strong></td>
+									<td><input type="text" name="expectativaVenda" id="expectativaVenda" style="width:80px;" disabled="disabled" /></td>
 								</tr>
 								<tr>
 									<td><strong>Promocional:</strong></td>
@@ -663,7 +672,21 @@ fieldset {
 								</tr>
 							</tbody>
 						</table>
-					</fieldset>
+					</fieldset>	
+				    <fieldset style="width: 630px !important; margin-bottom: 2px; float: left;">
+				     <legend>Data Recolhimento</legend>
+					   	<table border="0" cellSpacing="1" cellPadding="1" width="562">
+					      <tbody><tr>
+					        <td width="60">Previsto:</td>
+					        <td width="91"><input style="width: 70px; float: left;" id="dataRecolhimentoPrevisto" name="dataRecolhimentoPrevisto" type="text"></td>
+					        <td width="48" align="right">Real:</td>
+					        <td width="79"><input style="width: 70px; text-align: right;" id="dataRecolhimentoReal" disabled="disabled" name="dataRecolhimentoReal" type="text"></td>
+					        <td width="180" align="right">Semana de Recolhimento:</td>
+					        <td width="85"><input style="width: 70px; float: left;" id="semanaRecolhimento" disabled="disabled" name="semanaRecolhimento" type="text"></td>
+					      </tr>
+					      </tbody>
+					    </table>
+				    </fieldset>
 				</div>
 				<br clear="all" />
 			</div>
@@ -975,6 +998,7 @@ fieldset {
 
 	$(".prodsPesqGrid").flexigrid({
 			dataType : 'json',
+			preProcess: executarPreProcessamento,
 			colModel : [ {
 				display : 'Produto',
 				name : 'nomeProduto',

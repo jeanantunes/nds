@@ -23,6 +23,7 @@ import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.ProdutoService;
 import br.com.abril.nds.util.CurrencyUtil;
+import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
 import br.com.caelum.vraptor.Get;
@@ -128,7 +129,7 @@ public class ProdutoEdicaoController {
 			dto.setPacotePadrao(pe.getPacotePadrao());
 			dto.setPrecoPrevisto(pe.getPrecoPrevisto());
 			dto.setPrecoVenda(pe.getPrecoVenda());
-			dto.setReparteDistribuido(pe.getReparteDistribuido());
+			dto.setExpectativaVenda(pe.getExpectativaVenda());
 			dto.setCodigoDeBarras(pe.getCodigoDeBarras());
 			dto.setCodigoDeBarrasCorporativo(pe.getCodigoDeBarraCorporativo());
 			dto.setChamadaCapa(pe.getChamadaCapa());
@@ -139,7 +140,11 @@ public class ProdutoEdicaoController {
 			dto.setBoletimInformativo(pe.getBoletimInformativo());
 			dto.setOrigemInterface(pe.getOrigemInterface());
 			dto.setNumeroLancamento(pe.getNumeroLancamento());
-
+			dto.setPeb(pe.getPeb());
+			dto.setEditor(pe.getProduto().getEditor().getNome());
+			
+			
+			
 			Dimensao dimEdicao = pe.getDimensao();
 			if (dimEdicao == null) {
 				dto.setComprimento(0);
@@ -159,11 +164,16 @@ public class ProdutoEdicaoController {
 				dto.setDataLancamento(uLancamento.getDataLancamentoDistribuidor());
 				dto.setRepartePrevisto(uLancamento.getReparte());
 				dto.setRepartePromocional(uLancamento.getRepartePromocional());
+				dto.setDataRecolhimentoPrevisto(uLancamento.getDataRecolhimentoPrevista());
+				dto.setDataRecolhimentoReal(uLancamento.getDataRecolhimentoDistribuidor());
+				dto.setSemanaRecolhimento(DateUtil.obterNumeroSemanaNoAno(uLancamento.getDataRecolhimentoDistribuidor()));
 			}
 		} else {
 			
 			// Edição criada pelo Distribuidor:
 			dto.setOrigemInterface(false);
+			
+			dto.setPeb(produto.getPeb());
 		}
 		
 		/* 
