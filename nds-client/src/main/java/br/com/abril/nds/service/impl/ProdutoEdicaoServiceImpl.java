@@ -7,6 +7,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +32,7 @@ import br.com.abril.nds.repository.ParametroSistemaRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.repository.ProdutoRepository;
 import br.com.abril.nds.service.CapaService;
+import br.com.abril.nds.service.MatrizLancamentoService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.exception.UniqueConstraintViolationException;
 import br.com.abril.nds.util.TipoMensagem;
@@ -63,6 +65,8 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 	@Autowired
 	private CapaService capaService;
 	
+	@Autowired
+	private MatrizLancamentoService matrizLancamentoService;
 	
 	@Override
 	@Transactional(readOnly = true)
@@ -512,30 +516,46 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 	}
 	
 	@Override
-	@Transactional(readOnly = true)
+	@Transactional(readOnly = false)
 	public void excluirProdutoEdicao(Long idProdutoEdicao) throws UniqueConstraintViolationException {
 		
 		ProdutoEdicao produtoEdicao = produtoEdicaoRepository.buscarPorId(idProdutoEdicao);
 		if (produtoEdicao == null) {
 			throw new ValidacaoException(TipoMensagem.ERROR, "Por favor, selecione uma Edição existente!");
 		}
+
+		List<Long> idsLancamento = new ArrayList<Long>();
 		
-		/* Regra: Se a Edição for originária da Interface, não pode ser excluida! */
-		if (produtoEdicao.getOrigemInterface()) {
-			throw new ValidacaoException(TipoMensagem.ERROR, "Esta Edição não pode ser excluida por ser originária da INTERFACE!");
-		}
-		
-		// TODO: 
-		/* Regra: Não excluir se existir referencias desta edição em outras tabelas. */
-		//throw new ValidacaoException(TipoMensagem.ERROR, "Esta Edição não pode ser excluida por estar associada em outras partes do sistema!");
-		
-		try {
+		for (Lancamento lancamento : produtoEdicao.getLancamentos()) {
 			
-			produtoEdicaoRepository.remover(produtoEdicao);
+			if (!(lancamento.getStatus().equals(StatusLancamento.PLANEJADO)
+					|| lancamento.getStatus().equals(StatusLancamento.CONFIRMADO))) {
+				
+				throw new ValidacaoException(TipoMensagem.ERROR, "Esta Edição não pode ser excluida por ter lancamentos em balanceamento ou já balanceados!");
+			}
+			
+			idsLancamento.add(lancamento.getId());
+		}
+
+		try {
+
+			if (!idsLancamento.isEmpty()) {
+
+				int arraySize = idsLancamento.size();
+				
+				Long[] ids = idsLancamento.toArray(new Long[arraySize]);
+				
+				this.lancamentoRepository.removerPorId(ids);
+			}
+
+			this.produtoEdicaoRepository.remover(produtoEdicao);
+
 		} catch (DataIntegrityViolationException e) {
-			throw new UniqueConstraintViolationException(
-					"Impossível excluir o registro. Já foram gerados movimentos.");
+			
+			throw new ValidacaoException(TipoMensagem.ERROR, "Esta Edição não pode ser excluida por estar associada em outras partes do sistema!");
+			
 		} catch (Exception e) {
+			
 			throw new ValidacaoException(TipoMensagem.ERROR, "Ocorreu um erro ao tentar excluir a edição!");
 		}
 	}
