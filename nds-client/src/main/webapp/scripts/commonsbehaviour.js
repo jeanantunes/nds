@@ -6,9 +6,9 @@
 		$('.bt_arq a').tipsy({gravity: 'ne'}); 
 	});
 	
-	
-
+	//workspace : "#workspace div.ui-tabs-panel:not(.ui-tabs-hide)";
 	var BaseController = {
+			workspace : "",
 			bindData : function(data, form) {
 				element = data;
 				
