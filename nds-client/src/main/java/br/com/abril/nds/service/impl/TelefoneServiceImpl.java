@@ -39,19 +39,7 @@ public class TelefoneServiceImpl implements TelefoneService {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Lista de telefones é obrigatória.");
 		}
 		
-		boolean isTelefonePrincipal = false;
-		
-		for (TelefoneAssociacaoDTO dto : listaTelefones){
-			
-			if (isTelefonePrincipal && dto.isPrincipal()){
-				
-				throw new ValidacaoException(TipoMensagem.WARNING, "Apenas um telefone principal é permitido.");
-			}
-			
-			if (dto.isPrincipal()){
-				isTelefonePrincipal = dto.isPrincipal();
-			}
-		}
+		validarTelefonePrincipal(listaTelefones);
 		
 		for (TelefoneAssociacaoDTO associacaoTelefone : listaTelefones){
 			this.valiadarTelefone(associacaoTelefone.getTelefone(), associacaoTelefone.getTipoTelefone());
@@ -228,5 +216,31 @@ public class TelefoneServiceImpl implements TelefoneService {
 	public Telefone buscarTelefonePorId(Long longValue) {
 		
 		return this.telefoneRepository.buscarPorId(longValue);
+	}
+	
+	/**
+	 * Valida se a lista tem pelo menos um e somente um telefone principal
+	 * 
+	 * @param listaTelefones lista de telefones para serem validados
+	 */
+	private void validarTelefonePrincipal(List<TelefoneAssociacaoDTO> listaTelefones) {
+		boolean isTelefonePrincipal = false;
+		boolean hasTelefonePrincipal = false;
+		for (TelefoneAssociacaoDTO dto : listaTelefones){
+			
+			if (isTelefonePrincipal && dto.isPrincipal()){
+				
+				throw new ValidacaoException(TipoMensagem.WARNING, "Apenas um telefone principal é permitido.");
+			}
+			
+			if (dto.isPrincipal()){
+				isTelefonePrincipal = dto.isPrincipal();
+				hasTelefonePrincipal = dto.isPrincipal();
+			}
+		}
+		
+		if (!hasTelefonePrincipal)
+			throw new ValidacaoException(TipoMensagem.WARNING, "É necessario cadastrar pelo menos um telefone principal.");
+		
 	}
 }
