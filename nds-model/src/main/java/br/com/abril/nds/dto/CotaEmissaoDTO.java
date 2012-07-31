@@ -36,7 +36,7 @@ public class CotaEmissaoDTO implements Serializable{
 	private String inscricaoEstadual;
 	private String dataRecolhimento;
 	private String dataEmissao;
-	private String box;
+	private Integer box;
 	private String codigoRota;
 	private String nomeRota;
 	
@@ -255,14 +255,14 @@ public class CotaEmissaoDTO implements Serializable{
 	/**
 	 * @return the box
 	 */
-	public String getBox() {
+	public Integer getBox() {
 		return box;
 	}
 
 	/**
 	 * @param box the box to set
 	 */
-	public void setBox(String box) {
+	public void setBox(Integer box) {
 		this.box = box;
 	}
 

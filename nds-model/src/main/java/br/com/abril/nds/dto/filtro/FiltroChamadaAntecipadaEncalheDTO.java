@@ -66,16 +66,18 @@ public class FiltroChamadaAntecipadaEncalheDTO implements Serializable {
 	@Export(label = "Roteiro")
 	private String descRoteiro;
 	
+	@Export(label = "Município")
+	private String descMunicipio;
+	
+	@Export(label = "Tipo de Ponto")
+	private String descTipoPontoPDV;
+	
 	@Export(label = "Com CE")
 	private String descComCE;
 	
 	private Integer codMunicipio;
 	
 	private Long codTipoPontoPDV;
-	
-	private String descMunicipio;
-	
-	private String descTipoPontoPDV;
 	
 
 	/**

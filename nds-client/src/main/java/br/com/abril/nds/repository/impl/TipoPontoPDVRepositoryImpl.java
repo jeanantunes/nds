@@ -2,7 +2,10 @@ package br.com.abril.nds.repository.impl;
 
 import java.util.List;
 
+import org.apache.xmlbeans.impl.xb.xsdschema.RestrictionDocument.Restriction;
+import org.hibernate.Criteria;
 import org.hibernate.Query;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.model.cadastro.pdv.TipoPontoPDV;
@@ -29,5 +32,16 @@ public class TipoPontoPDVRepositoryImpl extends AbstractRepositoryModel<TipoPont
 		Query query = getSession().createQuery(hql.toString());
 		
 		return query.list();
+	}
+	
+	@Override
+	public TipoPontoPDV buscarTipoPontoPdvPrincipal(Long codigoTipoPdv) {
+		
+		Criteria creCriteria = getSession().createCriteria(TipoPontoPDV.class);
+		
+		creCriteria.add(Restrictions.eq("codigo", codigoTipoPdv));
+		creCriteria.setMaxResults(1);
+		
+		return (TipoPontoPDV) creCriteria.uniqueResult();
 	}
 }

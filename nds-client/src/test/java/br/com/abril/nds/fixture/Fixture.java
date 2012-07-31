@@ -36,7 +36,6 @@ import br.com.abril.nds.model.cadastro.GrupoFornecedor;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.cadastro.LicencaMunicipal;
 import br.com.abril.nds.model.cadastro.MaterialPromocional;
-import br.com.abril.nds.model.cadastro.Moeda;
 import br.com.abril.nds.model.cadastro.OperacaoDistribuidor;
 import br.com.abril.nds.model.cadastro.ParametroCobrancaCota;
 import br.com.abril.nds.model.cadastro.ParametroContratoCota;
@@ -66,6 +65,7 @@ import br.com.abril.nds.model.cadastro.TelefoneEntregador;
 import br.com.abril.nds.model.cadastro.TipoAtividade;
 import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
+import br.com.abril.nds.model.cadastro.TipoCota;
 import br.com.abril.nds.model.cadastro.TipoDesconto;
 import br.com.abril.nds.model.cadastro.TipoEndereco;
 import br.com.abril.nds.model.cadastro.TipoEntrega;
@@ -466,6 +466,29 @@ public class Fixture {
 	public static ProdutoEdicao produtoEdicao(String codigoProdutoEdicao, Long numeroEdicao, 
 			int pacotePadrao, int peb, BigDecimal peso, BigDecimal precoCusto,
 			BigDecimal precoVenda, String codigoDeBarras, Long cdSMNotUsedAnyMore, Produto produto, 
+			BigDecimal expectativaVenda, boolean parcial,String nomeComercial) {
+		
+		ProdutoEdicao produtoEdicao = new ProdutoEdicao();
+		produtoEdicao.setCodigo(codigoProdutoEdicao);
+		produtoEdicao.setNumeroEdicao(numeroEdicao);
+		produtoEdicao.setPacotePadrao(pacotePadrao);
+		produtoEdicao.setPeb(peb);
+		produtoEdicao.setPeso(peso);
+		produtoEdicao.setPrecoCusto(precoCusto);
+		produtoEdicao.setPrecoVenda(precoVenda);
+		produtoEdicao.setProduto(produto);
+		produtoEdicao.setCodigoDeBarras(codigoDeBarras);
+		produtoEdicao.setExpectativaVenda(expectativaVenda);
+		produtoEdicao.setParcial(parcial);
+		produtoEdicao.setNomeComercial(nomeComercial);
+		
+		produtoEdicao.setOrigemInterface(Boolean.TRUE);
+		return produtoEdicao;
+	}
+	
+	public static ProdutoEdicao produtoEdicao(String codigoProdutoEdicao, Long numeroEdicao, 
+			int pacotePadrao, int peb, BigDecimal peso, BigDecimal precoCusto,
+			BigDecimal precoVenda, String codigoDeBarras, Long cdSMNotUsedAnyMore, Produto produto, 
 			BigDecimal expectativaVenda, boolean parcial) {
 		
 		ProdutoEdicao produtoEdicao = new ProdutoEdicao();
@@ -484,6 +507,7 @@ public class Fixture {
 		produtoEdicao.setOrigemInterface(Boolean.TRUE);
 		return produtoEdicao;
 	}
+	
 	
 	public static Lancamento lancamento(TipoLancamento tipoLancamento,
 			ProdutoEdicao produtoEdicao, Date dlp, Date drp, Date dataCriacao,
@@ -2257,7 +2281,7 @@ public class Fixture {
 
 	public static ParametroCobrancaCota parametroCobrancaCota(Set<FormaCobranca> formasCobranca,
 							Integer numeroAcumuloDivida, BigDecimal valor, Cota cota,
-							int fatorVencimento,boolean recebeCobrancaEmail, BigDecimal valorMininoCobranca) {
+							int fatorVencimento,boolean recebeCobrancaEmail, BigDecimal valorMininoCobranca, TipoCota tipoCota) {
 		
 		ParametroCobrancaCota parametro = new ParametroCobrancaCota();
 		
@@ -2271,6 +2295,7 @@ public class Fixture {
 		parametro.setValorMininoCobranca(valorMininoCobranca);
 		parametro.setPoliticaSuspensao(politicaSuspensao);
 		parametro.setFormasCobrancaCota(formasCobranca);
+		parametro.setTipoCota(tipoCota);
 		
 		return parametro;
 	}

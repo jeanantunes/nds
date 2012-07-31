@@ -7,5 +7,7 @@ import br.com.abril.nds.model.cadastro.pdv.TipoPontoPDV;
 public interface TipoPontoPDVRepository extends Repository<TipoPontoPDV, Long> {
 	
 	List<TipoPontoPDV> buscarTodosPdvPrincipal();
+	
+	TipoPontoPDV buscarTipoPontoPdvPrincipal(Long codigoTipoPdv);
 
 }

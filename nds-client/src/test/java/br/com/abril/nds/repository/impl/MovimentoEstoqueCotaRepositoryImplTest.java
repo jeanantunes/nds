@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 
 import org.junit.Assert;
@@ -533,19 +534,20 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		
 		lancamentoVeja.getRecebimentos().add(itemRecebimentoFisico2Veja);
 		
+		save(lancamentoVeja);
+		
 		ChamadaEncalhe chamadaEncalhe = Fixture.chamadaEncalhe(
 				Fixture.criarData(28, Calendar.FEBRUARY, 2012), 
 				veja1, 
 				TipoChamadaEncalhe.MATRIZ_RECOLHIMENTO);
+		chamadaEncalhe.setLancamentos(new HashSet<Lancamento>());
+		chamadaEncalhe.getLancamentos().add(lancamentoVeja);
+		
 		
 		save(chamadaEncalhe);
 		
-		lancamentoVeja.setChamadaEncalhe(chamadaEncalhe);
-		
 //		Estudo estudo = Fixture.estudo(new BigDecimal(100),
 //				Fixture.criarData(22, Calendar.FEBRUARY, 2012), veja1);
-
-		save(lancamentoVeja);
 
 		PessoaFisica manoel = Fixture.pessoaFisica("123.456.789-00",
 				"manoel@mail.com", "Manoel da Silva");

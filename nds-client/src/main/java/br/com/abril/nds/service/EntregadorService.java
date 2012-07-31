@@ -5,6 +5,7 @@ import java.util.List;
 
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.dto.ProcuracaoImpressaoDTO;
+import br.com.abril.nds.dto.ProcuracaoImpressaoWrapper;
 import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroEntregadorDTO;
 import br.com.abril.nds.model.cadastro.Entregador;
@@ -135,5 +136,5 @@ public interface EntregadorService {
 	 * 
 	 * @throws Exception
 	 */
-	byte[] getDocumentoProcuracao(List<ProcuracaoImpressaoDTO> list) throws Exception;
+	byte[] getDocumentoProcuracao(List<ProcuracaoImpressaoWrapper> list) throws Exception;
 }
