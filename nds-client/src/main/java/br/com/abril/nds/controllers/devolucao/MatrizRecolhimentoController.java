@@ -3,9 +3,11 @@ package br.com.abril.nds.controllers.devolucao;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
@@ -17,6 +19,7 @@ import org.springframework.util.SerializationUtils;
 
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.util.PaginacaoUtil;
+import br.com.abril.nds.client.vo.ConfirmacaoVO;
 import br.com.abril.nds.client.vo.FiltroPesquisaMatrizRecolhimentoVO;
 import br.com.abril.nds.client.vo.ProdutoRecolhimentoFormatadoVO;
 import br.com.abril.nds.client.vo.ProdutoRecolhimentoVO;
@@ -118,7 +121,12 @@ public class MatrizRecolhimentoController {
 	
 	@Post
 	@Path("/confirmar")
-	public void confirmar() {
+	public void confirmar(List<Date> datasConfirmadas) {
+		
+		if (datasConfirmadas == null || datasConfirmadas.size() <= 0) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Ao menos uma data deve ser selecionada!");
+		}
 		
 		BalanceamentoRecolhimentoDTO balanceamentoRecolhimento = 
 			(BalanceamentoRecolhimentoDTO)
@@ -128,15 +136,28 @@ public class MatrizRecolhimentoController {
 		
 		FiltroPesquisaMatrizRecolhimentoVO filtro = obterFiltroSessao();
 		
-		recolhimentoService.confirmarBalanceamentoRecolhimento(
-													balanceamentoRecolhimento.getMatrizRecolhimento(),
+		TreeMap<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimento =
+			this.clonarMapaRecolhimento(balanceamentoRecolhimento.getMatrizRecolhimento());
+		
+		TreeMap<Date, List<ProdutoRecolhimentoDTO>> matrizConfirmada =
+			recolhimentoService.confirmarBalanceamentoRecolhimento(
+													matrizRecolhimento,
 													filtro.getNumeroSemana(),
+													datasConfirmadas,
 													obterUsuario());
 		
-		removerAtributoAlteracaoSessao();
+		matrizRecolhimento =
+			this.atualizarMatizComProdutosConfirmados(matrizRecolhimento, matrizConfirmada);
+		
+		balanceamentoRecolhimento.setMatrizRecolhimento(matrizRecolhimento);
+		
+		this.httpSession.setAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_RECOLHIMENTO,
+									  balanceamentoRecolhimento);
+		
+		this.verificarBalanceamentosConfirmados();
 		
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS,
-			"Balanceamento da matriz de recolhimento confirmado com sucesso!"), Constantes.PARAM_MSGS)
+			"Balanceamento da matriz de recolhimento confirmado com sucesso!"), "result")
 				.recursive().serialize();
 	}
 	
@@ -255,7 +276,7 @@ public class MatrizRecolhimentoController {
 		
 			PaginacaoVO paginacao = new PaginacaoVO(page, rp, sortorder);
 			
-			processarBalanceamento(listaProdutoRecolhimento, balanceamentoRecolhimento.isMatrizFechada(),
+			processarBalanceamento(listaProdutoRecolhimento, balanceamentoRecolhimento.isSemanaRecolhimento(),
 								   paginacao, sortname);
 		} else {
 			
@@ -299,7 +320,7 @@ public class MatrizRecolhimentoController {
 		
 		Date novaData = DateUtil.parseDataPTBR(novaDataFormatada);
 		
-		this.validarPeriodoReprogramacao(filtro.getNumeroSemana(), novaData);
+		this.validarDataReprogramacao(filtro.getNumeroSemana(), novaData);
 		
 		this.validarListaParaReprogramacao(listaProdutoRecolhimento);
 		
@@ -327,7 +348,7 @@ public class MatrizRecolhimentoController {
 		
 		this.validarDadosReprogramar(novaDataFormatada, filtro.getNumeroSemana());
 		
-		this.validarPeriodoReprogramacao(filtro.getNumeroSemana(), novaData);
+		this.validarDataReprogramacao(filtro.getNumeroSemana(), novaData);
 		
 		List<ProdutoRecolhimentoFormatadoVO> listaProdutoRecolhimento = new ArrayList<ProdutoRecolhimentoFormatadoVO>();
 		
@@ -385,6 +406,57 @@ public class MatrizRecolhimentoController {
 	}
 	
 	/**
+	 * Método que atualiza a matriz de recolhimento de acordo com os produtos confirmados
+	 * 
+	 * @param matrizRecolhimento - matriz de recolhimento
+	 * @param matrizConfirmada - matriz de recolhimento confirmada
+	 * 
+	 * @return matriz atualizada
+	 */
+	private TreeMap<Date, List<ProdutoRecolhimentoDTO>> atualizarMatizComProdutosConfirmados(
+								TreeMap<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimento,
+								TreeMap<Date, List<ProdutoRecolhimentoDTO>> matrizConfirmada) {
+		
+		for (Map.Entry<Date, List<ProdutoRecolhimentoDTO>> entry
+				: matrizConfirmada.entrySet()) {
+			
+			Date novaData = entry.getKey();
+			
+			List<ProdutoRecolhimentoDTO> produtosConfirmados = matrizConfirmada.get(novaData);
+			
+			matrizRecolhimento.put(novaData, produtosConfirmados);
+		}
+		
+		return matrizRecolhimento;
+	}
+	
+	/**
+	 * Método que verifica se todos os recolhimentos estão confirmados
+	 * para remover a flag de alteração de dados da sessão.
+	 */
+	private void verificarBalanceamentosConfirmados() {
+		
+		List<ConfirmacaoVO> listaConfirmacao = montarListaDatasConfirmacao();
+		
+		boolean balanceamentosConfirmados = true;
+		
+		for (ConfirmacaoVO confirmacao : listaConfirmacao) {
+			
+			if (!confirmacao.isConfirmado()) {
+				
+				balanceamentosConfirmados = false;
+				
+				break;
+			}
+		}
+		
+		if (balanceamentosConfirmados) {
+			
+			this.removerAtributoAlteracaoSessao();
+		}
+	}
+	
+	/**
 	 * Configura o filtro informado na tela e o armazena na sessão.
 	 * 
 	 * @param numeroSemana - número da semana
@@ -435,11 +507,11 @@ public class MatrizRecolhimentoController {
 		}
 		
 		if (balanceamentoRecolhimento == null
-				|| balanceamentoRecolhimento.isMatrizFechada()) {
+				|| balanceamentoRecolhimento.isSemanaRecolhimento()) {
 			
 			throw new ValidacaoException(
 				new ValidacaoVO(TipoMensagem.WARNING,
-								"Ação não permitida! A matriz já se encontra fechada!"));
+								"Ação não permitida! A semana de recolhimento já está iniciada!"));
 		}
 	}
 	
@@ -612,38 +684,19 @@ public class MatrizRecolhimentoController {
 		//Adicionar no mapa
 		for (ProdutoRecolhimentoDTO produtoRecolhimentoDTO : listaProdutoRecolhimentoAdicionar) {
 			
-			if (!produtoRecolhimentoDTO.isPossuiChamada()) {
+			List<ProdutoRecolhimentoDTO> listaProdutoRecolhimentoDTO =
+				matrizRecolhimento.get(novaData);
 			
-				List<ProdutoRecolhimentoDTO> listaProdutoRecolhimentoDTO =
-					matrizRecolhimento.get(novaData);
+			if (listaProdutoRecolhimentoDTO == null) {
 				
-				if (listaProdutoRecolhimentoDTO == null) {
-					
-					listaProdutoRecolhimentoDTO = new ArrayList<ProdutoRecolhimentoDTO>();
-				}
-				
-				listaProdutoRecolhimentoDTO.add(produtoRecolhimentoDTO);
-				
-				produtoRecolhimentoDTO.setNovaData(novaData);
-				
-				matrizRecolhimento.put(novaData, listaProdutoRecolhimentoDTO);
-				
-			} else {
-				
-				Date dataAntiga = produtoRecolhimentoDTO.getNovaData();
-				
-				List<ProdutoRecolhimentoDTO> listaProdutoRecolhimentoDTO =
-					matrizRecolhimento.get(dataAntiga);
-				
-				if (listaProdutoRecolhimentoDTO == null) {
-					
-					listaProdutoRecolhimentoDTO = new ArrayList<ProdutoRecolhimentoDTO>();
-				}
-				
-				listaProdutoRecolhimentoDTO.add(produtoRecolhimentoDTO);
-				
-				matrizRecolhimento.put(dataAntiga, listaProdutoRecolhimentoDTO);
+				listaProdutoRecolhimentoDTO = new ArrayList<ProdutoRecolhimentoDTO>();
 			}
+			
+			listaProdutoRecolhimentoDTO.add(produtoRecolhimentoDTO);
+			
+			produtoRecolhimentoDTO.setNovaData(novaData);
+			
+			matrizRecolhimento.put(novaData, listaProdutoRecolhimentoDTO);
 		}
 	}
 	
@@ -651,12 +704,12 @@ public class MatrizRecolhimentoController {
 	 * Método que processa os balanceamentos para exibição no grid.
 	 * 
 	 * @param listaProdutoRecolhimento - lista de produtos de recolhimento 
-	 * @param matrizFechada - flag que indica se a matriz está fechada
+	 * @param isSemanaRecolhimento - flag que indica se a semana atual é a semana de recolhimento
 	 * @param paginacao - paginação
 	 * @param sortname - nome da coluna para ordenação
 	 */
 	private void processarBalanceamento(List<ProdutoRecolhimentoDTO> listaProdutoRecolhimento,
-										boolean matrizFechada, PaginacaoVO paginacao, String sortname) {
+										boolean isSemanaRecolhimento, PaginacaoVO paginacao, String sortname) {
 		
 		List<ProdutoRecolhimentoVO> listaProdutoRecolhimentoVO =
 			new LinkedList<ProdutoRecolhimentoVO>();
@@ -723,10 +776,10 @@ public class MatrizRecolhimentoController {
 			
 			produtoRecolhimentoVO.setNovaData(produtoRecolhimentoDTO.getNovaData());
 			
-			produtoRecolhimentoVO.setBloqueioMatrizFechada(matrizFechada);
-			
-			produtoRecolhimentoVO.setBloqueioDataRecolhimento(
-				produtoRecolhimentoDTO.isPossuiChamada());
+			produtoRecolhimentoVO.setBloqueioAlteracaoBalanceamento(
+				isSemanaRecolhimento
+				|| produtoRecolhimentoDTO.isPossuiChamada()
+				|| produtoRecolhimentoDTO.isBalanceamentoConfirmado());
 			
 			listaProdutoRecolhimentoVO.add(produtoRecolhimentoVO);
 		}
@@ -850,9 +903,8 @@ public class MatrizRecolhimentoController {
 			produtoRecolhimentoFormatado.setNovaData(null);
 		}
 		
-		produtoRecolhimentoFormatado.setBloqueioMatrizFechada(produtoRecolhimento.isBloqueioMatrizFechada());
-		
-		produtoRecolhimentoFormatado.setBloqueioDataRecolhimento(produtoRecolhimento.isBloqueioDataRecolhimento());		
+		produtoRecolhimentoFormatado.setBloqueioAlteracaoBalanceamento(
+			produtoRecolhimento.isBloqueioAlteracaoBalanceamento());
 		
 		return produtoRecolhimentoFormatado;
 	}
@@ -948,12 +1000,26 @@ public class MatrizRecolhimentoController {
 	}
 	
 	/**
-	 * Valida a data de reprogramação de acordo com o período da semana.
+	 * Valida se a data para reprogramação é válida.
 	 * 
 	 * @param numeroSemana - número da semana
 	 * @param novaData - nova data de recolhimento
 	 */
-	private void validarPeriodoReprogramacao(Integer numeroSemana, Date novaData) {
+	private void validarDataReprogramacao(Integer numeroSemana, Date novaData) {
+		
+		List<ConfirmacaoVO> confirmacoes = this.montarListaDatasConfirmacao();
+		
+		for (ConfirmacaoVO confirmacao : confirmacoes) {
+			
+			if (DateUtil.parseDataPTBR(confirmacao.getMensagem()).equals(novaData)) {
+				
+				if (confirmacao.isConfirmado()) {
+					
+					throw new ValidacaoException(TipoMensagem.WARNING,
+						"O recolhimento não pode ser reprogramado para uma data já confirmada!");
+				}
+			}
+		}
 		
 		Distribuidor distribuidor = this.distribuidorService.obter();
 		
@@ -1128,7 +1194,8 @@ public class MatrizRecolhimentoController {
 		
 		ResultadoResumoBalanceamentoVO resultadoResumoBalanceamento = new ResultadoResumoBalanceamentoVO();
 		
-		resultadoResumoBalanceamento.setMatrizFechada(balanceamentoRecolhimento.isMatrizFechada());
+		resultadoResumoBalanceamento.setBloquearBotoes(
+			balanceamentoRecolhimento.isSemanaRecolhimento());
 		
 		resultadoResumoBalanceamento.setListaResumoPeriodoBalanceamento(resumoPeriodoBalanceamento);
 		
@@ -1153,6 +1220,81 @@ public class MatrizRecolhimentoController {
 		usuario.setNome("Usuário da Silva");
 		
 		return usuario;
+	}
+	
+	/**
+	 * Obtem agrupamento diário para confirmação de Balanceamento
+	 */
+	@Post
+	public void obterAgrupamentoDiarioBalanceamento() {
+
+		List<ConfirmacaoVO> confirmacoesVO = this.montarListaDatasConfirmacao();
+
+		if (confirmacoesVO != null) {
+		
+			result.use(Results.json()).from(confirmacoesVO, "result").serialize();
+		}		
+	}
+	
+	/**
+	 * Obtem a concentração ordenada e agrupada por data para a Matriz de Lançamento
+	 * 
+	 * @return List<ConfirmacaoVO>: confirmacoesVO
+	 */
+    private List<ConfirmacaoVO> montarListaDatasConfirmacao() {
+		
+    	BalanceamentoRecolhimentoDTO balanceamentoRecolhimento =
+			(BalanceamentoRecolhimentoDTO) this.httpSession.getAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_RECOLHIMENTO);
+
+		if (balanceamentoRecolhimento == null
+				|| balanceamentoRecolhimento.getMatrizRecolhimento() == null
+				|| balanceamentoRecolhimento.getMatrizRecolhimento().isEmpty()) {
+			
+			return null;
+		}
+    	
+		List<ConfirmacaoVO> confirmacoesVO = new ArrayList<ConfirmacaoVO>();
+
+		Map<Date, Boolean> mapaDatasConfirmacaoOrdenada = new LinkedHashMap<Date, Boolean>();
+
+		for (Map.Entry<Date, List<ProdutoRecolhimentoDTO>> entry
+				: balanceamentoRecolhimento.getMatrizRecolhimento().entrySet()) {
+			
+			Date novaData = entry.getKey();
+			
+            List<ProdutoRecolhimentoDTO> produtosRecolhimento = entry.getValue();
+			
+            if (produtosRecolhimento == null || produtosRecolhimento.isEmpty()) {
+				
+				continue;
+			}
+			
+            boolean confirmado = false;
+            
+			for (ProdutoRecolhimentoDTO produtoRecolhimento : produtosRecolhimento) {
+
+				confirmado =
+					produtoRecolhimento.isBalanceamentoConfirmado()
+						|| produtoRecolhimento.isPossuiChamada();
+				
+				if (!confirmado) {
+					
+					break;
+				}
+			}
+			
+			mapaDatasConfirmacaoOrdenada.put(novaData, confirmado);
+		}
+		
+		Set<Entry<Date, Boolean>> entrySet = mapaDatasConfirmacaoOrdenada.entrySet();
+		
+		for (Entry<Date, Boolean> item : entrySet) {
+			
+			confirmacoesVO.add(
+				new ConfirmacaoVO(DateUtil.formatarDataPTBR(item.getKey()), item.getValue()));
+		}
+
+		return confirmacoesVO;
 	}
 	
 }

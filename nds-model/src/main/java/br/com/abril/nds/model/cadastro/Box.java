@@ -34,8 +34,8 @@ public class Box implements Serializable {
 	@Column(name = "ID")
 	private Long id;
 	
-	@Column(name = "CODIGO", nullable = false,unique=true)	
-	private String codigo;
+	@Column(name = "CODIGO", nullable = false,unique=true, length=4)	
+	private Integer codigo;
 	
 	@Enumerated(EnumType.STRING)	
 	@Column(name = "TIPO_BOX", nullable = false)
@@ -50,19 +50,7 @@ public class Box implements Serializable {
 	@OneToMany(mappedBy ="box")
 	private Set<Roteiro> roteiros;
 	
-	/**
-	 * Flag indicando se o box é um posto avançado
-	 */
-	@Column(name = "POSTO_AVANCADO", nullable = false)
-	private boolean postoAvancado;
 	
-	public boolean isPostoAvancado() {
-		return postoAvancado;
-	}
-
-	public void setPostoAvancado(boolean postoAvancado) {
-		this.postoAvancado = postoAvancado;
-	}
 
 	public Set<Cota> getCotas() {
 		return cotas;
@@ -94,11 +82,11 @@ public class Box implements Serializable {
 		this.id = id;
 	}
 	
-	public String getCodigo() {
+	public Integer getCodigo() {
 		return codigo;
 	}
 	
-	public void setCodigo(String codigo) {
+	public void setCodigo(Integer codigo) {
 		this.codigo = codigo;
 	}
 	
@@ -132,7 +120,6 @@ public class Box implements Serializable {
 		result = prime * result + ((cotas == null) ? 0 : cotas.hashCode());
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		result = prime * result + ((nome == null) ? 0 : nome.hashCode());
-		result = prime * result + (postoAvancado ? 1231 : 1237);
 		result = prime * result
 				+ ((roteiros == null) ? 0 : roteiros.hashCode());
 		result = prime * result + ((tipoBox == null) ? 0 : tipoBox.hashCode());
@@ -167,9 +154,7 @@ public class Box implements Serializable {
 			if (other.nome != null)
 				return false;
 		} else if (!nome.equals(other.nome))
-			return false;
-		if (postoAvancado != other.postoAvancado)
-			return false;
+			return false;		
 		if (roteiros == null) {
 			if (other.roteiros != null)
 				return false;

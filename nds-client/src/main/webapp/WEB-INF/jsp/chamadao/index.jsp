@@ -7,9 +7,55 @@
 <script>
 
 	$(function() {
+		var followUp = $('#numeroCotaFollowUp').val();
 		
 		inicializar();
+		if(followUp != ''){			
+			pesquisar();
+		}
 	});
+
+	function getQueryString() {
+		var result = {}; 
+		var queryString = location.search.substring(1);
+		var re = /([^&=]+)=([^&]*)/g;
+		var m;
+
+		while (m = re.exec(queryString)) {
+			result[decodeURIComponent(m[1])] = decodeURIComponent(m[2]);
+		}
+
+		return result;
+	}
+
+	function popularGridPeloFollowUp(numeroCota, dataChamadaoFormatada){
+				
+		
+		$(".chamadaoGrid").flexOptions({
+			url: "${pageContext.request.contextPath}/devolucao/chamadao/pesquisarConsignados",
+			onSuccess: function() {
+				
+				var checkAllSelected = verifyCheckAll();
+				
+				if (checkAllSelected) {
+					
+					$("input[name='checkConsignado']").each(function() {
+						
+						this.checked = true;
+					});
+				}
+			},
+			params: [
+		         {name:'numeroCota', value: numeroCota},
+		         {name:'dataChamadaoFormatada', value: dataChamadaoFormatada},
+		         {name:'idFornecedor', value: idFornecedor}
+		    ],
+		    newp: 1,
+		});
+		
+		$(".chamadaoGrid").flexReload();
+
+		}
 	
 	function iniciarGrid() {
 		
@@ -109,13 +155,30 @@
 		$("#numeroCota").focus();
 		
 		$("#descricaoCota").autocomplete({source: ""});
+
+		
+		if(getQueryString()["carregarGrid"] == true){
+			var numeroCota = getQueryString()["numeroCota"];
+			var dataChamadaoFormatada = getQueryString()["data"];
+			popularGridPeloFollowUp(numeroCota,dataChamadaoFormatada);
+
+			}
 	}
 		
 	function pesquisar() {
+		var followUp = $('#numeroCotaFollowUp').val();
 		
-		var numeroCota = $("#numeroCota").val();
-		var dataChamadaoFormatada = $("#dataChamadao").val();
-		var idFornecedor = $("#idFornecedor").val();
+		var numeroCota;
+		var dataChamadaoFormatada;
+		
+		if(followUp != ''){
+			numeroCota = $("#numeroCotaFollowUp").val();
+			dataChamadaoFormatada = $("#dataCotaFollowUp").val();
+		}else{
+			numeroCota = $("#numeroCota").val();
+			dataChamadaoFormatada = $("#dataChamadao").val();
+			var idFornecedor = $("#idFornecedor").val();
+		}
 		
 		$(".chamadaoGrid").flexOptions({
 			url: "${pageContext.request.contextPath}/devolucao/chamadao/pesquisarConsignados",
@@ -375,7 +438,8 @@
 </head>
 
 <body>
-
+<input type="hidden" value="${numeroCotaFollowUp}" id="numeroCotaFollowUp" name="numeroCotaFollowUp">
+<input type="hidden" value="${dataCotaFollowUp}" id="dataCotaFollowUp" name="dataCotaFollowUp">
 	<div id="dialog-confirm" title="Chamadão">
 		
 		<jsp:include page="../messagesDialog.jsp" />

@@ -30,6 +30,8 @@ import br.com.abril.nds.dto.ResumoPeriodoBalanceamentoDTO;
 import br.com.abril.nds.dto.SumarioLancamentosDTO;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
+import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
@@ -39,7 +41,6 @@ import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
-import br.com.abril.nds.vo.PeriodoVO;
 
 @Repository
 public class LancamentoRepositoryImpl extends
@@ -322,7 +323,7 @@ public class LancamentoRepositoryImpl extends
 	 */
 	@Override
 	@SuppressWarnings("unchecked")
-	public List<ProdutoRecolhimentoDTO> obterBalanceamentoRecolhimento(PeriodoVO periodoRecolhimento,
+	public List<ProdutoRecolhimentoDTO> obterBalanceamentoRecolhimento(Intervalo<Date> periodoRecolhimento,
 																	   List<Long> fornecedores,
 																	   GrupoProduto grupoCromo) {
 
@@ -340,7 +341,7 @@ public class LancamentoRepositoryImpl extends
 	 */
 	@Override
 	@SuppressWarnings("unchecked")
-	public List<ProdutoRecolhimentoDTO> obterBalanceamentoRecolhimentoPorEditorData(PeriodoVO periodoRecolhimento, 
+	public List<ProdutoRecolhimentoDTO> obterBalanceamentoRecolhimentoPorEditorData(Intervalo<Date> periodoRecolhimento, 
 																					List<Long> fornecedores,
 																					GrupoProduto grupoCromo) {
 
@@ -358,21 +359,22 @@ public class LancamentoRepositoryImpl extends
 	 */
 	@Override
 	@SuppressWarnings("unchecked")
-	public TreeMap<Date, BigDecimal> obterExpectativasEncalhePorData(PeriodoVO periodoRecolhimento, 
-																 List<Long> fornecedores,
-																 GrupoProduto grupoCromo) {
+	public TreeMap<Date, BigDecimal> obterExpectativasEncalhePorData(Intervalo<Date> periodoRecolhimento, 
+																 	 List<Long> fornecedores,
+																 	 GrupoProduto grupoCromo) {
 
 		String sql = getConsultaExpectativaEncalheData();
 		
 		Query query = getSession().createSQLQuery(sql); 
 
 		query.setParameterList("idsFornecedores", fornecedores);
-		query.setParameter("periodoInicial", periodoRecolhimento.getDataInicial());
-		query.setParameter("periodoFinal", periodoRecolhimento.getDataFinal());
+		query.setParameter("periodoInicial", periodoRecolhimento.getDe());
+		query.setParameter("periodoFinal", periodoRecolhimento.getAte());
 		query.setParameter("grupoCromo", grupoCromo);
 		query.setParameter("tipoParcial", TipoLancamentoParcial.PARCIAL);
 		query.setParameter("statusLancamentoExpedido", StatusLancamento.EXPEDIDO.toString());
 		query.setParameter("statusLancamentoBalanceamentoRecolhimento", StatusLancamento.BALANCEADO_RECOLHIMENTO.toString());
+		query.setParameter("statusLancamentoEmBalanceamentoRecolhimento", StatusLancamento.EM_BALANCEAMENTO_RECOLHIMENTO.toString());
 
 		List<Object[]> expectativasEncalheDia = query.list();
 
@@ -388,30 +390,6 @@ public class LancamentoRepositoryImpl extends
 		}
 
 		return mapaExpectativaEncalheDia;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public boolean verificarExistenciaChamadaEncalheMatrizRecolhimento(PeriodoVO periodo) {
-
-		StringBuilder hql = new StringBuilder();
-
-		hql.append(" select count(chamadaEncalhe) ")
-		   .append(" from ChamadaEncalhe chamadaEncalhe ")
-		   .append(" where chamadaEncalhe.tipoChamadaEncalhe = :tipoChamadaEncalhe ")
-		   .append(" and chamadaEncalhe.dataRecolhimento between :dataInicial and :dataFinal ");
-
-		Query query = getSession().createQuery(hql.toString());
-
-		query.setParameter("tipoChamadaEncalhe", TipoChamadaEncalhe.MATRIZ_RECOLHIMENTO);
-		query.setParameter("dataInicial", periodo.getDataInicial());
-		query.setParameter("dataFinal", periodo.getDataFinal());
-		
-		Long quantidadeRegistrosEncontrados = (Long) query.uniqueResult();
-		
-		return quantidadeRegistrosEncontrados > 0;
 	}
 	
 	private String getConsultaBalanceamentoRecolhimentoAnalitico() {
@@ -433,13 +411,13 @@ public class LancamentoRepositoryImpl extends
 		sql.append(" editor.NOME as nomeEditor, ");
 		
 		sql.append(" case ");
-		sql.append(" when (select box.POSTO_AVANCADO from BOX box, COTA cota, ESTOQUE_PRODUTO_COTA epc ");
+		sql.append(" when (select box.TIPO_BOX from BOX box, COTA cota, ESTOQUE_PRODUTO_COTA epc ");
 		sql.append(" where epc.PRODUTO_EDICAO_ID = produtoEdicao.ID ");
 		sql.append(" and cota.ID = epc.COTA_ID ");
 		sql.append(" and cota.BOX_ID = box.ID ");
-		sql.append(" and box.POSTO_AVANCADO = 1 ");
+		sql.append(" and box.TIPO_BOX = :tipoBoxPostoAvancado ");
 		sql.append(" limit 1 ");
-		sql.append(" ) is not null then  case ");   
+		sql.append(" ) is not null then case ");   
 		sql.append(" when tipoProduto.GRUPO_PRODUTO = :grupoCromo ");  
 		sql.append(" and periodoLancamentoParcial.TIPO<> :tipoParcial then ");  
 		sql.append(" case when produtoEdicao.EXPECTATIVA_VENDA is null or produtoEdicao.EXPECTATIVA_VENDA = 0 then ");
@@ -457,13 +435,13 @@ public class LancamentoRepositoryImpl extends
 		sql.append(" end as expectativaEncalheAtendida, ");		
 		
 		sql.append(" case ");
-		sql.append(" when (select box.POSTO_AVANCADO from BOX box, COTA cota, ESTOQUE_PRODUTO_COTA epc ");
+		sql.append(" when (select box.TIPO_BOX from BOX box, COTA cota, ESTOQUE_PRODUTO_COTA epc ");
 		sql.append(" where epc.PRODUTO_EDICAO_ID = produtoEdicao.ID ");
 		sql.append(" and cota.ID = epc.COTA_ID ");
 		sql.append(" and cota.BOX_ID = box.ID ");
-		sql.append(" and box.POSTO_AVANCADO = 1 ");
+		sql.append(" and box.TIPO_BOX = :tipoBoxPostoAvancado ");
 		sql.append(" limit 1 ");
-		sql.append(" ) is null then  case ");
+		sql.append(" ) is null then case ");
 		sql.append(" when tipoProduto.GRUPO_PRODUTO = :grupoCromo ");
 		sql.append(" and periodoLancamentoParcial.TIPO<> :tipoParcial  then ");
 		sql.append(" case when produtoEdicao.EXPECTATIVA_VENDA is null or produtoEdicao.EXPECTATIVA_VENDA = 0 then ");
@@ -514,7 +492,7 @@ public class LancamentoRepositoryImpl extends
 		
 		sql.append(" case  ");
 		sql.append(" when (chamadaEncalhe.ID is not null)  ");
-		sql.append(" and chamadaEncalhe.TIPO_CHAMADA_ENCALHE<> :tipoChamadaEncalhe then true ");
+		sql.append(" and chamadaEncalhe.TIPO_CHAMADA_ENCALHE <> :tipoChamadaEncalhe then true ");
 		sql.append(" else false ");
 		sql.append(" end as possuiChamada, ");
 		sql.append(" produtoEdicao.ID as idProdutoEdicao, ");
@@ -573,7 +551,9 @@ public class LancamentoRepositoryImpl extends
 
 		sql.append(" where ");
 		sql.append(" fornecedor.JURIDICA_ID=pessoaFornecedor.ID  ");
-		sql.append(" and (lancamento.STATUS = :statusLancamentoExpedido or lancamento.STATUS = :statusLancamentoBalanceamentoRecolhimento) ");
+		sql.append(" and (lancamento.STATUS = :statusLancamentoExpedido ");
+		sql.append(" or lancamento.STATUS = :statusLancamentoBalanceamentoRecolhimento ");
+		sql.append(" or lancamento.STATUS = :statusLancamentoEmBalanceamentoRecolhimento) ");
 		sql.append(" and produto.EDITOR_ID=editor.ID  ");
 		sql.append(" and produto.TIPO_PRODUTO_ID=tipoProduto.ID  ");
 		sql.append(" and ( ");
@@ -597,12 +577,12 @@ public class LancamentoRepositoryImpl extends
 	
 	private String getConsultaExpectativaEncalheData() {
 		
-		String sql = " select analitica.dataRecolhimentoPrevista, "
+		String sql = " select analitica.dataRecolhimentoDistribuidor, "
 				   + " sum(analitica.expectativaEncalhe) "
 				   + " from "
 				   + " ( "
 				   + " select "
-				   + " lancamento.DATA_REC_PREVISTA as dataRecolhimentoPrevista, "
+				   + " lancamento.DATA_REC_DISTRIB as dataRecolhimentoDistribuidor, "
 				   + " case "
 				   + " when tipoProduto.GRUPO_PRODUTO = :grupoCromo "
 				   + " and periodoLancamentoParcial.TIPO <> :tipoParcial then "
@@ -626,15 +606,15 @@ public class LancamentoRepositoryImpl extends
 		sql += clausulaFrom;
 		sql += " group by lancamento.ID ";
 		sql += " ) as analitica ";
-		sql += " group by analitica.dataRecolhimentoPrevista ";
+		sql += " group by analitica.dataRecolhimentoDistribuidor ";
 		
 		return sql;
 	}
 	
-	private Query getQueryBalanceamentoRecolhimentoComParametros(PeriodoVO periodoRecolhimento,
-																	      List<Long> fornecedores,
-																	      GrupoProduto grupoCromo,
-																	      String sql) {
+	private Query getQueryBalanceamentoRecolhimentoComParametros(Intervalo<Date> periodoRecolhimento,
+																 List<Long> fornecedores,
+																 GrupoProduto grupoCromo,
+																 String sql) {
 		
 		Query query = getSession().createSQLQuery(sql).addScalar("nomeFornecedor")
 													  .addScalar("statusLancamento")
@@ -663,13 +643,15 @@ public class LancamentoRepositoryImpl extends
 													  .addScalar("novaData");
 
 		query.setParameterList("idsFornecedores", fornecedores);
-		query.setParameter("periodoInicial", periodoRecolhimento.getDataInicial());
-		query.setParameter("periodoFinal", periodoRecolhimento.getDataFinal());
+		query.setParameter("periodoInicial", periodoRecolhimento.getDe());
+		query.setParameter("periodoFinal", periodoRecolhimento.getAte());
 		query.setParameter("grupoCromo", grupoCromo);
-		query.setParameter("tipoParcial", TipoLancamentoParcial.PARCIAL);
+		query.setParameter("tipoParcial", TipoLancamentoParcial.PARCIAL.toString());
 		query.setParameter("statusLancamentoExpedido", StatusLancamento.EXPEDIDO.toString());
 		query.setParameter("statusLancamentoBalanceamentoRecolhimento", StatusLancamento.BALANCEADO_RECOLHIMENTO.toString());
-		query.setParameter("tipoChamadaEncalhe", TipoChamadaEncalhe.MATRIZ_RECOLHIMENTO);
+		query.setParameter("statusLancamentoEmBalanceamentoRecolhimento", StatusLancamento.EM_BALANCEAMENTO_RECOLHIMENTO.toString());
+		query.setParameter("tipoChamadaEncalhe", TipoChamadaEncalhe.MATRIZ_RECOLHIMENTO.toString());
+		query.setParameter("tipoBoxPostoAvancado", TipoBox.POSTO_AVANCADO.toString());
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(ProdutoRecolhimentoDTO.class));
 		
@@ -745,13 +727,12 @@ public class LancamentoRepositoryImpl extends
 		projectionList.add(Projections.property("produtoEdicao.codigoDeBarras"),"codigoDeBarras");
 		projectionList.add(Projections.property("produtoEdicao.precoVenda"),"precoVenda");
 		projectionList.add(Projections.property("produtoEdicao.desconto"),"desconto");		
-		projectionList.add(Projections.sqlProjection("(produtoedi1_.PRECO_VENDA - produtoedi1_.DESCONTO) as precoDesconto", new String[]{"precoDesconto"}, new Type[] {StandardBasicTypes.BIG_DECIMAL}));
+		projectionList.add(Projections.alias(Projections.sqlProjection("(produtoedi1_.PRECO_VENDA - produtoedi1_.DESCONTO) as precoDesconto", new String[]{"precoDesconto"}, new Type[] {StandardBasicTypes.BIG_DECIMAL}), "precoDesconto"));
 		projectionList.add(Projections.property("dataLancamentoDistribuidor"),"dataLancamento");
 		projectionList.add(Projections.property("dataRecolhimentoDistribuidor"),"dataRecolhimento");
 		projectionList.add(Projections.groupProperty("id"));		
 		projectionList.add(Projections.property("lancamentoParcial.recolhimentoFinal"),"dataRecolhimentoFinal");
 		criteria.setProjection(projectionList);		
-		
 		
 		
 		if(Ordenacao.ASC ==  ordenacao){
@@ -809,6 +790,7 @@ public class LancamentoRepositoryImpl extends
 		criteria.createAlias("periodoLancamentoParcial.lancamentoParcial", "lancamentoParcial",Criteria.LEFT_JOIN );
 		
 		criteria.add(Restrictions.between("dataRecolhimentoDistribuidor", dataInicioRecolhimento.getTime(), dataFimRecolhimento.getTime()));
+		
 		if (idFornecedor != null) {
 			criteria.add(Restrictions.eq(
 					"fornecedores.id", idFornecedor));
@@ -1125,24 +1107,26 @@ public class LancamentoRepositoryImpl extends
 	}
 	
 	@Override
-	public Lancamento obterLancamentoProdutoPorDataLancamentoOuDataRecolhimento(String codigoProduto, Date dataLancamentoPrevista, Date dataRecolhimentoPrevista){
+	public Lancamento obterLancamentoProdutoPorDataLancamentoOuDataRecolhimento(ProdutoEdicao produtoEdicao, Date dataLancamentoPrevista, Date dataRecolhimentoPrevista){
 		
 		StringBuilder sql = new StringBuilder();
-		sql.append("SELECT la FROM Lancamento la ");
-		sql.append("	   JOIN FETCH pe.produto p ");
-		sql.append("WHERE  p.codigo = :codigoProduto ");
+	
+		sql.append(" select lancamento  from Lancamento lancamento ");
+		sql.append(" join lancamento.produtoEdicao produtoEdicao ");
 		
+		sql.append(" where produtoEdicao.id =:produtoEdicao ");
+	
 		if (dataLancamentoPrevista != null) {
-			sql.append(" la.dataLancamentoPrevista = :dataLancamentoPrevista ");
+			sql.append(" AND lancamento.dataLancamentoPrevista = :dataLancamentoPrevista ");
 		}
 		
 		if (dataRecolhimentoPrevista != null) {
-			sql.append(" p.dataRecolhimentoPrevista = :dataRecolhimentoPrevista ");
+			sql.append(" AND lancamento.dataRecolhimentoPrevista = :dataRecolhimentoPrevista ");
 		}
 		
 		Query query = getSession().createQuery(sql.toString());
 		query.setMaxResults(1);
-		query.setParameter("codigoProduto", codigoProduto);
+		query.setParameter("produtoEdicao", produtoEdicao.getId());
 		
 		if (dataLancamentoPrevista != null) {
 			query.setParameter("dataLancamentoPrevista", dataLancamentoPrevista);
@@ -1156,12 +1140,41 @@ public class LancamentoRepositoryImpl extends
 	}
 	
 	@Override
+	public Lancamento obterLancamentoProdutoPorDataLancamentoDataLancamentoDistribuidor(ProdutoEdicao produtoEdicao, Date dataLancamentoPrevista, Date dataLancamentoDistribuidor){
+		
+		StringBuilder sql = new StringBuilder();
+	
+		sql.append(" select lancamento  from Lancamento lancamento ");
+		sql.append(" join lancamento.produtoEdicao produtoEdicao ");
+		
+		sql.append(" where produtoEdicao.id =:produtoEdicao ");
+	
+		if (dataLancamentoPrevista != null) {
+			sql.append(" AND lancamento.dataLancamentoPrevista = :dataLancamentoPrevista ");
+		}
+		
+		sql.append(" AND lancamento.dataLancamentoDistribuidor = :dataLancamentoDistribuidor ");
+		
+		Query query = getSession().createQuery(sql.toString());
+		query.setMaxResults(1);
+		query.setParameter("produtoEdicao", produtoEdicao.getId());
+		
+		if (dataLancamentoPrevista != null) {
+			query.setParameter("dataLancamentoPrevista", dataLancamentoPrevista);
+		}
+		
+		query.setParameter("dataLancamentoDistribuidor", dataLancamentoDistribuidor);
+		
+		return (Lancamento) query.uniqueResult();
+	}
+	
+	@Override
 	public Long obterQuantidadeLancamentos(StatusLancamento statusLancamento){
 		
 		StringBuilder hql = new StringBuilder("select count(lanc.id) ");
 		hql.append(" from Lancamento lanc ")
 		   .append(" where lanc.dataLancamentoPrevista = :hoje ")
-		   .append(" and lanc.statusLancamento = :statusLancamento ");
+		   .append(" and lanc.status = :statusLancamento ");
 		
 		Query query = this.getSession().createQuery(hql.toString());
 		query.setParameter("hoje", new Date());
@@ -1174,10 +1187,12 @@ public class LancamentoRepositoryImpl extends
 	public BigDecimal obterConsignadoDia(StatusLancamento statusLancamento){
 		
 		StringBuilder hql = new StringBuilder("select ");
-		hql.append(" sum(lanc.produtoEdicao.precoVenda) * (lanc.produtoEdicao.reparteDistribuido) ")
+		hql.append(" sum(lanc.produtoEdicao.precoVenda) * sum(lanc.produtoEdicao.reparteDistribuido) ")
 		   .append(" from Lancamento lanc ")
-		   .append(" where lanc.dataLancamentoPrevista = :hoje ")
-		   .append(" and lanc.statusLancamento = :statusLancamento ");
+		   .append(" where lanc.produtoEdicao.reparteDistribuido is not null ")
+		   .append(" and lanc.produtoEdicao.precoVenda is not null ")
+		   .append(" and lanc.dataLancamentoPrevista = :hoje ")
+		   .append(" and lanc.status = :statusLancamento ");
 		
 		Query query = this.getSession().createQuery(hql.toString());
 		

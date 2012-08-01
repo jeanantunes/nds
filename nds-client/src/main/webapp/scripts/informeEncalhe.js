@@ -25,7 +25,7 @@ InformeEncalhe.prototype.initGrid = function() {
 
 						exibirMensagem(data.mensagens.tipoMensagem,
 								data.mensagens.listaMensagens);
-
+						
 					} else {
 						$.each(data.rows, function(index, value) {
 							var acao = "";
@@ -122,11 +122,13 @@ InformeEncalhe.prototype.initGrid = function() {
 				showTableToggleBtn : true,
 				width : 960,
 				height : 180,
-				onChangeSort :function(sortname, sortorder){
+				onChangeSort:function(sortname, sortorder){
+					console.log("sort");
 					_this.imprimirParans.sortname = sortname;
 					_this.imprimirParans.sortorder = sortorder;
 					$("input[name='sortname']").val(sortname);
 					$("input[name='sortorder']").val(sortorder);
+					$(this).flexReload();
 				}
 			});
 
@@ -180,6 +182,7 @@ InformeEncalhe.prototype.bindEvents = function() {
 	var _this = this;
 
 	$("#semanaRecolhimento").mask("99");
+	$("#dataRecolhimentoBox").mask("99/99/9999");
 	$("#dataRecolhimentoBox")
 			.datepicker(
 					{
@@ -316,7 +319,7 @@ function CapaPopup(idProdutoEdicao) {
 }
 
 CapaPopup.prototype.changeStatus = function(newStatus) {
-	$(this.anchor).unbind();
+	$(this.img).unbind();
 	var _this = this;
 	var eventObj;
 	this.anchor.title = newStatus.title;
@@ -372,9 +375,9 @@ CapaPopup.prototype.openDialogUpload = function(event) {
 	var uploadComponente = new CapaUpload(_this.idProdutoEdicao, function(
 			result) {
 		$dialogUpload.dialog('close');
-		if (result.mensagens) {
-			exibirMensagem(result.mensagens.tipoMensagem,
-					result.mensagens.listaMensagens);
+		if (result.listaMensagens) {
+			exibirMensagem(result.tipoMensagem,
+					result.listaMensagens);
 
 		} else {
 			_this.changeStatus(_this.statusEnum.LOADING);

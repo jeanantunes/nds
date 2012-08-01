@@ -10,7 +10,9 @@ function GeracaoNFe() {
 GeracaoNFe.prototype.path = contextPath + '/expedicao/geracaoNFe/';
 GeracaoNFe.prototype.init = function() {
 	var _this = this;
-
+	
+	
+	
 	$("#selectFornecedores").multiselect({
 		selectedList : 6
 	});
@@ -62,24 +64,30 @@ GeracaoNFe.prototype.init = function() {
 			}
 		}
 	});
-
+	
+	var dataEmissao = formatDateToString(new Date());
+	$("#datepickerEmissao").val(dataEmissao);
 };
 GeracaoNFe.prototype.gerar = function() {
 	var params = this.getParams();
-	var todas = $('#checkboxCheckAllCotasSuspensas').attr('checked') == 'checked';
-	if (todas) {
-		var listCotasSuspensas = $.map(this.mapCotasSuspensas, function(value,
-				index) {
-			if (value) {
-				return index;
-			}
-		});
-		params = serializeArrayToPost('idCotasSuspensas', listCotasSuspensas,
-				params);
+	var todas = $('#checkboxCheckAllCotasSuspensas').checked;
+	
+	var cotasSuspensas = $(".checkboxCheckCotasSuspensas");
+	
+	var listaCotasSuspensas = new Array;
+	
+	for (var index in cotasSuspensas) {
+		if (cotasSuspensas[index].checked) {
+			listaCotasSuspensas.push(cotasSuspensas[index].value);
+		}
 	}
+	
+	params = serializeArrayToPost('idCotasSuspensas', listaCotasSuspensas, params);
 	params['dataEmissao'] = $("#datepickerEmissao").val();
 	params['todasCotasSuspensa'] = todas;
-
+	
+	var _this = this;
+	
 	$.postJSON(this.path + 'gerar.json', params, function(data) {
 		var tipoMensagem = data.tipoMensagem;
 		var listaMensagens = data.listaMensagens;
@@ -87,22 +95,28 @@ GeracaoNFe.prototype.gerar = function() {
 		if (tipoMensagem && listaMensagens) {
 			exibirMensagemDialog(tipoMensagem, listaMensagens, "");
 		}
-
-	}, null, true);
+		
+		_this.gridReaload(_this.$gridNFe,'busca.json');
+		
+	});
 };
+
 GeracaoNFe.prototype.imprimir = function(fileType) {
 	var params = this.getParams();
-	var todas = $('#checkboxCheckAllCotasSuspensas').attr('checked') == 'checked';
-	if (todas) {
-		var listCotasSuspensas = $.map(this.mapCotasSuspensas, function(value,
-				index) {
-			if (value) {
-				return index;
-			}
-		});
-		params = serializeArrayToPost('idCotasSuspensas', listCotasSuspensas,
-				params);
+	
+	var todas = $('#checkboxCheckAllCotasSuspensas').checked;
+	
+	var cotasSuspensas = $(".checkboxCheckCotasSuspensas");
+	
+	var listaCotasSuspensas = new Array;
+	
+	for (var index in cotasSuspensas) {
+		if (cotasSuspensas[index].checked) {
+			listaCotasSuspensas.push(cotasSuspensas[index].value);
+		}
 	}
+	
+	params = serializeArrayToPost('idCotasSuspensas', listaCotasSuspensas, params);
 	params['dataEmissao'] = $("#datepickerEmissao").val();
 	params['todasCotasSuspensa'] = todas;
 	params['fileType'] = fileType;
@@ -115,15 +129,15 @@ GeracaoNFe.prototype.imprimir = function(fileType) {
 
 GeracaoNFe.prototype.getParams = function() {
 	var params = {
-		"intervaloBox.de" : $("#inputIntervaloBoxDe").val(),
-		"intervaloBox.ate" : $("#inputIntervaloBoxAte").val(),
-		"intervalorCota.de" : $("#inputIntervaloCotaDe").val(),
-		"intervalorCota.ate" : $("#inputIntervaloCotaAte").val(),
-		"intervaloDateMovimento.de" : $("#datepickerIntervaloMovimentoDe")
+		"intervaloBoxDe" : $("#inputIntervaloBoxDe").val(),
+		"intervaloBoxAte" : $("#inputIntervaloBoxAte").val(),
+		"intervalorCotaDe" : $("#inputIntervaloCotaDe").val(),
+		"intervaloCotaAte" : $("#inputIntervaloCotaAte").val(),
+		"intervaloDateMovimentoDe" : $("#datepickerIntervaloMovimentoDe")
 				.val(),
-		"intervaloDateMovimento.ate" : $("#datepickerIntervaloMovimentoAte")
+		"intervaloDateMovimentoAte" : $("#datepickerIntervaloMovimentoAte")
 				.val(),
-		"tipoNotaFiscal" : 1
+		"tipoNotaFiscal" : $("#selectTipoNotaFiscal").val()
 	};
 	var listaFornecedores = $("#selectFornecedores").val();
 	if (listaFornecedores) {
@@ -135,6 +149,7 @@ GeracaoNFe.prototype.getParams = function() {
 
 GeracaoNFe.prototype.btnGerarOnClick = function() {
 	this.mapCotasSuspensas = new Object();
+	
 	$('#checkboxCheckAllCotasSuspensas').attr('checked', false);
 	var _this = this;
 	var params = this.getParams();
@@ -149,9 +164,11 @@ GeracaoNFe.prototype.btnGerarOnClick = function() {
 			_this.$dialogCotasSuspensas.dialog("open");
 			_this.gridReaload(_this.$gridCotasSuspensas,
 					'buscaCotasSuspensas.json');
+		} else {
+			_this.gerar();
 		}
 
-	}, null, true);
+	});
 };
 
 GeracaoNFe.prototype.pequisar = function() {
@@ -162,50 +179,59 @@ GeracaoNFe.prototype.pequisar = function() {
 GeracaoNFe.prototype.gridReaload = function(grid, uri) {
 	var params = [ {
 		name : "tipoNotaFiscal",
-		value : 1
+		value : $("#selectTipoNotaFiscal").val()
 	} ];
 
 	if ($("#inputIntervaloBoxDe").val().length > 0) {
 		params.push({
-			name : "intervaloBox.de",
+			name : "intervaloBoxDe",
 			value : $("#inputIntervaloBoxDe").val()
 		});
 	}
 
 	if ($("#inputIntervaloBoxAte").val().length > 0) {
 		params.push({
-			name : "intervaloBox.ate",
+			name : "intervaloBoxAte",
 			value : $("#inputIntervaloBoxAte").val()
 		});
 	}
 
 	if ($("#inputIntervaloCotaDe").val().length > 0) {
 		params.push({
-			name : "intervalorCota.de",
-			value : $("#inputIntervaloCotaDe").val()
+			name : "intervaloCotaDe",
+			value : parseInt($("#inputIntervaloCotaDe").val())
 		});
 	}
 
 	if ($("#inputIntervaloCotaAte").val().length > 0) {
 		params.push({
-			name : "intervalorCota.ate",
-			value : $("#inputIntervaloCotaAte").val()
+			name : "intervaloCotaAte",
+			value : parseInt($("#inputIntervaloCotaAte").val())
 		});
 	}
 
 	if ($("#datepickerIntervaloMovimentoDe").val().length > 0) {
 		params.push({
-			name : "intervaloDateMovimento.de",
+			name : "intervaloDateMovimentoDe",
 			value : $("#datepickerIntervaloMovimentoDe").val()
 		});
 	}
 
 	if ($("#datepickerIntervaloMovimentoAte").val().length > 0) {
 		params.push({
-			name : "intervaloDateMovimento.ate",
+			name : "intervaloDateMovimentoAte",
 			value : $("#datepickerIntervaloMovimentoAte").val()
 		});
 	}
+	
+	if (($("#inputIntervaloCotaDe").val().length > 0)
+			&& ($("#inputIntervaloCotaAte").val().length > 0) 
+			&& (($("#datepickerIntervaloMovimentoDe").val().length == 0) 
+					||  ($("#datepickerIntervaloMovimentoAte").val().length == 0))) {
+		exibirMensagem("WARNING", ["Quando haver intervalo de [Cota], deve haver também intervalo de [Data de Movimento]"], "");
+		return;
+	}
+	
 	var listaFornecedores = $("#selectFornecedores").val();
 	if (listaFornecedores) {
 		$.each(listaFornecedores, function(index, value) {

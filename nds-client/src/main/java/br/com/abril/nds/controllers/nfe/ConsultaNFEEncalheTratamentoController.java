@@ -1,6 +1,7 @@
 package br.com.abril.nds.controllers.nfe;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -18,16 +19,24 @@ import br.com.abril.nds.dto.ItemNotaFiscalPendenteDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaNFEEncalheTratamento;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.service.DistribuidorService;
+import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
+import br.com.abril.nds.model.fiscal.CFOP;
+import br.com.abril.nds.model.fiscal.NotaFiscalEntradaCota;
 import br.com.abril.nds.model.fiscal.StatusNotaFiscalEntrada;
 import br.com.abril.nds.model.seguranca.Permissao;
+import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
 import br.com.abril.nds.model.seguranca.Usuario;
+import br.com.abril.nds.service.CFOPService;
 import br.com.abril.nds.service.ConsultaNFEEncalheTratamentoNotasRecebidasService;
 import br.com.abril.nds.service.CotaService;
+import br.com.abril.nds.service.NotaFiscalEntradaService;
+import br.com.abril.nds.service.PessoaJuridicaService;
+import br.com.abril.nds.service.TipoNotaFiscalService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
@@ -61,7 +70,19 @@ public class ConsultaNFEEncalheTratamentoController {
 	private DistribuidorService distribuidorService;
 	
 	@Autowired
+	private NotaFiscalEntradaService notaFiscalEntradaService;
+	
+	@Autowired
 	private HttpServletResponse httpResponse;
+	
+	@Autowired
+	private PessoaJuridicaService pessoaJuridicaService;
+	
+	@Autowired
+	private TipoNotaFiscalService tipoNotaFiscalService;
+	
+	@Autowired
+	private CFOPService cfopService;
 	
 	@Autowired
 	private CotaService cotaService;
@@ -189,7 +210,33 @@ public class ConsultaNFEEncalheTratamentoController {
 		
 		return tableModel;
 	}
+	
 
+	@Post
+	@Path("/cadastrarNota")
+	public void cadastrarNota(NotaFiscalEntradaCota nota, Integer numeroCota){
+		Cota cota = this.cotaService.obterPorNumeroDaCota(numeroCota);
+		CFOP cfop  = this.cfopService.buscarPorId(1l);
+		PessoaJuridica pj = this.pessoaJuridicaService.buscarPorId(1L);
+		TipoNotaFiscal tp = this.tipoNotaFiscalService.obterPorId(1L);
+		
+		nota.setDataEmissao(new Date());
+		nota.setDataExpedicao(new Date());
+		nota.setOrigem(Origem.INTERFACE);
+		nota.setValorBruto(BigDecimal.TEN);
+		nota.setValorLiquido(BigDecimal.TEN);
+		nota.setValorDesconto(BigDecimal.TEN);
+		nota.setCota(cota);
+		nota.setStatusNotaFiscal(StatusNotaFiscalEntrada.RECEBIDA);
+		
+		nota.setCfop(cfop);
+		nota.setEmitente(pj);
+		nota.setTipoNotaFiscal(tp);
+		
+		this.notaFiscalEntradaService.inserirNotaFiscal(nota);
+		
+	}
+	
 	private void validarEntrada(FiltroConsultaNFEEncalheTratamento filtro) {
 				
 		if(filtro.getStatusNotaFiscalEntrada() == null){

@@ -11,6 +11,7 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
+<meta charset="UTF-8"/>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title>NDS - Novo Distrib</title>
 
@@ -83,7 +84,45 @@
 <link rel="stylesheet" type="text/css"
 	  href="${pageContext.request.contextPath}/scripts/tools-1.2.6/css/tools.css" />
 
+<link rel="stylesheet" href="scripts/jquery-ui-1.8.16.custom/development-bundle/themes/redmond/jquery.ui.all.css" />
+
+<link rel="stylesheet" type="text/css" href="scripts/tooltip/tipsy.css" />
+<link rel="stylesheet" type="text/css" href="scripts/tooltip/tipsy-docs.css" />
+<script language="javascript" type="text/javascript" src="scripts/tooltip/jquery.tipsy.js"></script>
+
+<script type="text/javascript" src="scripts/commonsbehaviour.js"></script>
+
 <script language="javascript" type="text/javascript">
+
+(function($) {
+	$.fn
+			.extend(
+					$.ui.dialog.prototype,
+					{
+						_original_init : $.ui.dialog.prototype._init,
+						_original_open : $.ui.dialog.prototype.open,
+						_init : function() {
+							var self = this.element;
+
+							var diaOpt = {
+								form: this.options.form
+							};
+
+							$.fn.extend(true, this.options, diaOpt);
+							this._original_init();
+
+							
+							//this.addForm();
+						},
+						open : function() {
+							var self = this.element, o = this.options;
+							self.parent().appendTo(o.form);
+							this._original_open();
+							self.parent().css("top", "58px");
+						}
+					});
+})(jQuery);
+
 	$(function() {
 		$( "#tabs-cadastros" ).tabs();
 		$( "#tabs-pessoas" ).tabs();
@@ -314,7 +353,7 @@
 					<li><span class="classLancamento">&nbsp;</span><a
 						href="javascript:;">Lançamento</a>
 						<ul>
-							<li><a href="matrizLancamento">Balanceamento
+							<li><a href="<c:url value="/matrizLancamento"/>">Balanceamento
 									da Matriz</a>
 							</li>
 							<li><a href="Lancamento/consulta_consignado_jornaleiro.htm">Consulta
@@ -343,7 +382,7 @@
 							<li><a href="Expedicao/geracao_arquivo_nfe.htm">Geração
 									arquivos NF-e</a>
 							</li>
-							<li><a href="Expedicao/geracao_nfe.htm">Geração de NF-e</a>
+							<li><a href='<c:url value="/expedicao/geracaoNFe"/>'>Geração de NF-e</a>
 							</li>
 							<li><a href='<c:url value="/cotaAusente/index"/>'>Cota
 									Ausente</a>
@@ -450,6 +489,7 @@
 									Controle Aprovação
 								</a>
 							</li>
+							<li><a href='<c:url value="/followup"/>'>Follow Up do Sistema</a></li>
 							<li><a href='<c:url value="/administracao/painelProcessamento"/>'>Painel de Processamento</a></li>
 							<li><a href='<c:url value="/administracao/gruposAcesso"/>'>Grupos de Acesso</a></li>
 							<li><a href='<c:url value="/administracao/cadastroCalendario"/>'>Calendário</a></li>
@@ -464,10 +504,7 @@
 							</li>
 							<li><a href="Administracao/fechar_dia.htm">Fechar o Dia</a>
 							</li>
-							<li><a href='<c:url value="/servico/cadastroServico"/>'>Serviço de Entrega</a>
-							</li>
-							<li><a href='<c:url value="/administracao/tipoProduto"/>'>Tipo de Produto</a>
-							</li>
+							
 							<li><a href="Administracao/help_administracao.htm">Help</a>
 							</li>
 							<li><a href='<c:url value="/distribuidor/parametroCobranca/index"/>'>Parâmetros de Cobrança</a>
@@ -518,7 +555,6 @@
 			<!-- DECORATOR BODY -->
 		</div>
 		<br clear="all" />
-
 
 	</div>
 

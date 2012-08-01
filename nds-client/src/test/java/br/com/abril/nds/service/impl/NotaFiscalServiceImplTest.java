@@ -45,6 +45,7 @@ import br.com.abril.nds.model.cadastro.TipoParametroSistema;
 import br.com.abril.nds.model.cadastro.TipoProduto;
 import br.com.abril.nds.model.cadastro.TipoRegistroCobranca;
 import br.com.abril.nds.model.cadastro.TipoTelefone;
+import br.com.abril.nds.model.cadastro.TributacaoFiscal;
 import br.com.abril.nds.model.fiscal.CFOP;
 import br.com.abril.nds.model.fiscal.NCM;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
@@ -138,7 +139,7 @@ public class NotaFiscalServiceImplTest extends AbstractRepositoryImplTest {
 		save(carteiraSemRegistro);
 
 		bancoHSBC = Fixture.banco(10L, true, carteiraSemRegistro, "1010",
-				123456L, "1", "1", "Instrucoes.", Moeda.REAL, "HSBC", "399",
+				123456L, "1", "1", "Instrucoes.", "HSBC","BANCO HSBC", "399",
 				BigDecimal.ZERO, BigDecimal.ZERO);
 
 		save(bancoHSBC);
@@ -187,7 +188,7 @@ public class NotaFiscalServiceImplTest extends AbstractRepositoryImplTest {
 		save(distribuidor);
 		
 		Endereco endereco = Fixture.criarEndereco(
-				TipoEndereco.COBRANCA, "13222-020", "Rua João de Souza", 51, "Centro", "São Paulo", "SP");
+				TipoEndereco.COBRANCA, "13222-020", "Rua João de Souza", 51, "Centro", "São Paulo", "SP",1);
 		save(endereco);
 		EnderecoDistribuidor enderecoDistribuidor = Fixture.enderecoDistribuidor(distribuidor, endereco, true, TipoEndereco.COBRANCA);
 		
@@ -201,8 +202,7 @@ public class NotaFiscalServiceImplTest extends AbstractRepositoryImplTest {
 
 		// ////////////
 
-		Box box1 = Fixture.criarBox("Box-1", "BX-001", TipoBox.LANCAMENTO,
-				false);
+		Box box1 = Fixture.criarBox(1, "BX-001", TipoBox.LANCAMENTO);
 		save(box1);
 
 		PessoaFisica manoel = Fixture.pessoaFisica("123.456.789-00",
@@ -214,7 +214,7 @@ public class NotaFiscalServiceImplTest extends AbstractRepositoryImplTest {
 		
 		
 		Endereco enderecoCotaManotel = Fixture.criarEndereco(
-				TipoEndereco.COMERCIAL, "13730-000", "Rua Marechal Deodoro", 50, "Centro", "Mococa", "SP");
+				TipoEndereco.COMERCIAL, "13730-000", "Rua Marechal Deodoro", 50, "Centro", "Mococa", "SP",1);
 
 		EnderecoCota enderecoCota = new EnderecoCota();
 		enderecoCota.setCota(cotaManoel);
@@ -269,7 +269,7 @@ public class NotaFiscalServiceImplTest extends AbstractRepositoryImplTest {
 
 		// ////
 		Produto produtoComDesconto = Fixture.produto("8001", "Novo", "Novo",
-				PeriodicidadeProduto.ANUAL, tipoProduto, 5, 5, BigDecimal.TEN);
+				PeriodicidadeProduto.ANUAL, tipoProduto, 5, 5, BigDecimal.TEN, TributacaoFiscal.TRIBUTADO);
 		produtoComDesconto.addFornecedor(dinap);
 		produtoComDesconto.setEditor(abril);
 		save(produtoComDesconto);
@@ -348,7 +348,7 @@ public class NotaFiscalServiceImplTest extends AbstractRepositoryImplTest {
 			StatusProcessamentoInterno statusInterno, Status status) {
 
 		Endereco endereco = Fixture.criarEndereco(TipoEndereco.COMERCIAL,
-				"13720000", "logradouro", 123, "bairro", "cidade", "uf");
+				"13720000", "logradouro", 123, "bairro", "cidade", "uf",1);
 
 		Telefone telefone = Fixture.telefone("ddd", "numero", "ramal");
 
@@ -377,7 +377,7 @@ public class NotaFiscalServiceImplTest extends AbstractRepositoryImplTest {
 
 		Endereco enderecoTransporte = Fixture.criarEndereco(
 				TipoEndereco.COMERCIAL, "10500250", "Rua Nova", 1000,
-				"Bairro Novo", "Olimpia", "SP");
+				"Bairro Novo", "Olimpia", "SP",1);
 
 		InformacaoTransporte informacaoTransporte = Fixture
 				.informacaoTransporte("88416646000103", enderecoTransporte,
@@ -434,7 +434,7 @@ public class NotaFiscalServiceImplTest extends AbstractRepositoryImplTest {
 			Produto produto = Fixture.produto("0" + numero + "codigo",
 					"descricao", "0" + numero + "nome",
 					PeriodicidadeProduto.ANUAL, tipo, 123, 123, new BigDecimal(
-							123));
+							123), TributacaoFiscal. TRIBUTADO);
 
 			ProdutoEdicao produtoEdicao = Fixture.produtoEdicao(
 					"codigoProdutoEdicao", 999L, 1111, 222, new BigDecimal(
@@ -473,7 +473,7 @@ public class NotaFiscalServiceImplTest extends AbstractRepositoryImplTest {
 		
 		Endereco enderecoTransporte = Fixture.criarEndereco(
 				TipoEndereco.COMERCIAL, "10500250", "Rua Nova", 1000,
-				"Bairro Novo", "Olimpia", "SP");
+				"Bairro Novo", "Olimpia", "SP",1);
 		save(enderecoTransporte);
 		InformacaoTransporte informacaoTransporte = Fixture
 				.informacaoTransporte("88416646000103", enderecoTransporte,

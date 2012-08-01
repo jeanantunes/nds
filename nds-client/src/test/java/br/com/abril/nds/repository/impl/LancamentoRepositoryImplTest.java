@@ -52,7 +52,7 @@ import br.com.abril.nds.model.planejamento.TipoLancamentoParcial;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.util.CurrencyUtil;
-import br.com.abril.nds.vo.PeriodoVO;
+import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
 public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
 
@@ -404,48 +404,6 @@ public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
 		Assert.assertEquals(CurrencyUtil.formatarValor(new BigDecimal(101.20)),
 				CurrencyUtil.formatarValor(resumo2302.getPesoTotal()));
 	}
-
-	@Test
-	public void verificarMatrizRecolhimentoComChamadaEncalhe() {
-		
-		Calendar calendar = Calendar.getInstance();
-		
-		PeriodoVO periodo = new PeriodoVO();
-
-		periodo.setDataInicial(calendar.getTime());
-
-		calendar.add(Calendar.DAY_OF_MONTH, +5);
-		
-		periodo.setDataFinal(calendar.getTime());
-		
-		boolean existeChamadaEncalhe =
-				this.lancamentoRepository.verificarExistenciaChamadaEncalheMatrizRecolhimento(periodo);
-		
-		Assert.assertTrue(existeChamadaEncalhe);
-	}
-
-	@Test
-	public void verificarMatrizRecolhimentoSemChamadaEncalhe() {
-		
-		chamadaEncalhe.setTipoChamadaEncalhe(TipoChamadaEncalhe.ANTECIPADA);
-		
-		update(chamadaEncalhe);
-		
-		Calendar calendar = Calendar.getInstance();
-		
-		PeriodoVO periodo = new PeriodoVO();
-
-		periodo.setDataInicial(calendar.getTime());
-
-		calendar.add(Calendar.DAY_OF_MONTH, +5);
-		
-		periodo.setDataFinal(calendar.getTime());
-		
-		boolean existeChamadaEncalhe =
-				this.lancamentoRepository.verificarExistenciaChamadaEncalheMatrizRecolhimento(periodo);
-		
-		Assert.assertFalse(existeChamadaEncalhe);
-	}
 	
 	@Test
 	public void obterUltimoLancamentoDaEdicao() {
@@ -483,7 +441,7 @@ public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
 	public void obterLancamentoInformeRecolhimento() {
 		List<InformeEncalheDTO>  result =  lancamentoRepository.obterLancamentoInformeRecolhimento(
 				1L, Calendar.getInstance(), Calendar.getInstance(),
-				null, null, 0, 15);
+				"precoDesconto", Ordenacao.ASC, 0, 15);
 	}
 	
 	

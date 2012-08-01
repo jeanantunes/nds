@@ -2,6 +2,8 @@ package br.com.abril.nds.model.planejamento;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -9,10 +11,12 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.estoque.ConferenciaEncalhe;
 
 /**
  * Entidade com as chamadas de encalhes das cotas
@@ -49,6 +53,9 @@ public class ChamadaEncalheCota implements Serializable {
 	@JoinColumn(name = "CHAMADA_ENCALHE_ID")
 	private ChamadaEncalhe chamadaEncalhe;
 
+	@OneToMany(mappedBy = "chamadaEncalheCota")
+	private Set<ConferenciaEncalhe> conferenciasEncalhe = new HashSet<ConferenciaEncalhe>();
+			
 	/**
 	 * @return the id
 	 */
@@ -119,6 +126,20 @@ public class ChamadaEncalheCota implements Serializable {
 
 	public void setPostergado(boolean postergado) {
 		this.postergado = postergado;
+	}
+
+	/**
+	 * @return the conferenciasEncalhe
+	 */
+	public Set<ConferenciaEncalhe> getConferenciasEncalhe() {
+		return conferenciasEncalhe;
+	}
+
+	/**
+	 * @param conferenciasEncalhe the conferenciasEncalhe to set
+	 */
+	public void setConferenciasEncalhe(Set<ConferenciaEncalhe> conferenciasEncalhe) {
+		this.conferenciasEncalhe = conferenciasEncalhe;
 	}
 
 }

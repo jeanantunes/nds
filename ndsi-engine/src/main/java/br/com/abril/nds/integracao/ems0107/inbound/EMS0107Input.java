@@ -21,7 +21,6 @@ import com.ancientprogramming.fixedformat4j.annotation.Record;
 @Record
 @Entity
 @Table(name = "ndsi_ems0107_tmp")
-
 public class EMS0107Input implements Serializable {
 
 	/**

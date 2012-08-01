@@ -16,6 +16,7 @@ var painelProcessamentoController = {
 	},
 	initGridDetalheInterfaceGrid : function() {
 		$(".detalheInterfaceGrid").flexigrid({
+			preProcess : painelProcessamentoController.executarPreInterface,
 			dataType : 'json',
 			colModel : [ {
 				display : 'Ação',
@@ -36,6 +37,12 @@ var painelProcessamentoController = {
 				sortable : true,
 				align : 'left'
 			}],
+			sortname : "acao",
+			sortorder : "asc",
+			usepager : true,
+			useRp : true,
+			rp : 15,
+			showTableToggleBtn : true,			
 			width : 700,
 			height : 200
 		});
@@ -52,7 +59,7 @@ var painelProcessamentoController = {
 				align : 'left'
 			}, {
 				display : 'Mensagem Usuário',
-				name : 'mensagemInfo',
+				name : 'mensagem',
 				width : 330,
 				sortable : true,
 				align : 'left'
@@ -63,7 +70,7 @@ var painelProcessamentoController = {
 				sortable : true,
 				align : 'left'
 			}],
-			sortname : "mensagemInfo",
+			sortname : "tipoErro",
 			sortorder : "asc",
 			usepager : true,
 			useRp : true,
@@ -150,7 +157,7 @@ var painelProcessamentoController = {
 				display : 'Reprocessar',
 				name : 'reprocessar',
 				width : 100,
-				sortable : true,
+				sortable : false,
 				align : 'center'
 			}],
 			sortname : "nome",
@@ -263,9 +270,23 @@ var painelProcessamentoController = {
 		$(".detalheInterfaceGrid").flexReload();
 		painelProcessamentoController.popup_detalhes();			
 	},
+	executarPreInterface : function (resultado) {
+
+		if (resultado.mensagens) {
+			$("#dialog-detalhes").dialog("close");
+			exibirMensagem(
+				resultado.mensagens.tipoMensagem, 
+				resultado.mensagens.listaMensagens
+			);
+			return resultado;
+		}
+
+		return resultado;
+	},
 	executarPreInterfaceProcessamento : function(resultado) {
 
 		if (resultado.mensagens) {
+			$("#dialog-novo").dialog("close");
 			exibirMensagem(
 				resultado.mensagens.tipoMensagem, 
 				resultado.mensagens.listaMensagens

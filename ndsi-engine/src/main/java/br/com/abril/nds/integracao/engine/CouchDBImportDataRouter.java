@@ -1,6 +1,14 @@
 package br.com.abril.nds.integracao.engine;
 
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.ProtocolException;
+import java.net.URL;
+
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.Query;
 import org.lightcouch.CouchDbClient;
@@ -57,17 +65,21 @@ public class CouchDBImportDataRouter extends AbstractRepository implements Conte
 		
 		this.consultaCodigoDistribuidor();
 		CouchDbClient couchDbClient = this.getCouchDBClient();
-		
+			
 		View view = couchDbClient.view("importacao/porTipoDocumento");
+		
+		//verifyViewUpdate();
+		
 		view.key(inputModel.getRouteInterface().getName());
 		view.limit(couchDbProperties.getBachSize());
-		ViewResult<String, ?, Void> result = view.queryView(String.class, classLinha, Void.class);
+		view.includeDocs(true);
+		ViewResult<String, Void, ?> result = view.queryView(String.class, Void.class, classLinha);
 		do {	
 			
 			
 			for (@SuppressWarnings("rawtypes") Rows row: result.getRows()) {
 				
-				IntegracaoDocument doc = (IntegracaoDocument) row.getValue(); 
+				IntegracaoDocument doc = (IntegracaoDocument) row.getDoc(); 
 				
 				final Message message = new Message();
 				message.getHeader().put(MessageHeaderProperties.URI.getValue(), inputModel.getRouteInterface().getName());
@@ -113,12 +125,50 @@ public class CouchDBImportDataRouter extends AbstractRepository implements Conte
 			view = couchDbClient.view("importacao/porTipoDocumento");
 			view.key(inputModel.getRouteInterface().getName());
 			view.limit(couchDbProperties.getBachSize());
-			result = view.queryView(String.class, classLinha, Void.class);
+			view.includeDocs(true);
+			result = view.queryView(String.class, Void.class, classLinha);
 		} while(!result.getRows().isEmpty());
 		
 		couchDbClient.shutdown();
 	}
 	
+	private void verifyViewUpdate() {
+		
+		String couchURL = String.format("%s://%s:%d",
+				couchDbProperties.getProtocol(),				
+				couchDbProperties.getHost(), 
+				couchDbProperties.getPort());
+
+		URL url = null;
+		HttpURLConnection conn = null;
+		BufferedReader reader = null;
+		String line;
+		try {
+			url = new URL(couchURL + "/_active_tasks");
+			conn = (HttpURLConnection) url.openConnection();
+			conn.setDoOutput(true);
+			conn.setUseCaches(false);
+			conn.setRequestMethod("GET");
+			reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+
+			while ((line = reader.readLine()) != null) {
+				System.out.println(line);
+			}
+ 
+			reader.close();
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ProtocolException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+
 	/**
 	 * Retorna o client para o CouchDB na database correspondente ao distribuidor.
 	 * 

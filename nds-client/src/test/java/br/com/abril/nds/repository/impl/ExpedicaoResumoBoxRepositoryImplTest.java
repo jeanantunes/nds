@@ -87,7 +87,7 @@ public class ExpedicaoResumoBoxRepositoryImplTest extends AbstractRepositoryImpl
 		
 		ParametroCobrancaCota parametroCobranca = 
 				Fixture.parametroCobrancaCota(null, 2, BigDecimal.TEN, null, 1, 
-											  true, BigDecimal.TEN);
+											  true, BigDecimal.TEN, null);
   		save(parametroCobranca);
 		
 		FormaCobranca formaBoleto =
@@ -102,7 +102,7 @@ public class ExpedicaoResumoBoxRepositoryImplTest extends AbstractRepositoryImpl
 		politicasCobranca.add(politicaCobranca);
 		
 		PessoaJuridica juridicaDistrib = Fixture.pessoaJuridica("Distribuidor Acme",
-				"33.333.333/0001-33", "333.333.333.333", "distrib_acme@mail.com", "99.999-9");
+				"33.333.333/0001-33", "333333333333", "distrib_acme@mail.com", "99.999-9");
 		save(juridicaDistrib);
 
 		Distribuidor distribuidor = Fixture.distribuidor(1, juridicaDistrib, new Date(), politicasCobranca);
@@ -120,10 +120,10 @@ public class ExpedicaoResumoBoxRepositoryImplTest extends AbstractRepositoryImpl
 		Fornecedor fornecedorDinap = Fixture.fornecedorDinap(tipoFornecedorPublicacao);
 		save(fornecedorDinap);
 		
-		box1 = Fixture.criarBox("Box-1", "BX-001", TipoBox.LANCAMENTO, false);
+		box1 = Fixture.criarBox(1, "BX-001", TipoBox.LANCAMENTO);
 		save(box1);
 		
-		Box box2 = Fixture.criarBox("Box-2", "BX-002", TipoBox.LANCAMENTO, false);
+		Box box2 = Fixture.criarBox(2, "BX-002", TipoBox.LANCAMENTO);
 		save(box2);
 		
 		PessoaFisica manoel = Fixture.pessoaFisica("123.456.789-00",
@@ -393,10 +393,10 @@ public class ExpedicaoResumoBoxRepositoryImplTest extends AbstractRepositoryImpl
 				usuarioJoao, estoqueProdutoVeja1, TipoDiferenca.SOBRA_EM);
 		
 		
-		RateioDiferenca rateioDiferencaCotaManoel = Fixture.rateioDiferenca(new BigDecimal(10), cotaManoel, diferenca3, estudoCotaSuper1Manoel);
+		RateioDiferenca rateioDiferencaCotaManoel = Fixture.rateioDiferenca(new BigDecimal(10), cotaManoel, diferenca3, estudoCotaSuper1Manoel, new Date());
 		save(rateioDiferencaCotaManoel);
 		
-		RateioDiferenca rateioDiferencaJose = Fixture.rateioDiferenca(new BigDecimal(10),cotaJose, diferenca, estudoCotaVeja1Joao);
+		RateioDiferenca rateioDiferencaJose = Fixture.rateioDiferenca(new BigDecimal(10),cotaJose, diferenca, estudoCotaVeja1Joao, new Date());
 		save(rateioDiferencaJose);
 	}
 

@@ -48,9 +48,7 @@ public class ProdutoRecolhimentoVO {
 	
 	private Date novaData;
 	
-	private boolean bloqueioDataRecolhimento;
-	
-	private boolean bloqueioMatrizFechada;
+	private boolean bloqueioAlteracaoBalanceamento;
 
 	/**
 	 * @return the idLancamento
@@ -305,31 +303,18 @@ public class ProdutoRecolhimentoVO {
 	}
 
 	/**
-	 * @return the bloqueioDataRecolhimento
+	 * @return the bloqueioAlteracaoBalanceamento
 	 */
-	public boolean isBloqueioDataRecolhimento() {
-		return bloqueioDataRecolhimento;
+	public boolean isBloqueioAlteracaoBalanceamento() {
+		return bloqueioAlteracaoBalanceamento;
 	}
 
 	/**
-	 * @param bloqueioDataRecolhimento the bloqueioDataRecolhimento to set
+	 * @param bloqueioAlteracaoBalanceamento the bloqueioAlteracaoBalanceamento to set
 	 */
-	public void setBloqueioDataRecolhimento(boolean bloqueioDataRecolhimento) {
-		this.bloqueioDataRecolhimento = bloqueioDataRecolhimento;
-	}
-
-	/**
-	 * @return the bloqueioMatrizFechada
-	 */
-	public boolean isBloqueioMatrizFechada() {
-		return bloqueioMatrizFechada;
-	}
-
-	/**
-	 * @param bloqueioMatrizFechada the bloqueioMatrizFechada to set
-	 */
-	public void setBloqueioMatrizFechada(boolean bloqueioMatrizFechada) {
-		this.bloqueioMatrizFechada = bloqueioMatrizFechada;
+	public void setBloqueioAlteracaoBalanceamento(
+			boolean bloqueioAlteracaoBalanceamento) {
+		this.bloqueioAlteracaoBalanceamento = bloqueioAlteracaoBalanceamento;
 	}
 
 	/**

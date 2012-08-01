@@ -26,6 +26,7 @@ import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TipoFornecedor;
 import br.com.abril.nds.model.cadastro.TipoProduto;
+import br.com.abril.nds.model.cadastro.TributacaoFiscal;
 import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
 import br.com.abril.nds.model.estoque.RecebimentoFisico;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
@@ -76,13 +77,13 @@ public class LancamentoRepositoryImplExpedicaoTest extends AbstractRepositoryImp
 		for(Integer i=1000;i<1010; i++) {
 			
 			PessoaJuridica juridica = Fixture.pessoaJuridica("PessoaJ"+i,
-					"0"+ i, "000.000.000.000", "acme@mail.com", "99.999-9");
+					"0"+ i, "000000000000", "acme@mail.com", "99.999-9");
 			save(juridica);
 			
 			Fornecedor fornecedor = Fixture.fornecedor(juridica, SituacaoCadastro.ATIVO, true, tipoFornecedorPublicacao, null);
 			save(fornecedor);
 			
-			Produto produto = Fixture.produto("00"+i, "descricao"+i, "nome"+i, PeriodicidadeProduto.ANUAL, tipoRevista, 5, 5, BigDecimal.TEN);
+			Produto produto = Fixture.produto("00"+i, "descricao"+i, "nome"+i, PeriodicidadeProduto.ANUAL, tipoRevista, 5, 5, BigDecimal.TEN, TributacaoFiscal. TRIBUTADO);
 			produto.addFornecedor(fornecedor);
 			produto.setEditor(abril);
 			save(produto); 

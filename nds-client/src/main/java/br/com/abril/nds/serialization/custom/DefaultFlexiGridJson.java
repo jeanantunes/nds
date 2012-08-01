@@ -6,8 +6,10 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
+import br.com.abril.nds.converters.ConvertDataJSON;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.TableModel;
+import br.com.caelum.vraptor.core.Localization;
 import br.com.caelum.vraptor.interceptor.TypeNameExtractor;
 import br.com.caelum.vraptor.ioc.Component;
 import br.com.caelum.vraptor.serialization.ProxyInitializer;
@@ -29,7 +31,7 @@ public class DefaultFlexiGridJson implements FlexiGridJson {
     private TypeNameExtractor extractor;
     private ProxyInitializer initializer;
 
-    public DefaultFlexiGridJson(HttpServletResponse response, TypeNameExtractor extractor, ProxyInitializer initializer)
+    public DefaultFlexiGridJson(HttpServletResponse response, TypeNameExtractor extractor, ProxyInitializer initializer,Localization localization)
             throws IOException {
     	    
     	    this.response = response;
@@ -49,6 +51,8 @@ public class DefaultFlexiGridJson implements FlexiGridJson {
                     };
                 }
             });
+            
+            xstream.registerConverter(new ConvertDataJSON(localization));
             
             xstream.aliasField("rows", TableModel.class, "rows");
             serializer = new XStreamSerializer(xstream, response.getWriter(), extractor, initializer);

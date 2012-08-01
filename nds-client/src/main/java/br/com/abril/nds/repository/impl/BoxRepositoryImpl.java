@@ -40,21 +40,12 @@ public class BoxRepositoryImpl extends AbstractRepositoryModel<Box,Long> impleme
 	 * (non-Javadoc)
 	 * @see br.com.abril.nds.repository.BoxRepository#obterListaBox(br.com.abril.nds.model.cadastro.TipoBox)
 	 */
+	@SuppressWarnings("unchecked")
 	public List<Box> obterListaBox(TipoBox tipoBox) {
 		
-		StringBuilder hql = new StringBuilder();
+		Criteria criteria = addRestrictions(null,tipoBox);
 		
-		hql.append(" select box from Box box ");
-		
-		hql.append(" where ");
-		
-		hql.append(" box.tipoBox = :tipoBox ");
-		
-		Query query = this.getSession().createQuery(hql.toString());
-		
-		query.setParameter("tipoBox", tipoBox);
-		
-		return query.list();
+		return criteria.list();
 		
 		
 	}
@@ -119,9 +110,9 @@ public class BoxRepositoryImpl extends AbstractRepositoryModel<Box,Long> impleme
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Box> busca(String codigoBox,TipoBox tipoBox, boolean postoAvancado , String  orderBy, Ordenacao ordenacao, int initialResult, int maxResults){
+	public List<Box> busca(Integer codigoBox,TipoBox tipoBox, String  orderBy , Ordenacao ordenacao, int initialResult, int maxResults){
 		
-		Criteria criteria = addRestrictions(codigoBox, tipoBox, postoAvancado);
+		Criteria criteria = addRestrictions(codigoBox, tipoBox);
 		
 		if(Ordenacao.ASC ==  ordenacao){
 			criteria.addOrder(Order.asc(orderBy));
@@ -138,8 +129,8 @@ public class BoxRepositoryImpl extends AbstractRepositoryModel<Box,Long> impleme
 	
 	
 	@Override
-	public Long quantidade(String codigoBox,TipoBox tipoBox, boolean postoAvancado ){
-		Criteria criteria = addRestrictions(codigoBox, tipoBox, postoAvancado);
+	public Long quantidade(Integer codigoBox,TipoBox tipoBox ){
+		Criteria criteria = addRestrictions(codigoBox, tipoBox);
 		criteria.setProjection(Projections.rowCount());
 		
 		
@@ -150,24 +141,19 @@ public class BoxRepositoryImpl extends AbstractRepositoryModel<Box,Long> impleme
 	 * Adiciona as restricoes a consulta.
 	 * @param codigoBox Codigo do box
 	 * @param tipoBox Tipo do Box {@link TipoBox}
-	 * @param postoAvancado Inidica se o Box é um posto avançado.
 	 * @return
 	 */
-	private Criteria addRestrictions(String codigoBox, TipoBox tipoBox,
-			boolean postoAvancado) {
+	private Criteria addRestrictions(Integer codigoBox, TipoBox tipoBox) {
 		Criteria criteria =  getSession().createCriteria(Box.class);	
 		
-		if(!StringUtil.isEmpty(codigoBox)){
-			criteria.add(Restrictions.ilike("codigo", codigoBox));
+		if( codigoBox != null ){
+			criteria.add(Restrictions.eq("codigo", codigoBox));
 		}
 		
 		if(tipoBox != null){
 			criteria.add(Restrictions.eq("tipoBox", tipoBox));
-		}
+		}		
 		
-		if(postoAvancado){
-			criteria.add(Restrictions.eq("postoAvancado", true));
-		}
 		return criteria;
 	}
 	
@@ -176,10 +162,10 @@ public class BoxRepositoryImpl extends AbstractRepositoryModel<Box,Long> impleme
 	 * @see br.com.abril.nds.repository.BoxRepository#hasCodigo(java.lang.String, java.lang.Long)
 	 */
 	@Override
-	public boolean hasCodigo(String codigoBox, Long id){
+	public boolean hasCodigo(Integer codigoBox, Long id){
 		Criteria criteria =  getSession().createCriteria(Box.class);	
 		
-		criteria.add(Restrictions.ilike("codigo", codigoBox));
+		criteria.add(Restrictions.eq("codigo", codigoBox));
 		if(id != null){
 			criteria.add(Restrictions.ne("id", id));
 		}
@@ -201,7 +187,7 @@ public class BoxRepositoryImpl extends AbstractRepositoryModel<Box,Long> impleme
 		
 		hql.append("select roteirizacao.pdv.cota.numeroCota as numeroCota,");
 		hql.append("case roteirizacao.pdv.cota.pessoa.class when 'F' then roteirizacao.pdv.cota.pessoa.nome when 'J' then roteirizacao.pdv.cota.pessoa.razaoSocial end  as nomeCota,");
-		hql.append("rota.codigoRota as rota,");
+		hql.append("rota.codigoRota ||' - '|| rota.descricaoRota as rota,");
 		hql.append("roteiro.descricaoRoteiro as roteiro");
 		
 		hql.append(" from Roteiro roteiro  join roteiro.rotas rota join rota.roteirizacao roteirizacao ");
@@ -221,7 +207,7 @@ public class BoxRepositoryImpl extends AbstractRepositoryModel<Box,Long> impleme
 	}
 
 	@Override
-	public String obterCodigoBoxPadraoUsuario(Long idUsuario) {
+	public Integer obterCodigoBoxPadraoUsuario(Long idUsuario) {
 		
 		StringBuilder hql = new StringBuilder("select p.box.codigo ");
 		hql.append(" from ParametroUsuarioBox p ")
@@ -230,7 +216,7 @@ public class BoxRepositoryImpl extends AbstractRepositoryModel<Box,Long> impleme
 		Query query = this.getSession().createQuery(hql.toString());
 		query.setParameter("idUsuario", idUsuario);
 		
-		return (String) query.uniqueResult();
+		return (Integer) query.uniqueResult();
 	}
 	
 	/*

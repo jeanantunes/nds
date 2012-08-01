@@ -45,7 +45,7 @@ public class RotaRepositoryImplTest extends AbstractRepositoryImplTest  {
 		pdvManoel = Fixture.criarPDVPrincipal("PDV MANOEL", cotaManoel);
 		save(pdvManoel);
 				
-		box1 = Fixture.criarBox("Box-1", "BX-001", TipoBox.LANCAMENTO, false);
+		box1 = Fixture.criarBox(1, "BX-001", TipoBox.LANCAMENTO);
 		save(box1);
 		
 		Roteiro roteiro = Fixture.criarRoteiro("Pinheiros",box1,TipoRoteiro.NORMAL);

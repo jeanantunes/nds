@@ -129,7 +129,12 @@ public class NFEExporter {
 		
 		List<Field> campos = new ArrayList<Field>();
 		List<Method> metodos = new ArrayList<Method>();
-		Class<?> clazz = notaFiscal.getClass();
+		
+		Class<?> clazz = null;
+		
+		if (notaFiscal != null) 
+			clazz = notaFiscal.getClass();
+		
 		while (clazz != null) {
 			campos.addAll(Arrays.asList(clazz.getDeclaredFields()));
 			metodos.addAll(Arrays.asList(clazz.getDeclaredMethods()));
@@ -396,10 +401,13 @@ public class NFEExporter {
 
 		for (int i = 0; i < this.listaNFEExporters.size() - 1; i++) {
 			for (int j = i + 1; j < this.listaNFEExporters.size(); j++) {
-				if (this.listaNFEExporters.get(i).getPrimeiraSecao().compareToIgnoreCase(this.listaNFEExporters.get(j).getPrimeiraSecao()) > 0 ){
-					nfeExporterAux = this.listaNFEExporters.get(i);
-					this.listaNFEExporters.set(i, this.listaNFEExporters.get(j));
-					this.listaNFEExporters.set(j, nfeExporterAux);
+				if (this.listaNFEExporters.get(i).getPrimeiraSecao() != null && this.listaNFEExporters.get(i).getPrimeiraSecao().isEmpty()) {
+					if(this.listaNFEExporters.get(i).getPrimeiraSecao()
+							.compareToIgnoreCase(this.listaNFEExporters.get(j).getPrimeiraSecao()) > 0 ){
+						nfeExporterAux = this.listaNFEExporters.get(i);
+						this.listaNFEExporters.set(i, this.listaNFEExporters.get(j));
+						this.listaNFEExporters.set(j, nfeExporterAux);
+					}
 				}
 			}
 		}
@@ -569,7 +577,7 @@ public class NFEExporter {
 	}
 	
 	public String getPrimeiraSecao(){
-		if (!this.mapSecoes.isEmpty()) {
+		if (this.mapSecoes != null && !this.mapSecoes.isEmpty()) {
 			return ((TipoSecao)this.mapSecoes.keySet().toArray()[0]).getSigla();
 		}else {
 			return null;

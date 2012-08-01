@@ -1,5 +1,6 @@
 package br.com.abril.nds.controllers;
 
+import java.io.IOException;
 import java.io.InputStream;
 
 import javax.persistence.NoResultException;
@@ -25,6 +26,10 @@ import br.com.caelum.vraptor.interceptor.multipart.UploadedFile;
 @Path("/capa")
 public class CapaController {
 	
+	private final static String JPEG_CONTENT_TYPE = "image/jpeg";
+	
+	private final static int TAMANHO_MAXIMO =  20 * 1024;
+	
 	@Autowired
 	private Result result;
 	
@@ -46,9 +51,22 @@ public class CapaController {
 	}	
 	
 	@Post("salvaCapa")
-	public void salvaCapa(Long idProdutoEdicao, UploadedFile image){		
-		capaService.saveCapa(idProdutoEdicao, image.getContentType(), image.getFile());	
+	public void salvaCapa(Long idProdutoEdicao, UploadedFile image) throws IOException{
 		
+		String contentType = image.getContentType();
+		
+		if(!JPEG_CONTENT_TYPE.equalsIgnoreCase(contentType)){
+			result.use(CustomJson.class).from(new ValidacaoVO(TipoMensagem.WARNING, "Apenas Imagens do tipo JPEG")).serialize();
+			return;
+		}
+		
+		InputStream inputStream = image.getFile();
+		int tamanho = inputStream.available();
+		if(TAMANHO_MAXIMO < tamanho){
+			result.use(CustomJson.class).from(new ValidacaoVO(TipoMensagem.WARNING, "Apenas Imagens de at&eacute; 20 kbytes")).serialize();
+			return;
+		}
+		capaService.saveCapa(idProdutoEdicao,contentType, inputStream);	
 		
 		result.use(CustomJson.class).from("OK").serialize();
 		

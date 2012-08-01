@@ -1,5 +1,6 @@
 package br.com.abril.nds.repository.impl;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -235,4 +236,25 @@ public class CobrancaRepositoryImpl extends AbstractRepositoryModel<Cobranca, Lo
 		return criteria.list();
 	}
 	
+	@Override
+	public BigDecimal obterValorCobrancasQuitadasPorData(Date data){
+		
+		StringBuilder hql = new StringBuilder("select sum(c.valor) ");
+		hql.append(" from Cobranca c ")
+		   .append(" where c.dataPagamento is not null ");
+		
+		if (data != null){
+			
+			hql.append(" and c.dataVencimento <= :data ");
+		}
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		
+		if (data != null){
+			
+			query.setParameter("data", data);
+		}
+		
+		return (BigDecimal) query.uniqueResult();
+	}
 }

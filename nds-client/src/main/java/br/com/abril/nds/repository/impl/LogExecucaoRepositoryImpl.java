@@ -3,18 +3,19 @@ package br.com.abril.nds.repository.impl;
 import java.util.List;
 
 import org.hibernate.Criteria;
-import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.transform.Transformers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import br.com.abril.nds.dto.ConsultaInterfacesDTO;
 import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.integracao.LogExecucao;
 import br.com.abril.nds.model.integracao.LogExecucaoMensagem;
+import br.com.abril.nds.model.integracao.StatusExecucaoEnum;
 import br.com.abril.nds.repository.LogExecucaoRepository;
-import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
 @Repository
 public class LogExecucaoRepositoryImpl extends AbstractRepositoryModel<LogExecucao, Long>  implements LogExecucaoRepository {
@@ -34,14 +35,25 @@ public class LogExecucaoRepositoryImpl extends AbstractRepositoryModel<LogExecuc
 	 */
 	@SuppressWarnings({"unchecked"})
 	@Override
-	public List<LogExecucao> obterInterfaces() {
+	public List<ConsultaInterfacesDTO> obterInterfaces() {
 		
 		Distribuidor distribuidor = distribuidorService.obter();
 		
-		Criteria criteria =  getSession().createCriteria(LogExecucao.class, "logExecucao");	
+		Criteria criteria =  getSession().createCriteria(LogExecucaoMensagem.class, "logExecucaoMensagem");	
 		
+		criteria.createCriteria("logExecucao", "logExecucao", Criteria.LEFT_JOIN);
+		criteria.createCriteria("logExecucao.interfaceExecucao", "interfaceExecucao", Criteria.LEFT_JOIN);
+		
+		criteria.setProjection( Projections.projectionList()
+			    .add(Projections.groupProperty("logExecucao.status"), "status")  
+			    .add(Projections.groupProperty("interfaceExecucao.nome"), "nome")  
+			    .add(Projections.groupProperty("interfaceExecucao.id"), "id")  
+			    .add(Projections.groupProperty("logExecucao.dataInicio"), "dataInicio")
+			    .add(Projections.max("logExecucaoMensagem.nomeArquivo"), "nomeArquivo"))
+			    .setResultTransformer(Transformers.aliasToBean(ConsultaInterfacesDTO.class)); 
+
 		criteria.add( Restrictions.eq("logExecucao.dataInicio", distribuidor.getDataOperacao()) );
-		
+
 		return criteria.list();
 	}
 
@@ -50,32 +62,11 @@ public class LogExecucaoRepositoryImpl extends AbstractRepositoryModel<LogExecuc
 	 */
 	@SuppressWarnings({"unchecked"})
 	@Override
-	public List<LogExecucaoMensagem> obterMensagensLogInterface(Long codigoLogExecucao, String orderBy, Ordenacao ordenacao, int initialResult, int maxResults) {
+	public List<LogExecucaoMensagem> obterMensagensLogInterface(Long codigoLogExecucao) {
 
 		Criteria criteria = addMensagensLogInterfaceRestrictions(codigoLogExecucao);
 		
-		if(Ordenacao.ASC ==  ordenacao){
-			criteria.addOrder(Order.asc(orderBy));
-		}else if(Ordenacao.DESC ==  ordenacao){
-			criteria.addOrder(Order.desc(orderBy));
-		}
-		
-		criteria.setMaxResults(maxResults);
-		criteria.setFirstResult(initialResult);
-
 		return criteria.list();
-	}
-
-	/**
-	 * Retorna a quantidade de registros total de mensagens de log de interface na base de dados
-	 * @param codigoLogExecucao
-	 * @return
-	 */
-	@Override
-	public Long quantidadeMensagensLogInterface(Long codigoLogExecucao){
-		Criteria criteria = addMensagensLogInterfaceRestrictions(codigoLogExecucao);
-		criteria.setProjection(Projections.rowCount());
-		return (Long)criteria.list().get(0);
 	}
 
 	/**
@@ -86,8 +77,18 @@ public class LogExecucaoRepositoryImpl extends AbstractRepositoryModel<LogExecuc
 	private Criteria addMensagensLogInterfaceRestrictions(Long codigoLogExecucao) {
 		Criteria criteria = getSession().createCriteria(LogExecucaoMensagem.class);
 		criteria.createCriteria("logExecucao", "logExecucao", Criteria.LEFT_JOIN);
-		criteria.add(Restrictions.eq("logExecucao.id", codigoLogExecucao));
+		criteria.createCriteria("logExecucao.interfaceExecucao", "interfaceExecucao", Criteria.LEFT_JOIN);
+		criteria.add(Restrictions.eq("interfaceExecucao.id", codigoLogExecucao));
 		return criteria;
+	}
+
+	@Override
+	public List<LogExecucaoMensagem> obterMensagensErroLogInterface(Long codigoLogExecucao) {
+		Criteria criteria = addMensagensLogInterfaceRestrictions(codigoLogExecucao);
+		
+		criteria.add( Restrictions.not(Restrictions.eq("logExecucao.status", StatusExecucaoEnum.SUCESSO)) );
+
+		return criteria.list();
 	}
 	
 }

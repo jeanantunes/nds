@@ -156,6 +156,7 @@ public class CotaController {
 	 */
 	private void processarTelefonesCota(Long idCota){
 		
+		
 		Map<Integer, TelefoneAssociacaoDTO> map = this.obterTelefonesSalvarSessao();
 		
 		List<TelefoneAssociacaoDTO> lista = new ArrayList<TelefoneAssociacaoDTO>();
@@ -237,7 +238,7 @@ public class CotaController {
 			
 			if (cota.getBox() != null) {
 			
-				cotaVO.setCodigoBox(cota.getBox().getCodigo());
+				cotaVO.setCodigoBox(cota.getBox().getCodigo() + " - "+cota.getBox().getNome());
 			}
 			
 			this.result.use(Results.json()).from(cotaVO, "result").recursive().serialize();

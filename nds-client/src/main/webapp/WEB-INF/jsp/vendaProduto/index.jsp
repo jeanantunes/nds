@@ -1,24 +1,5 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>NDS - Novo Distrib</title>
-<link rel="stylesheet" type="text/css" href="../css/NDS.css" />
-<link rel="stylesheet" type="text/css" href="../css/menu_superior.css" />
-<link rel="stylesheet" href="../scripts/jquery-ui-1.8.16.custom/development-bundle/themes/redmond/jquery.ui.all.css" />
-<script language="javascript" type="text/javascript" src="../scripts/jquery-ui-1.8.16.custom/development-bundle/jquery-1.6.2.js"></script>
-<script language="javascript" type="text/javascript" src="../scripts/jquery-ui-1.8.16.custom/development-bundle/ui/jquery.ui.core.js"></script>
-<script language="javascript" type="text/javascript" src="../scripts/jquery-ui-1.8.16.custom/development-bundle/ui/jquery.effects.core.js"></script>
-<script language="javascript" type="text/javascript" src="../scripts/jquery-ui-1.8.16.custom/development-bundle/ui/jquery.effects.highlight.js"></script>
-<script language="javascript" type="text/javascript" src="../scripts/jquery-ui-1.8.16.custom/development-bundle/ui/jquery.ui.widget.js"></script>
-<script language="javascript" type="text/javascript" src="../scripts/jquery-ui-1.8.16.custom/development-bundle/ui/jquery.ui.position.js"></script>
-<script language="javascript" type="text/javascript" src="../scripts/jquery-ui-1.8.16.custom/development-bundle/ui/jquery.ui.accordion.js"></script>
-<script language="javascript" type="text/javascript" src="../scripts/NDS.js"></script>
-<script language="javascript" type="text/javascript" src="../scripts/jquery-ui-1.8.16.custom/development-bundle/ui/jquery.ui.dialog.js"></script>
-<script language="javascript" type="text/javascript" src="../scripts/jquery.maskmoney.js"></script>
 
-<script language="javascript" type="text/javascript" src="../scripts/flexigrid-1.1/js/flexigrid.pack.js"></script>
-<link rel="stylesheet" type="text/css" href="../scripts/flexigrid-1.1/css/flexigrid.pack.css" />
 <script language="javascript" type="text/javascript">
 
 	$(function() {		
@@ -269,13 +250,13 @@
 				sortable : true,
 				align : 'left'
 			}, {
-				display : 'Data Lançamento',
+				display : 'Dt. Lcto',
 				name : 'dataLancamento',
 				width : 100,
 				sortable : true,
 				align : 'center'
 			}, {
-				display : 'Data Recolhimento',
+				display : 'Dt. Rcto',
 				name : 'dataRecolhimento',
 				width : 100,
 				sortable : true,
@@ -283,19 +264,19 @@
 			}, {
 				display : 'Reparte',
 				name : 'reparte',
-				width : 100,
+				width : 70,
 				sortable : true,
 				align : 'center'
 			}, {
 				display : 'Venda',
 				name : 'valorVendaFormatado',
-				width : 90,
+				width : 70,
 				sortable : true,
 				align : 'center'
 			}, {
 				display : '% Venda',
 				name : 'percentagemVendaFormatado',
-				width : 90,
+				width : 70,
 				sortable : true,
 				align : 'right'
 			}, {
@@ -311,9 +292,15 @@
 				sortable : true,
 				align : 'right'
 			}, {
+				display : 'Chamada Capa',
+				name : 'chamadaCapa',
+				width : 90,
+				sortable : true,
+				align : 'left'
+			}, {
 				display : 'Ação',
 				name : 'acao',
-				width : 60,
+				width : 30,
 				sortable : true,
 				align : 'center'
 			}],
@@ -386,4 +373,3 @@
 		});
 </script>
 </body>
-</html>

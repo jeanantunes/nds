@@ -121,9 +121,9 @@
 	
 			    $("span[name='qtdeExemplares']").tooltip();
 			    
-			    var matrizFechada = result.matrizFechada;
+			    var bloquearBotoes = result.bloquearBotoes;
 			    
-			    if (matrizFechada) {
+			    if (bloquearBotoes) {
 			    	
 			    	bloquearLinks();
 			    	
@@ -169,7 +169,7 @@
 			
 			function habilitarLinks() {
 				
-				habilitarLink("linkConfirmar", confirmar);
+				habilitarLink("linkConfirmar", obterConfirmacaoBalanceamento);
 				habilitarLink("linkEditor", function() { verificarBalanceamentosAlterados(balancearPorEditor); });
 				habilitarLink("linkValor", function() { verificarBalanceamentosAlterados(balancearPorValor); });
 				habilitarLink("linkSalvar", salvar);
@@ -238,7 +238,7 @@
 					var idProdutoEdicao = row.cell.idProdutoEdicao;
 					var nomeProduto = row.cell.nomeProduto;
 					
-					row.cell.nomeProduto = balanceamento.getLinkProduto(idProdutoEdicao, nomeProduto);
+					row.cell.nomeProduto = balanceamento.getColunaProduto(idProdutoEdicao, nomeProduto);
 					row.cell.sequencia = gerarInputSequencia(row);
 					row.cell.novaData = gerarHTMLNovaData(row);
 					row.cell.reprogramar = gerarCheckReprogramar(row);
@@ -255,7 +255,7 @@
 				
 				var retornoHTML;
 				
-				if (row.cell.bloqueioMatrizFechada) {
+				if (row.cell.bloqueioAlteracaoBalanceamento) {
 					
 					retornoHTML = '<input type="text" id="sequencia' + row.id + '"'
 							    + 	    ' value="' + row.cell.sequencia + '"'
@@ -278,12 +278,9 @@
 					
 				retornoHTML = '<div name="divNovaData" id="divNovaData' + row.id + '" style="width: 100%;">';
 				
-				retornoHTML += '<input type="hidden" name="hiddenBloqueioMatrizFechada"'
-						    + 	     ' value="' + row.cell.bloqueioMatrizFechada + '" />';
-						     
-		     	retornoHTML += '<input type="hidden" name="hiddenBloqueioDataRecolhimento"'
-						     + 	     ' value="' + row.cell.bloqueioDataRecolhimento + '" />';
-					
+				retornoHTML += '<input type="hidden" name="hiddenBloqueioAlteracaoBalanceamento"'
+						    + 	     ' value="' + row.cell.bloqueioAlteracaoBalanceamento + '" />';
+				
 				retornoHTML += '<input type="text" name="novaData"'
 							 + 	     ' value="' + row.cell.novaData + '"'
 							 + 	     ' style="width:65px; margin-right:5px; float:left;" />';
@@ -301,7 +298,7 @@
 				
 				var retornoHTML;
 				
-				if (row.cell.bloqueioMatrizFechada) {
+				if (row.cell.bloqueioAlteracaoBalanceamento) {
 					
 					retornoHTML = '<input type="checkbox" id="ch' + row.id + '"'
 			   		   			+       ' name="checkReprogramar"'
@@ -348,11 +345,10 @@
 				
 				var inputCheck = $("#checkReprogramar" + idLinha);
 				
-				var hiddenBloqueioMatrizFechada = $(divNovaData).find("input[name='hiddenBloqueioMatrizFechada']").val();
-				var hiddenBloqueioDataRecolhimento = $(divNovaData).find("input[name='hiddenBloqueioDataRecolhimento']").val();
+				var bloqueioAlteracaoBalanceamento = $(divNovaData).find("input[name='hiddenBloqueioAlteracaoBalanceamento']").val();
 				
 				if (inputCheck.attr("checked") == "checked"
-						|| eval(hiddenBloqueioMatrizFechada) || eval(hiddenBloqueioDataRecolhimento)) {
+						|| eval(bloqueioAlteracaoBalanceamento)) {
 				
 					$(inputNovaData).disable();
 					
@@ -648,17 +644,31 @@
 				});
 			}
 			
-			function confirmar() {
+			function confirmarBalanceamento() {
 				
 				$.postJSON(
 					"${pageContext.request.contextPath}/devolucao/balanceamentoMatriz/confirmar",
-					null,
+					balanceamento.obterDatasMarcadasConfirmacao(),
 					function(result) {
 				
 						fecharGridBalanceamento();
 						
-						$("#resumoPeriodo").hide();
-					}
+						$("#dialog-confirm-balanceamento").dialog("close");
+
+						if (result) {
+						   
+							var tipoMensagem = result.tipoMensagem;
+						   	var listaMensagens = result.listaMensagens;
+						   
+						   	if (tipoMensagem && listaMensagens) {
+							   
+						    	exibirMensagem(tipoMensagem, listaMensagens);
+					       	}
+		        	   	}
+					},
+					null,
+					true,
+					"dialog-confirmar"
 				);
 			}
 			
@@ -699,8 +709,6 @@
 			}
 			
 			function salvar() {
-				
-				fecharGridBalanceamento();
 				
 				$.postJSON(
 					"${pageContext.request.contextPath}/devolucao/balanceamentoMatriz/salvar"
@@ -903,24 +911,51 @@
 				
 				$("#checkAllReprogramar").attr("checked", false);
 			}
-
-			function mostarDetalhesProduto(idProdutoEdicao) {
-
-				var data = [];
-				
-				data.push({name:'idProdutoEdicao', value: idProdutoEdicao});
+			
+			function obterConfirmacaoBalanceamento() {
 				
 				$.postJSON(
-					"${pageContext.request.contextPath}/cadastro/edicao/obterDetalheProduto.json", 
-					data,
+					"${pageContext.request.contextPath}/devolucao/balanceamentoMatriz/obterAgrupamentoDiarioBalanceamento", 
+					null,
 					function(result) {
-						balanceamento.popularDetalheProduto(result);
-						balanceamento.popup_detalhes_prod("#dialog-detalhe-produto" );
+						balanceamento.popularConfirmacaoBalanceamento(result);
+						abrirPopupConfirmarBalanceamento();
 					},
 					function() {
-						$("#dialog-detalhe-produto").hide();
+						$("#dialog-confirm-balanceamento").hide();
 					}
 				);
+			}
+			
+			function abrirPopupConfirmarBalanceamento() {
+				
+				$( "#dialog-confirm-balanceamento" ).dialog({
+					resizable: false,
+					height:'auto',
+					width:300,
+					modal: true,
+					buttons: [
+					    {
+					    	id: "dialogConfirmarBtnConfirmar",
+					    	text: "Confirmar",
+					    	click: function() {
+							
+					    		confirmarBalanceamento();
+					    	}
+					    },
+					    {
+					    	id: "dialogConfirmarBtnCancelar",
+					    	text: "Cancelar",
+					    	click: function() {
+					    
+					    		$(this).dialog("close");
+					    	}
+						}
+					],
+					beforeClose: function() {
+						clearMessageDialogTimeout("dialog-confirmar");
+				    }
+				});
 			}
 			
 			$(function() {
@@ -940,6 +975,20 @@
 			   
 		</div>
 		
+		<div id="dialog-confirm-balanceamento" title="Balanceamento" style="display:none;">
+		    
+		    <jsp:include page="../messagesDialog.jsp">
+				<jsp:param value="dialog-confirmar" name="messageDialog"/>
+			</jsp:include>
+			
+		    <fieldset style="width:250px!important;">
+		    	<legend>Confirmar Balanceamento</legend>
+
+		        <table width="240" border="0" cellspacing="1" cellpadding="1" id="tableConfirmaBalanceamento">
+		        </table>
+
+		    </fieldset>
+		</div>
 		
 		<div id="dialogReprogramarBalanceamento" title="Reprogramar Recolhimentos">
 		    

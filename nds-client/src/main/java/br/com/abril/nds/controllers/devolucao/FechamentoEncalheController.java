@@ -74,7 +74,7 @@ public class FechamentoEncalheController {
 		
 		Distribuidor dist = distribuidorService.obter();
 		List<Fornecedor> listaFornecedores = fornecedorService.obterFornecedores();
-		List<Box> listaBoxes = boxService.buscarPorTipo(TipoBox.RECOLHIMENTO);
+		List<Box> listaBoxes = boxService.buscarPorTipo(TipoBox.ENCALHE);
 		
 		result.include("dataOperacao", DateUtil.formatarDataPTBR(dist.getDataOperacao()));
 		result.include("listaFornecedores", listaFornecedores);

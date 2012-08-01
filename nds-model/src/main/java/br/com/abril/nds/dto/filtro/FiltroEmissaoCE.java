@@ -17,9 +17,9 @@ public class FiltroEmissaoCE implements Serializable {
 	@Export(label="Até:")
 	private Date dtRecolhimentoAte;
 	@Export(label=" Intervalor Box:")
-	private Long idBoxDe;
+	private Integer idBoxDe;
 	@Export(label="Até:")
-	private Long idBoxAte;
+	private Integer idBoxAte;
 	@Export(label="Cota:")
 	private Integer numCotaDe;
 	@Export(label="Até:")
@@ -28,14 +28,40 @@ public class FiltroEmissaoCE implements Serializable {
 	private Long idRoteiro;
 	@Export(label="Rota:")
 	private Long idRota; 
-	@Export(label="Capa:")
 	private Boolean capa;
-	@Export(label="Personalizada:")
 	private Boolean personalizada;
 	private List<Long> fornecedores;
 	private String colunaOrdenacao;
 	private String ordenacao;
+	
+	public enum ColunaOrdenacao {
+
+		COTA("numCota"),
+		NOME("nomeCota"),
+		EXEMPLARES("qtdeExemplares"),
+		VALOR("vlrTotalCe");
 		
+		private String nomeColuna;
+		
+		private ColunaOrdenacao(String nomeColuna) {
+			this.nomeColuna = nomeColuna;
+		}
+		
+		@Override
+		public String toString() {
+			return this.nomeColuna;
+		}
+		
+		public static ColunaOrdenacao getPorDescricao(String descricao) {
+			for(ColunaOrdenacao coluna: ColunaOrdenacao.values()) {
+				if(coluna.toString().equals(descricao))
+					return coluna;
+			}
+			return null;
+		}
+	}
+	
+	
 	/**
 	 * @return the dtRecolhimentoDe
 	 */
@@ -63,25 +89,25 @@ public class FiltroEmissaoCE implements Serializable {
 	/**
 	 * @return the idBoxDe
 	 */
-	public Long getIdBoxDe() {
+	public Integer getIdBoxDe() {
 		return idBoxDe;
 	}
 	/**
 	 * @param idBoxDe the idBoxDe to set
 	 */
-	public void setIdBoxDe(Long idBoxDe) {
+	public void setIdBoxDe(Integer idBoxDe) {
 		this.idBoxDe = idBoxDe;
 	}
 	/**
 	 * @return the idBoxAte
 	 */
-	public Long getIdBoxAte() {
+	public Integer getIdBoxAte() {
 		return idBoxAte;
 	}
 	/**
 	 * @param idBoxAte the idBoxAte to set
 	 */
-	public void setIdBoxAte(Long idBoxAte) {
+	public void setIdBoxAte(Integer idBoxAte) {
 		this.idBoxAte = idBoxAte;
 	}
 	/**

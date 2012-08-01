@@ -20,6 +20,7 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.FormaEmissao;
+import br.com.abril.nds.model.cadastro.PoliticaCobranca;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.cadastro.TipoFormaCobranca;
 import br.com.abril.nds.model.seguranca.Permissao;
@@ -176,6 +177,21 @@ public class ParametroCobrancaController {
 	
 	
 	/**
+	 * Verifica se existe uma politica de cobrança principal
+	 */
+	@Post
+	@Path("/existPrincipal")
+	public void existPrincipal(){
+		PoliticaCobranca politica = politicaCobrancaService.obterPoliticaCobrancaPrincipal();
+		if (politica==null){
+			throw new ValidacaoException(TipoMensagem.WARNING, "Defina ao menos um [Parâmetro de Cobrança] como [Principal].");
+		}
+		result.nothing();
+	}
+	
+	
+	
+	/**
 	 * Método responsável pela inclusão de novo parametro de cobrança
 	 * @param ParametroCobrancaDTO
 	 */
@@ -203,6 +219,10 @@ public class ParametroCobrancaController {
 	
 	
 
+	/**
+	 * Obtém dados do parametro de cobrança
+	 * @param idPolitica
+	 */
 	@Post
 	@Path("/obterParametroCobranca")
 	public void obterParametroCobranca(Long idPolitica){

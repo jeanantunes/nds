@@ -14,13 +14,13 @@ import br.com.abril.nds.dto.ResumoPeriodoBalanceamentoDTO;
 import br.com.abril.nds.dto.SumarioLancamentosDTO;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
+import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
-import br.com.abril.nds.vo.PeriodoVO;
 
 public interface LancamentoRepository extends Repository<Lancamento, Long> {
 	
@@ -57,7 +57,7 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 	 * @return List<ProdutoRecolhimentoDTO>
 	 */
 	List<ProdutoRecolhimentoDTO> obterBalanceamentoRecolhimento(
-			PeriodoVO periodoRecolhimento, List<Long> fornecedores,
+			Intervalo<Date> periodoRecolhimento, List<Long> fornecedores,
 			GrupoProduto grupoCromo);
 
 	/**
@@ -73,7 +73,7 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 	 * @return List<ProdutoRecolhimentoDTO>
 	 */
 	List<ProdutoRecolhimentoDTO> obterBalanceamentoRecolhimentoPorEditorData(
-			PeriodoVO periodoRecolhimento, List<Long> fornecedores,
+			Intervalo<Date> periodoRecolhimento, List<Long> fornecedores,
 			GrupoProduto grupoCromo);
 
 	/**
@@ -89,20 +89,8 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 	 * @return Map<Date, BigDecimal>
 	 */
 	TreeMap<Date, BigDecimal> obterExpectativasEncalhePorData(
-			PeriodoVO periodoRecolhimento, List<Long> fornecedores,
+			Intervalo<Date> periodoRecolhimento, List<Long> fornecedores,
 			GrupoProduto grupoCromo);
-
-	/**
-	 * Método que verifica a existência de uma chamada de encalhe do tipo Matriz
-	 * Recolhimento para o período especificado.
-	 * 
-	 * @param periodo
-	 *            - Período a ser utilizado na pesquisa.
-	 * 
-	 * @return caso exista chamada: true, caso não exista: false.
-	 */
-	boolean verificarExistenciaChamadaEncalheMatrizRecolhimento(
-			PeriodoVO periodo);
 
 	/**
 	 * Obtém o último Lancamento de determinado ProdutoEdicao
@@ -247,14 +235,22 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 	/**
 	 * Retorna um lançamento de produto onde as datas de lançamento e recolhimento previstas forem iguais aos parâmetros informados.
 	 * 
-	 * @param codigoProduto - código do produto
+	 * @param produtoEdicao - produto edição
 	 * @param dataLancamentoPrevista - data a ser comparada com a data de lançamento prevista
 	 * @param dataRecolhimentoPrevista - data a ser comparada com a data de recolhimento prevista
 	 * @return Lancamento
 	 */
-	public Lancamento obterLancamentoProdutoPorDataLancamentoOuDataRecolhimento(String codigoProduto, Date dataLancamentoPrevista, Date dataRecolhimentoPrevista);
+	public Lancamento obterLancamentoProdutoPorDataLancamentoOuDataRecolhimento(ProdutoEdicao produtoEdicao, Date dataLancamentoPrevista, Date dataRecolhimentoPrevista);
 
 	Long obterQuantidadeLancamentos(StatusLancamento statusLancamento);
 
 	BigDecimal obterConsignadoDia(StatusLancamento statusLancamento);
+	
+	Lancamento obterLancamentoProdutoPorDataLancamentoDataLancamentoDistribuidor(ProdutoEdicao produtoEdicao, 
+																				 Date dataLancamentoPrevista, 
+																				 Date dataLancamentoDistribuidor);
+	
 }
+	
+	
+	

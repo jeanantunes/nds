@@ -193,7 +193,7 @@ public class VendaEncalheController {
 		
 		Cota cota = cotaService.obterPorNumeroDaCota(numeroCota);
 		
-		String codBox = (cota == null || cota.getBox() == null)?"":cota.getBox().getCodigo();
+		String codBox = (cota == null || cota.getBox() == null)?"":cota.getBox().getCodigo().toString();
 		
 		result.use(CustomMapJson.class).put("box", codBox).serialize();
 	}

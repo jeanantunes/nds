@@ -32,12 +32,12 @@ public abstract class AbstractBalanceamentoRecolhimentoStrategy implements Balan
 		
 		if (!validarDadosRecolhimento(dadosRecolhimento)) {
 			
-			return balanceamentoRecolhimento; 
+			return balanceamentoRecolhimento;
 		}
 		
 		TreeMap<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimento = null;
 		
-		if (dadosRecolhimento.getBalancearMatriz()) {
+		if (!dadosRecolhimento.isSemanaRecolhimento()) {
 			
 			matrizRecolhimento = this.gerarMatrizRecolhimentoBalanceada(dadosRecolhimento);
 			
@@ -53,7 +53,7 @@ public abstract class AbstractBalanceamentoRecolhimentoStrategy implements Balan
 		balanceamentoRecolhimento.setCapacidadeRecolhimentoDistribuidor(
 			dadosRecolhimento.getCapacidadeRecolhimentoDistribuidor());
 		
-		balanceamentoRecolhimento.setMatrizFechada(dadosRecolhimento.isMatrizFechada());
+		balanceamentoRecolhimento.setSemanaRecolhimento(dadosRecolhimento.isSemanaRecolhimento());
 		
 		return balanceamentoRecolhimento;
 	}
@@ -75,8 +75,7 @@ public abstract class AbstractBalanceamentoRecolhimentoStrategy implements Balan
 														   		Date dataRecolhimentoPrevista) {
 		
 		List<ProdutoRecolhimentoDTO> produtosRecolhimentoNaoBalanceaveis = 
-			this.obterProdutosRecolhimentoNaoBalanceaveisPorData(
-				dadosRecolhimento.getProdutosRecolhimento(), dataRecolhimentoPrevista);
+			this.obterProdutosRecolhimentoNaoBalanceaveisPorData(dadosRecolhimento, dataRecolhimentoPrevista);
 		
 		if (!produtosRecolhimentoNaoBalanceaveis.isEmpty()) {
 			
@@ -87,10 +86,12 @@ public abstract class AbstractBalanceamentoRecolhimentoStrategy implements Balan
 	/*
 	 * Obtém os produtos de recolhimento não balanceáveis (possuem chamada antecipada ou chamadão) de uma determinada data.
 	 */
-	protected List<ProdutoRecolhimentoDTO> obterProdutosRecolhimentoNaoBalanceaveisPorData(List<ProdutoRecolhimentoDTO> produtosRecolhimento, 
+	protected List<ProdutoRecolhimentoDTO> obterProdutosRecolhimentoNaoBalanceaveisPorData(RecolhimentoDTO dadosRecolhimento, 
 																		  				   Date dataRecolhimentoDesejada) {
 		
 		List<ProdutoRecolhimentoDTO> produtosRecolhimentoNaoBalanceaveis = new ArrayList<ProdutoRecolhimentoDTO>();
+		
+		List<ProdutoRecolhimentoDTO> produtosRecolhimento = dadosRecolhimento.getProdutosRecolhimento();
 		
 		if (produtosRecolhimento == null 
 				|| produtosRecolhimento.isEmpty()
@@ -103,14 +104,27 @@ public abstract class AbstractBalanceamentoRecolhimentoStrategy implements Balan
 			
 			ProdutoRecolhimentoDTO produtoRecolhimento = produtosRecolhimento.get(indice);
 			
-			if ((produtoRecolhimento.isPossuiChamada())
-					&& produtoRecolhimento.getDataRecolhimentoDistribuidor().equals(dataRecolhimentoDesejada)) {
+			if (produtoRecolhimento.getDataRecolhimentoDistribuidor().equals(dataRecolhimentoDesejada)) {
 				
-				produtosRecolhimentoNaoBalanceaveis.add(produtosRecolhimento.remove(indice--));
+				if (this.isProdutoNaoBalanceavel(dadosRecolhimento.isConfiguracaoInicial(), produtoRecolhimento)) {
+					
+					produtosRecolhimentoNaoBalanceaveis.add(produtosRecolhimento.remove(indice--));
+				}
 			}
 		}
 		
 		return produtosRecolhimentoNaoBalanceaveis;
+	}
+
+	/**
+	 * Verifica se o produto de recolhimento pode ser balanceado ou não.
+	 */
+	private boolean isProdutoNaoBalanceavel(boolean isConfiguracaoInicial,
+										 	ProdutoRecolhimentoDTO produtoRecolhimento) {
+		
+		return produtoRecolhimento.isPossuiChamada()
+				|| produtoRecolhimento.isBalanceamentoConfirmado()
+				|| (produtoRecolhimento.isBalanceamentoSalvo() && !isConfiguracaoInicial);
 	}
 	
 	/*
@@ -224,10 +238,12 @@ public abstract class AbstractBalanceamentoRecolhimentoStrategy implements Balan
 	/*
 	 * Obtém os produtos de recolhimento balanceáveis (não possuem chamadão ou chamada antecipada) de uma determinada data.
 	 */
-	protected List<ProdutoRecolhimentoDTO> obterProdutosRecolhimentoBalanceaveisPorData(List<ProdutoRecolhimentoDTO> produtosRecolhimento, 
+	protected List<ProdutoRecolhimentoDTO> obterProdutosRecolhimentoBalanceaveisPorData(RecolhimentoDTO dadosRecolhimento, 
 																		  			    Date dataRecolhimentoDesejada) {
 		
 		List<ProdutoRecolhimentoDTO> produtosRecolhimentoFiltrados = new ArrayList<ProdutoRecolhimentoDTO>();
+		
+		List<ProdutoRecolhimentoDTO> produtosRecolhimento = dadosRecolhimento.getProdutosRecolhimento();
 		
 		if (produtosRecolhimento == null 
 				|| produtosRecolhimento.isEmpty()
@@ -238,7 +254,7 @@ public abstract class AbstractBalanceamentoRecolhimentoStrategy implements Balan
 		
 		for (ProdutoRecolhimentoDTO produtoRecolhimento : produtosRecolhimento) {
 			
-			if (produtoRecolhimento.isPossuiChamada()) {
+			if (this.isProdutoNaoBalanceavel(dadosRecolhimento.isConfiguracaoInicial(), produtoRecolhimento)) {
 				
 				continue;
 			}

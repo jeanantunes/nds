@@ -137,7 +137,7 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 		
 				
 		Banco bancoHSBC = Fixture.banco(10L, true, null, "1010",
-			  		123456L, "1", "1", "Instruções.", Moeda.REAL, "HSBC", "399", BigDecimal.ZERO, BigDecimal.ZERO);
+			  		123456L, "1", "1", "Instruções.", "HSBC","BANCO HSBC", "399", BigDecimal.ZERO, BigDecimal.ZERO);
 		save(bancoHSBC);
 		
 		
@@ -244,7 +244,7 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 		formasCobranca.add(formaBoleto);
 		ParametroCobrancaCota parametroCobrancaConta = 
 				Fixture.parametroCobrancaCota(formasCobranca, null, null, cota, 1, 
-											  true, BigDecimal.TEN);
+											  true, BigDecimal.TEN, null);
 		formaBoleto.setParametroCobrancaCota(parametroCobrancaConta);
 		formaBoleto.setPrincipal(true);
 		
@@ -329,7 +329,7 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 	private void criarEnderecoCota(Cota cota) {
 		
 		Endereco endereco = Fixture.criarEndereco(
-				TipoEndereco.COMERCIAL, "13730-000", "Rua Marechal Deodoro", 50, "Centro", "Mococa", "SP");
+				TipoEndereco.COMERCIAL, "13730-000", "Rua Marechal Deodoro", 50, "Centro", "Mococa", "SP",1);
 
 		EnderecoCota enderecoCota = new EnderecoCota();
 		enderecoCota.setCota(cota);
@@ -338,7 +338,7 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 		enderecoCota.setTipoEndereco(TipoEndereco.COBRANCA);
 		
 		Endereco endereco2 = Fixture.criarEndereco(
-				TipoEndereco.LOCAL_ENTREGA, "13730-000", "Rua X", 50, "Vila Carvalho", "Mococa", "SP");
+				TipoEndereco.LOCAL_ENTREGA, "13730-000", "Rua X", 50, "Vila Carvalho", "Mococa", "SP",1);
 
 		EnderecoCota enderecoCota2 = new EnderecoCota();
 		enderecoCota2.setCota(cota);
@@ -401,7 +401,7 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 	public void obterIdCotasEntre() {
 		
 		Intervalo<Integer> intervaloCota = new Intervalo<Integer>(1, 10);
-		Intervalo<String> intervaloBox = new Intervalo<String>("BX-1", "BX-2");
+		Intervalo<Integer> intervaloBox = new Intervalo<Integer>(1, 2);
 		SituacaoCadastro situacao =  SituacaoCadastro.ATIVO;
 		cotaRepository.obterIdCotasEntre(intervaloCota, intervaloBox,
 				situacao);

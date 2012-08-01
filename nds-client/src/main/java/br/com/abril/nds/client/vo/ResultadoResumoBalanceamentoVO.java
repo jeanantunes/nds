@@ -13,7 +13,7 @@ public class ResultadoResumoBalanceamentoVO implements Serializable {
 
 	private List<ResumoPeriodoBalanceamentoVO> listaResumoPeriodoBalanceamento;
 	
-	private boolean matrizFechada;
+	private boolean bloquearBotoes;
 	
 	private BigDecimal capacidadeRecolhimentoDistribuidor;
 	
@@ -40,17 +40,17 @@ public class ResultadoResumoBalanceamentoVO implements Serializable {
 	}
 
 	/**
-	 * @return the matrizFechada
+	 * @return the bloquearBotoes
 	 */
-	public boolean isMatrizFechada() {
-		return matrizFechada;
+	public boolean isBloquearBotoes() {
+		return bloquearBotoes;
 	}
 
 	/**
-	 * @param matrizFechada the matrizFechada to set
+	 * @param bloquearBotoes the bloquearBotoes to set
 	 */
-	public void setMatrizFechada(boolean matrizFechada) {
-		this.matrizFechada = matrizFechada;
+	public void setBloquearBotoes(boolean bloquearBotoes) {
+		this.bloquearBotoes = bloquearBotoes;
 	}
 
 	/**

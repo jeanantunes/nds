@@ -33,8 +33,6 @@ import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
-import br.com.abril.nds.repository.ItemNotaFiscalEntradaRepository;
-import br.com.abril.nds.repository.ItemRecebimentoFisicoRepository;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.NotaFiscalEntradaService;
 import br.com.abril.nds.service.PessoaJuridicaService;
@@ -66,12 +64,6 @@ public class RecebimentoFisicoController {
 	
 	@Autowired
 	private FornecedorService fornecedorService;
-	
-	@Autowired
-	private ItemRecebimentoFisicoRepository itemRecebimentoFisicoRepository;
-	
-	@Autowired
-	private ItemNotaFiscalEntradaRepository itemNotaFiscalEntradaRepository;
 	
 	@Autowired
 	private NotaFiscalEntradaService notaFiscalService;
@@ -307,7 +299,12 @@ public class RecebimentoFisicoController {
 			String dataRecolhimento, 
 			List<RecebimentoFisicoDTO> itensRecebimento) {
 		
-		atualizarItensRecebimentoEmSession(itensRecebimento);
+		NotaFiscalEntrada notaFiscalEntrada = getNotaFiscalFromSession();
+		
+		if(Origem.INTERFACE.equals(notaFiscalEntrada.getOrigem())) {
+			
+			atualizarItensRecebimentoEmSession(itensRecebimento);
+		}
 		
 		validarNovoItemRecebimentoFisico(
 				itemRecebimento, 
@@ -338,6 +335,11 @@ public class RecebimentoFisicoController {
 		itemRecebimento.setOrigemItemNota(Origem.MANUAL);
 		itemRecebimento.setEdicao(produtoEdicao.getNumeroEdicao());
 		itemRecebimento.setIdProdutoEdicao(produtoEdicao.getId());
+		
+		if(!Origem.INTERFACE.equals(notaFiscalEntrada.getOrigem())) {
+			
+			itemRecebimento.setQtdFisico(itemRecebimento.getRepartePrevisto());
+		}
 		
 		validarProdutoEdicaoExistente(itemRecebimento, itensRecebimentoFisico);
 		

@@ -60,12 +60,12 @@ public class MovimentoFinanceiroCotaRepositoryImplTest extends AbstractRepositor
 		save(banco);
 		
 		PessoaJuridica juridicaDistrib = Fixture.pessoaJuridica("Distribuidor Acme",
-				"56.003.315/0001-47", "333.333.333.333", "distrib_acme@mail.com", "99.999-9");
+				"56.003.315/0001-47", "333333333333", "distrib_acme@mail.com", "99.999-9");
 		save(juridicaDistrib);
 		
 		ParametroCobrancaCota parametroCobranca = 
 				Fixture.parametroCobrancaCota(null, 2, BigDecimal.TEN, null, 1, 
-											  true, BigDecimal.TEN);
+											  true, BigDecimal.TEN, null);
   		save(parametroCobranca);
 		
 		FormaCobranca formaBoleto =
@@ -97,7 +97,7 @@ public class MovimentoFinanceiroCotaRepositoryImplTest extends AbstractRepositor
 		Usuario usuarioJoao = Fixture.usuarioJoao();
 		save(usuarioJoao);
 		
-		Box box = Fixture.criarBox("Box-1", "BX-001", TipoBox.LANCAMENTO, false);
+		Box box = Fixture.criarBox(1, "BX-001", TipoBox.LANCAMENTO);
 		save(box);
 		
 		PessoaFisica manoel = Fixture.pessoaFisica("319.435.088-95",

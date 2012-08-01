@@ -12,7 +12,7 @@ import org.springframework.test.context.transaction.TransactionConfiguration;
 import br.com.abril.nds.integracao.spring.NdsiRunner;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@TransactionConfiguration(transactionManager="ndsi-transactionManager")
+@TransactionConfiguration(transactionManager="transactionManager")
 @ContextConfiguration(locations={NdsiRunner.SPRING_FILE_LOCATION})
 public abstract class TestTemplate extends AbstractTransactionalJUnit4SpringContextTests {
 	

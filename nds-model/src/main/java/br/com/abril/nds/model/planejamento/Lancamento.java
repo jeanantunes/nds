@@ -16,6 +16,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinColumns;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -31,6 +32,7 @@ import org.hibernate.annotations.NotFoundAction;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.estoque.Expedicao;
 import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
+import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 
 /**
  * @author T30541
@@ -117,10 +119,15 @@ public class Lancamento implements Serializable {
 	@JoinColumn(name = "EXPEDICAO_ID")
 	private Expedicao expedicao;
 	
-	
 	@OneToOne(mappedBy="lancamento")
 	private PeriodoLancamentoParcial periodoLancamentoParcial;
 
+	@OneToMany(mappedBy = "lancamento")
+	private List<MovimentoEstoqueCota> movimentoEstoqueCotas;
+	
+	@ManyToMany(mappedBy="lancamentos", targetEntity=ChamadaEncalhe.class)
+	private Set<ChamadaEncalhe> chamadaEncalhe;
+	
 	public Long getId() {
 		return id;
 	}
@@ -317,6 +324,37 @@ public class Lancamento implements Serializable {
 			PeriodoLancamentoParcial periodoLancamentoParcial) {
 		this.periodoLancamentoParcial = periodoLancamentoParcial;
 	}
+
+	/**
+	 * @return the movimentoEstoqueCotas
+	 */
+	public List<MovimentoEstoqueCota> getMovimentoEstoqueCotas() {
+		return movimentoEstoqueCotas;
+	}
+
+	/**
+	 * @param movimentoEstoqueCotas the movimentoEstoqueCotas to set
+	 */
+	public void setMovimentoEstoqueCotas(
+			List<MovimentoEstoqueCota> movimentoEstoqueCotas) {
+		this.movimentoEstoqueCotas = movimentoEstoqueCotas;
+	}
+
+	/**
+	 * @return the chamadaEncalhe
+	 */
+	public Set<ChamadaEncalhe> getChamadaEncalhe() {
+		return chamadaEncalhe;
+	}
+
+	/**
+	 * @param chamadaEncalhe the chamadaEncalhe to set
+	 */
+	public void setChamadaEncalhe(Set<ChamadaEncalhe> chamadaEncalhe) {
+		this.chamadaEncalhe = chamadaEncalhe;
+	}
+
+	
 	
 
 }

@@ -55,10 +55,10 @@ public class ProdutoEdicao implements Serializable {
 	protected Long id;
 	
 	//@Column(name = "CODIGO", nullable = false, unique = true)
-	@Column(name = "CODIGO", nullable = true)
+	@Column(name = "CODIGO", nullable = true, length=8)
 	protected String codigo;
 
-	@Column(name  = "CODIGO_DE_BARRAS", nullable = true)
+	@Column(name  = "CODIGO_DE_BARRAS", nullable = true, length=18)
 	protected String codigoDeBarras;
 	
 	@Column(name  = "CODIGO_DE_BARRAS_CORPORATIVO", nullable = true, length = 25)
@@ -67,7 +67,7 @@ public class ProdutoEdicao implements Serializable {
 	@Column(name  = "NUMERO_EDICAO", nullable = false)
 	protected Long numeroEdicao;
 	
-	@Column(name = "NOME_COMERCIAL", nullable = true, unique = true, length = 24)
+	@Column(name = "NOME_COMERCIAL", nullable = true, unique = true, length = 60)
 	private String nomeComercial;
 	
 	@Column(name = "PRECO_VENDA", nullable = true)
@@ -94,7 +94,7 @@ public class ProdutoEdicao implements Serializable {
 	@Column(name = "PESO", nullable = false)
 	protected BigDecimal peso;
 	
-	@Column(name = "BOLETIM_INFORMATIVO", nullable = true)
+	@Column(name = "BOLETIM_INFORMATIVO", nullable = true, length=2048)
 	protected String boletimInformativo;
 	
 	@ManyToOne(optional = false)

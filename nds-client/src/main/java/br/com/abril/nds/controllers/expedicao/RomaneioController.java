@@ -94,8 +94,7 @@ public class RomaneioController {
 		
 	}
 	
-	private TableModel<CellModelKeyValue<RomaneioDTO>> efetuarConsultaRomaneio(
-			FiltroRomaneioDTO filtro) {
+	private TableModel<CellModelKeyValue<RomaneioDTO>> efetuarConsultaRomaneio(FiltroRomaneioDTO filtro) {
 		
 		List<RomaneioDTO> listaRomaneios = this.romaneioService.buscarRomaneio(filtro, "limitar");
 		

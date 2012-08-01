@@ -12,7 +12,6 @@ import br.com.abril.nds.dto.filtro.FiltroConsultaFornecedorDTO;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.GrupoFornecedor;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
-import br.com.abril.nds.model.cadastro.TelefoneFornecedor;
 
 public interface FornecedorService {
 
@@ -130,7 +129,7 @@ public interface FornecedorService {
 	 * @param listaTelefonesRemover - Telefones a serem removidos.
 	 */
 	void processarTelefones(Long idEntregador, 
-						    List<TelefoneFornecedor> listaTelefonesAdicionar, 
+						    List<TelefoneAssociacaoDTO> listaTelefonesAdicionar, 
 						    Collection<Long> listaTelefonesRemover);
 	
 	/**

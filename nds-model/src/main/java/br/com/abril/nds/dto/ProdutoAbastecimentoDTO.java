@@ -16,7 +16,7 @@ public class ProdutoAbastecimentoDTO implements Serializable{
 	private String precoCapa;
 	private String total;
 	private String codigoRota;	
-	private String codigoBox;
+	private Integer codigoBox;
 	private Long idProdutoEdicao;
 	private Integer codigoCota;
 	private Integer sequenciaMatriz;
@@ -110,11 +110,11 @@ public class ProdutoAbastecimentoDTO implements Serializable{
 		this.total = CurrencyUtil.formatarValor(total);
 	}
 
-	public String getCodigoBox() {
+	public Integer getCodigoBox() {
 		return codigoBox;
 	}
 
-	public void setCodigoBox(String codigoBox) {
+	public void setCodigoBox(Integer codigoBox) {
 		this.codigoBox = codigoBox;
 	}
 

@@ -205,7 +205,18 @@
 
 		function pesquisarHistoricoStatusCota() {
 
-			var filtro = obterDadosFiltro();
+			var followUp = $('#numeroCotaFollowUp').val();
+			var filtro;			
+			if(followUp != ''){			
+				filtro = [
+							{name: 'filtro.numeroCota' , value: followUp },
+							{name: 'filtro.periodo.dataInicial' , value: null },
+							{name: 'filtro.periodo.dataFinal' , value: null }
+							]
+			}else{
+				var filtro = obterDadosFiltro();
+			}
+
 
 			$(".manutencaoStatusCotaGrid").flexOptions({
 				url : '<c:url value="/financeiro/manutencaoStatusCota/pesquisar" />', 
@@ -324,14 +335,21 @@
 
 		$(function() {
 
+			var followUp = $('#numeroCotaFollowUp').val();
+			
 			inicializar();
+			if(followUp != ''){			
+				pesquisarHistoricoStatusCota();
+			}
+
+			
 		});
 		
 		
 	</script>
 </head>
 <body>
-
+<input type="hidden" value="${numeroCotaFollowUp}" id="numeroCotaFollowUp" name="numeroCotaFollowUp">
 	<!-- Filtro da Pesquisa -->
 	<fieldset class="classFieldset">
 	

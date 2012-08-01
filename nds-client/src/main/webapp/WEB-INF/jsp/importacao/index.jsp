@@ -33,6 +33,12 @@ function tratarRespostaImportacao(data) {
 
 function exibirMensagensImportacao(tipoMensagem, mensagens) {
 
+	var divError= $("#errorImportacao");
+
+	var textError = $("#idTextErrorImportacao");
+	
+	$(divError).hide();
+
 	if (tipoMensagem != "ERROR") {
 		
 		exibirMensagem(tipoMensagem, mensagens);
@@ -41,12 +47,6 @@ function exibirMensagensImportacao(tipoMensagem, mensagens) {
 	}
 	
 	clearMessageTimeout();
-
-	var divError= $("#errorImportacao");
-	
-	$(divError).hide();
-
-	var textError = $("#idTextErrorImportacao");
 
 	montarExibicaoMensagem(false, tipoMensagem, mensagens,
 						   null, null,

@@ -11,10 +11,16 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+<<<<<<< HEAD
 import br.com.abril.nds.client.annotation.Rules;
+=======
+import br.com.abril.nds.dto.CapaDTO;
+>>>>>>> master
 import br.com.abril.nds.dto.CotaEmissaoDTO;
+import br.com.abril.nds.dto.DistribuidorDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.filtro.FiltroEmissaoCE;
+import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Distribuidor;
@@ -26,8 +32,11 @@ import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.BoxService;
+import br.com.abril.nds.service.ChamadaEncalheService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.RoteirizacaoService;
+import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
 import br.com.abril.nds.util.export.NDSFileHeader;
@@ -54,6 +63,9 @@ public class EmissaoCEController {
 	
 	@Autowired
 	private DistribuidorService distribuidorService;
+	
+	@Autowired
+	private ChamadaEncalheService chamadaEncalheService;
 	
 	@Autowired
 	private HttpServletResponse httpResponse;
@@ -95,56 +107,19 @@ public class EmissaoCEController {
 		filtro.setOrdenacao(sortorder);
 		filtro.setColunaOrdenacao(sortname);
 		
-//		if(filtro.getTipoConsulta() == null)
-//			throw new ValidacaoException(TipoMensagem.WARNING, " 'Tipo de consulta' deve ser selecionado.");
-//				
-//		if(filtro.getDataDate() == null && !filtro.getDataLancamento().isEmpty())
-//			throw new ValidacaoException(TipoMensagem.WARNING, "'Data de Lançamento' não é válida.");
-//		
-//		if(filtro.getDataLancamento() == null || filtro.getDataLancamento().isEmpty())
-//			throw new ValidacaoException(TipoMensagem.WARNING, "'Data de Lançamento' é obrigatória.");
-//		
-//		filtro.setPaginacao(new PaginacaoVO(page, rp, sortorder,sortname));
-//		
-//		tratarFiltro(filtro);
-//		
-		List<CotaEmissaoDTO> lista = getMockList(); //mapaAbastecimentoService.obterDadosAbastecimento(filtro);
 
+		if(filtro.getDtRecolhimentoDe()!= null && filtro.getDtRecolhimentoAte() != null
+				&& DateUtil.isDataInicialMaiorDataFinal(filtro.getDtRecolhimentoDe(), filtro.getDtRecolhimentoAte()))
+			throw new ValidacaoException(TipoMensagem.WARNING, "Intervalo de Dt. Recolhimento inválido, o valor inicial é maior que o final.");
+		
+		session.setAttribute(FILTRO_SESSION_ATTRIBUTE, filtro);
+	
+		List<CotaEmissaoDTO> lista = chamadaEncalheService.obterDadosEmissaoChamadasEncalhe(filtro); 
 		
 		result.use(FlexiGridJson.class).from(lista).page(1).total(lista.size()).serialize();
 		
 	}
-	
-	private List<CotaEmissaoDTO> getMockList() {
 		
-		List<CotaEmissaoDTO> cotas = new ArrayList<CotaEmissaoDTO>();
-		
-		CotaEmissaoDTO cota = null;
-		for(int i=0; i<10; i++) {
-			cota = new CotaEmissaoDTO();
-			cota.setNomeCota("Cota" + i);
-			cota.setNumCota(i);
-			cota.setQtdeExemplares(i * 100);
-			cotas.add(cota);
-		}
-		
-		return cotas;
-	}
-	
-	
-	/**
-	 * Executa tratamento de paginação em função de alteração do filtro de pesquisa.
-	 * 
-	 * @param filtroEmissaoCE
-	 */
-	private void tratarFiltro(FiltroEmissaoCE filtroAtual) {
-
-		FiltroEmissaoCE filtroSession = (FiltroEmissaoCE) session
-				.getAttribute(FILTRO_SESSION_ATTRIBUTE);
-				
-		session.setAttribute(FILTRO_SESSION_ATTRIBUTE, filtroAtual);
-	}
-	
 	/**
 	 * Método responsável por carregar o combo de fornecedores.
 	 * @return 
@@ -170,7 +145,7 @@ public class EmissaoCEController {
 				
 		for(Box box : listaBoxes){
 			
-			boxes.add(new ItemDTO<Long, String>(box.getId(),box.getCodigo()));
+			boxes.add(new ItemDTO<Long, String>(box.getId(),box.getCodigo() + " - " + box.getNome()));
 		}
 		
 		return boxes;			
@@ -212,6 +187,59 @@ public class EmissaoCEController {
 		return listaRoteiros;
 	}
 	
+	public void imprimirCE() {
+		
+		switch (distribuidorService.obter().getTipoImpressaoCE()) {
+		case MODELO_1:
+			result.forwardTo(EmissaoCEController.class).modelo1();
+			break;
+		case MODELO_2:
+			result.forwardTo(EmissaoCEController.class).modelo2();
+			break;
+
+		default:
+			break;
+		}
+		
+		
+	}
+
+	public void modelo1() {
+				
+		setDados();		
+				
+	}
+	
+	public void setDados() {
+		
+		FiltroEmissaoCE filtro = (FiltroEmissaoCE) session.getAttribute(FILTRO_SESSION_ATTRIBUTE);
+		
+		List<CotaEmissaoDTO> cotasEmissao = chamadaEncalheService.obterDadosImpressaoEmissaoChamadasEncalhe(filtro);	
+				
+		DistribuidorDTO dadosDistribuidor = distribuidorService.obterDadosEmissao();
+		
+		if(filtro.getDtRecolhimentoAte()!=null && filtro.getDtRecolhimentoAte()!=null)
+			filtro.setPersonalizada(false);
+		
+		if(filtro.getPersonalizada()) {
+			List<CapaDTO> capas =  chamadaEncalheService.obterIdsCapasChamadaEncalhe(filtro.getDtRecolhimentoDe(), filtro.getDtRecolhimentoAte());
+			result.include("capas", capas);
+		}
+		
+		result.include("cotasEmissao", cotasEmissao);
+		
+		result.include("dadosDistribuidor", dadosDistribuidor);
+		
+		result.include("withCapa", filtro.getCapa());
+		
+		result.include("personalizada", filtro.getPersonalizada());
+				
+	}
+	
+	public void modelo2() {
+		
+		setDados();
+	}
 
 	/**
 	 * Obtém os dados do cabeçalho de exportação.
@@ -248,9 +276,9 @@ public class EmissaoCEController {
 	public void exportar(FileType fileType) throws IOException {
 		
 		FiltroEmissaoCE filtro = (FiltroEmissaoCE) session.getAttribute(FILTRO_SESSION_ATTRIBUTE);
-		
-		List<CotaEmissaoDTO> lista = getMockList();
-		
+
+		List<CotaEmissaoDTO> lista = chamadaEncalheService.obterDadosEmissaoChamadasEncalhe(filtro); 
+	
 		if(lista.isEmpty()) {
 			lista = new ArrayList<CotaEmissaoDTO>();
 		}

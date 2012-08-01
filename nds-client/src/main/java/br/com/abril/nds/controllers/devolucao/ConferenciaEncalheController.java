@@ -218,6 +218,8 @@ public class ConferenciaEncalheController {
 		
 		dados.put("reparte", infoConfereciaEncalheCota.getReparte() == null ? BigDecimal.ZERO : infoConfereciaEncalheCota.getReparte());
 		
+		dados.put("indDistribuidorAceitaJuramentado", infoConfereciaEncalheCota.isDistribuidorAceitaJuramentado());
+		
 		this.calcularValoresMonetarios(dados);
 		
 		Cota cota = infoConfereciaEncalheCota.getCota();
@@ -246,6 +248,10 @@ public class ConferenciaEncalheController {
 
 			dados.put("notaFiscal", dadosNotaFiscal);
 
+			
+		} else if( session.getAttribute(NOTA_FISCAL_CONFERENCIA) != null ){
+			
+			dados.put("notaFiscal", session.getAttribute(NOTA_FISCAL_CONFERENCIA));
 			
 		} else {
 			
@@ -431,12 +437,17 @@ public class ConferenciaEncalheController {
 		this.atualizarQuantidadeConferida(idProdutoEdicao, quantidade, produtoEdicao);
 		
 		this.carregarListaConferencia(null, false, false);
+		
 	}
 	
 	@Post
-	public void recalcularConferencia(Long idConferencia, Long qtdExemplares, Boolean juramentada, BigDecimal valorCapa){
+	public void atualizarValores(Long idConferencia, Long qtdExemplares, Boolean juramentada, BigDecimal valorCapa){
 		
 		List<ConferenciaEncalheDTO> listaConferencia = this.getListaConferenciaEncalheFromSession();
+		
+		if(qtdExemplares == null) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "Quantidade de exemplares inválida.");
+		}
 		
 		ConferenciaEncalheDTO conf = null;
 		

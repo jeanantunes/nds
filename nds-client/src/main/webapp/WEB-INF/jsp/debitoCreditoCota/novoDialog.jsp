@@ -275,16 +275,24 @@
 				height:600,
 				width:800,
 				modal: true,
-				buttons: {
-					"Confirmar": function() {
-						closeEnable = true;
-						salvarMovimentoFinanceiro();
-					},
-					"Cancelar": function() {
-						closeEnable = true;
-						$(this).dialog("close");
-					}
-				},
+				buttons:[ 
+				          {
+					           id:"bt_confirmar",
+					           text:"Confirmar", 
+					           click: function() {
+					        	   closeEnable = true;
+								   salvarMovimentoFinanceiro();
+					           }
+				           },
+				           {
+					           id:"bt_cancelar",
+					           text:"Cancelar", 
+					           click: function() {
+					        	   closeEnable = true;
+								   $(this).dialog("close");
+					           }
+				           }
+		        ],
 				beforeClose: function() {
 					
 					if (closeEnable!=true){

@@ -223,10 +223,13 @@ public class ConsultaNotasController {
 
 		List<Fornecedor> fornecedores = fornecedorService.obterFornecedoresAtivos();
 
-		List<TipoNotaFiscal> tiposNotaFiscal = tipoNotaFiscalService.obterTiposNotasFiscais();
+		Distribuidor distribuidor = distribuidorService.obter();
 
-		result.include("fornecedores", fornecedores);
-		result.include("tiposNotaFiscal", tiposNotaFiscal);		
+		List<TipoNotaFiscal> tiposNotaFiscal = 
+				this.tipoNotaFiscalService.obterTiposNotasFiscaisPorTipoAtividadeDistribuidor(distribuidor.getId());
+
+		this.result.include("fornecedores", fornecedores);
+		this.result.include("tiposNotaFiscal", tiposNotaFiscal);
 	}
 
 	private void inserirDataAtual() {

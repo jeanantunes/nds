@@ -291,17 +291,6 @@ public class BaixaFinanceiraController {
 		return usuario;
 	}
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	/**
 	 * Método responsavel pela busca de boleto individual
 	 * @param nossoNumero
@@ -635,11 +624,23 @@ public class BaixaFinanceiraController {
 			this.dividaService.postergarCobrancaCota(idCobrancas, dataPostergacao, idUsuario, isIsento);
 			
 		} catch (Exception e) {
-			this.result.use(
-				Results.json()).from(
-						new ValidacaoVO(
-							TipoMensagem.ERROR, "Ocorreu um erro ao tentar postergar as cobranças!"), "result").recursive().serialize();
-			throw new ValidacaoException();
+			
+			if(e instanceof ValidacaoException){
+				
+				ValidacaoException ex = (ValidacaoException)e;
+				
+				this.result.use(
+						Results.json()).from(ex.getValidacao(), "result").recursive().serialize();
+				return;
+			}
+			else{
+			
+				this.result.use(
+					Results.json()).from(
+							new ValidacaoVO(
+								TipoMensagem.ERROR, "Ocorreu um erro ao tentar postergar as cobranças!"), "result").recursive().serialize();
+				throw new ValidacaoException();
+			}
 		}
 		
 		this.result.use(

@@ -13,6 +13,8 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
@@ -55,7 +57,12 @@ public class ChamadaEncalhe implements Serializable {
 	
 	@OneToMany(mappedBy = "chamadaEncalhe", cascade = CascadeType.REMOVE)
 	private Set<ChamadaEncalheCota> chamadaEncalheCotas = new HashSet<ChamadaEncalheCota>();
-			
+	
+	@ManyToMany
+	@JoinTable(name = "CHAMADA_ENCALHE_LANCAMENTO", joinColumns = {@JoinColumn(name = "CHAMADA_ENCALHE_ID")}, 
+	inverseJoinColumns = {@JoinColumn(name = "LANCAMENTO_ID")})
+	private Set<Lancamento> lancamentos = new HashSet<Lancamento>();
+	
 	/**
 	 * @return the id
 	 */
@@ -118,6 +125,20 @@ public class ChamadaEncalhe implements Serializable {
 	 */
 	public void setChamadaEncalheCotas(Set<ChamadaEncalheCota> chamadaEncalheCotas) {
 		this.chamadaEncalheCotas = chamadaEncalheCotas;
+	}
+
+	/**
+	 * @return the lancamentos
+	 */
+	public Set<Lancamento> getLancamentos() {
+		return lancamentos;
+	}
+
+	/**
+	 * @param lancamentos the lancamentos to set
+	 */
+	public void setLancamentos(Set<Lancamento> lancamentos) {
+		this.lancamentos = lancamentos;
 	}
 
 }

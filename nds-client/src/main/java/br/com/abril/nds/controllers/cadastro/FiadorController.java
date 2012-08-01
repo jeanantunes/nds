@@ -142,12 +142,6 @@ public class FiadorController {
 			filtro.getPaginacaoVO().setOrdenacao(Util.getEnumByStringValue(Ordenacao.values(), sortorder));
 		}
 		
-		if ((filtro.getNome() == null || filtro.getNome().trim().isEmpty()) && 
-				(filtro.getCpfCnpj() == null || filtro.getCpfCnpj().trim().isEmpty())){
-			
-			throw new ValidacaoException(TipoMensagem.WARNING, "Nome ou CPF/CNPJ são obrigatórios.");
-		}
-		
 		if (filtro.getCpfCnpj() != null){
 			filtro.setCpfCnpj(filtro.getCpfCnpj().replace(".", "").replace("-", "").replace("/", ""));
 		}

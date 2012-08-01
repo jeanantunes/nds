@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.ParcialDTO;
+import br.com.abril.nds.dto.ParcialVendaDTO;
 import br.com.abril.nds.dto.PeriodoParcialDTO;
 import br.com.abril.nds.dto.filtro.FiltroParciaisDTO;
 import br.com.abril.nds.exception.ValidacaoException;
@@ -404,8 +405,30 @@ public class ParciaisController {
 		
 		result.nothing();
 	}
+	
+	/**
+	 * Exporta os dados da pesquisa de períodos.
+	 * 
+	 * @param fileType - tipo de arquivo
+	 * 
+	 * @throws IOException Exceção de E/S
+	 */
+	@Get
+	public void exportarDetalhesVenda(FileType fileType) throws IOException {
 		
+		List<ParcialVendaDTO> listaParcialVenda = new ArrayList<ParcialVendaDTO>();
+		
+		if(listaParcialVenda.isEmpty()) {
 
+			throw new ValidacaoException(TipoMensagem.WARNING,"A última pesquisa realizada não obteve resultado.");
+		}
+
+		FileExporter.to("detalhes_venda", fileType).inHTTPResponse(this.getNDSFileHeader(), null, null, 
+				listaParcialVenda, ParcialVendaDTO.class, this.httpResponse);
+		
+		result.nothing();
+	}
+		
 	/**
 	 * Método que obtém o usuário logado
 	 * 

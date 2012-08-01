@@ -91,7 +91,6 @@ public class ConferenciaEncalheRepositoryImpl extends
 		hql.append(" 0 AS qtdInformada, 	");
 		hql.append(" 0 AS valorTotal, 		");
 		hql.append(" PROD_EDICAO.PRECO_VENDA AS precoCapaInformado,                   ");
-		
 		hql.append(" CH_ENCALHE.DATA_RECOLHIMENTO AS dataRecolhimento,  	 ");
 		hql.append(" CH_ENCALHE.TIPO_CHAMADA_ENCALHE AS tipoChamadaEncalhe,	 ");
 		hql.append(" PROD.CODIGO AS codigo,");
@@ -145,7 +144,6 @@ public class ConferenciaEncalheRepositoryImpl extends
 		((SQLQuery)query).addScalar("qtdInformada", StandardBasicTypes.BIG_DECIMAL);
 		((SQLQuery)query).addScalar("precoCapaInformado", StandardBasicTypes.BIG_DECIMAL);
 		((SQLQuery)query).addScalar("valorTotal", StandardBasicTypes.BIG_DECIMAL);
-						
 		
 		((SQLQuery)query).addScalar("dataRecolhimento");
 		((SQLQuery)query).addScalar("tipoChamadaEncalhe");
@@ -236,6 +234,7 @@ public class ConferenciaEncalheRepositoryImpl extends
 		((SQLQuery)query).addScalar("idConferenciaEncalhe", StandardBasicTypes.LONG);
 		((SQLQuery)query).addScalar("qtdExemplar");
 		((SQLQuery)query).addScalar("qtdInformada");
+		((SQLQuery)query).addScalar("juramentada");
 		((SQLQuery)query).addScalar("precoCapaInformado");
 		((SQLQuery)query).addScalar("tipoChamadaEncalhe");
 		((SQLQuery)query).addScalar("idProdutoEdicao", StandardBasicTypes.LONG);

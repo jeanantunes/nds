@@ -2,6 +2,7 @@ package br.com.abril.nds.server.model;
 
 public enum TipoIndicador {
 
+	LIQUIDACAO("Liquidação", 5),
 	TITULOS_LANCADOS("Títulos Lançados no Dia", 0),
 	TITULOS_FURADOS("Títulos Furados no Dia", 1),
 	CONSIGNADO("Consignado no Dia", 2),
@@ -33,13 +34,12 @@ public enum TipoIndicador {
 		this.ordemExibicao = ordemExibicao;
 	}
 	
-	public String toString(){
-		
-		return this.descricao;
-	}
-	
 	public int getOrdemExibicao(){
 		
 		return this.ordemExibicao;
+	}
+
+	public String getDescricao() {
+		return descricao;
 	}
 }

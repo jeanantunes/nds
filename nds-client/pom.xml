@@ -227,6 +227,7 @@
 				<configuration>
 					<mainClass>br.com.abril.nds.fixture.DataLoader</mainClass>
 					<classpathScope>test</classpathScope>
+					<!-- <commandlineArgs>cleanData</commandlineArgs> -->
 				</configuration>
 			</plugin>
 		</plugins>
@@ -269,6 +270,7 @@
 				<activeByDefault>true</activeByDefault>
 			</activation>
 			<properties>
+				<jndi-name>java:comp/env/jdbc/nds-client</jndi-name>
 				<dataSourceURL>jdbc:mysql://localhost:3306/nds-client</dataSourceURL>
 				<dataSourceUsername>root</dataSourceUsername>
 				<dataSourcePassword>root</dataSourcePassword>
@@ -293,6 +295,7 @@
 		<profile>
 			<id>desenvolvimento-abril</id>
 			<properties>
+				<jndi-name>java:comp/env/jdbc/nds-client</jndi-name>
 				<dataSourceURL>jdbc:mysql://abrildgbdb01.cdgtwjqgurfb.sa-east-1.rds.amazonaws.com:3306/nds-client</dataSourceURL>
 				<dataSourceUsername>admin</dataSourceUsername>
 				<dataSourcePassword>abrildgb01</dataSourcePassword>
@@ -316,6 +319,7 @@
 		<profile>
 			<id>integracaoContinua</id>
 			<properties>
+				<jndi-name>java:comp/env/jdbc/nds-client</jndi-name>
 				<dataSourceURL>jdbc:mysql://abrildgbdb01.cdgtwjqgurfb.sa-east-1.rds.amazonaws.com:3306/nds-client</dataSourceURL>
 				<dataSourceUsername>admin</dataSourceUsername>
 				<dataSourcePassword>abrildgb01</dataSourcePassword>
@@ -339,6 +343,7 @@
 		<profile>
 			<id>qa</id>
 			<properties>
+				<jndi-name>java:comp/env/jdbc/nds-client</jndi-name>
 				<dataSourceURL>jdbc:mysql://10.10.50.197:3306/nds-client</dataSourceURL>
 				<dataSourceUsername>root</dataSourceUsername>
 				<dataSourcePassword>root</dataSourcePassword>
@@ -362,6 +367,7 @@
 		<profile>
 			<id>qa2</id>
 			<properties>
+				<jndi-name>java:comp/env/jdbc/nds-client</jndi-name>
 				<dataSourceURL>jdbc:mysql://10.10.50.201:3306/nds-client</dataSourceURL>
 				<dataSourceUsername>root</dataSourceUsername>
 				<dataSourcePassword>root</dataSourcePassword>
@@ -385,6 +391,7 @@
 		<profile>
 			<id>qa3</id>
 			<properties>
+				<jndi-name>java:comp/env/jdbc/nds-client</jndi-name>
 				<dataSourceURL>jdbc:mysql://10.10.50.198:3306/nds-client</dataSourceURL>
 				<dataSourceUsername>root</dataSourceUsername>
 				<dataSourcePassword>root</dataSourcePassword>
@@ -407,6 +414,12 @@
 		</profile>
 		<profile>
 			<id>homologacao</id>
+			<properties>
+				<jndi-name>java:comp/env/jdbc/nds-client-homolog</jndi-name>
+				<dataSourceURL>jdbc:mysql://abrildgbdb01.cdgtwjqgurfb.sa-east-1.rds.amazonaws.com:3306/nds-client-homolog</dataSourceURL>
+				<dataSourceUsername>admin</dataSourceUsername>
+				<dataSourcePassword>abrildgb01</dataSourcePassword>
+			</properties>
 			<build>
 				<plugins>
 					<plugin>

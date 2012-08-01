@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import javax.annotation.PostConstruct;
+
 import org.apache.commons.io.IOUtils;
 import org.lightcouch.NoDocumentException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +21,8 @@ import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.TipoImpressaoInformeEncalheDTO;
 import br.com.abril.nds.dto.TipoImpressaoInformeEncalheDTO.Capas;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.integracao.service.DistribuidorService;
+import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
@@ -58,7 +62,15 @@ public class ConsultaInformeEncalheController {
 	private FornecedorService fornecedorService;
 	
 	@Autowired 
-	private CapaService capaService;
+	private CapaService capaService;	
+	
+	
+	private DiaSemana inicioDaSemana;
+	
+	
+	private ConsultaInformeEncalheController(DistribuidorService distribuidorService){
+		inicioDaSemana = distribuidorService.obter().getInicioSemana();
+	}
 
 	@Get("/")
 	@Rules(Permissao.ROLE_RECOLHIMENTO_CONSULTA_INFORME_ENCALHE)
@@ -80,80 +92,42 @@ public class ConsultaInformeEncalheController {
 				if (semanaRecolhimento > dataInicioRecolhimento
 						.getMaximum(Calendar.WEEK_OF_YEAR)) {
 					throw new ValidacaoException(new ValidacaoVO(
-							TipoMensagem.ERROR, "Semana inválida."));
+							TipoMensagem.WARNING, "Semana inválida."));
 				}
 
 				dataInicioRecolhimento.set(Calendar.WEEK_OF_YEAR,
 						semanaRecolhimento);
-				dataInicioRecolhimento.add(Calendar.DAY_OF_MONTH, -1);
+				
+				dataInicioRecolhimento.set(Calendar.DAY_OF_WEEK, inicioDaSemana.getCodigoDiaSemana());
 				dataFimRecolhimento = (Calendar) dataInicioRecolhimento.clone();
-				dataFimRecolhimento.add(Calendar.DAY_OF_MONTH, 7);
+				dataFimRecolhimento.add(Calendar.DAY_OF_MONTH, 6);
 
 			} else if (dataRecolhimento != null) {
 				dataInicioRecolhimento = dataRecolhimento;
 				dataFimRecolhimento = dataRecolhimento;
 			}
 		} else {
-			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR,
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING,
 					"Informe [Semana] ou [Data Recolhimento]"));
 		}
 		Long quantidade = lancamentoService
 				.quantidadeLancamentoInformeRecolhimento(idFornecedor,
 						dataInicioRecolhimento, dataFimRecolhimento);
-		List<InformeEncalheDTO> informeEncalheDTOs = lancamentoService
-				.obterLancamentoInformeRecolhimento(idFornecedor,
-						dataInicioRecolhimento, dataFimRecolhimento, sortname,
-						Ordenacao.valueOf(sortorder.toUpperCase()), page * rp
-								- rp, rp);
-
-		result.use(FlexiGridJson.class).from(informeEncalheDTOs)
-				.total(quantidade.intValue()).page(page).serialize();
+		if (quantidade > 0) {
+			List<InformeEncalheDTO> informeEncalheDTOs = lancamentoService
+					.obterLancamentoInformeRecolhimento(idFornecedor,
+							dataInicioRecolhimento, dataFimRecolhimento,
+							sortname,
+							Ordenacao.valueOf(sortorder.toUpperCase()), page
+									* rp - rp, rp);
+			result.use(FlexiGridJson.class).from(informeEncalheDTOs)
+					.total(quantidade.intValue()).page(page).serialize();
+		}else{
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING,
+					"Registros não encontrados."));
+		}
 	}
 
-	@Post("/imprimir")
-	public Download imprimir(Long idFornecedor, Integer semanaRecolhimento,
-			Calendar dataRecolhimento,
-			TipoImpressaoInformeEncalheDTO tipoImpressao, String sortname,
-			String sortorder) throws IOException {
-		Calendar dataInicioRecolhimento = null, dataFimRecolhimento = null;
-
-		if ((semanaRecolhimento == null) ^ (dataRecolhimento == null)) {
-			if (semanaRecolhimento != null) {
-				dataInicioRecolhimento = Calendar.getInstance();
-
-				if (semanaRecolhimento > dataInicioRecolhimento
-						.getMaximum(Calendar.WEEK_OF_YEAR)) {
-					throw new ValidacaoException(new ValidacaoVO(
-							TipoMensagem.ERROR, "Semana inválida."));
-				}
-
-				dataInicioRecolhimento.set(Calendar.WEEK_OF_YEAR,
-						semanaRecolhimento);
-				dataInicioRecolhimento.add(Calendar.DAY_OF_MONTH, -1);
-				dataFimRecolhimento = (Calendar) dataInicioRecolhimento.clone();
-				dataFimRecolhimento.add(Calendar.DAY_OF_MONTH, 7);
-
-			} else if (dataRecolhimento != null) {
-				dataInicioRecolhimento = dataRecolhimento;
-				dataFimRecolhimento = dataRecolhimento;
-			}
-		} else {
-			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR,
-					"Informe [Semana] ou [Data Recolhimento]"));
-		}
-
-		List<InformeEncalheDTO> informeEncalheDTOs = lancamentoService
-				.obterLancamentoInformeRecolhimento(idFornecedor,
-						dataInicioRecolhimento, dataFimRecolhimento, sortname,
-						Ordenacao.valueOf(sortorder.toUpperCase()), null, null);
-
-		if (tipoImpressao.getCapas() != Capas.NAO) {
-			List<List<ItemDTO<Integer, byte[]>>> capas = preparaDadosImpressao(informeEncalheDTOs);
-		}
-		//TODO: Chamar relatorio;
-		return new ByteArrayDownload(new byte[0], "application/pdf", "relatorio.pdf", true);
-
-	}
 	
 	@Post
 	public void relatorioInformeEncalhe(Long idFornecedor, Integer semanaRecolhimento,
@@ -175,21 +149,22 @@ public class ConsultaInformeEncalheController {
 				if (semanaRecolhimento > dataInicioRecolhimento
 						.getMaximum(Calendar.WEEK_OF_YEAR)) {
 					throw new ValidacaoException(new ValidacaoVO(
-							TipoMensagem.ERROR, "Semana inválida."));
+							TipoMensagem.WARNING, "Semana inválida."));
 				}
 
 				dataInicioRecolhimento.set(Calendar.WEEK_OF_YEAR,
 						semanaRecolhimento);
-				dataInicioRecolhimento.add(Calendar.DAY_OF_MONTH, -1);
+				
+				dataInicioRecolhimento.set(Calendar.DAY_OF_WEEK, inicioDaSemana.getCodigoDiaSemana());
 				dataFimRecolhimento = (Calendar) dataInicioRecolhimento.clone();
-				dataFimRecolhimento.add(Calendar.DAY_OF_MONTH, 7);
+				dataFimRecolhimento.add(Calendar.DAY_OF_MONTH, 6);
 
 			} else if (dataRecolhimento != null) {
 				dataInicioRecolhimento = dataRecolhimento;
 				dataFimRecolhimento = dataRecolhimento;
 			}
 		} else {
-			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR,
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING,
 					"Informe [Semana] ou [Data Recolhimento]"));
 		}
 

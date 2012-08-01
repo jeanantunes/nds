@@ -1,6 +1,7 @@
 package br.com.abril.nds.repository.impl;
 
 import java.math.BigDecimal;
+import java.security.InvalidParameterException;
 import java.util.List;
 import java.util.Set;
 
@@ -186,9 +187,9 @@ public class EstoqueProdutoCotaRepositoryImpl extends AbstractRepositoryModel<Es
 		if (cotaInadimplente){
 			
 			hql.append(" where es.cota.id not in ( ")
-			   .append(" select distinct hist.dividad.cota.id ")
+			   .append(" select distinct hist.divida.cota.id ")
 			   .append(" from HistoricoAcumuloDivida hist ")
-			   .append(" where hist.status != :quitada ");
+			   .append(" where hist.status != :quitada) ");
 		}
 		
 		Query query = this.getSession().createQuery(hql.toString());
@@ -199,5 +200,30 @@ public class EstoqueProdutoCotaRepositoryImpl extends AbstractRepositoryModel<Es
 		}
 		
 		return (BigDecimal) query.uniqueResult();
+	}
+
+	@Override
+	public Double obterFaturamentoCota(Long idCota) {
+		
+		if (idCota == null)
+			throw new InvalidParameterException();
+				
+		StringBuilder hql = new StringBuilder();
+
+		hql.append(" SELECT sum((epc.qtdeRecebida - epc.qtdeDevolvida) * (produtoEdicao.precoVenda - produtoEdicao.desconto))")
+		
+		.append(" FROM EstoqueProdutoCota AS epc ")
+		.append(" JOIN epc.cota as cota ")
+		.append(" JOIN epc.produtoEdicao as produtoEdicao ");
+		
+		
+		hql.append(" WHERE cota.id = :idCota ");
+		
+
+		Query query = this.getSession().createQuery(hql.toString());
+		
+		query.setParameter("idCota",idCota);
+		
+		return ((BigDecimal) query.uniqueResult()).doubleValue();
 	}
 }

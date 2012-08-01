@@ -366,7 +366,8 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 
 		hql.append("SELECT new ")
 				.append(ChamadaAntecipadaEncalheDTO.class.getCanonicalName())
-				.append(" ( box.codigo , cota.numeroCota, estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida, ")
+				.append(" ( box.codigo, box.nome ,cota.numeroCota, estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida, ")
+				.append(" lancamento.id ,")
 				.append(" case when (pessoa.nome is not null) then ( pessoa.nome )")
 				.append(" when (pessoa.razaoSocial is not null) then ( pessoa.razaoSocial )")
 				.append(" else null end ").append(" ) ");
@@ -434,6 +435,14 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 		if(filtro.getRoteiro()!= null){
 			param.put("roteiro",filtro.getRoteiro());
 		}
+		
+		if(filtro.getCodMunicipio()!= null){
+			param.put("codigoCidadeIBGE",filtro.getCodMunicipio());
+		}
+		
+		if(filtro.getCodTipoPontoPDV()!= null){
+			param.put("codigoTipoPontoPDV", filtro.getCodTipoPontoPDV());
+		}
 
 		return param;
 	}
@@ -460,7 +469,12 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 		if (filtro.getFornecedor() != null) {
 			hql.append(" JOIN produto.fornecedores fornecedor ");
 		}
-
+		
+		if(filtro.getCodMunicipio()!= null){
+			hql.append(" JOIN pdv.enderecos enderecoPDV ")
+				.append(" JOIN enderecoPDV.endereco endereco ");
+		}
+		
 		hql.append(" WHERE ")
 				.append("NOT EXISTS (")
 				.append(" SELECT chamadaEncalheCota.cota FROM ChamadaEncalheCota chamadaEncalheCota ")
@@ -476,6 +490,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 				.append(" AND lancamento.dataRecolhimentoPrevista >:dataAtual ")
 				.append(" AND (estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) > 0 ")
 				.append(" AND pdv.caracteristicas.pontoPrincipal = true ");
+
 
 		if (filtro.getNumeroCota() != null) {
 
@@ -498,6 +513,14 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 		
 		if(filtro.getRoteiro()!= null ){
 			hql.append(" AND roteiro.id =:roteiro ");
+		}
+		
+		if(filtro.getCodMunicipio()!= null){
+			hql.append(" AND endereco.codigoCidadeIBGE =:codigoCidadeIBGE ");
+		}
+		
+		if(filtro.getCodTipoPontoPDV()!= null){
+			hql.append(" AND pdv.segmentacao.tipoPontoPDV.codigo =:codigoTipoPontoPDV ");
 		}
 
 		return hql.toString();
@@ -1043,19 +1066,24 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public Set<Long> obterIdCotasEntre(Intervalo<Integer> intervaloCota, Intervalo<String> intervaloBox, SituacaoCadastro situacao) {
+	public Set<Long> obterIdCotasEntre(Intervalo<Integer> intervaloCota, Intervalo<Integer> intervaloBox, SituacaoCadastro situacao) {
 		
 		Set<Long> listaIdCotas = new HashSet<Long>();
 		
 		Criteria criteria = super.getSession().createCriteria(Cota.class);
 		criteria.createAlias("box", "box");
 		criteria.setProjection(Projections.id());
-		if (intervaloCota != null) {
-			criteria.add(Restrictions.between("numeroCota", intervaloCota.getDe(),
-					intervaloCota.getAte()));
+		if (intervaloCota != null && intervaloCota.getDe() != null) {
+			
+			if (intervaloCota.getAte() != null) {
+				criteria.add(Restrictions.between("numeroCota", intervaloCota.getDe(),
+						intervaloCota.getAte()));
+			} else {
+				criteria.add(Restrictions.eq("numeroCota", intervaloCota.getDe()));
+			}
 		}
 		
-		if(intervaloBox != null){
+		if(intervaloBox != null && intervaloBox.getDe() != null &&  intervaloBox.getAte() != null){
 			criteria.add(Restrictions.between("box.codigo", intervaloBox.getDe(),
 					intervaloBox.getAte()));
 		}

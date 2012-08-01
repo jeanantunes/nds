@@ -88,6 +88,9 @@ public class Fornecedor implements Serializable {
 	@Enumerated(EnumType.STRING)
 	@Column(name = "ORIGEM", nullable = false)
 	private Origem origem;
+	
+	@Column(name = "EMAIL_NFE")
+	private String emailNfe;
 
 	public Long getId() {
 		return id;
@@ -205,6 +208,20 @@ public class Fornecedor implements Serializable {
 	 */
 	public void setOrigem(Origem origem) {
 		this.origem = origem;
+	}
+
+	/**
+	 * @return the emailNfe
+	 */
+	public String getEmailNfe() {
+		return emailNfe;
+	}
+
+	/**
+	 * @param emailNfe the emailNfe to set
+	 */
+	public void setEmailNfe(String emailNfe) {
+		this.emailNfe = emailNfe;
 	}
 
 	@Override

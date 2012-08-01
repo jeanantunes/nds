@@ -332,13 +332,24 @@
 		<dependency>
 			<groupId>com.ancientprogramming.fixedformat4j</groupId>
 			<artifactId>fixedformat4j</artifactId>
-			<version>1.2.2</version>
 			<type>jar</type>
 			<scope>compile</scope>
 		</dependency>
 	</dependencies>
 
 	<repositories>
+		<!-- Antigo
+		<repository>
+			<id>nexus</id>
+			<url>http://177.71.177.215:8080/nexus/content/groups/public/</url>
+		</repository>
+		-->
+	
+		<repository>
+			<id>nexus</id>
+			<url>http://177.71.255.76:8080/nexus-2.0.6/content/groups/public/</url>
+		</repository>
+	
 		<repository>
 		   <id>jrimum.org</id>
 		   <url>http://jrimum.org/maven/content/groups/public/</url>
@@ -346,10 +357,6 @@
 		      <enabled>true</enabled>
 		   </snapshots>
 		</repository>	
-		<repository>
-			<id>nexus</id>
-			<url>http://177.71.177.215:8080/nexus/content/groups/public/</url>
-		</repository>
 	</repositories>
 
 	<build>
@@ -421,7 +428,6 @@
 		<module>ndsi-canonical</module>
 		<module>ndsi-couchdbinterface</module>
 		<module>ndsi-engine</module>
-		<module>ndsi-webtest</module>
 
 		<module>nds-client</module>
 
