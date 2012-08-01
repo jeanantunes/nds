@@ -81,7 +81,45 @@
 <link rel="stylesheet" type="text/css"
 	  href="${pageContext.request.contextPath}/scripts/tools-1.2.6/css/tools.css" />
 
+<link rel="stylesheet" href="scripts/jquery-ui-1.8.16.custom/development-bundle/themes/redmond/jquery.ui.all.css" />
+
+<link rel="stylesheet" type="text/css" href="scripts/tooltip/tipsy.css" />
+<link rel="stylesheet" type="text/css" href="scripts/tooltip/tipsy-docs.css" />
+<script language="javascript" type="text/javascript" src="scripts/tooltip/jquery.tipsy.js"></script>
+
+<script type="text/javascript" src="scripts/commonsbehaviour.js"></script>
+
 <script language="javascript" type="text/javascript">
+
+(function($) {
+	$.fn
+			.extend(
+					$.ui.dialog.prototype,
+					{
+						_original_init : $.ui.dialog.prototype._init,
+						_original_open : $.ui.dialog.prototype.open,
+						_init : function() {
+							var self = this.element;
+
+							var diaOpt = {
+								form: this.options.form
+							};
+
+							$.fn.extend(true, this.options, diaOpt);
+							this._original_init();
+
+							
+							//this.addForm();
+						},
+						open : function() {
+							var self = this.element, o = this.options;
+							self.parent().appendTo(o.form);
+							this._original_open();
+							self.parent().css("top", "58px");
+						}
+					});
+})(jQuery);
+
 	$(function() {
 		$( "#tabs-cadastros" ).tabs();
 		$( "#tabs-pessoas" ).tabs();
@@ -498,7 +536,6 @@
 			<!-- DECORATOR BODY -->
 		</div>
 		<br clear="all" />
-
 
 	</div>
 
