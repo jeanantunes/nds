@@ -27,7 +27,11 @@ public class ProdutoEdicaoDTO implements Serializable {
 	private BigDecimal peso;
 	private String codigoProduto;
 	private String nomeProduto;
+	
+	private String descricaoProduto;
 	private boolean possuiBrinde;
+	private String descricaoBrinde;
+	
 	private BigDecimal expectativaVenda;
 	private boolean permiteValeDesconto;
 	private boolean parcial;
@@ -523,6 +527,30 @@ public class ProdutoEdicaoDTO implements Serializable {
 	 */
 	public void setSemanaRecolhimento(Integer semanaRecolhimento) {
 		this.semanaRecolhimento = semanaRecolhimento;
+	}
+	/**
+	 * @return the descricaoBrinde
+	 */
+	public String getDescricaoBrinde() {
+		return descricaoBrinde;
+	}
+	/**
+	 * @param descricaoBrinde the descricaoBrinde to set
+	 */
+	public void setDescricaoBrinde(String descricaoBrinde) {
+		this.descricaoBrinde = descricaoBrinde;
+	}
+	/**
+	 * @return the descricaoProduto
+	 */
+	public String getDescricaoProduto() {
+		return descricaoProduto;
+	}
+	/**
+	 * @param descricaoProduto the descricaoProduto to set
+	 */
+	public void setDescricaoProduto(String descricaoProduto) {
+		this.descricaoProduto = descricaoProduto;
 	}
 	
 }

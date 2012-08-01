@@ -364,13 +364,13 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		if (statusLancamento != null) {
 			hql.append("  AND ln.status = :situacaoLancamento ");
 		}		
-		if (StringUtil.isEmpty(codigoProduto)) {
+		if (!StringUtil.isEmpty(codigoProduto)) {
 			hql.append("  AND UPPER(pr.codigo) LIKE UPPER(:codigoProduto) ");
 		}
-		if (StringUtil.isEmpty(nomeProduto)) {
+		if (!StringUtil.isEmpty(nomeProduto)) {
 			hql.append("  AND UPPER(pr.descricao) LIKE UPPER(:nomeProduto) ");
 		}
-		if (StringUtil.isEmpty(codigoDeBarras)) {
+		if (!StringUtil.isEmpty(codigoDeBarras)) {
 			hql.append("  AND pe.codigoDeBarras LIKE :codigoDeBarras ");
 		}
 		if (brinde) {
@@ -397,13 +397,13 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		if (statusLancamento != null) {
 			query.setParameter("situacaoLancamento", statusLancamento);
 		}		
-		if (StringUtil.isEmpty(codigoProduto)) {
+		if (!StringUtil.isEmpty(codigoProduto)) {
 			query.setString("codigoProduto", codigoProduto);
 		}
-		if (StringUtil.isEmpty(nomeProduto))  {
+		if (!StringUtil.isEmpty(nomeProduto))  {
 			query.setString("nomeProduto", nomeProduto);
 		}
-		if (StringUtil.isEmpty(codigoDeBarras)){
+		if (!StringUtil.isEmpty(codigoDeBarras)){
 			query.setString("codigoDeBarras", codigoDeBarras);
 		}
 		if (brinde) {

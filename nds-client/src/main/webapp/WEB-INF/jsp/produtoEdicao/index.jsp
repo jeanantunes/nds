@@ -191,12 +191,16 @@ function carregarDialog(id) {
 				$("#espessura").val(result.espessura);
 				$("#chamadaCapa").val(result.chamadaCapa);
 				$('#parcial').val(result.parcial + "");
-				$('#possuiBrinde').attr('checked', result.possuiBrinde);
+				$('#possuiBrinde').attr('checked', result.possuiBrinde).change();
 				$('#boletimInformativo').val(result.boletimInformativo);
 				
 				$('#dataRecolhimentoPrevisto').val(result.dataRecolhimentoPrevisto == undefined ? '' : result.dataRecolhimentoPrevisto.$).attr("readonly", false);
 				$('#semanaRecolhimento').val(result.semanaRecolhimento);
 				$('#dataRecolhimentoReal').val(result.dataRecolhimentoReal == undefined ? '' : result.dataRecolhimentoReal.$);
+				$("#ped").val(result.ped).attr("readonly", false);		
+				$("#descricaoProduto").val(result.descricaoProduto).attr("readonly", false);
+				$("#descricaoBrinde").val(result.descricaoBrinde).attr("readonly", false);
+				
 				if (result.origemInterface) {
 					$("#precoVenda").attr("readonly", false);				
 				} else {
@@ -496,11 +500,23 @@ $(function() {
 	$("#comprimento").numeric();
 	$("#espessura").numeric();
 	$("#numeroLancamento").numeric();
+	$("#ped").numeric();
+	
 
 	$("#dataLancamentoPrevisto").mask("99/99/9999");
 	$("#dataRecolhimentoPrevisto").mask("99/99/9999");
 	$("#dataRecolhimentoReal").mask("99/99/9999");
 	$("#dataLancamento").mask("99/99/9999");
+	
+	$('#possuiBrinde').change(function(){
+		if($(this).attr('checked')){
+			$('.descBrinde').show();
+		}else{
+			$('.descBrinde').hide();
+		}
+	});
+	
+
 });
 </script>
 
@@ -605,7 +621,7 @@ fieldset {
 									<td><strong>Edi&ccedil;&atilde;o:</strong></td>
 									<td><input type="text" name="numeroEdicao" id="numeroEdicao" style="width:50px;" /></td>
 									<td><strong>PED:</strong></td>
-									<td><input type="text" name="ped" id="ped" style="width:50px;" disabled="disabled" /></td>
+									<td><input type="text" name="ped" id="ped" style="width:50px;" /></td>
 									<td><strong>Pct. Padr&atilde;o:</strong></td>
 									<td><input type="text" name="pacotePadrao" id="pacotePadrao" style="width:50px;" /></td>
 								</tr>
@@ -758,17 +774,9 @@ fieldset {
 									<td width="86"><input type="text" name="peso" id="peso" style="width:80px;" /></td>
 								</tr>
 								<tr>
-									<td width="59">Largura:</td>
-									<td width="86"><input type="text" name="largura" id="largura" style="width:80px;" /></td>
-								</tr>
-								<tr>
-									<td width="59">Comprimento:</td>
-									<td width="86"><input type="text" name="comprimento" id="comprimento" style="width:80px;" /></td>
-								</tr>
-								<tr>
-									<td width="59">Espessura:</td>
-									<td width="86"><input type="text" name="espessura" id="espessura" style="width:80px;" /></td>
-								</tr>
+									<td width="59">Descri&ccedil;&atilde;o Produto:</td>
+									<td width="86"><input type="text" name="descricaoProduto" id="descricaoProduto" style="width:80px;" /></td>
+								</tr>							
 							</tbody>
 						</table>
 					</fieldset>
@@ -795,6 +803,10 @@ fieldset {
 									<td height="24">Brinde:</td>
 									<td><input type="checkbox" name="possuiBrinde" id="possuiBrinde" /></td>
 								</tr>
+								<tr class="descBrinde" style="display:none;">
+						       	    <td height="24">Descri&ccedil;&atilde;o Brinde:</td>
+						       	    <td><input type="text" name="descricaoBrinde" id="descricaoBrinde" style="width:190px;" /></td>
+						     	</tr>
 							</tbody>
 						</table>
 					</fieldset>

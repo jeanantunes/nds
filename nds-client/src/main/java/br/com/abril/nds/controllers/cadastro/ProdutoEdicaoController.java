@@ -65,23 +65,38 @@ public class ProdutoEdicaoController {
 			Date dataLancamentoDe, Date dataLancamentoAte, BigDecimal precoDe,BigDecimal precoAte , String situacaoLancamento,
 			String codigoDeBarras, boolean brinde,
             String sortorder, String sortname, int page, int rp) {
-
+		Intervalo<BigDecimal> intervaloPreco = null;
+		Intervalo<Date> intervaloLancamento = null;
 		// Validar:
 		if ((codigoProduto == null || codigoProduto.trim().isEmpty()) 
 				|| (nomeProduto == null || nomeProduto.trim().isEmpty())) {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Por favor, preencha o campo 'Código' ou 'Produto'!");
 		}
-		
+		if(dataLancamentoDe == null ^ dataLancamentoAte == null ){
+			throw new ValidacaoException(TipoMensagem.WARNING, "Por favor, preencha o interválo válido de 'Lançamento'!");
+		}else if(dataLancamentoDe != null && dataLancamentoAte != null){
+			if(dataLancamentoDe.before(dataLancamentoAte)){
+				throw new ValidacaoException(TipoMensagem.WARNING, "Por favor, preencha o interválo válido de 'Lançamento'!");
+			}
+			
+			intervaloLancamento = new Intervalo<Date>(dataLancamentoDe, dataLancamentoAte);		
+		}
+		if(precoDe == null ^ precoAte == null ){
+			throw new ValidacaoException(TipoMensagem.WARNING, "Por favor, preencha o interválo válido de 'Preço'!");
+		}else if(precoDe != null && precoAte != null ){
+			if(precoDe.compareTo(precoAte) <=0){
+				throw new ValidacaoException(TipoMensagem.WARNING, "Por favor, preencha o interválo válido de 'Preço'!");
+			}
+			intervaloPreco = new Intervalo<BigDecimal>(precoDe, precoAte);
+		}		
 		
 		StatusLancamento statusLancamento = null;
 		for (StatusLancamento status : StatusLancamento.values()) {
 			if (status.getDescricao().equals(situacaoLancamento)) {
 				statusLancamento = status;
 			}
-		}
-		
-		Intervalo<Date> intervaloLancamento = new Intervalo<Date>(dataLancamentoDe, dataLancamentoAte);
-		Intervalo<BigDecimal> intervaloPreco = new Intervalo<BigDecimal>(precoDe, precoAte);
+		}		
+	
 		// Pesquisar:
 		Long qtd = peService.countPesquisarEdicoes(codigoProduto, nomeProduto, intervaloLancamento, intervaloPreco, statusLancamento, codigoDeBarras, brinde);
 		List<ProdutoEdicaoDTO> lst = peService.pesquisarEdicoes(codigoProduto, nomeProduto, intervaloLancamento, intervaloPreco, statusLancamento, codigoDeBarras, brinde, sortorder, sortname, page, rp);
@@ -111,6 +126,7 @@ public class ProdutoEdicaoController {
 		dto.setPacotePadrao(produto.getPacotePadrao());
 		dto.setPeso(produto.getPeso());
 		dto.setDescricaoDesconto("");
+		dto.setDescricaoProduto(produto.getDescricao());
 		dto.setDesconto(produto.getDescontoLogistica() == null 
 				? BigDecimal.ZERO : BigDecimal.valueOf(
 						produto.getDescontoLogistica().getPercentualDesconto()));
@@ -139,9 +155,9 @@ public class ProdutoEdicaoController {
 			dto.setNumeroLancamento(pe.getNumeroLancamento());
 			dto.setPeb(pe.getPeb());
 			dto.setEditor(pe.getProduto().getEditor().getNome());
-			
-			
-			
+			if (pe.getBrinde() !=null) {
+				dto.setDescricaoBrinde(pe.getBrinde().getDescricao());
+			}
 			Dimensao dimEdicao = pe.getDimensao();
 			if (dimEdicao == null) {
 				dto.setComprimento(0);
@@ -209,7 +225,7 @@ public class ProdutoEdicaoController {
 			BigDecimal desconto, BigDecimal peso, 
 			BigDecimal largura, BigDecimal comprimento, BigDecimal espessura,
 			String chamadaCapa, boolean parcial, boolean possuiBrinde,
-			String boletimInformativo, Integer numeroLancamento) {
+			String boletimInformativo, Integer numeroLancamento, String descricaoBrinde, String descricaoProduto) {
 		
 		// DTO para transportar os dados:
 		ProdutoEdicaoDTO dto = new ProdutoEdicaoDTO();
@@ -235,7 +251,8 @@ public class ProdutoEdicaoController {
 		dto.setParcial(parcial);
 		dto.setPossuiBrinde(possuiBrinde);
 		dto.setNumeroLancamento(numeroLancamento);
-		
+		dto.setDescricaoBrinde(descricaoBrinde);
+		dto.setDescricaoProduto(descricaoProduto);
 		this.validarProdutoEdicao(dto);
 		
 		
@@ -255,7 +272,7 @@ public class ProdutoEdicaoController {
 		} catch (ValidacaoException e) {
 			
 			vo = e.getValidacao();
-		} catch (Exception e) {
+		} catch (Throwable e) {
 			
 			vo = new ValidacaoVO(TipoMensagem.ERROR, e.getMessage());
 		} finally {

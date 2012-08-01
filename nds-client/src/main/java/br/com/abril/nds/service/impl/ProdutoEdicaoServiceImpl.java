@@ -19,6 +19,7 @@ import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.dto.FuroProdutoDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.cadastro.Brinde;
 import br.com.abril.nds.model.cadastro.Dimensao;
 import br.com.abril.nds.model.cadastro.ParametroSistema;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
@@ -429,6 +430,8 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 			dimEdicao.setEspessura(dto.getEspessura());
 			produtoEdicao.setDimensao(dimEdicao);
 			
+			produtoEdicao.getProduto().setDescricao(dto.getDescricaoProduto());
+			
 			// Texto boletim informativo:
 			produtoEdicao.setBoletimInformativo(dto.getBoletimInformativo());
 		} else {
@@ -446,18 +449,20 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 		// Outros:
 		produtoEdicao.setChamadaCapa(dto.getChamadaCapa());
 		produtoEdicao.setPossuiBrinde(dto.isPossuiBrinde());
+		if(produtoEdicao.getBrinde()==null){
+			produtoEdicao.setBrinde(new Brinde());
+		}
+		produtoEdicao.getBrinde().setDescricao(dto.getDescricaoBrinde());
 		
 		// Característica Física:
 		produtoEdicao.setPeso(dto.getPeso());
 		
 		produtoEdicao.setNumeroLancamento(dto.getNumeroLancamento());
 		
-		if (produtoEdicao.getId() == null) {
-			
+		if (produtoEdicao.getId() == null) {			
 			// Salvar:
 			produtoEdicaoRepository.adicionar(produtoEdicao);
-		} else {
-			
+		} else {			
 			// Atualizar:
 			produtoEdicaoRepository.alterar(produtoEdicao);
 		}
