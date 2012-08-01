@@ -23,6 +23,8 @@ import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.ProdutoService;
 import br.com.abril.nds.util.CurrencyUtil;
+import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
 import br.com.caelum.vraptor.Get;
@@ -60,33 +62,44 @@ public class ProdutoEdicaoController {
 	@Post
 	@Path("/pesquisarEdicoes.json")
 	public void pesquisarEdicoes(String codigoProduto, String nomeProduto,
-			Date dataLancamento, String situacaoLancamento,
+			Date dataLancamentoDe, Date dataLancamentoAte, BigDecimal precoDe,BigDecimal precoAte , String situacaoLancamento,
 			String codigoDeBarras, boolean brinde,
             String sortorder, String sortname, int page, int rp) {
-
+		Intervalo<BigDecimal> intervaloPreco = null;
+		Intervalo<Date> intervaloLancamento = null;
 		// Validar:
 		if ((codigoProduto == null || codigoProduto.trim().isEmpty()) 
 				|| (nomeProduto == null || nomeProduto.trim().isEmpty())) {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Por favor, preencha o campo 'Código' ou 'Produto'!");
 		}
+		if(dataLancamentoDe == null ^ dataLancamentoAte == null ){
+			throw new ValidacaoException(TipoMensagem.WARNING, "Por favor, preencha o interválo válido de 'Lançamento'!");
+		}else if(dataLancamentoDe != null && dataLancamentoAte != null){
+			if(dataLancamentoDe.before(dataLancamentoAte)){
+				throw new ValidacaoException(TipoMensagem.WARNING, "Por favor, preencha o interválo válido de 'Lançamento'!");
+			}
+			
+			intervaloLancamento = new Intervalo<Date>(dataLancamentoDe, dataLancamentoAte);		
+		}
+		if(precoDe == null ^ precoAte == null ){
+			throw new ValidacaoException(TipoMensagem.WARNING, "Por favor, preencha o interválo válido de 'Preço'!");
+		}else if(precoDe != null && precoAte != null ){
+			if(precoDe.compareTo(precoAte) <=0){
+				throw new ValidacaoException(TipoMensagem.WARNING, "Por favor, preencha o interválo válido de 'Preço'!");
+			}
+			intervaloPreco = new Intervalo<BigDecimal>(precoDe, precoAte);
+		}		
 		
-		// Popular o DTO:
-		ProdutoEdicaoDTO dto = new ProdutoEdicaoDTO();
-		dto.setCodigoProduto(codigoProduto);
-		dto.setNomeProduto(nomeProduto);
-		dto.setDataLancamento(dataLancamento);
-		dto.setCodigoDeBarras(codigoDeBarras);
-		dto.setPossuiBrinde(brinde);
-		dto.setSituacaoLancamento(null);
+		StatusLancamento statusLancamento = null;
 		for (StatusLancamento status : StatusLancamento.values()) {
 			if (status.getDescricao().equals(situacaoLancamento)) {
-				dto.setSituacaoLancamento(status);
+				statusLancamento = status;
 			}
-		}
-		
+		}		
+	
 		// Pesquisar:
-		Long qtd = peService.countPesquisarEdicoes(dto);
-		List<ProdutoEdicaoDTO> lst = peService.pesquisarEdicoes(dto, sortorder, sortname, page, rp);
+		Long qtd = peService.countPesquisarEdicoes(codigoProduto, nomeProduto, intervaloLancamento, intervaloPreco, statusLancamento, codigoDeBarras, brinde);
+		List<ProdutoEdicaoDTO> lst = peService.pesquisarEdicoes(codigoProduto, nomeProduto, intervaloLancamento, intervaloPreco, statusLancamento, codigoDeBarras, brinde, sortorder, sortname, page, rp);
 		
 		this.result.use(FlexiGridJson.class).from(lst).total(qtd.intValue()).page(page).serialize();
 	}
@@ -113,6 +126,7 @@ public class ProdutoEdicaoController {
 		dto.setPacotePadrao(produto.getPacotePadrao());
 		dto.setPeso(produto.getPeso());
 		dto.setDescricaoDesconto("");
+		dto.setDescricaoProduto(produto.getDescricao());
 		dto.setDesconto(produto.getDescontoLogistica() == null 
 				? BigDecimal.ZERO : BigDecimal.valueOf(
 						produto.getDescontoLogistica().getPercentualDesconto()));
@@ -128,7 +142,7 @@ public class ProdutoEdicaoController {
 			dto.setPacotePadrao(pe.getPacotePadrao());
 			dto.setPrecoPrevisto(pe.getPrecoPrevisto());
 			dto.setPrecoVenda(pe.getPrecoVenda());
-			dto.setReparteDistribuido(pe.getReparteDistribuido());
+			dto.setExpectativaVenda(pe.getExpectativaVenda());
 			dto.setCodigoDeBarras(pe.getCodigoDeBarras());
 			dto.setCodigoDeBarrasCorporativo(pe.getCodigoDeBarraCorporativo());
 			dto.setChamadaCapa(pe.getChamadaCapa());
@@ -139,7 +153,11 @@ public class ProdutoEdicaoController {
 			dto.setBoletimInformativo(pe.getBoletimInformativo());
 			dto.setOrigemInterface(pe.getOrigemInterface());
 			dto.setNumeroLancamento(pe.getNumeroLancamento());
-
+			dto.setPeb(pe.getPeb());
+			dto.setEditor(pe.getProduto().getEditor().getNome());
+			if (pe.getBrinde() !=null) {
+				dto.setDescricaoBrinde(pe.getBrinde().getDescricao());
+			}
 			Dimensao dimEdicao = pe.getDimensao();
 			if (dimEdicao == null) {
 				dto.setComprimento(0);
@@ -159,20 +177,24 @@ public class ProdutoEdicaoController {
 				dto.setDataLancamento(uLancamento.getDataLancamentoDistribuidor());
 				dto.setRepartePrevisto(uLancamento.getReparte());
 				dto.setRepartePromocional(uLancamento.getRepartePromocional());
+				dto.setDataRecolhimentoPrevisto(uLancamento.getDataRecolhimentoPrevista());
+				dto.setDataRecolhimentoReal(uLancamento.getDataRecolhimentoDistribuidor());
+				dto.setSemanaRecolhimento(DateUtil.obterNumeroSemanaNoAno(uLancamento.getDataRecolhimentoDistribuidor()));
 			}
 		} else {
 			
 			// Edição criada pelo Distribuidor:
 			dto.setOrigemInterface(false);
+			
+			dto.setPeb(produto.getPeb());
 		}
 		
 		/* 
 		 * Regra: Se não houver edições já cadatradas para este produto, deve-se
 		 * obrigar a cadastrar o número 1. 
 		 */
-		ProdutoEdicaoDTO countEdicao = new ProdutoEdicaoDTO();
-		countEdicao.setCodigoProduto(codigoProduto);
-		Long qtdEdicoes = peService.countPesquisarEdicoes(countEdicao);
+		
+		Long qtdEdicoes = peService.countPesquisarEdicoes(codigoProduto, null, null, null, null, null, false);
 		if (qtdEdicoes == 0 || Long.valueOf(0).equals(qtdEdicoes)) {
 			dto.setNumeroEdicao(1L);
 		}
@@ -184,11 +206,8 @@ public class ProdutoEdicaoController {
 	@Post
 	@Path("/ultimasEdicoes.json")
 	public void ultimasEdicoes(String codigoProduto) {
-		
-		ProdutoEdicaoDTO dto = new ProdutoEdicaoDTO();
-		dto.setCodigoProduto(codigoProduto);
-		
-		List<ProdutoEdicaoDTO> lst = peService.pesquisarUltimasEdicoes(dto, 5);
+			
+		List<ProdutoEdicaoDTO> lst = peService.pesquisarUltimasEdicoes(codigoProduto, 5);
 
 		this.result.use(FlexiGridJson.class).from(lst).total(lst.size()).page(1).serialize();
 	}
@@ -206,7 +225,7 @@ public class ProdutoEdicaoController {
 			BigDecimal desconto, BigDecimal peso, 
 			BigDecimal largura, BigDecimal comprimento, BigDecimal espessura,
 			String chamadaCapa, boolean parcial, boolean possuiBrinde,
-			String boletimInformativo, Integer numeroLancamento) {
+			String boletimInformativo, Integer numeroLancamento, String descricaoBrinde, String descricaoProduto) {
 		
 		// DTO para transportar os dados:
 		ProdutoEdicaoDTO dto = new ProdutoEdicaoDTO();
@@ -232,7 +251,8 @@ public class ProdutoEdicaoController {
 		dto.setParcial(parcial);
 		dto.setPossuiBrinde(possuiBrinde);
 		dto.setNumeroLancamento(numeroLancamento);
-		
+		dto.setDescricaoBrinde(descricaoBrinde);
+		dto.setDescricaoProduto(descricaoProduto);
 		this.validarProdutoEdicao(dto);
 		
 		
@@ -252,7 +272,7 @@ public class ProdutoEdicaoController {
 		} catch (ValidacaoException e) {
 			
 			vo = e.getValidacao();
-		} catch (Exception e) {
+		} catch (Throwable e) {
 			
 			vo = new ValidacaoVO(TipoMensagem.ERROR, e.getMessage());
 		} finally {
