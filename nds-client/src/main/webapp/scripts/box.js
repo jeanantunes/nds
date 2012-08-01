@@ -1,5 +1,5 @@
 
-var boxController = {
+var boxController = $.extend(true, {
 	tipoBoxEnun : {
 		ENCALHE : 'Encalhe',
 		LANCAMENTO : 'Lan&ccedil;amento',
@@ -8,7 +8,7 @@ var boxController = {
 	box : {},
 	path : contextPath + '/cadastro/box/',
 	intGridBox : function() {
-		$(".boxGrid").flexigrid({
+		$(".boxGrid", this.workspace).flexigrid({
 			preProcess : function(data) {
 				if( typeof data.mensagens == "object") {
 
@@ -62,51 +62,55 @@ var boxController = {
 			useRp : true,
 			rp : 15,
 			showTableToggleBtn : true,
-			width : 960,
-			height : 255
+			width : 'auto',
+			height : '280'
 		});
-		$(".boxGrid").flexOptions({
+		$(".boxGrid", this.workspace).flexOptions({
 			"url" : this.path + 'busca.json',
 			params : [{
 				name : "codigoBox",
-				value : $("#pesquisaCodigoBox").val()
+				value : $("#pesquisaCodigoBox", this.workspace).val()
 			}, {
 				name : "tipoBox",
-				value : $("#pesquisaTipoBox").val()
+				value : $("#pesquisaTipoBox", this.workspace).val()
 			}]
 		});
 
 	},
-	buscar : function(codigoBox, tipoBox) {
-		$(".boxGrid").flexOptions({
-			"url" : this.path + 'busca.json',
-			params : [{
-				name : "codigoBox",
-				value : codigoBox
-			}, {
-				name : "tipoBox",
-				value : tipoBox
-			}],
+	//buscar : function(codigoBox, tipoBox) {
+	buscar : function(obj) { 
+		
+		// var serializedObj = $(obj).closest("form").serialize();
+		var serializedObj = $("#pesquisar_box_form", this.workspace).serialize();
+		
+		/*var codigoBox = ;
+		var tipoBox = ;*/
+		
+		$(".boxGrid", this.workspace).flexOptions({
+			"url" : this.path + 'busca.json?' + serializedObj,
+			method: 'GET',
 			newp:1
 		});
 		$(".boxGrid").flexReload();
 	},
 	bindButtons : function() {
-		$("#btnPesquisar").click(function() {
-			boxController.buscar(parseInt($("#pesquisaCodigoBox").val()), $("#pesquisaTipoBox").val());
+		$("#btnPesquisar", this.workspace).click(function() {
+			//boxController.buscar(parseInt($("#pesquisaCodigoBox").val()), $("#pesquisaTipoBox").val());
+			boxController.buscar(this);
 			$(".grids").show();
 		});
-		$("#btnNovo").click(function() {
+		$("#btnNovo", this.workspace).click(function() {
 			boxController.novo();
 		});
 	},
 	bindInputEvent : function() {
-		
-		$('#pesquisaCodigoBox, #boxCodigo').mask("9999");
+		//$('#pesquisaCodigoBox, #boxCodigo').mask("9999");
+		$('#pesquisaCodigoBox, #boxCodigo').numeric();
 		$('#pesquisaCodigoBox').bind('keypress', function(e) {
 			if(e.keyCode == 13) {
-				boxController.buscar(parseInt($("#pesquisaCodigoBox").val()), $("#pesquisaTipoBox").val());
-				$(".grids").show();
+				//boxController.buscar(parseInt($("#pesquisaCodigoBox").val()), $("#pesquisaTipoBox").val());
+				boxController.buscar();
+				$(".grids", this.workspace).show();
 			}
 		});
 	},
@@ -115,14 +119,15 @@ var boxController = {
 		this.initGridDetalhe();
 		this.bindButtons();
 		this.bindInputEvent();
+		this.createDialog();
 	},
-	showPopupEditar : function(title) {
-		$("#dialog-novo").dialog({
+	createDialog : function() {
+		//$("#dialog-novo").dialog({
+		$("#dialog-novo", this.workspace).dialog({
 			resizable : false,
 			height : 230,
 			width : 400,
 			modal : true,
-			title : title,
 			buttons : [{
 				id:"btnDialogNovoConfirmar",
 				text:"Confirmar",
@@ -136,8 +141,19 @@ var boxController = {
 					$(this).dialog("close");
 				}
 			}],
-			beforeClose : clearMessageDialogTimeout
+			beforeClose : clearMessageDialogTimeout,
+			form: $("#dialog-novo", this.workspace).parents("form")
+			//form: $("#dialog-novo").parents("form")
 		});
+		$("#dialog-novo", this.workspace).dialog("close");
+		//$("#dialog-novo").dialog("close");
+	},
+	showPopupEditar : function(title) {
+		//$("#dialog-novo")
+		$("#dialog-novo", this.workspace)
+			.dialog( "option" ,  "title", title )
+			.dialog( "open" );
+		
 	},
 	editar : function(id) {
 		$.postJSON(this.path + 'buscaPorId.json', {
@@ -146,18 +162,10 @@ var boxController = {
 			if( typeof data.mensagens == "object") {
 				exibirMensagem(data.mensagens.tipoMensagem, data.mensagens.listaMensagens);
 			} else {
-
-				boxController.bindData(data);
+				boxController.bindData(data, $("#novo_box_form", this.workspace));
 				boxController.showPopupEditar('Editar Box');
 			}
 		});
-	},
-	bindData : function(data) {
-		this.box = data.box;
-		
-		$("#boxCodigo").val(this.box.codigo);
-		$("#boxNome").val(this.box.nome);
-		$("#boxTipoBox").val(this.box.tipoBox);
 	},
 	getData : function() {		
 		this.box.codigo = parseInt($("#boxCodigo").val());
@@ -165,13 +173,12 @@ var boxController = {
 		this.box.tipoBox = $("#boxTipoBox").val();
 	},
 	salvar : function(dialog) {
-		this.getData();
-		var obj = {};
-		for(var propriedade in this.box) {
-			obj['box.' + propriedade] = this.box[propriedade];
+		//this.getData();
 
-		}
+		//var obj = $(dialog).dialog("option", "form").serialize();
 
+		var obj = $("#novo_box_form", this.workspace).serialize();
+		
 		$.postJSON(this.path + 'salvar.json', obj, function(data) {
 			var tipoMensagem = data.tipoMensagem;
 			var listaMensagens = data.listaMensagens;
@@ -182,13 +189,14 @@ var boxController = {
 
 			$(dialog).dialog("close");
 			$("#effect").show("highlight", {}, 1000, callback);
-			$(".grids").show();
-			$(".boxGrid").flexReload();
+			$(".grids", this.workspace).show();
+			$(".boxGrid", this.workspace).flexReload();
 
 		}, null, true);
 	},
 	excluir : function(id) {
-		$("#dialog-excluir").dialog({
+		//$("#dialog-excluir").dialog({
+		$("#dialog-excluir", this.workspace).dialog({
 			resizable : false,
 			height : 170,
 			width : 380,
@@ -214,7 +222,7 @@ var boxController = {
 			if( typeof data.mensagens == "object") {
 				exibirMensagem(data.mensagens.tipoMensagem, data.mensagens.listaMensagens);
 			}
-			$(".boxGrid").flexReload();
+			$(".boxGrid", this.workspace).flexReload();
 			
 		});
 	},
@@ -222,8 +230,10 @@ var boxController = {
 		var data = {
 			box : {}
 		};
+		
+		this.clearForm($("#novo_box_form", this.workspace));
 
-		this.bindData(data);
+		this.bindData(data, $("#novo_box_form", this.workspace));
 		this.showPopupEditar('Incluir Novo Box');
 	},	
 	initGridDetalhe: function(){
@@ -266,7 +276,8 @@ var boxController = {
 		});
 	},
 	detalheDialog:function(){
-		$( "#dialog-box" ).dialog({
+		//$( "#dialog-box" ).dialog({
+		$( "#dialog-box", this.workspace).dialog({
 			resizable: false,
 			height:410,
 			width:630,
@@ -281,7 +292,8 @@ var boxController = {
 		});
 	},
 	detalhe:function(id){		
-		$(".boxCotaGrid").flexOptions({
+		//$(".boxCotaGrid").flexOptions({
+		$(".boxCotaGrid", this.workspace).flexOptions({
 			"url" : this.path + 'detalhe.json',
 			params : [{
 				name : "id",
@@ -289,8 +301,8 @@ var boxController = {
 			}],
 			newp:1
 		});
-		$(".boxCotaGrid").flexReload();
+		//$(".boxCotaGrid").flexReload();
+		$(".boxCotaGrid", this.workspace).flexReload();
 		this.detalheDialog();
 	}
-};
-
+}, BaseController);
