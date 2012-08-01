@@ -493,6 +493,7 @@ public class DataLoader {
 	private static ParametroCobrancaCota parametroCobrancaMurilo;
 	private static ParametroCobrancaCota parametroCobrancaMariana;
 	private static ParametroCobrancaCota parametroCobrancaOralando;
+	private static ParametroCobrancaCota parametroCobrancaManoel;
 
 	private static ParametrosCotaNotaFiscalEletronica parametroCotaNotaFiscalEletronicaJose;
 	private static ParametrosCotaNotaFiscalEletronica parametroCotaNotaFiscalEletronicaManoel;
@@ -2257,6 +2258,16 @@ public class DataLoader {
 				false, new BigDecimal(1000), null);
 		save(session, parametroCobrancaOralando);
 		formaDeposito.setParametroCobrancaCota(parametroCobrancaOralando);
+		formaDeposito.setPrincipal(true);
+		save(session,formaDeposito);
+		
+		formasCobranca = new HashSet<FormaCobranca>();
+		formasCobranca.add(formaDeposito);
+		parametroCobrancaManoel = Fixture.parametroCobrancaCota(formasCobranca,
+				null, null, cotaManoel, 1,
+				false, new BigDecimal(1000), TipoCota.CONSIGNADO);
+		save(session, parametroCobrancaManoel);
+		formaDeposito.setParametroCobrancaCota(parametroCobrancaManoel);
 		formaDeposito.setPrincipal(true);
 		save(session,formaDeposito);
 
