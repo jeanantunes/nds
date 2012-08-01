@@ -3,7 +3,7 @@
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
 	<script type="text/javascript">
 		$(function(){
-			produto.inicializar();
+			produtoController.inicializar();
 		});
 	</script>
 
@@ -25,12 +25,13 @@
 
 <body>
 
-	<form action="" id="excluir_produto_form">
+	<form action="/produto" id="excluir_form">
 	<div id="dialog-excluir" title="Excluir Produto">
 		<p>Confirma a exclus&atilde;o deste Produto?</p>
 	</div>
 	</form>
 
+	<form action="/produto" id="incluir_form">
 	<div id="dialog-novo" title="Incluir Novo Produto">
      
 		<input id="idProduto" type="hidden" />
@@ -90,7 +91,7 @@
 				<tr>
 					<td><strong>Tipo de Desconto:</strong></td>
 					<td>
-						<select name="comboTipoDesconto" id="comboTipoDesconto" style="width:210px;" onchange="produto.carregarPercentualDesconto();" >
+						<select name="comboTipoDesconto" id="comboTipoDesconto" style="width:210px;" onchange="produtoController.carregarPercentualDesconto();" >
 						</select>
 					</td>
 					<td><strong>% Desconto:</strong></td>
@@ -241,7 +242,9 @@
 		</table>
 		
 	</div> 
+	</form>
 
+	<form action="/produto" id="pesquisar_form">
 	<fieldset class="classFieldset">
 		<legend> Pesquisar Produtos</legend>
 		<table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
@@ -251,23 +254,23 @@
 					
 			    	<input type="text" name="codigoProduto" id="codigoProduto"
 						   style="width: 80px; float: left; margin-right: 5px;" maxlength="255"
-						   onchange="produto.pesquisarPorCodigoProduto('#codigoProduto', '#produto', '#edicao', false,
-								   									   produto.pesquisarProdutosSuccessCallBack,
-								   									   produto.pesquisarProdutosErrorCallBack);" />
+						   onchange="produtoController.pesquisarPorCodigoProduto('#codigoProduto', '#produto', '#edicao', false,
+								   									   produtoController.pesquisarProdutosSuccessCallBack,
+								   									   produtoController.pesquisarProdutosErrorCallBack);" />
 				</td>
 				
 				<td width="55">Produto:</td>
 				<td width="237">
 					<input type="text" name="produto" id="produto" style="width: 222px;" maxlength="255"
-					       onkeyup="produto.autoCompletarPorNomeProduto('#produto', false);"
-					       onblur="produto.pesquisarPorNomeProduto('#codigoProduto', '#produto', '#edicao', false,
-														    	   produto.pesquisarProdutosSuccessCallBack,
-														    	   produto.pesquisarProdutosErrorCallBack);"/>
+					       onkeyup="produtoController.autoCompletarPorNomeProduto('#produto', false);"
+					       onblur="produtoController.pesquisarPorNomeProduto('#codigoProduto', '#produto', '#edicao', false,
+														    	   produtoController.pesquisarProdutosSuccessCallBack,
+														    	   produtoController.pesquisarProdutosErrorCallBack);"/>
 				</td>
 				<td width="99">Fornecedor:</td>
 				<td width="251">
 					<input type="text" id="fornecedor" name="fornecedor" style="width:200px;"
-					       onkeyup="produto.autoCompletarPorNomeFornecedor('#fornecedor', false);" />
+					       onkeyup="produtoController.autoCompletarPorNomeFornecedor('#fornecedor', false);" />
 				
 				</td>
 				<td width="106">&nbsp;</td>
@@ -288,12 +291,13 @@
 				</td>
 				<td>
 					<span class="bt_pesquisar">
-						<a href="javascript:;" onclick="produto.pesquisar();">Pesquisar</a>
+						<a href="javascript:;" onclick="produtoController.pesquisar();">Pesquisar</a>
 					</span>
 				</td>
 			</tr>
 		</table>
 	</fieldset>
+	</form>
 
 	<div class="linha_separa_fields">&nbsp;</div>
 	
@@ -304,7 +308,7 @@
 			</div>
 	
 		<span class="bt_novos" title="Novo">
-			<a href="javascript:;" onclick="produto.novoProduto();">
+			<a href="javascript:;" onclick="produtoController.novoProduto();">
 				<img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0" />Novo
 			</a>
 		</span>
