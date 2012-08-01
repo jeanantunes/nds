@@ -6,486 +6,10 @@
 
 <script language="javascript" type="text/javascript">
 
-function pesquisarEdicoes() {
-
-	var codigoProduto = $("#pCodigoProduto").val();
-	var nomeProduto = $("#pNomeProduto").val();
-	var dataLancamento = $("#pDataLancamento").val();
-	var situacaoLancamento = $("#pSituacaoLancamento").val();
-	var codigoDeBarras = $("#pCodigoDeBarras").val();
-	
-	$("#pBrinde").val(0);
-	if (document.getElementById('pBrinde').checked){
-		$("#pBrinde").val(1);
-	}
-	var brinde = $("#pBrinde").val();
-	
-	$(".edicoesGrid").flexOptions({
-		url: "<c:url value='/cadastro/edicao/pesquisarEdicoes.json' />",
-		params: [{name:'codigoProduto', value: codigoProduto },
-			     {name:'nomeProduto', value: nomeProduto },
-			     {name:'dataLancamento', value: dataLancamento },
-			     {name:'situacaoLancamento', value: situacaoLancamento },
-			     {name:'codigoDeBarras', value: codigoDeBarras },
-			     {name:'brinde', value : brinde }],
-		newp: 1,
-	});
-	
-	$(".edicoesGrid").flexReload();
-}
-
-
-function executarPreProcessamento(resultado) {
-
-	// Exibe mensagem de erro/alerta, se houver:
-	var mensagens = (resultado.mensagens) ? resultado.mensagens : resultado.result;   
-	var tipoMensagem = (mensagens && mensagens.tipoMensagem) ? mensagens.tipoMensagem : null; 
-	var listaMensagens = (mensagens && mensagens.listaMensagens) ? mensagens.listaMensagens : null;
-	if (tipoMensagem && listaMensagens) {
-		exibirMensagem(tipoMensagem, listaMensagens);
-		return;
-	}
-	
-	var nProduto = '';
-	var cProduto = '';
-	$.each(resultado.rows, function(index, row) {
-		
-		var linkAprovar = '<a href="javascript:;" onclick="editarEdicao(' + row.cell.id + ');" style="cursor:pointer">' +
-				     	  	'<img title="Editar" src="${pageContext.request.contextPath}/images/ico_editar.gif" hspace="5" border="0px" />' +
-				  		  '</a>';
-		
-		var linkExcluir = '<a href="javascript:;" onclick="removerEdicao(' + row.cell.id + ');" style="cursor:pointer">' +
-						   	 '<img title="Excluir" src="${pageContext.request.contextPath}/images/ico_excluir.gif" hspace="5" border="0px" />' +
-						   '</a>';
-		
-		row.cell.acao = linkAprovar + linkExcluir;
-
-		//
-		nProduto = row.cell.nomeProduto;
-		cProduto = row.cell.codigoProduto;
-	});
-		
-	$(".grids").show();
-
-	//
-	var txt = '';
-	if (nProduto != null || cProduto != null) {
-		txt = ": " + cProduto + " - " + nProduto;
-	}
-	$("#labelNomeProduto").html(txt);
-	$("#codigoProduto").val(cProduto);
-	
-	return resultado;
-}
-
-function salvaUmaEdicao() {
-	
-	$("#formUpload").ajaxSubmit({
-		success: function(responseText, statusText, xhr, $form)  { 
-			var mensagens = (responseText.mensagens) ? responseText.mensagens : responseText.result;   
-			var tipoMensagem = mensagens.tipoMensagem;
-			var listaMensagens = mensagens.listaMensagens;
-			if (tipoMensagem && listaMensagens) {
-				exibirMensagemDialog(tipoMensagem, listaMensagens, 'dialogMensagemNovo');
-			}
-			
-			prepararTela(null);
-			carregarDialog(null);
-		}, 
-		url: "<c:url value='/cadastro/edicao/salvar' />",
-		type: 'POST',
-		dataType: 'json',
-		data: { codigoProduto : $("#codigoProduto").val() }
-	});
-
-}
-
-function novaEdicao() {
-	popup(null);
-};
-
-function editarEdicao(id) {
-	popup(id);
-}
-
-function prepararTela(id) {
-	
-	// limpar os campos:
-	form_clear('formUpload');
-	carregarImagemCapa(id);
-	$('#formUpload').find(':input').each(
-		function() {
-			switch(this.type) {
-			case 'text':
-			case 'textarea':
-			case 'password':
-				$(this).attr("readonly", true);
-				break;
-			
-			case 'file':
-			case 'select-multiple':
-			case 'select-one':
-			case 'checkbox':
-			case 'radio':
-				$(this).attr("disabled", true);
-				break;
-			}
-		}
-	);
-	
-	
-	// Popular a lista de Edições:
-	$(".prodsPesqGrid").flexOptions({
-		url: "<c:url value='/cadastro/edicao/ultimasEdicoes.json' />",
-		params: [{name:'codigoProduto', value: $("#codigoProduto").val() }],
-		newp: 1,
-	});
-
-	$(".prodsPesqGrid").flexReload();	
-}
-
-function carregarDialog(id) {
-	
-	// Exibir os dados do Produto:
-	$.postJSON(
-		"<c:url value='/cadastro/edicao/carregarDadosProdutoEdicao.json' />",
-		{ codigoProduto : $("#codigoProduto").val(), 
-		  idProdutoEdicao : id},
-		function(result) {
-			if (result) {
-				$("#idProdutoEdicao").val(result.id);
-				$("#codigoProdutoEdicao").val(result.codigoProduto);
-				$("#nomePublicacao").val(result.nomeProduto);
-				$("#nomeComercialProduto").val(result.nomeComercialProduto);
-				$("#nomeFornecedor").val(result.nomeFornecedor);
-				$("#situacao").val(result.situacao);
-				$("#numeroEdicao").val(result.numeroEdicao);
-				$("#fase").val(result.fase);
-				$("#numeroLancamento").val(result.numeroLancamento);
-				$("#pacotePadrao").val(result.pacotePadrao);
-				$("#tipoLancamento").val(result.tipoLancamento);
-				$("#precoPrevisto").val(result.precoPrevisto);
-				$("#precoVenda").val(result.precoVenda);
-				$("#dataLancamentoPrevisto").val(result.dataLancamentoPrevisto == undefined ? '' : result.dataLancamentoPrevisto.$);
-				$("#dataLancamento").val(result.dataLancamento == undefined ? '' : result.dataLancamento.$);
-				$("#repartePrevisto").val(result.repartePrevisto)
-				$("#reparteDistribuido").val(result.reparteDistribuido);
-				$("#repartePromocional").val(result.repartePromocional);
-				//$("#categoria").val();
-				$("#codigoDeBarras").val(result.codigoDeBarras);
-				$("#codigoDeBarrasCorporativo").val(result.codigoDeBarrasCorporativo);
-				$("#desconto").val(result.desconto);
-				$("#peso").val(result.peso);
-				$("#largura").val(result.largura);
-				$("#comprimento").val(result.comprimento);
-				$("#espessura").val(result.espessura);
-				$("#chamadaCapa").val(result.chamadaCapa);
-				$('#parcial').val(result.parcial + "");
-				$('#possuiBrinde').attr('checked', result.possuiBrinde);
-				$('#boletimInformativo').val(result.boletimInformativo);
-
-				if (result.origemInterface) {
-					$("#precoVenda").attr("readonly", false);				
-				} else {
-					$("#codigoProdutoEdicao").attr("readonly", false);
-					$("#nomeComercialProduto").attr("readonly", false);
-					$("#numeroEdicao").attr("readonly", (result.numeroEdicao == 1));
-					$("#pacotePadrao").attr("readonly", false);
-					$("#tipoLancamento").attr("disabled", false);
-					$("#precoPrevisto").attr("readonly", false);
-					$("#dataLancamentoPrevisto").attr("readonly", false);
-					$("#repartePrevisto").attr("readonly", false);
-					$("#repartePromocional").attr("readonly", false);
-					$("#codigoDeBarrasCorporativo").attr("readonly", false);
-					$('#parcial').attr("disabled", false);
-					$("#desconto").attr("readonly", false);
-					$("#largura").attr("readonly", false);
-					$("#comprimento").attr("readonly", false);
-					$("#espessura").attr("readonly", false);
-					$('#boletimInformativo').attr("readonly", false);
-				}
-
-				$("#numeroLancamento").attr("readonly", false); 
-				$("#imagemCapa").attr("disabled", false);
-				$("#codigoDeBarras").attr("readonly", false);				
-				$("#chamadaCapa").attr("readonly", false);
-				$('#possuiBrinde').attr("disabled", false);
-				$("#peso").attr("readonly", false);
-			}
-		},
-		function(result) { 
-			exibirMensagemDialog(result.tipoMensagem, result.listaMensagens, "");
-			},
-		true
-	);
-
-}
-
-function popup(id) {
-	
-	if ($(".edicoesGrid > tbody").data() == null || $(".edicoesGrid > tbody").data() == undefined) {
-		exibirMensagem('WARNING', ['Por favor, escolha um produto para adicionar a Edi&ccedil;&atilde;o!'], "");
-		return;
-	}
-	
-	prepararTela(id);
-	carregarDialog(id);
-
-	$( "#dialog-novo" ).dialog({
-		resizable: false,
-		height:615,
-		width:960,
-		modal: true,
-		buttons: {
-			"Confirmar": function() {
-
-				$("#formUpload").ajaxSubmit({
-					beforeSubmit: function(arr, formData, options) {
-						// Incluir aqui as validacoes;
-					},
-					success: function(responseText, statusText, xhr, $form)  { 
-						var mensagens = (responseText.mensagens) ? responseText.mensagens : responseText.result;   
-						var tipoMensagem = mensagens.tipoMensagem;
-						var listaMensagens = mensagens.listaMensagens;
-						if (tipoMensagem && listaMensagens) {
-							//exibirMensagemDialog(tipoMensagem, listaMensagens, 'dialogMensagemNovo');
-
-							$("#dialog-novo").dialog( "close" );
-							pesquisarEdicoes();
-							exibirMensagem(tipoMensagem, listaMensagens);
-						}
-					}, 
-					url: "<c:url value='/cadastro/edicao/salvar' />",
-					type: 'POST',
-					dataType: 'json',
-					data: { codigoProduto : $("#codigoProduto").val() }
-				});
-			},
-			"Cancelar": function() {
-				$("#dialog-novo").dialog( "close" );
-			}
-		}
-	});
-};
-
-function carregarImagemCapa(idProdutoEdicao) {
-
-	var imgPath = (idProdutoEdicao == null || idProdutoEdicao == undefined)
-		? "" : "<c:url value='/capa/' />" + idProdutoEdicao; 
-	var img = $("<img />").attr('src', imgPath).attr('width', '144').attr('height', '185').attr('alt', 'Capa');
-	$("#div_imagem_capa").empty();
-	$("#div_imagem_capa").append(img);
-	
-	img.load(function() {
-		if (!(!this.complete || typeof this.naturalWidth == "undefined" || this.naturalWidth == 0)) {
-			$("#div_imagem_capa").append(img);
-		}
-	});
-
-}
-
-
-
-function form_clear(formName) {
-
-	$('#' + formName).find(':input').each(
-		function() {
-			switch(this.type) {
-				case 'hidden': 
-				case 'text':
-				case 'textarea':
-				case 'password':
-				case 'select-multiple':
-				case 'select-one':
-				case 'file':
-					$(this).val('');
-					break;
-
-				case 'checkbox':
-				case 'radio':
-					this.checked = false;
-					break;
-			}
-		}
-	);
-};
-
-
-
-	
-	function popup_alterar() {
-		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
-	
-		$( "#dialog-novo" ).dialog({
-			resizable: false,
-			height:615,
-			width:950,
-			modal: true,
-			buttons: {
-				"Confirmar": function() {
-					$( this ).dialog( "close" );
-					$("#effect").hide("highlight", {}, 1000, callback);
-					$( "#abaPdv" ).show( );
-					
-				},
-				"Cancelar": function() {
-					$( this ).dialog( "close" );
-				}
-			}
-		});	      
-	};
-	
-function removerEdicao(id) {
-
-	$( "#dialog-excluir" ).dialog({
-		resizable: false,
-		height:170,
-		width:380,
-		modal: true,
-		buttons: {
-			"Confirmar": function() {
-
-				$.postJSON(
-					"<c:url value='/cadastro/edicao/removerEdicao.json' />",
-					{idProdutoEdicao : id},
-					function(result) {
-				   		$("#dialog-excluir").dialog("close");
-				   		
-						var tipoMensagem = result.tipoMensagem;
-						var listaMensagens = result.listaMensagens;
-						
-						if (tipoMensagem && listaMensagens) {
-							
-							exibirMensagem(tipoMensagem, listaMensagens);
-						}
-
-						carregarImagemCapa(null);
-					},
-					function(result) {
-				   		$("#dialog-excluir").dialog("close");
-						
-						var tipoMensagem = result.tipoMensagem;
-						var listaMensagens = result.listaMensagens;
-						
-						if (tipoMensagem && listaMensagens) {
-							
-							exibirMensagem(tipoMensagem, listaMensagens);
-						}
-					},
-					true
-				);
-			},
-			"Cancelar": function() {
-				$( this ).dialog( "close" );
-			}
-		},
-		beforeClose: function() {
-			clearMessageDialogTimeout();
-		}
-	});
-};
-	
-	function popup_excluir_capa() {
-		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
-	
-		$( "#dialog-excluir-capa" ).dialog({
-			resizable: false,
-			height:170,
-			width:380,
-			modal: true,
-			buttons: {
-				"Confirmar": function() {
-					$.postJSON(
-						"<c:url value='/capa/removerCapa' />",
-						{idProdutoEdicao : $("#idProdutoEdicao").val()},
-						function(result) {
-							$( "#dialog-excluir-capa" ).dialog( "close" );
-							
-							var mensagens = (result.mensagens) ? result.mensagens : result.result;
-							var tipoMensagem = mensagens.tipoMensagem;
-							var listaMensagens = mensagens.listaMensagens;
-							
-							if (tipoMensagem && listaMensagens) {
-								exibirMensagemDialog(tipoMensagem, listaMensagens, 'dialogMensagemNovo');
-							}
-						},
-						function(result) {
-							$( "#dialog-excluir-capa" ).dialog( "close" );
-
-							var mensagens = (result.mensagens) ? result.mensagens : result.result;
-							var tipoMensagem = mensagens.tipoMensagem;
-							var listaMensagens = mensagens.listaMensagens;
-							
-							if (tipoMensagem && listaMensagens) {
-								exibirMensagemDialog(tipoMensagem, listaMensagens, 'dialogMensagemNovo');
-							}
-						},
-						true
-					);
-				},
-				"Cancelar": function() {
-					$( "#dialog-excluir-capa" ).dialog( "close" );
-				}
-			}
-		});
-	};
-	
-	
 	$(function() {
-			$( "#tabEdicoes" ).tabs();
+		produtoEdicaoController.init();
 	});
 	
-	$(function() {
-		$( "#pDataLancamento" ).datepicker({
-			showOn: "button",
-			buttonImage: "${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
-			buttonImageOnly: true
-		});
-		$( "#dateLancto_pop" ).datepicker({
-			showOn: "button",
-			buttonImage: "${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
-			buttonImageOnly: true
-		});
-		$( "#dtLancto" ).datepicker({
-			showOn: "button",
-			buttonImage: "${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
-			buttonImageOnly: true
-		});
-	});
-function mostrar_prod(){
-	$( "#pesqProdutos" ).fadeIn('slow');
-	
-	}
-	function fecha_prod(){
-	$( "#pesqProdutos" ).fadeOut('slow');
-	
-	}
-function mostraLinhaProd(){
-	
-	$( ".prodLinhas" ).show('slow');
-	}
-</script>
-
-<script type="text/javascript">
-
-$(function() {
-	$("#numeroEdicao").numeric();
-	$("#pacotePadrao").numeric();
-	$("#repartePrevisto").numeric();
-	$("#reparteDistribuido").numeric();
-	$("#repartePromocional").numeric();
-	$("#precoPrevisto").numeric();
-	$("#precoVenda").numeric();
-	$("#desconto").numeric();
-	$("#peso").numeric();
-	$("#largura").numeric();
-	$("#comprimento").numeric();
-	$("#espessura").numeric();
-	$("#numeroLancamento").numeric();
-
-	$("#dataLancamentoPrevisto").mask("99/99/9999");
-	$("#dataLancamento").mask("99/99/9999");
-});
 </script>
 
 <style>
@@ -505,21 +29,26 @@ fieldset {
 
 <body>
 
+<form action="/cadastro/edicao" id="incluir_capa_form">
 <div id="dialog-capa" title="Incluir Imagem Capa" style="display:none;">
 	<br />
 	<p><input type="file" size="30" id="file01" name="file01" /></p>
 </div>
+</form>
 
+<form action="/cadastro/edicao" id="excluir_capa_form">
 <div id="dialog-excluir-capa" title="Excluir Capa" style="display:none;">
 	<p>Confirma a exclus&atilde;o desta Capa?</p>
 </div>
+</form>
 
+<form action="/cadastro/edicao" id="excluir_form">
 <div id="dialog-excluir" title="Excluir Edi&ccedil;&atilde;o">
 	<p>Confirma a exclus&atilde;o desta Edi&ccedil;&atilde;o?</p>
 </div>
+</form>
 
-
-
+<form action="/cadastro/edicao" id="novo_form">
 <div id="dialog-novo" title="Incluir Nova Edi&ccedil;&atilde;o">
 	
 	<jsp:include page="../messagesDialog.jsp">
@@ -542,7 +71,7 @@ fieldset {
 						<table class="prodsPesqGrid"></table>
 					</fieldset>
 					
-					<span class="bt_add"><a href="javascript:;" onclick="salvaUmaEdicao();">Incluir Novo</a></span>
+					<span class="bt_add"><a href="javascript:;" onclick="produtoEdicaoController.salvaUmaEdicao();">Incluir Novo</a></span>
 				</div>
 				
 				<div class="ldForm">
@@ -563,7 +92,7 @@ fieldset {
 										</div>
 										
 										<br clear="all" />
-										<a href="javascript:;" onclick="popup_excluir_capa();">
+										<a href="javascript:;" onclick="produtoEdicaoController.popup_excluir_capa();">
 											<img src="${pageContext.request.contextPath}/images/ico_excluir.gif" alt="Excluir Capa" width="15" height="15" hspace="5" vspace="3" border="0" />
 										</a>
 									</td>
@@ -675,7 +204,7 @@ fieldset {
 						<table class="prodsPesqGrid"></table>
 					</fieldset>
 					
-					<span class="bt_add"><a href="javascript:;" onclick="salvaUmaEdicao();">Incluir Novo</a></span>
+					<span class="bt_add"><a href="javascript:;" onclick="produtoEdicaoController.salvaUmaEdicao();">Incluir Novo</a></span>
 				</div>
 				
 				<div class="ldForm">
@@ -790,7 +319,7 @@ fieldset {
 						<table class="prodsPesqGrid"></table>
 					</fieldset>
 					
-					<span class="bt_add"><a href="javascript:;" onclick="salvaUmaEdicao();">Incluir Novo</a></span>
+					<span class="bt_add"><a href="javascript:;" onclick="produtoEdicaoController.salvaUmaEdicao();">Incluir Novo</a></span>
 				</div>
 				
 				<div class="ldForm">
@@ -855,7 +384,9 @@ fieldset {
 		</div>
 	</form>
 </div>
+</form>
 
+<form action="/cadastro/edicao" id="pesquisar_form">
 <div class="corpo">
 	
 	<br clear="all"/>
@@ -863,13 +394,6 @@ fieldset {
 
 	<div class="container">
 	
-		<div id="effect" style="padding: 0 .7em;" class="ui-state-highlight ui-corner-all">
-			<p>
-				<span style="float: left; margin-right: .3em;" class="ui-icon ui-icon-info"></span>
-				<b>Edi&ccedil;&atilde;o < evento > com < status >.</b>
-			</p>
-		</div>
-		
 		<fieldset class="classFieldset">
 			<input type="hidden" id="codigoProduto" name="codigoProduto" value="" />
 			<legend>Pesquisar Produto</legend>
@@ -881,7 +405,7 @@ fieldset {
 						<td width="80">
 							<input type="text" name="pCodigoProduto" id="pCodigoProduto" maxlength="255" 
 									style="width:80px;" 
-									onchange="produtoEdicao.pesquisarPorCodigoProduto('#pCodigoProduto', '#pNomeProduto', false,
+									onchange="produtoEdicaoController.pesquisarPorCodigoProduto('#pCodigoProduto', '#pNomeProduto', false,
 											undefined,
 											undefined);" />
 						</td>
@@ -889,8 +413,8 @@ fieldset {
 						<td width="172">
 							<input type="text" name="pNomeProduto" id="pNomeProduto" maxlength="255" 
 									style="width:170px;"
-									onkeyup="produtoEdicao.autoCompletarPorNomeProduto('#pNomeProduto', false);"
-									onblur="produtoEdicao.pesquisarPorNomeProduto('#pCodigoProduto', '#pNomeProduto', false,
+									onkeyup="produtoEdicaoController.autoCompletarPorNomeProduto('#pNomeProduto', false);"
+									onblur="produtoEdicaoController.pesquisarPorNomeProduto('#pCodigoProduto', '#pNomeProduto', false,
 										undefined,
 										undefined);" />
 						</td>
@@ -923,7 +447,7 @@ fieldset {
 						<td>Brinde</td>
 						<td>&nbsp;</td>
 						<td>&nbsp;</td>
-						<td><span class="bt_pesquisar"><a href="javascript:;" onclick="pesquisarEdicoes();">Pesquisar</a></span></td>
+						<td><span class="bt_pesquisar"><a href="javascript:;" onclick="produtoEdicaoController.pesquisarEdicoes();">Pesquisar</a></span></td>
 					</tr>
 				</tbody>
 			</table>
@@ -938,158 +462,13 @@ fieldset {
 			</div>
 			
 			<span class="bt_novos" title="Novo">
-				<a href="javascript:;" onclick="novaEdicao();"><img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0"/>Novo</a>
+				<a href="javascript:;" onclick="produtoEdicaoController.novaEdicao();"><img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0"/>Novo</a>
 			</span>
 		</fieldset>
 		
 		<div class="linha_separa_fields">&nbsp;</div>
 	</div>
-</div> 
-<script>
-	$(".bonificacoesGrid").flexigrid({
-			//url : '../xml/produtos_bonificacoes-xml.xml',
-			dataType : 'xml',
-			colModel : [ {
-				display : 'Faixa',
-				name : 'faixa',
-				width : 320,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Quantidade Adicional',
-				name : 'qtdeAdicional',
-				width : 160,
-				sortable : true,
-				align : 'center'
-			}, {
-				display : 'A&ccedil;ões',
-				name : 'acoes',
-				width : 60,
-				sortable : true,
-				align : 'center'
-			}],
-			width : 620,
-			height : 120,
-			singleSelect : true
-		});
-
-	$(".prodsPesqGrid").flexigrid({
-			dataType : 'json',
-			colModel : [ {
-				display : 'Produto',
-				name : 'nomeProduto',
-				width : 115,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Edi&ccedil;&atilde;o',
-				name : 'numeroEdicao',
-				width : 40,
-				sortable : true,
-				align : 'left'
-			}],
-			width : 200,
-			height : 350,
-			singleSelect : true
-		});
-		
-		
-	$(".edicoesGrid").flexigrid({
-		preProcess: executarPreProcessamento,
-		dataType : 'json',
-			colModel : [ {
-				display : 'C&oacute;digo',
-				name : 'codigoProduto',
-				width : 60,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Nome Comercial',
-				name : 'nomeProduto',
-				width : 180,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Edi&ccedil;&atilde;o',
-				name : 'numeroEdicao',
-				width : 50,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Fornecedor',
-				name : 'nomeFornecedor',
-				width : 200,
-				sortable : true,
-				align : 'left',
-			}, {
-				display : 'Tipo de Lan&ccedil;amento',
-				name : 'statusLancamento',
-				width : 120,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Situa&ccedil;&atilde;o',
-				name : 'statusSituacao',
-				width : 115,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Brinde',
-				name : 'temBrinde',
-				width : 60,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'A&ccedil;&atilde;o',
-				name : 'acao',
-				width : 60,
-				sortable : true,
-				align : 'center'
-			}],
-			sortname : "codigoProduto",
-			sortorder : "asc",
-			usepager : true,
-			useRp : true,
-			rp : 15,
-			showTableToggleBtn : true,
-			width : 960,
-			height : 255,
-			singleSelect : true
-		});
-		
-		
-		$(".produtoEdicaoBaseGrid").flexigrid({
-			preProcess: executarPreProcessamento,
-			dataType : 'json',
-			colModel : [ {
-				display : 'C&oacute;digo',
-				name : 'codigo',
-				width : 80,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Produto',
-				name : 'produto',
-				width : 280,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Produto &Uacute;nico',
-				name : 'produtoUnico',
-				width : 100,
-				sortable : true,
-				align : 'center'
-			}, {
-				display : 'Edi&ccedil;&atilde;o Base',
-				name : 'edicaoBase',
-				width : 100,
-				sortable : true,
-				align : 'center',
-			}],
-			width : 640,
-			height : 120,
-			singleSelect : true
-		});
-</script>
+</div>
+</form> 
 </body>
 </html>
