@@ -33,6 +33,7 @@ import br.com.abril.nds.repository.ProdutoRepository;
 import br.com.abril.nds.service.CapaService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.exception.UniqueConstraintViolationException;
+import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
 
@@ -212,27 +213,30 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 
 	@Override
 	@Transactional(readOnly = true)
-	public List<ProdutoEdicaoDTO> pesquisarEdicoes(ProdutoEdicaoDTO dto,
+	public List<ProdutoEdicaoDTO> pesquisarEdicoes(String codigoProduto, String nomeProduto,
+			Intervalo<Date> dataLancamento, Intervalo<BigDecimal> preco , StatusLancamento statusLancamento,
+			String codigoDeBarras, boolean brinde,
 			String sortorder, String sortname, int page, int maxResults) {
 		
 		final int initialResult = ((page * maxResults) - maxResults);
-		return this.produtoEdicaoRepository.pesquisarEdicoes(dto, sortorder,
-				sortname, initialResult, maxResults);
+		return this.produtoEdicaoRepository.pesquisarEdicoes(codigoProduto, nomeProduto, dataLancamento, preco, statusLancamento, codigoDeBarras, brinde, sortorder, sortname, initialResult, maxResults);
 	}
 	
 	@Override
 	@Transactional(readOnly = true)
-	public Long countPesquisarEdicoes(ProdutoEdicaoDTO dto) {
+	public Long countPesquisarEdicoes(String codigoProduto, String nomeProduto,
+			Intervalo<Date> dataLancamento, Intervalo<BigDecimal> preco , StatusLancamento statusLancamento,
+			String codigoDeBarras, boolean brinde) {
 		
-		return this.produtoEdicaoRepository.countPesquisarEdicoes(dto);
+		return this.produtoEdicaoRepository.countPesquisarEdicoes(codigoProduto, nomeProduto, dataLancamento, preco, statusLancamento, codigoDeBarras, brinde);
 	}
 	
 	@Override
 	@Transactional(readOnly = true)
-	public List<ProdutoEdicaoDTO> pesquisarUltimasEdicoes(ProdutoEdicaoDTO dto,
+	public List<ProdutoEdicaoDTO> pesquisarUltimasEdicoes(String codigoProduto,
 			int maxResults) {
 		
-		return this.produtoEdicaoRepository.pesquisarEdicoes(dto, "DESC",
+		return this.produtoEdicaoRepository.pesquisarEdicoes(codigoProduto,null,null,null,null,null,false, "DESC",
 				"numeroEdicao", 0, 5);
 	}
 	

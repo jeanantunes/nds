@@ -10,7 +10,10 @@ function pesquisarEdicoes() {
 
 	var codigoProduto = $("#pCodigoProduto").val();
 	var nomeProduto = $("#pNomeProduto").val();
-	var dataLancamento = $("#pDataLancamento").val();
+	var dataLancamentoDe = $("#pDateLanctoDe").val();	
+	var precoDe = $("#pPrecoDe").val();
+	var precoAte = $("#pPrecoAte").val();
+	var dataLancamentoAte = $("#pDateLanctoAte").val();
 	var situacaoLancamento = $("#pSituacaoLancamento").val();
 	var codigoDeBarras = $("#pCodigoDeBarras").val();
 	
@@ -24,7 +27,10 @@ function pesquisarEdicoes() {
 		url: "<c:url value='/cadastro/edicao/pesquisarEdicoes.json' />",
 		params: [{name:'codigoProduto', value: codigoProduto },
 			     {name:'nomeProduto', value: nomeProduto },
-			     {name:'dataLancamento', value: dataLancamento },
+			     {name:'dataLancamentoDe', value: dataLancamentoDe },
+			     {name:'dataLancamentoAte', value: dataLancamentoAte },
+			     {name:'precoDe', value: precoDe },
+			     {name:'precoAte', value: precoAte },
 			     {name:'situacaoLancamento', value: situacaoLancamento },
 			     {name:'codigoDeBarras', value: codigoDeBarras },
 			     {name:'brinde', value : brinde }],
@@ -443,11 +449,12 @@ function removerEdicao(id) {
 	});
 	
 	$(function() {
-		$( "#pDataLancamento" ).datepicker({
+		$( "#pDateLanctoDe,#pDateLanctoAte" ).datepicker({
 			showOn: "button",
 			buttonImage: "${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
 			buttonImageOnly: true
-		});
+		});		
+		
 		$( "#dateLancto_pop" ).datepicker({
 			showOn: "button",
 			buttonImage: "${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
@@ -900,28 +907,31 @@ fieldset {
 				<thead/>
 				<tbody>
 					<tr>
-						<td width="72">C&oacute;digo:</td>
-						<td width="80">
+						<td width="74">C&oacute;digo:</td>
+						<td width="81">
 							<input type="text" name="pCodigoProduto" id="pCodigoProduto" maxlength="255" 
 									style="width:80px;" 
 									onchange="produtoEdicao.pesquisarPorCodigoProduto('#pCodigoProduto', '#pNomeProduto', false,
 											undefined,
 											undefined);" />
 						</td>
-						<td width="47">Produto:</td>
-						<td width="172">
+						<td width="48">Produto:</td>
+						<td width="167">
 							<input type="text" name="pNomeProduto" id="pNomeProduto" maxlength="255" 
-									style="width:170px;"
+									style="width:160px;"
 									onkeyup="produtoEdicao.autoCompletarPorNomeProduto('#pNomeProduto', false);"
 									onblur="produtoEdicao.pesquisarPorNomeProduto('#pCodigoProduto', '#pNomeProduto', false,
 										undefined,
 										undefined);" />
 						</td>
-						<td width="100">Data Lan&ccedil;amento:</td>
-						<td width="105"><input type="text" name="pDataLancamento" id="pDataLancamento" style="width:80px;"/></td>
-						<td width="50">Situa&ccedil;&atilde;o:</td>
-						<td width="168">
-							<select name="select" id="pSituacaoLancamento" name="pSituacaoLancamento" style="width:150px;">
+						<td width="86">Per&iacute;odo Lcto:</td>
+		                <td width="103"><input type="text" name="pDateLanctoDe" id="pDateLanctoDe" style="width:80px;"/></td>
+		                <td width="22">At&eacute;:</td>
+		                <td width="108"><input type="text" name="pDateLanctoAte" id="pDateLanctoAte" style="width:80px;"/></td>
+						<td width="20">&nbsp;</td>
+						<td width="52">Situa&ccedil;&atilde;o:</td>
+						<td width="133">
+							<select name="select" id="pSituacaoLancamento" name="pSituacaoLancamento" style="width:130px;">
 								<option value="" selected="selected">Selecione...</option>
 								<option value="Transmitido">Transmitido</option>
 								<option value="Previsto">Previsto</option>
@@ -937,15 +947,16 @@ fieldset {
 								<option value="Fechado">Fechado</option>
 							</select>
 						</td>
-						<td width="110">&nbsp;</td>
 					</tr>
 					<tr>
 						<td>C&oacute;d. Barras:</td>
-						<td colspan="3" ><input type="text" name="pCodigoDeBarras" id="pCodigoDeBarras" style="width:311px;"/></td>
+						<td colspan="3" ><input type="text" name="pCodigoDeBarras" id="pCodigoDeBarras" style="width:300px;"/></td>						
+						<td>Pre&ccedil;o (R$) de:</td>
+		                <td><input type="text" name="pPrecoDe" id="pPrecoDe" style="width:80px; text-align:right;"/></td>
+		                <td>At&eacute;:</td>
+		                <td><input type="text" name="pPrecoAte" id="pPrecoAte" style="width:80px;text-align:right;"/></td>
 						<td align="right"><input type="checkbox" name="pBrinde" id="pBrinde" value=""/></td>
-						<td>Brinde</td>
-						<td>&nbsp;</td>
-						<td>&nbsp;</td>
+						<td><label for="pBrinde">Brinde</label></td>
 						<td><span class="bt_pesquisar"><a href="javascript:;" onclick="pesquisarEdicoes();">Pesquisar</a></span></td>
 					</tr>
 				</tbody>

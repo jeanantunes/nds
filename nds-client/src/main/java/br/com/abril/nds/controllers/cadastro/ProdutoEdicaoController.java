@@ -24,6 +24,7 @@ import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.ProdutoService;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
 import br.com.caelum.vraptor.Get;
@@ -61,7 +62,7 @@ public class ProdutoEdicaoController {
 	@Post
 	@Path("/pesquisarEdicoes.json")
 	public void pesquisarEdicoes(String codigoProduto, String nomeProduto,
-			Date dataLancamento, String situacaoLancamento,
+			Date dataLancamentoDe, Date dataLancamentoAte, BigDecimal precoDe,BigDecimal precoAte , String situacaoLancamento,
 			String codigoDeBarras, boolean brinde,
             String sortorder, String sortname, int page, int rp) {
 
@@ -71,23 +72,19 @@ public class ProdutoEdicaoController {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Por favor, preencha o campo 'Código' ou 'Produto'!");
 		}
 		
-		// Popular o DTO:
-		ProdutoEdicaoDTO dto = new ProdutoEdicaoDTO();
-		dto.setCodigoProduto(codigoProduto);
-		dto.setNomeProduto(nomeProduto);
-		dto.setDataLancamento(dataLancamento);
-		dto.setCodigoDeBarras(codigoDeBarras);
-		dto.setPossuiBrinde(brinde);
-		dto.setSituacaoLancamento(null);
+		
+		StatusLancamento statusLancamento = null;
 		for (StatusLancamento status : StatusLancamento.values()) {
 			if (status.getDescricao().equals(situacaoLancamento)) {
-				dto.setSituacaoLancamento(status);
+				statusLancamento = status;
 			}
 		}
 		
+		Intervalo<Date> intervaloLancamento = new Intervalo<Date>(dataLancamentoDe, dataLancamentoAte);
+		Intervalo<BigDecimal> intervaloPreco = new Intervalo<BigDecimal>(precoDe, precoAte);
 		// Pesquisar:
-		Long qtd = peService.countPesquisarEdicoes(dto);
-		List<ProdutoEdicaoDTO> lst = peService.pesquisarEdicoes(dto, sortorder, sortname, page, rp);
+		Long qtd = peService.countPesquisarEdicoes(codigoProduto, nomeProduto, intervaloLancamento, intervaloPreco, statusLancamento, codigoDeBarras, brinde);
+		List<ProdutoEdicaoDTO> lst = peService.pesquisarEdicoes(codigoProduto, nomeProduto, intervaloLancamento, intervaloPreco, statusLancamento, codigoDeBarras, brinde, sortorder, sortname, page, rp);
 		
 		this.result.use(FlexiGridJson.class).from(lst).total(qtd.intValue()).page(page).serialize();
 	}
@@ -180,9 +177,8 @@ public class ProdutoEdicaoController {
 		 * Regra: Se não houver edições já cadatradas para este produto, deve-se
 		 * obrigar a cadastrar o número 1. 
 		 */
-		ProdutoEdicaoDTO countEdicao = new ProdutoEdicaoDTO();
-		countEdicao.setCodigoProduto(codigoProduto);
-		Long qtdEdicoes = peService.countPesquisarEdicoes(countEdicao);
+		
+		Long qtdEdicoes = peService.countPesquisarEdicoes(codigoProduto, null, null, null, null, null, false);
 		if (qtdEdicoes == 0 || Long.valueOf(0).equals(qtdEdicoes)) {
 			dto.setNumeroEdicao(1L);
 		}
@@ -194,11 +190,8 @@ public class ProdutoEdicaoController {
 	@Post
 	@Path("/ultimasEdicoes.json")
 	public void ultimasEdicoes(String codigoProduto) {
-		
-		ProdutoEdicaoDTO dto = new ProdutoEdicaoDTO();
-		dto.setCodigoProduto(codigoProduto);
-		
-		List<ProdutoEdicaoDTO> lst = peService.pesquisarUltimasEdicoes(dto, 5);
+			
+		List<ProdutoEdicaoDTO> lst = peService.pesquisarUltimasEdicoes(codigoProduto, 5);
 
 		this.result.use(FlexiGridJson.class).from(lst).total(lst.size()).page(1).serialize();
 	}
