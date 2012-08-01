@@ -4208,12 +4208,12 @@ public class DataLoader {
 
 		distribuidor.setPoliticaSuspensao(politicaSuspensao);
 
-		ParametroContratoCota parametroContrato = Fixture.criarParametroContratoCota("<font color=\'blue\'><b>CONSIDERANDO QUE:</b></font><br>"+
+		ParametroContratoCota parametroContrato = Fixture.criarParametroContratoCota("<font color=\"blue\"><b>CONSIDERANDO QUE:</b></font><br>"+
 																					 "<br>"+"<b>(i)</b>	A Contratante contempla, dentro de seu objeto social, a atividade de distribuição de livros, jornais, revistas, impressos e publicações em geral e, portanto, necessita de serviços de transporte de revistas;"+
 																					 "<br>"+"<b>(ii)</b>	A Contratada é empresa especializada e, por isso, capaz de prestar serviços de transportes, bem como declara que possui qualificação técnica e documentação necessária para a prestação dos serviços citados acima;"+
 																					 "<br>"+"<b>(iii)</b>	A Contratante deseja contratar a Contratada para a prestação dos serviços de transporte de revistas;"+
 																					 "<br>"+"RESOLVEM, mútua e reciprocamente, celebrar o presente Contrato de Prestação de Serviços de Transporte de Revistas (“Contrato”), que se obrigam a cumprir, por si e seus eventuais sucessores a qualquer título, em conformidade com os termos e condições a seguir:"+
-																					 "<br><br>"+"<font color=\'blue\'><b>1.	OBJETO DO CONTRATO</b><br></font>"+
+																					 "<br><br>"+"<font color=\"blue\"><b>1.	OBJETO DO CONTRATO</b><br></font>"+
 																					 "<br>"+"<b>1.1.</b>	O presente contrato tem por objeto a prestação dos serviços pela Contratada de transporte de revistas, sob sua exclusiva responsabilidade, sem qualquer relação de subordinação com a Contratante e dentro da melhor técnica, diligência, zelo e probidade, consistindo na disponibilização de veículos e motoristas que atendam a demanda da Contratante."
 																					 , "neste ato, por seus representantes infra-assinados, doravante denominada simplesmente CONTRATADA.", 30, 30);
 		save(session, parametroContrato);

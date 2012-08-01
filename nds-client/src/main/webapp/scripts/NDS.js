@@ -609,6 +609,32 @@ function mostra_status(opcao) {
 			grid_2.style.display = "none";   
 		break;   
 	}   
+
+}
+
+function focarPrimeiroElemento() {
+	$('input:visible:enabled:first').focus();
+}
+
+function escondeHeader(){
+	$('.sub-header').fadeOut('fast');
+	$('#sobeHeader').fadeOut('fast');
+	$('.headerEsconde').fadeIn('fast');
+	$('#desceHeader').fadeIn('fast');
+	// Elemento existe
+	if ($('.gridOff').length != 0) {
+		$('.gridOff').removeClass('gridOff').addClass('gridOn');
+	}
+}
+function mostraHeader(){
+	$('.sub-header').fadeIn('fast');
+	$('#sobeHeader').fadeIn('fast');
+	$('.headerEsconde').fadeOut('fast');
+	$('#desceHeader').fadeOut('fast');
+	// Elemento existe
+	if ($('.gridOn').length != 0) {
+		$('.gridOn').removeClass('gridOn').addClass('gridOff');
+	}
 }
 
 /**
