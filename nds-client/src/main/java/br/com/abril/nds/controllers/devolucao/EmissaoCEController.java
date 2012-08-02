@@ -10,12 +10,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
-
-<<<<<<< HEAD
 import br.com.abril.nds.client.annotation.Rules;
-=======
 import br.com.abril.nds.dto.CapaDTO;
->>>>>>> master
 import br.com.abril.nds.dto.CotaEmissaoDTO;
 import br.com.abril.nds.dto.DistribuidorDTO;
 import br.com.abril.nds.dto.ItemDTO;
