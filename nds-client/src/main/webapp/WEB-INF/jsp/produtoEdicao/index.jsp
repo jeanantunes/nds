@@ -10,7 +10,10 @@ function pesquisarEdicoes() {
 
 	var codigoProduto = $("#pCodigoProduto").val();
 	var nomeProduto = $("#pNomeProduto").val();
-	var dataLancamento = $("#pDataLancamento").val();
+	var dataLancamentoDe = $("#pDateLanctoDe").val();	
+	var precoDe = $("#pPrecoDe").val();
+	var precoAte = $("#pPrecoAte").val();
+	var dataLancamentoAte = $("#pDateLanctoAte").val();
 	var situacaoLancamento = $("#pSituacaoLancamento").val();
 	var codigoDeBarras = $("#pCodigoDeBarras").val();
 	
@@ -24,7 +27,10 @@ function pesquisarEdicoes() {
 		url: "<c:url value='/cadastro/edicao/pesquisarEdicoes.json' />",
 		params: [{name:'codigoProduto', value: codigoProduto },
 			     {name:'nomeProduto', value: nomeProduto },
-			     {name:'dataLancamento', value: dataLancamento },
+			     {name:'dataLancamentoDe', value: dataLancamentoDe },
+			     {name:'dataLancamentoAte', value: dataLancamentoAte },
+			     {name:'precoDe', value: precoDe },
+			     {name:'precoAte', value: precoAte },
 			     {name:'situacaoLancamento', value: situacaoLancamento },
 			     {name:'codigoDeBarras', value: codigoDeBarras },
 			     {name:'brinde', value : brinde }],
@@ -61,7 +67,11 @@ function executarPreProcessamento(resultado) {
 		row.cell.acao = linkAprovar + linkExcluir;
 
 		//
-		nProduto = row.cell.nomeProduto;
+		if(row.cell.nomeProduto){
+			nProduto = row.cell.nomeProduto;
+		}else{
+			row.cell.nomeProduto = '';
+		}
 		cProduto = row.cell.codigoProduto;
 	});
 		
@@ -169,7 +179,7 @@ function carregarDialog(id) {
 				$("#dataLancamentoPrevisto").val(result.dataLancamentoPrevisto == undefined ? '' : result.dataLancamentoPrevisto.$);
 				$("#dataLancamento").val(result.dataLancamento == undefined ? '' : result.dataLancamento.$);
 				$("#repartePrevisto").val(result.repartePrevisto)
-				$("#reparteDistribuido").val(result.reparteDistribuido);
+				$("#expectativaVenda").val(result.expectativaVenda);
 				$("#repartePromocional").val(result.repartePromocional);
 				//$("#categoria").val();
 				$("#codigoDeBarras").val(result.codigoDeBarras);
@@ -181,9 +191,16 @@ function carregarDialog(id) {
 				$("#espessura").val(result.espessura);
 				$("#chamadaCapa").val(result.chamadaCapa);
 				$('#parcial').val(result.parcial + "");
-				$('#possuiBrinde').attr('checked', result.possuiBrinde);
+				$('#possuiBrinde').attr('checked', result.possuiBrinde).change();
 				$('#boletimInformativo').val(result.boletimInformativo);
-
+				
+				$('#dataRecolhimentoPrevisto').val(result.dataRecolhimentoPrevisto == undefined ? '' : result.dataRecolhimentoPrevisto.$).attr("readonly", false);
+				$('#semanaRecolhimento').val(result.semanaRecolhimento);
+				$('#dataRecolhimentoReal').val(result.dataRecolhimentoReal == undefined ? '' : result.dataRecolhimentoReal.$);
+				$("#ped").val(result.ped).attr("readonly", false);		
+				$("#descricaoProduto").val(result.descricaoProduto).attr("readonly", false);
+				$("#descricaoBrinde").val(result.descricaoBrinde).attr("readonly", false);
+				
 				if (result.origemInterface) {
 					$("#precoVenda").attr("readonly", false);				
 				} else {
@@ -319,7 +336,7 @@ function form_clear(formName) {
 		$( "#dialog-novo" ).dialog({
 			resizable: false,
 			height:615,
-			width:950,
+			width:960,
 			modal: true,
 			buttons: {
 				"Confirmar": function() {
@@ -436,11 +453,12 @@ function removerEdicao(id) {
 	});
 	
 	$(function() {
-		$( "#pDataLancamento" ).datepicker({
+		$( "#pDateLanctoDe,#pDateLanctoAte" ).datepicker({
 			showOn: "button",
 			buttonImage: "${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
 			buttonImageOnly: true
-		});
+		});		
+		
 		$( "#dateLancto_pop" ).datepicker({
 			showOn: "button",
 			buttonImage: "${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
@@ -472,7 +490,7 @@ $(function() {
 	$("#numeroEdicao").numeric();
 	$("#pacotePadrao").numeric();
 	$("#repartePrevisto").numeric();
-	$("#reparteDistribuido").numeric();
+	$("#expectativaVenda").numeric();
 	$("#repartePromocional").numeric();
 	$("#precoPrevisto").numeric();
 	$("#precoVenda").numeric();
@@ -482,9 +500,23 @@ $(function() {
 	$("#comprimento").numeric();
 	$("#espessura").numeric();
 	$("#numeroLancamento").numeric();
+	$("#ped").numeric();
+	
 
 	$("#dataLancamentoPrevisto").mask("99/99/9999");
+	$("#dataRecolhimentoPrevisto").mask("99/99/9999");
+	$("#dataRecolhimentoReal").mask("99/99/9999");
 	$("#dataLancamento").mask("99/99/9999");
+	
+	$('#possuiBrinde').change(function(){
+		if($(this).attr('checked')){
+			$('.descBrinde').show();
+		}else{
+			$('.descBrinde').hide();
+		}
+	});
+	
+
 });
 </script>
 
@@ -553,7 +585,8 @@ fieldset {
 							<tbody>
 								<tr>
 									<td width="181"><strong>C&oacute;digo:</strong></td>
-									<td width="100"><input type="text" name="codigoProdutoEdicao" id="codigoProdutoEdicao" style="width:100px;" /></td>
+									<td width="100" colspan="3"><input type="text" name="codigoProdutoEdicao" id="codigoProdutoEdicao" style="width:100px;" /></td>
+									
 									<td width="90">&nbsp;</td>
 									<td width="108">&nbsp;</td>
 									<td width="153" rowspan="8" align="center">
@@ -570,36 +603,33 @@ fieldset {
 								</tr>
 								<tr>
 									<td><strong>Nome Publica&ccedil;&atilde;o:</strong></td>
-									<td colspan="3"><input type="text" name="nomePublicacao" id="nomePublicacao" style="width:250px;" disabled="disabled" /></td>
+									<td colspan="5"><input type="text" name="nomePublicacao" id="nomePublicacao" style="width:340px;" disabled="disabled" /></td>
 								</tr>
 								<tr>
 									<td><strong>Nome Comercial Produto:</strong></td>
-									<td colspan="3"><input type="text" name="nomeComercialProduto" id="nomeComercialProduto" style="width:250px;" /></td>
+									<td colspan="5"><input type="text" name="nomeComercialProduto" id="nomeComercialProduto" style="width:340px;" /></td>
 								</tr>
 								<tr>
 									<td><strong>Fornecedor:</strong></td>
-									<td colspan="3"><input type="text" name="nomeFornecedor" id="nomeFornecedor" style="width:250px;" disabled="disabled" /></td>
+									<td colspan="5"><input type="text" name="nomeFornecedor" id="nomeFornecedor" style="width:340px;" disabled="disabled" /></td>
 								</tr>
 								<tr>
 									<td><strong>Situa&ccedil;&atilde;o:</strong></td>
-									<td colspan="3"><input type="text" name="situacao" id="situacao" style="width:250px;" disabled="disabled" /></td>
+									<td colspan="5"><input type="text" name="situacao" id="situacao" style="width:340px;" disabled="disabled" /></td>
 								</tr>
 								<tr>
 									<td><strong>Edi&ccedil;&atilde;o:</strong></td>
 									<td><input type="text" name="numeroEdicao" id="numeroEdicao" style="width:50px;" /></td>
-									<td><strong>Fase:</strong></td>
-									<td><input type="text" name="fase" id="fase" style="width:50px;" disabled="disabled" /></td>
-								</tr>
-								<tr>
-									<td><strong>N&ordm; Lancto:</strong></td>
-									<td><input type="text" name="numeroLancamento" id="numeroLancamento" style="width:50px;" maxlength="9" /></td>
+									<td><strong>PED:</strong></td>
+									<td><input type="text" name="ped" id="ped" style="width:50px;" /></td>
 									<td><strong>Pct. Padr&atilde;o:</strong></td>
 									<td><input type="text" name="pacotePadrao" id="pacotePadrao" style="width:50px;" /></td>
 								</tr>
+							
 								<tr>
 									<td><strong>Tipo de Lan&ccedil;amento:</strong></td>
 									<td colspan="3">
-										<select name="tipoLancamento" id="tipoLancamento" style="width:260px;" >
+										<select name="tipoLancamento" id="tipoLancamento" style="width:160px;" >
 											<option value="">Selecione...</option>
 											<option value="LANCAMENTO">Lan&ccedil;amento</option>
 											<option value="PARCIAL">Ed. Parcial</option>
@@ -608,10 +638,12 @@ fieldset {
 											<option value="SUPLEMENTAR">Supl. Compuls</option>
 										</select>
 									</td>
+									<td><strong>N&ordm; Lancto:</strong></td>
+									<td><input type="text" name="numeroLancamento" id="numeroLancamento" style="width:50px;" maxlength="9" /></td>
 								</tr>
 								<tr>
 									<td><strong>Capa da Edi&ccedil;&atilde;o:</strong></td>
-									<td><input type="file" name="imagemCapa" id="imagemCapa" style="width:50px;" /></td>
+									<td colspan="5"><input type="file" name="imagemCapa" id="imagemCapa" style="width:340px;" /></td>
 								</tr>
 							</tbody>
 						</table>
@@ -626,8 +658,8 @@ fieldset {
 									<td width="80"><input type="text" name="repartePrevisto" id="repartePrevisto" style="width:80px; float:left;" /></td>
 								</tr>
 								<tr>
-									<td><strong>Distribuido:</strong></td>
-									<td><input type="text" name="reparteDistribuido" id="reparteDistribuido" style="width:80px;" disabled="disabled" /></td>
+									<td><strong>Exp. Venda(%):</strong></td>
+									<td><input type="text" name="expectativaVenda" id="expectativaVenda" style="width:80px;" disabled="disabled" /></td>
 								</tr>
 								<tr>
 									<td><strong>Promocional:</strong></td>
@@ -663,7 +695,21 @@ fieldset {
 								</tr>
 							</tbody>
 						</table>
-					</fieldset>
+					</fieldset>	
+				    <fieldset style="width: 630px !important; margin-bottom: 2px; float: left;">
+				     <legend>Data Recolhimento</legend>
+					   	<table border="0" cellSpacing="1" cellPadding="1" width="562">
+					      <tbody><tr>
+					        <td width="60">Previsto:</td>
+					        <td width="91"><input style="width: 70px; float: left;" id="dataRecolhimentoPrevisto" name="dataRecolhimentoPrevisto" type="text"></td>
+					        <td width="48" align="right">Real:</td>
+					        <td width="79"><input style="width: 70px; text-align: right;" id="dataRecolhimentoReal" disabled="disabled" name="dataRecolhimentoReal" type="text"></td>
+					        <td width="180" align="right">Semana de Recolhimento:</td>
+					        <td width="85"><input style="width: 70px; float: left;" id="semanaRecolhimento" disabled="disabled" name="semanaRecolhimento" type="text"></td>
+					      </tr>
+					      </tbody>
+					    </table>
+				    </fieldset>
 				</div>
 				<br clear="all" />
 			</div>
@@ -728,17 +774,9 @@ fieldset {
 									<td width="86"><input type="text" name="peso" id="peso" style="width:80px;" /></td>
 								</tr>
 								<tr>
-									<td width="59">Largura:</td>
-									<td width="86"><input type="text" name="largura" id="largura" style="width:80px;" /></td>
-								</tr>
-								<tr>
-									<td width="59">Comprimento:</td>
-									<td width="86"><input type="text" name="comprimento" id="comprimento" style="width:80px;" /></td>
-								</tr>
-								<tr>
-									<td width="59">Espessura:</td>
-									<td width="86"><input type="text" name="espessura" id="espessura" style="width:80px;" /></td>
-								</tr>
+									<td width="59">Descri&ccedil;&atilde;o Produto:</td>
+									<td width="86"><input type="text" name="descricaoProduto" id="descricaoProduto" style="width:80px;" /></td>
+								</tr>							
 							</tbody>
 						</table>
 					</fieldset>
@@ -765,6 +803,10 @@ fieldset {
 									<td height="24">Brinde:</td>
 									<td><input type="checkbox" name="possuiBrinde" id="possuiBrinde" /></td>
 								</tr>
+								<tr class="descBrinde" style="display:none;">
+						       	    <td height="24">Descri&ccedil;&atilde;o Brinde:</td>
+						       	    <td><input type="text" name="descricaoBrinde" id="descricaoBrinde" style="width:190px;" /></td>
+						     	</tr>
 							</tbody>
 						</table>
 					</fieldset>
@@ -877,28 +919,31 @@ fieldset {
 				<thead/>
 				<tbody>
 					<tr>
-						<td width="72">C&oacute;digo:</td>
-						<td width="80">
+						<td width="74">C&oacute;digo:</td>
+						<td width="81">
 							<input type="text" name="pCodigoProduto" id="pCodigoProduto" maxlength="255" 
 									style="width:80px;" 
 									onchange="produtoEdicao.pesquisarPorCodigoProduto('#pCodigoProduto', '#pNomeProduto', false,
 											undefined,
 											undefined);" />
 						</td>
-						<td width="47">Produto:</td>
-						<td width="172">
+						<td width="48">Produto:</td>
+						<td width="167">
 							<input type="text" name="pNomeProduto" id="pNomeProduto" maxlength="255" 
-									style="width:170px;"
+									style="width:160px;"
 									onkeyup="produtoEdicao.autoCompletarPorNomeProduto('#pNomeProduto', false);"
 									onblur="produtoEdicao.pesquisarPorNomeProduto('#pCodigoProduto', '#pNomeProduto', false,
 										undefined,
 										undefined);" />
 						</td>
-						<td width="100">Data Lan&ccedil;amento:</td>
-						<td width="105"><input type="text" name="pDataLancamento" id="pDataLancamento" style="width:80px;"/></td>
-						<td width="50">Situa&ccedil;&atilde;o:</td>
-						<td width="168">
-							<select name="select" id="pSituacaoLancamento" name="pSituacaoLancamento" style="width:150px;">
+						<td width="86">Per&iacute;odo Lcto:</td>
+		                <td width="103"><input type="text" name="pDateLanctoDe" id="pDateLanctoDe" style="width:80px;"/></td>
+		                <td width="22">At&eacute;:</td>
+		                <td width="108"><input type="text" name="pDateLanctoAte" id="pDateLanctoAte" style="width:80px;"/></td>
+						<td width="20">&nbsp;</td>
+						<td width="52">Situa&ccedil;&atilde;o:</td>
+						<td width="133">
+							<select name="select" id="pSituacaoLancamento" name="pSituacaoLancamento" style="width:130px;">
 								<option value="" selected="selected">Selecione...</option>
 								<option value="Transmitido">Transmitido</option>
 								<option value="Previsto">Previsto</option>
@@ -914,15 +959,16 @@ fieldset {
 								<option value="Fechado">Fechado</option>
 							</select>
 						</td>
-						<td width="110">&nbsp;</td>
 					</tr>
 					<tr>
 						<td>C&oacute;d. Barras:</td>
-						<td colspan="3" ><input type="text" name="pCodigoDeBarras" id="pCodigoDeBarras" style="width:311px;"/></td>
+						<td colspan="3" ><input type="text" name="pCodigoDeBarras" id="pCodigoDeBarras" style="width:300px;"/></td>						
+						<td>Pre&ccedil;o (R$) de:</td>
+		                <td><input type="text" name="pPrecoDe" id="pPrecoDe" style="width:80px; text-align:right;"/></td>
+		                <td>At&eacute;:</td>
+		                <td><input type="text" name="pPrecoAte" id="pPrecoAte" style="width:80px;text-align:right;"/></td>
 						<td align="right"><input type="checkbox" name="pBrinde" id="pBrinde" value=""/></td>
-						<td>Brinde</td>
-						<td>&nbsp;</td>
-						<td>&nbsp;</td>
+						<td><label for="pBrinde">Brinde</label></td>
 						<td><span class="bt_pesquisar"><a href="javascript:;" onclick="pesquisarEdicoes();">Pesquisar</a></span></td>
 					</tr>
 				</tbody>
@@ -975,6 +1021,7 @@ fieldset {
 
 	$(".prodsPesqGrid").flexigrid({
 			dataType : 'json',
+			preProcess: executarPreProcessamento,
 			colModel : [ {
 				display : 'Produto',
 				name : 'nomeProduto',

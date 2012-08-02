@@ -57,20 +57,6 @@ public class EnderecoServiceImpl implements EnderecoService {
 		
 		if (listaEnderecos != null){
 		
-			boolean isEnderecoPrincipal = false;
-			
-			for (EnderecoAssociacaoDTO enderecoAssociacao : listaEnderecos){
-				
-				if (isEnderecoPrincipal && enderecoAssociacao.isEnderecoPrincipal()){
-					
-					throw new ValidacaoException(TipoMensagem.WARNING, "Apenas um endereço principal é permitido.");
-				}
-				
-				if (enderecoAssociacao.isEnderecoPrincipal()){
-					isEnderecoPrincipal = enderecoAssociacao.isEnderecoPrincipal();
-				}
-			}
-			
 			for (EnderecoAssociacaoDTO enderecoAssociacaoDTO : listaEnderecos){
 				
 				this.validarEndereco(enderecoAssociacaoDTO.getEndereco(), enderecoAssociacaoDTO.getTipoEndereco());
@@ -169,6 +155,9 @@ public class EnderecoServiceImpl implements EnderecoService {
 		return this.enderecoRepository.buscarPorId(idEndereco);
 	}
 	
+	/* (non-Javadoc)
+	 * @see br.com.abril.nds.service.EnderecoService#buscarEnderecosPorIdPessoa(java.lang.Long, java.util.Set)
+	 */
 	@Override
 	@Transactional(readOnly = true)
 	public List<EnderecoAssociacaoDTO> buscarEnderecosPorIdPessoa(Long idPessoa, Set<Long> idsIgnorar){
@@ -251,4 +240,5 @@ public class EnderecoServiceImpl implements EnderecoService {
 
 		return this.enderecoRepository.obterLogradourosPorCodigoBairroNome(codigoBairro, nomeLogradouro);
 	}
+	
 }

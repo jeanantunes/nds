@@ -52,6 +52,7 @@ import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.PoliticaCobranca;
 import br.com.abril.nds.model.cadastro.PoliticaSuspensao;
+import br.com.abril.nds.model.cadastro.Processo;
 import br.com.abril.nds.model.cadastro.ProcuracaoEntregador;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
@@ -417,6 +418,7 @@ public class Fixture {
 		fornecedor.setInicioAtividade(new Date());
 		fornecedor.setCodigoInterface(codigoInterface);
 		fornecedor.setOrigem(Origem.MANUAL);
+		fornecedor.setEmailNfe("teste@gmail.com");
 		return fornecedor;
 	}
 	
@@ -1194,7 +1196,7 @@ public class Fixture {
 		tipoNotaFiscal.setTipoOperacao(TipoOperacao.ENTRADA);		
 		tipoNotaFiscal.setTipoAtividade(TipoAtividade.PRESTADOR_SERVICO);
 		tipoNotaFiscal.setSerieNotaFiscal(2);
-		
+		tipoNotaFiscal.setProcesso(Processo.PROCESSO);
 		return tipoNotaFiscal;
 	}
 
@@ -1241,7 +1243,8 @@ public class Fixture {
 		tipoNotaFiscal.setNopCodigo(0L);
 		tipoNotaFiscal.setTipoOperacao(TipoOperacao.SAIDA);
 		tipoNotaFiscal.setTipoAtividade(TipoAtividade.MERCANTIL);
-		tipoNotaFiscal.setSerieNotaFiscal(3);		
+		tipoNotaFiscal.setSerieNotaFiscal(3);
+		tipoNotaFiscal.setProcesso(Processo.PROCESSO);
 		return tipoNotaFiscal;
 	}
 
@@ -1258,6 +1261,7 @@ public class Fixture {
 		tipoNotaFiscal.setNopCodigo(0L);
 		tipoNotaFiscal.setTipoOperacao(TipoOperacao.ENTRADA);
 		tipoNotaFiscal.setTipoAtividade(TipoAtividade.PRESTADOR_SERVICO);
+		tipoNotaFiscal.setProcesso(Processo.PROCESSO);
 		tipoNotaFiscal.setSerieNotaFiscal(4);
 		
 		return tipoNotaFiscal;

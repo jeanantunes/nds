@@ -2,15 +2,19 @@ package br.com.abril.nds.dto.filtro;
 
 import java.io.Serializable;
 
+import br.com.abril.nds.model.cadastro.TipoAtividade;
+import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Exportable;
 
 @Exportable
 public class FiltroCadastroTipoNotaDTO extends FiltroDTO implements Serializable {
 
 	private static final long serialVersionUID = -733782325727284635L;
-
-	private String cfop;
 	
+	@Export(label="Operação")
+	private TipoAtividade tipoAtividade;
+	
+	@Export(label="Tipo Nota")
 	private String tipoNota;
 
 	private OrdenacaoColunaConsulta ordenacaoColuna;
@@ -20,6 +24,8 @@ public class FiltroCadastroTipoNotaDTO extends FiltroDTO implements Serializable
 	
 	public enum OrdenacaoColunaConsulta {
 		
+		OPERACAO("operacao"),
+		PROCESSO("processo"),
 		NOP_DESCRICAO("nopDescricao"),
 		CFOP_ESTADO("cfopEstado"),
 		CFOP_OUTROS_ESTADOS("cfopOutrosEstados");
@@ -43,15 +49,7 @@ public class FiltroCadastroTipoNotaDTO extends FiltroDTO implements Serializable
 	public void setOrdenacaoColuna(OrdenacaoColunaConsulta ordenacaoColuna) {
 		this.ordenacaoColuna = ordenacaoColuna;
 	}
-
-	public String getCfop() {
-		return cfop;
-	}
-
-	public void setCfop(String cfop) {
-		this.cfop = cfop;
-	}
-
+	
 	public String getTipoNota() {
 		return tipoNota;
 	}
@@ -59,5 +57,21 @@ public class FiltroCadastroTipoNotaDTO extends FiltroDTO implements Serializable
 	public void setTipoNota(String tipoNota) {
 		this.tipoNota = tipoNota;
 	}
+
+	/**
+	 * @return the tipoAtividade
+	 */
+	public TipoAtividade getTipoAtividade() {
+		return tipoAtividade;
+	}
+
+	/**
+	 * @param tipoAtividade the tipoAtividade to set
+	 */
+	public void setTipoAtividade(TipoAtividade tipoAtividade) {
+		this.tipoAtividade = tipoAtividade;
+	}
+	
+	
 
 }
