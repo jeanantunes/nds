@@ -18,21 +18,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.dto.CalendarioFeriadoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
-import br.com.abril.nds.integracao.service.DistribuidorService;
-import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.TipoFeriado;
 import br.com.abril.nds.model.dne.Localidade;
-import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.CalendarioService.TipoPesquisaFeriado;
-import br.com.abril.nds.service.impl.CalendarioServiceImpl;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TipoMensagem;
-import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
-import br.com.abril.nds.util.export.NDSFileHeader;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
@@ -52,9 +46,6 @@ public class CadastroCalendarioController {
 	
 	@Autowired
 	private HttpSession session;
-	
-	@Autowired
-	private DistribuidorService distribuidorService;
 	
 	@Autowired
 	private HttpServletResponse response;
@@ -200,15 +191,16 @@ public class CadastroCalendarioController {
 		
 	}
 	
-	public void obterFeriadosDoMes(int mes, int ano) {
+	public void obterFeriadosDoMes(int mes) {
 		
-		if(ano == 0) {
-			ano = Calendar.getInstance().get(Calendar.YEAR);
+		FiltroCalendarioFeriado filtro = (FiltroCalendarioFeriado) session.getAttribute(FILTRO_PESQUISA);
+		
+		if(filtro == null) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "Dados da pesquisa inválidos.");
 		}
 		
-		FiltroCalendarioFeriado filtro = new FiltroCalendarioFeriado();
 		filtro.setMesFeriado(mes);
-		filtro.setAnoFeriado(ano);
+		
 		session.setAttribute(FILTRO_PESQUISA, filtro);
 		
 		List<CalendarioFeriadoDTO> listaCalendarioFeriado = calendarioService.obterListaCalendarioFeriadoMensal(filtro.getMesFeriado(), filtro.getAnoFeriado());
@@ -246,42 +238,6 @@ public class CadastroCalendarioController {
 		
 		result.use(Results.nothing());
 		
-	}
-	
-	/**
-	 * Obtém os dados do cabeçalho de exportação.
-	 * 
-	 * @return NDSFileHeader
-	 */
-	private NDSFileHeader getNDSFileHeader() {
-		
-		NDSFileHeader ndsFileHeader = new NDSFileHeader();
-		
-		Distribuidor distribuidor = this.distribuidorService.obter();
-		
-		if (distribuidor != null) {
-			
-			ndsFileHeader.setNomeDistribuidor(distribuidor.getJuridica().getRazaoSocial());
-			ndsFileHeader.setCnpjDistribuidor(distribuidor.getJuridica().getCnpj());
-		}
-		
-		ndsFileHeader.setData(new Date());
-		
-		ndsFileHeader.setNomeUsuario(this.getUsuario().getNome());
-		
-		return ndsFileHeader;
-	}
-	
-	//TODO: não há como reconhecer usuario, ainda
-	private Usuario getUsuario() {
-			
-			Usuario usuario = new Usuario();
-			
-			usuario.setId(1L);
-			
-			usuario.setNome("Jornaleiro da Silva");
-			
-			return usuario;
 	}
 	
 	public void obterFeriados(int anoVigencia) {

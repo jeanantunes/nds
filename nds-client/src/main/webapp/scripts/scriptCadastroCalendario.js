@@ -16,14 +16,11 @@ var CadastroCalendario = {
 		
 		carregarPopUpFeriadosMes : function(mes) {
 			
-			var ano = 2012;//TODO obter este campo 
-			
 			$(".mesFeriadoGrid").flexOptions({
 				preProcess: CadastroCalendario.preProcessarMesFeriado,
 				url: contextPath + '/administracao/cadastroCalendario/obterFeriadosDoMes',
 				dataType : 'json',
-				params:[{name:'mes', value: mes},
-				        {name:'ano', value: ano}]
+				params:[{name:'mes', value: mes}]
 			
 			});
 			
