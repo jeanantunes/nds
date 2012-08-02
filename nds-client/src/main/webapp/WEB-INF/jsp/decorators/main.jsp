@@ -81,13 +81,13 @@
 <link rel="stylesheet" type="text/css"
 	  href="${pageContext.request.contextPath}/scripts/tools-1.2.6/css/tools.css" />
 
-<link rel="stylesheet" href="scripts/jquery-ui-1.8.16.custom/development-bundle/themes/redmond/jquery.ui.all.css" />
+<link rel="stylesheet" href="${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/development-bundle/themes/redmond/jquery.ui.all.css" />
 
-<link rel="stylesheet" type="text/css" href="scripts/tooltip/tipsy.css" />
-<link rel="stylesheet" type="text/css" href="scripts/tooltip/tipsy-docs.css" />
-<script language="javascript" type="text/javascript" src="scripts/tooltip/jquery.tipsy.js"></script>
+<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/scripts/tooltip/tipsy.css" />
+<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/scripts/tooltip/tipsy-docs.css" />
+<script language="javascript" type="text/javascript" src="${pageContext.request.contextPath}/scripts/tooltip/jquery.tipsy.js"></script>
 
-<script type="text/javascript" src="scripts/commonsbehaviour.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/commonsbehaviour.js"></script>
 
 <script language="javascript" type="text/javascript">
 
