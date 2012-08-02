@@ -75,7 +75,6 @@ import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.EncargoFinanceiroRepository;
 import br.com.abril.nds.repository.EnderecoRepository;
-import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
 import br.com.abril.nds.repository.NotaFiscalRepository;
 import br.com.abril.nds.repository.PdvRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
@@ -214,39 +213,41 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 
 		for (RetornoNFEDTO dadosRetornoNFE : listaDadosRetornoNFE) {
 
-			NotaFiscal notaFiscal = this.notaFiscalDAO
-					.buscarPorId(dadosRetornoNFE.getIdNotaFiscal());
-
-			if (notaFiscal != null) {
-
-				IdentificacaoEmitente emitente = notaFiscal
-						.getIdentificacaoEmitente();
-
-				String cpfCnpjEmitente = emitente.getPessoaEmitenteReferencia()
-						.getDocumento();
-
-				InformacaoEletronica informacaoEletronica = notaFiscal
-						.getInformacaoEletronica();
-
-				if (cpfCnpjEmitente.equals(dadosRetornoNFE.getCpfCnpj())) {
-
-					if (StatusProcessamentoInterno.ENVIADA.equals(notaFiscal.getStatusProcessamentoInterno())) {
-
-						if (Status.AUTORIZADO.equals(dadosRetornoNFE.getStatus())
-								|| Status.USO_DENEGADO.equals(dadosRetornoNFE.getStatus())) {
-
-							listaDadosRetornoNFEProcessados.add(dadosRetornoNFE);
-						}
-
-					} else if (StatusProcessamentoInterno.RETORNADA
-							.equals(notaFiscal.getStatusProcessamentoInterno())) {
-
-						if (Status.AUTORIZADO.equals(informacaoEletronica
-								.getRetornoComunicacaoEletronica().getStatus())
-								&& Status.CANCELAMENTO_HOMOLOGADO
-										.equals(dadosRetornoNFE.getStatus())) {
-
-							listaDadosRetornoNFEProcessados.add(dadosRetornoNFE);
+			if (dadosRetornoNFE.getIdNotaFiscal() != null) {
+				
+				NotaFiscal notaFiscal = this.notaFiscalDAO
+						.buscarPorId(dadosRetornoNFE.getIdNotaFiscal());
+	
+				if (notaFiscal != null) {
+	
+					IdentificacaoEmitente emitente = notaFiscal
+							.getIdentificacaoEmitente();
+	
+					String cpfCnpjEmitente = emitente.getDocumento();
+	
+					InformacaoEletronica informacaoEletronica = notaFiscal
+							.getInformacaoEletronica();
+	
+					if (cpfCnpjEmitente.equals(dadosRetornoNFE.getCpfCnpj())) {
+	
+						if (StatusProcessamentoInterno.ENVIADA.equals(notaFiscal.getStatusProcessamentoInterno())) {
+	
+							if (Status.AUTORIZADO.equals(dadosRetornoNFE.getStatus())
+									|| Status.USO_DENEGADO.equals(dadosRetornoNFE.getStatus())) {
+	
+								listaDadosRetornoNFEProcessados.add(dadosRetornoNFE);
+							}
+	
+						} else if (StatusProcessamentoInterno.RETORNADA
+								.equals(notaFiscal.getStatusProcessamentoInterno())) {
+	
+							if (Status.AUTORIZADO.equals(informacaoEletronica
+									.getRetornoComunicacaoEletronica().getStatus())
+									&& Status.CANCELAMENTO_HOMOLOGADO
+											.equals(dadosRetornoNFE.getStatus())) {
+	
+								listaDadosRetornoNFEProcessados.add(dadosRetornoNFE);
+							}
 						}
 					}
 				}
@@ -257,13 +258,17 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 	}
 
 	@Override
-	public void cancelarNotaFiscal(Long id) {
+	@Transactional
+	public void cancelarNotaFiscal(RetornoNFEDTO dadosRetornoNFE) {
+		atualizaRetornoNFe(dadosRetornoNFE);
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void denegarNotaFiscal(Long id) {
+	@Transactional
+	public void denegarNotaFiscal(RetornoNFEDTO dadosRetornoNFE) {
+		atualizaRetornoNFe(dadosRetornoNFE);
 		// TODO Auto-generated method stub
 
 	}
@@ -278,12 +283,27 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 	@Override
 	@Transactional
 	public void autorizarNotaFiscal(RetornoNFEDTO dadosRetornoNFE) {
-
+		atualizaRetornoNFe(dadosRetornoNFE);
+	}
+	
+	/**
+	 * Atualiza o Retorno de um NotaFiscal que já foi enviada.
+	 * 
+	 * @param dadosRetornoNFE
+	 */
+	private void atualizaRetornoNFe(RetornoNFEDTO dadosRetornoNFE) {
+		
 		NotaFiscal notaFiscal = this.notaFiscalDAO.buscarPorId(dadosRetornoNFE
-				.getIdNotaFiscal());
+			.getIdNotaFiscal());
 
 		InformacaoEletronica informacaoEletronica = notaFiscal
 				.getInformacaoEletronica();
+		
+		if (informacaoEletronica == null) {
+			notaFiscal.setInformacaoEletronica(new InformacaoEletronica());
+			informacaoEletronica = notaFiscal
+					.getInformacaoEletronica();
+		}
 
 		informacaoEletronica.setChaveAcesso(dadosRetornoNFE.getChaveAcesso());
 
@@ -302,7 +322,8 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		notaFiscal
 				.setStatusProcessamentoInterno(StatusProcessamentoInterno.RETORNADA);
 
-		this.notaFiscalDAO.merge(notaFiscal);
+		this.notaFiscalDAO.merge(notaFiscal);	
+
 
 	}
 
