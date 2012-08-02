@@ -173,7 +173,9 @@
 	    <fieldset style="width:585px!important;">
 			<legend>Produtos</legend>
 			
-	    	<table class="lanctoFaltasSobrasCota_3Grid"></table>
+			<div style="display: none;" id="divPesquisaProdutosNota">
+	    		<table class="lanctoFaltasSobrasCota_3Grid"></table>
+	    	</div>
 		</fieldset>
 		
 		<div class="linha_separa_fields" style="width:580px!important;">&nbsp;</div>
@@ -244,8 +246,14 @@
 		});
 	
 		function popupNovasDiferencas(idDiferenca) {
-
-			$("#fieldCota").hide();
+			
+			$("#codigoProdutoInput").val("");
+			$("#nomeProdutoInput").val("");
+			$("#edicaoProdutoInput").val("");
+			$("#precoCapaProduto").text("");
+			$("#reparteProduto").text("");
+			$("#diferencaProdutoInput").val("");
+			$("#paraEstoque").check();
 			
 			$(".trCotas").remove();
 			$("#cotaInput1").val("");
@@ -253,8 +261,16 @@
 			$("#reparteText1").text("");
 			$("#diferencaInput1").val("");
 			$("#reparteAtualText1").text("");
+			$("#checkboxLancCota").uncheck();
 			
-			$("#paraEstoque").attr("checked",true);
+			$(".prodSemCota").show();
+			$(".prodComCota").hide();
+			
+			$("#dateNotaEnvio").val("");
+			$("#cotaInputNota").val("");
+			$("#nomeCotaNota").val("");
+			
+			$("#divPesquisaProdutosNota").hide();
 			
 			if (idDiferenca){
 				
@@ -646,7 +662,7 @@
 							);
 						}
 					}, 
-					2000
+					500
 			);
 		}
 		
@@ -689,6 +705,8 @@
 			});
 			
 			$(".lanctoFaltasSobrasCota_3Grid").flexReload();
+			
+			$("#divPesquisaProdutosNota").show();
 		}
 		
 		function alterarReparteAtual(indexDiv){
