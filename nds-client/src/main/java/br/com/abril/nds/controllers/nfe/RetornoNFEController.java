@@ -113,11 +113,11 @@ public class RetornoNFEController {
 				continue;
 			
 			case CANCELAMENTO_HOMOLOGADO:
-				this.notaFiscalService.cancelarNotaFiscal(notaRetorno.getIdNotaFiscal());
+				this.notaFiscalService.cancelarNotaFiscal(notaRetorno);
 				continue;
 			
 			case USO_DENEGADO:
-				this.notaFiscalService.denegarNotaFiscal(notaRetorno.getIdNotaFiscal());
+				this.notaFiscalService.denegarNotaFiscal(notaRetorno);
 				continue;
 			
 			default:
