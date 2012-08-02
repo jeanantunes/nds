@@ -22,6 +22,8 @@ import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
+import br.com.caelum.stella.validation.CPFValidator;
+import br.com.caelum.stella.validation.InvalidStateException;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
@@ -159,6 +161,8 @@ public class SociosController {
 		
 		List<String> msgsValidacao = new ArrayList<String>();
 		
+		CPFValidator cpfValidator = new CPFValidator(true);
+		
 		if (pessoa == null){
 			throw new ValidacaoException(TipoMensagem.WARNING, "CPF é obrigatório.");
 		}
@@ -204,6 +208,22 @@ public class SociosController {
 		
 		if (pessoa.getSexo() == null){
 			msgsValidacao.add("Sexo é obrigatório.");
+		}
+		
+		try{
+			cpfValidator.assertValid(pessoa.getCpf());
+		
+		} catch(InvalidStateException e){
+			
+			//Tenta validar CPF não formatado.
+			cpfValidator = new CPFValidator(false);
+
+			try {
+				cpfValidator.assertValid(pessoa.getCpf());
+			
+			} catch(InvalidStateException ie) {
+				msgsValidacao.add("CPF inválido."); 
+			}
 		}
 		
 		//dados do conjuge

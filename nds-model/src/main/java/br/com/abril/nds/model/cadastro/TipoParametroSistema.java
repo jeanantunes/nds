@@ -60,20 +60,15 @@ public enum TipoParametroSistema {
 	 */
 	EMAIL_USUARIO,
 	
+	/**
+	 * Representa a quantidade de meses que sera efetuado o expurgo do sistema
+	 */
+	FREQUENCIA_EXPURGO,
 	
-	LOGOTIPO_DISTRIBUIDOR,
-	
-	CNPJ,
-	RAZAO_SOCIAL,
-	//EMAIL,	// estou usando o EMAIL_USUARIO
-	UF,
-	
+	//TODO remover esse parametro após a alteração do "TODO" que se incontra na classe br.com.abril.nds.integracao.engine.CouchDBImportDataRouter
 	CODIGO_DISTRIBUIDOR_DINAP,
-	CODIGO_DISTRIBUIDOR_FC,
-	
-	LOGIN_DISTRIBUIDOR,
-	SENHA_DISTRIBUIDOR,
-	
+	LOGOTIPO_DISTRIBUIDOR,
+		
 	VERSAO_SISTEMA,
 	
 	PATH_INTERFACE_CE_EXPORTACAO,

@@ -94,6 +94,31 @@
         $('[name="nacionalidadeConjugeCpf"]:eq('+ indiceAba +')').val("");
         $('[name="naturalConjugeCpf"]:eq('+ indiceAba +')').val("");
         $('[name="checkboxSocioPrincipal"]:eq('+ indiceAba +')').uncheck();
+        enableFields(indiceAba);
+	}
+	
+	function enableFields(indiceAba) {
+		$('[name="nomeFiadorCpf"]:eq('+ indiceAba +')').attr("disabled", false);
+        $('[name="emailFiadorCpf"]:eq('+ indiceAba +')').attr("disabled", false);
+        $('[name="cpfFiador"]:eq('+ indiceAba +')').attr("disabled", false);
+        $('[name="rgFiador"]:eq('+ indiceAba +')').attr("disabled", false);
+        $('[name="dataNascimentoFiadorCpf"]:eq('+ indiceAba +')').attr("disabled", false);
+        $('[name="orgaoEmissorFiadorCpf"]:eq('+ indiceAba +')').attr("disabled", false);
+        $('[name="selectUfOrgaoEmiCpf"]:eq('+ indiceAba +')').attr("disabled", false);
+        $('[name="estadoCivilFiadorCpf"]:eq('+ indiceAba +')').attr("disabled", false);
+        $('[name="selectSexoFiador"]:eq('+ indiceAba +')').attr("disabled", false);
+        $('[name="nacionalidadeFiadorCpf"]:eq('+ indiceAba +')').attr("disabled", false);
+        $('[name="naturalFiadorCpf"]:eq('+ indiceAba +')').attr("disabled", false);
+        $('[name="nomeConjugeCpf"]:eq('+ indiceAba +')').attr("disabled", false);
+        $('[name="emailConjugeCpf"]:eq('+ indiceAba +')').attr("disabled", false);
+        $('[name="cpfConjuge"]:eq('+ indiceAba +')').attr("disabled", false);
+        $('[name="rgConjuge"]:eq('+ indiceAba +')').attr("disabled", false);
+        $('[name="dataNascimentoConjugeCpf"]:eq('+ indiceAba +')').attr("disabled", false);
+        $('[name="orgaoEmissorConjugeCpf"]:eq('+ indiceAba +')').attr("disabled", false);
+        $('[name="selectUfOrgaoEmiConjugeCpf"]:eq('+ indiceAba +')').attr("disabled", false);
+        $('[name="selectSexoConjuge"]:eq('+ indiceAba +')').attr("disabled", false);
+        $('[name="nacionalidadeConjugeCpf"]:eq('+ indiceAba +')').attr("disabled", false);
+        $('[name="naturalConjugeCpf"]:eq('+ indiceAba +')').attr("disabled", false);
 	}
 	
 	$(function(){
