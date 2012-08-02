@@ -38,14 +38,7 @@ public class ParametroSistemaRepositoryImpl extends AbstractRepositoryModel<Para
 		String hql = "from ParametroSistema p where p.tipoParametroSistema in (:listaTipoParametroSistema) ";
 		
 		List<TipoParametroSistema> lst = new ArrayList<TipoParametroSistema>();
-		lst.add(TipoParametroSistema.CNPJ);
-		lst.add(TipoParametroSistema.RAZAO_SOCIAL);
 		lst.add(TipoParametroSistema.EMAIL_USUARIO);
-		lst.add(TipoParametroSistema.UF);
-		lst.add(TipoParametroSistema.CODIGO_DISTRIBUIDOR_DINAP);
-		lst.add(TipoParametroSistema.CODIGO_DISTRIBUIDOR_FC);
-		lst.add(TipoParametroSistema.LOGIN_DISTRIBUIDOR);
-		lst.add(TipoParametroSistema.SENHA_DISTRIBUIDOR);
 		lst.add(TipoParametroSistema.VERSAO_SISTEMA);
 		lst.add(TipoParametroSistema.PATH_INTERFACE_CE_EXPORTACAO);
 		lst.add(TipoParametroSistema.PATH_INTERFACE_PRODIN_IMPORTACAO);
@@ -62,6 +55,7 @@ public class ParametroSistemaRepositoryImpl extends AbstractRepositoryModel<Para
 		lst.add(TipoParametroSistema.DATA_OPERACAO_CORRENTE);
 		lst.add(TipoParametroSistema.PATH_IMAGENS_CAPA);
 		lst.add(TipoParametroSistema.PATH_IMAGENS_PDV);
+		lst.add(TipoParametroSistema.FREQUENCIA_EXPURGO);
 		
 		Query query = this.getSession().createQuery(hql);
 		query.setParameterList("listaTipoParametroSistema", lst);

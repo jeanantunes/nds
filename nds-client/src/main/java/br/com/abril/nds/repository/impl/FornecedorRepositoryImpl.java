@@ -231,8 +231,8 @@ public class FornecedorRepositoryImpl extends
 		   .append(" fornecedor.juridica.cnpj as cnpj, ")
 		   .append(" fornecedor.responsavel as responsavel, ")
 		   .append(" telefone.numero as telefone, ")
-		   .append(" fornecedor.juridica.email as email ")
-
+		   .append(" fornecedor.juridica.email as email, ")
+		   .append(" fornecedor.emailNfe as emailNfe ")
 		   .append(" from Fornecedor fornecedor ")
 		   .append(" left join fornecedor.telefones telefoneFornecedor ")
 		   .append(" left join telefoneFornecedor.telefone telefone ")

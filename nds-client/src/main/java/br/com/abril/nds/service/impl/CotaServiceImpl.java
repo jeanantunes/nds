@@ -57,6 +57,7 @@ import br.com.abril.nds.repository.BaseReferenciaCotaRepository;
 import br.com.abril.nds.repository.CobrancaRepository;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.EnderecoCotaRepository;
+import br.com.abril.nds.repository.EstoqueProdutoCotaRepository;
 import br.com.abril.nds.repository.HistoricoNumeroCotaRepository;
 import br.com.abril.nds.repository.HistoricoSituacaoCotaRepository;
 import br.com.abril.nds.repository.PdvRepository;
@@ -73,7 +74,9 @@ import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.EnderecoService;
 import br.com.abril.nds.service.SituacaoCotaService;
 import br.com.abril.nds.service.TelefoneService;
+import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
 import br.com.caelum.stella.validation.CNPJValidator;
@@ -149,6 +152,9 @@ public class CotaServiceImpl implements CotaService {
 	
 	@Autowired
 	TipoMovimentoEstoqueRepository tipoMovimentoEstoqueRepository;
+	
+	@Autowired
+	EstoqueProdutoCotaRepository estoqueProdutoCotaRepository;
 	
 	@Transactional(readOnly = true)
 	@Override
@@ -287,6 +293,8 @@ public class CotaServiceImpl implements CotaService {
 	}
 	
 	private void salvarEnderecosCota(Cota cota, List<EnderecoAssociacaoDTO> listaEnderecoAssociacao) {
+
+		validarEnderecoPrincipalPorCota(listaEnderecoAssociacao, cota);
 		
 		enderecoService.cadastrarEnderecos(listaEnderecoAssociacao, cota.getPessoa());
 		
@@ -534,7 +542,15 @@ public class CotaServiceImpl implements CotaService {
 	@Transactional
 	public List<CotaSuspensaoDTO> obterDTOCotasSujeitasSuspensao(String sortOrder, String sortColumn, Integer inicio, Integer rp) {
 		
-		return cotaRepository.obterCotasSujeitasSuspensao(sortOrder,sortColumn, inicio, rp);		
+		List<CotaSuspensaoDTO> lista = cotaRepository.obterCotasSujeitasSuspensao(sortOrder,sortColumn, inicio, rp);
+		
+		for(CotaSuspensaoDTO dto : lista) {
+			Integer perc = (int) ((dto.getDoubleDividaAcumulada() / dto.getDoubleConsignado() ) * 100);
+			dto.setPercDivida(perc.toString() + "%");
+			dto.setFaturamento(CurrencyUtil.formatarValor(estoqueProdutoCotaRepository.obterFaturamentoCota(dto.getIdCota())));
+		}
+		
+		return lista;		
 	}
 
 	@Override
@@ -1585,5 +1601,92 @@ public class CotaServiceImpl implements CotaService {
 	public EnderecoCota obterEnderecoPrincipal(long idCota) {
 
 		return this.cotaRepository.obterEnderecoPrincipal(idCota);
+	}
+
+	/* (non-Javadoc)
+	 * @see br.com.abril.nds.service.CotaService#obterCotasEntre(br.com.abril.nds.util.Intervalo, br.com.abril.nds.util.Intervalo, br.com.abril.nds.model.cadastro.SituacaoCadastro)
+	 */
+	@Override
+	@Transactional
+	public List<Cota> obterCotasEntre(Intervalo<Integer> intervaloCota,
+			Intervalo<Integer> intervaloBox, SituacaoCadastro situacao) {
+		
+		List<Cota> listaCotas = new ArrayList<Cota>();
+		
+		Set<Long> idCotas = this.cotaRepository.obterIdCotasEntre(intervaloCota, intervaloBox, situacao);
+		
+		for(Long idCota : idCotas ) {
+			
+			Cota cota = this.cotaRepository.buscarPorId(idCota);
+			
+			if (cota != null) 
+				listaCotas.add(cota);
+		}
+		
+		return listaCotas;
+	}
+	
+	/**
+	 * Valida se a lista de endereços pertencentes a uma cota, 
+	 * tem pelo menos um e somente um endereço principal
+	 * 
+	 * @param listaEnderecos lista de edereços para serem validados
+	 * @param cota cota relacionada com os endereços cadastrados
+	 */
+	private void validarEnderecoPrincipalPorCota(List<EnderecoAssociacaoDTO> listaEnderecos, Cota cota) {
+		
+		List<EnderecoAssociacaoDTO> enderecoAssociacaoValidacao = this.obterEnderecoAssociacaoDTOsCota(cota);
+		
+		enderecoAssociacaoValidacao.addAll(listaEnderecos);
+		
+		boolean isEnderecoPrincipal = false;
+		boolean hasEnderecoPrincipal = false;
+		
+		for (EnderecoAssociacaoDTO enderecoAssociacao : enderecoAssociacaoValidacao){
+			
+			if (isEnderecoPrincipal && enderecoAssociacao.isEnderecoPrincipal()){
+				
+				throw new ValidacaoException(TipoMensagem.WARNING, "Apenas um endereço principal é permitido.");
+			}
+			
+			if (enderecoAssociacao.isEnderecoPrincipal()){
+				isEnderecoPrincipal = enderecoAssociacao.isEnderecoPrincipal();
+				hasEnderecoPrincipal = isEnderecoPrincipal;
+			}
+		}
+		
+		if (!hasEnderecoPrincipal) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "É necessario cadastrar pelo menos um endereço principal.");
+		}
+	}
+	
+	
+	/**
+	 * Obtém uma lista de DTO de EnderecoAssociacao dos endereços pertencentes a cota parametrizada.
+	 * 
+	 * @param cota
+	 * @return
+	 */
+	private List<EnderecoAssociacaoDTO> obterEnderecoAssociacaoDTOsCota(Cota cota) {
+		
+		Set<EnderecoCota> enderecosCadastrados = cota.getEnderecos();
+		
+		List<EnderecoAssociacaoDTO> enderecoAssociacaoCadastrado = new ArrayList<EnderecoAssociacaoDTO>();
+		
+		if(enderecosCadastrados != null) {
+		
+			for(EnderecoCota enderecoCota : enderecosCadastrados) {
+				
+				EnderecoAssociacaoDTO enderecoAssociacao = new EnderecoAssociacaoDTO();
+				
+				enderecoAssociacao.setEndereco(enderecoCota.getEndereco());
+				enderecoAssociacao.setEnderecoPrincipal(enderecoCota.isPrincipal());
+				enderecoAssociacao.setTipoEndereco(enderecoCota.getTipoEndereco());
+				
+				enderecoAssociacaoCadastrado.add(enderecoAssociacao);
+			}
+		}
+		
+		return enderecoAssociacaoCadastrado;
 	}
 }

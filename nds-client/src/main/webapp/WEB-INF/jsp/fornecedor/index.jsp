@@ -55,6 +55,7 @@
 		$("#email").val("");
 		$("#tipoFornecedor").val("");
 		$("#validadeContrato").val("");
+		$("#emailNfe").val("");
 		$("#possuiContrato").uncheck();
 		$( '.validade' ).hide();
 	}
@@ -152,6 +153,11 @@
 				data.rows[i].cell.email = "";
 			}
 			
+			if (!data.rows[i].cell.emailNfe) {
+				
+				data.rows[i].cell.emailNfe = "";
+			}
+			
 			var isHabilitado = data.rows[i].cell.origem != 'INTERFACE';
 			
 			data.rows[i].cell.acao = getActionFornecedor(data.rows[i].id, isHabilitado);
@@ -185,6 +191,7 @@
 				$("#inscricaoEstadual").val(result.inscricaoEstadual);
 				$("#responsavel").val(result.responsavel);
 				$("#email").val(result.email);
+				$("#emailNfe").val(result.emailNfe);
 				$("#tipoFornecedor").val(result.tipoFornecedor);
 				
 				if (result.possuiContrato) {

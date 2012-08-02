@@ -25,6 +25,7 @@ import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.cadastro.TipoProduto;
+import br.com.abril.nds.model.cadastro.TributacaoFiscal;
 import br.com.abril.nds.model.fiscal.NCM;
 import br.com.abril.nds.model.movimentacao.CotaAusente;
 import br.com.abril.nds.vo.PaginacaoVO;
@@ -50,7 +51,7 @@ public class CotaAusenteRepositoryImplTest extends AbstractRepositoryImplTest {
 				"manoel@mail.com", "Manoel da Silva");
 		save(manoel);
 		
-		box1 = Fixture.criarBox("Box-1", "BX-001", TipoBox.LANCAMENTO, false);
+		box1 = Fixture.criarBox(1, "BX-001", TipoBox.LANCAMENTO);
 		save(box1);
 		
 		cotaManoel = Fixture.cota(123, manoel, SituacaoCadastro.ATIVO, box1);
@@ -70,7 +71,7 @@ public class CotaAusenteRepositoryImplTest extends AbstractRepositoryImplTest {
 		Editor abril = Fixture.editoraAbril();
 		save(abril);
 		
-		Produto produto = Fixture.produto("12","Algum", "Nome-p", PeriodicidadeProduto.MENSAL, t, 5, 5, BigDecimal.TEN);
+		Produto produto = Fixture.produto("12","Algum", "Nome-p", PeriodicidadeProduto.MENSAL, t, 5, 5, BigDecimal.TEN, TributacaoFiscal.TRIBUTADO);
 		produto.setEditor(abril);
 		save(produto);
 		

@@ -44,7 +44,7 @@ public class HistoricoSituacaoCotaRepositoryImplTest extends AbstractRepositoryI
 	@Before
 	public void setup() {
 		
-		Box box1 = Fixture.criarBox("Box-1", "BX-001", TipoBox.LANCAMENTO, false);
+		Box box1 = Fixture.criarBox(1, "BX-001", TipoBox.LANCAMENTO);
 		
 		Pessoa pessoaManoel = Fixture.pessoaFisica("123.456.789-00", "manoel@mail.com", "Manoel da Silva");
 		

@@ -26,15 +26,18 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.GrupoFornecedor;
 import br.com.abril.nds.model.cadastro.Rota;
 import br.com.abril.nds.model.cadastro.Roteiro;
+import br.com.abril.nds.model.cadastro.pdv.TipoPontoPDV;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.serialization.custom.CustomMapJson;
 import br.com.abril.nds.service.BoxService;
 import br.com.abril.nds.service.ChamadaAntecipadaEncalheService;
 import br.com.abril.nds.service.FornecedorService;
+import br.com.abril.nds.service.PdvService;
 import br.com.abril.nds.service.ProdutoService;
 import br.com.abril.nds.service.RoteirizacaoService;
 import br.com.abril.nds.util.CellModelKeyValue;
@@ -94,13 +97,44 @@ public class ChamadaEncalheAntecipadaController {
 	@Autowired
 	private RoteirizacaoService roteirizacaoService;
 	
+	@Autowired
+	private PdvService pdvService;
+	
 	@Path("/")
 	public void index(){
 		
-		result.include("listaFornecedores",obterFornecedores(null) );
+		result.include("listaFornecedores",obterFornecedores(null));
 		result.include("listaBoxes",obterBoxs(null));
 		carregarRota();
 		carregarRoteiro();
+		carregarMunicipios();
+		carregarTipoPonto();
+	}
+	
+	private void carregarTipoPonto(){
+		
+		List<TipoPontoPDV> listaTipoPontoPDV = pdvService.obterTiposPontoPDVPrincipal();
+		
+		List<ItemDTO<Long, String>> tipoPonto = new ArrayList<ItemDTO<Long,String>>();
+		
+		for (TipoPontoPDV tp : listaTipoPontoPDV) {
+			tipoPonto.add(new ItemDTO<Long, String>(tp.getCodigo(), tp.getDescricao()));
+		}
+		
+		result.include("listaTipoPonto",tipoPonto);
+	}
+	
+	private void carregarMunicipios(){
+		
+		List<Endereco> enderecoPdvPrincipal = pdvService.buscarMunicipiosPdvPrincipal();
+		
+		List<ItemDTO<Integer, String>> municipios = new ArrayList<ItemDTO<Integer,String>>();
+		
+		for (Endereco tp : enderecoPdvPrincipal) {
+			municipios.add(new ItemDTO<Integer, String>(tp.getCodigoCidadeIBGE(),tp.getCidade()));
+		}
+		
+		result.include("listaMunicipios",municipios);
 	}
 	
 	/**
@@ -160,12 +194,14 @@ public class ChamadaEncalheAntecipadaController {
 	@Post
 	@Path("/pesquisar")
 	public void pesquisarCotasPorProduto(String codigoProduto,Long numeroEdicao,Long box,Long fornecedor, 
-										 Long rota,Long roteiro,boolean programacaoRealizada,
+										 Long rota,Long roteiro,boolean programacaoRealizada,Integer municipio,Long tipoPontoPDV,
 										 String sortorder, String sortname, int page, int rp){
 		
 		validarParametrosPesquisa(codigoProduto, numeroEdicao);
 		
-		FiltroChamadaAntecipadaEncalheDTO filtro = new FiltroChamadaAntecipadaEncalheDTO(codigoProduto,numeroEdicao,box,fornecedor,rota,roteiro,programacaoRealizada);
+		FiltroChamadaAntecipadaEncalheDTO filtro = 
+				new FiltroChamadaAntecipadaEncalheDTO(codigoProduto,numeroEdicao,box,fornecedor,
+													  rota,roteiro,programacaoRealizada, municipio,tipoPontoPDV);
 		
 		configurarPaginacaoPesquisa(filtro, sortorder, sortname, page, rp);
 		
@@ -232,9 +268,16 @@ public class ChamadaEncalheAntecipadaController {
 	 */
 	@Post
 	@Path("/obterQuantidadeExemplares")
-	public void obterQuantidadeExemplaresPorCota(Integer numeroCota, String codigoProduto, Long numeroEdicao,Long fornecedor,boolean programacaoRealizada){
+	public void obterQuantidadeExemplaresPorCota(Integer numeroCota, String codigoProduto, Long numeroEdicao,Long fornecedor,
+												 boolean programacaoRealizada,Integer municipio, Long tipoPontoPDV){
 		
-		FiltroChamadaAntecipadaEncalheDTO filtro = new FiltroChamadaAntecipadaEncalheDTO(codigoProduto,numeroEdicao,null,fornecedor,numeroCota);
+		FiltroChamadaAntecipadaEncalheDTO filtro = new FiltroChamadaAntecipadaEncalheDTO();
+		filtro.setNumeroCota(numeroCota);
+		filtro.setCodigoProduto(codigoProduto);
+		filtro.setNumeroEdicao(numeroEdicao);
+		filtro.setFornecedor(fornecedor);
+		filtro.setCodMunicipio(municipio);
+		filtro.setCodTipoPontoPDV(tipoPontoPDV);
 		
 		BigDecimal quantidade = BigDecimal.ZERO;
 		
@@ -485,7 +528,8 @@ public class ChamadaEncalheAntecipadaController {
 					new ChamadaAntecipadaEncalheDTO(
 							Integer.parseInt(vo.getNumeroCota()),
 							new BigDecimal(vo.getQntExemplares()),
-							vo.getCodigoChamdaEncalhe()));
+							vo.getCodigoChamdaEncalhe(),
+							vo.getIdLancamento()));
 		}
 		
 		infoEncalheDTO.setChamadasAntecipadaEncalhe(listaChamadaAntecipadaEncalheDTOs);
@@ -666,11 +710,12 @@ public class ChamadaEncalheAntecipadaController {
 		for (ChamadaAntecipadaEncalheDTO dto : listaChamdaAntecipadaEncalheDTO) {
 			
 			chamadaEncalheAntecipadaVO =  new ChamadaEncalheAntecipadaVO();
-			chamadaEncalheAntecipadaVO.setBox(dto.getCodBox());
+			chamadaEncalheAntecipadaVO.setBox(dto.getCodBox() + " - " + dto.getNomeBox());
 			chamadaEncalheAntecipadaVO.setNomeCota(dto.getNomeCota());
 			chamadaEncalheAntecipadaVO.setNumeroCota( String.valueOf(dto.getNumeroCota()));
 			chamadaEncalheAntecipadaVO.setQntExemplares(String.valueOf(dto.getQntExemplares().intValue()));
 			chamadaEncalheAntecipadaVO.setCodigoChamdaEncalhe(dto.getCodigoChamadaEncalhe());
+			chamadaEncalheAntecipadaVO.setIdLancamento(dto.getIdLancamento());
 			
 			listaChamadaEncalheAntecipadaVO.add(chamadaEncalheAntecipadaVO);
 		}
@@ -748,7 +793,7 @@ public class ChamadaEncalheAntecipadaController {
 		List<ItemDTO<Long, String>> listaBoxCombo = new ArrayList<ItemDTO<Long,String>>();
 		
 		for (Box box : listaBox) {
-			listaBoxCombo.add(new ItemDTO<Long, String>(box.getId(), box.getCodigo()));
+			listaBoxCombo.add(new ItemDTO<Long, String>(box.getId(), box.getCodigo() + " - " + box.getNome()));
 		}
 		
 		return listaBoxCombo;
@@ -818,7 +863,7 @@ public class ChamadaEncalheAntecipadaController {
 	@SuppressWarnings("unchecked")
 	@Get
 	public void exportarPesquisaCotas(FileType fileType,String dataProgaramada,String codigoProduto, 
-										Long numeroEdicao, Long fornecedor ) throws IOException{
+										Long numeroEdicao, Long fornecedor,Integer municipio,Long tipoPontoPDV) throws IOException{
 		
 		List<ChamadaEncalheAntecipadaVO> listaChamadaEncalheAntecipada = 
 				(List<ChamadaEncalheAntecipadaVO>) session.getAttribute(LISTA_PESQUISA_COTA);
@@ -828,6 +873,8 @@ public class ChamadaEncalheAntecipadaController {
 		filtro.setCodigoProduto(codigoProduto);
 		filtro.setFornecedor(fornecedor);
 		filtro.setNumeroEdicao(numeroEdicao);
+		filtro.setCodMunicipio(municipio);
+		filtro.setCodTipoPontoPDV(tipoPontoPDV);
 		
 		atribuirValoresFIltro(filtro);
 		
@@ -916,7 +963,7 @@ public class ChamadaEncalheAntecipadaController {
 			Box box = boxService.buscarPorId(filtro.getBox());
 			
 			if(box!= null){
-				filtro.setDescBox(box.getCodigo());
+				filtro.setDescBox(box.getCodigo() + " - " + box.getNome());
 			}
 		}
 		
@@ -939,6 +986,22 @@ public class ChamadaEncalheAntecipadaController {
 		}
 		else{
 			filtro.setDescComCE("Não");
+		}
+		
+		if(filtro.getCodMunicipio()!= null){
+			
+			Endereco endereco = pdvService.buscarMunicipioPdvPrincipal(filtro.getCodMunicipio());
+			if(endereco!= null){
+				filtro.setDescMunicipio(endereco.getCidade());
+			}
+		}
+		
+		if(filtro.getCodTipoPontoPDV()!= null){
+			
+			TipoPontoPDV tipoPontoPDV = pdvService.obterTipoPontoPDVPrincipal(filtro.getCodTipoPontoPDV());
+			if(tipoPontoPDV!= null){
+				filtro.setDescTipoPontoPDV(tipoPontoPDV.getDescricao());
+			}
 		}
 	}
 	

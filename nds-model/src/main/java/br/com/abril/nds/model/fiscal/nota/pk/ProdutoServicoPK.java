@@ -30,6 +30,17 @@ public class ProdutoServicoPK implements Serializable {
 	@NFEExport(secao = TipoSecao.H, posicao = 0)
 	private Integer sequencia;
 
+	public ProdutoServicoPK() {
+	}
+	
+	
+	public ProdutoServicoPK(NotaFiscal notaFiscal, Integer sequencia) {
+		super();
+		this.notaFiscal = notaFiscal;
+		this.sequencia = sequencia;
+	}
+
+
 	/**
 	 * @return the notaFiscal
 	 */
@@ -43,7 +54,7 @@ public class ProdutoServicoPK implements Serializable {
 	public void setNotaFiscal(NotaFiscal notaFiscal) {
 		this.notaFiscal = notaFiscal;
 	}
-
+	
 	/**
 	 * @see java.lang.Object#hashCode()
 	 */

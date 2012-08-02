@@ -53,7 +53,7 @@ public class PdvRepositoryTest extends AbstractRepositoryImplTest {
 						"sys.discover@gmail.com", "Manoel da Silva");
 		save(manoel);
 		
-		box1 = Fixture.criarBox("Box-1", "BX-001", TipoBox.LANCAMENTO, false);
+		box1 = Fixture.criarBox(1, "BX-001", TipoBox.LANCAMENTO);
 		save(box1);
 		
 		cotaManoel = Fixture.cota(123, manoel, SituacaoCadastro.ATIVO,box1);
@@ -83,7 +83,7 @@ public class PdvRepositoryTest extends AbstractRepositoryImplTest {
 									caracteristicas, licencaMunicipal, segmentacao);
 		save(pdv);
 		
-		Endereco endereco = Fixture.criarEndereco(TipoEndereco.RESIDENCIAL, "13720-000", "logradouro", 10, "Bairro", "Mococa", "SP");
+		Endereco endereco = Fixture.criarEndereco(TipoEndereco.RESIDENCIAL, "13720-000", "logradouro", 10, "Bairro", "Mococa", "SP",1);
 		save(endereco);
 		
 		Telefone telefone = Fixture.telefone("001", "369222", "10");
@@ -95,7 +95,7 @@ public class PdvRepositoryTest extends AbstractRepositoryImplTest {
 		TelefonePDV telefonePDV = Fixture.criarTelefonePDV(telefone, pdv, true, TipoTelefone.COMERCIAL);
 		save(telefonePDV);
 		
-		Endereco endereco1 = Fixture.criarEndereco(TipoEndereco.COMERCIAL, "13720-000", "logradouro", 10, "Bairro", "Mococa", "SP");
+		Endereco endereco1 = Fixture.criarEndereco(TipoEndereco.COMERCIAL, "13720-000", "logradouro", 10, "Bairro", "Mococa", "SP",1);
 		save(endereco1);
 		
 		Telefone telefone1 = Fixture.telefone("001", "369222", "10");

@@ -9,6 +9,8 @@
 <body>
 	<a href="${pageContext.request.contextPath}/executeNdsi.htm?emsRoute=br.com.abril.nds.integracao.ems0106.route.EMS0106Route&userName=webtest">Executar EMS0106</a>
 	<br>
+	<a href="${pageContext.request.contextPath}/executeNdsi.htm?emsRoute=br.com.abril.nds.integracao.ems0112.route.EMS0112Route&userName=webtest">Executar EMS0112</a>
+	<br>
 	<a href="${pageContext.request.contextPath}/executeEMS0118.htm">Executar EMS0118</a>
 	<br>
 	<a href="${pageContext.request.contextPath}/executeEMS0117.htm">Executar EMS0117</a>

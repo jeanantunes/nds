@@ -3,6 +3,7 @@ package br.com.abril.nds.model.fiscal.nota;
 import java.io.Serializable;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -33,7 +34,7 @@ public class NotaFiscal implements Serializable {
 	 */
 	@Id
 	@GeneratedValue(generator = "NOTA_FISCAL_SEQ")
-	@NFEExport(secao = TipoSecao.B, posicao = 2)
+	@NFEExport(secao = TipoSecao.B, posicao = 1)
 	private Long id;
 	
 	/**

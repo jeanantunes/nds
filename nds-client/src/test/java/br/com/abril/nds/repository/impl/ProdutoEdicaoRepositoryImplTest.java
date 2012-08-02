@@ -33,6 +33,7 @@ import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.cadastro.TipoFornecedor;
 import br.com.abril.nds.model.cadastro.TipoProduto;
 import br.com.abril.nds.model.cadastro.TipoRegistroCobranca;
+import br.com.abril.nds.model.cadastro.TributacaoFiscal;
 import br.com.abril.nds.model.fiscal.NCM;
 import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.model.planejamento.Lancamento;
@@ -71,12 +72,12 @@ public class ProdutoEdicaoRepositoryImplTest extends AbstractRepositoryImplTest 
 		save(carteiraSemRegistro);
 		
 		bancoHSBC = Fixture.banco(10L, true, carteiraSemRegistro, "1010",
-				  123456L, "1", "1", "Instrucoes.", Moeda.REAL, "HSBC", "399", BigDecimal.ZERO, BigDecimal.ZERO);
+				  123456L, "1", "1", "Instrucoes.", "HSBC","BANCO HSBC", "399", BigDecimal.ZERO, BigDecimal.ZERO);
 		
 		save(bancoHSBC);
 		
 		PessoaJuridica juridicaDistrib = Fixture.pessoaJuridica("Distribuidor Acme",
-				"590033123647", "333.333.333.333", "distrib_acme@mail.com", "99.999-9");
+				"590033123647", "33333333333", "distrib_acme@mail.com", "99.999-9");
 		save(juridicaDistrib);
 		
 		formaBoleto = Fixture.formaCobrancaBoleto(true, new BigDecimal(200), true, bancoHSBC,
@@ -108,7 +109,7 @@ public class ProdutoEdicaoRepositoryImplTest extends AbstractRepositoryImplTest 
 		
 		//////////////
 		
-		Box box1 = Fixture.criarBox("Box-1", "BX-001", TipoBox.LANCAMENTO, false);
+		Box box1 = Fixture.criarBox(1, "BX-001", TipoBox.LANCAMENTO);
 		save(box1);
 		
 		PessoaFisica manoel =
@@ -149,7 +150,7 @@ public class ProdutoEdicaoRepositoryImplTest extends AbstractRepositoryImplTest 
 		//////
 		
 		//////
-		Produto produtoComDesconto = Fixture.produto("8001", "Novo", "Novo", PeriodicidadeProduto.ANUAL, tipoProduto, 5, 5, BigDecimal.TEN);
+		Produto produtoComDesconto = Fixture.produto("8001", "Novo", "Novo", PeriodicidadeProduto.ANUAL, tipoProduto, 5, 5, BigDecimal.TEN, TributacaoFiscal. TRIBUTADO);
 		produtoComDesconto.addFornecedor(dinap);
 		produtoComDesconto.setEditor(abril);
 		save(produtoComDesconto);

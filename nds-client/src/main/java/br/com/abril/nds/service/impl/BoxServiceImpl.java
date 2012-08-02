@@ -84,18 +84,17 @@ public class BoxServiceImpl implements BoxService {
 	
 	@Override
 	@Transactional(readOnly = true)
-	public List<Box> busca(String codigoBox, TipoBox tipoBox,
-			boolean postoAvancado, String orderBy, Ordenacao ordenacao,
-			int initialResult, int maxResults) {
-		return boxRepository.busca(codigoBox, tipoBox, postoAvancado, orderBy,
-				ordenacao, initialResult, maxResults);
+	public List<Box> busca(Integer codigoBox, TipoBox tipoBox,
+			String orderBy, Ordenacao ordenacao, int initialResult,
+			int maxResults) {
+		return boxRepository.busca(codigoBox, tipoBox, orderBy, ordenacao,
+				initialResult, maxResults);
 	}
 
 	@Override
 	@Transactional(readOnly = true)
-	public Long quantidade(String codigoBox, TipoBox tipoBox,
-			boolean postoAvancado) {
-		return boxRepository.quantidade(codigoBox, tipoBox, postoAvancado);
+	public Long quantidade(Integer codigoBox, TipoBox tipoBox) {
+		return boxRepository.quantidade(codigoBox, tipoBox);
 	}
 
 	@Override

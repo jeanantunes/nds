@@ -78,7 +78,7 @@ public class FinanceiroServiceImplTest extends AbstractRepositoryImplTest {
 		save(politicaCobranca);
 		
 		Endereco enderecoDoDistruibuidor = Fixture.criarEndereco(
-				TipoEndereco.COBRANCA, "13222-020", "Rua João de Souza", 51, "Centro", "São Paulo", "SP");
+				TipoEndereco.COBRANCA, "13222-020", "Rua João de Souza", 51, "Centro", "São Paulo", "SP",1);
 		
 		EnderecoDistribuidor enderecoDistribuidor = Fixture.enderecoDistribuidor(distribuidor, enderecoDoDistruibuidor, true, TipoEndereco.COBRANCA);
 		
@@ -87,14 +87,14 @@ public class FinanceiroServiceImplTest extends AbstractRepositoryImplTest {
 		PessoaFisica pessoaFisica = Fixture.pessoaFisica("123.456.789-00","sys.discover@gmail.com", "Cota da Silva");
 		save(pessoaFisica);
 		
-		Box box = Fixture.criarBox("300", "Box 300", TipoBox.LANCAMENTO, false);
+		Box box = Fixture.criarBox(300, "Box 300", TipoBox.LANCAMENTO);
 		save(box);
 		
 		Cota cota = Fixture.cota(1000, pessoaFisica, SituacaoCadastro.ATIVO,box);
 		save(cota);
 		
 		Endereco enderecoDaCota = Fixture.criarEndereco(
-				TipoEndereco.COBRANCA, "13222-020", "Rua Antonio Cristovan", 51, "Centro", "Mococa", "SP");
+				TipoEndereco.COBRANCA, "13222-020", "Rua Antonio Cristovan", 51, "Centro", "Mococa", "SP",1);
 		
 		
 		EnderecoCota enderecoCota = Fixture.enderecoCota(cota, enderecoDaCota, true, TipoEndereco.COBRANCA);
@@ -106,7 +106,7 @@ public class FinanceiroServiceImplTest extends AbstractRepositoryImplTest {
 		formasCobranca.add(formaBoleto);
 		ParametroCobrancaCota parametroCobranca = 
 				Fixture.parametroCobrancaCota(formasCobranca, 1, null, cota, 1, 
-											  false, new BigDecimal(1000));
+											  false, new BigDecimal(1000), null);
 		save(parametroCobranca);
 		formaBoleto.setParametroCobrancaCota(parametroCobranca);
 		formaBoleto.setPrincipal(true);

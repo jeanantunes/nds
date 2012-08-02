@@ -17,7 +17,7 @@ public class TipoDescontoCotaVO {
 	@Export(label = "Usuário")
 	private String usuario;
 	
-	private String seq;
+	private String sequencial;
 	
 	private String cota;
 	
@@ -63,12 +63,12 @@ public class TipoDescontoCotaVO {
 		this.usuario = usuario;
 	}
 
-	public String getSeq() {
-		return seq;
+	public String getSequencial() {
+		return sequencial;
 	}
 
-	public void setSeq(String seq) {
-		this.seq = seq;
+	public void setSequencial(String sequencial) {
+		this.sequencial = sequencial;
 	}
 
 	public String getCota() {

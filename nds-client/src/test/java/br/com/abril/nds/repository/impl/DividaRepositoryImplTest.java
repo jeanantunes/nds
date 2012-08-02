@@ -78,7 +78,7 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
 		save(carteiraRegistrada);
 		
 		Banco bancoHSBC = Fixture.banco(10L, true, carteiraRegistrada, "1010",
-				  123456L, "1", "1", "Instrucoes.", Moeda.REAL, "HSBC", "399", BigDecimal.ZERO, BigDecimal.ZERO);
+				  123456L, "1", "1", "Instrucoes.", "HSBC","BANCO HSBC", "399", BigDecimal.ZERO, BigDecimal.ZERO);
 		
 		save(bancoHSBC);
 		
@@ -87,7 +87,7 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
 		save(manoel);
 		
 		PessoaJuridica juridicaDistrib = Fixture.pessoaJuridica("Distribuidor Acme",
-				"56.003.315/0001-47", "333.333.333.333", "distrib_acme@mail.com", "99.999-9");
+				"56.003.315/0001-47", "333333333333", "distrib_acme@mail.com", "99.999-9");
 		
 		save(juridicaDistrib);
 		
@@ -113,7 +113,7 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
 		Usuario usuarioJoao = Fixture.usuarioJoao();
 		save(usuarioJoao);
 		
-		Box box1 = Fixture.criarBox("Box-1", "BX-001", TipoBox.LANCAMENTO, false);
+		Box box1 = Fixture.criarBox(1, "BX-001", TipoBox.LANCAMENTO);
 		save(box1);
 		
 		Cota cotaManoel = Fixture.cota(123, manoel, SituacaoCadastro.ATIVO,box1);
@@ -126,7 +126,7 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
 		formasCobranca.add(formaBoleto);
 		ParametroCobrancaCota parametroCobrancaConta = 
 				Fixture.parametroCobrancaCota(formasCobranca, 1, BigDecimal.TEN, cotaManoel, 1, 
-											  true, BigDecimal.TEN);
+											  true, BigDecimal.TEN, null);
 		formaBoleto.setParametroCobrancaCota(parametroCobrancaConta);
 		formaBoleto.setPrincipal(true);
 		

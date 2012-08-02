@@ -4426,13 +4426,13 @@ public class DataLoader {
 
 	private static void criarBox(Session session){
 
-		box1 = Fixture.criarBox("Box-1", "BX-001", TipoBox.LANCAMENTO, false);
+		box1 = Fixture.criarBox(1, "BX-001", TipoBox.LANCAMENTO);
 		session.save(box1);
 
-		box2 = Fixture.criarBox("Box-2", "BX-002", TipoBox.LANCAMENTO, false);
+		box2 = Fixture.criarBox(2, "BX-002", TipoBox.LANCAMENTO);
 		session.save(box2);
 		
-		boxPostoAvancado = Fixture.criarBox("Box-Avancado", "BX-AVANCADO", TipoBox.LANCAMENTO, true);
+		boxPostoAvancado = Fixture.criarBox(3, "BX-AVANCADO", TipoBox.POSTO_AVANCADO);
 		session.save(boxPostoAvancado);
 
 		box300Reparte = Fixture.boxReparte300();
@@ -4441,7 +4441,7 @@ public class DataLoader {
 		
 		
 		for (int i = 3; i < 100; i++) {
-			session.save(Fixture.criarBox("Box-"+i, "BX-"+i, TipoBox.LANCAMENTO, false));
+			session.save(Fixture.criarBox(i, "BX-"+i, TipoBox.LANCAMENTO));
 		}
 	}
 
@@ -4797,16 +4797,16 @@ public class DataLoader {
 	private static void criarBanco(Session session) {
 
 		bancoHSBC = Fixture.banco(10L, true, carteiraSemRegistro, "1010",
-							  123456L, "1", "1", "Instrucoes HSBC.", Moeda.REAL, "HSBC", "399", BigDecimal.ONE, BigDecimal.ZERO);
+							  123456L, "1", "1", "Instrucoes HSBC.", "HSBC", "BANCO HSBC S/A", "399", BigDecimal.ONE, BigDecimal.ZERO);
 
 		bancoITAU = Fixture.banco(10L, true, carteiraSemRegistro, "1010",
-				  12345L, "1", "1", "Instrucoes ITAU.", Moeda.REAL, "BANCO_ITAU", "184", BigDecimal.TEN, BigDecimal.ONE);
+				  12345L, "1", "1", "Instrucoes ITAU.", "ITAU", "BANCO ITAU S/A", "184", BigDecimal.TEN, BigDecimal.ONE);
 
 		bancoDOBRASIL = Fixture.banco(10L, true, carteiraSemRegistro, "1010",
-				  123456L, "1", "1", "Instrucoes DOBRASIL.", Moeda.REAL, "BANCO_DO_BRASIL", "001", BigDecimal.ZERO, BigDecimal.ONE);
+				  123456L, "1", "1", "Instrucoes DOBRASIL.", "BB", "BANCO DO BRASIL", "001", BigDecimal.ZERO, BigDecimal.ONE);
 
 		bancoBRADESCO = Fixture.banco(10L, true, carteiraSemRegistro, "1010",
-				  123456L, "1", "1", "Instrucoes BRADESCO.", Moeda.REAL, "BANCO_BRADESCO", "065", BigDecimal.ZERO, BigDecimal.TEN);
+				  123456L, "1", "1", "Instrucoes BRADESCO.", "BRADESCO", "BANCO BRADESCO S/A", "065", BigDecimal.ZERO, BigDecimal.TEN);
 
 		save(session, bancoHSBC,bancoITAU,bancoDOBRASIL,bancoBRADESCO);
 	}
@@ -5275,19 +5275,19 @@ public class DataLoader {
 		TipoNotaFiscal tipoNotaFiscal = Fixture.tipoNotaFiscalRecebimentoMercadoriasEncalhe();
 		save(session, tipoNotaFiscal);
 		
-		Box boxRecolhimento = Fixture.criarBox("ENC_BOX1", "Box Encalhe", TipoBox.RECOLHIMENTO, false);
+		Box boxRecolhimento = Fixture.criarBox(601, "Box Encalhe", TipoBox.ENCALHE);
 		save(session, boxRecolhimento);
 		
 		ParametroUsuarioBox parametroUsuarioBox = Fixture.parametroUsuarioBox(boxRecolhimento, usuarioJoao, true);
 		save(session, parametroUsuarioBox);
 		
-		boxRecolhimento = Fixture.criarBox("ENC_BOX2", "Box Encalhe_2", TipoBox.RECOLHIMENTO, false);
+		boxRecolhimento = Fixture.criarBox(602, "Box Encalhe_2", TipoBox.ENCALHE);
 		save(session, boxRecolhimento);
 		
-		boxRecolhimento = Fixture.criarBox("ENC_BOX3", "Box Encalhe_3", TipoBox.RECOLHIMENTO, false);
+		boxRecolhimento = Fixture.criarBox(603, "Box Encalhe_3", TipoBox.ENCALHE);
 		save(session, boxRecolhimento);
 		
-		boxRecolhimento = Fixture.criarBox("ENC_BOX4", "Box Encalhe_4", TipoBox.RECOLHIMENTO, false);
+		boxRecolhimento = Fixture.criarBox(604, "Box Encalhe_4", TipoBox.ENCALHE);
 		save(session, boxRecolhimento);
 		
 		/**

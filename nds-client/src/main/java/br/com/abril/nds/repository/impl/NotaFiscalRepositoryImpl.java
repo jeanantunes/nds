@@ -57,7 +57,7 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		
 		boolean indAnd = false;
 		
-		if(filtro.getBox()!=null && !filtro.getBox().isEmpty()) {
+		if(filtro.getBox()!=null ) {
 
 			sql.append(" INNER JOIN COTA ON ");
 			sql.append(" ( NOTA_FISCAL_NOVO.PESSOA_DESTINATARIO_ID_REFERENCIA = COTA.PESSOA_ID ) ");
@@ -67,7 +67,7 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 			
 		}
 		
-		if(	(filtro.getBox()!=null && !filtro.getBox().isEmpty()) ||
+		if(	(filtro.getBox()!=null) ||
 			filtro.getDataInicial() != null ||
 			filtro.getDataFinal() != null 	||
 			( filtro.getDocumentoPessoa() != null && !filtro.getDocumentoPessoa().isEmpty() ) ||
@@ -83,7 +83,7 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		}
 		
 		
-		if(filtro.getBox()!=null && !filtro.getBox().isEmpty()) {
+		if(filtro.getBox()!=null) {
 			
 			sql.append(" BOX.CODIGO = :codigoBox ");
 			
@@ -202,7 +202,7 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		SQLQuery sqlQuery = getSession().createSQLQuery(sql.toString());
 		
 		
-		if(filtro.getBox()!=null && !filtro.getBox().isEmpty()) {
+		if(filtro.getBox()!=null ) {
 			sqlQuery.setParameter("codigoBox", filtro.getBox());
 		}
 
@@ -289,7 +289,7 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		
 		boolean indAnd = false;
 		
-		if(filtro.getBox()!=null && !filtro.getBox().isEmpty()) {
+		if(filtro.getBox()!=null) {
 
 			sql.append(" INNER JOIN COTA ON ");
 			sql.append(" ( NOTA_FISCAL_NOVO.PESSOA_DESTINATARIO_ID_REFERENCIA = COTA.PESSOA_ID ) ");
@@ -299,7 +299,7 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 			
 		}
 		
-		if(	(filtro.getBox()!=null && !filtro.getBox().isEmpty()) ||
+		if(	(filtro.getBox()!=null) ||
 			filtro.getDataInicial() != null ||
 			filtro.getDataFinal() != null 	||
 			( filtro.getDocumentoPessoa() != null && !filtro.getDocumentoPessoa().isEmpty() ) ||
@@ -315,7 +315,7 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		}
 		
 		
-		if(filtro.getBox()!=null && !filtro.getBox().isEmpty()) {
+		if(filtro.getBox()!=null) {
 			
 			sql.append(" BOX.CODIGO = :codigoBox ");
 			
@@ -498,7 +498,7 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		
 		sqlQuery.setResultTransformer(new AliasToBeanResultTransformer(NfeDTO.class));
 		
-		if(filtro.getBox()!=null && !filtro.getBox().isEmpty()) {
+		if(filtro.getBox()!=null) {
 			sqlQuery.setParameter("codigoBox", filtro.getBox());
 		}
 

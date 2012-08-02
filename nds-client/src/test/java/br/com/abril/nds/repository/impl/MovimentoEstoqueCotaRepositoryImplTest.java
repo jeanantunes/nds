@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 
 import org.junit.Assert;
@@ -59,6 +60,7 @@ import br.com.abril.nds.model.movimentacao.StatusOperacao;
 import br.com.abril.nds.model.planejamento.ChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.ChamadaEncalheCota;
 import br.com.abril.nds.model.planejamento.Estudo;
+import br.com.abril.nds.model.planejamento.EstudoCota;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
@@ -274,7 +276,7 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 				"manoel@mail.com", "Manoel da Silva");
 		save(manoel);
 		
-		Box box1 = Fixture.criarBox("Box-1", "BX-001", TipoBox.LANCAMENTO, false);
+		Box box1 = Fixture.criarBox(1, "BX-001", TipoBox.LANCAMENTO);
 		save(box1);
 		
 		cotaManoel = Fixture.cota(123, manoel, SituacaoCadastro.ATIVO, box1);
@@ -443,10 +445,10 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 				"pedro@mail.com", "Pedro Alvares");
 		save(pedro);
 		
-		box1 = Fixture.criarBox("Box-1", "BX-001", TipoBox.LANCAMENTO, false);
+		box1 = Fixture.criarBox(1, "BX-001", TipoBox.LANCAMENTO);
 		save(box1);
 		
-		box2 = Fixture.criarBox("Box-2", "BX-002", TipoBox.LANCAMENTO, false);
+		box2 = Fixture.criarBox(2, "BX-002", TipoBox.LANCAMENTO);
 		save(box2);
 		
 		Roteiro roteiro1 = Fixture.criarRoteiro("", box1, TipoRoteiro.NORMAL);
@@ -532,17 +534,26 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		
 		lancamentoVeja.getRecebimentos().add(itemRecebimentoFisico2Veja);
 		
+		save(lancamentoVeja);
 		
-		Estudo estudo = Fixture.estudo(new BigDecimal(100),
-				Fixture.criarData(22, Calendar.FEBRUARY, 2012), veja1);
-
-		save(lancamentoVeja, estudo);
+		ChamadaEncalhe chamadaEncalhe = Fixture.chamadaEncalhe(
+				Fixture.criarData(28, Calendar.FEBRUARY, 2012), 
+				veja1, 
+				TipoChamadaEncalhe.MATRIZ_RECOLHIMENTO);
+		chamadaEncalhe.setLancamentos(new HashSet<Lancamento>());
+		chamadaEncalhe.getLancamentos().add(lancamentoVeja);
+		
+		
+		save(chamadaEncalhe);
+		
+//		Estudo estudo = Fixture.estudo(new BigDecimal(100),
+//				Fixture.criarData(22, Calendar.FEBRUARY, 2012), veja1);
 
 		PessoaFisica manoel = Fixture.pessoaFisica("123.456.789-00",
 				"manoel@mail.com", "Manoel da Silva");
 		save(manoel);
 		
-		Box box1 = Fixture.criarBox("Box-1", "BX-001", TipoBox.LANCAMENTO, false);
+		Box box1 = Fixture.criarBox(1, "BX-001", TipoBox.LANCAMENTO);
 		save(box1);
 		
 		cotaManoel = Fixture.cota(123, manoel, SituacaoCadastro.ATIVO, box1);
@@ -561,13 +572,6 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		
 		TipoMovimentoEstoque tipoMovimentoEnvioEncalhe = Fixture.tipoMovimentoEnvioEncalhe();
 		save(tipoMovimentoEnvioEncalhe);
-		
-		ChamadaEncalhe chamadaEncalhe = Fixture.chamadaEncalhe(
-				Fixture.criarData(28, Calendar.FEBRUARY, 2012), 
-				veja1, 
-				TipoChamadaEncalhe.MATRIZ_RECOLHIMENTO);
-		
-		save(chamadaEncalhe);
 		
 		/**
 		 * CHAMADA ENCALHE COTA
@@ -653,7 +657,63 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 			
 	}
 	
-	public void setUpMovimentosNotaFiscal(){
+	public void setUpForNotaFiscal() {
+		
+		lancamentoVeja = Fixture.lancamento(
+				TipoLancamento.SUPLEMENTAR, 
+				veja1,
+				Fixture.criarData(22, Calendar.FEBRUARY, 2012),
+				Fixture.criarData(28, Calendar.FEBRUARY, 2012),
+				new Date(),
+				new Date(),
+				new BigDecimal(100),
+				StatusLancamento.BALANCEADO_RECOLHIMENTO, itemRecebimentoFisico1Veja, 1);
+		
+		lancamentoVeja.getRecebimentos().add(itemRecebimentoFisico2Veja);
+		
+		
+		Estudo estudo = Fixture.estudo(new BigDecimal(100),
+				Fixture.criarData(22, Calendar.FEBRUARY, 2012), veja1);
+
+		save(lancamentoVeja, estudo);
+		
+		PessoaFisica manoel = Fixture.pessoaFisica("123.456.789-00",
+				"manoel@mail.com", "Manoel da Silva");
+		save(manoel);
+		
+		Box box1 = Fixture.criarBox(1000, "BX-001", TipoBox.LANCAMENTO);
+		save(box1);
+		
+		cotaManoel = Fixture.cota(123, manoel, SituacaoCadastro.ATIVO, box1);
+		save(cotaManoel);
+		
+		EstudoCota estudoCota = Fixture.estudoCota(new BigDecimal(100),
+				new BigDecimal(22), estudo, cotaManoel);
+		save(estudoCota);
+
+		EstoqueProdutoCota estoqueProdutoCota = Fixture.estoqueProdutoCota(
+				veja1, cotaManoel, BigDecimal.TEN, BigDecimal.ZERO);
+		save(estoqueProdutoCota);
+		
+		estoqueProdutoCota = Fixture.estoqueProdutoCota(
+				quatroRoda2, cotaManoel, BigDecimal.TEN, BigDecimal.ZERO);
+		save(estoqueProdutoCota);
+		
+		Usuario usuarioJoao = Fixture.usuarioJoao();
+		save(usuarioJoao);
+		
+		TipoMovimentoEstoque tipoMovimentoEnvioEncalhe = Fixture.tipoMovimentoRecebimentoReparte();
+		save(tipoMovimentoEnvioEncalhe);
+		
+		MovimentoEstoqueCota mec = Fixture.movimentoEstoqueCotaEnvioEncalhe( 
+				Fixture.criarData(28, Calendar.FEBRUARY, 2012), 
+				veja1,
+				tipoMovimentoEnvioEncalhe, 
+				usuarioJoao, 
+				estoqueProdutoCota,
+				new BigDecimal(8), cotaManoel, StatusAprovacao.APROVADO, "Aprovado");
+		mec.setLancamento(lancamentoVeja);
+		save(mec);
 		
 	}
 	
@@ -880,7 +940,7 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 				"manoel@mail.com", "Manoel da Silva");
 		save(manoel);
 		
-		Box box1 = Fixture.criarBox("Box-45", "BX-045", TipoBox.LANCAMENTO, false);
+		Box box1 = Fixture.criarBox(45, "BX-045", TipoBox.LANCAMENTO);
 		save(box1);
 		
 		
@@ -956,9 +1016,9 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 	}
 	
 	@Test
-	public void obterMovimentoEstoqueCotaPor() {
+	public void obterMovimentoEstoqueCotaPorReparte() {
 		
-		setUpForContagemDevolucao();
+		setUpForNotaFiscal();
 		
 		ParametrosRecolhimentoDistribuidor parametrosRecolhimentoDistribuidor = new ParametrosRecolhimentoDistribuidor();
 		parametrosRecolhimentoDistribuidor.setDiaRecolhimentoPrimeiro(false);
@@ -971,8 +1031,8 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		distribuidor.setParametrosRecolhimentoDistribuidor(parametrosRecolhimentoDistribuidor);
 		
 		List<GrupoMovimentoEstoque> listaGrupoMovimentoEstoques = new ArrayList<GrupoMovimentoEstoque>();
-		listaGrupoMovimentoEstoques.add(GrupoMovimentoEstoque.VENDA_ENCALHE);
-		listaGrupoMovimentoEstoques.add(GrupoMovimentoEstoque.ENVIO_ENCALHE);
+		listaGrupoMovimentoEstoques.add(GrupoMovimentoEstoque.RECEBIMENTO_REPARTE);
+		listaGrupoMovimentoEstoques.add(GrupoMovimentoEstoque.COMPRA_SUPLEMENTAR);
 		
 		List<Long> listaProdutos =  new ArrayList<Long>();
 		listaProdutos.add(veja1.getProduto().getId());
@@ -986,16 +1046,43 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		periodo.setDe(DateUtil.parseData("01/01/2012", "dd/MM/yyyy"));
 		periodo.setAte(DateUtil.parseData("01/01/2013", "dd/MM/yyyy"));
 		
-		List<MovimentoEstoqueCota> listaMovimentoEstoqueCota = this.movimentoEstoqueCotaRepository.obterMovimentoEstoqueCotaPor(distribuidor, cotaManoel.getId(), tipoNotaFiscal.getGrupoNotaFiscal(), listaGrupoMovimentoEstoques, periodo, listaFornecedores, listaProdutos);
+		List<MovimentoEstoqueCota> listaMovimentoEstoqueCota = this.movimentoEstoqueCotaRepository.obterMovimentoEstoqueCotaPor(distribuidor, cotaManoel.getId(), GrupoNotaFiscal.NF_REMESSA_CONSIGNACAO, listaGrupoMovimentoEstoques, periodo, listaFornecedores, listaProdutos);
 
-		listaMovimentoEstoqueCota = this.movimentoEstoqueCotaRepository.obterMovimentoEstoqueCotaPor(distribuidor, cotaManoel.getId(), GrupoNotaFiscal.NF_DEVOLUCAO_REMESSA_CONSIGNACAO, listaGrupoMovimentoEstoques, periodo, listaFornecedores, listaProdutos);
-
-		listaMovimentoEstoqueCota = this.movimentoEstoqueCotaRepository.obterMovimentoEstoqueCotaPor(distribuidor, cotaManoel.getId(), GrupoNotaFiscal.NF_VENDA, listaGrupoMovimentoEstoques, periodo, listaFornecedores, listaProdutos);
+		int tamanhoEsperado = 1;
 		
-//		int tamanhoEsperado = 5;
-		
-//		Assert.assertEquals(tamanhoEsperado, listaMovimentoEstoqueCota.size());
+		Assert.assertEquals(tamanhoEsperado, listaMovimentoEstoqueCota.size());
 		
 	}
-	
+
+	@Test
+	public void obterMovimentoEstoqueCotaPorEncalhe() {
+		
+		setUpForConsultaEncalhe();
+		
+		ParametrosRecolhimentoDistribuidor parametrosRecolhimentoDistribuidor = new ParametrosRecolhimentoDistribuidor();
+		parametrosRecolhimentoDistribuidor.setDiaRecolhimentoPrimeiro(false);
+		parametrosRecolhimentoDistribuidor.setDiaRecolhimentoSegundo(false);
+		parametrosRecolhimentoDistribuidor.setDiaRecolhimentoTerceiro(true);
+		parametrosRecolhimentoDistribuidor.setDiaRecolhimentoQuarto(true);
+		parametrosRecolhimentoDistribuidor.setDiaRecolhimentoQuinto(false);
+
+		Distribuidor distribuidor = new Distribuidor();
+		distribuidor.setParametrosRecolhimentoDistribuidor(parametrosRecolhimentoDistribuidor);
+		
+		List<GrupoMovimentoEstoque> listaGrupoMovimentoEstoques = new ArrayList<GrupoMovimentoEstoque>();
+		listaGrupoMovimentoEstoques.add(GrupoMovimentoEstoque.ENVIO_ENCALHE);
+		listaGrupoMovimentoEstoques.add(GrupoMovimentoEstoque.ENCALHE_ANTECIPADO);
+		
+		Intervalo<Date> periodo = new Intervalo<Date>();
+		periodo.setDe(DateUtil.parseData("01/01/2012", "dd/MM/yyyy"));
+		periodo.setAte(DateUtil.parseData("01/01/2013", "dd/MM/yyyy"));
+		
+		List<MovimentoEstoqueCota> listaMovimentoEstoqueCota = this.movimentoEstoqueCotaRepository.obterMovimentoEstoqueCotaPor(distribuidor, cotaManoel.getId(), GrupoNotaFiscal.NF_DEVOLUCAO_REMESSA_CONSIGNACAO, listaGrupoMovimentoEstoques, periodo, null, null);
+
+		int tamanhoEsperado = 3;
+		
+		Assert.assertEquals(tamanhoEsperado, listaMovimentoEstoqueCota.size());
+		
+	}
+
 }

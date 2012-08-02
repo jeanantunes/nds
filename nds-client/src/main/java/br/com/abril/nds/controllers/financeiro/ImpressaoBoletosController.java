@@ -144,7 +144,7 @@ public class ImpressaoBoletosController {
 		
 		for(Box box : listaBoxes){
 			
-			boxes.add(new ItemDTO<Long, String>(box.getId(),box.getCodigo()));
+			boxes.add(new ItemDTO<Long, String>(box.getId(),box.getCodigo()+" - " + box.getNome()));
 		}
 			
 		result.include("listaBoxes",boxes);
@@ -366,7 +366,7 @@ public class ImpressaoBoletosController {
 				Box box = boxService.buscarPorId(filtro.getIdBox());
 				
 				if(box!= null){
-					filtro.setCodigoBox(box.getCodigo());
+					filtro.setCodigoBox(box.getCodigo() + " - " + box.getNome());
 				}
 			}
 			
@@ -684,6 +684,24 @@ public class ImpressaoBoletosController {
 		usuario.setNome("Jornaleiro da Silva");
 		
 		return usuario;
+	}
+	
+	@Post
+	public void habilitarAcaoGeracaoDivida(Date dataPesquisa){
+		
+		Distribuidor distribuidor = distribuidorService.obter();
+		
+		boolean isAcaoGeraDivida = true;
+		
+		if(dataPesquisa == null){
+			isAcaoGeraDivida = false;
+		}
+		
+		if (dataPesquisa.compareTo(distribuidor.getDataOperacao())==-1){
+			isAcaoGeraDivida = false;
+		}
+		
+		result.use(CustomMapJson.class).put("isAcaoGeraDivida", isAcaoGeraDivida).serialize();
 	}
 	
 }

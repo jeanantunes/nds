@@ -26,7 +26,6 @@ import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
-import br.com.abril.nds.model.cadastro.TelefoneFornecedor;
 import br.com.abril.nds.model.cadastro.TipoFornecedor;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.PessoaJuridicaService;
@@ -34,10 +33,13 @@ import br.com.abril.nds.service.TipoFornecedorService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.util.StringUtil;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.vo.PaginacaoVO;
+import br.com.caelum.stella.validation.CNPJValidator;
+import br.com.caelum.stella.validation.InvalidStateException;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
@@ -245,14 +247,39 @@ public class FornecedorController {
 			mensagens.add("O preenchimento do campo [Razao Social] é obrigatório.");
 		}
 		
+		CNPJValidator cnpjValidator = new CNPJValidator(true);
+		
 		if (fornecedorDTO.getCnpj() == null || fornecedorDTO.getCnpj().isEmpty()) {
 			
 			mensagens.add("O preenchimento do campo [CNPJ] é obrigatório.");
+		
+		} else {
+			
+			try{
+				
+				cnpjValidator.assertValid(fornecedorDTO.getCnpj());
+			
+			} catch(InvalidStateException e){
+				
+				mensagens.add("CNPJ inválido.");
+			}
 		}
 		
 		if (fornecedorDTO.getTipoFornecedor() == null) {
 			
 			mensagens.add("O preenchimento do campo [Tipo Fornecedor] é obrigatório.");
+		}
+		
+		if (!StringUtil.isEmpty(fornecedorDTO.getEmailNfe())) {
+			if (!Util.validarEmail(fornecedorDTO.getEmailNfe())) {
+				mensagens.add("O preenchimento do campo [E-mail NFe] está inválido!");
+			}
+		}
+		
+		if (!StringUtil.isEmpty(fornecedorDTO.getEmail())) {
+			if (!Util.validarEmail(fornecedorDTO.getEmail())) {
+				mensagens.add("O preenchimento do campo [E-mail] está inválido!");
+			}
 		}
 		
 		if (fornecedorDTO.isPossuiContrato()) {
@@ -384,30 +411,19 @@ public class FornecedorController {
 
 		Map<Integer, TelefoneAssociacaoDTO> map = this.obterTelefonesSalvarSessao();
 
-		List<TelefoneFornecedor> lista = new ArrayList<TelefoneFornecedor>();
-
-		for (Integer key : map.keySet()){
-
-			TelefoneAssociacaoDTO telefoneAssociacaoDTO = map.get(key);
-
-			if (telefoneAssociacaoDTO.getTipoTelefone() != null){
-				
-				TelefoneFornecedor telefoneFornecedor = new TelefoneFornecedor();
-				telefoneFornecedor.setPrincipal(telefoneAssociacaoDTO.isPrincipal());
-				telefoneFornecedor.setTelefone(telefoneAssociacaoDTO.getTelefone());
-				telefoneFornecedor.setTipoTelefone(telefoneAssociacaoDTO.getTipoTelefone());
-
-				if (key > 0) {
-
-					telefoneFornecedor.setId(key.longValue());
-				}
-				
-				lista.add(telefoneFornecedor);
+		List<TelefoneAssociacaoDTO> listaTelefoneAdicionar = new ArrayList<TelefoneAssociacaoDTO>();
+		
+		if (map != null){
+			
+			for (TelefoneAssociacaoDTO telefoneAssociacaoDTO : map.values()){
+			
+				listaTelefoneAdicionar.add(telefoneAssociacaoDTO);
 			}
 		}
 
 		Set<Long> telefonesRemover = this.obterTelefonesRemoverSessao();
-		this.fornecedorService.processarTelefones(idFornecedor, lista, telefonesRemover);
+		
+		this.fornecedorService.processarTelefones(idFornecedor, listaTelefoneAdicionar, telefonesRemover);
 
 		this.session.removeAttribute(LISTA_TELEFONES_SALVAR_SESSAO);
 		this.session.removeAttribute(LISTA_TELEFONES_REMOVER_SESSAO);
@@ -484,6 +500,8 @@ public class FornecedorController {
 
 		fornecedor.setTipoFornecedor(tipoFornecedor);
 		
+		fornecedor.setEmailNfe(fornecedorDTO.getEmailNfe());
+		
 		fornecedor.setCodigoInterface(fornecedorDTO.getCodigoInterface());
 		
 		fornecedor.setValidadeContrato(DateUtil.parseDataPTBR(fornecedorDTO.getValidadeContrato()));
@@ -510,6 +528,8 @@ public class FornecedorController {
 		fornecedorDTO.setCodigoInterface(fornecedor.getCodigoInterface());
 		
 		fornecedorDTO.setEmail(fornecedor.getJuridica().getEmail());
+		
+		fornecedorDTO.setEmailNfe(fornecedor.getEmailNfe());
 		
 		fornecedorDTO.setIdFornecedor(fornecedor.getId());
 		

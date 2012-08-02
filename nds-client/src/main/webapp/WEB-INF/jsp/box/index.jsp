@@ -1,4 +1,5 @@
 <head>
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/cota.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.price_format.1.7.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/box.js"></script>
@@ -17,17 +18,23 @@ $(function(){
 </head>
 
 <body>
+	<form action="/cadastro/box/" id="cotas_associadas_box_form">
 	<div id="dialog-box" title="Detalhes do Box">
 		<fieldset>
 	    	<legend>Cotas Associadas ao Box</legend>
 	        <table class="boxCotaGrid"></table>
 	    </fieldset>
 	</div>
+	</form>
 
+	<form action="/cadastro/box/" id="excluir_box_form">
 	<div id="dialog-excluir" title="Excluir Box">		
 		<p>Confirma a exclus&atilde;o deste Box?</p>
 	</div>
+	</form>
 	
+	<form action="/cadastro/box/" id="novo_box_form">
+	<input type="hidden" name="box.id" id="boxId" style="width:80px;"/>
 	<div id="dialog-novo" title="Incluir Novo Box">  
 		<jsp:include page="../messagesDialog.jsp" />  
 	    <table width="356" border="0" cellpadding="2" cellspacing="1" class="filtro">
@@ -43,36 +50,30 @@ $(function(){
 	              <td>Tipo de Box:</td>
 	              <td><select name="box.tipoBox" id="boxTipoBox" style="width:227px;">
 	                  	<option selected="selected"> </option>
-	                    <option value="SUPLEMENTAR">Suplementar</option>
-	                    <option value="RECOLHIMENTO">Recolhimento</option>
+	                    <option value="ENCALHE">Encalhe</option>
 	                    <option value="LANCAMENTO">Lan&ccedil;amento</option>
-	                    <option value="NUMEROS_ATRASADOS">NA</option>
+	                    <option value="POSTO_AVANCADO">Posto Avan&ccedilado</option>
 	             	 </select>
 	             </td>
-	            </tr>
-	            <tr>
-	              <td><label for="box.postoAvancado">Posto Avan&ccedil;ado:</label></td>
-	              <td><input type="checkbox" name="box.postoAvancado" id="boxPostoAvancado" /></td>
-	  			</tr>
+	            </tr>	           
           </table>
     </div>
+	</form>
 	
+	<form action="/cadastro/box/" id="pesquisar_box_form">
 	 <fieldset class="classFieldset">
    	    <legend> Pesquisar Box</legend>
         <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
             <tr>
               <td width="30">Box:</td>
-                <td><input type="text" name="pesquisa.codigoBox" id="pesquisaCodigoBox" style="width:130px;"/></td>
+                <td><input type="text" name="box.codigo" id="pesquisaCodigoBox" style="width:130px;"/></td>
                 <td width="76">Tipo de Box:</td>
-                <td><select name="pesquisa.tipoBox" id="pesquisaTipoBox" style="width:180px;">
+                <td><select name="box.tipoBox" id="pesquisaTipoBox" style="width:180px;">
                 		<option selected="selected"> </option>
-	                    <option value="SUPLEMENTAR">Suplementar</option>
-	                    <option value="RECOLHIMENTO">Recolhimento</option>
+	                    <option value="ENCALHE">Encalhe</option>
 	                    <option value="LANCAMENTO">Lan&ccedil;amento</option>
-	                    <option value="NUMEROS_ATRASADOS">NA</option>
-              </select></td>               
-<!--               <td width="120"><label for="box.postoAvancado">Posto Avan&ccedil;ado:</label></td> -->
-<!-- 	          <td align="left"><input type="checkbox" name="box.postoAvancado" id="boxPostoAvancado" /></td>	          -->
+	                    <option value="POSTO_AVANCADO">Posto Avan&ccedilado</option>
+              </select></td>
               <td><span class="bt_pesquisar"><a href="javascript:;" id="btnPesquisar">Pesquisar</a></span></td>
             </tr>
           </table>
@@ -89,5 +90,6 @@ $(function(){
    
       </fieldset>
       <div class="linha_separa_fields">&nbsp;</div>
+    </form>
 
 </body>

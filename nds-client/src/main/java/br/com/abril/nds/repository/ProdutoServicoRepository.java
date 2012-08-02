@@ -4,8 +4,9 @@ import java.util.List;
 
 import br.com.abril.nds.model.fiscal.nota.ItemNotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.ProdutoServico;
+import br.com.abril.nds.model.fiscal.nota.pk.ProdutoServicoPK;
 
-public interface ProdutoServicoRepository  extends Repository<ProdutoServico, Long> {
+public interface ProdutoServicoRepository  extends Repository<ProdutoServico, ProdutoServicoPK> {
 	
 	/**
 	 * Atualiza tabela de amarração que informa se o produto de um movimento possui nota fiscal.
@@ -13,7 +14,7 @@ public interface ProdutoServicoRepository  extends Repository<ProdutoServico, Lo
 	 * @param listaProdutoServico 
 	 * @param listItemNotaFiscal
 	 */
-	public void atualizarProdutosQuePossuemNota(List<ProdutoServico> listaProdutoServico, 
+	public abstract void atualizarProdutosQuePossuemNota(List<ProdutoServico> listaProdutoServico, 
 			List<ItemNotaFiscal> listItemNotaFiscal);
 	
 }

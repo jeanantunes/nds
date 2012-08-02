@@ -338,9 +338,16 @@
 	</dependencies>
 
 	<repositories>
+		<!-- Antigo
 		<repository>
 			<id>nexus</id>
 			<url>http://177.71.177.215:8080/nexus/content/groups/public/</url>
+		</repository>
+		-->
+	
+		<repository>
+			<id>nexus</id>
+			<url>http://177.71.255.76:8080/nexus-2.0.6/content/groups/public/</url>
 		</repository>
 	
 		<repository>

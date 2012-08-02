@@ -7,15 +7,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.dto.CapaDTO;
 import br.com.abril.nds.dto.CotaEmissaoDTO;
+import br.com.abril.nds.dto.ProdutoEmissaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroEmissaoCE;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.EnderecoCota;
-import br.com.abril.nds.model.cadastro.TipoEndereco;
+import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.repository.ChamadaEncalheRepository;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.service.ChamadaEncalheService;
+import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 
 /**
@@ -46,10 +49,11 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 
 
 	@Override
+	@Transactional
 	public List<CotaEmissaoDTO> obterDadosImpressaoEmissaoChamadasEncalhe(
 			FiltroEmissaoCE filtro) {
 		
-		List<CotaEmissaoDTO> lista = obterDadosEmissaoChamadasEncalhe(filtro);
+		List<CotaEmissaoDTO> lista = chamadaEncalheRepository.obterDadosEmissaoImpressaoChamadasEncalhe(filtro);
 		
 		for(CotaEmissaoDTO dto:lista) {
 			
@@ -67,19 +71,57 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 			
 			if( endereco!= null) {
 				dto.setEndereco(endereco.getLogradouro().toUpperCase()  + " " + endereco.getNumero());
+				dto.setUf(endereco.getUf());
+				dto.setCidade(endereco.getCidade());
+				dto.setUf(endereco.getUf());
+				dto.setCep(endereco.getCep());
 			}
+			
+			if(cota.getPessoa() instanceof PessoaJuridica)
+				dto.setInscricaoEstadual(((PessoaJuridica)cota.getPessoa()).getInscricaoEstadual());
 			
 			dto.setNumeroNome(dto.getNumCota()+ " " + dto.getNomeCota().toUpperCase());
 			dto.setCnpj(cota.getPessoa().getDocumento());
+									
+			dto.setDataEmissao(DateUtil.formatarDataPTBR(new Date()));
 			
-			if(filtro.getDtRecolhimentoDe()!= null && filtro.getDtRecolhimentoDe().equals(filtro.getDtRecolhimentoAte())) {
-				dto.setDataRecolhimento(DateUtil.formatarDataPTBR(filtro.getDtRecolhimentoDe()));
+			dto.setProdutos(chamadaEncalheRepository.obterProdutosEmissaoCE(filtro,dto.getIdCota()));
+			
+			Double vlrReparte = 0.0;	
+			Double vlrDesconto = 0.0;
+			Double vlrEncalhe = 0.0;	
+			
+			for(ProdutoEmissaoDTO produtoDTO : dto.getProdutos()) {
+				produtoDTO.setVendido(produtoDTO.getReparte() - produtoDTO.getQuantidadeDevolvida());
+				produtoDTO.setVlrVendido(CurrencyUtil.formatarValor(produtoDTO.getVendido() * produtoDTO.getVlrPrecoComDesconto()));
+				vlrReparte += produtoDTO.getPrecoVenda() * produtoDTO.getReparte();
+				vlrDesconto +=  produtoDTO.getVlrDesconto() * produtoDTO.getReparte();
+				vlrEncalhe += produtoDTO.getQuantidadeDevolvida() * (produtoDTO.getPrecoVenda() - produtoDTO.getVlrDesconto());
 			}
 			
-			dto.setDataEmissao(DateUtil.formatarDataPTBR(new Date()));
+			Double vlrReparteLiquido = vlrReparte - vlrDesconto;
+			Double totalLiquido = vlrReparteLiquido - vlrEncalhe;
+			
+			dto.setVlrReparte(CurrencyUtil.formatarValor(vlrReparte));
+			dto.setVlrComDesconto(CurrencyUtil.formatarValor(vlrDesconto));
+			dto.setVlrReparteLiquido(CurrencyUtil.formatarValor(vlrReparteLiquido));
+			dto.setVlrEncalhe(CurrencyUtil.formatarValor(vlrEncalhe));
+			dto.setVlrTotalLiquido(CurrencyUtil.formatarValor(totalLiquido));
+			
+			
+			
 		}
 		
 		return lista;
+	}
+
+
+	@Override
+	@Transactional
+	public List<CapaDTO> obterIdsCapasChamadaEncalhe(Date dtRecolhimentoDe,
+			Date dtRecolhimentoAte) {
+		
+		return chamadaEncalheRepository.obterIdsCapasChamadaEncalhe(dtRecolhimentoDe, dtRecolhimentoAte);
 	}
 		
 }

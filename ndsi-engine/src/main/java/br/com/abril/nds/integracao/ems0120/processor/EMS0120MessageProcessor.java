@@ -94,7 +94,7 @@ public class EMS0120MessageProcessor extends AbstractRepository implements Messa
 			    outdetalhe.setContextoProduto(mec.getProdutoEdicao().getProduto().getCodigoContexto());//cod_publ
 				outdetalhe.setCodPublicacao(mec.getProdutoEdicao().getProduto().getCodigo());
 				outdetalhe.setEdicao(mec.getProdutoEdicao().getNumeroEdicao());
-				outdetalhe.setNumeroBoxCota(mec.getCota().getBox().getCodigo());
+				outdetalhe.setNumeroBoxCota(mec.getCota().getBox().getCodigo() + " - "+mec.getCota().getBox().getNome());
 				outdetalhe.setPrecoCapa(mec.getProdutoEdicao().getPrecoVenda());
 				outdetalhe.setQuantidadeReparte(mec.getQtde());
 				outdetalhe.setDataLancamento(mec.getData());

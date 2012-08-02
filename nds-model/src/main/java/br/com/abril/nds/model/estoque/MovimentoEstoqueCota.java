@@ -14,6 +14,7 @@ import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.fiscal.nota.ProdutoServico;
 import br.com.abril.nds.model.movimentacao.AbstractMovimentoEstoque;
 import br.com.abril.nds.model.planejamento.EstudoCota;
+import br.com.abril.nds.model.planejamento.Lancamento;
 
 @Entity
 @Table(name = "MOVIMENTO_ESTOQUE_COTA")
@@ -35,11 +36,15 @@ public class MovimentoEstoqueCota  extends AbstractMovimentoEstoque {
 	@JoinColumn(name = "ESTUDO_COTA_ID")
 	private EstudoCota estudoCota;
 	
-	@ManyToMany(mappedBy="listaMovimentoEstoqueCota", targetEntity=ProdutoServico.class)
+	@ManyToMany(mappedBy="listaMovimentoEstoqueCota")
 	private List<ProdutoServico> listaProdutoServicos;
 	
 	@OneToMany(mappedBy = "movimentoEstoqueCota")
 	private List<ConferenciaEncalhe> listaConferenciasEncalhe;
+	
+	@ManyToOne(optional = true)
+	@JoinColumn(name = "LANCAMENTO_ID")
+	private Lancamento lancamento;
 	
 	public Cota getCota() {
 		return cota;
@@ -98,6 +103,20 @@ public class MovimentoEstoqueCota  extends AbstractMovimentoEstoque {
 	public void setListaConferenciasEncalhe(
 			List<ConferenciaEncalhe> listaConferenciasEncalhe) {
 		this.listaConferenciasEncalhe = listaConferenciasEncalhe;
+	}
+
+	/**
+	 * @return the lancamento
+	 */
+	public Lancamento getLancamento() {
+		return lancamento;
+	}
+
+	/**
+	 * @param lancamento the lancamento to set
+	 */
+	public void setLancamento(Lancamento lancamento) {
+		this.lancamento = lancamento;
 	}
 
 }

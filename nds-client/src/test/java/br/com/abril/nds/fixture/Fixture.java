@@ -36,7 +36,6 @@ import br.com.abril.nds.model.cadastro.GrupoFornecedor;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.cadastro.LicencaMunicipal;
 import br.com.abril.nds.model.cadastro.MaterialPromocional;
-import br.com.abril.nds.model.cadastro.Moeda;
 import br.com.abril.nds.model.cadastro.OperacaoDistribuidor;
 import br.com.abril.nds.model.cadastro.ParametroCobrancaCota;
 import br.com.abril.nds.model.cadastro.ParametroContratoCota;
@@ -53,6 +52,7 @@ import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.PoliticaCobranca;
 import br.com.abril.nds.model.cadastro.PoliticaSuspensao;
+import br.com.abril.nds.model.cadastro.Processo;
 import br.com.abril.nds.model.cadastro.ProcuracaoEntregador;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
@@ -66,6 +66,7 @@ import br.com.abril.nds.model.cadastro.TelefoneEntregador;
 import br.com.abril.nds.model.cadastro.TipoAtividade;
 import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
+import br.com.abril.nds.model.cadastro.TipoCota;
 import br.com.abril.nds.model.cadastro.TipoDesconto;
 import br.com.abril.nds.model.cadastro.TipoEndereco;
 import br.com.abril.nds.model.cadastro.TipoEntrega;
@@ -80,6 +81,7 @@ import br.com.abril.nds.model.cadastro.TipoProduto;
 import br.com.abril.nds.model.cadastro.TipoRegistroCobranca;
 import br.com.abril.nds.model.cadastro.TipoRoteiro;
 import br.com.abril.nds.model.cadastro.TipoTelefone;
+import br.com.abril.nds.model.cadastro.TributacaoFiscal;
 import br.com.abril.nds.model.cadastro.pdv.AreaInfluenciaPDV;
 import br.com.abril.nds.model.cadastro.pdv.CaracteristicasPDV;
 import br.com.abril.nds.model.cadastro.pdv.EnderecoPDV;
@@ -201,7 +203,7 @@ public class Fixture {
 	}
 	
 	public static CotaAusente cotaAusenteAtivo(){
-		Box box1 = Fixture.criarBox("Box-1", "BX-001", TipoBox.LANCAMENTO, false);
+		Box box1 = Fixture.criarBox(1, "BX-001", TipoBox.LANCAMENTO);
 		Pessoa manoel = Fixture.pessoaFisica("123.456.789-00",
 				"sys.discover@gmail.com", "Manoel da Silva");	
 		Cota cotaManoel = Fixture.cota(123, manoel, SituacaoCadastro.ATIVO, box1);
@@ -249,78 +251,78 @@ public class Fixture {
 
 	public static Produto produtoVeja(TipoProduto tipoProduto) {
 		return produto("1", "Veja", "Veja", PeriodicidadeProduto.SEMANAL,
-				tipoProduto, 5, 5, BigDecimal.TEN);
+				tipoProduto, 5, 5, BigDecimal.TEN, TributacaoFiscal. TRIBUTADO);
 	}
 
 	public static Produto produtoQuatroRodas(TipoProduto tipoProduto) {
 		return produto("2", "Quatro Rodas", "Quatro Rodas",
-				PeriodicidadeProduto.MENSAL, tipoProduto, 5, 5, BigDecimal.TEN);
+				PeriodicidadeProduto.MENSAL, tipoProduto, 5, 5, BigDecimal.TEN, TributacaoFiscal. TRIBUTADO);
 	}
 
 	public static Produto produtoInfoExame(TipoProduto tipoProduto) {
 		return produto("3", "Info Exame", "Info Exame",
-				PeriodicidadeProduto.MENSAL, tipoProduto, 5, 5, BigDecimal.TEN);
+				PeriodicidadeProduto.MENSAL, tipoProduto, 5, 5, BigDecimal.TEN, TributacaoFiscal. TRIBUTADO);
 	}
 
 	public static Produto produtoCapricho(TipoProduto tipoProduto) {
 		return produto("4", "Capricho", "Capricho",
-				PeriodicidadeProduto.QUINZENAL, tipoProduto, 5, 5, BigDecimal.TEN);
+				PeriodicidadeProduto.QUINZENAL, tipoProduto, 5, 5, BigDecimal.TEN, TributacaoFiscal. TRIBUTADO);
 	}
 	
 	public static Produto produtoSuperInteressante(TipoProduto tipoProduto) {
 		return produto("5",
 				"Superinteressante", "Superinteressante",
-				PeriodicidadeProduto.MENSAL, tipoProduto, 5, 5, BigDecimal.TEN);
+				PeriodicidadeProduto.MENSAL, tipoProduto, 5, 5, BigDecimal.TEN, TributacaoFiscal. TRIBUTADO);
 	}
 	
 	public static Produto produtoBoaForma(TipoProduto tipoProduto) {
 		return produto("6", "Boa Forma", "Boa Forma",
-				PeriodicidadeProduto.MENSAL, tipoProduto, 5, 5, BigDecimal.TEN);
+				PeriodicidadeProduto.MENSAL, tipoProduto, 5, 5, BigDecimal.TEN, TributacaoFiscal. TRIBUTADO);
 	}
 	
 	public static Produto produtoBravo(TipoProduto tipoProduto) {
 		return produto("7", "Bravo", "Bravo",
-				PeriodicidadeProduto.MENSAL, tipoProduto, 5, 5, BigDecimal.TEN);
+				PeriodicidadeProduto.MENSAL, tipoProduto, 5, 5, BigDecimal.TEN, TributacaoFiscal. TRIBUTADO);
 	}
 	
 	public static Produto produtoContigo(TipoProduto tipoProduto) {
 		return produto("8", "Contigo", "Contigo",
-				PeriodicidadeProduto.QUINZENAL, tipoProduto, 5, 5, BigDecimal.TEN);
+				PeriodicidadeProduto.QUINZENAL, tipoProduto, 5, 5, BigDecimal.TEN, TributacaoFiscal. TRIBUTADO);
 	}
 	
 	public static Produto produtoCaras(TipoProduto tipoProduto) {
 		return produto("9", "Caras", "Caras",
-				PeriodicidadeProduto.MENSAL, tipoProduto, 5, 5, BigDecimal.TEN);
+				PeriodicidadeProduto.MENSAL, tipoProduto, 5, 5, BigDecimal.TEN, TributacaoFiscal. TRIBUTADO);
 	}
 	
 	public static Produto produtoClaudia(TipoProduto tipoProduto) {
 		return produto("10", "Claudia", "Claudia",
-				PeriodicidadeProduto.SEMANAL, tipoProduto, 5, 5, BigDecimal.TEN);
+				PeriodicidadeProduto.SEMANAL, tipoProduto, 5, 5, BigDecimal.TEN, TributacaoFiscal. TRIBUTADO);
 	}
 	
 	public static Produto produtoCasaClaudia(TipoProduto tipoProduto) {
 		return produto("11", "Casa Claudia", "Casa Claudia",
-				PeriodicidadeProduto.MENSAL, tipoProduto, 5, 5, BigDecimal.TEN);
+				PeriodicidadeProduto.MENSAL, tipoProduto, 5, 5, BigDecimal.TEN, TributacaoFiscal. TRIBUTADO);
 	}
 	
 	public static Produto produtoManequim(TipoProduto tipoProduto) {
 		return produto("12", "Manequim", "Manequim",
-				PeriodicidadeProduto.SEMANAL, tipoProduto, 5, 5, BigDecimal.TEN);
+				PeriodicidadeProduto.SEMANAL, tipoProduto, 5, 5, BigDecimal.TEN, TributacaoFiscal. TRIBUTADO);
 	}
 	
 	public static Produto produtoNationalGeographic(TipoProduto tipoProduto) {
 		return produto("13", "National Geographic", "National Geographic",
-				PeriodicidadeProduto.MENSAL, tipoProduto, 5, 5, BigDecimal.TEN);
+				PeriodicidadeProduto.MENSAL, tipoProduto, 5, 5, BigDecimal.TEN, TributacaoFiscal. TRIBUTADO);
 	}
 	
 	public static Produto produtoPlacar(TipoProduto tipoProduto) {
 		return produto("14", "Placar", "Placar",
-				PeriodicidadeProduto.MENSAL, tipoProduto, 5, 5, BigDecimal.TEN);
+				PeriodicidadeProduto.MENSAL, tipoProduto, 5, 5, BigDecimal.TEN, TributacaoFiscal. TRIBUTADO);
 	}
 	
 	public static Produto produtoCromoReiLeao(TipoProduto tipoProduto) {
 		return produto("15", "Cromo Rei Leao", "Cromo Rei Leao",
-				PeriodicidadeProduto.SEMANAL, tipoProduto, 5, 5, BigDecimal.TEN);
+				PeriodicidadeProduto.SEMANAL, tipoProduto, 5, 5, BigDecimal.TEN, TributacaoFiscal. TRIBUTADO);
 	}
 	
 	public static TipoProduto tipoRevista(NCM ncm) {
@@ -340,12 +342,12 @@ public class Fixture {
 	}
 	
 	public static Box boxReparte300() {
-		return criarBox("300", "Box 300", TipoBox.LANCAMENTO, false);
+		return criarBox(300, "Box 300", TipoBox.LANCAMENTO);
 	}
 	
 	public static Banco hsbc(Carteira carteira) {
 		return Fixture.banco(10L, true, carteira, "1010",
-				  123456L, "1", "1", "Sem instruções", Moeda.REAL, "HSBC", "399", BigDecimal.ZERO, BigDecimal.ZERO);
+				  123456L, "1", "1", "Sem instruções", "HSBC","BANCO HSBC S/A", "399", BigDecimal.ZERO, BigDecimal.ZERO);
 	}
 	
 	public static Editor editoraAbril() {
@@ -417,6 +419,7 @@ public class Fixture {
 		fornecedor.setInicioAtividade(new Date());
 		fornecedor.setCodigoInterface(codigoInterface);
 		fornecedor.setOrigem(Origem.MANUAL);
+		fornecedor.setEmailNfe("teste@gmail.com");
 		return fornecedor;
 	}
 	
@@ -448,7 +451,7 @@ public class Fixture {
 
 	public static Produto produto(String codigo, String descricao, String nome,
 								  PeriodicidadeProduto periodicidade, TipoProduto tipo, 
-								  int peb, int pacotePadrao, BigDecimal peso) {
+								  int peb, int pacotePadrao, BigDecimal peso, TributacaoFiscal tributacaoFiscal) {
 		
 		Produto produto = new Produto();
 		produto.setCodigo(codigo);
@@ -459,10 +462,33 @@ public class Fixture {
 		produto.setPeb(peb);
 		produto.setPacotePadrao(pacotePadrao);
 		produto.setPeso(peso);
-		
+		produto.setTributacaoFiscal(tributacaoFiscal);
 		return produto;
 	}
 
+	public static ProdutoEdicao produtoEdicao(String codigoProdutoEdicao, Long numeroEdicao, 
+			int pacotePadrao, int peb, BigDecimal peso, BigDecimal precoCusto,
+			BigDecimal precoVenda, String codigoDeBarras, Long cdSMNotUsedAnyMore, Produto produto, 
+			BigDecimal expectativaVenda, boolean parcial,String nomeComercial) {
+		
+		ProdutoEdicao produtoEdicao = new ProdutoEdicao();
+		produtoEdicao.setCodigo(codigoProdutoEdicao);
+		produtoEdicao.setNumeroEdicao(numeroEdicao);
+		produtoEdicao.setPacotePadrao(pacotePadrao);
+		produtoEdicao.setPeb(peb);
+		produtoEdicao.setPeso(peso);
+		produtoEdicao.setPrecoCusto(precoCusto);
+		produtoEdicao.setPrecoVenda(precoVenda);
+		produtoEdicao.setProduto(produto);
+		produtoEdicao.setCodigoDeBarras(codigoDeBarras);
+		produtoEdicao.setExpectativaVenda(expectativaVenda);
+		produtoEdicao.setParcial(parcial);
+		produtoEdicao.setNomeComercial(nomeComercial);
+		
+		produtoEdicao.setOrigemInterface(Boolean.TRUE);
+		return produtoEdicao;
+	}
+	
 	public static ProdutoEdicao produtoEdicao(String codigoProdutoEdicao, Long numeroEdicao, 
 			int pacotePadrao, int peb, BigDecimal peso, BigDecimal precoCusto,
 			BigDecimal precoVenda, String codigoDeBarras, Long cdSMNotUsedAnyMore, Produto produto, 
@@ -484,6 +510,7 @@ public class Fixture {
 		produtoEdicao.setOrigemInterface(Boolean.TRUE);
 		return produtoEdicao;
 	}
+	
 	
 	public static Lancamento lancamento(TipoLancamento tipoLancamento,
 			ProdutoEdicao produtoEdicao, Date dlp, Date drp, Date dataCriacao,
@@ -1170,7 +1197,7 @@ public class Fixture {
 		tipoNotaFiscal.setTipoOperacao(TipoOperacao.ENTRADA);		
 		tipoNotaFiscal.setTipoAtividade(TipoAtividade.PRESTADOR_SERVICO);
 		tipoNotaFiscal.setSerieNotaFiscal(2);
-		
+		tipoNotaFiscal.setProcesso(Processo.PROCESSO);
 		return tipoNotaFiscal;
 	}
 
@@ -1217,7 +1244,8 @@ public class Fixture {
 		tipoNotaFiscal.setNopCodigo(0L);
 		tipoNotaFiscal.setTipoOperacao(TipoOperacao.SAIDA);
 		tipoNotaFiscal.setTipoAtividade(TipoAtividade.MERCANTIL);
-		tipoNotaFiscal.setSerieNotaFiscal(3);		
+		tipoNotaFiscal.setSerieNotaFiscal(3);
+		tipoNotaFiscal.setProcesso(Processo.PROCESSO);
 		return tipoNotaFiscal;
 	}
 
@@ -1234,6 +1262,7 @@ public class Fixture {
 		tipoNotaFiscal.setNopCodigo(0L);
 		tipoNotaFiscal.setTipoOperacao(TipoOperacao.ENTRADA);
 		tipoNotaFiscal.setTipoAtividade(TipoAtividade.PRESTADOR_SERVICO);
+		tipoNotaFiscal.setProcesso(Processo.PROCESSO);
 		tipoNotaFiscal.setSerieNotaFiscal(4);
 		
 		return tipoNotaFiscal;
@@ -1855,12 +1884,13 @@ public class Fixture {
 		
 	}
 	
-	public static RateioDiferenca rateioDiferenca(BigDecimal qtde, Cota cota, Diferenca diferenca, EstudoCota estudoCota){
+	public static RateioDiferenca rateioDiferenca(BigDecimal qtde, Cota cota, Diferenca diferenca, EstudoCota estudoCota, Date dataNotaEnvio){
 		RateioDiferenca rateioDiferenca = new RateioDiferenca();
 		rateioDiferenca.setCota(cota);
 		rateioDiferenca.setDiferenca(diferenca);
 		rateioDiferenca.setEstudoCota(estudoCota);
 		rateioDiferenca.setQtde(qtde);
+		rateioDiferenca.setDataNotaEnvio(dataNotaEnvio);
 		
 		return rateioDiferenca;
 	}
@@ -1899,12 +1929,11 @@ public class Fixture {
 		return lancamento;
 	}
 	
-	public static Box criarBox(String codigo, String nome, TipoBox tipoBox, boolean postoAvancado) {
+	public static Box criarBox(Integer codigo, String nome, TipoBox tipoBox) {
 		Box box = new Box();
 		box.setCodigo(codigo);
 		box.setNome(nome);
 		box.setTipoBox(tipoBox);
-		box.setPostoAvancado(postoAvancado);
 		return box;
 	}
 	
@@ -2012,7 +2041,7 @@ public class Fixture {
 
 	public static Endereco criarEndereco(TipoEndereco tipoEndereco, String cep,
 										 String logradouro, int numero, 
-										 String bairro, String cidade, String uf) {
+										 String bairro, String cidade, String uf,Integer codigoCidadeIBGE) {
 		
 		Endereco endereco = new Endereco();
 		
@@ -2022,6 +2051,7 @@ public class Fixture {
 		endereco.setLogradouro(logradouro);
 		endereco.setNumero(numero);
 		endereco.setUf(uf);
+		endereco.setCodigoCidadeIBGE(codigoCidadeIBGE);
 		
 		return endereco;
 	}
@@ -2039,7 +2069,7 @@ public class Fixture {
 	}
 	
 	public static Banco banco(Long agencia, boolean ativo, Carteira carteira, String codigoCedente, Long conta, String dvAgencia,
-								 String dvConta, String instrucoes, Moeda moeda, String nome, String numeroBanco, BigDecimal juros, BigDecimal multa) {
+								 String dvConta, String instrucoes, String apelido, String nome, String numeroBanco, BigDecimal juros, BigDecimal multa) {
 		
 		Banco banco = new Banco();
 		
@@ -2051,7 +2081,7 @@ public class Fixture {
 		banco.setDvAgencia(dvAgencia);
 		banco.setDvConta(dvConta);
 		banco.setInstrucoes(instrucoes);
-		banco.setMoeda(moeda);
+		banco.setApelido(apelido);
 		banco.setNome(nome);
 		banco.setNumeroBanco(numeroBanco);
 		banco.setJuros(juros);
@@ -2272,7 +2302,7 @@ public class Fixture {
 
 	public static ParametroCobrancaCota parametroCobrancaCota(Set<FormaCobranca> formasCobranca,
 							Integer numeroAcumuloDivida, BigDecimal valor, Cota cota,
-							int fatorVencimento,boolean recebeCobrancaEmail, BigDecimal valorMininoCobranca) {
+							int fatorVencimento,boolean recebeCobrancaEmail, BigDecimal valorMininoCobranca, TipoCota tipoCota) {
 		
 		ParametroCobrancaCota parametro = new ParametroCobrancaCota();
 		
@@ -2286,6 +2316,7 @@ public class Fixture {
 		parametro.setValorMininoCobranca(valorMininoCobranca);
 		parametro.setPoliticaSuspensao(politicaSuspensao);
 		parametro.setFormasCobrancaCota(formasCobranca);
+		parametro.setTipoCota(tipoCota);
 		
 		return parametro;
 	}

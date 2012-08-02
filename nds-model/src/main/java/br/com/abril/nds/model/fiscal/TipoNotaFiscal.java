@@ -11,6 +11,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import br.com.abril.nds.model.cadastro.Processo;
 import br.com.abril.nds.model.cadastro.TipoAtividade;
 
 /**
@@ -58,6 +59,10 @@ public class TipoNotaFiscal {
 	@Enumerated(EnumType.STRING)
 	@Column(name = "TIPO_ATIVIDADE", nullable = false)
 	private TipoAtividade tipoAtividade;
+	
+	@Enumerated(EnumType.STRING)
+	@Column(name = "PROCESSO", nullable = false)
+	private Processo processo;
 	
 	@Enumerated(EnumType.STRING)
 	@Column(name = "EMITENTE", nullable = false)
@@ -171,6 +176,20 @@ public class TipoNotaFiscal {
 	}
 
 	/**
+	 * @return the processo
+	 */
+	public Processo getProcesso() {
+		return processo;
+	}
+
+	/**
+	 * @param processo the processo to set
+	 */
+	public void setProcesso(Processo processo) {
+		this.processo = processo;
+	}
+
+	/**
 	 * @return the serieNotaFiscal
 	 */
 	public Integer getSerieNotaFiscal() {
@@ -182,6 +201,31 @@ public class TipoNotaFiscal {
 	 */
 	public void setSerieNotaFiscal(Integer serieNotaFiscal) {
 		this.serieNotaFiscal = serieNotaFiscal;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		TipoNotaFiscal other = (TipoNotaFiscal) obj;
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
+			return false;
+		return true;
 	}
 	
 }

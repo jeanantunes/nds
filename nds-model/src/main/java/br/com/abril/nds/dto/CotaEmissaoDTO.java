@@ -2,9 +2,11 @@ package br.com.abril.nds.dto;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 import br.com.abril.nds.util.CurrencyUtil;
+import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Exportable;
 
@@ -23,6 +25,7 @@ public class CotaEmissaoDTO implements Serializable{
 	@Export(label="Valor Total CE R$")
 	private String vlrTotalCe;
 	
+	private Long idChamEncCota;
 	private List<ProdutoEmissaoDTO> produtos;
 	private String numeroNome;
 	private String cnpj;
@@ -33,8 +36,19 @@ public class CotaEmissaoDTO implements Serializable{
 	private String inscricaoEstadual;
 	private String dataRecolhimento;
 	private String dataEmissao;
-	private String boxRota;
+	private Integer box;
+	private String codigoRota;
+	private String nomeRota;
+	
 	private String numDocumento;
+	
+
+	private String vlrReparte;	
+	private String vlrComDesconto;	
+	private String vlrReparteLiquido;	
+	private String vlrEncalhe;	
+	private String vlrTotalLiquido;
+
 	
 	/**
 	 * @return the cnpj
@@ -118,8 +132,8 @@ public class CotaEmissaoDTO implements Serializable{
 	/**
 	 * @param dataRecolhimento the dataRecolhimento to set
 	 */
-	public void setDataRecolhimento(String dataRecolhimento) {
-		this.dataRecolhimento = dataRecolhimento;
+	public void setDataRecolhimento(Date dataRecolhimento) {
+		this.dataRecolhimento = DateUtil.formatarDataPTBR(dataRecolhimento);
 	}
 	/**
 	 * @return the dataEmissao
@@ -133,19 +147,7 @@ public class CotaEmissaoDTO implements Serializable{
 	public void setDataEmissao(String dataEmissao) {
 		this.dataEmissao = dataEmissao;
 	}
-	/**
-	 * @return the boxRota
-	 */
-	public String getBoxRota() {
-		return boxRota;
-	}
-	/**
-	 * @param boxRota the boxRota to set
-	 */
-	public void setBoxRota(String boxRota) {
-		this.boxRota = boxRota;
-	}
-		
+	
 	/**
 	 * @return the numCota
 	 */
@@ -248,6 +250,133 @@ public class CotaEmissaoDTO implements Serializable{
 	 */
 	public void setNumeroNome(String numeroNome) {
 		this.numeroNome = numeroNome;
+	}
+
+	/**
+	 * @return the box
+	 */
+	public Integer getBox() {
+		return box;
+	}
+
+	/**
+	 * @param box the box to set
+	 */
+	public void setBox(Integer box) {
+		this.box = box;
+	}
+
+
+	/**
+	 * @return the codigoRota
+	 */
+	public String getCodigoRota() {
+		return codigoRota;
+	}
+
+	/**
+	 * @param codigoRota the codigoRota to set
+	 */
+	public void setCodigoRota(String codigoRota) {
+		this.codigoRota = codigoRota;
+	}
+
+	/**
+	 * @return the nomeRota
+	 */
+	public String getNomeRota() {
+		return nomeRota;
+	}
+
+	/**
+	 * @param nomeRota the nomeRota to set
+	 */
+	public void setNomeRota(String nomeRota) {
+		this.nomeRota = nomeRota;
+	}
+
+	/**
+	 * @return the idChamEncCota
+	 */
+	public Long getIdChamEncCota() {
+		return idChamEncCota;
+	}
+
+	/**
+	 * @param idChamEncCota the idChamEncCota to set
+	 */
+	public void setIdChamEncCota(Long idChamEncCota) {
+		this.idChamEncCota = idChamEncCota;
+	}
+
+	/**
+	 * @return the vlrReparte
+	 */
+	public String getVlrReparte() {
+		return vlrReparte;
+	}
+
+	/**
+	 * @param vlrReparte the vlrReparte to set
+	 */
+	public void setVlrReparte(String vlrReparte) {
+		this.vlrReparte = vlrReparte;
+	}
+
+	/**
+	 * @return the vlrComDesconto
+	 */
+	public String getVlrComDesconto() {
+		return vlrComDesconto;
+	}
+
+	/**
+	 * @param vlrComDesconto the vlrComDesconto to set
+	 */
+	public void setVlrComDesconto(String vlrComDesconto) {
+		this.vlrComDesconto = vlrComDesconto;
+	}
+
+	/**
+	 * @return the vlrReparteLiquido
+	 */
+	public String getVlrReparteLiquido() {
+		return vlrReparteLiquido;
+	}
+
+	/**
+	 * @param vlrReparteLiquido the vlrReparteLiquido to set
+	 */
+	public void setVlrReparteLiquido(String vlrReparteLiquido) {
+		this.vlrReparteLiquido = vlrReparteLiquido;
+	}
+
+	/**
+	 * @return the vlrEncalhe
+	 */
+	public String getVlrEncalhe() {
+		return vlrEncalhe;
+	}
+
+	/**
+	 * @param vlrEncalhe the vlrEncalhe to set
+	 */
+	public void setVlrEncalhe(String vlrEncalhe) {
+		this.vlrEncalhe = vlrEncalhe;
+	}
+
+	/**
+	 * @return the vlrTotalLiquido
+	 */
+	public String getVlrTotalLiquido() {
+		return vlrTotalLiquido;
+	}
+
+	/**
+	 * @param vlrTotalLiquido the vlrTotalLiquido to set
+	 */
+	public void setVlrTotalLiquido(String vlrTotalLiquido) {
+		this.vlrTotalLiquido = vlrTotalLiquido;
 	}
 	
 	

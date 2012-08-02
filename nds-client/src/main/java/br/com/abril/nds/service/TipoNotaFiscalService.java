@@ -34,4 +34,6 @@ public interface TipoNotaFiscalService {
 	public abstract List<ItemDTO<Long, String>> carregarComboTiposNotasFiscais(TipoAtividade tipoAtividade);
 
 	
+	
+	List<TipoNotaFiscal> obterTiposNotasFiscaisPorTipoAtividadeDistribuidor(Long idDistribuidor);
 }

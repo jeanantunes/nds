@@ -300,7 +300,7 @@ fieldset label
 			<fieldset class="classFieldset">
 				<legend> Pesquisar Nota </legend>
 				<table width="950" border="0" cellpadding="2" cellspacing="1"
-					class="filtro">
+					   class="filtro">
 					<tr>
 						<td>Fornecedor:</td>
 						<td>

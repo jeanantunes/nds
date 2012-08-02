@@ -79,7 +79,7 @@ public class ConsolidadoFinanceiroCotaRepositoryImplTest extends AbstractReposit
 				"manoel@mail.com", "Manoel da Silva");
 				save(manoel);
 				
-		Box box1 = Fixture.criarBox("Box-1", "BX-001", TipoBox.LANCAMENTO, false);
+		Box box1 = Fixture.criarBox(1, "BX-001", TipoBox.LANCAMENTO);
 		save(box1);
 		
 		cotaManoel = Fixture.cota(1235, manoel, SituacaoCadastro.ATIVO, box1);
@@ -206,7 +206,7 @@ public class ConsolidadoFinanceiroCotaRepositoryImplTest extends AbstractReposit
 				"manoel@mail.com", "Manoel da Silva");
 				save(manoel);
 				
-		Box box1 = Fixture.criarBox("Box-1", "BX-001", TipoBox.LANCAMENTO, false);
+		Box box1 = Fixture.criarBox(1, "BX-001", TipoBox.LANCAMENTO);
 		save(box1);
 		
 		cotaManoel = Fixture.cota(123, manoel, SituacaoCadastro.ATIVO, box1);
@@ -308,7 +308,7 @@ public class ConsolidadoFinanceiroCotaRepositoryImplTest extends AbstractReposit
 		Diferenca diferenca = Fixture.diferenca(new BigDecimal(32), usuario, produtoEdicao, TipoDiferenca.FALTA_DE, StatusConfirmacao.CONFIRMADO, itemRecebimentoFisico, movimentoEstoque, true);
 		save(diferenca);
 		
-		RateioDiferenca rateioDiferenca = Fixture.rateioDiferenca(BigDecimal.TEN , cotaManoel, diferenca, estudoCota);
+		RateioDiferenca rateioDiferenca = Fixture.rateioDiferenca(BigDecimal.TEN , cotaManoel, diferenca, estudoCota, new Date());
 		save(rateioDiferenca);
 		
 		movimento = Fixture.movimentoEstoqueCota(produtoEdicao, tipoMovimentoConsignado, usuario, estoqueProdutoCota, new BigDecimal(23), cotaManoel, StatusAprovacao.APROVADO, "motivo");
