@@ -73,7 +73,7 @@ public class LocalidadeRepositoryImplTest extends AbstractRepositoryImplTest {
 	private void criarEnderecoCota(Cota cota) {
 		
 		Endereco endereco = Fixture.criarEndereco(
-				TipoEndereco.COMERCIAL, "13730-000", "Rua Marechal Deodoro", 50, "Centro", "Mococa", "SP");
+				TipoEndereco.COMERCIAL, "13730-000", "Rua Marechal Deodoro", 50, "Centro", "Mococa", "SP", 1);
 
 		endereco.setCodigoCidadeIBGE(1);
 		
@@ -87,7 +87,7 @@ public class LocalidadeRepositoryImplTest extends AbstractRepositoryImplTest {
 		
 		
 		Endereco endereco2 = Fixture.criarEndereco(
-				TipoEndereco.LOCAL_ENTREGA, "13730-000", "Rua X", 50, "Vila Carvalho", "Mococa", "SP");
+				TipoEndereco.LOCAL_ENTREGA, "13730-000", "Rua X", 50, "Vila Carvalho", "Mococa", "SP", 1);
 
 		endereco2.setCodigoCidadeIBGE(1);
 		
