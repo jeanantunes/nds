@@ -223,6 +223,7 @@
 							});
 							
 							$("#btnAddEditarSocio").text("Incluir Novo");
+							limparDadosCadastraisCPF(1);
 						},
 						null,
 						true

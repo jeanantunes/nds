@@ -293,6 +293,8 @@ public class CotaServiceImpl implements CotaService {
 	}
 	
 	private void salvarEnderecosCota(Cota cota, List<EnderecoAssociacaoDTO> listaEnderecoAssociacao) {
+
+		validarEnderecoPrincipalPorCota(listaEnderecoAssociacao, cota);
 		
 		enderecoService.cadastrarEnderecos(listaEnderecoAssociacao, cota.getPessoa());
 		
@@ -1622,5 +1624,69 @@ public class CotaServiceImpl implements CotaService {
 		}
 		
 		return listaCotas;
+	}
+	
+	/**
+	 * Valida se a lista de endereços pertencentes a uma cota, 
+	 * tem pelo menos um e somente um endereço principal
+	 * 
+	 * @param listaEnderecos lista de edereços para serem validados
+	 * @param cota cota relacionada com os endereços cadastrados
+	 */
+	private void validarEnderecoPrincipalPorCota(List<EnderecoAssociacaoDTO> listaEnderecos, Cota cota) {
+		
+		List<EnderecoAssociacaoDTO> enderecoAssociacaoValidacao = this.obterEnderecoAssociacaoDTOsCota(cota);
+		
+		enderecoAssociacaoValidacao.addAll(listaEnderecos);
+		
+		boolean isEnderecoPrincipal = false;
+		boolean hasEnderecoPrincipal = false;
+		
+		for (EnderecoAssociacaoDTO enderecoAssociacao : enderecoAssociacaoValidacao){
+			
+			if (isEnderecoPrincipal && enderecoAssociacao.isEnderecoPrincipal()){
+				
+				throw new ValidacaoException(TipoMensagem.WARNING, "Apenas um endereço principal é permitido.");
+			}
+			
+			if (enderecoAssociacao.isEnderecoPrincipal()){
+				isEnderecoPrincipal = enderecoAssociacao.isEnderecoPrincipal();
+				hasEnderecoPrincipal = isEnderecoPrincipal;
+			}
+		}
+		
+		if (!hasEnderecoPrincipal) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "É necessario cadastrar pelo menos um endereço principal.");
+		}
+	}
+	
+	
+	/**
+	 * Obtém uma lista de DTO de EnderecoAssociacao dos endereços pertencentes a cota parametrizada.
+	 * 
+	 * @param cota
+	 * @return
+	 */
+	private List<EnderecoAssociacaoDTO> obterEnderecoAssociacaoDTOsCota(Cota cota) {
+		
+		Set<EnderecoCota> enderecosCadastrados = cota.getEnderecos();
+		
+		List<EnderecoAssociacaoDTO> enderecoAssociacaoCadastrado = new ArrayList<EnderecoAssociacaoDTO>();
+		
+		if(enderecosCadastrados != null) {
+		
+			for(EnderecoCota enderecoCota : enderecosCadastrados) {
+				
+				EnderecoAssociacaoDTO enderecoAssociacao = new EnderecoAssociacaoDTO();
+				
+				enderecoAssociacao.setEndereco(enderecoCota.getEndereco());
+				enderecoAssociacao.setEnderecoPrincipal(enderecoCota.isPrincipal());
+				enderecoAssociacao.setTipoEndereco(enderecoCota.getTipoEndereco());
+				
+				enderecoAssociacaoCadastrado.add(enderecoAssociacao);
+			}
+		}
+		
+		return enderecoAssociacaoCadastrado;
 	}
 }
