@@ -65,6 +65,7 @@ import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.PoliticaCobranca;
 import br.com.abril.nds.model.cadastro.PoliticaSuspensao;
+import br.com.abril.nds.model.cadastro.Processo;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.Rota;
@@ -1280,6 +1281,7 @@ public class DataLoader {
 		nfeRemessaConsignacaoContribuinte.setGrupoNotaFiscal(GrupoNotaFiscal.NF_REMESSA_CONSIGNACAO);
 		nfeRemessaConsignacaoContribuinte.setTipoAtividade(TipoAtividade.MERCANTIL);
 		nfeRemessaConsignacaoContribuinte.setSerieNotaFiscal(1);
+		nfeRemessaConsignacaoContribuinte.setProcesso(Processo.PROCESSO);
 		save(session,nfeRemessaConsignacaoContribuinte);
 
 		TipoNotaFiscal nfeEntradaDevolucaoRemessaConsignacaoContribuinte = new TipoNotaFiscal();
@@ -1295,6 +1297,7 @@ public class DataLoader {
 		nfeEntradaDevolucaoRemessaConsignacaoContribuinte.setGrupoNotaFiscal(GrupoNotaFiscal.NF_DEVOLUCAO_REMESSA_CONSIGNACAO);
 		nfeEntradaDevolucaoRemessaConsignacaoContribuinte.setTipoAtividade(TipoAtividade.MERCANTIL);
 		nfeEntradaDevolucaoRemessaConsignacaoContribuinte.setSerieNotaFiscal(2);
+		nfeEntradaDevolucaoRemessaConsignacaoContribuinte.setProcesso(Processo.PROCESSO);
 		save(session, nfeEntradaDevolucaoRemessaConsignacaoContribuinte);
 
 		TipoNotaFiscal nfeDevolucaoSimbolicaMercadoriasVendidasContribuinte = new TipoNotaFiscal();
@@ -1310,6 +1313,7 @@ public class DataLoader {
 		nfeDevolucaoSimbolicaMercadoriasVendidasContribuinte.setGrupoNotaFiscal(GrupoNotaFiscal.NF_DEVOLUCAO_SIMBOLICA);
 		nfeDevolucaoSimbolicaMercadoriasVendidasContribuinte.setTipoAtividade(TipoAtividade.MERCANTIL);
 		nfeDevolucaoSimbolicaMercadoriasVendidasContribuinte.setSerieNotaFiscal(3);
+		nfeDevolucaoSimbolicaMercadoriasVendidasContribuinte.setProcesso(Processo.PROCESSO);
 		save(session, nfeDevolucaoSimbolicaMercadoriasVendidasContribuinte);
 
 		TipoNotaFiscal nfeVendasContribuinte = new TipoNotaFiscal();
@@ -1325,6 +1329,7 @@ public class DataLoader {
 		nfeVendasContribuinte.setGrupoNotaFiscal(GrupoNotaFiscal.NF_VENDA);
 		nfeVendasContribuinte.setTipoAtividade(TipoAtividade.MERCANTIL);
 		nfeVendasContribuinte.setSerieNotaFiscal(4);
+		nfeVendasContribuinte.setProcesso(Processo.PROCESSO);
 		save(session, nfeVendasContribuinte);
 
 		// Tipo de Nota - Mercantil - Cota não Contribuinte (cota que não emite NF-e)
@@ -1341,6 +1346,7 @@ public class DataLoader {
 		nfeRemessaConsignacao.setGrupoNotaFiscal(GrupoNotaFiscal.NF_REMESSA_CONSIGNACAO);
 		nfeRemessaConsignacao.setTipoAtividade(TipoAtividade.MERCANTIL);
 		nfeRemessaConsignacao.setSerieNotaFiscal(5);
+		nfeRemessaConsignacao.setProcesso(Processo.PROCESSO);
 		save(session,nfeRemessaConsignacao);
 
 		TipoNotaFiscal nfeEntradaDevolucaoRemessaConsignacao = new TipoNotaFiscal();
@@ -1356,6 +1362,7 @@ public class DataLoader {
 		nfeEntradaDevolucaoRemessaConsignacao.setGrupoNotaFiscal(GrupoNotaFiscal.NF_DEVOLUCAO_REMESSA_CONSIGNACAO);
 		nfeEntradaDevolucaoRemessaConsignacao.setTipoAtividade(TipoAtividade.MERCANTIL);
 		nfeEntradaDevolucaoRemessaConsignacao.setSerieNotaFiscal(6);
+		nfeEntradaDevolucaoRemessaConsignacao.setProcesso(Processo.PROCESSO);
 		save(session, nfeEntradaDevolucaoRemessaConsignacao);
 
 		TipoNotaFiscal nfeDevolucaoSimbolicaMercadoriasVendidas = new TipoNotaFiscal();
@@ -1371,6 +1378,7 @@ public class DataLoader {
 		nfeDevolucaoSimbolicaMercadoriasVendidas.setGrupoNotaFiscal(GrupoNotaFiscal.NF_DEVOLUCAO_SIMBOLICA);
 		nfeDevolucaoSimbolicaMercadoriasVendidas.setTipoAtividade(TipoAtividade.MERCANTIL);
 		nfeDevolucaoSimbolicaMercadoriasVendidas.setSerieNotaFiscal(7);
+		nfeDevolucaoSimbolicaMercadoriasVendidas.setProcesso(Processo.PROCESSO);
 		save(session, nfeDevolucaoSimbolicaMercadoriasVendidas);
 
 		TipoNotaFiscal nfeVendas = new TipoNotaFiscal();
@@ -1386,6 +1394,7 @@ public class DataLoader {
 		nfeVendas.setGrupoNotaFiscal(GrupoNotaFiscal.NF_VENDA);
 		nfeVendas.setTipoAtividade(TipoAtividade.MERCANTIL);
 		nfeVendas.setSerieNotaFiscal(8);
+		nfeVendas.setProcesso(Processo.PROCESSO);
 		save(session, nfeVendas);
 
 		// Tipo de Nota - Prestador de Serviço - Cota Contribuinte
@@ -1402,6 +1411,7 @@ public class DataLoader {
 		nfeRemessaDistribuicao1.setGrupoNotaFiscal(GrupoNotaFiscal.DEVOLUCAO_MERCADORIA_FORNECEDOR);
 		nfeRemessaDistribuicao1.setTipoAtividade(TipoAtividade.PRESTADOR_SERVICO);
 		nfeRemessaDistribuicao1.setSerieNotaFiscal(9);
+		nfeRemessaDistribuicao1.setProcesso(Processo.PROCESSO);
 		save(session, nfeRemessaDistribuicao1);
 
 		TipoNotaFiscal nfeDevolucaoRemessaDistribuicao1 = new TipoNotaFiscal();
@@ -1417,6 +1427,7 @@ public class DataLoader {
 		nfeDevolucaoRemessaDistribuicao1.setGrupoNotaFiscal(GrupoNotaFiscal.DEVOLUCAO_MERCADORIA_FORNECEDOR);
 		nfeDevolucaoRemessaDistribuicao1.setTipoAtividade(TipoAtividade.PRESTADOR_SERVICO);
 		nfeDevolucaoRemessaDistribuicao1.setSerieNotaFiscal(10);
+		nfeDevolucaoRemessaDistribuicao1.setProcesso(Processo.PROCESSO);
 		save(session, nfeDevolucaoRemessaDistribuicao1);
 
 		TipoNotaFiscal nfeVenda1 = new TipoNotaFiscal();
@@ -1432,6 +1443,7 @@ public class DataLoader {
 		nfeVenda1.setGrupoNotaFiscal(GrupoNotaFiscal.DEVOLUCAO_MERCADORIA_FORNECEDOR);
 		nfeVenda1.setTipoAtividade(TipoAtividade.PRESTADOR_SERVICO);
 		nfeVenda1.setSerieNotaFiscal(11);
+		nfeVenda1.setProcesso(Processo.PROCESSO);
 		save(session, nfeVenda1);
 
 		// Tipo de Nota - Prestarore de Serviço - Cota NÃO Contribuinte
@@ -1448,6 +1460,7 @@ public class DataLoader {
 		nfeRemessaDistribuicao2.setGrupoNotaFiscal(GrupoNotaFiscal.DEVOLUCAO_MERCADORIA_FORNECEDOR);
 		nfeRemessaDistribuicao2.setTipoAtividade(TipoAtividade.PRESTADOR_SERVICO);
 		nfeRemessaDistribuicao2.setSerieNotaFiscal(12);
+		nfeRemessaDistribuicao2.setProcesso(Processo.PROCESSO);
 		save(session, nfeRemessaDistribuicao2);
 
 		TipoNotaFiscal nfeDevolucaoRemessaDistribuicao2 = new TipoNotaFiscal();
@@ -1463,6 +1476,7 @@ public class DataLoader {
 		nfeDevolucaoRemessaDistribuicao2.setGrupoNotaFiscal(GrupoNotaFiscal.DEVOLUCAO_MERCADORIA_FORNECEDOR);
 		nfeDevolucaoRemessaDistribuicao2.setTipoAtividade(TipoAtividade.PRESTADOR_SERVICO);
 		nfeDevolucaoRemessaDistribuicao2.setSerieNotaFiscal(13);
+		nfeDevolucaoRemessaDistribuicao2.setProcesso(Processo.PROCESSO);
 		save(session, nfeDevolucaoRemessaDistribuicao2);
 
 		TipoNotaFiscal nfeVenda2 = new TipoNotaFiscal();
@@ -1478,6 +1492,7 @@ public class DataLoader {
 		nfeVenda2.setGrupoNotaFiscal(GrupoNotaFiscal.DEVOLUCAO_MERCADORIA_FORNECEDOR);
 		nfeVenda2.setTipoAtividade(TipoAtividade.PRESTADOR_SERVICO);
 		nfeVenda2.setSerieNotaFiscal(14);
+		nfeVenda2.setProcesso(Processo.PROCESSO);
 		save(session, nfeVenda2);
 	}
 
@@ -3012,12 +3027,6 @@ public class DataLoader {
 		save(session, Fixture.parametroSistema(TipoParametroSistema.PATH_INTERFACE_MDC_BACKUP,
 				"C:\\interface_mdc\\"));		// windows;
 //				"/opt/interface/archive/"));		// linux;
-		
-		
-		save(session, Fixture.parametroSistema(TipoParametroSistema.CODIGO_DISTRIBUIDOR_DINAP, "6338107"));
-		save(session, Fixture.parametroSistema(TipoParametroSistema.UF, "SP" ));
-		save(session, Fixture.parametroSistema(TipoParametroSistema.RAZAO_SOCIAL, "Distribuidora Paulista de Jornais, Livros e Revistas LTDA" ));
-		save(session, Fixture.parametroSistema(TipoParametroSistema.CNPJ, "50.958.925/0001-18" ));	
 		
 		
 		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0106_ARCHIVE, "/opt/interface/ems0106/archive/"));
