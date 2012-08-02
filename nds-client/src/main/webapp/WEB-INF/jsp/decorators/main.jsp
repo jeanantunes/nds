@@ -87,7 +87,7 @@
 <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/scripts/tooltip/tipsy-docs.css" />
 <script language="javascript" type="text/javascript" src="${pageContext.request.contextPath}/scripts/tooltip/jquery.tipsy.js"></script>
 
-<script language="javascript" type="text/javascript" src="${pageContext.request.contextPath}/scripts/commonsbehaviour.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/commonsbehaviour.js"></script>
 
 <script language="javascript" type="text/javascript">
 
