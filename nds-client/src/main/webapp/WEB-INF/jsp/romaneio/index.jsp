@@ -97,6 +97,7 @@ $(function() {
               <td width="121">
 	               <select name="idBox" id="idBox" style="width: 100px;">
 						<option value="" selected="selected">Selecione...</option>
+						<option value="-1" >Todos</option>
 						<c:forEach var="box" items="${listaBox}">
 							<option value="${box.key}">${box.value}</option>
 						</c:forEach>
@@ -106,6 +107,7 @@ $(function() {
                 <td width="277">
                 	<select name="idRoteiro" id="idRoteiro" style="width: 200px;">
 						<option value="" selected="selected">Selecione...</option>
+						<option value="-1" >Todos</option>
 						<c:forEach var="roteiro" items="${listaRoteiro}">
 							<option value="${roteiro.key}">${roteiro.value}</option>
 						</c:forEach>
@@ -116,6 +118,7 @@ $(function() {
                 <td width="296">
 					<select name="idRota" id="idRota" style="width: 190px;">
 						<option value="" selected="selected">Selecione...</option>
+						<option value="-1" >Todos</option>
 						<c:forEach var="rota" items="${listaRota}">
 							<option value="${rota.key}">${rota.value}</option>
 						</c:forEach>

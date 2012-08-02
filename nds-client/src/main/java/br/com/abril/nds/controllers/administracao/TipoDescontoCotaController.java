@@ -19,6 +19,8 @@ import br.com.abril.nds.client.vo.TipoDescontoCotaProdutoVO;
 import br.com.abril.nds.client.vo.TipoDescontoCotaVO;
 import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.dto.CotaDTO;
+import br.com.abril.nds.dto.TipoDescontoCotaDTO;
+import br.com.abril.nds.dto.TipoDescontoProdutoDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaDTO.OrdemColuna;
 import br.com.abril.nds.dto.filtro.FiltroTipoDescontoCotaDTO;
@@ -103,35 +105,25 @@ public class TipoDescontoCotaController {
 	
 	@Post
 	@Path("/novoDescontoGeral")
-	public void novoDescontoGeral(String desconto, String dataAlteracao, String usuario){
-		try {
-			BigDecimal descontoFormatado = new BigDecimal(Double.parseDouble(desconto));
-			TipoDescontoDistribuidor descontoDistribuidor = popularDescontoDistribuidor(desconto,dataAlteracao, usuario, EspecificacaoDesconto.GERAL);			
-			atualizarDistribuidor(descontoFormatado);
-			List<Distribuidor> listaDeDistribuidor = this.tipoDescontoCotaService.obterDistribuidores();
-			for(Distribuidor dist: listaDeDistribuidor){
-				descontoDistribuidor.setDistribuidor(dist);
-				salvarDescontoDistribuidor(descontoDistribuidor);
-			}
-		} catch (ParseException e) {
-			e.printStackTrace();
+	public void novoDescontoGeral(TipoDescontoDistribuidor descontoDistribuidor){
+		atualizarDistribuidor(new BigDecimal(descontoDistribuidor.getDesconto()));
+		List<Distribuidor> listaDeDistribuidor = this.tipoDescontoDistribuidorService.obterDistribuidores();
+		for(Distribuidor dist: listaDeDistribuidor){
+			descontoDistribuidor.setDistribuidor(dist);
+			descontoDistribuidor.setUsuario(getUsuario());
+			salvarDescontoDistribuidor(descontoDistribuidor);
 		}		
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Desconto cadastrado com sucesso"),"result").recursive().serialize();
 	}
 
-	
-	
 	@Post
 	@Path("/novoDescontoEspecifico")
-	public void novoDescontoEspecifico(String cotaEspecifica, String nomeEspecifico, String descontoEspecifico, String dataAlteracaoEspecifico, String usuarioEspecifico){
-		try {
-			Cota cotaParaAtualizar = this.cotaService.obterCotaPDVPorNumeroDaCota(Integer.parseInt(cotaEspecifica));		
-			atualizarCota(new BigDecimal(descontoEspecifico), cotaParaAtualizar);
-			TipoDescontoCota especifico = popularDescontoCota(descontoEspecifico, dataAlteracaoEspecifico, usuarioEspecifico, cotaParaAtualizar);			
-			salvarDescontoCota(especifico);
-		} catch (ParseException e) {
-			e.printStackTrace();
-		}
+	public void novoDescontoEspecifico(String cotaEspecifica, TipoDescontoCota descontoCota) throws ParseException{
+		Cota cotaParaAtualizar = this.cotaService.obterCotaPDVPorNumeroDaCota(Integer.parseInt(cotaEspecifica));		
+		atualizarCota(new BigDecimal(descontoCota.getDesconto()), cotaParaAtualizar);				
+		descontoCota.setUsuario(getUsuario());	
+		descontoCota.setCota(cotaParaAtualizar);
+		this.tipoDescontoCotaService.incluirDesconto(descontoCota);
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Desconto cadastrado com sucesso"),"result").recursive().serialize();
 	}
 	
@@ -156,80 +148,67 @@ public class TipoDescontoCotaController {
 		FiltroTipoDescontoCotaDTO filtro = carregarFiltroPesquisaDescontoGeral(sortorder, sortname, page, rp);	
 		
 		List<TipoDescontoCotaVO> listaDescontoCotaVO = null;		
-		try {			
-			listaDescontoCotaVO = tipoDescontoCotaService.obterTipoDescontoCota(EspecificacaoDesconto.GERAL);
-			} catch (Exception e) {
-
-			if (e instanceof ValidacaoException){
-				throw e;
-			} else {
-				throw new ValidacaoException(TipoMensagem.ERROR, "Erro ao pesquisar produto: " + e.getMessage());
-			}
-		}		
-		if (listaDescontoCotaVO == null || listaDescontoCotaVO.isEmpty()) {
-			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
-		} else {
 			
-			int qtdeTotalRegistros = listaDescontoCotaVO.size();
-			
-			List<TipoDescontoCotaVO> listaTipoDescontoCOtaPaginada =
-					PaginacaoUtil.paginarEOrdenarEmMemoria(
-							listaDescontoCotaVO, filtro.getPaginacao(), filtro.getOrdenacaoColuna().toString());
+		listaDescontoCotaVO = tipoDescontoDistribuidorService.obterTipoDescontoDistribuidor();
 		
-			TableModel<CellModelKeyValue<TipoDescontoCotaVO>> tableModel =
-					new TableModel<CellModelKeyValue<TipoDescontoCotaVO>>();
+		Integer totalDeRegistros = this.tipoDescontoDistribuidorService.buscarTotalDescontosDistribuidor();
+		
+		if (totalDeRegistros == 0) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
+		} 
+		
+		int qtdeTotalRegistros = listaDescontoCotaVO.size();
+		
+		List<TipoDescontoCotaVO> listaTipoDescontoCOtaPaginada = 
+				PaginacaoUtil.paginarEOrdenarEmMemoria(
+						listaDescontoCotaVO, filtro.getPaginacao(), filtro.getOrdenacaoColuna().toString());
 	
-			tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaTipoDescontoCOtaPaginada));
-			tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
-			tableModel.setTotal(qtdeTotalRegistros);
-			
-			result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
-		}
+		TableModel<CellModelKeyValue<TipoDescontoCotaVO>> tableModel =
+				new TableModel<CellModelKeyValue<TipoDescontoCotaVO>>();
+
+		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaTipoDescontoCOtaPaginada));
+		tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
+		tableModel.setTotal(qtdeTotalRegistros);
+		
+		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
+		
 	}
 	
 	@Post
 	@Path("/pesquisarDescontoEspecifico")
-	public void pesquisarDescontoEspecifico(String cotaEspecifica, String nomeEspecifico, String sortorder, String sortname, int page, int rp) throws Exception {
+	public void pesquisarDescontoEspecifico(Integer cotaEspecifica, String nomeEspecifico, String sortorder, String sortname, int page, int rp) throws Exception {
 		
-		FiltroCotaDTO filtroCotaDTO = popularFiltroCotaDTO(cotaEspecifica,	nomeEspecifico);
-		List<CotaDTO> listaDeCotas = this.cotaService.obterCotas(filtroCotaDTO);
-		
-		FiltroTipoDescontoCotaDTO filtro = carregarFiltroPesquisaDescontoEspecifico(cotaEspecifica, nomeEspecifico, sortorder, sortname, page, rp);
-		
-		List<TipoDescontoCotaVO> listaDescontoCotaVO = 	null;
-		try {			
-			listaDescontoCotaVO = popularTipoDescontoCotaVOParaCota(listaDeCotas);
-			} catch (Exception e) {
-
-			if (e instanceof ValidacaoException){
-				throw e;
-			} else {
-				throw new ValidacaoException(TipoMensagem.ERROR, "Erro ao pesquisar produto: " + e.getMessage());
-			}
-		}		
-		if (listaDescontoCotaVO == null || listaDescontoCotaVO.isEmpty()) {
-			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
-		} else {
-			int qtdeTotalRegistros = listaDescontoCotaVO.size();
-			
-			List<TipoDescontoCotaVO> listaTipoDescontoCOtaPaginada =
-					PaginacaoUtil.paginarEOrdenarEmMemoria(
-							listaDescontoCotaVO, filtro.getPaginacao(), filtro.getOrdenacaoColuna().toString());
-		
-			TableModel<CellModelKeyValue<TipoDescontoCotaVO>> tableModel =
-					new TableModel<CellModelKeyValue<TipoDescontoCotaVO>>();
-	
-			tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaTipoDescontoCOtaPaginada));			
-			tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
-			tableModel.setTotal(qtdeTotalRegistros);
-	
-			result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
+		Cota cota = null;
+		FiltroTipoDescontoCotaDTO filtro = null;
+		if(cotaEspecifica != null){
+			cota = this.cotaService.obterCotaPDVPorNumeroDaCota(cotaEspecifica);			
+			filtro = carregarFiltroPesquisaDescontoEspecifico(cotaEspecifica.toString(), nomeEspecifico, sortorder, sortname, page, rp);
+		}else{
+			filtro = carregarFiltroPesquisaDescontoEspecifico("", nomeEspecifico, sortorder, sortname, page, rp);
 		}
+		
+		
+		List<TipoDescontoCotaDTO> listaDescontoCotaDTO = this.tipoDescontoCotaService.obterTipoDescontosCota(cota);		
+			
+		Integer totalRegistros = this.tipoDescontoCotaService.buscarTotalDescontosPorCota();			
+				
+		if (totalRegistros == 0) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
+		} 
+		
+		TableModel<CellModelKeyValue<TipoDescontoCotaDTO>> tableModel = new TableModel<CellModelKeyValue<TipoDescontoCotaDTO>>();
+
+		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaDescontoCotaDTO));			
+		tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
+		tableModel.setTotal(totalRegistros);
+
+		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
 	}
 	
 	@Post
 	@Path("/pesquisarDescontoProduto")
 	public void pesquisarDescontoProduto(String codigo, String produto, String sortorder, String sortname, int page, int rp) throws Exception {
+		
 		Produto produtoPesquisado = null;
 		List<TipoDescontoCotaVO> listaDescontoCotaVO = 	null;
 		FiltroTipoDescontoCotaDTO filtro = carregarFiltroPesquisaDescontoProduto(codigo,sortorder, sortname, page, rp);
@@ -270,24 +249,24 @@ public class TipoDescontoCotaController {
 	}
 	@Post
 	@Path("/excluirDesconto")
-	public void excluirDesconto(long idDesconto){
-		TipoDescontoCota desconto = this.tipoDescontoCotaService.obterTipoDescontoCotaPorId(idDesconto);
-		
-		Date dataAtual = new Date();		
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-		String hoje = sdf.format(dataAtual);
-		
-		Date dataDesconto = desconto.getDataAlteracao();
-		String dataDescontoFormatada = sdf.format(dataDesconto);
-		
-		if(dataDescontoFormatada.equals(hoje)){
-			this.tipoDescontoCotaService.excluirDesconto(desconto);			
-			result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação realizada com sucesso."),
-					Constantes.PARAM_MSGS).recursive().serialize();			
-		}else{
-			result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.WARNING, "Só pode excluir desconto de data vigente!"),
-					Constantes.PARAM_MSGS).recursive().serialize();
-		}
+	public void excluirDesconto(long idDesconto, String tipoDesconto){
+//		TipoDescontoCota desconto = this.tipoDescontoCotaService.obterTipoDescontoCotaPorId(idDesconto);
+//		
+//		Date dataAtual = new Date();		
+//		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+//		String hoje = sdf.format(dataAtual);
+//		
+//		Date dataDesconto = desconto.getDataAlteracao();
+//		String dataDescontoFormatada = sdf.format(dataDesconto);
+//		
+//		if(dataDescontoFormatada.equals(hoje)){
+//			this.tipoDescontoCotaService.excluirDesconto(desconto);			
+//			result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação realizada com sucesso."),
+//					Constantes.PARAM_MSGS).recursive().serialize();			
+//		}else{
+//			result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.WARNING, "Só pode excluir desconto de data vigente!"),
+//					Constantes.PARAM_MSGS).recursive().serialize();
+//		}
 	}
 	
 	@Get
@@ -300,7 +279,7 @@ public class TipoDescontoCotaController {
 		
 		List<TipoDescontoCotaVO> listaDescontoCotaVO = null;
 		if(tipoDesconto.equals("geral")){
-			listaDescontoCotaVO = tipoDescontoCotaService.obterTipoDescontoCota(EspecificacaoDesconto.GERAL);
+			//listaDescontoCotaVO = tipoDescontoCotaService.obterTipoDescontoDistribuidor(EspecificacaoDesconto.GERAL);
 			FileExporter.to("consulta-tipo-desconto-cota", fileType).inHTTPResponse(this.getNDSFileHeader(), filtroSessao, null, listaDescontoCotaVO, TipoDescontoCotaVO.class, this.httpServletResponse);
 		}else if(tipoDesconto.equals("especifico")){
 			FiltroCotaDTO filtroCotaDTO = new FiltroCotaDTO();			
@@ -310,7 +289,7 @@ public class TipoDescontoCotaController {
 				filtroCotaDTO = popularFiltroCotaDTO(filtroSessao.getIdCota().toString(), filtroSessao.getNomeEspecifico());				
 			}
 			List<CotaDTO> listaDeCotas = this.cotaService.obterCotas(filtroCotaDTO);
-			listaDescontoCotaVO = popularTipoDescontoCotaVOParaCota(listaDeCotas);
+			//listaDescontoCotaVO = popularTipoDescontoCotaVOParaCota(listaDeCotas);
 			List<TipoDescontoCotaEspecificoVO> listaEspecifica = new ArrayList<TipoDescontoCotaEspecificoVO>();
 			for(TipoDescontoCotaVO vo: listaDescontoCotaVO ){
 				TipoDescontoCotaEspecificoVO especificoVO = new TipoDescontoCotaEspecificoVO();
@@ -398,26 +377,17 @@ public class TipoDescontoCotaController {
 		return filtroCotaDTO;
 	}
 	
-	private List<TipoDescontoCotaVO> popularTipoDescontoCotaVOParaCota(List<CotaDTO> listaDeCotas) {
-		List<TipoDescontoCotaVO> listaVO = this.tipoDescontoCotaService.obterTipoDescontoCota(EspecificacaoDesconto.ESPECIFICO);
-		List<TipoDescontoCotaVO> listaAux = new ArrayList<TipoDescontoCotaVO>();
-		for (TipoDescontoCotaVO tipoDescontoCotaVO : listaVO) {
-			for(CotaDTO cotaDTO: listaDeCotas){
-				if(tipoDescontoCotaVO.getCota().equals(cotaDTO.getNumeroCota().toString())){
-					tipoDescontoCotaVO.setNome(cotaDTO.getNomePessoa());
-					listaAux.add(tipoDescontoCotaVO);
-				}
-			}
-			
-		}
-		return listaAux;
-	}
-	
 	private List<TipoDescontoCotaVO> popularTipoDescontoCotaVOParaProduto(Produto produto) {
-		List<TipoDescontoCotaVO> listaVO = this.tipoDescontoCotaService.obterTipoDescontoCota(EspecificacaoDesconto.PRODUTO);
+		
+		List<TipoDescontoCotaVO> listaVO = this.tipoDescontoDistribuidorService.obterTipoDescontoDistribuidor();
+		//List<TipoDescontoProdutoDTO> listaCerta = this.tipoDescontoProdutoService.obterTipoDescontoProduto(produtoEdicao);
+		
 		List<TipoDescontoCotaVO> listaAux = new ArrayList<TipoDescontoCotaVO>();
+		
 		for (TipoDescontoCotaVO tipoDescontoCotaVO : listaVO) {
+			
 			ProdutoEdicao pr = this.produtoEdicaoService.obterProdutoEdicaoPorCodProdutoNumEdicao(tipoDescontoCotaVO.getCodigo(), tipoDescontoCotaVO.getEdicao());
+			
 			if(tipoDescontoCotaVO.getCodigo().equals(produto.getCodigo())){
 				tipoDescontoCotaVO.setCodigo(pr.getProduto().getCodigo());
 				tipoDescontoCotaVO.setProduto(pr.getProduto().getNome());
@@ -455,18 +425,6 @@ public class TipoDescontoCotaController {
 		return descontoDistribuidor;
 	}
 	
-	private TipoDescontoCota popularDescontoCota(String desconto,String dataAlteracao, String usuario, Cota cotaParaAtualizar) throws ParseException {
-		TipoDescontoCota descontoCota = new TipoDescontoCota();
-		descontoCota.setDesconto(Float.parseFloat(desconto));
-		SimpleDateFormat sdf = new SimpleDateFormat(Constantes.DATE_PATTERN_PT_BR);
-		Date dataFormatada;
-		dataFormatada = sdf.parse(dataAlteracao);
-		descontoCota.setDataAlteracao(dataFormatada);
-		descontoCota.setUsuario(getUsuario());	
-		descontoCota.setCota(cotaParaAtualizar);
-		return descontoCota;
-	}
-	
 	private TipoDescontoProduto popularDescontoProduto(String desconto,String dataAlteracao, String usuario, ProdutoEdicao produtoEdicao) throws ParseException {
 		TipoDescontoProduto descontoProduto = new TipoDescontoProduto();
 		descontoProduto.setDesconto(Float.parseFloat(desconto));
@@ -480,14 +438,12 @@ public class TipoDescontoCotaController {
 	}
 	
 	private void salvarDescontoDistribuidor(TipoDescontoDistribuidor tipoDescontoDistribuidor){
-		int sequencial = this.tipoDescontoDistribuidorService.obterUltimoSequencial();
-		tipoDescontoDistribuidor.setSequencial(sequencial);
+		int sequencial = this.tipoDescontoDistribuidorService.obterUltimoSequencial();		
+		tipoDescontoDistribuidor.setSequencial(++sequencial);
 		this.tipoDescontoDistribuidorService.incluirDescontoDistribuidor(tipoDescontoDistribuidor);
 	}
 	
-	private void salvarDescontoCota(TipoDescontoCota tipoDescontoCota) {
-		this.tipoDescontoCotaService.incluirDesconto(tipoDescontoCota);
-	}
+	
 	
 	private void salvarDescontoProduto(TipoDescontoProduto tipoDescontoProduto) {
 		this.tipoDescontoProdutoService.incluirDesconto(tipoDescontoProduto);
@@ -576,7 +532,7 @@ public class TipoDescontoCotaController {
 		}
 	}
 	
-	//TODO: não há como reconhecer usuario, ainda
+	
 		private Usuario getUsuario() {
 			
 			Usuario usuario = new Usuario();

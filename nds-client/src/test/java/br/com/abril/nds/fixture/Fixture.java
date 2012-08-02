@@ -36,7 +36,6 @@ import br.com.abril.nds.model.cadastro.GrupoFornecedor;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.cadastro.LicencaMunicipal;
 import br.com.abril.nds.model.cadastro.MaterialPromocional;
-import br.com.abril.nds.model.cadastro.Moeda;
 import br.com.abril.nds.model.cadastro.OperacaoDistribuidor;
 import br.com.abril.nds.model.cadastro.ParametroCobrancaCota;
 import br.com.abril.nds.model.cadastro.ParametroContratoCota;
@@ -53,6 +52,7 @@ import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.PoliticaCobranca;
 import br.com.abril.nds.model.cadastro.PoliticaSuspensao;
+import br.com.abril.nds.model.cadastro.Processo;
 import br.com.abril.nds.model.cadastro.ProcuracaoEntregador;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
@@ -66,6 +66,7 @@ import br.com.abril.nds.model.cadastro.TelefoneEntregador;
 import br.com.abril.nds.model.cadastro.TipoAtividade;
 import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
+import br.com.abril.nds.model.cadastro.TipoCota;
 import br.com.abril.nds.model.cadastro.TipoDesconto;
 import br.com.abril.nds.model.cadastro.TipoEndereco;
 import br.com.abril.nds.model.cadastro.TipoEntrega;
@@ -467,6 +468,29 @@ public class Fixture {
 	public static ProdutoEdicao produtoEdicao(String codigoProdutoEdicao, Long numeroEdicao, 
 			int pacotePadrao, int peb, BigDecimal peso, BigDecimal precoCusto,
 			BigDecimal precoVenda, String codigoDeBarras, Long cdSMNotUsedAnyMore, Produto produto, 
+			BigDecimal expectativaVenda, boolean parcial,String nomeComercial) {
+		
+		ProdutoEdicao produtoEdicao = new ProdutoEdicao();
+		produtoEdicao.setCodigo(codigoProdutoEdicao);
+		produtoEdicao.setNumeroEdicao(numeroEdicao);
+		produtoEdicao.setPacotePadrao(pacotePadrao);
+		produtoEdicao.setPeb(peb);
+		produtoEdicao.setPeso(peso);
+		produtoEdicao.setPrecoCusto(precoCusto);
+		produtoEdicao.setPrecoVenda(precoVenda);
+		produtoEdicao.setProduto(produto);
+		produtoEdicao.setCodigoDeBarras(codigoDeBarras);
+		produtoEdicao.setExpectativaVenda(expectativaVenda);
+		produtoEdicao.setParcial(parcial);
+		produtoEdicao.setNomeComercial(nomeComercial);
+		
+		produtoEdicao.setOrigemInterface(Boolean.TRUE);
+		return produtoEdicao;
+	}
+	
+	public static ProdutoEdicao produtoEdicao(String codigoProdutoEdicao, Long numeroEdicao, 
+			int pacotePadrao, int peb, BigDecimal peso, BigDecimal precoCusto,
+			BigDecimal precoVenda, String codigoDeBarras, Long cdSMNotUsedAnyMore, Produto produto, 
 			BigDecimal expectativaVenda, boolean parcial) {
 		
 		ProdutoEdicao produtoEdicao = new ProdutoEdicao();
@@ -485,6 +509,7 @@ public class Fixture {
 		produtoEdicao.setOrigemInterface(Boolean.TRUE);
 		return produtoEdicao;
 	}
+	
 	
 	public static Lancamento lancamento(TipoLancamento tipoLancamento,
 			ProdutoEdicao produtoEdicao, Date dlp, Date drp, Date dataCriacao,
@@ -1171,7 +1196,7 @@ public class Fixture {
 		tipoNotaFiscal.setTipoOperacao(TipoOperacao.ENTRADA);		
 		tipoNotaFiscal.setTipoAtividade(TipoAtividade.PRESTADOR_SERVICO);
 		tipoNotaFiscal.setSerieNotaFiscal(2);
-		
+		tipoNotaFiscal.setProcesso(Processo.PROCESSO);
 		return tipoNotaFiscal;
 	}
 
@@ -1218,7 +1243,8 @@ public class Fixture {
 		tipoNotaFiscal.setNopCodigo(0L);
 		tipoNotaFiscal.setTipoOperacao(TipoOperacao.SAIDA);
 		tipoNotaFiscal.setTipoAtividade(TipoAtividade.MERCANTIL);
-		tipoNotaFiscal.setSerieNotaFiscal(3);		
+		tipoNotaFiscal.setSerieNotaFiscal(3);
+		tipoNotaFiscal.setProcesso(Processo.PROCESSO);
 		return tipoNotaFiscal;
 	}
 
@@ -1235,6 +1261,7 @@ public class Fixture {
 		tipoNotaFiscal.setNopCodigo(0L);
 		tipoNotaFiscal.setTipoOperacao(TipoOperacao.ENTRADA);
 		tipoNotaFiscal.setTipoAtividade(TipoAtividade.PRESTADOR_SERVICO);
+		tipoNotaFiscal.setProcesso(Processo.PROCESSO);
 		tipoNotaFiscal.setSerieNotaFiscal(4);
 		
 		return tipoNotaFiscal;
@@ -1856,12 +1883,13 @@ public class Fixture {
 		
 	}
 	
-	public static RateioDiferenca rateioDiferenca(BigDecimal qtde, Cota cota, Diferenca diferenca, EstudoCota estudoCota){
+	public static RateioDiferenca rateioDiferenca(BigDecimal qtde, Cota cota, Diferenca diferenca, EstudoCota estudoCota, Date dataNotaEnvio){
 		RateioDiferenca rateioDiferenca = new RateioDiferenca();
 		rateioDiferenca.setCota(cota);
 		rateioDiferenca.setDiferenca(diferenca);
 		rateioDiferenca.setEstudoCota(estudoCota);
 		rateioDiferenca.setQtde(qtde);
+		rateioDiferenca.setDataNotaEnvio(dataNotaEnvio);
 		
 		return rateioDiferenca;
 	}
@@ -1996,7 +2024,7 @@ public class Fixture {
 
 	public static Endereco criarEndereco(TipoEndereco tipoEndereco, String cep,
 										 String logradouro, int numero, 
-										 String bairro, String cidade, String uf) {
+										 String bairro, String cidade, String uf,Integer codigoCidadeIBGE) {
 		
 		Endereco endereco = new Endereco();
 		
@@ -2006,6 +2034,7 @@ public class Fixture {
 		endereco.setLogradouro(logradouro);
 		endereco.setNumero(numero);
 		endereco.setUf(uf);
+		endereco.setCodigoCidadeIBGE(codigoCidadeIBGE);
 		
 		return endereco;
 	}
@@ -2256,7 +2285,7 @@ public class Fixture {
 
 	public static ParametroCobrancaCota parametroCobrancaCota(Set<FormaCobranca> formasCobranca,
 							Integer numeroAcumuloDivida, BigDecimal valor, Cota cota,
-							int fatorVencimento,boolean recebeCobrancaEmail, BigDecimal valorMininoCobranca) {
+							int fatorVencimento,boolean recebeCobrancaEmail, BigDecimal valorMininoCobranca, TipoCota tipoCota) {
 		
 		ParametroCobrancaCota parametro = new ParametroCobrancaCota();
 		
@@ -2270,6 +2299,7 @@ public class Fixture {
 		parametro.setValorMininoCobranca(valorMininoCobranca);
 		parametro.setPoliticaSuspensao(politicaSuspensao);
 		parametro.setFormasCobrancaCota(formasCobranca);
+		parametro.setTipoCota(tipoCota);
 		
 		return parametro;
 	}

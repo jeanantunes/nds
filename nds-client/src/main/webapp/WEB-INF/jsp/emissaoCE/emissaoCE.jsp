@@ -10,6 +10,13 @@
 	var ECE = new EmissaoCE('${pageContext.request.contextPath}', 'ECE');
 		
 	
+	function ativarPersonalizada(elemento) {
+		if(elemento.checked==true)
+			$('.personalizada').show();
+		else
+			$('.personalizada').hide();
+	}
+	
 	function popup_pesq_fornecedor() {
 		
 		 	$("#selectFornecedores").val(ECE.fornecedoresSelecionados);
@@ -98,7 +105,7 @@
 	function removeFornecedor(){
 		$( ".forncedoresSel" ).fadeOut('fast');
 		$( ".linhaForncedoresSel" ).hide();
-	}
+	}	
 	
 </script>
 <style type="text/css">
@@ -253,17 +260,20 @@
     </td>
     <td width="79" align="right">
 
+
 <!-- Capa -->    
-<input disabled="disabled" id="capa" type="checkbox" name="checkbox" onclick="imprimiPernosalizado();" /></td>
+<input  id="capa" type="checkbox" name="checkbox" onclick="ativarPersonalizada(this);"  /></td>
 
 
     <td> Capa </td>
     <td>
     
 <!-- Personalizada -->
-<input disabled="disabled" id="personalizada" type="checkbox" name="checkbox2" class="imprimirPersonalizada" /></td>
 
-    <td><span class="imprimirPersonalizada">Personalizada?</span></td>
+<input  id="personalizada" type="checkbox" name="checkbox2" class="imprimirPersonalizada personalizada" style="display:none" /></td>
+
+    <td><span class="imprimirPersonalizada personalizada" style="display:none">Personalizada?</span></td>
+    
     <td align="right">&nbsp;</td>
     <td colspan="2">&nbsp;</td>
     <td>&nbsp;</td>

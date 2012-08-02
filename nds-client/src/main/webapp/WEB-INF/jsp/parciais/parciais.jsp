@@ -6,6 +6,22 @@
 
 var PARCIAIS = new Parciais('${pageContext.request.contextPath}');
 
+function detalheVenda() {
+
+	$( "#dialog-detalhe-venda" ).dialog({
+		resizable: false,
+		height:420,
+		width:650,
+		modal: true,
+		buttons: {
+			"Fechar": function() {
+				$( this ).dialog( "close" );
+				
+			},
+		}
+	});
+};
+
 function popup() {
 	
 		PARCIAIS.carregaPeb();
@@ -150,6 +166,7 @@ $(function() {
 #dialog-detalhes fieldset li{float:left; margin-right:10px; margin-left:0px; margin-bottom:5px; line-height:20px;}
 #dialog-novo fieldset{width:250px!important;}
 #dialog-edit-produto{display:none;}
+#dialog-detalhe-venda{display:none;}
 </style>
 
 
@@ -432,7 +449,7 @@ $(function() {
 	            
 	<div id="exportacaoPeriodos">
 	            
-	            <span class="bt_novos" title="Gerar Arquivo">
+		<span class="bt_novos" title="Gerar Arquivo">
 	            
 	<!-- ARQUIVO EXCEL -->
 	<a href="${pageContext.request.contextPath}/parciais/exportarPeriodos?fileType=XLS">
@@ -455,12 +472,15 @@ $(function() {
 
       <div class="linha_separa_fields">&nbsp;</div>
        
-
+	 <input type="button" onclick="detalheVenda()" value="detalhes venda" />
         
 
     
     </div>
 </div> 
+
+<jsp:include page="parciaisDeVenda.jsp" />
+
 <script>
 
 $(function() {	

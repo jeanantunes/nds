@@ -18,6 +18,7 @@ import br.com.abril.nds.service.exception.UniqueConstraintViolationException;
 import br.com.abril.nds.util.StringUtil;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
+import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
@@ -43,9 +44,11 @@ public class BoxController {
 	}
 
 	@Path("/busca.json")
-	@Post
-	public void busca(Integer codigoBox, TipoBox tipoBox, String sortname,
+	@Get
+	public void busca(Box box, String sortname,
 			String sortorder, int rp, int page) {
+		Integer codigoBox = box.getCodigo();
+		TipoBox tipoBox = box.getTipoBox();
 		List<Box> boxs = boxService.busca(codigoBox, tipoBox, sortname,
 				Ordenacao.valueOf(sortorder.toUpperCase()), page*rp - rp, rp);
 		Long quantidade = boxService.quantidade(codigoBox, tipoBox);

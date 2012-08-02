@@ -354,7 +354,7 @@ public class ConferenciaEncalheRepositoryImplTest extends AbstractRepositoryImpl
 		save(bancoHSBC);
 		
 		PessoaJuridica juridicaDistrib = Fixture.pessoaJuridica("Distribuidor Acme",
-				"56003315000147", "333.333.333.333", "distrib_acme@mail.com", "99.999-9");
+				"56003315000147", "333333333333", "distrib_acme@mail.com", "99.999-9");
 		save(juridicaDistrib);
 		
 		formaBoleto = Fixture.formaCobrancaBoleto(true, new BigDecimal(200), true, bancoHSBC,

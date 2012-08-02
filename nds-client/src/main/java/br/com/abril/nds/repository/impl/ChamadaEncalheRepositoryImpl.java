@@ -10,6 +10,7 @@ import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Repository;
 
+import br.com.abril.nds.dto.CapaDTO;
 import br.com.abril.nds.dto.CotaEmissaoDTO;
 import br.com.abril.nds.dto.ProdutoEmissaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroEmissaoCE;
@@ -249,7 +250,7 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		hql.append(" 		pessoa.nome as nomeCota, ");
 		hql.append("		sum(chamEncCota.qtdePrevista) as qtdeExemplares, ");	
 		hql.append("		sum(chamEncCota.qtdePrevista * produtoEdicao.precoVenda) as vlrTotalCe, ");
-		hql.append(" 		box.codigo || '-' || box.nome as box, ");
+		hql.append(" 		box.codigo as box, ");
 		hql.append(" 		rota.codigoRota as codigoRota, ");
 		hql.append(" 		rota.descricaoRota as nomeRota ");
 		
@@ -279,6 +280,47 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 	}
 
 	@SuppressWarnings("unchecked")
+	public List<CapaDTO> obterIdsCapasChamadaEncalhe(Date dataDe, Date dataAte) {
+		
+		HashMap<String, Object> param = new HashMap<String, Object>();
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select produtoEdicao.id as id ");
+		
+		hql.append(" from ChamadaEncalheCota chamEncCota ")
+		   .append(" join chamEncCota.chamadaEncalhe  chamadaEncalhe ")
+		   .append(" join chamadaEncalhe.produtoEdicao produtoEdicao ");		
+
+		
+		
+		if(dataDe != null) {
+
+			hql.append(param.isEmpty()?" where ":" and ");			
+			hql.append(" chamadaEncalhe.dataRecolhimento >=:dataDe ");
+			param.put("dataDe", dataDe);
+		}
+		
+		if(dataAte != null) {
+
+			hql.append(param.isEmpty()?" where ":" and ");
+			hql.append(" chamadaEncalhe.dataRecolhimento <=:dataAte ");
+			param.put("dataAte", dataAte);
+		}
+		
+		Query query =  getSession().createQuery(hql.toString());
+		
+		for(String key : param.keySet()){
+			query.setParameter(key, param.get(key));			
+		}
+		
+		query.setResultTransformer(new AliasToBeanResultTransformer(
+				CapaDTO.class));
+		
+		return query.list();
+	}
+	
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<ProdutoEmissaoDTO> obterProdutosEmissaoCE(
 			FiltroEmissaoCE filtro, Long idCota) {
@@ -292,6 +334,7 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		hql.append(" 		lancamentos.sequenciaMatriz as sequencia, ");
 		hql.append(" 	    produto.codigo as codigoProduto, ");
 		hql.append(" 	    produto.nome as nomeProduto, ");
+		hql.append(" 	    produtoEdicao.id as idProdutoEdicao, ");
 		hql.append(" 	    produtoEdicao.numeroEdicao as edicao, ");
 		hql.append(" 	    produtoEdicao.desconto as desconto, ");
 		hql.append(" 	    produtoEdicao.precoVenda as precoVenda, ");
@@ -299,7 +342,8 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		hql.append(" 	    lancamentos.dataLancamentoDistribuidor as dataLancamento, ");
 		hql.append(" 	    (produtoEdicao.precoVenda - produtoEdicao.desconto) as precoComDesconto, ");
 		hql.append(" 	    lancamentos.reparte as reparte, ");
-		hql.append(" 	    sum(movimentoCota.qtde) as quantidadeDevolvida ");
+		hql.append(" 	    sum(movimentoCota.qtde) as quantidadeDevolvida, ");
+		hql.append("		lancamentos.sequenciaMatriz as sequencia ");
 		
 		gerarFromWhereProdutosCE(filtro, hql, param, idCota);
 		

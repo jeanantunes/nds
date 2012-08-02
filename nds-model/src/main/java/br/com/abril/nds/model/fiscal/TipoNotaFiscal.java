@@ -11,6 +11,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import br.com.abril.nds.model.cadastro.Processo;
 import br.com.abril.nds.model.cadastro.TipoAtividade;
 
 /**
@@ -58,6 +59,10 @@ public class TipoNotaFiscal {
 	@Enumerated(EnumType.STRING)
 	@Column(name = "TIPO_ATIVIDADE", nullable = false)
 	private TipoAtividade tipoAtividade;
+	
+	@Enumerated(EnumType.STRING)
+	@Column(name = "PROCESSO", nullable = false)
+	private Processo processo;
 	
 	@Enumerated(EnumType.STRING)
 	@Column(name = "EMITENTE", nullable = false)
@@ -168,6 +173,20 @@ public class TipoNotaFiscal {
 
 	public void setNopDescricao(String nopDescricao) {
 		this.nopDescricao = nopDescricao;
+	}
+
+	/**
+	 * @return the processo
+	 */
+	public Processo getProcesso() {
+		return processo;
+	}
+
+	/**
+	 * @param processo the processo to set
+	 */
+	public void setProcesso(Processo processo) {
+		this.processo = processo;
 	}
 
 	/**

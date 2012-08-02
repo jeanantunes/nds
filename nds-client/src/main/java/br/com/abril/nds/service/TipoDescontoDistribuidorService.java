@@ -2,6 +2,7 @@ package br.com.abril.nds.service;
 import java.math.BigDecimal;
 import java.util.List;
 
+import br.com.abril.nds.client.vo.TipoDescontoCotaVO;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.TipoDescontoDistribuidor;
 
@@ -22,6 +23,10 @@ public interface TipoDescontoDistribuidorService {
 	void excluirDesconto(TipoDescontoDistribuidor tipoDescontoDistribuidor );
 	
 	List<Distribuidor> obterDistribuidores();
+	
+	List<TipoDescontoCotaVO> obterTipoDescontoDistribuidor();
+	
+	Integer buscarTotalDescontosDistribuidor();
 	
 }
 	

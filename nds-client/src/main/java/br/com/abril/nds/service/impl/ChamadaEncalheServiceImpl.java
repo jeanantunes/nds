@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.dto.CapaDTO;
 import br.com.abril.nds.dto.CotaEmissaoDTO;
 import br.com.abril.nds.dto.ProdutoEmissaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroEmissaoCE;
@@ -112,6 +113,15 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 		}
 		
 		return lista;
+	}
+
+
+	@Override
+	@Transactional
+	public List<CapaDTO> obterIdsCapasChamadaEncalhe(Date dtRecolhimentoDe,
+			Date dtRecolhimentoAte) {
+		
+		return chamadaEncalheRepository.obterIdsCapasChamadaEncalhe(dtRecolhimentoDe, dtRecolhimentoAte);
 	}
 		
 }

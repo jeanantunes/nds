@@ -77,7 +77,7 @@ public class ProdutoEdicaoRepositoryImplTest extends AbstractRepositoryImplTest 
 		save(bancoHSBC);
 		
 		PessoaJuridica juridicaDistrib = Fixture.pessoaJuridica("Distribuidor Acme",
-				"590033123647", "333.333.333.333", "distrib_acme@mail.com", "99.999-9");
+				"590033123647", "33333333333", "distrib_acme@mail.com", "99.999-9");
 		save(juridicaDistrib);
 		
 		formaBoleto = Fixture.formaCobrancaBoleto(true, new BigDecimal(200), true, bancoHSBC,

@@ -1,6 +1,7 @@
 package br.com.abril.nds.model.estoque;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -10,6 +11,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.planejamento.EstudoCota;
@@ -40,6 +43,10 @@ public class RateioDiferenca implements Serializable {
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "COTA_ID")
 	private Cota cota;
+	
+	@Temporal(TemporalType.DATE)
+	@Column(name = "DATA_NOTA_ENVIO", nullable = false)
+	private Date dataNotaEnvio;
 	
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "DIFERENCA_ID")
@@ -97,4 +104,19 @@ public class RateioDiferenca implements Serializable {
 	public void setEstudoCota(EstudoCota estudoCota) {
 		this.estudoCota = estudoCota;
 	}
+
+	/**
+	 * @return the dataNotaEnvio
+	 */
+	public Date getDataNotaEnvio() {
+		return dataNotaEnvio;
+	}
+
+	/**
+	 * @param dataNotaEnvio the dataNotaEnvio to set
+	 */
+	public void setDataNotaEnvio(Date dataNotaEnvio) {
+		this.dataNotaEnvio = dataNotaEnvio;
+	}
+	
 }
