@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Map;
 
 import br.com.abril.nds.dto.CalendarioFeriadoDTO;
+import br.com.abril.nds.model.dne.Localidade;
+import br.com.abril.nds.util.export.FileExporter.FileType;
 
 /**
  * Interface que define serviços referentes a 
@@ -80,7 +82,7 @@ public interface CalendarioService {
 	 * 
 	 * @return {@link List<CalendarioFeriadoDTO>}
 	 */
-	List<CalendarioFeriadoDTO> obterListaCalendarioFeriado(Date dataFeriado);
+	List<CalendarioFeriadoDTO> obterListaCalendarioFeriadoDataEspecifica(Date dataFeriado);
 
 	/**
 	 * Obtém mapa de datas com feriados cadastrados.
@@ -90,5 +92,19 @@ public interface CalendarioService {
 	 * @return Map<Date, String>
 	 */
 	public Map<Date, String> obterListaDataFeriado(int anoVigencia);
+	
+	public List<Localidade> obterListaLocalidadeCotas();
 
+	public void excluirFeriado(CalendarioFeriadoDTO calendarioFeriado);
+	
+	public List<CalendarioFeriadoDTO> obterListaCalendarioFeriadoMensal(int mes, int ano);
+
+	public byte[] obterRelatorioCalendarioFeriado(FileType fileType, TipoPesquisaFeriado tipoPesquisaFeriado, int mes, int ano);
+	
+	public enum TipoPesquisaFeriado {
+		FERIADO_MENSAL,
+		FERIADO_ANUAL;
+	}
+
+	
 }

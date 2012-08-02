@@ -17,6 +17,8 @@ public class CalendarioFeriadoDTO implements Serializable {
 	
 	private String nomeCidade;
 	
+	private String diaSemana;
+	
 	private boolean indRepeteAnualmente;
 	
 	private boolean indOpera;
@@ -24,6 +26,24 @@ public class CalendarioFeriadoDTO implements Serializable {
 	private boolean indEfetuaCobranca;
 	
 	private String descricaoFeriado;
+	
+	
+	/**
+	 * Obtém diaSemana
+	 *
+	 * @return String
+	 */
+	public String getDiaSemana() {
+		return diaSemana;
+	}
+
+	/**
+	 * Atribuí diaSemana
+	 * @param diaSemana 
+	 */
+	public void setDiaSemana(String diaSemana) {
+		this.diaSemana = diaSemana;
+	}
 
 	/**
 	 * Obtém dataFeriado

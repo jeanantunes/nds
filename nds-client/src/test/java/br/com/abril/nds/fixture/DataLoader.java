@@ -5193,11 +5193,27 @@ public class DataLoader {
 		Localidade localidadeMococa  = Fixture.criarLocalidade(112L, "Mococa", 10L, saoPaulo);
 		save(session, localidadeMococa);
 		
-		Feriado feriadoIndependencia = Fixture.feriado(DateUtil.parseDataPTBR("07/09/2012"), TipoFeriado.FEDERAL, null, null , "Independência do Brasil");
+		Feriado feriadoIndependencia = Fixture.feriado(
+				DateUtil.parseDataPTBR("07/09/2012"), 
+				TipoFeriado.FEDERAL, 
+				null, 
+				null, 
+				"Independência do Brasil",
+				false,
+				false,
+				true);
 		save(session, feriadoIndependencia);
 
 		Feriado feriadoProclamacao =
-				Fixture.feriado(DateUtil.parseDataPTBR("15/11/2012"), TipoFeriado.FEDERAL, null, null ,"Proclamação da República");
+				Fixture.feriado(
+						DateUtil.parseDataPTBR("15/11/2012"), 
+						TipoFeriado.FEDERAL, 
+						null, 
+						null ,
+						"Proclamação da República",
+						false,
+						false,
+						false);
 
 		save(session, feriadoProclamacao);
 		

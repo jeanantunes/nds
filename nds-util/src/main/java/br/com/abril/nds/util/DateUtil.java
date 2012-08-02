@@ -379,21 +379,67 @@ public class DateUtil {
 		
 		switch(codigoDiaSemana){
 			case Calendar.SUNDAY:
-				return "domingo";
+				return "Domingo";
 			case Calendar.MONDAY:
-				return "segunda-feira";
+				return "Segunda-feira";
 			case Calendar.TUESDAY:
-				return "segunda-feira";
+				return "Terça-feira";
 			case Calendar.WEDNESDAY:
-				return "segunda-feira";
+				return "Quarta-feira";
 			case Calendar.THURSDAY:
-				return "segunda-feira";
+				return "Quinta-feira";
 			case Calendar.FRIDAY:
-				return "segunda-feira";
+				return "Sexta-feira";
 			case Calendar.SATURDAY:
-				return "segunda-feira";
+				return "Sabado-feira";
 			default:
-				return "segunda-feira";
+				return "Segunda-feira";
+		}
+	}
+	
+	public static String obterDecricaoMes(int codigoMes){
+		
+		switch(codigoMes){
+		
+			case Calendar.JANUARY:
+				return "Janeiro";
+				
+			case Calendar.FEBRUARY:
+				return "Fevereiro";
+			
+			case Calendar.MARCH:
+				return "Março";
+				
+			case Calendar.APRIL:
+				return "Abril";
+				
+			case Calendar.MAY:
+				return "Maio";
+				
+			case Calendar.JUNE:
+				return "Junho";
+				
+			case Calendar.JULY:
+				return "Julho";
+
+			case Calendar.AUGUST:
+				return "Agosto";
+
+			case Calendar.SEPTEMBER:
+				return "Setembro";
+
+			case Calendar.OCTOBER:
+				return "Outubro";
+
+			case Calendar.NOVEMBER:
+				return "Novembro";
+
+			case Calendar.DECEMBER:
+				return "Dezembro";
+
+				
+			default:
+				return "Dezembro";
 		}
 	}
 }

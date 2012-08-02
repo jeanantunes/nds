@@ -26,20 +26,7 @@ public interface FeriadoRepository extends Repository<Feriado, Long> {
 	 * @return  {@link List<Feriado>}
 	 */
 	public List<Feriado> obterFeriados(Date data, TipoFeriado tipoFeriado, String uf, Long idLocalidade);
-	
-	/**
-	 * Obtém registro de feriado de acordo cuja contraint 
-	 * seja igual ao parâmetros passados.
-	 * 
-	 * @param data
-	 * @param tipoFeriado
-	 * @param uf
-	 * @param idLocalidade
-	 * 
-	 * @return {@link Feriado}
-	 */
-	public Feriado obterFeriado(Date data, TipoFeriado tipoFeriado, String uf, Long idLocalidade);
-	
+
 	
 	/**
 	 * Obtem lista de feriados relativos a uma data específica 
@@ -50,8 +37,21 @@ public interface FeriadoRepository extends Repository<Feriado, Long> {
 	 * 
 	 * @return {@link List<CalendarioFeriadoDTO>}
 	 */
-	public List<CalendarioFeriadoDTO> obterListaCalendarioFeriado(Date dataFeriado);
+	public List<CalendarioFeriadoDTO> obterListaCalendarioFeriadoDataEspecifica(Date dataFeriado);
 	
+	
+	/**
+	 * Obtém lista de feriados referente ao mês e ano passados como parâmetros
+	 * assim com os feriados dos mêses de todos os anos (caso este esteja marcados
+	 * como feriados anuais).
+	 * 
+	 * @param mes
+	 * @param ano
+	 * 
+	 * @return {@link List<CalendarioFeriadoDTO>}
+	 */
+	public List<CalendarioFeriadoDTO> obterListaCalendarioFeriadoMensal(int mes, int ano);
+
 	
 	/**
 	 * Obtém lista de datas de feriados relativos a um período específico assim como 
@@ -60,9 +60,9 @@ public interface FeriadoRepository extends Repository<Feriado, Long> {
 	 * @param dataInicial
 	 * @param dataFinal
 	 * 
-	 * @return {@link List<Date>}
+	 * @return {@link List<CalendarioFeriadoDTO>}
 	 */
-	public List<CalendarioFeriadoDTO> obterListaDataFeriado(Date dataInicial, Date dataFinal);
+	public List<CalendarioFeriadoDTO> obterListaCalendarioFeriadoPeriodo(Date dataInicial, Date dataFinal);
 
 	
 }

@@ -1989,7 +1989,10 @@ public class Fixture {
 			TipoFeriado tipoFeriado,
 			UnidadeFederacao unidadeFederacao,
 			Localidade localidade, 
-			String descricao) {
+			String descricao,
+			boolean indEfetuaCobranca,
+			boolean indOpera,
+			boolean indRepeteAnualmente) {
 		
 		Feriado feriado = new Feriado();
 		
@@ -1998,6 +2001,10 @@ public class Fixture {
 		feriado.setTipoFeriado(tipoFeriado);
 		feriado.setUnidadeFederacao(unidadeFederacao);
 		feriado.setLocalidade(localidade);
+		
+		feriado.setIndEfetuaCobranca(indEfetuaCobranca);
+		feriado.setIndOpera(indOpera);
+		feriado.setIndRepeteAnualmente(indRepeteAnualmente);
 		
 		return feriado;
 		

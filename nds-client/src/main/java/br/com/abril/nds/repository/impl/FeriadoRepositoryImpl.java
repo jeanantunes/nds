@@ -57,21 +57,8 @@ public class FeriadoRepositoryImpl extends AbstractRepositoryModel<Feriado, Long
 		return criteria.list();
 	}
 	
-	@Override
-	public Feriado obterFeriado(Date data, TipoFeriado tipoFeriado, String uf, Long idLocalidade) {
-
-		Criteria criteria = super.getSession().createCriteria(Feriado.class);
-		
-		criteria.add(Restrictions.eq("data", data));
-		criteria.add(Restrictions.eq("tipoFeriado", tipoFeriado));
-		criteria.add(Restrictions.eq("unidadeFederacao.sigla", uf));
-		criteria.add(Restrictions.eq("localidade.id", idLocalidade));
-		
-		return (Feriado) criteria.uniqueResult();
-	}
-
 	
-	public List<CalendarioFeriadoDTO> obterListaCalendarioFeriado(Date dataFeriado) {
+	public List<CalendarioFeriadoDTO> obterListaCalendarioFeriadoMensal(int mes, int ano) {
 		
 		StringBuffer sql = new StringBuffer("");
 		
@@ -91,11 +78,71 @@ public class FeriadoRepositoryImpl extends AbstractRepositoryModel<Feriado, Long
 		
 		sql.append(" Feriado f ");
 		
+		sql.append(" left join f.localidade as localidade ");
+
+		sql.append(" left join f.unidadeFederacao as uf ");
+
+		sql.append(" where ");
+
+		sql.append(" month(f.data) = :mesFeriado and 	");
+		
+		sql.append(" year(f.data) = :anoFeriado 		");
+		
+ 		sql.append(" or ");
+		
+		sql.append(" ( ");
+
+		sql.append(" f.indRepeteAnualmente = :indRepeteAnualmente and ");
+		
+		sql.append(" month(f.data) = :mesFeriado ");
+		
+		sql.append(" ) ");
+		
+		sql.append(" order by f.data asc ");
+		
+		Query query = getSession().createQuery(sql.toString()).setResultTransformer(
+				new AliasToBeanResultTransformer(CalendarioFeriadoDTO.class));
+		
+		
+		query.setParameter("mesFeriado", mes);
+		
+		query.setParameter("anoFeriado", ano);
+		
+		query.setParameter("indRepeteAnualmente", true);
+	
+		return query.list();
+		
+	}
+	
+	public List<CalendarioFeriadoDTO> obterListaCalendarioFeriadoDataEspecifica(Date dataFeriado) {
+		
+		StringBuffer sql = new StringBuffer("");
+		
+		sql.append(" select ");
+		
+		sql.append(" f.data as dataFeriado, 			");
+		sql.append(" f.tipoFeriado as tipoFeriado,  	");
+		sql.append(" localidade.id as idLocalidade,		");							
+		sql.append(" uf.sigla as ufSigla, 				");							
+		sql.append(" localidade.nome as nomeCidade, 	");							
+		sql.append(" f.indRepeteAnualmente as indRepeteAnualmente, 	");							
+		sql.append(" f.indOpera as indOpera,	 					");							
+		sql.append(" f.indEfetuaCobranca as indEfetuaCobranca, 		");
+		sql.append(" f.descricao as descricaoFeriado 				");
+		
+		sql.append(" from ");
+		
+		sql.append(" Feriado f ");
+		
+		sql.append(" left join f.localidade as localidade ");
+
+		sql.append(" left join f.unidadeFederacao as uf ");
+
 		sql.append(" where ");
 			
 		sql.append(" f.data = :dataFeriado ");
 		
-		sql.append(" or ");
+ 		sql.append(" or ");
 		
 		sql.append(" ( ");
 
@@ -110,7 +157,9 @@ public class FeriadoRepositoryImpl extends AbstractRepositoryModel<Feriado, Long
 		Query query = getSession().createQuery(sql.toString()).setResultTransformer(
 				new AliasToBeanResultTransformer(CalendarioFeriadoDTO.class));
 		
+		
 		Calendar c = Calendar.getInstance();
+		c.clear();
 		c.setTime(dataFeriado);
 		
 		query.setParameter("dataFeriado",  dataFeriado);
@@ -122,23 +171,37 @@ public class FeriadoRepositoryImpl extends AbstractRepositoryModel<Feriado, Long
 		
 	}
 
-	public List<CalendarioFeriadoDTO> obterListaDataFeriado(Date dataInicial, Date dataFinal) {
+	public List<CalendarioFeriadoDTO> obterListaCalendarioFeriadoPeriodo(Date dataInicial, Date dataFinal) {
 		
 		StringBuffer sql = new StringBuffer("");
 		
 		sql.append(" select ");
 		
-		sql.append(" f.data as dataFeriado, f.descricao as descricaoFeriado	");
+		sql.append(" f.data as dataFeriado, 			");
+		sql.append(" f.tipoFeriado as tipoFeriado,  	");
+		sql.append(" localidade.id as idLocalidade,		");							
+		sql.append(" uf.sigla as ufSigla, 				");							
+		sql.append(" localidade.nome as nomeCidade, 	");							
+		sql.append(" f.indRepeteAnualmente as indRepeteAnualmente, 	");							
+		sql.append(" f.indOpera as indOpera,	 					");							
+		sql.append(" f.indEfetuaCobranca as indEfetuaCobranca, 		");
+		sql.append(" f.descricao as descricaoFeriado 				");
 		
 		sql.append(" from ");
 		
 		sql.append(" Feriado f ");
 		
+		sql.append(" left join f.localidade as localidade ");
+
+		sql.append(" left join f.unidadeFederacao as uf ");
+
 		sql.append(" where ");
 			
 		sql.append(" f.data between :dataInicial and :dataFinal ");
 		
 		sql.append(" or f.indRepeteAnualmente = :indRepeteAnualmente ");
+		
+		sql.append(" order by f.data asc ");
 		
 		Query query = getSession().createQuery(sql.toString()).setResultTransformer(new AliasToBeanResultTransformer(CalendarioFeriadoDTO.class));
 		
@@ -149,5 +212,7 @@ public class FeriadoRepositoryImpl extends AbstractRepositoryModel<Feriado, Long
 		return query.list();
 		
 	}
+	
+	
 	
 }

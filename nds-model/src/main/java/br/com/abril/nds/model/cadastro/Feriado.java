@@ -4,6 +4,8 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -14,6 +16,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
 
+import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.dne.Localidade;
 import br.com.abril.nds.model.dne.UnidadeFederacao;
 
@@ -38,14 +41,15 @@ public class Feriado {
 	@Column(name = "DESCRICAO", nullable = false)
 	private String descricao;
 
-	@ManyToOne(optional = true)
+	@ManyToOne
 	@JoinColumn(name = "UFE_SG")
 	private UnidadeFederacao unidadeFederacao;
 	
-	@ManyToOne(optional = true)
+	@ManyToOne
 	@JoinColumn(name = "LOCALIDADE_ID")
 	private Localidade localidade;
 
+	@Enumerated(EnumType.STRING)
 	@Column(name = "TIPO_FERIADO")
 	private TipoFeriado tipoFeriado;
 
@@ -58,6 +62,10 @@ public class Feriado {
 	@Column(name = "IND_EFETUA_COBRANCA")
 	private boolean indEfetuaCobranca;
 
+	@Enumerated(EnumType.STRING)
+	@Column(name = "ORIGEM")
+	private Origem origem;
+	
 	
 	/**
 	 * Obtém id
@@ -211,6 +219,22 @@ public class Feriado {
 	public void setUnidadeFederacao(UnidadeFederacao unidadeFederacao) {
 		this.unidadeFederacao = unidadeFederacao;
 	}
-	
+
+	/**
+	 * Obtém origem
+	 *
+	 * @return Origem
+	 */
+	public Origem getOrigem() {
+		return origem;
+	}
+
+	/**
+	 * Atribuí origem
+	 * @param origem 
+	 */
+	public void setOrigem(Origem origem) {
+		this.origem = origem;
+	}
 	
 }
