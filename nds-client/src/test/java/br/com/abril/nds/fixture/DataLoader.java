@@ -4506,6 +4506,7 @@ public class DataLoader {
 		fornecedorFc.setResponsavel("Sebastião");
 		fornecedorFc.setEmailNfe("sebastiao@email.com");
 		fornecedorFc.setOrigem(Origem.MANUAL);
+		fornecedorFc.setEmailNfe("acme@acme.com");
 
 		save(session, fornecedorAcme, fornecedorDinap, fornecedorFc);
 
