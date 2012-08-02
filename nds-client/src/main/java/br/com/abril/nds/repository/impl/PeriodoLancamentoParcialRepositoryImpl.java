@@ -30,7 +30,8 @@ public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepositoryMo
 				
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" select lancamento.dataLancamentoDistribuidor as dataLancamento, ");
+		hql.append(" select produtoEdicao.id as idProdutoEdicao, ");
+		hql.append("		lancamento.dataLancamentoDistribuidor as dataLancamento, ");
 		hql.append(" 		lancamento.dataRecolhimentoDistribuidor as dataRecolhimento, ");
 		hql.append(" 		estudo.qtdeReparte as reparte, ");
 		

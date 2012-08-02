@@ -15,6 +15,8 @@ public class PeriodoParcialDTO implements Serializable {
 
 	private static final long serialVersionUID = 7240165519168307608L;
 	
+	private Long idProdutoEdicao;
+	
 	@Export(label = "Período", alignment=Alignment.CENTER)
 	private String periodo;
 	
@@ -115,6 +117,18 @@ public class PeriodoParcialDTO implements Serializable {
 	 */
 	public void setIdLancamento(Long idLancamento) {
 		this.idLancamento = idLancamento;
+	}
+	/**
+	 * @return the idProdutoEdicao
+	 */
+	public Long getIdProdutoEdicao() {
+		return idProdutoEdicao;
+	}
+	/**
+	 * @param idProdutoEdicao the idProdutoEdicao to set
+	 */
+	public void setIdProdutoEdicao(Long idProdutoEdicao) {
+		this.idProdutoEdicao = idProdutoEdicao;
 	}
 	
 		

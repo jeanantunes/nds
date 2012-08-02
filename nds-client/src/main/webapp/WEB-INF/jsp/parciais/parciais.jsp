@@ -6,14 +6,14 @@
 
 var PARCIAIS = new Parciais('${pageContext.request.contextPath}');
 
-function popup() {
+function popup(modal) {
 	
 		PARCIAIS.carregaPeb();
 	
 		$( "#dialog-novo" ).dialog({
 			resizable: false,
 			height:200,
-			width:300,
+			width:400,
 			modal: true,
 			
 			buttons:[ 
@@ -21,7 +21,7 @@ function popup() {
 				           id:"bt_confirmar",
 				           text:"Confirmar", 
 				           click: function() {
-				        	   	PARCIAIS.inserirPeriodos();								
+				        	   	PARCIAIS.inserirPeriodos(modal);								
 								$( this ).dialog( "close" );
 				           }
 			           },
@@ -81,7 +81,7 @@ function popup() {
 		$( "#dialog-detalhes" ).dialog({
 			resizable: false,
 			height:550,
-			width:820,
+			width:960,
 			modal: true,
 			buttons: {
 				"Confirmar": function() {
@@ -145,11 +145,16 @@ $(function() {
 		
 </script>
 <style type="text/css">
-#dialog-detalhes fieldset{width:750px!important;}
+#dialog-detalhes fieldset{width:900px!important;}
+
 #dialog-detalhes fieldset ul{}
+
 #dialog-detalhes fieldset li{float:left; margin-right:10px; margin-left:0px; margin-bottom:5px; line-height:20px;}
+
 #dialog-novo fieldset{width:250px!important;}
-#dialog-edit-produto{display:none;}
+
+#dialog-edit-produto, #dialog-detalhe-venda{display:none;}
+
 </style>
 
 
@@ -251,7 +256,9 @@ $(function() {
 
 <fieldset>
 	<legend>Parciais</legend>
-    <table class="parciaisPopGrid"></table>
+	<div class="flexigrid" style="width: 900px; ">
+    	<table class="parciaisPopGrid"></table>
+    </div>
 </fieldset>
 
 
@@ -278,7 +285,7 @@ $(function() {
 	        
 	</div>   
 
- <span class="bt_novos" title="Novo"><a href="javascript:;" onclick="popup();"><img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0" alt="Incluir Períodos" />Incluir Períodos</a></span>
+ <span class="bt_novos" title="Novo"><a href="javascript:;" onclick="popup(true);"><img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0" alt="Incluir Períodos" />Incluir Períodos</a></span>
 
 
 </div>
@@ -448,8 +455,15 @@ $(function() {
 	
 			<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a>
 			</span>
+			
+	
+	 <span class="bt_novos" title="Novo">
+	 		<a href="javascript:;" onclick="popup(false);">
+	 		<img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0" alt="Incluir Períodos" />
+	 		Incluir Períodos
+	 		</a>
+	 </span>
 	        
-	</div>           
 	           
 </fieldset>
 
@@ -529,22 +543,16 @@ $(".grids").show();
 
 
 $(".periodosGrid").flexigrid($.extend({},{
-	colModel : [ {
-			display : 'Período',
-			name : 'periodo',
-			width : 100,
-			sortable : true,
-			align : 'center'
-		}, {
-			display : 'Data Lançamento',
+		colModel : [ {
+			display : 'Lcto',
 			name : 'dataLancamento',
-			width : 130,
+			width : 70,
 			sortable : true,
 			align : 'center'
 		}, {
-			display : 'Data Recolhimento',
+			display : 'Rcto',
 			name : 'dataRecolhimento',
-			width : 130,
+			width : 70,
 			sortable : true,
 			align : 'center'
 		}, {
@@ -554,37 +562,62 @@ $(".periodosGrid").flexigrid($.extend({},{
 			sortable : true,
 			align : 'center'
 		}, {
-			display : 'Encalhe',
-			name : 'encalhe',
+			display : 'Suplementação',
+			name : 'suplementacao',
 			width : 80,
 			sortable : true,
 			align : 'center'
 		}, {
-			display : 'Vendas',
-			name : 'vendas',
-			width : 70,
+			display : 'Encalhe',
+			name : 'encalhe',
+			width : 40,
 			sortable : true,
 			align : 'center'
 		}, {
-			display : 'Venda Acumulada',
-			name : 'vendaAcumulada',
-			width : 120,
+			display : 'Venda',
+			name : 'vendas',
+			width : 40,
 			sortable : true,
 			align : 'center'
 		}, {
 			display : '% Venda',
 			name : 'percVenda',
+			width : 50,
+			sortable : true,
+			align : 'center'
+		}, {
+			display : 'Venda CE',
+			name : 'vendaCE',
+			width : 50,
+			sortable : true,
+			align : 'center'
+		}, {
+			display : 'Reparte Acum.',
+			name : 'reparteAcumulado',
+			width : 75,
+			sortable : true,
+			align : 'center'
+		}, {
+			display : 'Venda Acum.',
+			name : 'vendaAcumulada',
 			width : 70,
+			sortable : true,
+			align : 'center'
+		}, {
+			display : '% Venda Acum.',
+			name : 'percVendaAcumulada',
+			width : 80,
 			sortable : true,
 			align : 'center'
 		}, {
 			display : 'Ação',
 			name : 'acao',
-			width : 75,
+			width : 60,
 			sortable : false,
 			align : 'center'
 		}],
-		sortname : "periodo",
+
+		sortname : "dataLancamento",
 		sortorder : "asc",
 		usepager : true,
 		useRp : true,
@@ -595,46 +628,40 @@ $(".periodosGrid").flexigrid($.extend({},{
 	})); 
 
 $(".parciaisPopGrid").flexigrid($.extend({},{
-	colModel : [ {
-			display : 'Período',
-			name : 'periodo',
-			width : 40,
-			sortable : true,
-			align : 'center'
-		}, {
-			display : 'Data Lançamento',
+		colModel : [ {
+			display : 'Lcto',
 			name : 'dataLancamento',
-			width : 90,
+			width : 70,
 			sortable : true,
 			align : 'center'
 		}, {
-			display : 'Data Recolhimento',
+			display : 'Rcto',
 			name : 'dataRecolhimento',
-			width : 100,
+			width : 70,
 			sortable : true,
 			align : 'center'
 		}, {
 			display : 'Reparte',
 			name : 'reparte',
-			width : 45,
+			width : 50,
+			sortable : true,
+			align : 'center'
+		}, {
+			display : 'Suplementação',
+			name : 'suplementacao',
+			width : 80,
 			sortable : true,
 			align : 'center'
 		}, {
 			display : 'Encalhe',
 			name : 'encalhe',
-			width : 45,
+			width : 40,
 			sortable : true,
 			align : 'center'
 		}, {
-			display : 'Vendas',
+			display : 'Venda',
 			name : 'vendas',
-			width : 60,
-			sortable : true,
-			align : 'center'
-		}, {
-			display : 'Venda Acumulada',
-			name : 'vendaAcumulada',
-			width : 120,
+			width : 40,
 			sortable : true,
 			align : 'center'
 		}, {
@@ -644,19 +671,43 @@ $(".parciaisPopGrid").flexigrid($.extend({},{
 			sortable : true,
 			align : 'center'
 		}, {
+			display : 'Venda CE',
+			name : 'vendaCE',
+			width : 50,
+			sortable : true,
+			align : 'center'
+		}, {
+			display : 'Reparte Acum.',
+			name : 'reparteAcumulado',
+			width : 75,
+			sortable : true,
+			align : 'center'
+		}, {
+			display : 'Venda Acum.',
+			name : 'vendaAcumulada',
+			width : 70,
+			sortable : true,
+			align : 'center'
+		}, {
+			display : '% Venda Acum.',
+			name : 'percVendaAcumulada',
+			width : 80,
+			sortable : true,
+			align : 'center'
+		}, {
 			display : 'Ação',
 			name : 'acao',
-			width : 65,
+			width : 60,
 			sortable : false,
 			align : 'center'
 		}],
-		sortname : "periodo",
+		sortname : "dataLancamento",
 		sortorder : "asc",
 		usepager : true,
 		useRp : true,
 		rp : 15,
 		showTableToggleBtn : true,
-		width : 750,
+		width : 900,
 		height : 200
 	})); 
 
