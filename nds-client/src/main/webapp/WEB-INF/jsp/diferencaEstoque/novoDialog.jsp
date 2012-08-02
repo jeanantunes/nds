@@ -193,8 +193,15 @@
 				dateFormat: "dd/mm/yy"
 			});
 			
+			$("#edicaoProdutoInput").numeric();
+			$("#diferencaProdutoInput").numeric();
+			$("#cotaInput1").numeric();
+			$("#diferencaInput1").numeric();
+			$("#cotaInputNota").numeric();
+			
 			$(".lanctoFaltasSobrasCota_3Grid").flexigrid({
 				preProcess: executarPreProcessamentoNovo,
+				onSuccess: function(){$("[name=diferencaProduto]").numeric();},
 				dataType : 'json',
 				colModel : [ {
 					display : 'Código',
@@ -639,6 +646,9 @@
 				$("#grid_1").append(tr);
 				
 				$("#cotaInput" + (linhaAtual + 1)).focus();
+				
+				$("#cotaInput"+ (linhaAtual + 1)).numeric();
+				$("#diferencaInput" + (linhaAtual + 1)).numeric();
 			}
 		}
 		
