@@ -164,7 +164,7 @@ public class FeriadoRepositoryImpl extends AbstractRepositoryModel<Feriado, Long
 		
 		query.setParameter("dataFeriado",  dataFeriado);
 		query.setParameter("diaFeriado", c.get(Calendar.DAY_OF_MONTH));
-		query.setParameter("mesFeriado", c.get(Calendar.MONTH));
+		query.setParameter("mesFeriado", (c.get(Calendar.MONTH)+1));
 		query.setParameter("indRepeteAnualmente", true);
 	
 		return query.list();

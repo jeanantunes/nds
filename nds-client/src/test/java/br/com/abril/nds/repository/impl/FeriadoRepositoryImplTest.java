@@ -84,7 +84,13 @@ public class FeriadoRepositoryImplTest extends AbstractRepositoryImplTest {
 		
 		Date dtFeriado = FERIADO_ANUAL_FEDERAL;
 		
-		List<CalendarioFeriadoDTO> resultado = feriadoRepository.obterListaCalendarioFeriadoDataEspecifica(dtFeriado);
+		Calendar anoAlterado = Calendar.getInstance();
+		
+		anoAlterado.setTime(dtFeriado);
+		
+		anoAlterado.set(Calendar.YEAR, 1998);
+		
+		List<CalendarioFeriadoDTO> resultado = feriadoRepository.obterListaCalendarioFeriadoDataEspecifica(anoAlterado.getTime());
 		
 		Assert.assertNotNull(resultado);
 		

@@ -1,7 +1,6 @@
 package br.com.abril.nds.service.impl;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Calendar;
@@ -20,7 +19,6 @@ import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperRunManager;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import net.sf.jasperreports.engine.export.JRXlsExporter;
-import net.sf.jasperreports.engine.util.JRLoader;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -394,16 +392,59 @@ public class CalendarioServiceImpl implements CalendarioService {
 	
 	@Transactional
 	public List<CalendarioFeriadoDTO> obterListaCalendarioFeriadoDataEspecifica(Date dataFeriado) {
-		return feriadoRepository.obterListaCalendarioFeriadoDataEspecifica(dataFeriado);
+		
+		Calendar dataPesquisa = Calendar.getInstance();
+		dataPesquisa.setTime(dataFeriado);
+		int ano = dataPesquisa.get(Calendar.YEAR);
+		
+		List<CalendarioFeriadoDTO> listaCalendarioFeriado = feriadoRepository.obterListaCalendarioFeriadoDataEspecifica(dataFeriado);
+		
+		if(listaCalendarioFeriado != null && !listaCalendarioFeriado.isEmpty()) {
+			for(CalendarioFeriadoDTO feriado :  listaCalendarioFeriado) {
+				feriado.setDataFeriado(obterDataComAnoPesquisa(feriado.getDataFeriado(), ano));
+			}
+		}
+		
+		return listaCalendarioFeriado;
+
 	}
 	
 	
 	
 	@Transactional
 	public List<CalendarioFeriadoDTO> obterListaCalendarioFeriadoMensal(int mes, int ano) {
-		return feriadoRepository.obterListaCalendarioFeriadoMensal(mes, ano);
+		
+		List<CalendarioFeriadoDTO> listaFeriado = feriadoRepository.obterListaCalendarioFeriadoMensal(mes, ano);
+		
+		if(listaFeriado == null || listaFeriado.isEmpty()) {
+			return listaFeriado;
+		}
+		
+		for(CalendarioFeriadoDTO feriado :  listaFeriado) {
+			feriado.setDataFeriado(obterDataComAnoPesquisa(feriado.getDataFeriado(), ano));
+		}
+		
+		return listaFeriado;
+		
 	}
 	
+	
+	private Date obterDataComAnoPesquisa(Date data, int anoPesquisa) {
+		
+		if(data == null) {
+			return null;
+		}
+		
+		Calendar novaData = Calendar.getInstance();
+		
+		novaData.setTime(data);
+		
+		novaData.set(Calendar.YEAR, anoPesquisa);
+		
+		return novaData.getTime();
+		
+	}
+
 	
 	
 	public void validarAlteracaoFeriado(Feriado feriado) {
@@ -529,11 +570,23 @@ public class CalendarioServiceImpl implements CalendarioService {
 			
 			listaCalendarioFeriado = feriadoRepository.obterListaCalendarioFeriadoPeriodo(dataInicial, dataFinal);
 			
+			if(listaCalendarioFeriado != null && !listaCalendarioFeriado.isEmpty()) {
+				for(CalendarioFeriadoDTO feriado :  listaCalendarioFeriado) {
+					feriado.setDataFeriado(obterDataComAnoPesquisa(feriado.getDataFeriado(), ano));
+				}
+			}
+			
 		}
 		
 		if(TipoPesquisaFeriado.FERIADO_MENSAL.equals(tipoPesquisaFeriado)) {
 			
 			listaCalendarioFeriado = feriadoRepository.obterListaCalendarioFeriadoMensal(mes, ano);
+			
+			if(listaCalendarioFeriado != null && !listaCalendarioFeriado.isEmpty()) {
+				for(CalendarioFeriadoDTO feriado :  listaCalendarioFeriado) {
+					feriado.setDataFeriado(obterDataComAnoPesquisa(feriado.getDataFeriado(), ano));
+				}
+			}
 			
 		}
 
