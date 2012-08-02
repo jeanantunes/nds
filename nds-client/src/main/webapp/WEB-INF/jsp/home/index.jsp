@@ -21,6 +21,17 @@
 <script language="javascript" type="text/javascript"
 	src="scripts/flexigrid-1.1/js/flexigrid.pack.js"></script>
 
+<script language="javascript" type="text/javascript"
+	src="${pageContext.request.contextPath}/scripts/jquery.maskmoney.js"></script>
+
+<link rel="stylesheet" type="text/css" href="scripts/tooltip/tipsy.css" />
+<link rel="stylesheet" type="text/css" href="scripts/tooltip/tipsy-docs.css" />
+<script language="javascript" type="text/javascript" src="scripts/tooltip/jquery.tipsy.js"></script>
+
+<script type="text/javascript" src="scripts/commonsbehaviour.js"></script>
+
+<script type="text/javascript" src="scripts/gruposAcesso.js"></script>
+
 <base href="<c:url value="/"/>" />
 
 <script type="text/javascript">

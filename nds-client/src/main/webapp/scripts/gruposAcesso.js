@@ -1,10 +1,10 @@
-var contextPath;
-var gruposAcessoController = {
-		init : function(path) {
-			this.contextPath = path;
+var gruposAcessoController = $.extend(true, {
+		path : "",
+		init : function(contextPath) {
 			this.initRegrasGrid();
 			this.initUsuariosGrid();
 			$( "#tabs-grupos" ).tabs();
+			this.path = contextPath + "/administracao/gruposAcesso";
 		},
 		popup_usuario : function() {
 			$( "#dialog-novo-usuario" ).dialog({
@@ -120,11 +120,19 @@ var gruposAcessoController = {
 			$('.gridsUsuario').show();
 		},
 		mostrarRegra : function() {
+			// var serializedObj = $(obj).closest("form").serialize();
+			var serializedObj = $("#pesquisar_regras_form", this.workspace).serialize();
+			$(".regrasGrid", this.workspace).flexOptions({
+				"url" : this.path + '/pesquisarRegras?' + serializedObj,
+				method: 'GET',
+				newp:1
+			});
+			$(".regrasGrid").flexReload();
+
 			$('.gridsRegra').show();
 		},
 		initUsuariosGrid : function() {
 			$(".usuariosGrid").flexigrid({
-				url : '../xml/usuarios-xml.xml',
 				dataType : 'xml',
 				colModel : [ {
 					display : 'Username',
@@ -199,15 +207,15 @@ var gruposAcessoController = {
 		},
 		initRegrasGrid : function() {
 			$(".regrasGrid").flexigrid({
-				url : '../xml/regras-xml.xml',
+				preProcess : function(data) {
+					if( typeof data.mensagens == "object") {
+						exibirMensagem(data.mensagens.tipoMensagem, data.mensagens.listaMensagens);
+					} else {
+						return data;
+					}
+				},
 				dataType : 'xml',
 				colModel : [ {
-					display : 'ID',
-					name : 'id',
-					width : 40,
-					sortable : true,
-					align : 'left'
-				}, {
 					display : 'Nome',
 					name : 'nome',
 					width : 370,
@@ -216,7 +224,7 @@ var gruposAcessoController = {
 				}, {
 					display : 'Descrição',
 					name : 'descricao',
-					width : 360,
+					width : 400,
 					sortable : true,
 					align : 'left'
 				}],
@@ -230,4 +238,4 @@ var gruposAcessoController = {
 				height : 255
 			});
 		}
-};
+}, BaseController);

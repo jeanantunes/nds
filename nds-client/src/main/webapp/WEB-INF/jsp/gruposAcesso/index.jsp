@@ -1,5 +1,4 @@
 <head>
-<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/gruposAcesso.js"></script>
 <script type="text/javascript">
 $(function() {
 	gruposAcessoController.init("${pageContext.request.contextPath}");
@@ -10,9 +9,12 @@ $(function() {
 </style>
 </head>
 <body>
+	<form action="/administracao/gruposAcesso" id="excluir_regra_form">
 	<div id="dialog-excluir_regra" title="Excluir Regra" style="display:none;">
 	  <p>Confirma a exclusão desta Regra?</p>
 	</div>
+	</form>
+	<form action="/administracao/gruposAcesso" id="nova_regra_form">
 	<div id="dialog-novo_regra" title="Regra" style="display:none;">
      	<table width="379" border="0" cellpadding="2" cellspacing="1" class="filtro">
 	        <tr>
@@ -25,9 +27,12 @@ $(function() {
 	        </tr>
       	</table>
 	</div>
+	<form action="/administracao/gruposAcesso" id="excluir_usuario_form">
 	<div id="dialog-excluir-usuario" title="Excluir Usuário" style="display:none;">
 	  <p>Confirma a exclusão deste usuário?</p>
 	</div>
+	</form>
+	<form action="/administracao/gruposAcesso" id="novo_usuario_form">
 	<div id="dialog-novo-usuario" title="Usuário" style="display:none;">
           <table width="700" border="0" cellpadding="2" cellspacing="1" class="filtro">
             <tr>
@@ -106,8 +111,8 @@ $(function() {
 			    	</fieldset>
 			    </td>
 			    <td width="34" align="center">
-			    	<img src="../images/seta_vai_todos.png" width="39" height="30" /><br />
-			      	<br /><img src="../images/seta_volta_todos.png" width="39" height="30" /><br />
+			    	<img src="images/seta_vai_todos.png" width="39" height="30" /><br />
+			      	<br /><img src="images/seta_volta_todos.png" width="39" height="30" /><br />
 			    </td>
 			    <td width="264" valign="top">
 				    <fieldset>
@@ -119,6 +124,7 @@ $(function() {
 			 </tr>
 		</table>
 	</div>
+	</form>
 	<div class="corpo">
 		<div class="container">
 	     	<div id="effect" style="padding: 0 .7em;" class="ui-state-highlight ui-corner-all"> 
@@ -131,9 +137,12 @@ $(function() {
 	                <li><a href="#tabs-usuarios">Usuários</a></li>
 	                <li><a href="#tabs-regras">Regras</a></li>
 	            </ul>
+	            <form action="/administracao/gruposAcesso" id="pesquisar_grupos_form">
 	            <div id="tabs-grupos">
 	            	1
 	            </div>
+	            </form>
+	            <form action="/administracao/gruposAcesso" id="pesquisar_usuario_form">
 	            <div id="tabs-usuarios">
 			        <fieldset style="width:925px!important;">
 			   	    	<legend> Pesquisar Usuário</legend>
@@ -151,19 +160,21 @@ $(function() {
 			      	<div class="gridsUsuario" style="display:none;">
 			       		<table class="usuariosGrid"></table>
 			        </div>
-			        <span class="bt_novos" title="Novo"><a href="javascript:;" onclick="gruposAcessoController.popup_usuario();"><img src="../images/ico_salvar.gif" hspace="5" border="0"/>Novo</a></span>
+			        <span class="bt_novos" title="Novo"><a href="javascript:;" onclick="gruposAcessoController.popup_usuario();"><img src="images/ico_salvar.gif" hspace="5" border="0"/>Novo</a></span>
 			      </fieldset>
 			      <br clear="all" />
 	            </div>
+	            </form>
+	            <form action="/administracao/gruposAcesso" id="pesquisar_regras_form">
 	            <div id="tabs-regras">
 	            	<fieldset style="width:925px!important;">
 			   	    <legend> Pesquisar Regras</legend>
 			        	<table width="850" border="0" cellpadding="2" cellspacing="1" class="filtro">
 			            	<tr>
 			              		<td width="41">Nome:</td>
-			              		<td width="184"><input type="text" name="textfield3" id="textfield3" style="width:160px;"/></td>
+			              		<td width="184"><input type="text" name="filtro.nome" style="width:160px;"/></td>
 			              		<td width="65">Descrição:</td>
-			              		<td width="430"><input type="text" name="textfield" id="textfield" style="width:200px;"/></td>
+			              		<td width="430"><input type="text" name="filtro.descricao" style="width:200px;"/></td>
 			              		<td width="104"><span class="bt_pesquisar"><a href="javascript:;" onclick="gruposAcessoController.mostrarRegra();">Pesquisar</a></span></td>
 			            	</tr>
 			          	</table>
@@ -174,10 +185,11 @@ $(function() {
 			          <div class="gridsRegra" style="display:none;">
 			       	  	<table class="regrasGrid"></table>
 			          </div>
-			          <%--<span class="bt_novos" title="Novo"><a href="javascript:;" onclick="gruposAcessoController.popup_nova_regra();"><img src="../images/ico_salvar.gif" hspace="5" border="0"/>Novo</a></span--%>
+			          <%--<span class="bt_novos" title="Novo"><a href="javascript:;" onclick="gruposAcessoController.popup_nova_regra();"><img src="images/ico_salvar.gif" hspace="5" border="0"/>Novo</a></span--%>
 			      </fieldset>
 			      <br clear="all" />
 	            </div>
+	            </form>
 	    	</div>
 		</div>
 	</div> 
