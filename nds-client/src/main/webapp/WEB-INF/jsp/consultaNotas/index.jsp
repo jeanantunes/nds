@@ -29,7 +29,7 @@
 			for (i = 0 ; i < data.rows.length; i++) {
 
 				var lastIndex = data.rows[i].cell.length - 1;
-
+				console.log(data.rows);
 				data.rows[i].cell[lastIndex-1] = 
 					'<a href="javascript:;" onclick="pesquisarDetalhesNota(' + data.rows[i].cell[lastIndex] + ')" ' +
 					' style="cursor:pointer;border:0px" title="Visualizar Detalhes">' +
@@ -201,19 +201,25 @@
 				}, {
 					display : 'Tipo',
 					name : 'descricao',
-					width : 200,
+					width : 150,
 					sortable : true,
 					align : 'left'
 				}, {
 					display : 'Fornecedor',
 					name : 'razaoSocial',
-					width : 130,
+					width : 100,
 					sortable : true,
 					align : 'left'
 				}, {
+					display : 'Valor R$',
+					name : 'valor',
+					width : 80,
+					sortable : true,
+					align : 'right'
+				},{
 					display : 'Nota Recebida',
 					name : 'statusNotaFiscal',
-					width : 120,
+					width : 110,
 					sortable : true,
 					align : 'center'
 				}, {
