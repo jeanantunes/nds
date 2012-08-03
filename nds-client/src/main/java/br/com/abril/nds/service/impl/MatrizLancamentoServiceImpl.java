@@ -1149,7 +1149,7 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 		
 		Date dataInicialSemana =
 			DateUtil.obterDataDaSemanaNoAno(numeroSemana,
-											distribuidor.getInicioSemana().getCodigoDiaSemana());
+											distribuidor.getInicioSemana().getCodigoDiaSemana(), dataLancamento);
 		
 		Date dataFinalSemana =
 			DateUtil.adicionarDias(dataInicialSemana, 6);
