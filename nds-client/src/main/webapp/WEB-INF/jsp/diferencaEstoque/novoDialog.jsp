@@ -54,21 +54,21 @@
 				</tr>
 				<tr>
 					<td>
-						<input type="text" id="codigoProdutoInput" style="width:60px;" 
+						<input type="text" id="codigoProdutoInput" style="width:60px;" maxlength="30"
 							onblur="produto.pesquisarPorCodigoProduto(codigoProdutoInput, nomeProdutoInput, edicaoProdutoInput, true);"/>
 					</td>
 					<td>
-						<input type="text" id="nomeProdutoInput" style="width:180px;" 
+						<input type="text" id="nomeProdutoInput" style="width:180px;" maxlength="60"
 							onkeyup="produto.autoCompletarPorNomeProduto(nomeProdutoInput, true);"
 							onblur="produto.pesquisarPorNomeProduto(codigoProdutoInput, nomeProdutoInput, edicaoProdutoInput, true);"/>
 					</td>
 					<td align="center">
-						<input type="text" id="edicaoProdutoInput" onblur="buscarPrecoProdutoEdicao();" style="width:50px;" />
+						<input type="text" id="edicaoProdutoInput" onblur="buscarPrecoProdutoEdicao();" style="width:50px;" maxlength="255" />
 					</td>
 					<td align="right" id="precoCapaProduto"></td>
 					<td align="center" id="reparteProduto"></td>
 					<td>
-						<input id="diferencaProdutoInput" style="width: 60px; text-align: center;" />
+						<input id="diferencaProdutoInput" style="width: 60px; text-align: center;" maxlength="255" />
 					</td>
 				</tr>
     		</table>
@@ -116,17 +116,17 @@
 						</tr>
 						<tr id="trCota1">
 							<td>
-								<input type="text" name="cotaInput" id="cotaInput1" style="width:60px;"
+								<input type="text" name="cotaInput" id="cotaInput1" style="width:60px;" maxlength="255"
 									onblur="cota.pesquisarPorNumeroCota(cotaInput1, nomeInput1, true, buscarReparteAtualCota(1));"/>
 							</td>
 							<td>
-								<input type="text" name="nomeInput" id="nomeInput1" style="width:180px;" 
+								<input type="text" name="nomeInput" id="nomeInput1" style="width:180px;" maxlength="255"
 									onkeyup="cota.autoCompletarPorNome(nomeInput1);" 
 									onblur="cota.pesquisarPorNomeCota(cotaInput1, nomeInput1, buscarReparteAtualCota(1));"/>
 							</td>
 							<td align="center" id="reparteText1"></td>
 							<td align="center">
-								<input type="text" name="diferencaInput" id="diferencaInput1" style="width:80px; text-align:center;" 
+								<input type="text" name="diferencaInput" id="diferencaInput1" style="width:80px; text-align:center;" maxlength="255"
 									onblur="adicionarLinhaCota(1);"
 									onchange="calcularReparteAtual(1);"/>
 							</td>
@@ -151,12 +151,12 @@
 					</td>
 					<td width="27">Cota:</td>
 					<td width="118">
-						<input type="text" style="width:80px; float:left; margin-right:5px;" id="cotaInputNota"
+						<input type="text" style="width:80px; float:left; margin-right:5px;" id="cotaInputNota" maxlength="255"
 							onblur="cota.pesquisarPorNumeroCota(cotaInputNota, nomeCotaNota, true);" />
 					</td>
 					<td width="32">Nome:</td>
 					<td width="167">
-						<input type="text" style="width:160px;" id="nomeCotaNota"
+						<input type="text" style="width:160px;" id="nomeCotaNota" maxlength="255"
 							onkeyup="cota.autoCompletarPorNome(nomeCotaNota);" 
 							onblur="cota.pesquisarPorNomeCota(cotaInputNota, nomeCotaNota);" />
 					</td>
@@ -198,6 +198,7 @@
 			$("#cotaInput1").numeric();
 			$("#diferencaInput1").numeric();
 			$("#cotaInputNota").numeric();
+			$("#dateNotaEnvio").mask("99/99/9999");
 			
 			$(".lanctoFaltasSobrasCota_3Grid").flexigrid({
 				preProcess: executarPreProcessamentoNovo,
@@ -629,16 +630,16 @@
 			if ($('#trCota' + (linhaAtual + 1)).length == 0 && $('#cotaInput' + (linhaAtual)).val() != ""){
 				
 				var tr = $('<tr class="trCotas" id="trCota'+ (linhaAtual + 1) +'" style="'+ ((linhaAtual + 1) % 2 == 0 ? "background: #F5F5F5;" : "") +'">' +
-						'<td><input type="text" name="cotaInput" id="cotaInput'+ (linhaAtual + 1) +'" onblur="cota.pesquisarPorNumeroCota(cotaInput'+ (linhaAtual + 1) +', nomeInput'+ (linhaAtual + 1) +', true, buscarReparteAtualCota('+ (linhaAtual + 1) +'));" style="width:60px;" /></td>' +
+						'<td><input type="text" name="cotaInput" maxlength="255" id="cotaInput'+ (linhaAtual + 1) +'" onblur="cota.pesquisarPorNumeroCota(cotaInput'+ (linhaAtual + 1) +', nomeInput'+ (linhaAtual + 1) +', true, buscarReparteAtualCota('+ (linhaAtual + 1) +'));" style="width:60px;" /></td>' +
 						'<td>'+
-						     '<input type="text" name="nomeInput" id="nomeInput'+ (linhaAtual + 1) +'" style="width:180px;" '+
+						     '<input type="text" name="nomeInput" maxlength="255" id="nomeInput'+ (linhaAtual + 1) +'" style="width:180px;" '+
 						         ' onkeyup="cota.autoCompletarPorNome(nomeInput'+ (linhaAtual + 1) +');" ' +
 						         ' onblur="cota.pesquisarPorNomeCota(cotaInput'+ (linhaAtual + 1) +', nomeInput'+ (linhaAtual + 1) +', buscarReparteAtualCota('+ (linhaAtual + 1) +'));" ' +
 						     '/>'+
 						'</td>' +
 						'<td align="center" id="reparteText'+ (linhaAtual + 1) +'"></td>' +
 						'<td align="center">' +
-						     '<input type="text" name="diferencaInput" id="diferencaInput'+ (linhaAtual + 1) +'" style="width:80px; text-align:center;" onblur="adicionarLinhaCota('+ (linhaAtual + 1) +');" onchange="calcularReparteAtual('+ (linhaAtual + 1) +')"/>' +
+						     '<input type="text" name="diferencaInput" maxlength="255" id="diferencaInput'+ (linhaAtual + 1) +'" style="width:80px; text-align:center;" onblur="adicionarLinhaCota('+ (linhaAtual + 1) +');" onchange="calcularReparteAtual('+ (linhaAtual + 1) +')"/>' +
 						'</td>' +
 						'<td id="reparteAtualText'+ (linhaAtual + 1) +'" align="center"></td></tr>'
 				);
@@ -699,7 +700,13 @@
 				$("#diferencaInput" + idDiv).val(0);
 			}
 			
-			$("#reparteAtualText" + idDiv).text(parseInt($("#reparteText" + idDiv).text()) - parseInt($("#diferencaInput" + idDiv).val()));
+			if ($("#tipoDiferenca").val() == "SOBRA_DE" || $("#tipoDiferenca").val() == "SOBRA_EM"){
+				
+				$("#reparteAtualText" + idDiv).text(parseInt($("#reparteText" + idDiv).text()) + parseInt($("#diferencaInput" + idDiv).val()));
+			} else {
+				
+				$("#reparteAtualText" + idDiv).text(parseInt($("#reparteText" + idDiv).text()) - parseInt($("#diferencaInput" + idDiv).val()));
+			}
 		}
 		
 		function pesquisarProdutosNota(){
@@ -721,9 +728,17 @@
 		
 		function alterarReparteAtual(indexDiv){
 			
-			$("#qtdTotal" + indexDiv).text(
-				parseInt($("#reparte" + indexDiv).text()) - parseInt($("#inputDiferencaProduto" + indexDiv).val())
-			);
+			if ($("#tipoDiferenca").val() == "SOBRA_DE" || $("#tipoDiferenca").val() == "SOBRA_EM"){
+				
+				$("#qtdTotal" + indexDiv).text(
+					parseInt($("#reparte" + indexDiv).text()) + parseInt($("#inputDiferencaProduto" + indexDiv).val())
+				);
+			} else {
+				
+				$("#qtdTotal" + indexDiv).text(
+					parseInt($("#reparte" + indexDiv).text()) - parseInt($("#inputDiferencaProduto" + indexDiv).val())
+				);
+			}
 		}
 		
 	</script>
