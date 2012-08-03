@@ -3,6 +3,7 @@ package br.com.abril.nds.fixture;
 import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -1196,7 +1197,6 @@ public class Fixture {
 		tipoNotaFiscal.setTipoOperacao(TipoOperacao.ENTRADA);		
 		tipoNotaFiscal.setTipoAtividade(TipoAtividade.MERCANTIL);
 		tipoNotaFiscal.setSerieNotaFiscal(2);
-		tipoNotaFiscal.setProcesso(Processo.PROCESSO);
 		return tipoNotaFiscal;
 	}
 
@@ -1244,7 +1244,7 @@ public class Fixture {
 		tipoNotaFiscal.setTipoOperacao(TipoOperacao.SAIDA);
 		tipoNotaFiscal.setTipoAtividade(TipoAtividade.MERCANTIL);
 		tipoNotaFiscal.setSerieNotaFiscal(3);
-		tipoNotaFiscal.setProcesso(Processo.PROCESSO);
+		tipoNotaFiscal.setProcesso(new HashSet<Processo>());
 		return tipoNotaFiscal;
 	}
 
@@ -1261,7 +1261,6 @@ public class Fixture {
 		tipoNotaFiscal.setNopCodigo(0L);
 		tipoNotaFiscal.setTipoOperacao(TipoOperacao.ENTRADA);
 		tipoNotaFiscal.setTipoAtividade(TipoAtividade.PRESTADOR_SERVICO);
-		tipoNotaFiscal.setProcesso(Processo.PROCESSO);
 		tipoNotaFiscal.setSerieNotaFiscal(4);
 		
 		return tipoNotaFiscal;

@@ -25,10 +25,7 @@ $(function() {
 });
 
 </script>
-<style type="text/css">
-	#dialog-box{display:none;}
-	#dialog-box fieldset{width:570px!important;}
-</style>
+
 </head>
 
 <body>
@@ -42,7 +39,7 @@ $(function() {
               			<td width="47">Operação:</td>
                 		<td width="114">
                 			 <select name="operacao" id="operacaoID" style="width:150px;" class="campoDePesquisa">
-						      <option selected="selected">Selecione...</option>
+						      <option selected="selected">Todos</option>
 						      <c:forEach var="operacao" items="${listaAtividades}">
 										<option value="${operacao.key}">${operacao.value}</option>
 							  </c:forEach>
@@ -80,7 +77,7 @@ $(function() {
 					display : 'Processo',
 					name : 'processo',
 					width : 140,
-					sortable : true,
+					sortable : false,
 					align : 'left'
 				},{
 					display : 'Tipo de Nota',
