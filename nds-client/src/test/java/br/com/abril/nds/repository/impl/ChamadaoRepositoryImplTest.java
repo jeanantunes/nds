@@ -54,7 +54,7 @@ public class ChamadaoRepositoryImplTest extends AbstractRepositoryImplTest  {
 		
 		ProdutoEdicao produtoEdicaoVeja1 =
 			Fixture.produtoEdicao("1", 1L, 10, 14, new BigDecimal(0.1),
-								  BigDecimal.TEN, new BigDecimal(20), "ABCDEFGHIJKLMNOPQRSTU", 1L, produtoVeja, null, false);
+								  BigDecimal.TEN, new BigDecimal(20), "ABCDEFGHIJKLMNOPQ", 1L, produtoVeja, null, false);
 		save(produtoEdicaoVeja1);
 		
 		Box box1 = Fixture.criarBox(1, "BX-001", TipoBox.LANCAMENTO);

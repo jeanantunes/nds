@@ -14,10 +14,26 @@ public class CFOPServiceImpl implements CFOPService {
 	@Autowired
 	private CFOPRepository cfopRepository;
 	
+	/**
+	 * Obtem CFOP por id
+	 * @param codigo
+	 * @return CFOP
+	 */
 	@Override
 	@Transactional
 	public CFOP buscarPorId(Long id) {		 
 		return this.cfopRepository.buscarPorId(id);
+	}
+
+	/**
+	 * Obtem CFOP por código
+	 * @param codigo
+	 * @return CFOP
+	 */
+	@Override
+	@Transactional
+	public CFOP buscarPorCodigo(String codigo) {
+		return this.cfopRepository.obterPorCodigo(codigo);
 	}
 
 }

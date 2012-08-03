@@ -71,7 +71,7 @@ public class ImportacaoDeArquivoHistoricoVendaStrategyTest extends AbstractRepos
 		save(produtoVeja);		
 				
 		produtoEdicaoVeja1 = Fixture.produtoEdicao("1", 1L, 10, 14,
-				BigDecimal.ONE, BigDecimal.TEN, new BigDecimal(20), "ABCDEFGHIJKLMNOPQRSTU", 1L,
+				BigDecimal.ONE, BigDecimal.TEN, new BigDecimal(20), "ABCDEFGHIJKLMNOPQ", 1L,
 				produtoVeja, null, false);
 		
 		save(produtoEdicaoVeja1);	

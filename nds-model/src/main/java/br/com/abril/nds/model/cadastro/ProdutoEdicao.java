@@ -67,7 +67,7 @@ public class ProdutoEdicao implements Serializable {
 	@Column(name  = "NUMERO_EDICAO", nullable = false)
 	protected Long numeroEdicao;
 	
-	@Column(name = "NOME_COMERCIAL", nullable = true, unique = true, length = 60)
+	@Column(name = "NOME_COMERCIAL", nullable = true, unique = false, length = 60)
 	private String nomeComercial;
 	
 	@Column(name = "PRECO_VENDA", nullable = true)

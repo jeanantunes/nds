@@ -96,11 +96,13 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 	public BalanceamentoRecolhimentoDTO obterMatrizBalanceamento(Integer numeroSemana,
 																 List<Long> listaIdsFornecedores,
 																 TipoBalanceamentoRecolhimento tipoBalanceamentoRecolhimento,
-																 boolean forcarBalanceamento) {
+																 boolean forcarBalanceamento,
+																 Date dataBalanceamento) {
 		
 		RecolhimentoDTO dadosRecolhimento =
-			this.obterDadosRecolhimento(numeroSemana, listaIdsFornecedores,
-										tipoBalanceamentoRecolhimento, forcarBalanceamento);
+			this.obterDadosRecolhimento(
+				numeroSemana, listaIdsFornecedores, tipoBalanceamentoRecolhimento,
+				forcarBalanceamento, dataBalanceamento);
 		
 		BalanceamentoRecolhimentoStrategy balanceamentoRecolhimentoStrategy = 
 			BalanceamentoRecolhimentoFactory.getStrategy(tipoBalanceamentoRecolhimento);
@@ -540,13 +542,15 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 	private RecolhimentoDTO obterDadosRecolhimento(Integer numeroSemana,
 			 									   List<Long> listaIdsFornecedores,
 			 									   TipoBalanceamentoRecolhimento tipoBalanceamento,
-			 									   boolean forcarBalanceamento) {
+			 									   boolean forcarBalanceamento,
+			 									   Date dataBalanceamento) {
 		
 		RecolhimentoDTO dadosRecolhimento = new RecolhimentoDTO();
 		
 		Distribuidor distribuidor = this.distribuidorService.obter();
 		
-		Intervalo<Date> periodoRecolhimento = getPeriodoRecolhimento(distribuidor, numeroSemana);
+		Intervalo<Date> periodoRecolhimento =
+			getPeriodoRecolhimento(distribuidor, numeroSemana, dataBalanceamento);
 		
 		TreeSet<Date> datasRecolhimentoFornecedor = 
 			this.obterDatasRecolhimentoFornecedor(periodoRecolhimento, listaIdsFornecedores);
@@ -617,10 +621,13 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 	/**
 	 * Monta o perídodo de recolhimento de acordo com a semana informada.
 	 */
-	private Intervalo<Date> getPeriodoRecolhimento(Distribuidor distribuidor, Integer numeroSemana) {
+	private Intervalo<Date> getPeriodoRecolhimento(Distribuidor distribuidor,
+												   Integer numeroSemana,
+												   Date dataBalanceamento) {
 		
 		Date dataInicioSemana = 
-			DateUtil.obterDataDaSemanaNoAno(numeroSemana, distribuidor.getInicioSemana().getCodigoDiaSemana(), null);
+			DateUtil.obterDataDaSemanaNoAno(
+				numeroSemana, distribuidor.getInicioSemana().getCodigoDiaSemana(), dataBalanceamento);
 		
 		Date dataFimSemana = DateUtil.adicionarDias(dataInicioSemana, 6);
 		
