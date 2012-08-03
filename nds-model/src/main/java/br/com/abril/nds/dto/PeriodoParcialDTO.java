@@ -15,9 +15,8 @@ public class PeriodoParcialDTO implements Serializable {
 
 	private static final long serialVersionUID = 7240165519168307608L;
 	
-	@Export(label = "Período", alignment=Alignment.CENTER)
-	private String periodo;
-	
+	private Long idProdutoEdicao;
+		
 	@Export(label = "Data Lancamento", alignment=Alignment.CENTER)
 	private String dataLancamento;
 	
@@ -39,14 +38,20 @@ public class PeriodoParcialDTO implements Serializable {
 	@Export(label = "% Venda", alignment=Alignment.CENTER)
 	private String percVenda;
 	
+	@Export(label = "Suplementação", alignment=Alignment.CENTER)
+	private Integer suplementacao;
+	
+	@Export(label = "Venda CE", alignment=Alignment.CENTER)
+	private Integer vendaCE;
+	
+	@Export(label = "% Venda Acum.", alignment=Alignment.CENTER)
+	private String percVendaAcumulada;
+	
+	@Export(label = "% Venda Acum.", alignment=Alignment.CENTER)
+	private Integer reparteAcum;
+		
 	private Long idLancamento;
 	
-	public String getPeriodo() {
-		return periodo;
-	}
-	public void setPeriodo(Long periodo) {
-		this.periodo = periodo + "º";
-	}
 	public String getDataLancamento() {
 		return dataLancamento;
 	}
@@ -116,6 +121,64 @@ public class PeriodoParcialDTO implements Serializable {
 	public void setIdLancamento(Long idLancamento) {
 		this.idLancamento = idLancamento;
 	}
-	
-		
+	/**
+	 * @return the idProdutoEdicao
+	 */
+	public Long getIdProdutoEdicao() {
+		return idProdutoEdicao;
+	}
+	/**
+	 * @param idProdutoEdicao the idProdutoEdicao to set
+	 */
+	public void setIdProdutoEdicao(Long idProdutoEdicao) {
+		this.idProdutoEdicao = idProdutoEdicao;
+	}
+	/**
+	 * @return the suplementacao
+	 */
+	public Integer getSuplementacao() {
+		return suplementacao;
+	}
+	/**
+	 * @param suplementacao the suplementacao to set
+	 */
+	public void setSuplementacao(Integer suplementacao) {
+		this.suplementacao = suplementacao;
+	}
+	/**
+	 * @return the vendaCE
+	 */
+	public Integer getVendaCE() {
+		return vendaCE;
+	}
+	/**
+	 * @param vendaCE the vendaCE to set
+	 */
+	public void setVendaCE(Integer vendaCE) {
+		this.vendaCE = vendaCE;
+	}
+	/**
+	 * @return the percVendaAcumulada
+	 */
+	public String getPercVendaAcumulada() {
+		return percVendaAcumulada;
+	}
+	/**
+	 * @param percVendaAcumulada the percVendaAcumulada to set
+	 */
+	public void setPercVendaAcumulada(String percVendaAcumulada) {
+		this.percVendaAcumulada = percVendaAcumulada;
+	}
+	/**
+	 * @return the reparteAcum
+	 */
+	public Integer getReparteAcum() {
+		return reparteAcum;
+	}
+	/**
+	 * @param reparteAcum the reparteAcum to set
+	 */
+	public void setReparteAcum(Integer reparteAcum) {
+		this.reparteAcum = reparteAcum;
+	}		
 }

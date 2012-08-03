@@ -14,7 +14,8 @@
 				data,
 				function(result) {
 					
-					popupRateioDiferenca(idDiferenca);
+					//popupRateioDiferenca(idDiferenca);
+					popupNovasDiferencas(idDiferenca);
 				},
 				null
 			);
