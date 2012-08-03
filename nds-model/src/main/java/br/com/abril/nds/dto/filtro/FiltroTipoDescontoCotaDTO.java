@@ -33,7 +33,7 @@ public class FiltroTipoDescontoCotaDTO extends FiltroDTO implements Serializable
 	
 	public enum OrdenacaoColunaConsulta {
 		
-		SEQUENCIAL("seq"),COTA("cota"),CODIGO("codigo");
+		SEQUENCIAL("sequencial"),COTA("cota"),CODIGO("codigo");
 		
 		private String nomeColuna;
 		

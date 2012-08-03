@@ -1,13 +1,16 @@
 package br.com.abril.nds.service;
 
 import java.io.InputStream;
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
 import br.com.abril.nds.dto.FuroProdutoDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoDTO;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.service.exception.UniqueConstraintViolationException;
+import br.com.abril.nds.util.Intervalo;
 
 /**
  * Interface que define serviços referentes a entidade
@@ -98,18 +101,20 @@ public interface ProdutoEdicaoService {
 	 * 
 	 * @return
 	 */
-	public List<ProdutoEdicaoDTO> pesquisarEdicoes(ProdutoEdicaoDTO dto,
+	public List<ProdutoEdicaoDTO> pesquisarEdicoes(String codigoProduto, String nomeProduto,
+			Intervalo<Date> dataLancamento, Intervalo<BigDecimal> preco , StatusLancamento statusLancamento,
+			String codigoDeBarras, boolean brinde,
 			String sortorder, String sortname, int page, int maxResults);
 	
 	/**
 	 * Pesquisa as últimas edições cadastradas, .<br>
 	 * 
-	 * @param dto
+	 * @param codigoProduto
 	 * @param maxResults
 	 * 
 	 * @return
 	 */
-	public List<ProdutoEdicaoDTO> pesquisarUltimasEdicoes(ProdutoEdicaoDTO dto,
+	public List<ProdutoEdicaoDTO> pesquisarUltimasEdicoes(String codigoProduto,
 			int maxResults);
 	
 	/**
@@ -120,7 +125,9 @@ public interface ProdutoEdicaoService {
 	 * 
 	 * @return
 	 */
-	public Long countPesquisarEdicoes(ProdutoEdicaoDTO dto);
+	public Long countPesquisarEdicoes(String codigoProduto, String nomeProduto,
+			Intervalo<Date> dataLancamento, Intervalo<BigDecimal> preco , StatusLancamento statusLancamento,
+			String codigoDeBarras, boolean brinde);
 	
 	/**
 	 * Salva ou Atualiza um novo ProdutoEdição.

@@ -78,7 +78,7 @@ public class ParametroCobrancaCotaServiceImplTest extends AbstractRepositoryImpl
 		save(politicaCobranca);
 		
 		Endereco enderecoDoDistruibuidor = Fixture.criarEndereco(
-				TipoEndereco.COBRANCA, "13222-020", "Rua João de Souza", 51, "Centro", "São Paulo", "SP");
+				TipoEndereco.COBRANCA, "13222-020", "Rua João de Souza", 51, "Centro", "São Paulo", "SP",1);
 		
 		EnderecoDistribuidor enderecoDistribuidor = Fixture.enderecoDistribuidor(distribuidor, enderecoDoDistruibuidor, true, TipoEndereco.COBRANCA);
 		
@@ -94,7 +94,7 @@ public class ParametroCobrancaCotaServiceImplTest extends AbstractRepositoryImpl
 		save(cota);
 		
 		Endereco enderecoDaCota = Fixture.criarEndereco(
-				TipoEndereco.COBRANCA, "13222-020", "Rua Antonio Cristovan", 51, "Centro", "Mococa", "SP");
+				TipoEndereco.COBRANCA, "13222-020", "Rua Antonio Cristovan", 51, "Centro", "Mococa", "SP",1);
 		
 		
 		EnderecoCota enderecoCota = Fixture.enderecoCota(cota, enderecoDaCota, true, TipoEndereco.COBRANCA);
@@ -106,7 +106,7 @@ public class ParametroCobrancaCotaServiceImplTest extends AbstractRepositoryImpl
 		formasCobranca.add(formaBoleto);
 		ParametroCobrancaCota parametroCobranca = 
 				Fixture.parametroCobrancaCota(formasCobranca, 1, null, cota, 1, 
-											  false, new BigDecimal(1000));
+											  false, new BigDecimal(1000), null);
 		save(parametroCobranca);
 		formaBoleto.setParametroCobrancaCota(parametroCobranca);
 		formaBoleto.setPrincipal(true);

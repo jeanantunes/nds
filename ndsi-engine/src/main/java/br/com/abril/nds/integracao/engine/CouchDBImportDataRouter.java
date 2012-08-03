@@ -198,6 +198,9 @@ public class CouchDBImportDataRouter extends AbstractRepository implements Conte
 			@Override
 			public Void doInTransaction(TransactionStatus status) {
 				
+				//TODO Alterar consulta para obter o parametro "CODIGO_DISTRIBUIDOR_DINAP", 
+				// esse parametro não será mais relacionada aos Parametro do Sistema, sera relacionado aos Parametro do Distribuidor
+			
 				String hql = "SELECT p.valor from ParametroSistema p where p.tipoParametroSistema = :tipoParametroSistema";
 				
 				Query query = getSession().createQuery(hql);

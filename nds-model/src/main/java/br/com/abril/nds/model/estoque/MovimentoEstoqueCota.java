@@ -36,7 +36,7 @@ public class MovimentoEstoqueCota  extends AbstractMovimentoEstoque {
 	@JoinColumn(name = "ESTUDO_COTA_ID")
 	private EstudoCota estudoCota;
 	
-	@ManyToMany(mappedBy="listaMovimentoEstoqueCota", targetEntity=ProdutoServico.class)
+	@ManyToMany(mappedBy="listaMovimentoEstoqueCota")
 	private List<ProdutoServico> listaProdutoServicos;
 	
 	@OneToMany(mappedBy = "movimentoEstoqueCota")

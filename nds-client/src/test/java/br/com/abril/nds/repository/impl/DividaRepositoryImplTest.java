@@ -87,7 +87,7 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
 		save(manoel);
 		
 		PessoaJuridica juridicaDistrib = Fixture.pessoaJuridica("Distribuidor Acme",
-				"56.003.315/0001-47", "333.333.333.333", "distrib_acme@mail.com", "99.999-9");
+				"56.003.315/0001-47", "333333333333", "distrib_acme@mail.com", "99.999-9");
 		
 		save(juridicaDistrib);
 		
@@ -126,7 +126,7 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
 		formasCobranca.add(formaBoleto);
 		ParametroCobrancaCota parametroCobrancaConta = 
 				Fixture.parametroCobrancaCota(formasCobranca, 1, BigDecimal.TEN, cotaManoel, 1, 
-											  true, BigDecimal.TEN);
+											  true, BigDecimal.TEN, null);
 		formaBoleto.setParametroCobrancaCota(parametroCobrancaConta);
 		formaBoleto.setPrincipal(true);
 		
@@ -161,7 +161,7 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
 		save(produtoVeja);		
 				
 		ProdutoEdicao produtoEdicaoVeja1 = Fixture.produtoEdicao("1", 1L, 10, 14,
-				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(20), "ABCDEFGHIJKLMNOPQRSTU", 1L,
+				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(20), "ABCDEFGHIJKLMNOPQ", 1L,
 				produtoVeja, null, false);
 		save(produtoEdicaoVeja1);
 		

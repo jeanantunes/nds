@@ -153,6 +153,7 @@ public class CotaController {
 	 */
 	private void processarTelefonesCota(Long idCota){
 		
+		
 		Map<Integer, TelefoneAssociacaoDTO> map = this.obterTelefonesSalvarSessao();
 		
 		List<TelefoneAssociacaoDTO> lista = new ArrayList<TelefoneAssociacaoDTO>();

@@ -81,7 +81,7 @@ public class ParciaisServiceImplTest extends AbstractRepositoryImplTest  {
 		
 		ParametroCobrancaCota parametroCobranca = 
 				Fixture.parametroCobrancaCota(null, 2, BigDecimal.TEN, null, 1, 
-											  true, BigDecimal.TEN);
+											  true, BigDecimal.TEN, null);
 		
   		save(parametroCobranca);
 		
@@ -112,7 +112,7 @@ public class ParciaisServiceImplTest extends AbstractRepositoryImplTest  {
 		save(produtoVeja);
 		
 		produtoEdicaoVeja1 = Fixture.produtoEdicao("1", 1L, 10, peb,
-				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(20), "ABCDEFGHIJKLMNOPQRSTU", 1L,
+				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(20), "ABCDEFGHIJKLMNOPQ", 1L,
 				produtoVeja, null, false);
 		
 		produtoEdicaoVeja1.setParcial(true);

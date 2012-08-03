@@ -22,8 +22,7 @@ public class ConsultaConsignadoCotaServiceImpl implements ConsultaConsignadoCota
 
 	@Override
 	@Transactional
-	public List<ConsultaConsignadoCotaDTO> buscarConsignadoCota(
-			FiltroConsultaConsignadoCotaDTO filtro, String limitar) {		 
+	public List<ConsultaConsignadoCotaDTO> buscarConsignadoCota(FiltroConsultaConsignadoCotaDTO filtro, String limitar) {		 
 		return this.consignadoCotaRepository.buscarConsignadoCota(filtro, limitar);
 	}
 

@@ -2,6 +2,11 @@ package br.com.abril.nds.service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+
+import br.com.abril.nds.dto.CalendarioFeriadoDTO;
+import br.com.abril.nds.model.dne.Localidade;
+import br.com.abril.nds.util.export.FileExporter.FileType;
 
 /**
  * Interface que define serviços referentes a 
@@ -63,4 +68,43 @@ public interface CalendarioService {
  	 */
 	Date adicionarDiasUteis(Date data, int numDias, List<Integer> diasSemanaConcentracaoCobranca, Integer diaMesConcentracaoCobranca);
 
+	/**
+	 * Cadastro novo feriado.
+	 * 
+	 * @param calendarioFeriado
+	 */
+	void cadastrarFeriado(CalendarioFeriadoDTO calendarioFeriado);
+
+	/**
+	 * Obtém lista dos feriados cadastrado para determinada data.
+	 * 
+	 * @param dataFeriado
+	 * 
+	 * @return {@link List<CalendarioFeriadoDTO>}
+	 */
+	List<CalendarioFeriadoDTO> obterListaCalendarioFeriadoDataEspecifica(Date dataFeriado);
+
+	/**
+	 * Obtém mapa de datas com feriados cadastrados.
+	 * 
+	 * @param anoVigencia
+	 * 
+	 * @return Map<Date, String>
+	 */
+	public Map<Date, String> obterListaDataFeriado(int anoVigencia);
+	
+	public List<Localidade> obterListaLocalidadeCotas();
+
+	public void excluirFeriado(CalendarioFeriadoDTO calendarioFeriado);
+	
+	public List<CalendarioFeriadoDTO> obterListaCalendarioFeriadoMensal(int mes, int ano);
+
+	public byte[] obterRelatorioCalendarioFeriado(FileType fileType, TipoPesquisaFeriado tipoPesquisaFeriado, int mes, int ano);
+	
+	public enum TipoPesquisaFeriado {
+		FERIADO_MENSAL,
+		FERIADO_ANUAL;
+	}
+
+	
 }

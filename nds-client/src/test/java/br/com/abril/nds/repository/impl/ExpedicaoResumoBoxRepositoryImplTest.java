@@ -88,7 +88,7 @@ public class ExpedicaoResumoBoxRepositoryImplTest extends AbstractRepositoryImpl
 		
 		ParametroCobrancaCota parametroCobranca = 
 				Fixture.parametroCobrancaCota(null, 2, BigDecimal.TEN, null, 1, 
-											  true, BigDecimal.TEN);
+											  true, BigDecimal.TEN, null);
   		save(parametroCobranca);
 		
 		FormaCobranca formaBoleto =
@@ -103,7 +103,7 @@ public class ExpedicaoResumoBoxRepositoryImplTest extends AbstractRepositoryImpl
 		politicasCobranca.add(politicaCobranca);
 		
 		PessoaJuridica juridicaDistrib = Fixture.pessoaJuridica("Distribuidor Acme",
-				"33.333.333/0001-33", "333.333.333.333", "distrib_acme@mail.com", "99.999-9");
+				"33.333.333/0001-33", "333333333333", "distrib_acme@mail.com", "99.999-9");
 		save(juridicaDistrib);
 
 		Distribuidor distribuidor = Fixture.distribuidor(1, juridicaDistrib, new Date(), politicasCobranca);
@@ -170,22 +170,22 @@ public class ExpedicaoResumoBoxRepositoryImplTest extends AbstractRepositoryImpl
 		save(produtoCapricho);
 		
 		ProdutoEdicao produtoEdicaoVeja1 = Fixture.produtoEdicao("1", 1L, 10, 14,
-				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(20), "ABCDEFGHIJKLMNOPQRSTU", 1L,
+				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(20), "ABCDEFGHIJKLMNOPQ", 1L,
 				produtoVeja, null, false);
 		save(produtoEdicaoVeja1);
 		
 		ProdutoEdicao produtoEdicaoVeja2 = Fixture.produtoEdicao("1", 2L, 10, 14,
-				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(20), "ABCDEFGHIJKLMNOPQRST", 2L,
+				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(20), "ABCDEFGHIJKLMNOPA", 2L,
 				produtoVeja, null, false);
 		save(produtoEdicaoVeja2);
 		
 		ProdutoEdicao produtoEdicaoSuper1 = Fixture.produtoEdicao("1", 1L, 10, 14,
-				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(20), "ABCDEFGHIJKLMNOPQRS", 3L,
+				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(20), "ABCDEFGHIJKLMNOPB", 3L,
 				produtoSuper, null, false);
 		save(produtoEdicaoSuper1);
 		
 		ProdutoEdicao produtoEdicaoCapricho1 = Fixture.produtoEdicao("1", 1L, 9, 14,
-				new BigDecimal(0.15), new BigDecimal(9), new BigDecimal(13.5), "ABCDEFGHIJKLMNOPQR", 4L,
+				new BigDecimal(0.15), new BigDecimal(9), new BigDecimal(13.5), "ABCDEFGHIJKLMNOPC", 4L,
 				produtoCapricho, null, false);
 		save(produtoEdicaoCapricho1);
 		
@@ -393,11 +393,11 @@ public class ExpedicaoResumoBoxRepositoryImplTest extends AbstractRepositoryImpl
 			 50, produtoEdicaoCapricho1, tipoMovimentoSobraEm, 
 				usuarioJoao, estoqueProdutoVeja1, TipoDiferenca.SOBRA_EM);
 		
-		
-		RateioDiferenca rateioDiferencaCotaManoel = Fixture.rateioDiferenca(BigInteger.valueOf(10), cotaManoel, diferenca3, estudoCotaSuper1Manoel);
+		RateioDiferenca rateioDiferencaCotaManoel = Fixture.rateioDiferenca(BigInteger.valueOf(10), cotaManoel, diferenca3, estudoCotaSuper1Manoel, new Date());
 		save(rateioDiferencaCotaManoel);
 		
-		RateioDiferenca rateioDiferencaJose = Fixture.rateioDiferenca(BigInteger.valueOf(10),cotaJose, diferenca, estudoCotaVeja1Joao);
+		RateioDiferenca rateioDiferencaJose = Fixture.rateioDiferenca(BigInteger.valueOf(10),cotaJose, diferenca, estudoCotaVeja1Joao, new Date());
+
 		save(rateioDiferencaJose);
 	}
 

@@ -4,7 +4,9 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,6 +21,7 @@ import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.planejamento.ChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.ChamadaEncalheCota;
+import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
 import br.com.abril.nds.repository.ChamadaEncalheCotaRepository;
 import br.com.abril.nds.repository.ChamadaEncalheRepository;
@@ -113,17 +116,18 @@ public class ChamadaAntecipadaEncalheServiceImpl implements ChamadaAntecipadaEnc
 	 */
 	private void removerChamadasAntecipadas(Long... idChamadaAntecipada){
 		
+		ChamadaEncalhe chamadaEncalhe = null;
+		
 		for(Long id :idChamadaAntecipada){
 			
-			try{
+			Long qnt = chamadaEncalheCotaRepository.obterQntChamadaEncalheCota(id);
+			
+			if(qnt!= null && qnt == 0){
 				
-				chamadaEncalheRepository.removerPorId(id);
-				chamadaEncalheRepository.flush();
+				chamadaEncalhe = chamadaEncalheRepository.buscarPorId(id);
+				chamadaEncalhe.getLancamentos().clear();
 				
-			}catch (org.springframework.dao.DataIntegrityViolationException e) {
-				//Silencia a exceção caso alguma chamada de encalhe tenha vinculo com alguma chamada encalhe cota. 
-				//Utilizado para não ter que ficar fazendo implementação de integridade  desnecessária  para exclusão de chamada de encalhe, 
-				//quando as chamadas encalhe cota forem canceladas.
+				chamadaEncalheRepository.remover(chamadaEncalhe);
 			}
 		}
 	}
@@ -213,6 +217,7 @@ public class ChamadaAntecipadaEncalheServiceImpl implements ChamadaAntecipadaEnc
 		ProdutoEdicao produtoEdicao = produtoEdicaoRepository
 				.obterProdutoEdicaoPorCodProdutoNumEdicao(infoEncalheDTO.getCodigoProduto(), 
 														  infoEncalheDTO.getNumeroEdicao());
+	
 		ChamadaEncalhe chamadaEncalhe = 
 				chamadaEncalheRepository.obterPorNumeroEdicaoEDataRecolhimento(
 					produtoEdicao,
@@ -223,6 +228,7 @@ public class ChamadaAntecipadaEncalheServiceImpl implements ChamadaAntecipadaEnc
 			chamadaEncalhe = new ChamadaEncalhe();
 		}
 		
+		chamadaEncalhe.setLancamentos(obterLancamentoPorId(infoEncalheDTO.getChamadasAntecipadaEncalhe()));
 		chamadaEncalhe.setDataRecolhimento(infoEncalheDTO.getDataAntecipacao());
 		chamadaEncalhe.setProdutoEdicao(produtoEdicao);
 		chamadaEncalhe.setTipoChamadaEncalhe(TipoChamadaEncalhe.ANTECIPADA);
@@ -385,6 +391,20 @@ public class ChamadaAntecipadaEncalheServiceImpl implements ChamadaAntecipadaEnc
 		}
 		
 		return new BigDecimal(valorExemplares);
+	}
+	
+	private Set<Lancamento> obterLancamentoPorId(List<ChamadaAntecipadaEncalheDTO> chamadasEncalhe){
+		
+		Set<Long> idsLancamento = new HashSet<Long>(); 
+		
+		for(ChamadaAntecipadaEncalheDTO chm : chamadasEncalhe){
+			idsLancamento.add(chm.getIdLancamento());
+		}
+		
+		Set<Lancamento> retorno = new HashSet<Lancamento>();
+		retorno.addAll(lancamentoRepository.obterLancamentosPorIdOrdenados(idsLancamento));
+		
+		return retorno;
 	}
 	
 }

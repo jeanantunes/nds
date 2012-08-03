@@ -67,6 +67,8 @@ public class ParametroSistemaServiceImpl implements ParametroSistemaService {
 	public InputStream getLogotipoDistribuidor() {
 		InputStream inputStream;
 		try {
+			
+			//TODO alterar o modo de obter o LOGOTIPO_DISTRIBUIDOR, não é mais dominio do Parametro do Sistema
 			inputStream = couchDbClient.find(
 					TipoParametroSistema.LOGOTIPO_DISTRIBUIDOR.name()
 					+ "/" + ATTACHMENT_LOGOTIPO);
@@ -80,12 +82,6 @@ public class ParametroSistemaServiceImpl implements ParametroSistemaService {
 	@Transactional
 	public void salvar(ParametroSistemaGeralDTO dto, InputStream imgLogotipo, String imgContentType) {
 		
-		// Salvar logotipo:
-		if (imgLogotipo != null) {
-			couchDbClient.saveAttachment(imgLogotipo, ATTACHMENT_LOGOTIPO, imgContentType, TipoParametroSistema.LOGOTIPO_DISTRIBUIDOR.name(), null);
-		}
-		
-		// Salvar dto:
 		List<ParametroSistema> lst = dto.getParametrosSistema();
 		parametroSistemaRepository.salvar(lst);
 	}

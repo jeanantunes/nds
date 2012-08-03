@@ -80,7 +80,7 @@ public class EstoqueProdutoCotaRepositoryImplTest extends AbstractRepositoryImpl
 		save(bancoHSBC);
 		
 		PessoaJuridica juridicaDistrib = Fixture.pessoaJuridica("Distribuidor Acme",
-				"590033123647", "333.333.333.333", "distrib_acme@mail.com", "99.999-9");
+				"590033123647", "333", "distrib_acme@mail.com", "99.999-9");
 		save(juridicaDistrib);
 		
 		formaBoleto = Fixture.formaCobrancaBoleto(true, new BigDecimal(200), true, bancoHSBC,
@@ -127,13 +127,13 @@ public class EstoqueProdutoCotaRepositoryImplTest extends AbstractRepositoryImpl
 		
 		produtoEdicaoVeja1 =
 			Fixture.produtoEdicao("1", 1L, 10, 14, new BigDecimal(0.1),
-								  BigDecimal.TEN, new BigDecimal(20), "ABCDEFGHIJKLMNOPQRSTU", 1L, produtoVeja, null, false);
+								  BigDecimal.TEN, new BigDecimal(20), "ABCDEFGHIJKLMNOPQ", 1L, produtoVeja, null, false);
 		produtoEdicaoVeja1.setDesconto(null);
 		save(produtoEdicaoVeja1);
 		
 		
 		produtoEdicaoCaras1 = Fixture.produtoEdicao("1", 2L, 10, 14, new BigDecimal(0.1),
-				  BigDecimal.TEN, new BigDecimal(20), "ABCDEFGHIJKLMNOPQRST", 2L, produtoCaras, null, false);
+				  BigDecimal.TEN, new BigDecimal(20), "ABCDEFGHIJKLMNOPA", 2L, produtoCaras, null, false);
 		
 		produtoEdicaoCaras1.setDesconto(new BigDecimal(8));
 		save(produtoEdicaoCaras1);
@@ -295,4 +295,13 @@ public class EstoqueProdutoCotaRepositoryImplTest extends AbstractRepositoryImpl
 		
 	}
 	
+	@Test
+	public void testObterFaturamentoCota() {
+		Double faturamento = null;
+		
+		faturamento  = estoqueProdutoCotaRepository.obterFaturamentoCota(cotaManoel1.getId());
+		
+		Assert.assertTrue(faturamento.equals(108.0));
+		
+	}
 }

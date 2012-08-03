@@ -10,7 +10,9 @@ import br.com.abril.nds.util.DateUtil;
 public class ProdutoEmissaoDTO implements Serializable{
 
 	private static final long serialVersionUID = -6994377052719897181L;
-
+	
+	
+	private Long idProdutoEdicao;
 	private Integer sequencia;
 	private String codigoBarras;
 	private String codigoProduto;
@@ -209,5 +211,19 @@ public class ProdutoEmissaoDTO implements Serializable{
 	
 	public void setVlrDesconto(Double vlrDesconto) {
 		this.vlrDesconto = vlrDesconto;
+	}
+
+	/**
+	 * @return the idProdutoEdicao
+	 */
+	public Long getIdProdutoEdicao() {
+		return idProdutoEdicao;
+	}
+
+	/**
+	 * @param idProdutoEdicao the idProdutoEdicao to set
+	 */
+	public void setIdProdutoEdicao(Long idProdutoEdicao) {
+		this.idProdutoEdicao = idProdutoEdicao;
 	}
 }

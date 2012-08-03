@@ -29,7 +29,7 @@
 			for (i = 0 ; i < data.rows.length; i++) {
 
 				var lastIndex = data.rows[i].cell.length - 1;
-
+				
 				data.rows[i].cell[lastIndex-1] = 
 					'<a href="javascript:;" onclick="pesquisarDetalhesNota(' + data.rows[i].cell[lastIndex] + ')" ' +
 					' style="cursor:pointer;border:0px" title="Visualizar Detalhes">' +
@@ -50,7 +50,7 @@
 			var formData = $('#formPesquisaNotas').serializeArray();
 			
 			$("#notasSemFisicoGrid").flexOptions({
-				url : '<c:url value="/estoque/consultaNotas/pesquisarNotas" />',
+				url : contextPath + "/estoque/consultaNotas/pesquisarNotas",
 				params: formData,
 				newp: 1
 			});
@@ -61,7 +61,7 @@
 		function pesquisarDetalhesNota(idNota) {
 
 			$("#notasSemFisicoDetalheGrid").flexigrid({
-				url : '<c:url value="/estoque/consultaNotas/pesquisarDetalhesNotaFiscal" />',
+				url :  contextPath + "/estoque/consultaNotas/pesquisarDetalhesNotaFiscal",
 				preProcess: montarGridComRodape,
 				dataType : 'json',
 				colModel : [ {
@@ -201,19 +201,25 @@
 				}, {
 					display : 'Tipo',
 					name : 'descricao',
-					width : 200,
+					width : 150,
 					sortable : true,
 					align : 'left'
 				}, {
 					display : 'Fornecedor',
 					name : 'razaoSocial',
-					width : 130,
+					width : 100,
 					sortable : true,
 					align : 'left'
 				}, {
+					display : 'Valor R$',
+					name : 'valor',
+					width : 80,
+					sortable : true,
+					align : 'right'
+				},{
 					display : 'Nota Recebida',
 					name : 'statusNotaFiscal',
-					width : 120,
+					width : 110,
 					sortable : true,
 					align : 'center'
 				}, {

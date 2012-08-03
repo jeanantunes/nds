@@ -160,7 +160,7 @@ public class MonitorNFEServiceImplTest {
 				retornoComunicacaoEletronica);
 		
 		String documentoTransporte = "646546454654";
-		Endereco enderecoTransporte = Fixture.criarEndereco(TipoEndereco.COMERCIAL, "10500250", "Rua Nova", 1000, "Bairro Novo", "Olimpia", "SP");
+		Endereco enderecoTransporte = Fixture.criarEndereco(TipoEndereco.COMERCIAL, "10500250", "Rua Nova", 1000, "Bairro Novo", "Olimpia", "SP",12);
 		Integer modalidadeFrente = 1;
 		String municipio = "";
 		String nomeFantasiaTransporte = "";

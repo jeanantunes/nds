@@ -109,15 +109,15 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 
 		boolean usarAnd = false;
 		
-		if(filtro.getIdBox() != null ) { 
+		if(filtro.getIdBox() != null && filtro.getIdBox() != -1 ) {
 			hql.append( (usarAnd ? " and ":" where ") +" box.id = :idBox ");
 			usarAnd = true;
 		}
-		if(filtro.getIdRoteiro() != null){
+		if(filtro.getIdRoteiro() != null && filtro.getIdRoteiro() != -1){
 			hql.append( (usarAnd ? " and ":" where ") + " roteiro.id = :idRoteiro ");
 			usarAnd = true;
 		}
-		if(filtro.getIdRota() != null){
+		if(filtro.getIdRota() != null && filtro.getIdRota() != -1){
 			hql.append( (usarAnd ? " and ":" where ") + " rota.id = :idRota ");
 			usarAnd = true;
 		}
@@ -159,13 +159,13 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 		
 		HashMap<String,Object> param = new HashMap<String, Object>();
 		
-		if(filtro.getIdBox() != null ) { 
+		if(filtro.getIdBox() != null && filtro.getIdBox() != -1 ) { 
 			param.put("idBox", filtro.getIdBox());
 		}
-		if(filtro.getIdRoteiro() != null){
+		if(filtro.getIdRoteiro() != null && filtro.getIdRoteiro() != -1){
 			param.put("idRoteiro", filtro.getIdRoteiro());
 		}
-		if(filtro.getIdRota() != null){
+		if(filtro.getIdRota() != null && filtro.getIdRota() != -1){
 			param.put("idRota", filtro.getIdRota());
 		}
 		

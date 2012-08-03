@@ -70,7 +70,7 @@ public class MatrizLancamentoServiceImplTest extends AbstractRepositoryImplTest 
 		
 		ParametroCobrancaCota parametroCobranca = 
 				Fixture.parametroCobrancaCota(null, 2, BigDecimal.TEN, null, 1, 
-											  true, BigDecimal.TEN);
+											  true, BigDecimal.TEN, null);
 		
 		FormaCobranca formaBoleto =
 			Fixture.formaCobrancaBoleto(true, new BigDecimal(200), true, banco,
@@ -168,13 +168,15 @@ public class MatrizLancamentoServiceImplTest extends AbstractRepositoryImplTest 
 	
 	private Intervalo<Date> getPeriodoDistribuicao() {
 		
+		Date dataAtual = new Date();
+		
 		int numeroSemana =
-			DateUtil.obterNumeroSemanaNoAno(new Date(),
+			DateUtil.obterNumeroSemanaNoAno(dataAtual,
 											distribuidor.getInicioSemana().getCodigoDiaSemana());
 		
 		Date dataInicialSemana =
 			DateUtil.obterDataDaSemanaNoAno(numeroSemana,
-											distribuidor.getInicioSemana().getCodigoDiaSemana());
+											distribuidor.getInicioSemana().getCodigoDiaSemana(), dataAtual);
 		
 		Date dataFinalSemana =
 			DateUtil.adicionarDias(dataInicialSemana, 6);

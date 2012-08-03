@@ -13,6 +13,8 @@ public class ChamadaAntecipadaEncalheDTO implements Serializable {
 
 	private Integer codBox;
 	
+	private String nomeBox;
+	
 	private Integer numeroCota;
 	
 	private String nomeCota;
@@ -20,33 +22,69 @@ public class ChamadaAntecipadaEncalheDTO implements Serializable {
 	private BigInteger qntExemplares;
 	
 	private Long codigoChamadaEncalhe;
+	
+	private Long idLancamento;
 
 	public ChamadaAntecipadaEncalheDTO() {}
 
-	public ChamadaAntecipadaEncalheDTO(Integer codBox, Integer numeroCota,BigInteger qntExemplares,String nomeCota) {
+	public ChamadaAntecipadaEncalheDTO(Integer codBox,String nomeBox ,Integer numeroCota,BigInteger qntExemplares,Long idLancamento,String nomeCota) {
 		
 		this.codBox = codBox;
 		this.numeroCota = numeroCota;
 		this.nomeCota = nomeCota;
 		this.qntExemplares = qntExemplares;
+		this.nomeBox = nomeBox;
+		this.idLancamento = idLancamento;
 	}
 	
-	public ChamadaAntecipadaEncalheDTO(Integer codBox, Integer numeroCota,BigInteger qntExemplares,String nomeCota, Long codigoChamadaEncalhe) {
+	public ChamadaAntecipadaEncalheDTO(Integer codBox,String nomeBox, Integer numeroCota,BigInteger qntExemplares,String nomeCota, Long codigoChamadaEncalhe) {
 		
 		this.codBox = codBox;
 		this.numeroCota = numeroCota;
 		this.nomeCota = nomeCota;
 		this.qntExemplares = qntExemplares;
 		this.codigoChamadaEncalhe = codigoChamadaEncalhe;
+		this.nomeBox = nomeBox;
 	}
 	
-	public ChamadaAntecipadaEncalheDTO(Integer numeroCota,BigInteger qntExemplares,Long codigoChamadaEncalhe) {
+	public ChamadaAntecipadaEncalheDTO(Integer numeroCota,BigInteger qntExemplares,Long codigoChamadaEncalhe, Long idLancamento) {
 		
 		this.numeroCota = numeroCota;
 		this.qntExemplares = qntExemplares;
 		this.codigoChamadaEncalhe = codigoChamadaEncalhe;
+		this.idLancamento = idLancamento;
 	}
 	
+	
+	
+	/**
+	 * @return the idLancamento
+	 */
+	public Long getIdLancamento() {
+		return idLancamento;
+	}
+
+	/**
+	 * @param idLancamento the idLancamento to set
+	 */
+	public void setIdLancamento(Long idLancamento) {
+		this.idLancamento = idLancamento;
+	}
+
+	/**
+	 * @return the nomeBox
+	 */
+	public String getNomeBox() {
+		return nomeBox;
+	}
+
+	/**
+	 * @param nomeBox the nomeBox to set
+	 */
+	public void setNomeBox(String nomeBox) {
+		this.nomeBox = nomeBox;
+	}
+
 	/**
 	 * @return the codigoChamadaEncalhe
 	 */

@@ -79,35 +79,14 @@ public class ParametroSistemaGeralDTO implements Serializable {
 		return lst;
 	}
 	
-	/**
-	 * @return the cnpj
-	 */
-	public String getCnpj() {
-		return this.getParametroSistemaString(TipoParametroSistema.CNPJ);
+	public String getFrequenciaExpurgo(){
+		return getParametroSistemaString(TipoParametroSistema.FREQUENCIA_EXPURGO);
 	}
-
-	/**
-	 * @param cnpj
-	 *            the cnpj to set
-	 */
-	public void setCnpj(String cnpj) {
-		this.params.put(TipoParametroSistema.CNPJ, cnpj);
+	
+	public void setFrequenciaExpurgo(String qntMeses){
+		this.params.put(TipoParametroSistema.FREQUENCIA_EXPURGO,qntMeses);
 	}
-
-	/**
-	 * @return the razaoSocial
-	 */
-	public String getRazaoSocial() {
-		return this.getParametroSistemaString(TipoParametroSistema.RAZAO_SOCIAL);
-	}
-
-	/**
-	 * @param razaoSocial
-	 *            the razaoSocial to set
-	 */
-	public void setRazaoSocial(String razaoSocial) {
-		this.params.put(TipoParametroSistema.RAZAO_SOCIAL, razaoSocial);
-	}
+	
 
 	/**
 	 * @return the email
@@ -122,81 +101,6 @@ public class ParametroSistemaGeralDTO implements Serializable {
 	 */
 	public void setEmail(String email) {
 		this.params.put(TipoParametroSistema.EMAIL_USUARIO, email);
-	}
-
-	/**
-	 * @return the uf
-	 */
-	public String getUf() {
-		return this.getParametroSistemaString(TipoParametroSistema.UF);
-	}
-
-	/**
-	 * @param uf
-	 *            the uf to set
-	 */
-	public void setUf(String uf) {
-		this.params.put(TipoParametroSistema.UF, uf);
-	}
-
-	/**
-	 * @return the codDistribuidorDinap
-	 */
-	public String getCodDistribuidorDinap() {
-		return this.getParametroSistemaString(TipoParametroSistema.CODIGO_DISTRIBUIDOR_DINAP);
-	}
-
-	/**
-	 * @param codDistribuidorDinap
-	 *            the codDistribuidorDinap to set
-	 */
-	public void setCodDistribuidorDinap(String codDistribuidorDinap) {
-		this.params.put(TipoParametroSistema.CODIGO_DISTRIBUIDOR_DINAP, codDistribuidorDinap);
-	}
-
-	/**
-	 * @return the codDistribuidorFc
-	 */
-	public String getCodDistribuidorFc() {
-		return this.getParametroSistemaString(TipoParametroSistema.CODIGO_DISTRIBUIDOR_FC);
-	}
-
-	/**
-	 * @param codDistribuidorFc
-	 *            the codDistribuidorFc to set
-	 */
-	public void setCodDistribuidorFc(String codDistribuidorFc) {
-		this.params.put(TipoParametroSistema.CODIGO_DISTRIBUIDOR_FC, codDistribuidorFc);
-	}
-
-	/**
-	 * @return the login
-	 */
-	public String getLogin() {
-		return this.getParametroSistemaString(TipoParametroSistema.LOGIN_DISTRIBUIDOR);
-	}
-
-	/**
-	 * @param login
-	 *            the login to set
-	 */
-	public void setLogin(String login) {
-		this.params.put(TipoParametroSistema.LOGIN_DISTRIBUIDOR, login);
-	}
-
-	/**
-	 * @return the senha
-	 */
-	public String getSenha() {
-		return this.getParametroSistemaString(TipoParametroSistema.SENHA_DISTRIBUIDOR);
-	}
-
-	/**
-	 * @param senha
-	 *            the senha to set
-	 */
-	public void setSenha(String senha) {
-		this.params.put(TipoParametroSistema.SENHA_DISTRIBUIDOR, senha);
 	}
 
 	/**

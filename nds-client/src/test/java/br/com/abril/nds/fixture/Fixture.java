@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -53,6 +54,7 @@ import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.PoliticaCobranca;
 import br.com.abril.nds.model.cadastro.PoliticaSuspensao;
+import br.com.abril.nds.model.cadastro.Processo;
 import br.com.abril.nds.model.cadastro.ProcuracaoEntregador;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
@@ -66,9 +68,11 @@ import br.com.abril.nds.model.cadastro.TelefoneEntregador;
 import br.com.abril.nds.model.cadastro.TipoAtividade;
 import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
+import br.com.abril.nds.model.cadastro.TipoCota;
 import br.com.abril.nds.model.cadastro.TipoDesconto;
 import br.com.abril.nds.model.cadastro.TipoEndereco;
 import br.com.abril.nds.model.cadastro.TipoEntrega;
+import br.com.abril.nds.model.cadastro.TipoFeriado;
 import br.com.abril.nds.model.cadastro.TipoFormaCobranca;
 import br.com.abril.nds.model.cadastro.TipoFornecedor;
 import br.com.abril.nds.model.cadastro.TipoGarantia;
@@ -467,6 +471,29 @@ public class Fixture {
 	public static ProdutoEdicao produtoEdicao(String codigoProdutoEdicao, Long numeroEdicao, 
 			int pacotePadrao, int peb, BigDecimal peso, BigDecimal precoCusto,
 			BigDecimal precoVenda, String codigoDeBarras, Long cdSMNotUsedAnyMore, Produto produto, 
+			BigDecimal expectativaVenda, boolean parcial,String nomeComercial) {
+		
+		ProdutoEdicao produtoEdicao = new ProdutoEdicao();
+		produtoEdicao.setCodigo(codigoProdutoEdicao);
+		produtoEdicao.setNumeroEdicao(numeroEdicao);
+		produtoEdicao.setPacotePadrao(pacotePadrao);
+		produtoEdicao.setPeb(peb);
+		produtoEdicao.setPeso(peso);
+		produtoEdicao.setPrecoCusto(precoCusto);
+		produtoEdicao.setPrecoVenda(precoVenda);
+		produtoEdicao.setProduto(produto);
+		produtoEdicao.setCodigoDeBarras(codigoDeBarras);
+		produtoEdicao.setExpectativaVenda(expectativaVenda);
+		produtoEdicao.setParcial(parcial);
+		produtoEdicao.setNomeComercial(nomeComercial);
+		
+		produtoEdicao.setOrigemInterface(Boolean.TRUE);
+		return produtoEdicao;
+	}
+	
+	public static ProdutoEdicao produtoEdicao(String codigoProdutoEdicao, Long numeroEdicao, 
+			int pacotePadrao, int peb, BigDecimal peso, BigDecimal precoCusto,
+			BigDecimal precoVenda, String codigoDeBarras, Long cdSMNotUsedAnyMore, Produto produto, 
 			BigDecimal expectativaVenda, boolean parcial) {
 		
 		ProdutoEdicao produtoEdicao = new ProdutoEdicao();
@@ -485,6 +512,7 @@ public class Fixture {
 		produtoEdicao.setOrigemInterface(Boolean.TRUE);
 		return produtoEdicao;
 	}
+	
 	
 	public static Lancamento lancamento(TipoLancamento tipoLancamento,
 			ProdutoEdicao produtoEdicao, Date dlp, Date drp, Date dataCriacao,
@@ -1150,7 +1178,6 @@ public class Fixture {
 		itemNotaFiscal.setValorICMSProduto(valorICMSProduto);
 		itemNotaFiscal.setAliquotaIPIProduto(aliquotaIPIProduto);
 		itemNotaFiscal.setValorIPIProduto(valorIPIProduto);
-
 		
 		return itemNotaFiscal;
 		
@@ -1169,9 +1196,8 @@ public class Fixture {
 		tipoNotaFiscal.setContribuinte(false);
 		tipoNotaFiscal.setNopCodigo(0L);
 		tipoNotaFiscal.setTipoOperacao(TipoOperacao.ENTRADA);		
-		tipoNotaFiscal.setTipoAtividade(TipoAtividade.PRESTADOR_SERVICO);
+		tipoNotaFiscal.setTipoAtividade(TipoAtividade.MERCANTIL);
 		tipoNotaFiscal.setSerieNotaFiscal(2);
-		
 		return tipoNotaFiscal;
 	}
 
@@ -1218,7 +1244,8 @@ public class Fixture {
 		tipoNotaFiscal.setNopCodigo(0L);
 		tipoNotaFiscal.setTipoOperacao(TipoOperacao.SAIDA);
 		tipoNotaFiscal.setTipoAtividade(TipoAtividade.MERCANTIL);
-		tipoNotaFiscal.setSerieNotaFiscal(3);		
+		tipoNotaFiscal.setSerieNotaFiscal(3);
+		tipoNotaFiscal.setProcesso(new HashSet<Processo>());
 		return tipoNotaFiscal;
 	}
 
@@ -1856,12 +1883,13 @@ public class Fixture {
 		
 	}
 	
-	public static RateioDiferenca rateioDiferenca(BigInteger qtde, Cota cota, Diferenca diferenca, EstudoCota estudoCota){
+	public static RateioDiferenca rateioDiferenca(BigInteger qtde, Cota cota, Diferenca diferenca, EstudoCota estudoCota, Date dataNotaEnvio){
 		RateioDiferenca rateioDiferenca = new RateioDiferenca();
 		rateioDiferenca.setCota(cota);
 		rateioDiferenca.setDiferenca(diferenca);
 		rateioDiferenca.setEstudoCota(estudoCota);
 		rateioDiferenca.setQtde(qtde);
+		rateioDiferenca.setDataNotaEnvio(dataNotaEnvio);
 		
 		return rateioDiferenca;
 	}
@@ -1984,19 +2012,35 @@ public class Fixture {
 		return politicaCobranca;
 	}
 	
-	public static Feriado feriado(Date data, String descricao) {
+	public static Feriado feriado(
+			Date data, 
+			TipoFeriado tipoFeriado,
+			UnidadeFederacao unidadeFederacao,
+			Localidade localidade, 
+			String descricao,
+			boolean indEfetuaCobranca,
+			boolean indOpera,
+			boolean indRepeteAnualmente) {
 		
 		Feriado feriado = new Feriado();
 		
 		feriado.setData(data);
 		feriado.setDescricao(descricao);
+		feriado.setTipoFeriado(tipoFeriado);
+		feriado.setUnidadeFederacao(unidadeFederacao);
+		feriado.setLocalidade(localidade);
+		
+		feriado.setIndEfetuaCobranca(indEfetuaCobranca);
+		feriado.setIndOpera(indOpera);
+		feriado.setIndRepeteAnualmente(indRepeteAnualmente);
 		
 		return feriado;
+		
 	}
 
 	public static Endereco criarEndereco(TipoEndereco tipoEndereco, String cep,
 										 String logradouro, int numero, 
-										 String bairro, String cidade, String uf) {
+										 String bairro, String cidade, String uf,Integer codigoCidadeIBGE) {
 		
 		Endereco endereco = new Endereco();
 		
@@ -2006,6 +2050,7 @@ public class Fixture {
 		endereco.setLogradouro(logradouro);
 		endereco.setNumero(numero);
 		endereco.setUf(uf);
+		endereco.setCodigoCidadeIBGE(codigoCidadeIBGE);
 		
 		return endereco;
 	}
@@ -2256,7 +2301,7 @@ public class Fixture {
 
 	public static ParametroCobrancaCota parametroCobrancaCota(Set<FormaCobranca> formasCobranca,
 							Integer numeroAcumuloDivida, BigDecimal valor, Cota cota,
-							int fatorVencimento,boolean recebeCobrancaEmail, BigDecimal valorMininoCobranca) {
+							int fatorVencimento,boolean recebeCobrancaEmail, BigDecimal valorMininoCobranca, TipoCota tipoCota) {
 		
 		ParametroCobrancaCota parametro = new ParametroCobrancaCota();
 		
@@ -2270,6 +2315,7 @@ public class Fixture {
 		parametro.setValorMininoCobranca(valorMininoCobranca);
 		parametro.setPoliticaSuspensao(politicaSuspensao);
 		parametro.setFormasCobrancaCota(formasCobranca);
+		parametro.setTipoCota(tipoCota);
 		
 		return parametro;
 	}

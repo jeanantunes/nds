@@ -8,6 +8,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,7 @@ import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.dto.FuroProdutoDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.cadastro.Brinde;
 import br.com.abril.nds.model.cadastro.Dimensao;
 import br.com.abril.nds.model.cadastro.ParametroSistema;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
@@ -32,8 +34,10 @@ import br.com.abril.nds.repository.ParametroSistemaRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.repository.ProdutoRepository;
 import br.com.abril.nds.service.CapaService;
+import br.com.abril.nds.service.MatrizLancamentoService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.exception.UniqueConstraintViolationException;
+import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
 
@@ -64,6 +68,8 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 	@Autowired
 	private CapaService capaService;
 	
+	@Autowired
+	private MatrizLancamentoService matrizLancamentoService;
 	
 	@Override
 	@Transactional(readOnly = true)
@@ -213,27 +219,30 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 
 	@Override
 	@Transactional(readOnly = true)
-	public List<ProdutoEdicaoDTO> pesquisarEdicoes(ProdutoEdicaoDTO dto,
+	public List<ProdutoEdicaoDTO> pesquisarEdicoes(String codigoProduto, String nomeProduto,
+			Intervalo<Date> dataLancamento, Intervalo<BigDecimal> preco , StatusLancamento statusLancamento,
+			String codigoDeBarras, boolean brinde,
 			String sortorder, String sortname, int page, int maxResults) {
 		
 		final int initialResult = ((page * maxResults) - maxResults);
-		return this.produtoEdicaoRepository.pesquisarEdicoes(dto, sortorder,
-				sortname, initialResult, maxResults);
+		return this.produtoEdicaoRepository.pesquisarEdicoes(codigoProduto, nomeProduto, dataLancamento, preco, statusLancamento, codigoDeBarras, brinde, sortorder, sortname, initialResult, maxResults);
 	}
 	
 	@Override
 	@Transactional(readOnly = true)
-	public Long countPesquisarEdicoes(ProdutoEdicaoDTO dto) {
+	public Long countPesquisarEdicoes(String codigoProduto, String nomeProduto,
+			Intervalo<Date> dataLancamento, Intervalo<BigDecimal> preco , StatusLancamento statusLancamento,
+			String codigoDeBarras, boolean brinde) {
 		
-		return this.produtoEdicaoRepository.countPesquisarEdicoes(dto);
+		return this.produtoEdicaoRepository.countPesquisarEdicoes(codigoProduto, nomeProduto, dataLancamento, preco, statusLancamento, codigoDeBarras, brinde);
 	}
 	
 	@Override
 	@Transactional(readOnly = true)
-	public List<ProdutoEdicaoDTO> pesquisarUltimasEdicoes(ProdutoEdicaoDTO dto,
+	public List<ProdutoEdicaoDTO> pesquisarUltimasEdicoes(String codigoProduto,
 			int maxResults) {
 		
-		return this.produtoEdicaoRepository.pesquisarEdicoes(dto, "DESC",
+		return this.produtoEdicaoRepository.pesquisarEdicoes(codigoProduto,null,null,null,null,null,false, "DESC",
 				"numeroEdicao", 0, 5);
 	}
 	
@@ -422,6 +431,8 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 			dimEdicao.setEspessura(dto.getEspessura());
 			produtoEdicao.setDimensao(dimEdicao);
 			
+			produtoEdicao.getProduto().setDescricao(dto.getDescricaoProduto());
+			
 			// Texto boletim informativo:
 			produtoEdicao.setBoletimInformativo(dto.getBoletimInformativo());
 		} else {
@@ -439,18 +450,20 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 		// Outros:
 		produtoEdicao.setChamadaCapa(dto.getChamadaCapa());
 		produtoEdicao.setPossuiBrinde(dto.isPossuiBrinde());
+		if(produtoEdicao.getBrinde()==null){
+			produtoEdicao.setBrinde(new Brinde());
+		}
+		produtoEdicao.getBrinde().setDescricao(dto.getDescricaoBrinde());
 		
 		// Característica Física:
 		produtoEdicao.setPeso(dto.getPeso());
 		
 		produtoEdicao.setNumeroLancamento(dto.getNumeroLancamento());
 		
-		if (produtoEdicao.getId() == null) {
-			
+		if (produtoEdicao.getId() == null) {			
 			// Salvar:
 			produtoEdicaoRepository.adicionar(produtoEdicao);
-		} else {
-			
+		} else {			
 			// Atualizar:
 			produtoEdicaoRepository.alterar(produtoEdicao);
 		}
@@ -488,14 +501,8 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 		lancamento.setReparte(repartePrevisto);
 		lancamento.setRepartePromocional(repartePromocional);
 		
-		// Cálcular as datas de Recolhimento:
-		int peb = produtoEdicao.getProduto().getPeb();
-		Calendar calPeb = Calendar.getInstance();
-		calPeb.setTime(lancamento.getDataLancamentoPrevista());
-		calPeb.add(Calendar.DAY_OF_MONTH, peb);
-		Date dtPeb = calPeb.getTime();
-		lancamento.setDataRecolhimentoDistribuidor(dtPeb);
-		lancamento.setDataRecolhimentoPrevista(dtPeb);
+		lancamento.setDataRecolhimentoDistribuidor(dto.getDataRecolhimentoDistribuidor());
+		lancamento.setDataRecolhimentoPrevista(dto.getDataRecolhimentoPrevisto());
 		lancamento.setProdutoEdicao(produtoEdicao);
 		lancamento.setStatus(StatusLancamento.PLANEJADO);
 		lancamento.setTipoLancamento(TipoLancamento.LANCAMENTO);
@@ -513,30 +520,46 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 	}
 	
 	@Override
-	@Transactional(readOnly = true)
+	@Transactional(readOnly = false)
 	public void excluirProdutoEdicao(Long idProdutoEdicao) throws UniqueConstraintViolationException {
 		
 		ProdutoEdicao produtoEdicao = produtoEdicaoRepository.buscarPorId(idProdutoEdicao);
 		if (produtoEdicao == null) {
 			throw new ValidacaoException(TipoMensagem.ERROR, "Por favor, selecione uma Edição existente!");
 		}
+
+		List<Long> idsLancamento = new ArrayList<Long>();
 		
-		/* Regra: Se a Edição for originária da Interface, não pode ser excluida! */
-		if (produtoEdicao.getOrigemInterface()) {
-			throw new ValidacaoException(TipoMensagem.ERROR, "Esta Edição não pode ser excluida por ser originária da INTERFACE!");
-		}
-		
-		// TODO: 
-		/* Regra: Não excluir se existir referencias desta edição em outras tabelas. */
-		//throw new ValidacaoException(TipoMensagem.ERROR, "Esta Edição não pode ser excluida por estar associada em outras partes do sistema!");
-		
-		try {
+		for (Lancamento lancamento : produtoEdicao.getLancamentos()) {
 			
-			produtoEdicaoRepository.remover(produtoEdicao);
+			if (!(lancamento.getStatus().equals(StatusLancamento.PLANEJADO)
+					|| lancamento.getStatus().equals(StatusLancamento.CONFIRMADO))) {
+				
+				throw new ValidacaoException(TipoMensagem.ERROR, "Esta Edição não pode ser excluida por ter lancamentos em balanceamento ou já balanceados!");
+			}
+			
+			idsLancamento.add(lancamento.getId());
+		}
+
+		try {
+
+			if (!idsLancamento.isEmpty()) {
+
+				int arraySize = idsLancamento.size();
+				
+				Long[] ids = idsLancamento.toArray(new Long[arraySize]);
+				
+				this.lancamentoRepository.removerPorId(ids);
+			}
+
+			this.produtoEdicaoRepository.remover(produtoEdicao);
+
 		} catch (DataIntegrityViolationException e) {
-			throw new UniqueConstraintViolationException(
-					"Impossível excluir o registro. Já foram gerados movimentos.");
+			
+			throw new ValidacaoException(TipoMensagem.ERROR, "Esta Edição não pode ser excluida por estar associada em outras partes do sistema!");
+			
 		} catch (Exception e) {
+			
 			throw new ValidacaoException(TipoMensagem.ERROR, "Ocorreu um erro ao tentar excluir a edição!");
 		}
 	}

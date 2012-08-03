@@ -72,7 +72,7 @@ public class RateioDiferencaRepositoryImplTest extends AbstractRepositoryImplTes
 		produto.setEditor(abril);
 		save(produto);
 				
-		ProdutoEdicao produtoEdicao = Fixture.produtoEdicao("1", 1L, 1, 1, BigDecimal.TEN, BigDecimal.TEN, BigDecimal.TEN, "ABCDEFGHIJKLMNOPQRSTU", 1L, produto, null, false);
+		ProdutoEdicao produtoEdicao = Fixture.produtoEdicao("1", 1L, 1, 1, BigDecimal.TEN, BigDecimal.TEN, BigDecimal.TEN, "ABCDEFGHIJKLMNOPQ", 1L, produto, null, false);
 		save(produtoEdicao);
 		
 		PessoaJuridica pessoaJuridica = Fixture.pessoaJuridica("razaoSocial", "cnpj", "ie", "email", "99.999-9");
@@ -147,7 +147,8 @@ public class RateioDiferencaRepositoryImplTest extends AbstractRepositoryImplTes
 		EstudoCota estudoCota = Fixture.estudoCota(BigInteger.TEN, BigInteger.TEN, estudo, cota);
 		save(estudoCota);
 		
-		RateioDiferenca rateioDiferenca = Fixture.rateioDiferenca(BigInteger.TEN, cota, diferenca, estudoCota);
+		RateioDiferenca rateioDiferenca = Fixture.rateioDiferenca(BigInteger.TEN, cota, diferenca, estudoCota, new Date());
+
 		save(rateioDiferenca);
 	}
 	

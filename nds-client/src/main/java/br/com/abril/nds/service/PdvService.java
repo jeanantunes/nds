@@ -7,6 +7,7 @@ import br.com.abril.nds.dto.PdvDTO;
 import br.com.abril.nds.dto.PeriodoFuncionamentoDTO;
 import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroPdvDTO;
+import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.MaterialPromocional;
 import br.com.abril.nds.model.cadastro.TipoLicencaMunicipal;
 import br.com.abril.nds.model.cadastro.pdv.AreaInfluenciaPDV;
@@ -78,5 +79,13 @@ public interface PdvService {
 
 	List<TelefoneAssociacaoDTO> buscarTelefonesPdv(Long idPdv, Long idCota);
 	
-	boolean existePDVPrincipal(Long idCota, Long idPdv);		
+	boolean existePDVPrincipal(Long idCota, Long idPdv);
+	
+	List<Endereco> buscarMunicipiosPdvPrincipal();
+	
+	Endereco buscarMunicipioPdvPrincipal(Integer codigoCidadeIBGE);
+	
+	List<TipoPontoPDV> obterTiposPontoPDVPrincipal();
+	
+	TipoPontoPDV obterTipoPontoPDVPrincipal(Long codigoPontoPDV);
 }

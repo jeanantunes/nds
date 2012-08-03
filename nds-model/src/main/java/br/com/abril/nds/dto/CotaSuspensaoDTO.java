@@ -32,11 +32,19 @@ public class CotaSuspensaoDTO implements Serializable{
 	@Export(label = "Divida Acumulada R$", alignment=Alignment.RIGHT)
 	private String dividaAcumulada;
 	
+	@Export(label = "Faturamento R$", alignment=Alignment.RIGHT)
+	private String faturamento;
+	
+	@Export(label = "% Dívida", alignment=Alignment.RIGHT)
+	private String percDivida;
+		
 	private Double doubleDividaAcumulada;
 	
 	@Export(label = "Dias em Aberto", alignment=Alignment.CENTER)
 	private Long diasAberto;
 	
+	private Double doubleConsignado;
+		
 	private Boolean selecionado;
 	
 	
@@ -91,6 +99,7 @@ public class CotaSuspensaoDTO implements Serializable{
 	}
 
 	public void setVlrConsignado(BigDecimal vlrConsignado) {
+		setDoubleConsignado(vlrConsignado.doubleValue()); 
 		this.vlrConsignado = CurrencyUtil.formatarValor(vlrConsignado);
 	}
 
@@ -142,6 +151,48 @@ public class CotaSuspensaoDTO implements Serializable{
 	
 	public Double getDoubleDividaAcumulada() {
 		return doubleDividaAcumulada;
+	}
+
+	/**
+	 * @return the faturamento
+	 */
+	public String getFaturamento() {
+		return faturamento;
+	}
+
+	/**
+	 * @param faturamento the faturamento to set
+	 */
+	public void setFaturamento(String faturamento) {
+		this.faturamento = faturamento;
+	}
+
+	/**
+	 * @return the percDivida
+	 */
+	public String getPercDivida() {
+		return percDivida;
+	}
+
+	/**
+	 * @param percDivida the percDivida to set
+	 */
+	public void setPercDivida(String percDivida) {
+		this.percDivida = percDivida;
+	}
+
+	/**
+	 * @return the doubleConsignado
+	 */
+	public Double getDoubleConsignado() {
+		return doubleConsignado;
+	}
+
+	/**
+	 * @param doubleConsignado the doubleConsignado to set
+	 */
+	public void setDoubleConsignado(Double doubleConsignado) {
+		this.doubleConsignado = doubleConsignado;
 	}
 
 	public enum Ordenacao{

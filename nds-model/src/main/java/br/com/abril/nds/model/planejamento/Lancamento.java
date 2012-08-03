@@ -17,6 +17,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinColumns;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -122,12 +123,11 @@ public class Lancamento implements Serializable {
 	@OneToOne(mappedBy="lancamento")
 	private PeriodoLancamentoParcial periodoLancamentoParcial;
 
-	@ManyToOne(optional = true)
-	@JoinColumn(name = "CHAMADA_ENCALHE_ID")
-	private ChamadaEncalhe chamadaEncalhe;
-
 	@OneToMany(mappedBy = "lancamento")
 	private List<MovimentoEstoqueCota> movimentoEstoqueCotas;
+	
+	@ManyToMany(mappedBy="lancamentos", targetEntity=ChamadaEncalhe.class)
+	private Set<ChamadaEncalhe> chamadaEncalhe;
 	
 	public Long getId() {
 		return id;
@@ -327,20 +327,6 @@ public class Lancamento implements Serializable {
 	}
 
 	/**
-	 * @return the chamadaEncalhe
-	 */
-	public ChamadaEncalhe getChamadaEncalhe() {
-		return chamadaEncalhe;
-	}
-
-	/**
-	 * @param chamadaEncalhe the chamadaEncalhe to set
-	 */
-	public void setChamadaEncalhe(ChamadaEncalhe chamadaEncalhe) {
-		this.chamadaEncalhe = chamadaEncalhe;
-	}
-
-	/**
 	 * @return the movimentoEstoqueCotas
 	 */
 	public List<MovimentoEstoqueCota> getMovimentoEstoqueCotas() {
@@ -354,6 +340,22 @@ public class Lancamento implements Serializable {
 			List<MovimentoEstoqueCota> movimentoEstoqueCotas) {
 		this.movimentoEstoqueCotas = movimentoEstoqueCotas;
 	}
+
+	/**
+	 * @return the chamadaEncalhe
+	 */
+	public Set<ChamadaEncalhe> getChamadaEncalhe() {
+		return chamadaEncalhe;
+	}
+
+	/**
+	 * @param chamadaEncalhe the chamadaEncalhe to set
+	 */
+	public void setChamadaEncalhe(Set<ChamadaEncalhe> chamadaEncalhe) {
+		this.chamadaEncalhe = chamadaEncalhe;
+	}
+
+	
 	
 
 }

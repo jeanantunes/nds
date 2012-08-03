@@ -19,9 +19,10 @@ public class ChamadaEncalheAntecipadaVO implements Serializable {
 	private Long numeroEdicao;
 	private String codigoProduto;
 	private Long codigoChamdaEncalhe;
+	private Long idLancamento;
 	
 	@Export(label = "Box", exhibitionOrder = 1)
-	private Integer box;
+	private String box;
 	
 	@Export(label = "Cota",alignment = Alignment.CENTER, exhibitionOrder = 2)
 	private String numeroCota;
@@ -32,6 +33,20 @@ public class ChamadaEncalheAntecipadaVO implements Serializable {
 	@Export(label = "Qtde.Exemplares",alignment = Alignment.CENTER, exhibitionOrder = 4)
 	private BigInteger qntExemplares;
 	
+	
+	
+	/**
+	 * @return the idLancamento
+	 */
+	public Long getIdLancamento() {
+		return idLancamento;
+	}
+	/**
+	 * @param idLancamento the idLancamento to set
+	 */
+	public void setIdLancamento(Long idLancamento) {
+		this.idLancamento = idLancamento;
+	}
 	/**
 	 * @return the codigoChamdaEncalhe
 	 */
@@ -84,13 +99,13 @@ public class ChamadaEncalheAntecipadaVO implements Serializable {
 	/**
 	 * @return the box
 	 */
-	public Integer getBox() {
+	public String getBox() {
 		return box;
 	}
 	/**
 	 * @param box the box to set
 	 */
-	public void setBox(Integer box) {
+	public void setBox(String box) {
 		this.box = box;
 	}
 	/**

@@ -62,16 +62,16 @@ public interface NotaFiscalService {
 	/**
 	 * Cancela uma nota fiscal.
 	 * 
-	 * @param id - id da nota fiscal
+	 * @param dadosRetornoNFE
 	 */
-	void cancelarNotaFiscal(Long id);
+	void cancelarNotaFiscal(RetornoNFEDTO dadosRetornoNFE);
 	
 	/**
 	 * Denega uma nota fiscal.
 	 * 
-	 * @param id - id da nota fiscal
+	 * @param dadosRetornoNFE
 	 */
-	void denegarNotaFiscal(Long id);
+	void denegarNotaFiscal(RetornoNFEDTO dadosRetornoNFE);
 
 	/**
 	 * Envia uma nota fiscal.

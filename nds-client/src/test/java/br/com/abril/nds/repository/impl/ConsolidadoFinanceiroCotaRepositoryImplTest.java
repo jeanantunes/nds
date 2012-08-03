@@ -112,7 +112,7 @@ public class ConsolidadoFinanceiroCotaRepositoryImplTest extends AbstractReposit
 		save(produto);
 		
 		ProdutoEdicao produtoEdicao = Fixture.produtoEdicao("1", 234L,12 , 1, new BigDecimal(9), new BigDecimal(8), 
-				new BigDecimal(10), "ABCDEFGHIJKLMNOPQRSTU", 1L, produto, null, false);
+				new BigDecimal(10), "ABCDEFGHIJKLMNOPQ", 1L, produto, null, false);
 		save(produtoEdicao);
 				
 		TipoFornecedor tipoFornecedorPublicacao = Fixture.tipoFornecedorPublicacao();
@@ -243,7 +243,7 @@ public class ConsolidadoFinanceiroCotaRepositoryImplTest extends AbstractReposit
 		save(produto);
 		
 		ProdutoEdicao produtoEdicao = Fixture.produtoEdicao("1", 234L,12 , 1, new BigDecimal(9), new BigDecimal(8), 
-				new BigDecimal(10), "ABCDEFGHIJKLMNOPQRST", 2L, produto, null, false);
+				new BigDecimal(10), "ABCDEFGHIJKLMNOPA", 2L, produto, null, false);
 		save(produtoEdicao);
 				
 		TipoFornecedor tipoFornecedorPublicacao = Fixture.tipoFornecedorPublicacao();
@@ -309,7 +309,7 @@ public class ConsolidadoFinanceiroCotaRepositoryImplTest extends AbstractReposit
 		Diferenca diferenca = Fixture.diferenca(BigInteger.valueOf(32), usuario, produtoEdicao, TipoDiferenca.FALTA_DE, StatusConfirmacao.CONFIRMADO, itemRecebimentoFisico, movimentoEstoque, true);
 		save(diferenca);
 		
-		RateioDiferenca rateioDiferenca = Fixture.rateioDiferenca(BigInteger.TEN , cotaManoel, diferenca, estudoCota);
+		RateioDiferenca rateioDiferenca = Fixture.rateioDiferenca(BigInteger.TEN , cotaManoel, diferenca, estudoCota, new Date());
 		save(rateioDiferenca);
 		
 		movimento = Fixture.movimentoEstoqueCota(produtoEdicao, tipoMovimentoConsignado, usuario, estoqueProdutoCota, BigInteger.valueOf(23), cotaManoel, StatusAprovacao.APROVADO, "motivo");

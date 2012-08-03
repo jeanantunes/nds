@@ -9,6 +9,8 @@ import br.com.abril.nds.dto.FuroProdutoDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoDTO;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.planejamento.StatusLancamento;
+import br.com.abril.nds.util.Intervalo;
 
 /**
  * Interface que define as regras de acesso a dados referentes a entidade
@@ -138,7 +140,9 @@ public interface ProdutoEdicaoRepository extends Repository<ProdutoEdicao, Long>
 	 * 
 	 * @return
 	 */
-	public List<ProdutoEdicaoDTO> pesquisarEdicoes(ProdutoEdicaoDTO dto,
+	public List<ProdutoEdicaoDTO> pesquisarEdicoes(String codigoProduto, String nomeProduto,
+			Intervalo<Date> dataLancamento, Intervalo<BigDecimal> preco , StatusLancamento statusLancamento,
+			String codigoDeBarras, boolean brinde,
 			String sortorder, String sortname, int initialResult, int maxResults);
 	
 	/**
@@ -148,17 +152,19 @@ public interface ProdutoEdicaoRepository extends Repository<ProdutoEdicao, Long>
 	 * @param dto
 	 * @return
 	 */
-	public Long countPesquisarEdicoes(ProdutoEdicaoDTO dto);
+	public Long countPesquisarEdicoes(String codigoProduto, String nomeProduto,
+			Intervalo<Date> dataLancamento, Intervalo<BigDecimal> preco , StatusLancamento statusLancamento,
+			String codigoDeBarras, boolean brinde);
 	
 	/**
 	 * Pesquisa as últimas edições cadastradas.<br>
 	 * 
-	 * @param dto
+	 * @param codigoProduto
 	 * @param qtdEdicoes Quantidade de Edições a trazer.
 	 * 
 	 * @return
 	 */
-	public List<ProdutoEdicaoDTO> pesquisarUltimasEdicoes(ProdutoEdicaoDTO dto,
+	public List<ProdutoEdicaoDTO> pesquisarUltimasEdicoes(String codigoProduto,
 			int qtdEdicoes);
 	
 	/**

@@ -25,8 +25,9 @@
 				             {name:"fornecedor",value:$("#fornecedor").val()},
 				             {name:"rota",value:$("#rota").val()},
 				             {name:"roteiro",value:$("#roteiro").val()},
-				             {name:"programacaoRealizada",value:EncalheAntecipado.getProgramacaoRealizada}
-				             
+				             {name:"programacaoRealizada",value:EncalheAntecipado.getProgramacaoRealizada},
+				             {name:"municipio",value:$("#municipio").val()},
+				             {name:"tipoPontoPDV",value:$("#tipoPontoPDV").val()}
 				            ];
 			return formData;
 		},
@@ -57,6 +58,22 @@
 		
 		setHiddenFornecedor: function (){
 			$("#codFornecedorHidden").val($("#fornecedor").val());
+		},
+		
+		setHiddenMunicipio: function (){
+		   	$("#codMunicipioHidden").val($("#municipio").val());
+		},
+		
+		setHiddenTipoPontoPDV: function (){
+			$("#codTipoPontoPdvHidden").val($("#tipoPontoPDV").val());
+		},
+		
+		getHiddenMunicipio: function (){
+		   	return $("#codMunicipioHidden").val();
+		},
+		
+		getHiddenTipoPontoPDV: function (){
+			return $("#codTipoPontoPdvHidden").val();
 		},
 		
 		getCodigoProdutoPesquisa: function (){
@@ -428,8 +445,11 @@
 						
 				var inputHiddenCodigoChamadaEncalhe = 	
 					'<input type="hidden" id="codigoChamadaAntecipada' + index + '" name="codigoChamadaAntecipada" value="'+ row.cell.codigoChamdaEncalhe+'"/>';
+				
+				var inputHiddenIdLancamento= 	
+						'<input type="hidden" id="idLancamento' + index + '" name="idLancamento" value="'+ row.cell.idLancamento+'"/>';	
 					
-				row.cell.numeroCota = row.cell.numeroCota + inputNumeroCota + inputNomeCota  + inputHiddenCodigoChamadaEncalhe;	
+				row.cell.numeroCota = row.cell.numeroCota + inputNumeroCota + inputNomeCota  + inputHiddenCodigoChamadaEncalhe + inputHiddenIdLancamento;	
 				row.cell.qntExemplares = row.cell.qntExemplares + inputQuantidadeExemplares;
 				row.cell.sel = inputCheck;
 			});
@@ -437,6 +457,8 @@
 			EncalheAntecipado.setHiddenFornecedor();
 			EncalheAntecipado.setHiddenNumeroEdicao();
 			EncalheAntecipado.setHiddenProduto();
+			EncalheAntecipado.setHiddenMunicipio();
+			EncalheAntecipado.setHiddenTipoPontoPDV();
 			
 			$("#grids").show();
 			$("#gridAntecipada").show();
@@ -481,7 +503,10 @@
 			             {name:"codigoProduto", value:EncalheAntecipado.getHiddenProduto()},
 			             {name:"numeroEdicao",value:EncalheAntecipado.getHiddenNumeroEdicao()},
 			             {name:"fornecedor",value:EncalheAntecipado.getHiddenFornecedor()},
-			             {name:"programacaoRealizada",value:EncalheAntecipado.getProgramacaoRealizada()}];
+			             {name:"programacaoRealizada",value:EncalheAntecipado.getProgramacaoRealizada()},
+			             {name:"municipio",value:EncalheAntecipado.getHiddenMunicipio()},
+			             {name:"tipoPontoPDV",value:EncalheAntecipado.getHiddenTipoPontoPDV()}
+			             ];
 			
 			$.postJSON("<c:url value='/devolucao/chamadaEncalheAntecipada/obterQuantidadeExemplares' />",
 					param, 
@@ -552,8 +577,12 @@
 				
 				var inputHiddenCodigoChamadaEncalhe = 	
 					'<input type="hidden" id="codigoChamadaAntecipada' + index + '" name="codigoChamadaAntecipada" value="'+ row.cell.codigoChamdaEncalhe+'"/>';
+					
+				var inputHiddenIdLancamento= 	
+						'<input type="hidden" id="idLancamento' + index + '" name="idLancamento" value="'+ row.cell.idLancamento+'"/>';
+						
 				
-				row.cell.cota = inputCodigoCota + hiddenId + inputHiddenCodigoChamadaEncalhe;
+				row.cell.cota = inputCodigoCota + hiddenId + inputHiddenCodigoChamadaEncalhe +inputHiddenIdLancamento;
 				row.cell.nome = inputDescricaoCota;
 				row.cell.qtdeExemplares = inputQuantidadeExemplares;	
 				row.cell.sel = inputCheck;
@@ -562,6 +591,8 @@
 			EncalheAntecipado.setHiddenFornecedor();
 			EncalheAntecipado.setHiddenNumeroEdicao();
 			EncalheAntecipado.setHiddenProduto();
+			EncalheAntecipado.setHiddenMunicipio();
+			EncalheAntecipado.setHiddenTipoPontoPDV();
 			
 			$("#grids").show();
 			$("#gridAntecipada").hide();
@@ -657,6 +688,8 @@
 			
 				var codigoChamdaEncalhe = $(colunaCota).find("div").find('input[name="codigoChamadaAntecipada"]').val();
 				
+				var idLancamento = $(colunaCota).find("div").find('input[name="idLancamento"]').val();
+				
 				var check  = $(colunaCheck).find("div").find('input[name="'+groupName+'"]');
 				
 				if (EncalheAntecipado.isAtributosVaziosOrSelecionados(codigoCota,check)){
@@ -677,8 +710,8 @@
 				
 				cotaSelecionada += 'listaChamadaEncalheAntecipada[' + index + '].codigoChamdaEncalhe =' + codigoChamdaEncalhe  + '&';
 				
-				
-
+				cotaSelecionada += 'listaChamadaEncalheAntecipada[' + index + '].idLancamento =' + idLancamento  + '&';
+			
 				listaChamadaEncalheAntecipada = (listaChamadaEncalheAntecipada + cotaSelecionada);
 				
 			});
@@ -725,11 +758,13 @@
 					var paramProduto = "&codigoProduto="+EncalheAntecipado.getHiddenProduto();
 					var paramEdicao = "&numeroEdicao=" +EncalheAntecipado.getHiddenNumeroEdicao();
 					var paramFornecedor = "&fornecedor="+EncalheAntecipado.getHiddenFornecedor();
+					var paramMunicipio = "&municipio="+EncalheAntecipado.getHiddenMunicipio();
+					var paramTipoPontoPDV ="&tipoPontoPDV=" + EncalheAntecipado.getHiddenTipoPontoPDV();
 					
 					window.location = 
 						contextPath + "/devolucao/chamadaEncalheAntecipada/exportarPesquisaCotas?fileType=" 
 								+ fileType + paramDataProgaramada
-								+paramProduto + paramEdicao + paramFornecedor;
+								+paramProduto + paramEdicao + paramFornecedor + paramMunicipio + paramTipoPontoPDV;
 				},
 				EncalheAntecipado.tratarErroPesquisaCota,true);
 			}
@@ -1084,9 +1119,14 @@ $(function() {
    	   <input type="hidden" id="codProdutoHidden" name="codProdutoHidden" value=""/>
    	   <input type="hidden" id="numeroEdicaoHidden" name="numeroEdicaoHidden" value=""/>
    	   <input type="hidden" id="codFornecedorHidden" name="codFornecedorHidden" value=""/>
+   	   <input type="hidden" id="codMunicipioHidden" name="codMunicipioHidden" value=""/>
+   	   <input type="hidden" id="codTipoPontoPdvHidden" name="codTipoPontoPdvHidden" value=""/>
    	   
    	   <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
-		  <tr>
+		
+		<tbody>		
+		
+		 <tr>
 		    <td width="54">Código:</td>
 		    
 		    <td colspan="3">
@@ -1099,8 +1139,8 @@ $(function() {
 		    	
 		    </td>
 		    
-		    <td width="76">Produto:</td>
-		    <td width="258">
+		    <td width="54">Produto:</td>
+		    <td width="264">
 		    	<input type="text" name="produto" id="produto" style="width: 213px;" maxlength="255" class="campoDePesquisa"
 					       onkeyup="produto.autoCompletarPorNomeProduto('#produto', false);"
 					       onblur="produto.pesquisarPorNomeProduto('#codigoProduto', '#produto', '#edicao', false,
@@ -1108,8 +1148,8 @@ $(function() {
 					    	   EncalheAntecipado.pesquisarProdutosErrorCallBack);"/>
 		    </td>
 		    
-		    <td width="45">Edição:</td>
-		    <td width="100">
+		    <td width="42">Edição:</td>
+		    <td width="165">
 		    	
 		    	<input type="text" style="width:70px;" name="edicao" id="edicao" maxlength="20" disabled="disabled" class="campoDePesquisa"
 						   onchange="produto.validarNumEdicao('#codigoProduto', '#edicao', false,
@@ -1117,15 +1157,21 @@ $(function() {
 					    	   									EncalheAntecipado.validarEdicaoErrorCallBack);"/>
 		    	
 		    </td>
-		    <td width="200">Data Programada:</td>
+		    <td width="112">Data Programada:</td>
 		    <td width="106">
 		    	<input name="dataProgramada" type="text" id="dataProgramada" style="width:95px; text-align:center;" disabled="disabled" class="campoDePesquisa" />
 		    </td>
 		  </tr>
+		  
+		  </tbody>
+		</table>
+		
+		<table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
+		<tbody>
 		  <tr>
-		    <td>Box:</td>
+		    <td width="58">Box:</td>
 		    <td colspan="3">
-			    <select name="box" id="box" style="width:100px;" onchange="EncalheAntecipado.recarregarComboRoteiroRotas(this.value)" class="campoDePesquisa">
+			    <select name="box" id="box" style="width:150px;" onchange="EncalheAntecipado.recarregarComboRoteiroRotas(this.value)" class="campoDePesquisa">
 			      <option selected="selected" value="-1"></option>
 			      <option selected="selected">Todos</option>
 			      <c:forEach var="box" items="${listaBoxes}">
@@ -1134,9 +1180,9 @@ $(function() {
 			    </select>
 			</td>
 			
-			<td width="43">Roteiro:</td>
-		    <td width="198">
-		    	<select class="campoDePesquisa" name="roteiro" id="roteiro" style="width:160px; float:left; margin-right:5px;" onchange="EncalheAntecipado.recarregarComboRotas(this.value)" >
+			<td width="81">Roteiro:</td>
+		    <td width="187">
+		    	<select class="campoDePesquisa" name="roteiro" id="roteiro" style="width:150px; float:left; margin-right:5px;" onchange="EncalheAntecipado.recarregarComboRotas(this.value)" >
 
 			      <option selected="selected" value="">Todos</option>
 			      <c:forEach var="roteiro" items="${listaRoteiros}">
@@ -1144,9 +1190,9 @@ $(function() {
 				  </c:forEach>
 			    </select>
 		    </td>
-		    <td width="54">Rota:</td>
-		    <td width="242">
-		    	<select class="campoDePesquisa" name="rota" id="rota" style="width:160px; float:left; margin-right:5px;"  >
+		    <td width="37">Rota:</td>
+		    <td width="155">
+		    	<select class="campoDePesquisa" name="rota" id="rota" style="width:150px; float:left; margin-right:5px;"  >
 
 			      <option selected="selected" value="">Todos</option>
 			      <c:forEach var="rota" items="${listaRotas}">
@@ -1154,7 +1200,7 @@ $(function() {
 				  </c:forEach>
 			    </select>
 		    </td>
-		    <td>Fornecedor:</td>
+		    <td width="82">Fornecedor:</td>
 		    <td>
 		    	<select class="campoDePesquisa" name="fornecedor" id="fornecedor" style="width:130px;">
 
@@ -1165,20 +1211,47 @@ $(function() {
 		    	</select>
 		    </td>
 		  </tr>
-		  
+		 
 		  <tr>
+			
+			<td>Munic&iacute;pio:</td>
+			
+		  	<td colspan="3">
+				
+				<select class="campoDePesquisa" name="municipio" id="municipio" style="width:150px;">
+		      		<option selected="selected">Todos</option>
+		      		<c:forEach var="municipio" items="${listaMunicipios}">
+							<option value="${municipio.key}">${municipio.value}</option>
+					</c:forEach>
+		    	</select>
+				
+			</td>
+			
+			<td>Tipo de Ponto:</td>
+
+			<td>
+				<select class="campoDePesquisa" name="tipoPonto" id="tipoPontoPDV" style="width:150px;">
+		      		<option selected="selected">Todos</option>
+		      		<c:forEach var="tpPonto" items="${listaTipoPonto}">
+							<option value="${tpPonto.key}">${tpPonto.value}</option>
+					</c:forEach>
+		    	</select>
+				
+			</td>		  	
 		  	
-		  	<td align="right" colspan="8"><input class="campoDePesquisa" type="checkbox" id="checkCE" name="checkCE"></td>
+			<td align="right">
+				<input class="campoDePesquisa" type="checkbox" id="checkCE" name="checkCE">
+			</td>
 
 		  	<td>Com CE</td>
-		 
-		    <td>
+			 <td>&nbsp;</td>
+		    <td width="136" colspan="2">
 		    	<span class="bt_pesquisar">
 		    		<a href="javascript:;" onclick="EncalheAntecipado.pesquisar();" id="btn_pesquisa_ce" class="botaoPesquisar">Pesquisar</a>
 		    	</span>
 		    </td>
 		  </tr>
-		  
+		  </tbody>
         </table>
 
 	 </fieldset>

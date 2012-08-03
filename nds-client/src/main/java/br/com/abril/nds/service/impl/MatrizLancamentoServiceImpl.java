@@ -506,6 +506,9 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 		
 		balanceamentoLancamento.setNumeroSemana(dadosBalanceamentoLancamento.getNumeroSemana());
 		
+		balanceamentoLancamento.setDataLancamento(
+			dadosBalanceamentoLancamento.getDataLancamento());
+		
 		return balanceamentoLancamento;
 	}
 	
@@ -1139,6 +1142,8 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 		dadosBalanceamentoLancamento.setQtdDiasLimiteParaReprogLancamento(
 			distribuidor.getQtdDiasLimiteParaReprogLancamento());
 		
+		dadosBalanceamentoLancamento.setDataLancamento(dataLancamento);
+		
 		return dadosBalanceamentoLancamento;
 	}
 
@@ -1151,7 +1156,7 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 		
 		Date dataInicialSemana =
 			DateUtil.obterDataDaSemanaNoAno(numeroSemana,
-											distribuidor.getInicioSemana().getCodigoDiaSemana());
+											distribuidor.getInicioSemana().getCodigoDiaSemana(), dataLancamento);
 		
 		Date dataFinalSemana =
 			DateUtil.adicionarDias(dataInicialSemana, 6);
