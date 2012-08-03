@@ -28,10 +28,7 @@
 			    <td width="264" valign="top">
 			    	<fieldset>
 			    		<legend>Regras Disponíveis:</legend>
-					    <select name="permissoes" size="10" multiple="multiple" id="permissoes" style="height:170px; width:245px;">
-                   			<c:forEach items="${permissoes}" var="permissao">
-								<option value="${permissao.name}">${permissao.name}</option>
-                  		  	</c:forEach> 
+					    <select name="permissoesGrupo" size="10" multiple="multiple" id="permissoesGrupo" style="height:170px; width:245px;">
 					    </select>
 			    	</fieldset>
 			    </td>
@@ -42,10 +39,7 @@
 			    <td width="264" valign="top">
 				    <fieldset>
 				    	<legend>Regras Selecionadas</legend>
-					    <select name="permissoesSelecionadas" size="10" multiple="multiple" id="permissoesGrupoSelecionadas" style="height:170px; width:245px;">
-                   			<c:forEach items="${permissoesSelecionadas}" var="permissaoSelecionada">
-								<option value="${permissaoSelecionada.name}">${permissaoSelecionada.name}</option>
-                  		  	</c:forEach>
+					    <select name="permissoesGrupoSelecionadas" size="10" multiple="multiple" id="permissoesGrupoSelecionadas" style="height:170px; width:245px;">
 						</select>
 					</fieldset>
 				</td>

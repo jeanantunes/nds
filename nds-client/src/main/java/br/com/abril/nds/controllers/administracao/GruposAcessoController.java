@@ -97,8 +97,9 @@ public class GruposAcessoController {
 		}
 		dto.setPermissoes(permissoes);
 		
-		result.use(Results.json()).from(dto).recursive().serialize();
-		
+		result.use(Results.json()).from(dto, "result").recursive().serialize();
+		//result.use(Results.json()).from(dto, "result").serialize();
+		//result.use(Results.json()).from(dto).serialize();		
 	}
 
 	/**

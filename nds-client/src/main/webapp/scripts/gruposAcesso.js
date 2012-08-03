@@ -64,12 +64,14 @@ var gruposAcessoController = $.extend(true, {
 		popup_novo_grupo : function() {
 
 			$.getJSON(
-					this.path + "/novoGrupoPermissao", 
+					this.path + "/novoGrupoPermissao",null, 
 					function(result) {
-						console.log(result);
 						if (result) {
+							$(result.permissoes)[0].each() {
+								//$("#permissoesGrupo").appendTo("<option value=" + $(this) + " >" + $(this) + "</option>");
+							};
 							//$("#numeroSemana").val(result.int);
-						}
+						};
 					}
 				);
 
