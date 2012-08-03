@@ -119,23 +119,23 @@ public class ExpectativaEncalheDataTest extends AbstractRepositoryImplTest {
 		save(cromoReiLeao);
 
 		ProdutoEdicao veja1 = Fixture.produtoEdicao("1", 1L, 10, 7,
-			new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(15), "ABCDEFGHIJKLMNOPQRSTU", 1L,
+			new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(15), "ABCDEFGHIJKLMNOPQ", 1L,
 			veja, porcentagemExpectativaVenda, false);
 
 		ProdutoEdicao quatroRoda2 = Fixture.produtoEdicao("1", 2L, 15, 30,
-			new BigDecimal(0.1), BigDecimal.TEN, BigDecimal.TEN, "ABCDEFGHIJKLMNOPQRST", 2L,
+			new BigDecimal(0.1), BigDecimal.TEN, BigDecimal.TEN, "ABCDEFGHIJKLMNOPA", 2L,
 			quatroRodas, porcentagemExpectativaVenda, false);
 		
 		ProdutoEdicao infoExame3 = Fixture.produtoEdicao("1", 3L, 5, 30,
-			new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(12), "ABCDEFGHIJKLMNOPQRS", 3L,
+			new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(12), "ABCDEFGHIJKLMNOPC", 3L,
 			infoExame, porcentagemExpectativaVenda, false);
 		
 		ProdutoEdicao capricho1 = Fixture.produtoEdicao("1", 1L, 10, 15,
-			new BigDecimal(0.12), BigDecimal.TEN, BigDecimal.TEN, "ABCDEFGHIJKLMNOPQR", 4L,
+			new BigDecimal(0.12), BigDecimal.TEN, BigDecimal.TEN, "ABCDEFGHIJKLMNOPD", 4L,
 			capricho, porcentagemExpectativaVenda, false);
 		
 		ProdutoEdicao cromoReiLeao1 = Fixture.produtoEdicao("1", 1L, 100, 60,
-			new BigDecimal(0.01), BigDecimal.ONE, new BigDecimal(1.5), "ABCDEFGHIJKLMNOPQ", 5L,
+			new BigDecimal(0.01), BigDecimal.ONE, new BigDecimal(1.5), "ABCDEFGHIJKLMNOPE", 5L,
 			cromoReiLeao, porcentagemExpectativaVenda, false);
 		
 		save(veja1, quatroRoda2, infoExame3, capricho1, cromoReiLeao1);

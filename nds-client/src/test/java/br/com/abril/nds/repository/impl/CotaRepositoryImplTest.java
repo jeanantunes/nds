@@ -123,7 +123,7 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 		save(produto);
 		
 		ProdutoEdicao produtoEdicaoVeja1 = Fixture.produtoEdicao("1", 1L, 10, 14,
-				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(20), "ABCDEFGHIJKLMNOPQRSTU", 1L,
+				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(20), "ABCDEFGHIJKLMNOPQ", 1L,
 				produto, null, false);
 		
 		save(produtoEdicaoVeja1);
@@ -265,7 +265,7 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 		save(produtoVeja);
 		
 		ProdutoEdicao produtoEdicaoVeja1 = Fixture.produtoEdicao("1", 1L, 10, 14,
-				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(20), "ABCDEFGHIJKLMNOPQRST", 2L,
+				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(20), "ABCDEFGHIJKLMNOPA", 2L,
 				produtoVeja, null, false);
 		save(produtoEdicaoVeja1);
 		

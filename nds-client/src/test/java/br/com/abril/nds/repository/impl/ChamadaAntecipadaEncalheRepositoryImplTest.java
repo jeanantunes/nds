@@ -160,12 +160,12 @@ public class ChamadaAntecipadaEncalheRepositoryImplTest extends AbstractReposito
 		save(produtoVeja);
 
 		ProdutoEdicao produtoEdicaoVeja1 = Fixture.produtoEdicao("1", 1L, 10, 14,
-				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(20), "ABCDEFGHIJKLMNOPQRSTU", 1L,
+				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(20), "ABCDEFGHIJKLMNOPQ", 1L,
 				produtoVeja, null, false);
 		save(produtoEdicaoVeja1);
 		
 		ProdutoEdicao produtoEdicaoVeja2 = Fixture.produtoEdicao("1", 2L, 10, 14,
-				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(20), "ABCDEFGHIJOPQRSTU", 2L,
+				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(20), "ABCDEFGHIJOPA", 2L,
 				produtoVeja, null, false);
 		save(produtoEdicaoVeja2);
 		

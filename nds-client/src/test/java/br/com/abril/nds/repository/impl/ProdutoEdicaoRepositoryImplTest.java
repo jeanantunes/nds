@@ -144,7 +144,7 @@ public class ProdutoEdicaoRepositoryImplTest extends AbstractRepositoryImplTest 
 		produto.setEditor(abril);
 		save(produto);
 
-		produtoEdicaoVeja = Fixture.produtoEdicao("1", 1L, 10, 14, new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(20), "ABCDEFGHIJKLMNOPQRSTU", 1L, produto, null, false);
+		produtoEdicaoVeja = Fixture.produtoEdicao("1", 1L, 10, 14, new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(20), "ABCDEFGHIJKLMNOPQ", 1L, produto, null, false);
 		produtoEdicaoVeja.setDesconto(null);
 		save(produtoEdicaoVeja);
 		//////
@@ -155,7 +155,7 @@ public class ProdutoEdicaoRepositoryImplTest extends AbstractRepositoryImplTest 
 		produtoComDesconto.setEditor(abril);
 		save(produtoComDesconto);
 
-		produtoEdicaoComDesconto = Fixture.produtoEdicao("1", 2L, 10, 14, new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(20), "ABCDEFGHIJKLMNOPQRST", 2L, produtoComDesconto, null, false);
+		produtoEdicaoComDesconto = Fixture.produtoEdicao("1", 2L, 10, 14, new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(20), "ABCDEFGHIJKLMNOPQ", 2L, produtoComDesconto, null, false);
 		produtoEdicaoComDesconto.setDesconto(new BigDecimal(19));
 		save(produtoEdicaoComDesconto);
 		//////

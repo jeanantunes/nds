@@ -127,13 +127,13 @@ public class EstoqueProdutoCotaRepositoryImplTest extends AbstractRepositoryImpl
 		
 		produtoEdicaoVeja1 =
 			Fixture.produtoEdicao("1", 1L, 10, 14, new BigDecimal(0.1),
-								  BigDecimal.TEN, new BigDecimal(20), "ABCDEFGHIJKLMNOPQRSTU", 1L, produtoVeja, null, false);
+								  BigDecimal.TEN, new BigDecimal(20), "ABCDEFGHIJKLMNOPQ", 1L, produtoVeja, null, false);
 		produtoEdicaoVeja1.setDesconto(null);
 		save(produtoEdicaoVeja1);
 		
 		
 		produtoEdicaoCaras1 = Fixture.produtoEdicao("1", 2L, 10, 14, new BigDecimal(0.1),
-				  BigDecimal.TEN, new BigDecimal(20), "ABCDEFGHIJKLMNOPQRST", 2L, produtoCaras, null, false);
+				  BigDecimal.TEN, new BigDecimal(20), "ABCDEFGHIJKLMNOPA", 2L, produtoCaras, null, false);
 		
 		produtoEdicaoCaras1.setDesconto(new BigDecimal(8));
 		save(produtoEdicaoCaras1);
