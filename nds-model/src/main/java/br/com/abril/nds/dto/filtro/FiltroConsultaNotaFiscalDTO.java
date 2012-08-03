@@ -42,9 +42,13 @@ public class FiltroConsultaNotaFiscalDTO implements Serializable {
 	
 	private String chave;
 	
+	private Long idDistribuidor;
+	
 	private Boolean isNotaRecebida;
 
 	private PaginacaoVO paginacao;
+	
+	
 
 	private List<ColunaOrdenacao> listaColunaOrdenacao;
 
@@ -321,4 +325,20 @@ public class FiltroConsultaNotaFiscalDTO implements Serializable {
 	public void setNomeFornecedor(String nomeFornecedor) {
 		this.nomeFornecedor = nomeFornecedor;
 	}
+
+	/**
+	 * @return the idDistribuidor
+	 */
+	public Long getIdDistribuidor() {
+		return idDistribuidor;
+	}
+
+	/**
+	 * @param idDistribuidor the idDistribuidor to set
+	 */
+	public void setIdDistribuidor(Long idDistribuidor) {
+		this.idDistribuidor = idDistribuidor;
+	}
+	
+	
 }

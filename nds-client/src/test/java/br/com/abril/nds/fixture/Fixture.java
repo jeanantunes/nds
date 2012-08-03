@@ -1176,7 +1176,6 @@ public class Fixture {
 		itemNotaFiscal.setValorICMSProduto(valorICMSProduto);
 		itemNotaFiscal.setAliquotaIPIProduto(aliquotaIPIProduto);
 		itemNotaFiscal.setValorIPIProduto(valorIPIProduto);
-
 		
 		return itemNotaFiscal;
 		
@@ -1195,7 +1194,7 @@ public class Fixture {
 		tipoNotaFiscal.setContribuinte(false);
 		tipoNotaFiscal.setNopCodigo(0L);
 		tipoNotaFiscal.setTipoOperacao(TipoOperacao.ENTRADA);		
-		tipoNotaFiscal.setTipoAtividade(TipoAtividade.PRESTADOR_SERVICO);
+		tipoNotaFiscal.setTipoAtividade(TipoAtividade.MERCANTIL);
 		tipoNotaFiscal.setSerieNotaFiscal(2);
 		tipoNotaFiscal.setProcesso(Processo.PROCESSO);
 		return tipoNotaFiscal;
