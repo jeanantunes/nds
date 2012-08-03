@@ -8,17 +8,24 @@ $(function() {
 	$("#resumoExpedicaoGridBox").flexigrid({
 		preProcess:executarPreProcessamento,
 		dataType : 'json',
-		colModel : [ {
+		colModel : [ 
+		{
+			display : 'Data Lançamento',
+			name : 'dataLancamento',
+			width : 100,
+			sortable : true,
+			align : 'left'
+		}, {
 			
 			display : 'Box',
 			name : 'codigoBox',
-			width : 60,
+			width : 100,
 			sortable : true,
 			align : 'left'
 		}, {
 			display : 'Nome do Box',
 			name : 'descricaoBox',
-			width : 430,
+			width : 240,
 			sortable : true,
 			align : 'left'
 		}, {
@@ -45,6 +52,12 @@ $(function() {
 			width : 90,
 			sortable : true,
 			align : 'right'
+		}, {
+			display : 'Ação',
+			name : 'acao',
+			width : 40,
+			sortable : false,
+			align : 'center'
 		}],
 		sortname : "codigoBox",
 		sortorder : "asc",
@@ -141,6 +154,18 @@ $(function() {
 		mudarLegendaFielsSet('idFiledResultResumo','resumo');
 		
 		$("#dataLancamento").focus();
+		
+		$.each(resultado.tableModel.rows, function(index, row) {
+			
+			if (!row.cell.dataLancamento){
+				
+				row.cell.dataLancamento = "";
+			}
+			
+			row.cell.acao = "<div style='text-align: center;'>" +
+				"<a href='javascript:;' onclick='detalharResumoExpedicao("+ row.cell.codigoBox +","+ row.cell.dataLancamento +");'>"+
+				"<img border='0' alt='Detalhes' src='${pageContext.request.contextPath}/images/ico_detalhes.png'></a></div>";
+		});
 		
 		return resultado.tableModel;
 	}
