@@ -1,6 +1,7 @@
 package br.com.abril.nds.integracao.ems0122.outbound;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 
 import com.ancientprogramming.fixedformat4j.annotation.Field;
 import com.ancientprogramming.fixedformat4j.annotation.FixedFormatDecimal;
@@ -15,7 +16,7 @@ public class EMS0122Detalhe {
 	private String codPublicacao;
 	private Long edicao;
 	private Integer codigoCota;
-	private BigDecimal quantidadeSuplementar;
+	private BigInteger quantidadeSuplementar;
 	private BigDecimal precoCapa;
 
 
@@ -75,11 +76,11 @@ public class EMS0122Detalhe {
 	
 	@Field(offset=26, length=8)
 	@FixedFormatDecimal(decimals = 2, useDecimalDelimiter = true)
-	public BigDecimal getQuantidadeSuplementar() {
+	public BigInteger getQuantidadeSuplementar() {
 		return quantidadeSuplementar;
 	}
 
-	public void setQuantidadeSuplementar(BigDecimal quantidadeSuplementar) {
+	public void setQuantidadeSuplementar(BigInteger quantidadeSuplementar) {
 		this.quantidadeSuplementar = quantidadeSuplementar;
 	}
 

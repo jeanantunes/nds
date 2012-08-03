@@ -577,7 +577,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 	 * @return
 	 */
 	private ProdutoServico carregaProdutoServico(long idProdutoEdicao,
-			BigDecimal quantidade, int cfop, TipoOperacao tipoOperacao,
+			BigInteger quantidade, int cfop, TipoOperacao tipoOperacao,
 			String ufOrigem, String ufDestino, int naturezaOperacao,
 			String codigoNaturezaOperacao, Date dataVigencia,
 			BigDecimal valorItem, String raizCNPJ, String cstICMS) {
@@ -601,7 +601,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		produtoServico.setUnidade(produtoEdicao.getProduto().getTipoProduto().getNcm().getUnidadeMedida());
 		produtoServico.setValorDesconto(produtoEdicao.getDesconto());
 		produtoServico.setCfop(cfop);
-		produtoServico.setValorTotalBruto(valorItem.multiply(quantidade));
+		produtoServico.setValorTotalBruto(valorItem.multiply(new BigDecimal(quantidade) ));
 
 		EncargoFinanceiroProduto encargoFinanceiroProduto = tributacaoService
 				.calcularTributoProduto(raizCNPJ, tipoOperacao, ufOrigem,
@@ -863,7 +863,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 					if (itensNFeDevolucaoConsignado.contains(itemNFeEnvio)) {
 						ItemNotaFiscal itemNFeDevolucao = itensNFeDevolucaoConsignado.get(itensNFeDevolucaoConsignado.indexOf(itemNFeEnvio));
 											
-						BigDecimal quantidade = itemNFeEnvio.getQuantidade().add(itemNFeDevolucao.getQuantidade());
+						BigInteger quantidade = itemNFeEnvio.getQuantidade().add(itemNFeDevolucao.getQuantidade());
 					
 						itemNFeVenda.setQuantidade(quantidade);	
 					}
@@ -898,7 +898,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 			
 			BigDecimal valorUnitario = produtoEdicao.getPrecoVenda().subtract(produtoEdicao.getDesconto());
 			
-			BigDecimal quantidade = movimentoEstoqueCota.getQtde();
+			BigInteger quantidade = movimentoEstoqueCota.getQtde();
 			
 			List<MovimentoEstoqueCota> listaMovimentoEstoqueItem = new ArrayList<MovimentoEstoqueCota>();
 			
@@ -946,9 +946,9 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 	 * @param listaItemNotaFiscal intes para nota fiscal
 	 * @return somatoria total da quantidade de itens
 	 */
-	private BigDecimal sumarizarTotalItensNota(List<ItemNotaFiscal> listaItemNotaFiscal) {
+	private BigInteger sumarizarTotalItensNota(List<ItemNotaFiscal> listaItemNotaFiscal) {
 		
-		BigDecimal quantidade = BigDecimal.ZERO;
+		BigInteger quantidade = BigInteger.ZERO;
 		
 		for (ItemNotaFiscal item : listaItemNotaFiscal) {
 			quantidade = quantidade.add(item.getQuantidade());

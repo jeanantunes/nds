@@ -1,6 +1,7 @@
 package br.com.abril.nds.repository.impl;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -109,7 +110,7 @@ public class ExpedicaoResumoProdutoRepositoryImplTest extends AbstractRepository
 			
 			List<ItemRecebimentoFisico> listaRecebimentos = new ArrayList<ItemRecebimentoFisico>() ;
 			
-			EstoqueProduto estoque  =  Fixture.estoqueProduto(produtoEdicao, BigDecimal.ZERO);
+			EstoqueProduto estoque  =  Fixture.estoqueProduto(produtoEdicao, BigInteger.ZERO);
 			save(estoque);
 			
 			for(int x= 1; x< 3 ;x++){
@@ -124,7 +125,7 @@ public class ExpedicaoResumoProdutoRepositoryImplTest extends AbstractRepository
 						Fixture.criarData(23, Calendar.FEBRUARY, 2012),
 						Fixture.criarData(23, Calendar.FEBRUARY, 2012),
 						TipoLancamento.LANCAMENTO,
-						new BigDecimal(i));					
+						BigInteger.valueOf(i));					
 				save(itemNotaFiscal);
 				
 				RecebimentoFisico recebimentoFisico = Fixture.recebimentoFisico(
@@ -132,18 +133,18 @@ public class ExpedicaoResumoProdutoRepositoryImplTest extends AbstractRepository
 				save(recebimentoFisico);
 				
 				ItemRecebimentoFisico itemFisico = Fixture.itemRecebimentoFisico(
-						itemNotaFiscal, recebimentoFisico, new BigDecimal(i+x));
+						itemNotaFiscal, recebimentoFisico, BigInteger.valueOf(i+x));
 				save(itemFisico);
 				
 				
 				MovimentoEstoque movimentoEstoque  = 
 					Fixture.movimentoEstoque(itemFisico, produtoEdicao, tipoMovimentoFaltDe, usuario,
-						estoque, new Date(), new BigDecimal(1),
+						estoque, new Date(), BigInteger.valueOf(1),
 						StatusAprovacao.APROVADO, "Aprovado");
 				
 				save(movimentoEstoque);
 				
-				Diferenca diferenca = Fixture.diferenca(new BigDecimal(10), usuario, produtoEdicao, TipoDiferenca.SOBRA_DE, StatusConfirmacao.CONFIRMADO, itemFisico, movimentoEstoque, true);
+				Diferenca diferenca = Fixture.diferenca(BigInteger.valueOf(10), usuario, produtoEdicao, TipoDiferenca.SOBRA_DE, StatusConfirmacao.CONFIRMADO, itemFisico, movimentoEstoque, true);
 				save(diferenca);
 				
 				itemFisico.setDiferenca(diferenca);
@@ -160,17 +161,17 @@ public class ExpedicaoResumoProdutoRepositoryImplTest extends AbstractRepository
 					Fixture.criarData(23, Calendar.FEBRUARY, 2012), 
 					Fixture.criarData(23, Calendar.FEBRUARY, 2012), 
 					Fixture.criarData(23, Calendar.FEBRUARY, 2012), 
-					new BigDecimal(100), 
+					BigInteger.valueOf(100), 
 					StatusLancamento.EXPEDIDO, 
 					listaRecebimentos, 1);
-			lancamento.setReparte(new BigDecimal(10));
+			lancamento.setReparte(BigInteger.valueOf(10));
 			lancamento.setExpedicao(expedicao);
 			save(lancamento);
 		
 			Estudo estudo = new Estudo();
 			estudo.setDataLancamento(Fixture.criarData(23, Calendar.FEBRUARY, 2012));
 			estudo.setProdutoEdicao(produtoEdicao);
-			estudo.setQtdeReparte(new BigDecimal(i));
+			estudo.setQtdeReparte(BigInteger.valueOf(i));
 			save(estudo);
 		}
 		

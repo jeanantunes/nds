@@ -1,6 +1,6 @@
 package br.com.abril.nds.repository;
 
-import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -130,7 +130,7 @@ public interface CotaRepository extends Repository<Cota, Long> {
 	 * 
 	 * @return BigDecimal
 	 */
-	BigDecimal obterQntExemplaresCotasSujeitasAntecipacoEncalhe(FiltroChamadaAntecipadaEncalheDTO filtro);
+	BigInteger obterQntExemplaresCotasSujeitasAntecipacoEncalhe(FiltroChamadaAntecipadaEncalheDTO filtro);
 
 	
 	Cota obterCotaPDVPorNumeroDaCota(Integer numeroCota);

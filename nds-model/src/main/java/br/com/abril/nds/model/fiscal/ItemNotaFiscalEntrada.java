@@ -1,6 +1,7 @@
 package br.com.abril.nds.model.fiscal;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -69,7 +70,7 @@ public class ItemNotaFiscalEntrada implements Serializable {
 	private BigDecimal valorIPIProduto;	
 	
 	@Column(name = "QTDE", nullable = false)
-	private BigDecimal qtde;
+	private BigInteger qtde;
 
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "NOTA_FISCAL_ID")
@@ -109,11 +110,11 @@ public class ItemNotaFiscalEntrada implements Serializable {
 		this.id = id;
 	}
 	
-	public BigDecimal getQtde() {
+	public BigInteger getQtde() {
 		return qtde;
 	}
 
-	public void setQtde(BigDecimal qtde) {
+	public void setQtde(BigInteger qtde) {
 		this.qtde = qtde;
 	}	
 	

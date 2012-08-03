@@ -1,6 +1,7 @@
 package br.com.abril.nds.repository.impl;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
 
@@ -40,7 +41,7 @@ public class ConferenciaEncalheParcialRepositoryImpl extends AbstractRepositoryM
 	 * 
 	 * @return BigDecimal
 	 */
-	public BigDecimal obterQtdTotalEncalheParcial(StatusAprovacao statusAprovacao, Date dataMovimento, String codigoProduto, Long numeroEdicao) {
+	public BigInteger obterQtdTotalEncalheParcial(StatusAprovacao statusAprovacao, Date dataMovimento, String codigoProduto, Long numeroEdicao) {
 		
 		StringBuffer hql = new StringBuffer("");
 		
@@ -70,7 +71,7 @@ public class ConferenciaEncalheParcialRepositoryImpl extends AbstractRepositoryM
 
 		query.setParameter("numeroEdicao", numeroEdicao);
 		
-		return (BigDecimal) query.uniqueResult();
+		return (BigInteger) query.uniqueResult();
 		
 	}
 	

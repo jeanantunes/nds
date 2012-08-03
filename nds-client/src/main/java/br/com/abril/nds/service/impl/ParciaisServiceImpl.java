@@ -1,6 +1,6 @@
 package br.com.abril.nds.service.impl;
 
-import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
 
@@ -155,7 +155,7 @@ public class ParciaisServiceImpl implements ParciaisService{
 		lancamento.setDataRecolhimentoPrevista(dtRecolhimento);
 		lancamento.setDataLancamentoDistribuidor(dtLancamento);
 		lancamento.setDataRecolhimentoDistribuidor(dtRecolhimento);
-		lancamento.setReparte(BigDecimal.ZERO);
+		lancamento.setReparte(BigInteger.ZERO);
 		lancamento.setSequenciaMatriz(0);
 		lancamento.setDataCriacao(new Date());
 		lancamento.setDataStatus(new Date());

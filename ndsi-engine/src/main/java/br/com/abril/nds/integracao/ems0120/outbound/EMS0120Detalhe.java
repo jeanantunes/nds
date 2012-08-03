@@ -1,6 +1,7 @@
 package br.com.abril.nds.integracao.ems0120.outbound;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Date;
 
 import com.ancientprogramming.fixedformat4j.annotation.Field;
@@ -15,7 +16,7 @@ public class EMS0120Detalhe {
 	private String codPublicacao;
 	private Long edicao;
 	private Integer codigoCota;
-	private BigDecimal quantidadeReparte;
+	private BigInteger quantidadeReparte;
 	private BigDecimal precoCapa;
 	private Date dataLancamento;
 	private String numeroBoxCota;
@@ -75,11 +76,11 @@ public class EMS0120Detalhe {
 	}
 	
 	@Field(offset=26, length=8)
-	public BigDecimal getQuantidadeReparte() {
+	public BigInteger getQuantidadeReparte() {
 		return quantidadeReparte;
 	}
 
-	public void setQuantidadeReparte(BigDecimal quantidadeReparte) {
+	public void setQuantidadeReparte(BigInteger quantidadeReparte) {
 		this.quantidadeReparte = quantidadeReparte;
 	}
 

@@ -335,7 +335,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 	}
 
 	@Override
-	public BigDecimal obterQntExemplaresCotasSujeitasAntecipacoEncalhe(
+	public BigInteger obterQntExemplaresCotasSujeitasAntecipacoEncalhe(
 			FiltroChamadaAntecipadaEncalheDTO filtro) {
 
 		StringBuilder hql = new StringBuilder();
@@ -354,7 +354,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 
 		query.setMaxResults(1);
 
-		return (BigDecimal) query.uniqueResult();
+		return (BigInteger) query.uniqueResult();
 	}
 
 	@SuppressWarnings("unchecked")

@@ -2,6 +2,7 @@ package br.com.abril.nds.service.impl;
 
 import java.io.InputStream;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -392,10 +393,10 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 		
 		// 02) Campos a serem persistidos e/ou alterados:
 		
-		BigDecimal repartePrevisto = dto.getRepartePrevisto() == null 
-				? BigDecimal.ZERO : dto.getRepartePrevisto();
-		BigDecimal repartePromocional = dto.getRepartePromocional() == null 
-				? BigDecimal.ZERO : dto.getRepartePromocional();
+		BigInteger repartePrevisto = dto.getRepartePrevisto() == null 
+				? BigInteger.ZERO : dto.getRepartePrevisto();
+		BigInteger repartePromocional = dto.getRepartePromocional() == null 
+				? BigInteger.ZERO : dto.getRepartePromocional();
 		if (!produtoEdicao.getOrigemInterface().booleanValue()) {
 			// Campos exclusivos para o Distribuidor::
 			
@@ -493,10 +494,10 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 				? dto.getDataLancamentoPrevisto() : dto.getDataLancamento());	// Data Lançamento Real;
 		
 		// Reparte:
-		BigDecimal repartePrevisto = dto.getRepartePrevisto() == null 
-				? BigDecimal.ZERO : dto.getRepartePrevisto();
-		BigDecimal repartePromocional = dto.getRepartePromocional() == null 
-				? BigDecimal.ZERO : dto.getRepartePromocional();
+		BigInteger repartePrevisto = dto.getRepartePrevisto() == null 
+				? BigInteger.ZERO : dto.getRepartePrevisto();
+		BigInteger repartePromocional = dto.getRepartePromocional() == null 
+				? BigInteger.ZERO : dto.getRepartePromocional();
 		lancamento.setReparte(repartePrevisto);
 		lancamento.setRepartePromocional(repartePromocional);
 		

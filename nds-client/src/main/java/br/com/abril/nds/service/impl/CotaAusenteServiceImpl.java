@@ -1,6 +1,7 @@
 package br.com.abril.nds.service.impl;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
 
@@ -144,8 +145,8 @@ public class CotaAusenteServiceImpl implements CotaAusenteService{
 		for(MovimentoEstoqueCota movimento : movimentosCota) {
 			
 			if(movimento.getProdutoEdicao() != null){
-				BigDecimal qtdeExistente = obterQuantidadeSuplementarExistente(movimento.getProdutoEdicao().getId());
-				BigDecimal qtdeARetirar;
+				BigInteger qtdeExistente = obterQuantidadeSuplementarExistente(movimento.getProdutoEdicao().getId());
+				BigInteger qtdeARetirar;
 				
 				if(qtdeExistente.compareTo(movimento.getQtde()) > 0) {
 					qtdeARetirar = movimento.getQtde();
@@ -185,7 +186,7 @@ public class CotaAusenteServiceImpl implements CotaAusenteService{
 
 
 
-	private BigDecimal obterQuantidadeSuplementarExistente(Long idProdutoEdicao) {
+	private BigInteger obterQuantidadeSuplementarExistente(Long idProdutoEdicao) {
 	
 		EstoqueProduto ep = estoqueProdutoRepository.buscarEstoquePorProduto(idProdutoEdicao);
 		
@@ -209,7 +210,7 @@ public class CotaAusenteServiceImpl implements CotaAusenteService{
 				rateio.setCota(cota);
 				rateio.setCotaAusente(cotaAusente);
 				rateio.setProdutoEdicao(produtoEdicao);
-				rateio.setQtde(new BigDecimal(rateioDTO.getQtde()));
+				rateio.setQtde(BigInteger.valueOf( rateioDTO.getQtde() ));
 				
 				rateioCotaAusenteRepository.adicionar(rateio);
 				

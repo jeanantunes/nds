@@ -1,6 +1,7 @@
 package br.com.abril.nds.repository.impl;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.List;
 
 import junit.framework.Assert;
@@ -251,7 +252,7 @@ public class ItemNotaFiscalSaidaRepositoryImplTest extends AbstractRepositoryImp
 				Fixture.itemNotaFiscalSaidaNFE(
 						produtoEdicaoCE, 
 						notaFiscalSaidaFornecedor, 
-						BigDecimal.TEN,
+						BigInteger.TEN,
 						NCMProduto, 
 						CFOPProduto, 
 						unidadeProduto, 
