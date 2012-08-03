@@ -19,7 +19,7 @@ import br.com.abril.nds.service.PermissaoService;
 public class PermissaoServiceImpl implements PermissaoService {
 
 	@Override
-	public List<ResultadoPermissaoVO> buscar(FiltroConsultaPermissaoDTO filtro) {
+	public List<ResultadoPermissaoVO> buscarResultado(FiltroConsultaPermissaoDTO filtro) {
 		List<Permissao> permissoes = Arrays.asList(Permissao.values());
 
 		List<ResultadoPermissaoVO> resultado = new ArrayList<ResultadoPermissaoVO>();
@@ -38,6 +38,11 @@ public class PermissaoServiceImpl implements PermissaoService {
 		}
 		
 		return resultado;
+	}
+
+	@Override
+	public List<Permissao> buscar() {
+		return Arrays.asList(Permissao.values());
 	}
 	
 }

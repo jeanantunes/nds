@@ -61,14 +61,34 @@ var gruposAcessoController = $.extend(true, {
 				}
 			});
 		},
-		popup_nova_regra : function() {
-			$( "#dialog-novo_regra" ).dialog({
+		popup_novo_grupo : function() {
+
+			$.getJSON(
+					this.path + "/novoGrupoPermissao", 
+					function(result) {
+						if (result) {
+							$("#numeroSemana").val(result.int);
+						}
+					}
+				);
+
+			
+			"/novoGrupoPermissao";
+			$( "#dialog-novo-grupo", this.workspace).dialog({
 				resizable: false,
-				height:200,
-				width:470,
+				height:600,
+				width:750,
 				modal: true,
 				buttons: {
 					"Confirmar": function() {
+						
+						var obj = $("#novo_grupo_form", this.workspace);
+						//var obj = $("#novo_grupo_form", this.workspace).serialize();
+						
+						$("#permissoesGrupoSelecionadas").each(function(i){
+							$(this).val();
+					    });
+						
 						$( this ).dialog( "close" );
 						$("#effect").show("highlight", {}, 1000, callback);
 						$(".grids").show();
@@ -80,11 +100,11 @@ var gruposAcessoController = $.extend(true, {
 				}
 			});
 		},
-		popup_alterar_regra : function() {
-			$( "#dialog-novo_regra" ).dialog({
+		popup_alterar_grupo : function() {
+			$( "#dialog-novo-grupo" ).dialog({
 				resizable: false,
-				height:200,
-				width:470,
+				height:600,
+				width:750,
 				modal: true,
 				buttons: {
 					"Confirmar": function() {
@@ -99,8 +119,8 @@ var gruposAcessoController = $.extend(true, {
 				}
 			});	
 		},
-		popup_excluir_regra : function() {
-			$( "#dialog-excluir_regra" ).dialog({
+		popup_excluir_grupo : function() {
+			$( "#dialog-excluir_grupo" ).dialog({
 				resizable: false,
 				height:170,
 				width:380,
@@ -203,7 +223,6 @@ var gruposAcessoController = $.extend(true, {
 				height : 255
 			});
 		},
-		
 		initRegrasGrid : function() {
 			$(".regrasGrid", this.workspace).flexigrid({
 				preProcess: function(data) {

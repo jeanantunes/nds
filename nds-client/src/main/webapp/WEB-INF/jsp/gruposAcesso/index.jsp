@@ -11,23 +11,49 @@
 </head>
 <body>
 	<form action="/administracao/gruposAcesso" id="excluir_regra_form">
-	<div id="dialog-excluir_regra" title="Excluir Regra" style="display:none;">
-	  <p>Confirma a exclusão desta Regra?</p>
+	<input type="hidden" value="grupoPermissao.id" />
+	<div id="dialog-excluir_grupo" title="Excluir Grupo" style="display:none;">
+	  <p>Confirma a exclusão deste Grupo?</p>
 	</div>
 	</form>
-	<form action="/administracao/gruposAcesso" id="nova_regra_form">
-	<div id="dialog-novo_regra" title="Regra" style="display:none;">
+	<form action="/administracao/gruposAcesso" id="novo_grupo_form">
+	<div id="dialog-novo-grupo" title="Regra" style="display:none;">
      	<table width="379" border="0" cellpadding="2" cellspacing="1" class="filtro">
 	        <tr>
 	          <td width="70">Nome:</td>
 	          <td width="298"><input type="text" name="textfield" id="textfield" style="width:280px;"/></td>
 	        </tr>
-	        <tr>
-	          <td>Descrição:</td>
-	          <td><textarea name="textfield7" rows="3" id="textfield7" style="width:280px;"></textarea></td>
-	        </tr>
       	</table>
+         <table width="582" border="0" align="center" cellpadding="2" cellspacing="2">
+			 <tr class="especialidades">
+			    <td width="264" valign="top">
+			    	<fieldset>
+			    		<legend>Regras Disponíveis:</legend>
+					    <select name="permissoes" size="10" multiple="multiple" id="permissoes" style="height:170px; width:245px;">
+                   			<c:forEach items="${permissoes}" var="permissao">
+								<option value="${permissao.name}">${permissao.name}</option>
+                  		  	</c:forEach> 
+					    </select>
+			    	</fieldset>
+			    </td>
+			    <td width="34" align="center">
+			    	<img src="images/seta_vai_todos.png" width="39" height="30" /><br />
+			      	<br /><img src="images/seta_volta_todos.png" width="39" height="30" /><br />
+			    </td>
+			    <td width="264" valign="top">
+				    <fieldset>
+				    	<legend>Regras Selecionadas</legend>
+					    <select name="permissoesSelecionadas" size="10" multiple="multiple" id="permissoesGrupoSelecionadas" style="height:170px; width:245px;">
+                   			<c:forEach items="${permissoesSelecionadas}" var="permissaoSelecionada">
+								<option value="${permissaoSelecionada.name}">${permissaoSelecionada.name}</option>
+                  		  	</c:forEach>
+						</select>
+					</fieldset>
+				</td>
+			 </tr>
+		</table>      	
 	</div>
+	</form>
 	<form action="/administracao/gruposAcesso" id="excluir_usuario_form">
 	<div id="dialog-excluir-usuario" title="Excluir Usuário" style="display:none;">
 	  <p>Confirma a exclusão deste usuário?</p>
@@ -101,13 +127,10 @@
 			    <td width="264" valign="top">
 			    	<fieldset>
 			    		<legend>Regras Disponíveis:</legend>
-					    <select name="select4" size="10" multiple="multiple" id="select3" style="height:170px; width:245px;">
-					      <option>ACERTO_CONSULTOR_MANAGER</option>
-					      <option>ROLE_ADMIN</option>
-					      <option>ROLE_AGENDA_FINANCEIRA</option>
-					      <option>ROLE_ALTERAR_SENHA</option>
-					      <option>ROLE_ALTERAR_TEMA</option>
-					      <option>ROLE_ATENDIMENTO</option>
+					    <select name="permissoes" size="10" multiple="multiple" id="permissoes" style="height:170px; width:245px;">
+                   			<c:forEach items="${permissoes}" var="permissao">
+								<option value="${permissao.name}">${permissao.name}</option>
+                  		  	</c:forEach> 
 					    </select>
 			    	</fieldset>
 			    </td>
@@ -118,7 +141,10 @@
 			    <td width="264" valign="top">
 				    <fieldset>
 				    	<legend>Regras Selecionadas</legend>
-					    <select name="select5" size="10" multiple="multiple" id="select4" style="height:170px; width:245px;">
+					    <select name="permissoesSelecionadas" size="10" multiple="multiple" id="permissoesSelecionadas" style="height:170px; width:245px;">
+                   			<c:forEach items="${permissoesSelecionadas}" var="permissaoSelecionada">
+								<option value="${permissaoSelecionada.name}">${permissaoSelecionada.name}</option>
+                  		  	</c:forEach>
 						</select>
 					</fieldset>
 				</td>
@@ -128,10 +154,6 @@
 	</form>
 	<div class="corpo">
 		<div class="container">
-	     	<div id="effect" style="padding: 0 .7em;" class="ui-state-highlight ui-corner-all"> 
-				<p><span style="float: left; margin-right: .3em;" class="ui-icon ui-icon-info"></span>
-				<b>Usuário < evento > com < status >.</b></p>
-			</div>
         	<div id="tabs-grupos">
 	            <ul>
 	                <li><a href="#tabs-grupos">Grupos</a></li>
@@ -140,7 +162,25 @@
 	            </ul>
 	            <form action="/administracao/gruposAcesso" id="pesquisar_grupos_form">
 	            <div id="tabs-grupos">
-	            	1
+			        <fieldset style="width:925px!important;">
+			   	    	<legend> Pesquisar Grupo</legend>
+			        	<table width="850" border="0" cellpadding="2" cellspacing="1" class="filtro">
+				            <tr>
+				              <td width="83">Nome:</td>
+				              <td width="647"><input type="text" name="grupoPermissao.nome" id="grupoPermissao.nome" style="width:250px;"/></td>
+				              <td width="104"><span class="bt_pesquisar"><a href="javascript:;" onclick="gruposAcessoController.mostrarGrupo();">Pesquisar</a></span></td>
+				            </tr>
+			          	</table>
+			      	</fieldset>
+			      <div class="linha_separa_fields">&nbsp;</div>
+			      <fieldset style="width:925px!important;">
+			       	<legend>Grupos Cadastrados</legend>
+			      	<div class="gridsGrupos" style="display:none;">
+			       		<table class="gruposGrid"></table>
+			        </div>
+			        <span class="bt_novos" title="Novo"><a href="javascript:;" onclick="gruposAcessoController.popup_novo_grupo();"><img src="images/ico_salvar.gif" hspace="5" border="0"/>Novo</a></span>
+			      </fieldset>
+			      <br clear="all" />
 	            </div>
 	            </form>
 	            <form action="/administracao/gruposAcesso" id="pesquisar_usuario_form">

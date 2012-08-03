@@ -11,7 +11,9 @@ import br.com.abril.nds.client.util.PaginacaoUtil;
 import br.com.abril.nds.client.vo.ResultadoPermissaoVO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaPermissaoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.seguranca.GrupoPermissao;
 import br.com.abril.nds.model.seguranca.Permissao;
+import br.com.abril.nds.service.GrupoPermissaoService;
 import br.com.abril.nds.service.PermissaoService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.TableModel;
@@ -20,7 +22,6 @@ import br.com.abril.nds.util.Util;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
-import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
@@ -38,7 +39,10 @@ public class GruposAcessoController {
 
 	@Autowired
 	private PermissaoService permissaoService;
-	
+
+	@Autowired
+	private GrupoPermissaoService grupoPermissaoService;
+
 	@Autowired
 	private HttpSession session;
 	
@@ -54,6 +58,46 @@ public class GruposAcessoController {
 	}
 
 	/**
+	 * 
+	 */
+	@Get
+	@Path("/novoGrupoPermissao")
+	public void novoGrupoPermissao() {
+		editarGrupoPermissao(null);
+	}
+	
+	/**
+	 * @param filtro
+	 * @param rp
+	 * @param page
+	 * @param sortname
+	 * @param sortorder
+	 */
+	@Get
+	@Path("/editarGrupoPermissao")
+	public void editarGrupoPermissao(Long codigoGrupo) {
+		List<Permissao> permissoes = permissaoService.buscar();
+		if (codigoGrupo != null) {
+			List<Permissao> permissoesSelecionadas = grupoPermissaoService.buscarPermissoesGrupo(codigoGrupo);
+			result.include("permissoesSelecionadas", permissoesSelecionadas);
+			// Remove da lista as permissões selecionadas anteriormente
+			for (Permissao p : permissoesSelecionadas) {
+				if (permissoes.contains(p)) {
+					permissoes.remove(p);
+				}
+			}
+		}
+		result.include("permissoes", permissoes);
+	}
+
+	/**
+	 * @param codigoGrupo
+	 */
+	public void salvarGrupoPermissao(GrupoPermissao grupoPermissao) {
+		grupoPermissaoService.salvar(grupoPermissao);
+	}
+
+	/**
 	 * Retorna a lista de regras do sistema
 	 * @return List
 	 */
@@ -61,7 +105,7 @@ public class GruposAcessoController {
 	@Path("/pesquisarRegras")
 	public void pesquisarRegras(FiltroConsultaPermissaoDTO filtro, int rp, int page, String sortname, String sortorder) {
 		filtro = carregarFiltroConsultaRegras(filtro, rp, page, sortname, sortorder);
-		List<ResultadoPermissaoVO> permissoes = permissaoService.buscar(filtro);
+		List<ResultadoPermissaoVO> permissoes = permissaoService.buscarResultado(filtro);
 
 		if (permissoes == null || permissoes.isEmpty()) {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
