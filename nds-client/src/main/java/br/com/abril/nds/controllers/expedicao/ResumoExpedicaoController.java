@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.vo.ResultadoResumoExpedicaoVO;
 import br.com.abril.nds.client.vo.ResumoExpedicaoBoxVO;
+import br.com.abril.nds.client.vo.ResumoExpedicaoDetalheVO;
 import br.com.abril.nds.client.vo.ResumoExpedicaoVO;
 import br.com.abril.nds.client.vo.RetornoExpedicaoVO;
 import br.com.abril.nds.dto.ExpedicaoDTO;
@@ -81,6 +82,44 @@ public class ResumoExpedicaoController {
 		
 		carregarTiposResumo();
 	}
+	
+	@Post
+	@Path("/resumo/pesquisar/detalhe")
+	public void detalharResumoExpedicaoDoBox(Integer codigoBox, String dataLancamento) {
+	
+		Date dataLancntoDistribuidor = DateUtil.parseDataPTBR(dataLancamento);
+		
+		List<ResumoExpedicaoDetalheVO> listaDetalhe = new ArrayList<ResumoExpedicaoDetalheVO>();
+
+		int contador = 0;
+		
+		while(contador++<10) {
+
+			ResumoExpedicaoDetalheVO resumoExpedicaoDetalhe = new ResumoExpedicaoDetalheVO();
+			
+			resumoExpedicaoDetalhe.setCodigoProduto(""+contador);
+			resumoExpedicaoDetalhe.setDescricaoProduto("produto_"+contador);
+			resumoExpedicaoDetalhe.setEdicaoProduto(""+contador);
+			resumoExpedicaoDetalhe.setPrecoCapa(""+contador);
+			resumoExpedicaoDetalhe.setReparte("100");
+			resumoExpedicaoDetalhe.setValorFaturado("100");
+			resumoExpedicaoDetalhe.setQntDiferenca("100");
+			
+			listaDetalhe.add(resumoExpedicaoDetalhe);
+
+		}
+
+		TableModel<CellModelKeyValue<ResumoExpedicaoDetalheVO>> tableModel = new TableModel<CellModelKeyValue<ResumoExpedicaoDetalheVO>>();
+
+		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaDetalhe));
+		tableModel.setPage(1);
+		tableModel.setTotal(listaDetalhe.size());
+
+		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
+		
+	}
+	
+	
 	
 	/**
 	 * Pesquisa de resumo de expedição de edições agrupadas por produto.

@@ -68,6 +68,78 @@ $(function() {
 
 });
 
+
+$(function() {
+	
+	$("#venda-encalhe-grid").flexigrid({
+		
+		preProcess:executarPreProcessamento,
+		
+		dataType : 'json',
+		
+		colModel : [{
+			display : 'Código',
+			name : 'codigoProduto',
+			width : 60,
+			sortable : true,
+			align : 'left'
+		}, {
+			display : 'Produto',
+			name : 'descricaoProduto',
+			width : 330,
+			sortable : true,
+			align : 'left'
+		}, {
+			display : 'Edição',
+			name : 'edicaoProduto',
+			width : 90,
+			sortable : true,
+			align : 'center'
+		}, {
+			display : 'Preço Capa R$',
+			name : 'precoCapa',
+			width : 90,
+			sortable : true,
+			align : 'right'
+		}, {
+			display : 'Reparte',
+			name : 'reparte',
+			width : 90,
+			sortable : true,
+			align : 'center'
+		},{
+			display : 'Diferença',
+			name : 'qntDiferenca',
+			width : 90,
+			sortable : true,
+			align : 'center'
+		},{
+			display : 'Total R$',
+			name : 'total',
+			width : 90,
+			sortable : true,
+			align : 'center'
+		},{
+			display : 'Fornecedor',
+			name : 'total',
+			width : 90,
+			sortable : true,
+			align : 'center'
+		}],
+		
+		sortname : "codigoProduto",
+		sortorder : "asc",
+		usepager : true,
+		useRp : true,
+		rp : 15,
+		showTableToggleBtn : true,
+		width : 960,
+		height : 150
+	});
+
+});
+
+
 $(function() {
 	$("#resumoExpedicaoGridProduto").flexigrid({
 		preProcess:executarPreProcessamento,
@@ -126,6 +198,60 @@ $(function() {
 	});
 
 });
+
+	/**
+	 * Executa o pré processamento detalhes resumo expedicao 
+	 */
+	function executarPreProcessamentoDetalheResumoExpedicao(resultado) {
+		
+		if (resultado.mensagens) {
+	
+			exibirMensagem(
+				resultado.mensagens.tipoMensagem, 
+				resultado.mensagens.listaMensagens
+			);
+	
+			return resultado.tableModel;
+		}
+		
+		return resultado.tableModel;
+	}
+
+	function detalharResumoExpedicao(codigoBox, dataLancamento){ 
+		
+		$("#venda-encalhe-grid").flexOptions({
+			
+			url: contextPath + '/expedicao/resumo/pesquisar/detalhe',
+			dataType : 'json',
+			
+			params:[{name:'codigoBox', value: codigoBox},
+			        
+			        {name:'dataLancamento', value: dataLancamento}]
+		
+		});
+		
+		$("#venda-encalhe-grid").flexReload();
+		
+		$( "#dialog-venda-encalhe" ).dialog({
+			
+			resizable: false,
+			
+			width:1000,
+			
+			modal: true,
+			
+			buttons: {
+				
+				"Fechar": function() {
+					$( this ).dialog( "close" );
+				}
+			}
+		});		
+		
+		
+		
+	}
+	
 
 	/**
 	 * Executa o pré processamento das informa��es retornadas da requisição de pesquisa.
@@ -328,6 +454,7 @@ $(function() {
 
 <div class="linha_separa_fields">&nbsp;</div>
 
+
 <div id="grid" style="display:none;">
 
 	<fieldset class="classFieldset">
@@ -368,4 +495,20 @@ $(function() {
 	</fieldset>
  
  </div>
+ 
+ 
+ 
+<div id="dialog-venda-encalhe" style="display:none;">
+
+	<fieldset class="classFieldset">
+	    
+		<legend id="idFiledResultResumo">Resumo  Expedição por Box</legend>
+	    
+		<table id="venda-encalhe-grid"></table>
+		
+	</fieldset>
+
+</div>
+ 
+ 
 </body>
