@@ -1026,7 +1026,7 @@ public class MatrizRecolhimentoController {
 		}
 		
 		Date dataInicioSemana = DateUtil.obterDataDaSemanaNoAno(
-			numeroSemana, distribuidor.getInicioSemana().getCodigoDiaSemana());
+			numeroSemana, distribuidor.getInicioSemana().getCodigoDiaSemana(), null);
 		
 		Date dataFimSemana = DateUtil.adicionarDias(dataInicioSemana, 6);
 		

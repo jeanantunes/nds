@@ -250,10 +250,10 @@ public class DateUtil {
 	 * 
 	 * @param numeroSemana - número da semana no ano
 	 * @param diaInicioSemana - dia de início da semana (Utilizar as constantes da classe java.util.Calendar)
-	 * 
+	 * @param dataBase TODO
 	 * @return Data
 	 */
-	public static Date obterDataDaSemanaNoAno(Integer numeroSemana, Integer diaInicioSemana) {
+	public static Date obterDataDaSemanaNoAno(Integer numeroSemana, Integer diaInicioSemana, Date dataBase) {
 		
 		if (numeroSemana == null) {
 			
@@ -266,6 +266,9 @@ public class DateUtil {
 		}
 		
 		Calendar calendar = Calendar.getInstance();
+		if (dataBase != null) {
+			calendar.setTime(dataBase);
+		}
 		
 		int year = calendar.get(Calendar.YEAR);
 		

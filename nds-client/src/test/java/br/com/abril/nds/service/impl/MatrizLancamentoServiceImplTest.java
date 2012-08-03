@@ -174,7 +174,7 @@ public class MatrizLancamentoServiceImplTest extends AbstractRepositoryImplTest 
 		
 		Date dataInicialSemana =
 			DateUtil.obterDataDaSemanaNoAno(numeroSemana,
-											distribuidor.getInicioSemana().getCodigoDiaSemana());
+											distribuidor.getInicioSemana().getCodigoDiaSemana(), null);
 		
 		Date dataFinalSemana =
 			DateUtil.adicionarDias(dataInicialSemana, 6);
