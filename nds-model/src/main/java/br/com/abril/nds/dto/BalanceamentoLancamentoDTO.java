@@ -25,6 +25,8 @@ public class BalanceamentoLancamentoDTO implements Serializable {
 	
 	private int numeroSemana;
 	
+	private Date dataLancamento;
+	
 	/**
 	 * Construtor padrão.
 	 */
@@ -73,6 +75,20 @@ public class BalanceamentoLancamentoDTO implements Serializable {
 	 */
 	public void setNumeroSemana(int numeroSemana) {
 		this.numeroSemana = numeroSemana;
+	}
+
+	/**
+	 * @return the dataLancamento
+	 */
+	public Date getDataLancamento() {
+		return dataLancamento;
+	}
+
+	/**
+	 * @param dataLancamento the dataLancamento to set
+	 */
+	public void setDataLancamento(Date dataLancamento) {
+		this.dataLancamento = dataLancamento;
 	}
 	
 }

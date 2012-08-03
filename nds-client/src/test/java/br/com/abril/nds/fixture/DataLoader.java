@@ -8012,9 +8012,15 @@ public class DataLoader {
 
 	private static void criarDadosBalanceamentoLancamento(Session session) {
 
-		int numeroSemana = DateUtil.obterNumeroSemanaNoAno(new Date(), distribuidor.getInicioSemana().getCodigoDiaSemana());
+		Date dataAtual = new Date();
+		
+		int numeroSemana =
+			DateUtil.obterNumeroSemanaNoAno(
+				dataAtual, distribuidor.getInicioSemana().getCodigoDiaSemana());
 
-		Date dataLancamento = DateUtil.obterDataDaSemanaNoAno(numeroSemana, distribuidor.getInicioSemana().getCodigoDiaSemana(), null);
+		Date dataLancamento =
+			DateUtil.obterDataDaSemanaNoAno(
+				numeroSemana, distribuidor.getInicioSemana().getCodigoDiaSemana(), dataAtual);
 
 		Date dataRecolhimento = DateUtil.adicionarDias(dataLancamento, 15);
 
@@ -9033,9 +9039,15 @@ public class DataLoader {
 
 	private static void criarDadosBalanceamentoRecolhimento(Session session) {
 
-		int numeroSemana = DateUtil.obterNumeroSemanaNoAno(new Date(), distribuidor.getInicioSemana().getCodigoDiaSemana());
+		Date dataAtual = new Date();
+		
+		int numeroSemana =
+			DateUtil.obterNumeroSemanaNoAno(
+				dataAtual, distribuidor.getInicioSemana().getCodigoDiaSemana());
 
-		Date dataInicioSemanaAtual = DateUtil.obterDataDaSemanaNoAno(numeroSemana, distribuidor.getInicioSemana().getCodigoDiaSemana(), null);
+		Date dataInicioSemanaAtual =
+			DateUtil.obterDataDaSemanaNoAno(
+				numeroSemana, distribuidor.getInicioSemana().getCodigoDiaSemana(), dataAtual);
 
 		Date dataRecolhimentoProximaSemana = DateUtil.adicionarDias(dataInicioSemanaAtual, 7);
 

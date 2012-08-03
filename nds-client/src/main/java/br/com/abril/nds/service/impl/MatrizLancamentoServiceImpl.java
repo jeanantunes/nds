@@ -504,6 +504,9 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 		
 		balanceamentoLancamento.setNumeroSemana(dadosBalanceamentoLancamento.getNumeroSemana());
 		
+		balanceamentoLancamento.setDataLancamento(
+			dadosBalanceamentoLancamento.getDataLancamento());
+		
 		return balanceamentoLancamento;
 	}
 	
@@ -1136,6 +1139,8 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 		// TODO: a regra quanto à utilização desse parâmetro será tratada em um próximo ajuste
 		dadosBalanceamentoLancamento.setQtdDiasLimiteParaReprogLancamento(
 			distribuidor.getQtdDiasLimiteParaReprogLancamento());
+		
+		dadosBalanceamentoLancamento.setDataLancamento(dataLancamento);
 		
 		return dadosBalanceamentoLancamento;
 	}
