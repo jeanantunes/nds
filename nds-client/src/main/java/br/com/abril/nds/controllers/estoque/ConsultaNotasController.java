@@ -364,7 +364,11 @@ public class ConsultaNotasController {
 		PeriodoVO periodo = obterPeriodoValidado(dataInicial, dataFinal);
 		
 		filtroConsultaNotaFiscal.setPeriodo(periodo);
-
+		
+		Distribuidor distribuidor = this.distribuidorService.obter();
+		
+		filtroConsultaNotaFiscal.setIdDistribuidor(distribuidor.getId());
+		
 		PaginacaoVO paginacao = new PaginacaoVO(page, rp, sortorder);
 
 		filtroConsultaNotaFiscal.setPaginacao(paginacao);
