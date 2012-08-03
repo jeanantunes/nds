@@ -1,6 +1,7 @@
 package br.com.abril.nds.repository.impl.balanceamento.recolhimento;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
@@ -67,8 +68,8 @@ public class ExpectativaEncalheDataTest extends AbstractRepositoryImplTest {
 	private TipoProduto tipoCromo;
 	private TipoFornecedor tipoFornecedorPublicacao;
 	
-	BigDecimal qtdRecebida = new BigDecimal("110.00");
-	BigDecimal qtdDevolvida = BigDecimal.TEN;
+	BigInteger qtdRecebida = new BigInteger("110");
+	BigInteger qtdDevolvida = BigInteger.TEN;
 	BigDecimal porcentagemExpectativaVenda = BigDecimal.TEN;
 	
 	@Before
@@ -159,7 +160,7 @@ public class ExpectativaEncalheDataTest extends AbstractRepositoryImplTest {
 				Fixture.criarData(22, Calendar.FEBRUARY,2012),
 				Fixture.criarData(22, Calendar.FEBRUARY,2012),
 				TipoLancamento.LANCAMENTO,
-						new BigDecimal(50));
+						BigInteger.valueOf(50));
 		save(itemNotaFiscal1Veja);
 		
 		Date dataRecebimento = Fixture.criarData(22, Calendar.FEBRUARY, 2012);
@@ -169,7 +170,7 @@ public class ExpectativaEncalheDataTest extends AbstractRepositoryImplTest {
 		save(recebimentoFisico1Veja);
 			
 		ItemRecebimentoFisico itemRecebimentoFisico1Veja = 
-				Fixture.itemRecebimentoFisico(itemNotaFiscal1Veja, recebimentoFisico1Veja, new BigDecimal(50));
+				Fixture.itemRecebimentoFisico(itemNotaFiscal1Veja, recebimentoFisico1Veja, BigInteger.valueOf(50));
 		save(itemRecebimentoFisico1Veja);
 		
 		
@@ -185,7 +186,7 @@ public class ExpectativaEncalheDataTest extends AbstractRepositoryImplTest {
 				Fixture.criarData(22, Calendar.FEBRUARY,2012), 
 				Fixture.criarData(22, Calendar.FEBRUARY,2012),
 				TipoLancamento.LANCAMENTO,
-				new BigDecimal(50));
+				BigInteger.valueOf(50));
 		
 		save(itemNotaFiscal2Veja);
 
@@ -195,7 +196,7 @@ public class ExpectativaEncalheDataTest extends AbstractRepositoryImplTest {
 		save(recebimentoFisico2Veja);
 			
 		ItemRecebimentoFisico itemRecebimentoFisico2Veja = 
-				Fixture.itemRecebimentoFisico(itemNotaFiscal2Veja, recebimentoFisico2Veja, new BigDecimal(50));
+				Fixture.itemRecebimentoFisico(itemNotaFiscal2Veja, recebimentoFisico2Veja, BigInteger.valueOf(50));
 		save(itemRecebimentoFisico2Veja);
 		
 		
@@ -213,7 +214,7 @@ public class ExpectativaEncalheDataTest extends AbstractRepositoryImplTest {
 						Fixture.criarData(22, Calendar.FEBRUARY,2012), 
 						Fixture.criarData(22, Calendar.FEBRUARY,2012), 
 						TipoLancamento.LANCAMENTO,
-						new BigDecimal(25));
+						BigInteger.valueOf(25));
 		
 		save(itemNotaFiscal4Rodas);
 		
@@ -223,7 +224,7 @@ public class ExpectativaEncalheDataTest extends AbstractRepositoryImplTest {
 		save(recebimentoFisico4Rodas);
 
 		ItemRecebimentoFisico itemRecebimentoFisico4Rodas = 
-				Fixture.itemRecebimentoFisico(itemNotaFiscal4Rodas, recebimentoFisico4Rodas, new BigDecimal(25));
+				Fixture.itemRecebimentoFisico(itemNotaFiscal4Rodas, recebimentoFisico4Rodas, BigInteger.valueOf(25));
 		save(itemRecebimentoFisico4Rodas);
 		
 		lancamentoVeja = Fixture.lancamento(TipoLancamento.SUPLEMENTAR, veja1,
@@ -231,7 +232,7 @@ public class ExpectativaEncalheDataTest extends AbstractRepositoryImplTest {
 				Fixture.criarData(28, Calendar.FEBRUARY, 2012),
 				new Date(),
 				new Date(),
-				new BigDecimal(100),
+				BigInteger.valueOf(100),
 				StatusLancamento.EXPEDIDO, itemRecebimentoFisico1Veja, 1);
 		lancamentoVeja.getRecebimentos().add(itemRecebimentoFisico2Veja);
 		
@@ -240,7 +241,7 @@ public class ExpectativaEncalheDataTest extends AbstractRepositoryImplTest {
 				Fixture.criarData(22, Calendar.MARCH, 2012),
 				new Date(),
 				new Date(),
-				new BigDecimal(25),
+				BigInteger.valueOf(25),
 				StatusLancamento.EXPEDIDO, itemRecebimentoFisico4Rodas, 2);
 		
 		lancamentoInfoExame = Fixture.lancamento(TipoLancamento.LANCAMENTO, infoExame3,
@@ -248,7 +249,7 @@ public class ExpectativaEncalheDataTest extends AbstractRepositoryImplTest {
 				Fixture.criarData(23, Calendar.MARCH, 2012), 
 				new Date(),
 				new Date(),
-				new BigDecimal(40),
+				BigInteger.valueOf(40),
 				StatusLancamento.EXPEDIDO, null, 3);
 		
 		lancamentoCapricho = Fixture.lancamento(TipoLancamento.LANCAMENTO, capricho1,
@@ -256,7 +257,7 @@ public class ExpectativaEncalheDataTest extends AbstractRepositoryImplTest {
 				Fixture.criarData(12, Calendar.MARCH, 2012),
 				new Date(),
 				new Date(),
-				BigDecimal.TEN,
+				BigInteger.TEN,
 				StatusLancamento.EXPEDIDO, null, 4);
 		
 		lancamentoCromoReiLeao = Fixture.lancamento(TipoLancamento.LANCAMENTO, cromoReiLeao1,
@@ -264,7 +265,7 @@ public class ExpectativaEncalheDataTest extends AbstractRepositoryImplTest {
 				Fixture.criarData(23, Calendar.APRIL, 2012),
 				new Date(),
 				new Date(),
-				new BigDecimal(10000),
+				BigInteger.valueOf(10000),
 				StatusLancamento.BALANCEADO, null, 5);
 		
 		save(lancamentoVeja, lancamentoQuatroRodas, lancamentoInfoExame,
@@ -320,10 +321,10 @@ public class ExpectativaEncalheDataTest extends AbstractRepositoryImplTest {
 				lancamentoParcialCapricho, 
 				StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.FINAL);
 
-		Estudo estudoCapricho = Fixture.estudo(new BigDecimal(180),
+		Estudo estudoCapricho = Fixture.estudo(BigInteger.valueOf(180),
 				lancamentoCapricho.getDataLancamentoDistribuidor(), capricho1);
 		
-		EstudoCota estudoCotaCapricho = Fixture.estudoCota(BigDecimal.TEN, BigDecimal.ONE, estudoCapricho, cotaDinap);
+		EstudoCota estudoCotaCapricho = Fixture.estudoCota(BigInteger.TEN, BigInteger.ONE, estudoCapricho, cotaDinap);
 
 		save(estudoCapricho, lancamentoParcialCapricho, parcialCapricho, estudoCotaCapricho);
 		
@@ -347,10 +348,10 @@ public class ExpectativaEncalheDataTest extends AbstractRepositoryImplTest {
 				lancamentoParcialQuatroRodas, 
 				StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.FINAL);
 		
-		Estudo estudoQuatroRodas = Fixture.estudo(new BigDecimal(180),
+		Estudo estudoQuatroRodas = Fixture.estudo(BigInteger.valueOf(180),
 				lancamentoQuatroRodas.getDataLancamentoDistribuidor(), quatroRoda2);
 		
-		EstudoCota estudoCotaQuatroRodas = Fixture.estudoCota(BigDecimal.TEN, BigDecimal.ONE, estudoQuatroRodas, cotaFC);
+		EstudoCota estudoCotaQuatroRodas = Fixture.estudoCota(BigInteger.TEN, BigInteger.ONE, estudoQuatroRodas, cotaFC);
 		
 		save(estudoQuatroRodas, lancamentoParcialQuatroRodas, parcialQuatroRodas, estudoCotaQuatroRodas);
 		
@@ -372,10 +373,10 @@ public class ExpectativaEncalheDataTest extends AbstractRepositoryImplTest {
 				lancamentoParcialVeja, 
 				StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.FINAL);
 
-		Estudo estudoVeja = Fixture.estudo(new BigDecimal(180),
+		Estudo estudoVeja = Fixture.estudo(BigInteger.valueOf(180),
 				lancamentoVeja.getDataLancamentoDistribuidor(), veja1);
 		
-		EstudoCota estudoCotaVeja = Fixture.estudoCota(BigDecimal.TEN, BigDecimal.ONE, estudoVeja, cotaManoel);
+		EstudoCota estudoCotaVeja = Fixture.estudoCota(BigInteger.TEN, BigInteger.ONE, estudoVeja, cotaManoel);
 
 		save(estudoVeja, lancamentoParcialVeja, parcialVeja, estudoCotaVeja);
 		
@@ -399,10 +400,10 @@ public class ExpectativaEncalheDataTest extends AbstractRepositoryImplTest {
 				lancamentoParcialInfoExame, 
 				StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.FINAL);
 		
-		Estudo estudoInfoExame = Fixture.estudo(new BigDecimal(180),
+		Estudo estudoInfoExame = Fixture.estudo(BigInteger.valueOf(180),
 				lancamentoInfoExame.getDataLancamentoDistribuidor(), infoExame3);
 		
-		EstudoCota estudoCotaInfoExame = Fixture.estudoCota(BigDecimal.TEN, BigDecimal.ONE, estudoInfoExame, cotaJurandir);
+		EstudoCota estudoCotaInfoExame = Fixture.estudoCota(BigInteger.TEN, BigInteger.ONE, estudoInfoExame, cotaJurandir);
 		
 		save(estudoInfoExame, lancamentoParcialInfoExame, parcialInfoExame, estudoCotaInfoExame);
 	}
@@ -422,12 +423,12 @@ public class ExpectativaEncalheDataTest extends AbstractRepositoryImplTest {
 
 		Assert.assertEquals(4, expectativas.size());
 		
-		BigDecimal qtdEstoque = qtdRecebida.subtract(qtdDevolvida);
+		BigInteger qtdEstoque = qtdRecebida.subtract(qtdDevolvida);
 		
 		BigDecimal expectativaVenda =
-			qtdEstoque.multiply(MathUtil.divide(porcentagemExpectativaVenda, new BigDecimal("100.00")));
+				new BigDecimal(qtdEstoque).multiply(MathUtil.divide(porcentagemExpectativaVenda, new BigDecimal("100.00")));
 		
-		BigDecimal expectativaEsperada = qtdEstoque.subtract(expectativaVenda);
+		BigDecimal expectativaEsperada = new BigDecimal(qtdEstoque).subtract(expectativaVenda);
 		
 		for (Map.Entry<Date, BigDecimal> entry : expectativas.entrySet()) {
 

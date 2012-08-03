@@ -2,6 +2,7 @@ package br.com.abril.nds.controllers.cadastro;
 
 import java.io.InputStream;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -201,7 +202,7 @@ public class ProdutoEdicaoController {
 			TipoLancamento tipoLancamento,
 			BigDecimal precoPrevisto, BigDecimal precoVenda,
 			Date dataLancamentoPrevisto, 
-			BigDecimal repartePrevisto, BigDecimal repartePromocional,
+			BigInteger repartePrevisto, BigInteger repartePromocional,
 			String codigoDeBarras, String codigoDeBarrasCorporativo,
 			BigDecimal desconto, BigDecimal peso, 
 			BigDecimal largura, BigDecimal comprimento, BigDecimal espessura,

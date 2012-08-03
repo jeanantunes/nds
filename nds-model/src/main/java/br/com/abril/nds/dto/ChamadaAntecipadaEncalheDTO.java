@@ -2,6 +2,7 @@ package br.com.abril.nds.dto;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 
 public class ChamadaAntecipadaEncalheDTO implements Serializable {
 
@@ -16,13 +17,13 @@ public class ChamadaAntecipadaEncalheDTO implements Serializable {
 	
 	private String nomeCota;
 	
-	private BigDecimal qntExemplares;
+	private BigInteger qntExemplares;
 	
 	private Long codigoChamadaEncalhe;
 
 	public ChamadaAntecipadaEncalheDTO() {}
 
-	public ChamadaAntecipadaEncalheDTO(Integer codBox, Integer numeroCota,BigDecimal qntExemplares,String nomeCota) {
+	public ChamadaAntecipadaEncalheDTO(Integer codBox, Integer numeroCota,BigInteger qntExemplares,String nomeCota) {
 		
 		this.codBox = codBox;
 		this.numeroCota = numeroCota;
@@ -30,7 +31,7 @@ public class ChamadaAntecipadaEncalheDTO implements Serializable {
 		this.qntExemplares = qntExemplares;
 	}
 	
-	public ChamadaAntecipadaEncalheDTO(Integer codBox, Integer numeroCota,BigDecimal qntExemplares,String nomeCota, Long codigoChamadaEncalhe) {
+	public ChamadaAntecipadaEncalheDTO(Integer codBox, Integer numeroCota,BigInteger qntExemplares,String nomeCota, Long codigoChamadaEncalhe) {
 		
 		this.codBox = codBox;
 		this.numeroCota = numeroCota;
@@ -39,7 +40,7 @@ public class ChamadaAntecipadaEncalheDTO implements Serializable {
 		this.codigoChamadaEncalhe = codigoChamadaEncalhe;
 	}
 	
-	public ChamadaAntecipadaEncalheDTO(Integer numeroCota,BigDecimal qntExemplares,Long codigoChamadaEncalhe) {
+	public ChamadaAntecipadaEncalheDTO(Integer numeroCota,BigInteger qntExemplares,Long codigoChamadaEncalhe) {
 		
 		this.numeroCota = numeroCota;
 		this.qntExemplares = qntExemplares;
@@ -105,14 +106,14 @@ public class ChamadaAntecipadaEncalheDTO implements Serializable {
 	/**
 	 * @return the qntExemplares
 	 */
-	public BigDecimal getQntExemplares() {
+	public BigInteger getQntExemplares() {
 		return qntExemplares;
 	}
 
 	/**
 	 * @param qntExemplares the qntExemplares to set
 	 */
-	public void setQntExemplares(BigDecimal qntExemplares) {
+	public void setQntExemplares(BigInteger qntExemplares) {
 		this.qntExemplares = qntExemplares;
 	}
 }

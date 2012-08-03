@@ -1,6 +1,6 @@
 package br.com.abril.nds.repository;
 
-import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
 
@@ -10,7 +10,7 @@ import br.com.abril.nds.model.estoque.ConferenciaEncalheParcial;
 
 public interface ConferenciaEncalheParcialRepository extends Repository<ConferenciaEncalheParcial, Long>  {
 
-	public BigDecimal obterQtdTotalEncalheParcial(StatusAprovacao statusAprovacao, Date dataMovimento, String codigoProduto, Long numeroEdicao);
+	public BigInteger obterQtdTotalEncalheParcial(StatusAprovacao statusAprovacao, Date dataMovimento, String codigoProduto, Long numeroEdicao);
 	
 	
 	public List<ConferenciaEncalheParcial> obterListaConferenciaEncalhe(

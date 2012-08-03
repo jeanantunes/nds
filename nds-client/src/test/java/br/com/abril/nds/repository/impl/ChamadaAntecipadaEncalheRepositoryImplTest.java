@@ -1,6 +1,7 @@
 package br.com.abril.nds.repository.impl;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -181,28 +182,28 @@ public class ChamadaAntecipadaEncalheRepositoryImplTest extends AbstractReposito
 		save(notaFiscalFornecedor);
 
 		ItemNotaFiscalEntrada itemNotaFiscalFornecedor = Fixture.itemNotaFiscal(produtoEdicaoVeja1,
-				usuarioJoao, notaFiscalFornecedor, new Date(), new Date(), TipoLancamento.LANCAMENTO, BigDecimal.TEN);
+				usuarioJoao, notaFiscalFornecedor, new Date(), new Date(), TipoLancamento.LANCAMENTO, BigInteger.TEN);
 		save(itemNotaFiscalFornecedor);
 		
 		RecebimentoFisico recebimentoFisico = Fixture.recebimentoFisico(
 				notaFiscalFornecedor, usuarioJoao, new Date(), new Date(), StatusConfirmacao.CONFIRMADO);
 		save(recebimentoFisico);
 			
-		ItemRecebimentoFisico itemRecebimentoFisico = Fixture.itemRecebimentoFisico(itemNotaFiscalFornecedor, recebimentoFisico, BigDecimal.TEN);
+		ItemRecebimentoFisico itemRecebimentoFisico = Fixture.itemRecebimentoFisico(itemNotaFiscalFornecedor, recebimentoFisico, BigInteger.TEN);
 		save(itemRecebimentoFisico);
 		
-		EstoqueProduto estoqueProdutoVeja1 = Fixture.estoqueProduto(produtoEdicaoVeja1, BigDecimal.ZERO);
+		EstoqueProduto estoqueProdutoVeja1 = Fixture.estoqueProduto(produtoEdicaoVeja1, BigInteger.ZERO);
 		save(estoqueProdutoVeja1);
 		
-		EstoqueProduto estoqueProdutoVeja2 = Fixture.estoqueProduto(produtoEdicaoVeja2, BigDecimal.ZERO);
+		EstoqueProduto estoqueProdutoVeja2 = Fixture.estoqueProduto(produtoEdicaoVeja2, BigInteger.ZERO);
 		save(estoqueProdutoVeja2);
 		
 		EstoqueProdutoCota estoqueProdutoCotaVeja1 = Fixture.estoqueProdutoCota(
-				produtoEdicaoVeja1, cotaJose, BigDecimal.TEN, BigDecimal.ONE);
+				produtoEdicaoVeja1, cotaJose, BigInteger.TEN, BigInteger.ONE);
 		save(estoqueProdutoCotaVeja1);
 		
 		EstoqueProdutoCota estoqueProdutoCotaVeja2 = Fixture.estoqueProdutoCota(
-				produtoEdicaoVeja2, cotaManoel, BigDecimal.TEN, BigDecimal.ONE);
+				produtoEdicaoVeja2, cotaManoel, BigInteger.TEN, BigInteger.ONE);
 		save(estoqueProdutoCotaVeja2);
 		
 		TipoMovimentoEstoque tipoMovimentoRecFisico = Fixture.tipoMovimentoRecebimentoFisico();
@@ -210,7 +211,7 @@ public class ChamadaAntecipadaEncalheRepositoryImplTest extends AbstractReposito
 		
 		MovimentoEstoque movimentoRecFisicoVeja1 = Fixture.movimentoEstoque(
 				itemRecebimentoFisico, produtoEdicaoVeja1, tipoMovimentoRecFisico, usuarioJoao,
-				estoqueProdutoVeja1, new Date(), new BigDecimal(10), StatusAprovacao.APROVADO, "Aprovado");
+				estoqueProdutoVeja1, new Date(), BigInteger.valueOf(10), StatusAprovacao.APROVADO, "Aprovado");
 		
 		save(movimentoRecFisicoVeja1);
 		update(estoqueProdutoVeja1);
@@ -221,25 +222,25 @@ public class ChamadaAntecipadaEncalheRepositoryImplTest extends AbstractReposito
 		
 		MovimentoEstoque movimentoEstoque1 =
 			Fixture.movimentoEstoque(null, produtoEdicaoVeja1, tipoMovimentoFaltaEm, usuarioJoao,
-									 estoqueProdutoVeja1, new Date(), new BigDecimal(1),
+									 estoqueProdutoVeja1, new Date(), BigInteger.valueOf(1),
 									 StatusAprovacao.PENDENTE, null);
 		save(movimentoEstoque1);
 		
 		MovimentoEstoque movimentoEstoque2 =
 				Fixture.movimentoEstoque(null, produtoEdicaoVeja1, tipoMovimentoFaltaEm, usuarioJoao,
-										 estoqueProdutoVeja1, new Date(), new BigDecimal(1),
+										 estoqueProdutoVeja1, new Date(), BigInteger.valueOf(1),
 										 StatusAprovacao.PENDENTE, null);
 		save(movimentoEstoque2);
 		
 		MovimentoEstoque movimentoEstoque3 =
 			Fixture.movimentoEstoque(null, produtoEdicaoVeja2, tipoMovimentoFaltaDe, usuarioJoao,
-									 estoqueProdutoVeja2, new Date(), new BigDecimal(2),
+									 estoqueProdutoVeja2, new Date(), BigInteger.valueOf(2),
 									 StatusAprovacao.PENDENTE, null);
 		save(movimentoEstoque3);
 		
 		MovimentoEstoque movimentoEstoque4 =
 				Fixture.movimentoEstoque(null, produtoEdicaoVeja2, tipoMovimentoFaltaDe, usuarioJoao,
-										 estoqueProdutoVeja2, new Date(), new BigDecimal(2),
+										 estoqueProdutoVeja2, new Date(), BigInteger.valueOf(2),
 										 StatusAprovacao.PENDENTE, null);
 		save(movimentoEstoque4);
 		
@@ -249,7 +250,7 @@ public class ChamadaAntecipadaEncalheRepositoryImplTest extends AbstractReposito
 						produtoEdicaoVeja1,
 						DateUtil.adicionarDias(new Date(), 1),
 						DateUtil.adicionarDias(new Date(),+5), new Date(),
-						new Date(), BigDecimal.TEN,  StatusLancamento.EXPEDIDO,
+						new Date(), BigInteger.TEN,  StatusLancamento.EXPEDIDO,
 						itemRecebimentoFisico, 1);
 		save(lancamentoVeja1);
 		
@@ -260,30 +261,30 @@ public class ChamadaAntecipadaEncalheRepositoryImplTest extends AbstractReposito
 						DateUtil.adicionarDias(new Date(), 0),
 						DateUtil.adicionarDias(new Date(),+5), new Date(),
 
-						new Date(), BigDecimal.TEN, StatusLancamento.EXPEDIDO,
+						new Date(), BigInteger.TEN, StatusLancamento.EXPEDIDO,
 
 						null, 1);
 		save(lancamentoVeja2);
 		
 		Estudo estudoVeja1 = Fixture
-				.estudo(BigDecimal.TEN, lancamentoVeja1.getDataLancamentoDistribuidor(), produtoEdicaoVeja1);
+				.estudo(BigInteger.TEN, lancamentoVeja1.getDataLancamentoDistribuidor(), produtoEdicaoVeja1);
 		save(estudoVeja1);
 		
 		Estudo estudoVeja2 = Fixture
-				.estudo(BigDecimal.TEN, lancamentoVeja2.getDataLancamentoDistribuidor(), produtoEdicaoVeja2);
+				.estudo(BigInteger.TEN, lancamentoVeja2.getDataLancamentoDistribuidor(), produtoEdicaoVeja2);
 		save(estudoVeja2);
 		
-		EstudoCota estudoCotaVeja1Joao = Fixture.estudoCota(new BigDecimal(10), new BigDecimal(10), estudoVeja1, cotaJose);
+		EstudoCota estudoCotaVeja1Joao = Fixture.estudoCota(BigInteger.valueOf(10), BigInteger.valueOf(10), estudoVeja1, cotaJose);
 		save(estudoCotaVeja1Joao);
 		
-		EstudoCota estudoCotaVeja2Joao = Fixture.estudoCota(new BigDecimal(10), new BigDecimal(10), estudoVeja2, cotaManoel);
+		EstudoCota estudoCotaVeja2Joao = Fixture.estudoCota(BigInteger.valueOf(10), BigInteger.valueOf(10), estudoVeja2, cotaManoel);
 		save(estudoCotaVeja2Joao);
 		
 		ChamadaEncalhe chamadaEncalhe = Fixture.chamadaEncalhe(Fixture.criarData(28, Calendar.FEBRUARY, 2012),produtoEdicaoVeja1,TipoChamadaEncalhe.ANTECIPADA);
 		
 		save(chamadaEncalhe);
 		
-		ChamadaEncalheCota chamadaEncalheCota = Fixture.chamadaEncalheCota(chamadaEncalhe,false,cotaManoel,BigDecimal.TEN);
+		ChamadaEncalheCota chamadaEncalheCota = Fixture.chamadaEncalheCota(chamadaEncalhe,false,cotaManoel,BigInteger.TEN);
 		save(chamadaEncalheCota);
 	}
 	
@@ -313,11 +314,11 @@ public class ChamadaAntecipadaEncalheRepositoryImplTest extends AbstractReposito
 		filtro.setNumeroEdicao(numeroEdicao);
 		filtro.setNumeroCota(1234);
 		
-		BigDecimal antecipadaEncalheDTO = cotaRepository.obterQntExemplaresCotasSujeitasAntecipacoEncalhe(filtro);
+		BigInteger antecipadaEncalheDTO = cotaRepository.obterQntExemplaresCotasSujeitasAntecipacoEncalhe(filtro);
 		
 		Assert.assertNotNull(antecipadaEncalheDTO);
 		
-		Assert.assertTrue(antecipadaEncalheDTO.compareTo(BigDecimal.ZERO) > 0);
+		Assert.assertTrue(antecipadaEncalheDTO.compareTo(BigInteger.ZERO) > 0);
 	}
 	
 	@Test

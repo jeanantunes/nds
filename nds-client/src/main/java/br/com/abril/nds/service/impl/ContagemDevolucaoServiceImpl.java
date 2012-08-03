@@ -1,6 +1,7 @@
 package br.com.abril.nds.service.impl;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -143,15 +144,15 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 			
 			BigDecimal precoVenda = (contagem.getPrecoVenda() == null) ? new BigDecimal(0.0D) : contagem.getPrecoVenda();
 			
-			BigDecimal qtdMovimento = (contagem.getQtdDevolucao() == null) ? new BigDecimal(0.0D) : contagem.getQtdDevolucao();
+			BigInteger qtdMovimento = (contagem.getQtdDevolucao() == null) ? BigInteger.ZERO : contagem.getQtdDevolucao();
 			
-			BigDecimal qtdNota = (contagem.getQtdNota() == null) ? new BigDecimal(0.0D) : contagem.getQtdNota();
+			BigInteger qtdNota = (contagem.getQtdNota() == null) ? BigInteger.ZERO : contagem.getQtdNota();
 			
 			
-			BigDecimal diferenca = qtdMovimento.subtract(qtdNota);
+			BigInteger diferenca = qtdMovimento.subtract(qtdNota);
 			contagem.setDiferenca(diferenca);
 			
-			BigDecimal valorTotal = qtdMovimento.multiply(precoVenda);
+			BigDecimal valorTotal = precoVenda.multiply(new BigDecimal(qtdMovimento));
 			contagem.setValorTotal(valorTotal);
 			
 		}
@@ -258,19 +259,19 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 		String codigoProduto = contagem.getCodigoProduto();
 		Long numeroEdicao = contagem.getNumeroEdicao();
 		
-		BigDecimal qtdTotalConferenciaEncalheParcialOld = conferenciaEncalheParcialRepository.obterQtdTotalEncalheParcial(
+		BigInteger qtdTotalConferenciaEncalheParcialOld = conferenciaEncalheParcialRepository.obterQtdTotalEncalheParcial(
 				StatusAprovacao.PENDENTE,
 				dataMovimento, 
 				codigoProduto, 
 				numeroEdicao);
 		
-		BigDecimal qtdTotalConferenciaEncalheParcialNew = contagem.getQtdNota();
+		BigInteger qtdTotalConferenciaEncalheParcialNew = contagem.getQtdNota();
 		
 		if( qtdTotalConferenciaEncalheParcialNew == null ) {
 			return;
 		}
 		
-		BigDecimal correcao = null;
+		BigInteger correcao = null;
 		
 		if( qtdTotalConferenciaEncalheParcialOld != null ) {
 			
@@ -385,29 +386,29 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 	private void ajustarDiferencaConferenciaEncalheContagemDevolucao(ContagemDevolucaoDTO contagem, Usuario usuario) {
 		
 		if(contagem.getQtdDevolucao() == null) {
-			contagem.setQtdDevolucao(BigDecimal.ZERO);
+			contagem.setQtdDevolucao(BigInteger.ZERO);
 		}
 		
 		if(contagem.getQtdNota() == null) {
-			contagem.setQtdNota(BigDecimal.ZERO);
+			contagem.setQtdNota(BigInteger.ZERO);
 		}
 		
-		BigDecimal calculoQdeDiferenca = contagem.getQtdDevolucao().subtract(contagem.getQtdNota());
+		BigInteger calculoQdeDiferenca = contagem.getQtdDevolucao().subtract(contagem.getQtdNota());
 		
 		ProdutoEdicao produtoEdicao = new ProdutoEdicao();
 		produtoEdicao.setId(contagem.getIdProdutoEdicao());					
 
 		Diferenca diferenca = new Diferenca();
 		
-		if( calculoQdeDiferenca.compareTo(BigDecimal.ZERO) < 0 ) {
+		if( calculoQdeDiferenca.compareTo(BigInteger.ZERO) < 0 ) {
 			
 			diferenca.setTipoDiferenca(TipoDiferenca.FALTA_DE);
 			
-		} else if(calculoQdeDiferenca.compareTo(BigDecimal.ZERO) > 0) {
+		} else if(calculoQdeDiferenca.compareTo(BigInteger.ZERO) > 0) {
 			
 			diferenca.setTipoDiferenca(TipoDiferenca.SOBRA_DE);
 			
-		} else if(calculoQdeDiferenca.compareTo(BigDecimal.ZERO) == 0) {
+		} else if(calculoQdeDiferenca.compareTo(BigInteger.ZERO) == 0) {
 			
 			sinalizarDiferencaApurada(contagem);
 			
@@ -747,7 +748,7 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 			if(contagem.getIdProdutoEdicao() == null || contagem.getQtdNota() != null || contagem.getQtdNota().doubleValue() > 0.0D) {
 				
 				if(contagem.getPrecoVenda()!=null) {
-					valorTotal = valorTotal.add( contagem.getPrecoVenda().multiply(contagem.getQtdNota()) );
+					valorTotal = valorTotal.add( contagem.getPrecoVenda().multiply( new BigDecimal(contagem.getQtdNota()) ) );
 				}
 				
 				ProdutoEdicao produtoEdicao = new ProdutoEdicao();

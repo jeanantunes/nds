@@ -1,6 +1,7 @@
 package br.com.abril.nds.integracao.ems0114.processor;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Calendar;
 import java.util.List;
 
@@ -86,7 +87,7 @@ public class EMS0114MessageProcessor extends AbstractRepository implements
 			lancamento = new Lancamento();
 			lancamento.setDataCriacao(data.getTime());
 			lancamento.setDataStatus(data.getTime());
-			lancamento.setReparte(new BigDecimal(0));
+			lancamento.setReparte(BigInteger.valueOf(0));
 			lancamento.setDataLancamentoDistribuidor(data.getTime());
 			lancamento.setDataLancamentoPrevista(data.getTime());
 			lancamento.setStatus(StatusLancamento.EXPEDIDO);

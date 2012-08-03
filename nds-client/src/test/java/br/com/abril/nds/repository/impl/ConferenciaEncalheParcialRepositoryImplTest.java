@@ -1,6 +1,7 @@
 package br.com.abril.nds.repository.impl;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -135,7 +136,7 @@ public class ConferenciaEncalheParcialRepositoryImplTest extends AbstractReposit
 				Fixture.criarData(22, Calendar.FEBRUARY,2012),
 				Fixture.criarData(22, Calendar.FEBRUARY,2012),
 				TipoLancamento.LANCAMENTO,
-						new BigDecimal(50));
+						BigInteger.valueOf(50));
 		save(itemNotaFiscal1Veja);
 		
 		Date dataRecebimento = Fixture.criarData(22, Calendar.FEBRUARY, 2012);
@@ -145,7 +146,7 @@ public class ConferenciaEncalheParcialRepositoryImplTest extends AbstractReposit
 		save(recebimentoFisico1Veja);
 			
 		ItemRecebimentoFisico itemRecebimentoFisico1Veja = 
-				Fixture.itemRecebimentoFisico(itemNotaFiscal1Veja, recebimentoFisico1Veja, new BigDecimal(50));
+				Fixture.itemRecebimentoFisico(itemNotaFiscal1Veja, recebimentoFisico1Veja, BigInteger.valueOf(50));
 		save(itemRecebimentoFisico1Veja);
 		
 		
@@ -161,7 +162,7 @@ public class ConferenciaEncalheParcialRepositoryImplTest extends AbstractReposit
 				Fixture.criarData(22, Calendar.FEBRUARY,2012), 
 				Fixture.criarData(22, Calendar.FEBRUARY,2012),
 				TipoLancamento.LANCAMENTO,
-				new BigDecimal(50));
+				BigInteger.valueOf(50));
 		
 		save(itemNotaFiscal2Veja);
 
@@ -171,7 +172,7 @@ public class ConferenciaEncalheParcialRepositoryImplTest extends AbstractReposit
 		save(recebimentoFisico2Veja);
 			
 		ItemRecebimentoFisico itemRecebimentoFisico2Veja = 
-				Fixture.itemRecebimentoFisico(itemNotaFiscal2Veja, recebimentoFisico2Veja, new BigDecimal(50));
+				Fixture.itemRecebimentoFisico(itemNotaFiscal2Veja, recebimentoFisico2Veja, BigInteger.valueOf(50));
 		save(itemRecebimentoFisico2Veja);
 		
 		
@@ -189,7 +190,7 @@ public class ConferenciaEncalheParcialRepositoryImplTest extends AbstractReposit
 						Fixture.criarData(22, Calendar.FEBRUARY,2012), 
 						Fixture.criarData(22, Calendar.FEBRUARY,2012), 
 						TipoLancamento.LANCAMENTO,
-						new BigDecimal(25));
+						BigInteger.valueOf(25));
 		
 		save(itemNotaFiscal4Rodas);
 		
@@ -199,7 +200,7 @@ public class ConferenciaEncalheParcialRepositoryImplTest extends AbstractReposit
 		save(recebimentoFisico4Rodas);
 			
 		ItemRecebimentoFisico itemRecebimentoFisico4Rodas = 
-				Fixture.itemRecebimentoFisico(itemNotaFiscal4Rodas, recebimentoFisico4Rodas, new BigDecimal(25));
+				Fixture.itemRecebimentoFisico(itemNotaFiscal4Rodas, recebimentoFisico4Rodas, BigInteger.valueOf(25));
 		save(itemRecebimentoFisico4Rodas);
 		
 		lancamentoVeja = Fixture.lancamento(
@@ -209,13 +210,13 @@ public class ConferenciaEncalheParcialRepositoryImplTest extends AbstractReposit
 				Fixture.criarData(28, Calendar.FEBRUARY, 2012),
 				new Date(),
 				new Date(),
-				new BigDecimal(100),
+				BigInteger.valueOf(100),
 				StatusLancamento.BALANCEADO_RECOLHIMENTO, itemRecebimentoFisico1Veja, 1);
 		
 		lancamentoVeja.getRecebimentos().add(itemRecebimentoFisico2Veja);
 		
 		
-		Estudo estudo = Fixture.estudo(new BigDecimal(100),
+		Estudo estudo = Fixture.estudo(BigInteger.valueOf(100),
 				Fixture.criarData(22, Calendar.FEBRUARY, 2012), veja1);
 
 		save(lancamentoVeja, estudo);
@@ -231,7 +232,7 @@ public class ConferenciaEncalheParcialRepositoryImplTest extends AbstractReposit
 		save(cotaManoel);
 		
 		EstoqueProdutoCota estoqueProdutoCota = Fixture.estoqueProdutoCota(
-				veja1, cotaManoel, BigDecimal.TEN, BigDecimal.ZERO);
+				veja1, cotaManoel, BigInteger.TEN, BigInteger.ZERO);
 		save(estoqueProdutoCota);
 		
 		Usuario usuarioJoao = Fixture.usuarioJoao();
@@ -247,7 +248,7 @@ public class ConferenciaEncalheParcialRepositoryImplTest extends AbstractReposit
 				tipoMovimentoEnvioEncalhe, 
 				usuarioJoao, 
 				estoqueProdutoCota,
-				new BigDecimal(12), cotaManoel, StatusAprovacao.APROVADO, "Aprovado");
+				BigInteger.valueOf(12), cotaManoel, StatusAprovacao.APROVADO, "Aprovado");
 		
 		save(mec);
 		
@@ -256,7 +257,7 @@ public class ConferenciaEncalheParcialRepositoryImplTest extends AbstractReposit
 				Fixture.criarData(28, Calendar.FEBRUARY, 2012), 
 				veja1,
 				tipoMovimentoEnvioEncalhe, usuarioJoao, estoqueProdutoCota,
-				new BigDecimal(25), cotaManoel, StatusAprovacao.APROVADO, "Aprovado");
+				BigInteger.valueOf(25), cotaManoel, StatusAprovacao.APROVADO, "Aprovado");
 		
 		save(mec);
 		
@@ -264,7 +265,7 @@ public class ConferenciaEncalheParcialRepositoryImplTest extends AbstractReposit
 				Fixture.criarData(28, Calendar.FEBRUARY, 2012),
 				veja1,
 				tipoMovimentoEnvioEncalhe, usuarioJoao, estoqueProdutoCota,
-				new BigDecimal(14), cotaManoel, StatusAprovacao.APROVADO, "Aprovado");
+				BigInteger.valueOf(14), cotaManoel, StatusAprovacao.APROVADO, "Aprovado");
 		
 		save(mec);
 		
@@ -272,7 +273,7 @@ public class ConferenciaEncalheParcialRepositoryImplTest extends AbstractReposit
 				Fixture.criarData(28, Calendar.FEBRUARY, 2012),
 				veja1,
 				tipoMovimentoEnvioEncalhe, usuarioJoao, estoqueProdutoCota,
-				new BigDecimal(19), cotaManoel, StatusAprovacao.APROVADO, "Aprovado");
+				BigInteger.valueOf(19), cotaManoel, StatusAprovacao.APROVADO, "Aprovado");
 		
 		save(mec);
 		
@@ -283,7 +284,7 @@ public class ConferenciaEncalheParcialRepositoryImplTest extends AbstractReposit
 				StatusAprovacao.PENDENTE, 
 				Fixture.criarData(28, Calendar.FEBRUARY, 2012), 
 				new Date(), 
-				BigDecimal.TEN);
+				BigInteger.TEN);
 		save(conferenciaEncalheParcial);
 		
 		conferenciaEncalheParcial = Fixture.conferenciaEncalheParcial(
@@ -292,7 +293,7 @@ public class ConferenciaEncalheParcialRepositoryImplTest extends AbstractReposit
 				StatusAprovacao.PENDENTE, 
 				Fixture.criarData(28, Calendar.FEBRUARY, 2012), 
 				new Date(), 
-				BigDecimal.TEN);
+				BigInteger.TEN);
 		save(conferenciaEncalheParcial);
 		
 		conferenciaEncalheParcial = Fixture.conferenciaEncalheParcial(
@@ -301,7 +302,7 @@ public class ConferenciaEncalheParcialRepositoryImplTest extends AbstractReposit
 				StatusAprovacao.PENDENTE, 
 				Fixture.criarData(28, Calendar.FEBRUARY, 2012), 
 				new Date(), 
-				BigDecimal.TEN);
+				BigInteger.TEN);
 		
 		save(conferenciaEncalheParcial);
 		
@@ -311,7 +312,7 @@ public class ConferenciaEncalheParcialRepositoryImplTest extends AbstractReposit
 	@Test
 	public void testObterQtdTotalEncalheParcial() {
 		
-		BigDecimal qtd = conferenciaEncalheParcialRepositoryImpl.obterQtdTotalEncalheParcial(StatusAprovacao.PENDENTE, Fixture.criarData(28, Calendar.FEBRUARY, 2012), "1" ,1L);
+		BigInteger qtd = conferenciaEncalheParcialRepositoryImpl.obterQtdTotalEncalheParcial(StatusAprovacao.PENDENTE, Fixture.criarData(28, Calendar.FEBRUARY, 2012), "1" ,1L);
 		
 		Assert.assertTrue(qtd.intValue() == 30);
 	}

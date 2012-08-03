@@ -2,6 +2,7 @@ package br.com.abril.nds.dto;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Date;
 
 import br.com.abril.nds.model.Origem;
@@ -24,11 +25,11 @@ public class RecebimentoFisicoDTO implements Serializable {
 	
 	private BigDecimal precoCapa;
 	
-	private BigDecimal repartePrevisto;
+	private BigInteger repartePrevisto;
 	
-	private BigDecimal qtdFisico;
+	private BigInteger qtdFisico;
 	
-	private BigDecimal diferenca;
+	private BigInteger diferenca;
 	
 	private BigDecimal valorTotal;
 	
@@ -57,12 +58,12 @@ public class RecebimentoFisicoDTO implements Serializable {
 			Long edicao,
 			Long idProdutoEdicao,
 			BigDecimal precoCapa, 
-			BigDecimal repartePrevisto, 
-			BigDecimal qtdFisico,
+			BigInteger repartePrevisto, 
+			BigInteger qtdFisico,
 			Date dataLancamento,
 			Date dataRecolhimento,
 			TipoLancamento tipoLancamento,			
-			BigDecimal diferenca, 
+			BigInteger diferenca, 
 			TipoDiferenca tipoDiferenca,
 			Origem origemItemNota){
 		
@@ -134,27 +135,27 @@ public class RecebimentoFisicoDTO implements Serializable {
 		this.precoCapa = precoCapa;
 	}
 
-	public BigDecimal getRepartePrevisto() {
+	public BigInteger getRepartePrevisto() {
 		return repartePrevisto;
 	}
 
-	public void setRepartePrevisto(BigDecimal repartePrevisto) {
+	public void setRepartePrevisto(BigInteger repartePrevisto) {
 		this.repartePrevisto = repartePrevisto;
 	}
 
-	public BigDecimal getQtdFisico() {
+	public BigInteger getQtdFisico() {
 		return qtdFisico;
 	}
 
-	public void setQtdFisico(BigDecimal qtdFisico) {
+	public void setQtdFisico(BigInteger qtdFisico) {
 		this.qtdFisico = qtdFisico;
 	}
 
-	public BigDecimal getDiferenca() {
+	public BigInteger getDiferenca() {
 		return diferenca;
 	}
 
-	public void setDiferenca(BigDecimal diferenca) {
+	public void setDiferenca(BigInteger diferenca) {
 		this.diferenca = diferenca;
 	}
 

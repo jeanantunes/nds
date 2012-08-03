@@ -1,6 +1,7 @@
 package br.com.abril.nds.repository.impl;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -356,7 +357,7 @@ public class NotaFiscalRepositoryImplTest  extends AbstractRepositoryImplTest {
 		Long extipi = 1L;
 		Long ncm = 1L;
 		ProdutoEdicao produtoEdicao = null;
-		BigDecimal quantidade = BigDecimal.ONE;
+		BigInteger quantidade = BigInteger.ONE;
 		String unidade = "";
 		BigDecimal valorDesconto 	= BigDecimal.ZERO;
 		BigDecimal valorFrete 		= BigDecimal.ZERO;

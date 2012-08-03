@@ -1,6 +1,7 @@
 package br.com.abril.nds.controllers.estoque;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -380,7 +381,7 @@ public class RecebimentoFisicoController {
 	 */
 	private void carregarValorTotal(RecebimentoFisicoDTO itemRecebimento) {
 		
-		BigDecimal qtdRepartePrevisto = itemRecebimento.getRepartePrevisto();
+		BigInteger qtdRepartePrevisto = itemRecebimento.getRepartePrevisto();
 		
 		BigDecimal precoCapa = itemRecebimento.getPrecoCapa();
 		
@@ -390,7 +391,7 @@ public class RecebimentoFisicoController {
 		
 		if(qtdRepartePrevisto != null && precoCapa != null) {
 			
-			valorTotal = qtdRepartePrevisto.multiply(precoCapa);
+			valorTotal = precoCapa.multiply( new BigDecimal(qtdRepartePrevisto) ) ;
 		
 		}
 		  DecimalFormat df = new DecimalFormat("0.##");
@@ -409,18 +410,18 @@ public class RecebimentoFisicoController {
 	private void carregarValorDiferenca(RecebimentoFisicoDTO itemRecebimento) {
 		
 		if(itemRecebimento.getRepartePrevisto() == null) {
-			itemRecebimento.setRepartePrevisto(new BigDecimal("0.0"));
+			itemRecebimento.setRepartePrevisto(BigInteger.ZERO);
 		}
 
 		if(itemRecebimento.getQtdFisico() == null) {
-			itemRecebimento.setQtdFisico(new BigDecimal("0.0"));
+			itemRecebimento.setQtdFisico(BigInteger.ZERO);
 		}
 
-		BigDecimal qtdRepartePrevisto = itemRecebimento.getRepartePrevisto();
+		BigInteger qtdRepartePrevisto = itemRecebimento.getRepartePrevisto();
 		
-		BigDecimal qtdFisico = itemRecebimento.getQtdFisico();
+		BigInteger qtdFisico = itemRecebimento.getQtdFisico();
 		
-		BigDecimal valorDiferenca = qtdRepartePrevisto.subtract(qtdFisico);
+		BigInteger valorDiferenca = qtdRepartePrevisto.subtract( qtdFisico );
 		
 		itemRecebimento.setDiferenca(valorDiferenca);
 		
@@ -553,7 +554,7 @@ public class RecebimentoFisicoController {
 			
 			for(RecebimentoFisicoDTO recebimentoDTO: itensRecebimentoFisico){
 				
-				if( recebimentoDTO.getQtdFisico() == null || recebimentoDTO.getQtdFisico().compareTo(BigDecimal.ZERO) == 0 ){
+				if( recebimentoDTO.getQtdFisico() == null || recebimentoDTO.getQtdFisico().compareTo(BigInteger.ZERO) == 0 ){
 					
 					msgs.add("NF interface com Itens sem quantidade física informada.");
 					

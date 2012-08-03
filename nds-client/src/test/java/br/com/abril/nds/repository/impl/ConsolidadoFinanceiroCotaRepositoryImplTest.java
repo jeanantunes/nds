@@ -1,6 +1,7 @@
 package br.com.abril.nds.repository.impl;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -140,34 +141,34 @@ public class ConsolidadoFinanceiroCotaRepositoryImplTest extends AbstractReposit
 						new Date(), 
 						new Date(),
 						TipoLancamento.LANCAMENTO,
-						new BigDecimal(12));
+						BigInteger.valueOf(12));
 		save(itemNotaFiscal);
 		
-		ItemRecebimentoFisico itemRecebimentoFisico= Fixture.itemRecebimentoFisico(itemNotaFiscal, recebimentoFisico, new BigDecimal(12));
+		ItemRecebimentoFisico itemRecebimentoFisico= Fixture.itemRecebimentoFisico(itemNotaFiscal, recebimentoFisico, BigInteger.valueOf(12));
 		save(itemRecebimentoFisico);
 		
-		Lancamento lancamento = Fixture.lancamento(TipoLancamento.LANCAMENTO, produtoEdicao, dataAtual, dataAtual, dataAtual, dataAtual, new BigDecimal(30), StatusLancamento.CONFIRMADO, itemRecebimentoFisico, 1);
+		Lancamento lancamento = Fixture.lancamento(TipoLancamento.LANCAMENTO, produtoEdicao, dataAtual, dataAtual, dataAtual, dataAtual, BigInteger.valueOf(30), StatusLancamento.CONFIRMADO, itemRecebimentoFisico, 1);
 		save(lancamento);	
 		
-		Estudo estudo = Fixture.estudo(BigDecimal.TEN, dataAtual, produtoEdicao);
+		Estudo estudo = Fixture.estudo(BigInteger.TEN, dataAtual, produtoEdicao);
 		save(estudo);
 		
-		EstudoCota estudoCota = Fixture.estudoCota(new BigDecimal(30), new BigDecimal(30), estudo, cotaManoel);
+		EstudoCota estudoCota = Fixture.estudoCota(BigInteger.valueOf(30), BigInteger.valueOf(30), estudo, cotaManoel);
 		save(estudoCota);
 		
 		Expedicao expedicao = Fixture.expedicao(usuario, dataAtual);
 		save(expedicao);
 		
-		estoqueProdutoCota = Fixture.estoqueProdutoCota(produtoEdicao,new BigDecimal(30), cotaManoel, listaMovimentoEstoqueCota);		
+		estoqueProdutoCota = Fixture.estoqueProdutoCota(produtoEdicao,BigInteger.valueOf(30), cotaManoel, listaMovimentoEstoqueCota);		
 		save(estoqueProdutoCota);
 		
-		MovimentoEstoqueCota movimentoEstoqueCota = Fixture.movimentoEstoqueCota(produtoEdicao, tipoMovimentoEncalhe, usuario, estoqueProdutoCota, new BigDecimal(23), cotaManoel, StatusAprovacao.APROVADO, "MOTIVO A");
+		MovimentoEstoqueCota movimentoEstoqueCota = Fixture.movimentoEstoqueCota(produtoEdicao, tipoMovimentoEncalhe, usuario, estoqueProdutoCota, BigInteger.valueOf(23), cotaManoel, StatusAprovacao.APROVADO, "MOTIVO A");
 		save(movimentoEstoqueCota);
 		
-		movimento = Fixture.movimentoEstoqueCota(produtoEdicao, tipoMovimentoEncalhe, usuario, estoqueProdutoCota, new BigDecimal(23), cotaManoel, StatusAprovacao.APROVADO, "motivo");
+		movimento = Fixture.movimentoEstoqueCota(produtoEdicao, tipoMovimentoEncalhe, usuario, estoqueProdutoCota, BigInteger.valueOf(23), cotaManoel, StatusAprovacao.APROVADO, "motivo");
 		estoqueProdutoCota.getMovimentos().add(movimento);
 		save(movimento);
-		MovimentoEstoqueCota  movimentoVenda = Fixture.movimentoEstoqueCota(produtoEdicao, tipoMovimentoVenda, usuario, estoqueProdutoCota, new BigDecimal(23), cotaManoel, StatusAprovacao.APROVADO, "motivo");
+		MovimentoEstoqueCota  movimentoVenda = Fixture.movimentoEstoqueCota(produtoEdicao, tipoMovimentoVenda, usuario, estoqueProdutoCota, BigInteger.valueOf(23), cotaManoel, StatusAprovacao.APROVADO, "motivo");
 		save(movimentoVenda);
 		
 		TipoMovimentoFinanceiro tipoMovimentoFinanceiro = Fixture.tipoMovimentoFinanceiroEnvioEncalhe();
@@ -271,53 +272,53 @@ public class ConsolidadoFinanceiroCotaRepositoryImplTest extends AbstractReposit
 						new Date(), 
 						new Date(),
 						TipoLancamento.LANCAMENTO,
-						new BigDecimal(12));
+						BigInteger.valueOf(12));
 		save(itemNotaFiscal);
 		
-		ItemRecebimentoFisico itemRecebimentoFisico= Fixture.itemRecebimentoFisico(itemNotaFiscal, recebimentoFisico, new BigDecimal(12));
+		ItemRecebimentoFisico itemRecebimentoFisico= Fixture.itemRecebimentoFisico(itemNotaFiscal, recebimentoFisico, BigInteger.valueOf(12));
 		save(itemRecebimentoFisico);
 		
-		Lancamento lancamento = Fixture.lancamento(TipoLancamento.LANCAMENTO, produtoEdicao, dataAtual, dataAtual, dataAtual, dataAtual, new BigDecimal(30), StatusLancamento.CONFIRMADO, itemRecebimentoFisico, 1);
+		Lancamento lancamento = Fixture.lancamento(TipoLancamento.LANCAMENTO, produtoEdicao, dataAtual, dataAtual, dataAtual, dataAtual, BigInteger.valueOf(30), StatusLancamento.CONFIRMADO, itemRecebimentoFisico, 1);
 		save(lancamento);	
 		
-		Estudo estudo = Fixture.estudo(BigDecimal.TEN, dataAtual, produtoEdicao);
+		Estudo estudo = Fixture.estudo(BigInteger.TEN, dataAtual, produtoEdicao);
 		save(estudo);
 		
-		EstudoCota estudoCota = Fixture.estudoCota(new BigDecimal(20), new BigDecimal(10), estudo, cotaManoel);
+		EstudoCota estudoCota = Fixture.estudoCota(BigInteger.valueOf(20), BigInteger.valueOf(10), estudo, cotaManoel);
 		save(estudoCota);
 		
 		Expedicao expedicao = Fixture.expedicao(usuario, dataAtual);
 		save(expedicao);
 		
-		estoqueProdutoCota = Fixture.estoqueProdutoCota(produtoEdicao,new BigDecimal(30), cotaManoel, listaMovimentoEstoqueCota);		
+		estoqueProdutoCota = Fixture.estoqueProdutoCota(produtoEdicao,BigInteger.valueOf(30), cotaManoel, listaMovimentoEstoqueCota);		
 		save(estoqueProdutoCota);
 		
 		TipoMovimentoEstoque tipoMovimentoEstoque = Fixture.tipoMovimentoSobraDe();
 		save(tipoMovimentoEstoque);
 
-		MovimentoEstoqueCota movimentoEstoqueCota = Fixture.movimentoEstoqueCota(produtoEdicao, tipoMovimentoEstoque, usuario, estoqueProdutoCota, new BigDecimal(23), cotaManoel, StatusAprovacao.APROVADO, "MOTIVO A");
+		MovimentoEstoqueCota movimentoEstoqueCota = Fixture.movimentoEstoqueCota(produtoEdicao, tipoMovimentoEstoque, usuario, estoqueProdutoCota, BigInteger.valueOf(23), cotaManoel, StatusAprovacao.APROVADO, "MOTIVO A");
 		movimentoEstoqueCota.setEstudoCota(estudoCota);
 		save(movimentoEstoqueCota);
 		
-		EstoqueProduto estoqueProduto = Fixture.estoqueProduto(produtoEdicao, new BigDecimal(45)); 
+		EstoqueProduto estoqueProduto = Fixture.estoqueProduto(produtoEdicao, BigInteger.valueOf(45)); 
 		save(estoqueProduto);
 		
-		MovimentoEstoque movimentoEstoque = Fixture.movimentoEstoque(itemRecebimentoFisico, produtoEdicao, tipoMovimentoEstoque, usuario, estoqueProduto, dataAtual, new BigDecimal(12), StatusAprovacao.APROVADO , "MOTIVO B");
+		MovimentoEstoque movimentoEstoque = Fixture.movimentoEstoque(itemRecebimentoFisico, produtoEdicao, tipoMovimentoEstoque, usuario, estoqueProduto, dataAtual, BigInteger.valueOf(12), StatusAprovacao.APROVADO , "MOTIVO B");
 		save(movimentoEstoque);
 			
-		Diferenca diferenca = Fixture.diferenca(new BigDecimal(32), usuario, produtoEdicao, TipoDiferenca.FALTA_DE, StatusConfirmacao.CONFIRMADO, itemRecebimentoFisico, movimentoEstoque, true);
+		Diferenca diferenca = Fixture.diferenca(BigInteger.valueOf(32), usuario, produtoEdicao, TipoDiferenca.FALTA_DE, StatusConfirmacao.CONFIRMADO, itemRecebimentoFisico, movimentoEstoque, true);
 		save(diferenca);
 		
-		RateioDiferenca rateioDiferenca = Fixture.rateioDiferenca(BigDecimal.TEN , cotaManoel, diferenca, estudoCota);
+		RateioDiferenca rateioDiferenca = Fixture.rateioDiferenca(BigInteger.TEN , cotaManoel, diferenca, estudoCota);
 		save(rateioDiferenca);
 		
-		movimento = Fixture.movimentoEstoqueCota(produtoEdicao, tipoMovimentoConsignado, usuario, estoqueProdutoCota, new BigDecimal(23), cotaManoel, StatusAprovacao.APROVADO, "motivo");
+		movimento = Fixture.movimentoEstoqueCota(produtoEdicao, tipoMovimentoConsignado, usuario, estoqueProdutoCota, BigInteger.valueOf(23), cotaManoel, StatusAprovacao.APROVADO, "motivo");
 		movimento.setEstudoCota(estudoCota);
 		
 		
 		estoqueProdutoCota.getMovimentos().add(movimento);
 		save(movimento);
-		MovimentoEstoqueCota  movimentoEnvioJornaleiro = Fixture.movimentoEstoqueCota(produtoEdicao, tipoMovimentoConsignado, usuario, estoqueProdutoCota, new BigDecimal(23), cotaManoel, StatusAprovacao.APROVADO, "motivo");
+		MovimentoEstoqueCota  movimentoEnvioJornaleiro = Fixture.movimentoEstoqueCota(produtoEdicao, tipoMovimentoConsignado, usuario, estoqueProdutoCota, BigInteger.valueOf(23), cotaManoel, StatusAprovacao.APROVADO, "motivo");
 		movimentoEnvioJornaleiro.setEstudoCota(estudoCota);
 		save(movimentoEnvioJornaleiro);
 		

@@ -2,6 +2,7 @@ package br.com.abril.nds.integracao.model.canonic;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Date;
 
 import com.ancientprogramming.fixedformat4j.annotation.Field;
@@ -26,7 +27,7 @@ public class EMS0111Input extends IntegracaoDocument implements Serializable {
 	private Date dataLancamento;	
 	private String tipoLancamento;	
 	private String tipoProduto;	
-	private BigDecimal repartePrevisto;	
+	private BigInteger repartePrevisto;	
 	private BigDecimal pctAbrangencia;	
 	private BigDecimal pctEntregaAntecipada;	
 	private String condCotasAtuais;	
@@ -34,7 +35,7 @@ public class EMS0111Input extends IntegracaoDocument implements Serializable {
 	private String tipoHistorico;	
 	private String condBasePacotePadrao;	
 	private BigDecimal precoPrevisto;	
-	private BigDecimal repartePromocional;	
+	private BigInteger repartePromocional;	
 	private String condDistribuicaoFases;
 	
 		
@@ -136,11 +137,11 @@ public class EMS0111Input extends IntegracaoDocument implements Serializable {
 	
 	
 	@Field(offset = 62, length = 8)
-	public BigDecimal getRepartePrevisto() {
+	public BigInteger getRepartePrevisto() {
 		return repartePrevisto;
 	}
 	
-	public void setRepartePrevisto(BigDecimal repartePrevisto) {
+	public void setRepartePrevisto(BigInteger repartePrevisto) {
 		this.repartePrevisto = repartePrevisto;
 	}
 	
@@ -210,11 +211,11 @@ public class EMS0111Input extends IntegracaoDocument implements Serializable {
 	
 	
 	@Field(offset = 92, length = 8)
-	public BigDecimal getRepartePromocional() {
+	public BigInteger getRepartePromocional() {
 		return repartePromocional;
 	}
 	
-	public void setRepartePromocional(BigDecimal repartePromocional) {
+	public void setRepartePromocional(BigInteger repartePromocional) {
 		this.repartePromocional = repartePromocional;
 	}
 	

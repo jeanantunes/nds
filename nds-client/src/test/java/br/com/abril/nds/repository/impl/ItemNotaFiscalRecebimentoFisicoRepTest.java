@@ -1,6 +1,7 @@
 package br.com.abril.nds.repository.impl;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Date;
 
 import org.junit.Before;
@@ -101,7 +102,7 @@ public class ItemNotaFiscalRecebimentoFisicoRepTest extends AbstractRepositoryIm
 		
 			
 		
-		itemNotaFiscal = Fixture.itemNotaFiscal(produtoEdicao, usuario, notaFiscal, dataAtual, dataAtual, TipoLancamento.LANCAMENTO, new BigDecimal(23));
+		itemNotaFiscal = Fixture.itemNotaFiscal(produtoEdicao, usuario, notaFiscal, dataAtual, dataAtual, TipoLancamento.LANCAMENTO, BigInteger.valueOf(23));
 		save(itemNotaFiscal);
 		
 		recebimentoFisico = Fixture.recebimentoFisico(notaFiscal, usuario, dataAtual, dataAtual, StatusConfirmacao.PENDENTE);
@@ -114,7 +115,7 @@ public class ItemNotaFiscalRecebimentoFisicoRepTest extends AbstractRepositoryIm
 		
 		ItemRecebimentoFisico itemRecebimento = new ItemRecebimentoFisico();
 		itemRecebimento.setItemNotaFiscal(itemNotaFiscal);
-		itemRecebimento.setQtdeFisico(new BigDecimal(12));
+		itemRecebimento.setQtdeFisico(BigInteger.valueOf(12));
 		
 		itemRecebimento.setRecebimentoFisico(recebimentoFisico);
 		

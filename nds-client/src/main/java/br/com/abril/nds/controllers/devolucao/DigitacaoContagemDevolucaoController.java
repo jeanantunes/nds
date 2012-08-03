@@ -2,6 +2,7 @@ package br.com.abril.nds.controllers.devolucao;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -364,7 +365,7 @@ public class DigitacaoContagemDevolucaoController  {
 			
 			contagemDevolucaoDTO.setCodigoProduto(vo.getCodigoProduto());
 			contagemDevolucaoDTO.setNumeroEdicao(Long.parseLong(vo.getNumeroEdicao()));
-			contagemDevolucaoDTO.setQtdNota(new BigDecimal(vo.getQtdNota()));
+			contagemDevolucaoDTO.setQtdNota(new BigInteger(vo.getQtdNota()));
 			contagemDevolucaoDTO.setDataMovimento( ( vo.getDataRecolhimentoDistribuidor() == null ) ? null : DateUtil.parseData(vo.getDataRecolhimentoDistribuidor(),"dd/MM/yyyy"));
 			
 			listaResultadosDto.add(contagemDevolucaoDTO);

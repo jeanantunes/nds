@@ -2,6 +2,7 @@ package br.com.abril.nds.model.estoque;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -74,7 +75,7 @@ public class ConferenciaEncalhe implements Serializable {
 	 * fornecida pela cota na operação de conferência de encalhe.
 	 */
 	@Column(name = "QTDE_INFORMADA")
-	private BigDecimal qtdeInformada;
+	private BigInteger qtdeInformada;
 	
 	/**
 	 * Preco capa relativo ao item de nota fiscal de entrada
@@ -88,7 +89,7 @@ public class ConferenciaEncalhe implements Serializable {
 	 * relativa a conferência de encalhe
 	 */
 	@Column(name = "QTDE")
-	private BigDecimal qtde;
+	private BigInteger qtde;
 	
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "PRODUTO_EDICAO_ID")
@@ -234,9 +235,9 @@ public class ConferenciaEncalhe implements Serializable {
 	/**
 	 * Obtém qtdeInformada
 	 *
-	 * @return BigDecimal
+	 * @return BigInteger
 	 */
-	public BigDecimal getQtdeInformada() {
+	public BigInteger getQtdeInformada() {
 		return qtdeInformada;
 	}
 
@@ -244,7 +245,7 @@ public class ConferenciaEncalhe implements Serializable {
 	 * Atribuí qtdeInformada
 	 * @param qtdeInformada 
 	 */
-	public void setQtdeInformada(BigDecimal qtdeInformada) {
+	public void setQtdeInformada(BigInteger qtdeInformada) {
 		this.qtdeInformada = qtdeInformada;
 	}
 
@@ -268,9 +269,9 @@ public class ConferenciaEncalhe implements Serializable {
 	/**
 	 * Obtém qtde
 	 *
-	 * @return BigDecimal
+	 * @return BigInteger
 	 */
-	public BigDecimal getQtde() {
+	public BigInteger getQtde() {
 		return qtde;
 	}
 
@@ -278,7 +279,7 @@ public class ConferenciaEncalhe implements Serializable {
 	 * Atribuí qtde
 	 * @param qtde 
 	 */
-	public void setQtde(BigDecimal qtde) {
+	public void setQtde(BigInteger qtde) {
 		this.qtde = qtde;
 	}
 

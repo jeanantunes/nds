@@ -1,6 +1,7 @@
 package br.com.abril.nds.repository.impl;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -22,7 +23,6 @@ import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
 import br.com.abril.nds.model.cadastro.FormaEmissao;
-import br.com.abril.nds.model.cadastro.Moeda;
 import br.com.abril.nds.model.cadastro.ParametroContratoCota;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
@@ -153,51 +153,51 @@ public class EstoqueProdutoCotaRepositoryImplTest extends AbstractRepositoryImpl
 		
 		EstoqueProdutoCota estoqueProdutoCotaVeja1 =
 			Fixture.estoqueProdutoCota(produtoEdicaoVeja1, cotaManoel1,
-									   BigDecimal.TEN, BigDecimal.ONE);
+					BigInteger.TEN, BigInteger.ONE);
 		save(estoqueProdutoCotaVeja1);
 		
 		EstoqueProdutoCota estoqueProdutoCotaCaras1 =
 				Fixture.estoqueProdutoCota(produtoEdicaoCaras1, cotaManoel1,
-										   BigDecimal.TEN, BigDecimal.ONE);
+										   BigInteger.TEN, BigInteger.ONE);
 		save(estoqueProdutoCotaCaras1);
 		
 		EstoqueProdutoCota estoqueProdutoCota2Veja1 =
 			Fixture.estoqueProdutoCota(produtoEdicaoVeja1, cotaManoel2,
-									   BigDecimal.TEN, BigDecimal.ONE);
+									   BigInteger.TEN, BigInteger.ONE);
 		save(estoqueProdutoCota2Veja1);
 		
 		lancamentoVeja1 =
 			Fixture.lancamentoExpedidos(TipoLancamento.LANCAMENTO, produtoEdicaoVeja1, new Date(),
 										DateUtil.adicionarDias(new Date(), 1), new Date(), new Date(),
-										BigDecimal.TEN, StatusLancamento.EXPEDIDO, null, null, 1);
+										BigInteger.TEN, StatusLancamento.EXPEDIDO, null, null, 1);
 		save(lancamentoVeja1);
 		
 		
 		lancamentoCaras1 =
 				Fixture.lancamentoExpedidos(TipoLancamento.LANCAMENTO, produtoEdicaoCaras1, new Date(),
 											DateUtil.adicionarDias(new Date(), 1), new Date(), new Date(),
-											BigDecimal.TEN, StatusLancamento.EXPEDIDO, null, null, 1);
+											BigInteger.TEN, StatusLancamento.EXPEDIDO, null, null, 1);
 		
 		save(lancamentoCaras1);
 		
 		Estudo estudoVeja =
-			Fixture.estudo(BigDecimal.ZERO, lancamentoVeja1.getDataLancamentoPrevista(),
+			Fixture.estudo(BigInteger.ZERO, lancamentoVeja1.getDataLancamentoPrevista(),
 						   produtoEdicaoVeja1);
 		
 		Estudo estudoCaras =
-				Fixture.estudo(BigDecimal.ZERO, lancamentoCaras1.getDataLancamentoPrevista(),
+				Fixture.estudo(BigInteger.ZERO, lancamentoCaras1.getDataLancamentoPrevista(),
 							   produtoEdicaoCaras1);
 		
 		save(estudoVeja, estudoCaras);
 		
 		EstudoCota estudoCotaManoel1Veja =
-			Fixture.estudoCota(BigDecimal.ZERO, BigDecimal.ZERO, estudoVeja, cotaManoel1);
+			Fixture.estudoCota(BigInteger.ZERO, BigInteger.ZERO, estudoVeja, cotaManoel1);
 		
 		EstudoCota estudoCotaManoel2Veja =
-			Fixture.estudoCota(BigDecimal.ZERO, BigDecimal.ZERO, estudoVeja, cotaManoel2);
+			Fixture.estudoCota(BigInteger.ZERO, BigInteger.ZERO, estudoVeja, cotaManoel2);
 		
 		EstudoCota estudoCotaManoel1Caras =
-				Fixture.estudoCota(BigDecimal.ZERO, BigDecimal.ZERO, estudoCaras, cotaManoel1);
+				Fixture.estudoCota(BigInteger.ZERO, BigInteger.ZERO, estudoCaras, cotaManoel1);
 		
 		save(estudoCotaManoel1Veja, estudoCotaManoel2Veja, estudoCotaManoel1Caras);
 	}

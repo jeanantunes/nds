@@ -2,6 +2,7 @@ package br.com.abril.nds.controllers.estoque;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -146,7 +147,7 @@ public class DiferencaEstoqueController {
 		
 		List<DiferencaVO> listaConsultaDiferenca = new LinkedList<DiferencaVO>();
 		
-		BigDecimal qtdeTotalDiferencas = BigDecimal.ZERO;
+		BigInteger qtdeTotalDiferencas = BigInteger.ZERO;
 		BigDecimal valorTotalDiferencas = BigDecimal.ZERO;
 		
 		BigDecimal valorDesconto = null;
@@ -303,7 +304,7 @@ public class DiferencaEstoqueController {
 			
 			resultadoDiferencaVO.setTableModel(tableModel);
 			
-			resultadoDiferencaVO.setQtdeTotalDiferencas(BigDecimal.ZERO);
+			resultadoDiferencaVO.setQtdeTotalDiferencas(BigInteger.ZERO);
 			
 			resultadoDiferencaVO.setValorTotalDiferencas("");
 			
@@ -421,14 +422,14 @@ public class DiferencaEstoqueController {
 				
 				valorTotalDiferenca =
 					produtoEdicao.getPrecoVenda().subtract(valorDesconto).multiply(
-						new BigDecimal(produtoEdicao.getPacotePadrao())).multiply(diferenca.getQtde());
+						new BigDecimal(produtoEdicao.getPacotePadrao())).multiply( new BigDecimal( diferenca.getQtde() ) );
 				
 			} else if (TipoDiferenca.FALTA_EM.equals(tipoDiferenca)
 							|| TipoDiferenca.SOBRA_EM.equals(tipoDiferenca)) {
 				
 				valorTotalDiferenca =
 					produtoEdicao.getPrecoVenda().subtract(
-						valorDesconto).multiply(diferenca.getQtde());
+						valorDesconto).multiply(new BigDecimal( diferenca.getQtde() ) );
 			}
 			
 			
@@ -922,7 +923,7 @@ public class DiferencaEstoqueController {
 
 		List<DiferencaVO> listaLancamentosDiferenca = new LinkedList<DiferencaVO>();
 		
-		BigDecimal qtdeTotalDiferencas = BigDecimal.ZERO;
+		BigInteger qtdeTotalDiferencas = BigInteger.ZERO;
 		
 		BigDecimal valorTotalDiferencas = BigDecimal.ZERO;
 		
@@ -1016,7 +1017,7 @@ public class DiferencaEstoqueController {
 
 		List<DiferencaVO> listaLancamentosDiferenca = new LinkedList<DiferencaVO>();
 		
-		BigDecimal qtdeTotalDiferencas = BigDecimal.ZERO;
+		BigInteger qtdeTotalDiferencas = BigInteger.ZERO;
 		
 		BigDecimal valorTotalDiferencas = BigDecimal.ZERO;
 		
@@ -1115,7 +1116,7 @@ public class DiferencaEstoqueController {
 
 		List<DiferencaVO> listaConsultaDiferenca = new LinkedList<DiferencaVO>();
 		
-		BigDecimal qtdeTotalDiferencas = BigDecimal.ZERO;
+		BigInteger qtdeTotalDiferencas = BigInteger.ZERO;
 		BigDecimal valorTotalDiferencas = BigDecimal.ZERO;
 		
 		int quantidadeRegistros = diferencaEstoqueService.obterTotalDiferencas(filtro).intValue();
@@ -1564,7 +1565,7 @@ public class DiferencaEstoqueController {
 		
 		DiferencaVO diferencaVO = this.obterDiferencaPorId(idDiferenca);
 
-		BigDecimal somaQtdeRateio = BigDecimal.ZERO;
+		BigInteger somaQtdeRateio = BigInteger.ZERO;
 		
 		for (RateioCotaVO rateioCotaVO : listaNovosRateios) {
 			
