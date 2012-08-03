@@ -1,5 +1,4 @@
 <head>
-<script type="text/javascript" src="scripts/gruposAcesso.js"></script>
 <script type="text/javascript">
 	$(function() {
 		gruposAcessoController.init("${pageContext.request.contextPath}");

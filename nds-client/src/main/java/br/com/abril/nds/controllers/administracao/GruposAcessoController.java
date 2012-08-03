@@ -1,5 +1,6 @@
 package br.com.abril.nds.controllers.administracao;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpSession;
@@ -9,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.util.PaginacaoUtil;
 import br.com.abril.nds.client.vo.ResultadoPermissaoVO;
+import br.com.abril.nds.client.vo.ValidacaoVO;
+import br.com.abril.nds.dto.ConsultaGrupoPermissaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaPermissaoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.seguranca.GrupoPermissao;
@@ -76,10 +79,15 @@ public class GruposAcessoController {
 	@Get
 	@Path("/editarGrupoPermissao")
 	public void editarGrupoPermissao(Long codigoGrupo) {
+
+		ConsultaGrupoPermissaoDTO dto = new ConsultaGrupoPermissaoDTO();
+		
 		List<Permissao> permissoes = permissaoService.buscar();
 		if (codigoGrupo != null) {
-			List<Permissao> permissoesSelecionadas = grupoPermissaoService.buscarPermissoesGrupo(codigoGrupo);
-			result.include("permissoesSelecionadas", permissoesSelecionadas);
+			GrupoPermissao grupoPermissao = grupoPermissaoService.buscar(codigoGrupo);
+			List<Permissao> permissoesSelecionadas = new ArrayList<Permissao>(grupoPermissao.getPermissoes());
+			dto.setNome(grupoPermissao.getNome());
+			dto.setPermissoesSelecionadas(permissoesSelecionadas);
 			// Remove da lista as permissões selecionadas anteriormente
 			for (Permissao p : permissoesSelecionadas) {
 				if (permissoes.contains(p)) {
@@ -87,7 +95,10 @@ public class GruposAcessoController {
 				}
 			}
 		}
-		result.include("permissoes", permissoes);
+		dto.setPermissoes(permissoes);
+		
+		result.use(Results.json()).from(dto).recursive().serialize();
+		
 	}
 
 	/**

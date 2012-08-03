@@ -1,14 +1,10 @@
 package br.com.abril.nds.service.impl;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.model.seguranca.GrupoPermissao;
-import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.repository.GrupoPermissaoRepository;
 import br.com.abril.nds.service.GrupoPermissaoService;
 
@@ -23,8 +19,8 @@ public class GrupoPermissaoServiceImpl implements GrupoPermissaoService {
 	
 	@Transactional(readOnly = true)
 	@Override
-	public List<Permissao> buscarPermissoesGrupo(Long codigo) {
-		return new ArrayList<Permissao>(grupoPermissaoRepository.buscarPorId(codigo).getPermissoes());
+	public GrupoPermissao buscar(Long codigo) {
+		return grupoPermissaoRepository.buscarPorId(codigo);
 	}
 
 	@Override

@@ -66,14 +66,13 @@ var gruposAcessoController = $.extend(true, {
 			$.getJSON(
 					this.path + "/novoGrupoPermissao", 
 					function(result) {
+						console.log(result);
 						if (result) {
-							$("#numeroSemana").val(result.int);
+							//$("#numeroSemana").val(result.int);
 						}
 					}
 				);
 
-			
-			"/novoGrupoPermissao";
 			$( "#dialog-novo-grupo", this.workspace).dialog({
 				resizable: false,
 				height:600,
