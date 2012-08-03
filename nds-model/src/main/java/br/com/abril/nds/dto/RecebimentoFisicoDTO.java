@@ -24,9 +24,15 @@ public class RecebimentoFisicoDTO implements Serializable {
 	
 	private BigDecimal precoCapa;
 	
+	private BigDecimal precoDesconto;
+	
 	private BigDecimal repartePrevisto;
 	
 	private BigDecimal qtdFisico;
+	
+	private BigDecimal qtdPacote;
+	
+	private BigDecimal qtdExemplares;
 	
 	private BigDecimal diferenca;
 	
@@ -134,6 +140,14 @@ public class RecebimentoFisicoDTO implements Serializable {
 		this.precoCapa = precoCapa;
 	}
 
+	public BigDecimal getPrecoDesconto() {
+		return precoDesconto;
+	}
+
+	public void setPrecoDesconto(BigDecimal precoDesconto) {
+		this.precoDesconto = precoDesconto;
+	}
+
 	public BigDecimal getRepartePrevisto() {
 		return repartePrevisto;
 	}
@@ -148,6 +162,22 @@ public class RecebimentoFisicoDTO implements Serializable {
 
 	public void setQtdFisico(BigDecimal qtdFisico) {
 		this.qtdFisico = qtdFisico;
+	}
+
+	public BigDecimal getQtdPacote() {
+		return qtdPacote;
+	}
+
+	public void setQtdPacote(BigDecimal qtdPacote) {
+		this.qtdPacote = qtdPacote;
+	}
+
+	public BigDecimal getQtdExemplares() {
+		return qtdExemplares;
+	}
+
+	public void setQtdExemplares(BigDecimal qtdExemplares) {
+		this.qtdExemplares = qtdExemplares;
 	}
 
 	public BigDecimal getDiferenca() {
