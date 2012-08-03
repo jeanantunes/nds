@@ -26,7 +26,7 @@ public enum Permissao
 	ROLE_FINANCEIRO_BAIXA_BANCARIA("Baixa Bancária", 					                         	  	   Permissao.ROLE_FINANCEIRO),
 	ROLE_FINANCEIRO_BAIXA_BANCARIA_MANUAL("Baixa Bancária Manual",                                	  	   Permissao.ROLE_FINANCEIRO), 
 	ROLE_FINANCEIRO_BAIXA_MANUAL_DIVIDAS("Baixa Manual de Dívidas",                               	  	   Permissao.ROLE_FINANCEIRO), 
-	ROLE_FINANCEIRO_CONSULTA_BOLETOS_COTA("de Consulta Boletos por Cota",                         	  	   Permissao.ROLE_FINANCEIRO), 
+	ROLE_FINANCEIRO_CONSULTA_BOLETOS_COTA("Consulta Boletos por Cota",                         	  	   	   Permissao.ROLE_FINANCEIRO), 
 	ROLE_FINANCEIRO_CONTA_CORRENTE("Conta Corrente",                                              	  	   Permissao.ROLE_FINANCEIRO), 
 	ROLE_FINANCEIRO_DEBITOS_CREDITOS_COTA("Débitos / Créditos Cota",                              	  	   Permissao.ROLE_FINANCEIRO), 
 	ROLE_FINANCEIRO_GERACAO_COBRANCA("Geração Cobrança",                                          	  	   Permissao.ROLE_FINANCEIRO), 

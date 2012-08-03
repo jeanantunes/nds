@@ -1,8 +1,9 @@
 <head>
+<script type="text/javascript" src="scripts/gruposAcesso.js"></script>
 <script type="text/javascript">
-$(function() {
-	gruposAcessoController.init("${pageContext.request.contextPath}");
-});
+	$(function() {
+		gruposAcessoController.init("${pageContext.request.contextPath}");
+	});
 </script>
 <style type="text/css">
 	#dialog-novo fieldset{ width: 250px!important;}

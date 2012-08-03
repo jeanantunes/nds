@@ -124,16 +124,13 @@ var gruposAcessoController = $.extend(true, {
 			var serializedObj = $("#pesquisar_regras_form", this.workspace).serialize();
 			$(".regrasGrid", this.workspace).flexOptions({
 				"url" : this.path + '/pesquisarRegras?' + serializedObj,
-				method: 'GET',
 				newp:1
 			});
-			$(".regrasGrid").flexReload();
-
-			$('.gridsRegra').show();
+			$(".regrasGrid", this.workspace).flexReload();
 		},
 		initUsuariosGrid : function() {
-			$(".usuariosGrid").flexigrid({
-				dataType : 'xml',
+			$(".usuariosGrid", this.workspace).flexigrid({
+				dataType : 'json',
 				colModel : [ {
 					display : 'Username',
 					name : 'user',
@@ -205,16 +202,20 @@ var gruposAcessoController = $.extend(true, {
 				height : 255
 			});
 		},
+		
 		initRegrasGrid : function() {
-			$(".regrasGrid").flexigrid({
-				preProcess : function(data) {
+			$(".regrasGrid", this.workspace).flexigrid({
+				preProcess: function(data) {
 					if( typeof data.mensagens == "object") {
 						exibirMensagem(data.mensagens.tipoMensagem, data.mensagens.listaMensagens);
+						$(".gridsRegra", this.workspace).hide();
+						return data;
 					} else {
+						$(".gridsRegra", this.workspace).show();
 						return data;
 					}
 				},
-				dataType : 'xml',
+				dataType : 'json',
 				colModel : [ {
 					display : 'Nome',
 					name : 'nome',

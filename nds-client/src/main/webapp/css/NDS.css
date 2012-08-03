@@ -157,7 +157,7 @@ a{color:#000;}
 .bt_confirmar_1 a{padding-left:32px; color:#000; font-weight:bold; font-size:12px; text-decoration:none;}
 .bt_confirmar_1 a:hover{color:#00649F; text-decoration:underline;}
 
-/*.bt_pesquisar{background:url(../images/bt_pesquisar.png) no-repeat left center; width:104px; line-height:39px; float:left;}*/
+.bt_pesquisar{background:url(../images/bt_pesquisar.png) no-repeat left center; width:104px; line-height:39px; float:left;}
 .bt_pesquisar a{ color:#000; font-weight:bold; font-size:12px; text-decoration:none;  padding-left: 31px;}
 .bt_pesquisar a:hover{color:#00649F; text-decoration:underline;}
 

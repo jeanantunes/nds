@@ -8,11 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.util.PaginacaoUtil;
-import br.com.abril.nds.client.vo.RegistroCurvaABCEditorVO;
-import br.com.abril.nds.client.vo.ResultadoCurvaABCEditor;
 import br.com.abril.nds.client.vo.ResultadoPermissaoVO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaPermissaoDTO;
-import br.com.abril.nds.dto.filtro.FiltroCurvaABCEditorDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.service.PermissaoService;
@@ -21,8 +18,8 @@ import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.vo.PaginacaoVO;
-import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
+import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
@@ -59,7 +56,7 @@ public class GruposAcessoController {
 	 * Retorna a lista de regras do sistema
 	 * @return List
 	 */
-	@Get
+	@Post
 	@Path("/pesquisarRegras")
 	public void pesquisarRegras(FiltroConsultaPermissaoDTO filtro, int rp, int page, String sortname, String sortorder) {
 		filtro = carregarFiltroConsultaRegras(filtro, rp, page, sortname, sortorder);
@@ -95,7 +92,7 @@ public class GruposAcessoController {
 		if (filtro != null) {
 			PaginacaoVO paginacao = new PaginacaoVO(page, rp, sortorder);
 			filtro.setPaginacao(paginacao);
-			filtro.setOrdenacaoColuna(Util.getEnumByStringValue(FiltroConsultaPermissaoDTO.ColunaOrdenacaoPesquisarHistoricoEditorDTO.values(), sortname));
+			filtro.setOrdenacaoColuna(Util.getEnumByStringValue(FiltroConsultaPermissaoDTO.ColunaOrdenacao.values(), sortname));
 		}
 
 		FiltroConsultaPermissaoDTO filtroSessao = (FiltroConsultaPermissaoDTO) this.session.getAttribute(FILTRO_PESQUISA_CONSULTA_PERMISSAO_SESSION_ATTRIBUTE);

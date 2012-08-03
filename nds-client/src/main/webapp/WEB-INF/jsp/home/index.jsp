@@ -7,30 +7,33 @@
 <link href="css/menu_superior.css" rel="stylesheet" type="text/css" />
 <link rel="stylesheet" type="text/css" href="css/novo_distrib.css" />
 <link rel="stylesheet" type="text/css" href="css/NDS.css" />
-<link rel="stylesheet"
-	href="scripts/jquery-ui-1.8.16.custom/development-bundle/themes/redmond/jquery.ui.all.css" />
-<link rel="stylesheet" type="text/css"
-	href="scripts/flexigrid-1.1/css/flexigrid.pack.css" />
-
-<script language="javascript" type="text/javascript"
-	src="scripts/jquery-ui-1.8.16.custom/development-bundle/jquery-1.6.2.js"></script>
-<script language="javascript" type="text/javascript"
-	src="scripts/jquery-ui-1.8.16.custom/js/jquery-ui-1.8.16.custom.min.js"></script>
-<script language="javascript" type="text/javascript"
-	src="scripts/NDS.js"></script>
-<script language="javascript" type="text/javascript"
-	src="scripts/flexigrid-1.1/js/flexigrid.pack.js"></script>
-
-<script language="javascript" type="text/javascript"
-	src="${pageContext.request.contextPath}/scripts/jquery.maskmoney.js"></script>
-
+<link rel="stylesheet" href="scripts/jquery-ui-1.8.16.custom/development-bundle/themes/redmond/jquery.ui.all.css" />
+<link rel="stylesheet" type="text/css" href="scripts/jquery-ui-1.8.16.custom/development-bundle/themes/redmond/jquery.ui.theme.css"/>
+<link rel="stylesheet" type="text/css" href="scripts/flexigrid-1.1/css/flexigrid.pack.css" />
 <link rel="stylesheet" type="text/css" href="scripts/tooltip/tipsy.css" />
 <link rel="stylesheet" type="text/css" href="scripts/tooltip/tipsy-docs.css" />
+
+<script language="javascript" type="text/javascript" src="scripts/jquery-ui-1.8.16.custom/js/jquery-1.7.1.min.js"></script>
+<script language="javascript" type="text/javascript" src="scripts/jquery-ui-1.8.16.custom/js/jquery-ui-1.8.16.custom.min.js"></script>
+<script language="javascript" type="text/javascript" src="scripts/NDS.js"></script>
+<script language="javascript" type="text/javascript" src="scripts/utils.js"></script>
+<script language="javascript" type="text/javascript" src="scripts/flexigrid-1.1/js/flexigrid.pack.js"></script>
 <script language="javascript" type="text/javascript" src="scripts/tooltip/jquery.tipsy.js"></script>
+
+<script language="javascript" type="text/javascript" src="scripts/jquery.json-2.3.min.js"></script>
+<script language="javascript" type="text/javascript" src="scripts/flexigrid-1.1/js/flexigrid.js"></script>
+<script language="javascript" type="text/javascript" src="scripts/jquery.ui.datepicker-pt-BR.js"></script>
+<script language="javascript" type="text/javascript" src="scripts/jquery.maskmoney.js"></script>
+<script language="javascript" type="text/javascript" src="scripts/jquery.maskedinput.js"></script>
+
+<script type="text/javascript" src="scripts/tools-1.2.6/js/jquery.tools.min.js"></script>
+<script type="text/javascript" src="scripts/jquery.formatCurrency-1.4.0.min.js"></script>
+<script type="text/javascript" src="scripts/jquery.calculation.min.js"></script> 		
+<script type="text/javascript" src="scripts/jquery.dateFormat-1.0.js"></script>
 
 <script type="text/javascript" src="scripts/commonsbehaviour.js"></script>
 
-<script type="text/javascript" src="scripts/gruposAcesso.js"></script>
+<link rel="stylesheet" type="text/css" href="scripts/tools-1.2.6/css/tools.css" />
 
 <base href="<c:url value="/"/>" />
 
@@ -117,6 +120,9 @@
 				});
 
 	});
+	
+	var contextPath = "${pageContext.request.contextPath}";	
+	
 </script>
 
 <style>
@@ -176,8 +182,30 @@
 				</li>
 			</ul>
 			<br class="clearit">
-		</div>
 
+			<div class="container">
+				<div id="notify" style="display: none;"></div>
+				<div id="effectSuccess" class="ui-state-default ui-corner-all" style="display: none;">
+					<p>
+						<span style="float: left; margin-right: .3em;" class="ui-icon ui-icon-info"></span>
+						<b id="idTextSuccess"></b>
+					</p>
+				</div>
+				<div id="effectWarning" class="ui-state-highlight ui-corner-all" style="display: none;">
+					<p>
+						<span style="float: left; margin-right: .3em;" class="ui-icon ui-icon-info"></span>
+						<b id="idTextWarning"></b>
+					</p>
+				</div>
+				<div id="effectError" class="ui-state-error ui-corner-all" style="display: none;">
+					<p>
+						<span style="float: left; margin-right: .3em;" class="ui-icon ui-icon-info"></span>
+						<b id="idTextError"></b>
+					</p>
+				</div>
+			</div>			
+
+		</div>
 
 		<div id="workspace">
 			<ul></ul>

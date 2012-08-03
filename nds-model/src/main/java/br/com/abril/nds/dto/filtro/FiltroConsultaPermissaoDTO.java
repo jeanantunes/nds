@@ -3,6 +3,7 @@ package br.com.abril.nds.dto.filtro;
 import java.io.Serializable;
 import java.util.List;
 
+import br.com.abril.nds.dto.FiltroConsolidadoConsignadoCotaDTO;
 import br.com.abril.nds.vo.PaginacaoVO;
 
 /**
@@ -15,20 +16,20 @@ public class FiltroConsultaPermissaoDTO implements Serializable {
 	private String nome;
 	private String descricao;
 
-	private List<ColunaOrdenacaoPesquisarHistoricoEditorDTO> listaColunaOrdenacao;
+	private List<ColunaOrdenacao> listaColunaOrdenacao;
 
-	private ColunaOrdenacaoPesquisarHistoricoEditorDTO ordenacaoColuna;
+	private ColunaOrdenacao ordenacaoColuna;
 
 	private PaginacaoVO paginacao;
 
-	public enum ColunaOrdenacaoPesquisarHistoricoEditorDTO {
+	public enum ColunaOrdenacao {
 
 		NOME("nome"),
 		DESCRICAO("descricao");
 
 		private String nomeColuna;
 		
-		private ColunaOrdenacaoPesquisarHistoricoEditorDTO(String nomeColuna) {
+		private ColunaOrdenacao(String nomeColuna) {
 			this.nomeColuna = nomeColuna;
 		}
 		
@@ -54,21 +55,21 @@ public class FiltroConsultaPermissaoDTO implements Serializable {
 		this.descricao = descricao;
 	}
 
-	public List<ColunaOrdenacaoPesquisarHistoricoEditorDTO> getListaColunaOrdenacao() {
+	public List<ColunaOrdenacao> getListaColunaOrdenacao() {
 		return listaColunaOrdenacao;
 	}
 
 	public void setListaColunaOrdenacao(
-			List<ColunaOrdenacaoPesquisarHistoricoEditorDTO> listaColunaOrdenacao) {
+			List<ColunaOrdenacao> listaColunaOrdenacao) {
 		this.listaColunaOrdenacao = listaColunaOrdenacao;
 	}
 
-	public ColunaOrdenacaoPesquisarHistoricoEditorDTO getOrdenacaoColuna() {
+	public ColunaOrdenacao getOrdenacaoColuna() {
 		return ordenacaoColuna;
 	}
 
 	public void setOrdenacaoColuna(
-			ColunaOrdenacaoPesquisarHistoricoEditorDTO ordenacaoColuna) {
+			ColunaOrdenacao ordenacaoColuna) {
 		this.ordenacaoColuna = ordenacaoColuna;
 	}
 
@@ -80,4 +81,28 @@ public class FiltroConsultaPermissaoDTO implements Serializable {
 		this.paginacao = paginacao;
 	}
 
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		FiltroConsultaPermissaoDTO other = (FiltroConsultaPermissaoDTO) obj;
+		if (nome == null) {
+			if (other.nome != null)
+				return false;
+		} else if (!descricao.equals(other.descricao))
+			return false;
+		if (ordenacaoColuna != other.ordenacaoColuna)
+			return false;
+		if (paginacao == null) {
+			if (other.paginacao != null)
+				return false;
+		} else if (!paginacao.equals(other.paginacao))
+			return false;
+		return true;
+	}
+	
 }
