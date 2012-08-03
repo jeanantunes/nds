@@ -21,7 +21,12 @@ function Parciais(pathTela) {
 		
 		if(T.get('codigoProduto').length!=0 && T.get('edicaoProduto').length!=0) {
 			$('#painelLancamentos').hide();
-			$('#painelPeriodos').show();			
+			$('#painelPeriodos').show();	
+			
+			
+			T.codigoProduto = T.get('codigoProduto');
+			T.numEdicao = T.get('edicaoProduto');
+			
 			T.pesquisarPeriodosParciais();
 		} else {
 			$('#painelPeriodos').hide();
@@ -73,11 +78,16 @@ function Parciais(pathTela) {
 		
 	},
 
-	this.inserirPeriodos = function() {
+	this.inserirPeriodos = function(modal) {
 		
 		$.postJSON(contextPath + "/parciais/inserirPeriodos",
 				T.getDadosNovosPeriodo(),
-				function(result){$(".parciaisPopGrid").flexReload();},
+				function(result,modal){
+					if(modal)
+						$(".parciaisPopGrid").flexReload();
+					else
+						$(".periodosGrid").flexReload();
+				},
 				null, 
 				true,
 				"dialog-detalhes");
@@ -112,6 +122,7 @@ function Parciais(pathTela) {
 			$('#exportacaoPeriodos').hide();
 		} else {
 			$('#exportacaoPeriodos').show();
+			T.idProdutoEdicao = result.rows[0].cell.idProdutoEdicao;
 		}
 		
 		$.each(result.rows, function(index,row){T.gerarAcaoDetalhes(index,row);} );
@@ -129,7 +140,7 @@ function Parciais(pathTela) {
 		} else {
 			$('#exportacaoPeriodosModal').show();
 		}
-		
+				
 		$.each(result.rows, function(index,row){T.gerarAcaoDetalhes(index,row);} );
 				
 		return result;

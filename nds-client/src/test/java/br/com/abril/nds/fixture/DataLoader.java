@@ -83,6 +83,7 @@ import br.com.abril.nds.model.cadastro.TipoCota;
 import br.com.abril.nds.model.cadastro.TipoDesconto;
 import br.com.abril.nds.model.cadastro.TipoEndereco;
 import br.com.abril.nds.model.cadastro.TipoEntrega;
+import br.com.abril.nds.model.cadastro.TipoFeriado;
 import br.com.abril.nds.model.cadastro.TipoFornecedor;
 import br.com.abril.nds.model.cadastro.TipoGarantia;
 import br.com.abril.nds.model.cadastro.TipoLicencaMunicipal;
@@ -4506,6 +4507,7 @@ public class DataLoader {
 		fornecedorFc.setResponsavel("Sebastião");
 		fornecedorFc.setEmailNfe("sebastiao@email.com");
 		fornecedorFc.setOrigem(Origem.MANUAL);
+		fornecedorFc.setEmailNfe("acme@acme.com");
 
 		save(session, fornecedorAcme, fornecedorDinap, fornecedorFc);
 
@@ -5320,15 +5322,37 @@ public class DataLoader {
 	}
 
 	private static void criarFeriado(Session session) {
-		Feriado feriadoIndependencia =
-
-				Fixture.feriado(DateUtil.parseDataPTBR("07/09/2012"), "Independência do Brasil");
+		
+		UnidadeFederacao saoPaulo = Fixture.criarUnidadeFederacao("GO");
+		save(session, saoPaulo);
+		
+		Localidade localidadeMococa  = Fixture.criarLocalidade(112L, "Mococa", 10L, saoPaulo);
+		save(session, localidadeMococa);
+		
+		Feriado feriadoIndependencia = Fixture.feriado(
+				DateUtil.parseDataPTBR("07/09/2012"), 
+				TipoFeriado.FEDERAL, 
+				null, 
+				null, 
+				"Independência do Brasil",
+				false,
+				false,
+				true);
 		save(session, feriadoIndependencia);
 
 		Feriado feriadoProclamacao =
-				Fixture.feriado(DateUtil.parseDataPTBR("15/11/2012"), "Proclamação da República");
+				Fixture.feriado(
+						DateUtil.parseDataPTBR("15/11/2012"), 
+						TipoFeriado.FEDERAL, 
+						null, 
+						null ,
+						"Proclamação da República",
+						false,
+						false,
+						false);
 
 		save(session, feriadoProclamacao);
+		
 	}
 	
 	private static void criarEnderecoPDV(Session session){
