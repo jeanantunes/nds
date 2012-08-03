@@ -89,7 +89,7 @@ public class LancamentoRepositoryImplExpedicaoTest extends AbstractRepositoryImp
 			save(produto); 
 			
 			ProdutoEdicao produtoEdicao = Fixture.produtoEdicao("1", i.longValue(), 50, 40, 
-					new BigDecimal(30), new BigDecimal(20), new BigDecimal(10), "ABCDEFGHIJKLMNOPQRSTU", 1L, produto, null, false);	
+					new BigDecimal(30), new BigDecimal(20), new BigDecimal(10), "ABCDEFGHIJKLMNOPQ", 1L, produto, null, false);	
 			save(produtoEdicao);
 			
 			
