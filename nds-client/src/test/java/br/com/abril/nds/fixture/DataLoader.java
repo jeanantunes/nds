@@ -8000,7 +8000,7 @@ public class DataLoader {
 
 		int numeroSemana = DateUtil.obterNumeroSemanaNoAno(new Date(), distribuidor.getInicioSemana().getCodigoDiaSemana());
 
-		Date dataLancamento = DateUtil.obterDataDaSemanaNoAno(numeroSemana, distribuidor.getInicioSemana().getCodigoDiaSemana());
+		Date dataLancamento = DateUtil.obterDataDaSemanaNoAno(numeroSemana, distribuidor.getInicioSemana().getCodigoDiaSemana(), null);
 
 		Date dataRecolhimento = DateUtil.adicionarDias(dataLancamento, 15);
 
@@ -9021,7 +9021,7 @@ public class DataLoader {
 
 		int numeroSemana = DateUtil.obterNumeroSemanaNoAno(new Date(), distribuidor.getInicioSemana().getCodigoDiaSemana());
 
-		Date dataInicioSemanaAtual = DateUtil.obterDataDaSemanaNoAno(numeroSemana, distribuidor.getInicioSemana().getCodigoDiaSemana());
+		Date dataInicioSemanaAtual = DateUtil.obterDataDaSemanaNoAno(numeroSemana, distribuidor.getInicioSemana().getCodigoDiaSemana(), null);
 
 		Date dataRecolhimentoProximaSemana = DateUtil.adicionarDias(dataInicioSemanaAtual, 7);
 

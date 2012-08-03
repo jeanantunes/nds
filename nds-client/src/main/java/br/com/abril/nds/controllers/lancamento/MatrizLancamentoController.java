@@ -369,7 +369,7 @@ public class MatrizLancamentoController {
 		}
 		
 		Date dataInicioSemana = DateUtil.obterDataDaSemanaNoAno(
-			numeroSemana, distribuidor.getInicioSemana().getCodigoDiaSemana());
+			numeroSemana, distribuidor.getInicioSemana().getCodigoDiaSemana(), null);
 		
 		boolean dataInicioSemanaMaior =
 			DateUtil.isDataInicialMaiorDataFinal(dataInicioSemana, novaData);
