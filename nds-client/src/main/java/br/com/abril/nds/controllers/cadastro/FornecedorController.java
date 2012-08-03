@@ -35,6 +35,7 @@ import br.com.abril.nds.service.TipoFornecedorService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.util.StringUtil;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
@@ -270,6 +271,18 @@ public class FornecedorController {
 		if (fornecedorDTO.getTipoFornecedor() == null) {
 			
 			mensagens.add("O preenchimento do campo [Tipo Fornecedor] é obrigatório.");
+		}
+		
+		if (!StringUtil.isEmpty(fornecedorDTO.getEmailNfe())) {
+			if (!Util.validarEmail(fornecedorDTO.getEmailNfe())) {
+				mensagens.add("O preenchimento do campo [E-mail NFe] está inválido!");
+			}
+		}
+		
+		if (!StringUtil.isEmpty(fornecedorDTO.getEmail())) {
+			if (!Util.validarEmail(fornecedorDTO.getEmail())) {
+				mensagens.add("O preenchimento do campo [E-mail] está inválido!");
+			}
 		}
 		
 		if (fornecedorDTO.isPossuiContrato()) {
@@ -518,6 +531,8 @@ public class FornecedorController {
 		fornecedorDTO.setCodigoInterface(fornecedor.getCodigoInterface());
 		
 		fornecedorDTO.setEmail(fornecedor.getJuridica().getEmail());
+		
+		fornecedorDTO.setEmailNfe(fornecedor.getEmailNfe());
 		
 		fornecedorDTO.setIdFornecedor(fornecedor.getId());
 		

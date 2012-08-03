@@ -70,6 +70,7 @@ import br.com.abril.nds.model.cadastro.TipoCota;
 import br.com.abril.nds.model.cadastro.TipoDesconto;
 import br.com.abril.nds.model.cadastro.TipoEndereco;
 import br.com.abril.nds.model.cadastro.TipoEntrega;
+import br.com.abril.nds.model.cadastro.TipoFeriado;
 import br.com.abril.nds.model.cadastro.TipoFormaCobranca;
 import br.com.abril.nds.model.cadastro.TipoFornecedor;
 import br.com.abril.nds.model.cadastro.TipoGarantia;
@@ -418,6 +419,7 @@ public class Fixture {
 		fornecedor.setInicioAtividade(new Date());
 		fornecedor.setCodigoInterface(codigoInterface);
 		fornecedor.setOrigem(Origem.MANUAL);
+		fornecedor.setEmailNfe("teste@gmail.com");
 		return fornecedor;
 	}
 	
@@ -1174,7 +1176,6 @@ public class Fixture {
 		itemNotaFiscal.setValorICMSProduto(valorICMSProduto);
 		itemNotaFiscal.setAliquotaIPIProduto(aliquotaIPIProduto);
 		itemNotaFiscal.setValorIPIProduto(valorIPIProduto);
-
 		
 		return itemNotaFiscal;
 		
@@ -1193,7 +1194,7 @@ public class Fixture {
 		tipoNotaFiscal.setContribuinte(false);
 		tipoNotaFiscal.setNopCodigo(0L);
 		tipoNotaFiscal.setTipoOperacao(TipoOperacao.ENTRADA);		
-		tipoNotaFiscal.setTipoAtividade(TipoAtividade.PRESTADOR_SERVICO);
+		tipoNotaFiscal.setTipoAtividade(TipoAtividade.MERCANTIL);
 		tipoNotaFiscal.setSerieNotaFiscal(2);
 		tipoNotaFiscal.setProcesso(Processo.PROCESSO);
 		return tipoNotaFiscal;
@@ -2011,14 +2012,30 @@ public class Fixture {
 		return politicaCobranca;
 	}
 	
-	public static Feriado feriado(Date data, String descricao) {
+	public static Feriado feriado(
+			Date data, 
+			TipoFeriado tipoFeriado,
+			UnidadeFederacao unidadeFederacao,
+			Localidade localidade, 
+			String descricao,
+			boolean indEfetuaCobranca,
+			boolean indOpera,
+			boolean indRepeteAnualmente) {
 		
 		Feriado feriado = new Feriado();
 		
 		feriado.setData(data);
 		feriado.setDescricao(descricao);
+		feriado.setTipoFeriado(tipoFeriado);
+		feriado.setUnidadeFederacao(unidadeFederacao);
+		feriado.setLocalidade(localidade);
+		
+		feriado.setIndEfetuaCobranca(indEfetuaCobranca);
+		feriado.setIndOpera(indOpera);
+		feriado.setIndRepeteAnualmente(indRepeteAnualmente);
 		
 		return feriado;
+		
 	}
 
 	public static Endereco criarEndereco(TipoEndereco tipoEndereco, String cep,

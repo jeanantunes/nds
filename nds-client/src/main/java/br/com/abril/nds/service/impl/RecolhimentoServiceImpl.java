@@ -620,7 +620,7 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 	private Intervalo<Date> getPeriodoRecolhimento(Distribuidor distribuidor, Integer numeroSemana) {
 		
 		Date dataInicioSemana = 
-			DateUtil.obterDataDaSemanaNoAno(numeroSemana, distribuidor.getInicioSemana().getCodigoDiaSemana());
+			DateUtil.obterDataDaSemanaNoAno(numeroSemana, distribuidor.getInicioSemana().getCodigoDiaSemana(), null);
 		
 		Date dataFimSemana = DateUtil.adicionarDias(dataInicioSemana, 6);
 		

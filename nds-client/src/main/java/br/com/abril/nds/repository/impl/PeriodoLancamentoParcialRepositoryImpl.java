@@ -30,14 +30,18 @@ public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepositoryMo
 				
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" select lancamento.dataLancamentoDistribuidor as dataLancamento, ");
+		hql.append(" select produtoEdicao.id as idProdutoEdicao, ");
+		hql.append("		lancamento.dataLancamentoDistribuidor as dataLancamento, ");
 		hql.append(" 		lancamento.dataRecolhimentoDistribuidor as dataRecolhimento, ");
 		hql.append(" 		estudo.qtdeReparte as reparte, ");
 		
-		hql.append(" 		1 + (select count(parcial) from PeriodoLancamentoParcial parcial ");
-		hql.append("        		 where parcial.lancamento.dataLancamentoDistribuidor<periodo.lancamento.dataLancamentoDistribuidor");	
-		hql.append("        		 and parcial.lancamento.produtoEdicao.id=periodo.lancamento.produtoEdicao.id)");
-		hql.append("        as periodo,");
+		hql.append(" 		999 as suplementacao, ");
+		
+		hql.append(" 		999 as vendaCE, ");
+		
+		hql.append(" 		'9,99' as percVendaAcumulada, ");
+		
+		hql.append(" 		'99' as reparteAcum, ");
 		
 		hql.append("		(select sum(movimento.qtde) from ConferenciaEncalhe conferencia ");
 		hql.append("		 	join conferencia.movimentoEstoqueCota movimento ");

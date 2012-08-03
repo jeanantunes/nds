@@ -18,6 +18,7 @@ import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.vo.PaginacaoVO;
+import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
@@ -56,7 +57,7 @@ public class GruposAcessoController {
 	 * Retorna a lista de regras do sistema
 	 * @return List
 	 */
-	@Post
+	@Get
 	@Path("/pesquisarRegras")
 	public void pesquisarRegras(FiltroConsultaPermissaoDTO filtro, int rp, int page, String sortname, String sortorder) {
 		filtro = carregarFiltroConsultaRegras(filtro, rp, page, sortname, sortorder);

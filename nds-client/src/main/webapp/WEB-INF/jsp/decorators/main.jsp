@@ -17,35 +17,80 @@
 
 <base href="<c:url value="/"/>" />
 
-<link href="css/menu_superior.css" rel="stylesheet" type="text/css" />
-<link rel="stylesheet" type="text/css" href="css/novo_distrib.css" />
-<link rel="stylesheet" type="text/css" href="css/NDS.css" />
-<link rel="stylesheet" href="scripts/jquery-ui-1.8.16.custom/development-bundle/themes/redmond/jquery.ui.all.css" />
-<link rel="stylesheet" type="text/css" href="scripts/jquery-ui-1.8.16.custom/development-bundle/themes/redmond/jquery.ui.theme.css"/>
-<link rel="stylesheet" type="text/css" href="scripts/flexigrid-1.1/css/flexigrid.pack.css" />
-<link rel="stylesheet" type="text/css" href="scripts/tooltip/tipsy.css" />
-<link rel="stylesheet" type="text/css" href="scripts/tooltip/tipsy-docs.css" />
+<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/NDS.css" />
+<link rel="stylesheet"
+	href="${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/development-bundle/themes/redmond/jquery.ui.all.css" />
+<link rel="stylesheet" type="text/css"
+	href="${pageContext.request.contextPath}/scripts/flexigrid-1.1/css/flexigrid.pack.css" />
+<script language="javascript" type="text/javascript"
+	src="${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/js/jquery-1.7.1.min.js"></script>
+<script language="javascript" type="text/javascript"
+	src="${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/development-bundle/ui/jquery.ui.core.js"></script>
+<script language="javascript" type="text/javascript"
+	src="${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/development-bundle/ui/jquery.effects.core.js"></script>
+<script language="javascript" type="text/javascript"
+	src="${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/development-bundle/ui/jquery.effects.highlight.js"></script>
+<script language="javascript" type="text/javascript"
+	src="${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/development-bundle/ui/jquery.ui.widget.js"></script>
+<script language="javascript" type="text/javascript"
+	src="${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/development-bundle/ui/jquery.ui.position.js"></script>
+<script language="javascript" type="text/javascript"
+	src="${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/development-bundle/ui/jquery.ui.accordion.js"></script>
+<script language="javascript" type="text/javascript"
+	src="${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/development-bundle/ui/jquery.ui.dialog.js"></script>
+<script language="javascript" type="text/javascript"
+	src="${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/development-bundle/ui/jquery.ui.tabs.js"></script>
+<script language="javascript" type="text/javascript"
+	src="${pageContext.request.contextPath}/scripts/jquery.json-2.3.min.js"></script>
+<script language="javascript" type="text/javascript"
+	src="${pageContext.request.contextPath}/scripts/NDS.js"></script>
+<script language="javascript" type="text/javascript"
+	src="${pageContext.request.contextPath}/scripts/utils.js"></script>
+	
+<!-- TODO: Posteriormente incluir os métodos 'personalizados': 
+<script language="javascript" type="text/javascript"
+	src="${pageContext.request.contextPath}/scripts/flexigrid-1.1/js/flexigrid.pack.js"></script>
+ -->
+<script language="javascript" type="text/javascript"
+	src="${pageContext.request.contextPath}/scripts/flexigrid-1.1/js/flexigrid.js"></script>
+<script language="javascript" type="text/javascript"
+	src="${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/development-bundle/ui/jquery.ui.datepicker.js"></script>
+<script language="javascript" type="text/javascript"
+	src="${pageContext.request.contextPath}/scripts/jquery.ui.datepicker-pt-BR.js"></script>
+<script language="javascript" type="text/javascript"
+	src="${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/development-bundle/ui/jquery.ui.autocomplete.js"></script>
 
-<script language="javascript" type="text/javascript" src="scripts/jquery-ui-1.8.16.custom/js/jquery-1.7.1.min.js"></script>
-<script language="javascript" type="text/javascript" src="scripts/jquery-ui-1.8.16.custom/js/jquery-ui-1.8.16.custom.min.js"></script>
-<script language="javascript" type="text/javascript" src="scripts/NDS.js"></script>
-<script language="javascript" type="text/javascript" src="scripts/utils.js"></script>
-<script language="javascript" type="text/javascript" src="scripts/flexigrid-1.1/js/flexigrid.pack.js"></script>
-<script language="javascript" type="text/javascript" src="scripts/tooltip/jquery.tipsy.js"></script>
+<script language="javascript" type="text/javascript"
+	src="${pageContext.request.contextPath}/scripts/jquery.maskmoney.js"></script>
 
+<script language="javascript" type="text/javascript"
+	src="${pageContext.request.contextPath}/scripts/jquery.maskedinput.js"></script>
 
-<script language="javascript" type="text/javascript" src="scripts/jquery.json-2.3.min.js"></script>
-<script language="javascript" type="text/javascript" src="scripts/flexigrid-1.1/js/flexigrid.js"></script>
-<script language="javascript" type="text/javascript" src="scripts/jquery.ui.datepicker-pt-BR.js"></script>
-<script language="javascript" type="text/javascript" src="scripts/jquery.maskmoney.js"></script>
-<script language="javascript" type="text/javascript" src="scripts/jquery.maskedinput.js"></script>
+<link rel="stylesheet" type="text/css" 
+	href="${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/development-bundle/themes/redmond/jquery.ui.theme.css"/>
+	
+<script type="text/javascript"
+ 		src="${pageContext.request.contextPath}/scripts/tools-1.2.6/js/jquery.tools.min.js"></script>
 
-<script type="text/javascript" src="scripts/tools-1.2.6/js/jquery.tools.min.js"></script>
-<script type="text/javascript" src="scripts/jquery.formatCurrency-1.4.0.min.js"></script>
-<script type="text/javascript" src="scripts/jquery.calculation.min.js"></script> 		
-<script type="text/javascript" src="scripts/jquery.dateFormat-1.0.js"></script>
+<script type="text/javascript"
+ 		src="${pageContext.request.contextPath}/scripts/jquery.formatCurrency-1.4.0.min.js"></script>
 
-<link rel="stylesheet" type="text/css" href="scripts/tools-1.2.6/css/tools.css" />
+<script type="text/javascript"
+ 		src="${pageContext.request.contextPath}/scripts/jquery.calculation.min.js"></script> 		
+
+<script type="text/javascript"
+ 		src="${pageContext.request.contextPath}/scripts/jquery.dateFormat-1.0.js"></script>
+
+<link rel="stylesheet" type="text/css"
+	  href="${pageContext.request.contextPath}/scripts/tools-1.2.6/css/tools.css" />
+
+<link rel="stylesheet" href="${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/development-bundle/themes/redmond/jquery.ui.all.css" />
+
+<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/scripts/tooltip/tipsy.css" />
+<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/scripts/tooltip/tipsy-docs.css" />
+<script language="javascript" type="text/javascript" src="${pageContext.request.contextPath}/scripts/tooltip/jquery.tipsy.js"></script>
+
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/commonsbehaviour.js"></script>
 
 <script language="javascript" type="text/javascript">
 

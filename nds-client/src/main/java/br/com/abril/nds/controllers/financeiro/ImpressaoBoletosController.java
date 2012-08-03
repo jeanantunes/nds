@@ -698,9 +698,7 @@ public class ImpressaoBoletosController {
 		
 		if(dataPesquisa == null){
 			isAcaoGeraDivida = false;
-		}
-		
-		if (dataPesquisa.compareTo(distribuidor.getDataOperacao())==-1){
+		} else if (dataPesquisa.compareTo(distribuidor.getDataOperacao())==-1){
 			isAcaoGeraDivida = false;
 		}
 		

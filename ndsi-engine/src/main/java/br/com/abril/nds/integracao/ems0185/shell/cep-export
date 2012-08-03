@@ -9,7 +9,7 @@ SQL_FILE=dnecom-mysql.sql
 GZ_FILE=dnecom.tar.gz
 
 mdb-schema $MDB_FILE mysql > $SQL_FILE
-mdb-tables -1 $MDB_FILE | xargs -n1 mdb-export -H -I $MDB_FILE | sed 's/$/ ;/' >> $SQL_FILE
+mdb-tables -1 $MDB_FILE | xargs -n1 mdb-export -H -I 'mysql' $MDB_FILE | sed 's/$/ ;/' >> $SQL_FILE
 
 tar cvzf $GZ_FILE $SQL_FILE
 

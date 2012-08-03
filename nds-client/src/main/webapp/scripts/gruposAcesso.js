@@ -124,6 +124,7 @@ var gruposAcessoController = $.extend(true, {
 			var serializedObj = $("#pesquisar_regras_form", this.workspace).serialize();
 			$(".regrasGrid", this.workspace).flexOptions({
 				"url" : this.path + '/pesquisarRegras?' + serializedObj,
+				method: 'GET',
 				newp:1
 			});
 			$(".regrasGrid", this.workspace).flexReload();

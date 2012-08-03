@@ -84,6 +84,16 @@ public class NotaFiscalEntradaRepositoryImpl extends AbstractRepositoryModel<Not
 			condicoes += "".equals(condicoes) ? " where " : " and ";
 			
 			condicoes += " notaFiscal.tipoNotaFiscal.id = :idTipoNotaFiscal ";
+		} else {
+			
+			if (filtroConsultaNotaFiscal.getIdDistribuidor() != null) {
+				
+				condicoes += "".equals(condicoes) ? " where " : " and ";
+			
+				condicoes += " notaFiscal.tipoNotaFiscal.tipoAtividade = ";
+				
+				condicoes += " ( select distribuidor.tipoAtividade from Distribuidor distribuidor where distribuidor.id = :idDistribuidor ) ";
+			}
 		}
 
 		if (filtroConsultaNotaFiscal.getIdFornecedor() != null) {
@@ -103,7 +113,7 @@ public class NotaFiscalEntradaRepositoryImpl extends AbstractRepositoryModel<Not
 					  + condicaoNotaRecebida 
 					  + " :statusNotaFiscal ";
 		}
-
+		
 		hql.append(condicoes);
 
 		PaginacaoVO paginacao = filtroConsultaNotaFiscal.getPaginacao();
@@ -175,8 +185,13 @@ public class NotaFiscalEntradaRepositoryImpl extends AbstractRepositoryModel<Not
 		if (filtroConsultaNotaFiscal.getIdTipoNotaFiscal() != null) {
 			
 			query.setParameter("idTipoNotaFiscal", filtroConsultaNotaFiscal.getIdTipoNotaFiscal());
+		} else {
+		
+			if (filtroConsultaNotaFiscal.getIdDistribuidor() != null) {
+				query.setParameter("idDistribuidor", filtroConsultaNotaFiscal.getIdDistribuidor());
+			}
 		}
-
+		
 		if (filtroConsultaNotaFiscal.getIdFornecedor() != null) {
 			
 			query.setParameter("idFornecedor", filtroConsultaNotaFiscal.getIdFornecedor());

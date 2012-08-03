@@ -223,7 +223,7 @@ public class ProdutoEdicaoController {
 			Long numeroEdicao, int pacotePadrao,
 			TipoLancamento tipoLancamento,
 			BigDecimal precoPrevisto, BigDecimal precoVenda,
-			Date dataLancamentoPrevisto, 
+			Date dataLancamentoPrevisto, Date dataRecolhimentoPrevisto,
 			BigDecimal repartePrevisto, BigDecimal repartePromocional,
 			String codigoDeBarras, String codigoDeBarrasCorporativo,
 			BigDecimal desconto, BigDecimal peso, 
@@ -242,6 +242,8 @@ public class ProdutoEdicaoController {
 		dto.setPrecoPrevisto(precoPrevisto);
 		dto.setPrecoVenda(precoVenda);
 		dto.setDataLancamentoPrevisto(dataLancamentoPrevisto);
+		dto.setDataRecolhimentoPrevisto(dataRecolhimentoPrevisto);
+		dto.setDataRecolhimentoDistribuidor(dataRecolhimentoPrevisto);
 		dto.setRepartePrevisto(repartePrevisto);
 		dto.setRepartePromocional(repartePromocional);
 		dto.setCodigoDeBarras(codigoDeBarras);
@@ -325,6 +327,9 @@ public class ProdutoEdicaoController {
 			}
 			if (dto.getDataLancamentoPrevisto() == null) {
 				listaMensagens.add("Campo 'Data de Lançamento Previsto' deve ser preenchido!");
+			}
+			if (dto.getDataRecolhimentoPrevisto() == null) {
+				listaMensagens.add("Campo 'Data de Recolhimento Previsto' deve ser preenchido!");
 			}
 			if (dto.getRepartePrevisto() == null) {
 				listaMensagens.add("Por favor, digite um valor válido para o 'Reparte Previsto'!");
