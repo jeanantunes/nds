@@ -1282,7 +1282,10 @@ public class DataLoader {
 		nfeRemessaConsignacaoContribuinte.setGrupoNotaFiscal(GrupoNotaFiscal.NF_REMESSA_CONSIGNACAO);
 		nfeRemessaConsignacaoContribuinte.setTipoAtividade(TipoAtividade.MERCANTIL);
 		nfeRemessaConsignacaoContribuinte.setSerieNotaFiscal(1);
-		nfeRemessaConsignacaoContribuinte.setProcesso(Processo.PROCESSO);
+		nfeRemessaConsignacaoContribuinte.setProcesso(new HashSet<Processo>());
+		nfeRemessaConsignacaoContribuinte.getProcesso().add(Processo.GERACAO_NF_E);
+		nfeRemessaConsignacaoContribuinte.getProcesso().add(Processo.LANCAMENTO_FALTA_SOBRA);
+		nfeRemessaConsignacaoContribuinte.getProcesso().add(Processo.VENDA_SUPLEMENTAR);
 		save(session,nfeRemessaConsignacaoContribuinte);
 
 		TipoNotaFiscal nfeEntradaDevolucaoRemessaConsignacaoContribuinte = new TipoNotaFiscal();
@@ -1298,7 +1301,8 @@ public class DataLoader {
 		nfeEntradaDevolucaoRemessaConsignacaoContribuinte.setGrupoNotaFiscal(GrupoNotaFiscal.NF_DEVOLUCAO_REMESSA_CONSIGNACAO);
 		nfeEntradaDevolucaoRemessaConsignacaoContribuinte.setTipoAtividade(TipoAtividade.MERCANTIL);
 		nfeEntradaDevolucaoRemessaConsignacaoContribuinte.setSerieNotaFiscal(2);
-		nfeEntradaDevolucaoRemessaConsignacaoContribuinte.setProcesso(Processo.PROCESSO);
+		nfeEntradaDevolucaoRemessaConsignacaoContribuinte.setProcesso(new HashSet<Processo>());
+		nfeEntradaDevolucaoRemessaConsignacaoContribuinte.getProcesso().add(Processo.FECHAMENTO_ENCALHE);
 		save(session, nfeEntradaDevolucaoRemessaConsignacaoContribuinte);
 
 		TipoNotaFiscal nfeDevolucaoSimbolicaMercadoriasVendidasContribuinte = new TipoNotaFiscal();
@@ -1314,7 +1318,8 @@ public class DataLoader {
 		nfeDevolucaoSimbolicaMercadoriasVendidasContribuinte.setGrupoNotaFiscal(GrupoNotaFiscal.NF_DEVOLUCAO_SIMBOLICA);
 		nfeDevolucaoSimbolicaMercadoriasVendidasContribuinte.setTipoAtividade(TipoAtividade.MERCANTIL);
 		nfeDevolucaoSimbolicaMercadoriasVendidasContribuinte.setSerieNotaFiscal(3);
-		nfeDevolucaoSimbolicaMercadoriasVendidasContribuinte.setProcesso(Processo.PROCESSO);
+		nfeDevolucaoSimbolicaMercadoriasVendidasContribuinte.setProcesso(new HashSet<Processo>());
+		nfeDevolucaoSimbolicaMercadoriasVendidasContribuinte.getProcesso().add(Processo.GERACAO_NF_E);
 		save(session, nfeDevolucaoSimbolicaMercadoriasVendidasContribuinte);
 
 		TipoNotaFiscal nfeVendasContribuinte = new TipoNotaFiscal();
@@ -1330,7 +1335,8 @@ public class DataLoader {
 		nfeVendasContribuinte.setGrupoNotaFiscal(GrupoNotaFiscal.NF_VENDA);
 		nfeVendasContribuinte.setTipoAtividade(TipoAtividade.MERCANTIL);
 		nfeVendasContribuinte.setSerieNotaFiscal(4);
-		nfeVendasContribuinte.setProcesso(Processo.PROCESSO);
+		nfeVendasContribuinte.setProcesso(new HashSet<Processo>());
+		nfeVendasContribuinte.getProcesso().add(Processo.GERACAO_NF_E);
 		save(session, nfeVendasContribuinte);
 
 		// Tipo de Nota - Mercantil - Cota não Contribuinte (cota que não emite NF-e)
@@ -1347,7 +1353,10 @@ public class DataLoader {
 		nfeRemessaConsignacao.setGrupoNotaFiscal(GrupoNotaFiscal.NF_REMESSA_CONSIGNACAO);
 		nfeRemessaConsignacao.setTipoAtividade(TipoAtividade.MERCANTIL);
 		nfeRemessaConsignacao.setSerieNotaFiscal(5);
-		nfeRemessaConsignacao.setProcesso(Processo.PROCESSO);
+		nfeRemessaConsignacao.setProcesso(new HashSet<Processo>());
+		nfeRemessaConsignacao.getProcesso().add(Processo.GERACAO_NF_E);
+		nfeRemessaConsignacao.getProcesso().add(Processo.LANCAMENTO_FALTA_SOBRA);
+		nfeRemessaConsignacao.getProcesso().add(Processo.VENDA_SUPLEMENTAR);
 		save(session,nfeRemessaConsignacao);
 
 		TipoNotaFiscal nfeEntradaDevolucaoRemessaConsignacao = new TipoNotaFiscal();
@@ -1363,7 +1372,8 @@ public class DataLoader {
 		nfeEntradaDevolucaoRemessaConsignacao.setGrupoNotaFiscal(GrupoNotaFiscal.NF_DEVOLUCAO_REMESSA_CONSIGNACAO);
 		nfeEntradaDevolucaoRemessaConsignacao.setTipoAtividade(TipoAtividade.MERCANTIL);
 		nfeEntradaDevolucaoRemessaConsignacao.setSerieNotaFiscal(6);
-		nfeEntradaDevolucaoRemessaConsignacao.setProcesso(Processo.PROCESSO);
+		nfeEntradaDevolucaoRemessaConsignacao.setProcesso(new HashSet<Processo>());
+		nfeEntradaDevolucaoRemessaConsignacao.getProcesso().add(Processo.FECHAMENTO_ENCALHE);
 		save(session, nfeEntradaDevolucaoRemessaConsignacao);
 
 		TipoNotaFiscal nfeDevolucaoSimbolicaMercadoriasVendidas = new TipoNotaFiscal();
@@ -1379,7 +1389,8 @@ public class DataLoader {
 		nfeDevolucaoSimbolicaMercadoriasVendidas.setGrupoNotaFiscal(GrupoNotaFiscal.NF_DEVOLUCAO_SIMBOLICA);
 		nfeDevolucaoSimbolicaMercadoriasVendidas.setTipoAtividade(TipoAtividade.MERCANTIL);
 		nfeDevolucaoSimbolicaMercadoriasVendidas.setSerieNotaFiscal(7);
-		nfeDevolucaoSimbolicaMercadoriasVendidas.setProcesso(Processo.PROCESSO);
+		nfeDevolucaoSimbolicaMercadoriasVendidas.setProcesso(new HashSet<Processo>());
+		nfeDevolucaoSimbolicaMercadoriasVendidas.getProcesso().add(Processo.GERACAO_NF_E);
 		save(session, nfeDevolucaoSimbolicaMercadoriasVendidas);
 
 		TipoNotaFiscal nfeVendas = new TipoNotaFiscal();
@@ -1395,7 +1406,8 @@ public class DataLoader {
 		nfeVendas.setGrupoNotaFiscal(GrupoNotaFiscal.NF_VENDA);
 		nfeVendas.setTipoAtividade(TipoAtividade.MERCANTIL);
 		nfeVendas.setSerieNotaFiscal(8);
-		nfeVendas.setProcesso(Processo.PROCESSO);
+		nfeVendas.setProcesso(new HashSet<Processo>());
+		nfeVendas.getProcesso().add(Processo.GERACAO_NF_E);
 		save(session, nfeVendas);
 
 		// Tipo de Nota - Prestador de Serviço - Cota Contribuinte
@@ -1412,7 +1424,9 @@ public class DataLoader {
 		nfeRemessaDistribuicao1.setGrupoNotaFiscal(GrupoNotaFiscal.DEVOLUCAO_MERCADORIA_FORNECEDOR);
 		nfeRemessaDistribuicao1.setTipoAtividade(TipoAtividade.PRESTADOR_SERVICO);
 		nfeRemessaDistribuicao1.setSerieNotaFiscal(9);
-		nfeRemessaDistribuicao1.setProcesso(Processo.PROCESSO);
+		nfeRemessaDistribuicao1.setProcesso(new HashSet<Processo>());
+		nfeRemessaDistribuicao1.getProcesso().add(Processo.GERACAO_NF_E);
+		nfeRemessaDistribuicao1.getProcesso().add(Processo.VENDA_SUPLEMENTAR);
 		save(session, nfeRemessaDistribuicao1);
 
 		TipoNotaFiscal nfeDevolucaoRemessaDistribuicao1 = new TipoNotaFiscal();
@@ -1428,7 +1442,6 @@ public class DataLoader {
 		nfeDevolucaoRemessaDistribuicao1.setGrupoNotaFiscal(GrupoNotaFiscal.DEVOLUCAO_MERCADORIA_FORNECEDOR);
 		nfeDevolucaoRemessaDistribuicao1.setTipoAtividade(TipoAtividade.PRESTADOR_SERVICO);
 		nfeDevolucaoRemessaDistribuicao1.setSerieNotaFiscal(10);
-		nfeDevolucaoRemessaDistribuicao1.setProcesso(Processo.PROCESSO);
 		save(session, nfeDevolucaoRemessaDistribuicao1);
 
 		TipoNotaFiscal nfeVenda1 = new TipoNotaFiscal();
@@ -1444,7 +1457,6 @@ public class DataLoader {
 		nfeVenda1.setGrupoNotaFiscal(GrupoNotaFiscal.DEVOLUCAO_MERCADORIA_FORNECEDOR);
 		nfeVenda1.setTipoAtividade(TipoAtividade.PRESTADOR_SERVICO);
 		nfeVenda1.setSerieNotaFiscal(11);
-		nfeVenda1.setProcesso(Processo.PROCESSO);
 		save(session, nfeVenda1);
 
 		// Tipo de Nota - Prestarore de Serviço - Cota NÃO Contribuinte
@@ -1461,7 +1473,9 @@ public class DataLoader {
 		nfeRemessaDistribuicao2.setGrupoNotaFiscal(GrupoNotaFiscal.DEVOLUCAO_MERCADORIA_FORNECEDOR);
 		nfeRemessaDistribuicao2.setTipoAtividade(TipoAtividade.PRESTADOR_SERVICO);
 		nfeRemessaDistribuicao2.setSerieNotaFiscal(12);
-		nfeRemessaDistribuicao2.setProcesso(Processo.PROCESSO);
+		nfeRemessaDistribuicao2.setProcesso(new HashSet<Processo>());
+		nfeRemessaDistribuicao2.getProcesso().add(Processo.GERACAO_NF_E);
+		nfeRemessaDistribuicao2.getProcesso().add(Processo.VENDA_SUPLEMENTAR);
 		save(session, nfeRemessaDistribuicao2);
 
 		TipoNotaFiscal nfeDevolucaoRemessaDistribuicao2 = new TipoNotaFiscal();
@@ -1477,7 +1491,8 @@ public class DataLoader {
 		nfeDevolucaoRemessaDistribuicao2.setGrupoNotaFiscal(GrupoNotaFiscal.DEVOLUCAO_MERCADORIA_FORNECEDOR);
 		nfeDevolucaoRemessaDistribuicao2.setTipoAtividade(TipoAtividade.PRESTADOR_SERVICO);
 		nfeDevolucaoRemessaDistribuicao2.setSerieNotaFiscal(13);
-		nfeDevolucaoRemessaDistribuicao2.setProcesso(Processo.PROCESSO);
+		nfeDevolucaoRemessaDistribuicao2.setProcesso(new HashSet<Processo>());
+		nfeDevolucaoRemessaDistribuicao2.getProcesso().add(Processo.FECHAMENTO_ENCALHE);
 		save(session, nfeDevolucaoRemessaDistribuicao2);
 
 		TipoNotaFiscal nfeVenda2 = new TipoNotaFiscal();
@@ -1493,7 +1508,6 @@ public class DataLoader {
 		nfeVenda2.setGrupoNotaFiscal(GrupoNotaFiscal.DEVOLUCAO_MERCADORIA_FORNECEDOR);
 		nfeVenda2.setTipoAtividade(TipoAtividade.PRESTADOR_SERVICO);
 		nfeVenda2.setSerieNotaFiscal(14);
-		nfeVenda2.setProcesso(Processo.PROCESSO);
 		save(session, nfeVenda2);
 	}
 
