@@ -60,7 +60,7 @@ $(function() {
 	
 	$("#venda-encalhe-grid").flexigrid({
 		
-		preProcess:executarPreProcessamento,
+		preProcess: executarPreProcessamentoDetalheResumoExpedicao,
 		
 		dataType : 'json',
 		

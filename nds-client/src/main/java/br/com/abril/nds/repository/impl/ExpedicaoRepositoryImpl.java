@@ -31,6 +31,104 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 		super(Expedicao.class);
 	}
 
+	public Long obterQuantidadeResumoExpedicaoProdutosDoBox(FiltroResumoExpedicaoDTO filtro) {
+		
+		Query query = getSession().createQuery(gerarQueryResumoExpedicaoProdutosDoBox(Boolean.TRUE));
+		
+		query.setParameter("dataLancamento", filtro.getDataLancamento());
+		query.setParameter("status",StatusLancamento.EXPEDIDO);
+		
+		@SuppressWarnings("unchecked")
+		List<Long> conts  = query.list();
+		
+		return (!conts.isEmpty())?conts.size():0L;
+		
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<ExpedicaoDTO> obterResumoExpedicaoProdutosDoBox(FiltroResumoExpedicaoDTO filtro) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(gerarQueryResumoExpedicaoProdutosDoBox(Boolean.FALSE))
+					
+		.append(getOrderBy(filtro));
+		
+		Query query = getSession().createQuery(hql.toString());
+		
+		query.setParameter("dataLancamento", filtro.getDataLancamento());
+		query.setParameter("status",StatusLancamento.EXPEDIDO);
+		
+		if (filtro.getPaginacao() != null) {
+			
+			if (filtro.getPaginacao().getPosicaoInicial() != null) {
+				query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
+			}
+			
+			if (filtro.getPaginacao().getQtdResultadosPorPagina() != null) {
+				query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
+			}
+		}
+		
+		return query.list(); 
+		
+	}
+	
+	/**
+	 * Retorna o sql referente a consulta de Reusumo de produtos expedidos
+	 * @param isCount
+	 * @return String
+	 */
+	private String gerarQueryResumoExpedicaoProdutosDoBox(boolean isCount){
+		
+		StringBuilder hql = new StringBuilder();
+		
+		if (isCount){
+			
+			hql.append("SELECT count (produto.codigo) ");
+		}
+		else{
+		
+			hql.append("SELECT new ") .append(ExpedicaoDTO.class.getCanonicalName()) 
+			.append(" ( ") 
+						.append("produto.codigo,")
+						.append("produto.nome,")
+						.append("produtoEd.numeroEdicao,")
+						.append("produtoEd.precoVenda,")
+						.append("estudo.qtdeReparte,")
+						.append(" SUM (( case ")
+							.append(" when (diferenca.tipoDiferenca = 'FALTA_DE') then (-(diferenca.qtde * produtoEd.pacotePadrao))")
+							.append(" when (diferenca.tipoDiferenca = 'SOBRA_DE') then (diferenca.qtde * produtoEd.pacotePadrao)")
+							.append(" when (diferenca.tipoDiferenca = 'FALTA_EM') then (-diferenca.qtde)")
+							.append(" when (diferenca.tipoDiferenca = 'SOBRA_EM') then (diferenca.qtde)")
+							.append(" else 0")
+						.append(" end )) as qntDiferenca, ")
+						.append("produtoEd.precoVenda*estudo.qtdeReparte ")
+			.append(" ) ");
+		}	
+		
+		hql.append( "FROM" )
+			.append( " Estudo estudo join estudo.lancamentos lancamento ") 
+			.append( " JOIN lancamento.recebimentos itemRecebimento ")
+			.append("  JOIN lancamento.expedicao expedicao ")
+			.append( " LEFT JOIN itemRecebimento.diferenca diferenca")
+			.append( " JOIN lancamento.produtoEdicao produtoEd ")
+			.append( " JOIN produtoEd.produto produto ")
+			.append(" WHERE ")
+			.append(" lancamento.dataLancamentoDistribuidor =:dataLancamento ")
+			.append(" and lancamento.status =:status ");
+		
+		hql.append(" group by ")
+			.append("produto.codigo,")
+			.append("produto.nome,")
+			.append("produtoEd.numeroEdicao,")
+			.append("produtoEd.precoVenda,")
+			.append("estudo.qtdeReparte,")
+			.append("produtoEd.precoVenda*estudo.qtdeReparte ");
+
+		return hql.toString();
+	}
+	
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<ExpedicaoDTO> obterResumoExpedicaoPorProduto(FiltroResumoExpedicaoDTO filtro) {

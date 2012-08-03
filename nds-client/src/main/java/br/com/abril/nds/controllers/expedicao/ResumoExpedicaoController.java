@@ -115,7 +115,7 @@ public class ResumoExpedicaoController {
 		tableModel.setPage(1);
 		tableModel.setTotal(listaDetalhe.size());
 
-		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
+		result.use(Results.json()).from(tableModel).recursive().serialize();
 		
 	}
 	
