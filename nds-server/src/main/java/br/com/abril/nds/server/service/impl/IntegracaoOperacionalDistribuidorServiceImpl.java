@@ -1,16 +1,20 @@
 package br.com.abril.nds.server.service.impl;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import org.lightcouch.CouchDbClient;
 import org.lightcouch.NoDocumentException;
+import org.lightcouch.View;
+import org.lightcouch.ViewResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.integracao.couchdb.CouchDbProperties;
+import br.com.abril.nds.server.model.CouchDBUser;
 import br.com.abril.nds.server.model.Indicador;
 import br.com.abril.nds.server.model.OperacaoDistribuidor;
 import br.com.abril.nds.server.repository.IndicadorRepository;
@@ -52,7 +56,10 @@ public class IntegracaoOperacionalDistribuidorServiceImpl implements IntegracaoO
 		
 		for (String codigoDistribuidorIntegracao : codigosDistribuidoresIntegracao) {
 			
-			CouchDbClient couchDbClient = this.obterCouchDBClient(codigoDistribuidorIntegracao);
+			String nomeBancoDeDados = 
+				CouchDBUtil.obterNomeBancoDeDadosIntegracaoDistribuidor(codigoDistribuidorIntegracao);
+			
+			CouchDbClient couchDbClient = this.obterCouchDBClient(nomeBancoDeDados);
 			
 			OperacaoDistribuidor operacaoDistribuidor = null;
 			
@@ -79,8 +86,18 @@ public class IntegracaoOperacionalDistribuidorServiceImpl implements IntegracaoO
 	@Transactional(readOnly = true)
 	public Set<String> obterCodigosDistribuidoresIntegracao() {
 		
-		// TODO: Obter códigos (pendência Gabriel/Jonatas)
-		Set<String> codigosDistribuidoresIntegracao = null;
+		CouchDbClient couchDbClient = this.obterCouchDBClient(CouchDBUtil.DB_NAME_USERS);
+
+		View view = couchDbClient.view("users/distribuidores");
+		
+		ViewResult<String, CouchDBUser, Void> viewResult = view.queryView(String.class, CouchDBUser.class, Void.class);
+		
+		Set<String> codigosDistribuidoresIntegracao = new HashSet<String>();
+		
+		for (ViewResult<String, CouchDBUser, Void>.Rows row : viewResult.getRows()) {
+			
+			codigosDistribuidoresIntegracao.add(row.getValue().getIdDistribuidor());
+		}
 		
 		return codigosDistribuidoresIntegracao;
 	}
@@ -117,12 +134,12 @@ public class IntegracaoOperacionalDistribuidorServiceImpl implements IntegracaoO
 	}
 	
 	/*
-	 * Retorna o client para o CouchDB do banco de dados correspondente ao distribuidor.
+	 * Retorna o client para o CouchDB de acordo com o nome do bancos de dados.
 	 */
-	private CouchDbClient obterCouchDBClient(String codigoDistribuidorIntegracao) {
+	private CouchDbClient obterCouchDBClient(String nomeBancoDeDados) {
 		
 		return new CouchDbClient(
-				CouchDBUtil.obterNomeBancoDeDadosIntegracaoDistribuidor(codigoDistribuidorIntegracao),
+				nomeBancoDeDados,
 				true,
 				this.couchDbProperties.getProtocol(),
 				this.couchDbProperties.getHost(),

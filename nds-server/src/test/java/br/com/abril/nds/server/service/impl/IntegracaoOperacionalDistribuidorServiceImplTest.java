@@ -10,6 +10,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.lightcouch.CouchDbClient;
+import org.lightcouch.NoDocumentException;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.integracao.couchdb.CouchDbProperties;
@@ -18,6 +19,8 @@ import br.com.abril.nds.server.model.OperacaoDistribuidor;
 import br.com.abril.nds.server.repository.impl.AbstractRepositoryImplTest;
 import br.com.abril.nds.server.service.IntegracaoOperacionalDistribuidorService;
 import br.com.abril.nds.util.CouchDBUtil;
+
+import com.google.gson.JsonObject;
 
 public class IntegracaoOperacionalDistribuidorServiceImplTest extends AbstractRepositoryImplTest {
 	
@@ -34,7 +37,10 @@ public class IntegracaoOperacionalDistribuidorServiceImplTest extends AbstractRe
 		
 		for (String idDistribuidor : idsDistribuidores) {
 			
-			CouchDbClient couchDbClient = this.obterCouchDBClient(idDistribuidor);
+			String nomeBancoDeDados = 
+				CouchDBUtil.obterNomeBancoDeDadosIntegracaoDistribuidor(idDistribuidor);
+			
+			CouchDbClient couchDbClient = this.obterCouchDBClient(nomeBancoDeDados);
 			
 			OperacaoDistribuidor operacaoDistribuidor = couchDbClient.find(OperacaoDistribuidor.class, idDistribuidor);
 			
@@ -47,6 +53,27 @@ public class IntegracaoOperacionalDistribuidorServiceImplTest extends AbstractRe
 				couchDbClient.save(operacaoDistribuidor);
 			}
 		}
+		
+		CouchDbClient couchDbClient = this.obterCouchDBClient(CouchDBUtil.DB_NAME_USERS);
+		
+		try {
+			
+			couchDbClient.find("org.couchdb.user:test");
+			
+		} catch (NoDocumentException noDocumentException) {
+			
+			JsonObject jsonObject = new JsonObject();
+			
+			jsonObject.addProperty("_id", "org.couchdb.user:test");
+			jsonObject.addProperty("name", "test");
+			jsonObject.addProperty("roles", "");
+			jsonObject.addProperty("type", "user");
+			jsonObject.addProperty("salt", "");
+			jsonObject.addProperty("password_sha", "");
+			jsonObject.addProperty("info", "1");
+			
+			couchDbClient.save(jsonObject);
+		}			
 	}
 	
 	@Test
@@ -131,7 +158,18 @@ public class IntegracaoOperacionalDistribuidorServiceImplTest extends AbstractRe
 	@Test
 	public void obterCodigosDistribuidoresIntegracaoTest() {
 		
-		//TODO: Aguardando definição de pendência
+		Set<String> codigosDistribuidoresIntegracao = 
+			this.integracaoOperacionalDistribuidorService.obterCodigosDistribuidoresIntegracao();
+		
+		Assert.assertNotNull(codigosDistribuidoresIntegracao);
+		
+		int tamanhoEsperado = 1;
+		
+		Assert.assertEquals(tamanhoEsperado, codigosDistribuidoresIntegracao.size());	
+		
+		String idDistribuidorEsperado = "1";
+		
+		Assert.assertTrue(codigosDistribuidoresIntegracao.contains(idDistribuidorEsperado));
 	}
 	
 	@Test
@@ -178,10 +216,10 @@ public class IntegracaoOperacionalDistribuidorServiceImplTest extends AbstractRe
 	/*
 	 * Retorna o client para o CouchDB do banco de dados correspondente ao distribuidor.
 	 */
-	private CouchDbClient obterCouchDBClient(String codigoDistribuidorIntegracao) {
+	private CouchDbClient obterCouchDBClient(String nomeBancoDeDados) {
 		
 		return new CouchDbClient(
-				CouchDBUtil.obterNomeBancoDeDadosIntegracaoDistribuidor(codigoDistribuidorIntegracao),
+				nomeBancoDeDados,
 				true,
 				this.couchDbProperties.getProtocol(),
 				this.couchDbProperties.getHost(),
