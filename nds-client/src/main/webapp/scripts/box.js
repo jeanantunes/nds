@@ -167,7 +167,11 @@ var boxController = $.extend(true, {
 			if( typeof data.mensagens == "object") {
 				exibirMensagem(data.mensagens.tipoMensagem, data.mensagens.listaMensagens);
 			} else {
-				boxController.bindData(data, $("#novo_box_form", this.workspace));
+				//boxController.bindData(data, $("#novo_box_form", this.workspace));
+				$("#boxId").val(data.box.id);
+				$("#boxCodigo").val(data.box.codigo);
+				$("#boxNome").val(data.box.nome);
+				$("#boxTipoBox").val(data.box.tipoBox);
 				boxController.showPopupEditar('Editar Box');
 			}
 		});
