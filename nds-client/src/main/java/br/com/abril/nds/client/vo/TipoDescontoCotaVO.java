@@ -8,15 +8,16 @@ public class TipoDescontoCotaVO {
 	
 	private String id;
 	
-	@Export(label = "Data Alteração")
+	@Export(label = "Data Alteração",exhibitionOrder=4)
 	private String dtAlteracao;
 	
-	@Export(label = "Desconto")
+	@Export(label = "Desconto %",exhibitionOrder=2)
 	private String desconto;
 	
-	@Export(label = "Usuário")
+	@Export(label = "Usuário",exhibitionOrder=5)
 	private String usuario;
 	
+	@Export(label = "",exhibitionOrder=1)
 	private String sequencial;
 	
 	private String cota;
@@ -30,6 +31,9 @@ public class TipoDescontoCotaVO {
 	private String edicao;
 	
 	private String especificacaoDesconto;
+	
+	@Export(label = "Fornecedores",exhibitionOrder=3)
+	private String fornecedor;
 	
 	public String getId() {
 		return id;
@@ -118,5 +122,20 @@ public class TipoDescontoCotaVO {
 	public void setEspecificacaoDesconto(String especificacaoDesconto) {
 		this.especificacaoDesconto = especificacaoDesconto;
 	}
+
+	/**
+	 * @return the fornecedor
+	 */
+	public String getFornecedor() {
+		return fornecedor;
+	}
+
+	/**
+	 * @param fornecedor the fornecedor to set
+	 */
+	public void setFornecedor(String fornecedor) {
+		this.fornecedor = fornecedor;
+	}
+	
 	
 }
