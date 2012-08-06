@@ -216,7 +216,7 @@ var produto = $.extend(true, {
 			buttons: {
 				"Confirmar": function() {
 
-					this.salvarProduto();
+					produto.salvarProduto();
 				},
 				"Cancelar": function() {
 					$( this ).dialog( "close" );
@@ -256,9 +256,9 @@ var produto = $.extend(true, {
 						$("#comboTipoDesconto").val(result.tipoDesconto);
 						$("#comboTipoProdutoCadastro").val(result.codigoTipoProduto)
 
-						if (result.formaComercializacao == 'CONTA_FIRME') {
+						if (result.formaComercializacao == 'Conta Firme') {
 							$("#formaComercializacaoContaFirme").attr('checked', true);
-						} else if (result.formaComercializacao == 'CONSIGNADO') {
+						} else if (result.formaComercializacao == 'Consignado') {
 							$("#formaComercializacaoConsignado").attr('checked', true);
 						}
 						
@@ -327,7 +327,7 @@ var produto = $.extend(true, {
 			buttons: {
 				"Confirmar": function() {
 
-					this.salvarProduto();
+					produto.salvarProduto();
 					
 			   		$(".produtosGrid").flexReload();
 				},

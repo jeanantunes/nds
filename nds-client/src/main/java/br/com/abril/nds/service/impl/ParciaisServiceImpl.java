@@ -1,6 +1,6 @@
 package br.com.abril.nds.service.impl;
 
-import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -157,7 +157,7 @@ public class ParciaisServiceImpl implements ParciaisService{
 		lancamento.setDataRecolhimentoPrevista(dtRecolhimento);
 		lancamento.setDataLancamentoDistribuidor(dtLancamento);
 		lancamento.setDataRecolhimentoDistribuidor(dtRecolhimento);
-		lancamento.setReparte(BigDecimal.ZERO);
+		lancamento.setReparte(BigInteger.ZERO);
 		lancamento.setSequenciaMatriz(0);
 		lancamento.setDataCriacao(new Date());
 		lancamento.setDataStatus(new Date());
@@ -237,11 +237,7 @@ public class ParciaisServiceImpl implements ParciaisService{
 			throw new ValidacaoException(TipoMensagem.WARNING, "Lancamento já está em uso, não pode ser excluido.");
 		
 		PeriodoLancamentoParcial periodo = periodoLancamentoParcialRepository.obterPeriodoPorIdLancamento(idLancamento);
-		
-		if(lancamento.getHistoricos().size()>0) {
-			historicoLancamentoRepository.remover(lancamento.getHistoricos().get(0));
-		}
-		
+				
 		periodoLancamentoParcialRepository.remover(periodo);
 		
 		lancamentoRepository.remover(lancamento);

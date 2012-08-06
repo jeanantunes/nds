@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -261,7 +262,7 @@ public class MonitorNFEServiceImplTest {
 		Long ncm = 1L;
 		NotaFiscal notaFiscal = null;
 		ProdutoEdicao produtoEdicao = null;
-		BigDecimal quantidade = BigDecimal.ONE;
+		BigInteger quantidade = BigInteger.ONE;
 		String unidade = "";
 		BigDecimal valorDesconto 	= BigDecimal.ZERO;
 		BigDecimal valorFrete 		= BigDecimal.ZERO;

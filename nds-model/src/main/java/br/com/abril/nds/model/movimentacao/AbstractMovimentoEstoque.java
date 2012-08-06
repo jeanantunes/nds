@@ -1,6 +1,6 @@
 package br.com.abril.nds.model.movimentacao;
 
-import java.math.BigDecimal;
+import java.math.BigInteger;
 
 import javax.persistence.Column;
 import javax.persistence.JoinColumn;
@@ -13,16 +13,16 @@ import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 public abstract class AbstractMovimentoEstoque extends Movimento {
 
 	@Column(name = "QTDE", nullable = false)
-	protected BigDecimal qtde;
+	protected BigInteger qtde;
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "PRODUTO_EDICAO_ID")
 	protected ProdutoEdicao produtoEdicao;
 	
-	public BigDecimal getQtde() {
+	public BigInteger getQtde() {
 		return qtde;
 	}
 	
-	public void setQtde(BigDecimal qtde) {
+	public void setQtde(BigInteger qtde) {
 		this.qtde = qtde;
 	}
 	

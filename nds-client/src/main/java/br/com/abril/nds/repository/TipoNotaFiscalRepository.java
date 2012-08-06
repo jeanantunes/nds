@@ -2,11 +2,11 @@ package br.com.abril.nds.repository;
 
 import java.util.List;
 
+import br.com.abril.nds.dto.filtro.FiltroCadastroTipoNotaDTO;
 import br.com.abril.nds.model.cadastro.TipoAtividade;
 import br.com.abril.nds.model.fiscal.GrupoNotaFiscal;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
 import br.com.abril.nds.model.fiscal.TipoOperacao;
-import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
 public interface TipoNotaFiscalRepository extends Repository<TipoNotaFiscal, Long> {
 
@@ -16,11 +16,8 @@ public interface TipoNotaFiscalRepository extends Repository<TipoNotaFiscal, Lon
 
 	TipoNotaFiscal obterTipoNotaFiscal(GrupoNotaFiscal grupoNotaFiscal);
 
-	public List<TipoNotaFiscal> obterTiposNotasFiscais(String cfop, String tipoNota, TipoAtividade tipoAtividade, String orderBy, Ordenacao ordenacao, Integer initialResult, Integer maxResults);
-
-	public Long obterQuantidadeTiposNotasFiscais(String cfop, String tipoNota, TipoAtividade tipoAtividade);
+	public Integer obterQuantidadeTiposNotasFiscais(FiltroCadastroTipoNotaDTO filtro);
 	
-
 	List<TipoNotaFiscal> obterTiposNotasFiscaisPorTipoAtividadeDistribuidor(TipoAtividade tipoAtividade);
 	/**
 	 * Obtem tipos de notas fiscais de cotas nao contribuintes por tipo de atividade parametrizdo.
@@ -29,5 +26,7 @@ public interface TipoNotaFiscalRepository extends Repository<TipoNotaFiscal, Lon
 	 * @return lista tipo nota fiscal
 	 */
 	public List<TipoNotaFiscal> obterTiposNotasFiscaisCotasNaoContribuintesPor(TipoAtividade tipoAtividade);
+	
+	List<TipoNotaFiscal> consultarTipoNotaFiscal(FiltroCadastroTipoNotaDTO filtro);
 	
 }

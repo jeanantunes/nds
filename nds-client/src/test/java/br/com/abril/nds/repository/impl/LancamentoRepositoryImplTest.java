@@ -1,6 +1,7 @@
 package br.com.abril.nds.repository.impl;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
@@ -118,20 +119,20 @@ public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
 		save(cromoReiLeao);
 
 		veja1 = Fixture.produtoEdicao("1", 1L, 10, 7,
-				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(15), "ABCDEFGHIJKLMNOPQRSTU", 1L, veja, null, false);
+				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(15), "ABCDEFGHIJKLMNOPQ", 1L, veja, null, false);
 
 		ProdutoEdicao quatroRoda2 = Fixture.produtoEdicao("1", 2L, 15, 30,
-				new BigDecimal(0.1), BigDecimal.TEN, BigDecimal.TEN, "ABCDEFGHIJKLMNOPQRST", 2L,
+				new BigDecimal(0.1), BigDecimal.TEN, BigDecimal.TEN, "ABCDEFGHIJKLMNOPA", 2L,
 				quatroRodas, null, false);
 
 		ProdutoEdicao infoExame3 = Fixture.produtoEdicao("1", 3L, 5, 30,
-				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(12), "ABCDEFGHIJKLMNOPQRS", 3L, infoExame, null, false);
+				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(12), "ABCDEFGHIJKLMNOPC", 3L, infoExame, null, false);
 
 		ProdutoEdicao capricho1 = Fixture.produtoEdicao("1", 1L, 10, 15,
-				new BigDecimal(0.12), BigDecimal.TEN, BigDecimal.TEN, "ABCDEFGHIJKLMNOPQR", 4L, capricho, null, false);
+				new BigDecimal(0.12), BigDecimal.TEN, BigDecimal.TEN, "ABCDEFGHIJKLMNOPD", 4L, capricho, null, false);
 		
 		ProdutoEdicao cromoReiLeao1 = Fixture.produtoEdicao("1", 1L, 100, 60,
-				new BigDecimal(0.01), BigDecimal.ONE, new BigDecimal(1.5), "ABCDEFGHIJKLMNOPQ", 5L, cromoReiLeao, null, false);
+				new BigDecimal(0.01), BigDecimal.ONE, new BigDecimal(1.5), "ABCDEFGHIJKLMNOPE", 5L, cromoReiLeao, null, false);
 		
 		save(veja1, quatroRoda2, infoExame3, capricho1, cromoReiLeao1);
 		
@@ -154,7 +155,7 @@ public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
 				Fixture.criarData(22, Calendar.FEBRUARY,2012),
 				Fixture.criarData(22, Calendar.FEBRUARY,2012),
 				TipoLancamento.LANCAMENTO,
-						new BigDecimal(50));
+						BigInteger.valueOf(50));
 		save(itemNotaFiscal1Veja);
 		
 		Date dataRecebimento = Fixture.criarData(22, Calendar.FEBRUARY, 2012);
@@ -164,7 +165,7 @@ public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
 		save(recebimentoFisico1Veja);
 			
 		ItemRecebimentoFisico itemRecebimentoFisico1Veja = 
-				Fixture.itemRecebimentoFisico(itemNotaFiscal1Veja, recebimentoFisico1Veja, new BigDecimal(50));
+				Fixture.itemRecebimentoFisico(itemNotaFiscal1Veja, recebimentoFisico1Veja, BigInteger.valueOf(50));
 		save(itemRecebimentoFisico1Veja);
 		
 		
@@ -180,7 +181,7 @@ public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
 				Fixture.criarData(22, Calendar.FEBRUARY,2012), 
 				Fixture.criarData(22, Calendar.FEBRUARY,2012),
 				TipoLancamento.LANCAMENTO,
-				new BigDecimal(50));
+				BigInteger.valueOf(50));
 		
 		save(itemNotaFiscal2Veja);
 
@@ -190,7 +191,7 @@ public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
 		save(recebimentoFisico2Veja);
 			
 		ItemRecebimentoFisico itemRecebimentoFisico2Veja = 
-				Fixture.itemRecebimentoFisico(itemNotaFiscal2Veja, recebimentoFisico2Veja, new BigDecimal(50));
+				Fixture.itemRecebimentoFisico(itemNotaFiscal2Veja, recebimentoFisico2Veja, BigInteger.valueOf(50));
 		save(itemRecebimentoFisico2Veja);
 		
 		
@@ -208,7 +209,7 @@ public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
 						Fixture.criarData(22, Calendar.FEBRUARY,2012), 
 						Fixture.criarData(22, Calendar.FEBRUARY,2012), 
 						TipoLancamento.LANCAMENTO,
-						new BigDecimal(25));
+						BigInteger.valueOf(25));
 		
 		save(itemNotaFiscal4Rodas);
 		
@@ -218,7 +219,7 @@ public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
 		save(recebimentoFisico4Rodas);
 			
 		ItemRecebimentoFisico itemRecebimentoFisico4Rodas = 
-				Fixture.itemRecebimentoFisico(itemNotaFiscal4Rodas, recebimentoFisico4Rodas, new BigDecimal(25));
+				Fixture.itemRecebimentoFisico(itemNotaFiscal4Rodas, recebimentoFisico4Rodas, BigInteger.valueOf(25));
 		save(itemRecebimentoFisico4Rodas);
 		
 		lancamentoVeja = Fixture.lancamento(TipoLancamento.SUPLEMENTAR, veja1,
@@ -226,7 +227,7 @@ public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
 				Fixture.criarData(28, Calendar.FEBRUARY, 2012),
 				new Date(),
 				new Date(),
-				new BigDecimal(100),
+				BigInteger.valueOf(100),
 				StatusLancamento.CONFIRMADO, itemRecebimentoFisico1Veja, 1);
 		lancamentoVeja.getRecebimentos().add(itemRecebimentoFisico2Veja);
 		
@@ -235,7 +236,7 @@ public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
 				Fixture.criarData(22, Calendar.MARCH, 2012),
 				new Date(),
 				new Date(),
-				new BigDecimal(25),
+				BigInteger.valueOf(25),
 				StatusLancamento.CONFIRMADO, itemRecebimentoFisico4Rodas, 1);
 		
 		lancamentoInfoExame = Fixture.lancamento(TipoLancamento.LANCAMENTO, infoExame3,
@@ -243,7 +244,7 @@ public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
 				Fixture.criarData(23, Calendar.MARCH, 2012), 
 				new Date(),
 				new Date(),
-				new BigDecimal(40),
+				BigInteger.valueOf(40),
 				StatusLancamento.CONFIRMADO, null, 1);
 		
 		lancamentoCapricho = Fixture.lancamento(TipoLancamento.LANCAMENTO, capricho1,
@@ -251,7 +252,7 @@ public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
 				Fixture.criarData(12, Calendar.MARCH, 2012),
 				new Date(),
 				new Date(),
-				BigDecimal.TEN,
+				BigInteger.TEN,
 				StatusLancamento.CONFIRMADO, null, 1);
 		
 		lancamentoCromoReiLeao = Fixture.lancamento(TipoLancamento.LANCAMENTO, cromoReiLeao1,
@@ -259,10 +260,10 @@ public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
 				Fixture.criarData(23, Calendar.APRIL, 2012),
 				new Date(),
 				new Date(),
-				new BigDecimal(10000),
+				BigInteger.valueOf(10000),
 				StatusLancamento.CONFIRMADO, null, 1);
 		
-		Estudo estudo = Fixture.estudo(new BigDecimal(100),
+		Estudo estudo = Fixture.estudo(BigInteger.valueOf(100),
 				Fixture.criarData(22, Calendar.FEBRUARY, 2012), veja1);
 		
 		save(lancamentoVeja, lancamentoQuatroRodas, lancamentoInfoExame,
@@ -308,7 +309,7 @@ public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
 		
 		Cota cota = Fixture.cota(50, fornecedorDinap.getJuridica(), SituacaoCadastro.ATIVO, box);
 		
-		EstoqueProdutoCota estoqueProdutoCota = Fixture.estoqueProdutoCota(capricho1, BigDecimal.TEN, cota, null);
+		EstoqueProdutoCota estoqueProdutoCota = Fixture.estoqueProdutoCota(capricho1, BigInteger.TEN, cota, null);
 		
 		save(box, cota, estudo, estoqueProdutoCota);
 
@@ -322,13 +323,13 @@ public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
 				lancamentoParcial,  
 				StatusLancamentoParcial.PROJETADO, TipoLancamentoParcial.FINAL);
 
-		EstudoCota estudoCota = Fixture.estudoCota(BigDecimal.TEN, BigDecimal.ONE, estudo, cota);
+		EstudoCota estudoCota = Fixture.estudoCota(BigInteger.TEN, BigInteger.ONE, estudo, cota);
 
 		save(lancamentoParcial, parcial, estudoCota);
 		
 		Cota cota2 = Fixture.cota(55, fornecedorFC.getJuridica(), SituacaoCadastro.ATIVO, box);
 		
-		EstoqueProdutoCota estoqueProdutoCota2 = Fixture.estoqueProdutoCota(infoExame3, BigDecimal.TEN, cota2, null);
+		EstoqueProdutoCota estoqueProdutoCota2 = Fixture.estoqueProdutoCota(infoExame3, BigInteger.TEN, cota2, null);
 		
 		save(cota2, estoqueProdutoCota2);
 		
@@ -342,10 +343,10 @@ public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
 				lancamentoParcial2, 
 				StatusLancamentoParcial.RECOLHIDO, TipoLancamentoParcial.PARCIAL);
 		
-		Estudo estudo2 = Fixture.estudo(new BigDecimal(180),
+		Estudo estudo2 = Fixture.estudo(BigInteger.valueOf(180),
 				Fixture.criarData(12, Calendar.MARCH, 2012), infoExame3);
 		
-		EstudoCota estudoCota2 = Fixture.estudoCota(BigDecimal.TEN, BigDecimal.ONE, estudo2, cota2);
+		EstudoCota estudoCota2 = Fixture.estudoCota(BigInteger.TEN, BigInteger.ONE, estudo2, cota2);
 		
 		save(estudo2, lancamentoParcial2, parcial2, estudoCota2);
 	}

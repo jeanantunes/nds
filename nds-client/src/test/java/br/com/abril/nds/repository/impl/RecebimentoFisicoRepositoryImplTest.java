@@ -1,6 +1,7 @@
 package br.com.abril.nds.repository.impl;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -101,7 +102,7 @@ public class RecebimentoFisicoRepositoryImplTest extends AbstractRepositoryImplT
 		save(produto);
 		
 		produtoEdicao =
-				Fixture.produtoEdicao("1", 1L, 10, 14, new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(20), "ABCDEFGHIJKLMNOPQRSTU", 1L, produto, null, false);
+				Fixture.produtoEdicao("1", 1L, 10, 14, new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(20), "ABCDEFGHIJKLMNOPQ", 1L, produto, null, false);
 		save(produtoEdicao);
 		
 		itemNotaFiscal= 
@@ -112,13 +113,13 @@ public class RecebimentoFisicoRepositoryImplTest extends AbstractRepositoryImplT
 						new Date(), 
 						new Date(),
 						TipoLancamento.LANCAMENTO,
-						new BigDecimal(12));
+						BigInteger.valueOf(12));
 		save(itemNotaFiscal);
 		
 		recebimentoFisico = Fixture.recebimentoFisico(notaFiscal, usuario, new Date(), new Date(), StatusConfirmacao.PENDENTE);
 		save(recebimentoFisico);
 		
-		itemRecebimentoFisico= Fixture.itemRecebimentoFisico(itemNotaFiscal, recebimentoFisico, new BigDecimal(12));
+		itemRecebimentoFisico= Fixture.itemRecebimentoFisico(itemNotaFiscal, recebimentoFisico, BigInteger.valueOf(12));
 		save(itemRecebimentoFisico);
 	}
 		
@@ -128,10 +129,10 @@ public class RecebimentoFisicoRepositoryImplTest extends AbstractRepositoryImplT
 		RecebimentoFisicoDTO recebimentoDTO = new RecebimentoFisicoDTO();
 		
 		recebimentoDTO.setIdProdutoEdicao(produtoEdicao.getId());
-		recebimentoDTO.setQtdFisico(new BigDecimal(50));
+		recebimentoDTO.setQtdFisico(BigInteger.valueOf(50));
 		recebimentoDTO.setDataLancamento(new Date(System.currentTimeMillis()));
 		recebimentoDTO.setDataRecolhimento(new Date(System.currentTimeMillis()));
-		recebimentoDTO.setRepartePrevisto(new BigDecimal(12));
+		recebimentoDTO.setRepartePrevisto(BigInteger.valueOf(12));
 		recebimentoDTO.setTipoLancamento(TipoLancamento.LANCAMENTO);
 	
 		List<RecebimentoFisicoDTO> listaDTO = new ArrayList<RecebimentoFisicoDTO>();

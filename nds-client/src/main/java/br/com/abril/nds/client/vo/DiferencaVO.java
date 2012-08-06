@@ -2,10 +2,11 @@ package br.com.abril.nds.client.vo;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 
 import br.com.abril.nds.util.export.Export;
-import br.com.abril.nds.util.export.Exportable;
 import br.com.abril.nds.util.export.Export.Alignment;
+import br.com.abril.nds.util.export.Exportable;
 
 /**
  * Value Object para lançamento e consulta de diferença.
@@ -44,7 +45,7 @@ public class DiferencaVO implements Serializable {
 	private String pacotePadrao;
 	
 	@Export(label = "Exemplar", alignment = Alignment.RIGHT, exhibitionOrder = 9)
-	private BigDecimal quantidade;
+	private BigInteger quantidade;
 	
 	@Export(label = "Tipo de Diferença", exhibitionOrder = 7)
 	private String tipoDiferenca;
@@ -60,7 +61,7 @@ public class DiferencaVO implements Serializable {
 	@Export(label = "Total R$", alignment = Alignment.RIGHT, exhibitionOrder = 11)
 	private String valorTotalDiferenca;
 	
-	private BigDecimal qtdeEstoqueAtual;
+	private BigInteger qtdeEstoqueAtual;
 	
 	private Boolean automatica;
 	
@@ -188,14 +189,14 @@ public class DiferencaVO implements Serializable {
 	/**
 	 * @return the quantidade
 	 */
-	public BigDecimal getQuantidade() {
+	public BigInteger getQuantidade() {
 		return quantidade;
 	}
 
 	/**
 	 * @param quantidade the quantidade to set
 	 */
-	public void setQuantidade(BigDecimal quantidade) {
+	public void setQuantidade(BigInteger quantidade) {
 		this.quantidade = quantidade;
 	}
 
@@ -272,14 +273,14 @@ public class DiferencaVO implements Serializable {
 	/**
 	 * @return the qtdeEstoqueAtual
 	 */
-	public BigDecimal getQtdeEstoqueAtual() {
+	public BigInteger getQtdeEstoqueAtual() {
 		return qtdeEstoqueAtual;
 	}
 
 	/**
 	 * @param qtdeEstoqueAtual the qtdeEstoqueAtual to set
 	 */
-	public void setQtdeEstoqueAtual(BigDecimal qtdeEstoqueAtual) {
+	public void setQtdeEstoqueAtual(BigInteger qtdeEstoqueAtual) {
 		this.qtdeEstoqueAtual = qtdeEstoqueAtual;
 	}
 	

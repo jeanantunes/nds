@@ -2,6 +2,7 @@ package br.com.abril.nds.controllers.estoque;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -47,6 +48,7 @@ import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.model.planejamento.EstudoCota;
 import br.com.abril.nds.model.seguranca.Usuario;
+import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.DiferencaEstoqueService;
 import br.com.abril.nds.service.EstudoCotaService;
@@ -146,7 +148,7 @@ public class DiferencaEstoqueController {
 		
 		List<DiferencaVO> listaConsultaDiferenca = new LinkedList<DiferencaVO>();
 		
-		BigDecimal qtdeTotalDiferencas = BigDecimal.ZERO;
+		BigInteger qtdeTotalDiferencas = BigInteger.ZERO;
 		BigDecimal valorTotalDiferencas = BigDecimal.ZERO;
 		
 		BigDecimal valorDesconto = null;
@@ -303,7 +305,7 @@ public class DiferencaEstoqueController {
 			
 			resultadoDiferencaVO.setTableModel(tableModel);
 			
-			resultadoDiferencaVO.setQtdeTotalDiferencas(BigDecimal.ZERO);
+			resultadoDiferencaVO.setQtdeTotalDiferencas(BigInteger.ZERO);
 			
 			resultadoDiferencaVO.setValorTotalDiferencas("");
 			
@@ -354,15 +356,15 @@ public class DiferencaEstoqueController {
 		
 		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
 	}
-	
+
 	@Post
 	@Path("/lancamento/cadastrarNovasDiferencas")
-	@SuppressWarnings("unchecked")
-	public void cadastrarNovasDiferencas(List<DiferencaVO> listaNovasDiferencas, 
-										 Date dataMovimento,
-										 TipoDiferenca tipoDiferenca) {
-						
-		if (listaNovasDiferencas == null 
+	public void cadastrarNovasDiferencas(TipoDiferenca tipoDiferenca, boolean lancamentoPorCota, String codigoProduto,
+										 Integer edicaoProduto, Long diferenca, boolean direcionadoParaEstoque,
+										 List<Integer> listaNumeroCota, List<Long> diferencas, Date dataNotaEnvio,
+										 Integer numeroCota, List<String> listaCodigoProduto, List<Long> valorDiferencasProdNota) {
+		//TODO
+		/*if (listaNovasDiferencas == null 
 				|| listaNovasDiferencas.isEmpty()) {
 			
 			throw new ValidacaoException(TipoMensagem.WARNING, "Preencha os dados para lançamento!");
@@ -421,14 +423,14 @@ public class DiferencaEstoqueController {
 				
 				valorTotalDiferenca =
 					produtoEdicao.getPrecoVenda().subtract(valorDesconto).multiply(
-						new BigDecimal(produtoEdicao.getPacotePadrao())).multiply(diferenca.getQtde());
+						new BigDecimal(produtoEdicao.getPacotePadrao())).multiply( new BigDecimal( diferenca.getQtde() ) );
 				
 			} else if (TipoDiferenca.FALTA_EM.equals(tipoDiferenca)
 							|| TipoDiferenca.SOBRA_EM.equals(tipoDiferenca)) {
 				
 				valorTotalDiferenca =
 					produtoEdicao.getPrecoVenda().subtract(
-						valorDesconto).multiply(diferenca.getQtde());
+						valorDesconto).multiply(new BigDecimal( diferenca.getQtde() ) );
 			}
 			
 			
@@ -470,7 +472,7 @@ public class DiferencaEstoqueController {
 		
 		this.httpSession.setAttribute(LISTA_NOVAS_DIFERENCAS_SESSION_ATTRIBUTE, listaDiferencas);
 		
-		this.httpSession.setAttribute(MODO_INCLUSAO_SESSION_ATTRIBUTE, true);
+		this.httpSession.setAttribute(MODO_INCLUSAO_SESSION_ATTRIBUTE, true);*/
 		
 		result.use(Results.json()).from("").serialize();
 	}
@@ -922,7 +924,7 @@ public class DiferencaEstoqueController {
 
 		List<DiferencaVO> listaLancamentosDiferenca = new LinkedList<DiferencaVO>();
 		
-		BigDecimal qtdeTotalDiferencas = BigDecimal.ZERO;
+		BigInteger qtdeTotalDiferencas = BigInteger.ZERO;
 		
 		BigDecimal valorTotalDiferencas = BigDecimal.ZERO;
 		
@@ -1016,7 +1018,7 @@ public class DiferencaEstoqueController {
 
 		List<DiferencaVO> listaLancamentosDiferenca = new LinkedList<DiferencaVO>();
 		
-		BigDecimal qtdeTotalDiferencas = BigDecimal.ZERO;
+		BigInteger qtdeTotalDiferencas = BigInteger.ZERO;
 		
 		BigDecimal valorTotalDiferencas = BigDecimal.ZERO;
 		
@@ -1115,7 +1117,7 @@ public class DiferencaEstoqueController {
 
 		List<DiferencaVO> listaConsultaDiferenca = new LinkedList<DiferencaVO>();
 		
-		BigDecimal qtdeTotalDiferencas = BigDecimal.ZERO;
+		BigInteger qtdeTotalDiferencas = BigInteger.ZERO;
 		BigDecimal valorTotalDiferencas = BigDecimal.ZERO;
 		
 		int quantidadeRegistros = diferencaEstoqueService.obterTotalDiferencas(filtro).intValue();
@@ -1564,7 +1566,7 @@ public class DiferencaEstoqueController {
 		
 		DiferencaVO diferencaVO = this.obterDiferencaPorId(idDiferenca);
 
-		BigDecimal somaQtdeRateio = BigDecimal.ZERO;
+		BigInteger somaQtdeRateio = BigInteger.ZERO;
 		
 		for (RateioCotaVO rateioCotaVO : listaNovosRateios) {
 			
@@ -1881,4 +1883,79 @@ public class DiferencaEstoqueController {
 		return usuario;
 	}
 	
+	@Post
+	@Path("/lancamento/rateio/buscarDiferenca")
+	public void buscarDiferenca(Long idDiferenca){
+		
+		DiferencaVO diferencaVO = null;
+		
+		if (idDiferenca == null){
+			
+			diferencaVO = new DiferencaVO();
+//			diferencaVO.setNumeroEdicao("2");
+//			diferencaVO.setPrecoVenda("20.34");
+//			diferencaVO.setDescricaoProduto("tchans");
+//			diferencaVO.setQuantidade(BigDecimal.TEN);
+//			diferencaVO.setCodigoProduto("códigueta");
+		} else {
+			//TODO
+			diferencaVO = new DiferencaVO();
+					//this.diferencaEstoqueService.obterDiferenca(idDiferenca);
+		}
+		
+		result.use(Results.json()).from(diferencaVO, "result").recursive().serialize();
+	}
+	
+	@Post
+	@Path("/lancamento/rateio/buscarReparteCotaPreco")
+	public void buscarReparteCotaPreco(Long idProdutoEdicao, Integer numeroCota){
+		
+		//TODO
+		System.out.println("idProdutoEdicao: " + idProdutoEdicao + " - " + "numeroCota:" + numeroCota);
+		Object[] dados = new Object[2];
+		dados[0] = 25;
+		dados[1] = 3.98;
+		
+		result.use(Results.json()).from(dados, "result").serialize();
+	}
+	
+	@Post
+	@Path("/lancamento/rateio/buscarPrecoProdutoEdicao")
+	public void buscarPrecoProdutoEdicao(String codigoProduto, Integer numeroEdicao){
+		
+		System.out.println("codigoProduto: " + codigoProduto + " - " + "numeroEdicao:" + numeroEdicao);
+		Object[] dados = new Object[2];
+		dados[0] = 25;
+		dados[1] = 3.98;
+		
+		result.use(Results.json()).from(dados, "result").serialize();
+	}
+	
+	@Post
+	@Path("/lancamento/rateio/buscarProdutosCotaNota")
+	public void	buscarProdutosCotaNota(Date dateNotaEnvio, Integer numeroCota){
+		
+		//TODO
+		List<DiferencaVO> prods = new ArrayList<DiferencaVO>();
+		
+		DiferencaVO diferencaVO = new DiferencaVO();
+		diferencaVO.setCodigoProduto("123");
+		diferencaVO.setDescricaoProduto("nome produto");
+		diferencaVO.setNumeroEdicao("2");
+		diferencaVO.setPrecoVenda("12,98");
+		diferencaVO.setQuantidade(BigInteger.TEN);
+		
+		prods.add(diferencaVO);
+		
+		diferencaVO = new DiferencaVO();
+		diferencaVO.setCodigoProduto("123");
+		diferencaVO.setDescricaoProduto("nome produto");
+		diferencaVO.setNumeroEdicao("2");
+		diferencaVO.setPrecoVenda("12.98");
+		diferencaVO.setQuantidade(BigInteger.TEN);
+		
+		prods.add(diferencaVO);
+		
+		result.use(FlexiGridJson.class).from(prods).total(prods.size()).page(1).serialize();
+	}
 }

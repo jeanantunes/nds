@@ -1,8 +1,11 @@
 package br.com.abril.nds.dto;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
+
+
 
 public class SlipDTO {
 
@@ -14,7 +17,7 @@ public class SlipDTO {
 	
 	private BigDecimal valorTotalEncalhe;
 	
-	private BigDecimal totalProdutos;
+	private BigInteger totalProdutos;
 	
 	private BigDecimal valorSlip;
 	
@@ -22,7 +25,7 @@ public class SlipDTO {
 	
 	private BigDecimal valorEncalheDia;
 	
-	private BigDecimal totalProdutoDia;
+	private BigInteger totalProdutoDia;
 	
 	private Long ceJornaleiro;
 	
@@ -109,9 +112,9 @@ public class SlipDTO {
 	/**
 	 * Obtém totalProdutos
 	 *
-	 * @return BigDecimal
+	 * @return BigInteger
 	 */
-	public BigDecimal getTotalProdutos() {
+	public BigInteger getTotalProdutos() {
 		return totalProdutos;
 	}
 
@@ -119,7 +122,7 @@ public class SlipDTO {
 	 * Atribuí totalProdutos
 	 * @param totalProdutos 
 	 */
-	public void setTotalProdutos(BigDecimal totalProdutos) {
+	public void setTotalProdutos(BigInteger totalProdutos) {
 		this.totalProdutos = totalProdutos;
 	}
 
@@ -177,9 +180,9 @@ public class SlipDTO {
 	/**
 	 * Obtém totalProdutoDia
 	 *
-	 * @return BigDecimal
+	 * @return BigInteger
 	 */
-	public BigDecimal getTotalProdutoDia() {
+	public BigInteger getTotalProdutoDia() {
 		return totalProdutoDia;
 	}
 
@@ -187,7 +190,7 @@ public class SlipDTO {
 	 * Atribuí totalProdutoDia
 	 * @param totalProdutoDia 
 	 */
-	public void setTotalProdutoDia(BigDecimal totalProdutoDia) {
+	public void setTotalProdutoDia(BigInteger totalProdutoDia) {
 		this.totalProdutoDia = totalProdutoDia;
 	}
 

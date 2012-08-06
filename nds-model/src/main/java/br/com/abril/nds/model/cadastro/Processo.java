@@ -2,10 +2,12 @@ package br.com.abril.nds.model.cadastro;
 
 public enum Processo {
 	
-	//TODO definir os nomes de processo
-	PROCESSO("Processo a ser Definido")
+	LANCAMENTO_FALTA_SOBRA("Lançamento faltas e sobra"),
+	GERACAO_NF_E("Geração NF-e"),
+	VENDA_SUPLEMENTAR("Venda de Suplementar"),
+	FECHAMENTO_ENCALHE("Fechamento de Encalhe"),
+	DEVOLUCAO_AO_FORNECEDOR("Devolução ao Fornecedor")
 	;
-	
 	private String processo;
 	
 	Processo(String processo) {

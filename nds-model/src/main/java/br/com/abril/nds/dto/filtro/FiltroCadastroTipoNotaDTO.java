@@ -26,7 +26,7 @@ public class FiltroCadastroTipoNotaDTO extends FiltroDTO implements Serializable
 		
 		OPERACAO("operacao"),
 		PROCESSO("processo"),
-		NOP_DESCRICAO("nopDescricao"),
+		DESCRICAO("descricao"),
 		CFOP_ESTADO("cfopEstado"),
 		CFOP_OUTROS_ESTADOS("cfopOutrosEstados");
 		
@@ -41,7 +41,7 @@ public class FiltroCadastroTipoNotaDTO extends FiltroDTO implements Serializable
 			return this.nomeColuna;
 		}
 	}
-
+	
 	public OrdenacaoColunaConsulta getOrdenacaoColuna() {
 		return ordenacaoColuna;
 	}

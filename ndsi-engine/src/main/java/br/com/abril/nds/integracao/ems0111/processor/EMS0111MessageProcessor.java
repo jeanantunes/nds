@@ -1,8 +1,10 @@
 package br.com.abril.nds.integracao.ems0111.processor;
 
+import java.math.BigInteger;
 import java.util.Calendar;
 import java.util.Date;
 
+import org.apache.commons.beanutils.converters.BigIntegerConverter;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -110,10 +112,10 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 
 				}
 
-				if (lancamento.getReparte() != input.getRepartePrevisto())
+				if (lancamento.getReparte().longValue() != input.getRepartePrevisto())
 					;
 				{
-					lancamento.setReparte(input.getRepartePrevisto());
+					lancamento.setReparte( new BigInteger( input.getRepartePrevisto().toString() ));
 					ndsiLoggerFactory.getLogger().logInfo(
 							message,
 							EventoExecucaoEnum.INF_DADO_ALTERADO,
@@ -122,12 +124,12 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 
 				}
 
-				if (lancamento.getRepartePromocional() != input
+				if (lancamento.getRepartePromocional().longValue() != input
 						.getRepartePromocional())
 					;
 				{
-					lancamento.setRepartePromocional(input
-							.getRepartePromocional());
+					lancamento.setRepartePromocional( new BigInteger( input
+							.getRepartePromocional().toString()));
 
 					ndsiLoggerFactory.getLogger().logInfo(
 							message,
@@ -151,9 +153,9 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 				lancamento.setDataLancamentoPrevista(input.getDataLancamento());
 				lancamento.setTipoLancamento(parseTipo(input
 						.getTipoLancamento()));
-				lancamento.setReparte(input.getRepartePrevisto());
+				lancamento.setReparte(new BigInteger( input.getRepartePrevisto().toString()));
 				lancamento.setStatus(StatusLancamento.PLANEJADO);// confirmado
-				lancamento.setRepartePromocional(input.getRepartePromocional());// confirmado
+				lancamento.setRepartePromocional(new BigInteger( input.getRepartePromocional().toString()));// confirmado
 				lancamento.setDataCriacao(new Date());// confirmado
 				lancamento.setDataLancamentoDistribuidor(input
 						.getDataLancamento());// confirmado

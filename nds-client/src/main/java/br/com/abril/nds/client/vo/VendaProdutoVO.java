@@ -2,6 +2,7 @@ package br.com.abril.nds.client.vo;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 
 import br.com.abril.nds.model.estoque.TipoVendaEncalhe;
 
@@ -28,7 +29,7 @@ public class VendaProdutoVO implements Serializable{
 	
 	private Integer qntDisponivel;
 	
-	private Long qntSolicitada;
+	private BigInteger qntSolicitada;
 	
 	private String total;
 	
@@ -233,14 +234,14 @@ public class VendaProdutoVO implements Serializable{
 	/**
 	 * @return the qntSolicitada
 	 */
-	public Long getQntSolicitada() {
+	public BigInteger getQntSolicitada() {
 		return qntSolicitada;
 	}
 
 	/**
 	 * @param qntSolicitada the qntSolicitada to set
 	 */
-	public void setQntSolicitada(Long qntSolicitada) {
+	public void setQntSolicitada(BigInteger qntSolicitada) {
 		this.qntSolicitada = qntSolicitada;
 	}
 

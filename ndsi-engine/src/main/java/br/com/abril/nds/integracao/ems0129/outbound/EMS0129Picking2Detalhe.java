@@ -1,6 +1,7 @@
 package br.com.abril.nds.integracao.ems0129.outbound;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 
 import com.ancientprogramming.fixedformat4j.annotation.Align;
 import com.ancientprogramming.fixedformat4j.annotation.Field;
@@ -28,7 +29,7 @@ public class EMS0129Picking2Detalhe {
 	
 	private BigDecimal desconto;
 	
-	protected BigDecimal quantidade;
+	protected BigInteger quantidade;
 	
 	private String separador1;
 	
@@ -144,7 +145,7 @@ public class EMS0129Picking2Detalhe {
 	}
 	
 	@Field(offset = 73, length = 6, align = Align.RIGHT)
-	public BigDecimal getQuantidade() {
+	public BigInteger getQuantidade() {
 		return quantidade;
 	}
 	
@@ -185,7 +186,7 @@ public class EMS0129Picking2Detalhe {
 		this.desconto = desconto;
 	}
 
-	public void setQuantidade(BigDecimal quantidade) {
+	public void setQuantidade(BigInteger quantidade) {
 		this.quantidade = quantidade;
 	}	
 }

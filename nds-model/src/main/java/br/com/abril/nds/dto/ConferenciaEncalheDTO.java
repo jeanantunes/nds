@@ -2,6 +2,7 @@ package br.com.abril.nds.dto;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Date;
 
 import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
@@ -27,12 +28,12 @@ public class ConferenciaEncalheDTO implements Serializable {
 	/**
 	 * Quantidade apontada na conferência de encalhe
 	 */	
-	private BigDecimal qtdExemplar;
+	private BigInteger qtdExemplar;
 
 	/**
 	 *  Quantidade informada. Refere-se a qtde do item da nota fiscal de entrada da cota.
 	 */
-	private BigDecimal qtdInformada;
+	private BigInteger qtdInformada;
 	
 	/**
 	 * Preco Capa informado. Refere-se ao preco do item da nota fiscal de entrada da cota.
@@ -86,11 +87,11 @@ public class ConferenciaEncalheDTO implements Serializable {
 		this.idProdutoEdicao = idProdutoEdicao;
 	}
 
-	public BigDecimal getQtdExemplar() {
+	public BigInteger getQtdExemplar() {
 		return qtdExemplar;
 	}
 
-	public void setQtdExemplar(BigDecimal qtdExemplar) {
+	public void setQtdExemplar(BigInteger qtdExemplar) {
 		this.qtdExemplar = qtdExemplar;
 	}
 
@@ -190,11 +191,11 @@ public class ConferenciaEncalheDTO implements Serializable {
 		this.juramentada = juramentada;
 	}
 
-	public BigDecimal getQtdInformada() {
+	public BigInteger getQtdInformada() {
 		return qtdInformada;
 	}
 
-	public void setQtdInformada(BigDecimal qtdInformada) {
+	public void setQtdInformada(BigInteger qtdInformada) {
 		this.qtdInformada = qtdInformada;
 	}
 

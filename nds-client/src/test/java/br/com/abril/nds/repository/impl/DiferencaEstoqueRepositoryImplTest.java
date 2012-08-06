@@ -1,6 +1,7 @@
 package br.com.abril.nds.repository.impl;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
 
@@ -49,7 +50,7 @@ public class DiferencaEstoqueRepositoryImplTest extends AbstractRepositoryImplTe
 	
 	private Date dataMovimento;
 	
-	private BigDecimal quantidadeDiferenca;
+	private BigInteger quantidadeDiferenca;
 	
 	private TipoDiferenca tipoDiferenca;
 	
@@ -73,7 +74,7 @@ public class DiferencaEstoqueRepositoryImplTest extends AbstractRepositoryImplTe
 		
 		this.dataMovimento = Fixture.criarData(01, 2, 2012);
 		
-		this.quantidadeDiferenca = new BigDecimal("1.0");
+		this.quantidadeDiferenca = BigInteger.ONE;
 		
 		this.qtdeMovimentosLancamento = 30;
 		
@@ -117,7 +118,7 @@ public class DiferencaEstoqueRepositoryImplTest extends AbstractRepositoryImplTe
 		save(notaFiscalFornecedor);
 
 		ItemNotaFiscalEntrada itemNotaFiscal = 
-			Fixture.itemNotaFiscal(produtoEdicao, usuario, notaFiscalFornecedor, new Date(), new Date(), TipoLancamento.LANCAMENTO, BigDecimal.TEN);
+			Fixture.itemNotaFiscal(produtoEdicao, usuario, notaFiscalFornecedor, new Date(), new Date(), TipoLancamento.LANCAMENTO, BigInteger.TEN);
 		
 		save(itemNotaFiscal);
 
@@ -127,7 +128,7 @@ public class DiferencaEstoqueRepositoryImplTest extends AbstractRepositoryImplTe
 		save(recebimentoFisico);
 		
 		ItemRecebimentoFisico itemRecebimentoFisico =  
-			Fixture.itemRecebimentoFisico(itemNotaFiscal, recebimentoFisico, new BigDecimal("1.0"));
+			Fixture.itemRecebimentoFisico(itemNotaFiscal, recebimentoFisico, BigInteger.valueOf(1));
 		
 		save(itemRecebimentoFisico);
 		
@@ -139,7 +140,7 @@ public class DiferencaEstoqueRepositoryImplTest extends AbstractRepositoryImplTe
 			Fixture.lancamento(TipoLancamento.LANCAMENTO, produtoEdicao,
 							   DateUtil.adicionarDias(new Date(), 1), DateUtil.adicionarDias(new Date(),
 							   produtoEdicao.getPeb()), new Date(),
-							   new Date(), BigDecimal.TEN,  StatusLancamento.CONFIRMADO,
+							   new Date(), BigInteger.TEN,  StatusLancamento.CONFIRMADO,
 							   itemRecebimentoFisico, 1);
 		save(lancamentoVeja);
 		
@@ -149,7 +150,7 @@ public class DiferencaEstoqueRepositoryImplTest extends AbstractRepositoryImplTe
 				Fixture.movimentoEstoque(
 					itemRecebimentoFisico, produtoEdicao, tipoMovimento, usuario, 
 						estoqueProduto, dataMovimento, 
-							quantidadeDiferenca.multiply(new BigDecimal(i)), StatusAprovacao.APROVADO, null);
+							quantidadeDiferenca.multiply(BigInteger.valueOf(i)), StatusAprovacao.APROVADO, null);
 			
 			save(movimentoEstoque);
 			
@@ -168,7 +169,7 @@ public class DiferencaEstoqueRepositoryImplTest extends AbstractRepositoryImplTe
 				Fixture.movimentoEstoque(
 					itemRecebimentoFisico, produtoEdicao, tipoMovimento, usuario, 
 						estoqueProduto, dataMovimento, 
-							quantidadeDiferenca.multiply(new BigDecimal(i)), StatusAprovacao.APROVADO, null);
+							quantidadeDiferenca.multiply(BigInteger.valueOf(i)), StatusAprovacao.APROVADO, null);
 			
 			save(movimentoEstoque);
 			
@@ -286,7 +287,7 @@ public class DiferencaEstoqueRepositoryImplTest extends AbstractRepositoryImplTe
 		save(produto);
 		
 		ProdutoEdicao produtoEdicao = 
-			Fixture.produtoEdicao("1", 1L, 1, 1, BigDecimal.TEN, BigDecimal.TEN, BigDecimal.TEN, "ABCDEFGHIJKLMNOPQRSTU", 1L, produto, null, false);
+			Fixture.produtoEdicao("1", 1L, 1, 1, BigDecimal.TEN, BigDecimal.TEN, BigDecimal.TEN, "ABCDEFGHIJKLMNOP", 1L, produto, null, false);
 		
 		save(produtoEdicao);
 		

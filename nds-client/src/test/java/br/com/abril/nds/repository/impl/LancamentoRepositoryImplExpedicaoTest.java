@@ -1,6 +1,7 @@
 package br.com.abril.nds.repository.impl;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -89,7 +90,7 @@ public class LancamentoRepositoryImplExpedicaoTest extends AbstractRepositoryImp
 			save(produto); 
 			
 			ProdutoEdicao produtoEdicao = Fixture.produtoEdicao("1", i.longValue(), 50, 40, 
-					new BigDecimal(30), new BigDecimal(20), new BigDecimal(10), "ABCDEFGHIJKLMNOPQRSTU", 1L, produto, null, false);	
+					new BigDecimal(30), new BigDecimal(20), new BigDecimal(10), "ABCDEFGHIJKLMNOPQ", 1L, produto, null, false);	
 			save(produtoEdicao);
 			
 			
@@ -106,7 +107,7 @@ public class LancamentoRepositoryImplExpedicaoTest extends AbstractRepositoryImp
 					Fixture.criarData(23, Calendar.FEBRUARY, 2012),
 					Fixture.criarData(23, Calendar.FEBRUARY, 2012),
 					TipoLancamento.LANCAMENTO,
-					new BigDecimal(i));					
+					BigInteger.valueOf(i));					
 			save(itemNotaFiscal);
 			
 			RecebimentoFisico recebimentoFisico = Fixture.recebimentoFisico(
@@ -115,7 +116,7 @@ public class LancamentoRepositoryImplExpedicaoTest extends AbstractRepositoryImp
 			
 			
 			ItemRecebimentoFisico itemFisico = Fixture.itemRecebimentoFisico(
-					itemNotaFiscal, recebimentoFisico, new BigDecimal(i));
+					itemNotaFiscal, recebimentoFisico, BigInteger.valueOf(i));
 			save(itemFisico);
 			
 			Lancamento lancamento = Fixture.lancamento(TipoLancamento.LANCAMENTO, produtoEdicao,
@@ -123,27 +124,27 @@ public class LancamentoRepositoryImplExpedicaoTest extends AbstractRepositoryImp
 					Fixture.criarData(23, Calendar.FEBRUARY, 2012), 
 					Fixture.criarData(23, Calendar.FEBRUARY, 2012), 
 					Fixture.criarData(23, Calendar.FEBRUARY, 2012), 
-					new BigDecimal(100), 
+					BigInteger.valueOf(100), 
 					StatusLancamento.ESTUDO_FECHADO, 
 					itemFisico, 1);
-			lancamento.setReparte(new BigDecimal(10));
+			lancamento.setReparte(BigInteger.valueOf(10));
 			save(lancamento);
 		
 			Estudo estudo = new Estudo();
 			estudo.setDataLancamento(Fixture.criarData(23, Calendar.FEBRUARY, 2012));
 			estudo.setProdutoEdicao(produtoEdicao);
-			estudo.setQtdeReparte(new BigDecimal(10));
+			estudo.setQtdeReparte(BigInteger.valueOf(10));
 			save(estudo);
 			
 			Pessoa pessoa = Fixture.pessoaJuridica("razaoS"+i, "01" + i, "ie"+i, "email"+i, "99.999-9");
 			Cota cota = Fixture.cota(i, pessoa, SituacaoCadastro.ATIVO, box300Reparte);
-			EstudoCota estudoCota = Fixture.estudoCota(new BigDecimal(3), new BigDecimal(3), 
+			EstudoCota estudoCota = Fixture.estudoCota(BigInteger.valueOf(3), BigInteger.valueOf(3), 
 					estudo, cota);
 			save(pessoa,cota,estudoCota);		
 			
 			Pessoa pessoa2 = Fixture.pessoaJuridica("razaoS2"+i, "02" + i, "ie"+i, "email"+i, "99.999-9");
 			Cota cota2 = Fixture.cota(i+3000, pessoa2, SituacaoCadastro.ATIVO, box300Reparte);
-			EstudoCota estudoCota2 = Fixture.estudoCota(new BigDecimal(7), new BigDecimal(7), 
+			EstudoCota estudoCota2 = Fixture.estudoCota(BigInteger.valueOf(7), BigInteger.valueOf(7), 
 					estudo, cota2);
 			save( pessoa2,cota2,estudoCota2);		
 			
