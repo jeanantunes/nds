@@ -97,12 +97,14 @@ var boxController = $.extend(true, {
 			newp:1
 		});
 		$(".boxGrid").flexReload();
+		$("#fileExport").show();
 	},
 	bindButtons : function() {
 		$("#btnPesquisar", this.workspace).click(function() {
 			//boxController.buscar(parseInt($("#pesquisaCodigoBox").val()), $("#pesquisaTipoBox").val());
 			boxController.buscar(this);
 			$(".grids").show();
+			$("#fileExport").show();
 		});
 		$("#btnNovo", this.workspace).click(function() {
 			boxController.novo();
@@ -180,7 +182,7 @@ var boxController = $.extend(true, {
 		this.box.codigo = parseInt($("#boxCodigo").val());
 		this.box.nome = $("#boxNome").val();
 		this.box.tipoBox = $("#boxTipoBox").val();
-	},
+	},	
 	salvar : function(dialog) {
 		//this.getData();
 

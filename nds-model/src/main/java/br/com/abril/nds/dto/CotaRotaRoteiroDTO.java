@@ -2,11 +2,15 @@ package br.com.abril.nds.dto;
 
 import java.io.Serializable;
 
+import br.com.abril.nds.util.export.Export;
+import br.com.abril.nds.util.export.Exportable;
+
 /**
  * 
  * @author Diego Fernandes
  *
  */
+@Exportable
 public class CotaRotaRoteiroDTO implements Serializable{
 
 	/**
@@ -14,10 +18,16 @@ public class CotaRotaRoteiroDTO implements Serializable{
 	 */
 	private static final long serialVersionUID = -6933180219261652814L;
 	
-
+	@Export( label = "Cota")
 	private Integer numeroCota;
-	private String nomeCota;	
+	
+	@Export( label = "Nome")
+	private String nomeCota;
+	
+	@Export( label = "Rota")
 	private String rota;
+	
+	@Export( label = "Roteiro")
 	private String roteiro;
 	
 	
