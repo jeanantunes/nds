@@ -19,8 +19,8 @@ import br.com.abril.nds.client.vo.TipoDescontoCotaProdutoVO;
 import br.com.abril.nds.client.vo.TipoDescontoCotaVO;
 import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.dto.CotaDTO;
+import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.TipoDescontoCotaDTO;
-import br.com.abril.nds.dto.TipoDescontoProdutoDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaDTO.OrdemColuna;
 import br.com.abril.nds.dto.filtro.FiltroTipoDescontoCotaDTO;
@@ -29,6 +29,7 @@ import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.EspecificacaoDesconto;
+import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.TipoDescontoCota;
@@ -36,6 +37,7 @@ import br.com.abril.nds.model.cadastro.TipoDescontoDistribuidor;
 import br.com.abril.nds.model.cadastro.TipoDescontoProduto;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.service.CotaService;
+import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.ProdutoService;
 import br.com.abril.nds.service.TipoDescontoCotaService;
@@ -62,6 +64,7 @@ import br.com.caelum.vraptor.view.Results;
 @Path("/administracao/tipoDescontoCota")
 public class TipoDescontoCotaController {
 	
+	@Autowired
 	private Result result;
 	
 	@Autowired
@@ -88,49 +91,66 @@ public class TipoDescontoCotaController {
 	@Autowired
 	private DistribuidorService distribuidorService;
 	
+	@Autowired
+	private FornecedorService fornecedorService;
+	
+	@Autowired
 	private HttpServletResponse httpServletResponse;
 	
 	private static final String FILTRO_PESQUISA_TIPO_DESCONTO_COTA_SESSION_ATTRIBUTE = "filtroPesquisaTipoDescontoCota";
 	
-	public TipoDescontoCotaController(Result result, HttpSession session, HttpServletResponse httpServletResponse) {
-		this.result = result; 
-		this.session = session;
-		this.httpServletResponse = httpServletResponse;
+	public enum TipoDescontoSelecionado{
+		GERAL,ESPECIFICO,PRODUTO
 	}
 	
 	@Path("/")
-	public void index() {		
-		inserirDataAtual();		
-	}
+	public void index() {}
 	
 	@Post
 	@Path("/novoDescontoGeral")
-	public void novoDescontoGeral(TipoDescontoDistribuidor descontoDistribuidor){
-		atualizarDistribuidor(new BigDecimal(descontoDistribuidor.getDesconto()));
+	public void novoDescontoGeral(BigDecimal desconto, List<Long> fornecedores){
+		
+		if(fornecedores == null || fornecedores.isEmpty()){
+			throw new ValidacaoException(TipoMensagem.WARNING,"O campo Fornecedores selecionados deve ser preenchido!");
+		}
+		
+		if(desconto == null ){
+			throw new ValidacaoException(TipoMensagem.WARNING,"O campo Desconto deve ser preenchido!");
+		}
+		
+		//FIXME alterar a logica de inclusão de cadastro de Desconto Geral
+		
+		/*atualizarDistribuidor(new BigDecimal(descontoDistribuidor.getDesconto()));
 		List<Distribuidor> listaDeDistribuidor = this.tipoDescontoDistribuidorService.obterDistribuidores();
 		for(Distribuidor dist: listaDeDistribuidor){
 			descontoDistribuidor.setDistribuidor(dist);
 			descontoDistribuidor.setUsuario(getUsuario());
 			salvarDescontoDistribuidor(descontoDistribuidor);
-		}		
+		}*/		
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Desconto cadastrado com sucesso"),"result").recursive().serialize();
 	}
 
 	@Post
 	@Path("/novoDescontoEspecifico")
 	public void novoDescontoEspecifico(String cotaEspecifica, TipoDescontoCota descontoCota) throws ParseException{
-		Cota cotaParaAtualizar = this.cotaService.obterCotaPDVPorNumeroDaCota(Integer.parseInt(cotaEspecifica));		
+		
+		//FIXME revisar a implementação da inclusão de um novo desconto especifico
+		
+		/*Cota cotaParaAtualizar = this.cotaService.obterCotaPDVPorNumeroDaCota(Integer.parseInt(cotaEspecifica));		
 		atualizarCota(new BigDecimal(descontoCota.getDesconto()), cotaParaAtualizar);				
 		descontoCota.setUsuario(getUsuario());	
 		descontoCota.setCota(cotaParaAtualizar);
 		this.tipoDescontoCotaService.incluirDesconto(descontoCota);
-		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Desconto cadastrado com sucesso"),"result").recursive().serialize();
+		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Desconto cadastrado com sucesso"),"result").recursive().serialize();*/
 	}
 	
 	@Post
 	@Path("/novoDescontoProduto")
 	public void novoDescontoProduto(String codigo, String produto, String edicaoProduto, String descontoProduto, String dataAlteracaoProduto, String usuarioProduto){
-		try {
+		
+		//FIXME revisar a implementação da inclusão de um novo desconto de produto
+		
+		/*try {
 			ProdutoEdicao produtoEdicao = this.produtoEdicaoService.obterProdutoEdicaoPorCodProdutoNumEdicao(codigo, edicaoProduto);
 			produtoEdicao.setDesconto(new BigDecimal(descontoProduto));
 			this.produtoEdicaoService.alterarProdutoEdicao(produtoEdicao);
@@ -139,7 +159,7 @@ public class TipoDescontoCotaController {
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
-		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Desconto cadastrado com sucesso"),"result").recursive().serialize();
+		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Desconto cadastrado com sucesso"),"result").recursive().serialize();*/
 	}
 	
 	@Path("/pesquisarDescontoGeral")
@@ -149,9 +169,13 @@ public class TipoDescontoCotaController {
 		
 		List<TipoDescontoCotaVO> listaDescontoCotaVO = null;		
 			
-		listaDescontoCotaVO = tipoDescontoDistribuidorService.obterTipoDescontoDistribuidor();
+		//listaDescontoCotaVO = tipoDescontoDistribuidorService.obterTipoDescontoDistribuidor();
 		
-		Integer totalDeRegistros = this.tipoDescontoDistribuidorService.buscarTotalDescontosDistribuidor();
+		listaDescontoCotaVO = getMock();
+		
+		//Integer totalDeRegistros = this.tipoDescontoDistribuidorService.buscarTotalDescontosDistribuidor();
+		
+		Integer totalDeRegistros = getMock().size();
 		
 		if (totalDeRegistros == 0) {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
@@ -174,11 +198,38 @@ public class TipoDescontoCotaController {
 		
 	}
 	
+	public List<TipoDescontoCotaVO> getMock(){
+		
+		List<TipoDescontoCotaVO> lista = new ArrayList<TipoDescontoCotaVO>();
+		
+		for (int i = 0; i < 10; i++) {
+			
+			TipoDescontoCotaVO tp  = new TipoDescontoCotaVO(); 
+			
+			tp.setCodigo("Codigo");
+			tp.setCota("Cota");
+			tp.setDataAlteracao("10/10/2010");
+			tp.setDesconto("10");
+			tp.setEdicao("123");
+			tp.setEspecificacaoDesconto("Esp");
+			tp.setId(i+"");
+			tp.setSequencial(i+"");
+			tp.setUsuario("Usuario");
+			tp.setFornecedor("Fornecedor");
+		
+			lista.add(tp);
+		}
+		
+		return lista;
+	}
+	
 	@Post
 	@Path("/pesquisarDescontoEspecifico")
 	public void pesquisarDescontoEspecifico(Integer cotaEspecifica, String nomeEspecifico, String sortorder, String sortname, int page, int rp) throws Exception {
 		
-		Cota cota = null;
+		//FIXME revisar a implementação do preenchimento do grid
+		
+		/*Cota cota = null;
 		FiltroTipoDescontoCotaDTO filtro = null;
 		if(cotaEspecifica != null){
 			cota = this.cotaService.obterCotaPDVPorNumeroDaCota(cotaEspecifica);			
@@ -202,14 +253,16 @@ public class TipoDescontoCotaController {
 		tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
 		tableModel.setTotal(totalRegistros);
 
-		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
+		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();*/
 	}
 	
 	@Post
 	@Path("/pesquisarDescontoProduto")
 	public void pesquisarDescontoProduto(String codigo, String produto, String sortorder, String sortname, int page, int rp) throws Exception {
 		
-		Produto produtoPesquisado = null;
+		//FIXME revisar a implementação do preenchimento do grid
+		
+		/*Produto produtoPesquisado = null;
 		List<TipoDescontoCotaVO> listaDescontoCotaVO = 	null;
 		FiltroTipoDescontoCotaDTO filtro = carregarFiltroPesquisaDescontoProduto(codigo,sortorder, sortname, page, rp);
 		try {
@@ -245,83 +298,137 @@ public class TipoDescontoCotaController {
 			tableModel.setTotal(qtdeTotalRegistros);
 	
 			result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
-		}
-	}
-	@Post
-	@Path("/excluirDesconto")
-	public void excluirDesconto(long idDesconto, String tipoDesconto){
-//		TipoDescontoCota desconto = this.tipoDescontoCotaService.obterTipoDescontoCotaPorId(idDesconto);
-//		
-//		Date dataAtual = new Date();		
-//		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-//		String hoje = sdf.format(dataAtual);
-//		
-//		Date dataDesconto = desconto.getDataAlteracao();
-//		String dataDescontoFormatada = sdf.format(dataDesconto);
-//		
-//		if(dataDescontoFormatada.equals(hoje)){
-//			this.tipoDescontoCotaService.excluirDesconto(desconto);			
-//			result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação realizada com sucesso."),
-//					Constantes.PARAM_MSGS).recursive().serialize();			
-//		}else{
-//			result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.WARNING, "Só pode excluir desconto de data vigente!"),
-//					Constantes.PARAM_MSGS).recursive().serialize();
-//		}
+		}*/
 	}
 	
+	@Post
+	@Path("/excluirDesconto")
+	public void excluirDesconto(Long idDesconto, TipoDescontoSelecionado tipoDesconto ){
+		
+		//TODO verificar se a exclusão é apenas para registro da data vigente
+		
+		switch (tipoDesconto) {
+			case ESPECIFICO:
+				excluirDescontoEspecifico(idDesconto);
+				break;
+			case GERAL:
+				excluirDescontoGeral(idDesconto);
+				break;
+			case PRODUTO:
+				excluirDescontoProduto(idDesconto);
+				break;
+		}		
+	}
+	
+	private  void excluirDescontoProduto(Long idDesconto){
+		
+		//FIXME implementar a lopgica de exclusão
+		
+		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação realizada com sucesso."),
+				Constantes.PARAM_MSGS).recursive().serialize();
+	}
+	
+	private  void excluirDescontoGeral(Long idDesconto){
+		
+		//FIXME implementar a lopgica de exclusão
+		
+		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação realizada com sucesso."),
+				Constantes.PARAM_MSGS).recursive().serialize();
+	}
+	
+	private void excluirDescontoEspecifico(Long idDesconto){
+		
+		//FIXME implementar a lopgica de exclusão
+		
+		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação realizada com sucesso."),
+				Constantes.PARAM_MSGS).recursive().serialize();
+		
+	}
+	
+	private void exportarDescontoGeral(FileType fileType){
+		
+		//FIXME refazer a parte de importação
+		
+		//listaDescontoCotaVO = tipoDescontoCotaService.obterTipoDescontoDistribuidor(EspecificacaoDesconto.GERAL);
+		
+		//FileExporter.to("consulta-tipo-desconto-cota", fileType).inHTTPResponse(this.getNDSFileHeader(), filtroSessao, null, listaDescontoCotaVO, TipoDescontoCotaVO.class, this.httpServletResponse);
+
+	}
+	
+	private void exportarDescontoEspecifico(FileType fileType){
+		
+		//FIXME refazer a parte de importação
+		
+		/*FiltroCotaDTO filtroCotaDTO = new FiltroCotaDTO();			
+		
+		if(filtroSessao.getIdCota() == null  || filtroSessao.getNomeEspecifico() == null){
+			filtroCotaDTO = popularFiltroCotaDTO("", "");
+		}else{
+			filtroCotaDTO = popularFiltroCotaDTO(filtroSessao.getIdCota().toString(), filtroSessao.getNomeEspecifico());				
+		}
+		List<CotaDTO> listaDeCotas = this.cotaService.obterCotas(filtroCotaDTO);
+		listaDescontoCotaVO = popularTipoDescontoCotaVOParaCota(listaDeCotas);
+		List<TipoDescontoCotaEspecificoVO> listaEspecifica = new ArrayList<TipoDescontoCotaEspecificoVO>();
+		for(TipoDescontoCotaVO vo: listaDescontoCotaVO ){
+			TipoDescontoCotaEspecificoVO especificoVO = new TipoDescontoCotaEspecificoVO();
+			especificoVO.setDesconto(vo.getDesconto());
+			especificoVO.setDtAlteracao(vo.getDtAlteracao());
+			especificoVO.setUsuario(vo.getUsuario());
+			especificoVO.setCota(vo.getCota());
+			especificoVO.setNome(vo.getNome());
+			listaEspecifica.add(especificoVO);
+		}
+		FileExporter.to("consulta-tipo-desconto-cota", fileType).inHTTPResponse(this.getNDSFileHeader(), filtroSessao, null, listaEspecifica, TipoDescontoCotaEspecificoVO.class, this.httpServletResponse);*/
+	
+	}
+	
+	private void exportarDescontoProduto(FileType fileType){
+		
+		//FIXME refazer a parte de importação
+		
+		/*FiltroTipoDescontoCotaDTO filtroSessao = this.obterFiltroParaExportacao();
+		
+		Produto produtoPesquisado = null;
+		if(filtroSessao.getIdProduto() != null){
+			produtoPesquisado = this.produtoService.obterProdutoPorCodigo(filtroSessao.getIdProduto().toString());			
+		}else{
+			produtoPesquisado = new Produto();
+		}			
+		
+		List<TipoDescontoCotaVO> listaDescontoCotaVO  =  popularTipoDescontoCotaVOParaProduto(produtoPesquisado);
+		
+		List<TipoDescontoCotaProdutoVO> listaEspecifica = new ArrayList<TipoDescontoCotaProdutoVO>();
+		
+		for(TipoDescontoCotaVO vo: listaDescontoCotaVO ){
+			TipoDescontoCotaProdutoVO produtoVO = new TipoDescontoCotaProdutoVO();
+			produtoVO.setDesconto(vo.getDesconto());
+			produtoVO.setDtAlteracao(vo.getDtAlteracao());
+			produtoVO.setUsuario(vo.getUsuario());
+			produtoVO.setCodigo(vo.getCodigo());
+			produtoVO.setProduto(vo.getProduto());
+			produtoVO.setEdicao(vo.getEdicao());				
+			listaEspecifica.add(produtoVO);
+		}
+		FileExporter.to("consulta-tipo-desconto-cota", fileType).inHTTPResponse(this.getNDSFileHeader(), filtroSessao, null, listaEspecifica, TipoDescontoCotaProdutoVO.class, this.httpServletResponse);
+*/	}
+
 	@Get
-	public void exportar(FileType fileType, String tipoDesconto) throws IOException {
+	public void exportar(FileType fileType, TipoDescontoSelecionado tipoDesconto) throws IOException {
+		
 		if (fileType == null) {
 			throw new ValidacaoException(TipoMensagem.ERROR, "Tipo de arquivo não encontrado!");
 		}
-		
-		FiltroTipoDescontoCotaDTO filtroSessao = this.obterFiltroParaExportacao();
-		
-		List<TipoDescontoCotaVO> listaDescontoCotaVO = null;
-		if(tipoDesconto.equals("geral")){
-			//listaDescontoCotaVO = tipoDescontoCotaService.obterTipoDescontoDistribuidor(EspecificacaoDesconto.GERAL);
-			FileExporter.to("consulta-tipo-desconto-cota", fileType).inHTTPResponse(this.getNDSFileHeader(), filtroSessao, null, listaDescontoCotaVO, TipoDescontoCotaVO.class, this.httpServletResponse);
-		}else if(tipoDesconto.equals("especifico")){
-			FiltroCotaDTO filtroCotaDTO = new FiltroCotaDTO();			
-			if(filtroSessao.getIdCota() == null  || filtroSessao.getNomeEspecifico() == null){
-				filtroCotaDTO = popularFiltroCotaDTO("", "");
-			}else{
-				filtroCotaDTO = popularFiltroCotaDTO(filtroSessao.getIdCota().toString(), filtroSessao.getNomeEspecifico());				
-			}
-			List<CotaDTO> listaDeCotas = this.cotaService.obterCotas(filtroCotaDTO);
-			//listaDescontoCotaVO = popularTipoDescontoCotaVOParaCota(listaDeCotas);
-			List<TipoDescontoCotaEspecificoVO> listaEspecifica = new ArrayList<TipoDescontoCotaEspecificoVO>();
-			for(TipoDescontoCotaVO vo: listaDescontoCotaVO ){
-				TipoDescontoCotaEspecificoVO especificoVO = new TipoDescontoCotaEspecificoVO();
-				especificoVO.setDesconto(vo.getDesconto());
-				especificoVO.setDtAlteracao(vo.getDtAlteracao());
-				especificoVO.setUsuario(vo.getUsuario());
-				especificoVO.setCota(vo.getCota());
-				especificoVO.setNome(vo.getNome());
-				listaEspecifica.add(especificoVO);
-			}
-			FileExporter.to("consulta-tipo-desconto-cota", fileType).inHTTPResponse(this.getNDSFileHeader(), filtroSessao, null, listaEspecifica, TipoDescontoCotaEspecificoVO.class, this.httpServletResponse);
-		}else if(tipoDesconto.equals("produto")){
-			Produto produtoPesquisado = null;
-			if(filtroSessao.getIdProduto() != null){
-				produtoPesquisado = this.produtoService.obterProdutoPorCodigo(filtroSessao.getIdProduto().toString());			
-			}else{
-				produtoPesquisado = new Produto();
-			}			
-			
-			listaDescontoCotaVO = popularTipoDescontoCotaVOParaProduto(produtoPesquisado);			
-			List<TipoDescontoCotaProdutoVO> listaEspecifica = new ArrayList<TipoDescontoCotaProdutoVO>();
-			for(TipoDescontoCotaVO vo: listaDescontoCotaVO ){
-				TipoDescontoCotaProdutoVO produtoVO = new TipoDescontoCotaProdutoVO();
-				produtoVO.setDesconto(vo.getDesconto());
-				produtoVO.setDtAlteracao(vo.getDtAlteracao());
-				produtoVO.setUsuario(vo.getUsuario());
-				produtoVO.setCodigo(vo.getCodigo());
-				produtoVO.setProduto(vo.getProduto());
-				produtoVO.setEdicao(vo.getEdicao());				
-				listaEspecifica.add(produtoVO);
-			}
-			FileExporter.to("consulta-tipo-desconto-cota", fileType).inHTTPResponse(this.getNDSFileHeader(), filtroSessao, null, listaEspecifica, TipoDescontoCotaProdutoVO.class, this.httpServletResponse);			
+	
+		switch (tipoDesconto) {
+			case ESPECIFICO:
+				exportarDescontoEspecifico(fileType);
+				break;
+			case GERAL:
+				exportarDescontoGeral(fileType);		
+				break;
+			case PRODUTO:
+				exportarDescontoProduto(fileType);
+				break;
 		}		
 	}
 	
@@ -366,97 +473,6 @@ public class TipoDescontoCotaController {
 		ndsFileHeader.setNomeUsuario(this.getUsuario().getNome());
 		
 		return ndsFileHeader;
-	}
-
-	private FiltroCotaDTO popularFiltroCotaDTO(String cotaEspecifica,String nomeEspecifico) {
-		FiltroCotaDTO filtroCotaDTO = new FiltroCotaDTO();
-		if(!cotaEspecifica.equals("")){
-			filtroCotaDTO.setNumeroCota(Integer.parseInt(cotaEspecifica));			
-		}		
-		filtroCotaDTO.setOrdemColuna(OrdemColuna.NUMERO_COTA);
-		return filtroCotaDTO;
-	}
-	
-	private List<TipoDescontoCotaVO> popularTipoDescontoCotaVOParaProduto(Produto produto) {
-		
-		List<TipoDescontoCotaVO> listaVO = this.tipoDescontoDistribuidorService.obterTipoDescontoDistribuidor();
-		//List<TipoDescontoProdutoDTO> listaCerta = this.tipoDescontoProdutoService.obterTipoDescontoProduto(produtoEdicao);
-		
-		List<TipoDescontoCotaVO> listaAux = new ArrayList<TipoDescontoCotaVO>();
-		
-		for (TipoDescontoCotaVO tipoDescontoCotaVO : listaVO) {
-			
-			ProdutoEdicao pr = this.produtoEdicaoService.obterProdutoEdicaoPorCodProdutoNumEdicao(tipoDescontoCotaVO.getCodigo(), tipoDescontoCotaVO.getEdicao());
-			
-			if(tipoDescontoCotaVO.getCodigo().equals(produto.getCodigo())){
-				tipoDescontoCotaVO.setCodigo(pr.getProduto().getCodigo());
-				tipoDescontoCotaVO.setProduto(pr.getProduto().getNome());
-				tipoDescontoCotaVO.setEdicao(pr.getNumeroEdicao().toString());
-				listaAux.add(tipoDescontoCotaVO);				
-			}
-		}
-		
-		if(listaAux.isEmpty()){
-			for (TipoDescontoCotaVO tipoDescontoCotaVO : listaVO) {
-					ProdutoEdicao pr = this.produtoEdicaoService.obterProdutoEdicaoPorCodProdutoNumEdicao(tipoDescontoCotaVO.getCodigo(), tipoDescontoCotaVO.getEdicao());
-					tipoDescontoCotaVO.setCodigo(pr.getProduto().getCodigo());
-					tipoDescontoCotaVO.setProduto(pr.getProduto().getNome());
-					tipoDescontoCotaVO.setEdicao(pr.getNumeroEdicao().toString());
-					listaAux.add(tipoDescontoCotaVO);				
-				}
-		}		
-		
-		
-		return listaAux;
-	}
-
-	private void inserirDataAtual() {		
-		result.include("dataAtual", DateUtil.formatarData(new Date(), "dd/MM/yyyy"));
-	}
-	
-	private TipoDescontoDistribuidor popularDescontoDistribuidor(String desconto,	String dataAlteracao, String usuario, EspecificacaoDesconto especificacaoDesconto) throws ParseException {
-		TipoDescontoDistribuidor descontoDistribuidor = new TipoDescontoDistribuidor();
-		descontoDistribuidor.setDesconto(Float.parseFloat(desconto));
-		SimpleDateFormat sdf = new SimpleDateFormat(Constantes.DATE_PATTERN_PT_BR);
-		Date dataFormatada;
-		dataFormatada = sdf.parse(dataAlteracao);
-		descontoDistribuidor.setDataAlteracao(dataFormatada);
-		descontoDistribuidor.setUsuario(getUsuario());		
-		return descontoDistribuidor;
-	}
-	
-	private TipoDescontoProduto popularDescontoProduto(String desconto,String dataAlteracao, String usuario, ProdutoEdicao produtoEdicao) throws ParseException {
-		TipoDescontoProduto descontoProduto = new TipoDescontoProduto();
-		descontoProduto.setDesconto(Float.parseFloat(desconto));
-		SimpleDateFormat sdf = new SimpleDateFormat(Constantes.DATE_PATTERN_PT_BR);
-		Date dataFormatada;
-		dataFormatada = sdf.parse(dataAlteracao);
-		descontoProduto.setDataAlteracao(dataFormatada);
-		descontoProduto.setUsuario(getUsuario());
-		descontoProduto.setProdutoEdicao(produtoEdicao);
-		return descontoProduto;
-	}
-	
-	private void salvarDescontoDistribuidor(TipoDescontoDistribuidor tipoDescontoDistribuidor){
-		int sequencial = this.tipoDescontoDistribuidorService.obterUltimoSequencial();		
-		tipoDescontoDistribuidor.setSequencial(++sequencial);
-		this.tipoDescontoDistribuidorService.incluirDescontoDistribuidor(tipoDescontoDistribuidor);
-	}
-	
-	
-	
-	private void salvarDescontoProduto(TipoDescontoProduto tipoDescontoProduto) {
-		this.tipoDescontoProdutoService.incluirDesconto(tipoDescontoProduto);
-	}
-
-
-	private void atualizarDistribuidor(BigDecimal desconto) {		
-		this.tipoDescontoDistribuidorService.atualizarDistribuidores(desconto);
-	}
-	
-	private void atualizarCota(BigDecimal descontoEspecifico, Cota cotaParaAtualizar) {
-		cotaParaAtualizar.setFatorDesconto(descontoEspecifico);
-		this.cotaService.alterarCota(cotaParaAtualizar);
 	}
 	
 	private FiltroTipoDescontoCotaDTO carregarFiltroPesquisaDescontoGeral(String sortorder, String sortname, int page, int rp) {
@@ -533,15 +549,48 @@ public class TipoDescontoCotaController {
 	}
 	
 	
-		private Usuario getUsuario() {
+	private Usuario getUsuario() {
+		
+		Usuario usuario = new Usuario();
+		
+		usuario.setId(1L);
+		
+		usuario.setNome("Jornaleiro da Silva");
+		
+		return usuario;
+	}
+	
+	/**
+	 * Obtem os fornecedores que não possui associação com a cota informada
+	 * 
+	 * @param idCota -identificador da cota
+	 */
+	@Post
+	@Path("/obterFornecedores")
+	public void obterFornecedores(Long idCota){
+		
+		List<Fornecedor> fornecedores =   fornecedorService.obterFornecedores();
+		
+		result.use(Results.json()).from(this.getFornecedores(fornecedores),"result").recursive().serialize();
+	}
+	
+	/**
+	 * Retorna uma lista de fornecedores para exibição na tela
+	 * 
+	 * @param fornecedores - lista de fornecedores
+	 * 
+	 * @return List<ItemDTO<Long, String>>
+	 */
+	private List<ItemDTO<Long, String>> getFornecedores(List<Fornecedor> fornecedores){
+		
+		List<ItemDTO<Long, String>> itensFornecedor = new ArrayList<ItemDTO<Long,String>>();
+		
+		for(Fornecedor fornecedor : fornecedores){
 			
-			Usuario usuario = new Usuario();
-			
-			usuario.setId(1L);
-			
-			usuario.setNome("Jornaleiro da Silva");
-			
-			return usuario;
+			itensFornecedor.add(new ItemDTO<Long, String>(fornecedor.getId(), fornecedor.getJuridica().getRazaoSocial()));
 		}
+		
+		return itensFornecedor;
+	}
 
 }
