@@ -27,7 +27,7 @@ public class EMS0111Input extends IntegracaoDocument implements Serializable {
 	private Date dataLancamento;	
 	private String tipoLancamento;	
 	private String tipoProduto;	
-	private BigInteger repartePrevisto;	
+	private Long repartePrevisto;	
 	private BigDecimal pctAbrangencia;	
 	private BigDecimal pctEntregaAntecipada;	
 	private String condCotasAtuais;	
@@ -35,7 +35,7 @@ public class EMS0111Input extends IntegracaoDocument implements Serializable {
 	private String tipoHistorico;	
 	private String condBasePacotePadrao;	
 	private BigDecimal precoPrevisto;	
-	private BigInteger repartePromocional;	
+	private Long repartePromocional;	
 	private String condDistribuicaoFases;
 	
 		
@@ -137,11 +137,11 @@ public class EMS0111Input extends IntegracaoDocument implements Serializable {
 	
 	
 	@Field(offset = 62, length = 8)
-	public BigInteger getRepartePrevisto() {
+	public Long getRepartePrevisto() {
 		return repartePrevisto;
 	}
 	
-	public void setRepartePrevisto(BigInteger repartePrevisto) {
+	public void setRepartePrevisto(Long repartePrevisto) {
 		this.repartePrevisto = repartePrevisto;
 	}
 	
@@ -211,11 +211,11 @@ public class EMS0111Input extends IntegracaoDocument implements Serializable {
 	
 	
 	@Field(offset = 92, length = 8)
-	public BigInteger getRepartePromocional() {
+	public Long getRepartePromocional() {
 		return repartePromocional;
 	}
 	
-	public void setRepartePromocional(BigInteger repartePromocional) {
+	public void setRepartePromocional(Long repartePromocional) {
 		this.repartePromocional = repartePromocional;
 	}
 	
