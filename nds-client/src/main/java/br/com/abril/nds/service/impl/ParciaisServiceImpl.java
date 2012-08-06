@@ -1,12 +1,15 @@
 package br.com.abril.nds.service.impl;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.dto.ParcialVendaDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.TipoEdicao;
@@ -242,5 +245,37 @@ public class ParciaisServiceImpl implements ParciaisService{
 		periodoLancamentoParcialRepository.remover(periodo);
 		
 		lancamentoRepository.remover(lancamento);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@Transactional
+	public List<ParcialVendaDTO> obterDetalhesVenda() {
+		// TODO 
+//		return this.periodoLancamentoParcialRepository.obterDetalhesVenda();
+		
+		List<ParcialVendaDTO> lista = new ArrayList<ParcialVendaDTO>();
+		
+		ParcialVendaDTO parcialVendaDTO = new ParcialVendaDTO();
+		parcialVendaDTO.setEncalhe(1L);
+		parcialVendaDTO.setNomeCota("aaa");
+		parcialVendaDTO.setNumeroCota(1);
+		parcialVendaDTO.setReparte(3L);
+		parcialVendaDTO.setVendaJuramentada(20L);
+		
+		lista.add(parcialVendaDTO);
+
+		parcialVendaDTO = new ParcialVendaDTO();
+		parcialVendaDTO.setEncalhe(4L);
+		parcialVendaDTO.setNomeCota("ggg");
+		parcialVendaDTO.setNumeroCota(6);
+		parcialVendaDTO.setReparte(7L);
+		parcialVendaDTO.setVendaJuramentada(20L);
+		
+		lista.add(parcialVendaDTO);
+		
+		return lista;
 	}
 }

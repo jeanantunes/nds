@@ -1,7 +1,9 @@
 package br.com.abril.nds.service;
 
 import java.util.Date;
+import java.util.List;
 
+import br.com.abril.nds.dto.ParcialVendaDTO;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.seguranca.Usuario;
@@ -54,5 +56,8 @@ public interface ParciaisService {
 	 * @param idLancamento
 	 */
 	void excluirPeriodo(Long idLancamento);
+	
+	
+	List<ParcialVendaDTO> obterDetalhesVenda();
 
 }

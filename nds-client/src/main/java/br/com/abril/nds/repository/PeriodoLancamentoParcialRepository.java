@@ -3,6 +3,7 @@ package br.com.abril.nds.repository;
 import java.util.Date;
 import java.util.List;
 
+import br.com.abril.nds.dto.ParcialVendaDTO;
 import br.com.abril.nds.dto.PeriodoParcialDTO;
 import br.com.abril.nds.dto.filtro.FiltroParciaisDTO;
 import br.com.abril.nds.model.planejamento.PeriodoLancamentoParcial;
@@ -42,4 +43,6 @@ public interface PeriodoLancamentoParcialRepository  extends Repository<PeriodoL
 	 */
 	Boolean verificarValidadeNovoPeriodoParcial(Long idLancamento,
 			Date dataLancamento, Date dataRecolhimento);
+	
+	List<ParcialVendaDTO> obterDetalhesVenda();
 }
