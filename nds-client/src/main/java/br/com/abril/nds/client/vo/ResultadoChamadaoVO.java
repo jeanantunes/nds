@@ -2,6 +2,7 @@ package br.com.abril.nds.client.vo;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.TableModel;
@@ -23,7 +24,7 @@ public class ResultadoChamadaoVO implements Serializable {
 	private Long qtdProdutosTotal;
 	
 	@Export(label = "Total Exemplares", alignment=Alignment.CENTER, alignWithHeader = "Reparte")
-	private BigDecimal qtdExemplaresTotal;
+	private BigInteger qtdExemplaresTotal;
 	
 	@Export(label = "Total R$", alignment=Alignment.RIGHT, alignWithHeader = "Valor R$")
 	private String valorTotal;
@@ -46,7 +47,7 @@ public class ResultadoChamadaoVO implements Serializable {
 	 */
 	public ResultadoChamadaoVO(TableModel<CellModelKeyValue<ChamadaoVO>> tableModel,
 							   Long qtdProdutosTotal,
-							   BigDecimal qtdExemplaresTotal,
+							   BigInteger qtdExemplaresTotal,
 							   String valorTotal) {
 		
 		this.tableModel = tableModel;
@@ -86,14 +87,14 @@ public class ResultadoChamadaoVO implements Serializable {
 	/**
 	 * @return the qtdExemplaresTotal
 	 */
-	public BigDecimal getQtdExemplaresTotal() {
+	public BigInteger getQtdExemplaresTotal() {
 		return qtdExemplaresTotal;
 	}
 
 	/**
 	 * @param qtdExemplaresTotal the qtdExemplaresTotal to set
 	 */
-	public void setQtdExemplaresTotal(BigDecimal qtdExemplaresTotal) {
+	public void setQtdExemplaresTotal(BigInteger qtdExemplaresTotal) {
 		this.qtdExemplaresTotal = qtdExemplaresTotal;
 	}
 

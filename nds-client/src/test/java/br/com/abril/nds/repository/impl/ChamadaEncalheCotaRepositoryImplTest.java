@@ -1,6 +1,7 @@
 package br.com.abril.nds.repository.impl;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -146,7 +147,7 @@ public class ChamadaEncalheCotaRepositoryImplTest extends AbstractRepositoryImpl
 				Fixture.criarData(22, Calendar.FEBRUARY,2012),
 				Fixture.criarData(22, Calendar.FEBRUARY,2012),
 				TipoLancamento.LANCAMENTO,
-						new BigDecimal(50));
+				BigInteger.valueOf(50));
 		save(itemNotaFiscal1Veja);
 		
 		dataRecebimento = Fixture.criarData(22, Calendar.FEBRUARY, 2012);
@@ -156,7 +157,7 @@ public class ChamadaEncalheCotaRepositoryImplTest extends AbstractRepositoryImpl
 		save(recebimentoFisico1Veja);
 			
 		itemRecebimentoFisico1Veja = 
-				Fixture.itemRecebimentoFisico(itemNotaFiscal1Veja, recebimentoFisico1Veja, new BigDecimal(50));
+				Fixture.itemRecebimentoFisico(itemNotaFiscal1Veja, recebimentoFisico1Veja, BigInteger.valueOf(50));
 		save(itemRecebimentoFisico1Veja);
 		
 		
@@ -172,7 +173,7 @@ public class ChamadaEncalheCotaRepositoryImplTest extends AbstractRepositoryImpl
 				Fixture.criarData(22, Calendar.FEBRUARY,2012), 
 				Fixture.criarData(22, Calendar.FEBRUARY,2012),
 				TipoLancamento.LANCAMENTO,
-				new BigDecimal(50));
+				BigInteger.valueOf(50));
 		
 		save(itemNotaFiscal2Veja);
 
@@ -182,7 +183,7 @@ public class ChamadaEncalheCotaRepositoryImplTest extends AbstractRepositoryImpl
 		save(recebimentoFisico2Veja);
 			
 		itemRecebimentoFisico2Veja = 
-				Fixture.itemRecebimentoFisico(itemNotaFiscal2Veja, recebimentoFisico2Veja, new BigDecimal(50));
+				Fixture.itemRecebimentoFisico(itemNotaFiscal2Veja, recebimentoFisico2Veja, BigInteger.valueOf(50));
 		save(itemRecebimentoFisico2Veja);
 		
 		lancamentoVeja = Fixture.lancamento(
@@ -192,13 +193,13 @@ public class ChamadaEncalheCotaRepositoryImplTest extends AbstractRepositoryImpl
 				Fixture.criarData(28, Calendar.FEBRUARY, 2012),
 				new Date(),
 				new Date(),
-				new BigDecimal(100),
+				BigInteger.valueOf(100),
 				StatusLancamento.BALANCEADO_RECOLHIMENTO, itemRecebimentoFisico1Veja, 1);
 		
 		lancamentoVeja.getRecebimentos().add(itemRecebimentoFisico2Veja);
 		
 		
-		Estudo estudo = Fixture.estudo(new BigDecimal(100),
+		Estudo estudo = Fixture.estudo(BigInteger.valueOf(100),
 				Fixture.criarData(22, Calendar.FEBRUARY, 2012), veja1);
 
 		save(lancamentoVeja, estudo);
@@ -214,11 +215,11 @@ public class ChamadaEncalheCotaRepositoryImplTest extends AbstractRepositoryImpl
 		save(cotaManoel);
 		
 		EstoqueProdutoCota estoqueProdutoCota = Fixture.estoqueProdutoCota(
-				veja1, cotaManoel, BigDecimal.TEN, BigDecimal.ZERO);
+				veja1, cotaManoel, BigInteger.TEN, BigInteger.ZERO);
 		save(estoqueProdutoCota);
 		
 		estoqueProdutoCota = Fixture.estoqueProdutoCota(
-				quatroRoda2, cotaManoel, BigDecimal.TEN, BigDecimal.ZERO);
+				quatroRoda2, cotaManoel, BigInteger.TEN, BigInteger.ZERO);
 		save(estoqueProdutoCota);
 		
 		Usuario usuarioJoao = Fixture.usuarioJoao();
@@ -241,7 +242,7 @@ public class ChamadaEncalheCotaRepositoryImplTest extends AbstractRepositoryImpl
 				chamadaEncalhe, 
 				false, 
 				cotaManoel, 
-				BigDecimal.TEN);
+				BigInteger.TEN);
 		save(chamadaEncalheCota);
 		
 		/**
@@ -273,13 +274,13 @@ public class ChamadaEncalheCotaRepositoryImplTest extends AbstractRepositoryImpl
 				tipoMovimentoEnvioEncalhe, 
 				usuarioJoao, 
 				estoqueProdutoCota,
-				new BigDecimal(8), cotaManoel, StatusAprovacao.APROVADO, "Aprovado");
+				BigInteger.valueOf(8), cotaManoel, StatusAprovacao.APROVADO, "Aprovado");
 		
 		save(mec);
 		
 		ConferenciaEncalhe conferenciaEncalhe = Fixture.conferenciaEncalhe(
 				mec, chamadaEncalheCota, controleConferenciaEncalheCota, 
-				Fixture.criarData(28, Calendar.FEBRUARY, 2012),new BigDecimal(8),new BigDecimal(8), veja1);
+				Fixture.criarData(28, Calendar.FEBRUARY, 2012),BigInteger.valueOf(8),BigInteger.valueOf(8), veja1);
 		save(conferenciaEncalhe);
 		
 		mec = Fixture.movimentoEstoqueCotaEnvioEncalhe( 
@@ -288,12 +289,12 @@ public class ChamadaEncalheCotaRepositoryImplTest extends AbstractRepositoryImpl
 				tipoMovimentoEnvioEncalhe, 
 				usuarioJoao, 
 				estoqueProdutoCota,
-				new BigDecimal(50), cotaManoel, StatusAprovacao.APROVADO, "Aprovado");
+				BigInteger.valueOf(50), cotaManoel, StatusAprovacao.APROVADO, "Aprovado");
 		
 		save(mec);
 		
 		conferenciaEncalhe = Fixture.conferenciaEncalhe(mec, chamadaEncalheCota, controleConferenciaEncalheCota,
-				Fixture.criarData(1, Calendar.MARCH, 2012), new BigDecimal(50),new BigDecimal(50), veja1);
+				Fixture.criarData(1, Calendar.MARCH, 2012), BigInteger.valueOf(50),BigInteger.valueOf(50), veja1);
 		save(conferenciaEncalhe);
 		
 		
@@ -303,12 +304,12 @@ public class ChamadaEncalheCotaRepositoryImplTest extends AbstractRepositoryImpl
 				tipoMovimentoEnvioEncalhe, 
 				usuarioJoao, 
 				estoqueProdutoCota,
-				new BigDecimal(45), cotaManoel, StatusAprovacao.APROVADO, "Aprovado");
+				BigInteger.valueOf(45), cotaManoel, StatusAprovacao.APROVADO, "Aprovado");
 		
 		save(mec);
 	
 		conferenciaEncalhe = Fixture.conferenciaEncalhe(mec, chamadaEncalheCota, controleConferenciaEncalheCota,
-				Fixture.criarData(2, Calendar.MARCH, 2012), new BigDecimal(45), new BigDecimal(45), veja1);
+				Fixture.criarData(2, Calendar.MARCH, 2012), BigInteger.valueOf(45), BigInteger.valueOf(45), veja1);
 		save(conferenciaEncalhe);
 			
 	}

@@ -115,13 +115,13 @@ $(function() {
 			align : 'center'
 		},{
 			display : 'Total R$',
-			name : 'total',
+			name : 'valorFaturado',
 			width : 90,
 			sortable : true,
 			align : 'center'
 		},{
 			display : 'Fornecedor',
-			name : 'total',
+			name : 'nomeFornecedor',
 			width : 90,
 			sortable : true,
 			align : 'center'
@@ -211,22 +211,28 @@ $(function() {
 				resultado.mensagens.listaMensagens
 			);
 	
-			return resultado.tableModel;
+			return resultado;
 		}
 		
-		return resultado.tableModel;
+		return resultado;
 	}
+	
+	var _codigoBox = "";
+	var _dataLancamento = "";
 
-	function detalharResumoExpedicao(codigoBox, dataLancamento){ 
+	function detalharResumoExpedicao(index){ 
+		
+		_codigoBox = $("#codigoBox" + index).val();
+		_dataLancamento = $("#dataLanc" + index).text();
 		
 		$("#venda-encalhe-grid").flexOptions({
 			
 			url: contextPath + '/expedicao/resumo/pesquisar/detalhe',
 			dataType : 'json',
 			
-			params:[{name:'codigoBox', value: codigoBox},
+			params:[{name:'codigoBox', value: _codigoBox},
 			        
-			        {name:'dataLancamento', value: dataLancamento}]
+			        {name:'dataLancamento', value: _dataLancamento}]
 		
 		});
 		
@@ -246,10 +252,7 @@ $(function() {
 					$( this ).dialog( "close" );
 				}
 			}
-		});		
-		
-		
-		
+		});
 	}
 	
 
@@ -283,13 +286,22 @@ $(function() {
 		
 		$.each(resultado.tableModel.rows, function(index, row) {
 			
+			row.cell.codigoBox = "<input type='hidden' id='codigoBox"+ index +"' value='"+ row.cell.codigoBox +"'/>"+ row.cell.codigoBox;
+			
+			var dataLan = "";
+			
 			if (!row.cell.dataLancamento){
 				
-				row.cell.dataLancamento = "";
+				dataLan = "";
+			} else {
+				
+				dataLan = row.cell.dataLancamento;
 			}
 			
+			row.cell.dataLancamento = "<div id='dataLanc"+ index +"'>"+ dataLan +"</div>";
+			
 			row.cell.acao = "<div style='text-align: center;'>" +
-				"<a href='javascript:;' onclick='detalharResumoExpedicao("+ row.cell.codigoBox +","+ row.cell.dataLancamento +");'>"+
+				"<a href='javascript:;' onclick='detalharResumoExpedicao("+ index +");'>"+
 				"<img border='0' alt='Detalhes' src='${pageContext.request.contextPath}/images/ico_detalhes.png'></a></div>";
 		});
 		
@@ -416,6 +428,11 @@ $(function() {
 		window.location = 
 			contextPath + "/expedicao/resumo/exportar?tipoConsulta=" + tipoPesquisa + "&fileType=" + fileType;
 	}
+  	
+	function exportarDetalhes(fileType) {
+
+		window.location = contextPath + "/expedicao/resumo/exportarDetalhes?fileType=" + fileType + "&codigoBox=" + _codigoBox + "&dataLancamento=" + _dataLancamento;
+	}
 </script>
 
 </head>
@@ -502,10 +519,31 @@ $(function() {
 
 	<fieldset class="classFieldset">
 	    
-		<legend id="idFiledResultResumo">Resumo  Expedição por Box</legend>
+		<legend id="idFiledResultResumo">Resumo Expedição por Box</legend>
 	    
 		<table id="venda-encalhe-grid"></table>
 		
+		<table width="100%" border="0" cellspacing="1" cellpadding="1">
+			<tr>
+				<td></td>
+    			<td>
+    				<span class="bt_novos" title="Gerar Arquivo">
+    					<a href="javascript:;" onclick="exportarDetalhes('XLS');">
+    						<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />Arquivo
+    					</a>
+    				</span>
+    				<span class="bt_novos" title="Imprimir">
+    					<a href="javascript:;" onclick="exportarDetalhes('PDF');">
+    						<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" alt="Imprimir" hspace="5" border="0" />Imprimir
+    					</a>
+    				</span>
+    			</td>
+    			<td>
+    				<strong>Total R$:</strong>
+    			</td>
+    			<td></td>
+  			</tr>
+		</table>
 	</fieldset>
 
 </div>

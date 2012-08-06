@@ -2,6 +2,7 @@ package br.com.abril.nds.strategy.importacao;
 
 import java.io.File;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -119,7 +120,7 @@ public class ImportacaoDeArquivoMatrizStrategy extends ImportacaoAbstractStrateg
 			lancamento.setDataStatus(new Date());
 			lancamento.setNumeroReprogramacoes(0);
 			lancamento.setProdutoEdicao(produtoEdicao);
-			lancamento.setReparte(new BigDecimal(0));
+			lancamento.setReparte(BigInteger.valueOf(0));
 			
 			lancamento.setStatus(StatusLancamento.PLANEJADO);
 			lancamento.setTipoLancamento(TipoLancamento.LANCAMENTO);

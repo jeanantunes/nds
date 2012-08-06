@@ -1,6 +1,7 @@
 package br.com.abril.nds.repository.impl;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -21,7 +22,6 @@ import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Editor;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
 import br.com.abril.nds.model.cadastro.Fornecedor;
-import br.com.abril.nds.model.cadastro.Moeda;
 import br.com.abril.nds.model.cadastro.ParametroContratoCota;
 import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
@@ -163,11 +163,11 @@ public class ProdutoEdicaoRepositoryImplTest extends AbstractRepositoryImplTest 
 		
 		Lancamento lancamento = 
 				Fixture.lancamento(TipoLancamento.LANCAMENTO, produtoEdicaoVeja, 
-						new Date(), new Date(), new Date(), new Date(), BigDecimal.TEN, StatusLancamento.CONFIRMADO, null, 1);
+						new Date(), new Date(), new Date(), new Date(), BigInteger.TEN, StatusLancamento.CONFIRMADO, null, 1);
 		save(lancamento);
 		
 		Estudo estudo = 
-				Fixture.estudo(BigDecimal.TEN, new Date(), produtoEdicaoVeja);
+				Fixture.estudo(BigInteger.TEN, new Date(), produtoEdicaoVeja);
 		save(estudo);
 	}
 	

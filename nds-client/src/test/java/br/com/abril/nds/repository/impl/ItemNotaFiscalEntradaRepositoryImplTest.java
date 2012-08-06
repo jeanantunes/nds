@@ -1,6 +1,7 @@
 package br.com.abril.nds.repository.impl;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Calendar;
 import java.util.List;
 
@@ -262,7 +263,7 @@ public class ItemNotaFiscalEntradaRepositoryImplTest extends AbstractRepositoryI
 						Fixture.criarData(22, Calendar.FEBRUARY,2012),     
 						Fixture.criarData(22, Calendar.FEBRUARY,2012),     
 						TipoLancamento.LANCAMENTO,                         
-						new BigDecimal(50), 
+						BigInteger.valueOf(50), 
 						NCMProduto, 
 						CFOPProduto, 
 						unidadeProduto, 
@@ -348,7 +349,7 @@ public class ItemNotaFiscalEntradaRepositoryImplTest extends AbstractRepositoryI
 						Fixture.criarData(22, Calendar.FEBRUARY,2012),     
 						Fixture.criarData(22, Calendar.FEBRUARY,2012),     
 						TipoLancamento.LANCAMENTO,                         
-						new BigDecimal(50), 
+						BigInteger.valueOf(50), 
 						NCMProduto, 
 						CFOPProduto, 
 						unidadeProduto, 

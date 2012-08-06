@@ -1,6 +1,7 @@
 package br.com.abril.nds.repository.impl;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -108,12 +109,12 @@ public class BoletoRepositoryImplTest extends AbstractRepositoryImplTest  {
 		save(produtoEdicaoVeja1);
 		
 		EstoqueProdutoCota estoqueProdutoCota = Fixture.estoqueProdutoCota(
-				produtoEdicaoVeja1, cota, BigDecimal.TEN, BigDecimal.ZERO);
+				produtoEdicaoVeja1, cota, BigInteger.TEN, BigInteger.ZERO);
 		save(estoqueProdutoCota);
 		
 		MovimentoEstoqueCota mec = Fixture.movimentoEstoqueCota(produtoEdicaoVeja1,
 				tipoMovimentoRecReparte, usuarioJoao, estoqueProdutoCota,
-				new BigDecimal(100.56), cota, StatusAprovacao.APROVADO, "Aprovado");
+				BigInteger.valueOf(100), cota, StatusAprovacao.APROVADO, "Aprovado");
 		save(mec);
 		
 		MovimentoFinanceiroCota movimentoFinanceiroCota = Fixture.movimentoFinanceiroCota(

@@ -1,6 +1,6 @@
 package br.com.abril.nds.service.impl;
 
-import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
 
@@ -148,7 +148,7 @@ public class ChamadaoServiceImpl implements ChamadaoService {
 				estoqueProdutoCotaRepository.buscarEstoquePorProdutEdicaoECota(
 					produtoEdicao.getId(), cota.getId());
 			
-			BigDecimal qtdPrevista = BigDecimal.ZERO;
+			BigInteger qtdPrevista = BigInteger.ZERO;
 			
 			if (estoqueProdutoCota != null) {
 				

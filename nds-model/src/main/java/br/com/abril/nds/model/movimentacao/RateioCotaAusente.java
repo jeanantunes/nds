@@ -1,5 +1,6 @@
 package br.com.abril.nds.model.movimentacao;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -32,7 +33,7 @@ public class RateioCotaAusente {
 	private ProdutoEdicao produtoEdicao;
 	
 	@Column(name = "QTDE", nullable = false)
-	private BigDecimal qtde;
+	private BigInteger qtde;
 	
 	@ManyToOne
 	@JoinColumn(name = "COTA_AUSENTE_ID")
@@ -62,11 +63,11 @@ public class RateioCotaAusente {
 		this.produtoEdicao = produtoEdicao;
 	}
 
-	public BigDecimal getQtde() {
+	public BigInteger getQtde() {
 		return qtde;
 	}
 
-	public void setQtde(BigDecimal qtde) {
+	public void setQtde(BigInteger qtde) {
 		this.qtde = qtde;
 	}
 	

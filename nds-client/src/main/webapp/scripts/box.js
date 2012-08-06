@@ -62,8 +62,8 @@ var boxController = $.extend(true, {
 			useRp : true,
 			rp : 15,
 			showTableToggleBtn : true,
-			width : 'auto',
-			height : '280'
+			width : 960,
+			height : 280
 		});
 		$(".boxGrid", this.workspace).flexOptions({
 			"url" : this.path + 'busca.json',
@@ -83,12 +83,17 @@ var boxController = $.extend(true, {
 		// var serializedObj = $(obj).closest("form").serialize();
 		var serializedObj = $("#pesquisar_box_form", this.workspace).serialize();
 		
+		var codigo = $("#pesquisaCodigoBox").val();
+		var tipoBox = $("#pesquisaTipoBox").val();
+		
 		/*var codigoBox = ;
 		var tipoBox = ;*/
 		
 		$(".boxGrid", this.workspace).flexOptions({
-			"url" : this.path + 'busca.json?' + serializedObj,
-			method: 'GET',
+			"url" : this.path + 'busca.json', //'busca.json?' + serializedObj,
+//			method: 'GET',
+			params: [{name:'box.codigo', value: codigo },
+			         {name:'box.tipoBox', value: tipoBox }],			
 			newp:1
 		});
 		$(".boxGrid").flexReload();

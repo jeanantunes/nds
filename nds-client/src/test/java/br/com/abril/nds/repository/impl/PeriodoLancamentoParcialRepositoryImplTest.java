@@ -1,6 +1,7 @@
 package br.com.abril.nds.repository.impl;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -82,7 +83,7 @@ public class PeriodoLancamentoParcialRepositoryImplTest extends AbstractReposito
 				Fixture.criarData(1,2,2010),
 				new Date(),
 				new Date(),
-				new BigDecimal(100),
+				BigInteger.valueOf(100),
 				StatusLancamento.CONFIRMADO, null, 1);
 		save(lancamento);
 		
@@ -91,12 +92,12 @@ public class PeriodoLancamentoParcialRepositoryImplTest extends AbstractReposito
 				Fixture.criarData(1,4,2010),
 				new Date(),
 				new Date(),
-				new BigDecimal(100),
+				BigInteger.valueOf(100),
 				StatusLancamento.CONFIRMADO, null, 2);
 		save(lancamento2);
 		
 		
-		Estudo estudo = Fixture.estudo(new BigDecimal(200),Fixture.criarData(22, Calendar.FEBRUARY, 2012), produtoEdicaoVeja1);
+		Estudo estudo = Fixture.estudo(BigInteger.valueOf(200),Fixture.criarData(22, Calendar.FEBRUARY, 2012), produtoEdicaoVeja1);
 		save(estudo);
 		
 		periodo = Fixture.criarPeriodoLancamentoParcial(lancamento, lancamentoParcial, 

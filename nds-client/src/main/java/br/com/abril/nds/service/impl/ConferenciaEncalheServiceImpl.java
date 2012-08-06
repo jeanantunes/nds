@@ -1,6 +1,7 @@
 package br.com.abril.nds.service.impl;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -20,6 +21,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.client.util.BigDecimalUtil;
+import br.com.abril.nds.client.util.BigIntegerUtil;
 import br.com.abril.nds.dto.ConferenciaEncalheDTO;
 import br.com.abril.nds.dto.DadosDocumentacaoConfEncalheCotaDTO;
 import br.com.abril.nds.dto.DebitoCreditoCotaDTO;
@@ -1506,7 +1509,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	 */
 	private void inserirItemRecebimentoFisico( RecebimentoFisico recebimentoFisico, 
 															  ItemNotaFiscalEntrada itemNotaFiscal,
-															  BigDecimal qtdeFisico,
+															  BigInteger qtdeFisico,
 															  Diferenca diferenca) {
 		
 		ItemRecebimentoFisico itemRecebimentoFisico = new ItemRecebimentoFisico();
@@ -1584,9 +1587,9 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			Long idProdutoEdicao, 
 			Date dataOperacao,
 			Date dataRecolhimentoDistribuidor,
-			BigDecimal qtdeExemplarEncalhe) throws EncalheExcedeReparteException {
+			BigInteger qtdeExemplarEncalhe) throws EncalheExcedeReparteException {
 		
-		BigDecimal qtdeReparte = obterQtdeReparteParaProdutoEdicao(
+		BigInteger qtdeReparte = obterQtdeReparteParaProdutoEdicao(
 				idCota, 
 				idProdutoEdicao, 
 				dataOperacao, 
@@ -1606,9 +1609,9 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	 * @param dataOperacao
 	 * @param dataRecolhimentoDistribuidor
 	 * 
-	 * @return BigDecimal
+	 * @return BigInteger
 	 */
-	private BigDecimal obterQtdeReparteParaProdutoEdicao(
+	private BigInteger obterQtdeReparteParaProdutoEdicao(
 			Long idCota, 
 			Long idProdutoEdicao, 
 			Date dataOperacao,
@@ -1634,7 +1637,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 												"reparte para o produtoEdicao de id: " + idProdutoEdicao);
 			}
 			
-			BigDecimal qtdeReparte = movimentoEstoqueCotaRepository.obterQtdeMovimentoEstoqueCotaParaProdutoEdicaoNoPeriodo(
+			BigInteger qtdeReparte = movimentoEstoqueCotaRepository.obterQtdeMovimentoEstoqueCotaParaProdutoEdicaoNoPeriodo(
 					idCota, 
 					idProdutoEdicao, 
 					dataLancamento, 
@@ -1652,9 +1655,9 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 
 			EstoqueProdutoCota estoqueProdutoCota = estoqueProdutoCotaRepository.buscarEstoquePorProdutEdicaoECota(idProdutoEdicao, idCota);
 			
-			BigDecimal qtdeDevolvida 	= (estoqueProdutoCota.getQtdeDevolvida() == null) ? BigDecimal.ZERO : estoqueProdutoCota.getQtdeDevolvida();
+			BigInteger qtdeDevolvida 	= (estoqueProdutoCota.getQtdeDevolvida() == null) ? BigInteger.ZERO : estoqueProdutoCota.getQtdeDevolvida();
 			
-			BigDecimal qtdeRecebida 	=  (estoqueProdutoCota.getQtdeRecebida() == null) ? BigDecimal.ZERO : estoqueProdutoCota.getQtdeRecebida();
+			BigInteger qtdeRecebida 	=  (estoqueProdutoCota.getQtdeRecebida() == null) ? BigInteger.ZERO : estoqueProdutoCota.getQtdeRecebida();
 			
 			return  qtdeRecebida.subtract(qtdeDevolvida);
 			
@@ -1722,13 +1725,13 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	 */
 	private void excluirRegistroMovimentoEstoqueCota(MovimentoEstoqueCota movimentoEstoqueCota) {
 		
-		if(movimentoEstoqueCota.getQtde() != null && (movimentoEstoqueCota.getQtde().compareTo(BigDecimal.ZERO) != 0)) {
+		if(movimentoEstoqueCota.getQtde() != null && (movimentoEstoqueCota.getQtde().compareTo(BigInteger.ZERO) != 0)) {
 
 			EstoqueProdutoCota estoqueProdutoCota = movimentoEstoqueCota.getEstoqueProdutoCota();
 			
 			if(estoqueProdutoCota != null) {
 
-				BigDecimal qtdeDevolvidaOriginal = estoqueProdutoCota.getQtdeDevolvida() == null ? BigDecimal.ZERO : estoqueProdutoCota.getQtdeDevolvida();
+				BigInteger qtdeDevolvidaOriginal = estoqueProdutoCota.getQtdeDevolvida() == null ? BigInteger.ZERO : estoqueProdutoCota.getQtdeDevolvida();
 				
 				estoqueProdutoCota.setQtdeDevolvida(qtdeDevolvidaOriginal.subtract(movimentoEstoqueCota.getQtde()));
 
@@ -1750,7 +1753,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	 */
 	private void excluirRegistroMovimentoEstoque(MovimentoEstoque movimentoEstoque) {
 		
-		if(movimentoEstoque.getQtde() != null && (movimentoEstoque.getQtde().compareTo(BigDecimal.ZERO) != 0)) {
+		if(movimentoEstoque.getQtde() != null && (movimentoEstoque.getQtde().compareTo(BigInteger.ZERO) != 0)) {
 
 			GrupoMovimentoEstoque grupoMovimentoEstoqueExcluido = ((TipoMovimentoEstoque)movimentoEstoque.getTipoMovimento()).getGrupoMovimentoEstoque();
 			
@@ -1760,7 +1763,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 				
 				if(GrupoMovimentoEstoque.SUPLEMENTAR_ENVIO_ENCALHE_ANTERIOR_PROGRAMACAO.equals(grupoMovimentoEstoqueExcluido)) {
 
-					BigDecimal qtdeOriginal = estoqueProduto.getQtdeSuplementar() == null ? BigDecimal.ZERO : estoqueProduto.getQtdeSuplementar();
+					BigInteger qtdeOriginal = estoqueProduto.getQtdeSuplementar() == null ? BigInteger.ZERO : estoqueProduto.getQtdeSuplementar();
 					
 					estoqueProduto.setQtdeSuplementar(qtdeOriginal.subtract(movimentoEstoque.getQtde()));
 
@@ -1769,7 +1772,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 					
 				} else {
 					
-					BigDecimal qtdeOriginal = estoqueProduto.getQtde() == null ? BigDecimal.ZERO : estoqueProduto.getQtde();
+					BigInteger qtdeOriginal = estoqueProduto.getQtde() == null ? BigInteger.ZERO : estoqueProduto.getQtde();
 					
 					estoqueProduto.setQtde(qtdeOriginal.subtract(movimentoEstoque.getQtde()));
 
@@ -2104,9 +2107,9 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			ConferenciaEncalheDTO conferenciaEncalheDTO, 
 			Map<GrupoMovimentoEstoque, TipoMovimentoEstoque> mapaTipoMovimentoEstoque) {
 		
-		BigDecimal oldQtdeMovEstoqueCota = movimentoEstoqueCota.getQtde();
+		BigInteger oldQtdeMovEstoqueCota = movimentoEstoqueCota.getQtde();
 		
-		BigDecimal newQtdeMovEstoquecota = conferenciaEncalheDTO.getQtdExemplar();
+		BigInteger newQtdeMovEstoquecota = conferenciaEncalheDTO.getQtdExemplar();
 		
 		movimentoEstoqueCota.setQtde(newQtdeMovEstoquecota);
 		
@@ -2114,9 +2117,9 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		EstoqueProdutoCota estoqueProdutoCota =  movimentoEstoqueCota.getEstoqueProdutoCota();
 		
-		BigDecimal qtdDevolvida = 
+		BigInteger qtdDevolvida = 
 				estoqueProdutoCota.getQtdeDevolvida() != null ? 
-					estoqueProdutoCota.getQtdeDevolvida() : BigDecimal.ZERO;
+					estoqueProdutoCota.getQtdeDevolvida() : BigInteger.ZERO;
 					
 		qtdDevolvida = qtdDevolvida.subtract(oldQtdeMovEstoqueCota).add(newQtdeMovEstoquecota);
 		
@@ -2139,9 +2142,9 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			ConferenciaEncalheDTO conferenciaEncalheDTO, 
 			Map<GrupoMovimentoEstoque, TipoMovimentoEstoque> mapaTipoMovimentoEstoque) {
 		
-		BigDecimal oldQtdeMovEstoque = movimentoEstoque.getQtde();
+		BigInteger oldQtdeMovEstoque = movimentoEstoque.getQtde();
 		
-		BigDecimal newQtdeMovEstoque = conferenciaEncalheDTO.getQtdExemplar();
+		BigInteger newQtdeMovEstoque = conferenciaEncalheDTO.getQtdExemplar();
 		
 		movimentoEstoque.setQtde(newQtdeMovEstoque);
 		
@@ -2155,7 +2158,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			
 			if(GrupoMovimentoEstoque.SUPLEMENTAR_ENVIO_ENCALHE_ANTERIOR_PROGRAMACAO.equals(grupoMovimentoEstoque)) {
 
-				BigDecimal qtdeOriginal = estoqueProduto.getQtdeSuplementar() == null ? BigDecimal.ZERO : estoqueProduto.getQtdeSuplementar();
+				BigInteger qtdeOriginal = estoqueProduto.getQtdeSuplementar() == null ? BigInteger.ZERO : estoqueProduto.getQtdeSuplementar();
 				estoqueProduto.setQtdeSuplementar(qtdeOriginal.subtract(oldQtdeMovEstoque));
 
 				estoqueProduto.setQtdeSuplementar(estoqueProduto.getQtdeSuplementar().add(newQtdeMovEstoque));
@@ -2164,7 +2167,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 				
 			} else {
 				
-				BigDecimal qtdeOriginal = estoqueProduto.getQtde() == null ? BigDecimal.ZERO : estoqueProduto.getQtde();
+				BigInteger qtdeOriginal = estoqueProduto.getQtde() == null ? BigInteger.ZERO : estoqueProduto.getQtde();
 				estoqueProduto.setQtde(qtdeOriginal.subtract(oldQtdeMovEstoque));
 
 				estoqueProduto.setQtde(estoqueProduto.getQtde().add(newQtdeMovEstoque));
@@ -2295,7 +2298,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		Long numeroSlip 		= controleNumeracaoSlipService.obterProximoNumeroSlip(TipoSlip.SLIP_CONFERENCIA_ENCALHE);
 		
 		
-		BigDecimal qtdeTotalProdutos 	= null;
+		BigInteger qtdeTotalProdutos 	= null;
 		BigDecimal valorTotalEncalhe 	= null;
 		BigDecimal valorTotalPagar 		= null;
 		
@@ -2303,7 +2306,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		for(ProdutoEdicaoSlipDTO produtoEdicaoSlip : listaProdutoEdicaoSlip) {
 			
-			BigDecimal reparte = obterQtdeReparteParaProdutoEdicao(
+			BigInteger reparte = obterQtdeReparteParaProdutoEdicao(
 					idCota, 
 					produtoEdicaoSlip.getIdProdutoEdicao(), 
 					dataOperacao, 
@@ -2311,9 +2314,9 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			
 			produtoEdicaoSlip.setReparte(reparte);
 			
-			qtdeTotalProdutos = adicionarValorBigDecimal(qtdeTotalProdutos, produtoEdicaoSlip.getEncalhe());
+			qtdeTotalProdutos = BigIntegerUtil.soma(qtdeTotalProdutos, produtoEdicaoSlip.getEncalhe());
 			
-			valorTotalEncalhe = adicionarValorBigDecimal(valorTotalEncalhe, produtoEdicaoSlip.getValorTotal());
+			valorTotalEncalhe = BigDecimalUtil.soma(valorTotalEncalhe, produtoEdicaoSlip.getValorTotal());
 			
 		}
 		
@@ -2406,29 +2409,5 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		}
 		
 	}
-	
-	/**
-	 * Adiciona ao primeiro parâmetro (valorTotal) o segundo parâmetro (valorAdiciona)
-	 * e retorna o resultado da soma; 
-	 * 
-	 * @param valorTotal
-	 * @param valorAdicional
-	 * 
-	 * @return BigDecimal
-	 */
-	private BigDecimal adicionarValorBigDecimal(BigDecimal valorTotal, BigDecimal valorAdicional) {
-		
-		if(valorAdicional == null ) {
-			return valorTotal;
-		}
-		
-		if(valorTotal == null) {
-			valorTotal = BigDecimal.ZERO;
-		}
-		
-		return valorTotal.add(valorAdicional);
-		
-	}
-	
 	
 }

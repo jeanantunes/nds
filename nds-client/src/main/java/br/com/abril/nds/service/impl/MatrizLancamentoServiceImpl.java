@@ -1,6 +1,7 @@
 package br.com.abril.nds.service.impl;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.client.util.BigDecimalUtil;
+import br.com.abril.nds.client.util.BigIntegerUtil;
 import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.dto.BalanceamentoLancamentoDTO;
 import br.com.abril.nds.dto.DadosBalanceamentoLancamentoDTO;
@@ -216,13 +218,13 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 	private void agruparLancamento(Lancamento lancamentoAtualizar,
 								   Lancamento lancamentoAgrupar) {
 
-		BigDecimal somaReparte =
-			BigDecimalUtil.soma(lancamentoAtualizar.getReparte(), lancamentoAgrupar.getReparte());
+		BigInteger somaReparte =
+			BigIntegerUtil.soma(lancamentoAtualizar.getReparte(), lancamentoAgrupar.getReparte());
 		
 		lancamentoAtualizar.setReparte(somaReparte);
 		
-		BigDecimal somaRepartePromocional =
-			BigDecimalUtil.soma(lancamentoAtualizar.getRepartePromocional(),
+		BigInteger somaRepartePromocional =
+				BigIntegerUtil.soma(lancamentoAtualizar.getRepartePromocional(),
 								lancamentoAgrupar.getRepartePromocional());
 			
 		lancamentoAtualizar.setRepartePromocional(somaRepartePromocional);
@@ -242,8 +244,8 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 		
 		if (estudoAtualizar != null) {
 		
-			BigDecimal somaQtdeReparte =
-				BigDecimalUtil.soma(estudoAtualizar.getQtdeReparte(), estudoAgrupar.getQtdeReparte());
+			BigInteger somaQtdeReparte =
+				BigIntegerUtil.soma(estudoAtualizar.getQtdeReparte(), estudoAgrupar.getQtdeReparte());
 			
 			estudoAtualizar.setQtdeReparte(somaQtdeReparte);
 		

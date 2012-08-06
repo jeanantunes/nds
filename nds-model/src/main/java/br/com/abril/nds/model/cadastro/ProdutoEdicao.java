@@ -2,6 +2,7 @@ package br.com.abril.nds.model.cadastro;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -77,7 +78,7 @@ public class ProdutoEdicao implements Serializable {
 	protected BigDecimal precoPrevisto;
 	
 	@Column(name = "REPARTE_DISTRIBUIDO", nullable = true)
-	protected BigDecimal reparteDistribuido;
+	protected BigInteger reparteDistribuido;
 	
 	@Column(name = "DESCONTO")
 	protected BigDecimal desconto = BigDecimal.ZERO;
@@ -460,14 +461,14 @@ public class ProdutoEdicao implements Serializable {
 	/**
 	 * @return the reparteDistribuido
 	 */
-	public BigDecimal getReparteDistribuido() {
+	public BigInteger getReparteDistribuido() {
 		return reparteDistribuido;
 	}
 
 	/**
 	 * @param reparteDistribuido the reparteDistribuido to set
 	 */
-	public void setReparteDistribuido(BigDecimal reparteDistribuido) {
+	public void setReparteDistribuido(BigInteger reparteDistribuido) {
 		this.reparteDistribuido = reparteDistribuido;
 	}
 
