@@ -85,40 +85,67 @@ public class ResumoExpedicaoController {
 	
 	@Post
 	@Path("/resumo/pesquisar/detalhe")
-	public void detalharResumoExpedicaoDoBox(Integer codigoBox, String dataLancamento) {
-	
-		Date dataLancntoDistribuidor = DateUtil.parseDataPTBR(dataLancamento);
+	public void detalharResumoExpedicaoDoBox(
+			String sortorder, 
+			String sortname, 
+			int page, 
+			int rp, 
+			Integer codigoBox, 
+			String dataLancamento) {
 		
-		List<ResumoExpedicaoDetalheVO> listaDetalhe = new ArrayList<ResumoExpedicaoDetalheVO>();
-
-		int contador = 0;
+		FiltroResumoExpedicaoDTO filtro = new FiltroResumoExpedicaoDTO();
 		
-		while(contador++<10) {
-
-			ResumoExpedicaoDetalheVO resumoExpedicaoDetalhe = new ResumoExpedicaoDetalheVO();
-			
-			resumoExpedicaoDetalhe.setCodigoProduto(""+contador);
-			resumoExpedicaoDetalhe.setDescricaoProduto("produto_"+contador);
-			resumoExpedicaoDetalhe.setEdicaoProduto(""+contador);
-			resumoExpedicaoDetalhe.setPrecoCapa(""+contador);
-			resumoExpedicaoDetalhe.setReparte("100");
-			resumoExpedicaoDetalhe.setValorFaturado("100");
-			resumoExpedicaoDetalhe.setQntDiferenca("100");
-			
-			listaDetalhe.add(resumoExpedicaoDetalhe);
-
-		}
-
-		TableModel<CellModelKeyValue<ResumoExpedicaoDetalheVO>> tableModel = new TableModel<CellModelKeyValue<ResumoExpedicaoDetalheVO>>();
-
-		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaDetalhe));
-		tableModel.setPage(1);
-		tableModel.setTotal(listaDetalhe.size());
-
-		result.use(Results.json()).from(tableModel).recursive().serialize();
+		filtro.setDataLancamento(DateUtil.parseData(dataLancamento, "dd/MM/yyyy"));
+		
+		filtro.setCodigoBox(codigoBox);
+		
+		this.configurarPaginacaoPesquisaResumoProduto(filtro, sortorder, sortname, page, rp);
+		
+		this.tratarFiltro(filtro);
+		
+		this.pesquisarDetalheResumoExpedicaoDoBox(filtro);
 		
 	}
 	
+	private void pesquisarDetalheResumoExpedicaoDoBox(FiltroResumoExpedicaoDTO filtro){
+		
+		List<ExpedicaoDTO> list = expedicaoService.obterResumoExpedicaoProdutosDoBox(filtro);
+		
+		if (list == null || list.isEmpty()){
+			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
+		}
+		
+		List<ResumoExpedicaoVO> listaLancamentosExpedidos = new LinkedList<ResumoExpedicaoVO>();
+		
+		ResumoExpedicaoVO resumoExpedicaoVO = null;
+		
+		for (ExpedicaoDTO expd  : list){
+			
+			resumoExpedicaoVO = new ResumoExpedicaoVO();
+			
+			resumoExpedicaoVO.setCodigoProduto(expd.getCodigoProduto());
+			resumoExpedicaoVO.setDescricaoProduto(expd.getNomeProduto());
+			resumoExpedicaoVO.setEdicaoProduto(getValor(expd.getNumeroEdicao()));
+			resumoExpedicaoVO.setPrecoCapa(CurrencyUtil.formatarValor(expd.getPrecoCapa()));
+			resumoExpedicaoVO.setReparte(getValor(expd.getQntReparte()));
+			resumoExpedicaoVO.setValorFaturado(CurrencyUtil.formatarValor(expd.getValorFaturado()));
+			resumoExpedicaoVO.setQntDiferenca(getValor(expd.getQntDiferenca()));
+			
+			listaLancamentosExpedidos.add(resumoExpedicaoVO);
+		}
+	
+		Long quantidadeRegistros = expedicaoService.obterQuantidadeResumoExpedicaoProdutosDoBox(filtro);
+		
+		TableModel<CellModelKeyValue<ResumoExpedicaoVO>> tableModel = 
+			new TableModel<CellModelKeyValue<ResumoExpedicaoVO>>();
+
+		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaLancamentosExpedidos));
+		tableModel.setTotal((quantidadeRegistros!= null)? quantidadeRegistros.intValue():0);
+		tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
+
+		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
+
+	}
 	
 	
 	/**

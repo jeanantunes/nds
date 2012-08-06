@@ -28,12 +28,13 @@ public class ExpedicaoDTO implements Serializable {
 	private BigDecimal qntDiferenca;
 	private BigDecimal valorFaturado;
 	private Long qntProduto;
+	private String razaoSocial;
 	
 	public ExpedicaoDTO() {}
 	
 	public ExpedicaoDTO(String codigoProduto, String nomeProduto,
 						Long numeroEdicao, BigDecimal precoCapa, BigDecimal qntReparte,
-						BigDecimal qntDiferenca, BigDecimal valorFaturado) {
+						BigDecimal qntDiferenca, BigDecimal valorFaturado, String razaoSocial) {
 		
 		this.codigoProduto = codigoProduto;
 		this.nomeProduto = nomeProduto;
@@ -42,6 +43,21 @@ public class ExpedicaoDTO implements Serializable {
 		this.qntReparte = qntReparte;
 		this.qntDiferenca = qntDiferenca;
 		this.valorFaturado = valorFaturado;
+		this.razaoSocial = razaoSocial;
+	}
+	
+	public ExpedicaoDTO(String codigoProduto, String nomeProduto,
+			Long numeroEdicao, BigDecimal precoCapa, BigDecimal qntReparte,
+			BigDecimal qntDiferenca, BigDecimal valorFaturado) {
+
+		this.codigoProduto = codigoProduto;
+		this.nomeProduto = nomeProduto;
+		this.numeroEdicao = numeroEdicao;
+		this.precoCapa = precoCapa;
+		this.qntReparte = qntReparte;
+		this.qntDiferenca = qntDiferenca;
+		this.valorFaturado = valorFaturado;
+
 	}
 	
 	public ExpedicaoDTO(Long idBox,String codigoBox, String nomeBox,
@@ -212,7 +228,21 @@ public class ExpedicaoDTO implements Serializable {
 		this.qntProduto = qntProduto;
 	}
 
-	
-	
+	/**
+	 * Obtém razaoSocial
+	 *
+	 * @return String
+	 */
+	public String getRazaoSocial() {
+		return razaoSocial;
+	}
+
+	/**
+	 * Atribuí razaoSocial
+	 * @param razaoSocial 
+	 */
+	public void setRazaoSocial(String razaoSocial) {
+		this.razaoSocial = razaoSocial;
+	}
 	
 }

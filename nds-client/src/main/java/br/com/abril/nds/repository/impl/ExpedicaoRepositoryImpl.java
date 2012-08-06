@@ -37,6 +37,8 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 		
 		query.setParameter("dataLancamento", filtro.getDataLancamento());
 		query.setParameter("status",StatusLancamento.EXPEDIDO);
+		query.setParameter("tipoBox", TipoBox.LANCAMENTO);
+		query.setParameter("codigoBox", filtro.getCodigoBox());
 		
 		@SuppressWarnings("unchecked")
 		List<Long> conts  = query.list();
@@ -58,6 +60,8 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 		
 		query.setParameter("dataLancamento", filtro.getDataLancamento());
 		query.setParameter("status",StatusLancamento.EXPEDIDO);
+		query.setParameter("tipoBox", TipoBox.LANCAMENTO);
+		query.setParameter("codigoBox", filtro.getCodigoBox());
 		
 		if (filtro.getPaginacao() != null) {
 			
@@ -103,20 +107,33 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 							.append(" when (diferenca.tipoDiferenca = 'SOBRA_EM') then (diferenca.qtde)")
 							.append(" else 0")
 						.append(" end )) as qntDiferenca, ")
-						.append("produtoEd.precoVenda*estudo.qtdeReparte ")
+						.append(" produtoEd.precoVenda*estudo.qtdeReparte, ")
+						.append(" juridica.razaoSocial ")
+						
 			.append(" ) ");
 		}	
 		
+		
+		
 		hql.append( "FROM" )
-			.append( " Estudo estudo join estudo.lancamentos lancamento ") 
-			.append( " JOIN lancamento.recebimentos itemRecebimento ")
-			.append("  JOIN lancamento.expedicao expedicao ")
-			.append( " LEFT JOIN itemRecebimento.diferenca diferenca")
-			.append( " JOIN lancamento.produtoEdicao produtoEd ")
-			.append( " JOIN produtoEd.produto produto ")
+			.append( " Box box")
+			.append(" JOIN box.cotas cota")
+			.append(" JOIN cota.estudoCotas estudoCota ")
+			.append(" LEFT JOIN estudoCota.rateiosDiferenca rateioDiferenca ")
+			.append(" LEFT JOIN rateioDiferenca.diferenca diferenca")
+			.append(" JOIN estudoCota.estudo estudo")
+			.append(" JOIN estudo.produtoEdicao produtoEd")
+			.append(" JOIN produtoEd.produto produto ")
+			.append(" JOIN produto.fornecedores fornecedor ")
+			.append(" JOIN fornecedor.juridica juridica ")
+			.append(" JOIN produtoEd.lancamentos lancamento ")
+			.append(" JOIN lancamento.expedicao expedicao ")
+
 			.append(" WHERE ")
 			.append(" lancamento.dataLancamentoDistribuidor =:dataLancamento ")
-			.append(" and lancamento.status =:status ");
+			.append(" and lancamento.status =:status ")
+			.append(" and box.tipoBox =:tipoBox ")
+			.append(" and box.codigo =:codigoBox ");
 		
 		hql.append(" group by ")
 			.append("produto.codigo,")
