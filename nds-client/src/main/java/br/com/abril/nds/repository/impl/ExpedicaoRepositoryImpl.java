@@ -321,6 +321,8 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 		
 		hql.append("SELECT new ") .append(ExpedicaoDTO.class.getCanonicalName()) 
 			.append(" ( ") 
+			
+						.append("lancamento.dataLancamentoDistribuidor, ")
 						.append("box.id,")
 						.append("box.codigo || '-'|| box.nome,")
 						.append("box.nome,")

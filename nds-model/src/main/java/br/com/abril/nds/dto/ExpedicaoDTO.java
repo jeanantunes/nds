@@ -2,6 +2,8 @@ package br.com.abril.nds.dto;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.util.Date;
 
 /**
  * 
@@ -17,6 +19,7 @@ public class ExpedicaoDTO implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 	
+	private Date dataLancamento;
 	private Long idBox;
 	private String codigoProduto;
 	private String nomeProduto;
@@ -24,8 +27,8 @@ public class ExpedicaoDTO implements Serializable {
 	private String nomeBox;
 	private Long numeroEdicao;
 	private BigDecimal precoCapa;
-	private BigDecimal qntReparte;
-	private BigDecimal qntDiferenca;
+	private BigInteger qntReparte;
+	private BigInteger qntDiferenca;
 	private BigDecimal valorFaturado;
 	private Long qntProduto;
 	private String razaoSocial;
@@ -33,8 +36,8 @@ public class ExpedicaoDTO implements Serializable {
 	public ExpedicaoDTO() {}
 	
 	public ExpedicaoDTO(String codigoProduto, String nomeProduto,
-						Long numeroEdicao, BigDecimal precoCapa, BigDecimal qntReparte,
-						BigDecimal qntDiferenca, BigDecimal valorFaturado, String razaoSocial) {
+						Long numeroEdicao, BigDecimal precoCapa, BigInteger qntReparte,
+						BigInteger qntDiferenca, BigDecimal valorFaturado, String razaoSocial) {
 		
 		this.codigoProduto = codigoProduto;
 		this.nomeProduto = nomeProduto;
@@ -47,8 +50,8 @@ public class ExpedicaoDTO implements Serializable {
 	}
 	
 	public ExpedicaoDTO(String codigoProduto, String nomeProduto,
-			Long numeroEdicao, BigDecimal precoCapa, BigDecimal qntReparte,
-			BigDecimal qntDiferenca, BigDecimal valorFaturado) {
+			Long numeroEdicao, BigDecimal precoCapa, BigInteger qntReparte,
+			BigInteger qntDiferenca, BigDecimal valorFaturado) {
 
 		this.codigoProduto = codigoProduto;
 		this.nomeProduto = nomeProduto;
@@ -60,10 +63,12 @@ public class ExpedicaoDTO implements Serializable {
 
 	}
 	
-	public ExpedicaoDTO(Long idBox,String codigoBox, String nomeBox,
-			BigDecimal precoCapa, BigDecimal qntReparte,
-			BigDecimal qntDiferenca, BigDecimal valorFaturado) {
+	public ExpedicaoDTO(Date dataLancamento, Long idBox, String codigoBox, String nomeBox,
+			BigDecimal precoCapa, BigInteger qntReparte,
+			BigInteger qntDiferenca, BigDecimal valorFaturado) {
 
+		
+		this.dataLancamento = dataLancamento;
 		this.idBox = idBox;
 		this.codigoBox = codigoBox;
 		this.nomeBox = nomeBox;
@@ -129,32 +134,39 @@ public class ExpedicaoDTO implements Serializable {
 	public void setPrecoCapa(BigDecimal precoCapa) {
 		this.precoCapa = precoCapa;
 	}
+	
 
 	/**
-	 * @return the qntReparte
+	 * Obtém qntReparte
+	 *
+	 * @return BigInteger
 	 */
-	public BigDecimal getQntReparte() {
+	public BigInteger getQntReparte() {
 		return qntReparte;
 	}
 
 	/**
-	 * @param qntReparte the qntReparte to set
+	 * Atribuí qntReparte
+	 * @param qntReparte 
 	 */
-	public void setQntReparte(BigDecimal qntReparte) {
+	public void setQntReparte(BigInteger qntReparte) {
 		this.qntReparte = qntReparte;
 	}
 
 	/**
-	 * @return the qntDiferenca
+	 * Obtém qntDiferenca
+	 *
+	 * @return BigInteger
 	 */
-	public BigDecimal getQntDiferenca() {
+	public BigInteger getQntDiferenca() {
 		return qntDiferenca;
 	}
 
 	/**
-	 * @param qntDiferenca the qntDiferenca to set
+	 * Atribuí qntDiferenca
+	 * @param qntDiferenca 
 	 */
-	public void setQntDiferenca(BigDecimal qntDiferenca) {
+	public void setQntDiferenca(BigInteger qntDiferenca) {
 		this.qntDiferenca = qntDiferenca;
 	}
 
@@ -243,6 +255,23 @@ public class ExpedicaoDTO implements Serializable {
 	 */
 	public void setRazaoSocial(String razaoSocial) {
 		this.razaoSocial = razaoSocial;
+	}
+
+	/**
+	 * Obtém dataLancamento
+	 *
+	 * @return Date
+	 */
+	public Date getDataLancamento() {
+		return dataLancamento;
+	}
+
+	/**
+	 * Atribuí dataLancamento
+	 * @param dataLancamento 
+	 */
+	public void setDataLancamento(Date dataLancamento) {
+		this.dataLancamento = dataLancamento;
 	}
 	
 }
