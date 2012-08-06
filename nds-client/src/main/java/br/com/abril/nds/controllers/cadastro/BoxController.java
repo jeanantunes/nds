@@ -44,7 +44,7 @@ public class BoxController {
 	}
 
 	@Path("/busca.json")
-	@Get
+//	@Get
 	public void busca(Box box, String sortname,
 			String sortorder, int rp, int page) {
 		Integer codigoBox = box.getCodigo();
