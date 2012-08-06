@@ -14,6 +14,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.beanutils.BeanComparator;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.client.vo.ConsultaNotaFiscalVO;
 import br.com.abril.nds.client.vo.ResultadoResumoExpedicaoVO;
 import br.com.abril.nds.client.vo.ResumoExpedicaoBoxVO;
 import br.com.abril.nds.client.vo.ResumoExpedicaoDetalheVO;
@@ -21,11 +22,13 @@ import br.com.abril.nds.client.vo.ResumoExpedicaoVO;
 import br.com.abril.nds.client.vo.RetornoExpedicaoVO;
 import br.com.abril.nds.dto.ExpedicaoDTO;
 import br.com.abril.nds.dto.ItemDTO;
+import br.com.abril.nds.dto.filtro.FiltroConsultaNotaFiscalDTO;
 import br.com.abril.nds.dto.filtro.FiltroResumoExpedicaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroResumoExpedicaoDTO.TipoPesquisaResumoExpedicao;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.fiscal.NotaFiscalEntradaFornecedor;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.service.ExpedicaoService;
 import br.com.abril.nds.util.CellModelKeyValue;
@@ -104,6 +107,7 @@ public class ResumoExpedicaoController {
 			resumoExpedicaoDetalhe.setReparte("100");
 			resumoExpedicaoDetalhe.setValorFaturado("100");
 			resumoExpedicaoDetalhe.setQntDiferenca("100");
+			resumoExpedicaoDetalhe.setNomeFornecedor("Fornecedor " + contador);
 			
 			listaDetalhe.add(resumoExpedicaoDetalhe);
 
@@ -586,4 +590,37 @@ public class ResumoExpedicaoController {
 		return usuario;
 	}
 	
+	@Get
+	@Path("/resumo/exportarDetalhes")
+	public void exportarDetalhes(FileType fileType, String codigoBox, Date dataLancamento) throws IOException {
+		
+		if (fileType == null) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "Tipo de arquivo não encontrado!");
+		}
+		
+		List<ResumoExpedicaoDetalheVO> listaDetalhe = new ArrayList<ResumoExpedicaoDetalheVO>();
+
+		int contador = 0;
+		
+		while(contador++<10) {
+
+			ResumoExpedicaoDetalheVO resumoExpedicaoDetalhe = new ResumoExpedicaoDetalheVO();
+			
+			resumoExpedicaoDetalhe.setCodigoProduto(""+contador);
+			resumoExpedicaoDetalhe.setDescricaoProduto("produto_"+contador);
+			resumoExpedicaoDetalhe.setEdicaoProduto(""+contador);
+			resumoExpedicaoDetalhe.setPrecoCapa(""+contador);
+			resumoExpedicaoDetalhe.setReparte("100");
+			resumoExpedicaoDetalhe.setValorFaturado("100");
+			resumoExpedicaoDetalhe.setQntDiferenca("100");
+			resumoExpedicaoDetalhe.setNomeFornecedor("Fornecedor " + contador);
+			
+			listaDetalhe.add(resumoExpedicaoDetalhe);
+
+		}
+		
+		FileExporter.to("consulta-detalhes-expedição-box", fileType)
+			.inHTTPResponse(this.getNDSFileHeader(), null, null, 
+					listaDetalhe, ResumoExpedicaoDetalheVO.class, this.httpServletResponse);
+	}
 }
