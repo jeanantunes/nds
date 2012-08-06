@@ -11,4 +11,11 @@ import br.com.abril.nds.model.fiscal.CFOP;
  */
 public interface CFOPRepository extends Repository<CFOP, Long> {
 	
+	/**
+	 * Obtem CFOP por código
+	 * @param codigo
+	 * @return CFOP 
+	 */
+	CFOP obterPorCodigo(String codigo);
+	
 }

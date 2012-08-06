@@ -2,12 +2,13 @@ package br.com.abril.nds.client.vo;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.export.Export;
-import br.com.abril.nds.util.export.Exportable;
 import br.com.abril.nds.util.export.Export.Alignment;
+import br.com.abril.nds.util.export.Exportable;
 
 @Exportable
 public class ResultadoDiferencaVO implements Serializable {
@@ -20,7 +21,7 @@ public class ResultadoDiferencaVO implements Serializable {
 	private TableModel<CellModelKeyValue<DiferencaVO>> tableModel;
 	
 	@Export(label = "Total", alignment=Alignment.RIGHT, alignWithHeader = "Exemplar")
-	private BigDecimal qtdeTotalDiferencas;
+	private BigInteger qtdeTotalDiferencas;
 	
 	@Export(label = "",alignment=Alignment.RIGHT, alignWithHeader = "Total R$")
 	private String valorTotalDiferencas;
@@ -41,7 +42,7 @@ public class ResultadoDiferencaVO implements Serializable {
 	 * @param valorTotalDiferencas - valor total das diferenças
 	 */
 	public ResultadoDiferencaVO(TableModel<CellModelKeyValue<DiferencaVO>> tableModel,
-										  BigDecimal qtdeTotalDiferencas,
+										BigInteger qtdeTotalDiferencas,
 										  String valorTotalDiferencas) {
 		
 		this.tableModel = tableModel;
@@ -66,14 +67,14 @@ public class ResultadoDiferencaVO implements Serializable {
 	/**
 	 * @return the qtdeTotalDiferencas
 	 */
-	public BigDecimal getQtdeTotalDiferencas() {
+	public BigInteger getQtdeTotalDiferencas() {
 		return qtdeTotalDiferencas;
 	}
 
 	/**
 	 * @param qtdeTotalDiferencas the qtdeTotalDiferencas to set
 	 */
-	public void setQtdeTotalDiferencas(BigDecimal qtdeTotalDiferencas) {
+	public void setQtdeTotalDiferencas(BigInteger qtdeTotalDiferencas) {
 		this.qtdeTotalDiferencas = qtdeTotalDiferencas;
 	}
 

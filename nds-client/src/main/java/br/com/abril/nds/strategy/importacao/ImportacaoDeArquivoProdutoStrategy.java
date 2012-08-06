@@ -258,7 +258,7 @@ public class ImportacaoDeArquivoProdutoStrategy extends ImportacaoAbstractStrate
 		        fornecedorRepository.adicionar(fornecedor);
 	  		}
 			
-			Produto produto = produtoRepository.obterProdutoPorNomeProdutoOuCodigo(input.getNomeDaPublicacao(),input.getCodigoDaPublicacao());
+			Produto produto = produtoRepository.obterProdutoPorCodigo(input.getCodigoDaPublicacao());
 			if (produto==null){
 				produto = new Produto();
 				
@@ -288,7 +288,7 @@ public class ImportacaoDeArquivoProdutoStrategy extends ImportacaoAbstractStrate
 				    (produto.getCodigoContexto()!=Integer.parseInt(input.getContextoFornecedorProduto()))||
 				    //(produto.getCodigo()!=input.getCodigoDaPublicacao())||
 				    (produto.getPacotePadrao()!=input.getPacotePadrao())||
-				    //(produto.getNome()!=input.getNomeDaPublicacao())||
+				    (produto.getNome()!=input.getNomeDaPublicacao())||
 				    (produto.getDescricao()!=input.getNomeDaPublicacao())){
 
 				    produto.setTipoProduto(tipoProduto);
@@ -297,7 +297,7 @@ public class ImportacaoDeArquivoProdutoStrategy extends ImportacaoAbstractStrate
 			  	    produto.setCodigoContexto(Integer.parseInt(input.getContextoFornecedorProduto()));
 			  	    //produto.setCodigo(input.getCodigoDaPublicacao());
 			  	    produto.setPacotePadrao(input.getPacotePadrao());
-			  	    //produto.setNome(input.getNomeDaPublicacao());
+			  	    produto.setNome(input.getNomeDaPublicacao());
 				    produto.setDescricao(input.getNomeDaPublicacao());
 				    produto.setPeriodicidade(periodicidadeProdutoService.getPeriodicidadeProdutoAsArchive(input.getPeriodicidade()));
 	
@@ -306,7 +306,7 @@ public class ImportacaoDeArquivoProdutoStrategy extends ImportacaoAbstractStrate
 				
 			}
 			
-			ProdutoEdicao produtoEdicao =produtoEdicaoRepository.obterProdutoEdicaoPorProdutoEEdicaoOuNome(produto.getId(), input.getEdicao(),input.getNomeComercial());
+			ProdutoEdicao produtoEdicao =produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao(produto.getCodigo(), input.getEdicao());
 			if (produtoEdicao==null){
 				produtoEdicao = new ProdutoEdicao();
 				
@@ -331,7 +331,7 @@ public class ImportacaoDeArquivoProdutoStrategy extends ImportacaoAbstractStrate
 					(produtoEdicao.getCodigo()!=input.getCodigoDaPublicacao())||
 					(produtoEdicao.getDesconto()!=input.getDesconto())||
 					(produtoEdicao.getPacotePadrao()!=input.getPacotePadrao())||
-					//(produtoEdicao.getNomeComercial()!=input.getNomeComercial())||
+					(produtoEdicao.getNomeComercial()!=input.getNomeComercial())||
 					(produtoEdicao.isAtivo()!=input.getStatusDaPublicacao())){
 				
 				    //produtoEdicao.setProduto(produto); 
@@ -340,7 +340,7 @@ public class ImportacaoDeArquivoProdutoStrategy extends ImportacaoAbstractStrate
 				    produtoEdicao.setCodigo(input.getCodigoDaPublicacao());
 				    produtoEdicao.setDesconto(input.getDesconto());
 				    produtoEdicao.setPacotePadrao(input.getPacotePadrao());
-				    //produtoEdicao.setNomeComercial(input.getNomeComercial());
+				    produtoEdicao.setNomeComercial(input.getNomeComercial());
 				    produtoEdicao.setAtivo(input.getStatusDaPublicacao());
 					
 				    produtoEdicaoRepository.alterar(produtoEdicao);

@@ -1,6 +1,7 @@
 package br.com.abril.nds.controllers.estoque;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -14,6 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.vo.ValidacaoVO;
+import br.com.abril.nds.dto.CabecalhoNotaDTO;
 import br.com.abril.nds.dto.RecebimentoFisicoDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaNotaFiscalDTO;
 import br.com.abril.nds.exception.ValidacaoException;
@@ -27,16 +29,24 @@ import br.com.abril.nds.model.fiscal.CFOP;
 import br.com.abril.nds.model.fiscal.NotaFiscal;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaFornecedor;
+import br.com.abril.nds.model.fiscal.StatusNotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
 import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
+import br.com.abril.nds.repository.ItemNotaFiscalEntradaRepository;
+import br.com.abril.nds.repository.ItemRecebimentoFisicoRepository;
+import br.com.abril.nds.service.CFOPService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.NotaFiscalEntradaService;
 import br.com.abril.nds.service.PessoaJuridicaService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
+import br.com.abril.nds.service.ProdutoService;
 import br.com.abril.nds.service.RecebimentoFisicoService;
+import br.com.abril.nds.service.TipoNotaFiscalService;
 import br.com.abril.nds.util.CellModel;
+import br.com.abril.nds.util.CellModelKeyValue;
+import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.caelum.vraptor.Path;
@@ -64,6 +74,15 @@ public class RecebimentoFisicoController {
 	private FornecedorService fornecedorService;
 	
 	@Autowired
+	private ProdutoService produtoService;
+	
+	@Autowired
+	private ItemRecebimentoFisicoRepository itemRecebimentoFisicoRepository;
+	
+	@Autowired
+	private ItemNotaFiscalEntradaRepository itemNotaFiscalEntradaRepository;
+	
+	@Autowired
 	private NotaFiscalEntradaService notaFiscalService;
 	
 	@Autowired
@@ -74,7 +93,13 @@ public class RecebimentoFisicoController {
 	
 	@Autowired
 	private ProdutoEdicaoService produtoEdicaoService;
+	
+	@Autowired
+	private TipoNotaFiscalService tipoNotaService;
 
+	@Autowired
+	private CFOPService cfopService;
+	
 	public RecebimentoFisicoController(
 			Result result, 
 			HttpServletRequest request,
@@ -272,7 +297,6 @@ public class RecebimentoFisicoController {
 			if(produtoEdicao!=null) {
 				result.use(Results.json()).from(produtoEdicao, "result").serialize();
 			}
-			
 		}
 		
 		result.use(Results.nothing());
@@ -380,7 +404,7 @@ public class RecebimentoFisicoController {
 	 */
 	private void carregarValorTotal(RecebimentoFisicoDTO itemRecebimento) {
 		
-		BigDecimal qtdRepartePrevisto = itemRecebimento.getRepartePrevisto();
+		BigInteger qtdRepartePrevisto = itemRecebimento.getRepartePrevisto();
 		
 		BigDecimal precoCapa = itemRecebimento.getPrecoCapa();
 		
@@ -390,7 +414,7 @@ public class RecebimentoFisicoController {
 		
 		if(qtdRepartePrevisto != null && precoCapa != null) {
 			
-			valorTotal = qtdRepartePrevisto.multiply(precoCapa);
+			valorTotal = precoCapa.multiply( new BigDecimal(qtdRepartePrevisto) ) ;
 		
 		}
 		  DecimalFormat df = new DecimalFormat("0.##");
@@ -409,18 +433,18 @@ public class RecebimentoFisicoController {
 	private void carregarValorDiferenca(RecebimentoFisicoDTO itemRecebimento) {
 		
 		if(itemRecebimento.getRepartePrevisto() == null) {
-			itemRecebimento.setRepartePrevisto(new BigDecimal("0.0"));
+			itemRecebimento.setRepartePrevisto(BigInteger.ZERO);
 		}
 
 		if(itemRecebimento.getQtdFisico() == null) {
-			itemRecebimento.setQtdFisico(new BigDecimal("0.0"));
+			itemRecebimento.setQtdFisico(BigInteger.ZERO);
 		}
 
-		BigDecimal qtdRepartePrevisto = itemRecebimento.getRepartePrevisto();
+		BigInteger qtdRepartePrevisto = itemRecebimento.getRepartePrevisto();
 		
-		BigDecimal qtdFisico = itemRecebimento.getQtdFisico();
+		BigInteger qtdFisico = itemRecebimento.getQtdFisico();
 		
-		BigDecimal valorDiferenca = qtdRepartePrevisto.subtract(qtdFisico);
+		BigInteger valorDiferenca = qtdRepartePrevisto.subtract( qtdFisico );
 		
 		itemRecebimento.setDiferenca(valorDiferenca);
 		
@@ -553,7 +577,7 @@ public class RecebimentoFisicoController {
 			
 			for(RecebimentoFisicoDTO recebimentoDTO: itensRecebimentoFisico){
 				
-				if( recebimentoDTO.getQtdFisico() == null || recebimentoDTO.getQtdFisico().compareTo(BigDecimal.ZERO) == 0 ){
+				if( recebimentoDTO.getQtdFisico() == null || recebimentoDTO.getQtdFisico().compareTo(BigInteger.ZERO) == 0 ){
 					
 					msgs.add("NF interface com Itens sem quantidade física informada.");
 					
@@ -1142,7 +1166,279 @@ public class RecebimentoFisicoController {
 	public void setItensRecebimentoFisicoToSession(List<RecebimentoFisicoDTO> itensRecebimentoFisico) {
 		request.getSession().setAttribute(ITENS_NOTA_FISCAL, itensRecebimentoFisico);
 	}
-
 	
+	
+	
+	
+	
+	
+	
+	
+	
+	/*NOVO POPUP DE CADASTRO DE NOTA FISCAL*/
+	
+	/**
+	 * Obtem cnpj do fornecedor
+	 * @param idFornecedor
+	 */
+	@Post
+	@Path("/obterCnpjFornecedor")
+	public void obterCnpjFornecedor(Long idFornecedor) {
+		String cnpj = "";
+		if(idFornecedor!=null) {
+			
+			Fornecedor fornecedor = fornecedorService.obterFornecedorPorId(idFornecedor);
+		
+			if(fornecedor!=null) {
+				cnpj = fornecedor.getJuridica().getCnpj();
+			}
 
+		}
+		result.use(Results.json()).from(cnpj, "result").serialize();
+	}
+	
+	/**
+	 * Obtem dados da edição do produto
+	 * @param codigo
+	 * @param edicao
+	 */
+	@Post
+	@Path("/obterDadosEdicao")
+	public void obterDadosEdicao(String codigo, String edicao) {
+		
+		if(codigo!=null && !codigo.trim().isEmpty() && edicao != null) {
+			
+			ProdutoEdicao produtoEdicao = produtoEdicaoService.obterProdutoEdicaoPorCodProdutoNumEdicao(codigo, edicao);
+		
+			if(produtoEdicao!=null) {
+				
+				RecebimentoFisicoDTO recFisicoDTO = new RecebimentoFisicoDTO();
+				
+				recFisicoDTO.setPrecoDesconto(produtoEdicao.getPrecoVenda().subtract(produtoEdicao.getDesconto()));
+				recFisicoDTO.setRepartePrevisto(produtoEdicao.getReparteDistribuido());
+				
+				result.use(Results.json()).from(recFisicoDTO, "result").serialize();
+			}
+			else{
+				throw new ValidacaoException(TipoMensagem.WARNING, "A [Edição] informada não existe para este [Produto].");
+			}
+			
+		}
+		
+		result.use(Results.nothing());
+	}
+	
+	/**
+	 * Carrega linha inicial da grid de inputs
+	 */
+	@Post
+	@Path("/montaGridItemNota")
+	public void montaGridItemNota() {
+
+		List<RecebimentoFisicoDTO> itemRecebimentoFisicoDTO = new ArrayList<RecebimentoFisicoDTO>();
+		
+		for (int indice = 0; indice < 1; indice++) {
+			
+			RecebimentoFisicoDTO recFisicoDTO = new RecebimentoFisicoDTO();
+			
+			itemRecebimentoFisicoDTO.add(recFisicoDTO);
+		}
+		
+		TableModel<CellModelKeyValue<RecebimentoFisicoDTO>> tableModel =
+				new TableModel<CellModelKeyValue<RecebimentoFisicoDTO>>();
+		
+		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(itemRecebimentoFisicoDTO));
+		
+		tableModel.setTotal(1);
+		
+		tableModel.setPage(1);
+		
+		this.result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
+	}
+	
+	/**
+	 * Inclui nova linha para entrada de dados na grid
+	 * @param itens
+	 */
+	@Post
+	@Path("/incluirItemNota")
+	public void incluirItemNota(List<RecebimentoFisicoDTO> itens) {
+
+		if (itens==null){
+			itens = new ArrayList<RecebimentoFisicoDTO>();
+		}
+		
+		RecebimentoFisicoDTO recFisicoDTO = new RecebimentoFisicoDTO();
+		
+		itens.add(recFisicoDTO);
+
+		TableModel<CellModelKeyValue<RecebimentoFisicoDTO>> tableModel =
+				new TableModel<CellModelKeyValue<RecebimentoFisicoDTO>>();
+		
+		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(itens));
+		
+		tableModel.setTotal(itens.size());
+		
+		tableModel.setPage(1);
+		
+		this.result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
+	}
+	
+	/**
+	 * Valida dados da Nota
+	 * @param nota
+	 */
+	private void validaCabecalhoNota(CabecalhoNotaDTO nota){
+		
+		//VALIDAÇÃO CABEÇALHO
+		if (nota.getFornecedor()==null){
+			throw new ValidacaoException(TipoMensagem.WARNING, "O campo [Fornecedor] é obrigatório!");
+		}
+		
+		if (nota.getCnpj()==null || "".equals(nota.getCnpj())){
+			throw new ValidacaoException(TipoMensagem.WARNING, "O campo [Cnpj] é obrigatório!");
+		}
+		
+		if (nota.getNumero()==null){
+			throw new ValidacaoException(TipoMensagem.WARNING, "O campo [Nota Fiscal] é obrigatório!");
+		}
+		
+		if (nota.getSerie()==null || "".equals(nota.getSerie())){
+			throw new ValidacaoException(TipoMensagem.WARNING, "O campo [Série] é obrigatório!");
+		}
+		
+		if (nota.getDataEmissao()==null){
+			throw new ValidacaoException(TipoMensagem.WARNING, "O campo [Data Emissão] é obrigatório!");
+		}
+		
+		if (nota.getDataEntrada()==null){
+			throw new ValidacaoException(TipoMensagem.WARNING, "O campo [Data Entrada] é obrigatório!");
+		}
+		
+		if (nota.getValorTotal()==null){
+			throw new ValidacaoException(TipoMensagem.WARNING, "O campo [Valor Total] é obrigatório!");
+		}
+	}
+	
+	/**
+	 * Valida Itens da Nota
+	 * @param itens
+	 */
+	private void validaItensNota(List<RecebimentoFisicoDTO> itens){
+
+		//VALIDAÇÃO ITENS
+		if (itens!=null && itens.size() > 0){
+		
+			int linha=0;
+			for (RecebimentoFisicoDTO item:itens){
+			     
+				linha++;
+				
+				if (item.getCodigoProduto()==null || "".equals(item.getCodigoProduto())){
+					throw new ValidacaoException(TipoMensagem.WARNING, "O campo [Codigo] do ítem "+linha+" é obrigatório!");
+				}
+				
+				if (item.getNomeProduto()==null || "".equals(item.getNomeProduto())){
+					throw new ValidacaoException(TipoMensagem.WARNING, "O campo [Produto] do ítem "+linha+" é obrigatório!");
+				}
+				
+				if (item.getEdicao()==null){
+					throw new ValidacaoException(TipoMensagem.WARNING, "O campo [Edição] do ítem "+linha+" é obrigatório!");
+				}
+				
+				if (item.getQtdFisico()==null){
+					throw new ValidacaoException(TipoMensagem.WARNING, "O campo [Qtde. Nota] do ítem "+linha+" é obrigatório!");
+				}
+				
+				if (item.getQtdPacote()==null){
+					throw new ValidacaoException(TipoMensagem.WARNING, "O campo [Qtde. Pcts] do ítem "+linha+" é obrigatório!");
+				}
+				
+				if (item.getQtdExemplares()==null){
+					throw new ValidacaoException(TipoMensagem.WARNING, "O campo [Qtde. Exems] do ítem "+linha+" é obrigatório!");
+				}
+				
+				if (item.getPrecoDesconto()==null){
+					throw new ValidacaoException(TipoMensagem.WARNING, "O campo [Preço Desc.] do ítem "+linha+" é obrigatório!");
+				}
+				
+				if (item.getDiferenca()==null){
+					throw new ValidacaoException(TipoMensagem.WARNING, "O campo [Diferença] do ítem "+linha+" é obrigatório!");
+				}
+				
+				if (item.getValorTotal()==null){
+					throw new ValidacaoException(TipoMensagem.WARNING, "O campo [Valor] do ítem "+linha+" é obrigatório!");
+				}
+			}
+		}
+		else{
+			throw new ValidacaoException(TipoMensagem.WARNING, "Não há ítens na nota!");
+		}
+	}
+	
+	/**
+	 * Inclui nota e itens
+	 * @param nota
+	 * @param itens
+	 */
+	@Post
+	@Path("/incluirNota")
+	public void incluirNota(CabecalhoNotaDTO nota, List<RecebimentoFisicoDTO> itens) {
+
+		this.validaCabecalhoNota(nota);
+		this.validaItensNota(itens);
+		
+		//TODO: capturar usuario logado
+		Usuario usuarioLogado = new Usuario();
+		usuarioLogado.setId(1L);
+		
+		Fornecedor fornecedor = fornecedorService.obterFornecedorPorId(nota.getFornecedor());
+		
+		NotaFiscalEntradaFornecedor notaFiscal = new NotaFiscalEntradaFornecedor();
+		notaFiscal.setFornecedor(fornecedor);
+		notaFiscal.setNumero(nota.getNumero());
+		notaFiscal.setSerie(nota.getSerie());
+		notaFiscal.setDataEmissao(nota.getDataEmissao());
+		notaFiscal.setDataExpedicao(nota.getDataEntrada());
+		notaFiscal.setValorLiquido(CurrencyUtil.converterValor(nota.getValorTotal()));
+		notaFiscal.setChaveAcesso(nota.getChaveAcesso());
+		
+		
+		notaFiscal.setEmitente(fornecedor.getJuridica());
+		notaFiscal.setCfop(cfopService.buscarPorCodigo("5917"));//OUTRAS SAIDAS DE MERCADORIA
+		notaFiscal.setTipoNotaFiscal(tipoNotaService.obterPorId(3l));//RECEBIMENTO DE ENCALHE
+		notaFiscal.setValorBruto(CurrencyUtil.converterValor(nota.getValorTotal()));
+        notaFiscal.setValorDesconto(notaFiscal.getValorBruto().subtract(notaFiscal.getValorLiquido()));
+		notaFiscal.setStatusNotaFiscal(StatusNotaFiscalEntrada.RECEBIDA);
+		notaFiscal.setOrigem(Origem.MANUAL);
+		
+		
+		//OBTEM CAMPOS OBRIGATORIOS PARA OS ITENS DA NOTA E TOTAL PARA VERIFICACAO COM O VALOR DA NOTA
+		Double totalItem = 0d;
+		ProdutoEdicao pe = null;
+		for (RecebimentoFisicoDTO item : itens){
+		    pe = produtoEdicaoService.obterProdutoEdicaoPorCodProdutoNumEdicao(item.getCodigoProduto(), Long.toString(item.getEdicao()));
+		    item.setIdProdutoEdicao(pe.getId());
+		    item.setOrigemItemNota(Origem.MANUAL);
+            item.setTipoLancamento(TipoLancamento.LANCAMENTO); 
+            
+            totalItem+=(item.getValorTotal().doubleValue());
+	    }
+		
+		if (notaFiscal.getValorLiquido().floatValue() != totalItem.floatValue()){
+			throw new ValidacaoException(TipoMensagem.WARNING, "Valor total da [Nota] não confere com o valor total dos [Itens]!");
+		}
+
+		try{
+		    recebimentoFisicoService.inserirDadosRecebimentoFisico(usuarioLogado, notaFiscal, itens, new Date());
+		}
+		catch(Exception e){
+			throw new ValidacaoException(TipoMensagem.ERROR, "Erro ao incluir nota: "+e.getMessage());
+		}
+		
+		List<String> listaMensagens = new ArrayList<String>();
+		listaMensagens.add("Nota fiscal cadastrada com sucesso.");
+		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, listaMensagens),"result").recursive().serialize();
+	}
+	
 }

@@ -1,6 +1,7 @@
 package br.com.abril.nds.service.impl;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -327,13 +328,13 @@ public class ChamadaAntecipadaEncalheServiceImpl implements ChamadaAntecipadaEnc
 	
 	@Transactional(readOnly=true)
 	@Override
-	public BigDecimal obterQntExemplaresCotasSujeitasAntecipacoEncalhe(FiltroChamadaAntecipadaEncalheDTO filtro) {
+	public BigInteger obterQntExemplaresCotasSujeitasAntecipacoEncalhe(FiltroChamadaAntecipadaEncalheDTO filtro) {
 		
-		BigDecimal qntPrevistaEncalhe = BigDecimal.ZERO;
+		BigInteger qntPrevistaEncalhe = BigInteger.ZERO;
 		
 		qntPrevistaEncalhe = cotaRepository.obterQntExemplaresCotasSujeitasAntecipacoEncalhe(filtro);
 		
-		if(qntPrevistaEncalhe == null || (qntPrevistaEncalhe.compareTo(BigDecimal.ZERO) <= 0)){
+		if(qntPrevistaEncalhe == null || (qntPrevistaEncalhe.compareTo(BigInteger.ZERO) <= 0)){
 			throw new ValidacaoException(TipoMensagem.WARNING,"Cota não possui exemplares em estoque para chamada antecipada de encalhe!");
 		}
 		

@@ -2,6 +2,7 @@ package br.com.abril.nds.dto;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Date;
 
 public class ProdutoEdicaoSlipDTO implements Serializable {
@@ -12,11 +13,11 @@ public class ProdutoEdicaoSlipDTO implements Serializable {
 	
 	private Long numeroEdicao;
 	
-	private BigDecimal reparte;
+	private BigInteger reparte;
 	
-	private BigDecimal encalhe;
+	private BigInteger encalhe;
 	
-	private BigDecimal quantidadeEfetiva;
+	private BigInteger quantidadeEfetiva;
 	
 	private BigDecimal precoVenda;
 	
@@ -61,9 +62,9 @@ public class ProdutoEdicaoSlipDTO implements Serializable {
 	/**
 	 * Obtém reparte
 	 *
-	 * @return BigDecimal
+	 * @return BigInteger
 	 */
-	public BigDecimal getReparte() {
+	public BigInteger getReparte() {
 		return reparte;
 	}
 
@@ -71,16 +72,16 @@ public class ProdutoEdicaoSlipDTO implements Serializable {
 	 * Atribuí reparte
 	 * @param reparte 
 	 */
-	public void setReparte(BigDecimal reparte) {
+	public void setReparte(BigInteger reparte) {
 		this.reparte = reparte;
 	}
 
 	/**
 	 * Obtém encalhe
 	 *
-	 * @return BigDecimal
+	 * @return BigInteger
 	 */
-	public BigDecimal getEncalhe() {
+	public BigInteger getEncalhe() {
 		return encalhe;
 	}
 
@@ -88,16 +89,16 @@ public class ProdutoEdicaoSlipDTO implements Serializable {
 	 * Atribuí encalhe
 	 * @param encalhe 
 	 */
-	public void setEncalhe(BigDecimal encalhe) {
+	public void setEncalhe(BigInteger encalhe) {
 		this.encalhe = encalhe;
 	}
 	
 	/**
 	 * Obtém quantidadeEfetiva
 	 *
-	 * @return BigDecimal
+	 * @return BigInteger
 	 */
-	public BigDecimal getQuantidadeEfetiva() {
+	public BigInteger getQuantidadeEfetiva() {
 		return quantidadeEfetiva;
 	}
 	
@@ -105,7 +106,7 @@ public class ProdutoEdicaoSlipDTO implements Serializable {
 	 * Atribuí quantidadeEfetiva
 	 * @param quantidadeEfetiva 
 	 */
-	public void setQuantidadeEfetiva(BigDecimal quantidadeEfetiva) {
+	public void setQuantidadeEfetiva(BigInteger quantidadeEfetiva) {
 		this.quantidadeEfetiva = quantidadeEfetiva;
 	}
 

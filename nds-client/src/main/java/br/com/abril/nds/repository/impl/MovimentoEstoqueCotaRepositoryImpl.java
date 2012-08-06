@@ -71,7 +71,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 	 * (non-Javadoc)
 	 * @see br.com.abril.nds.repository.MovimentoEstoqueCotaRepository#obterQtdeMovimentoEstoqueCotaParaProdutoEdicaoNoPeriodo(java.lang.Long, java.lang.Long, java.util.Date, java.util.Date, br.com.abril.nds.model.estoque.OperacaoEstoque)
 	 */
-	public BigDecimal obterQtdeMovimentoEstoqueCotaParaProdutoEdicaoNoPeriodo(
+	public BigInteger obterQtdeMovimentoEstoqueCotaParaProdutoEdicaoNoPeriodo(
 			Long idCota,
 			Long idProdutoEdicao,
 			Date dataInicial, 
@@ -100,7 +100,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		query.setParameter("idProdutoEdicao", idProdutoEdicao);
 		query.setParameter("operacaoEstoque", operacaoEstoque);
 		
-		return (BigDecimal) query.uniqueResult();
+		return (BigInteger) query.uniqueResult();
 		
 	}
 
