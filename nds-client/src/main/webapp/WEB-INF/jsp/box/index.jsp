@@ -23,7 +23,18 @@ $(function(){
 		<fieldset>
 	    	<legend>Cotas Associadas ao Box</legend>
 	        <table class="boxCotaGrid"></table>
-	    </fieldset>
+	  
+  		  		<span class="bt_arquivo">
+					<a href="${pageContext.request.contextPath}/cadastro/box/exportarDetalhes?fileType=XLS">
+						Arquivo
+					</a>
+				</span>
+  		  		<span class="bt_imprimir">
+					<a href="${pageContext.request.contextPath}/cadastro/box/exportarDetalhes?fileType=PDF">
+						Imprimir
+					</a>
+				</span>
+		 </fieldset>
 	</div>
 	</form>
 
@@ -86,8 +97,23 @@ $(function(){
         	<table class="boxGrid"></table>
         </div>
 
-           <span class="bt_novos" title="Novo"><a href="javascript:;" id="btnNovo"><img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0"/>Novo</a></span>
-   
+          <div id="fileExport" style="display: none;">
+  		  		
+  		  		<span class="bt_arquivo">
+					<a href="${pageContext.request.contextPath}/cadastro/box/exportarConsulta?fileType=XLS">
+						Arquivo
+					</a>
+				</span>
+  		  		
+  		  		<span class="bt_imprimir">
+					<a href="${pageContext.request.contextPath}/cadastro/box/exportarConsulta?fileType=PDF">
+						Imprimir
+					</a>
+				</span>
+			</div>
+			
+			<span class="bt_novos" title="Novo"><a href="javascript:;" id="btnNovo"><img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0"/>Novo</a></span>
+  		  
       </fieldset>
       <div class="linha_separa_fields">&nbsp;</div>
     </form>
