@@ -69,10 +69,17 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 			// SE EXISTIR PRODUTO/EDICAO NA TABELA
 			// VERIFICAR SE EXISTE LANCAMENTO CADASTRADO PARA O PRODUTO/EDICAO
 			
-			/*
+			
+			ndsiLoggerFactory
+			.getLogger()
+			.logError(
+					message,
+					EventoExecucaoEnum.RELACIONAMENTO,
+					"*********************** \r\n Preco do Arquivo:" + input.getPrecoPrevisto() + "\r\n ****************************");
+			
 			produtoEdicao.setPrecoVenda(input.getPrecoPrevisto());
-			getSession().update(produtoEdicao);
-			*/
+			//getSession().update(produtoEdicao);
+			
 			StringBuilder sql = new StringBuilder();
 
 			sql.append("SELECT lcto FROM Lancamento lcto ");
