@@ -434,7 +434,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 				dataVencimento = 
 				this.calendarioService.adicionarDiasUteis(
 						consolidadoFinanceiroCota.getDataConsolidado(), fatorVencimento,
-						null, formaCobrancaPrincipal.getDiaDoMes());
+						null, formaCobrancaPrincipal.getDiasDoMes().get(0));
 			break;
 			
 			case SEMANAL:
