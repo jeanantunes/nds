@@ -478,4 +478,41 @@ public class ExpedicaoResumoBoxRepositoryImplTest extends AbstractRepositoryImpl
 			save(diferenca);
 		}
 	}
+	
+	//-----------------------------------------------------
+	
+	
+	@Test 
+	public void consultarResumoExpedicaoProdutosDoBox(){
+		
+		FiltroResumoExpedicaoDTO filtro = new FiltroResumoExpedicaoDTO();
+		filtro.setDataLancamento(dataLancamento);
+		filtro.setCodigoBox(1);
+		filtro.setPaginacao(getPaginacaoVO(1, 10, Ordenacao.DESC));
+		
+		List<ExpedicaoDTO> lista = expedicaoRepository.obterResumoExpedicaoProdutosDoBox(filtro);
+		
+		Assert.assertNotNull(lista);
+		
+		Assert.assertTrue(!lista.isEmpty());
+	
+	}
+		
+	@Test
+	public void consultarQuantidadeResumoExpedicaoProdutosDoBox(){
+		
+		FiltroResumoExpedicaoDTO filtro = new FiltroResumoExpedicaoDTO();
+		filtro.setDataLancamento(dataLancamento);
+		filtro.setCodigoBox(1);
+		filtro.setPaginacao(getPaginacaoVO(1, 10, Ordenacao.DESC));
+		
+		Long quantidade =  expedicaoRepository.obterQuantidadeResumoExpedicaoProdutosDoBox(filtro);
+		
+		Assert.assertNotNull(quantidade);
+		
+		Assert.assertTrue(quantidade != 0);
+	}
+	
+	
+	
 }

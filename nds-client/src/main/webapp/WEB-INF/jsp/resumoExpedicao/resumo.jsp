@@ -73,7 +73,7 @@ $(function() {
 	
 	$("#venda-encalhe-grid").flexigrid({
 		
-		preProcess:executarPreProcessamentoDetalheResumoExpedicao,
+		preProcess: executarPreProcessamentoDetalheResumoExpedicao,
 		
 		dataType : 'json',
 		
@@ -225,12 +225,14 @@ $(function() {
 		_codigoBox = $("#codigoBox" + index).val();
 		_dataLancamento = $("#dataLanc" + index).text();
 		
+		var originalCodigoBox = _codigoBox.split('-')[0];
+		
 		$("#venda-encalhe-grid").flexOptions({
 			
 			url: contextPath + '/expedicao/resumo/pesquisar/detalhe',
 			dataType : 'json',
 			
-			params:[{name:'codigoBox', value: _codigoBox},
+			params:[{name:'codigoBox', value: originalCodigoBox},
 			        
 			        {name:'dataLancamento', value: _dataLancamento}]
 		
@@ -293,6 +295,7 @@ $(function() {
 			if (!row.cell.dataLancamento){
 				
 				dataLan = "";
+				
 			} else {
 				
 				dataLan = row.cell.dataLancamento;
@@ -431,7 +434,10 @@ $(function() {
   	
 	function exportarDetalhes(fileType) {
 
-		window.location = contextPath + "/expedicao/resumo/exportarDetalhes?fileType=" + fileType + "&codigoBox=" + _codigoBox + "&dataLancamento=" + _dataLancamento;
+		var originalCodigoBox = _codigoBox.split('-')[0];
+		
+		window.location = contextPath + "/expedicao/resumo/exportarDetalhes?fileType=" + fileType + "&codigoBox=" + originalCodigoBox + "&dataLancamento=" + _dataLancamento;
+		
 	}
 </script>
 
