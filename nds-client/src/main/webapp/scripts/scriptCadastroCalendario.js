@@ -110,7 +110,8 @@ var CadastroCalendario = {
 					var parametrosPesquisa = 
 						[ {name : "dtFeriado", value : dtFeriado},
 						  {name : "descTipoFeriado", value : tipoFeriado},
-						  {name : "idLocalidade", value : idLocalidade} ];
+						  {name : "idLocalidade", value : idLocalidade},
+						  {name : "indRepeteAnualmente", value : indRepeteAnualmente}];
 					
 					$.postJSON(
 							
