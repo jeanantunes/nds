@@ -69,10 +69,10 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 			// SE EXISTIR PRODUTO/EDICAO NA TABELA
 			// VERIFICAR SE EXISTE LANCAMENTO CADASTRADO PARA O PRODUTO/EDICAO
 			
-			
+			/*
 			produtoEdicao.setPrecoVenda(input.getPrecoPrevisto());
 			getSession().update(produtoEdicao);
-			
+			*/
 			StringBuilder sql = new StringBuilder();
 
 			sql.append("SELECT lcto FROM Lancamento lcto ");
@@ -144,7 +144,7 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 
 				}
 
-				getSession().update(lancamento);
+				//getSession().update(lancamento);
 
 			} else {
 				// NAO EXISTE LANCAMENTO PARA O PRODUTO/EDICAO INFORMADO
