@@ -262,6 +262,22 @@ public class ParciaisController {
 	}
 	
 	@Post
+	public void pesquisarParciaisVenda() {
+		
+		List<ParcialVendaDTO> listaParcialVenda = this.parciaisService.obterDetalhesVenda();
+		
+		TableModel<CellModelKeyValue<ParcialVendaDTO>> tableModel = new TableModel<CellModelKeyValue<ParcialVendaDTO>>();
+		
+		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaParcialVenda));
+		
+		tableModel.setPage(1);
+		
+		tableModel.setTotal(listaParcialVenda.size());
+
+		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
+	}
+	
+	@Post
 	public void obterPebDoProduto(String codigoProduto, String edicaoProduto) {
 		
 		ProdutoEdicao produtoEdicao = produtoEdicaoService.obterProdutoEdicaoPorCodProdutoNumEdicao(codigoProduto, edicaoProduto);
@@ -413,7 +429,7 @@ public class ParciaisController {
 	@Get
 	public void exportarDetalhesVenda(FileType fileType) throws IOException {
 		
-		List<ParcialVendaDTO> listaParcialVenda = new ArrayList<ParcialVendaDTO>();
+		List<ParcialVendaDTO> listaParcialVenda = this.parciaisService.obterDetalhesVenda();
 		
 		if(listaParcialVenda.isEmpty()) {
 
@@ -422,7 +438,7 @@ public class ParciaisController {
 
 		FileExporter.to("detalhes_venda", fileType).inHTTPResponse(this.getNDSFileHeader(), null, null, 
 				listaParcialVenda, ParcialVendaDTO.class, this.httpResponse);
-		
+
 		result.nothing();
 	}
 		
