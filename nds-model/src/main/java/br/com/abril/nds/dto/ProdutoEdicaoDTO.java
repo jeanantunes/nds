@@ -2,6 +2,7 @@ package br.com.abril.nds.dto;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Date;
 
 import br.com.abril.nds.model.planejamento.StatusLancamento;
@@ -55,8 +56,9 @@ public class ProdutoEdicaoDTO implements Serializable {
 	// numeroEdicao; pacotePadrao;
 	private BigDecimal precoPrevisto;
 	// precoVenda; (Real)
-	private BigDecimal repartePrevisto;
-	private BigDecimal repartePromocional;
+	private BigInteger repartePrevisto;
+	private BigInteger repartePromocional;
+
 	// codigoDeBarras
 	private String codigoDeBarrasCorporativo;
 	private String descricaoDesconto;
@@ -337,26 +339,26 @@ public class ProdutoEdicaoDTO implements Serializable {
 	/**
 	 * @return the repartePrevisto
 	 */
-	public BigDecimal getRepartePrevisto() {
+	public BigInteger getRepartePrevisto() {
 		return repartePrevisto;
 	}
 	/**
 	 * @param repartePrevisto the repartePrevisto to set
 	 */
-	public void setRepartePrevisto(BigDecimal repartePrevisto) {
+	public void setRepartePrevisto(BigInteger repartePrevisto) {
 		this.repartePrevisto = repartePrevisto;
 	}
-	
+
 	/**
 	 * @return the repartePromocional
 	 */
-	public BigDecimal getRepartePromocional() {
+	public BigInteger getRepartePromocional() {
 		return repartePromocional;
 	}
 	/**
 	 * @param repartePromocional the repartePromocional to set
 	 */
-	public void setRepartePromocional(BigDecimal repartePromocional) {
+	public void setRepartePromocional(BigInteger repartePromocional) {
 		this.repartePromocional = repartePromocional;
 	}
 	/**

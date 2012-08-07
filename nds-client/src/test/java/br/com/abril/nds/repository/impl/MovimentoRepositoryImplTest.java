@@ -1,6 +1,7 @@
 package br.com.abril.nds.repository.impl;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Calendar;
 import java.util.List;
 
@@ -50,19 +51,19 @@ public class MovimentoRepositoryImplTest extends AbstractRepositoryImplTest  {
 		save(produtoVeja);
 		
 		ProdutoEdicao produtoEdicaoVeja = Fixture.produtoEdicao("1", 1L, 10, 14,
-			new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(20), "ABCDEFGHIJKLMNOPQRSTU", 1L, produtoVeja, null, false);
+			new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(20), "ABCDEFGHIJKLMNOPQ", 1L, produtoVeja, null, false);
 		save(produtoEdicaoVeja);
 		
 		tipoMovimentoFaltaEm = Fixture.tipoMovimentoFaltaEm();
 		tipoMovimentoFaltaEm = merge(tipoMovimentoFaltaEm);
 		
-		EstoqueProduto estoqueProdutoVeja = Fixture.estoqueProduto(produtoEdicaoVeja, BigDecimal.ZERO);
+		EstoqueProduto estoqueProdutoVeja = Fixture.estoqueProduto(produtoEdicaoVeja, BigInteger.ZERO);
 		save(estoqueProdutoVeja);
 		
 		MovimentoEstoque movimentoEstoque = 
 			Fixture.movimentoEstoque(
 				null, produtoEdicaoVeja, tipoMovimentoFaltaEm, usuarioJoao, estoqueProdutoVeja,
-				calendar.getTime(), BigDecimal.TEN, StatusAprovacao.PENDENTE, "motivo");
+				calendar.getTime(), BigInteger.TEN, StatusAprovacao.PENDENTE, "motivo");
 		save(movimentoEstoque);
 	}
 	

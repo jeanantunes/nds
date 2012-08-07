@@ -1,6 +1,7 @@
 package br.com.abril.nds.repository.impl;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
 
@@ -38,7 +39,7 @@ public class ChamadaoRepositoryImplTest extends AbstractRepositoryImplTest  {
 	@Autowired
 	private ChamadaoRepository chamadaoRepository;
 	
-	private static BigDecimal qtdEstoqueVeja1;
+	private static BigInteger qtdEstoqueVeja1;
 	
 	@Before
 	public void setup() {
@@ -54,7 +55,7 @@ public class ChamadaoRepositoryImplTest extends AbstractRepositoryImplTest  {
 		
 		ProdutoEdicao produtoEdicaoVeja1 =
 			Fixture.produtoEdicao("1", 1L, 10, 14, new BigDecimal(0.1),
-								  BigDecimal.TEN, new BigDecimal(20), "ABCDEFGHIJKLMNOPQRSTU", 1L, produtoVeja, null, false);
+								  BigDecimal.TEN, new BigDecimal(20), "ABCDEFGHIJKLMNOPQ", 1L, produtoVeja, null, false);
 		save(produtoEdicaoVeja1);
 		
 		Box box1 = Fixture.criarBox(1, "BX-001", TipoBox.LANCAMENTO);
@@ -69,7 +70,7 @@ public class ChamadaoRepositoryImplTest extends AbstractRepositoryImplTest  {
 		
 		EstoqueProdutoCota estoqueProdutoCotaVeja1 =
 			Fixture.estoqueProdutoCota(produtoEdicaoVeja1, cotaManoel,
-									   BigDecimal.TEN, BigDecimal.ONE);
+					BigInteger.TEN, BigInteger.ONE);
 		save(estoqueProdutoCotaVeja1);
 		
 		qtdEstoqueVeja1 = 
@@ -77,17 +78,17 @@ public class ChamadaoRepositoryImplTest extends AbstractRepositoryImplTest  {
 				estoqueProdutoCotaVeja1.getQtdeDevolvida());
 		
 		Estudo estudoVeja1 =
-			Fixture.estudo(BigDecimal.TEN, new Date(), produtoEdicaoVeja1);
+			Fixture.estudo(BigInteger.TEN, new Date(), produtoEdicaoVeja1);
 		save(estudoVeja1);
 		
 		EstudoCota estudoCotaVeja1 =
-			Fixture.estudoCota(new BigDecimal(10), new BigDecimal(10), estudoVeja1, cotaManoel);
+			Fixture.estudoCota(BigInteger.valueOf(10), BigInteger.valueOf(10), estudoVeja1, cotaManoel);
 		save(estudoCotaVeja1);
 		
 		Lancamento lancamentoVeja1 =
 			Fixture.lancamentoExpedidos(TipoLancamento.LANCAMENTO, produtoEdicaoVeja1, new Date(),
 										DateUtil.adicionarDias(new Date(), 1), new Date(), new Date(),
-										BigDecimal.TEN, StatusLancamento.EXPEDIDO, null, null, 1);
+										BigInteger.TEN, StatusLancamento.EXPEDIDO, null, null, 1);
 		save(lancamentoVeja1);
 	}
 	

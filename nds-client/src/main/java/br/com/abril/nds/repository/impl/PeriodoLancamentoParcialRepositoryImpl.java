@@ -10,6 +10,7 @@ import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Repository;
 
+import br.com.abril.nds.dto.ParcialVendaDTO;
 import br.com.abril.nds.dto.PeriodoParcialDTO;
 import br.com.abril.nds.dto.filtro.FiltroParciaisDTO;
 import br.com.abril.nds.dto.filtro.FiltroParciaisDTO.ColunaOrdenacaoPeriodo;
@@ -27,7 +28,7 @@ public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepositoryMo
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<PeriodoParcialDTO> obterPeriodosParciais(FiltroParciaisDTO filtro) {
-				
+
 		StringBuilder hql = new StringBuilder();
 		
 		hql.append(" select produtoEdicao.id as idProdutoEdicao, ");
@@ -329,4 +330,14 @@ public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepositoryMo
 		
 		return (count == null || count == 0) ? true : false;
 	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public List<ParcialVendaDTO> obterDetalhesVenda() {
+
+		return null;
+	}
+	
 }

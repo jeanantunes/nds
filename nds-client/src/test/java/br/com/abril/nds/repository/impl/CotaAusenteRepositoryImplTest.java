@@ -75,7 +75,7 @@ public class CotaAusenteRepositoryImplTest extends AbstractRepositoryImplTest {
 		produto.setEditor(abril);
 		save(produto);
 		
-		ProdutoEdicao pe = Fixture.produtoEdicao("1", 12L, 3, 2, new BigDecimal(12), new BigDecimal(120),new BigDecimal(35), "ABCDEFGHIJKLMNOPQRSTU", 1L, produto, null, false);
+		ProdutoEdicao pe = Fixture.produtoEdicao("1", 12L, 3, 2, new BigDecimal(12), new BigDecimal(120),new BigDecimal(35), "ABCDEFGHIJKLMNOPQ", 1L, produto, null, false);
 		save(pe);
 		
 	

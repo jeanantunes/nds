@@ -14,6 +14,13 @@ var PARCIAIS = new Parciais('${pageContext.request.contextPath}');
 
 function detalheVenda() {
 
+	$(".parciaisVendaGrid").flexOptions({			
+		url : '<c:url value="/parciais/pesquisarParciaisVenda" />',
+		dataType : 'json'
+	});
+
+	$(".parciaisVendaGrid").flexReload();
+
 	$( "#dialog-detalhe-venda" ).dialog({
 		resizable: false,
 		height:420,

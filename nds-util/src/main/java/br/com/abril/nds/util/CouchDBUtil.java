@@ -11,6 +11,11 @@ import org.apache.commons.lang.StringUtils;
 public abstract class CouchDBUtil {
 	
 	/**
+	 * Nome do banco de dados de usuários
+	 */
+	public static final String DB_NAME_USERS = "_users";
+	
+	/**
 	 * Prefixo do nome dos bancos de dados
 	 */
 	private static final String DB_NAME_PREFIX = "db_";

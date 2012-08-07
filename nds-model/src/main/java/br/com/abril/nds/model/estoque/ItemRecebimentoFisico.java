@@ -1,6 +1,7 @@
 package br.com.abril.nds.model.estoque;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -29,7 +30,7 @@ public class ItemRecebimentoFisico implements Serializable {
 	@Column(name = "ID")
 	private Long id;
 	@Column(name = "QTDE_FISICO", nullable = false)
-	private BigDecimal qtdeFisico;
+	private BigInteger qtdeFisico;
 	@OneToOne
 	@JoinColumn(name = "DIFERENCA_ID")
 	private Diferenca diferenca;
@@ -54,13 +55,13 @@ public class ItemRecebimentoFisico implements Serializable {
 	/**
 	 * @return the qtdeFisico
 	 */
-	public BigDecimal getQtdeFisico() {
+	public BigInteger getQtdeFisico() {
 		return qtdeFisico;
 	}
 	/**
 	 * @param qtdeFisico the qtdeFisico to set
 	 */
-	public void setQtdeFisico(BigDecimal qtdeFisico) {
+	public void setQtdeFisico(BigInteger qtdeFisico) {
 		this.qtdeFisico = qtdeFisico;
 	}
 	/**

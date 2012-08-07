@@ -58,7 +58,7 @@ public class DistribuidorController {
 		}
 		
 		Date data = 
-			DateUtil.obterDataDaSemanaNoAno(numeroSemana, distribuidor.getInicioSemana().getCodigoDiaSemana());
+			DateUtil.obterDataDaSemanaNoAno(numeroSemana, distribuidor.getInicioSemana().getCodigoDiaSemana(), null);
 		
 		String dataFormatada = "";
 		

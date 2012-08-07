@@ -36,7 +36,7 @@ public class DateUtilTest {
 		
 		Date dataEsperada = DateUtil.parseDataPTBR("01/01/2012");
 		
-		Date dataObtida = DateUtil.obterDataDaSemanaNoAno(1, Calendar.SUNDAY);
+		Date dataObtida = DateUtil.obterDataDaSemanaNoAno(1, Calendar.SUNDAY, null);
 		
 		Assert.assertEquals(dataEsperada, dataObtida);
 	}
@@ -76,6 +76,18 @@ public class DateUtilTest {
 		periodoEsperado.add(DateUtil.parseDataPTBR("19/04/2012"));
 		
 		Assert.assertEquals(periodoEsperado, periodo);
+	}
+	
+	@Test
+	public void obterDataDaSemana01011999() {
+		Integer numeroSemana = 1;
+		Integer inicioSemana = 4;
+		Date data = DateUtil.parseDataPTBR("01/01/1999");
+
+		Date expected = DateUtil.parseDataPTBR("30/12/1998");
+		Date actual = DateUtil.obterDataDaSemanaNoAno(numeroSemana, inicioSemana, data);
+		
+		Assert.assertEquals(expected, actual);
 	}
 
 }

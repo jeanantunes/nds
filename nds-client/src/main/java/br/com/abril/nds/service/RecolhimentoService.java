@@ -25,13 +25,15 @@ public interface RecolhimentoService {
 	 * @param listaIdsFornecedores - lista de id's dos fornecedores
 	 * @param tipoBalanceamentoRecolhimento - tipo de balanceamento de recolhimento
 	 * @param forcarBalanceamento - indica se é necessário forçar o balanceamento da matriz
+	 * @param dataBalanceamento - data de balanceamento
 	 * 
 	 * @return {@link BalanceamentoRecolhimentoDTO}
 	 */
 	BalanceamentoRecolhimentoDTO obterMatrizBalanceamento(Integer numeroSemana,
 														  List<Long> listaIdsFornecedores,
 														  TipoBalanceamentoRecolhimento tipoBalanceamentoRecolhimento,
-														  boolean forcarBalanceamento);
+														  boolean forcarBalanceamento,
+														  Date dataBalanceamento);
 	
 	/**
 	 * Salva o balanceamento da matriz de recolhimento.

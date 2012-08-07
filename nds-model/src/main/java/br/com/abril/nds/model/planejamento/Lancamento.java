@@ -1,6 +1,7 @@
 package br.com.abril.nds.model.planejamento;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -91,10 +92,10 @@ public class Lancamento implements Serializable {
 	private StatusLancamento status;
 	
 	@Column(name = "REPARTE", nullable = false)
-	private BigDecimal reparte;
+	private BigInteger reparte;
 	
 	@Column(name = "REPARTE_PROMOCIONAL", nullable = true)
-	private BigDecimal repartePromocional;
+	private BigInteger repartePromocional;
 	
 	@OneToMany
 	private Set<ItemRecebimentoFisico> recebimentos = new HashSet<ItemRecebimentoFisico>();
@@ -208,11 +209,11 @@ public class Lancamento implements Serializable {
 		this.tipoLancamento = tipoLancamento;
 	}
 	
-	public BigDecimal getReparte() {
+	public BigInteger getReparte() {
 		return reparte;
 	}
 	
-	public void setReparte(BigDecimal reparte) {
+	public void setReparte(BigInteger reparte) {
 		this.reparte = reparte;
 	}
 	
@@ -260,8 +261,8 @@ public class Lancamento implements Serializable {
 		this.estudo = estudo;
 	}
 
-	public BigDecimal getTotalRecebimentoFisico() {
-		BigDecimal total = BigDecimal.ZERO;
+	public BigInteger getTotalRecebimentoFisico() {
+		BigInteger total = BigInteger.ZERO;
 		for (ItemRecebimentoFisico recebimento : recebimentos) {
 			total = total.add(recebimento.getQtdeFisico());
 		}
@@ -299,14 +300,14 @@ public class Lancamento implements Serializable {
 	/**
 	 * @return the repartePromocional
 	 */
-	public BigDecimal getRepartePromocional() {
+	public BigInteger getRepartePromocional() {
 		return repartePromocional;
 	}
 
 	/**
 	 * @param repartePromocional the repartePromocional to set
 	 */
-	public void setRepartePromocional(BigDecimal repartePromocional) {
+	public void setRepartePromocional(BigInteger repartePromocional) {
 		this.repartePromocional = repartePromocional;
 	}
 

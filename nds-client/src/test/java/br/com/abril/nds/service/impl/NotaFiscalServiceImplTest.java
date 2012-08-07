@@ -1,6 +1,7 @@
 package br.com.abril.nds.service.impl;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -27,7 +28,6 @@ import br.com.abril.nds.model.cadastro.EnderecoDistribuidor;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
-import br.com.abril.nds.model.cadastro.Moeda;
 import br.com.abril.nds.model.cadastro.ParametroContratoCota;
 import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
@@ -283,11 +283,11 @@ public class NotaFiscalServiceImplTest extends AbstractRepositoryImplTest {
 
 		Lancamento lancamento = Fixture.lancamento(TipoLancamento.LANCAMENTO,
 				produtoEdicaoVeja, new Date(), new Date(), new Date(),
-				new Date(), BigDecimal.TEN, StatusLancamento.CONFIRMADO, null,
+				new Date(), BigInteger.TEN, StatusLancamento.CONFIRMADO, null,
 				1);
 		save(lancamento);
 
-		Estudo estudo = Fixture.estudo(BigDecimal.TEN, new Date(),
+		Estudo estudo = Fixture.estudo(BigInteger.TEN, new Date(),
 				produtoEdicaoVeja);
 		save(estudo);
 	}
@@ -452,7 +452,7 @@ public class NotaFiscalServiceImplTest extends AbstractRepositoryImplTest {
 
 			ProdutoServico produtoServico = Fixture.produtoServico(i + 1, 111,
 					1111L, "codigoProduto", "descricaoProduto", encargo, 111L,
-					111L, nota, produtoEdicao, BigDecimal.ONE, "uni",
+					111L, nota, produtoEdicao, BigInteger.ONE, "uni",
 					new BigDecimal(4312), new BigDecimal(4312), new BigDecimal(
 							4312), new BigDecimal(4312), new BigDecimal(4312),
 					new BigDecimal(12344));
@@ -469,7 +469,7 @@ public class NotaFiscalServiceImplTest extends AbstractRepositoryImplTest {
 		List<ItemNotaFiscal> listItemNotaFiscal = new ArrayList<ItemNotaFiscal>();
 		
 		
-		listItemNotaFiscal.add(new ItemNotaFiscal(produtoEdicaoComDesconto.getId(), BigDecimal.TEN, BigDecimal.TEN, "091"));
+		listItemNotaFiscal.add(new ItemNotaFiscal(produtoEdicaoComDesconto.getId(), BigInteger.TEN, BigDecimal.TEN, "091"));
 		
 		Endereco enderecoTransporte = Fixture.criarEndereco(
 				TipoEndereco.COMERCIAL, "10500250", "Rua Nova", 1000,

@@ -2,6 +2,7 @@ package br.com.abril.nds.controllers.devolucao;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -279,7 +280,7 @@ public class ChamadaEncalheAntecipadaController {
 		filtro.setCodMunicipio(municipio);
 		filtro.setCodTipoPontoPDV(tipoPontoPDV);
 		
-		BigDecimal quantidade = BigDecimal.ZERO;
+		BigInteger quantidade = BigInteger.ZERO;
 		
 		if(!programacaoRealizada){
 			
@@ -527,7 +528,7 @@ public class ChamadaEncalheAntecipadaController {
 			listaChamadaAntecipadaEncalheDTOs.add(
 					new ChamadaAntecipadaEncalheDTO(
 							Integer.parseInt(vo.getNumeroCota()),
-							new BigDecimal(vo.getQntExemplares()),
+							vo.getQntExemplares(),
 							vo.getCodigoChamdaEncalhe(),
 							vo.getIdLancamento()));
 		}
@@ -713,7 +714,7 @@ public class ChamadaEncalheAntecipadaController {
 			chamadaEncalheAntecipadaVO.setBox(dto.getCodBox() + " - " + dto.getNomeBox());
 			chamadaEncalheAntecipadaVO.setNomeCota(dto.getNomeCota());
 			chamadaEncalheAntecipadaVO.setNumeroCota( String.valueOf(dto.getNumeroCota()));
-			chamadaEncalheAntecipadaVO.setQntExemplares(String.valueOf(dto.getQntExemplares().intValue()));
+			chamadaEncalheAntecipadaVO.setQntExemplares(dto.getQntExemplares());
 			chamadaEncalheAntecipadaVO.setCodigoChamdaEncalhe(dto.getCodigoChamadaEncalhe());
 			chamadaEncalheAntecipadaVO.setIdLancamento(dto.getIdLancamento());
 			
@@ -880,10 +881,10 @@ public class ChamadaEncalheAntecipadaController {
 		
 		InfoChamdaAntecipadaEncalheDTO infoChamdaAntecipadaEncalheDTO = new InfoChamdaAntecipadaEncalheDTO();
 		
-		Integer totalExemplares = 0;
+		BigInteger totalExemplares = BigInteger.ZERO;
 		 
 		for(ChamadaEncalheAntecipadaVO vo : listaChamadaEncalheAntecipada){
-			totalExemplares += Integer.parseInt(vo.getQntExemplares());
+			totalExemplares.add(vo.getQntExemplares());
 		}
 		
 		infoChamdaAntecipadaEncalheDTO.setTotalCotas(new BigDecimal(listaChamadaEncalheAntecipada.size()));
@@ -911,7 +912,7 @@ public class ChamadaEncalheAntecipadaController {
 		List<ChamadaEncalheAntecipadaPesCotaVO> listRetorno = new ArrayList<ChamadaEncalheAntecipadaPesCotaVO>();
 		
 		for(ChamadaEncalheAntecipadaVO vo : list){
-			listRetorno.add(new ChamadaEncalheAntecipadaPesCotaVO(vo.getNumeroCota(),vo.getNomeCota(),vo.getQntExemplares()));
+			listRetorno.add(new ChamadaEncalheAntecipadaPesCotaVO(vo.getNumeroCota(),vo.getNomeCota(),vo.getQntExemplares().toString()));
 		}
 		
 		return listRetorno;

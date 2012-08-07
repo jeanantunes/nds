@@ -51,7 +51,7 @@ public class Produto implements Serializable {
 	@Column(name = "PERIODICIDADE", nullable = false)
 	private PeriodicidadeProduto periodicidade;
 	
-	@Column(name = "NOME", nullable = false, unique = true, length = 60)
+	@Column(name = "NOME", nullable = false, unique = false, length = 60)
 	private String nome;
 	
 	@Column(name = "DESCRICAO")

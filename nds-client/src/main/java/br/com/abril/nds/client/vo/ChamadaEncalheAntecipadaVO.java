@@ -1,10 +1,11 @@
 package br.com.abril.nds.client.vo;
 
 import java.io.Serializable;
+import java.math.BigInteger;
 
 import br.com.abril.nds.util.export.Export;
-import br.com.abril.nds.util.export.Exportable;
 import br.com.abril.nds.util.export.Export.Alignment;
+import br.com.abril.nds.util.export.Exportable;
 
 @Exportable
 public class ChamadaEncalheAntecipadaVO implements Serializable {
@@ -30,7 +31,7 @@ public class ChamadaEncalheAntecipadaVO implements Serializable {
 	private String nomeCota;
 	
 	@Export(label = "Qtde.Exemplares",alignment = Alignment.CENTER, exhibitionOrder = 4)
-	private String qntExemplares;
+	private BigInteger qntExemplares;
 	
 	
 	
@@ -134,13 +135,13 @@ public class ChamadaEncalheAntecipadaVO implements Serializable {
 	/**
 	 * @return the qntExemplares
 	 */
-	public String getQntExemplares() {
+	public BigInteger getQntExemplares() {
 		return qntExemplares;
 	}
 	/**
 	 * @param qntExemplares the qntExemplares to set
 	 */
-	public void setQntExemplares(String qntExemplares) {
+	public void setQntExemplares(BigInteger qntExemplares) {
 		this.qntExemplares = qntExemplares;
 	}
 	

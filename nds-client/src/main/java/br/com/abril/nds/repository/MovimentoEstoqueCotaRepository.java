@@ -1,6 +1,7 @@
 package br.com.abril.nds.repository;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
 
@@ -140,9 +141,9 @@ public interface MovimentoEstoqueCotaRepository extends Repository<MovimentoEsto
 	 * @param dataFinal
 	 * @param operacaoEstoque
 	 * 
-	 * @return BigDecimal
+	 * @return BigInteger
 	 */
-	public BigDecimal obterQtdeMovimentoEstoqueCotaParaProdutoEdicaoNoPeriodo(
+	public BigInteger obterQtdeMovimentoEstoqueCotaParaProdutoEdicaoNoPeriodo(
 			Long idCota,
 			Long idProdutoEdicao,
 			Date dataInicial, 
