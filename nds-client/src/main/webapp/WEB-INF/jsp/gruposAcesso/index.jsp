@@ -1,7 +1,9 @@
 <head>
 <script type="text/javascript">
 	$(function() {
-		gruposAcessoController.init("${pageContext.request.contextPath}");
+		gruposPermissaoController.init("${pageContext.request.contextPath}");
+		usuariosPermissaoController.init("${pageContext.request.contextPath}");
+		regrasPermissaoController.init("${pageContext.request.contextPath}");
 	});
 </script>
 <style type="text/css">
@@ -15,12 +17,13 @@
 	  <p>Confirma a exclusão deste Grupo?</p>
 	</div>
 	</form>
-	<form action="/administracao/gruposAcesso" id="novo_grupo_form">
-	<div id="dialog-novo-grupo" title="Regra" style="display:none;">
+	<div id="dialog-novo-grupo" title="Grupo" style="display:none;">
+		<form action="/administracao/gruposAcesso" id="novo_grupo_form">
+        <input type="hidden" name="grupoPermissaoDTO.id" id="grupoPermissaoId" />
      	<table width="379" border="0" cellpadding="2" cellspacing="1" class="filtro">
 	        <tr>
 	          <td width="70">Nome:</td>
-	          <td width="298"><input type="text" name="textfield" id="textfield" style="width:280px;"/></td>
+	          <td width="298"><input type="text" name="grupoPermissaoDTO.nome" id="grupoPermissaonome" style="width:280px;"/></td>
 	        </tr>
       	</table>
          <table width="582" border="0" align="center" cellpadding="2" cellspacing="2">
@@ -28,71 +31,78 @@
 			    <td width="264" valign="top">
 			    	<fieldset>
 			    		<legend>Regras Disponíveis:</legend>
-					    <select name="permissoesGrupo" size="10" multiple="multiple" id="permissoesGrupo" style="height:170px; width:245px;">
+					    <select name="grupoPermissaoDTO.permissoesGrupo" size="10" multiple="multiple" id="permissoesGrupo" style="height:170px; width:245px;">
 					    </select>
 			    	</fieldset>
 			    </td>
 			    <td width="34" align="center">
-			    	<img src="images/seta_vai_todos.png" width="39" height="30" /><br />
-			      	<br /><img src="images/seta_volta_todos.png" width="39" height="30" /><br />
+			    	<a href="javascript:;" onclick="gruposPermissaoController.adicionaGruposSelecionados();"><img src="images/seta_vai_todos.png" width="39" height="30" /></a><br />
+			      	<br /><a href="javascript:;" onclick="gruposPermissaoController.removeGruposSelecionados();"><img src="images/seta_volta_todos.png" width="39" height="30" /></a><br />
 			    </td>
 			    <td width="264" valign="top">
 				    <fieldset>
 				    	<legend>Regras Selecionadas</legend>
-					    <select name="permissoesGrupoSelecionadas" size="10" multiple="multiple" id="permissoesGrupoSelecionadas" style="height:170px; width:245px;">
+					    <select name="grupoPermissaoDTO.permissoes" size="10" multiple="multiple" id="permissoesGrupoSelecionadas" style="height:170px; width:245px;">
 						</select>
 					</fieldset>
 				</td>
 			 </tr>
 		</table>      	
+		</form>
 	</div>
-	</form>
 	<form action="/administracao/gruposAcesso" id="excluir_usuario_form">
 	<div id="dialog-excluir-usuario" title="Excluir Usuário" style="display:none;">
 	  <p>Confirma a exclusão deste usuário?</p>
 	</div>
 	</form>
-	<form action="/administracao/gruposAcesso" id="novo_usuario_form">
 	<div id="dialog-novo-usuario" title="Usuário" style="display:none;">
+		<form action="/administracao/gruposAcesso" id="novo_usuario_form">
+		  <input type="hidden" name="usuario.id" id="usuarioId" />
           <table width="700" border="0" cellpadding="2" cellspacing="1" class="filtro">
             <tr>
               <td width="118">Primeiro Nome:</td>
-              <td width="229"><input type="text" name="textfield" id="textfield" style="width:220px;"/></td>
+              <td width="229"><input type="text" name="usuarioDTO.nome" id="usuarioNome" style="width:220px;"/></td>
               <td width="109">Último  Nome:</td>
-              <td width="223"><input type="text" name="textfield2" id="textfield2" style="width:220px;"/></td>
+              <td width="223"><input type="text" name="usuarioDTO.sobreNome" id="usuarioSobreNome" style="width:220px;"/></td>
             </tr>
             <tr>
-              <td>Username::</td>
-              <td><input type="text" name="textfield14" id="textfield14" style="width:220px;"/></td>
+              <td>Username:</td>
+              <td><input type="text" name="usuarioDTO.login" id="usuarioLogin" style="width:220px;"/></td>
               <td>E-mail:</td>
-              <td><input type="text" name="textfield3" id="textfield3" style="width:220px;"/></td>
+              <td><input type="text" name="usuarioDTO.email" id="usuarioEmail" style="width:220px;"/></td>
+            </tr>
+            <tr style="display:none;">
+              <td>Senha Antiga:</td>
+              <td><input type="text" name="usuarioDTO.senhaAntiga" id="usuarioSenhaAntiga" style="width:220px;"/></td>
+              <td>&nbsp;</td>
+              <td>&nbsp;</td>
             </tr>
             <tr>
-              <td>Senha:</td>
-              <td><input type="text" name="textfield6" id="textfield6" style="width:220px;"/></td>
-              <td>Confirma Senha:</td>
-              <td><input type="text" name="textfield9" id="textfield9" style="width:220px;"/></td>
+              <td>Nova Senha:</td>
+              <td><input type="text" name="usuarioDTO.senha" id="usuariosenha" style="width:220px;"/></td>
+              <td>Confirma nova Senha:</td>
+              <td><input type="text" name="usuarioDTO.senhaConfirma" id="usuarioSenhaConfirma" style="width:220px;"/></td>
             </tr>
             <tr>
               <td>Lembrete Senha:</td>
-              <td><input type="text" name="textfield8" id="textfield8" style="width:220px;"/></td>
+              <td><input type="text" name="usuarioDTO.lembreteSenha" id="usuarioLembreteSenha" style="width:220px;"/></td>
               <td>Telefone:</td>
               <td>(
-                <input type="text" name="textfield4" id="textfield4" style="width:50px;"/>
-              ) 
-              <input type="text" name="textfield5" id="textfield5" style="width:105px;"/></td>
+                <input type="text" name="usuarioDTO.ddd" id="usuarioDdd" style="width:50px;"/>
+              )
+              <input type="text" name="usuarioDTO.telefone" id="usuarioTelefone" style="width:105px;"/></td>
             </tr>
             <tr>
-              <td align="right"><input type="checkbox" name="checkbox" id="checkbox" /></td>
+              <td align="right"><input type="radio" name="usuarioDTO.ativa" id="usuarioAtivaTrue" value="true" /></td>
               <td>Ativa</td>
-              <td align="right"><input type="checkbox" name="checkbox3" id="checkbox3" /></td>
-              <td>Conta Expira</td>
+              <td align="right">&nbsp;</td>
+              <td>&nbsp;</td>
             </tr>
             <tr>
-              <td align="right"><input type="checkbox" name="checkbox2" id="checkbox2" /></td>
+              <td align="right"><input type="radio" name="usuarioDTO.ativa" id="usuarioAtivaFalse" value="false" /></td>
               <td>Bloqueada</td>
-              <td align="right"><input type="checkbox" name="checkbox4" id="checkbox4" /></td>
-              <td>Senha Expira</td>
+              <td align="right">&nbsp;</td>
+              <td>&nbsp;</td>
             </tr>
             <tr>
               <td>&nbsp;</td>
@@ -102,15 +112,15 @@
             </tr>
             <tr>
               <td>Endereço:</td>
-              <td><input type="text" name="textfield10" id="textfield10" style="width:220px;"/></td>
+              <td><input type="text" name="usuarioDTO.endereco" id="usuarioEndereco" style="width:220px;"/></td>
               <td>Cidade:</td>
-              <td><input type="text" name="textfield11" id="textfield11" style="width:220px;"/></td>
+              <td><input type="text" name="usuarioDTO.cidade" id="usuarioCidade" style="width:220px;"/></td>
             </tr>
             <tr>
               <td>País:</td>
-              <td><input type="text" name="textfield12" id="textfield12" style="width:220px;"/></td>
+              <td><input type="text" name="usuarioDTO.pais" id="usuarioPais" style="width:220px;"/></td>
               <td>CEP:</td>
-              <td><input type="text" name="textfield13" id="textfield13" style="width:220px;"/></td>
+              <td><input type="text" name="usuarioDTO.cep" id="usuarioCep" style="width:220px;"/></td>
             </tr>
           </table>
          <br clear="all" />
@@ -119,34 +129,51 @@
 			 <tr class="especialidades">
 			    <td width="264" valign="top">
 			    	<fieldset>
-			    		<legend>Regras Disponíveis:</legend>
-					    <select name="permissoes" size="10" multiple="multiple" id="permissoes" style="height:170px; width:245px;">
-                   			<c:forEach items="${permissoes}" var="permissao">
-								<option value="${permissao.name}">${permissao.name}</option>
-                  		  	</c:forEach> 
+			    		<legend>Grupos Disponíveis:</legend>
+					    <select name="gruposUsuario" size="10" multiple="multiple" id="gruposUsuario" style="height:170px; width:245px;">
 					    </select>
 			    	</fieldset>
 			    </td>
 			    <td width="34" align="center">
-			    	<img src="images/seta_vai_todos.png" width="39" height="30" /><br />
-			      	<br /><img src="images/seta_volta_todos.png" width="39" height="30" /><br />
+			    	<a href="javascript:;" onclick="usuarioPermissaoController.adicionaGruposSelecionadosUsuario();"><img src="images/seta_vai_todos.png" width="39" height="30" /></a><br />
+			      	<br /><a href="javascript:;" onclick="usuarioPermissaoController.removeGruposSelecionadosUsuario();"><img src="images/seta_volta_todos.png" width="39" height="30" /></a><br />
 			    </td>
 			    <td width="264" valign="top">
 				    <fieldset>
-				    	<legend>Regras Selecionadas</legend>
-					    <select name="permissoesSelecionadas" size="10" multiple="multiple" id="permissoesSelecionadas" style="height:170px; width:245px;">
-                   			<c:forEach items="${permissoesSelecionadas}" var="permissaoSelecionada">
-								<option value="${permissaoSelecionada.name}">${permissaoSelecionada.name}</option>
-                  		  	</c:forEach>
+				    	<legend>Grupos Selecionados</legend>
+					    <select name="gruposSelecionadosUsuario" size="10" multiple="multiple" id="gruposSelecionadosUsuario" style="height:170px; width:245px;">
 						</select>
 					</fieldset>
 				</td>
 			 </tr>
 		</table>
-	</div>
+         <table width="582" border="0" align="center" cellpadding="2" cellspacing="2">
+			 <tr class="especialidades">
+			    <td width="264" valign="top">
+			    	<fieldset>
+			    		<legend>Regras Disponíveis:</legend>
+					    <select name="permissoesUsuario" size="10" multiple="multiple" id="permissoesUsuario" style="height:170px; width:245px;">
+					    </select>
+			    	</fieldset>
+			    </td>
+			    <td width="34" align="center">
+			    	<a href="javascript:;" onclick="usuarioPermissaoController.adicionaPermissoesSelecionadasUsuario();"><img src="images/seta_vai_todos.png" width="39" height="30" /></a><br />
+			      	<br /><a href="javascript:;" onclick="usuarioPermissaoController.removePermissoesSelecionadasUsuario();"><img src="images/seta_volta_todos.png" width="39" height="30" /></a><br />
+			    </td>
+			    <td width="264" valign="top">
+				    <fieldset>
+				    	<legend>Regras Selecionadas</legend>
+					    <select name="permissoesSelecionadasUsuario" size="10" multiple="multiple" id="permissoesSelecionadasUsuario" style="height:170px; width:245px;">
+						</select>
+					</fieldset>
+				</td>
+			 </tr>
+		</table>
 	</form>
+	</div>
 	<div class="corpo">
 		<div class="container">
+			<jsp:include page="../messagesDialog.jsp" />	
         	<div id="tabs-grupos">
 	            <ul>
 	                <li><a href="#tabs-grupos">Grupos</a></li>
@@ -160,8 +187,8 @@
 			        	<table width="850" border="0" cellpadding="2" cellspacing="1" class="filtro">
 				            <tr>
 				              <td width="83">Nome:</td>
-				              <td width="647"><input type="text" name="grupoPermissao.nome" id="grupoPermissao.nome" style="width:250px;"/></td>
-				              <td width="104"><span class="bt_pesquisar"><a href="javascript:;" onclick="gruposAcessoController.mostrarGrupo();">Pesquisar</a></span></td>
+				              <td width="647"><input type="text" name="filtroConsultaGrupoDTO.nome" id="filtroConsultaGrupoDTO.nome" style="width:250px;"/></td>
+				              <td width="104"><span class="bt_pesquisar"><a href="javascript:;" onclick="gruposPermissaoController.mostrarGrupo();">Pesquisar</a></span></td>
 				            </tr>
 			          	</table>
 			      	</fieldset>
@@ -171,7 +198,7 @@
 			      	<div class="gridsGrupos" style="display:none;">
 			       		<table class="gruposGrid"></table>
 			        </div>
-			        <span class="bt_novos" title="Novo"><a href="javascript:;" onclick="gruposAcessoController.popup_novo_grupo();"><img src="images/ico_salvar.gif" hspace="5" border="0"/>Novo</a></span>
+			        <span class="bt_novos" title="Novo"><a href="javascript:;" onclick="gruposPermissaoController.popup_novo_grupo();"><img src="images/ico_salvar.gif" hspace="5" border="0"/>Novo</a></span>
 			      </fieldset>
 			      <br clear="all" />
 	            </div>
@@ -183,8 +210,8 @@
 			        	<table width="850" border="0" cellpadding="2" cellspacing="1" class="filtro">
 				            <tr>
 				              <td width="83">Nome / Login:</td>
-				              <td width="647"><input type="text" name="textfield3" id="textfield3" style="width:250px;"/></td>
-				              <td width="104"><span class="bt_pesquisar"><a href="javascript:;" onclick="gruposAcessoController.mostrarUsuario();">Pesquisar</a></span></td>
+				              <td width="647"><input type="text" name="usuario.nome" id="usuarioNome" style="width:250px;"/></td>
+				              <td width="104"><span class="bt_pesquisar"><a href="javascript:;" onclick="usuariosPermissaoController.mostrarUsuario();">Pesquisar</a></span></td>
 				            </tr>
 			          	</table>
 			      	</fieldset>
@@ -194,7 +221,7 @@
 			      	<div class="gridsUsuario" style="display:none;">
 			       		<table class="usuariosGrid"></table>
 			        </div>
-			        <span class="bt_novos" title="Novo"><a href="javascript:;" onclick="gruposAcessoController.popup_usuario();"><img src="images/ico_salvar.gif" hspace="5" border="0"/>Novo</a></span>
+			        <span class="bt_novos" title="Novo"><a href="javascript:;" onclick="usuariosPermissaoController.popup_novo_usuario();"><img src="images/ico_salvar.gif" hspace="5" border="0"/>Novo</a></span>
 			      </fieldset>
 			      <br clear="all" />
 	            </div>
@@ -206,10 +233,10 @@
 			        	<table width="850" border="0" cellpadding="2" cellspacing="1" class="filtro">
 			            	<tr>
 			              		<td width="41">Nome:</td>
-			              		<td width="184"><input type="text" name="filtro.nome" style="width:160px;"/></td>
+			              		<td width="184"><input type="text" name="filtroConsultaPermissaoDTO.nome" style="width:160px;"/></td>
 			              		<td width="65">Descrição:</td>
-			              		<td width="430"><input type="text" name="filtro.descricao" style="width:200px;"/></td>
-			              		<td width="104"><span class="bt_pesquisar"><a href="javascript:;" onclick="gruposAcessoController.mostrarRegra();">Pesquisar</a></span></td>
+			              		<td width="430"><input type="text" name="filtroConsultaPermissaoDTO.descricao" style="width:200px;"/></td>
+			              		<td width="104"><span class="bt_pesquisar"><a href="javascript:;" onclick="regrasPermissaoController.mostrarRegra();">Pesquisar</a></span></td>
 			            	</tr>
 			          	</table>
 			      	</fieldset>

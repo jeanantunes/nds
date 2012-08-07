@@ -50,6 +50,9 @@ public class Usuario implements Serializable {
 	@Column(name = "LOGIN", nullable = false)
 	private String login;
 	
+	@Column(name = "EMAIL", nullable = false)
+	private String email;
+	
 	@Column(name = "SENHA", nullable = false)
 	private String senha;
 	
@@ -62,14 +65,8 @@ public class Usuario implements Serializable {
 	@Column(name = "TELEFONE", nullable = true)
 	private String telefone;
 	
-	@Column(name = "SENHA_ATIVA")
-	private boolean senhaAtiva;
-
-	@Column(name = "CONTA_EXPIRA")
-	private boolean contaExpira;
-
-	@Column(name = "SENHA_EXPIRA")
-	private boolean senhaExpira;
+	@Column(name = "CONTA_ATIVA")
+	private boolean contaAtiva = false;
 
 	@Column(name = "ENDERECO")
 	private String endereco;
@@ -179,30 +176,6 @@ public class Usuario implements Serializable {
 		this.telefone = telefone;
 	}
 
-	public boolean isSenhaAtiva() {
-		return senhaAtiva;
-	}
-
-	public void setSenhaAtiva(boolean senhaAtiva) {
-		this.senhaAtiva = senhaAtiva;
-	}
-
-	public boolean isContaExpira() {
-		return contaExpira;
-	}
-
-	public void setContaExpira(boolean contaExpira) {
-		this.contaExpira = contaExpira;
-	}
-
-	public boolean isSenhaExpira() {
-		return senhaExpira;
-	}
-
-	public void setSenhaExpira(boolean senhaExpira) {
-		this.senhaExpira = senhaExpira;
-	}
-
 	public String getEndereco() {
 		return endereco;
 	}
@@ -241,6 +214,22 @@ public class Usuario implements Serializable {
 
 	public void setPermissoes(Set<Permissao> permissoes) {
 		this.permissoes = permissoes;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	public boolean isContaAtiva() {
+		return contaAtiva;
+	}
+
+	public void setContaAtiva(boolean contaAtiva) {
+		this.contaAtiva = contaAtiva;
 	}
 	
 }

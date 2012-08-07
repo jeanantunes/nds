@@ -2,6 +2,7 @@ package br.com.abril.nds.service.impl;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -42,7 +43,7 @@ public class PermissaoServiceImpl implements PermissaoService {
 
 	@Override
 	public List<Permissao> buscar() {
-		return Arrays.asList(Permissao.values());
+		return new LinkedList<Permissao>(Arrays.asList(Permissao.values()));
 	}
 	
 }

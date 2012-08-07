@@ -11,6 +11,8 @@ public class ConsultaGrupoPermissaoDTO {
 
 	private String nome;
 
+	private Long id;
+	
 	private List<Permissao> permissoes;
 
 	private List<Permissao> permissoesSelecionadas;
@@ -39,4 +41,12 @@ public class ConsultaGrupoPermissaoDTO {
 		this.permissoesSelecionadas = permissoesSelecionadas;
 	}
 
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+	
 }

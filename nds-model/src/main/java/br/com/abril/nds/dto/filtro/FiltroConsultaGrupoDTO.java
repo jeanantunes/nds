@@ -8,12 +8,13 @@ import br.com.abril.nds.vo.PaginacaoVO;
 /**
  * @author InfoA2
  */
-public class FiltroConsultaPermissaoDTO implements Serializable {
+public class FiltroConsultaGrupoDTO implements Serializable {
 
-	private static final long serialVersionUID = -435216121608747432L;
-
+	private static final long serialVersionUID = 5324269089581991865L;
+	
+	private Long id;
+	
 	private String nome;
-	private String descricao;
 
 	private List<ColunaOrdenacao> listaColunaOrdenacao;
 
@@ -23,19 +24,26 @@ public class FiltroConsultaPermissaoDTO implements Serializable {
 
 	public enum ColunaOrdenacao {
 
-		NOME("nome"),
-		DESCRICAO("descricao");
+		NOME("nome");
 
 		private String nomeColuna;
-		
+
 		private ColunaOrdenacao(String nomeColuna) {
 			this.nomeColuna = nomeColuna;
 		}
-		
+
 		@Override
 		public String toString() {
 			return this.nomeColuna;
 		}
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
 	}
 
 	public String getNome() {
@@ -44,14 +52,6 @@ public class FiltroConsultaPermissaoDTO implements Serializable {
 
 	public void setNome(String nome) {
 		this.nome = nome;
-	}
-
-	public String getDescricao() {
-		return descricao;
-	}
-
-	public void setDescricao(String descricao) {
-		this.descricao = descricao;
 	}
 
 	public List<ColunaOrdenacao> getListaColunaOrdenacao() {
@@ -67,8 +67,7 @@ public class FiltroConsultaPermissaoDTO implements Serializable {
 		return ordenacaoColuna;
 	}
 
-	public void setOrdenacaoColuna(
-			ColunaOrdenacao ordenacaoColuna) {
+	public void setOrdenacaoColuna(ColunaOrdenacao ordenacaoColuna) {
 		this.ordenacaoColuna = ordenacaoColuna;
 	}
 
@@ -88,20 +87,12 @@ public class FiltroConsultaPermissaoDTO implements Serializable {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		FiltroConsultaPermissaoDTO other = (FiltroConsultaPermissaoDTO) obj;
+		FiltroConsultaGrupoDTO other = (FiltroConsultaGrupoDTO) obj;
 		if (nome == null) {
 			if (other.nome != null)
 				return false;
-		} else if (!descricao.equals(other.descricao))
-			return false;
-		if (ordenacaoColuna != other.ordenacaoColuna)
-			return false;
-		if (paginacao == null) {
-			if (other.paginacao != null)
-				return false;
-		} else if (!paginacao.equals(other.paginacao))
-			return false;
+		}
 		return true;
 	}
-	
+
 }
