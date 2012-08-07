@@ -10,14 +10,21 @@ import br.com.abril.nds.client.vo.BaseComboVO;
 import br.com.abril.nds.client.vo.ProdutoCadastroVO;
 import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.dto.ConsultaProdutoDTO;
+import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.cadastro.ClasseSocial;
 import br.com.abril.nds.model.cadastro.Editor;
+import br.com.abril.nds.model.cadastro.FaixaEtaria;
+import br.com.abril.nds.model.cadastro.FormatoProduto;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.cadastro.Sexo;
+import br.com.abril.nds.model.cadastro.TemaProduto;
 import br.com.abril.nds.model.cadastro.TipoDesconto;
 import br.com.abril.nds.model.cadastro.TipoProduto;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
+import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.EditorService;
 import br.com.abril.nds.service.EstoqueProdutoService;
@@ -67,6 +74,18 @@ public class ProdutoController {
 	@Autowired
 	private TipoDescontoService tipoDescontoService;
 	
+	private static List<ItemDTO<ClasseSocial,String>> listaClasseSocial =  new ArrayList<ItemDTO<ClasseSocial,String>>();
+	  
+	private static List<ItemDTO<Sexo,String>> listaSexo =  new ArrayList<ItemDTO<Sexo,String>>();
+	
+	private static List<ItemDTO<FaixaEtaria,String>> listaFaixaEtaria =  new ArrayList<ItemDTO<FaixaEtaria,String>>();
+	
+	private static List<ItemDTO<FormatoProduto,String>> listaFormatoProduto =  new ArrayList<ItemDTO<FormatoProduto,String>>();
+	
+	private static List<ItemDTO<TipoLancamento,String>> listaTipoLancamento =  new ArrayList<ItemDTO<TipoLancamento,String>>();
+	
+	private static List<ItemDTO<TemaProduto,String>> listaTemaProduto =  new ArrayList<ItemDTO<TemaProduto,String>>();
+	
 	public ProdutoController(Result result) {
 		this.result = result;
 	}
@@ -75,6 +94,8 @@ public class ProdutoController {
 	public void index() {
 		
 		List<TipoProduto> listaTipoProduto = this.tipoProdutoService.obterTodosTiposProduto();
+		
+		carregarDadosSegmentacao();
 		
 		if (listaTipoProduto != null && !listaTipoProduto.isEmpty()) {
 			this.result.include("listaTipoProduto", listaTipoProduto);
@@ -281,6 +302,49 @@ public class ProdutoController {
 	}
 	
 	/**
+	 * Carrega os combos do modal de inclusão/edição do Produto-Segmentação.
+	 */
+	@Post
+	public void carregarDadosSegmentacao() {
+		
+		listaClasseSocial.clear();
+		for(ClasseSocial item:ClasseSocial.values()){
+			listaClasseSocial.add(new ItemDTO<ClasseSocial,String>(item,item.getDescClasseSocial()));
+		}
+		result.include("listaClasseSocial",listaClasseSocial);
+		
+		listaSexo.clear();
+		for(Sexo item:Sexo.values()){
+			listaSexo.add(new ItemDTO<Sexo,String>(item,item.name()));
+		}
+		result.include("listaSexo",listaSexo);	
+		
+		listaFaixaEtaria.clear();
+		for(FaixaEtaria item:FaixaEtaria.values()){
+			listaFaixaEtaria.add(new ItemDTO<FaixaEtaria,String>(item,item.getDescFaixaEtaria()));
+		}
+		result.include("listaFaixaEtaria",listaFaixaEtaria);	
+
+		listaFormatoProduto.clear();
+		for(FormatoProduto item:FormatoProduto.values()){
+			listaFormatoProduto.add(new ItemDTO<FormatoProduto,String>(item,item.getDescFormatoProduto()));
+		}
+		result.include("listaFormatoProduto",listaFormatoProduto);	
+
+		listaTipoLancamento.clear();
+		for(TipoLancamento item:TipoLancamento.values()){
+			listaTipoLancamento.add(new ItemDTO<TipoLancamento,String>(item,item.getDescricao()));
+		}
+		result.include("listaTipoLancamento",listaTipoLancamento);	
+		
+		listaTemaProduto.clear();
+		for(TemaProduto item:TemaProduto.values()){
+			listaTemaProduto.add(new ItemDTO<TemaProduto,String>(item,item.getDescTemaProduto()));
+		}
+		result.include("listaTemaProduto",listaTemaProduto);	
+    }
+	
+	/**
 	 * Remove um Produto.
 	 * 
 	 * @param id
@@ -337,7 +401,7 @@ public class ProdutoController {
 	@Post
 	public void salvarProduto(Produto produto, Long codigoEditor, Long codigoFornecedor, Long codigoTipoDesconto, 
 			Long codigoTipoProduto) {
-
+		
 		this.validarProduto(
 			produto, codigoEditor, codigoFornecedor, 
 			codigoTipoDesconto, codigoTipoProduto);
@@ -412,8 +476,20 @@ public class ProdutoController {
 				listaMensagens.add("O preenchimento do campo [Fornecedor] é obrigatório!");
 			}
 			
-			if (codigoEditor == null || codigoEditor.intValue() == 0) {
-				listaMensagens.add("O preenchimento do campo [Editor] é obrigatório!");
+			if (produto.getPeb() <= 0) {
+				listaMensagens.add("O preenchimento do campo [PEB] é obrigatório!");
+			} else {
+				produto.setPeb(produto.getPeb());
+			}
+			
+			if (produto.getPacotePadrao() <= 0) {
+				listaMensagens.add("O preenchimento do campo [Pacote Padrão] é obrigatório!");
+			} else {
+				produto.setPacotePadrao(produto.getPacotePadrao());
+			}
+			
+			if (codigoTipoDesconto == null || codigoTipoDesconto.intValue() == 0) {
+				listaMensagens.add("O preenchimento do campo [Tipo de Desconto] é obrigatório!");
 			}
 			
 			if (codigoTipoProduto == null || codigoTipoProduto.intValue() == 0) {
@@ -439,6 +515,7 @@ public class ProdutoController {
 			if (produto.getSubGrupoEditorial() != null && !produto.getSubGrupoEditorial().trim().isEmpty()) {
 				produto.setSubGrupoEditorial(produto.getSubGrupoEditorial().trim());
 			}
+	
 		}
 		
 		if (listaMensagens != null && !listaMensagens.isEmpty()) {

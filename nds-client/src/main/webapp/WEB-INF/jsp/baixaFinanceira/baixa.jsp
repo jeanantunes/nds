@@ -34,11 +34,16 @@
 				height:350,
 				width:650,
 				modal: true,
-				buttons: {
-					"Fechar": function() {
-						$( this ).dialog( "close" );
-					}
-				}
+				buttons:[ 
+				          {
+					           id:"bt_fechar",
+					           text:"Fechar", 
+					           click: function() {
+					        	   
+					        	   $( this ).dialog( "close" );
+					           }
+				           }
+		        ]
 			});
 		};
 		
@@ -48,16 +53,23 @@
 				height:430,
 				width:480,
 				modal: true,
-				buttons: {
-					"Confirmar": function() {
-						
-						popup_confirma_baixa_dividas();
-						
-					},
-					"Cancelar": function() {
-						$( this ).dialog( "close" );
-					}
-				},
+				buttons:[ 
+				          {
+					           id:"bt_confirmar",
+					           text:"Confirmar", 
+					           click: function() {
+					        	   
+					        	   popup_confirma_baixa_dividas();
+					           }
+				           },
+				           {
+					           id:"bt_cancelar",
+					           text:"Cancelar", 
+					           click: function() {
+					        	   $( this ).dialog( "close" );
+					           }
+				           }
+		        ],
 				beforeClose: function() {
 					clearMessageDialogTimeout();
 			    }
@@ -70,17 +82,24 @@
 				height:130,
 				width:470,
 				modal: true,
-				buttons: {
-					"Confirmar": function() {
-						
-						popup_confirma_pendente();
-						
-						$( this ).dialog( "close" );
-					},
-					"Cancelar": function() {
-						$( this ).dialog( "close" );
-					}
-				},
+				buttons:[ 
+				          {
+					           id:"bt_confirmar",
+					           text:"Confirmar", 
+					           click: function() {
+					        	   popup_confirma_pendente();
+									
+								   $( this ).dialog( "close" );
+					           }
+				           },
+				           {
+					           id:"bt_cancelar",
+					           text:"Cancelar", 
+					           click: function() {
+					        	   $( this ).dialog( "close" );
+					           }
+				           }
+		        ],
 				beforeClose: function() {
 					clearMessageDialogTimeout();
 			    }
@@ -93,20 +112,26 @@
 				height:170,
 				width:550,
 				modal: true,
-				buttons: {
-					"Sim": function() {
-						
-						baixaManualDividas(true);
-						
-						$( this ).dialog( "close" );
-					},
-					"Não": function() {
-						
-						baixaManualDividas(false);
-						
-						$( this ).dialog( "close" );
-					}
-				},
+				buttons:[ 
+				          {
+					           id:"bt_sim",
+					           text:"Sim", 
+					           click: function() {
+					        	   baixaManualDividas(true);
+									
+								   $( this ).dialog( "close" );
+					           }
+				           },
+				           {
+					           id:"bt_nao",
+					           text:"Não", 
+					           click: function() {
+					        	   baixaManualDividas(false);
+									
+								   $( this ).dialog( "close" );
+					           }
+				           }
+		        ],
 				beforeClose: function() {
 					clearMessageDialogTimeout();
 			    }
@@ -119,16 +144,24 @@
 				height:170,
 				width:380,
 				modal: true,
-				buttons: {
-					"Confirmar": function() {
-						$( this ).dialog( "close" );
-						
-						baixaPorNossoNumero();
-					},
-					"Cancelar": function() {
-						$( this ).dialog( "close" );
-					}
-				}
+				buttons:[ 
+				          {
+					           id:"bt_confirmar",
+					           text:"Confirmar", 
+					           click: function() {
+					        	   $( this ).dialog( "close" );
+									
+								   baixaPorNossoNumero();
+					           }
+				           },
+				           {
+					           id:"bt_cancelar",
+					           text:"Cancelar", 
+					           click: function() {
+					        	   $( this ).dialog( "close" );
+					           }
+				           }
+		        ]
 			});
 		};
 	
@@ -922,16 +955,23 @@
 				height:220,
 				width:300,
 				modal: true,
-				buttons: {
-					"Confirmar": function() {
-
-						finalizarPostergacao();
-					},
-					"Cancelar": function() {
-						$( this ).dialog( "close" );
-						limparModalPostergacao();
-					}
-				},
+				buttons:[ 
+				          {
+					           id:"bt_confirmar",
+					           text:"Confirmar", 
+					           click: function() {
+					        	   finalizarPostergacao();
+					           }
+				           },
+				           {
+					           id:"bt_cancelar",
+					           text:"Cancelar", 
+					           click: function() {
+					        	   $( this ).dialog( "close" );
+								   limparModalPostergacao();
+					           }
+				           }
+		        ],
 				beforeClose: function() {
 					limparModalPostergacao();
 					clearMessageDialogTimeout('dialogMensagemNovo');
