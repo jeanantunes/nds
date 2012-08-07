@@ -63,6 +63,19 @@ public interface FeriadoRepository extends Repository<Feriado, Long> {
 	 * @return {@link List<CalendarioFeriadoDTO>}
 	 */
 	public List<CalendarioFeriadoDTO> obterListaCalendarioFeriadoPeriodo(Date dataInicial, Date dataFinal);
+	
+	
+	/**
+	 * Recupera um feriado anual com base na data recebida
+	 * @param data data base para a recuperação do feriado anual, serão
+	 * utilizados como base apenas o dia e mês da data
+	 * @param tipo tipo de feriado para pesquisa
+	 * @return {@link Feriado} que corresponde ao feriado anual cadastrado ou
+	 * null caso não exista feriado correspondente cadastrado
+	 */
+	public Feriado obterFeriadoAnualTipo(Date data, TipoFeriado tipo);
+		
+	
 
 	
 }

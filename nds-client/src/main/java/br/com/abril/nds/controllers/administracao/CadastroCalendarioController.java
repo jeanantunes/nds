@@ -123,7 +123,8 @@ public class CadastroCalendarioController {
 	public void excluirCadastroFeriado(
 			String dtFeriado, 
 			String descTipoFeriado, 
-			Long idLocalidade) {
+			Long idLocalidade,
+			boolean indRepeteAnualmente) {
 		
 		validarCadastroFeriado(dtFeriado, descTipoFeriado, "-", idLocalidade);
 		
@@ -132,6 +133,7 @@ public class CadastroCalendarioController {
 		calendarioFeriado.setDataFeriado(DateUtil.parseDataPTBR(dtFeriado));
 		calendarioFeriado.setTipoFeriado(TipoFeriado.valueOf(descTipoFeriado));
 		calendarioFeriado.setIdLocalidade(idLocalidade);
+		calendarioFeriado.setIndRepeteAnualmente(indRepeteAnualmente);
 		
 		calendarioService.excluirFeriado(calendarioFeriado);
 		
