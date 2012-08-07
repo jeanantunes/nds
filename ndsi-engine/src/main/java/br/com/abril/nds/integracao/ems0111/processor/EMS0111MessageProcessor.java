@@ -75,8 +75,8 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 			.logInfo(
 					message,
 					EventoExecucaoEnum.RELACIONAMENTO,
-					"*********************** \r\n Preco do Arquivo:" + input.getPrecoPrevisto() + "\r\n ****************************",
-					"*********************** \r\n Preco do Arquivo:" + input.getPrecoPrevisto() + "\r\n ****************************");
+					"*********************** \r\n Preco do Arquivo:" + input.getPrecoPrevisto().toString() + "\r\n ****************************",
+					"*********************** \r\n Preco do Arquivo:" + input.getPrecoPrevisto().toString() + "\r\n ****************************");
 			
 			produtoEdicao.setPrecoVenda(input.getPrecoPrevisto());
 			//getSession().update(produtoEdicao);
