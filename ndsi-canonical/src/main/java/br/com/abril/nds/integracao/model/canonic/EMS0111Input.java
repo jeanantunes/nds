@@ -200,7 +200,7 @@ public class EMS0111Input extends IntegracaoDocument implements Serializable {
 		this.condBasePacotePadrao = condBasePacotePadrao;
 	}
 	
-	
+	@Field(offset = 82, length =10 )
 	public BigDecimal getPrecoPrevisto() {
 		return precoPrevisto;
 	}
