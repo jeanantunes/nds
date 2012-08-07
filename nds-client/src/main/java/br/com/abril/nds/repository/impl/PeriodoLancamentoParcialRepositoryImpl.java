@@ -23,7 +23,7 @@ public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepositoryMo
 	public PeriodoLancamentoParcialRepositoryImpl() {
 		super(PeriodoLancamentoParcial.class);
 	}
-
+	
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<PeriodoParcialDTO> obterPeriodosParciais(FiltroParciaisDTO filtro) {
@@ -33,15 +33,23 @@ public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepositoryMo
 		hql.append(" select produtoEdicao.id as idProdutoEdicao, ");
 		hql.append("		lancamento.dataLancamentoDistribuidor as dataLancamento, ");
 		hql.append(" 		lancamento.dataRecolhimentoDistribuidor as dataRecolhimento, ");
-		hql.append(" 		estudo.qtdeReparte as reparte, ");
 		
-		hql.append(" 		999 as suplementacao, ");
+		hql.append("		sum(mCota.qtde) as reparte,  ");
 		
-		hql.append(" 		999 as vendaCE, ");
+		hql.append(" 		(select sum(movCota.qtde) from Lancamento lancamentoSupl ");
+		hql.append("		 	left join lancamentoSupl.movimentoEstoqueCotas movCota ");
+		hql.append("			join lancamentoSupl.produtoEdicao pe ");
+		hql.append("		 where pe.id = produtoEdicao.id ");
+		hql.append("		    and lancamentoSupl.tipoLancamento = 'SUPLEMENTAR' ");
+		hql.append("			and lancamentoSupl.dataLancamentoDistribuidor >= lancamento.dataLancamentoDistribuidor ");
+		hql.append("			and lancamentoSupl.dataLancamentoDistribuidor <= lancamento.dataRecolhimentoDistribuidor) ");		
+		hql.append(" 		as suplementacao, ");
 		
-		hql.append(" 		'9,99' as percVendaAcumulada, ");
+		hql.append(" 		(select 999) as vendaCE, ");
 		
-		hql.append(" 		'99' as reparteAcum, ");
+		hql.append(" 		(select'9,99') as percVendaAcumulada, ");
+		
+		hql.append(" 		(select 999) as reparteAcum, ");
 		
 		hql.append("		(select sum(movimento.qtde) from ConferenciaEncalhe conferencia ");
 		hql.append("		 	join conferencia.movimentoEstoqueCota movimento ");
@@ -53,7 +61,7 @@ public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepositoryMo
 		hql.append("			group by chamadaEncalhe.id) ");
 		hql.append(" 		 as encalhe, ");
 		
-		hql.append("		estudo.qtdeReparte - (select sum(movimento.qtde) from ConferenciaEncalhe conferencia ");
+		hql.append("		sum(mCota.qtde) - (select sum(movimento.qtde) from ConferenciaEncalhe conferencia ");
 		hql.append("		 	join conferencia.movimentoEstoqueCota movimento ");
 		hql.append("		 	join conferencia.chamadaEncalheCota chamadaEncalheCota ");
 		hql.append("		 	join chamadaEncalheCota.chamadaEncalhe chamadaEncalhe ");
@@ -78,7 +86,7 @@ public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepositoryMo
 		hql.append("		 /case when periodo.status='RECOLHIDO' then 0 else 1 end ");
 		hql.append(" 		 as vendaAcumulada, ");
 				
-		hql.append("		  ((estudo.qtdeReparte - (select sum(movimento.qtde) from ConferenciaEncalhe conferencia ");
+		hql.append("		  ((sum(mCota.qtde) - (select sum(movimento.qtde) from ConferenciaEncalhe conferencia ");
 		hql.append("		 	join conferencia.movimentoEstoqueCota movimento ");
 		hql.append("		 	join conferencia.chamadaEncalheCota chamadaEncalheCota ");
 		hql.append("		 	join chamadaEncalheCota.chamadaEncalhe chamadaEncalhe ");
@@ -86,13 +94,16 @@ public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepositoryMo
 		hql.append("			and chamadaEncalhe.dataRecolhimento <= lancamento.dataRecolhimentoDistribuidor ");
 		hql.append("			and chamadaEncalhe.produtoEdicao.id = lancamento.produtoEdicao.id ");
 		hql.append("			group by chamadaEncalhe.id)) ");
-		hql.append(" 		   /estudo.qtdeReparte) * 100 ");
+		hql.append(" 		   /sum(mCota.qtde)) * 100 ");
 		hql.append("		 as percVenda, ");
 		
 		hql.append("		 lancamento.id as idLancamento ");
 		
 		hql.append(getSqlFromEWherePeriodosParciais(filtro));
-				
+		
+	
+		hql.append(" group by periodo ");
+		
 		hql.append(getOrderByPeriodosParciais(filtro));
 				
 		Query query =  getSession().createQuery(hql.toString());
@@ -125,6 +136,7 @@ public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepositoryMo
 		hql.append(" join lancamento.produtoEdicao produtoEdicao ");
 		hql.append(" join produtoEdicao.produto produto ");
 		hql.append(" left join lancamento.estudo estudo ");
+		hql.append(" left join lancamento.movimentoEstoqueCotas mCota ");
 		hql.append(" join produto.fornecedores fornecedor ");
 		hql.append(" join fornecedor.juridica juridica ");
 		

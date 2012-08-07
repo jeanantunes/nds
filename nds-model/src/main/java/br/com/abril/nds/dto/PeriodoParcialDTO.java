@@ -39,7 +39,7 @@ public class PeriodoParcialDTO implements Serializable {
 	private String percVenda;
 	
 	@Export(label = "Suplementação", alignment=Alignment.CENTER)
-	private Integer suplementacao;
+	private String suplementacao;
 	
 	@Export(label = "Venda CE", alignment=Alignment.CENTER)
 	private Integer vendaCE;
@@ -136,14 +136,17 @@ public class PeriodoParcialDTO implements Serializable {
 	/**
 	 * @return the suplementacao
 	 */
-	public Integer getSuplementacao() {
+	public String getSuplementacao() {
 		return suplementacao;
 	}
 	/**
 	 * @param suplementacao the suplementacao to set
 	 */
-	public void setSuplementacao(Integer suplementacao) {
-		this.suplementacao = suplementacao;
+	public void setSuplementacao(BigDecimal suplementacao) {
+		if(suplementacao==null)
+			this.suplementacao = "";
+		else
+			this.suplementacao = suplementacao.toBigInteger().toString();
 	}
 	/**
 	 * @return the vendaCE

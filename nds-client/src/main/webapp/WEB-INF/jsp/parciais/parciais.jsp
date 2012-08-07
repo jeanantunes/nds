@@ -4,6 +4,12 @@
 
 <script language="javascript" type="text/javascript">
 
+
+$(function() {
+	definirAcaoPesquisaTeclaEnter();
+});
+
+
 var PARCIAIS = new Parciais('${pageContext.request.contextPath}');
 
 function detalheVenda() {
@@ -100,10 +106,6 @@ function popup(modal) {
 			width:960,
 			modal: true,
 			buttons: {
-				"Confirmar": function() {
-					$( this ).dialog( "close" );
-					
-				},
 				"Cancelar": function() {
 					$( this ).dialog( "close" );
 				}
@@ -348,14 +350,14 @@ $(function() {
               <td width="46">Código:</td>
               <td colspan="3">
 <!-- Código -->
-<input id="codigoProduto" name="codigoProduto" style="width: 80px; float: left; margin-right: 5px;" maxlength="255"
+<input class="campoDePesquisa" id="codigoProduto" name="codigoProduto" style="width: 80px; float: left; margin-right: 5px;" maxlength="255"
 						   onchange="produto.pesquisarPorCodigoProdutoAutoCompleteEdicao('#codigoProduto', '#nomeProduto', '#edicaoProduto' , false);" />
 				</td>
                 <td width="51">Produto:</td>
                 <td width="163">
                 
 <!-- Nome Produto -->                
-<input id="nomeProduto" type="text" name="nomeProduto"  style="width: 150px;" maxlength="255"
+<input class="campoDePesquisa" id="nomeProduto" type="text" name="nomeProduto"  style="width: 150px;" maxlength="255"
 					       onkeyup="produto.autoCompletarPorNomeProduto('#nomeProduto', false);"
 					       onblur="produto.pesquisarPorNomeProduto('#codigoProduto', '#nomeProduto', null, false);"/>
 					    	   
@@ -364,13 +366,13 @@ $(function() {
                 <td width="148">
 
 <!-- Numero Edição -->                
-<input id="edicaoProduto"  type="text" name="edicoes" style="width:80px;"/></td>
+<input class="campoDePesquisa" id="edicaoProduto"  type="text" name="edicoes" style="width:80px;"/></td>
 
               <td width="67">Fornecedor:</td>
               <td colspan="2">
        
 <!-- Fornecedores -->
-<select id="idFornecedor" name="idFornecedor" style="width:200px;">
+<select class="campoDePesquisa" id="idFornecedor" name="idFornecedor" style="width:200px;">
     <option value="-1"  selected="selected">Todos</option>
     <c:forEach items="${listaFornecedores}" var="fornecedor">
       		<option value="${fornecedor.key}">${fornecedor.value}</option>	
@@ -384,19 +386,19 @@ $(function() {
               <td colspan="3">
 
 <!-- Data de -->              
-<input id="dataInicial" type="text" name="dataInicial" style="width:80px;"/></td>
+<input class="campoDePesquisa" id="dataInicial" type="text" name="dataInicial" style="width:80px;"/></td>
 
               <td>Até:</td>
               <td>
 
 <!-- Data até -->
-<input id="dataFinal" type="text" name="dataFinal" style="width:80px;"/></td>
+<input class="campoDePesquisa" id="dataFinal" type="text" name="dataFinal" style="width:80px;"/></td>
 
               <td>Status:</td>
               <td>
               
 <!-- Status -->              
-<select id="status" name="select2" style="width:140px;">
+<select class="campoDePesquisa" id="status" name="select2" style="width:140px;">
   <option selected="selected" value="">Todos</option>
    <c:forEach items="${listaStatus}" var="status">
       		<option value="${status.key}">${status.value}</option>	
@@ -408,7 +410,7 @@ $(function() {
               <td width="119"><span class="bt_pesquisar">
               
 <!-- Pesquisar -->
-<a href="javascript:;" onclick=" PARCIAIS.cliquePesquisar();">Pesquisar</a>
+<a class="botaoPesquisar" href="javascript:;" onclick=" PARCIAIS.cliquePesquisar();">Pesquisar</a>
 		
 			</span></td>
             </tr>
@@ -566,13 +568,13 @@ $(".periodosGrid").flexigrid($.extend({},{
 		colModel : [ {
 			display : 'Lcto',
 			name : 'dataLancamento',
-			width : 70,
+			width : 100,
 			sortable : true,
 			align : 'center'
 		}, {
 			display : 'Rcto',
 			name : 'dataRecolhimento',
-			width : 70,
+			width : 100,
 			sortable : true,
 			align : 'center'
 		}, {
@@ -613,7 +615,7 @@ $(".periodosGrid").flexigrid($.extend({},{
 			align : 'center'
 		}, {
 			display : 'Reparte Acum.',
-			name : 'reparteAcumulado',
+			name : 'reparteAcum',
 			width : 75,
 			sortable : true,
 			align : 'center'
