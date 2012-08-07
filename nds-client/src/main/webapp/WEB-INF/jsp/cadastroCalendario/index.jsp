@@ -17,16 +17,15 @@
 		width: 950px !important;
 	}
 	
-	.ui-datepicker-group {
-		margin-left: 4px;
-	}
-	
+
 	.ui-state-default {
 		font-size: 13px !important;
 	}
 	
 	.ui-datepicker-group {
-		margin: 0px !important;
+	    height: 220px;
+		margin-left: 4px;
+		margin: 0 !important;
 		padding: 5px !important;
 	}
 

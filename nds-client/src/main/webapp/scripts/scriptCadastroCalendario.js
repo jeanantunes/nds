@@ -434,7 +434,7 @@ var CadastroCalendario = {
 	    					
 	    					$( "#feriados" ).datepicker({
 	    						
-	    						numberOfMonths: [2,8],
+	    						numberOfMonths: 12,
 	    						minDate: dataInicialCalendario, 
 	    						maxDate: dataFinalCalendario, 
 	    						showButtonPanel: false,
