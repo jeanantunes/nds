@@ -13,8 +13,7 @@ var usuariosPermissaoController = $.extend(true, {
 				modal: true,
 				buttons: {
 					"Confirmar": function() {
-						var obj = $("#novo_grupo_form", this.workspace).serialize();
-						//var obj = $("#novo_grupo_form", this.workspace).serialize();
+						var obj = $("#novo_usuario_form", this.workspace).serialize();
 						
 						var permissoes = "";
 						$("#permissoesSelecionadasUsuario option", this.workspace).each(function() {
@@ -126,24 +125,59 @@ var usuariosPermissaoController = $.extend(true, {
 						$.each(data.rows , function(index, value) {
 
 							var linkEditarGrupo = '<a href="javascript:;" onclick="usuariosPermissaoController.editarUsuario(\'' + value.cell.id + '\');" style="cursor:pointer">' +
-				     	  	'<img title="Editar Grupo" src="' + contextPath + '/images/ico_detalhes.png" hspace="5" border="0px" />' +
+				     	  	'<img title="Editar Usuário" src="' + contextPath + '/images/ico_detalhes.png" hspace="5" border="0px" />' +
 				  		    '</a>';
 
 							var linkExcluirGrupo = '<a href="javascript:;" onclick="usuariosPermissaoController.popup_excluir_usuario(\'' + value.cell.id + '\');" style="cursor:pointer">' +
-				     	  	'<img title="Excluir Grupo" src="' + contextPath + '/images/ico_excluir.gif" hspace="5" border="0px" />' +
+				     	  	'<img title="Excluir Usuário" src="' + contextPath + '/images/ico_excluir.gif" hspace="5" border="0px" />' +
 				  		    '</a>';
 
+							// lembreteSenha
+							var lembreteSenha = "";
+							if (value.cell.lembreteSenha != undefined) {
+								lembreteSenha = value.cell.lembreteSenha;
+							}
+							value.cell[1] = lembreteSenha;
+
 							// Nome
-							value.cell[2] = value.cell.nome + value.cell.sobrenome;
+							var nome = "";
+							if (value.cell.nome != undefined) {
+								nome = value.cell.nome;
+								if (value.cell.sobrenome != undefined) {
+									nome += " " + value.cell.sobrenome;
+								}
+							}
+							value.cell[2] = nome;
 
+							// E-mail
+							var email = "";
+							if (value.cell.email != undefined) {
+								email = value.cell.email;
+							}
+							value.cell[3] = email;
+							
 							// Telefone
-							value.cell[4] = "(" + value.cell.ddd + ") " + value.cell.telefone;
+							var telefone = "";
+							if (value.cell.telefone != undefined) {
+								if (value.cell.ddd != undefined) {
+									telefone = "(" + value.cell.ddd + ") ";
+								}
+								telefone += value.cell.telefone;
+							}
+							value.cell[4] = telefone;
 
+							// Ativa
+							var ativa = "N";
+							if (value.cell.ativa == "true") {
+								ativa = "S";
+							}
+							value.cell[5] = ativa;
+							
 							// Ação
 							value.cell[6] = linkEditarGrupo + linkExcluirGrupo;
 
 						});
-						$(".gridsGrupos", this.workspace).show();
+						$(".gridsUsuario", this.workspace).show();
 					}
 					return data;
 				},
