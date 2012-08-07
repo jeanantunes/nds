@@ -71,7 +71,7 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 			
 			
 			produtoEdicao.setPrecoVenda(input.getPrecoPrevisto());
-			
+			getSession().update(produtoEdicao);
 			
 			StringBuilder sql = new StringBuilder();
 
@@ -143,6 +143,8 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 									+ input.getRepartePromocional());
 
 				}
+
+				getSession().update(lancamento);
 
 			} else {
 				// NAO EXISTE LANCAMENTO PARA O PRODUTO/EDICAO INFORMADO
