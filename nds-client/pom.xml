@@ -307,7 +307,7 @@
 						<artifactId>tomcat-maven-plugin</artifactId>
 						<configuration>
 							<server>tomcat-server</server>
-							<url>http://177.71.177.215:8080/manager/text</url>
+							<url>http://177.71.255.76:8080/manager/text</url>
 						</configuration>
 					</plugin>
 				</plugins>
@@ -400,7 +400,7 @@
 						<artifactId>tomcat-maven-plugin</artifactId>
 						<configuration>
 							<server>tomcat-server-homolog-abril</server>
-							<url>http://177.71.177.215:8080/manager/text</url>
+							<url>http://177.71.255.76:8080/manager/text</url>
 						</configuration>
 					</plugin>
 				</plugins>
