@@ -68,6 +68,11 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 		if (null != produtoEdicao) {
 			// SE EXISTIR PRODUTO/EDICAO NA TABELA
 			// VERIFICAR SE EXISTE LANCAMENTO CADASTRADO PARA O PRODUTO/EDICAO
+			
+			
+			produtoEdicao.setPrecoVenda(input.getPrecoPrevisto());
+			
+			
 			StringBuilder sql = new StringBuilder();
 
 			sql.append("SELECT lcto FROM Lancamento lcto ");
@@ -151,14 +156,12 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 				lancamento.setId(null);
 				lancamento.setProdutoEdicao(produtoEdicao);
 				lancamento.setDataLancamentoPrevista(input.getDataLancamento());
-				lancamento.setTipoLancamento(parseTipo(input
-						.getTipoLancamento()));
+				lancamento.setTipoLancamento(parseTipo(input.getTipoLancamento()));
 				lancamento.setReparte(new BigInteger( input.getRepartePrevisto().toString()));
 				lancamento.setStatus(StatusLancamento.PLANEJADO);// confirmado
 				lancamento.setRepartePromocional(new BigInteger( input.getRepartePromocional().toString()));// confirmado
 				lancamento.setDataCriacao(new Date());// confirmado
-				lancamento.setDataLancamentoDistribuidor(input
-						.getDataLancamento());// confirmado
+				lancamento.setDataLancamentoDistribuidor(input.getDataLancamento());// confirmado
 				lancamento.setDataRecolhimentoDistribuidor(data.getTime());// confirmado
 				lancamento.setDataRecolhimentoPrevista(data.getTime());// confirmado
 				lancamento.setDataStatus(new Date());// confirmado
@@ -166,7 +169,7 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 				lancamento.setHistoricos(null);// default
 				lancamento.setRecebimentos(null);// default
 				lancamento.setNumeroReprogramacoes(null);// confirmado
-				lancamento.setSequenciaMatriz(null);// confirmado
+				lancamento.setSequenciaMatriz(null);// confirmado				
 
 				// EFETIVAR INSERCAO NA BASE
 				getSession().persist(lancamento);
