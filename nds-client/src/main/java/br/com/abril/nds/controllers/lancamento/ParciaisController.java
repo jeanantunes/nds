@@ -435,6 +435,7 @@ public class ParciaisController {
 		Date lcto = DateUtil.parseDataPTBR("01/01/2010");
 		Date recto = DateUtil.parseDataPTBR("01/01/2013");
 		Long idProdutoEdicao = 1L;
+		
 				
 		List<ParcialVendaDTO> listaParcialVenda = this.parciaisService.obterDetalhesVenda(lcto, recto, idProdutoEdicao);
 		
