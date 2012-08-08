@@ -36,9 +36,7 @@ function EmissaoCE(pathTela,obj) {
 	},
 	
 	this.processaRetornoPesquisa = function(result) {
-		
-		debugger;
-		
+				
 		return result;
 	},
 	

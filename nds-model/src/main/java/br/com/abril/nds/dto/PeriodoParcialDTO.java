@@ -2,6 +2,7 @@ package br.com.abril.nds.dto;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Date;
 
 import br.com.abril.nds.util.Constantes;
@@ -67,47 +68,47 @@ public class PeriodoParcialDTO implements Serializable {
 	public String getReparte() {
 		return reparte;
 	}
-	public void setReparte(BigDecimal reparte) {
+	public void setReparte(BigInteger reparte) {
 		if(reparte==null)
 			this.reparte = "";
 		else
-			this.reparte = reparte.toBigInteger().toString();
+			this.reparte = reparte.toString();
 	}
 	public String getEncalhe() {
 		return encalhe;
 	}
-	public void setEncalhe(BigDecimal encalhe) {
+	public void setEncalhe(BigInteger encalhe) {
 		if(encalhe==null)
 			this.encalhe = "";
 		else
-			this.encalhe = encalhe.toBigInteger().toString();
+			this.encalhe = encalhe.toString();
 	}
 	public String getVendas() {
 		return vendas;
 	}
-	public void setVendas(BigDecimal vendas) {
+	public void setVendas(BigInteger vendas) {
 		if(vendas==null)
 			this.vendas = "";
 		else
-			this.vendas = vendas.toBigInteger().toString();
+			this.vendas = vendas.toString();
 	}
 	public String getVendaAcumulada() {
 		return vendaAcumulada;
 	}
-	public void setVendaAcumulada(BigDecimal vendaAcumulada) {
+	public void setVendaAcumulada(BigInteger vendaAcumulada) {
 		if(vendaAcumulada==null || vendas==null || vendas.isEmpty())
 			this.vendaAcumulada = "";
 		else 
-			this.vendaAcumulada = vendaAcumulada.toBigInteger().toString();
+			this.vendaAcumulada = vendaAcumulada.toString();
 	}
 	public String getPercVenda() {
 		return percVenda;
 	}
-	public void setPercVenda(BigDecimal percVenda) {
+	public void setPercVenda(BigInteger percVenda) {
 		if(percVenda==null)
 			this.percVenda = "";
 		else
-			this.percVenda = percVenda.toBigInteger().toString() + "%";
+			this.percVenda = percVenda.toString() + "%";
 	}
 	/**
 	 * @return the idLancamento
@@ -142,11 +143,11 @@ public class PeriodoParcialDTO implements Serializable {
 	/**
 	 * @param suplementacao the suplementacao to set
 	 */
-	public void setSuplementacao(BigDecimal suplementacao) {
+	public void setSuplementacao(BigInteger suplementacao) {
 		if(suplementacao==null)
 			this.suplementacao = "";
 		else
-			this.suplementacao = suplementacao.toBigInteger().toString();
+			this.suplementacao = suplementacao.toString();
 	}
 	/**
 	 * @return the vendaCE

@@ -28,7 +28,7 @@ public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepositoryMo
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<PeriodoParcialDTO> obterPeriodosParciais(FiltroParciaisDTO filtro) {
-
+				
 		StringBuilder hql = new StringBuilder();
 		
 		hql.append(" select produtoEdicao.id as idProdutoEdicao, ");
@@ -46,11 +46,11 @@ public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepositoryMo
 		hql.append("			and lancamentoSupl.dataLancamentoDistribuidor <= lancamento.dataRecolhimentoDistribuidor) ");		
 		hql.append(" 		as suplementacao, ");
 		
-		hql.append(" 		(select 999) as vendaCE, ");
+		hql.append(" 		999 as vendaCE, ");
 		
-		hql.append(" 		(select'9,99') as percVendaAcumulada, ");
+		hql.append(" 		'9,99' as percVendaAcumulada, ");
 		
-		hql.append(" 		(select 999) as reparteAcum, ");
+		hql.append(" 		999 as reparteAcum, ");
 		
 		hql.append("		(select sum(movimento.qtde) from ConferenciaEncalhe conferencia ");
 		hql.append("		 	join conferencia.movimentoEstoqueCota movimento ");
@@ -331,13 +331,9 @@ public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepositoryMo
 		return (count == null || count == 0) ? true : false;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public List<ParcialVendaDTO> obterDetalhesVenda() {
-
+		// TODO Auto-generated method stub
 		return null;
 	}
-	
 }
