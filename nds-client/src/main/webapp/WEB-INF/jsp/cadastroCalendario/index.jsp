@@ -1,6 +1,7 @@
 <head>
 
 <script language="javascript" type="text/javascript" src="${pageContext.request.contextPath}/scripts/scriptCadastroCalendario.js"></script>
+<script type="text/javascript" src='<c:url value="/"/>/scripts/shortcut.js'></script>
 
 <style type="text/css">
 
