@@ -52,6 +52,8 @@ public class PeriodoParcialDTO implements Serializable {
 		
 	private Long idLancamento;
 	
+	private boolean geradoPorInterface;
+	
 	public String getDataLancamento() {
 		return dataLancamento;
 	}
@@ -192,5 +194,17 @@ public class PeriodoParcialDTO implements Serializable {
 			this.reparteAcum = "";
 		else
 			this.reparteAcum = reparteAcum.toString();
+	}
+	/**
+	 * @return the geradoPorInterface
+	 */
+	public boolean isGeradoPorInterface() {
+		return geradoPorInterface;
+	}
+	/**
+	 * @param geradoPorInterface the geradoPorInterface to set
+	 */
+	public void setGeradoPorInterface(boolean geradoPorInterface) {
+		this.geradoPorInterface = geradoPorInterface;
 	}		
 }

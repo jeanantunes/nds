@@ -311,7 +311,7 @@ $(function() {
 	        
 	</div>   
 
- <span class="bt_novos" title="Novo"><a href="javascript:;" onclick="popup(true);"><img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0" alt="Incluir Períodos" />Incluir Períodos</a></span>
+ <span id="btnIncluirPeriodosModal" class="bt_novos" title="Novo"><a href="javascript:;" onclick="popup(true);"><img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0" alt="Incluir Períodos" />Incluir Períodos</a></span>
 
 
 </div>
@@ -483,7 +483,7 @@ $(function() {
 			</span>
 			
 	
-	 <span class="bt_novos" title="Novo">
+	 <span id="btnIncluirPeriodos" class="bt_novos" title="Novo">
 	 		<a href="javascript:;" onclick="popup(false);">
 	 		<img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0" alt="Incluir Períodos" />
 	 		Incluir Períodos
@@ -707,7 +707,7 @@ $(".parciaisPopGrid").flexigrid($.extend({},{
 			align : 'center'
 		}, {
 			display : 'Reparte Acum.',
-			name : 'reparteAcumulado',
+			name : 'reparteAcum',
 			width : 75,
 			sortable : true,
 			align : 'center'

@@ -219,8 +219,29 @@ public class ParciaisServiceImpl implements ParciaisService{
 		lancamento.setDataRecolhimentoPrevista(dataRecolhimento);
 		
 		lancamentoRepository.merge(lancamento);
+		
+
+		ajustarPeriodoAnteriorProximo(idLancamento, dataLancamento, dataRecolhimento);
+				
 	}
 
+	private void ajustarPeriodoAnteriorProximo(Long idLancamento,
+			Date dtLancamento, Date dtRecolhimento) {
+	
+		//TODO
+
+		Lancamento lancamento = lancamentoRepository.buscarPorId(idLancamento);
+		
+		PeriodoLancamentoParcial periodo = periodoLancamentoParcialRepository.obterPeriodoPorIdLancamento(idLancamento);
+		/*
+		lancamento.setDataLancamentoDistribuidor(dataLancamento);
+		lancamento.setDataLancamentoPrevista(dataLancamento);
+		lancamento.setDataRecolhimentoDistribuidor(dataRecolhimento);
+		lancamento.setDataRecolhimentoPrevista(dataRecolhimento);
+		*/
+		lancamentoRepository.merge(lancamento);
+	}
+	
 	@Override
 	@Transactional
 	public void excluirPeriodo(Long idLancamento) {
@@ -274,4 +295,6 @@ public class ParciaisServiceImpl implements ParciaisService{
 		
 		return lista;
 	}
+
+	
 }

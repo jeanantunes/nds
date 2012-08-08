@@ -125,6 +125,11 @@ function Parciais(pathTela) {
 			T.idProdutoEdicao = result.rows[0].cell.idProdutoEdicao;
 		}
 		
+		if(result.rows[0].cell.geradoPorInterface==true)
+			$("#btnIncluirPeriodos").hide();
+		else
+			$("#btnIncluirPeriodos").show();		
+		
 		$.each(result.rows, function(index,row){T.gerarAcaoDetalhes(index,row);} );
 				
 		return result;
@@ -140,7 +145,12 @@ function Parciais(pathTela) {
 		} else {
 			$('#exportacaoPeriodosModal').show();
 		}
-				
+		
+		if(result.rows[0].cell.geradoPorInterface==true)
+			$("#btnIncluirPeriodosModal").hide();
+		else
+			$("#btnIncluirPeriodosModal").show();		
+		
 		$.each(result.rows, function(index,row){T.gerarAcaoDetalhes(index,row);} );
 				
 		return result;
@@ -233,13 +243,17 @@ function Parciais(pathTela) {
 	this.gerarAcaoDetalhes = function(index, row) {
 		
 		row.cell.acao = 
-			'<a href="javascript:;" onclick="PARCIAIS.carregarEdicaoDetalhes(\''+ 
+			'<a href="javascript:;" ' +
+			(row.cell.geradoPorInterface==true?'style="opacity: 0.5;"':'onclick="PARCIAIS.carregarEdicaoDetalhes(\''+ 
 					row.cell.idLancamento +'\', \''+
 					row.cell.dataLancamento +'\', \''+
 					row.cell.dataRecolhimento +
-								
-			' \');"><img src="'+pathTela+'/images/ico_editar.gif" border="0" hspace="5" /></a>' +
-			'<a href="javascript:;" onclick="PARCIAIS.carregarExclusaoPeriodo(\'' + row.cell.idLancamento+ '\');"><img src="'+pathTela+'/images/ico_excluir.gif" hspace="5" border="0" /></a>';
+			        ' \')"')+
+			        
+			' ><img src="'+pathTela+'/images/ico_editar.gif" border="0" hspace="5" /></a>' +
+			'<a href="javascript:;" '+
+			(row.cell.geradoPorInterface==true?'style="opacity: 0.5;"':' onclick="PARCIAIS.carregarExclusaoPeriodo(\'' + row.cell.idLancamento+ '\');" ')+
+			'><img src="'+pathTela+'/images/ico_excluir.gif" hspace="5" border="0" /></a>';
 	},
 	
 	this.carregarDetalhes = function(idProdutoEdicao , dataLancamento, dataRecolhimento, codigoProduto, 

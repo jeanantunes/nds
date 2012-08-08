@@ -34,6 +34,7 @@ public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepositoryMo
 		hql.append(" select produtoEdicao.id as idProdutoEdicao, ");
 		hql.append("		lancamento.dataLancamentoDistribuidor as dataLancamento, ");
 		hql.append(" 		lancamento.dataRecolhimentoDistribuidor as dataRecolhimento, ");
+		hql.append("		produtoEdicao.origemInterface as geradoPorInterface, ");
 		
 		hql.append("		sum(mCota.qtde) as reparte,  ");
 		
@@ -164,7 +165,7 @@ public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepositoryMo
 		StringBuilder hql = new StringBuilder();
 			
 		hql.append(" from PeriodoLancamentoParcial periodo ");
-		hql.append(" join periodo.lancamentoParcial lancamentoParcial");
+		hql.append(" join periodo.lancamentoParcial lancamentoParcial ");
 		hql.append(" join periodo.lancamento lancamento ");
 		hql.append(" join lancamento.produtoEdicao produtoEdicao ");
 		hql.append(" join produtoEdicao.produto produto ");

@@ -1532,6 +1532,7 @@ public class DataLoader {
 		ProdutoEdicao cromoBrasileiraoEd1 = Fixture.produtoEdicao("COD_FF", 1L, 5, 30,
 				new BigDecimal(50), new BigDecimal(100), new BigDecimal(100), "3333", 0L, cromoBrasileirao, null, false,"Cromo Brasileirão");
 		cromoBrasileiraoEd1.setParcial(true);
+		cromoBrasileiraoEd1.setOrigemInterface(false);
 		cromoBrasileiraoEd1.setDesconto(new BigDecimal(10));
 		
 		ProdutoEdicao guiaViagemEd1 = Fixture.produtoEdicao("COD_GG", 1L, 5, 30,
