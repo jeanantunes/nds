@@ -114,9 +114,6 @@ public class ParciaisServiceImplTest extends AbstractRepositoryImplTest  {
 	private PeriodoLancamentoParcialRepository periodoLancamentoParcialRepository;
 	
 	@Autowired
-	private PeriodoLancamentoParcialRepository periodoLancamentoParcialService;
-	
-	@Autowired
 	private HistoricoLancamentoRepository historicoLancamentoRepository;
 
 	@Before
@@ -366,7 +363,7 @@ public class ParciaisServiceImplTest extends AbstractRepositoryImplTest  {
 	@Test
 	public void obterDetalhesVenda() {
 		
-		List<ParcialVendaDTO> parciaisVenda = periodoLancamentoParcialService.obterDetalhesVenda(this.dtInicial, this.dtFinal, this.produtoEdicaoVeja1.getId());
+		List<ParcialVendaDTO> parciaisVenda = parciaisServiceImpl.obterDetalhesVenda(this.dtInicial, this.dtFinal, this.produtoEdicaoVeja1.getId());
 
 		Assert.assertEquals(parciaisVenda.size(),1);	
 	}

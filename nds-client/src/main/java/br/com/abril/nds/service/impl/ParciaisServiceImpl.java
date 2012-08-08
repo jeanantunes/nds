@@ -1,7 +1,6 @@
 package br.com.abril.nds.service.impl;
 
 import java.math.BigInteger;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -244,34 +243,16 @@ public class ParciaisServiceImpl implements ParciaisService{
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * Obtem detalhes das vendas do produtoEdição nas datas de Lancamento e Recolhimento
+	 * @param dataLancamento
+	 * @param dataRecolhimento
+	 * @param idProdutoRdicao
+	 * @return List<ParcialVendaDTO>
 	 */
 	@Override
-	@Transactional
-	public List<ParcialVendaDTO> obterDetalhesVenda() {
-		// TODO 
-//		return this.periodoLancamentoParcialRepository.obterDetalhesVenda();
-		
-		List<ParcialVendaDTO> lista = new ArrayList<ParcialVendaDTO>();
-		
-		ParcialVendaDTO parcialVendaDTO = new ParcialVendaDTO();
-		parcialVendaDTO.setEncalhe(BigInteger.valueOf(1L));
-		parcialVendaDTO.setNomeCota("aaa");
-		parcialVendaDTO.setNumeroCota(1);
-		parcialVendaDTO.setReparte(BigInteger.valueOf(3L));
-		parcialVendaDTO.setVendaJuramentada(BigInteger.valueOf(20L));
-		
-		lista.add(parcialVendaDTO);
-
-		parcialVendaDTO = new ParcialVendaDTO();
-		parcialVendaDTO.setEncalhe(BigInteger.valueOf(4L));
-		parcialVendaDTO.setNomeCota("ggg");
-		parcialVendaDTO.setNumeroCota(6);
-		parcialVendaDTO.setReparte(BigInteger.valueOf(7L));
-		parcialVendaDTO.setVendaJuramentada(BigInteger.valueOf(20L));
-		
-		lista.add(parcialVendaDTO);
-		
-		return lista;
+	@Transactional(readOnly = true)
+	public List<ParcialVendaDTO> obterDetalhesVenda(Date dataLancamento,
+			Date dataRecolhimento, Long idProdutoEdicao) {
+		return periodoLancamentoParcialRepository.obterDetalhesVenda(dataLancamento, dataRecolhimento, idProdutoEdicao);
 	}
 }
