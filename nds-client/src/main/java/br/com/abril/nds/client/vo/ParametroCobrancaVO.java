@@ -6,12 +6,16 @@ public class ParametroCobrancaVO {
 	Long idPolitica;
 	String forma;
 	String banco;
-	String vlr_minimo_emissao;
+	String valorMinimoEmissao;
 	String formaEmissao;
-	String acumula_divida;
-	String cobranca_unificada;
-	String envio_email;
+	String acumulaDivida;
+	String cobrancaUnificada;
+	String envioEmail;
 	boolean principal;
+	String fornecedores;
+	String concentracaoPagamentos;
+	
+	
 	
 	public Long getIdPolitica() {
 		return idPolitica;
@@ -37,12 +41,12 @@ public class ParametroCobrancaVO {
 		this.banco = banco;
 	}
 	
-	public String getVlr_minimo_emissao() {
-		return vlr_minimo_emissao;
+	public String getValorMinimoEmissao() {
+		return valorMinimoEmissao;
 	}
 	
-	public void setVlr_minimo_emissao(String vlr_minimo_emissao) {
-		this.vlr_minimo_emissao = vlr_minimo_emissao;
+	public void setValorMinimoEmissao(String vlr_minimo_emissao) {
+		this.valorMinimoEmissao = vlr_minimo_emissao;
 	}
 	
 	public String getFormaEmissao() {
@@ -52,28 +56,28 @@ public class ParametroCobrancaVO {
 		this.formaEmissao = formaEmissao;
 	}
 	
-	public String getAcumula_divida() {
-		return acumula_divida;
+	public String getAcumulaDivida() {
+		return acumulaDivida;
 	}
 	
-	public void setAcumula_divida(String acumula_divida) {
-		this.acumula_divida = acumula_divida;
+	public void setAcumulaDivida(String acumula_divida) {
+		this.acumulaDivida = acumula_divida;
 	}
 	
-	public String getCobranca_unificada() {
-		return cobranca_unificada;
+	public String getCobrancaUnificada() {
+		return cobrancaUnificada;
 	}
 	
-	public void setCobranca_unificada(String cobranca_unificada) {
-		this.cobranca_unificada = cobranca_unificada;
+	public void setCobrancaUnificada(String cobranca_unificada) {
+		this.cobrancaUnificada = cobranca_unificada;
 	}
 	
-	public String getEnvio_email() {
-		return envio_email;
+	public String getEnvioEmail() {
+		return envioEmail;
 	}
 	
-	public void setEnvio_email(String envio_email) {
-		this.envio_email = envio_email;
+	public void setEnvioEmail(String envio_email) {
+		this.envioEmail = envio_email;
 	}
 	
 	public boolean isPrincipal() {
@@ -89,14 +93,14 @@ public class ParametroCobrancaVO {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result
-				+ ((acumula_divida == null) ? 0 : acumula_divida.hashCode());
+				+ ((acumulaDivida == null) ? 0 : acumulaDivida.hashCode());
 		result = prime * result + ((banco == null) ? 0 : banco.hashCode());
 		result = prime
 				* result
-				+ ((cobranca_unificada == null) ? 0 : cobranca_unificada
+				+ ((cobrancaUnificada == null) ? 0 : cobrancaUnificada
 						.hashCode());
 		result = prime * result
-				+ ((envio_email == null) ? 0 : envio_email.hashCode());
+				+ ((envioEmail == null) ? 0 : envioEmail.hashCode());
 		result = prime * result + ((forma == null) ? 0 : forma.hashCode());
 		result = prime * result
 				+ ((formaEmissao == null) ? 0 : formaEmissao.hashCode());
@@ -105,7 +109,7 @@ public class ParametroCobrancaVO {
 		result = prime * result + (principal ? 1231 : 1237);
 		result = prime
 				* result
-				+ ((vlr_minimo_emissao == null) ? 0 : vlr_minimo_emissao
+				+ ((valorMinimoEmissao == null) ? 0 : valorMinimoEmissao
 						.hashCode());
 		return result;
 	}
@@ -119,25 +123,25 @@ public class ParametroCobrancaVO {
 		if (getClass() != obj.getClass())
 			return false;
 		ParametroCobrancaVO other = (ParametroCobrancaVO) obj;
-		if (acumula_divida == null) {
-			if (other.acumula_divida != null)
+		if (acumulaDivida == null) {
+			if (other.acumulaDivida != null)
 				return false;
-		} else if (!acumula_divida.equals(other.acumula_divida))
+		} else if (!acumulaDivida.equals(other.acumulaDivida))
 			return false;
 		if (banco == null) {
 			if (other.banco != null)
 				return false;
 		} else if (!banco.equals(other.banco))
 			return false;
-		if (cobranca_unificada == null) {
-			if (other.cobranca_unificada != null)
+		if (cobrancaUnificada == null) {
+			if (other.cobrancaUnificada != null)
 				return false;
-		} else if (!cobranca_unificada.equals(other.cobranca_unificada))
+		} else if (!cobrancaUnificada.equals(other.cobrancaUnificada))
 			return false;
-		if (envio_email == null) {
-			if (other.envio_email != null)
+		if (envioEmail == null) {
+			if (other.envioEmail != null)
 				return false;
-		} else if (!envio_email.equals(other.envio_email))
+		} else if (!envioEmail.equals(other.envioEmail))
 			return false;
 		if (forma == null) {
 			if (other.forma != null)
@@ -156,12 +160,40 @@ public class ParametroCobrancaVO {
 			return false;
 		if (principal != other.principal)
 			return false;
-		if (vlr_minimo_emissao == null) {
-			if (other.vlr_minimo_emissao != null)
+		if (valorMinimoEmissao == null) {
+			if (other.valorMinimoEmissao != null)
 				return false;
-		} else if (!vlr_minimo_emissao.equals(other.vlr_minimo_emissao))
+		} else if (!valorMinimoEmissao.equals(other.valorMinimoEmissao))
 			return false;
 		return true;
+	}
+
+	/**
+	 * @return the fornecedores
+	 */
+	public String getFornecedores() {
+		return fornecedores;
+	}
+
+	/**
+	 * @param fornecedores the fornecedores to set
+	 */
+	public void setFornecedores(String fornecedores) {
+		this.fornecedores = fornecedores;
+	}
+
+	/**
+	 * @return the concentracaoPagamentos
+	 */
+	public String getConcentracaoPagamentos() {
+		return concentracaoPagamentos;
+	}
+
+	/**
+	 * @param concentracaoPagamentos the concentracaoPagamentos to set
+	 */
+	public void setConcentracaoPagamentos(String concentracaoPagamentos) {
+		this.concentracaoPagamentos = concentracaoPagamentos;
 	}
 
 }

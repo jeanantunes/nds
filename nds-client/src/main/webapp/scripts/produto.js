@@ -254,7 +254,14 @@ var produto = $.extend(true, {
 						$("#comboEditor").val(result.codigoEditor);
 						$("#comboFornecedoresCadastro").val(result.codigoFornecedor);
 						$("#comboTipoDesconto").val(result.tipoDesconto);
-						$("#comboTipoProdutoCadastro").val(result.codigoTipoProduto)
+						$("#comboTipoProdutoCadastro").val(result.codigoTipoProduto);
+						$("#segmentacaoClasseSocial").val(result.classeSocial);
+						$("#segmentacaoSexo").val(result.sexo);
+						$("#segmentacaoFaixaEtaria").val(result.faixaEtaria);
+						$("#segmentacaoFormato").val(result.formatoProduto);
+						$("#segmentacaoTipoLancamento").val(result.tipoLancamento);
+						$("#segmentacaoTemaPrincipal").val(result.temaPrincipal);
+						$("#segmentacaoTemaSecundario").val(result.temaSecundario);
 
 						if (result.formaComercializacao == 'Conta Firme') {
 							$("#formaComercializacaoContaFirme").attr('checked', true);
@@ -398,13 +405,20 @@ var produto = $.extend(true, {
         			   {name:"produto.formaComercializacao",value:this.buscarValueRadio('formaComercializacao')},
         			   {name:"produto.tributacaoFiscal",value:this.buscarValueRadio('radioTributacaoFiscal')},
         			   {name:"produto.grupoEditorial",value:$("#grupoEditorial").val()},
-        			   {name:"produto.subGrupoEditorial",value:$("#subGrupoEditorial").val()},
+        			   {name:"produto.subGrupoEditorial",value:$("#subGrupoEditorial").val()},	
+        			   {name:"produto.segmentacao.classeSocial",value:$("#segmentacaoClasseSocial").val()},
+        			   {name:"produto.segmentacao.sexo",value:$("#segmentacaoSexo").val()},
+        			   {name:"produto.segmentacao.faixaEtaria",value:$("#segmentacaoFaixaEtaria").val()},
+        			   {name:"produto.segmentacao.formatoProduto",value:$("#segmentacaoFormato").val()},
+        			   {name:"produto.segmentacao.tipoLancamento",value:$("#segmentacaoTipoLancamento").val()},
+        			   {name:"produto.segmentacao.temaPrincipal",value:$("#segmentacaoTemaPrincipal").val()},
+        			   {name:"produto.segmentacao.temaSecundario",value:$("#segmentacaoTemaSecundario").val()},
         			   {name:"codigoEditor",value:$("#comboEditor").val()},
         			   {name:"codigoFornecedor",value:$("#comboFornecedoresCadastro").val()},
         			   {name:"codigoTipoDesconto",value:$("#comboTipoDesconto").val()},
-        			   {name:"codigoTipoProduto",value:$("#comboTipoProdutoCadastro").val()} ];
-		 
-		$.postJSON(contextPath + "/produto/salvarProduto", 
+        			   {name:"codigoTipoProduto",value:$("#comboTipoProdutoCadastro").val()}];
+ 
+		$.postJSON(contextPath + "/produto/salvarProduto",  
 			   	params,
 			   	function (result) {
 

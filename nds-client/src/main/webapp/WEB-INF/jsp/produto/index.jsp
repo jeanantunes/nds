@@ -175,62 +175,99 @@
 							<tr>
 								<td width="380" valign="top">
 									<table width="380" border="0" cellspacing="1" cellpadding="1">
+									
+									
 										<tr>
 											<td width="160"><strong>Classe Social:</strong></td>
-											<td width="281">
-												<select name="select12" id="select13" style="width:200px;" disabled="disabled" >
-													<option selected="selected"></option>
-												</select>
+											<td width="320">
+												<select name="segmentacaoClasseSocial" id="segmentacaoClasseSocial" style="width:150px;">
+							                        <option value="">Selecione</option>
+							                        <c:forEach varStatus="counter" var="itemClasseSocial" items="${listaClasseSocial}">
+									                    <option value="${itemClasseSocial.key}">${itemClasseSocial.value}</option>
+									                </c:forEach>
+							                    </select> 
 											</td>
 										</tr>
+			
+										
 										<tr>
 											<td><strong>Sexo:</strong></td>
 											<td>
-												<select name="select13" id="select14" style="width:200px;" disabled="disabled" >
-													<option selected="selected"></option>
-												</select>
+												<select name="segmentacaoSexo" id="segmentacaoSexo" style="width:150px;">
+							                        <option value="">Selecione</option>
+							                        <c:forEach varStatus="counter" var="itemSexo" items="${listaSexo}">
+									                    <option value="${itemSexo.key}">${itemSexo.value}</option>
+									                </c:forEach>
+							                    </select> 
 											</td>
 										</tr>
+										
+										
 										<tr>
 											<td><strong>Faixa-Et&aacute;ria:</strong></td>
 											<td>
-												<select name="select14" id="select15" style="width:200px;" disabled="disabled" >
-													<option selected="selected"></option>
-												</select>
+												<select name="segmentacaoFaixaEtaria" id="segmentacaoFaixaEtaria" style="width:150px;">
+							                        <option value="">Selecione</option>
+							                        <c:forEach varStatus="counter" var="itemFaixaEtaria" items="${listaFaixaEtaria}">
+									                    <option value="${itemFaixaEtaria.key}">${itemFaixaEtaria.value}</option>
+									                </c:forEach>
+							                    </select> 
 											</td>
 										</tr>
+										
+										
 										<tr>
 											<td width="137"><strong>Formato:</strong></td>
 											<td width="200">
-												<select name="select12" id="select13" style="width:200px;" disabled="disabled" >
-													<option selected="selected"></option>
-												</select>
+												<select name="segmentacaoFormato" id="segmentacaoFormato" style="width:150px;">
+							                        <option value="">Selecione</option>
+							                        <c:forEach varStatus="counter" var="itemFormato" items="${listaFormatoProduto}">
+									                    <option value="${itemFormato.key}">${itemFormato.value}</option>
+									                </c:forEach>
+							                    </select> 
 											</td>
 										</tr>
+										
+										
 										<tr>
 											<td><strong>Tipo de Lan&ccedil;amento:</strong></td>
 											<td>
-												<select name="select13" id="select14" style="width:200px;" disabled="disabled"  >
-													<option selected="selected"></option>
-												</select>
+												<select name="segmentacaoTipoLancamento" id="segmentacaoTipoLancamento" style="width:150px;">
+							                        <option value="">Selecione</option>
+							                        <c:forEach varStatus="counter" var="itemTipoLancamento" items="${listaTipoLancamento}">
+									                    <option value="${itemTipoLancamento.key}">${itemTipoLancamento.value}</option>
+									                </c:forEach>
+							                    </select> 
 											</td>
 										</tr>
+										
+										
 										<tr>
 											<td><strong>Tema Principal:</strong></td>
 											<td>
-												<select name="select14" id="select15" style="width:200px;" disabled="disabled" >
-													<option selected="selected"></option>
-												</select>
+												<select name="segmentacaoTemaPrincipal" id="segmentacaoTemaPrincipal" style="width:150px;">
+							                        <option value="">Selecione</option>
+							                        <c:forEach varStatus="counter" var="itemTema" items="${listaTemaProduto}">
+									                    <option value="${itemTema.key}">${itemTema.value}</option>
+									                </c:forEach>
+							                    </select> 
 											</td>
 										</tr>
+										
+										
 										<tr>
-											<td><strong>Tema Secund&aacute;rio:</strong></td>
+											<td><strong>Tema Secundario:</strong></td>
 											<td>
-												<select name="select15" id="select16" style="width:200px;" disabled="disabled" >
-													<option selected="selected"></option>
-												</select>
+												<select name="segmentacaoTemaSecundario" id="segmentacaoTemaSecundario" style="width:150px;">
+							                        <option value="">Selecione</option>
+							                        <c:forEach varStatus="counter" var="itemTema" items="${listaTemaProduto}">
+									                    <option value="${itemTema.key}">${itemTema.value}</option>
+									                </c:forEach>
+							                    </select> 
 											</td>
 										</tr>
+										
+										
 									</table>
 								</td>
 							</tr>
