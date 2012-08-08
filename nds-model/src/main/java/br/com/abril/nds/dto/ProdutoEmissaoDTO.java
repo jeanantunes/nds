@@ -2,6 +2,7 @@ package br.com.abril.nds.dto;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Date;
 
 import br.com.abril.nds.util.CurrencyUtil;
@@ -153,7 +154,7 @@ public class ProdutoEmissaoDTO implements Serializable{
 	/**
 	 * @param reparte the reparte to set
 	 */
-	public void setReparte(BigDecimal reparte) {
+	public void setReparte(BigInteger reparte) {
 		this.reparte = reparte.intValue();
 	}
 	/**
@@ -165,7 +166,7 @@ public class ProdutoEmissaoDTO implements Serializable{
 	/**
 	 * @param quantidadeDevolvida the quantidadeDevolvida to set
 	 */
-	public void setQuantidadeDevolvida(BigDecimal quantidadeDevolvida) {
+	public void setQuantidadeDevolvida(BigInteger quantidadeDevolvida) {
 		this.quantidadeDevolvida = quantidadeDevolvida!=null?quantidadeDevolvida.intValue():0;
 	}
 	/**
