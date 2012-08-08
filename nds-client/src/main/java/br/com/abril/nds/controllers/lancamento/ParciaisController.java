@@ -262,9 +262,10 @@ public class ParciaisController {
 	}
 	
 	@Post
-	public void pesquisarParciaisVenda() {
+	public void pesquisarParciaisVenda(Date dtLcto, Date dtRcto, Long idProdutoEdicao) {
 		
-		List<ParcialVendaDTO> listaParcialVenda = this.parciaisService.obterDetalhesVenda();
+	
+		List<ParcialVendaDTO> listaParcialVenda = this.parciaisService.obterDetalhesVenda(dtLcto, dtRcto, idProdutoEdicao);
 		
 		TableModel<CellModelKeyValue<ParcialVendaDTO>> tableModel = new TableModel<CellModelKeyValue<ParcialVendaDTO>>();
 		
@@ -429,7 +430,14 @@ public class ParciaisController {
 	@Get
 	public void exportarDetalhesVenda(FileType fileType) throws IOException {
 		
-		List<ParcialVendaDTO> listaParcialVenda = this.parciaisService.obterDetalhesVenda();
+		
+		//RECEBER OS PARAMETROS ABAIXO OU List<ParcialVendaDTO> DA SESSAO
+		Date lcto = DateUtil.parseDataPTBR("01/01/2010");
+		Date recto = DateUtil.parseDataPTBR("01/01/2013");
+		Long idProdutoEdicao = 1L;
+		
+				
+		List<ParcialVendaDTO> listaParcialVenda = this.parciaisService.obterDetalhesVenda(lcto, recto, idProdutoEdicao);
 		
 		if(listaParcialVenda.isEmpty()) {
 
