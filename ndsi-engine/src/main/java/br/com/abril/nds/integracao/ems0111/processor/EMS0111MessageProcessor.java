@@ -68,18 +68,8 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 		if (null != produtoEdicao) {
 			// SE EXISTIR PRODUTO/EDICAO NA TABELA
 			// VERIFICAR SE EXISTE LANCAMENTO CADASTRADO PARA O PRODUTO/EDICAO
-			
-			
-			ndsiLoggerFactory
-			.getLogger()
-			.logInfo(
-					message,
-					EventoExecucaoEnum.RELACIONAMENTO,
-					"*********************** \r\n Preco do Arquivo:" + input.getPrecoPrevisto().toString() + "\r\n ****************************",
-					"*********************** \r\n Preco do Arquivo:" + input.getPrecoPrevisto().toString() + "\r\n ****************************");
-			
-			produtoEdicao.setPrecoVenda(input.getPrecoPrevisto());
-			//getSession().update(produtoEdicao);
+				
+			produtoEdicao.setPrecoVenda(input.getPrecoPrevisto());			
 			
 			StringBuilder sql = new StringBuilder();
 
@@ -151,8 +141,6 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 									+ input.getRepartePromocional());
 
 				}
-
-				//getSession().update(lancamento);
 
 			} else {
 				// NAO EXISTE LANCAMENTO PARA O PRODUTO/EDICAO INFORMADO

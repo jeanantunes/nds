@@ -117,11 +117,39 @@ public class TipoDescontoCotaController {
 	
 	@Post
 	@Path("/novoDescontoProduto")
-	public void novoDescontoProduto(String codigo, String produto, String edicaoProduto, String descontoProduto, String dataAlteracaoProduto, String usuarioProduto){
-		
+	public void novoDescontoProduto(String codigoProduto, Long edicaoProduto, Integer quantidadeEdicoes, 
+									boolean isCheckedEdicao, boolean hasCotaEspecifica,
+									BigDecimal descontoProduto, List<Integer> cotas, boolean descontoPredominante) {		
 		//FIXME revisar a implementação da inclusão de um novo desconto de produto
 		
-		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Desconto cadastrado com sucesso"),"result").recursive().serialize();
+		List<String> mensagens = new ArrayList<String>();
+		
+		if (codigoProduto == null || codigoProduto.isEmpty()) {
+			
+			mensagens.add("O campo Código deve ser preenchido!");
+		}
+		
+		if (isCheckedEdicao && (edicaoProduto == null || quantidadeEdicoes == null)) {
+			
+			mensagens.add("O campo Edição específica ou Edições deve ser preenchido!");
+		}
+
+		if (descontoProduto == null) {
+			
+			mensagens.add("O campo Desconto deve ser preenchido!");
+		}
+		
+		if (hasCotaEspecifica && cotas == null) {
+			
+			mensagens.add("Ao menos uma cota deve ser selecionada!");
+		}
+		
+		if (!mensagens.isEmpty()) {
+			
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, mensagens));
+		}
+		
+		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Desconto cadastrado com sucesso"),"result").recursive().serialize();
 	}
 	
 	@Path("/pesquisarDescontoGeral")

@@ -1,5 +1,6 @@
 package br.com.abril.nds.integracao.ems0106.processor;
 
+import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
 
@@ -60,7 +61,7 @@ public class EMS0106MessageProcessor extends AbstractRepository implements Messa
 		
 				estudo.setProdutoEdicao(lancamento.getProdutoEdicao());
 				estudo.setDataLancamento(lancamento.getDataLancamentoPrevista());
-				estudo.setQtdeReparte(input.getReparteDistribuir());
+				estudo.setQtdeReparte(BigInteger.valueOf(input.getReparteDistribuir()));
 		
 				getSession().persist(estudo);
 		
@@ -70,7 +71,7 @@ public class EMS0106MessageProcessor extends AbstractRepository implements Messa
 					
 					estudo.setProdutoEdicao(produtoEdicao);
 					estudo.setDataLancamento(lancamento.getDataLancamentoPrevista());
-					estudo.setQtdeReparte(input.getReparteDistribuir());
+					estudo.setQtdeReparte(BigInteger.valueOf( input.getReparteDistribuir() ));
 		
 					getSession().persist(estudo);
 				}

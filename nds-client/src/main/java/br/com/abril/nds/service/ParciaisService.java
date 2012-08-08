@@ -58,6 +58,13 @@ public interface ParciaisService {
 	void excluirPeriodo(Long idLancamento);
 	
 	
-	List<ParcialVendaDTO> obterDetalhesVenda();
+	/**
+	 * Obtem detalhes das vendas do produtoEdição nas datas de Lancamento e Recolhimento
+	 * @param dataLancamento
+	 * @param dataRecolhimento
+	 * @param idProdutoEdicao
+	 * @return List<ParcialVendaDTO>
+	 */
+	List<ParcialVendaDTO> obterDetalhesVenda(Date dataLancamento, Date dataRecolhimento, Long idProdutoEdicao);
 
 }
