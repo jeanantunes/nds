@@ -11,6 +11,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.dto.ParcialVendaDTO;
 import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.Carteira;
@@ -163,5 +164,22 @@ public class ParciaisServiceImplTest extends AbstractRepositoryImplTest  {
 		
 		
 	}
+	
+	
+	
+	
+	
+	@Test
+	public void obterDetalhesVenda() {
+		
+		parciaisServiceImpl.gerarPeriodosParcias(produtoEdicaoVeja1, 1, usuarioJoao, peb, distribuidor);
+		
+		List<ParcialVendaDTO> parciaisVenda = periodoLancamentoParcialRepository.obterDetalhesVenda(this.dtInicial, this.dtFinal, this.produtoEdicaoVeja1.getId());
+
+		Assert.assertEquals(parciaisVenda.size(),1);	
+	}
+
+	
+	
 
 }
