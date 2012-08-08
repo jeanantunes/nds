@@ -64,7 +64,7 @@ public class EMS0106MessageProcessor extends AbstractRepository implements Messa
 				estudo.setQtdeReparte(BigInteger.valueOf(input.getReparteDistribuir()));
 		
 				getSession().persist(estudo);
-		
+/*		
 				for (ProdutoEdicao produtoEdicao : listaProdutoEdicao) {
 					
 					estudo = new Estudo();
@@ -75,6 +75,7 @@ public class EMS0106MessageProcessor extends AbstractRepository implements Messa
 		
 					getSession().persist(estudo);
 				}
+*/
 			}
 			
 		} else {
