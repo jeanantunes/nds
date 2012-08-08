@@ -39,13 +39,14 @@ var DESCONTO_PRODUTO = {
 		$.postJSON("<c:url value='/administracao/tipoDescontoCota/novoDescontoProduto'/>",
 				   data,
 				   function(result) {
-			           fecharDialogs();
+
+					   $( "#dialog-produto" ).dialog( "close" );
+
 					   var tipoMensagem = result.tipoMensagem;
 					   var listaMensagens = result.listaMensagens;
 					   if (tipoMensagem && listaMensagens) {
 					       exibirMensagem(tipoMensagem, listaMensagens);
 				       }
-	                   pesquisar();
 	               },
 				   null,
 				   true);
@@ -58,6 +59,8 @@ var DESCONTO_PRODUTO = {
 		var quantidadeEdicoes = $("#quantidadeEdicoes").val();
 		var descontoProduto = $("#descontoProduto").val();
 		var descontoPredominante = $("#descontoPredominante").attr("checked") ? true : false;
+		var isCheckedEdicao = $("#mostrarEdicao").attr("checked") ? true : false;
+		var hasCotaEspecifica = document.getElementById("radioCotasEspecificas").checked;
 		
 		var data = new Array();
 		
@@ -66,6 +69,8 @@ var DESCONTO_PRODUTO = {
 		data.push({name:'descontoProduto' , value: descontoProduto});
 		data.push({name:'quantidadeEdicoes' , value: quantidadeEdicoes});
 		data.push({name:'descontoPredominante' , value: descontoPredominante});
+		data.push({name:'isCheckedEdicao' , value: isCheckedEdicao});
+		data.push({name:'hasCotaEspecifica' , value: hasCotaEspecifica});
 		
 		$("input[id^=cotaInput]").each(function(index, value) {
 			if ($(this).val()) {
@@ -186,9 +191,9 @@ function adicionarLinhaCota(linhaAtual){
             <td>Cotas:</td>
             <td><table width="100%" border="0" cellspacing="0" cellpadding="0">
               <tr>
-                <td width="10%"><input type="radio" name="cotas" id="cotas" value="radio" onchange="esconderGridCota();" /></td>
+                <td width="10%"><input type="radio" name="cotas" id="radioTodasCotas" value="radio" onchange="esconderGridCota();" /></td>
                 <td width="29%">Todas</td>
-                <td width="8%"><input type="radio" name="cotas" id="cotas" value="radio" onchange="mostrarGridCota();" /></td>
+                <td width="8%"><input type="radio" name="cotas" id="radioCotasEspecificas" value="radio" onchange="mostrarGridCota();" /></td>
                 <td width="53%">Específica</td>
               </tr>
             </table></td>

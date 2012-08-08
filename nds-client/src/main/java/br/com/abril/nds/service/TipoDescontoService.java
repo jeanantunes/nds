@@ -1,26 +1,32 @@
 package br.com.abril.nds.service;
-import java.math.BigDecimal;
 import java.util.List;
 
-import br.com.abril.nds.client.vo.TipoDescontoVO;
-import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.dto.TipoDescontoCotaDTO;
+import br.com.abril.nds.dto.TipoDescontoDTO;
+import br.com.abril.nds.dto.TipoDescontoProdutoDTO;
+import br.com.abril.nds.dto.filtro.FiltroTipoDescontoCotaDTO;
+import br.com.abril.nds.dto.filtro.FiltroTipoDescontoDTO;
+import br.com.abril.nds.dto.filtro.FiltroTipoDescontoProdutoDTO;
 import br.com.abril.nds.model.cadastro.TipoDesconto;
 
 
 /**
- * Interface que define serviços referentes a entidade
- * {@link br.com.abril.nds.model.cadastro.TipoDescontoCota}
+ * Interface que define serviços referentes aos tipos de desconto
  * 
  */
 public interface TipoDescontoService {
 
-	void incluirDescontoGeral(TipoDesconto tipoDesconto);
+	List<TipoDescontoDTO> buscarTipoDesconto(FiltroTipoDescontoDTO filtro);
 	
-	void atualizarDistribuidores(BigDecimal desconto);
+	Integer buscarQntTipoDesconto(FiltroTipoDescontoDTO filtro);
 	
-	List<TipoDescontoVO> obterTipoDescontoGeral();
-
-	Cota obterCota(int numeroCota);
+	List<TipoDescontoCotaDTO> buscarTipoDescontoCota(FiltroTipoDescontoCotaDTO filtro);
+	
+	Integer buscarQuantidadeTipoDescontoCota(FiltroTipoDescontoCotaDTO filtro);
+	
+	List<TipoDescontoProdutoDTO> buscarTipoDescontoProduto(FiltroTipoDescontoProdutoDTO filtro);
+	
+	Integer buscarQuantidadeTipoDescontoProduto(FiltroTipoDescontoProdutoDTO filtro);
 	
 	List<TipoDesconto> obterTodosTiposDescontos();
 	

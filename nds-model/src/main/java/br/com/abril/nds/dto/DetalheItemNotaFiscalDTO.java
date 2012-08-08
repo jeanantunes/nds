@@ -2,6 +2,7 @@ package br.com.abril.nds.dto;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 
 import br.com.abril.nds.model.estoque.TipoDiferenca;
 
@@ -17,9 +18,9 @@ public class DetalheItemNotaFiscalDTO implements Serializable {
 	
 	private Long numeroEdicao;
 	
-	private BigDecimal quantidadeExemplares;
+	private BigInteger quantidadeExemplares;
 	
-	private BigDecimal sobrasFaltas;
+	private BigInteger sobrasFaltas;
 	
 	private BigDecimal precoVenda;
 
@@ -74,28 +75,28 @@ public class DetalheItemNotaFiscalDTO implements Serializable {
 	/**
 	 * @return the quantidadeExemplares
 	 */
-	public BigDecimal getQuantidadeExemplares() {
+	public BigInteger getQuantidadeExemplares() {
 		return quantidadeExemplares;
 	}
 
 	/**
 	 * @param quantidadeExemplares the quantidadeExemplares to set
 	 */
-	public void setQuantidadeExemplares(BigDecimal quantidadeExemplares) {
+	public void setQuantidadeExemplares(BigInteger quantidadeExemplares) {
 		this.quantidadeExemplares = quantidadeExemplares;
 	}
 
 	/**
 	 * @return the sobrasFaltas
 	 */
-	public BigDecimal getSobrasFaltas() {
+	public BigInteger getSobrasFaltas() {
 		return sobrasFaltas;
 	}
 
 	/**
 	 * @param sobrasFaltas the sobrasFaltas to set
 	 */
-	public void setSobrasFaltas(BigDecimal sobrasFaltas) {
+	public void setSobrasFaltas(BigInteger sobrasFaltas) {
 		this.sobrasFaltas = sobrasFaltas;
 	}
 

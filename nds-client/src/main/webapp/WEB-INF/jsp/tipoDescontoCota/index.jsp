@@ -10,7 +10,7 @@ $(function() {
 	$("#produto").autocomplete({source: ""});		
 	$("#descontoGeral").mask("99.99");
 	$("#descontoEspecifico").mask("99.99");
-	$("#span_total_geral_venda").formatCurrency({region: 'pt-BR', decimalSymbol: ',', symbol: ''});
+	$("#descontoProduto").mask("99.99");		
 });
 
 var TIPO_DESCONTO = {
@@ -23,8 +23,10 @@ var TIPO_DESCONTO = {
 			TIPO_DESCONTO.pesquisarDescontoGeral();						
 		}else if(TIPO_DESCONTO.tipoDescontoSelecionado == 'ESPECIFICO'){
 			TIPO_DESCONTO.pesquisarDescontoEspecifico();
-		}else{
+		}else if (TIPO_DESCONTO.tipoDescontoSelecionado == 'PRODUTO') {
 			TIPO_DESCONTO.pesquisarDescontoProduto();
+		}else{
+			exibirMensagem("WARNING", ['Informe um tipo de desconto para pesquisa!'], "");
 		}	
 	},
 	
@@ -41,8 +43,8 @@ var TIPO_DESCONTO = {
 	
 	pesquisarDescontoEspecifico:function(){
 		 
-		var cotaEspecifica = $("#cotaDaPesquisa").val();
-		var nomeEspecifico = $("#nomeDaCotaDaPesquisa").val();
+		var cotaEspecifica = $("#numCotaPesquisa").val();
+		var nomeEspecifico = $("#descricaoCotaPesquisa").val();
 		
 		$(".tiposDescEspecificoGrid").flexOptions({
 			url: "<c:url value='/administracao/tipoDescontoCota/pesquisarDescontoEspecifico'/>",
@@ -119,7 +121,7 @@ var TIPO_DESCONTO = {
 	
 	exibirExportacao:function(isExibir){
 		
-		if(TIPO_DESCONTO.tipoDescontoSelecionado =="PROPDUTO"){
+		if(TIPO_DESCONTO.tipoDescontoSelecionado =="PRODUTO"){
 			if(isExibir == true){
 				$("#idExportacaoProduto").show();	
 			}else{
@@ -162,7 +164,7 @@ var TIPO_DESCONTO = {
 		
 		$.each(resultado.rows, function(index, row) {					
 
-			var linkExcluir = '<a href="javascript:;" onclick="TIPO_DESCONTO.exibirDialogExclusao(' + row.cell.id + ');" style="cursor:pointer">' +
+			var linkExcluir = '<a href="javascript:;" onclick="TIPO_DESCONTO.exibirDialogExclusao(' + row.cell.idTipoDesconto + ');" style="cursor:pointer">' +
 							   	 '<img title="Excluir Desconto" src="${pageContext.request.contextPath}/images/ico_excluir.gif" hspace="5" border="0px" />' +
 							   '</a>';
 			
@@ -185,7 +187,7 @@ var TIPO_DESCONTO = {
 			buttons: {
 				"Confirmar": function() {
 		
-					TIPO_DESCONTO.excluirDesconto(idDesconto,tipoDescontoSelecionado);
+					TIPO_DESCONTO.excluirDesconto(idDesconto,TIPO_DESCONTO.tipoDescontoSelecionado);
 									
 					$( this ).dialog( "close" );
 				},
@@ -260,10 +262,26 @@ var TIPO_DESCONTO = {
                 <td width="48">Produto</td>
                 <td width="585">
                 <div class="especifico" style="display: none">
-	                <label style="width:auto!important;">Cota:</label>
-	                <input name="cotaDaPesquisa" id="cotaDaPesquisa" type="text" style="width:80px; float:left;" onchange="cota.pesquisarPorNumeroCota('#cotaDaPesquisa', '#nomeDaCotaDaPesquisa');" />
-	                <label style="width:auto!important;">Nome:</label>
-	                <input name="nomeDaCotaDaPesquisa" id="nomeDaCotaDaPesquisa" type="text" style="width:160px; float:left;" />
+	                
+	                Cota: <input name="numCotaPesquisa" 
+			           		   id="numCotaPesquisa" 
+			           		   type="text"
+			           		   maxlength="11"
+			           		   style="width:70px;"
+			           		   onchange="cota.pesquisarPorNumeroCota('#numCotaPesquisa', '#descricaoCotaPesquisa',false,
+			           	  											null, 
+			           	  											null);" />
+			    	Nome: <input  name="descricaoCotaPesquisa" 
+					      		 id="descricaoCotaPesquisa" 
+					      		 type="text" 
+					      		 class="nome_jornaleiro" 
+					      		 maxlength="255"
+					      		 style="width:200px;"
+					      		 onkeyup="cota.autoCompletarPorNome('#descricaoCotaPesquisa');" 
+					      		 onblur="cota.pesquisarPorNomeCota('#numCotaPesquisa', '#descricaoCotaPesquisa',false,
+													      			null,
+													      			null);" />
+				                
                 </div>
                 
                 <div class="produto" style="display: none">
@@ -386,14 +404,13 @@ var TIPO_DESCONTO = {
 				align : 'center'
 			}, {
 				display : 'Fornecedores',
-				name : 'forncedores',
+				name : 'fornecedor',
 				width : 320,
 				sortable : true,
 				align : 'left'
 			}, {
-
 				display : 'Data Alteração',
-				name : 'dtAlteracao',
+				name : 'dataAlteracao',
 				width : 150,
 				sortable : true,
 				align : 'center'
@@ -406,7 +423,7 @@ var TIPO_DESCONTO = {
 			}, {
 				display : 'Ação',
 				name : 'acao',
-				width : 30,
+				width : 35,
 				sortable : true,
 				align : 'center'
 			}],
@@ -433,15 +450,21 @@ var TIPO_DESCONTO = {
 			},{
 				display : 'Nome',
 				name : 'nomeCota',
-				width : 350,
+				width : 200,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Desconto %',
 				name : 'desconto',
-				width : 150,
+				width : 100,
 				sortable : true,
 				align : 'center'
+			}, {
+				display : 'Fornecedor(es)',
+				name : 'fornecedor',
+				width : 180,
+				sortable : true,
+				align : 'left'
 			}, {
 				display : 'Data Alteração',
 				name : 'dataAlteracao',
@@ -457,11 +480,11 @@ var TIPO_DESCONTO = {
 			}, {
 				display : 'Ação',
 				name : 'acao',
-				width : 30,
+				width : 35,
 				sortable : true,
 				align : 'center'
 			}],
-			sortname : "cota",
+			sortname : "numeroCota",
 			sortorder : "asc",
 			usepager : true,
 			useRp : true,
@@ -476,19 +499,19 @@ var TIPO_DESCONTO = {
 			dataType : 'json',
 			colModel : [ {
 				display : 'Código',
-				name : 'codigo',
+				name : 'codigoProduto',
 				width : 70,
 				sortable : true,
 				align : 'left'
 			},{
 				display : 'Produto',
-				name : 'produto',
+				name : 'nomeProduto',
 				width : 228,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Edição',
-				name : 'edicao',
+				name : 'numeroEdicao',
 				width : 100,
 				sortable : true,
 				align : 'center'
@@ -500,13 +523,13 @@ var TIPO_DESCONTO = {
 				align : 'center'
 			}, {
 				display : 'Data Alteração',
-				name : 'dtAlteracao',
+				name : 'dataAlteracao',
 				width : 120,
 				sortable : true,
 				align : 'center'			
 			}, {
 				display : 'Usuário',
-				name : 'usuario',
+				name : 'nomeUsuario',
 				width : 150,
 				sortable : true,
 				align : 'left'
@@ -517,7 +540,7 @@ var TIPO_DESCONTO = {
 				sortable : true,
 				align : 'center'
 			}],
-			sortname : "codigo",
+			sortname : "codigoProduto",
 			sortorder : "asc",
 			usepager : true,
 			useRp : true,
