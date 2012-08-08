@@ -54,6 +54,9 @@ public class ParametroDistribuicaoCota implements Serializable {
 	
 	@Column(name = "SLIP_EMAIL", nullable = true)
 	private Boolean slipEmail;
+	
+	@Column(name = "PROCURACAO_ASSINADA")
+	private boolean procuracaoAssinada;
 
 	
 	public ParametroDistribuicaoCota(){
@@ -279,8 +282,12 @@ public class ParametroDistribuicaoCota implements Serializable {
 	public void setSlipEmail(Boolean slipEmail) {
 		this.slipEmail = slipEmail;
 	}
- 
-	
+
+	public boolean getProcuracaoAssinada() {
+		return procuracaoAssinada;
+	}
+
+	public void setProcuracaoAssinada(boolean procuracaoAssinada) {
+		this.procuracaoAssinada = procuracaoAssinada;
+	}
 }
-
-

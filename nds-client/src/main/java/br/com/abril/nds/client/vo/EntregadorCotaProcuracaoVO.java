@@ -3,10 +3,11 @@ package br.com.abril.nds.client.vo;
 public class EntregadorCotaProcuracaoVO {
 
 	
-	public EntregadorCotaProcuracaoVO(Integer numeroCota, String nomeCota){
+	public EntregadorCotaProcuracaoVO(Integer numeroCota, String nomeCota, boolean procuracaoAssinada){
 		
 		this.numeroCota = numeroCota;
 		this.nomeCota = nomeCota;
+		this.procuracaoAssinada = procuracaoAssinada;
 	}
 	
 	private Integer numeroCota;

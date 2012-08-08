@@ -37,6 +37,7 @@ import br.com.abril.nds.model.cadastro.Entregador;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.ProcuracaoEntregador;
+import br.com.abril.nds.model.cadastro.Rota;
 import br.com.abril.nds.model.cadastro.TelefoneEntregador;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.EntregadorService;
@@ -628,9 +629,19 @@ public class EntregadorController {
 			Entregador entregador = this.entregadorService.buscarPorId(idEntregador);
 			
 			dados[0] = entregador.getPessoa().getNome();
-			dados[1] = entregador.getRoteiro() != null ? entregador.getRoteiro().getDescricaoRoteiro() : "";
-			dados[2] = entregador.getRoteiro() != null && entregador.getRoteiro().getBox() != null ? entregador.getRoteiro().getBox().getNome() : "";
-			dados[3] = entregador.getRota() != null ? entregador.getRota().getDescricaoRota() : "";
+			
+			Rota rota = entregador.getRota();
+			if (rota != null){
+				
+				dados[1] = rota.getRoteiro() != null ? rota.getRoteiro().getDescricaoRoteiro() : "";
+				dados[2] = rota.getRoteiro() != null && rota.getRoteiro().getBox() != null ? rota.getRoteiro().getBox().getNome() : "";
+				dados[3] = entregador.getRota() != null ? entregador.getRota().getDescricaoRota() : "";
+			} else {
+				
+				dados[1] = "";
+				dados[2] = "";
+				dados[3] = "";
+			}
 			
 			EntregadorCotaProcuracaoPaginacaoVO retorno = 
 					this.entregadorService.buscarCotasAtendidas(idEntregador, 1, 15, 
