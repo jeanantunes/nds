@@ -15,8 +15,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.client.vo.EntregadorCotaProcuracaoPaginacaoVO;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
-import br.com.abril.nds.dto.ProcuracaoImpressaoDTO;
 import br.com.abril.nds.dto.ProcuracaoImpressaoWrapper;
 import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroEntregadorDTO;
@@ -358,5 +358,15 @@ public class EntregadorServiceImpl implements EntregadorService {
 		 String path = url.toURI().getPath();
 		 
 		 return JasperRunManager.runReportToPdf(path, parameters, jrDataSource);
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public EntregadorCotaProcuracaoPaginacaoVO buscarCotasAtendidas(
+			Long idEntregador, int pagina, int resultadosPorPagina,
+			String sortname, String sortorder) {
+		
+		return this.entregadorRepository.buscarCotasAtendidas(idEntregador, pagina, resultadosPorPagina,
+				sortname, sortorder);
 	}
 }

@@ -17,6 +17,8 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.client.vo.EntregadorCotaProcuracaoPaginacaoVO;
+import br.com.abril.nds.client.vo.EntregadorCotaProcuracaoVO;
 import br.com.abril.nds.client.vo.EntregadorPessoaFisicaVO;
 import br.com.abril.nds.client.vo.EntregadorPessoaJuridicaVO;
 import br.com.abril.nds.client.vo.ValidacaoVO;
@@ -41,6 +43,7 @@ import br.com.abril.nds.service.EntregadorService;
 import br.com.abril.nds.service.PessoaFisicaService;
 import br.com.abril.nds.service.PessoaJuridicaService;
 import br.com.abril.nds.util.CellModel;
+import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
@@ -50,6 +53,7 @@ import br.com.caelum.stella.validation.CNPJValidator;
 import br.com.caelum.stella.validation.CPFValidator;
 import br.com.caelum.stella.validation.InvalidStateException;
 import br.com.caelum.vraptor.Path;
+import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
@@ -159,11 +163,8 @@ public class EntregadorController {
 												Long codigoEntregador,
 												boolean isComissionado,
 												String percentualComissao,
-												boolean procuracao,
 												String cpfEntregador, 
-												Integer numeroCotaProcuracao,
-												PessoaFisica pessoaFisica,
-												ProcuracaoEntregador procuracaoEntregador) {
+												PessoaFisica pessoaFisica) {
 		
 		HashMap<String, String> cpf = new HashMap<String, String>();
 		cpf.put(CPF, cpfEntregador);
@@ -171,10 +172,7 @@ public class EntregadorController {
 		validarParametrosEntradaCadastroEntregador(codigoEntregador, 
 												   isComissionado, 
 												   percentualComissao, 
-												   cpf,
-												   procuracao,
-												   numeroCotaProcuracao,
-												   procuracaoEntregador);
+												   cpf);
 
 		String mensagemSucesso = "Cadastro realizado com sucesso.";
 
@@ -223,31 +221,7 @@ public class EntregadorController {
 			entregador.setPercentualComissao(new BigDecimal(getValorSemMascara(percentualComissao)));
 		}
 		
-		entregador.setProcuracao(procuracao);
-
-		if (procuracao && numeroCotaProcuracao == null) {
-
-			throw new ValidacaoException(TipoMensagem.WARNING, "Você deve preencher uma cota para realizar uma procuração.");
-
-		} else if (!procuracao) {
-
-			procuracaoEntregador = null;
-
-		} else {
-
-			procuracaoEntregador = obterProcuracaoEntregadorValidada(numeroCotaProcuracao, idEntregador, procuracaoEntregador);
-		}
-
-		if (procuracaoEntregador != null) {
-
-			procuracaoEntregador.setEntregador(entregador);
-
-			entregador = this.entregadorService.salvarEntregadorProcuracao(entregador, procuracaoEntregador);
-
-		} else {
-			
-			entregador = this.entregadorService.salvarEntregadorProcuracao(entregador, null);
-		}
+		entregador = this.entregadorService.salvarEntregadorProcuracao(entregador, null);
 
 		processarEnderecosEntregador(entregador.getId());
 
@@ -279,11 +253,10 @@ public class EntregadorController {
 												  Long codigoEntregador,
 												  boolean isComissionado,
 												  String percentualComissao,
-												  boolean procuracao,
+												  
 												  String cnpjEntregador,
-												  Integer numeroCotaProcuracao,
-												  PessoaJuridica pessoaJuridica,
-												  ProcuracaoEntregador procuracaoEntregador) {
+												  
+												  PessoaJuridica pessoaJuridica) {
 		
 		HashMap<String, String> cnpj = new HashMap<String, String>();
 		cnpj.put(CNPJ, cnpjEntregador);
@@ -291,10 +264,7 @@ public class EntregadorController {
 		validarParametrosEntradaCadastroEntregador(codigoEntregador, 
 												   isComissionado, 
 												   percentualComissao, 
-												   cnpj,
-												   procuracao,
-												   numeroCotaProcuracao,
-												   procuracaoEntregador);
+												   cnpj);
 
 		String mensagemSucesso = "Cadastro realizado com sucesso.";
 
@@ -342,32 +312,9 @@ public class EntregadorController {
 			entregador.setPercentualComissao(new BigDecimal(getValorSemMascara(percentualComissao )));
 		}
 
-		entregador.setProcuracao(procuracao);
 		entregador.setPessoa(pessoaJuridicaExistente);
 
-		if (procuracao && numeroCotaProcuracao == null) {
-
-			throw new ValidacaoException(TipoMensagem.WARNING, "Você deve preencher uma cota para realizar uma procuração.");
-
-		} else if (!procuracao) {
-
-			procuracaoEntregador = null;
-
-		} else {
-
-			procuracaoEntregador = obterProcuracaoEntregadorValidada(numeroCotaProcuracao, idEntregador, procuracaoEntregador);
-		}
-
-		if (procuracaoEntregador != null) {
-
-			procuracaoEntregador.setEntregador(entregador);
-
-			entregador = this.entregadorService.salvarEntregadorProcuracao(entregador, procuracaoEntregador);
-
-		} else {
-			
-			entregador = this.entregadorService.salvarEntregadorProcuracao(entregador, null);
-		}
+		entregador = this.entregadorService.salvarEntregadorProcuracao(entregador, null);
 
 		processarEnderecosEntregador(entregador.getId());
 
@@ -671,6 +618,71 @@ public class EntregadorController {
 		}
 	}
 	
+	@Post
+	public void carregarAbaCota(Long idEntregador){
+		
+		Object[] dados = new Object[5];
+		
+		if (idEntregador != null){
+			
+			Entregador entregador = this.entregadorService.buscarPorId(idEntregador);
+			
+			dados[0] = entregador.getPessoa().getNome();
+			dados[1] = entregador.getRoteiro() != null ? entregador.getRoteiro().getDescricaoRoteiro() : "";
+			dados[2] = entregador.getRoteiro() != null && entregador.getRoteiro().getBox() != null ? entregador.getRoteiro().getBox().getNome() : "";
+			dados[3] = entregador.getRota() != null ? entregador.getRota().getDescricaoRota() : "";
+			
+			EntregadorCotaProcuracaoPaginacaoVO retorno = 
+					this.entregadorService.buscarCotasAtendidas(idEntregador, 1, 15, 
+					"numeroCota", "asc");
+			
+			TableModel<CellModelKeyValue<EntregadorCotaProcuracaoVO>> tableModel = 
+					new TableModel<CellModelKeyValue<EntregadorCotaProcuracaoVO>>();
+			
+			tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(retorno.getListaVO()));
+			
+			tableModel.setTotal(retorno.getTotalRegistros());
+			
+			tableModel.setPage(1);
+			
+			dados[4] = tableModel;
+		} else {
+			
+			dados[0] = "";
+			dados[1] = "";
+			dados[2] = "";
+			dados[3] = "";
+			dados[4] = new TableModel<CellModelKeyValue<EntregadorCotaProcuracaoVO>>();
+		}
+		
+		this.result.use(Results.json()).from(dados, "result").recursive().serialize();
+	}
+	
+	public void atualizarGridCotas(Long idEntregador, int page, int rp, 
+			String sortname, String sortorder){
+		
+		if (idEntregador == null){
+			
+			this.result.use(Results.json()).withoutRoot().from(new TableModel<CellModelKeyValue<EntregadorCotaProcuracaoVO>>()).recursive().serialize();
+		} else {
+		
+			EntregadorCotaProcuracaoPaginacaoVO retorno = 
+					this.entregadorService.buscarCotasAtendidas(idEntregador, page, rp, 
+					sortname, sortorder);
+			
+			TableModel<CellModelKeyValue<EntregadorCotaProcuracaoVO>> tableModel = 
+					new TableModel<CellModelKeyValue<EntregadorCotaProcuracaoVO>>();
+			
+			tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(retorno.getListaVO()));
+			
+			tableModel.setTotal(retorno.getTotalRegistros());
+			
+			tableModel.setPage(page);
+			
+			this.result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
+		}
+	}
+	
 	/*
 	 * 
 	 */
@@ -678,10 +690,7 @@ public class EntregadorController {
 	private void validarParametrosEntradaCadastroEntregador(Long codigoEntregador,
 															boolean isComissionado,
 															String percentualComissao,
-															HashMap<String, String> cpfCnpj,
-   															boolean procuracao,
-															Integer numeroCotaProcuracao,
-															ProcuracaoEntregador procuracaoEntregador) {
+															HashMap<String, String> cpfCnpj) {
 		
 		List<String> listaMensagens = new ArrayList<String>();
 		
@@ -754,31 +763,6 @@ public class EntregadorController {
 				listaMensagens.add("O preenchimento do campo [Percentual da comissão] não é válido.");
 			}
 		}
-		
-		if (procuracao) {
-			
-			if (numeroCotaProcuracao == null) {
-		
-				listaMensagens.add("O preenchimento do campo [Cota da procuração] é obrigatório.");
-			}
-		
-			if (procuracaoEntregador.getEstadoCivil() == null) {
-				
-				listaMensagens.add("O preenchimento do campo [Estado civil do procurador] é obrigatório.");
-			}
-			
-			if (procuracaoEntregador.getProcurador() == null 
-					|| procuracaoEntregador.getProcurador().isEmpty()) {
-				
-				listaMensagens.add("O preenchimento do campo [Nome do procurador] é obrigatório.");
-			}
-			
-			if (procuracaoEntregador.getNumeroPermissao() == null 
-					|| procuracaoEntregador.getNumeroPermissao().isEmpty()) {
-				
-				listaMensagens.add("O preenchimento do campo [Número da permissão] é obrigatório.");
-			}
-		}
 			
 		List<EnderecoAssociacaoDTO> listaEnderecoAssociacaoSalvar = 
 				(List<EnderecoAssociacaoDTO>) this.session.getAttribute(
@@ -847,41 +831,41 @@ public class EntregadorController {
 	/*
 	 * 
 	 */
-	private ProcuracaoEntregador obterProcuracaoEntregadorValidada(Integer numeroCotaProcuracao, 
-																   Long idEntregador,
-																   ProcuracaoEntregador procuracaoEntregador) {
-
-		ProcuracaoEntregador procuracaoEntregadorExistente = null;
-		
-		if (idEntregador != null) {
-
-			procuracaoEntregadorExistente = this.entregadorService.obterProcuracaoEntregadorPorId(idEntregador);
-		}
-
-		Cota cota = this.cotaService.obterPorNumeroDaCota(numeroCotaProcuracao);
-
-		if (cota == null) {
-
-			throw new ValidacaoException(TipoMensagem.WARNING, "Cota inválida para a procuração.");
-		}
-
-		if (procuracaoEntregadorExistente == null) {
-			
-			procuracaoEntregador.setCota(cota);
-			
-			return procuracaoEntregador;
-		}
-
-		procuracaoEntregadorExistente.setCota(cota);
-		procuracaoEntregadorExistente.setEstadoCivil(procuracaoEntregador.getEstadoCivil());
-		procuracaoEntregadorExistente.setNacionalidade(procuracaoEntregador.getNacionalidade());
-		procuracaoEntregadorExistente.setNumeroPermissao(procuracaoEntregador.getNumeroPermissao());
-		procuracaoEntregadorExistente.setProcurador(procuracaoEntregador.getProcurador());
-		procuracaoEntregadorExistente.setProfissao(procuracaoEntregador.getProfissao());
-		procuracaoEntregadorExistente.setRg(procuracaoEntregador.getRg());
-
-		return procuracaoEntregadorExistente;
-	}
+//	private ProcuracaoEntregador obterProcuracaoEntregadorValidada(Integer numeroCotaProcuracao, 
+//																   Long idEntregador,
+//																   ProcuracaoEntregador procuracaoEntregador) {
+//
+//		ProcuracaoEntregador procuracaoEntregadorExistente = null;
+//		
+//		if (idEntregador != null) {
+//
+//			procuracaoEntregadorExistente = this.entregadorService.obterProcuracaoEntregadorPorId(idEntregador);
+//		}
+//
+//		Cota cota = this.cotaService.obterPorNumeroDaCota(numeroCotaProcuracao);
+//
+//		if (cota == null) {
+//
+//			throw new ValidacaoException(TipoMensagem.WARNING, "Cota inválida para a procuração.");
+//		}
+//
+//		if (procuracaoEntregadorExistente == null) {
+//			
+//			procuracaoEntregador.setCota(cota);
+//			
+//			return procuracaoEntregador;
+//		}
+//
+//		procuracaoEntregadorExistente.setCota(cota);
+//		procuracaoEntregadorExistente.setEstadoCivil(procuracaoEntregador.getEstadoCivil());
+//		procuracaoEntregadorExistente.setNacionalidade(procuracaoEntregador.getNacionalidade());
+//		procuracaoEntregadorExistente.setNumeroPermissao(procuracaoEntregador.getNumeroPermissao());
+//		procuracaoEntregadorExistente.setProcurador(procuracaoEntregador.getProcurador());
+//		procuracaoEntregadorExistente.setProfissao(procuracaoEntregador.getProfissao());
+//		procuracaoEntregadorExistente.setRg(procuracaoEntregador.getRg());
+//
+//		return procuracaoEntregadorExistente;
+//	}
 	
 	/*
 	 * Método responsável por processar os endereços do entregador.

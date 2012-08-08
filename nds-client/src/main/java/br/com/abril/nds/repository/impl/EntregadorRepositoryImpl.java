@@ -10,6 +10,8 @@ import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.hibernate.transform.ResultTransformer;
 import org.springframework.stereotype.Repository;
 
+import br.com.abril.nds.client.vo.EntregadorCotaProcuracaoPaginacaoVO;
+import br.com.abril.nds.client.vo.EntregadorCotaProcuracaoVO;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroEntregadorDTO;
 import br.com.abril.nds.model.cadastro.Entregador;
@@ -279,6 +281,63 @@ public class EntregadorRepositoryImpl extends AbstractRepositoryModel<Entregador
 		criteria.setProjection(Projections.rowCount());
 
 		return ((Long) criteria.list().get(0)).intValue();
-	}	
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public EntregadorCotaProcuracaoPaginacaoVO buscarCotasAtendidas(
+			Long idEntregador, int pagina, int resultadosPorPagina,
+			String sortname, String sortorder) {
+		
+		EntregadorCotaProcuracaoPaginacaoVO retorno = new EntregadorCotaProcuracaoPaginacaoVO();
+		
+		StringBuilder hql = new StringBuilder();
+		hql.append("select new ").append(EntregadorCotaProcuracaoVO.class.getCanonicalName()).append("(")
+		   .append(" cota.numeroCota, cota.pessoa.nome ")
+		   .append(") ")
+		   .append(" from Entregador e join e.roteiro.box.cotas cota ")
+		   .append(" where e.id = :idEntregador ");
+		
+		retorno.setTotalRegistros(obterQtdRegistrosCotaAtendidaPaginacao(hql.toString(), idEntregador).intValue());
+		
+		hql.append(" order by ");
+		
+		if ("numeroCota".equals(sortname)){
+			
+			hql.append(" cota.numeroCota ");
+		} else {
+			
+			hql.append(" cota.pessoa.nome ");
+		}
+		
+		if ("asc".equals(sortorder)){
+			
+			hql.append(" asc ");
+		} else {
+			
+			hql.append(" desc ");
+		}
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setParameter("idEntregador", idEntregador);
+		
+		query.setFirstResult(pagina > 0 ? (pagina - 1) * resultadosPorPagina : pagina * resultadosPorPagina);
+		query.setMaxResults(resultadosPorPagina);
+		
+		
+		retorno.setListaVO(query.list());
+		
+		
+		return retorno;
+	}
 	
+	private Long obterQtdRegistrosCotaAtendidaPaginacao(String hql, Long idEntregador){
+		
+		String _hql = hql.substring(hql.indexOf("from"), hql.length());
+		
+		Query query = this.getSession().createQuery("select count (cota.id) " + _hql);
+		query.setParameter("idEntregador", idEntregador);
+		
+		return (Long) query.uniqueResult();
+	}
 }
