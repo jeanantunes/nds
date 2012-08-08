@@ -24,10 +24,11 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
+import br.com.abril.nds.model.cadastro.desconto.TipoDesconto;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
+import br.com.abril.nds.service.DescontoService;
 import br.com.abril.nds.service.FornecedorService;
-import br.com.abril.nds.service.TipoDescontoService;
 import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
@@ -50,7 +51,7 @@ public class TipoDescontoCotaController {
 	private Result result;
 	
 	@Autowired
-	private TipoDescontoService tipoDescontoService;
+	private DescontoService descontoService;
 
 	@Autowired
 	private HttpSession session;
@@ -69,10 +70,6 @@ public class TipoDescontoCotaController {
 	private String FILTRO_PESQUISA_TIPO_DESCONTO_SESSION_ATTRIBUTE = "filtroPesquisaPorGeral";
 	
 	private static final String FILTRO_PESQUISA_TIPO_DESCONTO_COTA_SESSION_ATTRIBUTE = "filtroPesquisaPorCota";
-	
-	public enum TipoDescontoSelecionado{
-		GERAL,ESPECIFICO,PRODUTO
-	}
 	
 	@Path("/")
 	public void index() {}
@@ -157,13 +154,13 @@ public class TipoDescontoCotaController {
 		
 		FiltroTipoDescontoDTO filtro = carregarFiltroPesquisaDescontoGeral(sortorder, sortname, page, rp);	
 		
-		List<TipoDescontoDTO> listaTipoDescontoGeral = tipoDescontoService.buscarTipoDesconto(filtro);
+		List<TipoDescontoDTO> listaTipoDescontoGeral = descontoService.buscarTipoDesconto(filtro);
 			
 		if (listaTipoDescontoGeral.isEmpty()) {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
 		} 
 		
-		Integer totalDeRegistros = tipoDescontoService.buscarQntTipoDesconto(filtro);
+		Integer totalDeRegistros = descontoService.buscarQntTipoDesconto(filtro);
 		
 		result.use(FlexiGridJson.class).from(listaTipoDescontoGeral).total(totalDeRegistros).page(page).serialize();
 	}
@@ -174,13 +171,13 @@ public class TipoDescontoCotaController {
 		
 		FiltroTipoDescontoCotaDTO filtro = carregarFiltroPesquisaDescontoEspecifico(cotaEspecifica,nomeEspecifico,sortorder, sortname, page, rp);
 		
-		List<TipoDescontoCotaDTO> listaDescontoCotaEspecifica = tipoDescontoService.buscarTipoDescontoCota(filtro);
+		List<TipoDescontoCotaDTO> listaDescontoCotaEspecifica = descontoService.buscarTipoDescontoCota(filtro);
 			
 		if (listaDescontoCotaEspecifica.isEmpty()) {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
 		} 
 		
-		Integer totalRegistros  = tipoDescontoService.buscarQuantidadeTipoDescontoCota(filtro);
+		Integer totalRegistros  = descontoService.buscarQuantidadeTipoDescontoCota(filtro);
 		
 		result.use(FlexiGridJson.class).from(listaDescontoCotaEspecifica).total(totalRegistros).page(page).serialize();
 	}
@@ -191,20 +188,20 @@ public class TipoDescontoCotaController {
 		
 		FiltroTipoDescontoProdutoDTO filtro = carregarFiltroPesquisaDescontoProduto(codigo,produto,sortorder, sortname, page, rp);
 		
-		List<TipoDescontoProdutoDTO> listaTipoDescontoProduto  = tipoDescontoService.buscarTipoDescontoProduto(filtro);
+		List<TipoDescontoProdutoDTO> listaTipoDescontoProduto  = descontoService.buscarTipoDescontoProduto(filtro);
 		
 		if(listaTipoDescontoProduto.isEmpty()){
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
 		}
 		
-		Integer totalRegistros  = tipoDescontoService.buscarQuantidadeTipoDescontoProduto(filtro);
+		Integer totalRegistros  = descontoService.buscarQuantidadeTipoDescontoProduto(filtro);
 		
 		result.use(FlexiGridJson.class).from(listaTipoDescontoProduto).total(totalRegistros).page(page).serialize();
 	}
 	
 	@Post
 	@Path("/excluirDesconto")
-	public void excluirDesconto(Long idDesconto, TipoDescontoSelecionado tipoDesconto ){
+	public void excluirDesconto(Long idDesconto, TipoDesconto tipoDesconto ){
 		
 		//TODO verificar se a exclusão é apenas para registro da data vigente
 		
@@ -250,7 +247,7 @@ public class TipoDescontoCotaController {
 		
 		FiltroTipoDescontoDTO filtroSessao = (FiltroTipoDescontoDTO) obterFiltroParaExportacao(FiltroTipoDescontoDTO.class);
 		
-		List<TipoDescontoDTO> listaTipoDescontoGeral  = tipoDescontoService.buscarTipoDesconto(filtroSessao);
+		List<TipoDescontoDTO> listaTipoDescontoGeral  = descontoService.buscarTipoDesconto(filtroSessao);
 		
 		FileExporter.to("consulta-tipo-desconto-cota", fileType).inHTTPResponse(this.getNDSFileHeader(), filtroSessao, null, listaTipoDescontoGeral, TipoDescontoDTO.class, this.httpServletResponse);
 
@@ -260,7 +257,7 @@ public class TipoDescontoCotaController {
 		
 		FiltroTipoDescontoCotaDTO filtroSessao = (FiltroTipoDescontoCotaDTO) obterFiltroParaExportacao(FiltroTipoDescontoCotaDTO.class);
 		
-		List<TipoDescontoCotaDTO> listaDescontoCotaEspecifica = tipoDescontoService.buscarTipoDescontoCota(filtroSessao);
+		List<TipoDescontoCotaDTO> listaDescontoCotaEspecifica = descontoService.buscarTipoDescontoCota(filtroSessao);
 		
 		FileExporter.to("consulta-tipo-desconto-cota", fileType).inHTTPResponse(this.getNDSFileHeader(), filtroSessao, null, listaDescontoCotaEspecifica,TipoDescontoCotaDTO.class, this.httpServletResponse);
 	}
@@ -269,13 +266,13 @@ public class TipoDescontoCotaController {
 		
 		FiltroTipoDescontoProdutoDTO filtroSessao = (FiltroTipoDescontoProdutoDTO) obterFiltroParaExportacao(FiltroTipoDescontoProdutoDTO.class);
 		
-		List<TipoDescontoProdutoDTO> listaTipoDescontoProduto  = tipoDescontoService.buscarTipoDescontoProduto(filtroSessao);
+		List<TipoDescontoProdutoDTO> listaTipoDescontoProduto  = descontoService.buscarTipoDescontoProduto(filtroSessao);
 		
 		FileExporter.to("consulta-tipo-desconto-cota", fileType).inHTTPResponse(this.getNDSFileHeader(), filtroSessao, null, listaTipoDescontoProduto, TipoDescontoProdutoDTO.class, this.httpServletResponse);
 	}
 
 	@Get
-	public void exportar(FileType fileType, TipoDescontoSelecionado tipoDesconto) throws IOException {
+	public void exportar(FileType fileType, TipoDesconto tipoDesconto) throws IOException {
 		
 		if (fileType == null) {
 			throw new ValidacaoException(TipoMensagem.ERROR, "Tipo de arquivo não encontrado!");
