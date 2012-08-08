@@ -16,11 +16,14 @@ import br.com.abril.nds.dto.filtro.FiltroTipoDescontoCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroTipoDescontoDTO;
 import br.com.abril.nds.dto.filtro.FiltroTipoDescontoProdutoDTO;
 import br.com.abril.nds.model.cadastro.TipoDesconto;
+import br.com.abril.nds.model.cadastro.desconto.DescontoCota;
+import br.com.abril.nds.model.cadastro.desconto.DescontoDistribuidor;
+import br.com.abril.nds.model.cadastro.desconto.DescontoProduto;
 import br.com.abril.nds.repository.TipoDescontoRepository;
-import br.com.abril.nds.service.TipoDescontoService;
+import br.com.abril.nds.service.DescontoService;
 
 @Service
-public class TipoDescontoServiceImpl implements TipoDescontoService {
+public class DescontoServiceImpl implements DescontoService {
 
 	@Autowired
 	private TipoDescontoRepository tipoDescontoRepository;
@@ -40,39 +43,69 @@ public class TipoDescontoServiceImpl implements TipoDescontoService {
 	}
 
 	@Override
+	@Transactional(readOnly=true)
 	public List<TipoDescontoDTO> buscarTipoDesconto(FiltroTipoDescontoDTO filtro) {
 		// FIXME Implementar a consulta paginada de desconto
 		return getMock();
 	}
 
 	@Override
+	@Transactional(readOnly=true)
 	public Integer buscarQntTipoDesconto(FiltroTipoDescontoDTO filtro) {
 		// FIXME Implementar a consulta de desconto
 		return getMock().size();
 	}
 
 	@Override
+	@Transactional(readOnly=true)
 	public List<TipoDescontoCotaDTO> buscarTipoDescontoCota(FiltroTipoDescontoCotaDTO filtro) {
 		// FIXME Implementar a consulta paginada de desconto
 		return getMockEspecia();
 	}
 
 	@Override
+	@Transactional(readOnly=true)
 	public Integer buscarQuantidadeTipoDescontoCota(FiltroTipoDescontoCotaDTO filtro) {
 		// FIXME Implementar a consulta  de desconto
 		return getMockEspecia().size();
 	}
 
 	@Override
+	@Transactional(readOnly=true)
 	public List<TipoDescontoProdutoDTO> buscarTipoDescontoProduto(FiltroTipoDescontoProdutoDTO filtro) {
 		// FIXME Implementar a consulta paginada de desconto
 		return getMockProduto();
 	}
 
 	@Override
+	@Transactional(readOnly=true)
 	public Integer buscarQuantidadeTipoDescontoProduto(FiltroTipoDescontoProdutoDTO filtro) {
 		// FIXME Implementar a consulta de desconto
 		return getMockProduto().size();
+	}
+	
+	@Override
+	@Transactional
+	public void excluirDesconto(Long idDesconto,br.com.abril.nds.model.cadastro.desconto.TipoDesconto tipoDesconto) {
+		// FIXME Implementar a exclusão do desconto informado
+	}
+	
+	@Override
+	@Transactional
+	public void incluirDesconto(DescontoCota desconto) {
+		// FIXME Implementar a inclusão do desconto da cota
+	}
+	
+	@Override
+	@Transactional
+	public void incluirDesconto(DescontoDistribuidor desconto) {
+		// FIXME Implementar a inclusão do desconto da cota
+	}
+	
+	@Override
+	@Transactional
+	public void incluirDesconto(DescontoProduto desconto) {
+		// FIXME Implementar a inclusão do desconto da cota
 	}
 	
 	private List<TipoDescontoCotaDTO> getMockEspecia(){
