@@ -1,7 +1,7 @@
 <head>
 
 <script language="javascript" type="text/javascript" src="${pageContext.request.contextPath}/scripts/scriptCadastroCalendario.js"></script>
-<script type="text/javascript" src='<c:url value="/"/>/scripts/shortcut.js'></script>
+
 
 <style type="text/css">
 
@@ -276,7 +276,7 @@
 				
 				<table>
 					<tr>
-						<td><input type="text" id="anoVigenciaPesquisa"/></td>
+						<td><input type="text" id="anoVigenciaPesquisa" value="${anoCorrente}"/></td>
 						<td>
 							<span class="bt_pesquisar"><a href="javascript:;"
 							onclick="CadastroCalendario.recarregarPainelCalendarioFeriado();">Pesquisar</a>
