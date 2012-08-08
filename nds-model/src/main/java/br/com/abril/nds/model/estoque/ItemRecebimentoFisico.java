@@ -1,6 +1,5 @@
 package br.com.abril.nds.model.estoque;
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.math.BigInteger;
 
 import javax.persistence.Column;
