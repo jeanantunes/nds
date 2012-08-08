@@ -3,6 +3,7 @@ package br.com.abril.nds.dto.filtro;
 import java.io.Serializable;
 
 import br.com.abril.nds.model.cadastro.TipoAtividade;
+import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Exportable;
 
@@ -11,7 +12,7 @@ public class FiltroCadastroTipoNotaDTO extends FiltroDTO implements Serializable
 
 	private static final long serialVersionUID = -733782325727284635L;
 	
-	@Export(label="Operação")
+	
 	private TipoAtividade tipoAtividade;
 	
 	@Export(label="Tipo Nota")
@@ -70,6 +71,15 @@ public class FiltroCadastroTipoNotaDTO extends FiltroDTO implements Serializable
 	 */
 	public void setTipoAtividade(TipoAtividade tipoAtividade) {
 		this.tipoAtividade = tipoAtividade;
+	}
+	
+	@Export(label="Operação")
+	public String getOperacao(){
+		if(tipoAtividade == null){
+			return "Todos";
+		}else{
+			return tipoAtividade.getDescTipoDistribuidor();
+		}
 	}
 	
 	
