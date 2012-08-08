@@ -16,6 +16,7 @@ import br.com.abril.nds.client.vo.ResultadoPermissaoVO;
 import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.dto.ConsultaGrupoPermissaoDTO;
 import br.com.abril.nds.dto.GrupoPermissaoDTO;
+import br.com.abril.nds.dto.UsuarioDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaGrupoDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaPermissaoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
@@ -125,8 +126,6 @@ public class GruposAcessoController {
 		dto.setPermissoes(permissoes);
 		
 		result.use(Results.json()).from(dto, "result").recursive().serialize();
-		//result.use(Results.json()).from(dto, "result").serialize();
-		//result.use(Results.json()).from(dto).serialize();		
 	}
 
 	/**
@@ -257,6 +256,37 @@ public class GruposAcessoController {
 		result.use(FlexiGridJson.class).from(usuarios).total(quantidadeRegistros).page(page).serialize();
 	}
 
+	private void validarDadosUsuario(UsuarioDTO usuario) {
+		List<String> listaMensagemValidacao = new ArrayList<String>();
+
+		if (usuario.getNome() == null || usuario.getNome().isEmpty()) {
+			listaMensagemValidacao.add("O preenchimento do campo nome é obrigatório!");
+		}
+
+		if (usuario.getLogin() == null || usuario.getLogin().isEmpty()) {
+			listaMensagemValidacao.add("O preenchimento do campo login é obrigatório!");
+		}
+
+		if (usuario.getEmail() == null || usuario.getEmail().isEmpty()) {
+			listaMensagemValidacao.add("O preenchimento do campo e-mail é obrigatório!");
+		}
+
+		if (usuario.getSenha() == null || usuario.getSenha().isEmpty()) {
+			listaMensagemValidacao.add("O preenchimento do campo senha é obrigatório!");
+		}
+
+		if ( (usuario.getPermissoesSelecionadas() == null || usuario.getPermissoesSelecionadas().isEmpty()) && 
+			 (usuario.getGruposSelecionados() == null || usuario.getGruposSelecionados().isEmpty()) ) {
+			listaMensagemValidacao.add("É necessário selecionar ao menos uma permissão e/ou grupo!");
+		}
+
+		if (!listaMensagemValidacao.isEmpty()) {
+			ValidacaoVO validacaoVO = new ValidacaoVO(TipoMensagem.ERROR, listaMensagemValidacao);
+			throw new ValidacaoException(validacaoVO);
+		}
+
+	}
+	
 	/**
 	 * @param usuario
 	 * @param rp
@@ -266,10 +296,84 @@ public class GruposAcessoController {
 	 */
 	@Get
 	@Path("/salvarUsuario")
-	public void salvarUsuario(Usuario usuario) {
-		System.out.println(usuario);
+	public void salvarUsuario(UsuarioDTO usuarioDTO) {
+		this.validarDadosUsuario(usuarioDTO);
+
+		Usuario usuario = new Usuario();
+		usuario.setId(usuarioDTO.getId());
+		usuario.setNome(usuarioDTO.getNome());
+		
+		Set<Permissao> permissoes = new HashSet<Permissao>();
+		for (String permissao : usuarioDTO.getPermissoesSelecionadas().split(",")) {
+			permissoes.add(Permissao.valueOf(permissao));
+		}
+		usuario.setPermissoes(permissoes);
+
+		Set<GrupoPermissao> grupos = new HashSet<GrupoPermissao>();
+		for (String grupo : usuarioDTO.getGruposSelecionados().split(",")) {
+			grupos.add(grupoPermissaoService.buscar(Long.parseLong(grupo)));
+		}
+		usuario.setGruposPermissoes(grupos);
+		
+		usuarioService.salvar(usuario);
+		
+		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS,"Usuário salvo com Sucesso."),"result").recursive().serialize();
+	
 	}
 
+	/**
+	 * 
+	 */
+	@Get
+	@Path("/novoUsuario")
+	public void novoUsuario() {
+		editarUsuario(null);
+	}
+	
+	/**
+	 * 
+	 */
+	@Get
+	@Path("/excluirUsuario")
+	public void excluirUsuario(Long codigoUsuario) {
+		usuarioService.excluir(codigoUsuario);
+		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS,"Usuário excluído com Sucesso."),"result").recursive().serialize();
+	}
+	
+	
+	/**
+	 * @param filtro
+	 * @param rp
+	 * @param page
+	 * @param sortname
+	 * @param sortorder
+	 */
+	@Get
+	@Path("/editarUsuario")
+	public void editarUsuario(Long codigoUsuario) {
+
+		/*ConsultaGrupoPermissaoDTO dto = new ConsultaGrupoPermissaoDTO();
+		
+		List<Permissao> permissoes = permissaoService.buscar();
+		if (codigoGrupo != null) {
+			GrupoPermissao grupoPermissao = grupoPermissaoService.buscar(codigoGrupo);
+			List<Permissao> permissoesSelecionadas = new ArrayList<Permissao>(grupoPermissao.getPermissoes());
+			dto.setId(grupoPermissao.getId());
+			dto.setNome(grupoPermissao.getNome());
+			dto.setPermissoesSelecionadas(permissoesSelecionadas);
+			// Remove da lista as permissões selecionadas anteriormente
+			for (Permissao p : permissoesSelecionadas) {
+				if (permissoes.contains(p)) {
+					permissoes.remove(permissoes.indexOf(p));
+				}
+			}
+		}
+		dto.setPermissoes(permissoes);
+		
+		result.use(Results.json()).from(dto, "result").recursive().serialize();*/
+	}
+
+	
 	// REGRAS (PERMISSÕES)
 	
 	/**

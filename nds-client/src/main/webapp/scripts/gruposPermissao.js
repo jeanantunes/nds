@@ -89,24 +89,6 @@ var gruposPermissaoController = $.extend(true, {
 			});
 			$("#permissoesGrupoSelecionadas option:selected", this.workspace).remove();
 		},
-		popup_alterar_grupo : function() {
-			$( "#dialog-novo-grupo", this.workspace ).dialog({
-				resizable: false,
-				height:600,
-				width:750,
-				modal: true,
-				buttons: {
-					"Confirmar": function() {
-						$( this ).dialog( "close" );
-						$("#effect").hide("highlight", {}, 1000, callback);
-						
-					},
-					"Cancelar": function() {
-						$( this ).dialog( "close" );
-					}
-				}
-			});	
-		},
 		popup_excluir_grupo : function(codigoGrupo) {
 			$( "#dialog-excluir_grupo", this.workspace ).dialog({
 				resizable: false,
@@ -151,7 +133,7 @@ var gruposPermissaoController = $.extend(true, {
 			});
 			$(".gruposGrid", this.workspace).flexReload();
 		},
-		editarGrupo : function(idGrupo) {
+		popup_editar_grupo : function(idGrupo) {
 			$("#permissoesGrupo option", this.workspace).remove();
 			$("#permissoesGrupoSelecionadas option", this.workspace).remove();
 			
@@ -191,7 +173,7 @@ var gruposPermissaoController = $.extend(true, {
 					} else {
 						$.each(data.rows , function(index, value) {
 
-							var linkEditarGrupo = '<a href="javascript:;" onclick="gruposPermissaoController.editarGrupo(\'' + value.cell.id + '\');" style="cursor:pointer">' +
+							var linkEditarGrupo = '<a href="javascript:;" onclick="gruposPermissaoController.popup_editar_grupo(\'' + value.cell.id + '\');" style="cursor:pointer">' +
 				     	  	'<img title="Editar Grupo" src="' + contextPath + '/images/ico_detalhes.png" hspace="5" border="0px" />' +
 				  		    '</a>';
 

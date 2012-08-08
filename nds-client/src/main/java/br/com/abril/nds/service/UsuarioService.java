@@ -13,5 +13,9 @@ public interface UsuarioService {
 	public List<Usuario> listar(Usuario usuario, String orderBy, Ordenacao ordenacao, int initialResult, int maxResults);
 
 	public int quantidade(Usuario usuario);
+
+	public void salvar(Usuario usuario);
+	
+	public void excluir(Long codigoUsuario);
 	
 }

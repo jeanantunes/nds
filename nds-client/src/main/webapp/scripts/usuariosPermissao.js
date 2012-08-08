@@ -5,7 +5,81 @@ var usuariosPermissaoController = $.extend(true, {
 			this.initUsuariosGrid();
 			this.mostrarUsuario();
 		},
+		limpar_selecoes : function() {
+			$("#gruposUsuario option", this.workspace).remove();
+			$("#gruposSelecionadosUsuario option", this.workspace).remove();
+			$("#permissoesUsuario option", this.workspace).remove();
+			$("#permissoesSelecionadasUsuario option", this.workspace).remove();
+		},
 		popup_novo_usuario : function() {
+
+			this.limpar_selecoes();
+			
+			this.clearForm($("#novo_usuario_form", this.workspace));
+			
+			$.getJSON(
+					this.path + "/novoUsuario",
+					null, 
+					function(result) {
+						if (result) {
+							$(result.grupos).each(function() {
+								$("#gruposUsuario", this.workspace).append($("<option/>", {value: $(this).id,
+																			 			   text: $(this).nome 
+																			 			  }));
+							});
+							$(result.permissoes).each(function() {
+								$("#permissoesUsuario", this.workspace).append($("<option/>", {value: $(this)[0].toString(),
+																			 			   text: $(this)[0].toString() 
+																			 			  }));
+							});
+						}
+					}
+				);
+			
+			this.popup_usuario();
+		},
+		popup_editar_usuario : function(idGrupo) {
+			this.limpar_selecoes();
+			
+			$.getJSON(
+					this.path + "/editarUsuario",
+					"codigoUsuario=" + idGrupo, 
+					function(result) {
+						if (result) {
+							
+							usuariosPermissaoController.bindData(result, $("#novo_usuario_form", this.workspace));
+							
+							$(result.grupos).each(function() {
+								$("#gruposUsuario", usuariosPermissaoController.workspace).append($("<option/>", {value: $(this).id,
+																			 			   text: $(this).nome 
+																			 			  }));
+							});
+
+							$(result.gruposSelecionados).each(function() {
+								$("#gruposSelecionadosUsuario", usuariosPermissaoController.workspace).append($("<option/>", {value: $(this).id,
+																			 			   text: $(this).nome 
+																			 			  }));
+							});
+
+							$(result.permissoes).each(function() {
+								$("#permissoesUsuario", usuariosPermissaoController.workspace).append($("<option/>", {value: $(this)[0].toString(),
+																			 			   text: $(this)[0].toString() 
+																			 			  }));
+							});
+
+							$(result.permissoesSelecionadas).each(function() {
+								$("#permissoesSelecionadasUsuario", usuariosPermissaoController.workspace).append($("<option/>", {value: $(this)[0].toString(),
+																			 			   text: $(this)[0].toString() 
+																			 			  }));
+							});
+
+						}
+					}
+				);
+			
+			this.popup_usuario();
+		},
+		popup_usuario : function() {
 			$( "#dialog-novo-usuario" , this.workspace).dialog({
 				resizable: false,
 				height:620,
@@ -55,25 +129,7 @@ var usuariosPermissaoController = $.extend(true, {
 				}
 			});
 		},
-		popup_alterar_usuario : function() {
-			$( "#dialog-novo-usuario", this.workspace ).dialog({
-				resizable: false,
-				height:620,
-				width:750,
-				modal: true,
-				buttons: {
-					"Confirmar": function() {
-						$( this ).dialog( "close" );
-						$("#effect").hide("highlight", {}, 1000, callback);
-						
-					},
-					"Cancelar": function() {
-						$( this ).dialog( "close" );
-					}
-				}
-			});			
-		},
-		popup_excluir_usuario : function() {
+		popup_excluir_usuario : function(codigoUsuario) {
 			$( "#dialog-excluir-usuario", this.workspace ).dialog({
 				resizable: false,
 				height:170,
@@ -81,8 +137,27 @@ var usuariosPermissaoController = $.extend(true, {
 				modal: true,
 				buttons: {
 					"Confirmar": function() {
+						$.getJSON(
+								usuariosPermissaoController.path + "/excluirUsuario",
+								"codigoUsuario=" + codigoUsuario, 
+								function(result) {
+
+									var tipoMensagem = result.tipoMensagem;
+									var listaMensagens = result.listaMensagens;
+
+									if(tipoMensagem && listaMensagens) {
+										exibirMensagem(tipoMensagem, listaMensagens);
+									}
+
+									$("#effect").show("highlight", {}, 1000, callback);
+									$(".usuariosGrid", usuariosPermissaoController.workspace).flexReload();
+
+								}
+							);
+
 						$( this ).dialog( "close" );
 						$("#effect").show("highlight", {}, 1000, callback);
+
 					},
 					"Cancelar": function() {
 						$( this ).dialog( "close" );
@@ -92,16 +167,16 @@ var usuariosPermissaoController = $.extend(true, {
 		},
 		adicionaGruposSelecionados : function() {
 			$('#permissoesGrupo', this.workspace).find(":selected").each(function() {
-				$("#permissoesGrupoSelecionadas", this.workspace).append($("<option/>", {value: $(this).val(),
-		 			   text: $(this).val() 
+				$("#permissoesGrupoSelecionadas", this.workspace).append($("<option/>", {value: $(this).id,
+		 			   text: $(this).nome
 		 			  }));
 			});
 			$("#permissoesGrupo option:selected", this.workspace).remove();
 		},
 		removeGruposSelecionados : function() {
 			$('#permissoesGrupoSelecionadas', this.workspace).find(":selected").each(function() {
-				$("#permissoesGrupo", this.workspace).append($("<option/>", {value: $(this).val(),
-		 			   text: $(this).val() 
+				$("#permissoesGrupo", this.workspace).append($("<option/>", {value: $(this).id,
+		 			   text: $(this).nome 
 		 			  }));
 			});
 			$("#permissoesGrupoSelecionadas option:selected", this.workspace).remove();
@@ -124,7 +199,7 @@ var usuariosPermissaoController = $.extend(true, {
 					} else {
 						$.each(data.rows , function(index, value) {
 
-							var linkEditarGrupo = '<a href="javascript:;" onclick="usuariosPermissaoController.editarUsuario(\'' + value.cell.id + '\');" style="cursor:pointer">' +
+							var linkEditarGrupo = '<a href="javascript:;" onclick="usuariosPermissaoController.popup_editar_usuario(\'' + value.cell.id + '\');" style="cursor:pointer">' +
 				     	  	'<img title="Editar Usuário" src="' + contextPath + '/images/ico_detalhes.png" hspace="5" border="0px" />' +
 				  		    '</a>';
 

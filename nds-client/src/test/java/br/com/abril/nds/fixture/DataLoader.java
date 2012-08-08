@@ -1055,6 +1055,7 @@ public class DataLoader {
 		admin.setSenha("81dc9bdb52d04dc20036dbd8313ed055"); // Senha: 1234
 		admin.setNome("Administrador");
 		admin.setContaAtiva(true);
+		admin.setEmail("adminteste@abril.com.br");
 		
 		Set<GrupoPermissao> gruposPermissoes = new HashSet<GrupoPermissao>();
 		gruposPermissoes.add(grupoAdmin);
