@@ -35,18 +35,24 @@ var DESCONTO_ESPECIFICO = {
 	
 	novoDescontoEspecifico:function() {
 		
-		var cotaEspecifica = $("#cotaEspecifica").val();
+		var cotaEspecifica = $("#numCotaEspecifico").val();
 		var descontoEspecifico = $("#descontoEspecifico").val();
 		
+		var fornecedores ="";
+		
+		$("#selectFornecedorSelecionado_option_especifico option").each(function (index) {
+			 fornecedores = fornecedores + "fornecedores["+index+"]="+ $(this).val() +"&";
+		});
+		
 		$.postJSON("<c:url value='/administracao/tipoDescontoCota/novoDescontoEspecifico'/>",
-				[
-					{name: "cotaEspecifica", value:cotaEspecifica },					
-					{name: "descontoCota.desconto", value: descontoEspecifico }
-					],				   
-				   function(result) {
+				"numeroCota=" + cotaEspecifica	+				
+				"&desconto=" + descontoEspecifico + "&" +
+				fornecedores
+				,				   
+				function(result) {
 			           
 						 if (result.tipoMensagem && result.tipoMensagem !="SUCCESS" && result.listaMensagens) {			      
-							   exibirMensagemDialog(result.tipoMensagem, result.listaMensagens, "");
+							   exibirMensagemDialog(result.tipoMensagem, result.listaMensagens, "idModalDescontoEspecifico");
 					       }
 						   else{
 							   exibirMensagem(result.tipoMensagem, result.listaMensagens, "");
@@ -63,7 +69,10 @@ var DESCONTO_ESPECIFICO = {
 	
 	pesquisarCotaSuccessCallBack:function(){},
 	
-	pesquisarCotaErrorCallBack:function(){}
+	pesquisarCotaErrorCallBack:function(){
+		
+		exibirMensagemDialog("WARNING", [' Cota não encontrada!'], "idModalDescontoEspecifico");
+	}
 		
 };
 
@@ -85,7 +94,7 @@ var DESCONTO_ESPECIFICO = {
 <table width="480" border="0" align="center" cellpadding="2" cellspacing="2">
   
   <tr class="especialidades">
-    <td colspan="3" valign="top">
+    <td colspan="4" valign="top">
     	<fieldset style="width:500px;">
     		<legend>Selecione a Cota</legend>
     		Cota:
@@ -93,20 +102,19 @@ var DESCONTO_ESPECIFICO = {
            		   id="numCotaEspecifico" 
            		   type="text"
            		   maxlength="11"
-           		   style="width:70px; 
-           		   float:left; margin-right:5px;"
-           		   onchange="cota.pesquisarPorNumeroCota('#numCotaEspecifico', '#descricaoCotaEspecifico',false,
+           		   style="width:70px;"
+           		   onchange="cota.pesquisarPorNumeroCota('#numCotaEspecifico', '#descricaoCotaEspecifico',true,
            	  											DESCONTO_ESPECIFICO.pesquisarCotaSuccessCallBack, 
            	  											DESCONTO_ESPECIFICO.pesquisarCotaErrorCallBack);" />
-    		
+    		Nome:
     		<input  name="descricaoCotaEspecifico" 
 		      		 id="descricaoCotaEspecifico" 
 		      		 type="text" 
 		      		 class="nome_jornaleiro" 
 		      		 maxlength="255"
-		      		 style="width:130px;"
+		      		 style="width:200px;"
 		      		 onkeyup="cota.autoCompletarPorNome('#descricaoCotaEspecifico');" 
-		      		 onblur="cota.pesquisarPorNomeCota('#numCotaEspecifico', '#descricaoCotaEspecifico',false,
+		      		 onblur="cota.pesquisarPorNomeCota('#numCotaEspecifico', '#descricaoCotaEspecifico',true,
 										      			DESCONTO_ESPECIFICO.pesquisarCotaSuccessCallBack,
 										      			DESCONTO_ESPECIFICO.pesquisarCotaErrorCallBack);" />
     		

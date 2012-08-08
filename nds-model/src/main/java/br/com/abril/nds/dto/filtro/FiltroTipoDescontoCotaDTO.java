@@ -1,39 +1,34 @@
 package br.com.abril.nds.dto.filtro;
 
 import java.io.Serializable;
-import java.util.Date;
 
+import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Exportable;
-import br.com.abril.nds.vo.PaginacaoVO;
 
 @Exportable
 public class FiltroTipoDescontoCotaDTO extends FiltroDTO implements Serializable {
 	
 	private static final long serialVersionUID = 2281254940257591061L;
 	
-	private Long desconto;
+	@Export(label="Tipo de Desconto", exhibitionOrder=1)
+	private final String tipoDesconto = "Específico";
+
+	@Export(label="Cota" , exhibitionOrder=2)
+	private Integer numeroCota;
 	
-	private Date dataAlteracao;
-	
-	private String usuario;
-	
-	private Long idCota;
-	
-	private String nomeEspecifico;
-	
-	private Long idProduto;
-	
-	private Long numeroEdicao;
-	
-	private PaginacaoVO paginacao;
-	
-	
+	@Export(label="Nome" , exhibitionOrder=3)
+	private String nomeCota;
+		
 	private OrdenacaoColunaConsulta ordenacaoColuna;
-	
 	
 	public enum OrdenacaoColunaConsulta {
 		
-		SEQUENCIAL("sequencial"),COTA("cota"),CODIGO("codigo");
+		NUMERO_COTA("numeroCota"),
+		NOME_COTA("nomeCota"),
+		DESONTO("desconto"),
+		FORNECEDORES("fornecedor"),
+		DATA_ALTERACAO("dataAlteracao"),
+		USUARIO("nomeUsuario");
 		
 		private String nomeColuna;
 		
@@ -49,87 +44,104 @@ public class FiltroTipoDescontoCotaDTO extends FiltroDTO implements Serializable
 		}
 	}
 	
-	public FiltroTipoDescontoCotaDTO() {
-		
-	}
-	
-	public FiltroTipoDescontoCotaDTO(Long desconto, Date dataAlteracao, String usuario) {
-		super();
-		this.desconto = desconto;
-		this.dataAlteracao = dataAlteracao;
-		this.usuario = usuario;		
+	/**
+	 * @return the tipoDesconto
+	 */
+	public String getTipoDesconto() {
+		return tipoDesconto;
 	}
 
-	public Long getDesconto() {
-		return desconto;
+	/**
+	 * @return the numeroCota
+	 */
+	public Integer getNumeroCota() {
+		return numeroCota;
 	}
 
-	public void setDesconto(Long desconto) {
-		this.desconto = desconto;
+	/**
+	 * @param numeroCota the numeroCota to set
+	 */
+	public void setNumeroCota(Integer numeroCota) {
+		this.numeroCota = numeroCota;
 	}
 
-	public Date getDataAlteracao() {
-		return dataAlteracao;
+	/**
+	 * @return the nomeCota
+	 */
+	public String getNomeCota() {
+		return nomeCota;
 	}
 
-	public void setDataAlteracao(Date dataAlteracao) {
-		this.dataAlteracao = dataAlteracao;
+	/**
+	 * @param nomeCota the nomeCota to set
+	 */
+	public void setNomeCota(String nomeCota) {
+		this.nomeCota = nomeCota;
 	}
 
-	public String getUsuario() {
-		return usuario;
-	}
-
-	public void setUsuario(String usuario) {
-		this.usuario = usuario;
-	}
-
-	public PaginacaoVO getPaginacao() {
-		return paginacao;
-	}
-
-	public void setPaginacao(PaginacaoVO paginacao) {
-		this.paginacao = paginacao;
-	}
-
+	/**
+	 * @return the ordenacaoColuna
+	 */
 	public OrdenacaoColunaConsulta getOrdenacaoColuna() {
 		return ordenacaoColuna;
 	}
 
+	/**
+	 * @param ordenacaoColuna the ordenacaoColuna to set
+	 */
 	public void setOrdenacaoColuna(OrdenacaoColunaConsulta ordenacaoColuna) {
 		this.ordenacaoColuna = ordenacaoColuna;
 	}
 
-	public Long getIdCota() {
-		return idCota;
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result
+				+ ((nomeCota == null) ? 0 : nomeCota.hashCode());
+		result = prime * result
+				+ ((numeroCota == null) ? 0 : numeroCota.hashCode());
+		result = prime * result
+				+ ((ordenacaoColuna == null) ? 0 : ordenacaoColuna.hashCode());
+		result = prime * result
+				+ ((tipoDesconto == null) ? 0 : tipoDesconto.hashCode());
+		return result;
 	}
 
-	public void setIdCota(Long idCota) {
-		this.idCota = idCota;
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		FiltroTipoDescontoCotaDTO other = (FiltroTipoDescontoCotaDTO) obj;
+		if (nomeCota == null) {
+			if (other.nomeCota != null)
+				return false;
+		} else if (!nomeCota.equals(other.nomeCota))
+			return false;
+		if (numeroCota == null) {
+			if (other.numeroCota != null)
+				return false;
+		} else if (!numeroCota.equals(other.numeroCota))
+			return false;
+		if (ordenacaoColuna != other.ordenacaoColuna)
+			return false;
+		if (tipoDesconto == null) {
+			if (other.tipoDesconto != null)
+				return false;
+		} else if (!tipoDesconto.equals(other.tipoDesconto))
+			return false;
+		return true;
 	}
-
-	public Long getIdProduto() {
-		return idProduto;
-	}
-
-	public void setIdProduto(Long idProduto) {
-		this.idProduto = idProduto;
-	}
-
-	public Long getNumeroEdicao() {
-		return numeroEdicao;
-	}
-
-	public void setNumeroEdicao(Long numeroEdicao) {
-		this.numeroEdicao = numeroEdicao;
-	}
-
-	public String getNomeEspecifico() {
-		return nomeEspecifico;
-	}
-
-	public void setNomeEspecifico(String nomeEspecifico) {
-		this.nomeEspecifico = nomeEspecifico;
-	}
+	
 	
 }

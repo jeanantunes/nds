@@ -1,13 +1,12 @@
 package br.com.abril.nds.dto;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 
-import br.com.abril.nds.util.Constantes;
-import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.export.Export;
-import br.com.abril.nds.util.export.Exportable;
 import br.com.abril.nds.util.export.Export.Alignment;
+import br.com.abril.nds.util.export.Exportable;
 
 @Exportable
 public class TipoDescontoCotaDTO implements Serializable {
@@ -20,67 +19,120 @@ public class TipoDescontoCotaDTO implements Serializable {
 	@Export(label = "Nome", alignment=Alignment.LEFT, exhibitionOrder = 2)
 	private String nomeCota;
 	
-	@Export(label = "Desconto", alignment=Alignment.RIGHT, exhibitionOrder = 3)
-	private Float desconto;
+	@Export(label = "Desconto %", alignment=Alignment.CENTER, exhibitionOrder = 3)
+	private BigDecimal desconto;
 	
-	@Export(label = "Data Alteração", alignment=Alignment.CENTER, exhibitionOrder = 4)
-	private String dataAlteracao;
+	@Export(label = "Fornecedor(es)", alignment=Alignment.RIGHT, exhibitionOrder = 4)
+	private String fornecedor;
 	
-	@Export(label = "Usuário", alignment=Alignment.LEFT, exhibitionOrder = 5)
+	@Export(label = "Data Alteração", alignment=Alignment.CENTER, exhibitionOrder = 5)
+	private Date dataAlteracao;
+	
+	@Export(label = "Usuário", alignment=Alignment.LEFT, exhibitionOrder = 6)
 	private String nomeUsuario;
+	
+	private Long idTipoDesconto;
 	
 	public TipoDescontoCotaDTO() {}
 
-	public TipoDescontoCotaDTO(Integer numeroCota, String nomeCota,
-			Float desconto, String dataAlteracao, String nomeUsuario) {
-		super();
-		this.numeroCota = numeroCota;
-		this.nomeCota = nomeCota;
-		this.desconto = desconto;
-		this.dataAlteracao = dataAlteracao;
-		this.nomeUsuario = nomeUsuario;
-	}
-
+	/**
+	 * @return the numeroCota
+	 */
 	public Integer getNumeroCota() {
 		return numeroCota;
 	}
 
+	/**
+	 * @param numeroCota the numeroCota to set
+	 */
 	public void setNumeroCota(Integer numeroCota) {
 		this.numeroCota = numeroCota;
 	}
 
+	/**
+	 * @return the nomeCota
+	 */
 	public String getNomeCota() {
 		return nomeCota;
 	}
 
+	/**
+	 * @param nomeCota the nomeCota to set
+	 */
 	public void setNomeCota(String nomeCota) {
 		this.nomeCota = nomeCota;
 	}
 
-	public Float getDesconto() {
+	/**
+	 * @return the desconto
+	 */
+	public BigDecimal getDesconto() {
 		return desconto;
 	}
 
-	public void setDesconto(Float desconto) {
+	/**
+	 * @param desconto the desconto to set
+	 */
+	public void setDesconto(BigDecimal desconto) {
 		this.desconto = desconto;
 	}
 
-	public String getDataAlteracao() {
+	/**
+	 * @return the fornecedor
+	 */
+	public String getFornecedor() {
+		return fornecedor;
+	}
+
+	/**
+	 * @param fornecedor the fornecedor to set
+	 */
+	public void setFornecedor(String fornecedor) {
+		this.fornecedor = fornecedor;
+	}
+
+	/**
+	 * @return the dataAlteracao
+	 */
+	public Date getDataAlteracao() {
 		return dataAlteracao;
 	}
 
+	/**
+	 * @param dataAlteracao the dataAlteracao to set
+	 */
 	public void setDataAlteracao(Date dataAlteracao) {
-		this.dataAlteracao = DateUtil.formatarData(dataAlteracao, Constantes.DATE_PATTERN_PT_BR);;
+		this.dataAlteracao = dataAlteracao;
 	}
 
+	/**
+	 * @return the nomeUsuario
+	 */
 	public String getNomeUsuario() {
 		return nomeUsuario;
 	}
 
+	/**
+	 * @param nomeUsuario the nomeUsuario to set
+	 */
 	public void setNomeUsuario(String nomeUsuario) {
 		this.nomeUsuario = nomeUsuario;
 	}
-	
-	
 
+	/**
+	 * @return the idTipoDesconto
+	 */
+	public Long getIdTipoDesconto() {
+		return idTipoDesconto;
+	}
+
+	/**
+	 * @param idTipoDesconto the idTipoDesconto to set
+	 */
+	public void setIdTipoDesconto(Long idTipoDesconto) {
+		this.idTipoDesconto = idTipoDesconto;
+	}
+
+	
+		
 }

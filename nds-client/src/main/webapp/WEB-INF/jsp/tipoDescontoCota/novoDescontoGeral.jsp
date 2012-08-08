@@ -20,7 +20,7 @@ var DESCONTO_GERAL = {
 		$( "#dialog-geral" ).dialog({
 			resizable: false,
 			height:345,
-			width:540,
+			width:550,
 			modal: true,
 			buttons: {
 				"Confirmar": function() {								
