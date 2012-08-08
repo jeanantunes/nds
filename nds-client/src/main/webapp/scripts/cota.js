@@ -21,7 +21,7 @@ var cota = {
 				}, 
 				isFromModal
 			);
-		
+
 		} else {
 			
 			if (errorCallBack) {

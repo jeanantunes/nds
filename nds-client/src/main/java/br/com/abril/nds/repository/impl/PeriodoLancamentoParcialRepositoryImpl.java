@@ -363,10 +363,47 @@ public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepositoryMo
 		
 		return (count == null || count == 0) ? true : false;
 	}
-
+	
+	/**
+	 * Obtem detalhes das vendas do produtoEdição nas datas de Lancamento e Recolhimento
+	 * @param dataLancamento
+	 * @param dataRecolhimento
+	 * @param idProdutoRdicao
+	 * @return List<ParcialVendaDTO>
+	 */
+	@SuppressWarnings("unchecked")
 	@Override
-	public List<ParcialVendaDTO> obterDetalhesVenda() {
-		// TODO Auto-generated method stub
-		return null;
+	public List<ParcialVendaDTO> obterDetalhesVenda(Date dataLancamento, Date dataRecolhimento, Long idProdutoEdicao) {
+		
+        StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select cota.numeroCota as numeroCota, ");
+		hql.append(" pessoa.nome as nomeCota, ");
+		hql.append(" epc.qtdeRecebida as reparte, ");
+		hql.append(" epc.qtdeDevolvida as encalhe, ");
+	    hql.append(" case when conferencia.juramentada = true then conferencia.qtde else 0 end as vendaJuramentada ");
+		
+		hql.append(" from ConferenciaEncalhe conferencia ");
+		hql.append("	join conferencia.movimentoEstoqueCota movimento ");
+		hql.append("	join conferencia.chamadaEncalheCota chamadaEncalheCota ");
+		hql.append("	join chamadaEncalheCota.chamadaEncalhe chamadaEncalhe ");
+		hql.append("	join movimento.estoqueProdutoCota epc ");
+		hql.append("	join movimento.cota cota ");
+		hql.append("	join epc.produtoEdicao produtoEdicao ");
+		hql.append("	join cota.pessoa pessoa ");
+		
+		hql.append("	where chamadaEncalhe.dataRecolhimento >= :dataLancamento ");
+		hql.append("	and chamadaEncalhe.dataRecolhimento <= :dataRecolhimento ");
+		hql.append("	and produtoEdicao.id = :idProdutoEdicao ");
+				
+		Query query =  getSession().createQuery(hql.toString());
+		
+		query.setParameter("dataLancamento",dataLancamento);
+		query.setParameter("dataRecolhimento",dataRecolhimento);
+		query.setParameter("idProdutoEdicao",idProdutoEdicao);
+		
+		query.setResultTransformer(new AliasToBeanResultTransformer(ParcialVendaDTO.class));
+		
+		return query.list();
 	}
 }

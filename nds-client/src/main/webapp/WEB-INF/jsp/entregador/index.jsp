@@ -70,6 +70,9 @@
 
 	function novoEntregador(isCadastroPF) {
 		
+		$("#idEntregadorPF").val("");
+		$("#idEntregadorPJ").val("");
+		
 		var idCampoInicioAtividade = "#inicioAtividade";
 
 		if (isCadastroPF) {
@@ -148,17 +151,6 @@
 			data.push({name: 'codigoEntregador', value: $("#codigoEntregadorPF").val()});
 			data.push({name: 'isComissionado', value: $("#comissionadoPF").is(":checked")});
 			data.push({name: 'percentualComissao', value: $("#percentualComissaoPF").val()});
-			data.push({name: 'procuracao', value: $("#procuracaoPF").is(":checked")});
-			data.push({name: 'cpfProcuracao', value: $("#cpfProcuracaoPF").val()});
-			data.push({name: 'numeroCotaProcuracao', value: $("#numeroCotaProcuracaoPF").val()});
-
-			data.push({name: 'procuracaoEntregador.numeroPermissao', value: $("#numeroPermissaoPF").val()});
-			data.push({name: 'procuracaoEntregador.procurador', value: $("#nomeProcuradorProcuracaoPF").val()});
-			data.push({name: 'procuracaoEntregador.estadoCivil', value: $("#estadoCivilProcuradorProcuracaoPF").val()});
-			data.push({name: 'procuracaoEntregador.endereco', value: $("#enderecoProcuradorProcuracaoPF").val()});
-			data.push({name: 'procuracaoEntregador.rg', value: $("#rgProcuradorProcuracaoPF").val()});
-			data.push({name: 'procuracaoEntregador.nacionalidade', value: $("#nacionalidadeProcuradorProcuracaoPF").val()});
-			data.push({name: 'procuracaoEntregador.profissao', value: $("#profissaoProcuradorProcuracaoPF").val()});
 
 			data.push({name: 'pessoaFisica.cpf', value: $("#cpf").val()});
 			data.push({name: 'pessoaFisica.nome', value: $("#nomeEntregador").val()});
@@ -182,17 +174,6 @@
 			data.push({name: 'codigoEntregador', value: $("#codigoEntregadorPJ").val()});
 			data.push({name: 'isComissionado', value: $("#comissionadoPJ").is(":checked")});
 			data.push({name: 'percentualComissao', value: $("#percentualComissaoPJ").val()});
-			data.push({name: 'procuracao', value: $("#procuracaoPJ").is(":checked")});
-			data.push({name: 'cpfProcuracao', value: $("#cpfProcuracaoPJ").val()});
-			data.push({name: 'numeroCotaProcuracao', value: $("#numeroCotaProcuracaoPJ").val()});
-
-			data.push({name: 'procuracaoEntregador.numeroPermissao', value: $("#numeroPermissaoPJ").val()});
-			data.push({name: 'procuracaoEntregador.procurador', value: $("#nomeProcuradorProcuracaoPJ").val()});
-			data.push({name: 'procuracaoEntregador.estadoCivil', value: $("#estadoCivilProcuradorProcuracaoPJ").val()});
-			data.push({name: 'procuracaoEntregador.endereco', value: $("#enderecoProcuradorProcuracaoPJ").val()});
-			data.push({name: 'procuracaoEntregador.rg', value: $("#rgProcuradorProcuracaoPJ").val()});
-			data.push({name: 'procuracaoEntregador.nacionalidade', value: $("#nacionalidadeProcuradorProcuracaoPJ").val()});
-			data.push({name: 'procuracaoEntregador.profissao', value: $("#profissaoProcuradorProcuracaoPJ").val()});
 
 			data.push({name: 'pessoaJuridica.razaoSocial', value: $("#razaoSocial").val()});
 			data.push({name: 'pessoaJuridica.nomeFantasia', value: $("#nomeFantasia").val()});
@@ -340,6 +321,8 @@
 				ENDERECO_ENTREGADOR.popularGridEnderecos();
 				
 				ENTREGADOR.carregarTelefones();
+				
+				$("#linkDadosCadastrais").click();
 			},
 			function(result) {
 				
@@ -585,6 +568,44 @@
 		$(".pessoasGrid").flexReload();
 
 		$(".grids").show();
+	}
+	
+	function pesquisarCotas(){
+		
+		var idEntregador = $("#idEntregadorPF").val() == "" ? $("#idEntregadorPJ").val() : $("#idEntregadorPF").val();
+		
+		$.postJSON(
+			'<c:url value="/cadastro/entregador/carregarAbaCota" />',
+			{'idEntregador' : idEntregador},
+			function(result) {
+				
+				if (result.tipoMensagem){
+					
+					exibirMensagem(
+						result.tipoMensagem, 
+						result.listaMensagens
+					);
+					
+					return;
+				}
+				
+				$("#nomeEntregadorAbaCota").text(result[0]);
+				$("#nomeRoteiro").text(result[1]);
+				$("#numeroBox").text(result[2]);
+				$("#nomeRota").text(result[3]);
+				
+				$(".entregadoresCotaGrid").flexAddData({
+					page: result[4].page, total: result[4].total, rows: result[4].rows
+				});
+				
+				$(".entregadoresCotaGrid").flexOptions({
+					url : '<c:url value="/cadastro/entregador/atualizarGridCotas" />',
+					params : [
+					          {name: "idEntregador", value: idEntregador}
+					         ]
+				});
+			}, null, true
+		);
 	}
 </script>
 </head>
