@@ -1,14 +1,25 @@
-
-<script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/produtoEdicao.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/cota.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
+<script type="text/javascript">
 
 var DESCONTO_PRODUTO = {
 		
+	inicializarModal: function() {
+		
+		$("#formTipoDescontoProduto")[0].reset();
+		
+		esconderGridCota();
+	},
+
 	popup_produto:function() {
+		
+		DESCONTO_PRODUTO.inicializarModal();
 
 		$( "#dialog-produto" ).dialog({
 			resizable: false,
-			height:320,
-			width:400,
+			height:550,
+			width:450,
 			modal: true,
 			buttons: {
 				"Confirmar": function() {
@@ -19,25 +30,14 @@ var DESCONTO_PRODUTO = {
 				}
 			}
 		});	
-		      
 	},
 
 	novoDescontoProduto:function() {
 		
-		var codigo = $("#codigo").val();
-		var produto = $("#produto").val();
-		var edicaoProduto = $("#edicaoProduto").val();
-		var descontoProduto = $("#descontoProduto").val();
-		var dataAlteracaoProduto = $("#dataAlteracaoProduto").val();
-		var usuarioProduto = $("#usuarioProduto").val()
-		
+		var data = DESCONTO_PRODUTO.obterParametrosNovoDescontoProduto();
+
 		$.postJSON("<c:url value='/administracao/tipoDescontoCota/novoDescontoProduto'/>",
-				   "codigo="+codigo+
-				   "&produto="+ produto +
-				   "&edicaoProduto="+ edicaoProduto +
-				   "&descontoProduto="+ descontoProduto +
-				   "&dataAlteracaoProduto="+ dataAlteracaoProduto +
-				   "&usuarioProduto="+ usuarioProduto,
+				   data,
 				   function(result) {
 			           fecharDialogs();
 					   var tipoMensagem = result.tipoMensagem;
@@ -49,84 +49,190 @@ var DESCONTO_PRODUTO = {
 	               },
 				   null,
 				   true);
-		$(".tiposDescEspecificoGrid").flexReload();		
-	}
+	},
 
+	obterParametrosNovoDescontoProduto: function() {
+		
+		var codigoProduto = $("#pCodigoProduto").val();
+		var edicaoProduto = $("#edicaoProduto").val();
+		var quantidadeEdicoes = $("#quantidadeEdicoes").val();
+		var descontoProduto = $("#descontoProduto").val();
+		var descontoPredominante = $("#descontoPredominante").attr("checked") ? true : false;
+		
+		var data = new Array();
+		
+		data.push({name:'codigoProduto' , value: codigoProduto});
+		data.push({name:'edicaoProduto' , value: edicaoProduto});
+		data.push({name:'descontoProduto' , value: descontoProduto});
+		data.push({name:'quantidadeEdicoes' , value: quantidadeEdicoes});
+		data.push({name:'descontoPredominante' , value: descontoPredominante});
+		
+		$("input[id^=cotaInput]").each(function(index, value) {
+			if ($(this).val()) {
+				data.push({name:'cotas' , value: $(this).val()});
+			}
+		});
+		
+		return data;
+	}
 };
+
+function mostrarGridCota(){
+	$('.especificaCota').show();
+}
+
+function esconderGridCota(){
+	
+	$('.especificaCota').hide();
+	
+	resetGridCota();
+}
+
+function mostraEdicao() {
+
+	$("#mostrarEdicao").attr("checked") ? $('.aEdicao').show() : $('.aEdicao').hide();
+}
+
+function resetGridCota() {
+	
+	$("tr[id^='trCota']").remove();
+	
+	$("#gridCotas").append(
+		'<tr id="trCota1">' +
+		'<td>' +
+		'<input type="text" name="cotaInput" id="cotaInput1" style="width:120px;" maxlength="255" ' +
+		'onblur="cota.pesquisarPorNumeroCota(\'#cotaInput1\', \'#nomeInput1\', true);"/>' +
+		'</td>' +
+		'<td>' +
+		'<input type="text" name="nomeInput" id="nomeInput1" style="width:245px;" maxlength="255"' +
+		'onkeyup="cota.autoCompletarPorNome(\'#nomeInput1\');" ' +
+		'onblur="cota.pesquisarPorNomeCota(\'#cotaInput1\', \'#nomeInput1\',adicionarLinhaCota(1));"/>' +
+		'</td>' +
+		'</tr>'
+	);
+}
+
+function adicionarLinhaCota(linhaAtual){
+	
+	if ($('#trCota' + (linhaAtual + 1)).length == 0 && $('#cotaInput' + (linhaAtual)).val() != ""){
+		
+		var tr = $('<tr class="trCotas" id="trCota'+ (linhaAtual + 1) +'" style="'+ ((linhaAtual + 1) % 2 == 0 ? "background: #F5F5F5;" : "") +'">' +
+				'<td><input type="text" name="cotaInput" maxlength="255" id="cotaInput'+ (linhaAtual + 1) +'" onblur="cota.pesquisarPorNumeroCota(cotaInput'+ (linhaAtual + 1) +', nomeInput'+ (linhaAtual + 1) +', true);" style="width:120px;" /></td>' +
+				'<td>'+
+					 '<input type="text" name="nomeInput" maxlength="255" id="nomeInput'+ (linhaAtual + 1) +'" style="width:245px;" '+
+						 ' onkeyup="cota.autoCompletarPorNome(nomeInput'+ (linhaAtual + 1) +');" ' +
+						 ' onblur="cota.pesquisarPorNomeCota(cotaInput'+ (linhaAtual + 1) +', nomeInput'+ (linhaAtual + 1) +', adicionarLinhaCota('+ (linhaAtual + 1) +'));" ' +
+					 '/>'+
+				'</td>' +
+				'</tr>'
+		);
+		
+		$("#gridCotas").append(tr);
+		
+		$("#cotaInput" + (linhaAtual + 1)).focus();
+		
+		$("#cotaInput"+ (linhaAtual + 1)).numeric();
+	}
+}
 
 </script>
 
-<div id="dialog-produto" title="Novo Tipo de Desconto Produto" style="display:none;">    
-    <table width="394" border="0" cellpadding="2" cellspacing="1" class="filtro">
-            <tr>
-              <td width="100">Código:</td>
-              <td width="283"><input type="text" name="textfield22" id="textfield22"  style="width:100px; float:left; margin-right:5px;" readonly="readonly" /><span class="classPesquisar"><a href="javascript:;">&nbsp;</a></span></td>
-            </tr>
-            <tr>
-              <td>Produto:</td>
-              <td><input type="text" name="textfield4" id="textfield4" style="width:230px;" value="" disabled="disabled"/></td>
-            </tr>
-            <tr>
-              <td>Edição:</td>
-              <td><input type="checkbox" name="checkbox" id="checkbox" onchange="mostraEdicao();" /></td>
-            </tr>
-            <tr>
-              <td colspan="2"><table width="100%" border="0" cellspacing="0" cellpadding="0" class="aEdicao" style="display:none;">
-                <tr>
-                    <td width="27%">Edição Específica:</td>
-                    <td width="18%"><input type="text" name="textfield5" id="textfield5" style="width:60px; margin-left:2px"/></td>
-                    <td width="12%">ou por </td>
-                    <td width="18%"><input type="text" name="textfield6" id="textfield6" style="width:60px;"/></td>
-                    <td width="25%">Edições</td>
-                </tr>
-              </table></td>
-            </tr>
-            <tr>
-              <td>Desconto %:</td>
-              <td><input type="text" name="textfield2" id="textfield2" style="width:100px;"/></td>
-            </tr>
-            <tr>
-              <td>Cotas:</td>
-              <td><table width="100%" border="0" cellspacing="0" cellpadding="0">
-                <tr>
-                  <td width="10%"><input type="radio" name="cotas" id="cotas" value="radio" onchange="escondeCota();" /></td>
-                  <td width="29%">Todas</td>
-                  <td width="8%"><input type="radio" name="cotas" id="cotas" value="radio" onchange="mostraCota();" /></td>
-                  <td width="53%">Específica</td>
-                </tr>
-              </table></td>
-            </tr>
-            <tr>
-              <td colspan="2"><table width="100%" border="0" cellspacing="1" cellpadding="1" class="especificaCota" style="display:none;">
-                <tr class="header_table">
-                  <td width="34%">Cota</td>
-                  <td width="66%">Nome</td>
-                </tr>
-                <tr class="class_linha_1">
-                  <td><input type="text" name="textfield22" id="textfield22"  style="width:80px; float:left; margin-right:5px;" readonly="readonly" /><span class="classPesquisar"><a href="javascript:;">&nbsp;</a></span></td>
-                  <td><input type="text" name="textfield" id="textfield"  style="width:200px;" /></td>
-                </tr>
-                <tr class="class_linha_2">
-                  <td><input type="text" name="textfield" id="textfield3"  style="width:80px; float:left; margin-right:5px;" readonly="readonly" />
-                    <span class="classPesquisar"><a href="javascript:;">&nbsp;</a></span></td>
-                  <td><input type="text" name="textfield" id="textfield7"  style="width:200px;" /></td>
-                </tr>
-                <tr class="class_linha_1">
-                  <td><input type="text" name="textfield" id="textfield8"  style="width:80px; float:left; margin-right:5px;" readonly="readonly" />
-                    <span class="classPesquisar"><a href="javascript:;">&nbsp;</a></span></td>
-                  <td><input type="text" name="textfield" id="textfield9"  style="width:200px;" /></td>
-                </tr>
-                <tr class="class_linha_2">
-                  <td><input type="text" name="textfield" id="textfield10"  style="width:80px; float:left; margin-right:5px;" readonly="readonly" />
-                    <span class="classPesquisar"><a href="javascript:;">&nbsp;</a></span></td>
-                  <td><input type="text" name="textfield" id="textfield11"  style="width:200px;" /></td>
-                </tr>
-              </table></td>
-            </tr>
-            <tr>
-              <td colspan="2">Este desconto predomina sobre os demais (geral / Específico)?
-              <input type="checkbox" name="checkbox2" id="checkbox2" /></td>
-            </tr>
-          </table>       
+<div id="dialog-produto" title="Novo Tipo de Desconto Produto" style="display:none;">
 
-    </div>
+<jsp:include page="../messagesDialog.jsp" />    
+
+<form id="formTipoDescontoProduto">
+  <table width="394" border="0" cellpadding="2" cellspacing="1" class="filtro" style="font-size:8pt">
+          <tr>
+            <td width="100">CÃ³digo:</td>
+            <td width="100">
+            	<input type="text" name="pCodigoProduto" id="pCodigoProduto" maxlength="255" 
+					   style="width:100px; float:left; margin-right:5px;"
+					   onblur="produtoEdicao.pesquisarPorCodigoProduto('#pCodigoProduto', '#pNomeProduto', true,
+							   undefined,
+							   undefined);"/>
+            </td>
+          </tr>
+          <tr>
+            <td>Produto:</td>
+            <td>
+            	<input type="text" name="pNomeProduto" id="pNomeProduto" maxlength="255" 
+									style="width:160px;"
+									onkeyup="produtoEdicao.autoCompletarPorNomeProduto('#pNomeProduto', false);"
+									onblur="produtoEdicao.pesquisarPorNomeProduto('#pCodigoProduto', '#pNomeProduto', true,
+										undefined,
+										undefined);" />
+            </td>
+          </tr>
+          <tr>
+            <td>EdiÃ§Ã£o:</td>
+            <td><input type="checkbox" name="checkbox" id="mostrarEdicao" onclick="mostraEdicao();" /></td>
+          </tr>
+		  
+          <tr class="aEdicao" style="display:none;">
+
+	          <td>EdiÃ§Ã£o EspecÃ­fica:</td>
+	          <td><input type="text" name="edicaoProduto" id="edicaoProduto" style="width:60px;"/>
+	          ou por
+	          <input type="text" name="quantidadeEdicoes" id="quantidadeEdicoes" style="width:60px;"/>
+	          EdiÃ§Ãµes</td>
+            
+		  </tr>
+		  <tr>
+            <td>Desconto %:</td>
+            <td><input type="text" name="descontoProduto" id="descontoProduto" style="width:100px;"/></td>
+          </tr>
+          <tr>
+            <td>Cotas:</td>
+            <td><table width="100%" border="0" cellspacing="0" cellpadding="0">
+              <tr>
+                <td width="10%"><input type="radio" name="cotas" id="cotas" value="radio" onchange="esconderGridCota();" /></td>
+                <td width="29%">Todas</td>
+                <td width="8%"><input type="radio" name="cotas" id="cotas" value="radio" onchange="mostrarGridCota();" /></td>
+                <td width="53%">EspecÃ­fica</td>
+              </tr>
+            </table></td>
+          </tr>
+    </table>       
+
+
+		<div id="fieldCota" class="especificaCota" style="display:none;">
+			
+			<fieldset style="width:395px!important;">
+				<legend>Cotas</legend>
+				<div style="overflow: auto; height: 240px;">
+	    			<table border="0" cellspacing="1" cellpadding="1" class="especificaCota" id="gridCotas" style="display:none;width:100%" >
+						
+						<tr class="header_table">
+			                <td width="34%">Cota</td>
+			                <td width="66%">Nome</td>
+						</tr>
+						<tr id="trCota1">
+							<td>
+								<input type="text" name="cotaInput" id="cotaInput1" style="width:120px;" maxlength="255"
+									onblur="cota.pesquisarPorNumeroCota('#cotaInput1', '#nomeInput1', true);"/>
+							</td>
+							<td>
+								<input type="text" name="nomeInput" id="nomeInput1" style="width:245px;" maxlength="255"
+									onkeyup="cota.autoCompletarPorNome('#nomeInput1');" 
+									onblur="cota.pesquisarPorNomeCota('#cotaInput1', '#nomeInput1',adicionarLinhaCota(1));"/>
+							</td>
+						</tr>
+						<tfoot>
+							<tr>
+								<td colspan="2">
+									Este desconto predomina sobre os demais (geral / EspecÃ­fico)?
+									<input type="checkbox" name="descontoPredominante" id="descontoPredominante" />
+								</td>
+							</tr>
+				      	</tfoot>
+					</table>
+				</div>
+			</fieldset>
+		</div>            
+
+
+ </form>
+
+  </div>
+

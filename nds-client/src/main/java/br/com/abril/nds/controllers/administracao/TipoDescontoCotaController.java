@@ -146,7 +146,9 @@ public class TipoDescontoCotaController {
 	
 	@Post
 	@Path("/novoDescontoProduto")
-	public void novoDescontoProduto(String codigo, String produto, String edicaoProduto, String descontoProduto, String dataAlteracaoProduto, String usuarioProduto){
+	public void novoDescontoProduto(String codigoProduto, Long edicaoProduto, Integer quantidadeEdicoes, 
+									BigDecimal descontoProduto, List<Integer> cotas, boolean descontoPredominante) {		
+		this.result.nothing();
 		
 		//FIXME revisar a implementação da inclusão de um novo desconto de produto
 		

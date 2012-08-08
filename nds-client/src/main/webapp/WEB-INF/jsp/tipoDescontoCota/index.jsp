@@ -10,7 +10,7 @@ $(function() {
 	$("#produto").autocomplete({source: ""});		
 	$("#descontoGeral").mask("99.99");
 	$("#descontoEspecifico").mask("99.99");
-	$("#descontoProduto").mask("99.99");		
+	$("#span_total_geral_venda").formatCurrency({region: 'pt-BR', decimalSymbol: ',', symbol: ''});
 });
 
 var TIPO_DESCONTO = {
@@ -268,9 +268,19 @@ var TIPO_DESCONTO = {
                 
                 <div class="produto" style="display: none">
 	                <label style="width:auto!important;">Código:</label>
-	                <input name="codigoPesquisa" id="codigoPesquisa" type="text" style="width:80px; float:left;"/>
+	                <input type="text" name="codigoPesquisa" id="codigoPesquisa" maxlength="255" 
+					   	   style="width:80px; float:left;"
+					       onblur="produtoEdicao.pesquisarPorCodigoProduto('#codigoPesquisa', '#produtoPesquisa', false,
+								   undefined,
+								   undefined);"/>
 	                <label style="width:auto!important;">Produto:</label>
-	                <input name="produtoPesquisa" id="produtoPesquisa" type="text" style="width:160px; float:left;" />
+	                <input type="text" name="produtoPesquisa" id="produtoPesquisa" maxlength="255" 
+						   style="width:160px; float:left;"
+						   onkeyup="produtoEdicao.autoCompletarPorNomeProduto('#produtoPesquisa', false);"
+						   onblur="produtoEdicao.pesquisarPorNomeProduto('#codigoPesquisa', '#produtoPesquisa', false,
+								   undefined,
+								   undefined);" />
+	                
                 </div>
                 </td>
               <td width="104"><span class="bt_pesquisar"><a href="javascript:;" onclick="TIPO_DESCONTO.pesquisar();">Pesquisar</a></span></td>
