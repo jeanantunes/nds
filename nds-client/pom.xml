@@ -240,7 +240,7 @@
 		<profile>
 			<id>desenvolvimento</id>
 			<activation>
-				<activeByDefault>true</activeByDefault>
+	       		<activeByDefault>true</activeByDefault>
 			</activation>
 			<properties>
 				<jndi-name>java:comp/env/jdbc/nds-client</jndi-name>
@@ -264,31 +264,7 @@
 					</plugin>
 				</plugins>
 			</build>
-		</profile>
-		<profile>
-			<id>desenvolvimento-abril</id>
-			<properties>
-				<jndi-name>java:comp/env/jdbc/nds-client</jndi-name>
-				<dataSourceURL>jdbc:mysql://abrildgbdb01.cdgtwjqgurfb.sa-east-1.rds.amazonaws.com:3306/nds-client</dataSourceURL>
-				<dataSourceUsername>admin</dataSourceUsername>
-				<dataSourcePassword>abrildgb01</dataSourcePassword>
-				<testDataSourceURL>jdbc:mysql://abrildgbdb01.cdgtwjqgurfb.sa-east-1.rds.amazonaws.com:3306/nds-client-test</testDataSourceURL>
-				<testDataSourceUsername>admin</testDataSourceUsername>
-				<testDataSourcePassword>abrildgb01</testDataSourcePassword>
-			</properties>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.codehaus.mojo</groupId>
-						<artifactId>tomcat-maven-plugin</artifactId>
-						<configuration>
-							<server>tomcat-server</server>
-							<url>http://localhost:8080/manager/text</url>
-						</configuration>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
+		</profile>		
 		<profile>
 			<id>integracaoContinua</id>
 			<properties>
@@ -313,6 +289,27 @@
 				</plugins>
 			</build>
 		</profile>
+		<profile>
+			<id>homologacao</id>
+			<properties>
+				<jndi-name>java:comp/env/jdbc/nds-client-homolog</jndi-name>
+				<dataSourceURL>jdbc:mysql://abrildgbdb01.cdgtwjqgurfb.sa-east-1.rds.amazonaws.com:3306/nds-client-homolog</dataSourceURL>
+				<dataSourceUsername>admin</dataSourceUsername>
+				<dataSourcePassword>abrildgb01</dataSourcePassword>
+			</properties>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>tomcat-maven-plugin</artifactId>
+						<configuration>
+							<server>tomcat-server-homolog-abril</server>
+							<url>http://177.71.255.76:8080/manager/text</url>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>		
 		<profile>
 			<id>qa</id>
 			<properties>
@@ -384,28 +381,7 @@
 					</plugin>
 				</plugins>
 			</build>
-		</profile>
-		<profile>
-			<id>homologacao</id>
-			<properties>
-				<jndi-name>java:comp/env/jdbc/nds-client-homolog</jndi-name>
-				<dataSourceURL>jdbc:mysql://abrildgbdb01.cdgtwjqgurfb.sa-east-1.rds.amazonaws.com:3306/nds-client-homolog</dataSourceURL>
-				<dataSourceUsername>admin</dataSourceUsername>
-				<dataSourcePassword>abrildgb01</dataSourcePassword>
-			</properties>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.codehaus.mojo</groupId>
-						<artifactId>tomcat-maven-plugin</artifactId>
-						<configuration>
-							<server>tomcat-server-homolog-abril</server>
-							<url>http://177.71.255.76:8080/manager/text</url>
-						</configuration>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
+		</profile>		
 	</profiles>
 
 </project>

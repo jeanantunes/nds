@@ -17,7 +17,7 @@ public class EMS0106Input implements Serializable {
 
 	private String codigoPublicacao;
 	private Long edicao;
-	private BigInteger reparteDistribuir;
+	private Long reparteDistribuir;
 
 	@Field(offset = 1, length = 8)
 	public String getCodigoPublicacao() {
@@ -39,11 +39,11 @@ public class EMS0106Input implements Serializable {
 
 	@Field(offset = 13, length = 8)
 	@FixedFormatDecimal(decimals=2, useDecimalDelimiter=false)
-	public BigInteger getReparteDistribuir() {
+	public Long getReparteDistribuir() {
 		return reparteDistribuir;
 	}
 
-	public void setReparteDistribuir(BigInteger reparteDistribuir) {
+	public void setReparteDistribuir(Long reparteDistribuir) {
 		this.reparteDistribuir = reparteDistribuir;
 	}
 

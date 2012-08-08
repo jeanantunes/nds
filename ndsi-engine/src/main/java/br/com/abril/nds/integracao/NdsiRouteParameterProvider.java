@@ -21,7 +21,7 @@ public class NdsiRouteParameterProvider extends AbstractRepository implements Ro
 	@Override
 	@Transactional
 	public Map<String, Object> getParameters() {
-		Query query = getSession().createSQLQuery("select * from parametro_sistema");
+		Query query = getSession().createSQLQuery("select * from PARAMETRO_SISTEMA");
 		
 		List<Object[]> result = query.list();
 		
