@@ -1,7 +1,6 @@
 package br.com.abril.nds.dto;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
 
@@ -43,13 +42,13 @@ public class PeriodoParcialDTO implements Serializable {
 	private String suplementacao;
 	
 	@Export(label = "Venda CE", alignment=Alignment.CENTER)
-	private Integer vendaCE;
+	private String vendaCE;
 	
 	@Export(label = "% Venda Acum.", alignment=Alignment.CENTER)
 	private String percVendaAcumulada;
 	
 	@Export(label = "% Venda Acum.", alignment=Alignment.CENTER)
-	private Integer reparteAcum;
+	private String reparteAcum;
 		
 	private Long idLancamento;
 	
@@ -152,14 +151,17 @@ public class PeriodoParcialDTO implements Serializable {
 	/**
 	 * @return the vendaCE
 	 */
-	public Integer getVendaCE() {
+	public String getVendaCE() {
 		return vendaCE;
 	}
 	/**
 	 * @param vendaCE the vendaCE to set
 	 */
-	public void setVendaCE(Integer vendaCE) {
-		this.vendaCE = vendaCE;
+	public void setVendaCE(BigInteger vendaCE) {
+		if(vendaCE==null)
+			this.vendaCE = "";
+		else
+		this.vendaCE = vendaCE.toString();
 	}
 	/**
 	 * @return the percVendaAcumulada
@@ -170,19 +172,25 @@ public class PeriodoParcialDTO implements Serializable {
 	/**
 	 * @param percVendaAcumulada the percVendaAcumulada to set
 	 */
-	public void setPercVendaAcumulada(String percVendaAcumulada) {
-		this.percVendaAcumulada = percVendaAcumulada;
+	public void setPercVendaAcumulada(BigInteger percVendaAcumulada) {
+		if(percVendaAcumulada==null)
+			this.percVendaAcumulada = "";
+		else
+		this.percVendaAcumulada = percVendaAcumulada.toString() + "%";
 	}
 	/**
 	 * @return the reparteAcum
 	 */
-	public Integer getReparteAcum() {
+	public String getReparteAcum() {
 		return reparteAcum;
 	}
 	/**
 	 * @param reparteAcum the reparteAcum to set
 	 */
-	public void setReparteAcum(Integer reparteAcum) {
-		this.reparteAcum = reparteAcum;
+	public void setReparteAcum(BigInteger reparteAcum) {
+		if(reparteAcum==null)
+			this.reparteAcum = "";
+		else
+			this.reparteAcum = reparteAcum.toString();
 	}		
 }

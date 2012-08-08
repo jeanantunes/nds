@@ -228,9 +228,16 @@ public class ParciaisController {
 		
 		
 		List<PeriodoParcialDTO> listaPeriodo = periodoLancamentoParcialService.obterPeriodosParciais(filtro);
-				
-		Integer totalRegistros = periodoLancamentoParcialService.totalObterPeriodosParciais(filtro);
 		
+		for(PeriodoParcialDTO periodo:listaPeriodo) {
+			if(periodo.getReparte()=="") {
+				periodo.setReparteAcum(null);
+				periodo.setPercVendaAcumulada(null);
+			}
+		}
+		
+		Integer totalRegistros = periodoLancamentoParcialService.totalObterPeriodosParciais(filtro);
+				
 		TableModel<CellModelKeyValue<PeriodoParcialDTO>> tableModel = new TableModel<CellModelKeyValue<PeriodoParcialDTO>>();
 
 		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaPeriodo));
