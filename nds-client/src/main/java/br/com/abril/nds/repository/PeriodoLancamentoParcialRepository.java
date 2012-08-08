@@ -44,5 +44,13 @@ public interface PeriodoLancamentoParcialRepository  extends Repository<PeriodoL
 	Boolean verificarValidadeNovoPeriodoParcial(Long idLancamento,
 			Date dataLancamento, Date dataRecolhimento);
 	
-	List<ParcialVendaDTO> obterDetalhesVenda();
+	
+	/**
+	 * Obtem detalhes das vendas do produtoEdição nas datas de Lancamento e Recolhimento
+	 * @param dataLancamento
+	 * @param dataRecolhimento
+	 * @param idProdutoEdicao
+	 * @return List<ParcialVendaDTO>
+	 */
+	List<ParcialVendaDTO> obterDetalhesVenda(Date dataLancamento, Date dataRecolhimento, Long idProdutoEdicao);
 }

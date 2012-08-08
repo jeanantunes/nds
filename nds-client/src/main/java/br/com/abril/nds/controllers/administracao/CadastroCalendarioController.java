@@ -58,6 +58,8 @@ public class CadastroCalendarioController {
 	@Path("/")
 	public void index(){
 		
+		adicionarAnoCorrentePesquisa();
+		
 		carregarComboTipoFeriado();
 		
 		carregarComboMunicipio();
@@ -123,7 +125,8 @@ public class CadastroCalendarioController {
 	public void excluirCadastroFeriado(
 			String dtFeriado, 
 			String descTipoFeriado, 
-			Long idLocalidade) {
+			Long idLocalidade,
+			boolean indRepeteAnualmente) {
 		
 		validarCadastroFeriado(dtFeriado, descTipoFeriado, "-", idLocalidade);
 		
@@ -132,6 +135,7 @@ public class CadastroCalendarioController {
 		calendarioFeriado.setDataFeriado(DateUtil.parseDataPTBR(dtFeriado));
 		calendarioFeriado.setTipoFeriado(TipoFeriado.valueOf(descTipoFeriado));
 		calendarioFeriado.setIdLocalidade(idLocalidade);
+		calendarioFeriado.setIndRepeteAnualmente(indRepeteAnualmente);
 		
 		calendarioService.excluirFeriado(calendarioFeriado);
 		
@@ -243,7 +247,7 @@ public class CadastroCalendarioController {
 	public void obterFeriados(int anoVigencia) {
 		
 		if(anoVigencia == 0) {
-			anoVigencia = Calendar.getInstance().get(Calendar.YEAR);
+			anoVigencia = getAnoCorrente();
 		}
 		
 		FiltroCalendarioFeriado filtro = new FiltroCalendarioFeriado();
@@ -260,6 +264,14 @@ public class CadastroCalendarioController {
 		
 		result.use(CustomJson.class).from(resposta).serialize();
 	
+	}
+	
+	private void adicionarAnoCorrentePesquisa() {
+		result.include("anoCorrente", getAnoCorrente());
+	}
+
+	private Integer getAnoCorrente() {
+		return Calendar.getInstance().get(Calendar.YEAR);
 	}
 	
 	/**

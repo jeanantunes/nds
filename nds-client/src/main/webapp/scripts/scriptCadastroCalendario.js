@@ -1,5 +1,7 @@
 var CadastroCalendario = {
 
+		mesPesquisaFeriados : null,
+		
 		datasDestacar :  {},
 
 		recarregarDiaFeriadoGrid : function(dataFeriado) {
@@ -16,15 +18,10 @@ var CadastroCalendario = {
 		
 		carregarPopUpFeriadosMes : function(mes) {
 			
-			$(".mesFeriadoGrid").flexOptions({
-				preProcess: CadastroCalendario.preProcessarMesFeriado,
-				url: contextPath + '/administracao/cadastroCalendario/obterFeriadosDoMes',
-				dataType : 'json',
-				params:[{name:'mes', value: mes}]
-			
-			});
-			
-			$(".mesFeriadoGrid").flexReload();
+			if (CadastroCalendario.mesPesquisaFeriados == null) {
+				CadastroCalendario.mesPesquisaFeriados = mes;
+			}
+			CadastroCalendario.recarregarMesFeriadoGrid();
 			
 			$( "#dialog-feriado-mes" ).dialog({
 				
@@ -37,6 +34,7 @@ var CadastroCalendario = {
 				buttons: {
 					
 					"Fechar": function() {
+						CadastroCalendario.mesPesquisaFeriados = null;
 						$( this ).dialog( "close" );
 					}
 				}
@@ -110,7 +108,8 @@ var CadastroCalendario = {
 					var parametrosPesquisa = 
 						[ {name : "dtFeriado", value : dtFeriado},
 						  {name : "descTipoFeriado", value : tipoFeriado},
-						  {name : "idLocalidade", value : idLocalidade} ];
+						  {name : "idLocalidade", value : idLocalidade},
+						  {name : "indRepeteAnualmente", value : indRepeteAnualmente}];
 					
 					$.postJSON(
 							
@@ -294,6 +293,8 @@ var CadastroCalendario = {
 				indEfetuaCobranca = $("#indEfetuaCobrancaNovo").is(":checked");
 				indRepeteAnualmente = $("#indRepeteAnualmenteNovo").is(":checked");
 				
+			
+				
 			} else {
 
 				dtFeriado = $("#dtFeriado").val();
@@ -329,6 +330,7 @@ var CadastroCalendario = {
 						if(fromPopUpNovoFeriado) {
 							exibirMensagem(result.tipoMensagem, result.listaMensagens);
 							$( "#dialog-novo" ).dialog( "close" );
+							CadastroCalendario.recarregarMesFeriadoGrid();
 						} else {
 							CadastroCalendario.recarregarDiaFeriadoGrid(dtFeriado);
 							exibirMensagemDialog(result.tipoMensagem, result.listaMensagens, 'dialog-editar');
@@ -338,6 +340,18 @@ var CadastroCalendario = {
 						
 					}, null, true, idDialog);
 			
+		},
+		
+		recarregarMesFeriadoGrid: function() {
+			$(".mesFeriadoGrid").flexOptions({
+				preProcess: CadastroCalendario.preProcessarMesFeriado,
+				url: contextPath + '/administracao/cadastroCalendario/obterFeriadosDoMes',
+				dataType : 'json',
+				params:[{name:'mes', value: CadastroCalendario.mesPesquisaFeriados}]
+			
+			});
+			
+			$(".mesFeriadoGrid").flexReload();
 		},
 		
 		popupNovoCadastroFeriado: function() {
@@ -588,6 +602,13 @@ $(document).ready(function() {
 		}],
 		width : 650,
 		height : 120
+	});
+	
+$("#anoVigenciaPesquisa").keyup(function (e){
+		
+		if (e.keyCode == 13) {
+			CadastroCalendario.recarregarPainelCalendarioFeriado();
+		}
 	});
 	
 	

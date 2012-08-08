@@ -24,25 +24,33 @@ public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepositoryMo
 	public PeriodoLancamentoParcialRepositoryImpl() {
 		super(PeriodoLancamentoParcial.class);
 	}
-
+	
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<PeriodoParcialDTO> obterPeriodosParciais(FiltroParciaisDTO filtro) {
-
+				
 		StringBuilder hql = new StringBuilder();
 		
 		hql.append(" select produtoEdicao.id as idProdutoEdicao, ");
 		hql.append("		lancamento.dataLancamentoDistribuidor as dataLancamento, ");
 		hql.append(" 		lancamento.dataRecolhimentoDistribuidor as dataRecolhimento, ");
-		hql.append(" 		estudo.qtdeReparte as reparte, ");
 		
-		hql.append(" 		999 as suplementacao, ");
+		hql.append("		sum(mCota.qtde) as reparte,  ");
+		
+		hql.append(" 		(select sum(movCota.qtde) from Lancamento lancamentoSupl ");
+		hql.append("		 	left join lancamentoSupl.movimentoEstoqueCotas movCota ");
+		hql.append("			join lancamentoSupl.produtoEdicao pe ");
+		hql.append("		 where pe.id = produtoEdicao.id ");
+		hql.append("		    and lancamentoSupl.tipoLancamento = 'SUPLEMENTAR' ");
+		hql.append("			and lancamentoSupl.dataLancamentoDistribuidor >= lancamento.dataLancamentoDistribuidor ");
+		hql.append("			and lancamentoSupl.dataLancamentoDistribuidor <= lancamento.dataRecolhimentoDistribuidor) ");		
+		hql.append(" 		as suplementacao, ");
 		
 		hql.append(" 		999 as vendaCE, ");
 		
 		hql.append(" 		'9,99' as percVendaAcumulada, ");
 		
-		hql.append(" 		'99' as reparteAcum, ");
+		hql.append(" 		999 as reparteAcum, ");
 		
 		hql.append("		(select sum(movimento.qtde) from ConferenciaEncalhe conferencia ");
 		hql.append("		 	join conferencia.movimentoEstoqueCota movimento ");
@@ -54,7 +62,7 @@ public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepositoryMo
 		hql.append("			group by chamadaEncalhe.id) ");
 		hql.append(" 		 as encalhe, ");
 		
-		hql.append("		estudo.qtdeReparte - (select sum(movimento.qtde) from ConferenciaEncalhe conferencia ");
+		hql.append("		sum(mCota.qtde) - (select sum(movimento.qtde) from ConferenciaEncalhe conferencia ");
 		hql.append("		 	join conferencia.movimentoEstoqueCota movimento ");
 		hql.append("		 	join conferencia.chamadaEncalheCota chamadaEncalheCota ");
 		hql.append("		 	join chamadaEncalheCota.chamadaEncalhe chamadaEncalhe ");
@@ -79,7 +87,7 @@ public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepositoryMo
 		hql.append("		 /case when periodo.status='RECOLHIDO' then 0 else 1 end ");
 		hql.append(" 		 as vendaAcumulada, ");
 				
-		hql.append("		  ((estudo.qtdeReparte - (select sum(movimento.qtde) from ConferenciaEncalhe conferencia ");
+		hql.append("		  ((sum(mCota.qtde) - (select sum(movimento.qtde) from ConferenciaEncalhe conferencia ");
 		hql.append("		 	join conferencia.movimentoEstoqueCota movimento ");
 		hql.append("		 	join conferencia.chamadaEncalheCota chamadaEncalheCota ");
 		hql.append("		 	join chamadaEncalheCota.chamadaEncalhe chamadaEncalhe ");
@@ -87,13 +95,16 @@ public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepositoryMo
 		hql.append("			and chamadaEncalhe.dataRecolhimento <= lancamento.dataRecolhimentoDistribuidor ");
 		hql.append("			and chamadaEncalhe.produtoEdicao.id = lancamento.produtoEdicao.id ");
 		hql.append("			group by chamadaEncalhe.id)) ");
-		hql.append(" 		   /estudo.qtdeReparte) * 100 ");
+		hql.append(" 		   /sum(mCota.qtde)) * 100 ");
 		hql.append("		 as percVenda, ");
 		
 		hql.append("		 lancamento.id as idLancamento ");
 		
 		hql.append(getSqlFromEWherePeriodosParciais(filtro));
-				
+		
+	
+		hql.append(" group by periodo ");
+		
 		hql.append(getOrderByPeriodosParciais(filtro));
 				
 		Query query =  getSession().createQuery(hql.toString());
@@ -126,6 +137,7 @@ public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepositoryMo
 		hql.append(" join lancamento.produtoEdicao produtoEdicao ");
 		hql.append(" join produtoEdicao.produto produto ");
 		hql.append(" left join lancamento.estudo estudo ");
+		hql.append(" left join lancamento.movimentoEstoqueCotas mCota ");
 		hql.append(" join produto.fornecedores fornecedor ");
 		hql.append(" join fornecedor.juridica juridica ");
 		
@@ -318,14 +330,46 @@ public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepositoryMo
 		
 		return (count == null || count == 0) ? true : false;
 	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public List<ParcialVendaDTO> obterDetalhesVenda() {
-
-		return null;
-	}
 	
+	/**
+	 * Obtem detalhes das vendas do produtoEdição nas datas de Lancamento e Recolhimento
+	 * @param dataLancamento
+	 * @param dataRecolhimento
+	 * @param idProdutoRdicao
+	 * @return List<ParcialVendaDTO>
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<ParcialVendaDTO> obterDetalhesVenda(Date dataLancamento, Date dataRecolhimento, Long idProdutoEdicao) {
+		
+        StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select cota.numeroCota as numeroCota, ");
+		hql.append(" pessoa.nome as nomeCota, ");
+		hql.append(" epc.qtdeRecebida as reparte, ");
+		hql.append(" epc.qtdeDevolvida as encalhe, ");
+		hql.append(" conferencia.juramentada as vendaJuramentada");
+		
+		hql.append(" from ConferenciaEncalhe conferencia ");
+		hql.append("	join conferencia.movimentoEstoqueCota movimento ");
+		hql.append("	join conferencia.chamadaEncalheCota chamadaEncalheCota ");
+		hql.append("	join chamadaEncalheCota.chamadaEncalhe chamadaEncalhe ");
+		hql.append("	join movimento.estoqueProdutoCota epc ");
+		hql.append("	join movimento.cota cota ");
+		hql.append("	join cota.pessoa pessoa ");
+		
+		hql.append("	where chamadaEncalhe.dataRecolhimento >= :dataLancamento ");
+		hql.append("	and chamadaEncalhe.dataRecolhimento <= :dataRecolhimento ");
+		hql.append("	and chamadaEncalhe.produtoEdicao.id = :idProdutoEdicao ");
+				
+		Query query =  getSession().createQuery(hql.toString());
+		
+		query.setParameter("dataLancamento",dataLancamento);
+		query.setParameter("dataRecolhimento",dataRecolhimento);
+		query.setParameter("idProdutoEdicao",idProdutoEdicao);
+		
+		query.setResultTransformer(new AliasToBeanResultTransformer(ParcialVendaDTO.class));
+		
+		return query.list();
+	}
 }

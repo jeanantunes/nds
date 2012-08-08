@@ -1570,19 +1570,36 @@ public class DataLoader {
 				BigInteger.valueOf(80),
 				StatusLancamento.PLANEJADO, null, 1);
 		save(session,lancamentoPeriodo2);
+		
+		Lancamento lancamentoPeriodoSuplementar = Fixture.lancamento(TipoLancamento.SUPLEMENTAR, cromoBrasileiraoEd1,
+				Fixture.criarData(2, 2, 2011),
+				Fixture.criarData(1, 3, 2011),
+				new Date(),
+				new Date(),
+				BigInteger.valueOf(15),
+				StatusLancamento.RECOLHIDO, null, 1);
+		save(session,lancamentoPeriodoSuplementar);
 
 		Estudo estudo = Fixture.estudo(BigInteger.valueOf(200), Fixture.criarData(1, 2, 2011), cromoBrasileiraoEd1);
 		save(session,estudo);
 
-		TipoMovimentoEstoque tipoMovimentoEncalhe = Fixture.tipoMovimentoEnvioEncalhe();
-		save(session,tipoMovimentoEncalhe);
-
 
 		EstoqueProdutoCota estoque = Fixture.estoqueProdutoCota(cromoBrasileiraoEd1, BigInteger.valueOf(50), cotaGuilherme, null);
-
-		MovimentoEstoqueCota movimento = Fixture.movimentoEstoqueCota(cromoBrasileiraoEd1, tipoMovimentoEncalhe,
+		save(session,estoque);
+		
+		MovimentoEstoqueCota movimento = Fixture.movimentoEstoqueCota(cromoBrasileiraoEd1, tipoMovimentoEnvioEncalhe,
 				usuarioJoao, estoque, BigInteger.valueOf(10), cotaGuilherme, StatusAprovacao.APROVADO, "motivo");
-
+		
+		MovimentoEstoqueCota movimentoReparte = Fixture.movimentoEstoqueCota(cromoBrasileiraoEd1, tipoMovimentoRecReparte,
+				usuarioJoao, estoque, BigInteger.valueOf(25), cotaGuilherme, StatusAprovacao.APROVADO, "motivo");
+		movimentoReparte.setLancamento(lancamentoPeriodo);
+		save(session,movimentoReparte);
+		
+		MovimentoEstoqueCota movimentoReparteSuplementar = Fixture.movimentoEstoqueCota(cromoBrasileiraoEd1, tipoMovimentoRecReparte,
+				usuarioJoao, estoque, BigInteger.valueOf(15), cotaGuilherme, StatusAprovacao.APROVADO, "motivo");
+		movimentoReparteSuplementar.setLancamento(lancamentoPeriodoSuplementar);
+		save(session,movimentoReparteSuplementar);
+		
 		ChamadaEncalhe chamadaEncalhe = Fixture.chamadaEncalhe(Fixture.criarData(1, 3, 2011), cromoBrasileiraoEd1,TipoChamadaEncalhe.ANTECIPADA);
 
 		chamadaEncalhe.setLancamentos(new HashSet<Lancamento>());
@@ -1603,7 +1620,7 @@ public class DataLoader {
 				BigInteger.valueOf(50),
 				cromoBrasileiraoEd1);
 
-		save(session,estoque,movimento,chamadaEncalhe,chamadaEncalheCota,controle,controleCota,conferencia);
+		save(session,movimento,chamadaEncalhe,chamadaEncalheCota,controle,controleCota,conferencia);
 		
 		save(session, lancamentoPeriodo, lancamentoPeriodo2);
 		

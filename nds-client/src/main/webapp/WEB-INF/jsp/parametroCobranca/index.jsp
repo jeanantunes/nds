@@ -4,13 +4,11 @@
 
 <script language="javascript" type="text/javascript">
 
+	var tipoFormaCobranca = null;
+	var idPolitica = null;
+
 	$(function() {		
-		$("#valorMinimo").numeric();
-		$("#taxaMulta").numeric();
-		$("#valorMulta").numeric();
-		$("#taxaJuros").numeric();
-		$("#diaDoMes").numeric();
-	    carregarFornecedores();
+		$("#valorMinimo, #diasDoMes, #diasDoMes1, #diasDoMes2, #taxaMulta,#valorMulta,#taxaJuros").numeric();
 	    carregarFormasEmissao(null,"");
 	});
 
@@ -18,56 +16,74 @@
 		$(".parametrosGrid").flexigrid({
 			preProcess: getDataFromResult,
 			dataType : 'json',
-			colModel : [ {
-				display : 'Forma de Pagamento',
+			colModel :[ {
+				display : 'Forma Pagto',
 				name : 'forma',
-				width : 120,
+				width : 50,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Banco',
 				name : 'banco',
-				width : 80,
+				width : 50,
 				sortable : true,
 				align : 'left'
 			}, {
-				display : 'Valor Mínimo Emissão R$',
-				name : 'vlr_minimo_emissao',
-				width : 140,
+				display : 'Vlr. M&iacute;n. Emiss&atilde;o R$',
+				name : 'valorMinimoEmissao',
+				width : 90,
 				sortable : true,
 				align : 'right'
 			}, {
 				display : 'Acumula Divida',
-				name : 'acumula_divida',
-				width : 90,
+				name : 'acumulaDivida',
+				width : 80,
 				sortable : true,
 				align : 'center'
 			}, {
-				display : 'Cobrança Unificada',
-				name : 'cobranca_unificada',
-				width : 100,
+				display : 'Cobran&ccedil;a Unif.',
+				name : 'cobrancaUnificada',
+				width : 80,
 				sortable : true,
 				align : 'center',
 			}, {
-				display : 'Forma Emissão',
+				display : 'Forma Emiss&atilde;o',
 				name : 'formaEmissao',
-				width : 160,
+				width : 110,
 				sortable : true,
 				align : 'left'
 			}, {
-				display : 'Envio por E-Mail',
-				name : 'envio_email',
-				width : 90,
-				sortable : true,
-				align : 'center'
-			}, {
-				display : 'Ação',
-				name : 'acao',
+				display : 'Envia E-Mail',
+				name : 'envioEmail',
 				width : 60,
 				sortable : true,
 				align : 'center'
+			}, {
+				display : 'Fornecedores',
+				name : 'fornecedores',
+				width : 80,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Concentra&ccedil;&atilde;o Pgtos',
+				name : 'concentracaoPagamentos',
+				width : 110,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Principal',
+				name : 'principal',
+				width : 50,
+				sortable : true,
+				align : 'center'
+			}, {
+				display : 'A&ccedil;&atilde;o',
+				name : 'acao',
+				width : 45,
+				sortable : true,
+				align : 'center'
 			}],
-			sortname : "Nome",
+			sortname : "forma",
 			sortorder : "asc",
 			usepager : true,
 			useRp : true,
@@ -124,6 +140,15 @@
 							   '</a>';
 			
 			row.cell.acao = linkEditar + linkExcluir;
+			
+			
+			if(row.cell.principal){
+				row.cell.principal = '<img src="${pageContext.request.contextPath}/images/ico_check.gif" border="0px"/>';
+			}else{
+				row.cell.principal = '';
+			}
+			
+			
 		});
 			
 		$(".grids").show();
@@ -267,100 +292,59 @@
 	
 	//MODOS DE EXIBIÇÃO
 	function opcaoPagto(op){
-		
 		if ((op=='BOLETO')||(op=='DEPOSITO')||(op=='TRANSFERENCIA_BANCARIA')){
-			//TODOS
-			$('#tdTitleComboBanco').show();
-			$('#tdComboBanco').show();
-
-			$('#tdTitleValorMinimo').show();
-			$('#tdValorMinimo').show();
+			$('.tdComboBanco').show();
+			$('.tdValorMinimo').show();			
+			$('.tdMulta').show();			
+			$('.tdJuros').show();
 			
-			$('#tdTitleMulta').show();
-			$('#tdMulta').show();
-			
-			$('#tdTitleJuros').show();
-			$('#tdJuros').show();
 	    }
 		
 		else if ((op=='CHEQUE')||(op=='DINHEIRO')){
-			//TODOS, MENOS BANCO
-			$('#tdTitleComboBanco').hide();
-			$('#tdComboBanco').hide();
-
-			$('#tdTitleValorMinimo').show();
-			$('#tdValorMinimo').show();
-			
-			$('#tdTitleMulta').show();
-			$('#tdMulta').show();
-			
-			$('#tdTitleJuros').show();
-			$('#tdJuros').show();
+			$('.tdComboBanco').hide();			
+			$('.tdValorMinimo').show();
+			$('.tdMulta').show();			
+			$('.tdJuros').show();
 
 	    }
 		
 		else if (op=='BOLETO_EM_BRANCO'){
-			//TODOS, MENOS VRMINIMO,JUROS E MULTA
-			$('#tdTitleComboBanco').show();
-			$('#tdComboBanco').show();
-			
-			$('#tdTitleValorMinimo').hide();
-			$('#tdValorMinimo').hide();
-			
-			$('#tdTitleMulta').hide();
-			$('#tdMulta').hide();
-			
-			$('#tdTitleJuros').hide();
-			$('#tdJuros').hide();
-			
-			//Adiciona em Forma de Emissao:	Individual, agregada à chamada de encalhe 
+			$('.tdComboBanco').show();			
+			$('.tdValorMinimo').hide();			
+			$('.tdMulta').hide();			
+			$('.tdJuros').hide();
+			$('.formPgto').show();
 		}    
 		
 		else if ((op=='OUTROS')){
-			//TODOS, MENOS BANCO E VRMINIMO
-			$('#tdTitleComboBanco').hide();
-			$('#tdComboBanco').hide();
-			
-			$('#tdTitleValorMinimo').hide();
-			$('#tdValorMinimo').hide();
-			
-			$('#tdTitleMulta').show();
-			$('#tdMulta').show();
-			
-			$('#tdTitleJuros').show();
-			$('#tdJuros').show();
+			$('.tdComboBanco').hide();			
+			$('.tdValorMinimo').hide();			
+			$('.tdMulta').show();			
+			$('.tdJuros').show();
 	    }
 		
-	};
-	
-	
-	function mostraSemanal(){
-		$("#tipoFormaCobranca").val('SEMANAL');
-		document.formularioFormaCobranca.mensal.checked = false;
-		$( ".semanal" ).show();
-		$( ".mensal" ).hide();
-	};
+		if((op=='BOLETO') || (op=='BOLETO_EM_BRANCO')){
+			$('.formPgto').show();
+		}else{
+			$('.formPgto').hide();
+		}
 		
+	};	
 	
-	function mostraMensal(){
-		$("#tipoFormaCobranca").val('MENSAL');
-		document.formularioFormaCobranca.semanal.checked = false;
-		$( ".semanal" ).hide();
-		$( ".mensal" ).show();
-	};
+	function mudaConcentracaoPagamento(op){
+		tipoFormaCobranca = (op.valueOf().toUpperCase());
+		$( ".mensal,.semanal,.quinzenal" ).hide();
+		$( "." + op ).show();
+		
+	};	
 	
 	
 	function opcaoTipoFormaCobranca(op){
-		if (op=='SEMANAL'){
-			document.formularioFormaCobranca.semanal.checked = true;
-			document.formularioFormaCobranca.mensal.checked = false;
-			mostraSemanal();
-	    }
-		else if (op=='MENSAL'){
-			document.formularioFormaCobranca.semanal.checked = false;
-			document.formularioFormaCobranca.mensal.checked = true;
-			mostraMensal();
-		}    
+		op = op.toLowerCase();		
+		
+		$("#radio_"+op).attr("checked", true);
+		//document.formularioParametro[op].checked = true;
+		mudaConcentracaoPagamento(op);
 	};
 	
 	
@@ -385,7 +369,7 @@
 		
 		var formaEmissao = resultado.formaEmissao;
 		
-		$("#_idPolitica").val(resultado.idPolitica);
+		idPolitica  = resultado.idPolitica;
 		
 		$("#tipoCobranca").val(resultado.tipoCobranca);
 		
@@ -399,238 +383,126 @@
 		
 		$("#instrucoes").val(resultado.instrucoes);
 
-		$("#acumulaDivida").val(0);
-		$("#vencimentoDiaUtil").val(0);
-		$("#unificada").val(0);
-		$("#envioEmail").val(0);
+		$("#acumulaDivida").val(resultado.envioEmail?'S':'N');
+		$("#vencimentoDiaUtil").val(resultado.envioEmail?'S':'N');
+		$("#unificada").val(resultado.envioEmail?'S':'N');
+		$("#envioEmail").val(resultado.envioEmail?'S':'N');
 		
-		if (resultado.acumulaDivida){
-		    $("#acumulaDivida").val(1);
-		}
-		if (resultado.vencimentoDiaUtil){
-		    $("#vencimentoDiaUtil").val(1);
-		}
-		if (resultado.unificada){
-		    $("#unificada").val(1);
-		}    
-		if (resultado.envioEmail){
-		    $("#envioEmail").val(1);
-		}
-		
-		$("#diaDoMes").val(resultado.diaDoMes);
-		
-		$("#principal").val(resultado.principal);
-		document.formularioParametro.principal.checked = resultado.principal;
+		if(resultado.tipoFormaCobranca == 'MENSAL'){
+			if(resultado.diasDoMes[0]){
+				$('#diaDoMes').val(resultado.diasDoMes[0]);
+			}else{
+				$('#diaDoMes').val("");
+			}
+		}else if(resultado.tipoFormaCobranca == 'QUINZENAL'){			
+			if(resultado.diasDoMes[0]){
+				$('#diaDoMes1').val(resultado.diasDoMes[0]);
+			}else{
+				$('#diaDoMes1').val("");
+			}
+			if(resultado.diasDoMes[1]){
+				$('#diaDoMes2').val(resultado.diasDoMes[1]);
+			}else{
+				$('#diaDoMes2').val("");
+			}
+		}		
+		$("#principal").attr('checked',resultado.principal);		
+		$("#PS").attr('checked',resultado.segunda);
+		$("#PT").attr('checked',resultado.terca);
+		$("#PQ").attr('checked',resultado.quarta);
+		$("#PQu").attr('checked',resultado.quinta);
+		$("#PSex").attr('checked',resultado.sexta);
+		$("#PSab").attr('checked',resultado.sabado);
+		$("#PDom").attr('checked',resultado.domingo);
 
-		$("#PS").val(resultado.segunda);
-		document.formularioFormaCobranca.PS.checked = resultado.segunda;
-		
-		$("#PT").val(resultado.terca);
-		document.formularioFormaCobranca.PT.checked = resultado.terca;
-		
-		$("#PQ").val(resultado.quarta);
-		document.formularioFormaCobranca.PQ.checked = resultado.quarta;
-		
-		$("#PQu").val(resultado.quinta);
-		document.formularioFormaCobranca.PQu.checked = resultado.quinta;
-		
-		$("#PSex").val(resultado.sexta);
-		document.formularioFormaCobranca.PSex.checked = resultado.sexta;
-		
-		$("#PSab").val(resultado.sabado);
-		document.formularioFormaCobranca.PSab.checked = resultado.sabado;
-		
-		$("#PDom").val(resultado.domingo);
-		document.formularioFormaCobranca.PDom.checked = resultado.domingo;
 
 		opcaoPagto(resultado.tipoCobranca);
 		opcaoTipoFormaCobranca(resultado.tipoFormaCobranca);
-		obterFornecedoresUnificados(resultado.fornecedoresId);
+		
+		$("input[name='checkGroupFornecedores']").each(function(i) {			
+			$(this).attr('checked',false);
+		});	
+		
+		$.each(resultado.fornecedoresId, function(index, value) { 
+			 $("#fornecedor_" + value).attr('checked', true);
+		});
+		
+		
+		$("input[name='radioFormaCobrancaBoleto']").each(function(i) {			
+			if($(this).val() == resultado.formaCobrancaBoleto){
+				$(this).attr('checked', true);
+			}
+		});
 		
 		carregarFormasEmissao(resultado.tipoCobranca,formaEmissao);
-	}
-	
-	//OBTEM FORNECEDORES UNIFICADOS
-	function obterFornecedoresUnificados(unificados) {
-		$("input[name='checkGroupFornecedores']:checked").each(function(i) {
-			document.getElementById("fornecedor_"+$(this).val()).checked = false;
-		});
-		for(i=0;i<unificados.length;i++){
-			document.getElementById("fornecedor_"+unificados[i]).checked = true;
-		}
-	}
-
-	
-	
-	//OBTEM FORNECEDORES MARCADOS PELO USUARIO PARA UNIFICÁ-LOS
-	function obterFornecedoresMarcados() {
-		var fornecedorMarcado = "";
-		$("input[name='checkGroupFornecedores']:checked").each(function(i) {
-			fornecedorMarcado += 'listaIdsFornecedores=' + $(this).val() + '&';
-		});
-		return fornecedorMarcado;
-	}
-	
+	}	
 	
 	//INCLUSÃO DE NOVO PARAMETRO
     function postarParametro(novo) {
-		
-    	var telaMensagem="idModal";
-
-		var idPolitica = $("#_idPolitica").val();
-		
-    	var tipoCobranca = $("#tipoCobranca").val();
-    	var tipoFormaCobranca = $("#tipoFormaCobranca").val();
-    	var formaEmissao = $("#formaEmissao").val();
-		var banco = $("#banco").val();
-		
-		var valorMinimo = $("#valorMinimo").val();
-		var taxaMulta = $("#taxaMulta").val();
-		var valorMulta = $("#valorMulta").val();
-		var taxaJuros = $("#taxaJuros").val();
-		
-		var instrucoes = $("#instrucoes").val();
-
-		var acumulaDivida = $("#acumulaDivida").val();
-		var vencimentoDiaUtil = $("#vencimentoDiaUtil").val();
-		var unificada = $("#unificada").val();
-		var envioEmail = $("#envioEmail").val();
-		
-		$("#principal").val(0);
-    	if (document.formularioParametro.principal.checked){
-    		$("#principal").val(1);
-		}
-		var principal      = $("#principal").val();
-
-		var diaDoMes       = $("#diaDoMes").val();
-		
-		$("#PS").val(0);
-		if (document.formularioFormaCobranca.PS.checked){
-			$("#PS").val(1);
-		}
-		var segunda = $("#PS").val();
-		
-		$("#PT").val(0);
-		if (document.formularioFormaCobranca.PT.checked){
-			$("#PT").val(1);
-		}
-		var terca = $("#PT").val();
-		
-		$("#PQ").val(0);
-		if (document.formularioFormaCobranca.PQ.checked){
-			$("#PQ").val(1);
-		}
-		var quarta = $("#PQ").val();
-		
-		$("#PQu").val(0);
-		if (document.formularioFormaCobranca.PQu.checked){
-			$("#PQu").val(1);
-		}
-		var quinta = $("#PQu").val();
-		
-		$("#PSex").val(0);
-		if (document.formularioFormaCobranca.PSex.checked){
-			$("#PSex").val(1);
-		}
-		var sexta  = $("#PSex").val();
-		
-		$("#PSab").val(0);
-		if (document.formularioFormaCobranca.PSab.checked){
-			$("#PSab").val(1);
-		}
-		var sabado = $("#PSab").val();
-		
-		$("#PDom").val(0);
-		if (document.formularioFormaCobranca.PDom.checked){
-			$("#PDom").val(1);
-		}
-		var domingo  = $("#PDom").val();
-
 		if(novo){
-			$.postJSON("<c:url value='/distribuidor/parametroCobranca/postarParametroCobranca'/>",
-					   "parametros.tipoCobranca="+tipoCobranca+
-					   "&parametros.idBanco="+ banco +
-					   "&parametros.valorMinimo="+ valorMinimo+
-					   "&parametros.taxaMulta="+ taxaMulta +
-					   "&parametros.valorMulta="+ valorMulta+
-					   "&parametros.taxaJuros="+ taxaJuros+
-					   "&parametros.instrucoes="+ instrucoes+
-					   "&parametros.acumulaDivida="+ acumulaDivida+
-					   "&parametros.vencimentoDiaUtil="+ vencimentoDiaUtil+
-					   "&parametros.unificada="+ unificada+
-					   "&parametros.envioEmail="+ envioEmail+
-					   "&parametros.formaEmissao="+ formaEmissao+
-					   "&parametros.principal="+ principal+
-					   
-					   "&parametros.domingo="+domingo+    
-					   "&parametros.segunda="+segunda+            
-					   "&parametros.terca="+terca+            
-					   "&parametros.quarta="+quarta+            
-					   "&parametros.quinta="+quinta+            
-					   "&parametros.sexta="+sexta+            
-					   "&parametros.sabado="+sabado+
-					   "&parametros.diaDoMes="+diaDoMes+
-					   "&tipoFormaCobranca="+tipoFormaCobranca+
-					   "&"+obterFornecedoresMarcados(),
-					   function(mensagens) {
-						   fecharDialogs();
-			        	   telaMensagem=null;
-			        	   if (mensagens){
-							   var tipoMensagem = mensagens.tipoMensagem;
-							   var listaMensagens = mensagens.listaMensagens;
-							   if (tipoMensagem && listaMensagens) {
-							       exibirMensagem(tipoMensagem, listaMensagens);
-						       }
-			        	   }
-				           mostrarGridConsulta();
-			            },
-			   			null,
-			   			true,
-			   			telaMensagem);
+			idPolitica = null;
 		}
-		else{
-			$.postJSON("<c:url value='/distribuidor/parametroCobranca/postarParametroCobranca'/>",
-					   "parametros.idPolitica="+idPolitica+
-					   "&parametros.tipoCobranca="+tipoCobranca+
-					   "&parametros.idBanco="+ banco +
-					   "&parametros.valorMinimo="+ valorMinimo+
-					   "&parametros.taxaMulta="+ taxaMulta +
-					   "&parametros.valorMulta="+ valorMulta+
-					   "&parametros.taxaJuros="+ taxaJuros+
-					   "&parametros.instrucoes="+ instrucoes+
-					   "&parametros.acumulaDivida="+ acumulaDivida+
-					   "&parametros.vencimentoDiaUtil="+ vencimentoDiaUtil+
-					   "&parametros.unificada="+ unificada+
-					   "&parametros.envioEmail="+ envioEmail+
-					   "&parametros.formaEmissao="+ formaEmissao+
-					   "&parametros.principal="+ principal+
-					   
-					   "&parametros.domingo="+domingo+    
-					   "&parametros.segunda="+segunda+            
-					   "&parametros.terca="+terca+            
-					   "&parametros.quarta="+quarta+            
-					   "&parametros.quinta="+quinta+            
-					   "&parametros.sexta="+sexta+            
-					   "&parametros.sabado="+sabado+
-					   "&parametros.diaDoMes="+diaDoMes+
-					   "&tipoFormaCobranca="+tipoFormaCobranca+
-					   "&"+obterFornecedoresMarcados(),
-					   function(mensagens) {
-						   fecharDialogs();
-			        	   telaMensagem=null;
-			        	   if (mensagens){
-							   var tipoMensagem = mensagens.tipoMensagem;
-							   var listaMensagens = mensagens.listaMensagens;
-							   if (tipoMensagem && listaMensagens) {
-							       exibirMensagem(tipoMensagem, listaMensagens);
-						       }
-			        	   }
-				           mostrarGridConsulta();
-			            },
-			   			null,
-			   			true,
-			   			telaMensagem);
+		var parametroCobranca = {
+				idPolitica: idPolitica,
+				tipoFormaCobranca: tipoFormaCobranca,
+				tipoCobranca : $("#tipoCobranca").val(),
+				formaEmissao : $("#formaEmissao").val(),
+				idBanco : $("#banco").val(),
+				valorMinimo : $("#valorMinimo").val(),
+				taxaMulta : $("#taxaMulta").val(),
+				valorMulta : $("#valorMulta").val(),
+				taxaJuros : $("#taxaJuros").val(),
+				instrucoes : $("#instrucoes").val(),
+				acumulaDivida : $("#acumulaDivida").val() == 'S',
+				vencimentoDiaUtil : $("#vencimentoDiaUtil").val() == 'S',
+				unificada : $("#unificada").val() == 'S',
+				envioEmail : $("#envioEmail").val() == 'S',
+				principal : $("#principal").attr('checked')  == 'checked',
+				segunda : $("#PS").attr('checked')  == 'checked',		
+				terca : $("#PT").attr('checked')  == 'checked',
+				quarta : $("#PQ").attr('checked')  == 'checked',		
+				quinta : $("#PQu").attr('checked')  == 'checked',	
+				sexta : $("#PSex").attr('checked')  == 'checked',		
+				sabado : $("#PSab").attr('checked')  == 'checked',		
+				domingo : $("#PDom").attr('checked')  == 'checked'
+		};
+		
+		$("input[name='radioFormaCobrancaBoleto']:checked").each(function(i) {			
+			parametroCobranca.formaCobrancaBoleto =  $(this).val();
+		});	
+		
+		
+		var postObject = serializeObjectToPost("parametros", parametroCobranca);
+		if(tipoFormaCobranca == 'MENSAL'){
+			postObject = serializeArrayToPost("parametros.diasDoMes",[$('#diaDoMes').val()] ,postObject);
+		}else if(tipoFormaCobranca == 'QUINZENAL'){
+			postObject = serializeArrayToPost("parametros.diasDoMes",[$('#diaDoMes1').val(),$('#diaDoMes2').val()] ,postObject);
 		}
+		var listaIdsFornecedores = new Array();
+		$("input[name='checkGroupFornecedores']:checked").each(function(i) {			
+			listaIdsFornecedores.push($(this).val());
+		});	
+		
+		
+		postObject = serializeArrayToPost("parametros.fornecedoresId",listaIdsFornecedores ,postObject);
+		
+		$.postJSON(contextPath + '/distribuidor/parametroCobranca/postarParametroCobranca',postObject,
+				   function(mensagens) {
+					   fecharDialogs();
+		        	   telaMensagem=null;
+		        	   if (mensagens){
+						   var tipoMensagem = mensagens.tipoMensagem;
+						   var listaMensagens = mensagens.listaMensagens;
+						   if (tipoMensagem && listaMensagens) {
+						       exibirMensagem(tipoMensagem, listaMensagens);
+					       }
+		        	   }
+			           mostrarGridConsulta();
+		            },
+		   			null,
+		   			true,
+		   			null);
+		
 	}
 
 	
@@ -667,82 +539,49 @@
     function preparaCadastroParametro() {
 		
     	$("input[name='checkGroupFornecedores']:checked").each(function(i) {
-			document.getElementById("fornecedor_"+$(this).val()).checked = false;
+			$(this).attr('checked',false);
 		});
 		
-		$( ".semanal" ).hide();
-		$( ".mensal" ).hide();
-		document.formularioFormaCobranca.mensal.checked = false;
-		document.formularioFormaCobranca.semanal.checked = false;
+		$( ".semanal,.mensal,.quinzenal" ).hide();
 		
-        $("#_idPolitica").val("");
+		idPolitica  = null;
 		
-		$("#tipoCobranca").val("");
+		$("#tipoCobranca").val('');
 		
-		$("#formaEmissao").val("");
-		$("#formaCobranca").val("");
-		$("#banco").val("");
+		$("#formaCobranca").val('');
+		$("#banco").val('');
 		
-		$("#valorMinimo").val("");
-		$("#taxaMulta").val("");
-		$("#valorMulta").val("");
-		$("#taxaJuros").val("");
+		$("#valorMinimo").val('');
+		$("#taxaMulta").val('');
+		$("#valorMulta").val('');
+		$("#taxaJuros").val('');
 		
-		$("#instrucoes").val("");
+		$("#instrucoes").val('');
 
-		$("#acumulaDivida").val(0);
-		$("#vencimentoDiaUtil").val(0);
-		$("#unificada").val(0);
-		$("#envioEmail").val(0);
+		$("#acumulaDivida").val('S');
+		$("#vencimentoDiaUtil").val('S');
+		$("#unificada").val('S');
+		$("#envioEmail").val('S');		
+		$('#diaDoMes').val("");
+		$('#diaDoMes1').val("");	
+		$('#diaDoMes2').val("");			
 		
-		$("#diaDoMes").val("");
-		document.formularioParametro.principal.checked = false;
-		document.formularioFormaCobranca.PS.checked = false;
-		document.formularioFormaCobranca.PT.checked = false;
-		document.formularioFormaCobranca.PQ.checked = false;
-		document.formularioFormaCobranca.PQu.checked = false;
-		document.formularioFormaCobranca.PSex.checked = false;
-		document.formularioFormaCobranca.PSab.checked = false;
-		document.formularioFormaCobranca.PDom.checked = false;
+		$("#principal").attr('checked',false);		
+		$("#PS").attr('checked',false);
+		$("#PT").attr('checked',false);
+		$("#PQ").attr('checked',false);
+		$("#PQu").attr('checked',false);
+		$("#PSex").attr('checked',false);
+		$("#PSab").attr('checked',false);
+		$("#PDom").attr('checked',false);
+
 		
 		carregarFormasEmissao(null,"");
+		$("input[name='checkGroupFornecedores']").each(function(i) {			
+			$(this).attr('checked',false);
+		});	
 
-	}
-
-	
-	
-    function montarTrRadioBox(result,name,nameItemIdent) {
-
-		var options = "";
-		
-		$.each(result, function(index, row) {
-
-			options += "<tr> <td width='23'>";
-			options += "<input id='" + nameItemIdent + row.key.$ +"' value='" + row.key.$ + "' name='"+name+"' type='checkbox' />";
-			options += "</td> <td width='138'>";	
-			options += "<label for='" + nameItemIdent + row.key.$ +"' >"+ row.value.$ +"</label>";
-		    options += "</td>";
-		    options += "</tr>";   
-
-		});
-		
-		return options;
-	}
-	
-	function carregarFornecedores(){
-		$.postJSON("<c:url value='/distribuidor/parametroCobranca/obterFornecedores' />",
-				   null,
-				   sucessCallbackCarregarFornecedores,
-				   null,
-				   true);
-	}
-	
-	function sucessCallbackCarregarFornecedores(result) {
-	    var radioBoxes =  montarTrRadioBox(result,"checkGroupFornecedores","fornecedor_");
-		$("#fornecedores").html(radioBoxes);
-	}
-
-	
+	}	
 	
 	function montarComboBox(result,name,onChange,selected) {
 
@@ -811,11 +650,6 @@
 
 </head>
 
-
-<input type="hidden" name="_idPolitica" id="_idPolitica"/>
-<input type="hidden" name="tipoFormaCobranca" id="tipoFormaCobranca"/>
-
-
 <div id="dialog-excluir" title="Excluir Parâmetro de Cobrança">
 	<p>Confirma a exclusão deste Parâmetro de Cobrança?</p>
 </div>
@@ -828,273 +662,173 @@
 	</jsp:include>
 
     <form id="formularioParametro" name="formularioParametro">
-
-		<table width="809" border="0" cellspacing="2" cellpadding="2">
-		   
-		   
-		   <tr>
-		       <td width="200">Principal</td>
-			   <td width="200">
-			       <input name="principal" type="checkbox"
-			       id="principal" style="float: left;" value="" checked="checked" />
-			   </td>
-		   </tr>
-		   
-		   
-		   <tr>
-		     <td width="144">Forma de Pagamento:</td>
-		     <td>
-		     
-			      <select name="tipoCobranca" id="tipoCobranca" style="width:150px;" onchange="opcaoPagto(this.value);carregarFormasEmissao(this.value,'');">
-	                   <option value="">Selecione</option>
-	                   <c:forEach varStatus="counter" var="tipoCobranca" items="${listaTiposCobranca}">
-				          <option value="${tipoCobranca.key}">${tipoCobranca.value}</option>
-				       </c:forEach>
-		          </select>  
-		          
-		     </td>
-		     
-		     <td width="204">Acumula Dívida:</td>
-		     <td width="234">
-			     <select name="acumulaDivida" id="acumulaDivida" style="width:80px;">
-			        <option value="1">Sim</option>
-			        <option value="0">Não</option>
-			     </select>
-		     </td>
-		   </tr>
-		   
-		   
-		   <tr>
-			    <td id="tdTitleComboBanco" width="144">Banco:</td>
-			    <td id="tdComboBanco">
-			    
-				    <select name="banco" id="banco" style="width:150px;" onchange="obterDadosBancarios(this.value);">
-				       <option value="">Selecione</option>
-	                   <c:forEach varStatus="counter" var="banco" items="${listaBancos}">
-				          <option value="${banco.key}">${banco.value}</option>
-				       </c:forEach>
-		            </select>
-		            
-			    </td>
-			    
-			    <td>Vencimentos somente em dia útil:</td>
-			    <td>
-				    <select name="vencimentoDiaUtil" id="vencimentoDiaUtil" style="width:80px;">
-				      <option value="1">Sim</option>
-				      <option value="0">Não</option>
-				    </select>
-			    </td>
-		   </tr>
-
-		   
-		   <tr>
-			    <td id="tdTitleValorMinimo" valign="top">Valor Mínimo Emissão:</td>
-			    <td id="tdValorMinimo" valign="top">
-			        <input type="text" maxlength="16" name="valorMinimo" id="valorMinimo" style="width:100px;" />
-			    </td>
-			    
-			    <td>Cobrança Unificada:</td>
-			    <td>
-				    <select name="unificada" id="unificada" style="width:80px;">
-				      <option value="1">Sim</option>
-				      <option value="0">Não</option>
-				    </select>
-			        <br clear="all" />
-			    </td>
-		    </tr>
-		    
-		    
-		    <tr>
-			    <td id="tdTitleMulta">Multa  %:</td>
-			    <td id="tdMulta" width="201"><table width="100%" border="0" cellspacing="0" cellpadding="0" style="color: buttonface;">
-			        <tr>
-			          <td width="37%">
-			              <input type="text" maxlength="16" readonly="true" name="taxaMulta" id="taxaMulta" style="width:70px;" />
-			          </td>
-			          <td width="24%">&nbsp;ou  R$:</td>
-			          <td width="39%">
-			              <input type="text" maxlength="16" readonly="true" name="valorMulta" id="valorMulta" style="width:70px;" />
-			          </td>
-			        </tr>
-			    </table></td>
-			    <td width="204">Envio por E-mail:</td>
-			    <td colspan="2"><select name="envioEmail" id="envioEmail" style="width:80px;">
-			      <option value="1">Sim</option>
-			      <option value="0">Não</option>
-			    </select></td>
-		    </tr>
-		  
-		  
-		    <tr>
-			    <td id="tdTitleJuros">Juros%:</td>
-			    <td id="tdJuros"><input type="text" maxlength="16" readonly="true" name="taxaJuros" id="taxaJuros" style="width:100px;" /></td>
-			    <td>Impressão:</td>
-			    
-			    <td>
-				    <div id="formasEmissao"/>
-			    </td>
-		    </tr>
-		  
-		  
-		    <tr>
-			    <td valign="top">Instruções:</td>
-			    <td colspan="3">
-			        <textarea readonly="true" name="instrucoes" maxlength="100" rows="4" id="instrucoes" style="width:645px;"></textarea>
-			    </td>
-		    </tr>
-		    
-		</table>
-		
-    </form>		
     
-    
-    
-    <legend>Unificar Cobranças</legend>
-    
-	<form name="formularioFormaCobranca" id="formularioFormaCobranca">		
-                         
-	    <table width="800" height="25" border="0" cellpadding="1" cellspacing="1">
-		    
-		     <tr class="header_table">
-		         <td align="left">Fornecedores</td>
-		         <td align="left">&nbsp;</td>
-		         <td align="left">Concentração de Pagamentos</td>
-		     </tr>
-		     
-	         <tr>
-	         
-               
-                 <td width="400" align="left" valign="top" style="border:1px solid #ccc;">
-
-	                 <table width="168" border="0" cellspacing="1" cellpadding="1">
-	                     <div id="fornecedores"/>
-		             </table>
-		             
-	                 <p><br clear="all" />
-		                 <br clear="all" />
-		                 <br clear="all" />
-		                 <br clear="all" />
-	                 </p>
-                 
-                 </td>
-                 
-                 
-			     <td width="6" align="left" valign="top">&nbsp;</td>
-			     <td width="148" align="left" valign="top"style="border:1px solid #ccc;">
-
-			         <table width="100%" border="0" cellspacing="1" cellpadding="1">
-				         <tr>
-				             <td width="20"><input type="radio" name="mensal" id="mensal" value="radio" onclick="mostraMensal();" /></td>
-				             <td width="173">Mensal</td>
-				             <td width="20"><input type="radio" name="semanal" id="semanal" value="radio" onclick="mostraSemanal();" /></td>
-				             <td width="173">Semanal</td>
-				         </tr>
-				     </table>
-				    
-				     <table width="100%" border="0" cellspacing="1" cellpadding="1" class="mensal">
-				         <tr>
-				             <td width="68">Todo dia:</td>
-				             <td width="156"><input maxlength="2" type="text" name="diaDoMes" id="diaDoMes" style="width:60px;"/></td>
-				         </tr>
-				     </table>
-			     
-		        
-                     <table width="100%" border="0" cellspacing="1" cellpadding="1" class="semanal">
-					        
-			             <tr>
-			                 <td>
-			                     <input type="checkbox" name="PS" id="PS" />
-			                 </td>    
-			                 <td>
-			                     <label for="PS">Segunda-feira</label>
-			                 </td>
-			             </tr>
-					            
-					     <tr>
-			                 <td>           
-					             <input type="checkbox" name="PT" id="PT" />
-					         </td>    
-			                 <td>    
-					             <label for="PT">Terça-feira</label>
-					         </td>
-			             </tr>
-			             
-			             <tr>
-			                 <td>            
-					             <input type="checkbox" name="PQ" id="PQ" />
-					         </td>    
-			                 <td>      
-					             <label for="PQ">Quarta-feira</label>
-					         </td>
-			              </tr>    
-					                          
-					      <tr>
-			                 <td>          
-					             <input type="checkbox" name="PQu" id="PQu" />
-					          </td>    
-			                  <td>  
-					             <label for="PQu">Quinta-feira</label>
-					          </td>
-			              </tr>
-					                  
-					      <tr>
-			                 <td>          
-					             <input type="checkbox" name="PSex" id="PSex" />
-					         </td>    
-			                 <td>      
-					             <label for="PSex">Sexta-feira</label>
-					         </td>
-			              </tr>    
-					               
-					      <tr>
-			                 <td>    
-					             <input type="checkbox" name="PSab" id="PSab" />
-					             </td>    
-			                 <td>  
-					             <label for="PSab">Sábado</label>
-					         </td>
-			              </tr>
-					                   
-					      <tr>
-			                  <td>
-					             <input type="checkbox" name="PDom" id="PDom" />
-					             </td>    
-			                 <td>  
-					             <label for="PDom">Domingo</label>
-					         </td>
-			              </tr>
-					
-					 </table>
-					 
-				 	
-					 
-			     </td>
-  
-             </tr>  
-
-			 <tr>
-			    <td valign="top">&nbsp;</td>
-			    <td valign="top">&nbsp;</td>
-			    <td valign="top">&nbsp;</td>
-			 </tr>
-
-		</table>
-		
-    </form>
-    
-    
-    
+    	<fieldset style="width:890px!important;">
+    <legend>Formas de Pagamento</legend>
+  <table width="880" border="0" cellspacing="2" cellpadding="2">
+   <tr>
+     <td width="132">Forma de Pagamento:</td>
+     <td><select name="tipoCobranca" id="tipoCobranca" style="width:200px;" onchange="opcaoPagto(this.value);carregarFormasEmissao(this.value,'');">
+   			<option value="">Selecione</option>
+            <c:forEach varStatus="counter" var="tipoCobranca" items="${listaTiposCobranca}">
+     		 <option value="${tipoCobranca.key}">${tipoCobranca.value}</option>
+ 			</c:forEach>
+      </select></td>
+     <td width="202">Acumula D&iacute;vida:</td>
+     <td width="302"><select name="acumulaDivida" id="acumulaDivida" style="width:80px;">
+       <option value="S">Sim</option>
+       <option value="N">N&atilde;o</option>
+      </select></td>
+   </tr>
+  <tr>
+    <td width="132"><label class="tdComboBanco" for="banco">Banco:</label></td>
+    <td><select class="tdComboBanco" name="banco" id="banco" style="width:200px;" onchange="obterDadosBancarios(this.value);">
+      <option value="">Selecione</option>
+       <c:forEach varStatus="counter" var="banco" items="${listaBancos}">
+          <option value="${banco.key}">${banco.value}</option>
+       </c:forEach>
+    </select></td>
+    <td>Vencimentos somente em dia &uacute;til:</td>
+    <td><select name="vencimentoDiaUtil" id="vencimentoDiaUtil" style="width:80px;">
+      <option value="S">Sim</option>
+	  <option value="N">N&atilde;o</option>
+    </select></td>
+  </tr>
+  <tr>
+    <td valign="top"><label class="tdValorMinimo" for="banco">BVlr. M&iacute;nimo Emiss&atilde;o:</label></td>
+    <td valign="top"><input class="tdValorMinimo" type="text" maxlength="16" name="valorMinimo" id="valorMinimo" style="width:100px;" /></td>
+    <td>Cobran&ccedil;a Unificada:</td>
+    <td><select name="unificada" id="unificada" style="width:80px;">
+ 		<option value="S">Sim</option>
+		<option value="N">N&atilde;o</option>
+    </select>
+    <br clear="all" /></td>
+  </tr>
+  <tr>
+    <td><label class="tdMulta" for="taxaMulta">Multa  %:</label></td>
+    <td width="218"><table class="tdMulta" width="100%" border="0" cellspacing="0" cellpadding="0">
+        <tr>
+          <td width="37%"><input type="text" readonly="true" name="taxaMulta" id="taxaMulta" style="width:70px;" /></td>
+          <td width="24%">&nbsp;ou  R$:</td>
+          <td width="39%"><input type="text" readonly="true" name="valorMulta" id="valorMulta" style="width:70px;" /></td>
+        </tr>
+    </table></td>
+    <td width="202">Envio por E-mail:</td>
+    <td colspan="2"><select name="envioEmail" id="envioEmail" style="width:80px;">
+      <option value="S">Sim</option>
+      <option value="N">N&atilde;o</option>
+    </select></td>
+  </tr>
+  <tr>
+    <td><label class="tdJuros" for="taxaJuros">Juros %:</label></td>
+    <td><input class="tdJuros" type="text" readonly="true" name="taxaJuros" id="taxaJuros" style="width:100px;" /></td>
+    <td>Impress&atilde;o:</td>
+    <td>
+    	<div id="formasEmissao"/>
+    </td>
+  </tr>
+  <tr>
+    <td><span class="formPgto">Forma de Cobran&ccedil;a:</span></td>
+    <td><table width="100%" border="0" cellspacing="0" cellpadding="0" class="formPgto">
+      <tr>
+        <td width="9%"><input class="formPgto" type="radio" name="radioFormaCobrancaBoleto" id="radioFormaCobrancaBoleto.REGISTRADA" value="REGISTRADA"  /></td>
+        <td width="34%"><label class="formPgto" for="radioFormaCobrancaBoleto.REGISTRADA">Registrado</label></td>
+        <td width="10%"><input class="formPgto" type="radio" name="radioFormaCobrancaBoleto" id="radioFormaCobrancaBoleto.NAO_REGISTRADA" value="NAO_REGISTRADA"/></td>
+        <td width="47%"><label class="formPgto" for="radioFormaCobrancaBoleto.NAO_REGISTRADA">N&atilde;o Registrado</label></td>
+        </tr>
+    </table></td>
+    <td align="right"><input type="checkbox" name="principal" id="principal" /></td>
+    <td><label for="principal">Principal</label></td>
+  </tr>
+  <tr>
+    <td valign="top">Instru&ccedil;&otilde;es:</td>
+    <td colspan="3"><textarea name="instrucoes" rows="2" maxlength="100" id="instrucoes" style="width:645px;" readonly="true"></textarea></td>
+    </tr>
+  <tr>
+    <td valign="top">Fornecedores:</td>
+    <td rowspan="2" valign="top">
+    <table width="100%" border="0" cellspacing="1" cellpadding="0">
+     <c:set var="qauntidadeFornecedores" value="${fn:length(listaFornecedores)}"/>
+     <c:forEach step="2" items="${listaFornecedores}" varStatus ="status">    
+      <tr>
+       <td width="11%"> <input type="checkbox" name="checkGroupFornecedores" id="fornecedor_<c:out value="${listaFornecedores[status.index].key}" />" value='<c:out value="${listaFornecedores[status.index].key}" />' /></td>
+       <td width="41%"><c:out value="${listaFornecedores[status.index].value}"/></td>
+        <c:if test="${qauntidadeFornecedores gt (status.index+1)}">
+	        <td width="11%"><input type="checkbox" name="checkGroupFornecedores" id="fornecedor_<c:out value="${listaFornecedores[status.index+1].key}" />" value='<c:out value="${listaFornecedores[status.index+1].key}" />' /></td>
+	        <td width="41%"><c:out value="${listaFornecedores[status.index+1].value}"/></td>
+        </c:if>
+        </tr>      
+      </c:forEach>
+    </table></td>
+    <td>Concentra&ccedil;&atilde;o de Pagamentos:</td>
+    <td><table width="100%" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td width="6%"><input type="radio" name="concentracaoPagamento" id="radio_diaria" value="diaria" onclick='mudaConcentracaoPagamento("diaria");' /></td>
+        <td width="14%"><label for="diario">Di&aacute;ria</label></td>
+        <td width="7%"><input type="radio" name="concentracaoPagamento" id="radio_semanal" value="semanal" onclick="mudaConcentracaoPagamento('semanal');" /></td>
+        <td width="19%"><label for="semanal">Semanal</label></td>
+        <td width="7%"><input type="radio" name="concentracaoPagamento" id="radio_quinzenal" value="quinzenal" onclick="mudaConcentracaoPagamento('quinzenal');" /></td>
+        <td width="21%"><label for="quinzenal">Quinzenal</label></td>
+        <td width="7%"><input type="radio" name="concentracaoPagamento" id="radio_mensal" value="mensal" onclick="mudaConcentracaoPagamento('mensal');" /></td>
+        <td width="19%"><label for="mensal">Mensal</label></td>
+      </tr>
+    </table></td>
+  </tr>
+  <tr>
+    <td valign="top">&nbsp;</td>
+    <td>&nbsp;</td>
+    <td>
+    	<table width="100%" border="0" cellspacing="1" cellpadding="1" class="quinzenal">
+        <tr>
+          <td width="72">Todo dia:</td>
+          <td width="83"><input type="text" name="diasDoMes[]" id="diaDoMes1" style="width:60px;"/></td>
+          <td width="23">e:</td>
+          <td width="111"><input type="text" name="diasDoMes[]" id="diaDoMes2" style="width:60px;"/></td>
+          </tr>
+        </table>
+      <table width="100%" border="0" cellspacing="1" cellpadding="1" class="mensal">
+        <tr>
+          <td width="72">Todo dia:</td>
+          <td width="223"><input type="text" name="diasDoMes[]" id="diaDoMes" style="width:60px;"/></td>
+          </tr>
+        </table>
+      <table width="100%" border="0" cellspacing="1" cellpadding="1" class="semanal">
+        <tr>
+          <td width="20"><input type="checkbox" name="PS" id="PS" /></td>
+          <td width="113"><label for="PS">Segunda-feira</label></td>
+          <td width="20"><input type="checkbox" name="PT" id="PT" /></td>
+          <td width="121"> <label for="PT">Ter&ccedil;a-feira</label></td>
+        </tr>
+        <tr>
+          <td><input type="checkbox" name="PQ" id="PQ" /></td>
+          <td><label for="PQ">Quarta-feira</label></td>
+          <td><input type="checkbox" name="PQu" id="PQu" /></td>
+          <td><label for="PQu">Quinta-feira</label></td>
+        </tr>
+        <tr>
+          <td><input type="checkbox" name="PSex" id="PSex" /></td>
+          <td><label for="PSex">Sexta-feira</label></td>
+          <td><input type="checkbox" name="PSab" id="PSab" /></td>
+          <td><label for="PSab">S&aacute;bado</label></td>
+        </tr>
+        <tr>
+          <td><input type="checkbox" name="PDom" id="PDom" /></td>
+          <td><label for="PDom">Domingo</label></td>
+          <td>&nbsp;</td>
+          <td>&nbsp;</td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+  </table>
+</fieldset>		
+    </form>	
     
 </div>
 
 <div class="container">	
-<div id="effect" style="padding: 0 .7em;" class="ui-state-highlight ui-corner-all"> 
-<p><span style="float: left; margin-right: .3em;" class="ui-icon ui-icon-info"></span>
-			<b>Parâmetro < evento > com < status >.</b></p>
-</div>
-
    <fieldset class="classFieldset">
-  	    <legend>Pesquisar Parâmetros de Cobrança</legend>
+  	    <legend>Pesquisar Par&aacute;metros de Cobran&ccedil;a</legend>
        <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
            <tr>
            
@@ -1130,7 +864,7 @@
 <div class="linha_separa_fields">&nbsp;</div>
    <fieldset class="classFieldset">
  
-   	  <legend>Parâmetros de Cobranças Cadastrados</legend>
+   	  <legend>Par&aacute;metros de Cobran&ccedil;as Cadastrados</legend>
       <div class="grids" style="display:none;">
     	  <table class="parametrosGrid"></table>
       </div>
