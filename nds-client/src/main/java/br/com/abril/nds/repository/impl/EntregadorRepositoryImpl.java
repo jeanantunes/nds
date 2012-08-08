@@ -293,9 +293,9 @@ public class EntregadorRepositoryImpl extends AbstractRepositoryModel<Entregador
 		
 		StringBuilder hql = new StringBuilder();
 		hql.append("select new ").append(EntregadorCotaProcuracaoVO.class.getCanonicalName()).append("(")
-		   .append(" cota.numeroCota, cota.pessoa.nome ")
+		   .append(" cota.numeroCota, cota.pessoa.nome, cota.parametroDistribuicao.procuracaoAssinada ")
 		   .append(") ")
-		   .append(" from Entregador e join e.roteiro.box.cotas cota ")
+		   .append(" from Entregador e join e.rota.roteiro.box.cotas cota ")
 		   .append(" where e.id = :idEntregador ");
 		
 		retorno.setTotalRegistros(obterQtdRegistrosCotaAtendidaPaginacao(hql.toString(), idEntregador).intValue());
@@ -324,9 +324,7 @@ public class EntregadorRepositoryImpl extends AbstractRepositoryModel<Entregador
 		query.setFirstResult(pagina > 0 ? (pagina - 1) * resultadosPorPagina : pagina * resultadosPorPagina);
 		query.setMaxResults(resultadosPorPagina);
 		
-		
 		retorno.setListaVO(query.list());
-		
 		
 		return retorno;
 	}

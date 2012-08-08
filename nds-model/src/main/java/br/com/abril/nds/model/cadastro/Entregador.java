@@ -66,10 +66,6 @@ public class Entregador {
 	private Set<TelefoneEntregador> telefones = new HashSet<TelefoneEntregador>();
 	
 	@OneToOne
-	@JoinColumn(name="ROTEIRO_ID")
-	private Roteiro roteiro;
-	
-	@OneToOne
 	@JoinColumn(name="ROTA_ID")
 	private Rota rota;
 
@@ -211,14 +207,6 @@ public class Entregador {
 	 */
 	public void setTelefones(Set<TelefoneEntregador> telefones) {
 		this.telefones = telefones;
-	}
-	
-	public Roteiro getRoteiro() {
-		return roteiro;
-	}
-
-	public void setRoteiro(Roteiro roteiro) {
-		this.roteiro = roteiro;
 	}
 
 	public Rota getRota() {
