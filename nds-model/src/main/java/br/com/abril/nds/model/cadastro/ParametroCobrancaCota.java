@@ -13,8 +13,8 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -36,8 +36,8 @@ public class ParametroCobrancaCota implements Serializable {
 	@OneToMany(mappedBy="parametroCobrancaCota")
 	private Set<FormaCobranca> formasCobrancaCota = new HashSet<FormaCobranca>();
 	
-	@ManyToOne
-	@JoinColumn(name = "COTA_ID")
+	@OneToOne
+	@JoinColumn(name = "COTA_ID", unique = true)
 	private Cota cota;
 	
 	@Column(name = "VALOR_MINIMO_COBRANCA")

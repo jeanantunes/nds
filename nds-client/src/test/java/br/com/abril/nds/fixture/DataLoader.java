@@ -2313,10 +2313,7 @@ public class DataLoader {
 		
 		formasCobranca = new HashSet<FormaCobranca>();
 		formasCobranca.add(formaDeposito);
-		parametroCobrancaManoel = Fixture.parametroCobrancaCota(formasCobranca,
-				null, null, cotaManoel, 1,
-				false, new BigDecimal(1000), TipoCota.CONSIGNADO);
-		save(session, parametroCobrancaManoel);
+		
 		formaDeposito.setParametroCobrancaCota(parametroCobrancaManoel);
 		formaDeposito.setPrincipal(true);
 		save(session,formaDeposito);
@@ -4449,11 +4446,13 @@ public class DataLoader {
 
 		formasCobranca = new HashSet<FormaCobranca>();
 		formasCobranca.add(formaBoleto);
-		ParametroCobrancaCota parametroCobrancaConta =
-			Fixture.parametroCobrancaCota(formasCobranca, 1, BigDecimal.TEN, cotaManoel, 1,
-					                      true, BigDecimal.TEN, null);
-		save(session, parametroCobrancaConta);
-		formaBoleto.setParametroCobrancaCota(parametroCobrancaConta);
+		
+		parametroCobrancaManoel = Fixture.parametroCobrancaCota(formasCobranca,
+				null, null, cotaManoel, 1,
+				false, new BigDecimal(1000), TipoCota.CONSIGNADO);
+		save(session, parametroCobrancaManoel);
+		
+		formaBoleto.setParametroCobrancaCota(parametroCobrancaManoel);
 		formaBoleto.setPrincipal(true);
 		save(session, formaBoleto);
 
@@ -4465,7 +4464,7 @@ public class DataLoader {
 				Fixture.parametroCobrancaCota(formasCobranca, 2, BigDecimal.TEN, cotaJose, 1,
 											  true, BigDecimal.TEN, null);
 		save(session, parametroCobrancaConta1);
-		formaCheque.setParametroCobrancaCota(parametroCobrancaConta);
+		formaCheque.setParametroCobrancaCota(parametroCobrancaConta1);
 		formaCheque.setPrincipal(true);
 		save(session, formaCheque);
 
@@ -4477,7 +4476,7 @@ public class DataLoader {
 				Fixture.parametroCobrancaCota(formasCobranca, 2, BigDecimal.TEN, cotaMaria, 1,
 											  true, BigDecimal.TEN, null);
 		save(session, parametroCobrancaConta2);
-		formaDeposito.setParametroCobrancaCota(parametroCobrancaConta);
+		formaDeposito.setParametroCobrancaCota(parametroCobrancaConta2);
 		formaDeposito.setPrincipal(true);
 		save(session, formaDeposito);
 
@@ -4489,7 +4488,7 @@ public class DataLoader {
 				Fixture.parametroCobrancaCota(formasCobranca, 2, BigDecimal.TEN, cotaJoao, 1,
 											  false, BigDecimal.TEN, null);
 		save(session, parametroCobrancaConta3);
-		formaDinheiro.setParametroCobrancaCota(parametroCobrancaConta);
+		formaDinheiro.setParametroCobrancaCota(parametroCobrancaConta3);
 		formaDinheiro.setPrincipal(true);
 		save(session, formaDinheiro);
 
@@ -4501,7 +4500,7 @@ public class DataLoader {
 				Fixture.parametroCobrancaCota(formasCobranca, 2, BigDecimal.TEN, cotaLuis, 1,
 											  true, BigDecimal.TEN, null);
 		save(session, parametroCobrancaConta4);
-		formaTransferenciBancaria.setParametroCobrancaCota(parametroCobrancaConta);
+		formaTransferenciBancaria.setParametroCobrancaCota(parametroCobrancaConta4);
 		formaTransferenciBancaria.setPrincipal(true);
 		save(session, formaTransferenciBancaria);
 
