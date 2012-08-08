@@ -71,21 +71,32 @@ public class ParametroSistemaRepositoryImpl extends AbstractRepositoryModel<Para
 		query.setMaxResults(1);
 		
 		for (ParametroSistema itemPS : parametrosSistema) {
-			query.setParameter("tipoParametroSistema", itemPS.getTipoParametroSistema());
-			ParametroSistema ps = (ParametroSistema) query.uniqueResult();
-			if (ps == null) {
-				
-				// Parâmetro não existe no banco - create:
-				adicionar(itemPS);
-			} else {
-				
-				// Atualiza o valor de um parâmetro existente:
-				if (!ps.getValor().equals(itemPS.getValor())) {
-					ps.setValor(itemPS.getValor());
-					alterar(ps);
+			if (!isInterface(itemPS)) {
+				query.setParameter("tipoParametroSistema",
+						itemPS.getTipoParametroSistema());
+				ParametroSistema ps = (ParametroSistema) query.uniqueResult();
+				if (ps == null) {
+
+					// Parâmetro não existe no banco - create:
+					adicionar(itemPS);
+				} else {
+
+					// Atualiza o valor de um parâmetro existente:
+					if (!ps.getValor().equals(itemPS.getValor())) {
+						ps.setValor(itemPS.getValor());
+						alterar(ps);
+					}
 				}
 			}
 		}
+	}
+
+	/**
+	 * @param itemPS
+	 * @return
+	 */
+	private boolean isInterface(ParametroSistema itemPS) {
+		return TipoParametroSistema.TIPOS_INTERFACE.contains(itemPS.getTipoParametroSistema());
 	}
 	
 }
