@@ -64,6 +64,14 @@ public class Entregador {
 	
 	@OneToMany(mappedBy = "entregador")
 	private Set<TelefoneEntregador> telefones = new HashSet<TelefoneEntregador>();
+	
+	@OneToOne
+	@JoinColumn(name="ROTEIRO_ID")
+	private Roteiro roteiro;
+	
+	@OneToOne
+	@JoinColumn(name="ROTA_ID")
+	private Rota rota;
 
 	/**
 	 * @return the id
@@ -204,6 +212,22 @@ public class Entregador {
 	public void setTelefones(Set<TelefoneEntregador> telefones) {
 		this.telefones = telefones;
 	}
+	
+	public Roteiro getRoteiro() {
+		return roteiro;
+	}
+
+	public void setRoteiro(Roteiro roteiro) {
+		this.roteiro = roteiro;
+	}
+
+	public Rota getRota() {
+		return rota;
+	}
+
+	public void setRota(Rota rota) {
+		this.rota = rota;
+	}
 
 	@Override
 	public int hashCode() {
@@ -229,7 +253,4 @@ public class Entregador {
 			return false;
 		return true;
 	}
-	
-	
-
 }

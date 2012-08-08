@@ -15,7 +15,7 @@
 				<a href="#manutencaoTelefones" onclick="ENTREGADOR.carregarTelefones()">Telefones</a>
 			</li>
 			<li>
-				<a href="#cotas" id="linkCotas">Cotas</a>
+				<a href="#cotas" id="linkCotas" onclick="pesquisarCotas();">Cotas</a>
 			</li>
 		</ul>
 
