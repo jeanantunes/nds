@@ -591,6 +591,13 @@ $(document).ready(function() {
 		height : 120
 	});
 	
+$("#anoVigenciaPesquisa").keyup(function (e){
+		
+		if (e.keyCode == 13) {
+			CadastroCalendario.recarregarPainelCalendarioFeriado();
+		}
+	});
+	
 	
 	
 });	
