@@ -255,20 +255,20 @@ public class ParciaisServiceImpl implements ParciaisService{
 		List<ParcialVendaDTO> lista = new ArrayList<ParcialVendaDTO>();
 		
 		ParcialVendaDTO parcialVendaDTO = new ParcialVendaDTO();
-		parcialVendaDTO.setEncalhe(1L);
+		parcialVendaDTO.setEncalhe(BigInteger.valueOf(1L));
 		parcialVendaDTO.setNomeCota("aaa");
 		parcialVendaDTO.setNumeroCota(1);
-		parcialVendaDTO.setReparte(3L);
-		parcialVendaDTO.setVendaJuramentada(20L);
+		parcialVendaDTO.setReparte(BigInteger.valueOf(3L));
+		parcialVendaDTO.setVendaJuramentada(BigInteger.valueOf(20L));
 		
 		lista.add(parcialVendaDTO);
 
 		parcialVendaDTO = new ParcialVendaDTO();
-		parcialVendaDTO.setEncalhe(4L);
+		parcialVendaDTO.setEncalhe(BigInteger.valueOf(4L));
 		parcialVendaDTO.setNomeCota("ggg");
 		parcialVendaDTO.setNumeroCota(6);
-		parcialVendaDTO.setReparte(7L);
-		parcialVendaDTO.setVendaJuramentada(20L);
+		parcialVendaDTO.setReparte(BigInteger.valueOf(7L));
+		parcialVendaDTO.setVendaJuramentada(BigInteger.valueOf(20L));
 		
 		lista.add(parcialVendaDTO);
 		

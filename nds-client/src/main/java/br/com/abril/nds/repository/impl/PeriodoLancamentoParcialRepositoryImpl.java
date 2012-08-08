@@ -348,7 +348,7 @@ public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepositoryMo
 		hql.append(" pessoa.nome as nomeCota, ");
 		hql.append(" epc.qtdeRecebida as reparte, ");
 		hql.append(" epc.qtdeDevolvida as encalhe, ");
-		hql.append(" conferencia.juramentada as vendaJuramentada");
+	    hql.append(" case when conferencia.juramentada = true then conferencia.qtde else 0 end as vendaJuramentada ");
 		
 		hql.append(" from ConferenciaEncalhe conferencia ");
 		hql.append("	join conferencia.movimentoEstoqueCota movimento ");
@@ -356,11 +356,12 @@ public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepositoryMo
 		hql.append("	join chamadaEncalheCota.chamadaEncalhe chamadaEncalhe ");
 		hql.append("	join movimento.estoqueProdutoCota epc ");
 		hql.append("	join movimento.cota cota ");
+		hql.append("	join epc.produtoEdicao produtoEdicao ");
 		hql.append("	join cota.pessoa pessoa ");
 		
 		hql.append("	where chamadaEncalhe.dataRecolhimento >= :dataLancamento ");
 		hql.append("	and chamadaEncalhe.dataRecolhimento <= :dataRecolhimento ");
-		hql.append("	and chamadaEncalhe.produtoEdicao.id = :idProdutoEdicao ");
+		hql.append("	and produtoEdicao.id = :idProdutoEdicao ");
 				
 		Query query =  getSession().createQuery(hql.toString());
 		
