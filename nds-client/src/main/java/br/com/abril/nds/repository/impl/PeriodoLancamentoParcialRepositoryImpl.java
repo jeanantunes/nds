@@ -34,6 +34,7 @@ public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepositoryMo
 		hql.append(" select produtoEdicao.id as idProdutoEdicao, ");
 		hql.append("		lancamento.dataLancamentoDistribuidor as dataLancamento, ");
 		hql.append(" 		lancamento.dataRecolhimentoDistribuidor as dataRecolhimento, ");
+		hql.append("		produtoEdicao.origemInterface as geradoPorInterface, ");
 		
 		hql.append("		sum(mCota.qtde) as reparte,  ");
 		
@@ -45,12 +46,6 @@ public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepositoryMo
 		hql.append("			and lancamentoSupl.dataLancamentoDistribuidor >= lancamento.dataLancamentoDistribuidor ");
 		hql.append("			and lancamentoSupl.dataLancamentoDistribuidor <= lancamento.dataRecolhimentoDistribuidor) ");		
 		hql.append(" 		as suplementacao, ");
-		
-		hql.append(" 		999 as vendaCE, ");
-		
-		hql.append(" 		'9,99' as percVendaAcumulada, ");
-		
-		hql.append(" 		999 as reparteAcum, ");
 		
 		hql.append("		(select sum(movimento.qtde) from ConferenciaEncalhe conferencia ");
 		hql.append("		 	join conferencia.movimentoEstoqueCota movimento ");
@@ -69,10 +64,41 @@ public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepositoryMo
 		hql.append("			where chamadaEncalhe.dataRecolhimento >= lancamento.dataLancamentoDistribuidor ");
 		hql.append("			and chamadaEncalhe.dataRecolhimento <= lancamento.dataRecolhimentoDistribuidor ");
 		hql.append("			and chamadaEncalhe.produtoEdicao.id = lancamento.produtoEdicao.id ");
-		hql.append("			group by chamadaEncalhe.id) ");
-		hql.append(" 		as vendas, ");
+		hql.append("			group by chamadaEncalhe.id) as vendas, ");
 		
-		hql.append("		((select lancamentoInicial.estudo.qtdeReparte from Lancamento lancamentoInicial ");
+		hql.append("		sum(mCota.qtde) - (select sum(movimento.qtde) from ConferenciaEncalhe conferencia ");
+		hql.append("		 	join conferencia.movimentoEstoqueCota movimento ");
+		hql.append("		 	join conferencia.chamadaEncalheCota chamadaEncalheCota ");
+		hql.append("		 	join chamadaEncalheCota.chamadaEncalhe chamadaEncalhe ");
+		hql.append("			where chamadaEncalhe.dataRecolhimento >= lancamento.dataLancamentoDistribuidor ");
+		hql.append("			and chamadaEncalhe.dataRecolhimento <= lancamento.dataRecolhimentoDistribuidor ");
+		hql.append("			and chamadaEncalhe.produtoEdicao.id = lancamento.produtoEdicao.id ");
+		hql.append("			group by chamadaEncalhe.id) as vendaCE, ");
+		
+		hql.append(" 		(select sum(movCota.qtde) from Lancamento lancamentoSupl ");
+		hql.append("		 	left join lancamentoSupl.movimentoEstoqueCotas movCota ");
+		hql.append("			join lancamentoSupl.produtoEdicao pe ");
+		hql.append("		 where pe.id = produtoEdicao.id ");
+		hql.append("			and lancamentoSupl.dataLancamentoDistribuidor <= lancamento.dataRecolhimentoDistribuidor) ");		
+		hql.append(" 		as reparteAcum, ");
+		
+		hql.append("		((select sum(liMCota.qtde) from Lancamento lancamentoInicial ");
+		hql.append("			 left join lancamentoInicial.movimentoEstoqueCotas liMCota ");
+		hql.append("			where lancamentoInicial.dataLancamentoDistribuidor=lancamentoParcial.lancamentoInicial ");
+		hql.append("			and lancamentoInicial.produtoEdicao.id=produtoEdicao.id) ");
+		hql.append("		- (select sum(movimento.qtde) from ConferenciaEncalhe conferencia ");
+		hql.append("		 	join conferencia.movimentoEstoqueCota movimento ");
+		hql.append("		 	join conferencia.chamadaEncalheCota chamadaEncalheCota ");
+		hql.append("		 	join chamadaEncalheCota.chamadaEncalhe chamadaEncalhe ");
+		hql.append("			where chamadaEncalhe.dataRecolhimento >= lancamentoParcial.lancamentoInicial ");
+		hql.append("			and chamadaEncalhe.dataRecolhimento <= lancamentoParcial.recolhimentoFinal ");
+		hql.append("			and chamadaEncalhe.produtoEdicao.id = lancamento.produtoEdicao.id ");
+		hql.append("			group by chamadaEncalhe.id)) ");
+		hql.append(" 		 as vendaAcumulada, ");
+		
+
+		hql.append("		round((((select sum(liMCota.qtde) from Lancamento lancamentoInicial ");
+		hql.append("			 left join lancamentoInicial.movimentoEstoqueCotas liMCota ");
 		hql.append("			where lancamentoInicial.dataLancamentoDistribuidor=lancamentoParcial.lancamentoInicial ");
 		hql.append("			and lancamentoInicial.produtoEdicao.id=produtoEdicao.id) ");
 		hql.append("		- (select sum(movimento.qtde) from ConferenciaEncalhe conferencia ");
@@ -84,9 +110,16 @@ public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepositoryMo
 		hql.append("			and chamadaEncalhe.produtoEdicao.id = lancamento.produtoEdicao.id ");
 		hql.append("			group by chamadaEncalhe.id)) ");
 		
-		hql.append("		 /case when periodo.status='RECOLHIDO' then 0 else 1 end ");
-		hql.append(" 		 as vendaAcumulada, ");
-				
+		hql.append(" 		/(select sum(movCota.qtde) from Lancamento lancamentoSupl ");
+		hql.append("		 	left join lancamentoSupl.movimentoEstoqueCotas movCota ");
+		hql.append("			join lancamentoSupl.produtoEdicao pe ");
+		hql.append("		 where pe.id = produtoEdicao.id ");
+		hql.append("			and lancamentoSupl.dataLancamentoDistribuidor <= lancamento.dataRecolhimentoDistribuidor)) ");
+		hql.append("		 * 100 )");
+		hql.append(" 		as percVendaAcumulada, ");
+		
+		
+		
 		hql.append("		  ((sum(mCota.qtde) - (select sum(movimento.qtde) from ConferenciaEncalhe conferencia ");
 		hql.append("		 	join conferencia.movimentoEstoqueCota movimento ");
 		hql.append("		 	join conferencia.chamadaEncalheCota chamadaEncalheCota ");
@@ -104,7 +137,7 @@ public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepositoryMo
 		
 	
 		hql.append(" group by periodo ");
-		
+				
 		hql.append(getOrderByPeriodosParciais(filtro));
 				
 		Query query =  getSession().createQuery(hql.toString());
@@ -132,7 +165,7 @@ public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepositoryMo
 		StringBuilder hql = new StringBuilder();
 			
 		hql.append(" from PeriodoLancamentoParcial periodo ");
-		hql.append(" join periodo.lancamentoParcial lancamentoParcial");
+		hql.append(" join periodo.lancamentoParcial lancamentoParcial ");
 		hql.append(" join periodo.lancamento lancamento ");
 		hql.append(" join lancamento.produtoEdicao produtoEdicao ");
 		hql.append(" join produtoEdicao.produto produto ");

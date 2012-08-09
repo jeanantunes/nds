@@ -34,6 +34,8 @@ public class ParcialDTO implements Serializable{
 	@Export(label = "Status", alignment=Alignment.LEFT)
 	private String statusParcial;
 	
+	private boolean geradoPorInterface;
+	
 	private String precoCapa;
 	
 	public ParcialDTO() {}
@@ -122,6 +124,22 @@ public class ParcialDTO implements Serializable{
 	 */
 	public void setPrecoCapa(BigDecimal precoCapa) {
 		this.precoCapa = CurrencyUtil.formatarValor(precoCapa);
+	}
+
+
+	/**
+	 * @return the geradoPorInterface
+	 */
+	public boolean isGeradoPorInterface() {
+		return geradoPorInterface;
+	}
+
+
+	/**
+	 * @param geradoPorInterface the geradoPorInterface to set
+	 */
+	public void setGeradoPorInterface(boolean geradoPorInterface) {
+		this.geradoPorInterface = geradoPorInterface;
 	}
 	
 }
