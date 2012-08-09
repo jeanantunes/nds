@@ -42,7 +42,7 @@ public class EMS0107Input implements Serializable {
 	private Long codigoCota;
 
 	@Column
-	private BigInteger quantidadeReparte;
+	private Long quantidadeReparte;
 
 	@Column
 	private String repartePDV;
@@ -80,12 +80,11 @@ public class EMS0107Input implements Serializable {
 	}
 
 	@Field(offset = 17, length = 8)
-	@FixedFormatDecimal(decimals = 2, useDecimalDelimiter = false)
-	public BigInteger getQuantidadeReparte() {
+	public Long getQuantidadeReparte() {
 		return quantidadeReparte;
 	}
 
-	public void setQuantidadeReparte(BigInteger quantidadeReparte) {
+	public void setQuantidadeReparte(Long quantidadeReparte) {
 		this.quantidadeReparte = quantidadeReparte;
 	}
 
