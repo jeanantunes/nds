@@ -232,8 +232,8 @@ public class ConferenciaEncalheRepositoryImpl extends
 		Query query =  this.getSession().createSQLQuery(hql.toString()).setResultTransformer(new AliasToBeanResultTransformer(ConferenciaEncalheDTO.class));
 		
 		((SQLQuery)query).addScalar("idConferenciaEncalhe", StandardBasicTypes.LONG);
-		((SQLQuery)query).addScalar("qtdExemplar");
-		((SQLQuery)query).addScalar("qtdInformada");
+		((SQLQuery)query).addScalar("qtdExemplar", StandardBasicTypes.BIG_INTEGER);
+		((SQLQuery)query).addScalar("qtdInformada", StandardBasicTypes.BIG_INTEGER);
 		((SQLQuery)query).addScalar("juramentada");
 		((SQLQuery)query).addScalar("precoCapaInformado");
 		((SQLQuery)query).addScalar("tipoChamadaEncalhe");
