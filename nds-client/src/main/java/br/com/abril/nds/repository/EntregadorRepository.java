@@ -3,7 +3,6 @@ package br.com.abril.nds.repository;
 import java.util.List;
 
 import br.com.abril.nds.client.vo.EntregadorCotaProcuracaoPaginacaoVO;
-import br.com.abril.nds.client.vo.EntregadorCotaProcuracaoVO;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroEntregadorDTO;
 import br.com.abril.nds.model.cadastro.Entregador;
@@ -71,4 +70,12 @@ public interface EntregadorRepository extends Repository<Entregador, Long> {
 	EntregadorCotaProcuracaoPaginacaoVO buscarCotasAtendidas(Long idEntregador,
 			int pagina, int resultadosPorPagina, String sortname,
 			String sortorder);
+	
+	/**
+	 * Verifica a existencia de {@link Entregador} pelo codigo diferente do id;
+	 * @param codigo Código do Entregador
+	 * @param id (Opional) ID do entragador
+	 * @return
+	 */
+	public abstract boolean hasEntregador(Long codigo, Long id);
 }

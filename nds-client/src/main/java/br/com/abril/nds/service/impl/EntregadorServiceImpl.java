@@ -90,6 +90,10 @@ public class EntregadorServiceImpl implements EntregadorService {
 	@Transactional
 	public Entregador salvarEntregadorProcuracao(Entregador entregador, ProcuracaoEntregador procuracaoEntregador) {
 		
+		if(this.entregadorRepository.hasEntregador(entregador.getCodigo(), entregador.getId())){
+			throw new ValidacaoException(TipoMensagem.WARNING, "Código do Entregado já cadastrado!");
+		}
+		
 		entregador = this.entregadorRepository.merge(entregador);
 
 		if (procuracaoEntregador != null) {
