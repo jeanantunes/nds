@@ -99,6 +99,7 @@ public class Distribuidor {
 	 * na chamada de encalhe
 	 */
 	@Column(name = "TIPO_CONT_CE")
+	@Enumerated(EnumType.STRING)
 	private TipoContabilizacaoCE tipoContabilizacaoCE;
 	
 	/**
