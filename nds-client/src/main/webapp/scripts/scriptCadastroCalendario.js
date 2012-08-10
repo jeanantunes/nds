@@ -492,14 +492,6 @@ $(document).ready(function() {
 	
 	
 	CadastroCalendario.recarregarPainelCalendarioFeriado();
-
-	$( "#dtFeriadoNovo" ).datepicker({
-		showOn: "button",
-		dateFormat: "dd/mm/yy",
-		buttonImage: "scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
-		buttonImageOnly: true
-	});
-
 	
 	$(".diaFeriadoGrid").flexigrid({
 		colModel : [ {

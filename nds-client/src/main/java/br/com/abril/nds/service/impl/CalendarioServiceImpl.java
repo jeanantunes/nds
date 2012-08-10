@@ -545,7 +545,7 @@ public class CalendarioServiceImpl implements CalendarioService {
 	protected URL obterDiretorioReports() {
 
 		URL urlDanfe = Thread.currentThread().getContextClassLoader()
-				.getResource("/reports/");
+				.getResource("reports/");
 
 		return urlDanfe;
 	}
