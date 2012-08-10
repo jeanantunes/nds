@@ -20,6 +20,7 @@ import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
+import br.com.abril.nds.serialization.custom.PlainJSONSerialization;
 import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.ProdutoService;
@@ -280,7 +281,7 @@ public class ProdutoEdicaoController {
 			vo = new ValidacaoVO(TipoMensagem.ERROR, e.getMessage());
 		} finally {
 			
-			this.result.use(Results.json()).from(vo, "result").recursive().serialize();
+			this.result.use(PlainJSONSerialization.class).from(vo, "result").recursive().serialize();
 		}
 	}
 	
