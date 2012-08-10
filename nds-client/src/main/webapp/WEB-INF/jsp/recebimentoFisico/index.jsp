@@ -1106,12 +1106,13 @@ validarEdicaoCallBack : function() {
 				           id:"bt_cancelar",
 				           text:"Cancelar", 
 				           click: function() {
-				        	   $( this ).dialog( "close" );
+				        	   $( this ).dialog( "close" );   
 				           }
 			           }
 	        ],
 		    beforeClose: function() {
 			    clearMessageDialogTimeout();
+			    limparCamposNovaNota();
 	        }
 		});
 	};
@@ -1686,8 +1687,6 @@ validarEdicaoCallBack : function() {
         $("#novoDataEmissao").val("");
         $("#novoDataEntrada").val("");
         $("#novoValorTotal").val("");
-        
-        montaGridItens();
 	}
 	
 	function incluirNota() {
@@ -1697,15 +1696,12 @@ validarEdicaoCallBack : function() {
 
 		formData = obterCabecalho() + obterListaItens();
 		url = '<c:url value="/estoque/recebimentoFisico/incluirNota" />';
-		obterValorTotalItens();
 
 		$.postJSON(
 			url,
 			formData,
 			function(result) {
-				
-				limparCamposNovaNota();
-				
+
 				$("#dialog-adicionar").dialog( "close" );
 	
 				exibirMensagem(
