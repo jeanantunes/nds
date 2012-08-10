@@ -50,7 +50,6 @@ public class ParametrosDistribuidorController {
 		result.include("parametrosDistribuidor", parametrosDistribuidorService.getParametrosDistribuidor());
 		result.include("listaDiaOperacaoFornecedor", distribuicaoFornecedorService.buscarDiasOperacaoFornecedor());
 		result.include("fornecedores", fornecedorService.obterFornecedores());
-		//result.include("distribuidor", distribuidorService.obter());
 	}
 
 	/**buscarDiasOperacaoFornecedor
