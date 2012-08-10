@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -479,26 +480,29 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 					"Endereço principal do distribuidor não encontrada!");
 		}
 
-		Endereco endereco = enderecoDistribuidor.getEndereco();
-		enderecoRepository.detach(endereco);
-		endereco.setId(null);
-		endereco.setPessoa(null);
-		enderecoRepository.adicionar(endereco);
-		identificacaoEmitente.setEndereco(endereco);
-
+		try {
+			Endereco endereco = enderecoDistribuidor.getEndereco().clone();
+			enderecoRepository.detach(endereco);
+			endereco.setId(null);
+			endereco.setPessoa(null);
+			enderecoRepository.adicionar(endereco);
+			identificacaoEmitente.setEndereco(endereco);
+		} catch (Exception exception) {
+			throw new ValidacaoException(TipoMensagem.ERROR,
+					"Erro ao adicionar o endereço do distribuidor!");
+		}
+		
 		TelefoneDistribuidor telefoneDistribuidor = distribuidorRepository
 				.obterTelefonePrincipal();
 
-		if (telefoneDistribuidor == null) {
-			throw new ValidacaoException(TipoMensagem.ERROR,
-					"Telefone principal do distribuidor não encontrada!");
+		if (telefoneDistribuidor != null) {
+			Telefone telefone = telefoneDistribuidor.getTelefone();
+			telefoneRepository.detach(telefone);
+			telefone.setId(null);
+			telefone.setPessoa(null);
+			telefoneRepository.adicionar(telefone);
+			identificacaoEmitente.setTelefone(telefone);
 		}
-		Telefone telefone = telefoneDistribuidor.getTelefone();
-		telefoneRepository.detach(telefone);
-		telefone.setId(null);
-		telefone.setPessoa(null);
-		telefoneRepository.adicionar(telefone);
-		identificacaoEmitente.setTelefone(telefone);
 		// TODO: Como definir o Regime Tributario
 		identificacaoEmitente
 				.setRegimeTributario(RegimeTributario.SIMPLES_NACIONAL);
@@ -550,17 +554,15 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 
 		TelefoneCota telefoneCota = telefoneCotaRepository
 				.obterTelefonePrincipal(idCota);
-		if (telefoneCota == null) {
-			throw new ValidacaoException(TipoMensagem.ERROR,
-					"Telefone principal da cota " + idCota + " não encontrada!");
+		if (telefoneCota != null) {
+			Telefone telefone = telefoneCota.getTelefone();
+			
+			telefoneRepository.detach(telefone);
+			telefone.setId(null);
+			telefone.setPessoa(null);
+			telefoneRepository.adicionar(telefone);
+			destinatario.setTelefone(telefone);
 		}
-		Telefone telefone = telefoneCota.getTelefone();
-		
-		telefoneRepository.detach(telefone);
-		telefone.setId(null);
-		telefone.setPessoa(null);
-		telefoneRepository.adicionar(telefone);
-		destinatario.setTelefone(telefone);
 
 		return destinatario;
 	}
