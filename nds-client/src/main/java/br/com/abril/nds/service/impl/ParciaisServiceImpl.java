@@ -194,10 +194,12 @@ public class ParciaisServiceImpl implements ParciaisService{
 			
 		Lancamento lancamento = lancamentoRepository.buscarPorId(idLancamento);
 		
-		
 		if(lancamento == null)
 			throw new ValidacaoException(TipoMensagem.WARNING, "Lancamento não deve ser nulo.");
 				
+		if(!lancamento.getStatus().equals(StatusLancamento.PLANEJADO))
+			throw new ValidacaoException(TipoMensagem.WARNING, "Lancamento já foi realizado, não pode ser alterado.");
+						
 		PeriodoLancamentoParcial periodo = periodoLancamentoParcialRepository.obterPeriodoPorIdLancamento(idLancamento);
 		
 		if(DateUtil.isDataInicialMaiorDataFinal(periodo.getLancamentoParcial().getLancamentoInicial(), dataLancamento))
@@ -212,6 +214,10 @@ public class ParciaisServiceImpl implements ParciaisService{
 		if(!idMudancaPeriodoValida)
 			throw new ValidacaoException(TipoMensagem.WARNING, "A nova data ultrapassa lançamentos e/ou recolhimentos de outro período.");
 		
+		Long diferencaLancamento = DateUtil.obterDiferencaDias(lancamento.getDataLancamentoDistribuidor(), dataLancamento);
+		Long diferencaRecolhimento = DateUtil.obterDiferencaDias(dataRecolhimento, lancamento.getDataRecolhimentoDistribuidor());
+		
+		
 		lancamento.setDataLancamentoDistribuidor(dataLancamento);
 		lancamento.setDataLancamentoPrevista(dataLancamento);
 		lancamento.setDataRecolhimentoDistribuidor(dataRecolhimento);
@@ -219,28 +225,48 @@ public class ParciaisServiceImpl implements ParciaisService{
 		
 		lancamentoRepository.merge(lancamento);
 		
-
-		ajustarPeriodoAnteriorProximo(idLancamento, dataLancamento, dataRecolhimento);
-				
-	}
-
-	private void ajustarPeriodoAnteriorProximo(Long idLancamento,
-			Date dtLancamento, Date dtRecolhimento) {
-	
-		//TODO
-
-		Lancamento lancamento = lancamentoRepository.buscarPorId(idLancamento);
+		if( !diferencaLancamento.equals(0) )
+			ajustarPeriodoAnterior(lancamento.getProdutoEdicao().getId(), dataLancamento, diferencaLancamento.intValue());
 		
-		PeriodoLancamentoParcial periodo = periodoLancamentoParcialRepository.obterPeriodoPorIdLancamento(idLancamento);
-		/*
-		lancamento.setDataLancamentoDistribuidor(dataLancamento);
-		lancamento.setDataLancamentoPrevista(dataLancamento);
-		lancamento.setDataRecolhimentoDistribuidor(dataRecolhimento);
-		lancamento.setDataRecolhimentoPrevista(dataRecolhimento);
-		*/
-		lancamentoRepository.merge(lancamento);
+		if( !diferencaRecolhimento.equals(0) )
+			ajustarPeriodoProximo(lancamento.getProdutoEdicao().getId(), dataRecolhimento, diferencaRecolhimento.intValue());
+		
 	}
 	
+	private void ajustarPeriodoProximo(Long idProdutoEdicao,
+			Date dataRecolhimento, Integer diferencaRecolhimento) {
+
+		Lancamento lancamentoPosterior = periodoLancamentoParcialRepository.obterLancamentoPosterior(idProdutoEdicao,dataRecolhimento);
+		
+		if(lancamentoPosterior==null)
+			return;
+		
+		if(!lancamentoPosterior.getStatus().equals(StatusLancamento.PLANEJADO))
+				return;
+		
+		lancamentoPosterior.setDataLancamentoDistribuidor(
+				DateUtil.subtrairDias(lancamentoPosterior.getDataLancamentoDistribuidor(), diferencaRecolhimento));
+		
+		lancamentoRepository.merge(lancamentoPosterior);
+	}
+
+	private void ajustarPeriodoAnterior(Long idProdutoEdicao,
+			Date dataLancamento, Integer diferencaLancamento) {
+		
+		Lancamento lancamentoAnterior = periodoLancamentoParcialRepository.obterLancamentoAnterior(idProdutoEdicao,dataLancamento);
+		
+		if(lancamentoAnterior==null)
+			return;
+		
+		if(!lancamentoAnterior.getStatus().equals(StatusLancamento.PLANEJADO))
+				return;
+		
+		lancamentoAnterior.setDataRecolhimentoDistribuidor(
+				DateUtil.adicionarDias(lancamentoAnterior.getDataRecolhimentoDistribuidor(), diferencaLancamento));
+		
+		lancamentoRepository.merge(lancamentoAnterior);
+	}
+
 	@Override
 	@Transactional
 	public void excluirPeriodo(Long idLancamento) {
@@ -254,7 +280,7 @@ public class ParciaisServiceImpl implements ParciaisService{
 			throw new ValidacaoException(TipoMensagem.WARNING, "Lancamento não deve ser nulo.");
 		
 		if( !lancamento.getStatus().equals(StatusLancamento.PLANEJADO)) 
-			throw new ValidacaoException(TipoMensagem.WARNING, "Lancamento já está em uso, não pode ser excluido.");
+			throw new ValidacaoException(TipoMensagem.WARNING, "Lancamento já foi realizado, não pode ser excluido.");
 		
 		PeriodoLancamentoParcial periodo = periodoLancamentoParcialRepository.obterPeriodoPorIdLancamento(idLancamento);
 				

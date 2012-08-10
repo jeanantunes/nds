@@ -27,7 +27,7 @@ import br.com.abril.nds.util.export.fiscal.nota.NFEWhens;
 @Entity
 @Table(name = "ENDERECO")
 @SequenceGenerator(name="ENDERECO_SEQ", initialValue = 1, allocationSize = 1)
-public class Endereco implements Serializable {
+public class Endereco implements Serializable, Cloneable {
 
 	/**
 	 * Serial Version UID
@@ -258,6 +258,11 @@ public class Endereco implements Serializable {
 	 */
 	public void setCodigoUf(Integer codigoUf) {
 		this.codigoUf = codigoUf;
+	}
+	
+	@Override
+	public Endereco clone() throws CloneNotSupportedException {
+		return (Endereco) super.clone();
 	}
 
 }

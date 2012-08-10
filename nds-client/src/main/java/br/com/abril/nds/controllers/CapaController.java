@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.serialization.custom.CustomJson;
+import br.com.abril.nds.serialization.custom.PlainJSONSerialization;
 import br.com.abril.nds.service.CapaService;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.caelum.vraptor.Get;
@@ -77,14 +78,16 @@ public class CapaController {
 	 *  
 	 * @param idProdutoEdicao
 	 */
-	@Post("removerCapa")
+	@Post
+	@Path("/removerCapa")
 	public void removerCapa(long idProdutoEdicao) {
 		
+		ValidacaoVO vo = null;
 		try {
 			
 			capaService.deleteCapa(idProdutoEdicao);
+			vo = new ValidacaoVO(TipoMensagem.SUCCESS, "Remoção feita com sucesso!");
 		} catch (Exception e) {
-			ValidacaoVO vo = null;
 			if (e instanceof ValidacaoException) {
 				
 				vo = ((ValidacaoException) e).getValidacao();
@@ -96,8 +99,8 @@ public class CapaController {
 					vo = new ValidacaoVO(TipoMensagem.ERROR, e.getMessage() + "");
 				}
 			}
-			
-			throw new ValidacaoException(vo);
+		} finally {
+			this.result.use(PlainJSONSerialization.class).from(vo, "result").recursive().serialize();
 		}
 		
 		

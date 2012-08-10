@@ -1,7 +1,5 @@
 package br.com.abril.nds.client.vo;
 
-import java.math.BigDecimal;
-
 import br.com.abril.nds.model.cadastro.TipoContabilizacaoCE;
 
 
@@ -223,7 +221,7 @@ public class ParametrosDistribuidorVO {
 	
 	private Integer chamadaoDiasSuspensao;
 	
-	private BigDecimal chamadaoValorConsignado;
+	private String chamadaoValorConsignado;
 
 	public int getRelancamentoParciaisEmDias() {
 		return relancamentoParciaisEmDias;
@@ -1006,14 +1004,14 @@ public class ParametrosDistribuidorVO {
     /**
      * @return the chamadaoValorConsignado
      */
-    public BigDecimal getChamadaoValorConsignado() {
+    public String getChamadaoValorConsignado() {
         return chamadaoValorConsignado;
     }
 
     /**
      * @param chamadaoValorConsignado the chamadaoValorConsignado to set
      */
-    public void setChamadaoValorConsignado(BigDecimal chamadaoValorConsignado) {
+    public void setChamadaoValorConsignado(String chamadaoValorConsignado) {
         this.chamadaoValorConsignado = chamadaoValorConsignado;
     }
 

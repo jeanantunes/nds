@@ -6,6 +6,7 @@ import java.util.List;
 import br.com.abril.nds.dto.ParcialVendaDTO;
 import br.com.abril.nds.dto.PeriodoParcialDTO;
 import br.com.abril.nds.dto.filtro.FiltroParciaisDTO;
+import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.PeriodoLancamentoParcial;
 
 public interface PeriodoLancamentoParcialRepository  extends Repository<PeriodoLancamentoParcial, Long>  {
@@ -53,4 +54,23 @@ public interface PeriodoLancamentoParcialRepository  extends Repository<PeriodoL
 	 * @return List<ParcialVendaDTO>
 	 */
 	List<ParcialVendaDTO> obterDetalhesVenda(Date dataLancamento, Date dataRecolhimento, Long idProdutoEdicao);
+
+	/**
+	 * Obtém lançamento de periodo parcial posterior.
+	 * @param dataRecolhimento 
+	 * 
+	 * @param idLancamento
+	 * @return
+	 */
+	Lancamento obterLancamentoPosterior(Long idProdutoEdicao, Date dataRecolhimento);
+
+	/**
+	 * Obtém lançamento de periodo parcial anterior.
+	 * @param dataRecolhimento 
+	 * 
+	 * @param idLancamento
+	 * @return
+	 */
+	Lancamento obterLancamentoAnterior(Long idProdutoEdicao, Date dataLancamento);
+
 }

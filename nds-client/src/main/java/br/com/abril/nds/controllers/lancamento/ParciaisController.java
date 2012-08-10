@@ -14,7 +14,6 @@ import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.ParcialDTO;
 import br.com.abril.nds.dto.ParcialVendaDTO;
 import br.com.abril.nds.dto.PeriodoParcialDTO;
-import br.com.abril.nds.dto.filtro.FiltroConsultaDividasCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroParciaisDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.service.DistribuidorService;
@@ -51,11 +50,11 @@ public class ParciaisController {
 
 	private static final String FILTRO_SESSION_ATTRIBUTE = "filtroParcial";
 	
-	private static String FILTRO_DATA_LANCAMENTO;
+	private static String FILTRO_DATA_LANCAMENTO = "filtroDataLancamento";
 	
-	private static String FILTRO_DATA_RECEBIMENTO;
+	private static String FILTRO_DATA_RECEBIMENTO = "filtroDataRecebimento";
 	
-	private static String FILTRO_ID_PRODUTO_EDICAO;
+	private static String FILTRO_ID_PRODUTO_EDICAO = "filtroIdProdutoEdicao";
 	
 	@Autowired
 	private HttpSession session;
