@@ -338,4 +338,18 @@ public class EntregadorRepositoryImpl extends AbstractRepositoryModel<Entregador
 		
 		return (Long) query.uniqueResult();
 	}
+	
+	
+	@Override
+	public boolean hasEntregador(Long codigo, Long id){
+		Criteria criteria = getSession().createCriteria(Entregador.class);		
+		criteria.add(Restrictions.eq("codigo", codigo));
+		if (id != null) {
+			criteria.add(Restrictions.not(Restrictions.idEq(id)));
+		}		
+		criteria.setProjection(Projections.rowCount());
+		
+		
+		return(Long)criteria.uniqueResult() > 0; 
+	}
 }
