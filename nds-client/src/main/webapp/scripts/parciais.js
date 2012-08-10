@@ -79,10 +79,9 @@ function Parciais(pathTela) {
 	},
 
 	this.inserirPeriodos = function(modal) {
-		
 		$.postJSON(contextPath + "/parciais/inserirPeriodos",
 				T.getDadosNovosPeriodo(),
-				function(result,modal){
+				function(result){
 					if(modal)
 						$(".parciaisPopGrid").flexReload();
 					else
@@ -241,6 +240,11 @@ function Parciais(pathTela) {
 	},
 	
 	this.gerarAcaoDetalhes = function(index, row) {
+		row.cell.vendas = '<a href="javascript:;" onclick="PARCIAIS.detalheVendas(\'' +
+		row.cell.dataLancamento +'\', \''+
+		row.cell.dataRecolhimento +'\', \''+
+		row.cell.idProdutoEdicao +'\', \''+
+		'\');">' + row.cell.vendas + '</a>';
 		
 		row.cell.acao = 
 			'<a href="javascript:;" ' +
@@ -320,7 +324,6 @@ function Parciais(pathTela) {
 						exibirMensagem('SUCCESS', ['Período alterado com sucesso.']);
 					}
 					
-					$().close();
 				},	
 				null,
 				true,
@@ -335,13 +338,12 @@ function Parciais(pathTela) {
 		$.postJSON(contextPath + "/parciais/excluirPeriodoParcial",
 				data,
 				function(result){
-
-					
+			
 					if($('#painelPeriodos').css('display')=='none') {
 						exibirMensagemDialog('SUCCESS', ['Período excluido com sucesso.'], "dialog-detalhes");			
 						$(".parciaisPopGrid").flexReload();
 					} else {
-						$(".parciaisGrid").flexReload();
+						$(".periodosGrid").flexReload();
 						exibirMensagem('SUCCESS', ['Período excluido com sucesso.']);
 					}
 					
@@ -354,6 +356,27 @@ function Parciais(pathTela) {
 		
 	},
 	
+
+	this.detalheVendas = function(dtLcto, dtRcto, idProdutoEdicao) {
+		
+		var data = [];
+		
+		data.push({name:'dtLcto',				value: dtLcto});
+		data.push({name:'dtRcto',				value: dtRcto});
+		data.push({name:'idProdutoEdicao',		value: idProdutoEdicao});
+		
+		
+		$(".parciaisVendaGrid").flexOptions({			
+			url : pathTela + "/parciais/pesquisarParciaisVenda",
+			dataType : 'json',
+			params: data
+		});
+
+		$(".parciaisVendaGrid").flexReload();
+
+		pupup_detalheVendas();
+	},
+		
 	/**
 	 * Atribui valor a um campo da tela
 	 * Obs: Checkboxs devem ser atribuidos com o valor de true ou false
