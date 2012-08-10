@@ -698,7 +698,7 @@ var produto = $.extend(true, {
 
 	validaNumeroEdicaoSucessoCallBack : function(idCodigo, idEdicao, successCallBack) {
 		if (successCallBack) {
-			this.successCallBack(idCodigo, idEdicao);
+			successCallBack(idCodigo, idEdicao);
 		}
 	},
 	
