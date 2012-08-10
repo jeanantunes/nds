@@ -125,6 +125,8 @@ public class IntegracaoOperacionalDistribuidorServiceImpl implements IntegracaoO
 						
 						if (indicador != null){
 							
+							indicador.setDistribuidor(operacaoDistribuidor);
+							
 							this.indicadorRepository.alterar(indicador);
 						}
 					}
