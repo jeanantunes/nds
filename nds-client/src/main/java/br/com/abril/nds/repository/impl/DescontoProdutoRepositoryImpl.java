@@ -45,7 +45,7 @@ public class DescontoProdutoRepositoryImpl extends AbstractRepositoryModel<Desco
 
 		ProjectionList projectionList = (ProjectionList) getAliasProjectionTipoDescontoProduto();
 
-		if (filtro != null && filtro.getCodigoProduto() != null) {
+		if (filtro != null && filtro.getCodigoProduto() != null && !filtro.getCodigoProduto().isEmpty()) {
 
 			criteria.add(Restrictions.eq("produto.codigo", filtro.getCodigoProduto()));
 		}

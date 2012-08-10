@@ -95,6 +95,7 @@ import br.com.abril.nds.model.cadastro.TipoRoteiro;
 import br.com.abril.nds.model.cadastro.TipoTelefone;
 import br.com.abril.nds.model.cadastro.TributacaoFiscal;
 import br.com.abril.nds.model.cadastro.desconto.DescontoDistribuidor;
+import br.com.abril.nds.model.cadastro.desconto.DescontoProduto;
 import br.com.abril.nds.model.cadastro.pdv.AreaInfluenciaPDV;
 import br.com.abril.nds.model.cadastro.pdv.EnderecoPDV;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
@@ -1000,6 +1001,8 @@ public class DataLoader {
 		//criarNovaNotaFiscal(session);
 		
 		gerarDescontoDistribuidorParaFornecedor(session);
+		
+		criarDescontoProduto(session);
 	}
 
 	
@@ -10969,6 +10972,49 @@ public class DataLoader {
 		}
 		
 		
+	}
+	
+	private static void criarDescontoProduto(Session session) {
+		
+		DescontoProduto descontoProdutoVeja = new DescontoProduto();
+		descontoProdutoVeja.setDataAlteracao(new Date());
+		descontoProdutoVeja.setDesconto(new BigDecimal(50));
+		descontoProdutoVeja.setDistribuidor(distribuidor);
+		descontoProdutoVeja.setProdutoEdicao(produtoEdicaoVeja1);
+		descontoProdutoVeja.setUsuario(usuarioJoao);
+		
+		DescontoProduto descontoProdutoQuatroRodas = new DescontoProduto();
+		descontoProdutoQuatroRodas.setDataAlteracao(new Date());
+		descontoProdutoQuatroRodas.setDesconto(new BigDecimal(50));
+		descontoProdutoQuatroRodas.setDistribuidor(distribuidor);
+		descontoProdutoQuatroRodas.setProdutoEdicao(produtoEdicaoQuatroRodas1);
+		descontoProdutoQuatroRodas.setUsuario(usuarioJoao);
+		
+		DescontoProduto descontoProdutoInfoExame = new DescontoProduto();
+		descontoProdutoInfoExame.setDataAlteracao(new Date());
+		descontoProdutoInfoExame.setDesconto(new BigDecimal(50));
+		descontoProdutoInfoExame.setDistribuidor(distribuidor);
+		descontoProdutoInfoExame.setProdutoEdicao(produtoEdicaoInfoExame1);
+		descontoProdutoInfoExame.setUsuario(usuarioJoao);
+		
+		DescontoProduto descontoProdutoCapricho = new DescontoProduto();
+		descontoProdutoCapricho.setDataAlteracao(new Date());
+		descontoProdutoCapricho.setDesconto(new BigDecimal(50));
+		descontoProdutoCapricho.setDistribuidor(distribuidor);
+		descontoProdutoCapricho.setProdutoEdicao(produtoEdicaoCapricho1);
+		descontoProdutoCapricho.setUsuario(usuarioJoao);
+		
+		DescontoProduto descontoProdutoSuperInteressante = new DescontoProduto();
+		descontoProdutoSuperInteressante.setDataAlteracao(new Date());
+		descontoProdutoSuperInteressante.setDesconto(new BigDecimal(50));
+		descontoProdutoSuperInteressante.setDistribuidor(distribuidor);
+		descontoProdutoSuperInteressante.setProdutoEdicao(produtoEdicaoSuper1);
+		descontoProdutoSuperInteressante.setUsuario(usuarioJoao);
+		
+		save(
+			session, descontoProdutoVeja, descontoProdutoQuatroRodas, 
+			descontoProdutoInfoExame, descontoProdutoCapricho, descontoProdutoSuperInteressante
+		);
 	}
 	
 }

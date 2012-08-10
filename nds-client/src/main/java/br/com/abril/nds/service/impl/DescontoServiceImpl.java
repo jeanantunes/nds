@@ -20,6 +20,7 @@ import br.com.abril.nds.model.cadastro.desconto.DescontoCota;
 import br.com.abril.nds.model.cadastro.desconto.DescontoDistribuidor;
 import br.com.abril.nds.model.cadastro.desconto.DescontoProduto;
 import br.com.abril.nds.repository.DescontoDistribuidorRepository;
+import br.com.abril.nds.repository.DescontoProdutoRepository;
 import br.com.abril.nds.repository.TipoDescontoRepository;
 import br.com.abril.nds.service.DescontoService;
 
@@ -31,6 +32,9 @@ public class DescontoServiceImpl implements DescontoService {
 	
 	@Autowired
 	private DescontoDistribuidorRepository descontoDistribuidorRepository;
+	
+	@Autowired
+	private DescontoProdutoRepository descontoProdutoRepository;
 	
 	@Override
 	@Transactional(readOnly=true)
@@ -77,15 +81,15 @@ public class DescontoServiceImpl implements DescontoService {
 	@Override
 	@Transactional(readOnly=true)
 	public List<TipoDescontoProdutoDTO> buscarTipoDescontoProduto(FiltroTipoDescontoProdutoDTO filtro) {
-		// FIXME Implementar a consulta paginada de desconto
-		return getMockProduto();
+
+		return this.descontoProdutoRepository.buscarTipoDescontoProduto(filtro);
 	}
 
 	@Override
 	@Transactional(readOnly=true)
 	public Integer buscarQuantidadeTipoDescontoProduto(FiltroTipoDescontoProdutoDTO filtro) {
-		// FIXME Implementar a consulta de desconto
-		return getMockProduto().size();
+
+		return this.descontoProdutoRepository.buscarQuantidadeTipoDescontoProduto(filtro);
 	}
 	
 	@Override
@@ -132,27 +136,4 @@ public class DescontoServiceImpl implements DescontoService {
 		
 		return listaDescontoCotaDTO;
 	}
-
-	private List<TipoDescontoProdutoDTO> getMockProduto(){
-		
-		List<TipoDescontoProdutoDTO> listaDescontoCotaDTO = new ArrayList<TipoDescontoProdutoDTO>();
-		
-		for (int i = 0; i < 10; i++) {
-			
-			TipoDescontoProdutoDTO x = new TipoDescontoProdutoDTO();
-			
-			x.setCodigoProduto("Prod - " + i);
-			x.setDataAlteracao(new Date());
-			x.setDesconto(BigDecimal.TEN);
-			x.setNomeProduto("Nome" + i);
-			x.setNomeUsuario("Mane");
-			x.setNumeroEdicao((long)i);
-			x.setIdTipoDesconto(new Long(i));
-			
-			listaDescontoCotaDTO.add(x);
-		}
-		
-		return listaDescontoCotaDTO;
-	}
-
 }
