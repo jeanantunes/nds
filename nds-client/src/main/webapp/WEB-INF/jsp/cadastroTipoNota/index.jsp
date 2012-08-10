@@ -39,7 +39,7 @@ $(function() {
               			<td width="55">Operação:</td>
                 		<td width="176">
                 			 <select name="operacao" id="operacaoID" style="width:150px;" class="campoDePesquisa">
-						      <option selected="selected">Todos</option>
+						      <option selected="selected" value="">Todos</option>
 						      <c:forEach var="operacao" items="${listaAtividades}">
 										<option value="${operacao.key}">${operacao.value}</option>
 							  </c:forEach>

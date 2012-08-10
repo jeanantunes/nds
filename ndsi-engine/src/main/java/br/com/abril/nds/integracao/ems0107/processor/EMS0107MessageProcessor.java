@@ -1,5 +1,6 @@
 package br.com.abril.nds.integracao.ems0107.processor;
 
+import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
 
@@ -77,8 +78,8 @@ public class EMS0107MessageProcessor extends AbstractRepository implements Messa
 					
 					estudoCota.setCota(cota);
 					estudoCota.setEstudo(estudo);
-					estudoCota.setQtdeEfetiva(input.getQuantidadeReparte());
-					estudoCota.setQtdePrevista(input.getQuantidadeReparte());
+					estudoCota.setQtdeEfetiva( BigInteger.valueOf(input.getQuantidadeReparte()) );
+					estudoCota.setQtdePrevista( BigInteger.valueOf(input.getQuantidadeReparte()) );
 					
 					this.getSession().persist(estudoCota);
 				}

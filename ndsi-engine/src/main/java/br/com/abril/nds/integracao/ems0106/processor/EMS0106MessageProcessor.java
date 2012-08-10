@@ -64,7 +64,8 @@ public class EMS0106MessageProcessor extends AbstractRepository implements Messa
 				estudo.setQtdeReparte(BigInteger.valueOf(input.getReparteDistribuir()));
 		
 				getSession().persist(estudo);
-		
+				///FIXME Comentado para verificação posterios junto a Eduardo "PunkRock" Castro em 08/08
+/*		
 				for (ProdutoEdicao produtoEdicao : listaProdutoEdicao) {
 					
 					estudo = new Estudo();
@@ -75,6 +76,7 @@ public class EMS0106MessageProcessor extends AbstractRepository implements Messa
 		
 					getSession().persist(estudo);
 				}
+*/
 			}
 			
 		} else {
