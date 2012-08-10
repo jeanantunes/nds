@@ -253,7 +253,7 @@ var ConferenciaEncalheCont = {
 				}
 		);
 	},
-	
+	indDistribuidorAceitaJuramentado:null,
 	preProcessarConsultaConferenciaEncalhe : function(result){
 		
 		if (result.mensagens){
@@ -266,7 +266,7 @@ var ConferenciaEncalheCont = {
 		
 		var modeloConferenciaEncalhe = result.listaConferenciaEncalhe;
 		
-		var indDistribuidorAceitaJuramentado = result.indDistribuidorAceitaJuramentado;
+		ConferenciaEncalheCont.indDistribuidorAceitaJuramentado = result.indDistribuidorAceitaJuramentado;
 		
 		$("._dadosConfEncalhe").remove();
 		
@@ -323,7 +323,7 @@ var ConferenciaEncalheCont = {
 					
 					var inputCheckBoxJuramentada = '';
 					
-					if(indDistribuidorAceitaJuramentado == true) {
+					if(ConferenciaEncalheCont.indDistribuidorAceitaJuramentado == true) {
 						
 						inputCheckBoxJuramentada = '<input type="checkbox" ' + (value.juramentada == true ? 'checked="checked"' : '')
 						+ ' onchange="ConferenciaEncalheCont.atualizarValores('+ index +');" id="checkGroupJuramentada_' + index + '"/>';
@@ -439,7 +439,9 @@ var ConferenciaEncalheCont = {
 	adicionarEncalhe: function(){
 		
 		var data = [{name: "idProdutoEdicao", value: ConferenciaEncalheCont.idProdutoEdicaoNovoEncalhe}, 
-		            {name: "quantidade", value: $("#exemplaresNovoEncalhe").val()}];
+		            {name: "quantidade", value: $("#exemplaresNovoEncalhe").val()},
+		            {name:"juramentada", value:$('#checkboxJueramentadaNovoEncalhe').attr('checked') == 'checked' }];
+		
 		
 		$.postJSON(contextPath + '/devolucao/conferenciaEncalhe/adicionarProdutoConferido', data,
 			function(result){
@@ -462,6 +464,12 @@ var ConferenciaEncalheCont = {
 		$("#descontoNovoEncalhe").val("");
 		$("#exemplaresNovoEncalhe").val("");
 		$("#valorTotalNovoEncalhe").val("");
+		
+		if(ConferenciaEncalheCont.indDistribuidorAceitaJuramentado){
+			$("#checkboxJueramentadaNovoEncalhe").removeAttr('disabled');
+		}else{
+			$("#checkboxJueramentadaNovoEncalhe").attr('disabled', true);
+		}
 		$("#checkboxJueramentadaNovoEncalhe").removeAttr("checked");
 	},
 	
