@@ -164,7 +164,7 @@ public class DescontoServiceImpl implements DescontoService {
 			x.setDesconto(BigDecimal.TEN);
 			x.setNomeProduto("Nome" + i);
 			x.setNomeUsuario("Mane");
-			x.setNumeroEdicao(i);
+			x.setNumeroEdicao((long)i);
 			x.setIdTipoDesconto(new Long(i));
 			
 			listaDescontoCotaDTO.add(x);
