@@ -84,6 +84,7 @@ import br.com.abril.nds.model.cadastro.TipoRegistroCobranca;
 import br.com.abril.nds.model.cadastro.TipoRoteiro;
 import br.com.abril.nds.model.cadastro.TipoTelefone;
 import br.com.abril.nds.model.cadastro.TributacaoFiscal;
+import br.com.abril.nds.model.cadastro.desconto.DescontoDistribuidor;
 import br.com.abril.nds.model.cadastro.pdv.AreaInfluenciaPDV;
 import br.com.abril.nds.model.cadastro.pdv.CaracteristicasPDV;
 import br.com.abril.nds.model.cadastro.pdv.EnderecoPDV;
@@ -3296,5 +3297,15 @@ public class Fixture {
 		
 	}
 	
-	
+	public static DescontoDistribuidor descontoDistribuidor(BigDecimal desconto, Distribuidor distribuidor, Set<Fornecedor> fornecedores,Usuario usuario ){
+		
+		DescontoDistribuidor descontoReturn = new DescontoDistribuidor();
+		descontoReturn.setDesconto(desconto);
+		descontoReturn.setDataAlteracao(new Date());
+		descontoReturn.setDistribuidor(distribuidor);
+		descontoReturn.setFornecedores(fornecedores);
+		descontoReturn.setUsuario(usuario);
+		
+		return descontoReturn;
+	}
 }
