@@ -57,13 +57,13 @@
 	</form>
 	<div id="dialog-novo-usuario" title="Usuário" style="display:none;">
 		<form action="/administracao/gruposAcesso" id="novo_usuario_form">
-		  <input type="hidden" name="usuario.id" id="usuarioId" />
+		  <input type="hidden" name="usuarioDTO.id" id="usuarioId" />
           <table width="700" border="0" cellpadding="2" cellspacing="1" class="filtro">
             <tr>
               <td width="118">Primeiro Nome:</td>
               <td width="229"><input type="text" name="usuarioDTO.nome" id="usuarioNome" style="width:220px;"/></td>
               <td width="109">Último  Nome:</td>
-              <td width="223"><input type="text" name="usuarioDTO.sobreNome" id="usuarioSobreNome" style="width:220px;"/></td>
+              <td width="223"><input type="text" name="usuarioDTO.sobrenome" id="usuarioSobreNome" style="width:220px;"/></td>
             </tr>
             <tr>
               <td>Username:</td>
@@ -71,17 +71,17 @@
               <td>E-mail:</td>
               <td><input type="text" name="usuarioDTO.email" id="usuarioEmail" style="width:220px;"/></td>
             </tr>
-            <tr style="display:none;">
+            <tr id="senhaAntiga" style="display:none;">
               <td>Senha Antiga:</td>
-              <td><input type="text" name="usuarioDTO.senhaAntiga" id="usuarioSenhaAntiga" style="width:220px;"/></td>
+              <td><input type="password" name="usuarioDTO.senhaAntiga" id="usuarioSenhaAntiga" style="width:220px;"/></td>
               <td>&nbsp;</td>
               <td>&nbsp;</td>
             </tr>
             <tr>
               <td>Nova Senha:</td>
-              <td><input type="text" name="usuarioDTO.senha" id="usuariosenha" style="width:220px;"/></td>
+              <td><input type="password" name="usuarioDTO.senha" id="usuariosenha" style="width:220px;"/></td>
               <td>Confirma nova Senha:</td>
-              <td><input type="text" name="usuarioDTO.senhaConfirma" id="usuarioSenhaConfirma" style="width:220px;"/></td>
+              <td><input type="password" name="usuarioDTO.confirmaSenha" id="usuarioSenhaConfirma" style="width:220px;"/></td>
             </tr>
             <tr>
               <td>Lembrete Senha:</td>
@@ -93,13 +93,13 @@
               <input type="text" name="usuarioDTO.telefone" id="usuarioTelefone" style="width:105px;"/></td>
             </tr>
             <tr>
-              <td align="right"><input type="radio" name="usuarioDTO.ativa" id="usuarioAtivaTrue" value="true" /></td>
+              <td align="right"><input type="radio" name="usuarioDTOContaAtiva" id="usuarioAtivaTrue" checked value="ativa"/></td>
               <td>Ativa</td>
               <td align="right">&nbsp;</td>
               <td>&nbsp;</td>
             </tr>
             <tr>
-              <td align="right"><input type="radio" name="usuarioDTO.ativa" id="usuarioAtivaFalse" value="false" /></td>
+              <td align="right"><input type="radio" name="usuarioDTOContaAtiva" id="usuarioAtivaFalse" value=""/></td>
               <td>Bloqueada</td>
               <td align="right">&nbsp;</td>
               <td>&nbsp;</td>
@@ -135,8 +135,8 @@
 			    	</fieldset>
 			    </td>
 			    <td width="34" align="center">
-			    	<a href="javascript:;" onclick="usuarioPermissaoController.adicionaGruposSelecionadosUsuario();"><img src="images/seta_vai_todos.png" width="39" height="30" /></a><br />
-			      	<br /><a href="javascript:;" onclick="usuarioPermissaoController.removeGruposSelecionadosUsuario();"><img src="images/seta_volta_todos.png" width="39" height="30" /></a><br />
+			    	<a href="javascript:;" onclick="usuariosPermissaoController.adicionaGruposSelecionados();"><img src="images/seta_vai_todos.png" width="39" height="30" /></a><br />
+			      	<br /><a href="javascript:;" onclick="usuariosPermissaoController.removeGruposSelecionados();"><img src="images/seta_volta_todos.png" width="39" height="30" /></a><br />
 			    </td>
 			    <td width="264" valign="top">
 				    <fieldset>
@@ -157,8 +157,8 @@
 			    	</fieldset>
 			    </td>
 			    <td width="34" align="center">
-			    	<a href="javascript:;" onclick="usuarioPermissaoController.adicionaPermissoesSelecionadasUsuario();"><img src="images/seta_vai_todos.png" width="39" height="30" /></a><br />
-			      	<br /><a href="javascript:;" onclick="usuarioPermissaoController.removePermissoesSelecionadasUsuario();"><img src="images/seta_volta_todos.png" width="39" height="30" /></a><br />
+			    	<a href="javascript:;" onclick="usuariosPermissaoController.adicionaPermissoesSelecionadas();"><img src="images/seta_vai_todos.png" width="39" height="30" /></a><br />
+			      	<br /><a href="javascript:;" onclick="usuariosPermissaoController.removePermissoesSelecionadas();"><img src="images/seta_volta_todos.png" width="39" height="30" /></a><br />
 			    </td>
 			    <td width="264" valign="top">
 				    <fieldset>

@@ -16,6 +16,8 @@ import javax.persistence.JoinTable;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import br.com.abril.nds.vo.PeriodoVO;
+
 @Entity	
 @Table(name = "GRUPO_PERMISSAO")
 @SequenceGenerator(name="GRUPO_PERMISSAO_SEQ", initialValue = 1, allocationSize = 1)
@@ -61,5 +63,6 @@ public class GrupoPermissao {
 	public void setPermissoes(Set<Permissao> permissoes) {
 		this.permissoes = permissoes;
 	}
+
 	
 }

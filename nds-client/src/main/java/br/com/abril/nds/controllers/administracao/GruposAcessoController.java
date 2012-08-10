@@ -23,6 +23,7 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.seguranca.GrupoPermissao;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
+import br.com.abril.nds.serialization.custom.CustomMapJson;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.GrupoPermissaoService;
 import br.com.abril.nds.service.PermissaoService;
@@ -275,16 +276,47 @@ public class GruposAcessoController {
 			listaMensagemValidacao.add("O preenchimento do campo senha é obrigatório!");
 		}
 
+		if (usuario.getConfirmaSenha() == null || usuario.getConfirmaSenha().isEmpty()) {
+			listaMensagemValidacao.add("O preenchimento do campo confirma senha é obrigatório!");
+		}
+
+		if (usuario.getSenha() != null && !usuario.getSenha().isEmpty() && usuario.getConfirmaSenha() != null && !usuario.getConfirmaSenha().isEmpty()) {
+			if (!usuario.getConfirmaSenha().equals(usuario.getSenha())) {
+				listaMensagemValidacao.add("Os campos nova senha e confirmação de senha não correspondem!");
+			}
+		}
+
 		if ( (usuario.getPermissoesSelecionadas() == null || usuario.getPermissoesSelecionadas().isEmpty()) && 
 			 (usuario.getGruposSelecionados() == null || usuario.getGruposSelecionados().isEmpty()) ) {
 			listaMensagemValidacao.add("É necessário selecionar ao menos uma permissão e/ou grupo!");
 		}
 
+		if (usuario.getId() != null && usuario.getId() != 0 && usuario.getSenhaAntiga() != null && !usuario.getSenhaAntiga().isEmpty()) {
+			if (!usuarioService.validarSenha(usuario.getId(), usuario.getSenhaAntiga())) {
+				listaMensagemValidacao.add("Senha antiga está incorreta!");
+			}
+		}
+		
 		if (!listaMensagemValidacao.isEmpty()) {
 			ValidacaoVO validacaoVO = new ValidacaoVO(TipoMensagem.ERROR, listaMensagemValidacao);
 			throw new ValidacaoException(validacaoVO);
 		}
 
+	}
+
+	/**
+	 * @return
+	 */
+	private UsuarioDTO criptografarSenhas(UsuarioDTO usuarioDTO) {
+		if (usuarioDTO.getSenha() != null && !usuarioDTO.getSenha().isEmpty())
+			usuarioDTO.setSenha(Util.md5(usuarioDTO.getSenha()));
+		
+		if (usuarioDTO.getSenhaAntiga() != null && !usuarioDTO.getSenhaAntiga().isEmpty())
+			usuarioDTO.setSenhaAntiga(Util.md5(usuarioDTO.getSenhaAntiga()));
+		
+		if (usuarioDTO.getConfirmaSenha() != null && !usuarioDTO.getConfirmaSenha().isEmpty())
+			usuarioDTO.setConfirmaSenha(Util.md5(usuarioDTO.getConfirmaSenha()));
+		return usuarioDTO;
 	}
 	
 	/**
@@ -294,18 +326,20 @@ public class GruposAcessoController {
 	 * @param sortname
 	 * @param sortorder
 	 */
-	@Get
+	@Post
 	@Path("/salvarUsuario")
 	public void salvarUsuario(UsuarioDTO usuarioDTO) {
-		this.validarDadosUsuario(usuarioDTO);
 
-		Usuario usuario = new Usuario();
-		usuario.setId(usuarioDTO.getId());
-		usuario.setNome(usuarioDTO.getNome());
+		this.criptografarSenhas(usuarioDTO);
+		
+		this.validarDadosUsuario(usuarioDTO);
+		
+		Usuario usuario = getUsuarioEntity(usuarioDTO);
 		
 		Set<Permissao> permissoes = new HashSet<Permissao>();
 		for (String permissao : usuarioDTO.getPermissoesSelecionadas().split(",")) {
-			permissoes.add(Permissao.valueOf(permissao));
+			if ( permissao != null && !permissao.isEmpty() )
+				permissoes.add(Permissao.valueOf(permissao));
 		}
 		usuario.setPermissoes(permissoes);
 
@@ -321,6 +355,73 @@ public class GruposAcessoController {
 	
 	}
 
+	/**
+	 * @param usuarioDTO
+	 * @return
+	 */
+	private Usuario getUsuarioEntity(UsuarioDTO usuarioDTO) {
+		
+		Usuario usuario = new Usuario();
+		usuario.setCep(usuarioDTO.getCep());
+		usuario.setCidade(usuarioDTO.getCidade());
+		usuario.setDdd(usuarioDTO.getDdd());
+		usuario.setEmail(usuarioDTO.getEmail());
+		usuario.setEndereco(usuarioDTO.getEndereco());
+		usuario.setId(usuarioDTO.getId());
+		usuario.setLembreteSenha(usuarioDTO.getLembreteSenha());
+		usuario.setLogin(usuarioDTO.getLogin());
+		usuario.setNome(usuarioDTO.getNome());
+		usuario.setPais(usuarioDTO.getPais());
+		usuario.setSenha(usuarioDTO.getSenha());
+		usuario.setSobrenome(usuarioDTO.getSobrenome());
+		usuario.setTelefone(usuarioDTO.getTelefone());
+		if (usuarioDTO.getContaAtiva().equals(UsuarioDTO.ATIVA)) {
+			usuario.setContaAtiva(true);
+		} else {
+			usuario.setContaAtiva(false);
+		}
+		return usuario;
+		
+	}
+	
+	/**
+	 * @param usuario
+	 * @return
+	 */
+	private UsuarioDTO getUsuarioDTO(Usuario usuario) {
+		UsuarioDTO dto = new UsuarioDTO();
+		dto.setCep(usuario.getCep());
+		dto.setCidade(usuario.getCidade());
+		if (usuario.isContaAtiva()) {
+			dto.setContaAtiva(UsuarioDTO.ATIVA);
+		} else {
+			dto.setContaAtiva("");
+		}
+		dto.setDdd(usuario.getDdd());
+		dto.setEmail(usuario.getEmail());
+		dto.setEndereco(usuario.getEndereco());
+		dto.setId(usuario.getId());
+		dto.setLembreteSenha(usuario.getLembreteSenha());
+		dto.setLogin(usuario.getLogin());
+		dto.setNome(usuario.getNome());
+		dto.setPais(usuario.getPais());
+		dto.setSobrenome(usuario.getSobrenome());
+		dto.setTelefone(usuario.getTelefone());
+		
+		dto.setPermissoesSelecionadasList(usuarioService.buscarPermissoes(usuario.getId()));
+		
+		List<GrupoPermissaoDTO> grupos = new ArrayList<GrupoPermissaoDTO>();
+		GrupoPermissaoDTO grupo = null;
+		for (GrupoPermissao g : usuarioService.buscarGrupoPermissoes(usuario.getId())) {
+			grupo = new GrupoPermissaoDTO();
+			grupo.setId(g.getId());
+			grupo.setNome(g.getNome());
+			grupos.add(grupo);
+		}
+		dto.setGruposSelecionadosList(grupos);
+		return dto;
+	}
+	
 	/**
 	 * 
 	 */
@@ -352,25 +453,34 @@ public class GruposAcessoController {
 	@Path("/editarUsuario")
 	public void editarUsuario(Long codigoUsuario) {
 
-		/*ConsultaGrupoPermissaoDTO dto = new ConsultaGrupoPermissaoDTO();
+		UsuarioDTO dto = new UsuarioDTO();
 		
 		List<Permissao> permissoes = permissaoService.buscar();
-		if (codigoGrupo != null) {
-			GrupoPermissao grupoPermissao = grupoPermissaoService.buscar(codigoGrupo);
-			List<Permissao> permissoesSelecionadas = new ArrayList<Permissao>(grupoPermissao.getPermissoes());
-			dto.setId(grupoPermissao.getId());
-			dto.setNome(grupoPermissao.getNome());
-			dto.setPermissoesSelecionadas(permissoesSelecionadas);
+		List<GrupoPermissaoDTO> grupos = grupoPermissaoService.listarDTOs();
+		if (codigoUsuario != null && codigoUsuario != 0) {
+			Usuario usuario = usuarioService.buscar(codigoUsuario);
+			dto = this.getUsuarioDTO(usuario);
+			
 			// Remove da lista as permissões selecionadas anteriormente
-			for (Permissao p : permissoesSelecionadas) {
+			for (Permissao p : dto.getPermissoesSelecionadasList()) {
 				if (permissoes.contains(p)) {
 					permissoes.remove(permissoes.indexOf(p));
 				}
 			}
+
+			// Remove da lista de grupos selecionados anteriormente
+			for (GrupoPermissaoDTO g : dto.getGruposSelecionadosList()) {
+				if (grupos.contains(g)) {
+					grupos.remove(grupos.indexOf(g));
+				}
+			}
+
 		}
 		dto.setPermissoes(permissoes);
+		dto.setGrupos(grupos);
 		
-		result.use(Results.json()).from(dto, "result").recursive().serialize();*/
+		
+		result.use(CustomMapJson.class).put("usuarioDTO", dto).serialize();
 	}
 
 	

@@ -1,5 +1,6 @@
 package br.com.abril.nds.service.impl;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
@@ -57,6 +58,35 @@ public class UsuarioServiceImpl implements UsuarioService {
 		usuario.setPermissoes(new HashSet<Permissao>());
 		usuarioRepository.alterar(usuario);
 		usuarioRepository.remover(usuario);
+	}
+
+	@Override
+	@Transactional
+	public Usuario buscar(Long codigoUsuario) {
+		Usuario usuario = usuarioRepository.buscarPorId(codigoUsuario);
+		return usuario;
+	}
+
+	@Override
+	@Transactional
+	public boolean validarSenha(Long idUsuario, String senha) {
+		Usuario usuario = usuarioRepository.buscarPorId(idUsuario);
+		if (usuario.getSenha().equals(senha)) {
+			return true;
+		}
+		return false;
+	}
+
+	@Override
+	@Transactional
+	public List<GrupoPermissao> buscarGrupoPermissoes(Long codigoUsuario) {
+		return new ArrayList(usuarioRepository.buscarPorId(codigoUsuario).getGruposPermissoes());
+	}
+
+	@Override
+	@Transactional
+	public List<Permissao> buscarPermissoes(Long codigoUsuario) {
+		return new ArrayList(usuarioRepository.buscarPorId(codigoUsuario).getPermissoes());
 	}
 
 }

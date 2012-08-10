@@ -1,6 +1,9 @@
 package br.com.abril.nds.dto;
 
 import java.io.Serializable;
+import java.util.List;
+
+import br.com.abril.nds.model.seguranca.Permissao;
 
 /**
  * @author InfoA2
@@ -9,6 +12,8 @@ public class UsuarioDTO implements Serializable {
 
 	private static final long serialVersionUID = 8177352750699708272L;
 
+	public static final String ATIVA = "ativa";
+	
 	private Long id;
 
 	private String nome;
@@ -27,7 +32,7 @@ public class UsuarioDTO implements Serializable {
 
 	private String telefone;
 
-	private boolean contaAtiva;
+	private String contaAtiva;
 
 	private String endereco;
 
@@ -44,6 +49,14 @@ public class UsuarioDTO implements Serializable {
 	private String permissoesSelecionadas;
 
 	private String gruposSelecionados;
+
+	private List<GrupoPermissaoDTO> grupos;
+
+	private List<Permissao> permissoes;
+
+	private List<GrupoPermissaoDTO> gruposSelecionadosList;
+
+	private List<Permissao> permissoesSelecionadasList;
 
 	public Long getId() {
 		return id;
@@ -117,14 +130,6 @@ public class UsuarioDTO implements Serializable {
 		this.telefone = telefone;
 	}
 
-	public boolean isContaAtiva() {
-		return contaAtiva;
-	}
-
-	public void setContaAtiva(boolean contaAtiva) {
-		this.contaAtiva = contaAtiva;
-	}
-
 	public String getEndereco() {
 		return endereco;
 	}
@@ -189,4 +194,46 @@ public class UsuarioDTO implements Serializable {
 		this.gruposSelecionados = gruposSelecionados;
 	}
 
+	public List<GrupoPermissaoDTO> getGrupos() {
+		return grupos;
+	}
+
+	public void setGrupos(List<GrupoPermissaoDTO> grupos) {
+		this.grupos = grupos;
+	}
+
+	public List<Permissao> getPermissoes() {
+		return permissoes;
+	}
+
+	public void setPermissoes(List<Permissao> permissoes) {
+		this.permissoes = permissoes;
+	}
+
+	public String getContaAtiva() {
+		return contaAtiva;
+	}
+
+	public void setContaAtiva(String contaAtiva) {
+		this.contaAtiva = contaAtiva;
+	}
+
+	public List<GrupoPermissaoDTO> getGruposSelecionadosList() {
+		return gruposSelecionadosList;
+	}
+
+	public void setGruposSelecionadosList(
+			List<GrupoPermissaoDTO> gruposSelecionadosList) {
+		this.gruposSelecionadosList = gruposSelecionadosList;
+	}
+
+	public List<Permissao> getPermissoesSelecionadasList() {
+		return permissoesSelecionadasList;
+	}
+
+	public void setPermissoesSelecionadasList(
+			List<Permissao> permissoesSelecionadasList) {
+		this.permissoesSelecionadasList = permissoesSelecionadasList;
+	}
+	
 }

@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.client.vo.ResultadoGrupoVO;
 import br.com.abril.nds.client.vo.ValidacaoVO;
+import br.com.abril.nds.dto.GrupoPermissaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaGrupoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.seguranca.GrupoPermissao;
@@ -75,6 +76,20 @@ public class GrupoPermissaoServiceImpl implements GrupoPermissaoService {
 		this.salvar(grupoPermissao);
 		
 		grupoPermissaoRepository.remover(grupoPermissao);
+	}
+
+	@Override
+	@Transactional
+	public List<GrupoPermissaoDTO> listarDTOs() {
+		List<GrupoPermissaoDTO> grupos = new ArrayList<GrupoPermissaoDTO>();
+		GrupoPermissaoDTO grupo = null;
+		for (ResultadoGrupoVO g : grupoPermissaoRepository.buscaFiltrada(null)) {
+			grupo = new GrupoPermissaoDTO();
+			grupo.setId(g.getId());
+			grupo.setNome(g.getNome());
+			grupos.add(grupo);
+		}
+		return grupos;
 	}
 
 }

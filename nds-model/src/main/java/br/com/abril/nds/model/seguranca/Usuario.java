@@ -84,7 +84,7 @@ public class Usuario implements Serializable {
 	@Column(name="GRUPO_PERMISSAO_ID")
 	private Set<GrupoPermissao> gruposPermissoes = new HashSet<GrupoPermissao>();
 
-	@ElementCollection(targetClass=Permissao.class, fetch=FetchType.EAGER)
+	@ElementCollection(targetClass=Permissao.class, fetch=FetchType.LAZY)
 	@Enumerated(EnumType.STRING)
     @JoinTable(
             name="USUARIO_PERMISSAO", // ref table.
