@@ -94,6 +94,7 @@ import br.com.abril.nds.model.cadastro.TipoRegistroCobranca;
 import br.com.abril.nds.model.cadastro.TipoRoteiro;
 import br.com.abril.nds.model.cadastro.TipoTelefone;
 import br.com.abril.nds.model.cadastro.TributacaoFiscal;
+import br.com.abril.nds.model.cadastro.desconto.DescontoDistribuidor;
 import br.com.abril.nds.model.cadastro.pdv.AreaInfluenciaPDV;
 import br.com.abril.nds.model.cadastro.pdv.EnderecoPDV;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
@@ -998,9 +999,38 @@ public class DataLoader {
 		
 		//criarNovaNotaFiscal(session);
 		
+		gerarDescontoDistribuidorParaFornecedor(session);
 	}
 
 	
+	private static void gerarDescontoDistribuidorParaFornecedor(Session session) {
+		
+		Set<Fornecedor> fornecedores = new HashSet<Fornecedor>();
+		fornecedores.add(fornecedorAcme);
+		fornecedores.add(fornecedorDinap);
+		DescontoDistribuidor desconto1 = Fixture.descontoDistribuidor(new BigDecimal(2), distribuidor, fornecedores , usuarioJoao);
+		
+		Set<Fornecedor> fornecedores1 = new HashSet<Fornecedor>();
+		fornecedores1.add(fornecedorAcme);
+		fornecedores1.add(fornecedorDinap);
+		DescontoDistribuidor desconto2 = Fixture.descontoDistribuidor(new BigDecimal(3), distribuidor, fornecedores1 , usuarioJoao);
+		
+		Set<Fornecedor> fornecedores2 = new HashSet<Fornecedor>();
+		fornecedores2.add(fornecedorAcme);
+		DescontoDistribuidor desconto3 = Fixture.descontoDistribuidor(new BigDecimal(5), distribuidor, fornecedores2 , usuarioJoao);
+		
+		Set<Fornecedor> fornecedores3 = new HashSet<Fornecedor>();
+		fornecedores3.add(fornecedorDinap);
+		DescontoDistribuidor desconto4 = Fixture.descontoDistribuidor(new BigDecimal(6), distribuidor, fornecedores3 , usuarioJoao);
+		
+		Set<Fornecedor> fornecedores4 = new HashSet<Fornecedor>();
+		fornecedores4.add(fornecedorAcme);
+		fornecedores4.add(fornecedorDinap);
+		DescontoDistribuidor desconto5 = Fixture.descontoDistribuidor(new BigDecimal(7), distribuidor, fornecedores4, usuarioJoao);
+		
+		save(session,desconto1,desconto2,desconto3,desconto4,desconto5);
+	}
+
 	/*
 	 * Carga Inicial do sistema Zerado
 	 * */

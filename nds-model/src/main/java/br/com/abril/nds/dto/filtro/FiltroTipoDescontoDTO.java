@@ -19,7 +19,7 @@ public class FiltroTipoDescontoDTO extends FiltroDTO implements Serializable {
 		
 		SEQUENCIAL("sequencial"),
 		DESCONTO("desconto"),
-		FORNECEDORES("fornecedores"),
+		FORNECEDORES("fornecedor"),
 		DATA_ALTERACAO("dataAlteracao"),
 		USUARIO("usuario");
 		
