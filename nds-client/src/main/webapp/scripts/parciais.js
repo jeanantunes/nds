@@ -79,10 +79,9 @@ function Parciais(pathTela) {
 	},
 
 	this.inserirPeriodos = function(modal) {
-		
 		$.postJSON(contextPath + "/parciais/inserirPeriodos",
 				T.getDadosNovosPeriodo(),
-				function(result,modal){
+				function(result){
 					if(modal)
 						$(".parciaisPopGrid").flexReload();
 					else
@@ -320,7 +319,6 @@ function Parciais(pathTela) {
 						exibirMensagem('SUCCESS', ['Período alterado com sucesso.']);
 					}
 					
-					$().close();
 				},	
 				null,
 				true,
@@ -335,13 +333,12 @@ function Parciais(pathTela) {
 		$.postJSON(contextPath + "/parciais/excluirPeriodoParcial",
 				data,
 				function(result){
-
-					
+			
 					if($('#painelPeriodos').css('display')=='none') {
 						exibirMensagemDialog('SUCCESS', ['Período excluido com sucesso.'], "dialog-detalhes");			
 						$(".parciaisPopGrid").flexReload();
 					} else {
-						$(".parciaisGrid").flexReload();
+						$(".periodosGrid").flexReload();
 						exibirMensagem('SUCCESS', ['Período excluido com sucesso.']);
 					}
 					
