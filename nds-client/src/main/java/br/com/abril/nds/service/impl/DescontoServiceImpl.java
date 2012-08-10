@@ -19,6 +19,7 @@ import br.com.abril.nds.model.cadastro.TipoDesconto;
 import br.com.abril.nds.model.cadastro.desconto.DescontoCota;
 import br.com.abril.nds.model.cadastro.desconto.DescontoDistribuidor;
 import br.com.abril.nds.model.cadastro.desconto.DescontoProduto;
+import br.com.abril.nds.repository.DescontoDistribuidorRepository;
 import br.com.abril.nds.repository.TipoDescontoRepository;
 import br.com.abril.nds.service.DescontoService;
 
@@ -27,6 +28,9 @@ public class DescontoServiceImpl implements DescontoService {
 
 	@Autowired
 	private TipoDescontoRepository tipoDescontoRepository;
+	
+	@Autowired
+	private DescontoDistribuidorRepository descontoDistribuidorRepository;
 	
 	@Override
 	@Transactional(readOnly=true)
@@ -45,15 +49,15 @@ public class DescontoServiceImpl implements DescontoService {
 	@Override
 	@Transactional(readOnly=true)
 	public List<TipoDescontoDTO> buscarTipoDesconto(FiltroTipoDescontoDTO filtro) {
-		// FIXME Implementar a consulta paginada de desconto
-		return getMock();
+
+		return descontoDistribuidorRepository.buscarDescontos(filtro);
 	}
 
 	@Override
 	@Transactional(readOnly=true)
 	public Integer buscarQntTipoDesconto(FiltroTipoDescontoDTO filtro) {
-		// FIXME Implementar a consulta de desconto
-		return getMock().size();
+	
+		return descontoDistribuidorRepository.buscarQuantidadeDescontos(filtro);
 	}
 
 	@Override
@@ -129,28 +133,6 @@ public class DescontoServiceImpl implements DescontoService {
 		return listaDescontoCotaDTO;
 	}
 
-	
-	private List<TipoDescontoDTO> getMock(){
-		
-		List<TipoDescontoDTO> lista = new ArrayList<TipoDescontoDTO>();
-		
-		for (int i = 0; i < 10; i++) {
-			
-			TipoDescontoDTO tp  = new TipoDescontoDTO(); 
-			
-			tp.setDataAlteracao(new Date());
-			tp.setDesconto(BigDecimal.TEN);
-			tp.setFornecedor("Fornecedor");
-			tp.setIdTipoDesconto((new Long(i)));
-			tp.setUsuario("Usuario");
-			tp.setSequencial((new Long(i)));
-			
-			lista.add(tp);
-		}
-		
-		return lista;
-	}
-	
 	private List<TipoDescontoProdutoDTO> getMockProduto(){
 		
 		List<TipoDescontoProdutoDTO> listaDescontoCotaDTO = new ArrayList<TipoDescontoProdutoDTO>();
