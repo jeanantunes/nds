@@ -14,6 +14,7 @@ import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.ParcialDTO;
 import br.com.abril.nds.dto.ParcialVendaDTO;
 import br.com.abril.nds.dto.PeriodoParcialDTO;
+import br.com.abril.nds.dto.filtro.FiltroConsultaDividasCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroParciaisDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.service.DistribuidorService;
@@ -49,6 +50,12 @@ import br.com.caelum.vraptor.view.Results;
 public class ParciaisController {
 
 	private static final String FILTRO_SESSION_ATTRIBUTE = "filtroParcial";
+	
+	private static String FILTRO_DATA_LANCAMENTO;
+	
+	private static String FILTRO_DATA_RECEBIMENTO;
+	
+	private static String FILTRO_ID_PRODUTO_EDICAO;
 	
 	@Autowired
 	private HttpSession session;
@@ -228,9 +235,16 @@ public class ParciaisController {
 		
 		
 		List<PeriodoParcialDTO> listaPeriodo = periodoLancamentoParcialService.obterPeriodosParciais(filtro);
-				
-		Integer totalRegistros = periodoLancamentoParcialService.totalObterPeriodosParciais(filtro);
 		
+		for(PeriodoParcialDTO periodo:listaPeriodo) {
+			if(periodo.getReparte()=="") {
+				periodo.setReparteAcum(null);
+				periodo.setPercVendaAcumulada(null);
+			}
+		}
+		
+		Integer totalRegistros = periodoLancamentoParcialService.totalObterPeriodosParciais(filtro);
+				
 		TableModel<CellModelKeyValue<PeriodoParcialDTO>> tableModel = new TableModel<CellModelKeyValue<PeriodoParcialDTO>>();
 
 		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaPeriodo));
@@ -263,8 +277,14 @@ public class ParciaisController {
 	
 	@Post
 	public void pesquisarParciaisVenda(Date dtLcto, Date dtRcto, Long idProdutoEdicao) {
-		
 	
+	
+		this.session.setAttribute(FILTRO_DATA_LANCAMENTO,dtLcto);
+		
+		this.session.setAttribute(FILTRO_DATA_RECEBIMENTO,dtRcto);
+		
+		this.session.setAttribute(FILTRO_ID_PRODUTO_EDICAO,idProdutoEdicao);
+		
 		List<ParcialVendaDTO> listaParcialVenda = this.parciaisService.obterDetalhesVenda(dtLcto, dtRcto, idProdutoEdicao);
 		
 		TableModel<CellModelKeyValue<ParcialVendaDTO>> tableModel = new TableModel<CellModelKeyValue<ParcialVendaDTO>>();
@@ -430,14 +450,19 @@ public class ParciaisController {
 	@Get
 	public void exportarDetalhesVenda(FileType fileType) throws IOException {
 		
+		List<ParcialVendaDTO> listaParcialVenda = new ArrayList<ParcialVendaDTO>();
 		
-		//RECEBER OS PARAMETROS ABAIXO OU List<ParcialVendaDTO> DA SESSAO
-		Date lcto = DateUtil.parseDataPTBR("01/01/2010");
-		Date recto = DateUtil.parseDataPTBR("01/01/2013");
-		Long idProdutoEdicao = 1L;
 		
-				
-		List<ParcialVendaDTO> listaParcialVenda = this.parciaisService.obterDetalhesVenda(lcto, recto, idProdutoEdicao);
+		Date lcto = (Date) this.session.getAttribute(FILTRO_DATA_LANCAMENTO);
+		
+		Date recto = (Date) this.session.getAttribute(FILTRO_DATA_RECEBIMENTO);
+		
+		Long idProdutoEdicao = (Long) this.session.getAttribute(FILTRO_ID_PRODUTO_EDICAO);
+
+		if ((lcto!=null) && (recto!=null) && (idProdutoEdicao!=null)){
+		    listaParcialVenda = this.parciaisService.obterDetalhesVenda(lcto, recto, idProdutoEdicao);
+		}
+		
 		
 		if(listaParcialVenda.isEmpty()) {
 

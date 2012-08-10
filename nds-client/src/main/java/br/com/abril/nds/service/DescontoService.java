@@ -8,13 +8,16 @@ import br.com.abril.nds.dto.filtro.FiltroTipoDescontoCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroTipoDescontoDTO;
 import br.com.abril.nds.dto.filtro.FiltroTipoDescontoProdutoDTO;
 import br.com.abril.nds.model.cadastro.TipoDesconto;
+import br.com.abril.nds.model.cadastro.desconto.DescontoCota;
+import br.com.abril.nds.model.cadastro.desconto.DescontoDistribuidor;
+import br.com.abril.nds.model.cadastro.desconto.DescontoProduto;
 
 
 /**
- * Interface que define serviços referentes aos tipos de desconto
+ * Interface que define serviços referentes aos desconto do sistema
  * 
  */
-public interface TipoDescontoService {
+public interface DescontoService {
 
 	List<TipoDescontoDTO> buscarTipoDesconto(FiltroTipoDescontoDTO filtro);
 	
@@ -31,5 +34,13 @@ public interface TipoDescontoService {
 	List<TipoDesconto> obterTodosTiposDescontos();
 	
 	TipoDesconto obterTipoDescontoPorID(Long id);
+	
+	void excluirDesconto(Long idDesconto, br.com.abril.nds.model.cadastro.desconto.TipoDesconto tipoDesconto);
+	
+	void incluirDesconto(DescontoDistribuidor desconto);
+	
+	void incluirDesconto(DescontoCota desconto);
+	
+	void incluirDesconto(DescontoProduto desconto);
 }
 	

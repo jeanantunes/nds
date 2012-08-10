@@ -31,7 +31,7 @@ import br.com.abril.nds.service.EstoqueProdutoService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.ProdutoService;
-import br.com.abril.nds.service.TipoDescontoService;
+import br.com.abril.nds.service.DescontoService;
 import br.com.abril.nds.service.TipoProdutoService;
 import br.com.abril.nds.service.exception.UniqueConstraintViolationException;
 import br.com.abril.nds.util.ItemAutoComplete;
@@ -72,7 +72,7 @@ public class ProdutoController {
 	private FornecedorService fornecedorService;
 	
 	@Autowired
-	private TipoDescontoService tipoDescontoService;
+	private DescontoService tipoDescontoService;
 	
 	private static List<ItemDTO<ClasseSocial,String>> listaClasseSocial =  new ArrayList<ItemDTO<ClasseSocial,String>>();
 	  
