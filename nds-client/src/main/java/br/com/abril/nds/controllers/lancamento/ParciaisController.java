@@ -50,11 +50,11 @@ public class ParciaisController {
 
 	private static final String FILTRO_SESSION_ATTRIBUTE = "filtroParcial";
 	
-	private static String FILTRO_DATA_LANCAMENTO;
+	private static String FILTRO_DATA_LANCAMENTO = "filtroDataLancamento";
 	
-	private static String FILTRO_DATA_RECEBIMENTO;
+	private static String FILTRO_DATA_RECEBIMENTO = "filtroDataRecebimento";
 	
-	private static String FILTRO_ID_PRODUTO_EDICAO;
+	private static String FILTRO_ID_PRODUTO_EDICAO = "filtroIdProdutoEdicao";
 	
 	@Autowired
 	private HttpSession session;

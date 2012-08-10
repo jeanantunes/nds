@@ -12,28 +12,6 @@ $(function() {
 
 var PARCIAIS = new Parciais('${pageContext.request.contextPath}');
 
-function detalheVenda() {
-
-	$(".parciaisVendaGrid").flexOptions({			
-		url : '<c:url value="/parciais/pesquisarParciaisVenda" />',
-		dataType : 'json'
-	});
-
-	$(".parciaisVendaGrid").flexReload();
-
-	$( "#dialog-detalhe-venda" ).dialog({
-		resizable: false,
-		height:420,
-		width:650,
-		modal: true,
-		buttons: {
-			"Fechar": function() {
-				$( this ).dialog( "close" );
-				
-			},
-		}
-	});
-};
 
 function popup(modal) {
 	
@@ -64,6 +42,22 @@ function popup(modal) {
 	        ]
 		});
 	};
+	
+	function pupup_detalheVendas() {
+		
+		$( "#dialog-detalhe-venda" ).dialog({
+			resizable: false,
+			height:450,
+			width:660,
+			modal: true,
+			buttons: {
+				"Fechar": function() {
+					$( this ).dialog( "close" );
+					
+				},
+			}
+		});
+	}
 	
 	function popup_alterar() {
 		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
@@ -494,10 +488,6 @@ $(function() {
 </fieldset>
 
       <div class="linha_separa_fields">&nbsp;</div>
-       
-	 <input type="button" onclick="detalheVenda()" value="detalhes venda" />
-        
-
     
     </div>
 </div> 
