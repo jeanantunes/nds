@@ -87,7 +87,7 @@ function gravar() {
 	var data = [
 		{name:'parametrosDistribuidor.relancamentoParciaisEmDias', value: $('#relancamentoParciaisEmDias').val()},
 		{name:'parametrosDistribuidor.tipoContabilizacaoCE', value: $('input[name=parametrosDistribuidor.radioTipoContabilizacaoCE]:checked').val()},
-		{name:'parametrosDistribuidor.supervisionaVendaNegativa', value: $('#supervisionaVendaNegativa').is('checked')},
+		{name:'parametrosDistribuidor.supervisionaVendaNegativa', value: $('#supervisionaVendaNegativa').is(':checked')},
 		{name:'parametrosDistribuidor.chamadaoDiasSuspensao', value: $('#chamadaoDiasSuspensao').val()},
 		{name:'parametrosDistribuidor.chamadaoValorConsignado', value: $('#chamadaoValorConsignado').val()},
 		{name:'parametrosDistribuidor.aceitaEncalheJuramentada', value: $('#aceitaEncalheJuramentada').attr('checked')},
@@ -536,7 +536,7 @@ $(function() {
                                        value="VALOR" />
 							</c:if>		
 							<c:if test="${empty parametrosDistribuidor.tipoContabilizacaoCE or 
-								(not parametrosDistribuidor.tipoContabilizacaoCE eq 'VALOR')}">
+								(not (parametrosDistribuidor.tipoContabilizacaoCE eq 'VALOR'))}">
 								<input type="radio" name="parametrosDistribuidor.tipoContabilizacaoCE" 
 									   id="radioTipoContabilizacaoCEValor" 
                                        value="VALOR" />
@@ -551,7 +551,7 @@ $(function() {
                                      value="EXEMPLARES" />
 							  </c:if>
 							  <c:if test="${empty parametrosDistribuidor.tipoContabilizacaoCE or 
-									(not parametrosDistribuidor.tipoContabilizacaoCE eq 'EXEMPLARES')}">
+									(not (parametrosDistribuidor.tipoContabilizacaoCE eq 'EXEMPLARES'))}">
 									<input type="radio" name="parametrosDistribuidor.tipoContabilizacaoCE" 
                                      id="radioTipoContabilizacaoCEExamplares" 
 			                         value="EXEMPLARES" />
@@ -638,12 +638,14 @@ $(function() {
                           <table width="387" border="0" cellspacing="1" cellpadding="0">
                             <tr>
                               <td width="221" align="right">Avisar quando a Cota permanecer por &nbsp;</td>
-                              <td width="70"><input name="parametrosDistribuidor.chamadaoDiasSuspensao" type="text" id="chamadaoDiasSuspensao" style="width:20px; text-align:center;" /></td>
+                              <td width="70"><input name="parametrosDistribuidor.chamadaoDiasSuspensao" 
+                                type="text" id="chamadaoDiasSuspensao" style="width:20px; text-align:center;" value="${parametrosDistribuidor.chamadaoDiasSuspensao}" /></td>
                               <td width="92" align="left">dias suspensos</td>
                             </tr>
                             <tr>
                               <td align="right"> Ou atingir R$&nbsp; </td>
-                              <td><input name="parametrosDistribuidor.chamadaoValorConsignado" type="text" id="chamadaoValorConsignado" style="width:50px; text-align:right;" /></td>
+                              <td><input name="parametrosDistribuidor.chamadaoValorConsignado" 
+                                type="text" id="chamadaoValorConsignado" style="width:50px; text-align:right;" value="${parametrosDistribuidor.chamadaoValorConsignado}" /></td>
                               <td align="left">de consignado</td>
                             </tr>
                          </table>
