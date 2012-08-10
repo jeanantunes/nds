@@ -1,5 +1,9 @@
 package br.com.abril.nds.client.vo;
 
+import java.math.BigDecimal;
+
+import br.com.abril.nds.model.cadastro.TipoContabilizacaoCE;
+
 
 /**
  * VO para controle dos parametros do distribuidor
@@ -13,6 +17,9 @@ public class ParametrosDistribuidorVO {
 	private int relancamentoParciaisEmDias;
 	
 	// Frame Recolhimento
+	
+	private TipoContabilizacaoCE tipoContabilizacaoCE;
+	
 	private String aceitaEncalheJuramentada;
 	
 	private String diaRecolhimentoPrimeiro;
@@ -26,6 +33,8 @@ public class ParametrosDistribuidorVO {
 	private String diaRecolhimentoQuinto;
 
 	private String limiteCEProximaSemana;
+	
+	private boolean supervisionaVendaNegativa;
 
 	private String conferenciaCegaRecebimento;
 
@@ -211,6 +220,10 @@ public class ParametrosDistribuidorVO {
 	private String prazoAvisoPrevioValidadeGarantiaFaltaEm;
 
 	private String prazoAvisoPrevioValidadeGarantiaSobraEm;
+	
+	private Integer chamadaoDiasSuspensao;
+	
+	private BigDecimal chamadaoValorConsignado;
 
 	public int getRelancamentoParciaisEmDias() {
 		return relancamentoParciaisEmDias;
@@ -220,7 +233,21 @@ public class ParametrosDistribuidorVO {
 		this.relancamentoParciaisEmDias = relancamentoParciaisEmDias;
 	}
 
-	public String getAceitaEncalheJuramentada() {
+	/**
+     * @return the tipoContabilizacaoCE
+     */
+    public TipoContabilizacaoCE getTipoContabilizacaoCE() {
+        return tipoContabilizacaoCE;
+    }
+
+    /**
+     * @param tipoContabilizacaoCE the tipoContabilizacaoCE to set
+     */
+    public void setTipoContabilizacaoCE(TipoContabilizacaoCE tipoContabilizacaoCE) {
+        this.tipoContabilizacaoCE = tipoContabilizacaoCE;
+    }
+
+    public String getAceitaEncalheJuramentada() {
 		return aceitaEncalheJuramentada;
 	}
 
@@ -276,7 +303,21 @@ public class ParametrosDistribuidorVO {
 		this.limiteCEProximaSemana = limiteCEProximaSemana;
 	}
 
-	public String getConferenciaCegaRecebimento() {
+	/**
+     * @return the supervisionaVendaNegativa
+     */
+    public boolean isSupervisionaVendaNegativa() {
+        return supervisionaVendaNegativa;
+    }
+
+    /**
+     * @param supervisionaVendaNegativa the supervisionaVendaNegativa to set
+     */
+    public void setSupervisionaVendaNegativa(boolean supervisionaVendaNegativa) {
+        this.supervisionaVendaNegativa = supervisionaVendaNegativa;
+    }
+
+    public String getConferenciaCegaRecebimento() {
 		return conferenciaCegaRecebimento;
 	}
 
@@ -947,5 +988,33 @@ public class ParametrosDistribuidorVO {
 			String prazoAvisoPrevioValidadeGarantiaSobraEm) {
 		this.prazoAvisoPrevioValidadeGarantiaSobraEm = prazoAvisoPrevioValidadeGarantiaSobraEm;
 	}
+
+    /**
+     * @return the chamadaoDiasSuspensao
+     */
+    public Integer getChamadaoDiasSuspensao() {
+        return chamadaoDiasSuspensao;
+    }
+
+    /**
+     * @param chamadaoDiasSuspensao the chamadaoDiasSuspensao to set
+     */
+    public void setChamadaoDiasSuspensao(Integer chamadaoDiasSuspensao) {
+        this.chamadaoDiasSuspensao = chamadaoDiasSuspensao;
+    }
+
+    /**
+     * @return the chamadaoValorConsignado
+     */
+    public BigDecimal getChamadaoValorConsignado() {
+        return chamadaoValorConsignado;
+    }
+
+    /**
+     * @param chamadaoValorConsignado the chamadaoValorConsignado to set
+     */
+    public void setChamadaoValorConsignado(BigDecimal chamadaoValorConsignado) {
+        this.chamadaoValorConsignado = chamadaoValorConsignado;
+    }
 
 }
