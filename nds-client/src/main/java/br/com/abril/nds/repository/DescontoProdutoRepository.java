@@ -1,9 +1,11 @@
 package br.com.abril.nds.repository;
 
 import java.util.List;
+import java.util.Set;
 
 import br.com.abril.nds.dto.TipoDescontoProdutoDTO;
 import br.com.abril.nds.dto.filtro.FiltroTipoDescontoProdutoDTO;
+import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.desconto.DescontoProduto;
 
 /**
@@ -33,4 +35,13 @@ public interface DescontoProdutoRepository extends Repository<DescontoProduto, L
 	 * @return Integer - Contagem dos dados referentes ao tipo de desconto por produto.
 	 */
 	Integer buscarQuantidadeTipoDescontoProduto(FiltroTipoDescontoProdutoDTO filtro);
+	
+	/**
+	 * Método que retorna uma coleção com as cotas relacionadas ao tipo de desconto especificado.
+	 * 
+	 * @param idDescontoProduto - ID do Tipo de desconto.
+	 * 
+	 * @return - Set<Cota> - As cotas relacionadas.
+	 */
+	Set<Cota> obterCotasDoTipoDescontoProduto(Long idDescontoProduto);
 }

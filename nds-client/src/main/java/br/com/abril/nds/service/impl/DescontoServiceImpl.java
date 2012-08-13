@@ -236,7 +236,6 @@ public class DescontoServiceImpl implements DescontoService {
 	@Override
 	@Transactional
 	public void incluirDesconto(DescontoProdutoDTO desconto, Usuario usuario) {
-		// FIXME Implementar a inclusão do desconto da cota
 
 		validarEntradaDeDadosInclusaoDescontoPorProduto(desconto);
 
@@ -378,5 +377,20 @@ public class DescontoServiceImpl implements DescontoService {
 		}
 
 		return cotas;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@Transactional
+	public Set<Cota> obterCotasDoTipoDescontoProduto(Long idDescontoProduto) {
+
+		if (idDescontoProduto == null) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "O desconto precisa ser especificado.");
+		}
+		
+		return this.descontoProdutoRepository.obterCotasDoTipoDescontoProduto(idDescontoProduto);
 	}
 }
