@@ -79,15 +79,7 @@ public class TipoDescontoCotaController {
 	@Path("/novoDescontoGeral")
 	public void novoDescontoGeral(BigDecimal desconto, List<Long> fornecedores){
 		
-		if(fornecedores == null || fornecedores.isEmpty()){
-			throw new ValidacaoException(TipoMensagem.WARNING,"O campo Fornecedores selecionados deve ser preenchido!");
-		}
-		
-		if(desconto == null ){
-			throw new ValidacaoException(TipoMensagem.WARNING,"O campo Desconto deve ser preenchido!");
-		}
-		
-		//FIXME alterar a logica de inclusão de cadastro de Desconto Geral
+		descontoService.incluirDesconto(desconto, fornecedores, getUsuario());
 			
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Desconto cadastrado com sucesso"),"result").recursive().serialize();
 	}
@@ -96,19 +88,7 @@ public class TipoDescontoCotaController {
 	@Path("/novoDescontoEspecifico")
 	public void novoDescontoEspecifico(Integer numeroCota, BigDecimal desconto, List<Long> fornecedores) {
 		
-		if(numeroCota == null ){
-			throw new ValidacaoException(TipoMensagem.WARNING,"O campo Cota deve ser preenchido!");
-		}
-		
-		if(fornecedores == null || fornecedores.isEmpty()){
-			throw new ValidacaoException(TipoMensagem.WARNING,"O campo Fornecedores selecionados deve ser preenchido!");
-		}
-		
-		if(desconto == null ){
-			throw new ValidacaoException(TipoMensagem.WARNING,"O campo Desconto deve ser preenchido!");
-		}
-		
-		//FIXME revisar a implementação da inclusão de um novo desconto especifico
+		descontoService.incluirDesconto(desconto, fornecedores, numeroCota, getUsuario());
 		
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Desconto cadastrado com sucesso"),"result").recursive().serialize();
 	}
@@ -177,44 +157,10 @@ public class TipoDescontoCotaController {
 	@Path("/excluirDesconto")
 	public void excluirDesconto(Long idDesconto, TipoDesconto tipoDesconto ){
 		
-		//TODO verificar se a exclusão é apenas para registro da data vigente
-		
-		switch (tipoDesconto) {
-			case ESPECIFICO:
-				excluirDescontoEspecifico(idDesconto);
-				break;
-			case GERAL:
-				excluirDescontoGeral(idDesconto);
-				break;
-			case PRODUTO:
-				excluirDescontoProduto(idDesconto);
-				break;
-		}		
-	}
-	
-	private  void excluirDescontoProduto(Long idDesconto){
-		
-		//FIXME implementar a lopgica de exclusão
+		descontoService.excluirDesconto(idDesconto, tipoDesconto);
 		
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação realizada com sucesso."),
 				Constantes.PARAM_MSGS).recursive().serialize();
-	}
-	
-	private  void excluirDescontoGeral(Long idDesconto){
-		
-		//FIXME implementar a lopgica de exclusão
-		
-		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação realizada com sucesso."),
-				Constantes.PARAM_MSGS).recursive().serialize();
-	}
-	
-	private void excluirDescontoEspecifico(Long idDesconto){
-		
-		//FIXME implementar a lopgica de exclusão
-		
-		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação realizada com sucesso."),
-				Constantes.PARAM_MSGS).recursive().serialize();
-		
 	}
 	
 	private void exportarDescontoGeral(FileType fileType) throws IOException{

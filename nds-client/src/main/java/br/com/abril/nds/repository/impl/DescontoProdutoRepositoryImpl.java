@@ -1,5 +1,7 @@
 package br.com.abril.nds.repository.impl;
 
+import org.springframework.stereotype.Repository;
+
 import java.util.List;
 
 import org.hibernate.Criteria;
