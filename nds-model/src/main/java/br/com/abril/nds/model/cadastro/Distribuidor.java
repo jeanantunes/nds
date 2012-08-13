@@ -95,6 +95,26 @@ public class Distribuidor {
 	private boolean aceitaJuramentado;
 	
 	/**
+	 * Tipo da contabilização selecionada pelo distribuidor
+	 * na chamada de encalhe
+	 */
+	@Column(name = "TIPO_CONT_CE")
+	@Enumerated(EnumType.STRING)
+	private TipoContabilizacaoCE tipoContabilizacaoCE;
+	
+	/**
+	 * Flag indicando se a venda negativa deve ser supervisionada
+	 */
+	@Column(name = "SUPERVISIONA_VENDA_NEGATIVA")
+	private boolean supervisionaVendaNegativa;
+	
+	/**
+	 * Parametrização de Política de Chamadão do Distribuidor
+	 */
+	@Embedded
+	private PoliticaChamadao politicaChamadao;
+	
+	/**
 	 * Capacidade de distribuição diária do distribuidor, em número de exemplares
 	 */
 	@Column(name = "CAPACIDADE_DISTRIBUICAO", nullable = false)
@@ -471,8 +491,50 @@ public class Distribuidor {
 	public void setAceitaJuramentado(boolean aceitaJuramentado) {
 		this.aceitaJuramentado = aceitaJuramentado;
 	}
-
+	
 	/**
+     * @return the tipoContabilizacaoCE
+     */
+    public TipoContabilizacaoCE getTipoContabilizacaoCE() {
+        return tipoContabilizacaoCE;
+    }
+
+    /**
+     * @param tipoContabilizacaoCE the tipoContabilizacaoCE to set
+     */
+    public void setTipoContabilizacaoCE(TipoContabilizacaoCE tipoContabilizacaoCE) {
+        this.tipoContabilizacaoCE = tipoContabilizacaoCE;
+    }
+
+    /**
+     * @return the supervisionaVendaNegativa
+     */
+    public boolean isSupervisionaVendaNegativa() {
+        return supervisionaVendaNegativa;
+    }
+
+    /**
+     * @param supervisionaVendaNegativa the supervisionaVendaNegativa to set
+     */
+    public void setSupervisionaVendaNegativa(boolean supervisionaVendaNegativa) {
+        this.supervisionaVendaNegativa = supervisionaVendaNegativa;
+    }
+
+    /**
+     * @return the politicaChamadao
+     */
+    public PoliticaChamadao getPoliticaChamadao() {
+        return politicaChamadao;
+    }
+
+    /**
+     * @param politicaChamadao the politicaChamadao to set
+     */
+    public void setPoliticaChamadao(PoliticaChamadao politicaChamadao) {
+        this.politicaChamadao = politicaChamadao;
+    }
+
+    /**
 	 * @return the leiautePicking
 	 */
 	public LeiautePicking getLeiautePicking() {

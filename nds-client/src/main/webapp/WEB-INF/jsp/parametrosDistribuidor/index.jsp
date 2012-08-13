@@ -84,7 +84,6 @@ function recarregarDiasDistribuidorFornecedorGrid() {
 }
 
 function gravar() {
-	
 	var data = [
 		{name:'parametrosDistribuidor.relancamentoParciaisEmDias', value: $('#relancamentoParciaisEmDias').val()},
 		{name:'parametrosDistribuidor.aceitaEncalheJuramentada', value: $('#aceitaEncalheJuramentada').is('checked')},
@@ -362,6 +361,17 @@ $(function() {
 		 precision:0
 	});	
 	
+	$("#chamadaoValorConsignado").maskMoney({
+		 thousands:'.', 
+		 decimal:',', 
+	});
+	
+	$("#chamadaoDiasSuspensao").maskMoney({
+		 thousands:'', 
+		 decimal:'', 
+		 precision:0
+	});
+	
 	$("#relancamentoParciaisEmDias").val(${parametrosDistribuidor.relancamentoParciaisEmDias});
 	
 	$('input:radio[name=distribuidor][value=${parametrosDistribuidor.distribuidor}]').click();
@@ -456,7 +466,10 @@ $(function() {
 			
 			
 			<div id="tabOperacao">
-				<fieldset style="width:440px!important; margin-bottom:5px; float:left;">
+		      <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                <tr>
+                  <td valign="top">		
+                    <fieldset style="width:440px!important; margin-bottom:5px; float:left;">
 		                <legend>Dias de Operação:</legend>
 		                <table width="441" border="0" cellpadding="0" cellspacing="1">
 		                  <tr class="header_table">
@@ -520,15 +533,73 @@ $(function() {
 	                   		  </c:forEach>
 			                </table>
 		                </span>
-		              </fieldset>
-			          <fieldset style="width:410px!important; margin-bottom:5px;">
+		              </fieldset> 
+                  <fieldset style="width:440px!important; margin-bottom:5px;">
+                    <legend>Parciais / Matriz de Lançamento</legend>
+                    <label>Relançamento de Parciais em D+: </label>
+                    <select name="parametrosDistribuidor.relancamentoParciaisEmDias" size="1" id="relancamentoParciaisEmDias" style="width:50px; height:19px;">
+                      <option value="2" selected="selected">2</option>
+                      <option value="3">3</option>
+                      <option value="4">4</option>
+                      <option value="5">5</option>
+                    </select>
+                  </fieldset>
+                   <fieldset style="width:440px!important; margin-bottom:5px;">
+                  <legend>Reutilização de Código de Cota</legend>
+                  <table width="390" border="0" cellspacing="1" cellpadding="0">
+                    <tr>
+                      <td width="222" align="left">Reutilização de Código de Cota Inativa:</td>
+                      <td width="40" align="center"><input name="parametrosDistribuidor.reutilizacaoCodigoCotaInativa" value="${parametrosDistribuidor.reutilizacaoCodigoCotaInativa}" type="text" id="reutilizacaoCodigoCotaInativa" style="width:40px; text-align:center;" value="06" /></td>
+                      <td width="124" align="left"> &nbsp;( meses )</td>
+                    </tr>
+                  </table>
+                </fieldset>
+                  </td>
+                  <td style="width:10px;">&nbsp;</td>
+                  <td valign="top"> 
+			          <fieldset style="width:420px!important; margin-bottom:5px;">
 			                <legend>Recolhimento</legend>
 			            <table width="398" border="0" cellspacing="0" cellpadding="0">
 			              <tr>
 			                <td width="197">&nbsp;</td>
 			                <td colspan="11">&nbsp;</td>
 			              </tr>
-			              <tr>
+			             
+                         <tr>
+                            <td>Na CE, deseja utilizar:</td>
+                            <td>
+                             <c:if test="${parametrosDistribuidor.tipoContabilizacaoCE eq 'VALOR'}">
+								<input type="radio" name="parametrosDistribuidor.tipoContabilizacaoCE" 
+									   id="radioTipoContabilizacaoCEValor" 
+									   checked="checked"
+                                       value="VALOR" />
+							</c:if>		
+							<c:if test="${empty parametrosDistribuidor.tipoContabilizacaoCE or 
+								(not (parametrosDistribuidor.tipoContabilizacaoCE eq 'VALOR'))}">
+								<input type="radio" name="parametrosDistribuidor.tipoContabilizacaoCE" 
+									   id="radioTipoContabilizacaoCEValor" 
+                                       value="VALOR" />
+							</c:if>									
+                            </td>
+                            <td colspan="3">Valor</td>
+                            <td>
+							  <c:if test="${parametrosDistribuidor.tipoContabilizacaoCE eq 'EXEMPLARES'}">
+								<input type="radio" name="parametrosDistribuidor.tipoContabilizacaoCE" 
+                                     id="radioTipoContabilizacaoCEExemplares" 
+									 checked="checked"	
+                                     value="EXEMPLARES" />
+							  </c:if>
+							  <c:if test="${empty parametrosDistribuidor.tipoContabilizacaoCE or 
+									(not (parametrosDistribuidor.tipoContabilizacaoCE eq 'EXEMPLARES'))}">
+									<input type="radio" name="parametrosDistribuidor.tipoContabilizacaoCE" 
+                                     id="radioTipoContabilizacaoCEExamplares" 
+			                         value="EXEMPLARES" />
+							  </c:if>
+							 </td>
+                            <td colspan="6">Exemplares</td>
+                          </tr>
+                    
+                         <tr>
 			                <td>Aceita Encalhe Juramentada:</td>
 			                <td width="22"><input name="parametrosDistribuidor.aceitaEncalheJuramentada" type="checkbox" id="aceitaEncalheJuramentada" ${parametrosDistribuidor.aceitaEncalheJuramentada} /></td>
 			                <td width="15">&nbsp;</td>
@@ -557,10 +628,22 @@ $(function() {
 			                <td>Dias</td>
 			              </tr>
 			              <tr>
-			                <td>Permite Recolher dias Posteriores:</td>
+			                <td>Aceita devolução antecipada cota:</td>
 			                <td><input name="parametrosDistribuidor.limiteCEProximaSemana" type="checkbox" id="limiteCEProximaSemana" ${parametrosDistribuidor.limiteCEProximaSemana} /></td>
 			                <td colspan="10">Limite CE Próxima Semana</td>
 			              </tr>
+                          <tr>
+                            <td colspan="11">Em casos de Venda Negativa, solicita a senha de aprovação do Supervisor?</td>
+                            <td>
+                              <c:if test="${parametrosDistribuidor.supervisionaVendaNegativa}">
+                                <input name="parametrosDistribuidor.supervisionaVendaNegativa" id="supervisionaVendaNegativa" type="checkbox" checked="checked" />
+                              </c:if>
+                              <c:if test="${empty parametrosDistribuidor.supervisionaVendaNegativa or (not parametrosDistribuidor.supervisionaVendaNegativa)}">
+                                <input name="parametrosDistribuidor.supervisionaVendaNegativa" id="supervisionaVendaNegativa" type="checkbox"/>
+                              </c:if>
+                            </td>
+                          </tr>
+                    <tr>
 			              <tr>
 			                <td>&nbsp;</td>
 			                <td>&nbsp;</td>
@@ -589,7 +672,24 @@ $(function() {
 			              </tr>
 			            </table>
 			          </fieldset>
-		      		  <fieldset style="width:410px!important; margin-bottom:5px;">
+		      		  <fieldset style="width:420px!important; margin-bottom:5px;">
+                          <legend>Chamadão</legend>
+                          <table width="387" border="0" cellspacing="1" cellpadding="0">
+                            <tr>
+                              <td width="221" align="right">Avisar quando a Cota permanecer por &nbsp;</td>
+                              <td width="70"><input name="parametrosDistribuidor.chamadaoDiasSuspensao" 
+                                type="text" id="chamadaoDiasSuspensao" style="width:20px; text-align:center;" value="${parametrosDistribuidor.chamadaoDiasSuspensao}" /></td>
+                              <td width="92" align="left">dias suspensos</td>
+                            </tr>
+                            <tr>
+                              <td align="right"> Ou atingir R$&nbsp; </td>
+                              <td><input name="parametrosDistribuidor.chamadaoValorConsignado" 
+                                type="text" id="chamadaoValorConsignado" style="width:50px; text-align:right;" value="${parametrosDistribuidor.chamadaoValorConsignado}" /></td>
+                              <td align="left">de consignado</td>
+                            </tr>
+                         </table>
+                      </fieldset>
+                      <fieldset style="width:420px!important; margin-bottom:5px;">
 		                <legend>Capacidade de Manuseio </legend>
 		                <table width="390" border="0" cellspacing="1" cellpadding="0">
 		                  <tr class="header_table">
@@ -604,26 +704,12 @@ $(function() {
 		                  </tr>
 		                </table>
 		              </fieldset>     
-			          <fieldset style="width:410px!important; margin-bottom:5px;">
-			            <legend>Reutilização de Código de Cota</legend>
-			            <table width="390" border="0" cellspacing="1" cellpadding="0">
-			              <tr>
-			                <td width="222" align="left">Reutilização de Código de Cota Inativa:</td>
-			                <td width="40" align="center"><input name="parametrosDistribuidor.reutilizacaoCodigoCotaInativa" value="${parametrosDistribuidor.reutilizacaoCodigoCotaInativa}" type="text" id="reutilizacaoCodigoCotaInativa" style="width:40px; text-align:center;" value="06" /></td>
-			                <td width="124" align="left"> &nbsp;( meses )</td>
-			              </tr>
-			            </table>
-			          </fieldset>
-		              <fieldset style="width:440px!important; margin-bottom:5px;">
-		                <legend>Parciais / Matriz de Lançamento</legend>
-		                <label>Relançamento de Parciais em D+: </label>
-		                <select name="parametrosDistribuidor.relancamentoParciaisEmDias" size="1" id="relancamentoParciaisEmDias" style="width:50px; height:19px;">
-		                  <option value="2" selected="selected">2</option>
-		                  <option value="3">3</option>
-		                  <option value="4">4</option>
-		                  <option value="5">5</option>
-		                </select>
-		              </fieldset>
+			         
+		              
+                  </td>
+                  </tr>
+                 </table> 
+       
 			</div>
 			<div id="tabEmissao">
 	            <fieldset style="width:390px!important;">

@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.hibernate.Criteria;
 import org.hibernate.Query;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Repository;
@@ -14,6 +15,7 @@ import br.com.abril.nds.dto.ParcialVendaDTO;
 import br.com.abril.nds.dto.PeriodoParcialDTO;
 import br.com.abril.nds.dto.filtro.FiltroParciaisDTO;
 import br.com.abril.nds.dto.filtro.FiltroParciaisDTO.ColunaOrdenacaoPeriodo;
+import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.PeriodoLancamentoParcial;
 import br.com.abril.nds.repository.PeriodoLancamentoParcialRepository;
 
@@ -405,5 +407,47 @@ public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepositoryMo
 		query.setResultTransformer(new AliasToBeanResultTransformer(ParcialVendaDTO.class));
 		
 		return query.list();
+	}
+
+	@Override
+	public Lancamento obterLancamentoPosterior(Long idProdutoEdicao, Date dataRecolhimento) {
+					
+		Criteria criteria = super.getSession().createCriteria(Lancamento.class,"lancamento");
+		
+		criteria.createAlias("lancamento.periodoLancamentoParcial","periodo");
+		
+		criteria.createAlias("lancamento.produtoEdicao","produtoEdicao");
+		
+		criteria.add(Restrictions.eq("produtoEdicao.id", idProdutoEdicao));
+		
+		criteria.add(Restrictions.gt("lancamento.dataLancamentoDistribuidor", dataRecolhimento));
+		
+		criteria.addOrder(Order.asc("lancamento.dataLancamentoDistribuidor"));  
+		
+		criteria.setMaxResults(1);
+		
+		return (Lancamento) criteria.uniqueResult();
+	
+	}
+	
+	@Override
+	public Lancamento obterLancamentoAnterior(Long idProdutoEdicao, Date dataLancamento) {
+					
+		Criteria criteria = super.getSession().createCriteria(Lancamento.class,"lancamento");
+		
+		criteria.createAlias("lancamento.periodoLancamentoParcial","periodo");
+		
+		criteria.createAlias("lancamento.produtoEdicao","produtoEdicao");
+		
+		criteria.add(Restrictions.eq("produtoEdicao.id", idProdutoEdicao));
+		
+		criteria.add(Restrictions.lt("lancamento.dataLancamentoDistribuidor", dataLancamento));
+		
+		criteria.addOrder(Order.asc("lancamento.dataLancamentoDistribuidor"));  
+		
+		criteria.setMaxResults(1);
+		
+		return (Lancamento) criteria.uniqueResult();
+	
 	}
 }

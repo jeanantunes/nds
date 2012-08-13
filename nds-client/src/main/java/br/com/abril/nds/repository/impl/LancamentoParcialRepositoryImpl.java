@@ -244,4 +244,5 @@ public class LancamentoParcialRepositoryImpl extends AbstractRepositoryModel<Lan
 		
 		return (totalRegistros == null) ? 0 : totalRegistros.intValue();
 	}
+
 }
