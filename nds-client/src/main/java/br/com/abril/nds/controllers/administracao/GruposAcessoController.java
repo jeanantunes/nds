@@ -168,7 +168,8 @@ public class GruposAcessoController {
 		
 		Set<Permissao> permissoes = new HashSet<Permissao>();
 		for (String permissao : grupoPermissaoDTO.getPermissoesSelecionadas().split(",")) {
-			permissoes.add(Permissao.valueOf(permissao));
+			permissoes = adicionarPermissoes(permissoes, Permissao.valueOf(permissao));
+			//permissoes.add(Permissao.valueOf(permissao));
 		}
 		
 		grupoPermissao.setPermissoes(permissoes);
@@ -337,15 +338,18 @@ public class GruposAcessoController {
 		Usuario usuario = getUsuarioEntity(usuarioDTO);
 		
 		Set<Permissao> permissoes = new HashSet<Permissao>();
-		for (String permissao : usuarioDTO.getPermissoesSelecionadas().split(",")) {
-			if ( permissao != null && !permissao.isEmpty() )
-				permissoes.add(Permissao.valueOf(permissao));
+		for (String p : usuarioDTO.getPermissoesSelecionadas().split(",")) {
+			if ( p != null && !p.isEmpty() ) {
+				//permissoes.add(Permissao.valueOf(p));
+				permissoes = adicionarPermissoes(permissoes, Permissao.valueOf(p));
+			}
 		}
 		usuario.setPermissoes(permissoes);
 
 		Set<GrupoPermissao> grupos = new HashSet<GrupoPermissao>();
 		for (String grupo : usuarioDTO.getGruposSelecionados().split(",")) {
-			grupos.add(grupoPermissaoService.buscar(Long.parseLong(grupo)));
+			if (grupo != null && !grupo.isEmpty())
+				grupos.add(grupoPermissaoService.buscar(Long.parseLong(grupo)));
 		}
 		usuario.setGruposPermissoes(grupos);
 		
@@ -355,6 +359,19 @@ public class GruposAcessoController {
 	
 	}
 
+	/**
+	 * @param permissoes
+	 * @param permissao
+	 * @return
+	 */
+	private Set<Permissao> adicionarPermissoes(Set<Permissao> permissoes, Permissao permissao) {
+		if (permissao.getPermissaoPai() != null) {
+			permissoes = adicionarPermissoes(permissoes, permissao.getPermissaoPai());
+		}
+		permissoes.add(permissao);
+		return permissoes;
+	}
+	
 	/**
 	 * @param usuarioDTO
 	 * @return
