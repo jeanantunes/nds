@@ -3310,12 +3310,13 @@ public class Fixture {
 		return descontoReturn;
 	}
 	
-    public static DescontoCota descontoCota(BigDecimal desconto, Cota cota, Set<Fornecedor> fornecedores,Usuario usuario ){
+    public static DescontoCota descontoCota(BigDecimal desconto, Distribuidor distribuidor, Cota cota, Set<Fornecedor> fornecedores,Usuario usuario ){
 		
 		DescontoCota descontoReturn = new DescontoCota();
 		descontoReturn.setDesconto(desconto);
 		descontoReturn.setDataAlteracao(new Date());
 		descontoReturn.setCota(cota);
+		descontoReturn.setDistribuidor(distribuidor);
 		descontoReturn.setFornecedores(fornecedores);
 		descontoReturn.setUsuario(usuario);
 		
