@@ -133,6 +133,8 @@ public class DescontoCotaRepositoryImplTest extends AbstractRepositoryImplTest{
 		Assert.assertTrue(!lista.isEmpty());
 		
 		filtro.setOrdenacaoColuna(FiltroTipoDescontoCotaDTO.OrdenacaoColunaConsulta.NUMERO_COTA);
+		filtro.setNomeCota(cota.getPessoa().getNome());
+		filtro.setNumeroCota(cota.getNumeroCota());
 		lista = descontoCotaRepository.obterDescontoCota(filtro);
 		Assert.assertTrue(!lista.isEmpty());
 		
