@@ -193,7 +193,6 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		}
 		parametrosDistribuidor.setParcelamentoDividas(verificaCheckString(distribuidor.isParcelamentoDividas()));
 		parametrosDistribuidor.setNegociacaoAteParcelas(CurrencyUtil.formatarValorTruncado(distribuidor.getNegociacaoAteParcelas()));
-		parametrosDistribuidor.setPermitePagamentoDividasDivergentes(verificaCheckString(distribuidor.isPermitePagamentoDividasDivergentes()));
 		
 		// Aprovação
 		parametrosDistribuidor.setUtilizaControleAprovacao(verificaCheckString(distribuidor.isUtilizaControleAprovacao()));
@@ -522,7 +521,6 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		} else {
 			distribuidor.setNegociacaoAteParcelas(null);
 		}
-		distribuidor.setPermitePagamentoDividasDivergentes(verificaCheckBoolean(parametrosDistribuidor.getPermitePagamentoDividasDivergentes()));
 		
 		// Aprovação
 		distribuidor.setUtilizaControleAprovacao(verificaCheckBoolean(parametrosDistribuidor.getUtilizaControleAprovacao()));

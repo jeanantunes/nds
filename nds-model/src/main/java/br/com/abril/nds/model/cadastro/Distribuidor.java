@@ -241,9 +241,6 @@ public class Distribuidor {
 	
 	@Column(name = "NEGOCIACAO_ATE_PARCELAS", nullable = true)
 	private Integer negociacaoAteParcelas;
-	
-	@Column(name = "PERMITE_PAGAMENTO_DIVIDAS_DIVERGENTES", nullable = true)
-	private boolean permitePagamentoDividasDivergentes;	
 
 	@Column(name = "UTILIZA_CONTROLE_APROVACAO", nullable = true)
 	private boolean utilizaControleAprovacao;	
@@ -704,15 +701,6 @@ public class Distribuidor {
 
 	public void setNegociacaoAteParcelas(Integer negociacaoAteParcelas) {
 		this.negociacaoAteParcelas = negociacaoAteParcelas;
-	}
-
-	public boolean isPermitePagamentoDividasDivergentes() {
-		return permitePagamentoDividasDivergentes;
-	}
-
-	public void setPermitePagamentoDividasDivergentes(
-			boolean permitePagamentoDividasDivergentes) {
-		this.permitePagamentoDividasDivergentes = permitePagamentoDividasDivergentes;
 	}
 
 	public boolean isUtilizaControleAprovacao() {

@@ -675,7 +675,6 @@ public class Fixture {
 		distribuidor.setUtilizaGarantiaPdv(false);
 		distribuidor.setParcelamentoDividas(false);
 		distribuidor.setNegociacaoAteParcelas(Integer.valueOf(3));
-		distribuidor.setPermitePagamentoDividasDivergentes(false);
 		distribuidor.setUtilizaControleAprovacao(false);
 		distribuidor.setPrazoFollowUp(Integer.valueOf(7));
 		distribuidor.setPrazoAvisoPrevioValidadeGarantia(Integer.valueOf(7));

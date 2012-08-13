@@ -171,8 +171,6 @@ public class ParametrosDistribuidorVO {
 	
 	private String negociacaoAteParcelas;
 	
-	private String permitePagamentoDividasDivergentes;
-
 	// Aba Aprovação
 	// Frame Aprovação
 	private String utilizaControleAprovacao;
@@ -795,15 +793,6 @@ public class ParametrosDistribuidorVO {
 
 	public void setNegociacaoAteParcelas(String negociacaoAteParcelas) {
 		this.negociacaoAteParcelas = negociacaoAteParcelas;
-	}
-
-	public String getPermitePagamentoDividasDivergentes() {
-		return permitePagamentoDividasDivergentes;
-	}
-
-	public void setPermitePagamentoDividasDivergentes(
-			String permitePagamentoDividasDivergentes) {
-		this.permitePagamentoDividasDivergentes = permitePagamentoDividasDivergentes;
 	}
 
 	public String getUtilizaControleAprovacao() {

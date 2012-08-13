@@ -11,6 +11,14 @@
 	.forncedoresSel, .editorSel {
 	    padding: 0px!important;
 	}
+	
+	body{
+	font-family: arial;
+	font-size: 11px;
+	color: #000;
+	background-color: #FFF;
+	margin: 0px;
+}
 </style>
 <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/scripts/editor/jquery.wysiwyg.css" />
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/editor/jquery.wysiwyg.js"></script>
