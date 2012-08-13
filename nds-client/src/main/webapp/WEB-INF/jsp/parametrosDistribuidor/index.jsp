@@ -11,6 +11,14 @@
 	.forncedoresSel, .editorSel {
 	    padding: 0px!important;
 	}
+	
+	body{
+	font-family: arial;
+	font-size: 11px;
+	color: #000;
+	background-color: #FFF;
+	margin: 0px;
+}
 </style>
 <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/scripts/editor/jquery.wysiwyg.css" />
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/editor/jquery.wysiwyg.js"></script>
@@ -139,8 +147,9 @@ function gravar() {
 		{name:'parametrosDistribuidor.sugereSuspensaoQuandoAtingirBoletos', value: $('#sugereSuspensaoQuandoAtingirBoletos').val()},
 		{name:'parametrosDistribuidor.sugereSuspensaoQuandoAtingirReais', value: $('#sugereSuspensaoQuandoAtingirReais').val()},
 		{name:'parametrosDistribuidor.parcelamentoDividas', value: $('#parcelamentoDividas').is(':checked')},
-		{name:'parametrosDistribuidor.negociacaoAteParcelas', value: $('#negociacaoAteParcelas').val()},
-		{name:'parametrosDistribuidor.permitePagamentoDividasDivergentes', value: $('#permitePagamentoDividasDivergentes').is(':checked')},
+		{name:'parametrosDistribuidor.negociacaoAteParcelas', value: $('#negociacaoAteParcelas').val()},		
+		{name:'parametrosDistribuidor.utilizaDesconto', value: $('#utilizaDesconto').is(':checked')},
+		{name:'parametrosDistribuidor.percentualDesconto', value: $('#percentualDesconto').val()},		
 		{name:'parametrosDistribuidor.utilizaControleAprovacao', value: $('#utilizaControleAprovacao').is(':checked')},
 		{name:'parametrosDistribuidor.paraDebitosCreditos', value: $('#paraDebitosCreditos').is(':checked')},
 		{name:'parametrosDistribuidor.negociacao', value: $('#negociacao').is(':checked')},

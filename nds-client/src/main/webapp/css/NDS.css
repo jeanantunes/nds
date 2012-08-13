@@ -195,7 +195,8 @@ fieldset ul{}
 fieldset li{ list-style-type:none; margin-bottom:10px;} 
 fieldset li a{color:#00649F; text-decoration:none; font-size:12px;}
 fieldset li a:hover{color:#000; text-decoration:underline;}
-fieldset label{ float: left; line-height: 23px; margin-bottom: 6px; margin-left: 5px; margin-right: 5px; width: 65px;}
+/* alterado fieldset label{ float: left; line-height: 23px; margin-bottom: 6px; margin-left: 5px; margin-right: 5px; width: 65px;}*/
+fieldset label{ float: left; line-height: 23px; margin-left: 5px; margin-right: 5px;}
 
 .classFieldset{ width:960px!important; margin:2px auto auto auto!important; float:left;  border:1px solid #ccc;}
 .classFieldset legend{ color:#01649E;}
