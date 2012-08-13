@@ -117,13 +117,6 @@ public class DescontoCotaRepositoryImpl extends AbstractRepositoryModel<Desconto
 			param.put("numeroCota", filtro.getNumeroCota());
 		}
 		
-		if(filtro.getNomeCota() != null && !"".equals(filtro.getNomeCota())) {
-			
-			hql.append(param.isEmpty()?" where ":" and ");
-			hql.append(" upper(pessoa.nomeFantasia) like :nomeCota ");
-			param.put("nomeCota", "%" + filtro.getNomeCota().toUpperCase() + "%");
-		}
-		
 		hql.append(" group by dc.id ");
  
 		hql = ordenacaoDescontoCota(filtro,hql);
@@ -157,7 +150,7 @@ public class DescontoCotaRepositoryImpl extends AbstractRepositoryModel<Desconto
  
         StringBuilder hql = new StringBuilder();
 		
-		hql.append(" select dc.id ");
+		hql.append(" select dc.id,cota.numeroCota ");
 		hql.append(" from DescontoCota dc "); 
 		hql.append(" join dc.cota cota ");	
 		hql.append(" join cota.pessoa pessoa ");
@@ -172,16 +165,13 @@ public class DescontoCotaRepositoryImpl extends AbstractRepositoryModel<Desconto
 			param.put("numeroCota", filtro.getNumeroCota());
 		}
 		
-		if(filtro.getNomeCota() != null && !"".equals(filtro.getNomeCota())) {
-			
-			hql.append(param.isEmpty()?" where ":" and ");
-			hql.append(" upper(pessoa.nomeFantasia) like :nomeCota ");
-			param.put("nomeCota", "%" + filtro.getNomeCota().toUpperCase() + "%");
-		}
-		
 		hql.append(" group by dc.id ");
 		
 		Query query =  getSession().createQuery(hql.toString());
+		
+		for(String key : param.keySet()){
+			query.setParameter(key, param.get(key));
+		}
 		
 		return query.list().size();
 	}
