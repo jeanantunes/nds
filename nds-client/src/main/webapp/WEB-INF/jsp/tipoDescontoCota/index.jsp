@@ -166,17 +166,21 @@ var TIPO_DESCONTO = {
 			}else{
 				TIPO_DESCONTO.mostra_especifico();
 			}
-			
+
 			return resultado;
 		}
-		
+
 		$.each(resultado.rows, function(index, row) {					
-			
+
 			if(TIPO_DESCONTO.tipoDescontoSelecionado == "PRODUTO"){
+
+				var linkCotas = '<a href="javascript:;" onclick="TIPO_DESCONTO.exibirDialogCotasProdutoEdicao(' + row.cell.idTipoDesconto + ');" style="cursor:pointer">' +
+							    row.cell.nomeProduto +
+							    '</a>';
+							    
+				row.cell.nomeProduto = linkCotas;
 				
-				//CHAMAR MODAL DE COTAS
-			}
-			else{
+			} else{
 				
 				if(row.cell.fornecedor=="Diversos"){
 					var linkFornecedores = '<a href="javascript:;" onclick="TIPO_DESCONTO.carregarFornecedoresAssociadosADesconto('+ row.cell.idTipoDesconto +');">Diversos</a>';
@@ -217,6 +221,28 @@ var TIPO_DESCONTO = {
 				}
 			}
 		});
+	},
+	
+	exibirDialogCotasProdutoEdicao: function(idTipoDesconto) {
+		
+		$(".lstCotaGrid").flexOptions({
+			url: "<c:url value='/administracao/tipoDescontoCota/exibirCotasTipoDescontoProduto'/>",
+			params: [{name: 'idTipoDescontoProduto', value: idTipoDesconto}]
+		});
+
+		$(".lstCotaGrid").flexReload();
+
+		$( "#dialog-cotas" ).dialog({
+			resizable: false,
+			height:'auto',
+			width:400,
+			modal: true,
+			buttons: {
+				"Fechar": function() {
+					$( this ).dialog( "close" );
+				},
+			}
+		});	
 	},
 	
 	excluirDesconto:function(idDesconto, tipoDesconto){		
@@ -623,5 +649,23 @@ var TIPO_DESCONTO = {
 			sortorder : "asc",
 		});
 	
+		$(".lstCotaGrid").flexigrid({
+			dataType : 'json',
+			colModel : [ {
+				display : 'Cota',
+				name : 'cota',
+				width : 60,
+				sortable : true,
+				align : 'left'
+			},{
+				display : 'Nome',
+				name : 'nome',
+				width : 245,
+				sortable : true,
+				align : 'left'
+			}],
+			width : 350,
+			height : 155
+		});
 </script>
 </body>
