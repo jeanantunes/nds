@@ -1,4 +1,5 @@
 package br.com.abril.nds.service;
+import java.math.BigDecimal;
 import java.util.List;
 
 import br.com.abril.nds.dto.TipoDescontoCotaDTO;
@@ -8,9 +9,8 @@ import br.com.abril.nds.dto.filtro.FiltroTipoDescontoCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroTipoDescontoDTO;
 import br.com.abril.nds.dto.filtro.FiltroTipoDescontoProdutoDTO;
 import br.com.abril.nds.model.cadastro.TipoDesconto;
-import br.com.abril.nds.model.cadastro.desconto.DescontoCota;
-import br.com.abril.nds.model.cadastro.desconto.DescontoDistribuidor;
 import br.com.abril.nds.model.cadastro.desconto.DescontoProduto;
+import br.com.abril.nds.model.seguranca.Usuario;
 
 
 /**
@@ -37,9 +37,9 @@ public interface DescontoService {
 	
 	void excluirDesconto(Long idDesconto, br.com.abril.nds.model.cadastro.desconto.TipoDesconto tipoDesconto);
 	
-	void incluirDesconto(DescontoDistribuidor desconto);
+	void incluirDesconto(BigDecimal desconto, List<Long> fornecedores,Usuario usuario);
 	
-	void incluirDesconto(DescontoCota desconto);
+	void incluirDesconto(BigDecimal valorDesconto, List<Long> fornecedores,Integer numeroCota,Usuario usuario);
 	
 	void incluirDesconto(DescontoProduto desconto);
 }
