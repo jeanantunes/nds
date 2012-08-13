@@ -94,6 +94,7 @@ import br.com.abril.nds.model.cadastro.TipoRegistroCobranca;
 import br.com.abril.nds.model.cadastro.TipoRoteiro;
 import br.com.abril.nds.model.cadastro.TipoTelefone;
 import br.com.abril.nds.model.cadastro.TributacaoFiscal;
+import br.com.abril.nds.model.cadastro.desconto.DescontoCota;
 import br.com.abril.nds.model.cadastro.desconto.DescontoDistribuidor;
 import br.com.abril.nds.model.cadastro.desconto.DescontoProduto;
 import br.com.abril.nds.model.cadastro.pdv.AreaInfluenciaPDV;
@@ -1003,6 +1004,9 @@ public class DataLoader {
 		gerarDescontoDistribuidorParaFornecedor(session);
 		
 		criarDescontoProduto(session);
+
+		gerarDescontoCota(session);
+
 	}
 
 	
@@ -1032,6 +1036,32 @@ public class DataLoader {
 		DescontoDistribuidor desconto5 = Fixture.descontoDistribuidor(new BigDecimal(7), distribuidor, fornecedores4, usuarioJoao);
 		
 		save(session,desconto1,desconto2,desconto3,desconto4,desconto5);
+	}
+	
+	/*
+	 * Carrega descontos especificos da cota
+	 */
+	public static void gerarDescontoCota(Session session){
+		
+		Usuario usuario = Fixture.usuarioJoao();
+		save(session,usuario);
+		
+		Set<Fornecedor> fornecedores1 = new HashSet<Fornecedor>();
+		fornecedores1.add(fornecedorAcme);
+		DescontoCota desconto1 = Fixture.descontoCota(new BigDecimal(2), distribuidor, cotaManoel, fornecedores1, usuario);
+		
+		Set<Fornecedor> fornecedores2 = new HashSet<Fornecedor>();
+		fornecedores2.add(fornecedorAcme);
+		fornecedores2.add(fornecedorDinap);
+		DescontoCota desconto2 = Fixture.descontoCota(new BigDecimal(3), distribuidor, cotaManoel, fornecedores2, usuario);
+		
+		Set<Fornecedor> fornecedores3 = new HashSet<Fornecedor>();
+		fornecedores3.add(fornecedorAcme);
+		fornecedores3.add(fornecedorDinap);
+		fornecedores3.add(fornecedorFc);
+		DescontoCota desconto3 = Fixture.descontoCota(new BigDecimal(4), distribuidor, cotaManoelCunha, fornecedores3, usuario);
+		
+		save(session,desconto1,desconto2,desconto3);
 	}
 
 	/*
