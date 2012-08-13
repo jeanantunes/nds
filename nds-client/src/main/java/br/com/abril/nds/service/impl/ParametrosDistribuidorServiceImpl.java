@@ -202,7 +202,16 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 			if (distribuidor.getPoliticaSuspensao().getValor() != null)
 				parametrosDistribuidor.setSugereSuspensaoQuandoAtingirReais(CurrencyUtil.formatarValor(distribuidor.getPoliticaSuspensao().getValor()));
 		}
-		parametrosDistribuidor.setParcelamentoDividas(verificaCheckString(distribuidor.isParcelamentoDividas()));
+		parametrosDistribuidor.setParcelamentoDividas(distribuidor.isParcelamentoDividas());
+		
+		if(distribuidor.getDescontoCotaNegociacao().compareTo(BigDecimal.ZERO) == 0) {
+			parametrosDistribuidor.setUtilizaDesconto(false);
+			parametrosDistribuidor.setPercentualDesconto(CurrencyUtil.formatarValor(0));
+		} else {
+			parametrosDistribuidor.setUtilizaDesconto(true);
+			parametrosDistribuidor.setPercentualDesconto(CurrencyUtil.formatarValor(distribuidor.getDescontoCotaNegociacao()));
+		}
+		
 		parametrosDistribuidor.setNegociacaoAteParcelas(CurrencyUtil.formatarValorTruncado(distribuidor.getNegociacaoAteParcelas()));
 		
 		// Aprovação
@@ -516,8 +525,12 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		}
 
 		distribuidor.setPoliticaSuspensao(politicaSuspensao);
+				
+		if(parametrosDistribuidor.getUtilizaDesconto() != null && parametrosDistribuidor.getUtilizaDesconto())
+			distribuidor.setDescontoCotaNegociacao(CurrencyUtil.converterValor(parametrosDistribuidor.getPercentualDesconto()));
+		else
+			distribuidor.setDescontoCotaNegociacao(BigDecimal.ZERO);
 		
-		distribuidor.setParcelamentoDividas(verificaCheckBoolean(parametrosDistribuidor.getParcelamentoDividas()));
 		if (parametrosDistribuidor.getNegociacaoAteParcelas() !=null && !parametrosDistribuidor.getNegociacaoAteParcelas().isEmpty()) {
 			distribuidor.setNegociacaoAteParcelas(CurrencyUtil.converterValor(parametrosDistribuidor.getNegociacaoAteParcelas()).intValueExact());
 		} else {
@@ -547,6 +560,8 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 			distribuidor.setPrazoAvisoPrevioValidadeGarantia(CurrencyUtil.converterValor(parametrosDistribuidor.getPrazoAvisoPrevioValidadeGarantia()).intValueExact());
 		else
 			distribuidor.setPrazoAvisoPrevioValidadeGarantia(null);
+		
+		distribuidor.setParcelamentoDividas(parametrosDistribuidor.getParcelamentoDividas());
 		
 		List<ParametrosDistribuidorFaltasSobras> listaParametrosDistribuidorFaltasSobras = new ArrayList<ParametrosDistribuidorFaltasSobras>();
 		

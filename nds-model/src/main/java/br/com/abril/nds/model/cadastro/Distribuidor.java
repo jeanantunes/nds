@@ -254,6 +254,12 @@ public class Distribuidor {
 	@Column(name="QTD_DIAS_LIMITE_PARA_REPROG_LANCAMENTO", nullable = false)
 	private Integer qtdDiasLimiteParaReprogLancamento;
 	
+	/**
+	 * Desconto da cota para negociação (Parametros do Distribuidor / Aba de Negociação)
+	 */
+	@Column(name="DESCONTO_COTA_PARA_NEGOCIACAO")
+	private BigDecimal descontoCotaNegociacao;
+	
 	public Long getId() {
 		return id;
 	}
@@ -741,6 +747,17 @@ public class Distribuidor {
 	public void setQtdDiasLimiteParaReprogLancamento(
 			Integer qtdDiasLimiteParaReprogLancamento) {
 		this.qtdDiasLimiteParaReprogLancamento = qtdDiasLimiteParaReprogLancamento;
+	}
+
+	public BigDecimal getDescontoCotaNegociacao() {
+		return descontoCotaNegociacao;
+	}
+
+	/**
+	 * @param descontoCotaNegociacao the descontoCotaNegociacao to set
+	 */
+	public void setDescontoCotaNegociacao(BigDecimal descontoCotaNegociacao) {
+		this.descontoCotaNegociacao = descontoCotaNegociacao;
 	}
 	
 }

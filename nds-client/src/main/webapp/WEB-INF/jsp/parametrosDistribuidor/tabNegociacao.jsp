@@ -29,27 +29,35 @@
                       <td><label>Utiliza desconto da cota para negociação?</label></td>
                       <td width="27">
   
-<!-- TODO -->                    
+<script type="text/javascript">
+	function checkDescontoSelecionado() {
+		//debugger;
+		if( $('#utilizaDesconto').is(":checked") )
+			$('.percentualDesconto').show();
+		else
+			$('.percentualDesconto').hide();
+	}
+</script>
+
 <!-- Utiliza desconto na negociação -->
-<input name="parametrosDistribuidor.utilizaDesconto" type="checkbox" value="" onclick="mostraNeg();" /></td>
+<input name="parametrosDistribuidor.utilizaDesconto" id="utilizaDesconto" type="checkbox" ${parametrosDistribuidor.utilizaDesconto?"checked":""} onclick="checkDescontoSelecionado()" /></td>
 
 
-                      <td width="50"><span class="utilizaNegociacao">
+                      <td width="50"><span class="percentualDesconto" style="display:${parametrosDistribuidor.utilizaDesconto?"block":"none"}">
 
-<!-- TODO -->
 <!-- % Desconto utilizado na negociação -->                      
-<input name="parametrosDistribuidor.percentualDesconto" type="text" style="width:40px;" />
+<input name="parametrosDistribuidor.percentualDesconto" id="percentualDesconto" value="${parametrosDistribuidor.percentualDesconto}" type="text" style="width:40px;" />
 
 					
 					</span></td>
-                      <td width="36"><span class="utilizaNegociacao">%</span></td>
+                      <td width="36"><span class="percentualDesconto" style="display:${parametrosDistribuidor.utilizaDesconto?"block":"none"}">%</span></td>
                     </tr>
                     <tr>
                       <td width="267"><label>Parcelamento de Divida:</label></td>
                       <td colspan="3">
         
 <!-- Parcelamento de Divida -->              
-<input  name="parametrosDistribuidor.parcelamentoDividas" id="parcelamentoDividas" type="checkbox" ${parametrosDistribuidor.parcelamentoDividas} /></td>
+<input  name="parametrosDistribuidor.parcelamentoDividas" id="parcelamentoDividas" type="checkbox" ${parametrosDistribuidor.parcelamentoDividas?"checked":""} /></td>
 
 
                     </tr>

@@ -167,7 +167,13 @@ public class ParametrosDistribuidorVO {
 
 	private String sugereSuspensaoQuandoAtingirReais;
 
-	private String parcelamentoDividas;
+	private Boolean parcelamentoDividas;
+	
+
+	private Boolean utilizaDesconto;
+	
+
+	private String percentualDesconto;
 	
 	private String negociacaoAteParcelas;
 	
@@ -220,7 +226,7 @@ public class ParametrosDistribuidorVO {
 	private Integer chamadaoDiasSuspensao;
 	
 	private String chamadaoValorConsignado;
-
+	
 	public int getRelancamentoParciaisEmDias() {
 		return relancamentoParciaisEmDias;
 	}
@@ -779,11 +785,11 @@ public class ParametrosDistribuidorVO {
 		this.sugereSuspensaoQuandoAtingirReais = sugereSuspensaoQuandoAtingirReais;
 	}
 
-	public String getParcelamentoDividas() {
+	public Boolean getParcelamentoDividas() {
 		return parcelamentoDividas;
 	}
 
-	public void setParcelamentoDividas(String parcelamentoDividas) {
+	public void setParcelamentoDividas(Boolean parcelamentoDividas) {
 		this.parcelamentoDividas = parcelamentoDividas;
 	}
 
@@ -1003,5 +1009,33 @@ public class ParametrosDistribuidorVO {
     public void setChamadaoValorConsignado(String chamadaoValorConsignado) {
         this.chamadaoValorConsignado = chamadaoValorConsignado;
     }
+
+	/**
+	 * @return the utilizaDesconto
+	 */
+	public Boolean getUtilizaDesconto() {
+		return utilizaDesconto;
+	}
+
+	/**
+	 * @param utilizaDesconto the utilizaDesconto to set
+	 */
+	public void setUtilizaDesconto(Boolean utilizaDesconto) {
+		this.utilizaDesconto = utilizaDesconto;
+	}
+
+	/**
+	 * @return the percentualDesconto
+	 */
+	public String getPercentualDesconto() {
+		return percentualDesconto;
+	}
+
+	/**
+	 * @param percentualDesconto the percentualDesconto to set
+	 */
+	public void setPercentualDesconto(String percentualDesconto) {
+		this.percentualDesconto = percentualDesconto;
+	}
 
 }

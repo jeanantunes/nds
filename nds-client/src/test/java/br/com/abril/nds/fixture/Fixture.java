@@ -702,6 +702,8 @@ public class Fixture {
 		pad.setFaltasSobras(false);
 		distribuidor.setParametrosAprovacaoDistribuidor(pad);
 		
+		distribuidor.setDescontoCotaNegociacao(BigDecimal.ZERO);
+		
 		return distribuidor;
 	}
 
