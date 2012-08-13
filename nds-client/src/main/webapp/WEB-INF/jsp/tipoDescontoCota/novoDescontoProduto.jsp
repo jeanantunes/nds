@@ -59,7 +59,6 @@ var DESCONTO_PRODUTO = {
 		var quantidadeEdicoes = $("#quantidadeEdicoes").val();
 		var descontoProduto = $("#descontoProduto").val();
 		var descontoPredominante = $("#descontoPredominante").attr("checked") ? true : false;
-		var isCheckedEdicao = $("#mostrarEdicao").attr("checked") ? true : false;
 		var hasCotaEspecifica = document.getElementById("radioCotasEspecificas").checked;
 		
 		var data = new Array();
@@ -69,7 +68,6 @@ var DESCONTO_PRODUTO = {
 		data.push({name:'descontoProduto' , value: descontoProduto});
 		data.push({name:'quantidadeEdicoes' , value: quantidadeEdicoes});
 		data.push({name:'descontoPredominante' , value: descontoPredominante});
-		data.push({name:'isCheckedEdicao' , value: isCheckedEdicao});
 		data.push({name:'hasCotaEspecifica' , value: hasCotaEspecifica});
 		
 		$("input[id^=cotaInput]").each(function(index, value) {
