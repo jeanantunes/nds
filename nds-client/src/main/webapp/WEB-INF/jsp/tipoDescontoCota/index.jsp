@@ -159,11 +159,32 @@ var TIPO_DESCONTO = {
 			
 			TIPO_DESCONTO.exibirExportacao(false);
 			
+			if(TIPO_DESCONTO.tipoDescontoSelecionado == "PRODUTO"){
+				TIPO_DESCONTO.mostra_produto();
+			}else if (TIPO_DESCONTO.tipoDescontoSelecionado == "GERAL"){
+				TIPO_DESCONTO.mostra_geral();
+			}else{
+				TIPO_DESCONTO.mostra_especifico();
+			}
+			
 			return resultado;
 		}
 		
 		$.each(resultado.rows, function(index, row) {					
-
+			
+			if(TIPO_DESCONTO.tipoDescontoSelecionado == "PRODUTO"){
+				
+				//CHAMAR MODAL DE COTAS
+			}
+			else{
+				
+				if(row.cell.fornecedor=="Diversos"){
+					var linkFornecedores = '<a href="javascript:;" onclick="TIPO_DESCONTO.carregarFornecedoresAssociadosADesconto('+ row.cell.idTipoDesconto +');">Diversos</a>';
+						
+					row.cell.fornecedor = linkFornecedores; 
+				}
+			}
+			
 			var linkExcluir = '<a href="javascript:;" onclick="TIPO_DESCONTO.exibirDialogExclusao(' + row.cell.idTipoDesconto + ');" style="cursor:pointer">' +
 							   	 '<img title="Excluir Desconto" src="${pageContext.request.contextPath}/images/ico_excluir.gif" hspace="5" border="0px" />' +
 							   '</a>';
@@ -226,7 +247,38 @@ var TIPO_DESCONTO = {
 					}
 				},null,true
 		);
-	}		
+	},
+	
+	carregarFornecedoresAssociadosADesconto:function(idDesconto){
+		
+		var param = [{name:"idDesconto",value:idDesconto},{name:"tipoDesconto",value:TIPO_DESCONTO.tipoDescontoSelecionado}];
+		
+		$(".lstFornecedoresGrid").flexOptions({
+			url: "<c:url value='/administracao/tipoDescontoCota/obterFornecedoresAssociadosDesconto'/>",
+			params: param,
+		    newp: 1,
+		    sortorder:'asc'
+		});
+		
+		$(".lstFornecedoresGrid").flexReload();
+		
+		TIPO_DESCONTO.popup_lista_fornecedores();
+	},
+	
+	popup_lista_fornecedores:function() {
+		
+		$( "#dialog-fornecedores" ).dialog({
+			resizable: false,
+			height:'auto',
+			width:400,
+			modal: true,
+			buttons: {
+				"Fechar": function() {
+					$( this ).dialog( "close" );
+				},
+			}
+		});	      
+	}
 };
 
 </script>
@@ -247,6 +299,12 @@ var TIPO_DESCONTO = {
 	<!-- Modal de inclusão de novo desconto Produto  -->
 	<jsp:include page="novoDescontoProduto.jsp"/>
 	
+	<div id="dialog-fornecedores" title="Fornecedores" style="display:none;">
+		<fieldset style="width:350px!important;">
+    		<legend>Fornecedores</legend>
+        	<table class="lstFornecedoresGrid"></table>
+    	</fieldset>
+	</div>
 
    <div class="container">
     
@@ -550,6 +608,20 @@ var TIPO_DESCONTO = {
 			height : 255
 		});
 		
-		
+		$(".lstFornecedoresGrid").flexigrid({
+			dataType : 'json',
+			colModel : [ {
+				display : 'Nome',
+				name : 'value',
+				width : 315,
+				sortable : true,
+				align : 'left'
+			}],
+			width : 350,
+			height : 155,
+			sortname : "value",
+			sortorder : "asc",
+		});
+	
 </script>
 </body>

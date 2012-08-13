@@ -327,11 +327,40 @@ public class DescontoServiceImpl implements DescontoService {
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, mensagens));
 		}
 	}
+
+	@Override
+	@Transactional(readOnly=true)
+	public List<Fornecedor> busacarFornecedoresAssociadosADesconto(Long idDesconto, 
+																	br.com.abril.nds.model.cadastro.desconto.TipoDesconto tipoDesconto) {
+		List<Fornecedor> listaFornecedores = new ArrayList<Fornecedor>();
+		
+		switch (tipoDesconto) {
+		case GERAL :
+			
+			DescontoDistribuidor desconto = descontoDistribuidorRepository.buscarPorId(idDesconto);
+			
+			if(desconto!= null){
+				listaFornecedores.addAll(desconto.getFornecedores());
+			}
+			break;
+			
+		case ESPECIFICO :
+			
+			DescontoCota descontoCota = descontoCotaRepository.buscarPorId(idDesconto);
+			
+			if(descontoCota!= null){
+				listaFornecedores.addAll(descontoCota.getFornecedores());
+			}
+			break;
+		}
+		
+		return listaFornecedores;
+	}
 	
 	private Set<Cota> obterCotas(List<Integer> idsCotas, boolean isTodasCotas) {
-		
+
 		Set<Cota> cotas = null;
-		
+
 		if (idsCotas != null) {
 
 			cotas = new LinkedHashSet<Cota>();
@@ -347,7 +376,7 @@ public class DescontoServiceImpl implements DescontoService {
 
 			cotas = new HashSet<Cota>(this.cotaRepository.buscarTodos());
 		}
-		
+
 		return cotas;
 	}
 }
