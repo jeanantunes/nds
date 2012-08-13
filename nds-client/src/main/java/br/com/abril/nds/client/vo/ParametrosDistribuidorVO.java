@@ -105,37 +105,53 @@ public class ParametrosDistribuidorVO {
 	private String utilizaProcuracaoEntregadores;
 
 	private String informacoesComplementaresProcuracao;
+	
+	/**
+	 * Distribuidor utiliza termo de adesão para entrega em bancas
+	 */
+	private boolean utilizaTermoAdesaoEntregaBancas;
+	
+	/**
+	 * Complemento termo de adesão entrega em bancas
+	 */
+	private String complementoTermoAdesaoEntregaBancas;
 
-	// Frame Garantia
-	private String utilizaGarantiaPdv;
+	//Frame Garantia
+	private boolean utilizaGarantiaPdv;
 	
-	private String chequeCalcao;
+	private boolean utilizaChequeCaucao;
+
+	private Integer validadeChequeCaucao;
 	
-	private String chequeCalcaoValor;
+	private boolean utilizaFiador;
 	
-	private String fiador;
+	private Integer validadeFiador;
 	
-	private String fiadorValor;
+	private boolean utilizaImovel;
 	
-	private String imovel;
+	private Integer validadeImovel;
 	
-	private String imovelValor;
+	private boolean utilizaCaucaoLiquida;
 	
-	private String caucaoLiquida;
+	private Integer validadeCaucaoLiquida;
 	
-	private String caucaoLiquidaValor;
+	private boolean utilizaNotaPromissoria;
 	
-	private String notaPromissoria;
+	private Integer validadeNotaPromissoria;
 	
-	private String notaPromissoriaValor;
+	private boolean utilizaAntecedenciaValidade;
 	
-	private String antecedenciaValidade;
+	private Integer validadeAntecedenciaValidade;
 	
-	private String antecedenciaValidadeValor;
+	/**
+	 * Distribuidor utiliza garantia "OUTROS"
+	 */
+	private boolean utilizaOutros;
 	
-	private String indicadorReajusteCaucaoLiquida;
-	
-	private String indicadorReajusteCaucaoLiquidaValor;
+	/**
+	 * Validade da garantia "OUTROS" em meses
+	 */
+	private Integer validadeOutros;
 	
 	// Aba Negociação
 	// Frame Negociação de Dívidas
@@ -524,130 +540,242 @@ public class ParametrosDistribuidorVO {
 			String informacoesComplementaresProcuracao) {
 		this.informacoesComplementaresProcuracao = informacoesComplementaresProcuracao;
 	}
+	
+	/**
+     * @return the utilizaTermoAdesaoEntregaBancas
+     */
+    public boolean isUtilizaTermoAdesaoEntregaBancas() {
+        return utilizaTermoAdesaoEntregaBancas;
+    }
 
-	public String getUtilizaGarantiaPdv() {
+    /**
+     * @param utilizaTermoAdesaoEntregaBancas the utilizaTermoAdesaoEntregaBancas to set
+     */
+    public void setUtilizaTermoAdesaoEntregaBancas(
+            boolean utilizaTermoAdesaoEntregaBancas) {
+        this.utilizaTermoAdesaoEntregaBancas = utilizaTermoAdesaoEntregaBancas;
+    }
+
+    /**
+     * @return the complementoTermoAdesaoEntregaBancas
+     */
+    public String getComplementoTermoAdesaoEntregaBancas() {
+        return complementoTermoAdesaoEntregaBancas;
+    }
+
+    /**
+     * @param complementoTermoAdesaoEntregaBancas the complementoTermoAdesaoEntregaBancas to set
+     */
+    public void setComplementoTermoAdesaoEntregaBancas(
+            String complementoTermoAdesaoEntregaBancas) {
+        this.complementoTermoAdesaoEntregaBancas = complementoTermoAdesaoEntregaBancas;
+    }
+
+    public boolean getUtilizaGarantiaPdv() {
 		return utilizaGarantiaPdv;
 	}
 
-	public void setUtilizaGarantiaPdv(String utilizaGarantiaPdv) {
+	public void setUtilizaGarantiaPdv(boolean utilizaGarantiaPdv) {
 		this.utilizaGarantiaPdv = utilizaGarantiaPdv;
 	}
+	
+	/**
+     * @return the utilizaChequeCaucao
+     */
+    public boolean isUtilizaChequeCaucao() {
+        return utilizaChequeCaucao;
+    }
 
-	public String getChequeCalcao() {
-		return chequeCalcao;
-	}
+    /**
+     * @param utilizaChequeCaucao the utilizaChequeCaucao to set
+     */
+    public void setUtilizaChequeCaucao(boolean utilizaChequeCaucao) {
+        this.utilizaChequeCaucao = utilizaChequeCaucao;
+    }
 
-	public void setChequeCalcao(String chequeCalcao) {
-		this.chequeCalcao = chequeCalcao;
-	}
+    /**
+     * @return the validadeChequeCaucao
+     */
+    public Integer getValidadeChequeCaucao() {
+        return validadeChequeCaucao;
+    }
 
-	public String getChequeCalcaoValor() {
-		return chequeCalcaoValor;
-	}
+    /**
+     * @param validadeCheque the validadeChequeCaucao to set
+     */
+    public void setValidadeChequeCaucao(Integer validadeChequeCaucao) {
+        this.validadeChequeCaucao = validadeChequeCaucao;
+    }
 
-	public void setChequeCalcaoValor(String chequeCalcaoValor) {
-		this.chequeCalcaoValor = chequeCalcaoValor;
-	}
+    /**
+     * @return the utilizaFiador
+     */
+    public boolean isUtilizaFiador() {
+        return utilizaFiador;
+    }
 
-	public String getFiador() {
-		return fiador;
-	}
+    /**
+     * @param utilizaFiador the utilizaFiador to set
+     */
+    public void setUtilizaFiador(boolean utilizaFiador) {
+        this.utilizaFiador = utilizaFiador;
+    }
 
-	public void setFiador(String fiador) {
-		this.fiador = fiador;
-	}
+    /**
+     * @return the validadeFiador
+     */
+    public Integer getValidadeFiador() {
+        return validadeFiador;
+    }
 
-	public String getFiadorValor() {
-		return fiadorValor;
-	}
+    /**
+     * @param validadeFiador the validadeFiador to set
+     */
+    public void setValidadeFiador(Integer validadeFiador) {
+        this.validadeFiador = validadeFiador;
+    }
 
-	public void setFiadorValor(String fiadorValor) {
-		this.fiadorValor = fiadorValor;
-	}
+    /**
+     * @return the utilizaImovel
+     */
+    public boolean isUtilizaImovel() {
+        return utilizaImovel;
+    }
 
-	public String getImovel() {
-		return imovel;
-	}
+    /**
+     * @param utilizaImovel the utilizaImovel to set
+     */
+    public void setUtilizaImovel(boolean utilizaImovel) {
+        this.utilizaImovel = utilizaImovel;
+    }
 
-	public void setImovel(String imovel) {
-		this.imovel = imovel;
-	}
+    /**
+     * @return the validadeImovel
+     */
+    public Integer getValidadeImovel() {
+        return validadeImovel;
+    }
 
-	public String getImovelValor() {
-		return imovelValor;
-	}
+    /**
+     * @param validadeImovel the validadeImovel to set
+     */
+    public void setValidadeImovel(Integer validadeImovel) {
+        this.validadeImovel = validadeImovel;
+    }
 
-	public void setImovelValor(String imovelValor) {
-		this.imovelValor = imovelValor;
-	}
+    /**
+     * @return the utilizaCaucaoLiquida
+     */
+    public boolean isUtilizaCaucaoLiquida() {
+        return utilizaCaucaoLiquida;
+    }
 
-	public String getCaucaoLiquida() {
-		return caucaoLiquida;
-	}
+    /**
+     * @param utilizaCaucaoLiquida the utilizaCaucaoLiquida to set
+     */
+    public void setUtilizaCaucaoLiquida(boolean utilizaCaucaoLiquida) {
+        this.utilizaCaucaoLiquida = utilizaCaucaoLiquida;
+    }
 
-	public void setCaucaoLiquida(String caucaoLiquida) {
-		this.caucaoLiquida = caucaoLiquida;
-	}
+    /**
+     * @return the validadeCaucaoLiquida
+     */
+    public Integer getValidadeCaucaoLiquida() {
+        return validadeCaucaoLiquida;
+    }
 
-	public String getCaucaoLiquidaValor() {
-		return caucaoLiquidaValor;
-	}
+    /**
+     * @param validadeCaucaoLiquida the validadeCaucaoLiquida to set
+     */
+    public void setValidadeCaucaoLiquida(Integer validadeCaucaoLiquida) {
+        this.validadeCaucaoLiquida = validadeCaucaoLiquida;
+    }
 
-	public void setCaucaoLiquidaValor(String caucaoLiquidaValor) {
-		this.caucaoLiquidaValor = caucaoLiquidaValor;
-	}
+    /**
+     * @return the utilizaNotaPromissoria
+     */
+    public boolean isUtilizaNotaPromissoria() {
+        return utilizaNotaPromissoria;
+    }
 
-	public String getNotaPromissoria() {
-		return notaPromissoria;
-	}
+    /**
+     * @param utilizaNotaPromissoria the utilizaNotaPromissoria to set
+     */
+    public void setUtilizaNotaPromissoria(boolean utilizaNotaPromissoria) {
+        this.utilizaNotaPromissoria = utilizaNotaPromissoria;
+    }
 
-	public void setNotaPromissoria(String notaPromissoria) {
-		this.notaPromissoria = notaPromissoria;
-	}
+    /**
+     * @return the validadeNotaPromissoria
+     */
+    public Integer getValidadeNotaPromissoria() {
+        return validadeNotaPromissoria;
+    }
 
-	public String getNotaPromissoriaValor() {
-		return notaPromissoriaValor;
-	}
+    /**
+     * @param validadeNotaPromissoria the validadeNotaPromissoria to set
+     */
+    public void setValidadeNotaPromissoria(Integer validadeNotaPromissoria) {
+        this.validadeNotaPromissoria = validadeNotaPromissoria;
+    }
 
-	public void setNotaPromissoriaValor(String notaPromissoriaValor) {
-		this.notaPromissoriaValor = notaPromissoriaValor;
-	}
+    /**
+     * @return the utilizaAntecedenciaValidade
+     */
+    public boolean isUtilizaAntecedenciaValidade() {
+        return utilizaAntecedenciaValidade;
+    }
 
-	public String getAntecedenciaValidade() {
-		return antecedenciaValidade;
-	}
+    /**
+     * @param utilizaAntecedenciaValidade the utilizaAntecedenciaValidade to set
+     */
+    public void setUtilizaAntecedenciaValidade(boolean utilizaAntecedenciaValidade) {
+        this.utilizaAntecedenciaValidade = utilizaAntecedenciaValidade;
+    }
 
-	public void setAntecedenciaValidade(String antecedenciaValidade) {
-		this.antecedenciaValidade = antecedenciaValidade;
-	}
+    /**
+     * @return the validadeAntecedenciaValidade
+     */
+    public Integer getValidadeAntecedenciaValidade() {
+        return validadeAntecedenciaValidade;
+    }
 
-	public String getAntecedenciaValidadeValor() {
-		return antecedenciaValidadeValor;
-	}
+    /**
+     * @param validadeAntecedenciaValidade the validadeAntecedenciaValidade to set
+     */
+    public void setValidadeAntecedenciaValidade(Integer validadeAntecedenciaValidade) {
+        this.validadeAntecedenciaValidade = validadeAntecedenciaValidade;
+    }
 
-	public void setAntecedenciaValidadeValor(String antecedenciaValidadeValor) {
-		this.antecedenciaValidadeValor = antecedenciaValidadeValor;
-	}
+    /**
+     * @return the utilizaOutros
+     */
+    public boolean isUtilizaOutros() {
+        return utilizaOutros;
+    }
 
-	public String getIndicadorReajusteCaucaoLiquida() {
-		return indicadorReajusteCaucaoLiquida;
-	}
+    /**
+     * @param utilizaOutros the utilizaOutros to set
+     */
+    public void setUtilizaOutros(boolean utilizaOutros) {
+        this.utilizaOutros = utilizaOutros;
+    }
 
-	public void setIndicadorReajusteCaucaoLiquida(
-			String indicadorReajusteCaucaoLiquida) {
-		this.indicadorReajusteCaucaoLiquida = indicadorReajusteCaucaoLiquida;
-	}
+    /**
+     * @return the validadeOutros
+     */
+    public Integer getValidadeOutros() {
+        return validadeOutros;
+    }
 
-	public String getIndicadorReajusteCaucaoLiquidaValor() {
-		return indicadorReajusteCaucaoLiquidaValor;
-	}
+    /**
+     * @param validadeOutros the validadeOutros to set
+     */
+    public void setValidadeOutros(Integer validadeOutros) {
+        this.validadeOutros = validadeOutros;
+    }
 
-	public void setIndicadorReajusteCaucaoLiquidaValor(
-			String indicadorReajusteCaucaoLiquidaValor) {
-		this.indicadorReajusteCaucaoLiquidaValor = indicadorReajusteCaucaoLiquidaValor;
-	}
-
-	public String getSugereSuspensaoQuandoAtingirBoletos() {
+    public String getSugereSuspensaoQuandoAtingirBoletos() {
 		return sugereSuspensaoQuandoAtingirBoletos;
 	}
 

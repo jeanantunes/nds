@@ -169,29 +169,32 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		parametrosDistribuidor.setInformacoesComplementaresProcuracao(distribuidor.getInformacoesComplementaresProcuracao());
 		
 		// Garantia
-		parametrosDistribuidor.setUtilizaGarantiaPdv(verificaCheckString(distribuidor.isUtilizaGarantiaPdv()));
+		parametrosDistribuidor.setUtilizaGarantiaPdv(distribuidor.isUtilizaGarantiaPdv());
 		
 		for (TipoGarantiaAceita tipoGarantiaAceita : distribuidor.getTiposGarantiasAceita()) {
 			if (tipoGarantiaAceita.isUtilizar()) {
 				if (tipoGarantiaAceita.getTipoGarantia() == TipoGarantia.CHEQUE_CAUCAO) {
-					parametrosDistribuidor.setChequeCalcao(CHECKED);
-					parametrosDistribuidor.setChequeCalcaoValor(tipoGarantiaAceita.getValor());
+					parametrosDistribuidor.setUtilizaChequeCaucao(true);
+					parametrosDistribuidor.setValidadeChequeCaucao(tipoGarantiaAceita.getValor());
 				} else if (tipoGarantiaAceita.getTipoGarantia() == TipoGarantia.FIADOR) {
-					parametrosDistribuidor.setFiador(CHECKED);
-					parametrosDistribuidor.setFiadorValor(tipoGarantiaAceita.getValor());
+					parametrosDistribuidor.setUtilizaFiador(true);
+					parametrosDistribuidor.setValidadeFiador(tipoGarantiaAceita.getValor());
 				} else if (tipoGarantiaAceita.getTipoGarantia() == TipoGarantia.IMOVEL) {
-					parametrosDistribuidor.setImovel(CHECKED);
-					parametrosDistribuidor.setImovelValor(tipoGarantiaAceita.getValor());
+					parametrosDistribuidor.setUtilizaImovel(true);
+					parametrosDistribuidor.setValidadeImovel(tipoGarantiaAceita.getValor());
 				} else if (tipoGarantiaAceita.getTipoGarantia() == TipoGarantia.CAUCAO_LIQUIDA) {
-					parametrosDistribuidor.setCaucaoLiquida(CHECKED);
-					parametrosDistribuidor.setCaucaoLiquidaValor(tipoGarantiaAceita.getValor());
+					parametrosDistribuidor.setUtilizaCaucaoLiquida(true);
+					parametrosDistribuidor.setValidadeCaucaoLiquida(tipoGarantiaAceita.getValor());
 				} else if (tipoGarantiaAceita.getTipoGarantia() == TipoGarantia.NOTA_PROMISSORIA) {
-					parametrosDistribuidor.setNotaPromissoria(CHECKED);
-					parametrosDistribuidor.setNotaPromissoriaValor(tipoGarantiaAceita.getValor());
+					parametrosDistribuidor.setUtilizaNotaPromissoria(true);
+					parametrosDistribuidor.setValidadeNotaPromissoria(tipoGarantiaAceita.getValor());
 				} else if (tipoGarantiaAceita.getTipoGarantia() == TipoGarantia.ANTECEDENCIA_VALIDADE) {
-					parametrosDistribuidor.setAntecedenciaValidade(CHECKED);
-					parametrosDistribuidor.setAntecedenciaValidadeValor(tipoGarantiaAceita.getValor());
-				}
+					parametrosDistribuidor.setUtilizaAntecedenciaValidade(true);
+					parametrosDistribuidor.setValidadeAntecedenciaValidade(tipoGarantiaAceita.getValor());
+				}  else if (tipoGarantiaAceita.getTipoGarantia() == TipoGarantia.OUTROS) {
+                    parametrosDistribuidor.setUtilizaOutros(true);
+                    parametrosDistribuidor.setValidadeOutros(tipoGarantiaAceita.getValor());
+                }
 			}
 		}
 		
@@ -433,61 +436,51 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 
 		List<TipoGarantiaAceita> listaTipoGarantiaAceitas = new ArrayList<TipoGarantiaAceita>();
 
-		distribuidor.setUtilizaGarantiaPdv(verificaCheckBoolean(parametrosDistribuidor.getUtilizaGarantiaPdv()));
+		distribuidor.setUtilizaGarantiaPdv(parametrosDistribuidor.getUtilizaGarantiaPdv());
 		
+		//Garantias Aceitas
+		//TODO: Refatorar
 		TipoGarantiaAceita tipoGarantiaAceitaChequeCaucao = new TipoGarantiaAceita();
 		tipoGarantiaAceitaChequeCaucao.setTipoGarantia(TipoGarantia.CHEQUE_CAUCAO);
-		tipoGarantiaAceitaChequeCaucao.setValor(parametrosDistribuidor.getChequeCalcaoValor());
-		if (verificaCheckBoolean(parametrosDistribuidor.getChequeCalcao()))
-			tipoGarantiaAceitaChequeCaucao.setUtilizar(true);
-		else
-			tipoGarantiaAceitaChequeCaucao.setUtilizar(false);
+		tipoGarantiaAceitaChequeCaucao.setValor(parametrosDistribuidor.getValidadeChequeCaucao());
+		tipoGarantiaAceitaChequeCaucao.setUtilizar(parametrosDistribuidor.isUtilizaChequeCaucao());
 		listaTipoGarantiaAceitas.add(tipoGarantiaAceitaChequeCaucao);
 
 		TipoGarantiaAceita tipoGarantiaAceitaFiador = new TipoGarantiaAceita();
 		tipoGarantiaAceitaFiador.setTipoGarantia(TipoGarantia.FIADOR);
-		tipoGarantiaAceitaFiador.setValor(parametrosDistribuidor.getFiadorValor());
-		if (verificaCheckBoolean(parametrosDistribuidor.getFiador()))
-			tipoGarantiaAceitaFiador.setUtilizar(true);
-		else
-			tipoGarantiaAceitaFiador.setUtilizar(false);
+		tipoGarantiaAceitaFiador.setValor(parametrosDistribuidor.getValidadeFiador());
+		tipoGarantiaAceitaFiador.setUtilizar(parametrosDistribuidor.isUtilizaFiador());
 		listaTipoGarantiaAceitas.add(tipoGarantiaAceitaFiador);
 
 		TipoGarantiaAceita tipoGarantiaAceitaImovel = new TipoGarantiaAceita();
 		tipoGarantiaAceitaImovel.setTipoGarantia(TipoGarantia.IMOVEL);
-		tipoGarantiaAceitaImovel.setValor(parametrosDistribuidor.getImovelValor());
-		if (verificaCheckBoolean(parametrosDistribuidor.getImovel()))
-			tipoGarantiaAceitaImovel.setUtilizar(true);
-		else
-			tipoGarantiaAceitaImovel.setUtilizar(false);
+		tipoGarantiaAceitaImovel.setValor(parametrosDistribuidor.getValidadeImovel());
+		tipoGarantiaAceitaImovel.setUtilizar(parametrosDistribuidor.isUtilizaImovel());
 		listaTipoGarantiaAceitas.add(tipoGarantiaAceitaImovel);
 
 		TipoGarantiaAceita tipoGarantiaAceitaCaucaoLiquida = new TipoGarantiaAceita();
 		tipoGarantiaAceitaCaucaoLiquida.setTipoGarantia(TipoGarantia.CAUCAO_LIQUIDA);
-		tipoGarantiaAceitaCaucaoLiquida.setValor(parametrosDistribuidor.getCaucaoLiquidaValor());
-		if (verificaCheckBoolean(parametrosDistribuidor.getCaucaoLiquida()))
-			tipoGarantiaAceitaCaucaoLiquida.setUtilizar(true);
-		else
-			tipoGarantiaAceitaCaucaoLiquida.setUtilizar(false);
+		tipoGarantiaAceitaCaucaoLiquida.setValor(parametrosDistribuidor.getValidadeCaucaoLiquida());
+		tipoGarantiaAceitaCaucaoLiquida.setUtilizar(parametrosDistribuidor.isUtilizaCaucaoLiquida());
 		listaTipoGarantiaAceitas.add(tipoGarantiaAceitaCaucaoLiquida);
 
 		TipoGarantiaAceita tipoGarantiaAceitaNotaPromissoria = new TipoGarantiaAceita();
 		tipoGarantiaAceitaNotaPromissoria.setTipoGarantia(TipoGarantia.NOTA_PROMISSORIA);
-		tipoGarantiaAceitaNotaPromissoria.setValor(parametrosDistribuidor.getNotaPromissoriaValor());
-		if (verificaCheckBoolean(parametrosDistribuidor.getNotaPromissoria()))
-			tipoGarantiaAceitaNotaPromissoria.setUtilizar(true);
-		else
-			tipoGarantiaAceitaNotaPromissoria.setUtilizar(false);
+		tipoGarantiaAceitaNotaPromissoria.setValor(parametrosDistribuidor.getValidadeNotaPromissoria());
+		tipoGarantiaAceitaNotaPromissoria.setUtilizar(parametrosDistribuidor.isUtilizaNotaPromissoria());
 		listaTipoGarantiaAceitas.add(tipoGarantiaAceitaNotaPromissoria);
 
 		TipoGarantiaAceita tipoGarantiaAceitaAntecedenciaValidade = new TipoGarantiaAceita();
 		tipoGarantiaAceitaAntecedenciaValidade.setTipoGarantia(TipoGarantia.ANTECEDENCIA_VALIDADE);
-		tipoGarantiaAceitaAntecedenciaValidade.setValor(parametrosDistribuidor.getAntecedenciaValidadeValor());
-		if (verificaCheckBoolean(parametrosDistribuidor.getAntecedenciaValidade()))
-			tipoGarantiaAceitaAntecedenciaValidade.setUtilizar(true);
-		else
-			tipoGarantiaAceitaAntecedenciaValidade.setUtilizar(false);
+		tipoGarantiaAceitaAntecedenciaValidade.setValor(parametrosDistribuidor.getValidadeAntecedenciaValidade());
+		tipoGarantiaAceitaAntecedenciaValidade.setUtilizar(parametrosDistribuidor.isUtilizaAntecedenciaValidade());
 		listaTipoGarantiaAceitas.add(tipoGarantiaAceitaAntecedenciaValidade);
+		
+		TipoGarantiaAceita tipoGarantiaOutros = new TipoGarantiaAceita();
+		tipoGarantiaOutros.setTipoGarantia(TipoGarantia.OUTROS);
+		tipoGarantiaOutros.setValor(parametrosDistribuidor.getValidadeOutros());
+		tipoGarantiaOutros.setUtilizar(parametrosDistribuidor.isUtilizaOutros());
+        listaTipoGarantiaAceitas.add(tipoGarantiaOutros);
 
 		for (TipoGarantiaAceita tipoGarantiaAceita : listaTipoGarantiaAceitas) {
 			tipoGarantiaAceita.setDistribuidor(distribuidor);
