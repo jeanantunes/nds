@@ -247,6 +247,7 @@ public class ResumoExpedicaoController {
 			
 			throw new ValidacaoException(TipoMensagem.ERROR, "Tipo de consulta inválido!");
 		}
+		result.nothing();
 	}
 	
 	private void exportarResumoExpedicaoProduto(FileType fileType, 
