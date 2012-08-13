@@ -13,6 +13,8 @@ public class RecebimentoFisicoDTO implements Serializable {
 	
 	private static final long serialVersionUID = -580201558784688016L;
 
+	private int lineId;
+	
 	private Long idItemNota;
 	
 	private Long idItemRecebimentoFisico;
@@ -27,13 +29,30 @@ public class RecebimentoFisicoDTO implements Serializable {
 	
 	private BigDecimal precoDesconto;
 	
+	private int pacotePadrao;
+	
+	/*
+	 * Campo referente a quantidade deste item na nota.
+	 */
 	private BigInteger repartePrevisto;
 	
+	/*
+	 * Campo referente a quantidade recebimento fisico.
+	 * 
+	 * O calculo do valor deste campo é igual a:
+	 * 	(qtdPacote * peb) + qtdExemplar
+	 */
 	private BigInteger qtdFisico;
 	
+	/*
+	 * Quantidade de pacotes. 
+	 */
 	private BigInteger qtdPacote;
 	
-	private BigInteger qtdExemplares;
+	/*
+	 * Campo referente a quantidade de quebra.
+	 */
+	private BigInteger qtdExemplar;
 	
 	private BigInteger diferenca;
 	
@@ -51,8 +70,6 @@ public class RecebimentoFisicoDTO implements Serializable {
 	
 	private TipoLancamento tipoLancamento;	
 	
-	private int lineId;
-	
 	public RecebimentoFisicoDTO() {}
 	
 	public RecebimentoFisicoDTO(
@@ -66,6 +83,7 @@ public class RecebimentoFisicoDTO implements Serializable {
 			BigDecimal precoCapa, 
 			BigInteger repartePrevisto, 
 			BigInteger qtdFisico,
+			int pacotePadrao,
 			Date dataLancamento,
 			Date dataRecolhimento,
 			TipoLancamento tipoLancamento,			
@@ -82,11 +100,10 @@ public class RecebimentoFisicoDTO implements Serializable {
 		this.precoCapa = precoCapa;
 		this.repartePrevisto = repartePrevisto;
 		this.qtdFisico = qtdFisico;
-		
+		this.pacotePadrao = pacotePadrao;		
 		this.dataLancamento = dataLancamento;
 		this.dataRecolhimento = dataRecolhimento;
-		this.tipoLancamento = tipoLancamento;
-		
+		this.tipoLancamento = tipoLancamento;		
 		this.diferenca = diferenca;
 		this.tipoDiferenca = tipoDiferenca;
 		this.origemItemNota = origemItemNota;
@@ -173,12 +190,12 @@ public class RecebimentoFisicoDTO implements Serializable {
 		this.qtdPacote = qtdPacote;
 	}
 
-	public BigInteger getQtdExemplares() {
-		return qtdExemplares;
+	public BigInteger getQtdExemplar() {
+		return qtdExemplar;
 	}
 
-	public void setQtdExemplares(BigInteger qtdExemplares) {
-		this.qtdExemplares = qtdExemplares;
+	public void setQtdExemplar(BigInteger qtdExemplar) {
+		this.qtdExemplar = qtdExemplar;
 	}
 
 	public BigInteger getDiferenca() {
@@ -246,6 +263,14 @@ public class RecebimentoFisicoDTO implements Serializable {
 		this.tipoLancamento = tipoLancamento;
 	}
 
+	public int getPacotePadrao() {
+		return pacotePadrao;
+	}
+
+	public void setPacotePadrao(int pacotePadrao) {
+		this.pacotePadrao = pacotePadrao;
+	}
+
 	public int getLineId() {
 		return lineId;
 	}
@@ -254,6 +279,9 @@ public class RecebimentoFisicoDTO implements Serializable {
 		this.lineId = lineId;
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -262,6 +290,9 @@ public class RecebimentoFisicoDTO implements Serializable {
 		return result;
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
@@ -279,6 +310,7 @@ public class RecebimentoFisicoDTO implements Serializable {
 		}
 		return true;
 	}
+
 	
 	
 

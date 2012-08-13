@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.client.vo.RecebimentoFisicoVO;
 import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.dto.CabecalhoNotaDTO;
 import br.com.abril.nds.dto.RecebimentoFisicoDTO;
@@ -34,17 +35,13 @@ import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
 import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
-import br.com.abril.nds.repository.ItemNotaFiscalEntradaRepository;
-import br.com.abril.nds.repository.ItemRecebimentoFisicoRepository;
 import br.com.abril.nds.service.CFOPService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.NotaFiscalEntradaService;
 import br.com.abril.nds.service.PessoaJuridicaService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
-import br.com.abril.nds.service.ProdutoService;
 import br.com.abril.nds.service.RecebimentoFisicoService;
 import br.com.abril.nds.service.TipoNotaFiscalService;
-import br.com.abril.nds.util.CellModel;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.TableModel;
@@ -68,19 +65,14 @@ public class RecebimentoFisicoController {
 	
 	private static final String ITENS_NOTA_FISCAL = "itensNotaFiscal";
 	
+	private static final String IND_SIM = "S";
+	
+	private static final String IND_NAO = "N";
+	
 	private static final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 	
 	@Autowired
 	private FornecedorService fornecedorService;
-	
-	@Autowired
-	private ProdutoService produtoService;
-	
-	@Autowired
-	private ItemRecebimentoFisicoRepository itemRecebimentoFisicoRepository;
-	
-	@Autowired
-	private ItemNotaFiscalEntradaRepository itemNotaFiscalEntradaRepository;
 	
 	@Autowired
 	private NotaFiscalEntradaService notaFiscalService;
@@ -143,7 +135,9 @@ public class RecebimentoFisicoController {
 		PessoaJuridica pessoaJuridica = pessoaJuridicaService.buscarPorCnpj(cnpj);
 		
 		if(pessoaJuridica != null){
-			result.use(Results.json()).from(pessoaJuridica, "result").serialize();			 
+			
+			result.use(Results.json()).from(pessoaJuridica, "result").serialize();
+			
 		}else{
 			
 			throw new ValidacaoException(TipoMensagem.ERROR,"CNPJ não encontrado!");
@@ -158,7 +152,7 @@ public class RecebimentoFisicoController {
 	@Post
 	public void refreshListaItemRecebimentoFisico() {
 		
-		if( getItensRecebimentoFisicoFromSession() == null) {
+		if( getItensRecebimentoFisicoFromSession() == null ) {
 			setItensRecebimentoFisicoToSession(new LinkedList<RecebimentoFisicoDTO>());
 		}
 		
@@ -170,8 +164,15 @@ public class RecebimentoFisicoController {
 		
 		boolean indRecebimentoFisicoConfirmado = verificarRecebimentoFisicoConfirmado(notaFiscal.getId());
 		
-		TableModel<CellModel> tableModel =  obterTableModelParaListItensNotaRecebimento(getItensRecebimentoFisicoFromSession(), indNotaInterface, indRecebimentoFisicoConfirmado);
+		List<CellModelKeyValue<RecebimentoFisicoVO>> rows = obterListaCellModelKeyValue(getItensRecebimentoFisicoFromSession(), indNotaInterface, indRecebimentoFisicoConfirmado);
 		
+		TableModel<CellModelKeyValue<RecebimentoFisicoVO>> tableModel = 
+				new TableModel<CellModelKeyValue<RecebimentoFisicoVO>>();
+
+		tableModel.setRows(rows);
+		tableModel.setTotal(rows.size());
+		tableModel.setPage(1);
+
 		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
 		
 	}
@@ -217,13 +218,17 @@ public class RecebimentoFisicoController {
 		
 		boolean indNotaInterface = Origem.INTERFACE.equals(notaFiscal.getOrigem());	
 		
-		ValidacaoVO validacao = new ValidacaoVO();
-		
 		boolean indRecebimentoFisicoConfirmado = verificarRecebimentoFisicoConfirmado(idNotaFiscal);
 		
-				
-		TableModel<CellModel> tableModel =  obterTableModelParaListItensNotaRecebimento(getItensRecebimentoFisicoFromSession(), indNotaInterface, indRecebimentoFisicoConfirmado);
+		List<CellModelKeyValue<RecebimentoFisicoVO>> rows = obterListaCellModelKeyValue(getItensRecebimentoFisicoFromSession(), indNotaInterface, indRecebimentoFisicoConfirmado);
 		
+		TableModel<CellModelKeyValue<RecebimentoFisicoVO>> tableModel = 
+				new TableModel<CellModelKeyValue<RecebimentoFisicoVO>>();
+
+		tableModel.setRows(rows);
+		tableModel.setTotal(rows.size());
+		tableModel.setPage(1);
+
 		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
 				
 	}
@@ -481,8 +486,11 @@ public class RecebimentoFisicoController {
 		recebimentoFisicoService.apagarItemRecebimentoItemNota(apagarReceb);
 		
 		List<String> msgs = new ArrayList<String>();
+		
 		msgs.add("Item Nota fiscal removido com sucesso.");
+		
 		ValidacaoVO validacao = new ValidacaoVO(TipoMensagem.SUCCESS, msgs);
+		
 		result.use(Results.json()).from(validacao, "result").include("listaMensagens").serialize();
 		
 	}
@@ -505,12 +513,18 @@ public class RecebimentoFisicoController {
 		if(itensRecebimento != null) {
 			
 			for(RecebimentoFisicoDTO itemFromForm : itensRecebimento) {
-
+				
+				int formItemLineId = itemFromForm.getLineId();
+				
 				for(RecebimentoFisicoDTO itemFromSession : itensRecebimentoFisicoFromSession) {
 					
-					if(itemFromForm.equals(itemFromSession)) {
+					int sessionItemLineId = itemFromSession.getLineId();
+					
+					if(formItemLineId == sessionItemLineId) {
 						
-						itemFromSession.setQtdFisico(itemFromForm.getQtdFisico());
+						itemFromSession.setQtdPacote(itemFromForm.getQtdPacote());
+						
+						itemFromSession.setQtdExemplar(itemFromForm.getQtdExemplar());
 						
 						break;
 						
@@ -532,21 +546,13 @@ public class RecebimentoFisicoController {
 	@Post
 	public void salvarDadosItensDaNotaFiscal(List<RecebimentoFisicoDTO> itensRecebimento) {
 		
-		
 		NotaFiscalEntrada notaFiscalEntrada = getNotaFiscalFromSession();
 		
 		if(Origem.INTERFACE.equals(notaFiscalEntrada.getOrigem())){
-			
-			//validarItensRecebimento(itensRecebimento);
 			atualizarItensRecebimentoEmSession(itensRecebimento);
-		
 		}
-	
-		//TODO: capturar usuario logado
-		Usuario usuarioLogado = new Usuario();
-		usuarioLogado.setId(1L);
 		
-		recebimentoFisicoService.inserirDadosRecebimentoFisico(usuarioLogado, getNotaFiscalFromSession(), getItensRecebimentoFisicoFromSession(), new Date());
+		recebimentoFisicoService.inserirDadosRecebimentoFisico(getUsuarioLogado(), getNotaFiscalFromSession(), getItensRecebimentoFisicoFromSession(), new Date());
 		
 		List<String> msgs = new ArrayList<String>();
 		msgs.add("Itens salvos com sucesso.");
@@ -751,87 +757,115 @@ public class RecebimentoFisicoController {
 
 	}
 	
-	/**
-	 * Obtem um tableModel com os dados da lista de itens de recebimento fisico.
-	 * 
-	 * @param listaExtratoEdicao
-	 * @param indNotaInterface
-	 * 
-	 * @return TableModel.
-	 */
-	private TableModel<CellModel> obterTableModelParaListItensNotaRecebimento(List<RecebimentoFisicoDTO> itensRecebimentoFisico, boolean indNotaInterface, boolean indRecebimentoFisicoConfirmado) {
-					
-		TableModel<CellModel> tableModel = new TableModel<CellModel>();
+	//TODO: REMOVER METODO APOS TESTES
+	private List<RecebimentoFisicoDTO> getListaMockada() {
 		
-		List<CellModel> listaModeloGenerico = new LinkedList<CellModel>();
+		List<RecebimentoFisicoDTO> listaRecebimentoFisico = new LinkedList<RecebimentoFisicoDTO>();
+		
+		int contador = 0;
+		
+		while(contador++<10) {
+			
+			RecebimentoFisicoDTO recebFisico = new RecebimentoFisicoDTO();
+			
+			recebFisico.setCodigoProduto(""+contador);
+			recebFisico.setNomeProduto("produto_"+contador);
+			recebFisico.setEdicao(1L);
+			recebFisico.setPrecoCapa(BigDecimal.TEN);
+			recebFisico.setRepartePrevisto(new BigInteger(String.valueOf(contador)));
+			recebFisico.setQtdPacote(new BigInteger(String.valueOf(contador)));
+			recebFisico.setQtdExemplar(new BigInteger(String.valueOf(contador)));
+			recebFisico.setDiferenca(BigInteger.ZERO);
+			recebFisico.setValorTotal(BigDecimal.TEN);
+			recebFisico.setOrigemItemNota(Origem.MANUAL);
+			
+			listaRecebimentoFisico.add(recebFisico);
+		}
+		
+		return listaRecebimentoFisico;
+		
+	}
+	
+	/**
+	 * Obtém uma lista do tipo {@link CellModelKeyValue<RecebimentoFisicoVO>}
+	 * 
+	 * @param itensRecebimentoFisico
+	 * @param indNotaInterface
+	 * @param indRecebimentoFisicoConfirmado
+	 * 
+	 * @return List<CellModelKeyValue<RecebimentoFisicoVO>>
+	 */
+	private List<CellModelKeyValue<RecebimentoFisicoVO>> obterListaCellModelKeyValue(
+			List<RecebimentoFisicoDTO> itensRecebimentoFisico, 
+			boolean indNotaInterface, 
+			boolean indRecebimentoFisicoConfirmado) {
 		
 		int counter = 0;
 		
+		List<CellModelKeyValue<RecebimentoFisicoVO>> rows = new LinkedList<CellModelKeyValue<RecebimentoFisicoVO>>();
+		
 		for(RecebimentoFisicoDTO dto : itensRecebimentoFisico) {
 			
-			dto.setLineId(counter++);
+			counter++;
+
+			dto.setLineId(counter);
+			
+			RecebimentoFisicoVO recebFisico = new RecebimentoFisicoVO();
 			
 			String codigo 		     	 = dto.getCodigoProduto();
 			String nomeProduto 	     	 = dto.getNomeProduto();
-			String edicao 		     	 = (dto.getEdicao() 				== null) 	? "" 	: dto.getEdicao().toString();
+			String edicao 		     	 = (dto.getEdicao() 			== null) 	? "" 	: dto.getEdicao().toString();
 			String precoCapa 	     	 = (dto.getPrecoCapa() 			== null) 	? "0.0" : dto.getPrecoCapa().toString();
-			String repartePrevisto 	 	 = (dto.getRepartePrevisto() 	== null) 	? "0.0" : dto.getRepartePrevisto().toString();
-			String qtdeFisica		 	 = (dto.getQtdFisico() 			== null) 	? "0.0" : dto.getQtdFisico().toString();
-			String diferenca		 	 = (dto.getDiferenca() 			== null) 	? "0.0" : dto.getDiferenca().toString();
-			String valorTotal		 	 = (dto.getValorTotal() 			== null) 	? "0.0" : dto.getValorTotal().toString() ;
-			String alteracaoPermitida = "";
-			if(indRecebimentoFisicoConfirmado){
-				alteracaoPermitida	 = "N";
-			}else{
-				alteracaoPermitida	 = (Origem.MANUAL.equals(dto.getOrigemItemNota())) ? "S" : "N";
+			String repartePrevisto 	 	 = (dto.getRepartePrevisto() 	== null) 	? "0" : dto.getRepartePrevisto().toString();
+			String qtdPacote			 = (dto.getQtdPacote()			== null) 	? "0"	: dto.getQtdPacote().toString(); 
+			String qtdExemplar			 = (dto.getQtdExemplar()		== null)	? "0"	: dto.getQtdExemplar().toString();
+			String diferenca		 	 = (dto.getDiferenca() 			== null) 	? "0" : dto.getDiferenca().toString();
+			String valorTotal		 	 = (dto.getValorTotal() 		== null) 	? "0.0" : dto.getValorTotal().toString() ;
+			
+			String edicaoItemNotaPermitida 		= IND_SIM;
+			String edicaoItemRecFisicoPermitida = IND_SIM;
+			
+			if(indRecebimentoFisicoConfirmado) {
+				
+				edicaoItemNotaPermitida 		= IND_NAO;
+				edicaoItemRecFisicoPermitida 	= IND_NAO;
+				
+			} else {
+				
+				if(Origem.MANUAL.equals(dto.getOrigemItemNota())) {
+
+					edicaoItemNotaPermitida 		= IND_SIM;
+					edicaoItemRecFisicoPermitida 	= IND_SIM;
+
+					
+				} else {
+					edicaoItemNotaPermitida 		= IND_NAO;
+					edicaoItemRecFisicoPermitida 	= IND_SIM;
+				}
 			}
 			
+			String destacarValorNegativo = (dto.getDiferenca() != null && dto.getDiferenca().intValue() < 0) ? IND_SIM : IND_NAO;
 			
-			String destacarValorNegativo = (dto.getDiferenca() != null && dto.getDiferenca().doubleValue() < 0.0D) ? "S" : "N";
+			recebFisico.setLineId(counter);
+			recebFisico.setCodigo(codigo);
+			recebFisico.setNomeProduto(nomeProduto);
+			recebFisico.setEdicao(edicao);
+			recebFisico.setPrecoCapa(precoCapa);
+			recebFisico.setRepartePrevisto(repartePrevisto);
+			recebFisico.setQtdPacote(qtdPacote);
+			recebFisico.setQtdExemplar(qtdExemplar);
+			recebFisico.setDiferenca(diferenca);
+			recebFisico.setValorTotal(valorTotal);
 			
-			if(indNotaInterface){
-				
-				listaModeloGenerico.add(
-						new CellModel( 	
-								dto.getLineId(), 
-								codigo, 
-								nomeProduto, 
-								edicao, 
-								precoCapa, 
-								repartePrevisto,
-								qtdeFisica,
-								diferenca,
-								valorTotal,
-								alteracaoPermitida,
-								destacarValorNegativo
-						));
-				
-			}else{
-				
-				listaModeloGenerico.add(
-						new CellModel( 	
-								dto.getLineId(), 
-								codigo, 
-								nomeProduto, 
-								edicao, 
-								precoCapa, 
-								diferenca,
-								valorTotal,
-								alteracaoPermitida,
-								destacarValorNegativo
-						));
-			}
-			
-			
-			
+			recebFisico.setEdicaoItemNotaPermitida(edicaoItemNotaPermitida);
+			recebFisico.setEdicaoItemRecFisicoPermitida(edicaoItemRecFisicoPermitida);
+			recebFisico.setDestacarValorNegativo(destacarValorNegativo);
+
+			rows.add(new CellModelKeyValue<RecebimentoFisicoVO>(counter, recebFisico));
 			
 		}
 		
-		tableModel.setPage(1);
-		tableModel.setTotal(listaModeloGenerico.size());
-		tableModel.setRows(listaModeloGenerico);
-		
-		return tableModel;
+		return rows;
 		
 	}
 	
@@ -1125,11 +1159,7 @@ public class RecebimentoFisicoController {
 		
 		atualizarItensRecebimentoEmSession(itensRecebimento);
 		
-		//TODO: capturar usuario logado
-		Usuario usuarioLogado = new Usuario();
-		usuarioLogado.setId(1L);
-		
-		recebimentoFisicoService.confirmarRecebimentoFisico(usuarioLogado, getNotaFiscalFromSession(), getItensRecebimentoFisicoFromSession(), new Date());
+		recebimentoFisicoService.confirmarRecebimentoFisico(getUsuarioLogado(), getNotaFiscalFromSession(), getItensRecebimentoFisicoFromSession(), new Date());
 		
 		List<String> msgs = new ArrayList<String>();
 		msgs.add("Itens Confirmados com Sucesso.");
@@ -1354,7 +1384,7 @@ public class RecebimentoFisicoController {
 					throw new ValidacaoException(TipoMensagem.WARNING, "O campo [Qtde. Pcts] do ítem "+linha+" é obrigatório!");
 				}
 				
-				if (item.getQtdExemplares()==null){
+				if (item.getQtdExemplar()==null){
 					throw new ValidacaoException(TipoMensagem.WARNING, "O campo [Qtde. Exems] do ítem "+linha+" é obrigatório!");
 				}
 				
@@ -1376,6 +1406,16 @@ public class RecebimentoFisicoController {
 		}
 	}
 	
+	//TODO
+	private Usuario getUsuarioLogado(){
+			
+		Usuario usuario = new Usuario();
+		usuario.setId(1L);
+		
+		return usuario;
+	
+	}
+	
 	/**
 	 * Inclui nota e itens
 	 * @param nota
@@ -1387,10 +1427,6 @@ public class RecebimentoFisicoController {
 
 		this.validaCabecalhoNota(nota);
 		this.validaItensNota(itens);
-		
-		//TODO: capturar usuario logado
-		Usuario usuarioLogado = new Usuario();
-		usuarioLogado.setId(1L);
 		
 		Fornecedor fornecedor = fornecedorService.obterFornecedorPorId(nota.getFornecedor());
 		
@@ -1430,7 +1466,7 @@ public class RecebimentoFisicoController {
 		}
 
 		try{
-		    recebimentoFisicoService.inserirDadosRecebimentoFisico(usuarioLogado, notaFiscal, itens, new Date());
+		    recebimentoFisicoService.inserirDadosRecebimentoFisico(getUsuarioLogado(), notaFiscal, itens, new Date());
 		}
 		catch(Exception e){
 			throw new ValidacaoException(TipoMensagem.ERROR, "Erro ao incluir nota: "+e.getMessage());

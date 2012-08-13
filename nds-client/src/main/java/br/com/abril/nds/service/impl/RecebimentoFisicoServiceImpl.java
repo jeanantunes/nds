@@ -123,10 +123,26 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 			
 			BigDecimal valorTotal = new BigDecimal(0.0D);
 			
-			if(qtdRepartePrevisto != null && precoCapa != null) {
-				
-				valorTotal = precoCapa.multiply( BigDecimal.valueOf( qtdRepartePrevisto.longValue() ) );
+			BigInteger qtdFisico = itemRecebimento.getQtdFisico();
 			
+			BigInteger qtdPacote = BigInteger.ZERO;
+			BigInteger qtdQuebra = BigInteger.ZERO;
+			BigInteger pacotePadrao = 
+					(itemRecebimento.getPacotePadrao() <= 0) ? 
+							BigInteger.ONE :  
+								new BigInteger(String.valueOf(itemRecebimento.getPacotePadrao()));
+			
+			if(qtdFisico!=null) {
+				BigInteger[] qtdes = qtdFisico.divideAndRemainder(pacotePadrao);  
+				qtdPacote = qtdes[0];
+				qtdQuebra = qtdes[1];
+			}
+			
+			itemRecebimento.setQtdPacote(qtdPacote);
+			itemRecebimento.setQtdExemplar(qtdQuebra);
+			
+			if(qtdRepartePrevisto != null && precoCapa != null) {
+				valorTotal = precoCapa.multiply( BigDecimal.valueOf( qtdRepartePrevisto.longValue() ) );
 			}
 			
 			itemRecebimento.setValorTotal(valorTotal);
@@ -417,10 +433,16 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 			}
 			
 			if(recebimentoFisicoDTO.getIdItemRecebimentoFisico()!=null) {
+
 				
-				if(Origem.INTERFACE.equals(recebimentoFisicoDTO.getOrigemItemNota())) {
-					continue;
-				}
+//TODO:
+				
+//				verificar porque o item de recebimento fisico não esta 
+//				
+				
+//				if(Origem.INTERFACE.equals(recebimentoFisicoDTO.getOrigemItemNota())) {
+//					continue;
+//				}
 				
 				atualizarItemRecebimentoFisico(recebimentoFisicoDTO);
 				
@@ -697,7 +719,12 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 		
 		ItemRecebimentoFisico itemRecebimento = itemRecebimentoFisicoRepository.buscarPorId(recebimentoDTO.getIdItemRecebimentoFisico());
 		
-		itemRecebimento.setQtdeFisico(recebimentoDTO.getQtdFisico());
+		BigInteger pacotePadrao = (recebimentoDTO.getPacotePadrao() <= 0) ? BigInteger.ONE : new BigInteger(String.valueOf(recebimentoDTO.getPacotePadrao()));
+		BigInteger qtdPacote = (recebimentoDTO.getQtdPacote() == null) ? BigInteger.ZERO : recebimentoDTO.getQtdPacote();
+		BigInteger qtdExemplar = (recebimentoDTO.getQtdExemplar() == null) ? BigInteger.ZERO : recebimentoDTO.getQtdExemplar();
+		BigInteger qtdFisico = (qtdPacote.multiply(pacotePadrao)).add(qtdExemplar);
+		
+		itemRecebimento.setQtdeFisico(qtdFisico);
 		
 		itemRecebimentoFisicoRepository.alterar(itemRecebimento);		
 	}
@@ -717,8 +744,18 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 		
 		ItemRecebimentoFisico itemRecebimento = new ItemRecebimentoFisico();
 		
+		BigInteger pacotePadrao = (recebimentoDTO.getPacotePadrao() <= 0) ? BigInteger.ONE : new BigInteger(String.valueOf(recebimentoDTO.getPacotePadrao()));
+		
+		BigInteger qtdPacote = (recebimentoDTO.getQtdPacote() == null) ? BigInteger.ZERO : recebimentoDTO.getQtdPacote();
+		
+		BigInteger qtdExemplar = (recebimentoDTO.getQtdExemplar() == null) ? BigInteger.ZERO : recebimentoDTO.getQtdExemplar();
+		
+		BigInteger qtdFisico = (qtdPacote.multiply(pacotePadrao)).add(qtdExemplar);
+		
 		itemRecebimento.setItemNotaFiscal(itemNotaFiscal);
-		itemRecebimento.setQtdeFisico(recebimentoDTO.getQtdFisico());
+		
+		itemRecebimento.setQtdeFisico(qtdFisico);
+		
 		itemRecebimento.setRecebimentoFisico(recebimentoFisico);
 		
 		itemRecebimentoFisicoRepository.adicionar(itemRecebimento);		
