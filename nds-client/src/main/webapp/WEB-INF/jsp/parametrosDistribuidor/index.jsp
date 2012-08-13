@@ -265,6 +265,9 @@ $(document).ready(function() {
 	$('#informacoesComplementaresProcuracao').wysiwyg();
 	$('#informacoesComplementaresProcuracao').wysiwyg({controls:"font-family,italic,|,undo,redo"});
 	$('#informacoesComplementaresProcuracao').wysiwyg('setContent','${parametrosDistribuidor.informacoesComplementaresProcuracao}');
+	$('#informacoesComplementaresTermoAdesaoEntregaBancas').wysiwyg();
+	$('#informacoesComplementaresTermoAdesaoEntregaBancas').wysiwyg({controls:"font-family,italic,|,undo,redo"});
+	$('#informacoesComplementaresTermoAdesaoEntregaBancas').wysiwyg('setContent','');
 });
 
 $(function() {
@@ -388,6 +391,14 @@ $(function() {
 	
 	$("#tabDistribuidor").tabs();
 });
+
+function mostraTabelaGarantiasAceitas(){
+	if ($('#checkUtilizaGarantiaPdv').is(':checked')) {
+		$('#tabelaGarantiasAceitas').show();
+	} else {
+		$('#tabelaGarantiasAceitas').hide();
+	}
+}
 
 </script>
 </head>
