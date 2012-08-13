@@ -55,6 +55,25 @@
 	  <p>Confirma a exclusão deste usuário?</p>
 	</div>
 	</form>
+	<div id="dialog-alterar-senha" title="Alterar Senha" style="display:none;">
+		<form action="/administracao/gruposAcesso" id="alterar_senha_form">
+			<input type="hidden" name="usuarioDTO.id" id="usuarioId" />
+          	<table width="248" border="0" cellpadding="2" cellspacing="1" class="filtro">
+            	<tr>
+              		<td width="118">Senha:</td>
+              		<td width="130"><input type="password" name="usuarioDTO.senha" id="usuarioSenha" style="width:120px;"/></td>
+              	</tr>
+              	<tr>
+              		<td width="118">Confirmar Senha:</td>
+              		<td width="130"><input type="password" name="usuarioDTO.confirmaSenha" id="usuarioConfirmaSenha" style="width:120px;"/></td>
+           		</tr>
+           		<tr>
+	            	<td width="118">Lembrete Senha:</td>
+	            	<td width="130"><input type="text" name="usuarioDTO.lembreteSenha" id="usuarioLembreteSenha" style="width:120px;"/></td>
+	            </tr>
+           	</table>
+		</form>
+	</div>
 	<div id="dialog-novo-usuario" title="Usuário" style="display:none;">
 		<form action="/administracao/gruposAcesso" id="novo_usuario_form">
 		  <input type="hidden" name="usuarioDTO.id" id="usuarioId" />
@@ -71,26 +90,26 @@
               <td>E-mail:</td>
               <td><input type="text" name="usuarioDTO.email" id="usuarioEmail" style="width:220px;"/></td>
             </tr>
-            <tr id="senhaAntiga" style="display:none;">
-              <td>Senha Antiga:</td>
-              <td><input type="password" name="usuarioDTO.senhaAntiga" id="usuarioSenhaAntiga" style="width:220px;"/></td>
-              <td>&nbsp;</td>
-              <td>&nbsp;</td>
-            </tr>
-            <tr>
+            <tr id="trInsercaoSenhas">
               <td>Nova Senha:</td>
               <td><input type="password" name="usuarioDTO.senha" id="usuariosenha" style="width:220px;"/></td>
               <td>Confirma nova Senha:</td>
               <td><input type="password" name="usuarioDTO.confirmaSenha" id="usuarioSenhaConfirma" style="width:220px;"/></td>
             </tr>
-            <tr>
+            <tr id="trLembreteSenha">
               <td>Lembrete Senha:</td>
               <td><input type="text" name="usuarioDTO.lembreteSenha" id="usuarioLembreteSenha" style="width:220px;"/></td>
+              <td>&nbsp;</td>
+              <td>&nbsp;</td>
+            </tr>
+            <tr>
               <td>Telefone:</td>
               <td>(
                 <input type="text" name="usuarioDTO.ddd" id="usuarioDdd" style="width:50px;"/>
               )
               <input type="text" name="usuarioDTO.telefone" id="usuarioTelefone" style="width:105px;"/></td>
+              <td>&nbsp;</td>
+              <td>&nbsp;</td>
             </tr>
             <tr>
               <td align="right"><input type="radio" name="usuarioDTOContaAtiva" id="usuarioAtivaTrue" checked value="ativa"/></td>

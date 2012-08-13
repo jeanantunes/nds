@@ -97,4 +97,19 @@ public class UsuarioServiceImpl implements UsuarioService {
 		return usuarioRepository.getNomeUsuarioPorLogin(loginUsuario);
 	}
 
+	@Override
+	@Transactional(readOnly=true)
+	public boolean existeUsuario(String login) {
+		if (usuarioRepository.getNomeUsuarioPorLogin(login) != null) {
+			return true;
+		}
+		return false;
+	}
+
+	@Override
+	@Transactional
+	public void alterarSenha(Usuario usuario) {
+		usuarioRepository.alterarSenha(usuario);
+	}
+
 }

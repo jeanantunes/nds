@@ -43,7 +43,15 @@ public class PermissaoServiceImpl implements PermissaoService {
 
 	@Override
 	public List<Permissao> buscar() {
-		return new LinkedList<Permissao>(Arrays.asList(Permissao.values()));
+		List<Permissao> permissoes = new LinkedList<Permissao>();
+		
+		for (Permissao p : Arrays.asList(Permissao.values())) {
+			if (p.getPermissaoPai() != null) {
+				permissoes.add(p);
+			}
+		}
+		
+		return permissoes;
 	}
 	
 }

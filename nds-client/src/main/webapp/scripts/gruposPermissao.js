@@ -106,7 +106,7 @@ var gruposPermissaoController = $.extend(true, {
 									var listaMensagens = result.listaMensagens;
 
 									if(tipoMensagem && listaMensagens) {
-										exibirMensagem(tipoMensagem, listaMensagens);
+										exibirMensagemDialog(tipoMensagem, listaMensagens, "dialog-excluir_grupo");
 									}
 
 									$("#effect").show("highlight", {}, 1000, callback);
@@ -168,7 +168,7 @@ var gruposPermissaoController = $.extend(true, {
 			$(".gruposGrid", this.workspace).flexigrid({
 				preProcess: function(data) {
 					if( typeof data.mensagens == "object") {
-						exibirMensagem(data.mensagens.tipoMensagem, data.mensagens.listaMensagens);
+						exibirMensagemDialog(data.mensagens.tipoMensagem, data.mensagens.listaMensagens, "dialog-novo-grupo");
 						$(".gridsGrupos", this.workspace).hide();
 					} else {
 						$.each(data.rows , function(index, value) {

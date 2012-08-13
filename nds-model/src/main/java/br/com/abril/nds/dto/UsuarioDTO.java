@@ -44,8 +44,6 @@ public class UsuarioDTO implements Serializable {
 
 	private String confirmaSenha;
 
-	private String senhaAntiga;
-
 	private String permissoesSelecionadas;
 
 	private String gruposSelecionados;
@@ -160,14 +158,6 @@ public class UsuarioDTO implements Serializable {
 
 	public void setCep(String cep) {
 		this.cep = cep;
-	}
-
-	public String getSenhaAntiga() {
-		return senhaAntiga;
-	}
-
-	public void setSenhaAntiga(String senhaAntiga) {
-		this.senhaAntiga = senhaAntiga;
 	}
 
 	public String getConfirmaSenha() {

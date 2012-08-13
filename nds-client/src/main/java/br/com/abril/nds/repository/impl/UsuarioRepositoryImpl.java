@@ -3,6 +3,7 @@ package br.com.abril.nds.repository.impl;
 import java.util.List;
 
 import org.hibernate.Criteria;
+import org.hibernate.Query;
 import org.hibernate.criterion.LogicalExpression;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
@@ -108,6 +109,20 @@ public class UsuarioRepositoryImpl extends AbstractRepositoryModel<Usuario, Long
 		criteria.setProjection(Projections.groupProperty("nome"));
 		criteria.add(Restrictions.eq("login", login));
 		return (String) criteria.uniqueResult();
+	}
+
+
+	@Override
+	public void alterarSenha(Usuario usuario) {
+		
+		Query query = this.getSession().createQuery("update " + Usuario.class.getCanonicalName() + " set senha = :senha, lembreteSenha = :lembreteSenha  where id = (:id)");
+		
+		query.setParameter("senha", usuario.getSenha());
+		query.setParameter("lembreteSenha", usuario.getLembreteSenha());
+		query.setParameter("id", usuario.getId());
+		
+		query.executeUpdate();
+		
 	}
 	
 }

@@ -29,5 +29,9 @@ public interface UsuarioService {
 	public List<Permissao> buscarPermissoes(Long codigoUsuario);
 
 	public String getNomeUsuarioLogado();
+
+	public boolean existeUsuario(String login);
+
+	public void alterarSenha(Usuario usuario);
 	
 }

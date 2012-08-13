@@ -267,24 +267,20 @@ public class GruposAcessoController {
 
 		if (usuario.getLogin() == null || usuario.getLogin().isEmpty()) {
 			listaMensagemValidacao.add("O preenchimento do campo login é obrigatório!");
+		} else {
+			if ((usuario.getId() == null || usuario.getId() == 0) && usuarioService.existeUsuario(usuario.getLogin())) {
+				listaMensagemValidacao.add("Login de usuário já existente no sistema!");
+			}
 		}
 
 		if (usuario.getEmail() == null || usuario.getEmail().isEmpty()) {
 			listaMensagemValidacao.add("O preenchimento do campo e-mail é obrigatório!");
-		}
+		} else {
 
-		if (usuario.getSenha() == null || usuario.getSenha().isEmpty()) {
-			listaMensagemValidacao.add("O preenchimento do campo senha é obrigatório!");
-		}
-
-		if (usuario.getConfirmaSenha() == null || usuario.getConfirmaSenha().isEmpty()) {
-			listaMensagemValidacao.add("O preenchimento do campo confirma senha é obrigatório!");
-		}
-
-		if (usuario.getSenha() != null && !usuario.getSenha().isEmpty() && usuario.getConfirmaSenha() != null && !usuario.getConfirmaSenha().isEmpty()) {
-			if (!usuario.getConfirmaSenha().equals(usuario.getSenha())) {
-				listaMensagemValidacao.add("Os campos nova senha e confirmação de senha não correspondem!");
+			if (!Util.validarEmail(usuario.getEmail())) {
+				listaMensagemValidacao.add("E-mail inválido!");
 			}
+
 		}
 
 		if ( (usuario.getPermissoesSelecionadas() == null || usuario.getPermissoesSelecionadas().isEmpty()) && 
@@ -292,12 +288,6 @@ public class GruposAcessoController {
 			listaMensagemValidacao.add("É necessário selecionar ao menos uma permissão e/ou grupo!");
 		}
 
-		if (usuario.getId() != null && usuario.getId() != 0 && usuario.getSenhaAntiga() != null && !usuario.getSenhaAntiga().isEmpty()) {
-			if (!usuarioService.validarSenha(usuario.getId(), usuario.getSenhaAntiga())) {
-				listaMensagemValidacao.add("Senha antiga está incorreta!");
-			}
-		}
-		
 		if (!listaMensagemValidacao.isEmpty()) {
 			ValidacaoVO validacaoVO = new ValidacaoVO(TipoMensagem.ERROR, listaMensagemValidacao);
 			throw new ValidacaoException(validacaoVO);
@@ -309,15 +299,51 @@ public class GruposAcessoController {
 	 * @return
 	 */
 	private UsuarioDTO criptografarSenhas(UsuarioDTO usuarioDTO) {
+		
 		if (usuarioDTO.getSenha() != null && !usuarioDTO.getSenha().isEmpty())
 			usuarioDTO.setSenha(Util.md5(usuarioDTO.getSenha()));
-		
-		if (usuarioDTO.getSenhaAntiga() != null && !usuarioDTO.getSenhaAntiga().isEmpty())
-			usuarioDTO.setSenhaAntiga(Util.md5(usuarioDTO.getSenhaAntiga()));
 		
 		if (usuarioDTO.getConfirmaSenha() != null && !usuarioDTO.getConfirmaSenha().isEmpty())
 			usuarioDTO.setConfirmaSenha(Util.md5(usuarioDTO.getConfirmaSenha()));
 		return usuarioDTO;
+	}
+
+
+	private void validarAlteracaoSenhas(UsuarioDTO usuarioDTO) {
+		List<String> listaMensagemValidacao = new ArrayList<String>();
+		if (usuarioDTO.getSenha() == null || usuarioDTO.getSenha().isEmpty()) {
+			listaMensagemValidacao.add("O preenchimento do campo senha é obrigatório!");
+		}
+
+		if (usuarioDTO.getConfirmaSenha() == null || usuarioDTO.getConfirmaSenha().isEmpty()) {
+			listaMensagemValidacao.add("O preenchimento do campo confirma senha é obrigatório!");
+		}
+
+		if (usuarioDTO.getSenha() != null && !usuarioDTO.getSenha().isEmpty() && usuarioDTO.getConfirmaSenha() != null && !usuarioDTO.getConfirmaSenha().isEmpty()) {
+			if (!usuarioDTO.getConfirmaSenha().equals(usuarioDTO.getSenha())) {
+				listaMensagemValidacao.add("Os campos nova senha e confirmação de senha não correspondem!");
+			}
+		}
+
+		if (!listaMensagemValidacao.isEmpty()) {
+			ValidacaoVO validacaoVO = new ValidacaoVO(TipoMensagem.ERROR, listaMensagemValidacao);
+			throw new ValidacaoException(validacaoVO);
+		}
+	}
+	
+	@Post
+	@Path("/alterarSenha")
+	public void alterarSenha(UsuarioDTO usuarioDTO) {
+		usuarioDTO = this.criptografarSenhas(usuarioDTO);
+		validarAlteracaoSenhas(usuarioDTO);
+		
+		Usuario usuario = new Usuario();
+		usuario.setId(usuarioDTO.getId());
+		usuario.setSenha(usuarioDTO.getSenha());
+		usuario.setLembreteSenha(usuarioDTO.getLembreteSenha());
+		
+		usuarioService.alterarSenha(usuario);
+		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS,"Senha alterada com Sucesso."),"result").recursive().serialize();
 	}
 	
 	/**
@@ -331,9 +357,11 @@ public class GruposAcessoController {
 	@Path("/salvarUsuario")
 	public void salvarUsuario(UsuarioDTO usuarioDTO) {
 
-		this.criptografarSenhas(usuarioDTO);
-		
 		this.validarDadosUsuario(usuarioDTO);
+		
+		if (usuarioDTO.getId() == null || usuarioDTO.getId() == 0) {
+			validarAlteracaoSenhas(usuarioDTO);
+		}
 		
 		Usuario usuario = getUsuarioEntity(usuarioDTO);
 		
@@ -378,18 +406,23 @@ public class GruposAcessoController {
 	 */
 	private Usuario getUsuarioEntity(UsuarioDTO usuarioDTO) {
 		
-		Usuario usuario = new Usuario();
+		Usuario usuario = null;
+		if (usuarioDTO.getId() == null || usuarioDTO.getId() == 0) {
+			usuario = new Usuario();
+			usuario.setSenha(usuarioDTO.getSenha());
+			usuario.setLembreteSenha(usuarioDTO.getLembreteSenha());
+		} else {
+			usuario = usuarioService.buscar(usuarioDTO.getId());
+		}
 		usuario.setCep(usuarioDTO.getCep());
 		usuario.setCidade(usuarioDTO.getCidade());
 		usuario.setDdd(usuarioDTO.getDdd());
 		usuario.setEmail(usuarioDTO.getEmail());
 		usuario.setEndereco(usuarioDTO.getEndereco());
 		usuario.setId(usuarioDTO.getId());
-		usuario.setLembreteSenha(usuarioDTO.getLembreteSenha());
 		usuario.setLogin(usuarioDTO.getLogin());
 		usuario.setNome(usuarioDTO.getNome());
 		usuario.setPais(usuarioDTO.getPais());
-		usuario.setSenha(usuarioDTO.getSenha());
 		usuario.setSobrenome(usuarioDTO.getSobrenome());
 		usuario.setTelefone(usuarioDTO.getTelefone());
 		if (usuarioDTO.getContaAtiva().equals(UsuarioDTO.ATIVA)) {
@@ -557,5 +590,5 @@ public class GruposAcessoController {
 		return filtro;
 		
 	}
-	
+
 }
