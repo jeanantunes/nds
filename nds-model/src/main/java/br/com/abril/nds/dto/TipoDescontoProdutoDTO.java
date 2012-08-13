@@ -20,7 +20,7 @@ public class TipoDescontoProdutoDTO implements Serializable {
 	private String nomeProduto;
 	
 	@Export(label = "Edição", alignment=Alignment.CENTER, exhibitionOrder = 3)
-	private Integer numeroEdicao;
+	private Long numeroEdicao;
 	
 	@Export(label = "Desconto %", alignment=Alignment.CENTER, exhibitionOrder = 4)
 	private BigDecimal desconto;
@@ -64,14 +64,14 @@ public class TipoDescontoProdutoDTO implements Serializable {
 	/**
 	 * @return the numeroEdicao
 	 */
-	public Integer getNumeroEdicao() {
+	public Long getNumeroEdicao() {
 		return numeroEdicao;
 	}
 
 	/**
 	 * @param numeroEdicao the numeroEdicao to set
 	 */
-	public void setNumeroEdicao(Integer numeroEdicao) {
+	public void setNumeroEdicao(Long numeroEdicao) {
 		this.numeroEdicao = numeroEdicao;
 	}
 
