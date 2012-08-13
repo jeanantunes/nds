@@ -177,9 +177,6 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 				} else if (tipoGarantiaAceita.getTipoGarantia() == TipoGarantia.ANTECEDENCIA_VALIDADE) {
 					parametrosDistribuidor.setAntecedenciaValidade(CHECKED);
 					parametrosDistribuidor.setAntecedenciaValidadeValor(tipoGarantiaAceita.getValor());
-				} else if (tipoGarantiaAceita.getTipoGarantia() == TipoGarantia.INDICADOR_REAJUSTE_CAUCAO_LIQUIDA) {
-					parametrosDistribuidor.setIndicadorReajusteCaucaoLiquida(CHECKED);
-					parametrosDistribuidor.setIndicadorReajusteCaucaoLiquida(tipoGarantiaAceita.getValor());
 				}
 			}
 		}
@@ -484,15 +481,6 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		else
 			tipoGarantiaAceitaAntecedenciaValidade.setUtilizar(false);
 		listaTipoGarantiaAceitas.add(tipoGarantiaAceitaAntecedenciaValidade);
-
-		TipoGarantiaAceita tipoGarantiaAceitaIndicadorReajusteCaucaoLiquida = new TipoGarantiaAceita();
-		tipoGarantiaAceitaIndicadorReajusteCaucaoLiquida.setTipoGarantia(TipoGarantia.INDICADOR_REAJUSTE_CAUCAO_LIQUIDA);
-		tipoGarantiaAceitaIndicadorReajusteCaucaoLiquida.setValor(parametrosDistribuidor.getIndicadorReajusteCaucaoLiquidaValor());
-		if (verificaCheckBoolean(parametrosDistribuidor.getIndicadorReajusteCaucaoLiquida()))
-			tipoGarantiaAceitaIndicadorReajusteCaucaoLiquida.setUtilizar(true);
-		else
-			tipoGarantiaAceitaIndicadorReajusteCaucaoLiquida.setUtilizar(false);
-		listaTipoGarantiaAceitas.add(tipoGarantiaAceitaIndicadorReajusteCaucaoLiquida);
 
 		for (TipoGarantiaAceita tipoGarantiaAceita : listaTipoGarantiaAceitas) {
 			tipoGarantiaAceita.setDistribuidor(distribuidor);
