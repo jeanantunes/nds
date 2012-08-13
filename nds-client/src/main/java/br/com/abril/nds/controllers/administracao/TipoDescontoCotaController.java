@@ -97,9 +97,11 @@ public class TipoDescontoCotaController {
 	
 	@Post
 	@Path("/novoDescontoProduto")
-	public void novoDescontoProduto(DescontoProdutoDTO desconto) {		
+	public void novoDescontoProduto(DescontoProdutoDTO desconto, List<Integer> cotas) {		
 
-		this.descontoService.incluirDesconto(desconto);
+		desconto.setCotas(cotas);
+		
+		this.descontoService.incluirDesconto(desconto, getUsuario());
 
 		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Desconto cadastrado com sucesso"),"result").recursive().serialize();
 	}

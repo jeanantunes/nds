@@ -63,8 +63,6 @@ public interface DescontoService {
 	 */
 	void incluirDesconto(BigDecimal valorDesconto, List<Long> fornecedores,Integer numeroCota,Usuario usuario);
 	
-	void incluirDesconto(DescontoProdutoDTO desconto);
-
 	/**
 	 * Retorna os fornecedores associados a um desconto.
 	 * 
@@ -73,5 +71,8 @@ public interface DescontoService {
 	 * @return List<Fornecedor>
 	 */
 	List<Fornecedor> busacarFornecedoresAssociadosADesconto(Long idDesconto, br.com.abril.nds.model.cadastro.desconto.TipoDesconto tipoDesconto);
+
+	void incluirDesconto(DescontoProdutoDTO desconto, Usuario usuario);
+
 }
 	

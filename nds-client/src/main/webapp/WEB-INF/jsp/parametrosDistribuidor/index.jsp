@@ -11,6 +11,14 @@
 	.forncedoresSel, .editorSel {
 	    padding: 0px!important;
 	}
+	
+	body{
+	font-family: arial;
+	font-size: 11px;
+	color: #000;
+	background-color: #FFF;
+	margin: 0px;
+}
 </style>
 <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/scripts/editor/jquery.wysiwyg.css" />
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/editor/jquery.wysiwyg.js"></script>
@@ -113,46 +121,35 @@ function gravar() {
 		{name:'parametrosDistribuidor.notaEnvioEmail', value: $('#notaEnvioEmail').is(':checked')},
 		{name:'parametrosDistribuidor.chamadaEncalheImpressao', value: $('#chamadaEncalheImpressao').is(':checked')},
 		{name:'parametrosDistribuidor.chamadaEncalheEmail', value: $('#chamadaEncalheEmail').is(':checked')},
-		{name:'parametrosDistribuidor.impressaoNE', value: $("input[name='impressaoNE']:checked").val()},
-		{name:'parametrosDistribuidor.impressaoNEFaltaDe', value: $('#impressaoNEFaltaDe').is(':checked')},
-		{name:'parametrosDistribuidor.impressaoNEFaltaEm', value: $('#impressaoNEFaltaEm').is(':checked')},
-		{name:'parametrosDistribuidor.impressaoNESobraDe', value: $('#impressaoNESobraDe').is(':checked')},
-		{name:'parametrosDistribuidor.impressaoNESobraEm', value: $('#impressaoNESobraEm').is(':checked')},
+		{name:'parametrosDistribuidor.impressaoInterfaceLED', value: $("input[name='interfaceLED']:checked").val()},
 		{name:'parametrosDistribuidor.impressaoNECADANFE', value: $("input[name='impressaoNECADANFE']:checked").val()},
-		{name:'parametrosDistribuidor.impressaoNECADANFEFaltaDe', value: $('#impressaoNECADANFEFaltaDe').is(':checked')},
-		{name:'parametrosDistribuidor.impressaoNECADANFEFaltaEm', value: $('#impressaoNECADANFEFaltaEm').is(':checked')},
-		{name:'parametrosDistribuidor.impressaoNECADANFESobraDe', value: $('#impressaoNECADANFESobraDe').is(':checked')},
-		{name:'parametrosDistribuidor.impressaoNECADANFESobraEm', value: $('#impressaoNECADANFESobraEm').is(':checked')},
 		{name:'parametrosDistribuidor.impressaoCE', value: $("input[name='impressaoCE']:checked").val()},
-		{name:'parametrosDistribuidor.impressaoCEFaltaDe', value: $('#impressaoCEFaltaDe').is(':checked')},
-		{name:'parametrosDistribuidor.impressaoCEFaltaEm', value: $('#impressaoCEFaltaEm').is(':checked')},
-		{name:'parametrosDistribuidor.impressaoCESobraDe', value: $('#impressaoCESobraDe').is(':checked')},
-		{name:'parametrosDistribuidor.impressaoCESobraEm', value: $('#impressaoCESobraEm').is(':checked')},
 		{name:'parametrosDistribuidor.utilizaContratoComCotas', value: $('#utilizaContratoComCotas').is(':checked')},
 		{name:'parametrosDistribuidor.prazoContrato', value: $('#prazoContrato').val()},
 		{name:'parametrosDistribuidor.informacoesComplementaresContrato', value: $('#informacoesComplementaresContrato').val()},
 		{name:'parametrosDistribuidor.utilizaProcuracaoEntregadores', value: $('#utilizaProcuracaoEntregadores').is(':checked')},
 		{name:'parametrosDistribuidor.informacoesComplementaresProcuracao', value: $('#informacoesComplementaresProcuracao').val()},
 		{name:'parametrosDistribuidor.utilizaGarantiaPdv', value: $('#utilizaGarantiaPdv').is(':checked')},
-		{name:'parametrosDistribuidor.chequeCalcao', value: $('#chequeCalcao').is(':checked')},
-		{name:'parametrosDistribuidor.chequeCalcaoValor', value: $('#chequeCalcaoValor').val()},
-		{name:'parametrosDistribuidor.fiador', value: $('#fiador').is(':checked')},
-		{name:'parametrosDistribuidor.fiadorValor', value: $('#fiadorValor').val()},
-		{name:'parametrosDistribuidor.imovel', value: $('#imovel').is(':checked')},
-		{name:'parametrosDistribuidor.imovelValor', value: $('#imovelValor').val()},
-		{name:'parametrosDistribuidor.caucaoLiquida', value: $('#caucaoLiquida').is(':checked')},
-		{name:'parametrosDistribuidor.caucaoLiquidaValor', value: $('#caucaoLiquidaValor').val()},
-		{name:'parametrosDistribuidor.notaPromissoria', value: $('#notaPromissoria').is(':checked')},
-		{name:'parametrosDistribuidor.notaPromissoriaValor', value: $('#notaPromissoriaValor').val()},
-		{name:'parametrosDistribuidor.antecedenciaValidade', value: $('#antecedenciaValidade').is(':checked')},
-		{name:'parametrosDistribuidor.antecedenciaValidadeValor', value: $('#antecedenciaValidadeValor').val()},
-		{name:'parametrosDistribuidor.indicadorReajusteCaucaoLiquida', value: $('#indicadorReajusteCaucaoLiquida').is(':checked')},
-		{name:'parametrosDistribuidor.indicadorReajusteCaucaoLiquidaValor', value: $('#indicadorReajusteCaucaoLiquidaValor').val()},
+		{name:'parametrosDistribuidor.utilizaChequeCaucao', value: $('#utilizaChequeCaucao').is(':checked')},
+		{name:'parametrosDistribuidor.validadeChequeCaucao', value: $('#validadeChequeCaucao').val()},
+		{name:'parametrosDistribuidor.utilizaFiador', value: $('#utilizaFiador').is(':checked')},
+		{name:'parametrosDistribuidor.validadeFiador', value: $('#validadeFiador').val()},
+		{name:'parametrosDistribuidor.utilizaImovel', value: $('#utilizaImovel').is(':checked')},
+		{name:'parametrosDistribuidor.validadeImovel', value: $('#validadeImovel').val()},
+		{name:'parametrosDistribuidor.utilizaCaucaoLiquida', value: $('#utilizaCaucaoLiquida').is(':checked')},
+		{name:'parametrosDistribuidor.validadeCaucaoLiquida', value: $('#validadeCaucaoLiquidaValor').val()},
+		{name:'parametrosDistribuidor.utilizaNotaPromissoria', value: $('#utilizaNotaPromissoria').is(':checked')},
+		{name:'parametrosDistribuidor.validadeNotaPromissoria', value: $('#validadeNotaPromissoriaValor').val()},
+		{name:'parametrosDistribuidor.utilizaAntecedenciaValidade', value: $('#utilizaAntecedenciaValidade').is(':checked')},
+		{name:'parametrosDistribuidor.validadeAntecedenciaValidade', value: $('#validadeAntecedenciaValidade').val()},
+		{name:'parametrosDistribuidor.utilizaOutros', value: $('#utilizaOutros').is(':checked')},
+		{name:'parametrosDistribuidor.validadeOutros', value: $('#validadeOutros').val()},
 		{name:'parametrosDistribuidor.sugereSuspensaoQuandoAtingirBoletos', value: $('#sugereSuspensaoQuandoAtingirBoletos').val()},
 		{name:'parametrosDistribuidor.sugereSuspensaoQuandoAtingirReais', value: $('#sugereSuspensaoQuandoAtingirReais').val()},
 		{name:'parametrosDistribuidor.parcelamentoDividas', value: $('#parcelamentoDividas').is(':checked')},
-		{name:'parametrosDistribuidor.negociacaoAteParcelas', value: $('#negociacaoAteParcelas').val()},
-		{name:'parametrosDistribuidor.permitePagamentoDividasDivergentes', value: $('#permitePagamentoDividasDivergentes').is(':checked')},
+		{name:'parametrosDistribuidor.negociacaoAteParcelas', value: $('#negociacaoAteParcelas').val()},		
+		{name:'parametrosDistribuidor.utilizaDesconto', value: $('#utilizaDesconto').is(':checked')},
+		{name:'parametrosDistribuidor.percentualDesconto', value: $('#percentualDesconto').val()},		
 		{name:'parametrosDistribuidor.utilizaControleAprovacao', value: $('#utilizaControleAprovacao').is(':checked')},
 		{name:'parametrosDistribuidor.paraDebitosCreditos', value: $('#paraDebitosCreditos').is(':checked')},
 		{name:'parametrosDistribuidor.negociacao', value: $('#negociacao').is(':checked')},
@@ -378,7 +375,7 @@ $(function() {
 	$("#relancamentoParciaisEmDias").val(${parametrosDistribuidor.relancamentoParciaisEmDias});
 	
 	$('input:radio[name=distribuidor][value=${parametrosDistribuidor.distribuidor}]').click();
-	$('input:radio[name=impressaoNE][value=${parametrosDistribuidor.impressaoNE}]').click();
+	$('input:radio[name=interfaceLED][value=${parametrosDistribuidor.impressaoInterfaceLED}]').click();
 	$('input:radio[name=impressaoNECADANFE][value=${parametrosDistribuidor.impressaoNECADANFE}]').click();
 	$('input:radio[name=impressaoCE][value=${parametrosDistribuidor.impressaoCE}]').click();
 	

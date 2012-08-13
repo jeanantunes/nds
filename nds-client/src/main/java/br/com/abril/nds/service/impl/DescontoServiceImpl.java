@@ -230,44 +230,58 @@ public class DescontoServiceImpl implements DescontoService {
 		//FIXME chamar componente de geração de desconto PRODUTO EDIÇÂO
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	@Transactional
-	public void incluirDesconto(DescontoProdutoDTO desconto) {
+	public void incluirDesconto(DescontoProdutoDTO desconto, Usuario usuario) {
 		// FIXME Implementar a inclusão do desconto da cota
 
 		validarEntradaDeDadosInclusaoDescontoPorProduto(desconto);
 
 		Distribuidor distribuidor = this.distribuidorRepository.obter();
 
-		Set<Cota> cotas = new LinkedHashSet<Cota>();
+		Set<Cota> cotas = obterCotas(desconto.getCotas(), desconto.isTodasCotas());
 
-		for (Integer numeroCota : desconto.getCotas()) {
+		if (desconto.getEdicaoProduto() != null) {
 
-			Cota cota = this.cotaRepository.obterPorNumerDaCota(numeroCota);
-
-			cotas.add(cota);
-		}
-
-		ProdutoEdicao produtoEdicao = null;
-
-		if (desconto.getCodigoProduto() != null && desconto.getEdicaoProduto() != null) {
-
-			produtoEdicao = this.produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao(
+			ProdutoEdicao produtoEdicao = this.produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao(
 				desconto.getCodigoProduto(), desconto.getEdicaoProduto()
 			);
+
+			DescontoProduto descontoProduto = new DescontoProduto();
+
+			descontoProduto.setDesconto(desconto.getDescontoProduto());
+			descontoProduto.setDataAlteracao(new Date());
+			descontoProduto.setCotas(cotas);
+			descontoProduto.setDistribuidor(distribuidor);
+			descontoProduto.setProdutoEdicao(produtoEdicao);
+			descontoProduto.setUsuario(usuarioRepository.buscarPorId(usuario.getId()));
+
+			this.descontoProdutoRepository.adicionar(descontoProduto);
+
+		} else if (desconto.getQuantidadeEdicoes() != null) {
+
+			List<ProdutoEdicao> listaProdutoEdicao = 
+				this.produtoEdicaoRepository.obterProdutosEdicoesPorCodigoProdutoLimitado(
+					desconto.getCodigoProduto(), desconto.getQuantidadeEdicoes()
+				);
+
+			for (ProdutoEdicao produtoEdicao : listaProdutoEdicao) {
+
+				DescontoProduto descontoProduto = new DescontoProduto();
+
+				descontoProduto.setDesconto(desconto.getDescontoProduto());
+				descontoProduto.setDataAlteracao(new Date());
+				descontoProduto.setCotas(cotas);
+				descontoProduto.setDistribuidor(distribuidor);
+				descontoProduto.setProdutoEdicao(produtoEdicao);
+				descontoProduto.setUsuario(usuarioRepository.buscarPorId(usuario.getId()));
+
+				this.descontoProdutoRepository.adicionar(descontoProduto);
+			}
 		}
-
-		DescontoProduto descontoProduto = new DescontoProduto();
-
-		descontoProduto.setDesconto(desconto.getDescontoProduto());
-		descontoProduto.setDataAlteracao(new Date());
-		descontoProduto.setCotas(cotas);
-		descontoProduto.setDistribuidor(distribuidor);
-		descontoProduto.setProdutoEdicao(produtoEdicao);
-		
-		
-		
-//		ProdutoEdicao produtoEdicao = this.produtoEdicaoRepository.buscarPorId(desconto.getCodigoProduto());
 	}
 	
 	private void validarEntradaDeDadosInclusaoDescontoPorProduto(DescontoProdutoDTO desconto) {
@@ -284,9 +298,23 @@ public class DescontoServiceImpl implements DescontoService {
 			mensagens.add("O campo Edição específica ou Edições deve ser preenchido!");
 		}
 	
+		Integer quantidadeEdicoesExistentes = 
+				this.produtoEdicaoRepository.obterQuantidadeEdicoesPorCodigoProduto(desconto.getCodigoProduto());
+		
+		if (desconto.getQuantidadeEdicoes() != null && 
+				quantidadeEdicoesExistentes < desconto.getQuantidadeEdicoes()) {
+
+			mensagens.add("O número máximo de edições que pode ser informado é: " + quantidadeEdicoesExistentes);
+		}
+		
 		if (desconto.getDescontoProduto() == null) {
 			
 			mensagens.add("O campo Desconto deve ser preenchido!");
+		}
+		
+		if (!desconto.isHasCotaEspecifica() && !desconto.isTodasCotas()) {
+
+			mensagens.add("O campo de cotas deve ser preenchido!");
 		}
 		
 		if (desconto.isHasCotaEspecifica() && desconto.getCotas() == null) {
@@ -304,29 +332,51 @@ public class DescontoServiceImpl implements DescontoService {
 	@Transactional(readOnly=true)
 	public List<Fornecedor> busacarFornecedoresAssociadosADesconto(Long idDesconto, 
 																	br.com.abril.nds.model.cadastro.desconto.TipoDesconto tipoDesconto) {
-		
 		List<Fornecedor> listaFornecedores = new ArrayList<Fornecedor>();
 		
 		switch (tipoDesconto) {
-			case GERAL :
-				
-				DescontoDistribuidor desconto = descontoDistribuidorRepository.buscarPorId(idDesconto);
-				
-				if(desconto!= null){
-					listaFornecedores.addAll(desconto.getFornecedores());
-				}
-				break;
-				
-			case ESPECIFICO :
-				
-				DescontoCota descontoCota = descontoCotaRepository.buscarPorId(idDesconto);
-				
-				if(descontoCota!= null){
-					listaFornecedores.addAll(descontoCota.getFornecedores());
-				}
-				break;
+		case GERAL :
+			
+			DescontoDistribuidor desconto = descontoDistribuidorRepository.buscarPorId(idDesconto);
+			
+			if(desconto!= null){
+				listaFornecedores.addAll(desconto.getFornecedores());
+			}
+			break;
+			
+		case ESPECIFICO :
+			
+			DescontoCota descontoCota = descontoCotaRepository.buscarPorId(idDesconto);
+			
+			if(descontoCota!= null){
+				listaFornecedores.addAll(descontoCota.getFornecedores());
+			}
+			break;
 		}
 		
 		return listaFornecedores;
+	}
+	
+	private Set<Cota> obterCotas(List<Integer> idsCotas, boolean isTodasCotas) {
+
+		Set<Cota> cotas = null;
+
+		if (idsCotas != null) {
+
+			cotas = new LinkedHashSet<Cota>();
+
+			for (Integer numeroCota : idsCotas) {
+
+				Cota cota = this.cotaRepository.obterPorNumerDaCota(numeroCota);
+
+				cotas.add(cota);
+			}
+
+		} else if (isTodasCotas) {
+
+			cotas = new HashSet<Cota>(this.cotaRepository.buscarTodos());
+		}
+
+		return cotas;
 	}
 }

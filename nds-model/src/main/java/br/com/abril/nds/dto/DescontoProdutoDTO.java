@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.List;
 
+import br.com.abril.nds.model.seguranca.Usuario;
+
 public class DescontoProdutoDTO implements Serializable {
 
 	private static final long serialVersionUID = -2744214706916950981L;
@@ -16,12 +18,16 @@ public class DescontoProdutoDTO implements Serializable {
 	
 	private boolean hasCotaEspecifica;
 	
+	private boolean isTodasCotas;
+	
 	private BigDecimal descontoProduto;
 	
 	private List<Integer> cotas;
 	
 	private boolean descontoPredominante;
 
+	private Usuario usuario;
+	
 	/**
 	 * @return the codigoProduto
 	 */
@@ -79,6 +85,20 @@ public class DescontoProdutoDTO implements Serializable {
 	}
 
 	/**
+	 * @return the isTodasCotas
+	 */
+	public boolean isTodasCotas() {
+		return isTodasCotas;
+	}
+
+	/**
+	 * @param isTodasCotas the isTodasCotas to set
+	 */
+	public void setIsTodasCotas(boolean isTodasCotas) {
+		this.isTodasCotas = isTodasCotas;
+	}
+
+	/**
 	 * @return the descontoProduto
 	 */
 	public BigDecimal getDescontoProduto() {
@@ -118,5 +138,19 @@ public class DescontoProdutoDTO implements Serializable {
 	 */
 	public void setDescontoPredominante(boolean descontoPredominante) {
 		this.descontoPredominante = descontoPredominante;
+	}
+
+	/**
+	 * @return the usuario
+	 */
+	public Usuario getUsuario() {
+		return usuario;
+	}
+
+	/**
+	 * @param usuario the usuario to set
+	 */
+	public void setUsuario(Usuario usuario) {
+		this.usuario = usuario;
 	}
 }
