@@ -10,6 +10,8 @@ var DESCONTO_PRODUTO = {
 		$("#formTipoDescontoProduto")[0].reset();
 		
 		esconderGridCota();
+		
+		mostraEdicao();
 	},
 
 	popup_produto:function() {
@@ -40,6 +42,8 @@ var DESCONTO_PRODUTO = {
 				   data,
 				   function(result) {
 
+					   TIPO_DESCONTO.pesquisarDescontoProduto();
+
 					   $( "#dialog-produto" ).dialog( "close" );
 
 					   var tipoMensagem = result.tipoMensagem;
@@ -60,15 +64,17 @@ var DESCONTO_PRODUTO = {
 		var descontoProduto = $("#descontoProduto").val();
 		var descontoPredominante = $("#descontoPredominante").attr("checked") ? true : false;
 		var hasCotaEspecifica = document.getElementById("radioCotasEspecificas").checked;
+		var isTodasCotas = document.getElementById("radioTodasCotas").checked;
 		
 		var data = new Array();
 		
-		data.push({name:'codigoProduto' , value: codigoProduto});
-		data.push({name:'edicaoProduto' , value: edicaoProduto});
-		data.push({name:'descontoProduto' , value: descontoProduto});
-		data.push({name:'quantidadeEdicoes' , value: quantidadeEdicoes});
-		data.push({name:'descontoPredominante' , value: descontoPredominante});
-		data.push({name:'hasCotaEspecifica' , value: hasCotaEspecifica});
+		data.push({name:'desconto.codigoProduto' , value: codigoProduto});
+		data.push({name:'desconto.edicaoProduto' , value: edicaoProduto});
+		data.push({name:'desconto.descontoProduto' , value: descontoProduto});
+		data.push({name:'desconto.quantidadeEdicoes' , value: quantidadeEdicoes});
+		data.push({name:'desconto.descontoPredominante' , value: descontoPredominante});
+		data.push({name:'desconto.hasCotaEspecifica' , value: hasCotaEspecifica});
+		data.push({name:'desconto.isTodasCotas' , value: isTodasCotas});
 		
 		$("input[id^=cotaInput]").each(function(index, value) {
 			if ($(this).val()) {
@@ -141,7 +147,6 @@ function adicionarLinhaCota(linhaAtual){
 </script>
 
 <div id="dialog-produto" title="Novo Tipo de Desconto Produto" style="display:none;">
-
 <jsp:include page="../messagesDialog.jsp" />    
 
 <form id="formTipoDescontoProduto">
