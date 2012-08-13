@@ -84,6 +84,7 @@ import br.com.abril.nds.model.cadastro.TipoRegistroCobranca;
 import br.com.abril.nds.model.cadastro.TipoRoteiro;
 import br.com.abril.nds.model.cadastro.TipoTelefone;
 import br.com.abril.nds.model.cadastro.TributacaoFiscal;
+import br.com.abril.nds.model.cadastro.desconto.DescontoCota;
 import br.com.abril.nds.model.cadastro.desconto.DescontoDistribuidor;
 import br.com.abril.nds.model.cadastro.pdv.AreaInfluenciaPDV;
 import br.com.abril.nds.model.cadastro.pdv.CaracteristicasPDV;
@@ -3301,6 +3302,19 @@ public class Fixture {
 		DescontoDistribuidor descontoReturn = new DescontoDistribuidor();
 		descontoReturn.setDesconto(desconto);
 		descontoReturn.setDataAlteracao(new Date());
+		descontoReturn.setDistribuidor(distribuidor);
+		descontoReturn.setFornecedores(fornecedores);
+		descontoReturn.setUsuario(usuario);
+		
+		return descontoReturn;
+	}
+	
+    public static DescontoCota descontoCota(BigDecimal desconto, Distribuidor distribuidor, Cota cota, Set<Fornecedor> fornecedores,Usuario usuario ){
+		
+		DescontoCota descontoReturn = new DescontoCota();
+		descontoReturn.setDesconto(desconto);
+		descontoReturn.setDataAlteracao(new Date());
+		descontoReturn.setCota(cota);
 		descontoReturn.setDistribuidor(distribuidor);
 		descontoReturn.setFornecedores(fornecedores);
 		descontoReturn.setUsuario(usuario);
