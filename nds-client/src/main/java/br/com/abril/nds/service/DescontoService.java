@@ -2,6 +2,7 @@ package br.com.abril.nds.service;
 import java.math.BigDecimal;
 import java.util.List;
 
+import br.com.abril.nds.dto.DescontoProdutoDTO;
 import br.com.abril.nds.dto.TipoDescontoCotaDTO;
 import br.com.abril.nds.dto.TipoDescontoDTO;
 import br.com.abril.nds.dto.TipoDescontoProdutoDTO;
@@ -9,7 +10,6 @@ import br.com.abril.nds.dto.filtro.FiltroTipoDescontoCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroTipoDescontoDTO;
 import br.com.abril.nds.dto.filtro.FiltroTipoDescontoProdutoDTO;
 import br.com.abril.nds.model.cadastro.TipoDesconto;
-import br.com.abril.nds.model.cadastro.desconto.DescontoProduto;
 import br.com.abril.nds.model.seguranca.Usuario;
 
 
@@ -41,6 +41,6 @@ public interface DescontoService {
 	
 	void incluirDesconto(BigDecimal valorDesconto, List<Long> fornecedores,Integer numeroCota,Usuario usuario);
 	
-	void incluirDesconto(DescontoProduto desconto);
+	void incluirDesconto(DescontoProdutoDTO desconto);
 }
 	

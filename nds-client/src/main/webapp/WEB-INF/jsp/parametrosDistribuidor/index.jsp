@@ -86,99 +86,95 @@ function recarregarDiasDistribuidorFornecedorGrid() {
 function gravar() {
 	var data = [
 		{name:'parametrosDistribuidor.relancamentoParciaisEmDias', value: $('#relancamentoParciaisEmDias').val()},
-		{name:'parametrosDistribuidor.tipoContabilizacaoCE', value: $('input[name=parametrosDistribuidor.radioTipoContabilizacaoCE]:checked').val()},
-		{name:'parametrosDistribuidor.supervisionaVendaNegativa', value: $('#supervisionaVendaNegativa').is(':checked')},
-		{name:'parametrosDistribuidor.chamadaoDiasSuspensao', value: $('#chamadaoDiasSuspensao').val()},
-		{name:'parametrosDistribuidor.chamadaoValorConsignado', value: $('#chamadaoValorConsignado').val()},
-		{name:'parametrosDistribuidor.aceitaEncalheJuramentada', value: $('#aceitaEncalheJuramentada').attr('checked')},
-		{name:'parametrosDistribuidor.diaRecolhimentoPrimeiro', value: $('#diaRecolhimentoPrimeiro').attr('checked')},
-		{name:'parametrosDistribuidor.diaRecolhimentoSegundo', value: $('#diaRecolhimentoSegundo').attr('checked')},
-		{name:'parametrosDistribuidor.diaRecolhimentoTerceiro', value: $('#diaRecolhimentoTerceiro').attr('checked')},
-		{name:'parametrosDistribuidor.diaRecolhimentoQuarto', value: $('#diaRecolhimentoQuarto').attr('checked')},
-		{name:'parametrosDistribuidor.diaRecolhimentoQuinto', value: $('#diaRecolhimentoQuinto').attr('checked')},
-		{name:'parametrosDistribuidor.limiteCEProximaSemana', value: $('#limiteCEProximaSemana').attr('checked')},
-		{name:'parametrosDistribuidor.conferenciaCegaRecebimento', value: $('#conferenciaCegaRecebimento').attr('checked')},
-		{name:'parametrosDistribuidor.conferenciaCegaEncalhe', value: $('#conferenciaCegaEncalhe').attr('checked')},
+		{name:'parametrosDistribuidor.aceitaEncalheJuramentada', value: $('#aceitaEncalheJuramentada').is(':checked')},
+		{name:'parametrosDistribuidor.diaRecolhimentoPrimeiro', value: $('#diaRecolhimentoPrimeiro').is(':checked')},
+		{name:'parametrosDistribuidor.diaRecolhimentoSegundo', value: $('#diaRecolhimentoSegundo').is(':checked')},
+		{name:'parametrosDistribuidor.diaRecolhimentoTerceiro', value: $('#diaRecolhimentoTerceiro').is(':checked')},
+		{name:'parametrosDistribuidor.diaRecolhimentoQuarto', value: $('#diaRecolhimentoQuarto').is(':checked')},
+		{name:'parametrosDistribuidor.diaRecolhimentoQuinto', value: $('#diaRecolhimentoQuinto').is(':checked')},
+		{name:'parametrosDistribuidor.limiteCEProximaSemana', value: $('#limiteCEProximaSemana').is(':checked')},
+		{name:'parametrosDistribuidor.conferenciaCegaRecebimento', value: $('#conferenciaCegaRecebimento').is(':checked')},
+		{name:'parametrosDistribuidor.conferenciaCegaEncalhe', value: $('#conferenciaCegaEncalhe').is(':checked')},
 		{name:'parametrosDistribuidor.capacidadeManuseioHomemHoraLancamento', value: $('#capacidadeManuseioHomemHoraLancamento').val()},
 		{name:'parametrosDistribuidor.capacidadeManuseioHomemHoraRecolhimento', value: $('#capacidadeManuseioHomemHoraRecolhimento').val()},
 		{name:'parametrosDistribuidor.reutilizacaoCodigoCotaInativa', value: $('#reutilizacaoCodigoCotaInativa').val()},
-		{name:'parametrosDistribuidor.obrigacaoFiscao', value: $('#obrigacaoFiscao').attr('checked')},
-		{name:'parametrosDistribuidor.regimeEspecial', value: $('#regimeEspecial').attr('checked')},
-		{name:'parametrosDistribuidor.distribuidor', value: $("input[name='distribuidor']:checked").val()},
-		{name:'parametrosDistribuidor.slipImpressao', value: $('#slipImpressao').attr('checked')},
-		{name:'parametrosDistribuidor.slipEmail', value: $('#slipEmail').attr('checked')},
-		{name:'parametrosDistribuidor.boletoImpressao', value: $('#boletoImpressao').attr('checked')},
-		{name:'parametrosDistribuidor.boletoEmail', value: $('#boletoEmail').attr('checked')},
-		{name:'parametrosDistribuidor.boletoSlipImpressao', value: $('#boletoSlipImpressao').attr('checked')},
-		{name:'parametrosDistribuidor.boletoSlipEmail', value: $('#boletoSlipEmail').attr('checked')},
-		{name:'parametrosDistribuidor.reciboImpressao', value: $('#reciboImpressao').attr('checked')},
-		{name:'parametrosDistribuidor.reciboEmail', value: $('#reciboEmail').attr('checked')},
-		{name:'parametrosDistribuidor.notaEnvioImpressao', value: $('#notaEnvioImpressao').attr('checked')},
-		{name:'parametrosDistribuidor.notaEnvioEmail', value: $('#notaEnvioEmail').attr('checked')},
-		{name:'parametrosDistribuidor.chamadaEncalheImpressao', value: $('#chamadaEncalheImpressao').attr('checked')},
-		{name:'parametrosDistribuidor.chamadaEncalheEmail', value: $('#chamadaEncalheEmail').attr('checked')},
+		{name:'parametrosDistribuidor.obrigacaoFiscao', value: $('#obrigacaoFiscao').is(':checked')},
+		{name:'parametrosDistribuidor.regimeEspecial', value: $('#regimeEspecial').is(':checked')},
+		{name:'parametrosDistribuidor.distribuidor', value: $("[name='distribuidor']").val()},
+		{name:'parametrosDistribuidor.slipImpressao', value: $('#slipImpressao').is(':checked')},
+		{name:'parametrosDistribuidor.slipEmail', value: $('#slipEmail').is(':checked')},
+		{name:'parametrosDistribuidor.boletoImpressao', value: $('#boletoImpressao').is(':checked')},
+		{name:'parametrosDistribuidor.boletoEmail', value: $('#boletoEmail').is(':checked')},
+		{name:'parametrosDistribuidor.boletoSlipImpressao', value: $('#boletoSlipImpressao').is(':checked')},
+		{name:'parametrosDistribuidor.boletoSlipEmail', value: $('#boletoSlipEmail').is(':checked')},
+		{name:'parametrosDistribuidor.reciboImpressao', value: $('#reciboImpressao').is(':checked')},
+		{name:'parametrosDistribuidor.reciboEmail', value: $('#reciboEmail').is(':checked')},
+		{name:'parametrosDistribuidor.notaEnvioImpressao', value: $('#notaEnvioImpressao').is(':checked')},
+		{name:'parametrosDistribuidor.notaEnvioEmail', value: $('#notaEnvioEmail').is(':checked')},
+		{name:'parametrosDistribuidor.chamadaEncalheImpressao', value: $('#chamadaEncalheImpressao').is(':checked')},
+		{name:'parametrosDistribuidor.chamadaEncalheEmail', value: $('#chamadaEncalheEmail').is(':checked')},
 		{name:'parametrosDistribuidor.impressaoNE', value: $("input[name='impressaoNE']:checked").val()},
-		{name:'parametrosDistribuidor.impressaoNEFaltaDe', value: $('#impressaoNEFaltaDe').attr('checked')},
-		{name:'parametrosDistribuidor.impressaoNEFaltaEm', value: $('#impressaoNEFaltaEm').attr('checked')},
-		{name:'parametrosDistribuidor.impressaoNESobraDe', value: $('#impressaoNESobraDe').attr('checked')},
-		{name:'parametrosDistribuidor.impressaoNESobraEm', value: $('#impressaoNESobraEm').attr('checked')},
+		{name:'parametrosDistribuidor.impressaoNEFaltaDe', value: $('#impressaoNEFaltaDe').is(':checked')},
+		{name:'parametrosDistribuidor.impressaoNEFaltaEm', value: $('#impressaoNEFaltaEm').is(':checked')},
+		{name:'parametrosDistribuidor.impressaoNESobraDe', value: $('#impressaoNESobraDe').is(':checked')},
+		{name:'parametrosDistribuidor.impressaoNESobraEm', value: $('#impressaoNESobraEm').is(':checked')},
 		{name:'parametrosDistribuidor.impressaoNECADANFE', value: $("input[name='impressaoNECADANFE']:checked").val()},
-		{name:'parametrosDistribuidor.impressaoNECADANFEFaltaDe', value: $('#impressaoNECADANFEFaltaDe').attr('checked')},
-		{name:'parametrosDistribuidor.impressaoNECADANFEFaltaEm', value: $('#impressaoNECADANFEFaltaEm').attr('checked')},
-		{name:'parametrosDistribuidor.impressaoNECADANFESobraDe', value: $('#impressaoNECADANFESobraDe').attr('checked')},
-		{name:'parametrosDistribuidor.impressaoNECADANFESobraEm', value: $('#impressaoNECADANFESobraEm').attr('checked')},
+		{name:'parametrosDistribuidor.impressaoNECADANFEFaltaDe', value: $('#impressaoNECADANFEFaltaDe').is(':checked')},
+		{name:'parametrosDistribuidor.impressaoNECADANFEFaltaEm', value: $('#impressaoNECADANFEFaltaEm').is(':checked')},
+		{name:'parametrosDistribuidor.impressaoNECADANFESobraDe', value: $('#impressaoNECADANFESobraDe').is(':checked')},
+		{name:'parametrosDistribuidor.impressaoNECADANFESobraEm', value: $('#impressaoNECADANFESobraEm').is(':checked')},
 		{name:'parametrosDistribuidor.impressaoCE', value: $("input[name='impressaoCE']:checked").val()},
-		{name:'parametrosDistribuidor.impressaoCEFaltaDe', value: $('#impressaoCEFaltaDe').attr('checked')},
-		{name:'parametrosDistribuidor.impressaoCEFaltaEm', value: $('#impressaoCEFaltaEm').attr('checked')},
-		{name:'parametrosDistribuidor.impressaoCESobraDe', value: $('#impressaoCESobraDe').attr('checked')},
-		{name:'parametrosDistribuidor.impressaoCESobraEm', value: $('#impressaoCESobraEm').attr('checked')},
-		{name:'parametrosDistribuidor.utilizaContratoComCotas', value: $('#utilizaContratoComCotas').attr('checked')},
+		{name:'parametrosDistribuidor.impressaoCEFaltaDe', value: $('#impressaoCEFaltaDe').is(':checked')},
+		{name:'parametrosDistribuidor.impressaoCEFaltaEm', value: $('#impressaoCEFaltaEm').is(':checked')},
+		{name:'parametrosDistribuidor.impressaoCESobraDe', value: $('#impressaoCESobraDe').is(':checked')},
+		{name:'parametrosDistribuidor.impressaoCESobraEm', value: $('#impressaoCESobraEm').is(':checked')},
+		{name:'parametrosDistribuidor.utilizaContratoComCotas', value: $('#utilizaContratoComCotas').is(':checked')},
 		{name:'parametrosDistribuidor.prazoContrato', value: $('#prazoContrato').val()},
 		{name:'parametrosDistribuidor.informacoesComplementaresContrato', value: $('#informacoesComplementaresContrato').val()},
-		{name:'parametrosDistribuidor.utilizaProcuracaoEntregadores', value: $('#utilizaProcuracaoEntregadores').attr('checked')},
+		{name:'parametrosDistribuidor.utilizaProcuracaoEntregadores', value: $('#utilizaProcuracaoEntregadores').is(':checked')},
 		{name:'parametrosDistribuidor.informacoesComplementaresProcuracao', value: $('#informacoesComplementaresProcuracao').val()},
-		{name:'parametrosDistribuidor.utilizaGarantiaPdv', value: $('#utilizaGarantiaPdv').attr('checked')},
-		{name:'parametrosDistribuidor.chequeCalcao', value: $('#chequeCalcao').attr('checked')},
+		{name:'parametrosDistribuidor.utilizaGarantiaPdv', value: $('#utilizaGarantiaPdv').is(':checked')},
+		{name:'parametrosDistribuidor.chequeCalcao', value: $('#chequeCalcao').is(':checked')},
 		{name:'parametrosDistribuidor.chequeCalcaoValor', value: $('#chequeCalcaoValor').val()},
-		{name:'parametrosDistribuidor.fiador', value: $('#fiador').attr('checked')},
+		{name:'parametrosDistribuidor.fiador', value: $('#fiador').is(':checked')},
 		{name:'parametrosDistribuidor.fiadorValor', value: $('#fiadorValor').val()},
-		{name:'parametrosDistribuidor.imovel', value: $('#imovel').attr('checked')},
+		{name:'parametrosDistribuidor.imovel', value: $('#imovel').is(':checked')},
 		{name:'parametrosDistribuidor.imovelValor', value: $('#imovelValor').val()},
-		{name:'parametrosDistribuidor.caucaoLiquida', value: $('#caucaoLiquida').attr('checked')},
+		{name:'parametrosDistribuidor.caucaoLiquida', value: $('#caucaoLiquida').is(':checked')},
 		{name:'parametrosDistribuidor.caucaoLiquidaValor', value: $('#caucaoLiquidaValor').val()},
-		{name:'parametrosDistribuidor.notaPromissoria', value: $('#notaPromissoria').attr('checked')},
+		{name:'parametrosDistribuidor.notaPromissoria', value: $('#notaPromissoria').is(':checked')},
 		{name:'parametrosDistribuidor.notaPromissoriaValor', value: $('#notaPromissoriaValor').val()},
-		{name:'parametrosDistribuidor.antecedenciaValidade', value: $('#antecedenciaValidade').attr('checked')},
+		{name:'parametrosDistribuidor.antecedenciaValidade', value: $('#antecedenciaValidade').is(':checked')},
 		{name:'parametrosDistribuidor.antecedenciaValidadeValor', value: $('#antecedenciaValidadeValor').val()},
-		{name:'parametrosDistribuidor.indicadorReajusteCaucaoLiquida', value: $('#indicadorReajusteCaucaoLiquida').attr('checked')},
+		{name:'parametrosDistribuidor.indicadorReajusteCaucaoLiquida', value: $('#indicadorReajusteCaucaoLiquida').is(':checked')},
 		{name:'parametrosDistribuidor.indicadorReajusteCaucaoLiquidaValor', value: $('#indicadorReajusteCaucaoLiquidaValor').val()},
 		{name:'parametrosDistribuidor.sugereSuspensaoQuandoAtingirBoletos', value: $('#sugereSuspensaoQuandoAtingirBoletos').val()},
 		{name:'parametrosDistribuidor.sugereSuspensaoQuandoAtingirReais', value: $('#sugereSuspensaoQuandoAtingirReais').val()},
-		{name:'parametrosDistribuidor.parcelamentoDividas', value: $('#parcelamentoDividas').attr('checked')},
+		{name:'parametrosDistribuidor.parcelamentoDividas', value: $('#parcelamentoDividas').is(':checked')},
 		{name:'parametrosDistribuidor.negociacaoAteParcelas', value: $('#negociacaoAteParcelas').val()},
-		{name:'parametrosDistribuidor.permitePagamentoDividasDivergentes', value: $('#permitePagamentoDividasDivergentes').attr('checked')},
-		{name:'parametrosDistribuidor.utilizaControleAprovacao', value: $('#utilizaControleAprovacao').attr('checked')},
-		{name:'parametrosDistribuidor.paraDebitosCreditos', value: $('#paraDebitosCreditos').attr('checked')},
-		{name:'parametrosDistribuidor.negociacao', value: $('#negociacao').attr('checked')},
-		{name:'parametrosDistribuidor.ajusteEstoque', value: $('#ajusteEstoque').attr('checked')},
-		{name:'parametrosDistribuidor.postergacaoCobranca', value: $('#postergacaoCobranca').attr('checked')},
-		{name:'parametrosDistribuidor.devolucaoFornecedor', value: $('#devolucaoFornecedor').attr('checked')},
-		{name:'parametrosDistribuidor.recibo', value: $('#recibo').attr('checked')},
-		{name:'parametrosDistribuidor.faltasSobras', value: $('#faltasSobras').attr('checked')},
-		{name:'parametrosDistribuidor.aprovacaoFaltaDe', value: $('#aprovacaoFaltaDe').attr('checked')},
-		{name:'parametrosDistribuidor.aprovacaoSobraDe', value: $('#aprovacaoSobraDe').attr('checked')},
-		{name:'parametrosDistribuidor.aprovacaoFaltaEm', value: $('#aprovacaoFaltaEm').attr('checked')},
-		{name:'parametrosDistribuidor.aprovacaoSobraEm', value: $('#aprovacaoSobraEm').attr('checked')},
+		{name:'parametrosDistribuidor.permitePagamentoDividasDivergentes', value: $('#permitePagamentoDividasDivergentes').is(':checked')},
+		{name:'parametrosDistribuidor.utilizaControleAprovacao', value: $('#utilizaControleAprovacao').is(':checked')},
+		{name:'parametrosDistribuidor.paraDebitosCreditos', value: $('#paraDebitosCreditos').is(':checked')},
+		{name:'parametrosDistribuidor.negociacao', value: $('#negociacao').is(':checked')},
+		{name:'parametrosDistribuidor.ajusteEstoque', value: $('#ajusteEstoque').is(':checked')},
+		{name:'parametrosDistribuidor.postergacaoCobranca', value: $('#postergacaoCobranca').is(':checked')},
+		{name:'parametrosDistribuidor.devolucaoFornecedor', value: $('#devolucaoFornecedor').is(':checked')},
+		{name:'parametrosDistribuidor.recibo', value: $('#recibo').is(':checked')},
+		{name:'parametrosDistribuidor.faltasSobras', value: $('#faltasSobras').is(':checked')},
+		{name:'parametrosDistribuidor.aprovacaoFaltaDe', value: $('#aprovacaoFaltaDe').is(':checked')},
+		{name:'parametrosDistribuidor.aprovacaoSobraDe', value: $('#aprovacaoSobraDe').is(':checked')},
+		{name:'parametrosDistribuidor.aprovacaoFaltaEm', value: $('#aprovacaoFaltaEm').is(':checked')},
+		{name:'parametrosDistribuidor.aprovacaoSobraEm', value: $('#aprovacaoSobraEm').is(':checked')},
 		{name:'parametrosDistribuidor.prazoFollowUp', value: $('#prazoFollowUp').val()},
-		{name:'parametrosDistribuidor.prazoFollowUpFaltaDe', value: $('#prazoFollowUpFaltaDe').attr('checked')},
-		{name:'parametrosDistribuidor.prazoFollowUpSobraDe', value: $('#prazoFollowUpSobraDe').attr('checked')},
-		{name:'parametrosDistribuidor.prazoFollowUpFaltaEm', value: $('#prazoFollowUpFaltaEm').attr('checked')},
-		{name:'parametrosDistribuidor.prazoFollowUpSobraEm', value: $('#prazoFollowUpSobraEm').attr('checked')},
+		{name:'parametrosDistribuidor.prazoFollowUpFaltaDe', value: $('#prazoFollowUpFaltaDe').is(':checked')},
+		{name:'parametrosDistribuidor.prazoFollowUpSobraDe', value: $('#prazoFollowUpSobraDe').is(':checked')},
+		{name:'parametrosDistribuidor.prazoFollowUpFaltaEm', value: $('#prazoFollowUpFaltaEm').is(':checked')},
+		{name:'parametrosDistribuidor.prazoFollowUpSobraEm', value: $('#prazoFollowUpSobraEm').is(':checked')},
 		{name:'parametrosDistribuidor.prazoAvisoPrevioValidadeGarantia', value: $('#prazoAvisoPrevioValidadeGarantia').val()},
-		{name:'parametrosDistribuidor.prazoAvisoPrevioValidadeGarantiaFaltaDe', value: $('#prazoAvisoPrevioValidadeGarantiaFaltaDe').attr('checked')},
-		{name:'parametrosDistribuidor.prazoAvisoPrevioValidadeGarantiaSobraDe', value: $('#prazoAvisoPrevioValidadeGarantiaSobraDe').attr('checked')},
-		{name:'parametrosDistribuidor.prazoAvisoPrevioValidadeGarantiaFaltaEm', value: $('#prazoAvisoPrevioValidadeGarantiaFaltaEm').attr('checked')},
-		{name:'parametrosDistribuidor.prazoAvisoPrevioValidadeGarantiaSobraEm', value: $('#prazoAvisoPrevioValidadeGarantiaSobraEm').attr('checked')}
+		{name:'parametrosDistribuidor.prazoAvisoPrevioValidadeGarantiaFaltaDe', value: $('#prazoAvisoPrevioValidadeGarantiaFaltaDe').is(':checked')},
+		{name:'parametrosDistribuidor.prazoAvisoPrevioValidadeGarantiaSobraDe', value: $('#prazoAvisoPrevioValidadeGarantiaSobraDe').is(':checked')},
+		{name:'parametrosDistribuidor.prazoAvisoPrevioValidadeGarantiaFaltaEm', value: $('#prazoAvisoPrevioValidadeGarantiaFaltaEm').is(':checked')},
+		{name:'parametrosDistribuidor.prazoAvisoPrevioValidadeGarantiaSobraEm', value: $('#prazoAvisoPrevioValidadeGarantiaSobraEm').is(':checked')}
 	];
 	
 	$.postJSON("<c:url value='/administracao/parametrosDistribuidor/gravar'/>",
@@ -431,8 +427,9 @@ function mostraTabelaGarantiasAceitas(){
    	    <legend>Parâmetros do Distribuidor</legend>
         <div id="tabDistribuidor">
 			<ul>
+				<li><a href="#tabFiscal">Cadastro / Fiscal</a></li>
 				<li><a href="#tabOperacao">Operação</a></li>
-				<li><a href="#tabEmissao">Fiscal / Emissão de Documentos</a></li>
+				<li><a href="#tabEmissao">Documentos</a></li>
 				<li><a href="#tabContratos">Contratos e Garantias</a></li>
 			    <li><a href="#tabNegociacao">Negociação</a></li>
 			     <li><a href="#tabAprovacao">Aprovação</a></li>
@@ -440,213 +437,13 @@ function mostraTabelaGarantiasAceitas(){
 			
             <!--  Aba Operação --> 
             <jsp:include page="tabOperacao.jsp"/>
+			
+			<jsp:include page="tabFiscal.jsp"></jsp:include>
+			
       
-			<div id="tabEmissao">
-				<fieldset style="width:450px!important; margin-bottom:5px;">
-		              <legend>Fiscal</legend>
-		              <table width="426" border="0" cellspacing="0" cellpadding="0">
-		                <tr>
-		                  <td>&nbsp;</td>
-		                  <td>&nbsp;</td>
-		                  <td align="right">&nbsp;</td>
-		                  <td align="right">&nbsp;</td>
-		                  <td colspan="4"><strong>Distribuidor</strong></td>
-		                </tr>
-		                <tr>
-		                  <td width="20"><input name="parametrosDistribuidor.obrigacaoFiscao" id="obrigacaoFiscao" type="checkbox"  ${parametrosDistribuidor.obrigacaoFiscao}/></td>
-		                  <td width="97"> Obrigação Fiscal</td>
-		                  <td width="20"><input name="parametrosDistribuidor.regimeEspecial" id="regimeEspecial" type="checkbox"  ${parametrosDistribuidor.regimeEspecial}/></td>
-		                  <td width="98">Regime Especial</td>
-		                  <td width="20"><input type="radio" name="distribuidor" id="radioPrestadorServico" value="PRESTADOR_SERVICO" /> </td>
-		                  <td width="101">Prestador Serviço</td>
-		                  <td width="20"><input type="radio" name="distribuidor" id="radioMercantil" value="MERCANTIL" /></td>
-		                  <td width="50">Mercantil</td>
-		                </tr>
-		                <tr>
-		                  <td>&nbsp;</td>
-		                  <td>&nbsp;</td>
-		                  <td>&nbsp;</td>
-		                  <td>&nbsp;</td>
-		                  <td>&nbsp;</td>
-		                  <td colspan="3">&nbsp;</td>
-		                </tr>
-		              </table>
-	            </fieldset>
-	            <fieldset style="width:450px!important;">
-		           	<legend>Emissão de Documentos</legend>
-		                <table width="430" border="0" cellspacing="0" cellpadding="0">
-		                  <tr>
-		                    <td>Utiliza:</td>
-		                    <td align="center">Impressão</td>
-		                    <td align="center">E-mail</td>
-		                  </tr>
-		                  <tr>
-		                    <td width="203">Slip</td>
-		                    <td width="120" align="center"><input name="parametrosDistribuidor.slipImpressao" id="slipImpressao" type="checkbox"  ${parametrosDistribuidor.slipImpressao}/></td>
-		                    <td width="107" align="center"><input name="parametrosDistribuidor.slipEmail" id="slipEmail" type="checkbox"  ${parametrosDistribuidor.slipEmail}/></td>
-		                  </tr>
-		                  <tr>
-		                    <td>Boleto</td>
-		                    <td align="center"><input name="parametrosDistribuidor.boletoImpressao" id="boletoImpressao" type="checkbox"  ${parametrosDistribuidor.boletoImpressao}/></td>
-		                    <td align="center"><input name="parametrosDistribuidor.boletoEmail" id="boletoEmail" type="checkbox"  ${parametrosDistribuidor.boletoEmail}/></td>
-		                  </tr>
-		                  <tr>
-		                    <td>Boleto + Slip</td>
-		                    <td align="center"><input name="parametrosDistribuidor.boletoSlipImpressao" id="boletoSlipImpressao" type="checkbox"  ${parametrosDistribuidor.boletoSlipImpressao}/></td>
-		                    <td align="center"><input name="parametrosDistribuidor.boletoSlipEmail" id="boletoSlipEmail" type="checkbox"  ${parametrosDistribuidor.boletoSlipEmail}/></td>
-		                  </tr>
-		                  <tr>
-		                    <td>Recibo</td>
-		                    <td align="center"><input name="parametrosDistribuidor.reciboImpressao" id="reciboImpressao" type="checkbox"  ${parametrosDistribuidor.reciboImpressao}/></td>
-		                    <td align="center"><input name="parametrosDistribuidor.reciboEmail" id="reciboEmail" type="checkbox"  ${parametrosDistribuidor.reciboEmail}/></td>
-		                  </tr>
-		                  <tr>
-		                    <td>Nota de Envio</td>
-		                    <td align="center"><input name="parametrosDistribuidor.notaEnvioImpressao" id="notaEnvioImpressao" type="checkbox"  ${parametrosDistribuidor.notaEnvioImpressao}/></td>
-		                    <td align="center"><input name="parametrosDistribuidor.notaEnvioEmail" id="notaEnvioEmail" type="checkbox"  ${parametrosDistribuidor.notaEnvioEmail}/></td>
-		                  </tr>
-		                  <tr>
-		                    <td>Chamada de Encalhe</td>
-		                    <td align="center"><input name="parametrosDistribuidor.chamadaEncalheImpressao" id="chamadaEncalheImpressao" type="checkbox"  ${parametrosDistribuidor.chamadaEncalheImpressao}/></td>
-		                    <td align="center"><input name="parametrosDistribuidor.chamadaEncalheEmail" id="chamadaEncalheEmail" type="checkbox"  ${parametrosDistribuidor.chamadaEncalheEmail}/></td>
-		                  </tr>
-		                </table>
-	            </fieldset>
-	            <fieldset style="width:320px!important; margin-bottom:5px;">
-		           	  <legend>Impressão NE</legend>
-		                <table width="325" border="0" cellspacing="0" cellpadding="0">
-		                      <tr>
-		                        <td width="26"><input type="radio" name="impressaoNE" id="impressaoNEModelo1" value="MODELO_1" /></td>
-		                        <td width="93"><a href="${pageContext.request.contextPath}/modelos/ce_modelo_1.htm" target="_blank">Modelo 1</a></td>
-		                        <td width="20"><input type="radio" name="impressaoNE" id="impressaoNEModelo2" value="MODELO_2" /></td>
-		                        <td width="287"><a href="${pageContext.request.contextPath}/modelos/ce_modelo_2.html" target="_blank">Modelo 2</a></td>
-		                      </tr>
-		                      <tr>
-		                        <td>&nbsp;</td>
-		                        <td>&nbsp;</td>
-		                        <td>&nbsp;</td>
-		                        <td>&nbsp;</td>
-		                      </tr>
-	                    </table>
-	                    <table width="274" border="0" cellspacing="0" cellpadding="0" class="funcionalidades" style="display:none;">
-		                      <tr>
-		                        <td colspan="4">&nbsp;</td>
-		                      </tr>
-		                      <tr>
-		                        <td colspan="4">Para as Funcionalidades:</td>
-		                      </tr>
-		                      <tr>
-		                        <td width="23"><input name="parametrosDistribuidor.impressaoNEFaltaDe" id="impressaoNEFaltaDe" type="checkbox"  ${parametrosDistribuidor.impressaoNEFaltaDe}/></td>
-		                        <td width="123">Falta de</td>
-		                        <td width="20"><input name="parametrosDistribuidor.impressaoNESobraDe" id="impressaoNESobraDe" type="checkbox"  ${parametrosDistribuidor.impressaoNESobraDe}/></td>
-		                        <td width="108">Sobra de</td>
-		                      </tr>
-		                      <tr>
-		                        <td><input name="parametrosDistribuidor.impressaoNEFaltaEm" id="impressaoNEFaltaEm" type="checkbox"  ${parametrosDistribuidor.impressaoNEFaltaEm}/></td>
-		                        <td>Falta em</td>
-		                        <td><input name="parametrosDistribuidor.impressaoNESobraEm" id="impressaoNESobraEm" type="checkbox"  ${parametrosDistribuidor.impressaoNESobraEm}/></td>
-		                        <td>Sobra em</td>
-		                      </tr>
-		                      <tr>
-		                        <td>&nbsp;</td>
-		                        <td>&nbsp;</td>
-		                        <td>&nbsp;</td>
-		                        <td>&nbsp;</td>
-		                      </tr>
-						</table>
-			  	</fieldset>
-	            <fieldset style="width:320px!important; margin-bottom:5px;">
-		               	<legend>Impressão NECA / Danfe</legend>
-		                <table width="325" border="0" cellspacing="0" cellpadding="0">
-		                      <tr>
-		                        <td width="20"><input type="radio" name="impressaoNECADANFE" id="impressaoNECADANFEMODELO1" value="MODELO_1" /></td>
-		                        <td width="79"><a href="${pageContext.request.contextPath}/modelos/ce_modelo_1.htm" target="_blank">Modelo 1</a></td>
-		                        <td width="20"><input type="radio" name="impressaoNECADANFE" id="impressaoNECADANFEMODELO2" value="MODELO_2" /></td>
-		                        <td width="75"><a href="${pageContext.request.contextPath}/modelos/ce_modelo_3.htm" target="_blank">Modelo 2</a></td>
-		                        <td width="20"><input type="radio" name="impressaoNECADANFE" id="impressaoNECADANFE" value="DANFE" /></td>
-		                        <td width="111"><a href="javascript:;" target="_blank">Danfe</a></td>
-		                      </tr>
-		                      <tr>
-		                        <td>&nbsp;</td>
-		                        <td>&nbsp;</td>
-		                        <td>&nbsp;</td>
-		                        <td>&nbsp;</td>
-		                        <td>&nbsp;</td>
-		                        <td>&nbsp;</td>
-		                      </tr>
-		                    </table>
-		                    <table width="274" border="0" cellspacing="0" cellpadding="0" class="funcionalidades" style="display:none;">
-		                      <tr>
-		                        <td colspan="4">&nbsp;</td>
-		                      </tr>
-		                      <tr>
-		                        <td colspan="4">Para as Funcionalidades:</td>
-		                      </tr>
-		                      <tr>
-		                        <td width="23"><input name="parametrosDistribuidor.impressaoNECADANFEFaltaDe" id="impressaoNECADANFEFaltaDe" type="checkbox"  ${parametrosDistribuidor.impressaoNECADANFEFaltaDe}/></td>
-		                        <td width="123">Falta de</td>
-		                        <td width="20"><input name="parametrosDistribuidor.impressaoNECADANFESobraDe" id="impressaoNECADANFESobraDe" type="checkbox"  ${parametrosDistribuidor.impressaoNECADANFESobraDe}/></td>
-		                        <td width="108">Sobra de</td>
-		                      </tr>
-		                      <tr>
-		                        <td><input name="parametrosDistribuidor.impressaoNECADANFEFaltaEm" id="impressaoNECADANFEFaltaEm" type="checkbox"  ${parametrosDistribuidor.impressaoNECADANFEFaltaEm}/></td>
-		                        <td>Falta em</td>
-		                        <td><input name="parametrosDistribuidor.impressaoNECADANFESobraEm" id="impressaoNECADANFESobraEm" type="checkbox"  ${parametrosDistribuidor.impressaoNECADANFESobraEm}/></td>
-		                        <td>Sobra em</td>
-		                      </tr>
-		                      <tr>
-		                        <td>&nbsp;</td>
-		                        <td>&nbsp;</td>
-		                        <td>&nbsp;</td>
-		                        <td>&nbsp;</td>
-		                      </tr>
-		                </table>
-	              </fieldset>
-	              <fieldset style="width:320px!important; margin-bottom:5px;">
-		           	  	<legend>Impressão CE</legend>
-		                <table width="325" border="0" cellspacing="0" cellpadding="0">
-		                      <tr>
-		                        <td width="26"><input type="radio" name="impressaoCE" id="impressaoCEModelo2" value="MODELO_1" /></td>
-		                        <td width="93"><a href="${pageContext.request.contextPath}/modelos/ce_modelo_1.htm" target="_blank">Modelo 1</a></td>
-		                        <td width="20"><input type="radio" name="impressaoCE" id="impressaoCEModelo1" value="MODELO_2" /></td>
-		                        <td width="287"><a href="${pageContext.request.contextPath}/modelos/ce_modelo_2.html" target="_blank">Modelo 2</a></td>
-		                      </tr>
-		                      <tr>
-		                        <td>&nbsp;</td>
-		                        <td>&nbsp;</td>
-		                        <td>&nbsp;</td>
-		                        <td>&nbsp;</td>
-		                      </tr>
-	                    </table>
-	                    <table width="274" border="0" cellspacing="0" cellpadding="0" class="funcionalidades" style="display:none;">
-		                      <tr>
-		                        <td colspan="4">&nbsp;</td>
-		                      </tr>
-		                      <tr>
-		                        <td colspan="4">Para as Funcionalidades:</td>
-		                      </tr>
-		                      <tr>
-		                        <td width="23"><input name="parametrosDistribuidor.impressaoCEFaltaDe" id="impressaoCEFaltaDe" type="checkbox"  ${parametrosDistribuidor.impressaoCEFaltaDe}/></td>
-		                        <td width="123">Falta de</td>
-		                        <td width="20"><input name="parametrosDistribuidor.impressaoCESobraDe" id="impressaoCESobraDe" type="checkbox"  ${parametrosDistribuidor.impressaoCESobraDe}/></td>
-		                        <td width="108">Sobra de</td>
-		                      </tr>
-		                      <tr>
-		                        <td><input name="parametrosDistribuidor.impressaoCEFaltaEm" id="impressaoCEFaltaEm" type="checkbox"  ${parametrosDistribuidor.impressaoCEFaltaEm}/></td>
-		                        <td>Falta em</td>
-		                        <td><input name="parametrosDistribuidor.impressaoCESobraEm" id="impressaoCESobraEm" type="checkbox"  ${parametrosDistribuidor.impressaoCESobraEm}/></td>
-		                        <td>Sobra em</td>
-		                      </tr>
-		                      <tr>
-		                        <td>&nbsp;</td>
-		                        <td>&nbsp;</td>
-		                        <td>&nbsp;</td>
-		                        <td>&nbsp;</td>
-		                      </tr>
-		              	</table>
-	  			  </fieldset>
-	              <br clear="all"  />
-			</div>
+			
+			<jsp:include page="tabEmissao.jsp"></jsp:include>
+			
 		    <!-- Aba Contratos e Garantias  -->	
             <jsp:include page="tabContratosGarantias.jsp"></jsp:include>
             			

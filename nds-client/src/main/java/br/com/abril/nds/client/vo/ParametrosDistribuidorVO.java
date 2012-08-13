@@ -57,29 +57,29 @@ public class ParametrosDistribuidorVO {
 	private String distribuidor;
 	
 	// Frame Emissão de Documentos
-	private String slipImpressao;
+	private boolean slipImpressao;
 
-	private String slipEmail;
+	private boolean slipEmail;
 
-	private String boletoImpressao;
+	private boolean boletoImpressao;
 
-	private String boletoEmail;
+	private boolean boletoEmail;
 
-	private String boletoSlipImpressao;
+	private boolean boletoSlipImpressao;
 
-	private String boletoSlipEmail;
+	private boolean boletoSlipEmail;
 
-	private String reciboImpressao;
+	private boolean reciboImpressao;
 
-	private String reciboEmail;
+	private boolean reciboEmail;
 
-	private String notaEnvioImpressao;
+	private boolean notaEnvioImpressao;
 
-	private String notaEnvioEmail;
+	private boolean notaEnvioEmail;
 
-	private String chamadaEncalheImpressao;
+	private boolean chamadaEncalheImpressao;
 
-	private String chamadaEncalheEmail;
+	private boolean chamadaEncalheEmail;
 	
 	// Frame Impressão NE
 	// MODELO_1 ou MODELO_2
@@ -382,99 +382,99 @@ public class ParametrosDistribuidorVO {
 		this.distribuidor = distribuidor;
 	}
 
-	public String getSlipImpressao() {
+	public boolean getSlipImpressao() {
 		return slipImpressao;
 	}
 
-	public void setSlipImpressao(String slipImpressao) {
+	public void setSlipImpressao(boolean slipImpressao) {
 		this.slipImpressao = slipImpressao;
 	}
 
-	public String getSlipEmail() {
+	public boolean getSlipEmail() {
 		return slipEmail;
 	}
 
-	public void setSlipEmail(String slipEmail) {
+	public void setSlipEmail(boolean slipEmail) {
 		this.slipEmail = slipEmail;
 	}
 
-	public String getBoletoImpressao() {
+	public boolean getBoletoImpressao() {
 		return boletoImpressao;
 	}
 
-	public void setBoletoImpressao(String boletoImpressao) {
+	public void setBoletoImpressao(boolean boletoImpressao) {
 		this.boletoImpressao = boletoImpressao;
 	}
 
-	public String getBoletoEmail() {
+	public boolean getBoletoEmail() {
 		return boletoEmail;
 	}
 
-	public void setBoletoEmail(String boletoEmail) {
+	public void setBoletoEmail(boolean boletoEmail) {
 		this.boletoEmail = boletoEmail;
 	}
 
-	public String getBoletoSlipImpressao() {
+	public boolean getBoletoSlipImpressao() {
 		return boletoSlipImpressao;
 	}
 
-	public void setBoletoSlipImpressao(String boletoSlipImpressao) {
+	public void setBoletoSlipImpressao(boolean boletoSlipImpressao) {
 		this.boletoSlipImpressao = boletoSlipImpressao;
 	}
 
-	public String getBoletoSlipEmail() {
+	public boolean getBoletoSlipEmail() {
 		return boletoSlipEmail;
 	}
 
-	public void setBoletoSlipEmail(String boletoSlipEmail) {
+	public void setBoletoSlipEmail(boolean boletoSlipEmail) {
 		this.boletoSlipEmail = boletoSlipEmail;
 	}
 
-	public String getReciboImpressao() {
+	public boolean getReciboImpressao() {
 		return reciboImpressao;
 	}
 
-	public void setReciboImpressao(String reciboImpressao) {
+	public void setReciboImpressao(boolean reciboImpressao) {
 		this.reciboImpressao = reciboImpressao;
 	}
 
-	public String getReciboEmail() {
+	public boolean getReciboEmail() {
 		return reciboEmail;
 	}
 
-	public void setReciboEmail(String reciboEmail) {
+	public void setReciboEmail(boolean reciboEmail) {
 		this.reciboEmail = reciboEmail;
 	}
 
-	public String getNotaEnvioImpressao() {
+	public boolean getNotaEnvioImpressao() {
 		return notaEnvioImpressao;
 	}
 
-	public void setNotaEnvioImpressao(String notaEnvioImpressao) {
+	public void setNotaEnvioImpressao(boolean notaEnvioImpressao) {
 		this.notaEnvioImpressao = notaEnvioImpressao;
 	}
 
-	public String getNotaEnvioEmail() {
+	public boolean getNotaEnvioEmail() {
 		return notaEnvioEmail;
 	}
 
-	public void setNotaEnvioEmail(String notaEnvioEmail) {
+	public void setNotaEnvioEmail(boolean notaEnvioEmail) {
 		this.notaEnvioEmail = notaEnvioEmail;
 	}
 
-	public String getChamadaEncalheImpressao() {
+	public boolean getChamadaEncalheImpressao() {
 		return chamadaEncalheImpressao;
 	}
 
-	public void setChamadaEncalheImpressao(String chamadaEncalheImpressao) {
+	public void setChamadaEncalheImpressao(boolean chamadaEncalheImpressao) {
 		this.chamadaEncalheImpressao = chamadaEncalheImpressao;
 	}
 
-	public String getChamadaEncalheEmail() {
+	public boolean getChamadaEncalheEmail() {
 		return chamadaEncalheEmail;
 	}
 
-	public void setChamadaEncalheEmail(String chamadaEncalheEmail) {
+	public void setChamadaEncalheEmail(boolean chamadaEncalheEmail) {
 		this.chamadaEncalheEmail = chamadaEncalheEmail;
 	}
 
