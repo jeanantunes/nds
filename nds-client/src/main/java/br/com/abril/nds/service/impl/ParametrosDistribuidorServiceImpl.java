@@ -158,9 +158,9 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		
 		// Condições de Contratação:
 		boolean utilizaContratoComCotas = (distribuidor.getParametroContratoCota() != null);
-		parametrosDistribuidor.setUtilizaContratoComCotas((utilizaContratoComCotas ? CHECKED : ""));
+		parametrosDistribuidor.setUtilizaContratoComCotas(utilizaContratoComCotas);
 		if (utilizaContratoComCotas) {
-			parametrosDistribuidor.setPrazoContrato(CurrencyUtil.formatarValorTruncado(distribuidor.getParametroContratoCota().getDuracaoContratoCota()));
+			parametrosDistribuidor.setPrazoContrato(distribuidor.getParametroContratoCota().getDuracaoContratoCota());
 			parametrosDistribuidor.setInformacoesComplementaresContrato(distribuidor.getParametroContratoCota().getComplementoContrato());
 		}
 		
@@ -407,25 +407,18 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		}
 
 		// Condições de Contratação:
-		boolean utilizaContratoComCotas = verificaCheckBoolean(parametrosDistribuidor.getUtilizaContratoComCotas());
+		boolean utilizaContratoComCotas = parametrosDistribuidor.getUtilizaContratoComCotas();
 		if (utilizaContratoComCotas) {
 			ParametroContratoCota parametroContratoCota = null;
 			if (distribuidor.getParametroContratoCota() != null) {
 				parametroContratoCota = distribuidor.getParametroContratoCota();
 			} else {
 				parametroContratoCota = new ParametroContratoCota();
+				distribuidor.setParametroContratoCota(parametroContratoCota);
 			}
-			if (parametrosDistribuidor.getPrazoContrato() != null && !parametrosDistribuidor.getPrazoContrato().isEmpty()) {
-				parametroContratoCota.setDuracaoContratoCota(CurrencyUtil.converterValor(parametrosDistribuidor.getPrazoContrato()).intValue());
-			} else {
-				parametroContratoCota.setDuracaoContratoCota(2); // DEFAULT, entretanto, nunca deverá cair aqui
-			}
+			parametroContratoCota.setDuracaoContratoCota(parametrosDistribuidor.getPrazoContrato());
 			parametroContratoCota.setComplementoContrato(parametrosDistribuidor.getInformacoesComplementaresContrato());
-			
 			parametroContratoCotaRepository.alterar(parametroContratoCota);
-
-			distribuidor.setParametroContratoCota(parametroContratoCota);
-
 		} else {
 			distribuidor.setParametroContratoCota(null);
 		}
