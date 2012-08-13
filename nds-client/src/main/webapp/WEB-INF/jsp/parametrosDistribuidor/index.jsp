@@ -84,9 +84,12 @@ function recarregarDiasDistribuidorFornecedorGrid() {
 }
 
 function gravar() {
-	
 	var data = [
 		{name:'parametrosDistribuidor.relancamentoParciaisEmDias', value: $('#relancamentoParciaisEmDias').val()},
+		{name:'parametrosDistribuidor.tipoContabilizacaoCE', value: $('input[name=parametrosDistribuidor.radioTipoContabilizacaoCE]:checked').val()},
+		{name:'parametrosDistribuidor.supervisionaVendaNegativa', value: $('#supervisionaVendaNegativa').is(':checked')},
+		{name:'parametrosDistribuidor.chamadaoDiasSuspensao', value: $('#chamadaoDiasSuspensao').val()},
+		{name:'parametrosDistribuidor.chamadaoValorConsignado', value: $('#chamadaoValorConsignado').val()},
 		{name:'parametrosDistribuidor.aceitaEncalheJuramentada', value: $('#aceitaEncalheJuramentada').attr('checked')},
 		{name:'parametrosDistribuidor.diaRecolhimentoPrimeiro', value: $('#diaRecolhimentoPrimeiro').attr('checked')},
 		{name:'parametrosDistribuidor.diaRecolhimentoSegundo', value: $('#diaRecolhimentoSegundo').attr('checked')},
@@ -362,6 +365,17 @@ $(function() {
 		 precision:0
 	});	
 	
+	$("#chamadaoValorConsignado").maskMoney({
+		 thousands:'.', 
+		 decimal:',', 
+	});
+	
+	$("#chamadaoDiasSuspensao").maskMoney({
+		 thousands:'', 
+		 decimal:'', 
+		 precision:0
+	});
+	
 	$("#relancamentoParciaisEmDias").val(${parametrosDistribuidor.relancamentoParciaisEmDias});
 	
 	$('input:radio[name=distribuidor][value=${parametrosDistribuidor.distribuidor}]').click();
@@ -517,14 +531,14 @@ $(function() {
                             <td>
                              <c:if test="${parametrosDistribuidor.tipoContabilizacaoCE eq 'VALOR'}">
 								<input type="radio" name="parametrosDistribuidor.tipoContabilizacaoCE" 
-									   id="radioTipoContabilizacaoCE" 
+									   id="radioTipoContabilizacaoCEValor" 
 									   checked="checked"
                                        value="VALOR" />
 							</c:if>		
 							<c:if test="${empty parametrosDistribuidor.tipoContabilizacaoCE or 
-								(not parametrosDistribuidor.tipoContabilizacaoCE eq 'VALOR')}">
+								(not (parametrosDistribuidor.tipoContabilizacaoCE eq 'VALOR'))}">
 								<input type="radio" name="parametrosDistribuidor.tipoContabilizacaoCE" 
-									   id="radioTipoContabilizacaoCE" 
+									   id="radioTipoContabilizacaoCEValor" 
                                        value="VALOR" />
 							</c:if>									
                             </td>
@@ -532,14 +546,14 @@ $(function() {
                             <td>
 							  <c:if test="${parametrosDistribuidor.tipoContabilizacaoCE eq 'EXEMPLARES'}">
 								<input type="radio" name="parametrosDistribuidor.tipoContabilizacaoCE" 
-                                     id="radioTipoContabilizacaoCE" 
+                                     id="radioTipoContabilizacaoCEExemplares" 
 									 checked="checked"	
                                      value="EXEMPLARES" />
 							  </c:if>
 							  <c:if test="${empty parametrosDistribuidor.tipoContabilizacaoCE or 
-									(not parametrosDistribuidor.tipoContabilizacaoCE eq 'EXEMPLARES')}">
+									(not (parametrosDistribuidor.tipoContabilizacaoCE eq 'EXEMPLARES'))}">
 									<input type="radio" name="parametrosDistribuidor.tipoContabilizacaoCE" 
-                                     id="radioTipoContabilizacaoCE" 
+                                     id="radioTipoContabilizacaoCEExamplares" 
 			                         value="EXEMPLARES" />
 							  </c:if>
 							 </td>
@@ -583,10 +597,10 @@ $(function() {
                             <td colspan="11">Em casos de Venda Negativa, solicita a senha de aprovação do Supervisor?</td>
                             <td>
                               <c:if test="${parametrosDistribuidor.supervisionaVendaNegativa}">
-                                <input name="parametrosDistribuidor.supervisionaVendaNegativa" type="checkbox" checked="checked" />
+                                <input name="parametrosDistribuidor.supervisionaVendaNegativa" id="supervisionaVendaNegativa" type="checkbox" checked="checked" />
                               </c:if>
                               <c:if test="${empty parametrosDistribuidor.supervisionaVendaNegativa or (not parametrosDistribuidor.supervisionaVendaNegativa)}">
-                                <input name="parametrosDistribuidor.supervisionaVendaNegativa" type="checkbox"/>
+                                <input name="parametrosDistribuidor.supervisionaVendaNegativa" id="supervisionaVendaNegativa" type="checkbox"/>
                               </c:if>
                             </td>
                           </tr>
@@ -624,12 +638,14 @@ $(function() {
                           <table width="387" border="0" cellspacing="1" cellpadding="0">
                             <tr>
                               <td width="221" align="right">Avisar quando a Cota permanecer por &nbsp;</td>
-                              <td width="70"><input name="parametrosDistribuidor.chamadaoDiasSuspensao" type="text" id="chamadaoDiasSuspensao" style="width:20px; text-align:center;" /></td>
+                              <td width="70"><input name="parametrosDistribuidor.chamadaoDiasSuspensao" 
+                                type="text" id="chamadaoDiasSuspensao" style="width:20px; text-align:center;" value="${parametrosDistribuidor.chamadaoDiasSuspensao}" /></td>
                               <td width="92" align="left">dias suspensos</td>
                             </tr>
                             <tr>
                               <td align="right"> Ou atingir R$&nbsp; </td>
-                              <td><input name="parametrosDistribuidor.chamadaoValorConsignado" type="text" id="chamadaoValorConsignado" style="width:50px; text-align:right;" /></td>
+                              <td><input name="parametrosDistribuidor.chamadaoValorConsignado" 
+                                type="text" id="chamadaoValorConsignado" style="width:50px; text-align:right;" value="${parametrosDistribuidor.chamadaoValorConsignado}" /></td>
                               <td align="left">de consignado</td>
                             </tr>
                          </table>
