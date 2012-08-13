@@ -62,70 +62,73 @@
               <td>Validade (Meses)</td>
             </tr>
             <tr class="class_linha_1">
-              <td width="20"><input name="parametrosDistribuidor.chequeCalcao" id="chequeCalcao" type="checkbox" ${parametrosDistribuidor.chequeCalcao} />
+              <td width="20"><input name="parametrosDistribuidor.utilizaChequeCaucao" id="utilizaChequeCaucao" type="checkbox"/>
               </td>
               <td width="201">Cheque Caução</td>
-              <td width="104"><input name="date1" type="text" style="float: left; width: 60px;" id="date1" />
+              <td width="104"><input name="parametrosDistribuidor.validadeChequeCaucao" 
+                         type="text" style="float: left; width: 60px;" 
+                         value="${parametrosDistribuidor.validadeChequeCaucao}" 
+                         id="validadeChequeCaucao" />
               </td>
             </tr>
             <tr class="class_linha_2">
-              <td><input name="parametrosDistribuidor.caucaoLiquida" id="caucaoLiquida" type="checkbox" ${parametrosDistribuidor.caucaoLiquida}/>
+              <td><input name="parametrosDistribuidor.utilizaCaucaoLiquida" id="utilizaCaucaoLiquida" type="checkbox"/>
               </td>
               <td>Caução Líquida</td>
-              <td><input name="parametrosDistribuidor.chequeCalcaoValor" 
+              <td><input name="parametrosDistribuidor.validadeCaucaoLiquida" 
                          type="text" style="float: left; width: 60px;" 
-                         value="${parametrosDistribuidor.chequeCalcaoValor}" 
-                         id="chequeCalcaoValor" />
+                         value="${parametrosDistribuidor.validadeCaucaoLiquida}" 
+                         id="validadeCaucaoLiquida" />
               </td>
             </tr>
             <tr class="class_linha_2">
-              <td><input name="parametrosDistribuidor.fiador" id="fiador" type="checkbox" ${parametrosDistribuidor.fiador}/>
+              <td><input name="parametrosDistribuidor.utilizaFiador" id="utilizaFiador" type="checkbox"/>
               </td>
               <td>Fiador</td>
-              <td><input name="parametrosDistribuidor.fiadorValor" 
+              <td><input name="parametrosDistribuidor.validadeFiador" 
                          type="text" style="float: left; width: 60px;" 
-                         id="fiadorValor" 
-                         value="${parametrosDistribuidor.fiadorValor}" />
+                         id="validadeFiador" 
+                         value="${parametrosDistribuidor.validadeFiador}" />
               </td>
             </tr>
             <tr class="class_linha_1">
-              <td><input name="parametrosDistribuidor.notaPromissoria" id="notaPromissoria" type="checkbox" ${parametrosDistribuidor.notaPromissoria}/>
+              <td><input name="parametrosDistribuidor.utilizaNotaPromissoria" id="utilizaNotaPromissoria" type="checkbox"/>
               </td>
               <td>Nota Promissória</td>
-              <td><input name="parametrosDistribuidor.notaPromissoriaValor" 
+              <td><input name="parametrosDistribuidor.validadeNotaPromissoria" 
                          type="text" style="float: left; width: 60px;" 
-                         id="notaPromissoriaValor" 
-                         value="${parametrosDistribuidor.notaPromissoriaValor}" />
+                         id="validadeNotaPromissoria" 
+                         value="${parametrosDistribuidor.validadeNotaPromissoria}" />
               </td>
             </tr>
             <tr class="class_linha_2">
-              <td><input name="parametrosDistribuidor.imovel" id="imovel" type="checkbox" ${parametrosDistribuidor.imovel}/>
+              <td><input name="parametrosDistribuidor.utilizaImovel" id="utilizaImovel" type="checkbox"/>
               </td>
               <td>Imóvel</td>
-              <td><input name="parametrosDistribuidor.imovelValor" 
+              <td><input name="parametrosDistribuidor.validadeImovel" 
                          type="text" style="float: left; width: 60px;" 
-                         id="imovelValor" 
-                         value="${parametrosDistribuidor.imovelValor}" /> 
+                         id="validadeImovel" 
+                         value="${parametrosDistribuidor.validadeImovel}" /> 
               </td>
             </tr>
             <tr class="class_linha_1">
-              <td><input name="parametrosDistribuidor.antecedenciaValidade" id="antecedenciaValidade" type="checkbox" ${parametrosDistribuidor.antecedenciaValidade}/>
+              <td><input name="parametrosDistribuidor.utilizaAntecedenciaValidade" id="utilizaAntecedenciaValidade" type="checkbox"/>
               </td>
               <td>Antecedência da Validade</td>
-              <td><input name="parametrosDistribuidor.antecedenciaValidadeValor" 
+              <td><input name="parametrosDistribuidor.validadeAntecedenciaValidade" 
                          type="text" style="float: left; width: 60px;" 
-                         value="${parametrosDistribuidor.antecedenciaValidadeValor}" 
-                         id="antecedenciaValidadeValor" />
+                         value="${parametrosDistribuidor.validadeAntecedenciaValidade}" 
+                         id="validadeAntecedenciaValidade" />
               </td>
             </tr>
             <tr class="class_linha_2">
-              <td><input name="parametrosDistribuidor.outros" id="outros" type="checkbox"/>
+              <td><input name="parametrosDistribuidor.utilizaOutros" id="utilizaOutros" type="checkbox"/>
               </td>
               <td>Outros</td>
-              <td><input name="parametrosDistribuidor.outrosValor" 
+              <td><input name="parametrosDistribuidor.validadeOutros" 
                          type="text" style="float: left; width: 60px;" 
-                         value="" 
-                         id="outrosValor" />
+                          value="${parametrosDistribuidor.validadeOutros}" 
+                         id="validadeOutros" />
               </td>
             </tr>
           </table>
