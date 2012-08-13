@@ -9,4 +9,5 @@ public interface TipoDescontoRepository extends Repository<TipoDesconto, Long> {
 	List<TipoDesconto> obterTiposDescontoCota(Long idCota);
 	
 	List<TipoDesconto> obterTipoDescontoNaoReferenciadosComCota(Long idCota);
+	
 }
