@@ -95,9 +95,9 @@ public class ParametrosDistribuidorVO {
 	
 	// Aba Contratos e Garantias
 	// Frame Condições de Contratação
-	private String utilizaContratoComCotas;
+	private boolean utilizaContratoComCotas;
 	
-	private String prazoContrato;
+	private Integer prazoContrato;
 
 	private String informacoesComplementaresContrato;
 
@@ -496,19 +496,19 @@ public class ParametrosDistribuidorVO {
 		this.impressaoCE = impressaoCE;
 	}
 
-	public String getUtilizaContratoComCotas() {
+	public boolean getUtilizaContratoComCotas() {
 		return utilizaContratoComCotas;
 	}
 
-	public void setUtilizaContratoComCotas(String utilizaContratoComCotas) {
+	public void setUtilizaContratoComCotas(boolean utilizaContratoComCotas) {
 		this.utilizaContratoComCotas = utilizaContratoComCotas;
 	}
 
-	public String getPrazoContrato() {
+	public Integer getPrazoContrato() {
 		return prazoContrato;
 	}
 
-	public void setPrazoContrato(String prazoContrato) {
+	public void setPrazoContrato(Integer prazoContrato) {
 		this.prazoContrato = prazoContrato;
 	}
 
