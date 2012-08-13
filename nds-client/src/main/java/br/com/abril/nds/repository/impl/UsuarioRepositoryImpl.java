@@ -87,7 +87,7 @@ public class UsuarioRepositoryImpl extends AbstractRepositoryModel<Usuario, Long
 	 * @return
 	 */
 	private Criteria addRestrictions(Usuario usuario) {
-		Criteria criteria =  getSession().createCriteria(Usuario.class);	
+		Criteria criteria = getSession().createCriteria(Usuario.class);	
 		
 		String nome = usuario.getNome();
 		
@@ -97,6 +97,17 @@ public class UsuarioRepositoryImpl extends AbstractRepositoryModel<Usuario, Long
 		}
 
 		return criteria;
+	}
+
+	/* (non-Javadoc)
+	 * @see br.com.abril.nds.repository.UsuarioRepository#getUsuarioPorLogin(java.lang.String)
+	 */
+	@Override
+	public String getNomeUsuarioPorLogin(String login) {
+		Criteria criteria =  getSession().createCriteria(Usuario.class);
+		criteria.setProjection(Projections.groupProperty("nome"));
+		criteria.add(Restrictions.eq("login", login));
+		return (String) criteria.uniqueResult();
 	}
 	
 }

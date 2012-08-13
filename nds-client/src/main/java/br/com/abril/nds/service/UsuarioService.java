@@ -28,4 +28,6 @@ public interface UsuarioService {
 
 	public List<Permissao> buscarPermissoes(Long codigoUsuario);
 
+	public String getNomeUsuarioLogado();
+	
 }

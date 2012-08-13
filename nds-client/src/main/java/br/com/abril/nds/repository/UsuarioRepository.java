@@ -14,5 +14,7 @@ public interface UsuarioRepository extends Repository<Usuario, Long> {
 	public List<Usuario> listar(Usuario usuario, String orderBy, Ordenacao ordenacao, int initialResult, int maxResults);
 
 	public Long quantidade(Usuario usuario);
+
+	public String getNomeUsuarioPorLogin(String login);
 	
 }

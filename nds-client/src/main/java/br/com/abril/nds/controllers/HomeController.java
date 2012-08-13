@@ -18,6 +18,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.dto.MenuDTO;
 import br.com.abril.nds.model.seguranca.Permissao;
+import br.com.abril.nds.service.UsuarioService;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Resource;
@@ -38,6 +39,9 @@ public class HomeController {
 
 	@Autowired
 	private final Result result;
+
+	@Autowired
+	private UsuarioService usuarioService;
 
 	private List<MenuDTO> menus;
 
@@ -66,6 +70,8 @@ public class HomeController {
 
 		result.include("menus", mapaMenus);
 
+		result.include("nomeUsuario", usuarioService.getNomeUsuarioLogado());
+		
 	}
 
 	/**

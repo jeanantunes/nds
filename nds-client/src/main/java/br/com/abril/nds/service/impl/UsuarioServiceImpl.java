@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -87,6 +88,13 @@ public class UsuarioServiceImpl implements UsuarioService {
 	@Transactional
 	public List<Permissao> buscarPermissoes(Long codigoUsuario) {
 		return new ArrayList(usuarioRepository.buscarPorId(codigoUsuario).getPermissoes());
+	}
+
+	@Override
+	@Transactional(readOnly=true)
+	public String getNomeUsuarioLogado() {
+		String loginUsuario = SecurityContextHolder.getContext().getAuthentication().getName();
+		return usuarioRepository.getNomeUsuarioPorLogin(loginUsuario);
 	}
 
 }

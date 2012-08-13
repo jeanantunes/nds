@@ -151,8 +151,7 @@
 				<div class="usuario">
 					<div class="bt_novos">
 
-						<label title="Usuário Logado no Sistema">Usuário: Junior
-							Fonseca</label>
+						<label title="Usuário Logado no Sistema">Usuário: ${nomeUsuario}</label>
 					</div>
 					<div class="bt_novos">
 						<label> <script type="text/javascript"
