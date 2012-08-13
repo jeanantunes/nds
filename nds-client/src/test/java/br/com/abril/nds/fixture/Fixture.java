@@ -698,7 +698,6 @@ public class Fixture {
 		pad.setAjusteEstoque(false);
 		pad.setPostergacaoCobranca(false);
 		pad.setDevolucaoFornecedor(false);
-		pad.setRecibo(false);
 		pad.setFaltasSobras(false);
 		distribuidor.setParametrosAprovacaoDistribuidor(pad);
 		

@@ -218,16 +218,15 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		parametrosDistribuidor.setNegociacaoAteParcelas(CurrencyUtil.formatarValorTruncado(distribuidor.getNegociacaoAteParcelas()));
 		
 		// Aprovação
-		parametrosDistribuidor.setUtilizaControleAprovacao(verificaCheckString(distribuidor.isUtilizaControleAprovacao()));
+		parametrosDistribuidor.setUtilizaControleAprovacao(distribuidor.isUtilizaControleAprovacao());
 		
 		if (distribuidor.getParametrosAprovacaoDistribuidor() != null) {
-			parametrosDistribuidor.setParaDebitosCreditos(verificaCheckString(distribuidor.getParametrosAprovacaoDistribuidor().isDebitoCredito()));
-			parametrosDistribuidor.setNegociacao(verificaCheckString(distribuidor.getParametrosAprovacaoDistribuidor().isNegociacao()));
-			parametrosDistribuidor.setAjusteEstoque(verificaCheckString(distribuidor.getParametrosAprovacaoDistribuidor().isAjusteEstoque()));
-			parametrosDistribuidor.setPostergacaoCobranca(verificaCheckString(distribuidor.getParametrosAprovacaoDistribuidor().isPostergacaoCobranca()));
-			parametrosDistribuidor.setDevolucaoFornecedor(verificaCheckString(distribuidor.getParametrosAprovacaoDistribuidor().isDevolucaoFornecedor()));
-			parametrosDistribuidor.setRecibo(verificaCheckString(distribuidor.getParametrosAprovacaoDistribuidor().isRecibo()));
-			parametrosDistribuidor.setFaltasSobras(verificaCheckString(distribuidor.getParametrosAprovacaoDistribuidor().isFaltasSobras()));
+			parametrosDistribuidor.setParaDebitosCreditos(distribuidor.getParametrosAprovacaoDistribuidor().isDebitoCredito());
+			parametrosDistribuidor.setNegociacao(distribuidor.getParametrosAprovacaoDistribuidor().isNegociacao());
+			parametrosDistribuidor.setAjusteEstoque(distribuidor.getParametrosAprovacaoDistribuidor().isAjusteEstoque());
+			parametrosDistribuidor.setPostergacaoCobranca(distribuidor.getParametrosAprovacaoDistribuidor().isPostergacaoCobranca());
+			parametrosDistribuidor.setDevolucaoFornecedor(distribuidor.getParametrosAprovacaoDistribuidor().isDevolucaoFornecedor());
+			parametrosDistribuidor.setFaltasSobras(distribuidor.getParametrosAprovacaoDistribuidor().isFaltasSobras());
 		}
 		
 		parametrosDistribuidor.setPrazoFollowUp(CurrencyUtil.formatarValorTruncado(distribuidor.getPrazoFollowUp()));
@@ -516,17 +515,16 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		}
 		
 		// Aprovação
-		distribuidor.setUtilizaControleAprovacao(verificaCheckBoolean(parametrosDistribuidor.getUtilizaControleAprovacao()));
+		distribuidor.setUtilizaControleAprovacao(parametrosDistribuidor.getUtilizaControleAprovacao());
 		
 		ParametrosAprovacaoDistribuidor parametrosAprovacaoDistribuidor = new ParametrosAprovacaoDistribuidor();
-		parametrosAprovacaoDistribuidor.setDebitoCredito(verificaCheckBoolean(parametrosDistribuidor.getParaDebitosCreditos()));
+		parametrosAprovacaoDistribuidor.setDebitoCredito(parametrosDistribuidor.getParaDebitosCreditos());
 
-		parametrosAprovacaoDistribuidor.setNegociacao(verificaCheckBoolean(parametrosDistribuidor.getNegociacao()));
-		parametrosAprovacaoDistribuidor.setAjusteEstoque(verificaCheckBoolean(parametrosDistribuidor.getAjusteEstoque()));
-		parametrosAprovacaoDistribuidor.setPostergacaoCobranca(verificaCheckBoolean(parametrosDistribuidor.getPostergacaoCobranca()));
-		parametrosAprovacaoDistribuidor.setDevolucaoFornecedor(verificaCheckBoolean(parametrosDistribuidor.getDevolucaoFornecedor()));
-		parametrosAprovacaoDistribuidor.setRecibo(verificaCheckBoolean(parametrosDistribuidor.getRecibo()));
-		parametrosAprovacaoDistribuidor.setFaltasSobras(verificaCheckBoolean(parametrosDistribuidor.getFaltasSobras()));
+		parametrosAprovacaoDistribuidor.setNegociacao(parametrosDistribuidor.getNegociacao());
+		parametrosAprovacaoDistribuidor.setAjusteEstoque(parametrosDistribuidor.getAjusteEstoque());
+		parametrosAprovacaoDistribuidor.setPostergacaoCobranca(parametrosDistribuidor.getPostergacaoCobranca());
+		parametrosAprovacaoDistribuidor.setDevolucaoFornecedor(parametrosDistribuidor.getDevolucaoFornecedor());
+		parametrosAprovacaoDistribuidor.setFaltasSobras(parametrosDistribuidor.getFaltasSobras());
 		distribuidor.setParametrosAprovacaoDistribuidor(parametrosAprovacaoDistribuidor);
 		
 		if (parametrosDistribuidor.getPrazoFollowUp() != null && !parametrosDistribuidor.getPrazoFollowUp().isEmpty())
@@ -543,7 +541,7 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		
 		List<ParametrosDistribuidorFaltasSobras> listaParametrosDistribuidorFaltasSobras = new ArrayList<ParametrosDistribuidorFaltasSobras>();
 		
-		if (verificaCheckBoolean(parametrosDistribuidor.getFaltasSobras())) {
+		if (parametrosDistribuidor.getFaltasSobras()) {
 			
 			ParametrosDistribuidorFaltasSobras parametrosAprovacao = new ParametrosDistribuidorFaltasSobras();
 			parametrosAprovacao.setTipoParametrosDistribuidorFaltasSobras(TipoParametrosDistribuidorFaltasSobras.APROVACAO);

@@ -4294,7 +4294,6 @@ public class DataLoader {
 		parametrosAprovacaoDistribuidor.setFaltasSobras(true);
 		parametrosAprovacaoDistribuidor.setNegociacao(true);
 		parametrosAprovacaoDistribuidor.setPostergacaoCobranca(true);
-		parametrosAprovacaoDistribuidor.setRecibo(true);
 
 		ParametrosRecolhimentoDistribuidor parametrosRecolhimentoDistribuidor = new ParametrosRecolhimentoDistribuidor();
 
