@@ -61,6 +61,8 @@ public class IntegracaoOperacionalDistribuidorServiceImpl implements IntegracaoO
 			
 			CouchDbClient couchDbClient = this.obterCouchDBClient(nomeBancoDeDados);
 			
+			couchDbClient.setGsonBuilder(CouchDBUtil.getGsonBuilderForDate());
+			
 			OperacaoDistribuidor operacaoDistribuidor = null;
 			
 			try {
@@ -110,24 +112,48 @@ public class IntegracaoOperacionalDistribuidorServiceImpl implements IntegracaoO
 	public void atualizarInformacoesOperacionaisDistribuidores(
 			List<OperacaoDistribuidor> listaInformacoesOperacionaisDistribuidores) {
 		
-		if (listaInformacoesOperacionaisDistribuidores != null){
+		if (listaInformacoesOperacionaisDistribuidores != null) {
 			
-			for (OperacaoDistribuidor operacaoDistribuidor : listaInformacoesOperacionaisDistribuidores){
+			for (OperacaoDistribuidor operacaoDistribuidor : listaInformacoesOperacionaisDistribuidores) {
 				
-				if (operacaoDistribuidor != null){
+				if (operacaoDistribuidor.getIdDistribuidorInterface() == null) {
 					
-					this.operacaoDistribuidorRepository.alterar(operacaoDistribuidor);
+					continue;
 				}
 				
-				if (operacaoDistribuidor.getIndicadores() != null){
+				OperacaoDistribuidor operacaoDistribuidorAtual =
+					this.operacaoDistribuidorRepository.buscarPorId(
+						operacaoDistribuidor.getIdDistribuidorInterface());
+
+				if (operacaoDistribuidorAtual == null) {
 					
-					for (Indicador indicador : operacaoDistribuidor.getIndicadores()){
+					this.operacaoDistribuidorRepository.adicionar(operacaoDistribuidor);
+					
+					operacaoDistribuidorAtual =
+						this.operacaoDistribuidorRepository.buscarPorId(
+							operacaoDistribuidor.getIdDistribuidorInterface());
+					
+				} else {
+				
+					operacaoDistribuidorAtual.setRevisao(operacaoDistribuidor.getRevisao());
+					operacaoDistribuidorAtual.setDataOperacao(operacaoDistribuidor.getDataOperacao());
+					operacaoDistribuidorAtual.setStatusOperacao(operacaoDistribuidor.getStatusOperacao());
+					
+					this.operacaoDistribuidorRepository.alterar(operacaoDistribuidorAtual);
+				}
+				
+				if (operacaoDistribuidor.getIndicadores() != null) {
+					
+					for (Indicador indicador : operacaoDistribuidor.getIndicadores()) {
 						
-						if (indicador != null){
+						if (indicador != null) {
 							
-							indicador.setDistribuidor(operacaoDistribuidor);
+							indicador.setDistribuidor(operacaoDistribuidorAtual);
 							
-							this.indicadorRepository.alterar(indicador);
+							if (indicador.getId() == null) {
+							
+								this.indicadorRepository.adicionar(indicador);
+							}
 						}
 					}
 				}
