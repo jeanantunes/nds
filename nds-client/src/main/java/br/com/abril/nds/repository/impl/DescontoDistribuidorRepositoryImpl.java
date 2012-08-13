@@ -112,4 +112,5 @@ public class DescontoDistribuidorRepositoryImpl extends AbstractRepositoryModel<
 
 		return hql.toString();
 	}
+
 }

@@ -11,6 +11,7 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.client.util.PaginacaoUtil;
 import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.dto.DescontoProdutoDTO;
 import br.com.abril.nds.dto.ItemDTO;
@@ -37,6 +38,7 @@ import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
 import br.com.abril.nds.util.export.NDSFileHeader;
 import br.com.abril.nds.vo.PaginacaoVO;
+import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
@@ -96,7 +98,6 @@ public class TipoDescontoCotaController {
 	@Post
 	@Path("/novoDescontoProduto")
 	public void novoDescontoProduto(DescontoProdutoDTO desconto) {		
-		//FIXME revisar a implementação da inclusão de um novo desconto de produto
 
 		this.descontoService.incluirDesconto(desconto);
 
@@ -393,5 +394,20 @@ public class TipoDescontoCotaController {
 		}
 		
 		return itensFornecedor;
+	}
+	
+	@Post
+	@Path("/obterFornecedoresAssociadosDesconto")
+	public void obterFornecedoresAssociadosDesconto(Long idDesconto, TipoDesconto tipoDesconto,String sortorder, String sortname){
+		
+		List<Fornecedor> fornecedores =   descontoService.busacarFornecedoresAssociadosADesconto(idDesconto, tipoDesconto);
+		
+		List<ItemDTO<Long, String>> lista = getFornecedores(fornecedores);
+		
+		Ordenacao ordenacao = Util.getEnumByStringValue(Ordenacao.values(), sortorder);
+		
+		PaginacaoUtil.ordenarEmMemoria(lista, ordenacao, sortname);
+		
+		result.use(FlexiGridJson.class).from(lista).total(fornecedores.size()).page(1).serialize();
 	}
 }

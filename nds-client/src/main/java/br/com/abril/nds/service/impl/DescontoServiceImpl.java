@@ -3,8 +3,8 @@ package br.com.abril.nds.service.impl;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.LinkedHashSet;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -21,11 +21,9 @@ import br.com.abril.nds.dto.filtro.FiltroTipoDescontoCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroTipoDescontoDTO;
 import br.com.abril.nds.dto.filtro.FiltroTipoDescontoProdutoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
-import br.com.abril.nds.model.cadastro.Distribuidor;
-import br.com.abril.nds.model.cadastro.Fornecedor;
-import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.TipoDesconto;
 import br.com.abril.nds.model.cadastro.desconto.DescontoCota;
@@ -34,13 +32,10 @@ import br.com.abril.nds.model.cadastro.desconto.DescontoProduto;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.DescontoCotaRepository;
-import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.DescontoDistribuidorRepository;
 import br.com.abril.nds.repository.DescontoProdutoRepository;
 import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.FornecedorRepository;
-import br.com.abril.nds.repository.DescontoProdutoRepository;
-import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.repository.TipoDescontoRepository;
 import br.com.abril.nds.repository.UsuarioRepository;
@@ -304,25 +299,34 @@ public class DescontoServiceImpl implements DescontoService {
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, mensagens));
 		}
 	}
-	
-	private List<TipoDescontoCotaDTO> getMockEspecia(){
+
+	@Override
+	@Transactional(readOnly=true)
+	public List<Fornecedor> busacarFornecedoresAssociadosADesconto(Long idDesconto, 
+																	br.com.abril.nds.model.cadastro.desconto.TipoDesconto tipoDesconto) {
 		
-		List<TipoDescontoCotaDTO> listaDescontoCotaDTO = new ArrayList<TipoDescontoCotaDTO>();
+		List<Fornecedor> listaFornecedores = new ArrayList<Fornecedor>();
 		
-		for (int i = 0; i < 10; i++) {
-			
-			TipoDescontoCotaDTO x = new TipoDescontoCotaDTO();
-			x.setDataAlteracao(new Date());
-			x.setDesconto(BigDecimal.TEN);
-			x.setFornecedor("Fornecedor");
-			x.setNomeCota("jose MAria");
-			x.setNomeUsuario("Mane");
-			x.setNumeroCota(123);
-			x.setIdTipoDesconto(new Long(i));
-			
-			listaDescontoCotaDTO.add(x);
+		switch (tipoDesconto) {
+			case GERAL :
+				
+				DescontoDistribuidor desconto = descontoDistribuidorRepository.buscarPorId(idDesconto);
+				
+				if(desconto!= null){
+					listaFornecedores.addAll(desconto.getFornecedores());
+				}
+				break;
+				
+			case ESPECIFICO :
+				
+				DescontoCota descontoCota = descontoCotaRepository.buscarPorId(idDesconto);
+				
+				if(descontoCota!= null){
+					listaFornecedores.addAll(descontoCota.getFornecedores());
+				}
+				break;
 		}
 		
-		return listaDescontoCotaDTO;
+		return listaFornecedores;
 	}
 }

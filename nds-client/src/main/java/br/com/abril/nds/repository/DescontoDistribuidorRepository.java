@@ -4,7 +4,9 @@ import java.util.List;
 
 import br.com.abril.nds.dto.TipoDescontoDTO;
 import br.com.abril.nds.dto.filtro.FiltroTipoDescontoDTO;
+import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.desconto.DescontoDistribuidor;
+import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
 /**
  * Interface que define as regras de acesso a dados
