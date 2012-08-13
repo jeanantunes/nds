@@ -1,17 +1,21 @@
 @charset "utf-8";
 /* CSS Document */
-
+html{height:100%; min-height:90%; overflow:hidden;}
 body{
 	font-family: arial;
-	font-size: 12px;
+	font-size: 11px;
 	color: #000;
 	background-color: #FFF;
 	margin: 0px;
+	height:100%;
+	
 }
 
 .corpo{
 	width:100%;
 	overflow:hidden;
+	min-height:95%;
+
 }
 a{color:#000;}
 .header{
@@ -30,7 +34,7 @@ a{color:#000;}
 .titAplicacao h3{font-size:10px; margin:5px 0px 0px 0px; font-weight:bold;}
 .sub-header{
 	margin:auto auto;
-	height:75px;
+	height:70px;
 }
 .logo{margin-top:13px; float:left; display:inline}
 .usuario{float:right;}
@@ -137,41 +141,37 @@ a{color:#000;}
 
 
 
-
-
-.filtro{font-weight:bold;}
-
 .bt_iniciar{background:url(../images/bt_iniciar.png) no-repeat left center; width:120px; line-height:39px; float:left;}
-.bt_iniciar a{padding-left:38px; color:#000; font-weight:bold; font-size:12px; text-decoration:none;}
+.bt_iniciar a{padding-left:38px; color:#000; font-weight:bold; text-decoration:none;}
 .bt_iniciar a:hover{color:#00649F; text-decoration:underline;}
 
 .bt_finalizar{background:url(../images/bt_finalizar.png) no-repeat left center; width:90px; line-height:39px; float:left;}
-.bt_finalizar a{margin-left:38px; color:#000; font-weight:bold; font-size:12px; text-decoration:none;}
+.bt_finalizar a{margin-left:38px; color:#000; font-weight:bold; text-decoration:none;}
 .bt_finalizar a:hover{color:#00649F; text-decoration:underline;}
 
 .bt_confirmar{background:url(../images/bt_confirmar.png) no-repeat left center; width:104px; line-height:39px; float:left;}
-.bt_confirmar a{padding-left:32px; color:#000; font-weight:bold; font-size:12px; text-decoration:none;}
+.bt_confirmar a{padding-left:32px; color:#000; font-weight:bold; text-decoration:none;}
 .bt_confirmar a:hover{color:#00649F; text-decoration:underline;}
 
 .bt_confirmar_1{background:url(../images/bt_confirmar_1.png) no-repeat left center; width:183px; line-height:39px; float:left;}
-.bt_confirmar_1 a{padding-left:32px; color:#000; font-weight:bold; font-size:12px; text-decoration:none;}
+.bt_confirmar_1 a{padding-left:32px; color:#000; font-weight:bold; text-decoration:none;}
 .bt_confirmar_1 a:hover{color:#00649F; text-decoration:underline;}
 
-.bt_pesquisar{background:url(../images/bt_pesquisar.png) no-repeat left center; width:104px; line-height:39px; float:left;}
-.bt_pesquisar a{ color:#000; font-weight:bold; font-size:12px; text-decoration:none;  padding-left: 31px;}
-.bt_pesquisar a:hover{color:#00649F; text-decoration:underline;}
+/*.bt_pesquisar{background:url(../images/bt_pesquisar.png) no-repeat left center; width:104px; line-height:39px; float:left;}*/
+.bt_pesquisar a{ color:#000; font-weight:bold; text-decoration:none; border:1px solid #fff; display:table-cell }
+.bt_pesquisar a:hover{color:#00649F; text-decoration:underline;  border:1px solid #06C; display:table-cell}
 
 .bt_recolher{background:url(../images/bt_recolhimento_1.png) no-repeat left center; width:114px; line-height:39px; float:left;}
-.bt_recolher a{padding-left:28px; color:#000; font-weight:bold; font-size:12px; text-decoration:none;}
+.bt_recolher a{padding-left:28px; color:#000; font-weight:bold; text-decoration:none;}
 .bt_recolher a:hover{color:#00649F; text-decoration:underline;}
 
 .bt_sellAll{ margin-top:8px; float:left;}
-.bt_sellAll label{float:left;width:120px;}
+.bt_sellAll label{float:left;}
 
 
 
 .bt_novo{background:url(../images/bt_novo.png) no-repeat left center; width:92px; line-height:39px; float:left;}
-.bt_novo a{padding-left:38px; color:#000; font-weight:bold; font-size:12px; text-decoration:none;}
+.bt_novo a{padding-left:38px; color:#000; font-weight:bold; text-decoration:none;}
 .bt_novo a:hover{color:#00649F; text-decoration:underline;}
 
 .bt_atualizarIco{background:url(../images/ico_atualizar.gif) no-repeat left center; width:21px; height:20px; float:left;}
@@ -182,52 +182,52 @@ a{color:#000;}
 
 
 .bt_pdv{background:url(../images/bt_pdv.png) no-repeat left center; width:120px; line-height:39px; float:left;}
-.bt_pdv a{margin-left:34px; color:#000; font-weight:bold; font-size:12px; text-decoration:none;}
+.bt_pdv a{margin-left:34px; color:#000; font-weight:bold; text-decoration:none;}
 .bt_pdv a:hover{color:#00649F; text-decoration:underline;}
 
 
 .bt_financeiro{background:url(../images/bt_financeiro_1.png) no-repeat left center; width:94px; line-height:39px; float:left;}
-.bt_financeiro a{margin-left:24px; color:#000; font-weight:bold; font-size:12px; text-decoration:none;}
+.bt_financeiro a{margin-left:24px; color:#000; font-weight:bold; text-decoration:none;}
 .bt_financeiro a:hover{color:#00649F; text-decoration:underline;}
 
 
 .bt_suspender{background:url(../images/bt_suspender.png) no-repeat left center; width:170px; line-height:39px; float:left;}
-.bt_suspender a{padding-left:26px; color:#000; font-weight:bold; font-size:12px; text-decoration:none;}
+.bt_suspender a{padding-left:26px; color:#000; font-weight:bold; text-decoration:none;}
 .bt_suspender a:hover{color:#00649F; text-decoration:underline;}
 
 
 
 .bt_arquivo{background:url(../images/bt_excel.png) no-repeat left center; width:110px; line-height:39px; float:left;}
-.bt_arquivo a{padding-left:38px; color:#000; font-weight:bold; font-size:12px; text-decoration:none;}
+.bt_arquivo a{padding-left:38px; color:#000; font-weight:bold; text-decoration:none;}
 .bt_arquivo a:hover{color:#00649F; text-decoration:underline;}
 
 
 .bt_xml{background:url(../images/bt_xml.png) no-repeat left center; width:110px; line-height:39px; float:left;}
-.bt_xml a{padding-left:38px; color:#000; font-weight:bold; font-size:12px; text-decoration:none;}
+.bt_xml a{padding-left:38px; color:#000; font-weight:bold; text-decoration:none;}
 .bt_xml a:hover{color:#00649F; text-decoration:underline;}
 
 
 .bt_imprimir{background:url(../images/bt_imprimir.png) no-repeat left center; width:110px; line-height:39px; float:left;}
-.bt_imprimir a{padding-left:38px; color:#000; font-weight:bold; font-size:12px; text-decoration:none;}
+.bt_imprimir a{padding-left:38px; color:#000; font-weight:bold; text-decoration:none;}
 .bt_imprimir a:hover{color:#00649F; text-decoration:underline;}
 
 .bt_add{background:url(../images/bt_add_novo.png) no-repeat left center; width:110px;  line-height:39px; float:left;}
-.bt_add a{padding-left:30px; color:#000; font-weight:bold; font-size:12px; text-decoration:none;}
+.bt_add a{padding-left:30px; color:#000; font-weight:bold; text-decoration:none;}
 .bt_add a:hover{color:#00649F; text-decoration:underline;}
 
 .bt_integrar{background:url(../images/bt_integrar.png) no-repeat left center; width:110px;  line-height:39px; float:left;}
-.bt_integrar a{padding-left:30px; color:#000; font-weight:bold; font-size:12px; text-decoration:none;}
+.bt_integrar a{padding-left:30px; color:#000; font-weight:bold; text-decoration:none;}
 .bt_integrar a:hover{color:#00649F; text-decoration:underline;}
 
 
 .class_linha_1{background:#f0f0f0; line-height:39px;}
 .class_linha_2{background:#f8f8f8; line-height:39px;	}
 
-.linha_separa_fields{height:12px; width:980px;  float:left; overflow:hidden;}
+.linha_separa_fields{height:12px; width:100%;  float:left; overflow:hidden;}
 .linha_separa_fields_2{height:12px; width:700px;  float:left; overflow:hidden;}
 
 select{font-size: 12px; height: 21px;}
-select, input{font-size: 12px; height: 21px;}
+select, input{font-size: 12px; }
 .header_table{ background:url(../images/bg_header_table.jpg) repeat-x center center; line-height:25px; font-weight:bold; }
 .scroll_grid{height:130px; overflow-y:auto;}
 
@@ -300,10 +300,10 @@ select, input{font-size: 12px; height: 21px;}
 .formsFiltroHome{line-height:21px!important; float:left; padding:2px; height:auto; margin-right:5px;}
 
 
-#effect { display: none; margin: 0px; width:980px;  position: absolute; }
- #effect_1 { display: none; margin: 0px; width:800px;  position: absolute; }
+#effect, #effect_1 { display: none; margin: 0px; padding:5px!important; width:98%;  position: absolute; }
+ 
 
-#dialog-novo, #dialog-alterar, #dialog-excluir, #dialog-pdv, #dialog-endereco{display:none; font-size:12px;}
+#dialog-novo, #dialog-alterar, #dialog-excluir, #dialog-pdv, #dialog-endereco{display:none;}
   #pf-fiador, #pf-comprador, #pf-jornaleiro, #dialog-financeiro, #dialog-cpf, #dialog-cnpj{display:none;}
   #pj-fiador, #pj-transportadora, #pj-fornecedor, #pj-jornaleiro, #tabs-pj, #tabs-pf, #dialog-reprogramar,  #dialog-novo-balanceamento, #dialog-novo-balanceamento_1{display:none;}
   #pf-fiador_1, #pf-comprador_1, #pf-jornaleiro_1{display:none;}
@@ -321,7 +321,8 @@ select, input{font-size: 12px; height: 21px;}
 .bt_configura_inicial a{color:#000000; text-decoration:none; padding:0px 5px 0px 0px; line-height:27px;}
 .bt_configura_inicial a:hover{text-decoration:underline;}
 
-.bt_confirmar_novo{ border:1px solid #0C0; background:url(../images/bg_item_menu.jpg) repeat-x; float:left; margin:5px 0px 0px 5px; font-weight:bold;}
+.bt_confirmar_novo{ border:1px solid #0C0; background:url(../images/bg_item_menu.jpg) repeat-x; float:left; margin-left: 10px;
+    padding: 5px; font-weight:bold;}
 .bt_confirmar_novo a{color:#000000; text-decoration:none; padding:0px 5px 0px 0px; line-height:27px;}
 .bt_confirmar_novo a:hover{text-decoration:underline;}
 .vermelho{color:#FF0000; font-weight:bold;}
@@ -332,10 +333,10 @@ select, input{font-size: 12px; height: 21px;}
 .bt_incluir_novo a:hover{text-decoration:underline;}
 .vermelho{color:#FF0000; font-weight:bold;}
 
-.bt_novos a{ border:1px solid #EFEFEF; background:#fff; float:left; margin:5px 0px 0px 7px; font-weight:bold; padding-left:5px; padding-right:5px; text-decoration:none; line-height:25px; font-size:11px; }
+.bt_novos a, .bt_arq a{ border:1px solid #EFEFEF;  background:#FAFCFC; float:left; padding:5px; text-decoration:none; margin-left:10px;}
 /*.bt_novos a{color:#000000; text-decoration:none; padding:0px 5px 0px 0px; line-height:27px;}
 .bt_novos a:hover{text-decoration:underline;}*/
-
+.bt_novos a:hover, .bt_arq a:hover{ border:1px solid #5BF065; float:left; background:#fff;}
 
 
 .alert{border:1px solid #F00!important; background:#F4F4F4; padding:5px; font-size:11px; float:left;}
@@ -371,15 +372,17 @@ fieldset legend{font-weight:bold; margin-left:5px; color:#5C9CCC; padding-left:5
 
 .areaBts{
 	width:100%;
-	position:absolute;
 	left:0px;
-	top:40px;
+	margin-top:0px;
+	display:table;
+	margin-left: -8px;
 	right:15px;
 	padding-left:12px;
 	padding-right:30px;
 	border-bottom:1px solid #ccc;
 	padding-bottom:5px;
-	background:#F7F7F7
+	background:#FAFCFC;
+	box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
 }
 
 .img{margin-right:10px;}

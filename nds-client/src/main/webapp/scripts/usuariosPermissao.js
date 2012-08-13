@@ -303,13 +303,13 @@ var usuariosPermissaoController = $.extend(true, {
 				}, {
 					display : 'Nome',
 					name : 'nome',
-					width : 110,
+					width : 140,
 					sortable : true,
 					align : 'left'
 				}, {
 					display : 'E-mail',
 					name : 'email',
-					width : 120,
+					width : 140,
 					sortable : true,
 					align : 'left'
 				}, {
@@ -328,7 +328,7 @@ var usuariosPermissaoController = $.extend(true, {
 					display : 'Ação',
 					name : 'acao',
 					width : 60,
-					sortable : true,
+					sortable : false,
 					align : 'center'
 				}],
 				sortname : "nome",

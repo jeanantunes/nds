@@ -192,7 +192,7 @@ var gruposPermissaoController = $.extend(true, {
 				colModel : [ {
 					display : 'Nome',
 					name : 'nome',
-					width : 640,
+					width : 750,
 					sortable : true,
 					align : 'left'
 				}, {
