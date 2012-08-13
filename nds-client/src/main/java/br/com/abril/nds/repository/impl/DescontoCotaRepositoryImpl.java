@@ -1,5 +1,7 @@
 package br.com.abril.nds.repository.impl;
 
+import org.springframework.stereotype.Repository;
+
 import br.com.abril.nds.model.cadastro.desconto.DescontoCota;
 import br.com.abril.nds.repository.DescontoCotaRepository;
 
@@ -9,6 +11,7 @@ import br.com.abril.nds.repository.DescontoCotaRepository;
  * 
  * @author Discover Technology
  */
+@Repository
 public class DescontoCotaRepositoryImpl extends AbstractRepositoryModel<DescontoCota, Long> implements DescontoCotaRepository {
 
 	public DescontoCotaRepositoryImpl() {

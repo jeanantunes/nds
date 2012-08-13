@@ -15,6 +15,8 @@ var DESCONTO_GERAL = {
 		
 		$("#selectFornecedorSelecionado_option").clear();
 		
+		$("#descontoGeral").val("");
+		
 		TIPO_DESCONTO.carregarFornecedores("#selectFornecedor_option");
 		 
 		$( "#dialog-geral" ).dialog({
