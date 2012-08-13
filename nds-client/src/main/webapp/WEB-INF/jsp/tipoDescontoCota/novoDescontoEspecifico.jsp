@@ -15,6 +15,10 @@ var DESCONTO_ESPECIFICO = {
 		 
 		$("#selectFornecedorSelecionado_option_especifico").clear();
 		
+		$("#numCotaEspecifico").val("");
+		$("#descontoEspecifico").val("");
+		$("#descricaoCotaEspecifico").val("");
+		
 		TIPO_DESCONTO.carregarFornecedores("#selectFornecedor_option_especifico");
 		
 		$( "#dialog-especifico" ).dialog({
