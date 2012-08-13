@@ -374,6 +374,8 @@ $(function() {
 	habilitaPrazoContrato();
 	
 	$("#tabDistribuidor").tabs();
+	
+	alternarControleAprovacao();
 });
 
 function mostraTabelaGarantiasAceitas(){
@@ -382,6 +384,20 @@ function mostraTabelaGarantiasAceitas(){
 	} else {
 		$('#tabelaGarantiasAceitas').hide();
 	}
+}
+
+function alternarControleAprovacao(){
+	
+	if ($("#utilizaControleAprovacao").is(":checked")){
+		
+		$("table#controlesAprovacao input[type=checkbox]").enable();
+	} else {
+		
+		$("table#controlesAprovacao input[type=checkbox]").uncheck();
+		$("table#controlesAprovacao input[type=checkbox]").disable();
+	}
+	
+	$("input:checkbox[id=controlesAprovacao]").attr("disabled", "disabled");
 }
 
 </script>
