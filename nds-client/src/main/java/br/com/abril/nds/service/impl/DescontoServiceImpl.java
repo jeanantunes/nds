@@ -61,7 +61,7 @@ public class DescontoServiceImpl implements DescontoService {
 	
 	@Autowired
 	private CotaRepository cotaRepository;
-	
+
 	@Override
 	@Transactional(readOnly=true)
 	public List<TipoDesconto> obterTodosTiposDescontos() {
@@ -93,15 +93,15 @@ public class DescontoServiceImpl implements DescontoService {
 	@Override
 	@Transactional(readOnly=true)
 	public List<TipoDescontoCotaDTO> buscarTipoDescontoCota(FiltroTipoDescontoCotaDTO filtro) {
-		// FIXME Implementar a consulta paginada de desconto
-		return getMockEspecia();
+		
+		return this.descontoCotaRepository.obterDescontoCota(filtro);
 	}
 
 	@Override
 	@Transactional(readOnly=true)
 	public Integer buscarQuantidadeTipoDescontoCota(FiltroTipoDescontoCotaDTO filtro) {
-		// FIXME Implementar a consulta  de desconto
-		return getMockEspecia().size();
+		
+		return this.descontoCotaRepository.obterQuantidadeDescontoCota(filtro);
 	}
 
 	@Override
